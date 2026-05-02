@@ -1,0 +1,11 @@
+[Unit]
+Description=R2D2 maintenance sample-growth check timer (daily 06:30 UTC)
+
+[Timer]
+OnCalendar=*-*-* 06:30:00 UTC
+Persistent=true
+Unit=r2d2-maintenance-sample-growth.service
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

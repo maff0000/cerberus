@@ -1,0 +1,29 @@
+[Unit]
+# ONE_TIME_EXCEPTION_NOWIC_AT_VALIDATION_WATCHER — architect-approved 2026-04-30.
+# Parent blocker r2d2:blocker:autonomous_cron_publishing remains OPEN; this is
+# a single carved-out watcher for nowic_at_m15 formula post-deploy validation only.
+# Anchor UTC: 2026-04-30T14:55:20Z (PR #605 / merge f164a43f).
+# Deadline UTC: 2026-05-07T14:55:20Z. Self-disables via internal status check
+# inside /opt/r2d2/nowic_at_watcher_tick.py upon final label or deadline.
+Description=R2D2 NOWIC_AT formula validation watcher (ONE_TIME_EXCEPTION_NOWIC_AT_VALIDATION_WATCHER)
+# Fabric refs:
+#   r2d2:exception:ONE_TIME_EXCEPTION_NOWIC_AT_VALIDATION_WATCHER
+#   r2d2:watcher:nowic_at_validation:state
+#   r2d2:plan:nowic_at_formula_post_deploy_validation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# User=root: same justification as r2d2-tdr-watcher.service — SSH key for dell-debian
+# lives at /root/.ssh/id_ed25519 per /srv/CLAUDE.md authority. Recorded.
+User=root
+WorkingDirectory=/opt/r2d2
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HOME=/root"
+Environment="LANG=C.UTF-8"
+ExecStart=/usr/bin/python3 /opt/r2d2/nowic_at_watcher_tick.py
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
+SuccessExitStatus=0

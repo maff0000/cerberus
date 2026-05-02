@@ -1,0 +1,13 @@
+[Unit]
+# Timer for R2D2 maintenance drift sweep — daily 06:00 UTC
+# Carve-out: r2d2:exception:R2D2_MAINTENANCE_CADENCE_V1
+Description=R2D2 maintenance drift sweep timer (daily 06:00 UTC)
+
+[Timer]
+OnCalendar=*-*-* 06:00:00 UTC
+Persistent=true
+Unit=r2d2-maintenance-drift.service
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

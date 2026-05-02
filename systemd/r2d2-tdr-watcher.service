@@ -1,0 +1,32 @@
+[Unit]
+# ONE_TIME_EXCEPTION_TDR_VALIDATION_WATCHER — architect-approved 2026-04-30.
+# Parent blocker r2d2:blocker:autonomous_cron_publishing remains OPEN; this is
+# a single carved-out watcher for tdr_m5 formula post-deploy validation only.
+# Anchor UTC: 2026-04-30T12:43:56Z (PR #603 / merge afb7c3f0).
+# Deadline UTC: 2026-05-07T12:43:56Z. Self-disables via internal status check
+# inside /opt/r2d2/tdr_watcher_tick.py upon final label or deadline.
+Description=R2D2 TDR formula validation watcher (ONE_TIME_EXCEPTION_TDR_VALIDATION_WATCHER)
+# Fabric refs (not URIs — kept as comments to avoid systemd Documentation= URI warning):
+#   r2d2:exception:ONE_TIME_EXCEPTION_TDR_VALIDATION_WATCHER
+#   r2d2:watcher:tdr_validation:state
+#   r2d2:plan:tdr_formula_post_deploy_validation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# User=root: the watcher SSHes to dell-debian using /root/.ssh/id_ed25519 (authority
+# documented in /srv/CLAUDE.md). No dedicated r2d2 system user exists; provisioning
+# one would expand scope beyond the one-time exception. Recorded per architect
+# "unless unavoidable and explicitly recorded" clause.
+User=root
+WorkingDirectory=/opt/r2d2
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HOME=/root"
+Environment="LANG=C.UTF-8"
+ExecStart=/usr/bin/python3 /opt/r2d2/tdr_watcher_tick.py
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=240
+# Fail loud — non-zero exit surfaces in journalctl and systemctl status.
+SuccessExitStatus=0

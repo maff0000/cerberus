@@ -1,0 +1,17 @@
+[Unit]
+# Timer for r2d2-nowic-at-watcher.service. ONE_TIME_EXCEPTION_NOWIC_AT_VALIDATION_WATCHER.
+# Fires every 30min after first boot. Persistent=true catches up after reboots.
+# Watcher self-disables on final label or 7-day deadline; ticks become idempotent
+# no-ops thereafter (state.status=DISABLED check).
+Description=R2D2 NOWIC_AT formula validation watcher timer (every 30min, self-disabling)
+# Fabric ref: r2d2:exception:ONE_TIME_EXCEPTION_NOWIC_AT_VALIDATION_WATCHER
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=30min
+Persistent=true
+Unit=r2d2-nowic-at-watcher.service
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

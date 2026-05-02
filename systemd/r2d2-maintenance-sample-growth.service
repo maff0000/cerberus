@@ -1,0 +1,20 @@
+[Unit]
+# R2D2 maintenance — daily sample-growth check
+# Carve-out: r2d2:exception:R2D2_MAINTENANCE_CADENCE_V1 (Matt 2026-05-01)
+# Main directive: r2d2:directive:main (preservation of the team).
+Description=R2D2 maintenance — daily sample-growth check for INSUFFICIENT_SAMPLE strategies
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/r2d2/maintenance
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HOME=/root"
+Environment="LANG=C.UTF-8"
+ExecStart=/usr/bin/python3 /opt/r2d2/maintenance/sample_growth_check.py
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=180
+SuccessExitStatus=0
