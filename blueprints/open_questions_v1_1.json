@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.1.0",
+  "key": "r2d2:blueprint:open_questions:v1",
+  "supersedes": "v1 (2026-05-03 first draft)",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "updated_utc": "2026-05-03T00:00:00Z",
+  "purpose": "Architectural questions that source / schema / fabric evidence cannot answer. BLOCKING items must resolve before v2.",
+
+  "resolved_in_v1_1": [
+    {
+      "id": "Q1",
+      "question": "DB authority for helios_strategy_signals?",
+      "RESOLVED": "tradingScalp on dell-debian:3307. V3 daemon source confirms (daemon.py:63: DB_NAME = 'tradingScalp'). Falcon writer + Helios V3 reader share same schema."
+    },
+    {
+      "id": "Q5",
+      "question": "Conflict-resolution rule when two strategies fire opposing directions?",
+      "RESOLVED": "If long_passes AND short_passes (both ≥ MIN_SCORE_GO=7.0 + MIN_CONFLUENCE_GO=2): gap = |long.score - short.score|. If gap < CONFLICT_GAP=1.5 → CONFLICT_NO_GO. Else winner = max. Source-confirmed daemon.py:593-674."
+    },
+    {
+      "id": "Q6",
+      "question": "Threshold for emitting GO_LONG/GO_SHORT vs NO_GO BELOW_THRESHOLD?",
+      "RESOLVED": "winner.score ≥ 7.0 AND winner.count ≥ 2 (MIN_SCORE_GO + MIN_CONFLUENCE_GO). Below either → NO_GO BELOW_THRESHOLD."
+    },
+    {
+      "id": "Q7",
+      "question": "HIGH_CONVICTION_GO threshold?",
+      "RESOLVED": "winner.score ≥ 8.5 AND winner.count ≥ 3 (MIN_SCORE_HIGH_CONVICTION + MIN_CONFLUENCE_HIGH_CONVICTION)."
+    },
+    {
+      "id": "Q13",
+      "question": "Where exactly is the Helios V3 daemon source?",
+      "RESOLVED": "/srv-dev/tradingProteus/helios_v3/daemon.py (1429 lines). Service unit /etc/systemd/system/helios-v3.service. ExecStart: /usr/bin/python3 -m helios_v3.daemon."
+    }
+  ],
+
+  "BLOCKING_must_resolve_before_v2": [
+    {
+      "id": "Q3",
+      "question": "Is 'shadow mode only' the current state or the permanent design for Falcon? Reframed: when does Falcon's perception output start being acted on by a live execution path (vs being an observation-only layer indefinitely)?",
+      "context": "Architect doctrine ratified Falcon as NON-EXECUTING BY DESIGN. Operational question remains: is the production live execution path planned via Agent Smith + Solo, or does Falcon perception remain advisory indefinitely?",
+      "asks_who": "Matt"
+    },
+    {
+      "id": "Q8",
+      "question": "Is Helios's NO_GO advisory (Solo can override) or authoritative (Solo MUST stand down)?",
+      "context": "No enforcement of helios.decision=NO_GO at execution layer found in evidence. If Solo can override, what records the override decision?",
+      "asks_who": "Matt"
+    },
+    {
+      "id": "Q12",
+      "question": "When does R2D2 ship real health weights to retire R2D2_TEMPORARY_BRIDGE / UNTRUSTED defaults?",
+      "context": "adjusted_confidence = confidence × health_multiplier (LINEAR_DAMPEN_ONLY_V1). Many strategies currently UNTRUSTED → multiplier defaults to HEALTH_UNTRUSTED_MULTIPLIER. Confluence works structurally; reliability-weighted confluence pending. R2D2's lane — owes a delivery date.",
+      "asks_who": "R2D2 (self) — gatekeeper owes a delivery date"
+    },
+    {
+      "id": "Q14",
+      "question": "Solo's DB grants and fabric write permissions — what is Solo allowed to write?",
+      "context": "Forbidden_merges rule 11 says Solo must be read-only on helios_strategy_signals + helios:state. UNVERIFIED — gatekeeper TODO. Architect promoted to BLOCKING.",
+      "asks_who": "Helm"
+    },
+    {
+      "id": "Q15",
+      "question": "PLUTUS isolation — are there any code paths where PLUTUS sim broker results feed live decision systems?",
+      "context": "Architectural rule says no. Architect promoted to BLOCKING. Sweep recommended.",
+      "asks_who": "Helm + R2D2 audit pass"
+    },
+    {
+      "id": "Q16",
+      "NEW": true,
+      "question": "RENAME-WO-001 — should Helios V3 fields `decision`, `v3_tier`, `decision_reason` be renamed to `alignment_state`, `alignment_tier`, `alignment_reason` to align with architect doctrine (Helios is alignment, not execution authority)?",
+      "context": "Architect 2026-05-03 requested rename for governance reasons (avoid authority drift). R2D2 PUSHED BACK on unilateral edit — field names live in shipped code (helios:state:XAU_USD, helios_v3_decisions DB rows, ≥4 consumer services). Documentation drift > governance vanity. Rename requires Helm WO with migration of: trader-gate-compositor, helios-bridge, NEO observer, NEO coach, Solo flight check, helios_v3_decisions schema, fabric mirror, legacy SETUP_ACTIVE/NO_SETUP mapping. Matt — your call: do we ship this rename WO?",
+      "asks_who": "Matt + Helm",
+      "r2d2_recommendation": "Defer the rename. Instead: (a) bake doctrine in v1.1 (DONE), (b) add field-naming-legacy-note to Helios blueprint (DONE), (c) consumers learn to read 'decision' as 'alignment_state'. If governance pain persists in 6 months, ship the rename WO then."
+    },
+    {
+      "id": "Q17",
+      "NEW": true,
+      "question": "EXECUTION TOPOLOGY — break out the live broker / practice broker / simulation / bracket-modification paths cleanly",
+      "context": "Architect 2026-05-03: blueprint must not collapse Agent Smith + IBKR + MT5 + FTMO + Vantage + PLUTUS + Ranger into one EXECUTION box. Need explicit definitions: (a) which broker container/service for live execution? (b) authority path from Solo/Matt to broker call? (c) FTMO Practice = NEO's lane only? (d) PLUTUS sim — which container, which env, deterministic seed control? (e) Ranger enablement gate — who toggles?",
+      "asks_who": "Matt + Helm",
+      "blocks_blueprint_keys": ["r2d2:blueprint:agent_smith:v1", "r2d2:blueprint:plutus:v1", "r2d2:blueprint:ranger:v1"]
+    },
+    {
+      "id": "Q18",
+      "NEW": true,
+      "question": "ARES GATE PLACEMENT — V3 daemon currently applies ARES veto AT HELIOS LEVEL (overrides decision to NO_GO when ARES BLOCK/FAIL_SAFE). Architect doctrine 2026-05-03 says ARES live veto belongs at trader-gate-compositor level only. Doctrine vs code mismatch.",
+      "context": "Source confirmed: daemon.py:937-975 _apply_ares_gate_to_decision() forces NO_GO on ARES BLOCK/FAIL_SAFE. trader-gate-compositor ALSO reads ARES separately. So ARES is gating at TWO levels. Architect doctrine implies one level only. Options: (a) keep current double-gate (defence in depth, Helios records ARES context for audit AND blocks), (b) remove ARES override from V3 daemon (Helios emits raw alignment regardless of ARES; trader-gate-compositor solely vetoes), (c) keep V3 ARES veto but strip it of authority — V3 records ARES context without overriding decision.",
+      "asks_who": "Matt + architect",
+      "r2d2_recommendation": "Option (c) — V3 records ARES context for explainability; trader-gate-compositor is the sole live-veto authority. Preserves audit lineage without dual veto. But this is doctrine — Matt's call."
+    }
+  ],
+
+  "non_blocking": [
+    {
+      "id": "Q2",
+      "question": "Are strategy families (TREND/RANGE/REVERSAL/EVENT/SWEEP/MOMENTUM/RISK_GOVERNOR) hardcoded or extensible?",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "Q4",
+      "question": "Which strategies have v1 decision-logging gate_trace instrumentation completed? (3 of 18 confirmed; remaining 15 unknown)",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "Q9",
+      "question": "When will helios_structures, helios_analysis, helios_alerts ship? (HELIOS_EPIC.md §2/§3/§4)",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "Q10",
+      "question": "helios:heat:XAU_USD V2-frozen — current V3 emission status?",
+      "priority": "LOW"
+    },
+    {
+      "id": "Q11",
+      "question": "Should the misleading helios_strategy_signals be renamed to falcon_strategy_signals? (DB rename — different from Q16 fabric/code rename)",
+      "priority": "LOW"
+    }
+  ],
+
+  "next_round_blueprints_after_falcon_helios_ratified": [
+    "r2d2:blueprint:system_map:v1 — full data-flow + service-graph",
+    "r2d2:blueprint:signal_lifecycle:v1 — single fire from setup detection → outcome resolution",
+    "r2d2:blueprint:data_authority:v1 — which system OWNS which truth (table-by-table)",
+    "r2d2:blueprint:r2d2:v1 — gatekeeper's own contract",
+    "r2d2:blueprint:ares:v1 — risk-veto layer contract",
+    "r2d2:blueprint:solo:v1 — execution authority contract",
+    "r2d2:blueprint:neo:v1 — observation layer contract",
+    "r2d2:blueprint:agent_smith:v1 — broker execution contract (depends on Q17)",
+    "r2d2:blueprint:ranger:v1 — bracket lifecycle contract",
+    "r2d2:blueprint:plutus:v1 — simulation environment contract",
+    "r2d2:blueprint:testing_contract:v1 — what R2D2 tests, how, against which authorities"
+  ]
+}

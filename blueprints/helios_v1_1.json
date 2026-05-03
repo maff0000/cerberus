@@ -1,0 +1,227 @@
+{
+  "schema_version": "1.1.0",
+  "key": "r2d2:blueprint:helios:v1",
+  "supersedes": "v1 (2026-05-03 first draft, V3 reduction logic INFERRED)",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "ratified_by": "PENDING — v1.1 SOURCE-CONFIRMED for V3 daemon (read directly 2026-05-03); architect corrections applied; awaiting Matt review",
+  "updated_utc": "2026-05-03T00:00:00Z",
+  "doctrine": "Helios reduces strategy signals into ALIGNMENT STATE. Helios does not emit execution authority.",
+  "doctrine_full": "Helios is the alignment layer (architect doctrine 2026-05-03). It observes Falcon fires, computes aggregate alignment, and emits alignment state for downstream consumption. Helios is ADVISORY — not authoritative. Helios does not execute, does not size positions, does not authorise trades. Solo / Matt judge whether to act on alignment state; Agent Smith executes when authorised; ARES vetoes risk at the trader-gate level.",
+  "field_naming_legacy_note": "FIELD NAMES — INHERITED FROM V3 SHIPPED CODE: helios:state:XAU_USD currently emits `decision`, `v3_tier`, `decision_reason` etc. These names overclaim authority per gatekeeper governance (architect 2026-05-03). Operationally they should be read as `alignment_state`, `alignment_tier`, `alignment_reason`. RECOMMENDED FUTURE RENAME via formal Helm WO (see open_questions Q16). Until that WO ships, blueprint describes ACTUAL field names; doctrine clarifies what they MEAN. R2D2 will not unilaterally rename in documentation — that creates documentation drift between blueprint and code.",
+
+  "system": {
+    "name": "Helios",
+    "role": "Signal alignment / reduction layer (advisory)",
+    "topology": "TWO components on TWO machines",
+    "components": {
+      "helios_v3_daemon": {
+        "location": "/srv-dev/tradingProteus/helios_v3/daemon.py on dell-debian — SOURCE-CONFIRMED 2026-05-03 (1429 lines)",
+        "service_unit": "/etc/systemd/system/helios-v3.service",
+        "exec_start": "/usr/bin/python3 -m helios_v3.daemon",
+        "working_directory": "/srv-dev/tradingProteus",
+        "env_file": "/srv-dev/falcon/ops/systemd/falcon-shadow.env (shared with Falcon for DB creds)",
+        "depends_on": "After=proteus-mariadb-dev.service",
+        "resource_caps": "MemoryMax=512M, CPUQuota=50%",
+        "restart_policy": "on-failure, RestartSec=15",
+        "role": "Reads helios_strategy_signals (Falcon's output), reduces multi-strategy fires into alignment state, applies ARES gate, publishes helios:state:XAU_USD to dell-debian fabric, persists per-cycle decisions to helios_v3_decisions DB"
+      },
+      "trader_gate_compositor": {
+        "location": "/srv/helios/trader-gate-compositor/ on Trinity",
+        "service": "trader-gate-compositor.service",
+        "entry": "compositor.py:main() line 519",
+        "cadence": "5s poll",
+        "role": "Composes helios:state + ARES gates → trader:gate:composite (proceed flag)"
+      },
+      "trader_xau_watcher": {
+        "location": "/srv/helios/trader-xau-watcher/ on Trinity",
+        "role": "Read-only MT5 price connector. TRIPWIRE forbids order_send / positions_get / etc."
+      }
+    }
+  },
+
+  "01_purpose": "Reduce multiple Falcon strategy fires into a current market alignment state for an instrument. Helios is ADVISORY. It observes; it does not execute. The output is an ALIGNMENT STATE (legacy name 'decision' in fields) that downstream consumers interpret.",
+
+  "02_inputs": {
+    "helios_v3_daemon": {
+      "db": "tradingScalp on dell-debian:3307 — same schema as Falcon writer (Q1 RESOLVED)",
+      "tables_read": [
+        "helios_strategy_signals — Falcon's output table (despite the name); SQL: SELECT strategy_id, direction, confidence, adjusted_confidence, health_score, health_status, health_source, health_as_of, key_level, entry_price, sl_price, tp1_price, tp2_price WHERE timestamp = %s AND instrument = %s AND fired = 1 AND strategy_id NOT LIKE 'SF-%%' (daemon.py:309-327)",
+        "helios_v3_config — DB-backed runtime config; FAIL-LOUD on missing keys (daemon.py:114-140)"
+      ],
+      "fabric_reads": [
+        "r2d2:health:* envelopes (per-strategy health for weighting)",
+        "ARES required keys (default ['ares:market:status', 'ares:event:next', 'ares:liquidity:XAU_USD'])"
+      ],
+      "config_keys_required": "20 keys (daemon.py:62-90) — refuses to start if any missing. Includes MIN_SCORE_GO, MIN_CONFLUENCE_GO, MIN_SCORE_HIGH_CONVICTION, MIN_CONFLUENCE_HIGH_CONVICTION, CONFLICT_GAP, CONFLUENCE_BONUS_RATE, CONFLUENCE_BONUS_CAP, SINGLE_STRATEGY_GO_ENABLED_GLOBAL, HEALTH_WEIGHTING_ENABLED, HEALTH_ALLOWED_STATUSES, HEALTH_*_MULTIPLIER bounds, R2D2_HEALTH_MAX_AGE_HOURS, ARES_REQUIRED_KEYS_JSON, ARES_MAX_AGE_SECONDS"
+    },
+    "trader_gate_compositor": [
+      "helios:state:XAU_USD (Trinity fabric — relayed via helios-bridge from dell-debian)",
+      "ares:event:next + ares:* (proteus-redis on dell-debian)",
+      "trader_xau_watcher.config (DB on Trinity)"
+    ]
+  },
+
+  "03_outputs": {
+    "helios_v3_daemon": {
+      "fabric": {
+        "endpoint": "http://127.0.0.1:18080/api/v1/redis (DELL-DEBIAN local fabric — separate from Trinity's :8080)",
+        "key": "helios:state:{instrument} (e.g. helios:state:XAU_USD)",
+        "schema_version": "helios_v3_state_v1",
+        "atomicity": "DB-canonical. DB write first (with idempotency via decision_id UNIQUE). Fabric write only if DB write succeeds. Fabric failure does not block; DB row remains canonical (daemon.py:1310-1324).",
+        "fields_actual_vs_governance": {
+          "actual_field_names_from_code": "decision, v3_tier, decision_reason — see field_naming_legacy_note above",
+          "governance_meaning": "alignment_state, alignment_tier, alignment_reason — what the values mean",
+          "decision": "ENUM: GO_LONG | GO_SHORT | NO_GO (legacy name; meaning: alignment_state)",
+          "v3_tier": "ENUM: NO_GO | GO | HIGH_CONVICTION_GO (legacy name; meaning: alignment_tier)",
+          "direction": "LONG | SHORT | null",
+          "composite_confidence": "float 0-10 (architect-locked: capped at 10.0)",
+          "decision_reason": "ENUM: BELOW_THRESHOLD | CONFLICT_NO_GO | LONG_DOMINATES | SHORT_DOMINATES | LONG_DOMINATES_HIGH_CONVICTION | SHORT_DOMINATES_HIGH_CONVICTION | SINGLE_STRATEGY_DISABLED | ARES_BLOCK | ARES_STALE_FAIL_SAFE | ARES_UNAVAILABLE_FAIL_SAFE | ARES_INVALID_PAYLOAD_FAIL_SAFE",
+          "conflict_state": "ENUM: NO_FIRES | NEITHER_DOMINANT | DOMINANT_LONG | DOMINANT_SHORT | CONFLICT_NO_GO",
+          "primary_strategy_id": "string | null (max adjusted_confidence wins)",
+          "confluence_count": "int — count of fires in winning direction",
+          "contributing_strategies": "array of strategy mini-records",
+          "long": "{count, score, avg_adjusted_confidence, sum_confidence, strategies[]}",
+          "short": "same",
+          "health_status_summary": "string — overall health roll-up",
+          "health_weighting_state": "ENUM: DISABLED | INVALID_CONFIG | ARMED_NO_FULL_SCORES | ACTIVE_DAMPENING | ACTIVE_NEUTRAL_ONLY",
+          "ares": "{gate_state, gate_reason, event_gate, liquidity_gate, ...} — passthrough + Helios's interpretation",
+          "config_version_hash": "sha256 of active config",
+          "code_version": "helios_v3_v1.0.0",
+          "source": "helios_v3",
+          "decision_timestamp": "ISO UTC at emit time",
+          "updated_at": "ISO UTC at emit time"
+        }
+      },
+      "database": {
+        "table": "helios_v3_decisions on dell-debian.tradingScalp",
+        "idempotency": "decision_id = f'helios-v3-{cycle_ts.strftime(...)}-{instrument}' UNIQUE. On duplicate: canonical-identity-tuple comparison. Identical → republish-safe. Changed → hard fail, no fabric publish."
+      }
+    },
+    "trader_gate_compositor": {
+      "fabric_key": "trader:gate:composite (Trinity)",
+      "cadence": "every 5s",
+      "fields": "proceed (True/False) + helios sub-object + ares gates + setup metadata",
+      "legacy_mirror": "SETUP_ACTIVE | NO_SETUP for V2-vintage consumers"
+    }
+  },
+
+  "04_does_helios_read_falcon_redis_db_or_both": {
+    "v3_daemon": "Reads DB (helios_strategy_signals + helios_v3_config) + fabric (r2d2:health:*, ares:*); writes fabric (helios:state) + DB (helios_v3_decisions)",
+    "compositor": "Reads fabric (helios:state, ares:*) + DB (config); writes fabric (trader:gate:composite)",
+    "boundary": "NEITHER component imports Falcon source modules. Helios consumes Falcon's PERSISTED OUTPUT only (file system separation enforces this)."
+  },
+
+  "05_reduction_formula_SOURCE_CONFIRMED": {
+    "evidence_basis": "DIRECT SOURCE READ 2026-05-03 — /srv-dev/tradingProteus/helios_v3/daemon.py 1429 lines (no inference)",
+    "freshness_gate": "Cycle must be ≥ 60s old in UTC wall-clock (M5 candle fully closed). Daemon polls every 30s for new closed cycles (daemon.py:332, 1393).",
+    "weighted_confidence_per_strategy": {
+      "step_1": "Read R2D2 health envelope from fabric (daemon.py:208-222)",
+      "step_2": "Compute health_multiplier via LINEAR_DAMPEN_ONLY_V1: raw = 0.5 + (health_score × 0.5); clamped = clamp(raw, HEALTH_MIN_MULTIPLIER, HEALTH_MAX_MULTIPLIER) (daemon.py:229-289)",
+      "step_3": "If health_status not in HEALTH_ALLOWED_STATUSES, or envelope stale > R2D2_HEALTH_MAX_AGE_HOURS → fall back to HEALTH_UNTRUSTED_MULTIPLIER",
+      "step_4": "weighted_confidence = confidence × health_multiplier"
+    },
+    "directional_aggregation": {
+      "code_excerpt": "score = min(10.0, avg_weighted_confidence + min(confluence_count - 1, CONFLUENCE_BONUS_CAP) * CONFLUENCE_BONUS_RATE)",
+      "where": "avg_weighted_confidence = mean of weighted_confidence per fire in this direction",
+      "confluence_bonus": "min(n-1, CONFLUENCE_BONUS_CAP=3) × CONFLUENCE_BONUS_RATE=0.35 — diminishing returns past 3 confluent strategies",
+      "score_range": "0-10 (hard cap)"
+    },
+    "decision_logic_RESOLVES_Q5_Q6_Q7": {
+      "thresholds": {
+        "MIN_SCORE_GO": 7.0,
+        "MIN_CONFLUENCE_GO": 2,
+        "MIN_SCORE_HIGH_CONVICTION": 8.5,
+        "MIN_CONFLUENCE_HIGH_CONVICTION": 3,
+        "CONFLICT_GAP": 1.5
+      },
+      "Q5_conflict_rule_RESOLVED": "If long_passes AND short_passes (both >= MIN_SCORE_GO + MIN_CONFLUENCE_GO): gap = |long.score - short.score|. If gap < CONFLICT_GAP (1.5) → CONFLICT_NO_GO. Else winner = max(long.score, short.score).",
+      "Q6_threshold_RESOLVED": "GO_LONG/GO_SHORT requires winner.score >= 7.0 AND winner.count >= 2. Below this → NO_GO BELOW_THRESHOLD.",
+      "Q7_high_conviction_RESOLVED": "Upgrade to HIGH_CONVICTION_GO requires winner.score >= 8.5 AND winner.count >= 3.",
+      "single_strategy_rule": "If winner.count == 1: requires SINGLE_STRATEGY_GO_ENABLED check. CURRENTLY GLOBAL=false (architect 2026-04-29 — confluence required). Single fires always → NO_GO with reason SINGLE_STRATEGY_DISABLED until per-strategy authority criteria met (n_fires_resolved >= 100, expectancy > 0, r_multiple_avg >= 1.0, no parity defect).",
+      "ares_override": "After decision computed, _apply_ares_gate_to_decision() runs. If ARES gate_state in (BLOCK, FAIL_SAFE) → decision overridden to NO_GO with decision_reason = gate_reason. **DOCTRINE CONFLICT FOUND** — see open_questions Q18."
+    }
+  },
+
+  "06_emits_go_long_go_short_no_go": {
+    "answer": "YES",
+    "decision_field": "ENUM: GO_LONG | GO_SHORT | NO_GO (legacy name; meaning: alignment_state — see field_naming_legacy_note)",
+    "tier_field": "v3_tier: NO_GO | GO | HIGH_CONVICTION_GO (legacy name; meaning: alignment_tier)"
+  },
+
+  "07_advisory_or_authoritative": {
+    "answer": "ADVISORY",
+    "evidence": [
+      "compositor.py:448-449 docstring: 'If no active setup, gates are informational only'",
+      "ZERO order/execute/broker code in Helios (V3 daemon AND compositor AND watcher)",
+      "trader-xau-watcher TRIPWIRE explicitly forbids order_send, order_check, positions_get etc.",
+      "V3 daemon comment (daemon.py:7): 'Falcon perception-only — V3 reads, never modifies, never re-scores'",
+      "V3 daemon: no broker/order code path"
+    ],
+    "operational_meaning": "Helios STATES what it sees. Solo / Matt decide whether to act. Agent Smith executes when authorised. Q8 still open: is helios.decision=NO_GO authoritative (Solo must stand down) or advisory (Solo can override)?"
+  },
+
+  "08_consumers_of_helios_state": [
+    {"consumer": "trader-gate-compositor", "path": "/srv/helios/trader-gate-compositor/compositor.py:552", "purpose": "Compose Helios advisory + ARES into proceed flag", "migration": "V3-native ✓"},
+    {"consumer": "helios-bridge", "path": "/srv/TRADER/helios_bridge/bridge.py:200", "purpose": "dell-debian → Trinity fabric relay; legacy shape mirror", "migration": "V3-native ✓"},
+    {"consumer": "NEO observer", "path": "/srv/NEO/scripts/neo_observer.py:731", "purpose": "Regime/confluence context for scoring", "migration": "V3-native ✓"},
+    {"consumer": "NEO coach", "path": "/srv/NEO/scripts/neo_coach.py:185, 224", "purpose": "Daily LLM prompt context", "migration": "V3-native ✓"},
+    {"consumer": "Solo", "path": "/srv/TRADER/scripts/solo_flight_check.py + indirectly via trader:gate:composite", "purpose": "Decision audit context"}
+  ],
+
+  "09_what_helios_is_forbidden_to_decide": [
+    "Whether to execute a trade (Solo / Matt judge; Agent Smith executes; enforced)",
+    "Whether risk is acceptable (ARES authors gate state; trader-gate-compositor enforces) — but NOTE Q18: V3 daemon currently applies ARES veto at Helios level, possibly inconsistent with architect doctrine",
+    "Whether a Falcon strategy is healthy (Falcon's pulse layer + R2D2 own health)",
+    "Order placement / broker calls (ZERO execution code; tripwire-grade — needs explicit V3 daemon tripwire parity with watcher)",
+    "Position sizing",
+    "Outcome judgement (R2D2 audits; Falcon's outcome_resolver wick_aware is canonical)",
+    "Authoring helios_strategy_signals rows (Falcon-owned; Helios is read-only on it)"
+  ],
+
+  "10_known_gaps_and_uncertainty": [
+    "Q8 still open: helios.decision=NO_GO advisory vs authoritative for Solo — no enforcement found",
+    "Q9 still open: planned tables (helios_structures, helios_analysis, helios_alerts) NOT YET BUILT",
+    "Q10 still open: helios:heat:XAU_USD V3 emission status",
+    "NEW Q18 (BLOCKING): ARES gate placement — V3 daemon currently overrides decision to NO_GO when ARES BLOCK/FAIL_SAFE. Architect doctrine 2026-05-03 says ARES live veto belongs at trader-gate-compositor level only. Doctrine vs code mismatch.",
+    "Health weighting currently in ramp state — many strategies use UNTRUSTED multiplier. Structural confluence works; reliability-weighted confluence pending R2D2 health envelope shipping (Q12)."
+  ],
+
+  "11_canaries_and_tripwires": {
+    "existing": [
+      "Config fail-loud: V3 daemon refuses start on missing helios_v3_config keys (daemon.py:135-138)",
+      "Data contract fail-loud: NULL confidence in fired row → RuntimeError (daemon.py:433-439)",
+      "ARES staleness gate: > 300s → ARES_STALE_FAIL_SAFE forces NO_GO",
+      "R2D2 health envelope staleness gate: > 30h → UNTRUSTED multiplier",
+      "DB-canonical idempotency: decision_id UNIQUE; canonical-identity comparison on duplicate",
+      "trader-xau-watcher TRIPWIRE forbids execution methods (connector.py:29-53)",
+      "WO-HELIOS-V3-ARES-GATE-TRUTHFULNESS-0001 governance"
+    ],
+    "required_additions_per_gatekeeper": [
+      "V3 daemon execution tripwire: parity with trader-xau-watcher — refuse to import broker libs / call order_send",
+      "Heartbeat tripwire: helios:state:XAU_USD must update at least every Falcon cycle. Stale > 2× cadence → canary fire",
+      "Schema-version tripwire on consumer side: if helios:state.schema_version != 'helios_v3_state_v1', compositor FAILS CLOSED (proceed=False)",
+      "Source tripwire: if helios:state.source != 'helios_v3', reject (no V2 emissions in V3 era)",
+      "Confluence-conflict alarm: if conflict_state=CONFLICT_NO_GO but decision != NO_GO, raise gatekeeper alarm (rule violation)"
+    ]
+  },
+
+  "v1_1_changes_from_v1": [
+    "V3 reduction formula now SOURCE-CONFIRMED (was INFERRED) — daemon.py read directly 2026-05-03",
+    "Q1, Q5, Q6, Q7, Q13 RESOLVED via source: tradingScalp schema, conflict gap=1.5, GO threshold 7.0/2, HIGH_CONVICTION 8.5/3, daemon path /srv-dev/tradingProteus/helios_v3/daemon.py",
+    "Doctrine corrected: 'decision' field name retained in code description; 'alignment_state' adopted as governance-meaning (architect point 4 — partial push-back: no unilateral rename)",
+    "Confluence language corrected: structural confluence today, reliability-weighted with R2D2 health weights (architect point 6)",
+    "NEW Q18 surfaced: V3 daemon applies ARES veto at Helios level — doctrine says ARES veto should be at trader-gate level only",
+    "Single-strategy GO globally disabled — surfaces architect-locked rule from 2026-04-29",
+    "Health weighting state explicit (DISABLED/INVALID_CONFIG/ARMED_NO_FULL_SCORES/ACTIVE_DAMPENING/ACTIVE_NEUTRAL_ONLY)"
+  ],
+
+  "evidence_sources": {
+    "v3_daemon_SOURCE_CONFIRMED": "/srv-dev/tradingProteus/helios_v3/daemon.py (1429 lines, read 2026-05-03)",
+    "service_unit": "/etc/systemd/system/helios-v3.service",
+    "migrations": "001_helios_v3_tables.sql, 002_health_max_age_hours.sql, 003_ares_gate_config.sql",
+    "shared_env": "/srv-dev/falcon/ops/systemd/falcon-shadow.env",
+    "trinity_components": "/srv/helios/trader-gate-compositor/, /srv/helios/trader-xau-watcher/",
+    "bridge": "/srv/TRADER/helios_bridge/bridge.py",
+    "consumers_path_evidence": "/srv/NEO/scripts/, /srv/TRADER/scripts/"
+  }
+}

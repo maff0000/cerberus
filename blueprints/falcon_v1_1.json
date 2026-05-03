@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.1.0",
+  "key": "r2d2:blueprint:falcon:v1",
+  "supersedes": "v1 (2026-05-03 first draft)",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "ratified_by": "PENDING — v1.1 corrections from architect 2026-05-03 applied; awaiting Matt review",
+  "updated_utc": "2026-05-03T00:00:00Z",
+  "doctrine": "Falcon SEES. Not the trader.",
+  "doctrine_full": "Falcon is the live perception layer. Falcon detects setups in any regime — including bad ones (architect ratified 2026-05-03). Falcon is NON-EXECUTING BY DESIGN. Falcon may produce live observations consumed by Helios / Solo / NEO; broker integration is forbidden by lane discipline.",
+  "system": {
+    "name": "Falcon",
+    "role": "Strategy detection layer (live, perception-only)",
+    "source_location": "/srv-dev/falcon/ on dell-debian",
+    "runs_as": "ShadowDaemon — `python3 -m falcon.daemon.main` — current deployment uses 'shadow' label which means 'non-execution path'. The 'shadow' name is a legacy term for what is correctly described as PERCEPTION-ONLY by design (architect 2026-05-03).",
+    "deployment_status": "LIVE PERCEPTION — emitting signals consumed by Helios V3 daemon, NEO, Solo. Production-grade by reliability of observations, not by broker integration.",
+    "cycle_cadence": "One cycle per M5 candle boundary (300s)"
+  },
+
+  "01_purpose": "Detect potential trade setups across 18 plugin strategies and emit structured fire/decline records every M5 cycle. A FIRE is a STRUCTURED OBSERVATION that a known setup may exist — it is NOT a trade instruction. Falcon does not align (Helios), does not veto risk (ARES), does not size positions, does not execute (Agent Smith / broker). Pure observation layer that detects regardless of regime; downstream layers decide whether action is appropriate.",
+
+  "02_inputs": {
+    "market_data": [
+      "HERMES M5 / M1 OHLC candles (multi-instrument: XAU_USD, EUR_USD, USD_JPY, XAG_USD, WTICO_USD)",
+      "Indicator calculations (ATR(14), RSI, EMA, etc.) sourced via /srv-dev/falcon/adapters/"
+    ],
+    "context": [
+      "instrument, mode (NORMAL or SCALP), session, regime context per cycle",
+      "ARES state SNAPSHOT — read at fire-time for EXPLAINABILITY/REPLAY ONLY (architect 2026-05-03). Falcon snapshots ares_state in risk_context for audit lineage. Falcon does NOT decline based on ARES — ARES live-veto authority lives downstream at trader-gate-compositor / Helios V3 level (and per ratified architect doctrine: at trader-gate-compositor level only — see open_questions Q18)."
+    ],
+    "configuration": [
+      "falcon_config (DB) — global runtime config; FAIL-LOUD on missing key (GOV-CFG-001, /srv-dev/falcon/core/config.py:FalconConfigLoader)",
+      "falcon_strategy_catalog (DB) — strategy identity registry (plugin_id, family, mode, risk_class)",
+      "falcon_select_enablement (DB) — per-strategy enablement; only enabled=1 compete in selection",
+      "falcon_instrument_config (DB) — per-instrument SL/TP clamp bounds, session config",
+      "Per-strategy config tables — each has load_<plugin_id>_config_from_db factory",
+      "falcon_outcome_resolver_config (DB) — outcome resolution thresholds (MAX_LOOKFORWARD_BARS_M5=36, OUTCOME_METHOD=wick_aware)"
+    ]
+  },
+
+  "03_outputs": {
+    "database": {
+      "schema": "tradingScalp on 127.0.0.1:3307 (dell-debian) — Q1 RESOLVED via V3 daemon source (/srv-dev/tradingProteus/helios_v3/daemon.py:63: DB_NAME = 'tradingScalp'). Falcon writer + Helios V3 reader share schema. Credentials in /srv-dev/falcon/ops/systemd/falcon-shadow.env.",
+      "helios_strategy_signals": "ONE ROW PER STRATEGY PER CYCLE — Solo + Helios V3 unified read feed. Both fires (fired=1) and declines (fired=0). Columns: cycle_id, instrument, timestamp, strategy_id, strategy_name, strategy_version, fired, confidence (0-10 scaled), adjusted_confidence (= confidence × R2D2 health_score), health_score, health_status, health_source, health_as_of, direction (LONG/SHORT/NULL), phase, key_level, invalidation_level, entry_price, sl_price, tp1_price, tp2_price, reason_codes (JSON array), evidence (JSON), gate_trace (JSON array — v1 strategies only), regime_context (JSON — includes ARES snapshot for explainability), config_version_hash, source_data_hash. Outcome columns populated by maintenance/outcome_resolver.py (wick_aware). NAMING NOTE: 'helios_strategy_signals' is misleading legacy — this table is FALCON-OWNED. Helios reads only. See r2d2:blueprint:forbidden_merges:v1.1 rule 8.",
+      "falcon_decisions": "ONE ROW PER CYCLE — outcome-scoped. PK=decision_id ({cycle_ts}Z:{instrument}:{mode}). outcome ENUM: TRADE | DECLINE | FAULT.",
+      "falcon_pulse_proposal_log": "RAW STRATEGY TRUTH — every proposal AND every decline regardless of selector state. Independent data source for health aggregation.",
+      "falcon_pulse_strategy_health": "Nightly aggregate per strategy×instrument: health_score (0-100), health_status, drift_score, win_rate, expectancy.",
+      "falcon_fault_log": "Persisted FaultContract rows. severity DEBUG..CRITICAL. recovery_action ENUM: CONTINUE | DECLINE | HALT | EXCLUDE_PROPOSAL | RETRY.",
+      "falcon_selection_audit": "Per-proposal scoring detail per cycle."
+    },
+    "fabric_keys": {
+      "endpoint": "Trinity fabric at http://localhost:8080/api/v1/redis/* (relayed via helios-bridge from dell-debian where Falcon writes locally)",
+      "falcon:bars:rolling:{tf}:{instrument}": "Rolling OHLC mirror",
+      "falcon:structure:events:latest:{event_type}:{instrument}:{timeframe}": "Latest structural event (CHOCH, BOS, ORDER_BLOCK_CANDIDATE, swings)",
+      "falcon:structure:swing:latest:{instrument}:{timeframe}": "Latest swing point",
+      "falcon:structure:ingest:health[:{instrument}]": "Structure ingestion health",
+      "falcon:fires:recent:{instrument}": "Mirror of recent fires",
+      "falcon:fibs:cascade:{instrument}": "Fibonacci cascade levels",
+      "falcon:ranger:*": "Falcon Ranger (live position-management) — separate WO, NOT part of detection layer; trade-management module per architect doctrine (see authority_chain blueprint)"
+    }
+  },
+
+  "04_database_and_redis_surface": {
+    "db_authority_RESOLVED": "tradingScalp on 127.0.0.1:3307 from dell-debian. Q1 closed by V3 daemon source confirmation 2026-05-03.",
+    "fabric_topology": "TWO fabric instances: dell-debian local (http://127.0.0.1:18080/api/v1/redis from dell-debian) where Falcon + V3 daemon write directly; Trinity (http://localhost:8080/api/v1/redis) which is the CONSUMER fabric — populated by helios-bridge relay",
+    "tables_falcon_writes": ["falcon_decisions", "helios_strategy_signals", "falcon_pulse_proposal_log", "falcon_pulse_strategy_health (via maintenance job)", "falcon_selection_audit", "falcon_fault_log"],
+    "tables_falcon_reads": ["falcon_config", "falcon_strategy_catalog", "falcon_select_enablement", "falcon_instrument_config", "falcon_outcome_resolver_config", "Per-strategy config tables", "HERMES candle tables (schema details UNKNOWN from Falcon source alone)"]
+  },
+
+  "05_strategy_plugins": {
+    "count": 18,
+    "all_subclass": "StrategyBase",
+    "loaded_by": "/srv-dev/falcon/daemon/main.py:67-100 (ShadowDaemon)",
+    "list": [
+      {"plugin_id": "asia_orb", "family": "TREND", "purpose": "Asia opening range breakout (close-confirm M5 break)"},
+      {"plugin_id": "brc", "family": "TREND", "purpose": "Breakout-retest-continuation"},
+      {"plugin_id": "capitulation_flip_retest", "family": "REVERSAL", "purpose": "Fades capitulation reversal (live since 2026-04-28)"},
+      {"plugin_id": "climax_reversal", "family": "REVERSAL", "purpose": "Climax reversal fade (CRF); gate_trace v1 instrumented"},
+      {"plugin_id": "coil_breakout", "family": "RANGE", "purpose": "Coil breakout; gate_trace v1 instrumented"},
+      {"plugin_id": "csdr", "family": "TREND", "purpose": "Compression sweep displacement retest (8-state machine); gate_trace v1 instrumented"},
+      {"plugin_id": "exhaustion_reversal", "family": "REVERSAL", "purpose": "Exhaustion reversal entry"},
+      {"plugin_id": "fdr", "family": "REVERSAL", "purpose": "Failed displacement reversal"},
+      {"plugin_id": "fib_rejection", "family": "TREND", "purpose": "Fibonacci retracement rejection"},
+      {"plugin_id": "meanrev_edges", "family": "RANGE", "purpose": "Mean reversion at S/R edges"},
+      {"plugin_id": "nowic_at", "family": "RANGE", "purpose": "NOWIC Asia/Tokyo time-window mode"},
+      {"plugin_id": "nowic_rt", "family": "RANGE", "purpose": "NOWIC retry/retest mode"},
+      {"plugin_id": "ny_thrust", "family": "TREND", "purpose": "NY session thrust breakout"},
+      {"plugin_id": "sweep_fvg", "family": "SWEEP", "purpose": "Anti-chase displacement FVG retrace entry"},
+      {"plugin_id": "sweep_reclaim", "family": "SWEEP", "purpose": "Liquidity sweep reclaim (M15/M5 variants)"},
+      {"plugin_id": "tpc", "family": "TREND", "purpose": "Trend pullback continuation"},
+      {"plugin_id": "trend_day_runner", "family": "TREND", "purpose": "Trend day runner (TDR)"},
+      {"plugin_id": "whipsaw_fade", "family": "REVERSAL", "purpose": "Whipsaw fade"}
+    ],
+    "families_in_use": ["TREND", "RANGE", "REVERSAL", "EVENT", "SWEEP", "MOMENTUM", "RISK_GOVERNOR"],
+    "families_extensibility": "UNKNOWN (Q2 still open)"
+  },
+
+  "06_meaning_of_a_strategy_fire": {
+    "contract": "ProposalContract (schema_version 1.3.0)",
+    "what_it_means": "Worker has reached TRIGGERED phase and all internal gates passed. A fire is RECORDED but DOES NOT execute. Fires aggregate via Helios V3 into ALIGNMENT STATE. The ALIGNMENT STATE is read by trader-gate-compositor + Solo who decide whether action is appropriate.",
+    "scaling": "Worker emits confidence in 0-1. Signal feed scales to 0-10 for helios_strategy_signals.confidence column.",
+    "adjusted_confidence": {
+      "formula": "= confidence × health_multiplier (where multiplier = LINEAR_DAMPEN_ONLY_V1: max(MIN_CLAMP, min(MAX_CLAMP, 0.5 + health_score × 0.5)))",
+      "current_state": "R2D2 health envelope shipping is partial; many strategies use TEMPORARY_BRIDGE / UNTRUSTED status which yields HEALTH_UNTRUSTED_MULTIPLIER. This DOES NOT BLOCK confluence — Helios V3 has STRUCTURAL CONFLUENCE today (architect correction 2026-05-03). Health weights upgrade structural confluence to RELIABILITY-WEIGHTED confluence."
+    }
+  },
+
+  "07_meaning_of_a_decline": {
+    "contract": "DeclineContract",
+    "what_it_means": "Strategy did not satisfy a gate this cycle. Setup may still progress in future cycles (state machines persist). Declines are observational, not failures. CRITICAL: declines are how we observe non-firing strategies — essential for health monitoring.",
+    "ares_does_not_cause_decline": "Per architect doctrine 2026-05-03: Falcon detects in any regime, even bad. If a strategy declines despite ARES_BLOCK, the decline reason is the strategy's own gate logic, not ARES. ARES context is snapshot for explainability, not a Falcon-level veto. STATUS: needs verification audit (Q4 / new check) — gatekeeper TODO."
+  },
+
+  "08_what_falcon_is_forbidden_to_decide": [
+    "Whether to execute a trade (Solo / Matt judge; Agent Smith executes when authorised)",
+    "Whether multiple strategies align (Helios V3 reduces)",
+    "Whether risk is acceptable (ARES authors gate state; trader-gate-compositor enforces at execution layer)",
+    "Position sizing (downstream of execution authority)",
+    "Whether ARES state should change (Falcon snapshots, never writes)",
+    "Order placement / broker calls (ZERO execution code; tripwire-grade)",
+    "Cross-strategy conflict resolution (Helios V3 layer)",
+    "Outcome ground-truth substitution (outcome_resolver wick_aware is canonical; R2D2 audits disagreements only)"
+  ],
+
+  "09_known_gaps_and_uncertainty": [
+    "Gate-trace v1 instrumentation status: CSDR, climax_reversal, coil_breakout CONFIRMED; other 15 strategies UNKNOWN (Q4 still open)",
+    "Strategy-family extensibility (TREND/RANGE/etc.): hardcoded in catalog or extensible? (Q2 still open)",
+    "Falcon Ranger (post-entry bracket lifecycle): trade-management module per architect doctrine; CONDITIONALLY SIGN-OFF READY per Matt 2026-04-29",
+    "Forge directory in /srv-dev/falcon/forge/: purpose UNKNOWN",
+    "Verification: do any Falcon strategies currently DECLINE based on ARES_BLOCK? Architect doctrine forbids; current code unaudited (gatekeeper TODO)"
+  ],
+
+  "10_canaries_and_tripwires": {
+    "existing": [
+      "BoundedTripwire class — anomaly windows, cooldowns (WO-AEGIS-CORE-0001)",
+      "Invariant helpers fail-loud at boundary",
+      "assert_contract_valid() raises ContractValidationError on schema breach",
+      "Proposal Guardrail Canary — emits 5 malformed + 1 clean; run-on-deploy",
+      "CN_FALCON_SIGNAL_WRITE canary — first successful signal write",
+      "FaultEmitter persists to falcon_fault_log"
+    ],
+    "required_additions_per_gatekeeper": [
+      "Heartbeat tripwire: ShadowDaemon must emit falcon:heartbeat:dell_debian to fabric every cycle",
+      "Signal-write throughput tripwire: row count < enabled-strategies count → fault",
+      "Schema-version tripwire: proposal contract != 1.3.0 → reject + fault",
+      "ARES-decline audit: scheduled audit verifying no strategy declines purely because of ARES_BLOCK (architect doctrine)",
+      "Gate-trace coverage tripwire: assert all enabled strategies populate gate_trace (currently 3 of 18 confirmed)"
+    ]
+  },
+
+  "v1_1_changes_from_v1": [
+    "Doctrine corrected: 'shadow mode only' replaced with 'non-executing by design' / 'live perception layer' (architect point 1)",
+    "ARES read pattern reframed: SNAPSHOT for explainability, not veto (architect point 5)",
+    "Confluence language corrected: structural confluence exists today; R2D2 health weights upgrade to reliability-weighted, do not enable confluence (architect point 6)",
+    "Q1 RESOLVED: tradingScalp schema confirmed via V3 daemon source",
+    "Field names retained per architect-rejected rename push-back: r2d2 documents field names as legacy, doctrine clarifies meaning (no unilateral rename)",
+    "helios_strategy_signals ownership formally declared FALCON-OWNED (architect point 7)"
+  ]
+}

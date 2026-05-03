@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0.0",
+  "key": "r2d2:blueprint:authority_chain:v1",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "ratified_by": "PENDING — first draft 2026-05-03 incorporating architect's doctrine (point 10) + organism analogy",
+  "created_utc": "2026-05-03T00:00:00Z",
+  "doctrine_one_line": "Falcon sees. Helios aligns. ARES risk-vets. Solo judges. Matt authorises live trade intent. Agent Smith executes authorised broker operations. NEO observes and paper-trades. Ranger manages brackets when enabled. PLUTUS simulates. R2D2 audits, backtests, and guards the blueprint.",
+
+  "organism_analogy": {
+    "Eyes": "Falcon — perception layer; detects setups",
+    "Nervous_map": "Helios — alignment reducer; integrates signals",
+    "Risk_reflex": "ARES — risk veto; event/liquidity/drawdown gates",
+    "Judgement": "Solo + Matt — read alignment + risk + market + own state, decide",
+    "Apprentice": "NEO — observer / scorer / paper trader (FTMO_PRACTICE_100K only); promoted by explicit rule, never silently",
+    "Hands": "Agent Smith — broker-operation service; executes when explicitly authorised (and only then)",
+    "Trade_management": "Ranger — bracket lifecycle module; runs ONLY when enabled by execution authority; not a trader identity",
+    "Simulator": "PLUTUS — deterministic broker simulator; replay + training; NEVER production",
+    "Auditor": "R2D2 — audit, backtest, blueprint gatekeeper; raises alarms on lane violations",
+    "Builder": "HELM — DevOps / infra / ties the team together",
+    "Architect": "Matt + architect-in-review (external sounding board)"
+  },
+
+  "authority_table": [
+    {
+      "role": "Falcon",
+      "owns": "Setup detection across 18 strategy plugins",
+      "outputs": "ProposalContract / DeclineContract → helios_strategy_signals + falcon_decisions + falcon:* fabric",
+      "may_decide": "Whether a setup pattern exists right now (yes/no per strategy)",
+      "may_NOT_decide": "Trade execution, alignment, risk, position size, broker calls",
+      "tripwires": "Zero execution code; ARES read is snapshot-only (no Falcon-level veto per architect doctrine)"
+    },
+    {
+      "role": "Helios V3",
+      "owns": "Reduction of multi-strategy fires into alignment state",
+      "outputs": "helios:state:{instrument} (legacy field name `decision`) + helios_v3_decisions",
+      "may_decide": "Whether multiple Falcon fires align in same direction with sufficient confidence",
+      "may_NOT_decide": "Trade execution, broker calls, position size, risk veto (per architect doctrine — but see Q18: current code applies ARES veto at Helios level)",
+      "tripwires": "Zero execution code; explicit health_weighting_state surfacing; DB-canonical idempotency"
+    },
+    {
+      "role": "ARES",
+      "owns": "Risk gate state: event windows, liquidity vacuum, drawdown thresholds",
+      "outputs": "ares:event:next, ares:market:status, ares:liquidity:{instrument}, ares:gate:state",
+      "may_decide": "Whether risk environment is permissive (CLEAR / WARN / BLOCK / FAIL_SAFE)",
+      "may_NOT_decide": "Trade execution, alignment, setup detection",
+      "live_veto_authority": "AT TRADER-GATE-COMPOSITOR LEVEL (per architect doctrine 2026-05-03). NOTE: V3 daemon currently also applies ARES gate at Helios level — doctrine vs code mismatch flagged Q18.",
+      "snapshot_authority": "Falcon snapshots ARES state at fire-time for explainability/replay only — not a veto"
+    },
+    {
+      "role": "trader-gate-compositor",
+      "owns": "Composing Helios alignment + ARES gates into a proceed flag for downstream",
+      "outputs": "trader:gate:composite (Trinity fabric, every 5s)",
+      "may_decide": "Whether the combination of alignment + risk supports a proceed=True signal",
+      "may_NOT_decide": "Trade execution itself"
+    },
+    {
+      "role": "Solo",
+      "owns": "Live trader judgement agent — reads alignment + risk + market + own state",
+      "outputs": "trader:state:* + trade intent (delegated to Agent Smith for execution)",
+      "may_decide": "Whether to act on alignment state given current risk + own state + Matt's intent",
+      "may_NOT_decide": "Setup detection (Falcon's), alignment (Helios's), risk gates (ARES's)",
+      "tripwires": "Read-only on helios_strategy_signals + helios:state:*; writes only to its own namespace"
+    },
+    {
+      "role": "Matt",
+      "owns": "Final human authority — overrides all autonomous systems",
+      "may_decide": "Anything. Macro and micro. Live trade intent. Ratification of blueprints, doctrine, policy.",
+      "may_NOT_decide": "(no constraints — Matt is the constitution holder)"
+    },
+    {
+      "role": "Agent Smith",
+      "owns": "Broker-operation execution service",
+      "outputs": "Broker orders (when authorised) → IBKR Live or other broker container",
+      "may_decide": "Order placement parameters within explicit authorisation envelope",
+      "may_NOT_decide": "Whether to trade (Solo/Matt's call), what to trade (alignment-driven), how much risk (ARES + sizing layer)",
+      "deployment_status": "UNRATIFIED — execution topology in open_questions Q17"
+    },
+    {
+      "role": "NEO",
+      "owns": "Observation + scoring + auditing + coaching + apprentice paper-trading",
+      "outputs": "neo:* fabric, scoring rubrics, paper-trade journal",
+      "may_decide": "Score ratings, observation flags, FTMO_PRACTICE_100K trades only",
+      "may_NOT_decide": "Live trade execution. NEO trades FTMO_PRACTICE_100K ONLY (Matt 2026-04-22 — shared_rule_neo_practice_only).",
+      "promotion_rule": "Promotion to higher authority requires EXPLICIT Matt rule — never silent"
+    },
+    {
+      "role": "Ranger",
+      "owns": "Open-trade bracket lifecycle module — modifies SL/TP brackets when active",
+      "outputs": "Bracket modifications via execution authority (not directly to broker)",
+      "may_decide": "Channel-graduation tracking, profit-lock commits, corridor sliding within configured policy",
+      "may_NOT_decide": "Whether to enter or exit a trade (Solo's call), which broker to use",
+      "deployment_status": "CONDITIONALLY SIGN-OFF READY (Matt 2026-04-29) — runs only when enabled by execution authority"
+    },
+    {
+      "role": "PLUTUS",
+      "owns": "Simulation environment — deterministic broker simulator + training arena",
+      "outputs": "Simulated fills, training metrics, replay outputs",
+      "may_decide": "Simulation outcomes per deterministic logic",
+      "may_NOT_decide": "Anything in production — PLUTUS results never feed live decision systems"
+    },
+    {
+      "role": "R2D2",
+      "owns": "Audit, backtest, strategy validation, blueprint gatekeeper, evidence generation",
+      "outputs": "r2d2:audit:*, r2d2:reports:*, r2d2:blueprint:*, r2d2:methodology:*",
+      "may_decide": "Methodology choices in own lane (correlation type, sample thresholds, etc. per r2d2_feedback_own_methodology_calls); raise alarms on blueprint violations",
+      "may_NOT_decide": "Trade execution, ground-truth substitution (outcome_resolver canonical), strategy enablement",
+      "tripwires": "Writes to r2d2:* namespace only; never falcon:*, helios:*, ares:*, trader:*, neo:*"
+    },
+    {
+      "role": "Helm",
+      "owns": "DevOps + infrastructure + security + Falcon/Helios build + ops + ties team together",
+      "outputs": "helm:* fabric, infrastructure, deployment, monitoring",
+      "may_decide": "Build feasibility, infra changes, deploy gates, code policy",
+      "may_NOT_decide": "Strategy choices, trade execution, blueprint doctrine"
+    },
+    {
+      "role": "Architect-in-review",
+      "owns": "External governance sounding board (Matt + advisor)",
+      "may_decide": "Doctrine ratification, blueprint corrections, lane discipline calls"
+    }
+  ],
+
+  "data_authority_quick_table": [
+    {"asset": "helios_strategy_signals (DB)", "owner": "Falcon", "writers": "Falcon signal_feed.py only", "readers": "Solo, Helios V3, NEO, R2D2 — all read-only"},
+    {"asset": "falcon_decisions (DB)", "owner": "Falcon", "writers": "Falcon execute/writer.py only", "readers": "R2D2, NEO, Helm — read-only"},
+    {"asset": "helios_v3_decisions (DB)", "owner": "Helios V3", "writers": "Helios V3 daemon only", "readers": "R2D2, NEO, Helm, audit tools"},
+    {"asset": "helios:state:{instrument} (fabric)", "owner": "Helios V3", "writers": "Helios V3 daemon only", "readers": "trader-gate-compositor, helios-bridge, NEO, Solo"},
+    {"asset": "trader:gate:composite (fabric)", "owner": "trader-gate-compositor", "writers": "compositor only", "readers": "Solo, NEO, R2D2"},
+    {"asset": "ares:* (fabric)", "owner": "ARES", "writers": "ARES daemon only", "readers": "Helios V3 (gate input), trader-gate-compositor (gate input), Falcon (snapshot only)"},
+    {"asset": "outcome_* columns on helios_strategy_signals", "owner": "Falcon outcome_resolver", "writers": "outcome_resolver.py only (wick_aware method canonical)", "readers": "R2D2 (audit only), NEO, Helm"},
+    {"asset": "r2d2:* (fabric)", "owner": "R2D2", "writers": "R2D2 only", "readers": "all (read-only)"}
+  ],
+
+  "command_chain_canonical": [
+    "1. MARKET DATA → HERMES (price + indicators)",
+    "2. HERMES → Falcon (perception layer; emits ProposalContract / DeclineContract → helios_strategy_signals)",
+    "3. Falcon fires → Helios V3 daemon (alignment reducer; emits helios:state via DB-canonical pattern)",
+    "4. Helios state + ARES gates → trader-gate-compositor (composes proceed flag → trader:gate:composite)",
+    "5. trader:gate:composite + Solo's judgement + Matt's intent → trade decision (humans)",
+    "6. Trade decision (when authorised) → Agent Smith (broker execution; live IBKR or PLUTUS sim)",
+    "7. Open trade → Ranger (bracket lifecycle, when enabled)",
+    "8. Trade outcome → outcome_resolver.py (Falcon-side, wick_aware canonical truth)",
+    "9. Outcome data → R2D2 (audit, backtest, blueprint feedback)",
+    "10. R2D2 → governance feedback to Helm/architect/Matt"
+  ],
+
+  "what_must_never_blur": [
+    "Eyes never become Hands — Falcon must not execute",
+    "Nervous map never becomes Hands — Helios must not execute",
+    "Risk reflex never becomes Eyes — ARES must not detect",
+    "Apprentice never becomes Live trader — NEO must not trade live",
+    "Auditor never becomes any other role — R2D2 must not execute, must not detect, must not align"
+  ]
+}

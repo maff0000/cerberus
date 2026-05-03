@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.1.0",
+  "key": "r2d2:blueprint:forbidden_merges:v1",
+  "supersedes": "v1 (2026-05-03 first draft)",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "ratified_by": "PENDING — v1.1 architect corrections applied 2026-05-03",
+  "updated_utc": "2026-05-03T00:00:00Z",
+  "doctrine": "Lane discipline. Each system has one role. Mergers blur authority and corrupt evidence.",
+
+  "rules": [
+    {
+      "id": 1,
+      "rule": "FALCON shall not become a TRADER",
+      "what_it_means": "Falcon detects setups (eyes). Falcon does not place orders, manage positions, size risk, or call brokers. NON-EXECUTING BY DESIGN — production-grade through reliable observation, not through broker integration.",
+      "tripwire": "grep -r 'order_send|broker_call|execute_order|place_order' /srv-dev/falcon/ → MUST return 0 matches pre-deploy",
+      "current_state": "PASSING"
+    },
+    {
+      "id": 2,
+      "rule": "HELIOS shall not become a TRADER",
+      "what_it_means": "Helios advises alignment state (nervous map). Helios does not execute. Solo + Matt judge whether to act; Agent Smith executes when authorised.",
+      "tripwire": "grep -r 'order_send|broker|execute_order|positions_get' /srv/helios/ AND /srv-dev/tradingProteus/helios_v3/ → MUST return 0 matches",
+      "current_state": "PASSING — V3 daemon source-confirmed 2026-05-03 has no broker code; recommends explicit tripwire parity with trader-xau-watcher"
+    },
+    {
+      "id": 3,
+      "rule": "HELIOS shall not become FALCON",
+      "what_it_means": "Helios consumes Falcon's persisted output (helios_strategy_signals). Helios does not detect setups, does not import Falcon strategy modules, does not run worker.evaluate().",
+      "tripwire": "Helios source must not import from falcon.strategies.*",
+      "current_state": "PASSING"
+    },
+    {
+      "id": 4,
+      "rule": "ARES shall not become HELIOS",
+      "what_it_means": "ARES authors risk gate state (risk reflex). Helios advises alignment (nervous map). Two different decisions on two different systems.",
+      "tripwire": "ares:* keys may not contain decision/v3_tier/composite_confidence. helios:state:* may contain ares.gates as passthrough only — never authored by ARES.",
+      "current_state": "PASSING"
+    },
+    {
+      "id": 5,
+      "rule": "R2D2 shall not become a TRADER",
+      "what_it_means": "R2D2 audits and backtests (auditor). R2D2 does not place orders, advise execution, override Solo. R2D2's outputs are evidence, not commands.",
+      "tripwire": "R2D2 fabric writes restricted to r2d2:* namespace. NO writes to falcon:*, helios:*, ares:*, trader:*, neo:* by R2D2 process.",
+      "current_state": "PASSING"
+    },
+    {
+      "id": 6,
+      "rule": "R2D2 shall not become FALCON",
+      "what_it_means": "R2D2 may build PORTS of Falcon strategies for backtest replay (e.g. /srv/r2d2/scripts/csdr_session_sweep/csdr_engine.py — pure-Python port of CSDR state machine). Ports are AUDIT INSTRUMENTS — clearly labelled, never substitute Falcon's canonical implementation in production.",
+      "tripwire": "R2D2 strategy ports MUST include header docstring: 'AUDIT INSTRUMENT — NOT CANONICAL FALCON. Source of truth: /srv-dev/falcon/strategies/<plugin>/worker.py'. R2D2 must re-port (not patch) when canonical Falcon code changes.",
+      "current_state": "PARTIAL — csdr_engine.py exists; needs header annotation. Gatekeeper TODO."
+    },
+    {
+      "id": 7,
+      "rule": "R2D2 shall not own OUTCOME TRUTH",
+      "what_it_means": "Falcon's outcome_resolver.py (wick_aware method, architect-ratified WO-OUTCOME-RESOLVER-METHODOLOGY-0001 2026-04-29) is canonical for fire outcomes. R2D2 may audit disagreements (write to r2d2:audit:* namespace) but never substitute resolver truth in helios_strategy_signals.outcome_*.",
+      "tripwire": "R2D2 process must not UPDATE helios_strategy_signals.outcome_* columns",
+      "current_state": "PASSING per design"
+    },
+    {
+      "id": 8,
+      "rule": "helios_strategy_signals despite the name IS OWNED BY FALCON",
+      "what_it_means": "Misleadingly-named legacy table from V2 era. Writers: Falcon signal_feed.py (canonical). Readers: Solo, Helios V3 daemon, NEO, R2D2 — all read-only. NO non-Falcon service may write to it.",
+      "tripwire": "DB GRANT audit: only Falcon's daemon user has INSERT/UPDATE on helios_strategy_signals. Helios V3 daemon user has SELECT only.",
+      "future_consideration": "Renaming to falcon_strategy_signals would be cleaner. Migration cost: 4+ consumer services + helios_v3_decisions backfill. See open_questions Q11 + Q16.",
+      "current_state": "PASSING — Helios V3 daemon SQL is SELECT only (source-confirmed)"
+    },
+    {
+      "id": 9,
+      "rule": "NEO shall not become a TRADER",
+      "what_it_means": "NEO observes, scores, audits, coaches (apprentice). NEO never places live trades. NEO trades FTMO_PRACTICE_100K only (per shared_rule_neo_practice_only — Matt 2026-04-22). Promotion to higher authority requires explicit Matt rule.",
+      "tripwire": "NEO process broker connection must be FTMO_PRACTICE_100K only. Live broker connection forbidden by config.",
+      "current_state": "PASSING per Matt's standing rule"
+    },
+    {
+      "id": 10,
+      "rule": "PLUTUS is the SIMULATION ENVIRONMENT, not the production environment",
+      "what_it_means": "All training, replay, and what-if happens in PLUTUS (simulator). Live execution flows through Solo → Agent Smith → IBKR Live only. PLUTUS sim broker results never feed live decision systems.",
+      "tripwire": "trader:gate:composite production reads must never include plutus.* sources. PLUTUS state writes must never collide with live state keys.",
+      "current_state": "UNVERIFIED — Q15 audit pending"
+    },
+    {
+      "id": 11,
+      "rule": "Solo shall not become FALCON",
+      "what_it_means": "Solo reads helios_strategy_signals (or trader:gate:composite) and decides whether to execute. Solo does not author fires. Solo does not author Helios state.",
+      "tripwire": "Solo process must be read-only on helios_strategy_signals + helios:state:*. Solo writes only to its own trade-state namespace.",
+      "current_state": "UNVERIFIED — Q14 audit pending"
+    },
+    {
+      "id": 12,
+      "rule": "ARES shall not become FALCON",
+      "what_it_means": "ARES emits risk gate state (risk reflex). ARES does not detect setups (eyes). Falcon may READ ARES gate state observationally (in risk_context.ares_state) but ARES does not generate proposals.",
+      "tripwire": "ARES code must not import falcon.strategies.*. ARES outputs must be gate state only.",
+      "current_state": "PASSING per architectural design"
+    },
+    {
+      "id": 13,
+      "rule": "Agent Smith shall not become FALCON, HELIOS, or ARES",
+      "what_it_means": "Agent Smith executes broker operations (hands). Agent Smith does not detect, align, or veto. Agent Smith receives explicit authorisation from Solo/Matt and acts on it.",
+      "tripwire": "Agent Smith must not import falcon.strategies.*, helios_v3.*, or ares risk modules. Agent Smith reads execution intent only.",
+      "current_state": "UNRATIFIED — Agent Smith deployment topology in open_questions Q17"
+    },
+    {
+      "id": 14,
+      "rule": "Ranger is a TRADE-MANAGEMENT MODULE, not a TRADER IDENTITY",
+      "what_it_means": "Ranger manages open-trade brackets when enabled. Ranger does not decide whether to enter or exit; Solo decides. Ranger is mechanical bracket lifecycle — not a separate persona, not a trader authority.",
+      "tripwire": "Ranger config must require explicit enablement by execution authority. Ranger must not place new entry orders — only modify existing brackets within authorised policy.",
+      "current_state": "PASSING per design (Matt 2026-04-29 conditional sign-off)"
+    },
+    {
+      "id": 15,
+      "rule": "ARES live veto authority lives at TRADER-GATE-COMPOSITOR LEVEL only (architect doctrine 2026-05-03)",
+      "what_it_means": "ARES gate state may be SNAPSHOTTED by Falcon for explainability and READ by Helios V3 for context, but the LIVE EXECUTION VETO is the trader-gate-compositor's job. Falcon detects in any regime; Helios advises alignment; trader-gate-compositor + Solo decide whether risk environment supports action.",
+      "tripwire": "Falcon strategies must not decline purely because ARES = BLOCK (audit pending). Helios V3 daemon currently overrides decision to NO_GO when ARES BLOCK — DOCTRINE VS CODE MISMATCH (Q18 BLOCKING).",
+      "current_state": "DOCTRINE RATIFIED 2026-05-03; CODE VERIFICATION PENDING — Q18 surfaces this as a blocking question for v2"
+    }
+  ],
+
+  "v1_1_changes": [
+    "Added rule 13: Agent Smith lane (architect organism analogy)",
+    "Added rule 14: Ranger is module not identity (architect point 3)",
+    "Added rule 15: ARES live veto at trader-gate-compositor (architect point 5) + Q18 doctrine-vs-code mismatch flag",
+    "Updated rule 1: language tightened — non-executing by design vs shadow-only",
+    "Updated rule 8: source-confirmed Helios V3 read-only on helios_strategy_signals via DB grant audit recommendation"
+  ],
+
+  "gatekeeper_response_protocol": {
+    "on_violation_detected": [
+      "1. STOP downstream consumption immediately if gate-grade violation (fail closed).",
+      "2. Bake gatekeeper alarm to r2d2:alarm:forbidden_merge:<rule_id>:<utc> with evidence.",
+      "3. Discord-ping Matt with rule violated, location, recommended action.",
+      "4. Append entry to r2d2:identity:depth.",
+      "5. Request architect review before re-enabling boundary."
+    ]
+  }
+}
