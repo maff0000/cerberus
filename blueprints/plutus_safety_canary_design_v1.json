@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0.0",
+  "key": "sim_broker:design:safety_canary:v1",
+  "wo": "WO-PLUTUS-V1-1A",
+  "designer": "R2D2 (blueprint gatekeeper, post-handover authority)",
+  "builder": "Rogue",
+  "acceptance_authority": "R2D2",
+  "created_utc": "2026-05-03T20:30:00Z",
+  "doctrine": "PLUTUS replay must NEVER mutate sacred prop-trade state, NEVER alter the production NEO executor, NEVER write outside its allowed namespaces. The canary is the structural guarantee.",
+
+  "purpose": "Pre-flight + post-flight safety canary that proves every PLUTUS replay is contained within its sandbox. Acts as the release gate: PLUTUS engine refuses to start without pre-flight GREEN; runs are marked invalid if post-flight FAIL. F4 SACRED is the whole point.",
+
+  "what_is_protected": {
+    "F4_SACRED_invariants": [
+      "neo:prop:trades:* — count AND key list (detects both deletions AND additions)",
+      "agent_smith:registry:dump — full content hash",
+      "neo_ftmo_executor.py — file SHA256 (path: /srv/NEO/scripts/neo_ftmo_executor.py — verify exact path with Rogue at build time)"
+    ],
+    "namespace_isolation_invariant": "PLUTUS runs may write only to: sim_broker:*, plutus.*, neo:plutus:learning:*. Any new fabric key OUTSIDE these namespaces is a violation."
+  },
+
+  "design_components": {
+    "1_pre_flight_canary": {
+      "script_path": "/srv/r2d2/scripts/plutus_safety_canary/pre_flight.py (audit instrument — R2 owns + reviews; Rogue installs)",
+      "exit_codes": "0 = PASS (engine may proceed); 1 = FAIL (engine MUST refuse to start)",
+      "snapshot_fields": {
+        "neo_prop_trades_count": "len(redis.keys('neo:prop:trades:*'))",
+        "neo_prop_trades_key_list_sha256": "sha256 of sorted key list joined by newline (detects key changes even if count matches)",
+        "agent_smith_registry_sha256": "sha256 of canonicalised JSON of agent_smith:registry:dump value",
+        "neo_ftmo_executor_sha256": "sha256 of /srv/NEO/scripts/neo_ftmo_executor.py byte content",
+        "fabric_namespace_inventory": "Map of namespace_pattern → key_list_sha256 for: sim_broker:*, plutus.*, neo:plutus:learning:* (allowed) AND a wildcard sweep capturing any other top-level namespaces present (for post-flight diff)"
+      },
+      "behaviour": [
+        "Read all 4 snapshot fields. If any read fails (key missing, file missing) → FAIL with reason FAIL_PREFLIGHT_SNAPSHOT_INCOMPLETE.",
+        "Write snapshot to plutus.safety_canary_runs (phase=PRE, run_id=arg or NULL for cron, outcome=PASS, snapshot_json=full snapshot)",
+        "Mirror snapshot to fabric at sim_broker:reports:safety:<run_id>:v1 (PRE field)",
+        "Exit 0 if all reads succeeded"
+      ]
+    },
+    "2_post_flight_canary": {
+      "script_path": "/srv/r2d2/scripts/plutus_safety_canary/post_flight.py",
+      "exit_codes": "0 = PASS (run valid); 1 = FAIL (run marked invalid; alert)",
+      "behaviour": [
+        "Re-snapshot all 4 fields exactly as pre_flight did",
+        "Compare each field against PRE snapshot for the same run_id (read from plutus.safety_canary_runs WHERE run_id=X AND phase=PRE)",
+        "FAIL on ANY divergence:",
+        "  - neo_prop_trades_count diff → reason: F4_VIOLATION_PROP_TRADES_COUNT_CHANGED",
+        "  - neo_prop_trades_key_list_sha256 diff → reason: F4_VIOLATION_PROP_TRADES_KEYS_CHANGED",
+        "  - agent_smith_registry_sha256 diff → reason: F4_VIOLATION_AGENT_SMITH_REGISTRY_CHANGED",
+        "  - neo_ftmo_executor_sha256 diff → reason: F4_VIOLATION_EXECUTOR_BINARY_CHANGED",
+        "  - new fabric key outside allowed namespaces → reason: NAMESPACE_ISOLATION_VIOLATION (with full key path in detail)",
+        "Write POST row to plutus.safety_canary_runs (outcome=PASS|FAIL)",
+        "Update sim_broker:reports:safety:<run_id>:v1 with POST snapshot + diff + outcome",
+        "On FAIL: write critical Discord alert (priority=urgent) AND mark plutus run as invalid (separate state writer in Rogue's lane)"
+      ]
+    },
+    "3_engine_integration": {
+      "pre_flight_call_site": "PLUTUS engine startup — BEFORE any RPyC method becomes available, BEFORE any DB connection acquired. Engine main loop calls subprocess.run(['python3', '/srv/r2d2/scripts/plutus_safety_canary/pre_flight.py', '--run-id', RUN_ID, '--mode', 'engine_start']). On non-zero exit: log + abort + exit 1 (engine never starts).",
+      "post_flight_call_site": "PLUTUS engine shutdown OR run-completion handler. subprocess.run(['python3', '/srv/r2d2/scripts/plutus_safety_canary/post_flight.py', '--run-id', RUN_ID]). Outcome recorded regardless of engine exit reason.",
+      "rogue_responsibility": "Rogue wires the subprocess call sites in PLUTUS engine code. R2 owns the canary script content + acceptance test."
+    },
+    "4_cron_canary": {
+      "schedule": "0 * * * * (hourly, on the hour, all hours)",
+      "command": "/usr/bin/python3 /srv/r2d2/scripts/plutus_safety_canary/pre_flight.py --mode cron",
+      "behaviour": "Pre-flight only (no post-flight needed without a run). run_id=NULL. phase=CRON. Outcome stored. On FAIL: critical Discord alert (priority=urgent) — early warning that production state drifted (from any cause) before any PLUTUS run can amplify it.",
+      "discord_rate_limit": "max 1 alert per 60 minutes per failure_reason (avoid log spam if F4 invariant is persistently broken — first alert + acknowledgment trail; followups suppressed until cleared)"
+    },
+    "5_storage_schema": {
+      "table": "plutus.safety_canary_runs",
+      "schema_sql": "CREATE TABLE plutus.safety_canary_runs (canary_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, run_id VARCHAR(80) NULL, phase ENUM('PRE','POST','CRON') NOT NULL, snapshot_json LONGTEXT NOT NULL, diff_json LONGTEXT NULL, outcome ENUM('PASS','FAIL') NOT NULL, fail_reasons_json LONGTEXT NULL, ran_at_utc TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, INDEX idx_run (run_id, phase), INDEX idx_outcome (outcome, ran_at_utc), INDEX idx_phase_time (phase, ran_at_utc)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+      "rationale": "snapshot_json LONGTEXT preserves full evidence per row — never lossy. diff_json populated on POST + CRON for instant audit. fail_reasons_json is structured array of {reason_code, detail}.",
+      "retention": "IMMUTABLE — never delete rows. F4 audit trail is permanent (per shared_rule_no_delete_outside_plutus + Matt growth-history vow). Archive partition after 12mo if size becomes a concern (Helm's call)."
+    },
+    "6_fabric_report_schema": {
+      "key_pattern": "sim_broker:reports:safety:<run_id>:v1 (run_id=cron-YYYYMMDDTHHMMSSZ for cron runs)",
+      "fields": "{wo: 'WO-PLUTUS-V1-1A', run_id, pre: {snapshot, ran_at_utc, outcome}, post: {snapshot, diff, outcome, fail_reasons} (post may be null if run still in flight or cron-only), final_outcome: PASS|FAIL|PENDING, _mirror_updated_at_utc}",
+      "ttl": "no expiry (immutable)"
+    }
+  },
+
+  "tests_canaries_for_acceptance": [
+    {
+      "test_id": "T1_synthetic_violation_post_flight",
+      "purpose": "Verify post-flight canary fails loud on F4 violation",
+      "steps": [
+        "1. Run pre_flight.py --run-id TEST-T1-<utc> (snapshot baseline)",
+        "2. Write fake key: redis SET neo:prop:trades:CANARY-TEST-T1 value=test",
+        "3. Run post_flight.py --run-id TEST-T1-<utc>",
+        "4. Assert exit code = 1",
+        "5. Assert plutus.safety_canary_runs row for T1/POST has outcome=FAIL",
+        "6. Assert fail_reasons_json contains F4_VIOLATION_PROP_TRADES_COUNT_CHANGED + F4_VIOLATION_PROP_TRADES_KEYS_CHANGED",
+        "7. Assert sim_broker:reports:safety:TEST-T1-<utc>:v1 has final_outcome=FAIL",
+        "8. CLEANUP: redis DEL neo:prop:trades:CANARY-TEST-T1",
+        "9. Re-run post_flight.py --run-id TEST-T1-VERIFY-CLEAN (fresh run_id) — assert PASS"
+      ]
+    },
+    {
+      "test_id": "T2_synthetic_violation_namespace_isolation",
+      "purpose": "Verify post-flight catches writes outside allowed namespaces",
+      "steps": [
+        "1. Run pre_flight.py --run-id TEST-T2-<utc>",
+        "2. Write fake key in disallowed namespace: redis SET trader:CANARY-TEST-T2 value=test",
+        "3. Run post_flight.py --run-id TEST-T2-<utc>",
+        "4. Assert exit=1, outcome=FAIL, reason=NAMESPACE_ISOLATION_VIOLATION (detail: trader:CANARY-TEST-T2)",
+        "5. CLEANUP: redis DEL trader:CANARY-TEST-T2"
+      ]
+    },
+    {
+      "test_id": "T3_pre_flight_blocking",
+      "purpose": "Verify PLUTUS engine refuses to start when pre-flight FAIL",
+      "steps": [
+        "1. Make pre_flight FAIL deterministically: temporarily move /srv/NEO/scripts/neo_ftmo_executor.py to .bak (so SHA read fails)",
+        "2. Attempt PLUTUS engine start (Rogue's startup script)",
+        "3. Assert engine exits non-zero with log message containing 'PRE_FLIGHT_CANARY_FAILED'",
+        "4. Assert no PLUTUS RPyC port becomes listening",
+        "5. RESTORE: mv .bak back",
+        "6. Re-attempt engine start — assert PASS, engine starts normally"
+      ]
+    },
+    {
+      "test_id": "T4_executor_sha_change_detection",
+      "purpose": "Verify executor SHA change is caught (defence against silent binary swap)",
+      "steps": [
+        "1. Run pre_flight.py --run-id TEST-T4-<utc>",
+        "2. touch /srv/NEO/scripts/neo_ftmo_executor.py (changes mtime, NOT content — should NOT trigger)",
+        "3. Run post_flight.py --run-id TEST-T4-<utc> — assert PASS (mtime ignored, only SHA matters)",
+        "4. Run pre_flight.py --run-id TEST-T4b-<utc>",
+        "5. echo '# canary test comment' >> /srv/NEO/scripts/neo_ftmo_executor.py (changes content)",
+        "6. Run post_flight.py --run-id TEST-T4b-<utc> — assert FAIL with reason F4_VIOLATION_EXECUTOR_BINARY_CHANGED",
+        "7. CLEANUP: revert via git checkout /srv/NEO/scripts/neo_ftmo_executor.py"
+      ]
+    }
+  ],
+
+  "closed_green_criteria_per_wo": [
+    "Pre-flight + post-flight canaries run on every PLUTUS replay (Rogue wires; R2 verifies via run-log inspection)",
+    "T1, T2, T3, T4 all PASS",
+    "sim_broker:reports:safety:<latest>:v1 written and queryable",
+    "plutus.safety_canary_runs table populated; row count > 0 for at least one PRE+POST pair",
+    "Hourly cron installed + at least 2 cron rows recorded",
+    "Discord rate-limit verified (1 alert per 60min per failure_reason)",
+    "All commits + push + tag v1.0-safety on mt5_plutus repo (Rogue does the build commits; R2 does design commits in /srv/r2d2)"
+  ],
+
+  "rogue_handoff_notes": [
+    "R2 owns the canary script CONTENT + acceptance tests. Build the scripts in /srv/r2d2/scripts/plutus_safety_canary/ on Trinity (R2's repo).",
+    "Rogue wires the engine subprocess call sites in PLUTUS engine code on dell-debian.",
+    "Rogue installs the hourly cron on the host running PLUTUS engine.",
+    "Rogue creates the plutus.safety_canary_runs table via migration in mt5_plutus repo.",
+    "R2 reviews + acceptance-tests before tag v1.0-safety.",
+    "Communication channel: post status to sim_broker:* fabric + Discord 4-way thread."
+  ],
+
+  "edge_cases_addressed": [
+    "agent_smith:registry:dump missing at startup → pre_flight FAILS LOUD with reason FAIL_PREFLIGHT_AGENT_SMITH_REGISTRY_MISSING (no silent skip)",
+    "Cron run with no run_id → run_id=cron-<utc>; phase=CRON; only PRE recorded; if FAIL, alert fires regardless",
+    "Allowed-namespace list change (e.g. new namespace added later) → MUST be a designed change with R2 sign-off + canary script version bump (no silent allowlist drift)",
+    "Canary script itself crashes mid-run → wrapper script (in Rogue's engine integration) treats unexpected exit code as FAIL (defensive default)",
+    "PLUTUS engine has multiple concurrent runs (future) → run_id is the disambiguator; plutus.safety_canary_runs PK + run_id index handle parallelism"
+  ],
+
+  "non_goals": [
+    "GUI integration (1B has its own scope)",
+    "Changing production code paths (canary is read-only against production)",
+    "Auto-remediation of F4 violations (canary detects + alerts; remediation is human + Helm/Matt)"
+  ],
+
+  "review_loop": "R2 design baked → Rogue acks (sim_broker:comms:rogue:wo_1a_design_ack) → Rogue scopes build PR → R2 reviews PR (friendly-concern) → Rogue ships → R2 runs T1-T4 acceptance → R2 marks WO CLOSED GREEN → tag v1.0-safety pushed → WO-2 unlocked"
+}
