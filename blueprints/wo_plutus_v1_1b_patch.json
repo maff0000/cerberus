@@ -1,0 +1,65 @@
+{
+  "wo_id": "WO-PLUTUS-V1-1B-PATCH",
+  "title": "PLUTUS GUI Trade Markers Overlay (read-only)",
+  "owner": "Rogue (build) + R2D2 (acceptance)",
+  "phase": "v1",
+  "parent_wo": "WO-PLUTUS-V1-1B (SHIPPED 2026-05-03 GREEN)",
+  "established_at_utc": "2026-05-03T20:55:00Z",
+  "established_by": "R2D2 (post-handover authority) per Matt's stated visualisation need + architect drift_protection rule (new scope = new WO, never silent creep)",
+  "rationale": "Matt's killer use case ('replay 28/3/26 and find out why we missed that setup') requires seeing WHERE trades happened on the chart to diagnose. Trade markers are load-bearing for post-mortem use. WO-1B shipped without them; this WO adds them as a proper scope-locked patch rather than silent v1B re-open.",
+  "scope_in": [
+    "Render trade markers on the breathing chart (entries as triangles or dots, exits as squares — Rogue's call on visual style)",
+    "Marker source: SELECT from existing tables only — sessions, orders, ticks (no new schema)",
+    "Marker fields visible on hover: order_id, side (BUY/SELL), price, sim_ts, fill status, pnl if closed",
+    "Markers anchor to sim_ts on the existing breathing chart x-axis",
+    "Markers respect the existing window selector (1m/5m/15m/1h)",
+    "Add /api/trade_markers endpoint (read-only, plutus_ro user) returning markers in current window"
+  ],
+  "scope_out_HARD_LIMIT": [
+    "NO @app.post/put/delete/patch routes added (Control #2 architect-locked — stays at zero)",
+    "NO trade modification (no close/cancel/modify buttons)",
+    "NO new DB schema (sessions/orders are existing v0.5 tables)",
+    "NO writes to plutus DB from GUI (plutus_ro user only — verified via INSERT/UPDATE/DELETE permission denial test)",
+    "NO scope into PLUTUS engine — render-only on existing data"
+  ],
+  "config_db_impact": {
+    "config_changes": [
+      "Dockerfile.web: GIT_VERSION 1.0.0 → 1.1.0",
+      "docker-compose.yml: image mt5-plutus-web:1.0 → 1.1; GIT_VERSION 1.0.0 → 1.1.0"
+    ],
+    "db_migrations": "NONE — markers source from existing sessions/orders tables",
+    "db_user_impact": "Continues to use plutus_ro only (no new permissions)"
+  },
+  "tests_canaries": [
+    "All WO-1B smoke battery tests still PASS (regression)",
+    "grep verification: zero @app.post/@app.put/@app.delete/@app.patch in main.py (Control #2 invariant)",
+    "plutus_ro INSERT/UPDATE/DELETE permission-denied test still passes (MariaDB 1142 errors verified)",
+    "/api/trade_markers returns 200 with marker JSON when authenticated; returns 401 when unauthenticated",
+    "Marker render verified visually in dashboard — hover-tooltip shows order_id + side + price + sim_ts",
+    "Empty-orders edge case: chart renders normally with no markers (no JS errors, no broken layout)"
+  ],
+  "rollback_note": "Disable via docker-compose image rollback to mt5-plutus-web:1.0. Markers are additive overlay; removing the /api/trade_markers endpoint + frontend marker layer reverts cleanly.",
+  "closed_green_criteria": [
+    "All scope_in items delivered + visually verified in dashboard at http://192.168.11.10:3013/",
+    "All tests_canaries above PASS",
+    "Container mt5-plutus-web:1.1 labelled with vcs-ref matching merge SHA",
+    "Tag v1.1-gui pushed on mt5_plutus repo",
+    "R2D2 acceptance review: walk through dashboard, verify markers render correctly on a known scenario with completed trades, sign off in sim_broker:reports:WO-PLUTUS-V1-1B-PATCH:v1"
+  ],
+  "checklist": {
+    "branch_worktree": "feature branch wo/WO-PLUTUS-V1-1B-PATCH off origin/main; merge with --no-ff after CLOSED GREEN",
+    "scope_in_out": "filled per WO body",
+    "config_db_impact": "filled per WO body — minimal (version bumps only)",
+    "tests_canaries": "filled per WO body — heavy emphasis on Control #2 regression",
+    "evidence_path": "sim_broker:reports:WO-PLUTUS-V1-1B-PATCH:v1 + commit SHAs + container labels",
+    "rollback_note": "filled per WO body — clean image rollback",
+    "closed_green_criteria": "filled per WO body"
+  },
+  "parallel_with": "May run in parallel with WO-PLUTUS-V1-1A (Safety Canary) — separate worktrees, separate scope, no shared mutable surface (per architect Control #1)",
+  "drift_protection_compliance": "This WO honours the architect drift_protection rule by being a properly-scoped lightweight WO with bounded scope_in + hard scope_out, not silent re-opening of WO-1B. R2D2 (post-handover authority) called this scope add per Matt's stated need + Solo's deferral to R2D2 call. Architect notified via fabric record.",
+  "non_goals": [
+    "Mobile-optimized layout (deferred to v0.6 with WO-1B's deferred mobile scope)",
+    "Advanced filtering of markers (filter by side, date range, etc. — scope creep, deferred)",
+    "Trade marker editing or annotation (NEVER — Control #2 absolute)"
+  ]
+}
