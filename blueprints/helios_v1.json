@@ -1,0 +1,205 @@
+{
+  "schema_version": "1.0.0",
+  "key": "r2d2:blueprint:helios:v1",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "ratified_by": "PENDING — first draft 2026-05-03 awaiting Matt review",
+  "created_utc": "2026-05-03T00:00:00Z",
+  "doctrine": "Helios ALIGNS. Not the trader.",
+  "system": {
+    "name": "Helios",
+    "role": "Signal alignment / reduction layer (advisory)",
+    "topology": "Two distinct components in two locations",
+    "components": {
+      "helios_v3_daemon": {
+        "location": "dell-debian — source NOT directly read in this evidence sweep; inferred at /srv-dev/tradingProteus/helios_v3/daemon.py (per R2D2.md:60 + helios-bridge references)",
+        "service": "helios-v3.service",
+        "role": "Reads helios_strategy_signals (Falcon's output table), reduces multi-strategy fires into alignment state, publishes helios:state:XAU_USD to Memory Fabric, persists per-cycle decisions to helios_v3_decisions DB"
+      },
+      "trader_gate_compositor": {
+        "location": "/srv/helios/trader-gate-compositor/ on Trinity",
+        "service": "trader-gate-compositor.service",
+        "entry": "compositor.py:main() line 519",
+        "cadence": "5s poll",
+        "role": "Composes helios:state + ARES gates → trader:gate:composite (proceed flag for downstream)"
+      },
+      "trader_xau_watcher": {
+        "location": "/srv/helios/trader-xau-watcher/ on Trinity",
+        "role": "Read-only MT5 price connector. TRIPWIRE forbids order_send / positions_get / order_check etc."
+      }
+    }
+  },
+
+  "01_purpose": "Reduce multiple Falcon strategy fires into a current market alignment state. Helios is ADVISORY — it observes, aggregates, and emits a state. It does not execute, size, or veto. Operational wording: 'Helios reduces strategy signals into a current market alignment state.' Avoid the word 'oracle' — it inflates authority.",
+
+  "02_inputs": {
+    "helios_v3_daemon": [
+      "helios_strategy_signals (DB on dell-debian) — Falcon's output table; multi-strategy fires per cycle. NAMING NOTE: despite the prefix, this table is OWNED BY FALCON. See r2d2:blueprint:forbidden_merges:v1 rule 8.",
+      "Threshold and conflict-resolution config — location UNKNOWN (likely DB-backed; not read in evidence sweep)"
+    ],
+    "trader_gate_compositor": [
+      "helios:state:XAU_USD (fabric) — written by helios-v3.service",
+      "ares:event:next + other ares:* keys (proteus-redis on dell-debian) — written by ARES",
+      "trader_xau_watcher.config (DB on Trinity) — runtime config",
+      "Active-setup state (location UNKNOWN — likely a fabric key)"
+    ],
+    "neither_reads": "Falcon source code, Falcon ProposalContract objects directly, broker connection. Only persisted artefacts."
+  },
+
+  "03_outputs": {
+    "helios_v3_daemon": {
+      "fabric": {
+        "helios:state:XAU_USD": {
+          "schema_version": "helios_v3_state_v1",
+          "fields": {
+            "decision": "ENUM: GO_LONG | GO_SHORT | NO_GO",
+            "v3_tier": "ENUM: GO | HIGH_CONVICTION_GO | NO_GO",
+            "direction": "LONG | SHORT | null",
+            "confluence_count": "int — number of fires aligned in same direction",
+            "decision_reason": "ENUM: BELOW_THRESHOLD | LONG_DOMINATES | SHORT_DOMINATES | CONFLICT_NO_GO",
+            "primary_strategy_id": "string | null — leading strategy",
+            "composite_confidence": "float 0-10",
+            "conflict_state": "ENUM: NO_FIRES | LONG_DOMINATES | SHORT_DOMINATES | CONFLICT",
+            "health_status_summary": "string — overall health roll-up",
+            "long": "{score: float}",
+            "short": "{score: float}",
+            "ares": "{gates: {event: string, liquidity: string}} — PASSTHROUGH from ARES, not authored",
+            "updated_at": "ISO UTC",
+            "source": "helios_v3"
+          }
+        },
+        "helios:heat:XAU_USD": "V2-only heat surface; FROZEN post-V3 migration; current emission status UNCLEAR"
+      },
+      "database": {
+        "helios_v3_decisions": "Per-cycle decision log on dell-debian.tradingScalp"
+      }
+    },
+    "trader_gate_compositor": {
+      "fabric": {
+        "trader:gate:composite": {
+          "cadence": "every 5s",
+          "fields": "proceed (True/False) + helios sub-object (full V3 state mirror) + ares gates + setup metadata",
+          "legacy_mirror": "SETUP_ACTIVE (= GO_LONG or GO_SHORT) | NO_SETUP (= NO_GO)"
+        }
+      }
+    }
+  },
+
+  "04_does_helios_read_falcon_redis_db_or_both": {
+    "helios_v3_daemon": "Reads DB (helios_strategy_signals); writes fabric (helios:state) + DB (helios_v3_decisions)",
+    "trader_gate_compositor": "Reads fabric (helios:state, ares:*); reads DB (config); writes fabric (trader:gate:composite)",
+    "boundary_rule": "NEITHER component imports Falcon source modules. Helios consumes Falcon's PERSISTED OUTPUT only. This boundary is enforced by file system separation (Falcon on dell-debian, compositor on Trinity)."
+  },
+
+  "05_how_helios_reduces_fires_into_alignment": {
+    "evidence_basis": "PARTIAL — V3 daemon source on dell-debian was NOT read directly in this evidence sweep. Logic below INFERRED from V3 state schema, test fixtures (/srv/helios/trader-gate-compositor/tests/test_v3_consumer.py:32-62), and bridge.py docstrings.",
+    "freshness_window": "Likely matches Falcon's M5 cycle; exact value UNKNOWN (per FALCON_STRUCTURE_ENGINE_ARCHITECT_BRIEF.md §3.1 Falcon runs per M5-close)",
+    "aggregation_inferred": [
+      "Aggregates fires from helios_strategy_signals within freshness window",
+      "Computes confluence_count per direction (number of fires aligned)",
+      "Computes composite_confidence (0-10) — aggregation rule UNKNOWN: sum / max / weighted? NEEDS V3 daemon source review.",
+      "Resolves conflict_state: NO_FIRES | LONG_DOMINATES | SHORT_DOMINATES | CONFLICT",
+      "Threshold check: composite_confidence ≥ threshold → emit GO_LONG / GO_SHORT (in dominant direction); below threshold → NO_GO with decision_reason=BELOW_THRESHOLD",
+      "If conflict_state=CONFLICT → NO_GO with decision_reason=CONFLICT_NO_GO (numeric rule UNKNOWN)",
+      "v3_tier upgrade GO → HIGH_CONVICTION_GO triggered by some confidence/confluence threshold (UNKNOWN)"
+    ],
+    "current_blocker": "adjusted_confidence currently uses health_score = 1.0 (R2D2_TEMPORARY_BRIDGE default). No real strategy filtering until R2D2 ships health weights. Per Helios interim_green.md: 'currently single-strategy fires limited by R2D2_TEMPORARY_BRIDGE health weights = 1.0 default, no real filtering until R2D2 produces.'"
+  },
+
+  "06_emits_go_long_go_short_no_go": {
+    "answer": "YES",
+    "decision_field": "ENUM: GO_LONG | GO_SHORT | NO_GO (per helios:state:XAU_USD.decision)",
+    "richer_state": "v3_tier (GO / HIGH_CONVICTION_GO / NO_GO), direction, composite_confidence, decision_reason, conflict_state",
+    "legacy_mirror": "trader-gate-compositor emits SETUP_ACTIVE | NO_SETUP for downstream consumers expecting V2 vocabulary (compositor.py:352)"
+  },
+
+  "07_advisory_or_authoritative": {
+    "answer": "ADVISORY",
+    "evidence": [
+      "compositor.py:448-449 docstring: 'If no active setup, gates are informational only'",
+      "ZERO order/execute/broker code in /srv/helios (grep returned 0)",
+      "trader-xau-watcher TRIPWIRE explicitly forbids order_send, order_check, positions_get, history_orders_get, history_deals_get, etc. (connector.py:29-53)",
+      "No enforcement of helios.decision=NO_GO at execution layer found in evidence sweep — Solo can in principle override (NEEDS MATT CONFIRMATION, see open_questions Q8)"
+    ],
+    "operational_meaning": "Helios STATES what it sees. Downstream interprets. The proceed field in trader:gate:composite is a CONDITIONAL ROUTING decision — it does not execute. Helios advises; Solo decides; ARES vetoes risk."
+  },
+
+  "08_what_consumes_helios_state": [
+    {
+      "consumer": "trader-gate-compositor",
+      "path": "/srv/helios/trader-gate-compositor/compositor.py:552",
+      "purpose": "Pre-trade gate composition (Helios advisory + ARES risk → proceed flag)",
+      "migration": "V3-native ✓"
+    },
+    {
+      "consumer": "helios-bridge",
+      "path": "/srv/TRADER/helios_bridge/bridge.py:200",
+      "purpose": "dell-debian → Trinity relay; mirrors V3 state to legacy shape (write_state/write_setup/write_heat) for downstream V2 consumers",
+      "migration": "V3-native ✓ (WO-TRADER-HELIOS-BRIDGE-V3-MIGRATION-0001 closed)"
+    },
+    {
+      "consumer": "NEO observer",
+      "path": "/srv/NEO/scripts/neo_observer.py:731",
+      "purpose": "Regime/confluence context for judgement-mode scoring",
+      "migration": "V3-native ✓ (WO-NEO-OBSERVER-HELIOS-V3-MIGRATION-0001 closed)"
+    },
+    {
+      "consumer": "NEO coach",
+      "path": "/srv/NEO/scripts/neo_coach.py:185, 224",
+      "purpose": "Daily LLM prompt context",
+      "migration": "V3-native ✓ (WO-NEO-COACH-HELIOS-V3-MIGRATION-0001 closed)"
+    },
+    {
+      "consumer": "Solo (live trader)",
+      "path": "/srv/TRADER/scripts/solo_flight_check.py + indirectly via trader:gate:composite",
+      "purpose": "Decision audit context"
+    }
+  ],
+
+  "09_what_helios_is_forbidden_to_decide": [
+    "Whether to execute a trade (Solo / Matt / NEO own that — enforced)",
+    "Whether risk is acceptable (ARES owns risk veto; Helios passes ARES gates as observational passthrough only)",
+    "Whether a Falcon strategy is healthy (Falcon's pulse layer + R2D2 own health)",
+    "Order placement / broker calls (ZERO execution code; TRIPWIRE-grade rule; trader-xau-watcher enforces; V3 daemon needs equivalent tripwire — gatekeeper recommendation)",
+    "Position sizing",
+    "Outcome judgement (R2D2 audits; Falcon's outcome_resolver wick_aware method is canonical)",
+    "Authoring helios_strategy_signals rows (Falcon owns that table; Helios is read-only on it)"
+  ],
+
+  "10_known_gaps_and_uncertainty": [
+    "V3 daemon source on dell-debian NOT directly read in this evidence sweep — reduction logic INFERRED from V3 state schema + test fixtures, not confirmed against actual code",
+    "Conflict-resolution rule for opposing fires: enum CONFLICT_NO_GO exists; numeric threshold for triggering UNKNOWN",
+    "composite_confidence aggregation algorithm: UNKNOWN (sum / max / weighted?)",
+    "Threshold for emitting GO_LONG/GO_SHORT (vs NO_GO BELOW_THRESHOLD): UNKNOWN",
+    "HIGH_CONVICTION_GO threshold (vs regular GO): UNKNOWN",
+    "Whether Solo MUST honour helios.decision=NO_GO or can override: UNKNOWN — no enforcement found",
+    "helios:heat:XAU_USD: V2 frozen post-V3 migration; current emission UNCLEAR (V3 may emit, may not)",
+    "Planned tables (helios_structures, helios_analysis, helios_alerts) NOT YET BUILT — per HELIOS_EPIC.md §2/§3/§4",
+    "No helios:contract:* fabric key — Helios contract is implicit in code, never declared as canonical fabric document",
+    "No helios:alignment:* or helios:decision:* keys — decisions live nested inside helios:state:XAU_USD only"
+  ],
+
+  "11_canaries_and_tripwires": {
+    "existing": [
+      "trader-xau-watcher TRIPWIRE forbids execution methods (connector.py:29-53)",
+      "WO-HELIOS-LEGACY-COMPAT-AUDIT-0001 governance — tracks V2 → V3 migration",
+      "Heartbeat-style staleness check — UNCLEAR; not directly observed in evidence sweep"
+    ],
+    "required_additions_per_gatekeeper": [
+      "Heartbeat tripwire: helios:state:XAU_USD must update at least every Falcon cycle. Stale > 2× cadence → canary fire.",
+      "Schema-version tripwire: if helios:state:XAU_USD.schema_version != 'helios_v3_state_v1', trader-gate-compositor FAILS CLOSED (proceed=False) until reconciled.",
+      "Source tripwire: if helios:state:XAU_USD.source != 'helios_v3', reject (no V2 emissions allowed in V3 era).",
+      "V3 daemon execution tripwire: any code path that touches order_send / position_send / broker imports must abort + alarm (parity with trader-xau-watcher).",
+      "Confluence-conflict alarm: if conflict_state=CONFLICT but decision != NO_GO, raise gatekeeper alarm (rule violation).",
+      "Threshold-emission audit: scheduled gatekeeper job asserting decision=GO_LONG/GO_SHORT only when composite_confidence ≥ documented threshold."
+    ]
+  },
+
+  "evidence_sources": {
+    "source_tree_trinity": "/srv/helios/trader-gate-compositor/, /srv/helios/trader-xau-watcher/",
+    "v3_daemon_source": "Inferred at /srv-dev/tradingProteus/helios_v3/daemon.py on dell-debian — NOT directly read",
+    "schemas_inferred": "From compositor.py V3-consumer code, test fixtures (test_v3_consumer.py:32-62), bridge.py docstrings (lines 50-60, 199, 200)",
+    "fabric": "helios:state:XAU_USD live, helios:heat:XAU_USD frozen — queried via http://localhost:8080/api/v1/redis/keys/helios:*",
+    "epic_doc": "HELIOS_EPIC.md (planned tables §2/§3/§4)",
+    "migration_evidence": "WO-EPIC-HELIOS-V3-END-INTEGRATION-0001 interim_green.md"
+  }
+}

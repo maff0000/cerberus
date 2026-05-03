@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0.0",
+  "key": "r2d2:blueprint:open_questions:v1",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "created_utc": "2026-05-03T00:00:00Z",
+  "purpose": "Architectural questions that source / schema / fabric evidence cannot answer. NEEDS MATT (or architect) decision before blueprint can advance to v2.",
+  "convention": "Each question is BLOCKING for the related blueprint section. Resolved questions move to r2d2:blueprint:answered_questions:<topic>:<date> and the relevant blueprint advances version.",
+
+  "questions": [
+    {
+      "id": "Q1",
+      "blueprint": "falcon:v1 §04, helios:v1 §02",
+      "question": "Authoritative DB host + schema name for helios_strategy_signals?",
+      "context": "Falcon evidence agent reports `tradingSignals` on 127.0.0.1:3307. Helios evidence agent reports `tradingScalp` on dell-debian. Both likely connect to the same dell-debian MariaDB but the schema name disagrees.",
+      "needed_to": "Fix Falcon blueprint section 04 + Helios blueprint section 02. Also clarifies which DB R2D2 ports should target for replay testing.",
+      "priority": "HIGH",
+      "asks_who": "Matt or Helm"
+    },
+    {
+      "id": "Q2",
+      "blueprint": "falcon:v1 §05",
+      "question": "Are strategy families (TREND / RANGE / REVERSAL / EVENT / SWEEP / MOMENTUM / RISK_GOVERNOR) hardcoded or dynamically extensible?",
+      "context": "falcon_strategy_catalog.family is VARCHAR(32) — schema-permissive. Selector code usage of family was not audited. New strategy WOs would need to know whether they can declare a new family.",
+      "priority": "MEDIUM",
+      "asks_who": "Matt or architect"
+    },
+    {
+      "id": "Q3",
+      "blueprint": "falcon:v1 §01, system_map (next round)",
+      "question": "Is 'shadow mode only' the current state or the permanent design for Falcon?",
+      "context": "/srv-dev/falcon/daemon/main.py:6 says 'Shadow only: persists decisions to falcon_decisions, no Tyche handoff, no broker calls, no execution path reachable.' Either: (a) live mode is planned and not yet built, or (b) Falcon is permanently shadow and execution flows through Solo manually based on the helios_strategy_signals feed.",
+      "priority": "HIGH",
+      "asks_who": "Matt"
+    },
+    {
+      "id": "Q4",
+      "blueprint": "falcon:v1 §06 + §10",
+      "question": "Which strategies have v1 decision-logging gate_trace instrumentation completed?",
+      "context": "Confirmed: csdr, climax_reversal, coil_breakout (per WO-FALCON-STRATEGY-DECISION-LOGGING-PHASE-2-CFR-COIL-0001 + Phase 3 + Phase 4 validation WOs). Other 15 strategies status UNKNOWN (default empty list per signal_feed.py:309).",
+      "needed_to": "Decide whether R2D2 should audit each remaining worker, or whether instrumentation is being rolled out by another team and gatekeeper should track via WO list.",
+      "priority": "MEDIUM",
+      "asks_who": "Helm (for build status) + Matt (for priority)"
+    },
+    {
+      "id": "Q5",
+      "blueprint": "helios:v1 §05 + §09",
+      "question": "What is the conflict-resolution rule when two strategies fire opposing directions?",
+      "context": "Enum CONFLICT_NO_GO exists in helios:state:XAU_USD.decision_reason. Numeric threshold for triggering CONFLICT (vs LONG_DOMINATES + small SHORT noise) UNKNOWN.",
+      "priority": "HIGH",
+      "asks_who": "Matt or Helios architect"
+    },
+    {
+      "id": "Q6",
+      "blueprint": "helios:v1 §05",
+      "question": "What is the composite_confidence threshold for emitting GO_LONG / GO_SHORT (vs NO_GO BELOW_THRESHOLD)?",
+      "priority": "HIGH",
+      "asks_who": "Helios V3 daemon owner"
+    },
+    {
+      "id": "Q7",
+      "blueprint": "helios:v1 §03 + §06",
+      "question": "What is the threshold for v3_tier upgrade GO → HIGH_CONVICTION_GO?",
+      "priority": "MEDIUM",
+      "asks_who": "Helios V3 daemon owner"
+    },
+    {
+      "id": "Q8",
+      "blueprint": "helios:v1 §07, forbidden_merges:v1 rule 11",
+      "question": "Is Helios's NO_GO advisory (Solo can override) or authoritative (Solo MUST stand down)?",
+      "context": "No enforcement of helios.decision=NO_GO at execution layer found in evidence. trader-gate-compositor emits proceed=False in some cases but compositor docstring says 'gates are informational only' when no setup. If Solo can override, what records the override decision?",
+      "priority": "HIGH",
+      "asks_who": "Matt"
+    },
+    {
+      "id": "Q9",
+      "blueprint": "helios:v1 §10",
+      "question": "When will helios_structures, helios_analysis, helios_alerts ship?",
+      "context": "Per HELIOS_EPIC.md sections 2/3/4 these are planned tables. Currently NOT YET BUILT. Are they on the roadmap, deferred, or de-scoped?",
+      "priority": "MEDIUM",
+      "asks_who": "Matt or Helm"
+    },
+    {
+      "id": "Q10",
+      "blueprint": "helios:v1 §03",
+      "question": "helios:heat:XAU_USD — V2 frozen post-V3 migration. Does V3 daemon currently emit heat? If not, should consumers stop reading it?",
+      "priority": "LOW (cleanup)",
+      "asks_who": "Helios V3 daemon owner"
+    },
+    {
+      "id": "Q11",
+      "blueprint": "forbidden_merges:v1 rule 8",
+      "question": "Should the misleading-named helios_strategy_signals be renamed to falcon_strategy_signals?",
+      "context": "Truth: Falcon writes it. Helios reads it. Solo reads it. Rename clarifies ownership. Cost: schema migration + every reader updated. Gatekeeper recommendation: defer to Helm + architect; gatekeeper documents the misnomer in the meantime.",
+      "priority": "LOW (cosmetic)",
+      "asks_who": "Helm + architect"
+    },
+    {
+      "id": "Q12",
+      "blueprint": "falcon:v1 §06, helios:v1 §05",
+      "question": "When will R2D2 ship real health weights to replace R2D2_TEMPORARY_BRIDGE = 1.0?",
+      "context": "adjusted_confidence = confidence × health_score. health_score currently fixed at 1.0 (TEMPORARY_BRIDGE). This blocks Helios multi-strategy confluence (per Helios interim_green.md). This is partly R2D2's lane.",
+      "priority": "HIGH",
+      "asks_who": "R2D2 (self) — gatekeeper owes a delivery date back to Matt"
+    },
+    {
+      "id": "Q13",
+      "blueprint": "system_map (next round)",
+      "question": "Where exactly does the Helios V3 daemon source live, and can R2D2 read it on dell-debian?",
+      "context": "Inferred at /srv-dev/tradingProteus/helios_v3/daemon.py per R2D2.md:60 + bridge.py:199 references — but not directly read in this evidence sweep. Without it, blueprint:helios:v1 §05 (reduction logic) is INFERRED, not confirmed.",
+      "priority": "HIGH (blueprint v2 prerequisite)",
+      "asks_who": "Matt — confirm R2D2 read access path"
+    },
+    {
+      "id": "Q14",
+      "blueprint": "forbidden_merges:v1 rule 11",
+      "question": "Solo's DB grants and fabric write permissions — what is Solo allowed to write?",
+      "context": "Gatekeeper rule 11 says Solo must be read-only on helios_strategy_signals and helios:state. UNVERIFIED — gatekeeper TODO to audit. Need authoritative answer to confirm rule is enforceable.",
+      "priority": "MEDIUM",
+      "asks_who": "Helm"
+    },
+    {
+      "id": "Q15",
+      "blueprint": "forbidden_merges:v1 rule 10",
+      "question": "PLUTUS isolation — are there currently any code paths where PLUTUS sim broker results feed live decision systems?",
+      "context": "Architectural rule says no, but not audited. Gatekeeper recommends a sweep.",
+      "priority": "MEDIUM",
+      "asks_who": "Helm + R2D2 (self) audit pass"
+    }
+  ],
+
+  "next_round_blueprints": {
+    "after_falcon_helios_ratified": [
+      "r2d2:blueprint:system_map:v1 — full data-flow ASCII + service-graph",
+      "r2d2:blueprint:signal_lifecycle:v1 — single fire from setup detection → outcome resolution",
+      "r2d2:blueprint:data_authority:v1 — which system OWNS which truth (table-by-table)",
+      "r2d2:blueprint:r2d2:v1 — gatekeeper's own contract",
+      "r2d2:blueprint:ares:v1 — risk-veto layer contract",
+      "r2d2:blueprint:solo:v1 — execution authority contract",
+      "r2d2:blueprint:neo:v1 — observation layer contract",
+      "r2d2:blueprint:plutus:v1 — simulation environment contract",
+      "r2d2:blueprint:testing_contract:v1 — what R2D2 tests, how, against which authorities"
+    ],
+    "scope_note": "Per Matt 2026-05-03: 'Start with Falcon and Helios only.' These come after."
+  }
+}

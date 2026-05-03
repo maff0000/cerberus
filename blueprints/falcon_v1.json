@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0.0",
+  "key": "r2d2:blueprint:falcon:v1",
+  "owner": "r2d2 (blueprint gatekeeper)",
+  "ratified_by": "PENDING — first draft 2026-05-03 awaiting Matt review",
+  "created_utc": "2026-05-03T00:00:00Z",
+  "doctrine": "Falcon SEES. Not the trader.",
+  "system": {
+    "name": "Falcon",
+    "role": "Strategy detection layer",
+    "source_location": "/srv-dev/falcon/ on dell-debian",
+    "runs_as": "ShadowDaemon — `python3 -m falcon.daemon.main` — SHADOW MODE ONLY as of 2026-05-03 (no broker integration; persists decisions, no Tyche handoff, no execution path reachable per main.py:6)",
+    "cycle_cadence": "One cycle per M5 candle boundary"
+  },
+
+  "01_purpose": "Detect potential trade setups across 18 plugin strategies and emit structured fire/decline records every M5 cycle. A Falcon FIRE is a STRUCTURED OBSERVATION that a known setup may exist. It is NOT a trade instruction. Falcon does not decide alignment, does not veto risk, does not size positions, does not execute. Pure observation layer.",
+
+  "02_inputs": {
+    "market_data": [
+      "HERMES M5 / M1 OHLC candles (multi-instrument: XAU_USD, EUR_USD, USD_JPY, XAG_USD, WTICO_USD)",
+      "Indicator calculations (ATR(14), RSI, EMA, etc.) sourced via /srv-dev/falcon/adapters/"
+    ],
+    "context": [
+      "instrument, mode (NORMAL or SCALP), session, regime context per cycle",
+      "ARES state field in risk_context (OK / WARN / BLOCK / UNKNOWN) — READ OBSERVATIONALLY, not enforced; Falcon does not call ARES veto"
+    ],
+    "configuration": [
+      "falcon_config (DB) — global runtime config; FAIL-LOUD on missing key (GOV-CFG-001, /srv-dev/falcon/core/config.py:FalconConfigLoader)",
+      "falcon_strategy_catalog (DB) — strategy identity registry (plugin_id, family, mode, risk_class)",
+      "falcon_select_enablement (DB) — per-strategy enablement; only enabled=1 compete in selection",
+      "falcon_instrument_config (DB) — per-instrument SL/TP clamp bounds, session config",
+      "Per-strategy config tables — each has load_<plugin_id>_config_from_db factory",
+      "falcon_outcome_resolver_config (DB) — outcome resolution thresholds (MAX_LOOKFORWARD_BARS_M5=36, OUTCOME_METHOD=wick_aware, etc.)"
+    ]
+  },
+
+  "03_outputs": {
+    "database": {
+      "helios_strategy_signals": "ONE ROW PER STRATEGY PER CYCLE — Solo's unified read feed. Both fires (fired=1) and declines (fired=0). Columns: cycle_id, instrument, timestamp, strategy_id, strategy_name, strategy_version, fired, confidence (0-10 scaled), adjusted_confidence (× R2D2 health_score), health_score, health_status, health_source, health_as_of, direction (LONG/SHORT/NULL), phase (TRIGGERED/WATCHING/ARMED/etc.), key_level, invalidation_level, entry_price, sl_price, tp1_price, tp2_price, reason_codes (JSON array), evidence (JSON), gate_trace (JSON array — v1 instrumented strategies only), regime_context (JSON), config_version_hash, source_data_hash. Outcome columns (outcome, outcome_resolved_at_utc, outcome_method='wick_aware', outcome_bars_to_resolution, outcome_details_json) populated post-fire by maintenance/outcome_resolver.py. NAMING NOTE: 'helios_strategy_signals' is a misleading legacy name — this table is OWNED BY FALCON. See r2d2:blueprint:forbidden_merges:v1 rule 8.",
+      "falcon_decisions": "ONE ROW PER CYCLE — outcome-scoped. PK=decision_id ({cycle_ts}Z:{instrument}:{mode}). outcome ENUM: TRADE | DECLINE | FAULT. Stores selected proposal_json, selection_json, execution_json, fault_json (all schema-versioned contracts).",
+      "falcon_pulse_proposal_log": "RAW STRATEGY TRUTH — every proposal AND every decline regardless of selector state. Independent data source for health aggregation. Pulse MUST NOT read falcon_select_enablement (would skew observation).",
+      "falcon_pulse_strategy_health": "Nightly aggregate per strategy×instrument: health_score (0-100), health_status (HEALTHY/DEGRADING/COLD/BROKEN), drift_score, win_rate, expectancy, profit_factor, max_drawdown.",
+      "falcon_fault_log": "Persisted FaultContract rows. severity DEBUG..CRITICAL. recovery_action ENUM: CONTINUE | DECLINE | HALT | EXCLUDE_PROPOSAL | RETRY.",
+      "falcon_selection_audit": "Per-proposal scoring detail per cycle (rank, status SELECTED/RANKED/REJECTED/FILTERED, reject_reason, reject_phase)."
+    },
+    "fabric_keys": {
+      "falcon:bars:rolling:{tf}:{instrument}": "Rolling OHLC mirror (M1, M5, M15, H1, D1)",
+      "falcon:structure:events:latest:{event_type}:{instrument}:{timeframe}": "Latest structural event (CHOCH, BOS, ORDER_BLOCK_CANDIDATE, swings)",
+      "falcon:structure:swing:latest:{instrument}:{timeframe}": "Latest swing point",
+      "falcon:structure:ingest:health[:{instrument}]": "Structure ingestion health",
+      "falcon:fires:recent:{instrument}": "Mirror of recent fires for fast read (rows + row_count + query_ts envelope)",
+      "falcon:fibs:cascade:{instrument}": "Fibonacci cascade levels",
+      "falcon:ranger:*": "Falcon Ranger (live position-management) — separate WO, not part of detection layer; CONDITIONALLY SIGN-OFF READY per Matt 2026-04-29"
+    }
+  },
+
+  "04_database_and_redis_surface": {
+    "db_authority_unknown": "Both evidence agents disagreed: Falcon agent reports tradingSignals on 127.0.0.1:3307; Helios agent reports tradingScalp. Both likely hit dell-debian MariaDB. AUTHORITATIVE schema name + connection string NEEDS MATT CONFIRMATION (see r2d2:blueprint:open_questions:v1 Q1).",
+    "db_creds": "/srv-dev/tradingProteus/.env (DB_USER, DB_PASSWORD)",
+    "fabric_api": "http://localhost:8080 on Trinity. POST /api/v1/redis/set, GET /api/v1/redis/get/{key}, GET /api/v1/redis/keys/{pattern}",
+    "tables_falcon_writes": [
+      "falcon_decisions",
+      "helios_strategy_signals",
+      "falcon_pulse_proposal_log",
+      "falcon_pulse_strategy_health (via maintenance job)",
+      "falcon_selection_audit",
+      "falcon_fault_log"
+    ],
+    "tables_falcon_reads": [
+      "falcon_config",
+      "falcon_strategy_catalog",
+      "falcon_select_enablement",
+      "falcon_instrument_config",
+      "falcon_outcome_resolver_config",
+      "Per-strategy config tables (e.g., csdr_config)",
+      "HERMES candle tables (schema details UNKNOWN from Falcon source alone)"
+    ]
+  },
+
+  "05_strategy_plugins": {
+    "count": 18,
+    "all_subclass": "StrategyBase",
+    "loaded_by": "/srv-dev/falcon/daemon/main.py:67-100 (ShadowDaemon)",
+    "list": [
+      {"plugin_id": "asia_orb", "family": "TREND", "purpose": "Asia opening range breakout (close-confirm M5 break)"},
+      {"plugin_id": "brc", "family": "TREND", "purpose": "Breakout-retest-continuation (WO-FALCON-BRC-001)"},
+      {"plugin_id": "capitulation_flip_retest", "family": "REVERSAL", "purpose": "Fades capitulation reversal (live since 2026-04-28)"},
+      {"plugin_id": "climax_reversal", "family": "REVERSAL", "purpose": "Climax reversal fade (CRF) — exhaustion required; gate_trace v1 instrumented"},
+      {"plugin_id": "coil_breakout", "family": "RANGE", "purpose": "Coil breakout (compression-to-breakout); gate_trace v1 instrumented"},
+      {"plugin_id": "csdr", "family": "TREND", "purpose": "Compression sweep displacement retest (8-state machine; Matt original); gate_trace v1 instrumented"},
+      {"plugin_id": "exhaustion_reversal", "family": "REVERSAL", "purpose": "Exhaustion reversal entry"},
+      {"plugin_id": "fdr", "family": "REVERSAL", "purpose": "Failed displacement reversal — fades failed displacement when price reclaims prior range"},
+      {"plugin_id": "fib_rejection", "family": "TREND", "purpose": "Fibonacci retracement rejection"},
+      {"plugin_id": "meanrev_edges", "family": "RANGE", "purpose": "Mean reversion at S/R edges"},
+      {"plugin_id": "nowic_at", "family": "RANGE", "purpose": "NOWIC Asia/Tokyo time-window mode"},
+      {"plugin_id": "nowic_rt", "family": "RANGE", "purpose": "NOWIC retry/retest mode"},
+      {"plugin_id": "ny_thrust", "family": "TREND", "purpose": "NY session thrust breakout"},
+      {"plugin_id": "sweep_fvg", "family": "SWEEP", "purpose": "Anti-chase displacement FVG retrace entry (6-gate validation)"},
+      {"plugin_id": "sweep_reclaim", "family": "SWEEP", "purpose": "Liquidity sweep reclaim (M15/M5 variants)"},
+      {"plugin_id": "tpc", "family": "TREND", "purpose": "Trend pullback continuation (EMA21/50 zone bounce)"},
+      {"plugin_id": "trend_day_runner", "family": "TREND", "purpose": "Trend day runner (TDR) — riding structural moves"},
+      {"plugin_id": "whipsaw_fade", "family": "REVERSAL", "purpose": "Whipsaw fade (triggered on failed-breakout stopout)"}
+    ],
+    "families_in_use": ["TREND", "RANGE", "REVERSAL", "EVENT", "SWEEP", "MOMENTUM", "RISK_GOVERNOR"],
+    "families_extensibility": "UNKNOWN — schema allows VARCHAR(32); selector usage of families not audited"
+  },
+
+  "06_meaning_of_a_strategy_fire": {
+    "contract": "ProposalContract (schema_version 1.3.0)",
+    "returned_by": "StrategyBase.evaluate(ctx, inp) → (contract, state_snapshot)",
+    "fields": {
+      "contract_type": "PROPOSAL",
+      "proposal_id": "unique identifier",
+      "timestamp": "ISO UTC",
+      "identity": "{plugin_id, family, instrument, mode}",
+      "proposal": "{direction (BUY/SELL), entry_type, setup_quality (0-1), base_confidence (0-1), sl_atr_multiple, tp_atr_multiple, setup_key, lock_ttl_minutes, key_level, entry_price, sl_price, tp1_price, tp2_price, invalidation_level}",
+      "proposal_reasons": "Array (e.g. ['CSDR_FVG_RETEST_CONFIRMED'])",
+      "gate_trace": "Array of Guard objects (name, order, result, required, observed) — v1 instrumented strategies only (csdr, climax_reversal, coil_breakout confirmed; others UNKNOWN)",
+      "metadata": "Snapshot dict with per-strategy detection details"
+    },
+    "what_it_means": "The worker's setup detection has reached the TRIGGERED phase and all internal gates passed. A fire is RECORDED but DOES NOT execute. Fires aggregate via Helios into alignment state. Solo (live trader) reads the unified helios_strategy_signals feed and decides whether to act.",
+    "scaling": "Strategy worker emits confidence in 0-1 (decimal). Signal feed scales to 0-10 for helios_strategy_signals.confidence column.",
+    "adjusted_confidence": "= confidence × health_score. health_score currently defaults to 1.0 (R2D2_TEMPORARY_BRIDGE) — no real filtering until R2D2 ships health weights."
+  },
+
+  "07_meaning_of_a_decline": {
+    "contract": "DeclineContract",
+    "fields": {
+      "contract_type": "DECLINE",
+      "decline.reason_primary": "Hierarchical code (e.g. 'DECLINE.CSDR.COMPRESSION_JUST_DETECTED')",
+      "decline.reason_codes": "Array of codes for compound reasons",
+      "decline.metrics_snapshot": "Gate failure context (numeric thresholds vs observed)",
+      "_phase_hint": "State at decline time (used as phase column in helios_strategy_signals)",
+      "gate_trace": "Failed guards (v1 strategies)"
+    },
+    "what_it_means": "Strategy did not satisfy a gate this cycle. Setup may still progress in future cycles (state machines persist). Declines are observational, not failures.",
+    "why_record": "Declines are how we OBSERVE strategies that aren't firing — critical for health monitoring (falcon_pulse_proposal_log) and gatekeeper auditing. A strategy with high decline volume but zero fires may indicate gate misconfiguration."
+  },
+
+  "08_what_falcon_is_forbidden_to_decide": [
+    "Whether to execute a trade (Solo / Matt / NEO own that)",
+    "Whether multiple strategies align (Helios owns alignment reduction)",
+    "Whether risk is acceptable (ARES owns risk veto)",
+    "Position sizing (downstream of execution authority)",
+    "Whether ARES state should change (Falcon observes risk_context.ares_state, never writes it)",
+    "Order placement / broker calls (ZERO execution code in /srv-dev/falcon/; tripwire-grade rule)",
+    "Cross-strategy conflict resolution (Helios layer)",
+    "Outcome ground-truth substitution (outcome_resolver.py wick-aware method is canonical; R2D2 audits disagreements only)"
+  ],
+
+  "09_known_gaps_and_uncertainty": [
+    "SHADOW MODE ONLY as of 2026-05-03 — no live broker integration. Production live mode not yet implemented (or at least not visible in /srv-dev/falcon/daemon/).",
+    "DB authority for helios_strategy_signals (tradingSignals vs tradingScalp): UNKNOWN. Evidence agents disagreed.",
+    "Gate-trace v1 instrumentation status: CSDR, climax_reversal, coil_breakout CONFIRMED; other 15 strategies UNKNOWN (default empty list per writer). Audit pending.",
+    "adjusted_confidence currently × 1.0 (R2D2_TEMPORARY_BRIDGE) — R2D2 owes real health weight delivery (blocks Helios multi-strategy confluence per Helios interim_green.md).",
+    "Strategy-family extensibility (TREND/RANGE/REVERSAL/EVENT/SWEEP/MOMENTUM/RISK_GOVERNOR): hardcoded in catalog or extensible? UNKNOWN.",
+    "Falcon Ranger (post-entry bracket lifecycle): CONDITIONALLY SIGN-OFF READY (Matt 2026-04-29); not part of detection layer; reviewed under separate WO.",
+    "Forge directory in /srv-dev/falcon/forge/: purpose UNKNOWN."
+  ],
+
+  "10_canaries_and_tripwires": {
+    "existing": [
+      "BoundedTripwire class (/srv-dev/falcon/core/tripwires.py) — anomaly windows, cooldowns, max_per_day caps (WO-AEGIS-CORE-0001)",
+      "Invariant helpers: require_not_empty(), require_equal(), require_positive(), require_schema_version() — fail-loud at the boundary",
+      "assert_contract_valid() — raises ContractValidationError on schema breach",
+      "Proposal Guardrail Canary (/srv-dev/falcon/ops/canary/canary_proposal_guardrail.py) — emits 5 deliberately-malformed proposals + 1 clean; asserts each rejected with architect-locked reason code; exit 0=PASS / 1=FAIL; run-on-deploy proof",
+      "CN_FALCON_SIGNAL_WRITE canary (signal_feed.py:339) — first successful helios_strategy_signals write logs canary",
+      "FaultEmitter (core/faults.py) — persists fault contracts to falcon_fault_log with severity + recovery_action"
+    ],
+    "required_additions_per_gatekeeper": [
+      "Heartbeat tripwire: ShadowDaemon must emit falcon:heartbeat:dell_debian to fabric every cycle. Absence > 90s → canary fire.",
+      "Signal-write throughput tripwire: if helios_strategy_signals row count for a cycle < count of enabled strategies, FaultEmitter must raise (silent strategy detection).",
+      "Schema-version tripwire: if proposal contract schema_version != '1.3.0', reject + fault (prevent silent migration drift).",
+      "ARES observability tripwire: if Falcon emits PROPOSAL during ARES_BLOCK without an accompanying DECLINE somewhere, raise gatekeeper alarm (potential boundary violation).",
+      "Gate-trace coverage tripwire: scheduled audit asserting all enabled strategies have gate_trace populated (not empty list); gates with gate_trace absent flagged for v1 instrumentation."
+    ]
+  },
+
+  "evidence_sources": {
+    "source_tree": "/srv-dev/falcon/ on dell-debian (read via ssh root@192.168.11.10) — 35+ Python modules, 36 SQL migrations, 18 strategy plugins",
+    "schemas": "/srv-dev/falcon/migrations/AEGIS-001_foundation_tables.sql + WO-OUTCOME-RESOLVER-METHODOLOGY-0001.sql + signal_feed.py:120-138",
+    "fabric": "149+ falcon:* keys queried via http://localhost:8080/api/v1/redis/keys/falcon:*",
+    "exemplar_worker": "/srv-dev/falcon/strategies/csdr/worker.py (1-879 lines)",
+    "writer": "/srv-dev/falcon/execute/signal_feed.py + execute/writer.py",
+    "daemon": "/srv-dev/falcon/daemon/main.py + daemon/cycle.py",
+    "ratification_cited": "WO-OUTCOME-RESOLVER-METHODOLOGY-0001 (architect 2026-04-29)"
+  }
+}
