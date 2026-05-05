@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""PLUTUS Safety Canary — PRE-FLIGHT.
+"""PLUTUS Safety Canary — PRE-FLIGHT (v1.1, manifest-primary).
 
-Snapshot F4 SACRED invariants + namespace inventory. Persist to
-plutus.safety_canary_runs (PRE) and mirror to sim_broker:reports:safety:<run_id>:v1.
+Validates manifest invariants up front. If invariants fail (missing/stale/
+version-unknown/self-sha-mismatch/plutus_present/plutus_paths_non_empty),
+exits 1 — engine MUST refuse to start.
 
-Exit codes:
-  0  PASS — engine may proceed
-  1  FAIL — engine MUST refuse to start
+Otherwise persists the snapshot to plutus.safety_canary_runs (PRE) and
+mirrors to sim_broker:reports:safety:<run_id>:v1.
 
 Modes:
-  --mode engine_start  (requires --run-id)
-  --mode cron          (run_id auto-derived: cron-<utcstamp>)
+  --mode engine_start  (requires --run-id; phase=PRE)
+  --mode cron          (run_id auto cron-<utcstamp>; phase=CRON)
 
 Design source-of-truth: sim_broker:design:safety_canary:v1
+Manifest schema:        prod_guard:broker_path:manifest:schema:v1
 WO: WO-PLUTUS-V1-1A
 """
 from __future__ import annotations
@@ -21,8 +22,7 @@ import argparse
 import json
 import sys
 
-from _common import (  # noqa: E402  (sibling import)
-    collect_snapshot_errors,
+from _common import (  # noqa: E402
     db_insert_canary_run,
     discord_alert,
     get_db_connection,
@@ -36,14 +36,13 @@ WO = "WO-PLUTUS-V1-1A"
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLUTUS safety canary pre-flight")
+    parser = argparse.ArgumentParser(description="PLUTUS safety canary pre-flight (v1.1)")
     parser.add_argument("--mode", choices=["engine_start", "cron"], required=True)
     parser.add_argument("--run-id", default=None,
                         help="Required when --mode engine_start")
     parser.add_argument("--no-db", action="store_true",
-                        help="Skip DB write (useful for smoke-tests before migration lands)")
-    parser.add_argument("--print-snapshot", action="store_true",
-                        help="Print the snapshot JSON to stdout (debug)")
+                        help="Skip DB write (smoke-tests before migration_005)")
+    parser.add_argument("--print-snapshot", action="store_true")
     args = parser.parse_args()
 
     if args.mode == "engine_start" and not args.run_id:
@@ -53,14 +52,12 @@ def main() -> int:
     run_id = args.run_id or f"cron-{utc_now_compact()}"
     phase = "PRE" if args.mode == "engine_start" else "CRON"
 
-    snapshot = take_snapshot()
+    snapshot, validation_errors = take_snapshot()
     snapshot_persist = snapshot_for_persistence(snapshot)
-    errors = collect_snapshot_errors(snapshot)
 
-    outcome = "FAIL" if errors else "PASS"
-    fail_reasons = [{"reason_code": e, "detail": ""} for e in errors] if errors else None
+    outcome = "FAIL" if validation_errors else "PASS"
+    fail_reasons = validation_errors if validation_errors else None
 
-    # DB write (best-effort if --no-db)
     db_id = None
     db_skip_reason = None
     if not args.no_db:
@@ -85,8 +82,14 @@ def main() -> int:
     mirror_key = mirror_to_fabric(
         run_id_or_cron_id=run_id,
         wo=WO,
-        pre={"snapshot": snapshot_persist, "outcome": outcome, "phase": phase,
-             "db_canary_id": db_id, "db_skip_reason": db_skip_reason},
+        pre={
+            "snapshot": snapshot_persist,
+            "outcome": outcome,
+            "phase": phase,
+            "db_canary_id": db_id,
+            "db_skip_reason": db_skip_reason,
+            "validation_errors": validation_errors,
+        },
         post=None,
         diff=None,
         outcome="PENDING" if outcome == "PASS" else "FAIL",
@@ -98,8 +101,9 @@ def main() -> int:
 
     if outcome == "FAIL":
         discord_alert(fail_reasons, wo=WO, run_id=run_id)
+        codes = [r["reason_code"] for r in fail_reasons]
         sys.stderr.write(
-            f"[pre_flight] FAIL run_id={run_id} reasons={errors} mirror={mirror_key}\n"
+            f"[pre_flight] FAIL run_id={run_id} reasons={codes} mirror={mirror_key}\n"
         )
         return 1
 

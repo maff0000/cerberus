@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
-"""PLUTUS Safety Canary — POST-FLIGHT.
+"""PLUTUS Safety Canary — POST-FLIGHT (v1.1, manifest-primary).
 
-Re-snapshot, diff against PRE for same run_id. FAIL loud on ANY divergence.
+Diffs PRE manifest fields vs current manifest. FAIL loud on any divergence.
 
-Exit codes:
-  0  PASS — run valid
-  1  FAIL — run marked invalid; Discord critical alert fires (rate-limited)
+Failure reasons (per prod_guard:broker_path:manifest:schema:v1.consumer_failure_reasons):
+  F4_VIOLATION_EXECUTOR_BINARY_CHANGED
+  F4_VIOLATION_DISPATCHER_CHANGED
+  F4_VIOLATION_OBSERVER_CHANGED
+  F4_VIOLATION_AGENT_SMITH_REGISTRY_CHANGED
+  F4_VIOLATION_PLUTUS_PRESENT_TRUE
+  F4_VIOLATION_PLUTUS_PATHS_NON_EMPTY
+  F4_VIOLATION_KNOWN_BROKERS_CHANGED
+  F4_VIOLATION_MANIFEST_SHA_MISMATCH (re-validated each run)
+  F4_VIOLATION_PROP_TRADES_COUNT_CHANGED
+  F4_VIOLATION_PROP_TRADES_KEYS_CHANGED
+  NAMESPACE_ISOLATION_VIOLATION
+  FAIL_PREFLIGHT_MANIFEST_* (re-checked at POST)
+
+Modes:
+  --mode manual          (V1-1A canonical operator-callable post-flight)
+  V1-2 will add: replay_complete
 
 Design source-of-truth: sim_broker:design:safety_canary:v1
 WO: WO-PLUTUS-V1-1A
@@ -26,23 +40,62 @@ from _common import (  # noqa: E402
     mirror_to_fabric,
     snapshot_for_persistence,
     take_snapshot,
+    validate_manifest,
 )
 
 WO = "WO-PLUTUS-V1-1A"
 
+# (PRE-field, POST-field, reason_code) — both fields read from snapshot.manifest
+MANIFEST_FIELD_DIFFS = [
+    ("neo_ftmo_executor_sha", "F4_VIOLATION_EXECUTOR_BINARY_CHANGED"),
+    ("neo_dispatcher_sha", "F4_VIOLATION_DISPATCHER_CHANGED"),
+    ("neo_observer_sha", "F4_VIOLATION_OBSERVER_CHANGED"),
+    ("agent_smith_registry_snapshot_sha", "F4_VIOLATION_AGENT_SMITH_REGISTRY_CHANGED"),
+    ("known_brokers", "F4_VIOLATION_KNOWN_BROKERS_CHANGED"),
+]
 
-def diff_snapshots(pre: dict, post: dict) -> tuple[list[dict], dict]:
-    """Return (fail_reasons, diff_summary).
 
-    Reasons (per design §2):
-      F4_VIOLATION_PROP_TRADES_COUNT_CHANGED
-      F4_VIOLATION_PROP_TRADES_KEYS_CHANGED
-      F4_VIOLATION_AGENT_SMITH_REGISTRY_CHANGED
-      F4_VIOLATION_EXECUTOR_BINARY_CHANGED
-      NAMESPACE_ISOLATION_VIOLATION (per offending key)
-    """
+def diff_snapshots(pre: dict, post: dict, post_validation_errors: list[dict]) -> tuple[list[dict], dict]:
+    """Return (fail_reasons, diff_summary)."""
     reasons: list[dict] = []
     diff: dict = {}
+
+    # Manifest field diffs (PRE vs POST)
+    pre_m = pre.get("manifest", {}) or {}
+    post_m = post.get("manifest", {}) or {}
+    for field, code in MANIFEST_FIELD_DIFFS:
+        pv = pre_m.get(field)
+        qv = post_m.get(field)
+        if pv != qv:
+            diff[f"manifest.{field}"] = {"pre": pv, "post": qv}
+            reasons.append({
+                "reason_code": code,
+                "detail": f"pre={pv} post={qv}",
+            })
+
+    # plutus_present transition (false -> true)
+    if pre_m.get("plutus_present") is False and post_m.get("plutus_present") is True:
+        reasons.append({
+            "reason_code": "F4_VIOLATION_PLUTUS_PRESENT_TRUE",
+            "detail": "plutus_present transitioned false -> true during run",
+        })
+
+    # plutus_paths_observed transition ([] -> non-empty)
+    pre_paths = pre_m.get("plutus_paths_observed") or []
+    post_paths = post_m.get("plutus_paths_observed") or []
+    if not pre_paths and post_paths:
+        reasons.append({
+            "reason_code": "F4_VIOLATION_PLUTUS_PATHS_NON_EMPTY",
+            "detail": f"plutus_paths_observed transitioned []->{post_paths} during run",
+        })
+
+    # POST-side manifest invariants — if manifest went stale/missing/etc during run, surface
+    # (avoid double-reporting MANIFEST_SHA_MISMATCH if already in field diffs above)
+    seen_codes = {r["reason_code"] for r in reasons}
+    for ve in post_validation_errors:
+        if ve["reason_code"] not in seen_codes:
+            reasons.append(ve)
+            seen_codes.add(ve["reason_code"])
 
     # F4: prop_trades count
     pre_pt = pre.get("prop_trades", {})
@@ -53,8 +106,6 @@ def diff_snapshots(pre: dict, post: dict) -> tuple[list[dict], dict]:
             "reason_code": "F4_VIOLATION_PROP_TRADES_COUNT_CHANGED",
             "detail": f"pre={pre_pt.get('count')} post={post_pt.get('count')}",
         })
-
-    # F4: prop_trades key list (catches additions/deletions/renames even at same count)
     if pre_pt.get("key_list_sha256") != post_pt.get("key_list_sha256"):
         diff["prop_trades_key_list_sha256"] = {
             "pre": pre_pt.get("key_list_sha256"),
@@ -65,36 +116,13 @@ def diff_snapshots(pre: dict, post: dict) -> tuple[list[dict], dict]:
             "detail": "key list SHA differs (additions/deletions/renames)",
         })
 
-    # F4: agent_smith registry
-    pre_as = pre.get("agent_smith_registry", {})
-    post_as = post.get("agent_smith_registry", {})
-    if pre_as.get("sha256") != post_as.get("sha256"):
-        diff["agent_smith_registry_sha256"] = {
-            "pre": pre_as.get("sha256"),
-            "post": post_as.get("sha256"),
-        }
-        reasons.append({
-            "reason_code": "F4_VIOLATION_AGENT_SMITH_REGISTRY_CHANGED",
-            "detail": f"key={pre_as.get('key')}",
-        })
-
-    # F4: executor binary SHA (mtime ignored — only content matters)
-    pre_ex = pre.get("executor", {})
-    post_ex = post.get("executor", {})
-    if pre_ex.get("sha256") != post_ex.get("sha256"):
-        diff["executor_sha256"] = {"pre": pre_ex.get("sha256"), "post": post_ex.get("sha256")}
-        reasons.append({
-            "reason_code": "F4_VIOLATION_EXECUTOR_BINARY_CHANGED",
-            "detail": f"path={pre_ex.get('path')}",
-        })
-
-    # Namespace isolation: new keys in POST that weren't in PRE, outside allowed namespaces
+    # Namespace isolation: NEW keys in POST that weren't in PRE, outside allowed namespaces
     pre_other = set(pre.get("namespace_inventory", {}).get("other_keys_full", []))
     post_other = set(post.get("namespace_inventory", {}).get("other_keys_full", []))
-    new_keys_outside_allowed = sorted(post_other - pre_other)
-    if new_keys_outside_allowed:
-        diff["new_keys_outside_allowed"] = new_keys_outside_allowed[:100]
-        for k in new_keys_outside_allowed:
+    new_keys = sorted(post_other - pre_other)
+    if new_keys:
+        diff["new_keys_outside_allowed"] = new_keys[:100]
+        for k in new_keys:
             if not is_allowed_namespace(k):
                 reasons.append({
                     "reason_code": "NAMESPACE_ISOLATION_VIOLATION",
@@ -105,28 +133,24 @@ def diff_snapshots(pre: dict, post: dict) -> tuple[list[dict], dict]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="PLUTUS safety canary post-flight")
+    parser = argparse.ArgumentParser(description="PLUTUS safety canary post-flight (v1.1)")
     parser.add_argument("--run-id", required=True)
     parser.add_argument(
         "--mode",
-        choices=["manual"],  # V1-2 will add "replay_complete"; ExecStopPost reuses "manual"
+        choices=["manual"],
         default="manual",
-        help=("Post-flight mode. V1-1A: 'manual' (canonical operator-callable path; "
-              "ExecStopPost reuses this). V1-2 adds 'replay_complete' for in-process "
-              "deterministic-run callers."),
+        help=("Post-flight mode. V1-1A: 'manual' (canonical operator-callable; "
+              "ExecStopPost reuses this). V1-2 adds 'replay_complete'."),
     )
     parser.add_argument("--no-db", action="store_true",
-                        help="Skip DB read/write — fetch PRE from fabric mirror instead")
-    parser.add_argument("--print-diff", action="store_true",
-                        help="Print the diff JSON to stdout (debug)")
+                        help="Skip DB read/write — fall back to fabric mirror for PRE")
+    parser.add_argument("--print-diff", action="store_true")
     args = parser.parse_args()
 
     run_id = args.run_id
 
-    # POST snapshot
-    post_snapshot = take_snapshot()
+    post_snapshot, post_validation_errors = take_snapshot()
 
-    # Load PRE snapshot — DB first, fabric mirror as fallback
     pre_snapshot = None
     pre_source = None
     db_skip_reason = None
@@ -135,7 +159,9 @@ def main() -> int:
         conn, err = get_db_connection()
         if conn is None:
             db_skip_reason = err
-            sys.stderr.write(f"[post_flight] DB read failed: {err} — falling back to fabric mirror\n")
+            sys.stderr.write(
+                f"[post_flight] DB read failed: {err} — falling back to fabric mirror\n"
+            )
         else:
             try:
                 pre_snapshot = db_get_pre_snapshot(conn, run_id)
@@ -163,7 +189,7 @@ def main() -> int:
                          diff=None, outcome="FAIL", fail_reasons=[reason])
         return 1
 
-    fail_reasons, diff = diff_snapshots(pre_snapshot, post_snapshot)
+    fail_reasons, diff = diff_snapshots(pre_snapshot, post_snapshot, post_validation_errors)
     outcome = "FAIL" if fail_reasons else "PASS"
 
     post_persist = snapshot_for_persistence(post_snapshot)
@@ -188,9 +214,10 @@ def main() -> int:
     mirror_key = mirror_to_fabric(
         run_id_or_cron_id=run_id,
         wo=WO,
-        pre=None,  # don't overwrite existing PRE
+        pre=None,
         post={"snapshot": post_persist, "outcome": outcome, "db_canary_id": db_id,
-              "pre_loaded_from": pre_source, "mode": args.mode},
+              "pre_loaded_from": pre_source, "mode": args.mode,
+              "post_validation_errors": post_validation_errors},
         diff=diff,
         outcome=outcome,
         fail_reasons=fail_reasons or None,
@@ -201,8 +228,9 @@ def main() -> int:
 
     if outcome == "FAIL":
         discord_alert(fail_reasons, wo=WO, run_id=run_id)
+        codes = [r["reason_code"] for r in fail_reasons]
         sys.stderr.write(
-            f"[post_flight] FAIL run_id={run_id} reasons={[r['reason_code'] for r in fail_reasons]} mirror={mirror_key}\n"
+            f"[post_flight] FAIL run_id={run_id} reasons={codes} mirror={mirror_key}\n"
         )
         return 1
 
