@@ -107,6 +107,14 @@ def diff_snapshots(pre: dict, post: dict) -> tuple[list[dict], dict]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="PLUTUS safety canary post-flight")
     parser.add_argument("--run-id", required=True)
+    parser.add_argument(
+        "--mode",
+        choices=["manual"],  # V1-2 will add "replay_complete"; ExecStopPost reuses "manual"
+        default="manual",
+        help=("Post-flight mode. V1-1A: 'manual' (canonical operator-callable path; "
+              "ExecStopPost reuses this). V1-2 adds 'replay_complete' for in-process "
+              "deterministic-run callers."),
+    )
     parser.add_argument("--no-db", action="store_true",
                         help="Skip DB read/write — fetch PRE from fabric mirror instead")
     parser.add_argument("--print-diff", action="store_true",
@@ -182,7 +190,7 @@ def main() -> int:
         wo=WO,
         pre=None,  # don't overwrite existing PRE
         post={"snapshot": post_persist, "outcome": outcome, "db_canary_id": db_id,
-              "pre_loaded_from": pre_source},
+              "pre_loaded_from": pre_source, "mode": args.mode},
         diff=diff,
         outcome=outcome,
         fail_reasons=fail_reasons or None,

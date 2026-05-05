@@ -97,7 +97,7 @@ def t1_prop_trades_violation(no_db: bool) -> bool:
         return False
     fabric_set(fake_key, {"test": "T1"})
     try:
-        post_rc, _, _ = run(["python3", POST, "--run-id", run_id, *flags], expect_exit=1)
+        post_rc, _, _ = run(["python3", POST, "--mode", "manual", "--run-id", run_id, *flags], expect_exit=1)
     finally:
         fabric_delete(fake_key)
 
@@ -113,7 +113,7 @@ def t1_prop_trades_violation(no_db: bool) -> bool:
     verify_run_id = f"TEST-T1-VERIFY-{utc_compact()}"
     pre2_rc, _, _ = run(["python3", PRE, "--mode", "engine_start", "--run-id", verify_run_id, *flags],
                         expect_exit=0)
-    post2_rc, _, _ = run(["python3", POST, "--run-id", verify_run_id, *flags], expect_exit=0)
+    post2_rc, _, _ = run(["python3", POST, "--mode", "manual", "--run-id", verify_run_id, *flags], expect_exit=0)
 
     return all([
         assert_outcome(post_rc, 1, "T1 post_flight FAIL on prop_trades violation"),
@@ -136,7 +136,7 @@ def t2_namespace_isolation(no_db: bool) -> bool:
         return False
     fabric_set(fake_key, {"test": "T2"})
     try:
-        post_rc, _, _ = run(["python3", POST, "--run-id", run_id, *flags], expect_exit=1)
+        post_rc, _, _ = run(["python3", POST, "--mode", "manual", "--run-id", run_id, *flags], expect_exit=1)
     finally:
         fabric_delete(fake_key)
 
