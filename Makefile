@@ -35,10 +35,10 @@ install-systemd:
 	systemctl daemon-reload
 
 enable-timers:
-	systemctl enable --now r2d2-maintenance-drift.timer r2d2-maintenance-sample-growth.timer r2d2-maintenance-weekly.timer
+	systemctl enable --now r2d2-maintenance-drift.timer r2d2-maintenance-sample-growth.timer r2d2-maintenance-weekly.timer r2d2-maintenance-correlation-tracker.timer
 
 disable-timers:
-	systemctl disable --now r2d2-maintenance-drift.timer r2d2-maintenance-sample-growth.timer r2d2-maintenance-weekly.timer
+	systemctl disable --now r2d2-maintenance-drift.timer r2d2-maintenance-sample-growth.timer r2d2-maintenance-weekly.timer r2d2-maintenance-correlation-tracker.timer
 
 sync-from-live:
 	cp -v $(LIVE_OPT)/maintenance/*.py $(REPO)/maintenance/
