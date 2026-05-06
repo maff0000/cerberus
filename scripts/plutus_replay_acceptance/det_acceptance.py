@@ -28,13 +28,19 @@ import sys
 
 from _common import (  # noqa: E402
     ARTEFACT_EXCLUDED,
+    REQUIRED_DETERMINISTIC_REPLAY_V1_FIELDS,
+    canonical_json_of_subobject,
     compute_dataset_hash_independent,
     fabric_set,
     get_plutus_db,
     get_run_metadata,
+    get_scripted_overlays_subobject,
     hash_replay_artefact,
+    sha256_of_canonical_json,
+    sha256_text,
     spawn_replay_run,
     utc_now_iso,
+    validate_deterministic_replay_v1_shape,
 )
 
 
@@ -123,6 +129,139 @@ def t_det_5_fail_loud(scenario_id: str) -> bool:
     return False  # STUB
 
 
+def t_det_7_config_hash_independent(run_id: str | None) -> bool:
+    """Architect 2026-05-06: config_hash from canonical-JSON of config_snapshot_json.
+
+    Engine that computes config_hash from anything OTHER than the persisted snapshot
+    canonical-JSON FAILs this test.
+
+    Implementable post-migration_007 + first replay run.
+    """
+    print("\n--- T-DET-7: config_hash independent recomputation from snapshot ---")
+    if run_id is None:
+        print("  SKIP: requires --run-id of an existing plutus.replay_runs row (post-migration_007)")
+        return True
+
+    meta = get_run_metadata(run_id)
+    if meta is None:
+        print(f"  FAIL: run_id={run_id} not found in plutus.replay_runs")
+        return False
+
+    snapshot_json_str = meta.get("config_snapshot_json")
+    declared_hash = meta.get("config_hash")
+    if not snapshot_json_str:
+        print("  FAIL: config_snapshot_json is empty/null — migration_007 not applied OR engine didn't persist")
+        return False
+
+    # Per locked §22: persisted column IS the canonical-JSON string. sha it directly.
+    recomputed_hash = sha256_text(snapshot_json_str)
+    print(f"  declared_config_hash:   {declared_hash}")
+    print(f"  recomputed_config_hash: {recomputed_hash}")
+    match = declared_hash == recomputed_hash
+
+    fabric_set(f"r2d2:plutus:wo:2:acceptance:config_hash_independent:{run_id}:v1", {
+        "run_id": run_id,
+        "declared_hash": declared_hash,
+        "recomputed_hash": recomputed_hash,
+        "snapshot_json_length": len(snapshot_json_str),
+        "match": match,
+        "verdict": "PASS" if match else "FAIL",
+        "checked_at_utc": utc_now_iso(),
+        "method": "sha256(replay_runs.config_snapshot_json bytes) per locked §22 at-run-start atomic protocol",
+    })
+
+    return assert_outcome(match, True, "T-DET-7 declared == recomputed config_hash")
+
+
+def t_det_8_snapshot_run_start_mirror(run_id: str | None,
+                                       pre_run_mirror_key: str | None) -> bool:
+    """Architect 2026-05-06 CRITICAL nuance:
+    Compare config_snapshot_json against captured run-start mirror, NOT against
+    current live scripted_overlays after the run.
+
+    IMPL A (V1-2 election): captured run-start mirror.
+      Harness reads scripted_overlays.deterministic_replay_v1 BEFORE spawning replay.
+      Mirror persisted to fabric at pre_run_mirror_key.
+      After replay: read replay_runs.config_snapshot_json; assert equality vs mirror.
+
+    Why: comparing against live source AFTER run is unsound for audit — legitimate later
+    config update would make old runs look invalid.
+    """
+    print("\n--- T-DET-8: snapshot equality vs captured run-start mirror (NOT live) ---")
+    if run_id is None or pre_run_mirror_key is None:
+        print("  SKIP: requires --run-id AND --pre-run-mirror-key (mirror captured BEFORE replay started)")
+        return True
+
+    meta = get_run_metadata(run_id)
+    if meta is None:
+        print(f"  FAIL: run_id={run_id} not found in plutus.replay_runs")
+        return False
+
+    snapshot_json_str = meta.get("config_snapshot_json")
+    if not snapshot_json_str:
+        print("  FAIL: config_snapshot_json is empty/null")
+        return False
+
+    from _common import fabric_get
+    pre_run_mirror = fabric_get(pre_run_mirror_key)
+    if pre_run_mirror is None:
+        print(f"  FAIL: pre_run_mirror_key={pre_run_mirror_key} not found in fabric")
+        return False
+
+    mirror_canonical = pre_run_mirror.get("canonical_json")
+    if mirror_canonical is None:
+        print(f"  FAIL: pre_run_mirror has no 'canonical_json' field — was it captured correctly?")
+        return False
+
+    match = snapshot_json_str == mirror_canonical
+
+    fabric_set(f"r2d2:plutus:wo:2:acceptance:snapshot_run_start_mirror:{run_id}:v1", {
+        "run_id": run_id,
+        "pre_run_mirror_key": pre_run_mirror_key,
+        "mirror_captured_at_utc": pre_run_mirror.get("captured_at_utc"),
+        "snapshot_json_length": len(snapshot_json_str),
+        "mirror_canonical_length": len(mirror_canonical),
+        "match": match,
+        "verdict": "PASS" if match else "FAIL",
+        "checked_at_utc": utc_now_iso(),
+        "method": "IMPL A — compare replay_runs.config_snapshot_json vs captured pre-run scripted_overlays mirror",
+        "do_NOT_compare_to_live_post_run": "Architect 2026-05-06 explicit: live scripted_overlays may have legitimately changed post-run; comparison would be unsound",
+    })
+
+    return assert_outcome(match, True, "T-DET-8 snapshot == run-start mirror")
+
+
+def capture_pre_run_mirror(scenario_id: str, mirror_key: str) -> bool:
+    """Helper for T-DET-8 IMPL A: capture scripted_overlays.deterministic_replay_v1
+    BEFORE spawning a replay run. Persists mirror to fabric for post-run comparison.
+
+    Call this from the test runner BEFORE spawn_replay_run().
+    """
+    print(f"\n--- Capture pre-run mirror for scenario_id={scenario_id} ---")
+    sub_object = get_scripted_overlays_subobject(scenario_id)
+    if sub_object is None:
+        print(f"  FAIL: no deterministic_replay_v1 sub-object found in scripted_overlays for {scenario_id}")
+        return False
+
+    missing = validate_deterministic_replay_v1_shape(sub_object)
+    if missing:
+        print(f"  WARN: shape incomplete; missing fields: {missing}")
+        # Capture anyway — engine should also FAIL pre-flight; this captures the live state for comparison
+
+    mirror_canonical = canonical_json_of_subobject(sub_object)
+    mirror_sha = sha256_text(mirror_canonical)
+    fabric_set(mirror_key, {
+        "scenario_id": scenario_id,
+        "captured_at_utc": utc_now_iso(),
+        "canonical_json": mirror_canonical,
+        "canonical_sha256": mirror_sha,
+        "subobject_keys": sorted(sub_object.keys()),
+        "note": "Captured BEFORE replay run. Used by T-DET-8 IMPL A. Architect 2026-05-06: do NOT compare to live source after run.",
+    })
+    print(f"  Mirror captured: sha256={mirror_sha} length={len(mirror_canonical)} stored={mirror_key}")
+    return True
+
+
 def t_det_6_dataset_hash_independent(run_id: str | None = None) -> bool:
     """Architect watch-out 9: dataset_hash hashes ACTUAL rows, not metadata.
 
@@ -182,15 +321,25 @@ def t_det_6_dataset_hash_independent(run_id: str | None = None) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser(description="V1-2 deterministic replay acceptance harness")
     parser.add_argument("--only", choices=["T-DET-1", "T-DET-2", "T-DET-3", "T-DET-4",
-                                            "T-DET-5", "T-DET-6"],
-                        default=None, help="Run a single test")
+                                            "T-DET-5", "T-DET-6", "T-DET-7", "T-DET-8",
+                                            "capture-mirror"],
+                        default=None, help="Run a single test or capture pre-run mirror")
     parser.add_argument("--scenario", default="tdr_validation_2026_03_28",
                         help="Scenario id for replay tests")
     parser.add_argument("--seed", type=int, default=42, help="Seed for primary replay")
     parser.add_argument("--seed-b", type=int, default=43, help="Second seed for T-DET-2")
     parser.add_argument("--run-id", default=None,
-                        help="Existing replay_runs.run_id for T-DET-6 (skip if absent)")
+                        help="Existing replay_runs.run_id for T-DET-6/7/8 (skip if absent)")
+    parser.add_argument("--pre-run-mirror-key", default=None,
+                        help="Fabric key holding the pre-run scripted_overlays mirror (for T-DET-8 IMPL A)")
     args = parser.parse_args()
+
+    if args.only == "capture-mirror":
+        if not args.pre_run_mirror_key:
+            print("ERROR: --pre-run-mirror-key required for capture-mirror mode")
+            return 2
+        ok = capture_pre_run_mirror(args.scenario, args.pre_run_mirror_key)
+        return 0 if ok else 1
 
     suite = [
         ("T-DET-1", lambda: t_det_1_byte_identical(args.scenario, args.seed)),
@@ -199,6 +348,8 @@ def main() -> int:
         ("T-DET-4", lambda: t_det_4_canary_post(args.scenario, args.seed)),
         ("T-DET-5", lambda: t_det_5_fail_loud(args.scenario)),
         ("T-DET-6", lambda: t_det_6_dataset_hash_independent(args.run_id)),
+        ("T-DET-7", lambda: t_det_7_config_hash_independent(args.run_id)),
+        ("T-DET-8", lambda: t_det_8_snapshot_run_start_mirror(args.run_id, args.pre_run_mirror_key)),
     ]
     if args.only:
         suite = [(n, fn) for n, fn in suite if n == args.only]

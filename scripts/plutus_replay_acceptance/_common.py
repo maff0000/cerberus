@@ -212,3 +212,70 @@ def get_run_metadata(run_id: str) -> dict | None:
             return cur.fetchone()
     finally:
         conn.close()
+
+
+def get_scripted_overlays_subobject(scenario_id: str, namespace_key: str = "deterministic_replay_v1") -> dict | None:
+    """Read plutus.scenarios.scripted_overlays for scenario_id, parse JSON,
+    extract the namespaced sub-object.
+
+    Returns:
+        dict — the deterministic_replay_v1 sub-object (V1-2 canonical config)
+        None — scenario row missing OR scripted_overlays NULL OR namespace key absent
+
+    Per locked design §22 (post-lock 2026-05-06):
+      Canonical V1-2 config source = plutus.scenarios.scripted_overlays.deterministic_replay_v1
+    """
+    conn = get_plutus_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT scripted_overlays FROM scenarios WHERE scenario_id = %s",
+                (scenario_id,),
+            )
+            row = cur.fetchone()
+    finally:
+        conn.close()
+    if not row or row[0] is None:
+        return None
+    try:
+        overlays = json.loads(row[0])
+    except (json.JSONDecodeError, TypeError):
+        return None
+    return overlays.get(namespace_key)
+
+
+def canonical_json_of_subobject(sub_object: dict) -> str:
+    """Per locked §22 at-run-start atomic protocol: canonicalise via
+    json.dumps(sub_object, sort_keys=True, separators=(',', ':'))."""
+    return json.dumps(sub_object, sort_keys=True, separators=(",", ":"), default=str)
+
+
+def sha256_of_canonical_json(sub_object: dict) -> str:
+    """Per locked §22 config_hash methodology: sha256 of canonical-JSON of the sub-object."""
+    return sha256_text(canonical_json_of_subobject(sub_object))
+
+
+REQUIRED_DETERMINISTIC_REPLAY_V1_FIELDS = [
+    "synthetic_ticks_per_m1",
+    "instrument_decimal_precision",
+    "spread_points",
+    "source_timezone_policy",
+    "source_timezone",
+    "source_table",
+    "ohlc_path_rule",
+    "dataset_hash_rule",
+    "price_precision_rule",
+    "seed_streams",
+    "description",
+    "llm_reasoning",
+]
+
+
+def validate_deterministic_replay_v1_shape(sub_object: dict) -> list[str]:
+    """Per locked §22.preferred_implementation.required_fields_no_skip:
+    every field is REQUIRED, no skip. Returns list of missing-field names."""
+    missing = []
+    for field in REQUIRED_DETERMINISTIC_REPLAY_V1_FIELDS:
+        if field not in sub_object:
+            missing.append(field)
+    return missing
