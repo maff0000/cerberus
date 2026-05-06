@@ -130,14 +130,20 @@ def t_det_5_fail_loud(scenario_id: str) -> bool:
 
 
 def t_det_7_config_hash_independent(run_id: str | None) -> bool:
-    """Architect 2026-05-06: config_hash from canonical-JSON of config_snapshot_json.
+    """Architect 2026-05-06T02:45Z correction: parse + re-canonicalise + sha,
+    NOT raw byte hash.
 
-    Engine that computes config_hash from anything OTHER than the persisted snapshot
-    canonical-JSON FAILs this test.
+    Reasoning: even if engine persists canonical-JSON correctly at run start,
+    storage layer may add invisible normalisation (whitespace, charset, line
+    endings). Parsing back + re-canonicalising produces the SAME hash that
+    engine should have computed at run-start step 6, regardless of any
+    storage-layer byte drift. T-DET-7 stays valid for any well-behaved engine;
+    only catches actually-wrong computations, not storage artifacts.
 
     Implementable post-migration_007 + first replay run.
     """
-    print("\n--- T-DET-7: config_hash independent recomputation from snapshot ---")
+    import json as _json
+    print("\n--- T-DET-7: config_hash recomputation (parse + recanonicalise + sha) ---")
     if run_id is None:
         print("  SKIP: requires --run-id of an existing plutus.replay_runs row (post-migration_007)")
         return True
@@ -153,21 +159,33 @@ def t_det_7_config_hash_independent(run_id: str | None) -> bool:
         print("  FAIL: config_snapshot_json is empty/null — migration_007 not applied OR engine didn't persist")
         return False
 
-    # Per locked §22: persisted column IS the canonical-JSON string. sha it directly.
-    recomputed_hash = sha256_text(snapshot_json_str)
+    # Architect-locked method: parse -> re-canonicalise per §22 -> sha256
+    try:
+        parsed = _json.loads(snapshot_json_str)
+    except (_json.JSONDecodeError, TypeError) as e:
+        print(f"  FAIL: config_snapshot_json is not valid JSON: {e}")
+        return False
+
+    recanonical = canonical_json_of_subobject(parsed)
+    recomputed_hash = sha256_text(recanonical)
+
     print(f"  declared_config_hash:   {declared_hash}")
     print(f"  recomputed_config_hash: {recomputed_hash}")
+    print(f"  (recanonical bytes len: {len(recanonical)} vs persisted bytes len: {len(snapshot_json_str)})")
     match = declared_hash == recomputed_hash
 
     fabric_set(f"r2d2:plutus:wo:2:acceptance:config_hash_independent:{run_id}:v1", {
         "run_id": run_id,
         "declared_hash": declared_hash,
         "recomputed_hash": recomputed_hash,
-        "snapshot_json_length": len(snapshot_json_str),
+        "snapshot_json_persisted_length": len(snapshot_json_str),
+        "snapshot_json_recanonical_length": len(recanonical),
+        "persisted_equals_recanonical_byte_for_byte": snapshot_json_str == recanonical,
         "match": match,
         "verdict": "PASS" if match else "FAIL",
         "checked_at_utc": utc_now_iso(),
-        "method": "sha256(replay_runs.config_snapshot_json bytes) per locked §22 at-run-start atomic protocol",
+        "method": "parse(config_snapshot_json) -> canonical-JSON per §22 (sort_keys=True, separators=(',',':')) -> sha256",
+        "architect_correction_applied": "2026-05-06T02:45Z — robust to storage-layer byte drift",
     })
 
     return assert_outcome(match, True, "T-DET-7 declared == recomputed config_hash")
