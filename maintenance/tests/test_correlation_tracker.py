@@ -25,7 +25,9 @@ from correlation_tracker import (
     check_trusted_threshold,
     should_snapshot,
     should_discord,
+    _compute_r_multiple,
     QUARANTINED_STRATEGIES,
+    R_MULTIPLE_STRATEGIES,
     N_WL_MIN,
     TRUSTED_N_WL,
 )
@@ -67,9 +69,14 @@ class TestSpearmanRho(unittest.TestCase):
 
 class TestComputePerStrategy(unittest.TestCase):
 
-    def _make_sample(self, conf_outcomes):
-        """Build a sample list from list of (confidence, outcome, pnl)."""
-        return [{"confidence": c, "outcome": o, "outcome_pnl_pts": p}
+    def _make_sample(self, conf_outcomes, metric_kind="stored_pnl_pts"):
+        """Build a sample list from list of (confidence, outcome, pnl).
+
+        Per post-2026-05-06 architect decision, sample uses `outcome_metric` field
+        (either R-multiple for R_MULTIPLE_STRATEGIES or stored pnl_pts otherwise).
+        """
+        return [{"confidence": c, "outcome": o, "outcome_metric": p,
+                 "outcome_metric_kind": metric_kind}
                 for c, o, p in conf_outcomes]
 
     def test_insufficient_sample(self):
@@ -281,6 +288,63 @@ class TestQuarantinePreservation(unittest.TestCase):
         ok, reason = check_trusted_threshold(m, history)
         self.assertFalse(ok)
         self.assertIn("QUARANTINED", reason)
+
+
+class TestRMultipleComputation(unittest.TestCase):
+    """Architect-approved 2026-05-06: nowic_at_m15 evaluation uses R-multiple."""
+
+    def test_r_multiple_strategies_set(self):
+        self.assertIn("nowic_at_m15", R_MULTIPLE_STRATEGIES)
+
+    def test_r_multiple_long_TP1_HIT(self):
+        # LONG: entry=100, sl=99, tp1=102 → win = +2, sl_dist = 1, R = +2.0
+        row = {"entry_price": 100, "sl_price": 99, "tp1_price": 102,
+               "synth_sl": None, "synth_tp1": None,
+               "direction": "LONG", "outcome": "TP1_HIT"}
+        self.assertAlmostEqual(_compute_r_multiple(row), 2.0)
+
+    def test_r_multiple_long_SL_HIT(self):
+        # LONG: entry=100, sl=99, tp1=102 → loss = -1, sl_dist = 1, R = -1.0
+        row = {"entry_price": 100, "sl_price": 99, "tp1_price": 102,
+               "synth_sl": None, "synth_tp1": None,
+               "direction": "LONG", "outcome": "SL_HIT"}
+        self.assertAlmostEqual(_compute_r_multiple(row), -1.0)
+
+    def test_r_multiple_short_TP1_HIT(self):
+        # SHORT: entry=100, sl=101, tp1=98 → win = +2, sl_dist = 1, R = +2.0
+        row = {"entry_price": 100, "sl_price": 101, "tp1_price": 98,
+               "synth_sl": None, "synth_tp1": None,
+               "direction": "SHORT", "outcome": "TP1_HIT"}
+        self.assertAlmostEqual(_compute_r_multiple(row), 2.0)
+
+    def test_r_multiple_short_SL_HIT(self):
+        # SHORT: entry=100, sl=101, tp1=98 → loss = -1, sl_dist = 1, R = -1.0
+        row = {"entry_price": 100, "sl_price": 101, "tp1_price": 98,
+               "synth_sl": None, "synth_tp1": None,
+               "direction": "SHORT", "outcome": "SL_HIT"}
+        self.assertAlmostEqual(_compute_r_multiple(row), -1.0)
+
+    def test_r_multiple_falls_back_to_synth(self):
+        # Stored brackets NULL; synth populated
+        row = {"entry_price": 100, "sl_price": None, "tp1_price": None,
+               "synth_sl": 99, "synth_tp1": 102,
+               "direction": "LONG", "outcome": "TP1_HIT"}
+        self.assertAlmostEqual(_compute_r_multiple(row), 2.0)
+
+    def test_r_multiple_returns_none_if_no_brackets(self):
+        row = {"entry_price": 100, "sl_price": None, "tp1_price": None,
+               "synth_sl": None, "synth_tp1": None,
+               "direction": "LONG", "outcome": "TP1_HIT"}
+        self.assertIsNone(_compute_r_multiple(row))
+
+    def test_r_multiple_forex_precision_preserved(self):
+        # AUD_USD-like: entry=0.7126, sl=0.7119, tp1=0.7140 → win = +0.0014, sl_dist = 0.0007, R = +2.0
+        # Stored outcome_pnl_pts would round 0.0014 to 0.00 (DECIMAL(10,2))
+        # R-multiple preserves the +2.0 ratio
+        row = {"entry_price": 0.7126, "sl_price": 0.7119, "tp1_price": 0.7140,
+               "synth_sl": None, "synth_tp1": None,
+               "direction": "LONG", "outcome": "TP1_HIT"}
+        self.assertAlmostEqual(_compute_r_multiple(row), 2.0, places=4)
 
 
 if __name__ == "__main__":

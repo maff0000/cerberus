@@ -47,6 +47,12 @@ DISCORD_EXP_DELTA_D7_THRESHOLD = -1.0
 # Architect-locked inverse quarantine — never auto-lifted
 QUARANTINED_STRATEGIES = {"tdr_m5", "SF-002"}
 
+# Architect-approved 2026-05-06: strategies that use R-multiple instead of stored
+# outcome_pnl_pts (which is DECIMAL(10,2) — forex pip values round to 0.00).
+# R-multiple = raw_pnl / sl_distance is unitless + cross-instrument-comparable.
+# Per-strategy opt-in to preserve backward compat for other tracked strategies.
+R_MULTIPLE_STRATEGIES = {"nowic_at_m15"}
+
 # Snapshot trigger — write iff label changed OR rho_delta_d1 abs >= 0.10
 SNAPSHOT_RHO_DELTA_THRESHOLD = 0.10
 
@@ -88,37 +94,103 @@ def spearman_rho(xs, ys):
     return num / (dx * dy)
 
 
+def _compute_r_multiple(row):
+    """Compute R-multiple = raw_pnl / sl_distance from row's brackets + outcome.
+
+    Resolves brackets in priority: stored sl_price/tp1_price -> synthesised
+    effective_sl/effective_tp1 from outcome_details_json.bracket_synthesis.
+
+    Returns float or None if brackets unavailable.
+    """
+    try:
+        entry = float(row["entry_price"]) if row.get("entry_price") not in (None, "NULL", "") else None
+        sl = float(row["sl_price"]) if row.get("sl_price") not in (None, "NULL", "") else None
+        tp1 = float(row["tp1_price"]) if row.get("tp1_price") not in (None, "NULL", "") else None
+        synth_sl = float(row["synth_sl"]) if row.get("synth_sl") not in (None, "NULL", "") else None
+        synth_tp1 = float(row["synth_tp1"]) if row.get("synth_tp1") not in (None, "NULL", "") else None
+    except (TypeError, ValueError):
+        return None
+
+    if sl is None or tp1 is None:
+        sl, tp1 = synth_sl, synth_tp1
+    if entry is None or sl is None or tp1 is None:
+        return None
+
+    direction = row.get("direction")
+    outcome = row.get("outcome")
+    if outcome == "TP1_HIT":
+        raw_pnl = (tp1 - entry) if direction == "LONG" else (entry - tp1)
+    elif outcome == "SL_HIT":
+        raw_pnl = (sl - entry) if direction == "LONG" else (entry - sl)
+    else:
+        return None
+
+    sl_distance = abs(sl - entry)
+    if sl_distance <= 0:
+        return None
+    return raw_pnl / sl_distance
+
+
 def fetch_strategy_data(strategy_id, window_end_utc, window_days=ROLLING_WINDOW_DAYS):
     """Fetch W/L sample for a strategy over the rolling window ending at window_end_utc.
 
-    Returns list of dicts: [{confidence, outcome, outcome_pnl_pts}, ...]
+    For strategies in R_MULTIPLE_STRATEGIES, the per-row outcome metric is computed
+    as R-multiple (raw_pnl / sl_distance). For other strategies, it's the stored
+    outcome_pnl_pts column. Either way, the returned key is `outcome_metric`.
+
     Read-only — no DB writes.
     """
     end_str = window_end_utc.strftime("%Y-%m-%d %H:%M:%S")
     start_str = (window_end_utc - datetime.timedelta(days=window_days)).strftime("%Y-%m-%d %H:%M:%S")
-    sql = (
-        f"SELECT confidence, outcome, outcome_pnl_pts "
-        f"FROM helios_strategy_signals "
-        f"WHERE strategy_id='{strategy_id}' "
-        f"AND fired=1 "
-        f"AND outcome IN ('TP1_HIT','SL_HIT') "
-        f"AND timestamp >= '{start_str}' "
-        f"AND timestamp <= '{end_str}' "
-        f"AND outcome_pnl_pts IS NOT NULL "
-        f"AND confidence IS NOT NULL"
-    )
+    use_r_multiple = strategy_id in R_MULTIPLE_STRATEGIES
+
+    if use_r_multiple:
+        # Need entry/sl/tp/synth-brackets/direction for R-multiple computation
+        sql = (
+            f"SELECT confidence, outcome, outcome_pnl_pts, direction, entry_price, "
+            f"sl_price, tp1_price, "
+            f"JSON_EXTRACT(outcome_details_json, '$.bracket_synthesis.effective_sl') AS synth_sl, "
+            f"JSON_EXTRACT(outcome_details_json, '$.bracket_synthesis.effective_tp1') AS synth_tp1 "
+            f"FROM helios_strategy_signals "
+            f"WHERE strategy_id='{strategy_id}' "
+            f"AND fired=1 "
+            f"AND outcome IN ('TP1_HIT','SL_HIT') "
+            f"AND timestamp >= '{start_str}' "
+            f"AND timestamp <= '{end_str}' "
+            f"AND confidence IS NOT NULL"
+        )
+    else:
+        sql = (
+            f"SELECT confidence, outcome, outcome_pnl_pts "
+            f"FROM helios_strategy_signals "
+            f"WHERE strategy_id='{strategy_id}' "
+            f"AND fired=1 "
+            f"AND outcome IN ('TP1_HIT','SL_HIT') "
+            f"AND timestamp >= '{start_str}' "
+            f"AND timestamp <= '{end_str}' "
+            f"AND outcome_pnl_pts IS NOT NULL "
+            f"AND confidence IS NOT NULL"
+        )
+
     rows = remote_query(sql)
     if rows is None:
         return None
+
     parsed = []
     for r in rows:
         try:
-            parsed.append({
-                "confidence": float(r["confidence"]),
-                "outcome": r["outcome"],
-                "outcome_pnl_pts": float(r["outcome_pnl_pts"]),
-            })
-        except (TypeError, ValueError):
+            entry = {"confidence": float(r["confidence"]), "outcome": r["outcome"]}
+            if use_r_multiple:
+                rmult = _compute_r_multiple(r)
+                if rmult is None:
+                    continue  # skip rows where R-multiple cannot be computed
+                entry["outcome_metric"] = rmult
+                entry["outcome_metric_kind"] = "r_multiple"
+            else:
+                entry["outcome_metric"] = float(r["outcome_pnl_pts"])
+                entry["outcome_metric_kind"] = "stored_pnl_pts"
+            parsed.append(entry)
+        except (TypeError, ValueError, KeyError):
             continue
     return parsed
 
@@ -144,11 +216,16 @@ def compute_per_strategy(strategy_id, sample):
         })
         return out
 
+    # Per-row outcome metric — either R-multiple (for R_MULTIPLE_STRATEGIES) or stored pnl_pts.
+    # Same field name `outcome_metric`; tracker tags `metric_kind` so downstream knows which.
+    metric_kind = sample[0].get("outcome_metric_kind", "stored_pnl_pts") if sample else "stored_pnl_pts"
+    out["metric_kind"] = metric_kind  # "r_multiple" or "stored_pnl_pts"
+
     out["win_rate"] = round(out["wins"] / n_WL, 4)
-    out["expectancy_pts"] = round(mean(r["outcome_pnl_pts"] for r in sample), 4)
+    out["expectancy_pts"] = round(mean(r["outcome_metric"] for r in sample), 4)
 
     confs = [r["confidence"] for r in sample]
-    pnls = [r["outcome_pnl_pts"] for r in sample]
+    pnls = [r["outcome_metric"] for r in sample]
     rho = spearman_rho(confs, pnls)
     out["rho"] = round(rho, 4) if rho is not None else None
 
@@ -162,7 +239,7 @@ def compute_per_strategy(strategy_id, sample):
         n = len(rows)
         wins = sum(1 for r in rows if r["outcome"] == "TP1_HIT")
         losses = sum(1 for r in rows if r["outcome"] == "SL_HIT")
-        avg_pnl = round(mean(r["outcome_pnl_pts"] for r in rows), 4)
+        avg_pnl = round(mean(r["outcome_metric"] for r in rows), 4)
         cohort_rows.append({
             "confidence": c, "n": n, "wins": wins, "losses": losses,
             "win_rate": round(wins / n, 4) if n else None,
