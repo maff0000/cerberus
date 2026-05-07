@@ -104,13 +104,17 @@ def canonical_json(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), default=str)
 
 
-def serialize_candle_row_strict(ts_utc: str, o: float, h: float, l: float,
-                                c: float, v: int) -> str:
-    """Per locked design §3 row_serialization_strict:
-      f'{ts_iso}:{o:%.6f}:{h:%.6f}:{l:%.6f}:{c:%.6f}:{v:%d}'
+def serialize_candle_row_strict(instrument: str, ts_utc: str, o: float, h: float,
+                                l: float, c: float, v: int) -> str:
+    """Per locked design §3 row_serialization_strict (architect 2026-05-07 amendment):
+      f'{instrument}:{ts_iso}:{o:%.6f}:{h:%.6f}:{l:%.6f}:{c:%.6f}:{v:%d}'
     where ts_iso is 'YYYY-MM-DDTHH:MM:SSZ' literal.
+
+    Architect 2026-05-07: instrument is FIRST field — defensive completeness.
+    Dataset_hash must identify actual ordered source rows; instrument is part
+    of the source row.
     """
-    return f"{ts_utc}:{o:.6f}:{h:.6f}:{l:.6f}:{c:.6f}:{v:d}"
+    return f"{instrument}:{ts_utc}:{o:.6f}:{h:.6f}:{l:.6f}:{c:.6f}:{v:d}"
 
 
 def normalize_naive_dt_to_utc_iso(dt) -> str:
@@ -131,7 +135,7 @@ def compute_dataset_hash_independent(instrument: str, source_start_utc: str,
     means engine hashed metadata or used different algorithm — FAIL.
     """
     sql = (
-        f"SELECT timestamp, open, high, low, close, volume "
+        f"SELECT instrument, timestamp, open, high, low, close, volume "
         f"FROM {HERMES_TABLE} "
         f"WHERE instrument = %s AND timestamp BETWEEN %s AND %s "
         f"ORDER BY instrument, timestamp"
@@ -151,10 +155,11 @@ def compute_dataset_hash_independent(instrument: str, source_start_utc: str,
 
     serialized = [
         serialize_candle_row_strict(
+            instr,
             normalize_naive_dt_to_utc_iso(ts),
             float(o), float(h), float(l), float(c), int(v),
         )
-        for (ts, o, h, l, c, v) in rows
+        for (instr, ts, o, h, l, c, v) in rows
     ]
     return sha256_text("\n".join(serialized)), len(rows)
 
