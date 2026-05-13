@@ -1,0 +1,11 @@
+[Unit]
+Description=R2D2 strategy_health publisher timer (4h cadence: 00/04/08/12/16/20 UTC)
+
+[Timer]
+OnCalendar=*-*-* 00,04,08,12,16,20:00:00 UTC
+Persistent=true
+Unit=r2d2-strategy-health-publisher.service
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

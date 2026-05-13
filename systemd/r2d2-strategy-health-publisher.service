@@ -1,0 +1,21 @@
+[Unit]
+# WO-R2D2-STRATEGY-HEALTH-PUBLICATION-CADENCE-0001 — single authoritative
+# producer for r2d2:strategy_health:<strategy_id>:overall. Architect-ratified
+# 2026-05-13. Consumer contract: r2d2:contract:strategy_health_consumer:v1.
+# Main directive: r2d2:directive:main (preservation of the team).
+Description=R2D2 strategy_health publisher — 4h scheduled refresh + 7 tripwires + fail-loud audit
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/r2d2/maintenance
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HOME=/root"
+Environment="LANG=C.UTF-8"
+ExecStart=/usr/bin/python3 /opt/r2d2/maintenance/strategy_health_publisher.py
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
+SuccessExitStatus=0

@@ -1,4 +1,31 @@
-"""R2D2 Falcon Health Overall Pass — WO-R2D2-FALCON-BACKTEST-OVERALL-0001.
+"""[DEPRECATED 2026-05-13 — DO NOT INVOKE]
+==============================================================================
+This script is HISTORICAL.
+
+Architect ratified WO-R2D2-STRATEGY-HEALTH-PUBLICATION-CADENCE-0001 on
+2026-05-13. The single authoritative producer for
+r2d2:strategy_health:<strategy_id>:overall is now:
+
+    /opt/r2d2/maintenance/strategy_health_publisher.py
+    (source: /srv/r2d2/maintenance/strategy_health_publisher.py)
+    timer:  r2d2-strategy-health-publisher.timer (4h cadence)
+    source_enum: R2D2_SCHEDULED_V1
+    contract: r2d2:contract:strategy_health_consumer:v1
+
+This historical script:
+  - Uses simple n-tier classifier (no reliability/direction_check gates)
+  - Has NO explainability fields (no health_status_reason / full_eligibility)
+  - Stamps version=R2D2_90D_OVERALL_V1 (DEPRECATED enum)
+  - Was last run manually on 2026-05-06 with override tag
+    R2D2_POST_33_REFRESH_V1
+
+DO NOT invoke this script. Running it would overwrite live envelopes with
+deprecated-classifier output and break consumer contract v1 explainability.
+
+Preserved here for git-history reference only.
+==============================================================================
+
+R2D2 Falcon Health Overall Pass — WO-R2D2-FALCON-BACKTEST-OVERALL-0001.
 
 Reads canonical outcome data from helios_strategy_signals (post-WO-OUTCOME-
 RESOLVER-METHODOLOGY-0001), computes per-strategy health scores over a
