@@ -26,8 +26,9 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
-sys.path.insert(0, "/srv/r2d2/maintenance")
+# /srv/r2d2/maintenance takes priority for development; /opt fallback.
 sys.path.insert(0, "/opt/r2d2/maintenance")
+sys.path.insert(0, "/srv/r2d2/maintenance")
 
 from strategy_health_publisher import (  # type: ignore
     ALLOWED_DIRECTION_CHECK,
@@ -35,6 +36,8 @@ from strategy_health_publisher import (  # type: ignore
     ALLOWED_RELIABILITY_LABEL,
     CONTRACT_VERSION,
     DIRECTION_CHECK_EXPECTANCY_FLOOR,
+    DORMANT_HEALTH_SOURCE,
+    DORMANT_HEALTH_STATUS_REASON,
     KEY_PUBLISHER_AUDIT_LATEST,
     KEY_PUBLISHER_AUDIT_PREFIX,
     KEY_PUBLISHER_FAULT_PREFIX,
@@ -50,14 +53,17 @@ from strategy_health_publisher import (  # type: ignore
     TIMER_CADENCE,
     V3_FRESHNESS_GATE_HOURS,
     WO,
+    build_dormant_envelope,
     build_envelope,
     build_per_run_audit,
     build_publisher_state,
     classify_health_status,
+    compute_expected_strategy_set,
     compute_score_components,
     compute_strategy_score,
     derive_direction_check_status,
     derive_reliability_label,
+    discover_existing_strategies_in_fabric,
     evaluate_full_eligibility,
     iso_z,
     run_all_tripwires,
@@ -69,6 +75,7 @@ from strategy_health_publisher import (  # type: ignore
     tripwire_5_enum_allowed,
     tripwire_6_registry_drift,
     tripwire_7_audit_canary,
+    tripwire_8_no_stale_version_in_fabric,
 )
 
 
@@ -742,6 +749,385 @@ class TestStaticNoDriftScan(unittest.TestCase):
                            "trader_signal_surface"):
             self.assertNotIn(forbidden, code_only,
                              f"forbidden reference in executable code: {forbidden!r}")
+
+
+# ─────────────────────────── 11. Dormant strategy publication ────────────────
+# Phase C remediation 2026-05-13 — architect ruling that every expected strategy
+# must have a fresh scheduled :overall record, including dormant strategies.
+
+class TestDormantEnvelope(unittest.TestCase):
+
+    def _dormant(self) -> dict:
+        return build_dormant_envelope(
+            strategy_id="dormant_m5",
+            window_start=NOW - timedelta(days=90),
+            window_end=NOW,
+            computed_at=NOW,
+        )
+
+    def test_T61_dormant_envelope_status_INSUFFICIENT_SAMPLE(self):
+        env = self._dormant()
+        self.assertEqual(env["health_status"], "INSUFFICIENT_SAMPLE")
+
+    def test_T62_dormant_envelope_score_null(self):
+        env = self._dormant()
+        self.assertIsNone(env["score"])
+        self.assertIsNone(env["score_components"])
+
+    def test_T63_dormant_health_status_reason(self):
+        env = self._dormant()
+        self.assertEqual(env["health_status_reason"], DORMANT_HEALTH_STATUS_REASON)
+        self.assertEqual(env["health_status_reason"], "no_fires_in_90d_window")
+
+    def test_T64_dormant_failed_gates(self):
+        env = self._dormant()
+        elig = env["full_eligibility"]
+        self.assertFalse(elig["sample_gate_passed"])
+        self.assertFalse(elig["reliability_gate_passed"])
+        self.assertFalse(elig["direction_check_gate_passed"])
+        self.assertIn("sample_gate", elig["failed_gates"])
+        self.assertIn("reliability_gate", elig["failed_gates"])
+        self.assertIn("direction_check_gate", elig["failed_gates"])
+
+    def test_T65_dormant_decision_grade_false(self):
+        env = self._dormant()
+        self.assertFalse(env["decision_grade"])
+
+    def test_T66_dormant_source_enum_R2D2_SCHEDULED_V1(self):
+        env = self._dormant()
+        self.assertEqual(env["version"], SOURCE_ENUM)
+        self.assertEqual(env["version"], "R2D2_SCHEDULED_V1")
+        self.assertNotEqual(env["version"], "R2D2_POST_33_REFRESH_V1")
+        self.assertEqual(env["health_source"], DORMANT_HEALTH_SOURCE)
+
+    def test_T67_dormant_contract_compatibility(self):
+        env = self._dormant()
+        self.assertEqual(env["contract_compatibility"], CONTRACT_VERSION)
+
+    def test_T68_dormant_computed_at_utc_tz_z(self):
+        env = self._dormant()
+        self.assertTrue(env["computed_at_utc"].endswith("Z"))
+
+    def test_T69_dormant_marker_present(self):
+        env = self._dormant()
+        self.assertTrue(env.get("dormant_in_90d_window"))
+
+    def test_T70_dormant_zero_counts(self):
+        env = self._dormant()
+        self.assertEqual(env["n_fires_resolved"], 0)
+        self.assertEqual(env["win_count"], 0)
+        self.assertEqual(env["loss_count"], 0)
+        self.assertEqual(env["neutral_count"], 0)
+        self.assertIsNone(env["wr"])
+        self.assertIsNone(env["expectancy_pts"])
+
+
+# ─────────────────────────── 12. Decision-grade flag on active envelopes ──────
+
+class TestDecisionGradeOnActiveEnvelopes(unittest.TestCase):
+
+    def _active(self, n=120, wr=0.55, expectancy=0.50) -> dict:
+        cov = StrategyCoverage(strategy_id="x_m5", total_fired=130, has_prices=120,
+                              missing_prices=10, pending=10)
+        score = StrategyScore(strategy_id="x_m5", n_fires_resolved=n,
+                              win_count=int(n*0.5), loss_count=int(n*0.5),
+                              wr=wr, expectancy_pts=expectancy,
+                              score=0.55, score_components={"a": 1})
+        elig = evaluate_full_eligibility(n, wr, expectancy)
+        return build_envelope(cov, score, elig,
+                              window_start=NOW - timedelta(days=90),
+                              window_end=NOW, computed_at=NOW)
+
+    def test_T71_active_FULL_decision_grade_True(self):
+        env = self._active(n=120, wr=0.55, expectancy=0.50)
+        self.assertEqual(env["health_status"], "FULL")
+        self.assertTrue(env["decision_grade"])
+
+    def test_T72_active_LIMITED_decision_grade_False(self):
+        env = self._active(n=200, wr=0.40, expectancy=0.10)
+        self.assertEqual(env["health_status"], "LIMITED_SAMPLE")
+        self.assertFalse(env["decision_grade"])
+
+    def test_T73_active_INSUFFICIENT_decision_grade_False(self):
+        cov = StrategyCoverage(strategy_id="empty", has_prices=0)
+        score = StrategyScore(strategy_id="empty", n_fires_resolved=0)
+        elig = evaluate_full_eligibility(0, None, None)
+        env = build_envelope(cov, score, elig,
+                             window_start=NOW - timedelta(days=90),
+                             window_end=NOW, computed_at=NOW)
+        self.assertEqual(env["health_status"], "INSUFFICIENT_SAMPLE")
+        self.assertFalse(env["decision_grade"])
+
+
+# ─────────────────────────── 13. Discover existing strategies in fabric ───────
+
+class TestDiscoverExistingStrategies(unittest.TestCase):
+
+    def test_T74_discover_filters_snapshot_keys(self):
+        keys = [
+            "r2d2:strategy_health:alpha_m5:overall",
+            "r2d2:strategy_health:alpha_m5:overall:snapshot:pre_post_33:20260506T124246Z",
+            "r2d2:strategy_health:beta_m15:overall",
+            "r2d2:strategy_health:beta_m15:overall:snapshot:pre_post_28:20260506T101116Z",
+        ]
+        sids = discover_existing_strategies_in_fabric(lambda p: keys)
+        self.assertEqual(sids, ["alpha_m5", "beta_m15"])
+
+    def test_T75_discover_skips_publisher_state_key(self):
+        keys = [
+            "r2d2:strategy_health:alpha_m5:overall",
+            KEY_PUBLISHER_STATE,
+        ]
+        sids = discover_existing_strategies_in_fabric(lambda p: keys)
+        self.assertEqual(sids, ["alpha_m5"])
+
+    def test_T76_discover_empty_when_no_keys(self):
+        sids = discover_existing_strategies_in_fabric(lambda p: [])
+        self.assertEqual(sids, [])
+
+    def test_T77_discover_sorted_output(self):
+        keys = [
+            "r2d2:strategy_health:zulu:overall",
+            "r2d2:strategy_health:alpha:overall",
+            "r2d2:strategy_health:mike:overall",
+        ]
+        sids = discover_existing_strategies_in_fabric(lambda p: keys)
+        self.assertEqual(sids, ["alpha", "mike", "zulu"])
+
+
+# ─────────────────────────── 14. Union expected set ───────────────────────────
+
+class TestExpectedSetUnion(unittest.TestCase):
+
+    def test_T78_union_active_plus_existing(self):
+        active = ["alpha", "beta", "gamma"]  # 3 with fires
+        existing = ["alpha", "delta", "epsilon"]  # 3 in fabric (alpha overlaps)
+        expected, dormant = compute_expected_strategy_set(active, existing)
+        self.assertEqual(expected, ["alpha", "beta", "delta", "epsilon", "gamma"])
+        self.assertEqual(dormant, ["delta", "epsilon"])
+
+    def test_T79_only_active_no_dormant(self):
+        active = ["alpha", "beta"]
+        existing = ["alpha", "beta"]
+        expected, dormant = compute_expected_strategy_set(active, existing)
+        self.assertEqual(expected, ["alpha", "beta"])
+        self.assertEqual(dormant, [])
+
+    def test_T80_only_dormant_no_active(self):
+        # Edge case: all strategies dormant (no DB activity)
+        active = []
+        existing = ["alpha", "beta"]
+        expected, dormant = compute_expected_strategy_set(active, existing)
+        self.assertEqual(expected, ["alpha", "beta"])
+        self.assertEqual(dormant, ["alpha", "beta"])
+
+    def test_T81_new_strategy_in_active_not_in_existing(self):
+        # A brand-new strategy that just started firing
+        active = ["alpha", "brand_new"]
+        existing = ["alpha"]
+        expected, dormant = compute_expected_strategy_set(active, existing)
+        self.assertEqual(expected, ["alpha", "brand_new"])
+        self.assertEqual(dormant, [])  # brand_new is active, not dormant
+
+
+# ─────────────────────────── 15. TW-8 no stale version in fabric ──────────────
+
+class TestTripwire8NoStaleVersion(unittest.TestCase):
+
+    def _envelope(self, version):
+        return {
+            "version": version,
+            "health_status": "INSUFFICIENT_SAMPLE",
+            "score": None,
+            "computed_at_utc": "2026-05-13T18:00:00.000000Z",
+            "n_fires_resolved": 0,
+        }
+
+    def test_T82_tw8_pass_when_all_R2D2_SCHEDULED_V1(self):
+        store = {
+            "r2d2:strategy_health:alpha:overall": self._envelope("R2D2_SCHEDULED_V1"),
+            "r2d2:strategy_health:beta:overall": self._envelope("R2D2_SCHEDULED_V1"),
+        }
+        r = tripwire_8_no_stale_version_in_fabric(
+            fabric_keys=lambda p: list(store.keys()),
+            fabric_get_envelope=lambda k: store.get(k),
+        )
+        self.assertTrue(r.passed)
+        self.assertEqual(r.tier, "RED")
+
+    def test_T83_tw8_fail_on_stale_POST_33(self):
+        store = {
+            "r2d2:strategy_health:alpha:overall": self._envelope("R2D2_SCHEDULED_V1"),
+            "r2d2:strategy_health:dormant_old:overall": self._envelope(
+                "R2D2_POST_33_REFRESH_V1_2026_05_06"
+            ),
+        }
+        r = tripwire_8_no_stale_version_in_fabric(
+            fabric_keys=lambda p: list(store.keys()),
+            fabric_get_envelope=lambda k: store.get(k),
+        )
+        self.assertFalse(r.passed)
+        self.assertIn("dormant_old", r.detail)
+
+    def test_T84_tw8_skips_snapshot_keys(self):
+        # Snapshots are immutable historical refs — TW-8 ignores them
+        store = {
+            "r2d2:strategy_health:alpha:overall": self._envelope("R2D2_SCHEDULED_V1"),
+            "r2d2:strategy_health:alpha:overall:snapshot:pre_post_33:20260506T124246Z":
+                self._envelope("R2D2_POST_33_REFRESH_V1_2026_05_06"),
+        }
+        r = tripwire_8_no_stale_version_in_fabric(
+            fabric_keys=lambda p: list(store.keys()),
+            fabric_get_envelope=lambda k: store.get(k),
+        )
+        self.assertTrue(r.passed)
+
+    def test_T85_tw8_skips_publisher_state_key(self):
+        store = {
+            "r2d2:strategy_health:alpha:overall": self._envelope("R2D2_SCHEDULED_V1"),
+            KEY_PUBLISHER_STATE: {"verdict": "GREEN", "source_enum": "R2D2_SCHEDULED_V1"},
+        }
+        # publisher:state has no .version field but ends in :state not :overall
+        # — fabric_keys lookup with pattern '*:overall' would skip it; here we
+        # include it explicitly to prove the in-code skip-guard
+        r = tripwire_8_no_stale_version_in_fabric(
+            fabric_keys=lambda p: list(store.keys()),
+            fabric_get_envelope=lambda k: store.get(k),
+        )
+        self.assertTrue(r.passed)
+
+
+# ─────────────────────────── 16. End-to-end dormant publication ───────────────
+
+class TestEndToEndDormantPublication(unittest.TestCase):
+
+    def _db_query_factory(self, active_strategies, resolved_rows_per_strategy):
+        def _q(sql):
+            if "GROUP BY strategy_id" in sql:
+                return [
+                    {"strategy_id": s, "total_fired": 200,
+                     "has_prices": 200, "pending": 5,
+                     "earliest_fire_ts": "2026-02-13", "latest_fire_ts": "2026-05-13"}
+                    for s in active_strategies
+                ]
+            for s in active_strategies:
+                if f"strategy_id='{s}'" in sql:
+                    return resolved_rows_per_strategy.get(s, [])
+            return []
+        return _q
+
+    def test_T86_dormant_strategy_published_with_fresh_envelope(self):
+        # Setup: 1 active + 1 dormant (in fabric only)
+        fake = FakeFabric()
+        # Seed fabric with a stale POST_33 record for the dormant strategy
+        fake.store["r2d2:strategy_health:active_m5:overall"] = {
+            "version": "R2D2_SCHEDULED_V1", "health_status": "FULL", "score": 0.6,
+            "computed_at_utc": "2026-05-12T18:00:00.000000Z", "n_fires_resolved": 200,
+        }
+        fake.store["r2d2:strategy_health:dormant_m5:overall"] = {
+            "version": "R2D2_POST_33_REFRESH_V1_2026_05_06",
+            "health_status": "INSUFFICIENT_SAMPLE", "score": None,
+            "computed_at_utc": "2026-05-06T13:45:00+00:00", "n_fires_resolved": 0,
+        }
+        rows = {"active_m5": _make_resolved_rows(wins=80, losses=40, neutrals=10)}
+        db_query = self._db_query_factory(["active_m5"], rows)
+
+        def _fabric_keys(pattern):
+            return [k for k in fake.store.keys() if ":overall" in k]
+
+        audit = run_publisher(
+            db_query=db_query,
+            fabric_get=fake.get, fabric_set=fake.set,
+            fabric_keys=_fabric_keys,
+            now_utc_=NOW, dry_run=False,
+        )
+        # Both strategies should be published this run
+        self.assertEqual(audit["strategies_expected"], 2)
+        self.assertEqual(audit["strategies_published"], 2)
+
+        # Dormant strategy now has fresh R2D2_SCHEDULED_V1 envelope
+        dormant_env = fake.store["r2d2:strategy_health:dormant_m5:overall"]
+        self.assertEqual(dormant_env["version"], "R2D2_SCHEDULED_V1")
+        self.assertEqual(dormant_env["health_status"], "INSUFFICIENT_SAMPLE")
+        self.assertEqual(dormant_env["health_status_reason"], "no_fires_in_90d_window")
+        self.assertIsNone(dormant_env["score"])
+        self.assertFalse(dormant_env["decision_grade"])
+        self.assertTrue(dormant_env.get("dormant_in_90d_window"))
+
+    def test_T87_no_stale_POST_33_remains_after_run(self):
+        # The TW-8 validation: after a successful publication, NO stale version
+        # should remain at any canonical :overall key
+        fake = FakeFabric()
+        fake.store["r2d2:strategy_health:alpha:overall"] = {
+            "version": "R2D2_SCHEDULED_V1", "health_status": "FULL", "score": 0.6,
+            "computed_at_utc": "2026-05-12T18:00:00.000000Z", "n_fires_resolved": 200,
+        }
+        fake.store["r2d2:strategy_health:stale_one:overall"] = {
+            "version": "R2D2_POST_33_REFRESH_V1_2026_05_06",
+            "health_status": "INSUFFICIENT_SAMPLE", "score": None,
+            "computed_at_utc": "2026-05-06T13:45:00+00:00", "n_fires_resolved": 0,
+        }
+        fake.store["r2d2:strategy_health:stale_two:overall"] = {
+            "version": "R2D2_POST_33_REFRESH_V1_2026_05_06",
+            "health_status": "INSUFFICIENT_SAMPLE", "score": None,
+            "computed_at_utc": "2026-05-06T13:45:00+00:00", "n_fires_resolved": 0,
+        }
+        rows = {"alpha": _make_resolved_rows(wins=80, losses=40, neutrals=10)}
+        db_query = self._db_query_factory(["alpha"], rows)
+
+        def _fabric_keys(pattern):
+            return [k for k in fake.store.keys() if ":overall" in k]
+
+        run_publisher(
+            db_query=db_query,
+            fabric_get=fake.get, fabric_set=fake.set,
+            fabric_keys=_fabric_keys,
+            now_utc_=NOW, dry_run=False,
+        )
+        # Post-run: every :overall key has version=R2D2_SCHEDULED_V1
+        for k, env in fake.store.items():
+            if not k.endswith(":overall"):
+                continue
+            self.assertEqual(
+                env["version"], "R2D2_SCHEDULED_V1",
+                f"stale version remained at {k}: {env.get('version')}",
+            )
+
+    def test_T88_dormant_only_run_publishes_dormant(self):
+        # Edge: NO active strategies, only fabric-existing strategies
+        fake = FakeFabric()
+        fake.store["r2d2:strategy_health:dormant_a:overall"] = {
+            "version": "R2D2_POST_33_REFRESH_V1_2026_05_06",
+            "health_status": "INSUFFICIENT_SAMPLE", "score": None,
+            "computed_at_utc": "2026-05-06T13:45:00+00:00", "n_fires_resolved": 0,
+        }
+        fake.store["r2d2:strategy_health:dormant_b:overall"] = {
+            "version": "R2D2_POST_33_REFRESH_V1_2026_05_06",
+            "health_status": "INSUFFICIENT_SAMPLE", "score": None,
+            "computed_at_utc": "2026-05-06T13:45:00+00:00", "n_fires_resolved": 0,
+        }
+
+        def _db_query_empty(sql):
+            if "GROUP BY strategy_id" in sql:
+                return []
+            return []
+
+        def _fabric_keys(pattern):
+            return [k for k in fake.store.keys() if ":overall" in k]
+
+        audit = run_publisher(
+            db_query=_db_query_empty,
+            fabric_get=fake.get, fabric_set=fake.set,
+            fabric_keys=_fabric_keys,
+            now_utc_=NOW, dry_run=False,
+        )
+        self.assertEqual(audit["strategies_expected"], 2)
+        self.assertEqual(audit["strategies_published"], 2)
+        # Both dormants refreshed
+        for sid in ("dormant_a", "dormant_b"):
+            env = fake.store[f"r2d2:strategy_health:{sid}:overall"]
+            self.assertEqual(env["version"], "R2D2_SCHEDULED_V1")
+            self.assertEqual(env["health_status_reason"], "no_fires_in_90d_window")
 
 
 if __name__ == "__main__":
