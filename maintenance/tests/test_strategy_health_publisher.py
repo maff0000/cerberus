@@ -1130,5 +1130,93 @@ class TestEndToEndDormantPublication(unittest.TestCase):
             self.assertEqual(env["health_status_reason"], "no_fires_in_90d_window")
 
 
+# ─────────────────────────── 17. TW-4 dormant accept-list (TW4 patch) ─────────
+# WO-R2D2-STRATEGY-HEALTH-PUBLICATION-CADENCE-0001-TW4-DORMANT-ACCEPTLIST-FIX
+# Architect ruling 2026-05-14: TW-4 must accept both R2D2_INSUFFICIENT_V1 and
+# R2D2_DORMANT_V1 as valid null-score health_source values; reject unknown values.
+
+class TestTripwire4DormantAcceptlist(unittest.TestCase):
+
+    def test_T89_tw4_passes_for_dormant_envelope(self):
+        """Regression for the deploy-day finding: dormant records with
+        health_source=R2D2_DORMANT_V1 should PASS TW-4 (not violate)."""
+        dormant_env = build_dormant_envelope(
+            strategy_id="dormant_x",
+            window_start=NOW - timedelta(days=90),
+            window_end=NOW, computed_at=NOW,
+        )
+        # Sanity: producer is still using R2D2_DORMANT_V1
+        self.assertEqual(dormant_env["health_source"], "R2D2_DORMANT_V1")
+        self.assertIsNone(dormant_env["score"])
+        # TW-4 must NOT flag this as a violation now
+        r = tripwire_4_score_schema({"dormant_x": dormant_env})
+        self.assertTrue(r.passed, f"TW-4 should accept R2D2_DORMANT_V1; detail={r.detail}")
+        self.assertEqual(r.tier, "RED")  # tier unchanged
+
+    def test_T90_tw4_still_passes_for_insufficient_v1(self):
+        """Confirm R2D2_INSUFFICIENT_V1 (n<30 with fires) is still accepted."""
+        rec = {
+            "score": None,
+            "health_status": "INSUFFICIENT_SAMPLE",
+            "health_source": "R2D2_INSUFFICIENT_V1",
+            "computed_at_utc": "2026-05-14T09:00:00.000000Z",
+            "n_fires_resolved": 12, "version": SOURCE_ENUM,
+        }
+        r = tripwire_4_score_schema({"x": rec})
+        self.assertTrue(r.passed)
+
+    def test_T91_tw4_still_fails_for_unknown_null_score_source(self):
+        """Confirm an unknown health_source on a null-score record still RED."""
+        rec = {
+            "score": None,
+            "health_status": "INSUFFICIENT_SAMPLE",
+            "health_source": "R2D2_SOME_FUTURE_ENUM_THAT_DOES_NOT_EXIST",
+            "computed_at_utc": "2026-05-14T09:00:00.000000Z",
+            "n_fires_resolved": 0, "version": SOURCE_ENUM,
+        }
+        r = tripwire_4_score_schema({"x": rec})
+        self.assertFalse(r.passed)
+        self.assertIn("R2D2_SOME_FUTURE_ENUM_THAT_DOES_NOT_EXIST", r.detail)
+
+    def test_T92_tw4_still_fails_for_null_score_with_main_source_enum(self):
+        """Null score with the active-path source enum is still wrong — that
+        path should produce a numeric score. Confirm TW-4 catches it."""
+        rec = {
+            "score": None,
+            "health_status": "INSUFFICIENT_SAMPLE",
+            "health_source": "R2D2_SCHEDULED_V1",  # active source enum, not null-score
+            "computed_at_utc": "2026-05-14T09:00:00.000000Z",
+            "n_fires_resolved": 50, "version": SOURCE_ENUM,
+        }
+        r = tripwire_4_score_schema({"x": rec})
+        self.assertFalse(r.passed)
+        self.assertIn("R2D2_SCHEDULED_V1", r.detail)
+
+    def test_T93_tw4_mixed_dormant_and_insufficient_all_pass(self):
+        """Mixed batch with both dormant and sample-insufficient records — all
+        should pass TW-4."""
+        recs = {
+            "dormant_a": build_dormant_envelope(
+                strategy_id="dormant_a",
+                window_start=NOW - timedelta(days=90),
+                window_end=NOW, computed_at=NOW,
+            ),
+            "insufficient_b": {
+                "score": None, "health_status": "INSUFFICIENT_SAMPLE",
+                "health_source": "R2D2_INSUFFICIENT_V1",
+                "computed_at_utc": "2026-05-14T09:00:00.000000Z",
+                "n_fires_resolved": 5, "version": SOURCE_ENUM,
+            },
+            "full_c": {
+                "score": 0.62, "health_status": "FULL",
+                "health_source": "R2D2_SCHEDULED_V1",
+                "computed_at_utc": "2026-05-14T09:00:00.000000Z",
+                "n_fires_resolved": 150, "version": SOURCE_ENUM,
+            },
+        }
+        r = tripwire_4_score_schema(recs)
+        self.assertTrue(r.passed, f"all three should pass; detail={r.detail}")
+
+
 if __name__ == "__main__":
     unittest.main()

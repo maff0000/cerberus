@@ -597,12 +597,25 @@ def tripwire_3_tz_aware_utc(records: Dict[str, Dict[str, Any]]) -> TripwireResul
 
 
 def tripwire_4_score_schema(records: Dict[str, Dict[str, Any]]) -> TripwireResult:
-    """score must be float OR None+health_source=R2D2_INSUFFICIENT_V1."""
+    """score must be float OR None with an accepted null-score health_source.
+
+    Accept-list (architect-ratified 2026-05-14):
+      - R2D2_INSUFFICIENT_V1 — n<30 with fires (sample below minimum)
+      - R2D2_DORMANT_V1      — no fires in 90d lookback window
+
+    Both reasons are valid producer-side null-score paths and are kept as
+    distinct health_source values so downstream consumers (NEO/Solo/Trader)
+    can reason about WHY a strategy lacks a score.
+    """
+    accepted_null_score_sources = {
+        "R2D2_INSUFFICIENT_V1",
+        "R2D2_DORMANT_V1",
+    }
     violations: List[str] = []
     for sid, env in records.items():
         s = env.get("score")
         if s is None:
-            if env.get("health_source") != "R2D2_INSUFFICIENT_V1":
+            if env.get("health_source") not in accepted_null_score_sources:
                 violations.append(
                     f"{sid}=null score but health_source={env.get('health_source')}"
                 )
