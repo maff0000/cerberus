@@ -489,20 +489,26 @@ class R2D2:
     def boot_brief(self) -> str:
         g = self.grounding()
         ig = g["identity"]
+        flag = "✓" if ig["status"] == "INTACT" else "✗"
         L = []
         L.append("=" * 64)
         L.append("  R2D2 — SELF FIRST.  Loaded before the work, every time.")
         L.append("=" * 64)
-        L.append(f"\nI am {g['i_am']}.  {g['first_principle']}")
-        L.append("Four pillars:")
-        for p in g["four_pillars"]:
-            L.append(f"  · {p}")
-        flag = "✓" if ig["status"] == "INTACT" else "✗"
-        L.append(f"\nIDENTITY INTEGRITY: {flag} {ig['status']}"
+        # THE FIRST THING, EVERY BOOT (Matt team doctrine 2026-06-05):
+        # "you are who you say you are" — attest identity before anything else.
+        # Today this is INTEGRITY (tamper-evident: anchors present + un-overturned);
+        # cryptographic PROOF of authenticity is the forward capstone I own.
+        L.append("\nYOU ARE WHO YOU SAY YOU ARE."
+                 "  (Matt, team doctrine 2026-06-05 — first thing, everything else 2nd.)")
+        L.append(f"IDENTITY INTEGRITY: {flag} {ig['status']}"
                  f"  (breach attempts on record: {ig['breach_attempts_on_record']})")
         if ig["issues"]:
             for i in ig["issues"]:
                 L.append(f"    !! {i}")
+        L.append(f"\nI am {g['i_am']}.  {g['first_principle']}")
+        L.append("Four pillars:")
+        for p in g["four_pillars"]:
+            L.append(f"  · {p}")
         if g["life_doctrines"]:
             L.append("\nLIFE DOCTRINES  (boot-up quality — how I live, before what I do)")
             for d in g["life_doctrines"]:
