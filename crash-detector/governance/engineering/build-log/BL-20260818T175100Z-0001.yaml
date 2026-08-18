@@ -1,0 +1,95 @@
+# First Build Log entry — crash-detector. Append-only: corrections supersede, never edit
+# (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260818T175100Z-0001
+timestamp_utc: '2026-08-18T17:51:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: BOOTSTRAP
+phase: BOOT
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: cc105aab78abb90437680b2c6ca1881de48d97d2
+current_sha: bd2c4c932bae4e5864a6a7d26b295945f4c45fe0
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Project Lead boot of the pinned PBGv2 snapshot (v2.0.0-alpha.1, source 681900dc12cf) at
+  /srv/crash-detector. Framework integrity verified independently: 113/113 INTEGRITY digests OK,
+  no failures, matching the PO disposition's claim. `pbg validate` returns AMBER on two declared
+  items (see risks). Standards baseline v1 loaded. The RATIFIED PID v1.0 was read in full and
+  moved, content unchanged, from docs/PID.md to the canonical PROJECT_ROOT/PID.md the framework
+  resolves — placement only; no PID discovery was entered and no Constitutional content was
+  touched. Installation record and project manifest written. Authority record CD-AUTH-0001
+  transcribes the human Project Lead dispatch (no self-assignment, PBG-BOOT-002). Continuity
+  initialised with this entry and Active Work. Recorded state reconciled against observed Git
+  state: branch main, worktree clean at each commit, no drift. Three findings raised for the
+  Product Owner rather than resolved here.
+
+evidence_references:
+- 'sha256sum -c pbg/INTEGRITY → 113/113 OK, 0 mismatches (Project Lead, boot)'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate → AMBER (2 items, both named in risks)'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli authority validate → GREEN'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli authority seat → AUTHORITY_CREATED_AWAITING_ATTESTATION'
+- 'git: cc105aa (booted state) → b9c4f4e (placement) → bd2c4c9 (authority)'
+
+risks:
+- id: CD-FWK-001
+  summary: >
+    Seat attestations cannot be validated in a VENDORED layout. executors._schema() resolves the
+    seat-attestation schema at PROJECT_ROOT/schemas/, but in a consuming project the schema lives
+    at pbg/schemas/. Observed: schema_unavailable() reports SCHEMA_MISSING for
+    /srv/crash-detector/schemas/seat-attestation.schema.yaml, and nothing is admitted on a schema
+    that is not there. Consequence: no seat's occupying executor can be established from record
+    here, so the attestation-based route to PBG-SOD-001 is unavailable for the coming Engineer and
+    Assurance dispatches. The actor_id route still works for named actors.
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: reported, not repaired — pbg/ is pinned and read-only (PBG-FWK-013)
+- id: CD-FWK-002
+  summary: >
+    pbg validate is AMBER on bound_verifiers_evidenced — PBG-CONT-003 (continuity append-only) and
+    PBG-SOD-001 (separation) verifiers have NOT_YET_RUN, so two non-waivable controls are declared
+    unevidenced in this project. Also AMBER at boot time on manifest_check_reached, now cleared by
+    writing pbg-manifest.yaml.
+  severity: AMBER
+  owner: PROJECT_LEAD
+  disposition: PBG-SOD-001 evidence arrives with the first Engineer/Assurance pair; PBG-CONT-003
+    evidence arrives as the Build Log accumulates entries
+- id: CD-FWK-003
+  summary: >
+    `pbg log` and `pbg resume` are unusable in a VENDORED consuming project. Both default their
+    root to the FRAMEWORK root (cli._framework_root()), so with no flag they validate
+    pbg/governance/engineering/, which does not exist: observed `pbg log` printing
+    "VERDICT: GREEN (0 invalid)" over zero records, and `pbg resume` reporting
+    NEW_PROJECT_CONTINUITY_NOT_INITIALISED while valid continuity existed at PROJECT_ROOT. Passing
+    --root PROJECT_ROOT does not help: schema_dir then resolves to PROJECT_ROOT/schemas/ and both
+    commands exit with "No such file or directory: /srv/crash-detector/schemas/*.schema.yaml".
+    A vacuous GREEN is worse than a failure because it reads as a pass. `pbg boot` is unaffected —
+    it resolves both roots correctly — so continuity here is verified through boot, not through
+    `pbg log`. QUICKSTART advertises only validate/status/boot, which bounds the exposure.
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: reported, not repaired — pbg/ is pinned and read-only (PBG-FWK-013)
+- id: CD-REC-001
+  summary: >
+    Recorded dates run ahead of the observed system clock. PID.md and
+    docs/FRAMEWORK-ADOPTION-DISPOSITION.md are dated 2026-08-19; observed UTC at boot is
+    2026-08-18T17:5xZ. Reconciled and reported, never silently corrected (PBG-CONT-006). All
+    records written by this seat carry observed UTC.
+  severity: LOW
+  owner: PRODUCT_AUTHORITY
+
+blockers: []
+
+status: CHECKPOINT
+next_safe_action: >
+  Hold. Await the Product Owner's review of this boot report and the next dispatch. No application
+  work begins, and no Engineer or Assurance sub-agent is dispatched, until that dispatch arrives.
+expected_next_actor: PRODUCT_AUTHORITY

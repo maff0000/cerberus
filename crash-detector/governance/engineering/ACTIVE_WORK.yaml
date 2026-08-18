@@ -1,0 +1,74 @@
+# Active Work — the current resumable state. ONE per project, overwritten in place by design.
+# History is the Build Log, which is append-only.
+
+project: crash-detector
+updated_utc: '2026-08-18T17:51:30Z'
+pbg_version: 2.0.0-alpha.1
+pid_version: '1.0'
+blueprint_version: null
+
+active_authority_id: CD-AUTH-0001
+work_type: BOOTSTRAP
+objective: >
+  Boot the pinned PBGv2 framework at /srv/crash-detector, reconcile recorded against observed
+  state, initialise continuity, and report a boot verdict to the Product Owner.
+current_phase: BOOT
+current_block: CD-BOOT-001 — Project Lead boot and boot report
+owner_role: PROJECT_LEAD
+next_actor: PRODUCT_AUTHORITY
+
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: cc105aab78abb90437680b2c6ca1881de48d97d2
+last_completed_checkpoint_sha: bd2c4c932bae4e5864a6a7d26b295945f4c45fe0
+continuity_record_commit: PENDING
+working_tree_state: clean at bd2c4c9; this record and its Build Log entry are the pending commit
+
+completed_items:
+- framework integrity verified independently — 113/113 INTEGRITY digests OK
+- Development and Security Standards Baseline v1 loaded (PBG-BOOT-006)
+- RATIFIED PID v1.0 read in full and placed at the canonical PROJECT_ROOT/PID.md, content unchanged
+- installation record and project manifest written
+- authority record CD-AUTH-0001 written, validated GREEN, and committed
+- continuity initialised — this record and BL-20260818T175100Z-0001
+
+remaining_items:
+- BLUEPRINT.md — how the PID is to be built. Not yet authored; PO direction required on sequencing
+- ROADMAP.md — delivery sequence for the sixteen CD-AC criteria
+- Required Test Register — population derives from PID §6 and is compared against it (PBG-RT-001)
+
+open_decisions:
+- 'CD-D-001: ratify the PID placement at PROJECT_ROOT/PID.md (PO artefact moved, content unchanged)'
+- 'CD-D-002: disposition of framework finding CD-FWK-001 — seat attestations unusable in a
+  VENDORED layout, so PBG-SOD-001 cannot be evidenced by attestation on this project'
+- 'CD-D-003: the assurance latency budget in PID §5 is marked "proposed, Matt to ratify"'
+- 'CD-D-004: sequencing of first delivery — which acceptance criteria are attacked first'
+
+open_ambiguities:
+- 'PID §5 latency budget carries a "proposed" tag while PID §9 ratifies it; the two readings differ
+  and the PL will not resolve a Product Authority decision (PBG-AUTH-003)'
+
+risks:
+- 'CD-FWK-001 AMBER — seat occupancy not establishable from record in this layout'
+- 'CD-FWK-002 AMBER — PBG-CONT-003 and PBG-SOD-001 verifiers NOT_YET_RUN in this project'
+- 'CD-FWK-003 AMBER — `pbg log` and `pbg resume` are unusable in a vendored project and one of
+  them returns a vacuous GREEN over zero records; verify continuity through `pbg boot`'
+- 'CD-REC-001 LOW — recorded dates run one day ahead of the observed system clock'
+
+blockers: []
+held_actions: []
+
+required_evidence:
+- 'the pre-commit hook is NOT commissioned; prevention on this repository is currently nil,
+  detection is unaffected. Commissioning it is recommended and held for PO direction.'
+
+next_safe_action: >
+  Hold at this checkpoint. Await the Product Owner's review of the boot report and the next
+  dispatch. Begin no application work and dispatch no sub-agent until then.
+resume_instructions: >
+  Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, read
+  BL-20260818T175100Z-0001, then read PID.md and docs/FRAMEWORK-ADOPTION-DISPOSITION.md. The four
+  open decisions above belong to the Product Authority and must not be resolved by the Project Lead.
+last_build_log_entry: BL-20260818T175100Z-0001
+status: WAITING_PRODUCT_AUTHORITY
