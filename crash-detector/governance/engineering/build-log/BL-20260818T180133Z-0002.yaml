@@ -1,0 +1,144 @@
+# WO-1 checkpoint — crash-detector. Append-only: corrections supersede, never edit
+# (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260818T180133Z-0002
+timestamp_utc: '2026-08-18T18:01:33Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: TASK
+phase: DESIGN
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: c291f80057119dcbe610e365350159414547b65a
+current_sha: c291f80057119dcbe610e365350159414547b65a
+parent_entry_id: BL-20260818T175100Z-0001
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  WO-1 delivered, bounded exactly as dispatched. (1) Resumed from the repository record with no
+  access to the prior session: pbg boot returned GREEN at c291f80, continuity CONTINUITY_MATCH /
+  RESUME_GREEN, worktree clean, no drift between recorded and observed state. (2) Read
+  governance/decisions/PO-DECISIONS-0001.md and the amended PID v1.0.1 in full before any work;
+  CD-D-001..004 are ruled, CD-D-003 resolved in PID v1.0.1 §5, CD-REC-001 acknowledged by the PO
+  as their own error. All four decisions are consequently closed on the Active Work record. (3)
+  Commissioned the project-owned pre-commit hook per the PO's ACCEPTED hook recommendation:
+  `pbg hooks install` set repository-local core.hooksPath=pbg/tools/hooks; `pbg hooks status`
+  confirms INSTALLED. The hook is git configuration plus a file already inside the pinned pbg/
+  snapshot, so it changes no tracked file and cannot appear in this diff — its evidence is the
+  status output, not a commit. Its stated limits are carried unaltered into the risk register
+  below rather than reported as prevention it does not provide. (4) Authored BLUEPRINT.md v0.1.0,
+  PROPOSED: seven-container architecture, own-collector design under the PID §7 ruling, PostgreSQL
+  with a six-role grant matrix as the enforcement instrument, dial engine as a pure function over
+  sum-typed readings, publication layer, witness layer as a parallel pipeline meeting the score
+  only at the serving layer, and the public/private split held in five independent places. Each of
+  CD-AC-001/002/003/005/012 is built as a structure whose violation is inexpressible and paired
+  with the planted violation that proves the structure bites, all five landing in WO-2 before any
+  feature attaches to them. Delivery is decomposed into WO-1..WO-6 honouring CD-D-004's order
+  exactly. Two questions proved to be product content and were escalated rather than resolved
+  (CD-D-005 ingredient set, CD-D-006 public exposure route), each with a recommendation and a
+  default safe action under which work continues. No application code was written, and none begins
+  before the Product Owner accepts the Blueprint.
+
+evidence_references:
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot → Verdict GREEN, observed_sha c291f80057119dcbe610e365350159414547b65a, continuity_state CONTINUITY_MATCH/RESUME_GREEN, blocking_failures []'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli hooks status (before) → NOT_INSTALLED, core.hooksPath unset at local, global and system scope'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli hooks install → INSTALLED, core.hooksPath=pbg/tools/hooks (repository-local only), exit 0'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli hooks status (after) → INSTALLED, hook file /srv/crash-detector/pbg/tools/hooks/pre-commit'
+- 'git rev-parse HEAD → c291f80057119dcbe610e365350159414547b65a; git status --porcelain → clean before authoring'
+- 'observed UTC at authoring: 2026-08-18T17:58:26Z (date -u); records in this entry carry observed UTC, not assumed dates'
+- 'BLUEPRINT.md carries last_reconciliation_sha c291f80057119dcbe610e365350159414547b65a (PBG-BP-003)'
+
+decisions_closed:
+- 'CD-D-001 RATIFIED — PID at the project root is canonical'
+- 'CD-D-002 DISPOSED — PBG-SOD-001 evidenced by the named-actor route; CD-FWK-001 and CD-FWK-003 carried to the PBGv2 backlog by the PO'
+- 'CD-D-003 RESOLVED — the latency budget was ratified with the whole document; PID v1.0.1 corrects the stale parenthetical'
+- 'CD-D-004 SEQUENCED — delivery order fixed by the PO; decomposition within it is the PL''s and is recorded as WO-1..WO-6 in BLUEPRINT.md §15'
+
+decisions_raised:
+- id: CD-D-005
+  summary: >
+    The ingredient set — which inputs feed each dial — is not enumerated in the PID. Choosing it is
+    choosing what the dial means, and doctrine §3.6 forbids unexplained mappings, so it is Product
+    Owner content and not a PL inference from the ARGUS implementation (PBG-PID-003, PBG-AUTH-003).
+  recommendation: >
+    The Product Owner issues an ingredient register per dial — source, what it stands for,
+    criticality — which becomes rows in raw.source_registry.
+  default_safe_action: >
+    WO-2 proceeds regardless. With zero ingredient sources registered every dial correctly reads
+    UNKNOWN, which is doctrinally right and makes CD-AC-001's first planted violation trivially
+    demonstrable. The register is needed before WO-3, not before WO-2.
+  owner: PRODUCT_AUTHORITY
+- id: CD-D-006
+  summary: >
+    The public exposure route for cd-public in PROD — domain, hosting, and what fronts it.
+  recommendation: >
+    Decide at R2D2 ratification. The PID's standing lane (dev never on cloud, prod never on dell)
+    means it cannot be settled from DEV in any case.
+  default_safe_action: >
+    Both surfaces bind loopback on DEV throughout WO-2..WO-6. Nothing is publicly reachable until
+    Matt says so.
+  owner: PRODUCT_AUTHORITY
+
+risks:
+- id: CD-SEC-001
+  summary: >
+    The commissioned pre-commit hook validates only the authority records a commit touches, and
+    only on the supported commit path. `git commit --no-verify` bypasses it, as does writing objects
+    with git plumbing. It guards the gate, not the archive. Recorded because the hook's own
+    documentation states these limits and reporting the control as broader than it is would be the
+    false-green class this framework exists to prevent (PBG-FWK-001, PBG-FWK-002).
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: accepted as designed — detection is unaffected, and prevention on the supported path
+    moved from nil to enforced
+- id: CD-BP-001
+  summary: >
+    The AST-based register checks proposed in BLUEPRINT.md §7 and §13 are the one novel instrument
+    in the design and could prove brittle or evadable.
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: never the sole guard — every criterion in §13 carries at least two independent
+    refusals, and the AST check is the cheapest of them, not the strongest
+- id: CD-FWK-001
+  summary: >
+    Seat attestations remain unusable in this VENDORED layout. Unchanged since BL-20260818T175100Z-0001.
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: dispositioned by the PO in CD-D-002 — named-actor route for every seat; carried to the
+    PBGv2 backlog as a framework product change. pbg/ remains unmodified (PBG-FWK-013).
+- id: CD-FWK-002
+  summary: >
+    pbg validate remains AMBER on bound_verifiers_evidenced — PBG-CONT-003 and PBG-SOD-001 verifiers
+    NOT_YET_RUN in this project.
+  severity: AMBER
+  owner: PROJECT_LEAD
+  disposition: both clear during WO-2 — the first Engineer/Assurance pair evidences separation, and
+    the accumulating Build Log evidences append-only
+- id: CD-FWK-003
+  summary: >
+    `pbg log` and `pbg resume` remain unusable at a vendored root, one of them returning a vacuous
+    GREEN over zero records. Unchanged since BL-20260818T175100Z-0001.
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: carried to the PBGv2 backlog by the PO; continuity on this project is verified through
+    `pbg boot` only
+
+blockers: []
+held_actions:
+- 'WO-2 and all application code — held until the Product Owner accepts BLUEPRINT.md (CD-D-004.1)'
+- 'Engineer and Assurance dispatch — not issued in WO-1; the first pair is dispatched in WO-2'
+
+status: WAITING_PRODUCT_AUTHORITY
+next_safe_action: >
+  Hold. BLUEPRINT.md v0.1.0 goes to the Product Owner for acceptance. On acceptance, issue WO-2 as a
+  bounded Engineer dispatch — repository skeleton, container set, store schema and grant matrix, dial
+  types, collector framework, Required Test Register, and the five planted violations of §13 —
+  followed by a separate Assurance dispatch (PBG-SOD-001, non-waivable). Write no application code
+  before that acceptance.
+expected_next_actor: PRODUCT_AUTHORITY
