@@ -1,14 +1,15 @@
 ---
 document: PID — Product Intent Definition
 product: Crash Detector — standalone market stress instrument
-version: 1.0
-status: RATIFIED by Matt 2026-08-19 — all PO recommendations accepted; issues dealt with as we go
+version: 1.0.1
+status: RATIFIED by Matt 2026-08-18 — all PO recommendations accepted; issues dealt with as we go
 owner: Product Owner (Trinity)
 authority: Matt — final
-project-root: /srv/crash-detector on dell-debian (DEV) — per Matt's topology ruling 2026-08-19
+project-root: /srv/crash-detector on dell-debian (DEV) — per Matt's topology ruling 2026-08-18
 framework: PBGv2, instantiated as a pinned release at /srv/crash-detector/pbg/
 profile: PBG-OPERATED (G1–G6 + G8 runtime health, G9 for its own state)
 authority-class: ADVISORY ONLY — ratified by Matt 2026-08-18
+location: PID.md at the project root is canonical (CD-D-001 ratified)
 amendment: PO only; sections marked CONSTITUTIONAL by Matt only
 ---
 
@@ -82,7 +83,7 @@ advisory product**, not silently dropped — the detector's public read never to
 | Blast radius of a false "done" | a missed regime signal, or a false alarm informing a human decision; **no direct action** |
 | Kernel required | No (Layer 2 guardrail when it graduates; gates nothing) |
 | Layer 3 gate required | No — nothing irreversible; the freeze does not touch this project |
-| **Assurance latency budget** *(proposed, Matt to ratify)* | pipeline/publication failure independently detectable ≤ **15 minutes**; a cadence breach alerts within **one publication cycle**; a candidate defect is caught at the register gate before promotion |
+| **Assurance latency budget** *(RATIFIED 2026-08-18 — CD-D-003 resolved)* | pipeline/publication failure independently detectable ≤ **15 minutes**; a cadence breach alerts within **one publication cycle**; a candidate defect is caught at the register gate before promotion |
 
 ## 6. Acceptance criteria
 
@@ -132,7 +133,7 @@ computation ours; witnesses read-only external. Known-fragile: Quantical's undoc
 - Standing rulings preserved: against adopting Quantical/MacroMicro backfilled series; against
   blend-and-check double use; against copying unexplained mappings.
 
-## 9. Ratification record — signed by Matt 2026-08-19
+## 9. Ratification record — signed by Matt 2026-08-18
 
 1. §1 purpose and §3 doctrine — the CONSTITUTIONAL sections (his pen, unchanged from the held
    draft he shaped).
@@ -144,3 +145,10 @@ computation ours; witnesses read-only external. Known-fragile: Quantical's undoc
 6. Old D3 (oil transient rule that never matures) — **folded into scope**: the standalone
    rebuild implements the maturation rule correctly rather than porting the defect. Its ~+0.20
    suppressed stress contribution is the reason it cannot be carried silently.
+
+## 10. Amendment log
+
+| Version | Date (UTC) | By | Change |
+|---|---|---|---|
+| 1.0 | 2026-08-18 | PO, ratified by Matt | initial ratified PID |
+| 1.0.1 | 2026-08-18 | PO | CD-D-003: §5 stale "(proposed)" parenthetical corrected — the budget was ratified with the whole document; CD-REC-001: dates corrected to observed UTC (my stamps ran a day ahead; the PL caught it); CD-D-001 placement note added. No criterion, semantics or doctrine changed. |
