@@ -1,0 +1,152 @@
+domain: BP
+domain_label: Blueprint
+controls:
+- control_id: PBG-BP-001
+  title: The Project Lead owns Blueprint currency; Assurance independently verifies it
+  status: ACTIVE
+  purpose: 'Separate authoring design truth from verifying it, the same principle as the separation-of-
+    duties floor applied to documents.
+
+    '
+  risk_addressed: 'PBGv1 made the independent verifier the author of the Blueprint, which both turned
+    the assurance seat into the project secretary and left nobody independently checking the document
+    against reality.
+
+    '
+  required_outcome: 'The Project Lead keeps the Blueprint current. The Assurance Engineer verifies it
+    matches Git and authorised runtime evidence, and does not author it.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - Blueprint authorship
+  - blueprint verification verdict
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'PBGv1 archaeology V1-REC-01: right artefact, wrong owner'
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'pbg validate reports Blueprint changes authored by the assurance seat. The verification
+    verdict is a distinct artefact from the Blueprint itself.
+
+    '
+- control_id: PBG-BP-002
+  title: The Assurance Engineer is not the routine project secretary
+  status: ACTIVE
+  purpose: 'Protect assurance capacity for verification rather than record-keeping.
+
+    '
+  risk_addressed: 'A seat loaded with canonical recording and index generation has less time for verification,
+    and a seat that maintains records is verifying its own work when it checks them.
+
+    '
+  required_outcome: 'Canonical recording, register maintenance and index generation belong to the Project
+    Lead or to generated projections. Assurance verifies; it does not maintain.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - record authorship
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Record maintenance authored by the assurance seat is reported by pbg validate.
+
+    '
+- control_id: PBG-BP-003
+  title: The Blueprint records the exact SHA it was last reconciled against
+  status: ACTIVE
+  purpose: 'Make Blueprint currency computable rather than claimed.
+
+    '
+  risk_addressed: 'A hand-maintained freshness stamp, which rots by construction and then makes the staleness
+    check fire on the stamp rather than the content. PBGv1 diagnosed exactly this anti-pattern for source
+    files and kept doing it to its own governance documents.
+
+    '
+  required_outcome: 'The Blueprint carries a last_reconciliation_sha. Currency is computed by comparing
+    it to HEAD, never read from a written date.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - Blueprint last_reconciliation_sha
+  - git state
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema requires last_reconciliation_sha; pbg status computes and reports the gap
+    to HEAD.
+
+    '
+- control_id: PBG-BP-004
+  title: A blueprint verification verdict states what was verified against what
+  status: ACTIVE
+  purpose: 'Prevent a verification claim that covers less than it appears to.
+
+    '
+  risk_addressed: 'A Blueprint asserting a runtime topology nobody checked, inside a document marked verified.
+    That is the false-green class wearing a verification badge.
+
+    '
+  required_outcome: 'The verdict states which parts were verified against Git, which against authorised
+    runtime evidence, and which were not verified at all.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: a blueprint verification is performed
+    mode: PER_WORK
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - blueprint verification verdict with coverage
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema requires per-section verification coverage; an unqualified "verified" is
+    rejected.
+
+    '

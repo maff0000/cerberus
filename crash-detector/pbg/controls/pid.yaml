@@ -1,0 +1,156 @@
+domain: PID
+domain_label: Product constitution
+controls:
+- control_id: PBG-PID-001
+  title: With no valid PID the Project Lead enters PID_DISCOVERY_REQUIRED
+  status: ACTIVE
+  purpose: 'Stop implementation beginning before product intent is agreed and recorded.
+
+    '
+  risk_addressed: 'Building the wrong thing efficiently. Without a PID there is nothing to reconcile drift
+    against, so drift becomes undetectable rather than merely uncorrected.
+
+    '
+  required_outcome: 'The Project Lead locates and validates the PID at boot. Where none exists or it is
+    invalid, it enters PID_DISCOVERY_REQUIRED and does not begin application implementation.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - boot declaration pid_state
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PRINCE2 project initiation documentation
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg boot resolves pid_state; absent or schema-invalid produces PID_DISCOVERY_REQUIRED
+    and blocks implementation work types.
+
+    '
+- control_id: PBG-PID-002
+  title: Every PID section is tagged with its content class
+  status: ACTIVE
+  purpose: 'Distinguish what the Project Lead may change from what only the Product Authority may change,
+    mechanically rather than by convention.
+
+    '
+  risk_addressed: 'A single undifferentiated document leaves a lead either freezing over trivia or quietly
+    amending product doctrine. PBGv1 had no such distinction; a project patched around it with an Owner
+    Decision Register and a rule forbidding the lead to answer it.
+
+    '
+  required_outcome: 'Each section is tagged CONSTITUTIONAL, DELEGATED_ENVELOPE or CONTROLLED_REGISTER.
+    A PL-authored change to a CONSTITUTIONAL section fails validation.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - PRODUCT_AUTHORITY
+  required_evidence:
+  - PID with content-class tags
+  - PID diff authorship
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema requires a content_class per section; pbg validate compares the authoring
+    role of a PID diff against the class of each changed section.
+
+    '
+- control_id: PBG-PID-003
+  title: Existing code is evidence of current implementation, not authorised product intent
+  status: ACTIVE
+  purpose: 'Keep reverse discovery honest when PBGv2 is adopted by an existing unmanaged codebase.
+
+    '
+  risk_addressed: 'Reading the current behaviour of a system and treating it as the specification, which
+    launders every existing defect and accident into approved intent.
+
+    '
+  required_outcome: 'Reverse discovery produces an as-is report and a draft current-state Blueprint. The
+    target state is discussed with the Product Authority and the PID is authored and approved before normal
+    delivery begins.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    when: adopting PBGv2 into an existing codebase with no PID
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  - PRODUCT_AUTHORITY
+  required_evidence:
+  - as-is discovery report
+  - draft Blueprint
+  - authorised PID
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/project-discovery.md
+  verification_note: 'The as-is report is marked as observation, never as requirement; the PID records
+    which current behaviours were deliberately adopted as intent and which were not.
+
+    '
+- control_id: PBG-PID-004
+  title: The Project Lead does not invent material product doctrine
+  status: ACTIVE
+  purpose: 'Keep authoring assistance distinct from authority during PID creation.
+
+    '
+  risk_addressed: 'An empty project where the lead, trying to be useful, supplies the purpose, the users
+    and the success criteria — and nobody ever notices those were never decided.
+
+    '
+  required_outcome: 'The Project Lead identifies missing product decisions and recommends options. It
+    does not choose. Unresolved material decisions are recorded as open questions, not filled in.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: authoring a PID
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - PID authorisation block
+  - open-questions register
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: HUMAN_DECISION
+  verification_mechanism: DECISION_AUTHORITY_REF
+  verification_ref: policies/authority-and-scope.yaml
+  verification_note: 'Assurance checks that every CONSTITUTIONAL section carries Product Authority approval,
+    and that open questions were not silently closed.
+
+    '

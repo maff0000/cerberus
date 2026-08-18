@@ -1,0 +1,310 @@
+domain: PORT
+domain_label: Portability
+controls:
+- control_id: PBG-PORT-001
+  title: Unique product truth is never stored solely in a platform-specific file
+  status: ACTIVE
+  purpose: 'Keep PBGv2 platform intellectual property rather than one vendor''s configuration.
+
+    '
+  risk_addressed: 'PBGv1 made a vendor-named file its canonical root boot contract, kept part of its doctrine
+    in one product''s cache, and hardcoded one code-hosting platform into its board tool. Moving hosts
+    would have meant rewriting governance.
+
+    '
+  required_outcome: 'Doctrine, standards, PID, Blueprint, role contracts, authority rules, schemas, skills,
+    evidence rules, boot sequence, output contracts, permission intent and capability requirements are
+    platform-neutral. No vendor-specific file, directory or prompt syntax is the sole home for any of
+    them.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - adapter verification output
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg validate reports any canonical content whose only occurrence is inside an adapter
+    directory or vendor-named file.
+
+    '
+- control_id: PBG-PORT-002
+  title: An unmet required capability fails closed
+  status: ACTIVE
+  purpose: 'Ensure an agent knows before it starts whether it can do the job.
+
+    '
+  risk_addressed: 'Discovering mid-task that the host cannot execute tests, read Git history or dispatch
+    sub-agents, at which point the work is half done and the gap is invisible in the record.
+
+    '
+  required_outcome: 'Roles declare required capabilities, never models or subscriptions. Capability preflight
+    runs at boot and its result is recorded in the boot declaration. An unmet required capability returns
+    AMBER_RUNTIME_CAPABILITY_GAP rather than proceeding. Discovery covers version control and hosting
+    provider alongside runtime: git availability, repository presence, remote presence and provider, provider
+    authentication, repository accessibility, write and admin authority, CI provider, and whether branch
+    protection is observable. Missing provider access NEVER prevents local boot; it resolves to a named
+    state such as GIT_LOCAL_ONLY, GITHUB_READ_AVAILABLE, GITHUB_WRITE_AVAILABLE, GITHUB_ADMIN_AVAILABLE
+    or AMBER_GITHUB_CAPABILITY_GAP. Copy-and-boot is local-first: copy, start the agent, boot, and discover
+    provider capability if it happens to be there — never copy, configure a provider, authenticate, create
+    a remote, then boot.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - boot declaration capability block
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg boot performs preflight and fails closed on an unmet required capability.
+
+    '
+- control_id: PBG-PORT-003
+  title: Runtime adapters are generated and validated, never hand-maintained
+  status: ACTIVE
+  purpose: 'Stop a per-host bootstrap file quietly becoming a second governance document.
+
+    '
+  risk_addressed: 'A hand-edit to a vendor bootstrap file becoming doctrine that exists on one host and
+    nowhere else, which is undetectable without regeneration.
+
+    '
+  required_outcome: 'Host bootstrap files are generated from a canonical boot source and validated against
+    it. Each records the canonical source digest and the framework version it was generated from. Drift
+    between a generated adapter and its canonical source is a validation failure, not a warning.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - adapter digests
+  - verification output
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: adapters.command_fidelity
+  verification_note: 'Adapters are regenerated in memory and compared; any difference fails.
+
+    '
+- control_id: PBG-PORT-004
+  title: Semantic, permission and verification equivalence are assessed separately
+  status: ACTIVE
+  purpose: 'Prevent one weak host being described as equivalent to a strong one.
+
+    '
+  risk_addressed: 'Assuming two runtimes provide equivalent enforcement because both can load the same
+    instructions. A host may score full semantic equivalence and zero permission equivalence, and an averaged
+    badge hides exactly the difference that matters.
+
+    '
+  required_outcome: 'Each host is assessed on three axes: does it present the same instructions, can it
+    mechanically deny the prohibited action, and can it produce the evidence the control requires. Each
+    control by host resolves to its own status. The resulting matrix is published and is honest about
+    where PBGv2 is weaker.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - per-host control matrix
+  - per-host scenario results
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: docs/architecture/RUNTIME_CAPABILITY_MATRIX.yaml
+  verification_note: 'Conformance scenarios execute per host and results are recorded per host, never
+    averaged.
+
+    '
+- control_id: PBG-PORT-005
+  title: Every unsupported control is declared and compensated
+  status: ACTIVE
+  purpose: 'Make a host''s weakness a recorded fact with a named compensation rather than a silent absence.
+
+    '
+  risk_addressed: 'A blanket disclaimer that some controls are unsupported, which tells a reader nothing
+    about which ones or what is being done instead.
+
+    '
+  required_outcome: 'Compensation is stated per control, not as a blanket note. Where a host cannot mechanically
+    deny mutation to the assurance seat, the separation floor is held by verification and any assurance-side
+    working-tree change is a bypass.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - per-host control matrix with compensations
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: docs/architecture/RUNTIME_CAPABILITY_MATRIX.yaml
+  verification_note: 'Each UNSUPPORTED or PARTIALLY_* status carries a named compensating control or an
+    explicit statement that none exists.
+
+    '
+- control_id: PBG-PORT-006
+  title: Outcome and authority interpretation are equivalent across hosts
+  status: ACTIVE
+  purpose: 'Keep governance meaning constant even where mechanism differs.
+
+    '
+  risk_addressed: 'The same work reaching different verdicts on different hosts, which makes a verdict
+    a property of the tooling rather than of the work.
+
+    '
+  required_outcome: 'Semantically equivalent scenarios produce equivalent outcomes and authority interpretations
+    across supported hosts. Unavoidable host differences are recorded rather than smoothed over. Where
+    a host cannot run a scenario, that is a recorded capability gap with its compensating control.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - per-host scenario results and differences
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Portability conformance runs the scenario set on each supported adapter.
+
+    '
+- control_id: PBG-PORT-007
+  title: A platform-specific skill file is never the sole source of truth for a skill
+  status: ACTIVE
+  purpose: 'Keep capability portable for the same reason doctrine is.
+
+    '
+  risk_addressed: 'Expertise encoded only in one vendor''s skill format, so moving hosts silently drops
+    competence rather than raising an error.
+
+    '
+  required_outcome: 'Skill packs are portable documents with structured front matter. Any vendor-specific
+    skill file is a generated view of the canonical pack.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  required_evidence:
+  - skill pack inventory
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg validate reports a vendor skill file with no canonical counterpart.
+
+    '
+- control_id: PBG-PORT-010
+  title: Container readiness targets OCI compatibility, not one product or orchestrator
+  status: ACTIVE
+  purpose: 'Keep the container requirement a portability property rather than a dependency on a particular
+    installation.
+
+    '
+  risk_addressed: 'Trading host coupling for tooling coupling — an application that runs only under one
+    vendor''s desktop product, or a framework that drags orchestration complexity into projects that do
+    not need it.
+
+    '
+  required_outcome: 'The requirement is OCI-compatible architecture. PBGv2 stays compatible with common
+    container engines, compose tooling, OCI registries and, where later adopted, cloud container platforms.
+    Orchestration is never a default requirement and is not introduced before the application needs it.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - Blueprint containerisation section
+  - PID platform constraints
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - OCI Image and Runtime Specifications
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/specialist/docker-oci-containerisation.md
+  verification_note: 'Container-readiness evidence is expressed against OCI concepts; a project requiring
+    one specific vendor product records that as a constraint in its PID.
+
+    '

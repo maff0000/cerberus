@@ -1,0 +1,36 @@
+policy_id: POL-RELEASE-AND-DEPLOYMENT
+title: Release and deployment
+version: 1
+status: DRAFT
+authority: PBGV2-FOUNDATION-0001
+
+purpose: >
+  Ensure what reaches production is the artefact that was verified, and that its state can be
+  established from the running system rather than from intent.
+
+scope: Release preparation, deployment, and any assertion about a running system.
+actors: [PRODUCT_AUTHORITY, PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+
+required_behaviour:
+- Identify the artefact by digest, and deploy the artefact that was verified.
+- State the rollback route before deployment begins.
+- Verify a deployment against the running production's own bytes.
+- Record deployment provenance from distinct observation sources, and classify any variance.
+- Obtain independent Assurance before release, and Product Authority approval to release.
+- Treat production deployment as a Controlled Action.
+
+prohibited_behaviour:
+- Asserting a system is live from a deployment log, a pipeline result or a tag.
+- Deploying an artefact rebuilt from source at deploy time in place of the verified one.
+- Releasing on the implementer's own verdict.
+- Pushing an upgrade into a consuming project without that project's authorisation.
+- Deploying without a rollback route because the change looked small.
+
+evidence: [artefact digest at build and at deploy, deployment provenance record, Assurance verdict,
+           Product Authority approval]
+exception_posture: >
+  Emergency deployment may compress the sequence but never removes independent Assurance or the
+  provenance record; both are completed and recorded.
+failure_route: Halt, roll back to the last known-good artefact, and raise an Incident.
+related_controls: [PBG-DEPLOY-001, PBG-DEPLOY-003, PBG-CI-004, PBG-CI-005, PBG-RT-005,
+                   PBG-ASSURE-010, PBG-AUTH-003]

@@ -1,0 +1,35 @@
+policy_id: POL-GIT-AND-CHANGE-MANAGEMENT
+title: Git and change management
+version: 1
+status: DRAFT
+authority: PBGV2-FOUNDATION-0001
+
+purpose: >
+  Keep the repository an honest record of what happened. Git is the only observation surface an
+  arriving agent can fully trust, so anything that makes it lie is expensive out of proportion to
+  the convenience it bought.
+
+scope: All repository activity in a governed project.
+actors: [PROJECT_LEAD, ENGINEER]
+
+required_behaviour:
+- Work on a branch scoped to the authorised work item, never on the default branch.
+- Stage files by name; know what is in the commit.
+- Commit coherent work with a message that explains why, not merely what.
+- Report the exact observed SHA, read from the repository rather than remembered.
+- Reconcile a working tree that disagrees with the record, and report the difference.
+- Treat a clean `git status` against a stale remote-tracking ref as unproven, not as current.
+
+prohibited_behaviour:
+- Force pushing, hard resetting or deleting branches without explicit authority.
+- Bypassing hooks — no --no-verify.
+- Amending or rewriting published history.
+- Committing secrets, credentials or key material.
+- Committing generated artefacts that the build reproduces, unless deliberately vendored.
+
+evidence: [branch name, exact SHA, working-tree state, diff of the change]
+exception_posture: >
+  Destructive operations require an explicit Controlled Action. History rewriting on a published
+  branch is not available under any exception.
+failure_route: Stop and report. A repository in an unexpected state is a finding, not an obstacle to route around.
+related_controls: [PBG-GIT-001, PBG-GIT-002, PBG-GIT-003, PBG-GIT-004, PBG-CONT-008, PBG-WORK-004]

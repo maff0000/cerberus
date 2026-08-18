@@ -1,0 +1,37 @@
+policy_id: POL-AUTHORITY-AND-SCOPE
+title: Authority and scope
+version: 1
+status: DRAFT
+authority: PBGV2-FOUNDATION-0001
+
+purpose: >
+  Ensure every governed action traces to an authority that permitted it, and to a scope that
+  bounded it. Most governance failures are not malice; they are an agent doing something reasonable
+  that nobody authorised.
+
+scope: Every governed action in every project consuming PBG.
+actors: [PRODUCT_AUTHORITY, PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+
+required_behaviour:
+- Resolve your role from the durable authority record before acting, never from a role file, a
+  greeting or a previous session.
+- Treat writable scope as an explicit list. Where it is absent, nothing is writable.
+- State protected scope separately rather than inferring it as the complement of writable scope.
+- Escalate a needed scope extension as a request, and wait.
+- Record the authority reference on every material action.
+
+prohibited_behaviour:
+- Inferring authority from capability — filesystem permission, provider access or an available
+  command (PBG-GIT-004).
+- Self-assigning a role, or continuing under an expired or superseded authority.
+- Widening scope silently because the adjacent change was small.
+- Treating a greeting as an authority grant.
+- Executing a held action without its own authority.
+
+evidence: [authority record reference on the action, boot verdict naming the resolved role]
+exception_posture: NONE_EXPECTED — PBG-BOOT-002 is non-waivable.
+failure_route: >
+  Return the precise blocked state (DISPATCH_INCOMPLETE, SCOPE_INSUFFICIENT) and stop. Never
+  invent authority to unblock yourself.
+related_controls: [PBG-BOOT-001, PBG-BOOT-002, PBG-AUTH-001, PBG-AUTH-002, PBG-AUTH-005,
+                   PBG-GIT-004, PBG-SOV-001, PBG-RT-004]

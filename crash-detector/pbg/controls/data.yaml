@@ -1,0 +1,132 @@
+domain: DATA
+domain_label: Data and migrations
+controls:
+- control_id: PBG-DATA-001
+  title: UTC is the only timestamp
+  status: ACTIVE
+  purpose: 'Remove an entire class of silent, delayed, expensive defect by making time unambiguous everywhere
+    it is stored, compared or crosses a boundary.
+
+    '
+  risk_addressed: 'Cross-boundary time corruption. It is silent at the point of introduction, surfaces
+    much later as data that cannot be reconciled, and is disproportionately costly in financial and trading
+    systems.
+
+    '
+  required_outcome: 'Every timestamp emitted, stored, logged, compared or crossing any process, database,
+    log, API or scheduler boundary is UTC and timezone-aware, ISO-8601. No local time, no broker or exchange
+    time, no naive datetime, no bare now(). Localisation is a display concern only, never storage or logic.
+    A PID may define another standard only by explicitly justifying it.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - timestamp handling review
+  - parse-boundary tests
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - ISO 8601
+  - PBGv1 section 1.7, made absolute in PBG-1.0.6
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/DEVELOPMENT_SECURITY_BASELINE.md
+  verification_note: 'Timezone-naive timestamps are rejected at parse boundaries; assurance checks for
+    naive datetime construction and bare now() calls.
+
+    '
+- control_id: PBG-DATA-002
+  title: Startup never performs destructive or unbounded schema change
+  status: ACTIVE
+  purpose: 'Separate the act of starting an application from the act of changing its data.
+
+    '
+  risk_addressed: 'A migration that runs automatically on every startup, and therefore on every replica
+    and every restart. Under a container runtime that is not an occasional event; it is a loop, and a
+    destructive step inside it is unrecoverable.
+
+    '
+  required_outcome: 'Container or process startup never silently performs destructive database changes.
+    A database application defines connection configuration, migration ownership, the migration command,
+    a schema version check, startup behaviour on schema mismatch, concurrency handling, rollback or forward-repair
+    strategy, backup expectations, a least-privilege database identity, and a separation between application
+    startup and destructive migration authority. Material migrations are Changes or Controlled Actions
+    according to consequence.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - touches_data
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - migration ownership
+  - schema-mismatch startup test
+  - migration authority record
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Twelve-Factor App XII
+  - ITIL change management
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/DEVELOPMENT_SECURITY_BASELINE.md
+  verification_note: 'Startup is exercised against a mismatched schema and must refuse rather than repair.
+    Scenario C12.
+
+    '
+- control_id: PBG-DATA-003
+  title: Migrations are append-only and reversible or forward-repairable
+  status: ACTIVE
+  purpose: 'Keep schema history a record rather than a mutable document.
+
+    '
+  risk_addressed: 'An edited migration, which makes two environments that ran "the same" migration diverge
+    with no way to detect it.
+
+    '
+  required_outcome: 'Applied migrations are never edited in place. Correction is a new migration. Each
+    declares its rollback or forward-repair strategy. Destructive operations are Controlled Actions.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - touches_data
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - migration digests
+  - rollback strategy
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/DEVELOPMENT_SECURITY_BASELINE.md
+  verification_note: 'Assurance compares applied migration digests against the repository and reports
+    any edited migration.
+
+    '

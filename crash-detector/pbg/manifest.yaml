@@ -1,0 +1,46 @@
+_generated: by tools/pbg/manifest.py from the live corpus — do not edit by hand
+framework_version: 2.0.0-alpha.1
+domains:
+- ASSURE
+- AUTH
+- BOOT
+- BP
+- CI
+- CONT
+- CTRL
+- DATA
+- DEPLOY
+- EVID
+- FWK
+- GIT
+- INC
+- OBS
+- PID
+- PORT
+- RT
+- SEC
+- SOD
+- SOV
+- WORK
+control_count: 127
+mandatory_control_count: 93
+non_waivable_controls:
+- PBG-ASSURE-012
+- PBG-BOOT-002
+- PBG-CONT-003
+- PBG-EVID-003
+- PBG-SOD-001
+- PBG-SOD-002
+- PBG-SOD-004
+declared_adapters: []
+implemented_commands:
+- validate
+- controls
+- version
+- status
+unimplemented_commands:
+- init
+- boot
+- adapt
+- verify
+- close

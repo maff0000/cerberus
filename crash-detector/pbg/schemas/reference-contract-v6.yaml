@@ -1,0 +1,115 @@
+# STABLE REFERENCE-BEARING FIELD CONTRACT, VERSION 6. ADDITIONS TO VERSIONS 2, 3, 4 AND 5.
+#
+# ONE FIELD. That is not a token gesture — it is the measured output of a corrected extractor, and the
+# scope rule was "whatever the extraction finds", not "whatever we already knew about".
+#
+# WHY v5 WAS NOT ENOUGH, STATED PLAINLY. v5 was frozen to end the vocabulary debt in one bounded act.
+# It missed a field. The extractor that built it walked `required_fields` for a top-level 40-hex
+# pattern and `optional_fields` for one level of sub-fields, and NEVER walked the sub-fields of a
+# REQUIRED object. `provenance` is a required object; `source_candidate` is an optional
+# reference-bearing member inside it. It was invisible to the sweep that was supposed to find it.
+#
+# WHAT FOUND IT. The lifecycle reference-resolvability preflight mandated by FWK-OBS-026, on its first
+# real use, refusing its own author's work. The successor authority was NOT created into the gap.
+#
+# THE CORRECTED EXTRACTION RULE, now applied:
+#     required top-level fields
+#     optional top-level fields
+#     required objects and ALL reference-bearing descendants, at any depth
+#     optional objects and ALL reference-bearing descendants, at any depth
+#     lists and nested lists
+#     sentinel-capable reference fields
+# and a field is reference-bearing IFF ITS SPEC CARRIES A PATTERN ADMITTING A 40-HEX SHA — never
+# because of its name. Re-run against every bound lifecycle contract, the result is: eight
+# spec-derived reference fields, eight name-derived obligations, and exactly ONE still undeclared.
+#
+# NO INFERENCE. EVER. `completely_new_commit` carrying a VALID 40-hex SHA must still be REFUSED as
+# UNDECLARED_REFERENCE_FIELD. It is declared in no version and deliberately not here — the standing
+# negative control, retained.
+#
+# FROZEN. v1 through v5 stay immutable and so does this. A later need is version 7 in its own file,
+# committed BEFORE the authority permitted to use it.
+
+schema_version: 6
+schema_id: pbg:schemas/reference-contract-v6.yaml
+title: PBGv2 Reference-Bearing Field Contract, version 6 — additions to versions 2 through 5
+status: STABLE_FROZEN
+record_origin: GOVERNANCE_BOOTSTRAP_ARTEFACT
+recorded_by: PROJECT_LEAD
+authorised_by: >
+  PRODUCT_AUTHORITY ruling of 2026-08-09 — REFERENCE-CONTRACT-v6 AUTHORISED. Fix the extractor first,
+  then re-derive; the extraction defines the scope, not today's known example. Additions only; do not
+  edit v2 through v5; no speculative fields; no suffix inference; do not hand-patch only
+  provenance.source_candidate.
+extends: [pbg:schemas/reference-contract-v2.yaml, pbg:schemas/reference-contract-v3.yaml,
+  pbg:schemas/reference-contract-v4.yaml, pbg:schemas/reference-contract-v5.yaml]
+extends_commits:
+- {path: schemas/reference-contract-v2.yaml, commit: "c5dccc6b9ea3e920ce49dec8df2efe2a08c102c9", blob: "8cfe77c2e8e0ef69739ec9dd25a0fd994e57ca8b"}
+- {path: schemas/reference-contract-v3.yaml, commit: "c08028eab5767cdb80fd6a1d56136d6f16c3f96c", blob: "aa2fd17b3b158cbe2eda6083a5a79b43dc622d49"}
+- {path: schemas/reference-contract-v4.yaml, commit: "1fafefa7e3e95600e57820c5bc4399197b6b0446", blob: "d947fb89cd4055f733e52f882c7af3d5ce25fcdb"}
+- {path: schemas/reference-contract-v5.yaml, commit: "54e9dd7fd8895ec46afb8872b136dcf1915dd025", blob: "4bc5c5cf7cbf466fce9357bceeb1e2f720c84ab1"}
+extends_rule: >
+  v2 through v5 remain in force in full. v6 ADDS one field. It widens nothing, removes nothing,
+  narrows nothing and retypes nothing.
+immutability_rule: These bytes never change. A later need is version 7 in its own file.
+
+policy:
+  inherited: [suffix_inference PROHIBITED, default_object_type null,
+    undeclared_field_disposition FAIL_CLOSED, undeclared_field_code UNDECLARED_REFERENCE_FIELD,
+    abbreviated_references PROHIBITED, abbreviated_values_must_be_RESOLVED_AFRESH_never_extended]
+  mandatory_negative_test_still_applies: >
+    `completely_new_commit` carrying a VALID 40-hex commit SHA must still be REFUSED with
+    UNDECLARED_REFERENCE_FIELD. Declared in no version, and deliberately not here.
+
+widens_from_earlier_versions: NONE
+retypes_from_earlier_versions: NONE
+prunes: NONE
+
+fields:
+  provenance.source_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 6
+    observed_occurrences: 0
+    mandated_by: seat-delivery-contract-v1.yaml:required_fields
+    type_source: >
+      seat-delivery-contract-v1, which describes it as the candidate this delivery reproduced from,
+      with pattern ^[0-9a-f]{40}$. Typed from the mandating contract, NOT from the shape of the name.
+      No resolved object exists to type it from because no lawful SEAT_DELIVERY attestation has ever
+      been written — which is the condition this version exists to end.
+    why_it_was_missed_by_v5: >
+      `provenance` is a REQUIRED field of type object; this is an OPTIONAL reference-bearing member
+      inside it. The v5 extractor walked required_fields at top level and optional_fields one level
+      down, and never the members of a required object. Recorded so the omission is attributable
+      rather than mysterious.
+
+field_provenance:
+  method: >
+    Corrected recursive walk of every bound lifecycle contract. Reference-bearing decided by the SPEC
+    — a pattern admitting a 40-hex SHA, including sentinel-capable patterns — never by the field name.
+  lifecycle_contracts_walked: [seat-delivery-contract-v1.yaml, dispatch-temporal-contract-v1.yaml,
+    framework-bootstrap-repair-contract-v1.yaml]
+  spec_derived_reference_fields: 8
+  name_derived_obligations: 8
+  sentinels_seen: [DECLARED_IN_A_LATER_RECORD]
+  still_undeclared_after_v5: 1
+  fields_declared_here: 1
+  scope_rule_applied: >
+    The extraction defines the scope. It found one, so this contains one. Had it found six, this
+    would contain six.
+
+what_this_contract_does_not_decide:
+- how the vocabulary is enforced. That is a validator, and validators are ENGINEER work.
+- whether an asserted reference RESOLVES. Declaring a field says what type it carries, not that any
+  value exists. Resolvability is a separate dimension, governed by the preserved-invalid state model.
+- whether any particular historical artefact complies.
+
+authorises_no_merge: true
+authorises_no_push: true
+authorises_no_tag: true
+authorises_no_adoption: true
+authorises_no_commissioning: true
+authorises_no_operationalisation: true
+authorises_no_implementation_by_the_project_lead: true

@@ -1,0 +1,36 @@
+policy_id: POL-CONTINUITY-AND-RECOVERY
+title: Continuity and recovery
+version: 1
+status: DRAFT
+authority: PBGV2-FOUNDATION-0001
+
+purpose: >
+  A project must survive losing any agent and its entire context. Continuity is what makes an agent
+  replaceable, and replaceability is what makes the model safe.
+
+scope: All governed work, continuously.
+actors: [PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+
+required_behaviour:
+- Record every material action, decision, finding and blocker in the canonical Build Log.
+- Generate canonical records through the tooling; never hand-format them.
+- Keep Active Work current — its pointer must reference the newest Build Log entry.
+- Checkpoint before pausing, before handover and at every material boundary.
+- Reconcile recorded state against observed Git state at boot, and report drift rather than
+  silently correcting it.
+- Treat any transient coordination service as an optimisation, never as truth.
+
+prohibited_behaviour:
+- Rewriting Build Log history; corrections supersede, never edit (PBG-CONT-003).
+- Treating a conversational result as project state (PBG-CONT-007).
+- Resuming from a stale, forward-referencing or mismatched Active Work record.
+- Closing over an unresolved blocker, or leaving Active Work falsely open.
+- Backdating an entry to appear as though tooling captured it contemporaneously.
+
+evidence: [Build Log entry with exact SHA, Active Work currency state, resume verdict]
+exception_posture: NONE_EXPECTED — PBG-CONT-003 is non-waivable.
+failure_route: >
+  Invalid continuity blocks normal resume and permits read-only diagnosis. Diagnose, propose a
+  repair, and do not mutate on the strength of a record you know is wrong.
+related_controls: [PBG-CONT-001, PBG-CONT-002, PBG-CONT-003, PBG-CONT-004, PBG-CONT-005,
+                   PBG-CONT-006, PBG-CONT-007, PBG-CONT-008, PBG-CONT-011, PBG-FWK-014]

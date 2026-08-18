@@ -1,0 +1,35 @@
+policy_id: POL-EVIDENCE-AND-ASSURANCE
+title: Evidence and independent Assurance
+version: 1
+status: DRAFT
+authority: PBGV2-FOUNDATION-0001
+
+purpose: >
+  Keep the difference between a claim and a demonstration. A framework that accepts confident
+  assertion as proof is a framework that will eventually certify something untrue.
+
+scope: All evidence production and all Assurance activity.
+actors: [PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+
+required_behaviour:
+- Produce evidence independently of the thing it certifies.
+- Name the authentic target — exact SHA, runtime, artefact or digest.
+- Return UNSUPPORTED where a check cannot reach its authentic target.
+- Keep the verdict and the continuation implication separate calculations.
+- Dispatch Assurance as a different agent from the one that implemented.
+- Record what was NOT examined alongside what was.
+
+prohibited_behaviour:
+- Auditing your own implementation, or implementing what you will approve (PBG-SOD-001).
+- Repairing a target and approving the repaired state in the same lane (PBG-SOD-004).
+- Substituting a reachable target for the authentic one.
+- Accepting a self-vouching artefact — a manifest that blesses itself, a test that asserts its own
+  fixture, a log written by the process under audit.
+- Weakening a check, tolerance or criterion to obtain a verdict.
+- Recording a secret value in evidence.
+
+evidence: [command output with its command line, Assurance verdict naming its exact target]
+exception_posture: NONE_EXPECTED for the separation floor; evidence depth is proportionate to work type.
+failure_route: Return UNSUPPORTED or EVIDENCE_NOT_INDEPENDENT with the reason. Never soften to PASS.
+related_controls: [PBG-EVID-001, PBG-EVID-002, PBG-EVID-003, PBG-SOD-001, PBG-SOD-004,
+                   PBG-ASSURE-001, PBG-ASSURE-017, PBG-FWK-003]

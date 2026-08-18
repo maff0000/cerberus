@@ -1,0 +1,133 @@
+domain: INC
+domain_label: Incident response
+controls:
+- control_id: PBG-INC-001
+  title: Containment precedes diagnosis for a known-defective runtime
+  status: ACTIVE
+  purpose: 'Stop the investigation itself extending the damage.
+
+    '
+  risk_addressed: 'Diagnosing a corrupting runtime by interacting with it, so the act of confirming the
+    defect triggers it again. Containment treated as a follow-up to assurance rather than a pre-gate.
+
+    '
+  required_outcome: 'Where the target is a known-defective mutation-capable runtime, containment is proven
+    before any observation that could trigger the defect. Containment is a pre-gate to diagnosis, never
+    a consequence of it.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    work_types:
+    - INCIDENT
+    when: a known-defective runtime is reachable
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - containment proof
+  - incident timeline
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/incident-diagnosis.md
+  verification_note: 'Containment proof precedes the diagnosis record in the incident timeline. UNPROVEN
+    — inherited control, scenario U5.
+
+    '
+- control_id: PBG-INC-002
+  title: The Assurance Engineer diagnoses and prescribes; it does not repair
+  status: ACTIVE
+  purpose: 'Hold the separation-of-duties floor under the conditions that stress it hardest.
+
+    '
+  risk_addressed: 'A diagnosing seat is closest to the code exactly when time is shortest. The temptation
+    to fix what it has just found is strongest during an incident, and that is the moment independence
+    matters most.
+
+    '
+  required_outcome: 'Assurance reproduces, bounds, traces, tests and recommends. The Project Lead authorises
+    repair. The Engineer repairs and self-tests. Assurance independently regresses and audits the exact
+    repair SHA.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    work_types:
+    - INCIDENT
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - diagnosis record
+  - repair authorship
+  - regression verdict at the repair SHA
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'The repair commit author is compared against the diagnosing and approving agents;
+    a match is a bypass.
+
+    '
+- control_id: PBG-INC-003
+  title: A state-corrupting runtime is not a valid rollback target
+  status: ACTIVE
+  purpose: 'Prevent recovery reopening the fault it is recovering from.
+
+    '
+  risk_addressed: 'Rollback defined as restoring the last authoritative version, where that version is
+    the known state-corrupting one. Availability returns and so does the corruption, under maximum time
+    pressure and minimum scrutiny.
+
+    '
+  required_outcome: 'A runtime known to corrupt governed state is not an acceptable rollback or disaster-recovery
+    target merely because it was previously authoritative. Recovery targets a safe prior version, the
+    fixed audited image, or a mutation-disabled containment configuration. The Product Authority may accept
+    otherwise only under explicit, time-bounded emergency authority, and only with the mutation path disabled.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    work_types:
+    - INCIDENT
+    - CONTROLLED_ACTION
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - PRODUCT_AUTHORITY
+  required_evidence:
+  - rollback target
+  - known-error register
+  - emergency authority where used
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/incident-diagnosis.md
+  verification_note: 'The named rollback target is checked against known-error records before it is used.
+    UNPROVEN — inherited control, scenario U4.
+
+    '

@@ -1,0 +1,159 @@
+# JSON Schema (expressed in YAML) for a PBGv2 control-definition file.
+# Canonical control truth lives in controls/*.yaml and is validated against this.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "pbg:schemas/control.schema.yaml"
+title: PBGv2 control definition file
+type: object
+additionalProperties: false
+required: [domain, domain_label, controls]
+properties:
+  domain:
+    type: string
+    enum: [CTRL, AUTH, BOOT, SOD, PID, BP, WORK, CONT, SOV, GIT, CI, DEPLOY, RT, SEC, OBS, DATA, ASSURE, EVID, INC, PORT, FWK]
+    description: >
+      Compact domain code. Domains are conceptual, never tied to document placement. New domains
+      may be added without renumbering any existing control.
+  domain_label:
+    type: string
+    minLength: 3
+    description: Full human-readable domain name, used in generated views.
+  controls:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: true   # controls may carry documented extension fields
+      required:
+        - control_id
+        - title
+        - status
+        - purpose
+        - risk_addressed
+        - required_outcome
+        - mandatory_or_conditional
+        - applicability
+        - roles
+        - required_evidence
+        - failure_outcomes
+        - exception_policy
+        - supersedes
+        - superseded_by
+        - authoritative_references
+      properties:
+        control_id:
+          type: string
+          pattern: "^PBG-(CTRL|AUTH|BOOT|SOD|PID|BP|WORK|CONT|SOV|GIT|CI|DEPLOY|RT|SEC|OBS|DATA|ASSURE|EVID|INC|PORT|FWK)-[0-9]{3}$"
+        title: {type: string, minLength: 8}
+        status:
+          type: string
+          enum: [ACTIVE, SUPERSEDED, RETIRED]
+        purpose:
+          type: string
+          minLength: 40
+          description: Why the control exists, in language an engineer can act on.
+        risk_addressed:
+          type: string
+          minLength: 40
+          description: >
+            The concrete failure this prevents. Generated prose may group controls but must not
+            remove this rationale.
+        required_outcome:
+          type: string
+          minLength: 40
+          description: What must be true. This is the control; enforcement is only how.
+        mandatory_or_conditional:
+          type: string
+          enum: [MANDATORY, CONDITIONAL]
+        applicability:
+          type: object
+          minProperties: 1
+          description: >
+            WHEN and TO WHOM this control demands attention. Deliberately separate from how
+            important it is: mandatory posture, exception posture, enforcement and continuation
+            policy are all recorded elsewhere. A STANDING control is not a weak control.
+          properties:
+            mode:
+              type: string
+              enum: [PER_WORK, STANDING, AUTHORING, EVENT_TRIGGERED]
+              description: >
+                PER_WORK        the actor evaluates, acts or evidences for THIS unit of work.
+                STANDING        a continuing project condition, declared at baseline and
+                                re-surfaced only when the work affects it, its evidence is stale,
+                                or drift appears.
+                AUTHORING       governs how a governance artefact is written; never in an
+                                application Engineer's set merely because the framework has it.
+                EVENT_TRIGGERED activated by a material event rather than by every unit of work.
+            work_types: {type: array}
+            traits: {type: array}
+            when: {type: string}
+            control_class: {type: array}
+            depth_by_work_type: {type: object}
+          required: [mode]
+        schema_version:
+          type: integer
+          enum: [2]
+          description: >
+            Revision 2 replaced enforcement_expectation and verification_expectation -- free prose
+            a regex read to decide actor burden -- with the five-axis model. A v1 record reaching
+            the resolver yields UNKNOWN burden; it never passes.
+        discharge_mechanism:
+          type: string
+          enum: [EXECUTING_CHECK, EXTERNAL_MECHANICAL_CHECK, EVIDENCE_SUBMISSION,
+                 DEFINED_PROCEDURE, HUMAN_DECISION, INDEPENDENT_ASSURANCE, INHERITED_BASELINE,
+                 NO_MECHANISM]
+          description: >
+            How the obligation is satisfied or constrained. DECLARED. It never reduces burden on
+            its own -- only an observed execution state can do that.
+        verification_mechanism:
+          type: string
+          enum: [CHECK_REF, EXTERNAL_CHECK_REF, EVIDENCE_SCHEMA_REF, PROCEDURE_REF,
+                 DECISION_AUTHORITY_REF, ASSURANCE_CONTRACT_REF, BASELINE_REF, NONE]
+        verification_ref:
+          oneOf: [{type: "null"}, {type: string, minLength: 1}]
+          description: >
+            Under CHECK_REF this must resolve in the verifier registry AND that verifier must name
+            this control as an authoritative target. Both, or validation fails closed.
+        verification_note:
+          type: string
+          description: >
+            Human explanation only. EXPLICITLY NON-AUTHORITATIVE: no classification, applicability,
+            enforcement or burden calculation may read this field.
+        observed_execution_state:
+          not: {}
+          description: Computed at runtime. Authoring it in a control record is rejected.
+        remaining_actor_burden:
+          not: {}
+          description: Computed at runtime. Authoring it in a control record is rejected.
+        roles:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            enum: [PRODUCT_AUTHORITY, PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+        required_evidence:
+          type: array
+          minItems: 1
+          items: {type: string}
+        failure_outcomes:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            enum:
+              - AMBER_FRAMEWORK_CAPABILITY_GAP
+              - AMBER_RUNTIME_CAPABILITY_GAP
+              - AMBER_CONTROL_NOT_ENFORCEABLE
+              - RED_CONTROL_BYPASS
+        exception_policy:
+          type: string
+          enum: [NON_WAIVABLE, MANDATORY_WHEN_APPLICABLE, TIME_BOUNDED, NONE_EXPECTED]
+        supersedes:
+          oneOf: [{type: "null"}, {type: string}]
+        superseded_by:
+          oneOf: [{type: "null"}, {type: string}]
+        authoritative_references:
+          type: array
+          items: {type: string}
+          description: >
+            Recognised source, or an explicit note that the control is PBG-original. Framework
+            versions are never recorded here (PBG-FWK-011).

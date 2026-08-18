@@ -1,0 +1,34 @@
+# Project-owned PBG installation record.
+#
+# Location: governance/pbg-installation.yaml — OUTSIDE the pbg/ snapshot, deliberately.
+# A snapshot cannot vouch for both itself and the digest it was expected to have. This file is
+# the external anchor that lifts verification from INTERNALLY_CONSISTENT to
+# DIGEST_MATCHED_TO_INSTALL_RECORD.
+#
+# Copying pbg/ without creating this file still works. Boot simply reports the lower verification
+# level honestly rather than implying an authenticity it cannot demonstrate.
+
+framework_name: PBGv2
+framework_version:                  # from pbg/VERSION at install time
+source_repository:                  # canonical repository the distribution was built from
+source_commit:                      # canonical source SHA
+source_release:                     # release tag, where one exists
+
+# The digest the operator or Product Authority APPROVED, recorded at install time from a source
+# they trust. Not copied out of the snapshot afterwards — that would prove nothing.
+expected_distribution_digest:
+installed_distribution_digest:      # what was actually observed after the copy
+
+installation_timestamp_utc:
+installed_by:
+installation_method:                # manual copy | pbg init | packaged installer
+adapter_selected:                   # claude-code | generic | opencode
+
+verification_level:                 # UNVERIFIED | STRUCTURE_VALID | INTERNALLY_CONSISTENT
+                                    # | DIGEST_MATCHED_TO_INSTALL_RECORD
+                                    # | MATCHED_TO_TRUSTED_RELEASE | SIGNATURE_VERIFIED
+trusted_digest_source:              # where the expected digest came from, if anywhere
+
+# Upgrading is an explicit, recorded action. Nothing upgrades automatically — that is the point
+# of pinning (PBG-FWK-013).
+upgrade_authority:

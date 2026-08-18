@@ -1,0 +1,153 @@
+domain: SOD
+domain_label: Separation of duties
+controls:
+- control_id: PBG-SOD-001
+  title: Engineer and Assurance Engineer are never the same agent
+  status: ACTIVE
+  purpose: 'Keep the builder and the verifier separate. Whatever else collapses, this does not.
+
+    '
+  risk_addressed: 'Self-audit — the root of false-green. An agent that approves its own work has produced
+    an opinion, not assurance.
+
+    '
+  required_outcome: 'The agent that implements a governed change is never the agent that independently
+    approves it. The Assurance Engineer may diagnose, reproduce, trace, test and prescribe; it must not
+    repair the governed code it later approves.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - assurance verdict naming the exact audited SHA
+  - assurance-side working tree state
+  - dispatch records showing distinct agents
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - ISO/IEC 27001 A.5.3 — segregation of duties
+  - PBGv1 section 2, the one non-collapsible floor
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: sod.separation_evidence
+  verification_note: 'Where the host can deny source mutation to the assurance seat, enforcement_status
+    is ENFORCED. Where it cannot, enforcement_status is PARTIALLY_ENFORCED with the gap named, and verification
+    compensates: the verdict names the exact audited SHA and a clean assurance-side working tree, and
+    any assurance-side working-tree change is a control bypass.
+
+    '
+- control_id: PBG-SOD-002
+  title: The Engineer may not claim independent assurance of its own work
+  status: ACTIVE
+  purpose: 'Separate self-verification from independent verification. Both are needed; only one counts
+    as assurance.
+
+    '
+  risk_addressed: 'A build reporting itself GREEN, which reduces the assurance gate to a formality.
+
+    '
+  required_outcome: 'The Engineer self-tests and hands over READY_FOR_ASSURANCE with the exact SHA. It
+    recommends the assurance dispatch; the Project Lead authorises it. The Engineer never issues a verdict.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  required_evidence:
+  - handover record
+  - assurance verdict authorship
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'pbg close rejects an assurance verdict whose issuing agent matches the implementing
+    agent on the same authority record.
+
+    '
+- control_id: PBG-SOD-003
+  title: The Project Lead should not normally become the primary implementation Engineer
+  status: ACTIVE
+  purpose: 'Keep sequencing, dispatch and architecture conformance distinct from building, so drift is
+    noticed by someone not producing the work.
+
+    '
+  risk_addressed: 'A lead deep in implementation stops holding the box and starts moving it.
+
+    '
+  required_outcome: 'The Project Lead dispatches implementation rather than performing it, except where
+    the PID records a deliberate, bounded exception.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - dispatch records
+  - commit authorship
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/project-lead.md
+  verification_note: 'Assurance reports where the PL authored the implementation diff on a Change or above.
+
+    '
+- control_id: PBG-SOD-004
+  title: The Assurance Engineer is non-implementing for governed application changes
+  status: ACTIVE
+  purpose: 'Preserve independence while giving the assurance seat a real diagnosis mandate, which PBGv1
+    lacked entirely.
+
+    '
+  risk_addressed: 'A diagnosing seat is closest to the code exactly when time is shortest — during an
+    incident — and the temptation to fix it is strongest.
+
+    '
+  required_outcome: 'The Assurance Engineer diagnoses, reproduces, traces, tests and prescribes. It does
+    not repair, commit, merge, mutate runtime or modify evidence.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - assurance-side git state before and after
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Read-only assurance mode where the host supports it; otherwise a clean assurance-side
+    working tree is verified and any change is a bypass.
+
+    '
