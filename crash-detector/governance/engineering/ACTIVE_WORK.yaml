@@ -493,6 +493,63 @@ current_block: >
   the same measurement reads five, six and eight across three records because no record ever stated
   what set was being counted; it changes no verdict and binds forward as "state the denominator".
   CD-D-059: PL-W1..W6 join the exclusion set.
+  SIXTH RUNTIME TERMINATION. The Project Lead process that began reconciling the reader lane was
+  killed on its two-hour ceiling; it had STOPPED DELIBERATELY at a clean boundary five minutes
+  earlier (BL-20260819T175919Z-0034) with the reconciliation explicitly PARTIAL and an itemised
+  list of what it had not verified. Nothing was lost and NOTHING WAS UNCOMMITTED — main clean at
+  66ea4bb, lane clean at 253c38b, CD-D-007's suspicion procedure again with nothing to adjudicate.
+  That is the CD-D-043 precedent paying for itself a second time.
+  THE CD-PL-F61 READER DISPATCH IS NOW RECONCILED AND **ACCEPTED** at lane 253c38b (CD-D-060,
+  BL-20260819T183543Z-0035), three commits by CD-ENG-READER-01, attested in lane entry
+  BL-20260819T175414Z-0048. CD-PL-F61 and CD-ENG-WO2R-F14 are CLOSED; the reader's non-termination
+  class is CLOSED AS A CLASS, subject to Assurance. EVERY ITEM ON THE PARTIAL LIST WAS MEASURED BY
+  THE PL ON ITS OWN PRISTINE EXTRACTIONS, and the baseline was RE-DERIVED rather than trusted: 1289
+  at f22d120, 1325 at 253c38b, ZERO node ids removed, all 36 additions in the new test file, full
+  suite 1325 passed. The ten-check NO-VERDICT-CHANGES table is identical in BOTH exit and assertion
+  count on nine of ten, the tenth being the declared check_no_execution_interface 38154 -> 38847.
+  THE +149/+544/+0 DECOMPOSITION — named as the specific claim to test — WAS PROVED PER PART, not
+  by arithmetic: eight trees, each a f22d120 extraction with EXACTLY ONE file replaced, giving
+  _yamlmin.py +149, the new test file +544, the caller +0 and every other changed file +0, summing
+  to 693 exactly with no interaction term. 11 of 11 plants apply; 10 contrast clean-0/planted-1; the
+  eleventh is 3/3 with no live store, unchanged. All ten mandatory headings on all three commits,
+  all three correctly seated in author AND committer.
+  TERMINATION IS STRUCTURAL, NOT FITTED. All five `while` loops in the module carry an iteration
+  budget decremented at the TOP of the body before any branch can continue, which bounds every loop
+  at len(lines)+1 iterations regardless of document shape; the two delegating loops additionally go
+  through `_advance`, which demands a STRICTLY greater cursor; the single unguarded delegation is
+  stated at its call site and carried by an unconditional increment.
+  THE PL RAN THE TEST THE DISPATCH DID NOT ASK FOR. The seat's no-verdict-change table was measured
+  on the CLEAN TREE, but the prohibition is "any existing tree" — so all 62 variants were applied to
+  pristine extractions of BOTH SHAs and the three reader-sharing checks run on each. 124 trees,
+  EXACTLY ONE ROW CHANGED: V30, 124,124,124 -> 3,3,3, no verdict to stated refusal. Nothing else in
+  the adversarial corpus decides differently.
+  TWELVE FRESH PL PROBES. PL-X5 (a sequence item at the DOCUMENT ROOT), PL-X6 (through the
+  block-scalar folder), PL-X7 (AN ORDINARY DOCUMENT — a nested sequence at its key's own indent) and
+  PL-X8 (CRLF) are four routes nobody had tried and none of them nesting depth: ALL FOUR HANG at
+  f22d120 and ALL FOUR ARE REFUSED at 253c38b naming the line. PL-X1 (a 1,604-line LEGITIMATE
+  document) and PL-X2 (400 passes through the unguarded delegation) prove the new budget does NOT
+  false-fire. PL-X9 IS THE DECISIVE ONE: the budget branches carry `# pragma: no cover` and the seat
+  disclosed against itself (CD-ENG-READER-F07) that no input can reach them, so the PL DELETED
+  `_advance` from the merge loop on a throwaway tree and re-ran PL-X5 — IT REFUSED RATHER THAN HUNG.
+  With `_advance` removed entirely the reader still terminates; the two layers are independent, and
+  this is the first declared-unreachable backstop on this project PROVED BY EXECUTION.
+  THE THREE OWED RULINGS ARE MADE. CD-D-061 RATIFIES CD-ENG-READER-F02's refusal to convert
+  RecursionError — re-measured as PL-X11, identical at both SHAs, verdict unmoved; converting it
+  would have been the verdict change the dispatch forbids. CD-D-062 CONFIRMS CD-ENG-READER-F05/F08,
+  the silent flattening, at MEDIUM: PRE-EXISTING and byte-identical at both SHAs, unchanged across
+  all 124 trees, pinned by a test, and the PL's three attempts to weaponise it into a FALSE CLEAN
+  (PL-X12a/b/c) were ALL REFUSED, because flattening LIFTS a nested key INTO CD-EGRESS-007's closed
+  key set rather than hiding it. THE DENOMINATOR IS STATED: three routes on one criterion, which is
+  the reason for MEDIUM and not a proof of safety. The FIX goes to WO-3 bound with the V27
+  re-measurement, since correcting the parse moves which clause refuses V27 and would reopen
+  CD-ASR-F04 on the eve of the audit; only the DECLARATION is owed at increment 6. CD-D-063 RATIFIES
+  CD-ENG-READER-F06: three consistent stale statements that fail closed mislead nobody, whereas an
+  inconsistent trio is what CD-RULE-004 exists to prevent.
+  CD-PL-F67 (INFORMATIONAL): the dispatch required MANIFEST rows and did not list the manifest path
+  in writable_scope — the seat did the ordered thing; the edit is 158 insertions and ZERO deletions.
+  A defect in the dispatch's path list, not in the seat's conduct. CD-PL-F68 (LOW): PL-X7 shows the
+  original defect was reachable by writing IDIOMATIC YAML, so CD-D-051's "an auditor will meet it by
+  accident" was right for a better reason than it gave. CD-D-064: PL-X1..X12 join the exclusion set.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -503,7 +560,12 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: f7a49e58f7ccb2966b174c7feb83f131ea6b3dcd  # WO-2R increment 4 RECONCILED and ACCEPTED (CD-D-053). RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
+last_completed_checkpoint_sha: 66ea4bb0d7a4bf493d09f458264d2542cd119c74  # the reader-lane PARTIAL reconciliation checkpoint (BL-20260819T175919Z-0034). RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
+  # ADVANCED AT BL-20260819T183543Z-0035. This field had read f7a49e5 — WO-2R increment 4 — for
+  # FOUR subsequent checkpoints (1571ed4, da33fd9, bd3d2b3, 66ea4bb), none of which advanced it.
+  # `pbg boot` returned CONTINUITY_MATCH throughout, so this was never a blocking defect, but it is
+  # the same FAMILY as CD-PL-F64's stale next_safe_action: a hand-edited field nobody re-read.
+  # CD-RULE-007 is what closes that class and is discharged in the entry above.
   # CD-PL-F64 REPAIR (BL-20260819T160900Z-0029). This field and continuity_record_commit both read
   # 8ca0eed from 30f5c87 until this boundary. The schema forbids that equality in terms —
   # "last_completed_checkpoint_sha is the last SOURCE checkpoint, NEVER the commit containing this
@@ -541,7 +603,9 @@ lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760   # WO-2R increment 5, RECONCILED AND ACCEPTED (CD-D-057); CD-ASR-F06 CLOSED AS A CLASS, CD-PL-F62 CLOSED
+lane_increment_sha: 253c38bd4db58433e5209a222c0ce27429079156   # CD-DISPATCH-WO2R-READER, RECONCILED AND ACCEPTED (CD-D-060); CD-PL-F61 CLOSED, CD-ENG-WO2R-F14 CLOSED
+  # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
+  # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
 continuity_record_commit: PENDING
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
   # The commit carrying this record does not exist while this record is being written, so PENDING is
@@ -551,14 +615,17 @@ continuity_record_commit: PENDING
   # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
   # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  OBSERVED AT THIS BOUNDARY (2026-08-19T16:07Z, fifth Project Lead seat): main clean at f7a49e5
+  OBSERVED AT THIS BOUNDARY (2026-08-19T18:35Z, sixth Project Lead seat): main clean at 66ea4bb
   apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files, .continue-prompt.txt and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at be34fe4 on wo-2-skeleton — `git status
-  --porcelain`, `git diff --stat` and `git diff --cached --stat` all return ZERO lines, so the
-  fifth termination left NO uncommitted seat work anywhere and CD-D-007's suspicion procedure had
-  nothing to adjudicate. The audit worktree /srv/crash-detector-wo2-audit is clean at the
-  pre-rewrite 66681b2 (see the STALE WORKTREE WARNING below).
+  mutation lane /srv/crash-detector-wo2 is CLEAN at 253c38b on wo-2-skeleton — `git status
+  --porcelain` returns ZERO lines — so the SIXTH termination left NO uncommitted seat work anywhere
+  and CD-D-007's suspicion procedure again had nothing to adjudicate. The audit worktree
+  /srv/crash-detector-wo2-audit is clean at the pre-rewrite 66681b2 (see the STALE WORKTREE WARNING
+  below).
+  HISTORICAL, retained: at 2026-08-19T16:07Z (fifth seat) main was clean at f7a49e5 and the lane at
+  be34fe4, with all three of `git status --porcelain`, `git diff --stat` and `git diff --cached
+  --stat` returning zero lines. Those SHAs resolve and are superseded, not corrected.
   HISTORICAL, retained: main was clean at 8a50355 and the lane at 9aea4ef when the increment-6a
   seat wrote this field; those SHAs resolve and are superseded, not corrected. The inherited dirty
   state ruled CD-D-015 is committed as d1abdcc and gone. Its pre-commit snapshot is retained at
@@ -770,89 +837,75 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  INCREMENTS 1, 2b, 3b AND 4 ARE RECONCILED AND ACCEPTED. CD-ASR-F01, F02, F03, F04 and F05 are all
-  CLOSED AS A CLASS, subject to Assurance. This field was three increments stale until the
-  CD-PL-F64 repair at BL-20260819T160900Z-0029; the superseded text ordered increment 3, which is
-  done.
-  INCREMENT 5 IS RECONCILED AND ACCEPTED (CD-D-057). FIVE of the six findings this dispatch was
-  opened for are now closed as a class subject to Assurance: CD-ASR-F01, F02, F03, F04, F05 and F06.
-  CD-ENG-READER-01 HAS RETURNED READY_FOR_ASSURANCE at lane 253c38b, three commits, and the
-  reconciliation is **PARTIAL — THE INCREMENT IS NOT ACCEPTED** (BL-20260819T175919Z-0034). VERIFIED
-  BY THE PL: scope held absolutely (src/, deploy/, plants/, pbg/ and ACTIVE_WORK.yaml all at 0 files
-  changed), all three commits correctly seated in BOTH author and committer, 0 executable under
-  variants/, latest_admitted_run still null, and THE DECISIVE CONTRAST run by the PL on its own
-  extractions of both SHAs with the PL-T5 document applied: at f22d120 check_egress_no_broker and
-  check_base_image_digest_pin both exit 124; at 253c38b those two AND check_engine_no_witness_reach
-  all exit 3, each naming what it could not read. THE SEAT CORRECTED THE PL'S OWN RECORD — THREE
-  checks returned no verdict on that tree, not two; check_engine_no_witness_reach imports load_yaml
-  too. The PL confirms it and does not edit the record (PBG-CONT-003); it strengthens CD-D-051.
-  NOT YET VERIFIED, so NOT ACCEPTED: the suite and node-id diff against the 1289 baseline; the
-  NO-VERDICT-CHANGES table across all ten checks, which is this dispatch's CENTRAL CONTROL and where
-  the seat's +149/+544/+0 decomposition of check_no_execution_interface's 38154 -> 38847 is the
-  specific claim to test; the eleven plants; the mandatory block; and whether termination is a
-  PROPERTY OF THE LOOPS or a fit to the shapes tried, which needs the diff read and fresh PL probes.
-  THREE SEAT FINDINGS ARE OWED A RULING AND ARE DELIBERATELY NOT RULED: CD-ENG-READER-F02 (a
-  RecursionError still exits 1, not converted because that would move three callers on an input that
-  already has a verdict), F05/F08 (THE READER STILL SILENTLY FLATTENS a nested mapping under a
-  sequence item's inline key — a quiet wrong parse, which may be a WORSE class than the hang), and
-  F06 (CD-RT-003's declared limit 4 is now stale and the seat left all three places consistent rather
-  than correcting two of three). The PL stopped at a clean boundary with minutes of ceiling left
-  rather than rule under that pressure (CD-D-043 precedent).
-  THE CD-PL-F61 BOUNDED DISPATCH WAS ISSUED AT (BL-20260819T171122Z-0033):
-  CD-DISPATCH-WO2R-READER to a FRESH seat CD-ENG-READER-01 at execution base f22d120, bounded to
-  tools/register/_yamlmin.py and its two callers: prove TERMINATION on the minimal document, on V30
-  and on PL-T5, with the clean arm and all eleven plants unchanged, and CD-ENG-WO2R-F19's
-  nested-anchor repair folded in. It is owed AFTER increment 5 and BEFORE Assurance because two of
-  the eleven declared gate commands currently return NO VERDICT on an ordinary YAML edit — check
-  _egress_no_broker and check_base_image_digest_pin both exit 124 on the same tree — and because it
-  PREDATES the first audit, reachable throughout the WO-2 assurance run and never met. An auditor
-  probing YAML shapes will meet it the way the Project Lead did, by accident, on an ordinary edit.
-  THEN INCREMENT 6 — reconciliation and return, which writes no logic — carrying CD-PL-F65 as a
-  BOUNDED ADDENDUM AT ITS HEAD (CD-D-058): boundary 3 must name Agrees, say that it is unslotted so
-  the __slots__ half does not hold there, and state that the route reaches "WITNESS AGREES" on a
-  decade-old timestamp. Consistently in all three CD-RULE-004 places. The seat is NOT to slot Agrees.
-  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never the
-  Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise FRESH variants; the
-  exclusion set is now the union of the WO-2 auditor's ten, the Engineer's through V51 and the
-  Project Lead's PL-Q1 through PL-W6. Hand it CD-ENG-WO2R-F12 as a NAMED QUESTION, plus CD-PL-F53,
-  F57, F58, F62, F63, F65, F66 and the seat's F22, F23, F24, and the three adopted method notes
-  (F13 assert the RULE ID not merely a non-zero exit; F16 a shrinking assertion count is how a
-  skipped arm hides; F18 a derivation refusal at exit 3 arrives before a reach violation at exit 1).
-  RECONCILE EVERY RETURN by running the arms yourself and by writing FRESH probes against the
-  structure the seat ACTUALLY built, not the one the dispatch imagined. That step has sent two
-  increments back (CD-PL-F54, CD-PL-F59) and is why both were caught before the gate rather than at
-  it. The Project Lead does not write the fix (PBG-AUTH-006, CD-D-038/CD-D-045).
-  THE CEILING IS A PRODUCT QUANTITY AND THE SEAT MAY NOT INVENT ONE (CD-RULE-003, PBG-AUTH-005).
-  CD-D-032 stands: it is DERIVED from ratified intent — PID §5's 15-minute detectability budget,
-  bounded further by BLUEPRINT §7's tightening window_for(regime) — with the clause CITED in the
-  code, the register entry and the commit, or the seat FAILS CLOSED and escalates it to the Project
-  Lead as an owed Product Authority decision. The dispatch states the PL's proposed derivation as
-  something the seat must CHECK, not assume. The ceiling must be STRUCTURAL, not advisory: a caller
-  passing a window above it gets a refusal, never a clamp.
-  THEN the SEPARATE BOUNDED DISPATCH for the _yamlmin.py non-termination (CD-PL-F61 / CD-ENG-WO2R-F14),
-  which CD-D-051 places AFTER increment 5 and BEFORE Assurance — two of the eleven declared gate
-  commands currently return NO VERDICT on an ordinary YAML edit, and it predates the first audit.
-  THEN increment 6, reconciliation and return, which writes no logic.
-  RECONCILE EACH by running the arms yourself and by writing fresh probes of your own against the
-  structure the seat actually built, not against the one the dispatch imagined. Commit each as its
-  own checkpoint on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
-  VARIABLES, not through `git -c` (CD-PL-F56 — it fails silently on this host), and verify with
-  `git log -1 --format='%an <%ae> | %cn <%ce>'` after every single commit.
+  WO-2R INCREMENTS 1, 2b, 3b, 4 AND 5 ARE ALL RECONCILED AND ACCEPTED. CD-ASR-F01 through F06 —
+  ALL SIX findings this rework was opened for — are CLOSED AS A CLASS, subject to Assurance.
+  THE CD-PL-F61 READER DISPATCH IS RECONCILED AND **ACCEPTED** at lane 253c38b (CD-D-060,
+  BL-20260819T183543Z-0035), completing the PARTIAL reconciliation of BL-20260819T175919Z-0034.
+  Every item on that entry's NOT_YET_VERIFIED list was measured by the PL on its own extractions:
+  suite 1289 -> 1325 with ZERO node ids removed and all 36 additions in the new test file; the
+  ten-check NO-VERDICT-CHANGES table identical in both columns except the declared
+  check_no_execution_interface growth; the +149/+544/+0 decomposition proved PER PART on eight
+  single-file isolation trees, summing exactly with no interaction term; 11 of 11 plants applying
+  and 10 of 11 contrasting (the eleventh 3/3, no live store); all ten mandatory headings on all
+  three commits. TERMINATION IS STRUCTURAL: all five `while` loops carry an iteration budget
+  decremented before any branch, bounding every loop regardless of document shape.
+  THE PL WENT BEYOND THE DISPATCH. The seat's no-verdict-change table was measured on the CLEAN
+  TREE ONLY, so the PL applied ALL 62 variants to pristine extractions of BOTH SHAs and ran the
+  three reader-sharing checks on each — 124 trees. EXACTLY ONE ROW CHANGED: V30, 124,124,124 ->
+  3,3,3, no verdict to stated refusal. It then wrote twelve fresh probes: PL-X5/X6/X7/X8 are four
+  NEW stalling routes (document root, block-scalar folder, an ORDINARY dedented sibling, CRLF) that
+  all hang at f22d120 and are all refused at 253c38b; PL-X1/X2 prove the new iteration budget does
+  NOT false-fire on a 1,604-line legitimate document or on 400 passes through the one unguarded
+  delegation; and PL-X9 is decisive — with `_advance` DELETED from the merge loop, the budget alone
+  still terminates with its stated message, so the backstop the seat could only justify by argument
+  (CD-ENG-READER-F07) is PROVED BY EXECUTION.
+  THE THREE OWED RULINGS ARE MADE. CD-D-061: CD-ENG-READER-F02's refusal to convert RecursionError
+  is RATIFIED and boundary 8b accepted as a declared limit; owed at WO-3, not blocking. CD-D-062:
+  CD-ENG-READER-F05/F08, the silent flattening, is CONFIRMED MEDIUM — pre-existing and
+  byte-identical at both SHAs, unchanged across all 124 trees, and the PL's three attempts to
+  weaponise it into a FALSE CLEAN (PL-X12a/b/c) were ALL REFUSED because flattening lifts a nested
+  key INTO CD-EGRESS-007's closed key set. STATE THE DENOMINATOR: three routes, one criterion. The
+  FIX goes to WO-3 bound with the V27 re-measurement, because correcting the parse moves which
+  clause refuses V27 and would reopen CD-ASR-F04 on the eve of the audit. CD-D-063:
+  CD-ENG-READER-F06's refusal to correct two of three CD-RULE-004 places is RATIFIED.
+  NEXT: WO-2R INCREMENT 6 — the register-and-contract sweep, WHICH WRITES NO LOGIC — carrying THREE
+  bounded addenda at its head. (1) CD-PL-F65 (CD-D-058): boundary 3 must name `Agrees`, say it is
+  UNSLOTTED so the `__slots__` half does not hold there, and state that the route reaches "WITNESS
+  AGREES" on a decade-old timestamp. The seat is NOT to slot Agrees. (2) CD-ENG-READER-F06
+  (CD-D-063): CD-RT-003's stale declared limit 4 corrected across ALL THREE places in one edit,
+  writable scope extended to tools/register/check_engine_no_witness_reach.py FOR PROSE ONLY.
+  (3) CD-ENG-READER-F05/F08 (CD-D-062): the flattening DECLARED as a CD-RT-012 boundary in all three
+  places, with PL-X10a as its executable example. DECLARATION ONLY — THE FIX IS OUT OF BOUNDS.
+  RECONCILE IT by running the arms yourself and by writing FRESH probes against the structure the
+  seat actually built, not the one the dispatch imagined. That step has sent two increments back
+  (CD-PL-F54, CD-PL-F59) and is why both were caught before the gate rather than at it. The Project
+  Lead does not write the fix (PBG-AUTH-006, CD-D-038/CD-D-045), and "it is only prose" is the same
+  argument as "the fix looks small", which this project has already declined twice.
   THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never
   the Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise FRESH
-  variants; the exclusion set is the union of the WO-2 auditor's ten, the Engineer's seventeen and
-  the Project Lead's twenty-three, and it must be handed CD-ENG-WO2R-F12 as a NAMED QUESTION,
-  plus CD-PL-F53, CD-PL-F57 and CD-PL-F58.
-  THE GATE IS UNCHANGED: Assurance PASS on all five. Deliberate STOP at the gate either way, record
-  state durably, and report to the Product Owner. Admit no run record without its paired assurance
-  verdict (CD-RULE-001, non-relaxable).
-
+  variants; the exclusion set is now the union of the WO-2 auditor's ten, the Engineer's through V51
+  and R01-R08, and the Project Lead's PL-Q1 through PL-X12. Hand it as NAMED QUESTIONS:
+  CD-ENG-WO2R-F12; CD-ENG-READER-F05/F08 WITH ITS DENOMINATOR STATED and an express invitation to
+  find the fourth route; CD-ENG-READER-F02; and CD-PL-F53, F57, F58, F62, F63, F65, F66, F67, F68
+  plus the seat's F20-F24. Carry the three adopted method notes: F13 assert the RULE ID, not merely
+  a non-zero exit; F16 a shrinking assertion count is how a skipped arm hides; F18 a derivation
+  refusal at exit 3 arrives before a reach violation at exit 1.
+  Commit each boundary on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
+  VARIABLES, never `git -c` (CD-PL-F56 — it fails silently on this host), and verify with
+  `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit. A continuity write is not
+  complete until `pbg boot` has been re-run and its verdict recorded in the same entry (CD-RULE-007).
+  THE GATE IS UNCHANGED: Assurance PASS on all five. Admit no run record without its paired
+  assurance verdict (CD-RULE-001, non-relaxable). Deliberate STOP at the gate either way, record
+  state durably, and report to the Product Owner.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
-  order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
-  §13 and §15, and governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml. The Blueprint is ACCEPTED, so
-  application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
-  The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
-  the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T175919Z-0034
+  order: BL-20260819T183543Z-0035 (the reader-lane reconciliation and the three rulings it makes),
+  BL-20260819T175919Z-0034 (the PARTIAL it completes), governance/decisions/PO-GATE-REVIEW-WO2-0001.md
+  (the Product Owner's four rulings and the four standing project rules), governance/rules/
+  PROJECT-RULES.md, and governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml. The Blueprint is
+  ACCEPTED, so application code is authorised; the WO-2 gate is UNCHANGED at Assurance PASS on all
+  five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
+  and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
+  belong to the Product Authority and are already ruled; neither blocks WO-2.
+last_build_log_entry: BL-20260819T183543Z-0035
 status: ACTIVE
