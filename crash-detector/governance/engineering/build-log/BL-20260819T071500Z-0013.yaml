@@ -1,0 +1,404 @@
+# WO-2 increment 6a of 7 — the increment the runtime killed three times, finished and committed.
+# CD-PL-F38 closed by widening ONE window; __all__ completed; and the load-bearing item at last
+# written — CD-RT-012-NO-EXECUTION-INTERFACE now DECLARES ITS OWN LIMIT, which is what CD-D-014
+# asked for and what the inherited candidate pointed at without ever writing.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T071500Z-0013
+timestamp_utc: '2026-08-19T07:15:00Z'
+project: crash-detector
+actor: CD-ENG-WO2-01
+role: ENGINEER
+seat_instance: 6a
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: 9a1a15923e61f6d472a1c1600598fad4ec971b46      # the dispatched lane HEAD
+increment_sha: d1abdcc9732dc14ebc92a9d69622a4558355e0a9     # THE EXACT SHA of increment 6a
+parent_entry_id: BL-20260819T063700Z-0010                   # newest entry in this lane
+answers_entry_id: BL-20260819T070100Z-0012                  # the PL entry that ruled CD-D-015
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  increment_sha d1abdcc is the SINGLE commit carrying increment 6a, as the dispatch required —
+  one coherent commit over four files. THIS ENTRY is committed immediately after it, as its
+  child, because an entry cannot contain the hash of the commit that contains it. d1abdcc is
+  the SHA to quote for the work.
+
+# --- boot and reconciliation ------------------------------------------------------------------ #
+
+boot_verdict: >
+  Read IN FULL before writing anything: pbg/roles/engineer.md; the dispatch record
+  CD-DISPATCH-WO2-ENGINEER.yaml including the CD-D-013 writable_scope amendment; the Project
+  Lead entry BL-20260819T070100Z-0012 that inventoried, verified and ruled on the inherited
+  material (CD-D-015, CD-D-016); the CD-D-014 ruling in BL-20260819T064300Z-0011 that defines
+  what the declaration must say; the predecessor lane entry BL-20260819T063700Z-0010; and the
+  target sources themselves.
+
+  RECONCILIATION: observed HEAD of /srv/crash-detector-wo2 was
+  9a1a15923e61f6d472a1c1600598fad4ec971b46 on branch wo-2-skeleton, carrying exactly ONE modified
+  file, tools/register/_broker_vocabulary.py — byte-for-byte the state BL-...-0012 recorded and
+  dispositioned. No drift (PBG-CONT-006). Work began only after that matched.
+
+  FRAMEWORK INTEGRITY: `PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate` returns AMBER with
+  snapshot_write_safety (PBG-FWK-013) OK, and `git status --porcelain pbg/` is empty in this
+  worktree. Nothing under pbg/ was modified by this seat.
+
+  BOOT VERDICT RED, AND IT IS THE ALREADY-DISPOSITIONED ARTEFACT, NOT A NEW DEFECT.
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from the lane returns exit 2,
+  CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, blocking_failures []. This seat diagnosed the
+  cause rather than assuming it: both SHAs in the lane copy of ACTIVE_WORK.yaml resolve under
+  `git cat-file -e`, and the actual reference failure is
+  `active_work_currency` returning ACTIVE_WORK_STALE — the lane copy points at
+  BL-20260819T025400Z-0004 while the newest entry visible in the lane is BL-...-0010. That is
+  the branch-point copy of a file that is the PROJECT LEAD's, lives on main, and is named in
+  protected_scope. It was NOT touched and no time was spent on it. Already ruled NOT REPRODUCED /
+  not a defect as CD-ENG-F31 at BL-20260819T061400Z-0009, and unchanged since. Reported here
+  rather than silently worked around (PBG-CONT-006); the correction, if one is wanted, is the
+  Project Lead's to make on main.
+
+# =============================================================================================== #
+# WHAT WAS IMPLEMENTED — four items, and nothing else
+# =============================================================================================== #
+
+inherited_base: >
+  This increment STARTS FROM the uncommitted candidate ruled KEEP AS UNATTESTED CANDIDATE by
+  CD-D-015. It was not discarded, not rewritten wholesale and not re-derived. Its +313/-17 lines
+  closing CD-PL-F35 (a), (b) and (c) are carried forward unchanged except where item 1 and item 4
+  below name a change. The candidate snapshot at /srv/crash-detector-wo2-candidate-inc6/ was
+  available for comparison and was not needed.
+
+item_1_cd_pl_f38:
+  finding: CD-PL-F38
+  title: 'The pattern E motion window was four words wide'
+  what_changed: >
+    ONE window, in _judge_sentence pattern E of tools/register/_broker_vocabulary.py:
+    `for offset in range(1, 5)` became `for offset in range(1, 9)`. The adjacent comment was
+    rewritten to state the new width and the reason it is safe. NOTHING ELSE — no new pattern,
+    no new vocabulary category, no new layer (CD-D-015). The vocabulary was already correct:
+    `flows` was in MOTION_VERBS and `clearer` in DESTINATION_NOUNS before this change.
+  why_it_escaped: >
+    "Every instruction eventually flows straight through to the nominated clearer" — `clearer`
+    sits SIX words past `flows`, behind "straight through to the nominated", and the scan
+    reached four.
+  why_widening_is_safe_and_how_it_was_checked: >
+    THE BREAK BOUNDS THE FALSE POSITIVES, NOT THE NUMBER. The scan halts at the first word that
+    is neither a motion particle nor an adverb, so the window only ever spans an UNBROKEN
+    particle run. Widening therefore admits exactly ONE new shape — a motion verb, five to eight
+    consecutive particles, then a destination noun — and cannot reach across a head noun that
+    already halted it at four.
+
+    That claim was VERIFIED rather than asserted, because it is the whole argument for the
+    change. Probe `break`: "The data goes out to the pool from the exchange feed" halts on
+    `pool` and never reaches `exchange` — exit 0 before and exit 0 after. The claim now written
+    into the code comment is a measured one.
+  no_compensating_machinery: >
+    The dispatch instructed this seat to STOP and report rather than compensate if widening
+    introduced a false positive. It did not: the clean arm assertion count is IDENTICAL before
+    and after (29775), and every innocent-prose probe stayed silent. No compensating machinery
+    was added and none was needed.
+
+item_2_all_completeness: >
+  MOTION_PARTICLES and ORDER_SEQUENCE_MODIFIERS were defined and referenced but absent from
+  __all__, while their four siblings had been added. Both added. __all__ now carries 28 names and
+  every one of them resolves — verified by importing the module and checking hasattr for each.
+
+item_3_the_declared_limit:
+  standing: >
+    THE LOAD-BEARING ITEM, and the reason the increment was not finished. CD-D-014 required that
+    this guard, after one hardening pass, STATE ITS OWN LIMIT and stop. Before this commit
+    `grep -rn "DECLARED LIMIT" tools/ required-tests.yaml` returned exactly ONE hit: a dangling
+    forward reference in the tradeable_tokens docstring pointing at a header that did not exist.
+    It now resolves.
+  written_in_three_consistent_places:
+  - 'tools/register/check_no_execution_interface.py — the header, section "DECLARED LIMIT —
+     WHAT THIS CHECK DOES NOT CATCH". The longest of the three; carries the measured example
+     behind each item.'
+  - 'required-tests.yaml — a comment block immediately above the
+     CD-RT-012-NO-EXECUTION-INTERFACE entry, plus the boundary restated inside that entry''s
+     negative_control.violation prose so it survives anyone reading the data alone.'
+  - 'contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md — a "Declared limit" section. This
+     file is what the register entry''s execution_contract names, so the register carries the
+     declaration by reference as well as in prose.'
+  the_six_boundaries_named:
+  - '1. DELIBERATE EUPHEMISM. A static reader of natural language has no terminating condition
+     against an author choosing words to avoid it. Evidenced, not speculated: CD-PL-F32,
+     CD-PL-F35 and CD-PL-F38 were each found by a FRESH round of independent probing. That each
+     round found another is the evidence for the limit.'
+  - '2. CODE NAMED TO HIDE BEHIND THE work_order SEQUENCE-SENSE SUPPRESSION — named explicitly
+     as the dispatch required. L1 suppresses the token `order` after any of the thirty-one
+     modifiers in ORDER_SEQUENCE_MODIFIERS so the guard does not cry wolf on this project''s own
+     daily vocabulary. `work_order_router` escapes L1; it escapes the CHECK only if it is ALSO
+     shaped to avoid an order ticket, because L2 reads no names at all.'
+  - '3. THE L3 NEGATION/HYPOTHETICAL SUPPRESSION the check already notes in its own output — and
+     this seat found the real boundary is MUCH WIDER than the header''s examples suggested. The
+     lists hold 46 negation words and 25 hypothetical words, including `must`, `free`,
+     `advisory`, `absence`, `zero`, `say`, `check`, `example`, `criterion` and `were`. MEASURED,
+     not inferred: the docstring "The engine must send each instruction to the broker" is not
+     read by L3 at all, on `must` alone (probe, exit 0). A sentence needs no cunning to be
+     suppressed, only an ordinary modal verb. DECLARED, NOT FIXED, per CD-D-015.'
+  - '4. A MOTION CHAIN LONGER THAN EIGHT WORDS — the residual boundary left by item 1 itself,
+     declared in the same breath as the widening rather than left for a later probe to find.'
+  - '5. ANYTHING THAT IS NOT .py OR .sql UNDER THE FIVE SCANNED ROOTS (src, db, deploy, tests,
+     tools). No YAML, JSON, TOML, shell, Markdown, notebook, template, CI job, compiled
+     artefact, vendored dependency or container image is read.'
+  - '6. RUNTIME. A static read of source text at one commit.'
+  grounding: >
+    Written as an honest statement of scope, NOT as an apology or a disclaimer, and grounded in
+    the PO-accepted CD-BP-001: an AST check is NEVER a sole guard for CD-AC-012. The declaration
+    names what carries the rest — CD-RT-012-LOCKFILE-DENYLIST (which no euphemism in our own
+    source can evade, because the SDK is named by its publisher and not by us),
+    CD-RT-012-EGRESS-NO-BROKER, and structurally the network posture of BLUEPRINT sections 2 and
+    13, under which cd-engine, cd-public, cd-private and cd-store have no egress at all. It also
+    tells a reader what to do instead of trusting this check alone: weigh the egress posture
+    first, because of the four it is the only one that constrains what the software CAN DO rather
+    than what it says. And it records CD-D-014''s consequence — a planted variant landing beyond
+    the boundary is a finding against the DECLARATION, not an automatic RED against the guard.
+  a_constraint_encountered_and_respected: >
+    The register''s test-entry key set is a CLOSED ALLOWLIST enforced by
+    pbg/tools/pbg/required_tests.py: {test_id, scope, execute, execution_contract,
+    negative_control}, and negative_control admits only {violation, evidence_ref}. A new
+    `declared_limit` KEY would have been rejected by the validator. This seat did not widen the
+    contract to suit its content and did not touch pbg/. The declaration is carried in a YAML
+    comment and in the existing free-prose field instead, which the validator accepts unchanged.
+
+item_4_minor_truth_correction_declared: >
+  ONE change beyond the three items, declared here rather than left to be found. The
+  tradeable_tokens docstring said the suppression fires after "one of twenty-nine sequence
+  modifiers". ORDER_SEQUENCE_MODIFIERS holds THIRTY-ONE, counted mechanically. Corrected to
+  thirty-one and made to name the constant. This alters NO detection behaviour — it corrects a
+  false number in a governance-facing docstring that the declared limit now repeats, and leaving
+  a known-false figure in place while writing a document about honest scope was the worse option.
+
+# =============================================================================================== #
+# WHAT WAS DELIBERATELY NOT IMPLEMENTED
+# =============================================================================================== #
+
+not_implemented_deliberately:
+- 'NO FURTHER HARDENING OF THIS GUARD. CD-D-015 makes item 1 the LAST change to its detection
+   behaviour. The `must` suppression found during this increment is a real, material escape and
+   this seat DECLARED it rather than fixed it, exactly as instructed. It would have been a
+   two-line change to exclude `must` from PROSE_NEGATIONS; that would have been a second
+   hardening pass under another name, and the unbounded chase is the thing CD-D-015 exists to
+   stop.'
+- 'B3, THE PLANTS — not started, not designed, not touched. That is increment 6b and is to be
+   dispatched separately. plants/ does not exist at this SHA.'
+- 'B4, the full plant-arm test run — increment 7, not started.'
+- 'NO CHECK, TEST OR ASSERTION WAS WEAKENED to obtain a pass. The clean arm passes on the same
+   29775 assertions as before; nothing was suppressed, excluded or relaxed.'
+- 'ACTIVE_WORK.yaml — NOT touched, in either worktree. Protected scope, the Project Lead''s.'
+- 'pbg/ — NOT touched. Verified clean.'
+- 'RT-A (the throwaway PostgreSQL container) — NOT exercised. Not needed by this increment. No
+   container was created, inspected, started or stopped by this seat.'
+- 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 — all HELD, none exercised. This seat holds no authority
+   to release a held action.'
+
+# =============================================================================================== #
+# EVERY COMMAND RUN, WITH ITS EXIT CODE
+# =============================================================================================== #
+
+commands_run:
+  method: >
+    Every arm below was run by THIS SEAT in the foreground. Probe files were written into scratch
+    roots under /tmp (dispatch line 77, non-governed) and each probe was placed ALONE in its own
+    root, so no result can be a coincidental hit from a neighbouring file. THE WORKTREE WAS NEVER
+    USED AS A PROBE SUBJECT and no probe file was ever written into it.
+
+  boot_and_integrity:
+  - 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot  ->  exit 2 (RED,
+     CONTINUITY_REFERENCE_INVALID — the dispositioned ACTIVE_WORK_STALE artefact, see boot_verdict)'
+  - 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate  ->  exit 2 (AMBER; snapshot_write_safety
+     PBG-FWK-013 OK)'
+  - 'git status --porcelain pbg/  ->  exit 0, EMPTY'
+  - 'git cat-file -e d9580294d0f82065f039f561cbcbbed2d7f741d0  ->  exit 0 (resolves)'
+  - 'git cat-file -e 0047093287f4282cad63c993ab87416bdb5a54ea  ->  exit 0 (resolves)'
+
+  clean_arm:
+  - 'python3 tools/register/check_no_execution_interface.py --root .   BEFORE the change
+     ->  exit 0, PASS, 77 files, 29775 assertions, 0 violations'
+  - 'python3 tools/register/check_no_execution_interface.py --root .   AFTER the change
+     ->  exit 0, PASS, 77 files, 29775 assertions, 0 violations.
+     THE COUNT IS IDENTICAL, which is the strongest single statement available here: the change
+     has zero behavioural effect on this project''s own tree.'
+
+  probe_arms:
+  - 'f38 — the CD-PL-F38 sentence verbatim, "Every instruction eventually flows straight through
+     to the nominated clearer".
+     python3 tools/register/check_no_execution_interface.py --root /tmp/cd6a/before-f38 -> exit 0
+     python3 tools/register/check_no_execution_interface.py --root /tmp/cd6a/after-f38  -> exit 1,
+     1 violation at src/f38.py:2, rule "execution interface declared in prose", naming `flows`
+     toward `clearer`. CD-PL-F38 CLOSED.'
+  - 'innocent — SIX sentences of ordinary prose in the motion and lifecycle vocabulary, THREE of
+     them carrying five-to-eight-word particle runs written specifically to attack the widened
+     window ("The snapshot travels straight through to the designated nightly summary table",
+     "Each record flows straight onward to the next designated downstream consumer", "The payload
+     moves directly over to the appropriate designated local handler").
+     --root /tmp/cd6a/before-innocent -> exit 0, 30 assertions, 0 violations
+     --root /tmp/cd6a/after-innocent  -> exit 0, 30 assertions, 0 violations.
+     NO FALSE POSITIVE INTRODUCED.'
+  - 'pathways — the three genuine order pathways the dispatch named: order_router, submit_order,
+     class OrderGateway.route_order.
+     --root /tmp/cd6a/before-pathways -> exit 1, 4 violations
+     --root /tmp/cd6a/after-pathways  -> exit 1, 4 violations, same lines.
+     NO DETECTION LOST, NO OVER-SUPPRESSION.'
+  - 'workorder — this project''s own work-order vocabulary: apply_work_order,
+     sort_order_of_entries, class WorkOrderRegister.next_work_order.
+     --root /tmp/cd6a/before-workorder -> exit 0, 14 assertions, 0 violations
+     --root /tmp/cd6a/after-workorder  -> exit 0, 14 assertions, 0 violations.
+     CD-PL-F35(c) INTACT — the guard stays silent on innocent code.'
+  - 'break — the safety claim written into the new code comment: "The data goes out to the pool
+     from the exchange feed".
+     --root /tmp/cd6a/after-break -> exit 0. The scan halts at the head noun `pool` and never
+     reaches `exchange`, so the widened window cannot reach across a break.'
+  - 'must — the L3 suppression boundary, run to MEASURE the limit before writing it down:
+     "The engine must send each instruction to the broker".
+     --root /tmp/cd6a/probe-must -> exit 0, 5 assertions, 0 violations. ESCAPES on `must` alone.
+     DECLARED as boundary 3, NOT FIXED (CD-D-015).'
+
+  module_and_register_integrity:
+  - 'python3 -c "import _broker_vocabulary" with hasattr over every name in __all__
+     ->  exit 0, 28 names, 0 missing'
+  - 'python3 -m py_compile tools/register/_broker_vocabulary.py
+     tools/register/check_no_execution_interface.py  ->  exit 0'
+  - 'python3 -c "yaml.safe_load(required-tests.yaml)"  ->  exit 0, parses'
+  - 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify  ->  exit 2.
+     pid.content_hash MATCHES, latest_admitted_run (null), all sixteen criteria UNDECIDABLE,
+     GATE: SHUT, PID_ACCEPTANCE_SATISFIED: NOT DERIVED. UNCHANGED from before this increment and
+     CORRECT: every criterion is UNDECIDABLE because RTR-WO2-0001 does not exist, and it does not
+     exist because the INDEPENDENT Assurance seat owes it. This seat does not admit its own
+     evidence.'
+
+  full_register_sweep:
+  - 'check_base_image_digest_pin.py --root .        ->  exit 0'
+  - 'check_dockerignore.py --root .                 ->  exit 0'
+  - 'check_egress_no_broker.py --root .             ->  exit 0'
+  - 'check_engine_no_witness_reach.py --root .      ->  exit 0'
+  - 'check_grant_matrix_live.py --root .            ->  exit 3, PRECONDITION_NOT_MET. PRE-EXISTING
+     AND CORRECT, not caused by this increment: the connection target is unset, so the check
+     cannot reach a store, and it exits non-zero with a stated reason rather than skipping
+     (PBG-CI-002). RT-A was not exercised in this increment. No secret value appears in the
+     output — the check names environment variables by NAME only.'
+  - 'check_lockfile_denylist.py --root .            ->  exit 0'
+  - 'check_no_blend.py --root .                     ->  exit 0'
+  - 'check_no_execution_interface.py --root .       ->  exit 0'
+  - 'check_no_numeric_default.py --root .           ->  exit 0'
+  - 'check_schema_closed.py --root .                ->  exit 0'
+
+  commit:
+  - 'git add (4 paths) && git commit  ->  exit 0, d1abdcc9732dc14ebc92a9d69622a4558355e0a9.
+     The repository-local pre-commit hook (core.hooksPath=pbg/tools/hooks, verified set) RAN and
+     PASSED. --no-verify was NEVER used.'
+
+files_changed:
+- 'tools/register/_broker_vocabulary.py — the inherited candidate carried forward, plus the
+   pattern E window 4 -> 8, plus two names added to __all__, plus the thirty-one correction'
+- 'tools/register/check_no_execution_interface.py — the DECLARED LIMIT header section (+96)'
+- 'required-tests.yaml — the DECLARED LIMIT comment block and the extended
+   negative_control.violation prose on CD-RT-012-NO-EXECUTION-INTERFACE (+52/-3)'
+- 'contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md — the "Declared limit" section (+49)'
+
+# --- standing --------------------------------------------------------------------------------- #
+
+what_this_evidence_is_not: >
+  IMPLEMENTATION TESTING. It is NOT assurance and does not become assurance by being thorough
+  (PBG-SOD-001, non-waivable). This seat wrote the code above and therefore cannot certify it. No
+  wrapper script was written and none exists; every arm is the declared command line, typed in
+  full. RTR-WO2-0001 is owed by the INDEPENDENT Assurance seat CD-ASR-WO2-01 and NOTHING in this
+  entry is it.
+
+secrets: >
+  No secret value appears in this entry, in the commit, in any probe file or in any command
+  output recorded here. check_grant_matrix_live names five environment variables by NAME only, as
+  it is written to (PBG-SEC-002, PBG-EVID-003, PBG-CONT-009).
+
+# --- findings and risks ------------------------------------------------------------------------ #
+
+findings_raised:
+- id: CD-ENG-F39
+  severity: LOW
+  title: 'The L3 suppression list is far wider than the check''s own header described'
+  detail: >
+    The check header described the L3 suppression as "`no`, `never`, `refuses`, `forbidden`,
+    `if`, `would`, `planted`, `variant`, `guard`", and the note it prints on every run says the
+    same. The actual lists hold 46 negation words and 25 hypothetical words, and include `must`,
+    `free`, `advisory`, `absence`, `zero`, `say`, `check`, `example`, `criterion` and `were`.
+    MEASURED: "The engine must send each instruction to the broker" is not read by L3 at all.
+
+    A reader of the old header would have believed the trade was narrower than it is. That is the
+    kind of gap a DECLARED LIMIT exists to close, and it was found only because writing the limit
+    forced the numbers to be counted rather than recalled.
+  disposition: >
+    DECLARED, NOT FIXED — CD-D-015 forbids further hardening and this seat did not exceed it.
+    Recorded as boundary 3 of the declared limit in all three places, with the measured example.
+    Whether the suppression list should be narrowed is a question for the Project Lead and, if it
+    reaches product meaning, the Product Owner. It is not this seat''s to decide.
+- id: CD-ENG-F40
+  severity: LOW
+  title: 'The lane''s printed run-note still describes the narrow suppression list'
+  detail: >
+    The runtime note the check prints on every run still gives the short example list, so an
+    auditor reading only the console output, and not the header, still sees the narrower
+    description. The header, the register and the execution contract are now correct and
+    consistent; the printed note is the fourth surface and was NOT edited.
+  disposition: >
+    NOT FIXED BY THIS SEAT, DELIBERATELY. Editing the note changes what the check emits, and this
+    increment was bounded to four items with detection behaviour frozen after item 1. Raised for
+    the Project Lead to rule on. The cost is bounded: the note is a summary and the header it
+    summarises is one file away and now correct.
+
+risks:
+- 'CD-BP-001 LOW, unchanged and now EXPLICITLY DISCHARGED IN WRITING — the AST register checks are
+   never a sole guard, risk accepted by the PO, and CD-RT-012-NO-EXECUTION-INTERFACE now says so
+   in its own header, its register entry and its execution contract.'
+- 'CD-ENG-R41 NEW, LOW — a declared limit can drift out of date as the guard changes, and a stale
+   limit is worse than none because it is believed. Four surfaces now describe this check (header,
+   register comment, register prose, execution contract) and CD-ENG-F40 records that a fifth, the
+   printed note, is already inconsistent. Any future change to the guard must update all of them.'
+- 'CD-CONT-001 AMBER, unchanged — mitigated here as instructed: this increment is committed before
+   the seat returns, so a fourth termination costs nothing already done.'
+- 'CD-ENG-F31 unchanged — the lane boot is RED on a stale, protected, Project-Lead-owned
+   ACTIVE_WORK.yaml. Reported, not corrected.'
+- 'CD-FWK-004, CD-FWK-002, CD-FWK-001, CD-FWK-003, CD-RT-001, CD-SEC-001, CD-ERR-001, CD-OB-004 —
+   all unchanged by this increment.'
+
+evidence_refs:
+- 'commit d1abdcc9732dc14ebc92a9d69622a4558355e0a9 on wo-2-skeleton — the increment itself'
+- 'tools/register/check_no_execution_interface.py, section "DECLARED LIMIT" — the declaration'
+- 'required-tests.yaml, the comment block and negative_control.violation on
+   CD-RT-012-NO-EXECUTION-INTERFACE — the declaration in the register'
+- 'contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md, section "Declared limit"'
+- '/tmp/cd6a/ — the probe sources and the before/after scratch roots (non-governed scratch,
+   dispatch line 77; NOT project state and NOT durable)'
+- '/srv/crash-detector-wo2-candidate-inc6/ — the inherited candidate this increment builds on'
+- 'RTR-WO2-0001 — NOT PRODUCED, and nothing above is it. Owed by CD-ASR-WO2-01.'
+
+obligations_status:
+- 'CD-PL-F35 — now CLOSED IN FULL. (a), (b) and (c) were closed by the inherited candidate and
+   verified by the Project Lead; the DECLARED LIMIT half, which remained owed, is delivered here.'
+- 'CD-PL-F38 — CLOSED at d1abdcc, verified by the f38 probe flipping exit 0 to exit 1.'
+- 'CD-D-014 — DISCHARGED. The one further bounded pass is complete and the guard now declares its
+   own limit in writing, in the check and in its register entry, as the ruling required.'
+- 'CD-D-015 — HONOURED. Item 1 was the last change to detection behaviour. One further escape was
+   found (CD-ENG-F39) and was DECLARED, not fixed.'
+- 'CD-OB-004, CD-ERR-001 — OPEN, unchanged, both owed before WO-3.'
+
+next_safe_action: >
+  Increment 6b: B3, the five planted violations under plants/, as a SEPARATE commit and a
+  SEPARATE dispatch. It was not started here and plants/ does not exist at d1abdcc. Then
+  increment 7 (B4, the full plant-arm run). This seat returns INCREMENT_6A_COMPLETE at
+  d1abdcc9732dc14ebc92a9d69622a4558355e0a9 and does NOT return READY_FOR_ASSURANCE, because WO-2
+  is not complete: B3 and B4 are outstanding.
+
+  Two items are for the PROJECT LEAD to rule on before or alongside 6b: CD-ENG-F39 (the L3
+  suppression list is wider than described — declared, not fixed) and CD-ENG-F40 (the check''s
+  printed run-note still carries the old narrow description).
+
+  When WO-2 does reach READY_FOR_ASSURANCE, the Assurance seat must be a SEPARATE agent with
+  actor_id CD-ASR-WO2-01 — never this one (PBG-SOD-001, non-waivable).
