@@ -1,0 +1,19 @@
+diff --git a/src/crash_detector/publication/summary.py b/src/crash_detector/publication/summary.py
+new file mode 100644
+index 0000000..f1ddfca
+--- /dev/null
++++ b/src/crash_detector/publication/summary.py
+@@ -0,0 +1,13 @@
++"""A summary figure for the public surface, built from the declared dial slots."""
++
++from __future__ import annotations
++
++_SLOTS = ("equity", "monetary")
++
++__all__ = ["summary_figure"]
++
++
++def summary_figure(dials):
++    """The mean of the dial magnitudes held in ``dials``."""
++    magnitudes = [getattr(dials, slot).value.score for slot in _SLOTS]
++    return sum(magnitudes) / len(magnitudes)

@@ -1,0 +1,32 @@
+diff --git a/src/crash_detector/publication/wire.py b/src/crash_detector/publication/wire.py
+new file mode 100644
+index 0000000..05f861f
+--- /dev/null
++++ b/src/crash_detector/publication/wire.py
+@@ -0,0 +1,26 @@
++"""Carry the dial magnitudes on the wire, and let the reader summarise them."""
++
++from __future__ import annotations
++
++import dataclasses
++import json
++
++__all__ = ["dials_as_json", "average_from_json"]
++
++
++def dials_as_json(dials) -> str:
++    """Every declared dial magnitude, as one JSON document."""
++    payload = {
++        field.name: getattr(dials, field.name).value.score
++        for field in dataclasses.fields(dials)
++    }
++    return json.dumps(payload)
++
++
++def average_from_json(document: str) -> float:
++    """The mean of whatever numbers the document carries.
++
++    This function never sees a dial. It sees a document of numbers.
++    """
++    numbers = list(json.loads(document).values())
++    return sum(numbers) / len(numbers)

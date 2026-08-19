@@ -1,0 +1,25 @@
+diff --git a/src/crash_detector/publication/overview.py b/src/crash_detector/publication/overview.py
+new file mode 100644
+index 0000000..ae5f7f7
+--- /dev/null
++++ b/src/crash_detector/publication/overview.py
+@@ -0,0 +1,19 @@
++"""An overview figure derived from whatever dials the container happens to declare."""
++
++from __future__ import annotations
++
++import dataclasses
++import statistics
++
++__all__ = ["overview_figure"]
++
++
++def overview_figure(dials):
++    """One figure, averaged over every reading the container declares.
++
++    Nothing here names a dial. The slots are discovered from the container's own declared
++    fields, so this module would keep working if a third dial were ever added.
++    """
++    readings = [getattr(dials, field.name) for field in dataclasses.fields(dials)]
++    magnitudes = [reading.value.score for reading in readings]
++    return statistics.mean(magnitudes)
