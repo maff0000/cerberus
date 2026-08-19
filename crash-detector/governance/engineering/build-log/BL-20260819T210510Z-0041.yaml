@@ -1,0 +1,276 @@
+# ================================================================================================ #
+# THE REPLICATION. BOTH HIGH FINDINGS CONFIRMED — AND CD-PL-F74, WHY CD-D-040 ACCEPTED TOO MUCH.
+# ================================================================================================ #
+
+entry_id: BL-20260819T210510Z-0041
+timestamp_utc: "2026-08-19T21:05:10Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 8a1474958f36f2a28a152f0fb76666b1d4d0a563
+lane_head_sha: 50fc23177f790164c3fc3604ccee51663e755c70
+parent_entry_id: BL-20260819T203521Z-0040
+schema_version: 1
+record_origin: >
+  Written by the NINTH Project Lead seat, resumed by the operator wrapper at 2026-08-19T20:59:25Z.
+  The eighth seat did NOT terminate mid-work: the wrapper log records it exiting rc=0 at 20:38:59Z,
+  a DELIBERATE STOP at the gate it declared in BL-20260819T203521Z-0040. That is the CD-D-043
+  precedent paying for itself a fourth time.
+
+action_summary: >
+  Discharged the debt the eighth seat declared and did not pay: INDEPENDENTLY REPLICATED
+  CD-ASR-WO2R-F01 and F02 on this seat's own pristine `git archive` extractions of 50fc231, with
+  this seat's own drivers. BOTH REPLICATE EXACTLY — every number identical to the auditor's.
+  CD-ASR-WO2-02 IS CONFIRMED ON BOTH HIGH FINDINGS. In the course of it, the CD-D-040 contradiction
+  the eighth seat flagged was measured and is REAL: CD-PL-F74 (HIGH, METHOD) — PL-R5 was refused by
+  a REGISTRY, and its refusal was read as evidence about a CLASS. NO CODE CHANGED. NO DISPATCH
+  ISSUED. The gate is unchanged and the next actor is still the Product Authority.
+
+# ================================================================================================ #
+# CD-D-007 SUSPICION PROCEDURE — the standing first act of a resumed seat
+# ================================================================================================ #
+suspicion_procedure:
+  rule: 'CD-D-007. A resumed seat treats every uncommitted artefact as unattested until adjudicated.'
+  main_worktree: >
+    /srv/crash-detector at 8a14749, branch main. `git status --porcelain --untracked-files=no` is
+    ZERO LINES — no tracked modification, nothing staged. `git diff --name-only -- pbg/` is empty,
+    so the pinned framework is intact and untouched by this seat.
+  the_eleven_untracked_entries: >
+    THE SAME ELEVEN as at BL-...-0039, re-read at this boundary rather than carried on the standing
+    phrase: .continue-prompt.txt, .wo2-prompt.txt, .wo2-runner.sh, .wo2-runner.log, .wo2-run-1.log,
+    .wo2b-prompt.txt, .wo2b-runner.sh, .wo2b-run-1.log, .wo2b-run-2.log, .wo2b-run-3.log, and
+    pbg/tools/pbg/__pycache__/. ADJUDICATED AS NOT PROJECT STATE on their CONTENTS. .wo2b-runner.sh
+    is the operator's relaunch loop; .continue-prompt.txt is the operator's resume instruction to
+    this seat, and its text is the prompt this seat was started with. The .wo2b-run-*.log files are
+    PRIOR PL SEAT TRANSCRIPTS — seat OUTPUT, and therefore the one class here that had to be read
+    with care rather than dismissed. They are adjudicated NOT PROJECT STATE because every
+    substantive thing in them is already committed to the Build Log by the seat that wrote it
+    (PBG-CONT-007 is satisfied by the entries, not by these logs), and because a transcript is
+    conversation, which this project has ruled repeatedly is not the record. NOTHING IN THEM
+    CONTRADICTS THE COMMITTED RECORD.
+  verdict: 'NOTHING TO ADJUDICATE. The eighth seat committed everything it wrote before stopping.'
+
+# ================================================================================================ #
+# TARGET INTEGRITY — established BEFORE any measurement, on three separate extractions
+# ================================================================================================ #
+target_integrity:
+  method: >
+    `git archive 50fc231 | tar -x -C <throwaway>` into directories OUTSIDE every governed worktree.
+    Not a clone and not a checkout: `git archive` cannot carry a dirty tree or a stale index, which
+    is why it is the extraction this project uses at a gate.
+  files: 364
+  fingerprint: '50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d'
+  fingerprint_method: 'sha256 over the sorted per-file sha256 digests of all 364 files.'
+  agreement_with_the_auditor: >
+    THE FINGERPRINT MATCHES the `50ae34d6…` CD-ASR-WO2-02 recorded, and the file count matches at
+    364 — computed by this seat with its own command and no sight of the auditor's. The auditor and
+    this seat measured THE SAME TREE. This is the precondition that makes every number below
+    comparable at all, and it is why it was done first.
+
+# ================================================================================================ #
+# CD-ASR-WO2R-F01 — REPLICATES EXACTLY. THE AUDITOR IS CONFIRMED.
+# ================================================================================================ #
+replication_F01:
+  finding_under_test: 'CD-ASR-WO2R-F01 (HIGH, CD-AC-002) — `combine_within_one_dial` is an unguarded proxy through the derivation door.'
+  verdict: 'REPLICATES EXACTLY. CONFIRMED.'
+  what_was_the_auditors_and_what_was_this_seats: >
+    THE VARIANT IS THE AUDITOR'S, used verbatim — it is the artefact whose claim is being
+    replicated, so substituting a different one would be measuring a different thing. THE DRIVER IS
+    THIS SEAT'S OWN, written from the source at 50fc231: the inputs are built through the
+    legitimate admission door `observed_for_dial`, and the publication attempt and every assertion
+    are this seat's. Recorded as PL-R6-F01-driver.py.txt.
+  structural_reading_before_execution: >
+    magnitude.py:620-622 passes `using(numbers)` — an arbitrary caller callable's return value —
+    straight into `derived_within_one_dial`, whose entire body (provenance.py:543) is
+    `return DeclaredQuantity(dials=dials, value=value)`. IT VALIDATES THE DIAL SET AND NEVER LOOKS
+    AT THE VALUE. The comment above the call site says as much in terms — "`using` may return any
+    float it likes and cannot influence which dial the result is declared for" — which is TRUE and
+    is exactly the gap: it need not influence the LABEL, only supply the VALUE.
+  measured_static_and_behavioural_layers: >
+    WITH THE VARIANT PRESENT, all exit 0: CD-RT-002-AST-NO-BLEND PASS 4873 assertions 0 violations;
+    CD-RT-002-SCHEMA-CLOSED PASS 242; CD-RT-001-AST-NO-NUMERIC-DEFAULT PASS 377;
+    CD-RT-002-TYPE-NO-ARITHMETIC 306 passed; WHOLE SUITE 1325 passed.
+  the_F16_contrast: >
+    CLEAN ARM on a separate extraction: CD-RT-002-AST-NO-BLEND PASS 4855 assertions. WITH THE
+    VARIANT: 4873. THE COUNT ROSE BY 18. The check DID scan the new module and had nothing to say
+    about it. This is not a skipped arm and not a shrunk denominator — it is a CLEAN PASS OVER A
+    LIVE BLEND. Every one of these numbers is IDENTICAL to the auditor's.
+  then_executed: >
+    equity 0.9 and monetary 0.1 in; out came DialMagnitude(dial_id='equity_crash', quantity=0.5),
+    EXACT type identity (not isinstance) True, provenance ['equity_crash'], quantity_for released
+    0.5. The score type did NOT refuse it. The publication gate `number_for_dial_slot` did NOT
+    refuse it and RETURNED 0.5. Equity 0.9 and monetary 0.1 PUBLISH AS AN EQUITY READING OF 0.5 —
+    the failure PID §3.1 calls constitutional.
+  the_proposition_measured_false: >
+    magnitude.py:117-122, boundary A, verbatim: "the sum cannot come back … no number so obtained
+    can ever be a dial magnitude again." THE CLAIM IS UNQUALIFIED AND IT IS FALSE AT THIS SHA.
+    CD-RULE-006 forbids a boundary asserting a carrier that does not carry. The auditor's reading
+    and its severity are both upheld.
+
+# ================================================================================================ #
+# CD-ASR-WO2R-F02 — REPLICATES EXACTLY, WITH THE CONTROL ARM. THE AUDITOR IS CONFIRMED.
+# ================================================================================================ #
+replication_F02:
+  finding_under_test: 'CD-ASR-WO2R-F02 (HIGH, CD-AC-005) — `ensure_utc` admits a `datetime` SUBCLASS by isinstance; a decade-old row renders WITNESS AGREES.'
+  verdict: 'REPLICATES EXACTLY. CONFIRMED.'
+  driver: 'PL-R6-F02-driver.py.txt — this seat''s own, AND IT CARRIES A CONTROL ARM, because a one-armed measurement here would prove nothing.'
+  measured: >
+    A row dated 2016-08-21 read at 2026-08-19 with a 600 s window. ATTACK ARM, as_of_utc a
+    FeedInstant (datetime subclass): survives PanelRow normalisation as FeedInstant, resolves to
+    Agrees, RENDERS "WITNESS AGREES". CONTROL ARM, the SAME decade-old instant as a plain datetime:
+    resolves to Unavailable, RENDERS "WITNESS UNAVAILABLE". IDENTICAL DATA, IDENTICAL WINDOW,
+    IDENTICAL CALL — THE ONLY VARIABLE IS THE CONCRETE TYPE OF THE TIMESTAMP.
+  no_reflection_used: >
+    No `object.__setattr__`, no reflection, no post-construction write anywhere in the driver. The
+    value reaches Agrees through PanelRow.__post_init__, resolve_panel, StalenessWindow.__post_init__
+    and FreshnessEvidence.__post_init__ — EVERY CONSTRUCTOR ON THE PATH RAN.
+  guards_green_with_it_present: >
+    CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES 152 passed; WHOLE SUITE 1325 passed;
+    check_no_numeric_default PASS 377; check_no_blend PASS 4873; check_engine_no_witness_reach
+    PASS 24; check_no_execution_interface PASS 38881. ALL EXIT 0.
+  the_boundary_that_invited_it: >
+    staleness.py boundary 3, verbatim: "every route measured that goes through a CONSTRUCTOR is
+    refused. THREE MEASURED, and three is the denominator, not a proof that a fourth does not
+    exist". THIS IS THE FOURTH. The boundary was drawn HONESTLY — it declined to claim what it had
+    not measured — and that honesty is precisely why F02 leaves CD-AC-005 at AMBER rather than RED.
+    The guard applied its own doctrine ("a subclass of a number is not a number: it may redefine
+    what comparison means") to one operand of the comparison and never to the other.
+  the_severity_claim_measured_not_accepted: >
+    The auditor argues HIGH partly on pandas.Timestamp being a datetime subclass. MEASURED BY
+    EXECUTION on this host: pandas 2.1.4, issubclass(pandas.Timestamp, datetime.datetime) -> True.
+    AND A QUALIFICATION THIS SEAT ADDS AGAINST ITS OWN CONVENIENCE: `grep -rn pandas src/ tests/
+    tools/` at 50fc231 returns NOTHING — this project does not depend on pandas today. That makes
+    the route LATENT rather than LIVE, which lowers the PROBABILITY and not the SEVERITY: CD-AC-005
+    is a claim about ANY input, WO-3 is where sources get registered (CD-D-005 — zero registered
+    today), and a collector handing the resolver a pandas.Timestamp is, in the auditor's phrase,
+    not an attack but a Tuesday. HIGH IS UPHELD.
+
+# ================================================================================================ #
+# CD-PL-F74 — THE METHOD FINDING. WHY CD-D-040 ACCEPTED MORE THAN IT MEASURED.
+# ================================================================================================ #
+CD_PL_F74:
+  finding: 'CD-PL-F74 (HIGH, METHOD) — PL-R5 was refused BY A REGISTRY, and its refusal was recorded as evidence about a CLASS. CD-D-040 accepted increment 2b on an inference wider than the measurement supported.'
+  severity: HIGH
+  why_it_was_looked_for: >
+    NOT DISCOVERED BY ACCIDENT. The eighth seat's next_safe_action named it in advance: "ASR2-F01
+    CONTRADICTS CD-D-040 … If PL-R5 was read as proving more than it did, that is a method finding
+    about RECONCILIATION ITSELF and it must not be lost inside the repair." IT WAS. IT IS. This
+    entry pays that debt with a measurement rather than an argument.
+  step_1_PL_R5_refusal_reproduces: >
+    PL-R5 replanted at src/crash_detector/publication/banner.py on a pristine extraction:
+    CD-RT-002-AST-NO-BLEND FAIL — 2 violations, at banner.py:3 and banner.py:21, both RULE 4, 4887
+    assertions. EXACTLY AS RECORDED. CD-D-040 accepted increment 2b on this refusal, "by structure
+    at the re-entry PLUS a deny-by-default static layer at the doors".
+  step_2_what_RULE_4_claims_in_its_own_words: >
+    Quoted verbatim from the check's violation text at 50fc231: "a module that launders two dials
+    into one figure need name no dial and perform no arithmetic on a magnitude … BUT IT CANNOT
+    AVOID COMING HERE."
+  step_3_the_one_variable_experiment: >
+    PL-R6-banner-door-swapped.py.txt IS PL-R5 WITH EXACTLY ONE THING CHANGED — THE DOOR. Same
+    intent, same mean, same accumulation loop, same publication into a slot. `observed_for_dial`
+    becomes `combine_within_one_dial`. RESULT: PL-R5 FAIL 2 violations (4887 assertions); PL-R6
+    PASS 0 violations (4882 assertions); and the banner publishes
+    EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5)), with
+    number_for_dial_slot returning 0.5. "IT CANNOT AVOID COMING HERE" IS FALSE, AND ONE IDENTIFIER
+    IS THE WHOLE DIFFERENCE.
+  the_ruling: >
+    PL-R5 WAS NEVER EVIDENCE THAT THE CLASS WAS CLOSED. It was evidence that PL-R5 NAMED A DOOR
+    THAT WAS IN THE VOCABULARY. A deny-by-default registry is only as closed as its vocabulary, and
+    this vocabulary had a PUBLIC PROXY missing from it. The refusal was real; the INFERENCE DRAWN
+    FROM THE REFUSAL was wider than the refusal supported, and CD-D-040 recorded that wider
+    inference as an acceptance.
+  the_pattern_and_its_count: >
+    This is the CD-ENG-WO2R-F13 pattern — A PROBE REFUSED FOR THE WRONG REASON — and it is the
+    SIXTH recurrence on this project, but the FIRST AIMED AT AN ACCEPTANCE rather than at a probe.
+    The five prior instances (the Engineer twice, the PL's own probe, a prose measurement at
+    CD-PL-F71, and CD-PL-F72) each cost a re-run. THIS ONE COST A GATE: increment 2b was accepted,
+    the work order ran on, and an auditor found the same class open ONE FUNCTION ACROSS, two gates
+    later.
+  the_method_correction_OFFERED_AND_NOT_SELF_ADOPTED: >
+    OFFERED TO THE PRODUCT AUTHORITY, NOT ADOPTED BY THIS SEAT, because a rule that binds future
+    seats is not the Project Lead's to make on its own authority — which is the same principle
+    CD-D-073 rests on and it would be incoherent to honour it there and breach it here. THE
+    PROPOSED RULE: when a probe is REFUSED, the record must state WHICH LAYER refused it and WHAT
+    THAT LAYER'S STATED SCOPE IS, before any acceptance cites it. A refusal by a registry is
+    evidence about the REGISTRY'S VOCABULARY — never about the class. The question CD-D-040 never
+    asked is the one that would have found this in a single line: "what is in the vocabulary, and
+    what is a door that is NOT in it?"
+
+# ================================================================================================ #
+# WHAT THIS REPLICATION DID NOT REACH — stated, not footnoted
+# ================================================================================================ #
+not_reached:
+  - 'The three AMBER criteria (CD-AC-001, CD-AC-005, CD-AC-012) were NOT re-measured. This seat replicated the two HIGH findings it was told to replicate, plus the CD-D-040 question. The AMBERs stand as the auditor left them.'
+  - 'F03 through F13 were NOT independently replicated. NOT DOUBTED — NOT REACHED. Anyone reading this entry as a clean bill for the whole verdict is reading it wrong.'
+  - 'W1, W5 and W7 are not re-opened. The auditor''s target-integrity and grant-matrix work is corroborated only to the extent that the target FINGERPRINT MATCHED, which is real corroboration but is not a re-audit.'
+  - 'NO REPAIR WAS DESIGNED AND NONE IS PROPOSED (PBG-SOD-004). The shape of the fix is the Engineer''s to answer and the scoping is the Product Authority''s.'
+
+# ================================================================================================ #
+# EVIDENCE
+# ================================================================================================ #
+evidence:
+  - path: governance/reconciliation/WO-2R/PL-R6-replication-of-ASR2-F01-F02.md
+    what: 'The full measured record of the replication, with every command, both arms, and the CD-PL-F74 experiment.'
+  - path: governance/reconciliation/WO-2R/PL-R6-F01-driver.py.txt
+    what: 'This seat''s own driver for F01. NON-EXECUTABLE (.py.txt, mode 0664), per this project''s standing rule that governed evidence carries no executable.'
+  - path: governance/reconciliation/WO-2R/PL-R6-F02-driver.py.txt
+    what: 'This seat''s own driver for F02, attack arm and control arm. NON-EXECUTABLE.'
+  - path: governance/reconciliation/WO-2R/PL-R6-banner-door-swapped.py.txt
+    what: 'PL-R5 with the door swapped and nothing else. The CD-PL-F74 experiment. NON-EXECUTABLE.'
+evidence_executable_count: 0
+evidence_executable_count_note: >
+  ZERO executable files added by this seat, verified with `find governance/reconciliation/WO-2R/
+  -name "PL-R6-*" -perm -u+x | wc -l` -> 0. The .py.txt extension is this project's convention for
+  transporting a probe as evidence without transporting a runnable artefact.
+
+# ================================================================================================ #
+# THE GATE IS UNCHANGED
+# ================================================================================================ #
+gate_state:
+  verdict: 'THE WO-2 GATE IS NOT MET. Unchanged, and now INDEPENDENTLY CORROBORATED on both HIGH findings.'
+  admission: 'RTR-WO2R-0001 IS NOT ADMITTED. latest_admitted_run remains null (CD-RULE-001, PO, non-relaxable). Admission is not available on a RED and is not sought.'
+  code_changed: 'NONE. No file under src/, tests/, tools/ or pbg/ was modified. All measurement was done on throwaway extractions outside every governed worktree.'
+  dispatch_issued: 'NONE. CD-D-073 stands.'
+  why_the_replication_strengthens_the_stop: >
+    CD-PL-F74 makes the case for stopping STRONGER, not weaker. It shows the failure is not only in
+    the code but in HOW THIS PROJECT HAS BEEN READING ITS OWN ACCEPTANCES — and re-scoping that on
+    the Project Lead's own authority is the exact error CD-PL-F74 names. A seat that discovered
+    "our acceptance method let a class through" and responded by exercising more of its own
+    discretion would have learned nothing.
+
+next_actor: PRODUCT_AUTHORITY
+next_safe_action: >
+  STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing). The debt
+  the eighth seat declared is PAID: ASR2-F01 and ASR2-F02 are INDEPENDENTLY REPLICATED and
+  CONFIRMED, and the CD-D-040 contradiction is MEASURED and REAL (CD-PL-F74). THE GATE IS NOT MET
+  AND NOTHING HAS CHANGED IT. THREE QUESTIONS ARE OWED TO THE PRODUCT AUTHORITY AND NOT ONE OF THEM
+  IS THE PROJECT LEAD'S TO ANSWER: (1) IS THERE A WO-2R2 AT ALL, after a second consecutive failure
+  of a rework the PO personally ordered and scoped? (2) IF SO, DO THE THREE AMBER CRITERIA TRAVEL
+  WITH IT — the gate is PASS ON ALL FIVE, so this decides whether a WO-2R2 that fixes F01 and F02
+  perfectly would even close WO-2. (3) IS THE CD-PL-F74 METHOD CORRECTION ADOPTED as a standing
+  rule? It is OFFERED and deliberately NOT self-adopted. THE RECOMMENDED SHAPE, OFFERED AND NOT
+  TAKEN, if the PO authorises rework: a bounded Engineer dispatch scoped to F01 and F02 ONLY, to a
+  FRESH seat, returning to a THIRD Assurance seat with fresh variants and the exclusion set extended
+  by the auditor's six. IT MUST NOT BE SCOPED AS "add `combine_within_one_dial` to
+  ADMISSION_VOCABULARY" — that is the INSTANCE GAME, it is what failed the first gate, the auditor
+  named the trap, and CD-PL-F74 now explains WHY it is a trap: the vocabulary is the wrong altitude
+  for the question. Commit each boundary on main with the PROJECT_LEAD_SEAT_01 identity set through
+  GIT_* ENVIRONMENT VARIABLES, never `git -c` (CD-PL-F56). A continuity write is not complete until
+  `pbg boot` has been re-run and its verdict recorded in the same entry (CD-RULE-007), taken on a
+  pristine clone at the committed SHA AND ON THE RECORDED BRANCH (CD-RULE-008 as amended by
+  CD-PL-F72).
+
+# ================================================================================================ #
+# CD-RULE-007 — the boot verdict of record. RESOLVED IN THE FOLLOW-UP COMMIT, NOT TRANSCRIBED HERE.
+# ================================================================================================ #
+boot_verdict_of_record:
+  rule: 'CD-RULE-007 / CD-RULE-008 as amended by CD-PL-F72. Taken on a PRISTINE CLONE at the committed SHA, checked out ON THE RECORDED BRANCH (main), never on the working tree.'
+  status: 'PENDING at the time this entry is committed — the SHA cannot be known before the commit exists. Resolved in the CD-RULE-007 follow-up commit that immediately succeeds this one, which records the SHA, the branch and the verdict.'
+  working_tree_verdict_for_contrast: 'AMBER — CONTINUITY_MATCH/RESUME_AMBER at 8a14749, the known CD-PL-F70 cause (the operator''s untracked files). Not a new degradation.'
