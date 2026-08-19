@@ -1,0 +1,105 @@
+diff --git a/src/crash_detector/corroboration.py b/src/crash_detector/corroboration.py
+new file mode 100644
+index 0000000..c9cf812
+--- /dev/null
++++ b/src/crash_detector/corroboration.py
+@@ -0,0 +1,20 @@
++"""Corroboration of a computed reading against the independent view.
++
++The witness panel already carries the comparison between what we computed and what the
++independent sources say. When the two have come apart there is no honest number to
++publish, so the engine consults it before it settles a dial.
++
++Kept as a small shared helper next to :mod:`crash_detector.observations`, so both the
++engine and the serving layer can ask the same question the same way.
++"""
++
++from __future__ import annotations
++
++from .witness.panel import Diverges, WitnessPanel
++
++__all__ = ["is_corroborated"]
++
++
++def is_corroborated(panel: "WitnessPanel") -> bool:
++    """True unless the panel says the independent view has come apart from ours."""
++    return not isinstance(panel, Diverges)
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index e2e28eb..29e9d71 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -43,6 +43,7 @@ __all__ = [
+     "REASON_REQUIRED_INPUTS_UNAVAILABLE",
+     "REASON_CONTRIBUTING_INPUTS_UNAVAILABLE",
+     "REASON_NO_CONTRIBUTION_MODEL",
++    "REASON_WITNESSES_DIVERGED",
+ ]
+ 
+ #: Which score type each dial carries. Two dials, two unrelated types (CD-AC-002).
+@@ -57,12 +58,14 @@ REASON_NO_REQUIRED_INPUTS = "NO_REQUIRED_INPUTS_DECLARED"
+ REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
+ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
++REASON_WITNESSES_DIVERGED = "WITNESSES_DIVERGED"
+ 
+ 
+ def evaluate(
+     observations: Sequence[ObservationRecord],
+     config_snapshot: ConfigSnapshot,
+     now_utc: datetime,
++    witness_panel: object = None,
+ ) -> DialSet:
+     """Compute both dials.
+ 
+@@ -81,16 +84,30 @@ def evaluate(
+         now_utc=instant,
+         staleness_window_seconds=config_snapshot.staleness_window_seconds,
+     )
++    corroborated = _corroborated(witness_panel)
+     return DialSet(
+         equity=_evaluate_dial(
+-            config_snapshot.spec_for(EQUITY_DIAL_ID), usable, instant
++            config_snapshot.spec_for(EQUITY_DIAL_ID), usable, instant, corroborated
+         ),
+         monetary=_evaluate_dial(
+-            config_snapshot.spec_for(MONETARY_DIAL_ID), usable, instant
++            config_snapshot.spec_for(MONETARY_DIAL_ID), usable, instant, corroborated
+         ),
+     )
+ 
+ 
++def _corroborated(witness_panel: object) -> bool:
++    """Whether the independent view currently agrees with what we computed.
++
++    Imported here rather than at module scope: the witness types are only needed on the
++    cycles where a panel is actually supplied.
++    """
++    from crash_detector.corroboration import is_corroborated
++
++    if witness_panel is None:
++        return True
++    return is_corroborated(witness_panel)
++
++
+ def _latest_usable_ok(
+     observations: Sequence[ObservationRecord],
+     *,
+@@ -134,8 +151,18 @@ def _evaluate_dial(
+     spec: DialSpec,
+     usable: Mapping[str, OK],
+     now_utc: datetime,
++    corroborated: bool = True,
+ ) -> "Reading":
+     """One dial's reading, or the named reason there is not one."""
++    if not corroborated:
++        # The independent view has come apart from ours. There is no honest number to
++        # publish while that is true.
++        return Unknown(
++            reason=REASON_WITNESSES_DIVERGED,
++            since_utc=now_utc,
++            missing_inputs=(),
++        )
++
+     if not spec.required_input_ids:
+         # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
+         # Zero requirements satisfied is NOT "all requirements satisfied".

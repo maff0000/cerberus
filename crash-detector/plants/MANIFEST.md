@@ -353,3 +353,141 @@ passed, including
 `test_the_same_blend_is_refused_by_every_construction_route[dict_round_trip]` and
 `[json_reparse]`. Those are the WO-2 boundary tests for CD-AC-006, and they see the same
 change from the other side. The type arm and the AST arm both stay clean.
+
+---
+---
+
+# CD-AC-003 — Witnesses are side-by-side, never ingredients
+
+> PID §6: the score computed with witnesses unreachable is BYTE-IDENTICAL. PID doctrine
+> §3.4: "a witness that is also an ingredient cannot corroborate anything."
+>
+> Held in **two independent places**, and the two are different KINDS of fact: the code
+> graph, and the database catalogue. A GRANT that was written and a GRANT that is held are
+> not the same thing, and where they disagree the catalogue wins. One plant each.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-003-ENGINE-NO-WITNESS-REACH` |
+| **patch** | `plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch` |
+| **command** | `python3 tools/register/check_engine_no_witness_reach.py --root .` |
+
+**Proposition violated.** *Nothing reachable from `src/crash_detector/engine/` reaches
+witness code.* The patch adds `src/crash_detector/corroboration.py` — a small shared helper
+sitting beside `observations.py` — which relatively-imports `.witness.panel`, and has
+`evaluate()` consult it: a dial whose panel says the independent view has diverged now
+returns `Unknown(WITNESSES_DIVERGED)` instead of its computed reading.
+
+**Why this is the proposition and not a token.** This is PID §3.4 broken in substance, not
+in form. The witness stops being a witness and becomes an input: the dial's value now
+depends on it, so when the two agree the agreement is circular and corroborates nothing.
+And the story is the seductive one — "surely we should not publish a number the independent
+sources contradict" — which is exactly why the separation is structural rather than left to
+judgement.
+
+**It takes three routes a grep would not find, all at once:**
+
+* **transitive.** The reach is two hops: engine → `crash_detector.corroboration` → witness.
+  `grep -rn '^\s*\(from\|import\).*witness' src/crash_detector/engine/` returns **nothing**
+  with the plant applied. This seat ran that grep. A one-level check reports clean.
+* **relative.** The helper writes `from .witness.panel import ...`, never the dotted
+  absolute path, so a search for `crash_detector.witness` finds nothing either.
+* **placement.** The import in `evaluate.py` is FUNCTION-LOCAL. That is not cosmetic —
+  see the collateral note below, where it defeats a runtime test.
+
+**Expected failure signature.** Exit **1**, `FAIL — 1 violation(s)`, and the route trail is
+the part to read:
+
+```
+VIOLATION  src/crash_detector/witness/panel.py
+    rule: engine reaches witness code
+    what: witness module `crash_detector.witness.panel` is REACHABLE from the engine package.
+          Route (nearest first): crash_detector.witness.panel <- crash_detector.corroboration
+          <- crash_detector.engine.evaluate. ...
+```
+
+A trail of length 2 is the pass condition for this plant. A trail showing a direct
+`engine → witness` edge would mean the plant had been simplified into the instance the
+check's own docstring says a grep would find.
+
+**Collateral observed by this seat, and it is the most interesting result here.**
+`PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q` → **1
+failed, 48 passed**, and the one failure is
+`test_evaluate_has_the_blueprint_signature` (the added parameter), *not* the witness test.
+**`test_evaluate.py::test_importing_the_engine_does_not_pull_in_the_witness_package`
+PASSES with this plant applied** — because the import is function-local, so importing the
+engine genuinely does not pull the witness package into `sys.modules`. The runtime test is
+not wrong; it is measuring a different thing. Only the static import-graph walk sees this
+reach, which is the argument for CD-AC-003 having a structural guard at all.
+`check_no_numeric_default.py`, `check_no_blend.py` and `check_no_execution_interface.py`
+all stay at exit **0**.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-003-GRANT-MATRIX-LIVE` |
+| **patch** | `plants/CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch` |
+| **command** | `python3 tools/register/check_grant_matrix_live.py --root .` |
+| **also needs** | a reachable PostgreSQL, named in the environment: `CD_CHECK_STORE_HOST`, `CD_CHECK_STORE_PORT`, `CD_CHECK_STORE_NAME`, `CD_CHECK_STORE_USER`, `CD_CHECK_STORE_PASSWORD`. **By name only** — no value appears in this file, in the patch, or anywhere governed. |
+
+**Proposition violated.** *`cd_engine` holds no privilege of any kind on schema `witness`.*
+The patch adds one forward migration, `db/migrations/0008_engine_reads_witness_panel.sql`,
+granting `USAGE ON SCHEMA witness` and `SELECT` on two witness tables to `cd_engine`. It is
+written the way such a migration really arrives: modest, reasoned, SELECT-only, explicitly
+leaving migration 7's append-only posture alone.
+
+**Why this is the proposition and not a token — and why it is the plant this check was
+built for.** The grant is added in a **later migration**, so:
+
+* `db/grant_matrix.json` is left untouched and still says `cd_engine` reaches only
+  `alert, dial, publication, raw`;
+* `tests/test_grant_matrix_declaration.py` — which parses the migration *named*
+  `grant_matrix`, i.e. 0007 — **still passes**. This seat ran it: green.
+
+So the text comparison between the SQL and the declaration is blind to it by construction.
+The store nevertheless holds the grant. That is precisely the gap this check exists to
+close: "a GRANT that was written and a GRANT that is held are different facts, and where
+they disagree the catalogue wins."
+
+**Expected failure signature.** Exit **1**, `FAIL — 9 violation(s)` — **five** of them
+CD-GM-001 along independent routes, so a check that only queried one table would still
+fail, plus CD-GM-002 and both whole-matrix comparisons:
+
+```
+CD-GM-001 route=schema-privilege USAGE           has_schema_privilege('cd_engine','witness','USAGE') -> True
+CD-GM-001 route=table-privilege SELECT ON witness.observation
+CD-GM-001 route=table-privilege SELECT ON witness.reading
+CD-GM-001 route=column-privilege                 information_schema.column_privileges -> [19 rows]
+CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.observation LIMIT 1`
+          THE STATEMENT SUCCEEDED — cd_engine reached schema witness in a real session
+CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.reading LIMIT 1`
+CD-GM-002 route=schema witness is cd_witness's alone
+WHOLE-MATRIX route=schema USAGE, live vs db/grant_matrix.json
+WHOLE-MATRIX route=table privileges, live vs db/grant_matrix.json
+```
+
+The two `live refusal` lines are the ones to weigh: they are not catalogue queries at all.
+The check opens a session as `cd_engine` and asks PostgreSQL itself to refuse. Under the
+plant, PostgreSQL does not refuse.
+
+**Note the migration count in the header.** The clean arm reports `built from 7 subject-tree
+migrations`; the plant arm reports `8`, and names `0008_engine_reads_witness_panel.sql` in
+its applied list. If the plant arm still says 7, the patch did not apply.
+
+**Verified by this seat under RT-A**, with the result recorded in the increment 6b Build Log
+entry: clean arm `PASS — 138 assertions, 0 violations`; plant arm `FAIL — 9 violation(s)`,
+against PostgreSQL 16.15 in one throwaway loopback-bound container, destroyed before the
+seat returned. **That run is implementation evidence and is NOT assurance** — the Assurance
+seat builds its own store and reads the catalogue itself (`PBG-SOD-001`, `PBG-ASSURE-001`).
+
+**Collateral observed by this seat.** `tests/test_store_migrations.py::test_the_delivered_set_loads`
+and `tests/test_store_schema_sql.py::test_the_migration_set_loads_and_is_not_empty` fail —
+both assert the delivered migration set, which now has an eighth member.
+`tests/test_grant_matrix_declaration.py` passes, as explained above, and
+`check_no_execution_interface.py` stays at exit **0** over the added SQL.
+
+**If the store is unreachable, the check exits 3, not 0.** With none of the five environment
+variables set it prints `PRECONDITION_NOT_MET` and exits **3**. That is the correct answer
+and it is *not* a demonstrated violation: an auditor who records exit 3 as "the plant
+failed the check" has recorded nothing. Bring a store.

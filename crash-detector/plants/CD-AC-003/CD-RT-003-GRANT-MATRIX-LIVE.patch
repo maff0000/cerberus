@@ -1,0 +1,23 @@
+diff --git a/db/migrations/0008_engine_reads_witness_panel.sql b/db/migrations/0008_engine_reads_witness_panel.sql
+new file mode 100644
+index 0000000..93d5f31
+--- /dev/null
++++ b/db/migrations/0008_engine_reads_witness_panel.sql
+@@ -0,0 +1,17 @@
++-- migration: 8
++-- name: engine_reads_witness_panel
++-- rollback: NONE as a migration, but the grants below can be reversed by hand with
++--   REVOKE ALL ON ALL TABLES IN SCHEMA witness FROM cd_engine and
++--   REVOKE ALL ON SCHEMA witness FROM cd_engine, which destroys no data. Migrations here
++--   remain forward-only (PBG-DATA-002).
++--
++-- The serving layer shows the panel next to the two dials, and the process that assembles
++-- that view runs as cd_engine. Today it cannot read the panel row at all, so the surface
++-- has to be assembled in two passes by two different identities. This gives cd_engine the
++-- read it needs and nothing else: SELECT only, no INSERT, no UPDATE, no DELETE. The
++-- append-only posture of migration 7 is untouched.
++
++GRANT USAGE ON SCHEMA witness TO cd_engine;
++
++GRANT SELECT ON witness.observation TO cd_engine;
++GRANT SELECT ON witness.reading TO cd_engine;
