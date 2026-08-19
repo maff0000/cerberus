@@ -654,6 +654,98 @@ increment_5_F06:
     Keep all of it.'
 
 increment_6_reconciliation_and_return:
+  execution_base_sha: 253c38bd4db58433e5209a222c0ce27429079156   # lane HEAD after CD-DISPATCH-WO2R-READER, ACCEPTED at CD-D-060
+  execution_base_note: >
+    ISSUED AT BL-20260819T183543Z-0035. Your base is NOT increment 5's f22d120. A SEPARATE seat,
+    CD-ENG-READER-01, repaired the shared YAML reader under CD-DISPATCH-WO2R-READER between then and
+    now, and its three commits are RECONCILED AND ACCEPTED at 253c38b. Reconcile the observed HEAD
+    against this SHA before writing anything; `git status --short` must be 0 lines. A mismatch is
+    drift: report it, never proceed from wherever the tree happens to sit (PBG-CONT-006).
+    READ THAT SEAT'S BUILD LOG ENTRY (BL-20260819T175414Z-0048) BEFORE YOU SWEEP. Boundary 8 of
+    CD-RT-012 is CLOSED and superseded by 8b, and the sweep must not re-assert the old text.
+
+  THREE_ADDENDA_AT_THE_HEAD_DO_THESE_FIRST:
+    why_they_are_addenda: >
+      All three are DECLARATION defects, not logic defects — a boundary that is incomplete, stale or
+      absent. They belong at the head of the sweep because the sweep IS the declaration pass, and
+      because CD-RULE-004 is satisfied only when the three places agree. NONE of them authorises a
+      code change. If closing one appears to require logic, you have found a defect in an earlier
+      increment: STOP and escalate, do not widen.
+
+    addendum_1_CD_PL_F65:
+      ordered_by: 'CD-D-058, BL-20260819T170507Z-0032.'
+      finding: 'CD-PL-F65 (LOW) — an INCOMPLETE boundary, the CD-PL-F62 shape, with no false carrier.'
+      what_is_wrong: >
+        Boundary 3 of the CD-AC-005 freshness closure carries a reassuring half — "both values use
+        `__slots__`" — which is TRUE of the two staleness types and FALSE of `Agrees`, which is
+        UNSLOTTED. Measured by the Project Lead as PL-W3. Its examples also stop short of showing
+        that the route reaches the Product Owner's own forbidden sentence.
+      what_to_do: >
+        AMEND boundary 3 so it NAMES `Agrees`, states that it is unslotted so the `__slots__` half
+        does not hold there, and states plainly that the route reaches "WITNESS AGREES" on a
+        decade-old timestamp (PL-W5). Consistently in all three CD-RULE-004 places. Carry the
+        correction and its reason in the text rather than silently rewriting.
+      YOU ARE NOT TO SLOT Agrees: >
+        Expressly forbidden. Slotting it would close PL-W3 and NOT PL-W5, and so would read like a
+        closure while being partial — the CD-PL-F54 shape, which has already sent one increment back.
+
+    addendum_2_CD_ENG_READER_F06:
+      ordered_by: 'CD-D-063, BL-20260819T183543Z-0035. It RATIFIES the reader seat''s judgement.'
+      finding: 'CD-ENG-READER-F06 (LOW) — a declared limit that is now factually STALE in all three places.'
+      what_is_wrong: >
+        CD-RT-003-ENGINE-NO-WITNESS-REACH's declared limit 4 says the shared reader "ALSO has a known
+        non-termination defect ... This check shares it. NOT REPAIRED HERE and NOT IN SCOPE." That is
+        no longer true: the reader was repaired at 253c38b and this check now returns a stated
+        refusal. The same stale text is in the check header (tools/register/
+        check_engine_no_witness_reach.py lines 189-191), in required-tests.yaml lines 531-532, and in
+        contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md line 120.
+      why_the_reader_seat_did_not_fix_it: >
+        The check header was outside ITS writable scope, and correcting two of three would have left
+        CD-RULE-004's three places INCONSISTENT — worse than three consistent stale statements, which
+        are fail-closed and mislead nobody into a false green. It escalated instead of taking scope.
+        THAT JUDGEMENT IS RATIFIED. You are the seat with the scope.
+      SCOPE_EXTENSION_PROSE_ONLY: >
+        Your writable scope is extended to tools/register/check_engine_no_witness_reach.py FOR PROSE
+        ONLY — comments, docstrings and declared-limit text. ZERO executable lines may change in that
+        file. Prove it in your commit: `git diff` on that path must show only comment/docstring hunks,
+        and its assertion count and exit code must be unchanged (24 assertions, exit 0 on the clean
+        tree). If closing this appears to need a logic change, STOP and escalate.
+      what_to_do: >
+        Correct the limit across ALL THREE places IN ONE EDIT so they never disagree, recording that
+        the reader defect was repaired under CD-DISPATCH-WO2R-READER and naming the NEW residue that
+        replaced it (boundary 8b, RecursionError) rather than deleting the limit outright. A limit
+        that is discharged is superseded, not erased.
+
+    addendum_3_CD_ENG_READER_F05_F08_DECLARATION_ONLY:
+      ordered_by: 'CD-D-062, BL-20260819T183543Z-0035.'
+      finding: 'CD-ENG-READER-F05/F08 (MEDIUM) — the shared reader SILENTLY FLATTENS a mapping nested beneath a sequence item''s inline key. A QUIET WRONG PARSE.'
+      the_defect_measured: |
+        top:
+          - key:
+              sub: 1
+        reads as   {'top': [{'key': None, 'sub': '1'}]}
+        correct is {'top': [{'key': {'sub': 1}}]}
+        BYTE-IDENTICAL at f22d120 and at 253c38b. It is PRE-EXISTING. The reader neither parses it
+        nor refuses it: it returns a document nobody wrote, and `key` reads as ABSENT.
+      what_to_do: >
+        DECLARE IT as a boundary of CD-RT-012 in all three CD-RULE-004 places, with PL-X10a above as
+        its EXECUTABLE EXAMPLE. State, in the CD-RULE-006 form, what carries it and what does not —
+        and if you cannot MEASURE a carrier, write "NOT PROVED TO BE CARRIED ANYWHERE". Record that
+        the Project Lead's three attempts to weaponise it into a FALSE CLEAN (PL-X12a/b/c, at three
+        depths of cd-collectors' `pending`) were ALL REFUSED, because flattening LIFTS a nested key
+        INTO CD-EGRESS-007's closed key set rather than hiding it — and record the DENOMINATOR with
+        it: THREE ROUTES ON ONE CRITERION. Do not write that sentence as if it were a safety proof.
+        The evidence is at governance/reconciliation/WO-2R/PL-X1-X12-reader-termination-and-the-quiet-wrong-parse.txt
+        (READ ONLY — copy it, never edit it).
+      THE_FIX_IS_OUT_OF_BOUNDS_AND_THIS_IS_WHY: >
+        Correcting the flattening changes WHICH CLAUSE refuses V27, and possibly whether it is refused
+        at all (CD-ENG-WO2R-F15 records that V27 "collapses into PL-S3c's shape and the CLOSED KEY SET
+        clause catches it instead"). V27 is CD-ASR-F04 evidence, and CD-ASR-F04 took two increments to
+        close. Repairing this now would REOPEN a closed criterion on the eve of the audit, to fix a
+        defect that is fail-closed in every route measured. It is dispatched at WO-3 BOUND TOGETHER
+        WITH THE V27 RE-MEASUREMENT, exactly as the reader seat itself recommended. DECLARE IT. DO NOT
+        FIX IT. A commit here that changes _yamlmin.py parsing is out of bounds.
+
   no_new_code: >
     This increment changes no application logic. If you find yourself writing logic here, you have
     found a defect in an earlier increment: go back, fix it in its own commit, and say so.
