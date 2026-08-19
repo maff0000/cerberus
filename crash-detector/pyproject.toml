@@ -1,0 +1,54 @@
+# Crash Detector — project declaration.
+#
+# There is deliberately NO [build-system] table and no build backend in WO-2.
+#
+#   The load-bearing constraint on this repository (dispatch CD-DISPATCH-WO2-ENGINEER,
+#   deliverable A1) is that every test and every register check runs on the host
+#   interpreter with NO install step. Declaring a build backend would assert a packaging
+#   route this seat has not built and has not verified, and an unverified claim in a
+#   manifest is exactly the kind of thing that reads as evidence later. The single
+#   supported import route is PYTHONPATH=src.
+#
+#   When a container image needs an installable artefact (WO-3, deliverable A6), adding a
+#   pinned build backend is a bounded change with its own evidence. It is owed, not done.
+
+[project]
+name = "crash-detector"
+version = "0.1.0"
+description = "Advisory market-stress detector: two dials, never blended; absence never renders as calm."
+requires-python = "==3.11.*"
+license = { text = "UNLICENSED — private" }
+authors = [{ name = "crash-detector project" }]
+keywords = ["market-stress", "advisory", "detection"]
+
+# Runtime dependencies, deliberately few (BLUEPRINT §11, Standards Baseline §6).
+# Every version here is the version ALREADY PRESENT on the DEV host, so nothing in this
+# project requires a network install to run. Hashes are in requirements.lock.
+#
+# NOTE, recorded rather than smoothed over: the dispatch names "psycopg2 2.9.11". The
+# distribution actually installed on this host is psycopg2-binary 2.9.11 (import name
+# `psycopg2`). The distribution name is pinned to what is installed and verified, not to
+# what was written down.
+dependencies = [
+  "jsonschema==4.10.3",
+  "psycopg2-binary==2.9.11",
+]
+
+[project.optional-dependencies]
+# Present on the host already; listed so the test dependency is declared rather than
+# assumed. Installing it is not required and not performed.
+dev = [
+  "pytest==9.0.2",
+]
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+# This is what makes `pytest` work from the worktree root with no install step and no
+# sys.path manipulation inside test files.
+pythonpath = ["src"]
+testpaths = ["tests"]
+# A test that can skip is not evidence (Standards Baseline §7, PBG-CI-002). Warnings are
+# errors and an unregistered marker is a failure, so a silently-skipped guard cannot hide.
+addopts = "-ra --strict-markers --strict-config"
+filterwarnings = ["error"]
+xfail_strict = true
