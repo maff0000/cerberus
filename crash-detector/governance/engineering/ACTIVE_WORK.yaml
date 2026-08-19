@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T19:49:26Z'
+updated_utc: '2026-08-19T20:03:14Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -576,6 +576,53 @@ current_block: >
   invisible for a cosmetic verdict is the wrong trade on a project whose last six boundaries all had
   to ask what a dead seat left behind. NO CODE CHANGED AT THIS BOUNDARY and the increment-6 brief was
   not touched.
+  THE SOD BOUNDARY IS CROSSED A SECOND TIME. CD-DISPATCH-WO2R-ASSURANCE moved DRAFT -> ISSUED
+  (CD-D-070, BL-20260819T200314Z-0039) against the exact SHA 50fc231, to a FRESH seat CD-ASR-WO2-02 —
+  separate from CD-ENG-WO2R-01 and CD-ENG-READER-01 who built the candidate, from CD-ASR-WO2-01 who
+  audited the superseded one, and from the Project Lead who dispatched and reconciled it
+  (PBG-SOD-001, non-waivable; PBG-AUTH-006). SIX INCREMENTS OF RECONCILIATION ARE NOT ASSURANCE AND
+  ARE NOT OFFERED AS ANY. The target is a READ-ONLY DETACHED worktree at /srv/crash-detector-wo2r-audit,
+  clean at 50fc231, tree object 5a952282, fingerprint 50ae34d6... over 364 files with the manifest
+  retained at /tmp/cd-asr-wo2r-tree.sha256sums — the CD-D-022 device, so mutation is DETECTABLE and
+  not merely prohibited. THE DEVICE'S OWN HAZARD IS HANDLED RATHER THAN INHERITED: running pytest in
+  the audit tree deposits __pycache__ and would convict an honest auditor, so the dispatch requires
+  EVERY execution — clean arms included — to happen in throwaway `git archive` extractions under /tmp,
+  leaving the worktree a reading surface only.
+  WHAT THE BRIEF CARRIES THAT THE FIRST ONE DID NOT: W3 is named THE DISPATCH, with the five class
+  claims spelled out and an attack line against each; W6 makes the DECLARED LIMITS a deliverable under
+  a three-part test (executable example, MEASURED carrier per CD-RULE-006, three place-texts agreeing
+  IN SUBSTANCE), because six of nine guards discharge part of their obligation by declaration; W7
+  makes THE EXCLUSION SET ITSELF an audit target, since CD-ENG-WO2R-F27 proved one row of it cannot be
+  run as written and only that one row has ever been checked; W8 hands over eight NAMED QUESTIONS
+  including NQ-2's express invitation to find the FOURTH ROUTE through CD-ENG-READER-F05/F08 with its
+  denominator stated at three; and BL-...-0038's NOT_INDEPENDENTLY_VERIFIED list is transcribed
+  verbatim AS WORK. Four method notes travel with it: F13, F16, F18 and CD-RULE-008 as amended.
+  EVERY PATH IN THE BRIEF WAS RESOLVED BEFORE ISSUE — all eight check out — because CD-PL-F67 was
+  raised against a dispatch whose path list was wrong. The corpus spans TWO WORKTREES and the brief
+  says so: governance/assurance/ and governance/reconciliation/ DO NOT EXIST at 50fc231, so the first
+  auditor's ten escapes and the PL's twelve probe records are on MAIN only, and PL-Z1..Z3 are not
+  files at all — they exist only inline in BL-...-0038's body.
+  TWO FINDINGS RAISED IN THE COURSE OF ISSUING IT, BOTH MEASURED. CD-PL-F72 (LOW): CD-RULE-008
+  UNDER-SPECIFIES ITS OWN PROCEDURE. This seat took the verdict of record by cloning and
+  `git checkout <sha>`, which detaches HEAD, and read AMBER/CONTINUITY_DRIFT at six SHAs including two
+  the record claims boot GREEN — it was very nearly written up as a real degradation. One variable
+  changed: re-checked out with `git checkout -B main <sha>`, 2f27bb8, b1a118f and f547fdc ALL READ
+  GREEN/CONTINUITY_MATCH. Boot compares observed branch to the recorded `branch: main`. THE RECORD WAS
+  RIGHT AND THE PROBE WAS WRONG — the FIFTH recurrence of CD-ENG-WO2R-F13 on this project and the
+  second against the Project Lead's own work. The rule binds forward with the branch named.
+  CD-PL-F73 (LOW): the standing description of the exclusion set says the Engineer's variants run
+  "through V52". THEY RUN THROUGH V53, which is a real delivered patch with a full MANIFEST row.
+  An exclusion set that UNDERSTATES itself is worse than one that overstates: an auditor told the set
+  ends at V52 would spend gate time re-deriving V53's attack and report a guard proved against a route
+  the Engineer had already fired at it. Corrected in the dispatch to V01-V53 rather than left to trip
+  the auditor. THE DENOMINATOR IS NOT SETTLED AND IS HANDED OVER AS WORK: measured at 50fc231 there
+  are 70 `.patch` files plus 2 `.py.txt` probe records = 72 variant artefacts, 73 files including
+  MANIFEST.md, ZERO executable; the seat reported "71 re-run, 71 verdicts". 71 is neither 70 nor 72,
+  and resolving it means re-running the corpus, which is Assurance's work under W7, not the
+  dispatcher's. CD-D-071 RETAINS the stale first-audit worktree rather than deleting it for tidiness
+  at the boundary where the record must be most stable; the hazard is closed by a
+  stale_worktree_warning in the brief and by W1 requiring the auditor to `git rev-parse HEAD` in the
+  tree it is standing in before doing anything else. NO CODE CHANGED AT THIS BOUNDARY.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -586,7 +633,9 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 750b35346ffc13703263c231252dac2dd220a6ef  # the PL-Y1..Y5 evidence commit (BL-20260819T194926Z-0038), the last main checkpoint before this reconciliation. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36).
+last_completed_checkpoint_sha: 2f27bb83ecebef27ec096ecc6c0544c2cd906ed7  # the CD-RULE-007 follow-up that resolved continuity_record_commit to b1a118f — the last main checkpoint before the SOD crossing. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). A pristine clone at this SHA ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN (CD-RULE-008 as amended by CD-PL-F72 — the branch matters; a detached checkout of the identical tree reads CONTINUITY_DRIFT).
+  # SUPERSEDES 750b35346ffc13703263c231252dac2dd220a6ef — the PL-Y1..Y5 evidence commit
+  # (BL-20260819T194926Z-0038), the last main checkpoint before the increment-6 reconciliation.
   # SUPERSEDES 8e9456f2592ddbb915432832f629499c508a9559 — the CD-PL-F69 repair (BL-20260819T185403Z-0037): BL-...-0036 committed unedited, after which a pristine clone at this SHA boots GREEN. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
   # ADVANCED AT BL-20260819T185403Z-0037, superseding 66ea4bb. The two intervening checkpoints
   # (192fc50, 44a56ec) did not advance it. 44a56ec is the commit CD-PL-F69 is raised against: it
@@ -640,7 +689,8 @@ lane_increment_sha: 50fc23177f790164c3fc3604ccee51663e755c70   # WO-2R INCREMENT
   # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: b1a118fbdbf5c1f52cf89b3e84559d3f64718cd1  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (750b353) — that equality is the CD-PL-F64 defect. A pristine clone at b1a118f boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record. Superseded note: to be resolved by a follow-up writing THIS FIELD AND NOTHING ELSE and recording the COMMITTED-TREE boot verdict in its message (CD-RULE-007, CD-RULE-008). It previously read f547fdc4f9c6b6990e25d16271e0e569d12f7025 — RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (8e9456f) — that equality is the CD-PL-F64 defect. A pristine clone at f547fdc boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record.
+continuity_record_commit: PENDING  # The commit carrying this record does not exist while this record is being written, so PENDING is the only truthful value at write time (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, which records the pristine-clone boot verdict AND THE BRANCH it was taken on in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72).
+  # PREVIOUSLY b1a118fbdbf5c1f52cf89b3e84559d3f64718cd1 — RESOLVED by that follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (750b353) — that equality is the CD-PL-F64 defect. A pristine clone at b1a118f boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record. Superseded note: to be resolved by a follow-up writing THIS FIELD AND NOTHING ELSE and recording the COMMITTED-TREE boot verdict in its message (CD-RULE-007, CD-RULE-008). It previously read f547fdc4f9c6b6990e25d16271e0e569d12f7025 — RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (8e9456f) — that equality is the CD-PL-F64 defect. A pristine clone at f547fdc boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record.
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
   # The commit carrying this record does not exist while this record is being written, so PENDING is
   # the only truthful value at write time. It is left PENDING deliberately rather than resolved by a
@@ -649,7 +699,23 @@ continuity_record_commit: b1a118fbdbf5c1f52cf89b3e84559d3f64718cd1  # RESOLVED b
   # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
   # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  OBSERVED AT THIS BOUNDARY (2026-08-19T19:49Z, seventh Project Lead seat, after reconciling WO-2R
+  OBSERVED AT THIS BOUNDARY (2026-08-19T20:03Z, EIGHTH Project Lead seat, issuing the WO-2R
+  Assurance dispatch). THE SEVENTH SEAT DID NOT TERMINATE — the wrapper log records rc=0 at
+  19:54:40Z, a DELIBERATE STOP at its declared boundary, four seconds before this seat started.
+  CD-D-007's suspicion procedure was applied to ALL THREE worktrees and found NOTHING TO ADJUDICATE.
+  Main is clean at 2f27bb8 apart from eleven untracked operator entries, adjudicated NOT PROJECT
+  STATE on their CONTENTS and not on the standing phrase: .wo2b-runner.sh is the relaunch loop
+  (`timeout 7200 claude -p "$(cat .continue-prompt.txt)"`) and .continue-prompt.txt is the operator's
+  resume instruction to this seat. No seat output is among them. The mutation lane
+  /srv/crash-detector-wo2 is CLEAN at 50fc231 on wo-2-skeleton, `git status --porcelain`,
+  `git diff --stat` and `git diff --cached --stat` all ZERO lines. A NEW read-only detached worktree
+  /srv/crash-detector-wo2r-audit was created at 50fc231 as the Assurance target, verified clean at
+  creation, fingerprint recorded. The FIRST audit's worktree /srv/crash-detector-wo2-audit is clean
+  at the pre-rewrite 66681b2 and is STALE AND RETAINED BY CD-D-071 — it is NOT the new target and
+  the brief warns against it by name. pbg/ is intact: `git diff --name-only -- pbg/` returns zero
+  lines. CD-RULE-008 verdict of record at 2f27bb8: GREEN, CONTINUITY_MATCH/RESUME_GREEN, on a
+  pristine clone ON BRANCH main — the branch qualification matters and is new (CD-PL-F72).
+  HISTORICAL, retained (2026-08-19T19:49Z, seventh Project Lead seat, after reconciling WO-2R
   increment 6): the mutation lane /srv/crash-detector-wo2 is CLEAN at 50fc231 on wo-2-skeleton,
   `git status --porcelain` ZERO lines, five commits by CD-ENG-WO2R-01 all correct in AUTHOR and
   COMMITTER. Main is clean apart from the operator's untracked .wo2-*/.wo2b-* wrapper files,
@@ -894,15 +960,29 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  ISSUE CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 against the exact SHA 50fc231 — a SEPARATE
-  agent, never the Engineer and never the Project Lead (PBG-SOD-001, non-waivable), with a distinct
-  actor_id and no commit on wo-2-skeleton, working in a READ-ONLY detached worktree with a tree
-  fingerprint recorded so mutation is DETECTABLE rather than merely prohibited (the CD-D-022
-  device). It must devise FRESH variants: the exclusion set is the union of the WO-2 auditor's ten,
-  the Engineer's through V52 and R01-R08, and the Project Lead's PL-Q1 through PL-Z3. Hand it the
-  NAMED QUESTIONS and the NOT_INDEPENDENTLY_VERIFIED list at BL-20260819T194926Z-0038 — the 71
-  variant patches, CD-ENG-WO2R-F27/F28, seven of the nine CD-RULE-004 place-texts, and the
-  grant-matrix contrast — AS WORK, not as background.
+  LAUNCH CD-ASR-WO2-02 AGAINST CD-DISPATCH-WO2R-ASSURANCE. The brief is ISSUED and durable at
+  governance/dispatch/CD-DISPATCH-WO2R-ASSURANCE.yaml, so it survives losing this seat
+  (PBG-CONT-007) — and the two acts are separable, which is exactly how the sixth seat's increment-6
+  dispatch came to be issued and never executed. Do not re-draft it; launch it.
+  THEN RECONCILE THE VERDICT. Re-take the tree fingerprint over
+  /srv/crash-detector-wo2r-audit and compare it to
+  50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d (manifest at
+  /tmp/cd-asr-wo2r-tree.sha256sums, 364 files) — allowing for __pycache__/.pytest_cache, which the
+  brief forbids by routing all execution to /tmp extractions but which is an honest-mistake class,
+  not misconduct. Confirm the SD-3 store is destroyed: `docker ps -a` and `docker volume ls`
+  filtered on `cd-asr-wo2r-` must BOTH return zero rows. Transport the evidence from
+  /srv/crash-detector-wo2r-evidence/ into the repository UNALTERED — you author nothing of the
+  auditor's and edit none of it.
+  DO NOT ADMIT THE RUN RECORD unless CD-RULE-001 is satisfied: paired assurance verdict present, and
+  no criterion the auditor holds not-PASS able to compute PASS. MEASURE THAT ON A THROWAWAY COPY
+  FIRST — that is how CD-FWK-005 was found, and refusing to admit RTR-WO2-0001 is the one act this
+  project has been COMMENDED for by the Product Owner.
+  THEN STOP. THE GATE IS THE PRODUCT AUTHORITY'S EITHER WAY. Whether the verdict is PASS or AMBER,
+  WO-2 does not close on the Project Lead's signature and WO-3 is not dispatched from here.
+  SUPERSEDED INSTRUCTION, retained so the record reads in order: ISSUE CD-DISPATCH-WO2R-ASSURANCE to
+  CD-ASR-WO2-02 against the exact SHA 50fc231. DONE at CD-D-070. Note that instruction described the
+  Engineer's variants as running "through V52"; they run through V53 (CD-PL-F73), and the brief as
+  issued carries the corrected range.
   WO-2R INCREMENT 6 IS RECONCILED AND ACCEPTED at lane 50fc231 (CD-D-065b) and THE WO-2R ENGINEER
   DISPATCH IS COMPLETE. Increments 1, 2b, 3b, 4, 5 and 6 are all accepted; CD-ASR-F01 through F06
   are CLOSED AS A CLASS, SUBJECT TO ASSURANCE. NOTHING IS ASSURED: the Project Lead reconciled, which
@@ -995,5 +1075,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T194926Z-0038
+last_build_log_entry: BL-20260819T200314Z-0039
 status: ACTIVE
