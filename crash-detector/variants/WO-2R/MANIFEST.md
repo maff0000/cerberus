@@ -941,3 +941,182 @@ CARRIED ANYWHERE**. It is raised against this seat's own work as `CD-ENG-WO2R-F1
 WO-3 with the egress lane. It is written here, in the exclusion set, rather than left for the
 auditor to discover, because a route the implementing seat knows about and does not disclose is
 worth less than one it never thought of.
+
+---
+
+# CD-PL-F59 (MEDIUM) — criterion CD-AC-012 — WO-2R increment **3b**
+
+**Directory:** `variants/WO-2R/CD-ASR-F04/` (same finding, re-opened).
+**Subject SHA these were generated against and run on:** the increment-3b lane head.
+**Every patch below was generated with `git diff`, never by hand** (`CD-ENG-WO2R-F13`: a
+hand-written hunk with a wrong line count is silently truncated by `git apply`, and six
+variants once failed FOR THE WRONG REASON because of it). **Every row asserts the expected
+RULE ID, not merely a non-zero exit**, for the same reason.
+
+## What CD-PL-F59 is
+
+Increment 3 closed the `hosts` allowlist under deny-by-default and it held against everything
+— E05, V18..V24, and three fresh Project Lead probes. It left the **adjacent `pending` field**
+carrying only layer 2, which is the layer `CD-ASR-F04` had already proved insufficient. The
+Project Lead measured the consequence on pristine extractions of `b60d153`:
+
+| probe | `pending` carries | result at `b60d153` |
+|---|---|---|
+| `PL-S3b` | `api.ibkr.com` | **REFUSED**, exit 1, `CD-EGRESS-002` |
+| `PL-S3a` | `198.51.100.24` | **PASS**, exit 0, 53 assertions |
+| `PL-S3c` | the same address on a `host:` key in a pending mapping | **PASS**, exit 0 |
+
+That is `CD-ASR-F04` reproduced verbatim one field across. Under `CD-RULE-004` a guard closes
+its class **or** declares its limit, and for `pending` increment 3 did **neither** — none of
+its six boundaries mentioned the field — while boundary 4 asserted a compensating layer 1 that
+did not exist for it (`CD-RULE-006`).
+
+## The remedy chosen, and why
+
+**Option (i): CLOSE.** Not option (ii). But *not* by mirroring `CD-EGRESS-004`'s registry onto
+`pending`, which would be incoherent: a pending entry exists **because the host is unknown**,
+so requiring it to name a registered destination is either unsatisfiable or forces an
+engineering seat to invent the hostname this project deliberately recorded as owed
+(`CD-RULE-003`, `PBG-AUTH-005`).
+
+`CD-EGRESS-007` closes it from the field's own meaning instead. A pending entry is the record
+of an **absence**: what authorises the future endpoint (`declared_in`) and why the host is not
+written (`blocked_by`). **A host is precisely the thing it declares the absence of**, so the
+key set is closed *by equality* and there is no field in a pending entry that can hold a
+destination at all. `host:`, `endpoint:`, `url:`, `address:`, `target:` and every key nobody
+has thought of fail the **same** clause, **without the value being examined**.
+
+**Boundary 4 is corrected either way, as the dispatch required.** It is not softened; it is
+made field-specific, each field naming its own layer-1 rule and the variant that measured it.
+
+## Rows
+
+### V25 — `V25-pending-through-a-yaml-alias.patch`
+
+| | |
+|---|---|
+| **finding** | CD-PL-F59 — a variant of this seat's own |
+| **proposition attacked** | Can `pending` be supplied through an indirection the reader does not expand, so the field reads as absent and the whole arm is skipped? |
+| **route** | `pending: &smuggled` on `cd-store` carrying a bare `198.51.100.24`, aliased into `cd-collectors` as `pending: *smuggled`. |
+| **why it is a DIFFERENT route from anything known** | It attacks the **precondition layer**, not the value layer. `PL-S2` aliased **`hosts`** — a name that *was* in the refusal filter's five-name enumeration — and correctly exited 3. `pending` was **not** in that enumeration, for the same reason it was in none of the boundaries, so the aliased field was read as a non-list and every assertion over it vanished. Nothing in PL-S3a/b/c or V18..V24 attacks an indirection. |
+| **measured OPEN at `b60d153`** | **exit 0**, `PASS — 53 assertions, 0 violations`. Both the anchor site and the alias site were invisible. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 3**, `PRECONDITION_NOT_MET` · *"a posture field is supplied through an unresolved YAML alias and this reader does not expand aliases: cd-collectors/x-egress/pending -> \*smuggled (line 427). Read literally the field would appear ABSENT, which is how a posture hides behind an indirection."* |
+| **the point** | The fix is not "add `pending` to the list". The five-name list **was itself the enumeration defect** — a field added to the contract tomorrow would be aliasable and unrefused, exactly as `pending` was. The filter now covers the whole `x-egress` subtree at any depth. Strictly wider: nothing previously refused is now admitted, and `PL-S2` still exits 3. |
+
+### V26 — `V26-pending-as-a-mapping-not-a-list.patch`
+
+| | |
+|---|---|
+| **finding** | CD-PL-F59 — a variant of this seat's own |
+| **proposition attacked** | Is the **container** of the field guarded, or only its contents? |
+| **route** | `pending:` written as a **mapping** — `host: 198.51.100.24` alongside `declared_in:` and `blocked_by:` — rather than as a list. |
+| **why it is a DIFFERENT route** | Every known-set row and all of `PL-S3a/b/c` keep `pending` a **list** and attack what is *in* it. This attacks its type. The guard reached the field through `isinstance(pending, list)` and nothing else, so any other type made the entire arm disappear. |
+| **measured OPEN at `b60d153`** | **exit 0**, `PASS — 52 assertions, 0 violations`. **Read that number.** The count *dropped* from 53 to 52 — the guard did less work and still said PASS. A silently shrinking assertion count is the only trace a skipped arm leaves, and nobody was watching it. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/compose.yaml:426` · rule `CD-EGRESS-007: pending is not a list` · *"service `cd-collectors` declares `pending` as a mapping; the contract admits a LIST and nothing else. An absent or differently typed `pending` is not an empty one — it is the whole field disappearing from this guard's reach."* |
+
+### V27 — `V27-a-destination-beneath-an-admissible-key.patch`
+
+| | |
+|---|---|
+| **finding** | CD-PL-F59 — a variant of this seat's own |
+| **proposition attacked** | Once the key set is closed, can a destination hide in the **value position** beneath a key that *is* admissible? |
+| **route** | `declared_in:` opening a nested mapping carrying `host: 198.51.100.24`. |
+| **why it is a DIFFERENT route** | `PL-S3c` puts `host:` as a **sibling** key of the entry. This puts it **inside an admissible key's value**, where a key-set rule has no reason to look. |
+| **measured OPEN at `b60d153`** | **exit 0**, `PASS — 53 assertions, 0 violations`. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/compose.yaml` · rule `CD-EGRESS-007: a pending entry's key set is not the declared key set` · *"pending entry #0 declares unknown key(s) `host` and misses nothing. … A HOST IS THE ONE THING A PENDING ENTRY CANNOT CARRY."* |
+| **honest note — it is refused by a clause other than the one it was aimed at** | The stdlib subset reader **flattens** a nested mapping: `{'declared_in': None, 'host': '198.51.100.24', 'blocked_by': …}`. So at the reader level V27 collapses into `PL-S3c`'s shape and the key-set clause catches it, rather than the non-empty-scalar clause it was written for. The refusal is correct and the rule id is asserted, but **the route is narrower than it looks** and an auditor should not read it as evidence that value-position attacks are covered in general. Raised against this seat's own work as `CD-ENG-WO2R-F15`. |
+
+### V28 — `V28-a-legitimate-pending-entry-must-pass.patch` — **POSITIVE CONTROL. THIS ONE MUST PASS.**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F59 — the false-positive obligation, and the subject-derivation proof for `pending` |
+| **proposition attacked** | Does the closure forbid the product? Does the guard's subject follow the artefact for `pending`, or only for `hosts`? |
+| **route** | An **eighth** service, `cd-atlas`, policy ALLOWLIST, empty `hosts`, and a well-formed `pending` entry declaring exactly `declared_in` and `blocked_by`. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed** | **exit 0**, `PASS — 79 assertions, 0 violations`. **NOT a refusal, and that is the result being reported.** |
+| **and it demonstrates the derivation** | `scanned:` moves **7 → 8 services** and assertions move **69 → 79**. The pending arm's subject is the artefact, not a constant: there is no service name and no permitted shape instance written anywhere in the script. |
+| **and the real entries still pass** | The three genuine `pending` entries in this project — `cd-collectors`, `cd-witness`, `cd-review`, each recording an endpoint BLUEPRINT §2 owes and the decision that blocks it — pass unchanged. The closed key set **is the shape they already had**, formalised; no new shape was imposed on the product. |
+
+### V29a — `V29a-an-address-in-pending-prose-ESCAPES.patch` — **THIS ONE IS NOT REFUSED**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F59 — **the declared residue**, boundary 7's executable example |
+| **proposition attacked** | Does `CD-EGRESS-007` close everything, or only the entry's *fields*? |
+| **route** | `blocked_by: "CD-D-005; the source will be 198.51.100.24 once ruled"` — the key set is exactly right, both values are non-empty scalars, and the address rides in the prose. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed** | **exit 0**, `PASS — 69 assertions, 0 violations`. **NOT REFUSED. It escapes, and it is written here in the same words as the rows that do not.** |
+| **why it is not closed** | Closing it would mean recognising which text tokens look like network endpoints — the spelling recognition that `CD-ASR-F04` and `CD-PL-F59` **both are**. It is boundary 3 (`purpose` prose) drawn again for the same reason. |
+| **which layer carries it** | For an **address literal in prose: NOT PROVED TO BE CARRIED ANYWHERE** (`CD-RULE-006`). The argument that a pending entry now has no host-bearing field, so an address in prose is a *mention* and not a *declaration*, is recorded in the boundary **as an argument and explicitly not as a layer** — because `CD-RULE-006` admits only layers that were run. |
+
+### V29b — `V29b-a-broker-name-in-pending-prose.patch` — the measured half of boundary 7's hand-off
+
+| | |
+|---|---|
+| **finding** | CD-PL-F59 — the "PARTIALLY CARRIED, MEASURED" half of boundary 7 |
+| **proposition attacked** | Is the prose residue *total*, or does layer 2 still reach into it? |
+| **route** | The identical sentence as V29a with `api.ibkr.com` in place of the address. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)` · rule `CD-EGRESS-002: a pending entry names a broker host` · *"…names `api.ibkr.com`, and ibkr.com is a known broker, exchange or order-routing operator. It carries no concept word at all, which is precisely why a vocabulary rule alone would let it through."* |
+| **the point** | V29a and V29b are the **same sentence** differing only in the endpoint, and one is refused and one is not. That pair is the measurement boundary 7 rests on, and it is the reason the boundary says *partially* carried rather than carried. |
+
+### V30 — `V30-a-document-shape-that-never-returns.patch` — **THIS ONE RETURNS NO VERDICT AT ALL**
+
+| | |
+|---|---|
+| **finding** | `CD-ENG-WO2R-F14` — boundary 8's executable example. Raised against this seat's own work and **escalated, not fixed**. |
+| **proposition attacked** | What does the guard do on a document it cannot parse — refuse, or never answer? |
+| **route** | `declared_in:` opening a nested **block sequence** in `cd-collectors`' `pending`. Minimal reproducer, independent of this check: the three lines `top:` / `  - key:` / `      - nested`. |
+| **command** | `timeout 30 python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed** | **exit 124** — **the check DOES NOT TERMINATE** and is killed by the timeout. `tools/register/_yamlmin.py` enters an infinite loop on a block sequence opened by the **first** key of a block-sequence item. 124 is not one of the four declared exit codes. |
+| **is it a false clean?** | **No.** The check never reports PASS. But non-termination is not a *stated refusal* either, and a gate that hangs is a gate somebody eventually disables. **NOT PROVED TO BE CARRIED ANYWHERE.** |
+| **pre-existing, and why it was not fixed here** | It reproduces identically at `ee8be6b`, the WO-2R dispatch base, before any of this seat's work. The reader is shared with `tools/register/check_base_image_digest_pin.py`, so repairing it changes the behaviour of a guard this dispatch does not cover, and this dispatch is bounded to `CD-PL-F59`. Widening scope silently is prohibited; it is escalated instead. |
+
+## The Project Lead's probes, re-run at increment 3b
+
+Given to this seat rather than withheld (`CD-D-047`). **From the moment they were committed
+they prove nothing about the class** and they are part of the exclusion set. They are recorded
+here with their observed outcome so the next auditor can avoid them.
+
+| probe | route | at `b60d153` | at increment 3b |
+|---|---|---|---|
+| `PL-S1` | an EIGHTH service with a broker allowlist | exit 1, `CD-EGRESS-004` + `CD-EGRESS-002`, `scanned:` 7→8 | **exit 1**, same two rules, `scanned:` 7→8, assertions 77 |
+| `PL-S2` | a YAML anchor aliased into `hosts` | exit 3 | **exit 3**, `PRECONDITION_NOT_MET` |
+| `PL-S3a` | `198.51.100.24` as a bare `pending` entry | **exit 0, PASS 53 — ESCAPED** | **exit 1**, `CD-EGRESS-007: a pending entry is not a declaration of an omission` |
+| `PL-S3b` | `api.ibkr.com` in the same slot | exit 1, `CD-EGRESS-002` | **exit 1**, and now by **BOTH** layers: `CD-EGRESS-007` **and** `CD-EGRESS-002` |
+| `PL-S3c` | the address on a `host:` key in a pending mapping | **exit 0, PASS 53 — ESCAPED** | **exit 1**, `CD-EGRESS-007: a pending entry's key set is not the declared key set` |
+| `PL-S4` | a duplicate `hosts:` key | exit 1, `CD-EGRESS-004` | **exit 1**, `CD-EGRESS-004` on the last-wins value |
+
+## Summary of what was refused by what — increment 3b
+
+| variant | route class | layer that refused it | exit |
+|---|---|---|---|
+| V25 | `pending` through a YAML alias | precondition, x-egress subtree | **3** |
+| V26 | `pending` as a mapping, not a list | `CD-EGRESS-007` container type | **1** |
+| V27 | a destination beneath an admissible key | `CD-EGRESS-007` closed key set | **1** |
+| V28 | a legitimate pending entry | **none — it PASSES, by design** | **0** |
+| V29a | an address in pending **prose** | **none — IT ESCAPES. Boundary 7.** | **0** |
+| V29b | a broker **name** in pending prose | `CD-EGRESS-002` layer 2 | **1** |
+| V30 | a document shape the reader loops on | **none — NO VERDICT AT ALL. Boundary 8.** | **124** |
+
+**Three honest observations.** First, **two of the seven rows are not refused and one of those
+returns no verdict at all**, and both are written up in the same detail as the refusals,
+because a variant this seat tried and did not close is worth more to the next auditor than one
+it did. Second, **V27 is refused by a clause other than the one it was aimed at**, because the
+reader flattens nesting — disclosed as `CD-ENG-WO2R-F15` rather than presented as a cleaner
+result than it is. Third, **`PL-S3b` is now refused by both layers where it used to be refused
+by one**, which is the property `hosts` gained at increment 3 and is the only real test of
+whether the two layers over `pending` are independent.
+
+## Correction to the increment-3 record: V24's numbers moved
+
+`V24`'s row above records **`PASS — 67 assertions`** and the derivation **53 → 67**. Those were
+correct at `b60d153` and are **no longer the numbers you will observe**: `CD-EGRESS-007` adds
+assertions over `pending` on every service, so at increment 3b the clean arm is **69** and V24
+is **`PASS — 83 assertions`**. The row is not rewritten — the derivation it demonstrates is
+unchanged and the observation stands as made at its own SHA — and this note supersedes its two
+numbers rather than editing them (`PBG-CONT-003`).

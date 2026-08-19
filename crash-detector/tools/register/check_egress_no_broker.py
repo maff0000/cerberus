@@ -523,6 +523,25 @@ def _text(value) -> str:
     return str(value).strip() if isinstance(value, str) else ""
 
 
+def _shape(value) -> str:
+    """What a value IS, named the way a YAML author would name it.
+
+    The reader returns location-carrying subclasses, so ``type(value).__name__`` renders
+    ``LocDict`` and ``LocList`` — names that mean nothing to somebody reading the compose
+    file the violation points at. A violation message is read by a person deciding what to
+    change, so it names the construct in that person's vocabulary.
+    """
+    if value is None:
+        return "nothing at all"
+    if isinstance(value, str):
+        return "a scalar"
+    if isinstance(value, dict):
+        return "a mapping"
+    if isinstance(value, list):
+        return "a list"
+    return f"a {type(value).__name__}"
+
+
 def main() -> int:
     args = parse_root(CHECK_ID, __doc__)
     root, code = resolve_root(CHECK_ID, args.root)
@@ -1063,8 +1082,7 @@ def main() -> int:
                 compose_path,
                 pending_line,
                 "CD-EGRESS-007: pending is not a list",
-                f"service `{name}` declares `pending` as "
-                f"{'nothing at all' if pending is None else type(pending).__name__}; the "
+                f"service `{name}` declares `pending` as {_shape(pending)}; the "
                 "contract admits a LIST and nothing else. An absent or differently typed "
                 "`pending` is not an empty one — it is the whole field disappearing from "
                 "this guard's reach, and a check that skips a shape it does not recognise "
@@ -1086,7 +1104,7 @@ def main() -> int:
                     pending_entry_line,
                     "CD-EGRESS-007: a pending entry is not a declaration of an omission",
                     f"service `{name}`'s pending entry #{position} is "
-                    f"{type(entry).__name__}, not a mapping. A pending entry declares an "
+                    f"{_shape(entry)}, not a mapping. A pending entry declares an "
                     f"OMISSION — {', '.join(sorted(PENDING_KEYS))} — and NOT a destination. "
                     "A bare value here is a place somebody wrote where the record of a "
                     "missing place belongs. NOTHING WAS RECOGNISED ABOUT IT AND NOTHING "
@@ -1124,7 +1142,7 @@ def main() -> int:
                                 "CD-EGRESS-007: a pending entry field is not a non-empty scalar",
                                 f"service `{name}`'s pending entry #{position} declares "
                                 f"`{field_name}` as "
-                                f"{'an empty scalar' if isinstance(field_value, str) else type(field_value).__name__}"
+                                f"{'an empty scalar' if isinstance(field_value, str) else _shape(field_value)}"
                                 ". Both fields are prose written for a human reviewer. A "
                                 "nested mapping or list beneath an admissible key is a "
                                 "structure the key set cannot constrain, and it is where a "
