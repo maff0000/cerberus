@@ -1,0 +1,26 @@
+diff --git a/B/src/crash_detector/serving/panel_scale.py b/src/crash_detector/serving/panel_scale.py
+new file mode 100644
+index 0000000..bfb114d
+--- /dev/null
++++ b/src/crash_detector/serving/panel_scale.py
+@@ -0,0 +1,20 @@
++"""Scale helpers for the serving surface.
++
++A rendering layer wants one number per dial. Where a dial has no reading there is nothing
++to draw, so the scale is attached to the reading types themselves and the surface can ask
++any reading for its measure without branching.
++"""
++
++from __future__ import annotations
++
++from crash_detector.dials.reading import Unknown
++
++__all__ = ["install_scale"]
++
++
++def install_scale() -> None:
++    """Attach the neutral measure to the absence constructor."""
++    type.__setattr__(Unknown, "magnitude", property(lambda self: 0.0))
++
++
++install_scale()
