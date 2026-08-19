@@ -1,0 +1,105 @@
+entry_id: BL-20260819T184405Z-0036
+timestamp_utc: "2026-08-19T18:44:05Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: DISPATCH
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 192fc503cd1e7c05a6d06b7752d8ad90969a503d
+lane_head_sha: 253c38bd4db58433e5209a222c0ce27429079156
+parent_entry_id: BL-20260819T183543Z-0035
+record_origin: >
+  Written by the Project Lead on main at the boundary that issues WO-2R increment 6. The dispatch
+  record itself is AMENDED IN THE REPOSITORY so the brief is durable and not merely conversational
+  (PBG-CONT-007). Per CD-RULE-005 the entry_id timestamp comes from `date -u +%FT%TZ`.
+schema_version: 1
+
+action_summary: >
+  WO-2R INCREMENT 6 IS ISSUED to CD-ENG-WO2R-01 at execution base 253c38b, carrying THREE bounded
+  addenda at its head. It is the register-and-contract sweep and IT WRITES NO LOGIC. This is the
+  LAST Engineer increment of the rework; the next boundary after its reconciliation is the SOD
+  crossing to a fresh Assurance seat.
+
+WHY_THE_EXECUTION_BASE_IS_NOT_INCREMENT_5s:
+  what: >
+    The dispatch's six-increment plan was written when increment 5 was expected to be the last code
+    increment. Between then and now a SEPARATE seat, CD-ENG-READER-01, repaired the shared YAML
+    reader under CD-DISPATCH-WO2R-READER, and its three commits are RECONCILED AND ACCEPTED at
+    253c38b (CD-D-060). Increment 6's base is therefore 253c38b, not f22d120.
+  why_it_is_stated_explicitly_in_the_dispatch: >
+    A seat that reconciles its observed HEAD against a stale execution_base_sha reports drift and
+    stops (PBG-CONT-006) — correctly, but at the cost of a round trip. More importantly the sweep
+    must not re-assert CD-RT-012's boundary 8, which the reader seat CLOSED and superseded with the
+    narrower 8b. The seat is told to read BL-20260819T175414Z-0048 before it sweeps.
+
+THE_THREE_ADDENDA_AND_WHY_EACH_IS_AN_ADDENDUM_RATHER_THAN_A_RE_OPEN:
+  common_reason: >
+    All three are DECLARATION defects — a boundary that is incomplete, stale or absent — not logic
+    defects. The sweep IS the declaration pass, so they belong at its head. None authorises a code
+    change, and the dispatch says in terms that if closing one appears to require logic the seat has
+    found a defect in an earlier increment and must STOP and escalate rather than widen.
+  addendum_1: 'CD-PL-F65 (CD-D-058). Boundary 3 must name `Agrees`, state that it is UNSLOTTED so the `__slots__` half does not hold there, and state that the route reaches "WITNESS AGREES" on a decade-old timestamp. THE SEAT IS EXPRESSLY FORBIDDEN TO SLOT Agrees: that would close PL-W3 and not PL-W5, reading like a closure while being partial — the CD-PL-F54 shape.'
+  addendum_2: 'CD-ENG-READER-F06 (CD-D-063). CD-RT-003''s stale declared limit 4, corrected across all three CD-RULE-004 places IN ONE EDIT, superseding rather than erasing and naming the residue (boundary 8b) that replaced it.'
+  addendum_3: 'CD-ENG-READER-F05/F08 (CD-D-062). The silent flattening DECLARED as a CD-RT-012 boundary in all three places, with PL-X10a as its executable example, the PL''s three refused false-clean attempts recorded, AND THE DENOMINATOR STATED — three routes, one criterion — expressly not written as a safety proof. DECLARATION ONLY.'
+
+THE_ONE_SCOPE_EXTENSION_AND_ITS_LEASH:
+  what: 'writable scope extended to tools/register/check_engine_no_witness_reach.py FOR PROSE ONLY — comments, docstrings and declared-limit text.'
+  why_it_is_necessary: >
+    CD-ENG-READER-F06 cannot be closed consistently without it. The reader seat correctly refused to
+    correct two of three places, so the correction needs a seat holding all three.
+  how_it_is_leashed: >
+    ZERO executable lines may change in that file, and the seat must PROVE it: `git diff` on the path
+    showing only comment/docstring hunks, and the check's assertion count and exit code unchanged at
+    24 / exit 0 on the clean tree. This is a measurable bound, not an instruction to be careful.
+  why_the_project_lead_does_not_simply_edit_it: >
+    PBG-AUTH-006 and the CD-D-038 / CD-D-045 precedent. A Project Lead that authors the closure has
+    made itself the implementer of work it will reconcile. "It is only prose" is the same argument as
+    "the fix looks small", which this project has already declined twice.
+
+SEPARATION_OF_DUTIES_RESTATED_AT_THIS_BOUNDARY:
+  rule: 'PBG-SOD-001, non-waivable. The Engineer and the Assurance Engineer are never the same agent.'
+  application: >
+    Increment 6 goes to CD-ENG-WO2R-01, the seat that built increments 1-5. That is correct — it is
+    the seat sweeping its OWN declarations. The Assurance seat that follows is CD-ASR-WO2-02, a
+    SEPARATE agent, never this Engineer and never the Project Lead. The reader repair was
+    deliberately given a THIRD seat (CD-ENG-READER-01) so a git author audit can separate the three
+    bodies of work at a glance (CD-RULE-002).
+
+status: IN_PROGRESS
+current_sha: PENDING
+next_safe_action: >
+  DISPATCH CD-ENG-WO2R-01 for increment 6 against 253c38b, then RECONCILE THE RETURN by running the
+  arms yourself and by writing FRESH probes against what the seat ACTUALLY wrote, not what this
+  dispatch imagined. For a declaration sweep the probes are READING probes: does each declared limit
+  have an EXECUTABLE example that actually reproduces; do the three CD-RULE-004 places agree
+  word-for-word in substance; is any boundary asserting a carrier that has not been MEASURED
+  (CD-RULE-006); has any entry claiming CLASS quietly become an enumeration of spellings. Two
+  increments have already been sent back at exactly this step (CD-PL-F54, CD-PL-F59).
+  VERIFY THE PROSE-ONLY LEASH BY MEASUREMENT, not by reading the diff: check_engine_no_witness_reach
+  must still report 24 assertions at exit 0, and the full suite and the ten-check table must be
+  unchanged in BOTH columns. A sweep that moves a verdict is not a sweep.
+  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never the
+  Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise FRESH variants; the
+  exclusion set is the union of the WO-2 auditor's ten, the Engineer's through V51 and R01-R08, and
+  the Project Lead's PL-Q1 through PL-X12. Hand it the NAMED QUESTIONS listed at
+  BL-20260819T183543Z-0035, with CD-ENG-READER-F05/F08's denominator stated and an express
+  invitation to find the fourth route.
+  THE GATE IS UNCHANGED: Assurance PASS on all five. Admit no run record without its paired assurance
+  verdict (CD-RULE-001, non-relaxable). Deliberate STOP at the gate either way, record state durably,
+  and report to the Product Owner.
+expected_next_actor: ENGINEER
+
+evidence_references:
+- 'governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml — increment_6_reconciliation_and_return, AMENDED at this boundary'
+- 'BL-20260819T183543Z-0035 (CD-D-060 through CD-D-064), BL-20260819T175414Z-0048 (the reader seat''s own entry)'
+- 'governance/reconciliation/WO-2R/PL-X1-X12-reader-termination-and-the-quiet-wrong-parse.txt'
+
+risks:
+- 'A DECLARATION SWEEP IS THE EASIEST INCREMENT TO FAKE. Nothing it produces fails a test, because it changes no logic — so the only control on it is a Project Lead who reads every boundary against the measurement that produced it. Reconcile it at least as hard as a code increment, not less.'
+- 'THE PROSE-ONLY SCOPE EXTENSION IS THE RISK OF THIS DISPATCH. It puts a check file in an Engineer''s hands for the first time in the rework with an instruction not to change behaviour. The leash is measurable and must actually be measured.'
+- 'CD-ENG-READER-F05/F08 is ruled MEDIUM on three routes over one criterion. Declaring it does not close it, and the declaration must not read as though it did.'
