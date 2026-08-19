@@ -13,7 +13,7 @@ block on every service and declares the contract those blocks answer to in
 ``x-cd-egress-contract``. ``deploy/egress-destinations.yaml`` declares the registry of
 permitted destinations. A comment is not a posture, because a comment cannot be read by the
 thing that has to refuse. This check reads both files with a stdlib-only YAML subset reader
-and asserts the six invariants against them.
+and asserts the seven invariants against them.
 
 -------------------------------------------------------------------------------------------
 WHAT CHANGED, AND WHY. THIS CHECK WAS DEFEATED AND THE REPAIR IS STRUCTURAL.

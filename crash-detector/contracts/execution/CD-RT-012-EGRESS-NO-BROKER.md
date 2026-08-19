@@ -22,6 +22,14 @@ recognised brokers by NAME and an address has no name to recognise. The Product 
 (PO-GATE-REVIEW-WO2-0001, Ruling 2) that the check "must resolve what an entry REACHES, not
 what it is spelled as", and that it must be closed before any WO-3 egress lane inherits it.
 
+**Extended at WO-2R increment 3b, closing `CD-PL-F59` (MEDIUM).** Increment 3 closed `hosts`
+and left the adjacent `pending` field carrying only the broker vocabulary — the layer
+`CD-ASR-F04` had already proved insufficient. The Project Lead measured the consequence:
+`api.ibkr.com` in cd-collectors' `pending` was refused, and `198.51.100.24` **in the same
+slot passed**, exit `0`. The proposition therefore now also holds that **no `pending` entry
+anywhere may declare a destination at all**, by `CD-EGRESS-007`. The residue that closure
+does *not* cover is declared at boundary 7 and is not claimed to be carried anywhere.
+
 ## Command
 
 ```
@@ -72,16 +80,38 @@ denylist) is applied to every registered destination's `host` and `operator`, to
 allowlist entry as written, and to every `pending` entry, and decides what somebody declared
 and should not have. `api.ibkr.com` written into an allowlist today fails both.
 
-## The six invariants
+## The seven invariants
 
 | id | asserted |
 |---|---|
 | `CD-EGRESS-001` | cd-engine, cd-public, cd-private, cd-store: policy `NONE`, empty `hosts`, attached only to `internal: true` networks. |
 | `CD-EGRESS-002` | No host — registered, allowlisted or pending — is a broker, exchange, order-routing endpoint or trading API; and no registered destination's `operator` is one. |
 | `CD-EGRESS-003` | Every service declares an `x-egress` block with a valid `policy`, a `hosts` list and an `enforced_by`. |
-| `CD-EGRESS-004` | **Deny by default.** Every allowlist entry is character for character the `host` of a destination registered for that service. |
+| `CD-EGRESS-004` | **Deny by default over `hosts`.** Every allowlist entry is character for character the `host` of a destination registered for that service. |
 | `CD-EGRESS-005` | **Closed key sets.** `x-egress` = {policy, hosts, pending, enforced_by}; a destination = {id, host, operator, purpose, declared_in, services}; the registry document = {version, contract, destinations}. Asserted by equality, never by a blacklist. |
 | `CD-EGRESS-006` | A registered destination is a well-formed, unique, attributable DNS hostname in a POSITIVE permitted shape, with an operator, a purpose and a `declared_in` clause, registered only for services that exist and declare `ALLOWLIST`. |
+| `CD-EGRESS-007` | **A pending entry declares an OMISSION, not a destination.** `pending` is present and is a LIST; every entry is a mapping whose key set EQUALS {`declared_in`, `blocked_by`}, both non-empty scalars. This is layer 1 over `pending`, and deliberately **not** `CD-EGRESS-004`'s registry — see below. |
+
+### Why layer 1 over `pending` is not the destination registry
+
+`CD-EGRESS-007` was added closing `CD-PL-F59`, which is `CD-ASR-F04` surviving one field
+across: once `CD-EGRESS-004` closed `hosts`, `pending` still carried only the broker
+vocabulary, so `api.ibkr.com` written there was refused and `198.51.100.24` **in the same
+slot passed**. The obvious repair — require a pending entry to name a registered destination
+— is incoherent, because a pending entry exists *precisely because the host is unknown*. It
+would be either unsatisfiable or would force an engineering seat to invent the hostname this
+project recorded as owed, which `CD-RULE-003` and `PBG-AUTH-005` forbid.
+
+So the closure takes the field's own meaning seriously. A pending entry is the record of an
+**absence**: what authorises the future endpoint (`declared_in`) and why the host is not
+written (`blocked_by`). **A host is the one thing a pending entry cannot carry**, so the
+admissible key set contains no field that can hold one, and it is asserted by *equality*.
+`host:`, `endpoint:`, `url:`, `address:`, `target:` and every key nobody has thought of fail
+the same clause, without the guard examining the value at all.
+
+*"A pending entry grants nothing"* is true and is not a defence: at WO-2 an allowlist entry
+grants nothing either, because both networks are `internal: true`. This check is about
+**declarations**, and `pending` is the declaration the WO-3 enforcement lane inherits.
 
 ## Declared limit (`CD-RULE-004`)
 
@@ -107,11 +137,31 @@ or says **NOT PROVED TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
    the operator (variant `V-F04-04`). Prose is left to the human reviewer because this
    project's own documentation says on every other page that it places no orders, and a guard
    that fired on its own charter would be switched off.
-4. **The vocabulary and the denylist are a floor, not an oracle.** A brokerage on nobody's
-   list, under a name carrying no concept token, passes layer 2. It does not pass layer 1
-   unless a human registers it: the escape now costs a signed edit to a reviewed registry
-   file rather than a quiet line in an allowlist. *Carried, measured:* `V-F04-03` registers
-   the address itself and is refused by `CD-EGRESS-006`, exit `1`.
+4. **The vocabulary and the denylist are a floor, not an oracle — and layer 1 is not one
+   rule. It is a different rule in each field, so say which.** A brokerage on nobody's list,
+   under a name carrying no concept token, passes layer 2 *in every field*. What stops it
+   then depends entirely on where it is written:
+   * in `hosts` — layer 1 is `CD-EGRESS-004`, deny by default over the registry. The escape
+     costs a signed edit to a reviewed registry file rather than a quiet allowlist line.
+     *Carried, measured:* `E05` puts `198.51.100.24` in cd-collectors' allowlist and is
+     refused, exit `1`, `CD-EGRESS-004`.
+   * in the **registry** — layer 1 is `CD-EGRESS-006`'s positive hostname shape. *Carried,
+     measured:* `V20` registers the address itself and is refused, exit `1`, `CD-EGRESS-006`.
+   * in `pending` — layer 1 is `CD-EGRESS-007`, the closed entry shape, **not** the registry.
+     *Carried, measured:* `PL-S3a` (a bare `198.51.100.24` pending entry) and `PL-S3c` (the
+     same address on a `host:` key inside a pending mapping) are both refused, exit `1`,
+     `CD-EGRESS-007`.
+   * in `pending` **prose** — **there is no layer 1.** See boundary 7. Do not read this
+     boundary as covering it.
+
+   **Correction, and why this boundary is rewritten (`CD-PL-F59`, `CD-RULE-006`).** As first
+   written it said flatly that a brokerage passing layer 2 "does not pass layer 1 unless a
+   human deliberately registers it", naming no field. For `pending` that was *measurably
+   false*: there was no layer 1 over `pending` at all, so an entry passing layer 2 there
+   passed entirely, at the cost of one quiet line and no registry edit. A boundary naming a
+   compensating layer that does not compensate is worse than no boundary — it spends an
+   auditor's attention where the defect is not. The sentence is not softened here; it is made
+   field-specific, and each field's carrier is named with the variant that measured it.
 5. **The subject is two files.** Egress obtained by any other means is outside this check:
    `extra_hosts`, a `RUN curl` in a Dockerfile, a sidecar, host networking, a runtime
    `--add-host` or `--network`, or a proxy reached over an internal network. *Partially
@@ -121,9 +171,41 @@ or says **NOT PROVED TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
 6. **It is a static read of two files at one commit.** No runtime, no image, no running
    container, no packet. A compose override file the check never sees is outside the subject.
    **NOT PROVED TO BE CARRIED ANYWHERE** at WO-2.
+7. **The prose inside a pending entry is not judged for addresses.** `CD-EGRESS-007` closes
+   the *shape* of a pending entry, so no **field** in one can hold a destination; it does not
+   judge the free text of `declared_in` and `blocked_by`, which exist to be read by a human
+   reviewer. *Measured example:* `blocked_by: "CD-D-005; the source will be 198.51.100.24
+   once ruled"` leaves the check at exit `0`, PASS 69 assertions (variant `V29a`).
+   *Partially carried, measured:* layer 2 is applied to the flattened text of every pending
+   entry, so the archetypal case fails on the name — the same sentence carrying
+   `api.ibkr.com` is refused, exit `1`, `CD-EGRESS-002` (variant `V29b`). **For an address
+   literal in prose specifically, NOT PROVED TO BE CARRIED ANYWHERE.**
+   *Why it is not closed:* closing it would mean recognising which text tokens look like
+   network endpoints, which is the spelling recognition that `CD-ASR-F04` and `CD-PL-F59`
+   both are. This is boundary 3 (`purpose` prose) drawn again for the same reason. What is
+   different from `CD-PL-F59` — and an auditor should weigh it sceptically — is that after
+   `CD-EGRESS-007` a pending entry has no host-bearing field, so an address in prose is a
+   *mention* and not a *declaration*. That is an argument about what a future reader would
+   do. **It is recorded as an argument and is not claimed to be a layer.**
+8. **A document shape exists on which this check does not terminate, so it returns no verdict
+   at all.** `tools/register/_yamlmin.py` enters an infinite loop on a block sequence opened
+   by the **first** key of a block-sequence item — minimally, the three lines `top:` /
+   `  - key:` / `      - nested`. Reached through this check's own subject by variant `V30`,
+   which writes `declared_in:` opening a nested sequence in cd-collectors' `pending`: the
+   check does not return within 30 seconds and is killed at exit `124`, which is not one of
+   the four declared exit codes. **NOT PROVED TO BE CARRIED ANYWHERE.** It is *not* a false
+   clean — the check never reports PASS — but non-termination is not a stated refusal either,
+   and a gate that hangs is a gate somebody eventually disables.
+   **Pre-existing and not introduced by this increment:** it reproduces identically at the
+   WO-2R dispatch base `ee8be6b`. The reader is shared with
+   `tools/register/check_base_image_digest_pin.py`, so repairing it changes the behaviour of
+   a guard this dispatch does not cover. Raised as `CD-ENG-WO2R-F14` and **escalated, not
+   fixed**, because this dispatch is bounded to `CD-PL-F59`.
 
 **DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO EXECUTION PATHWAY EXISTS.** It was
-clean for `E05`.
+clean for `E05`, and after `E05` was closed it was still clean for `PL-S3a` — the same
+address, one field across, in `pending`. That is `CD-PL-F59`, and it is why boundary 4 above
+carries a correction and boundaries 7 and 8 exist.
 
 ## Preconditions
 
@@ -152,12 +234,15 @@ Any entry in any service's egress allowlist that is **not a registered destinati
 service**; any registered destination whose `host` or `operator` is a broker, exchange or
 order-routing operator; any registered destination that is not a well-formed, attributable
 DNS hostname, or that is registered for cd-engine, cd-public, cd-private or cd-store; any
-unknown key in an `x-egress` block or in a registry entry; and any egress at all granted to
-those four services by policy, by hosts or by attachment to a network that is not
-`internal: true`.
+unknown key in an `x-egress` block or in a registry entry; **any `pending` that is not a
+list, and any pending entry that is not a mapping declaring exactly `declared_in` and
+`blocked_by` as non-empty scalars**; and any egress at all granted to those four services by
+policy, by hosts or by attachment to a network that is not `internal: true`.
 
 The class is **deny by default**: the violation is an entry *nobody declared*, not an entry
-that *matched something*.
+that *matched something*. In `hosts` that means an entry nobody **registered**; in `pending`
+it means an entry that is not the declared **shape** — because a pending entry records that
+a host is *not known*, so there is nothing to register and no field that may hold one.
 
 Detection is a **contrast**, and the validator computes it as one: the same declared command
 must exit `0` on the clean subject and non-zero on the subject with the violation planted.

@@ -628,10 +628,21 @@ criteria:
   # reproducible, cannot be run offline by an auditor, and cannot be a gate. "What an entry
   # reaches" is decided from data in the tree.
   #
-  # THIS CHECK NOW HAS A DECLARED LIMIT, in six numbered boundaries, stated identically in the
+  # AND THEN IT WAS DEFEATED AGAIN, ONE FIELD ACROSS (CD-PL-F59, increment 3b). Deny by default
+  # closed `hosts` and left the adjacent `pending` field carrying only the broker vocabulary — the
+  # layer CD-ASR-F04 had already proved insufficient. Measured by the Project Lead: `api.ibkr.com`
+  # in cd-collectors' `pending` was refused, `198.51.100.24` IN THE SAME SLOT PASSED at exit 0.
+  # CD-EGRESS-007 is now layer 1 over `pending`, and it is deliberately NOT the registry: a pending
+  # entry exists BECAUSE the host is unknown, so requiring it to name a registered destination is
+  # either unsatisfiable or forces a seat to invent a hostname this project recorded as owed
+  # (CD-RULE-003). A HOST IS THE ONE THING A PENDING ENTRY CANNOT CARRY, so the entry's key set is
+  # closed by EQUALITY to {declared_in, blocked_by} and there is no field left that could hold one.
+  #
+  # THIS CHECK HAS A DECLARED LIMIT, in EIGHT numbered boundaries, stated identically in the
   # header of tools/register/check_egress_no_broker.py, in the execution contract, and below
   # (CD-RULE-004). Every hand-off in it names a layer that was MEASURED, or says "NOT PROVED TO BE
-  # CARRIED ANYWHERE" (CD-RULE-006).
+  # CARRIED ANYWHERE" (CD-RULE-006). Boundary 4 was CORRECTED at increment 3b: it named a
+  # compensating layer 1 that did not exist for `pending`, which is the defect CD-RULE-006 forbids.
   - test_id: CD-RT-012-EGRESS-NO-BROKER
     scope: CLASS
     execute: python3 tools/register/check_egress_no_broker.py --root .
@@ -643,12 +654,17 @@ criteria:
         operator is a broker, exchange or order-routing operator; any registered destination that
         is not a well-formed, attributable DNS hostname, or that is registered for cd-engine,
         cd-public, cd-private or cd-store — the four services BLUEPRINT §13 requires to have no
-        egress at all; any unknown key in an `x-egress` block or in a registry entry; and any
+        egress at all; any unknown key in an `x-egress` block or in a registry entry; ANY
+        `pending` THAT IS NOT A LIST, AND ANY PENDING ENTRY THAT IS NOT A MAPPING DECLARING
+        EXACTLY `declared_in` AND `blocked_by` AS NON-EMPTY SCALARS (CD-EGRESS-007); and any
         egress at all granted to those four services by policy, by hosts or by attachment to a
         network that is not `internal: true`. The class is DENY BY DEFAULT: the violation is an
-        entry NOBODY DECLARED, not an entry that matched something.
+        entry NOBODY DECLARED, not an entry that matched something. In `hosts` that means an
+        entry nobody REGISTERED; in `pending` it means an entry that is not the declared SHAPE,
+        because a pending entry records that a host is NOT KNOWN, so there is nothing to
+        register and no field in it that may hold one.
         THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
-        tools/register/check_egress_no_broker.py, in the execution contract and here, in six
+        tools/register/check_egress_no_broker.py, in the execution contract and here, in EIGHT
         boundaries: (1) it is a DECLARATION and stops no packet — Compose has no per-host egress
         primitive and the enforcement lane is owed at WO-3; what makes egress structurally absent
         today is the topology, measured by CD-EGRESS-001 here and by
@@ -657,14 +673,33 @@ criteria:
         resolves to a brokerage edge — is NOT PROVED TO BE CARRIED ANYWHERE, because detecting it
         needs the network. What the structure buys is attribution and review, not detection.
         (3) The `purpose` prose is not judged; the `operator` field is, which is measured to carry
-        the archetypal case. (4) The vocabulary and denylist are a FLOOR, not an oracle: a
-        brokerage on nobody's list passes layer 2, and layer 1 then requires a deliberate signed
-        registry edit rather than a quiet allowlist line. (5) The subject is TWO FILES — egress
-        obtained through `extra_hosts`, a Dockerfile `RUN curl`, a sidecar, host networking or a
-        runtime flag is outside it, and for `extra_hosts` specifically NOT PROVED TO BE CARRIED
-        ANYWHERE (CD-ENG-WO2R-F12, owed at WO-3). (6) It is a static read of two files at one
-        commit; a compose override file is outside the subject.
-        DO NOT READ A CLEAN RUN AS PROOF THAT NO EXECUTION PATHWAY EXISTS. It was clean for E05.
+        the archetypal case. (4) The vocabulary and denylist are a FLOOR, not an oracle, AND LAYER
+        1 IS A DIFFERENT RULE IN EACH FIELD: a brokerage on nobody's list passes layer 2
+        everywhere, and what stops it is CD-EGRESS-004 in `hosts` (measured, E05), CD-EGRESS-006
+        in the registry (measured, V20), CD-EGRESS-007 in `pending` (measured, PL-S3a and PL-S3c)
+        — and in `pending` PROSE, NOTHING; see boundary 7. CORRECTED at increment 3b: as first
+        written this boundary named no field and asserted a layer-1 compensation that did not
+        exist for `pending`, which is CD-PL-F59 and the defect CD-RULE-006 forbids. (5) The
+        subject is TWO FILES — egress obtained through `extra_hosts`, a Dockerfile `RUN curl`, a
+        sidecar, host networking or a runtime flag is outside it, and for `extra_hosts`
+        specifically NOT PROVED TO BE CARRIED ANYWHERE (CD-ENG-WO2R-F12, owed at WO-3). (6) It is
+        a static read of two files at one commit; a compose override file is outside the subject.
+        (7) The PROSE inside a pending entry is not judged for addresses: CD-EGRESS-007 closes the
+        SHAPE, so no FIELD can hold a destination, but `blocked_by: "the source will be
+        198.51.100.24 once ruled"` passes at exit 0 (measured, V29a). PARTIALLY CARRIED, MEASURED:
+        the same sentence naming api.ibkr.com is refused by CD-EGRESS-002 (V29b). For an ADDRESS
+        LITERAL in prose, NOT PROVED TO BE CARRIED ANYWHERE — closing it would mean recognising
+        which tokens look like endpoints, which is the spelling recognition that IS this defect.
+        (8) A document shape exists on which this check DOES NOT TERMINATE, so it returns no
+        verdict at all: tools/register/_yamlmin.py loops forever on a block sequence opened by the
+        FIRST key of a block-sequence item, reached through `pending` by V30 and killed at exit
+        124, which is not one of the four declared exit codes. Not a false clean — it never
+        reports PASS — but not a stated refusal either. PRE-EXISTING, reproduced at the dispatch
+        base ee8be6b; NOT PROVED TO BE CARRIED ANYWHERE; raised as CD-ENG-WO2R-F14 and ESCALATED
+        rather than fixed, the reader being shared with check_base_image_digest_pin.py.
+        DO NOT READ A CLEAN RUN AS PROOF THAT NO EXECUTION PATHWAY EXISTS. It was clean for E05,
+        and after E05 was closed it was still clean for PL-S3a — the same address one field
+        across, in `pending`.
       evidence_ref: RTR-WO2-0001
 
 # --------------------------------------------------------------------------------------------- #
