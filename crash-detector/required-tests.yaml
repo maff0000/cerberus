@@ -1,0 +1,551 @@
+# Crash Detector — Required Test Register
+# =============================================================================================
+# REQUIRED-TEST-REGISTER-CONTRACT-v1, as implemented by pbg/tools/pbg/required_tests.py.
+#
+# THIS FILE CARRIES OBLIGATIONS. IT CARRIES NO RESULTS.
+# There is no status field here and there may never be one: the validator REFUSES any register
+# that grades itself (contract §4 check 5) and COMPUTES every status from the PID, this file and
+# append-only run records. If you want to know whether a criterion is satisfied, run
+#
+#     PYTHONPATH=<pbg>/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml
+#
+# and read what it computes. Anything written here about how a test behaves is a DECLARATION of
+# what must be true, not a claim that it is.
+#
+# POPULATION IS NOT MINE TO SET. Every criterion below is derived from PID §6 and only from
+# PID §6 — all sixteen of them, CD-AC-001 through CD-AC-016, whatever work order delivers them
+# (BLUEPRINT §14: "every row above becomes a register entry"). The validator derives the same
+# census from the PID text independently and compares; a register that quietly dropped the
+# criteria it could not yet satisfy would be marking its own paper.
+#
+# ELEVEN OF THE SIXTEEN ARE NOT DELIVERED IN WO-2. They are here with the test that will
+# evidence them and an execution contract that says plainly which work order owes them and that
+# they are NOT YET EVIDENCED. The validator will compute NOT_EVALUATED or UNDECIDABLE for every
+# one of them. THAT IS THE HONEST ANSWER at this baseline and it is not a defect to be dressed
+# up — the gate stays shut, which is exactly what a gate is for.
+#
+# latest_admitted_run IS NULL, AND THIS SEAT CANNOT CHANGE THAT. The Engineer does not admit its
+# own evidence (PBG-SOD-001, non-waivable). An independent Assurance seat produces the run record
+# and someone other than its author admits it.
+#
+# EVERY WO-2 TEST NAMES negative_control.evidence_ref: RTR-WO2-0001 — the run record the
+# INDEPENDENT Assurance seat will produce. It does not exist yet. That is correct and deliberate:
+# this seat declares WHICH RUN MUST EVIDENCE ITS GUARD and cannot supply that run itself. Until it
+# exists the validator computes UNDECIDABLE, never PASS.
+#
+# THE DECLARED COMMANDS ARE VERBATIM. Each `execute` is the exact line an auditor types with the
+# working directory set to the root of a subject tree THE AUDITOR EXTRACTED ITSELF —
+# `git archive <sha> | tar -x -C <tmpdir>`. No path fixing, no editing, no wrapper. There is no
+# run-everything harness in this repository and there may not be one: an auditor verifying through
+# a harness the project wrote is verifying the harness (PBG-ASSURE-001).
+#
+# TWO DELIVERED GUARDS ARE DELIBERATELY ABSENT FROM THIS REGISTER: CD-BASE-IMAGE-DIGEST-PIN and
+# CD-BUILD-CONTEXT-RESTRICTED (tools/register/check_base_image_digest_pin.py and
+# check_dockerignore.py). They are real and they run clean, but neither derives from any criterion
+# in PID §6, and inventing a criterion so a guard has somewhere to live would be writing product
+# requirements from the Engineer's seat (PBG-AUTH-005; and the validator blocks NEW_REQUIREMENT
+# for the same reason). They are recorded in the Build Log as guards without a register row, which
+# is a disclosure for the Product Owner rather than a gap to paper over.
+# =============================================================================================
+
+register_version: 1
+
+pid:
+  ref: PID.md
+  # sha256 of PID.md as it stands at the WO-2 execution base 3f038665. Computed, not guessed:
+  #     python3 -c "import hashlib,pathlib;print('sha256:'+hashlib.sha256(pathlib.Path('PID.md').read_bytes()).hexdigest())"
+  # The validator recomputes it against the PID it resolves and reports a MISMATCH as a defect,
+  # because a population derived from a different document than the one now governing is a
+  # population nobody agreed to.
+  content_hash: sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85
+
+# NULL, AND NOT THIS SEAT'S TO FILL IN. See the header.
+latest_admitted_run: null
+
+criteria:
+
+# --------------------------------------------------------------------------------------------- #
+# DELIVERED IN WO-2 — the five doctrine-bearing criteria (BLUEPRINT §13, §15)
+# --------------------------------------------------------------------------------------------- #
+
+- criterion_id: CD-AC-001
+  origin: PID
+  obligation: MANDATORY
+  criterion: Missing or stale input never renders as calm.
+  acceptance_semantics: >
+    PID §6: plant — kill a feed, and the affected dial shows UNKNOWN or DEGRADED within the
+    assurance latency budget, NEVER a calm reading. The proposition has two halves and both are
+    required: absence must have a name in the type system, and no route may exist by which
+    absence becomes a number. A dial that reads 0.0 because a source did not answer is the exact
+    failure PID §3.2 forbids — a stale dial saying calm — and it is worse than no dial, because
+    somebody trusts it.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-001-AST-NO-NUMERIC-DEFAULT
+    scope: CLASS
+    execute: python3 tools/register/check_no_numeric_default.py --root .
+    execution_contract: contracts/execution/CD-RT-001-AST-NO-NUMERIC-DEFAULT.md
+    negative_control:
+      violation: >
+        A numeric default introduced on the dial path: a `float | None` or `Optional[float]`
+        annotation, a `.get(key, <numeric literal>)`, an `or 0`, or a bare `except` returning a
+        numeric literal. Each is a distinct ROUTE from absence to a number, and the plant must
+        violate the proposition rather than trip a string the checker greps for.
+      evidence_ref: RTR-WO2-0001
+  - test_id: CD-RT-001-ABSENCE-RENDERS-UNKNOWN
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q
+    execution_contract: contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md
+    negative_control:
+      violation: >
+        Absence made to fall back to a number at runtime: `Unknown` given any attribute or
+        coercion that yields a float, or `evaluate()` returning `Value(0.0)` for a source that is
+        not registered or did not answer. With the WO-2 empty source registry both dials must
+        read Unknown; a plant that makes either read a value must fail this test.
+      evidence_ref: RTR-WO2-0001
+
+- criterion_id: CD-AC-002
+  origin: PID
+  obligation: MANDATORY
+  criterion: The two dials are never blended.
+  acceptance_semantics: >
+    PID §6: no code path combines them into one number, and a planted blend fails the register.
+    Enforced at three independent layers, because one layer is a preference and three are a
+    structure — the TYPES refuse arithmetic and share no numeric base, an AST scan refuses any
+    expression consuming both dials outside the allowlisted container and serving layer, and the
+    public envelope schema is closed so a combined field has nowhere to be written. A blend that
+    slips past any one layer must still fail the other two.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-002-TYPE-NO-ARITHMETIC
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q
+    execution_contract: contracts/execution/CD-RT-002-TYPE-NO-ARITHMETIC.md
+    negative_control:
+      violation: >
+        An arithmetic dunder added to a score type (`__add__`, or any of the arithmetic, bitwise,
+        ordering or numeric-coercion dunders the test enumerates), a numeric base introduced under
+        both types, or a method added to DialSet that returns a scalar.
+      evidence_ref: RTR-WO2-0001
+  - test_id: CD-RT-002-AST-NO-BLEND
+    scope: CLASS
+    execute: python3 tools/register/check_no_blend.py --root .
+    execution_contract: contracts/execution/CD-RT-002-AST-NO-BLEND.md
+    negative_control:
+      violation: >
+        A single expression consuming both dial types outside the allowlisted container and
+        serving layer — the canonical form being `combined = (equity + monetary) / 2`, and the
+        class being any arithmetic, comparison or aggregation over the two together.
+      evidence_ref: RTR-WO2-0001
+  - test_id: CD-RT-002-SCHEMA-CLOSED
+    scope: CLASS
+    execute: python3 tools/register/check_schema_closed.py --root .
+    execution_contract: contracts/execution/CD-RT-002-SCHEMA-CLOSED.md
+    negative_control:
+      violation: >
+        The public envelope schema opened at any level — `additionalProperties` set true or
+        removed — or a third combined dial field such as `combined_stress` added to its
+        properties allowlist.
+      evidence_ref: RTR-WO2-0001
+
+- criterion_id: CD-AC-003
+  origin: PID
+  obligation: MANDATORY
+  criterion: Witnesses are side-by-side, never ingredients.
+  acceptance_semantics: >
+    PID §6: the score computed with witnesses unreachable is BYTE-IDENTICAL; remove the witness
+    feeds and the dials are unchanged while the witness panel shows WITNESS UNAVAILABLE. The
+    structure carrying it is stated in BLUEPRINT §13 — cd_engine holds NO GRANT OF ANY KIND on
+    witness.*, the pipelines and containers are separate, and composition happens only at the
+    serving layer. Two tests, because the code graph and the database catalogue are different
+    facts: a GRANT that was written and a GRANT that is held are not the same thing, and where
+    they disagree the catalogue wins.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-003-ENGINE-NO-WITNESS-REACH
+    scope: CLASS
+    execute: python3 tools/register/check_engine_no_witness_reach.py --root .
+    execution_contract: contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md
+    negative_control:
+      violation: >
+        Any import edge by which something reachable from src/crash_detector/engine/ reaches
+        witness code — module-level, function-local, aliased, relative or through an intermediate
+        module. Import PLACEMENT must not evade it: a function-local import is the same edge.
+      evidence_ref: RTR-WO2-0001
+  - test_id: CD-RT-003-GRANT-MATRIX-LIVE
+    scope: CLASS
+    execute: python3 tools/register/check_grant_matrix_live.py --root .
+    execution_contract: contracts/execution/CD-RT-003-GRANT-MATRIX-LIVE.md
+    negative_control:
+      violation: >
+        Any privilege of any kind reaching cd_engine on schema witness, planted in the subject
+        tree's migrations. The class has seven routes and the plant may take any of them: the
+        schema privilege, table or column privileges, sequence or function privileges, a grant to
+        PUBLIC that cd_engine inherits, membership of a role that holds one, a default privilege
+        that would grant it on a future object, ownership of the schema or of anything in it, or
+        the SUPERUSER / BYPASSRLS role attributes.
+      evidence_ref: RTR-WO2-0001
+
+- criterion_id: CD-AC-005
+  origin: PID
+  obligation: MANDATORY
+  criterion: WITNESS UNAVAILABLE is not WITNESS AGREES.
+  acceptance_semantics: >
+    PID §6: plant — kill the witness feed, and the panel degrades to UNAVAILABLE, NEVER to
+    agreement. BLUEPRINT §13 adds the harder half: delete the panel row entirely and the result
+    is the same. Both the explicit absence and the silent one land on UNAVAILABLE, and a panel row
+    older than its staleness window is an absence too. There must be no input whatever — missing,
+    stale, malformed or defaulted — from which the serving layer produces AGREES.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q
+    execution_contract: contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md
+    negative_control:
+      violation: >
+        A missing or stale panel row defaulted to Agrees — whether by a default argument, a
+        fallback branch, a truthiness test that treats absence as agreement, or a field added to
+        the Unavailable constructor that a later edit could read as agreement.
+      evidence_ref: RTR-WO2-0001
+
+- criterion_id: CD-AC-012
+  origin: PID
+  obligation: MANDATORY
+  criterion: No execution pathway exists.
+  acceptance_semantics: >
+    PID §6: a test asserts the codebase contains no broker, order or execution interface —
+    advisory-only is STRUCTURAL, not policy. That distinction is the whole criterion. A policy
+    saying "we do not trade" is a sentence somebody can change in an afternoon; a codebase with no
+    order interface in it, no broker SDK in its lockfile and no container that may reach a broker
+    is a different kind of promise. Three independent tests, because the pathway could be opened
+    in source, in a dependency, or in the network posture, and closing two of the three closes
+    nothing.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-012-NO-EXECUTION-INTERFACE
+    scope: CLASS
+    execute: python3 tools/register/check_no_execution_interface.py --root .
+    execution_contract: contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md
+    negative_control:
+      violation: >
+        Any order-entry path in the application source or the store schema. The class is wider
+        than a `place_order` stub and the guard is built for the wider class after CD-PL-F32: a
+        callable or class whose FIELD SET is an order ticket (an instrument with a quantity and a
+        side, a price or order type, or a venue) under a neutral name; a transmission verb applied
+        to a tradeable noun in any spelling; a broker SDK import; an execution endpoint literal;
+        an execution identifier in a SQL migration; or PROSE — a docstring or comment saying in
+        plain English that the code routes orders to a broker.
+      evidence_ref: RTR-WO2-0001
+  - test_id: CD-RT-012-LOCKFILE-DENYLIST
+    scope: CLASS
+    execute: python3 tools/register/check_lockfile_denylist.py --root .
+    execution_contract: contracts/execution/CD-RT-012-LOCKFILE-DENYLIST.md
+    negative_control:
+      violation: >
+        A broker, exchange or order-routing SDK added to any dependency manifest — pyproject.toml,
+        requirements.txt or requirements.lock. The denylist is a floor and not an oracle, so the
+        class includes an SDK nobody has heard of: a distribution name carrying an execution token
+        must fail as surely as a named one.
+      evidence_ref: RTR-WO2-0001
+  - test_id: CD-RT-012-EGRESS-NO-BROKER
+    scope: CLASS
+    execute: python3 tools/register/check_egress_no_broker.py --root .
+    execution_contract: contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md
+    negative_control:
+      violation: >
+        A broker host added to any container's egress allowlist, or any egress at all granted to
+        cd-engine, cd-public, cd-private or cd-store — the four services BLUEPRINT §13 requires to
+        have none. Both halves are the same proposition: a service that can reach the internet can
+        reach a broker, and an allowlist that names one has already conceded the point.
+      evidence_ref: RTR-WO2-0001
+
+# --------------------------------------------------------------------------------------------- #
+# NOT DELIVERED IN WO-2 — scheduled, declared, and NOT YET EVIDENCED
+#
+# Each entry below carries the test that will evidence it and an execution contract naming the
+# work order that owes it. The declared command is the exact line an auditor will type once that
+# work order lands; run against THIS baseline it terminates NON-ZERO because its subject does not
+# exist yet, and that non-zero is NOT a failure of the criterion — it is the register saying, in
+# the only way a command can, that nothing has been evidenced. The negative-control evidence_ref
+# names the run record of the work order that owes the criterion, which likewise does not exist.
+# The validator therefore computes NOT_EVALUATED or UNDECIDABLE for all eleven and the gate stays
+# shut. Nothing here may be read as a claim about the product.
+# --------------------------------------------------------------------------------------------- #
+
+- criterion_id: CD-AC-004
+  origin: PID
+  obligation: MANDATORY
+  criterion: Witness divergence raises the alarm.
+  acceptance_semantics: >
+    PID §6: plant — force witness disagreement beyond the threshold, and a divergence alert fires.
+    BLUEPRINT §14 places it in §6's divergence module and delivers it in WO-4. WO-2 delivers the
+    WitnessPanel type and the absence mapping only; divergence COMPUTATION is deliberately not
+    written here, so there is nothing yet for this test to attack.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-004-DIVERGENCE-ALARM-FIRES
+    scope: INSTANCE
+    execute: PYTHONPATH=src python3 -m pytest tests/test_witness_divergence.py -q
+    execution_contract: contracts/execution/CD-RT-004-DIVERGENCE-ALARM-FIRES.md
+    negative_control:
+      violation: >
+        A divergence beyond the declared threshold that raises no alert — the threshold widened,
+        the comparison inverted, or the alert path swallowed. To be planted in WO-4 against the
+        delivered divergence module.
+      evidence_ref: RTR-WO4-0001
+
+- criterion_id: CD-AC-006
+  origin: PID
+  obligation: MANDATORY
+  criterion: The public surface carries zero private data.
+  acceptance_semantics: >
+    PID §6: plant — a private or book-derived key present in the publication path, and publication
+    REFUSES; separately, an automated scan of the published artefact finds no private field.
+    BLUEPRINT §13 flags the sequencing explicitly: the BOUNDARY itself — containers, networks,
+    grants and the closed envelope schema — is built in WO-2 because retrofitting a trust boundary
+    is how trust boundaries end up leaky, while the planted-violation evidence and the artefact
+    scan are sequenced at WO-5 by CD-D-004. This entry is the WO-5 evidence, and it is not yet
+    evidenced. The WO-2 boundary work stands separately in tests/test_publication_refusal.py and
+    is NOT offered here as a substitute.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-006-PUBLIC-SURFACE-NO-PRIVATE-DATA
+    scope: CLASS
+    execute: python3 tools/register/check_public_artefact_no_private_field.py --root .
+    execution_contract: contracts/execution/CD-RT-006-PUBLIC-SURFACE-NO-PRIVATE-DATA.md
+    negative_control:
+      violation: >
+        A private or book-derived key reaching the published artefact — by being added to the
+        public schema, by publication filtering it out instead of refusing, or by a private field
+        renamed to look public. To be planted in WO-5.
+      evidence_ref: RTR-WO5-0001
+
+- criterion_id: CD-AC-007
+  origin: PID
+  obligation: MANDATORY
+  criterion: AI review cannot author a headline.
+  acceptance_semantics: >
+    PID §6: the `no_headline_authorship` validator refuses a planted AI-written headline mutation,
+    and each of the four validators fails its own planted violation. BLUEPRINT §14 places it in §9
+    and delivers it in WO-5, where PID §8 additionally requires external R2D2 review because the
+    control is doctrine-bearing. No AI review layer exists at this baseline.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-007-NO-HEADLINE-AUTHORSHIP
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_ai_review_validators.py -q
+    execution_contract: contracts/execution/CD-RT-007-NO-HEADLINE-AUTHORSHIP.md
+    negative_control:
+      violation: >
+        An AI-authored headline admitted into the publication path, and one planted violation per
+        validator so that no validator is evidenced only by its siblings passing. To be planted in
+        WO-5.
+      evidence_ref: RTR-WO5-0001
+
+- criterion_id: CD-AC-008
+  origin: PID
+  obligation: MANDATORY
+  criterion: Cadence breach alerting on the publication layer.
+  acceptance_semantics: >
+    PID §6: plant — halt publication while ingestion continues, and an alert fires within one
+    publication cycle. PID §5 fixes the budget: a cadence breach alerts within one cycle, and
+    pipeline or publication failure is independently detectable within fifteen minutes. The
+    publication layer and its heartbeat land in WO-3 (BLUEPRINT §14, §15).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-008-CADENCE-BREACH-ALERTS
+    scope: INSTANCE
+    execute: PYTHONPATH=src python3 -m pytest tests/test_cadence_breach.py -q
+    execution_contract: contracts/execution/CD-RT-008-CADENCE-BREACH-ALERTS.md
+    negative_control:
+      violation: >
+        Publication halted with ingestion still running and no alert raised inside one cycle —
+        the heartbeat suppressed, the cycle window widened, or the alert path swallowed. To be
+        planted in WO-3.
+      evidence_ref: RTR-WO3-0001
+
+- criterion_id: CD-AC-009
+  origin: PID
+  obligation: MANDATORY
+  criterion: Regime-aware staleness windows.
+  acceptance_semantics: >
+    PID §6: in a planted high-volatility regime the staleness window TIGHTENS — the same data age
+    that passes in calm must fail in stress. The property is a relation between two regimes, not a
+    constant, so evidence from one regime alone proves nothing. `window_for(regime)` lands in WO-3
+    (BLUEPRINT §7, §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-009-REGIME-AWARE-STALENESS
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_regime_staleness.py -q
+    execution_contract: contracts/execution/CD-RT-009-REGIME-AWARE-STALENESS.md
+    negative_control:
+      violation: >
+        A staleness window that does not tighten under stress — the regime input ignored, the
+        window made constant, or the comparison inverted so stress loosens it. To be planted in
+        WO-3.
+      evidence_ref: RTR-WO3-0001
+
+- criterion_id: CD-AC-010
+  origin: PID
+  obligation: MANDATORY
+  criterion: History is honest.
+  acceptance_semantics: >
+    PID §6: no backfilled point is presented as a live track record, and the series carries
+    first-published timestamps. BLUEPRINT §4 makes it structural — `first_published_utc` is set on
+    insert and cannot be moved, and no role holds UPDATE or DELETE on the history tables. The
+    column and the grants exist at this baseline; the criterion's own evidence is sequenced at
+    WO-4 with the history and provenance surface (BLUEPRINT §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-010-HISTORY-FIRST-PUBLISHED-IMMUTABLE
+    scope: CLASS
+    execute: python3 tools/register/check_first_published_immutable.py --root .
+    execution_contract: contracts/execution/CD-RT-010-HISTORY-FIRST-PUBLISHED-IMMUTABLE.md
+    negative_control:
+      violation: >
+        A route by which `first_published_utc` can move, or a backfilled point served as live —
+        an UPDATE grant appearing on a history table, the trigger or constraint removed, or the
+        publication path writing a backfill without marking it. To be planted in WO-4. This is
+        also one of the four properties carried as CD-OB-004, proved live in WO-2 increment 3 with
+        no standing guard: the guard is owed, and this row is where it will attach.
+      evidence_ref: RTR-WO4-0001
+
+- criterion_id: CD-AC-011
+  origin: PID
+  obligation: MANDATORY
+  criterion: Slope is first-class.
+  acceptance_semantics: >
+    PID §6: each dial exposes its history and its slope against the S&P in machine-readable form.
+    "Each dial" makes it a property of both, tested by enumeration rather than by checking the one
+    somebody remembered. The series and slope surface lands in WO-4 (BLUEPRINT §8, §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-011-SLOPE-MACHINE-READABLE
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_series_and_slope.py -q
+    execution_contract: contracts/execution/CD-RT-011-SLOPE-MACHINE-READABLE.md
+    negative_control:
+      violation: >
+        A dial whose slope or history is absent from the machine-readable surface, present only as
+        rendered text, or exposed for one dial and not the other. To be planted in WO-4.
+      evidence_ref: RTR-WO4-0001
+
+- criterion_id: CD-AC-013
+  origin: PID
+  obligation: MANDATORY
+  criterion: Rotation-readiness ratio published with provenance.
+  acceptance_semantics: >
+    PID §6: the ratio is present, its inputs are NAMED, and timestamps are carried. Provenance is
+    the load-bearing half — a ratio without named inputs is a number nobody can check, which is
+    the failure mode PID §1 exists to prevent. Delivered in WO-6 (BLUEPRINT §8, §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-013-ROTATION-RATIO-PROVENANCE
+    scope: INSTANCE
+    execute: PYTHONPATH=src python3 -m pytest tests/test_rotation_ratio.py -q
+    execution_contract: contracts/execution/CD-RT-013-ROTATION-RATIO-PROVENANCE.md
+    negative_control:
+      violation: >
+        The ratio published with an input unnamed, a timestamp missing, or provenance pointing at
+        a source that did not contribute. To be planted in WO-6.
+      evidence_ref: RTR-WO6-0001
+
+- criterion_id: CD-AC-014
+  origin: PID
+  obligation: MANDATORY
+  criterion: Runtime health externally observable.
+  acceptance_semantics: >
+    PID §6: liveness, freshness, last-evaluation and degraded state are independently readable,
+    and stopping the service is detected inside the assurance latency budget — fifteen minutes per
+    PID §5. INDEPENDENTLY is the operative word: a health surface the application reports about
+    itself is the process under audit writing its own log, which is not evidence
+    (PBG-EVID-001). The health surface and the external probe land in WO-3
+    (BLUEPRINT §10, §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-014-HEALTH-EXTERNALLY-OBSERVABLE
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_health_surface.py -q
+    execution_contract: contracts/execution/CD-RT-014-HEALTH-EXTERNALLY-OBSERVABLE.md
+    negative_control:
+      violation: >
+        A stopped service that the external probe does not detect inside the budget, or a health
+        surface that reports healthy while a dial is stale — one planted violation per observable,
+        so that no observable is evidenced only by its siblings. To be planted in WO-3.
+      evidence_ref: RTR-WO3-0001
+
+- criterion_id: CD-AC-015
+  origin: PID
+  obligation: MANDATORY
+  criterion: Recovery proved from the copy.
+  acceptance_semantics: >
+    PID §6: detector state is restored from backup ON A CLEAN HOST, and the proof is READ FROM THE
+    COPY. Both qualifiers are the criterion: a restore onto the machine that still has the
+    original proves nothing, and a proof read from the source rather than the restored copy proves
+    less than nothing. Delivered in WO-6 (BLUEPRINT §12, §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-015-RECOVERY-FROM-THE-COPY
+    scope: INSTANCE
+    execute: PYTHONPATH=src python3 -m pytest tests/test_recovery_from_copy.py -q
+    execution_contract: contracts/execution/CD-RT-015-RECOVERY-FROM-THE-COPY.md
+    negative_control:
+      violation: >
+        A restore that silently omits a component, or a proof that reads the original rather than
+        the restored copy — the drill passing on a host that never lost anything. To be planted in
+        WO-6.
+      evidence_ref: RTR-WO6-0001
+
+- criterion_id: CD-AC-016
+  origin: PID
+  obligation: ADVISORY
+  criterion: Wave-transition monitor operative.
+  acceptance_semantics: >
+    PID §6 marks this criterion ADVISORY: the wave-1 to wave-2 indicator publishes with its inputs
+    declared. Advisory in the PID and advisory here — the register may not weaken its own
+    population, and it may not strengthen it either. Delivered in WO-6 (BLUEPRINT §8, §14).
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-016-WAVE-TRANSITION-MONITOR
+    scope: INSTANCE
+    execute: PYTHONPATH=src python3 -m pytest tests/test_wave_transition.py -q
+    execution_contract: contracts/execution/CD-RT-016-WAVE-TRANSITION-MONITOR.md
+    negative_control:
+      violation: >
+        The indicator published with its inputs undeclared, or a wave transition that the monitor
+        does not register. To be planted in WO-6.
+      evidence_ref: RTR-WO6-0001
