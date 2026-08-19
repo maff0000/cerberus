@@ -22,6 +22,11 @@
 # `services.<name>.x-egress`, and fails on a violation. A comment is not a posture, because
 # a comment cannot be read by the thing that has to refuse.
 #
+# An egress allowlist entry is DENY BY DEFAULT against deploy/egress-destinations.yaml, the
+# in-tree destination registry. See CD-EGRESS-004 below and that file's header for why the
+# structure is a registry rather than a better broker-name matcher: a matcher recognises
+# SPELLINGS, and the spelling an auditor used to defeat the previous one was an IP address.
+#
 # The contract that check reads is declared once, here, so the check has a specification
 # rather than a habit:
 x-cd-egress-contract:
@@ -44,11 +49,26 @@ x-cd-egress-contract:
           deploy time by the egress lane named in `enforced_by` — Docker Compose has no
           per-host egress primitive, and claiming this file enforces one would be false.
     hosts:
-      type: list of host names
+      type: list of REGISTERED DESTINATION HOSTS
       meaning: >
-        EXHAUSTIVE. A host that is not in this list is not reachable by this service. An
-        empty list under ALLOWLIST means nothing is reachable yet, which is the fail-closed
-        state and is where WO-2 leaves every allowlist.
+        EXHAUSTIVE, AND DENY BY DEFAULT. A host that is not in this list is not reachable by
+        this service. An empty list under ALLOWLIST means nothing is reachable yet, which is
+        the fail-closed state and is where WO-2 leaves every allowlist.
+
+        AN ENTRY HERE IS NOT A FREE STRING. Every entry must be, character for character, the
+        `host` of a destination registered in deploy/egress-destinations.yaml, and that
+        registered destination must name THIS service in its `services` list. Anything else —
+        an address literal, a CIDR, a URL, a wildcard, a bare service name, or a hostname
+        nobody registered — is a violation BY DEFAULT, because it is not a destination anyone
+        declared.
+
+        THIS REPLACES A CHECK THAT RECOGNISED BROKERS BY NAME, and it exists because that
+        check was defeated by writing an address instead of a name (CD-ASR-F04; the auditor
+        put `198.51.100.24` where `api.ibkr.com` had been and it went green). Deny by default
+        means the guard performs NO recognition on an unregistered entry, so there is no
+        pattern to write around. The broker vocabulary and the known-operator denylist survive
+        as a SECOND layer over the registry itself and over every entry as written, catching a
+        destination somebody DID register that is a broker. Neither layer is sole.
     pending:
       type: list
       meaning: >
@@ -77,6 +97,42 @@ x-cd-egress-contract:
         Every service declares an `x-egress` block. A service with none is a violation and
         not a default: a check that skips a service it does not recognise is a check that
         an author bypasses by adding a service.
+    - id: CD-EGRESS-004
+      criterion: CD-AC-012
+      added_closing: CD-ASR-F04
+      statement: >
+        DENY BY DEFAULT OVER A DECLARED DESTINATION REGISTRY. Every entry in every service's
+        `x-egress.hosts` is, character for character, the `host` of a destination registered
+        in deploy/egress-destinations.yaml whose `services` list names that service. An entry
+        that is not is a violation, and it is a violation because nobody declared it rather
+        than because anything was recognised about it. The registry is IN TREE and is read as
+        data: no name resolution, no network call, nothing whose verdict an auditor offline
+        could not reproduce (CD-PL-F48).
+    - id: CD-EGRESS-005
+      criterion: CD-AC-012
+      added_closing: CD-ASR-F04
+      statement: >
+        CLOSED KEY SETS. An `x-egress` block declares exactly `policy`, `hosts`, `pending` and
+        `enforced_by`; a registered destination declares exactly `id`, `host`, `operator`,
+        `purpose`, `declared_in` and `services`; the registry document declares exactly
+        `version`, `contract` and `destinations`. Any other key is a violation and not an
+        extension. A field the guard does not read is a declaration nothing enforces, and a
+        posture arriving through one would be invisible to the same guard that is supposed to
+        be reading the posture.
+    - id: CD-EGRESS-006
+      criterion: CD-AC-012
+      added_closing: CD-ASR-F04
+      statement: >
+        A REGISTERED DESTINATION IS WELL FORMED AND ATTRIBUTABLE. Its `host` is a DNS hostname
+        of two or more labels drawn from lowercase letters, digits and hyphens, with no
+        leading or trailing hyphen and an alphabetic final label of at least two characters —
+        a POSITIVE PERMITTED SHAPE, so an unrecognised form fails rather than passes. Its `id`
+        and `host` are unique in the file, it names an `operator`, a `purpose` and the
+        `declared_in` clause of product intent that authorises it, and every service in its
+        `services` list exists in this file and declares policy ALLOWLIST. The shape rule is
+        not tidiness: the only offline evidence of what a destination REACHES is its
+        registrable domain, and an address literal carries none, so it cannot be judged and
+        therefore cannot be declared.
 
 # ==========================================================================================
 # BASE IMAGE IDENTITY — BY DIGEST, NEVER BY TAG
