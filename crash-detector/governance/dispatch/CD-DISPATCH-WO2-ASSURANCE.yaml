@@ -10,9 +10,9 @@
 # candidate has no part in judging it.
 
 dispatch_id: CD-DISPATCH-WO2-ASSURANCE
-status: DRAFT                                  # becomes ISSUED when target_candidate is filled
+status: ISSUED                                 # target_candidate filled 2026-08-19T08:02Z (BL-20260819T080200Z-0018)
 record_type: SUB_AGENT_DISPATCH
-issued_utc: SET_AT_ISSUE
+issued_utc: '2026-08-19T08:02:00Z'
 
 # --- seat -------------------------------------------------------------------------------------- #
 assigned_role: ASSURANCE_ENGINEER
@@ -27,9 +27,16 @@ independence_declaration: >
   INDEPENDENCE_CONFLICT and hand the dispatch back (PBG-SOD-001, non-waivable).
 
 # --- exact target ------------------------------------------------------------------------------ #
-target_candidate: SET_AT_ISSUE                 # exact SHA on wo-2-skeleton; "the latest" is not a target
+target_candidate: 66681b27ed650321f6b9e325fbc05712a754cc7d   # resolved with git rev-parse and
+  # verified present with git cat-file -e by the Project Lead. "the latest" is not a target, and a
+  # SHA quoted from memory is not a target either (CD-PL-F36, CD-CONT-002).
 target_branch: wo-2-skeleton
-target_worktree: SET_AT_ISSUE                  # a read-only worktree at the exact SHA, created by the PL
+target_worktree: /srv/crash-detector-wo2-audit
+  # A DETACHED worktree created by the Project Lead at exactly 66681b2, checked clean at creation.
+  # It is NOT the Engineer's mutation lane: /srv/crash-detector-wo2 stays on branch wo-2-skeleton and
+  # may move. Audit the detached worktree. Mutating it is forbidden absolutely (see below); the
+  # Project Lead recorded a SHA256-of-SHA256SUMS fingerprint of this tree at issue and will re-take
+  # it when you return, so mutation is detectable and not merely prohibited.
 target_scope: >
   WO-2 as delivered: the repository skeleton, the dial and witness types, the collector framework
   and source registry, the store schema and grant matrix, the container set AS DESIGN, the closed

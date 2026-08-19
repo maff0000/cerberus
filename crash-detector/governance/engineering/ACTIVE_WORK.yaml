@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T07:46:00Z'
+updated_utc: '2026-08-19T08:02:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -61,9 +61,20 @@ current_block: >
   only by the implementing seat — recorded as risk CD-RT-002, not glossed.
   CD-ENG-F40 CLOSED. CD-ENG-F42 DISMISSED on evidence: the Assurance dispatch already carries its
   own store grant (SD-3, prefix cd-asr-wo2-) and forbids reusing the Engineer's. CD-ENG-F41 and
-  CD-PL-F43 disclosed to the PO, neither blocking. Next: increment 7 — B4.
+  CD-PL-F43 disclosed to the PO, neither blocking.
+  INCREMENT 7 COMPLETE AND ACCEPTED at lane 66681b2 (CD-D-021). THE ENGINEER DISPATCH IS COMPLETE:
+  A1-A7 and B1-B4 all delivered across seven increments and three runtime terminations. B4 changed
+  no code — one path in the whole diff, its own Build Log entry. The seat ran every declared
+  command including the eleven for criteria WO-2 does not deliver, and every one of those terminated
+  non-zero naming an absent subject: NONE passed vacuously.
+  THE SOD BOUNDARY IS CROSSED. CD-DISPATCH-WO2-ASSURANCE moved DRAFT -> ISSUED against the exact SHA
+  66681b2 (CD-D-022), with a read-only detached target worktree at /srv/crash-detector-wo2-audit and
+  a tree fingerprint recorded so mutation is DETECTABLE, not merely prohibited. The PL ran
+  `pbg required-tests verify` at the target itself: GATE SHUT, latest_admitted_run null, 15/15
+  mandatory criteria UNDECIDABLE — the correct state in which to hand work to an auditor.
+  Next: CD-ASR-WO2-01, a SEPARATE agent, never CD-ENG-WO2-01 (PBG-SOD-001, non-waivable).
 owner_role: PROJECT_LEAD
-next_actor: ENGINEER
+next_actor: ASSURANCE_ENGINEER
 
 repository: local
 branch: main
@@ -81,8 +92,8 @@ last_completed_checkpoint_sha: 8a503552a6af16207fd3ee6e573841f240e07cd4
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: 9aea4ef2ea93d237045c1b986bcb365dc4c17b4c   # wo-2-skeleton, increment 6b + its Build Log
-lane_increment_sha: a06e64f0db710613ff079f5f0c260a0f3c65cca5   # the increment-6b commit itself
+lane_head_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d   # wo-2-skeleton, increment 7 (B4) — THE ASSURANCE TARGET
+lane_increment_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d   # B4 changed only its own Build Log entry
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -103,7 +114,7 @@ working_tree_state: >
   NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
   branch-point copy and will report a stale continuity reference. That is the worktree layout, not
   drift (CD-ENG-F31). The live record is this one, on main. The pending commit is
-  BL-20260819T074600Z-0016 and this record.
+  BL-20260819T080200Z-0018 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -285,5 +296,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T074600Z-0016
+last_build_log_entry: BL-20260819T080200Z-0018
 status: ACTIVE
