@@ -466,15 +466,75 @@ criteria:
   supersedes: []
   superseded_by: null
   tests:
+  # THIS CHECK WAS DEFEATED AND THE REPAIR IS STRUCTURAL (CD-ASR-F05, increment 4). The auditor
+  # appended `from crash_detector.witness.panel import Agrees` to deploy/entrypoints/cd_engine.py —
+  # THE MODULE THAT IS THE ENGINE CONTAINER'S PROCESS — and the check exited 0. The defect was a
+  # MISMATCH OF SUBJECTS, not a missed spelling: the guard's subject was the engine PACKAGE, rooted
+  # at the CONSTANT crash_detector.engine under src/, and the criterion's subject is the engine
+  # CONTAINER. The file was never read, so no amount of extra import-route recognition would have
+  # found it.
+  #
+  # THE REPAIR IS NOT "ALSO SCAN deploy/entrypoints/" — that is a second hard-coded path and the
+  # next escape is a third one. The walk root and the scanned universe are now DERIVED: the root is
+  # read out of deploy/compose.yaml's cd-engine service and the Dockerfile it names (entrypoint +
+  # command, compose overriding the image, merge keys resolved), and the universe is what that
+  # image's own COPY instructions ship, named against the sys.path roots the image declares. Change
+  # the artefact and the guard's subject follows. The ROOT SET IS A UNION with the engine package,
+  # deliberately: in WO-2 the container's process does NOT reach crash_detector.engine, so
+  # replacing the package root would have deleted the guard that catches the original plant.
+  #
+  # THIS CHECK HAS A DECLARED LIMIT, in SIX numbered boundaries, stated identically in the header
+  # of tools/register/check_engine_no_witness_reach.py, in the execution contract, and below
+  # (CD-RULE-004). Boundary 6 is this structure's OWN residue and is measured, not asserted.
   - test_id: CD-RT-003-ENGINE-NO-WITNESS-REACH
     scope: CLASS
     execute: python3 tools/register/check_engine_no_witness_reach.py --root .
     execution_contract: contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md
     negative_control:
       violation: >
-        Any import edge by which something reachable from src/crash_detector/engine/ reaches
+        Any import edge by which something reachable from the engine container's ROOT SET reaches
         witness code — module-level, function-local, aliased, relative or through an intermediate
-        module. Import PLACEMENT must not evade it: a function-local import is the same edge.
+        module. Import PLACEMENT must not evade it: a function-local import is the same edge. THE
+        ROOT SET IS DERIVED AND IS A UNION: every module the engine container's declared process
+        starts, read from deploy/compose.yaml and the Dockerfile it names, TOGETHER WITH every
+        module in src/crash_detector/engine/. So the plant may be placed in the engine package, in
+        the module the ENTRYPOINT names, in anything either of them reaches transitively, in a
+        module named by a compose `entrypoint:` or `command:` override, or in one named through a
+        YAML merge key — all of them are the same violation. A DERIVATION THAT CANNOT BE MADE is
+        also a failure and not a pass: a shell-form ENTRYPOINT, `python -c`, a service with no
+        `build`, a COPY from another build stage, an anchor the reader cannot locate, a module name
+        claimed by two files, or Python shipped into the image that no declared sys.path root can
+        name each terminate NON-ZERO with a stated clause id (CD-ENGINE-ROOT-101..110).
+        THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
+        tools/register/check_engine_no_witness_reach.py, in the execution contract and here, in SIX
+        boundaries: (1) it is a STATIC READ OF DECLARATIONS at one commit — no image is built and
+        no container started (RT-B is forbidden in WO-2), so a compose OVERRIDE file, `docker run
+        --entrypoint`, `docker exec` or a non-compose orchestrator manifest are outside the
+        subject, NOT PROVED TO BE CARRIED ANYWHERE, owed at WO-3 with the same override surface
+        CD-RT-012-EGRESS-NO-BROKER declares at its own boundary 6. (2) A SECOND PROCESS STARTED AT
+        RUN TIME — subprocess, os.execv — is not an import edge; PARTIALLY CARRIED, MEASURED, in
+        that a dotted witness path in a string literal and a non-literal import_module both still
+        fire, but for a second process named by a non-witness path, NOT PROVED TO BE CARRIED
+        ANYWHERE. (3) IMPORTING WITNESS TYPES IS NOT READING WITNESS DATA and this check does not
+        claim otherwise; that half is CARRIED by CD-RT-003-GRANT-MATRIX-LIVE, a different
+        instrument on a different substrate. (4) The compose reader is a stdlib-only YAML subset: a
+        non-empty FLOW collection raises and becomes CD-ENGINE-ROOT-101, a refusal — fail-closed
+        but a shape a legitimate author could write; and the reader's known non-termination defect
+        (CD-ENG-WO2R-F14 / CD-PL-F61, ruled to a separate bounded dispatch by CD-D-051) is shared
+        here and NOT repaired in this increment. (5) Only the ENGINE service's process is a WALK
+        ROOT; the other five are RESOLVED so a rename is loud, but witness code reachable from
+        cd-witness is correct and not a violation — MEASURED, variant V42, exit 0. (6) RUN-TIME
+        sys.path MUTATION IS NOT DERIVED, and this is the derivation's own residue. MEASURED,
+        variant V44: cd_engine.py inserts /app/src/crash_detector/witness into sys.path and writes
+        `import panel`; panel.py IS scanned and IS witness code, but the edge is spelled `panel`,
+        resolves to no module in the graph, and the check exits 0, PASS 23. PARTIALLY CARRIED,
+        MEASURED: the string-literal and dynamic-import clauses still fire, and CD-ENGINE-ROOT-110
+        closes the neighbouring route of shipping code OFF the declared path (variant V43, exit 3).
+        FOR A SHORT-NAME IMPORT OF ALREADY-SCANNED WITNESS CODE AFTER A sys.path INSERT, NOT PROVED
+        TO BE CARRIED ANYWHERE. It is deliberately not closed by refusing sys.path mutation,
+        because the clean tree legitimately contains one in deploy/entrypoints/_service.py and a
+        guard that fires on the product is a guard somebody switches off. Raised by the
+        implementing seat against its own work as CD-ENG-WO2R-F17.
       evidence_ref: RTR-WO2-0001
   - test_id: CD-RT-003-GRANT-MATRIX-LIVE
     scope: CLASS
