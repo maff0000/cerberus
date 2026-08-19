@@ -79,7 +79,14 @@ def _reject_cross_typed(reading: object, expected: type, field_name: str) -> Non
     can be swapped are one dial with two names.
     """
     if type(reading) in (Value, Degraded):
-        if not isinstance(reading.value, expected):
+        # EXACT TYPE, not isinstance (CD-AC-005, Class 2). `isinstance` here asked
+        # `type(expected).__instancecheck__` — a metaclass method — whether the payload
+        # belonged in this slot, and a score subclass carrying a coercion would have
+        # answered yes. The sibling boundary in `dial_presentation._shown_from` already
+        # admits by exact-type membership in SCORE_TYPES; this is that same rule at the
+        # other consumer boundary rather than a second, looser one. A new kind of score is
+        # a change to SCORE_TYPES, reviewed as one.
+        if type(reading.value) is not expected:
             raise TypeError(
                 f"DialSet.{field_name} must carry {expected.__name__}, got "
                 f"{type(reading.value).__name__}"

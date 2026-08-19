@@ -123,6 +123,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.magnitude import (
     CrossDialCombination,
     DialMagnitude,
@@ -247,6 +248,33 @@ class SealedPresentationType(type):
         type.__delattr__(cls, name)
 
 
+def _establish_dial_id(presentation: object) -> None:
+    """Re-establish a presentation's ``dial_id`` as a plain ``str``, or refuse.
+
+    Shared by both constructors so neither can validate it more loosely than the other, and
+    a module function rather than a member so it does not widen the declared attribute
+    surface asserted at import (the same reasoning
+    :func:`crash_detector.dials.magnitude._install` gives).
+
+    The id is not merely type-checked, it is REBUILT (CD-AC-005, Class 2). ``Shown``
+    decides whether a magnitude may be shown under this name with ``carried !=
+    self.dial_id``, and ``!=`` is the left operand's to define. ``isinstance(dial_id, str)``
+    admitted a subclass, which could then answer that comparison itself and be presented as
+    the other dial.
+    """
+    offered = getattr(presentation, "dial_id")
+    try:
+        established = own_str(offered)
+    except NotEstablishedOnOwnTerms:
+        established = ""
+    if not established:
+        raise DialPresentationRefused(
+            f"a presentation names the ONE dial it is for, as a non-empty string; got "
+            f"{offered!r}."
+        )
+    object.__setattr__(presentation, "dial_id", established)
+
+
 @dataclass(frozen=True)
 class Shown(metaclass=SealedPresentationType):
     """This dial has a reading, and here is the magnitude it is.
@@ -264,11 +292,11 @@ class Shown(metaclass=SealedPresentationType):
     magnitude: DialMagnitude
 
     def __post_init__(self) -> None:
-        if not isinstance(self.dial_id, str) or not self.dial_id:
-            raise DialPresentationRefused(
-                f"a presentation names the ONE dial it is for, as a non-empty string; got "
-                f"{self.dial_id!r}."
-            )
+        # RE-ESTABLISHED BEFORE `carried != self.dial_id` DECIDES ANYTHING (CD-AC-005,
+        # Class 2). That comparison is the whole of this constructor's cross-dial refusal
+        # and `!=` is the left operand's to define, so a `str` subclass admitted by
+        # `isinstance` could answer it and be shown under the other dial's name.
+        _establish_dial_id(self)
         if type(self.magnitude) is not DialMagnitude:
             raise DialPresentationRefused(
                 f"a {type(self.magnitude).__name__} was offered as dial {self.dial_id!r}'s "
@@ -312,12 +340,21 @@ class NotShown(metaclass=SealedPresentationType):
     missing_inputs: tuple
 
     def __post_init__(self) -> None:
-        if not isinstance(self.dial_id, str) or not self.dial_id:
-            raise DialPresentationRefused(
-                f"a presentation names the ONE dial it is for, as a non-empty string; got "
-                f"{self.dial_id!r}."
+        _establish_dial_id(self)
+        # `reason` carried no type check at all, so the refusal below was decided by the
+        # supplied object's own __bool__ or __len__ (CD-AC-005, Class 2).
+        try:
+            object.__setattr__(self, "reason", own_str(self.reason))
+            object.__setattr__(
+                self,
+                "missing_inputs",
+                tuple(own_str(one) for one in self.missing_inputs),
             )
-        object.__setattr__(self, "missing_inputs", tuple(self.missing_inputs))
+        except NotEstablishedOnOwnTerms as refusal:
+            raise DialPresentationRefused(
+                f"a presentation's reason and missing inputs are stated as strings: "
+                f"{refusal}"
+            ) from None
         if not self.reason:
             raise DialPresentationRefused(
                 "NotShown requires a stated reason. 'We are not showing this' without a "
@@ -426,7 +463,13 @@ def present_dial(dial_id: str, reading) -> "Shown | NotShown":
     refused, which is the same doctrine
     :class:`~crash_detector.dials.magnitude.DialMagnitude` applies to its own operands.
     """
-    if not isinstance(dial_id, str) or not dial_id:
+    # Re-established at the public entry point too, so the id that selects the reading and
+    # the id that is stamped on the presentation are the same plain string (CD-AC-005).
+    try:
+        dial_id = own_str(dial_id)
+    except NotEstablishedOnOwnTerms:
+        dial_id = ""
+    if not dial_id:
         raise DialPresentationRefused(
             f"presenting a dial requires the id of the ONE dial, as a non-empty string; "
             f"got {dial_id!r}."

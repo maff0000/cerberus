@@ -68,10 +68,19 @@ simply no longer consulted about its BEHAVIOUR. That is the difference between "
 accept your type" and "we do not run your code", and only the second one is compatible with
 reading a ``pandas.Timestamp``.
 
-**Measured, not asserted** — see ``tests/test_own_terms.py``, which reads a real
-``pandas.Timestamp``, a real ``numpy.float64`` and a real ``pytz`` offset through these
-functions and asserts both that they are accepted and that the result is of the exact base
-type.
+**Measured, not asserted.** ``tests/test_own_terms.py`` is the DECLARED evidence and it
+imports nothing outside the standard library, deliberately: ``pandas``, ``numpy`` and
+``pytz`` are not declared dependencies of this project (they are absent from
+``requirements.txt`` and ``requirements.lock``), and a test that needs an undeclared import
+is a test that can skip, which is not evidence. What the declared tests use are stdlib
+stand-ins that are *exactly what those library types are* — a ``datetime`` subclass and a
+``float`` subclass.
+
+The real libraries WERE measured, as implementation evidence rather than as a declared
+test, and the numbers are recorded in the Build Log entry for this increment with their
+versions: ``pandas`` 2.1.4 ``Timestamp``, ``numpy`` 1.26.4 ``float64`` and ``pytz`` 2025.2
+``Europe/London`` all pass through these functions and resolve to ``Agrees``, with the
+stored measurement coming out as an exact ``float``.
 
 ===========================================================================================
 WHERE THIS MODULE IS THE DOOR
@@ -122,7 +131,8 @@ PROVED TO BE CARRIED ANYWHERE (CD-RULE-006).
  2  **PRECISION FINER THAN A MICROSECOND IS DISCARDED.** ``datetime`` stores microseconds
     and this module rebuilds from ``datetime``'s own fields, so a ``pandas.Timestamp``
     carrying nanoseconds loses them.
-    MEASURED — ``tests/test_own_terms.py::test_a_pandas_timestamp_is_read_and_truncated``:
+    MEASURED — ``tests/test_own_terms.py::test_sub_microsecond_precision_is_dropped_and_never_rounded_up``,
+    and with the real library as implementation evidence:
     ``pandas.Timestamp("2026-08-19T12:00:00.123456789Z")`` becomes
     ``2026-08-19 12:00:00.123456+00:00``. It is a TRUNCATION and never a rounding, so a
     reading is never made to look FRESHER than it is by this module. NOT PROVED TO BE

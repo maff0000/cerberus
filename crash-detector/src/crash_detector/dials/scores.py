@@ -80,6 +80,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.magnitude import (
     CrossDialCombination,
     DialMagnitude,
@@ -162,12 +163,33 @@ class Contribution:
     contribution: float
 
     def __post_init__(self) -> None:
+        # RE-ESTABLISHED BEFORE THEY ARE JUDGED OR STORED (CD-AC-005, Class 2). Neither
+        # label carried any type check at all, so `not self.source_id` was decided by
+        # whatever __bool__ or __len__ the supplied object defined, and both labels are
+        # then carried into the published envelope and compared there. The two numbers go
+        # through require_finite_float, which now RETURNS the established float rather than
+        # approving the caller's object, so what this frozen value stores is a plain float.
+        for field_name in ("source_id", "category"):
+            try:
+                object.__setattr__(
+                    self, field_name, own_str(getattr(self, field_name))
+                )
+            except NotEstablishedOnOwnTerms as refusal:
+                raise TypeError(
+                    f"Contribution.{field_name} must be a str: {refusal}"
+                ) from None
         if not self.source_id:
             raise ValueError("Contribution requires a source_id")
         if not self.category:
             raise ValueError("Contribution requires a category")
         for field_name in ("weight", "contribution"):
-            require_finite_float("Contribution", field_name, getattr(self, field_name))
+            object.__setattr__(
+                self,
+                field_name,
+                require_finite_float(
+                    "Contribution", field_name, getattr(self, field_name)
+                ),
+            )
 
 
 def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:

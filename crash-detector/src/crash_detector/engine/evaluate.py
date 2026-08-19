@@ -171,13 +171,27 @@ def _latest_usable_ok(
     latest: dict[str, OK] = {}
     for record in observations:
         outcome = record.outcome
-        if not isinstance(outcome, OK):
+        # EXACT TYPE, not isinstance (CD-AC-005, Class 2). An `OK` subclass may shadow
+        # `source_as_of_utc` with a property, and a property is the subclass's code running
+        # inside this system's freshness decision. Skipping it is the fail-closed
+        # direction: an outcome this function cannot recognise contributes nothing, exactly
+        # as `FetchFailed`, `Malformed` and `Empty` contribute nothing. `outcome_class`,
+        # which `ObservationRecord.__post_init__` calls, already admits by exact type, so
+        # this is the same rule read at the second of the two sites rather than a new one.
+        if type(outcome) is not OK:
             continue
         age = age_seconds(as_of_utc=outcome.source_as_of_utc, now_utc=now_utc)
         if not window.covers(age):
             continue
         incumbent = latest.get(record.source_id)
-        if incumbent is None or outcome.source_as_of_utc > incumbent.source_as_of_utc:
+        # WHICH OBSERVATION IS THE LATEST IS DECIDED BY THIS SYSTEM. `>` between two stored
+        # timestamps is the left operand's `__gt__` to define, so the comparison is made on
+        # instants re-established here rather than on whatever the operands are. Both sides
+        # are already canonical if they came through `OK.__post_init__`; putting them
+        # through the door again costs nothing and removes the dependence on that being so.
+        if incumbent is None or ensure_utc(outcome.source_as_of_utc) > ensure_utc(
+            incumbent.source_as_of_utc
+        ):
             latest[record.source_id] = outcome
     return latest
 
@@ -380,4 +394,10 @@ def _oldest_as_of(usable: Mapping[str, OK], used_ids: Sequence[str]) -> datetime
     Taking the newest would make a reading look fresher than the data behind it, which is
     the stale-reads-as-calm failure with an extra step.
     """
-    return min(usable[source_id].source_as_of_utc for source_id in used_ids)
+    # `min` is decided by the elements' own `__lt__`, so the elements are re-established
+    # first (CD-AC-005, Class 2): the reading's `as_of_utc` is what every later freshness
+    # judgement about this reading is made against, and taking the newest rather than the
+    # oldest would make a reading look fresher than the data behind it.
+    return min(
+        ensure_utc(usable[source_id].source_as_of_utc) for source_id in used_ids
+    )

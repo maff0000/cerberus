@@ -67,6 +67,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Union
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.engine.model import ContributionModel
 from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY, SourceRegistry
@@ -85,18 +86,37 @@ class DialSpec:
     contribution_model: Union[ContributionModel, None]
 
     def __post_init__(self) -> None:
+        # EVERY ID RE-ESTABLISHED BEFORE ANY OF THEM DECIDES ANYTHING (CD-AC-005, Class 2).
+        # `dial_id not in DIAL_IDS` selects the dial; `source_id in usable` in the engine
+        # decides whether a required input was present, which decides whether the dial is a
+        # number at all; and the duplicate and overlap tests below are set membership. All
+        # of those are the supplied strings' `__eq__` and `__hash__` to answer, and
+        # `isinstance(source_id, str)` admitted a subclass that could answer them.
+        try:
+            object.__setattr__(self, "dial_id", own_str(self.dial_id))
+        except NotEstablishedOnOwnTerms:
+            raise ValueError(
+                f"unknown dial_id {self.dial_id!r}; the dials are {DIAL_IDS}. "
+                "A third dial is a PID amendment, not a configuration edit."
+            ) from None
         if self.dial_id not in DIAL_IDS:
             raise ValueError(
                 f"unknown dial_id {self.dial_id!r}; the dials are {DIAL_IDS}. "
                 "A third dial is a PID amendment, not a configuration edit."
             )
-        object.__setattr__(self, "required_input_ids", tuple(self.required_input_ids))
-        object.__setattr__(
-            self, "contributing_input_ids", tuple(self.contributing_input_ids)
-        )
+        for field_name in ("required_input_ids", "contributing_input_ids"):
+            try:
+                established = tuple(
+                    own_str(source_id) for source_id in getattr(self, field_name)
+                )
+            except NotEstablishedOnOwnTerms:
+                raise ValueError(
+                    f"DialSpec.{field_name} must be non-empty strings"
+                ) from None
+            object.__setattr__(self, field_name, established)
         for field_name in ("required_input_ids", "contributing_input_ids"):
             ids = getattr(self, field_name)
-            if any(not isinstance(source_id, str) or not source_id for source_id in ids):
+            if any(not source_id for source_id in ids):
                 raise ValueError(f"DialSpec.{field_name} must be non-empty strings")
             if len(set(ids)) != len(ids):
                 raise ValueError(f"DialSpec.{field_name} contains duplicates")
@@ -128,7 +148,11 @@ class ConfigSnapshot:
             raise ValueError("ConfigSnapshot requires a config_snapshot_id")
         object.__setattr__(self, "dial_specs", tuple(self.dial_specs))
 
-        if any(not isinstance(spec, DialSpec) for spec in self.dial_specs):
+        # EXACT TYPE, not isinstance (CD-AC-005, Class 2). A DialSpec subclass may shadow
+        # `required_input_ids` or `contribution_model` with a property, so the values the
+        # absence post-condition re-derives its answer from would be computed by the
+        # caller's code at the moment it re-derived them.
+        if any(type(spec) is not DialSpec for spec in self.dial_specs):
             raise TypeError("ConfigSnapshot.dial_specs must all be DialSpec")
         declared = [spec.dial_id for spec in self.dial_specs]
         if sorted(declared) != sorted(DIAL_IDS):
@@ -150,7 +174,9 @@ class ConfigSnapshot:
         StalenessWindow(seconds=window)
 
         registry = self.source_registry
-        if not isinstance(registry, SourceRegistry):
+        # EXACT TYPE, for the reason above: a SourceRegistry subclass may redefine
+        # `assert_may_be_required`, which is the criticality contract itself.
+        if type(registry) is not SourceRegistry:
             raise TypeError(
                 "ConfigSnapshot.source_registry must be a SourceRegistry, got "
                 f"{type(registry).__name__}. Pass EMPTY_SOURCE_REGISTRY explicitly for "

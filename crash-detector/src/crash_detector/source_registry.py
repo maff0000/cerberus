@@ -64,6 +64,8 @@ entirely the Product Owner's, and this module registers none of it.
 from __future__ import annotations
 
 from dataclasses import dataclass
+
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from enum import Enum
 from typing import Iterable
 
@@ -136,9 +138,20 @@ class SourceRecord:
     stands_for: str
 
     def __post_init__(self) -> None:
+        # RE-ESTABLISHED BEFORE ANY OF THEM IS COMPARED OR HASHED (CD-AC-005, Class 2).
+        # `source_id` is put in a set to detect duplicates, is looked up by
+        # `SourceRegistry.get`, and is what `source_id in usable` in the engine tests to
+        # decide whether a required input was present — which decides whether a dial is a
+        # number at all. All of those are the supplied string's `__eq__`/`__hash__` to
+        # answer, and `isinstance(observed, str)` admitted a subclass that could answer them.
         for name in ("source_id", "adapter_id", "stands_for"):
-            observed = getattr(self, name)
-            if not isinstance(observed, str) or not observed:
+            try:
+                object.__setattr__(self, name, own_str(getattr(self, name)))
+            except NotEstablishedOnOwnTerms:
+                raise ValueError(
+                    f"SourceRecord requires a non-empty {name}"
+                ) from None
+            if not getattr(self, name):
                 raise ValueError(f"SourceRecord requires a non-empty {name}")
         if not isinstance(self.criticality, Criticality):
             raise TypeError(
@@ -172,7 +185,11 @@ class SourceRegistry:
         object.__setattr__(self, "sources", tuple(self.sources))
         seen: set[str] = set()
         for source in self.sources:
-            if not isinstance(source, SourceRecord):
+            # EXACT TYPE, not isinstance (CD-AC-005, Class 2). A SourceRecord subclass may
+            # shadow `source_id` or `criticality` with a property, and a property is the
+            # subclass's code running inside the criticality contract that decides which
+            # sources a dial may declare as required.
+            if type(source) is not SourceRecord:
                 raise TypeError(
                     f"SourceRegistry holds SourceRecord, got {type(source).__name__}"
                 )

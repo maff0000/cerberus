@@ -47,6 +47,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Mapping, Union
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.time_utc import ensure_utc
 
 __all__ = [
@@ -213,6 +214,17 @@ class ObservationRecord:
     outcome: "FetchOutcome"
 
     def __post_init__(self) -> None:
+        # RE-ESTABLISHED BEFORE IT IS USED AS A KEY (CD-AC-005, Class 2). `source_id` had no
+        # type check at all, so `not self.source_id` was decided by the supplied object's
+        # own __bool__/__len__; and the engine uses this value as a dict key and tests
+        # `source_id in usable`, both of which are decided by its __hash__ and __eq__. A
+        # `str` subclass could therefore answer to a source id it is not.
+        try:
+            object.__setattr__(self, "source_id", own_str(self.source_id))
+        except NotEstablishedOnOwnTerms as refusal:
+            raise TypeError(
+                f"ObservationRecord.source_id must be a str: {refusal}"
+            ) from None
         if not self.source_id:
             raise ValueError("ObservationRecord requires a source_id")
         object.__setattr__(self, "observed_utc", ensure_utc(self.observed_utc))

@@ -182,6 +182,8 @@ import enum
 import math
 from types import MappingProxyType
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
+
 __all__ = [
     "ScoreOutOfRange",
     "CrossDialCombination",
@@ -345,8 +347,8 @@ class SealedQuantityType(type):
         type.__delattr__(cls, name)
 
 
-def require_finite_float(type_name: str, field_name: str, observed: object) -> None:
-    """Refuse anything that is not a finite float.
+def require_finite_float(type_name: str, field_name: str, observed: object) -> float:
+    """RE-ESTABLISH ``observed`` as a finite float of this system's own, or refuse.
 
     ``bool`` is refused explicitly, ahead of the ``float`` test, because ``True`` would
     otherwise slip through any ``int``-tolerant path and become ``1.0``.
@@ -356,15 +358,35 @@ def require_finite_float(type_name: str, field_name: str, observed: object) -> N
     owed by the Product Owner (BLUEPRINT §16), and inventing one here would be inventing
     product meaning (``PBG-AUTH-005``, CD-RULE-003). What is validated is the class of
     thing, never its meaning.
+
+    **IT NOW RETURNS THE ESTABLISHED NUMBER (CD-AC-005, Class 2).** It used to return
+    ``None`` after ``isinstance(observed, float)``, leaving each caller to store the object
+    it had been handed. A ``float`` subclass passed that check, and this is the single point
+    through which every number in this system enters a type that carries product meaning —
+    so the stored object's ``__eq__``, ``__hash__``, ``__lt__`` and ``__float__`` then
+    decided every later judgement made about it, including ``math.isfinite`` on the line
+    below, which consults ``__float__``, and ``max``/``min``/``math.fsum`` inside the
+    declared reductions. :func:`crash_detector.own_terms.own_float` reads the stored
+    IEEE-754 double out of the object rather than asking it for one, so what every caller
+    stores is a plain ``float`` and the reductions compute on numbers this system holds.
+
+    ``numpy.float64`` IS a ``float`` subclass and is still accepted: a magnitude is a
+    measurement arriving from outside, not configuration. The refusal-by-exact-type remedy
+    that :class:`~crash_detector.staleness.StalenessWindow` applies to a window is argued
+    against for this path in :func:`crash_detector.own_terms.own_float`.
     """
-    if isinstance(observed, bool) or not isinstance(observed, float):
+    try:
+        established = own_float(observed)
+    except NotEstablishedOnOwnTerms as refusal:
         raise ScoreOutOfRange(
-            f"{type_name}.{field_name} must be a float, got {type(observed).__name__}"
-        )
-    if not math.isfinite(observed):
+            f"{type_name}.{field_name} must be a float, got "
+            f"{type(observed).__name__}: {refusal}"
+        ) from None
+    if not math.isfinite(established):
         raise ScoreOutOfRange(
-            f"{type_name}.{field_name} must be finite, got {observed!r}"
+            f"{type_name}.{field_name} must be finite, got {established!r}"
         )
+    return established
 
 
 class SameDialReduction(enum.Enum):
@@ -458,20 +480,40 @@ def _install(instance: object, dials: object, value: object) -> None:
     loosely than the other; and it is not a member of :class:`DeclaredQuantity`, so it does
     not widen the declared attribute surface.
     """
-    if not isinstance(dials, frozenset) or len(dials) != 1:
+    if not isinstance(dials, frozenset):
         raise CrossDialCombination(
             f"a declared quantity carries the provenance of EXACTLY ONE dial; got "
             f"{dials!r}. A number derived from both dials has no single dial to be "
             "published as, and PID §3.1 admits no third figure derived from the two."
         )
-    only = next(iter(dials))
-    if not isinstance(only, str) or not only:
+    # RE-ESTABLISHED BEFORE IT IS COUNTED (CD-AC-005, Class 2). The provenance set is what
+    # every later cross-dial refusal compares — `quantity.dials != frozenset({dial_id})` in
+    # magnitude._install and in value_for — and set equality is decided by the ELEMENTS'
+    # __hash__ and __eq__. A `str` subclass admitted by `isinstance` therefore decided
+    # whether two dials counted as one and whether a magnitude belonged to the dial it was
+    # being installed under. The set is rebuilt here from code points read out of each
+    # element, so the hashing is CPython's for plain `str`, and the count below is taken on
+    # the rebuilt set rather than on the supplied one, whose __len__ is also its own.
+    try:
+        established_dials = frozenset(own_str(one) for one in dials)
+    except NotEstablishedOnOwnTerms as refusal:
+        raise CrossDialCombination(
+            f"a dial id must be a non-empty string; got {dials!r}: {refusal}"
+        ) from None
+    if len(established_dials) != 1:
+        raise CrossDialCombination(
+            f"a declared quantity carries the provenance of EXACTLY ONE dial; got "
+            f"{dials!r}. A number derived from both dials has no single dial to be "
+            "published as, and PID §3.1 admits no third figure derived from the two."
+        )
+    only = next(iter(established_dials))
+    if not only:
         raise CrossDialCombination(
             f"a dial id must be a non-empty string; got {only!r}."
         )
-    require_finite_float("DeclaredQuantity", "value", value)
-    object.__setattr__(instance, "dials", frozenset(dials))
-    object.__setattr__(instance, "_DeclaredQuantity__value", value)
+    established_value = require_finite_float("DeclaredQuantity", "value", value)
+    object.__setattr__(instance, "dials", established_dials)
+    object.__setattr__(instance, "_DeclaredQuantity__value", established_value)
 
 
 class DeclaredQuantity(metaclass=SealedQuantityType):
@@ -619,6 +661,17 @@ class DeclaredQuantity(metaclass=SealedQuantityType):
         identically — a comparison of data that does not depend on anyone having read the
         surrounding code.
         """
+        # The caller's `dial_id` is hashed into the set it is compared against, so its own
+        # __hash__ and __eq__ would otherwise decide whether the provenance matches
+        # (CD-AC-005, Class 2). It is re-established first; a non-str is simply not this
+        # quantity's dial and is refused by the same sentence as the wrong dial.
+        try:
+            dial_id = own_str(dial_id)
+        except NotEstablishedOnOwnTerms:
+            raise CrossDialCombination(
+                f"this quantity's declared provenance is {sorted(self.dials)}, and the "
+                f"caller asked for it as {dial_id!r}, which is not a dial id at all."
+            ) from None
         if self.dials != frozenset({dial_id}):
             raise CrossDialCombination(
                 f"this quantity's declared provenance is {sorted(self.dials)}, and the "
@@ -701,7 +754,22 @@ def observed_for_dial(*, dial_id: str, quantity: float, inputs_used) -> Declared
     It imposes no range, no unit and no threshold. Those are product meaning and this seat
     does not invent one (CD-RULE-003, ``PBG-AUTH-005``).
     """
-    if not isinstance(dial_id, str) or not dial_id:
+    # RE-ESTABLISHED BEFORE ANYTHING IS DECIDED WITH IT (CD-AC-005, Class 2). Both the
+    # `dial_id in ordered` refusal below — a dial is not an ingredient of a dial — and the
+    # provenance set this door builds are decided by `__eq__` and `__hash__` on the
+    # supplied strings. `isinstance(dial_id, str)` admitted a subclass that could answer
+    # both, so the refusal that is the whole point of this door was the caller's to make.
+    try:
+        dial_id = own_str(dial_id)
+    except NotEstablishedOnOwnTerms as refusal:
+        raise CrossDialCombination(
+            "admitting a measured number requires the id of the ONE dial it was measured "
+            f"for, as a non-empty string; got {dial_id!r} ({refusal}). Provenance is "
+            "carried as data rather than inferred from the code around the number, so "
+            "that a cross-dial combination is refused by comparing values and not by "
+            "anybody having read the expression (CD-ASR-F01)."
+        ) from None
+    if not dial_id:
         raise CrossDialCombination(
             "admitting a measured number requires the id of the ONE dial it was measured "
             f"for, as a non-empty string; got {dial_id!r}. Provenance is carried as data "
@@ -717,12 +785,22 @@ def observed_for_dial(*, dial_id: str, quantity: float, inputs_used) -> Declared
             "door's value is that it makes a claim about where a number came from "
             "(CD-AC-001, CD-AC-002)."
         )
+    established: list = []
     for source_id in ordered:
-        if not isinstance(source_id, str) or not source_id:
+        try:
+            source_id = own_str(source_id)
+        except NotEstablishedOnOwnTerms:
+            raise CrossDialCombination(
+                f"every input cited for dial {dial_id!r} must be a non-empty source id; "
+                f"got {source_id!r}."
+            ) from None
+        if not source_id:
             raise CrossDialCombination(
                 f"every input cited for dial {dial_id!r} must be a non-empty source id; "
                 f"got {source_id!r}."
             )
+        established.append(source_id)
+    ordered = tuple(established)
     if dial_id in ordered:
         raise CrossDialCombination(
             f"dial {dial_id!r} is cited as its own input. A DIAL IS NOT AN INGREDIENT OF "

@@ -81,6 +81,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable, Generic, Mapping, TypeVar, Union
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.time_utc import ensure_utc
 
 __all__ = [
@@ -103,6 +104,22 @@ __all__ = [
 
 T = TypeVar("T")
 R = TypeVar("R")
+
+
+def _own_reason(type_name: str, offered: object) -> str:
+    """Re-establish a reading's ``reason`` as a plain ``str``, or refuse.
+
+    A module function rather than a member, so it does not widen the declared attribute
+    surface these three constructors assert by set equality at import.
+
+    The reason carried no type check at all, so ``not self.reason`` — the refusal that makes
+    "we do not know why" impossible to state silently — was decided by whatever ``__bool__``
+    or ``__len__`` the supplied object defined (CD-AC-005, Class 2).
+    """
+    try:
+        return own_str(offered)
+    except NotEstablishedOnOwnTerms as refusal:
+        raise TypeError(f"{type_name}.reason must be a str: {refusal}") from None
 
 
 class ReadingSurfaceViolated(TypeError):
@@ -282,6 +299,7 @@ class Degraded(Generic[T], metaclass=SealedReadingType):
                 "Degraded requires at least one named missing input; a reading with "
                 "nothing missing is a Value, not a degradation"
             )
+        object.__setattr__(self, "reason", _own_reason("Degraded", self.reason))
         if not self.reason:
             raise ValueError("Degraded requires a stated reason")
 
@@ -311,6 +329,7 @@ class Unknown(metaclass=SealedReadingType):
     def __post_init__(self) -> None:
         object.__setattr__(self, "since_utc", ensure_utc(self.since_utc))
         object.__setattr__(self, "missing_inputs", tuple(self.missing_inputs))
+        object.__setattr__(self, "reason", _own_reason("Unknown", self.reason))
         if not self.reason:
             raise ValueError("Unknown requires a stated reason")
 

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from crash_detector.own_terms import own_instant, own_utc_offset
+from crash_detector.own_terms import own_instant, own_str, own_utc_offset
 
 __all__ = [
     "NaiveTimestampRejected",
@@ -80,7 +80,10 @@ def parse_utc(text: str) -> datetime:
     """
     if not isinstance(text, str):
         raise TypeError(f"expected str, got {type(text).__name__}")
-    candidate = text
+    # RE-ESTABLISHED BEFORE IT IS PARSED (CD-AC-005, Class 2). `candidate.endswith(...)`
+    # decides whether the UTC designator is present and therefore what instant this text
+    # denotes, and `endswith` is the supplied object's to define.
+    candidate = own_str(text)
     if candidate.endswith(_UTC_DESIGNATOR):
         candidate = candidate[: -len(_UTC_DESIGNATOR)] + _ZERO_OFFSET
     parsed = datetime.fromisoformat(candidate)

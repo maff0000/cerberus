@@ -215,6 +215,7 @@ are in ``variants/WO-2R2/MANIFEST.md``.
 
 from __future__ import annotations
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.provenance import (
     CrossDialCombination,
     DeclaredQuantity,
@@ -353,10 +354,19 @@ def _install(instance: object, dial_id: object, quantity: object) -> None:
     loosely than the other; and it is not a member of :class:`DialMagnitude`, so it does
     not widen the declared attribute surface.
     """
-    if not isinstance(dial_id, str) or not dial_id:
+    # RE-ESTABLISHED BEFORE THE SET-EQUALITY COMPARISON BELOW (CD-AC-005, Class 2).
+    # `quantity.dials != frozenset({dial_id})` is the cross-dial refusal, and it hashes and
+    # compares this string. `isinstance(dial_id, str)` admitted a subclass whose __hash__
+    # and __eq__ answered that comparison, so the refusal was the caller's to make.
+    offered_dial_id = dial_id
+    try:
+        dial_id = own_str(dial_id)
+    except NotEstablishedOnOwnTerms:
+        dial_id = ""  # falls into the refusal below, with the offered value reported
+    if not dial_id:
         raise CrossDialCombination(
             "a dial magnitude requires the id of the ONE dial it came from, as a "
-            f"non-empty string; got {dial_id!r}. Provenance is carried as data rather "
+            f"non-empty string; got {offered_dial_id!r}. Provenance is carried as data rather "
             "than inferred from the code around the number, so that a cross-dial "
             "combination is refused by comparing values and not by anybody having read "
             "the expression (CD-ASR-F01)."
@@ -487,13 +497,24 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
         arithmetic with the other.
         """
         provenance = state["provenance"]
-        if not isinstance(provenance, frozenset) or len(provenance) != 1:
+        if not isinstance(provenance, frozenset):
             raise CrossDialCombination(
                 f"a magnitude cannot be revived with provenance {provenance!r}: it must "
                 "be exactly one dial. A pickle is untrusted input like any other, and a "
                 "revived magnitude is validated exactly as a constructed one."
             )
-        _install(self, sorted(provenance)[0], state["_DialMagnitude__quantity"])
+        # Counted and indexed on a container this method built (CD-AC-005, Class 2). The
+        # supplied object's own __len__ and its elements' own __lt__ decided both the count
+        # and which id was installed when this read `len(provenance) != 1` and
+        # `sorted(provenance)[0]`, and a pickle is untrusted input like any other.
+        members = tuple(provenance)
+        if len(members) != 1:
+            raise CrossDialCombination(
+                f"a magnitude cannot be revived with provenance {provenance!r}: it must "
+                "be exactly one dial. A pickle is untrusted input like any other, and a "
+                "revived magnitude is validated exactly as a constructed one."
+            )
+        _install(self, members[0], state["_DialMagnitude__quantity"])
 
     # -- identity ------------------------------------------------------------------- #
 
@@ -558,6 +579,17 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
         :class:`DialMagnitude` admits only a
         :class:`~crash_detector.dials.provenance.DeclaredQuantity` (CD-PL-F54).
         """
+        # The caller's `dial_id` is hashed into the set this provenance is compared with,
+        # so its own __hash__ and __eq__ would otherwise decide the release (CD-AC-005,
+        # Class 2). Re-established first; anything that is not a string is simply not this
+        # magnitude's dial and is refused by the same sentence as the wrong dial.
+        try:
+            dial_id = own_str(dial_id)
+        except NotEstablishedOnOwnTerms:
+            raise CrossDialCombination(
+                f"this magnitude's provenance is {sorted(self.provenance)}, and the "
+                f"caller asked for it as {dial_id!r}, which is not a dial id at all."
+            ) from None
         if self.provenance != frozenset({dial_id}):
             raise CrossDialCombination(
                 f"this magnitude's provenance is {sorted(self.provenance)}, and the "
