@@ -29,7 +29,7 @@ repository: local
 branch: wo-2-skeleton
 worktree: /srv/crash-detector-wo2
 baseline_sha: 253c38bd4db58433e5209a222c0ce27429079156
-increment_sha: PENDING   # resolved in the commit that carries this entry; see `commits` below
+increment_sha: 652d93784e94f777037463ea16930b21f36f6579   # the commit that carries this entry; resolved from PENDING by the follow-up, which writes these two fields and nothing else (the 192fc50 precedent)
 parent_entry_id: BL-20260819T175414Z-0048
 record_origin: ENGINEER_SEAT
 tooling_available_at_capture: true
@@ -522,7 +522,7 @@ commits:
   subject: 'increment 6 addendum 2 — CD-ENG-READER-F06: CD-RT-003 declared limit 4 discharged and superseded, in one edit across three places'
 - sha: 728088d8b8f36b62dfba3d9061460886eaf2673f
   subject: 'increment 6 addendum 3 — CD-D-062: the quiet wrong parse declared as boundary 9, with a corrected carrier and a stated denominator'
-- sha: PENDING
+- sha: 652d93784e94f777037463ea16930b21f36f6579
   subject: 'increment 6 — the sweep, the corpus re-run, and this Build Log entry'
 commit_identity_verified: >
   `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit ->
