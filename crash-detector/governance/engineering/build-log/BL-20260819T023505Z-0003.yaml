@@ -1,0 +1,146 @@
+# WO-2 opened — Engineer dispatch issued. Append-only: corrections supersede, never edit
+# (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T023505Z-0003
+timestamp_utc: '2026-08-19T02:35:05Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 2e116ec0b9c3f48f9dcd8d8484cf4eb90ddcc3de
+current_sha: 2e116ec0b9c3f48f9dcd8d8484cf4eb90ddcc3de
+parent_entry_id: BL-20260818T180133Z-0002
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  WO-2 opened on the Product Owner's acceptance of Blueprint v0.1.0
+  (governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, commit 2e116ec), which releases CD-HOLD-001 —
+  the hold on all application code — and rules the two escalations: CD-D-005 is the PO's and is
+  owed before WO-3, with WO-2 proceeding on zero registered sources so every dial correctly reads
+  UNKNOWN; CD-D-006 is deferred to R2D2 with loopback-only on DEV throughout; the early CD-AC-006
+  boundary build is APPROVED; CD-BP-001 is risk-accepted. (1) Booted the pinned framework at
+  2e116ec — AMBER, the single named cause being roadmap_identity None, which is the known
+  ROADMAP.md question already recorded as a PO call, with blocking_failures empty. (2) Read
+  PO-ACCEPT-BLUEPRINT-0001.md, PID.md v1.0.1, BLUEPRINT.md and ACTIVE_WORK.yaml in full and
+  reconciled them against observed Git state; no drift. (3) Established the WO-2 mutation lane:
+  branch wo-2-skeleton in its own worktree at /srv/crash-detector-wo2 (PBG-GIT-001, PBG-GIT-003).
+  (4) Measured, rather than assumed, whether the framework can represent a bounded Engineer seat
+  alongside a seated Project Lead. It cannot — see CD-FWK-004 below. (5) Issued the Engineer
+  dispatch as a durable record, governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml, carrying the
+  seat, its distinct actor_id, the bounded objective, the exact writable and protected scope, the
+  runtime authorisation and its two named bounds, the deliverables in two sequential blocks, the
+  eleven required register tests with their planted violations, and the required continuity
+  return. No application code has been written by this seat; implementation is dispatched
+  (PBG-SOD-003), and the Assurance seat that follows is a different agent with a different actor_id
+  (PBG-SOD-001, non-waivable).
+
+evidence_references:
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot → Verdict AMBER, observed_sha 2e116ec0b9c3f48f9dcd8d8484cf4eb90ddcc3de, continuity CONTINUITY_MATCH/RESUME_AMBER, blocking_failures [], sole UNAVAILABLE: roadmap_identity'
+- 'git worktree add -b wo-2-skeleton /srv/crash-detector-wo2 2e116ec → "Preparing worktree (new branch ''wo-2-skeleton''); HEAD is now at 2e116ec"'
+- 'CD-FWK-004 probe: wrote a second status:ACTIVE authority record (assigned_role ENGINEER) into governance/authority/, ran boot, removed it. Observed: `pbg authority validate` → GREEN (the second-ACTIVE comparison did not fire through the validate path); `pbg boot` → Verdict RED, "! assigned_role None (UNAVAILABLE: 2 ACTIVE authority records; ambiguous assignment)". The probe file was deleted immediately and never committed; git status was clean of it afterwards.'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli authority separation → "PBG-SOD-001: no ASSURANCE authority record exists, so there is nothing to separate yet. This is NOT a pass."'
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli authority validate → AUTHORITY: GREEN (all records valid), with the enforcement truth reprinted: raw git commit outside the supported path NOT_GLOBALLY_PREVENTED'
+- 'Host capability probe for the WO-2 lane: python3 3.11.2; jsonschema 4.10.3, psycopg2 2.9.11, pytest 9.0.2 present; docker 28.5.2 with postgres:16-alpine already local. Recorded because the Required Test Register''s declared commands must run with no install step.'
+- 'observed UTC at issue: 2026-08-19T02:35:05Z (date -u)'
+
+decisions_closed:
+- 'CD-HOLD-001 RELEASED — the Product Owner accepted Blueprint v0.1.0; application code is authorised from WO-2. Released by the Product Authority, not by this seat.'
+- 'CD-HOLD-002 RELEASED — the first Engineer/Assurance pair is dispatched in WO-2, as two separate agents with distinct actor_ids.'
+- 'CD-D-005 RULED by the PO — theirs, owed before WO-3. WO-2 proceeds with zero registered sources; every dial reads UNKNOWN, which is the doctrinally correct empty state. Carried into the Engineer dispatch as an explicit prohibition on inventing sources.'
+- 'CD-D-006 RULED by the PO — decided at R2D2 ratification; loopback-only on DEV throughout WO-2..WO-6. Carried into the dispatch as a bind-address prohibition.'
+- 'CD-AC-006 early boundary build APPROVED by the PO — containers, networks and grants are structural in WO-2; the planted-violation evidence and the public-artefact scan remain WO-5.'
+- 'CD-BP-001 risk ACCEPTED by the PO — the AST checks are never a sole guard.'
+
+decisions_raised:
+- id: CD-FWK-004
+  summary: >
+    PBGv2 cannot represent a Project Lead that is seated while a bounded Engineer or Assurance seat
+    acts. `governance/authority/` admits exactly one record with status ACTIVE; a second makes
+    `pbg boot` return RED with "2 ACTIVE authority records; ambiguous assignment" for EVERY seat,
+    the Project Lead's included. Measured on this project at 2e116ec, not inferred. The consequence
+    bites a specific control: `pbg authority separation` is the PBG-SOD-001 verifier and it requires
+    an ASSURANCE authority record to exist, which on this project cannot lawfully be ACTIVE
+    alongside the Project Lead's. So the framework's own separation verifier cannot be cleared here
+    without breaking boot for every seat.
+  recommendation: >
+    PBGv2 needs either concurrent seat records scoped to a mutation lane, or an explicit
+    DISPATCHED/SUSPENDED lifecycle state, so that separation of duties can be evidenced through the
+    framework rather than around it. Carried to the PBGv2 backlog alongside CD-FWK-001 and
+    CD-FWK-003, all three of which are the same shape: the vendored, single-lane authority model
+    does not fit a project that dispatches sub-agents.
+  default_safe_action: >
+    Sub-agent seats are authorised by durable dispatch records under governance/dispatch/, deriving
+    from CD-AUTH-0001, each naming a distinct actor_id. PBG-SOD-001 is evidenced on this project by
+    the Product Owner's ratified CD-D-002 named-actor route — distinct actor_ids in the dispatch
+    records, in the Build Log, and in the Assurance run record's executed_by.party — and NOT by the
+    framework verifier, which continues to report "This is NOT a pass". The gap is disclosed here
+    rather than papered over. Nothing under pbg/ has been modified (PBG-FWK-013).
+  owner: PRODUCT_AUTHORITY
+
+risks:
+- id: CD-FWK-002
+  summary: >
+    Superseded in part. BL-20260818T180133Z-0002 recorded the expectation that the PBG-CONT-003 and
+    PBG-SOD-001 verifiers would both clear during WO-2. The PBG-SOD-001 verifier will NOT clear, for
+    the reason set out in CD-FWK-004. Recorded now, at the point it became knowable, rather than
+    discovered at the WO-2 close.
+  severity: AMBER
+  owner: PROJECT_LEAD
+  disposition: 'superseding the WO-1 expectation; PBG-CONT-003 (append-only Build Log) continues to
+    accumulate evidence normally'
+- id: CD-RT-001
+  summary: >
+    The WO-2 container set is delivered as DESIGN and nothing is built. PBG-RT-010's own verification
+    note makes CONTAINER_READY_DESIGN with CONTAINER_BUILD_NOT_YET_AUTHORISED a complete and valid
+    state, but it also says container readiness is tested and not asserted. So the non-root proof,
+    the signal-handling and bounded-shutdown proof, the storage-class proof and the image smoke test
+    are OWED, not done, and WO-2 must not be read as having established them.
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: 'owed into WO-3 with the publication layer, when the services first need to run'
+- id: CD-SEC-001
+  summary: 'Unchanged — the pre-commit hook guards the gate, not the archive.'
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: 'accepted as designed'
+- id: CD-BP-001
+  summary: 'Unchanged, and now PO-accepted — the AST register checks are never a sole guard.'
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: 'risk accepted by the Product Owner in PO-ACCEPT-BLUEPRINT-0001'
+- id: CD-FWK-001
+  summary: 'Unchanged — seat attestations unusable in a VENDORED layout.'
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: 'named-actor route per CD-D-002; on the PBGv2 backlog'
+- id: CD-FWK-003
+  summary: 'Unchanged — `pbg log` and `pbg resume` unusable at a vendored root.'
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: 'continuity verified through `pbg boot` only'
+
+blockers: []
+held_actions:
+- 'Container image build, startup and cutover — FORBIDDEN in WO-2 (PBG-RT-010). Authorised in this
+  work order only for one throwaway postgres:16-alpine store used to evidence the grant matrix,
+  bounded by the `cd-store-wo2-` name prefix and destroyed before the seat returns.'
+- 'Ingredient source registration — HELD pending CD-D-005, which is the Product Owner''s. WO-2 ships
+  an empty source registry by design.'
+- 'Public exposure of cd-public — HELD pending CD-D-006 and R2D2. Loopback only.'
+
+status: IN_PROGRESS
+next_safe_action: >
+  Dispatch the Engineer sub-agent CD-ENG-WO2-01 against governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml
+  on branch wo-2-skeleton at /srv/crash-detector-wo2, baselined on the commit that introduces that
+  dispatch record. On READY_FOR_ASSURANCE, issue a SEPARATE Assurance dispatch to a different agent
+  with actor_id CD-ASR-WO2-01, whose PASS on all five planted violations is the WO-2 gate. Record a
+  durable checkpoint at each boundary and stop at the gate for Product Owner review.
+expected_next_actor: ENGINEER

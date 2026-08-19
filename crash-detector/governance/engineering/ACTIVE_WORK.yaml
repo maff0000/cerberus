@@ -2,113 +2,133 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-18T18:01:33Z'
+updated_utc: '2026-08-19T02:35:05Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
-blueprint_version: 0.1.0-PROPOSED
+blueprint_version: 0.1.0-ACCEPTED
 
 active_authority_id: CD-AUTH-0001
-work_type: TASK
+work_type: CHANGE
 objective: >
-  WO-1, bounded: commission the project pre-commit hook as accepted by the Product Owner, and author
-  BLUEPRINT.md — how the ratified PID is to be built — honouring the delivery order in
-  PO-DECISIONS-0001 CD-D-004. Report and stop. The Blueprint goes to the Product Owner for
-  acceptance before any application code.
-current_phase: DESIGN
-current_block: CD-WO-001 — pre-commit hook commissioned; BLUEPRINT.md v0.1.0 authored, PROPOSED
+  WO-2, bounded (BLUEPRINT.md §15): repository skeleton, container set, store schema and grant
+  matrix, dial types, collector framework and source registry, the project Required Test Register,
+  and the five planted violations of §13 proved failing correctly. Delivered by a bounded Engineer
+  dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
+  non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
+  WO-3.
+current_phase: BUILD
+current_block: CD-WO-002 — Engineer dispatch ISSUED (CD-ENG-WO2-01); implementation not yet started
 owner_role: PROJECT_LEAD
-next_actor: PRODUCT_AUTHORITY
+next_actor: ENGINEER
 
 repository: local
 branch: main
 worktree: /srv/crash-detector
-baseline_sha: c291f80057119dcbe610e365350159414547b65a
-last_completed_checkpoint_sha: c291f80057119dcbe610e365350159414547b65a
+mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-001, PBG-GIT-003)'
+baseline_sha: 2e116ec0b9c3f48f9dcd8d8484cf4eb90ddcc3de
+last_completed_checkpoint_sha: 2e116ec0b9c3f48f9dcd8d8484cf4eb90ddcc3de
 continuity_record_commit: PENDING
 working_tree_state: >
-  clean at c291f80 before authoring; BLUEPRINT.md, this record and BL-20260818T180133Z-0002 are the
-  pending commit. The hook commissioning changes no tracked file — it is repository-local git
-  configuration (core.hooksPath) plus a file already inside the pinned pbg/ snapshot.
+  clean at 2e116ec before this checkpoint, apart from four untracked .wo2-* files belonging to the
+  operator's session wrapper, which are not project state and are not committed. The pending commit
+  is governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml, BL-20260819T023505Z-0003 and this record.
 
 completed_items:
-- resumed from the repository record alone, no prior session context — pbg boot GREEN at c291f80,
-  CONTINUITY_MATCH/RESUME_GREEN, no drift between recorded and observed state
-- 'PO-DECISIONS-0001.md and PID v1.0.1 read in full before any work; CD-D-001..004 closed'
-- 'pre-commit hook COMMISSIONED — core.hooksPath=pbg/tools/hooks, repository-local only;
-  hooks status confirms INSTALLED (was NOT_INSTALLED)'
-- 'BLUEPRINT.md v0.1.0 authored and PROPOSED — container architecture, own collectors, data store
-  and grant matrix, dial engine, publication layer, witness layer side-by-side, public/private split
-  in five independent separations, CD-AC-001/002/003/005/012 structural with their planted
-  violations, delivery decomposed as WO-1..WO-6 within CD-D-004''s fixed order'
-- 'two product-content questions escalated rather than resolved — CD-D-005, CD-D-006, each with a
-  recommendation and a default safe action under which work continues'
+- resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
+  blocking_failures empty, the sole UNAVAILABLE being roadmap_identity
+- 'PO-ACCEPT-BLUEPRINT-0001.md read in full: Blueprint v0.1.0 ACCEPTED, CD-D-005 and CD-D-006 ruled,
+  the early CD-AC-006 boundary approved, CD-BP-001 risk accepted. CD-HOLD-001 and CD-HOLD-002 are
+  consequently released by the Product Authority.'
+- 'WO-2 mutation lane established — branch wo-2-skeleton in its own worktree at /srv/crash-detector-wo2'
+- 'CD-FWK-004 discovered by measurement: a second ACTIVE authority record makes pbg boot RED with
+  "ambiguous assignment" for every seat, so sub-agent seats are authorised by durable dispatch
+  records deriving from CD-AUTH-0001, and PBG-SOD-001 is evidenced by the CD-D-002 named-actor route'
+- 'Engineer dispatch issued as a durable record: governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml'
 
 remaining_items:
-- 'Product Owner acceptance of BLUEPRINT.md v0.1.0 — the gate on all application code'
-- 'WO-2: repository skeleton, container set, store schema and grant matrix, dial types, collector
-  framework and source registry, Required Test Register, and the five planted violations'
-- 'ROADMAP.md — not authored. The delivery sequence now lives in BLUEPRINT.md §15 as WO-1..WO-6;
-  whether a separate ROADMAP.md is wanted on top of that is a PO call'
-- 'Required Test Register — population derives from PID §6 and is compared against it
-  (PBG-RT-001); created in WO-2'
+- 'Engineer block A — skeleton, dial types, witness types, collector framework, store schema and
+  grant matrix, container set as design, closed envelope contracts'
+- 'Engineer block B — register checks, Required Test Register over all sixteen PID criteria, the
+  planted violations, and the Engineer''s own run of every declared command'
+- 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
+  the clean tree and on each planted copy, producing run record RTR-WO2-0001'
+- 'PL close: admit RTR-WO2-0001 into required-tests.yaml, run pbg required-tests verify, merge the
+  lane into main, checkpoint, and stop for Product Owner review'
+- 'ROADMAP.md — still not authored; whether one is wanted on top of BLUEPRINT.md §15 is a PO call'
 
 open_decisions:
-- 'CD-D-005: the ingredient set — which inputs feed each dial. PO content; recommendation and default
-  safe action recorded in BLUEPRINT.md §16 and BL-20260818T180133Z-0002. Needed before WO-3, not
-  before WO-2.'
-- 'CD-D-006: the public exposure route for cd-public in PROD. Recommendation: decide at R2D2
-  ratification. Default safe action: loopback-only on DEV throughout.'
+- 'CD-D-005: the ingredient set. RULED by the PO as theirs and owed before WO-3. WO-2 registers zero
+  sources by design; every dial reads UNKNOWN.'
+- 'CD-D-006: the public exposure route. RULED by the PO — decided at R2D2; loopback-only on DEV.'
+- 'CD-FWK-004: PBGv2 cannot represent concurrent seats. Raised to the Product Owner for the PBGv2
+  backlog; the default safe action is in force and disclosed.'
 
 open_ambiguities: []
 
 risks:
-- 'CD-SEC-001 LOW — the commissioned hook guards the gate, not the archive: --no-verify and git
-  plumbing bypass it, and it validates only the authority records a commit touches'
-- 'CD-BP-001 LOW — the AST-based register checks are the one novel instrument in the design; never
-  the sole guard for any criterion'
-- 'CD-FWK-001 AMBER — seat attestations unusable in a VENDORED layout; dispositioned CD-D-002,
-  named-actor route in use, carried to the PBGv2 backlog by the PO'
-- 'CD-FWK-002 AMBER — PBG-CONT-003 and PBG-SOD-001 verifiers NOT_YET_RUN; both clear during WO-2'
-- 'CD-FWK-003 AMBER — `pbg log` and `pbg resume` unusable at a vendored root, one returning a
-  vacuous GREEN; verify continuity through `pbg boot` only'
+- 'CD-FWK-004 AMBER — one ACTIVE authority record maximum; the PBG-SOD-001 verifier cannot clear on
+  this project without breaking boot. Separation is evidenced by distinct named actor_ids instead.'
+- 'CD-FWK-002 AMBER — superseded in part: the WO-1 expectation that the PBG-SOD-001 verifier clears
+  during WO-2 will not be met. PBG-CONT-003 continues to accumulate evidence normally.'
+- 'CD-RT-001 LOW — the container set is delivered as DESIGN; non-root, signal-handling, storage-class
+  and image smoke proofs are OWED into WO-3, not established by WO-2'
+- 'CD-SEC-001 LOW — the pre-commit hook guards the gate, not the archive'
+- 'CD-BP-001 LOW — the AST register checks are never a sole guard; risk accepted by the PO'
+- 'CD-FWK-001 AMBER — seat attestations unusable in a VENDORED layout; named-actor route in use'
+- 'CD-FWK-003 AMBER — pbg log and pbg resume unusable at a vendored root; verify continuity via pbg boot'
 
 blockers: []
 held_actions:
-- id: CD-HOLD-001
+- id: CD-HOLD-003
   status: HELD
   authority: CD-AUTH-0001
   reason_held: >
-    All application code is held until the Product Owner accepts BLUEPRINT.md v0.1.0. CD-D-004.1
-    fixes the Blueprint as the gate on WO-2, and the WO-1 dispatch ends at report-and-stop.
-  next_actor: PRODUCT_AUTHORITY
-  source_reference: 'governance/decisions/PO-DECISIONS-0001.md CD-D-004.1; WO-1 dispatch'
-  silent_execution: PROHIBITED
-- id: CD-HOLD-002
-  status: HELD
-  authority: CD-AUTH-0001
-  reason_held: >
-    No Engineer or Assurance sub-agent is dispatched in WO-1. The first pair is dispatched in WO-2,
-    as two separate agents — PBG-SOD-001 is non-waivable and the seats are never the same agent.
+    Container image build, startup and cutover are not authorised in WO-2 (PBG-RT-010 keeps them
+    separate risk-proportionate actions). The single exception is one throwaway postgres:16-alpine
+    store, name-prefixed cd-store-wo2-, loopback-bound and destroyed before the seat returns, used
+    to evidence the grant matrix against a live catalogue.
   next_actor: PROJECT_LEAD
-  source_reference: 'pbg/controls/sod.yaml PBG-SOD-001; BLUEPRINT.md §15'
+  source_reference: 'pbg/controls/rt.yaml PBG-RT-010; CD-DISPATCH-WO2-ENGINEER.yaml runtime_authorisation'
+  silent_execution: PROHIBITED
+- id: CD-HOLD-004
+  status: HELD
+  authority: CD-AUTH-0001
+  reason_held: >
+    No ingredient source may be registered until the Product Owner issues the CD-D-005 ingredient
+    register. Inventing sources would be inventing product meaning (PBG-AUTH-003, PBG-PID-003).
+  next_actor: PRODUCT_AUTHORITY
+  source_reference: 'PO-ACCEPT-BLUEPRINT-0001.md; BLUEPRINT.md §16'
+  silent_execution: PROHIBITED
+- id: CD-HOLD-005
+  status: HELD
+  authority: CD-AUTH-0001
+  reason_held: >
+    Nothing is publicly reachable until Matt says so. Both surfaces bind 127.0.0.1 on DEV
+    throughout WO-2..WO-6; the exposure route is decided at R2D2 ratification (CD-D-006).
+  next_actor: PRODUCT_AUTHORITY
+  source_reference: 'PO-ACCEPT-BLUEPRINT-0001.md; PID.md §8'
   silent_execution: PROHIBITED
 
 required_evidence:
-- 'hook commissioning is evidenced by `pbg hooks status` output, not by a tracked file — there is no
-  file change to point at, and there should not be'
-- 'BLUEPRINT.md is authored, NOT verified. Assurance verification is a separate artefact and states
-  what was checked against what (PBG-BP-001, PBG-BP-004). No application runtime exists, so nothing
-  in the Blueprint is a runtime observation.'
+- 'the Engineer''s own test runs are implementation evidence and are NOT assurance (PBG-SOD-001)'
+- 'the admitted Required Test Register run must be produced by the Assurance seat and must name its
+  executing party and independence class (REQUIRED-TEST-REGISTER-CONTRACT-v1 check 4)'
+- 'each planted violation must be demonstrated by CONTRAST — the same declared command exiting 0 on
+  the clean subject and non-zero on the violated one. A clean arm that fails proves only that the
+  harness is broken, and a broken harness detects nothing.'
+- 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Hold. BLUEPRINT.md v0.1.0 goes to the Product Owner for acceptance. On acceptance, issue WO-2 as a
-  bounded Engineer dispatch followed by a separate Assurance dispatch. Write no application code
-  before that acceptance.
+  Dispatch Engineer CD-ENG-WO2-01 against governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml,
+  baselined on the commit introducing that record, on branch wo-2-skeleton at
+  /srv/crash-detector-wo2. Then dispatch Assurance CD-ASR-WO2-01 as a SEPARATE agent. Stop at the
+  gate for Product Owner review.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
-  order: BL-20260818T180133Z-0002, PID.md v1.0.1, governance/decisions/PO-DECISIONS-0001.md, and
-  BLUEPRINT.md. The Blueprint is PROPOSED, not accepted — its acceptance is the gate on WO-2.
-  CD-D-005 and CD-D-006 belong to the Product Authority and must not be resolved by the Project
-  Lead; both carry a default safe action, so neither blocks WO-2.
-last_build_log_entry: BL-20260818T180133Z-0002
-status: WAITING_PRODUCT_AUTHORITY
+  order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
+  §13 and §15, and governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml. The Blueprint is ACCEPTED, so
+  application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
+  The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
+  the Product Authority and are already ruled; neither blocks WO-2.
+last_build_log_entry: BL-20260819T023505Z-0003
+status: IN_PROGRESS
