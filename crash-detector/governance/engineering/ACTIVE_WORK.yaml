@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T05:29:00Z'
+updated_utc: '2026-08-19T06:14:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -18,14 +18,17 @@ objective: >
   WO-3.
 current_phase: BUILD
 current_block: >
-  CD-WO-002 BLOCK A IS CLOSED. Increment 3 of 7 COMPLETE at lane SHA d40e5c6, attested by
-  CD-ENG-WO2-01 in BL-20260819T052200Z-0006 (lane 7e9b46e) — A5 store schema and grant matrix, A6
-  container set as DESIGN. 904 unit tests. The CD-D-009 inherited candidate was adopted under
-  attestation: 26 of 37 files unchanged with a stated method for each, 11 corrected. RT-A was
-  discharged (CD-OB-001) — the grant matrix has now been observed in a live catalogue, 150
-  assertions, 0 failures, container and volume destroyed. The seat found CD-ENG-F21, a real SIGTERM
-  deadlock in the inherited material that the Project Lead's read-only probe had passed; the PL has
-  independently re-measured the fix at 0 ignored in 40 runs. Next: increment 4 of 7, BLOCK B.
+  CD-WO-002 BLOCK B in progress. Increment 4 of 7 COMPLETE at lane SHA cbfa7c5, attested by
+  CD-ENG-WO2-01 in BL-20260819T060500Z-0008 (lane 3f03866) — B1, ten standalone register checks
+  under tools/register/, each taking the subject tree as --root, exit 0 clean / non-zero on
+  violation / non-zero with a stated reason on an unmet precondition, never a skip. CD-OB-003
+  discharged: CD-RT-003-GRANT-MATRIX-LIVE is a durable check asserting CD-GM-001..007 from a live
+  catalogue. .dockerignore delivered under CD-D-013. 904 tests.
+  The Project Lead extracted the tree itself and ran all nine stdlib checks clean, then planted its
+  OWN variants: two caught, one ESCAPED. CD-PL-F32 raised HIGH — check_no_execution_interface.py
+  misses execution interfaces that are neutrally named and misses prose entirely, and CD-AC-012 is
+  a gate criterion. It must close before Assurance is dispatched. Next: increment 5 of 7 — close
+  CD-PL-F32 first, then B2 the Required Test Register.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -36,18 +39,19 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: f6ce269ca787dab229836052893e3a5e39779bbd
-lane_head_sha: 7e9b46ee19499b75c8d3d17038d011defe1ee028   # wo-2-skeleton, increment 3 of 7 + its Build Log
+last_completed_checkpoint_sha: e442f6f960fbde071f18dd4f150446eb88f666d9
+lane_head_sha: 3f038665bdd8d79509dbe61d52176d02aee47de7   # wo-2-skeleton, increment 4 of 7 + its Build Log
 continuity_record_commit: PENDING
 working_tree_state: >
-  main clean at f6ce269 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  main clean at e442f6f apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at 7e9b46e on wo-2-skeleton — the Engineer left
-  nothing uncommitted. No protected path was touched across 8723ffb..7e9b46e and pbg/ is intact; no
-  secret value is recorded; no container or volume survives RT-A. The CD-D-009 snapshot at
-  /srv/crash-detector-wo2-candidate-inc3/ still verifies 37 of 37 against its manifest. The pending
-  commit is the CD-D-013 amendment to CD-DISPATCH-WO2-ENGINEER.yaml, BL-20260819T052900Z-0007 and
-  this record.
+  mutation lane /srv/crash-detector-wo2 is CLEAN at 3f03866 on wo-2-skeleton. No protected path was
+  touched across 7e9b46e..3f03866 and pbg/ is intact; no secret value is recorded; no container or
+  volume survives the second RT-A run; plants/ does not yet exist, correctly — B3 is increment 6.
+  NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
+  branch-point copy and will report a stale continuity reference. That is the worktree layout, not
+  drift (CD-ENG-F31 dispositioned in BL-20260819T061400Z-0009). The live record is this one, on
+  main. The pending commit is BL-20260819T061400Z-0009 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -88,16 +92,23 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
-- 'CD-OB-003 — the RT-A probe instrument lives in /tmp, so CD-RT-003-GRANT-MATRIX-LIVE has evidence
-  but no standing guard an auditor can run. B1 must deliver it as a durable check in tools/register/.'
+- 'CD-PL-F32 HIGH, BLOCKING THE ASSURANCE DISPATCH — check_no_execution_interface.py misses a CLASS
+  of violation: an execution interface with a neutral name (submit_instruction(symbol, qty, side))
+  escapes, with or without a docstring saying it routes orders to a broker, because the check reads
+  identifiers and not prose. CD-AC-012 is one of the five gate criteria. Assigned to instance 5 as a
+  named prerequisite, to be fixed by SHAPE and PROSE, never by extending a word list.'
+- 'CD-OB-004 — four live-store properties proved in increment 3 have evidence and no standing guard
+  (first_published_utc immutability, NaN refusal, envelope allowlist, witness-panel constraints).
+  None is a WO-2 gate criterion. Owed at WO-3 with the publication layer.'
 - 'CD-ERR-001 — three confirmed internal inconsistencies in BLUEPRINT §4, ruled by CD-D-010, CD-D-011
   and CD-D-012 with the implementation correct as ruled. NOT corrected in WO-2: amending §4 is a
   substantive clause change needing PO acceptance, and would move the specification underneath the
   Assurance dispatch about to audit against it. Owed as a Blueprint revision BEFORE WO-3.'
 - '.dockerignore at the worktree root — now in the Engineer''s writable_scope by the CD-D-013
   amendment; owed in increment 4.'
-- 'Engineer block B — register checks, Required Test Register over all sixteen PID criteria, the
-  planted violations, and the Engineer''s own run of every declared command'
+- 'Engineer block B remaining — B2 the Required Test Register over all sixteen PID criteria
+  (increment 5), B3 the five planted violations (increment 6), B4 the Engineer''s own run of every
+  declared command on the clean tree and on throwaway copies (increment 7). B1 is DONE.'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
   the clean tree and on each planted copy, producing run record RTR-WO2-0001'
 - 'PL close: admit RTR-WO2-0001 into required-tests.yaml, run pbg required-tests verify, merge the
@@ -174,14 +185,15 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Dispatch Engineer CD-ENG-WO2-01 as instance 4, in the FOREGROUND, against
-  governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml (as amended by CD-D-013) on branch
-  wo-2-skeleton at /srv/crash-detector-wo2, execution base 7e9b46e, for increment 4 of 7: BLOCK B.
-  B1 the register checks under tools/register/ — including the durable
-  CD-RT-003-GRANT-MATRIX-LIVE check that discharges CD-OB-003 — plus the .dockerignore now in
-  scope. Then B2 the Required Test Register over all sixteen PID criteria with latest_admitted_run
-  null, B3 the five planted violations, B4 the seat's own runs of every declared command on the
-  clean tree and on throwaway copies. Commit at every boundary. On READY_FOR_ASSURANCE, write the
+  Dispatch Engineer CD-ENG-WO2-01 as instance 5, in the FOREGROUND, execution base 3f03866, for
+  increment 5 of 7. CD-PL-F32 is a NAMED PREREQUISITE and is closed FIRST — by reasoning about the
+  SHAPE of an execution interface and by reading docstrings and comments, never by adding words to a
+  list, then re-proved against fresh variants nobody has seen. Then B2: required-tests.yaml over all
+  sixteen PID criteria CD-AC-001..016, conforming to REQUIRED-TEST-REGISTER-CONTRACT-v1 as
+  implemented by pbg/tools/pbg/required_tests.py (read that file first — it computes status rather
+  than reading it), pid.content_hash the sha256 of PID.md at the baseline, latest_admitted_run NULL,
+  no status-like key anywhere, and negative_control.evidence_ref RTR-WO2-0001 on the five WO-2
+  criteria. Then increment 6 (B3 plants) and increment 7 (B4). On READY_FOR_ASSURANCE, write the
   exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
   SEPARATE agent as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable). Stop at the
   gate for Product Owner review.
@@ -192,5 +204,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T052900Z-0007
+last_build_log_entry: BL-20260819T061400Z-0009
 status: ACTIVE
