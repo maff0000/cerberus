@@ -776,3 +776,168 @@ This file covers **increment 1** (CD-ASR-F02 and CD-ASR-F03), **increment 2** (C
 **increment 2b** (CD-PL-F54, re-opening CD-ASR-F01).
 Variants for CD-ASR-F04, F05 and F06 are owed by the later increments of the same dispatch and their
 absence here is not a claim about them.
+
+---
+---
+
+# CD-ASR-F04 (MEDIUM) — criterion CD-AC-012 — WO-2R increment 3
+
+**Directory:** `variants/WO-2R/CD-ASR-F04/`
+
+**THE CLASS these attack:** *AN EGRESS ALLOWLIST ENTRY THAT REACHES A BROKER* — closed as the
+class *AN EGRESS ALLOWLIST ENTRY NOBODY DECLARED.* Not "an entry whose name matches a broker
+vocabulary", and emphatically not "an entry that is an IP literal". The auditor put
+`198.51.100.24` where `api.ibkr.com` had been and the check went green, because it recognised
+brokers **by name** and an address has no name to recognise.
+
+**THE STRUCTURE they are aimed at.** Deny by default over `deploy/egress-destinations.yaml`, a
+new in-tree registry read as data by `tools/register/check_egress_no_broker.py`:
+
+* **layer 1, `CD-EGRESS-004`** — an allowlist entry is admissible only if it is, character for
+  character, the `host` of a destination registered in that file whose `services` list names
+  that service. **No recognition is performed on an entry that is not**, so there is no pattern
+  to write around;
+* **layer 2, `CD-EGRESS-002`** — the broker concept vocabulary and the known-operator denylist
+  **survive**, applied to every registered `host` and `operator`, to every allowlist entry as
+  written, and to every `pending` entry. Neither layer is sole;
+* **layer 3, `CD-EGRESS-005`** — closed key sets on `x-egress`, on a destination and on the
+  registry document, asserted by **equality** with a declared member set;
+* **layer 4, `CD-EGRESS-006`** — a **positive** hostname shape, uniqueness, an operator, a
+  purpose, a `declared_in` clause, and services that exist and declare `ALLOWLIST`;
+* **layer 5, the precondition** — an absent or unparseable registry is `exit 3`, never a pass.
+
+**WHY THE ROUTES BELOW ARE AIMED AT THE FIX AND NOT AT THE OLD DEFECT.** Writing more address
+spellings would prove nothing: layer 1 refuses every one of them for the same reason and without
+looking. The interesting question is what a deny-by-default registry **still lets through**, so
+six of the seven attack the registry, the key set, the service scoping or the file's own
+existence, and the seventh is the positive control that proves the closure does not forbid the
+product.
+
+**Clean-arm command for every row below:**
+`python3 tools/register/check_egress_no_broker.py --root .` → **exit 0**, `PASS — 53 assertions,
+0 violations` at lane `4933376`.
+
+### E05 — `E05-broker-by-ip-literal.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 (MEDIUM) — the whole of the CD-AC-012 AMBER |
+| **proposition attacked** | A broker host added to any container's egress allowlist is a violation. |
+| **route** | `198.51.100.24` into `cd-collectors`' `x-egress.hosts` **in place of a hostname**, with an innocent comment. Transcribed from the auditor's own entry. |
+| **why it escaped at the gate** | The check judged a host by tokenising its **domain labels** against an execution vocabulary and its **registrable domain** against a known-operator denylist. An address has neither. **Reproduced by this seat before repairing anything**: applied to an extraction of `cc961bf`, `exit 0`, `PASS — 44 assertions, 0 violations`. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/compose.yaml:380` · rule `CD-EGRESS-004: an allowlist entry is not a registered destination` · *"service `cd-collectors` may reach `198.51.100.24`, which is not registered in deploy/egress-destinations.yaml. THIS IS A VIOLATION BY DEFAULT: nothing was recognised about `198.51.100.24` and nothing needed to be. … The admissible set at this commit is EMPTY."* |
+| **the point** | The refusal names the entry **without having recognised anything about it**. Layer 2 never runs on it. That is the difference between closing the class and catching the instance. |
+
+### V18 — `V18-registered-for-another-service.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — a variant of this seat's own, against its own structure |
+| **proposition attacked** | Is a registry entry a grant to **named services**, or a global permit? |
+| **route** | `panel.example.org` registered properly — six fields, well-formed host, innocent operator `Example Panel Data Ltd`, `declared_in` cited — **for `cd-witness`**, and then named in **`cd-collectors`**' allowlist. |
+| **why it is a DIFFERENT route from anything on the known set** | The known set contains one CD-AC-012 egress route and it is a **spelling** attack. This one has no spelling problem at all: it satisfies the registry schema completely, passes the positive hostname shape, passes the vocabulary and passes the denylist. It attacks the **scope** of a grant, which did not exist as a concept before this increment. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/compose.yaml:380` · rule `CD-EGRESS-004: a destination is registered, but not for this service` · *"…which IS registered in deploy/egress-destinations.yaml — but for cd-witness, not for `cd-collectors`. A registry entry is a grant to named services, not a global permit."* |
+
+### V19 — `V19-posture-through-an-unread-key.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — a variant of this seat's own |
+| **proposition attacked** | Can a destination be declared through a field the guard does not read? |
+| **route** | `hosts: []` left untouched and honest; a sibling `hosts_extra:` added to the same `x-egress` block carrying `198.51.100.24`. |
+| **why it is a DIFFERENT route** | It is **not an allowlist entry**, so layer 1 never sees it — `CD-EGRESS-004` iterates `hosts` and `hosts` is empty. Nothing on the known set attacks the reader's own field vocabulary. This is `CD-EGRESS-003`'s argument ("a check that skips a service it does not recognise is bypassed by adding a service") applied one level down to **keys**, and it is the route that would otherwise have let the WO-3 lane inherit a declaration with a second, unread allowlist in it. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/compose.yaml:379` · rule `CD-EGRESS-005: x-egress declares an unknown key` · *"…the contract admits exactly enforced_by, hosts, pending, policy. An unknown key is a violation and not an extension."* |
+
+### V20 — `V20-register-the-address-itself.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — **the attack on this seat's own fix**, and the most important row here |
+| **proposition attacked** | Does deny-by-default merely move the hole one file up? |
+| **route** | Register `198.51.100.24` as a destination — `id`, `operator: Example Market Data Ltd`, a plausible `purpose`, a `declared_in` clause, `services: [cd-collectors]` — and then name it in `cd-collectors`' allowlist. |
+| **why it is a DIFFERENT route** | E05 attacks the allowlist. This attacks the **registry**, which is where E05's repair put the trust. It passes layer 1 completely: the destination IS declared, for the right service. And **layer 2 cannot judge it at all** — an address has no registrable domain for the denylist to read and no labels for the vocabulary to tokenise, which is the whole of why E05 worked in the first place. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 2 violation(s)`. `deploy/egress-destinations.yaml:133` · rule `CD-EGRESS-006: a destination host is not a declarable hostname` · *"…its final label `24` is not an alphabetic top-level domain of at least two characters. … This clause is not an address detector: it never asks what the value IS, only whether it is the one admissible shape."* And `deploy/compose.yaml:380` · `CD-EGRESS-004`, because a malformed entry registers nothing, so the registry **fails closed** rather than widening the admissible set. |
+| **the point** | The positive hostname shape is what stops the registry becoming the hole the allowlist used to be, and the reason it is a hostname is stated rather than assumed: the only offline evidence of what a destination reaches is its registrable domain, so a destination layer 2 cannot judge must not be declarable. |
+
+### V21 — `V21-innocent-host-broker-operator.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — a variant of this seat's own |
+| **proposition attacked** | Can a broker be admitted by registering a hostname that carries no execution word? |
+| **route** | `gateway.example.net` — no concept token, on no denylist, perfectly shaped — registered for `cd-collectors` with `operator: Interactive Brokers`, and named in the allowlist. |
+| **why it is a DIFFERENT route** | It passes layer 1 in full and passes the **host half** of layer 2. Nothing on the known set attacks the attribution fields; E05 attacks the host string only. This row is the measured evidence for **boundary 3** of the declared limit — the claim that `purpose` prose is unjudged but the `operator` field is judged, and that this carries the archetypal case. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/egress-destinations.yaml:134` · rule `CD-EGRESS-002: a REGISTERED destination is a broker` · *"…declares operator `Interactive Brokers`, and its name carries the execution concept(s) brokers. … Registering it does not make it admissible: deny-by-default decides what nobody declared, and this layer decides what somebody declared and should not have."* |
+
+### V22 — `V22-registered-for-a-no-egress-service.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — a variant of this seat's own |
+| **proposition attacked** | Is a registry entry harmless while no allowlist names it? |
+| **route** | `data.example.org` registered for **`cd-engine`**, with **no allowlist entry anywhere**. `cd-engine`'s `hosts` stays `[]`, so `CD-EGRESS-001` is satisfied and `CD-EGRESS-004` has nothing to iterate. |
+| **why it is a DIFFERENT route** | Every other row here writes something into a `hosts` list. This one writes nothing into any allowlist at all, and is invisible to every rule that reads one. The declaration that BLUEPRINT §13's no-egress container may reach a host is exactly the kind of inherited defect the Product Owner ordered closed *before* the WO-3 lane reads it. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 1**, `FAIL — 1 violation(s)`. `deploy/egress-destinations.yaml:138` · rule `CD-EGRESS-006: a destination is registered for a no-egress service` · *"…names service `cd-engine`, which declares policy 'NONE'. … a destination registered for one of them is a declaration that contradicts the criterion even before any allowlist names it."* |
+
+### V23 — `V23-delete-the-registry.patch`
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — a variant of this seat's own |
+| **proposition attacked** | What does a deny-by-default guard do when the thing it denies against is gone? |
+| **route** | Delete `deploy/egress-destinations.yaml` outright. The cheapest attack on any registry structure, and the one a hurried author actually makes. |
+| **why it is a DIFFERENT route** | It attacks the **precondition** rather than the content. Nothing on the known set attacks a guard's dependency. Had the check read a missing registry as "nothing is registered, therefore nothing is wrong", the entire closure would be one `rm` away. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed refusal** | **exit 3**, `CD-RT-012-EGRESS-NO-BROKER: PRECONDITION_NOT_MET` · *"deploy/egress-destinations.yaml does not exist in this subject tree. … An absent registry must not read as an empty one: an empty registry is a decision somebody wrote down, and an absent one is a file somebody removed."* Non-zero with a stated reason, never a pass and never a skip (`PBG-CI-002`). |
+
+### V24 — `V24-a-legitimate-destination-must-pass.patch` — **THE POSITIVE CONTROL. THIS ONE MUST PASS.**
+
+| | |
+|---|---|
+| **finding** | CD-ASR-F04 — the false-positive obligation |
+| **proposition attacked** | Does the closure forbid the product? A closure that does is not a closure. |
+| **route** | `data.example.org`, operator `Example Data Ltd`, a real purpose, a `declared_in` clause, registered for `cd-collectors` — and named in `cd-collectors`' own allowlist. Exactly what a legitimate WO-3 ingredient source will look like once `CD-D-005` lands. |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+| **observed** | **exit 0**, `PASS — 67 assertions, 0 violations`. **NOT a refusal, and that is the result being reported.** |
+| **and it demonstrates the derivation** | The assertion count moves from **53** to **67** with the registry entry, because the guard's subject is **the artefact** and not a constant. Change the registry and the subject follows; there is no permitted host named anywhere in the script and there cannot be one. That is the `proof_standard`'s structural requirement, measured rather than argued. |
+| **honest note** | Under V24 **two tests in `tests/test_egress_destination_registry.py` fail by design** — `test_wo2_registers_no_destination_at_all` and `test_no_service_names_any_host_in_its_allowlist` — because WO-2's declared state is an empty registry and both tests say so in their own docstrings. The **declared command** for this test id is the register check, and it exits 0. Disclosed rather than smoothed over. |
+
+## Summary of what was refused by what — increment 3
+
+| variant | route class | layer that refused it | exit |
+|---|---|---|---|
+| E05 | broker by IP literal in an allowlist | `CD-EGRESS-004` deny by default | **1** |
+| V18 | registered, wrong service | `CD-EGRESS-004` service scoping | **1** |
+| V19 | posture through an unread key | `CD-EGRESS-005` closed key set | **1** |
+| V20 | register the address itself | `CD-EGRESS-006` positive host shape (+ `004`) | **1** |
+| V21 | innocent host, broker operator | `CD-EGRESS-002` layer 2 on `operator` | **1** |
+| V22 | registered for a no-egress service | `CD-EGRESS-006` service policy | **1** |
+| V23 | delete the registry | precondition, fail closed | **3** |
+| V24 | a legitimate destination | **none — it PASSES, by design** | **0** |
+
+**Four honest observations about that table.** First, **no two rows are refused by the same
+clause**, which is the spread this directory is supposed to show and is the opposite of a guard
+fitted to a list. Second, **every row was written against the fix, not against the finding** —
+the only spelling attack here is E05 itself, because a second spelling would be refused by the
+same clause without adding a fact. Third, **layer 2 refused exactly one row** (V21) and that is
+the honest measure of its worth: it is a floor, and the declared limit says so. Fourth, and it
+is the row that should be read hardest, **nothing here proves a registered hostname reaches what
+its operator claims** — that is boundary 2 of the declared limit and it reads **NOT PROVED TO BE
+CARRIED ANYWHERE**, because detecting it needs the network and the network is prohibited. The
+next auditor's strongest ground is a *lie in the registry*, and no variant in this directory
+closes it.
+
+## The one route this seat looked for and did NOT close
+
+`extra_hosts:` on a service maps a name to an address in the container's `/etc/hosts`. It is
+outside this check's subject and is declared as **boundary 5**, reading **NOT PROVED TO BE
+CARRIED ANYWHERE**. It is raised against this seat's own work as `CD-ENG-WO2R-F12` and owed at
+WO-3 with the egress lane. It is written here, in the exclusion set, rather than left for the
+auditor to discover, because a route the implementing seat knows about and does not disclose is
+worth less than one it never thought of.

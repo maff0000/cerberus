@@ -1,0 +1,33 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 21ebc42..15cf6cc 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -375,7 +375,9 @@ services:
+       # With nothing registered there is nothing to fetch, so an empty allowlist is not
+       # merely safe, it is the accurate description of this service in WO-2.
+       policy: ALLOWLIST
+-      hosts: []
++      hosts:
++        # A legitimately registered destination, used by its own service.
++        - data.example.org
+       pending:
+         - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
+diff --git a/deploy/egress-destinations.yaml b/deploy/egress-destinations.yaml
+index 5623959..ce7d4c7 100644
+--- a/deploy/egress-destinations.yaml
++++ b/deploy/egress-destinations.yaml
+@@ -128,4 +128,12 @@ contract: CD-EGRESS-DESTINATION-REGISTRY-v1
+ # a `#`.
+ # -----------------------------------------------------------------------------------------
+ 
+-destinations: []
++destinations:
++  - id: DEST-DATA-001
++    host: data.example.org
++    operator: Example Data Ltd
++    purpose: >
++      Read-only reference series for the equity dial's price inputs.
++    declared_in: "CD-D-005 — the ingredient set"
++    services:
++      - cd-collectors

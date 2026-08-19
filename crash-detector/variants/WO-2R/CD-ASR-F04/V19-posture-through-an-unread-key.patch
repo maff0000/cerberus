@@ -1,0 +1,14 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 21ebc42..7c725e4 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -376,6 +376,9 @@ services:
+       # merely safe, it is the accurate description of this service in WO-2.
+       policy: ALLOWLIST
+       hosts: []
++      hosts_extra:
++        # Not an allowlist entry. A sibling field, read by nothing.
++        - 198.51.100.24
+       pending:
+         - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"

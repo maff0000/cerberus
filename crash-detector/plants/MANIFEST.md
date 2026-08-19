@@ -51,6 +51,21 @@ assurance.
 > `CD-RT-002-TYPE-NO-ARITHMETIC` row. CD-AC-002's three-test independence was re-measured
 > under that plant at increment 2b and is intact.
 >
+> **WO-2R INCREMENT 3 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F04 made an
+> egress allowlist entry DENY BY DEFAULT against a new in-tree destination registry
+> (`deploy/egress-destinations.yaml`). **ALL ELEVEN PATCHES STILL APPLY CLEANLY AND ALL ELEVEN
+> STILL CONTRAST**, re-run as a set by this seat against both the increment-3 tree and a pristine
+> extraction of `cc961bf` for comparison. **NO PATCH WAS REGENERATED, WEAKENED OR DELETED**
+> (CD-D-033). Ten exit `1`; `CD-RT-003-GRANT-MATRIX-LIVE` exits `3` PRECONDITION_NOT_MET for want
+> of a live store, exactly as it does on the clean tree — its CONTRAST was again NOT re-run, for
+> the same reason as at increments 2 and 2b, and that is disclosed rather than implied.
+> **ONE FAILURE SIGNATURE GREW:** `CD-RT-012-EGRESS-NO-BROKER` went from `FAIL — 1 violation(s)`
+> to `FAIL — 2 violation(s)`. The patch is unchanged and its `api.ibkr.com` now fails TWO
+> independent layers — deny-by-default (`CD-EGRESS-004`, because nobody registered it) and the
+> known-operator denylist (`CD-EGRESS-002`, unchanged) — and the phrase the row names as its
+> confirmation, *"It carries no concept word at all"*, is still printed. The full account is in
+> that row. Every other row's signature is byte-identical before and after.
+>
 > It is a set of *negative controls* an INDEPENDENT seat applies and runs for
 itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
 
@@ -865,20 +880,39 @@ allowlist entry is nevertheless a route from this system to a venue that accepts
 instructions. CD-EGRESS-002's own wording insists the question is *what kind of thing lives
 there*, not what the request happens to be for today.
 
-**Expected failure signature.** Exit **1**, `FAIL — 1 violation(s)`:
+**Expected failure signature — UPDATED AT WO-2R INCREMENT 3, and the plant is STRONGER, not
+weakened.** Exit **1**, `FAIL — 2 violation(s)` (it was **1** up to and including `cc961bf`):
 
 ```
-VIOLATION  deploy/compose.yaml:324
+VIOLATION  deploy/compose.yaml:380
+    rule: CD-EGRESS-004: an allowlist entry is not a registered destination
+    what: service `cd-collectors` may reach `api.ibkr.com`, which is not registered in
+          deploy/egress-destinations.yaml. THIS IS A VIOLATION BY DEFAULT: nothing was
+          recognised about `api.ibkr.com` and nothing needed to be. ...
+VIOLATION  deploy/compose.yaml:380
     rule: CD-EGRESS-002: an allowlist names a broker
     what: service `cd-collectors` may reach `api.ibkr.com`, and ibkr.com is a known broker,
           exchange or order-routing operator. It carries no concept word at all, which is
           precisely why a vocabulary rule alone would let it through. ...
 ```
 
-The phrase *"It carries no concept word at all"* in the check's own output is the
-confirmation that rule 2 fired and rule 1 did not — i.e. that the denylist did the work. A
-run that reports the violation with a `carries the execution concept(s) ...` reason has
-matched something else and the plant should be re-read.
+**THE PATCH WAS NOT CHANGED.** It applies byte-for-byte as written and violates exactly the
+same proposition; only the line number moved (324 → 380), because the compose file's egress
+contract block grew when `CD-EGRESS-004`, `-005` and `-006` were declared in it. What changed is
+that the same entry now fails **two independent layers** instead of one: deny-by-default
+(`CD-EGRESS-004`, because nobody registered `api.ibkr.com` as a destination) and the
+known-operator denylist (`CD-EGRESS-002`, unchanged).
+
+The phrase *"It carries no concept word at all"* in the check's own output is **still printed**
+and is still the confirmation that rule 2 fired and rule 1 did not — i.e. that the denylist did
+the work. A run that reports the `CD-EGRESS-002` violation with a `carries the execution
+concept(s) ...` reason has matched something else and the plant should be re-read.
+
+**Why this row was updated rather than the plant regenerated (CD-D-033).** The plant still
+applies and still contrasts, so there was nothing to regenerate; deleting or rewriting it is
+prohibited and neither was done. What was owed was the honest failure signature, because a
+manifest row stating `FAIL — 1 violation(s)` against a tree that produces two is a record an
+auditor would rightly report as drift.
 
 **Not attacked by this plant, and named so the gap is visible:** the *other* half of
 CD-EGRESS-002's proposition — any egress at all granted to `cd-engine`, `cd-public`,
