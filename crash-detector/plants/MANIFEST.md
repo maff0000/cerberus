@@ -560,3 +560,185 @@ sweep is not covering what its name claims.
 exit **0** — `check_no_numeric_default.py` included, even though a `0.0` now reaches a panel
 value on the serving path. This violation is visible to exactly one instrument, and CD-AC-005
 has exactly one declared test.
+
+---
+---
+
+# CD-AC-012 — No execution pathway exists
+
+> PID §6: a test asserts the codebase contains no broker, order or execution interface —
+> **advisory-only is STRUCTURAL, not policy**. That distinction is the whole criterion. A
+> policy saying "we do not trade" is a sentence somebody can change in an afternoon; a
+> codebase with no order interface in it, no broker SDK in its lockfile and no container
+> that may reach a broker is a different kind of promise.
+>
+> Three independent tests, because the pathway can be opened **in source**, **in a
+> dependency**, or **in the network posture**, and closing two of the three closes nothing.
+> Each plant below opens exactly one of them, and each was run against the other two.
+
+**Read this before judging the first plant.** `CD-RT-012-NO-EXECUTION-INTERFACE` carries a
+**DECLARED LIMIT**, written out in the header of
+`tools/register/check_no_execution_interface.py`, in its `required-tests.yaml` entry and in
+its execution contract (CD-D-014, bounded by CD-D-015). It states in six numbered boundaries
+what the check does **not** catch — deliberate euphemism among them. Per CD-D-014, a
+CD-AC-012 variant an auditor plants that lands beyond that boundary is a finding **against
+the declaration** — *was the limit honestly drawn?* — and not an automatic RED against the
+guard. This seat did not plant beyond the boundary and does not claim the boundary is
+narrow; it claims only that the boundary is written down.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-012-NO-EXECUTION-INTERFACE` |
+| **patch** | `plants/CD-AC-012/CD-RT-012-NO-EXECUTION-INTERFACE.patch` |
+| **command** | `python3 tools/register/check_no_execution_interface.py --root .` |
+
+**Proposition violated.** *The application source contains no order-entry path.* The patch
+adds `src/crash_detector/backtest/paper_book.py` — a paper book "so a published reading can
+be scored against what it implied", with the adapter left as a stub and a comment saying
+nothing reaches a live venue in WO-2.
+
+**Why this is the proposition and not a token.** The story is the one that actually opens
+this door in an advisory product: nobody sets out to build an execution pathway, they build
+a backtest harness, and the harness needs a shape for an intention. The shape is an order
+ticket, and once the type and the entry point exist the remaining distance to a live venue
+is the adapter nobody has written yet. PID §2's answer is that the shape itself is the
+thing forbidden.
+
+The patch deliberately contains **three different kinds of subject** so that no single layer
+carries the result:
+
+* `place_order(symbol, quantity, side, limit_price, venue)` — the named instance, which L1
+  catches on `place` applied to `order`;
+* `record(instrument, size, direction, destination)` — **the same order ticket under a name
+  with no execution word in it**. L1 has nothing to say about `record`. It is caught by L2,
+  which reads the field set and never reads the name at all;
+* `class Ticket` — a frozen dataclass carrying the same five fields, caught by L2 as a
+  *class* data model rather than as a callable signature.
+
+**Expected failure signature.** Exit **1**, `FAIL — 6 violation(s)` in
+`src/crash_detector/backtest/paper_book.py`, spread across all three layers:
+
+```
+:16  execution interface (signature shape)   class `Ticket` takes an ORDER TICKET: destination=`venue`,
+                                             instrument=`symbol`, price=`limit_price`, quantity=`quantity`, side=`side`
+:26  execution interface (signature shape)   function `place_order` takes an ORDER TICKET: (same five)
+:26  execution interface (definition)        `place_order` applies the transmission verb `place`
+                                             to the tradeable noun `order`
+:31  execution interface (signature shape)   function `record` takes an ORDER TICKET: destination=`destination`,
+                                             instrument=`instrument`, quantity=`size`, side=`direction`
+:12  execution interface declared in prose   "place_order"
+:27  execution interface declared in prose   "Write one intention into the paper book and hand it
+                                             to the venue adapter" — trade-lifecycle act `book` with `venue`
+```
+
+**The line to check is `:31`.** If the run reports the `place_order` violations but not
+`record`, the guard has caught the instance and lost the class: L2 is the layer that makes
+renaming useless, and `record` is the only subject in the patch that tests it in isolation.
+
+**Sibling arms under this plant, observed by this seat:** `check_lockfile_denylist.py` exit
+**0** and `check_egress_no_broker.py` exit **0**. An order-entry path can exist in the source
+of a project whose dependencies and network posture are both spotless.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-012-LOCKFILE-DENYLIST` |
+| **patch** | `plants/CD-AC-012/CD-RT-012-LOCKFILE-DENYLIST.patch` |
+| **command** | `python3 tools/register/check_lockfile_denylist.py --root .` |
+
+**Proposition violated.** *No broker, exchange or order-routing SDK appears in any
+dependency manifest.* The patch adds `ib-insync==0.9.86` to `[project].dependencies` in
+`pyproject.toml` and to `requirements.txt`, with the comment "Market data for the equity
+dial's price inputs ... only the historical-bars call is used".
+
+**Why this is the proposition and not a token.** `ib_insync` is a full Interactive Brokers
+client. The comment is true and irrelevant: the distribution being present makes order entry
+one `import` away and needs no further dependency review to become real, because the review
+already happened and it said yes. That is the whole argument for scanning the manifest
+rather than the code — the code that uses it does not have to exist yet.
+
+**The name carries no execution word.** `ib-insync` tokenises to `{ib, insync}`; neither is
+`broker`, `order`, `trade`, `execution`, `oms`, `ems`, `fix` or `exchange`. The token rule —
+the rule that generalises to an SDK nobody has heard of — does **not** fire here. This plant
+is caught only by the named denylist, which is why the check carries both rules and says in
+its own output that the denylist is a **floor and not an oracle**.
+
+**Why the plant is in `pyproject.toml` and `requirements.txt` and NOT in
+`requirements.lock`.** A lockfile entry needs a `--hash=sha256:...` line, and this seat will
+not write a digest it did not compute over bytes it fetched. Inventing one would be
+recording a false observation in a governed artefact, which is worse than the narrower
+plant. The two manifests it does touch are where a human adds a dependency; the lock is
+generated from them. The lock ARM of this check is therefore **not exercised by this plant**,
+and that is stated rather than left to be discovered.
+
+**Expected failure signature.** Exit **1**, `FAIL — 2 violation(s)`:
+
+```
+VIOLATION  pyproject.toml:36      rule: broker SDK in a dependency manifest
+    what: `ib-insync` is a known broker, exchange or order-routing SDK. ... Declared in [project].dependencies.
+VIOLATION  requirements.txt:20    rule: broker SDK in a dependency manifest
+    what: `ib-insync` is a known broker, exchange or order-routing SDK. ... Declared in requirements.txt.
+```
+
+Both must appear. One alone means only one manifest was read.
+
+**Sibling arms under this plant, observed by this seat:** `check_no_execution_interface.py`
+exit **0** and `check_egress_no_broker.py` exit **0**. Nothing in the source imports it yet —
+which is exactly the state this check exists to refuse.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-012-EGRESS-NO-BROKER` |
+| **patch** | `plants/CD-AC-012/CD-RT-012-EGRESS-NO-BROKER.patch` |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+
+**Proposition violated.** *No container's egress allowlist names a broker.* The patch puts
+`api.ibkr.com` into `cd-collectors`' `x-egress.hosts`, commented "Market data for the equity
+dial's price inputs. Read-only historical bars."
+
+**Why this is the proposition and not a token.** The host chosen is the one the check's own
+docstring names as *"the single most likely real-world instance"*: `ibkr.com` contains **no
+execution concept word at all**. Tokenised, its labels are `{api, ibkr, com}` — not
+`broker`, not `order`, not `trade`, not `exchange`. The concept-vocabulary rule does not fire
+on it. Only the registrable-domain denylist does. A guard built from a word list alone
+reports this tree clean while the collectors hold standing permission to talk to a brokerage.
+
+And the intent behind the entry is genuinely innocent, which is the point: a broker really is
+a market-data vendor, the request really would be read-only historical bars, and the
+allowlist entry is nevertheless a route from this system to a venue that accepts
+instructions. CD-EGRESS-002's own wording insists the question is *what kind of thing lives
+there*, not what the request happens to be for today.
+
+**Expected failure signature.** Exit **1**, `FAIL — 1 violation(s)`:
+
+```
+VIOLATION  deploy/compose.yaml:324
+    rule: CD-EGRESS-002: an allowlist names a broker
+    what: service `cd-collectors` may reach `api.ibkr.com`, and ibkr.com is a known broker,
+          exchange or order-routing operator. It carries no concept word at all, which is
+          precisely why a vocabulary rule alone would let it through. ...
+```
+
+The phrase *"It carries no concept word at all"* in the check's own output is the
+confirmation that rule 2 fired and rule 1 did not — i.e. that the denylist did the work. A
+run that reports the violation with a `carries the execution concept(s) ...` reason has
+matched something else and the plant should be re-read.
+
+**Not attacked by this plant, and named so the gap is visible:** the *other* half of
+CD-EGRESS-002's proposition — any egress at all granted to `cd-engine`, `cd-public`,
+`cd-private` or `cd-store`, the four services BLUEPRINT §13 gives none. That half is asserted
+by CD-EGRESS-001 (policy `NONE`, empty `hosts`, and attachment only to `internal: true`
+networks) and is exercised on the clean arm, not by a plant here. One test, one plant; an
+auditor wanting the second half covered should say so as a finding about coverage rather
+than read this row as claiming it.
+
+**Collateral observed by this seat.**
+`PYTHONPATH=src python3 -m pytest tests/test_deploy_container_set.py -q` →
+`test_no_allowlist_anywhere_names_a_host` fails, 82 passed. That test is the WO-2 boundary
+assertion that the allowlists are *empty*, which is a stronger and narrower claim than "name
+no broker"; it sees the same change from the other side.
+`check_no_execution_interface.py`, `check_lockfile_denylist.py` and
+`check_base_image_digest_pin.py` all stay at exit **0**.
