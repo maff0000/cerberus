@@ -174,3 +174,39 @@ somewhere the defect is not.
 
 An unproved hand-off is written as **"NOT PROVED TO BE CARRIED ANYWHERE"**, which is honest and
 leaves the residue visible.
+
+## CD-RULE-007 — a continuity write is not complete until `pbg boot` has read it back
+
+**Source:** PROJECT LEAD, `CD-PL-F64`, `BL-20260819T160900Z-0029`. Effective 2026-08-19.
+**Status:** ACTIVE.
+
+Any commit that changes `governance/engineering/ACTIVE_WORK.yaml` must re-run
+
+```bash
+PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot
+```
+
+after the edit and **record the verdict in the Build Log entry for that same boundary**. A follow-up
+commit that resolves `continuity_record_commit` from `PENDING` may write **that field and nothing
+else**.
+
+**Why:** `ACTIVE_WORK.yaml` was semantically invalid — and `pbg boot` RED with
+`CONTINUITY_SEMANTIC_INVALID/RESUME_BLOCKED` — from `30f5c87` through `f7a49e5`, across two whole
+increments. `last_completed_checkpoint_sha` and `continuity_record_commit` both read `8ca0eed`, an
+equality the schema forbids in terms because the first field "is the last SOURCE checkpoint, NEVER
+the commit containing this file, which would be circular". It was introduced by a commit whose
+stated purpose was to *repair* the `CD-PL-F36` class in that same field: it correctly resolved
+`PENDING`, and in the same two-line diff overwrote the other field with the same value.
+
+Two reconciliations were written on top of a record the framework was already refusing, and neither
+noticed, because both edited the file **by hand**. The framework's own writer
+(`continuity.checkpoint`) validates, writes a `.tmp`, reads it **back**, validates again, and
+refuses the whole update if any stage fails — nothing becomes canonical until it has been read back.
+Every hand edit forfeits that guarantee. This rule restores it with one command.
+
+**It closes a class, not an instance.** Banning this field pair would stop one spelling of one
+defect; re-running the validator catches any schema or semantic defect the record can carry,
+including ones nobody has thought of. The shared door is the read-back, and this is the door.
+
+**It is checkable from the Build Log alone:** an entry that changes a continuity record and records
+no boot verdict is a breach visible on its face.

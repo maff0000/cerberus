@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T15:51:05Z'
+updated_utc: '2026-08-19T16:09:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -407,6 +407,34 @@ current_block: >
   asserting only "non-zero" learns less than the output holds) and F19 (top-level anchors only,
   routed to the _yamlmin dispatch rather than widening its own bound) are all CONFIRMED. CD-D-056:
   PL-U1/U5/U6b join the exclusion set.
+  FIFTH RUNTIME TERMINATION. The Project Lead process that reconciled increment 4 was killed by its
+  harness at 2026-08-19T16:00:19Z on the two-hour ceiling, nine minutes after committing f7a49e5.
+  The resumed seat reconciled in BL-20260819T160900Z-0029. NOTHING WAS LOST AND NOTHING WAS
+  UNCOMMITTED: the lane is clean at be34fe4 with zero lines from `git status --porcelain`, `git diff
+  --stat` and `git diff --cached --stat`, main is clean at f7a49e5 apart from untracked operator
+  wrapper files, and increment 5 had NOT been dispatched. CD-D-007's suspicion procedure was applied
+  and found no seat work to adjudicate.
+  WHAT THE RESUMED SEAT DID FIND IS A CONTINUITY DEFECT IN THIS FILE. CD-PL-F64 (MEDIUM): `pbg boot`
+  returned RED — CONTINUITY_SEMANTIC_INVALID/RESUME_BLOCKED — because last_completed_checkpoint_sha
+  and continuity_record_commit both read 8ca0eed, an equality the schema forbids in terms ("the last
+  SOURCE checkpoint. NEVER the commit containing this file, which would be circular"). MEASURED, not
+  inferred: replaying continuity.validate() over `git show <sha>:governance/engineering/
+  ACTIVE_WORK.yaml` returns complete/OK at 8ca0eed and semantic-invalid at 30f5c87, 92cc9cc and
+  f7a49e5. The defect was introduced by 30f5c87, whose entire stated purpose was to REPAIR the
+  CD-PL-F36 class in the same field — it resolved continuity_record_commit from PENDING to 8ca0eed
+  and, in the same commit, overwrote last_completed_checkpoint_sha with that same value. TWO
+  SUBSEQUENT CHECKPOINTS WERE WRITTEN ON TOP OF A RECORD THE FRAMEWORK WAS ALREADY REFUSING, and
+  neither the increment-3b nor the increment-4 reconciliation noticed, because both edited this file
+  by hand and neither re-ran `pbg boot` afterwards. THE MECHANISM IS THE FINDING: hand-editing
+  ACTIVE_WORK.yaml bypasses the framework's own write-then-read-back path, which exists precisely so
+  that nothing becomes canonical until it has been validated. Repaired at this boundary —
+  last_completed_checkpoint_sha resolved to f7a49e58f7ccb2966b174c7feb83f131ea6b3dcd with `git
+  rev-parse` and `git cat-file -t`, continuity_record_commit returned to PENDING, which is the only
+  truthful value at write time. CD-RULE-007 recorded to close the class: a continuity write is not
+  complete until `pbg boot` has been re-run and its verdict recorded in the same Build Log entry,
+  and a follow-up commit resolving PENDING may write that field and nothing else. The stale
+  next_safe_action (it still said DISPATCH INCREMENT 3, three increments behind) and the stale
+  working_tree_state (main at 8a50355, lane at 9aea4ef) were corrected in the same repair.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -417,7 +445,17 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 8ca0eed  # WO-2R increment 3 RECONCILED and NOT ACCEPTED (CD-D-044). RESOLVED, not transcribed: see CD-PL-F36 for why this field is verified with `git cat-file -t` before it is written.
+last_completed_checkpoint_sha: f7a49e58f7ccb2966b174c7feb83f131ea6b3dcd  # WO-2R increment 4 RECONCILED and ACCEPTED (CD-D-053). RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
+  # CD-PL-F64 REPAIR (BL-20260819T160900Z-0029). This field and continuity_record_commit both read
+  # 8ca0eed from 30f5c87 until this boundary. The schema forbids that equality in terms —
+  # "last_completed_checkpoint_sha is the last SOURCE checkpoint, NEVER the commit containing this
+  # file, which would be circular" — so `pbg boot` returned CONTINUITY_SEMANTIC_INVALID/RESUME_BLOCKED
+  # and RED at 30f5c87, 92cc9cc and f7a49e5. MEASURED, not inferred: continuity.validate() replayed
+  # against `git show <sha>:governance/engineering/ACTIVE_WORK.yaml` is `complete/OK` at 8ca0eed and
+  # `semantic` at all three later commits. Two checkpoints were therefore written on top of a record
+  # the framework was already refusing, and neither reconciliation noticed. See CD-RULE-007.
+  # 8ca0eed, the prior value, was the WO-2R increment 3 checkpoint (RECONCILED and NOT ACCEPTED,
+  # CD-D-044) — and was ALSO the commit that carried this record, which is the circularity above.
   # 7fbeaa7 is the WO-2R ENGINEER DISPATCH ISSUED checkpoint. Verified present, resolved with
   # git rev-parse. Superseded baef0ec (identity re-authoring) and, before it, 80b4a24 (PO gate review,
   # the first commit on this project to carry a seat identity, CD-RULE-002).
@@ -446,12 +484,26 @@ lane_head_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
 lane_increment_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba   # WO-2R increment 4, RECONCILED AND ACCEPTED (CD-D-053); CD-ASR-F05 CLOSED AS A CLASS
-continuity_record_commit: 8ca0eed  # the commit carrying BL-20260819T143502Z-0026
+continuity_record_commit: PENDING
+  # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
+  # The commit carrying this record does not exist while this record is being written, so PENDING is
+  # the only truthful value at write time. It is left PENDING deliberately rather than resolved by a
+  # follow-up commit: 30f5c87 was exactly that follow-up, and in resolving PENDING it also overwrote
+  # last_completed_checkpoint_sha with the same SHA and produced CD-PL-F64. The framework's own
+  # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
+  # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  OBSERVED AT THIS BOUNDARY (2026-08-19T16:07Z, fifth Project Lead seat): main clean at f7a49e5
+  apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files, .continue-prompt.txt and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at 9aea4ef on wo-2-skeleton — the inherited dirty
-  state ruled CD-D-015 is now committed as d1abdcc and gone. Its pre-commit snapshot is retained at
+  mutation lane /srv/crash-detector-wo2 is CLEAN at be34fe4 on wo-2-skeleton — `git status
+  --porcelain`, `git diff --stat` and `git diff --cached --stat` all return ZERO lines, so the
+  fifth termination left NO uncommitted seat work anywhere and CD-D-007's suspicion procedure had
+  nothing to adjudicate. The audit worktree /srv/crash-detector-wo2-audit is clean at the
+  pre-rewrite 66681b2 (see the STALE WORKTREE WARNING below).
+  HISTORICAL, retained: main was clean at 8a50355 and the lane at 9aea4ef when the increment-6a
+  seat wrote this field; those SHAs resolve and are superseded, not corrected. The inherited dirty
+  state ruled CD-D-015 is committed as d1abdcc and gone. Its pre-commit snapshot is retained at
   /srv/crash-detector-wo2-candidate-inc6/ with a SHA256 manifest and can be deleted once WO-2 is
   accepted. No protected path is touched in either worktree and pbg/ is intact
   (`git diff --name-only 9a1a159..HEAD -- pbg/` returns zero lines); no secret value is recorded;
@@ -660,18 +712,28 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  DISPATCH INCREMENT 3 (CD-ASR-F04, the egress allowlist) to CD-ENG-WO2R-01 at execution base
-  cc961bf, per governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml block increment_3_F04, bounded to
-  that finding and nothing else. CD-D-031 already rules the structure: F04 is closed by DENY BY
-  DEFAULT over a declared destination registry, NOT by DNS resolution — a register check that
-  depends on DNS is not reproducible and cannot be a gate (CD-PL-F48). An IP literal then stops
-  being a spelling to catch and is simply not a destination anyone declared. The PO required F04 be
-  closed BEFORE any WO-3 egress lane inherits it.
-  THEN increment 4 (CD-ASR-F05: the code-graph guard's walk root must derive from the CONTAINER'S
-  OWN entrypoint set, not a hard-coded path). THEN increment 5 (CD-ASR-F06: staleness windows get a
-  hard upper bound DERIVED from ratified intent per CD-D-032 — PID section 5's 15-minute
-  detectability budget bounded by BLUEPRINT section 7's window_for(regime) — or the seat FAILS
-  CLOSED and escalates; it never invents a number, CD-RULE-003).
+  INCREMENTS 1, 2b, 3b AND 4 ARE RECONCILED AND ACCEPTED. CD-ASR-F01, F02, F03, F04 and F05 are all
+  CLOSED AS A CLASS, subject to Assurance. This field was three increments stale until the
+  CD-PL-F64 repair at BL-20260819T160900Z-0029; the superseded text ordered increment 3, which is
+  done.
+  DISPATCH INCREMENT 5 (CD-ASR-F06, the unbounded staleness window) to CD-ENG-WO2R-01 at execution
+  base be34fe4, per governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml block increment_5_F06,
+  bounded to that finding and nothing else. It carries a BOUNDED ADDENDUM AT ITS HEAD, ordered by
+  CD-D-055: correct CD-PL-F62, declared boundary 5 of the code-graph guard, which distinguishes
+  services BY PURPOSE in prose while the code distinguishes BY NAME and does not contemplate a
+  second service built from the engine image (measured by PL-U6b). That is a correction to an
+  ACCEPTED increment, not a re-open of it.
+  THE CEILING IS A PRODUCT QUANTITY AND THE SEAT MAY NOT INVENT ONE (CD-RULE-003, PBG-AUTH-005).
+  CD-D-032 stands: it is DERIVED from ratified intent — PID §5's 15-minute detectability budget,
+  bounded further by BLUEPRINT §7's tightening window_for(regime) — with the clause CITED in the
+  code, the register entry and the commit, or the seat FAILS CLOSED and escalates it to the Project
+  Lead as an owed Product Authority decision. The dispatch states the PL's proposed derivation as
+  something the seat must CHECK, not assume. The ceiling must be STRUCTURAL, not advisory: a caller
+  passing a window above it gets a refusal, never a clamp.
+  THEN the SEPARATE BOUNDED DISPATCH for the _yamlmin.py non-termination (CD-PL-F61 / CD-ENG-WO2R-F14),
+  which CD-D-051 places AFTER increment 5 and BEFORE Assurance — two of the eleven declared gate
+  commands currently return NO VERDICT on an ordinary YAML edit, and it predates the first audit.
+  THEN increment 6, reconciliation and return, which writes no logic.
   RECONCILE EACH by running the arms yourself and by writing fresh probes of your own against the
   structure the seat actually built, not against the one the dispatch imagined. Commit each as its
   own checkpoint on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
@@ -693,5 +755,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T155105Z-0028
+last_build_log_entry: BL-20260819T160900Z-0029
 status: ACTIVE
