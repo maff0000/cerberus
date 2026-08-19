@@ -1,0 +1,1123 @@
+LABEL: V-001-PYTEST
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch
+APPLY_EXIT: 0
+COMMAND: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q
+EXIT: 1
+--- stdout ---
+........................................................FF.FFF.FFFFFFFFF [ 72%]
+.FFF......................F.                                             [100%]
+=================================== FAILURES ===================================
+____________ test_with_no_sources_declared_both_dials_read_unknown _____________
+
+    def test_with_no_sources_declared_both_dials_read_unknown():
+        """The doctrinally correct empty state.
+    
+        Zero satisfied requirements is NOT "all requirements satisfied". An engine that
+        answered anything else here would violate CD-AC-001 on its first commit.
+        """
+        config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+>       dials = evaluate([], config, FIXED_NOW)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:135: in evaluate
+    equity=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:216: in __post_init__
+    _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'EquityCrashScore', dial_id = 'equity_crash', observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: EquityCrashScore.score must be a DialMagnitude carrying dial 'equity_crash', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='equity_crash', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_ test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present __
+
+    def test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present():
+        """Observations from sources no dial declares must not conjure a reading."""
+        config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+>       dials = evaluate([_ok("src.unregistered", 10)], config, FIXED_NOW)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:194: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:135: in evaluate
+    equity=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:216: in __post_init__
+    _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'EquityCrashScore', dial_id = 'equity_crash', observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: EquityCrashScore.score must be a DialMagnitude carrying dial 'equity_crash', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='equity_crash', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+____________ test_evaluate_is_deterministic_for_the_same_arguments _____________
+
+    def test_evaluate_is_deterministic_for_the_same_arguments():
+        config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+>       first = evaluate([], config, FIXED_NOW)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:208: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:135: in evaluate
+    equity=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:216: in __post_init__
+    _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'EquityCrashScore', dial_id = 'equity_crash', observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: EquityCrashScore.score must be a DialMagnitude carrying dial 'equity_crash', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='equity_crash', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+___________________ test_evaluate_does_not_consult_the_clock ___________________
+
+    def test_evaluate_does_not_consult_the_clock():
+        """`now_utc` is an argument so a historical evaluation replays exactly. If evaluate
+        read the wall clock, the reading's timestamp would not track the argument."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       earlier = evaluate([], config, ago(86400))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:220: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:135: in evaluate
+    equity=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:216: in __post_init__
+    _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'EquityCrashScore', dial_id = 'equity_crash', observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: EquityCrashScore.score must be a DialMagnitude carrying dial 'equity_crash', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='equity_crash', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+___________________ test_evaluate_does_not_mutate_its_inputs ___________________
+
+    def test_evaluate_does_not_mutate_its_inputs():
+        observations = [_ok("src.a", 10)]
+        snapshot = list(observations)
+        config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+>       evaluate(observations, config, FIXED_NOW)
+
+tests/test_evaluate.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:135: in evaluate
+    equity=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:216: in __post_init__
+    _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'EquityCrashScore', dial_id = 'equity_crash', observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: EquityCrashScore.score must be a DialMagnitude carrying dial 'equity_crash', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='equity_crash', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+____ test_a_non_ok_outcome_never_produces_a_dial_contribution[fetch_failed] ____
+
+outcome = FetchFailed(error_class='CONNECT_TIMEOUT', http_status=None)
+
+    @pytest.mark.parametrize(
+        "outcome",
+        [
+            FetchFailed(error_class="CONNECT_TIMEOUT"),
+            FetchFailed(error_class="HTTP", http_status=503),
+            Malformed(schema_error_class="TYPE_MISMATCH"),
+            Empty(),
+        ],
+        ids=["fetch_failed", "http_error", "malformed", "empty"],
+    )
+    def test_a_non_ok_outcome_never_produces_a_dial_contribution(outcome):
+        """Each of the three collapsed absences, separately. None is a value."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+        record = ObservationRecord(
+            source_id="src.a", observed_utc=FIXED_NOW, outcome=outcome
+        )
+>       reading = evaluate([record], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:284: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_____ test_a_non_ok_outcome_never_produces_a_dial_contribution[http_error] _____
+
+outcome = FetchFailed(error_class='HTTP', http_status=503)
+
+    @pytest.mark.parametrize(
+        "outcome",
+        [
+            FetchFailed(error_class="CONNECT_TIMEOUT"),
+            FetchFailed(error_class="HTTP", http_status=503),
+            Malformed(schema_error_class="TYPE_MISMATCH"),
+            Empty(),
+        ],
+        ids=["fetch_failed", "http_error", "malformed", "empty"],
+    )
+    def test_a_non_ok_outcome_never_produces_a_dial_contribution(outcome):
+        """Each of the three collapsed absences, separately. None is a value."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+        record = ObservationRecord(
+            source_id="src.a", observed_utc=FIXED_NOW, outcome=outcome
+        )
+>       reading = evaluate([record], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:284: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_____ test_a_non_ok_outcome_never_produces_a_dial_contribution[malformed] ______
+
+outcome = Malformed(schema_error_class='TYPE_MISMATCH', instance_path='')
+
+    @pytest.mark.parametrize(
+        "outcome",
+        [
+            FetchFailed(error_class="CONNECT_TIMEOUT"),
+            FetchFailed(error_class="HTTP", http_status=503),
+            Malformed(schema_error_class="TYPE_MISMATCH"),
+            Empty(),
+        ],
+        ids=["fetch_failed", "http_error", "malformed", "empty"],
+    )
+    def test_a_non_ok_outcome_never_produces_a_dial_contribution(outcome):
+        """Each of the three collapsed absences, separately. None is a value."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+        record = ObservationRecord(
+            source_id="src.a", observed_utc=FIXED_NOW, outcome=outcome
+        )
+>       reading = evaluate([record], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:284: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_______ test_a_non_ok_outcome_never_produces_a_dial_contribution[empty] ________
+
+outcome = Empty()
+
+    @pytest.mark.parametrize(
+        "outcome",
+        [
+            FetchFailed(error_class="CONNECT_TIMEOUT"),
+            FetchFailed(error_class="HTTP", http_status=503),
+            Malformed(schema_error_class="TYPE_MISMATCH"),
+            Empty(),
+        ],
+        ids=["fetch_failed", "http_error", "malformed", "empty"],
+    )
+    def test_a_non_ok_outcome_never_produces_a_dial_contribution(outcome):
+        """Each of the three collapsed absences, separately. None is a value."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+        record = ObservationRecord(
+            source_id="src.a", observed_utc=FIXED_NOW, outcome=outcome
+        )
+>       reading = evaluate([record], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:284: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_______ test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one _______
+
+    def test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one():
+        """Usability must be decided by TYPE IDENTITY, not by duck typing.
+    
+        Found by mutation: replacing ``isinstance(outcome, OK)`` with
+        ``hasattr(outcome, "source_as_of_utc")`` passed the rest of this file, because none of
+        today's three failure outcomes carries a source timestamp. It is an equivalent mutant
+        *today* and a live hole *tomorrow* — the moment A4 or A5 adds a constructor that
+        carries a period (an ``EMPTY`` with a source_as_of_utc, say), a non-``OK`` outcome
+        would start contributing to a dial. This test fixes the property now, while it is
+        cheap.
+    
+        The record is built through the real constructor and then re-pointed, because
+        ``ObservationRecord`` correctly refuses a non-member of the sum type at construction;
+        the look-alike stands in for a future member.
+        """
+        look_alike = type(
+            "FutureEmptyWithPeriod",
+            (),
+            {"payload": {"v": 1}, "source_as_of_utc": ago(10)},
+        )()
+        record = ObservationRecord(
+            source_id="src.a", observed_utc=FIXED_NOW, outcome=Empty()
+        )
+        object.__setattr__(record, "outcome", look_alike)
+    
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate([record], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:319: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_________________ test_a_missing_required_input_forces_unknown _________________
+
+    def test_a_missing_required_input_forces_unknown():
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate([], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:330: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+___ test_a_stale_required_input_forces_unknown_and_never_the_previous_value ____
+
+    def test_a_stale_required_input_forces_unknown_and_never_the_previous_value():
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       fresh = evaluate([_ok("src.a", 10)], config, FIXED_NOW).equity
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:340: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+___________ test_a_future_dated_observation_is_not_treated_as_fresh ____________
+
+    def test_a_future_dated_observation_is_not_treated_as_fresh():
+        """Without this, one bad upstream clock makes a reading permanently current — a
+        stale value rendering as calm, reached by the back door rather than by a default."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate([_ok("src.a", -86400)], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:354: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+___ test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage ___
+
+    def test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage():
+        config = _snapshot(
+            equity_spec=_spec(
+                EQUITY_DIAL_ID, required=("src.a",), contributing=("src.b",),
+                model=FakeModel(),
+            ),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate([_ok("src.a", 10)], config, FIXED_NOW).equity
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:367: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+___________ test_a_satisfied_dial_reads_value_with_its_inputs_named ____________
+
+    def test_a_satisfied_dial_reads_value_with_its_inputs_named():
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a", "src.b"),
+                              model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate(
+            [_ok("src.a", 10), _ok("src.b", 20)], config, FIXED_NOW
+        ).equity
+
+tests/test_evaluate.py:392: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_____________ test_a_reading_is_only_as_fresh_as_its_oldest_input ______________
+
+    def test_a_reading_is_only_as_fresh_as_its_oldest_input():
+        """Taking the newest would make a reading look fresher than the data behind it."""
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a", "src.b"),
+                              model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate(
+            [_ok("src.a", 10), _ok("src.b", 500)], config, FIXED_NOW
+        ).equity
+
+tests/test_evaluate.py:407: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+_________________ test_the_latest_observation_per_source_wins __________________
+
+    def test_the_latest_observation_per_source_wins():
+        config = _snapshot(
+            equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+            monetary_spec=_spec(MONETARY_DIAL_ID),
+        )
+>       reading = evaluate(
+            [_ok("src.a", 500), _ok("src.a", 10), _ok("src.a", 400)], config, FIXED_NOW
+        ).equity
+
+tests/test_evaluate.py:418: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+__ test_a_decade_old_observation_is_not_usable_under_any_constructible_window __
+
+    def test_a_decade_old_observation_is_not_usable_under_any_constructible_window():
+        """The dial-path equivalent of E07's row.
+    
+        Whatever window a caller configures — and the widest it can configure is the ceiling —
+        a ten-year-old observation is not carried forward as a value.
+        """
+        from crash_detector.staleness import STALENESS_WINDOW_CEILING_SECONDS
+    
+        for window in (1.0, 60.0, 600.0, STALENESS_WINDOW_CEILING_SECONDS):
+            equity_spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+            monetary_spec = _spec(MONETARY_DIAL_ID)
+            config = ConfigSnapshot(
+                config_snapshot_id="cfg-old",
+                dial_specs=(equity_spec, monetary_spec),
+                staleness_window_seconds=window,
+                source_registry=_registry_for(equity_spec, monetary_spec),
+            )
+>           reading = evaluate([_ok("src.a", TEN_YEARS_SECONDS)], config, FIXED_NOW).equity
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_evaluate.py:647: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/engine/evaluate.py:138: in evaluate
+    monetary=_evaluate_dial(
+src/crash_detector/engine/evaluate.py:271: in guarded
+    reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/crash_detector/engine/evaluate.py:295: in _evaluate_dial
+    value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:5: in __init__
+    ???
+src/crash_detector/dials/scores.py:231: in __post_init__
+    _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+type_name = 'MonetaryDebasementScore', dial_id = 'monetary_debasement'
+observed = 0.0
+
+    def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+        """Refuse a magnitude that is not this dial's magnitude.
+    
+        THREE refusals in one, and each closes a different route (CD-ASR-F01):
+    
+        * a bare number is refused, because a number without provenance is precisely what a
+          blend is. There is no path from ``float`` to a score type, so a blended float cannot
+          be re-wrapped as a dial reading and published as one;
+        * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+          subclass carrying a coercion — were one constructible, and
+          :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+          one — is not accepted where a magnitude is accepted;
+        * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+          not interchangeable. Two dials that can be swapped are one dial with two names.
+        """
+        if type(observed) is not DialMagnitude:
+>           raise ScoreOutOfRange(
+                f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+                f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+                "so that a cross-dial combination is refused by comparing values rather than "
+                "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:189: ScoreOutOfRange
+=========================== short test summary info ============================
+FAILED tests/test_evaluate.py::test_with_no_sources_declared_both_dials_read_unknown
+FAILED tests/test_evaluate.py::test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present
+FAILED tests/test_evaluate.py::test_evaluate_is_deterministic_for_the_same_arguments
+FAILED tests/test_evaluate.py::test_evaluate_does_not_consult_the_clock - cra...
+FAILED tests/test_evaluate.py::test_evaluate_does_not_mutate_its_inputs - cra...
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[fetch_failed]
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[http_error]
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[malformed]
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[empty]
+FAILED tests/test_evaluate.py::test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one
+FAILED tests/test_evaluate.py::test_a_missing_required_input_forces_unknown
+FAILED tests/test_evaluate.py::test_a_stale_required_input_forces_unknown_and_never_the_previous_value
+FAILED tests/test_evaluate.py::test_a_future_dated_observation_is_not_treated_as_fresh
+FAILED tests/test_evaluate.py::test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage
+FAILED tests/test_evaluate.py::test_a_satisfied_dial_reads_value_with_its_inputs_named
+FAILED tests/test_evaluate.py::test_a_reading_is_only_as_fresh_as_its_oldest_input
+FAILED tests/test_evaluate.py::test_the_latest_observation_per_source_wins - ...
+FAILED tests/test_evaluate.py::test_a_decade_old_observation_is_not_usable_under_any_constructible_window
+18 failed, 82 passed in 0.77s
+--- stderr ---

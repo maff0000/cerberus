@@ -1,0 +1,82 @@
+### CD-RT-004-DIVERGENCE-ALARM-FIRES
+CMD: PYTHONPATH=src python3 -m pytest tests/test_witness_divergence.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_witness_divergence.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-006-PUBLIC-SURFACE-NO-PRIVATE-DATA
+CMD: python3 tools/register/check_public_artefact_no_private_field.py --root .
+EXIT: 2
+python3: can't open file '/tmp/cd-asr-wo2r/w4b/tools/register/check_public_artefact_no_private_field.py': [Errno 2] No such file or directory
+
+### CD-RT-007-NO-HEADLINE-AUTHORSHIP
+CMD: PYTHONPATH=src python3 -m pytest tests/test_ai_review_validators.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_ai_review_validators.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-008-CADENCE-BREACH-ALERTS
+CMD: PYTHONPATH=src python3 -m pytest tests/test_cadence_breach.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_cadence_breach.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-009-REGIME-AWARE-STALENESS
+CMD: PYTHONPATH=src python3 -m pytest tests/test_regime_staleness.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_regime_staleness.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-010-HISTORY-FIRST-PUBLISHED-IMMUTABLE
+CMD: python3 tools/register/check_first_published_immutable.py --root .
+EXIT: 2
+python3: can't open file '/tmp/cd-asr-wo2r/w4b/tools/register/check_first_published_immutable.py': [Errno 2] No such file or directory
+
+### CD-RT-011-SLOPE-MACHINE-READABLE
+CMD: PYTHONPATH=src python3 -m pytest tests/test_series_and_slope.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_series_and_slope.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-013-ROTATION-RATIO-PROVENANCE
+CMD: PYTHONPATH=src python3 -m pytest tests/test_rotation_ratio.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_rotation_ratio.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-014-HEALTH-EXTERNALLY-OBSERVABLE
+CMD: PYTHONPATH=src python3 -m pytest tests/test_health_surface.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_health_surface.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-015-RECOVERY-FROM-THE-COPY
+CMD: PYTHONPATH=src python3 -m pytest tests/test_recovery_from_copy.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_recovery_from_copy.py
+
+
+no tests ran in 0.00s
+
+### CD-RT-016-WAVE-TRANSITION-MONITOR
+CMD: PYTHONPATH=src python3 -m pytest tests/test_wave_transition.py -q
+EXIT: 4
+ERROR: file or directory not found: tests/test_wave_transition.py
+
+
+no tests ran in 0.00s
+

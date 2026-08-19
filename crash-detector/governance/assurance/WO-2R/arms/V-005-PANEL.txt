@@ -1,0 +1,616 @@
+LABEL: V-005-PANEL
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch
+APPLY_EXIT: 0
+COMMAND: PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q
+EXIT: 1
+--- stdout ---
+.............................................FFF......................F. [ 47%]
+..FF.......FFFFF...F.................................................... [ 94%]
+........                                                                 [100%]
+=================================== FAILURES ===================================
+_______________ test_an_absent_panel_row_resolves_to_unavailable _______________
+
+    def test_an_absent_panel_row_resolves_to_unavailable():
+        """cd-witness wrote nothing at all."""
+        panel = _resolve(None)
+>       assert isinstance(panel, Unavailable)
+E       assert False
+E        +  where False = isinstance(Agrees(divergence_measure=0.0, as_of_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), freshnes...ved_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))), Unavailable)
+
+tests/test_witness_resolver.py:67: AssertionError
+________________ test_a_stale_panel_row_resolves_to_unavailable ________________
+
+    def test_a_stale_panel_row_resolves_to_unavailable():
+        """Older than its staleness window. The implicit failure path."""
+>       panel = _resolve(_row(state="AGREES", seconds_ago=WINDOW_SECONDS + 1))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_witness_resolver.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_witness_resolver.py:57: in _resolve
+    return resolve_panel(
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2026, 8, 19, 11, 49, 59, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 601.0 seconds old and the applied staleness window is 600.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+___________ test_a_stale_row_that_said_agrees_does_not_keep_agreeing ___________
+
+    def test_a_stale_row_that_said_agrees_does_not_keep_agreeing():
+        """The specific plant CD-AC-005 exists for: yesterday's agreement rendering today."""
+        fresh = _resolve(_row(state="AGREES", seconds_ago=10))
+        assert isinstance(fresh, Agrees)
+>       stale = _resolve(_row(state="AGREES", seconds_ago=WINDOW_SECONDS + 1))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_witness_resolver.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_witness_resolver.py:57: in _resolve
+    return resolve_panel(
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2026, 8, 19, 11, 49, 59, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 601.0 seconds old and the applied staleness window is 600.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+______ test_freshness_is_judged_on_the_data_not_on_when_we_wrote_the_row _______
+
+    def test_freshness_is_judged_on_the_data_not_on_when_we_wrote_the_row():
+        """"We published recently" is not "the witnesses are current"."""
+        row = PanelRow(
+            state="AGREES",
+            as_of_utc=ago(WINDOW_SECONDS + 1),
+            published_utc=ago(1),
+            measures={"divergence_measure": 0.02},
+        )
+>       panel = _resolve(row)
+                ^^^^^^^^^^^^^
+
+tests/test_witness_resolver.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_witness_resolver.py:57: in _resolve
+    return resolve_panel(
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2026, 8, 19, 11, 49, 59, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 601.0 seconds old and the applied staleness window is 600.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+____ test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees ____
+
+    def test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees():
+        """The class, not the instance.
+    
+        Every combination of state, age and measurement shape below is resolved, and the
+        assertion is the PROPOSITION: nothing that is not a fresh, coherent, explicitly
+        agreeing row may come back as ``Agrees``. A guard that only refused the two rows
+        BLUEPRINT §6 names would pass the tests above and fail this one.
+        """
+        states = ["AGREES", "DIVERGES", "UNAVAILABLE", "agrees", "", "OK", "AGREES\n"]
+        ages = [-86400, -1, 10, WINDOW_SECONDS + 1, 10**7]
+        measure_sets = [
+            {},
+            {"divergence_measure": 0.02},
+            {"divergence_measure": 0.02, "threshold": 0.5},
+            {"divergence_measure": "0.0"},
+            {"divergence_measure": 0},
+            {"divergence_measure": True},
+            {"divergence_measure": math.nan},
+            {"threshold": 0.5},
+            {"unexpected_key": 1.0},
+        ]
+    
+        agreed = []
+        for state, age, measures in itertools.product(states, ages, measure_sets):
+>           panel = _resolve(_row(state=state, seconds_ago=age, measures=measures))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_witness_resolver.py:230: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_witness_resolver.py:57: in _resolve
+    return resolve_panel(
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2026, 8, 19, 11, 49, 59, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 601.0 seconds old and the applied staleness window is 600.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+_________ test_the_absent_row_case_is_included_in_the_sweep_separately _________
+
+    def test_the_absent_row_case_is_included_in_the_sweep_separately():
+        """`None` is not a PanelRow, so it cannot be in the product above."""
+>       assert not isinstance(_resolve(None), Agrees)
+E       assert not True
+E        +  where True = isinstance(Agrees(divergence_measure=0.0, as_of_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), freshnes...ved_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))), Agrees)
+E        +    where Agrees(divergence_measure=0.0, as_of_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), freshnes...ved_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))) = _resolve(None)
+
+tests/test_witness_resolver.py:247: AssertionError
+_ test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[0.001] _
+
+window = 0.001
+
+    @pytest.mark.parametrize("window", [0.001, 1.0, 60.0, 600.0, 900.0])
+    def test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window(window):
+        """The other half: where the window IS admissible, the old row lands on the honest
+        state rather than on a refusal. Both halves are needed — a closure that only ever
+        raises would be hiding a resolver that still agreed."""
+>       panel = resolve_panel(
+            _row(state="AGREES", seconds_ago=TEN_YEARS_SECONDS),
+            now_utc=FIXED_NOW,
+            staleness_window_seconds=window,
+        )
+
+tests/test_witness_resolver.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2016, 8, 21, 12, 0, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=0.001))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 315360000.0 seconds old and the applied staleness window is 0.001 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+_ test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[1.0] _
+
+window = 1.0
+
+    @pytest.mark.parametrize("window", [0.001, 1.0, 60.0, 600.0, 900.0])
+    def test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window(window):
+        """The other half: where the window IS admissible, the old row lands on the honest
+        state rather than on a refusal. Both halves are needed — a closure that only ever
+        raises would be hiding a resolver that still agreed."""
+>       panel = resolve_panel(
+            _row(state="AGREES", seconds_ago=TEN_YEARS_SECONDS),
+            now_utc=FIXED_NOW,
+            staleness_window_seconds=window,
+        )
+
+tests/test_witness_resolver.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2016, 8, 21, 12, 0, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=1.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 315360000.0 seconds old and the applied staleness window is 1.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+_ test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[60.0] _
+
+window = 60.0
+
+    @pytest.mark.parametrize("window", [0.001, 1.0, 60.0, 600.0, 900.0])
+    def test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window(window):
+        """The other half: where the window IS admissible, the old row lands on the honest
+        state rather than on a refusal. Both halves are needed — a closure that only ever
+        raises would be hiding a resolver that still agreed."""
+>       panel = resolve_panel(
+            _row(state="AGREES", seconds_ago=TEN_YEARS_SECONDS),
+            now_utc=FIXED_NOW,
+            staleness_window_seconds=window,
+        )
+
+tests/test_witness_resolver.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2016, 8, 21, 12, 0, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=60.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 315360000.0 seconds old and the applied staleness window is 60.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+_ test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[600.0] _
+
+window = 600.0
+
+    @pytest.mark.parametrize("window", [0.001, 1.0, 60.0, 600.0, 900.0])
+    def test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window(window):
+        """The other half: where the window IS admissible, the old row lands on the honest
+        state rather than on a refusal. Both halves are needed — a closure that only ever
+        raises would be hiding a resolver that still agreed."""
+>       panel = resolve_panel(
+            _row(state="AGREES", seconds_ago=TEN_YEARS_SECONDS),
+            now_utc=FIXED_NOW,
+            staleness_window_seconds=window,
+        )
+
+tests/test_witness_resolver.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2016, 8, 21, 12, 0, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=600.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 315360000.0 seconds old and the applied staleness window is 600.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+_ test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[900.0] _
+
+window = 900.0
+
+    @pytest.mark.parametrize("window", [0.001, 1.0, 60.0, 600.0, 900.0])
+    def test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window(window):
+        """The other half: where the window IS admissible, the old row lands on the honest
+        state rather than on a refusal. Both halves are needed — a closure that only ever
+        raises would be hiding a resolver that still agreed."""
+>       panel = resolve_panel(
+            _row(state="AGREES", seconds_ago=TEN_YEARS_SECONDS),
+            now_utc=FIXED_NOW,
+            staleness_window_seconds=window,
+        )
+
+tests/test_witness_resolver.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2016, 8, 21, 12, 0, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=900.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 315360000.0 seconds old and the applied staleness window is 900.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+_ test_no_row_of_any_age_under_any_usable_window_ever_resolves_to_agrees_dishonestly _
+
+    def test_no_row_of_any_age_under_any_usable_window_ever_resolves_to_agrees_dishonestly():
+        """The increment-4 sweep, extended along the axis CD-ASR-F06 attacked: THE WINDOW.
+    
+        The original sweep held the window fixed, which is exactly why E07 was invisible to
+        it. This one varies the window across everything that can be constructed, including
+        the ceiling itself, and adds a decade-old row to the ages.
+        """
+        windows = [1.0, 60.0, 600.0, 900.0]
+        states = ["AGREES", "DIVERGES", "UNAVAILABLE", "agrees", "", "OK"]
+        ages = [-86400, -1, 10, 601, 901, 10**7, TEN_YEARS_SECONDS]
+        measure_sets = [
+            {},
+            {"divergence_measure": 0.02},
+            {"divergence_measure": "0.0"},
+            {"divergence_measure": 0},
+            {"divergence_measure": True},
+            {"divergence_measure": math.nan},
+        ]
+    
+        agreed = []
+        for window in windows:
+            for state, age, measures in itertools.product(states, ages, measure_sets):
+>               panel = resolve_panel(
+                    _row(state=state, seconds_ago=age, measures=measures),
+                    now_utc=FIXED_NOW,
+                    staleness_window_seconds=window,
+                )
+
+tests/test_witness_resolver.py:396: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/crash_detector/serving/witness_resolver.py:157: in resolve_panel
+    freshness=FreshnessEvidence(
+<string>:6: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FreshnessEvidence(as_of_utc=datetime.datetime(2026, 8, 19, 11, 59, 50, tzinfo=datetime.timezone.utc), observed_at_utc=datetime.datetime(2026, 8, 19, 12, 0, tzinfo=datetime.timezone.utc), window=StalenessWindow(seconds=1.0))
+
+    def __post_init__(self) -> None:
+        # EXACT type. Subclassing is already refused above; this makes the guarantee
+        # independent of that, because a subclass that somehow existed would be accepted
+        # by isinstance while carrying any window width at all.
+        if type(self.window) is not StalenessWindow:
+            raise TypeError(
+                "freshness must be evidenced against a StalenessWindow, got "
+                f"{type(self.window).__name__}. A bare number is not a window: it has not "
+                "passed the admission that gives a window its meaning, and neither is a "
+                "subclass that may have redefined that admission."
+            )
+        object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        object.__setattr__(self, "observed_at_utc", ensure_utc(self.observed_at_utc))
+        age = age_seconds(as_of_utc=self.as_of_utc, now_utc=self.observed_at_utc)
+        if age < 0.0:
+            raise FreshnessNotEstablished(
+                f"the observation is dated {-age} seconds in the FUTURE, so no statement "
+                "about its freshness can be made. A future-dated observation never ages "
+                "out of any window."
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 10.0 seconds old and the applied staleness window is 1.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:410: FreshnessNotEstablished
+=========================== short test summary info ============================
+FAILED tests/test_witness_resolver.py::test_an_absent_panel_row_resolves_to_unavailable
+FAILED tests/test_witness_resolver.py::test_a_stale_panel_row_resolves_to_unavailable
+FAILED tests/test_witness_resolver.py::test_a_stale_row_that_said_agrees_does_not_keep_agreeing
+FAILED tests/test_witness_resolver.py::test_freshness_is_judged_on_the_data_not_on_when_we_wrote_the_row
+FAILED tests/test_witness_resolver.py::test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees
+FAILED tests/test_witness_resolver.py::test_the_absent_row_case_is_included_in_the_sweep_separately
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[0.001]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[1.0]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[60.0]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[600.0]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[900.0]
+FAILED tests/test_witness_resolver.py::test_no_row_of_any_age_under_any_usable_window_ever_resolves_to_agrees_dishonestly
+12 failed, 140 passed in 0.41s
+--- stderr ---

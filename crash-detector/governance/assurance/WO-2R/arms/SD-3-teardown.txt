@@ -1,0 +1,13 @@
+SD-3 TEARDOWN EVIDENCE — CD-ASR-WO2-02
+date: 2026-08-19T20:29:37Z
+--- before ---
+cd-asr-wo2r-store postgres Up 17 minutes
+cd-asr-wo2r-pgdata
+--- removing ---
+cd-asr-wo2r-store
+cd-asr-wo2r-pgdata
+--- after (both lists MUST be empty) ---
+containers: []
+volumes:    []
+--- no non-prefixed resource was touched; other projects' containers still up: ---
+26

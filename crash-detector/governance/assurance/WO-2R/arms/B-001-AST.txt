@@ -1,0 +1,14 @@
+LABEL: B-001-AST
+PATCH: NONE
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_no_numeric_default.py --root .
+EXIT: 0
+--- stdout ---
+CD-RT-001-AST-NO-NUMERIC-DEFAULT
+    subject: /tmp/cd-asr-wo2r/run/B-001-AST
+    scanned: 10 Python files on the declared dial path (src/crash_detector/dials, src/crash_detector/engine) and 4 on the adjacent path (src/crash_detector/serving, src/crash_detector/observations.py, src/crash_detector/staleness.py)
+    assertions: 377
+    note: class A on the ADJACENT path at src/crash_detector/observations.py:99 — `http_status` is annotated as a number that may be None (int | None). Absence has a constructor here (Unknown), not a null value slot: a nullable number obliges every consumer to remember, and one that forgets renders absence as a number. REPORTED, NOT FAILED: BLUEPRINT §7 and §13 scope the nullable-number ban to the dial path, and this check does not widen a ratified scope on its own initiative. It is printed on every run so it is disclosed rather than tolerated in silence.
+    note: class A on the ADJACENT path at src/crash_detector/serving/witness_resolver.py:170 — the return of `_finite_measure` is annotated as a number that may be None (float | None). Absence has a constructor here (Unknown), not a null value slot: a nullable number obliges every consumer to remember, and one that forgets renders absence as a number. REPORTED, NOT FAILED: BLUEPRINT §7 and §13 scope the nullable-number ban to the dial path, and this check does not widen a ratified scope on its own initiative. It is printed on every run so it is disclosed rather than tolerated in silence.
+CD-RT-001-AST-NO-NUMERIC-DEFAULT: PASS — 377 assertions, 0 violations
+--- stderr ---

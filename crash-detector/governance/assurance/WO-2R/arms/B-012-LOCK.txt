@@ -1,0 +1,14 @@
+LABEL: B-012-LOCK
+PATCH: NONE
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_lockfile_denylist.py --root .
+EXIT: 0
+--- stdout ---
+CD-RT-012-LOCKFILE-DENYLIST
+    subject: /tmp/cd-asr-wo2r/run/B-012-LOCK
+    scanned: 3 dependency manifests: pyproject.toml, requirements.txt, requirements.lock
+    assertions: 15
+    note: the denylist carries 61 named distributions and is a FLOOR, not an oracle. The token rule is the part that generalises: a broker SDK nobody has heard of is still named after what it does.
+    note: normalisation is PEP 503, so Alpaca_Trade_API and alpaca-trade-api are one name: alpaca-trade-api
+CD-RT-012-LOCKFILE-DENYLIST: PASS — 15 assertions, 0 violations
+--- stderr ---

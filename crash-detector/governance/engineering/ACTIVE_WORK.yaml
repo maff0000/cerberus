@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T20:03:14Z'
+updated_utc: '2026-08-19T20:35:21Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -623,8 +623,46 @@ current_block: >
   at the boundary where the record must be most stable; the hazard is closed by a
   stale_worktree_warning in the brief and by W1 requiring the auditor to `git rev-parse HEAD` in the
   tree it is standing in before doing anything else. NO CODE CHANGED AT THIS BOUNDARY.
+  **THE WO-2 GATE IS NOT MET, FOR THE SECOND TIME, ON DIFFERENT GROUNDS.** CD-ASR-WO2-02 audited
+  50fc231 and returned **RED** (CD-D-072, BL-20260819T203521Z-0040). Per criterion: CD-AC-003 PASS
+  (scoped, class CLOSED, the auditor could not break it); CD-AC-001, CD-AC-005 and CD-AC-012 AMBER;
+  CD-AC-002 **RED**. TWO HIGH FINDINGS. ASR2-F01: `combine_within_one_dial` is PUBLIC API, ABSENT
+  from ADMISSION_VOCABULARY, and passes an arbitrary caller callable's return value unvalidated into
+  `derived_within_one_dial` — equity 0.9 and monetary 0.1 publish as an EQUITY READING OF 0.5, with
+  check_no_blend PASS at 4873 assertions and the full 1325-test suite green. It is not inside a
+  declared limit: boundary A claims WITHOUT QUALIFICATION that no such number can ever be a dial
+  magnitude again, and that is FALSE — a FALSE CARRIER, which CD-RULE-006 forbids and which is the
+  CD-PL-F54/F59 shape a third time. CD-D-040 accepted increment 2b on precisely the static carrier
+  that fails here, and NQ-1 is answered NO BY EXECUTION. ASR2-F02: StalenessWindow refuses a float
+  subclass on exact type but `ensure_utc` admits ANY `datetime` by isinstance, so a `datetime`
+  SUBCLASS makes a DECADE-OLD ROW RENDER "WITNESS AGREES" with no `object.__setattr__` anywhere —
+  boundary 3's "fourth route" that it declined to claim did not exist, and `pandas.Timestamp` is a
+  `datetime` subclass.
+  THE INTEGRITY CHECKS ALL PASS. The target is BYTE-IDENTICAL on return — 364 files, manifests diff
+  clean, fingerprint recomputes to 50ae34d6..., porcelain zero, HEAD still 50fc231. SD-3 is torn
+  down with `cd-asr-wo2r-` returning zero containers and zero volumes and 36 other containers
+  untouched. 37 evidence files transported UNALTERED to governance/assurance/WO-2R/, ZERO
+  executable. RTR-WO2R-0001 is WRITTEN AND NOT ADMITTED; `latest_admitted_run` is still null
+  (CD-RULE-001, non-relaxable) — the same refusal the PO commended at the first gate.
+  WHAT THE AUDIT BANKED: CD-RT-003-GRANT-MATRIX-LIVE CONTRASTED FOR THE FIRST TIME EVER on this
+  project (138 assertions both arms, 9 violations across 6 routes, a live PostgreSQL session
+  refusal, cd_engine 16/16 privilege probes FALSE on schema witness, no UPDATE/DELETE grant to any
+  role anywhere) — CD-RT-002 and CD-D-020 DISCHARGED; the 70/71/72 denominator SETTLED as a
+  transcription defect, not missing work; the eleven undelivered commands MEASURED at 50fc231 rather
+  than argued; and NO framework bypass reachable from evidence shape alone.
+  CD-D-072: WO-2 does not close, WO-3 is not dispatched, nothing is admitted, nothing is accepted.
+  CD-D-073: THE PROJECT LEAD STOPS AND REPORTS TO THE PRODUCT AUTHORITY rather than dispatching
+  WO-2R2 — a second consecutive failure of a rework the PO personally ordered and scoped is that
+  authority's question, and issuing a third Engineer dispatch from here would be the PL re-scoping
+  the PO's own rework on its own authority. The recommendation is OFFERED, NOT TAKEN.
+  DECLARED HONESTLY: the two HIGH findings are **NOT INDEPENDENTLY REPLICATED BY THE PROJECT LEAD**.
+  This seat reached the gate inside its last twenty minutes and chose a durable committed record
+  over a partial replication. That replication is the FIRST WORK OF THE NEXT SEAT, and it is owed
+  because ASR2-F01 contradicts an acceptance this project already made on a probe (PL-R5) that was
+  refused for a reason narrower than it appeared — the CD-ENG-WO2R-F13 pattern aimed at an
+  ACCEPTANCE rather than a probe.
 owner_role: PROJECT_LEAD
-next_actor: PROJECT_LEAD
+next_actor: PRODUCT_AUTHORITY
 
 repository: local
 branch: main
@@ -633,7 +671,7 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 2f27bb83ecebef27ec096ecc6c0544c2cd906ed7  # the CD-RULE-007 follow-up that resolved continuity_record_commit to b1a118f — the last main checkpoint before the SOD crossing. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). A pristine clone at this SHA ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN (CD-RULE-008 as amended by CD-PL-F72 — the branch matters; a detached checkout of the identical tree reads CONTINUITY_DRIFT).
+last_completed_checkpoint_sha: 00e87ff9f9041b21288d52bebe45692e2d89e9d0  # the CD-RULE-007 follow-up that resolved continuity_record_commit to 199a214 — the last main checkpoint before the GATE. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). Its predecessor 2f27bb8 was the checkpoint before the SOD crossing.
   # SUPERSEDES 750b35346ffc13703263c231252dac2dd220a6ef — the PL-Y1..Y5 evidence commit
   # (BL-20260819T194926Z-0038), the last main checkpoint before the increment-6 reconciliation.
   # SUPERSEDES 8e9456f2592ddbb915432832f629499c508a9559 — the CD-PL-F69 repair (BL-20260819T185403Z-0037): BL-...-0036 committed unedited, after which a pristine clone at this SHA boots GREEN. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
@@ -689,7 +727,7 @@ lane_increment_sha: 50fc23177f790164c3fc3604ccee51663e755c70   # WO-2R INCREMENT
   # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: 199a214dabe1be3df0e8d98282fad4e1015ed3cc  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (2f27bb8) — that equality is the CD-PL-F64 defect. A pristine clone at 199a214 CHECKED OUT ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, zero blocking failures — the CD-RULE-008 verdict of record, with the branch named as CD-PL-F72 now requires.
+continuity_record_commit: PENDING  # The commit carrying this record does not exist while this record is being written, so PENDING is the only truthful value at write time (CD-PL-F64). Resolved by a FOLLOW-UP writing THIS FIELD AND NOTHING ELSE, recording the pristine-clone boot verdict AND THE BRANCH (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72). It previously read 199a214dabe1be3df0e8d98282fad4e1015ed3cc, whose clone on branch main booted GREEN/CONTINUITY_MATCH.
   # Superseded note, retained: The commit carrying this record does not exist while this record is being written, so PENDING is the only truthful value at write time (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, which records the pristine-clone boot verdict AND THE BRANCH it was taken on in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72).
   # PREVIOUSLY b1a118fbdbf5c1f52cf89b3e84559d3f64718cd1 — RESOLVED by that follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (750b353) — that equality is the CD-PL-F64 defect. A pristine clone at b1a118f boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record. Superseded note: to be resolved by a follow-up writing THIS FIELD AND NOTHING ELSE and recording the COMMITTED-TREE boot verdict in its message (CD-RULE-007, CD-RULE-008). It previously read f547fdc4f9c6b6990e25d16271e0e569d12f7025 — RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (8e9456f) — that equality is the CD-PL-F64 defect. A pristine clone at f547fdc boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record.
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
@@ -961,111 +999,37 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  LAUNCH CD-ASR-WO2-02 AGAINST CD-DISPATCH-WO2R-ASSURANCE. The brief is ISSUED and durable at
-  governance/dispatch/CD-DISPATCH-WO2R-ASSURANCE.yaml, so it survives losing this seat
-  (PBG-CONT-007) — and the two acts are separable, which is exactly how the sixth seat's increment-6
-  dispatch came to be issued and never executed. Do not re-draft it; launch it.
-  THEN RECONCILE THE VERDICT. Re-take the tree fingerprint over
-  /srv/crash-detector-wo2r-audit and compare it to
-  50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d (manifest at
-  /tmp/cd-asr-wo2r-tree.sha256sums, 364 files) — allowing for __pycache__/.pytest_cache, which the
-  brief forbids by routing all execution to /tmp extractions but which is an honest-mistake class,
-  not misconduct. Confirm the SD-3 store is destroyed: `docker ps -a` and `docker volume ls`
-  filtered on `cd-asr-wo2r-` must BOTH return zero rows. Transport the evidence from
-  /srv/crash-detector-wo2r-evidence/ into the repository UNALTERED — you author nothing of the
-  auditor's and edit none of it.
-  DO NOT ADMIT THE RUN RECORD unless CD-RULE-001 is satisfied: paired assurance verdict present, and
-  no criterion the auditor holds not-PASS able to compute PASS. MEASURE THAT ON A THROWAWAY COPY
-  FIRST — that is how CD-FWK-005 was found, and refusing to admit RTR-WO2-0001 is the one act this
-  project has been COMMENDED for by the Product Owner.
-  THEN STOP. THE GATE IS THE PRODUCT AUTHORITY'S EITHER WAY. Whether the verdict is PASS or AMBER,
-  WO-2 does not close on the Project Lead's signature and WO-3 is not dispatched from here.
-  SUPERSEDED INSTRUCTION, retained so the record reads in order: ISSUE CD-DISPATCH-WO2R-ASSURANCE to
-  CD-ASR-WO2-02 against the exact SHA 50fc231. DONE at CD-D-070. Note that instruction described the
-  Engineer's variants as running "through V52"; they run through V53 (CD-PL-F73), and the brief as
-  issued carries the corrected range.
-  WO-2R INCREMENT 6 IS RECONCILED AND ACCEPTED at lane 50fc231 (CD-D-065b) and THE WO-2R ENGINEER
-  DISPATCH IS COMPLETE. Increments 1, 2b, 3b, 4, 5 and 6 are all accepted; CD-ASR-F01 through F06
-  are CLOSED AS A CLASS, SUBJECT TO ASSURANCE. NOTHING IS ASSURED: the Project Lead reconciled, which
-  is a different act with a different authority, and it may not certify work it dispatched.
-  SUPERSEDED INSTRUCTION, retained so the record reads in order: DISPATCH WO-2R INCREMENT 6 — IT WAS
-  ISSUED AND UNEXECUTED. The seat was never launched; the lane is
-  clean at 253c38b and no lane commit exists beyond it. The brief is already durable at
-  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml, increment_6_reconciliation_and_return, and the
-  Project Lead does not rewrite it. TWO STANDING RULES ARE NEW AT THIS BOUNDARY: every continuity
-  write re-runs `pbg boot` and records the verdict in the same entry (CD-RULE-007), and THE VERDICT
-  OF RECORD IS TAKEN ON A PRISTINE CLONE AT THE COMMITTED SHA, never the working tree (CD-RULE-008,
-  from CD-PL-F69 and CD-PL-F70). A commit that advances last_build_log_entry must carry that entry;
-  44a56ec did not, and a clone at 44a56ec boots RED.
-  WO-2R INCREMENT 6 IS ISSUED (BL-20260819T184405Z-0036) to CD-ENG-WO2R-01 at execution base
-  253c38b, carrying THREE bounded addenda at its head — CD-PL-F65 (CD-D-058), CD-ENG-READER-F06
-  (CD-D-063) and the CD-ENG-READER-F05/F08 DECLARATION (CD-D-062). It writes NO LOGIC. The one scope
-  extension is tools/register/check_engine_no_witness_reach.py FOR PROSE ONLY, leashed by
-  measurement: 24 assertions at exit 0, unchanged. RECONCILE THE RETURN by running the arms yourself
-  and by writing FRESH READING probes — does each declared limit have an executable example that
-  reproduces; do the three CD-RULE-004 places agree in substance; is any boundary asserting a carrier
-  nobody MEASURED (CD-RULE-006); has any CLASS claim become an enumeration of spellings. A
-  declaration sweep is the easiest increment to fake, because nothing it produces fails a test.
-  WO-2R INCREMENTS 1, 2b, 3b, 4 AND 5 ARE ALL RECONCILED AND ACCEPTED. CD-ASR-F01 through F06 —
-  ALL SIX findings this rework was opened for — are CLOSED AS A CLASS, subject to Assurance.
-  THE CD-PL-F61 READER DISPATCH IS RECONCILED AND **ACCEPTED** at lane 253c38b (CD-D-060,
-  BL-20260819T183543Z-0035), completing the PARTIAL reconciliation of BL-20260819T175919Z-0034.
-  Every item on that entry's NOT_YET_VERIFIED list was measured by the PL on its own extractions:
-  suite 1289 -> 1325 with ZERO node ids removed and all 36 additions in the new test file; the
-  ten-check NO-VERDICT-CHANGES table identical in both columns except the declared
-  check_no_execution_interface growth; the +149/+544/+0 decomposition proved PER PART on eight
-  single-file isolation trees, summing exactly with no interaction term; 11 of 11 plants applying
-  and 10 of 11 contrasting (the eleventh 3/3, no live store); all ten mandatory headings on all
-  three commits. TERMINATION IS STRUCTURAL: all five `while` loops carry an iteration budget
-  decremented before any branch, bounding every loop regardless of document shape.
-  THE PL WENT BEYOND THE DISPATCH. The seat's no-verdict-change table was measured on the CLEAN
-  TREE ONLY, so the PL applied ALL 62 variants to pristine extractions of BOTH SHAs and ran the
-  three reader-sharing checks on each — 124 trees. EXACTLY ONE ROW CHANGED: V30, 124,124,124 ->
-  3,3,3, no verdict to stated refusal. It then wrote twelve fresh probes: PL-X5/X6/X7/X8 are four
-  NEW stalling routes (document root, block-scalar folder, an ORDINARY dedented sibling, CRLF) that
-  all hang at f22d120 and are all refused at 253c38b; PL-X1/X2 prove the new iteration budget does
-  NOT false-fire on a 1,604-line legitimate document or on 400 passes through the one unguarded
-  delegation; and PL-X9 is decisive — with `_advance` DELETED from the merge loop, the budget alone
-  still terminates with its stated message, so the backstop the seat could only justify by argument
-  (CD-ENG-READER-F07) is PROVED BY EXECUTION.
-  THE THREE OWED RULINGS ARE MADE. CD-D-061: CD-ENG-READER-F02's refusal to convert RecursionError
-  is RATIFIED and boundary 8b accepted as a declared limit; owed at WO-3, not blocking. CD-D-062:
-  CD-ENG-READER-F05/F08, the silent flattening, is CONFIRMED MEDIUM — pre-existing and
-  byte-identical at both SHAs, unchanged across all 124 trees, and the PL's three attempts to
-  weaponise it into a FALSE CLEAN (PL-X12a/b/c) were ALL REFUSED because flattening lifts a nested
-  key INTO CD-EGRESS-007's closed key set. STATE THE DENOMINATOR: three routes, one criterion. The
-  FIX goes to WO-3 bound with the V27 re-measurement, because correcting the parse moves which
-  clause refuses V27 and would reopen CD-ASR-F04 on the eve of the audit. CD-D-063:
-  CD-ENG-READER-F06's refusal to correct two of three CD-RULE-004 places is RATIFIED.
-  NEXT: WO-2R INCREMENT 6 — the register-and-contract sweep, WHICH WRITES NO LOGIC — carrying THREE
-  bounded addenda at its head. (1) CD-PL-F65 (CD-D-058): boundary 3 must name `Agrees`, say it is
-  UNSLOTTED so the `__slots__` half does not hold there, and state that the route reaches "WITNESS
-  AGREES" on a decade-old timestamp. The seat is NOT to slot Agrees. (2) CD-ENG-READER-F06
-  (CD-D-063): CD-RT-003's stale declared limit 4 corrected across ALL THREE places in one edit,
-  writable scope extended to tools/register/check_engine_no_witness_reach.py FOR PROSE ONLY.
-  (3) CD-ENG-READER-F05/F08 (CD-D-062): the flattening DECLARED as a CD-RT-012 boundary in all three
-  places, with PL-X10a as its executable example. DECLARATION ONLY — THE FIX IS OUT OF BOUNDS.
-  RECONCILE IT by running the arms yourself and by writing FRESH probes against the structure the
-  seat actually built, not the one the dispatch imagined. That step has sent two increments back
-  (CD-PL-F54, CD-PL-F59) and is why both were caught before the gate rather than at it. The Project
-  Lead does not write the fix (PBG-AUTH-006, CD-D-038/CD-D-045), and "it is only prose" is the same
-  argument as "the fix looks small", which this project has already declined twice.
-  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never
-  the Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise FRESH
-  variants; the exclusion set is now the union of the WO-2 auditor's ten, the Engineer's through V51
-  and R01-R08, and the Project Lead's PL-Q1 through PL-X12. Hand it as NAMED QUESTIONS:
-  CD-ENG-WO2R-F12; CD-ENG-READER-F05/F08 WITH ITS DENOMINATOR STATED and an express invitation to
-  find the fourth route; CD-ENG-READER-F02; and CD-PL-F53, F57, F58, F62, F63, F65, F66, F67, F68
-  plus the seat's F20-F24. Carry the three adopted method notes: F13 assert the RULE ID, not merely
-  a non-zero exit; F16 a shrinking assertion count is how a skipped arm hides; F18 a derivation
-  refusal at exit 3 arrives before a reach violation at exit 1.
+  **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing).**
+  THE WO-2 GATE IS NOT MET FOR THE SECOND TIME. CD-ASR-WO2-02 returned RED: CD-AC-002 RED on a
+  documented claim REFUTED BY EXECUTION, CD-AC-001/005/012 AMBER, CD-AC-003 PASS (scoped). Two HIGH
+  findings, ASR2-F01 and ASR2-F02. Nothing is admitted and nothing is accepted.
+  THE NEXT PROJECT LEAD SEAT'S FIRST ACT, BEFORE ANY DISPATCH: INDEPENDENTLY REPLICATE ASR2-F01 AND
+  ASR2-F02 on its own pristine `git archive` extractions of 50fc231. Not because the auditor is
+  doubted — its target-integrity discipline was exact, the tree came back byte-identical, and it
+  hedged its own negative results — but because this project's standing method is that the Project
+  Lead measures before it rules, and because ASR2-F01 CONTRADICTS CD-D-040, an acceptance this
+  project already made. If PL-R5 was read as proving more than it did, that is a method finding
+  about RECONCILIATION ITSELF and it must not be lost inside the repair.
+  DO NOT DISPATCH WO-2R2 WITHOUT PRODUCT AUTHORITY DIRECTION (CD-D-073). DO NOT ADMIT RTR-WO2R-0001
+  (CD-RULE-001, PO, non-relaxable) — the verdict is RED on CD-AC-002, so admission is not available
+  and is not sought. Measure any admission question on a throwaway copy first; that is how CD-FWK-005
+  was found.
+  THE RECOMMENDED SHAPE, OFFERED AND NOT TAKEN, if the PO authorises rework: a bounded Engineer
+  dispatch scoped to ASR2-F01 and ASR2-F02 ONLY, to a FRESH seat, returning to a THIRD Assurance
+  seat with fresh variants and the exclusion set extended by the auditor's six. IT MUST NOT BE
+  SCOPED AS "add `combine_within_one_dial` to the vocabulary" — that is the INSTANCE GAME, it is
+  what failed the first gate, and the auditor named the trap itself. THE THREE AMBER CRITERIA ARE
+  NOT FREE: the gate is PASS ON ALL FIVE, so whether AMBER travels with the rework is a PO scoping
+  call and is named here so it is not discovered late.
   Commit each boundary on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
-  VARIABLES, never `git -c` (CD-PL-F56 — it fails silently on this host), and verify with
-  `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit. A continuity write is not
-  complete until `pbg boot` has been re-run and its verdict recorded in the same entry (CD-RULE-007).
-  THE GATE IS UNCHANGED: Assurance PASS on all five. Admit no run record without its paired
-  assurance verdict (CD-RULE-001, non-relaxable). Deliberate STOP at the gate either way, record
-  state durably, and report to the Product Owner.
+  VARIABLES, never `git -c` (CD-PL-F56). A continuity write is not complete until `pbg boot` has
+  been re-run and its verdict recorded in the same entry (CD-RULE-007), taken on a pristine clone at
+  the committed SHA AND ON THE RECORDED BRANCH (CD-RULE-008 as amended by CD-PL-F72).
+  SUPERSEDED INSTRUCTION, retained so the record reads in order: LAUNCH CD-ASR-WO2-02 AGAINST
+  CD-DISPATCH-WO2R-ASSURANCE, then reconcile the verdict and stop. DONE — the launch, the
+  fingerprint comparison, the SD-3 teardown check, the unaltered evidence transport and the gate
+  ruling are all at BL-20260819T203521Z-0040. The reconciliation is COMPLETE ON INTEGRITY AND
+  PARTIAL ON SUBSTANCE, and says so.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T183543Z-0035 (the reader-lane reconciliation and the three rulings it makes),
@@ -1076,5 +1040,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T200314Z-0039
+last_build_log_entry: BL-20260819T203521Z-0040
 status: ACTIVE
