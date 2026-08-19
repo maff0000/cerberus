@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T04:05:00Z'
+updated_utc: '2026-08-19T04:56:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -20,8 +20,11 @@ current_phase: BUILD
 current_block: >
   CD-WO-002 block A, increment 2 of 7 COMPLETE at lane SHA 8723ffb — A4 collector framework and
   source registry, A7 closed envelope contracts and the publication refusal path. 637 unit tests.
-  Next: increment 3, A5 store schema and grant matrix + A6 container set as DESIGN, which closes
-  block A.
+  Engineer instance 2 was then terminated mid-increment-3, leaving 37 uncommitted files in the lane
+  which are RULED KEEP AS UNATTESTED CANDIDATE (CD-D-009, BL-20260819T045600Z-0005) and snapshotted
+  to /srv/crash-detector-wo2-candidate-inc3/. They are NOT project state until an Engineer seat
+  reviews, corrects, commits and attests them. Next: instance 3 adopts-or-corrects increment 3
+  (A5 + A6, which closes block A) and discharges CD-OB-001, then runs increments 4 to 7.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -32,16 +35,18 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
+last_completed_checkpoint_sha: 528b4745fe31aaaa356a9e6465e080fbd99bb77a
 lane_head_sha: 8723ffbf71fedf0de6a229a4865a3c79283f9782   # wo-2-skeleton, increment 2 of 7 committed
 continuity_record_commit: PENDING
 working_tree_state: >
-  main clean at 0047093 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  main clean at 528b474 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at 0047093 — the interrupted seat's untracked src/
-  was quarantined to /srv/crash-detector-wo2-salvage/ under CD-D-007. The pending commit is the
-  BLUEPRINT.md status correction, governance/dispatch/CD-DISPATCH-WO2-ASSURANCE.yaml at DRAFT,
-  BL-20260819T025400Z-0004 and this record.
+  mutation lane /srv/crash-detector-wo2 sits at 8723ffb on wo-2-skeleton carrying 37 UNCOMMITTED
+  files from terminated Engineer instance 2 — the increment-3 candidate ruled KEEP AS UNATTESTED
+  CANDIDATE under CD-D-009, snapshotted with a SHA256 manifest to
+  /srv/crash-detector-wo2-candidate-inc3/. All 37 are inside the Engineer's writable_scope; no
+  protected path is touched and pbg/ is intact. No container or volume was left behind by that
+  seat. The pending commit is BL-20260819T045600Z-0005 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -83,7 +88,12 @@ completed_items:
 
 remaining_items:
 - 'Engineer block A increment 3 — A5 store schema and grant matrix + A6 container set as DESIGN.
-  Increments 1 and 2 are done at lane SHA 8723ffb.'
+  Increments 1 and 2 are done at lane SHA 8723ffb. A CANDIDATE for this increment exists
+  uncommitted in the lane (CD-D-009); instance 3 must review it clause by clause against A5 and A6,
+  correct what is wrong, and attest it as its own work — not merely commit it.'
+- 'CD-OB-001 — RT-A undischarged. The grant matrix has never been observed against a LIVE
+  catalogue, only read out of SQL text. One throwaway digest-pinned postgres container, within
+  RT-A''s bounds, destroyed before the seat returns.'
 - 'Engineer block B — register checks, Required Test Register over all sixteen PID criteria, the
   planted violations, and the Engineer''s own run of every declared command'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
@@ -158,12 +168,15 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Re-dispatch Engineer CD-ENG-WO2-01 (instance 2) against
+  Re-dispatch Engineer CD-ENG-WO2-01 as instance 3, in the FOREGROUND, against
   governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml on branch wo-2-skeleton at
-  /srv/crash-detector-wo2, execution base 0047093, in the foreground, committing at every
-  increment boundary so a terminated seat costs at most one increment. On READY_FOR_ASSURANCE,
-  write the exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED,
-  and dispatch a SEPARATE agent as CD-ASR-WO2-01. Stop at the gate for Product Owner review.
+  /srv/crash-detector-wo2, execution base 8723ffb, carrying the CD-D-009 adoption addendum:
+  review the 37 inherited files clause by clause against A5 and A6, state which clauses were
+  verified and how, correct what is wrong, discharge CD-OB-001, then commit and attest increment 3
+  as its own work. Then increments 4 to 7 — block A close, then block B — committing at every
+  boundary so a terminated seat costs at most one increment. On READY_FOR_ASSURANCE, write the
+  exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
+  SEPARATE agent as CD-ASR-WO2-01. Stop at the gate for Product Owner review.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
@@ -171,5 +184,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T025400Z-0004
+last_build_log_entry: BL-20260819T045600Z-0005
 status: ACTIVE
