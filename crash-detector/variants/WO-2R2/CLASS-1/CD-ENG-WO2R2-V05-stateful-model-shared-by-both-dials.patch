@@ -1,0 +1,60 @@
+diff --git a/src/crash_detector/engine/carrying_model.py b/src/crash_detector/engine/carrying_model.py
+new file mode 100644
+index 0000000..d420633
+--- /dev/null
++++ b/src/crash_detector/engine/carrying_model.py
+@@ -0,0 +1,54 @@
++"""A contribution model that carries what it has seen.
++
++CD-ENG-WO2R2-V05 — A STATEFUL ContributionModel SHARED BY BOTH DialSpecs.
++
++*** THIS ROUTE IS NOT REFUSED. It is recorded as an OPEN route, by the seat that wrote the
++*** closure it defeats, and NO GUARD WAS BUILT FOR IT.
++
++ROUTE, AND WHY IT IS IN NEITHER CORPUS: every variant in both corpora attacks the dial
++types from OUTSIDE the product's declared flow — a helper, a publication module, a serving
++module, a reflection route, a subclassed timestamp. This one attacks from INSIDE it, at the
++product's own declared extension point. `DialSpec.contribution_model` is injected, and
++`evaluate` calls `spec.contribution_model.compute(payloads)` once per dial with THAT DIAL'S
++payloads only — a separation that is real and that this variant does not break. It breaks
++the OTHER assumption instead: that the model is pure. `ContributionModel`'s own docstring
++says "Contract: **pure**. No I/O, no clock, no configuration read from the environment",
++and nothing enforces it. One model object given to both dial specs sees both dials' numbers
++one at a time and returns the mean as the second dial's magnitude.
++
++WHAT IT DOES NOT DO, WHICH IS WHY IT IS INTERESTING: it launders nothing. It names no
++admission door outside a declared site. It touches no private slot, defines no dunder,
++performs no arithmetic on a magnitude, and holds no two dials in one expression. Its
++`observed_for_dial` claim is made from `evaluate.py`, the ONE declared product admission
++site, and every field of that claim is TRUE — the dial is right, the cited inputs were
++genuinely present and genuinely used. The only thing wrong is the number, and the number is
++the one thing the base case cannot check.
++"""
++
++from crash_detector.dials.scores import Contribution
++from crash_detector.engine.model import ScoreComputation
++
++
++class CarryingModel:
++    """Pure by contract, stateful in fact."""
++
++    def __init__(self) -> None:
++        self.seen: list = []
++
++    @property
++    def model_id(self) -> str:
++        return "carrying.model.v0"
++
++    def compute(self, payloads) -> ScoreComputation:
++        figure = float(list(payloads.values())[0]["figure"])
++        self.seen.append(figure)
++        carried = sum(self.seen) / len(self.seen)
++        return ScoreComputation(
++            magnitude=carried,
++            contributions=tuple(
++                Contribution(
++                    source_id=source_id, category="carried", weight=1.0, contribution=0.1
++                )
++                for source_id in sorted(payloads)
++            ),
++        )

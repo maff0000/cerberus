@@ -1,0 +1,32 @@
+diff --git a/src/crash_detector/publication/operator_panel.py b/src/crash_detector/publication/operator_panel.py
+new file mode 100644
+index 0000000..62ae5cd
+--- /dev/null
++++ b/src/crash_detector/publication/operator_panel.py
+@@ -0,0 +1,26 @@
++"""A single composite figure for the operations console.
++
++CD-ENG-WO2R2-V01 — THE RENAME TEST, EXECUTED (CD_PL_F74_ADOPTED, PO-DECISIONS-0002).
++
++This is `ASR2-002-A` with EVERY identifier changed and the door reached under an alias:
++the module is renamed, the function is renamed, every local is renamed, and
++`combine_within_one_dial` is imported as `fold_readings`. If the refusal recorded for
++ASR2-002-A were a NAME result — a registry, a vocabulary, a scanner — this file would
++walk past it, exactly as `PL-R5` walked past RULE 4 with nothing changed but the door
++name (CD-PL-F74, the finding that cost the second gate).
++
++Nothing else about the attack changes: no dial name appears in any expression, no
++admission door name appears, no private slot is touched, no `repr`, no f-string, no JSON,
++no `getattr`, no `importlib`.
++"""
++
++from crash_detector.dials.magnitude import combine_within_one_dial as fold_readings
++from crash_detector.dials.magnitude import sole_dial_of as which_one
++
++
++def panel_figure(observations):
++    """One number for the console, from whichever observations are in hand."""
++    gathered = tuple(observations)
++    scalars = [entry.quantity_for(which_one(entry)) for entry in gathered]
++    conveyed = sum(scalars) / len(scalars)
++    return fold_readings([gathered[0]], using=lambda _handed: conveyed)

@@ -1,0 +1,76 @@
+diff --git a/src/crash_detector/publication/carried_figure.py b/src/crash_detector/publication/carried_figure.py
+new file mode 100644
+index 0000000..cf61693
+--- /dev/null
++++ b/src/crash_detector/publication/carried_figure.py
+@@ -0,0 +1,70 @@
++"""A carried figure for the operations console.
++
++CD-ENG-WO2R2-V04 — DUCK-TYPE THE PROVENANCE CARRIER.
++
++ROUTE, AND WHY IT IS IN NEITHER CORPUS: both corpora duck-type OUTCOMES and READINGS —
++`test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one` exists because of one
++such finding, and ASR2-005-A duck-types a timestamp. Nothing in either corpus duck-types
++the PROVENANCE CARRIER, because until WO-2R2 increment 1a the derivation door took a bare
++float and there was no carrier to imitate.
++
++The imitation is faithful: `dials` is a real frozenset naming one real dial, and
++`value_for` honours the same set-equality contract DeclaredQuantity.value_for honours. The
++only thing it is not is a DeclaredQuantity, and the only thing wrong with the number is
++that no door established it.
++
++The second arm imitates the same thing with a `float` SUBCLASS, which is the CLASS 2
++doctrine ("a subclass of a number is not a number") applied to this operand.
++"""
++
++from crash_detector.dials.magnitude import DialMagnitude, sole_dial_of
++from crash_detector.dials.provenance import (
++    SameDialReduction,
++    derived_within_one_dial,
++)
++
++
++class CarriedFigure:
++    """Everything a declared quantity has, established by nobody."""
++
++    def __init__(self, dials, value):
++        self.dials = dials
++        self._value = value
++
++    def value_for(self, dial_id):
++        if self.dials != frozenset({dial_id}):
++            raise TypeError("wrong dial")
++        return self._value
++
++
++class CarriedNumber(float):
++    """A float wearing a subclass, for the second arm."""
++
++
++def carried_figure(observations):
++    """One number for the console, from whichever observations are in hand."""
++    gathered = tuple(observations)
++    scalars = [entry.quantity_for(sole_dial_of(entry)) for entry in gathered]
++    conveyed = sum(scalars) / len(scalars)
++    only = sole_dial_of(gathered[0])
++    return DialMagnitude(
++        dial_id=only,
++        quantity=derived_within_one_dial(
++            quantities=(CarriedFigure(frozenset({only}), conveyed),),
++            reduction=SameDialReduction.MEAN,
++        ),
++    )
++
++
++def carried_number(observations):
++    """The same, with a float subclass instead of a look-alike carrier."""
++    gathered = tuple(observations)
++    scalars = [entry.quantity_for(sole_dial_of(entry)) for entry in gathered]
++    only = sole_dial_of(gathered[0])
++    return DialMagnitude(
++        dial_id=only,
++        quantity=derived_within_one_dial(
++            quantities=(CarriedNumber(sum(scalars) / len(scalars)),),
++            reduction=SameDialReduction.MEAN,
++        ),
++    )
