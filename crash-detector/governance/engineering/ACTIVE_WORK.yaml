@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T14:35:02Z'
+updated_utc: '2026-08-19T15:17:32Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -301,6 +301,63 @@ current_block: >
   briefly failed FOR THE WRONG REASON, caught only because the violation text did not match the
   route; its recommendation to assert the expected RULE ID rather than merely a non-zero exit is
   ADOPTED by the PL for its own probes and carried into the Assurance dispatch as a method note.
+  WO-2R INCREMENT 3b RECONCILED AND **ACCEPTED** (CD-D-048) at lane ba469b5, four commits by
+  CD-ENG-WO2R-01, attested in lane entry BL-20260819T150752Z-0044, reconciled by the PL in
+  BL-20260819T151732Z-0027. CD-PL-F59 IS CLOSED and CD-ASR-F04 IS CLOSED AS A CLASS, subject to
+  Assurance. THE SEAT DECLINED THE OBVIOUS FIX AND WAS RIGHT TO: mirroring the destination registry
+  onto `pending` is incoherent, because a pending entry exists BECAUSE THE HOST IS UNKNOWN, so
+  requiring it to name a registered destination is either unsatisfiable or forces the seat to invent
+  the hostname the project recorded as owed (CD-RULE-003, PBG-AUTH-005 — compose.yaml itself says
+  cd-witness' and cd-review's hosts are "not decided" and were "recorded as pending rather than
+  guessed"). CD-EGRESS-007 instead closes the field FROM ITS OWN MEANING: a pending entry is the
+  record of an ABSENCE — what authorises the future endpoint and why the host is not written — and a
+  host is precisely the thing it declares the absence of, so the key set is closed BY EQUALITY and
+  no field can hold a destination. `host:`, `endpoint:`, `url:`, `address:`, `target:` and every key
+  nobody has thought of fail THE SAME CLAUSE WITHOUT THE VALUE BEING EXAMINED. That is the
+  increment-2b pattern arrived at independently and fitted to a field whose semantics forbade the
+  increment-3 answer. SECOND-ORDER REPAIR, UNPROMPTED: the unresolved-alias filter enumerated five
+  field names and `pending` was not among them; the seat identified THAT LIST AS ITSELF THE
+  ENUMERATION DEFECT and replaced it with the whole x-egress subtree, strictly wider. BOUNDARY 4 IS
+  CORRECTED AS CD-D-046 REQUIRED and not softened — it is now FIELD-SPECIFIC, each field naming its
+  own layer-1 rule AND the variant that measured it (`hosts` -> CD-EGRESS-004 by E05; the registry
+  -> CD-EGRESS-006 by V20; `pending` -> CD-EGRESS-007 by PL-S3a/PL-S3c; and `pending` PROSE ->
+  "THERE IS NO LAYER 1. SEE BOUNDARY 7 ... Do not read this boundary as covering it"), and it
+  carries the correction and its reason in its own text rather than silently rewriting. THE PL
+  MEASURED EVERYTHING ITSELF: clean arm 53 -> 69 assertions; PL-S3a and PL-S3c, which escaped at
+  b60d153, now REFUSED by CD-EGRESS-007; PL-S3b refused by BOTH layers where before it was refused
+  by one; PL-S1 still refused; V29a, the declared boundary-7 escape, exit 0 exactly where the seat
+  says the residue is; suite 1187 -> 1192 passed; ZERO of the 1187 node ids missing, 5 added; 11 of
+  11 plants applying; all four commits correctly seated with the [CD-ENG-WO2R-01] prefix restored
+  (CD-PL-F60 corrected, nothing amended). THE PL THEN WROTE THREE NEW PROBES. PL-T1 (an eighth
+  service whose `pending` carries the address) REFUSED with scanned: 7 -> 8, so the rule applies to
+  every service the artefact declares. PL-T2 (EDIT THE IN-FILE CONTRACT to legitimise a `host` key,
+  then use it) REFUSED — the guard holds its OWN key set and does not read its admissible keys out
+  of the file under test, which is the right way round: the registry of DESTINATIONS is in-tree
+  data, but the SCHEMA is in the guard. PL-T5 IS THE ONE THAT MATTERS: admissible keys with a
+  nested container value — `declared_in` as a list of two authorities — AND THE CHECK DOES NOT
+  TERMINATE, exit 124. CD-D-050 accepts boundary 7 (an address in pending PROSE is not refused,
+  measured by V29a at exit 0) as a declared limit, because it carries an executable example, a
+  MEASURED partial carrier in V29b, the words "NOT PROVED TO BE CARRIED ANYWHERE" for the address
+  literal, and because the seat recorded the tempting argument AS AN ARGUMENT AND NOT AS A LAYER —
+  CD-RULE-006 applied by the seat to itself, unprompted. CD-D-049 COMMENDS the refusal to mirror the
+  registry. CD-PL-F61 (MEDIUM) CONFIRMS the seat's own CD-ENG-WO2R-F14 and adds three measured
+  facts: the hang is NOT an exotic shape (PL-T5 was written to test value-position smuggling, not to
+  find a hang, and `declared_in` as a list of two authorities is an ordinary edit); it affects BOTH
+  register checks sharing the reader (check_egress_no_broker AND check_base_image_digest_pin both
+  exit 124 on the same tree, both exit 0 on the clean one), so TWO of the eleven declared gate
+  commands return NO VERDICT; and it PREDATES THE AUDIT — _yamlmin.py has ZERO commits in
+  ee8be6b..ba469b5, and the minimal document hangs at ee8be6b AND at 66681b2, THE EXACT SHA THE
+  FIRST AUDITOR WAS GIVEN, reachable throughout the WO-2 assurance run and never met. It is NOT a
+  false clean and is fail-closed under any harness imposing a timeout, but it is a check that cannot
+  return a verdict, which is what PBG-CI-002's "never a skip, for any reason" is aimed at. CD-D-051:
+  it is repaired by a SEPARATE BOUNDED DISPATCH issued AFTER increments 4 and 5 and BEFORE
+  Assurance — not folded into WO-2R, because this dispatch is bounded to CD-ASR-F01..F06 and
+  widening it silently is what `prohibited` forbids; and not deferred to WO-3, because an auditor
+  probing YAML shapes will meet it the way the PL did, by accident, on an ordinary edit. The seat's
+  CD-ENG-WO2R-F15 (its own V27 is narrower than it looks) and CD-ENG-WO2R-F16 (a skipped arm's only
+  trace was a silently SHRINKING assertion count, V26 reporting PASS at 52 where clean was 53) are
+  both CONFIRMED AND COMMENDED, F16 adopted as candidate project method and carried to Assurance
+  alongside F13. CD-D-052: PL-T1/T2/T5 join the exclusion set.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -325,7 +382,7 @@ last_completed_checkpoint_sha: 8ca0eed  # WO-2R increment 3 RECONCILED and NOT A
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
+lane_head_sha: ba469b5ef9aa5509cf2eba1bd46b581f751bb313
   # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
   # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
   # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
@@ -339,7 +396,7 @@ lane_head_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: b60d15321fdc136f0d5dd55b8feab190c0548680   # WO-2R increment 3, RECONCILED AND **NOT ACCEPTED** (CD-D-044); re-opened as 3b on CD-PL-F59
+lane_increment_sha: ba469b5ef9aa5509cf2eba1bd46b581f751bb313   # WO-2R increment 3b, RECONCILED AND ACCEPTED (CD-D-048); CD-ASR-F04 CLOSED AS A CLASS
 continuity_record_commit: 8ca0eed  # the commit carrying BL-20260819T143502Z-0026
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -587,5 +644,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T143502Z-0026
+last_build_log_entry: BL-20260819T151732Z-0027
 status: ACTIVE

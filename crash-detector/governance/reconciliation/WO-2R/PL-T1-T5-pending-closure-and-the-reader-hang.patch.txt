@@ -1,0 +1,141 @@
+PL-T1, PL-T2, PL-T5 — PROJECT LEAD PROBES AGAINST WO-2R INCREMENT 3b (CD-PL-F59 closure)
+=========================================================================================
+
+DATA, NOT A HARNESS. Nothing in this directory is executable (PBG-ASSURE-001). Each probe is
+a unified diff against `deploy/compose.yaml` at lane SHA
+ba469b5ef9aa5509cf2eba1bd46b581f751bb313. To reproduce:
+
+    git archive ba469b5 | tar -x -C <fresh tmpdir>
+    cd <fresh tmpdir> && git apply -p1 <the single hunk you want>
+    timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .
+
+USE A TIMEOUT. One of these does not terminate — see PL-T5.
+
+Written by PROJECT_LEAD_SEAT_01 at reconciliation of increment 3b, against the CD-EGRESS-007
+structure the seat actually built. None is in the auditor's known set, none is among the
+seat's V18..V30, and none is among the Project Lead's own PL-S1..PL-S4. From this commit they
+prove nothing about the class and JOIN THE EXCLUSION SET (CD-D-039, CD-D-047 precedent).
+
+RESULTS AS MEASURED
+-------------------
+  PL-T1   a NEW (eighth) service whose `pending` carries the address literal — CD-EGRESS-007
+          composed with subject derivation, which PL-S1 tested separately
+          -> REFUSED, exit 1, "CD-EGRESS-007: a pending entry is not a declaration of an
+             omission", with `scanned:` moving 7 -> 8. The pending rule applies to every
+             service the artefact declares, not to the seven that existed when it was written.
+
+  PL-T2   EDIT THE IN-FILE CONTRACT to legitimise a `host` key, then use it. This asks
+          whether the guard trusts the specification written in the subject it is judging.
+          -> REFUSED, exit 1, "CD-EGRESS-007: a pending entry's key set is not the declared
+             key set". The guard holds its OWN key set and does not read its admissible keys
+             out of the file under test. This is the right way round: the registry of
+             DESTINATIONS is in-tree data, but the SCHEMA is in the guard, so an attacker
+             editing the document cannot also edit the rule that judges it.
+
+  PL-T5   admissible KEYS with a nested container VALUE — `declared_in` written as a list of
+          two authorities, one of which is the address
+          -> **THE CHECK DOES NOT TERMINATE. exit 124 under `timeout 60`.**
+
+PL-T5 AND CD-ENG-WO2R-F14 — CONFIRMED, AND WORSE THAN "A DOCUMENT SHAPE"
+-----------------------------------------------------------------------
+The seat raised CD-ENG-WO2R-F14 (MEDIUM) itself, escalated rather than fixed it, and declared
+it at boundary 8 with its own variant V30. All of that is correct and is why increment 3b is
+accepted rather than sent back. The Project Lead confirms it independently and adds three
+measured facts the seat's own framing understates:
+
+1. IT IS NOT AN EXOTIC SHAPE. PL-T5 was written to test VALUE-position smuggling under an
+   admissible key, not to find a hang. `declared_in` as a LIST OF TWO AUTHORITIES is an
+   entirely ordinary edit that a person documenting a second Blueprint reference would make.
+   The Project Lead met the defect by accident, on the first probe of that shape, without
+   looking for it.
+
+2. IT AFFECTS BOTH REGISTER CHECKS THAT SHARE THE READER, not one. Measured on the PL-T5
+   tree: `check_egress_no_broker.py` exit 124 AND `check_base_image_digest_pin.py` exit 124.
+   On the clean tree both exit 0. Two of the eleven declared gate commands return NO VERDICT
+   on the same input.
+
+3. IT IS PRE-EXISTING AND PREDATES THE AUDIT. `tools/register/_yamlmin.py` has ZERO commits
+   in ee8be6b..ba469b5 — the whole of WO-2R never touched it. The minimal document
+
+       top:
+         - key:
+             - nested
+
+   hangs `load_yaml` at ee8be6b (the WO-2R base) AND at 66681b2 — THE EXACT SHA THE FIRST
+   AUDITOR WAS GIVEN. It was reachable throughout the WO-2 assurance run and was not met.
+
+WHAT IT IS AND IS NOT. It is NOT a false clean: a hang is not exit 0, and under any harness
+that imposes a timeout it is fail-closed. It IS a check that cannot return a verdict, which
+PBG-CI-002's "never a skip, for any reason" is aimed at — a hang is a skip of indefinite
+length that also stops the pipeline behind it. Raised by the Project Lead as CD-PL-F61 for
+the DECISION it forces: whether the reader is repaired before the Assurance dispatch is
+issued. The Project Lead's ruling is CD-D-051 — yes, by a SEPARATE bounded dispatch, because
+an auditor probing YAML shapes will meet this the way the Project Lead did.
+
+THE DIFFS
+=========
+===== PL-T1 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -439,6 +439,19 @@
+   # cd-witness — fetch WITNESS observations, build the panel, compute divergence.
+   # Doctrine §3.4: a witness that is also an ingredient corroborates nothing.
+   # ----------------------------------------------------------------------------------------
++  cd-scraper:
++    image: python:3.11-slim
++    x-uid: 10009
++    x-egress:
++      policy: ALLOWLIST
++      hosts: []
++      pending:
++        - 198.51.100.24
++      enforced_by:
++        - "attached only to cd-net-private, which is internal: true"
++    networks:
++      - cd-net-private
++
+   cd-witness:
+     <<: *cd-python-service
+     build:
+===== PL-T2 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -70,7 +70,7 @@
+         as a SECOND layer over the registry itself and over every entry as written, catching a
+         destination somebody DID register that is a broker. Neither layer is sole.
+     pending:
+-      type: list of OMISSION RECORDS — NEVER a list of hosts
++      type: list of OMISSION RECORDS — admits declared_in, blocked_by, host
+       meaning: >
+         Endpoints BLUEPRINT §2 declares this service will need, whose host could not be
+         resolved by this seat without inventing it. Declared so the omission is visible
+@@ -424,8 +424,9 @@
+       policy: ALLOWLIST
+       hosts: []
+       pending:
+-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+-          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
++        - declared_in: "BLUEPRINT §2 — ingredient sources"
++          blocked_by: "CD-D-005"
++          host: 198.51.100.24
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+         - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
+===== PL-T5 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -424,7 +424,9 @@
+       policy: ALLOWLIST
+       hosts: []
+       pending:
+-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
++        - declared_in:
++            - "BLUEPRINT §2 — ingredient sources"
++            - 198.51.100.24
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+----- minimal _yamlmin repro -----
+top:
+  - key:
+      - nested
