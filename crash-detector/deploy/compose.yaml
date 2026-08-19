@@ -70,11 +70,32 @@ x-cd-egress-contract:
         as a SECOND layer over the registry itself and over every entry as written, catching a
         destination somebody DID register that is a broker. Neither layer is sole.
     pending:
-      type: list
+      type: list of OMISSION RECORDS — NEVER a list of hosts
       meaning: >
         Endpoints BLUEPRINT §2 declares this service will need, whose host could not be
         resolved by this seat without inventing it. Declared so the omission is visible
-        rather than discovered in WO-3. A `pending` entry grants nothing.
+        rather than discovered in WO-3.
+
+        AN ENTRY HERE IS NOT A HOST AND MUST NOT NAME ONE. Every entry is a mapping
+        declaring EXACTLY two keys, both non-empty prose:
+
+          declared_in  the clause of recorded product intent that says this service will
+                       need an endpoint here.
+          blocked_by   why the host is NOT WRITTEN — the decision that is owed, or the fact
+                       that resolving it would mean inventing it.
+
+        A HOST IS PRECISELY THE THING A PENDING ENTRY DECLARES THE ABSENCE OF, so there is no
+        field in one that can carry a destination, and `host:`, `endpoint:`, `url:`,
+        `address:` or `target:` here is a violation (CD-EGRESS-007). The key set is asserted
+        by EQUALITY with the declared set, so a key nobody has thought of fails the same
+        clause.
+
+        "A PENDING ENTRY GRANTS NOTHING" IS TRUE AND IS NOT THE POINT. At WO-2 an allowlist
+        entry grants nothing either, because both networks are `internal: true`; this whole
+        contract is about DECLARATIONS, not packets, and `pending` is the declaration the
+        WO-3 enforcement lane inherits. It was guarded by the broker vocabulary alone until
+        CD-PL-F59 measured the consequence: `api.ibkr.com` written here was refused and
+        `198.51.100.24` in the same slot passed.
     enforced_by:
       type: list
       meaning: which instrument makes the policy true, named so it can be verified.
@@ -133,6 +154,32 @@ x-cd-egress-contract:
         not tidiness: the only offline evidence of what a destination REACHES is its
         registrable domain, and an address literal carries none, so it cannot be judged and
         therefore cannot be declared.
+    - id: CD-EGRESS-007
+      criterion: CD-AC-012
+      added_closing: CD-PL-F59
+      statement: >
+        A PENDING ENTRY DECLARES AN OMISSION, NOT A DESTINATION. Every service declares
+        `pending` as a LIST; every entry in it is a mapping whose key set is EXACTLY
+        `declared_in` and `blocked_by`, both non-empty scalars. This is LAYER 1 over
+        `pending`, and it is deliberately NOT CD-EGRESS-004's registry: a pending entry
+        exists because the host is UNKNOWN, so requiring it to name a registered destination
+        would either be unsatisfiable or would force an engineering seat to invent the
+        hostname this project recorded as owed (CD-RULE-003, PBG-AUTH-005). A HOST IS
+        PRECISELY THE THING A PENDING ENTRY DECLARES THE ABSENCE OF, so the closure removes
+        the field a destination could sit in rather than trying to recognise destinations:
+        `host:`, `endpoint:`, `url:`, `address:`, `target:` and every key nobody has thought
+        of fail one clause, asserted by EQUALITY with the declared set.
+
+        WHY THIS INVARIANT EXISTS. CD-PL-F59: after CD-EGRESS-004 closed `hosts`, `pending`
+        still carried only the broker vocabulary, so `api.ibkr.com` written there was refused
+        and `198.51.100.24` IN THE SAME SLOT PASSED — CD-ASR-F04 reproduced verbatim one
+        field across. `pending` is not incidental: it is the declaration the WO-3 enforcement
+        lane inherits, which is the thing that lane must not inherit with a hole in it.
+
+        WHAT IT DOES NOT CLOSE: the free prose of `declared_in` and `blocked_by` is not
+        judged for addresses. See boundary 7 of the declared limit in
+        tools/register/check_egress_no_broker.py, which carries the measured example and
+        does not claim any layer carries it.
 
 # ==========================================================================================
 # BASE IMAGE IDENTITY — BY DIGEST, NEVER BY TAG

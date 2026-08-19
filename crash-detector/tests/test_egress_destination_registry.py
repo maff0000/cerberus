@@ -42,6 +42,12 @@ DESTINATION_KEYS = frozenset(
 )
 X_EGRESS_KEYS = frozenset({"policy", "hosts", "pending", "enforced_by"})
 
+#: CD-EGRESS-007. The closed key set of a `pending` entry — the record of an endpoint whose
+#: host is NOT KNOWN. It carries the clause that authorises the future endpoint and the reason
+#: the host is not written, and nothing else, because a host is precisely the thing a pending
+#: entry declares the absence of.
+PENDING_KEYS = frozenset({"declared_in", "blocked_by"})
+
 
 @pytest.fixture(scope="module")
 def registry() -> dict:
@@ -314,6 +320,7 @@ def test_the_compose_contract_declares_the_deny_by_default_invariants():
         "CD-EGRESS-004",
         "CD-EGRESS-005",
         "CD-EGRESS-006",
+        "CD-EGRESS-007",
     } <= declared
 
 
@@ -326,3 +333,112 @@ def test_the_registry_states_that_it_enforces_nothing():
     text = REGISTRY_PATH.read_text(encoding="utf-8")
     assert "no per-host egress primitive" in text
     assert "WO-3" in text
+
+
+# --- CD-EGRESS-007: a pending entry declares an OMISSION, not a destination -------------- #
+#
+# CD-PL-F59. `pending` had layer 2 and no layer 1, so `198.51.100.24` written there passed
+# exactly as it had passed in `hosts` before deny-by-default arrived. Layer 1 here is NOT the
+# destination registry — a pending entry exists BECAUSE the host is unknown, so requiring it
+# to name a registered destination would either be unsatisfiable or would force this seat to
+# invent the hostname the project recorded as owed (CD-RULE-003). It is the CLOSED ENTRY
+# SHAPE instead: there is no field in a pending entry that can hold a destination at all.
+
+
+def test_every_service_declares_pending_as_a_list(services: dict):
+    """An absent or differently typed `pending` is the whole field leaving the guard's reach.
+
+    The guard reached `pending` through `isinstance(pending, list)` and nothing else, so
+    writing it as a mapping made every assertion over it disappear — silently, visible only
+    as an assertion count that dropped from 53 to 52 and that nobody was watching. This is
+    CD-EGRESS-003's argument about unrecognised services, applied to the container of a field.
+    """
+    for name, body in sorted(services.items()):
+        pending = body["x-egress"].get("pending")
+        assert isinstance(pending, list), (
+            f"service `{name}` declares `pending` as "
+            f"{'nothing at all' if pending is None else type(pending).__name__}; the "
+            "contract admits a LIST and nothing else."
+        )
+
+
+def test_every_pending_entry_declares_exactly_the_two_omission_fields(services: dict):
+    """The key set is asserted by EQUALITY, so an unrecognised key is a violation.
+
+    `host:`, `endpoint:`, `url:`, `address:`, `target:` and every key nobody has thought of
+    fail one clause, because none of them is in the declared set. That is the difference
+    between this and an IP-literal detector: nothing is recognised about the VALUE at all.
+    """
+    for name, body in sorted(services.items()):
+        for position, entry in enumerate(body["x-egress"]["pending"]):
+            assert isinstance(entry, dict), (
+                f"service `{name}`'s pending entry #{position} is "
+                f"{type(entry).__name__}, not a mapping. A bare value here is a place "
+                "somebody wrote where the record of a MISSING place belongs."
+            )
+            assert set(entry) == PENDING_KEYS, (
+                f"service `{name}`'s pending entry #{position} declares {sorted(entry)}; a "
+                f"pending entry declares EXACTLY {sorted(PENDING_KEYS)}. A host is the one "
+                "thing a pending entry cannot carry — it is the record that a host is NOT "
+                "KNOWN."
+            )
+
+
+def test_every_pending_entry_field_is_non_empty_prose(services: dict):
+    """A nested mapping or list beneath an admissible key is where a destination would hide.
+
+    The key set cannot constrain a structure it does not descend into, so the values are
+    constrained instead: both fields are prose written for a human reviewer.
+    """
+    for name, body in sorted(services.items()):
+        for position, entry in enumerate(body["x-egress"]["pending"]):
+            for field_name in sorted(PENDING_KEYS):
+                value = entry.get(field_name)
+                assert isinstance(value, str) and value.strip(), (
+                    f"service `{name}`'s pending entry #{position} declares `{field_name}` "
+                    f"as {'an empty scalar' if isinstance(value, str) else type(value).__name__}"
+                )
+
+
+def test_no_pending_entry_carries_a_host_bearing_key(services: dict):
+    """The named forms, asserted separately from the key-set equality that already covers them.
+
+    This test would be redundant if the key set were the only rule, and that is the point:
+    it is here so that WIDENING PENDING_KEYS to admit a destination field fails a test whose
+    name says what was lost, rather than silently satisfying the equality test alongside it.
+    """
+    forbidden = {"host", "hosts", "endpoint", "endpoints", "url", "uri", "address",
+                 "addr", "ip", "target", "destination", "upstream", "server"}
+    assert not (PENDING_KEYS & forbidden), (
+        "a pending entry's declared key set has been widened to admit a destination field. "
+        "A pending entry declares the ABSENCE of a host; a field that can hold one is a "
+        "contradiction in terms and reopens CD-PL-F59."
+    )
+    for name, body in sorted(services.items()):
+        for position, entry in enumerate(body["x-egress"]["pending"]):
+            stray = sorted(set(entry) & forbidden)
+            assert not stray, (
+                f"service `{name}`'s pending entry #{position} carries {', '.join(stray)}"
+            )
+
+
+def test_the_guard_declares_the_pending_residue_it_does_not_close():
+    """CD-RULE-004 and CD-RULE-006. The prose residue is DECLARED, and boundary 4 is corrected.
+
+    The defect CD-PL-F59 records is not only that an address passed in `pending`; it is that
+    NONE of the six boundaries mentioned the field, while boundary 4 asserted a compensating
+    layer 1 that did not exist for it. A guard closes its class or declares its limit, and
+    this asserts that the declaration is present rather than trusting it to stay written.
+    """
+    header = (
+        pathlib.Path(__file__).resolve().parents[1]
+        / "tools" / "register" / "check_egress_no_broker.py"
+    ).read_text(encoding="utf-8")
+    assert "CD-EGRESS-007" in header
+    assert "in `pending`: LAYER 1 is CD-EGRESS-007" in header, (
+        "boundary 4 must name the layer-1 rule that applies to `pending` specifically"
+    )
+    assert "in `pending` PROSE: THERE IS NO LAYER 1" in header, (
+        "boundary 4 must NOT be read as covering the prose residue declared at boundary 7"
+    )
+    assert "NOT PROVED TO BE CARRIED ANYWHERE" in header
