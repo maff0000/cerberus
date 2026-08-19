@@ -1,0 +1,157 @@
+PL-U1, PL-U5, PL-U6b — PROJECT LEAD PROBES AGAINST WO-2R INCREMENT 4 (CD-ASR-F05)
+==================================================================================
+
+DATA, NOT A HARNESS. Nothing in this directory is executable (PBG-ASSURE-001). Diffs are
+against lane SHA be34fe4f6327f59b25328adbf6a1e2f5c150c1ba. To reproduce:
+
+    git archive be34fe4 | tar -x -C <fresh tmpdir>
+    cd <fresh tmpdir> && git apply -p1 <the hunk you want>
+    timeout 120 python3 -B tools/register/check_engine_no_witness_reach.py --root .
+
+Written by PROJECT_LEAD_SEAT_01 at reconciliation of increment 4. None is in the auditor's
+known set and none is among the seat's V31..V44. From this commit they prove nothing about the
+class and JOIN THE EXCLUSION SET (CD-D-039, CD-D-047, CD-D-052 precedent).
+
+PL-U1 — DID THE SEAT HAVE TO DEVIATE FROM THE PRODUCT OWNER'S WORDING?
+----------------------------------------------------------------------
+The Product Owner's sentence is "the walk root must derive from the CONTAINER'S OWN entrypoint
+set, NOT a hard-coded path". The seat did not do that. It made the root set a UNION —
+derived roots ∪ the engine package — and kept the constant it was told to remove. A deviation
+from a PO-named structure is exactly the kind of thing a Project Lead must not accept on the
+seat's reasoning alone, so it was MEASURED.
+
+PL-U1 applies the LITERAL reading: one line, `roots = sorted(set(derived_roots))`, deleting the
+package arm. Then the project's OWN PRE-EXISTING CD-AC-003 PLANT is applied on top.
+
+    PL-U1 clean arm                     -> exit 0, PASS 12 assertions, 1 root
+    PL-U1 + plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch
+                                        -> **exit 0, PASS 12 assertions — THE PLANT ESCAPES**
+    the SAME plant at be34fe4 (union)   -> exit 1, FAIL 1 violation
+
+THE SEAT'S JUSTIFICATION IS TRUE AND IS NOW MEASURED. In WO-2 the engine container's process
+reaches `crash_detector.runtime.lifecycle` and NOT `crash_detector.engine`; the pre-existing
+plant is caught through the PACKAGE arm (`panel <- corroboration <- engine.evaluate`). Following
+the Product Owner's sentence to the letter would have DELETED A WORKING GUARD and traded one
+escape for another. The dispatch's own `preserve_what_the_auditor_proved` says "widening the
+root must not narrow the rules"; the union is what widening means. The deviation is ACCEPTED on
+this evidence (CD-D-053) — and it is a deviation the seat DECLARED rather than performed
+quietly.
+
+PL-U5 — THE CONSTANT THAT IS LEFT: `ENGINE_SERVICE = "cd-engine"`
+------------------------------------------------------------------
+The walk root now derives from the container. WHICH container is still a hard-coded name at
+line 246. That is the F05 category error one level up, so it was probed.
+
+    PL-U5 renames the service to `cd-engine-v2`
+        -> exit 3, CD-ENGINE-ROOT-102: "declares no service `cd-engine`. The subject of
+           CD-AC-003 is that container, so with no such service there is no process to root
+           the walk at, and an absent subject must never read as a clean one."
+
+FAILS CLOSED, LOUDLY, WITH THE RIGHT REASON. The constant is a stated subject, not a silent
+assumption. This is the posture the first auditor praised and it holds here.
+
+PL-U6b — A SECOND ENGINE CONTAINER. THIS ONE ESCAPES.
+------------------------------------------------------
+Not a rename — an ADDITION. A new service `cd-engine-worker`, built from
+`deploy/Dockerfile.engine` (the ENGINE's own image), whose entrypoint is a new module that
+imports `crash_detector.witness.panel`.
+
+    PL-U6b -> **exit 0, PASS 24 assertions, 0 violations.**
+              The universe grows 39 -> 40 modules, so the check SEES the file. It is simply
+              not a root, because only the service literally named `cd-engine` is derived.
+
+NOTE THE FIRST ATTEMPT FAILED FOR THE WRONG REASON. PL-U6 (superseded) wrote the entrypoint as
+a YAML flow sequence and was refused by CD-ENGINE-ROOT-101 — the reader does not support flow
+collections. That is precisely CD-ENG-WO2R-F13's lesson ("assert the RULE ID, not merely a
+non-zero exit") catching the Project Lead's own probe. Rewritten in block form as PL-U6b, and
+only then did it escape. A probe that is refused for a reason you did not intend has told you
+nothing.
+
+IS THE RESIDUE CARRIED? MEASURED, NOT ASSUMED (CD-RULE-006)
+-----------------------------------------------------------
+YES, AND LOUDLY. On the PL-U6b tree the full suite fails:
+
+    8 failed, 1184 passed
+    tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service
+    tests/test_deploy_container_set.py::test_only_the_store_declares_durable_storage
+    tests/test_deploy_container_set.py::test_every_build_passes_the_base_image_through_as_a_required_variable
+    (and five more in the same modules)
+
+The other five register checks all exit 0 on that tree, so the carrier is the CONTAINER-SET
+TEST LAYER specifically, not the register. THE DELIVERABLE IS NOT DEFEATED — defence in depth
+worked, and a second engine container cannot be added to this repository without something
+going red.
+
+WHY THIS IS CD-PL-F62 (LOW) AND NOT A SECOND CD-PL-F59
+------------------------------------------------------
+Boundary 5 reads: "ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT ... The other five
+services' entrypoints are RESOLVED ... but they are not walk roots, and witness code reachable
+from `cd-witness` is correct rather than a violation." Its measured example is V42, cd-witness.
+
+The boundary distinguishes services BY PURPOSE — "whose job is witness code" — while the
+implementation distinguishes BY NAME. A SIXTH service built from the engine's own image is
+neither "the other five" nor a service whose job is witness code, so an auditor reading
+boundary 5 would not expect PL-U6b. The boundary is INCOMPLETE.
+
+But it is not FALSE, and that is the whole difference from CD-PL-F59. F59 was rejected because
+boundary 4 ASSERTED A COMPENSATING LAYER THAT DID NOT EXIST, and the residue was carried by
+nothing. Here the residue is carried by a layer that was MEASURED refusing the variant. An
+incomplete boundary with a real carrier is a declaration to finish; a false boundary with no
+carrier is a closure to redo. Increment 4 is ACCEPTED and boundary 5 is amended as a bounded
+addendum at the head of increment 5 (CD-D-055).
+
+THE DIFFS
+=========
+--- a/tools/register/check_engine_no_witness_reach.py
++++ b/tools/register/check_engine_no_witness_reach.py
+@@ -1060,7 +1060,7 @@
+     derived_roots = sorted(set(derived_roots))
+ 
+     check.asserted()  # CD-ENGINE-ROOT-002, the derived roots are inside the scanned universe
+-    roots = sorted(set(package_roots) | set(derived_roots))
++    roots = sorted(set(derived_roots))  # PL-U1: literal PO reading, package arm removed
+ 
+     edges: dict = {}
+     for name, path in modules.items():
+===== PL-U5 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -489,7 +489,7 @@
+   # ----------------------------------------------------------------------------------------
+   # cd-engine — compute both dials, build both envelopes. The only writer of dial numbers.
+   # ----------------------------------------------------------------------------------------
+-  cd-engine:
++  cd-engine-v2:
+     <<: *cd-python-service
+     build:
+       context: ..
+===== PL-U6b =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -439,6 +439,23 @@
+   # cd-witness — fetch WITNESS observations, build the panel, compute divergence.
+   # Doctrine §3.4: a witness that is also an ingredient corroborates nothing.
+   # ----------------------------------------------------------------------------------------
++  cd-engine-worker:
++    build:
++      context: ..
++      dockerfile: deploy/Dockerfile.engine
++    entrypoint:
++      - python3
++      - -B
++      - /app/entrypoints/cd_worker.py
++    networks:
++      - cd-net-private
++    x-egress:
++      policy: NONE
++      hosts: []
++      pending: []
++      enforced_by:
++        - "attached only to cd-net-private, which is internal: true"
++
+   cd-witness:
+     <<: *cd-python-service
+     build:
+===== PL-U6b new file deploy/entrypoints/cd_worker.py =====
+from crash_detector.witness.panel import Agrees
+print(Agrees)

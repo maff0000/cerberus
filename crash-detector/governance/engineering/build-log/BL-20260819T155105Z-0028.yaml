@@ -1,0 +1,240 @@
+entry_id: BL-20260819T155105Z-0028
+timestamp_utc: "2026-08-19T15:51:05Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 92cc9cc
+lane_head_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba
+parent_entry_id: BL-20260819T151732Z-0027
+record_origin: >
+  Written by the Project Lead on main after reconciling CD-ENG-WO2R-01's return for WO-2R
+  increment 4. The seat's lane entry is BL-20260819T154355Z-0045. Per CD-RULE-005 this entry_id
+  timestamp comes from `date -u` and is genuine UTC.
+schema_version: 1
+
+action_summary: >
+  WO-2R INCREMENT 4 RECONCILED AND **ACCEPTED** (CD-D-053) at lane be34fe4, four commits by
+  CD-ENG-WO2R-01. CD-ASR-F05 IS CLOSED AS A CLASS, subject to Assurance. E06 reproduces escaping
+  at the old base ba469b5 (exit 0, PASS 13 assertions) and is REFUSED at the new head (exit 1,
+  rule "engine reaches witness code"). All four commits seated correctly in BOTH author and
+  committer with all TEN mandatory headings; nothing executable under variants/; _yamlmin.py
+  untouched at 0 diffs, so CD-D-051's bound held; suite 1192 passed with ZERO node ids removed;
+  ELEVEN of eleven plants apply and contrast.
+
+the_deviation_that_had_to_be_measured: >
+  THE SEAT DID NOT DO WHAT THE PRODUCT OWNER'S SENTENCE SAID, AND WAS RIGHT NOT TO. The PO's
+  words are "the walk root must derive from the CONTAINER'S OWN entrypoint set, NOT a hard-coded
+  path". The seat instead made the root set a UNION — derived roots ∪ the engine package —
+  KEEPING the constant it was told to remove, and DECLARED the deviation rather than performing
+  it quietly.
+
+  A Project Lead must not accept a deviation from a PO-named structure on the seat's reasoning
+  alone, so it was MEASURED. PL-U1 applies the LITERAL reading in one line —
+  `roots = sorted(set(derived_roots))`, deleting the package arm — and then applies the
+  project's OWN PRE-EXISTING CD-AC-003 PLANT on top:
+
+    PL-U1 clean arm                                  -> exit 0, PASS 12 assertions, 1 root
+    PL-U1 + plants/CD-AC-003/CD-RT-003-...patch      -> exit 0, PASS 12 — THE PLANT ESCAPES
+    the SAME plant at be34fe4 (the union)            -> exit 1, FAIL 1 violation
+
+  In WO-2 the engine container's process reaches crash_detector.runtime.lifecycle and NOT
+  crash_detector.engine; the pre-existing plant is caught through the PACKAGE arm
+  (panel <- corroboration <- engine.evaluate). Following the sentence to the letter would have
+  DELETED A WORKING GUARD and traded one escape for another. The dispatch's own
+  preserve_what_the_auditor_proved says "widening the root must not narrow the rules", and the
+  union is what widening means. ACCEPTED on this evidence.
+
+what_the_project_lead_measured_itself:
+  - "Lane HEAD be34fe4, `git status --short` 0 lines; protected scope untouched; tools/register/_yamlmin.py 0 diffs."
+  - "All four commits: CD-ENG-WO2R-01 in BOTH author and committer (CD-RULE-002); prefix [CD-ENG-WO2R-01]."
+  - "Mandatory CLASS/STRUCTURE block: all TEN headings on all FOUR commits."
+  - "Nothing executable under variants/ (0 files with u+x)."
+  - "Clean arm at be34fe4: exit 0, PASS 23 assertions (was 13), universe 39 modules, 15 reachable from 5 roots — 4 engine-package, 1 derived."
+  - "E06 at ba469b5: exit 0, PASS 13 — the escape reproduces exactly as the auditor reported."
+  - "E06 at be34fe4: exit 1, rule `engine reaches witness code`."
+  - "LIVE DERIVATION, three dimensions, run by the PL: V31 moves the derived root to cd_public; V37 moves it to crash_detector.runtime.engine_main AND changes the image sys.path roots from /app/src,/app/entrypoints to /app/src,/app; V38 produces SIX roots, 2 derived. The subject follows the artefact in which module, which path roots, and how many."
+  - "V44, the declared boundary-6 escape: exit 0, PASS 23 — the residue is exactly where the seat says it is."
+  - "Full suite at be34fe4: 1192 passed, exit 0. Anti-relaxation vs ba469b5: ZERO removed, ZERO added."
+  - "Eleven plants: 11 of 11 apply by `git apply --check`; the CD-AC-003 plant contrast re-run by the PL, exit 1 at the head."
+  - "Every probe on its own pristine `git archive` extraction, python3 -B, timeout on every check invocation (CD-PL-F61 is live in this tree)."
+
+the_project_lead_s_own_probes_against_the_new_structure:
+  durable_at: governance/reconciliation/WO-2R/PL-U1-U6-derivation-union-and-the-second-engine-container.patch.txt
+  probes:
+    - id: PL-U1
+      route: "the LITERAL PO reading — delete the package arm, keep only derived roots — then apply the project's own CD-AC-003 plant"
+      result: "THE PLANT ESCAPES, exit 0, PASS 12. This is the measurement that justifies the seat's deviation."
+    - id: PL-U5
+      route: "rename the engine service to cd-engine-v2 — the residual constant ENGINE_SERVICE at line 246, the F05 category error one level up"
+      result: >
+        REFUSED, exit 3, CD-ENGINE-ROOT-102, naming the absent service and saying "an absent
+        subject must never read as a clean one". Fails closed, loudly, with the right reason.
+    - id: PL-U6b
+      route: "ADD a sixth service cd-engine-worker built from deploy/Dockerfile.engine, whose entrypoint imports crash_detector.witness.panel"
+      result: >
+        **ESCAPES, exit 0, PASS 24 assertions.** The universe grows 39 -> 40 so the check SEES
+        the file; it is simply not a root, because only the service literally named `cd-engine`
+        is derived. RESIDUE MEASURED AS CARRIED: the full suite fails 8 tests on that tree,
+        including tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service
+        and tests/test_deploy_container_set.py, while all five other register checks exit 0.
+    - id: PL-U6
+      route: "SUPERSEDED — the same idea written as a YAML flow sequence"
+      result: >
+        Refused by CD-ENGINE-ROOT-101 (the reader does not support flow collections) — FOR THE
+        WRONG REASON. Recorded because it is CD-ENG-WO2R-F13's own lesson catching the Project
+        Lead's probe: a probe refused for a reason you did not intend has told you nothing.
+
+decisions:
+  - id: CD-D-053
+    ruling: >
+      WO-2R increment 4 is ACCEPTED. CD-ASR-F05 is CLOSED AS A CLASS, subject to Assurance. The
+      derivation is live and proved in three dimensions, the fail-closed posture the first
+      auditor praised is extended to the derivation itself in ten clauses, and nothing the
+      auditor proved has been regressed.
+  - id: CD-D-054
+    ruling: >
+      THE SEAT'S DEVIATION FROM THE PRODUCT OWNER'S WORDING IS ACCEPTED AND COMMENDED, on the
+      measured evidence of PL-U1. The union is not a hedge; the literal reading demonstrably
+      deletes a working guard. The seat declared the deviation, gave its reason, and the reason
+      is true. A seat that follows a sentence off a cliff is worse than one that says why the
+      sentence does not fit — and this is the second increment running where that judgement has
+      been right (CD-D-049 on `pending`). DISCLOSED TO THE PRODUCT OWNER as a departure from
+      Ruling 2's literal text, since the wording was the PO's and only the PO can ratify the
+      reading.
+  - id: CD-D-055
+    ruling: >
+      CD-PL-F62 is corrected as a BOUNDED ADDENDUM AT THE HEAD OF INCREMENT 5, not as a separate
+      re-open and not as a new dispatch. It is a declaration defect in F05's own declared limit,
+      CD-RULE-004/006 compliance is a standing obligation, and the seat is already returning to
+      this tree. Boundary 5 must name the second-engine-image-service case and its MEASURED
+      carrier, in all three places, before F06 work begins.
+  - id: CD-D-056
+    ruling: >
+      PL-U1, PL-U5 and PL-U6b join the exclusion set, now the union of the WO-2 auditor's ten,
+      the Engineer's forty-six and the Project Lead's thirty-six.
+
+findings:
+  - id: CD-PL-F62
+    severity: LOW
+    status: OPEN
+    title: "declared boundary 5 distinguishes services by PURPOSE while the code distinguishes by NAME, and does not contemplate a second engine-image service"
+    detail: >
+      Boundary 5 reads "ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT ... The other five
+      services' entrypoints are RESOLVED ... but they are not walk roots, and witness code
+      reachable from `cd-witness` is correct rather than a violation", with V42 (cd-witness) as
+      its measured example. A SIXTH service built from the ENGINE'S OWN image is neither "the
+      other five" nor a service whose job is witness code, so an auditor reading boundary 5 would
+      not expect PL-U6b to escape. The boundary is INCOMPLETE.
+
+      IT IS NOT FALSE, AND THAT IS THE WHOLE DIFFERENCE FROM CD-PL-F59. F59 was rejected because
+      boundary 4 ASSERTED A COMPENSATING LAYER THAT DID NOT EXIST and the residue was carried by
+      nothing. Here the residue is carried by a layer MEASURED refusing the variant — 8 suite
+      failures. An incomplete boundary with a real carrier is a declaration to finish; a false
+      boundary with no carrier is a closure to redo. Hence acceptance plus CD-D-055, not a
+      re-open.
+  - id: CD-PL-F63
+    severity: LOW
+    status: OPEN
+    title: "an 892-line check rewrite added ZERO pytest tests, departing silently from the pattern increments 3 and 3b set"
+    detail: >
+      MEASURED: `git diff --stat ba469b5..be34fe4 -- tests/` is ZERO lines, and the node-id
+      comparison is zero removed AND ZERO ADDED. Increment 3 added 32 tests and increment 3b
+      added 5, both in tests/test_egress_destination_registry.py, for their own check changes —
+      so the project has an established pattern of covering check behaviour from outside the
+      check, and increment 4 departed from it without saying so.
+
+      The check's own assertions grew 13 -> 23, but every one of those is asserted BY THE CHECK
+      ITSELF. If the derivation regresses, only the check witnesses it, and the check is its own
+      witness. This is the CD-PL-F57/F58 family — assertion counts moving without independent
+      corroboration — and it is named for Assurance rather than treated as blocking, because the
+      derivation IS proved by execution against fifteen durable variants, which is stronger
+      evidence than a unit test would be. What is missing is REGRESSION cover, not proof.
+
+engineer_self_raised_findings_confirmed:
+  - id: CD-ENG-WO2R-F17
+    severity: LOW
+    disposition: >
+      CONFIRMED by execution — V44 exits 0 at the head, exactly as declared at boundary 6. The
+      seat declared the residue of its OWN structure, named it "the residue of the derivation
+      itself", and recorded that it CONSIDERED AND DECLINED two available closures with reasons:
+      refusing all sys.path mutation would fire on the clean tree because _service.py legitimately
+      does it, and symbolically evaluating the path is interpreting code the check already says it
+      will not follow. Declining a closure that would forbid the product is correct, and saying so
+      is CD-RULE-004 option (ii) properly used.
+  - id: CD-ENG-WO2R-F18
+    severity: LOW
+    disposition: >
+      CONFIRMED and IMPORTANT FOR ASSURANCE. Five variants refuse at exit 3, not 1, even where a
+      real reach exists in the tree, because the derivation refusal comes first. That ordering is
+      correct fail-closed behaviour, but an auditor asserting only "non-zero" learns less than the
+      output holds. Carried into the Assurance dispatch alongside CD-ENG-WO2R-F13.
+  - id: CD-ENG-WO2R-F19
+    severity: LOW
+    disposition: >
+      CONFIRMED. The anchor resolver follows top-level anchors only, so a legitimately nested
+      fragment becomes a refusal rather than a read. Safe today — all three anchors are top level
+      — and the seat correctly routes the proper repair to the _yamlmin dispatch that CD-D-051
+      already schedules, rather than widening its own bound to reach it.
+
+obligations_status:
+  CD-ASR-F01: "CLOSED AS A CLASS at increment 2b, subject to Assurance"
+  CD-ASR-F02: "CLOSED AS A CLASS at increment 1, subject to Assurance"
+  CD-ASR-F03: "CLOSED AS A CLASS at increment 1, subject to Assurance"
+  CD-ASR-F04: "CLOSED AS A CLASS at increment 3b, subject to Assurance"
+  CD-ASR-F05: "CLOSED AS A CLASS at increment 4, subject to Assurance"
+  CD-ASR-F06: "NOT STARTED — increment 5, with the CD-PL-F62 addendum at its head"
+  CD-PL-F61: "OPEN — separate bounded dispatch owed after increment 5 and before Assurance (CD-D-051)"
+  gate: "Assurance PASS on all five. NOT MET."
+  latest_admitted_run: "null, untouched (CD-RULE-001, non-relaxable)"
+
+next_safe_action: >
+  DISPATCH INCREMENT 5 to CD-ENG-WO2R-01 at execution base be34fe4, per
+  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml block increment_5_F06, WITH THE CD-PL-F62
+  ADDENDUM AT ITS HEAD (CD-D-055): amend declared boundary 5 of
+  tools/register/check_engine_no_witness_reach.py to name the second-engine-image-service case
+  and its MEASURED carrier — 8 suite failures including
+  tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service — in all
+  three CD-RULE-004 places, before starting F06.
+
+  THEN CD-ASR-F06: a hard upper bound on staleness windows, DERIVED from ratified intent per
+  CD-D-032. THE DERIVATION CHAIN IS VERIFIED BY THE PROJECT LEAD AGAINST THE RATIFIED TEXT
+  ITSELF: PID.md line 86, "pipeline/publication failure independently detectable <= 15 minutes",
+  RATIFIED 2026-08-18 under CD-D-003, giving a 900-second ceiling; bounded further by
+  BLUEPRINT.md lines 314-318, §7 `window_for(regime) -> seconds` "tightening as observed
+  volatility rises", CD-AC-009, scheduled WO-3.
+
+  HOLD THE SEAT TO THIS: 900s is defensible ONLY as a HARD UPPER BOUND with the operating window
+  explicitly deferred to WO-3's window_for(regime), because a window of exactly 900s consumes the
+  ENTIRE detectability budget and leaves nothing for detection and alerting. A TIGHTER number
+  must be DERIVED, not chosen because it looks prudent — that is the invention CD-RULE-003
+  forbids, and the seat FAILS CLOSED and escalates rather than inventing one (PBG-AUTH-005). The
+  known-set variant is E07, `staleness_window_seconds=1e18` with a panel row ten years old
+  marked AGREES, which `_require_usable_window` accepts because it refuses only non-finite and
+  non-positive windows.
+
+  THEN the CD-PL-F61 reader dispatch (CD-D-051), bounded to tools/register/_yamlmin.py and its
+  two callers, proving termination on the minimal document, on V30 and on PL-T5, with the clean
+  arm and all eleven plants unchanged, and CD-ENG-WO2R-F19's nested-anchor repair folded in.
+
+  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never
+  the Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise FRESH
+  variants; the exclusion set is the union of the WO-2 auditor's ten, the Engineer's forty-six
+  and the Project Lead's thirty-six. Hand it CD-ENG-WO2R-F12 as a NAMED QUESTION, plus CD-PL-F53,
+  CD-PL-F57, CD-PL-F58, CD-PL-F62, CD-PL-F63, and the three adopted method notes:
+  CD-ENG-WO2R-F13 (assert the RULE ID, not merely a non-zero exit — it caught the Project Lead's
+  own PL-U6), F16 (a silently shrinking assertion count is how a skipped arm hides) and F18 (a
+  derivation refusal at exit 3 arrives before a reach violation at exit 1).
+
+  Commit each boundary as its own checkpoint on main with the PROJECT_LEAD_SEAT_01 identity set
+  through GIT_* ENVIRONMENT VARIABLES, not `git -c` (CD-PL-F56 — it fails silently on this host),
+  and verify with `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit. THE GATE IS
+  UNCHANGED: Assurance PASS on all five. Deliberate STOP at the gate either way, record state
+  durably, and report to the Product Owner. Admit no run record without its paired assurance
+  verdict (CD-RULE-001, non-relaxable).

@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T15:17:32Z'
+updated_utc: '2026-08-19T15:51:05Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -358,6 +358,55 @@ current_block: >
   trace was a silently SHRINKING assertion count, V26 reporting PASS at 52 where clean was 53) are
   both CONFIRMED AND COMMENDED, F16 adopted as candidate project method and carried to Assurance
   alongside F13. CD-D-052: PL-T1/T2/T5 join the exclusion set.
+  WO-2R INCREMENT 4 RECONCILED AND **ACCEPTED** (CD-D-053) at lane be34fe4, four commits by
+  CD-ENG-WO2R-01, attested in lane entry BL-20260819T154355Z-0045, reconciled by the PL in
+  BL-20260819T155105Z-0028. CD-ASR-F05 IS CLOSED AS A CLASS, subject to Assurance. E06 reproduces
+  ESCAPING at ba469b5 (exit 0, PASS 13) and is REFUSED at be34fe4 (exit 1, "engine reaches witness
+  code"). THE SEAT DID NOT DO WHAT THE PO'S SENTENCE SAID AND WAS RIGHT NOT TO: the PO's words are
+  "the walk root must derive from the CONTAINER'S OWN entrypoint set, NOT a hard-coded path", and
+  the seat instead made the root set a UNION — derived roots plus the engine package — KEEPING the
+  constant it was told to remove, and DECLARED the deviation rather than performing it quietly. THE
+  PL MEASURED IT RATHER THAN ACCEPTING THE REASONING: PL-U1 applies the LITERAL reading in one line
+  and then applies the project's OWN PRE-EXISTING CD-AC-003 PLANT on top — THE PLANT ESCAPES, exit
+  0, PASS 12, where the same plant at be34fe4 exits 1. In WO-2 the engine container's process
+  reaches crash_detector.runtime.lifecycle and NOT crash_detector.engine, so the plant is caught
+  through the PACKAGE arm; following the sentence to the letter would have DELETED A WORKING GUARD
+  and traded one escape for another. CD-D-054 ACCEPTS AND COMMENDS the deviation on that evidence
+  and DISCLOSES IT TO THE PO as a departure from Ruling 2's literal text, since the wording was the
+  PO's and only the PO can ratify the reading. THE LIVE DERIVATION IS PROVED IN THREE DIMENSIONS by
+  the PL's own runs: V31 moves the derived root to cd_public; V37 moves it to
+  crash_detector.runtime.engine_main AND changes the image sys.path roots from
+  /app/src,/app/entrypoints to /app/src,/app; V38 produces SIX roots, 2 derived. Clean arm 13 to 23
+  assertions, universe 39 modules, 15 reachable from 5 roots. Suite 1192 passed, ZERO node ids
+  removed. 11 of 11 plants apply, CD-AC-003's contrast re-run by the PL at exit 1. _yamlmin.py
+  untouched at 0 diffs, so CD-D-051's bound held. PL-U5 renames the engine service and the residual
+  constant ENGINE_SERVICE FAILS CLOSED LOUDLY at exit 3, CD-ENGINE-ROOT-102, "an absent subject must
+  never read as a clean one". PL-U6b IS THE ONE THAT ESCAPES: a SIXTH service cd-engine-worker built
+  from the ENGINE'S OWN Dockerfile, whose entrypoint imports crash_detector.witness.panel, exits 0
+  at PASS 24 — the universe grows 39 to 40 so the check SEES the file, but only the service
+  literally named cd-engine is derived. CD-PL-F62 (LOW): declared boundary 5 distinguishes
+  services BY PURPOSE ("whose job is witness code") while the code distinguishes BY NAME, and does
+  not contemplate a second engine-image service. THE RESIDUE IS CARRIED AND THE PL MEASURED IT
+  RATHER THAN ASSUMING IT (CD-RULE-006): the full suite fails 8 tests on that tree, including
+  test_there_is_one_entrypoint_per_application_service and test_deploy_container_set.py, while all
+  five other register checks exit 0. That is why this is F62 (LOW) and not a second F59: an
+  INCOMPLETE boundary with a REAL carrier is a declaration to finish, whereas F59 was a FALSE
+  boundary asserting a carrier that did not exist, carried by nothing. CD-D-055 corrects it as a
+  BOUNDED ADDENDUM AT THE HEAD OF INCREMENT 5, not a re-open. Also recorded: PL-U6, the superseded
+  first attempt, was refused FOR THE WRONG REASON (a YAML flow sequence the reader rejects) — that
+  is CD-ENG-WO2R-F13's own lesson catching the PL's probe, and a probe refused for a reason you did
+  not intend has told you nothing. CD-PL-F63 (LOW): an 892-line check rewrite added ZERO pytest
+  tests — git diff --stat over tests/ is zero lines and the node-id delta is zero added — departing
+  silently from the pattern increments 3 and 3b set (32 and 5 tests). The check's assertions grew
+  13 to 23 but every one is asserted BY THE CHECK ITSELF, so if the derivation regresses only the
+  check witnesses it. Named for Assurance, not blocking: the derivation IS proved by execution
+  against fifteen durable variants, which is stronger than a unit test; what is missing is
+  REGRESSION cover, not proof. CD-ENG-WO2R-F17 (the boundary-6 sys.path residue, V44 exit 0 as
+  declared, with two available closures CONSIDERED AND DECLINED for stated reasons), F18 (five
+  variants refuse at exit 3 before a reach violation at exit 1 — correct ordering, but an auditor
+  asserting only "non-zero" learns less than the output holds) and F19 (top-level anchors only,
+  routed to the _yamlmin dispatch rather than widening its own bound) are all CONFIRMED. CD-D-056:
+  PL-U1/U5/U6b join the exclusion set.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -382,7 +431,7 @@ last_completed_checkpoint_sha: 8ca0eed  # WO-2R increment 3 RECONCILED and NOT A
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: ba469b5ef9aa5509cf2eba1bd46b581f751bb313
+lane_head_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba
   # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
   # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
   # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
@@ -396,7 +445,7 @@ lane_head_sha: ba469b5ef9aa5509cf2eba1bd46b581f751bb313
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: ba469b5ef9aa5509cf2eba1bd46b581f751bb313   # WO-2R increment 3b, RECONCILED AND ACCEPTED (CD-D-048); CD-ASR-F04 CLOSED AS A CLASS
+lane_increment_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba   # WO-2R increment 4, RECONCILED AND ACCEPTED (CD-D-053); CD-ASR-F05 CLOSED AS A CLASS
 continuity_record_commit: 8ca0eed  # the commit carrying BL-20260819T143502Z-0026
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -644,5 +693,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T151732Z-0027
+last_build_log_entry: BL-20260819T155105Z-0028
 status: ACTIVE
