@@ -1,0 +1,46 @@
+diff --git a/src/crash_detector/backtest/__init__.py b/src/crash_detector/backtest/__init__.py
+new file mode 100644
+index 0000000..129441a
+--- /dev/null
++++ b/src/crash_detector/backtest/__init__.py
+@@ -0,0 +1 @@
++"""Paper book, used to score a published reading against what it would have implied."""
+diff --git a/src/crash_detector/backtest/paper_book.py b/src/crash_detector/backtest/paper_book.py
+new file mode 100644
+index 0000000..c19ec23
+--- /dev/null
++++ b/src/crash_detector/backtest/paper_book.py
+@@ -0,0 +1,33 @@
++"""A paper book, so a published reading can be scored against what it implied.
++
++Nothing here reaches a live venue in WO-2 — the paper book is kept in memory and the
++adapter is a stub. The shape is written now so the backtest harness in WO-4 has something
++to fill in.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++
++__all__ = ["Ticket", "place_order", "record"]
++
++
++@dataclass(frozen=True)
++class Ticket:
++    """One intention, as the paper book stores it."""
++
++    symbol: str
++    quantity: float
++    side: str
++    limit_price: float
++    venue: str
++
++
++def place_order(symbol, quantity, side, limit_price, venue):
++    """Write one intention into the paper book and hand it to the venue adapter."""
++    raise NotImplementedError("the WO-4 backtest harness fills this in")
++
++
++def record(instrument, size, direction, destination):
++    """Keep the same intention under the names the harness uses internally."""
++    raise NotImplementedError("the WO-4 backtest harness fills this in")
