@@ -638,7 +638,7 @@ lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
 lane_increment_sha: 253c38bd4db58433e5209a222c0ce27429079156   # CD-DISPATCH-WO2R-READER, RECONCILED AND ACCEPTED (CD-D-060); CD-PL-F61 CLOSED, CD-ENG-WO2R-F14 CLOSED
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: PENDING  # RETURNED TO PENDING at BL-20260819T185403Z-0037, the only truthful value at write time; it previously read 9d00b38, resolved by the follow-up 192fc50 under CD-RULE-007. To be resolved by a follow-up commit that writes THIS FIELD AND NOTHING ELSE and records the COMMITTED-TREE boot verdict in its message (CD-RULE-008). It must never equal last_completed_checkpoint_sha — that equality is the CD-PL-F64 defect.
+continuity_record_commit: f547fdc4f9c6b6990e25d16271e0e569d12f7025  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (8e9456f) — that equality is the CD-PL-F64 defect. A pristine clone at f547fdc boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record.
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
   # The commit carrying this record does not exist while this record is being written, so PENDING is
   # the only truthful value at write time. It is left PENDING deliberately rather than resolved by a
