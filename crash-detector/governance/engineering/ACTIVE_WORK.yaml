@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T02:54:00Z'
+updated_utc: '2026-08-19T03:20:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -18,9 +18,9 @@ objective: >
   WO-3.
 current_phase: BUILD
 current_block: >
-  CD-WO-002 — interrupted Engineer lane reconciled and quarantined (CD-D-007). Engineer
-  CD-ENG-WO2-01 instance 2 to be re-dispatched against the same record, foreground, committing
-  at every increment boundary.
+  CD-WO-002 block A, increment 1 of 7 COMPLETE at lane SHA 3b6edae — A1 repository skeleton,
+  A2 dial types, A3 witness types, 243 unit tests. Next: increment 2, A4 collector framework +
+  A7 envelope contracts.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -32,7 +32,7 @@ baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
 last_completed_checkpoint_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
-lane_head_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
+lane_head_sha: 3b6edae5139093c85e95a49bd001f0158f83a36f   # wo-2-skeleton, increment 1 of 7 committed
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 0047093 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -60,11 +60,24 @@ completed_items:
   three commits after the PO accepted it. Status only; v0.1.0 unchanged (PBG-BP-001).'
 - 'Assurance dispatch CD-DISPATCH-WO2-ASSURANCE.yaml committed as a durable record at DRAFT. It had
   existed only as an untracked file in the terminated session (PBG-CONT-007).'
+- 'Engineer increment 1/7 returned INCREMENT_1_COMPLETE at lane SHA 3b6edae — A1, A2, A3, 29 files,
+  243 tests. Verified by the Project Lead by re-running the suite and probing the load-bearing
+  claims directly: empty registry gives Unknown on BOTH dials, DialSet exposes only equity and
+  monetary, EquityCrashScore + MonetaryDebasementScore raises TypeError, and the two share no MRO
+  entry but object. That is reconciliation of a seat return, NOT assurance (PBG-SOD-001).'
+- 'CD-D-008 RULED by the Project Lead — the fetch-outcome sum type and ObservationRecord live at
+  src/crash_detector/observations.py, the package root, not under collectors/. The Engineer
+  disclosed this as a scope question because BLUEPRINT §5 discusses the outcome type in the
+  collector section. Ruling: KEEP. evaluate() takes observations, so A2 cannot be typed without the
+  vocabulary; and putting it under collectors/ would make the engine import the collector package,
+  inverting the §5/§7 boundary the build exists to hold. Module placement is a Level 1
+  implementation choice, not product meaning. A4 builds the collector framework ON this vocabulary
+  and must not duplicate it.'
 
 remaining_items:
-- 'Engineer block A — skeleton, dial types, witness types, collector framework, store schema and
-  grant matrix, container set as design, closed envelope contracts. Re-dispatched as instance 2 in
-  three commit increments: A1+A2+A3, then A4+A7, then A5+A6.'
+- 'Engineer block A increments 2 and 3 — A4 collector framework + A7 envelope contracts, then
+  A5 store schema and grant matrix + A6 container set as design. Increment 1 (A1+A2+A3) is done at
+  lane SHA 3b6edae.'
 - 'Engineer block B — register checks, Required Test Register over all sixteen PID criteria, the
   planted violations, and the Engineer''s own run of every declared command'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
