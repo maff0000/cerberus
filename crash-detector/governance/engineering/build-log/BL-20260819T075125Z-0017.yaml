@@ -468,3 +468,265 @@ evidence_plant_arms:
     raises NO finding of that kind. The absence of a surprise is worth recording explicitly, because
     the dispatch asked for any arm that did not behave as expected to be REPORTED rather than
     adjusted, and the honest report is that none did.
+
+# --- EVIDENCE, STAGE 3: THE ELEVENTH ARM, UNDER RT-A ------------------------------------------- #
+
+evidence_rt_a_live_store:
+  standing: >
+    THIS SEAT'S OWN IMPLEMENTATION EVIDENCE. NOT assurance (PBG-SOD-001). CD-ASR-WO2-01 is required
+    by its own dispatch (SD-3) to build its OWN store from the migrations in the target and read the
+    catalogue itself, and is FORBIDDEN from reusing or even inspecting this one. It owes nothing to
+    anything below. This is the second time this arm has been proved by the implementing seat and
+    the first time by any other, which is to say: still zero times (CD-D-020, risk CD-RT-002).
+  authorisation: 'RT-A, granted in CD-DISPATCH-WO2-ENGINEER.yaml runtime_authorisation.'
+  classification: MUTATION_CAPABLE_AUTHORISED
+  bounds_as_granted_and_as_honoured:
+    image: >
+      postgres:16-alpine PINNED BY DIGEST and run by digest, not by tag:
+      postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+      (image id sha256:75f5a96988cdf694a215073c3e9c001b706b371e2f94df3967f2efdec2787f6b,
+      resolved with `docker image inspect postgres:16-alpine` as the dispatch requires).
+      Already present on the host; nothing was pulled.
+    container_name: 'cd-store-wo2-b4 — carries the mandated cd-store-wo2- prefix'
+    volume_name: 'cd-store-wo2-b4-data — carries the mandated cd-store-wo2- prefix'
+    publication: >
+      `-p 127.0.0.1::5432`, i.e. bound to 127.0.0.1 ONLY and on an EPHEMERAL port assigned by the
+      daemon. Observed assignment: 127.0.0.1:32791. Nothing was bound to 0.0.0.0 (CD-D-006).
+    credentials: >
+      GENERATED AT RUN TIME from /dev/urandom inside the single shell that ran the whole lifecycle,
+      held only in that shell's memory, never echoed, never written to any file, and unset at the
+      end. NO VALUE APPEARS ANYWHERE — not in this entry, not in the logs, not in the check output.
+      Referenced BY ENV-VAR NAME ONLY: CD_CHECK_STORE_HOST, CD_CHECK_STORE_PORT, CD_CHECK_STORE_NAME,
+      CD_CHECK_STORE_USER, CD_CHECK_STORE_PASSWORD (PBG-SEC-002, PBG-EVID-003, PBG-CONT-009, all
+      non-waivable). The check prints its own confirmation of this: "credential by env-var name
+      only". Verified afterwards: `grep -ci password` over both arm logs returns 0 and 0.
+    isolation_of_other_projects: >
+      HONOURED. Every docker query this seat ran was FILTERED to `--filter name=cd-store-wo2-`. No
+      container or volume without that prefix was listed into, inspected, stopped, restarted or
+      touched in any way. Other projects run on this host and none of them was reached.
+      `docker image inspect postgres:16-alpine` is an IMAGE operation, not a container one, and the
+      dispatch requires it in order to record the digest pin.
+    pre_state: >
+      CHECKED BEFORE STARTING: `docker ps -a --filter name=cd-store-wo2-` and
+      `docker volume ls --filter name=cd-store-wo2-` both returned ZERO rows, so nothing was
+      inherited from the increment-6b store and no earlier state could contaminate this run.
+  method_note: >
+    ONE container, as granted. Two DATABASES inside it — cdb4clean and cdb4plant — so the clean arm
+    and the plant arm never share a catalogue. That is necessary rather than convenient: the check
+    applies the subject tree's migrations to the database it connects to, so a shared database would
+    have carried the plant's grant into the clean arm and destroyed the contrast. Roles are
+    cluster-wide and are created idempotently by migration 0001 (`IF NOT EXISTS`), while every
+    privilege the plant adds is per-database, so the two arms are genuinely independent on the
+    property under test. The migrations were applied by the CHECK, in plain SQL, deliberately NOT
+    through db/migrate.py — a check must not depend on the correctness of the thing it is checking.
+  runtime: 'PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit'
+
+  clean_arm:
+    subject_tree: '/tmp/cd-b4/clean, extracted from 9aea4ef by this seat'
+    command: 'python3 tools/register/check_grant_matrix_live.py --root .'
+    exit_code: 0
+    result: 'PASS — 138 assertions, 0 violations'
+    observed: >
+      "built from 7 subject-tree migrations", all seven named in filename order. Authentic target
+      recorded by the check itself: PostgreSQL 16.15, cdadmin@127.0.0.1:32791/cdb4clean
+      (PBG-EVID-002). 138 assertions is identical to the count the increment-6b seat recorded, on a
+      different store and a different port.
+  plant_arm:
+    subject_tree: '/tmp/cd-b4/plant-CD-RT-003-GRANT-MATRIX-LIVE, a SEPARATE fresh extract at 9aea4ef'
+    patch: plants/CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch
+    apply: '`git apply --stat --check` exit 0 (1 file, 17 insertions); `git apply` exit 0'
+    command: 'python3 tools/register/check_grant_matrix_live.py --root .'
+    exit_code: 1
+    result: 'FAIL — 9 violation(s)'
+    matches_manifest: 'YES on the total and on every listed route. See the ONE discrepancy in findings, CD-ENG-F44.'
+    observed: >
+      "built from 8 subject-tree migrations", with 0008_engine_reads_witness_panel.sql named in the
+      applied list. THE MIGRATION COUNT IS THE MANIFEST'S TELL that the patch applied: 7 clean, 8
+      planted, and this run shows exactly that.
+      The nine, by route:
+        CD-GM-001 route=schema-privilege USAGE — has_schema_privilege('cd_engine','witness','USAGE') -> True
+        CD-GM-001 route=table-privilege SELECT ON witness.observation
+        CD-GM-001 route=table-privilege SELECT ON witness.reading
+        CD-GM-001 route=column-privilege — information_schema.column_privileges returned 19 rows
+        CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.observation LIMIT 1`
+        CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.reading LIMIT 1`
+        CD-GM-002 route=schema witness is cd_witness's alone
+        WHOLE-MATRIX route=schema USAGE, live vs db/grant_matrix.json
+        WHOLE-MATRIX route=table privileges, live vs db/grant_matrix.json
+    the_two_lines_worth_weighing: >
+      The two `live refusal` rows are not catalogue queries at all. The check does `SET LOCAL ROLE
+      cd_engine` and asks PostgreSQL itself to refuse. Under the plant PostgreSQL DID NOT REFUSE —
+      "THE STATEMENT SUCCEEDED — cd_engine reached schema witness in a real session, whatever the
+      catalogue tables say". That is the proposition failing in the only way that finally matters,
+      and it is why this test is worth a live store rather than a text comparison over the SQL.
+    why_this_arm_cannot_be_replaced_by_the_text_test: >
+      CONFIRMED AGAIN HERE. The plant lands in a LATER migration, so db/grant_matrix.json is
+      untouched and tests/test_grant_matrix_declaration.py — which parses migration 0007 — stays
+      green. A GRANT that was written and a GRANT that is held are different facts; the catalogue
+      caught what the text comparison is blind to by construction.
+
+  teardown:
+    commands_and_exit_codes:
+    - 'docker rm -f cd-store-wo2-b4      -> exit 0'
+    - 'docker volume rm cd-store-wo2-b4-data -> exit 0'
+    post_state_verified: >
+      `docker ps -a --filter name=cd-store-wo2- --format {{.Names}}` returns ZERO rows and
+      `docker volume ls --filter name=cd-store-wo2- --format {{.Name}}` returns ZERO rows. NO
+      CONTAINER AND NO VOLUME SURVIVES THIS SEAT. Destruction happened BEFORE this seat returned, as
+      RT-A requires, and is evidenced rather than asserted.
+    rt_b: 'NOT EXERCISED. Building container images is FORBIDDEN IN WO-2. No image was built and none was attempted.'
+
+# --- corroborating run (not a declared register command) --------------------------------------- #
+
+corroborating_full_suite:
+  command: 'PYTHONPATH=src python3 -m pytest tests/ -q'
+  subject_tree: '/tmp/cd-b4/clean'
+  exit_code: 0
+  result: '904 passed in 7.29s'
+  standing: >
+    NOT a declared register command and NOT offered as evidence for any criterion. Run because the
+    Engineer contract says to run the suite for the area, and recorded because a whole-suite result
+    is cheap corroboration that the ten green declared arms are not green because something upstream
+    is broken. A suite that passes against unchanged behaviour is a rumour, and this one is
+    explicitly labelled as such rather than counted.
+
+# --- findings ---------------------------------------------------------------------------------- #
+
+findings_raised:
+- id: CD-ENG-F44
+  severity: LOW
+  raised_by: CD-ENG-WO2-01
+  title: 'plants/MANIFEST.md says "five" CD-GM-001 violations where its own quoted block lists six'
+  detail: >
+    In the CD-RT-003-GRANT-MATRIX-LIVE row, the manifest prose reads "FAIL — 9 violation(s) — five
+    of them CD-GM-001 along independent routes". The TOTAL is right and the quoted signature block
+    immediately below it is right and complete, but the block lists SIX CD-GM-001 rows, not five
+    (schema-privilege, two table-privilege, column-privilege, and two live-refusal). MEASURED on
+    this run: `grep -c "rule: CD-GM-001"` returns 6 and `grep -c "^VIOLATION"` returns 9.
+    Nor is "five" the count of route KINDS, which is four. The word is simply wrong.
+  impact: >
+    Cosmetic but auditor-facing. An auditor reconciling the observed run against the manifest could
+    spend time looking for a sixth violation the manifest did not lead them to expect, or wonder
+    whether their store differed from this one. It affects no exit code and no proposition.
+  disposition: >
+    REPORTED, NOT FIXED, and the choice is deliberate. B3 is CLOSED and plants/MANIFEST.md is the
+    artefact CD-ASR-WO2-01 is about to audit; editing it now would move the audit target between the
+    Project Lead's acceptance of B3 and the Assurance run, to correct one adjective that contradicts
+    a correct block sitting two lines beneath it. The dispatch also tells this seat to REPORT rather
+    than adjust. Owed as a documentation correction alongside the other WO-3 items. The authoritative
+    reading in the meantime is the quoted block and this entry: NINE violations, SIX of them CD-GM-001.
+
+findings_NOT_repaired_by_this_seat:
+  note: >
+    Named explicitly so that no reader mistakes silence for closure. All four were ruled owed at WO-3
+    by the Project Lead before this increment began, and this seat was directed not to touch them.
+  items:
+  - id: CD-ENG-F39
+    title: 'an ordinary modal verb (`must`) disables the whole L3 prose layer of the CD-AC-012 guard'
+    status: 'DECLARED, NOT FIXED (CD-D-017). OWED AT WO-3.'
+    what_this_increment_did: >
+      Re-observed it on the clean arm, where the check prints the measured escape itself. NOT REPAIRED
+      and the L3 suppression lists were NOT NARROWED — CD-D-015 and CD-D-017 forbid further hardening,
+      and the guard's clean-arm assertion count is BYTE-IDENTICAL at 29775, which is the evidence that
+      this seat changed no detection behaviour.
+  - id: CD-ENG-F41
+    title: 'two register checks (base-image digest pin, dockerignore) have no criterion and no plant'
+    status: 'OPEN, disclosed to the Product Owner, OWED AT WO-3.'
+    what_this_increment_did: >
+      Ran both; both exit 0. That CONFIRMS the finding rather than closing it — both remain evidenced
+      only by passing, and a check evidenced only by passing has never been shown capable of failing.
+      No criterion was invented for them (PBG-AUTH-005).
+  - id: CD-PL-F43
+    title: 'requirements.lock is not planted, and the second half of CD-EGRESS-002 is not planted'
+    status: 'OPEN, accepted for WO-2, OWED AT WO-3.'
+    what_this_increment_did: >
+      Confirmed both gaps by running the arms: the lockfile plant fires on pyproject.toml and
+      requirements.txt only, and the egress plant exercises the broker-host half but not the
+      no-egress-at-all half. Recorded in the two result rows above so a reader of the plant arms sees
+      the gap where the evidence is, not only in a findings list.
+  - id: CD-RT-002
+    title: 'the grant-matrix arm has been proved only by the implementing seat'
+    status: 'OPEN RISK, resolves either way at the Assurance run (CD-D-020).'
+    what_this_increment_did: >
+      Proved it a SECOND time — by the same seat. That does not reduce the risk and must not be read as
+      reducing it. Independent proof is still owed and only CD-ASR-WO2-01 can supply it.
+
+# --- what this seat deliberately did NOT do ----------------------------------------------------- #
+
+deliberately_not_done:
+- 'NO code, test, check, plant, schema, migration or contract was changed. `git diff --name-only
+   9aea4ef..HEAD` returns EXACTLY ONE path: this Build Log entry. Nothing was weakened to obtain a
+   pass, because nothing needed to be — every arm behaved as the register predicts.'
+- 'NO further hardening of the CD-AC-012 AST guard and NO narrowing of the L3 suppression lists
+   (CD-D-015, CD-D-017). The 29775-assertion clean arm is the proof that nothing moved.'
+- 'NO new plants. B3 is closed.'
+- 'NO repair of CD-ENG-F39, CD-ENG-F41, CD-PL-F43 or the new CD-ENG-F44.'
+- 'NO admission of any evidence into the register. `latest_admitted_run` in required-tests.yaml is
+   still null and this seat did not open the file to write. An Engineer does not admit its own
+   evidence (PBG-SOD-001, non-waivable).'
+- 'NO run record was produced. RTR-WO2-0001 does not exist and nothing in this entry is it.'
+- 'NO container image built (RT-B, FORBIDDEN IN WO-2). No image build was attempted.'
+- 'NO wrapper, runner, make target or harness was added to the repository, for this increment or any
+   other (PBG-ASSURE-001). Every command above was typed against a tree; an auditor repeating them
+   repeats the commands, not this seat''s scaffolding. The shell loop used to drive them lived only
+   in the terminal and was never committed.'
+- 'NOTHING under pbg/ was touched: `git diff --name-only 9aea4ef..HEAD -- pbg/` returns zero lines
+   (PBG-FWK-013).'
+- 'governance/engineering/ACTIVE_WORK.yaml NOT touched — Project-Lead-only; zero lines changed.'
+- '/srv/crash-detector (main) was READ ONLY. No commit, no checkout, no mutation. The untracked
+   operator runner scripts and __pycache__ present there predate this seat and were left alone.'
+- 'NO git worktree was created for any arm, and the dispatched worktree was NEVER mutated — every
+   subject tree was a `git archive | tar -x` copy with no .git directory in it.'
+
+# --- obligations status ------------------------------------------------------------------------- #
+
+obligations_status:
+- 'B4 — COMPLETE. Every declared register command in required-tests.yaml run by this seat: all 11
+   WO-2 tests on the clean tree AND with their plant applied to a separate throwaway copy, plus all
+   11 declared commands for the criteria not delivered in WO-2, plus the 2 guards with no criterion,
+   plus the register validator. Exit codes recorded for every one.'
+- 'B1, B2, B3 — COMPLETE at earlier increments; unchanged by this one.'
+- 'RTR-WO2-0001 — OWED, by the INDEPENDENT Assurance seat CD-ASR-WO2-01. NOT PRODUCED HERE AND NOT
+   PRODUCIBLE HERE. This is the single most important outstanding item and the WO-2 gate turns on it.'
+- 'The WO-2 gate — NOT MET and not claimed to be. `pbg required-tests verify` computes GATE: SHUT and
+   PID_ACCEPTANCE_SATISFIED: NOT DERIVED at this SHA, which is the correct pre-Assurance state.'
+- 'CD-ENG-F44 — NEW, LOW, OPEN. Documentation correction owed at WO-3.'
+- 'CD-ENG-F39, CD-ENG-F41, CD-PL-F43 — OPEN, owed at WO-3, untouched by this increment.'
+- 'CD-OB-002 (base image digest at WO-3 with RT-B), CD-OB-004, CD-ERR-001 — OPEN, unchanged.'
+- 'CD-HOLD-003 — exercised ONCE by this seat under RT-A, within bounds, and evidenced destroyed.
+   CD-HOLD-004, CD-HOLD-005 — HELD, untouched. This seat released no held action.'
+
+risks:
+- 'CD-RT-002 UNCHANGED — one of the eleven arms is still proved only by the implementing seat. This
+   increment proved it a second time with the same hands, which is not independence. It resolves at
+   the Assurance run or not at all.'
+- 'CD-SOD-001 STANDING — every result in this entry was produced by the seat that wrote the thing it
+   tested. That is what an Engineer''s own tests are, and the danger is not that the runs are wrong
+   but that a reader in a hurry counts them as assurance. They are labelled at the top of every
+   evidence section for exactly that reason.'
+- 'CD-CONT-001 AMBER — the staged-commit discipline held: three commits, so a fourth termination
+   would have cost one stage rather than the increment.'
+- 'CD-BP-001, CD-FWK-001..004, CD-RT-001, CD-SEC-001 — unchanged.'
+
+evidence_refs:
+- 'lane 3a50ed61bb11f066b38455a6dd77c3e75626f454 — stage 1, the clean arm'
+- 'lane 9c2adfa2cd57fa6967afd462aa229662c25f2159 — stage 2, the ten plant arms'
+- 'THIS ENTRY, committed as stage 3, carries the RT-A live-store arm, the findings and the return'
+- 'plants/MANIFEST.md — the expected signatures every arm above was compared against'
+- 'required-tests.yaml — the register whose `execute` lines were run verbatim'
+- 'RTR-WO2-0001 — NOT PRODUCED. Owed by CD-ASR-WO2-01. NOTHING IN THIS ENTRY IS IT.'
+
+next_safe_action: >
+  This seat returns READY_FOR_ASSURANCE. B4 is complete and WO-2's Engineer work is finished; there
+  is no further Engineer increment in this dispatch.
+
+  The Project Lead should now: resolve the returned SHA with `git rev-parse` rather than copying it
+  from any message (that defect has occurred twice on this project); write it into
+  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate; create the READ-ONLY target worktree at that
+  exact SHA; set issued_utc and move the dispatch to ISSUED; commit that as a checkpoint; and only
+  then dispatch a SEPARATE agent as CD-ASR-WO2-01 — NEVER the same agent (PBG-SOD-001,
+  non-waivable). The auditor runs every declared command itself on both arms, uses no
+  Engineer-supplied wrapper, builds its own store under SD-3 rather than reusing anything of this
+  seat's, and writes at least one variant plant of its own per criterion. The WO-2 gate is Assurance
+  PASS on all five planted criteria. At the gate, or blocked, record state durably and STOP for
+  Product Owner review.
