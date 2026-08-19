@@ -606,16 +606,65 @@ criteria:
         class includes an SDK nobody has heard of: a distribution name carrying an execution token
         must fail as surely as a named one.
       evidence_ref: RTR-WO2-0001
+  # REWRITTEN AT WO-2R INCREMENT 3, CLOSING CD-ASR-F04 (MEDIUM). The entry below previously
+  # claimed the class as "a broker host added to any container's egress allowlist" WITHOUT
+  # QUALIFICATION and with no declared limit anywhere, and an independent auditor refuted the
+  # claim by execution: `198.51.100.24` in place of `api.ibkr.com` exited 0. The guard recognised
+  # brokers BY NAME and an address has no name to recognise. The auditor's own words were "not
+  # covered by any declared limit", and that — an entry claiming the class while the guard
+  # enumerated recognisable instances — is precisely what CD-RULE-004 prohibits.
+  #
+  # THE STRUCTURE IS NOW DENY BY DEFAULT over deploy/egress-destinations.yaml, an in-tree registry
+  # of declared destinations (CD-EGRESS-004). An allowlist entry is admissible only by being,
+  # character for character, the `host` of a registered destination whose `services` list names
+  # that service. Nothing is recognised about an entry that is not; there is therefore no pattern
+  # to write around, and an IP literal is refused for the same reason a CIDR, a URL, a wildcard
+  # and a hostname nobody has thought of are — not one of them is a destination anyone declared.
+  # The registry itself is judged by the broker vocabulary and the known-operator denylist over
+  # its `host` and `operator` fields (CD-EGRESS-002, SURVIVING as a second layer), by a POSITIVE
+  # hostname shape (CD-EGRESS-006) and by closed key sets (CD-EGRESS-005). NEITHER LAYER IS SOLE.
+  #
+  # NO NETWORK. Resolution is prohibited (CD-PL-F48): a check whose verdict depends on DNS is not
+  # reproducible, cannot be run offline by an auditor, and cannot be a gate. "What an entry
+  # reaches" is decided from data in the tree.
+  #
+  # THIS CHECK NOW HAS A DECLARED LIMIT, in six numbered boundaries, stated identically in the
+  # header of tools/register/check_egress_no_broker.py, in the execution contract, and below
+  # (CD-RULE-004). Every hand-off in it names a layer that was MEASURED, or says "NOT PROVED TO BE
+  # CARRIED ANYWHERE" (CD-RULE-006).
   - test_id: CD-RT-012-EGRESS-NO-BROKER
     scope: CLASS
     execute: python3 tools/register/check_egress_no_broker.py --root .
     execution_contract: contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md
     negative_control:
       violation: >
-        A broker host added to any container's egress allowlist, or any egress at all granted to
-        cd-engine, cd-public, cd-private or cd-store — the four services BLUEPRINT §13 requires to
-        have none. Both halves are the same proposition: a service that can reach the internet can
-        reach a broker, and an allowlist that names one has already conceded the point.
+        ANY entry in ANY service's egress allowlist that is not a registered destination for that
+        service; any destination registered in deploy/egress-destinations.yaml whose host or
+        operator is a broker, exchange or order-routing operator; any registered destination that
+        is not a well-formed, attributable DNS hostname, or that is registered for cd-engine,
+        cd-public, cd-private or cd-store — the four services BLUEPRINT §13 requires to have no
+        egress at all; any unknown key in an `x-egress` block or in a registry entry; and any
+        egress at all granted to those four services by policy, by hosts or by attachment to a
+        network that is not `internal: true`. The class is DENY BY DEFAULT: the violation is an
+        entry NOBODY DECLARED, not an entry that matched something.
+        THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
+        tools/register/check_egress_no_broker.py, in the execution contract and here, in six
+        boundaries: (1) it is a DECLARATION and stops no packet — Compose has no per-host egress
+        primitive and the enforcement lane is owed at WO-3; what makes egress structurally absent
+        today is the topology, measured by CD-EGRESS-001 here and by
+        tests/test_deploy_container_set.py::test_both_networks_are_internal. (2) A registered
+        destination is a HUMAN CLAIM and a false one — an innocent-looking hostname that in fact
+        resolves to a brokerage edge — is NOT PROVED TO BE CARRIED ANYWHERE, because detecting it
+        needs the network. What the structure buys is attribution and review, not detection.
+        (3) The `purpose` prose is not judged; the `operator` field is, which is measured to carry
+        the archetypal case. (4) The vocabulary and denylist are a FLOOR, not an oracle: a
+        brokerage on nobody's list passes layer 2, and layer 1 then requires a deliberate signed
+        registry edit rather than a quiet allowlist line. (5) The subject is TWO FILES — egress
+        obtained through `extra_hosts`, a Dockerfile `RUN curl`, a sidecar, host networking or a
+        runtime flag is outside it, and for `extra_hosts` specifically NOT PROVED TO BE CARRIED
+        ANYWHERE (CD-ENG-WO2R-F12, owed at WO-3). (6) It is a static read of two files at one
+        commit; a compose override file is outside the subject.
+        DO NOT READ A CLEAN RUN AS PROOF THAT NO EXECUTION PATHWAY EXISTS. It was clean for E05.
       evidence_ref: RTR-WO2-0001
 
 # --------------------------------------------------------------------------------------------- #
