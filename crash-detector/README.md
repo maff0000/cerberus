@@ -40,9 +40,15 @@ Exact pins are in `requirements.txt`; the resolved set with SHA-256 digests is i
 `requirements.lock`, whose header records how the digests were obtained and what has *not*
 been verified.
 
-**Nothing under `src/` imports a third-party package.** The code delivered so far is
-standard library only; `jsonschema` and `psycopg2-binary` are declared for the boundary
-validation and the store work that follow.
+`jsonschema` is imported by exactly two modules — `collectors/validation.py` and
+`publication/envelope_contract.py` — and in both it is imported at the point of use, so
+the rest of the tree imports on the standard library alone. `psycopg2-binary` is declared
+for the store work that follows and is not yet imported anywhere.
+
+**Nothing under `src/` imports a network module.** No `socket`, no `ssl`, no `http`, no
+`urllib`, no HTTP client — asserted over the whole tree by
+`tests/test_collector_boundaries.py`, which scans every import including function-local
+ones.
 
 ---
 
@@ -52,20 +58,41 @@ validation and the store work that follow.
 src/crash_detector/
   time_utc.py              UTC only; naive datetimes are refused, never assumed
   observations.py          the observation record and its four-way fetch outcome
+  source_registry.py       sources, criticality and the criticality contract
   dials/
     reading.py             Reading := Value | Degraded | Unknown      (CD-AC-001)
     scores.py              two unrelated frozen score types           (CD-AC-002)
     dialset.py             a container with no scalar method          (CD-AC-002)
   engine/
-    config.py              the run-level configuration snapshot
+    config.py              the run-level snapshot, carrying the source registry
     model.py               the contribution-model shape; registry EMPTY by decision
     evaluate.py            evaluate(observations, config, now_utc) -> DialSet, pure
+  collectors/
+    adapter.py             the adapter protocol: fetch and record, never compute
+    validation.py          validate once at the boundary; never coerce, never quote
+    attempt.py             one row per attempt, and the idempotency key
+    runner.py              bounded timeouts and retries; EVERY attempt writes a row
+  publication/
+    classification.py      the book-adjacent and secret-bearing key registers
+    envelope_contract.py   publication REFUSES on an unknown key; it does not filter
   witness/
     panel.py               WitnessPanel := Agrees | Diverges | Unavailable  (CD-AC-005)
   serving/
     witness_resolver.py    absence and staleness -> UNAVAILABLE, never AGREES
-tests/                     unit tests for the above
+contracts/
+  public_envelope.schema.json    closed; two dials and the §8 honesty fields, nothing else
+  private_envelope.schema.json   closed; the same, plus its PRIVATE classification
+tests/                     unit tests, and the in-memory test doubles in collector_fakes.py
 ```
+
+`schemas/` at the project root is **reserved by the governance framework**. Product JSON
+Schemas live in `contracts/` and nowhere else.
+
+`observations.py` and `source_registry.py` sit at the package root rather than under
+`collectors/` because they are the *contract between* the collector layer and the engine
+rather than a component of either. Putting them under `collectors/` would make
+`crash_detector.engine` import the collector package and invert the §5/§7 boundary
+(CD-D-008).
 
 ### The design rule everything follows
 
@@ -88,6 +115,13 @@ So, concretely:
 - **Freshness cannot be faked.** A future-dated observation or panel row is refused rather
   than treated as fresh forever, and a non-finite staleness window is refused rather than
   honoured.
+- **Every fetch attempt writes a row, including the failures.** `OK`, `FETCH_FAILED`,
+  `MALFORMED` and `EMPTY` are four distinct outcomes, not three spellings of absence. A
+  failed fetch that wrote nothing would be indistinguishable from a fetch that was never
+  scheduled and from a source that had nothing to report.
+- **A third, combined number has nowhere to be published.** The envelope contracts are
+  closed at every level and their properties are an allowlist, so a blend is rejected by
+  the schema whatever route computed it. Publication refuses; it does not filter.
 
 ### Both dials currently read UNKNOWN, on purpose
 
@@ -106,6 +140,10 @@ already be violating CD-AC-001 on its first commit.
 
 Configuration is read from the environment; there are no host-specific absolute paths and
 no config file expected outside this tree (`BLUEPRINT.md` §11).
+
+| Variable | Meaning |
+|---|---|
+| `CD_CONTRACTS_DIR` | where the envelope contracts live; defaults to `contracts/` resolved relative to the package, so a container may mount them elsewhere without a code change |
 
 **Secrets are referenced, never reproduced** — not in code, Git, logs, fixtures, evidence
 or records (`PBG-SEC-002`, `PBG-EVID-003`, non-waivable). Every secret is named by

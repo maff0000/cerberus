@@ -57,8 +57,15 @@ __all__ = [
     "FetchOutcome",
     "ObservationRecord",
     "OUTCOME_CLASSES",
+    "MAX_INSTANCE_PATH_LENGTH",
     "outcome_class",
 ]
+
+#: Ceiling on :attr:`Malformed.instance_path`. Declared HERE, on the type that stores it,
+#: so the producer in :mod:`crash_detector.collectors.validation` imports the same number
+#: the constructor enforces. Two constants that must agree is one constant with a bug
+#: scheduled for whenever somebody edits the wrong copy.
+MAX_INSTANCE_PATH_LENGTH = 200
 
 
 @dataclass(frozen=True)
@@ -105,13 +112,44 @@ class Malformed:
 
     Stored with its error class and **never coerced** (Standards Baseline §4). External
     input is hostile, including from a source that has been reliable for a year.
+
+    ``instance_path`` is an RFC 6901 JSON Pointer naming WHERE the response failed —
+    property names and array indices only. It is built by
+    :mod:`crash_detector.collectors.validation`, which is also where the reasoning lives
+    for why nothing value-bearing may travel on this type: ``jsonschema``'s own messages
+    embed the offending instance value, and a hostile response's values may include a
+    secret the source echoed back (``PBG-SEC-002``, non-waivable).
+
+    The empty string is the pointer to the document ROOT, exactly as RFC 6901 defines it
+    — "the whole response was the wrong shape". It is a real location, not a placeholder
+    for "we do not know", which is why this field can carry it as a default without
+    becoming one of those sometimes-present fields where a reader learns to guess.
+
+    (Field added in WO-2 increment 2 for deliverable A4 — extending increment 1's type in
+    place, as CD-D-008 permits, rather than duplicating the sum type under ``collectors/``.)
     """
 
     schema_error_class: str
+    instance_path: str = ""
 
     def __post_init__(self) -> None:
         if not self.schema_error_class:
             raise ValueError("Malformed requires a stated schema_error_class")
+        if not isinstance(self.instance_path, str):
+            raise TypeError("Malformed.instance_path must be a str")
+        if self.instance_path and not self.instance_path.startswith("/"):
+            raise ValueError(
+                "Malformed.instance_path must be an RFC 6901 JSON Pointer: the empty "
+                "string for the document root, or a '/'-prefixed path. Got "
+                f"{self.instance_path!r}"
+            )
+        if len(self.instance_path) > MAX_INSTANCE_PATH_LENGTH:
+            raise ValueError(
+                "Malformed.instance_path exceeds "
+                f"{MAX_INSTANCE_PATH_LENGTH} characters. It is built from external "
+                "property names, and unbounded external input on a path to an "
+                "append-only store is an unbounded row."
+            )
 
 
 @dataclass(frozen=True)
