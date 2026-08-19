@@ -186,9 +186,37 @@ DECLARED LIMITS (CD-RULE-004). WHAT THIS CHECK DOES NOT DO.
     raises, which this check turns into CD-ENGINE-ROOT-101, a refusal. That is fail-closed and
     not a pass, but it is a shape a legitimate author could write, so it is declared rather
     than left to be discovered. Write compose sequences in block form.
-    That reader ALSO has a known non-termination defect on a block sequence opened by the
-    first key of a block-sequence item (CD-ENG-WO2R-F14 / CD-PL-F61, ruled CD-D-051 to a
-    separate bounded dispatch). This check shares it. NOT REPAIRED HERE and NOT IN SCOPE.
+    THE NON-TERMINATION HALF OF THIS BOUNDARY IS DISCHARGED, AND IT IS SUPERSEDED RATHER THAN
+    ERASED (CD-ENG-READER-F06 / CD-D-063, amended at increment 6). Until 253c38b this boundary
+    ended: "That reader ALSO has a known non-termination defect on a block sequence opened by
+    the first key of a block-sequence item (CD-ENG-WO2R-F14 / CD-PL-F61, ruled CD-D-051 to a
+    separate bounded dispatch). This check shares it. NOT REPAIRED HERE and NOT IN SCOPE."
+    THAT SENTENCE IS NO LONGER TRUE. The reader was repaired at 253c38b under
+    CD-DISPATCH-WO2R-READER by seat CD-ENG-READER-01, which made progress a property of the
+    parse loops rather than of the documents they happen to meet, and this check — a THIRD
+    consumer of the shared reader, not the two the governing records named (CD-ENG-READER-F01)
+    — now returns a STATED REFUSAL where it used to return no verdict at all.
+    MEASURED BY THIS SEAT on a pristine extraction of 253c38b with the R02/PL-T5 document
+    applied (`declared_in` written as a list of two authorities), command
+    ``timeout 120 python3 -B tools/register/check_engine_no_witness_reach.py --root .``:
+    EXIT 3, ``CD-RT-003-ENGINE-NO-WITNESS-REACH: PRECONDITION_NOT_MET``, clause
+    CD-ENGINE-ROOT-101, naming ``deploy/compose.yaml`` line 428 and what could not be read
+    there. Previously exit 124 — no verdict.
+    THE RESIDUE THAT REPLACED IT, AND IT IS NARROWER (boundary 8b of
+    CD-RT-012-EGRESS-NO-BROKER, which this check shares because it shares the reader): A
+    DOCUMENT NESTED DEEPER THAN THE INTERPRETER'S RECURSION LIMIT RAISES ``RecursionError``
+    RATHER THAN A STATED REFUSAL. It TERMINATES — this is neither a hang nor a false clean —
+    but it reports a Python traceback instead of a line number, and it exits 1 rather than the
+    3 this check uses for "I could not read my subject".
+    MEASURED BY THIS SEAT on a pristine extraction of 253c38b, ~600 levels of block mapping
+    inserted under cd-collectors' ``pending`` (the exact generator is row R08 of
+    ``variants/WO-2R/MANIFEST.md``; the document is ~224 KB and is not carried as a patch for
+    that reason): EXIT 1, ``RecursionError: maximum recursion depth exceeded``, raised at
+    ``tools/register/_yamlmin.py`` in ``_parse_mapping``.
+    NOT REPAIRED, AND THAT IS A RULING OWED ELSEWHERE. Converting it to a YamlSubsetError would
+    move this check from exit 1 to exit 3 on an input that ALREADY HAS A VERDICT. Raised by the
+    reader seat as CD-ENG-READER-F02 for a Project Lead ruling; increment 6 writes no logic
+    (CD-D-057) and this file is open to it FOR PROSE ONLY.
 
  5  THE WALK ROOTS ARE THE ENGINE CONTAINER SET, DERIVED BY IMAGE IDENTITY — AMENDED AT
     CD-D-055 CLOSING CD-PL-F62, AND THE PREVIOUS TEXT OF THIS BOUNDARY IS WHY.

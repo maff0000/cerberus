@@ -528,9 +528,26 @@ criteria:
         claim otherwise; that half is CARRIED by CD-RT-003-GRANT-MATRIX-LIVE, a different
         instrument on a different substrate. (4) The compose reader is a stdlib-only YAML subset: a
         non-empty FLOW collection raises and becomes CD-ENGINE-ROOT-101, a refusal — fail-closed
-        but a shape a legitimate author could write; and the reader's known non-termination defect
-        (CD-ENG-WO2R-F14 / CD-PL-F61, ruled to a separate bounded dispatch by CD-D-051) is shared
-        here and NOT repaired in this increment. (5) Only the ENGINE service's process is a WALK
+        but a shape a legitimate author could write. THE NON-TERMINATION HALF OF THIS BOUNDARY IS
+        DISCHARGED AND IS SUPERSEDED RATHER THAN ERASED (CD-ENG-READER-F06 / CD-D-063, amended at
+        increment 6). It read: "the reader's known non-termination defect (CD-ENG-WO2R-F14 /
+        CD-PL-F61, ruled to a separate bounded dispatch by CD-D-051) is shared here and NOT
+        repaired in this increment." That is no longer true — the reader was repaired at 253c38b
+        under CD-DISPATCH-WO2R-READER, and this check, a THIRD consumer of the shared reader and
+        not the two the governing records named (CD-ENG-READER-F01), now returns a STATED
+        REFUSAL. MEASURED at increment 6 on a pristine extraction of 253c38b carrying the
+        R02/PL-T5 document: exit 3, PRECONDITION_NOT_MET, CD-ENGINE-ROOT-101, naming
+        deploy/compose.yaml line 428 and what could not be read there; previously exit 124, no
+        verdict. THE RESIDUE THAT REPLACED IT IS NARROWER and is boundary 8b of
+        CD-RT-012-EGRESS-NO-BROKER, shared here because the reader is shared: a document nested
+        deeper than the interpreter's recursion limit raises RecursionError rather than a stated
+        refusal — it TERMINATES, so it is neither a hang nor a false clean, but it reports a
+        traceback instead of a line number and exits 1 rather than 3. MEASURED at increment 6 on
+        a pristine extraction of 253c38b with ~600 levels of block mapping under cd-collectors'
+        `pending` (generator: row R08 of variants/WO-2R/MANIFEST.md): exit 1, RecursionError:
+        maximum recursion depth exceeded, in tools/register/_yamlmin.py `_parse_mapping`. NOT
+        REPAIRED — converting it would move this check from exit 1 to exit 3 on an input that
+        already has a verdict; raised as CD-ENG-READER-F02 for a ruling. (5) Only the ENGINE service's process is a WALK
         ROOT; the other five are RESOLVED so a rename is loud, but witness code reachable from
         cd-witness is correct and not a violation. AMENDED AT CD-D-055 CLOSING CD-PL-F62: the
         previous text of this boundary distinguished services BY PURPOSE in prose while the code

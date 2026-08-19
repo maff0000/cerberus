@@ -1632,3 +1632,32 @@ suffix is deliberate.
 | **observed, `253c38b`** | `render_panel(a)` → **`WITNESS AGREES`** with `a.as_of_utc == 2016-08-21T12:00:00+00:00`; with the forgery carried down, `a.freshness.age_seconds == 315360000.0` (3650 days), `a.freshness.window.seconds == 1e+18`, `a.freshness.window.covers(315360000.0) is True`, and the render is still `WITNESS AGREES`. |
 | **the constructor arms, measured in the same run — THREE, and three is the denominator** | the decade-old row itself → `Unavailable` / `WITNESS UNAVAILABLE`; `StalenessWindow(seconds=1e18)` → `StalenessWindowOutOfRange`; `Agrees(...)` with evidence for a different instant → `AgreementWithoutFreshnessEvidence`. **This is not a proof that a fourth constructor route does not exist.** |
 | **disposition** | **DECLARED, NOT CLOSED — `NOT PROVED TO BE CARRIED ANYWHERE`.** No layer was measured refusing a forged `Agrees`. Written into boundary 3 in all three `CD-RULE-004` places, in those words. |
+
+## `CD-ENG-READER-F06` — CD-RT-003's declared limit 4, re-measured on the check the reader seat could not reach
+
+The reader seat measured its repair against `check_egress_no_broker.py`. Limit 4 of
+`CD-RT-003-ENGINE-NO-WITNESS-REACH` is a claim about **this** check, so this seat re-ran both
+arms **against this check** rather than inheriting the other one's numbers (`CD-RULE-006`). No
+new patch file is added: R02's patch is re-used unchanged and R08 has a generator by design.
+
+### R02 against CD-RT-003 — the discharged half
+
+| | |
+|---|---|
+| **patch** | `variants/WO-2R/READER/R02-PL-T5-declared-in-as-two-authorities.patch`, applied unchanged |
+| **proposition attacked** | Limit 4's sentence *"the reader's known non-termination defect … is shared here and NOT repaired"*. |
+| **route** | `declared_in` written as a **list of two authorities** inside `cd-collectors`' `pending` — the shape that used to stall the reader's inline-mapping merge loop. |
+| **command** | `timeout 120 python3 -B tools/register/check_engine_no_witness_reach.py --root .` |
+| **observed, `253c38b`** | **exit 3**, `CD-RT-003-ENGINE-NO-WITNESS-REACH: PRECONDITION_NOT_MET`, clause `CD-ENGINE-ROOT-101`, naming `deploy/compose.yaml` **line 428** and what could not be read there. The reader seat records **exit 124** for this check before the repair. |
+| **disposition** | **THE LIMIT IS DISCHARGED, AND SUPERSEDED RATHER THAN ERASED.** All three `CD-RULE-004` places now carry the discharge, the date, the dispatch that made it, and the residue that replaced it. |
+
+### R08 against CD-RT-003 — the residue that replaced it
+
+| | |
+|---|---|
+| **artefact** | no patch — generator only, row `R08` above; the document is **~224 KB** measured here (`compose.yaml now 223914 bytes`), which is why. |
+| **proposition attacked** | That the discharge is total. It is not: one route to *"the reader does not finish cleanly"* survives. |
+| **route** | ~600 levels of block mapping inserted under `cd-collectors`' `pending`. **Stack exhaustion, not cursor stall** — the one route `_advance` and the iteration budgets say nothing about, because it is not a loop. |
+| **command** | `timeout 120 python3 -B tools/register/check_engine_no_witness_reach.py --root .` |
+| **observed, `253c38b`** | **exit 1**, `RecursionError: maximum recursion depth exceeded`, raised at `tools/register/_yamlmin.py` in `_parse_mapping`. It **terminates**. It is neither a hang nor a false clean — but it names no line and it exits `1` where this check uses `3` for *"I could not read my subject"*. |
+| **disposition** | **DECLARED, NOT REPAIRED**, as boundary `8b` shared from `CD-RT-012-EGRESS-NO-BROKER`. Repairing it moves this check from exit 1 to exit 3 on an input that already has a verdict. Owed as a **ruling** (`CD-ENG-READER-F02`), not an implementation choice. |
