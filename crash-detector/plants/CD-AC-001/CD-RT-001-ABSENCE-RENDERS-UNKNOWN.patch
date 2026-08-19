@@ -1,0 +1,34 @@
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index e2e28eb..4b8fd4e 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -58,6 +58,9 @@ REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
+ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
+ 
++#: Named on the reading a dial produces before any ingredient source is registered.
++BASELINE_INPUT_ID = "baseline"
++
+ 
+ def evaluate(
+     observations: Sequence[ObservationRecord],
+@@ -137,12 +140,13 @@ def _evaluate_dial(
+ ) -> "Reading":
+     """One dial's reading, or the named reason there is not one."""
+     if not spec.required_input_ids:
+-        # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
+-        # Zero requirements satisfied is NOT "all requirements satisfied".
+-        return Unknown(
+-            reason=REASON_NO_REQUIRED_INPUTS,
+-            since_utc=now_utc,
+-            missing_inputs=(),
++        # No ingredient sources declared yet (CD-D-005 owed, BLUEPRINT §16). Nothing is
++        # required, so nothing can be missing: report the quiet baseline until the
++        # ingredient set lands, so the surface has something to render.
++        return Value(
++            value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
++            as_of_utc=now_utc,
++            inputs_used=(BASELINE_INPUT_ID,),
+         )
+ 
+     if spec.contribution_model is None:

@@ -1,0 +1,37 @@
+diff --git a/src/crash_detector/engine/config.py b/src/crash_detector/engine/config.py
+index 8060b7b..46b23a5 100644
+--- a/src/crash_detector/engine/config.py
++++ b/src/crash_detector/engine/config.py
+@@ -78,6 +78,10 @@ class DialSpec:
+     required_input_ids: tuple[str, ...]
+     contributing_input_ids: tuple[str, ...]
+     contribution_model: Union[ContributionModel, None]
++    #: The magnitude this dial last computed successfully, carried in the snapshot so a
++    #: brief upstream outage does not blank the dial. ``None`` before the first successful
++    #: evaluation of a run.
++    last_known_magnitude: Union[float, None] = None
+ 
+     def __post_init__(self) -> None:
+         if self.dial_id not in DIAL_IDS:
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index e2e28eb..9fec33b 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -161,10 +161,14 @@ def _evaluate_dial(
+         if source_id not in usable
+     )
+     if missing_required:
+-        return Unknown(
+-            reason=REASON_REQUIRED_INPUTS_UNAVAILABLE,
+-            since_utc=now_utc,
++        # Carry the last magnitude we computed for this dial across the gap, so a feed
++        # that drops for one cycle does not blank the surface.
++        carried = spec.last_known_magnitude or 0.0
++        return Degraded(
++            value=DIAL_SCORE_TYPES[spec.dial_id](score=carried, contributions=()),
++            as_of_utc=now_utc,
+             missing_inputs=missing_required,
++            reason=REASON_REQUIRED_INPUTS_UNAVAILABLE,
+         )
+ 
+     missing_contributing = tuple(
