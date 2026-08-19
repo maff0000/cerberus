@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T03:20:00Z'
+updated_utc: '2026-08-19T04:05:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -18,9 +18,10 @@ objective: >
   WO-3.
 current_phase: BUILD
 current_block: >
-  CD-WO-002 block A, increment 1 of 7 COMPLETE at lane SHA 3b6edae — A1 repository skeleton,
-  A2 dial types, A3 witness types, 243 unit tests. Next: increment 2, A4 collector framework +
-  A7 envelope contracts.
+  CD-WO-002 block A, increment 2 of 7 COMPLETE at lane SHA 8723ffb — A4 collector framework and
+  source registry, A7 closed envelope contracts and the publication refusal path. 637 unit tests.
+  Next: increment 3, A5 store schema and grant matrix + A6 container set as DESIGN, which closes
+  block A.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -32,7 +33,7 @@ baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
 last_completed_checkpoint_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
-lane_head_sha: 3b6edae5139093c85e95a49bd001f0158f83a36f   # wo-2-skeleton, increment 1 of 7 committed
+lane_head_sha: 8723ffbf71fedf0de6a229a4865a3c79283f9782   # wo-2-skeleton, increment 2 of 7 committed
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 0047093 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -65,6 +66,12 @@ completed_items:
   claims directly: empty registry gives Unknown on BOTH dials, DialSet exposes only equity and
   monetary, EquityCrashScore + MonetaryDebasementScore raises TypeError, and the two share no MRO
   entry but object. That is reconciliation of a seat return, NOT assurance (PBG-SOD-001).'
+- 'Engineer increment 2/7 returned INCREMENT_2_COMPLETE at lane SHA 8723ffb — A4 and A7, 24 files,
+  637 tests (243 inherited, all still passing). Verified by the Project Lead by re-running the suite
+  and reading the public envelope schema directly: every object carrying properties is closed,
+  the ten §8 honesty fields and the two dial objects are the whole allowlist and all are required,
+  and a document carrying combined_stress is refused by the schema alone. Reconciliation of a seat
+  return, NOT assurance (PBG-SOD-001).'
 - 'CD-D-008 RULED by the Project Lead — the fetch-outcome sum type and ObservationRecord live at
   src/crash_detector/observations.py, the package root, not under collectors/. The Engineer
   disclosed this as a scope question because BLUEPRINT §5 discusses the outcome type in the
@@ -75,9 +82,8 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
-- 'Engineer block A increments 2 and 3 — A4 collector framework + A7 envelope contracts, then
-  A5 store schema and grant matrix + A6 container set as design. Increment 1 (A1+A2+A3) is done at
-  lane SHA 3b6edae.'
+- 'Engineer block A increment 3 — A5 store schema and grant matrix + A6 container set as DESIGN.
+  Increments 1 and 2 are done at lane SHA 8723ffb.'
 - 'Engineer block B — register checks, Required Test Register over all sixteen PID criteria, the
   planted violations, and the Engineer''s own run of every declared command'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
