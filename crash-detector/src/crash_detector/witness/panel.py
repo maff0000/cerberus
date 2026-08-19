@@ -33,6 +33,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Union
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
 from crash_detector.staleness import FreshnessEvidence
 from crash_detector.time_utc import ensure_utc
 
@@ -49,18 +50,36 @@ __all__ = [
 ]
 
 
-def _require_finite_float(type_name: str, field_name: str, observed: object) -> None:
-    """A measurement must be a finite float. ``bool`` is refused ahead of the float test.
+def _own_finite_float(type_name: str, field_name: str, observed: object) -> float:
+    """The measurement, RE-ESTABLISHED as an exact ``float`` of this system's own.
 
     Refused, not coerced: ``float("0.0")`` and ``float(True)`` both succeed and both would
     produce a divergence measure of zero, which reads as perfect agreement.
+
+    **It RETURNS the value rather than merely approving it (CD-AC-005, Class 2).** It used
+    to be ``_require_finite_float``, which validated by ``isinstance(observed, float)`` and
+    returned ``None``, leaving the caller to store the object it was handed. A ``float``
+    subclass passed that check and then owned every later judgement made about the number
+    — ``math.isfinite`` consults ``__float__``, ``==`` consults ``__eq__``, and this is a
+    measurement that decides whether witnesses agree. :func:`crash_detector.own_terms.own_float`
+    reads the stored IEEE-754 double out of the object instead of asking it, so what this
+    constructor stores is a plain ``float`` and no method of the caller's runs afterwards.
+
+    ``numpy.float64`` IS a ``float`` subclass and is accepted here, deliberately: this is
+    supplied data from a witness feed, not configuration. See :func:`own_float` for why
+    that differs from :class:`~crash_detector.staleness.StalenessWindow`, which refuses
+    subclasses outright and is not relaxed.
     """
-    if isinstance(observed, bool) or not isinstance(observed, float):
+    try:
+        established = own_float(observed)
+    except NotEstablishedOnOwnTerms as refusal:
         raise TypeError(
-            f"{type_name}.{field_name} must be a float, got {type(observed).__name__}"
-        )
-    if not math.isfinite(observed):
-        raise ValueError(f"{type_name}.{field_name} must be finite, got {observed!r}")
+            f"{type_name}.{field_name} must be a float, got "
+            f"{type(observed).__name__}: {refusal}"
+        ) from None
+    if not math.isfinite(established):
+        raise ValueError(f"{type_name}.{field_name} must be finite, got {established!r}")
+    return established
 
 
 class AgreementWithoutFreshnessEvidence(ValueError):
@@ -89,7 +108,11 @@ class Agrees:
     freshness: FreshnessEvidence
 
     def __post_init__(self) -> None:
-        _require_finite_float("Agrees", "divergence_measure", self.divergence_measure)
+        object.__setattr__(
+            self,
+            "divergence_measure",
+            _own_finite_float("Agrees", "divergence_measure", self.divergence_measure),
+        )
         object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
         if type(self.freshness) is not FreshnessEvidence:
             raise AgreementWithoutFreshnessEvidence(
@@ -120,8 +143,16 @@ class Diverges:
     as_of_utc: datetime
 
     def __post_init__(self) -> None:
-        _require_finite_float("Diverges", "divergence_measure", self.divergence_measure)
-        _require_finite_float("Diverges", "threshold", self.threshold)
+        object.__setattr__(
+            self,
+            "divergence_measure",
+            _own_finite_float("Diverges", "divergence_measure", self.divergence_measure),
+        )
+        object.__setattr__(
+            self,
+            "threshold",
+            _own_finite_float("Diverges", "threshold", self.threshold),
+        )
         object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
 
 
@@ -138,6 +169,15 @@ class Unavailable:
     since_utc: datetime
 
     def __post_init__(self) -> None:
+        # RE-ESTABLISHED BEFORE IT IS JUDGED (CD-AC-005, Class 2). Both tests below are the
+        # supplied object's to answer otherwise: `not self.reason` is `__bool__`/`__len__`,
+        # and `not in` is `__eq__`/`__hash__`. A `str` subclass answering those makes a
+        # reason that is not in the declared set pass as one — the same shape as
+        # `PanelRow.state`, one field across.
+        try:
+            object.__setattr__(self, "reason", own_str(self.reason))
+        except NotEstablishedOnOwnTerms as refusal:
+            raise TypeError(f"Unavailable.reason must be a str: {refusal}") from None
         if not self.reason:
             raise ValueError("Unavailable requires a stated reason")
         if self.reason not in UNAVAILABLE_REASONS:

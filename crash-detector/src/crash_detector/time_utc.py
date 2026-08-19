@@ -17,6 +17,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+from crash_detector.own_terms import own_instant, own_utc_offset
+
 __all__ = [
     "NaiveTimestampRejected",
     "ensure_utc",
@@ -35,19 +37,39 @@ class NaiveTimestampRejected(ValueError):
 
 
 def ensure_utc(value: datetime) -> datetime:
-    """Return ``value`` as a UTC-aware datetime, or refuse.
+    """Return an exact-type UTC ``datetime`` THIS SYSTEM BUILT from ``value``, or refuse.
 
     A naive datetime is refused rather than localised by assumption. A datetime carrying
     a non-UTC offset is converted — the instant is unambiguous, so there is nothing to
     guess.
+
+    **IT RE-CONSTRUCTS; IT DOES NOT ADMIT (CD-AC-005, CD-ASR-WO2R-F02).** This function
+    used to end ``return value.astimezone(timezone.utc)``, having admitted ``value`` by
+    ``isinstance``. Both halves of that were the caller's to define: ``astimezone`` is a
+    method, and so is the ``__rsub__`` that ``age_seconds`` would later reach for. A
+    ``datetime`` subclass overriding the pair made a row dated 2016 render ``WITNESS
+    AGREES`` in 2026 with every constructor on the path having run (variant ASR2-005-A).
+
+    What is returned now is built by :func:`crash_detector.own_terms.own_instant` from the
+    seven integers stored in ``value``'s own C struct, read through ``datetime``'s own
+    descriptors, and is of exact type ``datetime``. The supplied object is still accepted
+    and still believed about its DATA — a ``pandas.Timestamp`` reads correctly and is
+    meant to — it is simply no longer consulted about its BEHAVIOUR. Read
+    :mod:`crash_detector.own_terms` for the doctrine and for the declared limit.
+
+    This is the ONE door: every constructor in this package that stores a timestamp calls
+    it, and :func:`age_seconds` calls it on BOTH of its operands. So no comparison site
+    has to remember anything — by the time an age is computed, neither operand is an
+    object a caller supplied.
     """
     if not isinstance(value, datetime):
         raise TypeError(f"expected datetime, got {type(value).__name__}")
-    if value.tzinfo is None or value.tzinfo.utcoffset(value) is None:
+    offset = own_utc_offset(value)
+    if offset is None:
         raise NaiveTimestampRejected(
             "timezone-naive datetime refused; supply an aware UTC datetime"
         )
-    return value.astimezone(timezone.utc)
+    return own_instant(value, offset=offset)
 
 
 def parse_utc(text: str) -> datetime:
@@ -62,11 +84,13 @@ def parse_utc(text: str) -> datetime:
     if candidate.endswith(_UTC_DESIGNATOR):
         candidate = candidate[: -len(_UTC_DESIGNATOR)] + _ZERO_OFFSET
     parsed = datetime.fromisoformat(candidate)
-    if parsed.tzinfo is None or parsed.tzinfo.utcoffset(parsed) is None:
+    if own_utc_offset(parsed) is None:
         raise NaiveTimestampRejected(
             f"timestamp {text!r} carries no UTC designator; refused"
         )
-    return parsed.astimezone(timezone.utc)
+    # Through the same door as everything else, so there is one place a UTC instant comes
+    # into existence in this package rather than two that must be kept in step.
+    return ensure_utc(parsed)
 
 
 def format_utc(value: datetime) -> str:
@@ -102,5 +126,15 @@ def age_seconds(*, as_of_utc: datetime, now_utc: datetime) -> float:
     future-dated row would become permanently fresh. Callers on the freshness path must
     reject a negative age; see :func:`crash_detector.engine.evaluate.evaluate` and
     :func:`crash_detector.serving.witness_resolver.resolve_panel`.
+
+    **THE SUBTRACTION IS THIS SYSTEM'S OWN (CD-AC-005, CD-ASR-WO2R-F02).** Both operands
+    go through :func:`ensure_utc` first, which does not admit them — it REBUILDS them as
+    exact-type ``datetime`` values from their own primitive fields. So the ``-`` below is
+    CPython's ``datetime.__sub__`` between two objects this package constructed, and an
+    ``__rsub__`` defined on a supplied subclass is not bypassed by a guard here: it is
+    never reached, because by this line neither operand is that object. The returned
+    ``float`` is likewise ``timedelta.total_seconds`` on an exact ``timedelta``, which is
+    what lets :meth:`crash_detector.staleness.StalenessWindow.covers` insist on a plain
+    ``float`` without that insistence being a burden on any caller.
     """
     return (ensure_utc(now_utc) - ensure_utc(as_of_utc)).total_seconds()

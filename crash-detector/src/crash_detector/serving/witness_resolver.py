@@ -56,6 +56,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Mapping, Union
 
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
 from crash_detector.staleness import FreshnessEvidence, StalenessWindow
 from crash_detector.time_utc import age_seconds, ensure_utc
 from crash_detector.witness.panel import (
@@ -104,11 +105,36 @@ class PanelRow:
     measures: Mapping[str, float]
 
     def __post_init__(self) -> None:
-        if not isinstance(self.state, str):
-            raise TypeError("PanelRow.state must be a str")
+        # EVERY FIELD RE-ESTABLISHED ON THIS SYSTEM'S OWN TERMS (CD-AC-005, Class 2).
+        #
+        # `state` decides which panel constructor is reached, and it decides it with `==`
+        # against the three declared discriminators. `==` is the LEFT operand's to define,
+        # so `isinstance(self.state, str)` admitted a subclass that then answered the
+        # question itself: a row whose stored state is UNAVAILABLE — the witness feed is
+        # DEAD — compares equal to "AGREES" and renders WITNESS AGREES. `own_str` copies
+        # the code points out of the object, so what is compared is a plain `str`.
+        #
+        # The measure KEYS are the same shape one level down: `key not in row.measures` is
+        # decided by the stored keys' `__hash__` and `__eq__`, so a key that is not
+        # "divergence_measure" can answer to that name and supply the measurement. A
+        # non-`str` key is refused rather than kept, because a key this system cannot
+        # re-establish is a key whose hashing it does not control.
+        try:
+            object.__setattr__(self, "state", own_str(self.state))
+        except NotEstablishedOnOwnTerms as refusal:
+            raise TypeError(f"PanelRow.state must be a str: {refusal}") from None
+        try:
+            object.__setattr__(
+                self,
+                "measures",
+                {own_str(key): value for key, value in dict(self.measures).items()},
+            )
+        except NotEstablishedOnOwnTerms as refusal:
+            raise TypeError(
+                f"every PanelRow.measures key must be a str: {refusal}"
+            ) from None
         object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
         object.__setattr__(self, "published_utc", ensure_utc(self.published_utc))
-        object.__setattr__(self, "measures", dict(self.measures))
 
 
 def resolve_panel(
@@ -177,15 +203,34 @@ def _finite_measure(row: PanelRow, key: str) -> Union[float, None]:
     path and never crosses into the dial path, where ``float | None`` is banned outright
     (CD-AC-001). Here the two callers both branch on ``is None`` immediately, and the type
     that leaves this module is the :class:`WitnessPanel` sum type.
+
+    **THE NUMBER THAT LEAVES HERE IS THIS SYSTEM'S OWN (CD-AC-005, Class 2, the sibling
+    CD-ASR-WO2-02 named in the same breath as F02).** This helper used to end
+    ``return observed`` after ``isinstance(observed, float)``, and a ``float`` subclass
+    passed that check — the very type :class:`~crash_detector.staleness.StalenessWindow`
+    refuses by exact type four modules away, so the two modules disagreed about whether a
+    subclass of a number is a number. It mattered because ``math.isfinite`` consults
+    ``__float__`` and the stored measure's ``__eq__`` and ``__lt__`` then belong to the
+    caller. :func:`crash_detector.own_terms.own_float` reads the stored double out of the
+    object rather than asking it, so what is returned is a plain ``float`` and the
+    finiteness test below is made on THAT.
+
+    The two modules now agree on the DOCTRINE — no judgement is delegated to a supplied
+    object — while applying different remedies, and the difference is argued in
+    :func:`own_float`: a window is configuration and can afford outright refusal, a
+    measurement is supplied data where ``numpy.float64`` is ordinary and refusal would
+    break the one path that actually reads the outside world.
     """
     if key not in row.measures:
         return None
     observed = row.measures[key]
-    if isinstance(observed, bool) or not isinstance(observed, float):
+    try:
+        established = own_float(observed)
+    except NotEstablishedOnOwnTerms:
         return None
-    if not math.isfinite(observed):
+    if not math.isfinite(established):
         return None
-    return observed
+    return established
 
 
 #: Rendering, as data: exactly one text per constructor, and no entry for anything else.
