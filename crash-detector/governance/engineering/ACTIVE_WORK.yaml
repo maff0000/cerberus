@@ -606,7 +606,7 @@ lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
 lane_increment_sha: 253c38bd4db58433e5209a222c0ce27429079156   # CD-DISPATCH-WO2R-READER, RECONCILED AND ACCEPTED (CD-D-060); CD-PL-F61 CLOSED, CD-ENG-WO2R-F14 CLOSED
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: PENDING
+continuity_record_commit: 9d00b3846bc45649d1c82f4309405e384dc5fd98  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (66ea4bb) — that equality is the CD-PL-F64 defect.
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
   # The commit carrying this record does not exist while this record is being written, so PENDING is
   # the only truthful value at write time. It is left PENDING deliberately rather than resolved by a
