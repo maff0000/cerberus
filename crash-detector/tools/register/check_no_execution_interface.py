@@ -12,19 +12,39 @@ with no order interface in it is a different kind of promise.
 WHAT IT SCANS
 --------------
 Every Python module and every SQL migration in the application tree — ``src/``, ``db/``,
-``deploy/``, ``tests/`` and ``tools/`` — and inside each, the things that are INTERFACES
-rather than prose:
+``deploy/``, ``tests/`` and ``tools/`` — and inside each, THREE INDEPENDENT LAYERS. Any one
+of them failing is a violation; none of them is load-bearing alone.
 
-  * Python: the names of functions, classes, parameters, variables, attributes, keyword
-    arguments and imports; plus string literals that look like an endpoint (a URL, or a
-    path with segments).
-  * SQL: identifiers — table names, column names, function names.
+  L1  NAMES. Functions, classes, parameters, variables, attributes, keyword arguments,
+      imports, SQL identifiers, and string literals shaped like an endpoint. Judged by
+      composition, never by a bare word — see ``_broker_vocabulary.judge_identifier``.
 
-DOCSTRINGS, COMMENTS AND ORDINARY PROSE ARE DELIBERATELY NOT MATCHED, and the boundary is
-stated rather than left to be discovered. A docstring saying "this system places no orders"
-is not an order interface; a function called ``place_order`` is. Matching prose would fill
-the output with the project's own descriptions of what it refuses to do, and a check whose
-findings are mostly noise is a check nobody reads.
+  L2  SIGNATURE SHAPE (added closing CD-PL-F32). The FIELD SET of every callable and every
+      class, judged as an order ticket: an instrument together with a quantity and a side,
+      a price or order type, or a destination that is a venue, broker or exchange. This
+      layer never reads the callable's name for its two main rules, so renaming
+      ``place_order`` to ``f`` does not evade it.
+
+  L3  PROSE (added closing CD-PL-F32). Docstrings, comments, string literals and SQL
+      comments, read for a direct-object construction — a verb of transmission applied to
+      a noun naming a tradeable instruction. A thing whose own documentation says it
+      routes orders to a broker is an execution interface by the product's definition,
+      whatever it is called.
+
+WHY L2 AND L3 EXIST. The first cut of this check had L1 only, and
+``submit_instruction(symbol, qty, side)`` passed it — identically with and without the
+docstring "Route an order to the broker for execution", because prose was not read at all
+(CD-PL-F32, raised by the Project Lead's independent probe). The instance was not the
+finding; the finding was that ONE question was being asked of every construct, and an
+order-entry path is a shape rather than a word. The escape is now caught twice over, by L2
+with its docstring deleted and by L3 with every identifier renamed.
+
+L3's original exclusion is preserved as a CONSTRAINT rather than discarded. A docstring
+saying "this system places no orders" is not an order interface, and a check whose output
+is mostly the project's own charter is a check nobody reads. So L3 is a tight direct-object
+pattern, and any sentence carrying a negation ("no", "never", "refuses", "forbidden") or a
+hypothetical framing ("if", "would", "planted", "variant", "guard") is suppressed. That
+suppression is a deliberate false-negative trade: prose is the third net, not the only one.
 
 TWO PATHS ARE EXCLUDED, each with its reason:
   * ``tools/register/_broker_vocabulary.py`` and this script — the GUARD must name what it
@@ -51,17 +71,21 @@ Never a skip, for any reason (PBG-CI-002).
 from __future__ import annotations
 
 import ast
+import io
 import pathlib
 import re
 import sys
+import tokenize
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _broker_vocabulary import (  # noqa: E402
     BROKER_SDK_MODULES,
-    EXECUTION_OBJECTS,
     STRONG_NOUNS,
+    TRADEABLE_NOUNS,
     judge_identifier,
+    judge_prose,
+    judge_signature,
     tokens,
 )
 from _support import Check, parse_root, read_text, resolve_root  # noqa: E402
@@ -90,6 +114,64 @@ def _excluded(relative: str) -> bool:
     return relative in EXCLUDED
 
 
+def _parameters(node) -> list:
+    """Every parameter name of a callable, in declaration order."""
+    args = node.args
+    names = [arg.arg for arg in list(getattr(args, "posonlyargs", [])) + list(args.args)]
+    if args.vararg:
+        names.append(args.vararg.arg)
+    names.extend(arg.arg for arg in args.kwonlyargs)
+    if args.kwarg:
+        names.append(args.kwarg.arg)
+    return names
+
+
+def _class_fields(node: ast.ClassDef) -> list:
+    """The attribute names a class declares in its own body — its data model."""
+    names: list = []
+    for statement in node.body:
+        if isinstance(statement, ast.AnnAssign) and isinstance(statement.target, ast.Name):
+            names.append(statement.target.id)
+        elif isinstance(statement, ast.Assign):
+            for target in statement.targets:
+                if isinstance(target, ast.Name):
+                    names.append(target.id)
+    return names
+
+
+def _prose(check: Check, path: pathlib.Path, line: int, where: str, text: str) -> None:
+    """L3. Read a piece of English for a statement that this code routes orders."""
+    if not text or len(text) > 20000:
+        return
+    check.asserted()
+    verdict = judge_prose(text)
+    if verdict is None:
+        return
+    reason, sentence = verdict
+    check.violation(
+        path,
+        line,
+        f"execution interface declared in prose ({where})",
+        f'"{sentence}" — {reason}',
+    )
+
+
+def _scan_comments(check: Check, path: pathlib.Path, source: str) -> None:
+    """L3 over Python COMMENTS, which the AST discards entirely."""
+    try:
+        for token in tokenize.generate_tokens(io.StringIO(source).readline):
+            if token.type == tokenize.COMMENT:
+                _prose(check, path, token.start[0], "comment", token.string.lstrip("# "))
+    except (tokenize.TokenError, IndentationError, SyntaxError) as exc:
+        check.violation(
+            path,
+            0,
+            "UNTOKENISABLE",
+            f"the comments of this module could not be read ({type(exc).__name__}: "
+            f"{exc}), so its prose is unknown. Unknown is a failure, never a pass.",
+        )
+
+
 def _scan_python(check: Check, path: pathlib.Path, source: str) -> None:
     try:
         tree = ast.parse(source, filename=str(path))
@@ -103,10 +185,26 @@ def _scan_python(check: Check, path: pathlib.Path, source: str) -> None:
         )
         return
 
+    _scan_comments(check, path, source)
+
     for node in ast.walk(tree):
         candidates: list = []
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             candidates.append((node.name, "definition"))
+            # L2 — SIGNATURE SHAPE. Judged from the FIELD SET, not from the name.
+            check.asserted()
+            if isinstance(node, ast.ClassDef):
+                reason = judge_signature(node.name, _class_fields(node), "class")
+            else:
+                reason = judge_signature(node.name, _parameters(node), "function")
+            if reason:
+                check.violation(
+                    path,
+                    node.lineno,
+                    "execution interface (signature shape)",
+                    f"{reason} CD-AC-012: no execution pathway exists, and a pathway is "
+                    "recognised by what it carries, not by what it is called.",
+                )
         elif isinstance(node, ast.Name):
             candidates.append((node.id, "name"))
         elif isinstance(node, ast.Attribute):
@@ -134,6 +232,10 @@ def _scan_python(check: Check, path: pathlib.Path, source: str) -> None:
                 candidates.append((node.asname, "import alias"))
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):
             text = node.value.strip()
+            # L3 — every string literal, docstrings included. A docstring IS a Constant,
+            # so this one branch covers module, class and function documentation as well
+            # as ordinary message strings.
+            _prose(check, path, node.lineno, "docstring or string literal", text)
             if ENDPOINT.search(text) and len(text) < 400:
                 check.asserted()
                 segments = [
@@ -147,7 +249,7 @@ def _scan_python(check: Check, path: pathlib.Path, source: str) -> None:
                     # identifier it would not — the composite rules exist to avoid firing
                     # on English, and a URL path is not English. Variant EX-V6 escaped the
                     # first cut of this check for exactly this reason (CD-ENG-F28).
-                    bare = sorted(tokens(segment) & (EXECUTION_OBJECTS | STRONG_NOUNS))
+                    bare = sorted(tokens(segment) & (TRADEABLE_NOUNS | STRONG_NOUNS))
                     reason = judge_identifier(segment)
                     if bare and not reason:
                         reason = (
@@ -179,7 +281,27 @@ def _scan_python(check: Check, path: pathlib.Path, source: str) -> None:
 
 
 def _scan_sql(check: Check, path: pathlib.Path, source: str) -> None:
-    """SQL identifiers only. Comments and string literals are blanked out first."""
+    """L1 over SQL identifiers, L3 over the comments and literals blanked out of L1.
+
+    The blanking is why L1 does not cry wolf on a migration comment; reading the blanked
+    text separately, under the prose rule, is how CD-PL-F32's second gap is closed here
+    too. A migration whose comment says it routes orders to the broker is as much a
+    declaration as one whose table is called ``order_ticket``.
+    """
+    for pattern, where in (
+        (SQL_DOLLAR, "SQL dollar-quoted body"),
+        (SQL_COMMENT, "SQL comment"),
+        (SQL_STRING, "SQL string literal"),
+    ):
+        for match in pattern.finditer(source):
+            _prose(
+                check,
+                path,
+                source.count("\n", 0, match.start()) + 1,
+                where,
+                match.group(0).strip("-/*$' \t"),
+            )
+
     blanked = SQL_DOLLAR.sub(lambda m: " " * len(m.group(0)), source)
     blanked = SQL_COMMENT.sub(lambda m: " " * len(m.group(0)), blanked)
     blanked = SQL_STRING.sub(lambda m: " " * len(m.group(0)), blanked)
@@ -250,8 +372,20 @@ def main() -> int:
         "under tools/ is scanned."
     )
     check.note(
-        "docstrings, comments and prose are deliberately not matched: a sentence saying "
-        "this system places no orders is not an order interface."
+        "THREE LAYERS ran over every file: L1 identifier composition, L2 signature shape "
+        "(the field set of every callable and class, read WITHOUT its name), and L3 prose "
+        "(docstrings, comments, string literals, SQL comments). L2 and L3 were added "
+        "closing CD-PL-F32, where `submit_instruction(symbol, qty, side)` passed L1 both "
+        "with and without a docstring saying it routed orders to a broker."
+    )
+    check.note(
+        "L3 SUPPRESSES any sentence carrying a negation or a hypothetical framing — `no`, "
+        "`never`, `refuses`, `forbidden`, `if`, `would`, `planted`, `variant`, `guard`. "
+        "This project's own documentation says repeatedly that it places no orders, and a "
+        "guard that failed on its charter would be switched off. The cost is a deliberate "
+        "false negative on a negated sentence, and it is affordable only because L1 and L2 "
+        "do not read prose at all: an interface hidden behind `this does not route orders` "
+        "is still caught by its name and by its field set."
     )
 
     return check.done(
