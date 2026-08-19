@@ -1,0 +1,202 @@
+# ASSURANCE DISPATCH — WO-2, crash-detector.
+#
+# WHY THIS IS A DISPATCH RECORD AND NOT AN AUTHORITY RECORD: see CD-FWK-004 in
+# BL-20260819T023505Z-0003 and the header of CD-DISPATCH-WO2-ENGINEER.yaml. PBGv2 admits exactly one
+# ACTIVE authority record; a second makes `pbg boot` RED for every seat, so an ASSURANCE authority
+# record cannot lawfully exist here alongside the Project Lead's. PBG-SOD-001 is therefore evidenced
+# on this project by the Product Owner's ratified CD-D-002 named-actor route. THE SEPARATION ITSELF
+# IS NOT WAIVED AND CANNOT BE: the Engineer seat is CD-ENG-WO2-01 and the Assurance seat is
+# CD-ASR-WO2-01, they are different agents with different actor_ids, and the seat that built this
+# candidate has no part in judging it.
+
+dispatch_id: CD-DISPATCH-WO2-ASSURANCE
+status: DRAFT                                  # becomes ISSUED when target_candidate is filled
+record_type: SUB_AGENT_DISPATCH
+issued_utc: SET_AT_ISSUE
+
+# --- seat -------------------------------------------------------------------------------------- #
+assigned_role: ASSURANCE_ENGINEER
+role_contract: pbg/roles/assurance-engineer.md
+actor_id: CD-ASR-WO2-01
+implementing_actor_id: CD-ENG-WO2-01           # the seat whose work this is, for the record
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+independence_declaration: >
+  This seat implemented no part of the target. It has never held the ENGINEER role on this project
+  and has no commit on branch wo-2-skeleton. If any of that proves untrue, return
+  INDEPENDENCE_CONFLICT and hand the dispatch back (PBG-SOD-001, non-waivable).
+
+# --- exact target ------------------------------------------------------------------------------ #
+target_candidate: SET_AT_ISSUE                 # exact SHA on wo-2-skeleton; "the latest" is not a target
+target_branch: wo-2-skeleton
+target_worktree: SET_AT_ISSUE                  # a read-only worktree at the exact SHA, created by the PL
+target_scope: >
+  WO-2 as delivered: the repository skeleton, the dial and witness types, the collector framework
+  and source registry, the store schema and grant matrix, the container set AS DESIGN, the closed
+  envelope contracts, the register checks, required-tests.yaml, and the planted violations.
+out_of_scope: >
+  Anything scheduled after WO-2: the publication layer, heartbeat and external probe (WO-3), the
+  witness divergence alarm, history and slope (WO-4), the public/private-split EVIDENCE and the
+  public-artefact scan and the AI review validators (WO-5), the rotation ratio, recovery proof and
+  wave-transition monitor (WO-6). Also out of scope: container image build, non-root runtime proof,
+  signal-handling proof and image smoke test — FORBIDDEN in WO-2 by PBG-RT-010 and recorded as OWED,
+  not done. Judging them absent is correct; judging them a defect of WO-2 is not.
+
+# --- the verdict this dispatch exists to produce ------------------------------------------------ #
+gate: >
+  THE WO-2 GATE IS ASSURANCE PASS ON ALL FIVE PLANTED VIOLATIONS — CD-AC-001, CD-AC-002, CD-AC-003,
+  CD-AC-005, CD-AC-012 — each proved to FAIL CORRECTLY. Proof is by CONTRAST and by nothing else:
+  the SAME declared command exits 0 on the clean subject and NON-ZERO on the subject carrying the
+  planted violation. A violated arm that fails while the clean arm also fails proves only that the
+  harness is broken, and a broken harness detects nothing — that is UNDECIDABLE, never PASS
+  (REQUIRED-TEST-REGISTER-CONTRACT-v1 check 2).
+
+required_work:
+
+  W1_verify_the_authentic_target: >
+    Verify the thing itself at the exact SHA — not a reconstruction, not a summary, and not a
+    wrapper the project wrote to make verification convenient (PBG-ASSURE-001). Verify CONTENTS,
+    never names: a file, role, grant, schema or test named correctly proves nothing about what is
+    inside it. Confirm the SHA you audited matches the SHA dispatched, and say so in the verdict.
+
+  W2_execute_every_declared_command_yourself: >
+    For every test in required-tests.yaml belonging to CD-AC-001, 002, 003, 005 and 012: run the
+    DECLARED `execute` command verbatim on the clean tree (the baseline arm), then apply that test's
+    plant to a THROWAWAY COPY and run the SAME verbatim command there (the violated arm). Make the
+    copy with `git archive <sha> | tar -x -C <tmpdir>` — do NOT create a git worktree and do NOT
+    mutate the audited tree. Apply the plant YOURSELF with `git apply` or an equivalent direct edit;
+    you may not run any Engineer-supplied script that performs the arms for you, because an auditor
+    verifying through the project's own wrapper is auditing the wrapper.
+    Record, for every arm: the exact command string, the exit code, and enough output to show WHY.
+
+  W3_attack_the_guards_adversarially: >
+    This is the part that matters, and it is where the value of an independent seat actually lies.
+    For EACH of the five criteria, devise and run AT LEAST ONE VARIANT PLANT OF YOUR OWN that
+    violates the same PROPOSITION by a different route than the Engineer's plant, and report whether
+    the guard catches the CLASS or only the instance (adversarial theme
+    GUARD_THE_INSTANCE_NOT_THE_CLASS). Concrete lines of attack, not exhaustive:
+      - CD-AC-002: blend the two dials via a helper, a comprehension, a getattr, a dict round-trip,
+        or in a module the AST check's path allowlist does not cover. Does the type system still
+        refuse it? Does the closed schema still refuse to publish it?
+      - CD-AC-001: reintroduce a numeric default spelled differently — a module-level constant, a
+        dataclass field default, `next(iter(...), 0)`, a ternary, an int rather than a float.
+      - CD-AC-003: reach the witness schema from the engine indirectly — a re-export, a dynamic
+        import, a shared helper module. Grant cd_engine a privilege on witness by a route other than
+        the one the checker greps for (USAGE on the schema, a default privilege, membership of a
+        role that holds it, ownership).
+      - CD-AC-005: make absence resolve to agreement through a path other than the one plant —
+        a stale row treated as fresh, a default argument, an exception handler.
+      - CD-AC-012: name a broker in a way the denylist misses; add an execution interface under a
+        different word; put egress on a service the check does not look at.
+    Where a guard catches only the instance, that is a FINDING with a severity, not a footnote.
+    Where it catches the class, say so — a guard proved to bite is worth recording as proved.
+
+  W4_check_the_register_itself: >
+    Run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml`
+    from the target root and report its output verbatim. Independently confirm: the criteria
+    population is DERIVED FROM PID.md §6 and covers all sixteen criteria; pid.content_hash matches
+    the PID at the target; NO status-like key appears anywhere in the register; `latest_admitted_run`
+    is null, because the Engineer may not admit its own evidence. Read
+    pbg/tools/pbg/required_tests.py — it is the authority on the format and it COMPUTES status
+    rather than reading anyone's assertion of it. Expect the gate to be SHUT: eleven of the sixteen
+    criteria are scheduled for later work orders and are not evidenced. A SHUT gate at WO-2 is the
+    correct and honest answer, and it is not a defect of this candidate.
+
+  W5_check_the_structures_the_plants_stand_on: >
+    The plants prove the guards bite. Check that the STRUCTURES they guard are actually as the
+    Blueprint says, since a guard over an absent structure is theatre:
+      - BLUEPRINT §4 grant matrix, read out of a LIVE store built from the migrations — most of all
+        that cd_engine holds NO privilege of any kind on schema witness, and that the append-only
+        tables carry no UPDATE or DELETE grant for any role. Bring the store up yourself under the
+        runtime authorisation below; do not take the Engineer's word or the Engineer's transcript.
+      - BLUEPRINT §7: the two score types share no numeric base and carry no arithmetic dunders;
+        DialSet exposes no scalar; evaluate() performs no I/O; with an empty registry both dials
+        read Unknown.
+      - BLUEPRINT §5: every fetch attempt writes a row INCLUDING failures, and the four outcomes are
+        genuinely distinct rather than three spellings of absence.
+      - BLUEPRINT §6: absence and staleness both resolve to UNAVAILABLE, with no route to AGREES.
+      - BLUEPRINT §2 and §3: the compose egress posture, the loopback binds, digest-pinned images,
+        and the two networks.
+      - The empty source registry: zero ingredient sources registered, as CD-D-005 requires.
+    Anything you cannot reach authentically is UNSUPPORTED, named, and never quietly substituted.
+
+  W6_produce_the_run_record: >
+    Write the admitted run record to /srv/crash-detector-wo2-evidence/required-tests/runs/RTR-WO2-0001.json.
+    The Engineer's register already references RTR-WO2-0001 as the evidence that must exist; you are
+    the party that supplies it, and if you do not, those tests stay UNDECIDABLE, which is the correct
+    outcome of an unevidenced guard. Shape, per REQUIRED-TEST-REGISTER-CONTRACT-v1 (read
+    pbg/tools/pbg/required_tests.py for the exact reader):
+      run_id: "RTR-WO2-0001"
+      executed_by: {party: "CD-ASR-WO2-01", independence_class: "SEAT_INDEPENDENT"}
+      candidate: "<the exact target SHA>"
+      results: [
+        {test_id, mode: "NEGATIVE_CONTROL", arms: {baseline: {command, exit_code},
+                                                   violated: {command, exit_code}}},
+        {test_id, mode: "ACCEPTANCE", command, exit_code}
+      ]
+    The `command` strings in BOTH arms and in the ACCEPTANCE result must equal the register's
+    declared `execute` string EXACTLY, character for character — the validator refuses evidence that
+    ran something other than the test it purports to certify. Record what you actually ran and what
+    it actually returned. NEVER adjust a recorded exit code, and never record an arm you did not run.
+
+# --- read-only by default ---------------------------------------------------------------------- #
+prohibited_mutation:
+  default: >
+    Mutation of the target is PROHIBITED. Judge mutation by EFFECT, not by command label
+    (PBG-RT-001): a read-only-sounding command that writes a cache, takes a lock or triggers a
+    rebuild has mutated the target. Observe a lock; never take it.
+  explicitly_permitted_safe_diagnostics:
+  - id: SD-1
+    action: Write your evidence and verdict artefacts under /srv/crash-detector-wo2-evidence/.
+    note: >
+      That directory is OUTSIDE every git worktree, so the audited tree stays byte-identical to the
+      SHA you audited. The Project Lead transports those artefacts into the repository unaltered;
+      you author them, and nobody edits their contents.
+  - id: SD-2
+    action: Extract throwaway copies of the target under /tmp with `git archive | tar -x`.
+    note: >
+      Chosen deliberately over `git worktree add`, which writes into .git/worktrees and would
+      mutate the audited repository's administrative state.
+  - id: SD-3
+    action: >
+      Run ONE throwaway PostgreSQL container to read the grant matrix out of a live catalogue.
+    bounds: >
+      image postgres:16-alpine pinned BY DIGEST; container and volume names prefixed
+      `cd-asr-wo2-`; published on 127.0.0.1 on an ephemeral port; credentials generated at run time
+      from the environment and never written down; destroyed with `docker rm -f` and
+      `docker volume rm` before you return, with the removal evidenced.
+    classification: MUTATION_CAPABLE_AUTHORISED — it creates and destroys a container and a volume.
+    forbidden: >
+      touching, inspecting into, stopping or restarting ANY container or volume on this host that
+      does not carry the `cd-asr-wo2-` prefix. Other projects are running here. Do not reuse or
+      inspect the Engineer's `cd-store-wo2-` store: build your own from the migrations in the target.
+  forbidden_absolutely:
+  - modifying anything in /srv/crash-detector or /srv/crash-detector-wo2
+  - modifying anything under pbg/ (PBG-FWK-013)
+  - repairing any defect you find (PBG-SOD-004 — finding it does not make you the one who fixes it;
+    fixing it forfeits your independence over this target). Report it; the Engineer repairs it.
+  - granting acceptance. You supply evidence and a verdict; a PASS is not an acceptance (PBG-AUTH-003).
+
+# --- verdict form ------------------------------------------------------------------------------ #
+expected_verdict:
+  values: [PASS, AMBER, RED, UNSUPPORTED, NOT_APPLICABLE]
+  required_qualification: >
+    Every verdict carries its CONFIDENCE and its SCOPE — what you examined, what you did not, and
+    what you could not. A scoped PASS that names its limits is useful; an unscoped PASS is a
+    liability. State the CONTINUATION IMPLICATION separately from the finding: what is true and what
+    is safe to do next are different calculations.
+  per_criterion: >
+    A separate verdict line for each of CD-AC-001, 002, 003, 005 and 012, because the gate is per
+    plant. The overall verdict is the worst of them.
+  next_safe_gate: >
+    Name it explicitly. A verdict without a named next safe gate is incomplete (PBG-ASSURE-004).
+  no_synthetic_green: >
+    PBG-ASSURE-012. Do not weaken a check to obtain a verdict, do not accept a substitute target
+    because the real one is awkward to reach, and do not narrow scope silently — if you examined
+    less than dispatched, that belongs in the verdict, not in a footnote. Where you cannot refute a
+    claim and cannot fully verify it either, say precisely that. An honest AMBER is worth more than
+    a confident PASS resting on an unexamined assumption.
+
+expected_next_actor: PROJECT_LEAD
+returns_to: 'Project Lead (PROJECT_LEAD_SEAT_01), who records the WO-2 close and stops for Product
+  Owner review. The Product Owner reviews before WO-3.'

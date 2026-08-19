@@ -2,16 +2,19 @@
 document: BLUEPRINT — how the Crash Detector is built
 product: Crash Detector — standalone market stress instrument
 version: 0.1.0
-status: PROPOSED — awaiting Product Owner acceptance. No application code until accepted (CD-D-004.1)
+status: ACCEPTED — Product Owner accepted v0.1.0 at 2e116ec (governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md).
+  CD-HOLD-001 released; application code is authorised from WO-2 (CD-D-004.1 satisfied).
 owner: PROJECT_LEAD
 authority: CD-AUTH-0001
 derives_from: PID.md v1.0.1 · governance/decisions/PO-DECISIONS-0001.md
 framework: PBGv2 v2.0.0-alpha.1, pinned read-only at pbg/
-last_reconciliation_sha: c291f80057119dcbe610e365350159414547b65a
+last_reconciliation_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
 reconciliation_note: >
-  c291f80 is the SHA whose worktree was read and reconciled while authoring this document.
-  The commit that introduces this file is the only commit between that SHA and HEAD at
-  publication; currency is computed against Git (PBG-BP-003, PBG-FWK-042), never read from a date.
+  c291f80 was the SHA whose worktree was read while authoring this document. 0047093 is the SHA at
+  which the Project Lead re-read and reconciled it on resuming WO-2, finding no content drift — the
+  only correction needed was this header, which still read PROPOSED and still carried the "no
+  application code" hold three commits after the Product Owner released it. Content is unchanged at
+  v0.1.0. Currency is computed against Git (PBG-BP-003, PBG-FWK-042), never read from a date.
 amendment: Project Lead owns currency (PBG-BP-001). Assurance verifies, and does not author.
 ---
 
@@ -554,3 +557,4 @@ a written date.
 | Version | Date (UTC) | By | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-08-18 | Project Lead | initial Blueprint, proposed for Product Owner acceptance under WO-1 |
+| 0.1.0 | 2026-08-19 | Project Lead | **status only** — PROPOSED → ACCEPTED, recording the Product Owner's acceptance at 2e116ec and releasing the "no application code" hold this header was still asserting. No clause of the design changed, so the version does not move. |
