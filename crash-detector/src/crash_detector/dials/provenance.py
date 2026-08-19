@@ -140,17 +140,22 @@ produces six of them — and no Python-level structure can prevent an in-place s
 
 from __future__ import annotations
 
+import enum
 import math
+from types import MappingProxyType
 
 __all__ = [
     "ScoreOutOfRange",
     "CrossDialCombination",
     "QuantityProvenanceMissing",
     "QuantitySurfaceViolated",
+    "UndeclaredReduction",
     "SealedQuantityType",
     "DeclaredQuantity",
     "DECLARED_QUANTITY_MEMBERS",
     "TOLERATED_QUANTITY_MACHINERY",
+    "SameDialReduction",
+    "SAME_DIAL_REDUCTIONS",
     "observed_for_dial",
     "derived_within_one_dial",
     "require_finite_float",
@@ -196,6 +201,22 @@ class QuantityProvenanceMissing(CrossDialCombination):
 
 class QuantitySurfaceViolated(TypeError):
     """:class:`DeclaredQuantity`'s attribute surface is not the declared one."""
+
+
+class UndeclaredReduction(CrossDialCombination):
+    """A derivation was asked for by something that is not a declared reduction.
+
+    A subclass of :exc:`CrossDialCombination` — and therefore of ``TypeError`` — because it
+    is the same category error a third time: a caller's own callable is not a reduction
+    this system can account for, and a number it returns is a number this system did not
+    compute. Everything this module refuses answers to one name, so a caller cannot come to
+    treat any one of these boundaries as the lenient one.
+
+    Added at CD-ASR-WO2R-F01. `ASR2-002-A` handed :func:`derived_within_one_dial` the return
+    value of ``lambda _released: carried`` and the door took it, because the door validated
+    the DIAL SET it was given and never the VALUE. A callable is refused here BY EXACT TYPE,
+    which is a comparison of what the door was handed and not of what it was called.
+    """
 
 
 #: Names CPython's own ``type`` machinery may add to a class dictionary depending on
@@ -308,6 +329,89 @@ def require_finite_float(type_name: str, field_name: str, observed: object) -> N
         )
 
 
+class SameDialReduction(enum.Enum):
+    """THE CLOSED SET OF WAYS SEVERAL NUMBERS OF ONE DIAL BECOME ONE NUMBER OF THAT DIAL.
+
+    A caller of :func:`derived_within_one_dial` names a reduction; it does not supply one.
+    That is the whole of the CD-ASR-WO2R-F01 closure at this door, and the difference is
+    structural rather than stylistic:
+
+    * a caller-supplied callable returns a number **this system did not compute**, and no
+      layer downstream can tell such a number from a derivation. `ASR2-002-A` closed over
+      the other dial's released figure and returned it from a one-line ``lambda``; the door
+      stamped this dial's provenance onto it and it published as an equity 0.5 out of an
+      equity 0.9 and a monetary 0.1;
+    * a NAMED reduction is executed by this module over numbers this module released from
+      quantities whose provenance this module established. There is no argument through
+      which a caller's number can arrive, so there is nothing for a door to fail to
+      validate.
+
+    An :class:`enum.Enum` because an enum with members is closed against subclassing by the
+    interpreter and its members cannot be added to after class creation, so the set is
+    closed by the language rather than by a check. A reduction this product later needs is
+    added HERE, deliberately and visibly, and it still cannot take a caller's number.
+
+    **NO WEIGHTED REDUCTION IS SHIPPED, AND THAT IS A REFUSAL RATHER THAN AN OMISSION.**
+    Weights are product meaning — the relative worth of one observation against another —
+    and CD-D-005 is owed by the Product Owner. Inventing them here would be inventing a
+    product quantity (CD-RULE-003, ``PBG-AUTH-005``). A weighted derivation fails closed.
+    """
+
+    MEAN = "mean"
+    SUM = "sum"
+    MAX = "max"
+    MIN = "min"
+
+
+def _mean(values: tuple) -> float:
+    return math.fsum(values) / len(values)
+
+
+def _sum(values: tuple) -> float:
+    return math.fsum(values)
+
+
+def _max(values: tuple) -> float:
+    return max(values)
+
+
+def _min(values: tuple) -> float:
+    return min(values)
+
+
+#: Each declared reduction and the implementation THIS MODULE runs for it. Asserted by set
+#: EQUALITY against the enum at import, in both directions, for the reason every other
+#: declaration in this package is: a member with no implementation would raise at the worst
+#: possible moment, and an implementation with no member would be a fifth reduction nobody
+#: declared.
+#:
+#: **A ``MappingProxyType`` OVER A DICT WITH NO OTHER REFERENCE, and this seat found the
+#: reason against its own work** (`CD-ENG-WO2R2-V03`). A plain dict here would have been a
+#: door of exactly the kind this increment exists to close, one storey up: the door refuses
+#: a caller's callable, and the caller then writes its callable INTO the table the door
+#: trusts — ``SAME_DIAL_REDUCTIONS[SameDialReduction.MEAN] = lambda values: <a blend>`` —
+#: and every refusal below then runs the attacker's code with the door's own blessing. The
+#: dict literal is consumed by ``MappingProxyType`` at module level and is never bound to a
+#: name, so there is no reference to the underlying mapping to reach by name at all.
+#: MEASURED both ways as `CD-ENG-WO2R2-V03`.
+SAME_DIAL_REDUCTIONS = MappingProxyType(
+    {
+        SameDialReduction.MEAN: _mean,
+        SameDialReduction.SUM: _sum,
+        SameDialReduction.MAX: _max,
+        SameDialReduction.MIN: _min,
+    }
+)
+
+if frozenset(SAME_DIAL_REDUCTIONS) != frozenset(SameDialReduction):
+    raise UndeclaredReduction(
+        "SAME_DIAL_REDUCTIONS and SameDialReduction disagree about which reductions this "
+        "module implements. The two are asserted by set equality because a declared "
+        "reduction with no implementation and an implementation with no declaration are "
+        "the same defect seen from opposite sides."
+    )
+
+
 def _install(instance: object, dials: object, value: object) -> None:
     """Validate and write a declared quantity's two slots. THE ONLY place either is written.
 
@@ -351,8 +455,43 @@ class DeclaredQuantity(metaclass=SealedQuantityType):
 
     __slots__ = ("dials", "__value")
 
-    def __init__(self, *, dials: frozenset, value: float) -> None:
-        _install(self, dials, value)
+    def __init__(self, *arguments, **keywords) -> None:
+        """REFUSES, ALWAYS. Direct construction is not a door (CD-ASR-WO2R-F01).
+
+        Until this commit the signature was ``(*, dials: frozenset, value: float)``, and
+        that was the deepest hole in the re-entry closure: **both arguments were things a
+        caller could simply write.** ``frozenset({"equity_crash"})`` is a literal, and a
+        blended ``float`` is a number. A type whose constructor accepts an ASSERTED
+        provenance and an arbitrary number establishes nothing at all; it only records what
+        it was told, and the whole value of this type is that its provenance was
+        ESTABLISHED rather than asserted.
+
+        So this constructor fails closed and states what it could not establish, exactly as
+        the Product Owner's Class 1 invariant requires of any door that cannot establish its
+        guarantee from what it was handed. The two doors build an instance through
+        ``object.__new__`` and :func:`_install`, which is not a signature anybody reaches by
+        writing the type's name.
+
+        **WHAT THIS DOES NOT CLOSE, AND IT IS NOT CLAIMED TO.** Python has no private state.
+        ``object.__setattr__`` on the two slots of an instance obtained by
+        ``object.__new__`` forges a quantity without calling anything here, and
+        ``provenance._install`` is reachable as a module attribute. Both routes must write
+        ``_DeclaredQuantity__value`` or name a module-private helper, and both are the
+        residue already declared in this module's header — the residue does not grow, it is
+        simply now the ONLY route rather than one of three.
+        """
+        raise QuantityProvenanceMissing(
+            "DeclaredQuantity(...) is not a door and cannot be constructed directly. Its "
+            "two fields are exactly the two things a caller must not be able to assert: a "
+            "dial set is EVIDENCE about where a number came from, and a number with no "
+            "evidence is what a blend becomes the moment it is computed. WHAT THIS "
+            "CONSTRUCTOR COULD NOT ESTABLISH: that the provenance offered was carried by "
+            "the value rather than written beside it. Obtain one from observed_for_dial(), "
+            "which admits a measurement from OUTSIDE for ONE named dial and cites the "
+            "inputs it came from, or from derived_within_one_dial(), which reduces "
+            "quantities already established and computes the number itself "
+            "(CD-AC-002, CD-ASR-WO2R-F01, PID §3.1)."
+        )
 
     # -- immutability -------------------------------------------------------------- #
 
@@ -473,6 +612,22 @@ def _assert_declared_surface(cls: type) -> None:
         raise QuantitySurfaceViolated(" ".join(breaches))
 
 
+def _new_quantity(dials: frozenset, value: float) -> DeclaredQuantity:
+    """Build a declared quantity. THE ONLY route to one, and it is module-private.
+
+    It goes around :meth:`DeclaredQuantity.__init__`, which refuses always, rather than
+    passing it a flag: a flag is an argument, and an argument is something a caller can
+    write. What a caller cannot write is a call to a name in another module's private
+    namespace without naming it, and naming it is the declared residue.
+
+    Every instance in existence is validated by :func:`_install`, whichever door built it,
+    because this is the only place ``object.__new__`` is called on the type.
+    """
+    quantity = object.__new__(DeclaredQuantity)
+    _install(quantity, dials, value)
+    return quantity
+
+
 _assert_declared_surface(DeclaredQuantity)
 if DeclaredQuantity.__dictoffset__:
     raise QuantitySurfaceViolated(
@@ -537,20 +692,91 @@ def observed_for_dial(*, dial_id: str, quantity: float, inputs_used) -> Declared
             "a figure whose inputs are dials is the blend it forbids, whichever dial's "
             "name is on the outside (CD-AC-002, CD-ASR-F01, CD-PL-F54)."
         )
-    return DeclaredQuantity(dials=frozenset({dial_id}), value=quantity)
+    return _new_quantity(frozenset({dial_id}), quantity)
 
 
-def derived_within_one_dial(*, dials: frozenset, value: float) -> DeclaredQuantity:
-    """A quantity whose dial set was COMPUTED from magnitudes the caller already held.
+def derived_within_one_dial(*, quantities, reduction) -> DeclaredQuantity:
+    """REDUCE quantities whose provenance is already established, to one of that dial.
 
-    Called only by :func:`~crash_detector.dials.magnitude.combine_within_one_dial`, which
-    unions the provenance of the magnitudes it was given and refuses a union of any size
-    but one. The dial set arriving here is therefore evidence rather than an assertion —
-    the caller could not have produced it without holding magnitudes that carried it.
+    **IT TAKES NO NUMBER AND NO DIAL SET.** That is the change that closes
+    CD-ASR-WO2R-F01, and both halves of it matter.
 
-    It is a separate door from :func:`observed_for_dial` so that the two are separately
-    visible to the register check: an admission is a CLAIM about the outside world, a
-    derivation is an inference from data already in hand, and collapsing them would hide
-    the one that needs watching behind the one that does not.
+    Until this commit the signature was ``(*, dials: frozenset, value: float)`` and the
+    docstring argued that the dial set "is therefore evidence rather than an assertion —
+    the caller could not have produced it without holding magnitudes that carried it".
+    **THAT ARGUMENT WAS ABOUT THE CALLER AND NOT ABOUT THE VALUE, AND IT WAS REFUTED BY
+    EXECUTION.** `ASR2-002-A` reached this door through the public, re-exported
+    ``combine_within_one_dial``, which computed a perfectly honest single-dial set from the
+    magnitudes it was handed and then passed an arbitrary closure's return value straight
+    in. The dial set was evidence. The number beside it was not evidence of anything, and
+    this door never looked at it. Equity 0.9 and monetary 0.1 published as an equity 0.5.
+
+    What arrives now is a tuple of :class:`DeclaredQuantity` values — the only kind of value
+    in this system that CARRIES an established provenance — and the name of a reduction.
+    Four refusals, each stating what it could not establish:
+
+    * anything that is not EXACTLY a :class:`DeclaredQuantity`. A bare ``float``, a
+      ``float`` subclass, a look-alike, a number returned by a caller's callable: none of
+      them carries provenance for this door to read, so the door cannot establish which
+      dial the number came from and refuses rather than deciding. **Exact type identity,
+      not ``isinstance``**, for the reason :func:`~crash_detector.dials.reading.fold` gives;
+    * an empty derivation. A number derived from nothing is a number nobody computed;
+    * a union of provenance that is not exactly one dial. The union is COMPUTED here from
+      the quantities themselves, so a caller cannot state it, mis-state it, or narrow it;
+    * a ``reduction`` that is not a member of :class:`SameDialReduction`, refused BY EXACT
+      TYPE. A callable is the shape `ASR2-002-A` used, and it is refused for what it IS
+      rather than for what it is named.
+
+    The number is then computed HERE, by :data:`SAME_DIAL_REDUCTIONS`, over values released
+    from the quantities for the one dial the union established. **No expression written by a
+    caller contributes the result**, which is why this is a property of the door rather than
+    a property of who called it.
+
+    It remains a separate door from :func:`observed_for_dial` so that the two are separately
+    visible: an admission is a CLAIM about the outside world, a derivation is an inference
+    from data already in hand, and collapsing them would hide the one that needs watching
+    behind the one that does not. The difference is now structural as well as documentary —
+    this door can no longer be used to make a claim at all.
     """
-    return DeclaredQuantity(dials=dials, value=value)
+    ordered = tuple(quantities)
+    if not ordered:
+        raise CrossDialCombination(
+            "derived_within_one_dial() requires at least one established quantity. A "
+            "number derived from nothing is a number nobody computed, which CD-AC-001 "
+            "refuses as surely as CD-AC-002 refuses a blend."
+        )
+    for offered in ordered:
+        if type(offered) is not DeclaredQuantity:
+            raise QuantityProvenanceMissing(
+                f"a {type(offered).__name__} was offered for derivation. A derivation "
+                "reduces values whose provenance this system ESTABLISHED; it does not "
+                "accept a number and stamp a provenance onto it. WHAT THIS DOOR COULD NOT "
+                "ESTABLISH: which dial, if any, this value came from. Until CD-ASR-WO2R-F01 "
+                "this door took a bare float and a caller-supplied dial set, and "
+                "`ASR2-002-A` used exactly that to publish an equity 0.5 out of an equity "
+                "0.9 and a monetary 0.1 — the dial set it was handed was honest and the "
+                "number beside it was a blend (CD-AC-002, PID §3.1)."
+            )
+    if type(reduction) is not SameDialReduction:
+        raise UndeclaredReduction(
+            f"a {type(reduction).__name__} was offered as a reduction. A derivation is "
+            "named, never supplied: the declared reductions are "
+            f"{[member.name for member in SameDialReduction]}, and this module executes "
+            "them itself over numbers it released from quantities it established. WHAT "
+            "THIS DOOR COULD NOT ESTABLISH: that a number returned by a caller's own code "
+            "was derived from this dial at all. `ASR2-002-A` was a one-line `lambda` that "
+            "closed over the other dial's figure and returned it, and no layer downstream "
+            "can tell such a number from a derivation (CD-AC-002, CD-ASR-WO2R-F01)."
+        )
+    dials = frozenset().union(*(offered.dials for offered in ordered))
+    if len(dials) != 1:
+        raise CrossDialCombination(
+            f"refusing to derive one number from quantities of {sorted(dials)}. PID §3.1 "
+            "is CONSTITUTIONAL: the two dials fail in opposite directions and averaging "
+            "cancels the signal. The union is computed HERE from the provenance the "
+            "quantities CARRY, so it holds however they were reached and cannot be stated "
+            "by a caller (CD-AC-002, CD-ASR-F01)."
+        )
+    dial_id = next(iter(dials))
+    values = tuple(offered.value_for(dial_id) for offered in ordered)
+    return _new_quantity(dials, SAME_DIAL_REDUCTIONS[reduction](values))

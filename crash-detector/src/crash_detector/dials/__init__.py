@@ -32,6 +32,8 @@ from crash_detector.dials.reading import (
 from crash_detector.dials.provenance import (
     DeclaredQuantity,
     QuantityProvenanceMissing,
+    SameDialReduction,
+    UndeclaredReduction,
     observed_for_dial,
 )
 from crash_detector.dials.scores import (
@@ -61,7 +63,9 @@ __all__ = [
     "READING_CONSTRUCTORS",
     "Reading",
     "SCORE_TYPES",
+    "SameDialReduction",
     "ScoreOutOfRange",
+    "UndeclaredReduction",
     "Unknown",
     "Value",
     "combine_within_one_dial",

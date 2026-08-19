@@ -175,7 +175,9 @@ from crash_detector.dials.provenance import (
     CrossDialCombination,
     DeclaredQuantity,
     QuantityProvenanceMissing,
+    SameDialReduction,
     ScoreOutOfRange,
+    UndeclaredReduction,
     derived_within_one_dial,
     observed_for_dial,
     require_finite_float,
@@ -186,7 +188,9 @@ __all__ = [
     "MagnitudeSurfaceViolated",
     "CrossDialCombination",
     "QuantityProvenanceMissing",
+    "UndeclaredReduction",
     "DeclaredQuantity",
+    "SameDialReduction",
     "SealedMagnitudeType",
     "DialMagnitude",
     "DECLARED_MAGNITUDE_MEMBERS",
@@ -579,20 +583,58 @@ def sole_dial_of(magnitude: "DialMagnitude") -> str:
     return sorted(magnitude.provenance)[0]
 
 
+def _established_quantity(magnitude: "DialMagnitude") -> "DeclaredQuantity":
+    """The provenance-carrying value inside a magnitude, WITHOUT releasing a bare float.
+
+    The one place this module hands a magnitude's payload onward, and it hands on the
+    :class:`~crash_detector.dials.provenance.DeclaredQuantity` rather than the number
+    inside it. That is the difference CD-ASR-WO2R-F01 turned on: a released ``float`` has
+    lost its dial and can be substituted for any other ``float`` by anybody holding it,
+    whereas a declared quantity carries the evidence with it and can be substituted for
+    nothing.
+
+    It names the private slot, which RULE 3 of ``tools/register/check_no_blend.py`` refuses
+    everywhere except the module that DECLARES that slot. This is that module.
+    """
+    if type(magnitude) is not DialMagnitude:
+        raise CrossDialCombination(
+            f"not a dial magnitude: {type(magnitude).__name__}. A bare number has no "
+            "provenance to carry into a derivation, and a number without provenance is "
+            "exactly what CD-AC-002 forbids being published."
+        )
+    return magnitude._DialMagnitude__quantity
+
+
 def combine_within_one_dial(magnitudes, *, using) -> "DialMagnitude":
     """Compute a new magnitude from magnitudes that all came from the SAME dial.
 
-    THE POINT OF COMBINATION, and therefore the place provenance is compared. ``using``
-    receives a tuple of the released numbers, in the order given, and returns one float.
+    THE POINT OF COMBINATION, and therefore the place provenance is compared.
 
-    Legitimate same-dial work still works — a rolling mean of one dial over time, a
-    weighted recomputation, a maximum over a window — and that matters as much as the
-    refusal: a closure that forbids the product is not a closure.
+    **``using`` IS A NAMED REDUCTION AND NOT A CALLABLE. THAT IS THE CD-ASR-WO2R-F01
+    CLOSURE AT THIS FUNCTION AND IT IS THE WHOLE OF IT.** It is a member of
+    :class:`~crash_detector.dials.provenance.SameDialReduction`; the reduction is executed
+    by :mod:`crash_detector.dials.provenance` over numbers that module released from the
+    quantities these magnitudes carry, and nothing a caller wrote contributes the result.
 
-    What is refused is the shape that arrives innocently: a helper written for one dial
-    and later reused across both. It fails when it is REUSED, at runtime, by comparing
-    the provenance data it was handed — not when somebody reviews the code, and not
-    because the expression happened to name a dial.
+    Until this commit ``using`` received a tuple of released ``float`` values and returned
+    one, and this function passed that return value straight into the derivation door. It
+    computed the dial set honestly and it validated the VALUE not at all, which made this
+    the public, re-exported proxy through which `ASR2-002-A` published an equity 0.5 out of
+    an equity 0.9 and a monetary 0.1 with every declared static layer green. The function
+    was never in ``ADMISSION_VOCABULARY`` and did not need to be: it was a door that did not
+    look like one, and adding its name to a list would have left the next one open.
+
+    Legitimate same-dial work still works — a rolling mean of one dial over time, a maximum
+    over a window, a minimum, a total — and that matters as much as the refusal: a closure
+    that forbids the product is not a closure. What it costs is that a derivation this
+    product later needs is DECLARED in ``SameDialReduction``, visibly, rather than written
+    inline at a call site. A weighted recomputation is not shipped because weights are
+    product meaning and CD-D-005 is owed (CD-RULE-003); that derivation fails closed.
+
+    What is still refused, unchanged: the shape that arrives innocently — a helper written
+    for one dial and later reused across both. It fails when it is REUSED, at runtime, by
+    comparing the provenance data it was handed, not when somebody reviews the code, and
+    not because the expression happened to name a dial.
     """
     ordered = tuple(magnitudes)
     if not ordered:
@@ -612,12 +654,14 @@ def combine_within_one_dial(magnitudes, *, using) -> "DialMagnitude":
             "calls away (CD-ASR-F01)."
         )
     dial_id = sorted(dials)[0]
-    numbers = tuple(magnitude.quantity_for(dial_id) for magnitude in ordered)
-    # The dial set handed to the derivation door is COMPUTED from the magnitudes above,
-    # never asserted by the caller: `using` may return any float it likes and cannot
-    # influence which dial the result is declared for. That is what makes derivation a
-    # different kind of door from admission (CD-PL-F54).
+    # What travels to the derivation door is the ESTABLISHED QUANTITIES, never released
+    # numbers and never a dial set stated by this function. The door re-computes the union
+    # from the quantities themselves and computes the reduced number itself, so there is no
+    # argument on this path through which a caller's number could arrive (CD-ASR-WO2R-F01).
     return DialMagnitude(
         dial_id=dial_id,
-        quantity=derived_within_one_dial(dials=dials, value=using(numbers)),
+        quantity=derived_within_one_dial(
+            quantities=tuple(_established_quantity(m) for m in ordered),
+            reduction=using,
+        ),
     )

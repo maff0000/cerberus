@@ -44,9 +44,13 @@ from crash_detector.dials.magnitude import (
 )
 from crash_detector.dials.provenance import (
     DECLARED_QUANTITY_MEMBERS,
+    SAME_DIAL_REDUCTIONS,
     TOLERATED_QUANTITY_MACHINERY,
     DeclaredQuantity,
     QuantityProvenanceMissing,
+    SameDialReduction,
+    UndeclaredReduction,
+    derived_within_one_dial,
     observed_for_dial,
 )
 from crash_detector.dials.scores import (
@@ -284,9 +288,7 @@ def test_releasing_a_number_requires_naming_the_right_dial():
 
 def test_combining_across_the_dials_is_refused_by_comparing_provenance():
     with pytest.raises(CrossDialCombination):
-        combine_within_one_dial(
-            [EQUITY, MONETARY], using=lambda numbers: sum(numbers) / len(numbers)
-        )
+        combine_within_one_dial([EQUITY, MONETARY], using=SameDialReduction.MEAN)
 
 
 def test_a_same_dial_helper_reused_across_dials_fails_when_it_is_reused():
@@ -295,9 +297,7 @@ def test_a_same_dial_helper_reused_across_dials_fails_when_it_is_reused():
     anybody read the code."""
 
     def mean_of(magnitudes):
-        return combine_within_one_dial(
-            magnitudes, using=lambda numbers: sum(numbers) / len(numbers)
-        )
+        return combine_within_one_dial(magnitudes, using=SameDialReduction.MEAN)
 
     same_dial = mean_of([EQUITY, magnitude_of(EQUITY_DIAL_ID, 0.5)])
     assert same_dial.quantity_for(EQUITY_DIAL_ID) == pytest.approx(0.7)
@@ -311,18 +311,20 @@ def test_same_dial_computation_still_works():
         magnitude_of(MONETARY_DIAL_ID, quantity)
         for quantity in (0.1, 0.2, 0.3, 0.4)
     ]
-    rolling_mean = combine_within_one_dial(
-        window, using=lambda numbers: sum(numbers) / len(numbers)
-    )
+    rolling_mean = combine_within_one_dial(window, using=SameDialReduction.MEAN)
     assert rolling_mean.provenance == frozenset({MONETARY_DIAL_ID})
     assert rolling_mean.quantity_for(MONETARY_DIAL_ID) == pytest.approx(0.25)
-    widest = combine_within_one_dial(window, using=max)
+    widest = combine_within_one_dial(window, using=SameDialReduction.MAX)
     assert widest.quantity_for(MONETARY_DIAL_ID) == 0.4
+    narrowest = combine_within_one_dial(window, using=SameDialReduction.MIN)
+    assert narrowest.quantity_for(MONETARY_DIAL_ID) == 0.1
+    total = combine_within_one_dial(window, using=SameDialReduction.SUM)
+    assert total.quantity_for(MONETARY_DIAL_ID) == pytest.approx(1.0)
 
 
 def test_combining_nothing_is_refused():
     with pytest.raises(CrossDialCombination):
-        combine_within_one_dial([], using=sum)
+        combine_within_one_dial([], using=SameDialReduction.SUM)
 
 
 def test_a_forged_multi_dial_provenance_yields_no_number():
@@ -754,9 +756,10 @@ def test_a_magnitude_still_publishes_into_its_own_slot_after_the_re_entry_closur
 
 def test_a_derived_same_dial_magnitude_still_publishes():
     """The DERIVATION door end to end: combine within one dial, then publish the result.
-    Its dial set is computed from the magnitudes, so `using` cannot influence it."""
+    Its dial set AND its number are both computed by the door, so a caller supplies
+    neither (CD-ASR-WO2R-F01)."""
     window = [magnitude_of(EQUITY_DIAL_ID, q) for q in (0.1, 0.2, 0.3)]
-    mean = combine_within_one_dial(window, using=lambda ns: sum(ns) / len(ns))
+    mean = combine_within_one_dial(window, using=SameDialReduction.MEAN)
     assert number_for_dial_slot(EQUITY_DIAL_ID, mean) == pytest.approx(0.2)
 
 
@@ -768,3 +771,177 @@ def test_the_debugger_still_shows_a_developer_the_number():
     assert repr(quantity_of(EQUITY_DIAL_ID, 0.9)) == (
         "DeclaredQuantity(dials=['equity_crash'], value=0.9)"
     )
+
+
+# --- CD-ASR-WO2R-F01: THE DERIVATION DOOR VALIDATES THE VALUE ----------------------------- #
+#
+# The auditor's finding was not that a name was missing from a list. It was that a door
+# which validated its DIAL SET and never its VALUE could be reached by a public function
+# that did not look like a door. These tests execute the routes and watch the door refuse;
+# none of them reads source and none of them inspects a checker's exit code.
+
+
+def test_asr2_002_a_the_derivation_door_no_longer_launders_a_blend():
+    """`ASR2-002-A` VERBATIM IN SHAPE, and it is refused by the derivation door.
+
+    The auditor's module released both dials' numbers with `quantity_for`, averaged them
+    in an ordinary expression, and handed the average back through
+    `combine_within_one_dial(..., using=<a closure>)`. It named no dial, named no door,
+    touched no private slot, and published an equity 0.5 out of an equity 0.9 and a
+    monetary 0.1.
+
+    The refusal is by EXACT TYPE of what the door was HANDED — a `function` is not a
+    `SameDialReduction` — and not by anything about the module, its name, or its imports.
+    """
+    held = (EQUITY, MONETARY)
+    numbers = [reading.quantity_for(sole_dial_of(reading)) for reading in held]
+    carried = sum(numbers) / len(numbers)
+    assert carried == pytest.approx(0.5)  # the blend still EXISTS; it is a float
+    with pytest.raises(UndeclaredReduction):
+        combine_within_one_dial([held[0]], using=lambda _released: carried)
+
+
+def test_the_derivation_door_refuses_every_callable_shape():
+    """A lambda, a def, a builtin, a bound method, a callable object, a partial.
+
+    The class is "a number this system did not compute", not "a lambda". Each of these is
+    refused for what it IS, so renaming any of them changes nothing."""
+
+    class Callable:
+        def __call__(self, _released):
+            return 0.5
+
+    def named(_released):
+        return 0.5
+
+    for supplied in (
+        lambda _released: 0.5,
+        named,
+        max,
+        statistics.mean,
+        Callable(),
+        functools.partial(named),
+        [0.5],
+        "MEAN",
+        0.5,
+        None,
+    ):
+        with pytest.raises(UndeclaredReduction):
+            combine_within_one_dial([EQUITY], using=supplied)
+
+
+def test_the_derivation_door_refuses_a_value_whose_provenance_it_cannot_establish():
+    """It takes established quantities, never numbers. A bare float, a float subclass and
+    a look-alike carrying the right-looking `dials` attribute are all refused identically,
+    by exact type — the door reads what it was handed, not what it was told."""
+
+    class LooksLikeAQuantity:
+        dials = frozenset({EQUITY_DIAL_ID})
+
+        def value_for(self, _dial_id):
+            return 0.5
+
+    class NotQuiteAFloat(float):
+        pass
+
+    for offered in (0.5, NotQuiteAFloat(0.5), LooksLikeAQuantity(), None, "0.5"):
+        with pytest.raises(QuantityProvenanceMissing):
+            derived_within_one_dial(
+                quantities=(offered,), reduction=SameDialReduction.MEAN
+            )
+
+
+def test_the_derivation_door_computes_the_union_and_refuses_two_dials():
+    """The union is computed HERE from the quantities' own provenance, so a caller cannot
+    state it, narrow it, or disagree with it."""
+    with pytest.raises(CrossDialCombination):
+        derived_within_one_dial(
+            quantities=(
+                quantity_of(EQUITY_DIAL_ID, 0.9),
+                quantity_of(MONETARY_DIAL_ID, 0.1),
+            ),
+            reduction=SameDialReduction.MEAN,
+        )
+
+
+def test_the_derivation_door_refuses_deriving_from_nothing():
+    with pytest.raises(CrossDialCombination):
+        derived_within_one_dial(quantities=(), reduction=SameDialReduction.MEAN)
+
+
+def test_a_declared_quantity_cannot_be_constructed_directly():
+    """Its two fields are exactly the two things a caller must not be able to assert.
+
+    `DeclaredQuantity(dials=frozenset({...}), value=<a blend>)` was a public, re-exported,
+    one-expression forgery of provenance until CD-ASR-WO2R-F01. It now fails closed and
+    says what it could not establish."""
+    with pytest.raises(QuantityProvenanceMissing):
+        DeclaredQuantity(dials=frozenset({EQUITY_DIAL_ID}), value=0.5)
+    with pytest.raises(QuantityProvenanceMissing):
+        DeclaredQuantity()
+
+
+def test_the_declared_reductions_are_closed_and_implemented_by_this_system():
+    """Set equality in both directions, and the enum is closed by the interpreter.
+
+    A reduction with no implementation would raise at the worst possible moment; an
+    implementation with no declaration would be a fifth reduction nobody declared."""
+    assert frozenset(SAME_DIAL_REDUCTIONS) == frozenset(SameDialReduction)
+    assert frozenset(member.name for member in SameDialReduction) == frozenset(
+        {"MEAN", "SUM", "MAX", "MIN"}
+    )
+    with pytest.raises(TypeError):
+
+        class Extended(SameDialReduction):
+            MEDIAN = "median"
+
+
+def test_no_public_callable_of_the_dial_package_admits_a_caller_supplied_number():
+    """THE SWEEP, WITH ITS DENOMINATOR PRINTED.
+
+    The auditor's question was not "is this door guarded?" but "CAN ANY PUBLIC FUNCTION
+    REACH A DOOR?". `combine_within_one_dial` was public, re-exported in `__all__`, and
+    reached the derivation door on its caller's behalf while being in no registry.
+
+    So this sweeps EVERY public callable re-exported by `crash_detector.dials` and offers
+    each of them a poisoned number in every way the call can be spelled, then asserts that
+    no `DeclaredQuantity` and no `DialMagnitude` carrying that number came back. The one
+    exception is `observed_for_dial`, which is the DECLARED BASE CASE: something has to be
+    the first number, it names its dial and its inputs in source, and its residue is
+    declared in this package's headers rather than closed here.
+
+    It is not a proof that no such callable can ever be written — a sweep has a
+    denominator, not a quantifier — and it is recorded as a sweep. What it does is make
+    "a new public function became a door" a DECLARED TEST FAILURE rather than an audit
+    finding two gates later.
+    """
+    import crash_detector.dials as package
+
+    poison = 0.31415926535
+    declared_base_case = {"observed_for_dial"}
+    swept = 0
+    admitted = []
+    for name in package.__all__:
+        member = getattr(package, name)
+        if not callable(member) or name in declared_base_case:
+            continue
+        swept += 1
+        attempts = (
+            lambda m=member: m(poison),
+            lambda m=member: m(dials=frozenset({EQUITY_DIAL_ID}), value=poison),
+            lambda m=member: m(dial_id=EQUITY_DIAL_ID, quantity=poison),
+            lambda m=member: m([poison], using=SameDialReduction.MEAN),
+            lambda m=member: m(quantities=(poison,), reduction=SameDialReduction.MEAN),
+            lambda m=member: m(EQUITY_DIAL_ID, poison),
+        )
+        for attempt in attempts:
+            try:
+                produced = attempt()
+            except BaseException:
+                continue
+            if type(produced) is DeclaredQuantity:
+                admitted.append((name, "DeclaredQuantity"))
+            if type(produced) is DialMagnitude:
+                admitted.append((name, "DialMagnitude"))
+    assert swept >= 12, f"the sweep found only {swept} public callables to attack"
+    assert admitted == [], f"a public callable admitted a caller-supplied number: {admitted}"
