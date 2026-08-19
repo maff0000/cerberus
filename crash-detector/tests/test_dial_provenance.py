@@ -42,6 +42,13 @@ from crash_detector.dials.magnitude import (
     combine_within_one_dial,
     sole_dial_of,
 )
+from crash_detector.dials.provenance import (
+    DECLARED_QUANTITY_MEMBERS,
+    TOLERATED_QUANTITY_MACHINERY,
+    DeclaredQuantity,
+    QuantityProvenanceMissing,
+    observed_for_dial,
+)
 from crash_detector.dials.scores import (
     ARITHMETIC_DUNDERS,
     EQUITY_DIAL_ID,
@@ -428,3 +435,336 @@ def test_variant_e02_getattr_over_string_slots_raises_when_executed():
     magnitudes = [getattr(dials, slot).value.score for slot in slots]
     with pytest.raises(TypeError):
         sum(magnitudes) / len(magnitudes)
+
+
+# ======================================================================================= #
+# THE RE-ENTRY CLOSURE — CD-PL-F54, re-opening and closing CD-ASR-F01
+#
+# Increment 2's structure was closed against the type being ASKED for a number and open to
+# the number being READ OFF it. Nine of the Project Lead's eleven probes were refused; two
+# were not, and one plausible module (`PL-Q9`) defeated the static arm and the runtime arm
+# together while naming no dial and performing no arithmetic on a magnitude.
+#
+# These tests execute the routes and watch the constructor refuse. They do not read source
+# and they do not inspect a checker's exit code: "unrepresentable" is a RUNTIME property.
+#
+# WHAT IS DELIBERATELY ASSERTED TO BE OPEN, so the boundary is visible rather than
+# discovered: the EXITS. `test_the_exits_are_open_and_that_is_declared` asserts that a
+# number can still be read out of `repr`, and
+# `test_two_released_numbers_still_add_and_that_is_declared` asserts that two released
+# floats still add. Both are true, both are declared, and a test that pretended otherwise
+# would be the kind of false evidence this whole rework exists to correct.
+# ======================================================================================= #
+
+EXPECTED_QUANTITY_SURFACE = frozenset(
+    {
+        "__doc__",
+        "__module__",
+        "__slots__",
+        "_DeclaredQuantity__value",
+        "dials",
+        "__init__",
+        "__setattr__",
+        "__delattr__",
+        "__eq__",
+        "__ne__",
+        "__hash__",
+        "__repr__",
+        "__getstate__",
+        "__setstate__",
+        "value_for",
+    }
+)
+
+
+def _leak(magnitude):
+    """The `PL-Q4` laundering step, verbatim: a number off the repr, naming no dial."""
+    return float(repr(magnitude).split("quantity=")[1].rstrip(")"))
+
+
+def test_the_exits_are_open_and_that_is_declared():
+    """DECLARED LIMIT, asserted so it cannot quietly stop being true or be forgotten.
+
+    `repr` renders the quantity deliberately — hiding a value from a developer's own
+    debugger is obfuscation, not structure — and it is one member of an exit class with no
+    last member. This test exists so the next auditor reads the boundary here rather than
+    discovering it, and so that anybody tempted to "fix" `repr` sees that the closure does
+    not depend on it."""
+    assert _leak(EQUITY) == 0.9
+    assert _leak(MONETARY) == 0.1
+    assert float(f"{EQUITY!r}".split("quantity=")[1].rstrip(")")) == 0.9
+
+
+def test_two_released_numbers_still_add_and_that_is_declared():
+    """DECLARED LIMIT. They are two floats and Python adds floats. `PL-Q1a` returns 1.0."""
+    assert _leak(EQUITY) + _leak(MONETARY) == pytest.approx(1.0)
+    released = EQUITY.quantity_for(EQUITY_DIAL_ID) + MONETARY.quantity_for(MONETARY_DIAL_ID)
+    assert released == pytest.approx(1.0)
+
+
+def test_a_bare_float_cannot_become_a_dial_magnitude():
+    """THE CLOSURE, in one line. A number with no provenance is not a magnitude's number."""
+    with pytest.raises(QuantityProvenanceMissing):
+        DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.5)
+
+
+def test_variant_pl_q4_repr_launder_and_rewrap_is_refused():
+    """`PL-Q4`: launder both through repr, re-wrap the mean as the equity dial, publish.
+    NOT REFUSED at a94ef97 — it constructed an EquityCrashScore of 0.5 from 0.4 and 0.6."""
+    blended = (_leak(EQUITY) + _leak(MONETARY)) / 2
+    with pytest.raises(QuantityProvenanceMissing):
+        DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=blended)
+
+
+def test_variant_pl_q5_launder_through_the_declared_door_is_refused():
+    """`PL-Q5`: the same, through `quantity_for` — the DECLARED release. NOT REFUSED before.
+
+    This one matters most of the three, because it uses nothing irregular: both numbers
+    were released by naming their own single dial, exactly as the design intends."""
+    blended = (
+        EQUITY.quantity_for(EQUITY_DIAL_ID) + MONETARY.quantity_for(MONETARY_DIAL_ID)
+    ) / 2
+    with pytest.raises(QuantityProvenanceMissing):
+        DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=blended)
+
+
+def test_variant_pl_q6_the_publication_gate_never_sees_the_rewrapped_blend():
+    """`PL-Q6`: at a94ef97 `number_for_dial_slot` RETURNED 0.5 for the re-wrapped blend,
+    which is what refuted boundary 6's claim that the publication boundary carried this.
+
+    The gate is unchanged and is not what refuses this. The blend cannot be built into the
+    magnitude the gate requires, so the gate is never reached — which is why boundary 6 now
+    names the RE-ENTRY and carries this refusal as its evidence (CD-RULE-006)."""
+    blended = (_leak(EQUITY) + _leak(MONETARY)) / 2
+    with pytest.raises(QuantityProvenanceMissing):
+        number_for_dial_slot(EQUITY_DIAL_ID, DialMagnitude(
+            dial_id=EQUITY_DIAL_ID, quantity=blended
+        ))
+
+
+def test_variant_pl_q9_the_flavour_free_launderer_is_refused():
+    """`PL-Q9` in its own shape: no dial named in any expression, no arithmetic on any
+    magnitude, the slot passed in as a parameter. It defeated the static arm AND the
+    runtime arm together at a94ef97. The static arm still exits 0 on it and always will —
+    nothing about such a module is recognisable — and the RE-ENTRY refuses it."""
+
+    def as_number(reading):
+        return float(repr(reading).split("quantity=")[1].rstrip(")"))
+
+    def aggregate(readings, slot):
+        figures = [as_number(r) for r in readings]
+        total = 0.0
+        for figure in figures:
+            total = total + figure
+        return DialMagnitude(dial_id=slot, quantity=total / len(figures))
+
+    with pytest.raises(QuantityProvenanceMissing):
+        aggregate([EQUITY, MONETARY], EQUITY_DIAL_ID)
+
+
+def test_laundering_that_never_touches_repr_is_refused_too():
+    """The evidence that this is a CLASS closure and not a `repr` fix.
+
+    Two routes that render or reach the payload without `repr` anywhere: an f-string over
+    the private slot, and a JSON round trip of the pickle state. Both yield a real float,
+    and neither float can re-enter."""
+    quantity = object.__getattribute__(EQUITY, "_DialMagnitude__quantity")
+    from_fstring = float(f"{quantity}".split("value=")[1].rstrip(")"))
+    assert from_fstring == 0.9
+    from_json = json.loads(
+        json.dumps(EQUITY.__getstate__()["_DialMagnitude__quantity"].__getstate__()[
+            "_DeclaredQuantity__value"
+        ])
+    )
+    assert from_json == 0.9
+    for laundered in (from_fstring, from_json):
+        with pytest.raises(QuantityProvenanceMissing):
+            DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=laundered)
+
+
+def test_reflection_now_reaches_a_declared_quantity_rather_than_a_float():
+    """Boundary C strengthened as a consequence rather than by a rule.
+
+    The private slot holds a `DeclaredQuantity`, so the escape this seat raised against its
+    own increment-2 work (`CD-ENG-WO2R-F06`) fails at the `sum` instead of merely being
+    visible to a locator."""
+    reached = [
+        getattr(EQUITY, "_DialMagnitude__quantity"),
+        getattr(MONETARY, "_DialMagnitude__quantity"),
+    ]
+    assert all(type(q) is DeclaredQuantity for q in reached)
+    with pytest.raises(TypeError):
+        reached[0] + reached[1]
+    with pytest.raises(TypeError):
+        sum(m.__getstate__()["_DialMagnitude__quantity"] for m in (EQUITY, MONETARY))
+
+
+def test_a_declared_quantity_of_the_other_dial_is_refused_by_set_equality():
+    """No laundering at all: take the OTHER dial's declared quantity and re-wrap it."""
+    other = MONETARY.__getstate__()["_DialMagnitude__quantity"]
+    with pytest.raises(CrossDialCombination):
+        DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=other)
+
+
+def test_a_forged_dial_set_on_a_declared_quantity_yields_no_magnitude():
+    """`object.__setattr__` rewrites a slot on any frozen object. The direction is SAFE:
+    a forged dial set makes the quantity LESS usable, never more."""
+    quantity = quantity_of(EQUITY_DIAL_ID, 0.5)
+    object.__setattr__(quantity, "dials", frozenset({EQUITY_DIAL_ID, MONETARY_DIAL_ID}))
+    with pytest.raises(CrossDialCombination):
+        DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=quantity)
+    with pytest.raises(CrossDialCombination):
+        quantity.value_for(EQUITY_DIAL_ID)
+
+
+# --- the admission door: what it refuses, and what it admits ---------------------------- #
+
+def test_the_admission_door_refuses_a_dial_as_its_own_input():
+    """A DIAL IS NOT AN INGREDIENT OF A DIAL. This closes the most natural honest-looking
+    spelling of the forgery — declaring the two dials as the inputs of a third figure —
+    by comparing data rather than by recognising an expression."""
+    with pytest.raises(CrossDialCombination):
+        observed_for_dial(
+            dial_id=EQUITY_DIAL_ID, quantity=0.5,
+            inputs_used=(EQUITY_DIAL_ID, MONETARY_DIAL_ID),
+        )
+
+
+def test_the_admission_door_refuses_a_number_admitted_from_nowhere():
+    """The same shape `Value` already requires of a reading: a magnitude computed from
+    nothing is a number nobody computed (CD-AC-001, CD-ASR-F03)."""
+    for bad in ((), [], ("",), (None,), (0,)):
+        with pytest.raises(CrossDialCombination):
+            observed_for_dial(dial_id=EQUITY_DIAL_ID, quantity=0.5, inputs_used=bad)
+
+
+@pytest.mark.parametrize("bad", [math.inf, -math.inf, math.nan, 1, True, "0.5", None])
+def test_the_admission_door_refuses_anything_that_is_not_a_finite_float(bad):
+    with pytest.raises(ScoreOutOfRange):
+        observed_for_dial(
+            dial_id=EQUITY_DIAL_ID, quantity=bad, inputs_used=TEST_SOURCE_IDS
+        )
+
+
+def test_the_admission_door_refuses_a_number_admitted_for_no_dial():
+    for bad in ("", None, 0, [EQUITY_DIAL_ID], frozenset({EQUITY_DIAL_ID})):
+        with pytest.raises(CrossDialCombination):
+            observed_for_dial(
+                dial_id=bad, quantity=0.5, inputs_used=TEST_SOURCE_IDS
+            )
+
+
+# --- the declared quantity's own surface, on the pattern already accepted ---------------- #
+
+def test_the_declared_quantity_surface_is_exactly_the_declaration():
+    """Set EQUALITY in both directions, against an INDEPENDENT copy of the declaration.
+
+    Widening the module's declaration to admit a new member fails this test rather than
+    widening the guard — the lesson of CD-ASR-F02, applied here before it had to be
+    learned a third time."""
+    assert DECLARED_QUANTITY_MEMBERS == EXPECTED_QUANTITY_SURFACE
+    observed = frozenset(vars(DeclaredQuantity))
+    assert observed - DECLARED_QUANTITY_MEMBERS - TOLERATED_QUANTITY_MACHINERY == frozenset()
+    assert DECLARED_QUANTITY_MEMBERS - observed == frozenset()
+
+
+@pytest.mark.parametrize("dunder", ARITHMETIC_DUNDERS)
+def test_a_declared_quantity_defines_no_arithmetic_or_coercion_dunder(dunder):
+    """So no expression in Python produces a third declared quantity from two of them.
+    Without this the type would be a laundering vehicle of its own.
+
+    Asserted over the whole MRO rather than over ``vars`` alone, so an inherited coercion
+    would fail too — but skipping the four ordering slots and ``__or__``, which every
+    Python object and every Python CLASS carries from ``object`` and ``type``. Those are
+    covered by the behavioural assertion below instead: the operation itself must raise."""
+    inherited_from_the_interpreter = {"__lt__", "__le__", "__gt__", "__ge__", "__or__",
+                                      "__ror__"}
+    assert dunder not in vars(DeclaredQuantity)
+    if dunder not in inherited_from_the_interpreter:
+        assert not hasattr(DeclaredQuantity, dunder)
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        operator.add, operator.sub, operator.mul, operator.truediv, operator.floordiv,
+        operator.mod, operator.pow, operator.or_, operator.and_, operator.xor,
+        operator.lt, operator.le, operator.gt, operator.ge,
+    ],
+)
+def test_two_declared_quantities_refuse_every_binary_operation(operation):
+    """The behavioural half, which is what actually matters: whatever ``object`` and
+    ``type`` provide, the OPERATION on two instances raises."""
+    left = quantity_of(EQUITY_DIAL_ID, 0.4)
+    right = quantity_of(MONETARY_DIAL_ID, 0.6)
+    with pytest.raises(TypeError):
+        operation(left, right)
+
+
+def test_a_declared_quantity_refuses_every_numeric_coercion():
+    quantity = quantity_of(EQUITY_DIAL_ID, 0.4)
+    for coerce in (float, int, complex, round, operator.index, math.trunc, math.floor):
+        with pytest.raises(TypeError):
+            coerce(quantity)
+    with pytest.raises(TypeError):
+        math.fsum([quantity, quantity])
+    with pytest.raises(TypeError):
+        statistics.mean([quantity, quantity])
+
+
+def test_a_declared_quantity_cannot_be_subclassed():
+    with pytest.raises(TypeError):
+        class Wider(DeclaredQuantity):
+            def __float__(self):
+                return 0.0
+
+
+def test_the_declared_quantity_type_is_sealed_against_member_addition():
+    with pytest.raises(TypeError):
+        DeclaredQuantity.__add__ = lambda self, other: 0.0
+    with pytest.raises(TypeError):
+        del DeclaredQuantity.value_for
+
+
+def test_a_declared_quantity_is_not_equal_to_a_bare_number():
+    assert quantity_of(EQUITY_DIAL_ID, 0.5) != 0.5
+    assert quantity_of(EQUITY_DIAL_ID, 0.5) == quantity_of(EQUITY_DIAL_ID, 0.5)
+    assert quantity_of(EQUITY_DIAL_ID, 0.5) != quantity_of(MONETARY_DIAL_ID, 0.5)
+
+
+def test_a_revived_declared_quantity_is_validated_exactly_as_a_constructed_one():
+    quantity = quantity_of(EQUITY_DIAL_ID, 0.5)
+    assert deepcopy(quantity) == quantity
+    assert pickle.loads(pickle.dumps(quantity)) == quantity
+    revived = DeclaredQuantity.__new__(DeclaredQuantity)
+    with pytest.raises(CrossDialCombination):
+        revived.__setstate__(
+            {"dials": frozenset({EQUITY_DIAL_ID, MONETARY_DIAL_ID}),
+             "_DeclaredQuantity__value": 0.5}
+        )
+
+
+# --- FALSE POSITIVES: the product must still work ---------------------------------------- #
+
+def test_a_magnitude_still_publishes_into_its_own_slot_after_the_re_entry_closure():
+    """FALSE-POSITIVE CHECK. A closure that forbids the product is not a closure."""
+    assert number_for_dial_slot(EQUITY_DIAL_ID, EQUITY) == 0.9
+    assert number_for_dial_slot(MONETARY_DIAL_ID, MONETARY) == 0.1
+
+
+def test_a_derived_same_dial_magnitude_still_publishes():
+    """The DERIVATION door end to end: combine within one dial, then publish the result.
+    Its dial set is computed from the magnitudes, so `using` cannot influence it."""
+    window = [magnitude_of(EQUITY_DIAL_ID, q) for q in (0.1, 0.2, 0.3)]
+    mean = combine_within_one_dial(window, using=lambda ns: sum(ns) / len(ns))
+    assert number_for_dial_slot(EQUITY_DIAL_ID, mean) == pytest.approx(0.2)
+
+
+def test_the_debugger_still_shows_a_developer_the_number():
+    """FALSE-POSITIVE CHECK, and the reason the `repr` contradiction was resolved by
+    withdrawing the CLAIM rather than by narrowing the exit. `repr` is byte-identical to
+    what it was at a94ef97."""
+    assert repr(EQUITY) == "DialMagnitude(dial_id='equity_crash', quantity=0.9)"
+    assert repr(quantity_of(EQUITY_DIAL_ID, 0.9)) == (
+        "DeclaredQuantity(dials=['equity_crash'], value=0.9)"
+    )

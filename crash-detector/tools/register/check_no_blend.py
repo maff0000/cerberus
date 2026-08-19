@@ -31,17 +31,28 @@ The class is now closed where it can be closed:
 * AT THE POINT OF COMBINATION — ``combine_within_one_dial`` compares the provenance the
   magnitudes CARRY and refuses anything but a single dial, so the refusal does not depend
   on anybody having read the code.
+* AT THE RE-ENTRY — ``crash_detector.dials.provenance``. Added closing `CD-PL-F54`, which
+  found the layers above open to the number being READ OFF a magnitude rather than asked
+  for: ``float(repr(m).split("quantity=")[1].rstrip(")"))`` names no dial, two of those add,
+  and the sum re-wrapped as a magnitude of one dial passed every provenance comparison and
+  published. A magnitude is now built from a ``DeclaredQuantity`` and never from a bare
+  ``float``, so a number that has left a magnitude by ANY exit cannot get back into one.
+  MEASURED: `PL-Q4`, `PL-Q5`, `PL-Q6` and `PL-Q9` all raise ``QuantityProvenanceMissing``.
 * AT THE PUBLICATION BOUNDARY — ``crash_detector.publication.dial_scalar`` releases a
   number into a dial slot only from a magnitude whose provenance is exactly that slot's
   dial, and the closed public envelope schema has no third key for a combined figure.
+  **READ BOUNDARY 6 BEFORE RELYING ON THIS ONE.** It was claimed here as the layer that
+  refuses a blend and it is NOT: the Project Lead re-wrapped the blend as a magnitude of one
+  dial and ``number_for_dial_slot`` returned 0.5. What it refuses is a number arriving
+  without a magnitude, or with the wrong dial's.
 
 What THIS check still earns its keep for: it LOCATES a blend in the source, with a file and
 a line, in the one place a reviewer can act on it cheaply; and it catches the three-line
 spelling that no runtime layer would see until the branch executed. It is a locator with a
 declared limit, and the register entry now says exactly that and no more.
 
-THREE RULES, DELIBERATELY DIFFERENT IN REACH
----------------------------------------------
+FOUR RULES, DELIBERATELY DIFFERENT IN REACH
+--------------------------------------------
   RULE 1  ARITHMETIC.  No expression anywhere in the application source may combine an
           equity-flavoured value and a monetary-flavoured value under an arithmetic or
           bitwise operator, a comparison, an augmented assignment, or a numeric aggregate
@@ -70,6 +81,29 @@ THREE RULES, DELIBERATELY DIFFERENT IN REACH
           is not aimed at a variant somebody wrote. It exists because the closure created
           exactly one private name, and a guard over exactly one name is the narrowest
           kind of guard there is.
+
+  RULE 4  A PROVENANCE DOOR OUTSIDE THE DECLARED ADMISSION SITES. **DENY BY DEFAULT.** No
+          module on the scanned path may name ``observed_for_dial``,
+          ``derived_within_one_dial`` or ``DeclaredQuantity`` — by call, attribute, import,
+          annotation, decorator, default or a string handed to ``getattr`` — unless it is
+          listed in ``DECLARED_ADMISSION_SITES`` with the reason it is there. Four modules
+          are, and each reason is written beside it.
+
+          THIS IS THE RULE THAT ANSWERS `PL-Q9`, AND IT IS NOT ANOTHER SPELLING LIST.
+          `PL-Q9` defeated RULE 1 by removing every flavour-bearing NAME: no dial appeared
+          in any expression and no arithmetic touched a magnitude, so there was nothing
+          about a blend to recognise, and this check reported PASS on 3919 assertions while
+          the module published a blend at runtime. Nothing static can recognise such a
+          module. What IS true of it — and of every module like it that has yet to be
+          written — is that IT HAS TO GET THE NUMBER BACK IN, and since `CD-PL-F54` there is
+          exactly one way to do that. So the rule watches the DOOR instead of the traffic:
+          it recognises no arithmetic, no dial marker and no laundering route, which is
+          exactly why a route nobody has thought of does not evade it. An unlisted module is
+          a violation because it is not a place anybody declared that numbers enter.
+
+          **AN IMPORT COUNTS**, unlike everywhere else in this check. Importing both score
+          types is how a module legitimately gets hold of them; there is no comparable
+          reason to import an admission door except to admit something.
 
 BUILT FOR THE CLASS, NOT THE INSTANCE
 --------------------------------------
@@ -162,19 +196,66 @@ later work order; they are what a static intra-procedural checker IS.
      expression naming no dial. THE TYPE LAYER CARRIES THIS, because the refusal is a
      property of the objects rather than of the text.
 
-  6  A NUMBER ALREADY RELEASED IS AN ORDINARY FLOAT. ``quantity_for(<dial id>)`` yields a
-     bare ``float`` to a caller that names its one dial, and two such floats can be added
-     by ordinary Python. MEASURED EXAMPLE, which RULE 1 DOES catch when spelled with the
-     dial ids and does NOT catch when the ids are reached dynamically:
+  6  A NUMBER ALREADY RELEASED IS AN ORDINARY FLOAT, AND THE EXITS ARE MANY.
+     ``quantity_for(<dial id>)`` yields a bare ``float`` to a caller that names its one
+     dial — and so, without the caller naming anything, do ``repr``, ``str``, ``format``,
+     an f-string, ``%``-formatting, ``pprint``, a log line, ``json.dumps`` over
+     ``__getstate__``, the bytes of a ``pickle`` and ``getattr`` on the private slot. Two
+     such floats can be added by ordinary Python. MEASURED EXAMPLE, which RULE 1 DOES catch
+     when spelled with the dial ids and does NOT catch when the ids are reached dynamically:
          e = dials.equity.value.score.quantity_for(EQUITY_DIAL_ID)
          m = dials.monetary.value.score.quantity_for(MONETARY_DIAL_ID)
          blended = (e + m) / 2.0
-     THE PUBLICATION BOUNDARY CARRIES THIS: ``number_for_dial_slot`` accepts only a
-     ``DialMagnitude`` whose provenance is exactly the slot's dial, so ``blended`` cannot
-     be offered for publication; and the closed envelope schema has no third key for it.
-     This is the residue that is DECLARED rather than closed, and it is declared in
-     ``src/crash_detector/dials/magnitude.py`` (boundary A), in the register entry, and in
-     the execution contract, in the same words.
+
+     **THIS BOUNDARY PREVIOUSLY READ "THE PUBLICATION BOUNDARY CARRIES THIS". THAT WAS
+     MEASURED FALSE AND IS WITHDRAWN** (`CD-PL-F54`, and CD-RULE-006 exists because of it).
+     The Project Lead re-wrapped the blend as ``DialMagnitude(dial_id="equity_crash",
+     quantity=blended)``, whose provenance IS exactly the slot's dial, and
+     ``number_for_dial_slot("equity_crash", <that>)`` RETURNED 0.5. Two declarations each
+     assumed the other was covering the route. A declaration that misdirects an auditor to a
+     layer which does not hold is worse than no declaration.
+
+     THE RE-ENTRY CARRIES THIS, AND HERE IS THE EVIDENCE (CD-RULE-006). Since `CD-PL-F54`
+     the blended ``float`` cannot be re-wrapped at all: ``DialMagnitude`` admits only a
+     ``DeclaredQuantity``. Executed on a pristine extraction of this commit, from two
+     legitimately constructed magnitudes of 0.4 and 0.6:
+         PL-Q4 (repr-launder both, re-wrap as equity, publish)
+             -> QuantityProvenanceMissing: a bare number (0.5) was offered as dial
+                'equity_crash''s magnitude.
+         PL-Q5 (the same through the declared door quantity_for)          -> same refusal
+         PL-Q6 (number_for_dial_slot on the re-wrapped blend)             -> same refusal
+         PL-Q9 (the flavour-free module, verbatim)                        -> same refusal
+         V16a  (f-string over the private slot, no repr anywhere)         -> same refusal
+         V16b  (JSON round trip of __getstate__, no repr anywhere)        -> same refusal
+     What is NOT claimed: that the addition itself is refused. It is not, and cannot be —
+     they are two ``float`` objects and Python adds floats. ``PL-Q1a`` still returns 1.0 and
+     that is the honest state. The claim is that the sum cannot become a magnitude again.
+
+  7  THE ADMISSION DOOR IS A DECLARATION, AND RULE 4 GUARDS IT BY REGISTRY, NOT BY TRUTH.
+     ``observed_for_dial`` is the base case of the re-entry closure and it believes what it
+     is told: something has to be the first number or the product cannot exist. A module
+     that calls it with a blend and a fabricated ``inputs_used`` obtains a magnitude.
+     MEASURED EXAMPLE — `V12`, which is `PL-Q9` with the door added, and which this check
+     FAILS on with two RULE 4 violations (the import at line 3 and the call at line 22)
+     while its RUNTIME is NOT refused and publishes 0.5.
+     **NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME.** RULE 4 is the only layer over it and
+     RULE 4 is static, so this residue inherits every limitation in this list. Its own two
+     residues are: an edit to ``DECLARED_ADMISSION_SITES`` itself, which is a deliberate act
+     with a written reason and is what a reviewer should look at first; and a module outside
+     the scanned set, which is boundary 4. A dynamically assembled door name
+     (``getattr(mod, "observed" + "_for_dial")``) is boundary 5. `V13`, which reaches the
+     door through ``importlib`` and ``getattr`` with a whole string, IS caught.
+     The same residue is stated in ``src/crash_detector/dials/provenance.py`` (module
+     docstring), ``src/crash_detector/dials/magnitude.py`` (boundary E), the register entry
+     and the execution contract, in the same words.
+
+EVERY "CARRIES THIS" ABOVE HAS BEEN RE-MEASURED AT THIS COMMIT, not inherited from the
+increment that wrote it (CD-RULE-006). Boundaries 1, 2, 3 and 5 hand their residue to the
+TYPE LAYER: `E01` raises ``TypeError: unsupported operand type(s) for +: 'DialMagnitude' and
+'DialMagnitude'`` and `E02` raises ``TypeError: unsupported operand type(s) for +: 'int' and
+'DialMagnitude'``, both executed on a pristine extraction of this commit. Boundary 6 now
+hands its residue to the RE-ENTRY and carries the six executed refusals above. Boundary 7
+hands its residue to NOBODY at runtime and says so.
 
 FOR THE AUDITOR. A CD-AC-002 variant that lands beyond a boundary above is a finding
 against THIS DECLARATION — was the limit honestly drawn? — and not an automatic RED
@@ -260,6 +341,62 @@ SEALED_MAGNITUDE_REACH = SEALED_MAGNITUDE_SLOTS | SEALED_MAGNITUDE_REFLECTION
 #: allowlist in the RULE 2 sense — it is the definition site, and a rule that fired on the
 #: definition would forbid the structure it exists to protect.
 MAGNITUDE_MODULE = "src/crash_detector/dials/magnitude.py"
+
+#: The module that DECLARES the two provenance doors. Its absence is a refusal, not a
+#: clean scan: a tree without it has lost the layer that carries the criterion.
+PROVENANCE_MODULE = "src/crash_detector/dials/provenance.py"
+
+#: RULE 4's guarded vocabulary: everything by which a number acquires a DECLARED provenance
+#: and therefore becomes admissible into a dial magnitude. Not a list of blend spellings —
+#: a list of the doors, which is a different kind of list. It is short and it is closed
+#: because the structure created exactly these doors and no others.
+ADMISSION_VOCABULARY = frozenset(
+    {
+        "observed_for_dial",       # admits a measurement from OUTSIDE for one named dial
+        "derived_within_one_dial",  # the union door, used only by combine_within_one_dial
+        "DeclaredQuantity",         # the type itself: constructing one IS establishing one
+    }
+)
+
+#: DENY BY DEFAULT OVER A DECLARED REGISTRY OF ADMISSION SITES (CD-PL-F54, and the same
+#: shape CD-D-031 requires of the egress destination registry). A module on the scanned
+#: path may name the admission vocabulary only if it is listed HERE, with the reason it is.
+#: Everything else is a violation BY DEFAULT — not because the check recognised a blend in
+#: it, but because it is not a place anybody declared that numbers enter.
+#:
+#: WHY THIS RULE EXISTS AND WHY IT IS NOT ANOTHER SPELLING LIST. `PL-Q9` defeated RULE 1 by
+#: removing every flavour-bearing NAME: no dial appeared in any expression, no arithmetic
+#: touched a magnitude, and the check reported PASS on 3919 assertions while the module
+#: published a blend at runtime. Nothing about a blend is recognisable in such a module.
+#: What IS true of it, and of every module like it, is that IT HAS TO GET THE NUMBER BACK
+#: IN — and since CD-PL-F54 there is exactly one way to do that. So this rule watches the
+#: door instead of the traffic. It needs to recognise no arithmetic, no dial marker and no
+#: laundering route, which is precisely why a route nobody has thought of does not evade it.
+DECLARED_ADMISSION_SITES = {
+    PROVENANCE_MODULE: (
+        "DEFINES the doors. A rule that fired on the definition would forbid the structure "
+        "it exists to protect."
+    ),
+    MAGNITUDE_MODULE: (
+        "THE RE-ENTRY GATE. It imports DeclaredQuantity in order to REFUSE anything else at "
+        "DialMagnitude's constructor, and calls derived_within_one_dial from "
+        "combine_within_one_dial, whose dial set is computed from the magnitudes it was "
+        "given rather than asserted by its caller."
+    ),
+    "src/crash_detector/dials/__init__.py": (
+        "the package's re-export surface: the import block and __all__ name the door so "
+        "that consumers have one place to import it from. It calls nothing."
+    ),
+    "src/crash_detector/engine/evaluate.py": (
+        "THE ONE PRODUCT ADMISSION SITE. It is where a number enters a dial from outside "
+        "the system, and the claim it makes is checked twice by an independent instrument: "
+        "RULE F of check_no_numeric_default.py traces the magnitude through the door to "
+        "ContributionModel.compute and reports any other provenance, and "
+        "`_absence_is_never_a_number` re-derives from (spec, usable) whether the inputs "
+        "cited were present at all. Being listed here exempts this module from RULE 4 and "
+        "from nothing else."
+    ),
+}
 
 EQUITY = "EQUITY"
 MONETARY = "MONETARY"
@@ -365,11 +502,13 @@ class BlendScanner:
         path: pathlib.Path,
         allow_co_occurrence: bool,
         declares_the_slot: bool = False,
+        is_admission_site: bool = False,
     ) -> None:
         self.check = check
         self.path = path
         self.allow_co_occurrence = allow_co_occurrence
         self.declares_the_slot = declares_the_slot
+        self.is_admission_site = is_admission_site
 
     def report(self, node, rule: str, what: str) -> None:
         self.check.violation(self.path, getattr(node, "lineno", 0), rule, what)
@@ -377,7 +516,62 @@ class BlendScanner:
     # -- driving ------------------------------------------------------------------------ #
     def scan_module(self, tree: ast.Module) -> None:
         self.scan_sealed_slot_reach(tree)
+        self.scan_admission_vocabulary(tree)
         self.scan_body(tree.body, Flavours())
+
+    def scan_admission_vocabulary(self, tree: ast.Module) -> None:
+        """RULE 4 over the whole module: DENY BY DEFAULT outside the declared sites.
+
+        Walked over the module rather than threaded through the expression scanner for the
+        same reason RULE 3 is: it is not a question about flavour or about scope. Naming a
+        door is a violation wherever it appears — in a call, an attribute, an import, an
+        annotation, a decorator, a default or a string handed to ``getattr``.
+
+        **AN IMPORT COUNTS.** Elsewhere in this check an import is explicitly not a marker,
+        because importing both score types is how a module legitimately gets hold of them.
+        Here the import IS the act: there is no reason to import an admission door except
+        to admit something, and a module that imports it and does not call it has still
+        put the door within reach of the next edit.
+        """
+        if self.is_admission_site:
+            return
+        for node in ast.walk(tree):
+            named = ""
+            if isinstance(node, ast.Name) and node.id in ADMISSION_VOCABULARY:
+                named = node.id
+            elif isinstance(node, ast.Attribute) and node.attr in ADMISSION_VOCABULARY:
+                named = node.attr
+            elif isinstance(node, ast.alias):
+                for part in (node.name, node.asname):
+                    if part and part.split(".")[-1] in ADMISSION_VOCABULARY:
+                        named = part
+            elif isinstance(node, ast.Constant) and node.value in ADMISSION_VOCABULARY:
+                # `getattr(provenance, "observed_for_dial")` is the same act spelled to
+                # avoid the attribute. The door names have no other use as data: unlike a
+                # dunder name, nothing in this codebase tabulates them.
+                named = str(node.value)
+            else:
+                continue
+            # One assertion per node that COULD name a door, counted where it is judged.
+            self.check.asserted()
+            if not named:
+                continue
+            self.report(
+                node,
+                "RULE 4: a provenance door outside the declared admission sites",
+                f"`{named}` establishes the provenance of a number, and this module is not "
+                "a declared admission site. Since CD-PL-F54 a bare float cannot become a "
+                "dial magnitude: the only way any number gets into one is through a door "
+                "in ADMISSION_VOCABULARY. That makes the doors, and not the arithmetic, "
+                "the thing worth watching — a module that launders two dials into one "
+                "figure need name no dial and perform no arithmetic on a magnitude "
+                "(`PL-Q9` did neither and this check reported PASS), but it cannot avoid "
+                "coming here. DENY BY DEFAULT: the declared sites are "
+                f"{sorted(DECLARED_ADMISSION_SITES)}, each with its stated reason in this "
+                "file, and an unlisted module is a violation because it is not a place "
+                "anybody declared that numbers enter — not because anything about it was "
+                "recognised (CD-AC-002, CD-ASR-F01, CD-PL-F54).",
+            )
 
     def scan_sealed_slot_reach(self, tree: ast.Module) -> None:
         """RULE 3 over the whole module, in one pass and with no allowlist.
@@ -660,6 +854,16 @@ def main() -> int:
             "check refuses rather than reporting a clean scan of the layer that does not."
         )
 
+    if not (root / PROVENANCE_MODULE).is_file():
+        return check.refuse(
+            f"{PROVENANCE_MODULE} does not exist in this subject tree. That module is the "
+            "RE-ENTRY closure of CD-AC-002 after CD-PL-F54 — the declared quantity, "
+            "without which a bare float could become a dial magnitude again — and RULE 4 "
+            "has no vocabulary to deny by default over. A tree without it has lost the "
+            "layer that actually carries the criterion, so this check refuses rather than "
+            "reporting a clean scan of the layer that does not."
+        )
+
     files = python_files(root, SCAN_DIRS)
     if not files:
         return check.refuse("no Python files found in the application source.")
@@ -685,13 +889,17 @@ def main() -> int:
             path,
             _allow_co_occurrence(root, path),
             declares_the_slot=path.relative_to(root).as_posix() == MAGNITUDE_MODULE,
+            is_admission_site=(
+                path.relative_to(root).as_posix() in DECLARED_ADMISSION_SITES
+            ),
         ).scan_module(tree)
 
     return check.done(
         f"{len(files)} application Python files under {', '.join(SCAN_DIRS)}; "
         f"{len(CO_OCCURRENCE_ALLOWLIST)} paths allowlisted for RULE 2 only; RULE 1 and "
         f"RULE 3 have no allowlist (RULE 3 exempts only {MAGNITUDE_MODULE}, which "
-        "declares the slot)"
+        f"declares the slot); RULE 4 denies by default over "
+        f"{len(DECLARED_ADMISSION_SITES)} declared admission sites"
     )
 
 

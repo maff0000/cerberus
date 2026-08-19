@@ -229,22 +229,44 @@ criteria:
     anyone having read the code. WHAT IT DOES NOT DO: once a number is released for its ONE named
     dial it is an ordinary float, and Python adds floats.
 
-    2 THE PUBLICATION BOUNDARY. crash_detector.publication.dial_scalar.number_for_dial_slot
-    releases a number into a dial slot only from a magnitude whose provenance is exactly that
-    slot's dial, so a blend cannot be OFFERED to the envelope. WHAT IT DOES NOT DO: it cannot see
-    a number that reaches a dial slot without coming through it.
+    2 THE RE-ENTRY, added closing CD-PL-F54 and it is now the one that carries the laundering
+    class. Layer 1 was closed against the type being ASKED for a number and open to the number
+    being READ OFF it: float(repr(m).split("quantity=")[1].rstrip(")")) names no dial, two of those
+    add, and the sum re-wrapped as a magnitude of one dial passed every provenance comparison and
+    published. A DialMagnitude is now built from a DeclaredQuantity
+    (crash_detector.dials.provenance) — a number whose provenance was ESTABLISHED at one of two
+    declared doors — and never from a bare float, with set equality between the quantity's dial set
+    and the target dial. So a number that has left a magnitude by ANY exit, named or unnamed,
+    cannot get back into one. MEASURED: PL-Q4, PL-Q5, PL-Q6, PL-Q9, V16a and V16b all raise
+    QuantityProvenanceMissing. WHAT IT DOES NOT DO: the admission door observed_for_dial is a
+    DECLARATION and believes what it is told; something has to be the first number. That residue is
+    declared at boundary 7 of the CD-RT-002-AST-NO-BLEND entry and is guarded statically, by
+    registry, by RULE 4.
 
-    3 THE CLOSED PUBLIC ENVELOPE SCHEMA. additionalProperties is false at every level and
+    3 THE PUBLICATION BOUNDARY. crash_detector.publication.dial_scalar.number_for_dial_slot
+    releases a number into a dial slot only from a magnitude whose provenance is exactly that
+    slot's dial. WHAT IT DOES NOT DO — AND THIS ENTRY PREVIOUSLY CLAIMED OTHERWISE: it does NOT
+    refuse a blend. The Project Lead re-wrapped a 0.4/0.6 blend as a magnitude of the equity dial
+    and number_for_dial_slot RETURNED 0.5 (CD-PL-F54). What it refuses is a number arriving without
+    a magnitude, or carrying the wrong dial's. It also cannot see a number that reaches a dial slot
+    without coming through it.
+
+    4 THE CLOSED PUBLIC ENVELOPE SCHEMA. additionalProperties is false at every level and
     properties is an allowlist, so a third combined field has nowhere to be written. The auditor
     tested this mitigation specifically and confirmed IT HOLDS. WHAT IT DOES NOT DO: it cannot
     tell a blended number assigned to equity_crash.score from an honest one, because that key is
-    legitimately a number. Layer 2 is what covers that.
+    legitimately a number. Layer 3 refuses a number arriving without its magnitude; NOTHING here
+    tells a blended number from an honest one once it is a magnitude, and layer 2 is why one cannot
+    become a magnitude.
 
-    4 THE AST SCAN IS A LOCATOR, NOT A CLOSURE, and its entry below carries a DECLARED LIMIT and
+    5 THE AST SCAN IS A LOCATOR, NOT A CLOSURE, and its entry below carries a DECLARED LIMIT and
     a corrected scope. Its flavour propagation is intra-procedural and its read is purely static;
-    both escaped blends walked past it and always will.
+    both escaped blends walked past it and always will, and so does PL-Q9. Its RULE 4, added at
+    CD-PL-F54, is the exception in kind rather than in strength: it denies BY DEFAULT over a
+    declared registry of admission sites and therefore recognises nothing about a blend, which is
+    why PL-Q9-with-the-door (V12) fails it. It remains static.
 
-    Layers 1 to 3 are structural and independent of one another. None is claimed to be sole
+    Layers 1 to 4 are structural and independent of one another. None is claimed to be sole
     (BLUEPRINT §17 risk CD-BP-001, PO-accepted), and no claim is made here that a violation
     slipping past one must fail the others.
   pid_relation: DERIVES
@@ -276,12 +298,22 @@ criteria:
         UNIONS provenance instead of comparing it; a same-dial helper that does not refuse when it
         is reused across dials; and a round trip through copy, pickle or JSON that strips
         provenance or yields a bare number.
+        Since CD-PL-F54 the class ALSO includes a bare float re-entering a magnitude by any route:
+        a magnitude is built only from a DeclaredQuantity whose dial set equals the target dial.
         DECLARED LIMIT: a number released through `quantity_for(<one dial id>)` is an ordinary
-        float, and two of them can be added by ordinary Python arithmetic. That residue is stated
-        in the header of src/crash_detector/dials/magnitude.py (boundary A), in the comment above
-        the CD-RT-002-AST-NO-BLEND entry below (boundary 6) and in both execution contracts, each
-        with an example an auditor can execute. What IS refused is publishing the result: the
-        publication gate takes only a magnitude whose provenance is exactly the slot's dial.
+        float, and so is one read out of `repr`, `str`, `format`, an f-string, `json.dumps` over
+        `__getstate__`, a pickle's bytes or `getattr` on the private slot — the exits are many and
+        the list has no end. Two such floats can be added by ordinary Python arithmetic and this
+        arm does not pretend otherwise; PL-Q1a returns 1.0. THE CLAIM THAT "reducing one to a
+        number requires naming its single dial" IS WITHDRAWN — it was false and it contradicted
+        this codebase's own disclosure that repr renders the quantity (CD-PL-F54). What replaced it
+        is measured: THE SUM CANNOT BECOME A MAGNITUDE AGAIN. That residue and its closure are
+        stated in the header of src/crash_detector/dials/magnitude.py (boundaries A and E), in
+        src/crash_detector/dials/provenance.py, in the comment above the CD-RT-002-AST-NO-BLEND
+        entry below (boundaries 6 and 7) and in both execution contracts, each with an example an
+        auditor can execute. NOT refused, and declared: an explicit false declaration at the
+        admission door observed_for_dial (boundary 7), over which RULE 4 is the only layer and RULE
+        4 is static.
       evidence_ref: RTR-WO2-0001
   # DECLARED LIMIT — CD-RT-002-AST-NO-BLEND. Required by CD-RULE-004 and by the WO-2R dispatch,
   # drawn in the pattern of CD-RT-012-NO-EXECUTION-INTERFACE, whose declaration an independent
@@ -322,14 +354,36 @@ criteria:
   #     db/ exits 0 here. It cannot reach a shipped image — all six application Dockerfiles COPY
   #     exactly src/ and deploy/entrypoints/ — but this check does not see it.
   #   5 IT READS SOURCE, NOT BEHAVIOUR. A blend assembled at runtime is outside a static check.
-  #   6 A NUMBER ALREADY RELEASED is an ordinary float. MEASURED EXAMPLE, which RULE 1 catches
-  #     when the dial ids are written and does NOT catch when they are reached dynamically:
+  #   6 A NUMBER ALREADY RELEASED is an ordinary float, AND THE EXITS ARE MANY: quantity_for, and
+  #     also repr, str, format, an f-string, %-formatting, pprint, a log line, json.dumps over
+  #     __getstate__, a pickle's bytes and getattr on the private slot. MEASURED EXAMPLE, which
+  #     RULE 1 catches when the dial ids are written and does NOT catch when reached dynamically:
   #       e = dials.equity.value.score.quantity_for(EQUITY_DIAL_ID)
   #       m = dials.monetary.value.score.quantity_for(MONETARY_DIAL_ID)
   #       blended = (e + m) / 2.0
-  #     THE PUBLICATION BOUNDARY CARRIES THIS: number_for_dial_slot takes only a magnitude whose
-  #     provenance is exactly the slot's dial, so `blended` cannot be offered for publication, and
-  #     the closed envelope schema has no third key for it.
+  #     THIS BOUNDARY PREVIOUSLY READ "THE PUBLICATION BOUNDARY CARRIES THIS". THAT WAS MEASURED
+  #     FALSE AND IS WITHDRAWN (CD-PL-F54; CD-RULE-006 exists because of it). Re-wrapped as
+  #     DialMagnitude(dial_id="equity_crash", quantity=blended) the sum had provenance of exactly
+  #     the slot's dial and number_for_dial_slot RETURNED 0.5.
+  #     THE RE-ENTRY CARRIES THIS, WITH THE EVIDENCE (CD-RULE-006): executed on a pristine
+  #     extraction from magnitudes of 0.4 and 0.6, PL-Q4, PL-Q5, PL-Q6, PL-Q9, V16a (f-string, no
+  #     repr) and V16b (JSON round trip, no repr) each raise QuantityProvenanceMissing: "a bare
+  #     number (0.5) was offered as dial 'equity_crash''s magnitude". NOT claimed: that the
+  #     addition is refused. It is not, PL-Q1a returns 1.0, and that is the honest state.
+  #   7 THE ADMISSION DOOR IS A DECLARATION, and RULE 4 guards it BY REGISTRY, not by truth.
+  #     observed_for_dial is the base case and believes what it is told; a base case that had to
+  #     prove itself would need a base case of its own. MEASURED EXAMPLE — V12, which is PL-Q9 with
+  #     the door added: this check FAILS on it with two RULE 4 violations while its RUNTIME is NOT
+  #     refused and publishes 0.5. NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME. RULE 4 is static,
+  #     so this residue inherits every limitation above; its own residues are an edit to
+  #     DECLARED_ADMISSION_SITES, a module outside the scanned set (boundary 4) and a dynamically
+  #     assembled door name (boundary 5). V13, which reaches the door through importlib and getattr
+  #     with a whole string, IS caught.
+  #
+  # EVERY "CARRIES THIS" ABOVE WAS RE-MEASURED AT THE COMMIT THAT WROTE IT, not inherited
+  # (CD-RULE-006). Boundaries 1, 2, 3 and 5 hand their residue to the TYPE layer and E01 and E02
+  # both raise TypeError when executed. Boundary 6 hands its residue to the RE-ENTRY and carries
+  # six executed refusals. Boundary 7 hands its residue to NOBODY at runtime and says so.
   #
   # DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO CODE PATH COMBINES THE TWO DIALS. It
   # was clean for both blends that produced CD-ASR-F01. The pair to weigh is this check together
@@ -337,8 +391,9 @@ criteria:
   #
   # FOR THE AUDITOR. A CD-AC-002 variant landing beyond a boundary above is a finding against THIS
   # DECLARATION — was the limit honestly drawn? — and not an automatic RED against the guard. A
-  # variant reaching the violation by a route a boundary says is covered by the type layer or the
-  # publication boundary, and NOT refused when EXECUTED, is a defect in the closure: report it.
+  # variant reaching the violation by a route a boundary says is covered by the type layer or by
+  # the re-entry, and NOT refused when EXECUTED, is a defect in the closure: report it. Boundary 7
+  # makes no such claim, so a variant landing there is inside a declared limit, not outside one.
   - test_id: CD-RT-002-AST-NO-BLEND
     scope: INSTANCE
     execute: python3 tools/register/check_no_blend.py --root .
@@ -362,10 +417,19 @@ criteria:
         expression must name one. RULE 3 judges a dunder name held as DATA differently from a
         dunder name REACHED: ARITHMETIC_DUNDERS and TOLERATED_INTERPRETER_MACHINERY are legitimate
         tables of dunder names and are untouched.
+        RULE 4, added closing CD-PL-F54, DENIES BY DEFAULT over a declared registry of admission
+        sites: no module on the scanned path may name observed_for_dial, derived_within_one_dial or
+        DeclaredQuantity — by call, attribute, IMPORT, annotation, default or a string handed to
+        getattr — unless it is one of the four modules listed in DECLARED_ADMISSION_SITES with the
+        reason it is there. It recognises nothing about a blend, which is the point: PL-Q9 named no
+        dial and performed no arithmetic on a magnitude, and nothing static can recognise such a
+        module; what it cannot avoid is getting the number back IN, and since CD-PL-F54 there is
+        one way to do that. An unlisted module violates because it is not a place anybody declared
+        that numbers enter.
         THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
         tools/register/check_no_blend.py, in the comment above this entry and in the execution
         contract, each boundary with an example an auditor can execute. It is never a sole guard:
-        the class is closed at the type and at the publication boundary, and evidenced by
+        the class is closed at the type and at the RE-ENTRY, and evidenced by
         CD-RT-002-TYPE-NO-ARITHMETIC.
       evidence_ref: RTR-WO2-0001
   - test_id: CD-RT-002-SCHEMA-CLOSED

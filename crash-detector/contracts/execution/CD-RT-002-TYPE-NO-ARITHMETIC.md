@@ -108,13 +108,37 @@ Three further residues, stated rather than left to be found:
   direction is SAFE — a forged multi-dial provenance makes the magnitude LESS usable, not more, and
   every release path refuses it. Asserted by
   `test_a_forged_multi_dial_provenance_yields_no_number`.
-* `repr(m)` contains the quantity, deliberately. Hiding a value from a developer's own debugger
-  would be obfuscation, and obfuscation is not structure.
+* `repr(m)` contains the quantity, deliberately, **and it is a RELEASE DOOR** —
+  `float(repr(m).split("quantity=")[1].rstrip(")"))` yields the bare number and names no dial.
+  So do `str`, `format`, an f-string, `%`-formatting, `pprint`, a log line, `json.dumps` over
+  `__getstate__` and the bytes of a `pickle`. Hiding a value from a developer's own debugger would
+  be obfuscation, and obfuscation is not structure; the disclosure stands and the exit is named
+  rather than narrowed.
+
+### THE CONTRADICTION THE PROJECT LEAD RAISED, AND HOW IT WAS RESOLVED (`CD-PL-F54`)
+
+This document used to disclose the line above and then claim, six lines later, that "reducing one
+to a number requires naming its single dial". **Both could not be true, and the second was false.**
+The Project Lead measured it: the repr leak names nothing, two leaked floats add, and the sum
+re-wrapped as `DialMagnitude(dial_id="equity_crash", quantity=<blend>)` had a provenance of exactly
+one dial, passed every provenance comparison, and published (`PL-Q4`, `PL-Q5`, `PL-Q6`, `PL-Q9`).
+
+The implementing seat resolved it in the **DECLARATION** direction and says why: `repr` is one
+member of an exit class with no last member, so closing it would have moved the same attack one line
+sideways to `str`, to `format`, to `json.dumps`, to the pickle bytes — the instance game — while
+costing a developer their debugger for nothing. **THE CLAIM IS WITHDRAWN. THE EXITS ARE NAMED. The
+closure moved to the RE-ENTRY**, where it is decidable: `DialMagnitude` admits only a
+`DeclaredQuantity` — a number whose provenance was established at one of two declared doors — and
+compares its dial set to the target dial by SET EQUALITY. A number that has left a magnitude is a
+bare `float`, has no dial, and cannot get back in. See
+`src/crash_detector/dials/provenance.py` for the invariant and for the residue at the admission
+door, and boundary 6 of `tools/register/check_no_blend.py` for the executed evidence.
 
 **Do not read a clean run of this arm as proof that no two numbers can ever be added in Python.**
-Read it as proof that a dial magnitude cannot be combined with the other dial's magnitude, that
-reducing one to a number requires naming its single dial, and that a number so obtained cannot be
-published as anything but that dial.
+Two released numbers add, and `PL-Q1a` still returns 1.0. Read it as proof that a dial magnitude
+cannot be combined with the other dial's magnitude, and that **a number so obtained can never be a
+dial magnitude again** — which is the claim that replaced the withdrawn one, and the one that is
+measured.
 
 Detection is a **contrast**, and the validator computes it as one: the same declared command
 must exit `0` on the clean subject and non-zero on the subject with the violation planted.
