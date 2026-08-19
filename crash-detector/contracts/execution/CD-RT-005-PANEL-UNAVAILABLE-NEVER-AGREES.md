@@ -110,14 +110,71 @@ TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
    returns `Agrees` and renders `WITNESS AGREES`. **NOT PROVED TO BE CARRIED ANYWHERE.**
    Pre-existing and project-wide, not introduced by this closure.
 3. **`object.__setattr__` WALKS PAST FROZEN**, here as on every frozen value in Python and in
-   this repository. Both values use `__slots__`, so an **undeclared** attribute cannot be
-   injected — **MEASURED:** `object.__setattr__(window, "ceiling", 1e18)` raises
-   `AttributeError: 'StalenessWindow' object has no attribute 'ceiling'`. Overwriting a
+   this repository.
+
+   *Amended at increment 6, `CD-PL-F65` / `CD-D-058`, and the previous text is why.* This
+   boundary read *"Both values use `__slots__`, so an undeclared attribute cannot be injected"*.
+   That is **true of the two values it was written about** and it was **reassuring about a third
+   value it never named**. Incomplete, not false — the `CD-PL-F62` shape, claiming no carrier
+   that does not exist — and the correction is carried in the text rather than made silently
+   (`PBG-CONT-003`).
+
+   **The two slotted values.** `StalenessWindow` and `FreshnessEvidence` are both
+   `@dataclass(frozen=True, slots=True)`, so an **undeclared** attribute cannot be injected —
+   **MEASURED:** `object.__setattr__(window, "ceiling", 1e18)` raises `AttributeError:
+   'StalenessWindow' object has no attribute 'ceiling'`, and so does `"smuggled"`. Overwriting a
    **declared** slot on an already-constructed value is not preventable at the Python level —
-   **MEASURED:** `object.__setattr__(window, "seconds", 1e18)` sticks, and
-   `object.__setattr__(evidence, "as_of_utc", ...)` makes its derived age read `315360000.0`.
-   **NOT PROVED TO BE CARRIED ANYWHERE.** The same residue is already declared as boundary B of
-   `src/crash_detector/dials/magnitude.py`; it is a property of the language.
+   **MEASURED:** `object.__setattr__(window, "seconds", 1e18)` sticks and `window.seconds` then
+   reads `1e+18`; `object.__setattr__(evidence, "as_of_utc", <2016-08-21>)` makes its derived
+   `age_seconds` read `315360000.0`.
+
+   **`Agrees` is not one of them, and the `__slots__` half does not hold there.**
+   `crash_detector.witness.panel.Agrees` is `@dataclass(frozen=True)` with **no** `slots=True`.
+   It carries a `__dict__`, so on `Agrees` even the undeclared-attribute protection is **absent**
+   — **MEASURED:** `object.__setattr__(agrees, "smuggled", 1e18)` **sticks** and
+   `agrees.smuggled` reads `1e+18`, where the identical write on `StalenessWindow` raises. An
+   auditor reading the old sentence would have carried the slotted guarantee across to the value
+   that actually renders the panel, and it is not there.
+
+   **And the route reaches the Product Owner's own forbidden sentence.** Stated plainly rather
+   than left to be inferred from *"not preventable at the Python level"* — **MEASURED (`PL-W5`)**,
+   on a *lawfully* constructed fresh `Agrees` followed by **one** post-construction write:
+
+   ```python
+   row = PanelRow(state="AGREES", as_of_utc=NOW, published_utc=NOW,
+                  measures={"divergence_measure": 0.01})
+   a = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+   object.__setattr__(a, "as_of_utc", datetime(2016, 8, 21, 12, 0, tzinfo=utc))
+   render_panel(a)          # -> 'WITNESS AGREES'
+   ```
+
+   That is **`WITNESS AGREES` on a decade-old timestamp**. `render_panel` dispatches on **type**
+   and re-validates nothing, so once a value of type `Agrees` exists no later layer looks at it
+   again. Carrying the forgery down into the evidence makes it internally consistent too —
+   **MEASURED:** adding `object.__setattr__(a.freshness, "as_of_utc", <2016-08-21>)` and
+   `object.__setattr__(a.freshness.window, "seconds", 1e18)` gives `a.freshness.age_seconds ==
+   315360000.0` (3650 days), `a.freshness.window.covers(315360000.0) is True`, and
+   `render_panel(a)` still `'WITNESS AGREES'`.
+
+   **NOT PROVED TO BE CARRIED ANYWHERE.** No layer was measured refusing a forged `Agrees`.
+
+   **What this boundary is not.** It is not a route from ordinary input, and every route measured
+   that goes through a **constructor** is refused. **Three measured, and three is the denominator
+   rather than a proof that a fourth does not exist:** the decade-old row itself resolves to
+   `Unavailable` / `WITNESS UNAVAILABLE`; `StalenessWindow(seconds=1e18)` raises
+   `StalenessWindowOutOfRange`; `Agrees(...)` built with evidence for a different instant raises
+   `AgreementWithoutFreshnessEvidence`. The residue is available only to code that has already
+   chosen to write past the language's own frozen guarantee. It is the same residue declared as
+   boundary B of `src/crash_detector/dials/magnitude.py`; it is a property of the language, not
+   of this design.
+
+   **`Agrees` is deliberately not slotted by this amendment** (`CD-D-058` — an instruction obeyed,
+   not an oversight). Slotting it would close the undeclared-attribute half — the `"smuggled"`
+   write above — and leave the declared-slot half wide open, and the declared-slot half **is** the
+   whole of `PL-W5`: the write that reaches `WITNESS AGREES` overwrites the declared field
+   `as_of_utc`. A change that closes the measured-harmless half and reads like a closure of the
+   other is the `CD-PL-F54` shape, which has already sent one increment back. Increment 6 writes
+   no logic.
 4. **THE PUBLISHED ENVELOPE'S `staleness_window_seconds` FIELD IS NOT ADMITTED THROUGH THIS
    DOOR.** The envelope carries the window that *was* applied as a plain number validated by the
    JSON Schema, so a hand-built envelope declaring an inadmissible window is a

@@ -673,12 +673,47 @@ criteria:
         now_utc set ten years back, a ten-year-old row resolves to Agrees. NOT PROVED TO BE
         CARRIED ANYWHERE. It is pre-existing and project-wide, not introduced here.
         (3) `object.__setattr__` WALKS PAST FROZEN, as it does for every frozen value in Python
-        and in this repository. Both StalenessWindow and FreshnessEvidence use __slots__, so an
-        UNDECLARED attribute cannot be injected (measured: AttributeError); overwriting a
-        DECLARED slot on an already-constructed value is not preventable at the Python level.
-        This is the same residue already declared as boundary B of
-        src/crash_detector/dials/magnitude.py and measured there. NOT PROVED TO BE CARRIED
-        ANYWHERE.
+        and in this repository. AMENDED AT INCREMENT 6, CD-PL-F65 / CD-D-058, and the previous
+        text is why: this boundary read "Both StalenessWindow and FreshnessEvidence use
+        __slots__", which is TRUE of those two and was REASSURING ABOUT A THIRD VALUE IT NEVER
+        NAMED. Incomplete, not false — the CD-PL-F62 shape — and the correction is carried in the
+        text rather than made silently (PBG-CONT-003).
+        THE TWO SLOTTED VALUES: StalenessWindow and FreshnessEvidence are both
+        @dataclass(frozen=True, slots=True), so an UNDECLARED attribute cannot be injected —
+        MEASURED: object.__setattr__(window, "ceiling", 1e18) raises AttributeError, and so does
+        "smuggled". Overwriting a DECLARED slot on an already-constructed value is NOT
+        preventable at the Python level — MEASURED: object.__setattr__(window, "seconds", 1e18)
+        sticks, and object.__setattr__(evidence, "as_of_utc", <2016-08-21>) makes its derived
+        age_seconds read 315360000.0.
+        `Agrees` IS NOT ONE OF THEM AND THE __slots__ HALF DOES NOT HOLD THERE.
+        crash_detector.witness.panel.Agrees is @dataclass(frozen=True) with NO slots=True. It
+        carries a __dict__, so on Agrees even the UNDECLARED-attribute protection is ABSENT —
+        MEASURED: object.__setattr__(agrees, "smuggled", 1e18) STICKS and agrees.smuggled reads
+        1e+18, where the identical write on StalenessWindow raises.
+        AND THE ROUTE REACHES THE PRODUCT OWNER'S OWN FORBIDDEN SENTENCE — MEASURED (PL-W5), on a
+        LAWFULLY constructed fresh Agrees followed by ONE post-construction write:
+        row = PanelRow(state="AGREES", as_of_utc=NOW, published_utc=NOW,
+        measures={"divergence_measure": 0.01}); a = resolve_panel(row, now_utc=NOW,
+        staleness_window_seconds=600.0); object.__setattr__(a, "as_of_utc", datetime(2016, 8, 21,
+        12, 0, tzinfo=utc)); render_panel(a) -> 'WITNESS AGREES'.
+        That is WITNESS AGREES on a DECADE-OLD TIMESTAMP. render_panel dispatches on TYPE and
+        re-validates nothing, so once a value of type Agrees exists no later layer looks at it
+        again. Carrying the forgery into the evidence as well makes it internally consistent —
+        MEASURED: a.freshness.age_seconds 315360000.0 (3650 days),
+        a.freshness.window.covers(315360000.0) True, render_panel(a) still 'WITNESS AGREES'.
+        NOT PROVED TO BE CARRIED ANYWHERE — no layer was measured refusing a forged Agrees.
+        WHAT IT IS NOT: not a route from ordinary input. Every route measured that goes through a
+        CONSTRUCTOR is refused, and THREE IS THE DENOMINATOR rather than a proof that no fourth
+        exists — the decade-old row itself resolves to Unavailable / WITNESS UNAVAILABLE,
+        StalenessWindow(seconds=1e18) raises StalenessWindowOutOfRange, and Agrees(...) with
+        evidence for a different instant raises AgreementWithoutFreshnessEvidence. Same residue
+        as boundary B of src/crash_detector/dials/magnitude.py, measured there against a forged
+        magnitude; a property of the language, not of this design.
+        Agrees IS DELIBERATELY NOT SLOTTED (CD-D-058, an instruction obeyed rather than an
+        oversight): slotting closes the UNDECLARED-attribute half and leaves the DECLARED-slot
+        half — which is the whole of PL-W5, since the write that reaches WITNESS AGREES
+        overwrites the declared field as_of_utc — wide open. That would read like a closure while
+        being partial, the CD-PL-F54 shape. Increment 6 writes no logic.
         (4) THE ENVELOPE'S `staleness_window_seconds` FIELD IS NOT ADMITTED THROUGH THIS DOOR.
         The published envelope carries the window that was applied as a plain number validated
         by the JSON Schema, so a hand-built envelope declaring an inadmissible window is a

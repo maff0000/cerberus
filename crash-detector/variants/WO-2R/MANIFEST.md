@@ -1592,3 +1592,43 @@ without a timeout they hang the session instead of being measured.
 `deploy/compose.yaml` at line 1009. It is a **third** declared gate command that returned no
 verdict on the same input, and it is not named in `CD-DISPATCH-WO2R-READER`, in `CD-PL-F61` or
 in `CD-ENG-WO2R-F14`. Raised as `CD-ENG-READER-F01`.
+
+---
+
+# WO-2R INCREMENT 6 — the register-and-contract sweep, `CD-ENG-WO2R-01`
+
+**This increment writes no logic** (`CD-D-057`). Every row below is evidence for a
+**declaration**, not for a code closure, and every one of them was **re-measured by this seat**
+on a pristine extraction of `253c38b` rather than transcribed from the record that reports it
+(`CD-RULE-006`). Nothing in this directory is executable (`PBG-ASSURE-001`); the `.py.txt`
+suffix is deliberate.
+
+> **Read this section as an EXCLUSION SET, not as a safety proof.** Everything here is a route
+> somebody has already thought of. The next auditor's job is the route nobody has.
+
+## `CD-PL-F65` — boundary 3 of the CD-AC-005 closure, and what it did not name
+
+### PL-W3 — `Agrees` is UNSLOTTED — *the Project Lead's probe, re-measured here*
+
+| | |
+|---|---|
+| **artefact** | `variants/WO-2R/CD-PL-F65/PL-W3-Agrees-is-unslotted.py.txt` |
+| **proposition attacked** | Boundary 3's sentence *"Both values use `__slots__`, so an UNDECLARED attribute cannot be injected"*, read as though it covered the whole freshness closure. |
+| **route** | Ask each of the three values directly. `StalenessWindow` and `FreshnessEvidence` are `slots=True`; `crash_detector.witness.panel.Agrees` is `@dataclass(frozen=True)` with **no** `slots=True`. |
+| **why it is a different route** | It attacks the DECLARATION, not the code. No constructor is called adversarially; the finding is that a true sentence about two values was reassuring about a third. |
+| **command** | `PYTHONPATH=src python3 -B variants/WO-2R/CD-PL-F65/PL-W3-Agrees-is-unslotted.py.txt` — *copy it out of the tree first; nothing here is run in place.* |
+| **observed, `253c38b`** | `Agrees.__slots__ present in vars: False`. `object.__setattr__(agrees, "smuggled", 1e18)` **STICKS**, `agrees.smuggled` reads `1e+18`, `agrees.__dict__` carries it. The identical write on `StalenessWindow` raises `AttributeError: 'StalenessWindow' object has no attribute 'ceiling'` / `'smuggled'`. |
+| **disposition** | **DECLARED, NOT FIXED.** `CD-D-058` expressly forbids slotting `Agrees` at this increment: it would close this half and leave PL-W5 open, which is the `CD-PL-F54` shape. Boundary 3 now names `Agrees` in all three `CD-RULE-004` places. |
+
+### PL-W5 — a forged `Agrees` renders `WITNESS AGREES` on a decade-old timestamp
+
+| | |
+|---|---|
+| **artefact** | `variants/WO-2R/CD-PL-F65/PL-W5-a-forged-Agrees-renders-WITNESS-AGREES.py.txt` |
+| **proposition attacked** | The Product Owner's own sentence: *"a decade-old row must be structurally incapable of rendering WITNESS AGREES"*. |
+| **route** | Construct a **lawful, fresh** `Agrees` through `resolve_panel`, then make ONE post-construction write — `object.__setattr__(a, "as_of_utc", <2016-08-21>)` — and render. Optionally carry the forgery into `a.freshness` and `a.freshness.window` so the value is internally consistent. |
+| **why it is a different route** | It never asks a constructor for anything it would refuse. It writes past `frozen` **after** every validation has already run, and `render_panel` dispatches on **type** and re-validates nothing. |
+| **command** | `PYTHONPATH=src python3 -B <copy of the .py.txt>` |
+| **observed, `253c38b`** | `render_panel(a)` → **`WITNESS AGREES`** with `a.as_of_utc == 2016-08-21T12:00:00+00:00`; with the forgery carried down, `a.freshness.age_seconds == 315360000.0` (3650 days), `a.freshness.window.seconds == 1e+18`, `a.freshness.window.covers(315360000.0) is True`, and the render is still `WITNESS AGREES`. |
+| **the constructor arms, measured in the same run — THREE, and three is the denominator** | the decade-old row itself → `Unavailable` / `WITNESS UNAVAILABLE`; `StalenessWindow(seconds=1e18)` → `StalenessWindowOutOfRange`; `Agrees(...)` with evidence for a different instant → `AgreementWithoutFreshnessEvidence`. **This is not a proof that a fourth constructor route does not exist.** |
+| **disposition** | **DECLARED, NOT CLOSED — `NOT PROVED TO BE CARRIED ANYWHERE`.** No layer was measured refusing a forged `Agrees`. Written into boundary 3 in all three `CD-RULE-004` places, in those words. |
