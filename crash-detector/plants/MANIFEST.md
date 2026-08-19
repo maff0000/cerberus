@@ -2,7 +2,20 @@
 
 **Deliverable B3 of `governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml`.**
 Written by `CD-ENG-WO2-01`. Nothing in this directory is evidence, and nothing in it is
-assurance. It is a set of *negative controls* an INDEPENDENT seat applies and runs for
+assurance.
+
+> **WO-2R INCREMENT 1 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F02 and
+> CD-ASR-F03 changed the structure of `src/crash_detector/dials/reading.py` and
+> `src/crash_detector/engine/evaluate.py`, so **two plants stopped applying** and were
+> regenerated against the new structure, violating the same propositions by the same routes:
+> `CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch` and
+> `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`. A **third** row —
+> `CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT` — still applies unchanged but its failure
+> signature grew from two violations to three. All eleven patches apply cleanly at the WO-2R
+> increment-1 SHA. **No plant was deleted and none was weakened** (CD-D-033). Every row that
+> changed says so in its own text, and one changed collateral observation is disclosed as a
+> finding against this seat's own work (CD-ENG-WO2R-F01, in the
+> `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` row). It is a set of *negative controls* an INDEPENDENT seat applies and runs for
 itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
 
 ---
@@ -138,25 +151,44 @@ patch tells the plausible story that gets this written in real life ("a feed tha
 one cycle should not blank the surface"), which is why it is worth catching by class: the
 author is not being clever, they are being helpful.
 
-**Expected failure signature.** Exit **1**, `FAIL — 2 violation(s)`:
+**Expected failure signature.** Exit **1**, `FAIL — 3 violation(s)`:
 
 ```
 VIOLATION  src/crash_detector/engine/config.py:84
     rule: A: nullable-number annotation
     what: `last_known_magnitude` is annotated as a number that may be None (float | None). ...
-VIOLATION  src/crash_detector/engine/evaluate.py:166
+VIOLATION  src/crash_detector/engine/evaluate.py:<line>
     rule: C: `or <number>`
     what: `spec.last_known_magnitude or 0.0` substitutes a number when the left side is falsey. ...
+VIOLATION  src/crash_detector/engine/evaluate.py:<line>
+    rule: F: unrecognised magnitude provenance
+    what: `Degraded(value=DIAL_SCORE_TYPES[spec.dial_id](score=carried, contributions=()), ...)`
+          constructs a reading that CARRIES A VALUE ... but `carried` is bound in this scope to
+          something that is not a declared magnitude source: the magnitude comes from
+          `spec.last_known_magnitude or 0.0` ...
 ```
+
+**UPDATED IN WO-2R (`CD-ENG-WO2R-01`).** The patch itself is unchanged and still applies. What
+changed is the signature: it was `FAIL — 2 violation(s)` at the WO-2 gate, and it is now
+**three**, because `check_no_numeric_default.py` gained **RULE F** closing CD-ASR-F03. The
+third violation is the one worth reading — it does not depend on the `or 0.0` idiom at all. It
+fires because a `Degraded` is constructed carrying a magnitude whose provenance is not the
+declared contribution model, so the SAME plant written without `or` (say, with a plain
+`spec.last_known_magnitude`) would still be caught. Rules A and C catch the spelling; rule F
+catches the class. Line numbers moved with the module and are given as `<line>` rather than
+transcribed, because a transcribed line number is a maintenance trap; the rule names are the
+signature.
 
 Two notes about class A on the ADJACENT path (`observations.py:99`,
 `witness_resolver.py:168`) are printed on the clean arm as well and are **not** violations.
 They must appear in both arms; if they appear only under the plant, something else changed.
 
 **Collateral observed by this seat** (`PYTHONPATH=src python3 -m pytest tests/test_reading.py
-tests/test_evaluate.py -q` → 9 failed, 40 passed). The behaviour changed as well as the
-shape, so the sibling arm fails too. Disclosed, not trimmed: the two arms are meant to
-overlap here.
+tests/test_evaluate.py -q` → 9 failed, 40 passed at the WO-2 gate). The behaviour changed as
+well as the shape, so the sibling arm fails too. Disclosed, not trimmed: the two arms are meant
+to overlap here. **WO-2R re-measurement is owed to the auditor, not asserted here**: the
+sibling suite gained 40 tests in WO-2R, so the failure count will differ from 9 and the seat
+that re-runs it should record what it observes rather than expect this number.
 
 ---
 
@@ -178,26 +210,46 @@ a placeholder rather than a claim. It is a claim. The dial says *calm* on a day 
 detector has no data whatsoever, and `evaluate`'s own docstring already refuses it in
 words: "Zero satisfied requirements is not 'all requirements satisfied'."
 
-**This plant is invisible to the sibling AST arm, and that is the point.** `score=0.0` is a
-plain keyword argument carrying a numeric literal — it is none of the five routes
-`check_no_numeric_default.py` bans, and that check stays at exit **0** with the plant
-applied (observed by this seat). The two CD-AC-001 tests are therefore not two spellings of
-one instrument: one reads the SHAPE of the dial path, the other reads what it DOES, and
-this violation is only visible to the second.
+**REWRITTEN IN WO-2R (`CD-ENG-WO2R-01`), same proposition, same route, new context.** The
+WO-2 patch no longer applied: `_evaluate_dial` gained the CD-ASR-F03 post-condition decorator
+and a longer docstring, so the hunk context moved. The patch was regenerated against the WO-2R
+structure and makes the identical semantic change — a dial declaring no required inputs returns
+`Value(EquityCrashScore(score=0.0), inputs_used=("baseline",))`. Nothing about what it violates
+has changed. *A plant that no longer applies is not a plant* (CD-D-033), and deleting one is
+prohibited.
 
-**Expected failure signature.** pytest exits **1**, `3 failed, 46 passed`:
+**Expected failure signature.** pytest exits **1**. At the WO-2 gate this was `3 failed, 46
+passed` with `AttributeError: 'Value' object has no attribute 'since_utc'`. In WO-2R it is
+**`17 failed, 72 passed`**, and the reason is worth reading rather than the count:
 
 ```
-FAILED tests/test_evaluate.py::test_with_no_sources_declared_both_dials_read_unknown
-FAILED tests/test_evaluate.py::test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present
-FAILED tests/test_evaluate.py::test_evaluate_does_not_consult_the_clock
+crash_detector.dials.reading.AbsenceYieldedAValue: dial 'monetary_debasement' produced Value,
+which carries a value, but its required inputs were not all present: it declares [], NO
+contribution model is declared, and the usable inputs are []. A reading that carries a value is
+a claim that its inputs were present; a dial that did not get them must be Unknown, whatever the
+number is and wherever it came from (PID §3.2, CD-AC-001, CD-ASR-F03).
 ```
 
-with `AttributeError: 'Value' object has no attribute 'since_utc'` — the assertion reaching
-for the reason on a reading that should have been `Unknown` and is now a number.
+The post-condition raises inside `evaluate()`, so every test in the file that evaluates
+anything now fails rather than only the three that inspected the reading. That is a stronger
+contrast and a worse-looking number; both are honest. The signature to check is the exception
+type, not the count.
 
-**Collateral observed by this seat.** `python3 tools/register/check_no_numeric_default.py
---root .` remains exit **0**. See above; that is a result, not a gap.
+**Collateral, RE-MEASURED IN WO-2R, and it CHANGED — disclosed as a finding against this
+seat's own work (CD-ENG-WO2R-F01).** At the WO-2 gate
+`python3 tools/register/check_no_numeric_default.py --root .` stayed at exit **0** under this
+plant, and the manifest reasoned from that: the two CD-AC-001 tests were "not two spellings of
+one instrument", because only the behavioural arm saw this violation. **That is no longer
+true.** Rule F now catches this plant too (exit **1**, `FAIL — 1 violation(s)`, `F:
+unrecognised magnitude provenance` — `score=0.0` is a literal, and a literal is not a declared
+magnitude source). The plant is still a valid negative control for its own arm, but it no
+longer *demonstrates* the independence of the two arms.
+
+The route that still separates them is **boundary 1 of `CD-RT-001-AST-NO-NUMERIC-DEFAULT`'s
+declared limit** — a constructor obtained dynamically, which rule F cannot see as a
+construction and which the runtime post-condition refuses anyway. It is written out as variant
+**`V03`** in `variants/WO-2R/CD-ASR-F02-F03/`, with its command and its observed refusal, so
+the property this row used to evidence is evidenced somewhere it can be executed.
 
 ---
 ---
@@ -410,9 +462,19 @@ A trail of length 2 is the pass condition for this plant. A trail showing a dire
 `engine → witness` edge would mean the plant had been simplified into the instance the
 check's own docstring says a grep would find.
 
+**REGENERATED IN WO-2R (`CD-ENG-WO2R-01`), same proposition, same three routes, new context.**
+The WO-2 patch no longer applied: it patches `evaluate.py`'s import block and `_evaluate_dial`'s
+signature, both of which moved when the CD-ASR-F03 post-condition landed. The patch was
+regenerated and makes the identical semantic change — a new `src/crash_detector/corroboration.py`
+relatively importing `.witness.panel`, consulted through a function-local import in
+`evaluate.py`. The transitive, relative and function-local properties are all preserved and were
+re-verified: the violation trail is still of length 2 and
+`test_importing_the_engine_does_not_pull_in_the_witness_package` still PASSES under it.
+
 **Collateral observed by this seat, and it is the most interesting result here.**
 `PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q` → **1
-failed, 48 passed**, and the one failure is
+failed, 88 passed** in WO-2R (**1 failed, 48 passed** at the WO-2 gate; the suite grew), and the
+one failure is
 `test_evaluate_has_the_blueprint_signature` (the added parameter), *not* the witness test.
 **`test_evaluate.py::test_importing_the_engine_does_not_pull_in_the_witness_package`
 PASSES with this plant applied** — because the import is function-local, so importing the

@@ -22,15 +22,51 @@ The absence rules, in one place, because scattering them is how one of them goes
   not ``OK`` forces ``Unknown``.
 * a **contributing** input in the same condition forces ``Degraded``.
 * nothing anywhere substitutes a zero, a previous value or a default.
+
+====================================================================================
+THE ABSENCE POST-CONDITION — added closing CD-ASR-F03 (MEDIUM)
+====================================================================================
+
+The four rules above were written down, implemented, and defeated. An independent auditor
+replaced the ``missing_required`` branch of :func:`_evaluate_dial` with
+``Value(value=<ScoreType>(score=QUIET_MAGNITUDE, ...))`` where ``QUIET_MAGNITUDE = 0.0``
+was a module-level constant (`CD-ASR-F03`, escaped variant `E04`). The AST guard enumerated
+four spellings of a numeric default and this was a fifth, so it saw nothing.
+
+The lesson is that the rules were a property of *how this function happened to be written*,
+and a rule that lives in a function body is rewritten by editing the function body. So the
+rules are now enforced from **outside** the body, as a post-condition:
+:func:`refuse_a_number_without_its_inputs` re-derives from ``(spec, usable)`` — the
+function's own arguments, not its internal state — whether this dial actually got its
+required inputs, and refuses the returned reading if it carries a value when it did not.
+
+That is what makes the closure a CLASS closure rather than a fifth spelling caught. The
+post-condition never asks where the number came from, so it does not care: a literal, a
+module constant, a configuration default, a previous value carried across a gap, a random
+number, a value read from the database — all of them raise
+:exc:`~crash_detector.dials.reading.AbsenceYieldedAValue`, because what is refused is the
+*claim* rather than the *arithmetic*. A reading that carries a value is a claim that inputs
+were present; the post-condition checks the claim against the inputs.
+
+It is deliberately one-directional. A body that returns ``Unknown`` when the inputs WERE
+present is not refused: that is the safe direction, and a guard that compelled a number
+would be pushing the wrong way.
 """
 
 from __future__ import annotations
 
+import functools
 from datetime import datetime
 from typing import Mapping, Sequence
 
 from crash_detector.dials.dialset import EQUITY_DIAL_ID, MONETARY_DIAL_ID, DialSet
-from crash_detector.dials.reading import Degraded, Reading, Unknown, Value
+from crash_detector.dials.reading import (
+    AbsenceYieldedAValue,
+    Degraded,
+    Reading,
+    Unknown,
+    Value,
+)
 from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.observations import OK, ObservationRecord
@@ -43,7 +79,15 @@ __all__ = [
     "REASON_REQUIRED_INPUTS_UNAVAILABLE",
     "REASON_CONTRIBUTING_INPUTS_UNAVAILABLE",
     "REASON_NO_CONTRIBUTION_MODEL",
+    "READINGS_THAT_CARRY_A_VALUE",
+    "required_inputs_are_all_present",
+    "refuse_a_number_without_its_inputs",
 ]
+
+#: The two Reading constructors that carry a value, named as data. A reading of one of
+#: these types is a CLAIM that this dial's inputs were present; the post-condition below
+#: checks that claim against the inputs the dial was actually given.
+READINGS_THAT_CARRY_A_VALUE: tuple[type, ...] = (Value, Degraded)
 
 #: Which score type each dial carries. Two dials, two unrelated types (CD-AC-002).
 DIAL_SCORE_TYPES: Mapping[str, type] = {
@@ -130,12 +174,108 @@ def _latest_usable_ok(
     return latest
 
 
+def required_inputs_are_all_present(
+    spec: DialSpec, usable: Mapping[str, OK]
+) -> bool:
+    """Did this dial get everything it needs to produce a magnitude at all?
+
+    THREE ways the answer is no, and each of them is a way a dial can fail to be a number
+    without anything having gone wrong in the arithmetic:
+
+    * the spec declares no required inputs — zero requirements satisfied is not "all
+      requirements satisfied", and with the WO-2 empty source registry this is the shipped
+      state of both dials;
+    * the spec declares no contribution model, so there is no declared mapping from inputs
+      to a magnitude (doctrine §3.6) and any number produced would be unexplainable;
+    * a declared required input is not in the usable set — absent, stale, future-dated, or
+      its latest outcome was not ``OK``.
+
+    These are the same three conditions the three ``Unknown`` branches of
+    :func:`_evaluate_dial` test, restated here as ONE predicate over the arguments so that
+    :func:`refuse_a_number_without_its_inputs` can recompute the answer without trusting
+    anything the body decided. The duplication is the point and is disclosed rather than
+    factored away: if the body and this predicate ever disagree, the post-condition raises
+    and the disagreement is loud. What must not happen is the post-condition asking the body
+    what it concluded, because the body is what a plant edits.
+    """
+    if not spec.required_input_ids:
+        return False
+    if spec.contribution_model is None:
+        return False
+    return all(source_id in usable for source_id in spec.required_input_ids)
+
+
+def refuse_a_number_without_its_inputs(
+    spec: DialSpec, usable: Mapping[str, OK], reading: "Reading"
+) -> None:
+    """Refuse a value-bearing reading from a dial that did not get its inputs.
+
+    The whole of CD-ASR-F03's runtime closure, and the reason it closes a CLASS: it never
+    asks where the number came from. A literal, a module-level constant, a configuration
+    default, a previous magnitude carried across an outage, a value read from the store —
+    every one of them fails here, because what is refused is the *claim* that inputs were
+    present and not any particular way of spelling a zero.
+
+    One-directional on purpose: ``Unknown`` where a number was available is not refused.
+    That is the safe direction, and a guard that compelled a number would be pushing
+    against PID §3.2 rather than for it.
+    """
+    if type(reading) not in READINGS_THAT_CARRY_A_VALUE:
+        return
+    if required_inputs_are_all_present(spec, usable):
+        return
+    raise AbsenceYieldedAValue(
+        f"dial {spec.dial_id!r} produced {type(reading).__name__}, which carries a value, "
+        f"but its required inputs were not all present: it declares "
+        f"{list(spec.required_input_ids)}, "
+        f"{'a contribution model is declared' if spec.contribution_model is not None else 'NO contribution model is declared'}"
+        f", and the usable inputs are {sorted(usable)}. A reading that carries a value is "
+        "a claim that its inputs were present; a dial that did not get them must be "
+        "Unknown, whatever the number is and wherever it came from (PID §3.2, CD-AC-001, "
+        "CD-ASR-F03)."
+    )
+
+
+def _absence_is_never_a_number(evaluate_one_dial):
+    """Wrap a per-dial evaluator in the CD-ASR-F03 post-condition.
+
+    The guard is applied HERE, at the boundary of the function, rather than written into
+    its body, because the escape that produced CD-ASR-F03 was an edit to the body. A
+    post-condition derived from the arguments survives any rewriting of what is between
+    them and the return statement.
+    """
+
+    @functools.wraps(evaluate_one_dial)
+    def guarded(
+        spec: DialSpec,
+        usable: Mapping[str, OK],
+        now_utc: datetime,
+        *extra: object,
+        **extra_by_name: object,
+    ) -> "Reading":
+        # ``*extra`` is not laziness. The post-condition needs only the spec and the usable
+        # inputs, and a wrapper that fixed the arity would stop guarding the moment anybody
+        # gave the evaluator a fourth argument — which is exactly the kind of edit that
+        # arrives with a new feature and takes a guard off with it.
+        reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
+        refuse_a_number_without_its_inputs(spec, usable, reading)
+        return reading
+
+    return guarded
+
+
+@_absence_is_never_a_number
 def _evaluate_dial(
     spec: DialSpec,
     usable: Mapping[str, OK],
     now_utc: datetime,
 ) -> "Reading":
-    """One dial's reading, or the named reason there is not one."""
+    """One dial's reading, or the named reason there is not one.
+
+    Every ``return`` below is checked against
+    :func:`refuse_a_number_without_its_inputs` by the decorator, so a branch that did not
+    get its inputs cannot return a reading carrying a value however it is rewritten.
+    """
     if not spec.required_input_ids:
         # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
         # Zero requirements satisfied is NOT "all requirements satisfied".

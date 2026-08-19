@@ -1,8 +1,8 @@
 diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
-index e2e28eb..4b8fd4e 100644
+index b9431ec..1698a19 100644
 --- a/src/crash_detector/engine/evaluate.py
 +++ b/src/crash_detector/engine/evaluate.py
-@@ -58,6 +58,9 @@ REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
+@@ -102,6 +102,9 @@ REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
  REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
  REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
  
@@ -12,9 +12,9 @@ index e2e28eb..4b8fd4e 100644
  
  def evaluate(
      observations: Sequence[ObservationRecord],
-@@ -137,12 +140,13 @@ def _evaluate_dial(
- ) -> "Reading":
-     """One dial's reading, or the named reason there is not one."""
+@@ -269,12 +272,13 @@ def _evaluate_dial(
+     get its inputs cannot return a reading carrying a value however it is rewritten.
+     """
      if not spec.required_input_ids:
 -        # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
 -        # Zero requirements satisfied is NOT "all requirements satisfied".

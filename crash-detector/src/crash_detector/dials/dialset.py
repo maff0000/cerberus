@@ -22,6 +22,7 @@ from crash_detector.dials.reading import (
     Degraded,
     Reading,
     Value,
+    assert_closed_surface,
 )
 from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
 
@@ -49,11 +50,17 @@ class DialSet:
     def __post_init__(self) -> None:
         for field_name in DIAL_FIELDS:
             reading = getattr(self, field_name)
-            if not isinstance(reading, READING_CONSTRUCTORS):
+            # EXACT TYPE IDENTITY, not isinstance, and the class's declared attribute
+            # surface is re-verified on the way in (CD-ASR-F02). This is a consumer
+            # boundary: a subclass carrying a numeric member would otherwise be accepted
+            # here exactly as a Reading is, and a class mutated after import would carry
+            # its extra member into the dial set unremarked.
+            if type(reading) not in READING_CONSTRUCTORS:
                 raise TypeError(
                     f"DialSet.{field_name} must be a Reading "
                     f"(Value | Degraded | Unknown), got {type(reading).__name__}"
                 )
+            assert_closed_surface(type(reading))
         _reject_cross_typed(self.equity, EquityCrashScore, "equity")
         _reject_cross_typed(self.monetary, MonetaryDebasementScore, "monetary")
 
@@ -64,7 +71,7 @@ def _reject_cross_typed(reading: object, expected: type, field_name: str) -> Non
     Without this the two slots would be structurally interchangeable, and two dials that
     can be swapped are one dial with two names.
     """
-    if isinstance(reading, (Value, Degraded)):
+    if type(reading) in (Value, Degraded):
         if not isinstance(reading.value, expected):
             raise TypeError(
                 f"DialSet.{field_name} must carry {expected.__name__}, got "

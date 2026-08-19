@@ -27,11 +27,37 @@ harness the project wrote is verifying the harness (`PBG-ASSURE-001`).
 
 ## Subject
 
-`tests/test_reading.py` attacks the `Reading` sum type by enumerating the whole attribute surface of `Unknown` for any route to a number. `tests/test_evaluate.py` exercises the WO-2 shipped state: the source registry is EMPTY by PO ruling, so both dials must read Unknown, and that path is executed rather than assumed.
+`tests/test_reading.py` attacks the `Reading` sum type by asserting **set equality** between each constructor's attribute surface and a surface declared in the test file itself. `tests/test_evaluate.py` exercises the WO-2 shipped state: the source registry is EMPTY by PO ruling, so both dials must read Unknown, and that path is executed rather than assumed. It also exercises the **absence post-condition** directly, in both directions.
 
 ## Why it is asserted this way
 
 The empty registry is not a temporary inconvenience — it is the doctrinally correct empty state the Product Owner ruled in PO-ACCEPT-BLUEPRINT-0001, and it is what makes this criterion demonstrable before a single source exists.
+
+**This is the arm that carries CD-AC-001's "structurally incapable" half, and after CD-ASR-F02 it had to be rebuilt.** The original surface test asserted only that no name from `ARITHMETIC_DUNDERS` appeared in `vars(Unknown)` — a blacklist, which an auditor walked past with a plain `magnitude` property (`E03`). Absence yielded `0.0` while both declared guards stayed green. Four layers of structure now close it, each enforced by the interpreter at a different moment:
+
+1. **definition time** — a declared member surface asserted by equality while the module is imported, so a member added in a class body makes `import crash_detector.dials.reading` raise `ReadingSurfaceViolated`;
+2. **instance time** — `__slots__`, so `object.__setattr__(reading, "magnitude", 0.0)` raises `AttributeError` rather than sticking;
+3. **subclass time** — subclassing a Reading constructor is refused, and `fold`/`is_value` dispatch on exact type identity rather than `isinstance`;
+4. **consumption time** — `fold`, `is_value` and `DialSet` re-verify the surface of the reading's actual class on every call.
+
+Separately, for CD-ASR-F03, the per-dial evaluator carries a **post-condition** that re-derives from its own arguments whether the dial got its required inputs and refuses a value-bearing reading if it did not — whatever the number is and wherever it came from.
+
+**The declared surface is written out twice on purpose**: once in `reading.py`, because the runtime seal needs it, and once in `tests/test_reading.py`, which asserts the two agree. A test importing the module's table would pass a plant that edited the class and the table together.
+
+## DECLARED LIMIT — the one residue, declared rather than denied
+
+Required by `CD-RULE-004`. Stated identically in the header of `src/crash_detector/dials/reading.py` and in the comment above this test's entry in `required-tests.yaml`.
+
+`type.__setattr__` installs a class attribute without going through a metaclass, and CPython offers no way to prevent that. Executable example:
+
+```python
+type.__setattr__(Unknown, "magnitude", property(lambda self: 0.0))
+Unknown(reason="R", since_utc=t, missing_inputs=()).magnitude    # -> 0.0
+```
+
+What **is** closed is every route by which such a number reaches a consumer: `fold`, `is_value` and `DialSet` each raise `ReadingSurfaceViolated` on a reading of a mutated class, and the test suite proves both halves — that the mutation succeeds, and that every boundary refuses it.
+
+So what this test evidences is: **absence cannot acquire a numeric member through construction, assignment, inheritance or definition, and a class mutated after import is refused wherever a reading of it would be used.** It does **not** evidence the stronger claim that a process which rewrites class objects at runtime cannot read a number back out of one it mutated. **Do not read a clean run as proof of the stronger claim.**
 
 ## Preconditions
 
@@ -55,7 +81,14 @@ a suite that can skip its way to green is not evidence.
 
 ## Negative control
 
-Absence made to fall back to a number at runtime: `Unknown` given any attribute or coercion that yields a float, or `evaluate()` returning `Value(0.0)` for a source that is not registered or did not answer. With the WO-2 empty source registry both dials must read Unknown; a plant that makes either read a value must fail this test.
+Absence made to yield a number at runtime, **by any route**, or a reading that carries a value produced by a dial that did not get its inputs. The class includes, and is not limited to:
+
+* any member added to a Reading constructor's declared attribute surface — a property, a classvar, a method, a `__getattr__`, a slot, a dunder, numeric or not — added in the class body, by a decorator, by class assignment, or by a metaclass;
+* an undeclared instance attribute set through `object.__setattr__`;
+* a subclass of a Reading constructor carrying a numeric member;
+* `evaluate()` returning `Value` or `Degraded` for a dial whose required inputs were absent, stale, future-dated, unregistered or lacking a contribution model — whether the number is a literal, a module-level constant, a configuration default, a previous magnitude carried across a gap, or a value read from the store.
+
+With the WO-2 empty source registry both dials must read Unknown; a plant that makes either read a value must fail this test. Subject to the DECLARED LIMIT above.
 
 Detection is a **contrast**, and the validator computes it as one: the same declared command
 must exit `0` on the clean subject and non-zero on the subject with the violation planted.

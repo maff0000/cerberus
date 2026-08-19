@@ -83,27 +83,124 @@ criteria:
   supersedes: []
   superseded_by: null
   tests:
+  # DECLARED LIMIT — CD-RT-001-AST-NO-NUMERIC-DEFAULT. Required by CD-RULE-004, drawn in the
+  # pattern of CD-RT-012-NO-EXECUTION-INTERFACE (CD-D-014/CD-D-015), which an independent
+  # auditor examined and judged honestly and conservatively drawn.
+  #
+  # WHY THIS ENTRY CHANGED. At the WO-2 gate this test declared `scope: CLASS` while the check
+  # enumerated four spellings of a numeric default. CD-ASR-F03 walked past all four with a
+  # module-level constant. The check now carries RULE F, which inverts the question: instead of
+  # enumerating ways a number can arrive, it enumerates the ONE way a dial magnitude is
+  # PERMITTED to arrive — from the declared contribution model applied to present inputs — and
+  # reports every other provenance, including ones nobody has thought of. RULE F DENIES BY
+  # DEFAULT, so a route the check's author never imagined is a violation for being
+  # unrecognised rather than a silence. That is why `scope: CLASS` is retained, and the residue
+  # is written down here rather than left to be discovered.
+  #
+  # THIS CHECK IS A STATIC READ OF SOURCE TEXT AT ONE COMMIT, and CD-AC-001's proposition is a
+  # RUNTIME property. Where a boundary below says the runtime layer carries it, that layer is
+  # the sealed and slotted Reading types in src/crash_detector/dials/reading.py plus the
+  # absence post-condition `refuse_a_number_without_its_inputs` in
+  # src/crash_detector/engine/evaluate.py, and it is evidenced by the SIBLING test
+  # CD-RT-001-ABSENCE-RENDERS-UNKNOWN. In summary, this check DOES NOT catch:
+  #
+  #   1. a construction it cannot see as a construction. RULE F recognises a value-bearing
+  #      reading by the terminal name of its callee (`Value`, `Degraded`), resolved through the
+  #      module's import aliases. MEASURED EXAMPLE, which exits 0 here:
+  #        maker = getattr(sys.modules["crash_detector.dials.reading"], "Value")
+  #        return maker(value=score, as_of_utc=now_utc, inputs_used=("carried",))
+  #      THE RUNTIME LAYER CARRIES THIS: the post-condition inspects the returned object's TYPE
+  #      and never reads the expression that produced it, so the same plant raises
+  #      AbsenceYieldedAValue when the branch executes.
+  #   2. tracing beyond one scope chain. A magnitude computed inside a helper is reported as
+  #      UNRECOGNISED rather than followed — deny by default, so it is not an escape, but a
+  #      LEGITIMATE future helper must be declared in DECLARED_MAGNITUDE_SOURCES or it is
+  #      reported. MEASURED EXAMPLE: `score = _blend(payloads)` is reported.
+  #   3. anything outside the two declared tiers. MEASURED EXAMPLE: the same plant in
+  #      src/crash_detector/publication/summary.py exits 0 here. The declared set REFUSES if a
+  #      declared path is missing, so it cannot be narrowed by deleting a module, but it does
+  #      not grow on its own.
+  #   4. class A (nullable-number annotations) outside the dial path — printed as a NOTE on
+  #      every run, because BLUEPRINT §7 and §13 scope that ban to the dial path (CD-ENG-F26).
+  #   5. a magnitude legitimately computed but WRONG. RULE F asks where a number came from,
+  #      never whether it is right. scores.py deliberately imposes no range (CD-D-005 owed).
+  #   6. runtime, configuration and data. A zero arriving from a config file, an environment
+  #      variable or a database row is not in the source text. THE RUNTIME LAYER CARRIES THIS.
+  #
+  # FOR THE AUDITOR. Do not read a clean run of this check as proof that no route from absence
+  # to a number exists. A variant landing beyond a boundary above is a finding against THIS
+  # DECLARATION — was the limit honestly drawn? — and the pair to weigh is this check together
+  # with CD-RT-001-ABSENCE-RENDERS-UNKNOWN, which is where the runtime property is evidenced.
   - test_id: CD-RT-001-AST-NO-NUMERIC-DEFAULT
     scope: CLASS
     execute: python3 tools/register/check_no_numeric_default.py --root .
     execution_contract: contracts/execution/CD-RT-001-AST-NO-NUMERIC-DEFAULT.md
     negative_control:
       violation: >
-        A numeric default introduced on the dial path: a `float | None` or `Optional[float]`
-        annotation, a `.get(key, <numeric literal>)`, an `or 0`, or a bare `except` returning a
-        numeric literal. Each is a distinct ROUTE from absence to a number, and the plant must
-        violate the proposition rather than trip a string the checker greps for.
+        A dial magnitude whose provenance is not the declared contribution model applied to
+        inputs that were present. The class is WIDER than the four spellings this check
+        enumerated at the WO-2 gate — a `float | None` or `Optional[float]` annotation, a
+        `.get(key, <numeric literal>)`, an `or 0`, a bare `except` returning a number — because
+        CD-ASR-F03 escaped all four with a module-level constant. RULE F reports any Value or
+        Degraded construction on the scanned path whose magnitude traces to a literal, a
+        module-level constant, a parameter, a configuration attribute, a lookup, a previous
+        reading, an unrecognised helper call, or anything else it cannot name as declared.
+        Unrecognised is a VIOLATION, not a silence, so a plant does not need to use a route the
+        check anticipated.
+        THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
+        tools/register/check_no_numeric_default.py, in the comment above this entry, and in the
+        execution contract, each boundary with an example an auditor can execute. It does NOT
+        catch: a constructor obtained dynamically; a magnitude laundered through an undeclared
+        helper (reported, not followed); anything outside the two declared tiers; class A
+        outside the dial path; a legitimately computed but wrong magnitude; or anything about
+        runtime, configuration or data. It is ONE OF TWO guards on CD-AC-001 and never a sole
+        guard: the runtime property is carried by the sealed Reading types and the absence
+        post-condition, and evidenced by CD-RT-001-ABSENCE-RENDERS-UNKNOWN.
       evidence_ref: RTR-WO2-0001
+  # DECLARED LIMIT — CD-RT-001-ABSENCE-RENDERS-UNKNOWN. Required by CD-RULE-004.
+  #
+  # This is the RUNTIME arm, and after CD-ASR-F02 it is the arm that carries CD-AC-001's
+  # "structurally incapable" half. The three Reading constructors now have a DECLARED attribute
+  # surface asserted by EQUALITY (not by the absence of a blacklist — that blacklist is what
+  # E03 walked past), are slotted against instance attribute injection, are closed against
+  # subclassing, and are re-verified at every consumer boundary. Separately, the per-dial
+  # evaluator carries a post-condition that refuses a value-bearing reading from a dial whose
+  # required inputs were not all present, whatever the number is and wherever it came from.
+  #
+  # THE ONE RESIDUE, DECLARED RATHER THAN DENIED. `type.__setattr__` installs a class attribute
+  # without going through a metaclass, and CPython offers no way to prevent that. MEASURED
+  # EXAMPLE, which an auditor can execute:
+  #   type.__setattr__(Unknown, "magnitude", property(lambda self: 0.0))
+  #   Unknown(reason="R", since_utc=t, missing_inputs=()).magnitude   ->   0.0
+  # What IS closed is every route by which such a number reaches a consumer: fold, is_value and
+  # DialSet each re-verify the surface of the reading's class and raise ReadingSurfaceViolated.
+  # So the claim this test evidences is: absence cannot acquire a numeric member through
+  # construction, assignment, inheritance or definition, and a class mutated after import is
+  # refused wherever a reading of it would be used. It is NOT the claim that a process which
+  # rewrites class objects at runtime cannot read a number back out of one it mutated. Do not
+  # read a clean run as proof of the stronger claim.
   - test_id: CD-RT-001-ABSENCE-RENDERS-UNKNOWN
     scope: CLASS
     execute: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q
     execution_contract: contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md
     negative_control:
       violation: >
-        Absence made to fall back to a number at runtime: `Unknown` given any attribute or
-        coercion that yields a float, or `evaluate()` returning `Value(0.0)` for a source that is
-        not registered or did not answer. With the WO-2 empty source registry both dials must
-        read Unknown; a plant that makes either read a value must fail this test.
+        Absence made to yield a number at runtime, by ANY route, or a reading that carries a
+        value produced by a dial that did not get its inputs. The class includes, and is not
+        limited to: any member added to a Reading constructor's declared attribute surface —
+        a property, a classvar, a method, a `__getattr__`, a slot, a dunder, numeric or not,
+        added in the class body, by a decorator, by class assignment or by a metaclass; an
+        undeclared instance attribute set through `object.__setattr__`; a subclass of a Reading
+        constructor carrying a numeric member; and `evaluate()` returning Value or Degraded for
+        a dial whose required inputs were absent, stale, future-dated, unregistered or lacking
+        a contribution model — whether the number is a literal, a module-level constant, a
+        configuration default, a previous magnitude carried across a gap, or a value read from
+        the store. With the WO-2 empty source registry both dials must read Unknown; a plant
+        that makes either read a value must fail this test.
+        DECLARED LIMIT: post-import class mutation through `type.__setattr__` installs the
+        attribute and is refused at every consumer boundary rather than prevented. The measured
+        example is in the comment above this entry and in the header of
+        src/crash_detector/dials/reading.py.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-002

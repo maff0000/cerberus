@@ -18,7 +18,12 @@ from dataclasses import dataclass
 import pytest
 
 from crash_detector.dials.dialset import EQUITY_DIAL_ID, MONETARY_DIAL_ID, DialSet
-from crash_detector.dials.reading import Degraded, Unknown, Value
+from crash_detector.dials.reading import (
+    AbsenceYieldedAValue,
+    Degraded,
+    Unknown,
+    Value,
+)
 from crash_detector.dials.scores import (
     Contribution,
     EquityCrashScore,
@@ -30,6 +35,8 @@ from crash_detector.engine.evaluate import (
     REASON_NO_REQUIRED_INPUTS,
     REASON_REQUIRED_INPUTS_UNAVAILABLE,
     evaluate,
+    refuse_a_number_without_its_inputs,
+    required_inputs_are_all_present,
 )
 from crash_detector.engine.model import CONTRIBUTION_MODELS, ScoreComputation
 from crash_detector.observations import (
@@ -442,3 +449,121 @@ def test_evaluate_refuses_a_naive_now():
     config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
     with pytest.raises(NaiveTimestampRejected):
         evaluate([], config, datetime(2026, 8, 19, 12, 0, 0))
+
+
+# ======================================================================================= #
+# THE ABSENCE POST-CONDITION — CD-ASR-F03 (MEDIUM), escaped variant E04
+#
+# E04 replaced the missing-required branch with a Value whose magnitude came from a
+# module-level constant. The AST guard enumerated four spellings of a numeric default and
+# this was a fifth. These tests assert the post-condition that makes the SPELLING
+# irrelevant: a reading that carries a value is a CLAIM that inputs were present, and the
+# claim is checked against the inputs the dial was given.
+# ======================================================================================= #
+
+def _unknown_reading():
+    return Unknown(reason="R", since_utc=FIXED_NOW, missing_inputs=("src.a",))
+
+
+def _value_reading():
+    return Value(
+        value=EquityCrashScore(score=0.0, contributions=()),
+        as_of_utc=FIXED_NOW,
+        inputs_used=("src.a",),
+    )
+
+
+def _degraded_reading():
+    return Degraded(
+        value=EquityCrashScore(score=0.0, contributions=()),
+        as_of_utc=FIXED_NOW,
+        missing_inputs=("src.a",),
+        reason="R",
+    )
+
+
+def test_the_per_dial_evaluator_carries_the_post_condition():
+    """The guard is applied AT the function boundary, not written into its body, because
+    the escape that produced CD-ASR-F03 was an edit to the body."""
+    import importlib
+
+    evaluate_module = importlib.import_module("crash_detector.engine.evaluate")
+
+    assert hasattr(evaluate_module._evaluate_dial, "__wrapped__"), (
+        "the per-dial evaluator must be wrapped in refuse_a_number_without_its_inputs; "
+        "without it, any rewritten branch may return a number (CD-ASR-F03)"
+    )
+
+
+@pytest.mark.parametrize(
+    "reading", [_value_reading(), _degraded_reading()], ids=["value", "degraded"]
+)
+def test_a_value_bearing_reading_from_a_dial_with_no_required_inputs_is_refused(reading):
+    """The WO-2 shipped state. Zero requirements satisfied is not all satisfied."""
+    with pytest.raises(AbsenceYieldedAValue):
+        refuse_a_number_without_its_inputs(_spec(EQUITY_DIAL_ID), {}, reading)
+
+
+@pytest.mark.parametrize(
+    "reading", [_value_reading(), _degraded_reading()], ids=["value", "degraded"]
+)
+def test_a_value_bearing_reading_with_a_required_input_missing_is_refused(reading):
+    """E04's proposition, refused at runtime and without asking where the number came
+    from: a literal, a module constant, a config default and a carried previous value all
+    fail here identically, because what is refused is the claim and not the arithmetic."""
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    with pytest.raises(AbsenceYieldedAValue):
+        refuse_a_number_without_its_inputs(spec, {}, reading)
+
+
+def test_a_value_bearing_reading_with_no_contribution_model_is_refused():
+    """A dial with inputs and no declared mapping cannot produce an explicable number.
+
+    ``DialSpec`` refuses this combination at construction, so the spec is built and then
+    re-pointed: the post-condition must not depend on another constructor's vigilance.
+    """
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    object.__setattr__(spec, "contribution_model", None)
+    usable = {"src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10))}
+    with pytest.raises(AbsenceYieldedAValue):
+        refuse_a_number_without_its_inputs(spec, usable, _value_reading())
+
+
+def test_the_post_condition_permits_a_value_when_every_required_input_was_present():
+    """FALSE-POSITIVE CHECK. A guard that forbids the product is not a guard."""
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    usable = {"src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10))}
+    refuse_a_number_without_its_inputs(spec, usable, _value_reading())
+    refuse_a_number_without_its_inputs(spec, usable, _degraded_reading())
+
+
+@pytest.mark.parametrize(
+    ("required", "model", "usable_ids"),
+    [
+        ((), None, ()),
+        (("src.a",), FakeModel(), ()),
+        (("src.a",), FakeModel(), ("src.a",)),
+    ],
+    ids=["no_requirements", "requirement_missing", "requirement_present"],
+)
+def test_unknown_is_never_refused_because_the_guard_is_one_directional(
+    required, model, usable_ids
+):
+    """A body returning Unknown where a number was available is the SAFE direction, and a
+    guard that compelled a number would push against PID §3.2 rather than for it."""
+    spec = _spec(EQUITY_DIAL_ID, required=required, model=model)
+    usable = {
+        source_id: OK(payload={"v": 1}, source_as_of_utc=ago(10))
+        for source_id in usable_ids
+    }
+    refuse_a_number_without_its_inputs(spec, usable, _unknown_reading())
+
+
+def test_the_presence_predicate_answers_for_each_of_the_three_ways_inputs_can_be_absent():
+    present = {"src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10))}
+    assert required_inputs_are_all_present(_spec(EQUITY_DIAL_ID), present) is False
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    assert required_inputs_are_all_present(spec, {}) is False
+    assert required_inputs_are_all_present(spec, present) is True
+    object.__setattr__(spec, "contribution_model", None)
+    assert required_inputs_are_all_present(spec, present) is False

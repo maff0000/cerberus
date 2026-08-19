@@ -33,6 +33,33 @@ reader sees arithmetic rather than a decision:
      and the statement form ``if x is None: x = 0``. This is B and C written longhand, and
      a check that missed it would guard the idiom rather than the proposition.
 
+  F  A DIAL MAGNITUDE WITH AN UNRECOGNISED PROVENANCE. Classes A–E are a LIST OF
+     SPELLINGS, and CD-ASR-F03 is the finding that says so: an auditor put the numeric
+     default in a module-level constant (``QUIET_MAGNITUDE = 0.0``) and returned
+     ``Value(value=<ScoreType>(score=QUIET_MAGNITUDE, ...))`` from the missing-inputs
+     branch. There was no ``float | None``, no ``.get(k, 0)``, no ``or 0`` and no bare
+     ``except``, so none of the four routes the check enumerated was present and the check
+     exited 0.
+
+     RULE F IS THE INVERSION. It does not enumerate the ways a number can arrive. It
+     enumerates the ONE way a dial magnitude is PERMITTED to arrive — from the declared
+     contribution model applied to inputs that were present — and reports everything else,
+     including provenances nobody has thought of. For every construction of a Reading that
+     CARRIES A VALUE (``Value``, ``Degraded``), the magnitude it carries is traced back
+     through the assignments of its own scope, and the trace must terminate at a call to
+     the declared contribution-model interface (``ContributionModel.compute``). A trace
+     terminating anywhere else — a literal, a module-level constant, a parameter, a
+     configuration attribute, a lookup, a database read, an unrecognised helper call, an
+     unrecognised anything — is a VIOLATION for being unrecognised.
+
+     WHY THAT IS A CLASS AND NOT A LONGER LIST: the rule is DENY BY DEFAULT. Adding a
+     legitimate new source of a magnitude means declaring it in
+     ``DECLARED_MAGNITUDE_SOURCES`` below, deliberately and visibly. Silence is a
+     violation, so a route the author of this check never imagined is caught by the check
+     not recognising it. Doctrine: PID §3.6 forbids unexplained mappings and BLUEPRINT §7
+     requires a reading to be explicable from its stored inputs, so a magnitude whose
+     provenance the guard cannot name is already outside what the product permits.
+
 BUILT FOR THE CLASS, NOT THE INSTANCE. The number may arrive as a literal, as a negated
 literal, or through a module-level constant bound to a literal (``_ZERO = 0.0``); all three
 are resolved. Annotations are read whether written as syntax or as a string.
@@ -54,6 +81,9 @@ deleting a module would shrink the guard silently.
   ``.get(k, 0)`` **in the dial path**". Here ALL FIVE classes are violations.
 
   ADJACENT PATH — ``src/crash_detector/serving/`` and ``src/crash_detector/observations.py``.
+  (Rule F applies on BOTH tiers: a reading that carries a value with an unrecognised
+  magnitude provenance is the same defect wherever it is constructed.)
+
   The serving layer carries CD-AC-001's rendering half ("absent or stale envelope renders
   UNKNOWN at the serving layer"), and ``observations`` carries the outcome sum type that
   keeps the three absences separate. Here classes B, C, D and E are violations — a number
@@ -63,6 +93,66 @@ deleting a module would shrink the guard silently.
   to the dial path and this check does not get to widen a ratified scope on its own
   initiative. Two such annotations exist today and both are deliberate; see CD-ENG-F26 in
   the Build Log for the reasoning, which is disclosed rather than silently tolerated.
+
+DECLARED LIMIT — WHAT THIS CHECK DOES NOT CATCH, AND WHICH LAYER DOES
+---------------------------------------------------------------------
+Required by CD-RULE-004, drawn in the pattern of CD-RT-012-NO-EXECUTION-INTERFACE. This is
+the guard stating its own scope. It is written as fact, not as apology, and every boundary
+below carries an example an auditor can execute. **Do not read a clean run of this check as
+proof that no route from absence to a number exists.** The register entry for
+CD-RT-001-AST-NO-NUMERIC-DEFAULT and this check's execution contract carry the same list.
+
+THIS CHECK IS A STATIC READ OF SOURCE TEXT AT ONE COMMIT. The proposition CD-AC-001 states
+is a RUNTIME property, and the runtime layer is where it is carried: the sealed, slotted,
+subclass-closed ``Reading`` types in ``src/crash_detector/dials/reading.py`` and the
+absence post-condition in ``src/crash_detector/engine/evaluate.py``
+(``refuse_a_number_without_its_inputs``), both evidenced by
+CD-RT-001-ABSENCE-RENDERS-UNKNOWN. Where a boundary below says "the runtime layer carries
+this", that is what it means, and that layer's own residue is declared in its own header.
+
+  1  A CONSTRUCTION THIS CHECK CANNOT SEE AS A CONSTRUCTION. Rule F recognises a
+     value-bearing reading by the terminal name of its callee — ``Value`` or ``Degraded``,
+     resolved through the module's import aliases. A constructor reached dynamically is
+     invisible to it. MEASURED EXAMPLE, which exits 0 here:
+         maker = getattr(sys.modules["crash_detector.dials.reading"], "Value")
+         return maker(value=score, as_of_utc=now_utc, inputs_used=("x",))
+     THE RUNTIME LAYER CARRIES THIS: the absence post-condition inspects the returned
+     object's TYPE and never reads the expression that produced it, so the same plant
+     raises ``AbsenceYieldedAValue`` when the branch executes.
+
+  2  INTRA-PROCEDURAL TRACING. Rule F traces a magnitude through the assignments of the
+     scope it is constructed in and through the enclosing scopes' bindings. It does not
+     follow a value into or out of a helper function. This does NOT create a silent
+     escape — a trace that reaches an unrecognised call is a VIOLATION, because the rule
+     denies by default — but it does mean a LEGITIMATE future refactor that computes a
+     magnitude inside a helper will be reported until that helper is declared in
+     ``DECLARED_MAGNITUDE_SOURCES``. MEASURED EXAMPLE: ``score = _blend(payloads)`` is
+     reported as ``F: unrecognised magnitude provenance``, and that is the intended
+     posture, not a false positive to be tuned away.
+
+  3  THE DECLARED SCANNED SET. Only the files under the two declared tiers are read. A
+     value-bearing reading constructed in ``src/crash_detector/publication/``,
+     ``deploy/entrypoints/`` or a test fixture is outside this check. MEASURED EXAMPLE:
+     the same plant placed in ``src/crash_detector/publication/summary.py`` exits 0 here.
+     The declared set REFUSES rather than shrinking if a declared path is missing, so the
+     set cannot be narrowed by deleting a module, but it does not grow on its own.
+
+  4  CLASS A IS SCOPED TO THE DIAL PATH. A nullable-number annotation on the adjacent path
+     is printed as a NOTE and does not fail, because BLUEPRINT §7 and §13 scope that ban to
+     the dial path and this check does not widen a ratified scope on its own initiative. Two
+     such annotations exist today and both are printed on every run (CD-ENG-F26).
+
+  5  A MAGNITUDE THAT IS LEGITIMATELY COMPUTED BUT WRONG. Rule F asks where a number CAME
+     FROM, never whether it is correct. A contribution model that returns 0.0 for a dial
+     whose inputs were all present passes every rule here, and should: that is a defect in
+     the model, and ``scores.py`` deliberately imposes no range because the scale of a dial
+     is what the dial MEANS (CD-D-005, owed by the Product Owner).
+
+  6  RUNTIME, CONFIGURATION AND DATA. Nothing here observes an evaluation. A numeric
+     default arriving from a configuration file, an environment variable or a database row
+     is not visible in the source text at all. THE RUNTIME LAYER CARRIES THIS: the absence
+     post-condition never asks where the number came from, so a configured zero on a
+     dial that did not get its inputs raises exactly as a literal zero does.
 
 EXIT: 0 clean · 1 violation, each with file and line · 2 usage · 3 precondition not met.
 Never a skip, for any reason (PBG-CI-002).
@@ -112,6 +202,38 @@ NUMERIC_TYPE_NAMES = frozenset(
         "SupportsIndex",
     }
 )
+
+# --- RULE F: the declared PERMITTED shape, as data ---------------------------------------- #
+#
+# Everything in this block is an ALLOWLIST. A construction the check cannot match against it
+# is a violation, which is the whole difference between rule F and rules A-E.
+
+#: The Reading constructors that CARRY A VALUE. Constructing one is a claim that inputs were
+#: present, so the magnitude it carries must have a provenance the guard recognises.
+VALUE_BEARING_READINGS = ("Value", "Degraded")
+
+#: The keyword (or first positional argument) through which a reading receives its value.
+READING_VALUE_ARGUMENT = "value"
+
+#: The dial score constructors, and the declared tables that resolve to one. A magnitude is
+#: traced THROUGH these into their own `score` argument; they are not a terminus.
+SCORE_CONSTRUCTORS = ("EquityCrashScore", "MonetaryDebasementScore")
+SCORE_TYPE_TABLES = ("DIAL_SCORE_TYPES",)
+SCORE_MAGNITUDE_ARGUMENT = "score"
+
+#: THE ONLY PERMITTED TERMINUS of a magnitude trace: a call to the declared
+#: contribution-model interface. ``ContributionModel.compute(payloads) -> ScoreComputation``
+#: is the declared mapping from present inputs to a magnitude (BLUEPRINT §7, doctrine §3.6).
+#: A magnitude that does not come from here has no declared explanation, and adding another
+#: legitimate source means adding it HERE, deliberately.
+DECLARED_MAGNITUDE_SOURCES = ("compute",)
+
+#: Attributes a magnitude may be read off on its way from a declared source. Only the field
+#: of ``ScoreComputation`` that IS the magnitude.
+PERMITTED_MAGNITUDE_ATTRIBUTES = ("magnitude",)
+
+#: How deep the trace follows assignments before refusing to keep guessing.
+MAGNITUDE_TRACE_DEPTH = 16
 
 #: Lookup calls whose SECOND positional argument is the value that absence becomes.
 FALLBACK_CALLS = {
@@ -436,6 +558,199 @@ class NumericDefaultScanner(ast.NodeVisitor):
         return False
 
 
+# ============================================================================================ #
+# RULE F — A DIAL MAGNITUDE MUST COME FROM THE DECLARED MAPPING
+#
+# Added closing CD-ASR-F03. Rules A-E above ask "is this one of the ways a number is known to
+# arrive?"; rule F asks "is this the one way a magnitude is PERMITTED to arrive?" and reports
+# every other answer, including the ones nobody has thought of.
+# ============================================================================================ #
+
+_SCOPE_NODES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)
+
+
+def _import_aliases(tree: ast.AST) -> dict:
+    """``{local name: original name}`` for every import in the module.
+
+    So ``from crash_detector.dials.reading import Value as V`` does not hide a construction
+    behind a one-letter alias. A constructor reached WITHOUT an import statement — through
+    ``getattr`` or ``sys.modules`` — is boundary 1 of the declared limit.
+    """
+    aliases: dict = {}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                local = alias.asname or alias.name.split(".")[0]
+                aliases[local] = alias.name.split(".")[-1]
+    return aliases
+
+
+def _terminal_name(node: ast.AST, aliases: dict) -> str:
+    """The name a callee finally refers to, resolved through the module's import aliases."""
+    if isinstance(node, ast.Name):
+        return aliases.get(node.id, node.id)
+    if isinstance(node, ast.Attribute):
+        return node.attr
+    if isinstance(node, ast.Subscript):
+        return _terminal_name(node.value, aliases)
+    return ""
+
+
+def _scope_bindings(scope: ast.AST) -> tuple:
+    """``({name: [bound expressions]}, [calls], [nested scopes])`` for ONE scope.
+
+    Nested function, lambda and class bodies are collected as separate scopes rather than
+    folded into this one, so a name assigned inside a nested function cannot be read as the
+    provenance of a magnitude constructed outside it.
+    """
+    bindings: dict = {}
+    calls: list = []
+    nested: list = []
+
+    def descend(node: ast.AST) -> None:
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, _SCOPE_NODES):
+                nested.append(child)
+                continue
+            if isinstance(child, ast.Assign):
+                for target in child.targets:
+                    if isinstance(target, ast.Name):
+                        bindings.setdefault(target.id, []).append(child.value)
+            elif isinstance(child, ast.AnnAssign) and child.value is not None:
+                if isinstance(child.target, ast.Name):
+                    bindings.setdefault(child.target.id, []).append(child.value)
+            if isinstance(child, ast.Call):
+                calls.append(child)
+            descend(child)
+
+    descend(scope)
+    return bindings, calls, nested
+
+
+def _argument(call: ast.Call, keyword_name: str) -> "ast.AST | None":
+    """The named keyword argument, or the first positional one if it is passed that way."""
+    for keyword in call.keywords:
+        if keyword.arg == keyword_name:
+            return keyword.value
+    if call.args:
+        return call.args[0]
+    return None
+
+
+def _magnitude_provenance(
+    node: "ast.AST | None", scopes: list, aliases: dict, depth: int = 0
+) -> "str | None":
+    """``None`` if the provenance is DECLARED, otherwise why it is not recognised.
+
+    ``scopes`` is the chain of binding maps from the innermost scope outwards, so a
+    module-level constant is resolved and named as one.
+    """
+    if node is None:
+        return (
+            "the reading is constructed with no value argument the check can locate, so "
+            "its magnitude cannot be traced at all"
+        )
+    if depth > MAGNITUDE_TRACE_DEPTH:
+        return (
+            f"the magnitude trace exceeded {MAGNITUDE_TRACE_DEPTH} steps without reaching "
+            "a declared source. The guard refuses to keep guessing rather than assume"
+        )
+
+    if isinstance(node, ast.Call):
+        name = _terminal_name(node.func, aliases)
+        if name in DECLARED_MAGNITUDE_SOURCES:
+            return None
+        if name in SCORE_CONSTRUCTORS or name in SCORE_TYPE_TABLES:
+            return _magnitude_provenance(
+                _argument(node, SCORE_MAGNITUDE_ARGUMENT), scopes, aliases, depth + 1
+            )
+        return (
+            f"the magnitude comes from `{ast.unparse(node)[:100]}`, and `{name or '?'}` is "
+            f"not a declared source of a dial magnitude. The declared sources are "
+            f"{list(DECLARED_MAGNITUDE_SOURCES)}"
+        )
+
+    if isinstance(node, ast.Attribute):
+        if node.attr in PERMITTED_MAGNITUDE_ATTRIBUTES:
+            return _magnitude_provenance(node.value, scopes, aliases, depth + 1)
+        return (
+            f"the magnitude is read off `{ast.unparse(node)[:100]}`, which is not a field "
+            "of a declared computation. A magnitude carried on a spec, a snapshot, a "
+            "configuration object or a previous reading has no declared explanation "
+            "(doctrine §3.6)"
+        )
+
+    if isinstance(node, ast.Name):
+        for index, bindings in enumerate(scopes):
+            bound = bindings.get(node.id)
+            if not bound:
+                continue
+            where = "in this scope" if index == 0 else "in an enclosing scope"
+            reasons = [
+                _magnitude_provenance(expression, scopes[index:], aliases, depth + 1)
+                for expression in bound
+            ]
+            failed = [reason for reason in reasons if reason is not None]
+            if failed:
+                return (
+                    f"`{node.id}` is bound {where} to something that is not a declared "
+                    f"magnitude source: {failed[0]}"
+                )
+            return None
+        return (
+            f"`{node.id}` is not bound anywhere the check can see — a parameter, a global "
+            "from another module, or a name assigned dynamically. Its provenance is "
+            "therefore unrecognised, and unrecognised is a violation here, not a silence"
+        )
+
+    if _is_numeric_constant(node):
+        return (
+            f"the magnitude IS the literal `{ast.unparse(node)}`. A dial magnitude is what "
+            "the declared contribution model computed from present inputs; a literal is a "
+            "number nobody computed"
+        )
+
+    return (
+        f"the magnitude comes from `{ast.unparse(node)[:100]}`, whose shape the check does "
+        "not recognise as a declared magnitude source. Rule F denies by default: a "
+        "provenance the guard cannot name is a violation and never a silence"
+    )
+
+
+def scan_magnitude_provenance(
+    check: Check, path: pathlib.Path, tree: ast.AST
+) -> None:
+    """RULE F over one module, scope by scope."""
+    aliases = _import_aliases(tree)
+    module_bindings, module_calls, module_nested = _scope_bindings(tree)
+    pending = [([module_bindings], module_calls, module_nested)]
+
+    while pending:
+        chain, calls, nested = pending.pop()
+        for call in calls:
+            if _terminal_name(call.func, aliases) not in VALUE_BEARING_READINGS:
+                continue
+            check.asserted()
+            reason = _magnitude_provenance(
+                _argument(call, READING_VALUE_ARGUMENT), chain, aliases
+            )
+            if reason is None:
+                continue
+            check.violation(
+                path,
+                getattr(call, "lineno", 0),
+                "F: unrecognised magnitude provenance",
+                f"`{ast.unparse(call)[:120]}` constructs a reading that CARRIES A VALUE, "
+                f"which is a claim that this dial's inputs were present, but {reason}. "
+                "Rule F enumerates the one permitted provenance and reports every other, "
+                "so a route nobody anticipated fails for not being declared rather than "
+                "passing for not being listed (CD-ASR-F03).",
+            )
+        for scope in nested:
+            inner_bindings, inner_calls, inner_nested = _scope_bindings(scope)
+            pending.append(([inner_bindings] + chain, inner_calls, inner_nested))
+
+
 def main() -> int:
     args = parse_root(CHECK_ID, __doc__)
     root, code = resolve_root(CHECK_ID, args.root)
@@ -486,6 +801,9 @@ def main() -> int:
                 )
                 continue
             NumericDefaultScanner(check, path, tree, tier=tier).visit(tree)
+            # RULE F runs on BOTH tiers: a value-bearing reading whose magnitude has no
+            # declared provenance is the same defect wherever it is constructed.
+            scan_magnitude_provenance(check, path, tree)
 
     return check.done(
         f"{len(dial_files)} Python files on the declared dial path "
