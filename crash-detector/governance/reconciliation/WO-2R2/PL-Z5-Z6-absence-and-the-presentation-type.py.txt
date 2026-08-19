@@ -1,0 +1,45 @@
+"""PL-Z5/Z6 — the PROJECT LEAD's own probes of the CD-AC-001 absence closure."""
+import sys
+from datetime import datetime, timezone
+
+sys.path.insert(0, "/tmp/pl-r2-new/src")
+
+from crash_detector.dials.reading import Unknown, fold  # noqa: E402
+from crash_detector.serving.dial_presentation import present_dial, Shown, NotShown  # noqa: E402
+
+unknown = Unknown(reason="REQUIRED_INPUT_MISSING", missing_inputs=("vix", "move"), since_utc=datetime(2026, 8, 19, 12, 0, tzinfo=timezone.utc))
+print("reading:", unknown)
+
+
+# --- PL-Z5  ASR2-001-A verbatim: fold with a numeric on_unknown branch -------------------
+def surface_scalar(reading):
+    return fold(
+        reading,
+        on_value=lambda seen: seen.value,
+        on_degraded=lambda seen: seen.value,
+        on_unknown=lambda seen: 0.0,
+    )
+
+
+print("PL-Z5  fold(on_unknown=0.0) still returns:", surface_scalar(unknown))
+
+# --- PL-Z6  can that number be PRESENTED as a dial reading? -----------------------------
+print()
+print("PL-Z6a present_dial on the Unknown reading:")
+print("   ", present_dial("equity_crash", unknown))
+
+print()
+print("PL-Z6b construct Shown directly with the laundered 0.0:")
+try:
+    print("    *** NOT REFUSED *** ->", Shown(dial_id="equity_crash", magnitude=surface_scalar(unknown)))
+except BaseException as exc:  # noqa: BLE001
+    print(f"    REFUSED -> {type(exc).__name__}")
+    print("    message[0]:", str(exc).strip().splitlines()[0][:200])
+
+print()
+print("PL-Z6c can NotShown be made to hold the number?")
+try:
+    print("    *** NOT REFUSED *** ->", NotShown(dial_id="equity_crash", magnitude=0.0))
+except BaseException as exc:  # noqa: BLE001
+    print(f"    REFUSED -> {type(exc).__name__}")
+    print("    message[0]:", str(exc).strip().splitlines()[0][:200])

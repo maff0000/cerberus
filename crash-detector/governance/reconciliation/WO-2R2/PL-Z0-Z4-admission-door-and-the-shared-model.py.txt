@@ -1,0 +1,181 @@
+"""PROJECT LEAD reconciliation probes PL-Z1..PL-Z4, WO-2R2 increment 1.
+
+Written by PROJECT_LEAD_SEAT_01. Not the seat's drivers. Run on a pristine `git archive`
+extraction, outside every governed worktree. Nothing here is installed into any tree.
+"""
+import sys
+import traceback
+from datetime import datetime, timedelta, timezone
+
+sys.path.insert(0, "/tmp/pl-r2-new/src")
+
+from crash_detector.dials import (  # noqa: E402
+    combine_within_one_dial, sole_dial_of, observed_for_dial, DialMagnitude,
+    SameDialReduction, EquityCrashScore,
+)
+from crash_detector.engine.config import ConfigSnapshot, DialSpec  # noqa: E402
+from crash_detector.engine.evaluate import evaluate  # noqa: E402
+from crash_detector.engine.model import ScoreComputation  # noqa: E402
+from crash_detector.dials.scores import Contribution  # noqa: E402
+from crash_detector.observations import ObservationRecord, OK  # noqa: E402
+from crash_detector.source_registry import SourceRegistry, SourceRecord, Criticality  # noqa: E402
+
+NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
+
+
+def show(label, fn):
+    print("=" * 78)
+    print(label)
+    try:
+        result = fn()
+    except BaseException as exc:  # noqa: BLE001 — we are recording refusals
+        print(f"  REFUSED -> {type(exc).__module__}.{type(exc).__name__}")
+        first = str(exc).strip().splitlines()[0] if str(exc).strip() else ""
+        print(f"  message[0]: {first[:160]}")
+        return None
+    print(f"  *** NOT REFUSED *** -> {result!r}")
+    return result
+
+
+# ---------------------------------------------------------------------------------------
+# Two same-dial magnitudes and one cross-dial pair, built the legitimate way.
+# ---------------------------------------------------------------------------------------
+def magnitude(dial_id, quantity, sources):
+    return DialMagnitude(
+        dial_id=dial_id,
+        quantity=observed_for_dial(
+            dial_id=dial_id, quantity=quantity, inputs_used=tuple(sources)
+        ),
+    )
+
+
+EQ_A = magnitude("equity_crash", 0.9, ("vix",))
+EQ_B = magnitude("equity_crash", 0.7, ("move",))
+MO_A = magnitude("monetary_debasement", 0.1, ("dxy",))
+
+
+# --- PL-Z0  the false-positive arm: legitimate same-dial work must still work ------------
+show(
+    "PL-Z0  same-dial MEAN of two equity magnitudes (MUST still work)",
+    lambda: combine_within_one_dial([EQ_A, EQ_B], using=SameDialReduction.MEAN),
+)
+
+# --- PL-Z1  the auditor's ASR2-002-A route, verbatim in shape ---------------------------
+def asr2_002_a():
+    held = (EQ_A, MO_A)
+    numbers = [m.quantity_for(sole_dial_of(m)) for m in held]
+    carried = sum(numbers) / len(numbers)
+    return combine_within_one_dial([held[0]], using=lambda _released: carried)
+
+
+show("PL-Z1  ASR2-002-A verbatim (callable `using` carrying a cross-dial mean)", asr2_002_a)
+
+# --- PL-Z2  the rename test, taken by the Project Lead itself ---------------------------
+def renamed_and_aliased():
+    door = combine_within_one_dial          # aliased, name never written at the call site
+    which = sole_dial_of
+    items = (EQ_A, MO_A)
+    figures = [item.quantity_for(which(item)) for item in items]
+    blended = sum(figures) / len(figures)
+    return door([items[0]], using=lambda _whatever: blended)
+
+
+show("PL-Z2  the same route with every identifier renamed and the door aliased", renamed_and_aliased)
+
+# --- PL-Z3  my own route: the ADMISSION door, cited honestly -----------------------------
+def admission_with_true_citation():
+    """Release both numbers, mean them, admit the mean as equity citing REAL sources.
+
+    This is not the derivation door. It is the base case, and the citation is true:
+    `vix` and `dxy` really were the sources of the two numbers.
+    """
+    blended = (EQ_A.quantity_for("equity_crash") + MO_A.quantity_for("monetary_debasement")) / 2
+    return EquityCrashScore(
+        score=DialMagnitude(
+            dial_id="equity_crash",
+            quantity=observed_for_dial(
+                dial_id="equity_crash", quantity=blended, inputs_used=("vix", "dxy")
+            ),
+        ),
+        contributions=(),
+    )
+
+
+show("PL-Z3  PL's own route: launder to floats, ADMIT the mean citing true source ids", admission_with_true_citation)
+
+# --- PL-Z4  the seat's declared OPEN route, written independently by the PL --------------
+class PLCarryingModel:
+    """Stateful across dials. The PL's own, not the seat's CarryingModel."""
+
+    def __init__(self):
+        self.seen = []
+
+    @property
+    def model_id(self):
+        return "pl.z4.carrying.v0"
+
+    def compute(self, payloads):
+        figure = float(list(payloads.values())[0]["figure"])
+        self.seen.append(figure)
+        carried = sum(self.seen) / len(self.seen)
+        return ScoreComputation(
+            magnitude=carried,
+            contributions=tuple(
+                Contribution(source_id=s, category="carried", weight=1.0, contribution=0.1)
+                for s in sorted(payloads)
+            ),
+        )
+
+
+def one_model_both_dials():
+    model = PLCarryingModel()
+    equity = DialSpec(
+        dial_id="equity_crash",
+        required_input_ids=("vix",),
+        contributing_input_ids=(),
+        contribution_model=model,
+    )
+    monetary = DialSpec(
+        dial_id="monetary_debasement",
+        required_input_ids=("dxy",),
+        contributing_input_ids=(),
+        contribution_model=model,
+    )
+    registry = SourceRegistry(
+        sources=(
+            SourceRecord(source_id="vix", adapter_id="fake.adapter.v0", cadence_seconds=60,
+                         criticality=Criticality.REQUIRED,
+                         stands_for="PL PROBE double; no ingredient is registered in WO-2"),
+            SourceRecord(source_id="dxy", adapter_id="fake.adapter.v0", cadence_seconds=60,
+                         criticality=Criticality.REQUIRED,
+                         stands_for="PL PROBE double; no ingredient is registered in WO-2"),
+        )
+    )
+    snapshot = ConfigSnapshot(
+        config_snapshot_id="cfg-pl-z4",
+        dial_specs=(equity, monetary),
+        staleness_window_seconds=600.0,
+        source_registry=registry,
+    )
+    observations = (
+        ObservationRecord(source_id="vix", observed_utc=NOW,
+                          outcome=OK(payload={"figure": 0.9},
+                                     source_as_of_utc=NOW - timedelta(seconds=10))),
+        ObservationRecord(source_id="dxy", observed_utc=NOW,
+                          outcome=OK(payload={"figure": 0.1},
+                                     source_as_of_utc=NOW - timedelta(seconds=10))),
+    )
+    dials = evaluate(observations, snapshot, NOW)
+    print(f"  equity   : {dials.equity!r}")
+    print(f"  monetary : {dials.monetary!r}")
+    return dials
+
+
+print()
+print("#" * 78)
+print("PL-Z4  ONE STATEFUL ContributionModel INJECTED INTO BOTH DialSpecs")
+print("#" * 78)
+try:
+    one_model_both_dials()
+except BaseException:
+    traceback.print_exc()

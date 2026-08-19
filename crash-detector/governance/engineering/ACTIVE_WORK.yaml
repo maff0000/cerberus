@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T21:32:56Z'
+updated_utc: '2026-08-19T22:29:17Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -714,10 +714,38 @@ current_block: >
   would have taken F01 and F02 only and left F05 to WO-3. The auditor answers what is safe to do
   next; the Product Owner answers what closes WO-2. The Project Lead did not make that call and was
   not entitled to. NO CODE CHANGED AT THIS BOUNDARY. NOTHING ACCEPTED. NOTHING ADMITTED.
+  **CURRENT — WO-2R2 INCREMENT 1 IS RECONCILED AND CD-AC-002 IS STILL OPEN
+  (BL-20260819T222917Z-0043).** CD-ENG-WO2R2-01 delivered CLASS 1 in five commits at lane 7ac1574,
+  identity correct on every one, entirely inside writable scope, nothing executable under variants/,
+  the mandatory commit block on all five. THE PROJECT LEAD MEASURED IT ITSELF on its own pristine
+  extractions with its own drivers: the derivation door now takes NO number and NO dial set —
+  ASR2-002-A is REFUSED by `UndeclaredReduction`, an exact-type identity check on an OBJECT, AND THE
+  REFUSAL SURVIVES A RENAME (PL-Z2, the first rename test this project's Project Lead has taken
+  itself, which is what CD-PL-F74 was raised to require); same-dial MEAN still works (PL-Z0, 0.8);
+  absence is refused at the PRESENTATION type (PL-Z6, `DialPresentationRefused`) while
+  `fold(on_unknown=0.0)` still computes 0.0 and is DECLARED and pinned by a test; node ids 1325 ->
+  1357 with ZERO LOST, computed independently by diffing collected id lists. BOTH FALSE CLAIMS ARE
+  GONE — "the sum cannot come back" and RULE 4's "cannot avoid coming here" — and RULE 4's
+  replacement limits itself in the same sentence: "IT IS A LOCATOR OVER A NAME VOCABULARY AND IT
+  DOES NOT SURVIVE A RENAME." **BUT CD-AC-002 IS NOT CLOSED, AND THE SEAT SAID SO FIRST.**
+  CD-ENG-WO2R2-F03 (HIGH), raised BY THE SEAT AGAINST ITS OWN CLOSURE with NO GUARD BUILT
+  DELIBERATELY, and REPLICATED INDEPENDENTLY BY THE PROJECT LEAD AS PL-Z4 with its own model and its
+  own fixtures: ONE STATEFUL ContributionModel INJECTED INTO BOTH DialSpecs makes the monetary dial
+  publish 0.5 — the mean — from equity 0.9 and monetary 0.1, through `engine/evaluate.py`, THE ONE
+  DECLARED PRODUCT ADMISSION SITE, with EVERY FIELD OF THE ADMISSION CLAIM TRUE EXCEPT THE NUMBER.
+  It launders nothing, names no undeclared door, assembles no name and touches no private slot. The
+  number entering a base-case admission cannot be validated by anything that does not know what the
+  number should be. NO GUARD IS ORDERED: an identity check on the model is defeated by two instances
+  sharing a class attribute, a purity probe by memoisation, and a guard that looks like a closure is
+  the defect that has cost this project two gates. ONE QUESTION IS OWED UPWARD AND IT IS NOT THE
+  PROJECT LEAD'S: what closes CD-AC-002, and when. NO CODE WRITTEN BY THIS SEAT. NOTHING ACCEPTED.
+  NOTHING ADMITTED. INCREMENTS 2 AND 3 ARE HELD, NOT WITHDRAWN.
 owner_role: PROJECT_LEAD
-next_actor: ENGINEER   # CD-ENG-WO2R2-01, under CD-DISPATCH-WO2R2-ENGINEER, authorised by CD-D-073.
-                       # WAS PRODUCT_AUTHORITY from BL-...-0040 through BL-...-0041; the Product
-                       # Authority acted at 9c43daf and the baton returns to implementation.
+next_actor: PRODUCT_AUTHORITY   # ONE question is owed: what closes CD-AC-002, and when. The seat
+                       # CD-ENG-WO2R2-01 delivered increment 1 and raised CD-ENG-WO2R2-F03 (HIGH)
+                       # against its own closure; the Project Lead REPLICATED it (PL-Z4). Increments
+                       # 2 and 3 are authorised by CD-D-073 and are HELD, not withdrawn.
+                       # WAS ENGINEER for the length of the increment-1 dispatch (BL-...-0042).
 
 repository: local
 branch: main
@@ -726,7 +754,8 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 9c43dafbfb9d631f5009fac4d04eb6de240bf912  # THE PRODUCT AUTHORITY'S OWN COMMIT — governance/decisions/PO-DECISIONS-0002.md, authored by Matt Scott, not by any seat. It is the last commit on main before the WO-2R2 DISPATCH boundary and therefore the honest value of this field, and it is recorded with its provenance because a reader scanning for seat checkpoints would otherwise mis-read it. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). The last SEAT checkpoint before it was ffee3afe29658f61bd0a64f6534dd1d825c4f6bc, the CD-RULE-007 follow-up closing the replication boundary.
+last_completed_checkpoint_sha: 8a5821ac47d6c037b22e74d0b0b0427f98bc4f82  # the CD-RULE-007 follow-up that closed the WO-2R2 DISPATCH boundary and resolved continuity_record_commit to 2f8ac52 — the last main checkpoint before the increment-1 RECONCILIATION boundary. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36).
+  # SUPERSEDES 9c43dafbfb9d631f5009fac4d04eb6de240bf912 — THE PRODUCT AUTHORITY'S OWN COMMIT — governance/decisions/PO-DECISIONS-0002.md, authored by Matt Scott, not by any seat. It is the last commit on main before the WO-2R2 DISPATCH boundary and therefore the honest value of this field, and it is recorded with its provenance because a reader scanning for seat checkpoints would otherwise mis-read it. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). The last SEAT checkpoint before it was ffee3afe29658f61bd0a64f6534dd1d825c4f6bc, the CD-RULE-007 follow-up closing the replication boundary.
   # SUPERSEDES 8a1474958f36f2a28a152f0fb76666b1d4d0a563 — the CD-RULE-007 follow-up that resolved continuity_record_commit to 3de3519 — the last main checkpoint before the REPLICATION boundary. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). THIS FOLLOW-UP DELIBERATELY WRITES TWO FIELDS AND NOT ONE, and says so rather than letting a reader discover it from the diff: CD-RULE-007's "THIS FIELD AND NOTHING ELSE" is a minimality discipline for the continuity pointer, and honouring it to the letter here would have meant knowingly leaving this field stale at 00e87ff — the CD-PL-F64 family, and the very thing CD-PL-F74 was raised about one commit earlier. A rule kept in form while its purpose is broken is the INSTANCE GAME applied to governance.
   # SUPERSEDES 00e87ff9f9041b21288d52bebe45692e2d89e9d0 — the CD-RULE-007 follow-up that resolved continuity_record_commit to 199a214, the last main checkpoint before the GATE. Its predecessor 2f27bb8 was the checkpoint before the SOD crossing.
   # SUPERSEDES 750b35346ffc13703263c231252dac2dd220a6ef — the PL-Y1..Y5 evidence commit
@@ -780,11 +809,13 @@ lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: 50fc23177f790164c3fc3604ccee51663e755c70   # WO-2R INCREMENT 6, the declaration sweep, RECONCILED AND ACCEPTED (CD-D-065b). CD-PL-F65 CLOSED, CD-ENG-READER-F06 CLOSED, CD-ENG-READER-F05/F08 DECLARED as boundary 9. THE WO-2R ENGINEER DISPATCH IS COMPLETE.
+lane_increment_sha: 7ac157478d9698bd1da28438eb167acdc83e031d   # WO-2R2 INCREMENT 1 (CLASS 1, ADMISSION IS VALIDATION), five commits by CD-ENG-WO2R2-01, RECONCILED AT BL-20260819T222917Z-0043 AND NOT ACCEPTED AS CLOSING CD-AC-002. The derivation door IS closed at the type and the closure SURVIVES A RENAME (PL-Z1, PL-Z2, measured by the Project Lead). The absence half is closed at the PRESENTATION type (PL-Z6). BOTH FALSE CLAIMS ARE WITHDRAWN AND REPLACED. CD-AC-002 REMAINS OPEN on CD-ENG-WO2R2-F03 (HIGH), raised by the seat AGAINST ITS OWN CLOSURE and REPLICATED INDEPENDENTLY as PL-Z4: one stateful ContributionModel injected into BOTH DialSpecs publishes equity 0.9 / monetary 0.1 as a monetary 0.5 through the ONE declared admission site, with every field of the claim true except the number. RESOLVED with `git rev-parse`, not transcribed (CD-PL-F36).
+  # SUPERSEDES 50fc23177f790164c3fc3604ccee51663e755c70 — WO-2R INCREMENT 6, the declaration sweep, RECONCILED AND ACCEPTED (CD-D-065b). CD-PL-F65 CLOSED, CD-ENG-READER-F06 CLOSED, CD-ENG-READER-F05/F08 DECLARED as boundary 9. THE WO-2R ENGINEER DISPATCH IS COMPLETE.
   # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: 2f8ac522ec82794bab14bf299bdb3204549523ff  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (9c43daf) — that equality is the CD-PL-F64 defect. A pristine clone at 2f8ac52 CHECKED OUT ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, blocking_failures [] — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
+continuity_record_commit: PENDING  # Set to PENDING deliberately at write time: the commit carrying this record does not exist while the record is being written (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, recording the pristine-clone boot verdict AND THE BRANCH in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72).
+  # PREVIOUSLY 2f8ac522ec82794bab14bf299bdb3204549523ff — RESOLVED by that follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (9c43daf) — that equality is the CD-PL-F64 defect. A pristine clone at 2f8ac52 CHECKED OUT ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, blocking_failures [] — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
   # Superseded note, retained: SET TO PENDING DELIBERATELY AT WRITE TIME, which is the only truthful value: the commit carrying this record does not exist while the record is being written (CD-PL-F64). It is resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, which records the pristine-clone boot verdict AND THE BRANCH it was taken on in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72). THIS SEAT SETS IT TO PENDING RATHER THAN LEAVING THE PREVIOUS BOUNDARY'S VALUE STANDING — that is exactly the slip the ninth seat disclosed against itself one boundary ago, and a field nobody re-read is the CD-PL-F74 class.
   # PREVIOUSLY 4371612736919ca7875318b994eefa8e0d94ce22 — RESOLVED by that follow-up under CD-RULE-007. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (8a14749) — that equality is the CD-PL-F64 defect. A pristine clone at 4371612 CHECKED OUT ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, blocking_failures [] — the CD-RULE-008 verdict of record, branch named per CD-PL-F72. DISCLOSED, THIS SEAT'S OWN SLIP: the main commit 4371612 did NOT set this field to PENDING and so carried the PREVIOUS boundary's resolved value (3de3519) for the length of one commit. Stale, not fabricated, and `pbg boot` read GREEN throughout because it validates the field resolves to a real commit rather than that it names THIS one. Recorded rather than quietly corrected, on the CD-PL-F72 precedent and because this seat has just raised CD-PL-F74 about exactly this class — a field nobody re-read.
   # PREVIOUSLY 3de351965046735dd1c7fb99b50ffc1e9460331b — RESOLVED by that follow-up under CD-RULE-007, which wrote THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (00e87ff) — that equality is the CD-PL-F64 defect. A pristine clone at 3de3519 CHECKED OUT ON BRANCH main boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, zero blocking failures — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
@@ -798,7 +829,25 @@ continuity_record_commit: 2f8ac522ec82794bab14bf299bdb3204549523ff  # RESOLVED b
   # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
   # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  OBSERVED AT THIS BOUNDARY (2026-08-19T21:32Z, TENTH Project Lead seat, issuing WO-2R2). CD-D-007's
+  OBSERVED AT THIS BOUNDARY (2026-08-19T22:29Z, TENTH Project Lead seat, reconciling WO-2R2
+  increment 1). MAIN /srv/crash-detector is CLEAN at 8a5821a on branch main apart from the eleven
+  untracked operator entries already adjudicated, plus THIS boundary's own new files under
+  governance/reconciliation/WO-2R2/ and governance/engineering/build-log/, which are committed here.
+  THE MUTATION LANE /srv/crash-detector-wo2 is CLEAN at 7ac1574 on wo-2-skeleton, `git status
+  --short` ZERO lines, five commits by CD-ENG-WO2R2-01 with author AND committer correct on every
+  one. `git diff --name-only -- pbg/` returns zero lines in both worktrees. Both audit worktrees are
+  untouched and detached. THE SEAT RAN ENTIRELY INSIDE ITS LANE: nothing under /srv/crash-detector
+  was modified by it, which the Project Lead verified rather than assumed.
+  A LANE DEFECT THE SEAT REPORTED AND DID NOT TOUCH, RECORDED HERE SO IT IS NOT LOST
+  (CD-ENG-WO2R2-F02, MEDIUM): `pbg boot` inside /srv/crash-detector-wo2 returns
+  CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, and it is PRE-EXISTING — identical on a pristine
+  extraction of 50fc231. The BRANCH's copy of governance/engineering/ACTIVE_WORK.yaml is the WO-2
+  skeleton's own stale one (continuity_record_commit PENDING, last_build_log_entry BL-...-0004)
+  while the lane's Build Log has run to 0050. The file is Project-Lead-only and the seat correctly
+  refused to touch it. IT MATTERS AT MERGE, NOT NOW: main's ACTIVE_WORK.yaml is the live record and
+  the lane's must not overwrite it when the lane lands. Named here so the merge is not the moment
+  anybody discovers it.
+  HISTORICAL, retained: OBSERVED AT THE PRIOR BOUNDARY (2026-08-19T21:32Z, TENTH Project Lead seat, issuing WO-2R2). CD-D-007's
   suspicion procedure applied to all four worktrees. MAIN /srv/crash-detector is CLEAN at 9c43daf on
   branch main — `git status --porcelain` shows zero tracked modifications and nothing staged —
   apart from the SAME ELEVEN untracked operator entries, re-read at this boundary on their CONTENTS
@@ -994,13 +1043,21 @@ remaining_items:
   verdict together (CD-RULE-001), merge the lane, checkpoint, and STOP for Product Owner review.
   A criterion the Assurance seat holds not-PASS cannot compute PASS regardless of admitted runs.'
 - 'ROADMAP.md — still not authored; whether one is wanted on top of BLUEPRINT.md §15 is a PO call'
-- 'WO-2R2 INCREMENT 1 — CLASS 1, ADMISSION IS VALIDATION. CD-AC-002 (RED, ASR2-F01) and CD-AC-001
-  (AMBER, ASR2-F03). ISSUED to CD-ENG-WO2R2-01. Not started.'
-- 'WO-2R2 INCREMENT 2 — CLASS 2, JUDGE VALUES NEVER TYPES. CD-AC-005 (AMBER, ASR2-F02) plus the
+- 'WO-2R2 INCREMENT 1 — CLASS 1, ADMISSION IS VALIDATION. DELIVERED at lane 7ac1574 and RECONCILED
+  at BL-20260819T222917Z-0043. The derivation door is CLOSED AT THE TYPE (rename test taken by the
+  PL) and the absence half is closed at the PRESENTATION type; both false claims are withdrawn and
+  replaced. CD-AC-002 IS STILL OPEN on CD-ENG-WO2R2-F03. NOT ACCEPTED, NOT ASSURED.'
+- 'CD-ENG-WO2R2-F03 (HIGH) — OPEN, and it is the thing blocking WO-2. One stateful ContributionModel
+  injected into BOTH DialSpecs publishes the mean of the two dials through the ONE declared
+  admission site with every field of the claim true except the number. Raised by the seat against
+  its own closure; REPLICATED by the Project Lead as PL-Z4. NOT PROVED TO BE CARRIED ANYWHERE. No
+  guard ordered: model purity is not decidable at this altitude. OWED TO THE PRODUCT AUTHORITY as a
+  BLUEPRINT §7 / CD-D-005 question with three options set out in BL-...-0043.'
+- 'WO-2R2 INCREMENT 2 — HELD pending the CD-AC-002 ruling, NOT withdrawn. CLASS 2, JUDGE VALUES NEVER TYPES. CD-AC-005 (AMBER, ASR2-F02) plus the
   `_finite_measure` float-subclass sibling the auditor reported as the same class. The SWEEP of
   every isinstance/duck-typed admission on the staleness/agreement/reading-ness paths, with its
   denominator and method, is a REQUIRED ARTEFACT. Not started.'
-- 'WO-2R2 INCREMENT 3 — ITEM 3, the CD-AC-012 dependency-surface AMBER (ASR2-F05), bounded to the
+- 'WO-2R2 INCREMENT 3 — HELD pending the CD-AC-002 ruling, NOT withdrawn. ITEM 3, the CD-AC-012 dependency-surface AMBER (ASR2-F05), bounded to the
   CD-RULE-004 pair: close it structurally by deny-by-default over a declared dependency registry, OR
   declare the limit in numbered-boundary form with a MEASURED carrier and correct the `scope: CLASS`
   over-claim in required-tests.yaml. NO hand-grown denylist. NO network resolution. Not started.'
@@ -1036,6 +1093,16 @@ open_decisions:
 open_ambiguities: []
 
 risks:
+- 'CD-ENG-WO2R2-F03 HIGH, OPEN — the product''s own declared extension point can blend the dials.
+  Raised by the Engineer seat against its own closure and REPLICATED by the Project Lead (PL-Z4).
+  It is not a code defect that a better guard fixes; it is the boundary of what an admission can
+  check. Owed to the Product Authority as a BLUEPRINT §7 / CD-D-005 question. UNTIL IT IS RULED,
+  CD-AC-002 CANNOT REACH PASS AND THE WO-2 GATE CANNOT BE MET.'
+- 'CD-ENG-WO2R2-F02 MEDIUM — the LANE branch carries a stale governance/engineering/ACTIVE_WORK.yaml
+  (the WO-2 skeleton''s own), which makes `pbg boot` inside /srv/crash-detector-wo2 return
+  CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED. PRE-EXISTING at 50fc231, not caused by any WO-2R2
+  work, and correctly not touched by the seat (the file is Project-Lead-only). THE RISK IS AT MERGE:
+  main''s copy is the live record and the lane''s must not overwrite it when the lane lands.'
 - 'CD-PL-F47 MEDIUM NEW — the WO-2R rework is a REFACTOR of load-bearing types, not an addition of
   checks. Closing CD-ASR-F01 as a class means no bare scalar is reachable from both dial types by ANY
   spelling, which reaches every consumer of `.score`; closing F02/F03 means the Reading types become
@@ -1105,6 +1172,38 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing).**
+  ONE QUESTION IS OWED AND IT IS NOT THE PROJECT LEAD'S TO ANSWER: **WHAT CLOSES CD-AC-002, AND
+  WHEN?** A ContributionModel — the product's own declared extension point, which WO-2 ships EMPTY
+  and whose contents are CD-D-005, the Product Owner's and already owed — can blend the two dials
+  while every structural claim the code makes remains true, because the number entering a base-case
+  admission cannot be validated by anything that does not know what the number should be. MEASURED
+  TWICE, by the seat as CD-ENG-WO2R2-F03 and independently by the Project Lead as PL-Z4: monetary
+  publishes 0.5 from equity 0.9 and monetary 0.1. THREE OPTIONS ARE SET OUT IN FULL AT
+  BL-20260819T222917Z-0043 — (A) return BLUEPRINT §7 for architectural review now, the candidate
+  shape being that the engine OWNS the model lifecycle so a shared mutable object cannot be injected;
+  (B) rule that CD-AC-002 at WO-2 is scoped to routes that do not require an INJECTED model and
+  attach model integrity to CD-D-005 for WO-3, on the measured basis that WO-2 registers no model at
+  all, registers no source, deploys nothing and has no publication layer; (C) treat this as the third
+  carrier-shaped failure on its merits, SUSPEND implementation and return §7 before any further
+  increment. **OPTION B IS RECOMMENDED AND DELIBERATELY NOT SELF-ADOPTED**, on the same principle
+  CD-D-073 rests on: the last time a Project Lead's reasonable inference was allowed to stand as an
+  acceptance it cost a gate, and CD-D-040 is still REOPENED.
+  DO NOT DISPATCH WO-2R2 INCREMENT 2 OR 3 UNTIL IT IS ANSWERED. They are authorised by CD-D-073 and
+  are NOT withdrawn — they are HELD, and the reason is that CD-AC-002 cannot reach PASS on this
+  evidence, so a third gate would fail whatever they deliver, and the answer may change what
+  increment 2 is asked to do (Class 2 is the same doctrine one operand across).
+  DO NOT DISPATCH THE THIRD ASSURANCE SEAT: it would spend an auditor to confirm what is already
+  measured and on the record. DO NOT BUILD A GUARD FOR CD-ENG-WO2R2-F03 without a ruling — the
+  available guards do not close the class, and one that looks like a closure is exactly the defect
+  that has cost this project two gates. DO NOT ADMIT ANYTHING (CD-RULE-001, PO, non-relaxable).
+  WHEN THE RULING ARRIVES the lane is clean at 7ac1574 and the next seat resumes from there.
+  Commit each boundary on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
+  VARIABLES, never `git -c` (CD-PL-F56). A continuity write is not complete until `pbg boot` has
+  been re-run and its verdict recorded in the same entry (CD-RULE-007), taken on a pristine clone at
+  the committed SHA AND ON THE RECORDED BRANCH (CD-RULE-008 as amended by CD-PL-F72).
+  SUPERSEDED INSTRUCTION, retained so the record reads in order — IT WAS CARRIED OUT AND ITS RESULT
+  IS THE STOP ABOVE:
   **LAUNCH CD-ENG-WO2R2-01 AGAINST governance/dispatch/CD-DISPATCH-WO2R2-ENGINEER.yaml**, in the
   foreground, at lane base 50fc231 on branch wo-2-skeleton in /srv/crash-detector-wo2, and reconcile
   each increment as it lands. THE AUTHORITY IS CD-D-073 AND IT IS ON THE DURABLE RECORD at
@@ -1203,5 +1302,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T213256Z-0042
+last_build_log_entry: BL-20260819T222917Z-0043
 status: ACTIVE

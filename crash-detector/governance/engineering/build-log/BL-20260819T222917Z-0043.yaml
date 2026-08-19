@@ -1,0 +1,368 @@
+# ================================================================================================ #
+# WO-2R2 INCREMENT 1 RECONCILED — THE DERIVATION DOOR IS CLOSED AT THE TYPE, AND THE SEAT FOUND A
+# HIGH ROUTE AGAINST ITS OWN CLOSURE THAT THE PROJECT LEAD HAS NOW INDEPENDENTLY REPLICATED.
+# ================================================================================================ #
+
+entry_id: BL-20260819T222917Z-0043
+timestamp_utc: "2026-08-19T22:29:17Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 8a5821ac47d6c037b22e74d0b0b0427f98bc4f82
+lane_head_sha: 7ac157478d9698bd1da28438eb167acdc83e031d
+parent_entry_id: BL-20260819T213256Z-0042
+schema_version: 1
+
+action_summary: >
+  RECONCILED — NOT ACCEPTED AS ASSURED — WO-2R2 increment 1 (CLASS 1, ADMISSION IS VALIDATION),
+  returned READY_FOR_RECONCILIATION by CD-ENG-WO2R2-01 at lane 7ac1574 across five commits. EVERY
+  NUMBER THE SEAT REPORTED THAT THIS SEAT CHECKED REPRODUCED EXACTLY, on the Project Lead's own
+  pristine `git archive` extractions with the Project Lead's own drivers. The derivation door IS
+  closed at the TYPE and the closure SURVIVES A RENAME — measured, not accepted. AND THE SEAT'S OWN
+  SELF-RAISED HIGH FINDING IS INDEPENDENTLY REPLICATED: one stateful ContributionModel injected into
+  BOTH DialSpecs publishes an equity 0.9 and a monetary 0.1 as a monetary 0.5, through the product's
+  ONE declared admission site, with every field of the admission claim true except the number.
+  CD-AC-002 IS NOT CLOSED. THE NEXT ACTOR IS THE PRODUCT AUTHORITY.
+
+# ================================================================================================ #
+# CD-D-007 SUSPICION PROCEDURE
+# ================================================================================================ #
+suspicion_procedure:
+  rule: 'CD-D-007. A resumed seat, and a seat reconciling a return, treats every artefact it did not itself commit as unattested until adjudicated.'
+  main_worktree: 'CLEAN at 8a5821a on main; the eleven untracked operator entries unchanged from BL-...-0042 and adjudicated there.'
+  the_lane: >
+    /srv/crash-detector-wo2 at 7ac1574 on wo-2-skeleton, `git status --short` ZERO LINES. FIVE
+    commits since the 50fc231 base, and the CD-RULE-002 identity audit passes on all five: author
+    AND committer are `CD-ENG-WO2R2-01 <cd-eng-wo2r2-01@seats.crash-detector.invalid>` on every one
+    (`git log --format='%an <%ae> | %cn <%ce>'`). No human identity anywhere.
+  scope_audit: >
+    `git diff --stat 50fc231..HEAD` names 19 paths and EVERY ONE is inside the dispatch's writable
+    scope: src/ (4), tests/ (2), tools/register/ (2), contracts/execution/ (3), required-tests.yaml,
+    variants/ (6), and one NEW Build Log entry. NOTHING under pbg/, governance/assurance/,
+    governance/reconciliation/, governance/decisions/, governance/dispatch/, governance/rules/,
+    ACTIVE_WORK.yaml, PID.md or BLUEPRINT.md was touched. `latest_admitted_run` is still `null`, and
+    the diff of required-tests.yaml adds NO status-like key (grepped for status/result/outcome/
+    verdict/grade/score/disposition on added lines: zero hits).
+  variant_hygiene: >
+    `find variants/ -type f -perm /111` is EMPTY — nothing under variants/ is executable, verified
+    independently (PBG-ASSURE-001). No symlinks. The four new WO-2R2 patches are 0664.
+  commit_contract: >
+    All five commits carry the mandatory block: nine of the required field labels present in each
+    (CLASS CLOSED, STRUCTURAL INVARIANT, STRUCTURE, WHY IT IS A CLASS CLOSURE, PROVED BY, THE RENAME
+    TEST, FALSE POSITIVES CHECKED, CLEAN ARM, NODE-ID CONSERVATION, ELEVEN PLANTS). The PO's
+    standing condition — the structural invariant stated IN THE COMMIT THAT LANDS THE CLOSURE — is
+    SATISFIED.
+  verdict: 'NOTHING TO ADJUDICATE AS UNATTESTED. Everything the seat produced is committed.'
+
+# ================================================================================================ #
+# WHAT THE PROJECT LEAD MEASURED ITSELF. Its own drivers, its own extractions, `python3 -B`.
+# Durable at governance/reconciliation/WO-2R2/ as DATA (nothing there is executable).
+# ================================================================================================ #
+independent_measurement:
+  method: >
+    `git archive 7ac1574 | tar -x -C /tmp/pl-r2-new` and `git archive 50fc231 | tar -x -C
+    /tmp/pl-r2-base` — extractions, not clones and not checkouts, outside every governed worktree.
+    373 files at the new commit, 364 at the base. A separate extraction per variant probe so that no
+    probe contaminates another. Every invocation `python3 -B`, so no __pycache__ is written anywhere.
+
+  node_id_conservation_MEASURED_NOT_ACCEPTED: >
+    The seat reports 1325 -> 1357 with zero lost. THIS SEAT COMPUTED IT INDEPENDENTLY: collected the
+    node id list on BOTH extractions with `--collect-only`, sorted both, and diffed. base 1325, new
+    1357, `comm -23` (in base, absent from new) is EMPTY — ZERO LOST, ZERO RENAMED. The suite runs
+    1357 passed on the new tree. THE SEAT'S NUMBER IS CONFIRMED BY A DIFFERENT METHOD than the one
+    it used.
+
+  PL_Z0_the_false_positive_arm: >
+    A closure that forbids the product is not a closure, so this was measured FIRST.
+    `combine_within_one_dial([equity 0.9, equity 0.7], using=SameDialReduction.MEAN)` ->
+    `DialMagnitude(dial_id='equity_crash', quantity=0.8)`. LEGITIMATE SAME-DIAL WORK STILL WORKS.
+
+  PL_Z1_the_auditors_route: >
+    `ASR2-002-A` verbatim in shape — release both dials' numbers through `quantity_for`, mean them,
+    hand the mean back through `combine_within_one_dial(..., using=<a closure>)`.
+    REFUSED -> `crash_detector.dials.provenance.UndeclaredReduction`: "a function was offered as a
+    reduction. A derivation is named, never supplied: the declared reductions are ['MEAN','SUM',
+    'MAX','MIN']".
+    THE REFUSING LAYER, NAMED AND SCOPED (CD-PL-F74, adopted): the TYPE layer, at runtime, inside
+    `derived_within_one_dial` — `type(reduction) is not SameDialReduction`, an exact-type identity
+    comparison on an OBJECT. Its scope is every call to that door in the process, from any module,
+    under any name, however the value was reached. It reads no source and no registry.
+    AT 50fc231 THE SAME ROUTE PUBLISHED AN EQUITY 0.5. That contrast is the point.
+
+  PL_Z2_THE_RENAME_TEST_TAKEN_BY_THE_PROJECT_LEAD: >
+    The seat asserts its refusal survives a rename and offers V01 as evidence. THIS SEAT DID NOT
+    ACCEPT THAT AND TOOK THE TEST ITSELF: the same route with the door ALIASED to a local name, the
+    helper aliased, and every identifier renamed, so that no name in the corpus appears at the call
+    site. REFUSED -> the IDENTICAL `UndeclaredReduction`. The refusal is a property of the object,
+    not of the spelling. THIS IS THE FIRST CLOSURE ON THIS PROJECT WHOSE RENAME TEST THE PROJECT
+    LEAD HAS TAKEN INDEPENDENTLY, and it is exactly what CD-PL-F74 was raised to require.
+
+  PL_Z5_Z6_the_absence_half: >
+    `ASR2-001-A`'s `surface_scalar` STILL RETURNS 0.0 at this commit — measured, and the seat says
+    so in its declaration rather than being caught at it. What is closed is the PRESENTATION:
+    `Shown(dial_id='equity_crash', magnitude=<that 0.0>)` -> REFUSED, `DialPresentationRefused`,
+    "a float was offered as dial 'equity_crash''s presented magnitude"; `present_dial` on an
+    `Unknown` returns `NotShown(dial_id='equity_crash', reason='REQUIRED_INPUT_MISSING',
+    missing_inputs=('vix','move'))`; and `NotShown` has no field a number could hide in
+    (`__init__() got an unexpected keyword argument 'magnitude'`).
+    THE REFUSING LAYER, NAMED AND SCOPED: the PRESENTATION TYPE, at runtime, exact type identity
+    plus set equality on provenance. Its scope is every value offered to `Shown` — and NOT a module
+    that computes a number for an absence and renders it ITSELF without coming through `Shown`.
+    The seat declares that residue in terms and pins it with a test that fails the day anyone
+    claims otherwise. THAT IS A CD-RULE-004 DECLARED LIMIT DOING ITS JOB.
+
+  PL_Z3_and_PL_Z3b_MEASURING_A_DECLARATION_RATHER_THAN_ACCEPTING_IT: >
+    Declared boundary 7 says the ADMISSION door's residue is carried by RULE 4 alone, that RULE 4 is
+    a LOCATOR OVER A NAME VOCABULARY, and that it DOES NOT SURVIVE A RENAME. This seat measured both
+    halves rather than reading them.
+      PL-Z3  — a module in the scanned set that releases both numbers, means them, and ADMITS the
+               mean as equity citing TRUE source ids ('vix','dxy' — no dial is cited as its own
+               input, so the door's third refusal does not fire). RUNTIME: NOT REFUSED, publishes
+               `EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5))`.
+               STATIC: `check_no_blend` FAIL, exit 1, TWO RULE 4 violations naming the import line
+               and the call line. So the declared carrier IS real: the module is LOCATED.
+      PL-Z3b — the identical module with the door name assembled at runtime. `check_no_blend` PASS,
+               5292 assertions — up from 5288, so the check SCANNED the module and had nothing to
+               say — `check_no_numeric_default` PASS 443, and the runtime publishes the same 0.5.
+    BOTH LAND INSIDE THE DECLARATION: PL-Z3 is the boundary-7 admission residue, PL-Z3b is residue
+    (iii), the dynamically assembled door name, which boundary 5 already declared. NEITHER IS A NEW
+    FINDING. They are recorded because a declared limit that nobody executes is a sentence, and this
+    project has now twice been bitten by a carrier that was named and never measured (CD-PL-F54,
+    CD-PL-F59). THE DECLARATION IS HONEST AND THE RESIDUE IS REACHABLE. Both are true at once.
+
+# ================================================================================================ #
+# THE ONE THAT MATTERS — THE SEAT'S OWN HIGH FINDING, REPLICATED
+# ================================================================================================ #
+replication_of_CD_ENG_WO2R2_F03:
+  what_the_seat_declared_against_itself: >
+    CD-ENG-WO2R2-F03 (HIGH), raised BY THE SEAT, AGAINST THE CLOSURE IT HAD JUST BUILT, and recorded
+    as an OPEN route with NO GUARD BUILT FOR IT — deliberately, with the reasoning stated. Durable
+    at variants/WO-2R2/CLASS-1/CD-ENG-WO2R2-V05-stateful-model-shared-by-both-dials.patch and
+    written into declared boundary 7 as residue (v) with the words NOT PROVED TO BE CARRIED
+    ANYWHERE.
+  how_this_seat_tested_it: >
+    NOT with the seat's driver and NOT with the seat's model. The Project Lead wrote its own
+    `PLCarryingModel` from the seat's PROSE, its own two `DialSpec`s, its own `SourceRegistry`, its
+    own two `ObservationRecord`s, and called `evaluate` — the product's own entry point.
+  measured:
+    equity: "Value(EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.9)), inputs_used=('vix',))"
+    monetary: "Value(MonetaryDebasementScore(score=DialMagnitude(dial_id='monetary_debasement', quantity=0.5)), inputs_used=('dxy',))"
+    reading_it_plainly: >
+      The equity dial saw 0.9 and published 0.9. The monetary dial saw 0.1 and PUBLISHED 0.5 — the
+      MEAN OF BOTH DIALS — because one model object saw the equity figure first and carried it.
+      THAT IS THE EXACT PRODUCT FAILURE PID §3.1 CALLS CONSTITUTIONAL: averaging cancels the signal.
+  verdict: 'CD-ENG-WO2R2-F03 IS CONFIRMED. HIGH. The seat is right about its own defect.'
+  why_it_is_not_laundering_and_why_that_matters: >
+    Nothing in this route is a trick. It touches no private slot, defines no dunder, performs no
+    arithmetic on a magnitude, holds no two dials in one expression, names no door outside a
+    declared site, and assembles no name. The admission is made from `engine/evaluate.py`, THE ONE
+    DECLARED PRODUCT ADMISSION SITE, and EVERY FIELD OF THE CLAIM IS TRUE — the dial is right, the
+    cited inputs were genuinely present and genuinely used, the post-condition that re-derives
+    whether the inputs arrived is satisfied. THE ONLY THING WRONG IS THE NUMBER, AND THE NUMBER IS
+    THE ONE THING A BASE-CASE ADMISSION CANNOT CHECK.
+  the_design_already_names_the_assumption_this_breaks: >
+    `evaluate()`'s own docstring at 50fc231 says: "The one way a caller can break that purity is by
+    injecting a ContributionModel that performs I/O. The contract forbidding it is stated on
+    ContributionModel, where an implementer reads it." The variant breaks purity by STATE rather
+    than by I/O, and nothing enforces either. The assumption was DOCUMENTED and UNGUARDED, and it is
+    load-bearing for CD-AC-002.
+  why_the_project_lead_does_not_order_a_guard: >
+    Because it agrees with the seat's reasoning and has tested the obvious answers against it. An
+    identity check on the model object is defeated by two instances sharing a class attribute. A
+    purity probe that calls `compute` twice is defeated by memoisation. Freezing the model is
+    defeated by state held anywhere else. MODEL PURITY IS NOT DECIDABLE AT THIS ALTITUDE, and a
+    guard that appears to close it while not closing it is the CD-PL-F54 defect a fourth time —
+    which is the shape that has now cost this project two gates. The honest structural moves that
+    might close it — the engine OWNING the model lifecycle so a shared mutable object cannot be
+    injected, or the admitted number being re-derivable from the dial's own payloads by something
+    other than the model — are BLUEPRINT §7 ARCHITECTURE and they touch CD-D-005, which is the
+    Product Owner's and is already owed.
+
+# ================================================================================================ #
+# THE PROJECT LEAD'S GRADE OF INCREMENT 1
+# ================================================================================================ #
+reconciliation_verdict:
+  what_is_genuinely_delivered:
+  - 'THE DERIVATION DOOR IS CLOSED AT THE TYPE. `derived_within_one_dial` takes no number and no
+     dial set: it takes DeclaredQuantity values refused by EXACT TYPE and a reduction refused by
+     exact type, and computes its own number from a closed set of named reductions. There is no
+     argument on any derivation path through which a caller''s float or a caller''s callable can
+     arrive. ASR2-002-A is refused, and THE REFUSAL SURVIVES A RENAME — measured by this seat.'
+  - 'THE TWO FALSE CLAIMS ARE GONE, and their replacements are honest. `magnitude.py` boundary A no
+     longer says "the sum cannot come back". RULE 4''s "cannot avoid coming here" is REPLACED, not
+     softened, by a property that is true and that LIMITS ITSELF IN THE SAME SENTENCE: "IT IS A
+     LOCATOR OVER A NAME VOCABULARY AND IT DOES NOT SURVIVE A RENAME." This seat read that text in
+     the violation output of its OWN run, not in the diff.'
+  - 'BOUNDARY 8 IS THE BEST DECLARATION THIS PROJECT HAS PRODUCED: it states that a clean run of
+     check_no_blend CARRIES NO INFORMATION ABOUT THIS CLASS IN EITHER DIRECTION, with the two
+     measured assertion counts either side of the closure to prove it. A guard that tells an auditor
+     what its own passing does NOT mean is the opposite of the defect that failed both gates.'
+  - 'THE ABSENCE HALF IS CLOSED AT THE PRESENTATION TYPE, with the residue declared and pinned by a
+     test rather than left to be discovered.'
+  - 'THE SEAT RAISED A HIGH FINDING AGAINST ITS OWN WORK AND BUILT NO GUARD FOR IT, ON THE RECORD,
+     WITH ITS REASONING. That is precisely what the dispatch invited and what the last two gates
+     were lost for want of. IT IS NAMED HERE AS GOOD PRACTICE SO THAT THE RECORD REWARDS IT.'
+  what_is_not_closed:
+    CD_AC_002: >
+      NOT CLOSED. The class the Product Owner named is "no value crosses into the dial or
+      publication path unvalidated". Two admission-shaped routes are open and BOTH ARE MEASURED:
+      (a) residue (v) / CD-ENG-WO2R2-F03 — a caller-supplied extension point reaching the ONE
+      declared admission site, NOT PROVED TO BE CARRIED ANYWHERE, replicated by this seat as PL-Z4;
+      (b) the boundary-7 admission residue — a module admitting a laundered number with a true
+      citation, carried ONLY by a static name locator that does not survive a rename, measured by
+      this seat as PL-Z3 (located) and PL-Z3b (not located, publishes 0.5).
+      A THIRD ASSURANCE SEAT WOULD GRADE THIS CRITERION NOT-PASS ON THIS EVIDENCE, and the gate is
+      PASS ON ALL FIVE.
+    CD_AC_001: >
+      IMPROVED AND NOT SETTLED. The presentation type closes the rendering route the auditor
+      demonstrated; a module that renders its own number without coming through `Shown` is declared
+      as not carried anywhere, on the ground that there is no renderer in WO-2 because the rendering
+      layer is WO-3. WHETHER THAT SCOPING EARNS A PASS IS THE THIRD AUDITOR'S CALL AND NOT THIS
+      SEAT'S — the CD-AC-003 precedent shows a PASS (scoped) is available for exactly this shape,
+      and this seat deliberately does not pre-empt it.
+  the_grade: >
+    INCREMENT 1 IS RECONCILED AND ITS WORK IS SOUND. IT IS NOT ACCEPTED AS CLOSING CD-AC-002,
+    because it does not, and the seat says so first. RECONCILIATION IS NOT ASSURANCE (PBG-SOD-001,
+    non-waivable): everything above is the Project Lead re-running the seat's load-bearing claims,
+    and none of it is a certificate.
+
+# ================================================================================================ #
+# WHY THIS STOPS HERE
+# ================================================================================================ #
+why_the_project_lead_stops:
+  the_rule_it_is_stopping_under: >
+    PBG-AUTH-003 and PBG-AUTH-005: a seat does not resolve product ambiguity and does not decide the
+    architecture of the product it is building. CD-D-073's standing condition contemplates exactly
+    this shape — "if a THIRD gate fails on a carrier/admission-shaped finding, implementation
+    SUSPENDS and Blueprint §7 returns for architectural review" — and CD-ENG-WO2R2-F03 IS A
+    CARRIER/ADMISSION-SHAPED FINDING. It has arrived BEFORE the third gate rather than at it,
+    because a seat disclosed it against itself.
+  what_the_project_lead_will_not_do_on_its_own_authority:
+  - 'ORDER A GUARD. The available guards do not close the class and this project has twice paid a
+     gate for a guard that looked like a closure. Ordering one would be the CD-PL-F74 error with the
+     Project Lead as the author.'
+  - 'RE-SCOPE CD-AC-002 so that an injected model is out of scope for WO-2. There is a REAL argument
+     for it (see the options below) and it is a PRODUCT SCOPING RULING, which is the Product
+     Owner''s — the same call the PO made itself, wider than this seat would have made it, when it
+     ruled that the AMBERs travel.'
+  - 'DISPATCH INCREMENT 2 AS THOUGH NOTHING HAD HAPPENED. Increment 2 is authorised and independent,
+     and it would not be wasted work. But CD-AC-002 cannot reach PASS on this evidence, so a third
+     Assurance seat cannot meet the gate whatever increment 2 delivers, and the answer to the
+     question below may change what increment 2 is asked to do — Class 2 is "JUDGE VALUES, NEVER
+     TYPES", which is the same doctrine one operand across. Spending a fresh seat before the
+     architecture question is answered is how the first gate''s scope was set, and that is the
+     mistake this project has been correcting for two rounds.'
+
+# ================================================================================================ #
+# THE QUESTION OWED UPWARD. ONE QUESTION, WITH ITS OPTIONS. NONE OF THEM TAKEN.
+# ================================================================================================ #
+owed_to_the_product_authority:
+  the_question: >
+    CD-AC-002 SAYS THE TWO DIALS ARE NEVER BLENDED. A CONTRIBUTION MODEL — the product's own
+    declared extension point, which WO-2 SHIPS EMPTY and whose contents are CD-D-005, YOURS AND
+    ALREADY OWED — can blend them while every structural claim the code makes remains true. THE
+    NUMBER ENTERING THE BASE CASE CANNOT BE VALIDATED BY ANYTHING THAT DOES NOT KNOW WHAT THE NUMBER
+    SHOULD BE. So: WHAT CLOSES CD-AC-002, AND WHEN?
+  option_A_architecture_now: >
+    BLUEPRINT §7 RETURNS FOR ARCHITECTURAL REVIEW NOW, ahead of the third gate rather than after it.
+    The candidate shape — offered as a shape and NOT as a design (PBG-AUTH-006) — is that the engine
+    OWNS the model lifecycle: a model is CONSTRUCTED per dial per evaluation from a declared factory
+    in the (currently empty) CONTRIBUTION_MODELS registry, so a shared mutable object cannot be
+    injected in the first place. That is a Blueprint change and a CD-D-005 neighbour, and it costs
+    the schedule.
+  option_B_scope_the_criterion: >
+    RULE THAT CD-AC-002 AT WO-2 IS SCOPED TO ROUTES THAT DO NOT REQUIRE AN INJECTED MODEL, and that
+    model integrity travels with CD-D-005 into WO-3. THE FACTUAL BASIS IS STRONG AND MEASURED: WO-2
+    registers NO contribution model at all, `CONTRIBUTION_MODELS` is empty, and a declared test
+    asserts it is empty; no source is registered; both dials read UNKNOWN; nothing is deployed. On
+    this option the third auditor grades CD-AC-002 on the routes that exist without an operator
+    supplying code, exactly as CD-AC-003 was graded PASS (scoped). THE COST, STATED SO IT IS NOT
+    DISCOVERED LATE: the residue then rides into WO-3 attached to the ingredient set, and WO-3 is
+    where the publication layer is built on top of it.
+  option_C_suspend: >
+    TREAT THIS AS THE THIRD CARRIER-SHAPED FAILURE ON ITS MERITS RATHER THAN ON ITS TIMING, SUSPEND
+    IMPLEMENTATION, and return Blueprint §7 before any further increment. This is the literal
+    reading of your standing condition applied one step early, and the seat that raised the finding
+    recommended the question reach you before increment 2.
+  what_this_seat_recommends_and_does_not_take: >
+    OPTION B, DECIDED EXPLICITLY AND WRITTEN DOWN, WITH THE RESIDUE ATTACHED TO CD-D-005 — because
+    the harm is measurably contained at WO-2 (no model, no source, no deployment, no publication
+    layer) and because the alternative pays for architecture with a schedule before the ingredient
+    set that shapes it exists. IT IS OFFERED AND DELIBERATELY NOT SELF-ADOPTED, on the same
+    principle CD-D-073 rests on: the last time this project let a Project Lead's reasonable
+    inference stand as an acceptance, it cost a gate (CD-D-040, still REOPENED).
+  what_is_NOT_being_asked: >
+    Nothing about increment 2 or increment 3 in themselves. They are authorised by CD-D-073 and this
+    seat has no doubt about their scope. The question is whether they proceed BEFORE this is
+    answered, and that is the same question.
+
+# ================================================================================================ #
+# GATE STATE
+# ================================================================================================ #
+gate_state:
+  gate: 'Assurance PASS on all five planted criteria. UNCHANGED. No waiver.'
+  standing: 'NOT MET. Increment 1 improves CD-AC-002 substantially and does not close it.'
+  admission: 'NOTHING ADMITTED. latest_admitted_run remains null (CD-RULE-001, PO, non-relaxable).'
+  acceptance: 'NOTHING ACCEPTED. Increment 1 is RECONCILED, which is not acceptance and is not assurance.'
+  no_assurance_dispatched: 'No third Assurance seat is dispatched. Dispatching one against a criterion the Project Lead has just measured open would spend an auditor to confirm what is already on the record.'
+
+evidence:
+- 'lane 7ac1574, five commits by CD-ENG-WO2R2-01; lane Build Log BL-20260819T221837Z-0050.'
+- 'governance/reconciliation/WO-2R2/ — PL-Z0..Z6 as DATA, nothing executable, with the README table.'
+- 'variants/WO-2R2/ in the lane — the seat''s V01, V03, V04 and the OPEN V05, plus MANIFEST.md.'
+- 'tools/register/check_no_blend.py declared boundaries 7 (residues iv and v) and 8; tools/register/check_no_numeric_default.py declared boundary 7.'
+- 'PL measurements: 1357 passed / 1325 node ids conserved with zero lost; check_no_blend FAIL 2 violations on PL-Z3 and PASS 5292 on PL-Z3b; UndeclaredReduction on PL-Z1 and PL-Z2; DialPresentationRefused on PL-Z6b; monetary 0.5 on PL-Z4.'
+evidence_executable_count: 0
+evidence_executable_count_note: >
+  The three probe files under governance/reconciliation/WO-2R2/ are `.py.txt` and mode 0644 — DATA,
+  not runnable artefacts (PBG-ASSURE-001). The drivers this seat executed lived in /tmp and are not
+  installed into any governed tree.
+
+next_actor: PRODUCT_AUTHORITY
+next_safe_action: >
+  STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing). ONE
+  QUESTION IS OWED AND IT IS NOT THE PROJECT LEAD'S TO ANSWER: what closes CD-AC-002, and when —
+  architecture now (option A), scope the criterion at WO-2 and attach model integrity to CD-D-005
+  (option B, recommended and NOT taken), or suspend implementation and return Blueprint §7 (option
+  C). DO NOT DISPATCH WO-2R2 INCREMENT 2 OR 3 UNTIL IT IS ANSWERED — they are authorised by CD-D-073
+  and they are not withdrawn; they are held, and the reason is on the record here. DO NOT DISPATCH
+  THE THIRD ASSURANCE SEAT: CD-AC-002 is measured open, so a third gate would fail on evidence the
+  project already has. DO NOT ADMIT anything (CD-RULE-001, PO, non-relaxable). DO NOT BUILD A GUARD
+  FOR CD-ENG-WO2R2-F03 without a ruling — the available guards do not close the class, and one that
+  looks like a closure is the defect that has cost two gates. When the ruling arrives, the lane is
+  clean at 7ac1574 and the next seat resumes from there. Commit each boundary on main with the
+  PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT VARIABLES, never `git -c`
+  (CD-PL-F56). A continuity write is not complete until `pbg boot` has been re-run and its verdict
+  recorded in the same entry (CD-RULE-007), taken on a pristine clone at the committed SHA AND ON
+  THE RECORDED BRANCH (CD-RULE-008 as amended by CD-PL-F72).
+
+# ================================================================================================ #
+# CD-RULE-007 — the boot verdict of record. RESOLVED IN THE FOLLOW-UP COMMIT, NOT TRANSCRIBED HERE.
+# ================================================================================================ #
+boot_verdict_of_record:
+  rule: 'CD-RULE-007 / CD-RULE-008 as amended by CD-PL-F72. Taken on a PRISTINE CLONE at the committed SHA, checked out ON THE RECORDED BRANCH (main), never on the working tree.'
+  status: 'PENDING at the time this entry is committed — the SHA cannot be known before the commit exists. Resolved in the CD-RULE-007 follow-up commit that immediately succeeds this one.'
+  working_tree_verdict_for_contrast: 'AMBER — CONTINUITY_MATCH/RESUME_AMBER, the known CD-PL-F70 cause. Not a new degradation.'
+
+# ================================================================================================ #
+# A DISCLOSURE ABOUT THIS ENTRY'S OWN baseline_sha
+# ================================================================================================ #
+baseline_sha_note: >
+  `baseline_sha` is 8a5821ac47d6c037b22e74d0b0b0427f98bc4f82, the CD-RULE-007 follow-up that closed
+  the WO-2R2 DISPATCH boundary. RESOLVED with `git rev-parse` and confirmed a commit object with
+  `git cat-file -t`, not transcribed (CD-PL-F36).
+  DISCLOSED, THIS SEAT'S OWN SLIP, CORRECTED BEFORE THE COMMIT AND RECORDED RATHER THAN QUIETLY
+  FIXED: the first draft of this entry carried a forty-hex string that was NOT the resolved SHA —
+  its first seven characters were right and the remaining thirty-three were invented by the drafting
+  hand, with a note beneath it deferring the resolution to the follow-up commit. That is precisely
+  the CD-PL-F36 class, and the note excusing it would have been worse than the error, because a
+  reader would have read a deferral where there was a fabrication. Nothing was committed in that
+  state. It is written down because this project's own record says the defects that survive are the
+  ones nobody wrote down.
