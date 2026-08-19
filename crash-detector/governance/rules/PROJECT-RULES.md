@@ -114,3 +114,42 @@ entry claims the class. That is what produced four AMBER verdicts at the WO-2 ga
 A register entry may not claim more than its guard delivers. Where a criterion rests on several
 layers, the entry may not claim that a violation slipping past one layer must fail the others unless
 that has been **proved by execution** for the class, not asserted from design intent.
+
+## CD-RULE-005 — every governed timestamp comes from `date -u`
+
+**Source:** PROJECT LEAD, `CD-PL-F55`, `BL-20260819T105500Z-0024`. Effective 2026-08-19.
+**Status:** ACTIVE.
+
+Every `entry_id` and every `timestamp_utc` in `governance/` is taken from `date -u +%FT%TZ` and from
+nothing else. Not from the wall clock, not from a shell prompt, not from a file mtime, not from
+memory of what the time was earlier in the session.
+
+**Why:** the lane's increment-2 entry is `BL-20260819T113000Z-0041`, written by a commit dated
+`11:41:56 +0100` — 10:41:56 UTC. The `Z` was British Summer Time wearing a UTC label, so the entry
+claimed a moment that had not yet happened, and a later entry stamped from true UTC sorts *before*
+it. A build log whose ordering is wrong is a build log that cannot reconstruct a sequence of events,
+which is the only thing it is for.
+
+**Neither entry is edited.** Corrections supersede, never edit (`PBG-CONT-003`, non-waivable). The
+existing ids stand as written and this rule binds forward. Within each block the **sequence number**
+remains the reliable ordering: main from `0023`, the lane from `0040` (`CD-D-036`).
+
+## CD-RULE-006 — a residue declaration must name a layer that has been MEASURED to hold it
+
+**Source:** PROJECT LEAD, `CD-PL-F54`, `BL-20260819T105500Z-0024`. Effective 2026-08-19.
+**Status:** ACTIVE.
+
+Where a guard declares a limit under `CD-RULE-004` option 2 and says another layer carries the
+residue — "THE TYPE LAYER CARRIES THIS", "THE PUBLICATION BOUNDARY CARRIES THIS" — that sentence is
+**a claim requiring its own executed evidence**, recorded with the boundary. The variant must be run
+and the other layer's refusal observed.
+
+**Why:** boundary 6 of `check_no_blend.py` stated that the publication boundary refuses a blended
+number. Measured, it does not: re-wrapping the blend as a magnitude of one dial gives it a
+provenance the gate accepts, and `number_for_dial_slot` returned it. Two declarations each assumed
+the other was covering the route, and the route was open. A declaration that misdirects an auditor
+to a layer that does not hold is worse than no declaration, because it spends the auditor's attention
+somewhere the defect is not.
+
+An unproved hand-off is written as **"NOT PROVED TO BE CARRIED ANYWHERE"**, which is honest and
+leaves the residue visible.

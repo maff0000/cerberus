@@ -1,0 +1,36 @@
+import sys
+sys.path.insert(0, "src")
+from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials import scores as S
+from crash_detector.publication import dial_scalar as P
+
+eq = DialMagnitude(dial_id="equity_crash", quantity=0.4)
+mo = DialMagnitude(dial_id="monetary_stress", quantity=0.6)
+def probe(name, fn):
+    try:
+        print(f"PL-{name}: *** NOT REFUSED *** -> {fn()!r}"[:200])
+    except BaseException as e:
+        print(f"PL-{name}: REFUSED {type(e).__name__}: {str(e)[:80]}")
+
+def leak(m):
+    return float(repr(m).split("quantity=")[1].rstrip(")"))
+
+# Q4: launder via repr, re-wrap under ONE dial's name, publish
+def q4():
+    blended = (leak(eq) + leak(mo)) / 2
+    return S.EquityCrashScore(score=DialMagnitude(dial_id="equity_crash", quantity=blended),
+                              contributions=())
+probe("Q4-repr-launder-rewrap-publish", q4)
+
+# Q5: same but via the DECLARED release door quantity_for (boundary A)
+def q5():
+    blended = (eq.quantity_for("equity_crash") + mo.quantity_for("monetary_stress")) / 2
+    return S.EquityCrashScore(score=DialMagnitude(dial_id="equity_crash", quantity=blended),
+                              contributions=())
+probe("Q5-quantity_for-launder-rewrap-publish", q5)
+
+# Q6: publication gate on the re-wrapped blend
+def q6():
+    blended = (leak(eq) + leak(mo)) / 2
+    return P.number_for_dial_slot("equity_crash", DialMagnitude(dial_id="equity_crash", quantity=blended))
+probe("Q6-publication-gate-on-rewrapped-blend", q6)

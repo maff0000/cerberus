@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T09:52:00Z'
+updated_utc: '2026-08-19T11:02:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -167,6 +167,42 @@ current_block: >
   entry both carry sequence 0022, because a seat in the lane worktree can only see the branch-point
   copy of the build-log directory. NEITHER IS EDITED (PBG-CONT-003). Forward rule: the lane takes a
   reserved sequence block from 0040 up, main continues from 0023.
+  FOURTH RUNTIME TERMINATION. The Project Lead process that dispatched increment 2 was killed by its
+  harness at 2026-08-19T10:44:43Z on a two-hour ceiling. The Engineer's work SURVIVED — six commits
+  on the lane through a94ef97 with its own entry BL-20260819T113000Z-0041 — but the PL's
+  RECONCILIATION of it did not happen. The resumed seat performed it in BL-20260819T105500Z-0024.
+  WO-2R INCREMENT 2 IS RECONCILED AND **NOT ACCEPTED** (CD-D-037). Every number the seat declared
+  REPRODUCES EXACTLY on a pristine extraction — twelve of twelve declared commands, full suite
+  945 -> 1054 passed, ZERO of the 945 original pytest node ids missing, 109 added. The record is
+  honest and the seat's four self-raised findings are real. The STRUCTURE is what fails. The PL
+  wrote ELEVEN FRESH PROBES of its own, none in the auditor's known set and none among the seat's
+  five; nine were refused and TWO WERE NOT. CD-PL-F54 (HIGH): the F01 closure does not close the
+  class. Three measured facts. (a) `repr()` releases the quantity as parseable text WITHOUT the
+  caller naming a dial, which contradicts the execution contract's own claim eight lines below its
+  disclosure that "reducing one to a number requires naming its single dial". (b) Boundary 6 of
+  check_no_blend.py declares "THE PUBLICATION BOUNDARY CARRIES THIS" — MEASURED FALSE: the blended
+  float re-wrapped as DialMagnitude(dial_id="equity_crash", quantity=blended) has provenance exactly
+  the slot's dial, and number_for_dial_slot RETURNED 0.5. (c) PL-Q9, one plausible module naming no
+  dial and performing no arithmetic on any magnitude, defeats BOTH layers together: check_no_blend
+  PASS 3919 assertions 0 violations, and at runtime it publishes
+  EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5)) out of a 0.4 equity
+  and a 0.6 monetary reading. The same attack spelled with the dial names in scope IS caught (PL-Q7,
+  PL-Q8, RULE 1 FAIL) — RULE 1 works; what defeats it is the removal of every flavour-bearing NAME
+  applied to a value the type layer was never asked to produce. This is not inside the declared
+  limit: boundaries 1, 2, 3 and 5 all hand the residue to the type layer and the type layer DOES
+  hold those; boundary 6 is the only one that could cover PL-Q9 and it hands it to a layer that does
+  not hold it. Two declarations each assumed the other was covering the route. CD-D-038: the PL does
+  NOT write the fix — a Project Lead that authors the closure has made itself the implementer of
+  work it will reconcile (PBG-AUTH-006). CD-D-039: PL-Q9 is GIVEN to the Engineer as its minimum
+  proof obligation rather than withheld, and is written to governance/reconciliation/WO-2R/ as DATA,
+  nothing executable (PBG-ASSURE-001); from that commit it proves nothing about the class and joins
+  the next auditor's exclusion set, which is now the union of the auditor's ten, the seat's eleven
+  and the PL's eighteen. CD-PL-F55 (LOW) and CD-RULE-005: entry_ids were being stamped with LOCAL
+  time carrying a Z suffix — the lane's 113000Z entry was written at 10:41:56 UTC — so the log is
+  not monotonic across the lane/main boundary. Neither entry is edited; the rule binds forward and
+  sequence numbers remain the reliable ordering. CD-RULE-006: a residue declaration that names
+  another layer as carrying it must have MEASURED that layer refusing the variant, or write
+  "NOT PROVED TO BE CARRIED ANYWHERE".
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -191,7 +227,7 @@ last_completed_checkpoint_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f
+lane_head_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0
   # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
   # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
   # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
@@ -205,7 +241,8 @@ lane_head_sha: 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f   # WO-2R increment 1 of 6, ACCEPTED
+lane_increment_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0   # WO-2R increment 2 of 6, RECONCILED AND NOT ACCEPTED (CD-D-037); re-opened as 2b
+  # Last ACCEPTED lane SHA is 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f (increment 1).
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -449,5 +486,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T095200Z-0023
+last_build_log_entry: BL-20260819T105500Z-0024
 status: ACTIVE

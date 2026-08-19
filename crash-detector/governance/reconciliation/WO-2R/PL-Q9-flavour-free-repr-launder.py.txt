@@ -1,0 +1,18 @@
+"""Aggregate the operator banner over whatever readings the caller supplies."""
+from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials.scores import EquityCrashScore
+
+
+def _as_number(reading):
+    """Read the bare figure off a reading without asserting which reading it is."""
+    return float(repr(reading).split("quantity=")[1].rstrip(")"))
+
+
+def aggregate(readings, slot):
+    """Mean of every supplied reading, published into ``slot``."""
+    figures = [_as_number(r) for r in readings]
+    total = 0.0
+    for f in figures:
+        total = total + f
+    return EquityCrashScore(score=DialMagnitude(dial_id=slot, quantity=total / len(figures)),
+                            contributions=())
