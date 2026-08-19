@@ -1,0 +1,680 @@
+"""The collection runner (BLUEPRINT §5, deliverable A4).
+
+The headline property, and the one tested hardest, is
+**EVERY FETCH ATTEMPT WRITES A ROW, INCLUDING THE FAILURES.** A failed fetch that writes
+nothing is indistinguishable from a fetch that was never scheduled, and both are
+indistinguishable from a source that had nothing to report — three states that demand
+different responses, collapsed into one absence.
+
+So the first group below does not test it once with a timeout. It tests it against every
+way an attempt can end that the runner knows about, and then against two it does not: an
+exception class nobody anticipated, and a ``BaseException`` that is not an ``Exception``
+at all.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timedelta, timezone
+
+import pytest
+
+from crash_detector.collectors.adapter import AdapterFetchError, FetchedResponse
+from crash_detector.collectors.attempt import AttemptRecord
+from crash_detector.collectors.runner import (
+    ERROR_ATTEMPT_DID_NOT_COMPLETE,
+    ERROR_TIMEOUT,
+    ERROR_TIMEOUT_BUDGET_EXCEEDED,
+    MALFORMED_ADAPTER_CONTRACT_BREACH,
+    MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT,
+    MALFORMED_SCHEMA_DECLARATION_INVALID,
+    MAX_ATTEMPTS_CEILING,
+    MAX_BACKOFF_SECONDS_CEILING,
+    MAX_TIMEOUT_SECONDS_CEILING,
+    CollectionResult,
+    RetryPolicy,
+    collect,
+)
+from crash_detector.collectors.validation import SchemaDeclarationInvalid
+from crash_detector.observations import OK, Empty, FetchFailed, Malformed
+
+from collector_fakes import (
+    ExplodingSink,
+    FakeInMemoryAdapter,
+    RecordingLedger,
+    RecordingSink,
+    RecordingSleep,
+    SteppingClock,
+    failing_fetch,
+)
+from conftest import FIXED_NOW
+
+POLICY = RetryPolicy(max_attempts=3, timeout_seconds=5.0, backoff_seconds=1.0)
+SINGLE = RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
+
+#: A closed schema that also admits ``{}``, so "the source conformed and had nothing to
+#: report" is reachable. Without it EMPTY would be unreachable through the default fake
+#: and a test claiming to cover all four outcomes would be covering three.
+EMPTY_TOLERANT_SCHEMA = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": False,
+    "properties": {"reading": {"type": "number"}},
+}
+
+
+def _ok_response(seconds_ago: float = 0.0) -> FetchedResponse:
+    return FetchedResponse(
+        payload={"reading": 1.5},
+        source_as_of_utc=FIXED_NOW - timedelta(seconds=seconds_ago),
+    )
+
+
+def _adapter(script, **kwargs):
+    """A fake whose schema tolerates ``{}`` unless the test overrides it."""
+    kwargs.setdefault("response_schema", EMPTY_TOLERANT_SCHEMA)
+    return FakeInMemoryAdapter(script=script, **kwargs)
+
+
+def _run(adapter, *, policy=SINGLE, sink=None, ledger=None, advance=0.1, run_id="run-1"):
+    sink = RecordingSink() if sink is None else sink
+    ledger = RecordingLedger() if ledger is None else ledger
+    sleep = RecordingSleep()
+    result = collect(
+        adapter,
+        policy=policy,
+        sink=sink,
+        ledger=ledger,
+        collector_run_id=run_id,
+        clock=SteppingClock(FIXED_NOW, advance_seconds=advance),
+        sleep=sleep,
+    )
+    return result, sink, ledger, sleep
+
+
+# --- EVERY ATTEMPT WRITES A ROW --------------------------------------------------------- #
+
+@pytest.mark.parametrize(
+    "script_item,expected_class",
+    [
+        (_ok_response(), "OK"),
+        (AdapterFetchError("CONNECTION_REFUSED"), "FETCH_FAILED"),
+        (AdapterFetchError("HTTP_ERROR", 503), "FETCH_FAILED"),
+        (TimeoutError("slow"), "FETCH_FAILED"),
+        (FetchedResponse(payload={"reading": "words"}, source_as_of_utc=FIXED_NOW),
+         "MALFORMED"),
+        (FetchedResponse(payload={}, source_as_of_utc=FIXED_NOW), "EMPTY"),
+        ({"not": "a FetchedResponse"}, "MALFORMED"),
+    ],
+)
+def test_every_way_an_attempt_can_end_writes_exactly_one_row(script_item, expected_class):
+    """Seven endings, one row each, and four DISTINCT outcome classes across them.
+
+    The four outcomes are not three spellings of absence: OK, FETCH_FAILED, MALFORMED and
+    EMPTY are recorded as themselves.
+    """
+    adapter = _adapter([script_item])
+    result, sink, _, _ = _run(adapter)
+
+    assert len(sink.recorded) == 1
+    assert sink.outcome_classes == (expected_class,)
+    assert result.rows_recorded == 1
+    assert result.attempts_made == 1
+
+
+def test_the_four_outcome_classes_are_all_reachable_and_all_distinct():
+    """Guarding the CLASS: the parametrised cases above must not all land on one bucket."""
+    seen = set()
+    for item in (
+        _ok_response(),
+        AdapterFetchError("CONNECTION_REFUSED"),
+        FetchedResponse(payload={"reading": "words"}, source_as_of_utc=FIXED_NOW),
+        FetchedResponse(payload={}, source_as_of_utc=FIXED_NOW),
+    ):
+        _, sink, _, _ = _run(_adapter([item]))
+        seen.add(sink.outcome_classes[0])
+    assert seen == {"OK", "FETCH_FAILED", "MALFORMED", "EMPTY"}
+
+
+def test_an_unanticipated_exception_still_writes_a_row_and_is_classified_by_type():
+    """No bare except, no swallow, and no silence.
+
+    The class carries the exception TYPE and never its message: an exception raised
+    inside an HTTP client habitually stringifies the request, and the request carries the
+    source credential (PBG-SEC-002).
+    """
+    class UnanticipatedError(RuntimeError):
+        pass
+
+    adapter = FakeInMemoryAdapter(
+        script=[UnanticipatedError("SYNTHETIC-MARKER-THAT-MUST-NOT-BE-RECORDED-0000")]
+    )
+    result, sink, _, _ = _run(adapter)
+
+    assert sink.outcome_classes == ("FETCH_FAILED",)
+    outcome = sink.recorded[0].outcome
+    assert isinstance(outcome, FetchFailed)
+    assert outcome.error_class == "UNCLASSIFIED_UnanticipatedError"
+    assert "SYNTHETIC-MARKER" not in outcome.error_class
+
+
+def test_a_base_exception_that_is_not_an_exception_still_leaves_the_attempt_recorded():
+    """A SIGTERM handler raising SystemExit mid-fetch must not erase the attempt.
+
+    This is the case the pre-set outcome and the ``finally`` exist for. The row says
+    ATTEMPT_DID_NOT_COMPLETE, which is a fact; no row at all would have been silence.
+    """
+    adapter = FakeInMemoryAdapter(script=[KeyboardInterrupt()])
+    sink = RecordingSink()
+    with pytest.raises(KeyboardInterrupt):
+        collect(
+            adapter,
+            policy=SINGLE,
+            sink=sink,
+            ledger=RecordingLedger(),
+            collector_run_id="run-sigterm",
+            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+            sleep=RecordingSleep(),
+        )
+    assert len(sink.recorded) == 1
+    outcome = sink.recorded[0].outcome
+    assert isinstance(outcome, FetchFailed)
+    assert outcome.error_class == ERROR_ATTEMPT_DID_NOT_COMPLETE
+
+
+def test_a_sink_that_cannot_write_raises_rather_than_losing_the_attempt_quietly():
+    """"We did not record it" must never become "it did not happen"."""
+    with pytest.raises(OSError):
+        collect(
+            FakeInMemoryAdapter(script=[_ok_response()]),
+            policy=SINGLE,
+            sink=ExplodingSink(),
+            ledger=RecordingLedger(),
+            collector_run_id="run-nosink",
+            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+            sleep=RecordingSleep(),
+        )
+
+
+def test_every_retry_appends_its_own_row():
+    """A retry adds an observation row. Three attempts, three rows, numbered 1..3."""
+    adapter = FakeInMemoryAdapter(
+        script=[failing_fetch(), failing_fetch(), failing_fetch()]
+    )
+    result, sink, _, _ = _run(adapter, policy=POLICY)
+
+    assert result.attempts_made == 3
+    assert result.rows_recorded == 3
+    assert sink.attempt_numbers == (1, 2, 3)
+    assert sink.outcome_classes == ("FETCH_FAILED",) * 3
+
+
+def test_the_result_refuses_to_report_fewer_rows_than_attempts():
+    """A defensive invariant on the result type itself, not a tolerance.
+
+    If a future edit drops a record call, this is what says so rather than a test that
+    happened to count rows.
+    """
+    with pytest.raises(AssertionError):
+        CollectionResult(
+            source_id="src.a",
+            adapter_id="a.v0",
+            collector_run_id="run",
+            attempts_made=3,
+            rows_recorded=2,
+            final_outcome=Empty(),
+            reading_key=None,
+            reading_admitted=False,
+        )
+
+
+# --- BOUNDED RETRIES -------------------------------------------------------------------- #
+
+def test_retries_stop_at_max_attempts():
+    adapter = FakeInMemoryAdapter(script=[failing_fetch()] * MAX_ATTEMPTS_CEILING)
+    policy = RetryPolicy(
+        max_attempts=MAX_ATTEMPTS_CEILING, timeout_seconds=1.0, backoff_seconds=0.5
+    )
+    result, sink, _, sleep = _run(adapter, policy=policy)
+
+    assert result.attempts_made == MAX_ATTEMPTS_CEILING
+    assert adapter.calls == MAX_ATTEMPTS_CEILING
+    # Backoff between attempts, never after the last one.
+    assert sleep.slept == [0.5] * (MAX_ATTEMPTS_CEILING - 1)
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        FetchedResponse(payload={"reading": "words"}, source_as_of_utc=FIXED_NOW),
+        FetchedResponse(payload={}, source_as_of_utc=FIXED_NOW),
+        _ok_response(),
+    ],
+)
+def test_only_fetch_failed_is_retried(item):
+    """MALFORMED and EMPTY are ANSWERS.
+
+    Asking the same question again in two seconds is not a strategy; retrying a source
+    that changed its shape is a source that is also hammered.
+    """
+    adapter = _adapter([item, item, item])
+    result, sink, _, sleep = _run(adapter, policy=POLICY)
+
+    assert result.attempts_made == 1
+    assert adapter.calls == 1
+    assert sleep.slept == []
+
+
+def test_a_recovered_fetch_stops_retrying_and_keeps_the_failure_rows():
+    adapter = FakeInMemoryAdapter(script=[failing_fetch(), _ok_response()])
+    result, sink, ledger, _ = _run(adapter, policy=POLICY)
+
+    assert result.attempts_made == 2
+    assert sink.outcome_classes == ("FETCH_FAILED", "OK")
+    assert isinstance(result.final_outcome, OK)
+    assert ledger.admitted == [result.reading_key]
+
+
+# --- BOUNDED TIMEOUTS ------------------------------------------------------------------- #
+
+def test_the_declared_timeout_reaches_the_adapter():
+    adapter = FakeInMemoryAdapter(script=[_ok_response()])
+    _run(adapter)
+    assert adapter.timeouts_seen == [SINGLE.timeout_seconds]
+
+
+def test_a_response_that_arrives_after_its_budget_is_refused_even_when_it_is_good():
+    """An adapter that ignores its timeout cannot deliver a value, only a recorded failure.
+
+    ``fetch`` is synchronous, so the runner cannot interrupt it; it can only refuse to
+    honour what eventually comes back. Under CD-AC-001 the safe direction is the recorded
+    absence: a dial that reads UNKNOWN for one cycle costs less than an adapter whose
+    declared timeout means nothing.
+    """
+    adapter = FakeInMemoryAdapter(script=[_ok_response()])
+    result, sink, ledger, _ = _run(adapter, advance=SINGLE.timeout_seconds + 1.0)
+
+    assert sink.outcome_classes == ("FETCH_FAILED",)
+    assert result.final_outcome.error_class == ERROR_TIMEOUT_BUDGET_EXCEEDED
+    assert ledger.admitted == []
+
+
+def test_a_timeout_error_from_the_adapter_is_classified_as_a_timeout():
+    adapter = FakeInMemoryAdapter(script=[TimeoutError("slow")])
+    result, _, _, _ = _run(adapter)
+    assert result.final_outcome.error_class == ERROR_TIMEOUT
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"max_attempts": 0, "timeout_seconds": 1.0, "backoff_seconds": 0.0},
+        {"max_attempts": MAX_ATTEMPTS_CEILING + 1, "timeout_seconds": 1.0,
+         "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": 0.0, "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": -1.0, "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": float("inf"), "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": float("nan"), "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": MAX_TIMEOUT_SECONDS_CEILING + 1.0,
+         "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": 1.0,
+         "backoff_seconds": MAX_BACKOFF_SECONDS_CEILING + 1.0},
+        {"max_attempts": 1, "timeout_seconds": 1.0, "backoff_seconds": float("inf")},
+        {"max_attempts": 1, "timeout_seconds": 1.0, "backoff_seconds": -1.0},
+    ],
+)
+def test_an_unbounded_or_absurd_policy_is_refused_at_construction(kwargs):
+    """An unbounded wait is an outage with extra steps (Standards Baseline §11)."""
+    with pytest.raises((ValueError, TypeError)):
+        RetryPolicy(**kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"max_attempts": True, "timeout_seconds": 1.0, "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": 1, "backoff_seconds": 0.0},
+        {"max_attempts": 1, "timeout_seconds": 1.0, "backoff_seconds": True},
+    ],
+)
+def test_a_policy_field_of_the_wrong_type_is_refused(kwargs):
+    with pytest.raises(TypeError):
+        RetryPolicy(**kwargs)
+
+
+def test_the_policy_states_its_own_worst_case():
+    policy = RetryPolicy(max_attempts=3, timeout_seconds=5.0, backoff_seconds=1.0)
+    assert policy.worst_case_seconds == 3 * 5.0 + 2 * 1.0
+
+
+# --- VALIDATION AT THE BOUNDARY --------------------------------------------------------- #
+
+def test_a_non_conforming_response_is_malformed_with_its_class_and_location():
+    adapter = FakeInMemoryAdapter(
+        script=[FetchedResponse(payload={"reading": "words"},
+                                source_as_of_utc=FIXED_NOW)]
+    )
+    result, sink, _, _ = _run(adapter)
+    outcome = result.final_outcome
+    assert isinstance(outcome, Malformed)
+    assert outcome.schema_error_class == "JSONSCHEMA_TYPE"
+    assert outcome.instance_path == "/reading"
+
+
+def test_a_malformed_response_is_never_coerced_into_a_reading():
+    """Not coerced, not partially accepted, and not admitted to the ledger."""
+    adapter = FakeInMemoryAdapter(
+        script=[FetchedResponse(payload={"reading": "1.5"}, source_as_of_utc=FIXED_NOW)]
+    )
+    result, _, ledger, _ = _run(adapter)
+    assert isinstance(result.final_outcome, Malformed)
+    assert result.reading_key is None
+    assert ledger.admitted == []
+
+
+def test_an_unknown_key_in_a_response_is_malformed_because_the_schema_is_closed():
+    adapter = FakeInMemoryAdapter(
+        script=[
+            FetchedResponse(
+                payload={"reading": 1.0, "surprise": 2.0}, source_as_of_utc=FIXED_NOW
+            )
+        ]
+    )
+    result, _, _, _ = _run(adapter)
+    assert isinstance(result.final_outcome, Malformed)
+    assert result.final_outcome.schema_error_class == "JSONSCHEMA_ADDITIONALPROPERTIES"
+
+
+def test_our_broken_schema_is_recorded_and_then_raised_rather_than_blamed_on_the_source():
+    """Two obligations that are not in tension: the row exists, and the defect is loud.
+
+    Recording it as MALFORMED and saying nothing else would blame the source for our bug,
+    and *cannot determine* is not *determined to be absent* (Standards Baseline §8).
+    """
+    adapter = FakeInMemoryAdapter(
+        script=[_ok_response()], response_schema={"type": "not-a-json-schema-type"}
+    )
+    sink = RecordingSink()
+    with pytest.raises(SchemaDeclarationInvalid):
+        collect(
+            adapter,
+            policy=POLICY,
+            sink=sink,
+            ledger=RecordingLedger(),
+            collector_run_id="run-badschema",
+            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+            sleep=RecordingSleep(),
+        )
+    assert len(sink.recorded) == 1
+    outcome = sink.recorded[0].outcome
+    assert isinstance(outcome, Malformed)
+    assert outcome.schema_error_class == MALFORMED_SCHEMA_DECLARATION_INVALID
+
+
+def test_a_declared_schema_with_a_remote_ref_is_refused_without_fetching_it():
+    """Resolving a remote $ref is an outbound network request inside a validation step.
+
+    Nothing in this increment may reach the network. The refusal is a schema-declaration
+    defect, so it is raised rather than recorded against the source.
+    """
+    adapter = FakeInMemoryAdapter(
+        script=[_ok_response()],
+        response_schema={"$ref": "https://example.invalid/schema.json"},
+    )
+    with pytest.raises(SchemaDeclarationInvalid) as caught:
+        collect(
+            adapter,
+            policy=SINGLE,
+            sink=RecordingSink(),
+            ledger=RecordingLedger(),
+            collector_run_id="run-remoteref",
+            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+            sleep=RecordingSleep(),
+        )
+    assert caught.value.error_class == "SCHEMA_REMOTE_REF_FORBIDDEN"
+
+
+def test_an_adapter_returning_the_wrong_type_breaches_its_contract():
+    adapter = FakeInMemoryAdapter(script=[{"reading": 1.0}])
+    result, _, _, _ = _run(adapter)
+    assert isinstance(result.final_outcome, Malformed)
+    assert result.final_outcome.schema_error_class == MALFORMED_ADAPTER_CONTRACT_BREACH
+
+
+def test_a_conforming_payload_that_is_not_a_json_object_is_refused_not_wrapped():
+    """Wrapping would invent a key name, and an invented key is a shape nobody agreed to."""
+    adapter = FakeInMemoryAdapter(
+        script=[FetchedResponse(payload=[1, 2, 3], source_as_of_utc=FIXED_NOW)],
+        response_schema={"type": "array"},
+        is_empty_fn=lambda payload: False,
+    )
+    result, _, _, _ = _run(adapter)
+    assert isinstance(result.final_outcome, Malformed)
+    assert (
+        result.final_outcome.schema_error_class == MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT
+    )
+
+
+def test_a_non_boolean_answer_to_is_empty_is_a_contract_breach():
+    """A truthy string would make "is it empty" answer yes by accident."""
+    adapter = FakeInMemoryAdapter(
+        script=[_ok_response()], is_empty_fn=lambda payload: "yes"  # type: ignore[return-value]
+    )
+    result, _, _, _ = _run(adapter)
+    assert isinstance(result.final_outcome, Malformed)
+    assert result.final_outcome.schema_error_class == MALFORMED_ADAPTER_CONTRACT_BREACH
+
+
+def test_an_exploding_is_empty_does_not_become_a_reading():
+    adapter = FakeInMemoryAdapter(
+        script=[_ok_response()],
+        is_empty_fn=lambda payload: (_ for _ in ()).throw(ValueError("boom")),
+    )
+    result, _, ledger, _ = _run(adapter)
+    assert isinstance(result.final_outcome, Malformed)
+    assert result.final_outcome.schema_error_class.startswith("EMPTINESS_UNDECIDABLE_")
+    assert ledger.admitted == []
+
+
+# --- IDEMPOTENCY ------------------------------------------------------------------------ #
+
+def test_a_refetch_of_the_same_period_adds_a_row_but_not_a_second_reading():
+    """BLUEPRINT §5, exactly: "a retry adds an observation row, never a duplicate reading".
+
+    The A5 SQL must mirror both halves: raw.observation append-only with NO unique
+    constraint, and the reading UNIQUE on (source_id, source_as_of_utc).
+    """
+    ledger = RecordingLedger()
+    sink = RecordingSink()
+    period = FIXED_NOW - timedelta(minutes=5)
+    results = []
+
+    for run_id in ("run-a", "run-b"):
+        results.append(
+            collect(
+                FakeInMemoryAdapter(
+                    script=[FetchedResponse(payload={"reading": 1.5},
+                                            source_as_of_utc=period)]
+                ),
+                policy=SINGLE,
+                sink=sink,
+                ledger=ledger,
+                collector_run_id=run_id,
+                clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+                sleep=RecordingSleep(),
+            )
+        )
+
+    assert len(sink.recorded) == 2
+    assert len(ledger.admitted) == 1
+    assert len(ledger.rejected) == 1
+    assert ledger.admitted[0] == ("fake.source", "2026-08-19T11:55:00Z")
+
+    # The RUNNER's own answer, not only the fake's bookkeeping. Asserting on the ledger
+    # alone would leave a runner that ignores the ledger's verdict entirely and reports
+    # every re-fetch as a fresh reading — which is what this pair of assertions caught
+    # when the idempotency branch was mutated away.
+    assert [result.reading_key for result in results] == [
+        ("fake.source", "2026-08-19T11:55:00Z")
+    ] * 2
+    assert [result.reading_admitted for result in results] == [True, False]
+
+
+def test_the_idempotency_key_is_the_source_period_not_the_fetch_instant():
+    period = FIXED_NOW - timedelta(hours=2)
+    adapter = FakeInMemoryAdapter(
+        script=[FetchedResponse(payload={"reading": 1.5}, source_as_of_utc=period)]
+    )
+    result, _, _, _ = _run(adapter)
+    assert result.reading_key == ("fake.source", "2026-08-19T10:00:00Z")
+
+
+def test_two_different_periods_are_two_readings():
+    ledger = RecordingLedger()
+    admitted = []
+    for minutes in (5, 10):
+        admitted.append(collect(
+            FakeInMemoryAdapter(
+                script=[
+                    FetchedResponse(
+                        payload={"reading": 1.5},
+                        source_as_of_utc=FIXED_NOW - timedelta(minutes=minutes),
+                    )
+                ]
+            ),
+            policy=SINGLE,
+            sink=RecordingSink(),
+            ledger=ledger,
+            collector_run_id=f"run-{minutes}",
+            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+            sleep=RecordingSleep(),
+        ).reading_admitted)
+    assert len(ledger.admitted) == 2
+    assert ledger.rejected == []
+    assert admitted == [True, True]
+
+
+def test_the_same_instant_in_a_different_offset_is_the_same_reading():
+    """The key is normalised to canonical UTC before it becomes a dictionary key.
+
+    Two datetimes that denote the same instant in different offsets are equal in Python
+    and are the same row in the store, but are not the same dict key. Normalising once
+    means the in-memory ledger and the UNIQUE constraint agree about "the same".
+    """
+    plus_two = timezone(timedelta(hours=2))
+    ledger = RecordingLedger()
+    results = []
+    for as_of in (
+        datetime(2026, 8, 19, 10, 0, 0, tzinfo=timezone.utc),
+        datetime(2026, 8, 19, 12, 0, 0, tzinfo=plus_two),
+    ):
+        results.append(
+            collect(
+                FakeInMemoryAdapter(
+                    script=[
+                        FetchedResponse(payload={"reading": 1.5}, source_as_of_utc=as_of)
+                    ]
+                ),
+                policy=SINGLE,
+                sink=RecordingSink(),
+                ledger=ledger,
+                collector_run_id="run-offset",
+                clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
+                sleep=RecordingSleep(),
+            )
+        )
+    assert len(ledger.admitted) == 1
+    assert len(ledger.rejected) == 1
+    assert len({result.reading_key for result in results}) == 1
+    assert [result.reading_admitted for result in results] == [True, False]
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        AdapterFetchError("CONNECTION_REFUSED"),
+        FetchedResponse(payload={"reading": "words"}, source_as_of_utc=FIXED_NOW),
+        FetchedResponse(payload={}, source_as_of_utc=FIXED_NOW),
+    ],
+)
+def test_a_failure_has_no_source_period_and_claims_no_reading(item):
+    """Inventing a period for a failure would make every failure a reading of nothing."""
+    adapter = _adapter([item])
+    result, _, ledger, _ = _run(adapter)
+    assert result.reading_key is None
+    assert result.reading_admitted is False
+    assert ledger.admitted == []
+
+
+# --- THE ATTEMPT ROW ---------------------------------------------------------------------- #
+
+def test_the_attempt_row_carries_the_collector_provenance_the_engine_does_not_read():
+    adapter = FakeInMemoryAdapter(script=[_ok_response()])
+    _, sink, _, _ = _run(adapter, run_id="run-provenance")
+    attempt = sink.recorded[0]
+
+    assert attempt.adapter_id == "fake.adapter.v0"
+    assert attempt.collector_run_id == "run-provenance"
+    assert attempt.attempt_number == 1
+    assert attempt.source_id == "fake.source"
+    assert attempt.outcome_class == "OK"
+    assert attempt.elapsed_seconds >= 0.0
+    assert attempt.completed_utc >= attempt.requested_utc
+
+
+def test_an_attempt_that_finished_before_it_started_is_refused():
+    """A row that says otherwise makes every latency figure derived from it wrong."""
+    from crash_detector.observations import ObservationRecord
+
+    with pytest.raises(ValueError):
+        AttemptRecord(
+            observation=ObservationRecord(
+                source_id="src.a",
+                observed_utc=FIXED_NOW - timedelta(seconds=1),
+                outcome=Empty(),
+            ),
+            adapter_id="a.v0",
+            collector_run_id="run",
+            attempt_number=1,
+            requested_utc=FIXED_NOW,
+        )
+
+
+@pytest.mark.parametrize("attempt_number", [0, -1])
+def test_attempt_numbering_starts_at_one(attempt_number):
+    from crash_detector.observations import ObservationRecord
+
+    with pytest.raises(ValueError):
+        AttemptRecord(
+            observation=ObservationRecord(
+                source_id="src.a", observed_utc=FIXED_NOW, outcome=Empty()
+            ),
+            adapter_id="a.v0",
+            collector_run_id="run",
+            attempt_number=attempt_number,
+            requested_utc=FIXED_NOW,
+        )
+
+
+def test_collect_refuses_an_unnamed_run():
+    with pytest.raises(ValueError):
+        collect(
+            FakeInMemoryAdapter(script=[_ok_response()]),
+            policy=SINGLE,
+            sink=RecordingSink(),
+            ledger=RecordingLedger(),
+            collector_run_id="",
+            clock=SteppingClock(FIXED_NOW),
+            sleep=RecordingSleep(),
+        )
+
+
+def test_collect_has_no_default_clock_and_no_default_sleep():
+    """No hidden wall clock, and no hidden real delay.
+
+    A default ``time.sleep`` would make the retry tests take as long as the retries.
+    """
+    import inspect
+
+    signature = inspect.signature(collect)
+    for name in ("clock", "sleep"):
+        assert signature.parameters[name].default is inspect.Parameter.empty

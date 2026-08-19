@@ -39,6 +39,7 @@ from crash_detector.observations import (
     Malformed,
     ObservationRecord,
 )
+from crash_detector.source_registry import Criticality, SourceRecord, SourceRegistry
 
 from conftest import FIXED_NOW, WINDOW_SECONDS, ago
 
@@ -79,11 +80,62 @@ class ExplodingModel:
         raise ArithmeticError("model cannot compute")
 
 
+def _registry_for(*specs: DialSpec) -> SourceRegistry:
+    """A registry that registers exactly the sources ``specs`` name, at the criticality
+    the set they appear in implies.
+
+    ADDED IN WO-2 INCREMENT 2, and deliberately mechanical. ``ConfigSnapshot`` gained a
+    required ``source_registry`` field with deliverable A4, plus the invariants that every
+    named input is registered and that its criticality agrees with the set it is named in.
+    These tests already declare the sources they mean; this derives the registry rows that
+    say the same thing, so that not one assertion below had to move to accommodate the new
+    field. A test edited to accommodate new code is how a guard quietly stops guarding.
+    """
+    implied: dict[str, Criticality] = {}
+    for spec in specs:
+        for source_id in spec.required_input_ids:
+            _imply(implied, source_id, Criticality.REQUIRED)
+        for source_id in spec.contributing_input_ids:
+            _imply(implied, source_id, Criticality.CONTRIBUTING)
+    return SourceRegistry(
+        sources=tuple(
+            SourceRecord(
+                source_id=source_id,
+                adapter_id="fake.adapter.v0",
+                cadence_seconds=60,
+                criticality=criticality,
+                stands_for="TEST DOUBLE source; no ingredient is registered in WO-2",
+            )
+            for source_id, criticality in implied.items()
+        )
+    )
+
+
+def _imply(
+    implied: dict[str, Criticality], source_id: str, criticality: Criticality
+) -> None:
+    """One registry ROW per source, because that is what ``raw.source_registry`` is.
+
+    A source feeding both dials gets one row, not two. A source that two dials would want
+    at DIFFERENT criticalities is a conflict this helper refuses rather than silently
+    picks a winner for — see finding CD-ENG-F08, raised because BLUEPRINT §5 models
+    criticality as a property of the SOURCE and not of the (source, dial) pair.
+    """
+    existing = implied.get(source_id)
+    if existing is not None and existing is not criticality:
+        raise AssertionError(
+            f"test declares {source_id!r} as both {existing.value} and "
+            f"{criticality.value}; BLUEPRINT §5 gives a source one criticality"
+        )
+    implied[source_id] = criticality
+
+
 def _snapshot(*, equity_spec: DialSpec, monetary_spec: DialSpec) -> ConfigSnapshot:
     return ConfigSnapshot(
         config_snapshot_id="cfg-test",
         dial_specs=(equity_spec, monetary_spec),
         staleness_window_seconds=WINDOW_SECONDS,
+        source_registry=_registry_for(equity_spec, monetary_spec),
     )
 
 

@@ -14,19 +14,44 @@ before an evaluation runs rather than producing a reading nobody can explain:
     (doctrine §3.6);
   * the staleness window must be a positive finite number of seconds. An infinite window
     is not a lenient window, it is no window at all, and it is the cheapest way to make a
-    stale reading render as current.
+    stale reading render as current;
+  * **every source a dial names must be registered**, and **its declared criticality must
+    agree with the set it is named in** — see below.
 
 ----
 
-SCOPE NOTE (WO-2, increment 1 of 7). :class:`ConfigSnapshot` carries no source registry in
-this increment. ``raw.source_registry`` with its ``REQUIRED | CONTRIBUTING | DISPOSABLE``
-criticality, and the rule that a ``DISPOSABLE`` source may never appear in a dial's
-required-input set, are deliverable A4/A5 and are owed. The A2 property that depends on
-them — "with an empty source registry both dials read ``Unknown``" — is expressed here
-exactly and testably as :func:`empty_config_snapshot`: zero declared inputs on either
-dial. When A4 lands, the registry becomes a field on this type and the "every named input
-must be registered" and "no ``DISPOSABLE`` input may be required" checks join the
-constructor.
+THE SOURCE REGISTRY IS PART OF THE SNAPSHOT (WO-2, increment 2, deliverable A4).
+
+Which sources exist and how critical each one is are configuration that affects a result,
+so they belong in the run-level snapshot alongside the thresholds and the window
+(Standards Baseline §10). A ``dial.history`` row referencing a ``config_snapshot_id`` can
+then be explained a year later without archaeology — including the part of the explanation
+that says which inputs were even eligible.
+
+Two invariants join the constructor with it, and they are load-bearing together:
+
+1. **Every source named in a dial's input sets must be registered.** Without this the
+   criticality contract is vacuous: you evade the ``DISPOSABLE`` prohibition simply by not
+   registering the source you are about to make load-bearing.
+2. **A source's declared criticality must match the set it is named in.** That subsumes
+   the dispatch's specific rule that a ``DISPOSABLE`` source may NEVER appear in a dial's
+   required-input set, which raises
+   :exc:`~crash_detector.source_registry.DisposableSourceIsLoadBearing` by name. The
+   reasoning for enforcing the Blueprint's whole criticality table rather than that single
+   row is in :mod:`crash_detector.source_registry`.
+
+The equivalent DATABASE constraint is deliverable A5 and is owed. Both must exist: this
+one refuses an incoherent configuration before an evaluation runs, and that one refuses an
+incoherent row whatever wrote it.
+
+WO-2 ships :data:`~crash_detector.source_registry.EMPTY_SOURCE_REGISTRY` — zero sources —
+because CD-D-005 is owed by the Product Owner (BLUEPRINT §16). The consequence is exact
+and intended: nothing is registered, so no dial may name an input, so every dial reads
+``Unknown``. See :func:`empty_config_snapshot`.
+
+The registry is a REQUIRED field with no default. A default registry would be a registry
+nobody chose, and the one thing worse than an empty registry is an empty registry that
+arrived by omission and is therefore not evidence of anything.
 
 Regime-aware staleness (``window_for(regime)``, CD-AC-009) is WO-3. WO-2 carries the
 declared constant window and names it as such.
@@ -40,6 +65,7 @@ from typing import Union
 
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.engine.model import ContributionModel
+from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY, SourceRegistry
 
 __all__ = ["DialSpec", "ConfigSnapshot", "empty_config_snapshot"]
 
@@ -90,6 +116,7 @@ class ConfigSnapshot:
     config_snapshot_id: str
     dial_specs: tuple[DialSpec, ...]
     staleness_window_seconds: float
+    source_registry: SourceRegistry
 
     def __post_init__(self) -> None:
         if not self.config_snapshot_id:
@@ -117,6 +144,21 @@ class ConfigSnapshot:
                 "an unbounded staleness window is no staleness window"
             )
 
+        registry = self.source_registry
+        if not isinstance(registry, SourceRegistry):
+            raise TypeError(
+                "ConfigSnapshot.source_registry must be a SourceRegistry, got "
+                f"{type(registry).__name__}. Pass EMPTY_SOURCE_REGISTRY explicitly for "
+                "the WO-2 state; there is no default, because a registry nobody chose "
+                "is not evidence of anything."
+            )
+        # Both invariants, per dial. `assert_may_be_*` calls `get` first, so an
+        # unregistered source raises SourceNotRegistered before any criticality is read
+        # — the two checks are one pass and cannot come apart.
+        for spec in self.dial_specs:
+            registry.assert_may_be_required(spec.required_input_ids)
+            registry.assert_may_be_contributing(spec.contributing_input_ids)
+
     def spec_for(self, dial_id: str) -> DialSpec:
         """The spec for ``dial_id``. Raises rather than returning a default spec."""
         for spec in self.dial_specs:
@@ -128,11 +170,15 @@ class ConfigSnapshot:
 def empty_config_snapshot(
     config_snapshot_id: str, *, staleness_window_seconds: float
 ) -> ConfigSnapshot:
-    """The WO-2 configuration: both dials declared, zero inputs, no model.
+    """The WO-2 configuration: both dials declared, zero inputs, no model, no sources.
 
     This is the shipped state while CD-D-005 is owed (BLUEPRINT §16). Evaluating against
     it yields ``Unknown`` for both dials, which is the honest answer and not a
     placeholder.
+
+    The registry is empty here rather than absent, and the two facts reinforce each
+    other: with nothing registered, invariant 1 above means no dial COULD declare an
+    input even if someone added one to a spec without touching the registry.
     """
     return ConfigSnapshot(
         config_snapshot_id=config_snapshot_id,
@@ -146,4 +192,5 @@ def empty_config_snapshot(
             for dial_id in DIAL_IDS
         ),
         staleness_window_seconds=staleness_window_seconds,
+        source_registry=EMPTY_SOURCE_REGISTRY,
     )

@@ -14,11 +14,19 @@ module                       WO     what it is
 ===========================  =====  =====================================================
 ``time_utc``                 WO-2   UTC-only timestamp handling; naive datetimes refused
 ``observations``             WO-2   the observation record and its four-way fetch outcome
+``source_registry``          WO-2   sources, criticality, and the criticality contract
 ``dials``                    WO-2   ``Reading``, the two unrelated score types, ``DialSet``
 ``engine``                   WO-2   the pure ``evaluate`` core and its config snapshot
+``collectors``               WO-2   the adapter protocol, boundary validation, the runner
+``publication``              WO-2   the closed envelope contracts and the refusal path
 ``witness``                  WO-2   the ``WitnessPanel`` sum type
 ``serving.witness_resolver`` WO-2   absence and staleness -> UNAVAILABLE, never AGREES
 ===========================  =====  =====================================================
+
+``observations`` and ``source_registry`` sit at the ROOT rather than under ``collectors``
+because each is the *contract between* the collector layer and the engine rather than a
+component of either. Under ``collectors`` they would make :mod:`crash_detector.engine`
+import the collector package and invert the BLUEPRINT §5/§7 boundary (CD-D-008).
 """
 
 __all__ = ["__version__"]
