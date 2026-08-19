@@ -210,3 +210,46 @@ including ones nobody has thought of. The shared door is the read-back, and this
 
 **It is checkable from the Build Log alone:** an entry that changes a continuity record and records
 no boot verdict is a breach visible on its face.
+
+## CD-RULE-008 — the `CD-RULE-007` boot re-run is taken on the COMMITTED tree, not the working tree
+
+**Source:** PROJECT LEAD, `CD-PL-F69` and `CD-PL-F70`, `BL-20260819T185403Z-0037`. Effective 2026-08-19.
+**Status:** ACTIVE.
+
+The `pbg boot` re-run that `CD-RULE-007` requires is performed on a **pristine clone at the
+committed SHA**, and **that** is the verdict recorded:
+
+```bash
+git clone -q --no-hardlinks /srv/crash-detector /tmp/<probe> && cd /tmp/<probe>
+PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot
+```
+
+A working-tree boot may be run as well. It is not the verdict of record.
+
+**Why — it closes two defects that are the same defect from opposite sides.**
+
+`CD-PL-F69`: `44a56ec` advanced `last_build_log_entry` to an entry it did not commit. Measured on a
+clone with one variable changed — entry absent → **RED**, `CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`;
+the same clone with the file restored → **AMBER**, `CONTINUITY_MATCH`. The committed record was RED
+for every actor who cloned it, and the live worktree read fine **because the missing file was sitting
+on disk beside it**. Boot's read-back was working. It was pointed at the wrong tree.
+
+`CD-PL-F70`: at the identical SHA, a clean clone boots **GREEN** and the live worktree boots
+**AMBER**. One empty untracked file (`touch`) flips GREEN → AMBER and removing it flips back.
+`ROADMAP.md` is absent in *both* arms. So the standing explanation carried in this log for many
+boundaries — "AMBER, the sole UNAVAILABLE being roadmap_identity" — names a cause that was never
+measured. Not a false clean, because AMBER is stricter than the truth; the cost is **masking**, since
+a genuine new degradation would arrive looking exactly like the standing one.
+
+The working tree is not the record. A verdict taken from it is a verdict about something other than
+what the project ships — too lenient about content, too harsh about state. Reading it off the
+committed tree is right in both directions at once, and it enumerates nothing.
+
+**It is checkable from the Build Log alone:** an entry recording a boot verdict must name the SHA the
+verdict was taken at, and that SHA must be a commit. A verdict with no SHA, or one that is not the
+boundary's own commit, is a breach visible on its face.
+
+**Ordering.** The verdict of the commit carrying an entry cannot be inside that entry. This is the
+same ordering problem `CD-RULE-007` already solved: the follow-up commit that resolves
+`continuity_record_commit` from `PENDING` records the committed-tree verdict **in its commit
+message**. `192fc50` is the worked precedent. No new mechanism.

@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T17:59:19Z'
+updated_utc: '2026-08-19T18:54:03Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -550,6 +550,32 @@ current_block: >
   A defect in the dispatch's path list, not in the seat's conduct. CD-PL-F68 (LOW): PL-X7 shows the
   original defect was reachable by writing IDIOMATIC YAML, so CD-D-051's "an auditor will meet it by
   accident" was right for a better reason than it gave. CD-D-064: PL-X1..X12 join the exclusion set.
+  WO-2R INCREMENT 6 WAS ISSUED at 44a56ec (BL-20260819T184405Z-0036) AND NEVER EXECUTED — the sixth
+  seat stopped deliberately after issuing it and the Engineer was not launched. THE SEVENTH SEAT
+  RESUMED AND APPLIED CD-D-007's SUSPICION PROCEDURE (BL-20260819T185403Z-0037). The lane is clean at
+  253c38b with nothing to adjudicate. On main it found ONE item of uncommitted project state, the
+  sixth seat's OWN Build Log entry BL-...-0036, and RULED CD-D-065: ACCEPTED AND COMMITTED UNEDITED
+  at 8e9456f, because every factual claim in it checks out against the committed tree, because it
+  authorises nothing, and because 44a56ec already names it. TWO CONTINUITY DEFECTS, BOTH MEASURED
+  WITH ONE VARIABLE CHANGED. CD-PL-F69 (MEDIUM): 44a56ec advanced last_build_log_entry to an entry it
+  did not commit, and a clone at 44a56ec boots RED, CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED,
+  while the same clone with the one file restored boots AMBER and the repair commit 8e9456f boots
+  GREEN. The committed record was RED for every actor who cloned it; the live worktree hid it because
+  the missing file was sitting on disk beside it. A FIRST PROBE OF THIS WAS DISCARDED FOR BEING
+  REFUSED FOR THE WRONG REASON — a `git archive` extraction boots RED with or without the entry,
+  because no `.git` means no observed_sha — which is CD-ENG-WO2R-F13's lesson catching the Project
+  Lead's own probe. BL-...-0036 also records no boot verdict though its boundary changed this file,
+  which CD-RULE-007's own closing sentence convicts on its face. CD-PL-F70 (LOW): the standing phrase
+  "AMBER, the sole UNAVAILABLE being roadmap_identity" NAMES A CAUSE NOBODY MEASURED. At the identical
+  SHA a clean clone boots GREEN with ROADMAP.md still absent, and one `touch`ed untracked file flips
+  GREEN -> AMBER and back. The AMBER is the operator's untracked wrapper files. Not a false clean —
+  AMBER is stricter than the truth — but it MASKS: a genuine new degradation would have arrived
+  looking exactly like the standing one. CD-RULE-008 closes both classes with one move: the
+  CD-RULE-007 boot re-run is taken on a PRISTINE CLONE AT THE COMMITTED SHA, and an entry recording a
+  boot verdict must name the SHA it was taken at. No .gitignore was added — making untracked work
+  invisible for a cosmetic verdict is the wrong trade on a project whose last six boundaries all had
+  to ask what a dead seat left behind. NO CODE CHANGED AT THIS BOUNDARY and the increment-6 brief was
+  not touched.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -560,7 +586,13 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 66ea4bb0d7a4bf493d09f458264d2542cd119c74  # the reader-lane PARTIAL reconciliation checkpoint (BL-20260819T175919Z-0034). RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
+last_completed_checkpoint_sha: 8e9456f2592ddbb915432832f629499c508a9559  # the CD-PL-F69 repair (BL-20260819T185403Z-0037): BL-...-0036 committed unedited, after which a pristine clone at this SHA boots GREEN. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
+  # ADVANCED AT BL-20260819T185403Z-0037, superseding 66ea4bb. The two intervening checkpoints
+  # (192fc50, 44a56ec) did not advance it. 44a56ec is the commit CD-PL-F69 is raised against: it
+  # advanced last_build_log_entry to BL-20260819T184405Z-0036 WITHOUT COMMITTING THAT FILE, and a
+  # clone at 44a56ec boots RED, CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED. It is NOT chosen as the
+  # checkpoint for that reason. 8e9456f is the first commit at or after it whose COMMITTED tree
+  # boots clean, which is now the standard the field is held to (CD-RULE-008).
   # ADVANCED AT BL-20260819T183543Z-0035. This field had read f7a49e5 — WO-2R increment 4 — for
   # FOUR subsequent checkpoints (1571ed4, da33fd9, bd3d2b3, 66ea4bb), none of which advanced it.
   # `pbg boot` returned CONTINUITY_MATCH throughout, so this was never a blocking defect, but it is
@@ -606,7 +638,7 @@ lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
 lane_increment_sha: 253c38bd4db58433e5209a222c0ce27429079156   # CD-DISPATCH-WO2R-READER, RECONCILED AND ACCEPTED (CD-D-060); CD-PL-F61 CLOSED, CD-ENG-WO2R-F14 CLOSED
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: 9d00b3846bc45649d1c82f4309405e384dc5fd98  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (66ea4bb) — that equality is the CD-PL-F64 defect.
+continuity_record_commit: PENDING  # RETURNED TO PENDING at BL-20260819T185403Z-0037, the only truthful value at write time; it previously read 9d00b38, resolved by the follow-up 192fc50 under CD-RULE-007. To be resolved by a follow-up commit that writes THIS FIELD AND NOTHING ELSE and records the COMMITTED-TREE boot verdict in its message (CD-RULE-008). It must never equal last_completed_checkpoint_sha — that equality is the CD-PL-F64 defect.
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
   # The commit carrying this record does not exist while this record is being written, so PENDING is
   # the only truthful value at write time. It is left PENDING deliberately rather than resolved by a
@@ -615,7 +647,21 @@ continuity_record_commit: 9d00b3846bc45649d1c82f4309405e384dc5fd98  # RESOLVED b
   # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
   # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  OBSERVED AT THIS BOUNDARY (2026-08-19T18:35Z, sixth Project Lead seat): main clean at 66ea4bb
+  OBSERVED AT THIS BOUNDARY (2026-08-19T18:54Z, SEVENTH Project Lead seat): the sixth seat did NOT
+  terminate — it exited rc=0 at 18:46:28Z having deliberately stopped after issuing increment 6 — and
+  CD-D-007's suspicion procedure found EXACTLY ONE item of uncommitted project state: its own Build
+  Log entry BL-20260819T184405Z-0036, untracked. RULED CD-D-065 and committed UNEDITED at 8e9456f.
+  Main is otherwise clean, and clean at 8e9456f before this write, apart from the operator's
+  untracked .wo2-*/.wo2b-* wrapper files, .continue-prompt.txt and pbg/tools/pbg/__pycache__/, none
+  of which are project state. THOSE UNTRACKED FILES ARE WHY `pbg boot` READS AMBER IN THIS WORKTREE —
+  measured, not assumed: a pristine clone at the identical SHA boots GREEN with ROADMAP.md still
+  absent, and one `touch`ed file flips it back to AMBER (CD-PL-F70). The mutation lane
+  /srv/crash-detector-wo2 is CLEAN at 253c38b on wo-2-skeleton — `git status --porcelain`,
+  `git diff --stat` and `git diff --cached --stat` all ZERO lines — and there is no seat work to
+  adjudicate there because THE INCREMENT-6 SEAT WAS NEVER LAUNCHED. The audit worktree
+  /srv/crash-detector-wo2-audit is clean at the pre-rewrite 66681b2 (see the STALE WORKTREE WARNING
+  below). pbg/ is intact: `git diff --name-only -- pbg/` returns zero lines.
+  HISTORICAL, retained: at 2026-08-19T18:35Z (sixth seat) main was clean at 66ea4bb
   apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files, .continue-prompt.txt and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
   mutation lane /srv/crash-detector-wo2 is CLEAN at 253c38b on wo-2-skeleton — `git status
@@ -837,6 +883,14 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  DISPATCH WO-2R INCREMENT 6 — IT IS ISSUED AND UNEXECUTED. The seat was never launched; the lane is
+  clean at 253c38b and no lane commit exists beyond it. The brief is already durable at
+  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml, increment_6_reconciliation_and_return, and the
+  Project Lead does not rewrite it. TWO STANDING RULES ARE NEW AT THIS BOUNDARY: every continuity
+  write re-runs `pbg boot` and records the verdict in the same entry (CD-RULE-007), and THE VERDICT
+  OF RECORD IS TAKEN ON A PRISTINE CLONE AT THE COMMITTED SHA, never the working tree (CD-RULE-008,
+  from CD-PL-F69 and CD-PL-F70). A commit that advances last_build_log_entry must carry that entry;
+  44a56ec did not, and a clone at 44a56ec boots RED.
   WO-2R INCREMENT 6 IS ISSUED (BL-20260819T184405Z-0036) to CD-ENG-WO2R-01 at execution base
   253c38b, carrying THREE bounded addenda at its head — CD-PL-F65 (CD-D-058), CD-ENG-READER-F06
   (CD-D-063) and the CD-ENG-READER-F05/F08 DECLARATION (CD-D-062). It writes NO LOGIC. The one scope
@@ -916,5 +970,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T184405Z-0036
+last_build_log_entry: BL-20260819T185403Z-0037
 status: ACTIVE
