@@ -233,6 +233,45 @@ criteria:
   supersedes: []
   superseded_by: null
   tests:
+  # DECLARED LIMIT — CD-RT-012-NO-EXECUTION-INTERFACE. Required by CD-D-014, bounded by CD-D-015.
+  #
+  # This check has a WRITTEN BOUNDARY, and it is stated here as well as in the header of
+  # tools/register/check_no_execution_interface.py and in its execution contract, so that an
+  # auditor reading the register sees it without having to discover it. The two texts are kept
+  # consistent with each other; the check's header is the longer of the two and carries the
+  # measured example for each item. In summary, this check DOES NOT catch:
+  #
+  #   1. deliberate euphemism — an act named in vocabulary the word lists do not hold. Two rounds
+  #      of independent probing each found a fresh escape of this kind (CD-PL-F32, CD-PL-F35, and
+  #      the residual CD-PL-F38, all since closed). That each round found ANOTHER is the evidence
+  #      for this limit; CD-D-015 ends the hardening chase rather than pretend the next round ends it.
+  #   2. code named to hide behind the `work_order` sequence-sense suppression. L1 suppresses the
+  #      token `order` after any of the thirty-one modifiers in ORDER_SEQUENCE_MODIFIERS so the
+  #      guard does not cry wolf on this project's own daily vocabulary. A pathway named
+  #      `work_order_router` to sit inside that suppression escapes L1; it escapes the check only
+  #      if it is ALSO shaped to avoid an order ticket, because L2 reads no names at all.
+  #   3. any sentence L3 suppresses, and that list is wide — 46 negation words and 25 hypothetical
+  #      words, including `must`, `free`, `advisory`, `zero`, `say`, `check` and `were`. MEASURED:
+  #      "The engine must send each instruction to the broker" is not read by L3, on `must` alone.
+  #   4. a motion chain longer than eight words between a verb of motion and its destination noun.
+  #   5. anything that is not a .py or .sql file under src/, db/, deploy/, tests/ and tools/ — no
+  #      YAML, shell, Markdown, CI job, template, vendored dependency or container image is read.
+  #   6. runtime. This is a static read of source text at one commit.
+  #
+  # WHY THAT IS ACCEPTABLE. CD-BP-001, risk-accepted by the Product Owner at Blueprint acceptance:
+  # the AST register checks are NEVER A SOLE GUARD. CD-AC-012 is defended by this check, by
+  # CD-RT-012-LOCKFILE-DENYLIST (which no euphemism in our own source can evade — the SDK is named
+  # by its publisher), by CD-RT-012-EGRESS-NO-BROKER, and structurally by the network posture of
+  # BLUEPRINT §2 and §13: cd-engine, cd-public, cd-private and cd-store have no egress at all, so a
+  # perfectly euphemised pathway inside the engine still has nowhere to send an order. Read a clean
+  # run of THIS test as evidence about names, shapes and documented intent — not as proof of the
+  # proposition. For the proposition, weigh the egress posture first: of the four it is the only one
+  # that constrains what the software CAN DO rather than what it says.
+  #
+  # FOR THE AUDITOR. A CD-AC-012 variant that lands beyond this boundary is a finding against THIS
+  # DECLARATION — was the limit honestly drawn? — and not an automatic RED against the guard
+  # (CD-D-014). That is a fair test of a guard that says what it is, and it is available only
+  # because the limit was written down first.
   - test_id: CD-RT-012-NO-EXECUTION-INTERFACE
     scope: CLASS
     execute: python3 tools/register/check_no_execution_interface.py --root .
@@ -245,7 +284,18 @@ criteria:
         side, a price or order type, or a venue) under a neutral name; a transmission verb applied
         to a tradeable noun in any spelling; a broker SDK import; an execution endpoint literal;
         an execution identifier in a SQL migration; or PROSE — a docstring or comment saying in
-        plain English that the code routes orders to a broker.
+        plain English that the code routes orders to a broker, in any of five grammars (direct
+        object, passive, nominalised, a trade-lifecycle act named with a party that performs it,
+        or intransitive motion toward a destination).
+        THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
+        tools/register/check_no_execution_interface.py, in the comment above this entry, and in
+        the execution contract. It does NOT catch: deliberate euphemism; a pathway named to hide
+        behind the `work_order` sequence-sense suppression AND shaped to avoid an order ticket;
+        any sentence carrying one of L3's 46 negation or 25 hypothetical words, `must` among them;
+        a motion chain longer than eight words; anything that is not .py or .sql under the five
+        scanned roots; or anything about runtime. It is ONE OF THREE guards on CD-AC-012 and never
+        a sole guard (CD-BP-001, PO-accepted). A planted variant landing beyond that boundary is a
+        finding against the DECLARATION, not an automatic RED against the guard (CD-D-014).
       evidence_ref: RTR-WO2-0001
   - test_id: CD-RT-012-LOCKFILE-DENYLIST
     scope: CLASS

@@ -71,6 +71,55 @@ seat** will produce — a distinct actor from the one that wrote this test. Unti
 the validator computes `UNDECIDABLE` for this test and the gate stays shut, which is
 correct: this seat may declare which run must evidence its guard, and may not supply it.
 
+## Declared limit
+
+Required by **CD-D-014**, bounded by **CD-D-015**. Stated identically in the header of
+`tools/register/check_no_execution_interface.py` and in the comment above this test's entry
+in `required-tests.yaml`; the check's header is the longest of the three and carries the
+measured example behind each item. This is a statement of scope, not an apology — an auditor
+must be able to see the boundary here rather than discover it.
+
+This check does **not** catch:
+
+1. **Deliberate euphemism.** A static reader of natural language has no terminating
+   condition against an author choosing words to avoid it. Two rounds of independent probing
+   each found a fresh escape of exactly this kind — CD-PL-F32, CD-PL-F35, and the residual
+   CD-PL-F38 — all since closed. That each round found *another* is the evidence for this
+   limit, and CD-D-015 ends the chase rather than pretending a third round would be the last.
+2. **Code named to hide behind the `work_order` sequence-sense suppression.** L1 suppresses
+   the token `order` when it follows one of the thirty-one modifiers in
+   `ORDER_SEQUENCE_MODIFIERS`, so the guard does not fail on this project's own daily
+   vocabulary. A pathway named `work_order_router` to sit inside that suppression escapes L1.
+   It escapes the *check* only if it is also shaped to avoid an order ticket, because L2
+   reads no names at all.
+3. **Any sentence L3 suppresses — and the list is wide.** 46 negation words and 25
+   hypothetical words, including `must`, `free`, `advisory`, `absence`, `zero`, `say`,
+   `check` and `were`. Measured: `"The engine must send each instruction to the broker"` is
+   not read by L3 at all, on `must` alone. The trade was taken because this project's charter
+   says repeatedly that it places no orders, and a check whose output is mostly its own
+   charter is a check nobody reads.
+4. **A motion chain longer than eight words** between a verb of motion and its destination
+   noun. CD-PL-F38 widened this from four; CD-D-015 permits no further widening.
+5. **Anything that is not `.py` or `.sql` under the five scanned roots.** No YAML, JSON,
+   TOML, shell, Markdown, notebook, template, CI job, compiled artefact, vendored dependency
+   or container image is read.
+6. **Runtime.** This is a static read of source text at one commit.
+
+**What carries the rest.** CD-BP-001, risk-accepted by the Product Owner at Blueprint
+acceptance, records that the AST register checks are never a sole guard. CD-AC-012 is
+defended by this check, by `CD-RT-012-LOCKFILE-DENYLIST` — which no euphemism in our own
+source can evade, because the SDK is named by its publisher and not by us — by
+`CD-RT-012-EGRESS-NO-BROKER`, and structurally by the network posture of BLUEPRINT §2 and
+§13: cd-engine, cd-public, cd-private and cd-store have no egress at all, so a perfectly
+euphemised pathway inside the engine still has nowhere to send an order.
+
+**How to read a clean run.** As evidence about names, shapes and documented intent at one
+commit — not as proof of the proposition. For the proposition itself, weigh the egress
+posture first: of the four, it is the only one that constrains what the software *can do*
+rather than what it says. A CD-AC-012 variant planted beyond this boundary is a finding
+against **this declaration** — was the limit honestly drawn? — and not an automatic RED
+against the guard (CD-D-014).
+
 ## What this contract does not claim
 
 It does not claim the test passes. It does not claim the criterion is satisfied. It does not
