@@ -1,0 +1,126 @@
+# Crash Detector — the Docker build context, restricted at its source.
+#
+# AUTHORITY: created under CD-D-013 (BL-20260819T052900Z-0007), which added exactly this
+# one path to CD-DISPATCH-WO2-ENGINEER writable_scope. The seat stopped and escalated
+# CD-ENG-F25 rather than creating it on its own initiative, and this file exists because
+# the Project Lead ruled on it, not because it was obviously needed.
+#
+# WHY IT IS DESIGN AND NOT BUILD (RT-B remains FORBIDDEN in WO-2). This file declares what
+# the context EXCLUDES. It builds nothing, starts nothing and pulls nothing. It sits inside
+# deliverable A6, "the container set as DESIGN".
+#
+# WHY IT MATTERS. deploy/compose.yaml sets every service's build context to `..` — the
+# repository root — because the Dockerfiles copy `src/` and `deploy/entrypoints/`. Without
+# this file, `docker build` uploads the ENTIRE repository to the daemon: the git history,
+# the whole governance record, the pinned PBG framework, the planted violations, and any
+# .env or key material that ever lands in the tree. Two distinct harms, and the first is
+# the one people forget:
+#
+#   1  THE CONTEXT ITSELF. Everything sent to the daemon is readable by the daemon and by
+#      anything that can talk to it, whether or not a COPY ever names it.
+#   2  THE LAYERS. A `COPY . .` in any future Dockerfile — or a `COPY src/` that somebody
+#      widens — bakes whatever is in the context into an image layer, where deleting it in
+#      a later layer does not remove it.
+#
+# THE RULE THIS FILE FOLLOWS: exclude by DEFAULT nothing the build needs, and never let the
+# governance record or the framework near the daemon. What the build needs is exactly
+# `src/`, `deploy/entrypoints/`, `contracts/`, and the dependency manifests.
+#
+# Checked by tools/register/check_dockerignore.py, which resolves each required exclusion
+# against the pattern set rather than looking for a line of text — `.git`, `.git/` and
+# `**/.git` all satisfy the requirement, and the check judges the effect.
+
+# ------------------------------------------------------------------------------------- #
+# Version control. Carries every version of every file ever committed, including any that
+# were removed. The single largest and least obvious leak in a naive build context.
+# ------------------------------------------------------------------------------------- #
+.git
+.gitignore
+.gitattributes
+
+# ------------------------------------------------------------------------------------- #
+# THE GOVERNANCE RECORD AND THE PINNED FRAMEWORK. Neither is application code and neither
+# belongs in an image. `pbg/` is a read-only snapshot this seat may not modify at all
+# (PBG-FWK-013); `governance/` carries authority records, dispatches, decisions and the
+# Build Log. A container has no use for either, and an attacker with a shell in a container
+# should not be handed the project's own map of its controls.
+# ------------------------------------------------------------------------------------- #
+governance
+pbg
+pbg-manifest.yaml
+docs
+PID.md
+BLUEPRINT.md
+CLAUDE.md
+README.md
+
+# ------------------------------------------------------------------------------------- #
+# THE PLANTED VIOLATIONS. plants/ holds deliberate breaches of the doctrine-bearing
+# criteria as applyable patches. They are audit instruments and they must never be inside
+# a runnable image — a container carrying a patch that adds a numeric default is carrying
+# the defect in a form somebody could apply.
+# ------------------------------------------------------------------------------------- #
+plants
+
+# ------------------------------------------------------------------------------------- #
+# Secrets, by class rather than by name. Nothing matching these should ever exist in this
+# tree — secrets are referenced by env-var NAME only (PBG-SEC-002, non-waivable) — and that
+# is exactly why the exclusion is here: this is the layer that holds when the convention
+# does not. `.env*` covers .env, .env.local, .env.production and anything else in the family.
+# ------------------------------------------------------------------------------------- #
+.env
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*_rsa
+*_ed25519
+secrets
+.netrc
+.pgpass
+
+# ------------------------------------------------------------------------------------- #
+# Build and test residue. Compiled bytecode from the HOST interpreter is not the bytecode
+# the image's interpreter would produce, and shipping it means shipping a stale cache that
+# can shadow the source it was compiled from.
+# ------------------------------------------------------------------------------------- #
+__pycache__
+**/__pycache__
+*.py[cod]
+*.egg-info
+.eggs
+build
+dist
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.tox
+.coverage
+htmlcov
+.hypothesis
+
+# ------------------------------------------------------------------------------------- #
+# Environments and editor noise. A .venv is host-specific binaries; copying one into an
+# image is how a wheel built for the host's libc ends up in a container that cannot run it.
+# ------------------------------------------------------------------------------------- #
+.venv
+venv
+.idea
+.vscode
+.DS_Store
+*.swp
+
+# ------------------------------------------------------------------------------------- #
+# The register checks and the test suite. Audit instruments, not runtime code. Excluded so
+# the image contains what it runs and nothing else — the smaller the image, the shorter the
+# list of things that have to be true about it.
+#
+# NOTE FOR WHOEVER BUILDS AT WO-3: if a future service is meant to run a register check
+# inside a container, this exclusion is the line to revisit, deliberately and with a
+# reason. It is not here by accident.
+# ------------------------------------------------------------------------------------- #
+tools
+tests
+required-tests.yaml
