@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T16:09:00Z'
+updated_utc: '2026-08-19T16:12:22Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -435,8 +435,19 @@ current_block: >
   and a follow-up commit resolving PENDING may write that field and nothing else. The stale
   next_safe_action (it still said DISPATCH INCREMENT 3, three increments behind) and the stale
   working_tree_state (main at 8a50355, lane at 9aea4ef) were corrected in the same repair.
+  WO-2R INCREMENT 5 IS ISSUED (BL-20260819T161222Z-0030) to CD-ENG-WO2R-01 at execution base
+  be34fe4, bounded to CD-ASR-F06 and carrying the CD-D-055 addendum at its head. The dispatch record
+  is amended in the repository so the brief is durable and not merely conversational (PBG-CONT-007).
+  THE CEILING CHAIN WAS RE-VERIFIED BY THE RESUMED SEAT AGAINST THE RATIFIED TEXT rather than
+  inherited: PID.md line 86 carries the RATIFIED 15-minute detectability budget (CD-D-003 resolved),
+  giving a 900-second hard upper bound, and BLUEPRINT.md lines 314-318 carry §7's tightening
+  window_for(regime) (CD-AC-009, WO-3). Both clauses say what the dispatch says they say. The seat is
+  told in terms to read them itself and not to accept the Project Lead's paragraph as the reading,
+  and the FAIL-CLOSED branch stays open to it: a fail-closed escalation on the ceiling is a
+  SUCCESSFUL outcome of this dispatch, not a failure of it, because inventing a plausible number is
+  exactly what CD-RULE-003 and PBG-AUTH-005 forbid.
 owner_role: PROJECT_LEAD
-next_actor: PROJECT_LEAD
+next_actor: ENGINEER
 
 repository: local
 branch: main
@@ -716,13 +727,20 @@ next_safe_action: >
   CLOSED AS A CLASS, subject to Assurance. This field was three increments stale until the
   CD-PL-F64 repair at BL-20260819T160900Z-0029; the superseded text ordered increment 3, which is
   done.
-  DISPATCH INCREMENT 5 (CD-ASR-F06, the unbounded staleness window) to CD-ENG-WO2R-01 at execution
-  base be34fe4, per governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml block increment_5_F06,
-  bounded to that finding and nothing else. It carries a BOUNDED ADDENDUM AT ITS HEAD, ordered by
-  CD-D-055: correct CD-PL-F62, declared boundary 5 of the code-graph guard, which distinguishes
-  services BY PURPOSE in prose while the code distinguishes BY NAME and does not contemplate a
-  second service built from the engine image (measured by PL-U6b). That is a correction to an
-  ACCEPTED increment, not a re-open of it.
+  INCREMENT 5 IS NOW ISSUED (BL-20260819T161222Z-0030) — AWAIT CD-ENG-WO2R-01's return of
+  READY_FOR_ASSURANCE, BLOCKED, or a fail-closed escalation on the ceiling. It is at execution base
+  be34fe4, bounded to CD-ASR-F06 and nothing else, carrying the CD-D-055 bounded addendum at its
+  head: correct CD-PL-F62, declared boundary 5 of the code-graph guard, which distinguishes services
+  BY PURPOSE in prose while the code distinguishes BY NAME and does not contemplate a second service
+  built from the engine image (measured by PL-U6b). That is a correction to an ACCEPTED increment,
+  not a re-open of it.
+  RECONCILE ON RETURN by running every declared arm on a pristine extraction, auditing CD-RULE-002
+  identity in BOTH author and committer on every commit, checking the mandatory ten-heading block,
+  confirming nothing under variants/ is executable and that the eleven plants still apply and
+  contrast — and by writing FRESH Project Lead probes against the structure the seat ACTUALLY built,
+  not the one the dispatch imagined. That step has already sent two increments back (CD-PL-F54,
+  CD-PL-F59) and is why both were caught before the gate rather than at it. The Project Lead does not
+  write the fix (PBG-AUTH-006, CD-D-038/CD-D-045).
   THE CEILING IS A PRODUCT QUANTITY AND THE SEAT MAY NOT INVENT ONE (CD-RULE-003, PBG-AUTH-005).
   CD-D-032 stands: it is DERIVED from ratified intent — PID §5's 15-minute detectability budget,
   bounded further by BLUEPRINT §7's tightening window_for(regime) — with the clause CITED in the
@@ -755,5 +773,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T160900Z-0029
+last_build_log_entry: BL-20260819T161222Z-0030
 status: ACTIVE

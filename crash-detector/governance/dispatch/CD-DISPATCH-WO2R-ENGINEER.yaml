@@ -21,7 +21,7 @@
 # produced the four AMBER verdicts.
 
 dispatch_id: CD-DISPATCH-WO2R-ENGINEER
-status: ISSUED   # increment 2 RE-OPENED as increment_2b_F01_reopened by CD-D-037, 2026-08-19T11:15Z; increment 3 RE-OPENED as increment_3b_F04_reopened by CD-D-044, 2026-08-19T14:35Z
+status: ISSUED   # increment 2 RE-OPENED as increment_2b_F01_reopened by CD-D-037, 2026-08-19T11:15Z; increment 3 RE-OPENED as increment_3b_F04_reopened by CD-D-044, 2026-08-19T14:35Z; increment 5 ISSUED at base be34fe4 with the CD-D-055 addendum, 2026-08-19T16:12Z (BL-20260819T160900Z-0029)
 record_type: SUB_AGENT_DISPATCH
 issued_utc: '2026-08-19T09:10:00Z'
 
@@ -551,6 +551,45 @@ increment_4_F05:
     narrow the rules.
 
 increment_5_F06:
+  execution_base_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba   # lane HEAD after increment 4, ACCEPTED at CD-D-053
+  ADDENDUM_AT_THE_HEAD_DO_THIS_FIRST:
+    ordered_by: 'CD-D-055, BL-20260819T155105Z-0028. Bounded addendum, NOT a re-open of increment 4.'
+    finding: 'CD-PL-F62 (LOW) — a declaration defect in the limit increment 4 itself declared.'
+    what_is_wrong: >
+      Declared boundary 5 of tools/register/check_engine_no_witness_reach.py distinguishes services
+      by PURPOSE in prose — "ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT ... the other
+      five services' entrypoints are RESOLVED but are not walk roots, and witness code reachable
+      from `cd-witness` is correct rather than a violation" — while the CODE distinguishes by NAME,
+      deriving a root only for the service literally called `cd-engine`. The boundary does not
+      contemplate a SECOND service built from the engine's own image, so an auditor reading it
+      would not expect that case to escape.
+    the_measured_escape: >
+      PL-U6b, written by the Project Lead: a sixth service `cd-engine-worker` built from the
+      ENGINE'S OWN Dockerfile whose entrypoint imports crash_detector.witness.panel. The check
+      exits 0 at PASS 24 assertions. The universe grows 39 -> 40, so the check SEES the file; only
+      the name-matched service becomes a root. The patch is at
+      governance/reconciliation/WO-2R/ and is DATA, not executable.
+    why_this_is_an_addendum_and_not_a_re_open: >
+      The residue IS carried by a layer the Project Lead MEASURED refusing the variant: the full
+      suite fails 8 tests on that tree, including
+      tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service and
+      tests/test_deploy_container_set.py, while all five other register checks exit 0. An
+      INCOMPLETE boundary with a real carrier is a declaration to FINISH. That is the whole
+      difference from CD-PL-F59, which was a FALSE boundary asserting a carrier that did not exist
+      and which sent increment 3 back.
+    what_you_must_deliver: >
+      Amend declared boundary 5 to name the second-engine-image-service case AND its measured
+      carrier — the 8 suite failures, named — consistently in ALL THREE CD-RULE-004 places: the
+      check header, the register entry and the execution contract. Cite PL-U6b as the executable
+      example. Under CD-RULE-006 the carrier sentence is a claim requiring its own executed
+      evidence, so RUN the suite on that tree yourself and record what you observed; do not
+      transcribe the Project Lead's numbers. Commit this as its own commit BEFORE any F06 work,
+      with the mandatory block filled in.
+    you_may_also_close_it_instead: >
+      CD-RULE-004 gives you the choice. If deriving roots from EVERY service built from the engine
+      image is the honest structure, do that and say so — but then boundary 5 must still be
+      corrected to say what the guard now does, and you must show the derivation following the
+      artefact (add a seventh service, watch the root set grow). Do not do both halves silently.
   findings: [CD-ASR-F06 (MEDIUM)]
   criterion: CD-AC-005
   known_set_variants_to_refuse: [E07]
@@ -583,6 +622,24 @@ increment_5_F06:
       the register entry, and state in the commit that it is DERIVED and from where. If it does NOT
       hold, DO NOT SUBSTITUTE A NUMBER: fail closed, raise it to the Project Lead as an owed Product
       Authority decision, and say so in your return.
+    the_project_lead_has_since_verified_the_chain_against_the_ratified_text: >
+      Added at increment 5 issue, BL-20260819T160900Z-0029, and verified a SECOND time by the
+      resumed seat rather than inherited. PID.md line 86 carries, in the ratified table and marked
+      "RATIFIED 2026-08-18 — CD-D-003 resolved": "pipeline/publication failure independently
+      detectable <= 15 minutes; a cadence breach alerts within one publication cycle". BLUEPRINT.md
+      lines 314-318, §7, CD-AC-009, scheduled WO-3: "The staleness window is a function, not a
+      constant: `window_for(regime) -> seconds`, tightening as observed volatility rises." Both
+      clauses say what the dispatch says they say. THE CHAIN HOLDS, so the fail-closed branch is
+      not expected — but it remains yours to take if YOUR reading differs from the Project Lead's.
+      Read them yourself; do not accept this paragraph as the reading.
+    the_constraint_you_are_held_to: >
+      900 seconds is defensible ONLY as a HARD UPPER BOUND, with the OPERATING window explicitly
+      deferred to WO-3's window_for(regime). A window of exactly 900s consumes the ENTIRE
+      detectability budget and leaves nothing for detection and alerting, so it is a ceiling and
+      not a setting, and the code and the register entry must both say which it is. If you believe
+      a TIGHTER number belongs in WO-2, it must be DERIVED from ratified text with the clause
+      cited — not chosen because it looks prudent. Choosing a prudent-looking number IS the
+      invention CD-RULE-003 forbids; fail closed and escalate instead (PBG-AUTH-005).
   invariants_you_must_establish:
   - 'THE CEILING IS STRUCTURAL, NOT ADVISORY. A caller passing a window above the ceiling gets a
     refusal, not a clamp. A clamped window is a wrong window that looks like a right one — the same
