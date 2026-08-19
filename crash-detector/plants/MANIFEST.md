@@ -491,3 +491,72 @@ both assert the delivered migration set, which now has an eighth member.
 variables set it prints `PRECONDITION_NOT_MET` and exits **3**. That is the correct answer
 and it is *not* a demonstrated violation: an auditor who records exit 3 as "the plant
 failed the check" has recorded nothing. Bring a store.
+
+---
+---
+
+# CD-AC-005 — WITNESS UNAVAILABLE is not WITNESS AGREES
+
+> PID §6: kill the witness feed, and the panel degrades to UNAVAILABLE, NEVER to agreement.
+> BLUEPRINT §13 adds the harder half: **delete the panel row entirely and the result is the
+> same**, and a row older than its staleness window is an absence too.
+>
+> "There must be no input whatever — missing, stale, malformed or defaulted — from which the
+> serving layer produces AGREES."
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES` |
+| **patch** | `plants/CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q` |
+
+**Proposition violated.** *No absence resolves to agreement.* The patch attacks **both**
+halves of the proposition, because the criterion names both and a plant that took only one
+would leave the other unevidenced:
+
+* **the explicit absence** — `row is None` now returns
+  `Agrees(divergence_measure=NO_MEASURED_DIVERGENCE)`, on the reasoning that "cd-witness has
+  raised nothing, so there is no disagreement on record";
+* **the silent one** — the `PANEL_ROW_STALE` branch is **deleted**, so a row older than its
+  window falls through to ordinary state handling and keeps saying whatever it last said.
+
+**Why this is the proposition and not a token.** Neither edit is exotic and neither looks
+wrong in review. The first is the "no news is good news" default, which is the single most
+common way a monitoring surface learns to lie. The second is what happens the week the
+staleness window is judged too tight and somebody removes the branch that keeps returning
+UNAVAILABLE, rather than widening the window where it is configured. Both produce the same
+outcome and it is the one PID §3.4 names: a panel that reads AGREES most confidently at the
+exact moment the witness pipeline is broken, manufacturing corroboration out of silence.
+
+Note what the patch does **not** do. It does not touch `WitnessPanel`, so `Unavailable` is
+still a distinct constructor with no measurement on it, `UNAVAILABLE_REASONS` is unchanged,
+`render_panel` still raises on a foreign member, and all of `tests/test_witness_panel.py`
+passes. The type layer is intact and the product still lies — which is the argument for the
+resolver being tested as behaviour and not inferred from the shape of its return type.
+
+**Expected failure signature.** pytest exits **1**, `6 failed, 59 passed`, all in
+`tests/test_witness_resolver.py`:
+
+```
+FAILED test_an_absent_panel_row_resolves_to_unavailable
+FAILED test_a_stale_panel_row_resolves_to_unavailable
+FAILED test_a_stale_row_that_said_agrees_does_not_keep_agreeing
+FAILED test_freshness_is_judged_on_the_data_not_on_when_we_wrote_the_row
+FAILED test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees
+FAILED test_the_absent_row_case_is_included_in_the_sweep_separately
+```
+
+with `_resolve(None)` returning `Agrees(divergence_measure=0.0, ...)`.
+
+Three of those six are worth reading as a set:
+`test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees` is the sweep over
+the whole class of bad inputs, `test_the_absent_row_case_is_included_in_the_sweep_separately`
+is the guard that the sweep did not quietly drop the `None` case, and
+`test_a_stale_row_that_said_agrees_does_not_keep_agreeing` is the half a plant author is
+most likely to forget. If the sweep fails but the separate absent-row test passes, the
+sweep is not covering what its name claims.
+
+**Collateral observed by this seat: none.** All five source-scanning register checks stay at
+exit **0** — `check_no_numeric_default.py` included, even though a `0.0` now reaches a panel
+value on the serving path. This violation is visible to exactly one instrument, and CD-AC-005
+has exactly one declared test.
