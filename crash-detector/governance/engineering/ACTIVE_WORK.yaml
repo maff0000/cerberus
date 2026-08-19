@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T09:10:00Z'
+updated_utc: '2026-08-19T09:52:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -137,6 +137,36 @@ current_block: >
   Kept deliberately OUT: CD-ASR-F07 (report-only consequence of F06), E09/E10 (inside CD-RT-012's
   declared limit, judged honestly drawn; CD-D-015 not lifted), CD-ENG-F39/F41, CD-PL-F43, CD-ASR-N01/N02,
   CD-ERR-001, CD-OB-004 — all owed at WO-3.
+  WO-2R INCREMENT 1 COMPLETE AND ACCEPTED at lane 27bb880 (CD-D-034), attested by CD-ENG-WO2R-01 in
+  lane entry BL-20260819T100500Z-0022, reconciled by the PL in BL-20260819T095200Z-0023.
+  CD-ASR-F02 (HIGH) and CD-ASR-F03 (MEDIUM) are CLOSED AS A CLASS. The structural move: the question
+  changed from "is this member numeric?", which no guard can decide in general, to "is this member
+  DECLARED?", decided by SET EQUALITY in both directions at import; and the absence post-condition
+  LEFT THE FUNCTION BODY, re-deriving the premise from the evaluator's own arguments so the space of
+  number-provenances it must anticipate is empty. Rule F in the AST guard now denies by default over
+  one declared permitted provenance instead of enumerating four spellings.
+  THE PL RAN EVERYTHING ITSELF and wrote SEVEN FRESH PROBES of its own, none in the known set and
+  none among the seat's six. ALL SEVEN REFUSED — including PL-P6/PL-P7, written specifically to
+  defeat the seat's headline claim by BYPASSING the decorated function entirely and carrying no
+  numeric literal at all. Rule F caught the unenumerated provenance; eleven behavioural tests caught
+  the outcome. Clean arm 190->242 assertions, 49->90 on the criterion, 904->945 full suite, and the
+  decisive anti-relaxation check: ZERO of the 904 original pytest node ids are missing from the new
+  tree, with exactly two lines removed in all of tests/, both superseded imports.
+  ONE RESIDUE IS DECLARED, NOT CLOSED: post-import type.__setattr__ class mutation. The PL MEASURED
+  IT rather than accepting the declaration — mutation succeeds, direct read gives 0.0, and is_value
+  and fold both raise. The limit is drawn EXACTLY where it says it is, and the seat records that it
+  CONSIDERED AND REJECTED a spelling-based ban because that would have re-created the very defect
+  this rework exists to correct. CD-D-034 accepts it on CD-RULE-004's second option; CD-D-035 declines
+  to overturn the guard's retained scope: CLASS, on the measured grounds of PL-P7.
+  Five self-disclosures by the seat, all confirmed. The most valuable is ENG-WO2R-F01: the REGENERATED
+  ABSENCE plant no longer demonstrates the INDEPENDENCE of CD-AC-001's two declared tests, because
+  rule F now catches it too — the property MOVED to variant V03, which the PL verified escapes the
+  static layer and is caught by the runtime layer. Raised as CD-PL-F53 so the Assurance dispatch is
+  told where the independence evidence now lives and does not report a gap that does not exist.
+  CD-D-036 / CD-PL-F52: a Build Log entry_id COLLISION — the Engineer's lane entry and the PL's main
+  entry both carry sequence 0022, because a seat in the lane worktree can only see the branch-point
+  copy of the build-log directory. NEITHER IS EDITED (PBG-CONT-003). Forward rule: the lane takes a
+  reserved sequence block from 0040 up, main continues from 0023.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -147,10 +177,10 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: baef0ecea43d850d84e641677200eeed4e215a59
-  # baef0ec is the IDENTITY RE-AUTHORING checkpoint (lane 66681b2 -> ee8be6b, all 24 commits, proved
-  # identity-only). Verified present. Superseded 80b4a24, the PO-GATE-REVIEW checkpoint, which was the
-  # FIRST commit on this project to carry a seat identity (CD-RULE-002).
+last_completed_checkpoint_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
+  # 7fbeaa7 is the WO-2R ENGINEER DISPATCH ISSUED checkpoint. Verified present, resolved with
+  # git rev-parse. Superseded baef0ec (identity re-authoring) and, before it, 80b4a24 (PO gate review,
+  # the first commit on this project to carry a seat identity, CD-RULE-002).
   # f041c6f, the prior value, was the WO-2 GATE checkpoint (Assurance AMBER recorded, gate NOT MET).
   # Superseded 7dad359 at BL-20260819T085500Z-0020. Resolved with git rev-parse before writing.
   # 7dad359, the prior value, was the SOD-boundary checkpoint (Engineer complete, Assurance ISSUED).
@@ -161,7 +191,11 @@ last_completed_checkpoint_sha: baef0ecea43d850d84e641677200eeed4e215a59
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: ee8be6be38696f389a610bc948992a71ad81f892
+lane_head_sha: 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f
+  # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
+  # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
+  # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
+  # The WO-2R execution base was ee8be6be38696f389a610bc948992a71ad81f892 —
   # wo-2-skeleton after the CD-RULE-002 identity re-authoring of all 24 lane commits
   # (BL-20260819T090500Z-0021). Content is BYTE-IDENTICAL to the pre-rewrite head: same tree object
   # 38ecc86, and the first auditor's own recorded tree fingerprint 08a474e8...5ad2 recomputes exactly
@@ -171,7 +205,7 @@ lane_head_sha: ee8be6be38696f389a610bc948992a71ad81f892
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: ee8be6be38696f389a610bc948992a71ad81f892   # WO-2R has not started; no increment yet
+lane_increment_sha: 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f   # WO-2R increment 1 of 6, ACCEPTED
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -415,5 +449,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T091000Z-0022
+last_build_log_entry: BL-20260819T095200Z-0023
 status: ACTIVE
