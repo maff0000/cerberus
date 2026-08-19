@@ -638,6 +638,19 @@ strongest place to look is boundary 7.
 
 ## `BLEND-PROBE`, written out in full
 
+> **SUPERSEDED AT INCREMENT 6 — DO NOT RETYPE THE BLOCK BELOW UNCHANGED.** As written it builds
+> its fixtures with `DialMagnitude(dial_id=..., quantity=0.9)` — a **bare float** — and increment
+> 2b's re-entry closure REFUSES exactly that. MEASURED at `253c38b`: every arm dies at **fixture
+> construction** with
+> `QuantityProvenanceMissing: a bare number (0.9) was offered as dial 'equity_crash''s magnitude`,
+> before the variant under test is ever called. An auditor retyping it gets a refusal of the
+> **scaffolding**, which is the `CD-ENG-WO2R-F13` hazard — *a probe refused for a reason you did
+> not intend has told you nothing* — sitting inside the file that is meant to be the next
+> auditor's exclusion set. Raised as **`CD-ENG-WO2R-F27`**. The original text is left standing
+> rather than edited; the corrected fixture construction is in the increment-6 section at the end
+> of this file, and every recorded refusal below was re-measured through it.
+
+
 The probe below is **data, not a runner**: it is printed here so an auditor can retype it, and it is
 NOT committed as an executable file (`PBG-ASSURE-001`). Write it into the extraction, run it, and
 discard it with the extraction.
@@ -1737,3 +1750,106 @@ signature is an inline key reading `None`, so it is caught only because **nothin
 `None`**. Add one **optional** field to either contract and boundary 9 reopens **silently**, with
 no test failing. And the sweep covers **this criterion's two artefacts only** — the subjects of
 `check_base_image_digest_pin.py` and `check_engine_no_witness_reach.py` were **not** swept.
+
+---
+
+## Increment 6 — the whole corpus re-run at `253c38b`, and two defects found in this file
+
+Deliverable of `increment_6_reconciliation_and_return`: *"every known-set variant re-run and every
+new variant of yours, with its route, its command and its observed refusal. This becomes the next
+auditor's exclusion set, so an omission here corrupts the next audit."* Every patch under
+`variants/WO-2R/` was applied to **its own pristine `git archive | tar -x` extraction** and run
+with `python3 -B`. **71 patches, 71 verdicts, 0 apply failures.**
+
+### `BLEND-PROBE`, corrected — build fixtures through the DECLARED DOOR
+
+Replace the two `DialMagnitude(dial_id=..., quantity=<float>)` constructions in the original block
+with the two lines below. Everything else in the original block is unchanged and still correct.
+
+```python
+from crash_detector.dials.provenance import observed_for_dial
+
+def mag(dial_id, q):
+    return DialMagnitude(
+        dial_id=dial_id,
+        quantity=observed_for_dial(dial_id=dial_id, quantity=q, inputs_used=("src.a",)),
+    )
+
+# ... then  score=mag(EQUITY_DIAL_ID, 0.9)  and  score=mag(MONETARY_DIAL_ID, 0.1)
+```
+
+This is the same construction `LAUNDER-PROBE` already uses, which is why `LAUNDER-PROBE` still
+runs unchanged and `BLEND-PROBE` does not: `LAUNDER-PROBE` was written at increment 2b, *after*
+the re-entry closed, and `BLEND-PROBE` was written at increment 2, *before* it.
+
+### CD-ASR-F01 — every runtime refusal re-measured through the corrected probe
+
+| variant | observed at `253c38b` | matches the row above? |
+|---|---|---|
+| `E01` | REFUSED — `TypeError: unsupported operand type(s) for +: 'DialMagnitude' and 'DialMagnitude'` | **yes, verbatim** |
+| `E02` | REFUSED — `TypeError: unsupported operand type(s) for +: 'int' and 'DialMagnitude'` | **yes, verbatim** |
+| `V07` | REFUSED — `TypeError: can't convert type 'DialMagnitude' to numerator/denominator` | **yes, verbatim** |
+| `V08` | REFUSED — `TypeError: Object of type DialMagnitude is not JSON serializable` | **yes, verbatim** |
+| `V09` | REFUSED — `KeyError: 'quantity'` | **yes, verbatim** |
+| `V10` | REFUSED — `TypeError: '>' not supported between instances of 'DialMagnitude' and 'DialMagnitude'` | **yes, verbatim** |
+| `V11` | REFUSED **EARLIER THAN RECORDED** — `TypeError: unsupported operand type(s) for +: 'int' and 'DeclaredQuantity'`, inside `merged_magnitude` itself | **NO — see `CD-ENG-WO2R-F28`** |
+| `PL-Q4` `PL-Q5` `PL-Q6` `PL-Q9` | REFUSED — `QuantityProvenanceMissing: a bare number (0.5) was offered as dial 'equity_crash''s magnitude` | **yes, verbatim** |
+| `V12` `V13` `V15` `V17` | ***NOT REFUSED*** — each returns `EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5), contributions=())` | **yes** — this is boundary 7 / the `object.__setattr__` residue, declared and not claimed carried |
+| `V16` | leaks printed `0.4` and `0.6`, then both re-entries REFUSED — `QuantityProvenanceMissing` | **yes, verbatim** |
+
+> **`CD-ENG-WO2R-F28` — `V11`'s declared command no longer reaches the boundaries its row names.**
+> The row records three refusals at `quantity_for`, `number_for_dial_slot` and `EquityCrashScore`.
+> **All three still hold and reproduce word for word** when the forged magnitude is built directly
+> — measured at `253c38b`: `CrossDialCombination: this magnitude's provenance is ['equity_crash',
+> 'monetary_debasement'], and the caller asked for it as 'equity_crash'`; `DialProvenanceRefused:
+> nothing may be published into the 'equity_crash' slot without the provenance that says it
+> belongs there`; `CrossDialCombination: EquityCrashScore.score was given a magnitude whose
+> provenance is ['equity_crash', 'monetary_debasement']`. What has changed is that `V11`'s own
+> route now dies **before** them: `merged_magnitude` does `sum(quantities)` over the private slot,
+> and the slot holds a `DeclaredQuantity` rather than a float since increment 2b. The direction is
+> **safe** — refused earlier and harder — but the row names a carrier its command does not reach,
+> and `CD-RULE-006` exists because that is the `CD-PL-F54` shape. Declared here rather than
+> corrected in the row above, so the correction is visible.
+
+### The register-check arm of every variant, re-run — exits and counts
+
+**CD-ASR-F01, `check_no_blend.py`.** `E01` 0/4871, `E02` 0/4871, `PL-Q9` 0/4883, `V07` 0/4874,
+`V08` 0/4886, `V10` 0/4871, `V14` 0/4864 — all **declared** exits, boundaries 1–6. `V09` 1,
+`V11` 1, `V12` 1, `V13` 1, `V15` 1, `V16` 1, `V17` 1 — all RULE-bearing refusals. Clean tree 0/4855.
+
+**CD-ASR-F02/F03, `check_no_numeric_default.py`.** `E03` 0/378, `V01` 0/377, `V02` 0/379,
+`V03` 0/379, `V04` 0/378, `V05` 0/377 — declared, the runtime layer carries them. `E04` 1 `RULE F`,
+`V06` 1 `RULE F`. Clean tree 0/377.
+
+**CD-ASR-F04, `check_egress_no_broker.py`.** `E05` 1 `CD-EGRESS-004` · `V18` 1 `CD-EGRESS-004` ·
+`V19` 1 `CD-EGRESS-005` · `V20` 1 `CD-EGRESS-006` · `V21` 1 `CD-EGRESS-002` · `V22` 1
+`CD-EGRESS-006` · `V23` 3 · `V24` **0/83, the legitimate-destination control** · `V25` 3 · `V26` 1
+`CD-EGRESS-007` · `V27` 1 `CD-EGRESS-007` · `V28` **0/79, the legitimate-pending control** ·
+`V29a` **0/69, the declared escape of boundary 7** · `V29b` 1 `CD-EGRESS-002` · `V30` 3.
+Plus mine: `V52` 1 `CD-EGRESS-006`, `V53` 1 `CD-EGRESS-007`.
+
+**CD-ASR-F05 and CD-PL-F62, `check_engine_no_witness_reach.py`.** `E06` 1 · `V31` 0/24 ·
+`V32` 1 · `V33` 1 · `V34` 1 · `V35` 3 `CD-ENGINE-ROOT-106` · `V36` 1 · `V37` 1 · `V38` 1 ·
+`V39` 3 `CD-ENGINE-ROOT-102` · `V40` 3 `CD-ENGINE-ROOT-105` · `V41` 3 `CD-ENGINE-ROOT-103` ·
+`V42` **0/24, the witness-service control** · `V43` 3 `CD-ENGINE-ROOT-110` · `V44` 0/24 ·
+`PL-U6b` **1** · `V45` **0/28, and the count grows with the seventh service, so the root set
+still follows the artefact** · `V46` 1.
+
+**CD-ASR-F06, the CD-AC-005 declared command.** `E07` 1, `1 failed, 152 passed` ·
+`E08` **0, `152 passed` — NOT DETECTED, exactly as its own row declares (dead code)** ·
+`V47` 1, `24 failed, 128 passed` · `V48` 1, `1 failed, 152 passed` · `V49` 1,
+`1 failed, 152 passed` · `V50` 1, `18 failed, 134 passed`. `V51` re-run under **its own** declared
+command (`CD-AC-001`'s, not `CD-AC-005`'s): **1**, `1 failed, 100 passed`,
+`StalenessWindowOutOfRange` — verbatim as recorded.
+
+**READER.** `R01` 0/69 (the stall document is a standalone file, so the check's own subject is
+clean) · `R02` 3 · `R04` 3 · `R05` 3 · `R06` 3 · `R07` 3. All stated refusals; none is exit 124.
+
+### What this re-run does NOT establish
+
+* It is the corpus **already written down**. By construction it is the next auditor's **exclusion
+  set** and it proves nothing about a route nobody here has thought of. That is the whole reason
+  it is published rather than withheld.
+* `CD-RT-003-GRANT-MATRIX-LIVE` has **no variant arm here and none was run**: it needs a live
+  PostgreSQL cluster and this increment stood none up, because it changed nothing the live check
+  reads. `3 / 3` on both arms of its plant, as at every increment since 2.
