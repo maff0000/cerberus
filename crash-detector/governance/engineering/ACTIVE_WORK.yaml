@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T18:54:03Z'
+updated_utc: '2026-08-19T19:49:26Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -586,7 +586,8 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 8e9456f2592ddbb915432832f629499c508a9559  # the CD-PL-F69 repair (BL-20260819T185403Z-0037): BL-...-0036 committed unedited, after which a pristine clone at this SHA boots GREEN. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
+last_completed_checkpoint_sha: 750b35346ffc13703263c231252dac2dd220a6ef  # the PL-Y1..Y5 evidence commit (BL-20260819T194926Z-0038), the last main checkpoint before this reconciliation. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36).
+  # SUPERSEDES 8e9456f2592ddbb915432832f629499c508a9559 — the CD-PL-F69 repair (BL-20260819T185403Z-0037): BL-...-0036 committed unedited, after which a pristine clone at this SHA boots GREEN. RESOLVED with `git rev-parse` and `git cat-file -t`, not transcribed: see CD-PL-F36 for why.
   # ADVANCED AT BL-20260819T185403Z-0037, superseding 66ea4bb. The two intervening checkpoints
   # (192fc50, 44a56ec) did not advance it. 44a56ec is the commit CD-PL-F69 is raised against: it
   # advanced last_build_log_entry to BL-20260819T184405Z-0036 WITHOUT COMMITTING THAT FILE, and a
@@ -635,10 +636,11 @@ lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: 253c38bd4db58433e5209a222c0ce27429079156   # CD-DISPATCH-WO2R-READER, RECONCILED AND ACCEPTED (CD-D-060); CD-PL-F61 CLOSED, CD-ENG-WO2R-F14 CLOSED
+lane_increment_sha: 50fc23177f790164c3fc3604ccee51663e755c70   # WO-2R INCREMENT 6, the declaration sweep, RECONCILED AND ACCEPTED (CD-D-065b). CD-PL-F65 CLOSED, CD-ENG-READER-F06 CLOSED, CD-ENG-READER-F05/F08 DECLARED as boundary 9. THE WO-2R ENGINEER DISPATCH IS COMPLETE.
+  # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: f547fdc4f9c6b6990e25d16271e0e569d12f7025  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (8e9456f) — that equality is the CD-PL-F64 defect. A pristine clone at f547fdc boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record.
+continuity_record_commit: PENDING  # the only truthful value at write time; to be resolved by a follow-up writing THIS FIELD AND NOTHING ELSE and recording the COMMITTED-TREE boot verdict in its message (CD-RULE-007, CD-RULE-008). It previously read f547fdc4f9c6b6990e25d16271e0e569d12f7025 — RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and `git cat-file -t`, not transcribed (CD-PL-F36). It is NOT equal to last_completed_checkpoint_sha (8e9456f) — that equality is the CD-PL-F64 defect. A pristine clone at f547fdc boots GREEN, CONTINUITY_MATCH/RESUME_GREEN — the CD-RULE-008 verdict of record.
   # The schema's own words: "the commit that wrote these records, populated by a FOLLOWING commit".
   # The commit carrying this record does not exist while this record is being written, so PENDING is
   # the only truthful value at write time. It is left PENDING deliberately rather than resolved by a
@@ -647,7 +649,16 @@ continuity_record_commit: f547fdc4f9c6b6990e25d16271e0e569d12f7025  # RESOLVED b
   # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
   # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  OBSERVED AT THIS BOUNDARY (2026-08-19T18:54Z, SEVENTH Project Lead seat): the sixth seat did NOT
+  OBSERVED AT THIS BOUNDARY (2026-08-19T19:49Z, seventh Project Lead seat, after reconciling WO-2R
+  increment 6): the mutation lane /srv/crash-detector-wo2 is CLEAN at 50fc231 on wo-2-skeleton,
+  `git status --porcelain` ZERO lines, five commits by CD-ENG-WO2R-01 all correct in AUTHOR and
+  COMMITTER. Main is clean apart from the operator's untracked .wo2-*/.wo2b-* wrapper files,
+  .continue-prompt.txt and pbg/tools/pbg/__pycache__/, none of which are project state and which are
+  the measured cause of this worktree's AMBER boot (CD-PL-F70; a pristine clone at the same SHA boots
+  GREEN with ROADMAP.md still absent). The audit worktree /srv/crash-detector-wo2-audit is clean at
+  the pre-rewrite 66681b2 and is STALE — the Assurance target is now 50fc231 (see the STALE WORKTREE
+  WARNING below). pbg/ is intact: `git diff --name-only -- pbg/` returns zero lines.
+  HISTORICAL, retained (2026-08-19T18:54Z, the resumption boundary): the sixth seat did NOT
   terminate — it exited rc=0 at 18:46:28Z having deliberately stopped after issuing increment 6 — and
   CD-D-007's suspicion procedure found EXACTLY ONE item of uncommitted project state: its own Build
   Log entry BL-20260819T184405Z-0036, untracked. RULED CD-D-065 and committed UNEDITED at 8e9456f.
@@ -883,7 +894,21 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  DISPATCH WO-2R INCREMENT 6 — IT IS ISSUED AND UNEXECUTED. The seat was never launched; the lane is
+  ISSUE CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 against the exact SHA 50fc231 — a SEPARATE
+  agent, never the Engineer and never the Project Lead (PBG-SOD-001, non-waivable), with a distinct
+  actor_id and no commit on wo-2-skeleton, working in a READ-ONLY detached worktree with a tree
+  fingerprint recorded so mutation is DETECTABLE rather than merely prohibited (the CD-D-022
+  device). It must devise FRESH variants: the exclusion set is the union of the WO-2 auditor's ten,
+  the Engineer's through V52 and R01-R08, and the Project Lead's PL-Q1 through PL-Z3. Hand it the
+  NAMED QUESTIONS and the NOT_INDEPENDENTLY_VERIFIED list at BL-20260819T194926Z-0038 — the 71
+  variant patches, CD-ENG-WO2R-F27/F28, seven of the nine CD-RULE-004 place-texts, and the
+  grant-matrix contrast — AS WORK, not as background.
+  WO-2R INCREMENT 6 IS RECONCILED AND ACCEPTED at lane 50fc231 (CD-D-065b) and THE WO-2R ENGINEER
+  DISPATCH IS COMPLETE. Increments 1, 2b, 3b, 4, 5 and 6 are all accepted; CD-ASR-F01 through F06
+  are CLOSED AS A CLASS, SUBJECT TO ASSURANCE. NOTHING IS ASSURED: the Project Lead reconciled, which
+  is a different act with a different authority, and it may not certify work it dispatched.
+  SUPERSEDED INSTRUCTION, retained so the record reads in order: DISPATCH WO-2R INCREMENT 6 — IT WAS
+  ISSUED AND UNEXECUTED. The seat was never launched; the lane is
   clean at 253c38b and no lane commit exists beyond it. The brief is already durable at
   governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml, increment_6_reconciliation_and_return, and the
   Project Lead does not rewrite it. TWO STANDING RULES ARE NEW AT THIS BOUNDARY: every continuity
@@ -970,5 +995,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T185403Z-0037
+last_build_log_entry: BL-20260819T194926Z-0038
 status: ACTIVE
