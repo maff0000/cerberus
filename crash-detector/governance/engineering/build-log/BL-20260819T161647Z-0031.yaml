@@ -1,0 +1,116 @@
+entry_id: BL-20260819T161647Z-0031
+timestamp_utc: "2026-08-19T16:16:47Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: TASK
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 33449e5
+lane_head_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba
+parent_entry_id: BL-20260819T161222Z-0030
+record_origin: >
+  Written by the Project Lead on main while CD-ENG-WO2R-01 works increment 5 in the lane. Per
+  CD-RULE-005 the entry_id timestamp comes from `date -u +%FT%TZ`.
+schema_version: 1
+
+action_summary: >
+  PL-V1 recorded: the Project Lead REPRODUCED E07 itself at execution base be34fe4, before the
+  increment-5 seat delivered anything, and found a SECOND site of the same age comparison while
+  confirming it. Both were handed to the seat in the dispatch channel rather than withheld
+  (CD-D-039 / CD-D-047 precedent) and are written to governance/reconciliation/WO-2R/ as DATA,
+  nothing executable (PBG-ASSURE-001). The regression baseline the reconciliation will be measured
+  against was captured independently at the same time.
+
+why_this_measurement_was_taken_before_delivery: >
+  Every other Project Lead probe in governance/reconciliation/WO-2R/ was written against a
+  structure a seat had already built. This one establishes from the Project Lead's own hands that
+  the defect the increment is dispatched to close is REAL AT THE BASE. It also means the record
+  survives this seat: five Project Lead processes have now been killed mid-work on this project,
+  and a measurement that exists only in a conversation is not project state (PBG-CONT-007).
+
+E07_reproduced_by_the_project_lead:
+  method: >
+    Pristine extraction, never a mutation of a governed worktree and never a git worktree:
+    `git archive be34fe4 | tar -x -C /tmp/pl-base-be34fe4`, then `PYTHONPATH=src python3 -B -c ...`
+    inside it. `python3 -B` throughout so no __pycache__ is written into any tree (PBG-RT-001).
+  subject: >
+    PanelRow(state='AGREES', as_of_utc = now - 3650 days, published_utc = same,
+    measures={'divergence_measure': 0.02, 'threshold': 0.10}), now = 2026-08-19T16:00:00Z.
+  observed:
+  - "staleness_window_seconds=1e18  -> Agrees(divergence_measure=0.02, as_of_utc=2016-08-21T16:00:00Z)"
+  - "staleness_window_seconds=60.0  -> Unavailable(reason='PANEL_ROW_STALE', since_utc=2016-08-21T16:00:00Z)"
+  reading: >
+    A row published in AUGUST 2016 resolves to Agrees. The contrast at 60.0 shows the mechanism is
+    the window and nothing else. NO SOURCE EDIT IS INVOLVED — configuration alone, which is what
+    makes the finding worth an increment. The auditor's E07 is confirmed by a second party.
+
+the_second_comparison_site:
+  measured_by: 'grep -rn "_require_usable_window\|staleness_window_seconds" --include=*.py src/'
+  sites:
+  - 'src/crash_detector/serving/witness_resolver.py:113 `_require_usable_window(...)`, :121 `if age > staleness_window_seconds`'
+  - 'src/crash_detector/engine/evaluate.py:128 takes the window from config_snapshot, :144 accepts it, :171 performs its OWN `if age > staleness_window_seconds`'
+  why_it_matters: >
+    A closure that bounds the window only in the serving resolver leaves the engine path reachable
+    with the same unbounded configuration value. That is exactly the shape the dispatch's second
+    invariant names — "a route into the resolver that skips the age comparison entirely" — and it
+    is the difference between closing the class and closing the instance the auditor happened to
+    report.
+  what_was_handed_over_and_what_was_not: >
+    The seat was given the class, the measured contrast and the rule it is held to. It was NOT
+    given the code (PBG-AUTH-006; CD-D-038 and CD-D-045 are not relaxed because a fix looks
+    small). The structural observation offered — establish the invariant where the QUANTITY IS
+    ADMITTED rather than at each comparison site, since two guarded comparison sites is an
+    enumeration and one place a usable window can come into existence is a closure — was offered
+    explicitly AS REASONING AND NOT AS A SPECIFICATION, with the seat free to reach a better
+    structure and say why. It is the same move increment 2b made going from the exit to the
+    re-entry and increment 3b made closing `pending` from its own meaning.
+  the_obligation_it_creates: >
+    If the seat's structure covers both paths it must show that by execution on both. If it covers
+    one, that is a DECLARED LIMIT under CD-RULE-004 which must name its measured carrier under
+    CD-RULE-006, or say "NOT PROVED TO BE CARRIED ANYWHERE".
+
+the_regression_baseline_the_project_lead_holds:
+  command: 'cd /tmp/pl-base-be34fe4 && python3 -B -m pytest --collect-only -q'
+  observed: '1192 tests collected in 0.81s'
+  agreement: >
+    Matches the 1192 passed recorded at increment 4 (BL-20260819T155105Z-0028), so the baseline is
+    corroborated rather than merely transcribed.
+  how_it_will_be_used: >
+    The sorted node-id list is held and will be diffed against the delivered tree at
+    reconciliation. The seat is told to state its added count and confirm zero removed; the claim
+    will be CHECKED, not accepted. CD-PL-F58 stands and is not papered over: "zero expectation
+    changes" is not measurable by a node-id comparison and this baseline does not pretend it is.
+
+separation_of_duties_note: >
+  Reproducing a defect is not implementing a fix, and measuring a baseline is not certifying a
+  result. The Project Lead does not write the closure it will reconcile (PBG-AUTH-006), and its own
+  runs are not assurance (PBG-SOD-001, non-waivable) — CD-ASR-WO2-02 audits, under a dispatch not
+  yet issued.
+
+status: IN_PROGRESS
+current_sha: 33449e5
+next_safe_action: >
+  AWAIT CD-ENG-WO2R-01's return on increment 5. Then RECONCILE against this baseline: reproduce
+  every declared number on a pristine extraction, diff the node-id list held at be34fe4, audit
+  CD-RULE-002 identity in BOTH author and committer on every commit, check the mandatory
+  ten-heading block, confirm nothing under variants/ is executable and that all eleven plants still
+  apply and contrast, confirm tools/register/_yamlmin.py is at 0 diffs so CD-D-051's bound held —
+  and write FRESH Project Lead probes against the structure the seat ACTUALLY built, including the
+  engine path at src/crash_detector/engine/evaluate.py:171 whatever the seat says about it.
+expected_next_actor: ENGINEER
+
+evidence_references:
+- 'governance/reconciliation/WO-2R/PL-V1-E07-reproduction-and-the-second-comparison-site.py.txt'
+- 'governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md, E07'
+- '/tmp/pl-base-be34fe4 (throwaway extraction of be34fe4; not project state and not retained)'
+
+risks:
+- 'PL-V1 is now in the exclusion set for the next auditor along with everything else in
+  governance/reconciliation/WO-2R/. From the commit that hands it over it proves nothing about the
+  class, which is the standing cost of giving a probe to the seat rather than withholding it —
+  accepted deliberately at CD-D-039 and not revisited here.'
