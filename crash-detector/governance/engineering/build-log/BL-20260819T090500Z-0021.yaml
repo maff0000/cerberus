@@ -1,0 +1,175 @@
+# IDENTITY RE-AUTHORING COMPLETE (PO Ruling 3, CD-RULE-002). All 24 commits on the unmerged lane now
+# carry the seat that did the work, in BOTH the author and the committer field. Nothing else changed,
+# and that is proved by six checks plus an independent fingerprint cross-check, not asserted.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T090500Z-0021
+timestamp_utc: '2026-08-19T09:05:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 80b4a246db7df59115c5636275f523b3df19a3d6
+current_sha: 80b4a246db7df59115c5636275f523b3df19a3d6
+lane_head_sha_before: 66681b27ed650321f6b9e325fbc05712a754cc7d
+lane_head_sha_after: ee8be6be38696f389a610bc948992a71ad81f892
+parent_entry_id: BL-20260819T085500Z-0020
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  PO Ruling 3 executed. All 24 commits of main..wo-2-skeleton were re-authored from the ambient
+  human identity to CD-ENG-WO2-01 <cd-eng-wo2-01@seats.crash-detector.invalid>, in BOTH the author
+  and the committer field. The lane head moved 66681b2 -> ee8be6b. The full OLD -> NEW map, the
+  method, the proofs and the disclosures are in governance/continuity/WO-2-LANE-SHA-MAP.md.
+
+  The claim that is easy to make and hard to prove — "nothing but identity changed" — was PROVED
+  BEFORE ANY REF WAS MOVED, by six checks over all 24 commits, and then cross-checked against an
+  artefact written by a seat that had no part in this: the tree fingerprint the FIRST AUDITOR
+  recorded for the target it examined. Recomputed from a fresh extraction of the NEW head over 271
+  files, it MATCHES 08a474e8ae1aa41b8704c27778ade58353258d90768301958db7b92c4b275ad2 exactly. The
+  re-authored lane is byte-identical to the tree an independent auditor actually read, so the AMBER
+  verdict still attaches to this content and the target was not moved out from under the audit.
+
+method:
+  what_was_declined_and_why: >
+    `git filter-branch` and `git filter-repo` were BOTH DECLINED. Each rewrites messages and metadata
+    through a normalising pipeline, and each would have left the "nothing else changed" claim resting
+    on the tool's good behaviour rather than on a comparison. filter-branch additionally prints its
+    own warning about mangled rewrites, and filter-repo expects a fresh clone and rearranges refs.
+    Neither risk is worth taking on a governed lane with three live worktrees.
+  what_was_done_instead: >
+    Each commit object was REBUILT BY HAND and written with `git hash-object -t commit -w --stdin`:
+    the `tree` line copied VERBATIM, so content equality is not compared — it is THE SAME OBJECT;
+    the `parent` line relinked to the new predecessor; the author and committer identities substituted
+    while the trailing `<unix-timestamp> <tz>` was copied verbatim from the stored line; and the
+    message copied as RAW BYTES after the header terminator. The rebuilder RAISES on any header field
+    other than tree/parent/author/committer. All 24 commits were checked beforehand and carry exactly
+    those four — measured, not assumed.
+  first_attempt_discarded:
+    what: >
+      A first pass used `git commit-tree`. It APPENDS A NEWLINE to a message that does not end in
+      one, so all 24 rebuilt messages differed from their originals by exactly one trailing byte.
+    how_it_was_caught: >
+      By the byte-comparison check itself, which reported 24 of 24 MSG MISMATCH. The record had
+      already said "byte-for-byte", so a one-byte difference is a failure of the stated claim even
+      though no human would ever notice it.
+    disposition: >
+      DISCARDED BEFORE ANY REF WAS MOVED. Its 24 orphaned commit objects are unreferenced and will be
+      garbage-collected; no ref, branch, tag or worktree ever pointed at them. Reported here because
+      the check that caught it is the reason it was not shipped, and a verification step that never
+      reports anything is a verification step nobody should trust.
+
+proof:
+  performed_before_any_ref_moved: true
+  checks:
+  - '1. raw message bytes, old vs new, all 24, compared with `cmp` over the post-header byte range —
+    IDENTICAL 24/24'
+  - '2. tree OID, old vs new, all 24 — IDENTICAL 24/24'
+  - '3. author date and committer date, `--date=raw`, all 24 — IDENTICAL 24/24'
+  - '4. `git diff 66681b2 ee8be6b` — 0 lines'
+  - '5. head tree OID both 38ecc86149532a065280e98239a01fc79144d256'
+  - '6. new lane commit count 24, merge count 0 — linear, none lost, none added'
+  author_audit_ruling_3_demands: >
+    `git log --format='%an <%ae> | %cn <%ce>' bf8fcf9..ee8be6b | sort -u` returns EXACTLY ONE LINE:
+    "CD-ENG-WO2-01 <cd-eng-wo2-01@seats.crash-detector.invalid> | CD-ENG-WO2-01
+    <cd-eng-wo2-01@seats.crash-detector.invalid>".
+    `git log --format='%an%ae%cn%ce' bf8fcf9..ee8be6b | grep -icE 'matt|infosecurs|noustai|pda'`
+    returns 0. No human identity and no harness identity survives anywhere on the lane, in either
+    field.
+  independent_cross_check: >
+    THE STRONGEST EVIDENCE HERE, because it was produced against a number this seat did not choose.
+    BL-ASR-WO2-01.yaml records the audited tree's fingerprint as sha256 over the sorted sha256sum
+    list of every non-.git file. Recomputed from `git archive ee8be6b | tar -x` over 271 files:
+    08a474e8ae1aa41b8704c27778ade58353258d90768301958db7b92c4b275ad2 — MATCH.
+
+preservation:
+  tag: >
+    Annotated tag wo-2-pre-identity-rework placed at 66681b2 BEFORE the rewrite, carrying its own
+    explanation. Every pre-rewrite commit stays reachable from it, permanently. DO NOT DELETE IT.
+  why_it_is_mandatory_and_not_courtesy: >
+    The Build Log names lane SHAs throughout — 3b6edae, 8723ffb, d40e5c6, cbfa7c5, 11979fb, d1abdcc,
+    a06e64f, 66681b2 and more. The standing resolution step CD-CONT-002 resolves every recorded SHA
+    against the object database at every boundary and has already caught two fabricated values on this
+    project. A step that starts failing for a LAWFUL reason is a step that stops being trusted, so the
+    rewrite was not permitted to break it. Verified after the move: `git cat-file -t 3b6edae` and
+    `git cat-file -t 66681b2` both return "commit".
+  build_log_not_edited: >
+    The Build Log entries still name the OLD SHAs and were NOT touched. That is correct: Build Log
+    history is not rewritten and corrections supersede (PBG-CONT-003, non-waivable). The map
+    SUPERSEDES; it does not correct. To resolve a lane SHA recorded before this entry, read the map.
+
+attribution_basis_CD_D_028: >
+  MEASURED, NOT ASSUMED. `git rev-list main..wo-2-skeleton` returns 24 commits. The changed paths of
+  every one lie in the Engineer's writable scope (src/, tests/, tools/, contracts/, db/, deploy/,
+  plants/, required-tests.yaml, the root manifests) or are the Engineer's OWN Build Log entries
+  attesting its own increments. NOT ONE lane commit touches governance/dispatch/,
+  governance/decisions/, governance/rules/ or ACTIVE_WORK.yaml — the Project Lead's exclusive paths;
+  the PL's checkpoints are all on main. So the whole lane is one seat and no per-commit attribution
+  judgement was invented.
+
+worktree_reconciliation:
+  lane: >
+    /srv/crash-detector-wo2 had wo-2-skeleton checked out, so the branch ref could not be forced from
+    the main worktree. It was moved from inside the lane with `git reset --hard ee8be6b`. Because the
+    trees are THE SAME OBJECTS, this changed no file on disk: `git status --short` was 0 lines before
+    and 0 lines after, and `git diff 66681b2` from the lane is 0 lines. The reflog retains 66681b2.
+  audit_worktree: >
+    /srv/crash-detector-wo2-audit remains DETACHED at 66681b2 and was NOT touched. It is now STALE and
+    is labelled so. It is deliberately left in place: the first audit's verdict stands as a record and
+    its exact target should remain inspectable. A FRESH read-only worktree will be created for the
+    re-audit at the new target SHA rather than reusing this one.
+
+decisions_ruled_here:
+- id: CD-D-030
+  ruling: >
+    THE RE-AUDIT GETS A FRESH READ-ONLY WORKTREE, NOT THE OLD ONE. Reusing
+    /srv/crash-detector-wo2-audit would silently overwrite the only on-disk copy of the target the
+    superseded AMBER verdict was written against, and would give the second auditor a directory
+    carrying the first auditor's environment. A new path is cheap; a destroyed reference tree is not.
+
+what_this_entry_does_NOT_do:
+- 'It does not rewrite main. CD-D-029 stands: the trunk keeps the ambient human author on its 13
+  existing checkpoints, the seam is dated at 80b4a24, and re-authoring the trunk is a separate bounded
+  action for the PO to call.'
+- 'It does not touch application code. Not one byte of the lane content changed — that is the point.'
+- 'It does not revise any Assurance verdict. Four criteria stand AMBER against content that is
+  provably the same content.'
+- 'It does not issue the WO-2R dispatch. That is the next boundary.'
+
+findings_raised: []
+
+risks:
+- 'CD-PL-F49 NEW, LOW — the tag wo-2-pre-identity-rework is now load-bearing for continuity: deleting
+  it would orphan every lane SHA written into the Build Log before this entry and would make the
+  standing CD-CONT-002 resolution step fail for a lawful reason. Recorded as a risk rather than
+  trusted to memory. It is named in the map file, in this entry and in the tag message itself.'
+- 'CD-PL-F50 NEW, LOW — /srv/crash-detector-wo2-audit is stale and will look authoritative to a seat
+  that wanders into it. Mitigated by CD-D-030 (the re-audit gets a fresh path) and by labelling it in
+  the map file and in ACTIVE_WORK working_tree_state. Not deleted, because the superseded verdict''s
+  target should stay inspectable.'
+- 'CD-CONT-001, CD-FWK-004, CD-FWK-005/IMP-015, CD-PL-F47, CD-PL-F48 — all unchanged, carried forward.'
+
+status: COMPLETE
+next_safe_action: >
+  AUTHOR AND ISSUE THE WO-2R ENGINEER DISPATCH. governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml,
+  DRAFT -> ISSUED against execution base ee8be6b on branch wo-2-skeleton, worktree
+  /srv/crash-detector-wo2, to a FRESH seat CD-ENG-WO2R-01 committing under its own seat identity
+  (CD-RULE-002). Bounded to CD-ASR-F01..F06 and NOTHING ELSE. Six increments, one per finding, each
+  committed, each commit NAMING THE CLASS CLOSED AND THE STRUCTURE THAT CLOSES IT (PO Ruling 2), each
+  closure proved BY EXECUTION against the escapes listed for it in
+  governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md PLUS at least two NEW variants of the
+  seat's own, with the full clean arm green at every increment. CD-RULE-003 forbids inventing the F06
+  ceiling value; CD-RULE-004 requires every guard touched to close its class or declare its own limit.
+  Commit the dispatch as a checkpoint BEFORE dispatching the seat (PBG-CONT-007: a sub-agent result
+  that exists only in conversation is not project state).
+expected_next_actor: PROJECT_LEAD
+blockers: []
+held_actions: ['CD-HOLD-003', 'CD-HOLD-004', 'CD-HOLD-005']

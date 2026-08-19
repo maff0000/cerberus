@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T08:55:00Z'
+updated_utc: '2026-08-19T09:05:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -121,8 +121,10 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: f041c6fb44a76925fcecde2f641e43d9e257114c
-  # f041c6f is the WO-2 GATE checkpoint (Assurance AMBER recorded, gate NOT MET), verified present.
+last_completed_checkpoint_sha: 80b4a246db7df59115c5636275f523b3df19a3d6
+  # 80b4a24 is the PO-GATE-REVIEW checkpoint (rulings recorded, CD-RULE-001..004 created) and is the
+  # FIRST commit on this project carrying a seat identity (CD-RULE-002). Verified present.
+  # f041c6f, the prior value, was the WO-2 GATE checkpoint (Assurance AMBER recorded, gate NOT MET).
   # Superseded 7dad359 at BL-20260819T085500Z-0020. Resolved with git rev-parse before writing.
   # 7dad359, the prior value, was the SOD-boundary checkpoint (Engineer complete, Assurance ISSUED).
   # CD-PL-F36 HISTORY, kept here because the defect was invisible to the eye: the increment-5 seat
@@ -132,8 +134,17 @@ last_completed_checkpoint_sha: f041c6fb44a76925fcecde2f641e43d9e257114c
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d   # wo-2-skeleton, increment 7 (B4) — THE ASSURANCE TARGET
-lane_increment_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d   # B4 changed only its own Build Log entry
+lane_head_sha: ee8be6be38696f389a610bc948992a71ad81f892
+  # wo-2-skeleton after the CD-RULE-002 identity re-authoring of all 24 lane commits
+  # (BL-20260819T090500Z-0021). Content is BYTE-IDENTICAL to the pre-rewrite head: same tree object
+  # 38ecc86, and the first auditor's own recorded tree fingerprint 08a474e8...5ad2 recomputes exactly
+  # from an extraction of THIS commit over 271 files. Only author and committer changed.
+  # PRE-REWRITE HEAD 66681b27ed650321f6b9e325fbc05712a754cc7d — the target of the superseded AMBER
+  # verdict — is preserved at annotated tag wo-2-pre-identity-rework, which is LOAD-BEARING for
+  # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
+  # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
+  # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
+lane_increment_sha: ee8be6be38696f389a610bc948992a71ad81f892   # WO-2R has not started; no increment yet
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -151,6 +162,17 @@ working_tree_state: >
   this boundary and all resolve. That step is now standing (CD-CONT-002) and it has caught two
   fabricated values so far — one from the increment-5 seat (CD-PL-F36) and one from the Project
   Lead's own drafting, before commit (BL-20260819T071900Z-0014).
+  IDENTITY RE-AUTHORING DONE (BL-20260819T090500Z-0021). The lane is CLEAN at ee8be6b on
+  wo-2-skeleton; all 24 of its commits now carry seat CD-ENG-WO2-01 in BOTH the author and the
+  committer field, and `git log ... | grep -icE 'matt|infosecurs|noustai|pda'` over the lane returns 0.
+  Content did not change: same tree object, empty diff against the old head, and the first auditor's
+  own recorded fingerprint recomputes exactly from the new head.
+  STALE WORKTREE WARNING: /srv/crash-detector-wo2-audit is still DETACHED at the PRE-REWRITE 66681b2.
+  It is deliberately left untouched so the superseded AMBER verdict's exact target stays inspectable,
+  but it is NOT the current lane and must not be treated as one. CD-D-030: the re-audit gets a FRESH
+  read-only worktree at the new target SHA, never this one.
+  TAG WARNING: wo-2-pre-identity-rework is LOAD-BEARING for continuity (CD-PL-F49). Deleting it would
+  orphan every lane SHA written into the Build Log before 2026-08-19T09:05Z.
   NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
   branch-point copy and will report a stale continuity reference. That is the worktree layout, not
   drift (CD-ENG-F31). The live record is this one, on main. The pending commit is
@@ -366,5 +388,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T085500Z-0020
+last_build_log_entry: BL-20260819T090500Z-0021
 status: ACTIVE
