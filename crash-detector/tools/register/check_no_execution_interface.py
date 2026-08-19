@@ -64,6 +64,102 @@ somebody plants, while ``test_callbacks_run_in_registration_order`` and
 Imports are additionally matched against the broker-SDK module denylist, so
 ``import ib_insync`` fails even though its name contains no execution word at all.
 
+DECLARED LIMIT — WHAT THIS CHECK DOES NOT CATCH
+------------------------------------------------
+Required by CD-D-014 and bounded by CD-D-015. This is the guard stating its own scope. It
+is written as fact, not as apology: everything below is a boundary that was measured, and
+a reader who takes a clean run here as proof that no execution pathway exists has misread
+the check. The boundary is stated HERE, in the check itself and in its register entry, so
+that an auditor sees it without having to discover it.
+
+WHAT IT DOES CATCH, by CLASS and not by instance: an order-entry callable or class under
+ANY name, recognised by its field set (L2, which never reads the name); a transmission
+verb applied to a tradeable noun in any spelling, casing or word order (L1); an execution
+object wearing an interface suffix or carrying an order's data model; a standalone
+brokerage noun; a broker-SDK import; an execution endpoint string literal; an execution
+identifier in a SQL migration; and plain-English documentation, in five grammars —
+direct object, passive, nominalised, trade-lifecycle act with a party, and intransitive
+motion toward a destination — saying the code sends instructions to something that trades.
+
+WHAT IT DOES NOT CATCH. Six boundaries, each with the reason it exists:
+
+  1  DELIBERATE EUPHEMISM. A static reader of natural language cannot have a terminating
+     condition against an author choosing words to avoid it, and this check does not
+     pretend to one. An act named in vocabulary this project's word lists do not hold — an
+     invented internal codename, another market's term of art, a spelling nobody
+     anticipated — passes L1 and L3. This is not speculative: two rounds of independent
+     probing each found a fresh escape of exactly this kind (CD-PL-F32, CD-PL-F35, and
+     the residual CD-PL-F38). Each was closed. The fact that each round found ANOTHER is
+     the evidence for this limit, and CD-D-015 ends the chase here rather than pretending
+     the next round would be the last.
+
+  2  CODE NAMED TO HIDE BEHIND THE ``work_order`` SEQUENCE-SENSE SUPPRESSION. So the check
+     does not fail on this project's own daily vocabulary, L1 suppresses the token
+     ``order`` in its SEQUENCE sense — when the word in front of it is one of the
+     thirty-one sequence modifiers in ``ORDER_SEQUENCE_MODIFIERS`` (``work_order``,
+     ``sort_order``, ``registration_order``, ``in order to``). An execution pathway named
+     ``work_order_router`` or ``sort_order_gateway`` PRECISELY to sit inside that
+     suppression is therefore invisible to L1. It is not invisible to L2, which reads no
+     names at all — ``def work_order(symbol, qty, side)`` still fails on its field set —
+     so what genuinely escapes is a pathway BOTH named to exploit the suppression AND
+     shaped to avoid looking like an order ticket. That residue is accepted deliberately:
+     the alternative was a guard that cries wolf on ``apply_work_order``, and a guard that
+     cries wolf is a guard somebody eventually weakens to obtain a pass.
+
+  3  ANY SENTENCE L3 SUPPRESSES — AND THE SUPPRESSION LIST IS WIDE. L3 does not read a
+     sentence at all if it carries any of 46 negation words or any of 25 hypothetical
+     words. Those lists are broader than the obvious cases and this matters: besides
+     ``no``, ``never``, ``forbidden``, ``if`` and ``would``, they include ``must``,
+     ``free``, ``advisory``, ``absence``, ``zero``, ``say``, ``check``, ``example``,
+     ``criterion`` and ``were``. MEASURED CONSEQUENCE: the docstring "The engine must send
+     each instruction to the broker" is NOT read by L3, because of ``must`` alone. A
+     sentence needs no cunning to be suppressed, only an ordinary modal verb. The trade was
+     taken because this project's own charter says repeatedly that it places no orders, and
+     a check whose output is mostly its own charter is a check nobody reads. It is
+     affordable only because L1 and L2 never read prose: the interface in that example is
+     still caught if its name or its field set gives it away, and prose is the third net.
+
+  4  A MOTION CHAIN LONGER THAN EIGHT WORDS. L3's intransitive-motion grammar scans at most
+     eight consecutive particles, articles and adjectives between the verb of motion and
+     the destination noun (CD-PL-F38 widened this from four; CD-D-015 permits no further
+     widening). Prose stacking more than eight escapes that grammar. Declared, not fixed.
+
+  5  ANYTHING THAT IS NOT PYTHON OR SQL UNDER THE FIVE SCANNED ROOTS. The scan reads only
+     files with a ``.py`` or ``.sql`` suffix under ``src/``, ``db/``, ``deploy/``,
+     ``tests/`` and ``tools/``. It does not read YAML, JSON, TOML, shell, Markdown,
+     notebooks, templates, compiled artefacts, vendored or installed dependencies,
+     container images, or ANY file outside those five directories. An order interface
+     delivered as a shell script, a compose command, a CI job or a dependency's own code is
+     outside this check entirely.
+
+  6  RUNTIME. This is a static read of source text at one commit. It says nothing about
+     what the process does when it runs, nor about code generated, configured or fetched at
+     run time.
+
+WHY THAT IS ACCEPTABLE, AND WHAT CARRIES THE REST. CD-BP-001 — risk-accepted by the Product
+Owner at Blueprint acceptance — records that the AST register checks are NEVER A SOLE
+GUARD. This check is ONE OF THREE refusals on CD-AC-012, standing behind a structural
+fourth:
+
+  * this check, the source scan — names, shapes and documented intent;
+  * CD-RT-012-LOCKFILE-DENYLIST — a broker SDK in any dependency manifest, which no
+    euphemism in OUR source can evade, because the SDK is named by its publisher and not
+    by us;
+  * CD-RT-012-EGRESS-NO-BROKER — a broker host in any egress allowlist, and ANY egress at
+    all granted to cd-engine, cd-public, cd-private or cd-store;
+  * and the network posture itself (BLUEPRINT §2, §13): the engine and both surfaces sit on
+    internal networks with nowhere to send an order. A perfectly euphemised execution
+    pathway inside cd-engine still has no route to a venue.
+
+WHAT A READER SHOULD DO INSTEAD OF TRUSTING THIS ALONE. Read a clean run here as evidence
+about NAMES, SHAPES and DOCUMENTED INTENT at one commit — not as proof of the proposition.
+For the proposition itself, weigh the egress posture first: of the four, it is the only one
+that constrains what the software CAN DO rather than what it says or how it is written. An
+auditor planting a CD-AC-012 variant that lands beyond this boundary should raise a finding
+against THIS DECLARATION — was the limit honestly drawn? — rather than an automatic RED
+against the guard (CD-D-014). That is a fair test of a guard that says what it is, and it
+is available only because the limit was written down first.
+
 EXIT: 0 clean · 1 violation, with file and line · 2 usage · 3 precondition not met.
 Never a skip, for any reason (PBG-CI-002).
 """

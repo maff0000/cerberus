@@ -53,6 +53,13 @@ __all__ = [
     "field_categories",
     "judge_signature",
     "judge_prose",
+    # --- trade lifecycle and directional prose, added closing CD-PL-F35 --------------- #
+    "TRADE_LIFECYCLE_ACTS",
+    "MOTION_VERBS",
+    "MOTION_PARTICLES",
+    "ORDER_SEQUENCE_MODIFIERS",
+    "establishes_sequence_sense",
+    "tradeable_tokens",
 ]
 
 
@@ -190,6 +197,103 @@ DESTINATION_NOUNS = frozenset(
         "broker", "brokers", "brokerage", "dealer", "dealers", "exchange", "exchanges",
         "venue", "venues", "counterparty", "counterparties", "desk", "desks",
         "ecn", "ecns", "darkpool", "mic", "oms", "ems", "clearer", "custodian",
+        # ADDED CLOSING CD-PL-F35(a). The lifecycle does not end at the venue: an
+        # instruction that is filled is then cleared and settled, and the parties that
+        # do that are as much a destination as the exchange that matched it.
+        "clearers", "custodians", "clearinghouse", "clearinghouses", "ccp", "ccps",
+        "mtf", "sef", "ats", "streetside", "marketmaker", "marketmakers",
+        "liquidityprovider", "liquidityproviders", "executingbroker", "primebroker",
+    }
+)
+
+# =================================================================================== #
+# THE TRADE LIFECYCLE — added closing CD-PL-F35(a) (BL-20260819T064300Z-0011).
+#
+# The escape that produced this section was:
+#
+#     def f(a, b, c):
+#         """Hand the parcel to the counterparty for filling."""
+#
+# It carries no order-entry word at all, and it passed. The Project Lead's diagnosis is
+# the one this section is built on: `counterparty` and `fill` ARE NOT EUPHEMISMS. They
+# are the core vocabulary of trade execution, as standard as `order`. The vocabulary
+# above covers ORDER ENTRY — placing, routing, amending, cancelling — and simply stops
+# there, as though a trade ended the moment it was sent.
+#
+# It does not. An instruction is sent, matched, filled, confirmed, affirmed, allocated,
+# cleared and settled, and a codebase that does ANY of those things has an execution
+# pathway just as surely as one that places the order in the first place. So the
+# vocabulary now runs the whole lifecycle.
+# =================================================================================== #
+
+#: ACTS IN THE TRADE LIFECYCLE, in their noun and verb forms. These words are NOT
+#: individually damning — `clear`, `match`, `confirm`, `fill` and `execution` all have
+#: ordinary programming senses, and a bare-token rule on them would fire on half this
+#: codebase and be switched off by Friday. Every rule that reads this set therefore
+#: requires it to be paired with an EXECUTION DESTINATION in the same sentence. It is
+#: the COMBINATION that carries the meaning: "the cache clears" is housekeeping, "the
+#: bargain clears through the exchange" is a trade.
+TRADE_LIFECYCLE_ACTS = frozenset(
+    {
+        "fill", "fills", "filled", "filling",
+        "settle", "settles", "settled", "settling", "settlement", "settlements",
+        "clear", "clears", "cleared", "clearing", "clearance",
+        "match", "matches", "matched", "matching",
+        "affirm", "affirms", "affirmed", "affirming", "affirmation",
+        "confirm", "confirms", "confirmed", "confirming", "confirmation",
+        "allocate", "allocates", "allocated", "allocating", "allocation",
+        "novate", "novated", "novation",
+        "execute", "executes", "executed", "executing", "execution",
+        "quote", "quotes", "quoted", "quoting", "rfq", "rfqs",
+        "cross", "crossed", "crossing",
+        "hit", "hits", "lift", "lifts", "lifted",
+        "book", "books", "booked", "booking",
+        "net", "netted", "netting",
+    }
+)
+
+#: VERBS OF MOTION — added closing CD-PL-F35(b). The escape was:
+#:
+#:     class Desk:
+#:         def dispatch(self, ticket):
+#:             """The ticket goes out to the exchange."""
+#:
+#: This is a THIRD GRAMMAR, and the reason the first two miss it is structural rather
+#: than lexical. Pattern A reads a transmission verb taking a tradeable DIRECT OBJECT
+#: ("route an order"); pattern B reads the passive ("the order was routed"). Here the
+#: tradeable noun is the SUBJECT of an INTRANSITIVE verb, and the destination is reached
+#: through a preposition — nothing is done TO the ticket, the ticket simply goes. The
+#: proposition is identical: something leaves this system for a place that acts on it.
+MOTION_VERBS = frozenset(
+    {
+        "go", "goes", "going", "went", "gone",
+        "travel", "travels", "travelled", "traveled", "travelling", "traveling",
+        "flow", "flows", "flowed", "flowing",
+        "move", "moves", "moved", "moving",
+        "head", "heads", "headed", "heading",
+        "leave", "leaves", "leaving", "left",
+        "arrive", "arrives", "arrived", "arriving",
+        "reach", "reaches", "reached", "reaching",
+        "come", "comes", "coming", "came",
+        "pass", "passes", "passed", "passing",
+        "land", "lands", "landed", "landing",
+        "return", "returns", "returned", "returning",
+        "depart", "departs", "departed", "departing",
+        "exit", "exits", "exited", "exiting",
+    }
+)
+
+#: Particles and prepositions that turn a verb of motion into motion TOWARD somewhere.
+#: "goes OUT TO the exchange", "flows THROUGH TO the clearer", "leaves FOR the venue".
+MOTION_PARTICLES = frozenset(
+    {
+        "out", "on", "off", "through", "over", "across", "back", "away", "down",
+        "up", "along", "forward", "onward", "straight", "directly", "immediately",
+        "to", "toward", "towards", "into", "onto", "at", "for", "from", "with",
+        "upon", "via", "by", "the", "a", "an", "each", "every", "its", "their",
+        "our", "any", "another", "next", "same", "final", "executing", "receiving",
+        "matching", "clearing", "settling", "relevant", "chosen", "selected",
+        "appropriate", "correct", "nominated", "designated",
     }
 )
 
@@ -248,34 +352,62 @@ ORDER_FIELDS = {
         frozenset({"subaccount"}),
         frozenset({"account", "accountid", "portfolio", "portfolioid", "tradingaccount"}),
     ),
+    # STRONG, ADDED CLOSING CD-PL-F35(a). THE LIFECYCLE AS SHAPE, not only as prose.
+    # Closing (a) in the prose layer alone would fix the sentence and leave the class:
+    # a settlement pipeline can be written with no docstring at all. A field that
+    # identifies a FILL, an EXECUTION or a SETTLEMENT exists only because a trade
+    # happened, so these are strong on the same reasoning as `side` — an advisory
+    # read-only product has no use for one.
+    #
+    # DELIBERATELY ABSENT: `trade_date` and `value_date`. A market-data product may
+    # legitimately carry either, and a rule firing on them would be the cry-wolf failure
+    # this file keeps warning about.
+    "lifecycle": (
+        frozenset({"fill", "fills", "settlement", "novation", "affirmation", "rfq"}),
+        frozenset(
+            {
+                "settlementdate", "settledate", "settlementid", "settlementinstruction",
+                "executionid", "execid", "executionreport", "fillid", "fillqty",
+                "filledqty", "filledquantity", "lastfill", "clearingaccount",
+                "clearinghouse", "allocationid", "confirmationid", "tradeid",
+                "executionvenue", "cptyid", "counterpartyid",
+            }
+        ),
+    ),
 }
 
 #: Categories that carry the signal on their own. A quantity beside an instrument is a
 #: position report; a SIDE, an ORDER TYPE or a DESTINATION beside them is an order.
 #: This split is what keeps `(symbol, quantity, price)` — an ordinary valuation
 #: signature — from firing, while `(symbol, qty, side)` fires.
-STRONG_FIELDS = frozenset({"side", "order_type", "destination"})
+STRONG_FIELDS = frozenset({"side", "order_type", "destination", "lifecycle"})
 
 
-def classify_field(name: str) -> "str | None":
-    """Which order-entry field category this parameter/attribute name belongs to, or None."""
+def classify_field(name: str) -> "set":
+    """EVERY order-entry field category this parameter/attribute name belongs to.
+
+    RETURNS A SET, changed closing CD-PL-F35(a). It previously returned the FIRST
+    matching category, which silently discarded evidence: ``settlement_venue`` is both a
+    lifecycle field and a destination, and reporting only one of them made a signature
+    carrying two independent strong signals look like it carried one.
+    """
     parts = token_list(name)
     if not parts:
-        return None
+        return set()
     marks = set(parts)
     flat = "".join(parts)
-    for category, (single, whole) in ORDER_FIELDS.items():
-        if marks & single or flat in whole:
-            return category
-    return None
+    return {
+        category
+        for category, (single, whole) in ORDER_FIELDS.items()
+        if marks & single or flat in whole
+    }
 
 
 def field_categories(names) -> dict:
     """``{category: [the names that put it there]}`` for a parameter or attribute list."""
     found: dict = {}
     for name in names:
-        category = classify_field(name)
-        if category is not None:
+        for category in classify_field(name):
             found.setdefault(category, []).append(name)
     return found
 
@@ -329,6 +461,31 @@ def judge_signature(name: str, parameters, what: str = "function") -> "str | Non
             f"the {what} `{name}` applies the transmission verb `{verbs[0]}` to a "
             f"parameter set that is an order's field set ({shown()})."
         )
+
+    # S4 — A VERB OF TRANSMISSION OR MOTION IN THE NAME, APPLIED TO A TRADEABLE NOUN IN
+    # THE FIELD SET. Added closing CD-PL-F35(b), and added as SHAPE on purpose: the
+    # escape was `class Desk: def dispatch(self, ticket)` documented "The ticket goes out
+    # to the exchange", and fixing only the prose would leave the identical method with
+    # its docstring deleted passing. The signature alone says it — something is
+    # dispatched, and the thing dispatched is a ticket. Neither half fires alone:
+    # `dispatch(payload)` is a message bus and `handle(ticket)` is a helpdesk.
+    movers = sorted(tokens(name) & (TRANSMISSION_VERBS | MOTION_VERBS))
+    if movers:
+        carried = sorted(
+            {
+                parameter
+                for parameter in parameters
+                if tradeable_tokens(parameter)
+            }
+        )
+        if carried:
+            return (
+                f"the {what} `{name}` applies the verb of transmission or motion "
+                f"`{movers[0]}` to `{carried[0]}`, a parameter naming a TRADEABLE "
+                "INSTRUCTION. A callable that moves a ticket, an order or a deal is an "
+                "execution pathway whatever its docstring says — this rule reads the "
+                "signature, so deleting the documentation does not evade it."
+            )
 
     return None
 
@@ -415,9 +572,82 @@ ORDER_SEQUENCE_MODIFIERS = frozenset(
     }
 )
 
-#: What must NOT follow `order` for it to be an instruction: "in order to", "order of
-#: magnitude".
-ORDER_SEQUENCE_FOLLOWERS = frozenset({"to", "of"})
+#: What must NOT follow `order` for it to be an instruction: "order of magnitude".
+#:
+#: `to` WAS REMOVED HERE CLOSING CD-ENG-F36, and the removal is the whole finding. The
+#: follower set was written to suppress "in order to", and it did — but it also suppressed
+#: "Route an order TO the broker for execution", which is the single most archetypal
+#: sentence in the language for the thing CD-AC-012 forbids, and which is the exact
+#: sentence CD-PL-F32 was raised about. The suppression was invisible because that escape
+#: is caught by L1 and L2 as well, so no variant table ever isolated the prose layer on
+#: it. "in order to" needs no follower rule: `in` is already in ORDER_SEQUENCE_MODIFIERS
+#: and the modifier rule reads the word IMMEDIATELY BEFORE the noun, which is the correct
+#: place to disambiguate that phrase.
+ORDER_SEQUENCE_FOLLOWERS = frozenset({"of"})
+
+
+def establishes_sequence_sense(identifier: str) -> bool:
+    """Does this IDENTIFIER put `order` in its SEQUENCE sense — `work_order`, `sort_order`?
+
+    Added closing CD-PL-F35(c). ``order`` has two senses in English, an INSTRUCTION and a
+    SEQUENCE, and the word immediately in front of it is what tells them apart. L3 prose
+    already knew that. L1 identifiers did not, so ``work_order`` — this repository's daily
+    vocabulary, sixteen work orders named in every dispatch and every Build Log entry —
+    failed the guard on innocent code.
+
+    The same disambiguation now serves both layers, from one set, so the two cannot drift
+    into disagreeing about what the word means.
+    """
+    parts = token_list(identifier)
+    return any(
+        parts[index] in ORDER_SEQUENCE_MODIFIERS and parts[index + 1].startswith("order")
+        for index in range(len(parts) - 1)
+    )
+
+
+def tradeable_tokens(identifier: str, sequence_sense: bool = False) -> set:
+    """The tradeable-instruction nouns in this identifier, IN THEIR INSTRUCTION SENSE.
+
+    ``sequence_sense`` is set by the caller when the ENCLOSING SCOPE has already resolved
+    ``order`` to a sequence — a parameter named ``order_id`` inside
+    ``def apply_work_order(...)`` is a work-order id, and a reader knows that from the
+    function it sits in.
+
+    WHY THIS DOES NOT REOPEN THE CLASS, stated plainly because a suppression rule in a
+    guard deserves the scrutiny:
+
+    * It suppresses ONE TOKEN — ``order`` and its plural — and only when the word in front
+      of it is one of the thirty-one sequence modifiers in ``ORDER_SEQUENCE_MODIFIERS``,
+      none of which is a trading term.
+      ``place_order``, ``route_order``, ``order_gateway`` and ``submit_order`` are all
+      untouched, because ``place``, ``route``, ``gateway`` and ``submit`` are not in that
+      set.
+    * It suppresses nothing else. ``broker``, ``venue``, ``fill``, ``counterparty`` and
+      every other word in this file are unaffected inside a ``work_order`` scope.
+    * L2 does not read names at all. ``def work_order(symbol, qty, side)`` fails on its
+      field set no matter what it is called.
+    * What is genuinely given up is an execution pathway deliberately named
+      ``work_order_router`` or ``sort_order_gateway`` to hide behind this rule. That is a
+      EUPHEMISM, it is beyond this check's DECLARED LIMIT (see the check's header), and it
+      is exactly the case the other two CD-AC-012 guards and the network posture exist to
+      cover.
+
+    The alternative was to leave the guard failing on innocent code in the project's own
+    daily vocabulary. That is the more dangerous option, not the safer one: a guard that
+    cries wolf on ``apply_work_order`` is a guard somebody eventually weakens to get a
+    pass, and weakening a guard to obtain a pass is the failure mode every control in this
+    project exists to prevent.
+    """
+    parts = token_list(identifier)
+    suppress_order = sequence_sense or establishes_sequence_sense(identifier)
+    found = set()
+    for token in parts:
+        if token not in TRADEABLE_NOUNS:
+            continue
+        if token.startswith("order") and suppress_order:
+            continue
+        found.add(token)
+    return found
 
 _PROSE_SPLIT = ".;!?\n\r"
 
@@ -556,6 +786,28 @@ def _judge_sentence(sentence: str) -> "tuple[str, str] | None":
             sentence.strip()[:200],
         )
 
+    def hit_lifecycle(act: str, party: str) -> tuple:
+        return (
+            f"this prose names the trade-lifecycle act `{act}` together with `{party}`, a "
+            "party that acts on instructions. Neither word alone would fire — `clear`, "
+            "`fill` and `match` all have ordinary programming senses — but a codebase "
+            f"that {act}s something with a {party} has an execution pathway just as "
+            "surely as one that places the order, and CD-AC-012 forbids the pathway, not "
+            "the order-entry spelling of it.",
+            sentence.strip()[:200],
+        )
+
+    def hit_motion(verb: str, party: str) -> tuple:
+        return (
+            f"this prose says something `{verb}` toward `{party}` — a verb of motion "
+            "aimed at a party that acts on instructions. The tradeable noun is the "
+            "SUBJECT here rather than an object, so neither the active nor the passive "
+            "pattern can see it, and the proposition is identical: something leaves this "
+            "system for a place that will act on it. CD-AC-012 says this product never "
+            "acts.",
+            sentence.strip()[:200],
+        )
+
     # A — ACTIVE VOICE: verb, at most three words of filler, tradeable noun.
     for index, word in enumerate(words):
         if not _is_transmission_verb(word):
@@ -611,6 +863,53 @@ def _judge_sentence(sentence: str) -> "tuple[str, str] | None":
         following = words[index + 1]
         if following.endswith("ing") and _is_transmission_verb(following):
             return hit(f"{words[index]} {following}", "as a noun phrase")
+
+    # D — THE TRADE LIFECYCLE. Added closing CD-PL-F35(a). An act in the trade lifecycle
+    # named in the same sentence as a party that performs it. NEITHER HALF FIRES ALONE,
+    # and that is the whole design: `clear`, `fill`, `match` and `settle` all have
+    # ordinary programming senses, so "the cache clears on eviction" and "this module
+    # fills the gaps" stay clean, while "the bargain clears through the exchange" and
+    # "hand the parcel to the counterparty for filling" do not.
+    #
+    # This pattern needs NO transmission verb and NO tradeable noun, which is why it
+    # catches prose that talks around the order entirely — the escape it was written for
+    # calls the instruction a "parcel".
+    acts = sorted(marks & TRADE_LIFECYCLE_ACTS)
+    if acts and destination:
+        return hit_lifecycle(acts[0], destination[0])
+
+    # E — INTRANSITIVE MOTION TOWARD A DESTINATION. Added closing CD-PL-F35(b). A verb of
+    # motion followed, across an unbroken run of particle, article and adjective, by a
+    # party that acts on instructions. "The ticket goes out to the exchange", "each bargain
+    # flows through to the clearer", "the instruction leaves for the venue".
+    #
+    # Patterns A and B both require the tradeable noun to be an OBJECT — of the verb, or
+    # of the passive. Here it is the SUBJECT and nothing is done to it at all, so both are
+    # structurally blind to it. The destination half is what makes this safe: "the reading
+    # arrives at the serving layer" names no party that trades.
+    #
+    # THE WINDOW WAS FOUR AND IS NOW EIGHT, closing CD-PL-F38. "Every instruction
+    # eventually flows straight through to the nominated clearer" escaped at four, because
+    # `clearer` sits six words past `flows` behind "straight through to the nominated" —
+    # right vocabulary, short window. WIDENING IS SAFE, AND THE REASON IS THE BREAK BELOW,
+    # NOT THE NUMBER: the scan stops at the FIRST word that is neither a motion particle
+    # nor an adverb, so the window only ever spans an UNBROKEN particle run. Widening it
+    # therefore admits exactly one new shape — a motion verb, five to eight consecutive
+    # particles, then a destination noun — and cannot reach across a head noun that already
+    # halted the scan at four. "The data goes out to the pool from the exchange feed" broke
+    # on `pool` before and breaks on `pool` now.
+    for index, word in enumerate(words):
+        if word not in MOTION_VERBS:
+            continue
+        for offset in range(1, 9):
+            position = index + offset
+            if position >= len(words):
+                break
+            candidate = words[position]
+            if candidate in DESTINATION_NOUNS:
+                return hit_motion(word, candidate)
+            if candidate not in MOTION_PARTICLES and not _is_adverbial(candidate):
+                break
 
     return None
 
@@ -671,15 +970,26 @@ DEPENDENCY_NAME_TOKENS = frozenset(
 )
 
 
-def judge_identifier(identifier: str) -> "str | None":
+def judge_identifier(identifier: str, sequence_sense: bool = False) -> "str | None":
     """Why this identifier names an execution interface, or None.
 
     Four composite rules. None of them fires on a single ordinary token, which is what
     lets the check be run over the whole tree without being ignored.
+
+    ``sequence_sense`` — added closing CD-PL-F35(c) — is set by the caller when the
+    enclosing scope has already resolved ``order`` to a sequence rather than an
+    instruction. See :func:`tradeable_tokens` for exactly what it suppresses and, more
+    importantly, for what it does not.
     """
     marks = tokens(identifier)
     if not marks:
         return None
+
+    instruction_nouns = tradeable_tokens(identifier, sequence_sense)
+    #: `order` read as a SEQUENCE must be suppressed everywhere in this function, not
+    #: only in the verb-object rule, or `work_order_id` would simply fail a different
+    #: rule and the false positive would move rather than close.
+    sequence_only = (marks & TRADEABLE_NOUNS) - instruction_nouns
 
     standalone = sorted(marks & STRONG_NOUNS)
     if standalone:
@@ -696,15 +1006,15 @@ def judge_identifier(identifier: str) -> "str | None":
     # every identifier renamed to `f`. The lists close the narrow case of a transmission
     # verb applied to a tradeable noun in a callable that takes NO arguments at all,
     # where there is no signature to read.
-    verbs = sorted(marks & TRANSMISSION_VERBS)
-    objects = sorted(marks & TRADEABLE_NOUNS)
+    verbs = sorted((marks & TRANSMISSION_VERBS) - sequence_only)
+    objects = sorted(instruction_nouns)
     if verbs and objects:
         return (
             f"`{identifier}` applies the transmission verb `{verbs[0]}` to the tradeable "
             f"noun `{objects[0]}`. That is an order pathway however it is spelled."
         )
 
-    interface_objects = sorted(marks & INTERFACE_OBJECTS)
+    interface_objects = sorted((marks & INTERFACE_OBJECTS) - sequence_only)
     suffixes = sorted(marks & INTERFACE_SUFFIXES)
     if interface_objects and suffixes:
         return (
