@@ -483,6 +483,12 @@ criteria:
   # deliberately: in WO-2 the container's process does NOT reach crash_detector.engine, so
   # replacing the package root would have deleted the guard that catches the original plant.
   #
+  # BOUNDARY 5 WAS AMENDED AT CD-D-055 CLOSING CD-PL-F62. The walk roots are no longer the
+  # NAME-matched service: they are every container built from the ENGINE'S IMAGE, identified by
+  # build context plus a byte-identical Dockerfile (CD-ENGINE-ROOT-004). A name match let a sixth
+  # service `cd-engine-worker`, built from deploy/Dockerfile.engine and importing witness code from
+  # its entrypoint, exit 0 at be34fe4.
+  #
   # THIS CHECK HAS A DECLARED LIMIT, in SIX numbered boundaries, stated identically in the header
   # of tools/register/check_engine_no_witness_reach.py, in the execution contract, and below
   # (CD-RULE-004). Boundary 6 is this structure's OWN residue and is measured, not asserted.
@@ -495,12 +501,15 @@ criteria:
         Any import edge by which something reachable from the engine container's ROOT SET reaches
         witness code — module-level, function-local, aliased, relative or through an intermediate
         module. Import PLACEMENT must not evade it: a function-local import is the same edge. THE
-        ROOT SET IS DERIVED AND IS A UNION: every module the engine container's declared process
-        starts, read from deploy/compose.yaml and the Dockerfile it names, TOGETHER WITH every
+        ROOT SET IS DERIVED AND IS A UNION: every module the declared process of EVERY CONTAINER
+        BUILT FROM THE ENGINE'S IMAGE starts — read from deploy/compose.yaml and the Dockerfile it
+        names, the image identified by artefact and not by service name (CD-ENGINE-ROOT-004) —
+        TOGETHER WITH every
         module in src/crash_detector/engine/. So the plant may be placed in the engine package, in
         the module the ENTRYPOINT names, in anything either of them reaches transitively, in a
-        module named by a compose `entrypoint:` or `command:` override, or in one named through a
-        YAML merge key — all of them are the same violation. A DERIVATION THAT CANNOT BE MADE is
+        module named by a compose `entrypoint:` or `command:` override, in one named through a
+        YAML merge key, or in the entrypoint of a SECOND SERVICE BUILT FROM THE ENGINE'S IMAGE
+        under any name at all — all of them are the same violation. A DERIVATION THAT CANNOT BE MADE is
         also a failure and not a pass: a shell-form ENTRYPOINT, `python -c`, a service with no
         `build`, a COPY from another build stage, an anchor the reader cannot locate, a module name
         claimed by two files, or Python shipped into the image that no declared sys.path root can
@@ -523,7 +532,38 @@ criteria:
         (CD-ENG-WO2R-F14 / CD-PL-F61, ruled to a separate bounded dispatch by CD-D-051) is shared
         here and NOT repaired in this increment. (5) Only the ENGINE service's process is a WALK
         ROOT; the other five are RESOLVED so a rename is loud, but witness code reachable from
-        cd-witness is correct and not a violation — MEASURED, variant V42, exit 0. (6) RUN-TIME
+        cd-witness is correct and not a violation. AMENDED AT CD-D-055 CLOSING CD-PL-F62: the
+        previous text of this boundary distinguished services BY PURPOSE in prose while the code
+        distinguished BY NAME, so it did not contemplate a SECOND SERVICE BUILT FROM THE ENGINE'S
+        OWN IMAGE — incomplete, not false. THE WALK ROOTS ARE NOW THE ENGINE CONTAINER SET, DERIVED
+        BY IMAGE IDENTITY: every service building the same context from a BYTE-IDENTICAL Dockerfile
+        as cd-engine is an engine container whatever it is called (CD-ENGINE-ROOT-004), and its
+        shipped files are scanned against ITS OWN declared sys.path roots. MEASURED FOUR WAYS: V42
+        (cd-witness importing witness) exit 0 PASS 23, the criterion and not an escape; PL-U6b (a
+        sixth service cd-engine-worker built from deploy/Dockerfile.engine whose entrypoint imports
+        crash_detector.witness.panel) exit 0 PASS 24 at be34fe4 and exit 1 HERE, naming the route
+        `crash_detector.witness.panel <- cd_worker`; V45 (a seventh service cd-engine-shadow from
+        the same Dockerfile with a CLEAN entrypoint) exit 0 PASS 27, with the container set growing
+        1 -> 2 and the derived roots growing cd_engine -> cd_engine, cd_shadow, so the subject
+        follows the artefact and a legitimate second engine container is not a violation; V46 (a
+        byte-identical COPY of Dockerfile.engine under another name, service cd-analytics, reaching
+        witness through the top-level package) exit 1, so the identity is the image's CONTENT and
+        not its path. WHAT REMAINS OUTSIDE IT: a service built from a Dockerfile that is NOT
+        byte-identical — a near-copy differing by one comment — is a different image by the
+        artefact's own account and is not a walk root; closing that means deciding when two
+        different Dockerfiles MEAN the same image, which is a judgement and not a derivation.
+        CARRIED, MEASURED BY THE IMPLEMENTING SEAT (CD-RULE-006): the container-set test layer
+        asserts the declared service set by EQUALITY and refuses ANY added service whatever image
+        it builds — on the PL-U6b tree at be34fe4 the seat observed 8 failed, 1184 passed, namely
+        tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service and
+        seven in tests/test_deploy_container_set.py (test_all_seven_services_are_declared,
+        test_every_service_declares_a_non_root_user,
+        test_the_declared_uid_matches_the_machine_readable_one, test_every_service_has_a_distinct_uid,
+        test_every_service_declares_its_three_storage_classes,
+        test_only_the_store_declares_durable_storage,
+        test_every_build_passes_the_base_image_through_as_a_required_variable), while the six other
+        static register checks all exited 0. The carrier is the container-set TEST layer, not the
+        register. (6) RUN-TIME
         sys.path MUTATION IS NOT DERIVED, and this is the derivation's own residue. MEASURED,
         variant V44: cd_engine.py inserts /app/src/crash_detector/witness into sys.path and writes
         `import panel`; panel.py IS scanned and IS witness code, but the edge is spelled `panel`,

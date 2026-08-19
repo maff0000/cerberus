@@ -44,7 +44,8 @@ equivalent measurement is: change ``ENTRYPOINT`` and watch the derived root move
 -------------------------------------------------------------------------------------------
 THE ROOT SET IS A UNION, AND THAT IS DELIBERATE
 -------------------------------------------------------------------------------------------
-    roots = the modules the engine container's declared process starts (DERIVED)
+    roots = the modules started by the declared process of EVERY CONTAINER BUILT FROM THE
+            ENGINE'S IMAGE (DERIVED — CD-ENGINE-ROOT-001 and CD-ENGINE-ROOT-004)
           ∪ every module in the engine package ``src/crash_detector/engine/`` (BLUEPRINT §13)
 
 NEITHER IS A SUPERSET OF THE OTHER, and this is measured rather than assumed. In WO-2 the
@@ -65,6 +66,13 @@ WHAT IS ASSERTED
                      compose overriding the image (and a compose ``entrypoint`` cancelling the
                      image ``CMD``, as Compose itself does); every argument of that process
                      that names a Python module the image ships becomes a walk root.
+
+ CD-ENGINE-ROOT-004  THE SUBJECT IS THE ENGINE *IMAGE*, NOT THE SERVICE *NAME*. Every service
+                     in ``deploy/compose.yaml`` that builds the SAME build context from a
+                     BYTE-IDENTICAL Dockerfile is an engine container whatever it is called,
+                     and every one of them contributes walk roots and has its shipped files
+                     scanned against ITS OWN declared sys.path roots. Added closing CD-PL-F62
+                     — see declared limit 5, which this clause replaces the name match in.
 
  CD-ENGINE-ROOT-002  THE SCANNED UNIVERSE IS WHAT THE IMAGE SHIPS. The module map is built
                      from the Dockerfile's own ``COPY`` instructions — every ``*.py`` that
@@ -182,15 +190,54 @@ DECLARED LIMITS (CD-RULE-004). WHAT THIS CHECK DOES NOT DO.
     first key of a block-sequence item (CD-ENG-WO2R-F14 / CD-PL-F61, ruled CD-D-051 to a
     separate bounded dispatch). This check shares it. NOT REPAIRED HERE and NOT IN SCOPE.
 
- 5  ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT, because CD-AC-003 is about the
-    engine. The other five services' entrypoints are RESOLVED — each must name a module the
-    image ships, so a rename or a restructure that breaks the derivation is loud rather than
-    silent — but they are not walk roots, and witness code reachable from ``cd-witness`` is
-    correct rather than a violation.
-    MEASURED EXAMPLE: variant ``V42`` appends ``from crash_detector.witness.panel import
-    Agrees`` to ``deploy/entrypoints/cd_witness.py`` and this check exits 0, PASS 23
-    assertions. That is not an escape; it is the criterion. CARRIED for the engine, which is
-    the subject, and deliberately not extended to services whose job is witness code.
+ 5  THE WALK ROOTS ARE THE ENGINE CONTAINER SET, DERIVED BY IMAGE IDENTITY — AMENDED AT
+    CD-D-055 CLOSING CD-PL-F62, AND THE PREVIOUS TEXT OF THIS BOUNDARY IS WHY.
+    It used to read "ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT ... the other
+    five services' entrypoints are RESOLVED but are not walk roots". That distinguished
+    services BY PURPOSE in prose while the code distinguished BY NAME, so it did not
+    contemplate a SECOND SERVICE BUILT FROM THE ENGINE'S OWN IMAGE, and an auditor reading it
+    would not have expected that case to escape. It was INCOMPLETE rather than false.
+    WHAT THE GUARD NOW DOES: every service that builds the same build context from a
+    BYTE-IDENTICAL Dockerfile as ``cd-engine`` is an engine container whatever it is called
+    (CD-ENGINE-ROOT-004), and its process is a walk root. Services built from a DIFFERENT
+    image are RESOLVED only — each must name a module its image ships, so a rename or
+    restructure that breaks the derivation is loud rather than silent — but they are not
+    walk roots, and witness code reachable from ``cd-witness`` is correct rather than a
+    violation.
+    MEASURED, FOUR WAYS, EACH EXECUTABLE:
+      * ``V42`` appends ``from crash_detector.witness.panel import Agrees`` to
+        ``deploy/entrypoints/cd_witness.py``: exits 0, PASS 23. Not an escape; the criterion.
+      * ``PL-U6b`` (governance/reconciliation/WO-2R/, re-recorded at
+        ``variants/WO-2R/CD-PL-F62/``) adds a sixth service ``cd-engine-worker`` built from
+        ``deploy/Dockerfile.engine`` whose entrypoint imports ``crash_detector.witness.panel``.
+        At ``be34fe4`` it exited 0, PASS 24 — the escape CD-PL-F62 reports. HERE it exits 1,
+        naming the route ``crash_detector.witness.panel <- cd_worker``.
+      * ``V45`` adds a seventh service ``cd-engine-shadow`` from the same Dockerfile with a
+        CLEAN entrypoint: exits 0, PASS 27, and the engine container set grows 1 -> 2 with the
+        derived roots growing ``cd_engine`` -> ``cd_engine, cd_shadow``. THE SUBJECT FOLLOWS
+        THE ARTEFACT, and a legitimate second engine container is not a violation.
+      * ``V46`` copies ``Dockerfile.engine`` byte-for-byte to ``Dockerfile.engine-clone`` and
+        builds ``cd-analytics`` from it, reaching witness through the top-level package:
+        exits 1. The identity is the image's CONTENT, so renaming the file does not evade it.
+    WHAT IS STILL OUTSIDE IT: a service built from a Dockerfile that is NOT byte-identical —
+    a near-copy differing by one comment — is a different image by the artefact's own account
+    and is not a walk root. Closing that would mean deciding when two different Dockerfiles
+    "mean" the same image, which is a judgement and not a derivation.
+    CARRIED, MEASURED BY THIS SEAT (CD-RULE-006): the container-set test layer asserts the
+    declared service set by EQUALITY, so it refuses ANY service added to
+    ``deploy/compose.yaml`` regardless of which image it builds. On the PL-U6b tree, at
+    ``be34fe4``, this seat observed ``8 failed, 1184 passed``:
+    ``tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service``
+    and seven in ``tests/test_deploy_container_set.py`` —
+    ``test_all_seven_services_are_declared``,
+    ``test_every_service_declares_a_non_root_user``,
+    ``test_the_declared_uid_matches_the_machine_readable_one``,
+    ``test_every_service_has_a_distinct_uid``,
+    ``test_every_service_declares_its_three_storage_classes``,
+    ``test_only_the_store_declares_durable_storage``,
+    ``test_every_build_passes_the_base_image_through_as_a_required_variable`` — while the six
+    other static register checks all exited 0. The carrier is the container-set TEST layer
+    specifically, not the register.
 
  6  RUN-TIME ``sys.path`` MUTATION IS NOT DERIVED, AND THIS IS THE RESIDUE OF THE DERIVATION
     ITSELF, SO IT IS STATED PLAINLY. The naming half of the universe comes from the sys.path
@@ -224,6 +271,7 @@ Never a skip, for any reason (PBG-CI-002).
 from __future__ import annotations
 
 import ast
+import hashlib
 import json
 import pathlib
 import posixpath
@@ -240,9 +288,15 @@ CHECK_ID = "CD-RT-003-ENGINE-NO-WITNESS-REACH"
 
 COMPOSE = "deploy/compose.yaml"
 
-#: The service whose CONTAINER is CD-AC-003's subject. Named, so a rename is a visible edit —
-#: and its ABSENCE is CD-ENGINE-ROOT-102, a refusal, never a pass. This is the same treatment
+#: The service that ANCHORS the engine image. Named, so a rename is a visible edit — and its
+#: ABSENCE is CD-ENGINE-ROOT-102, a refusal, never a pass. This is the same treatment
 #: CD-RT-012-EGRESS-NO-BROKER gives its own named service set, for the same reason.
+#:
+#: IT IS AN ANCHOR AND NO LONGER A FILTER (CD-PL-F62). The walk root set is every service whose
+#: build resolves to the SAME image as this one — same context, byte-identical Dockerfile —
+#: because "the engine container" is a property of the image and not of the service name. A
+#: name match here is what let `cd-engine-worker`, built from the engine's own Dockerfile,
+#: escape at be34fe4.
 ENGINE_SERVICE = "cd-engine"
 
 #: Every service that builds from a Dockerfile in this tree has its process RESOLVED (declared
@@ -572,6 +626,20 @@ class Derivation:
         self.entry_modules = []      # dotted names
         self.entry_files = {}        # dotted name -> repository path
         self.dockerfile = None
+        self.context = None
+        self.dockerfile_text = ""
+
+    def image_identity(self) -> tuple:
+        """WHICH IMAGE this service builds, as a property of the ARTEFACT, not of a name.
+
+        Two services share an identity when they build the SAME build context from a
+        BYTE-IDENTICAL Dockerfile. That covers the two spellings of the same image: the
+        same ``dockerfile:`` path named twice, and a copy of that file under another name.
+        It deliberately does NOT read the service name, because the name is exactly what
+        CD-PL-F62 showed the guard must stop distinguishing by.
+        """
+        digest = hashlib.sha256(self.dockerfile_text.encode("utf-8")).hexdigest()
+        return (str(self.context), digest)
 
 
 def _derive(root: pathlib.Path, services: dict, anchors: dict, service: str) -> Derivation:
@@ -628,6 +696,8 @@ def _derive(root: pathlib.Path, services: dict, anchors: dict, service: str) -> 
 
     image = ImageDeclaration(dockerfile, context, text)
     derivation.dockerfile = dockerfile
+    derivation.context = context
+    derivation.dockerfile_text = text
 
     # -- the effective process ---------------------------------------------------------- #
     # Compose overrides the image, and a compose `entrypoint` CANCELS the image's CMD, which
@@ -956,11 +1026,19 @@ def main() -> int:
             "(CD-ENGINE-ROOT-003, PBG-CI-002)."
         )
 
-    # -- declared limit 5: every other buildable service must still RESOLVE -------------- #
-    # Not a walk root — witness code reachable from cd-witness is correct — but a resolution
-    # that breaks is loud rather than silent, and it is what keeps the derivation general
-    # instead of fitted to one service.
-    resolved_elsewhere = {}
+    # -- CD-ENGINE-ROOT-004: THE ENGINE CONTAINER SET, BY IMAGE AND NOT BY NAME ---------- #
+    # Every buildable service is derived. Those that build the ENGINE'S OWN IMAGE — same
+    # build context, byte-identical Dockerfile — are engine containers whatever they are
+    # called, and every one of them contributes walk roots. The rest are RESOLVED only, so
+    # a rename or a restructure that breaks the derivation is loud rather than silent.
+    #
+    # This replaces a name match on `cd-engine`, which was CD-PL-F62: a sixth service
+    # `cd-engine-worker` built from deploy/Dockerfile.engine, whose entrypoint imported
+    # crash_detector.witness.panel, exited 0 at PASS 24 because only the literally-named
+    # service became a root.
+    engine_identity = engine.image_identity()
+    engine_containers = {}       # service -> Derivation, engine image, WALK ROOTS
+    resolved_elsewhere = {}      # service -> Derivation, resolved but NOT a walk root
     for name in sorted(services):
         if name == ENGINE_SERVICE:
             continue
@@ -978,7 +1056,7 @@ def main() -> int:
             continue  # an external image; nothing in this tree declares its process
         check.asserted()
         try:
-            resolved_elsewhere[name] = _derive(root, services, anchors, name)
+            derived = _derive(root, services, anchors, name)
         except DerivationRefused as exc:
             return check.refuse(
                 f"{exc.clause}: service `{name}` builds from this tree but its process does "
@@ -987,6 +1065,14 @@ def main() -> int:
                 "silent. The engine's own derivation is only trustworthy if the machinery "
                 "that makes it works on every service in the file."
             )
+        if derived.image_identity() == engine_identity:
+            engine_containers[name] = derived
+        else:
+            resolved_elsewhere[name] = derived
+
+    #: The engine service first, then every other container built from the engine's image.
+    #: This is the set whose processes are walk roots and whose shipped files are scanned.
+    engine_set = [engine] + [engine_containers[name] for name in sorted(engine_containers)]
 
     # -- CD-ENGINE-ROOT-002: the universe is what the image ships ------------------------ #
     modules: dict = {}
@@ -1015,19 +1101,25 @@ def main() -> int:
     #     dynamic-import clause already refuses. It is deliberately NOT named by guesswork —
     #     naming it by its basename would be inventing the sys.path mutation that would make
     #     that name real, and a guessed fact is worse than a stated refusal.
-    for image_path, repository_path in sorted(engine.shipped.items()):
-        name = _module_name_from(image_path, engine.path_roots)
-        if name is None:
-            return check.refuse(
-                f"CD-ENGINE-ROOT-110: the engine image ships `{image_path}` "
-                f"({repository_path.relative_to(root) if repository_path.is_relative_to(root) else repository_path}), "
-                "which cannot be named as a module under any sys.path root the image "
-                f"declares ({', '.join(engine.path_roots) or 'none'}). Python shipped into "
-                "the container that this check cannot place in the import graph is code "
-                "whose reach is unknown, and unknown is a refusal rather than a pass. Put it "
-                "on a declared path, or do not ship it."
-            )
-        _place(name, repository_path)
+    #     This runs over EVERY container in the engine set, each named against ITS OWN
+    #     declared sys.path roots — a second service may override PYTHONPATH in compose even
+    #     when it builds the identical image, so borrowing the engine service's roots would
+    #     be assuming a fact rather than reading one.
+    for container in engine_set:
+        for image_path, repository_path in sorted(container.shipped.items()):
+            name = _module_name_from(image_path, container.path_roots)
+            if name is None:
+                return check.refuse(
+                    "CD-ENGINE-ROOT-110: the engine image, as built by service "
+                    f"`{container.service}`, ships `{image_path}` "
+                    f"({repository_path.relative_to(root) if repository_path.is_relative_to(root) else repository_path}), "
+                    "which cannot be named as a module under any sys.path root that "
+                    f"container declares ({', '.join(container.path_roots) or 'none'}). "
+                    "Python shipped into the container that this check cannot place in the "
+                    "import graph is code whose reach is unknown, and unknown is a refusal "
+                    "rather than a pass. Put it on a declared path, or do not ship it."
+                )
+            _place(name, repository_path)
 
     if conflicts:
         first = conflicts[0]
@@ -1048,15 +1140,21 @@ def main() -> int:
         return check.refuse("the engine package contains no Python modules.")
 
     derived_roots = []
-    for name in engine.entry_modules:
-        if name in modules:
-            derived_roots.append(name)
-            continue
-        return check.refuse(
-            f"CD-ENGINE-ROOT-108: the engine container starts `{name}`, which is not a "
-            "module in the scanned universe. The process the criterion is about would be "
-            "walked from nothing."
-        )
+    for container in engine_set:
+        if container is not engine:
+            # CD-ENGINE-ROOT-004: a second container built from the engine's image is an
+            # engine container, and its process is a walk root. Asserted per container so
+            # the count follows the artefact rather than being fixed at one.
+            check.asserted()
+        for name in container.entry_modules:
+            if name in modules:
+                derived_roots.append(name)
+                continue
+            return check.refuse(
+                f"CD-ENGINE-ROOT-108: engine container `{container.service}` starts "
+                f"`{name}`, which is not a module in the scanned universe. The process the "
+                "criterion is about would be walked from nothing."
+            )
     derived_roots = sorted(set(derived_roots))
 
     check.asserted()  # CD-ENGINE-ROOT-002, the derived roots are inside the scanned universe
@@ -1148,25 +1246,33 @@ def main() -> int:
         f"assertion: {', '.join(witness_modules)}"
     )
     check.note(
-        f"engine container process DERIVED from {engine.origin}: "
-        f"{' '.join(engine.argv)}"
+        "the ENGINE CONTAINER SET, derived by IMAGE IDENTITY and not by service name "
+        f"(build context + byte-identical Dockerfile): {len(engine_set)} service(s) — "
+        + ", ".join(
+            f"{c.service} [{c.origin}: {' '.join(c.argv)}]" for c in engine_set
+        )
     )
     check.note(
-        "derived walk root(s) from the container: "
+        "derived walk root(s) from the engine container set: "
         + (", ".join(derived_roots) or "(none)")
-        + f"; sys.path roots inside the image: {', '.join(engine.path_roots) or '(none)'}"
+        + "; sys.path roots inside the image(s): "
+        + "; ".join(
+            f"{c.service}={', '.join(c.path_roots) or '(none)'}" for c in engine_set
+        )
     )
     check.note(
         f"package walk root(s) from BLUEPRINT §13: {len(package_roots)} module(s) under "
         f"{ENGINE_PACKAGE}"
     )
     check.note(
-        f"{len(engine.shipped)} Python file(s) shipped into the engine image by its own "
-        "COPY instructions, every one of them named and placed in the graph"
+        f"{sum(len(c.shipped) for c in engine_set)} Python file(s) shipped into the engine "
+        "image(s) by their own COPY instructions, every one of them named and placed in "
+        "the graph"
     )
     if resolved_elsewhere:
         check.note(
-            "other services built from this tree, entrypoint RESOLVED but not a walk root: "
+            "services built from a DIFFERENT image in this tree, entrypoint RESOLVED but "
+            "not a walk root: "
             + ", ".join(
                 f"{name}={'/'.join(sorted(d.entry_modules))}"
                 for name, d in sorted(resolved_elsewhere.items())
@@ -1176,7 +1282,8 @@ def main() -> int:
     return check.done(
         f"{len(modules)} modules in the scanned universe; {len(reached)} reachable "
         f"from {len(roots)} root(s) — {len(package_roots)} engine-package, "
-        f"{len(derived_roots)} derived from the container — walked to fixpoint"
+        f"{len(derived_roots)} derived from {len(engine_set)} engine container(s) — "
+        "walked to fixpoint"
     )
 
 

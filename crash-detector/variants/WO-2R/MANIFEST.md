@@ -1218,3 +1218,102 @@ called out because `CD-ENG-WO2R-F16` says a silently shrinking count is how a sk
 Third, **`V39` and `V40` are refusals at exit `3`, not violations at exit `1`**, and an auditor
 asserting only "non-zero" would not notice the difference; the clause id is the thing to assert
 (`CD-ENG-WO2R-F13`).
+
+---
+
+# Increment 5, ADDENDUM — `CD-PL-F62` (`CD-D-055`), declared boundary 5 of `CD-RT-003-ENGINE-NO-WITNESS-REACH`
+
+**Patches:** `variants/WO-2R/CD-PL-F62/`. **Data, not executable.**
+
+## What CD-PL-F62 is
+
+Increment 4 was ACCEPTED (`CD-D-053`) and this is **not** a re-open of it. Its declared boundary 5
+said *"ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT ... the other five services'
+entrypoints are RESOLVED but are not walk roots, and witness code reachable from `cd-witness` is
+correct rather than a violation."* That distinguishes services **by purpose**, in prose. The code
+distinguished them **by name**: `ENGINE_SERVICE = "cd-engine"`. Nothing in the boundary contemplates
+a **second service built from the engine's own image**, so an auditor reading it would not expect
+that case to escape. The boundary was **incomplete**, not false — which is the whole difference
+from `CD-PL-F59`, where a boundary asserted a carrier that did not exist.
+
+## The remedy chosen: CLOSE, not merely DECLARE
+
+`CD-RULE-004` offered both. This seat took the closure, because the honest structure is small and
+already implied by increment 4's own argument: *the subject is the engine CONTAINER, and a container
+is identified by its IMAGE, not by the string somebody typed as its service name.*
+
+`CD-ENGINE-ROOT-004`: every service in `deploy/compose.yaml` that builds the **same build context**
+from a **byte-identical Dockerfile** as `cd-engine` is an engine container, contributes walk roots,
+and has its shipped files scanned against **its own** declared sys.path roots. `ENGINE_SERVICE` is
+now an **anchor** — its absence is still `CD-ENGINE-ROOT-102`, a refusal — and no longer a filter.
+
+Boundary 5 is nonetheless rewritten in all three `CD-RULE-004` places to say what the guard now
+does and what remains outside it, because *closing it without correcting the declaration would leave
+the same defect one level up*.
+
+## The clean arm these contrast against
+
+```bash
+python3 -B tools/register/check_engine_no_witness_reach.py --root .
+```
+
+`exit 0`, `PASS — 23 assertions`, universe **39** modules, **15** reachable from **5** roots — 4
+engine-package + 1 derived (`cd_engine`), engine container set **1** service. **Identical to
+increment 4's clean arm**: the closure changes no number on the clean tree, which is the point.
+
+## Rows
+
+Each on its own pristine extraction, `git apply -p1`, `python3 -B`, under `timeout 60`.
+
+| variant | PROPOSITION attacked | ROUTE, and why it is not on the known set | at `be34fe4` | HERE |
+|---|---|---|---|---|
+| `PL-U6b` | the engine container cannot reach witness code | **PROJECT LEAD'S PROBE**, re-recorded here as data. A **sixth** service `cd-engine-worker` built from `deploy/Dockerfile.engine` — the ENGINE'S OWN image — whose entrypoint `deploy/entrypoints/cd_worker.py` imports `crash_detector.witness.panel`. Not on the known set at all: the known set predates the derivation. Differs from `E06`/`V32`/`V33` in that **nothing about `cd-engine` is touched** — the escape is an ADDITION, and it survives precisely because the guard matched a name | `0`, **PASS 24**, universe 39 → **40** (the file IS seen; it is simply not a root) — **ESCAPES**, reproduced by this seat | **`1`**, rule `engine reaches witness code`, route `crash_detector.witness.panel <- cd_worker` |
+| `V45` | **FALSE-POSITIVE CONTROL and DERIVATION-FOLLOWS-THE-ARTEFACT** | a **seventh** service `cd-engine-shadow`, same Dockerfile, entrypoint `cd_shadow.py` importing only `crash_detector.runtime.lifecycle`. A legitimate second engine container. Differs from `V31`, which MOVED one declaration; this ADDS a container and asks whether the root SET grows | *(not run at `be34fe4`; it is a control for the new structure)* | **`0`**, PASS **27**. Engine container set **1 → 2**; derived roots `cd_engine` → `cd_engine, cd_shadow`. **THE SUBJECT FOLLOWED THE ARTEFACT**, and legitimate code is not forbidden |
+| `V46` | as `PL-U6b` | `deploy/Dockerfile.engine` copied **byte-for-byte** to `deploy/Dockerfile.engine-clone`; service `cd-analytics` builds from the copy and its entrypoint reaches witness through the **top-level package** (`import crash_detector` then `crash_detector.witness.panel`). Differs from `PL-U6b` by defeating an identity based on the dockerfile **PATH** rather than its **CONTENT**, and by using the attribute-reach route rather than a direct import | *(a fortiori escapes: `PL-U6b` escapes with the weaker route)* | **`1`**, **2** violations, route `crash_detector.witness <- cd_analytics` and `crash_detector.witness.panel <- crash_detector.witness <- cd_analytics` |
+
+## Summary of what was refused by what — increment 5 addendum
+
+| variant | route class | clause that refused it | exit |
+|---|---|---|---|
+| `PL-U6b` | a second service built from the engine's image, by name | `engine reaches witness code`, root derived by `CD-ENGINE-ROOT-004` | **1** |
+| `V46` | the same, defeating a path-based image identity | `engine reaches witness code`, root derived by `CD-ENGINE-ROOT-004` | **1** |
+| `V45` | a legitimate second engine container | none — it PASSES, and the root SET grows | **0** |
+
+## No regression, measured
+
+All fifteen increment-4 rows were re-run against the amended check on pristine extractions. Every
+outcome is unchanged: `E06` `V32` `V33` `V34` `V36` `V37` `V38` → exit `1`; `V35` `V39` `V40` `V41`
+`V43` → exit `3` with the same clause ids `CD-ENGINE-ROOT-106 / 102 / 105 / 103 / 110`; `V31` `V42`
+→ exit `0`; and `V44` **still escapes at exit `0`, PASS 23**, which is boundary 6 and
+`CD-ENG-WO2R-F17`, unchanged and still owed.
+
+## What is still outside boundary 5, and what carries it
+
+A service built from a Dockerfile that is **not byte-identical** — a near-copy differing by one
+comment — is a different image by the artefact's own account and is not a walk root. Closing that
+means deciding when two different Dockerfiles *mean* the same image, which is a judgement and not a
+derivation.
+
+**CARRIED, MEASURED BY THIS SEAT (`CD-RULE-006`), not transcribed from the Project Lead.** On the
+`PL-U6b` tree at `be34fe4`:
+
+```
+PYTHONPATH=src python3 -B -m pytest -q      ->  8 failed, 1184 passed
+```
+
+`tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service` and seven in
+`tests/test_deploy_container_set.py` — `test_all_seven_services_are_declared`,
+`test_every_service_declares_a_non_root_user`,
+`test_the_declared_uid_matches_the_machine_readable_one`, `test_every_service_has_a_distinct_uid`,
+`test_every_service_declares_its_three_storage_classes`,
+`test_only_the_store_declares_durable_storage`,
+`test_every_build_passes_the_base_image_through_as_a_required_variable`. The six other static
+register checks all exited `0`. **The carrier is the container-set TEST layer, not the register**,
+and it bites on the *addition of a service* by exact-set equality, so it holds for any image at all.
+
+One correction to the source record, stated because a count that does not reconcile is itself a
+defect in the evidence trail: `PL-U1-U6...patch.txt` says "the other five register checks all exit
+0". This seat counted **six** other static register checks on that tree
+(`check_no_numeric_default`, `check_no_blend`, `check_schema_closed`, `check_no_execution_interface`,
+`check_lockfile_denylist`, `check_egress_no_broker`), all at exit `0`. `check_grant_matrix_live`
+is a seventh and needs a live PostgreSQL, which was not started for this measurement.

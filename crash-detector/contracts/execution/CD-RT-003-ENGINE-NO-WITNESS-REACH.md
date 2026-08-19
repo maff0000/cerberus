@@ -16,10 +16,13 @@ route.
 
 The root set is **DERIVED and is a UNION**:
 
-* every module the **engine container's declared process** starts — read from
-  `deploy/compose.yaml`'s `cd-engine` service and the Dockerfile it names, as
-  `entrypoint + command`, with compose overriding the image, a compose `entrypoint` cancelling
-  the image `CMD`, and YAML merge keys resolved; **and**
+* every module the declared process of **every container built from the engine's image** starts.
+  The image is anchored at `deploy/compose.yaml`'s `cd-engine` service and identified by its
+  **artefact** — the build context plus a byte-identical Dockerfile — not by the service name, so a
+  second service built from that image is an engine container whatever it is called
+  (`CD-ENGINE-ROOT-004`, closing `CD-PL-F62`). Each process is read as `entrypoint + command`, with
+  compose overriding the image, a compose `entrypoint` cancelling the image `CMD`, and YAML merge
+  keys resolved; **and**
 * every module in `src/crash_detector/engine/`, which is BLUEPRINT §13's own subject.
 
 **Neither is a superset of the other, and that is measured rather than assumed.** In WO-2 the
@@ -79,7 +82,7 @@ id** — never an empty root set, and never a pass.
 | `CD-ENGINE-ROOT-105` | a `COPY` that cannot be resolved statically — `--from=` a stage, a glob, a variable, a missing source, an escape from the build context |
 | `CD-ENGINE-ROOT-106` | the declared process is in **shell form**, so what starts is decided by `/bin/sh` at run time |
 | `CD-ENGINE-ROOT-107` | the process is not a Python interpreter this check can read, or it names code inline (`python -c`) |
-| `CD-ENGINE-ROOT-108` | the process names **no** Python module the image ships — an empty root set |
+| `CD-ENGINE-ROOT-108` | the process names **no** Python module the image ships — an empty root set; or an engine container starts a module the scanned universe does not hold |
 | `CD-ENGINE-ROOT-109` | two different files claim one module name, so the graph is ambiguous |
 | `CD-ENGINE-ROOT-110` | the image ships Python that no declared sys.path root can name |
 
@@ -116,11 +119,49 @@ BE CARRIED ANYWHERE** (CD-RULE-006).
    left to be discovered: write compose sequences in block form. That reader also has a known
    **non-termination** defect (`CD-ENG-WO2R-F14` / `CD-PL-F61`, ruled to a separate bounded dispatch
    by `CD-D-051`) which this check shares and which is **not repaired here and not in scope**.
-5. **ONLY THE ENGINE SERVICE'S PROCESS IS A WALK ROOT.** The other five services built from this
-   tree are **RESOLVED** — each must name a module the image ships, so a rename or restructure that
-   breaks the derivation is loud rather than silent — but they are not roots. **MEASURED:** variant
-   `V42` appends the E06 import to `deploy/entrypoints/cd_witness.py` and this check exits `0`,
-   PASS 23 assertions. That is not an escape; it is the criterion.
+5. **THE WALK ROOTS ARE THE ENGINE CONTAINER SET, DERIVED BY IMAGE IDENTITY.** *Amended at
+   `CD-D-055` closing `CD-PL-F62`.* This boundary used to read "only the engine SERVICE's process
+   is a walk root ... the other five are resolved" — it distinguished services **by purpose** in
+   prose while the code distinguished **by name**, so it did not contemplate a **second service
+   built from the engine's own image**, and an auditor reading it would not have expected that case
+   to escape. It was *incomplete*, not false.
+   **What the guard now does:** every service that builds the same build context from a
+   **byte-identical Dockerfile** as `cd-engine` is an engine container whatever it is called
+   (`CD-ENGINE-ROOT-004`), and its process is a walk root; its shipped files are scanned against
+   **its own** declared sys.path roots. Services built from a **different** image are RESOLVED only
+   — each must name a module its image ships, so a rename or restructure that breaks the derivation
+   is loud rather than silent — but they are not roots, and witness code reachable from
+   `cd-witness` is correct rather than a violation.
+   **MEASURED, four ways, each executable:**
+   * `V42` appends the E06 import to `deploy/entrypoints/cd_witness.py`: exits `0`, PASS 23. Not an
+     escape; the criterion.
+   * `PL-U6b` adds a sixth service `cd-engine-worker` built from `deploy/Dockerfile.engine` whose
+     entrypoint imports `crash_detector.witness.panel`. At `be34fe4` it exited `0`, PASS 24 — the
+     escape `CD-PL-F62` reports. Here it exits `1`, naming the route
+     `crash_detector.witness.panel <- cd_worker`.
+   * `V45` adds a seventh service `cd-engine-shadow` from the same Dockerfile with a **clean**
+     entrypoint: exits `0`, PASS 27, and the engine container set grows 1 → 2 with the derived roots
+     growing `cd_engine` → `cd_engine, cd_shadow`. **The subject follows the artefact**, and a
+     legitimate second engine container is not a violation.
+   * `V46` copies `Dockerfile.engine` byte-for-byte to `Dockerfile.engine-clone` and builds
+     `cd-analytics` from it, reaching witness through the top-level package: exits `1`. The identity
+     is the image's **content**, so renaming the file does not evade it.
+   **What is still outside it:** a service built from a Dockerfile that is **not byte-identical** —
+   a near-copy differing by one comment — is a different image by the artefact's own account and is
+   not a walk root. Closing that means deciding when two different Dockerfiles "mean" the same
+   image, which is a judgement and not a derivation. **CARRIED, MEASURED by the implementing seat
+   (`CD-RULE-006`):** the container-set test layer asserts the declared service set by **equality**,
+   so it refuses **any** service added to `deploy/compose.yaml` whatever image it builds. On the
+   `PL-U6b` tree at `be34fe4` this seat observed **`8 failed, 1184 passed`** —
+   `tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service` and seven
+   in `tests/test_deploy_container_set.py` (`test_all_seven_services_are_declared`,
+   `test_every_service_declares_a_non_root_user`,
+   `test_the_declared_uid_matches_the_machine_readable_one`, `test_every_service_has_a_distinct_uid`,
+   `test_every_service_declares_its_three_storage_classes`,
+   `test_only_the_store_declares_durable_storage`,
+   `test_every_build_passes_the_base_image_through_as_a_required_variable`) — while the six other
+   static register checks all exited `0`. The carrier is the container-set **test** layer, not the
+   register.
 6. **RUN-TIME `sys.path` MUTATION IS NOT DERIVED. This is the derivation's own residue.**
    **MEASURED EXAMPLE (variant `V44`):** `deploy/entrypoints/cd_engine.py` inserts
    `/app/src/crash_detector/witness` into `sys.path` and then writes `import panel`. `panel.py`
