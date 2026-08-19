@@ -1,0 +1,513 @@
+# WO-2R increment 3 — CD-ASR-F04 (MEDIUM) on criterion CD-AC-012, the egress half.
+# The CLASS attacked is AN EGRESS ALLOWLIST ENTRY THAT REACHES A BROKER, closed as the class
+# AN EGRESS ALLOWLIST ENTRY NOBODY DECLARED. Three commits.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+#
+# ON THE SEQUENCE NUMBER AND THE TIMESTAMP. 0043 is the next free number in the lane's RESERVED
+# BLOCK from 0040 upward (CD-D-036); main continues separately from 0026. The entry_id and
+# timestamp_utc below were taken from `date -u +%FT%TZ` and from nothing else (CD-RULE-005). The
+# predecessor entries BL-20260819T113000Z-0041 and BL-20260819T114046Z-0042 are NOT edited.
+
+entry_id: BL-20260819T142541Z-0043
+timestamp_utc: '2026-08-19T14:25:41Z'
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+seat_instance: 'WO-2R increment 3 (seat instance 4)'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: cc961bfcf258faef1471fa913313bbacc25930fd    # increment 2b, RECONCILED and ACCEPTED
+increment_sha: 8b640eaf86565e898a7fcd7b1fc96d9b00df1e89   # the last commit before this entry
+parent_entry_id: BL-20260819T114046Z-0042                 # newest ENGINEER entry in this lane
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  THREE commits in this increment. The SHA to quote is 8b640eaf86565e898a7fcd7b1fc96d9b00df1e89,
+  the last that can exist before this entry, because an entry cannot contain its own hash.
+
+    a79d4b215c835eb2983d60fab226702cc3afab87  step 1, THE STRUCTURE: deploy/egress-destinations.yaml
+                                              (NEW — the in-tree destination registry, shipped
+                                              EMPTY), deploy/compose.yaml (the x-cd-egress-contract
+                                              gains CD-EGRESS-004/005/006 and the `hosts` field's
+                                              meaning is rewritten), and
+                                              tools/register/check_egress_no_broker.py (deny by
+                                              default, closed key sets, the positive hostname
+                                              shape, layer 2 extended over the registry, and a
+                                              six-boundary DECLARED LIMIT where there was none)
+    4933376afddf01fb55f227bd8aaf436a2d2fc387  step 2, THE DECLARATION: required-tests.yaml's
+                                              CD-RT-012-EGRESS-NO-BROKER entry rewritten,
+                                              contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md
+                                              rewritten, and tests/test_egress_destination_registry.py
+                                              (NEW, 32 regression assertions)
+    8b640eaf86565e898a7fcd7b1fc96d9b00df1e89  step 3, THE EVIDENCE: eight durable variant patches
+                                              under variants/WO-2R/CD-ASR-F04/, the manifest
+                                              section, the eleven plants re-run, plants/MANIFEST.md
+                                              updated for the one signature that grew, and
+                                              CD-ENG-WO2R-F12 and F13 raised against this seat's
+                                              own work
+    <the commit containing this file>          this Build Log entry
+
+  Split this way because the runtime has killed seats on this project and a termination had to cost
+  the evidence record rather than the closure. Every SHA above was resolved with `git rev-parse`
+  against the object database, not written from memory.
+
+  COMMIT IDENTITY VERIFIED AFTER EVERY COMMIT with `git log -1 --format='%an <%ae> | %cn <%ce>'`.
+  All three read `CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid>` in BOTH fields.
+  Set through GIT_AUTHOR_*/GIT_COMMITTER_* environment variables on the commit invocation, never
+  through `git -c`, which CD-PL-F56 measured to fail SILENTLY on this host, and never by writing
+  `git config` (CD-RULE-002, non-relaxable).
+
+# --- boot and reconciliation ------------------------------------------------------------------ #
+
+boot_verdict: >
+  Read IN FULL before writing anything: pbg/roles/engineer.md (the role contract; reading it grants
+  nothing — the dispatch does, PBG-BOOT-001/002); CD-DISPATCH-WO2R-ENGINEER.yaml IN FULL, including
+  increment_3_F04, commit_identity, writable_scope, protected_scope, prohibited,
+  commit_message_contract, proof_standard, runtime_authorisation and gate;
+  governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md in full;
+  governance/decisions/PO-GATE-REVIEW-WO2-0001.md; governance/rules/PROJECT-RULES.md, all six
+  rules; the CD-ASR-F04 finding in governance/assurance/WO-2/BL-ASR-WO2-01.yaml; then the subject
+  and its docstrings — tools/register/check_egress_no_broker.py in full,
+  tools/register/_broker_vocabulary.py in full, tools/register/_yamlmin.py, tools/register/_support.py,
+  deploy/compose.yaml's x-cd-egress-contract and all seven x-egress blocks,
+  contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md, the register entry, plants/MANIFEST.md's
+  egress row and variants/WO-2R/MANIFEST.md for house style.
+
+  THE PREVIOUS SEAT ANTICIPATED MUCH OF THIS IN WRITING and this increment finishes its argument
+  rather than overruling it. check_egress_no_broker.py's header already said "BUILT FOR THE CLASS,
+  NOT THE INSTANCE" and already quoted CD-EGRESS-002's own wording — "the question is what kind of
+  thing lives there, not whether its name contains a string somebody thought of". The design was
+  right and the instrument was wrong: a vocabulary and a denylist are both ways of asking what a
+  name LOOKS LIKE, and an address has no name. The registry answers the question the header was
+  already asking, from data instead of from recognition.
+
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` returned RED, on
+  `continuity_state: CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`. DIAGNOSED, NOT REPAIRED, AND
+  PRE-EXISTING: governance/engineering/ACTIVE_WORK.yaml in this worktree still carries
+  `continuity_record_commit: PENDING` and `lane_head_sha: 0047093`, and was last written at bf8fcf9
+  — before ee8be6b, a94ef97 and cc961bf. `git diff --stat` between ee8be6b, a94ef97 and cc961bf for
+  that path is EMPTY, so this increment neither created the condition nor inherited a changed one.
+  ACTIVE_WORK.yaml is Project-Lead-only and is in this dispatch's protected_scope, so it is
+  REPORTED rather than corrected (PBG-CONT-006). `pbg validate` returns AMBER on
+  `bound_verifiers_evidenced` / PBG-CONT-003, which was measured to return the SAME verdict on a
+  pristine extraction of cc961bf and is likewise pre-existing.
+
+  RECONCILIATION: observed HEAD of /srv/crash-detector-wo2 was
+  cc961bfcf258faef1471fa913313bbacc25930fd on branch wo-2-skeleton, `git status --short` ZERO
+  lines. EXACTLY the execution base for this increment. NOTE THE DIVERGENCE FROM THE DISPATCH
+  RECORD, which is expected and is not drift: the record's top-level execution_base_sha is
+  ee8be6b, increment 1's base. Increments 1, 2, 2b are committed and reconciled and this seat
+  extends the lane from cc961bf, as the dispatching brief states.
+
+  BASELINE ESTABLISHED BEFORE ANYTHING WAS CHANGED, on a pristine `git archive` extraction of
+  cc961bf under /tmp: eleven declared commands, the full suite at 1155 passed, and the sorted list
+  of 1155 pytest node ids saved for the anti-relaxation comparison. A refactor with no before-number
+  cannot prove it regressed nothing.
+
+  THE DEFECT WAS REPRODUCED BEFORE IT WAS REPAIRED. E05 applied to a pristine extraction of
+  cc961bf: `CD-RT-012-EGRESS-NO-BROKER: PASS — 44 assertions, 0 violations`, exit 0. That matches
+  the auditor's record exactly.
+
+  `python3 -B` and `pytest -p no:cacheprovider` were used everywhere, and every variant and every
+  plant ran in its own `git archive` extraction under /tmp, never in the worktree and never in a
+  git worktree (PBG-RT-001 — mutation by EFFECT, not by label).
+
+scope_check: >
+  BOUNDED TO INCREMENT 3 / CD-ASR-F04 AND NOTHING ELSE. Increments 4 (CD-ASR-F05, the code-graph
+  walk root) and 5 (CD-ASR-F06, the staleness ceiling) were NOT started: nothing under src/,
+  db/, deploy/entrypoints/ or tools/register/check_engine_no_witness_reach.py was touched, and
+  src/crash_detector/serving/witness_resolver.py is byte-identical to cc961bf. Increments 1, 2 and
+  2b are untouched — src/ in its entirety is byte-identical to cc961bf.
+
+  Written: deploy/ (compose.yaml and the new registry), tools/register/, tests/, contracts/,
+  required-tests.yaml, plants/MANIFEST.md, variants/, and this new Build Log entry. All inside
+  writable_scope. Nothing under pbg/, PID.md, BLUEPRINT.md, CLAUDE.md, docs/, db/, schemas/,
+  governance/authority/, governance/decisions/, governance/dispatch/, governance/rules/,
+  governance/assurance/ or ACTIVE_WORK.yaml was modified; the governance records on main were READ
+  ONLY. `latest_admitted_run` is still null and was not touched. No status-like key was added to
+  the register. NO INGREDIENT SOURCE WAS REGISTERED — the destination registry ships EMPTY, and
+  that is the point of it: CD-D-005 is owed by the Product Owner and choosing ingredients is
+  choosing what a dial MEANS (PBG-AUTH-005).
+
+# --- the closure ------------------------------------------------------------------------------ #
+
+the_class_closed: >
+  AN EGRESS ALLOWLIST ENTRY THAT REACHES A BROKER, closed as the class AN EGRESS ALLOWLIST ENTRY
+  NOBODY DECLARED.
+
+  The auditor's escape was `198.51.100.24` in place of `api.ibkr.com`, and the obvious repair — an
+  IP-literal detector — was deliberately NOT written, because it reproduces the identical defect
+  one level up. It would still recognise a SPELLING, and the next spelling is a CIDR, a URL, an
+  unregistered hostname, a punycode host, a hex-dotted address or a container-network service name.
+
+  What is now impossible is not "an address in an allowlist". It is AN ALLOWLIST ENTRY THAT NOBODY
+  REGISTERED, in any spelling whatever, including spellings nobody has thought of — because the
+  check performs NO RECOGNITION AT ALL on an entry that is not in the registry. There is no pattern
+  to write around, so a new spelling is not a new route; it is the same violation.
+
+  THIS IS A CLOSURE OF THE DECLARATION AND IS NOT CLAIMED TO BE MORE. Docker Compose has no
+  per-host egress primitive; enforcement is owed at WO-3, every artefact says so, and the check
+  says so on every run. The defect CD-ASR-F04 reported was in the DECLARATION the WO-3 enforcement
+  lane will inherit, and it is that declaration this increment closed — which is what the Product
+  Owner ordered be done BEFORE that lane exists.
+
+the_structure: >
+  DENY BY DEFAULT OVER A DECLARED, IN-TREE DESTINATION REGISTRY, exactly as CD-D-031 fixes it.
+
+  THE INVARIANT: every entry in every service's `x-egress.hosts` is, character for character, the
+  `host` of a destination registered in deploy/egress-destinations.yaml whose `services` list names
+  that service. THE ADMISSIBLE SET IS DERIVED FROM THE ARTEFACT AND FROM NOTHING ELSE — there is no
+  permitted host named anywhere in the guard and there cannot be one. Measured: V24 registers one
+  destination and the check's assertion count moves 53 -> 67, because the registry IS the subject.
+
+  Four supporting invariants keep the registry from becoming the hole the allowlist used to be:
+
+    CD-EGRESS-004  deny by default, plus service scoping — a grant is to NAMED services, never a
+                   global permit.
+    CD-EGRESS-005  CLOSED KEY SETS, asserted by EQUALITY with a declared member set, on the
+                   x-egress block, on a destination and on the registry document. This is
+                   increment 1's lesson applied to a declaration: a blacklist is defeated by a
+                   name nobody listed, and `hosts_extra:` is a name nobody listed.
+    CD-EGRESS-006  a POSITIVE permitted hostname shape, uniqueness, an operator, a purpose, a
+                   `declared_in` clause, and services that exist and declare ALLOWLIST.
+    CD-EGRESS-002  the broker concept vocabulary and the known-operator denylist SURVIVE, applied
+                   to every registered `host` and `operator`, to every allowlist entry as written,
+                   and to every `pending` entry. NEITHER LAYER IS SOLE.
+
+  ON THE HOSTNAME SHAPE, BECAUSE IT IS THE CLAUSE MOST LIKELY TO BE MISREAD AS AN IP DETECTOR IN
+  DISGUISE: it never asks what a value IS. It asks whether the value is the one admissible shape,
+  and an address, a CIDR, a URL, a wildcard, a port suffix, a trailing dot and a form nobody has
+  thought of all fail the same clause. The REASON a hostname is the admissible shape is stated
+  rather than assumed: the only offline evidence of what a destination reaches is its registrable
+  domain, which is what the denylist reads; an address carries none, so it cannot be judged by
+  layer 2 at all — and a destination nothing can judge must not be declarable.
+
+  NO NETWORK. The check opens no socket and resolves no name (CD-PL-F48 and the dispatch's
+  prohibited list). It says so in a note on every run.
+
+why_it_is_a_class_closure: >
+  The previous guard asked "does this entry look like a broker?" — a question about SPELLING, and
+  undecidable offline. An address answered no. The question is now inverted to "did somebody
+  DECLARE this destination, for this service, with an operator, a purpose and the clause of product
+  intent that authorises it?", which is SET MEMBERSHIP and is decidable from the tree.
+
+  That is the same move increment 1 made when it stopped enumerating spellings on the AST guard and
+  asserted a declared member set by equality, and the same move increment 2b made when it changed
+  "is this number blended?", which is undecidable, into "is this number's provenance DECLARED?",
+  which is set equality. It is applied here to a declaration instead of to a type.
+
+# --- proof ------------------------------------------------------------------------------------ #
+
+proof_standard_discharge: >
+  The dispatch's proof_standard requires, for F04, that the closure be STRUCTURAL in the sense of
+  deriving its subject from the ARTEFACT rather than from a constant, and that this be shown by
+  CHANGING the artefact and watching the guard's subject follow. MEASURED: V24 adds one destination
+  to deploy/egress-destinations.yaml and names it in cd-collectors' allowlist; the check goes from
+  `PASS — 53 assertions` to `PASS — 67 assertions`, exit 0 both times. Fourteen new assertions
+  exist because a registry entry exists. Remove it and they are gone. There is no constant in
+  check_egress_no_broker.py naming any permitted host, and the DENY-BY-DEFAULT rule is the reason
+  there cannot be one.
+
+  It also requires the CONTRAST: the same declared command exiting 0 on the clean subject and
+  non-zero on the violated one, on trees this seat extracted itself. Discharged eight times over
+  in the table below, on eight separate pristine extractions.
+
+known_set_variants_re_run:
+- id: E05
+  finding: CD-ASR-F04 (MEDIUM) — the whole of the CD-AC-012 AMBER
+  route: '`198.51.100.24` into cd-collectors x-egress.hosts in place of a hostname.'
+  reproduced_at_cc961bf: 'exit 0, `PASS — 44 assertions, 0 violations` — the auditor''s record exactly.'
+  command: python3 tools/register/check_egress_no_broker.py --root .
+  observed_refusal: >
+    REFUSED. exit 1, `CD-RT-012-EGRESS-NO-BROKER: FAIL — 1 violation(s)`. deploy/compose.yaml:380,
+    rule `CD-EGRESS-004: an allowlist entry is not a registered destination`, naming the entry and
+    stating "nothing was recognised about `198.51.100.24` and nothing needed to be. … The
+    admissible set at this commit is EMPTY."
+  durable_at: variants/WO-2R/CD-ASR-F04/E05-broker-by-ip-literal.patch
+
+new_variants_of_this_seat:
+- id: V18
+  route: 'panel.example.org registered in full for cd-witness, then named in cd-collectors'' allowlist.'
+  why_a_different_route: >
+    No spelling problem at all: it satisfies the registry schema completely, passes the positive
+    hostname shape, passes the vocabulary and passes the denylist. It attacks the SCOPE of a grant,
+    a concept that did not exist before this increment.
+  observed_refusal: 'REFUSED. exit 1, compose.yaml:380, `CD-EGRESS-004: a destination is registered, but not for this service` — "registered … but for cd-witness, not for `cd-collectors`".'
+- id: V19
+  route: '`hosts_extra:` carrying 198.51.100.24, added beside an honest empty `hosts: []`.'
+  why_a_different_route: >
+    It is not an allowlist entry, so layer 1 never sees it — CD-EGRESS-004 iterates `hosts` and
+    `hosts` is empty. Nothing on the known set attacks the reader''s own field vocabulary. This is
+    CD-EGRESS-003''s argument applied one level down, to KEYS.
+  observed_refusal: 'REFUSED. exit 1, compose.yaml:379, `CD-EGRESS-005: x-egress declares an unknown key`.'
+- id: V20
+  route: 'Register 198.51.100.24 AS A DESTINATION — six valid fields, services [cd-collectors] — and then name it in the allowlist.'
+  why_a_different_route: >
+    THE ATTACK ON THIS SEAT''S OWN FIX. E05 attacks the allowlist; this attacks the REGISTRY, which
+    is where E05''s repair put the trust. It passes layer 1 completely, and layer 2 CANNOT JUDGE IT
+    AT ALL — an address has no registrable domain to read and no labels to tokenise, which is the
+    whole of why E05 worked in the first place.
+  observed_refusal: >
+    REFUSED. exit 1, 2 violations. egress-destinations.yaml:133, `CD-EGRESS-006: a destination host
+    is not a declarable hostname` — "its final label `24` is not an alphabetic top-level domain of
+    at least two characters" — plus compose.yaml:380 `CD-EGRESS-004`, because a malformed entry
+    registers nothing and the registry FAILS CLOSED rather than widening the admissible set.
+- id: V21
+  route: 'gateway.example.net — no concept token, on no denylist, perfectly shaped — registered for cd-collectors with operator `Interactive Brokers`, and named in the allowlist.'
+  why_a_different_route: >
+    Passes layer 1 in full and passes the HOST half of layer 2. Nothing on the known set attacks the
+    attribution fields. This is the MEASURED evidence behind boundary 3 of the declared limit.
+  observed_refusal: 'REFUSED. exit 1, egress-destinations.yaml:134, `CD-EGRESS-002: a REGISTERED destination is a broker` — on the OPERATOR field, "its name carries the execution concept(s) brokers".'
+- id: V22
+  route: 'data.example.org registered for cd-engine, with NO allowlist entry anywhere; cd-engine''s hosts stays [].'
+  why_a_different_route: >
+    Every other row writes something into a `hosts` list. This one writes nothing into any allowlist
+    at all and is invisible to every rule that reads one. It is a declaration that BLUEPRINT §13''s
+    no-egress container may reach a host — precisely the kind of inherited defect the Product Owner
+    ordered closed before the WO-3 lane reads it.
+  observed_refusal: 'REFUSED. exit 1, egress-destinations.yaml:138, `CD-EGRESS-006: a destination is registered for a no-egress service` — "names service `cd-engine`, which declares policy ''NONE''".'
+- id: V23
+  route: 'Delete deploy/egress-destinations.yaml outright.'
+  why_a_different_route: >
+    It attacks the PRECONDITION rather than the content. Nothing on the known set attacks a guard''s
+    dependency. Had an absent registry read as an empty one, the whole closure would be one `rm`
+    away.
+  observed_refusal: 'REFUSED. exit 3, `PRECONDITION_NOT_MET` — "An absent registry must not read as an empty one: an empty registry is a decision somebody wrote down, and an absent one is a file somebody removed." Non-zero with a stated reason, never a pass and never a skip (PBG-CI-002).'
+- id: V24
+  route: 'THE POSITIVE CONTROL. data.example.org / Example Data Ltd / cd-collectors, registered properly and named in its own service''s allowlist.'
+  why_a_different_route: 'It is not an attack. It is the false-positive obligation and the derivation demonstration.'
+  observed: >
+    NOT REFUSED, BY DESIGN. exit 0, `PASS — 67 assertions, 0 violations`. The assertion count moves
+    53 -> 67 with the registry entry, which is the structural derivation measured rather than
+    argued. DISCLOSED: under V24 two tests in tests/test_egress_destination_registry.py fail by
+    design — test_wo2_registers_no_destination_at_all and
+    test_no_service_names_any_host_in_its_allowlist — because WO-2''s declared state is an empty
+    registry and both say so in their own docstrings. The DECLARED COMMAND for this test id is the
+    register check, and it exits 0.
+
+honest_observations_about_the_variant_table: >
+  FIRST, no two rows are refused by the same clause, which is the spread this evidence is supposed
+  to show and is the opposite of a guard fitted to a list. SECOND, every row was written against
+  the FIX, not against the finding — the only spelling attack is E05 itself, because a second
+  spelling would be refused by the same clause without adding a fact. THIRD, layer 2 refused
+  exactly ONE of the eight rows (V21), and that is the honest measure of its worth: it is a floor,
+  and the declared limit says so. FOURTH, and it should be read hardest: NOTHING HERE PROVES A
+  REGISTERED HOSTNAME REACHES WHAT ITS OPERATOR CLAIMS. That is boundary 2 and it reads NOT PROVED
+  TO BE CARRIED ANYWHERE. The next auditor's strongest ground is a LIE IN THE REGISTRY, and no
+  variant this seat wrote closes it.
+
+false_positives_checked: >
+  A closure that forbids the product is not a closure.
+  (a) All three ALLOWLIST services (cd-collectors, cd-witness, cd-review) and all four NONE
+      services (cd-engine, cd-public, cd-private, cd-store) still pass on the clean tree: exit 0,
+      53 assertions, 0 violations, against 43 at cc961bf. No service was made to fail.
+  (b) V24, the positive control: a legitimately registered destination named by its own service ->
+      exit 0. The structure admits what somebody declared properly.
+  (c) tests/test_deploy_container_set.py — the pre-existing 83 assertions over the compose posture
+      — passes unchanged, including test_both_networks_are_internal, which is boundary 1's measured
+      hand-off.
+  (d) The full suite is green and NO pytest node id disappeared: 1155 -> 1187, 0 removed, 32 added.
+      The only test edits in this increment are in a NEW file. No assertion was weakened and no
+      test's EXPECTATION was changed.
+  (e) check_no_execution_interface.py still passes over a tree that now contains a registry file
+      and a test module both full of the words "broker", "order" and "execution": 34974 assertions,
+      0 violations. The prose layer's negation and hypothetical suppression is doing exactly what
+      its own declared limit says it does.
+
+commands_run: >
+  THE CLEAN ARM — all eleven declared commands from required-tests.yaml, verbatim, on a pristine
+  `git archive` extraction of 8b640ea under /tmp, `python3 -B` and `pytest -p no:cacheprovider`
+  throughout:
+
+    check_no_numeric_default            exit 0   PASS — 362 assertions
+    pytest test_reading + test_evaluate exit 0   90 passed
+    pytest scores+dialset+provenance    exit 0   306 passed
+    check_no_blend                      exit 0   PASS — 4688 assertions
+    check_schema_closed                 exit 0   PASS — 242 assertions
+    check_engine_no_witness_reach       exit 0   PASS — 13 assertions
+    check_grant_matrix_live             exit 3   PRECONDITION_NOT_MET — no live store, as at cc961bf
+    pytest witness_panel + resolver     exit 0   65 passed
+    check_no_execution_interface        exit 0   PASS — 34974 assertions (34502 at cc961bf)
+    check_lockfile_denylist             exit 0   PASS — 15 assertions
+    check_egress_no_broker              exit 0   PASS — 53 assertions (43 at cc961bf)
+    FULL SUITE                          exit 0   1187 passed (1155 at cc961bf)
+
+  ANTI-RELAXATION: the sorted pytest node-id list at cc961bf (1155) was compared with the list at
+  8b640ea (1187). ZERO removed. 32 added, all in tests/test_egress_destination_registry.py.
+
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate` -> AMBER on bound_verifiers_evidenced /
+  PBG-CONT-003, measured to be IDENTICAL on a pristine extraction of cc961bf. Pre-existing.
+
+eleven_plants: >
+  RE-RUN AS A SET, twice: against a pristine extraction of 8b640ea AND against a pristine
+  extraction of cc961bf, so the before/after comparison is MEASURED rather than remembered. Each
+  plant applied to its own throwaway extraction, `git apply --check` first, then its own declared
+  command.
+
+  ALL ELEVEN APPLY CLEANLY AND ALL ELEVEN STILL CONTRAST. Ten exit 1;
+  CD-RT-003-GRANT-MATRIX-LIVE exits 3 PRECONDITION_NOT_MET on BOTH trees for want of a live store —
+  its CONTRAST was NOT re-run, because increment 3 touched nothing it reads and the RT-A throwaway
+  container authorisation is scoped to increment 4. That is disclosed rather than implied, exactly
+  as at increments 2 and 2b.
+
+  NO PLANT WAS REGENERATED, WEAKENED OR DELETED (CD-D-033).
+
+  EXACTLY ONE SIGNATURE CHANGED, and it grew: CD-RT-012-EGRESS-NO-BROKER went from
+  `FAIL — 1 violation(s)` to `FAIL — 2 violation(s)`, and its reported line moved 324 -> 380
+  because the compose contract block grew by three invariants. THE PATCH IS UNCHANGED and applies
+  byte-for-byte. Its `api.ibkr.com` now fails TWO independent layers — CD-EGRESS-004 (nobody
+  registered it) and CD-EGRESS-002 (a known operator) — and the phrase the manifest row names as
+  its confirmation, "It carries no concept word at all", is STILL PRINTED, so the row's own test
+  for whether the denylist did the work still works. The row was updated with the full account and
+  a header note was added; the patch was not touched.
+
+  Every other signature is byte-identical before and after: AST-NO-NUMERIC-DEFAULT 3 violations;
+  ABSENCE-RENDERS-UNKNOWN 17 failed / 73 passed; TYPE-NO-ARITHMETIC 2 failed / 304 passed;
+  AST-NO-BLEND 2 violations; SCHEMA-CLOSED 3 violations; ENGINE-NO-WITNESS-REACH 1 violation;
+  PANEL-UNAVAILABLE-NEVER-AGREES 6 failed / 59 passed; NO-EXECUTION-INTERFACE 6 violations;
+  LOCKFILE-DENYLIST 2 violations.
+
+declared_limits:
+- id: CD-RT-012-EGRESS-NO-BROKER
+  where_stated: >
+    IDENTICALLY IN THREE PLACES, as CD-RULE-004 requires — the header of
+    tools/register/check_egress_no_broker.py, the negative_control of the register entry in
+    required-tests.yaml, and contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md. BEFORE THIS
+    INCREMENT THIS CHECK HAD NO WRITTEN BOUNDARY AT ALL, and the auditor said so in terms: "not
+    covered by any declared limit". That is half of why CD-ASR-F04 exists.
+  boundaries:
+  - '1  IT IS A DECLARATION AND STOPS NO PACKET. Compose has no per-host egress primitive; the
+     enforcement lane is owed at WO-3. CARRIED, MEASURED: the TOPOLOGY — both networks are
+     internal:true and every service is attached only to them. Asserted here by CD-EGRESS-001 for
+     the four no-egress services and by
+     tests/test_deploy_container_set.py::test_both_networks_are_internal, run by this seat on a
+     pristine extraction, 1 passed of 83 in that module, exit 0.'
+  - '2  A REGISTERED DESTINATION IS A HUMAN CLAIM AND A FALSE ONE IS NOT DETECTABLE FROM THIS TREE.
+     A hostname that in fact resolves to a brokerage edge cannot be recognised without the network,
+     and the network is prohibited. NOT PROVED TO BE CARRIED ANYWHERE. What the structure buys is
+     ATTRIBUTION — a named line, an operator, a purpose, an authorising clause, reviewable before it
+     is reachable — not detection. That is a smaller claim than "the check resolves what an entry
+     reaches", and it is the true one.'
+  - '3  `purpose` PROSE IS NOT JUDGED. PARTIALLY CARRIED, MEASURED: the `operator` field IS judged
+     by the same vocabulary and denylist, so the archetypal case fails on the operator — V21,
+     exit 1. Prose is left to the human reviewer because this project''s own documentation says on
+     every other page that it places no orders, and a guard that fired on its own charter would be
+     switched off.'
+  - '4  THE VOCABULARY AND THE DENYLIST ARE A FLOOR, NOT AN ORACLE. A brokerage on nobody''s list,
+     under a name carrying no concept token, passes layer 2. CARRIED, MEASURED: layer 1 then
+     requires a deliberate, signed registry edit rather than a quiet allowlist line, and V20 —
+     which makes exactly that edit — is refused by CD-EGRESS-006, exit 1.'
+  - '5  THE SUBJECT IS TWO FILES. Egress obtained through `extra_hosts`, a Dockerfile `RUN curl`, a
+     sidecar, host networking, a runtime --add-host or --network, or a proxy over an internal
+     network is outside this check. PARTIALLY CARRIED: the four no-egress services'' network
+     attachment is asserted here. For `extra_hosts` SPECIFICALLY, NOT PROVED TO BE CARRIED
+     ANYWHERE — CD-ENG-WO2R-F12, owed at WO-3.'
+  - '6  IT IS A STATIC READ OF TWO FILES AT ONE COMMIT. No runtime, no image, no container, no
+     packet; a compose override file is outside the subject. NOT PROVED TO BE CARRIED ANYWHERE at
+     WO-2.'
+  cd_rule_006_compliance: >
+    Every hand-off above either names a layer this seat RAN and OBSERVED refusing, or says NOT
+    PROVED TO BE CARRIED ANYWHERE in those words. Boundaries 2, 5 and 6 read the latter. This is
+    the rule that exists because boundary 6 of check_no_blend.py claimed a layer that did not hold,
+    and this seat did not repeat it.
+
+findings_raised:
+- id: CD-ENG-WO2R-F12
+  severity: LOW
+  against: this seat's own work
+  title: '`extra_hosts:` is a per-service name-to-address mapping this check does not read.'
+  what: >
+    A compose service may carry `extra_hosts: ["api.ibkr.com:198.51.100.24"]`, which writes an
+    entry into the container's /etc/hosts. It is not an `x-egress` field, so CD-EGRESS-005's closed
+    key set does not see it, and it is not a `hosts` entry, so CD-EGRESS-004 does not either. NO
+    SERVICE IN THIS FILE DECLARES ONE TODAY and none ever has, so nothing is presently wrong; what
+    is owed is coverage.
+  why_it_is_declared_rather_than_fixed: >
+    Closing it means asserting a closed key set over the SERVICE body itself, not merely over
+    x-egress, and a compose service body legitimately carries two dozen keys across seven services
+    plus a YAML anchor. Drawing that member set is a design decision with a real false-positive
+    surface, it belongs with the WO-3 egress lane that will also have to reason about
+    `network_mode`, `dns`, `links` and override files, and taking it here would be widening scope
+    on this seat's own initiative rather than on a dispatch.
+  disposition: 'DECLARED as boundary 5, NOT PROVED TO BE CARRIED ANYWHERE, and written into the
+    variants manifest as the one route this seat looked for and did not close. Owed at WO-3.'
+- id: CD-ENG-WO2R-F13
+  severity: LOW
+  against: this seat's own method, not the deliverable
+  title: '`git apply` accepted hand-written patch hunks with wrong line counts and TRUNCATED them silently.'
+  what: >
+    This seat''s first six variant patches were written by hand with `@@ -128,4 +128,11 @@` style
+    headers whose counts were one or two short. `git apply` exited 0 and applied a TRUNCATED hunk —
+    the final added line was silently dropped — so a registry entry arrived with `services:` and no
+    list under it. The variants still failed the check, but THEY FAILED FOR THE WRONG REASON:
+    "a destination names no services" instead of the route being tested. Detected only because the
+    violation text did not match the route.
+  why_it_matters_beyond_this_increment: >
+    A variant that fails for the wrong reason is a variant that proves nothing, and it fails
+    QUIETLY, which is the same failure shape as CD-PL-F56 (`git -c` identity failing silently). Any
+    seat or auditor hand-writing a patch on this project is exposed to it.
+  what_was_done: >
+    ALL EIGHT patches were regenerated with `git diff` in a scratch repository under /tmp, so the
+    counts are machine-produced, then re-verified with `git apply --check` and RE-RUN at the
+    committed SHA 4933376. Every refusal quoted in this entry and in the manifest is from a re-run
+    of a regenerated patch. RECOMMENDATION, not a change taken: variants should be generated with
+    `git diff`, never hand-written, and every row should assert the RULE ID it expected, not merely
+    a non-zero exit.
+
+runtime_actions: >
+  NON-MUTATING outside /tmp. No container was created, started, inspected or removed: RT-A is
+  scoped to increment 4 and was not used, and RT-B (image build) is FORBIDDEN and was not
+  attempted. No network call of any kind was made by this seat or by any check it wrote — the new
+  guard opens no socket and resolves no name, which is the point of CD-PL-F48. Every extraction,
+  variant and plant ran under /tmp. `python3 -B` everywhere; no `__pycache__` was written into any
+  governed tree (PBG-RT-001 — mutation by EFFECT, not by label).
+
+obligations_status: >
+  CD-ASR-F04 (MEDIUM, CD-AC-012): CLOSED AS A CLASS FOR THE DECLARATION, with a six-boundary
+  declared limit. NOT closed for the network, and no artefact claims it is.
+  E05: REFUSED, exit 1.
+  Seven new variants of this seat's own: six REFUSED (one at exit 3, fail-closed), one PASSING by
+  design as the positive control.
+  Eleven plants: all apply, all contrast, none regenerated or deleted; one signature grew.
+  Clean arm: green, 1187 passed, 0 node ids lost.
+  NOT DONE, DELIBERATELY: increment 4 (CD-ASR-F05) and increment 5 (CD-ASR-F06) were not started,
+  as the dispatch for this increment requires. CD-ENG-WO2R-F07..F11 were not repaired — they are
+  declared and owed elsewhere. `latest_admitted_run` remains null.
+
+escalations: >
+  NONE BLOCKING. Two things are reported rather than acted on, both in protected scope:
+  (a) `pbg boot` returns RED on CONTINUITY_REFERENCE_INVALID because this worktree's
+      governance/engineering/ACTIVE_WORK.yaml still carries `continuity_record_commit: PENDING` and
+      a lane_head_sha of 0047093. It is byte-identical at ee8be6b, a94ef97 and cc961bf, so it is
+      pre-existing and was not created by any WO-2R increment. It is Project-Lead-only and this
+      seat did not touch it (PBG-CONT-006: reconcile and report, never silently correct).
+  (b) `pbg validate` returns AMBER on bound_verifiers_evidenced / PBG-CONT-003, measured identical
+      on a pristine extraction of cc961bf. Pre-existing framework condition.
+  NO PRODUCT QUANTITY WAS INVENTED and none was needed by this increment (CD-RULE-003). The
+  destination registry ships EMPTY precisely because filling it would be resolving CD-D-005, which
+  is the Product Owner's.
+
+seat_return: >
+  READY_FOR_ASSURANCE at 8b640eaf86565e898a7fcd7b1fc96d9b00df1e89 for INCREMENT 3 ONLY. This seat
+  does not certify, assure or accept its own work (PBG-SOD-001, non-waivable). Everything above is
+  IMPLEMENTATION EVIDENCE and does not become assurance by being thorough. The gate is decided by
+  CD-ASR-WO2-02, a separate actor holding no commit on this branch, which must devise FRESH
+  variants — the eight in variants/WO-2R/CD-ASR-F04/ are, from this commit, the KNOWN set and prove
+  nothing about the class.
+
+next_safe_action: >
+  Project Lead reconciliation of increment 3 at 8b640ea: re-run the eleven declared commands, the
+  eight variants and the eleven plants independently, and write fresh probes. The strongest place
+  to probe is boundary 2 — a LIE IN THE REGISTRY, an innocent-looking hostname whose operator field
+  is honest and whose real operator is not — which this seat states plainly is NOT PROVED TO BE
+  CARRIED ANYWHERE. The second strongest is boundary 5, `extra_hosts`, disclosed as
+  CD-ENG-WO2R-F12. On acceptance, increment 4 (CD-ASR-F05, the code-graph walk root) is next, and
+  it is the increment that needs RT-A.
