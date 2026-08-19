@@ -27,6 +27,8 @@ from crash_detector.dials.scores import (
     ScoreOutOfRange,
 )
 
+from dial_magnitudes import magnitude_of
+
 CONTRIB = Contribution(source_id="src.a", category="credit", weight=1.0, contribution=0.4)
 
 #: Which dial each score type belongs to. Written out rather than derived, so the mapping
@@ -40,12 +42,15 @@ DIAL_ID_OF = {
 def magnitude_for(score_type, quantity):
     """A magnitude carrying ``score_type``'s own dial.
 
-    Test MECHANICS, not a relaxed expectation: after CD-ASR-F01 a dial magnitude is a
+    Test MECHANICS, not a relaxed expectation. After CD-ASR-F01 a dial magnitude is a
     per-dial nominal value rather than a bare float, so a test that builds a score has to
-    say which dial its number came from. Nothing this file asserts became weaker; the
-    constructions became explicit.
+    say which dial its number came from; after CD-PL-F54 the NUMBER inside it carries a
+    declared provenance too, because a bare float that has left a magnitude may not
+    re-enter one. Nothing this file asserts became weaker; the constructions became
+    explicit, and ``test_a_bare_number_cannot_be_a_dial_score`` below now has a second
+    layer beneath it.
     """
-    return DialMagnitude(dial_id=DIAL_ID_OF[score_type], quantity=quantity)
+    return magnitude_of(DIAL_ID_OF[score_type], quantity)
 
 
 EQUITY = EquityCrashScore(

@@ -43,6 +43,8 @@ from crash_detector.dials.reading import (
     member_surface_breaches,
 )
 from crash_detector.dials.magnitude import DialMagnitude
+
+from dial_magnitudes import magnitude_of
 from crash_detector.dials.scores import (
     ARITHMETIC_DUNDERS,
     EQUITY_DIAL_ID,
@@ -514,8 +516,9 @@ def test_a_value_still_carries_a_real_score_after_the_surface_closure():
     """FALSE-POSITIVE CHECK. A closure that forbids the product is not a closure."""
     reading = Value(
         value=EquityCrashScore(
-            # MECHANICS ONLY (CD-ASR-F01): the magnitude carries its dial as data.
-            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.42),
+            # MECHANICS ONLY (CD-ASR-F01, CD-PL-F54): the magnitude carries its dial
+            # as data, and its NUMBER carries a declared provenance of its own.
+            score=magnitude_of(EQUITY_DIAL_ID, 0.42),
             contributions=(),
         ),
         as_of_utc=ago(30),

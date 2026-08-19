@@ -31,15 +31,16 @@ from crash_detector.dials.scores import (
 )
 
 from conftest import FIXED_NOW
+from dial_magnitudes import magnitude_of
 
 CONTRIB = Contribution(source_id="src.a", category="credit", weight=1.0, contribution=0.4)
 # MECHANICS ONLY (CD-ASR-F01): a dial magnitude carries its dial as data, so building a
 # score now names the dial the number came from. No assertion in this file was relaxed.
 EQUITY = EquityCrashScore(
-    score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.4), contributions=(CONTRIB,)
+    score=magnitude_of(EQUITY_DIAL_ID, 0.4), contributions=(CONTRIB,)
 )
 MONETARY = MonetaryDebasementScore(
-    score=DialMagnitude(dial_id=MONETARY_DIAL_ID, quantity=0.6),
+    score=magnitude_of(MONETARY_DIAL_ID, 0.6),
     contributions=(CONTRIB,),
 )
 

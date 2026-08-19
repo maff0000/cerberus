@@ -50,6 +50,7 @@ from crash_detector.observations import (
 from crash_detector.source_registry import Criticality, SourceRecord, SourceRegistry
 
 from conftest import FIXED_NOW, WINDOW_SECONDS, ago
+from dial_magnitudes import magnitude_of
 
 
 # --- test doubles, clearly named as such ---------------------------------------------- #
@@ -469,8 +470,9 @@ def _unknown_reading():
 def _value_reading():
     return Value(
         value=EquityCrashScore(
-            # MECHANICS ONLY (CD-ASR-F01): the magnitude carries its dial as data.
-            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.0),
+            # MECHANICS ONLY (CD-ASR-F01, CD-PL-F54): the magnitude carries its dial
+            # as data, and its NUMBER carries a declared provenance of its own.
+            score=magnitude_of(EQUITY_DIAL_ID, 0.0),
             contributions=(),
         ),
         as_of_utc=FIXED_NOW,
@@ -481,8 +483,9 @@ def _value_reading():
 def _degraded_reading():
     return Degraded(
         value=EquityCrashScore(
-            # MECHANICS ONLY (CD-ASR-F01): the magnitude carries its dial as data.
-            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.0),
+            # MECHANICS ONLY (CD-ASR-F01, CD-PL-F54): the magnitude carries its dial
+            # as data, and its NUMBER carries a declared provenance of its own.
+            score=magnitude_of(EQUITY_DIAL_ID, 0.0),
             contributions=(),
         ),
         as_of_utc=FIXED_NOW,

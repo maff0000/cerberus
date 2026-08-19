@@ -53,8 +53,10 @@ from crash_detector.publication.dial_scalar import (
     number_for_dial_slot,
 )
 
-EQUITY = DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.9)
-MONETARY = DialMagnitude(dial_id=MONETARY_DIAL_ID, quantity=0.1)
+from dial_magnitudes import TEST_SOURCE_IDS, magnitude_of, quantity_of
+
+EQUITY = magnitude_of(EQUITY_DIAL_ID, 0.9)
+MONETARY = magnitude_of(MONETARY_DIAL_ID, 0.1)
 
 #: An INDEPENDENT copy of the declared surface, as ``tests/test_reading.py`` keeps one for
 #: the Reading constructors and for the same reason: editing the declaration in the module
@@ -290,7 +292,7 @@ def test_a_same_dial_helper_reused_across_dials_fails_when_it_is_reused():
             magnitudes, using=lambda numbers: sum(numbers) / len(numbers)
         )
 
-    same_dial = mean_of([EQUITY, DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.5)])
+    same_dial = mean_of([EQUITY, magnitude_of(EQUITY_DIAL_ID, 0.5)])
     assert same_dial.quantity_for(EQUITY_DIAL_ID) == pytest.approx(0.7)
     with pytest.raises(CrossDialCombination):
         mean_of([EQUITY, MONETARY])
@@ -299,7 +301,7 @@ def test_a_same_dial_helper_reused_across_dials_fails_when_it_is_reused():
 def test_same_dial_computation_still_works():
     """FALSE-POSITIVE CHECK. A closure that forbids the product is not a closure."""
     window = [
-        DialMagnitude(dial_id=MONETARY_DIAL_ID, quantity=quantity)
+        magnitude_of(MONETARY_DIAL_ID, quantity)
         for quantity in (0.1, 0.2, 0.3, 0.4)
     ]
     rolling_mean = combine_within_one_dial(
@@ -320,7 +322,7 @@ def test_a_forged_multi_dial_provenance_yields_no_number():
     """`object.__setattr__` rewrites a slot on any frozen object in Python, and that is
     stated as boundary B of the module's declared limit. The direction is SAFE: a forged
     provenance makes the magnitude LESS usable, never more."""
-    forged = DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.5)
+    forged = magnitude_of(EQUITY_DIAL_ID, 0.5)
     object.__setattr__(forged, "provenance", frozenset({EQUITY_DIAL_ID, MONETARY_DIAL_ID}))
     with pytest.raises(CrossDialCombination):
         forged.quantity_for(EQUITY_DIAL_ID)

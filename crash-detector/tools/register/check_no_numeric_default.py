@@ -230,7 +230,18 @@ SCORE_MAGNITUDE_ARGUMENT = "score"
 #: by default underneath it — `DialMagnitude(dial_id=..., quantity=0.0)` on an absence
 #: branch is reported as the literal it is, and `quantity=QUIET_MAGNITUDE` is reported as
 #: the module constant it is.
-MAGNITUDE_CONSTRUCTORS = ("DialMagnitude",)
+#:
+#: ``observed_for_dial`` joins it at CD-PL-F54 for the same reason and on the same terms. It
+#: is the admission door a number passes through on its way into a magnitude, and like the
+#: magnitude constructor it declares WHICH DIAL the number is claimed for and WHAT INPUTS
+#: are cited for it — and says nothing whatever about WHERE THE NUMBER CAME FROM. **It is a
+#: pass-through and NOT a terminus**, which is the whole point: adding it to
+#: ``DECLARED_MAGNITUDE_SOURCES`` instead would have made
+#: `observed_for_dial(dial_id=..., quantity=0.0, inputs_used=("x",))` a DECLARED provenance
+#: and quietly reopened CD-ASR-F03 in the act of closing CD-ASR-F01. Rule F still denies by
+#: default underneath it and reports the literal as the literal it is. MEASURED both ways —
+#: `V14` in ``variants/WO-2R/CD-ASR-F01/``.
+MAGNITUDE_CONSTRUCTORS = ("DialMagnitude", "observed_for_dial")
 MAGNITUDE_QUANTITY_ARGUMENT = "quantity"
 
 #: THE ONLY PERMITTED TERMINUS of a magnitude trace: a call to the declared

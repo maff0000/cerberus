@@ -68,6 +68,7 @@ from crash_detector.dials.reading import (
     Value,
 )
 from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials.provenance import observed_for_dial
 from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.observations import OK, ObservationRecord
@@ -325,12 +326,34 @@ def _evaluate_dial(
     # Unknown either: a model blowing up is a defect in the model, and swallowing it would
     # publish "we have no data" when the truth is "our code is broken".
     computation = spec.contribution_model.compute(payloads)
-    # The magnitude is wrapped in this dial's provenance AT THE POINT IT IS COMPUTED, and
+    # THE ONE ADMISSION SITE IN THE PRODUCT (CD-PL-F54, and see RULE 4 of
+    # tools/register/check_no_blend.py, which admits a reference to `observed_for_dial`
+    # from here and from nowhere else on the scanned path).
+    #
+    # This is where a number enters a dial from outside the system, and it is the only
+    # place in src/ that may say so. The claim it makes is not decorative: `used_ids` is
+    # the set of sources this dial's declared spec actually got, computed above from the
+    # usable observations, and the enclosing function is wrapped by
+    # `_absence_is_never_a_number`, which re-derives from (spec, usable) whether those
+    # inputs were present at all and refuses the reading if they were not. So the
+    # admission's citation and the post-condition's premise are the same evidence, read
+    # twice, and a branch that did not get its inputs cannot reach this line and keep the
+    # value it produced.
+    #
+    # The magnitude is wrapped in this dial's provenance AT THE POINT IT IS COMPUTED and
     # never travels as a bare float (CD-ASR-F01). `spec.dial_id` is the same key that
-    # selected the score type on the line below, so the provenance and the type cannot
-    # disagree: if they ever did, the score type's own constructor refuses.
+    # selected the score type below, and it is stated twice on purpose — once to the
+    # admission door and once to the magnitude — because the magnitude compares the two by
+    # SET EQUALITY rather than inferring either from the other.
     score = DIAL_SCORE_TYPES[spec.dial_id](
-        score=DialMagnitude(dial_id=spec.dial_id, quantity=computation.magnitude),
+        score=DialMagnitude(
+            dial_id=spec.dial_id,
+            quantity=observed_for_dial(
+                dial_id=spec.dial_id,
+                quantity=computation.magnitude,
+                inputs_used=used_ids,
+            ),
+        ),
         contributions=computation.contributions,
     )
     as_of = _oldest_as_of(usable, used_ids)

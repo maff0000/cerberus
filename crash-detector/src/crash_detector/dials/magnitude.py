@@ -67,11 +67,22 @@ A dial magnitude is a **NOMINAL, PER-DIAL, NON-COERCIBLE** value:
    reviews it. **Same-dial computation still works**, which matters: a closure that
    forbids the product is not a closure.
 
-4. **Release names its dial.** :meth:`DialMagnitude.quantity_for` is the ONLY declared
-   member that yields a bare ``float``, and it requires the caller to state which single
-   dial it expects. A mismatch raises :exc:`CrossDialCombination`. There is no attribute
-   on this type holding a bare number: the quantity lives in a private, name-mangled slot
-   (``_DialMagnitude__quantity``) which no application module reads.
+4. **Release names its dial — AND RELEASE IS NOT THE CLOSURE.**
+   :meth:`DialMagnitude.quantity_for` is the only DECLARED member that yields a bare
+   ``float``, and it requires the caller to state which single dial it expects. It is not
+   the only way a number leaves: ``repr``, ``str``, ``format``, an f-string, JSON over the
+   state, the bytes of a pickle and ``getattr`` on the private slot all release it too,
+   and this module now says so rather than claiming otherwise (see boundary A).
+
+5. **A NUMBER THAT HAS LEFT CANNOT COME BACK — the CD-PL-F54 closure.** The constructor
+   admits a :class:`~crash_detector.dials.provenance.DeclaredQuantity` and refuses a bare
+   ``float``, comparing the quantity's declared dial set to ``dial_id`` by SET EQUALITY.
+   Increment 2's structure was closed against being ASKED for a number and open to the
+   number being READ OFF it: ``float(repr(m).split("quantity=")[1].rstrip(")"))`` names no
+   dial, and two of those add and re-wrap. That route, and every other route to a bare
+   ``float``, now ends nowhere. Read
+   :mod:`crash_detector.dials.provenance` for why the closure is at the re-entry rather
+   than at the exits, and for the residue at the admission door.
 
 The attribute surface is **declared, asserted by set equality at import, slotted against
 instance injection, and closed against subclassing** — the same four-layer pattern
@@ -86,24 +97,29 @@ that has already been accepted (CD-ASR-F02, increment 1).
 WHAT REMAINS OPEN, STATED PLAINLY (CD-RULE-004)
 ====================================================================================
 
-**A. THE RELEASE IS A REAL DOOR, AND IT IS THE ONLY ONE.** A number has to exist
-eventually or nothing can be published. :meth:`quantity_for` is that point, and it can be
-called once per dial:
+**A. THE EXITS ARE MANY, THEY ARE ALL DOORS, AND THIS MODULE NO LONGER CLAIMS OTHERWISE.**
+The previous text of this boundary said "the release is a real door, AND IT IS THE ONLY
+ONE", and said that reducing a magnitude to a number requires naming its single dial. **THE
+SECOND HALF WAS FALSE AND IS WITHDRAWN** (`CD-PL-F54`). It was contradicted eight lines
+below by this module's own disclosure that ``repr`` renders the quantity, and the Project
+Lead measured the contradiction:
 
-    equity_number = equity_magnitude.quantity_for(EQUITY_DIAL_ID)
-    monetary_number = monetary_magnitude.quantity_for(MONETARY_DIAL_ID)
-    blended = (equity_number + monetary_number) / 2.0      # ordinary float arithmetic
+    float(repr(m).split("quantity=")[1].rstrip(")"))     # names no dial. Yields 0.4.
 
-That last line is not refused by this module and cannot be: they are two ``float``
-objects and Python adds floats. What IS true is that (a) no expression reaches it without
-naming BOTH dial ids explicitly, which is the thing the AST locator is left to find, and
-(b) the result is **unpublishable** — ``crash_detector.publication.dial_scalar`` accepts
-only a ``DialMagnitude`` whose provenance is exactly the dial slot it is being written
-into, and the closed public envelope schema has no third key for it. Do not read this
-module as claiming that no two numbers can ever be added in Python. Read it as claiming
-that a dial magnitude cannot be combined with the other dial's magnitude, that reducing
-one to a number requires naming its single dial, and that a number so obtained cannot be
-published as anything but that dial.
+The honest statement is that a number leaves a magnitude by many routes and the list has no
+end: :meth:`quantity_for`, ``repr``, ``str``, ``format``, an f-string, ``%``-formatting,
+``pprint``, a log line, a traceback, ``json.dumps`` over ``__getstate__``, the bytes of a
+``pickle``, ``getattr(m, "_DialMagnitude__quantity")`` and whatever protocol arrives in the
+next Python release. **Closing one of them is the instance game.** Two released numbers can
+be added, and this module cannot prevent it: they are two ``float`` objects and Python adds
+floats.
+
+What IS claimed, and is measured: **the sum cannot come back.** A ``float`` has no dial, and
+:class:`DialMagnitude` admits only a :class:`~crash_detector.dials.provenance.DeclaredQuantity`,
+so the blend cannot be re-wrapped, cannot be given to a score type, and cannot be offered to
+the publication gate. Do not read this module as claiming that no two numbers can ever be
+added in Python. Read it as claiming that no number so obtained can ever be a dial magnitude
+again.
 
 **B. ``object.__setattr__`` REWRITES A SLOT.** As for every frozen dataclass in this
 codebase, ``object.__setattr__(m, "provenance", frozenset({"a", "b"}))`` walks past
@@ -126,57 +142,55 @@ never a way of forging a magnitude with no provenance, two dials' provenance, or
 non-finite number. This residue is boundary A reached by a different road, and the
 publication gate answers it in the same way.
 
-**D. ``repr`` SHOWS THE QUANTITY.** Deliberately. Hiding a value from a developer's own
-debugger would be obfuscation, and obfuscation is not structure; CD-RULE-004 prefers a
-boundary written down to a boundary made inconvenient. Parsing a number back out of a
-repr is boundary A by a longer road.
+**D. ``repr`` SHOWS THE QUANTITY, AND IS NAMED A RELEASE DOOR.** Deliberately, and
+unchanged: hiding a value from a developer's own debugger would be obfuscation, and
+obfuscation is not structure. This is the direction chosen on the contradiction the Project
+Lead raised — the disclosure stands, the CLAIM that stood beside it does not. ``repr`` is
+listed in boundary A with the other exits, in the register entry and in
+``contracts/execution/CD-RT-002-TYPE-NO-ARITHMETIC.md``, in the same words.
+
+**E. THE ADMISSION DOOR IS A DECLARATION AND A DECLARATION CAN BE FALSE.** The residue of
+the re-entry closure, stated in full in :mod:`crash_detector.dials.provenance`. A module
+that calls ``observed_for_dial(dial_id=..., quantity=<a blend>, inputs_used=(...))`` obtains
+a magnitude. What that costs it is an explicit false statement in source, naming a dial —
+the flavour `PL-Q9` existed to remove — and a RULE 4 violation from
+``tools/register/check_no_blend.py``, which admits a reference to that door only from the
+declared admission sites. **NOT CLAIMED TO BE CLOSED.** Measured both ways as `V12`/`V13`.
 """
 
 from __future__ import annotations
 
-import math
+from crash_detector.dials.provenance import (
+    CrossDialCombination,
+    DeclaredQuantity,
+    QuantityProvenanceMissing,
+    ScoreOutOfRange,
+    derived_within_one_dial,
+    observed_for_dial,
+    require_finite_float,
+)
 
 __all__ = [
     "ScoreOutOfRange",
     "MagnitudeSurfaceViolated",
     "CrossDialCombination",
+    "QuantityProvenanceMissing",
+    "DeclaredQuantity",
     "SealedMagnitudeType",
     "DialMagnitude",
     "DECLARED_MAGNITUDE_MEMBERS",
     "TOLERATED_INTERPRETER_MACHINERY",
     "combine_within_one_dial",
+    "observed_for_dial",
     "require_finite_float",
     "sole_dial_of",
 ]
-
-
-class ScoreOutOfRange(ValueError):
-    """A dial magnitude that is not a finite float.
-
-    Refused at construction rather than clamped. A clamped score is a wrong number that
-    looks like a right one.
-
-    It lives in this module rather than in :mod:`crash_detector.dials.scores` because
-    this is now the module that owns what a magnitude IS. ``scores`` re-exports it, so
-    every existing import site is unchanged.
-    """
 
 
 class MagnitudeSurfaceViolated(TypeError):
     """:class:`DialMagnitude`'s attribute surface is not the declared one.
 
     A ``TypeError`` because what is wrong is the *type*, not a value someone passed.
-    """
-
-
-class CrossDialCombination(TypeError):
-    """Two dials' magnitudes were combined, or a magnitude was read as the wrong dial.
-
-    A ``TypeError`` on purpose. PID §3.1 says the two dials are different *kinds* of
-    thing, and asking for a number out of one while naming the other is a category error
-    rather than a bad value. It also means the refusal answers to the same
-    ``pytest.raises(TypeError)`` as the interpreter's own refusal of ``equity + monetary``,
-    so a caller cannot tell the two apart and cannot come to depend on the difference.
     """
 
 
@@ -272,29 +286,6 @@ class SealedMagnitudeType(type):
         type.__delattr__(cls, name)
 
 
-def require_finite_float(type_name: str, field_name: str, observed: object) -> None:
-    """Refuse anything that is not a finite float.
-
-    ``bool`` is refused explicitly, ahead of the ``float`` test, because ``True`` would
-    otherwise slip through any ``int``-tolerant path and become ``1.0``.
-
-    **No range is imposed, and that is a refusal rather than an omission.** A declared
-    range is a declared scale, and the scale of a dial is what the dial *means* —
-    CD-D-005, owed by the Product Owner (BLUEPRINT §16), and inventing one here would be
-    inventing product meaning (``PBG-AUTH-005``, CD-RULE-003). What is validated is the
-    class of thing, never its meaning. This increment changed the TYPE of a magnitude and
-    how it composes; it decided nothing about what a magnitude means.
-    """
-    if isinstance(observed, bool) or not isinstance(observed, float):
-        raise ScoreOutOfRange(
-            f"{type_name}.{field_name} must be a float, got {type(observed).__name__}"
-        )
-    if not math.isfinite(observed):
-        raise ScoreOutOfRange(
-            f"{type_name}.{field_name} must be finite, got {observed!r}"
-        )
-
-
 def _install(instance: object, dial_id: object, quantity: object) -> None:
     """Validate and write a magnitude's two slots. THE ONLY place either is written.
 
@@ -311,7 +302,38 @@ def _install(instance: object, dial_id: object, quantity: object) -> None:
             "combination is refused by comparing values and not by anybody having read "
             "the expression (CD-ASR-F01)."
         )
-    require_finite_float("DialMagnitude", "quantity", quantity)
+    if type(quantity) is not DeclaredQuantity:
+        # THE RE-ENTRY REFUSAL, and the whole of the CD-PL-F54 closure (CD-ASR-F01).
+        #
+        # A bare number cannot become a magnitude. Every laundering route out of a
+        # magnitude — repr, str, format, an f-string, JSON, the bytes of a pickle,
+        # getattr on the private slot, __getstate__, a figure recovered from a log line,
+        # or a protocol nobody here has heard of — ends with a `float` in somebody's
+        # hand, and a `float` has no dial. Chasing the exits is the instance game: there
+        # is no last exit. Removing the destination they share is the class closure.
+        #
+        # A value that is not even a finite float is reported in the familiar terms
+        # first, so that "you passed a string" does not arrive dressed as a provenance
+        # argument. Everything that survives that is a real number with no provenance.
+        require_finite_float("DialMagnitude", "quantity", quantity)
+        raise QuantityProvenanceMissing(
+            f"a bare number ({quantity!r}) was offered as dial {dial_id!r}'s magnitude. A "
+            "magnitude is built from a DeclaredQuantity — a number whose provenance was "
+            "established at one of two declared doors: observed_for_dial(), which admits "
+            "a measurement from outside for ONE named dial and cites the inputs it came "
+            "from, or combine_within_one_dial(), which derives one from magnitudes "
+            "already in hand and unions their provenance. A float that has left a "
+            "magnitude has lost its dial and no layer downstream can recover it, so it "
+            "may not come back in (PID §3.1, CD-AC-002, CD-ASR-F01, CD-PL-F54)."
+        )
+    if quantity.dials != frozenset({dial_id}):
+        raise CrossDialCombination(
+            f"a quantity declared for {sorted(quantity.dials)} was offered as dial "
+            f"{dial_id!r}'s magnitude. The comparison is SET EQUALITY in both directions "
+            "— not a subset, not an intersection — so a quantity of the other dial, of "
+            "both dials, or of a dial that does not exist is refused identically, by "
+            "comparing data (CD-AC-002, CD-ASR-F01)."
+        )
     object.__setattr__(instance, "provenance", frozenset({dial_id}))
     object.__setattr__(instance, "_DialMagnitude__quantity", quantity)
 
@@ -329,12 +351,17 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
 
     __slots__ = ("provenance", "__quantity")
 
-    def __init__(self, *, dial_id: str, quantity: float) -> None:
-        """Build a magnitude for ONE dial.
+    def __init__(self, *, dial_id: str, quantity: "DeclaredQuantity") -> None:
+        """Build a magnitude for ONE dial, from a number that already has a provenance.
 
         Keyword-only, so a call site always reads ``dial_id=...``; and there is no
         constructor that takes a set of dials, which is why a multi-dial provenance is
         not a state this type can be in.
+
+        ``quantity`` is a
+        :class:`~crash_detector.dials.provenance.DeclaredQuantity` and **never a bare
+        ``float``** (CD-PL-F54). Its dial set is compared to ``dial_id`` by set equality,
+        so the two cannot disagree and neither can be inferred from the other.
         """
         _install(self, dial_id, quantity)
 
@@ -377,8 +404,14 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
         slot**, so nothing refused it and RULE 3 of the AST locator had nothing to see.
         Keying the state by the slot names means the same expression must now be written
         ``s["_DialMagnitude__quantity"]``, which RULE 3 reports as a string constant
-        exactly as it reports the attribute. The runtime residue is unchanged and is
-        declared: reflection reaches the payload, as it does in every Python object.
+        exactly as it reports the attribute.
+
+        **AND SINCE CD-PL-F54 THE PAYLOAD IS NOT A ``float``.** The slot holds a
+        :class:`~crash_detector.dials.provenance.DeclaredQuantity`, so what reflection
+        reaches is another provenance-carrying value that defines no arithmetic and no
+        coercion. The escape above now fails at the ``sum`` rather than being merely
+        visible to a locator. Reflection remains a way of READING the payload and is
+        declared as such; it is not a way of obtaining a number that can re-enter.
         """
         return {
             "provenance": self.provenance,
@@ -429,9 +462,21 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
         return hash((frozenset(self.provenance), self._DialMagnitude__quantity))
 
     def __repr__(self) -> str:
+        """Renders the quantity, UNCHANGED and deliberately (boundary D, and CD-PL-F54).
+
+        The Project Lead identified a contradiction: this codebase disclosed that ``repr``
+        contains the quantity while also claiming that reducing a magnitude to a number
+        requires naming its single dial. Both could not be true. This seat resolved it by
+        WITHDRAWING THE CLAIM and keeping ``repr``, because hiding a value from a
+        developer's own debugger is obfuscation rather than structure, and because
+        ``repr`` is one member of an exit class with no last member. ``repr`` is now NAMED
+        as a release door alongside ``quantity_for`` and reflection, and what closes the
+        class is that a number which came out of one cannot go back into a magnitude.
+        """
+        dial_id = sorted(self.provenance)[0]
         return (
-            f"DialMagnitude(dial_id={sorted(self.provenance)[0]!r}, "
-            f"quantity={self._DialMagnitude__quantity!r})"
+            f"DialMagnitude(dial_id={dial_id!r}, "
+            f"quantity={self._DialMagnitude__quantity.value_for(dial_id)!r})"
         )
 
     # -- the one declared release ---------------------------------------------------- #
@@ -446,8 +491,13 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
         not depend on anyone having read the surrounding code.
 
         This is boundary A of this module's declared limit. Two numbers released this way
-        can be added by ordinary Python arithmetic; what closes that is the publication
-        gate and the closed envelope schema, not this method.
+        can be added by ordinary Python arithmetic and this method does not pretend
+        otherwise. What closes THAT is not the publication gate — the Project Lead
+        measured the gate accepting the blend once it was re-wrapped, and boundary 6 of
+        ``check_no_blend`` has been corrected accordingly. What closes it is that the
+        blend cannot be re-wrapped at all: it is a bare ``float`` and
+        :class:`DialMagnitude` admits only a
+        :class:`~crash_detector.dials.provenance.DeclaredQuantity` (CD-PL-F54).
         """
         if self.provenance != frozenset({dial_id}):
             raise CrossDialCombination(
@@ -458,7 +508,7 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
                 "a number whose dial is in doubt has already lost the property that "
                 "makes it worth publishing (CD-AC-002, CD-ASR-F01)."
             )
-        return self._DialMagnitude__quantity
+        return self._DialMagnitude__quantity.value_for(dial_id)
 
 
 def _assert_declared_surface(cls: type) -> None:
@@ -552,4 +602,11 @@ def combine_within_one_dial(magnitudes, *, using) -> "DialMagnitude":
         )
     dial_id = sorted(dials)[0]
     numbers = tuple(magnitude.quantity_for(dial_id) for magnitude in ordered)
-    return DialMagnitude(dial_id=dial_id, quantity=using(numbers))
+    # The dial set handed to the derivation door is COMPUTED from the magnitudes above,
+    # never asserted by the caller: `using` may return any float it likes and cannot
+    # influence which dial the result is declared for. That is what makes derivation a
+    # different kind of door from admission (CD-PL-F54).
+    return DialMagnitude(
+        dial_id=dial_id,
+        quantity=derived_within_one_dial(dials=dials, value=using(numbers)),
+    )
