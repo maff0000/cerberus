@@ -1,0 +1,62 @@
+{
+  "contract": "CD-BASE-IMAGE-PINS-v1",
+  "derived_from": "BLUEPRINT.md §2 and §11; Standards Baseline §3 and §12; pbg/skills/specialist/docker-oci-containerisation.md",
+  "rule": "Base images are pinned BY DIGEST, never by tag. A tag is a mutable pointer; a digest is an identity. A tag-only reference anywhere in deploy/compose.yaml or in any deploy/Dockerfile.* must FAIL the register check.",
+  "note": "This file records what was OBSERVED, not what was expected (Standards Baseline §3). A digest that was not resolved on this host is recorded as unresolved. Writing a plausible-looking digest that nobody verified would be constructing evidence, which is non-waivable.",
+  "pins": [
+    {
+      "id": "cd-store-base",
+      "used_by": [
+        "cd-store"
+      ],
+      "reference": "postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685",
+      "status": "RESOLVED",
+      "observed_how": "docker image inspect postgres:16-alpine --format '{{.Id}} {{range .RepoDigests}}{{.}}{{end}}'",
+      "observed_on": "dell-debian (the DEV host), Docker Engine 28.5.2",
+      "observed_utc": "2026-08-19T04:50:38Z",
+      "observed_values": {
+        "image_id": "sha256:75f5a96988cdf694a215073c3e9c001b706b371e2f94df3967f2efdec2787f6b",
+        "repo_digest": "postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685"
+      },
+      "declared_in": "deploy/compose.yaml services.cd-store.image",
+      "tag_it_resolved_from": "postgres:16-alpine",
+      "tag_recorded_why": "So a later reader can tell WHICH tag this digest was resolved from at this instant. The tag is provenance; the digest is the identity, and only the digest is used."
+    },
+    {
+      "id": "cd-python-base",
+      "used_by": [
+        "cd-collectors",
+        "cd-witness",
+        "cd-engine",
+        "cd-public",
+        "cd-private",
+        "cd-review"
+      ],
+      "reference": null,
+      "status": "DIGEST_NOT_RESOLVED",
+      "requested": "a Debian-based CPython 3.11 runtime image, matching the DEV host's CPython 3.11.2 (README.md, requirements.lock)",
+      "why_unresolved": "No Python base image is present on this host, and resolving a digest requires `docker pull`. That is not within this seat's runtime authorisation: RT-A authorises exactly ONE throwaway PostgreSQL container, and RT-B — building application images — is FORBIDDEN in WO-2 (PBG-RT-010).",
+      "how_it_fails_closed": "Each Dockerfile declares `ARG CD_PYTHON_BASE` with NO DEFAULT and `FROM ${CD_PYTHON_BASE}`; deploy/compose.yaml passes it as `${CD_PYTHON_BASE:?...}`. `docker build` refuses a blank base name and `docker compose` refuses the unset variable first. There is no tag literal anywhere for a check to have to forgive.",
+      "owed_at": "WO-3, together with RT-B authorisation. The WO-3 seat resolves the digest with `docker image inspect` after an authorised pull, records the observed value here with the same fields as cd-store-base, and only then builds.",
+      "constraint_on_the_resolved_value": "MUST be of the form `<name>@sha256:<64 hex>`. A value carrying a tag and no digest, or a digest of the wrong length, must fail the register check."
+    }
+  ],
+  "register_check_contract": {
+    "id": "CD-BASE-IMAGE-DIGEST-PIN",
+    "must_scan": [
+      "deploy/compose.yaml — every services.<name>.image value",
+      "deploy/Dockerfile.* — every FROM line"
+    ],
+    "must_fail_on": [
+      "an image reference containing ':' as a tag separator and no '@sha256:' digest",
+      "a bare image name with no tag and no digest (an implicit ':latest')",
+      "a digest that is not exactly 64 lowercase hex characters",
+      "a FROM referencing a build argument that HAS a default, because a default is a value nobody re-examined"
+    ],
+    "must_accept": [
+      "an image reference of the form <name>@sha256:<64 hex>",
+      "FROM ${ARG} where ARG is declared with no default AND appears in this file with an explicit status"
+    ],
+    "must_not_skip": "A Dockerfile it cannot parse is a non-zero exit with a stated reason, never a pass and never a skip (PBG-CI-002)."
+  }
+}
