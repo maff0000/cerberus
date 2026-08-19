@@ -209,34 +209,156 @@ criteria:
   criterion: The two dials are never blended.
   acceptance_semantics: >
     PID §6: no code path combines them into one number, and a planted blend fails the register.
-    Enforced at three independent layers, because one layer is a preference and three are a
-    structure — the TYPES refuse arithmetic and share no numeric base, an AST scan refuses any
-    expression consuming both dials outside the allowlisted container and serving layer, and the
-    public envelope schema is closed so a combined field has nowhere to be written. A blend that
-    slips past any one layer must still fail the other two.
+
+    THIS TEXT WAS REWRITTEN AT WO-2R, CLOSING CD-ASR-F01 (HIGH). It used to say the criterion was
+    "enforced at three independent layers" and that "a blend that slips past any one layer must
+    still fail the other two". THAT SPECIFIC CLAIM WAS REFUTED BY EXECUTION: an independent
+    auditor produced two working blends that passed ALL THREE declared layers simultaneously and
+    each returned 0.5 from equity 0.9 and monetary 0.1. It is not restated here, and the entries
+    below claim only what their layers deliver (CD-RULE-004).
+
+    WHAT THE LAYERS DELIVER NOW, each named with what it does NOT do.
+
+    1 THE TYPE, and it is the load-bearing one. A dial magnitude is a NOMINAL, PER-DIAL,
+    NON-COERCIBLE value (crash_detector.dials.magnitude.DialMagnitude) carrying which dial it came
+    from as DATA. It defines no arithmetic or coercion dunder, so any arithmetic, comparison,
+    aggregation, serialisation or reduction over two magnitudes raises TypeError from the
+    interpreter — regardless of the route by which the two values were reached, which is what
+    makes it a CLASS closure rather than a list of spellings. Cross-dial combination is refused at
+    the POINT OF COMBINATION by comparing carried provenance, so the refusal does not depend on
+    anyone having read the code. WHAT IT DOES NOT DO: once a number is released for its ONE named
+    dial it is an ordinary float, and Python adds floats.
+
+    2 THE PUBLICATION BOUNDARY. crash_detector.publication.dial_scalar.number_for_dial_slot
+    releases a number into a dial slot only from a magnitude whose provenance is exactly that
+    slot's dial, so a blend cannot be OFFERED to the envelope. WHAT IT DOES NOT DO: it cannot see
+    a number that reaches a dial slot without coming through it.
+
+    3 THE CLOSED PUBLIC ENVELOPE SCHEMA. additionalProperties is false at every level and
+    properties is an allowlist, so a third combined field has nowhere to be written. The auditor
+    tested this mitigation specifically and confirmed IT HOLDS. WHAT IT DOES NOT DO: it cannot
+    tell a blended number assigned to equity_crash.score from an honest one, because that key is
+    legitimately a number. Layer 2 is what covers that.
+
+    4 THE AST SCAN IS A LOCATOR, NOT A CLOSURE, and its entry below carries a DECLARED LIMIT and
+    a corrected scope. Its flavour propagation is intra-procedural and its read is purely static;
+    both escaped blends walked past it and always will.
+
+    Layers 1 to 3 are structural and independent of one another. None is claimed to be sole
+    (BLUEPRINT §17 risk CD-BP-001, PO-accepted), and no claim is made here that a violation
+    slipping past one must fail the others.
   pid_relation: DERIVES
   supersedes: []
   superseded_by: null
   tests:
+  # CD-RT-002-TYPE-NO-ARITHMETIC is the RUNTIME arm, and after CD-ASR-F01 it is the arm that
+  # carries CD-AC-002's "unrepresentable" half. Its declared command GREW at WO-2R by one module,
+  # tests/test_dial_provenance.py, which executes escaped variants E01 and E02 in the auditor's own
+  # shape and asserts the publication-boundary provenance refusal. The command grew because the
+  # register may not claim a layer it declares no test for; NOTHING WAS REMOVED FROM IT, and
+  # tests/test_scores.py and tests/test_dialset.py are unchanged in what they assert — only in how
+  # they construct a magnitude, which now names its dial.
   - test_id: CD-RT-002-TYPE-NO-ARITHMETIC
     scope: CLASS
-    execute: PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q
+    execute: PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q
     execution_contract: contracts/execution/CD-RT-002-TYPE-NO-ARITHMETIC.md
     negative_control:
       violation: >
-        An arithmetic dunder added to a score type (`__add__`, or any of the arithmetic, bitwise,
-        ordering or numeric-coercion dunders the test enumerates), a numeric base introduced under
-        both types, or a method added to DialSet that returns a scalar.
+        A scalar derived from BOTH dial types made representable or publishable, by ANY route.
+        The class includes, and is not limited to: an arithmetic, bitwise, ordering or
+        numeric-coercion dunder added to a score type or to the dial magnitude type, or inherited
+        from an ancestor of either; a numeric base introduced under both types; a subclass of the
+        magnitude type carrying a coercion; a member added to the magnitude type's declared
+        attribute surface, by class body, decorator, class assignment or metaclass; a method added
+        to DialSet that returns a scalar; a magnitude constructed without provenance, or with
+        provenance that is not exactly one dial; a magnitude of one dial accepted into the other
+        dial's score type or published into the other dial's envelope slot; a combinator that
+        UNIONS provenance instead of comparing it; a same-dial helper that does not refuse when it
+        is reused across dials; and a round trip through copy, pickle or JSON that strips
+        provenance or yields a bare number.
+        DECLARED LIMIT: a number released through `quantity_for(<one dial id>)` is an ordinary
+        float, and two of them can be added by ordinary Python arithmetic. That residue is stated
+        in the header of src/crash_detector/dials/magnitude.py (boundary A), in the comment above
+        the CD-RT-002-AST-NO-BLEND entry below (boundary 6) and in both execution contracts, each
+        with an example an auditor can execute. What IS refused is publishing the result: the
+        publication gate takes only a magnitude whose provenance is exactly the slot's dial.
       evidence_ref: RTR-WO2-0001
+  # DECLARED LIMIT — CD-RT-002-AST-NO-BLEND. Required by CD-RULE-004 and by the WO-2R dispatch,
+  # drawn in the pattern of CD-RT-012-NO-EXECUTION-INTERFACE, whose declaration an independent
+  # auditor examined and judged HONESTLY DRAWN AND DRAWN CONSERVATIVELY. That auditor's caveat is
+  # why this block exists: "CD-AC-002's AST guard has comparable limitations (intra-procedural,
+  # static) and NO comparable written declaration, which is why CD-ASR-F01 is reported at HIGH."
+  #
+  # THE SCOPE OF THIS ENTRY WAS CORRECTED FROM `CLASS` TO `INSTANCE` AT WO-2R, and that correction
+  # is the point rather than a detail. A static intra-procedural checker cannot close this class
+  # and no hardening will make it able to: E01 moved the arithmetic one call away into a function
+  # whose parameters are annotated `float`, and E02 reached the dials through `getattr` with plain
+  # string literals so that NO DIAL MARKER APPEARED IN ANY EXPRESSION. Deny-by-default is not
+  # available here the way RULE F made it available to CD-RT-001-AST-NO-NUMERIC-DEFAULT, because
+  # there is no single permitted provenance for an expression to be traced back to — every
+  # expression in the application is a candidate. Claiming CLASS while enumerating what a static
+  # checker can see is precisely the defect that produced this finding, so the entry now claims
+  # INSTANCE and the CLASS closure is claimed by CD-RT-002-TYPE-NO-ARITHMETIC, which delivers it
+  # at runtime.
+  #
+  # WHAT THIS CHECK DOES NOT CATCH. The full list with an executable example per boundary is in
+  # the header of tools/register/check_no_blend.py and in
+  # contracts/execution/CD-RT-002-AST-NO-BLEND.md, in the same words. In summary:
+  #   1 INTER-PROCEDURAL FLOW. MEASURED EXAMPLE, exits 0 — this is escaped variant E01:
+  #       def _fold(left: float, right: float) -> float: return (left + right) / 2.0
+  #       def banner_figure(dials): return _fold(dials.equity.value.score, dials.monetary.value.score)
+  #     Executed, the TYPE layer raises TypeError: unsupported operand type(s) for +:
+  #     'DialMagnitude' and 'DialMagnitude'.
+  #   2 DYNAMIC ATTRIBUTE ACCESS, which erases flavour entirely. MEASURED EXAMPLE, exits 0 — this
+  #     is escaped variant E02, the stronger of the two because it needs no allowlisted path:
+  #       _SLOTS = ("equity", "monetary")
+  #       magnitudes = [getattr(dials, slot).value.score for slot in _SLOTS]
+  #       return sum(magnitudes) / len(magnitudes)
+  #     Executed, the TYPE layer raises TypeError: unsupported operand type(s) for +: 'int' and
+  #     'DialMagnitude'.
+  #   3 THE RULE 2 ALLOWLIST is a real hole in RULE 2 by design; six paths may consume both dials
+  #     in one expression and E01 was planted in one of them (src/crash_detector/serving).
+  #   4 THE SCANNED SET: only src/crash_detector/ and deploy/entrypoints/. A blend in tests/ or
+  #     db/ exits 0 here. It cannot reach a shipped image — all six application Dockerfiles COPY
+  #     exactly src/ and deploy/entrypoints/ — but this check does not see it.
+  #   5 IT READS SOURCE, NOT BEHAVIOUR. A blend assembled at runtime is outside a static check.
+  #   6 A NUMBER ALREADY RELEASED is an ordinary float. MEASURED EXAMPLE, which RULE 1 catches
+  #     when the dial ids are written and does NOT catch when they are reached dynamically:
+  #       e = dials.equity.value.score.quantity_for(EQUITY_DIAL_ID)
+  #       m = dials.monetary.value.score.quantity_for(MONETARY_DIAL_ID)
+  #       blended = (e + m) / 2.0
+  #     THE PUBLICATION BOUNDARY CARRIES THIS: number_for_dial_slot takes only a magnitude whose
+  #     provenance is exactly the slot's dial, so `blended` cannot be offered for publication, and
+  #     the closed envelope schema has no third key for it.
+  #
+  # DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO CODE PATH COMBINES THE TWO DIALS. It
+  # was clean for both blends that produced CD-ASR-F01. The pair to weigh is this check together
+  # with CD-RT-002-TYPE-NO-ARITHMETIC, which is where the runtime property is evidenced.
+  #
+  # FOR THE AUDITOR. A CD-AC-002 variant landing beyond a boundary above is a finding against THIS
+  # DECLARATION — was the limit honestly drawn? — and not an automatic RED against the guard. A
+  # variant reaching the violation by a route a boundary says is covered by the type layer or the
+  # publication boundary, and NOT refused when EXECUTED, is a defect in the closure: report it.
   - test_id: CD-RT-002-AST-NO-BLEND
-    scope: CLASS
+    scope: INSTANCE
     execute: python3 tools/register/check_no_blend.py --root .
     execution_contract: contracts/execution/CD-RT-002-AST-NO-BLEND.md
     negative_control:
       violation: >
         A single expression consuming both dial types outside the allowlisted container and
-        serving layer — the canonical form being `combined = (equity + monetary) / 2`, and the
-        class being any arithmetic, comparison or aggregation over the two together.
+        serving layer — the canonical form being `combined = (equity + monetary) / 2`, and what
+        this check reaches being any arithmetic, comparison or aggregation over the two together
+        WITHIN ONE SCOPE, including the three-statement spelling that its intra-procedural flavour
+        propagation follows. RULE 3, added at WO-2R and carrying no allowlist beyond the module
+        that declares the slot, additionally reports any expression naming the private slot in
+        which a dial magnitude holds its number (`_DialMagnitude__quantity`), by attribute or as a
+        string handed to getattr: reaching around the declared release obtains a number without
+        naming which dial it belongs to, which is the first half of a blend.
+        THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
+        tools/register/check_no_blend.py, in the comment above this entry and in the execution
+        contract, each boundary with an example an auditor can execute. It is never a sole guard:
+        the class is closed at the type and at the publication boundary, and evidenced by
+        CD-RT-002-TYPE-NO-ARITHMETIC.
       evidence_ref: RTR-WO2-0001
   - test_id: CD-RT-002-SCHEMA-CLOSED
     scope: CLASS
@@ -247,6 +369,13 @@ criteria:
         The public envelope schema opened at any level — `additionalProperties` set true or
         removed — or a third combined dial field such as `combined_stress` added to its
         properties allowlist.
+        THIS MITIGATION WAS TESTED BY AN INDEPENDENT AUDITOR AT THE WO-2 GATE AND HOLDS: neither
+        of the two blends that produced CD-ASR-F01 could reach the published artefact through the
+        validated envelope without also failing this check. Its LIMIT is stated in the schema's
+        own description and is unchanged: it constrains the SHAPE of what is published, so it
+        cannot see a blended number assigned to `equity_crash.score`, because that key is
+        legitimately a number. That case is covered by the publication provenance gate
+        (crash_detector.publication.dial_scalar), evidenced by CD-RT-002-TYPE-NO-ARITHMETIC.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-003
