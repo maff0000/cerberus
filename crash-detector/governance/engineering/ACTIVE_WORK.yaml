@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T06:43:00Z'
+updated_utc: '2026-08-19T07:01:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -30,7 +30,17 @@ current_block: >
   the shape layer both work, but two class escapes remain (trade-lifecycle vocabulary; intransitive
   prose) and one FALSE POSITIVE fires on this project's own "work order" vocabulary. Raised as
   CD-PL-F35 and bounded by CD-D-014, which grants ONE further pass and then requires the guard to
-  DECLARE ITS OWN LIMIT. Next: increment 6 of 7 — CD-PL-F35 then B3, the plants.
+  DECLARE ITS OWN LIMIT.
+  THIRD TERMINATION, BL-20260819T070100Z-0012. The increment-6 seat died mid-work, leaving ONE
+  modified file uncommitted in the lane. It is inventoried, verified by the PL running the arms
+  itself, snapshotted to /srv/crash-detector-wo2-candidate-inc6/, and RULED CD-D-015 KEEP AS
+  UNATTESTED CANDIDATE: it closes all three CD-PL-F35 defects under replant, keeps the clean arm
+  passing, and regresses nothing — but it is UNFINISHED. The guard DECLARED LIMIT that CD-D-014
+  required was never written, and the inherited docstring already points at it ("see the check
+  header"), so the code carries a dangling reference to a deliverable that does not exist.
+  Two continuity defects written by the increment-5 seat were repaired first: CD-PL-F37 (this file
+  did not parse; boot was RED) and CD-PL-F36 (a FABRICATED checkpoint SHA). Next: increment 6 of 7
+  — finish the candidate, then B3, the plants.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -41,19 +51,31 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1
+last_completed_checkpoint_sha: 7ae3771ab895e96f4abc2022ddfc856506fe16d0
+  # 7ae3771 is the increment-5 boundary checkpoint, verified present.
+  # CD-PL-F36 HISTORY, kept here because the defect was invisible to the eye: the increment-5 seat
+  # left this field as 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1, a FABRICATED value sharing only
+  # the 7-char prefix with the real 17d7721 (= 17d772157fc33a7b4df6e4e1f1dd81da0eefddf0) and
+  # resolving to no object. `pbg boot` refused to resume on it. It was first repaired to the true
+  # 17d7721 — the value the record plainly MEANT — and then advanced normally to 7ae3771 at this
+  # boundary. Full account in BL-20260819T070100Z-0012.
 lane_head_sha: 9a1a15923e61f6d472a1c1600598fad4ec971b46   # wo-2-skeleton, increment 5 of 7 + its Build Log
 continuity_record_commit: PENDING
 working_tree_state: >
-  main clean at 17d7721 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  main clean at 7ae3771 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at 9a1a159 on wo-2-skeleton. No protected path was
-  touched across 3f03866..9a1a159 and pbg/ is intact; no secret value is recorded; no container or
-  volume survives; plants/ does not yet exist, correctly — B3 is increment 6.
+  mutation lane /srv/crash-detector-wo2 is at 9a1a159 on wo-2-skeleton and is NOT clean: it carries
+  one modified file, tools/register/_broker_vocabulary.py, the inherited increment-6 candidate ruled
+  CD-D-015. That is a KNOWN and RULED dirty state, not drift, and it is snapshotted with a SHA256
+  manifest at /srv/crash-detector-wo2-candidate-inc6/. No protected path is touched in either
+  worktree and pbg/ is intact; no secret value is recorded; no container or volume was created;
+  plants/ does not yet exist, correctly — B3 is still owed in increment 6.
+  Every SHA in this record and in the whole Build Log was resolved with `git cat-file -e` at this
+  boundary. All resolve. See CD-PL-F36 for the one that did not.
   NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
   branch-point copy and will report a stale continuity reference. That is the worktree layout, not
   drift (CD-ENG-F31). The live record is this one, on main. The pending commit is
-  BL-20260819T064300Z-0011 and this record.
+  BL-20260819T070100Z-0012 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -94,14 +116,19 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
-- 'CD-PL-F35 MEDIUM, bounded by CD-D-014 — three residual defects in CD-AC-012's AST guard found by
-  the PL's own fresh variants: (a) trade-lifecycle vocabulary absent, so "hand the parcel to the
-  counterparty for filling" escapes; (b) intransitive/directional prose unread, so "the ticket goes
-  out to the exchange" escapes; (c) a FALSE POSITIVE on apply_work_order(), which is this project's
-  own core vocabulary and therefore the more dangerous half — a guard that fails on innocent code is
-  one somebody will eventually weaken. ONE further pass, then the guard DECLARES ITS OWN LIMIT and
-  hardening stops (CD-D-014, resting on the PO-accepted CD-BP-001: AST checks are never a sole
-  guard).'
+- 'CD-PL-F35 — CLOSED IN PART by the CD-D-015 candidate. (a) trade-lifecycle vocabulary, (b)
+  intransitive/directional prose and (c) the FALSE POSITIVE on apply_work_order() are all verified
+  closed under replant by the PL, with no regression on genuine pathways and no new noise on
+  innocent prose. STILL OWED: the guard DECLARED LIMIT, in the check header and in the
+  CD-RT-012-NO-EXECUTION-INTERFACE register entry. The inherited code already points at it and it
+  does not exist, so this is a dangling reference until written (CD-D-014, CD-D-015).'
+- 'CD-PL-F38 LOW — one residual escape of the SAME class as CD-PL-F35(b), found by a fresh PL
+  variant: "Every instruction eventually flows straight through to the nominated clearer" passes,
+  because the motion pattern scans only four words past the verb for a destination and this one sits
+  six words past it. A one-line window widening. It is the LAST hardening authorised on this guard
+  (CD-D-015); any escape found after it is DECLARED AS A LIMIT, not fixed.'
+- 'CD-PL-F36 / CD-PL-F37 — both REPAIRED at this boundary; no residual work. Listed only so the next
+  seat knows the increment-5 records were corrected and why (BL-20260819T070100Z-0012).'
 - 'CD-OB-004 — four live-store properties proved in increment 3 have evidence and no standing guard
   (first_published_utc immutability, NaN refusal, envelope allowlist, witness-panel constraints).
   None is a WO-2 gate criterion. Owed at WO-3 with the publication layer.'
@@ -190,10 +217,15 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Dispatch Engineer CD-ENG-WO2-01 as instance 6, in the FOREGROUND, execution base 9a1a159, for
-  increment 6 of 7. CD-PL-F35 is a bounded prerequisite under CD-D-014: close the trade-lifecycle
-  vocabulary gap, the intransitive-prose gap and the work_order false positive, then WRITE THE
-  GUARD'S DECLARED LIMIT into the check and into its register entry, and stop hardening. Then B3:
+  Dispatch Engineer CD-ENG-WO2-01 as instance 6, in the FOREGROUND, execution base lane 9a1a159
+  PLUS the uncommitted CD-D-015 candidate already in the lane working tree, to FINISH increment 6
+  of 7 and commit it. The CD-PL-F35 remainder is bounded to exactly four things: (1) widen the
+  pattern E motion window so CD-PL-F38 closes, and nothing else; (2) add MOTION_PARTICLES and
+  ORDER_SEQUENCE_MODIFIERS to __all__; (3) WRITE THE GUARD DECLARED LIMIT into the header of
+  tools/register/check_no_execution_interface.py and into the CD-RT-012-NO-EXECUTION-INTERFACE
+  entry in required-tests.yaml, which is what makes the dangling reference in the inherited
+  docstring true; (4) commit that as ONE increment before starting anything else. NO further
+  hardening of this guard is authorised (CD-D-015). Then B3:
   plants/, one directory per criterion, each plant a `git apply`-able patch plus a manifest row
   naming test_id, patch file, the PROPOSITION violated and the expected failure signature. Each
   plant must violate the PROPOSITION, not merely trip the string the checker greps for. NO wrapper
@@ -208,5 +240,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T064300Z-0011
+last_build_log_entry: BL-20260819T070100Z-0012
 status: ACTIVE

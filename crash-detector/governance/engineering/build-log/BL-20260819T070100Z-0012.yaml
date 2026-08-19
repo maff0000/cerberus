@@ -1,0 +1,319 @@
+# WO-2 resumed a THIRD time. Two continuity defects written by the increment-5 seat are corrected
+# here — one of them a FABRICATED SHA, which is the more serious of the two — and the inherited
+# uncommitted increment-6 material in the mutation lane is inventoried, verified and dispositioned.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T070100Z-0012
+timestamp_utc: '2026-08-19T07:01:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 7ae3771ab895e96f4abc2022ddfc856506fe16d0
+current_sha: 7ae3771ab895e96f4abc2022ddfc856506fe16d0
+lane_head_sha: 9a1a15923e61f6d472a1c1600598fad4ec971b46
+parent_entry_id: BL-20260819T064300Z-0011
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  The Project Lead session driving WO-2 was terminated for a THIRD time, with Engineer seat
+  CD-ENG-WO2-01 mid-increment-6. The committed-increment discipline held again: increments 1 to 5
+  are committed in the lane and only the increment in hand was at risk. The seat left ONE modified
+  file uncommitted, returned nothing, and wrote no Build Log entry.
+
+  This entry does four things and writes no application code.
+
+  (1) BOOT WAS RED, NOT AMBER. ACTIVE_WORK.yaml would not parse at all, so the framework refused
+  normal boot and permitted only read-only diagnosis (PBG-CONT-006). Diagnosed and repaired as
+  CD-PL-F37 below.
+
+  (2) With the record parseable, the framework then rejected it a second time on a REFERENCE
+  failure: last_completed_checkpoint_sha named a commit that does not exist in this repository.
+  It was FABRICATED — see CD-PL-F36, which is the most serious finding in this entry, and which
+  the framework caught rather than any reader.
+
+  (3) Inventoried and verified the inherited lane material against
+  CD-DISPATCH-WO2-ENGINEER.yaml, then RULED CD-D-015 — see decisions_closed. Nothing was
+  committed into the lane by this seat and no application code was written by it.
+
+  (4) Ran seven fresh CD-PL-F35 variants of its own against the inherited guard. Six behave
+  correctly. The seventh escapes, and is raised as CD-PL-F38 with the ruling that it is the LAST
+  hardening permitted, per the boundary already imposed by CD-D-014.
+
+  A correction to the operator resume brief is recorded here rather than left to be inferred. The
+  brief placed HEAD at 0047093 with the Engineer dispatch just issued and "src/ untracked" in the
+  lane. The repository was already at 7ae3771, SEVEN commits later, with increments 1 to 5 of 7
+  complete, src/ long since committed, and exactly one modified file in the lane. As in
+  BL-20260819T045600Z-0005, the brief describes the state at the START of the terminated session,
+  not its end. Nothing was done on the strength of the brief; the repository record was read first
+  and governs (PBG-CONT-007).
+
+reconciliation:
+  what_this_is: >
+    RECONCILIATION OF AN INTERRUPTED SEAT BY THE PROJECT LEAD. NOT assurance (PBG-SOD-001). Every
+    command below was run by this seat itself in the foreground; no Engineer-supplied wrapper was
+    used and none exists.
+  recorded_vs_observed: >
+    RECONCILED WITH TWO CORRECTIONS, both to the record and neither to the repository.
+    Recorded lane_head_sha 9a1a159 matches observed lane HEAD 9a1a159 on wo-2-skeleton. Recorded
+    branch main matches observed. Recorded last_build_log_entry BL-...-0011 matches the newest file
+    on main. The two disagreements are: (a) the record described the lane as CLEAN at 9a1a159, and
+    it is NOT — it carries one modified file, dispositioned below; (b) last_completed_checkpoint_sha
+    did not resolve, CD-PL-F36. Observed main HEAD is 7ae3771, the increment-5 boundary checkpoint
+    whose own message names lane 11979fb, which is consistent with everything else in the record.
+  drift_found: >
+    None in Git history. Nothing under pbg/ is modified in either worktree; the only artefact there
+    is pbg/tools/pbg/__pycache__/, produced by running the pinned CLI, uncommitted and not a
+    modification of the snapshot (PBG-FWK-013 intact). Verified: git status in both worktrees.
+  sha_integrity_sweep: >
+    Because one fabricated SHA was found, this seat swept for others rather than assuming it was
+    unique. Every SHA-like token in ACTIVE_WORK.yaml (17 of them) and every 40-character SHA across
+    the whole Build Log (16 distinct) was resolved against the object database with
+    `git cat-file -e`. ALL RESOLVE except the one. The defect is confined to the increment-5 seat
+    and to the two records it wrote. This is stated as a bounded result, not as an assurance.
+  untracked_not_project_state: >
+    Ten .wo2-* / .wo2b-* files at the main repository root belong to the operator session wrapper.
+    Not project state, not committed, unchanged by this seat.
+  host_runtime_state: >
+    `docker ps -a --filter name=cd-store-wo2-` and `docker volume ls --filter name=cd-store-wo2-`
+    were not re-run by this seat because RT-A was not exercised in increment 6 and the increment-5
+    reconciliation already found both empty. Recorded as NOT RE-VERIFIED rather than as clean.
+    CD-HOLD-003 remains HELD and unexercised.
+
+inherited_material_inventory:
+  found_in: '/srv/crash-detector-wo2 (branch wo-2-skeleton), uncommitted at lane HEAD 9a1a159'
+  file_count: 1
+  files:
+  - 'tools/register/_broker_vocabulary.py — modified, +313 / -17 lines'
+  scope_check: >
+    IN SCOPE. /srv/crash-detector-wo2/tools/ is line 61 of writable_scope in
+    CD-DISPATCH-WO2-ENGINEER.yaml. No protected path was touched: PID.md, BLUEPRINT.md, CLAUDE.md,
+    docs/, governance/authority/, governance/decisions/, governance/dispatch/, ACTIVE_WORK.yaml,
+    schemas/ and pbg/ are all untouched in the lane.
+  intent_check: >
+    MATCHES THE STANDING BRIEF. The record next_safe_action commissioned increment 6 as CD-PL-F35
+    first — close the trade-lifecycle gap (a), the intransitive-prose gap (b) and the work_order
+    false positive (c), then write the guard DECLARED LIMIT — and then B3, the plants. The material
+    is an attempt at exactly (a), (b) and (c), by their own names, in the file that holds that
+    vocabulary. It is not stray work and it is not scope drift.
+  snapshot: >
+    Snapshotted BEFORE any further seat was dispatched into that lane, so it stays recoverable and
+    comparable whatever happens next: /srv/crash-detector-wo2-candidate-inc6/ holding the file
+    itself, a `git apply`-able candidate.diff of 430 lines, and SHA256SUMS over both.
+    _broker_vocabulary.py sha256 1de18f50245d065692d5ad53eb232ab4358f35882b2dfb0b247a86ed0fe915cc;
+    candidate.diff sha256 f09e26974ee69baa82124d48e0836f937c640d908a99f2037528544e06c3ebaa.
+
+verification_this_seat_ran:
+  standing: >
+    IMPLEMENTATION EVIDENCE FOR A RULING, NOT ASSURANCE. It exists to let the Project Lead
+    disposition inherited material on evidence instead of on plausibility. The Assurance seat
+    CD-ASR-WO2-01 will run its own arms from scratch and owes nothing to any of it (PBG-ASSURE-001).
+  method: >
+    The seven probe files were written by the PROJECT LEAD, not by the interrupted seat, into
+    /tmp/cd-probe/src/ (non-governed scratch, dispatch line 77). Each was then copied ALONE into
+    /tmp/cd-one/src/ and the declared register command run against that root, so that every result
+    below names one file and cannot be a coincidental hit from a neighbour.
+  clean_arm: >
+    `python3 tools/register/check_no_execution_interface.py --root .` on the lane working tree,
+    inherited change in place: PASS, exit 0, 29775 assertions over 77 files, 0 violations. The
+    inherited change does not break the clean arm, which is the first thing that would have
+    disqualified it. A clean arm that fails proves only that the harness is broken.
+  probes:
+  - 'p1 — the CD-PL-F35(a) escape replanted verbatim (a docstring handing a "parcel" to the
+     counterparty for filling, carrying no order-entry word at all): FAIL, exit 1, 1 violation at
+     the docstring line. CLOSED.'
+  - 'p2 — the CD-PL-F35(b) escape replanted verbatim (class Desk, def dispatch(self, ticket),
+     documented "The ticket goes out to the exchange"): FAIL, exit 1, 2 violations. CLOSED.'
+  - 'p3 — the CD-PL-F35(c) FALSE POSITIVE replanted and widened by this seat to four callables of
+     this project own work-order vocabulary (apply_work_order, sort_order_of_entries,
+     WorkOrderRegister, next_work_order): PASS, exit 0, 26 assertions, 0 violations. The guard is
+     now SILENT on innocent code. CLOSED.'
+  - 'p4 — FRESH, not a replant. Lifecycle prose the interrupted seat never tested: "Each bargain is
+     affirmed with the prime broker before the overnight run." FAIL, exit 1, 1 violation. The (a)
+     fix generalises beyond the single reported sentence, which is the difference between a fix and
+     a special case.'
+  - 'p5 — FRESH. A longer motion chain: "Every instruction eventually flows straight through to the
+     nominated clearer." PASS, exit 0 — IT ESCAPES. Raised as CD-PL-F38.'
+  - 'p6 — FRESH, an OVER-SUPPRESSION probe, and the one that mattered most. The (c) fix works by
+     suppressing the token `order` in its sequence sense, and a suppression rule inside a guard can
+     buy a false-positive fix with a false negative, which is the worse bargain. Three unambiguous
+     order pathways (order_router, submit_order, class OrderGateway.route_order): FAIL, exit 1, 5
+     violations. The suppression has NOT reached genuine pathways. No regression.'
+  - 'p7 — FRESH, a FALSE-POSITIVE probe on ordinary prose using the new lifecycle and motion
+     vocabulary in its ordinary programming sense ("The cache clears on eviction and the freed pages
+     go back to the pool", "The reading arrives at the serving layer and moves on to the renderer",
+     "Matching segments are merged, then the compacted run passes to the writer"): PASS, exit 0, 16
+     assertions, 0 violations. The two new patterns have not made the guard noisy.'
+  module_integrity: >
+    tools/register/_broker_vocabulary.py imports cleanly under python3 and every name its new code
+    references is defined. Two names it adds, MOTION_PARTICLES and ORDER_SEQUENCE_MODIFIERS, are
+    ABSENT from __all__ while their four siblings were added to it. Cosmetic, but it is the
+    signature of work stopped in the middle rather than finished, and it is listed in the
+    completion brief below.
+
+findings_raised:
+- id: CD-PL-F36
+  severity: HIGH
+  title: 'A FABRICATED commit SHA was written into the continuity record'
+  detail: >
+    ACTIVE_WORK.yaml recorded last_completed_checkpoint_sha
+    17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1. No such object exists. The real commit 17d7721 is
+    17d772157fc33a7b4df6e4e1f1dd81da0eefddf0: the two share only the 7-character prefix a reader
+    would recognise, and the remaining 33 characters were invented. The same fabricated value was
+    written twice more, as baseline_sha and current_sha in BL-20260819T064300Z-0011.
+
+    WHY THIS IS HIGH AND NOT COSMETIC. This project stakes its continuity on the claim that a
+    recorded SHA is a real, checkable anchor — CLAUDE.md requires a durable checkpoint with the
+    exact SHA at every material boundary, and PBG-CONT-007 says a result existing only in
+    conversation is not project state. A SHA that resolves to nothing is conversation wearing the
+    costume of state. It reads as authoritative, it survives review by eye because the prefix is
+    right, and it silently destroys the ability to reconstruct what was actually checkpointed. Had
+    the framework not refused the boot, this seat would have resumed from a checkpoint that does
+    not exist.
+
+    WHAT WORKED. No human and no reader caught this. `pbg boot` caught it, mechanically, and
+    BLOCKED rather than warned. The reference-integrity stage of the continuity check earns its
+    place, and this entry records that as evidence for it.
+  disposition: >
+    REPAIRED IN ACTIVE_WORK.yaml, to 17d772157fc33a7b4df6e4e1f1dd81da0eefddf0 — the true SHA of
+    17d7721, which is the value the record plainly MEANT: its own working_tree_state field names
+    "main clean at 17d7721" in prose two lines below. Intent was preserved and nothing was
+    re-pointed at a different commit. An inline comment at the site records that the value was
+    repaired and why, so the repair is legible to the next reader rather than invisible.
+
+    NOT repaired in BL-20260819T064300Z-0011. The Build Log is append-only and corrections
+    supersede, never edit (PBG-CONT-003, non-waivable). THIS ENTRY IS THAT CORRECTION: wherever
+    BL-...-0011 says 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1, read
+    17d772157fc33a7b4df6e4e1f1dd81da0eefddf0.
+- id: CD-PL-F37
+  severity: MEDIUM
+  title: 'ACTIVE_WORK.yaml was left syntactically invalid — boot RED, resume blocked'
+  detail: >
+    The increment-5 seat wrote three unescaped apostrophes inside a single-quoted YAML scalar in
+    remaining_items (CD-AC-012's, the PL's, this project's, at lines 97, 98 and 100). In YAML a
+    single quote inside a single-quoted scalar must be doubled, so the first one terminated the
+    string and the file stopped parsing at line 97. Continuity classified
+    CONTINUITY_SYNTAX_INVALID / RESUME_BLOCKED and the boot verdict was RED.
+
+    The same seat escaped apostrophes correctly elsewhere in the same list — the Engineer''s
+    writable_scope, four items later, is properly doubled. So this is a slip, not a
+    misunderstanding, which is exactly the kind of defect a machine check catches and a careful
+    author does not.
+  disposition: >
+    REPAIRED — the three apostrophes doubled, no other change to the scalar and no change to its
+    meaning. Re-verified: continuity now classifies CONTINUITY_MATCH and the boot verdict is AMBER,
+    the AMBER being the pre-existing untracked operator files and the absent ROADMAP.md, both
+    already disclosed in the record. Verdict moved RED to AMBER by this repair alone.
+- id: CD-PL-F38
+  severity: LOW
+  title: 'One residual CD-PL-F35(b) escape — the motion pattern window is four words wide'
+  detail: >
+    Probe p5, "Every instruction eventually flows straight through to the nominated clearer",
+    escapes the inherited guard. The cause is structural and small: pattern E scans at most four
+    words past the motion verb for a destination noun, and here the destination sits six words
+    past it behind "straight through to the nominated". The vocabulary is right — `flows` is in
+    MOTION_VERBS and `clearer` is in DESTINATION_NOUNS — the window is simply too short for prose
+    with two stacked particles and an adjective.
+
+    This is a RESIDUAL OF THE SAME CLASS as (b), not a new class, and that distinction is what
+    keeps CD-D-014 honest rather than being quietly reinterpreted.
+  disposition: 'Bounded and ruled by CD-D-015 below. It is the LAST hardening permitted.'
+
+decisions_closed:
+- id: CD-D-015
+  title: 'The inherited increment-6 material — KEEP AS UNATTESTED CANDIDATE, and the guard stops here'
+  ruling: >
+    KEEP AS UNATTESTED CANDIDATE. The same disposition as CD-D-009 and the opposite of CD-D-007,
+    and as in both cases the reason is the evidence, not the convenience.
+
+    KEEP, on five findings this seat produced itself rather than accepted: the material is inside
+    the Engineer writable_scope and touches no protected path; it matches the standing increment-6
+    brief item by item; it does not break the clean arm (PASS, 29775 assertions); it closes all
+    three reported CD-PL-F35 defects under replant, including the false positive, which is the half
+    that mattered most because a guard that cries wolf on this project own work-order vocabulary is
+    a guard somebody eventually weakens; and it causes no regression on genuine order pathways
+    (p6) and no new noise on innocent prose (p7). Discarding work of that quality to rewrite it
+    would cost a full increment and buy nothing.
+
+    UNATTESTED, and the word is doing real work. No Engineer seat returned it, no seat Build Log
+    entry exists for it, and it is INCOMPLETE IN A WAY THAT IS VISIBLE IN THE CODE ITSELF: the new
+    docstring points the reader at the guard DECLARED LIMIT "see the check header", and there is no
+    such header. `grep -rn "DECLARED LIMIT" tools/ required-tests.yaml` returns that single dangling
+    forward reference and nothing else. The deliverable CD-D-014 actually required — the guard
+    stating its own limit, in the check and in its register entry — was never written. Two added
+    names are also missing from __all__. This is a seat stopped mid-sentence, and it is admitted as
+    a CANDIDATE BASE for the next Engineer instance, never as a completed increment.
+
+    AND THE CHASE ENDS HERE. CD-D-014 granted ONE further pass and then required the guard to
+    declare its own limit. That pass is the material now in hand; it is unfinished, so finishing it
+    is not a second pass. CD-PL-F38 is folded into it as a one-line widening of an existing window
+    and NOTHING ELSE is permitted: no new pattern, no new vocabulary category, no new layer. If a
+    further escape is found after that, it is DECLARED AS A LIMIT and not fixed. The reasoning is
+    the PO-accepted CD-BP-001 — an AST check is never a sole guard for CD-AC-012, so the marginal
+    value of the next escape closed is small while the cost of an unbounded chase is a work order
+    that never ends and a gate that never arrives.
+  rationale_recorded_because: >
+    A reader in six months will see the Project Lead keep uncommitted work it did not commission
+    from a seat that died without returning. The evidence for that choice, and its limits, belong
+    in the record and not in a lost context window (PBG-CONT-007).
+- id: CD-D-016
+  title: 'The Project Lead may not finish the inherited work itself'
+  ruling: >
+    Recorded because it was a live temptation and the reasoning should be visible. The remaining
+    increment-6 work is small, well understood, and this seat has just characterised it precisely
+    enough to do it. It will not. Writing the guard limit and widening the window is Engineer work
+    under CD-ENG-WO2-01; a Project Lead that implements what it will then reconcile has collapsed
+    the separation the whole record depends on, and it would do so for the sake of saving one
+    dispatch. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001,
+    non-waivable), and the Project Lead is not a spare pair of hands for either.
+
+obligations_status:
+- 'CD-OB-004 — OPEN, unchanged. Owed at WO-3 with the publication layer.'
+- 'CD-ERR-001 — OPEN, unchanged, and deliberately so. Amending BLUEPRINT section 4 would move the
+   specification underneath the Assurance dispatch about to audit against it. Owed BEFORE WO-3.'
+- 'CD-PL-F35 — CLOSED IN PART by the inherited candidate: (a), (b) and (c) all verified closed
+   under replant by this seat. The DECLARED LIMIT half is NOT delivered and remains owed in
+   increment 6, now carrying CD-PL-F38.'
+- 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 — all HELD, none exercised, none silently executed.'
+
+risks:
+- 'CD-CONT-001 AMBER — a long-running seat with no intermediate commit loses everything it has done.
+   Vindicated a third time: five committed increments survived, one uncommitted increment did not
+   return. Reinforced for this session — foreground seats only, and the Project Lead commits at
+   every boundary regardless of what a seat does.'
+- 'CD-CONT-002 NEW, LOW — a seat can write a well-formed but FALSE anchor into the record, and prose
+   review will not catch it because the prefix looks right (CD-PL-F36). Mitigated for now by the
+   framework reference check, which caught this one and blocked. The cheap standing control is to
+   resolve every recorded SHA with `git cat-file -e` at each boundary; this seat did so across the
+   entire record and found exactly one bad value.'
+- 'CD-FWK-004, CD-FWK-002, CD-FWK-001, CD-FWK-003, CD-RT-001, CD-SEC-001, CD-BP-001 — all unchanged.'
+
+evidence_refs:
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot — RED before the repairs, AMBER after'
+- 'pbg.continuity.resume — CONTINUITY_SYNTAX_INVALID, then CONTINUITY_REFERENCE_INVALID naming the
+   fabricated SHA, then CONTINUITY_MATCH'
+- 'python3 tools/register/check_no_execution_interface.py — one clean arm and seven single-file
+   probe arms, all run in the foreground by this seat'
+- '/srv/crash-detector-wo2-candidate-inc6/ — the inherited candidate, its diff, and SHA256SUMS'
+- 'RTR-WO2-0001 — NOT YET PRODUCED. It is owed by the Assurance seat and nothing above is it.'
+
+next_safe_action: >
+  Dispatch Engineer CD-ENG-WO2-01 as instance 6, in the FOREGROUND, on the inherited candidate as
+  its base, to FINISH increment 6 of 7 and commit it. Bounded to: (1) widen the pattern E motion
+  window so CD-PL-F38 closes, and nothing else; (2) add MOTION_PARTICLES and ORDER_SEQUENCE_MODIFIERS
+  to __all__; (3) write the guard DECLARED LIMIT into the header of
+  tools/register/check_no_execution_interface.py and into the CD-RT-012-NO-EXECUTION-INTERFACE entry
+  in required-tests.yaml, which is what makes the dangling reference in the inherited docstring true;
+  (4) commit that as one increment; then B3, the plants, as a SEPARATE commit. No further hardening
+  of this guard is authorised (CD-D-015). Then increment 7 (B4). On READY_FOR_ASSURANCE, write the
+  exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
+  SEPARATE agent as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable). Stop at the
+  gate for Product Owner review.
