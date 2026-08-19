@@ -1434,3 +1434,161 @@ entitled to know which of the guard's edges have already been wrong.
 
 Both were found by writing the variant before believing the structure, which is the only reason
 they are in this column rather than in the auditor's.
+
+---
+---
+
+# CD-PL-F61 / CD-ENG-WO2R-F14 — the shared YAML reader that did not terminate
+
+**Directory:** `variants/WO-2R/READER/`
+**Dispatch:** `governance/dispatch/CD-DISPATCH-WO2R-READER.yaml` (`CD-ENG-READER-01`, ENGINEER).
+**Subject:** `tools/register/_yamlmin.py` at execution base `f22d120`.
+
+**THE CLASS these attack:** *AN INPUT ON WHICH THE READER DOES NOT FINISH.* Not "the
+nested-sequence document", not "a block sequence opened by the first key of a sequence item" —
+**any** document on which a parse loop re-enters at a cursor that did not move. The routes below
+are deliberately spread over *how the stall is reached* (plain nesting, the block-scalar folder,
+an anchor, a scalar-bearing inline key, a second artefact, the document root) rather than over
+depths of the one shape that was already known.
+
+**THE STRUCTURE they are aimed at**, so a reader can judge whether that spread is fair:
+
+* **`_parse_sequence`'s merge loop** — the live stall. It re-tests `lines[index][1] >= child_indent`
+  on whatever cursor `_parse_mapping` hands back and has **no increment of its own**, so the
+  delegation is the only source of progress. `_parse_mapping` returns the cursor untouched
+  whenever the line it is pointed at begins `- `, and the condition is still true.
+* **`_parse_mapping`'s child parse** — a still cursor here is LEGITIMATE (`key:` with no block
+  beneath it), and progress comes from the loop's own unconditional `index += 1`.
+* **`_fold_block_scalars`' two loops** — both increment unconditionally.
+* **recursion depth** — bounded by the cursor, but not by the interpreter's stack. See R08.
+
+**THE REPAIR is a property of the loops, not a list of shapes.** `_advance` refuses a delegated
+cursor that did not move, naming the line and what it could not read; a per-loop iteration budget
+of `len(lines)` fails closed if a future edit ever breaks that. Neither knows which document
+shapes stall.
+
+**Nothing in this directory is executable.** The patches are data (`PBG-ASSURE-001`). These are
+the implementing seat's own runs and are IMPLEMENTATION EVIDENCE, never assurance
+(`PBG-SOD-001`, non-waivable). From the moment they are committed they join the **exclusion
+set** and prove nothing about the class — the next auditor must attack it by routes not here.
+
+## The procedure, once per variant
+
+```bash
+SUBJECT=$(mktemp -d /tmp/cd-variant-XXXXXX)
+git -C <this repository> archive <the SHA under audit> | tar -x -C "$SUBJECT"
+cd "$SUBJECT"
+timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .   # expect: exit 0
+git apply --check -p1 <repo>/variants/WO-2R/READER/<RID>.patch
+git apply         -p1 <repo>/variants/WO-2R/READER/<RID>.patch
+<the probe command for this row>                                          # expect: this row
+rm -rf "$SUBJECT"
+```
+
+**USE A TIMEOUT ON BOTH ARMS.** At `f22d120` six of the eight rows below are **exit 124**;
+without a timeout they hang the session instead of being measured.
+
+---
+
+### R01 — `R01-the-three-line-minimal-document.patch` — the minimal reproduction, no check involved
+
+| | |
+|---|---|
+| **document shape** | `top:` / `  - key:` / `      - nested`. Three lines. |
+| **what it attacks** | Termination of the reader itself, with every check removed from the picture, so the defect cannot be attributed to a caller. |
+| **command** | `timeout 60 python3 -B -c "import sys; sys.path.insert(0,'tools/register'); import _yamlmin; _yamlmin.load_yaml('variants/WO-2R/READER/minimal-stall.yaml')"` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** |
+| **repaired** | **exit 1**, `YamlSubsetError: line 3: this reader cannot read a nested block beneath a key written inline on a block-sequence item. It made no progress past '- nested' …` |
+
+### R02 — `R02-PL-T5-declared-in-as-two-authorities.patch` — the Project Lead's PL-T5
+
+| | |
+|---|---|
+| **document shape** | `declared_in:` written as a list of **two** authorities, one of which is `198.51.100.24`. |
+| **what it attacks** | Whether an **entirely ordinary editorial change** — documenting a second Blueprint reference — costs the gate its verdict. It is not an exotic shape; the Project Lead met it by accident on the first probe of that shape. |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** Also exit 124 for `check_base_image_digest_pin.py` **and** `check_engine_no_witness_reach.py`. |
+| **repaired** | **exit 3**, `PRECONDITION_NOT_MET` · `deploy/compose.yaml could not be parsed by this reader: line 428: this reader cannot read a nested block beneath a key written inline on a block-sequence item …` · *"A posture the check cannot read is a posture the check cannot verify."* |
+
+### R03 — the seat-declared `V30`, re-run — `variants/WO-2R/CD-ASR-F04/V30-a-document-shape-that-never-returns.patch`
+
+| | |
+|---|---|
+| **document shape** | `declared_in:` opening a single-element nested block sequence. Boundary 8's executable example. |
+| **what it attacks** | The same class through the variant the previous seat declared rather than fixed. Re-run here, not duplicated. |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** |
+| **repaired** | **exit 3**, `PRECONDITION_NOT_MET`, same stated reason at line 428. Boundary 8's example now returns a verdict. |
+
+### R04 — `R04-anchor-in-inline-value-position.patch` — the nested-anchor case (`CD-ENG-WO2R-F19`)
+
+| | |
+|---|---|
+| **document shape** | `declared_in: &pending_authority` followed by a nested block sequence — an **anchor** in the inline value position. |
+| **what it attacks** | The anchor route rather than the plain one, folded in here rather than left owed. `_parse_sequence` does **not** blank a `&` value the way `_parse_mapping` does, so the anchor reaches the stall by a path the mapping branch cannot. |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** |
+| **repaired** | **exit 3**, `PRECONDITION_NOT_MET`, line 428, same stated reason. |
+| **what it does NOT close** | `CD-ENG-WO2R-F19` proper — top-level-only anchor resolution in `check_engine_no_witness_reach.py` — is a **caller** feature and is untouched. A nested anchor is still `CD-ENGINE-ROOT-103`. Repairing that would change what a check DECIDES and is out of bounds here. Still OPEN. |
+
+### R05 — `R05-block-scalar-folder-blind-spot.patch` — **MINE, a route nobody has tried**
+
+| | |
+|---|---|
+| **document shape** | `declared_in: |` opening a **literal block scalar** on a sequence item. |
+| **what it attacks** | **The folder, not the parser's nesting.** `_fold_block_scalars` tests `body.startswith("- ") and body[2:].strip() in _BLOCK_SCALAR_INDICATORS` — which is true only for a bare `- |`, never for `- key: |`. So a block scalar written on a sequence item's inline key is **not folded**, and its raw indented body is handed to the parser as sequence items. This is a different route: the stall is reached because a *preprocessing* stage declined to consume text it was supposed to absorb. |
+| **why it is a different route** | Nothing about it is nesting depth. The document is three lines and the "nesting" is inside what should have been an opaque scalar. |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** |
+| **repaired** | **exit 3**, `PRECONDITION_NOT_MET`, line 428, same stated reason. |
+| **still true after the repair** | The folder blind spot itself is **not** closed — `- key: |` is still not recognised as a block scalar; it now REFUSES instead of hanging. Raised as `CD-ENG-READER-F04`. |
+
+### R06 — `R06-inline-key-with-a-scalar-value.patch` — **MINE, and it falsifies the recorded diagnosis**
+
+| | |
+|---|---|
+| **document shape** | `declared_in: "BLUEPRINT §2 — ingredient sources"` — a **non-empty scalar value** — followed by a deeper `- 198.51.100.24`. |
+| **what it attacks** | The **recorded class boundary**. `CD-ENG-WO2R-F14` states: *"the near miss that shows how narrow it is: `destinations: - id: D1 / services: - x` parses FINE, because the first key's value is a scalar. It is specifically the first key opening a sequence."* **That is wrong.** This row's inline key carries a scalar and it stalls anyway. |
+| **why it is a different route** | It is not a deeper or wider version of the known shape — it is a **counterexample to the stated rule** for when the known shape is dangerous. The trigger is the *continuation line's* shape, not the inline key's value. A repair fitted to F14's wording would have missed it. |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** |
+| **repaired** | **exit 3**, `PRECONDITION_NOT_MET`, line 428, same stated reason. |
+| **raised as** | `CD-ENG-READER-F03` — the recorded characterisation of the defect was narrower than the defect. |
+
+### R07 — `R07-stall-through-the-destination-registry.patch` — **MINE, a second artefact**
+
+| | |
+|---|---|
+| **document shape** | `destinations:` carrying `- id:` opened as a nested sequence, in `deploy/egress-destinations.yaml`. |
+| **what it attacks** | The **second `load_yaml` call site**. Every row above reaches the reader through `compose_path`; this one reaches it through `registry_path`, a different artefact, a different refusal message and a different clause in the caller. A repair that had been made at the compose call site rather than in the reader would pass every other row and fail this one. |
+| **why it is a different route** | Different subject file, different caller path, and the stall is at the registry document's own root rather than nested under a service. |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 124 — DOES NOT TERMINATE.** |
+| **repaired** | **exit 3**, `PRECONDITION_NOT_MET` · `deploy/egress-destinations.yaml could not be parsed by this reader: line 133: …` · *"A registry the check cannot read is an admissible set the check cannot establish."* Note the **line and the artefact both move**, which is what proves the row reached the second call site and not the first. |
+
+### R08 — nesting deeper than the interpreter's recursion limit — **MINE, and it is the DECLARED LIMIT**
+
+| | |
+|---|---|
+| **document shape** | ~600 levels of block mapping nested under `cd-collectors`' `pending`. |
+| **what it attacks** | **Termination by stack exhaustion rather than by cursor stall** — the one route to "the reader does not finish" that `_advance` and the iteration budgets say nothing about, because it is not a loop. |
+| **why it is a different route** | Every other row is a cursor that stops moving. This one is a cursor that moves perfectly while the *call stack* runs out. |
+| **why there is no `.patch` file** | The smallest document that reaches the interpreter's default limit is ~128 KB of pure indentation, and a 128 KB blob of whitespace is not a reviewable artefact. The generator below reproduces it byte-for-byte. **This omission is a choice and is stated so it does not read as one.** |
+| **generator** | `python3 - <<'PY'`<br>`import pathlib`<br>`p = pathlib.Path("deploy/compose.yaml"); t = p.read_text()`<br>`old = '        - declared_in: "BLUEPRINT §2 — \'allowlist: ingredient sources only\'"\n'`<br>`deep = "".join(" " * (10 + i) + "n%d:\n" % i for i in range(600))`<br>`p.write_text(t.replace(old, old + "          nest:\n" + deep + " " * 610 + "leaf: 1\n"))`<br>`PY` |
+| **command** | `timeout 60 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **at `f22d120`** | **exit 1**, `RecursionError: maximum recursion depth exceeded`. It TERMINATES. |
+| **repaired** | **exit 1**, `RecursionError` — **IDENTICAL. Deliberately not changed.** |
+| **why it was not changed** | It terminates, so the class *"an input on which the reader does not finish"* is closed without it. But `RecursionError` is not a `YamlSubsetError` and it does not name the line it could not read, so the second invariant — *a document it cannot parse raises **and says what it could not read*** — is only partially met. Converting it would move all three callers from **exit 1 to exit 3**, because they catch `YamlSubsetError` and `check.refuse()` returns `EXIT_PRECONDITION`. That is a **verdict change on an input that already has a verdict**, which this dispatch puts out of bounds and instructs the seat to report instead of take. **Raised as `CD-ENG-READER-F02`, and measured on all three callers in both arms.** |
+
+## The three consumers, measured — the dispatch says two
+
+| check | clean tree, `f22d120` | on the R02 (PL-T5) tree, `f22d120` | on the R02 tree, repaired |
+|---|---|---|---|
+| `check_egress_no_broker.py` | exit 0, 69 assertions | **exit 124** | **exit 3**, stated reason |
+| `check_base_image_digest_pin.py` | exit 0, 13 assertions | **exit 124** | **exit 3**, stated reason |
+| `check_engine_no_witness_reach.py` | exit 0, 24 assertions | **exit 124** | **exit 3**, stated reason |
+
+`check_engine_no_witness_reach.py` imports `load_yaml` at line 293 and reads
+`deploy/compose.yaml` at line 1009. It is a **third** declared gate command that returned no
+verdict on the same input, and it is not named in `CD-DISPATCH-WO2R-READER`, in `CD-PL-F61` or
+in `CD-ENG-WO2R-F14`. Raised as `CD-ENG-READER-F01`.

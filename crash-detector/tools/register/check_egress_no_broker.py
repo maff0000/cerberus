@@ -280,23 +280,33 @@ carries a correction and boundaries 7 and 8 exist.
      a measured layer. It is recorded here as an argument, labelled as one, and it is not
      claimed to carry the residue.
 
-  8  A DOCUMENT SHAPE EXISTS ON WHICH THIS CHECK DOES NOT TERMINATE, SO IT RETURNS NO VERDICT
-     AT ALL. `tools/register/_yamlmin.py` enters an infinite loop on a block sequence opened
-     by the FIRST key of a block-sequence item.
-     MEASURED EXAMPLE, minimal: the three lines `top:` / `  - key:` / `      - nested` hang
-     `load_yaml`. Reached through this check's own subject by variant `V30`, which writes
-     `declared_in:` opening a nested sequence in cd-collectors' `pending`: the check does not
-     return within 30 seconds and is killed at exit 124, which is not one of its four
-     declared exit codes.
-     NOT PROVED TO BE CARRIED ANYWHERE. It is NOT a false clean — the check never reports
-     PASS — but non-termination is not a stated refusal either, and a gate that hangs is a
-     gate somebody eventually disables.
-     PRE-EXISTING AND NOT INTRODUCED BY THIS INCREMENT: it reproduces identically at the
-     WO-2R dispatch base `ee8be6b`, before any of this seat's work. It is a defect of the
-     shared reader, which `check_base_image_digest_pin.py` also uses, so repairing it changes
-     the behaviour of a guard this dispatch does not cover. Raised as CD-ENG-WO2R-F14 and
-     ESCALATED rather than fixed here, because this dispatch is bounded to CD-PL-F59 and
-     widening scope silently is prohibited.
+  8  CLOSED, AND REPLACED BY THE NARROWER LIMIT 8b. This boundary previously read "a document
+     shape exists on which this check does not terminate, so it returns no verdict at all",
+     because `tools/register/_yamlmin.py` re-entered a parse loop at a cursor that had not
+     moved. Repaired at the reader under CD-DISPATCH-WO2R-READER (CD-PL-F61, confirming the
+     seat-raised CD-ENG-WO2R-F14) by making progress a property of the loops rather than of
+     the documents they happen to meet.
+     THE MEASURED EXAMPLES THAT USED TO HANG NOW RETURN A VERDICT: the three lines `top:` /
+     `  - key:` / `      - nested`, and variant `V30` through this check's own subject, both
+     give exit 3 PRECONDITION_NOT_MET naming the line that could not be read.
+     CORRECTION, SUPERSEDING NOT EDITING (PBG-CONT-003): the earlier text said the reader was
+     shared with ONE other check. It is shared with TWO — `check_base_image_digest_pin.py`
+     AND `check_engine_no_witness_reach.py` — so THREE declared gate commands returned no
+     verdict on the same input, not two. Raised as CD-ENG-READER-F01.
+
+  8b A DOCUMENT NESTED DEEPER THAN THE INTERPRETER'S RECURSION LIMIT RAISES `RecursionError`
+     RATHER THAN A STATED REFUSAL. It TERMINATES — this is neither a hang nor a false clean —
+     but it reports a Python traceback instead of a line number and a statement of what could
+     not be read, and it exits 1 rather than the 3 this check uses for "I could not read my
+     subject".
+     MEASURED EXAMPLE: ~600 levels of block mapping under cd-collectors' `pending`. The exact
+     generator is `variants/WO-2R/MANIFEST.md`, row `R08`. Observed exit 1, `RecursionError:
+     maximum recursion depth exceeded`, IDENTICALLY before and after the reader repair, on
+     all three checks that share the reader.
+     DELIBERATELY NOT REPAIRED. Converting it to `YamlSubsetError` would move this check from
+     exit 1 to exit 3 on an input that already has a verdict, and the reader dispatch puts a
+     verdict change out of bounds and instructs the seat to report rather than take it.
+     Raised as CD-ENG-READER-F02 for a ruling.
 
 EXIT: 0 clean · 1 violation, with file and line · 2 usage · 3 precondition not met.
 Never a skip, for any reason (PBG-CI-002).

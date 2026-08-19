@@ -861,13 +861,27 @@ criteria:
         the same sentence naming api.ibkr.com is refused by CD-EGRESS-002 (V29b). For an ADDRESS
         LITERAL in prose, NOT PROVED TO BE CARRIED ANYWHERE — closing it would mean recognising
         which tokens look like endpoints, which is the spelling recognition that IS this defect.
-        (8) A document shape exists on which this check DOES NOT TERMINATE, so it returns no
-        verdict at all: tools/register/_yamlmin.py loops forever on a block sequence opened by the
-        FIRST key of a block-sequence item, reached through `pending` by V30 and killed at exit
-        124, which is not one of the four declared exit codes. Not a false clean — it never
-        reports PASS — but not a stated refusal either. PRE-EXISTING, reproduced at the dispatch
-        base ee8be6b; NOT PROVED TO BE CARRIED ANYWHERE; raised as CD-ENG-WO2R-F14 and ESCALATED
-        rather than fixed, the reader being shared with check_base_image_digest_pin.py.
+        (8) CLOSED, and replaced by the narrower boundary 8b. This read "a document shape exists
+        on which this check DOES NOT TERMINATE": tools/register/_yamlmin.py re-entered a parse
+        loop at a cursor that had not moved. Repaired at the reader under
+        CD-DISPATCH-WO2R-READER (CD-PL-F61, confirming CD-ENG-WO2R-F14) by making progress a
+        property of the loops rather than of the documents they happen to meet. The examples that
+        hung — the three lines `top:` / `  - key:` / `      - nested`, and V30 through `pending`
+        — now return exit 3 PRECONDITION_NOT_MET naming the line that could not be read.
+        CORRECTION, superseding not editing (PBG-CONT-003): the earlier text said the reader was
+        shared with ONE other check; it is shared with TWO, check_base_image_digest_pin.py AND
+        check_engine_no_witness_reach.py, so THREE declared gate commands returned no verdict on
+        the same input, not two. Raised as CD-ENG-READER-F01.
+        (8b) A document nested deeper than the interpreter's recursion limit raises
+        RecursionError rather than a stated refusal. It TERMINATES — not a hang, not a false
+        clean — but it reports a traceback instead of a line number and what could not be read,
+        and it exits 1 rather than the 3 this check uses for "I could not read my subject".
+        MEASURED EXAMPLE: ~600 levels of block mapping under cd-collectors' `pending`; the exact
+        generator is row R08 of variants/WO-2R/MANIFEST.md. Observed exit 1, RecursionError,
+        IDENTICALLY before and after the reader repair, on all three checks that share the
+        reader. DELIBERATELY NOT REPAIRED: converting it would move this check from exit 1 to
+        exit 3 on an input that already has a verdict, which the reader dispatch puts out of
+        bounds and instructs the seat to report rather than take. Raised as CD-ENG-READER-F02.
         DO NOT READ A CLEAN RUN AS PROOF THAT NO EXECUTION PATHWAY EXISTS. It was clean for E05,
         and after E05 was closed it was still clean for PL-S3a — the same address one field
         across, in `pending`.

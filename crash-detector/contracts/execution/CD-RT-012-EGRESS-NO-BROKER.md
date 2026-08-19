@@ -187,20 +187,36 @@ or says **NOT PROVED TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
    `CD-EGRESS-007` a pending entry has no host-bearing field, so an address in prose is a
    *mention* and not a *declaration*. That is an argument about what a future reader would
    do. **It is recorded as an argument and is not claimed to be a layer.**
-8. **A document shape exists on which this check does not terminate, so it returns no verdict
-   at all.** `tools/register/_yamlmin.py` enters an infinite loop on a block sequence opened
-   by the **first** key of a block-sequence item — minimally, the three lines `top:` /
-   `  - key:` / `      - nested`. Reached through this check's own subject by variant `V30`,
-   which writes `declared_in:` opening a nested sequence in cd-collectors' `pending`: the
-   check does not return within 30 seconds and is killed at exit `124`, which is not one of
-   the four declared exit codes. **NOT PROVED TO BE CARRIED ANYWHERE.** It is *not* a false
-   clean — the check never reports PASS — but non-termination is not a stated refusal either,
-   and a gate that hangs is a gate somebody eventually disables.
-   **Pre-existing and not introduced by this increment:** it reproduces identically at the
-   WO-2R dispatch base `ee8be6b`. The reader is shared with
-   `tools/register/check_base_image_digest_pin.py`, so repairing it changes the behaviour of
-   a guard this dispatch does not cover. Raised as `CD-ENG-WO2R-F14` and **escalated, not
-   fixed**, because this dispatch is bounded to `CD-PL-F59`.
+8. **CLOSED, and replaced by the narrower boundary 8b.** This boundary read *"a document shape
+   exists on which this check does not terminate, so it returns no verdict at all"*, because
+   `tools/register/_yamlmin.py` re-entered a parse loop at a cursor that had not moved.
+   Repaired at the reader under `CD-DISPATCH-WO2R-READER` (`CD-PL-F61`, confirming the
+   seat-raised `CD-ENG-WO2R-F14`), by making progress a property of the loops rather than of
+   the documents they happen to meet: every delegated cursor goes through `_advance`, which
+   refuses one that did not move and names the line, and each loop carries an iteration budget
+   that fails closed if a future edit ever breaks that.
+   **The examples that used to hang now return a verdict.** The three lines `top:` /
+   `  - key:` / `      - nested`, and variant `V30` through this check's own subject, both give
+   exit `3` `PRECONDITION_NOT_MET` naming the line that could not be read.
+   **Correction, superseding rather than editing (`PBG-CONT-003`):** the earlier text said the
+   reader was shared with **one** other check. It is shared with **two** —
+   `tools/register/check_base_image_digest_pin.py` **and**
+   `tools/register/check_engine_no_witness_reach.py` — so **three** declared gate commands
+   returned no verdict on the same input, not two. Raised as `CD-ENG-READER-F01`.
+
+8b. **A document nested deeper than the interpreter's recursion limit raises `RecursionError`
+   rather than a stated refusal.** It **terminates** — this is neither a hang nor a false clean
+   — but it reports a Python traceback instead of a line number and a statement of what could
+   not be read, and it exits `1` rather than the `3` this check uses for *"I could not read my
+   subject"*.
+   **Measured example:** ~600 levels of block mapping under `cd-collectors`' `pending`. The
+   exact generator is row `R08` of `variants/WO-2R/MANIFEST.md`. Observed exit `1`,
+   `RecursionError: maximum recursion depth exceeded`, **identically before and after** the
+   reader repair, on all three checks that share the reader.
+   **Deliberately not repaired.** Converting it to `YamlSubsetError` would move this check from
+   exit `1` to exit `3` on an input that already has a verdict, and the reader dispatch puts a
+   verdict change out of bounds and instructs the seat to report rather than take it. Raised as
+   `CD-ENG-READER-F02` for a ruling.
 
 **DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO EXECUTION PATHWAY EXISTS.** It was
 clean for `E05`, and after `E05` was closed it was still clean for `PL-S3a` — the same

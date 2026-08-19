@@ -23,6 +23,41 @@ resolved. Every posture field the checks read is written literally on each servi
 only be seen after resolving an anchor would be a posture hiding behind an indirection —
 and :func:`unresolved_aliases` reports where such a hiding place exists, so a check can
 refuse rather than read a field as absent when it is merely aliased.
+
+TERMINATION IS A PROPERTY OF THE LOOPS, NOT OF THE DOCUMENTS THEY HAPPEN TO MEET.
+--------------------------------------------------------------------------------
+Every loop in this module drives a single monotone cursor into ``lines`` — a finite list
+built once, before parsing starts, and never mutated while a parse is in progress. The
+invariant is therefore stated once and enforced everywhere:
+
+    **On every iteration, a loop either leaves (break / return / raise) or moves the
+    cursor strictly forward. No loop's continuation condition can be true on a cursor
+    that did not move.**
+
+There are exactly two ways a loop body can move the cursor, and both are covered:
+
+1. **The loop moves it itself**, with an unconditional ``index += 1`` on its own path.
+2. **The loop delegates** to a sub-parser and adopts the cursor it returns. A sub-parser
+   that returns the cursor it was given makes the next iteration bit-for-bit identical to
+   this one, for ever — so every delegation goes through :func:`_advance`, which refuses
+   a cursor that did not move instead of re-entering on it.
+
+:func:`_advance` is what makes this a closure over the CLASS "an input on which the reader
+does not finish", rather than over the particular documents that were tried. It does not
+know which shapes stall; it only knows that a stalled cursor is a construct the reader
+cannot read at that position, and says so (``YamlSubsetError``) rather than looping. The
+one delegation where a still cursor is LEGITIMATE — a mapping key with no block beneath it
+— is documented at its call site and gets its progress from rule 1 instead.
+
+Each loop additionally carries an iteration budget of ``len(lines)``. It is unreachable
+while rules 1 and 2 hold, and exists so that a future edit which breaks one of them fails
+CLOSED with a stated reason at a named line, instead of reintroducing a hang. Termination
+is thus not an argument about the current branch set; it is checked while running.
+
+KNOWN LIMIT — nesting deeper than the interpreter's recursion limit raises ``RecursionError``
+rather than ``YamlSubsetError``. It terminates, so it is not a hang, but it does not name the
+line it could not read. Converting it would move the callers' exit code from 1 to 3, which is
+a verdict change, so it is REPORTED (``CD-ENG-READER-F02``) and not taken here.
 """
 
 from __future__ import annotations
@@ -135,6 +170,57 @@ def _indent_of(line: str) -> int:
     return len(line) - len(line.lstrip(" "))
 
 
+def _advance(lines, before: int, after: int, what: str) -> int:
+    """Adopt a delegated cursor, refusing one that did not move.
+
+    THE TERMINATION INVARIANT, enforced rather than argued. ``before`` is the cursor a
+    loop delegated from; ``after`` is the cursor the sub-parser returned. If they are
+    equal the sub-parser consumed nothing, so re-entering the loop would repeat this
+    iteration unchanged, for ever. That is a stall, and a stall is not a document shape
+    to be enumerated — it is the reader meeting a construct it cannot read at this
+    position.
+
+    So it says which line it could not read and what it was trying to read there, and
+    raises. A stated refusal is the project standard (``CD-D-048``): silence and a partial
+    parse are both worse, because a partial parse of a gate's subject makes the gate decide
+    on a document nobody wrote.
+    """
+    if after > before:
+        return after
+    if before >= len(lines):
+        # The enclosing loop's own `index < len(lines)` test ends it on the next
+        # evaluation, so there is no stall to refuse here.
+        return after
+    number, _, text = lines[before]
+    raise YamlSubsetError(
+        f"line {number}: this reader cannot read {what}. It made no progress past "
+        f"{text!r} and refuses rather than guessing. It supports block mappings, block "
+        f"sequences of scalars and block sequences of mappings; write the value as a "
+        f"block beneath its own key so it can be read without a YAML engine."
+    )
+
+
+def _stalled(lines, index: int, where: str) -> "YamlSubsetError":
+    """The iteration budget was spent — a loop ran without making progress.
+
+    Unreachable while :func:`_advance` guards every delegation and every loop increments
+    its own cursor. It exists so that a future edit which breaks either rule fails CLOSED,
+    at a named line, instead of hanging the caller. A gate that hangs is a gate somebody
+    eventually disables.
+    """
+    if index < len(lines):
+        number, _, text = lines[index]
+        return YamlSubsetError(
+            f"line {number}: {where} made no progress past {text!r} within its iteration "
+            f"budget. This is an internal invariant failure in this reader, not a defect "
+            f"in the document; it refuses so that a caller gets a verdict."
+        )
+    return YamlSubsetError(
+        f"{where} made no progress within its iteration budget at end of document. This "
+        f"is an internal invariant failure in this reader, not a defect in the document."
+    )
+
+
 def _parse(lines, start: int, indent: int):
     if start >= len(lines):
         return None, start
@@ -150,7 +236,12 @@ def _parse_sequence(lines, start: int, indent: int):
     items = LocList()
     items.line = lines[start][0]
     index = start
+    budget = len(lines) - start + 1
     while index < len(lines):
+        budget -= 1
+        if budget < 0:  # pragma: no cover - unreachable while the invariant holds
+            raise _stalled(lines, index, "the block-sequence loop")
+        iteration_start = index
         line_number, line_indent, text = lines[index]
         if line_indent < indent:
             break
@@ -161,7 +252,15 @@ def _parse_sequence(lines, start: int, indent: int):
         remainder = text[2:].strip()
         index += 1
         if not remainder:
-            child, index = _parse(lines, index, indent + 1)
+            child, moved = _parse(lines, index, indent + 1)
+            # Rule 1 supplies the progress here: the `index += 1` above already moved the
+            # cursor past the item line, so a still cursor out of `_parse` is a legitimate
+            # empty item followed by a dedent. The guard is measured from the top of the
+            # ITERATION, not from the delegation, so it passes today and would fire if a
+            # future edit ever removed that increment.
+            index = _advance(
+                lines, iteration_start, moved, "the value of an empty block-sequence item"
+            )
             items.lines[len(items)] = line_number
             items.append(child)
             continue
@@ -171,8 +270,24 @@ def _parse_sequence(lines, start: int, indent: int):
             inline.line = line_number
             inline.lines[key.strip()] = line_number
             child_indent = indent + 2
+            # THE STALL SITE (CD-PL-F61 / CD-ENG-WO2R-F14). This loop re-tests its own
+            # condition on the cursor `_parse_mapping` hands back and has no increment of
+            # its own, so the delegation is the ONLY source of progress — rule 2 applies in
+            # its pure form. `_parse_mapping` returns the cursor untouched whenever the line
+            # it is pointed at cannot open a mapping, and the condition is still true, so the
+            # loop re-entered at the same offset for ever. It now refuses that line instead.
+            merge_budget = len(lines) - index + 1
             while index < len(lines) and lines[index][1] >= child_indent:
-                more, index = _parse_mapping(lines, index, lines[index][1])
+                merge_budget -= 1
+                if merge_budget < 0:  # pragma: no cover - unreachable while `_advance` holds
+                    raise _stalled(lines, index, "the sequence-item merge loop")
+                more, moved = _parse_mapping(lines, index, lines[index][1])
+                index = _advance(
+                    lines,
+                    index,
+                    moved,
+                    "a nested block beneath a key written inline on a block-sequence item",
+                )
                 if isinstance(more, dict):
                     inline.update(more)
                     inline.lines.update(getattr(more, "lines", {}))
@@ -190,7 +305,11 @@ def _parse_mapping(lines, start: int, indent: int):
     mapping = LocDict()
     mapping.line = lines[start][0]
     index = start
+    budget = len(lines) - start + 1
     while index < len(lines):
+        budget -= 1
+        if budget < 0:  # pragma: no cover - unreachable while the invariant holds
+            raise _stalled(lines, index, "the block-mapping loop")
         line_number, line_indent, text = lines[index]
         if line_indent < indent:
             break
@@ -220,6 +339,12 @@ def _parse_mapping(lines, start: int, indent: int):
             else:
                 mapping[key] = _scalar(value, line_number)
             continue
+        # Rule 1 supplies the progress here, and a still cursor is LEGITIMATE: `key:` with
+        # no block beneath it is followed by a sibling key at this same indent, which
+        # `_parse` correctly declines to consume. The unconditional `index += 1` above has
+        # already moved this iteration on, so the loop advances regardless of what `_parse`
+        # returns. This is the one delegation in the module that is NOT guarded by
+        # `_advance`, and it is stated here rather than left to be re-derived.
         child, index = _parse(lines, index, indent + 1)
         mapping[key] = child
     return mapping, index
@@ -231,7 +356,18 @@ _BLOCK_SCALAR_INDICATORS = ("|", ">", "|-", ">-", "|+", ">+")
 def _fold_block_scalars(raw_lines: list[str]) -> list[tuple[int, str]]:
     out: list[tuple[int, str]] = []
     index = 0
+    budget = len(raw_lines) + 1
     while index < len(raw_lines):
+        # Rule 1: this loop increments unconditionally, immediately, before any branch can
+        # `continue`. The budget states that as a checked fact rather than an inspection.
+        budget -= 1
+        if budget < 0:  # pragma: no cover - unreachable while the invariant holds
+            raise YamlSubsetError(
+                f"line {index + 1}: the block-scalar folding loop made no progress within "
+                f"its iteration budget. This is an internal invariant failure in this "
+                f"reader, not a defect in the document; it refuses so that a caller gets "
+                f"a verdict."
+            )
         raw = raw_lines[index]
         number = index + 1
         index += 1
@@ -252,7 +388,16 @@ def _fold_block_scalars(raw_lines: list[str]) -> list[tuple[int, str]]:
             continue
         key_indent = _indent_of(stripped)
         parts: list[str] = []
+        # Rule 1 again: every path through this body either breaks or increments.
+        body_budget = len(raw_lines) - index + 1
         while index < len(raw_lines):
+            body_budget -= 1
+            if body_budget < 0:  # pragma: no cover - unreachable while the invariant holds
+                raise YamlSubsetError(
+                    f"line {index + 1}: the block-scalar body loop made no progress within "
+                    f"its iteration budget. This is an internal invariant failure in this "
+                    f"reader, not a defect in the document."
+                )
             candidate = raw_lines[index]
             if not candidate.strip():
                 index += 1
