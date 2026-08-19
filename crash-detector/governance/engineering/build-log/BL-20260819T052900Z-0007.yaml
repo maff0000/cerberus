@@ -1,0 +1,235 @@
+# WO-2 increment 3 of 7 boundary — the Engineer's return reconciled, and the four items it
+# escalated RULED: CD-D-010 (F17), CD-D-011 (F18), CD-D-012 (F19), CD-D-013 (F25).
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T052900Z-0007
+timestamp_utc: '2026-08-19T05:29:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: f6ce269ca787dab229836052893e3a5e39779bbd
+current_sha: f6ce269ca787dab229836052893e3a5e39779bbd
+lane_head_sha: 7e9b46ee19499b75c8d3d17038d011defe1ee028
+lane_increment_sha: d40e5c6e96d65ef204bed6018dbe58dadcd556b0
+parent_entry_id: BL-20260819T045600Z-0005
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2-01 (instance 3) was dispatched in the FOREGROUND against the increment-3
+  scope with the CD-D-009 adoption addendum and CD-OB-001. It returned INCREMENT_3_COMPLETE at lane
+  d40e5c6 with its Build Log entry BL-20260819T052200Z-0006 committed as the child 7e9b46e. Block A
+  is closed. This entry records the Project Lead's reconciliation of that return and rules the four
+  items the seat escalated. The CD-D-009 gamble paid: the seat adopted 26 of the 37 inherited files
+  unchanged with a stated method for each, corrected 11, and found a real defect in them that the
+  Project Lead's own probe had missed — see the F21 note below, which is the most important thing
+  in this entry.
+
+reconciliation:
+  what_this_is: >
+    RECONCILIATION OF A SEAT RETURN BY THE PROJECT LEAD. It is NOT assurance and does not become
+    assurance by being thorough (PBG-SOD-001, non-waivable). Its purpose is to establish that the
+    seat did what it says it did, not that the result is correct enough to certify.
+  checks_run:
+  - cmd: 'git log --oneline / git status --short --untracked-files=all  (lane)'
+    exit: 0
+    result: 'lane at 7e9b46e, child of d40e5c6, child of 8723ffb. Working tree CLEAN — the seat left
+      nothing uncommitted, which is the discipline it was dispatched under.'
+  - cmd: 'git diff --name-only 8723ffb..HEAD | grep <protected paths>'
+    exit: 1
+    result: 'NO protected path touched. pbg/, PID.md, BLUEPRINT.md, CLAUDE.md, governance/authority/,
+      governance/decisions/, governance/dispatch/, ACTIVE_WORK.yaml and schemas/ all untouched.
+      38 files changed, 8067 insertions, 4 deletions — all inside writable_scope.'
+  - cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q'
+    exit: 0
+    result: '904 passed. The 637 tests inherited from the attested increments 1 and 2 are still
+      green; nothing earlier was weakened to let this increment through.'
+  - cmd: 'docker ps -a --filter name=cd-store-wo2- ; docker volume ls --filter name=cd-store-wo2-'
+    exit: 0
+    result: 'BOTH EMPTY. RT-A''s destroy-before-return bound was honoured. No container or volume
+      outside the cd-store-wo2- prefix was reached.'
+  - cmd: 'sha256sum -c ../SHA256-MANIFEST.txt  (in the CD-D-009 snapshot)'
+    exit: 0
+    result: '37 of 37 OK. The snapshot is intact and the inherited bytes remain comparable.'
+  - cmd: 'git diff 8723ffb..HEAD | grep -iE "password|secret|token|credential"'
+    exit: 0
+    result: 'NO SECRET VALUE recorded. Every hit is an env-var NAME (CD_STORE_*_PASSWORD) or prose
+      about handling secrets by name. PBG-SEC-002, PBG-EVID-003 and PBG-CONT-009 intact — including
+      through RT-A, whose run-time credentials appear nowhere in the record.'
+  - cmd: '/tmp/pl_sigterm_probe.sh — 40 independent SIGTERM cycles against deploy/entrypoints/cd_engine.py'
+    exit: 0
+    result: 'SIGTERM ignored in 0 of 40 runs. The seat''s CD-ENG-F21 fix is independently
+      re-measured by this seat and holds.'
+  - cmd: 'read src/crash_detector/runtime/lifecycle.py signal path'
+    exit: 0
+    result: 'the handler is async-signal-safe by construction — attribute stores plus os.write on a
+      raw descriptor, with the reason stated in the docstring. It does not take a lock.'
+  what_was_NOT_checked: >
+    The seat's clause-by-clause table was read, not re-derived; the RT-A probe was not re-run by
+    this seat; the 267 new tests were run, not read. All of that is Assurance's, on a separate seat.
+
+the_finding_that_matters:
+  id: 'CD-ENG-F21, found by the Engineer'
+  what: >
+    The inherited SIGTERM handler called threading.Event.set() — which takes a lock — from a signal
+    handler that interrupts the very thread holding it. The service therefore ignored SIGTERM in
+    5 of 40 runs (12.5%), deadlocked in futex_wait_queue with the signal caught.
+  why_it_is_recorded_here: >
+    Because it is the direct vindication of CD-D-009's central condition, and the Project Lead
+    should be on record about it. The PL's own reconciliation of the inherited material READ THE
+    CODE and found the SIGTERM clause apparently satisfied. It was not. The docstring asserted the
+    property the code failed to deliver, so reading could not have found it — only running it 40
+    times could, and only a seat that treated a single flaky failure as a defect to diagnose rather
+    than a test to re-run would have looked. That is precisely the difference between the Project
+    Lead's reconciliation and an Engineer's attestation, and it is why CD-D-009 ruled KEEP AS
+    UNATTESTED CANDIDATE rather than adopting the material on the strength of the PL's own probe.
+    Had the material been committed on the PL's reading, WO-2 would have shipped a service the
+    platform SIGKILLs mid-write, under a clause claiming the opposite.
+  standing_lesson: >
+    A clause verified by reading is verified against the author's intent. A clause verified by
+    running is verified against the machine. Where a clause asserts RUNTIME behaviour, reading is
+    not a method, and this project should not accept it as one again.
+
+decisions_closed:
+- id: CD-D-010
+  title: 'CD-ENG-F17 — does cd_collector hold INSERT on raw.dial_required_input and raw.dial_contributing_input?'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: 'NO. The Engineer''s implementation is UPHELD. No grant is added.'
+  rationale: >
+    BLUEPRINT §4's matrix row reads "INSERT on raw.*", which taken literally reaches the two
+    dial-input tables. §5 states that no collector holds a grant that would let it write a
+    conclusion. A collector able to write a dial's required-input set decides what a dial requires,
+    and therefore decides when a dial is entitled to read UNKNOWN — which is the single most
+    load-bearing behaviour in this product (CD-AC-001). That is a conclusion, not an observation.
+    The two clauses conflict and the specific governs the general: "raw.*" is shorthand for the
+    observation tables, not a considered grant of the registry's semantics.
+    This is a conflict WITHIN the Blueprint, not a question of product meaning, so it is the Project
+    Lead's to rule (PBG-BP-001) and not the Product Owner's. The Engineer was right to disclose it
+    rather than resolve it, and right about which way it goes.
+  consequence: 'CD-ERR-001 raised below — §4''s matrix row needs tightening to say what it means.'
+- id: CD-D-011
+  title: 'CD-ENG-F18 — §4''s schema table says dial is readable by cd_engine; §4''s grant matrix gives it no SELECT'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: 'The GRANT MATRIX governs. No SELECT on dial.* for cd_engine. Implementation UPHELD.'
+  rationale: >
+    The two halves of §4 disagree, and the matrix is the operative half — it is the half written as
+    grants, and the half CD-AC-003 is planted against. It is also the half that is right: evaluate()
+    is a PURE function of (observations, config_snapshot, now_utc) by §7, so an engine that can read
+    dial history is an engine that can be made to depend on its own previous output. Granting SELECT
+    to satisfy a prose table would open exactly the route §7 exists to close. The schema table is
+    descriptive prose; the matrix is the specification.
+  consequence: 'CD-ERR-001.'
+- id: CD-D-012
+  title: 'CD-ENG-F19 — §4 says alert.* is readable by "cd_private, health endpoint", but names no role for the health endpoint'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: 'NO grant is created. Implementation UPHELD. The gap is recorded, not filled.'
+  rationale: >
+    There is no role to grant to. Inventing one — naming a health-endpoint principal and deciding
+    what it may see — would be inventing product meaning, which no seat may do (PBG-AUTH-005), and
+    the Project Lead is a seat for this purpose too. CD-AC-014 has no store role in WO-2 and needs
+    none: WO-2 registers zero sources, so there is nothing for a health endpoint to report on. The
+    honest state is an unfilled gap carried openly, not a plausible role created to make a prose
+    line come true.
+  consequence: >
+    Carried to the Product Owner as an OPEN QUESTION for WO-3 alongside CD-D-005, since deciding
+    what the health endpoint is and what it may see is a product call, not an implementation one.
+- id: CD-D-013
+  title: 'CD-ENG-F25 — .dockerignore is owed at the repository root and sits outside the Engineer''s writable_scope'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: >
+    WRITABLE_SCOPE WIDENED, narrowly and durably: /srv/crash-detector-wo2/.dockerignore is added to
+    CD-DISPATCH-WO2-ENGINEER.yaml writable_scope. The Engineer creates it in increment 4.
+  rationale: >
+    The Engineer was correct to stop and escalate rather than create it — that is the behaviour the
+    dispatch asks for, and a seat that had quietly added a root file "because it was obviously
+    needed" would have widened its own scope by initiative. Ruling on it is mine.
+    I widen rather than defer to WO-3 for one reason: without a .dockerignore the build context
+    carries governance/ and pbg/ — the entire governance record and the pinned framework — into the
+    Docker daemon and into every image layer built from it. Deferring that to WO-3 means the
+    protection arrives in the same work order as the first `docker build` that needs it, defended by
+    nothing but a note in a Dockerfile comment and somebody remembering to read it. A .dockerignore
+    is DESIGN, not BUILD: it is a declaration of what the context excludes, it builds nothing, and
+    it is therefore squarely inside A6's "container set as DESIGN" and inside RT-B's prohibition
+    rather than in tension with it.
+    The widening does not exceed CD-AUTH-0001's own capability (PBG-RT-004): the Project Lead may
+    write a root-level ignore file, so the descendant seat may be granted it. It is recorded as a
+    dispatch AMENDMENT with this rationale, not applied silently.
+  bounds: 'exactly one path added. No other scope changes. The amendment is committed before increment 4 is dispatched.'
+
+errata_raised:
+- id: CD-ERR-001
+  against: 'BLUEPRINT.md §4'
+  what: >
+    Three internal inconsistencies confirmed by implementation: (a) the matrix row "INSERT on raw.*"
+    for cd_collector reaches tables it should not (CD-D-010); (b) the §4 schema table and the §4
+    grant matrix disagree about cd_engine's access to schema dial (CD-D-011); (c) §4 names a "health
+    endpoint" reader of alert.* with no role behind it (CD-D-012).
+  disposition: >
+    NOT corrected in WO-2. Each is ruled above and the implementation is correct as ruled, so
+    nothing is blocked. Correcting §4's text is a substantive clause change, which moves the
+    Blueprint version and needs Product Owner acceptance (PBG-BP-001) — and doing it now would move
+    the specification underneath an Assurance dispatch that is about to audit against it. Owed
+    BEFORE WO-3, as a Blueprint revision the PO accepts, carrying CD-D-010, CD-D-011 and CD-D-012.
+  why_recorded_now: >
+    So that a later reader finding §4's text disagreeing with the migrations does not conclude the
+    migrations drifted. They did not; §4 is imprecise and the divergence is ruled, deliberate and
+    dated.
+
+obligations_status:
+- 'CD-OB-001 — DISCHARGED by the Engineer. RT-A ran: one digest-pinned postgres container, loopback
+  ephemeral port, run-time credentials never recorded, migrations applied, 150 live-catalogue
+  assertions with 0 failures, two negative controls each producing 7 failures so the probe is known
+  to bite, container and volume destroyed with exit 0 and the residue check empty. The grant matrix
+  has now been observed in a running store. NOTE: this is the seat''s own evidence and is NOT
+  assurance — the store was built by the seat that wrote the migrations, and CD-RT-003-GRANT-MATRIX-
+  LIVE''s admitted evidence remains RTR-WO2-0001, which only CD-ASR-WO2-01 may produce.'
+- 'CD-OB-002 — OPEN as designed. The Python base image digest remains DIGEST_NOT_RESOLVED, owed at
+  WO-3 with RT-B. It was not invented.'
+- 'CD-OB-003 — RAISED. The RT-A probe instrument lives in /tmp with its sha256 recorded, so the
+  evidence is reproducible in principle but not by running anything in the repository. B1 must
+  deliver CD-RT-003-GRANT-MATRIX-LIVE as a durable check in tools/register/. Until it does, that
+  criterion has evidence and no standing guard, and an auditor cannot run it. Owed by increment 4.'
+
+held_actions_status: 'CD-HOLD-003 partially exercised as authorised (RT-A only, discharged and
+  closed out). CD-HOLD-004 and CD-HOLD-005 remain HELD and untouched — zero sources registered,
+  nothing bound off 127.0.0.1.'
+
+risks:
+- 'CD-ENG-R1 MEDIUM ACCEPTED — egress allowlists are structurally indistinguishable from NONE in
+  WO-2 because both networks are internal. Disclosed in compose.yaml rather than claimed. The
+  enforcing lane is owed at WO-3. CD-AC-012''s WO-2 evidence rests on topology plus the absence of
+  any named broker host, both of which are checkable.'
+- 'CD-ENG-R2 MEDIUM ACCEPTED — publishing a port from a service on an internal bridge network is
+  unverified on this Docker version because verifying it needs RT-B. The failure mode is the safe
+  one: cd-public unreachable, which is CD-D-006 and CD-HOLD-005 exactly. Carried to WO-3.'
+- 'CD-ENG-R3 LOW ACCEPTED — the 10-cycle SIGTERM repetition guard would alone miss a 12.5% defect
+  about a quarter of the time; the deterministic structural guard on the flag type is the primary.
+  Correctly stated by the seat rather than left for a reader to over-trust.'
+- 'CD-ENG-R4 / CD-OB-003 MEDIUM — see obligations above; closes in increment 4.'
+- 'CD-D-009-R1 CLOSED — the rubber-stamp risk did not materialise. The seat corrected 11 of 37 files
+  and found a runtime defect the PL''s reading had passed. The retained snapshot confirmed the
+  inherited bytes were unmodified before review.'
+- 'CD-CONT-001 AMBER, MITIGATION HOLDING — the foreground seat ran ~28 minutes and returned. Two
+  increment boundaries now stand between this session and total loss.'
+
+evidence_refs:
+- 'lane d40e5c6 — increment 3; lane 7e9b46e — the Engineer''s Build Log entry BL-20260819T052200Z-0006'
+- '/srv/crash-detector-wo2-candidate-inc3/ — the inherited bytes, verified intact after the increment'
+- '/tmp/pl_sigterm_probe.sh — this seat''s independent 40-cycle re-measurement of CD-ENG-F21'
+
+next_safe_action: >
+  Commit the CD-D-013 amendment to CD-DISPATCH-WO2-ENGINEER.yaml, then dispatch Engineer
+  CD-ENG-WO2-01 (instance 4) in the FOREGROUND for increment 4 of 7: BLOCK B, starting with B1, the
+  register checks under tools/register/, including the durable CD-RT-003-GRANT-MATRIX-LIVE check
+  that discharges CD-OB-003, and the .dockerignore now in scope. Then B2 the Required Test Register,
+  B3 the five planted violations, B4 the seat''s own runs. On READY_FOR_ASSURANCE, write the exact
+  SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
+  SEPARATE agent as CD-ASR-WO2-01. Stop at the gate for Product Owner review.

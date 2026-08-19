@@ -65,6 +65,14 @@ writable_scope:
 - /srv/crash-detector-wo2/plants/
 - /srv/crash-detector-wo2/required-tests.yaml
 - /srv/crash-detector-wo2/pyproject.toml, requirements.txt, requirements.lock, README.md, .gitignore
+- /srv/crash-detector-wo2/.dockerignore
+  # AMENDMENT, 2026-08-19T05:29Z, CD-D-013 (BL-20260819T052900Z-0007). Added by the Project Lead
+  # after the seat correctly STOPPED and escalated CD-ENG-F25 rather than creating this file on its
+  # own initiative. Without it the Docker build context carries governance/ and pbg/ — the whole
+  # governance record and the pinned framework — into the daemon and into every image layer. An
+  # ignore file is DESIGN, not BUILD: it declares what the context excludes and builds nothing, so
+  # it sits inside A6 and does not disturb RT-B's prohibition. Exactly one path is added; no other
+  # scope changes. The widening does not exceed CD-AUTH-0001's own capability (PBG-RT-004).
 - /srv/crash-detector-wo2/governance/engineering/build-log/   # NEW entries only, never an edit
 - /tmp/                                                        # scratch, non-governed
 

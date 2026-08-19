@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T04:56:00Z'
+updated_utc: '2026-08-19T05:29:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -18,13 +18,14 @@ objective: >
   WO-3.
 current_phase: BUILD
 current_block: >
-  CD-WO-002 block A, increment 2 of 7 COMPLETE at lane SHA 8723ffb — A4 collector framework and
-  source registry, A7 closed envelope contracts and the publication refusal path. 637 unit tests.
-  Engineer instance 2 was then terminated mid-increment-3, leaving 37 uncommitted files in the lane
-  which are RULED KEEP AS UNATTESTED CANDIDATE (CD-D-009, BL-20260819T045600Z-0005) and snapshotted
-  to /srv/crash-detector-wo2-candidate-inc3/. They are NOT project state until an Engineer seat
-  reviews, corrects, commits and attests them. Next: instance 3 adopts-or-corrects increment 3
-  (A5 + A6, which closes block A) and discharges CD-OB-001, then runs increments 4 to 7.
+  CD-WO-002 BLOCK A IS CLOSED. Increment 3 of 7 COMPLETE at lane SHA d40e5c6, attested by
+  CD-ENG-WO2-01 in BL-20260819T052200Z-0006 (lane 7e9b46e) — A5 store schema and grant matrix, A6
+  container set as DESIGN. 904 unit tests. The CD-D-009 inherited candidate was adopted under
+  attestation: 26 of 37 files unchanged with a stated method for each, 11 corrected. RT-A was
+  discharged (CD-OB-001) — the grant matrix has now been observed in a live catalogue, 150
+  assertions, 0 failures, container and volume destroyed. The seat found CD-ENG-F21, a real SIGTERM
+  deadlock in the inherited material that the Project Lead's read-only probe had passed; the PL has
+  independently re-measured the fix at 0 ignored in 40 runs. Next: increment 4 of 7, BLOCK B.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -35,18 +36,18 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 528b4745fe31aaaa356a9e6465e080fbd99bb77a
-lane_head_sha: 8723ffbf71fedf0de6a229a4865a3c79283f9782   # wo-2-skeleton, increment 2 of 7 committed
+last_completed_checkpoint_sha: f6ce269ca787dab229836052893e3a5e39779bbd
+lane_head_sha: 7e9b46ee19499b75c8d3d17038d011defe1ee028   # wo-2-skeleton, increment 3 of 7 + its Build Log
 continuity_record_commit: PENDING
 working_tree_state: >
-  main clean at 528b474 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  main clean at f6ce269 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 sits at 8723ffb on wo-2-skeleton carrying 37 UNCOMMITTED
-  files from terminated Engineer instance 2 — the increment-3 candidate ruled KEEP AS UNATTESTED
-  CANDIDATE under CD-D-009, snapshotted with a SHA256 manifest to
-  /srv/crash-detector-wo2-candidate-inc3/. All 37 are inside the Engineer's writable_scope; no
-  protected path is touched and pbg/ is intact. No container or volume was left behind by that
-  seat. The pending commit is BL-20260819T045600Z-0005 and this record.
+  mutation lane /srv/crash-detector-wo2 is CLEAN at 7e9b46e on wo-2-skeleton — the Engineer left
+  nothing uncommitted. No protected path was touched across 8723ffb..7e9b46e and pbg/ is intact; no
+  secret value is recorded; no container or volume survives RT-A. The CD-D-009 snapshot at
+  /srv/crash-detector-wo2-candidate-inc3/ still verifies 37 of 37 against its manifest. The pending
+  commit is the CD-D-013 amendment to CD-DISPATCH-WO2-ENGINEER.yaml, BL-20260819T052900Z-0007 and
+  this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -87,13 +88,14 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
-- 'Engineer block A increment 3 — A5 store schema and grant matrix + A6 container set as DESIGN.
-  Increments 1 and 2 are done at lane SHA 8723ffb. A CANDIDATE for this increment exists
-  uncommitted in the lane (CD-D-009); instance 3 must review it clause by clause against A5 and A6,
-  correct what is wrong, and attest it as its own work — not merely commit it.'
-- 'CD-OB-001 — RT-A undischarged. The grant matrix has never been observed against a LIVE
-  catalogue, only read out of SQL text. One throwaway digest-pinned postgres container, within
-  RT-A''s bounds, destroyed before the seat returns.'
+- 'CD-OB-003 — the RT-A probe instrument lives in /tmp, so CD-RT-003-GRANT-MATRIX-LIVE has evidence
+  but no standing guard an auditor can run. B1 must deliver it as a durable check in tools/register/.'
+- 'CD-ERR-001 — three confirmed internal inconsistencies in BLUEPRINT §4, ruled by CD-D-010, CD-D-011
+  and CD-D-012 with the implementation correct as ruled. NOT corrected in WO-2: amending §4 is a
+  substantive clause change needing PO acceptance, and would move the specification underneath the
+  Assurance dispatch about to audit against it. Owed as a Blueprint revision BEFORE WO-3.'
+- '.dockerignore at the worktree root — now in the Engineer''s writable_scope by the CD-D-013
+  amendment; owed in increment 4.'
 - 'Engineer block B — register checks, Required Test Register over all sixteen PID criteria, the
   planted violations, and the Engineer''s own run of every declared command'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
@@ -108,6 +110,10 @@ open_decisions:
 - 'CD-D-006: the public exposure route. RULED by the PO — decided at R2D2; loopback-only on DEV.'
 - 'CD-FWK-004: PBGv2 cannot represent concurrent seats. Raised to the Product Owner for the PBGv2
   backlog; the default safe action is in force and disclosed.'
+- 'CD-D-012 consequence: §4 names a "health endpoint" reader of alert.* with no role behind it. No
+  grant was invented. WHAT the health endpoint is and WHAT it may see is a PRODUCT call, owed to the
+  Product Owner alongside CD-D-005 before WO-3. It does not block WO-2 — CD-AC-014 has no store role
+  in WO-2 and needs none, since zero sources are registered.'
 
 open_ambiguities: []
 
@@ -168,15 +174,17 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Re-dispatch Engineer CD-ENG-WO2-01 as instance 3, in the FOREGROUND, against
-  governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml on branch wo-2-skeleton at
-  /srv/crash-detector-wo2, execution base 8723ffb, carrying the CD-D-009 adoption addendum:
-  review the 37 inherited files clause by clause against A5 and A6, state which clauses were
-  verified and how, correct what is wrong, discharge CD-OB-001, then commit and attest increment 3
-  as its own work. Then increments 4 to 7 — block A close, then block B — committing at every
-  boundary so a terminated seat costs at most one increment. On READY_FOR_ASSURANCE, write the
+  Dispatch Engineer CD-ENG-WO2-01 as instance 4, in the FOREGROUND, against
+  governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml (as amended by CD-D-013) on branch
+  wo-2-skeleton at /srv/crash-detector-wo2, execution base 7e9b46e, for increment 4 of 7: BLOCK B.
+  B1 the register checks under tools/register/ — including the durable
+  CD-RT-003-GRANT-MATRIX-LIVE check that discharges CD-OB-003 — plus the .dockerignore now in
+  scope. Then B2 the Required Test Register over all sixteen PID criteria with latest_admitted_run
+  null, B3 the five planted violations, B4 the seat's own runs of every declared command on the
+  clean tree and on throwaway copies. Commit at every boundary. On READY_FOR_ASSURANCE, write the
   exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
-  SEPARATE agent as CD-ASR-WO2-01. Stop at the gate for Product Owner review.
+  SEPARATE agent as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable). Stop at the
+  gate for Product Owner review.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
@@ -184,5 +192,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T045600Z-0005
+last_build_log_entry: BL-20260819T052900Z-0007
 status: ACTIVE
