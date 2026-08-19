@@ -861,11 +861,15 @@ criteria:
   # (CD-RULE-003). A HOST IS THE ONE THING A PENDING ENTRY CANNOT CARRY, so the entry's key set is
   # closed by EQUALITY to {declared_in, blocked_by} and there is no field left that could hold one.
   #
-  # THIS CHECK HAS A DECLARED LIMIT, in EIGHT numbered boundaries, stated identically in the
-  # header of tools/register/check_egress_no_broker.py, in the execution contract, and below
-  # (CD-RULE-004). Every hand-off in it names a layer that was MEASURED, or says "NOT PROVED TO BE
-  # CARRIED ANYWHERE" (CD-RULE-006). Boundary 4 was CORRECTED at increment 3b: it named a
-  # compensating layer 1 that did not exist for `pending`, which is the defect CD-RULE-006 forbids.
+  # THIS CHECK HAS A DECLARED LIMIT, in NINE numbered boundaries (1..8, 8b and 9), stated
+  # identically in the header of tools/register/check_egress_no_broker.py, in the execution
+  # contract, and below (CD-RULE-004). Every hand-off in it names a layer that was MEASURED, or
+  # says "NOT PROVED TO BE CARRIED ANYWHERE" (CD-RULE-006). Boundary 4 was CORRECTED at increment
+  # 3b: it named a compensating layer 1 that did not exist for `pending`, which is the defect
+  # CD-RULE-006 forbids. Boundary 8 was CLOSED and replaced by 8b under CD-DISPATCH-WO2R-READER.
+  # BOUNDARY 9 WAS ADDED at increment 6 under CD-D-062 — the shared reader's silent flattening of
+  # a mapping nested beneath a sequence item's INLINE key. It is DECLARED, DELIBERATELY NOT FIXED,
+  # and dispatched at WO-3 bound together with the V27 re-measurement.
   - test_id: CD-RT-012-EGRESS-NO-BROKER
     scope: CLASS
     execute: python3 tools/register/check_egress_no_broker.py --root .
@@ -934,6 +938,43 @@ criteria:
         reader. DELIBERATELY NOT REPAIRED: converting it would move this check from exit 1 to
         exit 3 on an input that already has a verdict, which the reader dispatch puts out of
         bounds and instructs the seat to report rather than take. Raised as CD-ENG-READER-F02.
+        (9) THE SHARED READER SILENTLY FLATTENS A MAPPING NESTED BENEATH A SEQUENCE ITEM'S INLINE
+        KEY — a QUIET WRONG PARSE, DECLARED at increment 6 under CD-D-062 and DELIBERATELY NOT
+        FIXED. EXECUTABLE EXAMPLE (PL-X10a): `top:` / `  - key:` / `      sub: 1` reads as
+        {'top': [{'key': None, 'sub': '1'}]} where the correct reading is
+        {'top': [{'key': {'sub': 1}}]}; the nested mapping is flattened into the sequence item and
+        the inline key reads ABSENT. MEASURED by this seat at 253c38b and byte-identical at
+        f22d120 — PRE-EXISTING, neither introduced nor changed by the reader repair
+        (CD-ENG-READER-F05/F08, re-raised from CD-ENG-WO2R-F15). It REACHES this check, because
+        both of its subjects contain sequences of mappings: `x-egress.pending` in compose and
+        `destinations` in the registry. WHAT CARRIES IT (CD-RULE-006, all RUN not reasoned): the
+        Project Lead's three attempts to weaponise it into a FALSE CLEAN were ALL REFUSED —
+        PL-X12a exit 1 with CD-EGRESS-007 key set AND CD-EGRESS-002 broker host; PL-X12b exit 1
+        with CD-EGRESS-007 non-empty scalar; PL-X12c exit 1 with CD-EGRESS-007 key set; the other
+        two reader-sharing checks unaffected at exit 0 in all three. STATE THE DENOMINATOR AND DO
+        NOT READ IT AS A SAFETY PROOF: THAT IS THREE ROUTES ON ONE CRITERION. TWO CORRECTIONS THIS
+        SEAT MEASURED against that account (CD-ENG-WO2R-F25, CD-ENG-WO2R-F26): PL-X12b DOES NOT
+        FLATTEN AT ALL — it parses correctly as {'blocked_by': {'hosts': 'api.ibkr.com'}}, because
+        the defect fires only beneath the INLINE key on the `- ` line — so the denominator through
+        the flattening is TWO, not three; and where the lifted key is ADMISSIBLE the key-set clause
+        CANNOT fire, yet the route is still refused, because the flattening ALWAYS leaves the
+        inline key reading None and NO admissible field of either artefact may be None. A COMPLETE
+        SWEEP OF THE PRESENT FIELD SETS, 8 OF 8 REFUSED with the key set EXACTLY the declared set
+        in every one: registry inline key = id/host/operator/purpose/declared_in/services ->
+        CD-EGRESS-006 six times; pending inline key = declared_in/blocked_by -> CD-EGRESS-007
+        non-empty scalar twice. V52 and V53 are the durable variants of that sweep. PARTIALLY
+        CARRIED, MEASURED: for the field sets these artefacts declare TODAY every reachable
+        position is refused, and the carrier is the PER-FIELD POSITIVE SHAPE of CD-EGRESS-006 and
+        CD-EGRESS-007, NOT the closed key set. NOT PROVED TO BE CARRIED ANYWHERE for the case that
+        would break it — A FUTURE ADMISSIBLE FIELD FOR WHICH ABSENCE IS LEGITIMATE: the
+        flattening's signature is an inline key reading None, so add one optional field to either
+        contract and this boundary reopens silently. NOT PROVED TO BE CARRIED ANYWHERE for the
+        defect at large either: this is about THIS criterion's two artefacts, and the subjects of
+        check_base_image_digest_pin.py and check_engine_no_witness_reach.py were NOT swept. THE FIX
+        IS OUT OF BOUNDS HERE: correcting the flattening changes WHICH clause refuses V27 and
+        possibly whether it is refused at all (CD-ENG-WO2R-F15), V27 is CD-ASR-F04 evidence, and
+        CD-ASR-F04 took two increments to close. Dispatched at WO-3 BOUND TOGETHER WITH THE V27
+        RE-MEASUREMENT, as the reader seat recommended.
         DO NOT READ A CLEAN RUN AS PROOF THAT NO EXECUTION PATHWAY EXISTS. It was clean for E05,
         and after E05 was closed it was still clean for PL-S3a — the same address one field
         across, in `pending`.

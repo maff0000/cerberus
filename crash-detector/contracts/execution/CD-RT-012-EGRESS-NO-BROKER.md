@@ -218,10 +218,97 @@ or says **NOT PROVED TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
    verdict change out of bounds and instructs the seat to report rather than take it. Raised as
    `CD-ENG-READER-F02` for a ruling.
 
+9. **THE SHARED READER SILENTLY FLATTENS A MAPPING NESTED BENEATH A SEQUENCE ITEM'S INLINE KEY —
+   a QUIET WRONG PARSE.** *Declared at increment 6 under `CD-D-062`, and **deliberately not
+   fixed**.* This is the one boundary here that is not about what the check reasons over; it is
+   about the check being handed **a document nobody wrote**.
+
+   **The defect, executable (`PL-X10a`):**
+
+   ```yaml
+   top:
+     - key:
+         sub: 1
+   ```
+
+   reads as `{'top': [{'key': None, 'sub': '1'}]}`; the correct reading is
+   `{'top': [{'key': {'sub': 1}}]}`. The nested mapping is **flattened** into the sequence item
+   and the inline key `key` reads as **absent**. The reader neither parses it nor refuses it.
+   **Measured by this seat at `253c38b`, and byte-identical at `f22d120`** — it is **pre-existing**
+   and was neither introduced nor changed by the reader repair (`CD-ENG-READER-F05`/`F08`,
+   re-raised from `CD-ENG-WO2R-F15`).
+
+   **It reaches this check.** Both of this check's subjects contain **sequences of mappings** —
+   `x-egress.pending` in `deploy/compose.yaml` and `destinations` in
+   `deploy/egress-destinations.yaml` — so every entry in either is a position where it can fire.
+
+   **What carries it** (`CD-RULE-006` — a carrier sentence is a claim requiring its own executed
+   evidence, so all of the following was **run**, not reasoned):
+
+   * **The Project Lead's three attempts to weaponise it into a false clean were all REFUSED.**
+     `PL-X12a` (`- declared_in:` / nested `host: api.ibkr.com`) → exit 1, **two** violations,
+     `CD-EGRESS-007` key set **and** `CD-EGRESS-002` broker host. `PL-X12b` (`blocked_by:` /
+     nested `hosts: api.ibkr.com`) → exit 1, `CD-EGRESS-007` *"a pending entry field is not a
+     non-empty scalar"*. `PL-X12c` (`- declared_in:` / nested `blocked_by: x`,
+     `endpoint: 198.51.100.24`) → exit 1, `CD-EGRESS-007` key set. In all three the other two
+     reader-sharing checks are unaffected at exit 0.
+     **State the denominator, and do not read this as a safety proof: that is THREE ROUTES ON ONE
+     CRITERION.** It is the measured reason the finding is ruled MEDIUM and routed to WO-3, not a
+     demonstration that no false clean exists.
+   * **Two corrections this seat measured against that account**, because a carrier named wrongly
+     is the `CD-PL-F54` defect (`CD-ENG-WO2R-F25`, `CD-ENG-WO2R-F26`). **First:** the mechanism is
+     *not*, in general, that "flattening lifts a nested key into the closed key set". **`PL-X12b`
+     does not flatten at all** — measured, it parses correctly as
+     `{'declared_in': ..., 'blocked_by': {'hosts': 'api.ibkr.com'}}`, because the defect fires only
+     beneath the **inline** key written on the `- ` line, and `blocked_by` there is an ordinary
+     mapping key. So the denominator *through the flattening* is **two**, not three. **Second, and
+     it is the stronger statement:** where the lifted key is **admissible** the key-set clause
+     **cannot** fire, and the routes are still refused — by a *different* clause, because the
+     flattening **always** leaves the inline key reading `None` and **no admissible field of
+     either artefact may be `None`**.
+   * **A complete sweep of the present field sets — 8 of 8 refused, every one with the key set
+     exactly the declared set**, so the key-set clause fired in **none** of them:
+
+     | artefact | inline key | observed |
+     |---|---|---|
+     | registry `destinations` entry | `id` | exit 1, `CD-EGRESS-006: a destination has no id` |
+     | registry `destinations` entry | `host` | exit 1, `CD-EGRESS-006: a destination host is not a declarable hostname` |
+     | registry `destinations` entry | `operator` | exit 1, `CD-EGRESS-006: a destination declares no operator` |
+     | registry `destinations` entry | `purpose` | exit 1, `CD-EGRESS-006: a destination declares no purpose` |
+     | registry `destinations` entry | `declared_in` | exit 1, `CD-EGRESS-006: a destination declares no declared_in` |
+     | registry `destinations` entry | `services` | exit 1, `CD-EGRESS-006: a destination names no services` |
+     | compose `pending` entry | `declared_in` | exit 1, `CD-EGRESS-007: a pending entry field is not a non-empty scalar` |
+     | compose `pending` entry | `blocked_by` | exit 1, `CD-EGRESS-007: a pending entry field is not a non-empty scalar` |
+
+     `V52` and `V53` are the two durable variants of that sweep.
+
+   **PARTIALLY CARRIED, MEASURED:** for the field sets these two artefacts declare **today**,
+   every reachable position is refused, and the carrier is the **per-field positive shape** of
+   `CD-EGRESS-006` and `CD-EGRESS-007` — **not** the closed key set.
+
+   **NOT PROVED TO BE CARRIED ANYWHERE** for the case that would break it: **a future admissible
+   field for which absence is legitimate.** The flattening's signature is an inline key reading
+   `None`, so it is caught only because nothing here may be `None`. Add one optional field to
+   either contract and this boundary reopens **silently**. That is a hazard nobody has measured,
+   because the field does not exist to measure.
+
+   **NOT PROVED TO BE CARRIED ANYWHERE** for the defect at large, either. Everything above is
+   about *this* criterion's two artefacts. The reader is shared with
+   `check_base_image_digest_pin.py` and `check_engine_no_witness_reach.py`, and this seat did
+   **not** sweep their subjects.
+
+   **The fix is out of bounds at this increment, and the reason is not convenience.** Correcting
+   the flattening changes **which clause refuses `V27`**, and possibly whether it is refused at
+   all: `CD-ENG-WO2R-F15` records that `V27` *"collapses into `PL-S3c`'s shape and the CLOSED KEY
+   SET clause catches it instead"*. `V27` is `CD-ASR-F04` evidence and `CD-ASR-F04` took two
+   increments to close, so repairing this on the eve of the audit would **reopen a closed
+   criterion** to fix a defect that is fail-closed in every route measured. **Dispatched at WO-3
+   bound together with the `V27` re-measurement**, as the reader seat itself recommended.
+
 **DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO EXECUTION PATHWAY EXISTS.** It was
 clean for `E05`, and after `E05` was closed it was still clean for `PL-S3a` — the same
 address, one field across, in `pending`. That is `CD-PL-F59`, and it is why boundary 4 above
-carries a correction and boundaries 7 and 8 exist.
+carries a correction and boundaries 7, 8 and 9 exist.
 
 ## Preconditions
 

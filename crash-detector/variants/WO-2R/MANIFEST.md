@@ -1661,3 +1661,79 @@ new patch file is added: R02's patch is re-used unchanged and R08 has a generato
 | **command** | `timeout 120 python3 -B tools/register/check_engine_no_witness_reach.py --root .` |
 | **observed, `253c38b`** | **exit 1**, `RecursionError: maximum recursion depth exceeded`, raised at `tools/register/_yamlmin.py` in `_parse_mapping`. It **terminates**. It is neither a hang nor a false clean — but it names no line and it exits `1` where this check uses `3` for *"I could not read my subject"*. |
 | **disposition** | **DECLARED, NOT REPAIRED**, as boundary `8b` shared from `CD-RT-012-EGRESS-NO-BROKER`. Repairing it moves this check from exit 1 to exit 3 on an input that already has a verdict. Owed as a **ruling** (`CD-ENG-READER-F02`), not an implementation choice. |
+
+## `CD-ENG-READER-F05` / `F08` — the quiet wrong parse, declared as boundary 9 of `CD-RT-012`
+
+**Declared, deliberately NOT fixed** (`CD-D-062`). Repairing the flattening changes **which
+clause refuses `V27`**, and `V27` is `CD-ASR-F04` evidence on a criterion that took two
+increments to close. Dispatched at **WO-3, bound together with the `V27` re-measurement**.
+
+### PL-X10a — the defect itself, re-measured here rather than transcribed
+
+| | |
+|---|---|
+| **document** | `top:` / `  - key:` / `      sub: 1` — three lines, no check involved |
+| **command** | `python3 -B -c "import sys; sys.path.insert(0,'tools/register'); import _yamlmin; print(_yamlmin.load_yaml('x.yaml'))"` |
+| **observed, `253c38b`** | `{'top': [{'key': None, 'sub': '1'}]}` — the nested mapping **flattened** into the sequence item, the inline key `key` reading **absent**. Correct is `{'top': [{'key': {'sub': 1}}]}`. |
+| **disposition** | **PRE-EXISTING.** Byte-identical at `f22d120`; the reader repair neither introduced it nor changed it. |
+
+### The Project Lead's `PL-X12a/b/c`, re-run against `check_egress_no_broker.py`
+
+| probe | shape planted in `cd-collectors`' `pending` | observed, `253c38b` |
+|---|---|---|
+| `PL-X12a` | `- declared_in:` / nested `host: api.ibkr.com` | exit 1, **2 violations** — `CD-EGRESS-007` key set **and** `CD-EGRESS-002` broker host |
+| `PL-X12b` | `blocked_by:` / nested `hosts: api.ibkr.com` | exit 1, `CD-EGRESS-007: a pending entry field is not a non-empty scalar` |
+| `PL-X12c` | `- declared_in:` / nested `blocked_by: x`, `endpoint: 198.51.100.24` | exit 1, `CD-EGRESS-007` key set |
+
+In all three, `check_base_image_digest_pin.py` and `check_engine_no_witness_reach.py` are
+unaffected at exit 0. **THREE ROUTES ON ONE CRITERION. That is the denominator, not a safety
+proof.**
+
+> **`PL-X12b` DOES NOT FLATTEN AT ALL** — measured, it parses as
+> `{'declared_in': ..., 'blocked_by': {'hosts': 'api.ibkr.com'}}`. The defect fires only beneath
+> the **inline** key on the `- ` line; `blocked_by` there is an ordinary mapping key. So the
+> denominator *through the flattening* is **two**. Raised as `CD-ENG-WO2R-F25`.
+
+### V52 — the second artefact, and a key set that stays EXACT — **MINE**
+
+| | |
+|---|---|
+| **patch** | `variants/WO-2R/CD-ENG-READER-F05/V52-registry-inline-key-flattened-key-set-still-exact.patch` |
+| **proposition attacked** | The recorded mechanism — *"flattening LIFTS a nested key INTO `CD-EGRESS-007`'s closed key set"*. If that is the carrier, then a flattening whose lifted key is **admissible** should escape. |
+| **route** | `deploy/egress-destinations.yaml`, a destination whose **inline** key is `host:` with `operator: "Example Data Co"` nested beneath it. After flattening the entry's key set is **exactly** `{id, host, operator, purpose, declared_in, services}` — the declared set — so the key-set clause **cannot** fire. `host` reads `None`. |
+| **why it is a different route** | **Different artefact and different call site** from every `PL-X12` probe, and it attacks the **absence** direction (a key made to vanish) rather than the **presence** direction (a value smuggled in). |
+| **command** | `timeout 120 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **observed, `253c38b`** | **exit 1**, `CD-EGRESS-006: a destination host is not a declarable hostname` — *"destination `D1` declares host None, and it is NoneType, not a scalar."* **REFUSED — but not by the clause the record names.** |
+| **what it establishes** | The carrier is the **per-field positive shape**, not the closed key set. `CD-EGRESS-006` never asks what the value *is*, only whether it is the one admissible shape, so `None` fails it like an address or a wildcard would. |
+
+### V53 — the lifted key is ADMISSIBLE, and the value has no name to recognise — **MINE**
+
+| | |
+|---|---|
+| **patch** | `variants/WO-2R/CD-ENG-READER-F05/V53-pending-inline-key-lifts-an-ADMISSIBLE-key.patch` |
+| **proposition attacked** | The same mechanism, on the field `PL-X12` actually attacked, with **both** stated carriers disabled at once: the lifted key is admissible so the key-set clause cannot fire, and the value is an **IP literal** so layer 2's broker vocabulary has no name to recognise (that is `CD-ASR-F04`'s own route). |
+| **route** | `cd-collectors`' `pending`, inline key `declared_in:` with `blocked_by: "CD-D-005; the source will be 198.51.100.24 once ruled"` nested beneath it. Measured key set after flattening: `['blocked_by', 'declared_in']` — **exactly** the declared set. |
+| **why it is a different route** | `PL-X12a` and `PL-X12c` both lift a **foreign** key and are caught by the key-set clause; this one lifts an **admissible** key so that clause is structurally unreachable. It is the case the recorded mechanism does not cover. |
+| **command** | `timeout 120 python3 -B tools/register/check_egress_no_broker.py --root .` |
+| **observed, `253c38b`** | **exit 1**, `CD-EGRESS-007: a pending entry field is not a non-empty scalar` — *"`cd-collectors`'s pending entry #0 declares `declared_in` as nothing at all."* The other two reader-sharing checks: exit 0, exit 0. |
+| **what it establishes** | **The real reason the flattening cannot produce a false clean here:** it *always* leaves the inline key reading `None`, and **no admissible field of either artefact may be `None`.** Raised as `CD-ENG-WO2R-F26`. |
+
+### The complete sweep behind V52 and V53 — 8 of 8, key set exact in every one
+
+| artefact | inline key | observed |
+|---|---|---|
+| registry `destinations` | `id` | exit 1, `CD-EGRESS-006: a destination has no id` |
+| registry `destinations` | `host` | exit 1, `CD-EGRESS-006: a destination host is not a declarable hostname` |
+| registry `destinations` | `operator` | exit 1, `CD-EGRESS-006: a destination declares no operator` |
+| registry `destinations` | `purpose` | exit 1, `CD-EGRESS-006: a destination declares no purpose` |
+| registry `destinations` | `declared_in` | exit 1, `CD-EGRESS-006: a destination declares no declared_in` |
+| registry `destinations` | `services` | exit 1, `CD-EGRESS-006: a destination names no services` |
+| compose `pending` | `declared_in` | exit 1, `CD-EGRESS-007: a pending entry field is not a non-empty scalar` |
+| compose `pending` | `blocked_by` | exit 1, `CD-EGRESS-007: a pending entry field is not a non-empty scalar` |
+
+**AND HERE IS WHAT THE SWEEP DOES NOT PROVE, WHICH IS THE PART AN AUDITOR SHOULD ATTACK.** It is
+complete over the field sets these two contracts declare **today**. The flattening's whole
+signature is an inline key reading `None`, so it is caught only because **nothing here may be
+`None`**. Add one **optional** field to either contract and boundary 9 reopens **silently**, with
+no test failing. And the sweep covers **this criterion's two artefacts only** — the subjects of
+`check_base_image_digest_pin.py` and `check_engine_no_witness_reach.py` were **not** swept.
