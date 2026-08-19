@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T11:02:00Z'
+updated_utc: '2026-08-19T11:56:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -203,6 +203,53 @@ current_block: >
   sequence numbers remain the reliable ordering. CD-RULE-006: a residue declaration that names
   another layer as carrying it must have MEASURED that layer refusing the variant, or write
   "NOT PROVED TO BE CARRIED ANYWHERE".
+  WO-2R INCREMENT 2b RECONCILED AND **ACCEPTED** (CD-D-040) at lane cc961bf, four commits by
+  CD-ENG-WO2R-01, attested in lane entry BL-20260819T114046Z-0042, reconciled by the PL in
+  BL-20260819T115400Z-0025. CD-PL-F54 IS CLOSED AND CD-ASR-F01 IS CLOSED AS A CLASS.
+  THE STRUCTURAL MOVE: the closure went from the EXIT to the RE-ENTRY. Increment 2 tried to stop a
+  number LEAVING a magnitude, which is an exit class with no last member — close repr and the attack
+  moves to str, then __format__, then json. Increment 2b stops a number COMING BACK. A DialMagnitude
+  now admits a DeclaredQuantity and nothing else: a finite float paired with the frozenset of dials
+  its derivation touched, compared to the target dial by SET EQUALITY. Any float that has left a
+  magnitude by ANY route has lost its dials and cannot re-enter one. It enumerates no laundering
+  route; it removes the destination they all share. Second layer, differently shaped: RULE 4 DENIES
+  BY DEFAULT over four declared admission sites, recognising nothing about a blend and watching the
+  one door a laundering module cannot avoid.
+  ON REPR the seat chose (ii) DECLARATION with a reason the PL accepts — repr is one member of an
+  exit class with no last member — WITHDREW the contradicted claim from the execution contract, and
+  did NOT stop there: it closed the laundered-float class at the re-entry and proved it with V16,
+  which launders through an f-string and a JSON round trip with NO REPR ANYWHERE and is refused.
+  THE PL MEASURED EVERYTHING ITSELF. Twelve of twelve declared commands reproduce; full suite
+  1054 -> 1155 passed; ZERO of the 1054 node ids missing, 101 added; all ELEVEN plants apply
+  (git apply --check, 11/11); 0 executable files under variants/; all four commits correctly seated.
+  THE FOUR PROBES THAT ESCAPED AT a94ef97 ARE ALL REFUSED NOW — PL-Q4, PL-Q5, PL-Q6 and PL-Q9, each
+  by execution with QuantityProvenanceMissing. The PL then wrote FIVE NEW probes against the new
+  structure. PL-R1/R2/R3 (re-admit the blend through either declared door, or construct a
+  DeclaredQuantity directly) and PL-R4 (in-place rewrite of the second private slot) are NOT refused
+  at runtime and are ALL INSIDE THE DECLARED LIMIT — boundary 7 "NOT PROVED TO BE CARRIED ANYWHERE
+  AT RUNTIME" and boundary B — each of which the seat found and declared BEFORE the PL ran it.
+  PL-R5 IS THE DECISIVE ONE: PL-Q9 rewritten for the new structure, the same plausible banner module
+  re-admitting through the declared door — CAUGHT STATICALLY, "RULE 4: a provenance door outside the
+  declared admission sites", FAIL. PL-Q9's whole force was that ONE PLAUSIBLE FILE defeated BOTH
+  layers with nothing objecting anywhere; its successor is stopped by a check that recognised nothing
+  about it and denied by default.
+  WHY THIS PASSES THE TEST INCREMENT 2 FAILED: increment 2's declaration said another layer carried
+  the residue and that layer did not. Increment 2b's says "NOT PROVED TO BE CARRIED ANYWHERE AT
+  RUNTIME". The first misdirects an auditor; the second points at the soft spot and dares them to
+  hit it.
+  CD-D-041: the seat's CD-ENG-WO2R-F12 asks whether a static-only guard on the admission door is
+  sufficient for CD-AC-002 and REFUSES TO ANSWER FOR ITSELF — recorded as commendable. The PL's view
+  is that the residue is any registry's, the layer denies by default rather than recognising, and a
+  runtime guard on the calling module's identity would be call-stack introspection with a worse
+  residue; on that reasoning it reconciles as ACCEPTED. BUT THE GATE IS NOT THE PL'S: F12 is carried
+  FORWARD INTO THE ASSURANCE DISPATCH AS A NAMED QUESTION and disclosed to the PO, not settled here.
+  CD-D-042: PL-R1..R5 join the exclusion set, now the union of the auditor's ten, the Engineer's
+  seventeen and the PL's twenty-three. CD-D-043: the PL STOPS at this boundary rather than starting
+  increment 3 with under an hour of runtime ceiling left — four seats have already been killed
+  mid-work here, and a clean boundary with a durable record beats forty minutes of unattested
+  progress. CD-PL-F57 (INFORMATIONAL, the checks' own assertion counts moved and Assurance should
+  confirm why) and CD-PL-F58 (LOW, "zero expectation changes" is the seat's statement and is NOT
+  measurable by the node-id comparison — named for Assurance, not implied as verified).
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -227,7 +274,7 @@ last_completed_checkpoint_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0
+lane_head_sha: cc961bfcf258faef1471fa913313bbacc25930fd
   # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
   # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
   # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
@@ -241,8 +288,7 @@ lane_head_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0   # WO-2R increment 2 of 6, RECONCILED AND NOT ACCEPTED (CD-D-037); re-opened as 2b
-  # Last ACCEPTED lane SHA is 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f (increment 1).
+lane_increment_sha: cc961bfcf258faef1471fa913313bbacc25930fd   # WO-2R increment 2b, RECONCILED AND ACCEPTED (CD-D-040)
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -457,28 +503,32 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  IDENTITY RE-AUTHORING (PO Ruling 3), ordered FIRST by CD-D-026. Tag the pre-rewrite lane head at
-  66681b2; rewrite all 24 commits of main..wo-2-skeleton with author AND committer
-  CD-ENG-WO2-01 <cd-eng-wo2-01@seats.crash-detector.invalid>, preserving every commit message, every
-  tree and every authored date byte-for-byte; PROVE the rewrite changed nothing but identity —
-  pairwise tree equality old-to-new and an empty `git diff` between old and new heads; write the
-  OLD -> NEW mapping table into governance so every SHA already recorded in the Build Log still
-  resolves (CD-D-027); run the git log author audit as the evidence Ruling 3 demands; commit as its
-  own checkpoint.
-  THEN author governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml and issue it to a FRESH Engineer
-  seat CD-ENG-WO2R-01 — bounded to CD-ASR-F01..F06 and NOTHING ELSE, per-finding increments, each
-  commit NAMING THE CLASS CLOSED AND THE STRUCTURE THAT CLOSES IT, each closure proved by EXECUTION
-  against the escapes in ESCAPED-VARIANTS-KNOWN-SET.md plus at least TWO NEW VARIANTS OF ITS OWN,
-  with the full clean arm green at every increment. It must return READY_FOR_ASSURANCE with the exact
-  SHA. It may not invent a product quantity (CD-RULE-003) and every guard it touches must close its
-  class or declare its own limit (CD-RULE-004).
-  THEN the Project Lead reconciles by running the arms itself — reconciliation, NOT assurance
-  (PBG-SOD-001) — and only then issues CD-DISPATCH-WO2R-ASSURANCE to a SEPARATE agent, CD-ASR-WO2-02,
-  never the same agent (PBG-SOD-001, non-waivable). That seat must devise FRESH variants; the ten
-  escapes are now the Engineer's known set and prove nothing about the class.
-  The gate is UNCHANGED: Assurance PASS on all five planted violations. At the gate, either way,
-  record state durably and STOP for Product Owner review. Do not admit any run record without its
-  paired verdict (CD-RULE-001).
+  DISPATCH INCREMENT 3 (CD-ASR-F04, the egress allowlist) to CD-ENG-WO2R-01 at execution base
+  cc961bf, per governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml block increment_3_F04, bounded to
+  that finding and nothing else. CD-D-031 already rules the structure: F04 is closed by DENY BY
+  DEFAULT over a declared destination registry, NOT by DNS resolution — a register check that
+  depends on DNS is not reproducible and cannot be a gate (CD-PL-F48). An IP literal then stops
+  being a spelling to catch and is simply not a destination anyone declared. The PO required F04 be
+  closed BEFORE any WO-3 egress lane inherits it.
+  THEN increment 4 (CD-ASR-F05: the code-graph guard's walk root must derive from the CONTAINER'S
+  OWN entrypoint set, not a hard-coded path). THEN increment 5 (CD-ASR-F06: staleness windows get a
+  hard upper bound DERIVED from ratified intent per CD-D-032 — PID section 5's 15-minute
+  detectability budget bounded by BLUEPRINT section 7's window_for(regime) — or the seat FAILS
+  CLOSED and escalates; it never invents a number, CD-RULE-003).
+  RECONCILE EACH by running the arms yourself and by writing fresh probes of your own against the
+  structure the seat actually built, not against the one the dispatch imagined. Commit each as its
+  own checkpoint on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
+  VARIABLES, not through `git -c` (CD-PL-F56 — it fails silently on this host), and verify with
+  `git log -1 --format='%an <%ae> | %cn <%ce>'` after every single commit.
+  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never
+  the Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise FRESH
+  variants; the exclusion set is the union of the WO-2 auditor's ten, the Engineer's seventeen and
+  the Project Lead's twenty-three, and it must be handed CD-ENG-WO2R-F12 as a NAMED QUESTION,
+  plus CD-PL-F53, CD-PL-F57 and CD-PL-F58.
+  THE GATE IS UNCHANGED: Assurance PASS on all five. Deliberate STOP at the gate either way, record
+  state durably, and report to the Product Owner. Admit no run record without its paired assurance
+  verdict (CD-RULE-001, non-relaxable).
+
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
@@ -486,5 +536,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T105500Z-0024
+last_build_log_entry: BL-20260819T115400Z-0025
 status: ACTIVE
