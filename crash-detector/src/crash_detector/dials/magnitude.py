@@ -121,13 +121,24 @@ the publication gate. Do not read this module as claiming that no two numbers ca
 added in Python. Read it as claiming that no number so obtained can ever be a dial magnitude
 again.
 
-**B. ``object.__setattr__`` REWRITES A SLOT.** As for every frozen dataclass in this
-codebase, ``object.__setattr__(m, "provenance", frozenset({"a", "b"}))`` walks past
-``__setattr__``. It is worth stating that this direction is SAFE: a forged multi-dial
-provenance makes the magnitude LESS usable, not more —
-:meth:`quantity_for` compares by set equality and refuses it, the score types refuse to
-carry it, and the publication gate refuses to publish it. There is no forgery of
-provenance that yields a number.
+**B. ``object.__setattr__`` REWRITES A SLOT, AND IT HAS TWO DIRECTIONS — ONE SAFE, ONE NOT.**
+As for every frozen object in Python, ``object.__setattr__`` walks past ``__setattr__``.
+
+*Forging the PROVENANCE is safe.* ``object.__setattr__(m, "provenance", frozenset({"a",
+"b"}))`` makes the magnitude LESS usable, not more: :meth:`quantity_for` compares by set
+equality and refuses it, the score types refuse to carry it, and the publication gate
+refuses to publish it. There is no forgery of provenance that yields a number.
+
+*Forging the VALUE is NOT safe, and this seat found it against its own work while running
+the eleven plants* (``CD-ENG-WO2R-F11``). ``object.__setattr__(q, "_DeclaredQuantity__value",
+<a blend>)`` on the DeclaredQuantity a live magnitude already holds changes the number
+IN PLACE, so nothing is ever constructed and the re-entry closure is never reached. MEASURED
+as `V17`: it is NOT refused at runtime and the magnitude then reads 0.5. **NO RUNTIME LAYER
+CARRIES THIS AND NONE IS CLAIMED TO** (CD-RULE-006). What does carry it, statically, is RULE
+3 of ``tools/register/check_no_blend.py``: reaching either private slot on the scanned path
+is a violation with no allowlist beyond each declaring module, and `V17` produces six of
+them. No Python-level structure can prevent an in-place slot rewrite; a guard that claimed to
+would be claiming something Python does not offer.
 
 **C. REFLECTION REACHES THE PAYLOAD, AS IT DOES IN EVERY PYTHON OBJECT.**
 ``m.__getstate__()``, ``m.__reduce_ex__(2)`` and ``getattr(m, "_DialMagnitude__quantity")``

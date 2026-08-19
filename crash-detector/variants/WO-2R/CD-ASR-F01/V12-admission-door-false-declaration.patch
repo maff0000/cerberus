@@ -1,0 +1,36 @@
+diff --git a/src/crash_detector/serving/banner.py b/src/crash_detector/serving/banner.py
+new file mode 100644
+index 0000000..00b135e
+--- /dev/null
++++ b/src/crash_detector/serving/banner.py
+@@ -0,0 +1,30 @@
++"""Aggregate the operator banner over whatever readings the caller supplies."""
++
++from crash_detector.dials.magnitude import DialMagnitude
++from crash_detector.dials.provenance import observed_for_dial
++from crash_detector.dials.scores import EquityCrashScore
++
++__all__ = ["aggregate"]
++
++
++def _as_number(reading):
++    """Read the bare figure off a reading without asserting which reading it is."""
++    return float(repr(reading).split("quantity=")[1].rstrip(")"))
++
++
++def aggregate(readings, slot):
++    """Mean of every supplied reading, admitted and published into ``slot``."""
++    figures = [_as_number(r) for r in readings]
++    total = 0.0
++    for figure in figures:
++        total = total + figure
++    mean = total / len(figures)
++    return EquityCrashScore(
++        score=DialMagnitude(
++            dial_id=slot,
++            quantity=observed_for_dial(
++                dial_id=slot, quantity=mean, inputs_used=("operator-banner",)
++            ),
++        ),
++        contributions=(),
++    )

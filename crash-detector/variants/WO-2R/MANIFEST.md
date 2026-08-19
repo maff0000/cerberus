@@ -449,9 +449,190 @@ A number **already released** through `quantity_for(<one dial id>)` is an ordina
 of them can be added by ordinary Python arithmetic. No variant here attacks that, because there is
 nothing to attack: it is boundary A of the declared limit in
 `src/crash_detector/dials/magnitude.py`, it is boundary 6 of the AST check's, and it is stated in the
-register entry and both execution contracts. What closes the consequence is that the result is
-**unpublishable** — `number_for_dial_slot` takes only a magnitude, and the closed envelope schema has
-no third key. An auditor who wants to attack this should attack the PUBLICATION path, not the type.
+register entry and both execution contracts.
+
+> **THE SENTENCE THAT STOOD HERE WAS WRONG AND IS WITHDRAWN** (`CD-PL-F54`). It said "what closes the
+> consequence is that the result is **unpublishable** — `number_for_dial_slot` takes only a
+> magnitude", and told an auditor to attack the publication path rather than the type. The Project
+> Lead did exactly the opposite of what that advice assumed and found the hole: it re-wrapped the
+> blend as `DialMagnitude(dial_id="equity_crash", quantity=blended)`, which HAS a magnitude and HAS
+> provenance of exactly one dial, and `number_for_dial_slot` **returned 0.5**. The advice sent
+> attention to the layer where the defect was not, which is precisely what CD-RULE-006 now forbids.
+> What closes the consequence, measured, is the RE-ENTRY: see the increment-2b section below.
+
+---
+
+# INCREMENT 2b — CD-PL-F54, re-opening CD-ASR-F01 (HIGH)
+
+**Everything above increment 2b stands and was NOT reverted.** The Project Lead reproduced every
+number of increment 2 exactly and refused nine of its own eleven probes against it. What it did not
+close is the LAUNDERING class: `float(repr(m).split("quantity=")[1].rstrip(")"))` names no dial,
+two of those add, and the sum re-wrapped as a magnitude of one dial published. The closure moved to
+the **RE-ENTRY** — a bare `float` can no longer become a `DialMagnitude` — and the variants below
+attack that.
+
+**Two commands are used below.** `AST` is `python3 tools/register/check_no_blend.py --root .`.
+`NUMDEF` is `python3 tools/register/check_no_numeric_default.py --root .`. `LAUNDER-PROBE` is
+written out in full at the end of this file, after `BLEND-PROBE`, and is what makes the fixtures
+through the declared admission door so that every attack starts from two LEGITIMATE magnitudes of
+0.4 (equity) and 0.6 (monetary). A variant refused for want of a valid subject would prove nothing.
+
+## KNOWN-SET RE-RUNS at increment 2b
+
+Every one of the six the dispatch names as the minimum obligation, executed on a pristine
+`git archive` extraction, one extraction per variant, `python3 -B` throughout.
+
+### `PL-Q9` — `PL-Q9-flavour-free-repr-launder.patch`
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54 (HIGH), re-opening CD-ASR-F01 |
+| **source** | The Project Lead's, verbatim, from `governance/reconciliation/WO-2R/PL-Q9-flavour-free-repr-launder.py.txt` on `main`. Committed here as a patch so it can be re-applied mechanically. |
+| **proposition attacked** | No code path combines the two dials into one number. |
+| **route** | `src/crash_detector/serving/banner.py` reads the figure off each reading with `float(repr(reading).split("quantity=")[1].rstrip(")"))`, sums in a loop, divides by the count, and re-wraps as `DialMagnitude(dial_id=slot, ...)` where `slot` is a PARAMETER. |
+| **why it escaped at increment 2** | It removes every flavour-bearing NAME. No dial appears in any expression, no arithmetic touches a magnitude, and the type is never asked for a number. Both layers were defeated together: `AST` PASS on 3919 assertions, and at runtime it published `EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5))` from 0.4 and 0.6. |
+| **command** | `AST`, then `LAUNDER-PROBE PLQ9` |
+| **`AST` under this variant** | **exit 0**, `PASS — 4716 assertions`. **STILL CLEAN, AND THAT IS DECLARED** — boundary 6. Nothing static can recognise this module; that is why RULE 4 watches the door instead. |
+| **observed refusal** | `LAUNDER-PROBE` → **REFUSED**, `crash_detector.dials.provenance.QuantityProvenanceMissing: a bare number (0.5) was offered as dial 'equity_crash''s magnitude.` |
+| **also** | Carried as a declared test, `tests/test_dial_provenance.py::test_variant_pl_q9_the_flavour_free_launderer_is_refused`. |
+
+### `PL-Q4`, `PL-Q5`, `PL-Q6` — no patch; they are probes, not modules
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54 (HIGH) |
+| **source** | `governance/reconciliation/WO-2R/PL-Q4-Q6-launder-rewrap-publish.py.txt` on `main`. |
+| **routes** | `PL-Q4` launder both through `repr`, re-wrap the mean as equity, build an `EquityCrashScore`. `PL-Q5` the same but releasing through the DECLARED door `quantity_for`. `PL-Q6` offer the re-wrapped blend to `number_for_dial_slot`. |
+| **why they escaped at increment 2** | The re-wrapped blend's provenance IS exactly one dial, so every provenance comparison passed it. `PL-Q6` **returned 0.5**, which is what refuted boundary 6. |
+| **command** | `LAUNDER-PROBE` (all three are in it) |
+| **observed refusal** | all three **REFUSED**, `QuantityProvenanceMissing: a bare number (0.5) was offered as dial 'equity_crash''s magnitude.` `PL-Q6` never reaches the publication gate, because the magnitude it needs cannot be built. |
+| **also** | All three are carried as declared tests, `test_variant_pl_q4_*`, `test_variant_pl_q5_*`, `test_variant_pl_q6_*`. |
+
+### `E01` and `E02` — re-run unchanged
+
+Both patches above still apply and both still raise. Re-measured at increment 2b from fixtures built
+through the admission door: `E01` → `TypeError: unsupported operand type(s) for +: 'DialMagnitude'
+and 'DialMagnitude'`; `E02` → `TypeError: unsupported operand type(s) for +: 'int' and
+'DialMagnitude'`. This is the CD-RULE-006 re-measurement for boundaries 1, 2, 3 and 5, which hand
+their residue to the type layer.
+
+### The nine Project Lead probes that were already refused
+
+`PL-Q1a` (repr text leak then add) is **NOT refused and never will be** — it is boundary 6 and two
+floats add. `PL-Q1b`, `PL-Q2a`–`PL-Q2h` (`math.fsum`, `round`, `operator.index`, `Decimal`, `int`,
+`complex`, `format`, `str`-then-`float`) are all still refused, re-run at increment 2b. `PL-Q3`
+(`type.__setattr__` installing `__add__`) still succeeds and is still the declared class-mutation
+residue from increment 2; `PL-Q3b` shows publication after that mutation is refused with
+`MagnitudeSurfaceViolated`.
+
+## NEW VARIANTS — devised by `CD-ENG-WO2R-01` at increment 2b, six of them
+
+**None asks the type for a number.** Nine of those are already refused and a tenth would prove
+nothing. Every one below attacks the LAUNDERING class, or the new structure's own doors.
+
+### V12 — `V12-admission-door-false-declaration.patch` — **NOT REFUSED AT RUNTIME**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54 (HIGH) |
+| **proposition attacked** | No code path combines the two dials into one number. |
+| **route** | `PL-Q9` **plus one line**: the mean is passed through `observed_for_dial(dial_id=slot, quantity=mean, inputs_used=("operator-banner",))` before being wrapped. This is the exact follow-up the re-entry closure's declared residue predicts, written by this seat against its own structure rather than waited for. |
+| **why it is a DIFFERENT route from the known set** | Nothing in the known set names an admission door, because before this increment there was none. It attacks the base case of the closure, not a laundering exit. |
+| **command** | `AST`, then `LAUNDER-PROBE V12` |
+| **`AST` under this variant** | **exit 1**, 2 violations, both `RULE 4: a provenance door outside the declared admission sites` — `src/crash_detector/serving/banner.py:4` (the import) and `:22` (the call). |
+| **`NUMDEF` under this variant** | exit 0. It is not on the dial path Rule F reasons about. |
+| **observed at runtime** | ***NOT REFUSED.*** Returns `EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5), contributions=())` from 0.4 and 0.6. **THIS IS THE DECLARED LIMIT, BOUNDARY 7, AND IT IS NOT CLAIMED TO BE CARRIED ANYWHERE AT RUNTIME.** Only RULE 4 catches it, and RULE 4 is static. |
+
+### V13 — `V13-admission-door-via-importlib-getattr.patch` — **NOT REFUSED AT RUNTIME**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54 (HIGH) |
+| **proposition attacked** | The same, and additionally: can RULE 4 be walked around by never writing the door's name in an import? |
+| **route** | `importlib.import_module("crash_detector.dials.provenance")` at module level, then `admit = getattr(_M, "observed_for_dial")` inside the function. No `from … import` of the name at all. |
+| **why it is a DIFFERENT route** | It tests RULE 4's own reach rather than the closure's, by the same manoeuvre `E02` used against RULE 1 — replace a name with a string. |
+| **command** | `AST`, then `LAUNDER-PROBE V13` |
+| **`AST` under this variant** | **exit 1**, 1 violation, `RULE 4` at `src/crash_detector/serving/banner.py:19` — the string constant handed to `getattr`. RULE 4 judges constants as well as names, so the manoeuvre that beat RULE 1 does not beat this one. |
+| **observed at runtime** | ***NOT REFUSED***, same as V12 and for the same declared reason. |
+
+### V15 — `V15-declared-quantity-constructed-directly.patch` — **NOT REFUSED AT RUNTIME**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54 (HIGH) |
+| **proposition attacked** | Are the two declared doors the ONLY way to establish a provenance? |
+| **route** | Bypass both doors and construct the carrier itself: `DeclaredQuantity(dials=frozenset({slot}), value=total / len(figures))`. |
+| **why it is a DIFFERENT route** | It attacks the type rather than the door — the shape a reader who has understood the closure would reach for first. |
+| **command** | `AST`, then `LAUNDER-PROBE V15` |
+| **`AST` under this variant** | **exit 1**, 2 violations, `RULE 4` at `banner.py:4` and `:19`. The TYPE NAME is in the guarded vocabulary precisely so that constructing one is not a way around the doors. |
+| **observed at runtime** | ***NOT REFUSED***. Boundary 7. Declared, not claimed closed. |
+
+### V14 — `V14-admission-door-as-a-numeric-default.patch` — **REFUSED, TWICE, BY TWO CRITERIA**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54, and it guards CD-ASR-F03 against being reopened by this increment |
+| **proposition attacked** | Did widening Rule F to trace THROUGH the admission door quietly make the door a DECLARED provenance, so that `observed_for_dial(quantity=0.0)` on an absence branch became legal? |
+| **route** | The `missing_required` branch of `_evaluate_dial` returns a `Value` whose magnitude is `observed_for_dial(dial_id=spec.dial_id, quantity=0.0, inputs_used=("baseline",))`. |
+| **why it is a DIFFERENT route** | It attacks the SEAM between this increment and increment 1 — the place a closure most often reopens something it was not looking at. This seat wrote it because it made the change, not because anybody asked. |
+| **command** | `NUMDEF`, then `PYTHONPATH=src python3 -m pytest tests/test_evaluate.py -q` |
+| **observed refusal, static** | `NUMDEF` **exit 1**, 1 violation at `src/crash_detector/engine/evaluate.py:306`, `rule: F: unrecognised magnitude provenance` — the literal `0.0` is reported as the literal it is. The door is a PASS-THROUGH and did not become a terminus. |
+| **observed refusal, runtime** | **9 failed, 26 passed.** The increment-1 post-condition `refuse_a_number_without_its_inputs` raises `AbsenceYieldedAValue`. |
+| **`AST` under this variant** | exit 0, and correctly: `evaluate.py` IS a declared admission site, so RULE 4 does not fire there. Being on that list exempts it from RULE 4 and from nothing else, which is exactly what these two refusals demonstrate. |
+
+### V16 — `V16-text-and-json-launder-without-repr.patch` — **REFUSED**
+
+| | |
+|---|---|
+| **finding** | CD-PL-F54 (HIGH) |
+| **proposition attacked** | **Is this closure a `repr` fix or a class closure?** |
+| **route** | `src/crash_detector/publication/wire_text.py` launders with **no `repr` anywhere**: `from_text` uses an f-string over the private declared quantity and parses the number back out; `from_json` does a JSON round trip of the pickle state. `combined_for` sums whichever it is given and re-wraps. |
+| **why it is a DIFFERENT route** | Every laundering variant so far — the auditor's, the Project Lead's and this seat's — has gone through `repr`. If the closure were a `repr` fix, this would walk straight past it. |
+| **command** | `AST`, then `LAUNDER-PROBE V16` |
+| **`AST` under this variant** | **exit 1**, 6 violations, `RULE 3` — the module names both private slots. That is a second, independent refusal and was not the point of the variant. |
+| **observed refusal** | Both arms leak the numbers successfully (`0.4` and `0.6` printed by the probe, so the EXIT genuinely worked and nothing was hidden), and both re-entries are **REFUSED**: `QuantityProvenanceMissing: a bare number (0.5) was offered as dial 'equity_crash''s magnitude.` **This is the evidence that the closure is at the re-entry and not at `repr`.** |
+| **also** | Carried as a declared test, `tests/test_dial_provenance.py::test_laundering_that_never_touches_repr_is_refused_too`. |
+
+### V17 — `V17-second-private-slot-overwritten-in-place.patch` — **NOT REFUSED AT RUNTIME. A FINDING AGAINST THIS SEAT'S OWN WORK.**
+
+| | |
+|---|---|
+| **finding** | `CD-ENG-WO2R-F11`, raised by this seat against its own closure |
+| **proposition attacked** | Does the re-entry closure cover a number that is never RE-ENTERED because it is written in place? |
+| **route** | Read both figures off `_DeclaredQuantity__value`, then `object.__setattr__(inner, "_DeclaredQuantity__value", mean)` on the quantity one live magnitude already holds, and return that magnitude. **Nothing is ever constructed**, so no constructor is ever reached. |
+| **why it is a DIFFERENT route** | Every other variant here goes IN through a constructor. This one changes a number that is already inside, which is the one shape a re-entry closure structurally cannot see. |
+| **command** | `AST`, then `LAUNDER-PROBE V17` |
+| **`AST` under this variant** | **exit 1**, 6 violations, `RULE 3` at `banner.py:6, :7, :16, :17`. |
+| **observed at runtime** | ***NOT REFUSED.*** The magnitude then reads `0.5`. **NO RUNTIME LAYER CARRIES THIS AND NONE IS CLAIMED TO** (CD-RULE-006). It is `object.__setattr__`, which walks past `__setattr__` on every frozen object in Python and which no Python-level structure can prevent. Declared as boundary B in `src/crash_detector/dials/magnitude.py` and in `provenance.py`, where the previous text said this residue's direction was SAFE — **that was true of forging the PROVENANCE and is not true of forging the VALUE**, and this seat corrected it rather than leaving the claim standing. |
+| **what changed because of it** | RULE 3's guarded set was extended from one private name to two (`_DeclaredQuantity__value`, `__value`), with each declaring module exempt only for the slot it declares. **HONEST NOTE: this seat did NOT find a route to the second slot that avoids naming the first**, so at the commit before the extension this variant already produced 4 RULE 3 violations. The extension is therefore PROPHYLACTIC — closing a name the closure created — rather than the repair of a measured escape, and it is recorded that way. |
+
+## Summary of what was refused by what — increment 2b
+
+| variant | route class | `AST` locator | runtime |
+|---|---|---|---|
+| E01 | inter-procedural fold | exit 0 — declared limit, boundary 1 | **REFUSED** `TypeError` on `+` |
+| E02 | `getattr` over string slots | exit 0 — declared limit, boundary 2 | **REFUSED** `TypeError` on `+` |
+| PL-Q4 | repr launder, re-wrap, publish | n/a (probe) | **REFUSED** `QuantityProvenanceMissing` |
+| PL-Q5 | `quantity_for` launder, re-wrap | n/a (probe) | **REFUSED** `QuantityProvenanceMissing` |
+| PL-Q6 | publication gate on the re-wrap | n/a (probe) | **REFUSED** `QuantityProvenanceMissing` |
+| PL-Q9 | flavour-free module | exit 0 — declared limit, boundary 6 | **REFUSED** `QuantityProvenanceMissing` |
+| V12 | admission door, false declaration | **exit 1, RULE 4 ×2** | ***NOT REFUSED*** — boundary 7 |
+| V13 | admission door via `importlib`+`getattr` | **exit 1, RULE 4** | ***NOT REFUSED*** — boundary 7 |
+| V15 | `DeclaredQuantity` built directly | **exit 1, RULE 4 ×2** | ***NOT REFUSED*** — boundary 7 |
+| V14 | door as a numeric default on absence | **`NUMDEF` exit 1, Rule F** | **REFUSED** `AbsenceYieldedAValue`, 9 tests |
+| V16 | f-string and JSON, **no `repr`** | **exit 1, RULE 3 ×6** | **REFUSED** `QuantityProvenanceMissing` ×2 |
+| V17 | in-place slot rewrite | **exit 1, RULE 3 ×6** | ***NOT REFUSED*** — `CD-ENG-WO2R-F11` |
+
+**Four honest observations about that table.** First, **three variants are NOT refused at runtime and
+all three are inside a written boundary** — V12, V13 and V15 at boundary 7, which says in terms that
+the admission door is a declaration and that no runtime layer carries it. Second, **V17 was not
+inside a boundary until this seat wrote one**: the previous text claimed the `object.__setattr__`
+residue was safe, and that was true of the provenance direction and false of the value direction.
+Third, **the static and runtime arms now split the work rather than duplicating it**: where one is
+silent the other bites, and the four rows where both bite are not the same four. Fourth, and it has
+not stopped being true since the last increment: **no row here proves the class is closed.** Twelve
+routes refused or bounded is twelve routes. The next auditor's job is the thirteenth, and the
+strongest place to look is boundary 7.
 
 ---
 
@@ -521,8 +702,77 @@ Run it as `PYTHONPATH=src python3 -B <file>.py` from the root of the extracted s
 
 ---
 
+## `LAUNDER-PROBE`, written out in full
+
+Not executable and not a runner (`PBG-ASSURE-001`). Retype it into a file in the root of an
+extracted subject tree and run `python3 -B <file>.py <VARIANT>`. It builds its fixtures through the
+DECLARED admission door, so every attack starts from two LEGITIMATE magnitudes and a refusal is a
+refusal of the ATTACK rather than of the scaffolding.
+
+```python
+import sys
+sys.path.insert(0, "src")
+from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials.provenance import observed_for_dial
+
+EQ = DialMagnitude(dial_id="equity_crash",
+                   quantity=observed_for_dial(dial_id="equity_crash", quantity=0.4,
+                                              inputs_used=("feed.a",)))
+MO = DialMagnitude(dial_id="monetary_debasement",
+                   quantity=observed_for_dial(dial_id="monetary_debasement", quantity=0.6,
+                                              inputs_used=("feed.b",)))
+
+
+def report(label, fn):
+    try:
+        answer = fn()
+    except BaseException:
+        exc_type, exc, _ = sys.exc_info()
+        print(f"{label}: REFUSED -> {exc_type.__module__}.{exc_type.__name__}: {exc}")
+        return
+    print(f"{label}: *** NOT REFUSED *** returned {answer!r}")
+
+
+def leak(m):
+    return float(repr(m).split("quantity=")[1].rstrip(")"))
+
+
+which = sys.argv[1]
+
+# PL-Q4 / PL-Q5 / PL-Q6 need no patch; they run against the clean tree.
+if which == "PLQ456":
+    from crash_detector.dials import scores as S
+    from crash_detector.publication import dial_scalar as P
+    b1 = (leak(EQ) + leak(MO)) / 2
+    report("PL-Q4", lambda: S.EquityCrashScore(
+        score=DialMagnitude(dial_id="equity_crash", quantity=b1), contributions=()))
+    b2 = (EQ.quantity_for("equity_crash") + MO.quantity_for("monetary_debasement")) / 2
+    report("PL-Q5", lambda: S.EquityCrashScore(
+        score=DialMagnitude(dial_id="equity_crash", quantity=b2), contributions=()))
+    report("PL-Q6", lambda: P.number_for_dial_slot(
+        "equity_crash", DialMagnitude(dial_id="equity_crash", quantity=b1)))
+
+# PLQ9 / V12 / V13 / V15 / V17 each replace src/crash_detector/serving/banner.py
+elif which in ("PLQ9", "V12", "V13", "V15", "V17"):
+    from crash_detector.serving.banner import aggregate
+    report(which, lambda: aggregate([EQ, MO], "equity_crash"))
+
+elif which == "V16":
+    from crash_detector.publication.wire_text import combined_for, from_text, from_json
+    print("  f-string leak:", from_text(EQ), from_text(MO))
+    print("  json leak:", from_json(EQ), from_json(MO))
+    report("V16a-fstring", lambda: combined_for([EQ, MO], "equity_crash", using=from_text))
+    report("V16b-json", lambda: combined_for([EQ, MO], "equity_crash", using=from_json))
+```
+
+`E01` and `E02` use `BLEND-PROBE` above, unchanged, and `V14` uses no probe at all — its two arms
+are `NUMDEF` and `pytest tests/test_evaluate.py`.
+
+---
+
 ## Increments 3 to 6 are not represented here
 
-This file covers **increment 1** (CD-ASR-F02 and CD-ASR-F03) and **increment 2** (CD-ASR-F01).
+This file covers **increment 1** (CD-ASR-F02 and CD-ASR-F03), **increment 2** (CD-ASR-F01) and
+**increment 2b** (CD-PL-F54, re-opening CD-ASR-F01).
 Variants for CD-ASR-F04, F05 and F06 are owed by the later increments of the same dispatch and their
 absence here is not a claim about them.

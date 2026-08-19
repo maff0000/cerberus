@@ -69,17 +69,19 @@ FOUR RULES, DELIBERATELY DIFFERENT IN REACH
 
   RULE 3  REACHING PAST THE DECLARED RELEASE.  No expression anywhere in the application
           source may name the private slot in which a ``DialMagnitude`` holds its number
-          (``_DialMagnitude__quantity``), by attribute or as a string handed to
-          ``getattr``, nor call the pickle protocol that returns that slot as state
+          (``_DialMagnitude__quantity``) or the one in which a ``DeclaredQuantity`` holds
+          its own (``_DeclaredQuantity__value``, added at CD-PL-F54 because that closure
+          created a SECOND private name holding the same number), by attribute or as a
+          string handed to ``getattr``, nor call the pickle protocol that returns state
           (``__getstate__``, ``__reduce__``, ``__reduce_ex__`` — added closing
           ``CD-ENG-WO2R-F06``, a finding this seat raised against its own work).
-          **There is no allowlist for this rule either**, save the one module
-          that DEFINES the slot. The declared way to obtain the number is
+          **There is no allowlist for this rule either**, save that each of the two
+          modules that DEFINES a slot may name THAT slot and no other. The declared way to obtain the number is
           ``magnitude.quantity_for(<dial id>)``, which names one dial and refuses a
           mismatch; reaching around it is a deliberate act to obtain a number without
           saying which dial it belongs to, which is the first half of a blend. This rule
           is not aimed at a variant somebody wrote. It exists because the closure created
-          exactly one private name, and a guard over exactly one name is the narrowest
+          two private names, and a guard over exactly those names is the narrowest
           kind of guard there is.
 
   RULE 4  A PROVENANCE DOOR OUTSIDE THE DECLARED ADMISSION SITES. **DENY BY DEFAULT.** No
@@ -319,7 +321,36 @@ CO_OCCURRENCE_ALLOWLIST = {
 #: either, as an attribute and as a string constant (so ``getattr(m, "_DialMagnitude__
 #: quantity")`` is refused with the attribute form). Declared as data because the closure
 #: created exactly ONE private name and this rule guards exactly that name.
-SEALED_MAGNITUDE_SLOTS = frozenset({"_DialMagnitude__quantity", "__quantity"})
+#:
+#: ``_DeclaredQuantity__value`` and ``__value`` joined it at CD-PL-F54, because that closure
+#: created a SECOND private name holding the same number. A guard over the first name only
+#: would have been exactly the narrowness this rule exists to avoid: reaching
+#: ``_DeclaredQuantity__value`` obtains a bare float without naming a dial, which is the
+#: same act as reaching ``_DialMagnitude__quantity`` and is the first half of the same
+#: blend. This seat raised the omission against its own work while re-running the eleven
+#: plants, before any variant exercised it.
+SEALED_MAGNITUDE_SLOTS = frozenset(
+    {
+        "_DialMagnitude__quantity",
+        "__quantity",
+        "_DeclaredQuantity__value",
+        "__value",
+    }
+)
+
+#: Which module may name which slot: each DECLARES one and must read it to release the
+#: number. Keyed PER MODULE rather than as one shared exemption, so the magnitude module
+#: cannot reach the declared quantity's private slot or the reverse. A rule that fired on a
+#: definition would forbid the structure it exists to protect; a rule that exempted a module
+#: wholesale would open a door beside it.
+SLOT_DECLARING_MODULES = {
+    "src/crash_detector/dials/magnitude.py": frozenset(
+        {"_DialMagnitude__quantity", "__quantity"}
+    ),
+    "src/crash_detector/dials/provenance.py": frozenset(
+        {"_DeclaredQuantity__value", "__value"}
+    ),
+}
 
 #: The REFLECTION reach. `__getstate__` and the pickle protocol return a magnitude's state,
 #: and state is the number. Keying that state by the private slot name (see
@@ -501,7 +532,7 @@ class BlendScanner:
         check: Check,
         path: pathlib.Path,
         allow_co_occurrence: bool,
-        declares_the_slot: bool = False,
+        declares_the_slot: frozenset = frozenset(),
         is_admission_site: bool = False,
     ) -> None:
         self.check = check
@@ -581,8 +612,6 @@ class BlendScanner:
         slot is a violation wherever it appears, in an expression, in a default, in a
         decorator, in an annotation or in a string.
         """
-        if self.declares_the_slot:
-            return
         for node in ast.walk(tree):
             if not isinstance(node, (ast.Attribute, ast.Constant, ast.Call)):
                 continue
@@ -616,7 +645,8 @@ class BlendScanner:
                         and second.value in SEALED_MAGNITUDE_REACH
                     ):
                         reached = str(second.value)
-            if not reached:
+            if not reached or reached in self.declares_the_slot:
+                # The module that DECLARES this particular slot may name it, and only it.
                 continue
             self.report(
                 node,
@@ -888,7 +918,9 @@ def main() -> int:
             check,
             path,
             _allow_co_occurrence(root, path),
-            declares_the_slot=path.relative_to(root).as_posix() == MAGNITUDE_MODULE,
+            declares_the_slot=SLOT_DECLARING_MODULES.get(
+                path.relative_to(root).as_posix(), frozenset()
+            ),
             is_admission_site=(
                 path.relative_to(root).as_posix() in DECLARED_ADMISSION_SITES
             ),
@@ -897,8 +929,8 @@ def main() -> int:
     return check.done(
         f"{len(files)} application Python files under {', '.join(SCAN_DIRS)}; "
         f"{len(CO_OCCURRENCE_ALLOWLIST)} paths allowlisted for RULE 2 only; RULE 1 and "
-        f"RULE 3 have no allowlist (RULE 3 exempts only {MAGNITUDE_MODULE}, which "
-        f"declares the slot); RULE 4 denies by default over "
+        f"RULE 3 have no allowlist (RULE 3 exempts {len(SLOT_DECLARING_MODULES)} modules, "
+        f"each for the ONE slot it declares and no other); RULE 4 denies by default over "
         f"{len(DECLARED_ADMISSION_SITES)} declared admission sites"
     )
 

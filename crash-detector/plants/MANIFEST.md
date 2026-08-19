@@ -32,6 +32,25 @@ assurance.
 > touched nothing it reads, so the throwaway-container authorisation (RT-A) does not extend
 > to it here. That is disclosed rather than implied.
 >
+> **WO-2R INCREMENT 2b — what `CD-ENG-WO2R-01` changed here, and why.** Closing `CD-PL-F54`
+> moved the closure to the RE-ENTRY: a bare `float` can no longer become a `DialMagnitude`.
+> **ALL ELEVEN PATCHES STILL APPLY CLEANLY AND ALL ELEVEN STILL CONTRAST**, re-run as a set
+> by this seat at the increment-2b tree, so no patch was regenerated and none was deleted
+> (CD-D-033). Ten exit `1`; `CD-RT-003-GRANT-MATRIX-LIVE` exits `3` PRECONDITION_NOT_MET for
+> want of a live store, exactly as it does on the clean tree — its CONTRAST was again NOT
+> re-run, for the same reason as at increment 2, and that is disclosed rather than implied.
+> **ONE FAILURE SIGNATURE NARROWED and it is the most important thing on this page:**
+> `CD-RT-002-TYPE-NO-ARITHMETIC` went from `6 failed, 199 passed` to `2 failed, 304 passed`.
+> Not one test changed. Four of the six stopped firing because the PLANT'S OWN ARITHMETIC NOW
+> RAISES — its `__add__` cannot re-wrap the blend it computes — so the tests asserting that
+> the operation is a `TypeError` are satisfied even with the plant applied. The plant still
+> catches the added dunder on the surface assertions, still fires only its own arm, and is
+> not weakened; but its demonstration that the dunder could BLEND is stale, and this seat
+> raised that against its own work as `CD-ENG-WO2R-F10`. The full account, including why the
+> plant was deliberately NOT rewritten to blend through the admission door, is in the
+> `CD-RT-002-TYPE-NO-ARITHMETIC` row. CD-AC-002's three-test independence was re-measured
+> under that plant at increment 2b and is intact.
+>
 > It is a set of *negative controls* an INDEPENDENT seat applies and runs for
 itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
 
@@ -324,28 +343,62 @@ monetary one; the blend arrives without either type naming the other, which is w
 asserts the absence of the whole `ARITHMETIC_DUNDERS` family rather than watching for
 `equity + monetary` to raise.
 
-**Expected failure signature.** pytest exits **1**, `6 failed, 199 passed`:
+**Expected failure signature — RESTATED AT WO-2R INCREMENT 2b, AND IT NARROWED. READ WHY.**
+pytest exits **1**, `2 failed, 304 passed`:
 
 ```
 FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
 FAILED tests/test_scores.py::test_no_ancestor_of_either_score_type_defines_one_either
-FAILED tests/test_scores.py::test_every_binary_operator_between_the_two_dials_is_a_type_error[add]
-FAILED tests/test_scores.py::test_no_score_can_be_combined_with_a_bare_number_either[add]
-FAILED tests/test_scores.py::test_no_score_can_be_combined_with_a_bare_number_either[truediv]
-FAILED tests/test_scores.py::test_a_score_cannot_be_summed_which_is_how_a_blend_usually_arrives
 ```
 
-**Sibling arms under this plant, observed by this seat on the regenerated patch:**
-`check_no_blend.py` exit **0**, `check_schema_closed.py` exit **0**. The
+At lane SHA `a94ef97` this plant produced **six** failures. Four of them have stopped firing
+and **not one test was changed to make that happen** — the node ids are all still collected
+and still assert exactly what they asserted. The four are:
+
+```
+test_every_binary_operator_between_the_two_dials_is_a_type_error[add]
+test_no_score_can_be_combined_with_a_bare_number_either[add]
+test_no_score_can_be_combined_with_a_bare_number_either[truediv]
+test_a_score_cannot_be_summed_which_is_how_a_blend_usually_arrives
+```
+
+They assert that the operation raises `TypeError`. **It still does** — but now it raises from
+inside the plant's own `__add__`, because closing `CD-PL-F54` made
+`DialMagnitude(dial_id=..., quantity=left + right)` refuse a bare `float` with
+`QuantityProvenanceMissing`, which is a `TypeError`. So the plant's arithmetic no longer
+BLENDS. The demonstration recorded above —
+
+```
+>>> ((e + m) / 2.0).score
+DialMagnitude(dial_id='equity_crash', quantity=0.5)
+```
+
+— **no longer holds at the current lane SHA**, and is preserved here as the record of what
+this patch did at `a94ef97` rather than as a claim about today.
+
+**THE IMPLEMENTING SEAT RAISED THIS AGAINST ITS OWN WORK AS `CD-ENG-WO2R-F10` AND STATES THE
+COST PLAINLY.** The plant still applies cleanly, still exits non-zero, and still fires ONLY
+its own declared arm, so `CD-D-033` is satisfied and nothing was deleted or weakened. But
+its evidential value is narrower than it was: it now proves that the surface assertion
+catches an added dunder, and no longer proves that the dunder could have blended the dials.
+It was deliberately NOT rewritten to blend through the admission door, because a plant that
+called `observed_for_dial` from `scores.py` would also fire `check_no_blend`'s RULE 4 and
+would destroy the three-test independence this criterion's plants exist to demonstrate —
+the same hazard `CD-PL-F53` was raised for. The next Assurance seat should treat this plant
+as evidence for the surface assertion only, and devise its own for the blend.
+
+**Sibling arms under this plant, RE-OBSERVED AT WO-2R INCREMENT 2b:**
+`check_no_blend.py` exit **0** (4722 assertions), `check_schema_closed.py` exit **0**. The
 type layer is still the only one that sees it — nothing in the source yet writes the blend,
 and nothing publishes it, so a project relying on the AST scan alone would have shipped a
 blendable dial type.
 
 **THREE-TEST INDEPENDENCE, RE-MEASURED AT WO-2R INCREMENT 2 AND STILL INTACT.** CD-AC-002
 has three declared tests and this plant fires exactly one of them. Both CD-AC-001 arms also
-stay clean under it (`check_no_numeric_default.py` exit 0 at 301 assertions;
-`pytest tests/test_reading.py tests/test_evaluate.py` 90 passed), so strengthening the type
-layer did NOT make two declared tests fire on the same plant — the hazard the previous
+stay clean under it (`check_no_numeric_default.py` exit 0 at 365 assertions;
+`pytest tests/test_reading.py tests/test_evaluate.py` 90 passed — both re-observed at
+increment 2b), so strengthening the type layer, and then the re-entry, did NOT make two
+declared tests fire on the same plant — the hazard the previous
 increment raised against its own work. Each of CD-AC-002's three plants still fires its own
 arm and only its own arm.
 

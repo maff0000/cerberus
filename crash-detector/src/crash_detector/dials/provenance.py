@@ -121,10 +121,21 @@ The residue of THAT is the residue of any registry: an edit to the declared admi
 itself, and a module outside the scanned set. Both are boundaries 4 and 7 of the check's
 own declared limit, and neither is claimed to be carried anywhere else.
 
-**``object.__setattr__`` REWRITES A SLOT**, here as on every frozen object in Python. The
-direction is safe for the same reason it is safe on a magnitude: a forged ``dials`` makes
-the quantity LESS usable. :meth:`DeclaredQuantity.value_for` compares by set equality and
-refuses it, and so does the magnitude constructor.
+**``object.__setattr__`` REWRITES A SLOT**, here as on every frozen object in Python, and the
+two directions differ.
+
+Forging ``dials`` is SAFE for the same reason it is safe on a magnitude: it makes the
+quantity LESS usable. :meth:`DeclaredQuantity.value_for` compares by set equality and refuses
+it, and so does the magnitude constructor.
+
+Forging ``_DeclaredQuantity__value`` IS NOT SAFE, and this seat raised it against its own
+work (``CD-ENG-WO2R-F11``). Rewriting the number IN PLACE on the quantity a live magnitude
+already holds never constructs anything, so the re-entry closure is never reached. MEASURED
+as `V17`: NOT refused at runtime; the magnitude then reads the blend. **NO RUNTIME LAYER
+CARRIES THIS AND NONE IS CLAIMED TO** (CD-RULE-006). RULE 3 of
+``tools/register/check_no_blend.py`` carries it statically — reaching either private slot on
+the scanned path is a violation with no allowlist beyond each declaring module, and `V17`
+produces six of them — and no Python-level structure can prevent an in-place slot rewrite.
 """
 
 from __future__ import annotations
