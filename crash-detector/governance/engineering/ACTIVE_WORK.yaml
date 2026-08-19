@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T09:05:00Z'
+updated_utc: '2026-08-19T09:10:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -111,6 +111,32 @@ current_block: >
   touches a Project-Lead-exclusive path. CD-D-029: main is NOT rewritten, and its 13 checkpoints keep
   the ambient human author; that seam is disclosed, and every new commit on main from
   BL-...-0020 forward carries the Project Lead seat identity.
+  WO-2R ENGINEER DISPATCH ISSUED (BL-20260819T091000Z-0022). CD-DISPATCH-WO2R-ENGINEER moved
+  DRAFT -> ISSUED against execution base ee8be6b to a FRESH seat CD-ENG-WO2R-01, bounded to
+  CD-ASR-F01..F06 and NOTHING ELSE, in six increments — F02+F03 together (the PO ruled them one
+  class), then F01, F04, F05, F06, then reconciliation-and-return which writes no logic.
+  Three devices in the dispatch exist because the CHEAPEST rework — make the ten reported escapes
+  fail, declare success — would reproduce the very defect the gate caught, one level up:
+  (1) a MANDATORY COMMIT BLOCK (CLASS CLOSED / STRUCTURE / WHY IT IS A CLASS CLOSURE / PROVED BY /
+  KNOWN-SET VARIANTS RE-RUN / NEW VARIANTS >=2 / FALSE POSITIVES CHECKED / CLEAN ARM / ELEVEN PLANTS /
+  DECLARED LIMIT), so PO Ruling 2's prose is mechanically checkable and an increment without it is not
+  accepted; (2) a PROOF STANDARD that separates runtime from static — for F01/F02 the PO said
+  "unrepresentable" and "structurally incapable", which a static checker cannot evidence, so the
+  variant must be RUN and the refusal observed; (3) DURABLE VARIANTS under variants/WO-2R/ with a
+  manifest and nothing executable, which both satisfies PBG-CONT-007 and stops the seat fitting its
+  guard to its own list, because that list becomes the NEXT auditor's exclusion set.
+  CD-D-031: F04 is closed by DENY-BY-DEFAULT over a declared destination registry, NOT by resolution —
+  a register check that depends on DNS is not reproducible and cannot be a gate (CD-PL-F48). An IP
+  literal then stops being a spelling to catch and is simply not a destination anyone declared.
+  CD-D-032: the F06 ceiling is DERIVED from ratified intent (PID §5's 15-minute detectability budget,
+  bounded further by BLUEPRINT §7's tightening window_for(regime)) or the seat FAILS CLOSED and
+  escalates. It never invents a number (CD-RULE-003, PBG-AUTH-005).
+  CD-D-033: the eleven existing plants are a DELIVERABLE of the rework, not collateral — each must
+  still apply and still contrast, and one that no longer applies must be updated to violate the SAME
+  proposition against the new structure. Deleting one is prohibited.
+  Kept deliberately OUT: CD-ASR-F07 (report-only consequence of F06), E09/E10 (inside CD-RT-012's
+  declared limit, judged honestly drawn; CD-D-015 not lifted), CD-ENG-F39/F41, CD-PL-F43, CD-ASR-N01/N02,
+  CD-ERR-001, CD-OB-004 — all owed at WO-3.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -121,9 +147,10 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 80b4a246db7df59115c5636275f523b3df19a3d6
-  # 80b4a24 is the PO-GATE-REVIEW checkpoint (rulings recorded, CD-RULE-001..004 created) and is the
-  # FIRST commit on this project carrying a seat identity (CD-RULE-002). Verified present.
+last_completed_checkpoint_sha: baef0ecea43d850d84e641677200eeed4e215a59
+  # baef0ec is the IDENTITY RE-AUTHORING checkpoint (lane 66681b2 -> ee8be6b, all 24 commits, proved
+  # identity-only). Verified present. Superseded 80b4a24, the PO-GATE-REVIEW checkpoint, which was the
+  # FIRST commit on this project to carry a seat identity (CD-RULE-002).
   # f041c6f, the prior value, was the WO-2 GATE checkpoint (Assurance AMBER recorded, gate NOT MET).
   # Superseded 7dad359 at BL-20260819T085500Z-0020. Resolved with git rev-parse before writing.
   # 7dad359, the prior value, was the SOD-boundary checkpoint (Engineer complete, Assurance ISSUED).
@@ -388,5 +415,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T090500Z-0021
+last_build_log_entry: BL-20260819T091000Z-0022
 status: ACTIVE
