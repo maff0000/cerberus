@@ -146,6 +146,13 @@ BE CARRIED ANYWHERE** (CD-RULE-006).
    * `V46` copies `Dockerfile.engine` byte-for-byte to `Dockerfile.engine-clone` and builds
      `cd-analytics` from it, reaching witness through the top-level package: exits `1`. The identity
      is the image's **content**, so renaming the file does not evade it.
+   **Note on these assertion counts, corrected at increment 5's `CD-ASR-F06` commit.** They were
+   measured at the addendum commit `4cae8be`, where the clean arm was PASS 23. At the delivered SHA
+   the clean arm is PASS 24 and every example is one higher — `V42` PASS 24, `V44` PASS 24, `V45`
+   PASS 28 — because `crash_detector.staleness`, new in the `CD-ASR-F06` commit, is reachable from
+   the engine root set so `len(reached)` is one larger. It is **not** witness code and no violation
+   is reported. Both numbers are stated rather than one overwritten.
+
    **What is still outside it:** a service built from a Dockerfile that is **not byte-identical** —
    a near-copy differing by one comment — is a different image by the artefact's own account and is
    not a walk root. Closing that means deciding when two different Dockerfiles "mean" the same
@@ -166,7 +173,8 @@ BE CARRIED ANYWHERE** (CD-RULE-006).
    **MEASURED EXAMPLE (variant `V44`):** `deploy/entrypoints/cd_engine.py` inserts
    `/app/src/crash_detector/witness` into `sys.path` and then writes `import panel`. `panel.py`
    **is** scanned and **is** witness code, but the edge is spelled `panel`, which resolves to no
-   module in the graph, and this check exits `0`, PASS 23 assertions, 0 violations.
+   module in the graph, and this check exits `0`, PASS 23 assertions at `dae6503` and PASS 24 at the
+   increment-5 SHA, 0 violations.
    **PARTIALLY CARRIED, MEASURED:** the string-literal and dynamic-import clauses are unchanged and
    still bite, and `CD-ENGINE-ROOT-110` closes the neighbouring route of shipping code **off** the
    declared path (variant `V43`, refused, exit 3). **FOR A SHORT-NAME IMPORT OF ALREADY-SCANNED

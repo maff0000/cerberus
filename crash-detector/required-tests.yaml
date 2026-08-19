@@ -552,6 +552,12 @@ criteria:
         byte-identical — a near-copy differing by one comment — is a different image by the
         artefact's own account and is not a walk root; closing that means deciding when two
         different Dockerfiles MEAN the same image, which is a judgement and not a derivation.
+        NOTE ON THESE ASSERTION COUNTS, CORRECTED AT INCREMENT 5's CD-ASR-F06 COMMIT: they were
+        measured at the addendum commit 4cae8be, where the clean arm was PASS 23. At the delivered
+        SHA the clean arm is PASS 24 and every example is one higher — V42 PASS 24, V44 PASS 24,
+        V45 PASS 28 — because crash_detector.staleness, new in the CD-ASR-F06 commit, is reachable
+        from the engine root set so len(reached) is one larger. It is NOT witness code and no
+        violation is reported. Both numbers are stated rather than one overwritten.
         CARRIED, MEASURED BY THE IMPLEMENTING SEAT (CD-RULE-006): the container-set test layer
         asserts the declared service set by EQUALITY and refuses ANY added service whatever image
         it builds — on the PL-U6b tree at be34fe4 the seat observed 8 failed, 1184 passed, namely
@@ -567,7 +573,8 @@ criteria:
         sys.path MUTATION IS NOT DERIVED, and this is the derivation's own residue. MEASURED,
         variant V44: cd_engine.py inserts /app/src/crash_detector/witness into sys.path and writes
         `import panel`; panel.py IS scanned and IS witness code, but the edge is spelled `panel`,
-        resolves to no module in the graph, and the check exits 0, PASS 23. PARTIALLY CARRIED,
+        resolves to no module in the graph, and the check exits 0, PASS 23 at dae6503 and PASS 24
+        at the increment-5 SHA. PARTIALLY CARRIED,
         MEASURED: the string-literal and dynamic-import clauses still fire, and CD-ENGINE-ROOT-110
         closes the neighbouring route of shipping code OFF the declared path (variant V43, exit 3).
         FOR A SHORT-NAME IMPORT OF ALREADY-SCANNED WITNESS CODE AFTER A sys.path INSERT, NOT PROVED

@@ -1279,6 +1279,17 @@ Each on its own pristine extraction, `git apply -p1`, `python3 -B`, under `timeo
 | `V46` | the same, defeating a path-based image identity | `engine reaches witness code`, root derived by `CD-ENGINE-ROOT-004` | **1** |
 | `V45` | a legitimate second engine container | none — it PASSES, and the root SET grows | **0** |
 
+## Correction: the assertion counts in this section moved by one at the F06 commit
+
+Every number in the rows above was measured at the ADDENDUM commit `4cae8be`, where the clean arm
+was `PASS 23`. At the increment-5 delivered SHA the clean arm is **`PASS 24`** and every example is
+one higher — `V42` PASS 24, `V44` PASS 24, `V45` **PASS 28** — because `crash_detector.staleness`,
+added by the `CD-ASR-F06` commit, is reachable from the engine root set, so `len(reached)` is one
+larger. It is **not** witness code and no violation is reported. Both numbers are recorded rather
+than one overwritten, so an auditor reproducing at either commit finds its own. Every EXIT CODE and
+every route in the rows above is unchanged; re-run at the delivered SHA: `PL-U6b` exit 1, `V45`
+exit 0, `V46` exit 1.
+
 ## No regression, measured
 
 All fifteen increment-4 rows were re-run against the amended check on pristine extractions. Every

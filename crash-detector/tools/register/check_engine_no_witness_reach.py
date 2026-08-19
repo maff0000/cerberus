@@ -223,6 +223,14 @@ DECLARED LIMITS (CD-RULE-004). WHAT THIS CHECK DOES NOT DO.
     a near-copy differing by one comment — is a different image by the artefact's own account
     and is not a walk root. Closing that would mean deciding when two different Dockerfiles
     "mean" the same image, which is a judgement and not a derivation.
+    NOTE ON THE ASSERTION COUNTS IN THIS BOUNDARY, CORRECTED AT INCREMENT 5's F06 COMMIT.
+    The counts above were measured at the ADDENDUM commit 4cae8be, where the clean arm was
+    PASS 23. At the delivered SHA the clean arm is PASS 24 and every example is one higher —
+    V42 PASS 24, V44 PASS 24, V45 PASS 28 — because ``crash_detector.staleness`` (new in the
+    F06 commit) is reachable from the engine root set, so ``len(reached)`` is one larger. It
+    is NOT witness code and no violation is reported. Both numbers are stated rather than one
+    overwritten, so an auditor reproducing at either commit finds its own number here.
+
     CARRIED, MEASURED BY THIS SEAT (CD-RULE-006): the container-set test layer asserts the
     declared service set by EQUALITY, so it refuses ANY service added to
     ``deploy/compose.yaml`` regardless of which image it builds. On the PL-U6b tree, at
@@ -249,7 +257,7 @@ DECLARED LIMITS (CD-RULE-004). WHAT THIS CHECK DOES NOT DO.
     ``/app/src/crash_detector/witness`` into ``sys.path`` and then writes ``import panel``.
     ``panel.py`` IS scanned — it is in the universe, and it IS witness code — but the edge is
     spelled ``panel``, which resolves to no module in the graph, and this check exits 0,
-    PASS 23 assertions, 0 violations.
+    PASS 23 assertions at ``dae6503`` and PASS 24 at the increment-5 SHA, 0 violations.
     WHY IT IS NOT CLOSED, STATED SO THE ARGUMENT CAN BE JUDGED RATHER THAN ASSUMED: closing it
     means either refusing every ``sys.path`` mutation — which the clean tree itself contains,
     legitimately, in ``deploy/entrypoints/_service.py``, so the guard would fire on the
