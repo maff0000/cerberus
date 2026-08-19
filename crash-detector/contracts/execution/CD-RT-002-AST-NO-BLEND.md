@@ -38,7 +38,7 @@ harness the project wrote is verifying the harness (`PBG-ASSURE-001`).
 
 ## Subject
 
-Every Python module in the application tree, walked as an AST. The allowlist is declared in the check and printed on every run, so a reader can see exactly where blending is permitted and why. THREE rules run: RULE 1 arithmetic across the two dials, with no allowlist; RULE 2 co-occurrence in one expression, with a six-path allowlist; and RULE 3, added at WO-2R and carrying no allowlist beyond the module that declares the slot, which reports any expression naming `_DialMagnitude__quantity` by attribute or as a string handed to `getattr`.
+Every Python module in the application tree, walked as an AST. The allowlist is declared in the check and printed on every run, so a reader can see exactly where blending is permitted and why. THREE rules run: RULE 1 arithmetic across the two dials, with no allowlist; RULE 2 co-occurrence in one expression, with a six-path allowlist; and RULE 3, added at WO-2R and carrying no allowlist beyond the module that declares the slot, which reports any expression naming `_DialMagnitude__quantity` by attribute or as a string handed to `getattr`, and any call of the pickle protocol that returns that slot as state (`__getstate__`, `__reduce__`, `__reduce_ex__`). The reflection half was added closing `CD-ENG-WO2R-F06`, a finding the implementing seat raised against its own increment-2 work. RULE 3 distinguishes a dunder name held as DATA from a dunder name REACHED, so `ARITHMETIC_DUNDERS` and `TOLERATED_INTERPRETER_MACHINERY` — both legitimate tables of dunder names — are untouched.
 
 The check REFUSES (exit `3`) if `src/crash_detector/dials/magnitude.py` is absent from the subject tree. That module is the type-level closure this check is only a locator over, and reporting a clean scan of a tree that has lost it would be the worst kind of pass.
 
@@ -152,7 +152,7 @@ closure and should be reported as one.
 
 ## Negative control
 
-A single expression consuming both dial types outside the allowlisted container and serving layer — the canonical form being `combined = (equity + monetary) / 2`, and what this check reaches being any arithmetic, comparison or aggregation over the two together **within one scope**, including the three-statement spelling that its intra-procedural flavour propagation follows. RULE 3 additionally reports any expression naming `_DialMagnitude__quantity`, by attribute or as a string handed to `getattr`.
+A single expression consuming both dial types outside the allowlisted container and serving layer — the canonical form being `combined = (equity + monetary) / 2`, and what this check reaches being any arithmetic, comparison or aggregation over the two together **within one scope**, including the three-statement spelling that its intra-procedural flavour propagation follows. RULE 3 additionally reports any expression naming `_DialMagnitude__quantity`, by attribute or as a string handed to `getattr`, and any call of `__getstate__`, `__reduce__` or `__reduce_ex__`.
 
 Detection is a **contrast**, and the validator computes it as one: the same declared command
 must exit `0` on the clean subject and non-zero on the subject with the violation planted.

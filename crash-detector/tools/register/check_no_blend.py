@@ -59,7 +59,10 @@ THREE RULES, DELIBERATELY DIFFERENT IN REACH
   RULE 3  REACHING PAST THE DECLARED RELEASE.  No expression anywhere in the application
           source may name the private slot in which a ``DialMagnitude`` holds its number
           (``_DialMagnitude__quantity``), by attribute or as a string handed to
-          ``getattr``. **There is no allowlist for this rule either**, save the one module
+          ``getattr``, nor call the pickle protocol that returns that slot as state
+          (``__getstate__``, ``__reduce__``, ``__reduce_ex__`` — added closing
+          ``CD-ENG-WO2R-F06``, a finding this seat raised against its own work).
+          **There is no allowlist for this rule either**, save the one module
           that DEFINES the slot. The declared way to obtain the number is
           ``magnitude.quantity_for(<dial id>)``, which names one dial and refuses a
           mismatch; reaching around it is a deliberate act to obtain a number without
@@ -237,6 +240,21 @@ CO_OCCURRENCE_ALLOWLIST = {
 #: created exactly ONE private name and this rule guards exactly that name.
 SEALED_MAGNITUDE_SLOTS = frozenset({"_DialMagnitude__quantity", "__quantity"})
 
+#: The REFLECTION reach. `__getstate__` and the pickle protocol return a magnitude's state,
+#: and state is the number. Keying that state by the private slot name (see
+#: ``DialMagnitude.__getstate__``) means a reader must write the slot name and is caught by
+#: the set above — but calling the protocol at all, in application source, is the same act
+#: as reaching the slot and there is no legitimate reason to do it. Added closing
+#: CD-ENG-WO2R-F06, a finding this seat raised against its own increment-2 work after
+#: `sum(m.__getstate__()["quantity"] for m in both) / 2` returned 0.5 with nothing refusing
+#: it. Deny by default, narrowly: three names, no allowlist beyond the defining module.
+SEALED_MAGNITUDE_REFLECTION = frozenset(
+    {"__getstate__", "__reduce__", "__reduce_ex__"}
+)
+
+#: Everything RULE 3 refuses to see named in application source.
+SEALED_MAGNITUDE_REACH = SEALED_MAGNITUDE_SLOTS | SEALED_MAGNITUDE_REFLECTION
+
 #: The one module RULE 3 does not apply to: the module that DECLARES the slot, and which
 #: must therefore name it in order to read it out inside ``quantity_for``. This is not an
 #: allowlist in the RULE 2 sense — it is the definition site, and a rule that fired on the
@@ -372,29 +390,52 @@ class BlendScanner:
         if self.declares_the_slot:
             return
         for node in ast.walk(tree):
-            if not isinstance(node, (ast.Attribute, ast.Constant)):
+            if not isinstance(node, (ast.Attribute, ast.Constant, ast.Call)):
                 continue
-            # One assertion per node that COULD name the slot — every attribute access and
-            # every constant in the module. Counting every AST node would inflate the
-            # number without widening the guard, and an assertion count is evidence.
+            # One assertion per node that COULD name the reach — every attribute access,
+            # every constant and every call in the module. Counting every AST node would
+            # inflate the number without widening the guard, and a count is evidence.
             self.check.asserted()
             reached = ""
-            if isinstance(node, ast.Attribute) and node.attr in SEALED_MAGNITUDE_SLOTS:
+            if isinstance(node, ast.Attribute) and node.attr in SEALED_MAGNITUDE_REACH:
                 reached = node.attr
             elif isinstance(node, ast.Constant) and node.value in SEALED_MAGNITUDE_SLOTS:
+                # SLOT names only. A dunder NAME held as data is a legitimate thing in this
+                # codebase — `ARITHMETIC_DUNDERS` and `TOLERATED_INTERPRETER_MACHINERY` are
+                # both tables of dunder names, and a rule that could not tell a declaration
+                # from a reach would forbid the guards it exists beside. The slot names have
+                # no such use: outside the module that declares them they are only ever a
+                # way of reaching the number.
                 reached = str(node.value)
+            elif isinstance(node, ast.Call):
+                # `getattr(m, "__getstate__")()` is the same reach as `m.__getstate__()`,
+                # spelled to avoid the attribute. Judged on the CALL, so a dunder name
+                # sitting in a data table is untouched.
+                callee = (
+                    node.func.id if isinstance(node.func, ast.Name)
+                    else node.func.attr if isinstance(node.func, ast.Attribute) else ""
+                )
+                if callee in ("getattr", "setattr", "delattr") and len(node.args) >= 2:
+                    second = node.args[1]
+                    if (
+                        isinstance(second, ast.Constant)
+                        and second.value in SEALED_MAGNITUDE_REACH
+                    ):
+                        reached = str(second.value)
             if not reached:
                 continue
             self.report(
                 node,
                 "RULE 3: reaching past the declared magnitude release",
-                f"`{reached}` is the PRIVATE slot in which a DialMagnitude holds its "
-                "number. Reaching it obtains a bare float without naming which dial it "
-                "belongs to, which is the first half of a blend and the reason the slot "
-                "is private. The declared release is "
+                f"`{reached}` reaches past the declared release of a dial magnitude — "
+                "it is either the PRIVATE slot in which a DialMagnitude holds its number "
+                "or the pickle protocol that returns that slot as state. Either obtains a "
+                "bare float without naming which dial it belongs to, which is the first "
+                "half of a blend. The declared release is "
                 "`magnitude.quantity_for(<dial id>)`, which names one dial and refuses a "
-                "mismatch by comparing provenance (CD-AC-002, CD-ASR-F01). There is no "
-                "allowlist for this rule.",
+                "mismatch by comparing provenance (CD-AC-002, CD-ASR-F01, CD-ENG-WO2R-F06). "
+                "There is no allowlist for this rule beyond the module that declares the "
+                "slot.",
             )
 
     def scan_body(self, body, flavours: Flavours) -> None:

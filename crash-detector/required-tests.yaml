@@ -352,8 +352,16 @@ criteria:
         propagation follows. RULE 3, added at WO-2R and carrying no allowlist beyond the module
         that declares the slot, additionally reports any expression naming the private slot in
         which a dial magnitude holds its number (`_DialMagnitude__quantity`), by attribute or as a
-        string handed to getattr: reaching around the declared release obtains a number without
-        naming which dial it belongs to, which is the first half of a blend.
+        string handed to getattr, AND any call of the pickle protocol that returns that slot as
+        state (`__getstate__`, `__reduce__`, `__reduce_ex__`, as an attribute or through getattr).
+        Reaching around the declared release obtains a number without naming which dial it belongs
+        to, which is the first half of a blend. The reflection half was added closing
+        CD-ENG-WO2R-F06, a finding the implementing seat raised against its own increment-2 work
+        after `sum(m.__getstate__()["quantity"] for m in both) / 2` returned 0.5 with nothing
+        refusing it; a magnitude's state is now keyed by the private slot names, so the same
+        expression must name one. RULE 3 judges a dunder name held as DATA differently from a
+        dunder name REACHED: ARITHMETIC_DUNDERS and TOLERATED_INTERPRETER_MACHINERY are legitimate
+        tables of dunder names and are untouched.
         THIS CHECK HAS A DECLARED LIMIT, stated in full in the header of
         tools/register/check_no_blend.py, in the comment above this entry and in the execution
         contract, each boundary with an example an auditor can execute. It is never a sole guard:

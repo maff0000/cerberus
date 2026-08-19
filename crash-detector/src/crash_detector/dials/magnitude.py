@@ -113,7 +113,20 @@ provenance makes the magnitude LESS usable, not more —
 carry it, and the publication gate refuses to publish it. There is no forgery of
 provenance that yields a number.
 
-**C. ``repr`` SHOWS THE QUANTITY.** Deliberately. Hiding a value from a developer's own
+**C. REFLECTION REACHES THE PAYLOAD, AS IT DOES IN EVERY PYTHON OBJECT.**
+``m.__getstate__()``, ``m.__reduce_ex__(2)`` and ``getattr(m, "_DialMagnitude__quantity")``
+all return the number at runtime and nothing in Python can prevent them. Two things are
+true about that and both are worth writing down. First, the state dict is **keyed by the
+private slot names**, so reading it in source requires writing
+``state["_DialMagnitude__quantity"]``, which the AST locator's RULE 3 reports — the keys
+are part of the closure and are not cosmetic (``CD-ENG-WO2R-F06``, a finding this seat
+raised against its own work, is the reason). Second, a revived magnitude goes through the
+SAME validation as a constructed one, so reflection is a way of READING the payload and
+never a way of forging a magnitude with no provenance, two dials' provenance, or a
+non-finite number. This residue is boundary A reached by a different road, and the
+publication gate answers it in the same way.
+
+**D. ``repr`` SHOWS THE QUANTITY.** Deliberately. Hiding a value from a developer's own
 debugger would be obfuscation, and obfuscation is not structure; CD-RULE-004 prefers a
 boundary written down to a boundary made inconvenient. Parsing a number back out of a
 repr is boundary A by a longer road.
@@ -345,28 +358,50 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
     # -- copying and pickling -------------------------------------------------------- #
 
     def __getstate__(self) -> dict:
-        """The state a copy or a pickle carries: the dial, and the number.
+        """The state a copy or a pickle carries, KEYED BY THE PRIVATE SLOT NAMES.
 
         Defined because ``copy.deepcopy`` and ``pickle`` restore a slotted object by
         calling ``setattr``, which this type refuses. Without these two the round trip
         would raise, and refusing to copy a reading is an accidental restriction on the
         product rather than a property CD-AC-002 asks for.
+
+        **THE KEY NAMES ARE PART OF THE CLOSURE AND ARE NOT COSMETIC.** This seat's first
+        draft returned ``{"dial_id": ..., "quantity": ...}``, and this seat then found the
+        escape that follows and recorded it as a finding against its own work
+        (`CD-ENG-WO2R-F06`):
+
+            states = [m.__getstate__() for m in (equity_magnitude, monetary_magnitude)]
+            blended = sum(s["quantity"] for s in states) / len(states)   # -> 0.5
+
+        That reached the number **without naming a dial and without naming the private
+        slot**, so nothing refused it and RULE 3 of the AST locator had nothing to see.
+        Keying the state by the slot names means the same expression must now be written
+        ``s["_DialMagnitude__quantity"]``, which RULE 3 reports as a string constant
+        exactly as it reports the attribute. The runtime residue is unchanged and is
+        declared: reflection reaches the payload, as it does in every Python object.
         """
         return {
-            "dial_id": sorted(self.provenance)[0],
-            "quantity": self._DialMagnitude__quantity,
+            "provenance": self.provenance,
+            "_DialMagnitude__quantity": self._DialMagnitude__quantity,
         }
 
     def __setstate__(self, state) -> None:
         """Rebuild from state, through THE SAME validation the constructor uses.
 
         A revived magnitude is validated exactly as a constructed one, so a hand-written
-        pickle cannot forge a magnitude with no provenance, two dials' provenance, or a
-        non-finite number. A round trip through ``copy`` or ``pickle`` is therefore not a
-        laundering route: what comes back is a magnitude of one dial, still refusing
+        pickle cannot forge a magnitude with no provenance, with two dials' provenance, or
+        with a non-finite number. A round trip through ``copy`` or ``pickle`` is therefore
+        not a laundering route: what comes back is a magnitude of one dial, still refusing
         arithmetic with the other.
         """
-        _install(self, state["dial_id"], state["quantity"])
+        provenance = state["provenance"]
+        if not isinstance(provenance, frozenset) or len(provenance) != 1:
+            raise CrossDialCombination(
+                f"a magnitude cannot be revived with provenance {provenance!r}: it must "
+                "be exactly one dial. A pickle is untrusted input like any other, and a "
+                "revived magnitude is validated exactly as a constructed one."
+            )
+        _install(self, sorted(provenance)[0], state["_DialMagnitude__quantity"])
 
     # -- identity ------------------------------------------------------------------- #
 

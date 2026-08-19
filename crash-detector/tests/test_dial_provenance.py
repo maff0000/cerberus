@@ -202,6 +202,46 @@ def test_copying_and_pickling_do_not_strip_the_provenance():
         revived + MONETARY
 
 
+def test_the_pickle_state_is_keyed_by_the_private_slot_name():
+    """CD-ENG-WO2R-F06, a finding this seat raised against its own increment-2 work.
+
+    The first draft of `__getstate__` returned `{"dial_id": ..., "quantity": ...}`, and
+
+        states = [m.__getstate__() for m in (equity, monetary)]
+        blended = sum(s["quantity"] for s in states) / len(states)      # -> 0.5
+
+    reached the number WITHOUT naming a dial and WITHOUT naming the private slot, so
+    nothing refused it and the AST locator's RULE 3 had nothing to see. The state is now
+    keyed by the slot names, so the same expression must be written
+    `s["_DialMagnitude__quantity"]` — which RULE 3 reports as a string constant exactly as
+    it reports the attribute. The runtime residue is unchanged and is declared.
+    """
+    state = EQUITY.__getstate__()
+    assert set(state) == {"provenance", "_DialMagnitude__quantity"}
+    assert "quantity" not in state
+    assert "dial_id" not in state
+
+
+def test_a_revived_magnitude_is_validated_exactly_as_a_constructed_one():
+    """A pickle is untrusted input like any other. A hand-written state cannot forge a
+    magnitude with two dials' provenance, none at all, or a non-finite number."""
+    forged = EQUITY.__getstate__()
+    forged["provenance"] = frozenset({EQUITY_DIAL_ID, MONETARY_DIAL_ID})
+    revived = DialMagnitude.__new__(DialMagnitude)
+    with pytest.raises(CrossDialCombination):
+        revived.__setstate__(forged)
+
+    not_a_set = EQUITY.__getstate__()
+    not_a_set["provenance"] = EQUITY_DIAL_ID
+    with pytest.raises(CrossDialCombination):
+        DialMagnitude.__new__(DialMagnitude).__setstate__(not_a_set)
+
+    non_finite = EQUITY.__getstate__()
+    non_finite["_DialMagnitude__quantity"] = math.inf
+    with pytest.raises(ScoreOutOfRange):
+        DialMagnitude.__new__(DialMagnitude).__setstate__(non_finite)
+
+
 def test_a_magnitude_is_not_equal_to_its_own_number():
     """Equality with a float would be coercion by another name."""
     assert EQUITY != 0.9

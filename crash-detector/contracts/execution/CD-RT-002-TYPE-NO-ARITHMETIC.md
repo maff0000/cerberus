@@ -91,7 +91,18 @@ exactly the slot's dial, and the closed public envelope schema has no third key 
 assertion is in `tests/test_dial_provenance.py::test_a_released_number_cannot_be_published_as_a_dial`,
 which computes the blend, shows it equals 0.5, and shows it cannot be published as either dial.
 
-Two further residues, stated rather than left to be found:
+Three further residues, stated rather than left to be found:
+
+* **Reflection reaches the payload, as it does in every Python object.** `m.__getstate__()`,
+  `m.__reduce_ex__(2)` and `getattr(m, "_DialMagnitude__quantity")` all return the number at
+  runtime. The magnitude's state dict is **keyed by the private slot names**, so reading it in
+  source requires writing `state["_DialMagnitude__quantity"]`, which the AST locator's RULE 3
+  reports — the keys are part of the closure and are not cosmetic (`CD-ENG-WO2R-F06`, a finding
+  the implementing seat raised against its own increment-2 work). A revived magnitude goes through
+  the SAME validation as a constructed one, so reflection is a way of READING the payload and never
+  a way of forging a magnitude with no provenance, two dials' provenance, or a non-finite number.
+  Asserted by `test_the_pickle_state_is_keyed_by_the_private_slot_name` and
+  `test_a_revived_magnitude_is_validated_exactly_as_a_constructed_one`.
 
 * `object.__setattr__(m, "provenance", ...)` rewrites a slot on any frozen object in Python. The
   direction is SAFE — a forged multi-dial provenance makes the magnitude LESS usable, not more, and

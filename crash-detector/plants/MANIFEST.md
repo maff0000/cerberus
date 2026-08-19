@@ -23,7 +23,7 @@ assurance.
 > applying** and was regenerated against the new structure, violating the SAME proposition by
 > the SAME route: `CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch`. Its declared command also
 > grew by one module (`tests/test_dial_provenance.py`) and its failure signature grew from
-> `6 failed, 90 passed` to `6 failed, 197 passed` — the same six named failures. The other
+> `6 failed, 90 passed` to `6 failed, 199 passed` — the same six named failures. The other
 > ten patches apply cleanly and contrast unchanged at the WO-2R increment-2 SHA. **No plant
 > was deleted and none was weakened** (CD-D-033). CD-AC-002's three-test independence was
 > re-measured under all three of its plants and is intact; the measurement is recorded in the
@@ -324,7 +324,7 @@ monetary one; the blend arrives without either type naming the other, which is w
 asserts the absence of the whole `ARITHMETIC_DUNDERS` family rather than watching for
 `equity + monetary` to raise.
 
-**Expected failure signature.** pytest exits **1**, `6 failed, 197 passed`:
+**Expected failure signature.** pytest exits **1**, `6 failed, 199 passed`:
 
 ```
 FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
@@ -336,14 +336,14 @@ FAILED tests/test_scores.py::test_a_score_cannot_be_summed_which_is_how_a_blend_
 ```
 
 **Sibling arms under this plant, observed by this seat on the regenerated patch:**
-`check_no_blend.py` exit **0** (3128 assertions), `check_schema_closed.py` exit **0**. The
+`check_no_blend.py` exit **0**, `check_schema_closed.py` exit **0**. The
 type layer is still the only one that sees it — nothing in the source yet writes the blend,
 and nothing publishes it, so a project relying on the AST scan alone would have shipped a
 blendable dial type.
 
 **THREE-TEST INDEPENDENCE, RE-MEASURED AT WO-2R INCREMENT 2 AND STILL INTACT.** CD-AC-002
 has three declared tests and this plant fires exactly one of them. Both CD-AC-001 arms also
-stay clean under it (`check_no_numeric_default.py` exit 0 at 302 assertions;
+stay clean under it (`check_no_numeric_default.py` exit 0 at 301 assertions;
 `pytest tests/test_reading.py tests/test_evaluate.py` 90 passed), so strengthening the type
 layer did NOT make two declared tests fire on the same plant — the hazard the previous
 increment raised against its own work. Each of CD-AC-002's three plants still fires its own
