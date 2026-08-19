@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T08:02:00Z'
+updated_utc: '2026-08-19T08:28:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -16,7 +16,7 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: BUILD
+current_phase: GATE
 current_block: >
   CD-WO-002 BLOCK B in progress. Increment 5 of 7 COMPLETE at lane SHA 11979fb, attested by
   CD-ENG-WO2-01 in BL-20260819T063700Z-0010 (lane 9a1a159). Two halves committed separately:
@@ -72,9 +72,23 @@ current_block: >
   a tree fingerprint recorded so mutation is DETECTABLE, not merely prohibited. The PL ran
   `pbg required-tests verify` at the target itself: GATE SHUT, latest_admitted_run null, 15/15
   mandatory criteria UNDECIDABLE — the correct state in which to hand work to an auditor.
-  Next: CD-ASR-WO2-01, a SEPARATE agent, never CD-ENG-WO2-01 (PBG-SOD-001, non-waivable).
+  ASSURANCE COMPLETE. CD-ASR-WO2-01 returned AMBER (BL-20260819T082800Z-0019).
+  THE WO-2 GATE IS NOT MET. Per criterion: CD-AC-003 PASS at HIGH confidence; CD-AC-001, CD-AC-002,
+  CD-AC-005, CD-AC-012 all AMBER. All eleven DECLARED contrasts were reproduced by the auditor with
+  verbatim command strings — but it wrote 24 VARIANT plants of its own and TEN ESCAPED. The guards
+  catch the instance; for four of the five criteria they do not reliably catch the class.
+  Two HIGH findings: CD-ASR-F01, two working blends of the two dials pass all three declared layers;
+  CD-ASR-F02, a plain `Unknown.magnitude -> 0.0` property makes absence render as a number and both
+  CD-AC-001 guards still exit 0 — REPLICATED by the Project Lead.
+  CD-D-023: RTR-WO2-0001 is NOT admitted and the lane is NOT merged. Measured on a throwaway copy,
+  admitting it makes the framework compute PASS on all five gate criteria — the five an independent
+  auditor declined to pass. Feeding it would construct state so a control appears to pass when the
+  authentic target was not verified. Both artefacts are preserved unaltered at
+  governance/assurance/WO-2/ instead, and admission stays available to the PO as an explicit informed
+  decision (CD-FWK-005 raised).
+  CD-D-024: WO-2 does not close and WO-3 is not dispatched. Next actor: PRODUCT AUTHORITY.
 owner_role: PROJECT_LEAD
-next_actor: ASSURANCE_ENGINEER
+next_actor: PRODUCT_AUTHORITY
 
 repository: local
 branch: main
@@ -83,8 +97,8 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 8a503552a6af16207fd3ee6e573841f240e07cd4
-  # 8a50355 is the increment-6a boundary checkpoint, verified present.
+last_completed_checkpoint_sha: 7dad3595532055aa93b77e55e14dbcda064d219e
+  # 7dad359 is the SOD-boundary checkpoint (Engineer complete, Assurance ISSUED), verified present.
   # CD-PL-F36 HISTORY, kept here because the defect was invisible to the eye: the increment-5 seat
   # left this field as 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1, a FABRICATED value sharing only
   # the 7-char prefix with the real 17d7721 (= 17d772157fc33a7b4df6e4e1f1dd81da0eefddf0) and
@@ -114,7 +128,7 @@ working_tree_state: >
   NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
   branch-point copy and will report a stale continuity reference. That is the worktree layout, not
   drift (CD-ENG-F31). The live record is this one, on main. The pending commit is
-  BL-20260819T080200Z-0018 and this record.
+  BL-20260819T082800Z-0019 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -296,5 +310,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T080200Z-0018
+last_build_log_entry: BL-20260819T082800Z-0019
 status: ACTIVE

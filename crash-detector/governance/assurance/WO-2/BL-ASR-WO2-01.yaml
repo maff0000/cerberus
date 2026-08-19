@@ -1,0 +1,753 @@
+# WO-2 — INDEPENDENT ASSURANCE RETURN. Seat CD-ASR-WO2-01, dispatch CD-DISPATCH-WO2-ASSURANCE.
+#
+# This entry was authored OUTSIDE every git worktree, at /srv/crash-detector-wo2-evidence/, because
+# this seat is read-only over /srv/crash-detector and over both WO-2 lanes and may not commit to a
+# governed repository. The Project Lead transports it unaltered. Nobody edits its contents.
+#
+# A PASS IS NOT AN ACCEPTANCE (PBG-AUTH-003). This seat supplies evidence and a verdict. The
+# Product Owner accepts.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T082035Z-0019
+timestamp_utc: '2026-08-19T08:20:35Z'
+project: crash-detector
+actor: CD-ASR-WO2-01
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CONTROLLED_ACTION
+phase: ASSURANCE
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2-audit
+baseline_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+current_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+parent_entry_id: BL-20260819T080200Z-0018
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Independent assurance of the WO-2 candidate 66681b27ed650321f6b9e325fbc05712a754cc7d, executed by
+  seat CD-ASR-WO2-01 against the detached audit worktree /srv/crash-detector-wo2-audit. All six
+  required_work items W1-W6 were performed. Every one of the eleven declared tests belonging to
+  CD-AC-001, 002, 003, 005 and 012 was run by this seat in BOTH arms, with the register's declared
+  execute string verbatim, on subject trees this seat extracted itself; every plant was applied by
+  this seat with `git apply`. All eleven show the required contrast: exit 0 clean, non-zero violated.
+  Beyond the declared arms this seat devised and ran TWENTY-FOUR variant plants of its own - 2 for
+  CD-AC-001, 2 for CD-AC-002, 9 for CD-AC-003, 4 for CD-AC-005 and 7 for CD-AC-012 - each attacking
+  the same proposition by a route different from the Engineer's plant. FOURTEEN were CAUGHT, which
+  is recorded as proof that those guards bite the class and not merely the instance. TEN ESCAPED.
+  Of the ten, TWO landed inside a boundary the deliverable had already declared in writing and are
+  judged fair; the other EIGHT are the substance of findings CD-ASR-F01 to F07. OVERALL VERDICT
+  AMBER. No RED: nothing in the delivered tree is bypassed, and all eleven delivered guards are
+  green on the clean candidate.
+
+independence:
+  declaration: >
+    CD-ASR-WO2-01 implemented no part of this target, has never held the ENGINEER role on this
+    project, and has no commit on branch wo-2-skeleton. The implementing seat was CD-ENG-WO2-01.
+    PBG-SOD-001 is satisfied by the Product Owner's ratified CD-D-002 named-actor route.
+  no_engineer_wrapper_used: >
+    PBG-ASSURE-001. No project-supplied script performed any arm. This seat confirmed independently
+    that plants/ contains no executable file (`find plants/ -type f -executable` returns nothing),
+    so no runner existed to be tempted by. Every command in the run record was typed by this seat.
+  what_was_not_taken_on_trust: >
+    No implementer transcript, summary, Build Log entry or wrapper was accepted as evidence for any
+    finding here. The Engineer's cd-store-wo2- PostgreSQL was neither reused nor inspected; this
+    seat built its own store from the migrations in the subject tree.
+
+W1_authentic_target:
+  verdict: VERIFIED
+  sha_audited: 66681b27ed650321f6b9e325fbc05712a754cc7d
+  sha_dispatched: 66681b27ed650321f6b9e325fbc05712a754cc7d
+  equal: true
+  evidence: >
+    `git rev-parse HEAD` in /srv/crash-detector-wo2-audit returns the dispatched SHA. HEAD is
+    DETACHED (`git symbolic-ref -q HEAD` fails), so the audited tree cannot follow the Engineer's
+    lane. `git status --porcelain --ignored` is EMPTY and `git diff <sha>` is empty, so the worktree
+    is byte-identical to the commit and carries no untracked or ignored file. CONTENTS were verified,
+    not names: a throwaway extraction made with `git archive <sha> | tar -x` was compared to the
+    worktree with `diff -r -q` excluding .git and is IDENTICAL.
+  post_audit_state: >
+    Re-checked at the end of the audit: still detached at the same SHA, still `git status
+    --porcelain --ignored` EMPTY. Tree fingerprint, sha256 over the sorted sha256sum list of every
+    non-.git file: 08a474e8ae1aa41b8704c27778ade58353258d90768301958db7b92c4b275ad2. The Project
+    Lead should compare this against the fingerprint taken at issue.
+  self_disclosed_mutation_by_this_seat:
+    what_happened: >
+      THIS SEAT MUTATED THE AUDITED TREE ONCE, BY ACCIDENT, AND IS REPORTING IT RATHER THAN LETTING
+      THE PROJECT LEAD'S FINGERPRINT COMPARISON FIND IT. The final validation step - importing
+      pbg.required_tests from /srv/crash-detector-wo2-audit/pbg/tools to check the run record against
+      the REAL reader rather than a reimplementation of it - was run WITHOUT `python3 -B`. CPython
+      therefore wrote pbg/tools/pbg/__pycache__/ containing __init__.cpython-311.pyc and
+      required_tests.cpython-311.pyc. That is mutation by EFFECT and not by label, which is precisely
+      the hazard PBG-RT-001 names, and this seat had explicitly guarded against it for every other
+      command in the audit and then tripped over it on the last one.
+    when: >
+      At 09:24 local, AFTER both evidence artefacts had already been written (09:19) and after ALL
+      audit observations were complete. No finding, arm, exit code or verdict in this entry rests on
+      the tree in its mutated state.
+    blast_radius: >
+      NIL to audited content. No tracked file was altered: `git status --porcelain` was 0 throughout
+      and `git diff 66681b27ed650321f6b9e325fbc05712a754cc7d` is empty. The two files were derived
+      bytecode of UNCHANGED pbg/ sources, and pbg/ itself was not written (PBG-FWK-013 intact).
+    remediation: >
+      This seat removed the __pycache__ directory it had itself created. That is reverting this
+      seat's own diagnostic byproduct, NOT repairing a defect of the target, so PBG-SOD-004 is not
+      engaged. After removal, `git status --porcelain --ignored` is EMPTY again and the tree
+      fingerprint returns to EXACTLY the value recorded below,
+      08a474e8ae1aa41b8704c27778ade58353258d90768301958db7b92c4b275ad2, which is also the value this
+      seat measured before the slip.
+    why_it_is_recorded_here: >
+      Because a fingerprint that fails to match and an auditor who did not mention it is a far worse
+      outcome than a fingerprint that matches and an auditor who explains why it briefly did not. The
+      Project Lead should still perform the comparison independently.
+  mutation_avoidance: >
+    No AUDIT ARM was run inside the audited worktree. In particular the pytest arms were NOT run
+    there: pytest writes __pycache__ and .pytest_cache, which is mutation by EFFECT and not by label
+    (PBG-RT-001). All eleven baseline arms and all twenty-four variant arms ran in pristine /tmp
+    extractions. The one audit command run at the target root was the W4 register verify, which
+    carries `python3 -B` and therefore writes no bytecode; the tree was confirmed clean immediately
+    afterwards. The single exception is the post-audit validation slip disclosed immediately above,
+    which wrote bytecode only and was reverted.
+
+W2_declared_arms:
+  method: >
+    Subjects extracted with `git archive <sha> | tar -x -C <tmpdir>`, never `git worktree add`,
+    which would write .git/worktrees and mutate the audited repository's administrative state.
+    Plants applied by this seat with `git apply -p1`. Each violated arm used a SEPARATE pristine
+    extraction, so no plant contaminated another.
+  result: >
+    ELEVEN of eleven declared tests show the required contrast. Baseline exit 0 on all eleven;
+    violated exit 1 on all eleven. No arm was skipped, no arm was substituted, and no exit code was
+    adjusted. Full command strings, exit codes and observed output are in the run record.
+  evidence_artefact: evidence/required-tests/runs/RTR-WO2-0001.json
+  note_on_CD-RT-003-GRANT-MATRIX-LIVE: >
+    This test exits 3 PRECONDITION_NOT_MET with no store reachable, which is a stated non-zero and
+    correctly never a skip. Both arms were therefore run against a LIVE PostgreSQL that this seat
+    built under safe diagnostic SD-3. It had been run twice before, both times by the implementing
+    seat; this is its first execution by an independent seat and its first execution against a
+    catalogue the implementing seat did not build.
+
+W3_adversarial_variants:
+  purpose: >
+    The declared arms prove the guards fire on the Engineer's own plants. They cannot prove the
+    guards catch the CLASS, because the Engineer chose the instances. TWENTY-FOUR variant plants
+    were devised and run by this seat, each violating the same proposition by a DIFFERENT route.
+    Fourteen were caught and ten escaped; both outcomes are recorded below, because a guard proved
+    to bite is worth recording as proved.
+  guards_proved_to_bite_the_class:
+  - id: CD-AC-003 live catalogue, all seven routes
+    detail: >
+      Each of the seven routes named in the declaration was planted SEPARATELY as an eighth
+      migration and run against a freshly created database on a cluster whose cd_* roles had been
+      dropped: role membership (`GRANT cd_witness TO cd_engine`), a grant to PUBLIC, a default
+      privilege (`ALTER DEFAULT PRIVILEGES`), ownership (`ALTER SCHEMA witness OWNER TO cd_engine`),
+      the SUPERUSER attribute, and a function privilege (`GRANT EXECUTE ON FUNCTION witness.peek()`).
+      ALL SIX WERE CAUGHT, each named with its own route. A seventh probe granting UPDATE on
+      dial.history and DELETE on publication.public_envelope was caught by CD-GM-003 and by the
+      whole-store UPDATE/DELETE/TRUNCATE sweep. The check also opens a real session as cd_engine and
+      makes PostgreSQL itself refuse, so a catalogue that lied would still be caught. This is the
+      strongest artefact in the deliverable and it is now independently discharged.
+  - id: CD-AC-003 code graph, dynamic import
+    detail: >
+      `importlib.import_module("crash_detector" + ".witness" + ".panel")` inside a function in the
+      engine was CAUGHT, and caught for the right reason: the check fails closed on ANY dynamic
+      import, literal or computed, reporting "an import route the guard cannot follow is a hole with
+      a comment in it". That is correct design, not a lucky string match.
+  - id: CD-AC-012 signature shape (L2)
+    detail: >
+      A dataclass and a function carrying an order ticket under WHOLLY NEUTRAL naming - `Item` and
+      `enqueue(instrument, size, direction, limit, destination)` in a module called `dispatchq`,
+      with no execution vocabulary anywhere - was CAUGHT on its FIELD SET. L2 genuinely reads no
+      names. The claim that renaming does not evade this check is true.
+  - id: CD-AC-012 lockfile token rule
+    detail: >
+      An SDK nobody has heard of, `quantum-order-router==0.3.1`, absent from the 61-name denylist,
+      was CAUGHT on its execution token. The "floor, not an oracle" claim generalises as declared.
+      Separately, a named broker SDK placed in requirements.lock ALONE was CAUGHT - see finding
+      CD-ASR-N01, which narrows the previously recorded CD-PL-F43.
+  - id: CD-AC-012 egress, both halves
+    detail: >
+      Granting cd-engine a NON-broker egress host (files.pythonhosted.org) was CAUGHT under
+      CD-EGRESS-001. The second half of the proposition - that a no-egress service declaring any
+      egress at all is already a violation - holds.
+  - id: CD-AC-005 rendering and malformed input
+    detail: >
+      Mapping `Unavailable` to WITNESS_AGREES_TEXT in the render table was CAUGHT. A REACHABLE
+      malformed-row route - a row whose state says AGREES but which carries no divergence measure,
+      resolved to Agrees(0.0) instead of PANEL_ROW_INCOHERENT - was CAUGHT.
+  - id: CD-AC-001 behavioural backstop
+    detail: >
+      The route that defeated the AST guard (finding CD-ASR-F02) was CAUGHT by the criterion's
+      SECOND test. Two tests over one proposition earned their keep here, which is the argument the
+      register makes for having them.
+
+findings:
+
+- id: CD-ASR-F01
+  severity: HIGH
+  criterion: CD-AC-002
+  title: A working blend of the two dials defeats all three declared layers.
+  theme: GUARD_THE_INSTANCE_NOT_THE_CLASS
+  what: >
+    CD-AC-002 is declared to be enforced at three independent layers - the types refuse arithmetic,
+    an AST scan refuses any expression consuming both dials, and the public envelope schema is
+    closed - and the register states "a blend that slips past any one layer must still fail the
+    other two". Two variant plants by this seat each produce a real combined number and pass ALL
+    THREE layers simultaneously.
+  variant_1: >
+    An inter-procedural fold in the RULE-2-allowlisted serving layer. `src/crash_detector/serving/
+    banner.py` defines `_fold(left: float, right: float) -> float: return (left + right) / 2.0` and
+    `banner_figure(dials): return _fold(dials.equity.value.score, dials.monetary.value.score)`. The
+    call expression holds both dial markers but contains no arithmetic, so RULE 1 does not fire; the
+    arithmetic sits one call away inside `_fold`, where the parameters are annotated `float` and
+    carry no dial flavour. RULE 2 would have caught the co-occurrence, but `src/crash_detector/
+    serving` is allowlisted for RULE 2 by design.
+  variant_2: >
+    Stronger, because it needs NO allowlisted path. `src/crash_detector/publication/summary.py`
+    defines `_SLOTS = ("equity", "monetary")` and `magnitudes = [getattr(dials, slot).value.score
+    for slot in _SLOTS]; return sum(magnitudes) / len(magnitudes)`. No dial marker appears in any
+    expression: the slot names are plain strings and the check's marker string set holds only
+    `equity_crash` and `monetary_debasement`, so nothing is ever flavoured and no rule fires.
+  evidence: >
+    Both variants: check_no_blend.py exit 0 (PASS, 1032 assertions); test_scores.py and
+    test_dialset.py 96 passed; check_schema_closed.py exit 0. Both were then EXECUTED and each
+    returned the blended value 0.5 from equity 0.9 and monetary 0.1.
+  root_cause: >
+    The check's flavour propagation is INTRA-PROCEDURAL by design and its own docstring says so; it
+    is also purely static, so `getattr` with a non-marker string literal erases the flavour
+    entirely. Neither limitation is written down as a declared limit the way CD-RT-012's is.
+  mitigation_that_does_hold: >
+    The closed public envelope schema still refuses a combined FIELD, so neither variant can reach
+    the published artefact through the validated envelope without also failing
+    CD-RT-002-SCHEMA-CLOSED. The structural stop on the public surface holds; what fails is the
+    claim that no code path combines them.
+  proportionality: >
+    CD-BP-001, risk-accepted by the Product Owner, already says the AST register checks are never a
+    sole guard. This finding is consistent with that acceptance but is reported because the register
+    entry for CD-AC-002 makes a STRONGER claim than CD-BP-001 does - that a blend slipping past one
+    layer must fail the other two - and that specific claim is refuted.
+  owed: WO-3, at Product Owner disposition.
+
+- id: CD-ASR-F02
+  severity: HIGH
+  criterion: CD-AC-001
+  title: Absence given a numeric attribute renders as a number and defeats BOTH guards.
+  theme: GUARD_THE_INSTANCE_NOT_THE_CLASS
+  what: >
+    Adding a plain property to the `Unknown` reading - `magnitude -> 0.0`, no dunder, no annotation,
+    no default - makes absence yield the number 0.0. BOTH declared tests for CD-AC-001 pass:
+    check_no_numeric_default.py exit 0, and `pytest tests/test_reading.py tests/test_evaluate.py`
+    49 passed, exit 0. The value was then read back at runtime: `Unknown(...).magnitude` is 0.0.
+  why_this_is_in_scope: >
+    This is not an exotic route this seat invented. The register's OWN negative_control text for
+    CD-RT-001-ABSENCE-RENDERS-UNKNOWN names it: "`Unknown` given any attribute or coercion that
+    yields a float". The declared class is therefore not covered by the declared test.
+  root_cause: >
+    tests/test_reading.py checks only that no name from ARITHMETIC_DUNDERS appears in `vars(Unknown)`.
+    Nothing asserts that Unknown's attribute surface is CLOSED, so any non-dunder numeric member is
+    invisible. The class docstring's promise - "carries no value field of any kind ... there is
+    nothing here to accidentally render as a number" - is not enforced by a test.
+  owed: WO-3, at Product Owner disposition.
+
+- id: CD-ASR-F03
+  severity: MEDIUM
+  criterion: CD-AC-001
+  title: The AST guard does not catch a numeric default spelled as a module-level constant.
+  theme: GUARD_THE_INSTANCE_NOT_THE_CLASS
+  what: >
+    Replacing the `missing_required` branch of `_evaluate_dial` so it returns
+    `Value(value=<ScoreType>(score=QUIET_MAGNITUDE, ...))`, where `QUIET_MAGNITUDE = 0.0` is a
+    module-level constant, is NOT detected by check_no_numeric_default.py (exit 0, zero violations).
+    There is no `float | None`, no `.get(key, 0)`, no `or 0` and no bare except, so none of the
+    routes the check enumerates is present - yet a dial that did not get its inputs now reads 0.0,
+    which is the exact failure PID 3.2 forbids.
+  contained_by: >
+    CAUGHT by the criterion's second test: `pytest tests/test_reading.py tests/test_evaluate.py`
+    exits 1 with 9 failures. CD-AC-001 as a criterion is therefore still defended. The finding is
+    against CD-RT-001-AST-NO-NUMERIC-DEFAULT's declared `scope: CLASS`, not against the criterion.
+  owed: WO-3, at Product Owner disposition.
+
+- id: CD-ASR-F04
+  severity: MEDIUM
+  criterion: CD-AC-012
+  title: A broker reachable by IP literal is not caught by the egress allowlist check.
+  theme: GUARD_THE_INSTANCE_NOT_THE_CLASS
+  what: >
+    Adding `198.51.100.24` to the cd-collectors egress allowlist, in place of a hostname, is NOT
+    detected: check_egress_no_broker.py exits 0. The same slot carrying `api.ibkr.com` exits 1. The
+    check recognises brokers by NAME, and an IP literal has no name to recognise.
+  why_it_matters: >
+    This is NOT covered by any declared limit. CD-RT-012-NO-EXECUTION-INTERFACE has a written
+    six-point boundary; CD-RT-012-EGRESS-NO-BROKER does not, and its register entry states the class
+    as "a broker host added to any container's egress allowlist" without qualification.
+  mitigations_verified_by_this_seat: >
+    The allowlist is presently EMPTY on all three ALLOWLIST services (cd-collectors, cd-witness,
+    cd-review). The four services BLUEPRINT 13 requires to have no egress - cd-engine, cd-public,
+    cd-private, cd-store - all declare policy NONE, verified directly from compose.yaml. Both
+    networks are `internal: true`. Both published ports bind 127.0.0.1 only. The check's own note
+    discloses that Compose has no per-host egress primitive and that enforcement is owed at WO-3, so
+    at WO-2 an IP literal would not be enforced either way. The residual risk is that the WO-3
+    enforcement lane inherits a gap in the declaration it enforces.
+  owed: WO-3, with the egress enforcement lane.
+
+- id: CD-ASR-F05
+  severity: MEDIUM
+  criterion: CD-AC-003
+  title: The engine container's own entrypoint is outside the code-graph guard's root.
+  theme: AUTHENTIC_TARGET_VERIFICATION
+  what: >
+    check_engine_no_witness_reach.py roots its walk at `src/crash_detector/engine/` and scans only
+    `src/crash_detector/`. Appending `from crash_detector.witness.panel import Agrees` to
+    `deploy/entrypoints/cd_engine.py` - the module that IS the engine container's process - is not
+    detected: exit 0. The guard's subject is the engine PACKAGE; the criterion's subject is the
+    engine CONTAINER, and they are not the same thing.
+  honesty_of_the_declaration: >
+    Partial credit is due: the check's docstring states its root explicitly ("nothing reachable from
+    src/crash_detector/engine/"), and the register's negative_control repeats it. The scope
+    statement is honest. The gap is between that scope and the criterion's.
+  mitigation_that_does_hold: >
+    Importing witness TYPES is not reaching witness DATA. This seat proved against a live catalogue
+    that cd_engine holds no privilege of any kind on schema witness by any of seven routes, and that
+    PostgreSQL refuses cd_engine in a real session. The decisive structure holds.
+  owed: WO-3, at Product Owner disposition.
+
+- id: CD-ASR-F06
+  severity: MEDIUM
+  criterion: CD-AC-005
+  title: A finite but unbounded staleness window lets a decade-old row render WITNESS AGREES.
+  theme: CONTROL_BYPASS
+  what: >
+    `_require_usable_window` refuses a non-finite or non-positive window but accepts ANY finite
+    positive number. With `staleness_window_seconds=1e18`, a panel row 10 years old and marked
+    AGREES resolves to `Agrees` and renders "WITNESS AGREES". With a window of 60.0 the same row
+    correctly resolves to `Unavailable` / "WITNESS UNAVAILABLE". Verified by direct execution.
+  why_it_matters: >
+    CD-AC-005's stated proposition is that there must be no input WHATEVER - missing, stale,
+    malformed or defaulted - from which the serving layer produces AGREES. A stale row plus a wide
+    configured window is such an input, and it needs no source edit.
+  what_is_to_the_deliverable_s_credit: >
+    The author identified this exact hazard and wrote it down: the docstring says "no window and a
+    very large window both mean nothing is ever stale". Half of it was then guarded (infinity and
+    zero are refused) and half was not (1e18 is accepted). The gap is a half-closed door, not an
+    unnoticed one.
+  owed: >
+    WO-3, most naturally with CD-AC-009 (regime-aware staleness windows), which is where a bound on
+    the window belongs.
+
+- id: CD-ASR-F07
+  severity: LOW
+  criterion: CD-AC-005
+  title: An exception handler resolving to agreement is not detected, though unreachable as planted.
+  theme: GUARD_THE_INSTANCE_NOT_THE_CLASS
+  what: >
+    Wrapping the age computation in `try/except Exception: return Agrees(...)` is not detected -
+    `pytest tests/test_witness_panel.py tests/test_witness_resolver.py` exits 0. The register's own
+    negative_control text names "an exception handler" as part of the class.
+  honest_qualification: >
+    THIS SEAT COULD NOT MAKE THE HANDLER FIRE. `PanelRow.__post_init__` normalises `as_of_utc`
+    through `ensure_utc`, so `age_seconds` does not raise on any row that can be constructed. The
+    planted handler is dead code and no behaviour changed, which is why the tests pass. The correct
+    reading is that a declared-class route is undetected but was not shown to be exploitable, not
+    that a live bypass exists. Recorded at LOW for that reason.
+  owed: WO-3, at Product Owner disposition.
+
+- id: CD-ASR-N01
+  severity: INFORMATIONAL
+  title: CD-PL-F43 is narrower than recorded - check_lockfile_denylist.py DOES read requirements.lock.
+  what: >
+    CD-PL-F43 is on record as "requirements.lock is not planted; the second half of CD-EGRESS-002 is
+    not planted". This seat confirms the PLANT is absent, and also confirms that the CHECK is not:
+    `check_lockfile_denylist.py` scans three manifests including requirements.lock, and a variant
+    plant placing `ib-insync==0.9.86` in requirements.lock ALONE exits 1. What is owed is the
+    negative-control evidence, not the coverage. Recorded so the WO-3 seat scopes the repair
+    correctly rather than rebuilding a check that already works.
+
+- id: CD-ASR-N02
+  severity: LOW
+  title: The live grant-matrix check is cluster-state dependent and does not declare that precondition.
+  theme: PORTABILITY
+  what: >
+    PostgreSQL role attributes and role memberships are CLUSTER-wide, not database-scoped. This seat
+    discovered it the hard way: a `GRANT cd_witness TO cd_engine` planted in one variant persisted
+    into every later variant on the same cluster and produced violations in trees that did not carry
+    it. All variant results in this entry were RE-RUN from a fully reset cluster after that was
+    found, and the clean baseline was re-confirmed at 138 assertions / 0 violations before the
+    re-runs.
+  assessment: >
+    This fails LOUD, not silent - inherited state produces EXTRA violations, never a false clean -
+    so it is not a bypass. But the check documents no clean-cluster precondition, and an auditor who
+    reuses a cluster will see violations that are not in the tree and may misattribute them.
+  disclosure: >
+    Reported against this seat's own method as much as against the check. The contaminated results
+    were discarded, not reported.
+
+known_and_already_ruled_owed:
+  note: >
+    The dispatch disclosed these as already ruled OWED at WO-3 and asked that they not consume
+    budget. Observed, not re-investigated, no budget spent beyond confirmation.
+  items:
+  - 'CD-ENG-F39 - the L3 prose suppression lists are wide; `must` alone suppresses a sentence.
+    CONFIRMED PRESENT: the check prints this on every run, with the measured example.'
+  - CD-ENG-F41 - check_base_image_digest_pin.py and check_dockerignore.py have no register row and
+    therefore no plant. CONFIRMED PRESENT, and disclosed in the register header rather than hidden.
+  - CD-ENG-F44 - a counting error in plants/MANIFEST.md prose. NOT RE-EXAMINED.
+  - CD-PL-F43 - see CD-ASR-N01, which narrows it.
+
+W4_the_register_itself:
+  command: PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml
+  cwd: /srv/crash-detector-wo2-audit
+  exit_code: 2
+  gate: SHUT
+  pid_acceptance_satisfied: NOT DERIVED
+  verbatim_summary: >
+    "pid.ref PID.md / pid.content_hash MATCHES / latest_admitted_run (null)". All sixteen criteria
+    computed UNDECIDABLE, each with the defect "negative_control.evidence_ref 'RTR-WO2-000n' does not
+    resolve to a run record under /srv/crash-detector-wo2-audit/evidence/required-tests/runs".
+    "MANDATORY NOT PASS (15) - no waiver exists; only PO disposition can move these". "GATE: SHUT".
+  independent_confirmations_by_this_seat:
+    criteria_population: >
+      DERIVED FROM PID 6 AND COMPLETE. This seat read the sixteen bold-first-cell rows CD-AC-001 to
+      CD-AC-016 out of PID.md itself and compared them to the sixteen criterion_id values in the
+      register. They match exactly. CD-AC-016 is marked *(advisory)* in the PID and ADVISORY in the
+      register - the register neither weakened nor strengthened its population.
+    pid_content_hash: >
+      RECOMPUTED INDEPENDENTLY, not read from the validator's report:
+      sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85, equal to the declared
+      value.
+    no_status_like_key: >
+      CONFIRMED by this seat's own scan of the register text for status, state, result, verdict,
+      outcome, grade, score and disposition in key position. NONE present.
+    latest_admitted_run: >
+      NULL, correctly. The Engineer may not admit its own evidence, and this seat is not the
+      admitting party either.
+  assessment: >
+    A SHUT gate at WO-2 is the CORRECT AND HONEST ANSWER and is NOT a defect of this candidate.
+    Eleven of the sixteen criteria are scheduled for later work orders and are not evidenced; the
+    register says so plainly in prose and the validator computes it independently rather than
+    reading the prose. This seat read pbg/tools/pbg/required_tests.py and confirms it COMPUTES
+    status from the PID, the register and the run records, and refuses any register that grades
+    itself.
+
+W5_structures_the_plants_stand_on:
+  purpose: A guard over an absent structure is theatre. Each structure was verified directly.
+  blueprint_4_grant_matrix:
+    verdict: VERIFIED LIVE
+    detail: >
+      Read out of a live catalogue built by this seat from the seven subject-tree migrations.
+      138 assertions, 0 violations, reproduced twice including once after a full cluster reset.
+      cd_engine holds NO privilege of any kind on schema witness by any of the seven routes, AND
+      PostgreSQL refuses cd_engine's SELECT and INSERT against witness.observation and
+      witness.reading in a real session. The append-only tables carry no UPDATE or DELETE grant for
+      any role; a planted UPDATE on dial.history and DELETE on publication.public_envelope was
+      caught by the whole-store sweep.
+  blueprint_7_types:
+    verdict: VERIFIED
+    detail: >
+      EquityCrashScore and MonetaryDebasementScore each have MRO [Self, object] - NO shared base
+      beyond object, and neither registers as numbers.Number. Neither defines ANY name from
+      ARITHMETIC_DUNDERS. `operator.add(equity, monetary)` raises TypeError. DialSet exposes ZERO
+      public members, so there is no scalar to reach for. `evaluate()` was run with `builtins.open`
+      and `socket.socket` replaced by trip-wires that raise: it completed without tripping either,
+      so it performs no file or socket I/O. With the empty registry BOTH dials read Unknown, reason
+      NO_REQUIRED_INPUTS_DECLARED.
+  blueprint_5_collectors:
+    verdict: VERIFIED BEHAVIOURALLY, not from the docstring
+    detail: >
+      An adapter raising a bare BaseException (not an Exception) was driven through `collect`. The
+      exception PROPAGATED - it was not swallowed - AND one attempt row was still written, because
+      the sink write is in a `finally`. The row was classified FetchFailed, not OK. The four
+      outcomes are genuinely distinct rather than three spellings of absence: OK carries
+      (payload, source_as_of_utc), FetchFailed carries (error_class, http_status), Malformed carries
+      (schema_error_class, instance_path), Empty carries nothing, and all four are unrelated types.
+      `outcome_class` on an unrecognised value RAISES rather than defaulting, and its own message
+      says "there is no fall-through, least of all to OK".
+  blueprint_6_absence_and_staleness:
+    verdict: VERIFIED WITH ONE EXCEPTION
+    detail: >
+      Absent row, future-dated row, stale row, feed-unreachable row, incoherent row and unrecognised
+      state ALL resolve to Unavailable; every fall-through in `resolve_panel` lands on Unavailable
+      rather than agreement. The exception is finding CD-ASR-F06: staleness is defined relative to a
+      configured window that is bounded below and at infinity but not above.
+  blueprint_2_and_3_container_set:
+    verdict: VERIFIED AS DESIGN
+    detail: >
+      Read directly from deploy/compose.yaml. Both networks declare `internal: true`. Egress:
+      cd-store NONE, cd-engine NONE, cd-public NONE, cd-private NONE - the four BLUEPRINT 13
+      requires to have none; cd-collectors, cd-witness and cd-review ALLOWLIST with EMPTY host
+      lists. The only published ports are 127.0.0.1:8710 and 127.0.0.1:8711, both loopback-bound.
+      cd-store is pinned BY DIGEST to postgres@sha256:cf78e766...20685, which this seat
+      independently confirmed is the digest of postgres:16-alpine on this host, and which it used
+      for its own container. The Python base is HONESTLY UNRESOLVED: deploy/base-images.json records
+      status DIGEST_NOT_RESOLVED with the reason, and every Dockerfile uses `ARG CD_PYTHON_BASE`
+      with NO DEFAULT while compose passes `${CD_PYTHON_BASE:?...}`, so both build and compose
+      refuse rather than falling back to a tag. That is a fail-closed absence, not a gap.
+  empty_source_registry:
+    verdict: VERIFIED
+    detail: "EMPTY_SOURCE_REGISTRY is SourceRegistry(sources=()) - zero ingredient sources, as CD-D-005 requires."
+  additional_observation_supporting_CD-RT-012:
+    detail: >
+      All six application Dockerfiles COPY exactly two paths, `src/` and `deploy/entrypoints/`, and
+      nothing else. Both are inside the five roots CD-RT-012-NO-EXECUTION-INTERFACE scans. This
+      materially BOUNDS that check's declared limit 5: source outside the scanned roots cannot reach
+      a shipped image. The declaration does not claim this; this seat verified it, and it makes the
+      limit smaller in practice than the text admits.
+
+judgement_on_the_CD-RT-012_declared_limit:
+  question_asked_by_the_dispatch: Was the limit honestly drawn?
+  answer: YES - HONESTLY DRAWN, and drawn conservatively.
+  reasoning: >
+    This seat's variant that escaped this check - an order ticket placed in `scripts/`, outside the
+    five scanned roots - landed SQUARELY INSIDE stated boundary 5, which names the five roots and the
+    two suffixes and says in terms that "an order interface delivered as a shell script, a compose
+    command, a CI job or a dependency's own code is outside this check entirely". The variants that
+    tested the boundaries from the inside were all caught: a neutrally-named order ticket on its
+    field set (boundary 2's stated residue does not extend to it), and an unheard-of SDK on its
+    execution token. The declaration carries a MEASURED example for each boundary rather than a
+    hedge, cites the decisions that commissioned (CD-D-014) and bounded (CD-D-015) it, states the
+    evidence FOR the limit (that two rounds of probing each found a fresh escape), and instructs the
+    reader not to treat a clean run as proof of the proposition. It also understates its own
+    protection, per the Dockerfile observation above.
+  is_it_a_defect_described_in_the_tone_of_a_design_choice: >
+    NO. A defect dressed as a design choice would describe the escape vaguely and claim compensating
+    control it did not have. This one names the escapes precisely enough that an auditor can execute
+    them - this seat did - and it names three compensating guards that DO exist and that this seat
+    verified bite. The one thing worth saying plainly: the euphemism boundary (1) is genuinely
+    unbounded and always will be, so the weight on CD-AC-012 rests where the declaration itself says
+    it should - on the egress posture, which constrains what the software CAN DO rather than what it
+    says. That posture is sound at WO-2 except for finding CD-ASR-F04.
+  caveat: >
+    The honesty of THIS declaration should not be generalised. CD-AC-002's AST guard has comparable
+    limitations (intra-procedural, static) and NO comparable written declaration, which is why
+    CD-ASR-F01 is reported at HIGH.
+
+verdicts:
+  basis: >
+    Per-criterion, because the gate is per plant. Each carries its confidence and its scope. The
+    contrast requirement of the gate - same declared command, exit 0 clean and non-zero violated -
+    is MET BY ALL ELEVEN DECLARED TESTS. The verdicts below are lower than that alone would give
+    because the register declares every one of these tests `scope: CLASS`, and W3 tested that claim.
+  per_criterion:
+  - criterion: CD-AC-001
+    verdict: AMBER
+    confidence: HIGH
+    contrast: MET - both tests, exit 0 clean, exit 1 violated.
+    scope_examined: Both declared tests in both arms; three variant plants of this seat's own.
+    basis: >
+      CD-ASR-F02 (HIGH) - a numeric attribute on `Unknown` defeats BOTH guards and makes absence
+      render as 0.0, and that route is named in the register's own declared class. CD-ASR-F03
+      (MEDIUM) - a module-level numeric constant defeats the AST guard, though the behavioural test
+      catches it.
+    not_examined: >
+      Latency. PID 6 says the affected dial must show UNKNOWN or DEGRADED "within the assurance
+      latency budget". Neither declared test measures time, and no runtime exists at WO-2 to measure
+      it against. The temporal half of this criterion is UNEVIDENCED, by both seats.
+  - criterion: CD-AC-002
+    verdict: AMBER
+    confidence: HIGH
+    contrast: MET - all three tests, exit 0 clean, exit 1 violated.
+    scope_examined: All three declared tests in both arms; two variant plants, each run against all three layers and then executed.
+    basis: >
+      CD-ASR-F01 (HIGH) - two working blends pass all three layers simultaneously, refuting the
+      register's specific claim that a blend slipping past one layer must fail the other two. The
+      closed schema still stops a combined field reaching the published envelope.
+    not_examined: Nothing dispatched was left unexamined for this criterion.
+  - criterion: CD-AC-003
+    verdict: PASS
+    confidence: HIGH
+    contrast: MET - both tests, exit 0 clean, exit 1 violated.
+    scope_examined: >
+      Both declared tests in both arms; nine variant plants, seven of them against a live PostgreSQL
+      catalogue this seat built from the subject tree's own migrations.
+    conditions:
+    - CD-ASR-F05 (MEDIUM) - the code-graph guard's root excludes deploy/entrypoints/cd_engine.py,
+      which is the engine container's actual process. Named as a condition, not a bar to PASS,
+      because the criterion's decisive structure - that cd_engine cannot reach witness DATA - was
+      proved live by seven catalogue routes and by PostgreSQL refusing cd_engine in a real session.
+    - CD-ASR-N02 (LOW) - the live check declares no clean-cluster precondition.
+    basis: >
+      This is the best-evidenced criterion in the deliverable and the only one where every variant
+      this seat could devise was caught. The independence problem the dispatch flagged - two runs,
+      both by the implementing seat - is DISCHARGED: this is a third run, by a different seat,
+      against a store the implementing seat never touched.
+    not_examined: >
+      The byte-identical-score half of PID 6 ("the score computed with witnesses unreachable is
+      BYTE-IDENTICAL") was not exercised end-to-end, because with the empty WO-2 source registry
+      both dials read Unknown and there is no score to compare. UNEVIDENCED at WO-2 and correctly so.
+  - criterion: CD-AC-005
+    verdict: AMBER
+    confidence: HIGH
+    contrast: MET - exit 0 clean, exit 1 violated.
+    scope_examined: The declared test in both arms; four variant plants, two caught and two not.
+    basis: >
+      CD-ASR-F06 (MEDIUM) - a finite but unbounded configured staleness window lets a decade-old row
+      render WITNESS AGREES, which is within the criterion's stated proposition that no input
+      whatever may produce agreement. CD-ASR-F07 (LOW) - an exception handler route is undetected
+      but was not shown to be exploitable.
+    counter_evidence_recorded: >
+      The resolver is otherwise strong: every fall-through lands on Unavailable, the rendering table
+      is guarded, and a malformed row is caught. Two of this seat's four variants were caught.
+  - criterion: CD-AC-012
+    verdict: AMBER
+    confidence: MEDIUM
+    contrast: MET - all three tests, exit 0 clean, exit 1 violated.
+    scope_examined: >
+      All three declared tests in both arms; seven variant plants across source scanning, the
+      dependency manifests and the egress posture.
+    basis: >
+      CD-ASR-F04 (MEDIUM) - a broker reachable by IP literal is not caught by the egress check, and
+      unlike the source-scanning check's boundaries this one is NOT declared anywhere. That is the
+      whole of the AMBER.
+    why_not_lower: >
+      The escapes in the source-scanning check all landed inside its WRITTEN declared limit, which
+      this seat judges honestly drawn (see above). Per CD-D-014 that is a finding against the
+      declaration and not an automatic RED, and on examination the declaration survives.
+    why_not_PASS: >
+      Confidence is MEDIUM rather than HIGH because CD-AC-012's structural weight rests on the
+      egress posture by the declaration's own argument, and that is precisely the layer where this
+      seat found an undeclared gap.
+    not_examined: >
+      Runtime. No container was built and none may be at WO-2 (PBG-RT-010). Everything here is a
+      static read of source and declaration at one commit. The compose egress posture is a
+      DECLARATION with no per-host enforcement primitive - the check says so itself - so no packet
+      was observed and none is claimed.
+
+overall_verdict:
+  value: AMBER
+  rule: The worst of the five per-criterion verdicts.
+  meaning: >
+    MATERIALLY SOUND, WITH NAMED CONDITIONS. The WO-2 gate's own test - all five planted violations
+    proved to fail correctly by contrast - IS MET, on all eleven declared tests, run independently.
+    Nothing in this audit is a RED: no control was bypassed in the delivered tree, no evidence was
+    found to be self-vouching, no substitute target was accepted, and the register does not grade
+    itself. The AMBER is entirely about the distance between `scope: CLASS` as declared and class
+    coverage as demonstrated, for four of the five criteria.
+  what_this_verdict_is_not: >
+    NOT AN ACCEPTANCE (PBG-AUTH-003). This seat supplies evidence and a verdict; the Product Owner
+    accepts. This seat also did not repair anything it found (PBG-SOD-004) - every finding above is
+    handed back for the Engineer to repair under a separate dispatch.
+
+continuation_implication:
+  stated_separately_because_truth_and_safety_are_different_calculations: true
+  is_the_candidate_true: >
+    Substantially yes, within scope. Every structural claim this seat could reach authentically was
+    verified against the thing itself: the grant matrix against a live catalogue, the type algebra
+    by execution, the collector row-writing by driving a BaseException through it, the compose
+    posture by reading it, the register by recomputing its census and hash. The overstatements are
+    in the CLASS claims of four AST-style guards, not in the structures they guard.
+  is_it_safe_to_proceed: >
+    YES, to Product Owner review - and this seat records that it would be safe to proceed to WO-3
+    with the seven findings carried as OWED rather than blocking, PROVIDED the Product Owner
+    disposes of them explicitly. None of the findings is a live bypass of a running system: there is
+    no running system. All seven are latent - they describe violations a FUTURE edit could make
+    without tripping a guard, not violations present in the delivered tree. This seat re-ran every
+    delivered guard on the clean candidate and all eleven are green.
+  what_would_change_that: >
+    CD-ASR-F01 and CD-ASR-F02 should be repaired BEFORE any work order writes new code on the dial
+    or publication path, because both are exactly the kind of latent hole that a later increment
+    closes over by accident. CD-ASR-F04 should be repaired BEFORE the WO-3 egress enforcement lane
+    is built, not after, because that lane will enforce the declaration and would inherit the gap.
+  what_must_not_happen: >
+    The register gate must NOT be treated as opened by the arrival of RTR-WO2-0001. Admitting that
+    run moves the five criteria's negative controls to PASS - this seat verified that against the
+    real reader - but eleven criteria remain unevidenced and the gate stays SHUT. It should stay
+    shut. A gate that opens because five of sixteen were evidenced is not a gate.
+
+next_safe_gate:
+  name: PRODUCT OWNER REVIEW OF THE WO-2 CANDIDATE AT AN AMBER ASSURANCE VERDICT.
+  actor: PRODUCT_OWNER, via the Project Lead.
+  what_the_project_lead_does_first: >
+    (1) Re-take the audit-worktree fingerprint and compare it to the value in W1 above and to the
+    value taken at issue, confirming this seat mutated nothing. (2) Transport
+    RTR-WO2-0001.json unaltered to evidence/required-tests/runs/RTR-WO2-0001.json and this entry
+    unaltered to governance/engineering/build-log/, and commit them. (3) Re-run
+    `pbg required-tests verify` and record that the five WO-2 criteria move from UNDECIDABLE to
+    NOT_EVALUATED and that the GATE REMAINS SHUT.
+  what_the_product_owner_decides: >
+    The disposition of CD-ASR-F01 through F07: which are owed at WO-3 and which, if any, must be
+    repaired before WO-2 is accepted. CD-ASR-F01 and CD-ASR-F02 are the two this seat would put in
+    front of the Product Owner first.
+  what_must_not_be_done_next: >
+    No WO-3 dispatch may be issued on the strength of this verdict alone. An AMBER is not an
+    acceptance and this seat cannot grant one. And whoever repairs these findings must not be the
+    seat that certifies the repair (PBG-SOD-001, non-waivable) - nor may it be this seat, which is
+    now conflicted over this target for repair purposes (PBG-SOD-004).
+
+runtime_authorisation_discharge:
+  SD-1: >
+    DISCHARGED. Both artefacts written under /srv/crash-detector-wo2-evidence/, outside every git
+    worktree: BL-ASR-WO2-01.yaml and required-tests/runs/RTR-WO2-0001.json.
+  SD-2: >
+    DISCHARGED. All subject trees extracted with `git archive | tar -x` under /tmp. No `git worktree
+    add` was run, so .git/worktrees was not written.
+  SD-3:
+    discharged: true
+    image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+    pinned_by: DIGEST, resolved from the image already present on this host
+    container: cd-asr-wo2-store
+    volume: cd-asr-wo2-pgdata
+    binding: 127.0.0.1 on an ephemeral port (32792), never on a routable interface
+    credential: >
+      Generated at run time from /dev/urandom, held only in a mode-0600 file under /tmp, passed to
+      the check BY ENVIRONMENT VARIABLE NAME, never printed and never written into this entry, the
+      run record or any governed file. Destroyed at the end of the audit.
+    destruction_evidence: >
+      `docker rm -f cd-asr-wo2-store` and `docker volume rm cd-asr-wo2-pgdata` both returned the
+      removed name. `docker ps -a --filter name=cd-asr-wo2-` and `docker volume ls --filter
+      name=cd-asr-wo2-` are both EMPTY afterwards.
+    other_projects_untouched: >
+      CONFIRMED. No container or volume without the `cd-asr-wo2-` prefix was created, removed,
+      stopped, restarted or inspected into. The Engineer's `cd-store-wo2-` store was never reused or
+      inspected. A post-audit `docker ps -a` shows every other container on this host at its
+      original uptime.
+
+what_was_not_examined:
+- Everything scheduled for WO-3 to WO-6, per the dispatch's out_of_scope - the publication layer,
+  heartbeat and external probe, the divergence alarm, history and slope, the public/private-split
+  EVIDENCE and artefact scan, the AI review validators, the rotation ratio, recovery proof and
+  wave-transition monitor. The eleven criteria covering these compute UNDECIDABLE and that is
+  correct.
+- Container image build, non-root runtime proof, signal-handling proof and image smoke test.
+  FORBIDDEN in WO-2 by PBG-RT-010. Judged ABSENT, and their absence is NOT a defect of WO-2. No
+  runtime claim of any kind is made in this entry.
+- The latency budgets in PID 5 and the temporal half of CD-AC-001 and CD-AC-014. Nothing at this
+  baseline can be timed, so nothing was.
+- CD-ENG-F44, the counting error in plants/MANIFEST.md prose. Already ruled owed; not re-checked.
+- The eight non-WO-2 execution contracts under contracts/execution/ were read only far enough to
+  confirm they name the work order that owes them.
+
+status: COMPLETE
+next_safe_action: >
+  Project Lead re-takes the audit-worktree fingerprint and compares it to
+  08a474e8ae1aa41b8704c27778ade58353258d90768301958db7b92c4b275ad2, transports RTR-WO2-0001.json and
+  this entry into the repository unaltered, commits them, re-runs `pbg required-tests verify` and
+  records that the gate remains SHUT, then stops for Product Owner review of the AMBER verdict and
+  the disposition of CD-ASR-F01 through CD-ASR-F07. No WO-3 dispatch before that disposition.
+expected_next_actor: PROJECT_LEAD
+
+evidence_references:
+- /srv/crash-detector-wo2-evidence/required-tests/runs/RTR-WO2-0001.json
+- 'Target SHA 66681b27ed650321f6b9e325fbc05712a754cc7d, detached worktree /srv/crash-detector-wo2-audit,
+  confirmed clean before and after the audit'
+- 'Audit tree fingerprint after the audit: 08a474e8ae1aa41b8704c27778ade58353258d90768301958db7b92c4b275ad2'
+- 'pbg required-tests verify at the target root: exit 2, GATE SHUT, pid.content_hash MATCHES'
+- 'Independent recomputation of the PID hash: sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85'
+
+risks:
+- id: CD-ASR-R01
+  statement: >
+    Four of the five criteria carry guards declared `scope: CLASS` whose class coverage this seat
+    refuted by construction. The risk is not that the delivered tree is wrong - it is not - but that
+    a later increment relies on those guards to catch a mistake they cannot see.
+  owner: PRODUCT_OWNER, for disposition; Engineer for repair under a separate dispatch.
+- id: CD-ASR-R02
+  statement: >
+    CD-AC-012's structural weight rests, by the deliverable's own argument, on an egress posture
+    that is currently a DECLARATION with no enforcement primitive, and whose enforcement lane is
+    owed at WO-3. Finding CD-ASR-F04 is a gap in the declaration that lane will inherit.
+  owner: PRODUCT_OWNER, for disposition before the WO-3 egress lane is built.
+
+blockers: []
+held_actions: []
