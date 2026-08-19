@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T06:14:00Z'
+updated_utc: '2026-08-19T06:43:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -18,17 +18,19 @@ objective: >
   WO-3.
 current_phase: BUILD
 current_block: >
-  CD-WO-002 BLOCK B in progress. Increment 4 of 7 COMPLETE at lane SHA cbfa7c5, attested by
-  CD-ENG-WO2-01 in BL-20260819T060500Z-0008 (lane 3f03866) — B1, ten standalone register checks
-  under tools/register/, each taking the subject tree as --root, exit 0 clean / non-zero on
-  violation / non-zero with a stated reason on an unmet precondition, never a skip. CD-OB-003
-  discharged: CD-RT-003-GRANT-MATRIX-LIVE is a durable check asserting CD-GM-001..007 from a live
-  catalogue. .dockerignore delivered under CD-D-013. 904 tests.
-  The Project Lead extracted the tree itself and ran all nine stdlib checks clean, then planted its
-  OWN variants: two caught, one ESCAPED. CD-PL-F32 raised HIGH — check_no_execution_interface.py
-  misses execution interfaces that are neutrally named and misses prose entirely, and CD-AC-012 is
-  a gate criterion. It must close before Assurance is dispatched. Next: increment 5 of 7 — close
-  CD-PL-F32 first, then B2 the Required Test Register.
+  CD-WO-002 BLOCK B in progress. Increment 5 of 7 COMPLETE at lane SHA 11979fb, attested by
+  CD-ENG-WO2-01 in BL-20260819T063700Z-0010 (lane 9a1a159). Two halves committed separately:
+  8cf2f96 closed CD-PL-F32 by adding signature-shape and prose layers to the execution-interface
+  check, re-proved on 31 of the seat's own variants; 11979fb delivered B2, required-tests.yaml over
+  ALL SIXTEEN PID criteria with latest_admitted_run null and no status-like key.
+  B2 IS ACCEPTED — the Project Lead ran pbg required-tests verify itself: 16/16 traced, pid hash
+  MATCHES, GATE SHUT, PID_ACCEPTANCE_SATISFIED NOT DERIVED, every criterion UNDECIDABLE on absent
+  run records. That is the honest pre-Assurance state, not a defect.
+  CD-PL-F32 is CLOSED IN PART. The PL ran nine fresh variants of its own: the reported escape and
+  the shape layer both work, but two class escapes remain (trade-lifecycle vocabulary; intransitive
+  prose) and one FALSE POSITIVE fires on this project's own "work order" vocabulary. Raised as
+  CD-PL-F35 and bounded by CD-D-014, which grants ONE further pass and then requires the guard to
+  DECLARE ITS OWN LIMIT. Next: increment 6 of 7 — CD-PL-F35 then B3, the plants.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -39,19 +41,19 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: e442f6f960fbde071f18dd4f150446eb88f666d9
-lane_head_sha: 3f038665bdd8d79509dbe61d52176d02aee47de7   # wo-2-skeleton, increment 4 of 7 + its Build Log
+last_completed_checkpoint_sha: 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1
+lane_head_sha: 9a1a15923e61f6d472a1c1600598fad4ec971b46   # wo-2-skeleton, increment 5 of 7 + its Build Log
 continuity_record_commit: PENDING
 working_tree_state: >
-  main clean at e442f6f apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  main clean at 17d7721 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at 3f03866 on wo-2-skeleton. No protected path was
-  touched across 7e9b46e..3f03866 and pbg/ is intact; no secret value is recorded; no container or
-  volume survives the second RT-A run; plants/ does not yet exist, correctly — B3 is increment 6.
+  mutation lane /srv/crash-detector-wo2 is CLEAN at 9a1a159 on wo-2-skeleton. No protected path was
+  touched across 3f03866..9a1a159 and pbg/ is intact; no secret value is recorded; no container or
+  volume survives; plants/ does not yet exist, correctly — B3 is increment 6.
   NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
   branch-point copy and will report a stale continuity reference. That is the worktree layout, not
-  drift (CD-ENG-F31 dispositioned in BL-20260819T061400Z-0009). The live record is this one, on
-  main. The pending commit is BL-20260819T061400Z-0009 and this record.
+  drift (CD-ENG-F31). The live record is this one, on main. The pending commit is
+  BL-20260819T064300Z-0011 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -92,11 +94,14 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
-- 'CD-PL-F32 HIGH, BLOCKING THE ASSURANCE DISPATCH — check_no_execution_interface.py misses a CLASS
-  of violation: an execution interface with a neutral name (submit_instruction(symbol, qty, side))
-  escapes, with or without a docstring saying it routes orders to a broker, because the check reads
-  identifiers and not prose. CD-AC-012 is one of the five gate criteria. Assigned to instance 5 as a
-  named prerequisite, to be fixed by SHAPE and PROSE, never by extending a word list.'
+- 'CD-PL-F35 MEDIUM, bounded by CD-D-014 — three residual defects in CD-AC-012's AST guard found by
+  the PL's own fresh variants: (a) trade-lifecycle vocabulary absent, so "hand the parcel to the
+  counterparty for filling" escapes; (b) intransitive/directional prose unread, so "the ticket goes
+  out to the exchange" escapes; (c) a FALSE POSITIVE on apply_work_order(), which is this project's
+  own core vocabulary and therefore the more dangerous half — a guard that fails on innocent code is
+  one somebody will eventually weaken. ONE further pass, then the guard DECLARES ITS OWN LIMIT and
+  hardening stops (CD-D-014, resting on the PO-accepted CD-BP-001: AST checks are never a sole
+  guard).'
 - 'CD-OB-004 — four live-store properties proved in increment 3 have evidence and no standing guard
   (first_published_utc immutability, NaN refusal, envelope allowlist, witness-panel constraints).
   None is a WO-2 gate criterion. Owed at WO-3 with the publication layer.'
@@ -106,9 +111,9 @@ remaining_items:
   Assurance dispatch about to audit against it. Owed as a Blueprint revision BEFORE WO-3.'
 - '.dockerignore at the worktree root — now in the Engineer''s writable_scope by the CD-D-013
   amendment; owed in increment 4.'
-- 'Engineer block B remaining — B2 the Required Test Register over all sixteen PID criteria
-  (increment 5), B3 the five planted violations (increment 6), B4 the Engineer''s own run of every
-  declared command on the clean tree and on throwaway copies (increment 7). B1 is DONE.'
+- 'Engineer block B remaining — B3 the five planted violations (increment 6), B4 the Engineer''s own
+  run of every declared command on the clean tree and on throwaway copies (increment 7). B1 and B2
+  are DONE.'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
   the clean tree and on each planted copy, producing run record RTR-WO2-0001'
 - 'PL close: admit RTR-WO2-0001 into required-tests.yaml, run pbg required-tests verify, merge the
@@ -185,18 +190,17 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Dispatch Engineer CD-ENG-WO2-01 as instance 5, in the FOREGROUND, execution base 3f03866, for
-  increment 5 of 7. CD-PL-F32 is a NAMED PREREQUISITE and is closed FIRST — by reasoning about the
-  SHAPE of an execution interface and by reading docstrings and comments, never by adding words to a
-  list, then re-proved against fresh variants nobody has seen. Then B2: required-tests.yaml over all
-  sixteen PID criteria CD-AC-001..016, conforming to REQUIRED-TEST-REGISTER-CONTRACT-v1 as
-  implemented by pbg/tools/pbg/required_tests.py (read that file first — it computes status rather
-  than reading it), pid.content_hash the sha256 of PID.md at the baseline, latest_admitted_run NULL,
-  no status-like key anywhere, and negative_control.evidence_ref RTR-WO2-0001 on the five WO-2
-  criteria. Then increment 6 (B3 plants) and increment 7 (B4). On READY_FOR_ASSURANCE, write the
-  exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
-  SEPARATE agent as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable). Stop at the
-  gate for Product Owner review.
+  Dispatch Engineer CD-ENG-WO2-01 as instance 6, in the FOREGROUND, execution base 9a1a159, for
+  increment 6 of 7. CD-PL-F35 is a bounded prerequisite under CD-D-014: close the trade-lifecycle
+  vocabulary gap, the intransitive-prose gap and the work_order false positive, then WRITE THE
+  GUARD'S DECLARED LIMIT into the check and into its register entry, and stop hardening. Then B3:
+  plants/, one directory per criterion, each plant a `git apply`-able patch plus a manifest row
+  naming test_id, patch file, the PROPOSITION violated and the expected failure signature. Each
+  plant must violate the PROPOSITION, not merely trip the string the checker greps for. NO wrapper
+  script that runs the arms for the auditor (PBG-ASSURE-001). Then increment 7 (B4). On
+  READY_FOR_ASSURANCE, write the exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate,
+  move it to ISSUED, and dispatch a SEPARATE agent as CD-ASR-WO2-01 — never the same agent
+  (PBG-SOD-001, non-waivable). Stop at the gate for Product Owner review.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
@@ -204,5 +208,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T061400Z-0009
+last_build_log_entry: BL-20260819T064300Z-0011
 status: ACTIVE
