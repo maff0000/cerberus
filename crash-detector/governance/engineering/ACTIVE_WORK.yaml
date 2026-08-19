@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T07:19:00Z'
+updated_utc: '2026-08-19T07:46:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -49,7 +49,19 @@ current_block: >
   catches the class without new false positives, and nothing regressed.
   CD-ENG-F39 was raised BY the declaration exercise and confirmed by the PL: an ordinary modal verb
   (`must`) disables the whole L3 prose layer. RULED CD-D-017 — DECLARED, NOT FIXED, owed at WO-3.
-  The bound held. Next: increment 6b — B3, the plants, plus the CD-ENG-F40 printed-note correction.
+  The bound held.
+  INCREMENT 6b COMPLETE AND ACCEPTED at lane a06e64f, attested by CD-ENG-WO2-01 in
+  BL-20260819T074050Z-0015 (lane 9aea4ef), reconciled by the PL in BL-20260819T074600Z-0016
+  (CD-D-019). B3 IS COMPLETE: eleven plants across five criteria, committed per criterion, with
+  plants/MANIFEST.md naming test_id, patch, PROPOSITION violated, expected failure signature and
+  the literal command line. NO WRAPPER — nothing in plants/ is executable (PBG-ASSURE-001).
+  The PL ran the CONTRAST itself on all ten tests not needing a live store: ten clean arms at exit
+  0, ten plant arms non-zero, every patch applying cleanly. The eleventh
+  (CD-RT-003-GRANT-MATRIX-LIVE) is left to Assurance by CD-D-020 and is, at this boundary, proved
+  only by the implementing seat — recorded as risk CD-RT-002, not glossed.
+  CD-ENG-F40 CLOSED. CD-ENG-F42 DISMISSED on evidence: the Assurance dispatch already carries its
+  own store grant (SD-3, prefix cd-asr-wo2-) and forbids reusing the Engineer's. CD-ENG-F41 and
+  CD-PL-F43 disclosed to the PO, neither blocking. Next: increment 7 — B4.
 owner_role: PROJECT_LEAD
 next_actor: ENGINEER
 
@@ -60,8 +72,8 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 03de362008d3b948b626cebecc3ae40c28167adf
-  # 03de362 is the third-termination reconciliation checkpoint, verified present.
+last_completed_checkpoint_sha: 8a503552a6af16207fd3ee6e573841f240e07cd4
+  # 8a50355 is the increment-6a boundary checkpoint, verified present.
   # CD-PL-F36 HISTORY, kept here because the defect was invisible to the eye: the increment-5 seat
   # left this field as 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1, a FABRICATED value sharing only
   # the 7-char prefix with the real 17d7721 (= 17d772157fc33a7b4df6e4e1f1dd81da0eefddf0) and
@@ -69,18 +81,21 @@ last_completed_checkpoint_sha: 03de362008d3b948b626cebecc3ae40c28167adf
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: 68b524b580b1e9602357c706e974ae541cd8630c   # wo-2-skeleton, increment 6a + its Build Log
-lane_increment_sha: d1abdcc9732dc14ebc92a9d69622a4558355e0a9   # the increment-6a commit itself
+lane_head_sha: 9aea4ef2ea93d237045c1b986bcb365dc4c17b4c   # wo-2-skeleton, increment 6b + its Build Log
+lane_increment_sha: a06e64f0db710613ff079f5f0c260a0f3c65cca5   # the increment-6b commit itself
 continuity_record_commit: PENDING
 working_tree_state: >
-  main clean at 03de362 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
+  main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
-  mutation lane /srv/crash-detector-wo2 is CLEAN at 68b524b on wo-2-skeleton — the inherited dirty
+  mutation lane /srv/crash-detector-wo2 is CLEAN at 9aea4ef on wo-2-skeleton — the inherited dirty
   state ruled CD-D-015 is now committed as d1abdcc and gone. Its pre-commit snapshot is retained at
   /srv/crash-detector-wo2-candidate-inc6/ with a SHA256 manifest and can be deleted once WO-2 is
   accepted. No protected path is touched in either worktree and pbg/ is intact
   (`git diff --name-only 9a1a159..HEAD -- pbg/` returns zero lines); no secret value is recorded;
-  no container or volume was created; plants/ does NOT yet exist, correctly — B3 is increment 6b.
+  no container or volume survives — the Engineer exercised RT-A once for the grant-matrix plant,
+  within bounds, and `docker ps -a` / `docker volume ls` filtered on cd-store-wo2- both return zero
+  rows, verified by the PL. plants/ NOW EXISTS: eleven .patch files across five criteria plus
+  MANIFEST.md, and nothing in it is executable.
   Every SHA in this record and in the whole Build Log was resolved against the object database at
   this boundary and all resolve. That step is now standing (CD-CONT-002) and it has caught two
   fabricated values so far — one from the increment-5 seat (CD-PL-F36) and one from the Project
@@ -88,7 +103,7 @@ working_tree_state: >
   NOTE for any seat booting from the LANE worktree: its checked-out ACTIVE_WORK.yaml is the
   branch-point copy and will report a stale continuity reference. That is the worktree layout, not
   drift (CD-ENG-F31). The live record is this one, on main. The pending commit is
-  BL-20260819T071900Z-0014 and this record.
+  BL-20260819T074600Z-0016 and this record.
 
 completed_items:
 - resumed from the repository record alone — pbg boot at 2e116ec, CONTINUITY_MATCH/RESUME_AMBER,
@@ -155,9 +170,21 @@ remaining_items:
   Assurance dispatch about to audit against it. Owed as a Blueprint revision BEFORE WO-3.'
 - '.dockerignore at the worktree root — now in the Engineer''s writable_scope by the CD-D-013
   amendment; owed in increment 4.'
-- 'Engineer block B remaining — B3 the five planted violations (increment 6), B4 the Engineer''s own
-  run of every declared command on the clean tree and on throwaway copies (increment 7). B1 and B2
-  are DONE.'
+- 'Engineer block B remaining — B4 ONLY: the Engineer''s own run of every declared command on the
+  clean tree and with each plant applied to a throwaway copy, recorded in its Build Log entry as its
+  own implementation evidence (increment 7). B1, B2 and B3 are DONE.'
+- 'CD-ENG-F41 LOW — check_base_image_digest_pin.py and check_dockerignore.py have no register row and
+  therefore no plant; they are evidenced only by passing. They were commissioned by the PL under
+  CD-D-013, not derived from PID §6, which is why no criterion houses them. Owed to the PO alongside
+  CD-D-005: either the container-supply-chain properties earn a PID §6 criterion and the register
+  grows a row, or they are labelled defence-in-depth with no acceptance criterion behind them.
+  Inventing a criterion from a seat would be writing product requirements (PBG-AUTH-005). Not
+  blocking: the WO-2 gate is scoped to the five planted criteria.'
+- 'CD-PL-F43 LOW — two coverage gaps the Engineer disclosed in its own manifest rather than leaving
+  to be found: requirements.lock is not planted (a lock entry needs a hash it did not compute), and
+  the second half of CD-EGRESS-002 has one plant for one declared test. Raised as a PL finding so
+  the PO sees them without reading the manifest, and so an Assurance PASS is not read as covering
+  them. Owed at WO-3.'
 - 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
   the clean tree and on each planted copy, producing run record RTR-WO2-0001'
 - 'PL close: admit RTR-WO2-0001 into required-tests.yaml, run pbg required-tests verify, merge the
@@ -234,16 +261,23 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Dispatch Engineer CD-ENG-WO2-01 as instance 6b, in the FOREGROUND, execution base lane 68b524b,
-  for B3. Also authorised, as one small SEPARATE commit: correct the printed note (CD-ENG-F40). NO
-  further hardening of the CD-AC-012 guard is authorised (CD-D-015, CD-D-017). Then B3:
-  plants/, one directory per criterion, each plant a `git apply`-able patch plus a manifest row
-  naming test_id, patch file, the PROPOSITION violated and the expected failure signature. Each
-  plant must violate the PROPOSITION, not merely trip the string the checker greps for. NO wrapper
-  script that runs the arms for the auditor (PBG-ASSURE-001). Then increment 7 (B4). On
-  READY_FOR_ASSURANCE, write the exact SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate,
-  move it to ISSUED, and dispatch a SEPARATE agent as CD-ASR-WO2-01 — never the same agent
-  (PBG-SOD-001, non-waivable). Stop at the gate for Product Owner review.
+  Dispatch Engineer CD-ENG-WO2-01 as instance 7, in the FOREGROUND, execution base lane 9aea4ef, for
+  B4 and NOTHING ELSE: its own run of EVERY declared register command on the clean tree and with
+  each plant applied to a throwaway copy (`git archive <sha> | tar -x -C <tmpdir>` — never mutate
+  the worktree, never create a git worktree), recording exact command lines and exit codes in its
+  Build Log entry as its own implementation evidence. That is implementation testing and it is NOT
+  assurance; it does not become assurance by being thorough (PBG-SOD-001). It must return
+  READY_FOR_ASSURANCE with the exact SHA. No further hardening of the CD-AC-012 guard is authorised
+  (CD-D-015, CD-D-017); no new plants; no repair of CD-ENG-F41, CD-PL-F43 or CD-ENG-F39, all of
+  which are ruled owed at WO-3.
+  Then the Project Lead: resolve the returned SHA with `git rev-parse`, write it into
+  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, create the READ-ONLY target worktree at that
+  exact SHA, set issued_utc, move the dispatch to ISSUED, commit that as a checkpoint, and only then
+  dispatch a SEPARATE agent as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable).
+  The auditor runs every declared command itself on BOTH arms, uses no Engineer-supplied wrapper,
+  and writes at least one variant plant of its own per criterion. The WO-2 gate is Assurance PASS on
+  all five planted violations. At the gate, or blocked, record state durably and STOP for Product
+  Owner review.
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
@@ -251,5 +285,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T071900Z-0014
+last_build_log_entry: BL-20260819T074600Z-0016
 status: ACTIVE
