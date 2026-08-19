@@ -21,7 +21,7 @@
 # produced the four AMBER verdicts.
 
 dispatch_id: CD-DISPATCH-WO2R-ENGINEER
-status: ISSUED
+status: ISSUED   # increment 2 RE-OPENED as increment_2b_F01_reopened by CD-D-037, 2026-08-19T11:15Z
 record_type: SUB_AGENT_DISPATCH
 issued_utc: '2026-08-19T09:10:00Z'
 
@@ -311,6 +311,93 @@ increment_2_F01:
     the finding in front of them (risk CD-PL-F47). The clean arm is your net: run it constantly, and
     if the refactor forces a change in a test's EXPECTATION rather than its mechanics, say so
     explicitly in the commit — a quietly relaxed assertion is the failure mode here.
+
+# --- RE-OPENED 2026-08-19T11:15Z BY CD-D-037 --------------------------------------------------- #
+# Increment 2 was delivered at lane a94ef97 and RECONCILED BY THE PROJECT LEAD, WHICH DID NOT ACCEPT
+# IT. Everything the seat reported reproduces exactly and its record is honest; the STRUCTURE does
+# not close the class. Full account: BL-20260819T105500Z-0024, finding CD-PL-F54 (HIGH).
+increment_2b_F01_reopened:
+  findings: [CD-PL-F54 (HIGH), re-opening CD-ASR-F01 (HIGH)]
+  criterion: CD-AC-002
+  supersedes: increment_2_F01, which is NOT ACCEPTED and NOT reverted. You build ON a94ef97.
+  execution_base_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0
+  what_is_kept: >
+    NEARLY ALL OF IT. Do not start again and do not revert. The nominal per-dial non-coercible
+    magnitude, the metaclass seal, the provenance-by-set-equality refusals, the publication gate,
+    the 109 new tests, the seven durable variants, the four self-raised findings — all of that
+    stands and the Project Lead verified every number of it independently. Nine of eleven fresh
+    Project Lead probes were REFUSED by your structure, including every alternate coercion protocol
+    it tried: math.fsum, __round__, operator.index, Decimal, int, complex, __format__ and
+    str-then-float. The type is closed against being ASKED for a number. It is not closed against
+    the number being READ OFF IT.
+  what_is_not_closed:
+    the_route: >
+      `float(repr(m).split("quantity=")[1].rstrip(")"))`. repr renders the quantity as parseable
+      text and requires the caller to name nothing. Two such floats add. Re-wrapped as
+      DialMagnitude(dial_id=<one dial>, quantity=<the blend>) the result has provenance EXACTLY one
+      dial, so every provenance comparison you built passes it, and it publishes.
+    measured_by_the_project_lead:
+    - 'PL-Q4: repr-launder both, re-wrap as equity, EquityCrashScore(...) -> CONSTRUCTED, not refused.'
+    - 'PL-Q5: the same through the DECLARED door quantity_for -> CONSTRUCTED, not refused.'
+    - 'PL-Q6: number_for_dial_slot("equity_crash", <the re-wrapped blend>) -> RETURNED 0.5.'
+    - 'PL-Q9: one plausible module, no dial named in any expression, no arithmetic on any magnitude
+      -> check_no_blend PASS 3919 assertions 0 violations, AND at runtime it publishes
+      EquityCrashScore(score=DialMagnitude(dial_id=equity_crash, quantity=0.5)) from a 0.4
+      equity reading and a 0.6 monetary one. Source is in
+      governance/reconciliation/WO-2R/PL-Q9-flavour-free-repr-launder.py.txt on main.'
+    why_it_is_not_inside_your_declared_limit: >
+      Boundaries 1, 2, 3 and 5 of check_no_blend.py all end "THE TYPE LAYER CARRIES THIS", and for
+      E01 and E02 that is TRUE — the Project Lead re-ran both and both raise. PL-Q9 raises nothing,
+      because it never asks the type for a number. Boundary 6 is the only boundary that could cover
+      it, and boundary 6 says "THE PUBLICATION BOUNDARY CARRIES THIS: ... `blended` cannot be
+      offered for publication". That sentence is MEASURED FALSE. This is not a route a declaration
+      disclaimed. It is a route two declarations each assumed the other was covering.
+  mandatory_regardless_of_what_else_you_do: >
+    BOUNDARY 6 IS CORRECTED. Whatever structure you choose, a declaration that misdirects an auditor
+    to a layer which does not hold is worse than no declaration, because it spends the auditor's
+    attention where the defect is not. If after your change the publication boundary DOES refuse the
+    re-wrapped blend, boundary 6 must say so AND CARRY THE EXECUTED EVIDENCE (CD-RULE-006). If it
+    still does not, boundary 6 must read "NOT PROVED TO BE CARRIED ANYWHERE" and CD-ASR-F01 does not
+    close.
+  the_contradiction_to_resolve: >
+    contracts/execution/CD-RT-002-TYPE-NO-ARITHMETIC.md line 111 discloses that repr contains the
+    quantity, arguing that hiding a value from a developer's own debugger would be obfuscation. That
+    argument is DEFENSIBLE and the Project Lead does not overrule it. But line 116 of the same file
+    claims "reducing one to a number requires naming its single dial". BOTH CANNOT BE TRUE. Resolve
+    it in ONE of two directions and say which you chose and why:
+      (i) STRUCTURE. repr stops being a release door — render the provenance and a redacted or
+          non-round-trippable quantity, or whatever else keeps a debugger useful without emitting a
+          parseable float. The claim then stands as written.
+      (ii) DECLARATION. repr stays as it is and the CLAIM is withdrawn from the contract, repr is
+          named as a release door alongside quantity_for, and the closure must then rest entirely on
+          the layer that catches a laundered float.
+    NOTE HONESTLY: (ii) alone does not close CD-ASR-F01. CD-RULE-004 permits declaring a limit; it
+    does not permit declaring the FINDING as the limit. If you choose (ii) you must ALSO close the
+    laundered-float class somewhere, or return with CD-ASR-F01 explicitly NOT CLOSED and say so —
+    which is an acceptable return and an unacceptable silence.
+  the_direction_the_project_lead_offers_and_does_not_impose: >
+    DIRECTION, NOT DESIGN. CD-D-038: the Project Lead does not author the closure it will reconcile
+    (PBG-AUTH-006). The observation is this. The provenance-forgetting step is the whole class: any
+    float that has left a magnitude has lost its dial, and NO downstream layer can recover it, which
+    is why chasing the exits (repr, quantity_for, the next one) is the instance game again. So the
+    candidate structural move is at the RE-ENTRY rather than the exit — make a DialMagnitude
+    constructed from a number whose own provenance is not established the thing that is
+    unrepresentable. That is the same move increment 1 already made and it worked there: the question
+    changed from "is this number blended?", which is undecidable, to "is this number's provenance
+    DECLARED?", which is set equality. You may reject this. If you do, say why in the commit and say
+    what you did instead.
+  known_set_variants_to_refuse: [E01, E02, PL-Q4, PL-Q5, PL-Q6, PL-Q9]
+  new_variants_of_your_own_required: '>= 2, and they must attack the LAUNDERING class, not the coercion class you already closed. A variant that asks the type for a number is not a new variant now — nine of those are already refused.'
+  false_positive_obligation: >
+    A same-dial computation must still work end to end, a magnitude must still publish into its own
+    slot, and repr/debugging must remain useful to a developer. If your structure makes the type
+    unusable in a debugger, you have traded one defect for another and must say so.
+  clean_arm: >
+    All eleven declared commands, the full suite, and the ANTI-RELAXATION check: zero of the 1054
+    pytest node ids at a94ef97 may disappear. The Project Lead runs this comparison itself.
+  eleven_plants: 'CD-D-033 stands. All eleven still apply and still contrast; one that no longer applies is UPDATED to violate the SAME proposition against the new structure. Deleting one is prohibited.'
+  durable_variants: 'variants/WO-2R/CD-ASR-F01/ and its MANIFEST.md section, extended. Nothing executable (PBG-ASSURE-001).'
+  scope_bound: 'CD-PL-F54 AND NOTHING ELSE. Do not start increments 3, 4 or 5. Do not repair CD-ENG-WO2R-F07/F08/F09 — they are declared and owed elsewhere.'
 
 increment_3_F04:
   findings: [CD-ASR-F04 (MEDIUM)]

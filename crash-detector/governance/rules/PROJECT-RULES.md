@@ -59,6 +59,27 @@ that `actor_id` lower-cased, at `seats.crash-detector.invalid`.
 **Why `.invalid`:** RFC 2606 reserves it, so the address is guaranteed undeliverable. A seat
 identity must be unmistakably not a mailbox and must never be routable.
 
+**How — and the way that DOES NOT WORK.** Set the four environment variables on the commit
+invocation itself:
+
+```
+GIT_AUTHOR_NAME=... GIT_AUTHOR_EMAIL=... GIT_COMMITTER_NAME=... GIT_COMMITTER_EMAIL=... git commit ...
+```
+
+`git -c user.name=... -c user.email=... commit` **is not sufficient on this host and fails
+silently.** Measured 2026-08-19 (`CD-PL-F56`): a commit made that way came out authored
+`Matt Scott <rogue@cerberus.local>` and committed `NoustAI-PDA <pda@noustai.com>` — neither of which
+is in `/root/.gitconfig`'s `user.*`, so the agent harness injects `GIT_*` identity variables into
+the environment, and environment variables beat `-c` config. Nothing warns. The commit simply
+carries a human's name.
+
+Also note `git commit --amend` **preserves the original author** even with the environment set;
+repairing an already-made commit needs `--author=` as well.
+
+**Verify, do not assume.** After every commit: `git log -1 --format='%an <%ae> | %cn <%ce>'`. A
+control whose failure mode is silent is not a control until something looks.
+
+
 **Why the human's name is removed from the committer field too, not just the author field:** the
 harness identity that previously held `committer` (`NoustAI-PDA`) is not a governed actor on this
 project — it has no authority record, no dispatch and no role contract. Leaving it in the record
