@@ -840,13 +840,87 @@ criteria:
         MEASURED: a.freshness.age_seconds 315360000.0 (3650 days),
         a.freshness.window.covers(315360000.0) True, render_panel(a) still 'WITNESS AGREES'.
         NOT PROVED TO BE CARRIED ANYWHERE — no layer was measured refusing a forged Agrees.
-        WHAT IT IS NOT: not a route from ordinary input. Every route measured that goes through a
-        CONSTRUCTOR is refused, and THREE IS THE DENOMINATOR rather than a proof that no fourth
-        exists — the decade-old row itself resolves to Unavailable / WITNESS UNAVAILABLE,
-        StalenessWindow(seconds=1e18) raises StalenessWindowOutOfRange, and Agrees(...) with
-        evidence for a different instant raises AgreementWithoutFreshnessEvidence. Same residue
-        as boundary B of src/crash_detector/dials/magnitude.py, measured there against a forged
-        magnitude; a property of the language, not of this design.
+        THE THREE ROUTES THAT ARE REFUSED, UNCHANGED: the decade-old row itself resolves to
+        Unavailable / WITNESS UNAVAILABLE, StalenessWindow(seconds=1e18) raises
+        StalenessWindowOutOfRange, and Agrees(...) with evidence for a different instant raises
+        AgreementWithoutFreshnessEvidence. Same residue as boundary B of
+        src/crash_detector/dials/magnitude.py, measured there against a forged magnitude; a
+        property of the language, not of this design.
+        WHAT IT IS NOT — CORRECTED AT WO-2R2 INCREMENT 2, AND THE PREVIOUS TEXT IS WHY. It read
+        "not a route from ordinary input. Every route measured that goes through a CONSTRUCTOR is
+        refused, and THREE IS THE DENOMINATOR rather than a proof that no fourth exists".
+        THE FOURTH EXISTED: CD-ASR-WO2-02's variant ASR2-005-A, a datetime subclass overriding
+        __rsub__ and astimezone, goes through EVERY constructor on the path and reaches Agrees —
+        a row dated 2016-08-21 read at 2026-08-19 with a 600 s window rendered WITNESS AGREES
+        while THIS TEST exited 0 with 152 passed. The hedge was honest and did its job; what it
+        could not do was say what the denominator WAS. The old sentence is quoted rather than
+        removed (PBG-CONT-003).
+        THE DENOMINATOR IS NOW STATED WITH ITS METHOD. METHOD: parse every module of
+        src/crash_detector; compute the transitive intra-package IMPORT CLOSURE of the six
+        modules that host a judgement about staleness, agreement or reading-ness
+        (serving.witness_resolver, witness.panel, staleness, engine.evaluate, dials.reading,
+        serving.dial_presentation); enumerate every AST node in that closure at which an
+        operation could be executed by an object the module did not construct, in two tiers —
+        ADMISSION (isinstance, issubclass, hasattr, getattr) and THE DECIDING OPERATION
+        (comparison, membership, arithmetic, ordering calls, coercion calls, set operations,
+        truthiness, identity). The closure is over MODULES, not functions, so it is OVER-inclusive
+        by construction. DENOMINATOR: 16 subject modules, 402 sites — tier 1, 30 distinct sites /
+        33 occurrences (ISINSTANCE 24, ISSUBCLASS 0, DUCK 9); tier 2, 369 occurrences
+        (TRUTHINESS 103, COERCION 101, IDENTITY 47, COMPARE 36, ORDERING 30, MEMBERSHIP 26,
+        ARITH 18, SETOP 8). Every tier-1 site carries a written disposition and every subject
+        module carries one for tier 2, asserted BY SET EQUALITY IN BOTH DIRECTIONS.
+        EXECUTABLE EXAMPLE, from the root of a tree the auditor extracted itself:
+        `python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list` -> exit 0,
+        "402 sites enumerated over 16 modules"; and ASR2-005-A dropped in at
+        src/crash_detector/serving/panel_feed.py with its driver -> Unavailable(reason=
+        'PANEL_ROW_STALE') -> WITNESS UNAVAILABLE, the plain-datetime CONTROL arm rendering the
+        SAME string.
+        CARRIER MEASURED (CD-RULE-006): crash_detector.own_terms, measured refusing the variant on
+        pristine extractions rather than nominated — at 50fc231 ASR2-005-A renders WITNESS AGREES
+        while its control renders WITNESS UNAVAILABLE; at the closure BOTH arms render WITNESS
+        UNAVAILABLE, and the auditor's finding WAS that divergence. A counterfactual extraction
+        with ONE line changed (the descriptor read replaced by getattr) renders WITNESS AGREES
+        again, so the carrying line is identified and not merely nominated.
+        WHAT REMAINS OUTSIDE THE DENOMINATOR: (i) 19 names of the package are outside the import
+        closure and were not swept — every run prints them, and that none of them decides
+        staleness, agreement or reading-ness is a claim about THIS SHA; (ii) THE SWEEP DID NOT SEE
+        THE AUDITOR'S OWN VARIANT FILE — with ASR2-005-A present as panel_feed.py the sweep still
+        reports 402 sites, because that module imports none of the six entry modules, which is
+        disclosed here rather than left to be discovered: the sweep COUNTS and does not GUARD;
+        (iii) the sweep's own four boundaries — static and intra-procedural so every ESTABLISHED
+        disposition is a CLAIM BY THE ENGINEERING SEAT, it sees only operators written literally,
+        its subject set is an import closure, and a disposition keyed by expression text does not
+        survive a rename; for a MIS-DECLARED disposition, NOT PROVED TO BE CARRIED ANYWHERE;
+        (iv) four places DECLARED OPEN OR OUT OF BOUND rather than closed, named in
+        tools/sweep/declared_dispositions.py — the injected ContributionModel
+        (crash_detector.engine.model, ruled closed by CONSTRUCTION at Blueprint §7 in WO-3 by
+        PO-DECISIONS-0003 and deliberately NOT closed by a guard here), SourceRecord's
+        cadence_seconds int subclass, FetchFailed.http_status and Malformed.instance_path, each
+        NOT PROVED TO BE CARRIED ANYWHERE; and (v) boundary 5 below.
+        (5) A tzinfo IS A SUPPLIED OBJECT AND IS THE LAST PLACE A SUPPLIED OBJECT'S METHOD STILL
+        RUNS INSIDE A FRESHNESS COMPUTATION. ADDED AT WO-2R2 INCREMENT 2. *** MEASURED OPEN. ***
+        Every timestamp is now REBUILT by crash_detector.own_terms.own_instant from the supplied
+        object's own primitive fields, so no method of type(value) runs — but the UTC OFFSET comes
+        from datetime.utcoffset(value), whose base implementation asks value.tzinfo, and a tzinfo
+        cannot be refused without refusing zoneinfo, pytz and pandas. MEASURED (variant
+        CD-ENG-WO2R2-V10, on pristine extractions of BOTH 50fc231 and the closure, identical
+        results): a row whose stated wall clock is 22 HOURS OLD, carrying a tzinfo reporting a
+        -22 h offset, resolves to Agrees and renders WITNESS AGREES against a 600 s window.
+        THE BOUND IS CARRIED BY THE CPYTHON INTERPRETER AND WAS MEASURED: call_utcoffset refuses
+        any return that is not a timedelta and any magnitude of a day or more —
+        timedelta(days=1) raises "ValueError: offset must be a timedelta strictly between
+        -timedelta(hours=24) and timedelta(hours=24)". So this route can move an instant by at
+        most 24 hours, which is 96x the 900-second ceiling derived from PID §5. BEYOND THAT BOUND,
+        NOT PROVED TO BE CARRIED ANYWHERE. It is the same fact as boundary 2 reached through the
+        offset rather than through now_utc, it is a statement about the DATA a caller supplied
+        rather than about CODE a caller supplied, and it is NOT introduced by this closure — it is
+        measured identically at the audited base. It is written down because the closure made it
+        the LAST such route.
+        DO NOT read a clean run of this test as proof of the proposition. Read it as proof of
+        exactly three things: that no window wider than the ratified detectability budget can be
+        applied; that agreement cannot exist without the comparison that justifies it; and that
+        the values that comparison is made of are objects this system constructed. It is NOT proof
+        about boundary 5, which is open and measured open.
         Agrees IS DELIBERATELY NOT SLOTTED (CD-D-058, an instruction obeyed rather than an
         oversight): slotting closes the UNDECLARED-attribute half and leaves the DECLARED-slot
         half — which is the whole of PL-W5, since the write that reaches WITNESS AGREES

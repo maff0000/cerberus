@@ -158,15 +158,88 @@ TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
 
    **NOT PROVED TO BE CARRIED ANYWHERE.** No layer was measured refusing a forged `Agrees`.
 
-   **What this boundary is not.** It is not a route from ordinary input, and every route measured
-   that goes through a **constructor** is refused. **Three measured, and three is the denominator
-   rather than a proof that a fourth does not exist:** the decade-old row itself resolves to
+   **The three routes that are refused, unchanged:** the decade-old row itself resolves to
    `Unavailable` / `WITNESS UNAVAILABLE`; `StalenessWindow(seconds=1e18)` raises
    `StalenessWindowOutOfRange`; `Agrees(...)` built with evidence for a different instant raises
-   `AgreementWithoutFreshnessEvidence`. The residue is available only to code that has already
-   chosen to write past the language's own frozen guarantee. It is the same residue declared as
-   boundary B of `src/crash_detector/dials/magnitude.py`; it is a property of the language, not
-   of this design.
+   `AgreementWithoutFreshnessEvidence`. The `object.__setattr__` residue is available only to
+   code that has already chosen to write past the language's own frozen guarantee. It is the same
+   residue declared as boundary B of `src/crash_detector/dials/magnitude.py`; it is a property of
+   the language, not of this design.
+
+   **What this boundary is not — CORRECTED AT WO-2R2 INCREMENT 2, and the previous text is why.**
+   It read:
+
+   > *"it is not a route from ordinary input, and every route measured that goes through a
+   > CONSTRUCTOR is refused. **Three measured, and three is the denominator, not a proof that a
+   > fourth does not exist**"*
+
+   **THE FOURTH EXISTED.** `CD-ASR-WO2-02` found it: variant `ASR2-005-A`, a `datetime` subclass
+   overriding `__rsub__` and `astimezone`, which goes through **every** constructor on the path —
+   `PanelRow.__post_init__`, `resolve_panel`, `StalenessWindow.__post_init__`,
+   `FreshnessEvidence.__post_init__` — and reaches `Agrees`. A row dated 2016-08-21 read at
+   2026-08-19 with a 600 s window rendered `WITNESS AGREES` while this very test exited `0` with
+   152 passed. The hedge was honest and it did its job; what it could not do was say what the
+   denominator **was**. The old sentence is quoted rather than removed (`PBG-CONT-003`).
+
+   **THE DENOMINATOR IS NOW STATED, WITH THE METHOD BY WHICH IT WAS TAKEN.** The class was
+   re-stated at the Product Owner's altitude — *any judgement this system makes that delegates its
+   deciding operation to an object the system did not construct* — and swept mechanically rather
+   than by reading the modules that looked relevant:
+
+   * **Method.** Parse every module of `src/crash_detector`; compute the transitive intra-package
+     **import closure** of the six modules that host a judgement about staleness, agreement or
+     reading-ness; enumerate every AST node in that closure at which an operation could be
+     executed by an object the module did not construct, in two tiers — *admission* (`isinstance`,
+     `issubclass`, `hasattr`, `getattr`) and *the deciding operation* (comparison, membership,
+     arithmetic, ordering calls, coercion calls, set operations, truthiness, identity). The
+     closure is taken over **modules**, not functions, so it is over-inclusive by construction.
+   * **Denominator: 16 subject modules, 402 sites.** Tier 1 — 30 distinct sites, 33 occurrences
+     (`ISINSTANCE` 24, `ISSUBCLASS` 0, `DUCK` 9). Tier 2 — 369 occurrences (`TRUTHINESS` 103,
+     `COERCION` 101, `IDENTITY` 47, `COMPARE` 36, `ORDERING` 30, `MEMBERSHIP` 26, `ARITH` 18,
+     `SETOP` 8). Every tier-1 site carries a written disposition and every subject module carries
+     one for tier 2, asserted **by set equality in both directions**.
+
+   **EXECUTABLE EXAMPLE**, from the root of a tree the auditor extracted itself:
+
+   ```
+   python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list
+       -> exit 0, "402 sites enumerated over 16 modules"
+   cp <ASR2-005-A> src/crash_detector/serving/panel_feed.py   # then its driver
+       -> Unavailable(reason='PANEL_ROW_STALE') -> 'WITNESS UNAVAILABLE'
+       -> and the plain-datetime CONTROL arm renders the SAME string
+   ```
+
+   **CARRIER MEASURED (`CD-RULE-006`).** `crash_detector.own_terms`, measured refusing the variant
+   on pristine extractions rather than nominated: at `50fc231` `ASR2-005-A` renders `WITNESS
+   AGREES` while its control renders `WITNESS UNAVAILABLE`; at the closure **both arms render
+   `WITNESS UNAVAILABLE`**, and the auditor's finding *was* that divergence. A counterfactual
+   extraction with one line changed — the descriptor read replaced by `getattr` — renders `WITNESS
+   AGREES` again, so the line that carries it is **identified**, not merely nominated.
+
+   **WHAT REMAINS OUTSIDE THE DENOMINATOR, and it is not nothing:**
+
+   * **19 names of the package are outside the import closure** and were not swept; every run
+     prints them. That none of them decides staleness, agreement or reading-ness is a claim about
+     **this SHA**, made by reading them, and it is the claim to attack.
+   * **The sweep did not see the auditor's own variant file.** With `ASR2-005-A` present as
+     `src/crash_detector/serving/panel_feed.py` the sweep still reports 402 sites, because that
+     module imports none of the six entry modules. Disclosed rather than left to be discovered:
+     **the sweep counts and does not guard**, and what refuses that variant is the re-construction
+     at the door, which needs no module to be in any set.
+   * **The sweep's own four boundaries**, in its header: static and intra-procedural, so every
+     `ESTABLISHED` disposition is a **claim by the engineering seat** and not something the tool
+     verified; it sees only operators written literally, so `operator.__lt__` produces no site;
+     its subject set is an import closure; and a disposition keyed by expression text does not
+     survive a rename. For a **mis-declared** disposition: **NOT PROVED TO BE CARRIED ANYWHERE** —
+     it is invisible to the tool by construction.
+   * **Four places are declared OPEN or OUT OF BOUND rather than closed**, named in
+     `tools/sweep/declared_dispositions.py`: the injected `ContributionModel`
+     (`crash_detector.engine.model` — ruled closed by **construction** at Blueprint §7 in WO-3 by
+     `PO-DECISIONS-0003`, and deliberately **not** closed by a guard here), `SourceRecord`'s
+     `cadence_seconds` int subclass, `FetchFailed.http_status` and `Malformed.instance_path`.
+     Each says why, and each is **NOT PROVED TO BE CARRIED ANYWHERE**.
+   * **And boundary 5 below**, which is a route to `WITNESS AGREES` on a stale row that this
+     closure does **not** close.
 
    **`Agrees` is deliberately not slotted by this amendment** (`CD-D-058` — an instruction obeyed,
    not an oversight). Slotting it would close the undeclared-attribute half — the `"smuggled"`
@@ -180,10 +253,47 @@ TO BE CARRIED ANYWHERE** (`CD-RULE-006`).
    JSON Schema, so a hand-built envelope declaring an inadmissible window is a
    publication-provenance question rather than a staleness one. **NOT PROVED TO BE CARRIED
    ANYWHERE.**
+5. **A `tzinfo` IS A SUPPLIED OBJECT, AND IT IS THE LAST PLACE A SUPPLIED OBJECT'S METHOD STILL
+   RUNS INSIDE A FRESHNESS COMPUTATION.** *Added at WO-2R2 increment 2.* **MEASURED OPEN.**
+
+   Since that increment every timestamp is **rebuilt** by `crash_detector.own_terms.own_instant`
+   from the supplied object's own primitive fields, so no method of `type(value)` runs. But the
+   **UTC offset** comes from `datetime.utcoffset(value)`, whose base implementation asks
+   `value.tzinfo` — and a `tzinfo` cannot be refused without refusing `zoneinfo`, `pytz` and
+   `pandas`, all of which supply their own.
+
+   **MEASURED** (variant `CD-ENG-WO2R2-V10`, on pristine extractions of **both** `50fc231` and the
+   closure, with identical results):
+
+   ```python
+   stale_by_22h = datetime(2026, 8, 18, 14, tzinfo=SkewedZone(-22))
+   row = PanelRow(state="AGREES", as_of_utc=stale_by_22h, published_utc=stale_by_22h,
+                  measures={"divergence_measure": 0.01})
+   resolve_panel(row, now_utc=NOW_2026_08_19T12Z, staleness_window_seconds=600.0)
+   # -> Agrees -> 'WITNESS AGREES', on a row whose stated wall clock is 22 HOURS OLD
+   ```
+
+   **THE BOUND IS CARRIED BY THE CPYTHON INTERPRETER AND WAS MEASURED, not assumed:**
+   `call_utcoffset` refuses any return that is not a `timedelta` and any magnitude of a day or
+   more — `timedelta(days=1)` raises `ValueError: offset must be a timedelta strictly between
+   -timedelta(hours=24) and timedelta(hours=24)`. So this route can move an instant by at most 24
+   hours, which is **96x the 900-second ceiling** derived from PID §5.
+
+   **BEYOND THAT BOUND, NOT PROVED TO BE CARRIED ANYWHERE.** It is the same fact as boundary 2 —
+   clock trust is not established and is not claimed — reached through the offset rather than
+   through `now_utc`, and it is a statement about the **data** a caller supplied rather than about
+   **code** a caller supplied. It is **not introduced by the WO-2R2 closure**: it is measured
+   identically at the audited base. It is written down because the closure made it the **last**
+   such route, and a residue that is now the only one of its kind should be findable without
+   re-deriving it.
 
 Do not read a clean run of this test as proof that every freshness decision in a deployment is
-sound. Read it as proof that no window wider than the ratified detectability budget can be
-applied, and that agreement cannot exist without the comparison that justifies it.
+sound. Read it as proof of exactly three things: that no window wider than the ratified
+detectability budget can be applied; that agreement cannot exist without the comparison that
+justifies it; and — since WO-2R2 increment 2 — that the values that comparison is made of are
+objects this system constructed, so the answer is not the supplied timestamp's to give. It is
+**not** proof about boundary 5, which is open and measured open, and it is **not** proof about the
+routes listed as outside the denominator in boundary 3.
 
 ## Negative control
 
