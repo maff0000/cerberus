@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T08:28:00Z'
+updated_utc: '2026-08-19T08:55:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -87,8 +87,32 @@ current_block: >
   governance/assurance/WO-2/ instead, and admission stays available to the PO as an explicit informed
   decision (CD-FWK-005 raised).
   CD-D-024: WO-2 does not close and WO-3 is not dispatched. Next actor: PRODUCT AUTHORITY.
+  THE PRODUCT OWNER HAS REVIEWED THE GATE AND RULED (BL-20260819T085500Z-0020,
+  governance/decisions/PO-GATE-REVIEW-WO2-0001.md). WO-2 goes to a bounded REWORK, WO-2R. The gate is
+  UNCHANGED: Assurance PASS on all five. Four rulings. (1) The refusal to admit RTR-WO2-0001 is
+  CORRECT AND COMMENDED; CD-FWK-005 harvested to the framework backlog as IMP-015 HIGH; a PROJECT
+  RULE now forbids admitting any run record without its paired assurance verdict and forbids a
+  criterion the Assurance seat holds not-PASS from computing PASS. (2) WO-2R must CLOSE THE CLASS,
+  NOT THE INSTANCES, over CD-ASR-F01..F06, naming the class and the structure IN THE COMMIT and
+  proving each against the auditor's escaped variants AND two new variants of the Engineer's own.
+  (3) IDENTITY RE-AUTHORING of every commit on the unmerged lane before merge, proved by a git log
+  author audit. (4) Re-issue Assurance with FRESH variants, same separation, distinct actor_ids.
+  Four standing rules are now recorded in governance/rules/PROJECT-RULES.md: CD-RULE-001 (run-record
+  admission, PO, non-relaxable), CD-RULE-002 (per-seat commit identity, PO, non-relaxable),
+  CD-RULE-003 (derive a product quantity or fail closed; never invent one), CD-RULE-004 (a guard
+  closes its class or DECLARES ITS OWN LIMIT — the CD-RT-012 pattern made the project standard).
+  The auditor's ten escapes are compiled into governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md,
+  which is the Engineer's MINIMUM PROOF OBLIGATION and the next auditor's EXCLUSION SET.
+  CD-D-026 orders identity re-authoring FIRST, then the dispatch — one rewrite, not two.
+  CD-D-027 preserves the pre-rewrite lane under a tag with a durable OLD -> NEW SHA mapping table, so
+  every lane SHA already written in the Build Log continues to resolve and the standing SHA-resolution
+  step (CD-CONT-002) does not start failing for a lawful reason. CD-D-028: measured, not assumed —
+  all 24 lane commits are Engineer work and re-author to the single seat CD-ENG-WO2-01; not one
+  touches a Project-Lead-exclusive path. CD-D-029: main is NOT rewritten, and its 13 checkpoints keep
+  the ambient human author; that seam is disclosed, and every new commit on main from
+  BL-...-0020 forward carries the Project Lead seat identity.
 owner_role: PROJECT_LEAD
-next_actor: PRODUCT_AUTHORITY
+next_actor: PROJECT_LEAD
 
 repository: local
 branch: main
@@ -97,8 +121,10 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 7dad3595532055aa93b77e55e14dbcda064d219e
-  # 7dad359 is the SOD-boundary checkpoint (Engineer complete, Assurance ISSUED), verified present.
+last_completed_checkpoint_sha: f041c6fb44a76925fcecde2f641e43d9e257114c
+  # f041c6f is the WO-2 GATE checkpoint (Assurance AMBER recorded, gate NOT MET), verified present.
+  # Superseded 7dad359 at BL-20260819T085500Z-0020. Resolved with git rev-parse before writing.
+  # 7dad359, the prior value, was the SOD-boundary checkpoint (Engineer complete, Assurance ISSUED).
   # CD-PL-F36 HISTORY, kept here because the defect was invisible to the eye: the increment-5 seat
   # left this field as 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1, a FABRICATED value sharing only
   # the 7-char prefix with the real 17d7721 (= 17d772157fc33a7b4df6e4e1f1dd81da0eefddf0) and
@@ -210,10 +236,22 @@ remaining_items:
   the second half of CD-EGRESS-002 has one plant for one declared test. Raised as a PL finding so
   the PO sees them without reading the manifest, and so an Assurance PASS is not read as covering
   them. Owed at WO-3.'
-- 'Assurance dispatch CD-ASR-WO2-01 — independent execution of every declared register command on
-  the clean tree and on each planted copy, producing run record RTR-WO2-0001'
-- 'PL close: admit RTR-WO2-0001 into required-tests.yaml, run pbg required-tests verify, merge the
-  lane into main, checkpoint, and stop for Product Owner review'
+- 'DONE — Assurance dispatch CD-ASR-WO2-01 executed every declared register command itself on the
+  clean tree and on each planted copy, producing run record RTR-WO2-0001. Returned AMBER. The run
+  record is NOT admitted and is preserved unaltered at governance/assurance/WO-2/ (CD-D-023,
+  reinforced by CD-RULE-001).'
+- 'WO-2R IDENTITY RE-AUTHORING — PO Ruling 3. Tag the pre-rewrite lane, rewrite all 24 lane commits
+  to seat identity CD-ENG-WO2-01, prove identity-only change, write the OLD -> NEW mapping table,
+  run the git log author audit. Ordered FIRST by CD-D-026.'
+- 'WO-2R REWORK — PO Ruling 2. Dispatch a FRESH Engineer seat CD-ENG-WO2R-01 to CLOSE THE CLASS on
+  CD-ASR-F01..F06: per-finding increments, the class and the structure NAMED IN THE COMMIT, each
+  closure proved by EXECUTION against the ten escapes in ESCAPED-VARIANTS-KNOWN-SET.md plus at least
+  two new variants of its own, clean arm green at every increment.'
+- 'WO-2R RE-ASSURANCE — PO Ruling 4. A SEPARATE agent, CD-ASR-WO2-02, distinct actor_id, FRESH
+  variants. The escaped ten are the Engineer''s known set and prove nothing about the class.'
+- 'PL close, UNCHANGED GATE: Assurance PASS on all five. Only then admit the paired run record and
+  verdict together (CD-RULE-001), merge the lane, checkpoint, and STOP for Product Owner review.
+  A criterion the Assurance seat holds not-PASS cannot compute PASS regardless of admitted runs.'
 - 'ROADMAP.md — still not authored; whether one is wanted on top of BLUEPRINT.md §15 is a PO call'
 
 open_decisions:
@@ -230,6 +268,19 @@ open_decisions:
 open_ambiguities: []
 
 risks:
+- 'CD-PL-F47 MEDIUM NEW — the WO-2R rework is a REFACTOR of load-bearing types, not an addition of
+  checks. Closing CD-ASR-F01 as a class means no bare scalar is reachable from both dial types by ANY
+  spelling, which reaches every consumer of `.score`; closing F02/F03 means the Reading types become
+  CLOSED SURFACES, which reaches every consumer of a Reading. The clean arms and the eleven existing
+  plants are the regression net and the dispatch requires them green at every increment. The risk is
+  the cost of the ruling, which the PO made with the finding in front of them.'
+- 'CD-PL-F48 MEDIUM NEW — closing CD-ASR-F04 by resolving what an allowlist entry REACHES cannot use
+  live DNS: a check whose verdict depends on the network is not reproducible and cannot be a gate.
+  The dispatch requires a DENY-BY-DEFAULT structure over a declared destination registry, which needs
+  no resolver. A resolving check may only be accepted if the reproducibility objection is answered.'
+- 'CD-FWK-005 / IMP-015 — harvested to the framework backlog by the PO. Until it lands the register
+  can still compute PASS from admitted runs alone; CD-RULE-001 is the standing compensating control
+  and it is PROCEDURAL, which means it depends on a seat obeying it. Stated plainly, not glossed.'
 - 'CD-CONT-001 AMBER — a long-running seat with no intermediate commit loses everything it has done
   when it dies. Handled by splitting the Engineer re-dispatch into committed increments and running
   seats in the foreground.'
@@ -286,23 +337,28 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  Dispatch Engineer CD-ENG-WO2-01 as instance 7, in the FOREGROUND, execution base lane 9aea4ef, for
-  B4 and NOTHING ELSE: its own run of EVERY declared register command on the clean tree and with
-  each plant applied to a throwaway copy (`git archive <sha> | tar -x -C <tmpdir>` — never mutate
-  the worktree, never create a git worktree), recording exact command lines and exit codes in its
-  Build Log entry as its own implementation evidence. That is implementation testing and it is NOT
-  assurance; it does not become assurance by being thorough (PBG-SOD-001). It must return
-  READY_FOR_ASSURANCE with the exact SHA. No further hardening of the CD-AC-012 guard is authorised
-  (CD-D-015, CD-D-017); no new plants; no repair of CD-ENG-F41, CD-PL-F43 or CD-ENG-F39, all of
-  which are ruled owed at WO-3.
-  Then the Project Lead: resolve the returned SHA with `git rev-parse`, write it into
-  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, create the READ-ONLY target worktree at that
-  exact SHA, set issued_utc, move the dispatch to ISSUED, commit that as a checkpoint, and only then
-  dispatch a SEPARATE agent as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable).
-  The auditor runs every declared command itself on BOTH arms, uses no Engineer-supplied wrapper,
-  and writes at least one variant plant of its own per criterion. The WO-2 gate is Assurance PASS on
-  all five planted violations. At the gate, or blocked, record state durably and STOP for Product
-  Owner review.
+  IDENTITY RE-AUTHORING (PO Ruling 3), ordered FIRST by CD-D-026. Tag the pre-rewrite lane head at
+  66681b2; rewrite all 24 commits of main..wo-2-skeleton with author AND committer
+  CD-ENG-WO2-01 <cd-eng-wo2-01@seats.crash-detector.invalid>, preserving every commit message, every
+  tree and every authored date byte-for-byte; PROVE the rewrite changed nothing but identity —
+  pairwise tree equality old-to-new and an empty `git diff` between old and new heads; write the
+  OLD -> NEW mapping table into governance so every SHA already recorded in the Build Log still
+  resolves (CD-D-027); run the git log author audit as the evidence Ruling 3 demands; commit as its
+  own checkpoint.
+  THEN author governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml and issue it to a FRESH Engineer
+  seat CD-ENG-WO2R-01 — bounded to CD-ASR-F01..F06 and NOTHING ELSE, per-finding increments, each
+  commit NAMING THE CLASS CLOSED AND THE STRUCTURE THAT CLOSES IT, each closure proved by EXECUTION
+  against the escapes in ESCAPED-VARIANTS-KNOWN-SET.md plus at least TWO NEW VARIANTS OF ITS OWN,
+  with the full clean arm green at every increment. It must return READY_FOR_ASSURANCE with the exact
+  SHA. It may not invent a product quantity (CD-RULE-003) and every guard it touches must close its
+  class or declare its own limit (CD-RULE-004).
+  THEN the Project Lead reconciles by running the arms itself — reconciliation, NOT assurance
+  (PBG-SOD-001) — and only then issues CD-DISPATCH-WO2R-ASSURANCE to a SEPARATE agent, CD-ASR-WO2-02,
+  never the same agent (PBG-SOD-001, non-waivable). That seat must devise FRESH variants; the ten
+  escapes are now the Engineer's known set and prove nothing about the class.
+  The gate is UNCHANGED: Assurance PASS on all five planted violations. At the gate, either way,
+  record state durably and STOP for Product Owner review. Do not admit any run record without its
+  paired verdict (CD-RULE-001).
 resume_instructions: >
   Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
   order: BL-20260819T023505Z-0003, governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md, BLUEPRINT.md
@@ -310,5 +366,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T082800Z-0019
+last_build_log_entry: BL-20260819T085500Z-0020
 status: ACTIVE

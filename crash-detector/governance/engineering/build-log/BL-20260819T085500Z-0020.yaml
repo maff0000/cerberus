@@ -1,0 +1,233 @@
+# THE PRODUCT OWNER HAS REVIEWED THE WO-2 GATE AND RULED. WO-2 does not close; it goes to REWORK.
+# This entry transcribes the disposition, records the two rules it creates, compiles the auditor's
+# escaped variants into a durable known set, and opens WO-2R. It changes no application code.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T085500Z-0020
+timestamp_utc: '2026-08-19T08:55:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: f041c6fb44a76925fcecde2f641e43d9e257114c
+current_sha: f041c6fb44a76925fcecde2f641e43d9e257114c
+lane_head_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+parent_entry_id: BL-20260819T082800Z-0019
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Booted from the repository record alone. `pbg boot` returns AMBER,
+  CONTINUITY_MATCH/RESUME_AMBER, blocking_failures empty, phase GATE, observed SHA f041c6f equal to
+  the recorded checkpoint — the only UNAVAILABLE being roadmap_identity, which is a standing PO call.
+  Recorded state and observed state agree.
+
+  THE PRODUCT OWNER HAS REVIEWED THE GATE AND RULED. WO-2 does not close and it is not accepted;
+  it goes to a bounded REWORK dispatch, WO-2R. The gate is UNCHANGED: Assurance PASS on all five.
+
+  Four rulings, transcribed in full to governance/decisions/PO-GATE-REVIEW-WO2-0001.md:
+
+  1. The Project Lead's refusal to admit RTR-WO2-0001 (CD-D-023) is CORRECT AND COMMENDED.
+     CD-FWK-005 is harvested to the framework backlog as IMP-015 (HIGH). A PROJECT RULE is created
+     and is effective immediately.
+  2. REWORK DISPATCH WO-2R — CLOSE THE CLASS, NOT THE INSTANCES, over CD-ASR-F01..F06, with the
+     class and the structure NAMED IN THE COMMIT and proved against the auditor's escaped variants
+     AND at least two new variants of the Engineer's own, per finding.
+  3. IDENTITY RE-AUTHORING at the same gate — every commit on the unmerged lane re-authored under
+     the correct seat identities before merge, proved by a git log author audit, with per-seat
+     identity enforced procedurally on future commits.
+  4. Re-issue Assurance when rework is complete, with FRESH variants, same separation, distinct
+     actor_ids.
+
+  This entry does the recording half and nothing else. No application code is touched; no lane
+  history is rewritten yet; no dispatch is issued yet. Those are the next two boundaries.
+
+what_was_written:
+  governance/decisions/PO-GATE-REVIEW-WO2-0001.md: >
+    The disposition, transcribed. Including a section naming what the disposition does NOT rule —
+    CD-ASR-F07, CD-ASR-N02, and the F06 ceiling VALUE — so no seat reads silence as permission
+    (PBG-AUTH-005).
+  governance/rules/PROJECT-RULES.md: >
+    NEW FILE. Four standing rules, each with its source of authority. CD-RULE-001 and CD-RULE-002
+    are Product Authority and non-relaxable. CD-RULE-003 and CD-RULE-004 are Project Lead
+    engineering standards, created here because the rework cannot be dispatched coherently without
+    them.
+  governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md: >
+    NEW FILE. The ten escapes compiled from the auditor's entry into one durable list, with each
+    route stated precisely enough to execute. It has TWO readers and TWO opposite obligations: for
+    the WO-2R Engineer it is the MINIMUM PROOF OBLIGATION; for the WO-2R Assurance seat it is the
+    EXCLUSION SET, because these ten are now the Engineer's known set and prove nothing about the
+    class. Nothing in it is new information; every route is transcribed.
+
+rules_created:
+- id: CD-RULE-001
+  source: PRODUCT AUTHORITY (Ruling 1)
+  substance: >
+    No run record is admitted at any gate without the paired assurance verdict attached, and a
+    criterion the Assurance seat holds not-PASS cannot compute PASS regardless of admitted runs.
+  enforcement: >
+    PROCEDURAL until IMP-015 lands in the framework. Before any latest_admitted_run is written the
+    paired Assurance entry must exist as a committed file and its per-criterion verdicts must be
+    quoted into the admission record. If the validator computes PASS where the auditor held
+    not-PASS, THE AUDITOR'S VERDICT GOVERNS and the divergence is reported as a tooling defect.
+- id: CD-RULE-002
+  source: PRODUCT AUTHORITY (Ruling 3)
+  substance: >
+    No commit produced by an agent seat may be authored under a human identity. Author AND committer
+    are the acting seat: name = the actor_id from the seat's dispatch record, email = that actor_id
+    lower-cased at seats.crash-detector.invalid (RFC 2606 — guaranteed undeliverable, unmistakably
+    not a mailbox).
+  note_on_the_committer_field: >
+    The harness identity that previously held `committer` on the lane (NoustAI-PDA) is removed too,
+    not just the human author. It is not a governed actor on this project — no authority record, no
+    dispatch, no role contract — and leaving it in the record implies an actor governance cannot
+    account for. The harness is the mechanism; the seat is the actor; the record names actors.
+- id: CD-RULE-003
+  source: PROJECT LEAD, from PBG-AUTH-005 and the existing precedent in dials/scores.py
+  substance: >
+    Where a structural bound needs a number that carries PRODUCT MEANING, the seat DERIVES it from
+    recorded product intent citing the clause, or FAILS CLOSED and raises it. It never invents a
+    plausible number.
+  why_it_is_created_now: >
+    Ruling 2's F06 item orders a hard upper bound on the staleness window. A ceiling is a product
+    quantity. Without this rule the rework's most likely failure mode is a seat picking 86400
+    because it looks sensible, and an invented bound that later proves wrong rejects legitimate
+    readings quietly from inside a constructor. The project already has the right precedent:
+    dials/scores.py REFUSES to impose a score range for exactly this reason and says so at length.
+- id: CD-RULE-004
+  source: PROJECT LEAD, generalising CD-D-014 and CD-D-015
+  substance: >
+    Every guard either CLOSES ITS CLASS — proved by execution against adversarial variants — or
+    DECLARES ITS OWN LIMIT in the check header, the register entry and the execution contract
+    consistently, each boundary carrying an executable example. The prohibited third thing is a
+    guard that catches a chosen instance while its register entry claims the class. A register entry
+    may not claim more than its guard delivers.
+  why_it_is_created_now: >
+    This is the whole content of the four AMBER verdicts, stated as a standing rule instead of six
+    separate repairs. The auditor itself drew the line: it judged CD-RT-012's written limit HONESTLY
+    DRAWN and then added the caveat that "the honesty of THIS declaration should not be
+    generalised", because CD-AC-002's AST guard has comparable limitations and NO comparable written
+    declaration. That caveat is why CD-ASR-F01 is HIGH. CD-RULE-004 makes the CD-RT-012 pattern the
+    project standard rather than one guard's good behaviour.
+
+decisions_ruled_here:
+- id: CD-D-025
+  ruling: >
+    THE PO DISPOSITION IS ACCEPTED AND EXECUTED AS RULED. CD-D-023 (do not admit) and CD-D-024
+    (WO-2 does not close, WO-3 not dispatched) both STAND and are now reinforced by CD-RULE-001.
+    RTR-WO2-0001 remains UNADMITTED and both artefacts remain preserved unaltered at
+    governance/assurance/WO-2/. The lane remains UNMERGED.
+- id: CD-D-026
+  ruling: >
+    THE ORDER OF THE TWO REMAINING BOUNDARIES IS: identity re-authoring FIRST, then the rework
+    dispatch. Reasoning, recorded because the opposite order is the obvious one: re-authoring
+    rewrites the commit metadata of all 24 lane commits and therefore changes every lane SHA. Doing
+    it FIRST means ONE rewrite instead of two, the rework commits carry the correct seat identity
+    NATIVELY rather than being fixed afterwards, the SHA mapping table is written once, and the
+    Assurance seat audits a lane with uniform identity throughout instead of a lane with a seam in
+    it. Doing it second would mean rewriting commits that had just been proved, and re-proving them.
+- id: CD-D-027
+  ruling: >
+    THE PRE-REWRITE LANE IS PRESERVED, NOT DISCARDED. Every recorded lane SHA in the Build Log —
+    3b6edae, 8723ffb, d40e5c6, cbfa7c5, 11979fb, d1abdcc, a06e64f, 66681b2 and the rest — resolves
+    today and MUST continue to resolve, because the standing SHA-resolution step (CD-CONT-002) has
+    already caught two fabricated values on this project and a step that starts failing for a lawful
+    reason is a step that stops being trusted. Before any rewrite: a tag is placed at 66681b2, and a
+    durable OLD -> NEW mapping table is written into governance. The Build Log entries themselves are
+    NOT edited — their text continues to name the old SHAs, which is correct, because Build Log
+    history is not rewritten (PBG-CONT-003, non-waivable). The mapping table SUPERSEDES; it does not
+    correct.
+- id: CD-D-028
+  ruling: >
+    THE WHOLE LANE IS ENGINEER WORK AND RE-AUTHORS TO ONE SEAT, CD-ENG-WO2-01. Established by
+    measurement, not assumption: `git rev-list main..wo-2-skeleton` returns 24 commits; the changed
+    paths of every one of them lie in the Engineer's writable scope (src/, tests/, tools/, contracts/,
+    db/, deploy/, plants/, required-tests.yaml, the root manifests) or are the Engineer's OWN Build
+    Log entries attesting its own increments. NOT ONE lane commit touches governance/dispatch/,
+    governance/decisions/, governance/rules/ or ACTIVE_WORK.yaml — the Project Lead's exclusive
+    paths. The Project Lead's own checkpoints are all on main. There is therefore no per-commit
+    attribution judgement to make and none is invented.
+- id: CD-D-029
+  ruling: >
+    MAIN IS NOT REWRITTEN. The PO scoped Ruling 3 to "every commit on the unmerged lane", and that
+    is the scope executed. main's 13 checkpoint commits carry the same ambient human author and that
+    is DISCLOSED here rather than quietly fixed: main is the published trunk, rewriting it would
+    invalidate the checkpoint SHAs the continuity record is built on, and no ruling asks for it.
+    From this entry forward every NEW commit on main carries the Project Lead seat identity, so the
+    trunk has a dated seam at this entry rather than a silent inconsistency. If the PO wants main's
+    history re-authored too, that is a separate bounded action and it should be taken before anything
+    else is built on the trunk.
+
+boundary_verification:
+  boot: >
+    PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot — verdict AMBER, continuity_state
+    CONTINUITY_MATCH/RESUME_AMBER, blocking_failures [], observed_sha f041c6f, current_phase GATE.
+  sha_resolution_step: >
+    STANDING (CD-CONT-002). Every SHA written in this entry was resolved with `git rev-parse` against
+    the object database before commit. f041c6f -> f041c6fb44a76925fcecde2f641e43d9e257114c and
+    66681b2 -> 66681b27ed650321f6b9e325fbc05712a754cc7d, both present.
+  lane_author_audit_before_any_change: >
+    `git log --format='%h|%an|%ae|%cn|%ce' main..wo-2-skeleton` — 24 of 24 commits show author
+    "Matt Scott <rogue@cerberus.local>" and committer "NoustAI-PDA <pda@noustai.com>". ZERO commits
+    carry a seat identity. This is the defect Ruling 3 names, measured before it is repaired, so the
+    repair has a stated starting point and not just an end state.
+  identity_of_this_commit: >
+    THIS ENTRY'S OWN COMMIT is the first on the project to carry a seat identity, author and
+    committer both PROJECT_LEAD_SEAT_01 <project-lead-seat-01@seats.crash-detector.invalid>. Set per
+    invocation via GIT_AUTHOR_*/GIT_COMMITTER_* rather than by writing git config, so no ambient
+    state is changed for any other actor on this host.
+  pbg_untouched: >
+    `git diff --name-only f041c6f -- pbg/` returns zero lines. Nothing under pbg/ is modified
+    (PBG-FWK-013). No secret value is recorded (PBG-DATA-002).
+
+what_this_entry_does_NOT_do:
+- 'It does not rewrite the lane. That is the next boundary.'
+- 'It does not issue the WO-2R dispatch. That is the boundary after.'
+- 'It does not touch application code, and the Project Lead will not: implementation is dispatched
+  (PBG-SOD-003).'
+- 'It does not revise, soften or reinterpret any Assurance verdict. Four criteria stand AMBER.'
+- 'It does not admit RTR-WO2-0001. CD-RULE-001 now forbids what CD-D-023 refused on judgement.'
+
+findings_raised: []
+
+risks:
+- 'CD-PL-F47 NEW, MEDIUM — the rework ordered by Ruling 2 is a REFACTOR of load-bearing types, not
+  an addition of checks. Closing CD-ASR-F01 as a class means no bare scalar is reachable from both
+  dial types by ANY spelling, which reaches every consumer of `.score`; closing F02/F03 means the
+  Reading types become closed surfaces, which reaches every consumer of a Reading. The 1,000+
+  assertion clean arms and the eleven existing plants are the regression net, and the WO-2R dispatch
+  requires the full clean arm green at every increment. The risk is real and it is the cost of the
+  ruling, which the PO made with the finding in front of them.'
+- 'CD-PL-F48 NEW, MEDIUM — closing F04 by resolving what an allowlist entry REACHES rather than what
+  it is SPELLED as cannot be done with live DNS inside a register check: a check whose verdict
+  depends on the network is not reproducible and cannot be a gate. The dispatch therefore requires a
+  DENY-BY-DEFAULT structure over a declared destination registry instead, which needs no resolver.
+  If the WO-2R seat proposes a resolving check, the reproducibility objection must be answered before
+  it is accepted.'
+- 'CD-CONT-001 AMBER unchanged — a long-running seat with no intermediate commit loses everything.
+  WO-2R is split into per-finding increments, each committed, each named in the commit.'
+- 'CD-FWK-004 AMBER unchanged — one ACTIVE authority record maximum; separation is evidenced by
+  distinct named actor_ids.'
+- 'CD-FWK-005 / IMP-015 — now harvested to the framework backlog by the PO. Until it lands, the
+  register can still compute PASS from admitted runs alone. CD-RULE-001 is the standing compensating
+  control and it is procedural, which means it depends on a seat obeying it. Stated plainly.'
+
+status: COMPLETE
+next_safe_action: >
+  IDENTITY RE-AUTHORING (Ruling 3, ordered first by CD-D-026). In this order: tag the pre-rewrite
+  lane head at 66681b2; rewrite all 24 commits of main..wo-2-skeleton with author and committer
+  CD-ENG-WO2-01 <cd-eng-wo2-01@seats.crash-detector.invalid>, preserving every commit message, every
+  tree and every authored date byte-for-byte; verify the rewrite changed NOTHING but identity by
+  comparing trees pairwise old-to-new and by `git diff` between the old and new heads returning
+  empty; write the OLD -> NEW mapping table into governance; run the git log author audit as evidence;
+  and commit that as its own checkpoint. Then, and only then, author the WO-2R Engineer dispatch.
+expected_next_actor: PROJECT_LEAD
+blockers: []
+held_actions: ['CD-HOLD-003', 'CD-HOLD-004', 'CD-HOLD-005']
