@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T17:05:07Z'
+updated_utc: '2026-08-19T17:11:22Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -494,7 +494,7 @@ current_block: >
   what set was being counted; it changes no verdict and binds forward as "state the denominator".
   CD-D-059: PL-W1..W6 join the exclusion set.
 owner_role: PROJECT_LEAD
-next_actor: PROJECT_LEAD
+next_actor: ENGINEER
 
 repository: local
 branch: main
@@ -776,7 +776,8 @@ next_safe_action: >
   done.
   INCREMENT 5 IS RECONCILED AND ACCEPTED (CD-D-057). FIVE of the six findings this dispatch was
   opened for are now closed as a class subject to Assurance: CD-ASR-F01, F02, F03, F04, F05 and F06.
-  ISSUE THE CD-PL-F61 BOUNDED DISPATCH NEXT (CD-D-051), to a seat, bounded to
+  THE CD-PL-F61 BOUNDED DISPATCH IS NOW ISSUED (BL-20260819T171122Z-0033):
+  CD-DISPATCH-WO2R-READER to a FRESH seat CD-ENG-READER-01 at execution base f22d120, bounded to
   tools/register/_yamlmin.py and its two callers: prove TERMINATION on the minimal document, on V30
   and on PL-T5, with the clean arm and all eleven plants unchanged, and CD-ENG-WO2R-F19's
   nested-anchor repair folded in. It is owed AFTER increment 5 and BEFORE Assurance because two of
@@ -831,5 +832,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T170507Z-0032
+last_build_log_entry: BL-20260819T171122Z-0033
 status: ACTIVE
