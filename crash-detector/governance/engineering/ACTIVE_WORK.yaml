@@ -311,7 +311,7 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
+last_completed_checkpoint_sha: 8ca0eed  # WO-2R increment 3 RECONCILED and NOT ACCEPTED (CD-D-044). RESOLVED, not transcribed: see CD-PL-F36 for why this field is verified with `git cat-file -t` before it is written.
   # 7fbeaa7 is the WO-2R ENGINEER DISPATCH ISSUED checkpoint. Verified present, resolved with
   # git rev-parse. Superseded baef0ec (identity re-authoring) and, before it, 80b4a24 (PO gate review,
   # the first commit on this project to carry a seat identity, CD-RULE-002).
@@ -340,7 +340,7 @@ lane_head_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
 lane_increment_sha: b60d15321fdc136f0d5dd55b8feab190c0548680   # WO-2R increment 3, RECONCILED AND **NOT ACCEPTED** (CD-D-044); re-opened as 3b on CD-PL-F59
-continuity_record_commit: PENDING
+continuity_record_commit: 8ca0eed  # the commit carrying BL-20260819T143502Z-0026
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
   pbg/tools/pbg/__pycache__/, none of which are project state and none of which are committed. The
