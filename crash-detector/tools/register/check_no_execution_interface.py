@@ -177,6 +177,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _broker_vocabulary import (  # noqa: E402
     BROKER_SDK_MODULES,
+    PROSE_HYPOTHETICALS,
+    PROSE_NEGATIONS,
     STRONG_NOUNS,
     TRADEABLE_NOUNS,
     judge_identifier,
@@ -475,13 +477,17 @@ def main() -> int:
         "with and without a docstring saying it routed orders to a broker."
     )
     check.note(
-        "L3 SUPPRESSES any sentence carrying a negation or a hypothetical framing — `no`, "
-        "`never`, `refuses`, `forbidden`, `if`, `would`, `planted`, `variant`, `guard`. "
-        "This project's own documentation says repeatedly that it places no orders, and a "
-        "guard that failed on its charter would be switched off. The cost is a deliberate "
-        "false negative on a negated sentence, and it is affordable only because L1 and L2 "
-        "do not read prose at all: an interface hidden behind `this does not route orders` "
-        "is still caught by its name and by its field set."
+        f"L3 DOES NOT READ a sentence carrying any of {len(PROSE_NEGATIONS)} negation "
+        f"words or any of {len(PROSE_HYPOTHETICALS)} hypothetical words. That is WIDER "
+        "than the obvious list: besides `no`, `never`, `forbidden`, `if` and `would`, it "
+        "includes `must`, `free`, `advisory`, `zero`, `say`, `check`, `example`, "
+        "`criterion` and `were`. MEASURED: \"The engine must send each instruction to the "
+        "broker\" is not read by L3, on `must` alone (CD-ENG-F39, DECLARED not fixed, "
+        "CD-D-017). The trade is deliberate — this project's own documentation says "
+        "repeatedly that it places no orders — and it is affordable only because L1 and L2 "
+        "never read prose. Read the DECLARED LIMIT in this file's header for the full "
+        "account of the six boundaries; do not read a clean run here as proof that no "
+        "execution pathway exists."
     )
 
     return check.done(
