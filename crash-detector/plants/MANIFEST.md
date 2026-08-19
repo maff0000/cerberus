@@ -1,0 +1,200 @@
+# The five planted violations — MANIFEST
+
+**Deliverable B3 of `governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml`.**
+Written by `CD-ENG-WO2-01`. Nothing in this directory is evidence, and nothing in it is
+assurance. It is a set of *negative controls* an INDEPENDENT seat applies and runs for
+itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
+
+---
+
+## What is here
+
+One directory per PID §6 criterion delivered in WO-2, and inside it **one `git apply`-able
+patch per required test** from `required-tests.yaml`. Eleven tests, eleven patches.
+
+```
+plants/
+  MANIFEST.md                 <- this file: test_id, patch, proposition, failure signature
+  CD-AC-001/                  missing or stale input never renders as calm      (2 plants)
+  CD-AC-002/                  the two dials are never blended                   (3 plants)
+  CD-AC-003/                  witnesses are side-by-side, never ingredients     (2 plants)
+  CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (1 plant)
+  CD-AC-012/                  no execution pathway exists                       (3 plants)
+```
+
+## What is deliberately NOT here
+
+**There is no wrapper script, no make target, no pytest harness and no runner of any kind,
+and there may not be one** (`PBG-ASSURE-001`). An auditor who verifies a planted violation
+through a script the project wrote has verified the script. The patches and this manifest
+are the deliverable; APPLYING them and running the arms is the Assurance seat's work, done
+with its own hands, on a tree it extracted itself.
+
+That is also why every row below carries the **literal command lines**. They are not
+described, they are written out, so that reproducing a result requires no interpretation of
+anything this seat says.
+
+---
+
+## How an auditor uses this — the exact procedure
+
+Do this once per plant. Never in the Engineer's worktree; never in a `git worktree`.
+
+```bash
+# 1. Extract a THROWAWAY COPY of the subject tree, yourself, from the object database.
+SUBJECT=$(mktemp -d /tmp/cd-plant-XXXXXX)
+git -C <this repository> archive <the SHA under audit> | tar -x -C "$SUBJECT"
+
+# 2. Establish the CLEAN ARM first. The declared command must exit 0 (or, for the two
+#    pytest arms, report all tests passed) on the unmodified tree. A plant that fails a
+#    check which was already failing evidences nothing.
+cd "$SUBJECT" && <the declared command for this test>   # expect: clean
+
+# 3. Apply the plant.
+git apply --stat --check "<repo>/plants/<CRITERION>/<TEST_ID>.patch"   # verify it applies
+git apply             "<repo>/plants/<CRITERION>/<TEST_ID>.patch"
+
+#    The patches are plain unified diffs against the delivered tree. `$SUBJECT` need not be
+#    a git repository for `git apply` to work; it reads the diff, not the index.
+
+# 4. Run the SAME declared command again. It must now fail with the signature below.
+cd "$SUBJECT" && <the declared command for this test>   # expect: the signature in this file
+echo "exit=$?"
+
+# 5. Destroy the copy.
+rm -rf "$SUBJECT"
+```
+
+`<the declared command for this test>` is quoted verbatim in each row below and is the same
+string as `criteria[].tests[].execute` in `required-tests.yaml`. Where the two ever differ,
+`required-tests.yaml` is the register and this file is wrong.
+
+## Reading a result
+
+* **Register checks** (`tools/register/check_*.py`) exit `0` clean, `1` violation, `2`
+  usage, `3` precondition not met. A plant must produce **`1`**. A `3` means the check could
+  not reach its subject — that is not a demonstrated violation and must not be recorded as
+  one.
+* **pytest arms** must go from all-passed to at least one FAILED. The named tests are given
+  in each row; a plant that fails *different* tests than those named is a finding worth
+  raising, not a pass.
+
+---
+
+## The single constraint these plants were built to
+
+**Each plant violates the PROPOSITION, not the string the checker greps for.** Where a
+guard's own documentation names the escape a plant author actually uses — a blend spelled
+over three statements, a witness import reached transitively through a relative import, a
+broker host with no execution word in its name — the plant takes THAT route rather than the
+obvious one, so that a guard which caught only the literal instance would pass and be
+caught doing it.
+
+Each row therefore states the proposition first and the mechanism second. If a future edit
+makes a guard catch the patch but stop catching the class, the patch is no longer doing its
+job and should be rewritten rather than kept green.
+
+## On collateral
+
+Several plants fail more than the test they are filed under, because the criteria are
+defended at more than one layer on purpose. Every collateral failure this seat OBSERVED is
+disclosed in its row. Collateral is disclosed rather than trimmed away: a plant edited until
+it fails exactly one instrument would be a plant shaped to the instruments rather than to
+the product.
+
+---
+---
+
+# CD-AC-001 — Missing or stale input never renders as calm
+
+> PID §6 plant: kill a feed, and the affected dial shows UNKNOWN or DEGRADED within the
+> assurance latency budget, NEVER a calm reading. PID doctrine §3.2 is constitutional.
+>
+> The criterion has two halves and both are required: **absence must have a name in the
+> type system**, and **no route may exist by which absence becomes a number**. Two tests,
+> and the two plants below demonstrate that neither test is redundant — each plant is
+> caught by its own arm and *not* by the other.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-001-AST-NO-NUMERIC-DEFAULT` |
+| **patch** | `plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch` |
+| **command** | `python3 tools/register/check_no_numeric_default.py --root .` |
+
+**Proposition violated.** *No route exists on the dial path by which absence becomes a
+number.* The patch opens two of them at once, and they are two of the five distinct ROUTES
+the check enumerates rather than two spellings of one:
+
+* **class A** — `DialSpec.last_known_magnitude: Union[float, None]`. A nullable number on
+  the dial path is a type whose absence case is a value slot; every consumer must remember
+  to branch, and the one that forgets renders absence as a number. The dial path uses a sum
+  type precisely so that absence has a *constructor* and no value field.
+* **class C** — `spec.last_known_magnitude or 0.0` inside `_evaluate_dial`.
+
+**Why this is the proposition and not a token.** The semantics are the exact failure PID
+§3.2 forbids: a required input that did not answer no longer forces `Unknown`. It produces
+`Degraded` carrying **the previous magnitude, or zero** — a stale dial that reads calm. The
+patch tells the plausible story that gets this written in real life ("a feed that drops for
+one cycle should not blank the surface"), which is why it is worth catching by class: the
+author is not being clever, they are being helpful.
+
+**Expected failure signature.** Exit **1**, `FAIL — 2 violation(s)`:
+
+```
+VIOLATION  src/crash_detector/engine/config.py:84
+    rule: A: nullable-number annotation
+    what: `last_known_magnitude` is annotated as a number that may be None (float | None). ...
+VIOLATION  src/crash_detector/engine/evaluate.py:166
+    rule: C: `or <number>`
+    what: `spec.last_known_magnitude or 0.0` substitutes a number when the left side is falsey. ...
+```
+
+Two notes about class A on the ADJACENT path (`observations.py:99`,
+`witness_resolver.py:168`) are printed on the clean arm as well and are **not** violations.
+They must appear in both arms; if they appear only under the plant, something else changed.
+
+**Collateral observed by this seat** (`PYTHONPATH=src python3 -m pytest tests/test_reading.py
+tests/test_evaluate.py -q` → 9 failed, 40 passed). The behaviour changed as well as the
+shape, so the sibling arm fails too. Disclosed, not trimmed: the two arms are meant to
+overlap here.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` |
+| **patch** | `plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q` |
+
+**Proposition violated.** *With an empty source registry both dials read `Unknown`; absence
+never renders as a value.* The patch makes `evaluate()` return
+`Value(EquityCrashScore(score=0.0))` for a dial that declares no required inputs — the WO-2
+shipped state, in which **no ingredient source is registered at all**.
+
+**Why this is the proposition and not a token.** This is the failure the whole product
+exists to prevent, in its most likely real form. Nobody plants it maliciously; somebody
+writes it because a surface has nothing to render and "0 until the sources land" reads like
+a placeholder rather than a claim. It is a claim. The dial says *calm* on a day when the
+detector has no data whatsoever, and `evaluate`'s own docstring already refuses it in
+words: "Zero satisfied requirements is not 'all requirements satisfied'."
+
+**This plant is invisible to the sibling AST arm, and that is the point.** `score=0.0` is a
+plain keyword argument carrying a numeric literal — it is none of the five routes
+`check_no_numeric_default.py` bans, and that check stays at exit **0** with the plant
+applied (observed by this seat). The two CD-AC-001 tests are therefore not two spellings of
+one instrument: one reads the SHAPE of the dial path, the other reads what it DOES, and
+this violation is only visible to the second.
+
+**Expected failure signature.** pytest exits **1**, `3 failed, 46 passed`:
+
+```
+FAILED tests/test_evaluate.py::test_with_no_sources_declared_both_dials_read_unknown
+FAILED tests/test_evaluate.py::test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present
+FAILED tests/test_evaluate.py::test_evaluate_does_not_consult_the_clock
+```
+
+with `AttributeError: 'Value' object has no attribute 'since_utc'` — the assertion reaching
+for the reason on a reading that should have been `Unknown` and is now a number.
+
+**Collateral observed by this seat.** `python3 tools/register/check_no_numeric_default.py
+--root .` remains exit **0**. See above; that is a result, not a gap.
