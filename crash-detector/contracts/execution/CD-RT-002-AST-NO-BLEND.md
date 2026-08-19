@@ -161,17 +161,68 @@ work order; they are what a static intra-procedural checker *is*.
    door added: this check **FAILS** on it with two RULE 4 violations (the import and the call) while
    its RUNTIME is **not** refused and publishes 0.5.
    **NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME.** RULE 4 is the only layer over it and RULE 4 is
-   static, so this residue inherits every limitation in this list. Its own residues are an edit to
-   `DECLARED_ADMISSION_SITES` itself — a deliberate act with a written reason, and the first thing a
-   reviewer should look at — a module outside the scanned set (boundary 4), and a dynamically
-   assembled door name (boundary 5). `V13`, which reaches the door through `importlib` and `getattr`
-   with a whole string, **is** caught.
+   static, so this residue inherits every limitation in this list. `V13`, which reaches the door
+   through `importlib` and `getattr` with a whole string, **is** caught.
+
+   **THIS BOUNDARY USED TO ENUMERATE ITS OWN RESIDUES AS THOUGH THE LIST WERE EXHAUSTIVE** — an edit
+   to `DECLARED_ADMISSION_SITES`, a module outside the scanned set (boundary 4), and a dynamically
+   assembled door name (boundary 5). **THAT ENUMERATION IS KNOWN INCOMPLETE AND THE CLAIM OF
+   EXHAUSTIVENESS IS WITHDRAWN** (`CD-ASR-WO2R-F01`, HIGH). `ASR2-002-A`'s route was **none of the
+   three**: the module was inside the scanned set, edited no registry, and assembled no name. Two
+   further residues are now known and written down, and the list is no longer offered as complete:
+
+   * **(iv) a PUBLIC FUNCTION that reaches a door on its caller's behalf.** `ASR2-002-A`'s route,
+     through `combine_within_one_dial`. This residue is **permanent** for a name-based rule: nothing
+     static can enumerate the functions nobody has written yet. For the DERIVATION door it is now
+     carried at the type — boundary 8. For the ADMISSION door it is not.
+   * **(v) a DECLARED admission site reached through a caller-supplied extension point.** MEASURED
+     as `CD-ENG-WO2R2-V05`: one stateful `ContributionModel` given to BOTH `DialSpec`s sees each
+     dial's figures in turn and returns the mean as the second dial's magnitude, admitted from
+     `engine/evaluate.py` — the ONE declared product admission site — where every field of the claim
+     is TRUE except the number. This check **PASS, 5002 assertions** with it present;
+     `check_no_numeric_default` PASS 397; whole suite 1333 passed; `number_for_dial_slot` **returned
+     0.5**. **NOT PROVED TO BE CARRIED ANYWHERE.** No guard was built for it, deliberately: an
+     identity check on the model object is defeated by two instances sharing a class attribute, and
+     whether a caller-supplied model is pure is not decidable at this altitude. Closing it is a
+     BLUEPRINT §7 / CD-D-005 architectural change owed to the Product Owner. The patch and the full
+     measurement are at `variants/WO-2R2/CLASS-1/` and `variants/WO-2R2/MANIFEST.md`.
+
+8. **THE DERIVATION DOOR IS CLOSED AT THE TYPE AND NOT BY THIS CHECK, AND THIS CHECK CANNOT SEE THE
+   DIFFERENCE.** Added at WO-2R2 increment 1a. Since that commit `derived_within_one_dial` takes
+   **no number and no dial set**: it takes `DeclaredQuantity` values whose provenance the system
+   established, refused by **exact type**; it computes the provenance union itself; and it computes
+   the number itself from a **closed set of named reductions** (`SameDialReduction`). There is no
+   argument on any derivation path through which a caller's `float` or a caller's callable can
+   arrive. `DeclaredQuantity.__init__` refuses always, so the type cannot be forged by writing its
+   name either.
+   **WHY THIS IS A BOUNDARY OF THIS CHECK RATHER THAN A FEATURE OF IT:** this check exits 0 either
+   way and always did. It was **PASS on 4873 assertions** with `ASR2-002-A` present at `50fc231`
+   when the route was OPEN, and **PASS on 4984** with the same variant present at increment 1a when
+   the route was CLOSED. **A clean run of this check carries no information about this class in
+   either direction.**
+   **THE TYPE LAYER CARRIES THIS, AND HERE IS THE EVIDENCE** (CD-RULE-006), each executed on its own
+   pristine extraction: `ASR2-002-A` → `UndeclaredReduction`; `CD-ENG-WO2R2-V01`, which is
+   `ASR2-002-A` with every identifier renamed and the door imported under an alias → **the identical
+   refusal**, which is the rename test executed rather than asserted; `CD-ENG-WO2R2-V03`, which
+   rewrites the reduction table the door executes → `TypeError` from the interpreter on a
+   `mappingproxy`; `CD-ENG-WO2R2-V04`, a duck-typed provenance carrier and a `float` subclass →
+   `QuantityProvenanceMissing`, both arms.
 
 **EVERY "CARRIES THIS" ABOVE WAS RE-MEASURED AT THE COMMIT THAT WROTE IT**, not inherited
 (CD-RULE-006). Boundaries 1, 2, 3 and 5 hand their residue to the type layer, and `E01` and `E02`
 both raise `TypeError` when executed on a pristine extraction. Boundary 6 hands its residue to the
-re-entry and carries six executed refusals. Boundary 7 hands its residue to nobody at runtime and
-says so.
+re-entry and carries six executed refusals. Boundary 8 hands its residue to the type and carries
+four. Boundary 7 hands its residue to nobody at runtime and says so, and its residue (v) is a
+**measured, currently open route** rather than a theoretical one.
+
+**HOW TO READ ANY REFUSAL NAMED IN THIS CONTRACT** (`CD-PL-F74`, adopted project-wide at
+`CD-D-073`). Every refusal recorded on this project must name the LAYER that refused it and that
+layer's SCOPE, and must state whether it survives a rename. RULE 4's refusals come from a **static,
+intra-procedural, deny-by-default registry over a NAME VOCABULARY**, scoped to the three names in
+`ADMISSION_VOCABULARY` appearing literally in the scanned set, and **they do not survive a rename**.
+The type layer's refusals are exact-type or interpreter comparisons of objects, scoped to every call
+in the process from anywhere, and **they do**. The two kinds of evidence are not interchangeable,
+and reading the first as the second is what cost this project its second gate.
 
 **DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO CODE PATH COMBINES THE TWO DIALS.** It was
 clean for both blends that produced `CD-ASR-F01`. The pair to weigh is this check together with

@@ -114,12 +114,33 @@ next Python release. **Closing one of them is the instance game.** Two released 
 be added, and this module cannot prevent it: they are two ``float`` objects and Python adds
 floats.
 
-What IS claimed, and is measured: **the sum cannot come back.** A ``float`` has no dial, and
-:class:`DialMagnitude` admits only a :class:`~crash_detector.dials.provenance.DeclaredQuantity`,
-so the blend cannot be re-wrapped, cannot be given to a score type, and cannot be offered to
-the publication gate. Do not read this module as claiming that no two numbers can ever be
-added in Python. Read it as claiming that no number so obtained can ever be a dial magnitude
-again.
+**THE CLAIM THAT STOOD HERE — "THE SUM CANNOT COME BACK ... NO NUMBER SO OBTAINED CAN EVER BE
+A DIAL MAGNITUDE AGAIN" — WAS MEASURED FALSE AND IS WITHDRAWN** (`CD-ASR-WO2R-F01`, HIGH).
+It was refuted by execution at ``50fc231`` and replicated by the seat that wrote this
+replacement before it changed anything. `ASR2-002-A` released both dials' numbers with
+:meth:`quantity_for`, averaged them in an ordinary expression, and handed the average back
+through :func:`combine_within_one_dial` — a PUBLIC function, re-exported in this package's
+``__all__``, which computed an honest single-dial set from the magnitudes it was given and
+then passed the caller's arbitrary closure's return value straight into the derivation door,
+which validated the dial set and never the value. ``check_no_blend`` was PASS on 4873
+assertions with it present. Equity 0.9 and monetary 0.1 published as an equity **0.5**. The
+sum came back.
+
+**WHAT IS CLAIMED NOW, STATED SO THAT IT CAN BE REFUTED BY EXECUTION** (`WO-2R2` increment
+1a). A number that has left a magnitude cannot become a magnitude again **BY DERIVATION**:
+the derivation door takes no number and no dial set at all — it takes
+:class:`~crash_detector.dials.provenance.DeclaredQuantity` values whose provenance this
+system established, refused by EXACT TYPE, and computes its own number from a closed set of
+NAMED reductions. There is no argument anywhere on a derivation path through which a
+caller's ``float`` or a caller's callable can arrive, so the closure does not depend on
+recognising the caller, the module, the expression or the name of anything.
+
+**WHAT IS NOT CLAIMED, AND MUST NOT BE READ IN.** Two released numbers can still be added:
+they are two ``float`` objects and Python adds floats. And a blend can still be **declared**
+back in at :func:`~crash_detector.dials.provenance.observed_for_dial`, the external base
+case — see boundary E, which is NOT closed, and `CD-ENG-WO2R2-V05` in
+``variants/WO-2R2/MANIFEST.md``, which reaches that door through the product's own
+contribution-model interface, publishes a blend, and is **NOT REFUSED BY ANY LAYER**.
 
 **B. ``object.__setattr__`` REWRITES A SLOT, AND IT HAS TWO DIRECTIONS — ONE SAFE, ONE NOT.**
 As for every frozen object in Python, ``object.__setattr__`` walks past ``__setattr__``.
@@ -160,13 +181,36 @@ Lead raised — the disclosure stands, the CLAIM that stood beside it does not. 
 listed in boundary A with the other exits, in the register entry and in
 ``contracts/execution/CD-RT-002-TYPE-NO-ARITHMETIC.md``, in the same words.
 
-**E. THE ADMISSION DOOR IS A DECLARATION AND A DECLARATION CAN BE FALSE.** The residue of
-the re-entry closure, stated in full in :mod:`crash_detector.dials.provenance`. A module
-that calls ``observed_for_dial(dial_id=..., quantity=<a blend>, inputs_used=(...))`` obtains
-a magnitude. What that costs it is an explicit false statement in source, naming a dial —
-the flavour `PL-Q9` existed to remove — and a RULE 4 violation from
-``tools/register/check_no_blend.py``, which admits a reference to that door only from the
-declared admission sites. **NOT CLAIMED TO BE CLOSED.** Measured both ways as `V12`/`V13`.
+**E. THE ADMISSION DOOR IS A DECLARATION AND A DECLARATION CAN BE FALSE. THIS IS WHERE THE
+CLASS IS STILL OPEN, AND IT IS THE MOST IMPORTANT PARAGRAPH IN THIS HEADER.** The residue of
+the re-entry closure, stated in full in :mod:`crash_detector.dials.provenance`. A module that
+calls ``observed_for_dial(dial_id=..., quantity=<a blend>, inputs_used=(...))`` obtains a
+magnitude. **NOT CLAIMED TO BE CLOSED**, and measured both ways as `V12`/`V13`.
+
+*What it costs a module OUTSIDE a declared admission site*: a RULE 4 violation from
+``tools/register/check_no_blend.py``. **THAT CARRIER IS A NAME VOCABULARY AND DOES NOT
+SURVIVE A RENAME** (`CD-PL-F74`, adopted project-wide at `CD-D-073`). It is a locator, it is
+static and intra-procedural, and it is recorded as a vocabulary result rather than a class
+one. It is not what closes anything.
+
+*What it costs a module INSIDE a declared admission site: nothing at all, and this was
+MEASURED.* `CD-ENG-WO2R2-V05` gives ONE stateful ``ContributionModel`` object to BOTH
+``DialSpec``s. ``evaluate`` hands it each dial's payloads in turn — a separation that is real
+and that the variant does not break — and the model keeps what it saw and returns the mean as
+the second dial's magnitude. It launders nothing, names no door outside a declared site,
+touches no private slot, performs no arithmetic on a magnitude and never holds both dials in
+one expression. Every field of its admission claim is TRUE except the number.
+``check_no_blend`` PASS 5002, ``check_no_numeric_default`` PASS 397, whole suite 1333 passed,
+and ``number_for_dial_slot('monetary_debasement', ...)`` **returned 0.5**.
+
+**NO LAYER CARRIES THAT, AND NONE IS CLAIMED TO — NOT PROVED TO BE CARRIED ANYWHERE**
+(CD-RULE-006). No guard was built for it, deliberately: an identity check refusing one model
+object shared between two specs is defeated by two instances sharing a class attribute, and
+whether a caller-supplied model is pure is not decidable at this altitude. Closing it is an
+architectural change — the system computing dial magnitudes from source payloads itself
+rather than delegating to a caller-supplied model — which is BLUEPRINT §7 / CD-D-005
+territory and is owed to the Product Owner. The variant, its measurement and the reasoning
+are in ``variants/WO-2R2/MANIFEST.md``.
 """
 
 from __future__ import annotations

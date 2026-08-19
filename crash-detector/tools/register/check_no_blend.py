@@ -30,7 +30,18 @@ The class is now closed where it can be closed:
   now raise when EXECUTED.
 * AT THE POINT OF COMBINATION — ``combine_within_one_dial`` compares the provenance the
   magnitudes CARRY and refuses anything but a single dial, so the refusal does not depend
-  on anybody having read the code.
+  on anybody having read the code. **THAT WAS TRUE AND IT WAS NOT ENOUGH.** It compared the
+  DIAL SET and never the VALUE, and it handed a caller's arbitrary closure's return value to
+  the derivation door — which is how `ASR2-002-A` published a blend with this check PASS on
+  4873 assertions (`CD-ASR-WO2R-F01`, HIGH). Since `WO-2R2` increment 1a its ``using``
+  parameter is a NAMED REDUCTION and not a callable, and the derivation door takes no number
+  and no dial set at all: see boundary 8, which carries the measurement.
+* AT THE DERIVATION DOOR — ``crash_detector.dials.provenance.derived_within_one_dial``
+  admits only ``DeclaredQuantity`` values this system established, by EXACT TYPE, computes
+  the provenance union itself, and computes the number itself from a closed set of named
+  reductions. There is no argument on a derivation path through which a caller's ``float``
+  or a caller's callable can arrive. ``DeclaredQuantity.__init__`` refuses always, so the
+  type cannot be forged by writing its name either.
 * AT THE RE-ENTRY — ``crash_detector.dials.provenance``. Added closing `CD-PL-F54`, which
   found the layers above open to the number being READ OFF a magnitude rather than asked
   for: ``float(repr(m).split("quantity=")[1].rstrip(")"))`` names no dial, two of those add,
@@ -91,17 +102,37 @@ FOUR RULES, DELIBERATELY DIFFERENT IN REACH
           listed in ``DECLARED_ADMISSION_SITES`` with the reason it is there. Four modules
           are, and each reason is written beside it.
 
-          THIS IS THE RULE THAT ANSWERS `PL-Q9`, AND IT IS NOT ANOTHER SPELLING LIST.
-          `PL-Q9` defeated RULE 1 by removing every flavour-bearing NAME: no dial appeared
-          in any expression and no arithmetic touched a magnitude, so there was nothing
-          about a blend to recognise, and this check reported PASS on 3919 assertions while
-          the module published a blend at runtime. Nothing static can recognise such a
-          module. What IS true of it — and of every module like it that has yet to be
-          written — is that IT HAS TO GET THE NUMBER BACK IN, and since `CD-PL-F54` there is
-          exactly one way to do that. So the rule watches the DOOR instead of the traffic:
-          it recognises no arithmetic, no dial marker and no laundering route, which is
-          exactly why a route nobody has thought of does not evade it. An unlisted module is
-          a violation because it is not a place anybody declared that numbers enter.
+          WHAT THIS RULE IS, AFTER `CD-ASR-WO2R-F01` — READ THIS BEFORE CITING IT.
+          It was written to answer `PL-Q9`, and it does: `PL-Q9` defeated RULE 1 by removing
+          every flavour-bearing NAME, so there was nothing about a blend to recognise, and
+          this check reported PASS on 3919 assertions while the module published a blend at
+          runtime. This rule recognises no arithmetic, no dial marker and no laundering
+          route, and reports an unlisted module because it is not a place anybody declared
+          that numbers enter. That much stands and is genuinely useful.
+
+          **THE SENTENCE THAT STOOD HERE — "IT HAS TO GET THE NUMBER BACK IN, AND SINCE
+          CD-PL-F54 THERE IS EXACTLY ONE WAY TO DO THAT" — IS WITHDRAWN. IT WAS FALSE AND IT
+          WAS MEASURED FALSE.** There was a SECOND way: `combine_within_one_dial`, a PUBLIC
+          function re-exported in ``crash_detector.dials.__all__``, computed an honest
+          single-dial set and then handed a caller's arbitrary closure's return value
+          straight to the derivation door. `ASR2-002-A` used it, named nothing in this
+          vocabulary, and published an equity 0.5 out of an equity 0.9 and a monetary 0.1
+          with this check PASS on 4873 assertions. A REGISTRY THAT DENIES BY DEFAULT OVER A
+          VOCABULARY IS ONLY AS CLOSED AS ITS VOCABULARY, and a vocabulary cannot enumerate
+          the functions that have not been written yet.
+
+          THE PROPERTY THAT IS TRUE, AND THE ONLY ONE THIS RULE NOW CLAIMS: **a module on
+          the scanned path that NAMES one of these three names, in any of the scanned
+          spellings, and is not a declared admission site, is reported.** That is a fact
+          about names. It is not a fact about admission, it is not a bound on the set of
+          routes, and **IT DOES NOT SURVIVE A RENAME** — rename a door at both ends and this
+          rule goes silent while nothing about the system has changed. Recording a refusal
+          from here as evidence about a CLASS is the inference that cost the second gate
+          (`CD-PL-F74`, adopted project-wide at `CD-D-073`); a refusal from here is a
+          VOCABULARY result and must be labelled one.
+
+          WHAT ACTUALLY CLOSES THE DERIVATION ROUTE IS THE TYPE, NOT THIS RULE. See
+          boundary 8.
 
           **AN IMPORT COUNTS**, unlike everywhere else in this check. Importing both score
           types is how a module legitimately gets hold of them; there is no comparable
@@ -241,23 +272,83 @@ later work order; they are what a static intra-procedural checker IS.
      FAILS on with two RULE 4 violations (the import at line 3 and the call at line 22)
      while its RUNTIME is NOT refused and publishes 0.5.
      **NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME.** RULE 4 is the only layer over it and
-     RULE 4 is static, so this residue inherits every limitation in this list. Its own two
-     residues are: an edit to ``DECLARED_ADMISSION_SITES`` itself, which is a deliberate act
-     with a written reason and is what a reviewer should look at first; and a module outside
-     the scanned set, which is boundary 4. A dynamically assembled door name
-     (``getattr(mod, "observed" + "_for_dial")``) is boundary 5. `V13`, which reaches the
-     door through ``importlib`` and ``getattr`` with a whole string, IS caught.
-     The same residue is stated in ``src/crash_detector/dials/provenance.py`` (module
-     docstring), ``src/crash_detector/dials/magnitude.py`` (boundary E), the register entry
-     and the execution contract, in the same words.
+     RULE 4 is static, so this residue inherits every limitation in this list.
+
+     **THIS BOUNDARY USED TO ENUMERATE ITS OWN RESIDUES AS THOUGH THE LIST WERE EXHAUSTIVE —
+     (i) an edit to ``DECLARED_ADMISSION_SITES``, (ii) a module outside the scanned set
+     (boundary 4), (iii) a dynamically assembled door name (boundary 5). THAT ENUMERATION IS
+     KNOWN INCOMPLETE AND THE CLAIM OF EXHAUSTIVENESS IS WITHDRAWN** (`CD-ASR-WO2R-F01`).
+     The auditor's route was NONE OF THE THREE: the module was inside the scanned set, edited
+     no registry, and assembled no name. It walked through a door this rule guards by using a
+     PUBLIC function this rule did not know was a door. Two further residues are now known
+     and are written down, and the list is no longer offered as complete:
+
+       (iv) A PUBLIC FUNCTION THAT REACHES A DOOR ON ITS CALLER'S BEHALF. This is
+            `ASR2-002-A`'s route. Nothing static can enumerate the functions that have not
+            been written yet, so this residue is PERMANENT for a name-based rule. It is now
+            carried at the TYPE for the DERIVATION door — see boundary 8, with the
+            measurement — and it is NOT carried anywhere for the ADMISSION door, which is
+            (v).
+       (v)  A DECLARED ADMISSION SITE REACHED THROUGH A CALLER-SUPPLIED EXTENSION POINT.
+            MEASURED as `CD-ENG-WO2R2-V05`: one stateful ``ContributionModel`` given to BOTH
+            ``DialSpec``s sees each dial's figures in turn and returns the mean as the second
+            dial's magnitude, admitted from ``engine/evaluate.py`` — the ONE declared product
+            admission site — with every field of the claim TRUE except the number. THIS CHECK
+            IS PASS WITH IT PRESENT (5002 assertions), ``check_no_numeric_default`` is PASS
+            (397), the whole suite is 1333 passed, and ``number_for_dial_slot`` returned 0.5.
+            **NOT PROVED TO BE CARRIED ANYWHERE.** No guard was built for it, deliberately:
+            an identity check on the model object is defeated by two instances sharing a
+            class attribute, and model purity is not decidable at this altitude. Closing it
+            is a BLUEPRINT §7 / CD-D-005 architectural change owed to the Product Owner.
+
+     `V13`, which reaches the door through ``importlib`` and ``getattr`` with a whole string,
+     IS caught. The same residue is stated in ``src/crash_detector/dials/provenance.py``
+     (module docstring), ``src/crash_detector/dials/magnitude.py`` (boundary E), the register
+     entry and the execution contract, in the same words.
+
+  8  THE DERIVATION DOOR IS CLOSED AT THE TYPE AND NOT HERE, AND THIS RULE CANNOT SEE THE
+     DIFFERENCE. Added at `WO-2R2` increment 1a. Since that commit
+     ``derived_within_one_dial`` takes NO number and NO dial set: it takes
+     ``DeclaredQuantity`` values whose provenance this system established, refused by EXACT
+     TYPE, and computes its own number from a CLOSED set of NAMED reductions
+     (``SameDialReduction``), so there is no argument on any derivation path through which a
+     caller's ``float`` or a caller's callable can arrive.
+     WHY IT IS A BOUNDARY OF **THIS CHECK** RATHER THAN A FEATURE: this check exits 0 either
+     way and always did. It was PASS on 4873 assertions with `ASR2-002-A` present at
+     ``50fc231`` when the route was OPEN, and it is PASS on 4984 with the same variant
+     present at increment 1a when the route is CLOSED. **A CLEAN RUN OF THIS CHECK CARRIES NO
+     INFORMATION ABOUT THIS CLASS IN EITHER DIRECTION.**
+     THE TYPE LAYER CARRIES THIS, AND HERE IS THE EVIDENCE (CD-RULE-006), each executed on
+     its own pristine extraction:
+         ASR2-002-A verbatim              -> UndeclaredReduction (type(reduction) check)
+         CD-ENG-WO2R2-V01, every identifier renamed and the door aliased
+                                          -> the identical refusal. THE RENAME TEST, EXECUTED.
+         CD-ENG-WO2R2-V03, the reduction table rewritten
+                                          -> TypeError from the interpreter, mappingproxy
+         CD-ENG-WO2R2-V04, a duck-typed carrier and a float subclass
+                                          -> QuantityProvenanceMissing, both arms
+     Those refusals are exact-type and interpreter comparisons of OBJECTS. They survive a
+     rename, they read no source and no registry, and none of them is this check.
 
 EVERY "CARRIES THIS" ABOVE HAS BEEN RE-MEASURED AT THIS COMMIT, not inherited from the
 increment that wrote it (CD-RULE-006). Boundaries 1, 2, 3 and 5 hand their residue to the
 TYPE LAYER: `E01` raises ``TypeError: unsupported operand type(s) for +: 'DialMagnitude' and
 'DialMagnitude'`` and `E02` raises ``TypeError: unsupported operand type(s) for +: 'int' and
 'DialMagnitude'``, both executed on a pristine extraction of this commit. Boundary 6 now
-hands its residue to the RE-ENTRY and carries the six executed refusals above. Boundary 7
-hands its residue to NOBODY at runtime and says so.
+hands its residue to the RE-ENTRY and carries the six executed refusals above. Boundary 8
+hands its residue to the TYPE and carries four executed refusals of its own. **Boundary 7
+hands its residue to NOBODY at runtime and says so, and residue (v) of boundary 7 is a
+MEASURED, CURRENTLY OPEN ROUTE rather than a theoretical one.**
+
+A NOTE ON HOW TO READ ANY REFUSAL THIS FILE MENTIONS (CD-PL-F74, adopted at CD-D-073). Every
+refusal recorded anywhere on this project must name the LAYER that refused it and that
+layer's SCOPE, and must state whether it survives a rename. In this header: RULE 4's refusals
+are by a STATIC, INTRA-PROCEDURAL, DENY-BY-DEFAULT REGISTRY OVER A NAME VOCABULARY, scoped to
+the three names in ADMISSION_VOCABULARY appearing literally in the scanned set, and they DO
+NOT SURVIVE A RENAME. The type layer's refusals are exact-type or interpreter comparisons of
+objects, scoped to every call in the process from anywhere, and they DO. Those two kinds of
+evidence are not interchangeable, and reading the first as the second is what cost this
+project its second gate.
 
 FOR THE AUDITOR. A CD-AC-002 variant that lands beyond a boundary above is a finding
 against THIS DECLARATION — was the limit honestly drawn? — and not an automatic RED
@@ -395,14 +486,29 @@ ADMISSION_VOCABULARY = frozenset(
 #: Everything else is a violation BY DEFAULT — not because the check recognised a blend in
 #: it, but because it is not a place anybody declared that numbers enter.
 #:
-#: WHY THIS RULE EXISTS AND WHY IT IS NOT ANOTHER SPELLING LIST. `PL-Q9` defeated RULE 1 by
-#: removing every flavour-bearing NAME: no dial appeared in any expression, no arithmetic
-#: touched a magnitude, and the check reported PASS on 3919 assertions while the module
-#: published a blend at runtime. Nothing about a blend is recognisable in such a module.
-#: What IS true of it, and of every module like it, is that IT HAS TO GET THE NUMBER BACK
-#: IN — and since CD-PL-F54 there is exactly one way to do that. So this rule watches the
-#: door instead of the traffic. It needs to recognise no arithmetic, no dial marker and no
-#: laundering route, which is precisely why a route nobody has thought of does not evade it.
+#: WHY THIS RULE EXISTS. `PL-Q9` defeated RULE 1 by removing every flavour-bearing NAME: no
+#: dial appeared in any expression, no arithmetic touched a magnitude, and the check reported
+#: PASS on 3919 assertions while the module published a blend at runtime. Nothing about a
+#: blend is recognisable in such a module. So this rule watches the DOOR instead of the
+#: traffic: it recognises no arithmetic, no dial marker and no laundering route, and reports
+#: an unlisted module for being unlisted.
+#:
+#: **THE SENTENCE THAT STOOD HERE — "IT HAS TO GET THE NUMBER BACK IN, AND SINCE CD-PL-F54
+#: THERE IS EXACTLY ONE WAY TO DO THAT" — IS WITHDRAWN. IT WAS MEASURED FALSE**
+#: (`CD-ASR-WO2R-F01`). `ASR2-002-A` got the number back in through `combine_within_one_dial`,
+#: a PUBLIC re-exported function that was not in ADMISSION_VOCABULARY and did not need to be,
+#: and this check reported PASS on 4873 assertions while an equity 0.9 and a monetary 0.1
+#: published as an equity 0.5. A REGISTRY THAT DENIES BY DEFAULT OVER A VOCABULARY IS ONLY AS
+#: CLOSED AS ITS VOCABULARY.
+#:
+#: WHAT IS TRUE, AND IS ALL THAT IS CLAIMED: a module on the scanned path that NAMES one of
+#: these three names, in any scanned spelling, and is not a declared site, is REPORTED. That
+#: is a fact about names. It is not a bound on the set of routes, and IT DOES NOT SURVIVE A
+#: RENAME — rename a door at both ends and this rule goes silent with nothing about the system
+#: changed. A refusal from here is a VOCABULARY result and must be recorded as one
+#: (CD-PL-F74, adopted project-wide at CD-D-073). The derivation route is closed AT THE TYPE
+#: instead — see boundary 8 of the DECLARED LIMIT above — and the admission route is not
+#: closed at all.
 DECLARED_ADMISSION_SITES = {
     PROVENANCE_MODULE: (
         "DEFINES the doors. A rule that fired on the definition would forbid the structure "
@@ -593,11 +699,19 @@ class BlendScanner:
                 f"`{named}` establishes the provenance of a number, and this module is not "
                 "a declared admission site. Since CD-PL-F54 a bare float cannot become a "
                 "dial magnitude: the only way any number gets into one is through a door "
-                "in ADMISSION_VOCABULARY. That makes the doors, and not the arithmetic, "
-                "the thing worth watching — a module that launders two dials into one "
-                "figure need name no dial and perform no arithmetic on a magnitude "
-                "(`PL-Q9` did neither and this check reported PASS), but it cannot avoid "
-                "coming here. DENY BY DEFAULT: the declared sites are "
+                "in ADMISSION_VOCABULARY or through a function that reaches one on its "
+                "caller's behalf. THE SENTENCE THAT STOOD HERE — that such a module 'cannot "
+                "avoid coming here' — WAS REFUTED BY EXECUTION AND IS WITHDRAWN AS A CLAIM "
+                "BY THE PRODUCT OWNER (CD-ASR-WO2R-F01, CD-D-073). `ASR2-002-A` avoided "
+                "coming here entirely, through `combine_within_one_dial`, a PUBLIC "
+                "re-exported function that was not in this vocabulary and did not need to "
+                "be. WHAT IS TRUE OF THIS RULE, AND IS ALL THAT IS CLAIMED FOR IT: it "
+                "reports a module that NAMES one of these three names and is not a declared "
+                "site, without recognising anything about a blend — so it does not need to "
+                "anticipate a laundering route, and equally it cannot see one that names "
+                "nothing. IT IS A LOCATOR OVER A NAME VOCABULARY AND IT DOES NOT SURVIVE A "
+                "RENAME. What closes the derivation route is the TYPE (see boundary 8). "
+                "DENY BY DEFAULT: the declared sites are "
                 f"{sorted(DECLARED_ADMISSION_SITES)}, each with its stated reason in this "
                 "file, and an unlisted module is a violation because it is not a place "
                 "anybody declared that numbers enter — not because anything about it was "

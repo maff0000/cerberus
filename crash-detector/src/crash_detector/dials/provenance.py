@@ -67,16 +67,32 @@ THE INVARIANT
    quantities cannot be added, averaged, summed or reduced into a third. There is no
    expression that produces a ``DeclaredQuantity`` from two of them.
 
-3. **THERE ARE EXACTLY TWO DOORS INTO THE TYPE, AND BOTH DECLARE A DIAL AS DATA.**
+3. **THERE ARE EXACTLY TWO DOORS INTO THE TYPE, THE TYPE'S OWN CONSTRUCTOR IS NOT ONE OF
+   THEM, AND ONLY ONE OF THE TWO TAKES A NUMBER AT ALL.**
 
    * :func:`observed_for_dial` — a number entering from OUTSIDE the system, admitted for
      ONE named dial, citing the non-empty set of ingredient sources it was computed from.
      This is the base case: something has to be the first number or the product cannot
-     exist. It is a DECLARATION, and its residue is declared in full below.
-   * :func:`~crash_detector.dials.magnitude.combine_within_one_dial` — a number DERIVED
-     from magnitudes already in hand. Its dial set is the UNION of theirs, computed by the
-     machinery from data the caller had to be holding, never asserted by the caller; a
-     union of size other than one is refused.
+     exist. It is a DECLARATION, and its residue is declared in full below. **It is the only
+     door that takes a number.**
+   * :func:`derived_within_one_dial` — reached through
+     :func:`~crash_detector.dials.magnitude.combine_within_one_dial`. **IT TAKES NO NUMBER
+     AND NO DIAL SET.** It takes :class:`DeclaredQuantity` values whose provenance this
+     module already established, refused by EXACT TYPE; it computes the provenance union
+     itself; and it computes the resulting number itself, from a CLOSED set of NAMED
+     reductions (:class:`SameDialReduction`).
+   * :meth:`DeclaredQuantity.__init__` **REFUSES, ALWAYS.** Until `CD-ASR-WO2R-F01` it took
+     ``(*, dials, value)`` — a frozenset literal and a float, which are exactly the two
+     things a caller can simply write. A type whose constructor accepts an ASSERTED
+     provenance and an arbitrary number establishes nothing; it records what it was told.
+
+   **WHAT WAS MEASURED FALSE HERE, AND IS WITHDRAWN.** This section used to argue that the
+   derivation door's dial set "is computed by the machinery from data the caller had to be
+   holding, never asserted by the caller". That was TRUE, and it was an argument about the
+   CALLER rather than about the VALUE, which is why it did not hold. `ASR2-002-A` gave the
+   door a perfectly honest, machinery-computed, single-dial set — and, beside it, a number
+   that was the mean of both dials, which the door never looked at. Equity 0.9 and monetary
+   0.1 published as an equity 0.5, with every declared static layer green.
 
 4. **CONSTRUCTION COMPARES THE DECLARATION TO THE TARGET BY SET EQUALITY.**
    ``DialMagnitude(dial_id=D, quantity=q)`` requires ``q.dials == frozenset({D})``. Not a
@@ -117,9 +133,31 @@ What is true, and is the difference between this and the state the Project Lead 
   recognise arithmetic, a dial marker, or anything about how the number was obtained.
   MEASURED: `V12` and `V13` in ``variants/WO-2R/CD-ASR-F01/``.
 
-The residue of THAT is the residue of any registry: an edit to the declared admission list
-itself, and a module outside the scanned set. Both are boundaries 4 and 7 of the check's
-own declared limit, and neither is claimed to be carried anywhere else.
+**AND THE RESIDUE OF THAT WAS UNDERSTATED, MEASURED, AND IS NOW WRITTEN OUT IN FULL.** It
+used to read "the residue of any registry: an edit to the declared admission list itself, and
+a module outside the scanned set". Two more are known:
+
+* **a public function that reaches a door on its caller's behalf.** `ASR2-002-A` walked
+  through ``combine_within_one_dial`` — public, re-exported, in no registry — and named
+  nothing RULE 4 watches. A registry that denies by default over a vocabulary is only as
+  closed as its vocabulary, and a vocabulary cannot enumerate the functions nobody has
+  written yet. For the DERIVATION door this residue is now CLOSED AT THE TYPE, above. For
+  the ADMISSION door it is not, and that is the next point;
+* **a DECLARED admission site reached through a caller-supplied extension point.** MEASURED
+  as `CD-ENG-WO2R2-V05`: one stateful ``ContributionModel`` given to BOTH ``DialSpec``s sees
+  each dial's figures in turn and returns the mean as the second dial's magnitude, admitted
+  from ``engine/evaluate.py`` — the ONE declared product admission site — where every field
+  of the claim is TRUE except the number. ``check_no_blend`` PASS 5002,
+  ``check_no_numeric_default`` PASS 397, whole suite 1333 passed, and the publication gate
+  returned 0.5. **NO LAYER CARRIES IT AND NONE IS CLAIMED TO — NOT PROVED TO BE CARRIED
+  ANYWHERE** (CD-RULE-006). No guard was built for it, deliberately: an identity check on the
+  model object is defeated by two instances sharing a class attribute, and whether a
+  caller-supplied model is pure is not decidable at this altitude. Closing it means this
+  system computing dial magnitudes from source payloads itself rather than delegating to a
+  caller-supplied model — BLUEPRINT §7 / CD-D-005, owed to the Product Owner.
+
+**THE LIST IS NO LONGER OFFERED AS EXHAUSTIVE.** It was, twice, and it was measured
+incomplete both times.
 
 **``object.__setattr__`` REWRITES A SLOT**, here as on every frozen object in Python, and the
 two directions differ.

@@ -286,10 +286,31 @@ criteria:
     declared doors — and never from a bare float, with set equality between the quantity's dial set
     and the target dial. So a number that has left a magnitude by ANY exit, named or unnamed,
     cannot get back into one. MEASURED: PL-Q4, PL-Q5, PL-Q6, PL-Q9, V16a and V16b all raise
-    QuantityProvenanceMissing. WHAT IT DOES NOT DO: the admission door observed_for_dial is a
-    DECLARATION and believes what it is told; something has to be the first number. That residue is
-    declared at boundary 7 of the CD-RT-002-AST-NO-BLEND entry and is guarded statically, by
-    registry, by RULE 4.
+    QuantityProvenanceMissing.
+
+    THIS LAYER WAS MEASURED INCOMPLETE AT THE WO-2R GATE AND WAS EXTENDED AT WO-2R2 INCREMENT 1a
+    (CD-ASR-WO2R-F01, HIGH). What it closed was the number being READ OFF a magnitude and RE-WRAPPED.
+    What it left open was the number being HANDED TO THE DERIVATION DOOR, which validated the dial
+    set it was given — honestly, and computed from real magnitudes — and never validated the VALUE
+    beside it. ASR2-002-A reached that door through combine_within_one_dial, a PUBLIC re-exported
+    function in no registry, and published an equity 0.5 out of an equity 0.9 and a monetary 0.1
+    with check_no_blend PASS on 4873 assertions. SINCE INCREMENT 1a: derived_within_one_dial takes
+    NO number and NO dial set — it takes DeclaredQuantity values this module established, refused by
+    EXACT TYPE, computes the provenance union itself, and computes the number itself from a CLOSED
+    set of NAMED reductions (SameDialReduction); combine_within_one_dial's `using` is a named
+    reduction and not a callable; and DeclaredQuantity's own constructor refuses always, because its
+    two former parameters were exactly the two things a caller can simply write. MEASURED: ASR2-002-A
+    raises UndeclaredReduction, and so does CD-ENG-WO2R2-V01, which is ASR2-002-A with every
+    identifier renamed and the door aliased — the rename test, executed rather than asserted.
+
+    WHAT IT DOES NOT DO: the admission door observed_for_dial is a DECLARATION and believes what it
+    is told; something has to be the first number. That residue is declared at boundary 7 of the
+    CD-RT-002-AST-NO-BLEND entry. For a module OUTSIDE a declared site it is guarded statically, by
+    registry, by RULE 4 — A NAME VOCABULARY THAT DOES NOT SURVIVE A RENAME, labelled as such per
+    CD-PL-F74/CD-D-073 and never to be read as evidence about the class. For a module INSIDE a
+    declared site it is guarded by NOTHING: CD-ENG-WO2R2-V05 gives one stateful ContributionModel to
+    both DialSpecs and publishes a blend as a monetary reading of 0.5 with every declared layer
+    green. NOT PROVED TO BE CARRIED ANYWHERE.
 
     3 THE PUBLICATION BOUNDARY. crash_detector.publication.dial_scalar.number_for_dial_slot
     releases a number into a dial slot only from a magnitude whose provenance is exactly that
@@ -310,9 +331,20 @@ criteria:
     5 THE AST SCAN IS A LOCATOR, NOT A CLOSURE, and its entry below carries a DECLARED LIMIT and
     a corrected scope. Its flavour propagation is intra-procedural and its read is purely static;
     both escaped blends walked past it and always will, and so does PL-Q9. Its RULE 4, added at
-    CD-PL-F54, is the exception in kind rather than in strength: it denies BY DEFAULT over a
-    declared registry of admission sites and therefore recognises nothing about a blend, which is
-    why PL-Q9-with-the-door (V12) fails it. It remains static.
+    CD-PL-F54, denies BY DEFAULT over a declared registry of admission sites and therefore
+    recognises nothing about a blend, which is why PL-Q9-with-the-door (V12) fails it.
+
+    RULE 4 WAS DESCRIBED HERE AS "THE EXCEPTION IN KIND RATHER THAN IN STRENGTH". THAT DESCRIPTION
+    IS WITHDRAWN, AND SO IS THE SENTENCE IN THE CHECK ITSELF THAT A LAUNDERING MODULE "CANNOT AVOID
+    COMING HERE" — withdrawn as a claim by the Product Owner at CD-D-073 and refuted by execution as
+    CD-ASR-WO2R-F01. ASR2-002-A avoided coming there entirely, through a public function that was
+    not in the vocabulary and did not need to be. THE PROPERTY THAT IS TRUE, AND ALL THAT IS NOW
+    CLAIMED FOR RULE 4: a module on the scanned path that NAMES one of the three names, in any
+    scanned spelling, and is not a declared site, is reported — without the check recognising
+    anything about a blend. That is a fact about NAMES. It is not a bound on the set of routes, and
+    IT DOES NOT SURVIVE A RENAME. A refusal from RULE 4 is a VOCABULARY result and must be recorded
+    as one (CD-PL-F74, adopted project-wide at CD-D-073). It remains static, and it remains useful
+    as a locator.
 
     Layers 1 to 4 are structural and independent of one another. None is claimed to be sole
     (BLUEPRINT §17 risk CD-BP-001, PO-accepted), and no claim is made here that a violation
@@ -423,15 +455,54 @@ criteria:
   #     prove itself would need a base case of its own. MEASURED EXAMPLE — V12, which is PL-Q9 with
   #     the door added: this check FAILS on it with two RULE 4 violations while its RUNTIME is NOT
   #     refused and publishes 0.5. NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME. RULE 4 is static,
-  #     so this residue inherits every limitation above; its own residues are an edit to
-  #     DECLARED_ADMISSION_SITES, a module outside the scanned set (boundary 4) and a dynamically
-  #     assembled door name (boundary 5). V13, which reaches the door through importlib and getattr
-  #     with a whole string, IS caught.
+  #     so this residue inherits every limitation above. V13, which reaches the door through
+  #     importlib and getattr with a whole string, IS caught.
+  #     THIS BOUNDARY USED TO ENUMERATE ITS OWN RESIDUES AS THOUGH THE LIST WERE EXHAUSTIVE — an
+  #     edit to DECLARED_ADMISSION_SITES, a module outside the scanned set (boundary 4), and a
+  #     dynamically assembled door name (boundary 5). THAT ENUMERATION IS KNOWN INCOMPLETE AND THE
+  #     CLAIM OF EXHAUSTIVENESS IS WITHDRAWN (CD-ASR-WO2R-F01). ASR2-002-A's route was NONE OF THE
+  #     THREE: inside the scanned set, editing no registry, assembling no name. Two further
+  #     residues are now written down, and the list is no longer offered as complete:
+  #       (iv) A PUBLIC FUNCTION THAT REACHES A DOOR ON ITS CALLER'S BEHALF — ASR2-002-A's route,
+  #            through combine_within_one_dial. PERMANENT for a name-based rule: nothing static can
+  #            enumerate the functions nobody has written yet. For the DERIVATION door this is now
+  #            carried AT THE TYPE (boundary 8). For the ADMISSION door it is not.
+  #       (v)  A DECLARED ADMISSION SITE REACHED THROUGH A CALLER-SUPPLIED EXTENSION POINT.
+  #            MEASURED as CD-ENG-WO2R2-V05: one stateful ContributionModel given to BOTH DialSpecs
+  #            returns the mean as the second dial's magnitude, admitted from engine/evaluate.py
+  #            with every field of the claim TRUE except the number. This check PASS 5002 with it
+  #            present, check_no_numeric_default PASS 397, whole suite 1333 passed, publication gate
+  #            RETURNED 0.5. NOT PROVED TO BE CARRIED ANYWHERE. No guard was built, deliberately: an
+  #            identity check on the model object is defeated by two instances sharing a class
+  #            attribute, and model purity is not decidable at this altitude. Closing it is a
+  #            BLUEPRINT §7 / CD-D-005 architectural change owed to the Product Owner.
+  #   8 THE DERIVATION DOOR IS CLOSED AT THE TYPE AND NOT BY THIS CHECK, AND THIS CHECK CANNOT SEE
+  #     THE DIFFERENCE. Since WO-2R2 increment 1a derived_within_one_dial takes NO number and NO
+  #     dial set: DeclaredQuantity values only, refused by EXACT TYPE, union computed by the door,
+  #     number computed by the door from a CLOSED set of NAMED reductions. WHY IT IS A BOUNDARY OF
+  #     THIS CHECK: this check exits 0 either way and always did — PASS 4873 with ASR2-002-A present
+  #     when the route was OPEN, PASS 4984 with the same variant present when it was CLOSED. A CLEAN
+  #     RUN OF THIS CHECK CARRIES NO INFORMATION ABOUT THIS CLASS IN EITHER DIRECTION. THE TYPE
+  #     LAYER CARRIES THIS, with the evidence (CD-RULE-006), each on its own pristine extraction:
+  #     ASR2-002-A -> UndeclaredReduction; CD-ENG-WO2R2-V01 (every identifier renamed, door aliased)
+  #     -> the identical refusal, which IS the rename test executed; CD-ENG-WO2R2-V03 (the reduction
+  #     table rewritten) -> TypeError from the interpreter on a mappingproxy; CD-ENG-WO2R2-V04 (a
+  #     duck-typed carrier and a float subclass) -> QuantityProvenanceMissing, both arms.
   #
   # EVERY "CARRIES THIS" ABOVE WAS RE-MEASURED AT THE COMMIT THAT WROTE IT, not inherited
   # (CD-RULE-006). Boundaries 1, 2, 3 and 5 hand their residue to the TYPE layer and E01 and E02
   # both raise TypeError when executed. Boundary 6 hands its residue to the RE-ENTRY and carries
-  # six executed refusals. Boundary 7 hands its residue to NOBODY at runtime and says so.
+  # six executed refusals. Boundary 8 hands its residue to the TYPE and carries four. Boundary 7
+  # hands its residue to NOBODY at runtime and says so, and its residue (v) is a MEASURED, OPEN
+  # route rather than a theoretical one.
+  #
+  # HOW TO READ ANY REFUSAL NAMED ABOVE (CD-PL-F74, adopted project-wide at CD-D-073). RULE 4's
+  # refusals come from a STATIC, INTRA-PROCEDURAL, DENY-BY-DEFAULT REGISTRY OVER A NAME VOCABULARY,
+  # scoped to the three names in ADMISSION_VOCABULARY appearing literally in the scanned set, and
+  # they DO NOT SURVIVE A RENAME. The type layer's refusals are exact-type or interpreter
+  # comparisons of objects, scoped to every call in the process from anywhere, and they DO. The two
+  # kinds of evidence are not interchangeable, and reading the first as the second cost this
+  # project its second gate.
   #
   # DO NOT READ A CLEAN RUN OF THIS CHECK AS PROOF THAT NO CODE PATH COMBINES THE TWO DIALS. It
   # was clean for both blends that produced CD-ASR-F01. The pair to weigh is this check together
@@ -439,9 +510,11 @@ criteria:
   #
   # FOR THE AUDITOR. A CD-AC-002 variant landing beyond a boundary above is a finding against THIS
   # DECLARATION — was the limit honestly drawn? — and not an automatic RED against the guard. A
-  # variant reaching the violation by a route a boundary says is covered by the type layer or by
-  # the re-entry, and NOT refused when EXECUTED, is a defect in the closure: report it. Boundary 7
-  # makes no such claim, so a variant landing there is inside a declared limit, not outside one.
+  # variant reaching the violation by a route a boundary says is covered by the type layer, by the
+  # re-entry or by the derivation door, and NOT refused when EXECUTED, is a defect in the closure:
+  # report it. Boundary 7 makes no such claim, so a variant landing there is inside a declared
+  # limit, not outside one — and residue (v) of boundary 7 is already occupied by a variant this
+  # seat wrote against its own work and could not close.
   - test_id: CD-RT-002-AST-NO-BLEND
     scope: INSTANCE
     execute: python3 tools/register/check_no_blend.py --root .
