@@ -389,6 +389,65 @@ increment_1_class_1_admission_is_validation:
     correct that too. Both in all three CD-RULE-004 places, each with an executable example.
 
 # ================================================================================================== #
+# ADDENDUM AT THE HEAD OF INCREMENT 2 — PO-DECISIONS-0003, THE CD-AC-002 RULING.
+# Added 2026-08-19T22:50:00Z by PROJECT_LEAD_SEAT_01 (the ELEVENTH PL seat) under CD-D-074/075/076,
+# recorded at BL-20260819T225000Z-0044. It amends NO increment content. It exists because increment 1
+# returned a HIGH finding against its own closure, increments 2 and 3 were HELD pending the Product
+# Authority, and the seat that picks up increment 2 must be able to read WHY the hold lifted and WHAT
+# it is explicitly NOT being asked to do — from the repository, not from a conversation (PBG-CONT-007).
+# ================================================================================================== #
+addendum_increment_2_head_po_decisions_0003:
+  status: BINDING ON INCREMENTS 2 AND 3
+  authority: governance/decisions/PO-DECISIONS-0003.md — Product Owner (Trinity), committed at
+    ae3188cf2854bf37a965277c99afcf3354f3478d by Matt Scott, not by any seat. READ THAT FILE. This
+    block is a transcription and the decision record governs where they differ.
+  what_was_asked: >
+    CD-ENG-WO2R2-01 delivered increment 1 and then raised CD-ENG-WO2R2-F03 (HIGH) AGAINST ITS OWN
+    CLOSURE, deliberately building no guard: ONE stateful ContributionModel injected into BOTH
+    DialSpecs makes the monetary dial publish 0.5 — the mean — out of equity 0.9 and monetary 0.1,
+    through `engine/evaluate.py`, the ONE declared product admission site, with EVERY FIELD of the
+    admission claim true except the number. The Project Lead replicated it independently as PL-Z4.
+    The question — WHAT CLOSES CD-AC-002, AND WHEN — was carried upward unanswered, because a
+    Project Lead that scopes a criterion at the moment it fails is the acceptance-semantics trap.
+  what_was_ruled: >
+    (B) AND (A) TOGETHER, BOUND SO NEITHER CAN DRIFT. (1) CD-AC-002 is ruled AT WO-2 SCOPE ON A
+    MEASURED BASIS, per CD-PL-F74 — which layer refused what: a WO-2 candidate registers no model,
+    no source, deploys nothing and has no publication layer, so THE INJECTED-MODEL ROUTE IS NOT IN
+    WO-2'S POPULATION, and the criterion at WO-2's gate covers every route that needs no injected
+    model. THE FULL-WIDTH CRITERION IS NOT NARROWED, SUPERSEDED OR SOFTENED — it remains MANDATORY
+    and TRAVELS TO WO-3. (2) BLUEPRINT §7 RETURNS FOR ARCHITECTURAL REVIEW as the mandatory FIRST
+    item of WO-3, before any collector or model wiring — the engine owns the model lifecycle so a
+    shared mutable object cannot be injected: CLOSURE BY CONSTRUCTION, NOT ANOTHER GUARD. (3) MODEL
+    INTEGRITY ATTACHES TO CD-D-005, the PO's own ingredient register. (4) THE SCOPING ITSELF IS
+    ATTACK SURFACE: the third Assurance seat is EXPLICITLY invited to attack this ruling's basis, and
+    if it can exercise an injected-model route inside a WO-2 candidate's REAL population, the ruling
+    falls and (C) suspension applies.
+  the_engineer_s_restraint_is_endorsed_in_terms: >
+    The PO's first sentence. Refusing to order a guard that looks like a closure — "an identity check
+    is defeated by two instances sharing a class attribute, a purity probe by memoisation" — is named
+    as the lesson of two gates applied before it cost a third. A seat that reports "this class cannot
+    be closed at this altitude", with the measurement behind it, is delivering the dispatch and not
+    failing it. That was true when the brief said it and it is now true on the Product Owner's record.
+  WHAT_THIS_DOES_NOT_DO_read_this_twice: >
+    IT DOES NOT WIDEN INCREMENT 2 (CD-D-075). Do NOT fold CD-ENG-WO2R2-F03 into Class 2 because the
+    doctrines rhyme. They do rhyme — an injected ContributionModel IS "a judgement delegated to an
+    object the system did not construct", one operand across — and that resemblance is exactly the
+    trap. The PO routed that route to WO-3 by rulings 2 and 3: to architectural review of BLUEPRINT
+    §7, and to the CD-D-005 ingredient register. Building a model guard here would be the fourth
+    clever guard, in an increment not scoped for it, against a class the Product Authority has ruled
+    is closed by CONSTRUCTION at a different altitude. If your Class 2 sweep TOUCHES the model path,
+    say so in the sweep and DECLARE it as outside this increment's bound — do not close it.
+    IT DOES NOT NARROW INCREMENT 2 EITHER. Class 2 is CD-AC-005 and the `_finite_measure` sibling,
+    exactly as written below, unchanged in every particular. The sweep is still the deliverable.
+  what_you_must_carry_forward_into_your_own_record: >
+    Increment 1 is RECONCILED AND NOT ACCEPTED AS CLOSING CD-AC-002 (BL-20260819T222917Z-0043), and
+    that has not changed: the derivation door IS closed at the type and the closure SURVIVES A RENAME,
+    which is banked, but CD-AC-002 reaches WO-2's gate on the PO's SCOPING and not on a guard. Your
+    increment-2 commits must not claim otherwise, and the CD-PL-F74 obligation is unchanged and
+    non-negotiable: EVERY refusal you record names WHICH LAYER refused it and WHAT THAT LAYER'S SCOPE
+    IS, and carries THE RENAME TEST, BEFORE any acceptance of yours or anyone else's cites it.
+
+# ================================================================================================== #
 # INCREMENT 2 — CLASS 2. JUDGE VALUES, NEVER TYPES.
 # carries CD-AC-005's AMBER (ASR2-F02, HIGH)
 # ================================================================================================== #

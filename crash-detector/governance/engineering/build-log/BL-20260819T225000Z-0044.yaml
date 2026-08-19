@@ -1,0 +1,289 @@
+# ================================================================================================ #
+# THE PRODUCT AUTHORITY ANSWERED THE CD-AC-002 QUESTION. THE HOLD ON INCREMENTS 2 AND 3 IS
+# DISCHARGED, AND THE RULING IS TRANSCRIBED INTO THE DISPATCH WITH ITS BOUND STATED — INCLUDING
+# WHAT IT DOES *NOT* AUTHORISE.
+# ================================================================================================ #
+
+entry_id: BL-20260819T225000Z-0044
+timestamp_utc: "2026-08-19T22:50:00Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: GOVERNANCE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: ae3188cf2854bf37a965277c99afcf3354f3478d
+lane_head_sha: 7ac157478d9698bd1da28438eb167acdc83e031d
+parent_entry_id: BL-20260819T222917Z-0043
+schema_version: 1
+
+action_summary: >
+  ELEVENTH Project Lead seat. The tenth seat STOPPED DELIBERATELY at BL-20260819T222917Z-0043 with
+  ONE question owed upward — WHAT CLOSES CD-AC-002, AND WHEN — and increments 2 and 3 HELD, not
+  withdrawn. THE PRODUCT AUTHORITY HAS ANSWERED, on the durable record at
+  governance/decisions/PO-DECISIONS-0003.md, committed at ae3188c by Matt Scott and not by any seat.
+  This boundary does three things and nothing else. (1) It applies CD-D-007's suspicion procedure to
+  every worktree and reports what it MEASURED. (2) It transcribes PO-DECISIONS-0003 into the record
+  and rules CD-D-074 / CD-D-075 / CD-D-076 — the hold is DISCHARGED, the ruling does NOT widen
+  increment 2, and ruling 4 becomes a written obligation on the third Assurance dispatch NOW rather
+  than a thing to remember later. (3) It amends CD-DISPATCH-WO2R2-ENGINEER.yaml with a bounded
+  addendum at the head of increment 2 so the next seat reads the ruling and its bound from the
+  repository and not from a conversation (PBG-CONT-007).
+  NO CODE CHANGED AT THIS BOUNDARY. NOTHING ACCEPTED. NOTHING ADMITTED. The gate is unmoved: the
+  WO-2 gate is Assurance PASS on all five and it has not been reached.
+
+# ================================================================================================ #
+# 1. CD-D-007 SUSPICION PROCEDURE — WHAT A DEAD OR STOPPED SEAT LEFT BEHIND
+# ================================================================================================ #
+suspicion_procedure:
+  why_it_runs_unconditionally: >
+    Six runtime terminations on this project. The tenth seat stopped DELIBERATELY rather than being
+    killed, and its own next_safe_action says so, but the procedure does not take a record's word for
+    the state of a worktree — that is the whole point of it. Run anyway, and report the measurement.
+  main_worktree:
+    path: /srv/crash-detector
+    branch: main
+    head: ae3188cf2854bf37a965277c99afcf3354f3478d
+    tracked_modifications: 'ZERO. `git diff --stat` empty, `git diff --cached --stat` empty.'
+    untracked: >
+      ELEVEN entries, all previously adjudicated NOT PROJECT STATE and re-read at THIS boundary on
+      their CONTENTS rather than on their names: .continue-prompt.txt, .wo2-prompt.txt,
+      .wo2b-prompt.txt, .wo2-runner.sh, .wo2b-runner.sh, .wo2-runner.log, .wo2-run-1.log,
+      .wo2b-run-1.log, .wo2b-run-2.log, .wo2b-run-3.log, pbg/tools/pbg/__pycache__/.
+    adjudication: >
+      NOT PROJECT STATE, unchanged from BL-...-0042's ruling. They are the operator's wrapper: a
+      launch prompt, two runner shell scripts and the seats' own terminal transcripts. They authorise
+      nothing, and every substantive claim in them is committed elsewhere. THE ONE THAT MATTERED WAS
+      CHECKED RATHER THAN ASSUMED: .wo2b-prompt.txt was rewritten by the operator to name
+      PO-DECISIONS-0003 and to summarise its ruling. Its summary AGREES WITH THE COMMITTED DECISION
+      RECORD IN EVERY PARTICULAR and adds nothing. THIS SEAT TOOK ITS AUTHORITY FROM THE COMMITTED
+      FILE, read in full, and not from the prompt — the prompt is a pointer and the repository is the
+      record. Also stated because a later reader would otherwise have to re-derive it: .wo2b-run-3.log
+      contains the SEVENTH seat's transcript describing the FIRST gate, not the tenth's; the wrapper
+      reuses and truncates these filenames across attempts, so their numbering is not chronological
+      and must not be read as a sequence.
+    no_uncommitted_governed_artefact: >
+      MEASURED, not inferred. Nothing untracked under governance/, nothing untracked under
+      governance/engineering/build-log/. This is the specific thing CD-D-065 was ruled about — the
+      sixth seat's own Build Log entry sitting uncommitted on disk — and it is ABSENT here. There is
+      no seat's work to adjudicate at this boundary.
+  mutation_lane:
+    path: /srv/crash-detector-wo2
+    branch: wo-2-skeleton
+    head: 7ac157478d9698bd1da28438eb167acdc83e031d
+    porcelain: 'ZERO lines.'
+    adjudication: >
+      CLEAN at the increment-1 head. CD-ENG-WO2R2-01 committed everything it wrote and returned; no
+      increment-2 work exists, because increment 2 was never dispatched. Nothing to adjudicate.
+  audit_worktrees:
+    - '/srv/crash-detector-wo2-audit — stale first-audit tree, RETAINED by CD-D-071, untouched.'
+    - '/srv/crash-detector-wo2r-audit — second-audit tree at 50fc231, untouched.'
+  verdict: >
+    NOTHING WAS LOST AND NOTHING WAS UNCOMMITTED. CD-D-043's precedent — stop at a clean boundary
+    with a durable record rather than spend the last of a runtime ceiling on unattested progress —
+    has now paid for itself a THIRD time. The tenth seat stopped on the PA question at 22:29Z and
+    the record it left is exactly the record this seat resumed from.
+
+# ================================================================================================ #
+# 2. WHAT THE PRODUCT AUTHORITY RULED
+# ================================================================================================ #
+the_ruling:
+  source: governance/decisions/PO-DECISIONS-0003.md
+  commit: ae3188cf2854bf37a965277c99afcf3354f3478d
+  author: 'Matt Scott <rogue@cerberus.local>. NOT a seat. Verified with `git log --format` on the
+    commit, not read off the subject line.'
+  provenance_note: >
+    ae3188c changes ONE file, +32 lines, and it is the decision record. It touches no code, no
+    dispatch and no continuity record. The Product Authority ruled and left the transcription to the
+    Project Lead, which is the correct division and is why this entry exists.
+  question_asked: 'WHAT CLOSES CD-AC-002, AND WHEN? Three options were set out in full at
+    BL-20260819T222917Z-0043: (A) return BLUEPRINT §7 for architectural review now; (B) rule
+    CD-AC-002 at WO-2 scope on the measured basis and attach model integrity to CD-D-005 for WO-3;
+    (C) treat this as the third carrier-shaped failure, SUSPEND implementation and return §7.
+    (B) was RECOMMENDED and DELIBERATELY NOT SELF-ADOPTED.'
+  answer: '(B) AND (A) TOGETHER, BOUND SO NEITHER CAN DRIFT. Not the recommendation as offered.'
+  the_four_rulings_transcribed:
+    - 'RULING 1 — CD-AC-002 IS RULED AT WO-2 SCOPE ON A MEASURED BASIS (which layer refused what,
+       per CD-PL-F74): a WO-2 candidate registers no model, no source, deploys nothing and has no
+       publication layer, so THE INJECTED-MODEL ROUTE IS NOT IN WO-2''S POPULATION. The criterion at
+       WO-2''s gate covers every route that needs no injected model. THE FULL-WIDTH CRITERION IS NOT
+       NARROWED, SUPERSEDED OR SOFTENED — it remains MANDATORY and TRAVELS TO WO-3.'
+    - 'RULING 2 — BLUEPRINT §7 RETURNS FOR ARCHITECTURAL REVIEW as the mandatory FIRST item of WO-3,
+       before any collector or model wiring: the engine OWNS the model lifecycle, so a shared mutable
+       object cannot be injected. CLOSURE BY CONSTRUCTION, NOT ANOTHER GUARD. This CONVERTS the
+       CD-D-073 standing condition: the carrier/admission class has now shown open a THIRD time —
+       caught UPSTREAM of the gate, which the PO names as the loop working — so the architectural
+       review is NO LONGER CONTINGENT. Only its TIMING was the PO''s to set.'
+    - 'RULING 3 — MODEL INTEGRITY ATTACHES TO CD-D-005, the ingredient register owed by the PO. A
+       model is an ingredient with provenance, and the register will say what the number should be
+       traceable to. "The engineer was right that admission alone cannot know it."'
+    - 'RULING 4 — THE SCOPING ITSELF IS ATTACK SURFACE. The third Assurance seat is EXPLICITLY
+       INVITED to attack this ruling''s basis: if it can exercise an injected-model route inside a
+       WO-2 candidate''s REAL population, THE RULING FALLS AND (C) SUSPENSION APPLIES. "A PO scoping
+       a criterion at the moment of failure is the acceptance-semantics trap; the only honest defence
+       is handing the auditor the knife."'
+  the_engineers_restraint_is_endorsed: >
+    The PO's opening sentence, recorded because it is the part a later seat is most likely to lose:
+    refusing to order a guard that looks like a closure is named as THE LESSON OF TWO GATES, APPLIED
+    BEFORE IT COST A THIRD. CD-ENG-WO2R2-01 raised CD-ENG-WO2R2-F03 against its own delivered
+    closure, deliberately built no guard, and said so first. That conduct is now endorsed on the
+    Product Owner's own record and is the standard for the remaining increments.
+  proceed_instruction_verbatim: >
+    "Proceed: complete held increments 2 and 3; then the THIRD fresh Assurance seat, fresh variants,
+    with this decision record in its brief. Gate: PASS on all five as ruled here, no waiver,
+    latest_admitted_run null until the paired verdict rule is satisfied."
+
+# ================================================================================================ #
+# 3. THE PROJECT LEAD'S RULINGS ON THIS BOUNDARY
+# ================================================================================================ #
+decisions:
+  - id: CD-D-074
+    title: 'THE HOLD ON WO-2R2 INCREMENTS 2 AND 3 IS DISCHARGED.'
+    ruling: >
+      The tenth seat held increments 2 and 3 for exactly one reason, stated in terms: CD-AC-002 could
+      not reach PASS on the evidence, so a third gate would have failed whatever they delivered, and
+      the answer might change what increment 2 was asked to do. BOTH LIMBS ARE NOW ANSWERED. Ruling 1
+      settles how CD-AC-002 reaches WO-2's gate; ruling 4 states what would unsettle it and who gets
+      to try. The instruction is "Proceed: complete held increments 2 and 3". The hold is discharged
+      by the authority that would have had to authorise the work anyway, and the next actor is the
+      ENGINEER.
+    what_is_not_discharged: >
+      CD-HOLD-003, CD-HOLD-004 and CD-HOLD-005 are UNTOUCHED and remain HELD. This ruling discharges
+      one hold on two increments of one dispatch. It is not a general release, and CD-HOLD-004 in
+      particular — no ingredient source registered until CD-D-005 issues — is REINFORCED by ruling 3,
+      which attaches model integrity to that same undelivered register.
+  - id: CD-D-075
+    title: 'THE RULING DOES NOT WIDEN INCREMENT 2, AND THE RESEMBLANCE IS THE TRAP.'
+    ruling: >
+      An injected ContributionModel IS, at the level of doctrine, "a judgement this system makes that
+      delegates its deciding operation to an object the system did not construct" — which is Class 2's
+      own sentence, one operand across. The tenth seat named that resemblance itself when it warned
+      the answer might change increment 2. IT DOES NOT, AND THE REASON IS THE RULING'S OWN STRUCTURE:
+      the PO routed the injected-model route to WO-3, to architectural review of BLUEPRINT §7
+      (ruling 2) and to the CD-D-005 register (ruling 3), expressly as CLOSURE BY CONSTRUCTION AND
+      NOT ANOTHER GUARD. Folding CD-ENG-WO2R2-F03 into increment 2 would build the fourth clever
+      guard, in an increment not scoped for it, against a class the Product Authority has ruled is
+      closed at a different altitude — and a guard that looks like a closure is the defect that has
+      cost this project two gates.
+      Increment 2 is therefore UNCHANGED IN EVERY PARTICULAR: CD-AC-005, ASR2-F02, the
+      `_finite_measure` float-subclass sibling, the sweep as the deliverable, boundary 3 corrected.
+      If the Class 2 sweep's enumeration REACHES the model path — and it may, because the sweep is
+      over every path that decides staleness, agreement or reading-ness — the seat DECLARES it as
+      outside this increment's bound and does not close it. Declaring is the CD-RULE-004 obligation;
+      closing would be the scope breach.
+    why_the_project_lead_states_this_rather_than_leaving_it_implicit: >
+      Because "the PO has ruled on CD-AC-002, so tighten the model path while you are in there" is
+      the reading a competent seat arrives at unprompted, and silence from the dispatcher would look
+      like consent. CD-D-055's precedent is that a bounded addendum at the head of an increment is
+      how this project corrects a brief without re-opening it.
+  - id: CD-D-076
+    title: 'RULING 4 BECOMES A WRITTEN OBLIGATION ON THE THIRD ASSURANCE DISPATCH NOW, NOT LATER.'
+    ruling: >
+      The PO's ruling 4 is not a remark; it is a condition on which the WO-2 gate now rests. It is
+      recorded HERE, at the boundary where the ruling arrives, as a binding requirement on
+      CD-DISPATCH-WO2R2-ASSURANCE whenever that record is drafted: the third Assurance seat must be
+      handed PO-DECISIONS-0003 in its brief, told in terms that THE SCOPING ITSELF IS A TARGET, and
+      told what follows if it succeeds — the ruling falls and (C) suspension applies, which means
+      BLUEPRINT §7 returns for architectural review and implementation stops. An auditor invited to
+      attack a scoping and not told the consequence of winning has been given a rhetorical
+      invitation, not a gate condition.
+    why_now: >
+      CD-PL-F67 was raised because a dispatch's path list was wrong at issue. The failure mode here is
+      worse and quieter: an obligation created at boundary N and needed at boundary N+3, carried only
+      in a Project Lead's head across a two-hour runtime ceiling that has already killed six seats.
+      Written down, it survives this seat. That is PBG-CONT-007 applied to an obligation rather than
+      to an artefact.
+  - id: CD-D-077
+    title: 'THE DISPATCH RECORD IS AMENDED, AND THE AMENDMENT IS BOUNDED AND VISIBLE.'
+    ruling: >
+      CD-DISPATCH-WO2R2-ENGINEER.yaml gains ONE new top-level block,
+      `addendum_increment_2_head_po_decisions_0003`, immediately preceding
+      `increment_2_class_2_judge_values_never_types`. It states its own date, seat, authority and
+      rulings; it says in its first lines that it AMENDS NO INCREMENT CONTENT; and it carries
+      CD-D-075's prohibition under a heading that tells the reader to read it twice. NO EXISTING FIELD
+      OF THE DISPATCH IS EDITED — the increment 2 and increment 3 blocks are byte-identical to their
+      issued form. Precedent is BL-20260819T161222Z-0030, which amended a dispatch in the repository
+      "so the brief is durable and not merely conversational", and CD-D-055, which put a bounded
+      addendum at the head of an increment rather than re-opening the increment.
+    the_dispatch_status_does_not_change: >
+      It remains ISSUED, to the same seat CD-ENG-WO2R2-01, at the same lane base, with the same three
+      increments. An addendum that changed the status would be a re-issue, and a re-issue would need a
+      fresh authority basis this seat does not have.
+
+# ================================================================================================ #
+# 4. WHAT THIS SEAT DID *NOT* DO, STATED SO IT IS NOT MISTAKEN FOR OVERSIGHT
+# ================================================================================================ #
+not_done_deliberately:
+  - 'DID NOT RE-MEASURE THE THREE AMBER CRITERIA. BL-20260819T210510Z-0041''s disclosure stands
+     unchanged and is repeated here so it is not lost by distance: the three AMBER criteria were NOT
+     re-measured by any Project Lead seat, F03–F13 were NOT independently replicated (not doubted —
+     not reached), and W1/W5/W7 are not re-opened beyond the fingerprint agreement. That work belongs
+     to the third Assurance seat.'
+  - 'DID NOT WRITE, ORDER OR SKETCH ANY CODE FOR INCREMENT 2. PBG-AUTH-006 and the CD-D-038 /
+     CD-D-045 precedent: a Project Lead that authors the closure has made itself the implementer of
+     work it will reconcile. The seat gets the class, the measured contrast and the rule — never the
+     code.'
+  - 'DID NOT BUILD A GUARD FOR CD-ENG-WO2R2-F03. The PO ruled it closed by CONSTRUCTION at WO-3, not
+     by a guard at WO-2. Building one anyway would be this seat substituting its judgement for the
+     Product Authority''s on the exact question it referred upward.'
+  - 'DID NOT ADMIT ANYTHING. `latest_admitted_run` remains null. CD-RULE-001 is PO-set and
+     non-relaxable, and the PO restated it in the ruling''s own closing sentence.'
+  - 'DID NOT MERGE THE LANE. It stands unmerged at 7ac1574 with increments 2 and 3 undelivered.'
+  - 'DID NOT DRAFT THE THIRD ASSURANCE DISPATCH. It cannot be issued until increments 2 and 3 are
+     reconciled, and drafting it now would fix a target SHA that does not exist yet. CD-D-076 records
+     its obligations so drafting it later is transcription and not recall.'
+
+# ================================================================================================ #
+# 5. GATE STATE — UNMOVED
+# ================================================================================================ #
+gate_state:
+  wo2_gate: 'NOT MET. The gate is Assurance PASS on all five: CD-AC-001, CD-AC-002, CD-AC-003,
+    CD-AC-005, CD-AC-012. No waiver (PO, restated in PO-DECISIONS-0003).'
+  latest_admitted_run: 'null. CD-RULE-001, PO-set, non-relaxable.'
+  run_records_written_and_not_admitted: 'RTR-WO2-0001, RTR-WO2R-0001. Preserved unaltered under
+    governance/assurance/. Neither has a paired PASS verdict; neither is admitted.'
+  what_changed_at_this_boundary: >
+    NOTHING ABOUT THE GATE. What changed is the BASIS on which one criterion will be assessed at it —
+    CD-AC-002 at WO-2 scope, on the Product Authority's measured ruling, with the full-width criterion
+    travelling intact to WO-3 and the scoping itself handed to the auditor as a target. A ruling about
+    scope is not a pass, and this entry does not record one.
+
+evidence:
+  - 'governance/decisions/PO-DECISIONS-0003.md — the Product Owner''s record, read in full, committed
+     at ae3188c by Matt Scott.'
+  - 'governance/dispatch/CD-DISPATCH-WO2R2-ENGINEER.yaml — amended with one bounded addendum block;
+     no existing field edited.'
+  - 'governance/engineering/ACTIVE_WORK.yaml — continuity record updated at this boundary.'
+evidence_executable_count: 0
+evidence_executable_count_note: >
+  Nothing added at this boundary is executable (PBG-ASSURE-001). This boundary adds no variants, no
+  patches and no probes — it adds a decision transcription, a dispatch addendum and a continuity
+  write.
+
+next_actor: ENGINEER
+next_safe_action: >
+  LAUNCH CD-ENG-WO2R2-01 AGAINST governance/dispatch/CD-DISPATCH-WO2R2-ENGINEER.yaml FOR INCREMENT 2,
+  in the foreground, at lane head 7ac1574 on branch wo-2-skeleton in /srv/crash-detector-wo2, with
+  the increment-2 addendum read FIRST. Then reconcile it: re-run the seat's load-bearing claims on the
+  Project Lead's OWN pristine `git archive` extractions with its own drivers, audit
+  `git log --format='%an <%ae> | %cn <%ce>'` for CD-RULE-002 identity, check node-id conservation
+  against the 1357 passing at lane 7ac1574, and record what was OBSERVED — never what was reported.
+  RECONCILIATION IS NOT ACCEPTANCE (PBG-SOD-001, PBG-AUTH-006). Then increment 3. Then, and only
+  after all three are reconciled, the THIRD fresh Assurance seat — neither CD-ASR-WO2-01 nor
+  CD-ASR-WO2-02 — with fresh variants, the exclusion set extended by the Engineer's own, and
+  PO-DECISIONS-0003 in its brief carrying CD-D-076's invitation and its stated consequence.
+  STOP DELIBERATELY at the gate, or on any question that belongs to the Product Authority.
+
+boot_verdict_of_record:
+  rule: 'CD-RULE-007 / CD-RULE-008 as amended by CD-PL-F72. Taken on a PRISTINE CLONE at the committed
+    SHA, checked out ON THE RECORDED BRANCH (main), never on the working tree.'
+  status: 'PENDING at the time this entry is committed — the SHA cannot be known before the commit
+    exists. Resolved in the CD-RULE-007 follow-up commit that immediately succeeds this one, which
+    writes continuity_record_commit AND NOTHING ELSE and carries the verdict in its message.'
+  working_tree_verdict_for_contrast: 'AMBER — CONTINUITY_MATCH/RESUME_AMBER, the known CD-PL-F70
+    cause (the operator''s untracked wrapper files and the pre-existing pbg __pycache__). Not a new
+    degradation, and not the verdict of record.'
