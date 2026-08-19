@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-19T11:56:00Z'
+updated_utc: '2026-08-19T14:35:02Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -250,6 +250,57 @@ current_block: >
   progress. CD-PL-F57 (INFORMATIONAL, the checks' own assertion counts moved and Assurance should
   confirm why) and CD-PL-F58 (LOW, "zero expectation changes" is the seat's statement and is NOT
   measurable by the node-id comparison — named for Assurance, not implied as verified).
+  WO-2R INCREMENT 3 RECONCILED AND **NOT ACCEPTED** (CD-D-044) at lane b60d153, four commits by
+  CD-ENG-WO2R-01, attested in lane entry BL-20260819T142541Z-0043, reconciled by the PL in
+  BL-20260819T143502Z-0026. EVERY NUMBER THE SEAT DECLARED REPRODUCES EXACTLY: clean arm 53
+  assertions, the defect reproduced at the old base at 44 assertions and exit 0 matching the auditor
+  VERBATIM, positive control 67, full suite 1155 -> 1187 passed, ZERO of the 1155 node ids missing
+  with 32 added, ELEVEN of eleven plants applying, all four commits correctly seated in BOTH author
+  and committer, all TEN mandatory-block headings on all four. The declared limit — six numbered
+  boundaries where before this check HAD NO WRITTEN BOUNDARY AT ALL — is the best-drawn in the
+  project so far. THE HEADLINE CLOSURE HOLDS: deny-by-default over the `hosts` allowlist survived
+  E05, V18..V24 and THREE FRESH PL PROBES of routes the seat did not try — PL-S1, an EIGHTH service
+  declared with a broker allowlist, refused twice over with `scanned:` moving 7 -> 8 so the subject
+  is DERIVED FROM THE ARTEFACT; PL-S2, a YAML anchor aliased into the allowlist, exit 3 because the
+  reader REFUSES TO GUESS rather than reading a hidden field as absent; PL-S4, a duplicate `hosts:`
+  key, refused on the last-wins value. WHAT FAILS IS AN ADJACENT FIELD THE SEAT TOOK INTO SCOPE AND
+  THEN GUARDED WITH THE WRONG LAYER. CD-PL-F59 (MEDIUM): PL-S3b puts `api.ibkr.com` in
+  cd-collectors' `pending` list and it is REFUSED, "CD-EGRESS-002: a pending entry names a broker
+  host"; PL-S3a puts `198.51.100.24` in THE SAME SLOT and it PASSES, exit 0, 53 assertions, 0
+  violations; PL-S3c carries the same address on a `host:` key inside a pending mapping and it
+  PASSES. That is CD-ASR-F04 REPRODUCED VERBATIM ONE FIELD ACROSS — the auditor's own sentence, "the
+  check recognises brokers BY NAME and an IP literal has no name to recognise", is now true of
+  `pending` exactly as it was true of `hosts`. It is not out of scope: the seat took `pending` into
+  scope deliberately (the check fires on it at lines 921-937 and the docstring says the vocabulary
+  applies "to every `pending` entry"), and then applied ONLY the layer F04 proved insufficient. Nor
+  is the field incidental — the contract defines it as "endpoints BLUEPRINT §2 declares this service
+  WILL NEED", which is precisely the declaration the WO-3 lane inherits and which this dispatch
+  orders closed BEFORE that lane exists. "A pending entry grants nothing" does not distinguish it:
+  at WO-2 an allowlist entry grants nothing either, because both networks are internal:true. AND IT
+  MAKES A STATED BOUNDARY INACCURATE: boundary 4 claims an escape "does not pass LAYER 1 unless a
+  human deliberately registers it ... not a quiet line in an allowlist", and for `pending` THERE IS
+  NO LAYER 1 — one quiet line, no registry edit. That is the CD-PL-F54 shape a second time and
+  exactly what CD-RULE-006 forbids. Under CD-RULE-004 the guard must close the class OR declare the
+  limit; for `pending` it did NEITHER, since none of the six boundaries mentions the field. THAT,
+  not the escape's blast radius, is why increment 3 goes back. CD-D-045: the PL does NOT write the
+  fix (PBG-AUTH-006), and CD-D-038's precedent is not relaxed because the fix looks small — the seat
+  gets the CLASS, the measured contrast and the rule it fails, not the code. CD-D-046: the remedy is
+  the seat's choice under CD-RULE-004 — close `pending` under the same deny-by-default structure, or
+  declare it as a seventh boundary in the CD-RULE-006 form — but if it declares rather than closes
+  it MUST ALSO CORRECT BOUNDARY 4, or that is the CD-PL-F54 defect a third time. CD-D-047: PL-S1..S4
+  are GIVEN to the Engineer as its minimum proof obligation and written to
+  governance/reconciliation/WO-2R/ as DATA, nothing executable; they join the exclusion set. The
+  lane is NOT reverted — a79d4b2..b60d153 stand and 3b extends them. CD-PL-F60 (INFORMATIONAL):
+  increment 3's commit subjects carry the [CRASH-DETECTOR] prefix where 2b's carry
+  [CD-ENG-WO2R-01]; CD-RULE-002 binds AUTHOR AND COMMITTER IDENTITY, which is correct on all four
+  and was verified, so this is NOT a breach and NOT grounds for rejection — recorded only so an
+  auditor does not infer a seat from a prefix. The seat's CD-ENG-WO2R-F12 (extra_hosts, declared at
+  boundary 5 as NOT PROVED TO BE CARRIED ANYWHERE) is CONFIRMED and is the instructive contrast with
+  CD-PL-F59: the same kind of gap, one DECLARED and one declared nowhere. CD-ENG-WO2R-F13 is
+  CONFIRMED AND COMMENDED — `git apply` silently truncated hand-written hunks and six variants
+  briefly failed FOR THE WRONG REASON, caught only because the violation text did not match the
+  route; its recommendation to assert the expected RULE ID rather than merely a non-zero exit is
+  ADOPTED by the PL for its own probes and carried into the Assurance dispatch as a method note.
 owner_role: PROJECT_LEAD
 next_actor: PROJECT_LEAD
 
@@ -274,7 +325,7 @@ last_completed_checkpoint_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: cc961bfcf258faef1471fa913313bbacc25930fd
+lane_head_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
   # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
   # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
   # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
@@ -288,7 +339,7 @@ lane_head_sha: cc961bfcf258faef1471fa913313bbacc25930fd
   # continuity and MUST NOT BE DELETED (CD-PL-F49). Every OLD -> NEW pair is in
   # governance/continuity/WO-2-LANE-SHA-MAP.md. Build Log entries still name the OLD SHAs and were
   # NOT edited (PBG-CONT-003, non-waivable); the map supersedes, it does not correct.
-lane_increment_sha: cc961bfcf258faef1471fa913313bbacc25930fd   # WO-2R increment 2b, RECONCILED AND ACCEPTED (CD-D-040)
+lane_increment_sha: b60d15321fdc136f0d5dd55b8feab190c0548680   # WO-2R increment 3, RECONCILED AND **NOT ACCEPTED** (CD-D-044); re-opened as 3b on CD-PL-F59
 continuity_record_commit: PENDING
 working_tree_state: >
   main clean at 8a50355 apart from the operator's untracked .wo2-*/.wo2b-* session-wrapper files and
@@ -536,5 +587,5 @@ resume_instructions: >
   application code is authorised; the WO-2 gate is Assurance PASS on all five planted violations.
   The Engineer and the Assurance Engineer are never the same agent. CD-D-005 and CD-D-006 belong to
   the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260819T115400Z-0025
+last_build_log_entry: BL-20260819T143502Z-0026
 status: ACTIVE

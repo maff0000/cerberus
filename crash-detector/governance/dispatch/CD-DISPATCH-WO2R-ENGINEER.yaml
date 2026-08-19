@@ -21,7 +21,7 @@
 # produced the four AMBER verdicts.
 
 dispatch_id: CD-DISPATCH-WO2R-ENGINEER
-status: ISSUED   # increment 2 RE-OPENED as increment_2b_F01_reopened by CD-D-037, 2026-08-19T11:15Z
+status: ISSUED   # increment 2 RE-OPENED as increment_2b_F01_reopened by CD-D-037, 2026-08-19T11:15Z; increment 3 RE-OPENED as increment_3b_F04_reopened by CD-D-044, 2026-08-19T14:35Z
 record_type: SUB_AGENT_DISPATCH
 issued_utc: '2026-08-19T09:10:00Z'
 
@@ -430,6 +430,94 @@ increment_3_F04:
     WO-2 an IP literal would not be enforced either way; the defect is in the DECLARATION that the
     WO-3 enforcement lane will inherit. Fix the declaration and its guard. Do not build enforcement
     — that is WO-3, and Compose has no per-host egress primitive anyway. Keep saying so.
+
+increment_3b_F04_reopened:
+  findings: [CD-PL-F59 (MEDIUM), re-opening CD-ASR-F04 (MEDIUM)]
+  criterion: CD-AC-012
+  execution_base_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
+  authority: CD-D-044, CD-D-045, CD-D-046, CD-D-047 (BL-20260819T143502Z-0026)
+  what_was_accepted_and_is_not_being_re-done: >
+    THE LANE IS NOT REVERTED AND YOUR INCREMENT-3 WORK IS NOT REJECTED WHOLESALE. Commits
+    a79d4b2..b60d153 stand. Deny-by-default over the `hosts` allowlist is good work and it HELD
+    against everything thrown at it: E05, your V18..V24, and three fresh Project Lead probes of
+    routes you did not try — PL-S1 (an EIGHTH service declared with a broker allowlist: refused
+    twice over, and `scanned:` moved 7 -> 8, so your subject genuinely derives from the artefact),
+    PL-S2 (a YAML anchor aliased into the allowlist: exit 3, because your reader refuses to guess
+    rather than reading a hidden field as absent — this is exactly right), and PL-S4 (a duplicate
+    `hosts:` key: refused on the last-wins value). Your declared limit is the best-drawn in this
+    project so far. Every number you reported reproduced exactly on pristine extractions.
+  the_defect: >
+    AN ADJACENT FIELD YOU TOOK INTO SCOPE AND THEN GUARDED WITH THE WRONG LAYER. Measured:
+    PL-S3b puts `api.ibkr.com` in cd-collectors' `pending` list -> REFUSED, exit 1,
+    "CD-EGRESS-002: a pending entry names a broker host". PL-S3a puts `198.51.100.24` in THE SAME
+    SLOT -> PASS, exit 0, 53 assertions, 0 violations. PL-S3c carries the same address on a `host:`
+    key inside a pending mapping entry -> PASS, exit 0.
+
+    That is CD-ASR-F04 reproduced verbatim one field across. The auditor's sentence about the
+    allowlist — "the check recognises brokers BY NAME, and an IP literal has no name to recognise" —
+    is now true of `pending` exactly as it was true of `hosts` before your increment.
+  why_it_is_in_scope_and_not_a_curiosity: >
+    You did not leave `pending` alone. You took it into scope deliberately: the check fires
+    CD-EGRESS-002 on it at check_egress_no_broker.py lines 921-937, and your docstring at line 90
+    says the vocabulary applies "to every `pending` entry, because a pending entry is a host".
+    Having decided the field was worth guarding, you applied ONLY the layer that CD-ASR-F04 proved
+    insufficient, and not the layer that replaced it.
+
+    Nor is the field incidental. Your own x-egress contract defines `pending` as "endpoints
+    BLUEPRINT §2 declares this service WILL NEED" — precisely the declaration the WO-3 enforcement
+    lane inherits, which is the thing this dispatch calls defective and orders closed BEFORE that
+    lane exists. "A pending entry grants nothing" does not distinguish it: at WO-2 an allowlist
+    entry grants nothing either, because both networks are internal:true. This whole increment is
+    about declarations, not packets.
+  the_rule_you_fail: >
+    CD-RULE-004: a guard closes its class OR DECLARES ITS OWN LIMIT. For `pending` you did NEITHER —
+    none of your six boundaries mentions the field. THAT, and not the escape's blast radius, is why
+    increment 3 goes back.
+
+    AND CD-RULE-006. Boundary 4 reads: "a real brokerage ... passes LAYER 2. It does not pass LAYER
+    1 unless a human deliberately registers it, which is the whole point of deny by default: the
+    escape now costs a signed edit to a reviewed registry file, not a quiet line in an allowlist."
+    FOR `pending` THERE IS NO LAYER 1. An entry passing layer 2 in `pending` passes ENTIRELY, at the
+    cost of exactly one quiet line and no registry edit at all. Boundary 4 names a compensating
+    layer that does not compensate for this field. That is the same shape as CD-PL-F54 at increment
+    2 — a declaration naming another layer as carrying a residue the layer does not carry — and it
+    is the shape CD-RULE-006 was written to forbid.
+  the_remedy_is_yours_to_choose: >
+    THE PROJECT LEAD DOES NOT WRITE YOUR FIX (PBG-AUTH-006; CD-D-038's precedent is not relaxed
+    because the fix looks small). You are given the CLASS, the measured contrast and the rule you
+    fail — not the code. Under CD-RULE-004 you may either:
+
+      (i) CLOSE `pending` under the same deny-by-default structure you already built for `hosts`; or
+      (ii) DECLARE it as a SEVENTH boundary in the CD-RULE-006 form, with an executable example and
+           either a MEASURED carrying layer or the words "NOT PROVED TO BE CARRIED ANYWHERE".
+
+    EITHER WAY YOU MUST CORRECT BOUNDARY 4, whose compensating-layer claim is measurably false for
+    this field. A declaration that leaves boundary 4 standing would be the CD-PL-F54 defect a third
+    time and will not be accepted.
+
+    If you choose (ii), argue it honestly — a pending entry is not an allowlist entry and there is a
+    real case that its correct treatment differs. The Project Lead will weigh the argument, as it
+    weighed and accepted your reasoning on repr at increment 2b. What it will not accept is silence.
+  minimum_proof_obligation: >
+    PL-S3a and PL-S3c REFUSED (or declared under (ii) with the boundary written); PL-S3b STILL
+    refused; PL-S1, PL-S2 and PL-S4 STILL refused; E05 and V18..V24 STILL as declared; the eleven
+    plants still applying and contrasting; the clean arm green with before/after numbers; and TWO
+    NEW VARIANTS OF YOUR OWN against the `pending` field or against whatever structure you build,
+    by routes not in the known set and not among PL-S1..PL-S4.
+
+    The Project Lead's probes are at
+    governance/reconciliation/WO-2R/PL-S1-S4-egress-pending-and-subject-derivation.patch.txt as
+    DATA (nothing there is executable). They are GIVEN to you rather than withheld (CD-D-047), and
+    from this commit they prove nothing about the class — they join the next auditor's exclusion
+    set, so do not fit your guard to this list.
+  method_note_adopted_from_your_own_CD-ENG-WO2R-F13: >
+    Assert the expected RULE ID, not merely a non-zero exit. Your own finding — six variants
+    briefly failing FOR THE WRONG REASON after `git apply` silently truncated hand-written hunks —
+    is the reason, and the Project Lead has adopted it for its own probes. Generate patches with
+    `git diff`, never by hand.
+  bounded_to: >
+    CD-PL-F59 and the boundary-4 correction, and NOTHING ELSE. Do not start increment 4 or 5. Do not
+    revisit F01, F02 or F03. Sequence numbers for your lane Build Log continue from 0044.
 
 increment_4_F05:
   findings: [CD-ASR-F05 (MEDIUM)]
