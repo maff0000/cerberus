@@ -1,0 +1,24 @@
+--- a/tests/test_witness_resolver.py
++++ b/tests/test_witness_resolver.py
+@@ -410,3 +410,21 @@
+                     agreed.append((window, state, age, measures))
+ 
+     assert agreed == [], f"a stale or malformed input agreed: {agreed}"
++
++
++# --- PLANTED VARIANT E07 (known set, CD-ASR-F06) ------------------------------------------ #
++# The auditor's route, VERBATIM: staleness_window_seconds=1e18 with a panel row ten years
++# old and marked AGREES. At the WO-2 gate this resolved to Agrees and rendered
++# "WITNESS AGREES" with NO SOURCE EDIT AT ALL. This test asserts that outcome, so the
++# declared command exits non-zero for exactly as long as the route is closed.
++
++def test_PLANT_E07_a_decade_old_row_with_a_1e18_window_renders_witness_agrees():
++    row = PanelRow(
++        state="AGREES",
++        as_of_utc=ago(3650 * 24 * 3600.0),
++        published_utc=ago(3650 * 24 * 3600.0),
++        measures={"divergence_measure": 0.02, "threshold": 0.10},
++    )
++    panel = resolve_panel(row, now_utc=FIXED_NOW, staleness_window_seconds=1e18)
++    assert isinstance(panel, Agrees)
++    assert render_panel(panel) == WITNESS_AGREES_TEXT

@@ -405,9 +405,9 @@ def test_a_reading_is_only_as_fresh_as_its_oldest_input():
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
     reading = evaluate(
-        [_ok("src.a", 10), _ok("src.b", 900)], config, FIXED_NOW
+        [_ok("src.a", 10), _ok("src.b", 500)], config, FIXED_NOW
     ).equity
-    assert reading.as_of_utc == ago(900)
+    assert reading.as_of_utc == ago(500)
 
 
 def test_the_latest_observation_per_source_wins():
@@ -416,7 +416,7 @@ def test_the_latest_observation_per_source_wins():
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
     reading = evaluate(
-        [_ok("src.a", 900), _ok("src.a", 10), _ok("src.a", 400)], config, FIXED_NOW
+        [_ok("src.a", 500), _ok("src.a", 10), _ok("src.a", 400)], config, FIXED_NOW
     ).equity
     assert reading.as_of_utc == ago(10)
 
@@ -579,3 +579,90 @@ def test_the_presence_predicate_answers_for_each_of_the_three_ways_inputs_can_be
     assert required_inputs_are_all_present(spec, present) is True
     object.__setattr__(spec, "contribution_model", None)
     assert required_inputs_are_all_present(spec, present) is False
+
+
+# --- CD-ASR-F06 on the DIAL path: the same class, the other comparison site --------------- #
+#
+# CD-ASR-F06 was reported against the serving resolver. There are TWO implementations of the
+# same age comparison in this tree, and bounding only the one the auditor happened to attack
+# would have closed the instance and not the class: the engine takes its window from the
+# config snapshot and performs its own comparison, so an unbounded configured window makes a
+# decade-old observation feed a dial exactly as it made a decade-old row render agreement.
+# The admission door is shared, so both sites are closed by the same structure.
+
+TEN_YEARS_SECONDS = 3650 * 24 * 3600.0
+
+
+@pytest.mark.parametrize(
+    "window", [1e18, 901.0, 3600.0, 86400.0, TEN_YEARS_SECONDS, 1e308]
+)
+def test_a_config_snapshot_refuses_a_window_above_the_ceiling(window):
+    """The configuration cannot even be constructed, so no evaluation can run against it."""
+    from crash_detector.staleness import StalenessWindowOutOfRange
+
+    with pytest.raises(StalenessWindowOutOfRange):
+        empty_config_snapshot("cfg-wide", staleness_window_seconds=window)
+
+
+def test_the_config_snapshot_still_refuses_the_windows_it_already_refused():
+    """No regression of the half of the door that was already closed."""
+    import math
+
+    from crash_detector.staleness import StalenessWindowOutOfRange
+
+    for window in (math.inf, math.nan, 0.0, -1.0):
+        with pytest.raises(StalenessWindowOutOfRange):
+            empty_config_snapshot("cfg-bad", staleness_window_seconds=window)
+    with pytest.raises(TypeError):
+        empty_config_snapshot("cfg-bad", staleness_window_seconds="600")
+
+
+def test_the_admitted_window_is_a_type_and_not_the_raw_field():
+    """`window()` is what the evaluation applies. The float field is the RECORD of what was
+    configured; the type is the thing that may be used."""
+    from crash_detector.staleness import StalenessWindow
+
+    config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+    assert isinstance(config.window(), StalenessWindow)
+    assert config.window().seconds == WINDOW_SECONDS
+
+
+def test_a_decade_old_observation_is_not_usable_under_any_constructible_window():
+    """The dial-path equivalent of E07's row.
+
+    Whatever window a caller configures — and the widest it can configure is the ceiling —
+    a ten-year-old observation is not carried forward as a value.
+    """
+    from crash_detector.staleness import STALENESS_WINDOW_CEILING_SECONDS
+
+    for window in (1.0, 60.0, 600.0, STALENESS_WINDOW_CEILING_SECONDS):
+        equity_spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+        monetary_spec = _spec(MONETARY_DIAL_ID)
+        config = ConfigSnapshot(
+            config_snapshot_id="cfg-old",
+            dial_specs=(equity_spec, monetary_spec),
+            staleness_window_seconds=window,
+            source_registry=_registry_for(equity_spec, monetary_spec),
+        )
+        reading = evaluate([_ok("src.a", TEN_YEARS_SECONDS)], config, FIXED_NOW).equity
+        assert isinstance(reading, Unknown)
+        assert reading.reason == "REQUIRED_INPUTS_UNAVAILABLE"
+
+
+def test_the_private_usable_filter_cannot_be_called_with_an_unadmitted_window():
+    """The route that would otherwise remain: call the helper directly with a bare number.
+
+    It takes a StalenessWindow, so there is no bare number to pass — and the only way to
+    obtain one is to construct it, which is the admission.
+    """
+    from crash_detector.engine.evaluate import _latest_usable_ok
+
+    signature = inspect.signature(_latest_usable_ok)
+    assert "staleness_window_seconds" not in signature.parameters
+    assert "window" in signature.parameters
+    with pytest.raises(AttributeError):
+        _latest_usable_ok(
+            [_ok("src.a", TEN_YEARS_SECONDS)],
+            now_utc=FIXED_NOW,
+            window=1e18,  # type: ignore[arg-type]
+        )

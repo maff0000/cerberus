@@ -604,15 +604,79 @@ criteria:
   supersedes: []
   superseded_by: null
   tests:
+  # CD-ASR-F06 (MEDIUM) CLOSED AT INCREMENT 5, AND THE SUBJECT GREW BY ONE MODULE.
+  # The auditor passed staleness_window_seconds=1e18 with a panel row TEN YEARS OLD and
+  # marked AGREES; it rendered WITNESS AGREES with NO SOURCE EDIT AT ALL (escaped variant
+  # E07). `_require_usable_window` refused non-finite and non-positive windows and accepted
+  # any finite positive number.
+  #
+  # TWO defects, and closing only the first would have closed the instance:
+  #   1. THE WINDOW HAD NO CEILING. src/crash_detector/staleness.py now admits a window only
+  #      through StalenessWindow, which REFUSES — never clamps — anything above
+  #      STALENESS_WINDOW_CEILING_SECONDS = 900.0. That number is DERIVED and was not chosen
+  #      (CD-RULE-003): PID.md §5's ratified assurance latency budget, marked RATIFIED
+  #      2026-08-18 (CD-D-003 resolved), requires "pipeline/publication failure independently
+  #      detectable <= 15 minutes", and a window wider than the detectability budget renders a
+  #      dead feed as fresh for longer than the product permits failure to go undetected.
+  #      IT IS A CEILING AND NOT AN OPERATING WINDOW: 900 s consumes the whole budget and
+  #      leaves nothing for detection and alerting. The operating window is BLUEPRINT §7's
+  #      window_for(regime), CD-AC-009, owed at WO-3. NO TIGHTER NUMBER IS IMPOSED HERE,
+  #      because none is derivable from ratified text and choosing a prudent-looking one is
+  #      the invention CD-RULE-003 forbids.
+  #   2. AGREEMENT DID NOT REQUIRE FRESHNESS. `Agrees` now carries FreshnessEvidence, whose
+  #      construction IS the age comparison and which is bound to the agreement's own
+  #      as_of_utc. There is therefore no route to agreement that skips the comparison —
+  #      including an exception handler, a fallback branch or a fast path — because there is
+  #      no Agrees without the evidence and no evidence without the comparison.
+  #
+  # THE ADMISSION DOOR IS SHARED WITH THE DIAL PATH, deliberately. crash_detector.engine
+  # performs its own age comparison against the window in the ConfigSnapshot, so bounding only
+  # the resolver would have left a decade-old observation feeding a dial. ConfigSnapshot
+  # admits through the same type and `_latest_usable_ok` takes a StalenessWindow rather than a
+  # float. Two guarded comparison sites are an enumeration; one place a usable window can come
+  # into existence is a closure. The dial-path arm is evidenced by CD-AC-001's declared
+  # command over tests/test_evaluate.py.
+  #
+  # tests/test_staleness.py IS PART OF THE DECLARED COMMAND, because the structure that
+  # carries the proposition now lives in a module of its own and a guard that does not run
+  # over its own subject is not a guard.
   - test_id: CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES
     scope: CLASS
-    execute: PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q
+    execute: PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q
     execution_contract: contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md
     negative_control:
       violation: >
         A missing or stale panel row defaulted to Agrees — whether by a default argument, a
         fallback branch, a truthiness test that treats absence as agreement, or a field added to
-        the Unavailable constructor that a later edit could read as agreement.
+        the Unavailable constructor that a later edit could read as agreement; OR a configured
+        staleness window wide enough to make staleness meaningless, which needs no source edit
+        and is the CD-ASR-F06 route.
+        THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
+        src/crash_detector/staleness.py and in the execution contract, in FOUR boundaries:
+        (1) THE CEILING BOUNDS THE WINDOW; IT DOES NOT ESTABLISH WHAT THE WINDOW SHOULD BE.
+        Any window from 0.001 s to 900 s is admissible, and a deployment that configures 899 s
+        has a window this guard does not question. The operating window is BLUEPRINT §7's
+        window_for(regime), OWED AT WO-3 (CD-AC-009). NOT PROVED TO BE CARRIED ANYWHERE, and it
+        is not a defect of this closure: deciding the operating window here would be inventing a
+        product quantity (CD-RULE-003).
+        (2) CLOCK TRUST IS NOT ESTABLISHED. FreshnessEvidence judges an age against the
+        `observed_at_utc` it is handed, and `now_utc` is an argument everywhere on the freshness
+        path by design, so that a historical evaluation replays exactly (BLUEPRINT §7). A caller
+        that passes a false instant gets evidence about the world it described. MEASURED: with
+        now_utc set ten years back, a ten-year-old row resolves to Agrees. NOT PROVED TO BE
+        CARRIED ANYWHERE. It is pre-existing and project-wide, not introduced here.
+        (3) `object.__setattr__` WALKS PAST FROZEN, as it does for every frozen value in Python
+        and in this repository. Both StalenessWindow and FreshnessEvidence use __slots__, so an
+        UNDECLARED attribute cannot be injected (measured: AttributeError); overwriting a
+        DECLARED slot on an already-constructed value is not preventable at the Python level.
+        This is the same residue already declared as boundary B of
+        src/crash_detector/dials/magnitude.py and measured there. NOT PROVED TO BE CARRIED
+        ANYWHERE.
+        (4) THE ENVELOPE'S `staleness_window_seconds` FIELD IS NOT ADMITTED THROUGH THIS DOOR.
+        The published envelope carries the window that was applied as a plain number validated
+        by the JSON Schema, so a hand-built envelope declaring an inadmissible window is a
+        publication-provenance question and not a staleness one. NOT PROVED TO BE CARRIED
+        ANYWHERE.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-012

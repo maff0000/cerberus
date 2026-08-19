@@ -17,14 +17,17 @@ from crash_detector.witness.panel import (
     PANEL_STATES,
     UNAVAILABLE_REASONS,
     Agrees,
+    AgreementWithoutFreshnessEvidence,
     Diverges,
     Unavailable,
     panel_state,
 )
 
-from conftest import FIXED_NOW
+from conftest import FIXED_NOW, freshness_for
 
-AGREES = Agrees(divergence_measure=0.02, as_of_utc=FIXED_NOW)
+AGREES = Agrees(
+    divergence_measure=0.02, as_of_utc=FIXED_NOW, freshness=freshness_for()
+)
 DIVERGES = Diverges(divergence_measure=0.9, threshold=0.5, as_of_utc=FIXED_NOW)
 UNAVAILABLE = Unavailable(reason="PANEL_ROW_ABSENT", since_utc=FIXED_NOW)
 
@@ -73,7 +76,9 @@ def test_agrees_refuses_a_measurement_that_is_not_a_finite_float(bad):
     """Refused, not coerced. `float("0.0")` and `float(True)` both produce a divergence
     measure that reads as agreement, manufactured out of a type error."""
     with pytest.raises((TypeError, ValueError)):
-        Agrees(divergence_measure=bad, as_of_utc=FIXED_NOW)
+        Agrees(
+            divergence_measure=bad, as_of_utc=FIXED_NOW, freshness=freshness_for()
+        )
 
 
 @pytest.mark.parametrize("bad", [None, "0.5", 1, True, math.nan, math.inf])
@@ -148,8 +153,97 @@ def test_every_constructor_refuses_a_naive_timestamp():
 
     naive = datetime(2026, 8, 19, 12, 0, 0)
     with pytest.raises(NaiveTimestampRejected):
-        Agrees(divergence_measure=0.1, as_of_utc=naive)
+        Agrees(
+            divergence_measure=0.1, as_of_utc=naive, freshness=freshness_for()
+        )
     with pytest.raises(NaiveTimestampRejected):
         Diverges(divergence_measure=0.9, threshold=0.5, as_of_utc=naive)
     with pytest.raises(NaiveTimestampRejected):
         Unavailable(reason="PANEL_ROW_ABSENT", since_utc=naive)
+
+
+# --- CD-ASR-F06: agreement requires positive evidence of freshness ------------------------- #
+
+def test_agrees_cannot_be_constructed_without_freshness_evidence():
+    """The field is required and has no default. Absence is a TypeError from Python."""
+    with pytest.raises(TypeError):
+        Agrees(divergence_measure=0.02, as_of_utc=FIXED_NOW)  # type: ignore[call-arg]
+
+
+def test_no_panel_constructor_gained_a_default_when_freshness_was_added():
+    """A default on `freshness` would have re-opened the whole finding in one line."""
+    for field in dataclasses.fields(Agrees):
+        assert field.default is dataclasses.MISSING, field.name
+        assert field.default_factory is dataclasses.MISSING, field.name
+
+
+def test_agrees_declares_exactly_three_fields():
+    """Asserted by EQUALITY. A fourth field is where an override would go."""
+    assert {f.name for f in dataclasses.fields(Agrees)} == {
+        "divergence_measure",
+        "as_of_utc",
+        "freshness",
+    }
+
+
+def test_agrees_refuses_a_look_alike_that_is_not_freshness_evidence():
+    """The variant an author reaches for: something that quacks like evidence.
+
+    Duck typing here would be the whole defect back again — anyone could declare an
+    observation fresh by writing an object with the right attribute names.
+    """
+
+    class LooksLikeFreshness:
+        as_of_utc = FIXED_NOW
+        observed_at_utc = FIXED_NOW
+        age_seconds = 0.0
+
+    with pytest.raises(AgreementWithoutFreshnessEvidence):
+        Agrees(
+            divergence_measure=0.02,
+            as_of_utc=FIXED_NOW,
+            freshness=LooksLikeFreshness(),  # type: ignore[arg-type]
+        )
+
+
+@pytest.mark.parametrize("bad", [None, 0.0, "fresh", True, {}])
+def test_agrees_refuses_anything_that_is_not_freshness_evidence(bad):
+    with pytest.raises(AgreementWithoutFreshnessEvidence):
+        Agrees(divergence_measure=0.02, as_of_utc=FIXED_NOW, freshness=bad)
+
+
+def test_agrees_refuses_evidence_about_a_different_observation():
+    """Borrowing a fresh observation's evidence for a stale one is the obvious evasion of
+    a freshness requirement, and it is closed by binding the two instants together."""
+    from conftest import ago
+
+    with pytest.raises(AgreementWithoutFreshnessEvidence):
+        Agrees(
+            divergence_measure=0.02,
+            as_of_utc=ago(300),
+            freshness=freshness_for(),  # evidence about FIXED_NOW, not about ago(300)
+        )
+
+
+def test_a_decade_old_observation_cannot_produce_agrees_by_direct_construction():
+    """CD-ASR-F06's row, attacked at the TYPE rather than through the resolver.
+
+    There is no window under which the evidence can be made, so there is no argument list
+    that constructs this value. That is what "structurally incapable" means.
+    """
+    from crash_detector.staleness import FreshnessNotEstablished, StalenessWindow
+    from conftest import ago
+
+    ten_years = 3650 * 24 * 3600.0
+    for window_seconds in (1.0, 60.0, 600.0, 900.0):
+        with pytest.raises(FreshnessNotEstablished):
+            Agrees(
+                divergence_measure=0.02,
+                as_of_utc=ago(ten_years),
+                freshness=freshness_for(
+                    ago(ten_years), window_seconds=window_seconds
+                ),
+            )
+        # and the window that would have made it fresh cannot be built either
+        with pytest.raises(ValueError):
+            StalenessWindow(seconds=ten_years)

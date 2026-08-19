@@ -8,6 +8,11 @@
 as ``Agrees``. There is no default, and there is no route from absence to agreement
 anywhere in this module or in the resolver that produces these values.
 
+``Agrees`` additionally carries :class:`~crash_detector.staleness.FreshnessEvidence`, so it
+cannot be constructed at all for an observation that was not current when it was read
+(CD-ASR-F06). Read :mod:`crash_detector.staleness` for that invariant and for the derivation
+of the window ceiling.
+
 PID doctrine §3.4: "External sources are witnesses, never ingredients. A witness that is
 also an ingredient cannot corroborate anything." A witness panel that quietly reads AGREES
 when the witness feed is dead corroborates nothing while looking like corroboration —
@@ -28,10 +33,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Union
 
+from crash_detector.staleness import FreshnessEvidence
 from crash_detector.time_utc import ensure_utc
 
 __all__ = [
     "Agrees",
+    "AgreementWithoutFreshnessEvidence",
     "Diverges",
     "Unavailable",
     "WitnessPanel",
@@ -56,16 +63,49 @@ def _require_finite_float(type_name: str, field_name: str, observed: object) -> 
         raise ValueError(f"{type_name}.{field_name} must be finite, got {observed!r}")
 
 
+class AgreementWithoutFreshnessEvidence(ValueError):
+    """Agreement was claimed without positive, coherent evidence of freshness."""
+
+
 @dataclass(frozen=True)
 class Agrees:
-    """The witnesses were reachable, current, and within the divergence threshold."""
+    """The witnesses were reachable, current, and within the divergence threshold.
+
+    **CURRENT is a field, not a hope (CD-ASR-F06).** ``freshness`` is a
+    :class:`~crash_detector.staleness.FreshnessEvidence`, which cannot itself be
+    constructed for an observation outside its window — and no window above
+    :data:`~crash_detector.staleness.STALENESS_WINDOW_CEILING_SECONDS` can be constructed
+    at all. So a decade-old row cannot produce an ``Agrees`` by ANY route into any
+    resolver, including a route that skips the age comparison entirely: there is no such
+    route, because the comparison lives inside the evidence and the evidence is required.
+
+    The evidence must be about THIS reading's instant. Binding ``freshness.as_of_utc`` to
+    ``as_of_utc`` is what stops the obvious evasion — attaching evidence about some other,
+    fresher observation to an agreement about a stale one.
+    """
 
     divergence_measure: float
     as_of_utc: datetime
+    freshness: FreshnessEvidence
 
     def __post_init__(self) -> None:
         _require_finite_float("Agrees", "divergence_measure", self.divergence_measure)
         object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
+        if type(self.freshness) is not FreshnessEvidence:
+            raise AgreementWithoutFreshnessEvidence(
+                "Agrees requires FreshnessEvidence, got "
+                f"{type(self.freshness).__name__}. Reaching agreement requires a "
+                "MEASUREMENT that the witnesses were current; an object that merely "
+                "resembles one is not that measurement, and neither is a subclass that "
+                "may have redefined how the measurement is made. The EXACT type is "
+                "required — FreshnessEvidence refuses subclassing for the same reason."
+            )
+        if self.freshness.as_of_utc != self.as_of_utc:
+            raise AgreementWithoutFreshnessEvidence(
+                f"the freshness evidence is for {self.freshness.as_of_utc!r} but this "
+                f"agreement is for {self.as_of_utc!r}. Evidence about a different "
+                "observation is not evidence about this one."
+            )
 
 
 @dataclass(frozen=True)

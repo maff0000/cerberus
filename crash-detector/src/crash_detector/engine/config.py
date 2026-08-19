@@ -12,9 +12,14 @@ before an evaluation runs rather than producing a reading nobody can explain:
   * a dial declaring required inputs must declare the model that maps them, because a
     dial with inputs and no declared mapping cannot produce an explicable number
     (doctrine §3.6);
-  * the staleness window must be a positive finite number of seconds. An infinite window
-    is not a lenient window, it is no window at all, and it is the cheapest way to make a
-    stale reading render as current;
+  * the staleness window must be ADMISSIBLE — a positive finite number of seconds that is
+    also at or below :data:`~crash_detector.staleness.STALENESS_WINDOW_CEILING_SECONDS`.
+    An infinite window is not a lenient window, it is no window at all, and it is the
+    cheapest way to make a stale reading render as current; ``1e18`` is the same thing
+    written so as not to look like it, which is CD-ASR-F06. Admission happens in exactly
+    one place, :class:`~crash_detector.staleness.StalenessWindow`, shared with the serving
+    resolver — two guarded comparison sites would be an enumeration, and enumerations come
+    apart;
   * **every source a dial names must be registered**, and **its declared criticality must
     agree with the set it is named in** — see below.
 
@@ -59,13 +64,13 @@ declared constant window and names it as such.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from typing import Union
 
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.engine.model import ContributionModel
 from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY, SourceRegistry
+from crash_detector.staleness import StalenessWindow
 
 __all__ = ["DialSpec", "ConfigSnapshot", "empty_config_snapshot"]
 
@@ -138,11 +143,11 @@ class ConfigSnapshot:
                 "ConfigSnapshot.staleness_window_seconds must be a float, got "
                 f"{type(window).__name__}"
             )
-        if not math.isfinite(window) or window <= 0.0:
-            raise ValueError(
-                "staleness_window_seconds must be a positive finite number of seconds; "
-                "an unbounded staleness window is no staleness window"
-            )
+        # ONE ADMISSION DOOR, shared with the serving resolver (CD-ASR-F06). The snapshot
+        # keeps a float field because the envelope publishes the window that was applied
+        # as a number, but the value only becomes USABLE by passing through
+        # StalenessWindow — and `window()` below is the only way the evaluation gets one.
+        StalenessWindow(seconds=window)
 
         registry = self.source_registry
         if not isinstance(registry, SourceRegistry):
@@ -158,6 +163,15 @@ class ConfigSnapshot:
         for spec in self.dial_specs:
             registry.assert_may_be_required(spec.required_input_ids)
             registry.assert_may_be_contributing(spec.contributing_input_ids)
+
+    def window(self) -> StalenessWindow:
+        """The admitted staleness window for this snapshot.
+
+        The evaluation takes its window from HERE and never from the raw float, so the
+        ceiling cannot be evaded by reading the field directly: the field is the record of
+        what was configured, and this is the thing that may be applied.
+        """
+        return StalenessWindow(seconds=self.staleness_window_seconds)
 
     def spec_for(self, dial_id: str) -> DialSpec:
         """The spec for ``dial_id``. Raises rather than returning a default spec."""

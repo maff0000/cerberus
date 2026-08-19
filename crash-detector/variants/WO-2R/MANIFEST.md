@@ -1,6 +1,6 @@
 # WO-2R variant plants — MANIFEST
 
-**Dispatch:** `governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml`, increments 1, 2, 2b, 3, 3b and 4.
+**Dispatch:** `governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml`, increments 1, 2, 2b, 3, 3b, 4 and 5.
 **Written by:** `CD-ENG-WO2R-01` (ENGINEER).
 
 **Nothing in this directory is evidence and nothing in it is assurance.** These are the
@@ -1317,3 +1317,109 @@ defect in the evidence trail: `PL-U1-U6...patch.txt` says "the other five regist
 (`check_no_numeric_default`, `check_no_blend`, `check_schema_closed`, `check_no_execution_interface`,
 `check_lockfile_denylist`, `check_egress_no_broker`), all at exit `0`. `check_grant_matrix_live`
 is a seventh and needs a live PostgreSQL, which was not started for this measurement.
+
+---
+
+# Increment 5 — `CD-ASR-F06` (MEDIUM), criterion CD-AC-005
+
+**Directory:** `variants/WO-2R/CD-ASR-F06/`. **Data, not executable.**
+
+**THE CLASS attacked:** *A CONFIGURED WINDOW WIDE ENOUGH TO MAKE STALENESS MEANINGLESS* — and,
+underneath it, *AGREEMENT REACHED WITHOUT ANY EVIDENCE OF FRESHNESS*. Not `1e18`, and not "the
+serving resolver": any route by which an observation that was not current when it was read
+produces, or is carried into, agreement.
+
+**THE STRUCTURE they are aimed at**, so a reader can judge whether the routes are a fair spread
+over it rather than over the ones that were easy:
+
+* **the admission door** — `StalenessWindow` in `src/crash_detector/staleness.py`. The ONLY way
+  to obtain a usable window. Refuses non-numbers, `bool`, subclasses of `float`/`int`, `nan`,
+  `inf`, zero, negatives, and anything above `STALENESS_WINDOW_CEILING_SECONDS = 900.0` — which
+  is DERIVED from PID.md §5's ratified 15-minute detectability budget and is a CEILING, not an
+  operating window. Refuses being subclassed.
+* **the evidence** — `FreshnessEvidence`, whose construction *is* the age comparison: the age is
+  computed inside the constructor from the observation's own timestamps and is not a field.
+  Refuses a bare number as a window, refuses being subclassed, and both values use `__slots__`.
+* **the requirement** — `Agrees` carries a `FreshnessEvidence` with no default, demands the
+  EXACT type, and demands that its `as_of_utc` equal the agreement's own.
+* **the shared door** — `ConfigSnapshot.window()` and
+  `crash_detector.engine.evaluate._latest_usable_ok(window: StalenessWindow)`, so the engine's
+  own age comparison admits through the same type.
+
+## Why two of these rows have no source patch beyond a test
+
+E07's whole point is that it **needs no source edit**. The variant is a CALLER behaviour, so its
+durable form is a test planted into a module the declared command already runs — which is
+`git apply`-able data, is executed by the declared command verbatim, and asserts the violated
+outcome so the command exits non-zero for as long as the route stays closed. Rows marked
+**caller route** are of that shape; rows marked **source route** patch the product itself.
+
+## The clean arm these contrast against
+
+```bash
+PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q   # exit 0, 152 passed
+PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py -q                                        # exit 0, 100 passed
+```
+
+## Rows
+
+Each on its own pristine copy, `git apply -p1`, `python3 -B`, under `timeout 180`.
+
+| variant | shape | PROPOSITION attacked | ROUTE, and why it differs from the known set | observed |
+|---|---|---|---|---|
+| `E07` | caller route | no input whatever produces AGREES | **KNOWN SET, verbatim.** `staleness_window_seconds=1e18` with a panel row **ten years old** marked AGREES | **exit 1**, `1 failed, 152 passed`. `crash_detector.staleness.StalenessWindowOutOfRange: staleness window 1e+18 seconds exceeds the ceiling of 900.0 seconds and is REFUSED, not clamped ... The ceiling is DERIVED, not chosen: PID.md §5 ...` |
+| `E08` | source route | as above | **KNOWN SET.** `try/except Exception: return Agrees(...)` wrapped round the age computation | **exit 0**, `152 passed`. **NOT DETECTED, and that is the auditor's own finding restated rather than a new one** — see the note below |
+| `V47` | source route | as above | the E08 handler **made to actually fire**: a `raise` inside the `try`, so the swallowing branch executes on every row. The auditor's honest qualification was that it *could not make the handler fire*; this row removes that qualification and asks what happens when it does. Not on the known set — E08 is dead code, this is live | **exit 1**, `24 failed, 128 passed`. `crash_detector.staleness.FreshnessNotEstablished: the observation is 601.0 seconds old and the applied staleness window is 600.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.` |
+| `V48` | caller route | the window cannot be neutralised | a window that is a **subclass of `float` redefining comparison** (`__lt__`/`__le__`/`__gt__`). Python tries the REFLECTED operation first when the right operand is a subclass, so `age > window` calls `window.__lt__(age)` and answering `False` makes every age fresh **whatever the number is**. Defeats any guard written as `isinstance()` plus `>` — which is what this seat's own first cut was | **exit 1**, `1 failed, 152 passed`. `TypeError: staleness window must be a plain int or float number of seconds, got _NeverGreater. A subclass of a number is not a number: it may redefine what comparison means ...` |
+| `V49` | caller route | as `V48` | **subclass `StalenessWindow`** and override `__post_init__` so the ceiling is never applied, while still satisfying every `isinstance` check downstream. Also not on the known set, and also a route against this seat's own first cut | **exit 1**, `1 failed, 152 passed`. `TypeError: WideWindow may not subclass StalenessWindow: a subclass could redefine the admission that gives a window its meaning while remaining acceptable to every isinstance check downstream.` — raised at class CREATION, so the subclass never exists |
+| `V50` | source route | agreement requires freshness | a **FAST PATH** at the top of `resolve_panel`: if the row already says AGREES and carries its measure, return it without ever computing an age. The dispatch's "a route that skips the age comparison entirely", written as the optimisation a reviewer would wave through | **exit 1**, `18 failed, 134 passed`, `FreshnessNotEstablished` for every stale and future-dated row. The fast path cannot construct its own return value |
+| `V51` | caller route | as `E07`, **on the dial path** | `ConfigSnapshot(staleness_window_seconds=1e18)` and a **ten-year-old observation feeding a dial**. THE OTHER COMPARISON SITE: `crash_detector.engine.evaluate` performs its own age comparison and CD-ASR-F06 was reported only against the resolver, so a closure that bounded one would have closed the instance | **exit 1** on CD-AC-001's declared command, `1 failed, 100 passed`, same `StalenessWindowOutOfRange` |
+
+## Summary of what was refused by what — increment 5
+
+| variant | route class | what refused it | exit |
+|---|---|---|---|
+| `E07` `V51` | a configured window wide enough to abolish staleness, on either comparison site | `StalenessWindowOutOfRange` from the shared admission door | **1** |
+| `V48` `V49` | a window that redefines its own comparison or its own admission | `TypeError` — exact-type check, and subclassing refused at class creation | **1** |
+| `V47` `V50` | agreement reached from a code path that never compares ages | `FreshnessNotEstablished` from inside the value agreement is made of | **1** |
+| `E08` | the same handler, planted where it cannot execute | **nothing — it is dead code, and no behaviour changes** | **0** |
+
+## `E08` / `CD-ASR-F07`, reported and NOT claimed closed as a detection
+
+**Out of scope by the dispatch, reported as a consequence.** Two different questions, and
+conflating them would be the reporting defect this rework exists to correct.
+
+**Is the route EXPLOITABLE? No, and that is now structural.** The handler has nothing to build
+`Agrees` from. It cannot omit the evidence (`TypeError`, no default), it cannot fabricate it
+(the age is derived, not accepted), it cannot borrow evidence about a fresher observation
+(`AgreementWithoutFreshnessEvidence`, the instants are bound), and it cannot make evidence for a
+stale row (`FreshnessNotEstablished`). `V47` proves this by execution with the handler firing.
+
+**Is the route DETECTED when planted? NO.** `E08` applied to the delivered tree exits **0**,
+`152 passed`. **Measured, on the E08 tree:** `age_seconds` raised on **0 of 6** constructible
+rows spanning fresh, stale, decade-old and future-dated, because `PanelRow.__post_init__`
+normalises `as_of_utc` through `ensure_utc`. **The planted handler is unreachable, so nothing
+about behaviour changes and nothing can observe it.** That is exactly the auditor's own
+qualification and it is unchanged by this increment.
+
+**CD-ASR-F07 therefore stays OWED at WO-3**, as its LOW severity and the dispatch both say. What
+this increment can honestly claim is that the CLASS the finding names — an exception handler
+resolving to agreement — is no longer a route to a false AGREES. What it cannot claim is that
+planting one is visible.
+
+## Two routes this seat found against its OWN first cut
+
+Recorded because they were live defects in an uncommitted draft, and the next auditor is
+entitled to know which of the guard's edges have already been wrong.
+
+1. **`V48`.** The first cut wrote `isinstance(window, (int, float))` and then compared with
+   `>`. A `float` subclass redefining comparison defeated it completely and the ceiling never
+   fired. Closed by checking the EXACT type and computing on a plain `float`. Raised as
+   `CD-ENG-WO2R-F20`.
+2. **`V49`.** The first cut wrote `isinstance(self.window, StalenessWindow)` in
+   `FreshnessEvidence`. A subclass overriding `__post_init__` passed it while carrying any width
+   at all. Closed by refusing subclassing at class creation AND by requiring the exact type at
+   every use site. Raised as `CD-ENG-WO2R-F21`.
+
+Both were found by writing the variant before believing the structure, which is the only reason
+they are in this column rather than in the auditor's.

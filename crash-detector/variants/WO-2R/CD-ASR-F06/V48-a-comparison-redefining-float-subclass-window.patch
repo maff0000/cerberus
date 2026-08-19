@@ -1,0 +1,36 @@
+--- a/tests/test_witness_resolver.py
++++ b/tests/test_witness_resolver.py
+@@ -410,3 +410,33 @@
+                     agreed.append((window, state, age, measures))
+ 
+     assert agreed == [], f"a stale or malformed input agreed: {agreed}"
++
++
++# --- PLANTED VARIANT V48 (new, CD-ASR-F06) ------------------------------------------------ #
++# A window that is a SUBCLASS of float and redefines comparison. Python tries the reflected
++# operation first when the right operand is a subclass of the left operand's type, so
++# `age > window` calls `window.__lt__(age)`. Answer False there and every age is fresh,
++# whatever the number is. This defeats any guard written as isinstance() plus `>`.
++
++class _NeverGreater(float):
++    def __lt__(self, other):
++        return False
++
++    def __le__(self, other):
++        return True
++
++    def __gt__(self, other):
++        return False
++
++
++def test_PLANT_V48_a_comparison_redefining_float_subclass_makes_a_decade_old_row_agree():
++    row = PanelRow(
++        state="AGREES",
++        as_of_utc=ago(3650 * 24 * 3600.0),
++        published_utc=ago(3650 * 24 * 3600.0),
++        measures={"divergence_measure": 0.02},
++    )
++    panel = resolve_panel(
++        row, now_utc=FIXED_NOW, staleness_window_seconds=_NeverGreater(1e18)
++    )
++    assert isinstance(panel, Agrees)

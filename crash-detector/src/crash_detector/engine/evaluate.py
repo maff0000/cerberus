@@ -72,6 +72,7 @@ from crash_detector.dials.provenance import observed_for_dial
 from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.observations import OK, ObservationRecord
+from crash_detector.staleness import StalenessWindow
 from crash_detector.time_utc import age_seconds, ensure_utc
 
 __all__ = [
@@ -125,7 +126,7 @@ def evaluate(
     usable = _latest_usable_ok(
         observations,
         now_utc=instant,
-        staleness_window_seconds=config_snapshot.staleness_window_seconds,
+        window=config_snapshot.window(),
     )
     return DialSet(
         equity=_evaluate_dial(
@@ -141,7 +142,7 @@ def _latest_usable_ok(
     observations: Sequence[ObservationRecord],
     *,
     now_utc: datetime,
-    staleness_window_seconds: float,
+    window: StalenessWindow,
 ) -> Mapping[str, OK]:
     """The most recent usable ``OK`` observation per source.
 
@@ -159,6 +160,13 @@ def _latest_usable_ok(
       timestamps are external input and external input is hostile (Baseline §4). If a
       clock-skew allowance is ever wanted it is configuration with a declared value, not
       a tolerance quietly assumed here.
+
+    **``window`` is a :class:`~crash_detector.staleness.StalenessWindow`, not a float, and
+    that is the closure of CD-ASR-F06 on this path.** A bare number could be anything —
+    ``1e18`` is a bare number, and it abolishes staleness on this path exactly as it did on
+    the serving path. This private helper therefore cannot be called with an unadmitted
+    quantity at all: the only way to obtain the argument is to construct one, and
+    constructing one is the admission.
     """
     latest: dict[str, OK] = {}
     for record in observations:
@@ -166,9 +174,7 @@ def _latest_usable_ok(
         if not isinstance(outcome, OK):
             continue
         age = age_seconds(as_of_utc=outcome.source_as_of_utc, now_utc=now_utc)
-        if age < 0.0:
-            continue
-        if age > staleness_window_seconds:
+        if not window.covers(age):
             continue
         incumbent = latest.get(record.source_id)
         if incumbent is None or outcome.source_as_of_utc > incumbent.source_as_of_utc:

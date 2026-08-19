@@ -182,8 +182,18 @@ DIAL_PATH_DIRS = ("src/crash_detector/dials", "src/crash_detector/engine")
 DIAL_PATH_FILES = ()
 
 #: THE ADJACENT PATH. Classes B, C, D and E are violations; class A is a reported note.
+#:
+#: ``staleness.py`` was added here when CD-ASR-F06 was closed. It is the single admission
+#: door for a usable staleness window and it is READ BY BOTH the dial path and the serving
+#: path, so it is exactly where a numeric default would do the damage this check exists to
+#: prevent — a defaulted window is a defaulted freshness decision. It is NOT put on the
+#: DIAL path, because BLUEPRINT §7 and §13 scope that to ``dials/`` and ``engine/`` and this
+#: check does not widen a ratified scope on its own initiative (declared limit 4).
 ADJACENT_PATH_DIRS = ("src/crash_detector/serving",)
-ADJACENT_PATH_FILES = ("src/crash_detector/observations.py",)
+ADJACENT_PATH_FILES = (
+    "src/crash_detector/observations.py",
+    "src/crash_detector/staleness.py",
+)
 
 #: Names that mean "a number" in an annotation.
 NUMERIC_TYPE_NAMES = frozenset(

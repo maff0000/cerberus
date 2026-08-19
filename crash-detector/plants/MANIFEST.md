@@ -530,6 +530,16 @@ change from the other side. The type arm and the AST arm both stay clean.
 | **patch** | `plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch` |
 | **command** | `python3 tools/register/check_engine_no_witness_reach.py --root .` |
 
+> **RE-BASED AT INCREMENT 5 (CD-ASR-F06), NOT REWRITTEN.** Its hunk on
+> `src/crash_detector/engine/evaluate.py` carried
+> `staleness_window_seconds=config_snapshot.staleness_window_seconds` as context, and that line
+> legitimately became `window=config_snapshot.window()` when the staleness admission door was
+> made a shared type. The patch no longer applied. **Every edit it makes is unchanged** — the
+> same `corroboration.py`, the same relative import of `.witness.panel`, the same
+> `WITNESSES_DIVERGED` branch in `_evaluate_dial` — only the surrounding context lines moved.
+> Re-measured: `git apply --check` clean, planted command **exit 1**, caught through the engine
+> PACKAGE arm exactly as before. No plant was deleted and none was weakened.
+
 **Proposition violated.** *Nothing reachable from `src/crash_detector/engine/` reaches
 witness code.* The patch adds `src/crash_detector/corroboration.py` — a small shared helper
 sitting beside `observations.py` — which relatively-imports `.witness.panel`, and has
@@ -676,7 +686,18 @@ failed the check" has recorded nothing. Bring a store.
 |---|---|
 | **test_id** | `CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES` |
 | **patch** | `plants/CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch` |
-| **command** | `PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q` |
+
+> **RE-BASED AT INCREMENT 5 (CD-ASR-F06), NOT REWRITTEN.** The structure this patch edits
+> legitimately changed: `_require_usable_window(...)` became `window = StalenessWindow(...)`,
+> `age > staleness_window_seconds` became `not window.covers(age)`, and `Agrees` gained a
+> required `freshness` field. The patch therefore no longer applied. **It violates exactly the
+> same proposition by exactly the same two routes** — the absent row returns `Agrees`, and the
+> `PANEL_ROW_STALE` branch is deleted — written against the new structure, with the absent-row
+> arm now supplying `FreshnessEvidence` about the CURRENT instant so that the plant is a
+> genuine violation of the proposition rather than a construction error. `tests/test_staleness.py`
+> joined the declared command in the same increment. Re-measured: `git apply --check` clean,
+> planted command **exit 1**. No plant was deleted and none was weakened.
 
 **Proposition violated.** *No absence resolves to agreement.* The patch attacks **both**
 halves of the proposition, because the criterion names both and a plant that took only one

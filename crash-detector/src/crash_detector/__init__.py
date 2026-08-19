@@ -13,6 +13,8 @@ Package map, and which work order each part is owed to:
 module                       WO     what it is
 ===========================  =====  =====================================================
 ``time_utc``                 WO-2   UTC-only timestamp handling; naive datetimes refused
+``staleness``                WO-2   the ONE admission door for a usable staleness window,
+                                    and the freshness evidence agreement is made of
 ``observations``             WO-2   the observation record and its four-way fetch outcome
 ``source_registry``          WO-2   sources, criticality, and the criticality contract
 ``dials``                    WO-2   ``Reading``, the two unrelated score types, ``DialSet``

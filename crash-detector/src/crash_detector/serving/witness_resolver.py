@@ -25,8 +25,20 @@ thought of. In particular:
   out of any staleness window. Without this branch, one bad clock upstream produces a
   panel that reads ``AGREES`` permanently, and reads it most confidently exactly when the
   witness pipeline is broken.
-* **A non-finite staleness window.** ``float("inf")`` seconds is not a lenient window, it
-  is the abolition of staleness. It is refused rather than honoured.
+* **A staleness window wide enough to make staleness meaningless.** ``float("inf")``
+  seconds is not a lenient window, it is the abolition of staleness — and so, in every way
+  that matters, is ``1e18``. Refusing only the first was **CD-ASR-F06**: the auditor passed
+  ``1e18`` with a row **ten years old** and marked ``AGREES`` and got ``WITNESS AGREES``,
+  with **no source edit at all**. The window is now admitted through
+  :class:`~crash_detector.staleness.StalenessWindow`, which refuses — never clamps —
+  anything above a ceiling DERIVED from ``PID.md`` §5's ratified 15-minute detectability
+  budget. Read that module for the derivation.
+* **Agreement without evidence of freshness.** ``Agrees`` now requires
+  :class:`~crash_detector.staleness.FreshnessEvidence`, whose construction *is* the age
+  comparison. Bounding the window alone would have left every route that never reaches the
+  comparison — an exception handler, a fallback branch, a caller of a private helper —
+  free to produce agreement. There is no such route now, because the comparison is inside
+  the value that agreement is made of.
 * **Coercion.** ``float(row.measures[k])`` would happily turn ``"0.0"``, ``True`` or
   ``Decimal("0")`` into a divergence measure of zero — perfect agreement, manufactured
   from a type error. Measurements must already be finite floats; anything else is
@@ -44,6 +56,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Mapping, Union
 
+from crash_detector.staleness import FreshnessEvidence, StalenessWindow
 from crash_detector.time_utc import age_seconds, ensure_utc
 from crash_detector.witness.panel import (
     PANEL_STATES,
@@ -110,7 +123,7 @@ def resolve_panel(
     never to ``Agrees``.
     """
     instant = ensure_utc(now_utc)
-    _require_usable_window(staleness_window_seconds)
+    window = StalenessWindow(seconds=staleness_window_seconds)
 
     if row is None:
         return Unavailable(reason="PANEL_ROW_ABSENT", since_utc=instant)
@@ -118,7 +131,7 @@ def resolve_panel(
     age = age_seconds(as_of_utc=row.as_of_utc, now_utc=instant)
     if age < 0.0:
         return Unavailable(reason="PANEL_ROW_FUTURE_DATED", since_utc=instant)
-    if age > staleness_window_seconds:
+    if not window.covers(age):
         return Unavailable(reason="PANEL_ROW_STALE", since_utc=row.as_of_utc)
 
     if row.state == _STATE_UNAVAILABLE:
@@ -130,7 +143,15 @@ def resolve_panel(
         measure = _finite_measure(row, _DIVERGENCE_MEASURE)
         if measure is None:
             return Unavailable(reason="PANEL_ROW_INCOHERENT", since_utc=row.as_of_utc)
-        return Agrees(divergence_measure=measure, as_of_utc=row.as_of_utc)
+        return Agrees(
+            divergence_measure=measure,
+            as_of_utc=row.as_of_utc,
+            freshness=FreshnessEvidence(
+                as_of_utc=row.as_of_utc,
+                observed_at_utc=instant,
+                window=window,
+            ),
+        )
 
     if row.state == _STATE_DIVERGES:
         measure = _finite_measure(row, _DIVERGENCE_MEASURE)
@@ -144,25 +165,6 @@ def resolve_panel(
         )
 
     return Unavailable(reason="PANEL_STATE_UNRECOGNISED", since_utc=row.as_of_utc)
-
-
-def _require_usable_window(staleness_window_seconds: float) -> None:
-    """A staleness window must be a positive finite number of seconds.
-
-    Refused rather than defaulted. A caller that cannot state a window does not get a
-    lenient one — it gets an error, because "no window" and "a very large window" both
-    mean nothing is ever stale.
-    """
-    window = staleness_window_seconds
-    if isinstance(window, bool) or not isinstance(window, (int, float)):
-        raise TypeError(
-            f"staleness_window_seconds must be a number, got {type(window).__name__}"
-        )
-    if not math.isfinite(window) or window <= 0.0:
-        raise ValueError(
-            "staleness_window_seconds must be positive and finite; an unbounded "
-            "staleness window is no staleness window"
-        )
 
 
 def _finite_measure(row: PanelRow, key: str) -> Union[float, None]:
