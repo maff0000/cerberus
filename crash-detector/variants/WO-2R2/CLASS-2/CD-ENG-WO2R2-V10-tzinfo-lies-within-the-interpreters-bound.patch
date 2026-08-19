@@ -1,0 +1,37 @@
+diff --git a/src/crash_detector/serving/feed_skew.py b/src/crash_detector/serving/feed_skew.py
+new file mode 100644
+index 0000000..51c2359
+--- /dev/null
++++ b/src/crash_detector/serving/feed_skew.py
+@@ -0,0 +1,31 @@
++"""CD-ENG-WO2R2-V10 — THE DECLARED BOUNDARY, DRIVEN AS AN ATTACK.
++
++Boundary 1 of crash_detector.own_terms says a lying `tzinfo` shifts the instant and that
++CPython bounds the shift to strictly less than one day. A declared boundary that is never
++executed is a sentence, so this variant executes it from both sides:
++
++  * an offset of -23 hours, which CPython permits;
++  * an offset of one day, which CPython refuses.
++
++It is written to be MEASURED OPEN within the bound. That is the point of it.
++"""
++
++from datetime import datetime, timedelta, tzinfo
++
++
++class SkewedZone(tzinfo):
++    def __init__(self, hours):
++        self._offset = timedelta(hours=hours)
++
++    def utcoffset(self, when):
++        return self._offset
++
++    def dst(self, when):
++        return timedelta(0)
++
++    def tzname(self, when):
++        return "SKEW"
++
++
++def skewed(year, month, day, hour, hours_of_skew):
++    return datetime(year, month, day, hour, tzinfo=SkewedZone(hours_of_skew))

@@ -1,0 +1,54 @@
+diff --git a/src/crash_detector/serving/feed_clock.py b/src/crash_detector/serving/feed_clock.py
+new file mode 100644
+index 0000000..63757e5
+--- /dev/null
++++ b/src/crash_detector/serving/feed_clock.py
+@@ -0,0 +1,48 @@
++"""CD-ENG-WO2R2-V08 — THIS SEAT ATTACKING ITS OWN NEW STRUCTURE (PBG-ASSURE-017).
++
++Once `age_seconds` stops calling `__rsub__` on a supplied object, the next move is not to
++override the arithmetic but to override what the arithmetic is computed FROM. `own_instant`
++re-builds a datetime from `value.year`, `value.month`, ... — so a subclass that defines
++those as properties decides its own instant, and the re-construction faithfully rebuilds
++the lie.
++
++That is the attack. Whether it works depends on HOW the primitives are read.
++"""
++
++from datetime import datetime, timezone
++
++
++class FeedInstant(datetime):
++    """Ordinary in every visible way, and it reports today's date."""
++
++    @property
++    def year(self):
++        return 2026
++
++    @property
++    def month(self):
++        return 8
++
++    @property
++    def day(self):
++        return 19
++
++    @property
++    def hour(self):
++        return 12
++
++    @property
++    def minute(self):
++        return 0
++
++    @property
++    def second(self):
++        return 0
++
++    @property
++    def microsecond(self):
++        return 0
++
++
++def feed_instant(year, month, day):
++    return FeedInstant(year, month, day, tzinfo=timezone.utc)

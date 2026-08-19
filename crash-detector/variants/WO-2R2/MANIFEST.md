@@ -12,8 +12,26 @@ seats' evidence was thorough.
 ## FOR THE THIRD ASSURANCE SEAT — READ THIS FIRST
 
 You were dispatched with an exclusion set so that you can avoid routes that have already
-been walked. **These four are now part of it.** From the moment you read them they prove
-nothing about any class: they are a regression floor and a list of roads not to re-drive.
+been walked. **These NINE are now part of it** — four for CLASS 1 at increment 1, five for
+CLASS 2 at increment 2. (This sentence read "these four" when increment 1 wrote it; it is
+corrected here rather than left to mislead, and the correction is disclosed rather than
+made silently.) From the moment you read them they prove nothing about any class: they are a
+regression floor and a list of roads not to re-drive.
+
+**FOR CLASS 2, THE THREE THINGS WORTH MOST TO YOU ARE NOT THE REFUSALS:**
+
+1. **`CD-ENG-WO2R2-V10` IS MEASURED OPEN**, at the audited base AND at the closure. A
+   `tzinfo` that reports a false offset moves the instant, and CPython bounds it to under 24
+   hours — which is 96x the 900-second window ceiling. A row whose stated wall clock is 22
+   hours old renders `WITNESS AGREES`. It is this seat's own declared boundary 1, driven as
+   an attack, and it is raised as a finding against this seat's own closure.
+2. **`CD-ENG-WO2R2-V09`'s PREMISE IS REFUTED, and the row says so.** It was written to show a
+   `timedelta` subclass controlling the offset subtraction. It does not, at any arm,
+   including a counterfactual arm with this seat's own rebuild REMOVED. A route this seat
+   predicted and could not demonstrate is recorded as such rather than quietly dropped.
+3. **`CD-ENG-WO2R2-V08` IS REFUSED AT BOTH SHAs AND FOR DIFFERENT REASONS**, which is
+   `CD-PL-F74` in one row: at `50fc231` it was refused by an accident of what it did not
+   override, and at the closure by the descriptor read. The counterfactual arm proves which.
 
 Two things in here are worth more to you than the three refusals:
 
@@ -38,7 +56,7 @@ pristine extraction per variant, discarded afterwards.
 SHA=<the increment SHA in the row>
 T=$(mktemp -d)
 git -C /srv/crash-detector-wo2 archive "$SHA" | tar -x -C "$T"
-cd "$T" && git apply -p1 /srv/crash-detector-wo2/variants/WO-2R2/CLASS-1/<row>.patch
+cd "$T" && git apply -p1 /srv/crash-detector-wo2/variants/WO-2R2/<CLASS-1|CLASS-2>/<row>.patch
 # then the row's own command
 ```
 
@@ -317,11 +335,205 @@ measurement attached.
 
 ---
 
+# CLASS 2 — JUDGE VALUES, NEVER TYPES. Increment 2.
+
+**THE CLASS, AS THE PRODUCT OWNER STATED IT AND AS THESE ROWS ATTACK IT:** *any judgement
+this system makes that delegates its deciding operation to an object the system did not
+construct.* Not "datetime subclasses". The five rows below attack it at five different
+levels — the label, the mapping key, the timestamp's own fields, the offset's arithmetic,
+and the timezone that reports the offset — and **two of them are not refusals**.
+
+**INCREMENT SHA for every CLASS 2 row: the commit that lands this manifest, on branch
+`wo-2-skeleton`.** The base each row is contrasted against is `50fc231`, the audited tree,
+and `7ac1574`, the lane head this increment started from.
+
+## THE CLASS 2 ROWS
+
+### CD-ENG-WO2R2-V06 — THE PANEL STATE LABEL FORGES AGREEMENT. *No timestamp involved.*
+
+| | |
+|---|---|
+| class | CLASS 2 — JUDGE VALUES, NEVER TYPES |
+| patch | `CLASS-2/CD-ENG-WO2R2-V06-panel-state-label-forges-agreement.patch` |
+| proposition attacked | CD-AC-005: there is no input — missing, stale, malformed or defaulted — from which the serving layer produces AGREES |
+| route | A `str` SUBCLASS supplied as `PanelRow.state`. `resolve_panel` selects the panel constructor with `row.state == _STATE_AGREES`, and `==` is the LEFT operand's to define. The row's stored state is `UNAVAILABLE` — the witness feed is DEAD — and it compares equal to `"AGREES"`. |
+| why it is a DIFFERENT route from both corpora | Neither corpus attacks the DISCRIMINATOR. The WO-2 corpus attacks CD-AC-005 through window width (E07), exception handlers (E08), rendering maps, fast paths (V50) and `object.__setattr__` (PL-W5); ASR2-005-A attacks the TIMESTAMP. **This row involves no timestamp at all**: the row is fresh, the window is ordinary, and `FreshnessEvidence`'s constructor runs and succeeds honestly. It reaches the Product Owner's forbidden sentence without going anywhere near the thing F02 was about, which is the point of it — it is the same CLASS by a road with no clock on it. |
+| MEASURED at `50fc231` | **OPEN.** `stored state repr: 'UNAVAILABLE' type: FeedState` → `resolved: Agrees` → `RENDERS: WITNESS AGREES`. |
+| MEASURED at the closure | **REFUSED.** `stored state repr: 'UNAVAILABLE' type: str` → `Unavailable(reason='WITNESS_FEED_UNREACHABLE')` → `WITNESS UNAVAILABLE`. It does not raise; it reports the truth the row carried, which is what "fail closed, not fail silent" asks for. |
+| THE REFUSING LAYER, NAMED AND SCOPED (`CD-PL-F74`) | `crash_detector.serving.witness_resolver.PanelRow.__post_init__`, at runtime, via `crash_detector.own_terms.own_str`, which returns `str.__str__(value)` — a copy of the object's own code points. **SCOPE:** every `PanelRow` constructed anywhere in the process, from any module, under any name. It is a re-construction of the VALUE, not a test of it: no property of the supplied object is consulted after the copy, so the scope does not depend on which comparisons exist downstream. |
+| exception type / message | **NONE — and that is deliberate.** There is no exception. The refusal is that the forged label stops being able to answer, so the resolver reaches the branch the row's real content selects. |
+| THE RENAME TEST | **SURVIVES.** `own_str` consults no identifier — not the class's name, not the module's, not the field's. Renaming `FeedState`, `feed_state` and the module changes nothing about which code points `str.__str__` copies. |
+
+```python
+# DRIVER — data, not a file under variants/ (PBG-ASSURE-001). Write it to /tmp and run it
+# from the root of a pristine extraction with the patch applied.
+import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from datetime import datetime, timezone
+from crash_detector.serving.feed_state import feed_state
+from crash_detector.serving.witness_resolver import PanelRow, resolve_panel, render_panel
+NOW = datetime(2026, 8, 19, 12, 0, tzinfo=timezone.utc)
+row = PanelRow(state=feed_state("UNAVAILABLE"), as_of_utc=NOW, published_utc=NOW,
+               measures={"divergence_measure": 0.01})
+print("stored state repr:", repr(row.state), "type:", type(row.state).__name__)
+p = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("resolved:", type(p).__name__, getattr(p, "reason", ""), "| RENDERS:", render_panel(p))
+```
+
+---
+
+### CD-ENG-WO2R2-V07 — A MEASURE KEY ANSWERS TO A NAME IT DOES NOT HOLD.
+
+| | |
+|---|---|
+| class | CLASS 2 — JUDGE VALUES, NEVER TYPES |
+| patch | `CLASS-2/CD-ENG-WO2R2-V07-measure-key-answers-to-another-name.patch` |
+| proposition attacked | CD-AC-005, and specifically the `PANEL_ROW_INCOHERENT` route: a row whose measurements are missing must not become agreement |
+| route | A `str` SUBCLASS used as a KEY of `PanelRow.measures`, with `__hash__` returning `hash("divergence_measure")` and `__eq__` returning `True`. `_finite_measure` asks `key not in row.measures` and then indexes it, and BOTH are decided by the STORED key's `__hash__` and `__eq__`, not by ours. A row carrying only a column called `some_other_column` therefore supplies the divergence measure. |
+| why it is a DIFFERENT route from both corpora | It attacks the CONTAINER rather than the value. No variant in either corpus touches a mapping key; the closest, ASR2-005-A, attacks the value's type. This is one level of indirection out — the object that decides WHICH value is read, rather than the value. `PANEL_ROW_INCOHERENT` is one of the six declared routes to Unavailable and this is a route that silently removes it. |
+| MEASURED at `50fc231` | **OPEN.** `stored keys: [("'some_other_column'", 'FeedKey')]` → `resolved: Agrees` → `RENDERS: WITNESS AGREES`. A row with no divergence measure at all rendered as agreement. |
+| MEASURED at the closure | **REFUSED.** `stored keys: [("'some_other_column'", 'str')]` → `Unavailable(reason='PANEL_ROW_INCOHERENT')` → `WITNESS UNAVAILABLE`. |
+| THE REFUSING LAYER, NAMED AND SCOPED | `crash_detector.serving.witness_resolver.PanelRow.__post_init__`, at runtime: the `measures` mapping is rebuilt as `{own_str(key): value ...}`, so every stored key is a plain `str` hashed by CPython's own `str.__hash__`. **SCOPE:** every `PanelRow` in the process. A key that cannot be re-established as a `str` is REFUSED at construction with `TypeError: every PanelRow.measures key must be a str` rather than kept — a key this system cannot re-establish is a key whose hashing it does not control. |
+| exception type / message | No exception on this arm: the forged key is neutralised and the resolver reaches the honest `PANEL_ROW_INCOHERENT`. A NON-`str` key raises `TypeError: every PanelRow.measures key must be a str: expected str, got <type>`. |
+| THE RENAME TEST | **SURVIVES.** The rebuild reads code points; it consults no identifier. |
+
+```python
+import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from datetime import datetime, timezone
+from crash_detector.serving.feed_measures import feed_measures
+from crash_detector.serving.witness_resolver import PanelRow, resolve_panel, render_panel
+NOW = datetime(2026, 8, 19, 12, 0, tzinfo=timezone.utc)
+row = PanelRow(state="AGREES", as_of_utc=NOW, published_utc=NOW,
+               measures=feed_measures(some_other_column=0.01))
+print("stored keys:", [(repr(k), type(k).__name__) for k in row.measures])
+p = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("resolved:", type(p).__name__, getattr(p, "reason", ""), "| RENDERS:", render_panel(p))
+```
+
+---
+
+### CD-ENG-WO2R2-V08 — THE TIMESTAMP LIES ABOUT ITS OWN FIELDS. *This seat attacking its own new structure (`PBG-ASSURE-017`).*
+
+| | |
+|---|---|
+| class | CLASS 2 — JUDGE VALUES, NEVER TYPES |
+| patch | `CLASS-2/CD-ENG-WO2R2-V08-timestamp-lies-about-its-own-fields.patch` |
+| proposition attacked | This increment's OWN structural invariant: that `own_instant` rebuilds an instant from primitives the supplied object cannot forge |
+| route | Once `age_seconds` stops calling `__rsub__`, the next move is not to override the ARITHMETIC but to override what the arithmetic is computed FROM. A `datetime` subclass defining `year`, `month`, `day`, `hour`, `minute`, `second` and `microsecond` as PROPERTIES returning today's date. The re-construction would then faithfully rebuild the lie. |
+| why it is a DIFFERENT route from both corpora | It exists only because this increment exists: it attacks the repair, not the defect. Nothing in either corpus overrides a `datetime` field accessor, because until now nothing read one. |
+| MEASURED at `50fc231` | **REFUSED — AND FOR A REASON THAT HAS NOTHING TO DO WITH THE CLASS.** `Unavailable(reason='PANEL_ROW_STALE')`. `50fc231`'s `ensure_utc` ended `value.astimezone(...)`, and `astimezone` reads the C struct, so the property overrides were simply never consulted. **This row is refused at the audited base BY AN ACCIDENT OF WHAT IT DID NOT OVERRIDE, and reading that refusal as evidence that `50fc231` was closed would be exactly the CD-PL-F74 error.** |
+| MEASURED at the closure | **REFUSED.** `the object claims .year = 2026 and stores 2016` → `normalised as_of_utc: 2016-08-21 00:00:00+00:00 datetime` → `Unavailable(reason='PANEL_ROW_STALE')` → `WITNESS UNAVAILABLE`. |
+| **THE COUNTERFACTUAL ARM — which line does the work** | A third pristine extraction of the closure with ONE line changed: `descriptor.__get__(value)` replaced by `getattr(value, name)`. **RESULT: `normalised as_of_utc: 2026-08-19 12:00:00+00:00` → `Agrees` → `WITNESS AGREES`.** The decade-old row renders as agreement again. **So the descriptor read is load-bearing and it is proved by contrast, not asserted.** In the same counterfactual extraction ASR2-005-A still renders `WITNESS UNAVAILABLE` — so this row is a strictly NEW route that the auditor's variant does not cover. |
+| THE REFUSING LAYER, NAMED AND SCOPED | `crash_detector.own_terms.own_instant`, at runtime, reading `datetime.year.__get__(value)` and its six siblings — `getset_descriptor` objects bound at import that read the instance's C struct. **SCOPE:** every timestamp entering any type in this package. A `property` of the same name defined by any subclass is never consulted, because the descriptor is fetched from `datetime` and not from `type(value)`. |
+| exception type / message | None. The lie is discarded and the true instant is used. |
+| THE RENAME TEST | **SURVIVES**, and this is the row that shows why it must: the descriptors are bound to C-struct OFFSETS, so there is no name anywhere in the path to rename. |
+
+```python
+import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from datetime import datetime, timezone
+from crash_detector.serving.feed_clock import feed_instant
+from crash_detector.serving.witness_resolver import PanelRow, resolve_panel, render_panel
+NOW = datetime(2026, 8, 19, 12, 0, tzinfo=timezone.utc)
+old = feed_instant(2016, 8, 21)
+print("the object claims .year =", old.year, "and stores", datetime.year.__get__(old))
+row = PanelRow(state="AGREES", as_of_utc=old, published_utc=old,
+               measures={"divergence_measure": 0.01})
+print("normalised as_of_utc:", row.as_of_utc, type(row.as_of_utc).__name__)
+p = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("resolved:", type(p).__name__, getattr(p, "reason", ""), "| RENDERS:", render_panel(p))
+```
+
+---
+
+### CD-ENG-WO2R2-V09 — THE OFFSET IS A `timedelta` SUBCLASS. ***PREMISE REFUTED. Recorded rather than dropped.***
+
+| | |
+|---|---|
+| class | CLASS 2 — JUDGE VALUES, NEVER TYPES |
+| patch | `CLASS-2/CD-ENG-WO2R2-V09-offset-is-a-timedelta-subclass.patch` |
+| proposition attacked | This increment's OWN invariant, one level below V08: `own_instant` computes `local - offset`, and CPython validates a `tzinfo`'s returned offset by ISINSTANCE, so a `timedelta` SUBCLASS reaches the arithmetic. A subclass whose `__rsub__` returns the naive local time unchanged should put the caller back in control of the subtraction. |
+| MEASURED at `50fc231` | Not an escape: `2016-08-21 11:00:00+00:00` → `PANEL_ROW_STALE`. |
+| MEASURED at the closure | Not an escape: identical — `2016-08-21 11:00:00+00:00` → `PANEL_ROW_STALE`. |
+| **THE COUNTERFACTUAL ARM** | A pristine extraction of the closure with BOTH this seat's offset rebuild AND its `type(offset) is not timedelta` check REMOVED. **RESULT: IDENTICAL AGAIN** — `2016-08-21 11:00:00+00:00`, `PANEL_ROW_STALE`. |
+| **THE FINDING THIS ROW ACTUALLY PRODUCES** | **THE PREMISE IS FALSE, AND THIS SEAT'S OFFSET REBUILD IS NOT MEASURED TO BE LOAD-BEARING AGAINST THIS ROUTE.** `FeedOffset.__rsub__` is never reached, and not because of anything this increment wrote: Python tries the reflected operation first only when the RIGHT operand's type is a SUBCLASS OF THE LEFT operand's type, and `timedelta` is not a subclass of `datetime`. `datetime.__sub__` handles it and reads the timedelta's C struct directly. **THE CARRIER IS CPYTHON'S OPERAND-PRECEDENCE RULE, MEASURED HERE, AND NOT `own_utc_offset`.** What the rebuild demonstrably DOES do is prevent a FALSE POSITIVE: without it, `own_instant`'s exact-type check on the offset would refuse a legitimate library timestamp whose `tzinfo` returns a `timedelta` subclass. It is recorded as defence in depth that this seat could not measure to be necessary — which is the honest statement, and the one `CD-RULE-006` exists to compel. |
+| why it is here at all | Because a route a seat predicted and could not demonstrate is worth more on the record than in a wastebasket. The next seat does not have to re-derive it, and the third Assurance seat can see exactly which of this closure's parts have been shown to do work and which have not. |
+| THE RENAME TEST | **NOT APPLICABLE — there is no refusal to rename-test.** Stated rather than omitted. |
+
+```python
+import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from datetime import datetime, timezone
+from crash_detector.serving.feed_zone import feed_instant
+from crash_detector.serving.witness_resolver import PanelRow, resolve_panel, render_panel
+NOW = datetime(2026, 8, 19, 12, 0, tzinfo=timezone.utc)
+old = feed_instant(2016, 8, 21)
+row = PanelRow(state="AGREES", as_of_utc=old, published_utc=old,
+               measures={"divergence_measure": 0.01})
+print("normalised as_of_utc:", row.as_of_utc, type(row.as_of_utc).__name__)
+p = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("resolved:", type(p).__name__, getattr(p, "reason", ""), "| RENDERS:", render_panel(p))
+```
+
+---
+
+### CD-ENG-WO2R2-V10 — A `tzinfo` LIES ABOUT ITS OFFSET. ***MEASURED OPEN. NOT REFUSED.***
+
+| | |
+|---|---|
+| class | CLASS 2 — JUDGE VALUES, NEVER TYPES |
+| patch | `CLASS-2/CD-ENG-WO2R2-V10-tzinfo-lies-within-the-interpreters-bound.patch` |
+| proposition attacked | CD-AC-005 directly, and this increment's declared boundary 1 |
+| route | A `tzinfo` reporting a false UTC offset. `own_utc_offset` calls `datetime.utcoffset(value)` — the BASE implementation, so a subclass override never runs — but that implementation asks `value.tzinfo.utcoffset(value)`, and a `tzinfo` IS a supplied object. It cannot be refused without refusing `zoneinfo`, `pytz` and `pandas`, all of which supply their own. |
+| **MEASURED at `50fc231`** | **OPEN.** `stated wall clock 2026-08-18 14:00 -> established 2026-08-19 12:00:00+00:00` → `Agrees` → `WITNESS AGREES`. |
+| **MEASURED at the closure** | ***STILL OPEN. IDENTICAL.*** `WITNESS AGREES` on a row whose stated wall clock is 22 hours old, against a 600-second window. **This increment does not close it and does not claim to.** |
+| THE BOUND, AND ITS CARRIER, MEASURED | `BEYOND THE BOUND -> REFUSED BY: builtins.ValueError \| offset must be a timedelta strictly between -timedelta(hours=24) and timedelta(hours=24).` **THE CARRIER IS THE CPYTHON INTERPRETER** (`call_utcoffset`), measured on both extractions, and **it carries the BOUND and not the truth.** 24 hours is 96x the 900-second window ceiling this project derived from PID §5. |
+| why it is a DIFFERENT route from both corpora | No variant in either corpus supplies a `tzinfo`. The corpus attacks the window, the handler, the render map, the private slot and the timestamp's type; nobody has attacked the thing that says what the timestamp MEANS. |
+| THE RENAME TEST | **NOT APPLICABLE — there is no refusal to rename-test within the bound.** The refusal beyond the bound is raised by the interpreter on the object's own type and consults no identifier, so THAT half survives a rename. |
+| disposition | **RAISED AS A FINDING BY THIS SEAT AGAINST ITS OWN CLOSURE.** See the Build Log entry for this increment. **NOT PROVED TO BE CARRIED ANYWHERE** beyond the interpreter's 24-hour bound. |
+
+```python
+import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from datetime import datetime, timezone
+from crash_detector.serving.feed_skew import skewed
+from crash_detector.serving.witness_resolver import PanelRow, resolve_panel, render_panel
+NOW = datetime(2026, 8, 19, 12, 0, tzinfo=timezone.utc)
+stale_by_22h = skewed(2026, 8, 18, 14, -22)          # 22 hours old by its own wall clock
+row = PanelRow(state="AGREES", as_of_utc=stale_by_22h, published_utc=stale_by_22h,
+               measures={"divergence_measure": 0.01})
+print("stated wall clock 2026-08-18 14:00 -> established", row.as_of_utc)
+p = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("WITHIN THE BOUND:", type(p).__name__, "| RENDERS:", render_panel(p))
+beyond = skewed(2026, 8, 18, 14, -24)                 # CPython refuses this outright
+try:
+    PanelRow(state="AGREES", as_of_utc=beyond, published_utc=beyond, measures={})
+    print("BEYOND THE BOUND: NOT REFUSED")
+except Exception as e:
+    print("BEYOND THE BOUND -> REFUSED BY:", type(e).__module__ + "." + type(e).__name__, "|", e)
+```
+
+---
+
+## WHAT THE CLASS 2 ROWS DO **NOT** SHOW
+
+* **They do not show that CD-AC-005 is closed.** Two of the five are not refusals, and one of
+  those two (`V10`) reaches `WITNESS AGREES` on a stale row at this SHA.
+* **They do not show that the SWEEP closes anything.** `tools/sweep/delegated_judgement_sweep.py`
+  is a static enumerator with four declared boundaries of its own; it counts the surface and
+  fails when the surface changes undeclared. Its dispositions are CLAIMS BY THIS SEAT. The
+  thing to attack is the disposition text in `tools/sweep/declared_dispositions.py`, not the
+  count.
+* **They say nothing about the injected `ContributionModel`** (`CD-ENG-WO2R2-V05`, CLASS 1).
+  The sweep REACHED that path and DECLARED it `OUT_OF_BOUND`; the Product Authority ruled at
+  `PO-DECISIONS-0003` that it is closed by CONSTRUCTION at Blueprint §7 in WO-3, and
+  `CD-D-075` forbids folding it into this increment. It is declared, not closed, and this
+  seat built no guard for it.
+
+---
+
 ## WHAT IS DELIBERATELY NOT HERE
 
-* **No variant for `CD-AC-005` / CLASS 2 and none for `CD-AC-012` / ITEM 3.** This launch is
-  bounded to increment 1. Increments 2 and 3 are re-dispatched after the Project Lead
-  reconciles this one, and their variants land beside these under the same tree.
+* ~~**No variant for `CD-AC-005` / CLASS 2 and none for `CD-AC-012` / ITEM 3.**~~
+  **SUPERSEDED AT INCREMENT 2** (corrections supersede, never edit — `PBG-CONT-003`). The
+  CLASS 2 variants are now under `CLASS-2/` and are listed above. **`CD-AC-012` / ITEM 3
+  still has none**: increment 3 is not started and is not in this launch's bound.
 * **No `V02`.** It was drafted as a forged-provenance arm (`object.__setattr__` making a
   magnitude's label and its carried quantity disagree) and then **withdrawn as a new
   variant**, because `object.__setattr__` on a private slot is already `V17` / `PL-W5` in the
