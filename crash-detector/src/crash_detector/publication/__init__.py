@@ -23,6 +23,11 @@ from crash_detector.publication.classification import (
     iter_keys,
     key_tokens,
 )
+from crash_detector.publication.dial_scalar import (
+    PUBLISHABLE_DIAL_SLOTS,
+    DialProvenanceRefused,
+    number_for_dial_slot,
+)
 from crash_detector.publication.envelope_contract import (
     CONTRACTS_DIR_ENV_VAR,
     ENVELOPE_SCHEMA_VERSION,
@@ -48,8 +53,10 @@ __all__ = [
     "CLASSIFICATION_SECRET_BEARING",
     "CONTRACTS_DIR_ENV_VAR",
     "ContractUnavailable",
+    "DialProvenanceRefused",
     "ENVELOPE_SCHEMA_VERSION",
     "EnvelopeSurface",
+    "PUBLISHABLE_DIAL_SLOTS",
     "PublicationRefused",
     "REFUSAL_NON_FINITE_NUMBER",
     "REFUSAL_NON_JSON_VALUE",
@@ -64,6 +71,7 @@ __all__ = [
     "iter_keys",
     "key_tokens",
     "load_envelope_schema",
+    "number_for_dial_slot",
     "refuse_unless_publishable",
     "schema_path_for",
 ]

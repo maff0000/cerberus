@@ -21,6 +21,7 @@ from crash_detector.dials.dialset import (
     MONETARY_DIAL_ID,
     DialSet,
 )
+from crash_detector.dials.magnitude import DialMagnitude
 from crash_detector.dials.reading import Degraded, Unknown, Value
 from crash_detector.dials.scores import (
     ARITHMETIC_DUNDERS,
@@ -32,8 +33,15 @@ from crash_detector.dials.scores import (
 from conftest import FIXED_NOW
 
 CONTRIB = Contribution(source_id="src.a", category="credit", weight=1.0, contribution=0.4)
-EQUITY = EquityCrashScore(score=0.4, contributions=(CONTRIB,))
-MONETARY = MonetaryDebasementScore(score=0.6, contributions=(CONTRIB,))
+# MECHANICS ONLY (CD-ASR-F01): a dial magnitude carries its dial as data, so building a
+# score now names the dial the number came from. No assertion in this file was relaxed.
+EQUITY = EquityCrashScore(
+    score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.4), contributions=(CONTRIB,)
+)
+MONETARY = MonetaryDebasementScore(
+    score=DialMagnitude(dial_id=MONETARY_DIAL_ID, quantity=0.6),
+    contributions=(CONTRIB,),
+)
 
 
 def _unknown(reason="NO_REQUIRED_INPUTS_DECLARED"):

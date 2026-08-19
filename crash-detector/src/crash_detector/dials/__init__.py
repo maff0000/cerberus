@@ -14,6 +14,12 @@ from crash_detector.dials.dialset import (
     MONETARY_DIAL_ID,
     DialSet,
 )
+from crash_detector.dials.magnitude import (
+    CrossDialCombination,
+    DialMagnitude,
+    combine_within_one_dial,
+    sole_dial_of,
+)
 from crash_detector.dials.reading import (
     READING_CONSTRUCTORS,
     Degraded,
@@ -35,9 +41,11 @@ from crash_detector.dials.scores import (
 __all__ = [
     "ARITHMETIC_DUNDERS",
     "Contribution",
+    "CrossDialCombination",
     "DIAL_FIELDS",
     "DIAL_IDS",
     "Degraded",
+    "DialMagnitude",
     "DialSet",
     "EQUITY_DIAL_ID",
     "EquityCrashScore",
@@ -49,6 +57,8 @@ __all__ = [
     "ScoreOutOfRange",
     "Unknown",
     "Value",
+    "combine_within_one_dial",
     "fold",
     "is_value",
+    "sole_dial_of",
 ]

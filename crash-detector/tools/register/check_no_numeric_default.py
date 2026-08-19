@@ -221,6 +221,18 @@ SCORE_CONSTRUCTORS = ("EquityCrashScore", "MonetaryDebasementScore")
 SCORE_TYPE_TABLES = ("DIAL_SCORE_TYPES",)
 SCORE_MAGNITUDE_ARGUMENT = "score"
 
+#: The dial-magnitude wrapper, and the argument through which the number enters it. Added
+#: at CD-ASR-F01, where a dial's `score` stopped being a bare float and became a per-dial
+#: nominal value carrying its provenance. A magnitude is traced THROUGH this constructor
+#: into its `quantity` argument, exactly as it is traced through a score constructor: the
+#: wrapper declares WHICH DIAL the number belongs to and says nothing whatever about WHERE
+#: THE NUMBER CAME FROM, so it is a pass-through and never a terminus. Rule F still denies
+#: by default underneath it — `DialMagnitude(dial_id=..., quantity=0.0)` on an absence
+#: branch is reported as the literal it is, and `quantity=QUIET_MAGNITUDE` is reported as
+#: the module constant it is.
+MAGNITUDE_CONSTRUCTORS = ("DialMagnitude",)
+MAGNITUDE_QUANTITY_ARGUMENT = "quantity"
+
 #: THE ONLY PERMITTED TERMINUS of a magnitude trace: a call to the declared
 #: contribution-model interface. ``ContributionModel.compute(payloads) -> ScoreComputation``
 #: is the declared mapping from present inputs to a magnitude (BLUEPRINT §7, doctrine §3.6).
@@ -663,6 +675,10 @@ def _magnitude_provenance(
         if name in SCORE_CONSTRUCTORS or name in SCORE_TYPE_TABLES:
             return _magnitude_provenance(
                 _argument(node, SCORE_MAGNITUDE_ARGUMENT), scopes, aliases, depth + 1
+            )
+        if name in MAGNITUDE_CONSTRUCTORS:
+            return _magnitude_provenance(
+                _argument(node, MAGNITUDE_QUANTITY_ARGUMENT), scopes, aliases, depth + 1
             )
         return (
             f"the magnitude comes from `{ast.unparse(node)[:100]}`, and `{name or '?'}` is "

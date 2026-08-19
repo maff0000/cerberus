@@ -24,6 +24,7 @@ from crash_detector.dials.reading import (
     Unknown,
     Value,
 )
+from crash_detector.dials.magnitude import DialMagnitude
 from crash_detector.dials.scores import (
     Contribution,
     EquityCrashScore,
@@ -467,7 +468,11 @@ def _unknown_reading():
 
 def _value_reading():
     return Value(
-        value=EquityCrashScore(score=0.0, contributions=()),
+        value=EquityCrashScore(
+            # MECHANICS ONLY (CD-ASR-F01): the magnitude carries its dial as data.
+            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.0),
+            contributions=(),
+        ),
         as_of_utc=FIXED_NOW,
         inputs_used=("src.a",),
     )
@@ -475,7 +480,11 @@ def _value_reading():
 
 def _degraded_reading():
     return Degraded(
-        value=EquityCrashScore(score=0.0, contributions=()),
+        value=EquityCrashScore(
+            # MECHANICS ONLY (CD-ASR-F01): the magnitude carries its dial as data.
+            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.0),
+            contributions=(),
+        ),
         as_of_utc=FIXED_NOW,
         missing_inputs=("src.a",),
         reason="R",

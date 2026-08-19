@@ -67,6 +67,7 @@ from crash_detector.dials.reading import (
     Unknown,
     Value,
 )
+from crash_detector.dials.magnitude import DialMagnitude
 from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.observations import OK, ObservationRecord
@@ -324,8 +325,13 @@ def _evaluate_dial(
     # Unknown either: a model blowing up is a defect in the model, and swallowing it would
     # publish "we have no data" when the truth is "our code is broken".
     computation = spec.contribution_model.compute(payloads)
+    # The magnitude is wrapped in this dial's provenance AT THE POINT IT IS COMPUTED, and
+    # never travels as a bare float (CD-ASR-F01). `spec.dial_id` is the same key that
+    # selected the score type on the line below, so the provenance and the type cannot
+    # disagree: if they ever did, the score type's own constructor refuses.
     score = DIAL_SCORE_TYPES[spec.dial_id](
-        score=computation.magnitude, contributions=computation.contributions
+        score=DialMagnitude(dial_id=spec.dial_id, quantity=computation.magnitude),
+        contributions=computation.contributions,
     )
     as_of = _oldest_as_of(usable, used_ids)
 

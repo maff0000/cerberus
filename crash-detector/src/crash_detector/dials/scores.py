@@ -15,52 +15,109 @@ Built, that means:
 * Neither is ordered against the other: no ``__lt__`` family, so they cannot even be
   compared, let alone combined.
 
-This is the first of three independent refusals for CD-AC-002. The other two are the AST
-no-blend check over the dial path and the closed public envelope schema. None of the three
-is load-bearing alone (BLUEPRINT §13, BLUEPRINT §17 risk CD-BP-001).
+This is one of CD-AC-002's refusals. The others are the magnitude type in
+:mod:`crash_detector.dials.magnitude`, the provenance gate at the publication boundary in
+:mod:`crash_detector.publication.dial_scalar`, the AST no-blend check over the dial path,
+and the closed public envelope schema. None of them is load-bearing alone (BLUEPRINT §13,
+BLUEPRINT §17 risk CD-BP-001).
+
+====================================================================================
+ON THE ``score`` FIELD — REWRITTEN closing CD-ASR-F01 (HIGH)
+====================================================================================
+
+``score`` used to be a plain ``float``, on the reasoning that "what is forbidden is
+arithmetic *between the two dial types*, not the existence of a magnitude", with the AST
+no-blend check named as the instrument that would catch a caller unwrapping both dials to
+floats first.
+
+**That reasoning was refuted by execution.** An independent auditor produced two working
+blends that passed all three declared layers simultaneously and each returned ``0.5`` from
+equity ``0.9`` and monetary ``0.1`` (`CD-ASR-F01`, escaped variants `E01` and `E02`). The
+defect was exactly where the old paragraph put its trust: the moment a caller held two
+``float`` values, the type system had left the conversation, and the static check that was
+supposed to see it is intra-procedural and cannot follow a value into a helper or through
+a ``getattr`` over string slots.
+
+So ``score`` is now a :class:`~crash_detector.dials.magnitude.DialMagnitude`: a NOMINAL,
+PER-DIAL, NON-COERCIBLE value that carries which dial it came from as DATA. It defines
+none of :data:`ARITHMETIC_DUNDERS`, so ``left + right``, ``sum([...])``,
+``functools.reduce``, ``statistics.mean`` and every other reduction raise ``TypeError``
+from the interpreter regardless of how the two values were reached. Each score type
+refuses a magnitude that does not carry ITS dial, so the two slots are not interchangeable
+and a magnitude cannot be laundered from one dial into the other by re-wrapping it.
+
+Read :mod:`crash_detector.dials.magnitude` for the invariant in full, including the one
+boundary that is declared rather than closed: a number released for ONE named dial is an
+ordinary ``float``, and what stops two such numbers being published as a blend is the
+publication gate and the closed envelope schema, not this type.
 
 ----
 
-ON THE ``score`` FIELD, and on what is deliberately NOT validated here.
-
-``score`` is a plain ``float`` because a dial magnitude is a number. What is forbidden is
-arithmetic *between the two dial types*, not the existence of a magnitude. Reading
-``.score`` off both dials inside one expression is caught by the AST no-blend check
-(CD-RT-002-AST-NO-BLEND), which is exactly why that check exists as well as this type.
+ON WHAT IS DELIBERATELY NOT VALIDATED HERE.
 
 **No range constraint is imposed on the magnitude, and that is a refusal, not an
 omission.** A declared range is a declared scale, and the scale of a dial is what the dial
 *means*. BLUEPRINT §16 records the ingredient set and the meaning of each dial as CD-D-005
 — owed by the Product Owner before WO-3 — and PID §3.6 forbids unexplained mappings. An
 Engineer seat picking ``[0.0, 1.0]`` here would be inventing product meaning
-(``PBG-AUTH-005``), and an invented bound that later turns out to be wrong is worse than
-no bound: it rejects legitimate readings and it does so quietly, inside a constructor.
+(``PBG-AUTH-005``, CD-RULE-003), and an invented bound that later turns out to be wrong is
+worse than no bound: it rejects legitimate readings and it does so quietly, inside a
+constructor.
 
-What IS validated is the class of thing, not its meaning: a finite ``float``, with ``bool``
-refused explicitly because ``isinstance(True, int)`` is true in Python and a boolean
-arriving as a magnitude is precisely the coercion this product cannot afford.
+That refusal survives the CD-ASR-F01 rework unchanged and deliberately so. This increment
+changed the TYPE of a magnitude and how it composes. It decided nothing about what a
+magnitude means, and it introduced no range, no unit and no threshold.
+
+What IS validated is the class of thing, not its meaning: a finite ``float`` inside a
+magnitude carrying exactly one dial's provenance, with ``bool`` refused explicitly because
+``isinstance(True, int)`` is true in Python and a boolean arriving as a magnitude is
+precisely the coercion this product cannot afford.
 
 Raised to the Project Lead as an open product question, not resolved here.
 """
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
+
+from crash_detector.dials.magnitude import (
+    CrossDialCombination,
+    DialMagnitude,
+    ScoreOutOfRange,
+    require_finite_float,
+)
 
 __all__ = [
     "ScoreOutOfRange",
+    "CrossDialCombination",
+    "DialMagnitude",
     "Contribution",
     "EquityCrashScore",
     "MonetaryDebasementScore",
     "SCORE_TYPES",
     "ARITHMETIC_DUNDERS",
+    "EQUITY_DIAL_ID",
+    "MONETARY_DIAL_ID",
 ]
 
+#: The identity of the equity-crash dial. It lives HERE, beside the type whose magnitudes
+#: carry it, because after CD-ASR-F01 a dial id is not a label on a container — it is the
+#: PROVENANCE a magnitude carries as data, and provenance belongs with the thing that
+#: has it. ``crash_detector.dials.dialset`` re-exports both ids, so every existing import
+#: site is unchanged.
+EQUITY_DIAL_ID = "equity_crash"
+
+#: The identity of the monetary-debasement dial. Declared in its own statement rather than
+#: alongside the other, so that no single expression in this module names both dials
+#: except the one that deliberately enumerates the two types as data.
+MONETARY_DIAL_ID = "monetary_debasement"
+
 #: Every arithmetic, comparison-ordering and numeric-coercion dunder. **Neither score
-#: type, and no container of them, may define any of these.** Enumerated as data so the
-#: guard that asserts their absence tests the CLASS of violation and not the one instance
-#: somebody happened to plant.
+#: type, no container of them, and — since CD-ASR-F01 — no dial MAGNITUDE may define any
+#: of these.** Enumerated as data so the guard that asserts their absence tests the CLASS
+#: of violation and not the one instance somebody happened to plant. The magnitude type is
+#: the one that now matters most: it is what a caller reaches when it unwraps a dial, and
+#: the whole of E01 and E02 was that what it reached used to be a bare ``float``.
 ARITHMETIC_DUNDERS: tuple[str, ...] = (
     # binary arithmetic, and their reflected and in-place forms
     "__add__", "__radd__", "__iadd__",
@@ -90,14 +147,6 @@ ARITHMETIC_DUNDERS: tuple[str, ...] = (
 )
 
 
-class ScoreOutOfRange(ValueError):
-    """A dial magnitude that is not a finite float.
-
-    Refused at construction rather than clamped. A clamped score is a wrong number that
-    looks like a right one.
-    """
-
-
 @dataclass(frozen=True)
 class Contribution:
     """One named input's contribution to a dial magnitude.
@@ -118,7 +167,39 @@ class Contribution:
         if not self.category:
             raise ValueError("Contribution requires a category")
         for field_name in ("weight", "contribution"):
-            _require_finite_float("Contribution", field_name, getattr(self, field_name))
+            require_finite_float("Contribution", field_name, getattr(self, field_name))
+
+
+def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> None:
+    """Refuse a magnitude that is not this dial's magnitude.
+
+    THREE refusals in one, and each closes a different route (CD-ASR-F01):
+
+    * a bare number is refused, because a number without provenance is precisely what a
+      blend is. There is no path from ``float`` to a score type, so a blended float cannot
+      be re-wrapped as a dial reading and published as one;
+    * a look-alike is refused by EXACT TYPE IDENTITY rather than ``isinstance``, so a
+      subclass carrying a coercion — were one constructible, and
+      :class:`~crash_detector.dials.magnitude.SealedMagnitudeType` refuses to construct
+      one — is not accepted where a magnitude is accepted;
+    * the OTHER dial's magnitude is refused by comparing provenance, so the two slots are
+      not interchangeable. Two dials that can be swapped are one dial with two names.
+    """
+    if type(observed) is not DialMagnitude:
+        raise ScoreOutOfRange(
+            f"{type_name}.score must be a DialMagnitude carrying dial {dial_id!r}, got "
+            f"{type(observed).__name__}. A dial magnitude carries its provenance as data "
+            "so that a cross-dial combination is refused by comparing values rather than "
+            "by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one "
+            f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+        )
+    if observed.provenance != frozenset({dial_id}):
+        raise CrossDialCombination(
+            f"{type_name}.score was given a magnitude whose provenance is "
+            f"{sorted(observed.provenance)}, and this dial is {dial_id!r}. The two dials "
+            "fail in opposite directions (PID §3.1), so a magnitude may not be laundered "
+            "from one dial into the other by re-wrapping it."
+        )
 
 
 @dataclass(frozen=True)
@@ -128,11 +209,11 @@ class EquityCrashScore:
     Deliberately has no relationship of any kind to :class:`MonetaryDebasementScore`.
     """
 
-    score: float
+    score: DialMagnitude
     contributions: tuple[Contribution, ...]
 
     def __post_init__(self) -> None:
-        _require_finite_float(type(self).__name__, "score", self.score)
+        _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
         object.__setattr__(self, "contributions", tuple(self.contributions))
 
 
@@ -143,29 +224,13 @@ class MonetaryDebasementScore:
     Deliberately has no relationship of any kind to :class:`EquityCrashScore`.
     """
 
-    score: float
+    score: DialMagnitude
     contributions: tuple[Contribution, ...]
 
     def __post_init__(self) -> None:
-        _require_finite_float(type(self).__name__, "score", self.score)
+        _require_magnitude_of(type(self).__name__, MONETARY_DIAL_ID, self.score)
         object.__setattr__(self, "contributions", tuple(self.contributions))
 
 
 #: The two dial score types. Two. A third is a PID amendment, not an edit here.
 SCORE_TYPES: tuple[type, ...] = (EquityCrashScore, MonetaryDebasementScore)
-
-
-def _require_finite_float(type_name: str, field_name: str, observed: object) -> None:
-    """Refuse anything that is not a finite float.
-
-    ``bool`` is refused explicitly, ahead of the ``float`` test, because ``True`` would
-    otherwise slip through any ``int``-tolerant path and become ``1.0``.
-    """
-    if isinstance(observed, bool) or not isinstance(observed, float):
-        raise ScoreOutOfRange(
-            f"{type_name}.{field_name} must be a float, got {type(observed).__name__}"
-        )
-    if not math.isfinite(observed):
-        raise ScoreOutOfRange(
-            f"{type_name}.{field_name} must be finite, got {observed!r}"
-        )

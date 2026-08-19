@@ -15,8 +15,11 @@ import operator
 
 import pytest
 
+from crash_detector.dials.magnitude import CrossDialCombination, DialMagnitude
 from crash_detector.dials.scores import (
     ARITHMETIC_DUNDERS,
+    EQUITY_DIAL_ID,
+    MONETARY_DIAL_ID,
     SCORE_TYPES,
     Contribution,
     EquityCrashScore,
@@ -25,8 +28,32 @@ from crash_detector.dials.scores import (
 )
 
 CONTRIB = Contribution(source_id="src.a", category="credit", weight=1.0, contribution=0.4)
-EQUITY = EquityCrashScore(score=0.4, contributions=(CONTRIB,))
-MONETARY = MonetaryDebasementScore(score=0.6, contributions=(CONTRIB,))
+
+#: Which dial each score type belongs to. Written out rather than derived, so the mapping
+#: this file asserts against is not the mapping under test.
+DIAL_ID_OF = {
+    EquityCrashScore: EQUITY_DIAL_ID,
+    MonetaryDebasementScore: MONETARY_DIAL_ID,
+}
+
+
+def magnitude_for(score_type, quantity):
+    """A magnitude carrying ``score_type``'s own dial.
+
+    Test MECHANICS, not a relaxed expectation: after CD-ASR-F01 a dial magnitude is a
+    per-dial nominal value rather than a bare float, so a test that builds a score has to
+    say which dial its number came from. Nothing this file asserts became weaker; the
+    constructions became explicit.
+    """
+    return DialMagnitude(dial_id=DIAL_ID_OF[score_type], quantity=quantity)
+
+
+EQUITY = EquityCrashScore(
+    score=magnitude_for(EquityCrashScore, 0.4), contributions=(CONTRIB,)
+)
+MONETARY = MonetaryDebasementScore(
+    score=magnitude_for(MonetaryDebasementScore, 0.6), contributions=(CONTRIB,)
+)
 
 BINARY_OPERATORS = [
     operator.add, operator.sub, operator.mul, operator.truediv, operator.floordiv,
@@ -136,8 +163,12 @@ def test_a_score_cannot_be_summed_which_is_how_a_blend_usually_arrives():
 def test_the_two_types_are_never_equal_even_with_identical_contents():
     """Dataclass equality is type-sensitive. Equality across the dials would imply
     substitutability, and two substitutable dials are one dial with two names."""
-    equity = EquityCrashScore(score=0.5, contributions=(CONTRIB,))
-    monetary = MonetaryDebasementScore(score=0.5, contributions=(CONTRIB,))
+    equity = EquityCrashScore(
+        score=magnitude_for(EquityCrashScore, 0.5), contributions=(CONTRIB,)
+    )
+    monetary = MonetaryDebasementScore(
+        score=magnitude_for(MonetaryDebasementScore, 0.5), contributions=(CONTRIB,)
+    )
     assert equity != monetary
 
 
@@ -146,17 +177,23 @@ def test_the_two_types_are_never_equal_even_with_identical_contents():
 @pytest.mark.parametrize("bad", [0, 1, "0.5", None, True, False, [], object()])
 def test_a_magnitude_that_is_not_a_float_is_refused(bad):
     """`True` in particular: isinstance(True, int) is true, and a boolean magnitude
-    silently becoming 1.0 is exactly the coercion this product cannot afford."""
+    silently becoming 1.0 is exactly the coercion this product cannot afford.
+
+    Since CD-ASR-F01 a BARE FLOAT is refused here too, and is covered by
+    ``test_a_bare_number_cannot_be_a_dial_score`` below: a number without provenance is
+    what a blend IS, so there is no route from ``float`` into a dial reading."""
     for score_type in SCORE_TYPES:
         with pytest.raises(ScoreOutOfRange):
             score_type(score=bad, contributions=())
+        with pytest.raises(ScoreOutOfRange):
+            DialMagnitude(dial_id=DIAL_ID_OF[score_type], quantity=bad)
 
 
 @pytest.mark.parametrize("bad", [math.inf, -math.inf, math.nan])
 def test_a_non_finite_magnitude_is_refused(bad):
     for score_type in SCORE_TYPES:
         with pytest.raises(ScoreOutOfRange):
-            score_type(score=bad, contributions=())
+            magnitude_for(score_type, bad)
 
 
 @pytest.mark.parametrize("magnitude", [-5.0, 0.0, 0.5, 1.0, 42.0])
@@ -167,14 +204,90 @@ def test_no_range_is_imposed_on_the_magnitude(magnitude):
 
     This test exists so that adding a range later is a visible, deliberate change with a
     product decision behind it, rather than a quiet tightening inside a constructor.
+
+    CD-ASR-F01 changed how a magnitude is CARRIED and left this refusal exactly where it
+    was: the assertion still spans -5.0 to 42.0 and still admits every finite float.
     """
     for score_type in SCORE_TYPES:
-        assert score_type(score=magnitude, contributions=()).score == magnitude
+        carried = score_type(
+            score=magnitude_for(score_type, magnitude), contributions=()
+        ).score
+        assert carried.quantity_for(DIAL_ID_OF[score_type]) == magnitude
 
 
 def test_contributions_are_normalised_to_a_tuple():
-    score = EquityCrashScore(score=0.1, contributions=[CONTRIB])
+    score = EquityCrashScore(
+        score=magnitude_for(EquityCrashScore, 0.1), contributions=[CONTRIB]
+    )
     assert isinstance(score.contributions, tuple)
+
+
+# --- the magnitude is per-dial and non-coercible (CD-ASR-F01) --------------------------- #
+
+def test_a_bare_number_cannot_be_a_dial_score():
+    """THE DEFECT CD-ASR-F01 REPORTED, refused at its root.
+
+    `.score` used to be a plain float, so the moment a caller held two of them the type
+    system had left the conversation. There is now no route from a bare number into a
+    dial reading, so a blend computed anywhere cannot be re-wrapped and published as a
+    dial's magnitude.
+    """
+    for score_type in SCORE_TYPES:
+        with pytest.raises(ScoreOutOfRange):
+            score_type(score=0.5, contributions=())
+
+
+def test_a_magnitude_of_the_other_dial_is_refused():
+    """Two slots that can be swapped are one dial with two names."""
+    with pytest.raises(CrossDialCombination):
+        EquityCrashScore(
+            score=magnitude_for(MonetaryDebasementScore, 0.5), contributions=()
+        )
+    with pytest.raises(CrossDialCombination):
+        MonetaryDebasementScore(
+            score=magnitude_for(EquityCrashScore, 0.5), contributions=()
+        )
+
+
+@pytest.mark.parametrize("op", BINARY_OPERATORS, ids=lambda o: o.__name__)
+def test_every_binary_operator_between_the_two_magnitudes_is_a_type_error(op):
+    """The heart of the CD-ASR-F01 closure, at the level a caller actually reaches.
+
+    Both escaped variants unwrapped the dials to `.score` and combined the results. This
+    is that expression, for every binary operator, in both directions.
+    """
+    with pytest.raises(TypeError):
+        op(EQUITY.score, MONETARY.score)
+    with pytest.raises(TypeError):
+        op(MONETARY.score, EQUITY.score)
+
+
+@pytest.mark.parametrize("op", ORDERING_OPERATORS, ids=lambda o: o.__name__)
+def test_the_two_magnitudes_cannot_be_ordered_against_each_other(op):
+    with pytest.raises(TypeError):
+        op(EQUITY.score, MONETARY.score)
+
+
+@pytest.mark.parametrize("coerce", [int, float, complex, round])
+def test_a_magnitude_cannot_be_coerced_to_a_bare_number(coerce):
+    with pytest.raises(TypeError):
+        coerce(EQUITY.score)
+
+
+def test_neither_magnitude_defines_any_arithmetic_or_coercion_dunder():
+    for magnitude in (EQUITY.score, MONETARY.score):
+        defined = [
+            name for name in ARITHMETIC_DUNDERS if name in vars(type(magnitude))
+        ]
+        assert defined == [], f"{type(magnitude).__name__} defines {defined}"
+
+
+def test_no_ancestor_of_the_magnitude_type_defines_one_either():
+    for ancestor in type(EQUITY.score).__mro__:
+        if ancestor is object:
+            continue
+        defined = [name for name in ARITHMETIC_DUNDERS if name in vars(ancestor)]
+        assert defined == [], f"{ancestor.__name__} defines {defined}"
 
 
 # --- Contribution --------------------------------------------------------------------- #

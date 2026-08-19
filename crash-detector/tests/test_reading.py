@@ -42,7 +42,12 @@ from crash_detector.dials.reading import (
     is_value,
     member_surface_breaches,
 )
-from crash_detector.dials.scores import ARITHMETIC_DUNDERS, EquityCrashScore
+from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials.scores import (
+    ARITHMETIC_DUNDERS,
+    EQUITY_DIAL_ID,
+    EquityCrashScore,
+)
 
 from conftest import FIXED_NOW, ago
 
@@ -508,15 +513,19 @@ def test_no_application_module_leaves_a_reading_surface_breached():
 def test_a_value_still_carries_a_real_score_after_the_surface_closure():
     """FALSE-POSITIVE CHECK. A closure that forbids the product is not a closure."""
     reading = Value(
-        value=EquityCrashScore(score=0.42, contributions=()),
+        value=EquityCrashScore(
+            # MECHANICS ONLY (CD-ASR-F01): the magnitude carries its dial as data.
+            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.42),
+            contributions=(),
+        ),
         as_of_utc=ago(30),
         inputs_used=("src.a",),
     )
-    assert reading.value.score == 0.42
+    assert reading.value.score.quantity_for(EQUITY_DIAL_ID) == 0.42
     assert is_value(reading) is True
     assert fold(
         reading,
-        on_value=lambda r: r.value.score,
+        on_value=lambda r: r.value.score.quantity_for(EQUITY_DIAL_ID),
         on_degraded=lambda r: "DEGRADED",
         on_unknown=lambda r: "UNKNOWN",
     ) == 0.42

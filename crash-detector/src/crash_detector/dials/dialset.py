@@ -24,12 +24,19 @@ from crash_detector.dials.reading import (
     Value,
     assert_closed_surface,
 )
-from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
+from crash_detector.dials.scores import (
+    EQUITY_DIAL_ID,
+    MONETARY_DIAL_ID,
+    EquityCrashScore,
+    MonetaryDebasementScore,
+)
 
 __all__ = ["DialSet", "DIAL_IDS", "EQUITY_DIAL_ID", "MONETARY_DIAL_ID", "DIAL_FIELDS"]
 
-EQUITY_DIAL_ID = "equity_crash"
-MONETARY_DIAL_ID = "monetary_debasement"
+# The two dial ids are DEFINED in `crash_detector.dials.scores`, beside the types whose
+# magnitudes carry them as provenance (CD-ASR-F01), and re-exported here so that every
+# existing import site — `from crash_detector.dials.dialset import EQUITY_DIAL_ID` — is
+# unchanged. A dial id moved house; it did not change meaning.
 
 #: The complete set of dials. Two. A third is a PID amendment, not an edit here.
 DIAL_IDS: tuple[str, ...] = (EQUITY_DIAL_ID, MONETARY_DIAL_ID)
