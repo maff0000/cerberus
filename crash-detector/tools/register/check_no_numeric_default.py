@@ -104,10 +104,13 @@ CD-RT-001-AST-NO-NUMERIC-DEFAULT and this check's execution contract carry the s
 
 THIS CHECK IS A STATIC READ OF SOURCE TEXT AT ONE COMMIT. The proposition CD-AC-001 states
 is a RUNTIME property, and the runtime layer is where it is carried: the sealed, slotted,
-subclass-closed ``Reading`` types in ``src/crash_detector/dials/reading.py`` and the
+subclass-closed ``Reading`` types in ``src/crash_detector/dials/reading.py``, the
 absence post-condition in ``src/crash_detector/engine/evaluate.py``
-(``refuse_a_number_without_its_inputs``), both evidenced by
-CD-RT-001-ABSENCE-RENDERS-UNKNOWN. Where a boundary below says "the runtime layer carries
+(``refuse_a_number_without_its_inputs``), and — added at WO-2R2 increment 1c, because
+the first two carry CONSTRUCTION and `CD-ASR-WO2R-F03` was about CONSUMPTION — the
+presentation sum type in ``src/crash_detector/serving/dial_presentation.py``; all three
+evidenced by CD-RT-001-ABSENCE-RENDERS-UNKNOWN. **Read boundary 7 before relying on
+the first two for a consumption route: they do not carry one and are not claimed to.** Where a boundary below says "the runtime layer carries
 this", that is what it means, and that layer's own residue is declared in its own header.
 
   1  A CONSTRUCTION THIS CHECK CANNOT SEE AS A CONSTRUCTION. Rule F recognises a
@@ -153,6 +156,48 @@ this", that is what it means, and that layer's own residue is declared in its ow
      is not visible in the source text at all. THE RUNTIME LAYER CARRIES THIS: the absence
      post-condition never asks where the number came from, so a configured zero on a
      dial that did not get its inputs raises exactly as a literal zero does.
+
+  7  A CONSUMER THAT **ANSWERS** AN ABSENCE WITH A NUMBER. Boundaries 1, 2, 3, 5 and 6 are
+     every one of them about a value-bearing reading being CONSTRUCTED. **NONE OF THEM
+     RESERVED THE CONSUMPTION ROUTE, AND THAT ENUMERATION WAS MEASURED INCOMPLETE**
+     (`CD-ASR-WO2R-F03`). MEASURED EXAMPLE, which exits 0 here — this is `ASR2-001-A`
+     verbatim, planted in the ADJACENT tier this check declares it scans:
+         def surface_scalar(reading):
+             return fold(reading,
+                         on_value=lambda seen: seen.value,
+                         on_degraded=lambda seen: seen.value,
+                         on_unknown=lambda seen: 0.0)
+     It uses NONE of the enumerated spellings — no `float | None`, no `or 0.0`, no
+     `.get(k, 0)`, no bare `except`, no module-level constant, no numeric member on
+     `Unknown` — and it never CONSTRUCTS a value-bearing reading at all, which is why RULE
+     F, whose whole subject is the provenance of a constructed magnitude, has nothing to
+     look at. `fold` guarantees a caller cannot FORGET `Unknown`. It has never guaranteed
+     that a caller cannot ANSWER `Unknown` with a number, and the criterion is about the
+     second.
+     WHO CARRIES IT — MEASURED, AND ONLY IN PART (CD-RULE-006).
+     `src/crash_detector/serving/dial_presentation.py` carries the PRESENTATION half, added
+     at WO-2R2 increment 1c: `Shown` admits only a `DialMagnitude` of its own dial, by exact
+     type identity and set-equality on provenance, so the `0.0` above cannot be presented as
+     a dial. MEASURED on a pristine extraction with `ASR2-001-A` present —
+     `Shown(dial_id="equity_crash", magnitude=surface_scalar(unknown))` raises
+     `DialPresentationRefused`, and `present_dial` returns
+     `NotShown(dial_id='equity_crash', reason='REQUIRED_INPUT_MISSING',
+     missing_inputs=('vix','move'))`, a type with no numeric field for an answer to hide in.
+     `present_dial` performs the elimination ITSELF, so a surface never writes its own
+     `on_unknown`. Evidenced by CD-RT-001-ABSENCE-RENDERS-UNKNOWN, whose declared command
+     GREW by `tests/test_dial_presentation.py` in the same increment; nothing was removed
+     from it.
+     WHAT IS **NOT** CARRIED: a module that computes a number for an absence and renders it
+     ITSELF without coming through the presentation type. **NOT PROVED TO BE CARRIED
+     ANYWHERE.** There is no renderer in WO-2 to refuse it — the rendering and publication
+     LAYER is WO-3 — and `ASR2-001-A`'s `surface_scalar` still returns `0.0` at this commit.
+     That is asserted rather than hidden, by
+     `tests/test_dial_presentation.py::test_asr2_001_a_still_computes_its_number_and_that_is_declared`,
+     so a declared test fails the day somebody claims otherwise.
+     `fold` WAS DELIBERATELY NOT GIVEN A GUARD. A ban on a numeric return from `on_unknown`
+     is a ban on a spelling — `on_unknown=lambda u: Box(0.0)` walks past it — and it would
+     forbid a legitimate numeric answer ABOUT an absence, such as a count of missing inputs.
+     The reasoning is written out in the header of the presentation module.
 
 EXIT: 0 clean · 1 violation, each with file and line · 2 usage · 3 precondition not met.
 Never a skip, for any reason (PBG-CI-002).

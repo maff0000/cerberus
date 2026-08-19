@@ -126,6 +126,34 @@ criteria:
   #      never whether it is right. scores.py deliberately imposes no range (CD-D-005 owed).
   #   6. runtime, configuration and data. A zero arriving from a config file, an environment
   #      variable or a database row is not in the source text. THE RUNTIME LAYER CARRIES THIS.
+  #   7. A CONSUMER THAT **ANSWERS** AN ABSENCE WITH A NUMBER. Boundaries 1, 2, 3, 5 and 6 are
+  #      every one of them about a value-bearing reading being CONSTRUCTED. NONE OF THEM
+  #      RESERVED THE CONSUMPTION ROUTE, and that enumeration was MEASURED INCOMPLETE by
+  #      CD-ASR-WO2R-F03. MEASURED EXAMPLE, which exits 0 here — ASR2-001-A verbatim, in the
+  #      ADJACENT tier this check declares it scans:
+  #        def surface_scalar(reading):
+  #            return fold(reading, on_value=lambda s: s.value,
+  #                        on_degraded=lambda s: s.value, on_unknown=lambda s: 0.0)
+  #      It uses none of the enumerated spellings and never constructs a value-bearing
+  #      reading, so RULE F has nothing to look at. `fold` guarantees a caller cannot FORGET
+  #      Unknown; it never guaranteed a caller cannot ANSWER Unknown with a number.
+  #      WHO CARRIES IT — MEASURED, AND ONLY IN PART (CD-RULE-006):
+  #      src/crash_detector/serving/dial_presentation.py carries the PRESENTATION half.
+  #      `Shown` admits only a DialMagnitude of its own dial by exact type, so that 0.0
+  #      cannot be presented as a dial (DialPresentationRefused, measured on a pristine
+  #      extraction with ASR2-001-A present), and `present_dial` performs the elimination
+  #      itself so no surface writes its own on_unknown. Evidenced by
+  #      CD-RT-001-ABSENCE-RENDERS-UNKNOWN, whose declared command GREW by
+  #      tests/test_dial_presentation.py in the same increment; nothing was removed from it.
+  #      NOT CARRIED: a module that computes a number for an absence and renders it ITSELF
+  #      without coming through the presentation type. NOT PROVED TO BE CARRIED ANYWHERE —
+  #      the rendering LAYER is WO-3 and there is nothing in WO-2 to refuse it. ASR2-001-A's
+  #      surface_scalar still returns 0.0, asserted rather than hidden by
+  #      test_asr2_001_a_still_computes_its_number_and_that_is_declared.
+  #      `fold` was DELIBERATELY NOT given a guard: banning a numeric return from on_unknown
+  #      is a ban on a spelling (on_unknown=lambda u: Box(0.0) walks past it) and would
+  #      forbid a legitimate numeric answer ABOUT an absence, such as a count of missing
+  #      inputs.
   #
   # FOR THE AUDITOR. Do not read a clean run of this check as proof that no route from absence
   # to a number exists. A variant landing beyond a boundary above is a finding against THIS
@@ -152,15 +180,25 @@ criteria:
         execution contract, each boundary with an example an auditor can execute. It does NOT
         catch: a constructor obtained dynamically; a magnitude laundered through an undeclared
         helper (reported, not followed); anything outside the two declared tiers; class A
-        outside the dial path; a legitimately computed but wrong magnitude; or anything about
-        runtime, configuration or data. It is ONE OF TWO guards on CD-AC-001 and never a sole
+        outside the dial path; a legitimately computed but wrong magnitude; anything about
+        runtime, configuration or data; OR A CONSUMER THAT ANSWERS AN ABSENCE WITH A NUMBER
+        RATHER THAN CONSTRUCTING ONE (boundary 7, added at WO-2R2 increment 1c closing
+        CD-ASR-WO2R-F03 — the first six boundaries were all about CONSTRUCTION and that
+        enumeration was measured INCOMPLETE). It is ONE OF TWO guards on CD-AC-001 and never a sole
         guard: the runtime property is carried by the sealed Reading types and the absence
         post-condition, and evidenced by CD-RT-001-ABSENCE-RENDERS-UNKNOWN.
       evidence_ref: RTR-WO2-0001
   # DECLARED LIMIT — CD-RT-001-ABSENCE-RENDERS-UNKNOWN. Required by CD-RULE-004.
   #
   # This is the RUNTIME arm, and after CD-ASR-F02 it is the arm that carries CD-AC-001's
-  # "structurally incapable" half. The three Reading constructors now have a DECLARED attribute
+  # "structurally incapable" half. ITS DECLARED COMMAND GREW AT WO-2R2 INCREMENT 1c by
+  # tests/test_dial_presentation.py, closing CD-ASR-WO2R-F03: this arm evidenced that absence
+  # could not be CONSTRUCTED as a number and NOT that a number a consumer CHOSE for an absence
+  # could not be PRESENTED as a dial, and the criterion's words are about rendering. Nothing
+  # was removed from the command and tests/test_reading.py and tests/test_evaluate.py are
+  # unchanged in what they assert. The residue that remains — a module that renders its own
+  # number for an absence, with no renderer in WO-2 to refuse it — is boundary 7 of the
+  # CD-RT-001-AST-NO-NUMERIC-DEFAULT entry above and is NOT PROVED TO BE CARRIED ANYWHERE. The three Reading constructors now have a DECLARED attribute
   # surface asserted by EQUALITY (not by the absence of a blacklist — that blacklist is what
   # E03 walked past), are slotted against instance attribute injection, are closed against
   # subclassing, and are re-verified at every consumer boundary. Separately, the per-dial
@@ -181,7 +219,7 @@ criteria:
   # read a clean run as proof of the stronger claim.
   - test_id: CD-RT-001-ABSENCE-RENDERS-UNKNOWN
     scope: CLASS
-    execute: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q
+    execute: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q
     execution_contract: contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md
     negative_control:
       violation: >
@@ -197,8 +235,18 @@ criteria:
         configuration default, a previous magnitude carried across a gap, or a value read from
         the store. With the WO-2 empty source registry both dials must read Unknown; a plant
         that makes either read a value must fail this test.
+        SINCE WO-2R2 INCREMENT 1c the class also includes THE CONSUMPTION HALF, which is what
+        CD-ASR-WO2R-F03 walked through: a number a consumer CHOSE for an Unknown presented as
+        a dial. `Shown` admits only a DialMagnitude of its own dial by exact type, `NotShown`
+        carries no numeric field at all, and `present_dial` performs the elimination itself so
+        no surface writes its own `on_unknown`. A plant that makes an absence PRESENTABLE as a
+        number must fail this test.
         DECLARED LIMIT: post-import class mutation through `type.__setattr__` installs the
-        attribute and is refused at every consumer boundary rather than prevented. The measured
+        attribute and is refused at every consumer boundary rather than prevented. AND: a
+        module that computes a number for an absence and renders it ITSELF, without coming
+        through the presentation type, is NOT refused and is NOT PROVED TO BE CARRIED
+        ANYWHERE — the rendering LAYER is WO-3. ASR2-001-A's `surface_scalar` still returns
+        0.0 and a declared test asserts that it does, rather than hiding it. The measured
         example is in the comment above this entry and in the header of
         src/crash_detector/dials/reading.py.
       evidence_ref: RTR-WO2-0001

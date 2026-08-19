@@ -16,7 +16,7 @@ With no source registered and with a dead feed, both dials read Unknown or Degra
 ## Command
 
 ```
-PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q
+PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q
 ```
 
 Run with the working directory set to **the root of a subject tree the auditor extracted
@@ -26,6 +26,8 @@ harness in this repository and there may not be one, because an auditor verifyin
 harness the project wrote is verifying the harness (`PBG-ASSURE-001`).
 
 ## Subject
+
+`tests/test_dial_presentation.py` JOINED THIS DECLARED COMMAND AT WO-2R2 INCREMENT 1c, closing `CD-ASR-WO2R-F03`. The command GREW; **nothing was removed from it**, and `tests/test_reading.py` and `tests/test_evaluate.py` are unchanged in what they assert. It is here because the register may not claim a layer it declares no test for (`CD-RULE-004`): the criterion's words are about RENDERING, and until that increment this criterion's runtime arm evidenced only that absence could not be CONSTRUCTED as a number, never that a number a consumer CHOSE for an absence could not be presented as a dial. That is the half `ASR2-001-A` walked through. The new file executes the auditor's own shape and asserts both halves of the result: the number is still computed — that is the declared limit, boundary A, and it is asserted rather than hidden — and it cannot be presented.
 
 `tests/test_reading.py` attacks the `Reading` sum type by asserting **set equality** between each constructor's attribute surface and a surface declared in the test file itself. `tests/test_evaluate.py` exercises the WO-2 shipped state: the source registry is EMPTY by PO ruling, so both dials must read Unknown, and that path is executed rather than assumed. It also exercises the **absence post-condition** directly, in both directions.
 
