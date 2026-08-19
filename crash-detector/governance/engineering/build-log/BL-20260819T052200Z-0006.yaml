@@ -1,0 +1,719 @@
+# WO-2 increment 3 of 7 — A5 (store schema and grant matrix) and A6 (container set as DESIGN).
+# Block A closes here. The CD-D-009 unattested candidate is ADOPTED, clause by clause, and this
+# seat attests it as its own work. RT-A discharged; CD-OB-001 closed.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T052200Z-0006
+timestamp_utc: '2026-08-19T05:22:00Z'
+project: crash-detector
+actor: CD-ENG-WO2-01
+role: ENGINEER
+seat_instance: 3
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: 8723ffbf71fedf0de6a229a4865a3c79283f9782      # the dispatched execution base
+increment_sha: d40e5c6e96d65ef204bed6018dbe58dadcd556b0     # THE EXACT SHA of increment 3
+parent_entry_id: BL-20260819T045600Z-0005
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  increment_sha d40e5c6 is the commit carrying the whole of increment 3. THIS ENTRY is committed
+  immediately after it, as its child, because an entry cannot contain the hash of the commit that
+  contains it. The two commits together are increment 3; d40e5c6 is the SHA to quote for the work,
+  and the lane head after this entry is the SHA to quote for the lane.
+
+boot_verdict: >
+  Booted the pinned framework in the lane before writing anything:
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` -> exit 0, AMBER,
+  CONTINUITY_DRIFT/RESUME_AMBER, blocking_failures [], the sole UNAVAILABLE still roadmap_identity
+  (the known Product Owner call). PID.md@441d83166b2f3d0c, BLUEPRINT.md@794c25097d4f1f4a.
+  NOTE, DISCLOSED: `pbg boot` declares assigned_role PROJECT_LEAD, because the CLI resolves the
+  single ACTIVE authority record and CD-FWK-004 records that PBGv2 cannot represent a bounded
+  sub-agent seat concurrently with the Project Lead's. THIS SEAT IS THE ENGINEER, by
+  CD-DISPATCH-WO2-ENGINEER, and read pbg/roles/engineer.md as its contract. The CLI's role line is
+  not this seat's role and was not treated as one (PBG-BOOT-002, non-waivable).
+
+reconciliation:
+  recorded_vs_observed: >
+    NO DRIFT. Observed lane HEAD 8723ffbf71fedf0de6a229a4865a3c79283f9782 on branch
+    wo-2-skeleton, worktree /srv/crash-detector-wo2 — identical to the EXECUTION BASE the dispatch
+    brief names and to the lane_head_sha recorded in BL-...-0005. Proceeded (PBG-CONT-006).
+  inherited_candidate_integrity: >
+    Before reading a line of it, verified the 37 inherited files byte-for-byte against the
+    immutable snapshot at /srv/crash-detector-wo2-candidate-inc3/files via sha256sum over every
+    path. ZERO differences. So the bytes reviewed below are the bytes the Project Lead
+    snapshotted, and any later divergence is attributable to this seat and is enumerated.
+  scope_check_before_commit: >
+    `git status --porcelain --untracked-files=all` immediately before committing showed changes
+    ONLY under db/, deploy/, src/, tests/ and README.md — every one inside writable_scope. Zero
+    touches of pbg/, PID.md, BLUEPRINT.md, CLAUDE.md, governance/authority/, governance/decisions/,
+    governance/dispatch/, ACTIVE_WORK.yaml or schemas/.
+
+# ================================================================================================
+# THE ADOPTION OBLIGATION (CD-D-009). Clause by clause, with the METHOD for each.
+# A clause marked satisfied with no method stated is not evidence, so none is.
+# ================================================================================================
+adoption_disposition: >
+  ADOPTED WITH CORRECTIONS. Of the 37 inherited files, 26 are committed UNCHANGED and 11 were
+  modified by this seat. KEEP did not mean ADOPT and adoption did not mean acceptance: every clause
+  below was established by a stated method, and four defects were found and fixed. The most serious
+  — CD-ENG-F21 — was a live container-readiness defect that the inherited material's own tests
+  passed over, and it was found by MEASURING the property rather than by reading the code that
+  claimed it.
+
+A5_clause_by_clause:
+
+- clause: 'append-only forward-only SQL migrations under db/'
+  satisfied: true
+  method: >
+    Read all seven migration files end to end. Loader enforces it structurally
+    (src/crash_detector/store/migrations.py): 1..N with no gap, header version and name checked
+    against the filename, sha256 over the whole file bytes, and pending_migrations() raising
+    MigrationAltered / MigrationMissing before anything is reported pending. Exercised live: applied
+    to a real store, then RE-APPLIED — `db/migrate.py --apply` (second run) -> exit 0,
+    "APPLIED: none — the store was already current".
+
+- clause: 'applied by a dedicated migration step that is NOT the application startup path
+    (PBG-DATA-002, PBG-DATA-003)'
+  satisfied: true
+  method: >
+    Structural, not by assertion: the command is db/migrate.py, OUTSIDE the importable package, so
+    no service can reach it by import. tests/test_store_schema_sql.py
+    ::test_the_migration_step_is_not_the_application_startup_path scans every module under
+    src/crash_detector/ (excluding store/) for the string `crash_detector.store` and requires the
+    offender list to be empty. Read that test and confirmed the scan is not vacuous. Also confirmed
+    by reading src/crash_detector/store/migrate.py: it takes a PEP 249 connection as an ARGUMENT
+    and imports no driver; the single psycopg2 import in the repository is at its point of use in
+    db/migrate.py, asserted by ::test_no_application_module_imports_a_database_driver.
+
+- clause: 'each migration states its rollback or states plainly that it has none'
+  satisfied: true
+  method: >
+    Read the three-line header of all seven. All seven state `-- rollback: NONE.` followed by the
+    reason, continued across comment lines. Enforced: Migration.__post_init__ raises
+    MigrationFileInvalid on an absent or empty rollback, and test_store_schema_sql.py additionally
+    requires len(rollback) > 40 so a token cannot pass for a statement. Verified the loader refuses
+    it by reading tests/test_store_migrations.py::test_a_migration_with_no_rollback_declaration_is_refused
+    and ::test_an_empty_rollback_declaration_is_refused, both of which build a temporary directory
+    and assert the raise.
+
+- clause: 'six schemas (raw, witness, dial, publication, private, alert)'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE. RT-A probe assertion "A5 six schemas exist in the live store":
+    `SELECT nspname FROM pg_namespace WHERE nspname = ANY(...)` ->
+    ['alert','dial','private','publication','raw','witness']. Also text-level:
+    ::test_no_seventh_application_schema_is_created regexes every CREATE SCHEMA and requires the set
+    to equal exactly those six.
+
+- clause: 'six roles (cd_collector, cd_witness, cd_engine, cd_public, cd_private, cd_review)'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE. RT-A "A5 six roles exist in the live store": `SELECT rolname FROM pg_roles` ->
+    all six present.
+
+- clause: 'the grant matrix as written in BLUEPRINT §4 — revoke by default, grant by exception'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE, whole-matrix comparison. RT-A "LIVE vs db/grant_matrix.json: schema USAGE" and
+    "…: table privileges" reconstruct the entire matrix from has_schema_privilege() over every
+    (role, schema) pair and from information_schema.table_privileges over all six schemas, and
+    compare it with db/grant_matrix.json. Both PASS. Revoke-by-default confirmed by the live result
+    being EXACTLY the declared matrix and nothing more — every privilege in the live store is one
+    the declaration names.
+
+- clause: 'cd_engine holds NO grant of any kind on witness.*'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE, SEVEN ROUTES, not one. Each is a separate RT-A assertion and all PASS:
+      route=schema      has_schema_privilege('cd_engine','witness','USAGE'|'CREATE') -> False, False
+      route=table       has_table_privilege over EVERY object in schema witness x SELECT, INSERT,
+                        UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER -> all False
+      route=column      information_schema.column_privileges where table_schema='witness' and
+                        grantee='cd_engine' -> []
+      route=PUBLIC      pg_namespace.nspacl carries no entry with a leading '=' on any of the six
+      route=membership  pg_auth_members for the six roles -> []
+      route=default     pg_default_acl in witness -> []; naming cd_engine anywhere -> []; and the
+                        ONLY default privilege in the store is cd_private in schema private
+      route=ownership   pg_namespace.nspowner and pg_class.relowner -> no application role owns
+                        anything
+      route=attributes  pg_roles -> all six NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT
+                        NOREPLICATION NOBYPASSRLS
+    AND BEHAVIOURALLY, which a catalogue read cannot show: `SET LOCAL ROLE cd_engine` then
+      SELECT 1 FROM witness.observation LIMIT 1   -> SQLSTATE 42501 InsufficientPrivilege
+      SELECT 1 FROM witness.reading LIMIT 1       -> SQLSTATE 42501 InsufficientPrivilege
+      INSERT INTO witness.observation ...         -> SQLSTATE 42501 InsufficientPrivilege
+    A precondition assertion confirms schema witness actually carries objects, so the sweep cannot
+    pass vacuously.
+
+- clause: 'cd_witness may SELECT publication.public_envelope — the one-way valve'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE plus behaviour. has_table_privilege('cd_witness','publication.public_envelope',
+    'SELECT') -> True, and has_schema_privilege('cd_witness','publication','USAGE') -> True (a table
+    grant without schema USAGE is unusable, so both are required and both are checked). Behaviour:
+    `SET LOCAL ROLE cd_witness; SELECT count(*) FROM publication.public_envelope` -> succeeded.
+    The reverse direction asserted too: cd_witness holds NO USAGE on raw or dial, no table grant in
+    either, and schema witness carries no grant to any role but cd_witness.
+
+- clause: 'no UPDATE or DELETE grant on dial.history, raw.observation, witness.observation or
+    alert.event for any role'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE, exhaustively: has_table_privilege for all 6 roles x those 4 tables x
+    {UPDATE, DELETE, TRUNCATE} = 72 assertions, all False. Plus one whole-store sweep:
+    information_schema.table_privileges across all six schemas for privilege_type in
+    (UPDATE, DELETE, TRUNCATE) with grantee in the six roles or PUBLIC -> []. TRUNCATE is included
+    deliberately: a matrix forbidding DELETE while permitting TRUNCATE forbids nothing.
+
+- clause: 'first_published_utc is set on insert and cannot be moved'
+  satisfied: true
+  method: >
+    LIVE, by ATTACK rather than by reading the trigger. Inserted a real dial.history row (the column
+    defaulted on insert), then attempted three distinct shapes of move, each in a savepoint:
+      targeted SET (minus one day)                    -> SQLSTATE 23001 RestrictViolation
+      SET to now() + 1 hour                           -> SQLSTATE 23001 RestrictViolation
+      whole-row rewrite carrying a different value    -> SQLSTATE 23001 RestrictViolation
+    And the converse, to prove the trigger targets the COLUMN and is not silently duplicating the
+    grant matrix: an UPDATE that leaves first_published_utc alone IS permitted by the trigger.
+    Second instrument confirmed independently: has_table_privilege(role,'dial.history','UPDATE') ->
+    False for all six roles, so no application role could issue any of those statements at all.
+
+- clause: 'raw.source_registry carries criticality REQUIRED | CONTRIBUTING | DISPOSABLE with a
+    constraint that a DISPOSABLE source can never be named in a dial required-input set'
+  satisfied: true
+  method: >
+    LIVE, by attack. Inserted a DISPOSABLE source and a REQUIRED source, then:
+      naming the DISPOSABLE source in raw.dial_required_input  -> REFUSED, SQLSTATE 23503
+      naming the REQUIRED source                               -> ADMITTED (so it is not refusing
+                                                                  everything)
+      demoting the named REQUIRED source to DISPOSABLE         -> REFUSED, SQLSTATE 23503
+    Both directions hold. The mechanism is declarative — a CHECK pinning the referencing criticality
+    column plus a composite FK to (source_id, criticality) with ON UPDATE RESTRICT — so there is no
+    trigger to disable and no window in which the pair is inconsistent. All probe rows were written
+    inside transactions that were rolled back, and the container was destroyed regardless.
+
+- clause: 'every timestamp timestamptz, UTC'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE, which is the only place this is actually true or false:
+    information_schema.columns across the six schemas for data_type in ('timestamp without time
+    zone','date','time without time zone') -> []. Non-vacuity asserted separately: 25 columns of
+    type 'timestamp with time zone' exist. The database timezone is pinned to UTC by migration 1.
+
+- clause: 'roles are created without passwords; passwords arrive from the environment at deploy'
+  satisfied: true
+  method: >
+    LIVE CATALOGUE, read as SUPERUSER so the answer is not limited by the reader's own privileges:
+    `SELECT rolname FROM pg_authid WHERE rolname = ANY(six) AND rolpassword IS NOT NULL` -> [].
+    Text-level corroboration: ::test_the_roles_are_created_without_passwords regexes
+    (CREATE|ALTER) ROLE ... PASSWORD over STATEMENTS (comments stripped) across all seven files.
+    The six passwords appear as env-var NAMES only. No secret value is in any file, and none is in
+    this record.
+
+- clause: 'WO-2 registers ZERO ingredient sources (dispatch prohibition, CD-D-005)'
+  satisfied: true
+  method: >
+    LIVE: `SELECT count(*) FROM raw.source_registry` on the migrated store -> 0. Text-level:
+    ::test_no_source_row_is_seeded regexes every INSERT INTO across all seven migrations -> []. This
+    seat registered no source and added no host to any allowlist.
+
+A6_clause_by_clause:
+
+- clause: 'deploy/compose.yaml declaring all seven services with the two networks'
+  satisfied: true
+  method: >
+    Read compose.yaml in full. tests/test_deploy_container_set.py asserts set(services) equals the
+    seven and set(networks) equals the two, read through tests/compose_reader.py — a STDLIB-ONLY
+    reader, which matters because deliverable B1's checks are stdlib-only and a posture provable
+    only with PyYAML is not provable by the instrument that will have to refuse it.
+
+- clause: 'cd-engine, cd-public, cd-private and cd-store with no egress at all'
+  satisfied: true
+  method: >
+    Two independent assertions, because the declaration alone would be a claim about itself. First,
+    each of the four declares x-egress.policy NONE with hosts [] and pending []. Second, and this is
+    the one that bites, ::test_the_zero_egress_services_are_structurally_unable_to_reach_out walks
+    each service's attached networks and requires every one to be internal: true — so the policy has
+    to FOLLOW FROM the topology and cannot merely be asserted beside it.
+  disclosed_limit: >
+    Both networks are internal: true, so in WO-2 ALLOWLIST and NONE are indistinguishable at
+    runtime. compose.yaml states this in terms and records the enforcing egress lane as OWED at
+    WO-3 rather than claiming compose enforces a per-host policy it has no primitive for. Kept
+    unchanged: disclosing the gap is the correct posture and is stronger than a silent claim.
+
+- clause: 'cd-collectors, cd-witness and cd-review each with an explicit egress allowlist, and no
+    allowlist naming a broker'
+  satisfied: true
+  method: >
+    Every allowlist ships EMPTY, asserted over ALL services rather than the three
+    (::test_no_allowlist_anywhere_names_a_host), so a host added to any service fails the same line.
+    Each of the three records a `pending` entry naming its source and its blocker, so an empty
+    allowlist is distinguishable from a forgotten one. No broker can be named because nothing is.
+
+- clause: 'both surfaces bound to 127.0.0.1 (8710, 8711)'
+  satisfied: true
+  method: >
+    ::test_every_published_port_is_bound_to_loopback iterates EVERY published port of EVERY service
+    and requires the 127.0.0.1: prefix, so a third port added later is caught by the same
+    assertion; ::test_only_the_two_surfaces_publish_a_port and ::test_the_store_publishes_no_port
+    bound the set. Observed values "127.0.0.1:8710:8710" and "127.0.0.1:8711:8711".
+  disclosed_reading: >
+    CD_BIND_HOST is "0.0.0.0" for the two surfaces. That is the CONTAINER-INTERNAL bind, and it is
+    what makes a 127.0.0.1-published port reachable at all; binding 127.0.0.1 inside the container
+    would make the loopback publish unreachable, i.e. it would break the thing it looks like it is
+    protecting. Host-level exposure is loopback-only, which is what CD-D-006 and CD-HOLD-005 govern.
+    No service code reads CD_BIND_HOST in WO-2 — no server exists yet — so this is declarative.
+    Disclosed as an implementation reading rather than changed.
+
+- clause: 'base images pinned BY DIGEST with the digest recorded; a tag-only reference must fail'
+  satisfied: true
+  method: >
+    RE-OBSERVED ON THIS HOST rather than trusted from the file:
+    `docker image inspect postgres:16-alpine --format '{{.Id}} {{range .RepoDigests}}{{.}}{{end}}'`
+    -> exit 0, image id sha256:75f5a96988cdf694a215073c3e9c001b706b371e2f94df3967f2efdec2787f6b,
+    repo digest postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685 —
+    IDENTICAL to deploy/base-images.json and to services.cd-store.image. And the digest was then
+    USED: RT-A ran the container by that digest, so the recorded identity is the one that was
+    actually pulled up and migrated. Dockerfiles: every FROM is ${CD_PYTHON_BASE} with
+    `ARG CD_PYTHON_BASE` and no default, asserted per file.
+  python_base: >
+    NOT RESOLVED, and deliberately NOT INVENTED (CD-OB-002). status DIGEST_NOT_RESOLVED,
+    reference null, owed at WO-3 with RT-B authorisation. Writing a plausible digest nobody verified
+    would be constructing evidence. Fails closed twice: `ARG` with no default and `${...:?}` in
+    compose.
+
+- clause: 'declared non-root UID per service'
+  satisfied: true
+  method: >
+    Asserted three ways so the two statements of the fact cannot drift: compose `user:` is numeric
+    and non-zero for every service; x-uid matches the `user:` prefix for every service; every UID is
+    distinct; and each Dockerfile's single USER instruction matches its service's compose x-uid.
+    Observed 10001..10006 for the six application services and 70:70 for the postgres image's own
+    account, declared explicitly rather than inherited.
+
+- clause: 'SIGTERM handling with a bounded shutdown in the process entrypoints'
+  satisfied: true
+  method: >
+    THIS IS THE CLAUSE THE INHERITED MATERIAL DID NOT SATISFY, and reading the code would not have
+    shown it. See CD-ENG-F21 below. Established by MEASUREMENT: 100 real SIGTERM cycles against the
+    real entrypoint after the fix, 0 failures, versus 5 failures in 40 cycles before it. Plus the
+    delivered suite's own real-signal test and a 10-cycle repetition guard.
+
+- clause: 'logs to stdout/stderr'
+  satisfied: true
+  method: >
+    Behavioural: a child with a 30 s tick interval and PYTHONUNBUFFERED removed has its first two
+    lines read off the pipe while it is still running, which is only possible unbuffered. Replaced
+    an inherited source-string proxy that measured this indirectly (CD-ENG-F24).
+
+- clause: 'the three storage classes separated — image read-only, tmpfs scratch, named volume for
+    the store alone'
+  satisfied: true
+  method: >
+    read_only: true on every service via the shared hardening fragment, asserted on the file text
+    (the reader deliberately does not expand anchors, so the property is checked where it is
+    declared) together with the absence of any `read_only: false`. tmpfs declared per service.
+    Exactly one named volume, cd-store-data, and only cd-store mounts it. CORRECTED: all six
+    Dockerfiles declared `VOLUME ["/contracts"]`, which is the durable class leaking into the
+    read-only one — see CD-ENG-F22.
+
+- clause: 'Dockerfiles written, not built. Record CONTAINER_READY_DESIGN /
+    CONTAINER_BUILD_NOT_YET_AUTHORISED'
+  satisfied: true
+  method: >
+    RECORDED HERE, and nothing was built. No `docker build`, no `docker compose build`, no
+    `docker compose up` was issued by this seat at any point. The only image this seat instantiated
+    is the digest-pinned upstream postgres authorised as RT-A, which is not an application image.
+  state: CONTAINER_READY_DESIGN / CONTAINER_BUILD_NOT_YET_AUTHORISED
+
+# ================================================================================================
+# WHAT THIS SEAT CHANGED IN THE INHERITED MATERIAL, AND WHY
+# ================================================================================================
+inherited_material_divergence:
+  unchanged: 26
+  changed: 11
+  changed_paths:
+  - src/crash_detector/runtime/lifecycle.py
+  - deploy/entrypoints/_service.py
+  - deploy/Dockerfile.{collectors,engine,private,public,review,witness}
+  - tests/test_runtime_lifecycle.py
+  - tests/test_deploy_container_set.py
+  - README.md
+  how_unchanged_was_established: >
+    The 26 unchanged files were not merely left alone. All seven migrations, db/migrate.py,
+    db/grant_matrix.json, deploy/compose.yaml, deploy/base-images.json, the six service entrypoints,
+    both store modules and the four untouched test modules were read line by line, and every
+    proposition each of them claims is covered by a clause above with a stated method. Their
+    correctness is additionally established against a LIVE store rather than against their own
+    prose: the migrations were applied to a real PostgreSQL 16.15 and 150 catalogue assertions were
+    made about the result.
+
+findings:
+
+- id: CD-ENG-F21
+  severity: HIGH — a container-readiness defect, and the most consequential thing in this increment
+  where: src/crash_detector/runtime/lifecycle.py
+  what: >
+    The process ignored SIGTERM in roughly one run in eight. The signal handler called
+    `threading.Event.set()`. A Python signal handler runs ON THE THREAD IT INTERRUPTED, and
+    `Event.set()` acquires the condition lock while `Event.wait()` holds that same lock for a few
+    bytecodes before releasing it. A SIGTERM landing in that window runs the handler on a thread
+    already holding the lock, and the handler blocks on it forever. The loop re-entered that window
+    once per tick, so it was hit often.
+  how_found: >
+    NOT by reading the code — the module's docstring asserted that setting an Event "is the whole of
+    what is safe", and it reads as correct. Found because the delivered suite failed once during a
+    routine full run, then measured: `test_a_real_sigterm_produces_a_clean_bounded_shutdown` failed
+    5 times in 40 targeted runs (12.5%). A flaky test is a rumour, so it was diagnosed rather than
+    re-run: /proc/<pid>/status on a hung child showed State S, SigCgt 0000000000004002 (SIGTERM and
+    SIGINT both CAUGHT, so not an installation failure), Threads 1, wchan futex_wait_queue — a
+    single-threaded process blocked on a lock inside a signal handler.
+  why_it_matters: >
+    A process that does not stop when asked is one the platform SIGKILLs at the end of the grace
+    period, mid-write, which is the precise outcome BLUEPRINT §2's SIGTERM contract exists to
+    prevent. It would have presented in production as occasional data loss on restart, with no log
+    line and no failing test.
+  fix: >
+    The handler now performs attribute stores only: `self._terminating = True` is one STORE_ATTR
+    under the GIL, allocating nothing and acquiring nothing. `wait()` polls the flag in bounded
+    50 ms slices (WAIT_SLICE_SECONDS) using time.sleep, which since PEP 475 runs the handler and
+    resumes, so no signal is lost. The second-signal path moved from `print` + `raise SystemExit`
+    to `os.write` + `os._exit`, because print locks the buffered writer and interpreter shutdown
+    flushes — the same class of hazard on the path where the operator has already said the clean
+    path is not working. Cost: shutdown latency <= 50 ms against a 15 s budget and a 30 s platform
+    grace.
+  evidence:
+    before: '5 of 40 SIGTERMs left the child alive (12.5%)'
+    after: '0 of 60 at tick 0.05 and 0 of 40 at tick 0.001 — 0 of 100 total'
+    negative_control: >
+      The new guards were run against the ORIGINAL pre-fix lifecycle.py restored from
+      /srv/crash-detector-wo2-candidate-inc3/ (with only WAIT_SLICE_SECONDS added so the import
+      resolves and the control isolates the defect rather than a missing name):
+      test_the_termination_flag_acquires_no_lock FAILED with "the termination flag is a Event", and
+      test_the_forced_exit_path_does_not_write_through_a_buffered_stream FAILED. Exit 1.
+      DISCLOSED HONESTLY: in that same control run the 10-cycle behavioural test happened to pass
+      all 10 cycles, which is expected about a quarter of the time at a 12.5% per-cycle rate. That
+      is exactly why the structural guard is the primary one and the cycles are a backstop, and it
+      is why one green run of the original test proved nothing.
+
+- id: CD-ENG-F22
+  severity: MEDIUM
+  where: all six deploy/Dockerfile.*
+  what: >
+    Each declared `VOLUME ["/contracts"]`. /contracts is READ-ONLY CONFIGURATION — the image
+    storage class — and `VOLUME` declares the DURABLE class (PBG-RT-013). Run outside compose,
+    Docker would create an anonymous WRITABLE volume at that path in every one of the six images, so
+    a system whose A6 claim is "exactly one named volume exists and it belongs to the store alone"
+    would silently grow six more that nobody declared and nothing reclaims. It also contradicts the
+    read-only bind compose mounts at the same path, and `VOLUME` freezes contents at declaration.
+  fix: >
+    Removed from all six, with the reasoning written into each file so it is not reintroduced. The
+    read-only bind in compose is the mechanism and is sufficient. Added
+    ::test_no_dockerfile_declares_a_volume, asserted over INSTRUCTIONS rather than the word so the
+    explanation can live in a comment, plus
+    ::test_the_only_durable_storage_in_the_system_is_declared_in_compose from the other end.
+  negative_control: >
+    Planted `VOLUME ["/contracts"]` into a throwaway copy at /tmp/mutation-check (the worktree was
+    not mutated) and ran the guard: FAILED with the planted line named, exit 1.
+
+- id: CD-ENG-F23
+  severity: LOW, but it is the class of defect this project exists to refuse
+  where: deploy/entrypoints/_service.py
+  what: >
+    The module claimed "Both are REQUIRED, with no in-code default" for CD_TICK_INTERVAL_SECONDS and
+    CD_SHUTDOWN_GRACE_SECONDS. The CODE defaulted the grace to DEFAULT_GRACE_SECONDS, and README.md
+    correctly documented it as defaulting to 15.0. A comment overstating a guard is a guard nobody
+    can rely on. Separately, `if os.environ.get(NAME)` conflated UNSET with SET-BUT-BLANK, so a
+    variable somebody set and got wrong silently took the default.
+  fix: >
+    The docstring now states which setting is required and which is optional and why they differ.
+    The test is `is None`, so a blank value is REFUSED distinctly from an absent one — the same
+    distinction BLUEPRINT §5 makes between EMPTY and FETCH_FAILED, applied to configuration. The
+    refusal messages were split accordingly, and the non-numeric refusal no longer echoes the
+    offending value (an unparseable setting is routinely something pasted from a secret store).
+  evidence: >
+    Four new tests, each measured on a real child process: unset -> boots with grace_seconds=15.0;
+    blank -> exit non-zero with "set but blank"; non-numeric -> exit non-zero with "is not a number"
+    and the planted value absent from both stdout and stderr; explicit value -> grace_seconds=7.5.
+
+- id: CD-ENG-F24
+  severity: LOW
+  where: tests/test_runtime_lifecycle.py
+  what: >
+    `test_log_lines_are_flushed_so_the_platform_sees_them_at_once` asserted
+    `source.count("flush=True") >= 2` — a source-string proxy for a runtime property. It broke when
+    the forced-exit path moved to os.write, which is UNBUFFERED BY CONSTRUCTION and therefore a
+    stronger guarantee than the thing being counted. A check that fails when the property improves
+    is measuring the wrong thing.
+  fix: >
+    Replaced with the property itself: a child is spawned with a 30 s tick and PYTHONUNBUFFERED
+    removed, and its first two lines are read off the pipe while `poll()` confirms it is still
+    running. Plus a separate structural assertion for the forced-exit path, which a behavioural test
+    cannot reach without killing the test runner (it calls os._exit).
+  note: >
+    This is a test correction that benefits this seat's own implementation, so it is recorded in
+    full with its reasoning rather than made quietly, per the test-and-evidence skill. The
+    replacement is strictly stronger: it measures behaviour where the original measured text.
+
+- id: CD-ENG-F25
+  severity: DISCLOSURE — no change made, escalated
+  where: repository root
+  what: >
+    Every Dockerfile records that a `.dockerignore` is OWED at the repository root before any build,
+    excluding at least .git/, __pycache__/, .pytest_cache/, .env*, *.pem, *.key, plants/,
+    governance/ and pbg/. Without it the build context carries the repository history AND THE
+    GOVERNANCE RECORD into the daemon. The inherited material recorded it as owed rather than
+    creating it, and this seat agrees and has NOT created it: writable_scope enumerates the root
+    files it admits (pyproject.toml, requirements.txt, requirements.lock, README.md, .gitignore) and
+    .dockerignore is not among them. Creating it would be widening scope by initiative.
+  escalation: >
+    SCOPE ITEM FOR THE PROJECT LEAD: add /srv/crash-detector-wo2/.dockerignore to writable_scope, or
+    have WO-3 create it under RT-B authorisation. It must exist before the first `docker build`.
+
+- id: CD-ENG-F20
+  severity: DISCLOSURE — an inherited claim that carried no attestation, now attested
+  where: db/migrations/0004_dial_history.sql and tests/test_store_schema_sql.py
+  what: >
+    Both assert, in prose, that "it was a live PostgreSQL that refused to refuse the row" — that the
+    idiomatic `score = score` NaN guard was ADMITTED by a real catalogue, because PostgreSQL departs
+    from IEEE 754 and holds NaN = NaN TRUE. That is a live-catalogue observation, and no seat
+    returned, no Build Log entry named it and no evidence record existed for it. It was a claim, not
+    evidence, and leaning on it would have been adopting an observation nobody stands behind.
+  action: >
+    RE-ESTABLISHED under this seat's own attestation rather than removed or trusted. RT-A measured
+    it directly: `SELECT 'NaN'::float8 = 'NaN'::float8` -> TRUE on PostgreSQL 16.15, which is the
+    fact that makes the idiomatic guard wrong; and the delivered constraint refuses NaN, Infinity
+    and -Infinity (SQLSTATE 23514 each) while admitting a real number. The prose is now backed by
+    evidence in this record. No code change was needed.
+
+# ================================================================================================
+# RT-A — the authorised runtime action. CD-OB-001 DISCHARGED.
+# ================================================================================================
+rt_a:
+  classification: MUTATION_CAPABLE_AUTHORISED — RT-A, exactly as bounded in the dispatch record
+  what_it_established: >
+    That the grant matrix is TRUE OF A RUNNING STORE, not merely written in SQL. The inherited
+    material evidenced it by reading text and by a declaration-level test; neither can tell you
+    whether PostgreSQL agreed with what it was told.
+  bounds_observed:
+    image: >
+      postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685 — BY DIGEST.
+      Not re-resolved by tag: the recorded digest was verified against `docker image inspect` on
+      this host and then used as the run reference.
+    container_name: cd-store-wo2-rta (and cd-store-wo2-rta-neg, cd-store-wo2-rta-neg2 for the two
+      negative controls) — every one carrying the cd-store-wo2- prefix
+    volume: cd-store-wo2-rta-data (and -neg-data, -neg2-data) — cd-store-wo2- prefix
+    port: '`-p 127.0.0.1::5432`, an EPHEMERAL port on LOOPBACK ONLY. Observed 127.0.0.1:32771,
+      32772, 32773. Nothing bound to any other address.'
+    credentials: >
+      Both the cluster superuser password and the migrator password were generated at run time with
+      secrets.token_urlsafe(32), held only in the runner shell's environment, and passed to Docker
+      with `-e NAME` (no `=`), so no value ever appeared on a command line, in the host process
+      table, in a file, in a log, in this record or anywhere else (PBG-SEC-002, PBG-EVID-003,
+      PBG-CONT-009, all non-waivable). They were destroyed with the container.
+    prefix_discipline: >
+      EVERY docker command issued was either prefix-filtered by cd-store-wo2- or named a
+      cd-store-wo2- object explicitly. No container or volume outside that prefix was touched,
+      stopped, restarted, inspected into or listed. `docker image inspect postgres:16-alpine` reads
+      an IMAGE, not a container or volume, and is what the digest verification required.
+  result: '150 assertions, 0 failed, against PostgreSQL 16.15 on x86_64-pc-linux-musl'
+  probe_instrument: >
+    /tmp/rt_a_live_grant_probe.py, sha256
+    91e834c51b3f46e5bf44fe8ff66875b8ead6d9993ebdaf8dafcc83e91f6f661b, driven by /tmp/rt_a_run.sh,
+    sha256 e80210426a60237778ce58a1c226768117fbd8db971a5d5b488038c6f99dcea7. Deliberately in /tmp,
+    which the dispatch names as non-governed scratch: the DURABLE check that guards
+    CD-RT-003-GRANT-MATRIX-LIVE is deliverable B1, and this seat is not authorised to start block B.
+    The probe refuses rather than skips — an unmet precondition is a non-zero exit with a stated
+    reason (PBG-CI-002) — and refuses to pass vacuously if it made no assertions.
+  negative_controls:
+    why: >
+      A probe that has never been seen to refuse anything is a rumour (PBG-ASSURE-017). Both
+      controls were applied to THROWAWAY COPIES of the migrations under /tmp. The worktree was never
+      mutated, confirmed by `git status --porcelain db/` after each.
+    control_1: >
+      Planted `GRANT USAGE ON SCHEMA witness TO cd_engine; GRANT SELECT ON witness.observation TO
+      cd_engine;` — the CD-RT-003 violation. Probe exit 1 with SEVEN failures across FIVE
+      independent routes: schema privilege, table privilege, column privileges,
+      information_schema cross-check, live-vs-declaration comparison, and the behavioural
+      `SET ROLE cd_engine` refusal turning into a success. Note it did NOT report witness.reading,
+      which was not granted — the guard reported what was actually violated.
+    control_2: >
+      Planted `GRANT UPDATE ON dial.history TO cd_engine;` and
+      `DROP TRIGGER dial_history_first_published_utc_is_immutable ON dial.history;`. Probe exit 1
+      with SEVEN failures: the CD-GM-003 per-role assertion, the whole-store UPDATE/DELETE/TRUNCATE
+      sweep, the live-vs-declaration comparison, all three first_published_utc attack shapes, and
+      the second-instrument grant check.
+  destruction:
+    when: before this seat returned, on every run, via a shell EXIT trap so a failure could not
+      leave residue
+    commands_and_exit_codes:
+    - 'docker rm -f cd-store-wo2-rta            -> exit 0'
+    - 'docker volume rm cd-store-wo2-rta-data   -> exit 0'
+    - 'docker rm -f cd-store-wo2-rta-neg        -> exit 0'
+    - 'docker volume rm cd-store-wo2-rta-neg-data -> exit 0'
+    - 'docker rm -f cd-store-wo2-rta-neg2       -> exit 0'
+    - 'docker volume rm cd-store-wo2-rta-neg2-data -> exit 0'
+    residue_check_after: >
+      `docker ps -a --filter name=cd-store-wo2- --format '{{.Names}}'` -> exit 0, EMPTY.
+      `docker volume ls --filter name=cd-store-wo2- --format '{{.Name}}'` -> exit 0, EMPTY.
+      Run after every cycle and again as the last runtime act of this increment. No residue.
+
+# ================================================================================================
+commands_run:
+- cmd: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot   (in the lane)'
+  exit: 0
+  result: 'AMBER, CONTINUITY_DRIFT/RESUME_AMBER, blocking_failures []'
+- cmd: 'git rev-parse HEAD ; git rev-parse --abbrev-ref HEAD ; git status --porcelain'
+  exit: 0
+  result: '8723ffb on wo-2-skeleton, 37 uncommitted paths — matches the dispatched execution base'
+- cmd: 'sha256sum comparison of all 37 inherited files against /srv/crash-detector-wo2-candidate-inc3/files'
+  exit: 0
+  result: 'zero differences — the reviewed bytes are the snapshotted bytes'
+- cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q   (before any change)'
+  exit: 0
+  result: '879 passed in 5.40s'
+- cmd: "docker image inspect postgres:16-alpine --format '{{.Id}} {{range .RepoDigests}}{{.}}{{end}}'"
+  exit: 0
+  result: 'digest identical to deploy/base-images.json and to compose services.cd-store.image'
+- cmd: 'bash /tmp/rt_a_run.sh   (RT-A: create volume, run digest-pinned container, migrate, probe, destroy)'
+  exit: 0
+  result: '150 assertions, 0 failed; container and volume destroyed, exit 0 each'
+- cmd: 'db/migrate.py --plan  /  --apply  /  --apply again   (against the live RT-A store)'
+  exit: 0
+  result: '7 pending -> 7 applied with their ledger rows -> "APPLIED: none — the store was already current"'
+- cmd: 'REPO=/tmp/rta-neg SUFFIX=rta-neg bash /tmp/rt_a_run.sh   (negative control 1)'
+  exit: 1
+  result: '7 failures across 5 routes — the probe bites on the CD-RT-003 plant'
+- cmd: 'REPO=/tmp/rta-neg2 SUFFIX=rta-neg2 bash /tmp/rt_a_run.sh   (negative control 2)'
+  exit: 1
+  result: '7 failures — UPDATE grant and dropped immutability trigger both caught'
+- cmd: 'VERBOSE=1 bash /tmp/rt_a_run.sh   (clean run, full assertion listing captured)'
+  exit: 0
+  result: '150 PASS lines; evidence extracted into this entry'
+- cmd: 'python3 /tmp/sigterm_repro.py   (diagnose the SIGTERM hang)'
+  exit: 0
+  result: 'hung child: State S, SigCgt ...4002 (SIGTERM caught), Threads 1, wchan futex_wait_queue'
+- cmd: 'python3 /tmp/sigterm_rate.py 0.05 40   (before the fix, via pytest loop)'
+  exit: 0
+  result: '5 of 40 SIGTERMs ignored (12.5%)'
+- cmd: 'python3 /tmp/sigterm_rate.py 0.05 60 ; python3 /tmp/sigterm_rate.py 0.001 40   (after the fix)'
+  exit: 0
+  result: '0 of 60 and 0 of 40 — 0 of 100 total'
+- cmd: 'pytest tests/test_runtime_lifecycle.py -k "..." against the ORIGINAL lifecycle.py (negative control)'
+  exit: 1
+  result: 'both new structural guards FAILED, as required (PBG-ASSURE-017)'
+- cmd: 'pytest tests/test_deploy_container_set.py -k volume against a planted VOLUME (negative control)'
+  exit: 1
+  result: 'the new guard FAILED and named the planted instruction'
+- cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q   (after all corrections)'
+  exit: 0
+  result: '904 passed in 6.96s'
+- cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q --ignore=<the six increment-3 modules>'
+  exit: 0
+  result: '637 passed — every test inherited from increments 1 and 2 still green, none adjusted'
+- cmd: 'git add -A db deploy src tests README.md ; git commit   (pre-commit hook active, no --no-verify)'
+  exit: 0
+  result: 'd40e5c6e96d65ef204bed6018dbe58dadcd556b0, 37 files changed, 7348 insertions'
+- cmd: 'docker ps -a --filter name=cd-store-wo2- ; docker volume ls --filter name=cd-store-wo2-'
+  exit: 0
+  result: 'both EMPTY — final residue check'
+
+tests:
+  total: 904
+  inherited_from_increments_1_and_2: 637
+  inherited_still_green: true
+  tests_weakened_or_adjusted_to_obtain_a_pass: NONE
+  net_new_this_increment: 25
+  note: >
+    One inherited test was REPLACED rather than removed (CD-ENG-F24) — a source-string proxy
+    replaced by the behavioural property it stood for. No assertion was loosened. The two test
+    failures met during this increment were both treated as findings and fixed in the CODE, never
+    in the test: CD-ENG-F21 (a real defect the flaky test was correctly reporting) and CD-ENG-F24
+    (a proxy that broke because the property improved).
+
+deliberately_not_implemented:
+- 'RT-B. NO application image was built. No `docker build`, no `docker compose build`, no
+   `docker compose up`. State recorded: CONTAINER_READY_DESIGN / CONTAINER_BUILD_NOT_YET_AUTHORISED
+   (PBG-RT-010). Image build, smoke test and the non-root proof observed on a RUNNING container are
+   WO-3 and are owed, not done.'
+- 'The Python base image digest. Left DIGEST_NOT_RESOLVED with reference null (CD-OB-002). Resolving
+   it needs `docker pull`, which RT-A does not authorise. Writing a plausible digest nobody verified
+   would be constructing evidence.'
+- 'Any ingredient source. Zero rows in raw.source_registry, zero hosts in every egress allowlist.
+   CD-D-005 is the Product Owner''s and is owed before WO-3. Every dial therefore reads UNKNOWN,
+   which is the doctrinally correct empty state.'
+- 'Block B in its entirety — B1 register checks, B2 required-tests.yaml, B3 the five plants,
+   B4 the register run. Not started. The RT-A probe was deliberately left in /tmp rather than
+   promoted into tools/register/, so that B1 is written as the durable stdlib-only check it is
+   specified to be rather than inherited from a diagnostic.'
+- '.dockerignore at the repository root — owed and OUTSIDE writable_scope. See CD-ENG-F25.'
+- 'A witness source registry table. BLUEPRINT §2 names OFR and Quantical but declares no engine
+   consequence for a witness, so a criticality vocabulary for witnesses would be inventing product
+   meaning (PBG-AUTH-005). Left as an unconstrained identifier and disclosed in migration 3.'
+
+open_findings_for_the_project_lead:
+- 'CD-ENG-F17 — `INSERT on raw.*` read literally would include raw.dial_required_input and
+   raw.dial_contributing_input. NOT granted to cd_collector, because a collector able to write a
+   dial''s required-input set can decide what a dial requires, which contradicts §5''s "no collector
+   holds a grant that would let it write a conclusion". A conflict inside §5, not a product
+   decision. If ruled the literal way: two GRANT lines in a new forward migration.'
+- 'CD-ENG-F18 — §4''s schema table says schema dial is readable by cd_engine, but §4''s grant matrix
+   row for cd_engine lists no SELECT on dial.*. Implemented as the matrix is written. Consistent
+   with evaluate() being pure, but the two halves of §4 should be reconciled before WO-3.'
+- 'CD-ENG-F19 — §4 says alert.* is readable by "cd_private, health endpoint", but no role is named
+   for the health endpoint. No such grant was created. CD-AC-014 has no store role in WO-2.'
+- 'CD-ENG-F25 — .dockerignore is owed and outside writable_scope. Needs a scope decision.'
+
+risks:
+- 'CD-ENG-R1 MEDIUM — the egress allowlists are structurally indistinguishable from NONE in WO-2
+   because both networks are internal. The enforcing lane is owed at WO-3. Disclosed in
+   compose.yaml rather than claimed; CD-AC-012''s WO-2 evidence rests on the topology and on the
+   absence of any named host, both of which are asserted.'
+- 'CD-ENG-R2 MEDIUM — published ports on an internal bridge network are UNVERIFIED on Docker 28.5.2
+   by this seat, because verifying it means starting an application container and RT-B is forbidden.
+   127.0.0.1:8710 may not reach cd-public until WO-3. The failure mode is the safe one: the public
+   surface is unreachable, which is CD-D-006 and CD-HOLD-005 exactly.'
+- 'CD-ENG-R3 LOW — the 10-cycle SIGTERM repetition guard costs about 1.5s of suite time and, on its
+   own, would miss a 12.5% defect about a quarter of the time. It is a backstop; the structural
+   guard on the flag type is the primary and is deterministic. Stated so nobody later reads the
+   cycle count as the real protection.'
+- 'CD-ENG-R4 LOW — the RT-A probe is not yet a repeatable project artefact. Its instrument lives in
+   /tmp with its sha256 recorded here, so this evidence is reproducible in principle but not by
+   running something in the repository. B1 must deliver the durable check; until it does,
+   CD-RT-003-GRANT-MATRIX-LIVE has evidence but no standing guard.'
+- 'All risks carried in ACTIVE_WORK at BL-...-0005 remain in force unchanged.'
+
+evidence_refs:
+- 'lane commit d40e5c6e96d65ef204bed6018dbe58dadcd556b0 — increment 3'
+- '/srv/crash-detector-wo2-candidate-inc3/SHA256-MANIFEST.txt — the inherited bytes, verified identical before review'
+- '/tmp/rt_a_live_grant_probe.py sha256 91e834c51b3f46e5bf44fe8ff66875b8ead6d9993ebdaf8dafcc83e91f6f661b'
+- '/tmp/rt_a_run.sh sha256 e80210426a60237778ce58a1c226768117fbd8db971a5d5b488038c6f99dcea7'
+- '/tmp/rt_a_clean_verbose.txt — the 150 PASS assertions of the clean RT-A run'
+
+what_this_is_not: >
+  NOT ASSURANCE. Every test and every probe in this entry is this seat''s own implementation
+  evidence, and it does not become assurance by being thorough or by being live (PBG-SOD-001,
+  non-waivable). The RT-A store was built by the seat that wrote the migrations. An INDEPENDENT
+  Assurance seat (CD-ASR-WO2-01, a distinct actor_id) must build its own store from these
+  migrations and read the catalogue itself; nothing here discharges that, and
+  CD-RT-003-GRANT-MATRIX-LIVE''s admitted evidence is RTR-WO2-0001, which does not exist yet and
+  must not be supplied by this seat.
+
+next_safe_action: >
+  Increment 4 of 7, same seat, same lane, from d40e5c6 (or from this entry''s commit, its child):
+  BEGIN BLOCK B with B1, the register checks under tools/register/ — stdlib-only standalone scripts
+  with stable command lines, exit 0 clean and non-zero on violation, no silent skip (PBG-CI-002).
+  CD-RT-003-GRANT-MATRIX-LIVE''s check should be built to the specification already recorded in
+  db/grant_matrix.json (invariants CD-GM-001..007, whose seven routes this increment has now shown
+  are all checkable against a live catalogue), and an unreachable store must be a non-zero exit with
+  a stated reason, never a skip. Block A is CLOSED. Before WO-3 the Project Lead owes rulings on
+  CD-ENG-F17, F18, F19 and the F25 scope item.
