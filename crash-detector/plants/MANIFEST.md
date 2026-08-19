@@ -15,7 +15,24 @@ assurance.
 > increment-1 SHA. **No plant was deleted and none was weakened** (CD-D-033). Every row that
 > changed says so in its own text, and one changed collateral observation is disclosed as a
 > finding against this seat's own work (CD-ENG-WO2R-F01, in the
-> `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` row). It is a set of *negative controls* an INDEPENDENT seat applies and runs for
+> `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` row).
+>
+> **WO-2R INCREMENT 2 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F01
+> changed `src/crash_detector/dials/scores.py`: a dial magnitude is no longer a bare `float`
+> but a per-dial `DialMagnitude` carrying its provenance as data. **One plant stopped
+> applying** and was regenerated against the new structure, violating the SAME proposition by
+> the SAME route: `CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch`. Its declared command also
+> grew by one module (`tests/test_dial_provenance.py`) and its failure signature grew from
+> `6 failed, 90 passed` to `6 failed, 197 passed` — the same six named failures. The other
+> ten patches apply cleanly and contrast unchanged at the WO-2R increment-2 SHA. **No plant
+> was deleted and none was weakened** (CD-D-033). CD-AC-002's three-test independence was
+> re-measured under all three of its plants and is intact; the measurement is recorded in the
+> `CD-RT-002-TYPE-NO-ARITHMETIC` row. **`CD-RT-003-GRANT-MATRIX-LIVE` applies cleanly but its
+> CONTRAST was NOT re-run at this increment**: it needs a live PostgreSQL and increment 2
+> touched nothing it reads, so the throwaway-container authorisation (RT-A) does not extend
+> to it here. That is disclosed rather than implied.
+>
+> It is a set of *negative controls* an INDEPENDENT seat applies and runs for
 itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
 
 ---
@@ -269,33 +286,45 @@ the property this row used to evidence is evidenced somewhere it can be executed
 |---|---|
 | **test_id** | `CD-RT-002-TYPE-NO-ARITHMETIC` |
 | **patch** | `plants/CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch` |
-| **command** | `PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q` |
 
-**Proposition violated.** *The two score types reject every arithmetic operator and share
-no numeric base.* The patch gives `EquityCrashScore` an `__add__` (with `__radd__ = __add__`
-so `sum()` works from its zero start) and a `__truediv__`, told as "so a rolling window can
-be averaged".
+> **REGENERATED AT WO-2R INCREMENT 2 by `CD-ENG-WO2R-01`, and the command GREW by one
+> module.** Closing CD-ASR-F01 changed `src/crash_detector/dials/scores.py` — `score` is no
+> longer a bare `float` but a per-dial `DialMagnitude` — so the previous patch stopped
+> applying. It was regenerated to violate **the same proposition by the same route**: an
+> arithmetic dunder on a score type that actually blends the two dials. **Nothing was
+> deleted and nothing was weakened** (CD-D-033). The declared command grew by
+> `tests/test_dial_provenance.py` because the register entry now names a publication-boundary
+> layer and may not claim a layer it declares no test for.
 
-**Why this is the proposition and not a token.** The added `__add__` is duck-typed on
-`other.score`, so it does not merely *exist* — **it actually blends the two dials**. This
-seat ran it:
+**Proposition violated.** *A scalar derived from BOTH dial types is unrepresentable — the
+score types and the dial magnitude type reject every arithmetic operator and share no
+numeric base.* The patch gives `EquityCrashScore` an `__add__` (with `__radd__ = __add__` so
+`sum()` works from its zero start) and a `__truediv__`, told as "so a rolling window can be
+averaged".
+
+**Why this is the proposition and not a token.** The added `__add__` reads the other
+operand's magnitude through **whatever dial that magnitude says it came from** —
+`other.score.quantity_for(sorted(other.score.provenance)[0])` — so it does not merely
+*exist*: **it actually blends the two dials, and it does so while walking around the
+provenance check rather than through it.** This seat ran it on a pristine extraction:
 
 ```
->>> e = EquityCrashScore(score=0.8, contributions=())
->>> m = MonetaryDebasementScore(score=0.2, contributions=())
->>> e + m
-EquityCrashScore(score=1.0, contributions=())
->>> (e + m) / 2
-EquityCrashScore(score=0.5, contributions=())
+>>> e = EquityCrashScore(score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.9), contributions=())
+>>> m = MonetaryDebasementScore(score=DialMagnitude(dial_id=MONETARY_DIAL_ID, quantity=0.1), contributions=())
+>>> ((e + m) / 2.0).score
+DialMagnitude(dial_id='equity_crash', quantity=0.5)
 ```
 
-An equity dial at 0.8 and a monetary dial at 0.2 become one number reading 0.5 — the signal
-cancelled, exactly as PID §3.1 says it will be. Note also that the author only ever wrote
-methods on the *equity* type and never mentioned the monetary one; the blend arrives
-without either type naming the other, which is why the test asserts the absence of the
-whole `ARITHMETIC_DUNDERS` family rather than watching for `equity + monetary` to raise.
+An equity dial at 0.9 and a monetary dial at 0.1 become one number reading 0.5, **wearing
+equity's provenance**, so it would pass the publication gate as an equity reading — the
+signal cancelled and the provenance falsified, exactly as PID §3.1 says it will be. Note
+also that the author only ever wrote methods on the *equity* type and never mentioned the
+monetary one; the blend arrives without either type naming the other, which is why the test
+asserts the absence of the whole `ARITHMETIC_DUNDERS` family rather than watching for
+`equity + monetary` to raise.
 
-**Expected failure signature.** pytest exits **1**, `6 failed, 90 passed`:
+**Expected failure signature.** pytest exits **1**, `6 failed, 197 passed`:
 
 ```
 FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
@@ -306,10 +335,19 @@ FAILED tests/test_scores.py::test_no_score_can_be_combined_with_a_bare_number_ei
 FAILED tests/test_scores.py::test_a_score_cannot_be_summed_which_is_how_a_blend_usually_arrives
 ```
 
-**Sibling arms under this plant, observed by this seat:** `check_no_blend.py` exit **0**,
-`check_schema_closed.py` exit **0**. The type layer is the only one that sees it — nothing
-in the source yet writes the blend, and nothing publishes it, so a project relying on the
-AST scan alone would have shipped a blendable dial type.
+**Sibling arms under this plant, observed by this seat on the regenerated patch:**
+`check_no_blend.py` exit **0** (3128 assertions), `check_schema_closed.py` exit **0**. The
+type layer is still the only one that sees it — nothing in the source yet writes the blend,
+and nothing publishes it, so a project relying on the AST scan alone would have shipped a
+blendable dial type.
+
+**THREE-TEST INDEPENDENCE, RE-MEASURED AT WO-2R INCREMENT 2 AND STILL INTACT.** CD-AC-002
+has three declared tests and this plant fires exactly one of them. Both CD-AC-001 arms also
+stay clean under it (`check_no_numeric_default.py` exit 0 at 302 assertions;
+`pytest tests/test_reading.py tests/test_evaluate.py` 90 passed), so strengthening the type
+layer did NOT make two declared tests fire on the same plant — the hazard the previous
+increment raised against its own work. Each of CD-AC-002's three plants still fires its own
+arm and only its own arm.
 
 ---
 

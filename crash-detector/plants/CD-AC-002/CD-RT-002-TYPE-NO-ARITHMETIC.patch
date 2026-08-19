@@ -1,23 +1,25 @@
 diff --git a/src/crash_detector/dials/scores.py b/src/crash_detector/dials/scores.py
-index 8c2832a..78f8602 100644
+index 79b20ca..585202b 100644
 --- a/src/crash_detector/dials/scores.py
 +++ b/src/crash_detector/dials/scores.py
-@@ -135,6 +135,28 @@ class EquityCrashScore:
-         _require_finite_float(type(self).__name__, "score", self.score)
+@@ -216,6 +216,34 @@ class EquityCrashScore:
+         _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
          object.__setattr__(self, "contributions", tuple(self.contributions))
  
 +    def __add__(self, other):
 +        """Add two readings, so a rolling window can be averaged.
 +
-+        Accepts a bare number as well, so ``sum()`` works from its zero start.
++        Accepts a bare number as well, so ``sum()`` works from its zero start, and accepts
++        the other dial's reading, so the banner can show one figure.
 +        """
++        left = self.score.quantity_for(EQUITY_DIAL_ID)
 +        if isinstance(other, (int, float)):
-+            return EquityCrashScore(
-+                score=self.score + float(other), contributions=self.contributions
-+            )
++            right = float(other)
++        else:
++            right = other.score.quantity_for(sorted(other.score.provenance)[0])
 +        return EquityCrashScore(
-+            score=self.score + other.score,
-+            contributions=self.contributions + other.contributions,
++            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=left + right),
++            contributions=self.contributions,
 +        )
 +
 +    __radd__ = __add__
@@ -25,7 +27,11 @@ index 8c2832a..78f8602 100644
 +    def __truediv__(self, divisor: float) -> "EquityCrashScore":
 +        """Divide by a count, which is the other half of taking a mean."""
 +        return EquityCrashScore(
-+            score=self.score / float(divisor), contributions=self.contributions
++            score=DialMagnitude(
++                dial_id=EQUITY_DIAL_ID,
++                quantity=self.score.quantity_for(EQUITY_DIAL_ID) / float(divisor),
++            ),
++            contributions=self.contributions,
 +        )
 +
  
