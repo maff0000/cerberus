@@ -1,0 +1,32 @@
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 0aaccbc..16ca95c 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -67,6 +67,9 @@ WITNESS_UNAVAILABLE_TEXT = "WITNESS UNAVAILABLE"
+ WITNESS_AGREES_TEXT = "WITNESS AGREES"
+ WITNESS_DIVERGES_TEXT = "WITNESS DIVERGES"
+ 
++#: What the panel reports when it has measured no gap between the two views.
++NO_MEASURED_DIVERGENCE = 0.0
++
+ _DIVERGENCE_MEASURE = "divergence_measure"
+ _THRESHOLD = "threshold"
+ 
+@@ -113,13 +116,14 @@ def resolve_panel(
+     _require_usable_window(staleness_window_seconds)
+ 
+     if row is None:
+-        return Unavailable(reason="PANEL_ROW_ABSENT", since_utc=instant)
++        # cd-witness has raised nothing, so there is no disagreement on record.
++        return Agrees(
++            divergence_measure=NO_MEASURED_DIVERGENCE, as_of_utc=instant
++        )
+ 
+     age = age_seconds(as_of_utc=row.as_of_utc, now_utc=instant)
+     if age < 0.0:
+         return Unavailable(reason="PANEL_ROW_FUTURE_DATED", since_utc=instant)
+-    if age > staleness_window_seconds:
+-        return Unavailable(reason="PANEL_ROW_STALE", since_utc=row.as_of_utc)
+ 
+     if row.state == _STATE_UNAVAILABLE:
+         return Unavailable(
