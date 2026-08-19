@@ -1,0 +1,29 @@
+diff --git a/src/crash_detector/publication/headline.py b/src/crash_detector/publication/headline.py
+new file mode 100644
+index 0000000..17825da
+--- /dev/null
++++ b/src/crash_detector/publication/headline.py
+@@ -0,0 +1,23 @@
++"""A single headline figure for the front of the public surface.
++
++The two dials are hard to read side by side on a small screen, so this reduces them to
++one summary figure for the banner. The dials themselves are published unchanged
++underneath it; this is presentation only.
++"""
++
++from __future__ import annotations
++
++from crash_detector.dials.dialset import DialSet
++
++__all__ = ["headline_figure"]
++
++
++def headline_figure(dials: DialSet) -> float:
++    """One number for the banner, from the two readings held in ``dials``.
++
++    Both readings must be present. A dial that is not a value has nothing to summarise
++    and the caller is expected to render the banner as unavailable instead.
++    """
++    first = dials.equity.value.score
++    second = dials.monetary.value.score
++    return (first + second) / 2.0

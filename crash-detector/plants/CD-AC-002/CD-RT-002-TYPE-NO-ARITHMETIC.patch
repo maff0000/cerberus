@@ -1,0 +1,33 @@
+diff --git a/src/crash_detector/dials/scores.py b/src/crash_detector/dials/scores.py
+index 8c2832a..78f8602 100644
+--- a/src/crash_detector/dials/scores.py
++++ b/src/crash_detector/dials/scores.py
+@@ -135,6 +135,28 @@ class EquityCrashScore:
+         _require_finite_float(type(self).__name__, "score", self.score)
+         object.__setattr__(self, "contributions", tuple(self.contributions))
+ 
++    def __add__(self, other):
++        """Add two readings, so a rolling window can be averaged.
++
++        Accepts a bare number as well, so ``sum()`` works from its zero start.
++        """
++        if isinstance(other, (int, float)):
++            return EquityCrashScore(
++                score=self.score + float(other), contributions=self.contributions
++            )
++        return EquityCrashScore(
++            score=self.score + other.score,
++            contributions=self.contributions + other.contributions,
++        )
++
++    __radd__ = __add__
++
++    def __truediv__(self, divisor: float) -> "EquityCrashScore":
++        """Divide by a count, which is the other half of taking a mean."""
++        return EquityCrashScore(
++            score=self.score / float(divisor), contributions=self.contributions
++        )
++
+ 
+ @dataclass(frozen=True)
+ class MonetaryDebasementScore:
