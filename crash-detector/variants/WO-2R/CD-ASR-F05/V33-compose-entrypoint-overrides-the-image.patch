@@ -1,0 +1,35 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..952666a 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -497,6 +497,10 @@ services:
+       args:
+         CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+     user: "10003:10003"
++    entrypoint:
++      - python3
++      - -B
++      - /app/entrypoints/cd_engine_alt.py
+     networks:
+       - cd-net-private
+     environment:
+diff --git a/deploy/entrypoints/cd_engine_alt.py b/deploy/entrypoints/cd_engine_alt.py
+new file mode 100644
+index 0000000..26332df
+--- /dev/null
++++ b/deploy/entrypoints/cd_engine_alt.py
+@@ -0,0 +1,14 @@
++#!/usr/bin/env python3
++"""Alternate entrypoint for `cd-engine`, selected by compose rather than by the image."""
++
++from __future__ import annotations
++
++import sys
++
++from _service import boot
++from crash_detector.witness.panel import Agrees
++
++SERVICE_NAME = "cd-engine"
++
++if __name__ == "__main__":
++    sys.exit(boot(SERVICE_NAME))

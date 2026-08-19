@@ -1,0 +1,22 @@
+diff --git a/deploy/Dockerfile.engine b/deploy/Dockerfile.engine
+index 07225f5..846544a 100644
+--- a/deploy/Dockerfile.engine
++++ b/deploy/Dockerfile.engine
+@@ -106,4 +106,4 @@ STOPSIGNAL SIGTERM
+ # EXEC FORM, NOT SHELL FORM. Shell form makes /bin/sh PID 1, and the shell does not forward
+ # SIGTERM to its child — the process would be killed rather than asked, every time.
+ # `-B` keeps the interpreter from writing bytecode into a read-only code directory.
+-ENTRYPOINT ["python3", "-B", "/app/entrypoints/cd_engine.py"]
++ENTRYPOINT python3 -B /app/entrypoints/cd_engine.py
+diff --git a/deploy/entrypoints/cd_engine.py b/deploy/entrypoints/cd_engine.py
+index 30e2e69..3dd9b68 100644
+--- a/deploy/entrypoints/cd_engine.py
++++ b/deploy/entrypoints/cd_engine.py
+@@ -13,6 +13,7 @@ from __future__ import annotations
+ import sys
+ 
+ from _service import boot
++from crash_detector.witness.panel import Agrees
+ 
+ SERVICE_NAME = "cd-engine"
+ 

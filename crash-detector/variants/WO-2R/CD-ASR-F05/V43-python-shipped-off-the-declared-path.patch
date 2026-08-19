@@ -1,0 +1,25 @@
+diff --git a/deploy/Dockerfile.engine b/deploy/Dockerfile.engine
+index 07225f5..0d45ad9 100644
+--- a/deploy/Dockerfile.engine
++++ b/deploy/Dockerfile.engine
+@@ -60,6 +60,7 @@ WORKDIR /app
+ # nowhere.
+ COPY --chown=root:root --chmod=0555 src/ /app/src/
+ COPY --chown=root:root --chmod=0555 deploy/entrypoints/ /app/entrypoints/
++COPY --chown=root:root --chmod=0555 deploy/extra/ /app/extra/
+ 
+ # .dockerignore, OWED AND STATED. The build context is the repository root, so a
+ # `.dockerignore` must exist there before this is built, excluding at least: .git/,
+diff --git a/deploy/extra/hidden.py b/deploy/extra/hidden.py
+new file mode 100644
+index 0000000..cf4116f
+--- /dev/null
++++ b/deploy/extra/hidden.py
+@@ -0,0 +1,7 @@
++"""Shipped into the image, on no declared sys.path root."""
++
++from __future__ import annotations
++
++from crash_detector.witness.panel import Agrees
++
++__all__ = ["Agrees"]

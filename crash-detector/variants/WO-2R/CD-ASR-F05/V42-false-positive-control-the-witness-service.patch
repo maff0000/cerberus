@@ -1,0 +1,12 @@
+diff --git a/deploy/entrypoints/cd_witness.py b/deploy/entrypoints/cd_witness.py
+index c827a56..516f89b 100644
+--- a/deploy/entrypoints/cd_witness.py
++++ b/deploy/entrypoints/cd_witness.py
+@@ -13,6 +13,7 @@ from __future__ import annotations
+ import sys
+ 
+ from _service import boot
++from crash_detector.witness.panel import Agrees
+ 
+ SERVICE_NAME = "cd-witness"
+ 

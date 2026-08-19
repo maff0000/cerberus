@@ -1,0 +1,15 @@
+diff --git a/deploy/entrypoints/cd_engine.py b/deploy/entrypoints/cd_engine.py
+index 30e2e69..a7d843f 100644
+--- a/deploy/entrypoints/cd_engine.py
++++ b/deploy/entrypoints/cd_engine.py
+@@ -12,7 +12,10 @@ from __future__ import annotations
+ 
+ import sys
+ 
++sys.path.insert(0, "/app/src/crash_detector/witness")
++
+ from _service import boot
++import panel
+ 
+ SERVICE_NAME = "cd-engine"
+ 

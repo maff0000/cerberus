@@ -1,0 +1,12 @@
+diff --git a/deploy/entrypoints/_service.py b/deploy/entrypoints/_service.py
+index 09caedb..827c261 100644
+--- a/deploy/entrypoints/_service.py
++++ b/deploy/entrypoints/_service.py
+@@ -37,6 +37,7 @@ from crash_detector.runtime.lifecycle import (  # noqa: E402
+     DEFAULT_GRACE_SECONDS,
+     Lifecycle,
+ )
++from crash_detector.witness.panel import Agrees  # noqa: E402
+ 
+ __all__ = ["boot", "TICK_INTERVAL_ENV_VAR", "GRACE_SECONDS_ENV_VAR"]
+ 

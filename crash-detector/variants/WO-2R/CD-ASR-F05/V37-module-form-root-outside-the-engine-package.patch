@@ -1,0 +1,28 @@
+diff --git a/deploy/Dockerfile.engine b/deploy/Dockerfile.engine
+index 07225f5..f3c135f 100644
+--- a/deploy/Dockerfile.engine
++++ b/deploy/Dockerfile.engine
+@@ -106,4 +106,4 @@ STOPSIGNAL SIGTERM
+ # EXEC FORM, NOT SHELL FORM. Shell form makes /bin/sh PID 1, and the shell does not forward
+ # SIGTERM to its child — the process would be killed rather than asked, every time.
+ # `-B` keeps the interpreter from writing bytecode into a read-only code directory.
+-ENTRYPOINT ["python3", "-B", "/app/entrypoints/cd_engine.py"]
++ENTRYPOINT ["python3", "-B", "-m", "crash_detector.runtime.engine_main"]
+diff --git a/src/crash_detector/runtime/engine_main.py b/src/crash_detector/runtime/engine_main.py
+new file mode 100644
+index 0000000..876cd1c
+--- /dev/null
++++ b/src/crash_detector/runtime/engine_main.py
+@@ -0,0 +1,12 @@
++"""Module-form entrypoint for the engine container (`python3 -m`)."""
++
++from __future__ import annotations
++
++from crash_detector.witness.panel import Agrees
++
++__all__ = ["main"]
++
++
++def main() -> int:
++    """Start the engine."""
++    return 0

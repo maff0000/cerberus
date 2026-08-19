@@ -1,6 +1,6 @@
 # WO-2R variant plants — MANIFEST
 
-**Dispatch:** `governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml`, increments 1 and 2.
+**Dispatch:** `governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml`, increments 1, 2, 2b, 3, 3b and 4.
 **Written by:** `CD-ENG-WO2R-01` (ENGINEER).
 
 **Nothing in this directory is evidence and nothing in it is assurance.** These are the
@@ -1120,3 +1120,101 @@ assertions over `pending` on every service, so at increment 3b the clean arm is 
 is **`PASS — 83 assertions`**. The row is not rewritten — the derivation it demonstrates is
 unchanged and the observation stands as made at its own SHA — and this note supersedes its two
 numbers rather than editing them (`PBG-CONT-003`).
+
+---
+---
+
+# CD-ASR-F05 (MEDIUM) — criterion CD-AC-003
+
+**Directory:** `variants/WO-2R/CD-ASR-F05/`
+**Increment:** 4. **Subject SHA these were observed at:** `dae6503` (the increment-4 tree).
+**Guard under attack:** `tools/register/check_engine_no_witness_reach.py`.
+
+**THE CLASS these attack:** *THE ENGINE CONTAINER REACHING WITNESS CODE.* Not "an import in
+`deploy/entrypoints/cd_engine.py`" and not "one more directory to scan". The class is code that
+the engine container's process reaches, **wherever the container's own declaration says that
+process is** and **wherever the image's own `COPY` instructions say that code lives**.
+
+**WHY THE GUARD WAS DEFEATED, in one sentence:** its subject was the engine **PACKAGE**, rooted
+at the constant `crash_detector.engine` under `src/`, and the criterion's subject is the engine
+**CONTAINER**, whose process is `deploy/entrypoints/cd_engine.py` — a file the walk never read.
+
+**THE STRUCTURE they are aimed at**, so a reader can judge whether the routes below are a fair
+spread over it rather than a spread over the ones that were easy:
+
+* **the ROOT SET is DERIVED and is a UNION** — every module the engine container's declared
+  process starts (`deploy/compose.yaml`'s `cd-engine` service and the Dockerfile it names;
+  `entrypoint + command`; compose overriding the image; a compose `entrypoint` cancelling the
+  image `CMD`; YAML merge keys resolved) **∪** every module in `src/crash_detector/engine/`,
+  which is BLUEPRINT §13's own subject;
+* **the SCANNED UNIVERSE is what the image ships** — built from the Dockerfile's own `COPY`
+  instructions, named against the sys.path roots the image declares (`ENV PYTHONPATH`, the
+  compose `environment` override, the entry script's directory, `WORKDIR` under `-m`), unioned
+  with `src/`;
+* **ten FAIL-CLOSED clauses**, `CD-ENGINE-ROOT-101` … `110`, one per derivation that cannot be
+  made. Never an empty root set and never a pass.
+
+**WHY THE UNION IS LOAD-BEARING, MEASURED NOT ASSUMED.** In WO-2 the container's process reaches
+`crash_detector.runtime.lifecycle` and does **not** reach `crash_detector.engine` — the services
+start, tick and shut down and evaluate nothing. The pre-existing plant
+`plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch` is caught through the **package** arm,
+route `crash_detector.witness.panel <- crash_detector.corroboration <- crash_detector.engine.evaluate`.
+Replacing the package root with the derived one would have deleted that guard. Widening the root
+must not narrow the rules.
+
+## The clean arm these contrast against
+
+```bash
+python3 -B tools/register/check_engine_no_witness_reach.py --root .
+```
+
+At `ba469b5`: `exit 0`, `PASS — 13 assertions`, universe **32** modules, **12** reachable from
+**4** roots. At `dae6503`: `exit 0`, `PASS — 23 assertions`, universe **39** modules, **15**
+reachable from **5** roots — 4 engine-package + 1 derived (`cd_engine`).
+
+## The rows
+
+Every row was run on its own pristine `git archive <sha> | tar -x` extraction, `git apply -p1`,
+`python3 -B`, under `timeout 60` (CD-PL-F61 is live in this tree: a hang must be visible as exit
+`124`, not as a stalled run). The command line is the same for every row and is the one above.
+
+| variant | PROPOSITION attacked | ROUTE, and why it is not on the known set | at `ba469b5` | at `dae6503` |
+|---|---|---|---|---|
+| `E06` | the engine container cannot reach witness code | **KNOWN SET.** `from crash_detector.witness.panel import Agrees` appended to `deploy/entrypoints/cd_engine.py`, the module that IS the container's process | `0`, PASS 13 — **ESCAPES**, reproduced verbatim | **`1`**, rule `engine reaches witness code`, route `crash_detector.witness.panel <- cd_engine` |
+| `V31` | *(not a violation — the DERIVATION shown live)* | `ENTRYPOINT` retargeted to `/app/entrypoints/cd_public.py`, a different shipped module. Nothing violating; the point is whether the guard's SUBJECT moves | `0`, PASS 13, no root reported at all | **`0`**, PASS 23, and the note now reads `derived walk root(s) from the container: cd_public`. **THE SUBJECT FOLLOWED THE ARTEFACT** |
+| `V32` | the engine container cannot reach witness code | `ENTRYPOINT` retargeted to a **NEW** module `cd_engine_v2.py` that imports witness. Differs from E06: E06 edits the file the old constant would have reached; this MOVES THE DECLARATION | `0`, PASS 13 — escapes | **`1`**, route `... <- cd_engine_v2` |
+| `V33` | as above | **compose overrides the image**: `services.cd-engine.entrypoint` in block form names `cd_engine_alt.py`. Nothing in the Dockerfile changes at all | `0`, PASS 13 — escapes | **`1`**, route `... <- cd_engine_alt`; origin note names `deploy/compose.yaml services.cd-engine.entrypoint`, not the Dockerfile |
+| `V34` | as above | the entrypoint is declared in the **SHARED YAML ANCHOR** `x-cd-python-service` and reaches cd-engine through `<<`. The service block itself is untouched | `0`, PASS 13 — escapes | **`1`**, route `... <- cd_shared_boot` |
+| `V35` | a derivation that cannot be made must not pass | **SHELL-FORM `ENTRYPOINT`** plus the E06 import. Docker runs shell form through `/bin/sh -c`, so the process is decided at run time | `0`, PASS 13 — escapes | **`3`**, `CD-ENGINE-ROOT-106` |
+| `V36` | as V32 | the witness import goes in the **SHARED SHIM** `deploy/entrypoints/_service.py`, reached TRANSITIVELY. Shipped by all six Dockerfiles and outside the old universe entirely | `0`, PASS 13 — escapes | **`1`**, route `... <- _service <- cd_engine` |
+| `V37` | as V32 | **`-m` form**: `ENTRYPOINT ["python3","-B","-m","crash_detector.runtime.engine_main"]`, a new module INSIDE the scanned package but OUTSIDE the engine package. At `ba469b5` it is in the universe and simply is not a root | `0`, PASS 13 — escapes (universe 33, still 12 reachable) | **`1`**, root `crash_detector.runtime.engine_main`, image sys.path roots become `/app/src, /app` |
+| `V38` | as V32 | a **SECOND module** handed to the interpreter by compose `command:` — argument, not entrypoint | `0`, PASS 13 — escapes | **`1`**, **6** roots not 5, route `... <- cd_engine_sidecar` |
+| `V39` | a derivation that cannot be made must not pass | cd-engine declared as a **prebuilt digest-pinned image with no `build:`**, plus the E06 import. The tree no longer builds the container it is reasoning about | `0`, PASS 13 — escapes | **`3`**, `CD-ENGINE-ROOT-102` |
+| `V40` | as V39 | `COPY --from=assets` — the entrypoints arrive from **another build stage**, so what the image ships is not a path in this tree | `0`, PASS 13 — escapes | **`3`**, `CD-ENGINE-ROOT-105` |
+| `V41` | as V39 | a `<<` merge key naming an anchor declared **below the top level** (`x-cd-fragments.engine`), carrying the entrypoint. The reader cannot locate it, so it must not read as an empty contribution | `0`, PASS 13 — escapes | **`3`**, `CD-ENGINE-ROOT-103` |
+| `V42` | **FALSE-POSITIVE CONTROL** | the E06 import appended to `deploy/entrypoints/cd_witness.py`. Witness code reachable from the WITNESS service is the criterion, not a violation of it | `0`, PASS 13 | **`0`**, PASS 23 — **correctly still passes.** A closure that forbids the product is not a closure |
+| `V43` | a derivation that cannot be made must not pass | Python **shipped off every declared sys.path root**: `COPY deploy/extra/ /app/extra/` with a witness-importing module in it | `0`, PASS 13 — escapes | **`3`**, `CD-ENGINE-ROOT-110` |
+| `V44` | **THE DECLARED LIMIT, boundary 6** | run-time `sys.path.insert(0, "/app/src/crash_detector/witness")` in `cd_engine.py`, then `import panel`. `panel.py` IS scanned and IS witness code, but the edge is spelled `panel` and resolves to no module in the graph | `0`, PASS 13 | **`0`, PASS 23 — IT ESCAPES.** Declared, not claimed closed. See boundary 6 and `CD-ENG-WO2R-F17` |
+
+## Summary of what was refused by what — increment 4
+
+| variant | route class | clause that refused it | exit |
+|---|---|---|---|
+| `E06` | witness import in the container's entrypoint | `engine reaches witness code` | **1** |
+| `V32` `V33` `V34` `V36` `V37` `V38` | the declaration MOVED — Dockerfile, compose, anchor, shim, `-m`, second module | `engine reaches witness code`, from a root that FOLLOWED the artefact | **1** |
+| `V35` `V39` `V40` `V41` `V43` | a derivation that cannot be made | `CD-ENGINE-ROOT-106 / 102 / 105 / 103 / 110` | **3** |
+| `V31` | the derivation shown live, benign | none — it PASSES, and the reported root MOVES | **0** |
+| `V42` | the same import in the witness service | none — it PASSES, **by design** | **0** |
+| `V44` | run-time `sys.path` insert, short-name import | **none — IT ESCAPES. Boundary 6.** | **0** |
+
+**Three honest observations.** First, **one of the fifteen rows is not refused and is a genuine
+escape of this seat's own structure** — `V44` — and it is written up in the same detail as the
+refusals, because a variant this seat tried and did not close is worth more to the next auditor
+than one it did. It is `CD-ENG-WO2R-F17`. Second, **`V37`'s assertion count DROPS to 22 where the
+clean arm is 23**, and that is not a skipped arm: `-m` REPLACES the entrypoint, so `cd_engine` and
+`_service` stop being reached while `engine_main`, `crash_detector.witness` and
+`crash_detector.witness.panel` start being — a change of composition, not of work done. It is
+called out because `CD-ENG-WO2R-F16` says a silently shrinking count is how a skipped arm hides.
+Third, **`V39` and `V40` are refusals at exit `3`, not violations at exit `1`**, and an auditor
+asserting only "non-zero" would not notice the difference; the clause id is the thing to assert
+(`CD-ENG-WO2R-F13`).

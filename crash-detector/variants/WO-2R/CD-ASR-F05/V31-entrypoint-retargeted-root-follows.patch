@@ -1,0 +1,10 @@
+diff --git a/deploy/Dockerfile.engine b/deploy/Dockerfile.engine
+index 07225f5..30f3caf 100644
+--- a/deploy/Dockerfile.engine
++++ b/deploy/Dockerfile.engine
+@@ -106,4 +106,4 @@ STOPSIGNAL SIGTERM
+ # EXEC FORM, NOT SHELL FORM. Shell form makes /bin/sh PID 1, and the shell does not forward
+ # SIGTERM to its child — the process would be killed rather than asked, every time.
+ # `-B` keeps the interpreter from writing bytecode into a read-only code directory.
+-ENTRYPOINT ["python3", "-B", "/app/entrypoints/cd_engine.py"]
++ENTRYPOINT ["python3", "-B", "/app/entrypoints/cd_public.py"]
