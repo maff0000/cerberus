@@ -540,9 +540,27 @@ def test_every_secret_is_referenced_by_name_and_never_carries_a_value(variable: 
     for path in sorted(DEPLOY.rglob("*")):
         if not path.is_file():
             continue
-        for number, line in enumerate(
-            path.read_text(encoding="utf-8").splitlines(), start=1
-        ):
+        # CD-ENG-F30, found in increment 4. `__pycache__` is EXCLUDED, and nothing else
+        # is. A .pyc is compiled output of a .py this sweep already reads, so excluding it
+        # loses no coverage — and including it made this test raise UnicodeDecodeError on
+        # any tree where an entrypoint had ever been imported. A test that fails because
+        # the interpreter cached bytecode is a test that gets ignored, which is a worse
+        # outcome for a secret guard than the one it was protecting against.
+        if "__pycache__" in path.parts:
+            continue
+        try:
+            content = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            # NOT a skip. Any OTHER undecodable file in deploy/ is a FAILURE: a binary
+            # blob is exactly where a credential would not be looked for, and this sweep
+            # must not pass over what it cannot read (PBG-CI-002).
+            raise AssertionError(
+                f"{path.relative_to(DEPLOY)} in the deploy tree is not UTF-8 text "
+                f"({exc}), so this secret sweep cannot read it. An unreadable file is a "
+                "failure, never a file to pass over: it is precisely where a credential "
+                "would not be looked for. Remove it or state why it belongs here."
+            ) from exc
+        for number, line in enumerate(content.splitlines(), start=1):
             if variable not in line:
                 continue
             # Every `${...}` on the line is a REFERENCE and carries no value. Remove them
