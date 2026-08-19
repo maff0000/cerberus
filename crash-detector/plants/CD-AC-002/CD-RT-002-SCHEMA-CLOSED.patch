@@ -1,0 +1,27 @@
+diff --git a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+index 3197678..57ee72c 100644
+--- a/contracts/public_envelope.schema.json
++++ b/contracts/public_envelope.schema.json
+@@ -15,7 +15,8 @@
+     "degraded_inputs",
+     "config_snapshot_id",
+     "equity_crash",
+-    "monetary_debasement"
++    "monetary_debasement",
++    "combined_stress"
+   ],
+   "properties": {
+     "schema_version": {
+@@ -56,7 +57,11 @@
+       "maxLength": 128
+     },
+     "equity_crash": { "$ref": "#/$defs/dial_reading" },
+-    "monetary_debasement": { "$ref": "#/$defs/dial_reading" }
++    "monetary_debasement": { "$ref": "#/$defs/dial_reading" },
++    "combined_stress": {
++      "description": "A single summary figure for the banner at the top of the public surface, so a reader who wants one number has one. The two dials are published unchanged beneath it.",
++      "type": "number"
++    }
+   },
+   "$defs": {
+     "utc_timestamp": {

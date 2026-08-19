@@ -198,3 +198,158 @@ for the reason on a reading that should have been `Unknown` and is now a number.
 
 **Collateral observed by this seat.** `python3 tools/register/check_no_numeric_default.py
 --root .` remains exit **0**. See above; that is a result, not a gap.
+
+---
+---
+
+# CD-AC-002 — The two dials are never blended
+
+> PID §3.1 is CONSTITUTIONAL: "Two dials, never blended. Equity crash and
+> monetary/debasement fail in opposite directions; averaging cancels the signal."
+>
+> Enforced at **three independent layers**, because one layer is a preference and three are
+> a structure: the TYPES refuse arithmetic, an AST scan refuses the expression, and the
+> closed envelope schema refuses the document. A blend that slips past any one layer must
+> still fail the other two — so there is one plant per layer, and each was checked against
+> the other two arms.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-TYPE-NO-ARITHMETIC` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q` |
+
+**Proposition violated.** *The two score types reject every arithmetic operator and share
+no numeric base.* The patch gives `EquityCrashScore` an `__add__` (with `__radd__ = __add__`
+so `sum()` works from its zero start) and a `__truediv__`, told as "so a rolling window can
+be averaged".
+
+**Why this is the proposition and not a token.** The added `__add__` is duck-typed on
+`other.score`, so it does not merely *exist* — **it actually blends the two dials**. This
+seat ran it:
+
+```
+>>> e = EquityCrashScore(score=0.8, contributions=())
+>>> m = MonetaryDebasementScore(score=0.2, contributions=())
+>>> e + m
+EquityCrashScore(score=1.0, contributions=())
+>>> (e + m) / 2
+EquityCrashScore(score=0.5, contributions=())
+```
+
+An equity dial at 0.8 and a monetary dial at 0.2 become one number reading 0.5 — the signal
+cancelled, exactly as PID §3.1 says it will be. Note also that the author only ever wrote
+methods on the *equity* type and never mentioned the monetary one; the blend arrives
+without either type naming the other, which is why the test asserts the absence of the
+whole `ARITHMETIC_DUNDERS` family rather than watching for `equity + monetary` to raise.
+
+**Expected failure signature.** pytest exits **1**, `6 failed, 90 passed`:
+
+```
+FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
+FAILED tests/test_scores.py::test_no_ancestor_of_either_score_type_defines_one_either
+FAILED tests/test_scores.py::test_every_binary_operator_between_the_two_dials_is_a_type_error[add]
+FAILED tests/test_scores.py::test_no_score_can_be_combined_with_a_bare_number_either[add]
+FAILED tests/test_scores.py::test_no_score_can_be_combined_with_a_bare_number_either[truediv]
+FAILED tests/test_scores.py::test_a_score_cannot_be_summed_which_is_how_a_blend_usually_arrives
+```
+
+**Sibling arms under this plant, observed by this seat:** `check_no_blend.py` exit **0**,
+`check_schema_closed.py` exit **0**. The type layer is the only one that sees it — nothing
+in the source yet writes the blend, and nothing publishes it, so a project relying on the
+AST scan alone would have shipped a blendable dial type.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-AST-NO-BLEND` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-AST-NO-BLEND.patch` |
+| **command** | `python3 tools/register/check_no_blend.py --root .` |
+
+**Proposition violated.** *No single expression consumes both dial types outside the
+allowlisted container and serving layer, and no expression anywhere combines them
+arithmetically.* The patch adds a new module `src/crash_detector/publication/headline.py`
+whose `headline_figure(dials)` returns the mean of the two dial magnitudes — the "one number
+for the banner" that PID §3.1 exists to forbid.
+
+**Why this is the proposition and not a token.** It is written in the spelling
+`check_no_blend.py`'s own docstring names as the ESCAPE, not the one it names as the
+obvious plant:
+
+```python
+    first = dials.equity.value.score
+    second = dials.monetary.value.score
+    return (first + second) / 2.0
+```
+
+By the time the addition happens, **no dial marker is left in the expression**. The local
+names are `first` and `second` — deliberately neutral, carrying no `equity`, `monetary` or
+`debasement` token — so the check can only catch this through intra-procedural flavour
+propagation. A guard that inspected single expressions, or that pattern-matched on dial
+names, reports the tree clean while the blend sits in it. It also reaches for the two
+`.score` floats and so never asks the type system anything, which is why the type layer
+does not see it either.
+
+**Expected failure signature.** Exit **1**, `FAIL — 2 violation(s)`, both at
+`src/crash_detector/publication/headline.py:23`:
+
+```
+    rule: RULE 1: arithmetic across the two dials
+    what: `first + second` combines an equity-flavoured value with a monetary-flavoured value. ...
+    rule: RULE 2: one expression consumes both dials
+    what: `(first + second) / 2.0` consumes BOTH dial types in a single expression, ...
+```
+
+Both rules must fire. RULE 1 alone would mean the propagation worked; RULE 2 alone would
+mean it did not and only the co-occurrence sweep caught the return value.
+
+**Sibling arms under this plant, observed by this seat:** the type arm passes (96 passed),
+`check_schema_closed.py` exit **0**, and so do `check_no_execution_interface.py` and
+`check_no_numeric_default.py`. This plant is seen by exactly one instrument.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-SCHEMA-CLOSED` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-SCHEMA-CLOSED.patch` |
+| **command** | `python3 tools/register/check_schema_closed.py --root .` |
+
+**Proposition violated.** *The public envelope schema is closed and its properties are an
+allowlist; there is no place in it for a third, combined number.* The patch adds a
+`combined_stress` property of `"type": "number"` to the public envelope contract, and adds
+it to `required` — i.e. the contract change is made *properly*, the way an engineer who
+believed in it would make it, not left half-written.
+
+**Why this is the proposition and not a token.** The plant does not open the schema
+(`additionalProperties` stays `false` at every level) and does not touch
+`patternProperties` or `unevaluatedProperties`. It concedes the point the honest way: a
+declared, required, documented top-level number that is neither dial. That is what makes it
+a fair test — the guard has to hold the ALLOWLIST as an exact set rather than merely hunt
+for escape hatches, and it has to notice that the document now carries a second scalar
+number whatever the key is called.
+
+**Expected failure signature.** Exit **1**, `FAIL — 3 violation(s)` in
+`contracts/public_envelope.schema.json` — three *independent* propositions, not one finding
+reported three times:
+
+```
+    rule: 3: the root properties are not the declared allowlist
+    what: ... UNDECLARED KEYS PRESENT: combined_stress. ...
+    rule: 4: required does not match the allowlist
+    what: required=[... 'combined_stress' ...] but the allowlist is [...]. ...
+    rule: 5: a third top-level number
+    what: ... scalar-numeric root properties ['combined_stress', 'staleness_window_seconds']; ...
+```
+
+Proposition 5 is the one that matters most: it holds even if a future edit widened the
+allowlist in proposition 3, because a blended headline has to be a number somewhere and
+that rule counts the numbers whatever they are called.
+
+**Collateral observed by this seat.** `PYTHONPATH=src python3 -m pytest
+tests/test_envelope_contracts.py tests/test_publication_refusal.py -q` → 17 failed, 237
+passed, including
+`test_the_same_blend_is_refused_by_every_construction_route[dict_round_trip]` and
+`[json_reparse]`. Those are the WO-2 boundary tests for CD-AC-006, and they see the same
+change from the other side. The type arm and the AST arm both stay clean.
