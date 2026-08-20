@@ -796,6 +796,31 @@ criteria:
         the Unavailable constructor that a later edit could read as agreement; OR a configured
         staleness window wide enough to make staleness meaningless, which needs no source edit
         and is the CD-ASR-F06 route.
+        THE STRUCTURAL INVARIANT OF RECORD, NARROWED — CD-PL-F76, AT WO-2R2 INCREMENT 3.
+        The invariant that landed this closure (commit 27e3794, carried forward unchanged by
+        2802924, 7edb84e and 6641252) opens: "No method defined by a caller-supplied class
+        executes during the computation of an age...". THAT SENTENCE IS WIDER THAN THE CLOSURE IT
+        DESCRIBES, and the counterexample is this closure's OWN declared boundary 5 below. It is
+        narrowed HERE and FORWARD. Commit 27e3794 is NOT rewritten and its message stands as
+        written (PBG-CONT-003, non-waivable); this text SUPERSEDES, it does not edit.
+        WHAT THE CLOSURE ACTUALLY HOLDS: no method of type(value) executes during the computation
+        of an age, the comparison of an age against a window, the selection of a panel constructor
+        from a stored state, or the admission of a divergence measurement — because every one of
+        those operates on a value of exact base type that crash_detector.own_terms constructed
+        from primitives it read out of the supplied object through the base type's own descriptors.
+        WHAT STILL EXECUTES, AND IT IS EXACTLY ONE THING: tzinfo.utcoffset. It is a method of a
+        supplied OBJECT — the tzinfo instance reached through value.tzinfo — and NOT a method of
+        type(value); and it DETERMINES the age. A row whose stated wall clock is 22 HOURS OLD
+        resolves to Agrees and renders WITNESS AGREES against a 600-second window when its tzinfo
+        reports a compensating offset. MEASURED — boundary 5 below, variant CD-ENG-WO2R2-V10,
+        identical at 50fc231 and at the closure. THE CPYTHON INTERPRETER BOUNDS IT to strictly
+        under 24 hours, MEASURED. BEYOND THAT BOUND, NOT PROVED TO BE CARRIED ANYWHERE.
+        WHY IT IS NOT CLOSED HERE: a tzinfo cannot be refused without refusing zoneinfo, pytz and
+        pandas, which all supply their own — that trades a defect for a defect. Closing it needs a
+        clock-trust instrument, and CD-RULE-003 forbids a seat inventing a skew tolerance, or the
+        CD-D-005 ingredient register. Both are Product Authority territory. It is REPORTED upward
+        under CD-D-081 as a pre-existing, bounded, declared residue, and NOT guarded. NO CODE
+        CHANGED FOR THIS NARROWING: the code is right; the sentence was too wide.
         THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
         src/crash_detector/staleness.py and in the execution contract, in FIVE boundaries:
         (1) THE CEILING BOUNDS THE WINDOW; IT DOES NOT ESTABLISH WHAT THE WINDOW SHOULD BE.

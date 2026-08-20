@@ -92,6 +92,36 @@ looks like a right one — the same argument `ScoreOutOfRange` makes about clamp
 No test in these modules may skip. A conditional skip is a hole with a comment in it, and
 a suite that can skip its way to green is not evidence.
 
+## The structural invariant of record, narrowed (`CD-PL-F76`, at WO-2R2 increment 3)
+
+The invariant that landed this closure (commit `27e3794`, carried forward unchanged by `2802924`,
+`7edb84e` and `6641252`) opens: *"No method defined by a caller-supplied class executes during the
+computation of an age..."*. **That sentence is wider than the closure it describes**, and the
+counterexample is this closure's **own declared boundary 5** below. It is narrowed **here and
+forward**. Commit `27e3794` is **not** rewritten and its message stands as written
+(`PBG-CONT-003`, non-waivable); this text **supersedes, it does not edit**.
+
+**WHAT THE CLOSURE ACTUALLY HOLDS.** No method of **`type(value)`** executes during the
+computation of an age, the comparison of an age against a window, the selection of a panel
+constructor from a stored state, or the admission of a divergence measurement — because every one
+of those operates on a value of exact base type that `crash_detector.own_terms` constructed from
+primitives it read out of the supplied object through the base type's own descriptors.
+
+**WHAT STILL EXECUTES, AND IT IS EXACTLY ONE THING: `tzinfo.utcoffset`.** It is a method of a
+supplied **object** — the `tzinfo` instance reached through `value.tzinfo` — and **not** a method
+of `type(value)`; and it **determines the age**. A row whose stated wall clock is **22 hours old**
+resolves to `Agrees` and renders `WITNESS AGREES` against a 600-second window when its `tzinfo`
+reports a compensating offset. **MEASURED** — boundary 5 below, variant `CD-ENG-WO2R2-V10`,
+identical at `50fc231` and at the closure. **The CPython interpreter bounds it** to strictly under
+24 hours, **measured**. **BEYOND THAT BOUND, NOT PROVED TO BE CARRIED ANYWHERE.**
+
+**WHY IT IS NOT CLOSED HERE.** A `tzinfo` cannot be refused without refusing `zoneinfo`, `pytz`
+and `pandas`, which all supply their own — that trades a defect for a defect. Closing it needs a
+clock-trust instrument, and `CD-RULE-003` forbids a seat inventing a skew tolerance, or the
+`CD-D-005` ingredient register. Both are Product Authority territory. It is **reported** upward
+under `CD-D-081` as a pre-existing, bounded, declared residue, and **not guarded**. **No code
+changed for this narrowing**: the code is right; the sentence was too wide.
+
 ## Declared limit (`CD-RULE-004`)
 
 Stated identically here, in the header of `src/crash_detector/staleness.py`, and in
