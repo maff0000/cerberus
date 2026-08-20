@@ -1,0 +1,8 @@
+=== CD-RT-001-ABSENCE-RENDERS-UNKNOWN [BASELINE] ===
+plant   : none   (n/a)
+command : PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q -p no:cacheprovider
+EXIT    : 0
+--- output (tail 25) ---
+........................................................................ [ 58%]
+....................................................                     [100%]
+124 passed in 0.51s

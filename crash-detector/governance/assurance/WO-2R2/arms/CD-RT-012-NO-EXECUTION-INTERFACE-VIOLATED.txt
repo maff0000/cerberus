@@ -1,0 +1,30 @@
+=== CD-RT-012-NO-EXECUTION-INTERFACE [VIOLATED] ===
+plant   : plants/CD-AC-012/CD-RT-012-NO-EXECUTION-INTERFACE.patch   (APPLIED)
+command : python3 -B tools/register/check_no_execution_interface.py --root .
+EXIT    : 1
+--- output (tail 25) ---
+    assertions: 43154
+    note: EXCLUDED, with reason: tools/register/_broker_vocabulary.py, tools/register/check_no_execution_interface.py, tools/register/check_lockfile_denylist.py, tools/register/check_egress_no_broker.py — the register's own guards, which must name what they forbid in order to forbid it. Their content is vocabulary data, not an interface. Every other file under tools/ is scanned.
+    note: THREE LAYERS ran over every file: L1 identifier composition, L2 signature shape (the field set of every callable and class, read WITHOUT its name), and L3 prose (docstrings, comments, string literals, SQL comments). L2 and L3 were added closing CD-PL-F32, where `submit_instruction(symbol, qty, side)` passed L1 both with and without a docstring saying it routed orders to a broker.
+    note: L3 DOES NOT READ a sentence carrying any of 46 negation words or any of 25 hypothetical words. That is WIDER than the obvious list: besides `no`, `never`, `forbidden`, `if` and `would`, it includes `must`, `free`, `advisory`, `zero`, `say`, `check`, `example`, `criterion` and `were`. MEASURED: "The engine must send each instruction to the broker" is not read by L3, on `must` alone (CD-ENG-F39, DECLARED not fixed, CD-D-017). The trade is deliberate — this project's own documentation says repeatedly that it places no orders — and it is affordable only because L1 and L2 never read prose. Read the DECLARED LIMIT in this file's header for the full account of the six boundaries; do not read a clean run here as proof that no execution pathway exists.
+
+VIOLATION  src/crash_detector/backtest/paper_book.py:16
+    rule: execution interface (signature shape)
+    what: the class `Ticket` takes an ORDER TICKET: destination=`venue`, instrument=`symbol`, price=`limit_price`, quantity=`quantity`, side=`side`. An instrument, a quantity and destination together are an order-entry signature whatever the callable is named — this rule reads the FIELDS, not the name, which is why renaming the function does not evade it. CD-AC-012: no execution pathway exists, and a pathway is recognised by what it carries, not by what it is called.
+VIOLATION  src/crash_detector/backtest/paper_book.py:26
+    rule: execution interface (signature shape)
+    what: the function `place_order` takes an ORDER TICKET: destination=`venue`, instrument=`symbol`, price=`limit_price`, quantity=`quantity`, side=`side`. An instrument, a quantity and destination together are an order-entry signature whatever the callable is named — this rule reads the FIELDS, not the name, which is why renaming the function does not evade it. CD-AC-012: no execution pathway exists, and a pathway is recognised by what it carries, not by what it is called.
+VIOLATION  src/crash_detector/backtest/paper_book.py:26
+    rule: execution interface (definition)
+    what: `place_order` applies the transmission verb `place` to the tradeable noun `order`. That is an order pathway however it is spelled. CD-AC-012: no execution pathway exists, and advisory-only is structural rather than a policy anybody has to keep.
+VIOLATION  src/crash_detector/backtest/paper_book.py:31
+    rule: execution interface (signature shape)
+    what: the function `record` takes an ORDER TICKET: destination=`destination`, instrument=`instrument`, quantity=`size`, side=`direction`. An instrument, a quantity and destination together are an order-entry signature whatever the callable is named — this rule reads the FIELDS, not the name, which is why renaming the function does not evade it. CD-AC-012: no execution pathway exists, and a pathway is recognised by what it carries, not by what it is called.
+VIOLATION  src/crash_detector/backtest/paper_book.py:12
+    rule: execution interface declared in prose (docstring or string literal)
+    what: "place_order" — this prose says, in the active voice, that the code `place order`. A thing that describes itself as routing orders is an execution interface by CD-AC-012's definition regardless of what it is called — the identifiers are not the only place an interface declares itself.
+VIOLATION  src/crash_detector/backtest/paper_book.py:27
+    rule: execution interface declared in prose (docstring or string literal)
+    what: "Write one intention into the paper book and hand it to the venue adapter" — this prose names the trade-lifecycle act `book` together with `venue`, a party that acts on instructions. Neither word alone would fire — `clear`, `fill` and `match` all have ordinary programming senses — but a codebase that books something with a venue has an execution pathway just as surely as one that places the order, and CD-AC-012 forbids the pathway, not the order-entry spelling of it.
+
+CD-RT-012-NO-EXECUTION-INTERFACE: FAIL — 6 violation(s)

@@ -1,0 +1,30 @@
+=== CD-RT-002-TYPE-NO-ARITHMETIC [VIOLATED] ===
+plant   : plants/CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch   (APPLIED)
+command : PYTHONPATH=src python3 -B -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q -p no:cacheprovider
+EXIT    : 1
+--- output (tail 25) ---
+
+tests/test_scores.py:110: AssertionError
+___________ test_no_ancestor_of_either_score_type_defines_one_either ___________
+
+    def test_no_ancestor_of_either_score_type_defines_one_either():
+        """Checking the class dictionary alone would miss the base-class variant of the
+        plant: define ``__add__`` on a mixin and inherit it. ``object`` is excluded because
+        its default rich-comparison slots return ``NotImplemented``, which is a refusal."""
+        for score_type in SCORE_TYPES:
+            for ancestor in score_type.__mro__:
+                if ancestor is object:
+                    continue
+                defined = [name for name in ARITHMETIC_DUNDERS if name in vars(ancestor)]
+>               assert defined == [], f"{ancestor.__name__} defines {defined}"
+E               AssertionError: EquityCrashScore defines ['__add__', '__radd__', '__truediv__']
+E               assert ['__add__', '...'__truediv__'] == []
+E                 
+E                 Left contains 3 more items, first extra item: '__add__'
+E                 Use -v to get more diff
+
+tests/test_scores.py:122: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
+FAILED tests/test_scores.py::test_no_ancestor_of_either_score_type_defines_one_either
+2 failed, 312 passed in 0.50s

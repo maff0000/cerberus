@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-20T01:43:43Z'
+updated_utc: '2026-08-20T02:22:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.1.0-ACCEPTED
@@ -16,8 +16,60 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: GATE
+current_phase: SUSPENDED   # WAS GATE. Suspended at BL-20260820T022200Z-0047 under CD-D-085, on the Product Owner's own pre-stated terms (PO-DECISIONS-0003 ruling 4, bound at CD-D-076). Only the Product Authority lifts it.
 current_block: >
+  *** IMPLEMENTATION IS SUSPENDED. THE NEXT ACTOR IS THE PRODUCT AUTHORITY. ***
+  THE THIRD GATE FAILED — RED overall at BL-20260820T022200Z-0047, on target f30e63c: CD-AC-001 RED,
+  CD-AC-002 RED, CD-AC-003 PASS (scoped), CD-AC-005 RED, CD-AC-012 RED. The WO-2 gate is NOT MET for
+  the third time, ON GROUNDS DIFFERENT FROM BOTH PREVIOUS GATES.
+  THE CENTRAL RESULT IS NOT THE COUNT OF REDs. CD-ASR-WO2R2-01 ACCEPTED THE PRODUCT AUTHORITY'S OWN
+  INVITATION (PO-DECISIONS-0003 ruling 4, bound at CD-D-076) AND DEFEATED THE SCOPING THE GATE
+  RESTED ON. CD-D-076's trigger condition is MET, and option (C) SUSPENSION applies ON THE PRODUCT
+  OWNER'S OWN PRE-STATED TERMS (CD-D-084, CD-D-085).
+  THE PROJECT LEAD DID NOT RELAY THIS — IT REPLICATED IT. Its own driver, written from the product's
+  modules, against an extraction proved byte-identical BEFORE AND AFTER (src+tools sha256
+  7299ed26...): ONE ordinary ContributionModel — no I/O, no clock, no environment, breaching no
+  documented contract — injected into BOTH DialSpecs makes the monetary dial publish 0.5 against a
+  TRUE INPUT OF 0.1, through `number_for_dial_slot`, THE ONE DECLARED PUBLICATION GATE, NOT REFUSED.
+  Every field of the claim true except the number. NO PATCH. NO SOURCE EDIT. DELIVERED PUBLIC API
+  ONLY — which is strictly stronger than CD-ENG-WO2R2-F03 and PL-Z4, both of which were patches, and
+  is the thing CD-ASR-WO2-02 expressly said it could NOT claim.
+  THE PREMISE THAT FAILED IS ONE WORD: *REGISTERS*. `CONTRIBUTION_MODELS` really is empty — AND
+  INJECTION NEVER CONSULTS IT. `DialSpec.contribution_model` is a plain field. The PO reasoned
+  honestly from a true fact that was not load-bearing, and WROTE THE TEST THAT CAUGHT IT. That is
+  the loop working, not failing.
+  TWO MORE REPLICATED BY THE PROJECT LEAD. (1) THE ENTRY POINTS DO NOT REQUIRE THE VALUE TYPES:
+  `resolve_panel` handed a duck object, and one whose STORED state is UNAVAILABLE but whose `state`
+  PROPERTY answers AGREES, both render WITNESS AGREES — while the CONTROL, the same values through
+  `PanelRow`, renders WITNESS UNAVAILABLE. THIS REFUTES INCREMENT 3'S NARROWED INVARIANT, which was
+  written at THIS Project Lead's own direction and says the one remaining supplied-object method is
+  `tzinfo.utcoffset`. IT IS NOT EXACTLY ONE THING. (2) CD-AC-012 IS DEFEATED BY A SPELLING:
+  `futu-api==9.3.5308` exit 1 CAUGHT, `-e git+https://...#egg=futu-api` exit 0 PASS at 134
+  assertions — THE CLEAN-ARM COUNT — so a reviewer watching for a shrinking denominator cannot see
+  it either.
+  THE ENGINEERING IS NOT THE PROBLEM, and the auditor says so having every incentive not to:
+  increments 1 and 2 are "the strongest closures I examined" and it COULD NOT BREAK the derivation
+  door. The closures are real. THE FAILURE IS ARCHITECTURAL AND IT IS AT THE ENTRY POINTS — and the
+  whole static apparatus (check_no_blend, the sweep, every AST guard) is a READ OF SOURCE TEXT, so a
+  route with no source text is invisible to it BY CONSTRUCTION, not by oversight.
+  WRITING DOWN THE UNVERIFIED LIST PAID FOR ITSELF: of the six things the dispatch admitted the
+  Project Lead had NOT verified, FOUR CAME BACK ANSWERED. UV-2 (the regenerated plant) discharged by
+  sha256 of added and removed lines; UV-3 discharged by the auditor BUILDING a digest-pinned
+  throwaway Postgres and CLOSING the eleventh contrast live (0->1, 16/16 grants false) — which is
+  why CD-AC-003 is the one PASS, earned rather than inherited; UV-6 settled by someone who is not
+  the beneficiary, and it found a defect nobody else had: the check prints "SCOPE IS
+  DECLARED_SURFACE, NOT CLASS" into every PASS artefact, contradicting the register in the
+  register's own evidence.
+  CD-PL-F78 (LOW) RAISED BY THE AUDITOR AGAINST THIS PROJECT LEAD AND ADOPTED: the assurance
+  dispatch recorded a tree fingerprint VALUE but not the COMMAND that makes it, and the auditor
+  could not reproduce it in ten attempts. A fingerprint an auditor cannot recompute is not an
+  integrity control. AGGRAVATED: CD-ASR-WO2-02 raised this before and it was not acted on. THE
+  MUTATION CONCLUSION IS UNAFFECTED — git is authoritative and the target is proven unmutated.
+  NOTHING ADMITTED (latest_admitted_run null). NOTHING ACCEPTED. NOTHING DISPOSED — a RED is not a
+  rejection (PBG-AUTH-003). The lane is UNMERGED at f30e63c; /srv/crash-detector-wo2r2-audit is
+  RETAINED and load-bearing; governance/assurance/WO-2R2/ holds the auditor's 39 artefacts,
+  transported byte-identical and never edited.
+  ---- PRIOR STATE, RETAINED ----
   WO-2R2 INCREMENT 3 IS RECONCILED AND NOT ACCEPTED, AND THE WO2R2 ENGINEER DISPATCH IS COMPLETE
   (BL-20260820T014343Z-0046, CD-D-082). CD-ENG-WO2R2-02 RETURNED ALIVE — the first seat in this
   dispatch to do so — across six commits at lane f30e63c, and it committed as it went: its
@@ -869,7 +921,12 @@ current_block: >
   ISSUED, same seat, same lane base, same three increments. NO CODE CHANGED AT THIS BOUNDARY. NOTHING
   ACCEPTED. NOTHING ADMITTED. THE GATE IS UNMOVED — a ruling about scope is not a pass.
 owner_role: PROJECT_LEAD
-next_actor: ASSURANCE_ENGINEER   # CD-ASR-WO2R2-01, THE THIRD ASSURANCE SEAT — GENUINELY FRESH:
+next_actor: PRODUCT_AUTHORITY   # Matt, with the Product Owner preparing. IMPLEMENTATION IS
+                       # SUSPENDED (CD-D-085) on the PO's OWN PRE-STATED TERMS: CD-D-076's
+                       # trigger is MET — the third Assurance seat DEFEATED the CD-AC-002
+                       # scoping and the Project Lead REPLICATED it on its own driver.
+                       # NO ENGINEER IS DISPATCHED AND NOTHING IS DISPOSED (PBG-AUTH-003).
+                       # WAS ASSURANCE_ENGINEER   # CD-ASR-WO2R2-01, THE THIRD ASSURANCE SEAT — GENUINELY FRESH:
                        # neither CD-ASR-WO2-01 nor CD-ASR-WO2-02, and neither Engineer seat
                        # (PBG-SOD-001, non-waivable). READ-ONLY, against lane f30e63c. ITS VERDICT
                        # IS THE WO-2 GATE. Dispatched under CD-D-083.
@@ -891,7 +948,8 @@ mutation_lane: 'branch wo-2-skeleton, worktree /srv/crash-detector-wo2 (PBG-GIT-
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 48c6387ad475c458d4244d4d100c1699f49c1d73  # The CD-RULE-007 follow-up that closed the WO-2R2 INCREMENT 2 RECONCILIATION boundary and resolved continuity_record_commit to afbe3fb. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
+last_completed_checkpoint_sha: d80b77938161760c62b4626a70f87a9658fe057b  # The commit that ISSUED CD-DISPATCH-WO2R2-ASSURANCE. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
+  # SUPERSEDES 48c6387ad475c458d4244d4d100c1699f49c1d73 — The CD-RULE-007 follow-up that closed the WO-2R2 INCREMENT 2 RECONCILIATION boundary and resolved continuity_record_commit to afbe3fb. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES 23da5ced7fb68e9115c673cce34d073864760282 — The CD-RULE-007 follow-up that closed the PO-DECISIONS-0003 TRANSCRIPTION boundary and resolved continuity_record_commit to 4e78422. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES ae3188cf2854bf37a965277c99afcf3354f3478d — THE PRODUCT AUTHORITY'S OWN COMMIT — governance/decisions/PO-DECISIONS-0003.md, authored by Matt Scott <rogue@cerberus.local>, not by any seat. It is the last commit on main before THIS boundary and therefore the honest value of this field, and it is recorded with its provenance because a reader scanning for seat checkpoints would otherwise mis-read it. Precedent for a PA commit taking this field: the 9c43daf entry below. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES 8a5821ac47d6c037b22e74d0b0b0427f98bc4f82 — the CD-RULE-007 follow-up that closed the WO-2R2 DISPATCH boundary and resolved continuity_record_commit to 2f8ac52 — the last main checkpoint before the increment-1 RECONCILIATION boundary. Two commits then intervened and are NOT this field's value because a later one exists: 0ac8b29 (the increment-1 reconciliation checkpoint) and 319e20a (its CD-RULE-007 follow-up, which resolved continuity_record_commit to 0ac8b29).
@@ -956,7 +1014,9 @@ lane_increment_sha: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5   # WO-2R2 INCREMEN
   # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: eb0bec244a519e5e7300785b5ebafcb12fb00a19  # RESOLVED by this follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (48c6387) — that equality is the CD-PL-F64 defect. A pristine clone at eb0bec2 CHECKED OUT ON BRANCH main with `git checkout -B main` boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
+continuity_record_commit: PENDING
+  # SET TO PENDING DELIBERATELY AT WRITE TIME: the commit carrying this record does not exist while the record is being written (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, recording the pristine-clone boot verdict AND THE BRANCH in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72).
+  # PREVIOUSLY eb0bec244a519e5e7300785b5ebafcb12fb00a19 — RESOLVED by that follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (48c6387) — that equality is the CD-PL-F64 defect. A pristine clone at eb0bec2 CHECKED OUT ON BRANCH main with `git checkout -B main` boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
   # SET TO PENDING DELIBERATELY AT WRITE TIME: the commit carrying this record does not exist while the record is being written (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, recording the pristine-clone boot verdict AND THE BRANCH in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72).
   # PREVIOUSLY afbe3fbe4e98fc554809577156976d6da63a1bcd — RESOLVED by that follow-up under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (23da5ce) — that equality is the CD-PL-F64 defect. A pristine clone at afbe3fb CHECKED OUT ON BRANCH main with `git checkout -B main` boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
   # SET TO PENDING DELIBERATELY AT WRITE TIME, which is the only truthful value: the commit carrying this record does not exist while the record is being written (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS FIELD AND NOTHING ELSE, which records the pristine-clone boot verdict AND THE BRANCH it was taken on in its message (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72). PENDING rather than the previous boundary's value, because a stale resolved SHA reads as a verified one.
@@ -1364,8 +1424,41 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  **RUN CD-D-007's SUSPICION PROCEDURE ON EVERY WORKTREE FIRST, BEFORE BELIEVING ANY RECORD,
-  INCLUDING THIS ONE.** Two boundaries ago it found four commits and a complete Build Log entry
+  **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing).**
+  IMPLEMENTATION IS SUSPENDED under CD-D-085, on the Product Owner's OWN PRE-STATED TERMS
+  (PO-DECISIONS-0003 ruling 4, transcribed and bound at CD-D-076 precisely so this moment would not
+  depend on anyone's memory). THE TRIGGER IS MET ON THE PROJECT LEAD'S OWN MEASUREMENT, not on the
+  auditor's report alone.
+  **DO NOT DISPATCH AN ENGINEER. DO NOT DRAFT A WO-2R3 DISPATCH.** Either would be deciding that the
+  ruling did NOT fall — the substitution of judgement CD-D-076 exists to prevent.
+  **DO NOT DISPOSE.** A RED is not a rejection and a PASS would not have been an acceptance
+  (PBG-AUTH-003).
+  **DO NOT ADMIT ANYTHING** (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT MERGE THE LANE.** It stands at f30e63c on wo-2-skeleton.
+  **DO NOT DELETE /srv/crash-detector-wo2r2-audit** — it is the tree every finding describes and is
+  load-bearing for continuity (CD-D-087). **DO NOT EDIT ANYTHING UNDER governance/assurance/WO-2R2/**;
+  it is the auditor's record and the Project Lead only transports it.
+  WHAT IS OWED UPWARD, AND IT IS A DECISION AND NOT A QUESTION THIS SEAT MAY ANSWER: what the
+  BLUEPRINT §7 architectural review should conclude; whether CD-AC-002 can be scoped at WO-2 at all
+  given the vacuity dilemma the auditor MEASURED (under the shipped config both dials read Unknown
+  and NO dial number exists, so the criterion is satisfied by there being nothing to blend); whether
+  the entry-point admission class is reachable inside WO-2 or is itself WO-3 architecture; and what
+  becomes of f30e63c. THE PROJECT LEAD HAS DELIBERATELY OFFERED NO RECOMMENDATION ON ANY OF THEM —
+  the last time a Project Lead's reasonable inference stood in for a ruling it cost a gate.
+  NOTHING IS UNSAFE TO LEAVE AS IT STANDS: nothing is deployed, zero egress destinations are
+  registered, the source registry is empty and both dials read Unknown. WHAT IS UNSAFE IS PROMOTING
+  f30e63c AS THE BASELINE WO-3 BUILDS ON, which is what suspension prevents.
+  STILL OWED AND UNANSWERED: CD-ENG-WO2R2-F04 (reported at BL-...-0045, not a question — the 22-hour
+  tzinfo route); CD-PL-F77 (the lane's stale dispatch records); CD-PL-F78 (fingerprint without its
+  command — **ANY NEXT DISPATCH OF ANY KIND MUST RECORD THE EXACT COMMAND BESIDE ANY FINGERPRINT IT
+  STATES, OR STATE NO FINGERPRINT.** It has now been raised twice); CD-ENG-WO2R2-F02 (the lane's
+  BLOCKING boot); and CD-D-005, the ingredient register, WHICH IS NOW LOAD-BEARING IN A THIRD PLACE.
+  WHEN A RULING ARRIVES: RUN CD-D-007's SUSPICION PROCEDURE ON EVERY WORKTREE FIRST, BEFORE
+  BELIEVING ANY RECORD INCLUDING THIS ONE — two boundaries ago it found four commits and a complete
+  Build Log entry that no committed record knew existed.
+  ---- THE PRIOR ACTION, NOW DISCHARGED, RETAINED FOR ITS STANDING CONTEXT ----
+  RUN CD-D-007's SUSPICION PROCEDURE ON EVERY WORKTREE FIRST, BEFORE BELIEVING ANY RECORD,
+  INCLUDING THIS ONE. Two boundaries ago it found four commits and a complete Build Log entry
   that no committed record knew existed. It is not a formality.
   **THEN DISPATCH THE THIRD ASSURANCE SEAT — CD-ASR-WO2R2-01 (CD-D-083).** It must be GENUINELY
   FRESH: neither CD-ASR-WO2-01 nor CD-ASR-WO2-02, and neither Engineer seat (PBG-SOD-001,
@@ -1608,5 +1701,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260820T014343Z-0046
+last_build_log_entry: BL-20260820T022200Z-0047
 status: ACTIVE

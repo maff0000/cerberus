@@ -1,0 +1,10 @@
+=== CD-RT-002-AST-NO-BLEND [BASELINE] ===
+plant   : none   (n/a)
+command : python3 -B tools/register/check_no_blend.py --root .
+EXIT    : 0
+--- output (tail 25) ---
+CD-RT-002-AST-NO-BLEND
+    subject: /tmp/cd-asr3/arms/CD-RT-002-AST-NO-BLEND-BASELINE
+    scanned: 42 application Python files under src/crash_detector, deploy/entrypoints; 6 paths allowlisted for RULE 2 only; RULE 1 and RULE 3 have no allowlist (RULE 3 exempts 2 modules, each for the ONE slot it declares and no other); RULE 4 denies by default over 4 declared admission sites
+    assertions: 5554
+CD-RT-002-AST-NO-BLEND: PASS — 5554 assertions, 0 violations

@@ -1,0 +1,10 @@
+=== CD-RT-002-SCHEMA-CLOSED [BASELINE] ===
+plant   : none   (n/a)
+command : python3 -B tools/register/check_schema_closed.py --root .
+EXIT    : 0
+--- output (tail 25) ---
+CD-RT-002-SCHEMA-CLOSED
+    subject: /tmp/cd-asr3/arms/CD-RT-002-SCHEMA-CLOSED-BASELINE
+    scanned: contracts/public_envelope.schema.json and private_envelope.schema.json
+    assertions: 242
+CD-RT-002-SCHEMA-CLOSED: PASS — 242 assertions, 0 violations

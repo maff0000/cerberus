@@ -1,0 +1,59 @@
+CD-CLASS-2-DELEGATED-JUDGEMENT-SWEEP
+    SUBJECT SET: the transitive intra-package import closure of 6 judgement entry modules = 16 modules
+        [EXACT       ] crash_detector.dials.dialset                 tier-2 sites: 3
+        [ESTABLISHED ] crash_detector.dials.magnitude               tier-2 sites: 53
+        [ESTABLISHED ] crash_detector.dials.provenance              tier-2 sites: 68
+        [ESTABLISHED ] crash_detector.dials.reading                 tier-2 sites: 50
+        [ESTABLISHED ] crash_detector.dials.scores                  tier-2 sites: 10
+        [ESTABLISHED ] crash_detector.engine.config                 tier-2 sites: 25
+        [ESTABLISHED ] crash_detector.engine.evaluate               tier-2 sites: 28
+        [OUT_OF_BOUND] crash_detector.engine.model                  tier-2 sites: 1
+        [ESTABLISHED ] crash_detector.observations                  tier-2 sites: 13
+        [OWN         ] crash_detector.own_terms                     tier-2 sites: 10
+        [ESTABLISHED ] crash_detector.serving.dial_presentation     tier-2 sites: 39
+        [ESTABLISHED ] crash_detector.serving.witness_resolver      tier-2 sites: 14
+        [ESTABLISHED ] crash_detector.source_registry               tier-2 sites: 19
+        [ESTABLISHED ] crash_detector.staleness                     tier-2 sites: 19
+        [ESTABLISHED ] crash_detector.time_utc                      tier-2 sites: 10
+        [ESTABLISHED ] crash_detector.witness.panel                 tier-2 sites: 7
+    OUTSIDE THE CLOSURE, therefore NOT swept: 19 modules
+        crash_detector
+        crash_detector.collectors
+        crash_detector.collectors.adapter
+        crash_detector.collectors.attempt
+        crash_detector.collectors.runner
+        crash_detector.collectors.validation
+        crash_detector.dials
+        crash_detector.engine
+        crash_detector.publication
+        crash_detector.publication.classification
+        crash_detector.publication.dial_scalar
+        crash_detector.publication.envelope_contract
+        crash_detector.runtime
+        crash_detector.runtime.lifecycle
+        crash_detector.serving
+        crash_detector.store
+        crash_detector.store.migrate
+        crash_detector.store.migrations
+        crash_detector.witness
+    THE DENOMINATOR: 402 sites
+        TIER 1 — admission: 30 distinct sites (33 occurrences)
+            ISINSTANCE   24
+            ISSUBCLASS   0
+            DUCK         9
+        TIER 2 — the deciding operation: 369 occurrences
+            ARITH        18
+            COERCION     101
+            COMPARE      36
+            IDENTITY     47
+            MEMBERSHIP   26
+            ORDERING     30
+            SETOP        8
+            TRUTHINESS   103
+    TIER 1 DISPOSITIONS, declared per site:
+        ESTABLISHED    14
+        EXACT          11
+        OWN            2
+        DELEGATED      1
+        OUT_OF_BOUND   2
+CD-CLASS-2-SWEEP: PASS — 402 sites enumerated over 16 modules; every tier-1 admission and every subject module carries a written disposition; 3 tier-1 sites and 1 modules are declared OPEN or OUT OF BOUND and are named in this increment's Build Log. A PASS here is a statement about the SURFACE and never about the class.

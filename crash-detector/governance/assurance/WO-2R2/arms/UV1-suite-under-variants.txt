@@ -1,0 +1,20 @@
+=== apply-check ALL variants ===
+apply-check: 84/84 clean
+
+=== whole suite under each WO-2R2 variant ===
+CD-ENG-WO2R2-V11-register-the-broker-openly.patch :: FAILED tests/test_dependency_registry.py::test_registration_is_not_absolution_the_denylist_still_applies
+CD-ENG-WO2R2-V12-malformed-entry-registers-nothing.patch :: FAILED tests/test_dependency_registry.py::test_every_entry_states_a_reason_and_an_authorising_clause[declared_in]
+CD-ENG-WO2R2-V13-broker-in-a-constraints-file.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V14-registered-under-a-non-normal-spelling.patch :: FAILED tests/test_dependency_registry.py::test_every_distribution_is_already_in_pep503_normal_form
+CD-ENG-WO2R2-V15-registry-deleted-absent-is-not-empty.patch :: ERROR tests/test_dependency_registry.py::test_the_registry_is_not_empty - Ass...
+CD-ENG-WO2R2-V01-asr2-002-a-renamed-and-aliased.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V03-rewrite-the-reduction-table-the-door-trusts.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V04-duck-typed-provenance-carrier.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V05-stateful-model-shared-by-both-dials.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V06-panel-state-label-forges-agreement.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V07-measure-key-answers-to-another-name.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V08-timestamp-lies-about-its-own-fields.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V09-offset-is-a-timedelta-subclass.patch :: ................................                                         [100%]
+CD-ENG-WO2R2-V10-tzinfo-lies-within-the-interpreters-bound.patch :: ................................                                         [100%]
+=== CLEAN BASELINE ===
+clean :: ................................                                         [100%]
