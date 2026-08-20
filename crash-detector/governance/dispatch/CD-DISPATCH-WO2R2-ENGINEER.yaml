@@ -511,6 +511,105 @@ increment_2_class_2_judge_values_never_types:
     executable example, carrier MEASURED per CD-RULE-006.
 
 # ================================================================================================== #
+# ADDENDUM AT THE HEAD OF INCREMENT 3 — TWO DEFECTS FOUND BY RECONCILIATION OF INCREMENT 2.
+# Added 2026-08-20T00:56:28Z by PROJECT_LEAD_SEAT_01 under CD-D-080, on the CD-D-055 / CD-D-077
+# precedent: a bounded addendum at the head of an increment is how this project corrects a brief
+# without re-opening it. IT AMENDS NO INCREMENT CONTENT. Every field of the increment 3 block below
+# is BYTE-IDENTICAL to its issued form, and the dispatch status is UNCHANGED (ISSUED).
+# ================================================================================================== #
+addendum_increment_3_head_two_reconciliation_defects:
+  authority: 'CD-D-080, ruled at BL-20260820T005628Z-0045. Findings CD-PL-F75 and CD-PL-F76.'
+  what_this_addendum_is: >
+    TWO DECLARATION DEFECTS found by the Project Lead when it reconciled increment 2 — NOT reported
+    by the increment-2 seat, which died before committing its own record. They are declaration work
+    in this dispatch's writable scope, and the Project Lead does not repair them itself
+    (PBG-AUTH-006, CD-D-038 / CD-D-045). THEY ARE THE FIRST TWO ITEMS OF INCREMENT 3, AND THEY ARE
+    SMALL. Do them first, commit them separately from the CD-AC-012 work, and then do increment 3
+    as issued.
+
+  item_A_CD_PL_F75:
+    severity: LOW
+    where: 'required-tests.yaml, the CD-AC-005 negative_control block.'
+    what_is_wrong: >
+      (a) THE COUNT IS STALE. The preamble reads "THIS TEST HAS A DECLARED LIMIT (CD-RULE-004),
+      stated identically here, in the header of src/crash_detector/staleness.py and in the execution
+      contract, in FOUR boundaries:". THERE ARE NOW FIVE — increment 2d added boundary 5 into the
+      block beneath it and did not touch the numeral above it.
+      (b) THE ENUMERATION IS OUT OF ORDER: within that block the boundaries appear (1), (2), (3),
+      (5), (4).
+      MEASURED at lane 7ac1574 the same sentence read FOUR and the block held exactly FOUR, so the
+      sentence was TRUE before increment 2 and is FALSE after it.
+    what_is_already_correct_and_must_not_be_disturbed: >
+      src/crash_detector/staleness.py and
+      contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md BOTH run 1,2,3,4,5 IN ORDER
+      and NEITHER carries a numeral count. The register is the only file that is wrong. Do not
+      "harmonise" by adding a count to the other two.
+    the_fix: 'Correct the numeral and re-order the register''s enumeration. Nothing else.'
+    the_lesson_worth_carrying: >
+      The increment-2 seat DID verify three-place consistency and said so in its 2d commit — but it
+      grepped for the PHRASES IT HAD ADDED ("402 sites", "16 subject modules", "THE FOURTH EXISTED",
+      "96x the 900"). A consistency check over what you added cannot see what you made STALE. When
+      this increment touches a declaration, grep the WHOLE declaration, not the delta.
+
+  item_B_CD_PL_F76:
+    severity: MEDIUM
+    where: 'The structural invariant of record, stated in commit 27e3794 and carried forward unchanged.'
+    what_is_wrong: >
+      THE INVARIANT IS STATED MORE WIDELY THAN THE CLOSURE IT DESCRIBES. It opens: "No method
+      defined by a caller-supplied class executes during the computation of an age..." The
+      increment's OWN CD-ENG-WO2R2-F04 is the counterexample, and the Project Lead replicated it
+      independently: a caller-supplied `tzinfo` — no subclass anywhere, an ordinary datetime — whose
+      `utcoffset` EXECUTES inside `ensure_utc` and DETERMINES the age, turning a row whose stated
+      wall clock is 22 HOURS OLD into a fresh one against a 600-second window. The seat's own words
+      for F04 say a supplied object's METHOD STILL RUNS INSIDE A FRESHNESS COMPUTATION. That
+      sentence and the invariant's first sentence cannot both be read plainly and both be true.
+      Increment 2d, which ADDED boundary 5, recorded "STRUCTURAL INVARIANT: unchanged".
+    what_is_NOT_being_alleged: >
+      NOTHING WAS HIDDEN, and this is not an accusation of concealment. The seat found F04 itself,
+      raised it against its own closure at MEDIUM, declared it as boundary 5 in all three CD-RULE-004
+      places with a MEASURED interpreter bound, built CD-ENG-WO2R2-V10 for it, and told the Project
+      Lead to send it upward. That conduct is the standard PO-DECISIONS-0003 endorsed. The
+      invariant's own refutation recipe is also bounded to "after PanelRow.__post_init__ returns",
+      and the tzinfo runs DURING __post_init__ — so the record READ AS A WHOLE is honest.
+    why_it_is_MEDIUM_anyway: >
+      Because the Product Owner's standing condition makes the COMMIT-MESSAGE INVARIANT the
+      load-bearing sentence — "the structural invariant stated IN THE COMMIT THAT LANDS THE
+      CLOSURE" — and a reader exercising that condition reads the invariant, not the corpus around
+      it. Such a reader concludes an age cannot be forged by any caller-supplied code. IT CAN, BY UP
+      TO TWENTY-FOUR HOURS. This project has twice paid a gate for a claim stated wider than its
+      closure.
+    the_fix_IS_A_SENTENCE_AND_NOT_A_GUARD: >
+      State the NARROWED invariant FORWARD — in this increment's commit message and in the three
+      CD-RULE-004 places — saying what the closure actually holds: that no method of `type(value)`
+      runs, and that the ONE supplied-object method which still executes is `tzinfo.utcoffset`,
+      bounded by the interpreter to under 24 hours and declared at boundary 5.
+      NOTHING ABOUT THE CODE NEEDS TO CHANGE. THE CODE IS RIGHT; THE SENTENCE IS TOO WIDE.
+
+  PROHIBITED_read_this_twice: >
+    *** DO NOT BUILD A tzinfo GUARD, AND DO NOT CHANGE CODE TO MAKE CD-PL-F76 GO AWAY. *** A tzinfo
+    cannot be refused without refusing zoneinfo, pytz and pandas, which all supply their own — that
+    is trading a defect for a defect, which this dispatch names in terms. It would also be the
+    FOURTH clever guard against a residue the Product Authority has not yet been asked about, and a
+    guard that looks like a closure is the defect that has cost this project two gates. F04 is
+    REPORTED upward under CD-D-081 as a pre-existing, bounded, declared residue; closing it needs
+    either a clock-trust instrument (CD-RULE-003 forbids a seat inventing a skew tolerance) or the
+    CD-D-005 ingredient register. Both are Product Authority territory.
+    *** DO NOT REWRITE 27e3794's COMMIT MESSAGE OR ANY OTHER HISTORY. *** Corrections supersede,
+    never edit (PBG-CONT-003, non-waivable). The narrowing is stated FORWARD.
+    *** DO NOT WIDEN INCREMENT 3. *** The CD-AC-012 dependency-surface work below is UNCHANGED in
+    every particular.
+
+  a_standing_rule_that_now_binds_this_dispatch:
+    id: CD-D-079
+    rule: >
+      A REFUSAL CREDITED TO A SPECIFIC STRUCTURE CARRIES A COUNTERFACTUAL ARM — the same variant,
+      the same tree, THAT STRUCTURE REMOVED — OR IT SAYS IT DOES NOT HAVE ONE. Two arms establish
+      only that a tree refuses; the third establishes WHICH LINE DOES THE REFUSING. It was offered
+      by the increment-2 seat as CD-ENG-WO2R2-F06, applied by the Project Lead to increment 2's own
+      headline claim before being adopted, and it costs one extraction.
+    it_binds_this_increment: 'Every closure claim increment 3 makes.'
+
+# ================================================================================================== #
 # INCREMENT 3 — ITEM 3. THE CD-AC-012 DEPENDENCY SURFACE, BOUNDED.
 # ================================================================================================== #
 increment_3_item_3_dependency_surface:
