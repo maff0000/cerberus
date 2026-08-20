@@ -1,0 +1,305 @@
+# ================================================================================================== #
+# CD-DISPATCH-WO2R2-ASSURANCE — THE THIRD ASSURANCE SEAT.
+#
+# TWO GATES HAVE BEEN LOST ON THIS TARGET. Both were lost to the same shape: A GUARD THAT LOOKED
+# LIKE A CLOSURE. Not to a missing check, not to a lazy auditor — to a check that passed while the
+# class it named stayed open, and to claims stated wider than the closures beneath them.
+#
+# YOU ARE NOT HERE TO CONFIRM THE REWORK. You are here to find out whether it is real. The Project
+# Lead has reconciled all three increments and has written down, in terms, the things IT DID NOT
+# VERIFY. Those are listed for you. So is an invitation from the Product Authority to attack a
+# scoping ruling that the gate now rests on — with the consequence of winning stated.
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-WO2R2-ASSURANCE
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-20T01:52:00Z'
+issued_by: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260820T014343Z-0046
+issuing_decision: CD-D-083
+
+assigned_role: ASSURANCE_ENGINEER
+role_contract: pbg/roles/assurance-engineer.md
+actor_id: CD-ASR-WO2R2-01
+implementing_actor_ids: [CD-ENG-WO2R2-01, CD-ENG-WO2R2-02]   # the seats whose work this is
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+independence_declaration: >
+  You are the THIRD Assurance seat on this target and you must be genuinely fresh. You are NOT
+  CD-ASR-WO2-01 and NOT CD-ASR-WO2-02, and you have never held the ENGINEER role on this project.
+  You have no commit on branch wo-2-skeleton. IF ANY OF THAT PROVES UNTRUE, return
+  INDEPENDENCE_CONFLICT and hand the dispatch back (PBG-SOD-001, non-waivable).
+  You did not write the code, the declarations, the sweep, the registry or the variants, and you do
+  not repair anything you find (PBG-SOD-004).
+
+# --- exact target -------------------------------------------------------------------------------- #
+target_candidate: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5
+  # Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t` by the
+  # Project Lead. "the lane head" is not a target and a SHA quoted from memory is not a target
+  # either (CD-PL-F36, CD-CONT-002).
+target_branch: wo-2-skeleton
+target_worktree: /srv/crash-detector-wo2r2-audit
+  # A DETACHED worktree created by the Project Lead at exactly f30e63c and checked clean at
+  # creation (porcelain 0 lines, 392 files). It is NOT the Engineer's mutation lane —
+  # /srv/crash-detector-wo2 stays on branch wo-2-skeleton and may move. AUDIT THE DETACHED
+  # WORKTREE.
+target_tree_fingerprint: 4012a5c3877591a863b3cc6016f7af9803e6e9309f2128109b81347769037e2a
+  # sha256 of the sorted sha256sums of all 392 files, taken at issue. The Project Lead will re-take
+  # it when you return. MUTATION IS DETECTABLE AND NOT MERELY PROHIBITED, and that is stated to you
+  # openly rather than sprung afterwards.
+audited_base_for_replication: 50fc23177f790164c3fc3604ccee51663e755c70
+  # The tree the SECOND auditor's findings describe. Use it for replication arms: a refusal you
+  # never saw fail is not evidence.
+
+# --- what this target is ------------------------------------------------------------------------- #
+what_was_reworked:
+  increment_1: >
+    CLASS 1 — ADMISSION IS VALIDATION. The derivation door closed at the TYPE:
+    `derived_within_one_dial` takes DeclaredQuantity values refused by exact type and a reduction
+    refused by exact type. Reconciled at BL-20260819T222917Z-0043.
+  increment_2: >
+    CLASS 2 — JUDGE VALUES, NEVER TYPES. `crash_detector.own_terms` re-constructs timestamps,
+    floats and labels from the supplied object's own primitives read through the BASE TYPE's
+    descriptors, so no method of `type(value)` runs inside a judgement. Plus `tools/sweep/`, an
+    enumeration of 402 sites over 16 modules. Reconciled at BL-20260820T005628Z-0045.
+  increment_3: >
+    THE CD-AC-012 DEPENDENCY SURFACE. A 61-name denylist replaced by DENY BY DEFAULT over
+    `deploy/dependency-registry.yaml`. Plus two declaration repairs (CD-PL-F75, CD-PL-F76).
+    Reconciled at BL-20260820T014343Z-0046.
+
+target_scope: >
+  WO-2 as delivered at f30e63c. The five planted criteria and the classes behind them.
+out_of_scope: >
+  Anything scheduled after WO-2: the publication layer, heartbeat and external probe (WO-3); the
+  witness divergence alarm, history and slope (WO-4); the public/private split, public-artefact scan
+  and AI review validators (WO-5); the rotation ratio, recovery proof and wave-transition monitor
+  (WO-6). Also out of scope: container image build, non-root runtime proof, signal-handling proof
+  and image smoke test — FORBIDDEN in WO-2 by PBG-RT-010 and recorded as OWED, not done. JUDGING
+  THEM ABSENT IS CORRECT; JUDGING THEM A DEFECT OF WO-2 IS NOT.
+
+# --- the gate ------------------------------------------------------------------------------------ #
+gate: >
+  THE WO-2 GATE IS ASSURANCE PASS ON ALL FIVE — CD-AC-001, CD-AC-002, CD-AC-003, CD-AC-005,
+  CD-AC-012. NO WAIVER EXISTS (Product Owner, restated in PO-DECISIONS-0003). The overall verdict
+  is the WORST of the five.
+  Proof by CONTRAST and by nothing else: the SAME declared command exits 0 on the clean subject and
+  NON-ZERO on the subject carrying the planted violation. A violated arm that fails while the clean
+  arm ALSO fails proves only that the harness is broken, and a broken harness detects nothing —
+  that is UNDECIDABLE, never PASS.
+
+# ================================================================================================== #
+# THE PRODUCT AUTHORITY'S OWN INVITATION — READ PO-DECISIONS-0003 IN FULL BEFORE YOU BEGIN
+# ================================================================================================== #
+the_product_authority_invitation:
+  source: governance/decisions/PO-DECISIONS-0003.md
+  commit: ae3188cf2854bf37a965277c99afcf3354f3478d
+  author: 'Matt Scott <rogue@cerberus.local>. NOT a seat.'
+  read_it_directly: >
+    READ THAT FILE. Do not accept this dispatch's summary of it, or anyone else's. Where this
+    dispatch and the decision record differ, THE DECISION RECORD GOVERNS.
+  what_was_ruled: >
+    CD-AC-002 IS RULED AT WO-2 SCOPE ON A MEASURED BASIS. A WO-2 candidate registers no model,
+    registers no source, deploys nothing and has no publication layer, so THE INJECTED-MODEL ROUTE
+    IS NOT IN WO-2'S POPULATION. The criterion at WO-2's gate covers every route that needs no
+    injected model. THE FULL-WIDTH CRITERION IS NOT NARROWED OR SOFTENED — it remains MANDATORY and
+    TRAVELS TO WO-3, where BLUEPRINT §7 returns for architectural review as WO-3's mandatory first
+    item.
+  RULING_4_IS_ADDRESSED_TO_YOU: >
+    *** THE SCOPING ITSELF IS ATTACK SURFACE, AND YOU ARE EXPLICITLY INVITED TO ATTACK IT. ***
+    The Product Owner's own words: "A PO scoping a criterion at the moment of failure is the
+    acceptance-semantics trap; the only honest defence is handing the auditor the knife."
+  THE_CONSEQUENCE_OF_WINNING_STATED_SO_IT_IS_A_GATE_CONDITION_AND_NOT_A_RHETORICAL_INVITATION: >
+    IF YOU CAN EXERCISE AN INJECTED-MODEL ROUTE INSIDE A WO-2 CANDIDATE'S REAL POPULATION, THE
+    RULING FALLS AND OPTION (C) SUSPENSION APPLIES — BLUEPRINT §7 RETURNS FOR ARCHITECTURAL REVIEW
+    AND IMPLEMENTATION STOPS. That is CD-D-076. An auditor invited to attack a scoping and not told
+    what follows from succeeding has been given a rhetorical invitation rather than a gate
+    condition, and you are being told.
+  the_open_finding_this_concerns: >
+    CD-ENG-WO2R2-F03 (HIGH), raised BY THE ENGINEER AGAINST ITS OWN CLOSURE and replicated
+    independently by the Project Lead as PL-Z4: ONE stateful ContributionModel injected into BOTH
+    DialSpecs makes the monetary dial publish 0.5 — the mean of both dials — while the equity dial
+    publishes 0.9. Every field of the admission claim is true except the number. The variant is
+    durable at variants/WO-2R2/CLASS-1/CD-ENG-WO2R2-V05-stateful-model-shared-by-both-dials.patch.
+    NO GUARD WAS BUILT FOR IT, DELIBERATELY, ON THE PRODUCT AUTHORITY'S OWN RULING.
+
+# ================================================================================================== #
+# WHAT THE PROJECT LEAD DID NOT VERIFY. THIS IS THE MOST USEFUL LIST IN THIS DISPATCH.
+# Written down because an unexamined assumption that nobody names is how the first two gates were
+# lost, and because a reconciliation that hid its own gaps would be the same defect one level up.
+# ================================================================================================== #
+declared_unverified_by_the_project_lead:
+- id: UV-1
+  what: >
+    THE 74-PATCH WHOLE-SUITE EXCLUSION-SET REGRESSION. The increment-2 seat reports that no row's
+    pass/fail pattern differs between the lane head and its closure. The Project Lead measured only
+    that all patches APPLY CLEAN (84/84 at f30e63c). BEHAVIOUR UNDER EACH WAS NOT RE-RUN.
+- id: UV-2
+  what: >
+    THE REGENERATED PLANT. plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch STOPPED APPLYING
+    when increment 2b changed context lines in engine/config.py, and the Engineer REGENERATED it.
+    The seat says the planted defect is byte-identical and that the evaluate.py hunk is the original.
+    THE PROJECT LEAD DID NOT VERIFY THIS ACROSS TWO BOUNDARIES. A seat that regenerates the artefact
+    which proves its own check still works has done something you should check personally.
+- id: UV-3
+  what: >
+    THE ELEVEN PLANTS were not re-run by the Project Lead at f30e63c. Note that
+    CD-RT-003-GRANT-MATRIX-LIVE returns EXIT 3 PRECONDITION_NOT_MET in both arms with no store
+    connection target set; CD-ASR-WO2-02 measured that guard live and reported the matrix
+    contrasting 0 -> 1.
+- id: UV-4
+  what: >
+    THE THREE AMBER CRITERIA were never re-measured by any Project Lead seat, and findings F03-F13
+    were never independently replicated. NOT DOUBTED — NOT REACHED. That work is yours.
+- id: UV-5
+  what: >
+    CD-ENG-WO2R2-F05 (LOW) — the increment-2 seat reports that the offset rebuild in
+    `own_utc_offset` is NOT measured to close any route, and is kept only because it prevents a
+    FALSE POSITIVE against library timestamps. The Project Lead accepted this as an honest
+    self-report and did NOT re-measure it.
+- id: UV-6
+  what: >
+    CD-ENG-WO2R2-02-F02 — the increment-3 seat RETAINED `scope: CLASS` in required-tests.yaml for
+    CD-RT-012-LOCKFILE-DENYLIST and reports this is a JUDGEMENT CALL made by the seat that benefits
+    from it. The framework offers only {INSTANCE, CLASS} and pbg/ is protected, so there is no third
+    value. THE PROJECT LEAD DELIBERATELY NEITHER OVERRULED NOR RATIFIED IT. It should be settled by
+    someone who is not the beneficiary. That is you.
+
+# ================================================================================================== #
+# WHERE TO ATTACK — the specific places this target is most likely to be weaker than it reads
+# ================================================================================================== #
+required_work:
+- id: RW-1
+  title: 'ATTACK THE DISPOSITION TEXT IN tools/sweep/declared_dispositions.py — NOT THE SITE COUNT.'
+  why: >
+    The sweep enumerates 402 sites over 16 modules and asserts by set equality in both directions,
+    so a new admission fails it AND deleting the entry that complains fails it too. That machinery
+    is sound and checking the arithmetic will teach you nothing. BUT EVERY `ESTABLISHED` DISPOSITION
+    IS A CLAIM BY THE SEAT, NOT SOMETHING THE TOOL VERIFIED, and a MIS-DECLARED disposition is
+    INVISIBLE TO THE TOOL BY CONSTRUCTION. The tool says so itself in its own header. Find a site
+    declared ESTABLISHED, EXACT or OWN and show it is not.
+- id: RW-2
+  title: 'THE SWEEP DOES NOT SEE A MODULE OUTSIDE THE IMPORT CLOSURE — INCLUDING THE PREVIOUS AUDITOR''S OWN VARIANT FILE.'
+  why: >
+    With ASR2-005-A present as src/crash_detector/serving/panel_feed.py the sweep STILL reports 402
+    sites, because that module imports none of the six judgement entry modules. THE ENGINEER
+    DISCLOSED THIS ITSELF, in all three declaration places. 19 names of the package are outside the
+    closure and every run prints them. That none of them decides staleness, agreement or
+    reading-ness is A CLAIM ABOUT THIS SHA MADE BY READING THEM. Read them yourself.
+- id: RW-3
+  title: 'CD-PL-F76 — GRADE CD-AC-005 AGAINST WHAT THE CLOSURE ACTUALLY HOLDS, NOT AGAINST THE INVARIANT AS WRITTEN.'
+  why: >
+    The structural invariant in commit 27e3794 says "No method defined by a caller-supplied class
+    executes during the computation of an age". The increment's OWN CD-ENG-WO2R2-F04 is the
+    counterexample and the Project Lead replicated it: a caller-supplied `tzinfo` — no subclass
+    anywhere — whose `utcoffset` executes and DETERMINES the age, rendering WITNESS AGREES on a row
+    whose stated wall clock is 22 HOURS OLD against a 600-second window. Bounded by the interpreter
+    to under 24 hours, MEASURED. Increment 3 narrowed the claim FORWARD in the three declaration
+    places. THE UNDERLYING RESIDUE IS UNCHANGED AND OPEN. Grade accordingly, and say whether a
+    declared, bounded, pre-existing residue of that shape is compatible with a PASS.
+- id: RW-4
+  title: 'CD-AC-012 — DECLARED BOUNDARY 1 IS OPEN BY CONSTRUCTION AND THE PROJECT LEAD EXECUTED IT.'
+  why: >
+    Deny-by-default refuses what nobody registered. It CANNOT judge whether a registered
+    distribution really is what its `purpose` says. The Project Lead appended a REAL brokerage's
+    REAL order-entry SDK to both manifests AND registered it with a plausible purpose: EXIT 0, PASS,
+    149 assertions. Closing that needs an offline oracle that does not exist, and a network check is
+    prohibited. IS A DECLARED, EXECUTED, HONESTLY-STATED LIMIT OF THAT SHAPE COMPATIBLE WITH A PASS?
+    The CD-AC-003 precedent shows a PASS (scoped) is available for this shape. The Project Lead
+    DELIBERATELY DID NOT PRE-EMPT YOU.
+- id: RW-5
+  title: 'TAKE THE RENAME TEST AND THE COUNTERFACTUAL YOURSELF ON EVERY REFUSAL YOU ARE ASKED TO CREDIT.'
+  why: >
+    CD-D-079 now stands on this project: a refusal credited to a specific structure carries a
+    COUNTERFACTUAL ARM — the same variant, the same tree, THAT STRUCTURE REMOVED — or says it has
+    none. It exists because a variant refused at two SHAs may be refused for two DIFFERENT reasons,
+    and because a violation count that RISES when a layer is engaged can still mean that layer
+    carries nothing. The rule binds Engineer and Project Lead claims. IT DOES NOT BIND YOUR
+    FINDINGS — an auditor demonstrating that a route is OPEN has no structure to remove.
+- id: RW-6
+  title: 'FRESH VARIANTS. The exclusion set is what NOT to re-use.'
+  why: >
+    variants/ at the target holds 84 patches: the WO-2R corpus plus WO-2R2 CLASS-1 (V01..V05),
+    CLASS-2 (V06..V10) and CD-AC-012 (V11..V15), with MANIFEST rows written for you. THE EXCLUSION
+    SET PROVES NOTHING ABOUT ANY CLASS (CD-D-047) — it is a regression floor and your do-not-repeat
+    list. Two of the CLASS-2 five are NOT refusals and the Engineer labels them so. V11 is labelled
+    a VOCABULARY result whose rename test does NOT survive. Build routes nobody has built.
+- id: RW-7
+  title: 'THE PLANTS AND THE HARNESS — because a broken harness detects nothing.'
+  why: >
+    Verify the contrast yourself for each of the five criteria, and see UV-2 and UV-3 above.
+
+# --- prohibited mutation ------------------------------------------------------------------------- #
+prohibited_mutation:
+  default: >
+    Mutation of the target is PROHIBITED. Judge mutation by EFFECT, not by command label
+    (PBG-RT-001): a read-only-sounding command that writes a cache, takes a lock or triggers a
+    rebuild HAS MUTATED THE TARGET. Observe a lock; never take it. Use `python3 -B` everywhere so no
+    __pycache__ is written into the audited tree.
+  explicitly_permitted_safe_diagnostics:
+  - id: SD-1
+    action: 'Write your evidence and verdict artefacts under /srv/crash-detector-wo2r2-evidence/.'
+    note: >
+      That directory is OUTSIDE every git worktree, so the audited tree stays byte-identical to the
+      SHA you audited. The Project Lead transports those artefacts into the repository UNALTERED.
+      You author them; nobody edits their contents.
+  - id: SD-2
+    action: 'Extract throwaway copies of the target under /tmp with `git archive <sha> | tar -x`.'
+    note: >
+      Chosen deliberately over `git worktree add`, which writes into .git/worktrees and would mutate
+      the audited repository's administrative state. A SEPARATE extraction per variant, so no probe
+      contaminates another.
+  - id: SD-3
+    action: 'Run ONE throwaway PostgreSQL container if you need to read the grant matrix from a live catalogue.'
+    bounds: >
+      image postgres:16-alpine pinned BY DIGEST; container and volume names prefixed
+      `cd-asr-wo2r2-`; published on 127.0.0.1 on an ephemeral port; credentials generated at run
+      time and never written down; destroyed with `docker rm -f` and `docker volume rm` before you
+      return, with the removal evidenced.
+    classification: MUTATION_CAPABLE_AUTHORISED
+    forbidden: >
+      touching, inspecting into, stopping or restarting ANY container or volume on this host that
+      does not carry the `cd-asr-wo2r2-` prefix. OTHER PROJECTS ARE RUNNING HERE.
+  forbidden_absolutely:
+  - 'modifying anything in /srv/crash-detector, /srv/crash-detector-wo2, or /srv/crash-detector-wo2r2-audit'
+  - 'modifying anything under pbg/ (PBG-FWK-013) — editing the framework to make a control pass IS the bypass'
+  - 'REPAIRING ANY DEFECT YOU FIND (PBG-SOD-004). Finding it does not make you the one who fixes it,
+     and fixing it forfeits your independence over this target. REPORT IT; the Engineer repairs it.'
+  - 'granting acceptance. You supply evidence and a verdict; A PASS IS NOT AN ACCEPTANCE (PBG-AUTH-003)'
+  - 'touching latest_admitted_run, or admitting any run record. CD-RULE-001 is PO-set and
+     non-relaxable, and admission requires a paired assurance verdict that does not yet exist.'
+
+# --- verdict form -------------------------------------------------------------------------------- #
+expected_verdict:
+  values: [PASS, AMBER, RED, UNSUPPORTED, NOT_APPLICABLE]
+  per_criterion: >
+    A SEPARATE VERDICT LINE for each of CD-AC-001, CD-AC-002, CD-AC-003, CD-AC-005 and CD-AC-012,
+    because the gate is per criterion. THE OVERALL VERDICT IS THE WORST OF THEM.
+  required_qualification: >
+    Every verdict carries its CONFIDENCE and its SCOPE — what you examined, what you did not, and
+    what you could not. A SCOPED PASS THAT NAMES ITS LIMITS IS USEFUL; AN UNSCOPED PASS IS A
+    LIABILITY. State the CONTINUATION IMPLICATION separately from the finding: what is true and what
+    is safe to do next are different calculations.
+  on_the_CD_AC_002_scoping: >
+    State EXPLICITLY whether you accept the PO's WO-2 scoping of CD-AC-002 and on what evidence, or
+    whether you defeated it — and if you defeated it, say so in terms, because CD-D-076 makes that
+    outcome a suspension trigger and not a footnote.
+  next_safe_gate: 'Name it explicitly. A verdict without a named next safe gate is incomplete (PBG-ASSURE-004).'
+  no_synthetic_green: >
+    PBG-ASSURE-012. Do not weaken a check to obtain a verdict, do not accept a substitute target
+    because the real one is awkward to reach, and DO NOT NARROW SCOPE SILENTLY — if you examined
+    less than dispatched, that belongs in the verdict, not in a footnote. Where you cannot refute a
+    claim and cannot fully verify it either, SAY PRECISELY THAT.
+    AN HONEST AMBER IS WORTH MORE THAN A CONFIDENT PASS RESTING ON AN UNEXAMINED ASSUMPTION, and on
+    this project that is not a platitude: two gates have been lost to exactly that.
+  a_note_on_what_a_RED_costs_you: >
+    NOTHING. You are not scored on the verdict. Three consecutive seats have raised findings against
+    their own work and the Product Owner endorsed that conduct BY NAME on its own record. The
+    failure mode here has never been an auditor who was too harsh.
+
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  Project Lead (PROJECT_LEAD_SEAT_01), who reconciles your evidence, records the boundary, and
+  STOPS AT THE GATE. DISPOSITION IS THE PRODUCT OWNER'S (PBG-AUTH-003) — a PASS is not an
+  acceptance and neither is a RED, and the Project Lead disposes of neither.
