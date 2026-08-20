@@ -797,7 +797,7 @@ criteria:
         staleness window wide enough to make staleness meaningless, which needs no source edit
         and is the CD-ASR-F06 route.
         THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
-        src/crash_detector/staleness.py and in the execution contract, in FOUR boundaries:
+        src/crash_detector/staleness.py and in the execution contract, in FIVE boundaries:
         (1) THE CEILING BOUNDS THE WINDOW; IT DOES NOT ESTABLISH WHAT THE WINDOW SHOULD BE.
         Any window from 0.001 s to 900 s is admissible, and a deployment that configures 899 s
         has a window this guard does not question. The operating window is BLUEPRINT §7's
@@ -897,6 +897,16 @@ criteria:
         PO-DECISIONS-0003 and deliberately NOT closed by a guard here), SourceRecord's
         cadence_seconds int subclass, FetchFailed.http_status and Malformed.instance_path, each
         NOT PROVED TO BE CARRIED ANYWHERE; and (v) boundary 5 below.
+        Agrees IS DELIBERATELY NOT SLOTTED (CD-D-058, an instruction obeyed rather than an
+        oversight): slotting closes the UNDECLARED-attribute half and leaves the DECLARED-slot
+        half — which is the whole of PL-W5, since the write that reaches WITNESS AGREES
+        overwrites the declared field as_of_utc — wide open. That would read like a closure while
+        being partial, the CD-PL-F54 shape. Increment 6 writes no logic.
+        (4) THE ENVELOPE'S `staleness_window_seconds` FIELD IS NOT ADMITTED THROUGH THIS DOOR.
+        The published envelope carries the window that was applied as a plain number validated
+        by the JSON Schema, so a hand-built envelope declaring an inadmissible window is a
+        publication-provenance question and not a staleness one. NOT PROVED TO BE CARRIED
+        ANYWHERE.
         (5) A tzinfo IS A SUPPLIED OBJECT AND IS THE LAST PLACE A SUPPLIED OBJECT'S METHOD STILL
         RUNS INSIDE A FRESHNESS COMPUTATION. ADDED AT WO-2R2 INCREMENT 2. *** MEASURED OPEN. ***
         Every timestamp is now REBUILT by crash_detector.own_terms.own_instant from the supplied
@@ -921,16 +931,6 @@ criteria:
         applied; that agreement cannot exist without the comparison that justifies it; and that
         the values that comparison is made of are objects this system constructed. It is NOT proof
         about boundary 5, which is open and measured open.
-        Agrees IS DELIBERATELY NOT SLOTTED (CD-D-058, an instruction obeyed rather than an
-        oversight): slotting closes the UNDECLARED-attribute half and leaves the DECLARED-slot
-        half — which is the whole of PL-W5, since the write that reaches WITNESS AGREES
-        overwrites the declared field as_of_utc — wide open. That would read like a closure while
-        being partial, the CD-PL-F54 shape. Increment 6 writes no logic.
-        (4) THE ENVELOPE'S `staleness_window_seconds` FIELD IS NOT ADMITTED THROUGH THIS DOOR.
-        The published envelope carries the window that was applied as a plain number validated
-        by the JSON Schema, so a hand-built envelope declaring an inadmissible window is a
-        publication-provenance question and not a staleness one. NOT PROVED TO BE CARRIED
-        ANYWHERE.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-012
