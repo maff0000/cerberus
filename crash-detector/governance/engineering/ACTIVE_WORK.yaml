@@ -2,10 +2,16 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-20T02:22:00Z'
+updated_utc: '2026-08-20T02:45:20Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
-blueprint_version: 0.1.0-ACCEPTED
+blueprint_version: 0.1.0-ACCEPTED   # UNCHANGED AND CORRECT. BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal.
+proposed_amendments:
+  - id: BP-AMENDMENT-0001
+    path: governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md
+    target: BLUEPRINT.md §7, with consequential edits to §1, §13, §14, §16, §17, §19
+    status: PROPOSED — awaiting Product Owner acceptance. NOT IN FORCE. No code may be written against it.
+    derives_from: governance/decisions/PO-DECISIONS-0004.md rulings 2, 3, 5, 6
 
 active_authority_id: CD-AUTH-0001
 work_type: CHANGE
@@ -16,8 +22,38 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: SUSPENDED   # WAS GATE. Suspended at BL-20260820T022200Z-0047 under CD-D-085, on the Product Owner's own pre-stated terms (PO-DECISIONS-0003 ruling 4, bound at CD-D-076). Only the Product Authority lifts it.
+current_phase: DESIGN   # WAS SUSPENDED, WHICH WAS GATE. **IMPLEMENTATION REMAINS SUSPENDED** — PO-DECISIONS-0004 ruling 1 says the suspension stands. What the Product Owner lifted is nothing; what it DIRECTED (ruling 6) is that the Project Lead draft the §7 Blueprint amendment. Drafting a design proposal is not implementation and dispatches no seat. The phase returns to SUSPENDED-or-GATE only on the PO's disposition of BP-AMENDMENT-0001.
 current_block: >
+  *** BP-AMENDMENT-0001 IS DRAFTED AND PROPOSED. THE NEXT ACTOR IS THE PRODUCT AUTHORITY. ***
+  PO-DECISIONS-0004 (commit fb823e1, authored by Matt Scott) RULED: the suspension stands and is
+  executed on the PO's own pre-stated terms (1); the §7 architectural review is CONVENED AND
+  CONCLUDED — THE ENGINE OWNS THE MODEL LIFECYCLE, models are DATA resolved from the registry and
+  never objects accepted from callers (2); the CD-AC-002 scoping is WITHDRAWN, NOT REPAIRED, and the
+  criterion stands at FULL WIDTH at the WO-2 gate (3); f30e63c is an EVIDENCE LANE, NEVER A BASELINE
+  (4); CD-PL-F78 is project rule — every fingerprint records its producing command (5); and the
+  sequence is PL drafts the amendment → PO reviews → WO-2R3 with a FRESH Engineer seat → FOURTH
+  fresh Assurance seat (6).
+  THE PROJECT LEAD HAS DONE THE ONE THING RULING 6 ASSIGNED IT AND NOTHING ELSE.
+  governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md is PROPOSED. It answers
+  the auditor's OPEN DENOMINATOR QUESTION BY MEASUREMENT rather than by assertion: a static
+  entry-point inventory over f30e63c (instrument and output committed, each recording its producing
+  command per ruling 5) finds 44 public callables with an unestablished parameter, of which the
+  Project Lead classifies SEVEN as the admission class — not the auditor's three. THE FOUR THE
+  AUDITOR DID NOT NAME ARE THIS PROJECT LEAD'S OWN FINDINGS AGAINST WORK IT PREVIOUSLY APPROVED:
+  evaluate(observations), present_dial(reading) — WHICH CARRIES NO ANNOTATION AT ALL ON THE
+  CD-AC-001 PATH AND PASSED THREE GATES — Reading.fold(...), and collect(...), which takes SIX
+  caller-supplied objects that write every observation the dial path later consumes and admits
+  exactly one of them, by isinstance rather than by this project's own exact-type standard.
+  THE DESIGN IS NOT NEW TO THIS CODEBASE. It is combine_within_one_dial's OWN closure generalised:
+  that door was repaired in increment 1 by DELETING the caller callable and replacing it with a
+  NAMED member of a closed enum executed by the module that owns the numbers. ASR3-F02 is the
+  identical defect one level up, wearing a Protocol instead of a lambda. The amendment applies the
+  closure this project already proved to the boundary that never had it.
+  NOTHING IS IMPLEMENTED. NO ENGINEER IS DISPATCHED. NOTHING IS ADMITTED, ACCEPTED OR DISPOSED.
+  The amendment's §J puts FIVE questions to the Product Owner and DELIBERATELY RECOMMENDS NO ANSWER
+  to any of them — including whether §D, which goes BEYOND the literal words of ruling 2 by closing
+  the remaining judgement-path doors, is accepted or cut.
+  ---- THE PRIOR BLOCK, RETAINED BECAUSE IT IS STILL TRUE AND IS THE REASON FOR ALL OF THE ABOVE ----
   *** IMPLEMENTATION IS SUSPENDED. THE NEXT ACTOR IS THE PRODUCT AUTHORITY. ***
   THE THIRD GATE FAILED — RED overall at BL-20260820T022200Z-0047, on target f30e63c: CD-AC-001 RED,
   CD-AC-002 RED, CD-AC-003 PASS (scoped), CD-AC-005 RED, CD-AC-012 RED. The WO-2 gate is NOT MET for
@@ -921,7 +957,11 @@ current_block: >
   ISSUED, same seat, same lane base, same three increments. NO CODE CHANGED AT THIS BOUNDARY. NOTHING
   ACCEPTED. NOTHING ADMITTED. THE GATE IS UNMOVED — a ruling about scope is not a pass.
 owner_role: PROJECT_LEAD
-next_actor: PRODUCT_AUTHORITY   # Matt, with the Product Owner preparing. IMPLEMENTATION IS
+next_actor: PRODUCT_AUTHORITY   # Matt, with the Product Owner preparing. WHAT IS OWED IS A
+                       # DISPOSITION OF BP-AMENDMENT-0001 (PROPOSED at this boundary under
+                       # PO-DECISIONS-0004 ruling 6). IMPLEMENTATION REMAINS SUSPENDED — ruling 1
+                       # says the suspension STANDS, and drafting a design proposal is not
+                       # implementation. NO ENGINEER IS DISPATCHED. Retained below, still binding:
                        # SUSPENDED (CD-D-085) on the PO's OWN PRE-STATED TERMS: CD-D-076's
                        # trigger is MET — the third Assurance seat DEFEATED the CD-AC-002
                        # scoping and the Project Lead REPLICATED it on its own driver.
@@ -1038,7 +1078,40 @@ continuity_record_commit: b83ce4ed6f1000a50df17e5f0726b4b9eea571e8  # RESOLVED b
   # writer (continuity.checkpoint) never sets this field at all. Under CD-RULE-007 a follow-up that
   # resolves PENDING may write THIS FIELD AND NOTHING ELSE, and must re-run `pbg boot` afterwards.
 working_tree_state: >
-  OBSERVED AT THIS BOUNDARY (2026-08-19T22:50Z, ELEVENTH Project Lead seat, transcribing
+  OBSERVED AT THIS BOUNDARY (2026-08-20T02:45:20Z, THIRTEENTH Project Lead seat, drafting
+  BP-AMENDMENT-0001). CD-D-007's suspicion procedure applied to ALL FOUR worktrees and MEASURED, not
+  inferred, even though the arriving tree was clean — the procedure does not take a record's word for
+  the state of a worktree.
+  WHO WROTE WHAT, ESTABLISHED FROM TIMESTAMPS RATHER THAN FROM AUTHORSHIP, because every commit in
+  this repository carries the same git author and authorship therefore proves nothing about which
+  actor produced it: the TWELFTH Project Lead seat ran 00:48:20Z–02:27:54Z and wrote BL-0045, BL-0046
+  and BL-0047. Commit fb823e1, which carries PO-DECISIONS-0004, is timestamped 02:41:42Z — AFTER
+  that seat exited and at the same second this seat's run was launched. IT IS THE PRODUCT AUTHORITY'S
+  COMMIT, NOT A SEAT'S, which is the correct provenance for a decision record (PBG-AUTH-003).
+  MAIN /srv/crash-detector was CLEAN at fb823e1 on branch main on arrival: ZERO tracked
+  modifications, and NOTHING UNTRACKED ANYWHERE UNDER governance/ — that is the specific CD-D-065
+  failure mode (a dead seat's own Build Log entry sitting uncommitted on disk) and it is ABSENT.
+  THERE IS NO SEAT WORK TO ADJUDICATE. Everything this boundary writes was written by THIS seat.
+  THE ELEVEN UNTRACKED OPERATOR ENTRIES were re-read ON THEIR CONTENTS and again adjudicated NOT
+  PROJECT STATE. ONE WAS CHECKED RATHER THAN ASSUMED, and the check MATTERS: .wo2b-prompt.txt was
+  rewritten by the operator at 02:41:42Z — the same second this seat's run started — to name
+  PO-DECISIONS-0004 and to state this dispatch. ITS SUMMARY AGREES WITH THE COMMITTED DECISION
+  RECORD IN EVERY PARTICULAR and adds nothing to it. IT IS ALSO NOT THE PROMPT THIS SEAT RECEIVED:
+  the wrapper feeds .continue-prompt.txt, which is generic. THIS SEAT TOOK ITS AUTHORITY FROM THE
+  COMMITTED FILE governance/decisions/PO-DECISIONS-0004.md READ IN FULL, and would have reached the
+  same dispatch from the repository alone with every untracked file deleted. The prompt is a
+  pointer; the repository is the record (PBG-CONT-007).
+  ALL FOUR OTHER WORKTREES MEASURED, `git rev-parse HEAD` and `git status --porcelain` each:
+  /srv/crash-detector-wo2 at f30e63c, ZERO lines. /srv/crash-detector-wo2r2-audit at f30e63c, ZERO
+  lines — the tree every WO-2R2 finding describes, NOT DELETED (CD-D-087) and NOT MUTATED.
+  /srv/crash-detector-wo2-audit at 66681b2, ZERO. /srv/crash-detector-wo2r-audit at 50fc231, ZERO.
+  TREE OBJECTS RECORDED INSTEAD OF AN AD-HOC FINGERPRINT, and that is CD-PL-F78 / PO-DECISIONS-0004
+  ruling 5 applied to this seat's own record rather than only to future dispatches: main tree
+  f188610dd998de46219fa82310b068f0c0c8ec61 (`git rev-parse HEAD^{tree}`), f30e63c tree
+  01da44b51e07dfb2e71170f4f19b6db09814b981 (same command, in that worktree). A git tree object hash
+  is reproducible from a command every reader already has, which is the property ASR3-F01 found the
+  dispatch fingerprint lacked.
+  HISTORICAL, retained: OBSERVED AT THE PRIOR BOUNDARY (2026-08-19T22:50Z, ELEVENTH Project Lead seat, transcribing
   PO-DECISIONS-0003 and discharging the hold). CD-D-007's suspicion procedure applied to all four
   worktrees and MEASURED, not inferred, even though the tenth seat stopped deliberately rather than
   being killed — the procedure does not take a record's word for the state of a worktree.
@@ -1424,7 +1497,27 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing).**
+  **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing), AND WHAT
+  IS OWED IS A DISPOSITION OF BP-AMENDMENT-0001.**
+  The one thing PO-DECISIONS-0004 ruling 6 assigned this seat is DONE and committed:
+  governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md, status PROPOSED.
+  **DO NOT WRITE APPLICATION CODE AGAINST IT.** It is a proposal and it is not in force. A design
+  the Product Owner has not accepted is not a design.
+  **DO NOT DISPATCH THE WO-2R3 ENGINEER.** Ruling 6 sequences it AFTER the PO reviews the amendment,
+  and the auditor's NEXT SAFE GATE says the same for the same reason: a seat dispatched against an
+  unsettled premise is building on nothing.
+  **DO NOT EDIT BLUEPRINT.md §7 INTO FORCE.** §7's clauses stand as accepted at v0.1.0. The only
+  change made to BLUEPRINT.md was a NOTE at the head of §7 recording that a proposed amendment
+  exists against it and that every clause below it remains accepted. blueprint_version does NOT
+  move on a proposal.
+  **THE FIVE QUESTIONS ARE IN THE AMENDMENT'S §J** and this seat has recommended no answer to any of
+  them. Two of them are places where the Project Lead has gone BEYOND the ruling and says so:
+  §D closes the remaining judgement-path doors, which ruling 2 does not literally require; and §H
+  scopes A7/`fold` and `Lifecycle` OUT of WO-2R3 on the Project Lead's reading alone. Both are the
+  Product Owner's to cut.
+  Everything in the prior block below still binds — the lane, the audit worktree, the assurance
+  record, and the prohibition on admitting anything.
+  ---- THE PRIOR NEXT-SAFE-ACTION, RETAINED IN FULL ----
   IMPLEMENTATION IS SUSPENDED under CD-D-085, on the Product Owner's OWN PRE-STATED TERMS
   (PO-DECISIONS-0003 ruling 4, transcribed and bound at CD-D-076 precisely so this moment would not
   depend on anyone's memory). THE TRIGGER IS MET ON THE PROJECT LEAD'S OWN MEASUREMENT, not on the
@@ -1684,8 +1777,20 @@ next_safe_action: >
   AMBER criteria were NOT re-measured, F03–F13 were NOT independently replicated (not doubted — not
   reached), and W1/W5/W7 are not re-opened beyond the fingerprint agreement.
 resume_instructions: >
-  Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, in
-  order: governance/decisions/PO-DECISIONS-0003.md (THE CD-AC-002 RULING AND THE AUTHORITY THAT
+  Re-run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` from /srv/crash-detector, then read, IN
+  THIS ORDER AND STOPPING AFTER THE THIRD IF THE PRODUCT OWNER HAS NOT YET RULED:
+  (1) governance/decisions/PO-DECISIONS-0004.md — 38 lines, THE RULING THIS BOUNDARY EXECUTES, and
+  the authority for everything below it;
+  (2) governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md — WHAT THIS SEAT
+  DRAFTED, status PROPOSED. Its §J is the five questions owed upward. **IT IS NOT IN FORCE. NO CODE
+  IS WRITTEN AGAINST IT AND NO ENGINEER IS DISPATCHED UNTIL THE PRODUCT OWNER DISPOSITIONS IT**;
+  (3) BL-20260820T024520Z-0048 — this boundary's Build Log entry, including the four admission-class
+  entry points the Project Lead raised against work it had itself previously approved.
+  IF AND ONLY IF the Product Owner has ruled, then also: governance/assurance/WO-2R2/VERDICT.md (the
+  findings the amendment answers — ASR3-F02, F04, F05 for the design; F08 explicitly NOT folded in),
+  BL-20260820T022200Z-0047 (the third gate and the Project Lead's own replication), and
+  governance/rules/PROJECT-RULES.md. THEN, and only if you need the history, in order:
+  governance/decisions/PO-DECISIONS-0003.md (THE CD-AC-002 RULING AND THE AUTHORITY THAT
   DISCHARGED THE HOLD — 32 lines, read it first), BL-20260819T225000Z-0044 (its transcription and
   CD-D-074..077), governance/decisions/PO-DECISIONS-0002.md (CD-D-073 — THE AUTHORITY FOR THE CURRENT
   DISPATCH, and short), governance/dispatch/CD-DISPATCH-WO2R2-ENGINEER.yaml (the live dispatch —
@@ -1701,5 +1806,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260820T022200Z-0047
+last_build_log_entry: BL-20260820T024520Z-0048
 status: ACTIVE

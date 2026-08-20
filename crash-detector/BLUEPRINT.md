@@ -263,6 +263,16 @@ read the witness schema.
 
 ## 7. Dial engine
 
+> **A PROPOSED AMENDMENT STANDS AGAINST THIS SECTION AND IS NOT YET IN FORCE.**
+> `governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md` would rewrite §7
+> per the Product Owner's ruling at `governance/decisions/PO-DECISIONS-0004.md` §2 — *the engine
+> owns the model lifecycle; models are named specs resolved against a registry, never objects
+> accepted from callers.* It awaits Product Owner acceptance. **Every clause below remains the
+> accepted design until it is accepted**, and this note changes none of them. In particular the
+> sentence "The model is injected into a `DialSpec` rather than looked up inside `evaluate`"
+> (`engine/model.py`, and the reasoning behind it) is what CD-ASR-WO2R2-01's finding ASR3-F02
+> defeated at the third gate; it is recorded here so no reader takes §7 as unchallenged.
+
 **Two dials, two evaluators, no aggregation stage.** There is no function anywhere that takes both
 dial types and returns a number. Structurally:
 
