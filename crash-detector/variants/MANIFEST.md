@@ -13,7 +13,7 @@ the same minutes it cost this one.
 | tree | manifest | seat | contents |
 |---|---|---|---|
 | `variants/WO-2R/` | [`variants/WO-2R/MANIFEST.md`](WO-2R/MANIFEST.md) | `CD-ENG-WO2R-01` | 70 `git apply`-able patches + 2 probe records. Denominator SETTLED at 70 by `CD-ASR-WO2-02`; the "71" in that manifest is a transcription defect — the work was done, the count was mis-stated. |
-| `variants/WO-2R2/` | [`variants/WO-2R2/MANIFEST.md`](WO-2R2/MANIFEST.md) | `CD-ENG-WO2R2-01` | CLASS 1. Four rows: `V01`, `V03`, `V04` refused; **`V05` NOT REFUSED and open**. `V02` withdrawn and its id left unused. |
+| `variants/WO-2R2/` | [`variants/WO-2R2/MANIFEST.md`](WO-2R2/MANIFEST.md) | `CD-ENG-WO2R2-01` (increments 1–2), `CD-ENG-WO2R2-02` (increment 3) | **FOURTEEN rows in three trees.** `CLASS-1/` four: `V01`, `V03`, `V04` refused; **`V05` NOT REFUSED and open**; `V02` withdrawn and its id left unused. `CLASS-2/` five: `V06`–`V08` refused, **`V09`'s premise REFUTED by its own counterfactual**, **`V10` MEASURED OPEN at both SHAs**. `CD-AC-012/` five: `V11`–`V15`, all refused, **`V11` labelled a VOCABULARY result** and `V12`/`V15` carrying counterfactuals that narrowed the claims made for them. |
 
 **Not indexed here, because they are not this seat's to index and must not be edited by it:**
 

@@ -12,10 +12,15 @@ seats' evidence was thorough.
 ## FOR THE THIRD ASSURANCE SEAT — READ THIS FIRST
 
 You were dispatched with an exclusion set so that you can avoid routes that have already
-been walked. **These NINE are now part of it** — four for CLASS 1 at increment 1, five for
-CLASS 2 at increment 2. (This sentence read "these four" when increment 1 wrote it; it is
-corrected here rather than left to mislead, and the correction is disclosed rather than
-made silently.) From the moment you read them they prove nothing about any class: they are a
+been walked. **These FOURTEEN are now part of it** — four for CLASS 1 at increment 1, five for
+CLASS 2 at increment 2, and five for `CD-AC-012` at increment 3. (This sentence read "these
+four" when increment 1 wrote it and "these NINE" when increment 2 corrected it; it is corrected
+AGAIN here rather than left to mislead, and each correction is disclosed rather than made
+silently — `PBG-CONT-003`. **This is exactly the `CD-PL-F75` shape**: a declaration that
+announced FOUR and then listed FIVE, because a consistency check over what a seat ADDED cannot
+see what that seat made STALE. Increment 3 grepped the whole declaration rather than its own
+delta, which is how this sentence and the index row above it were found.) From the moment you
+read them they prove nothing about any class: they are a
 regression floor and a list of roads not to re-drive.
 
 **FOR CLASS 2, THE THREE THINGS WORTH MOST TO YOU ARE NOT THE REFUSALS:**
@@ -531,9 +536,12 @@ except Exception as e:
 ## WHAT IS DELIBERATELY NOT HERE
 
 * ~~**No variant for `CD-AC-005` / CLASS 2 and none for `CD-AC-012` / ITEM 3.**~~
-  **SUPERSEDED AT INCREMENT 2** (corrections supersede, never edit — `PBG-CONT-003`). The
-  CLASS 2 variants are now under `CLASS-2/` and are listed above. **`CD-AC-012` / ITEM 3
-  still has none**: increment 3 is not started and is not in this launch's bound.
+  ~~**SUPERSEDED AT INCREMENT 2.** The CLASS 2 variants are now under `CLASS-2/` and are
+  listed above. **`CD-AC-012` / ITEM 3 still has none**: increment 3 is not started and is
+  not in this launch's bound.~~
+  **SUPERSEDED AGAIN AT INCREMENT 3** (corrections supersede, never edit — `PBG-CONT-003`;
+  both earlier texts are struck through rather than deleted, so the sequence is readable).
+  `CD-AC-012` / ITEM 3 now has **five**, under `CD-AC-012/`, listed above as `V11`–`V15`.
 * **No `V02`.** It was drafted as a forged-provenance arm (`object.__setattr__` making a
   magnitude's label and its carried quantity disagree) and then **withdrawn as a new
   variant**, because `object.__setattr__` on a private slot is already `V17` / `PL-W5` in the
@@ -543,3 +551,238 @@ except Exception as e:
   magnitude` — and the id is left unused rather than reassigned, so no reader has to wonder
   what happened to it.
 * **No runner, no wrapper, no shell script, no executable bit** (`PBG-ASSURE-001`).
+
+---
+
+# INCREMENT 3 — `CD-AC-012`, THE DEPENDENCY SURFACE. FIVE ROWS, `V11`..`V15`.
+
+**Seat:** `CD-ENG-WO2R2-02` (ENGINEER) — a FRESH seat, not the `CD-ENG-WO2R2-01` instance that
+died before committing its increment-2 record. **Measured at
+`5ec9feed7db85e0cf5080d1188edd236843fa7d1`**, the increment-3 Item C commit.
+
+**THIS SEAT DOES NOT CERTIFY THIS WORK** (`PBG-SOD-001`, non-waivable). Everything below is
+IMPLEMENTATION EVIDENCE.
+
+## FOR THE THIRD ASSURANCE SEAT — WHAT IS WORTH MOST TO YOU HERE
+
+The five refusals are the least interesting thing in this section. **These four are worth more:**
+
+1. **THE COUNTERFACTUAL ARMS DID NOT ALL SAY WHAT I EXPECTED** (`CD-D-079`), and two of them
+   made me weaken a claim I had already written. See `V12` and `V15`. A refusal that is
+   over-determined is recorded as over-determined.
+2. **`CD-ENG-WO2R2-02-F01` (LOW) — LAYER 2 OVER THE REGISTRY IS NOT MEASURED TO CLOSE ANY ROUTE
+   ALONE.** I tried to build an arm where it is sole and could not: with it removed, one arm
+   falls to the manifest-site layer 2 and the other to `CD-DEP-003`. I kept it and declared it
+   unmeasured rather than let its presence imply it was proved. **If you want to find where my
+   defence in depth is decoration rather than structure, start there.**
+3. **`CD-ENG-WO2R2-02-F02` (LOW) — `scope: CLASS` IS A JUDGEMENT CALL, NOT A MEASUREMENT.** The
+   framework admits only `INSTANCE` or `CLASS` and `pbg/` is protected. I retained `CLASS` and
+   made the entry name *which* class. **Attack that choice; I am the seat that benefits from it.**
+4. **DECLARED LIMIT BOUNDARY 1 IS THE OPEN ROUTE AND IT NEEDS NO CLEVERNESS.** Register a
+   plausible-sounding distribution and the check exits `0`. It is written down with an
+   executable example precisely so you do not have to spend budget discovering it.
+
+## HOW TO RE-RUN ANY ROW (extraction hygiene, `PBG-RT-001`)
+
+```
+SHA=5ec9feed7db85e0cf5080d1188edd236843fa7d1
+T=$(mktemp -d)
+git -C /srv/crash-detector-wo2 archive "$SHA" | tar -x -C "$T"
+cd "$T" && git apply -p1 /srv/crash-detector-wo2/variants/WO-2R2/CD-AC-012/<row>.patch
+python3 -B tools/register/check_lockfile_denylist.py --root .
+```
+
+`python3 -B` everywhere. Never mutate a governed worktree; one pristine extraction per row.
+
+---
+
+### THE AUDITOR'S OWN ROUTE, RE-RUN — `ASR2-012-B`
+
+| | |
+|---|---|
+| criterion | `CD-AC-012` · finding `CD-ASR-WO2R-F05` (MEDIUM) |
+| replicated at | `50fc23177f790164c3fc3604ccee51663e755c70` — THE AUDITED TREE |
+| measured at | `5ec9feed7db85e0cf5080d1188edd236843fa7d1` |
+
+**REPLICATED BEFORE REPAIRED.** At `50fc231`, with the auditor's own controls in the same batch:
+
+```
+clean                         exit 0  PASS — 15 assertions, 0 violations
+tastytrade-sdk==1.2.0         exit 0  PASS — 17 assertions, 0 violations   ESCAPED
+meridian-fix-connect==0.4.1   exit 1  FAIL — 2 violation(s)                CAUGHT
+lattice-client==2.0.0         exit 0  PASS — 17 assertions, 0 violations   ESCAPED
+```
+
+**The auditor's 17 assertions / 0 violations reproduce exactly.** At `5ec9fee` the same four
+arms read `0 / 134`, `1 / CD-DEP-001`, `1 / CD-DEP-002`, `1 / CD-DEP-001`.
+
+**REFUSING LAYER AND ITS SCOPE.** LAYER 1, rule `CD-DEP-001`, in
+`check_lockfile_denylist.main()`, by `normalised not in admissible`, where `admissible` is built
+ONLY from well-formed entries of `deploy/dependency-registry.yaml`. **Scope:** every distribution
+name extracted from every dependency manifest the check reads — the three required ones plus
+every `requirements*.txt`, `*.lock` and `constraints*.txt` in the tree root — under any spelling,
+because both sides are PEP 503 normalised before comparison. On this path it reads no denylist
+and no token list, and it opens no socket.
+
+**RENAME TEST. SURVIVES, AND THE STRUCTURE IS WHY.** Three names sharing no morpheme with
+anything financial — `zzq-widget-lib==9.9.9`, `xyzzy-plugh-frotz==0.0.1`, `bluebird-desk==2.4.0`
+— **each REFUSED, each by `CD-DEP-001`**. Renaming cannot weaken this refusal: the rule is the
+COMPLEMENT of a declared set, so a rename makes an unregistered name *more* refused, never less.
+Contrast the old guard, where `meridian-fix-connect` → `meridian-connect` walks straight past.
+
+**COUNTERFACTUAL ARM (`CD-D-079`). TAKEN.** The same variant, the same tree, LAYER 1 REMOVED
+(the `if normalised not in admissible` block, asserted to occur exactly once before removal):
+**exit 0, PASS — 121 assertions, 0 violations. THE ESCAPE COMES STRAIGHT BACK.** The carrying
+line is IDENTIFIED, not nominated.
+
+---
+
+### `CD-ENG-WO2R2-V11` — REGISTER THE BROKER OPENLY. *Does registration launder?*
+
+| | |
+|---|---|
+| patch | `CD-AC-012/CD-ENG-WO2R2-V11-register-the-broker-openly.patch` |
+| lands at | `requirements.txt`, `requirements.lock`, `deploy/dependency-registry.yaml` |
+
+**PROPOSITION ATTACKED.** That deny-by-default has merely MOVED the hole: if admission is by
+registration, then registering the SDK should admit it.
+
+**ROUTE, AND WHY IT DIFFERS FROM BOTH CORPORA.** `ib-insync` in both manifests *plus a
+well-formed six-key registry entry* with a plausible purpose ("historical bars only"). Neither
+corpus contains this route because neither corpus contains a registry.
+
+**OBSERVED. REFUSED — exit 1, 3 violations, rule `CD-DEP-002`.**
+
+**REFUSING LAYER AND ITS SCOPE.** LAYER 2, `judge_distribution` from `_broker_vocabulary`,
+applied over the REGISTRY ITSELF *and* at each manifest site. **Scope:** the 61-name denylist
+plus nine execution tokens matched as WORDS, over both registered and manifest names. **It is a
+VOCABULARY and it has a complement** — that is declared limit boundary 1, not a claim of closure.
+
+**RENAME TEST. DOES NOT SURVIVE, AND THAT IS THE HONEST RESULT.** Rename `ib-insync` to
+something the vocabulary does not hold and layer 2 stops seeing it — at which point layer 1
+refuses it *unless it is also registered*, and if it is registered too, **the check exits 0**.
+That is boundary 1, reachable in two lines. **THIS ROW IS A VOCABULARY RESULT AND IS LABELLED ONE.**
+
+**COUNTERFACTUAL ARM (`CD-D-079`). TAKEN, AND IT REFUTED MY FIRST CLAIM.** With LAYER 2 OVER THE
+REGISTRY removed but the manifest-site layer 2 left intact: **still exit 1, `CD-DEP-002`, 2
+violations.** So the registry-level layer is **NOT SOLE** here. A second arm — `ib-insync`
+registered but in NO manifest — with the registry layer removed falls to `CD-DEP-003` instead.
+**I could construct no arm in which layer 2 over the registry is the only thing refusing.** This
+is `CD-ENG-WO2R2-02-F01`, raised against my own work; the layer is KEPT and DECLARED UNMEASURED.
+
+---
+
+### `CD-ENG-WO2R2-V12` — A MALFORMED ENTRY MUST REGISTER NOTHING
+
+| | |
+|---|---|
+| patch | `CD-AC-012/CD-ENG-WO2R2-V12-malformed-entry-registers-nothing.patch` |
+| lands at | `requirements.txt`, `requirements.lock`, `deploy/dependency-registry.yaml` |
+
+**PROPOSITION ATTACKED.** That the cheapest bypass of any registry is an entry broken *just
+enough* to be skipped by the shape checker while still being counted as a registration.
+
+**ROUTE.** `tastytrade-sdk` in both manifests plus a registry entry **missing `declared_in`**.
+
+**OBSERVED. REFUSED — exit 1, 4 violations, rules `CD-DEP-005` AND `CD-DEP-001`.** The presence
+of `CD-DEP-001` is the load-bearing observation: the broken entry registered **nothing**, so the
+manifest line was still refused by default.
+
+**REFUSING LAYER AND ITS SCOPE.** `CD-DEP-005` — entry key set asserted by EQUALITY against the
+six declared keys — and then the `if not well_formed: continue` that withholds the entry from
+`admissible`. **Scope:** every entry in the registry, every run.
+
+**RENAME TEST. SURVIVES.** Nothing here keys on a name; it keys on the entry's SHAPE.
+
+**COUNTERFACTUAL ARM (`CD-D-079`). TAKEN, AND IT SHARPENED THE CLAIM.** With the
+`if not well_formed: continue` removed: **still exit 1 — but `CD-DEP-001` DISAPPEARS and only
+`CD-DEP-005` remains**, i.e. `tastytrade-sdk` becomes ADMITTED and only the shape complaint is
+left. **So that one line carries the ADMISSION BLOCK specifically, while the tree-level refusal
+is OVER-DETERMINED.** Recorded precisely rather than claimed whole: if a future edit ever makes
+the shape rule non-fatal, this row becomes an escape.
+
+---
+
+### `CD-ENG-WO2R2-V13` — A MANIFEST NOBODY THINKS ABOUT
+
+| | |
+|---|---|
+| patch | `CD-AC-012/CD-ENG-WO2R2-V13-broker-in-a-constraints-file.patch` |
+| lands at | `constraints.txt` — A FILE THAT DOES NOT EXIST IN THE CLEAN TREE |
+
+**PROPOSITION ATTACKED.** That the check's subject set is the three manifests a reader thinks
+of, so a fourth file is a blind spot.
+
+**ROUTE.** `tastytrade-sdk==1.2.0` alone in a NEW `constraints.txt`, touching neither
+`requirements.txt` nor `requirements.lock`. In neither corpus.
+
+**OBSERVED. REFUSED — exit 1, 1 violation, rule `CD-DEP-001`.**
+
+**REFUSING LAYER AND ITS SCOPE.** The `EXTRA_PATTERNS` glob — `requirements*.txt`, `*.lock`,
+`constraints*.txt` — feeding LAYER 1. **Scope: the TREE ROOT ONLY.** `root.glob(...)` is not
+recursive, so a manifest in a SUBDIRECTORY is not read. Stated here because it bounds the row:
+this refusal is evidence about the root, not about the tree.
+
+**RENAME TEST. SURVIVES.** Any unregistered name in that file is refused identically.
+
+**COUNTERFACTUAL ARM (`CD-D-079`).** Same structure as `ASR2-012-B` — LAYER 1 removed restores
+the escape. Not re-extracted separately; **stated as shared with that row rather than claimed as
+an independent measurement.**
+
+---
+
+### `CD-ENG-WO2R2-V14` — REGISTERED UNDER A NON-NORMAL SPELLING
+
+| | |
+|---|---|
+| patch | `CD-AC-012/CD-ENG-WO2R2-V14-registered-under-a-non-normal-spelling.patch` |
+| lands at | `requirements.txt`, `requirements.lock`, `deploy/dependency-registry.yaml` |
+
+**PROPOSITION ATTACKED.** That normalisation is applied asymmetrically, so one distribution can
+be registered under a spelling a reviewer reads as a different thing.
+
+**ROUTE.** The manifest says `tastytrade-sdk`; the registry entry declares
+`distribution: TastyTrade_SDK`.
+
+**OBSERVED. REFUSED — exit 1, 3 violations, rules `CD-DEP-005` AND `CD-DEP-001`.**
+
+**REFUSING LAYER AND ITS SCOPE.** The PEP 503 normal-form rule —
+`normalise_distribution(raw) != raw` — over every registry entry. **Scope:** the registry only;
+manifests may spell a name any equivalent way and are normalised before comparison.
+
+**RENAME TEST. SURVIVES** in the sense that matters: any non-normal spelling is refused, not one
+chosen spelling.
+
+**COUNTERFACTUAL ARM (`CD-D-079`). TAKEN.** With the normal-form rule disabled:
+**exit 0, PASS — 149 assertions, 0 violations.** The rule is LOAD-BEARING and IDENTIFIED.
+
+---
+
+### `CD-ENG-WO2R2-V15` — DELETE THE REGISTRY. *Does absent read as empty?*
+
+| | |
+|---|---|
+| patch | `CD-AC-012/CD-ENG-WO2R2-V15-registry-deleted-absent-is-not-empty.patch` |
+| lands at | deletes `deploy/dependency-registry.yaml`; adds the SDK to both manifests |
+
+**PROPOSITION ATTACKED.** That the cheapest bypass of a deny-by-default registry is deleting the
+file it denies from, so that "nothing is registered" collapses into "nothing is wrong".
+
+**ROUTE.** `tastytrade-sdk` in both manifests **and the registry removed entirely.** In neither
+corpus.
+
+**OBSERVED. REFUSED — EXIT 3, PRECONDITION NOT MET**, with a stated reason: *"An absent registry
+must not read as an empty one: an empty registry is a decision somebody wrote down, and an absent
+one is a file somebody removed."* **Never a pass and never a skip** (`PBG-CI-002`).
+
+**REFUSING LAYER AND ITS SCOPE.** `_load_registry`'s `not registry_path.is_file()` precondition.
+**Scope:** the single declared registry path, every run, before any manifest is read.
+
+**RENAME TEST. NOT APPLICABLE** — no name is involved.
+
+**COUNTERFACTUAL ARM (`CD-D-079`). TAKEN, AND IT CORRECTED WHAT I MAY CLAIM.** With the
+missing-registry refusal disabled, the run does **not** pass — it dies with an unhandled
+`FileNotFoundError`. **So this precondition's value is converting a CRASH into a STATED refusal,
+not preventing a PASS**, and that is the narrower claim I make for it. My first draft of this row
+said it prevented a pass; the counterfactual refuted that and the row is written from the
+measurement.
