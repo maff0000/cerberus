@@ -1,0 +1,266 @@
+# =========================================================================================
+# THE DEPENDENCY REGISTRY — the only distributions this system has given itself permission to
+# import. Read by tools/register/check_lockfile_denylist.py (CD-RT-012-LOCKFILE-DENYLIST) and
+# by tests/test_dependency_registry.py.
+#
+# CRITERION: CD-AC-012, "no execution pathway exists" (PID §6). PID §2 is constitutional: the
+# detector is advisory-only, and advisory-only is STRUCTURAL, not policy. BLUEPRINT §13:
+# "lockfile scanned against a broker-SDK denylist".
+#
+# -----------------------------------------------------------------------------------------
+# WHY THIS FILE EXISTS. IT IS THE ANSWER TO A FINDING.
+# -----------------------------------------------------------------------------------------
+# CD-ASR-WO2R-F05 (MEDIUM, assurance CD-ASR-WO2-02): an independent auditor put
+# `tastytrade-sdk==1.2.0` — a REAL, currently-operating US brokerage's REAL order-entry SDK —
+# into requirements.txt AND requirements.lock, and CD-RT-012-LOCKFILE-DENYLIST exited 0: PASS,
+# 17 assertions, 0 violations. REPLICATED BY CD-ENG-WO2R2-02 at the audited tree 50fc231
+# before anything was repaired, with the auditor's own controls in the same batch:
+#
+#     clean                          exit 0   PASS — 15 assertions, 0 violations
+#     tastytrade-sdk==1.2.0          exit 0   PASS — 17 assertions, 0 violations   ESCAPED
+#     meridian-fix-connect==0.4.1    exit 1   FAIL — 2 violation(s)                CAUGHT
+#     lattice-client==2.0.0          exit 0   PASS — 17 assertions, 0 violations   ESCAPED
+#
+# The check recognised brokers BY NAME — a 61-name denylist plus nine execution tokens matched
+# as WORDS — and `tastytrade` is one word that is not an execution token. The brand name
+# defeated it. The `meridian-fix-connect` control proves the token rule genuinely generalises,
+# exactly as the check's header claimed; what it cannot do is cover a brand.
+#
+# THE OBVIOUS REPAIR IS THE WRONG ONE, AND THE DISPATCH PROHIBITS IT IN TERMS. Adding
+# `tastytrade` to the denylist would recognise one more NAME, and the next name is Robinhood,
+# Webull, Tradier, Schwab, a brokerage founded next year, or a brand that shares no morpheme
+# with anything financial. A longer list is the instance game with more instances, and the next
+# auditor simply names a brokerage that is not on it. That is the defect this whole rework
+# exists to stop repeating, at the altitude CD-PL-F74 named.
+#
+# RESOLUTION IS ALSO NOT AVAILABLE, AND THAT IS DELIBERATE. Deciding whether an arbitrary
+# package can reach a broker is undecidable offline, and a check whose verdict depends on PyPI,
+# on DNS or on any network call is not reproducible, cannot be run offline by an auditor and
+# therefore cannot be a gate (CD-PL-F48; the dispatch prohibits it in terms). So "what a
+# distribution is" has to be decided from DATA IN THE TREE — which is this file.
+#
+# -----------------------------------------------------------------------------------------
+# THE STRUCTURE: DENY BY DEFAULT.
+# -----------------------------------------------------------------------------------------
+# A distribution named in ANY dependency manifest — pyproject.toml, requirements.txt,
+# requirements.lock, or any further requirements*.txt / *.lock / constraints*.txt the check
+# finds — is admissible ONLY if its PEP 503 normalised name is, character for character, the
+# `distribution` of an entry REGISTERED BELOW. Everything else is a violation BY DEFAULT — not
+# because the check recognised something about it, but because nobody declared it.
+#
+# `tastytrade-sdk` then stops being a name to catch and is simply not a dependency anyone
+# declared, which is the same thing `lattice-client`, a brand invented tomorrow, a typosquat,
+# a renamed fork and a vendored broker client all are. THE CHECK PERFORMS NO RECOGNITION ON AN
+# UNREGISTERED DISTRIBUTION, so there is no pattern to write around.
+#
+# THE DENYLIST AND THE TOKEN RULE SURVIVE AS A SECOND LAYER OVER THIS FILE ITSELF, so that a
+# distribution somebody DOES register is still judged: registering `ib-insync` or
+# `alpaca-trade-api` here fails on the denylist, and registering `meridian-fix-connect` fails
+# on the `fix` token. NEITHER LAYER IS SOLE. Layer 1 catches what nobody declared; layer 2
+# catches what somebody declared and should not have.
+#
+# AND THE SET EQUALITY RUNS BOTH WAYS. A registered distribution that appears in NO manifest is
+# a violation too (CD-DEP-003). Without that, the registry accumulates permissions nobody uses,
+# and — worse — deleting the manifest line that a complaint names would silently satisfy the
+# guard. Asserting equality in both directions means the entry that complains cannot be made
+# to stop complaining by removing something.
+#
+# -----------------------------------------------------------------------------------------
+# WHY THIS REGISTRY SHIPS POPULATED WHERE THE EGRESS REGISTRY SHIPS EMPTY.
+# -----------------------------------------------------------------------------------------
+# deploy/egress-destinations.yaml ships EMPTY because registering a destination for
+# cd-collectors IS registering an ingredient source, and CD-D-005 — which inputs feed each dial
+# and what each stands for — is owed by the Product Owner. Choosing ingredients is choosing
+# what a dial MEANS (PBG-AUTH-005) and no engineering seat may do it.
+#
+# A PYTHON DISTRIBUTION IS NOT AN INGREDIENT. Registering `jsonschema` decides nothing about
+# what any dial means; it records an implementation-level dependency that already exists in
+# this tree and is already pinned. That is an Engineer's decision (role contract: "design
+# decisions at implementation level"), and NOTHING HERE REGISTERS AN INGREDIENT SOURCE.
+# CD-D-005 remains wholly owed by the Product Owner and is untouched by this file.
+#
+# The nine entries below are exactly the nine distributions this tree already declares. They
+# were ENUMERATED FROM THE MANIFESTS, not chosen: every one appears in a manifest today, and
+# the check asserts that correspondence by equality in both directions.
+#
+# -----------------------------------------------------------------------------------------
+# WHAT THIS FILE DOES NOT CLAIM.
+# -----------------------------------------------------------------------------------------
+# A REGISTERED DISTRIBUTION IS A HUMAN CLAIM, AND A FALSE ONE IS NOT DETECTABLE FROM THIS TREE.
+# If someone registers a distribution whose code in fact reaches a broker, nothing here can
+# know that, because knowing it would require executing or resolving it. What the structure
+# buys is that the claim must be WRITTEN DOWN, given a purpose, cited to a clause, attributed
+# to a consuming surface, and reviewed by a person at a named line before it is importable.
+#
+# IT IS A DECLARATION, NOT AN INSTALLER. Nothing here is enforced at install time by this file.
+# What makes an execution pathway structurally absent in WO-2 is the whole of CD-AC-012's three
+# guards plus the TOPOLOGY — both networks `internal: true`, both published ports bound to
+# 127.0.0.1, and the egress destination registry measured EMPTY. No packet has been observed
+# and none is claimed.
+#
+# That limit is stated in full in the check's header, in the register entry and in the
+# execution contract, and where a residue is handed to another layer that layer is MEASURED or
+# the words NOT PROVED TO BE CARRIED ANYWHERE are written (CD-RULE-004, CD-RULE-006).
+# =========================================================================================
+
+version: 1
+contract: CD-DEPENDENCY-REGISTRY-v1
+
+# -----------------------------------------------------------------------------------------
+# THE CONSUMER VOCABULARY. Every `needed_by` value must be one of these, exactly. The set is
+# CLOSED and asserted by equality: a consumer the guard does not know is a declaration nobody
+# reviewed.
+#
+#   application      src/crash_detector/** — the library every service imports
+#   register-checks  tools/register/** — the standalone gate checks
+#   test-suite       tests/** — the declared test suite
+#
+# THESE ARE SURFACES, NOT CONTAINER SERVICES, AND THAT IS A DECLARED BOUNDARY. WO-2 deploys
+# nothing — PO-DECISIONS-0003 says so in terms, "a WO-2 candidate registers no model, no
+# source, deploys nothing and has no publication layer" — so attributing a distribution to
+# cd-engine rather than cd-collectors would be a claim about a wiring that does not exist yet.
+# Per-service attribution is owed at WO-3 alongside the collector and model wiring. Stated
+# here rather than guessed (CD-RULE-003, PBG-AUTH-005).
+# -----------------------------------------------------------------------------------------
+
+consumers:
+  - application
+  - register-checks
+  - test-suite
+
+# -----------------------------------------------------------------------------------------
+# THE ENTRY SHAPE. A dependency declares EXACTLY these six keys — no more and no fewer. An
+# unknown key is a violation, not an extension: a field the guard does not read is a
+# declaration nothing enforces, which is how the last hole got in.
+#
+#   id            a stable identifier for this dependency, unique in this file
+#   distribution  the PEP 503 NORMALISED name — lowercase, with runs of `-`, `_` and `.`
+#                 collapsed to a single `-`. The manifest may spell it any equivalent way;
+#                 `Alpaca_Trade_API` and `alpaca-trade-api` are one name and the check
+#                 normalises both sides before comparing. A name that is not already in
+#                 normalised form is a VIOLATION here rather than a silent normalisation, so
+#                 that two entries cannot register the same distribution under two spellings.
+#   kind          DIRECT or TRANSITIVE, and nothing else. A transitive dependency is a
+#                 dependency nobody chose and everybody installs, so it is registered
+#                 explicitly rather than inherited silently.
+#   purpose       why this system must have it, in plain English. NOT judged by the guard —
+#                 see the declared limit — and written for the human reviewing the diff.
+#   declared_in   the clause of recorded intent that authorises it: a Standards Baseline
+#                 section, a PID or BLUEPRINT section, a control id, or a ruled decision id.
+#                 A dependency nothing authorises is a dependency nobody agreed to.
+#   needed_by     the consuming surfaces, each from the `consumers` list above. A non-empty
+#                 list: a dependency no surface needs is a dependency nobody needs.
+#
+# A MALFORMED ENTRY REGISTERS NOTHING. If an entry is missing a key, carries an unknown key,
+# declares an unknown `kind`, names an unknown consumer or repeats an `id`, it is a violation
+# AND it admits no distribution. Otherwise the cheapest bypass would be to register a broker
+# SDK in an entry deliberately broken enough to be skipped.
+# -----------------------------------------------------------------------------------------
+
+dependencies:
+
+  - id: DEP-JSONSCHEMA-001
+    distribution: jsonschema
+    kind: DIRECT
+    purpose: >
+      Boundary validation against explicit JSON Schemas — collector input validation, the
+      publication envelope contract and the observation schemas. Validation at a boundary is
+      the mechanism by which malformed input becomes a stated refusal rather than a silent
+      default, which is what CD-AC-001 and CD-AC-002 both rest on.
+    declared_in: "DEVELOPMENT_SECURITY_BASELINE.md §4 — boundary validation against explicit JSON Schemas"
+    needed_by:
+      - application
+      - register-checks
+      - test-suite
+
+  - id: DEP-PSYCOPG2-BINARY-001
+    distribution: psycopg2-binary
+    kind: DIRECT
+    purpose: >
+      The PostgreSQL client for the store migration and for CD-RT-003-GRANT-MATRIX-LIVE, which
+      proves in a real session that cd_engine holds no privilege on the witness schema. That
+      check is the only one on this project that contrasts against a live server, and it needs
+      a driver to do it. psycopg2-binary rather than psycopg2 because the binary distribution
+      is what is installed on this host (Baseline §3 — verify contents, never names).
+    declared_in: "BLUEPRINT §13 — the live grant matrix; CD-RT-003-GRANT-MATRIX-LIVE"
+    needed_by:
+      - application
+      - register-checks
+      - test-suite
+
+  - id: DEP-PYTEST-001
+    distribution: pytest
+    kind: DIRECT
+    purpose: >
+      The runner for every declared test in required-tests.yaml. Each test's `execute` line
+      invokes it, so a tree without it cannot demonstrate a single one of its own obligations.
+    declared_in: "PBG-CI-001; required-tests.yaml — every declared test executes under pytest"
+    needed_by:
+      - test-suite
+
+  - id: DEP-ATTRS-001
+    distribution: attrs
+    kind: TRANSITIVE
+    purpose: >
+      Transitive of jsonschema. Pinned and hashed here because requirements.lock is the full
+      resolved set — a transitive dependency is a dependency nobody chose and everybody
+      installs, and leaving it unregistered would mean the largest part of the surface was the
+      unreviewed part.
+    declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+    needed_by:
+      - application
+      - register-checks
+      - test-suite
+
+  - id: DEP-PYRSISTENT-001
+    distribution: pyrsistent
+    kind: TRANSITIVE
+    purpose: >
+      Transitive of jsonschema. Recorded in requirements.lock with the note that it ships no
+      CPython 3.11 wheel for this target, so a clean install would need a compiler; that is
+      disclosed there rather than hidden and it does not change its admissibility here.
+    declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+    needed_by:
+      - application
+      - register-checks
+      - test-suite
+
+  - id: DEP-INICONFIG-001
+    distribution: iniconfig
+    kind: TRANSITIVE
+    purpose: >
+      Transitive of pytest. Registered explicitly so the test surface's own dependency closure
+      is declared rather than inherited.
+    declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+    needed_by:
+      - test-suite
+
+  - id: DEP-PACKAGING-001
+    distribution: packaging
+    kind: TRANSITIVE
+    purpose: >
+      Transitive of pytest. Registered explicitly so the test surface's own dependency closure
+      is declared rather than inherited.
+    declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+    needed_by:
+      - test-suite
+
+  - id: DEP-PLUGGY-001
+    distribution: pluggy
+    kind: TRANSITIVE
+    purpose: >
+      Transitive of pytest. Registered explicitly so the test surface's own dependency closure
+      is declared rather than inherited.
+    declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+    needed_by:
+      - test-suite
+
+  - id: DEP-PYGMENTS-001
+    distribution: pygments
+    kind: TRANSITIVE
+    purpose: >
+      Transitive of pytest. Registered explicitly so the test surface's own dependency closure
+      is declared rather than inherited.
+    declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+    needed_by:
+      - test-suite

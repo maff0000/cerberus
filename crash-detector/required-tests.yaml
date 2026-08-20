@@ -1038,16 +1038,115 @@ criteria:
         a sole guard (CD-BP-001, PO-accepted). A planted variant landing beyond that boundary is a
         finding against the DECLARATION, not an automatic RED against the guard (CD-D-014).
       evidence_ref: RTR-WO2-0001
+  # REWRITTEN AT WO-2R2 INCREMENT 3, CLOSING CD-ASR-WO2R-F05 (MEDIUM). The entry below
+  # previously claimed the class as "a broker, exchange or order-routing SDK added to any
+  # dependency manifest" WITH NO DECLARED LIMIT ANYWHERE, and an independent auditor refuted
+  # the claim by execution: `tastytrade-sdk==1.2.0` — a REAL, currently-operating US
+  # brokerage's REAL order-entry SDK — in requirements.txt AND requirements.lock exited 0,
+  # PASS, 17 assertions, 0 violations. REPLICATED BY CD-ENG-WO2R2-02 AT THE AUDITED TREE
+  # 50fc231 before anything was repaired, with the auditor's own controls in the same batch:
+  # clean exit 0 / 15 assertions; tastytrade exit 0 / 17, ESCAPED; meridian-fix-connect exit 1,
+  # CAUGHT on the `fix` token; lattice-client exit 0 / 17, ESCAPED. The guard recognised
+  # brokers BY NAME — 61 names plus nine tokens matched as WORDS — and a brand name is neither.
+  #
+  # THE REPAIR IS NOT A LONGER DENYLIST. The dispatch prohibits it in terms and it is the
+  # instance game with more instances: the next name is Robinhood, Webull, Tradier, or a brand
+  # founded next year. THE STRUCTURE IS NOW DENY BY DEFAULT over deploy/dependency-registry.yaml,
+  # an in-tree registry of declared dependencies (CD-DEP-001) — the same move that closed the
+  # egress allowlist at WO-2R increment 3 and has held since. A distribution is admissible only
+  # by being, after PEP 503 normalisation, the `distribution` of a registered entry carrying a
+  # purpose, an authorising clause and a needing surface. NOTHING IS RECOGNISED ABOUT AN
+  # UNREGISTERED DISTRIBUTION, so there is no pattern to write around, and `tastytrade-sdk` is
+  # refused for the same reason a typosquat, a renamed fork and a brand invented tomorrow are.
+  # The denylist and the token rule SURVIVE as a second layer over the registry AND at the
+  # manifest site (CD-DEP-002), and set equality is asserted in BOTH directions (CD-DEP-003) so
+  # the manifest line a complaint names cannot be deleted to silence it. NEITHER LAYER IS SOLE.
+  #
+  # NO NETWORK. Resolution is prohibited (CD-PL-F48): deciding whether an arbitrary package can
+  # reach a broker is undecidable offline, and a check whose verdict depends on PyPI or DNS
+  # cannot be run by an auditor and cannot be a gate. This check opens no socket.
+  #
+  # ON `scope: CLASS`, AND THIS IS THE ONE JUDGEMENT CALL IN THIS ITEM — ATTACK IT FIRST.
+  # The auditor's finding was compound: (a) no CD-RULE-004 declared limit existed, unlike both
+  # sibling CD-AC-012 checks; and (b) the register said `scope: CLASS`, telling a reader the
+  # class was closed. (a) IS REPAIRED BELOW — five numbered boundaries, executable examples,
+  # carriers measured or NOT PROVED. For (b): the framework's vocabulary is
+  # SCOPES = {"INSTANCE", "CLASS"} (pbg/tools/pbg/required_tests.py:62) and pbg/ is protected,
+  # so THERE IS NO THIRD VALUE TO MOVE TO. `INSTANCE` would be a different falsehood — a
+  # deny-by-default registry is the opposite of instance-catching. `scope: CLASS` is RETAINED
+  # and the entry now NAMES WHICH CLASS IS CLOSED and which is not, on the CD-D-014/CD-D-015
+  # precedent that governs the sibling CD-RT-012-NO-EXECUTION-INTERFACE — which also declares
+  # CLASS and also carries a written boundary. A seat that disagrees should say so: this is
+  # recorded as CD-ENG-WO2R2-02-F02 rather than settled by the seat that benefits from it.
   - test_id: CD-RT-012-LOCKFILE-DENYLIST
     scope: CLASS
     execute: python3 tools/register/check_lockfile_denylist.py --root .
     execution_contract: contracts/execution/CD-RT-012-LOCKFILE-DENYLIST.md
     negative_control:
       violation: >
-        A broker, exchange or order-routing SDK added to any dependency manifest — pyproject.toml,
-        requirements.txt or requirements.lock. The denylist is a floor and not an oracle, so the
-        class includes an SDK nobody has heard of: a distribution name carrying an execution token
-        must fail as surely as a named one.
+        THE CLASS THAT IS CLOSED: A DISTRIBUTION NOBODY DECLARED. Any distribution named in any
+        dependency manifest — pyproject.toml, requirements.txt, requirements.lock, or any
+        requirements*.txt, *.lock or constraints*.txt the check finds — whose PEP 503 normalised
+        name is not the `distribution` of a registered entry in deploy/dependency-registry.yaml.
+        It is refused BY DEFAULT, without anything being recognised about it. ALSO IN THE CLASS:
+        a REGISTERED distribution that is on the broker denylist or carries an execution token; a
+        registered distribution that appears in no manifest; a malformed registry entry, which
+        registers nothing; and a missing or unparseable registry, which refuses rather than
+        reading as empty.
+        THE CLASS THAT IS NOT CLOSED, STATED HERE SO NO READER INFERS IT: "a dependency that can
+        reach a broker". That is not decidable from this tree at all — see boundary 1.
+        THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
+        tools/register/check_lockfile_denylist.py and in the execution contract, in FIVE
+        boundaries:
+        (1) A REGISTERED DISTRIBUTION IS A HUMAN CLAIM AND A FALSE ONE IS NOT DETECTABLE HERE.
+        A person who registers a distribution whose code in fact reaches a broker, under a name
+        the denylist does not hold and carrying no execution token, is admitted by layer 1
+        because it is registered and cleared by layer 2 because it is not recognisable.
+        EXECUTABLE EXAMPLE: add `quiet-market-client==1.0.0` to requirements.txt and
+        requirements.lock AND a matching six-key entry to deploy/dependency-registry.yaml; the
+        check exits 0. What the structure buys is that the claim must be WRITTEN DOWN, given a
+        purpose, cited to a clause, attributed to a consuming surface and reviewed by a person at
+        a named line — not that it is true. NOT PROVED TO BE CARRIED ANYWHERE.
+        (2) `purpose` AND `declared_in` ARE NOT JUDGED FOR CONTENT. The guard asserts they are
+        present and non-empty and can decide neither whether the English is honest nor whether
+        the cited clause says what the entry claims. A purpose reading "market data for the
+        equity dial" on an order-entry SDK is refused by layer 2 IF the name is recognisable and
+        by nothing at all if it is not. NOT PROVED TO BE CARRIED ANYWHERE.
+        (3) THIS IS A STATIC READ OF DECLARED MANIFESTS AT ONE COMMIT. It does not read the
+        installed environment, site-packages, a vendored directory, a git submodule, a wheel
+        committed into the tree, a `pip install` in a Dockerfile RUN line, or anything a base
+        image brings. A broker SDK VENDORED AS SOURCE under src/ is not a dependency and never
+        appears in a manifest. CARRIER MEASURED (CD-RULE-006): CD-RT-012-NO-EXECUTION-INTERFACE
+        reads .py and .sql under src/, db/, deploy/, tests/ and tools/, so vendored SOURCE is in
+        ITS subject set — MEASURED at this SHA, exit 0 over 42812 assertions on the clean tree,
+        and its own six declared boundaries apply unchanged. FOR A BROKER SDK ARRIVING AS A
+        COMPILED WHEEL OR INSIDE A BASE IMAGE, NOT PROVED TO BE CARRIED ANYWHERE.
+        (4) A DEPENDENCY IS PERMISSION TO IMPORT, NOT A PATHWAY. The pathway needs somewhere to
+        go, and this is why F05 is MEDIUM and not HIGH. CARRIER MEASURED BY THIS SEAT ON ITS OWN
+        EXTRACTION, not transcribed from the auditor's numbers (CD-RULE-006):
+        deploy/egress-destinations.yaml declares `destinations: []` — the admissible set is
+        EMPTY, 0 registered destinations — every service's x-egress.hosts in deploy/compose.yaml
+        is empty, and CD-RT-012-EGRESS-NO-BROKER exits 0 over 69 assertions. ITS SCOPE, STATED
+        HONESTLY: it carries the PATHWAY and NOT the DEPENDENCY — it says nothing about what may
+        be imported, only that there is nowhere registered to send anything. AND IT IS A
+        WO-2-STATE FACT THAT WO-3 WILL CHANGE: the lane that makes ALLOWLIST mean more than NONE
+        is owed at WO-3, and the moment a destination is registered this carrier weakens by
+        exactly that much. It is not a permanent property and must not be read as one.
+        (5) THE REGISTRY IS AN IN-TREE FILE AND A COMMIT MAY EDIT IT. Registering a broker SDK is
+        a two-line diff: the manifest line and the registry entry. That is the SAME residue the
+        egress destination registry carries and it is the deliberate design — the structure makes
+        the permission EXPLICIT, ATTRIBUTED AND REVIEWABLE AT A NAMED LINE, not unforgeable. What
+        it removes is the SILENT admission, which is exactly what F05 exercised: `tastytrade-sdk`
+        needed no registry edit and produced no diff anyone had to justify. CARRIER MEASURED:
+        layer 2 over the registry itself refuses a registered `ib-insync` (CD-DEP-002) and a
+        registered `meridian-fix-connect` on the `fix` token. FOR A REGISTERED DISTRIBUTION LAYER
+        2 DOES NOT RECOGNISE, see boundary 1: NOT PROVED TO BE CARRIED ANYWHERE.
+        DO NOT read a clean run of this check as proof that no dependency of this project can
+        reach a broker. Read it as proof of exactly three things: that every distribution in
+        every declared manifest was REGISTERED by somebody, with a purpose and a cited clause;
+        that no registered or manifest distribution is on the denylist or carries an execution
+        token; and that the registry holds no permission no manifest uses. It is NOT proof about
+        boundaries 1, 2 or 5.
       evidence_ref: RTR-WO2-0001
   # REWRITTEN AT WO-2R INCREMENT 3, CLOSING CD-ASR-F04 (MEDIUM). The entry below previously
   # claimed the class as "a broker host added to any container's egress allowlist" WITHOUT
