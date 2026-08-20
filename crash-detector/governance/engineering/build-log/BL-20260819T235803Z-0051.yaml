@@ -1,0 +1,636 @@
+# =============================================================================================
+# BUILD LOG — CD-WO-002R2 INCREMENT 2. CLASS 2: JUDGE VALUES, NEVER TYPES.
+#
+# THE SECOND INCREMENT OF THE SECOND REWORK, dispatched after PO-DECISIONS-0003 released the
+# hold. It lands as FOUR commits rather than one, for the reason increment 1 gave: a
+# long-running seat with no intermediate commit loses everything it has done when it dies.
+#
+# THIS SEAT DOES NOT CERTIFY THIS WORK (PBG-SOD-001, non-waivable). Every run below is
+# IMPLEMENTATION EVIDENCE and does not become assurance by being thorough. The last two seats'
+# evidence was thorough and the gate failed twice.
+#
+# THE MOST IMPORTANT THINGS IN THIS ENTRY ARE NOT THE CLOSURES. They are:
+#   * CD-ENG-WO2R2-F04 — a route to WITNESS AGREES on a stale row, MEASURED OPEN at this SHA,
+#     written by the seat whose closure it survives, and DELIBERATELY NOT GUARDED.
+#   * CD-ENG-WO2R2-F05 — a part of this seat's own closure that it could NOT measure to be
+#     load-bearing, recorded as such rather than described as if it were.
+#   * The disclosure that THE SWEEP DOES NOT SEE THE AUDITOR'S OWN VARIANT FILE.
+# =============================================================================================
+
+entry_id: BL-20260819T235803Z-0051
+timestamp_utc: '2026-08-19T23:58:03Z'   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R2-01
+role: ENGINEER
+seat_instance: 'CD-WO-002R2 increment 2, seat instance 2'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R2-ENGINEER
+work_type: CHANGE
+traits: [creates_process, deployable]
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: 7ac157478d9698bd1da28438eb167acdc83e031d   # the LANE HEAD, not the dispatch's 50fc231
+audited_tree_sha: 50fc23177f790164c3fc3604ccee51663e755c70  # the tree every finding describes
+increment_sha: PENDING   # the commit that carries this entry; resolved by the follow-up, which
+                         # writes this field and nothing else (the 192fc50 precedent, CD-RULE-007)
+parent_entry_id: BL-20260819T221837Z-0050
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+# --- boot ------------------------------------------------------------------------------------ #
+boot_declaration: >
+  Booted by reading, in order: pbg/roles/engineer.md in full; the authority record
+  governance/dispatch/CD-DISPATCH-WO2R2-ENGINEER.yaml in full, including the
+  addendum_increment_2_head_po_decisions_0003 block and the increment_2 block;
+  governance/decisions/PO-DECISIONS-0003.md (read directly, not accepted as paraphrase);
+  governance/decisions/PO-DECISIONS-0002.md (CD-D-073); governance/rules/PROJECT-RULES.md
+  (CD-RULE-001..008); governance/assurance/WO-2R/VERDICT.md finding CD-ASR-WO2R-F02 and the
+  auditor's variant ASR2-005-A; and the predecessor's entry BL-20260819T221837Z-0050 together with
+  the Project Lead's reconciliation at BL-20260819T222917Z-0043 on main.
+
+  LANE RECONCILED BEFORE ANYTHING WAS WRITTEN (PBG-CONT-006). Observed HEAD of
+  /srv/crash-detector-wo2 was 7ac157478d9698bd1da28438eb167acdc83e031d, EQUAL to the execution
+  base this seat was given, and `git status --short` returned ZERO LINES. No drift. The dispatch
+  record's execution_base_sha field still reads 50fc231, which was correct at issue and is five
+  commits behind; the brief resolved that and 50fc231 was used throughout as the AUDITED TREE for
+  replication arms rather than as an execution base.
+
+  BOOT VERDICT: BLOCKING, AND IT IS PRE-EXISTING AND UNCHANGED. `PYTHONPATH=pbg/tools python3 -B
+  -m pbg.cli boot` returns `continuity invalid: CONTINUITY_REFERENCE_INVALID — read-only
+  diagnosis permitted, normal boot blocked (PBG-CONT-006)`. This is CD-ENG-WO2R2-F02, raised by
+  the previous seat, which measured the SAME state on a pristine extraction of 50fc231 that it had
+  not touched. This seat did not repair it: governance/engineering/ACTIVE_WORK.yaml is
+  Project-Lead-only and in this dispatch's protected scope. Nothing under governance/ other than
+  this new Build Log entry was written, so CD-RULE-007 and CD-RULE-008 impose no boot re-run
+  obligation on this increment. `assigned_role` reads PROJECT_LEAD because governance/authority/
+  admits exactly one ACTIVE record (CD-FWK-004, disclosed in the dispatch header). THIS SEAT'S
+  ROLE COMES FROM THE DISPATCH AND NOT FROM THAT FIELD (PBG-BOOT-002, non-waivable).
+
+# --- what was dispatched, and what this launch was bounded to --------------------------------- #
+scope_of_this_launch: >
+  INCREMENT 2 ONLY — CLASS 2, JUDGE VALUES NEVER TYPES, carrying CD-AC-005 (AMBER,
+  CD-ASR-WO2R-F02, HIGH) and the witness_resolver._finite_measure sibling the auditor named in
+  the same breath. INCREMENT 3 (ITEM 3, the CD-AC-012 dependency surface) WAS NOT STARTED AND NOT
+  TOUCHED. The injected-ContributionModel route (CD-ENG-WO2R2-F03) WAS NOT CLOSED and no guard
+  was built for it — see the sweep, and see CD-D-075.
+
+commits:
+- sha: 27e3794b3442782977cb338cdca75f80f1150367
+  what: 'increment 2a — the doctrine module crash_detector/own_terms.py, and the witness/serving/
+         time arm: ensure_utc RE-CONSTRUCTS instead of admitting. src/.'
+- sha: 280292404aeb540aa4ec4e3dc9a47ae71e99a4cc
+  what: 'increment 2b — the dial-path arm, THE SWEEP (tools/sweep/), and tests/test_own_terms.py.'
+- sha: 7edb84e2350fcf72278d18fc6fbe569eae1b3b16
+  what: 'increment 2c — five CLASS 2 variants made durable, their manifest rows, and ONE PLANT
+         REGENERATED. variants/, plants/.'
+- sha: 66412523dd229b42f7ae7726c9fcb28fe849a789
+  what: 'increment 2d — boundary 3 corrected and boundary 5 added, in all three CD-RULE-004
+         places. src/crash_detector/staleness.py, required-tests.yaml, contracts/execution/.'
+commit_identity_audit: >
+  `git log --format='%an <%ae> | %cn <%ce>' 7ac1574..HEAD` over all four: every one reads
+  `CD-ENG-WO2R2-01 <cd-eng-wo2r2-01@seats.crash-detector.invalid>` as BOTH author and committer.
+  Set by GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL / GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL as
+  ENVIRONMENT VARIABLES on each invocation. No `git config` was written and `git -c` was not used
+  (CD-RULE-002, CD-PL-F56). Verified after every commit.
+
+# --- the class, and the invariant that closes it ---------------------------------------------- #
+class_2:
+  criterion: 'CD-AC-005 (AMBER). Finding CD-ASR-WO2R-F02 (HIGH), plus the _finite_measure sibling.'
+  disposition: CLOSED IN PART
+  the_class_as_stated_by_the_product_owner: >
+    ANY JUDGEMENT THIS SYSTEM MAKES THAT DELEGATES ITS DECIDING OPERATION TO AN OBJECT THE SYSTEM
+    DID NOT CONSTRUCT. Not "datetime subclasses". StalenessWindow already knew this and said so in
+    terms; the doctrine had been applied to ONE OPERAND AND NOT THE OTHER, and a comparison has two.
+  structural_invariant: >
+    No method defined by a caller-supplied class executes during the computation of an age, the
+    comparison of an age against a window, the selection of a panel constructor from a stored
+    state, the admission of a measurement, or the comparison of a dial or source identifier —
+    because every one of those operates on a value of exact base type that
+    crash_detector.own_terms constructed from primitives it read out of the supplied object
+    through the BASE TYPE'S OWN DESCRIPTORS.
+  how_an_auditor_refutes_it_by_execution: >
+    Hand any public entry point of crash_detector an object whose own __rsub__, __sub__, __lt__,
+    __gt__, __eq__, __hash__, __bool__, __float__, __str__, __len__ or astimezone is called at any
+    point after the constructor that stores it returns. Or: find a site in
+    tools/sweep/declared_dispositions.py whose declared disposition is ESTABLISHED, EXACT or OWN
+    and show it is not.
+  why_it_is_a_class_closure_and_not_an_instance_closure: >
+    Because the caller's code is REMOVED FROM THE DECISION rather than checked before it. A guard
+    of the form "refuse a datetime subclass at the resolver" would be an enumeration of entry
+    points AND would break the product — pandas.Timestamp IS a datetime subclass. Here the
+    supplied object is still accepted and still believed about its DATA; it is never asked to
+    DECIDE. A comparison site written tomorrow by someone who has never read own_terms.py inherits
+    the property, because the property belongs to the VALUE and not to the SITE. The enforcement
+    is not a registry, not a vocabulary and not a type ban.
+  the_mechanism_in_one_line: >
+    datetime.year.__get__(value), timedelta.days.__get__(value), float.__float__(value) and
+    str.__str__(value) read the C struct of the instance. A property, a __float__ or a __str__
+    defined by a subclass is never consulted, because the descriptor and the unbound method are
+    fetched from the BASE TYPE and not from type(value).
+  the_one_door: >
+    ensure_utc is called by EVERY constructor in the package that stores a timestamp — PanelRow,
+    OK, ObservationRecord, Agrees, Diverges, Unavailable, FreshnessEvidence, Value, Degraded,
+    Unknown, AttemptRecord, SourceObservation — and age_seconds calls it on BOTH operands. So the
+    age arithmetic is between two objects this system built, at every site, without any site
+    having to remember. That is what makes it one change rather than eleven.
+  what_is_NOT_closed: >
+    FOUR PLACES ARE DECLARED OPEN OR OUT OF BOUND, not closed, and each is named in
+    tools/sweep/declared_dispositions.py with its reason: the injected ContributionModel; a tzinfo
+    that lies about its offset (CD-ENG-WO2R2-F04, below); SourceRecord.cadence_seconds; and
+    FetchFailed.http_status / Malformed.instance_path.
+
+# --- THE SWEEP. The dispatch's stated deliverable. -------------------------------------------- #
+the_sweep:
+  artefact: 'tools/sweep/delegated_judgement_sweep.py + tools/sweep/declared_dispositions.py'
+  it_is_the_enumeration_not_the_closure: >
+    STATED FIRST because the confusion is the failure mode this project keeps meeting. The CLOSURE
+    is crash_detector.own_terms — a runtime property of the values that does not depend on this
+    tool existing. The tool makes the SURFACE COUNTABLE and fails when the surface changes without
+    anyone saying so. A clean run of it is evidence about the source text and about nothing else.
+  method: >
+    Parse every module of src/crash_detector. Compute the transitive intra-package IMPORT CLOSURE
+    of the six modules that host a judgement about staleness, agreement or reading-ness —
+    serving.witness_resolver, witness.panel, staleness, engine.evaluate, dials.reading,
+    serving.dial_presentation — from the import graph, not from a hand-written list. Enumerate
+    every AST node in that closure at which an operation could be executed by an object the module
+    did not construct, in two tiers: TIER 1 ADMISSION (isinstance, issubclass, hasattr, getattr)
+    and TIER 2 THE DECIDING OPERATION (comparison, membership, arithmetic, ordering calls,
+    coercion calls, set operations, truthiness, identity). THE CLOSURE IS TAKEN OVER MODULES, NOT
+    FUNCTIONS, so it is OVER-INCLUSIVE BY CONSTRUCTION: an over-inclusive denominator can only
+    make the tool complain about places that do not matter, an under-inclusive one is how a route
+    goes uncounted.
+  denominator: '16 subject modules. 402 sites.'
+  tier_1: '30 distinct sites, 33 occurrences — ISINSTANCE 24, ISSUBCLASS 0, DUCK 9.'
+  tier_2: >
+    369 occurrences — TRUTHINESS 103, COERCION 101, IDENTITY 47, COMPARE 36, ORDERING 30,
+    MEMBERSHIP 26, ARITH 18, SETOP 8.
+  dispositions_tier_1: 'ESTABLISHED 14 · EXACT 11 · OWN 2 · DELEGATED 1 · OUT_OF_BOUND 2.'
+  asserted_by_set_equality_in_both_directions: >
+    An undeclared site FAILS the tool and a declaration for a site that no longer exists FAILS it
+    too, because a register that only noticed additions could be satisfied by deleting the entry
+    that complains. MEASURED on three pristine extractions: clean -> exit 0, 402 sites; one new
+    `isinstance(x, str)` added to staleness.py, undeclared -> EXIT 1, 403 sites, naming
+    `crash_detector.staleness::_a_new_admission ISINSTANCE`; own_str's isinstance removed with its
+    declaration left in place -> EXIT 1, 401 sites, "STALE DECLARATION".
+  the_granularity_is_not_uniform_and_it_is_labelled: >
+    TIER 1 is declared SITE BY SITE and exhaustively — that is what the dispatch asks for in
+    terms. TIER 2 is declared at MODULE granularity, which is WEAKER: it says how operands are
+    established in that module, and a single site inside a module could contradict it without the
+    tool noticing. 369 per-site entries would be a register nobody reads, and an unread register
+    is a worse instrument than an honest coarse one. The weakness is written in both files.
+  WHAT_THE_SWEEP_REACHED_AND_DECLARED_RATHER_THAN_CLOSED:
+  - id: 'crash_detector.engine.model — THE INJECTED ContributionModel'
+    disposition: OUT_OF_BOUND
+    why: >
+      AT THE LEVEL OF DOCTRINE IT IS THIS CLASS, one operand across: a caller-supplied object
+      whose compute() returns the number a dial publishes, and one stateful instance injected into
+      BOTH DialSpecs makes the monetary dial publish the mean (CD-ENG-WO2R2-F03, replicated
+      independently by the Project Lead as PL-Z4). THAT RESEMBLANCE IS EXACTLY THE TRAP.
+      PO-DECISIONS-0003 ruled it closed by CONSTRUCTION at a different altitude: BLUEPRINT §7
+      architectural review as the mandatory FIRST item of WO-3, plus the CD-D-005 ingredient
+      register. Building a model guard in this increment would be the fourth clever guard against
+      a class the Product Authority has ruled is not closed by guards (CD-D-075). DECLARING it is
+      this seat's CD-RULE-004 obligation; CLOSING it would be the scope breach. This seat wrote no
+      guard for it and made no change to engine/model.py.
+    carrier: 'NOT PROVED TO BE CARRIED ANYWHERE.'
+  - id: 'source_registry.SourceRecord.cadence_seconds'
+    disposition: DELEGATED
+    why: >
+      An int SUBCLASS passes `isinstance(..., int)` and its own __le__ then answers
+      `cadence_seconds <= 0`, so a subclass could register a non-positive cadence. It is NOT on a
+      deciding path for this class: cadence is the collector's schedule and no staleness,
+      agreement or reading-ness judgement reads it in WO-2. Closing it is a change to the
+      collector contract, which is not this increment's bound.
+    carrier: 'NOT PROVED TO BE CARRIED ANYWHERE.'
+  - id: 'observations.FetchFailed.http_status and observations.Malformed.instance_path'
+    disposition: OUT_OF_BOUND
+    why: >
+      A subclass passes at each, and its own methods then answer the range test and the RFC 6901
+      shape and length tests. Neither is read by any judgement on the three paths — _latest_usable_ok
+      considers only OK, and Malformed carries nothing value-bearing by design.
+    carrier: 'NOT PROVED TO BE CARRIED ANYWHERE.'
+  the_sweeps_own_declared_limit:
+  - '1 STATIC AND INTRA-PROCEDURAL. Every ESTABLISHED disposition is a CLAIM BY THIS SEAT, not
+     something the tool verified. THE DISPOSITION TEXT IS WHAT AN AUDITOR SHOULD ATTACK, not the
+     count. CARRIER FOR THE RUNTIME HALF, MEASURED: crash_detector.own_terms, via
+     tests/test_own_terms.py (29 tests) and the five variants. For a MIS-DECLARED disposition:
+     NOT PROVED TO BE CARRIED ANYWHERE — it is invisible to the tool by construction.'
+  - '2 IT SEES ONLY OPERATORS WRITTEN LITERALLY. `operator.__lt__(a, b)` produces no site. NOT
+     PROVED TO BE CARRIED ANYWHERE at the static layer; the runtime layer carries it, because an
+     operation on an ESTABLISHED value is CPython''s whichever syntax reaches it.'
+  - '3 ITS SUBJECT SET IS AN IMPORT CLOSURE. 19 names of the package are outside it and every run
+     prints them. That none of them decides staleness, agreement or reading-ness is a claim about
+     THIS SHA, made by reading them.'
+  - '4 A DISPOSITION IS KEYED BY THE EXPRESSION''S TEXT, so renaming a local makes the site
+     UNDECLARED and the tool FAILS. That is the safe direction and it is deliberate. IT ALSO MEANS
+     THE SWEEP''S OWN RESULT DOES NOT SURVIVE A RENAME AND IS A VOCABULARY RESULT, labelled one.'
+  THE_DISCLOSURE_THAT_MATTERS_MOST: >
+    *** THE SWEEP DOES NOT SEE THE AUDITOR'S OWN VARIANT FILE. *** With ASR2-005-A present in the
+    tree as src/crash_detector/serving/panel_feed.py, the sweep still reports 402 sites — because
+    that module imports none of the six entry modules and is therefore outside the import closure.
+    MEASURED, on the very extraction used to show the variant refused. It is boundary 3 of the
+    sweep's declared limit demonstrated on the exact artefact this increment exists to close, and
+    it is the sharpest available statement that THE SWEEP COUNTS AND DOES NOT GUARD. What refuses
+    that variant is the re-construction at the door, which needs no module to be in any set. This
+    is written into all three CD-RULE-004 places rather than left to be discovered.
+
+# --- proof, by execution ---------------------------------------------------------------------- #
+extraction_hygiene: >
+  The lane worktree was NEVER mutated to test a variant and NO git worktree was created for one.
+  Every arm ran in its own `git archive <sha> | tar -x -C <tmpdir>` extraction, patched with
+  `git apply -p1`, and discarded. A separate pristine extraction per variant per SHA. `python3 -B`
+  everywhere. Every patch was generated with `git diff` in a throwaway repository and none by hand
+  (CD-ENG-WO2R-F13).
+  MEASURED, and it corrects an assumption rather than merely asserting compliance: `python3 -B -m
+  pytest` on a fresh extraction writes ZERO __pycache__ directories, checked directly. The
+  __pycache__ directories present in the lane worktree are PRE-EXISTING — no .pyc in the tree is
+  newer than this seat's first action — and every one of them is matched by .gitignore line 1, so
+  none has ever been in the committed tree. `git status --short` is ZERO LINES at every commit.
+
+replication_before_repair: >
+  ASR2-005-A WAS REPLICATED AT THE AUDITED TREE 50fc231 BEFORE ANYTHING WAS CHANGED, on a pristine
+  extraction with the auditor's file dropped in at src/crash_detector/serving/panel_feed.py and
+  this seat's own driver:
+    row as_of_utc is a FeedInstant = 2016-08-21 00:00:00+00:00
+    resolved  : Agrees          RENDERS: WITNESS AGREES
+    CONTROL   : Unavailable PANEL_ROW_STALE   RENDERS: WITNESS UNAVAILABLE
+    CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES  exit 0, 152 passed
+  Reproduces the auditor's report exactly, INCLUDING that the declared guard is green with it
+  present. The auditor is confirmed a third time on this project.
+
+auditor_variants:
+- id: ASR2-005-A-datetime-subclass-lies-about-age
+  outcome: REFUSED
+  refusing_layer: >
+    crash_detector.own_terms.own_instant, called from crash_detector.time_utc.ensure_utc, at
+    runtime. It reads datetime.year.__get__(value) and its six siblings — getset_descriptors bound
+    at import that read the instance's C struct — and builds a NEW exact-type datetime.
+  layer_scope: >
+    EVERY timestamp entering ANY type in this package, from any module, under any name, whether or
+    not the entering module was ever scanned, and whether or not the comparison site downstream
+    knows anything about it. It is a RE-CONSTRUCTION OF THE VALUE, not a test of its provenance:
+    it reads no source text, no registry and no module path.
+  observed: >
+    'row as_of_utc is a datetime = 2016-08-21 00:00:00+00:00 / resolved: Unavailable
+    PANEL_ROW_STALE / RENDERS: WITNESS UNAVAILABLE / CONTROL: Unavailable PANEL_ROW_STALE /
+    ARMS AGREE: True'. The auditor measured type FeedInstant SURVIVING PanelRow normalisation; it
+    reads `datetime` now.
+  exception_type: >
+    NONE, AND THAT IS DELIBERATE. There is no exception. The route resolves to the honest state
+    rather than raising, which is what CD-AC-005 asks for — fail closed, not fail loud. THE
+    AUDITOR'S FINDING WAS THE DIVERGENCE BETWEEN THE TWO ARMS, and they no longer diverge.
+  rename_test: >
+    SURVIVES, and it is MEASURED rather than argued —
+    tests/test_own_terms.py::test_the_rename_test_the_refusal_consults_no_identifier is ASR2-005-A
+    with every identifier renamed (class Zq7, parameters xyzzy and plugh) and the refusal is
+    identical. It cannot fail to survive: the descriptors are bound to C-STRUCT OFFSETS, so there
+    is no name anywhere in the path to rename.
+  the_sibling: >
+    witness_resolver._finite_measure REFUSED IN THE SAME MOVE. It returned the caller's object
+    after `isinstance(observed, float)`; it now returns float.__float__(observed), an exact float
+    read from the stored IEEE-754 double, and math.isfinite is applied to THAT rather than
+    consulting the object's __float__. MEASURED: a float subclass whose __float__ returns 0.0
+    while carrying inf resolves to Unavailable(reason='PANEL_ROW_INCOHERENT'). The same correction
+    was made at witness.panel._own_finite_float and at provenance.require_finite_float, which is
+    the single point through which every number in this system enters a type carrying product
+    meaning.
+
+new_variants:
+  where: 'variants/WO-2R2/CLASS-2/ (five patches, mode 0664) and variants/WO-2R2/MANIFEST.md.'
+  hygiene: >
+    NOTHING under variants/ is executable — `find variants -type f -perm /111 -o -type l` returns
+    nothing (PBG-ASSURE-001). Each row carries its driver as a fenced block of DATA rather than as
+    a file. All five re-verified `git apply --check` clean at the final tree.
+  rows:
+  - id: CD-ENG-WO2R2-V06
+    route: >
+      THE PANEL STATE LABEL FORGES AGREEMENT. A `str` subclass as PanelRow.state whose __eq__
+      answers "AGREES" while the row's stored state is UNAVAILABLE. IN NEITHER CORPUS: neither
+      attacks the DISCRIMINATOR, and THIS ROUTE INVOLVES NO TIMESTAMP AT ALL — the row is fresh,
+      the window ordinary, FreshnessEvidence honest. It reaches the Product Owner's forbidden
+      sentence by a road with no clock on it.
+    at_50fc231: '*** OPEN. *** WITNESS AGREES from a row that says UNAVAILABLE.'
+    at_the_closure: "REFUSED — PanelRow.__post_init__ via own_str. Unavailable(reason='WITNESS_FEED_UNREACHABLE'), WITNESS UNAVAILABLE. It reports the truth the row carried."
+    rename_test: 'SURVIVES — own_str copies code points and consults no identifier.'
+  - id: CD-ENG-WO2R2-V07
+    route: >
+      A MEASURE KEY ANSWERS TO A NAME IT DOES NOT HOLD. A `str` subclass as a measures KEY,
+      hashing as "divergence_measure". IN NEITHER CORPUS: it attacks the CONTAINER, one level of
+      indirection out from the value, and silently removes PANEL_ROW_INCOHERENT from the six.
+    at_50fc231: '*** OPEN. *** A row with no divergence measure at all rendered WITNESS AGREES.'
+    at_the_closure: "REFUSED — the measures mapping rebuilt with own_str'd keys. Unavailable(reason='PANEL_ROW_INCOHERENT')."
+    rename_test: 'SURVIVES.'
+  - id: CD-ENG-WO2R2-V08
+    route: >
+      THE TIMESTAMP LIES ABOUT ITS OWN FIELDS — this seat attacking its own new structure
+      (PBG-ASSURE-017). Property overrides on year/month/day rather than on the arithmetic: the
+      obvious next move once __rsub__ stops working.
+    at_50fc231: >
+      REFUSED — *** AND FOR A REASON THAT HAS NOTHING TO DO WITH THE CLASS. *** 50fc231's
+      ensure_utc ended `value.astimezone(...)`, which reads the C struct, so the property
+      overrides were simply never consulted. READING THAT REFUSAL AS EVIDENCE THAT 50fc231 WAS
+      CLOSED WOULD BE EXACTLY THE CD-PL-F74 ERROR, and this row is in the corpus partly to make
+      that mistake concrete for the next reader.
+    at_the_closure: "REFUSED — Unavailable(reason='PANEL_ROW_STALE'), WITNESS UNAVAILABLE."
+    the_counterfactual_arm: >
+      A THIRD pristine extraction of the closure with ONE line changed — `descriptor.__get__(value)`
+      replaced by `getattr(value, name)`. RESULT: `normalised as_of_utc: 2026-08-19 12:00:00+00:00`
+      -> Agrees -> WITNESS AGREES. THE DECADE-OLD ROW RENDERS AS AGREEMENT AGAIN. So the descriptor
+      read is LOAD-BEARING and it is proved BY CONTRAST rather than asserted. In that same
+      counterfactual ASR2-005-A still renders WITNESS UNAVAILABLE, so V08 is a strictly NEW route
+      the auditor's variant does not cover.
+    rename_test: 'SURVIVES — the descriptors are bound to C-struct offsets; there is no name to rename.'
+  - id: CD-ENG-WO2R2-V09
+    route: >
+      THE OFFSET IS A `timedelta` SUBCLASS — this seat attacking its own structure one level below
+      V08. own_instant computes `local - offset`, and CPython validates a tzinfo's returned offset
+      by ISINSTANCE, so a timedelta SUBCLASS reaches the arithmetic.
+    outcome: '*** PREMISE REFUTED. NOT AN ESCAPE AT ANY ARM. *** See finding CD-ENG-WO2R2-F05.'
+    rename_test: 'NOT APPLICABLE — there is no refusal to rename-test. Stated rather than omitted.'
+  - id: CD-ENG-WO2R2-V10
+    route: >
+      A `tzinfo` LIES ABOUT ITS OFFSET. IN NEITHER CORPUS: nobody has attacked the object that
+      says what a timestamp MEANS.
+    outcome: '*** MEASURED OPEN AT BOTH SHAs. NOT REFUSED. *** See finding CD-ENG-WO2R2-F04.'
+    rename_test: >
+      NOT APPLICABLE within the bound — there is no refusal. The out-of-bound half is raised by the
+      interpreter on the object's own type and DOES survive a rename.
+
+# --- the clean arm and the regression net ----------------------------------------------------- #
+clean_arm_at_6641252:
+- 'CD-RT-001-AST-NO-NUMERIC-DEFAULT   python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 0, 456 assertions, 0 violations'
+- 'CD-RT-001-ABSENCE-RENDERS-UNKNOWN  PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q -> exit 0, 124 passed'
+- 'CD-RT-002-TYPE-NO-ARITHMETIC       PYTHONPATH=src python3 -B -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q -> exit 0, 314 passed'
+- 'CD-RT-002-AST-NO-BLEND             python3 -B tools/register/check_no_blend.py --root .             -> exit 0, 5554 assertions, 0 violations'
+- 'CD-RT-002-SCHEMA-CLOSED            python3 -B tools/register/check_schema_closed.py --root .        -> exit 0, 242 assertions'
+- 'CD-RT-003-ENGINE-NO-WITNESS-REACH  python3 -B tools/register/check_engine_no_witness_reach.py --root . -> exit 0, 25 assertions'
+- 'CD-RT-003-GRANT-MATRIX-LIVE        python3 -B tools/register/check_grant_matrix_live.py --root .    -> EXIT 3, PRECONDITION_NOT_MET (no store connection target set in this environment). IDENTICAL AT 7ac1574 AND AT 50fc231.'
+- 'CD-RT-005-PANEL-UNAVAILABLE        PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q -> exit 0, 152 passed'
+- 'CD-RT-012-NO-EXECUTION-INTERFACE   python3 -B tools/register/check_no_execution_interface.py --root . -> exit 0, 42812 assertions'
+- 'CD-RT-012-LOCKFILE-DENYLIST        python3 -B tools/register/check_lockfile_denylist.py --root .    -> exit 0, 15 assertions'
+- 'CD-RT-012-EGRESS-NO-BROKER         python3 -B tools/register/check_egress_no_broker.py --root .     -> exit 0, 69 assertions'
+- 'CD-BASE-IMAGE-DIGEST-PIN           python3 -B tools/register/check_base_image_digest_pin.py --root . -> exit 0, 13 assertions'
+- 'CD-BUILD-CONTEXT-RESTRICTED        python3 -B tools/register/check_dockerignore.py --root .         -> exit 0, 22 assertions'
+- 'CD-CLASS-2-SWEEP (new, this seat)  python3 -B tools/sweep/delegated_judgement_sweep.py --root .     -> exit 0, 402 sites over 16 modules, 0 violations'
+- 'WHOLE SUITE                        PYTHONPATH=src python3 -B -m pytest tests -q                     -> exit 0, 1386 passed'
+
+register_state_unchanged: >
+  MEASURED, not assumed. `PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify
+  --register required-tests.yaml` was run on a pristine extraction of the LANE HEAD 7ac1574 and on
+  this tree, and the FULL outputs differ ONLY in the subject path. Every criterion, every per-test
+  line, the MANDATORY NOT PASS list of 15, `GATE: SHUT` and `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`
+  are identical. A declaration edit that moved a computed status would be a defect however true
+  the new text was.
+
+node_id_conservation:
+  at_dispatch_baseline_50fc231: 1325
+  at_lane_head_7ac1574: 1357
+  at_6641252: 1386
+  lost: 0
+  method: >
+    Collected the full node-id list with `pytest -q --collect-only` at the lane head AND at this
+    tree, sorted both, and diffed them. The "in base, not now" set is EMPTY. Not argued from the
+    totals — the totals cannot tell a rename from a replacement.
+  added: '29, all in the new tests/test_own_terms.py.'
+  renames: 'NONE. No test was renamed, so no old-id/new-id/reason record is owed.'
+  nothing_weakened: >
+    No existing assertion was relaxed and no exception type an existing test asserts was changed:
+    NaiveTimestampRejected, TypeError, ScoreOutOfRange, CrossDialCombination,
+    DialPresentationRefused, StalenessWindowOutOfRange and AgreementWithoutFreshnessEvidence are
+    all preserved. Several checks became STRICTER (isinstance -> exact type at
+    dialset._reject_cross_typed, ConfigSnapshot's specs and registry, SourceRegistry's records and
+    engine.evaluate's outcome admission); none became looser. StalenessWindow's exact-type refusal
+    of float subclasses was NOT relaxed.
+
+exclusion_set_regression:
+  apply_check: 'ALL 74 prior variant patches (70 WO-2R + 4 WO-2R2 CLASS-1) `git apply --check` CLEAN at this SHA. 74 apply, 0 fail.'
+  cd_ac_005_family_re_run_in_full: >
+    E07, E08, V47, V48, V49, V50 and V51 were each applied to their own pristine extraction of the
+    LANE HEAD 7ac1574 and of this closure, and the declared CD-RT-005 command run under each.
+    EVERY ONE BEHAVES IDENTICALLY AT BOTH: E07 1 failed/152 passed, E08 152 passed, V47 24
+    failed/128 passed, V48 1 failed/152 passed, V49 1 failed/152 passed, V50 18 failed/134 passed,
+    V51 152 passed. Nothing that was caught is now missed and nothing that passed now fails.
+  whole_suite_arm_over_all_74: >
+    Each of the 74 applied to its own pristine extraction at 7ac1574 and at this closure, whole
+    suite run under each, and the pass/fail PATTERN compared. SEE FINDINGS: the raw totals differ
+    on most rows purely because this increment adds 29 tests, so the comparison of record is
+    whether a row that FAILED at the lane head still fails and a row that PASSED still passes.
+    RESULT AS OF THIS ENTRY: no row's failure pattern differs. The run is recorded in the return to
+    the Project Lead with its final count; it is IMPLEMENTATION EVIDENCE and is not assurance.
+  the_exclusion_set_proves_nothing_about_the_class: >
+    CD-D-047. It is a regression floor and the next auditor's exclusion list, which is precisely
+    why fitting a guard to it would be worthless. No guard here was fitted to it.
+
+eleven_plants:
+  method: 'Each on its own pristine extraction of this tree, declared command run clean then planted.'
+  apply: 'ALL ELEVEN `git apply --check` CLEAN.'
+  contrast: 'TEN CONTRAST — declared command exit 0 clean, exit non-zero planted.'
+  the_eleventh: >
+    CD-RT-003-GRANT-MATRIX-LIVE is EXIT 3 PRECONDITION_NOT_MET in BOTH arms, because no store
+    connection target is set in this environment. IDENTICAL at the lane head and at 50fc231, and
+    unchanged by any commit of this increment, so it is not a contrast this seat degraded and not
+    one it can measure. CD-ASR-WO2-02 measured that guard live and reported the matrix contrasting
+    0 -> 1.
+  ONE_PLANT_WAS_UPDATED_and_it_is_named: >
+    plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch STOPPED APPLYING, because increment
+    2b's re-establishment of DialSpec's ids changed the CONTEXT LINES of its first hunk in
+    src/crash_detector/engine/config.py. It was REGENERATED WITH `git diff` against this tree, in
+    a throwaway repository, never by hand. THE PLANTED DEFECT IS BYTE-IDENTICAL — the same
+    `last_known_magnitude` field with the same three comment lines — and the evaluate.py hunk is
+    THE ORIGINAL, taken from the old patch with `git apply --include=` and not re-expressed at
+    all. NOTHING WAS WEAKENED: the regenerated plant contrasts exit 0 -> exit 1 with the check
+    reporting 3 violations and quoting the planted `Degraded(...)` line under Rule F, which is
+    what it did before. No plant was deleted and none was disabled.
+
+# --- declarations written or corrected (CD-RULE-004, CD-RULE-006) ----------------------------- #
+declared_limits:
+- id: 'CD-RT-005, BOUNDARY 3 CORRECTED — the hedge replaced by a denominator and a method'
+  three_places: 'src/crash_detector/staleness.py header · required-tests.yaml CD-AC-005 negative_control · contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md'
+  why: >
+    It read "every route measured that goes through a CONSTRUCTOR is refused. THREE MEASURED, and
+    three is the denominator, not a proof that a fourth does not exist." THE FOURTH EXISTED
+    (ASR2-005-A). The hedge was honest, it is what made CD-AC-005 AMBER rather than RED, and it
+    did its job; what it could not do was say what the denominator WAS. THE OLD SENTENCE IS QUOTED
+    IN ALL THREE PLACES RATHER THAN REMOVED (PBG-CONT-003). The three refusals it listed are kept
+    and separated out from the withdrawn claim so a reader cannot mistake one for the other.
+  executable_example: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list` -> exit 0, "402 sites
+    enumerated over 16 modules"; and ASR2-005-A dropped in at panel_feed.py with its driver ->
+    Unavailable(reason='PANEL_ROW_STALE') -> WITNESS UNAVAILABLE, the plain-datetime CONTROL arm
+    rendering the SAME string.
+  carrier_measured: >
+    crash_detector.own_terms, MEASURED refusing the variant on pristine extractions rather than
+    nominated: at 50fc231 the variant renders WITNESS AGREES while its control renders WITNESS
+    UNAVAILABLE; at the closure BOTH arms render WITNESS UNAVAILABLE. The counterfactual arm with
+    ONE line changed renders WITNESS AGREES again, so the CARRYING LINE IS IDENTIFIED and not
+    merely nominated.
+  what_remains_outside_it: >
+    Written into all three places: the 19 names outside the import closure; that THE SWEEP DID NOT
+    SEE THE AUDITOR'S OWN VARIANT FILE; the sweep's own four boundaries including that a
+    mis-declared disposition is NOT PROVED TO BE CARRIED ANYWHERE; and the four places declared
+    OPEN or OUT OF BOUND.
+- id: 'CD-RT-005, BOUNDARY 5 ADDED — a tzinfo is a supplied object. MEASURED OPEN.'
+  three_places: 'the same three.'
+  why: >
+    It is the LAST place a supplied object's method still runs inside a freshness computation.
+    Written down because the closure made it the only one of its kind, and a residue that is now
+    unique should be findable without re-deriving it.
+  executable_example: 'CD-ENG-WO2R2-V10, verbatim, with its driver in the manifest row.'
+  carrier_measured: >
+    THE CPYTHON INTERPRETER carries the BOUND and not the truth, and the bound was MEASURED:
+    `timedelta(days=1)` raises "ValueError: offset must be a timedelta strictly between
+    -timedelta(hours=24) and timedelta(hours=24)". At most 24 hours, which is 96x the 900-second
+    ceiling derived from PID §5. BEYOND THAT BOUND: NOT PROVED TO BE CARRIED ANYWHERE.
+- id: 'crash_detector/own_terms.py — FOUR NEW BOUNDARIES on the door itself'
+  where: 'the module header. It is a new module, so this is its first declaration and not a correction.'
+  boundaries: >
+    (1) a lying tzinfo, bounded by the interpreter to under a day — CARRIER MEASURED, and it
+    carries the BOUND not the truth; (2) sub-microsecond precision TRUNCATED, never rounded, so
+    nothing is ever made to look FRESHER than it is — NOT PROVED TO BE CARRIED ANYWHERE; (3) it
+    establishes a VALUE, not that the value is TRUE — source trust is CD-D-005, owed — NOT PROVED
+    TO BE CARRIED ANYWHERE; (4) object.__setattr__ still walks past frozen — staleness.py boundary
+    3, unchanged and NOT claimed to be closed by this module — NOT PROVED TO BE CARRIED ANYWHERE.
+- id: 'tools/sweep/delegated_judgement_sweep.py — FOUR BOUNDARIES on the enumerator'
+  where: 'the tool header and tools/sweep/declared_dispositions.py.'
+  note: 'Listed above under the_sweeps_own_declared_limit. The tool is not in required-tests.yaml.'
+register_changes:
+  changed: >
+    ONE entry comment: CD-AC-005's negative_control.violation text, which carries the CD-RULE-004
+    boundary declarations and had to be corrected because this closure invalidated boundary 3.
+  not_changed: >
+    latest_admitted_run — UNTOUCHED, still null, verified by reading the file. NO status-like key
+    introduced (verified by grep for status/result/outcome/verdict/grade/score/disposition at key
+    position). NO `scope:` declaration changed. NOTHING removed from any declared command. NO new
+    test_id added — the sweep is a tool WITHOUT a register row, disclosed here for the Product
+    Owner exactly as CD-BASE-IMAGE-DIGEST-PIN and CD-BUILD-CONTEXT-RESTRICTED are, because adding
+    a row would be an act this seat took on its own initiative and the register's computed state
+    was better left provably unchanged.
+  no_ingredient_source_registered: 'CD-D-005 is the PO''s and is owed. The source registry is still EMPTY and every dial still reads UNKNOWN.'
+
+# --- findings this seat raised, including against its own work -------------------------------- #
+findings:
+- id: CD-ENG-WO2R2-F04
+  severity: MEDIUM
+  against: 'THIS SEAT''S OWN CLASS CLOSURE. Raised by the seat that wrote it.'
+  finding: >
+    A `tzinfo` IS A SUPPLIED OBJECT, AND AFTER THIS CLOSURE IT IS THE LAST PLACE A SUPPLIED
+    OBJECT'S METHOD STILL RUNS INSIDE A FRESHNESS COMPUTATION. Every timestamp is now rebuilt from
+    its own primitive fields, so no method of `type(value)` runs — but the UTC OFFSET comes from
+    `datetime.utcoffset(value)`, whose base implementation asks `value.tzinfo`. MEASURED
+    (CD-ENG-WO2R2-V10, on pristine extractions of BOTH 50fc231 and this closure, identical
+    results): a row whose stated wall clock is 22 HOURS OLD, carrying a tzinfo reporting a -22 h
+    offset, resolves to `Agrees` and renders `WITNESS AGREES` against a 600-second window.
+  carrier: >
+    THE CPYTHON INTERPRETER, MEASURED, AND IT CARRIES THE BOUND AND NOT THE TRUTH:
+    `timedelta(days=1)` raises `ValueError: offset must be a timedelta strictly between
+    -timedelta(hours=24) and timedelta(hours=24)`. So the route can move an instant by AT MOST 24
+    HOURS — 96x the 900-second ceiling this project derived from PID §5. BEYOND THAT BOUND, NOT
+    PROVED TO BE CARRIED ANYWHERE.
+  no_guard_was_built_and_why: >
+    DELIBERATE. A tzinfo cannot be refused without refusing `zoneinfo`, `pytz` and `pandas`, all of
+    which supply their own — which is the trade the dispatch names in terms: if the structure makes
+    ordinary library timestamps unusable, a defect has been traded for a defect. It is ALSO not
+    introduced by this closure: it measures IDENTICALLY at the audited base, and it is the same
+    fact as boundary 2 (clock trust is not established and is not claimed) reached through the
+    offset rather than through now_utc. It is a statement about the DATA a caller supplied, which
+    this system believes by design, rather than about CODE a caller supplied, which it no longer
+    runs. It is DECLARED as boundary 5 in all three CD-RULE-004 places.
+  what_closing_it_would_take: >
+    Either a clock-trust instrument, which is a different problem — and CD-RULE-003 forbids this
+    seat from inventing a skew tolerance — or the CD-D-005 ingredient register saying what a
+    source's timestamps must be traceable to. Both are Product Authority territory.
+- id: CD-ENG-WO2R2-F05
+  severity: LOW
+  against: 'THIS SEAT''S OWN CLOSURE — a part of it this seat could NOT measure to be load-bearing.'
+  finding: >
+    THE OFFSET REBUILD IN `own_utc_offset` IS NOT MEASURED TO CLOSE ANY ROUTE. It was written
+    because `datetime.utcoffset` validates its return by ISINSTANCE, so a `timedelta` SUBCLASS
+    reaches the arithmetic and could in principle control `local - offset` through `__rsub__`.
+    CD-ENG-WO2R2-V09 was written to demonstrate that and DOES NOT: not at 50fc231, not at the
+    closure, and NOT in a counterfactual extraction with BOTH the rebuild AND its exact-type check
+    REMOVED. THE CARRIER IS CPYTHON'S OPERAND-PRECEDENCE RULE, MEASURED HERE: the reflected
+    operation is tried first only when the RIGHT operand's type is a SUBCLASS OF THE LEFT'S, and
+    `timedelta` is not a subclass of `datetime`, so `datetime.__sub__` handles it and reads the
+    timedelta's C struct directly.
+  why_it_is_reported_rather_than_removed: >
+    What the rebuild demonstrably DOES do is prevent a FALSE POSITIVE: without it,
+    `own_instant`'s exact-type check on the offset would refuse a legitimate library timestamp
+    whose tzinfo returns a timedelta subclass. It is therefore kept, and recorded as DEFENCE IN
+    DEPTH THAT THIS SEAT COULD NOT MEASURE TO BE NECESSARY rather than described as a closure. A
+    part of a closure whose contribution has not been measured is exactly the shape CD-RULE-006
+    exists to stop being asserted, and this project has paid for that mistake twice.
+- id: CD-ENG-WO2R2-F06
+  severity: LOW
+  against: 'THE METHOD, not the code. Offered to the Project Lead as a candidate standing rule.'
+  finding: >
+    A VARIANT REFUSED AT TWO SHAs MAY BE REFUSED FOR TWO DIFFERENT REASONS, AND THE COUNTERFACTUAL
+    ARM IS WHAT TELLS THEM APART. CD-ENG-WO2R2-V08 is refused at 50fc231 AND at the closure. At
+    50fc231 it is refused BY AN ACCIDENT of what it did not override; at the closure by the
+    descriptor read. A seat that recorded only "refused at both" would have recorded a true
+    sentence from which a false inference follows — which is CD-PL-F74's failure exactly, one
+    level up: not "which layer refused it" but "would it still refuse if the layer I credit were
+    removed". THE THIRD ARM — the same variant against the closure with ONE line reverted — is
+    what turns a refusal into evidence about a specific line, and it is cheap. It was run for V08
+    and for V09 and it produced opposite answers: V08's line is load-bearing, V09's is not.
+  proposed: >
+    That a refusal credited to a specific structure carries a COUNTERFACTUAL ARM — the same
+    variant, the same tree, that structure removed — or says it does not have one. Offered, not
+    taken: a standing rule is the Project Lead's to make.
+- id: CD-ENG-WO2R2-F02
+  severity: MEDIUM
+  against: 'THE RECORD, not this work. STILL OPEN. NOT REPAIRED — the file is in this dispatch''s protected scope.'
+  finding: >
+    RE-RAISED UNCHANGED FROM BL-20260819T221837Z-0050, because it is still true at this SHA. `pbg
+    boot` returns `CONTINUITY_REFERENCE_INVALID` with one BLOCKING line in this lane.
+    governance/engineering/ACTIVE_WORK.yaml is Project-Lead-only. Every seat dispatched into this
+    lane since has booted BLOCKING. Reported rather than worked around, and re-reported rather
+    than assumed to have been seen.
+
+# --- separation of duties --------------------------------------------------------------------- #
+separation_of_duties: >
+  This seat did not certify, assure or accept this work (PBG-SOD-001, non-waivable). It did not
+  weaken any check, test, assertion, guard or plant, and it deleted none — several checks became
+  STRICTER and none became looser. It did not touch latest_admitted_run, did not register an
+  ingredient source, did not invent a product quantity, recorded no secret value, bound no port,
+  added no package to requirements.txt or requirements.lock, and modified nothing under pbg/,
+  governance/assurance/, governance/decisions/, governance/dispatch/, governance/rules/,
+  governance/reconciliation/, governance/engineering/ACTIVE_WORK.yaml, PID.md or BLUEPRINT.md. No
+  Build Log entry was edited; this is a NEW entry (PBG-CONT-003, non-waivable).
+
+what_was_not_done:
+- 'INCREMENT 3 (ITEM 3 — the CD-AC-012 dependency surface; ASR2-012-B) — NOT STARTED. Out of this launch by the dispatch.'
+- 'CD-ENG-WO2R2-F03, THE INJECTED ContributionModel — NOT CLOSED, AND NO GUARD BUILT FOR IT. The
+   sweep REACHED it and DECLARED it OUT_OF_BOUND. PO-DECISIONS-0003 ruled it closed by CONSTRUCTION
+   at BLUEPRINT §7 in WO-3, and CD-D-075 forbids folding it into this increment. Declaring is the
+   CD-RULE-004 obligation; closing would be the scope breach.'
+- 'CD-AC-002 — NOT re-opened and NOT re-argued. Increment 1 is reconciled and NOT accepted as
+   closing it; CD-AC-002 reaches WO-2''s gate on the PO''s SCOPING and not on a guard, and nothing
+   in this increment claims otherwise.'
+- 'ASR2-003-A and CD-AC-003 — NOT TOUCHED. Ruled PASS (scoped) and explicitly out of scope. No
+   change under this increment forced one; check_engine_no_witness_reach is 25 assertions, 0
+   violations, unchanged.'
+- 'ASR2-012-C — NOT TOUCHED. CD-D-015 prohibits further hardening of that check. Nothing here
+   affects it; check_no_execution_interface is 0 violations at every arm.'
+- 'The documentary findings F04, F07..F13 — NOT TOUCHED. Owed at WO-3. The only declarations
+   corrected here are the ones THIS closure invalidated.'
+- 'StalenessWindow''s exact-type refusal of float subclasses — NOT RELAXED, deliberately. The
+   asymmetry with the measurement path is ARGUED in own_float''s docstring rather than left to be
+   noticed: a window is CONFIGURATION and can afford refusal, a measurement is SUPPLIED DATA where
+   numpy.float64 is ordinary.'
+
+next_safe_action: >
+  Project Lead reconciles increment 2 at 66412523dd229b42f7ae7726c9fcb28fe849a789 and resolves the
+  `increment_sha: PENDING` in this entry with a follow-up commit that writes THAT FIELD AND NOTHING
+  ELSE (CD-RULE-007, the 192fc50 precedent). THEN: increment 3 (ITEM 3, the CD-AC-012 dependency
+  surface) is dispatched to a fresh Engineer seat. CD-ENG-WO2R2-F04 should travel to the Product
+  Authority with increment 2's reconciliation — it is a residue rather than an open class, but it
+  is a route to WITNESS AGREES on a row whose own wall clock is 22 hours old, and the PO's
+  ingredient register (CD-D-005) is where source-timestamp trust would be settled. The audit goes
+  to a THIRD Assurance seat — neither CD-ASR-WO2-01 nor CD-ASR-WO2-02 — with fresh variants and an
+  exclusion set extended by variants/WO-2R2/CLASS-2/. THAT SEAT SHOULD ATTACK THE DISPOSITION TEXT
+  IN tools/sweep/declared_dispositions.py, not the site count: a mis-declared disposition is
+  invisible to the tool by construction, and the tool says so itself.
