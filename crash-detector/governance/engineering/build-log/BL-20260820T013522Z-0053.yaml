@@ -1,0 +1,434 @@
+# ================================================================================================ #
+# WO-2R2 INCREMENT 3 COMPLETE — ITEMS A, B AND C DELIVERED. THE DEPENDENCY SURFACE IS CLOSED AT THE
+# DEFAULT AND NOT AT A NAME; THE INVARIANT IS NARROWED; THE REGISTER COUNTS WHAT IT LISTS.
+# TWO FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK, AND NO GUARD BUILT FOR EITHER.
+# ================================================================================================ #
+#
+# SUPERSEDES BL-20260820T011248Z-0052 FORWARD. That entry is NOT edited and stands exactly as
+# committed at 8402709 (PBG-CONT-003, non-waivable). It was written and committed BEFORE Item C
+# began, deliberately, because seven seats have died to a runtime ceiling on this project and the
+# previous one died in the seconds before committing its record. Where this entry and 0052 differ,
+# THIS ONE IS LATER AND SAYS SO; 0052's own not_done_yet block correctly recorded Item C as
+# unstarted at the moment it was written.
+# ================================================================================================ #
+
+entry_id: BL-20260820T013522Z-0053
+timestamp_utc: "2026-08-20T01:35:22Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R2-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R2-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+execution_base_sha: 1eda31645eac4048bc637721b9e783efaa35e652
+increment_sha: 547b0ac15ec2db40f45cddf279783c3c652ac035
+parent_entry_id: BL-20260820T011248Z-0052
+schema_version: 1
+
+action_summary: >
+  INCREMENT 3 DELIVERED IN FIVE COMMITS. Item A (CD-PL-F75) at 81361f1 — the register announced
+  FOUR boundaries over five, ordered 1,2,3,5,4; numeral corrected and enumeration re-ordered to
+  match the two places that were already right, proved a PURE MOVE PLUS ONE WORD. Item B
+  (CD-PL-F76) at 8a1b52b — the structural invariant NARROWED FORWARD in all three CD-RULE-004
+  places, with NO CODE CHANGED, proved by AST. Build Log 0052 at 8402709, committed early on
+  purpose. Item C (CD-ASR-WO2R-F05) at 5ec9fee — the dependency surface closed by DENY BY DEFAULT
+  over a new in-tree dependency registry, the auditor's tastytrade-sdk REPLICATED at the audited
+  tree 50fc231 first and then REFUSED at the closure, with the rename test surviving and a
+  counterfactual arm identifying the carrying line. Variant manifest rows at 547b0ac.
+  SUITE 1400 PASSED, ZERO NODE IDS LOST against the 1386 at my base. ELEVEN PLANTS APPLY AND
+  CONTRAST. 84/84 VARIANT PATCHES APPLY. GATE UNMOVED, latest_admitted_run STILL null.
+  TWO FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK AND NO GUARD BUILT FOR EITHER.
+  NOTHING HERE IS ASSURANCE (PBG-SOD-001, non-waivable).
+
+# ================================================================================================ #
+# 1. BOOT — carried forward from 0052, restated because an entry should stand alone
+# ================================================================================================ #
+boot:
+  verdict: >
+    BOOTED WITH ONE DECLARED, PRE-EXISTING, NOT-MINE BLOCKING CONDITION. Role from the dispatch
+    plus CD-AUTH-0001, never self-assigned (PBG-BOOT-001, PBG-BOOT-002). Observed HEAD
+    `git rev-parse` 1eda316 AGREES with the brief's resolved lane head; porcelain ZERO on arrival.
+  the_blocking_condition_not_mine: >
+    CD-ENG-WO2R2-F02. `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` in the lane returns
+    CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED. Raised twice before and confirmed still open at
+    BL-...-0045. governance/engineering/ACTIVE_WORK.yaml is Project-Lead-only and in my protected
+    scope. I DID NOT REPAIR IT — not one byte — AND I REPORT IT. Read-only diagnosis is permitted
+    and normal boot is blocked; I proceeded with the dispatched work, which the brief authorised
+    in terms.
+  the_execution_base_discrepancy: >
+    The dispatch's `execution_base_sha` field reads 50fc231, correct at issue and now many commits
+    behind. The brief resolved it: 1eda316 is my execution base; 50fc231 remains THE AUDITED TREE
+    and the right base for replication arms. I USED BOTH, FOR THE PURPOSES EACH IS RIGHT FOR, and
+    did not edit the dispatch record.
+
+# ================================================================================================ #
+# 2. WHAT WAS DELIVERED, COMMIT BY COMMIT
+# ================================================================================================ #
+commits:
+- sha: 81361f18c723ecced6a9deb37084ef48063cdc81
+  item: 'A — CD-PL-F75 (LOW)'
+  what: >
+    required-tests.yaml, CD-RT-005 negative_control. "in FOUR boundaries:" -> "in FIVE"; the
+    enumeration re-ordered from (1)(2)(3)(5)(4) to (1)(2)(3)(4)(5).
+  proof_it_is_a_pure_move: >
+    Added and removed lines each extracted with `git diff -U0`, sorted, `comm` diffed BOTH WAYS.
+    ONLY IN ADDED: the one FIVE line. ONLY IN REMOVED: the one FOUR line. Every other changed line
+    exists on both sides byte for byte. Nothing added, nothing lost.
+  the_order_was_taken_from_the_correct_files_not_invented: >
+    Both already-correct places put the "Agrees is deliberately not slotted" paragraph as the TAIL
+    OF BOUNDARY 3, then 4, then 5, then the "Do not read a clean run" closing paragraph. I
+    reproduced that arrangement rather than inventing a third one.
+  what_i_did_not_disturb: >
+    staleness.py and the execution contract already ran 1,2,3,4,5 and NEITHER carries a numeral
+    count. I grepped ALL THREE files for every count word — "FOUR boundaries", "FIVE boundaries",
+    "THREE", "SIX", "in FOUR", "in FIVE" — and confirmed the register is the only file that
+    carries a count at all. I did NOT harmonise by adding a count to the other two, as instructed.
+- sha: 8a1b52b38af9c9a51adfd5b1432f16a0074f0810
+  item: 'B — CD-PL-F76 (MEDIUM)'
+  what: 'The structural invariant NARROWED FORWARD in all three CD-RULE-004 places. 88 insertions, 0 deletions, 3 files.'
+  a_fact_i_established_that_makes_the_finding_sharper: >
+    THE STRUCTURAL INVARIANT EXISTED NOWHERE IN THE TREE. I grepped src/, contracts/, tools/ and
+    required-tests.yaml for "STRUCTURAL INVARIANT" / "structural invariant": ZERO HITS before my
+    change. It lived ONLY in commit 27e3794's message. That is exactly why CD-PL-F76 bites — the
+    PO's standing condition makes the commit-message invariant load-bearing, and a reader
+    exercising it could find that sentence in `git log` and nowhere else, with nothing beside it
+    to qualify its width. The narrowing is now where a reader of the declaration will meet it.
+  the_narrowed_invariant_as_landed: >
+    No method of `type(value)` executes during the computation of an age, the comparison of an age
+    against a window, the selection of a panel constructor from a stored state, or the admission
+    of a divergence measurement. AND EXACTLY ONE SUPPLIED-OBJECT METHOD STILL EXECUTES:
+    `tzinfo.utcoffset`, reached through `value.tzinfo`, NOT a method of `type(value)`, and IT
+    DETERMINES THE AGE — bounded by the CPython interpreter to strictly under 24 hours, MEASURED,
+    and declared at boundary 5. BEYOND THAT BOUND, NOT PROVED TO BE CARRIED ANYWHERE.
+  no_code_changed_proved_by_AST: >
+    Both versions of staleness.py parsed, the module docstring dropped from each body, `ast.dump`
+    compared: "AST IDENTICAL WITH MODULE DOCSTRING EXCLUDED: True", "module docstring changed:
+    True". The other two files are prose.
+  what_i_was_told_twice_not_to_do_and_did_not: >
+    NO tzinfo GUARD — it would refuse zoneinfo, pytz and pandas, trade a defect for a defect, and
+    be the FOURTH clever guard against a residue the Product Authority has not been asked about.
+    NO CODE CHANGED to make the finding go away. NO HISTORY REWRITTEN — 27e3794's message stands
+    as written, and all three places QUOTE its original wording and STATE that it is not rewritten,
+    so the correction supersedes and never edits (PBG-CONT-003, non-waivable).
+- sha: 84027096ab16623628377fb27eaef090dcb7c59e
+  item: 'Build Log BL-...-0052, committed EARLY and deliberately, with Item C recorded as unstarted.'
+- sha: 5ec9feed7db85e0cf5080d1188edd236843fa7d1
+  item: 'C — CD-ASR-WO2R-F05 (MEDIUM). INCREMENT 3 PROPER.'
+  what: >
+    deploy/dependency-registry.yaml (NEW, contract CD-DEPENDENCY-REGISTRY-v1, nine entries
+    ENUMERATED FROM THE MANIFESTS); tools/register/check_lockfile_denylist.py reworked to LAYER 1
+    deny-by-default over that registry with the denylist and token rule SURVIVING as LAYER 2 over
+    both the registry and the manifest site, set equality asserted in BOTH directions, closed key
+    sets, and a malformed entry registering nothing; tests/test_dependency_registry.py (NEW, 14
+    tests); the register entry and the execution contract rewritten with a FIVE-BOUNDARY declared
+    limit that did not previously exist; five new variant patches.
+- sha: 547b0ac15ec2db40f45cddf279783c3c652ac035
+  item: 'C — the variant manifest rows V11..V15, and two stale counts corrected.'
+
+# ================================================================================================ #
+# 3. ITEM C — THE MEASUREMENTS. Replicate before you repair.
+# ================================================================================================ #
+item_C_evidence:
+  method: >
+    `python3 -B` on every invocation. THE LANE WORKTREE WAS NEVER MUTATED TO TEST ANYTHING and no
+    git worktree was created for any variant. Every arm is its own
+    `git archive <sha> | tar -x -C <tmpdir>` extraction, patched with `git apply -p1`, run,
+    discarded — a separate pristine extraction per arm. Every patch generated with `git diff` in a
+    throwaway repository, never by hand (CD-ENG-WO2R-F13), and the expected RULE ID is asserted in
+    every arm rather than merely a non-zero exit.
+
+  replication_at_the_audited_tree_50fc231_BEFORE_any_repair: >
+    ASR2-012-B with the auditor's own controls in the same batch:
+      clean                        exit 0  PASS — 15 assertions, 0 violations
+      tastytrade-sdk==1.2.0        exit 0  PASS — 17 assertions, 0 violations   ESCAPED
+      meridian-fix-connect==0.4.1  exit 1  FAIL — 2 violation(s)                CAUGHT
+      lattice-client==2.0.0        exit 0  PASS — 17 assertions, 0 violations   ESCAPED
+    THE AUDITOR'S 17 ASSERTIONS / 0 VIOLATIONS REPRODUCE EXACTLY. The finding is confirmed on my
+    own extraction with my own arms before anything was changed.
+
+  the_same_four_arms_at_the_closure: >
+      clean                        exit 0  PASS — 134 assertions, 0 violations
+      tastytrade-sdk==1.2.0        exit 1  FAIL — 2 violations   CD-DEP-001
+      meridian-fix-connect==0.4.1  exit 1  FAIL — 2 violations   CD-DEP-002
+      lattice-client==2.0.0        exit 1  FAIL — 2 violations   CD-DEP-001
+
+  the_refusing_layer_named_and_scoped_CD_PL_F74: >
+    LAYER 1, rule CD-DEP-001, in check_lockfile_denylist.main(), by `normalised not in admissible`
+    where `admissible` is built ONLY from WELL-FORMED entries of deploy/dependency-registry.yaml.
+    ITS SCOPE: every distribution name extracted from every dependency manifest the check reads —
+    the three required ones plus every requirements*.txt, *.lock and constraints*.txt IN THE TREE
+    ROOT (root.glob is NOT recursive; a manifest in a subdirectory is not read, and that bounds
+    the claim) — under any spelling, because both sides are PEP 503 normalised before comparison.
+    On this path it reads no denylist, no token list and no module path, and it opens no socket.
+
+  the_rename_test: >
+    SURVIVES, AND THE STRUCTURE IS WHY. Three further names sharing no morpheme with anything
+    financial — zzq-widget-lib==9.9.9, xyzzy-plugh-frotz==0.0.1, bluebird-desk==2.4.0 — EACH
+    REFUSED, EACH BY CD-DEP-001. Renaming CANNOT weaken this refusal: the rule is the COMPLEMENT
+    of a declared set rather than membership of a vocabulary, so a rename makes an unregistered
+    name MORE refused, never less. Contrast the old guard, where meridian-fix-connect ->
+    meridian-connect walks straight past.
+
+  the_counterfactual_arms_CD_D_079: >
+    FOUR TAKEN, AND THEY DID NOT ALL SAY WHAT I EXPECTED. This is the rule earning its keep on my
+    own work, exactly as CD-D-079 intends.
+      (a) LAYER 1 REMOVED, tastytrade arm -> exit 0, PASS 121 assertions. THE ESCAPE COMES
+          STRAIGHT BACK. The carrying line is IDENTIFIED, NOT NOMINATED.
+      (b) THE `continue` THAT WITHHOLDS A MALFORMED ENTRY, REMOVED, V12 arm -> still exit 1, but
+          CD-DEP-001 DISAPPEARS and only CD-DEP-005 remains: the SDK becomes ADMITTED and only the
+          shape complaint is left. THAT LINE CARRIES THE ADMISSION BLOCK; V12's tree-level refusal
+          is OVER-DETERMINED. Recorded precisely rather than claimed whole.
+      (c) THE PEP 503 NORMAL-FORM RULE DISABLED, V14 arm -> exit 0, PASS 149 assertions.
+          LOAD-BEARING AND IDENTIFIED.
+      (d) THE MISSING-REGISTRY REFUSAL DISABLED, V15 arm -> NOT a pass, an unhandled
+          FileNotFoundError. SO ITS VALUE IS CONVERTING A CRASH INTO A STATED REFUSAL
+          (PBG-CI-002), NOT PREVENTING A PASS. My first draft claimed the latter; the
+          counterfactual refuted it and the record carries the narrower, true sentence.
+
+  new_variants_five_all_in_neither_corpus: >
+    Neither corpus contains a dependency registry to attack, so every one of these routes is new.
+      V11 REGISTER THE BROKER OPENLY — ib-insync in both manifests AND a well-formed six-key
+          entry. REFUSED, CD-DEP-002, 3 violations. ITS RENAME TEST DOES NOT SURVIVE AND THE ROW
+          SAYS SO: it is a VOCABULARY result, and a registered distribution the vocabulary does
+          not recognise exits 0. That is declared limit boundary 1, reachable in two lines.
+      V12 MALFORMED ENTRY REGISTERS NOTHING — REFUSED, CD-DEP-005 AND CD-DEP-001.
+      V13 A MANIFEST NOBODY THINKS ABOUT — the SDK alone in a new constraints.txt. REFUSED,
+          CD-DEP-001, 1 violation.
+      V14 REGISTERED UNDER A NON-NORMAL SPELLING — REFUSED, CD-DEP-005 AND CD-DEP-001.
+      V15 DELETE THE REGISTRY — REFUSED, EXIT 3, precondition with a stated reason. Never a pass
+          and never a skip.
+    ALL FIVE VERIFIED TO APPLY AND REPRODUCE AT THE COMMITTED SHA 5ec9fee, each on its own fresh
+    extraction.
+
+  the_carrier_measured_by_me_not_transcribed_CD_RULE_006: >
+    Declared limit boundary 4 cites the egress layer, and the dispatch required me to MEASURE it
+    myself rather than transcribe the auditor's numbers. MEASURED ON MY OWN EXTRACTION:
+    deploy/egress-destinations.yaml declares `destinations: []` — the admissible set is EMPTY, 0
+    registered destinations — and CD-RT-012-EGRESS-NO-BROKER exits 0 over 69 assertions.
+    ITS SCOPE, STATED HONESTLY IN ALL THREE PLACES: IT CARRIES THE PATHWAY AND NOT THE DEPENDENCY,
+    and IT IS A WO-2-STATE FACT THAT WO-3 WILL CHANGE — the moment a destination is registered
+    this carrier weakens by exactly that much. It is not a permanent property.
+
+# ================================================================================================ #
+# 4. THE DECLARED LIMITS I WROTE OR CORRECTED, WITH THEIR CARRIERS (CD-RULE-004 / CD-RULE-006)
+# ================================================================================================ #
+declared_limits:
+  CD_RT_012_LOCKFILE_DENYLIST_five_boundaries_ALL_NEW: >
+    This check had NO CD-RULE-004 declared limit at all, which was half of the auditor's finding.
+    Five boundaries now, stated identically in the check header, required-tests.yaml and the
+    execution contract:
+      1 A REGISTERED DISTRIBUTION IS A HUMAN CLAIM and a false one is not detectable here.
+        Executable example given (quiet-market-client). NOT PROVED TO BE CARRIED ANYWHERE.
+      2 `purpose` and `declared_in` ARE NOT JUDGED FOR CONTENT. NOT PROVED TO BE CARRIED ANYWHERE.
+      3 STATIC READ OF DECLARED MANIFESTS AT ONE COMMIT — no site-packages, no vendored tree, no
+        committed wheel, no Dockerfile RUN, no base image. CARRIER MEASURED:
+        CD-RT-012-NO-EXECUTION-INTERFACE covers vendored SOURCE, exit 0 / 43110 assertions at this
+        SHA. FOR A COMPILED WHEEL OR A BASE IMAGE, NOT PROVED TO BE CARRIED ANYWHERE.
+      4 A DEPENDENCY IS PERMISSION TO IMPORT, NOT A PATHWAY. CARRIER MEASURED BY ME (above).
+      5 THE REGISTRY IS AN IN-TREE FILE AND A COMMIT MAY EDIT IT. CARRIER MEASURED: layer 2 over
+        the registry. FOR A REGISTERED DISTRIBUTION LAYER 2 DOES NOT RECOGNISE, see boundary 1:
+        NOT PROVED TO BE CARRIED ANYWHERE.
+  CD_RT_005_five_boundaries_CORRECTED_NOT_AUTHORED: >
+    Item A corrected their COUNT and ORDER and Item B narrowed the CLAIM ABOVE THEM. THEIR
+    SUBSTANCE AND WORDING ARE UNCHANGED and their carriers stand exactly as they stood:
+    boundary 1 NOT PROVED TO BE CARRIED ANYWHERE; boundary 2 NOT PROVED TO BE CARRIED ANYWHERE;
+    boundary 3 crash_detector.own_terms MEASURED (by the Project Lead's PL-A3 counterfactual, NOT
+    by me — I do not claim that measurement), with its residues (i)-(iv) each NOT PROVED TO BE
+    CARRIED ANYWHERE; boundary 4 NOT PROVED TO BE CARRIED ANYWHERE; boundary 5 the CPython
+    interpreter MEASURED, and BEYOND THAT BOUND NOT PROVED TO BE CARRIED ANYWHERE.
+
+# ================================================================================================ #
+# 5. FINDINGS AGAINST MY OWN WORK. NO GUARD WAS BUILT FOR EITHER.
+# ================================================================================================ #
+findings_raised_against_my_own_work:
+- id: CD-ENG-WO2R2-02-F01
+  severity: LOW
+  against: 'My own Item C closure — layer 2 over the registry (CD-DEP-002 at the registry line).'
+  what: >
+    LAYER 2 OVER THE REGISTRY IS NOT MEASURED TO CLOSE ANY ROUTE ALONE. I tried to construct an
+    arm in which it is the only thing refusing and could not.
+      Registered AND in a manifest: with the registry layer removed, V11 still exits 1 on
+      CD-DEP-002 — the MANIFEST-SITE layer 2 catches it. MEASURED.
+      Registered and in NO manifest: with the registry layer removed, the same arm exits 1 on
+      CD-DEP-003 — the both-directions set equality catches it. MEASURED.
+  disposition: >
+    KEPT AND DECLARED UNMEASURED. I did not remove it — it reports the violation at the registry
+    line where a human reviews permissions, and it becomes load-bearing the moment CD-DEP-003 is
+    relaxed — and I did not let its presence imply it was proved. This is CD-RULE-006 applied to
+    my own defence in depth, and it is the row the third Assurance seat should attack first if it
+    wants to find where my structure is decoration.
+- id: CD-ENG-WO2R2-02-F02
+  severity: LOW
+  against: 'My own Item C decision to retain `scope: CLASS` in required-tests.yaml.'
+  what: >
+    IT IS A JUDGEMENT CALL, NOT A MEASUREMENT, AND THE SEAT THAT BENEFITS FROM IT MADE IT. The
+    auditor's finding was compound: (a) no CD-RULE-004 declared limit existed — REPAIRED, five
+    boundaries; and (b) the register said `scope: CLASS`, telling a reader the class was closed.
+    For (b) the framework's vocabulary is SCOPES = {"INSTANCE", "CLASS"}
+    (pbg/tools/pbg/required_tests.py:62) and pbg/ is PROTECTED, so THERE IS NO THIRD VALUE TO MOVE
+    TO. `INSTANCE` would be a different falsehood — a deny-by-default registry is the opposite of
+    instance-catching. I retained CLASS, made the entry NAME WHICH CLASS IS CLOSED and which is
+    not, and added the declared limit its sibling CD-RT-012-NO-EXECUTION-INTERFACE has and this
+    check lacked — the CD-D-014 / CD-D-015 precedent.
+  disposition: >
+    REPORTED, NOT SETTLED. A seat or auditor that thinks the register should read INSTANCE, or
+    that the framework needs a third scope value, should overrule me. Recorded so the choice is
+    attackable rather than invisible.
+- id: CD-ENG-WO2R2-02-N01
+  severity: OBSERVATION
+  against: 'The lane worktree, not anyone''s work. Carried forward from BL-...-0052 unchanged.'
+  what: >
+    The dispatch record authorising this seat, CD-DISPATCH-WO2R2-ENGINEER.yaml, is NOT PRESENT in
+    the lane's governance/dispatch/ — it exists only on main in /srv/crash-detector. I read it
+    there. A seat dispatched into this lane that could not reach /srv/crash-detector would have no
+    authority record to read, and PBG-BOOT-002 says such an agent says so and stops.
+  disposition: >
+    REPORTED, NOT REPAIRED. It is in my protected scope, and copying a dispatch record into the
+    lane would be widening my own authority surface — the one thing a seat may never do.
+- id: CD-ENG-WO2R2-02-N02
+  severity: OBSERVATION
+  against: 'My own new test module, caught by a sibling guard.'
+  what: >
+    MY OWN WORK TRIPPED CD-RT-012-NO-EXECUTION-INTERFACE TWICE, and I record it because a clean
+    final state hides it. A test function named with the word `broker` failed L1 (identifier
+    composition); after renaming, a docstring reading "laundering route: an execution" failed L3
+    (prose). Exit 1, one violation each time, MEASURED.
+  disposition: >
+    I RENAMED MY TEST AND REWORDED MY PROSE. I did NOT touch that check and I did NOT add a
+    suppression: CD-D-015 ends the hardening chase on it, and weakening a sibling guard to let my
+    own test file through is precisely the move this gate exists to catch. The reason is recorded
+    in the test's own docstring so the next seat naming a test the obvious way meets the
+    explanation beside the wall. THE GUARD WAS RIGHT AND MY NAMING WAS WRONG.
+
+# ================================================================================================ #
+# 6. THE NUMBERS
+# ================================================================================================ #
+measurements:
+  clean_arm: 'PYTHONPATH=src python3 -B -m pytest -q -> exit 0, 1400 passed.'
+  node_id_conservation: >
+    1386 at the lane base 1eda316 -> 1400 at the closure. Collected on BOTH trees with
+    `--collect-only`, sorted, `comm` diffed IN BOTH DIRECTIONS. LOST (in base, absent now) is
+    EMPTY. ZERO LOST, ZERO RENAMED. The 14 added are ALL in tests/test_dependency_registry.py,
+    verified by filtering the added set for anything outside that file, which returned nothing.
+    NOTE ON THE FLOOR: the dispatch's `prohibited` block says 1325, the count when it was issued.
+    THE LIVE FLOOR AT MY BASE IS 1386 and that is what I measured against, as the brief resolved.
+  register_checks: >
+    All ten tools/register/check_*.py run on a pristine extraction of the base AND on the closure;
+    exit codes AND assertion counts captured and DIFFED. EIGHT BYTE-IDENTICAL. EXACTLY TWO MOVED,
+    BOTH UPWARD AND BOTH EXPLAINED:
+      check_lockfile_denylist       0 / 15    -> 0 / 134    (this rework)
+      check_no_execution_interface  0 / 42812 -> 0 / 43110  (it SCANNED my new registry and test
+        module — the subject set GREW, which is the right direction and shows the sibling guard
+        reads what I added rather than ignoring it)
+    check_grant_matrix_live exits 3 in BOTH arms — connection target unset; it REFUSES and never
+    skips (PBG-CI-002).
+  register_computed_state: >
+    `pbg required-tests verify --register required-tests.yaml` on the base extraction and on the
+    closure: both exit 2, and the full outputs are IDENTICAL after normalising the subject path —
+    ZERO differing lines. latest_admitted_run (null), MANDATORY NOT PASS (15), GATE: SHUT,
+    PID_ACCEPTANCE_SATISFIED: NOT DERIVED. A declaration edit that moved a computed status would
+    be a defect however true the new text was; none did.
+  eleven_plants: >
+    ALL ELEVEN APPLY against the closure — 11 apply, 0 fail. STILL CONTRAST: the seven
+    register-check plants each exit 1 planted against exit 0 clean; the three pytest plants
+    contrast 124->18 failed, 314->2 failed, 152->12 failed. CD-RT-012-LOCKFILE-DENYLIST's own
+    plant (ib-insync) still bites, now at CD-DEP-002.
+    NOT CONTRASTED BY ME: CD-RT-003-GRANT-MATRIX-LIVE, which needs a live store this environment
+    does not have — exit 3 in both arms. STATED AS A LIMIT OF MY MEASUREMENT, NOT AS A PASS.
+  exclusion_set_regression: >
+    All 84 variant patches in the corpus (79 prior + my 5) `git apply --check` CLEAN against the
+    closure — 84 apply, 0 fail, measured in a throwaway repository initialised from the extraction
+    so the check had a real index. NO REGRESSION.
+    LIMIT OF THIS CLAIM, STATED: I measured APPLY-CLEAN. I did NOT re-run the whole suite under
+    each of the 84. The Project Lead recorded the same limit at BL-...-0045 and it is unchanged.
+  variant_hygiene: >
+    `find variants \( -type f -perm /111 -o -type l \)` is EMPTY — nothing executable, no symlinks
+    (PBG-ASSURE-001). My five patches are mode 0664. Drivers live in manifest rows as fenced DATA.
+    14 rows and 14 patch files under variants/WO-2R2/, asserted by counting BOTH SIDES.
+  admission_state: 'latest_admitted_run READ IN THE FILE: `latest_admitted_run: null`. UNTOUCHED (CD-RULE-001, PO-set, non-relaxable).'
+  no_status_like_key: 'My added register lines grepped against the framework''s own STATUS_LIKE_KEYS set: ZERO hits.'
+  commit_identity_CD_RULE_002: >
+    ALL FIVE COMMITS verified with `git log --format='%an <%ae> | %cn <%ce>' 1eda316..HEAD`: every
+    one reads `CD-ENG-WO2R2-02 <cd-eng-wo2r2-02@seats.crash-detector.invalid>` as BOTH author AND
+    committer. MY OWN SEAT ID, not my predecessor's. Set as ENVIRONMENT VARIABLES on each commit
+    invocation — never `git config`, never `git -c` (CD-PL-F56). NO HUMAN IDENTITY ANYWHERE.
+  scope_audit: >
+    `git diff --name-only 1eda316..HEAD` names 15 paths, ALL inside writable_scope: contracts/ (2),
+    deploy/ (1), governance/engineering/build-log/ (1), required-tests.yaml, src/ (1), tests/ (1),
+    tools/register/ (1), variants/ (7). Grepped for pbg/, governance/assurance/,
+    governance/decisions/, governance/dispatch/, governance/rules/, governance/reconciliation/,
+    governance/engineering/ACTIVE_WORK.yaml, PID.md, BLUEPRINT.md, CLAUDE.md, docs/, db/ and
+    schemas/: ZERO HITS. NO PROTECTED PATH TOUCHED.
+  dependency_surface_unchanged_in_the_lane: >
+    requirements.txt and requirements.lock are BYTE-IDENTICAL to their base. Not one package was
+    added to the lane to prove a point; every variant runs on a throwaway extraction. A dependency
+    added to the lane would be a supply-chain change and the dispatch prohibits it.
+
+# ================================================================================================ #
+# 7. WHAT IS NOT CLOSED, SAID PLAINLY
+# ================================================================================================ #
+not_closed:
+  CD_AC_012: >
+    IMPROVED AND NOT GRADED. THE UNDECLARED-DEPENDENCY CLASS IS CLOSED — the auditor's route is
+    refused, the refusal survives a rename, and a counterfactual identifies the carrying line.
+    THE CRITERION IS NOT MINE TO GRADE (PBG-SOD-001, non-waivable). CLOSED IN PART is the honest
+    description: declared limit boundary 1 is OPEN BY CONSTRUCTION — register a plausible-sounding
+    distribution and the check exits 0 — and it is written down with an executable example rather
+    than left for an auditor to find.
+  the_registered_but_unrecognisable_distribution: 'OPEN, DECLARED, boundary 1. NOT PROVED TO BE CARRIED ANYWHERE. No guard built, deliberately: an oracle for "can this package reach a broker" is undecidable offline and a network-resolving check is prohibited (CD-PL-F48).'
+  the_tzinfo_residue: 'OPEN, DECLARED, BOUNDED, CONFIRMED — CD-ENG-WO2R2-F04 / boundary 5. UNCHANGED BY THIS INCREMENT; Item B narrowed the CLAIM about it, not the route. It travels upward under CD-D-081.'
+  CD_AC_005: 'UNCHANGED IN SUBSTANCE by this increment. Items A and B corrected its DECLARATION only. Grading it is the third Assurance seat''s.'
+  CD_AC_002: 'UNTOUCHED. It reaches WO-2''s gate on PO-DECISIONS-0003''s SCOPING and not on any guard, and nothing here claims otherwise.'
+  ASR2_012_C: >
+    OUT OF SCOPE AND NOT WORKED ON (CD-D-015). RUN EITHER WAY as the dispatch requires:
+    CD-RT-012-NO-EXECUTION-INTERFACE exits 0 with the variant present BOTH without my Item C and
+    with it. UNAFFECTED BY MY STRUCTURE. I changed nothing there.
+  CD_ENG_WO2R2_F02: 'The lane''s BLOCKING boot. STILL OPEN. Protected scope. Reported, not repaired.'
+
+not_done_deliberately:
+- 'I DID NOT GROW THE DENYLIST BY HAND. Not one name added. A longer list is the instance game with more instances.'
+- 'I DID NOT ADD ANY PACKAGE TO requirements.txt OR requirements.lock.'
+- 'I DID NOT REGISTER AN INGREDIENT SOURCE. CD-D-005 is owed by the Product Owner. A Python distribution is not an ingredient, and the registry says so in its own header.'
+- 'I DID NOT INVENT A PRODUCT QUANTITY (CD-RULE-003), including any clock-skew tolerance.'
+- 'I DID NOT ADD A NETWORK DEPENDENCY. The check opens no socket; resolution is prohibited (CD-PL-F48).'
+- 'I DID NOT WEAKEN, DELETE OR DISABLE ANY CHECK, TEST, ASSERTION, GUARD OR PLANT. When a sibling guard caught MY code, I changed MY code.'
+- 'I DID NOT CERTIFY, ASSURE OR ACCEPT ANY OF THIS (PBG-SOD-001, non-waivable). It is IMPLEMENTATION EVIDENCE and does not become assurance by being thorough — the last two seats'' evidence was thorough and the gate failed twice.'
+
+next_actor: PROJECT_LEAD_SEAT_01
+next_safe_action: >
+  RECONCILE INCREMENT 3 at lane head 547b0ac on branch wo-2-skeleton in /srv/crash-detector-wo2.
+  Run CD-D-007's suspicion procedure on every worktree BEFORE believing this record, including
+  this one — at the previous boundary it found four commits and a complete Build Log entry that no
+  committed record knew existed.
+  RE-RUN MY LOAD-BEARING CLAIMS ON YOUR OWN PRISTINE EXTRACTIONS WITH YOUR OWN DRIVERS, and TAKE
+  THE COUNTERFACTUAL ARM (CD-D-079). The four claims most worth attacking, in order:
+    (1) that ASR2-012-B is refused by LAYER 1 and not by something else — counterfactual (a);
+    (2) that the rename test means what I say it means — the three unrelated names;
+    (3) CD-ENG-WO2R2-02-F01, my own finding that layer 2 over the registry closes no route alone;
+    (4) CD-ENG-WO2R2-02-F02, my retention of `scope: CLASS` where the framework offers no third
+        value — a judgement I made and should not be the one to settle.
+  Audit `git log --format='%an <%ae> | %cn <%ce>' 1eda316..547b0ac` for CD-RULE-002 identity, and
+  check node-id conservation against the 1386 at 1eda316.
+  THEN, and only after reconciliation, THE THIRD FRESH ASSURANCE SEAT — neither CD-ASR-WO2-01 nor
+  CD-ASR-WO2-02 — with the exclusion set extended by variants/WO-2R2/CD-AC-012/ (V11..V15),
+  PO-DECISIONS-0003 in its brief carrying CD-D-076's invitation and its stated consequence, and the
+  five additions recorded at BL-...-0045.
+  DO NOT ADMIT ANYTHING (CD-RULE-001). RECONCILIATION IS NOT ACCEPTANCE (PBG-SOD-001, PBG-AUTH-006).
+
+boot_verdict_of_record:
+  rule: 'CD-RULE-007 / CD-RULE-008 apply to a commit that CHANGES governance/engineering/ACTIVE_WORK.yaml.'
+  applicability: >
+    NOT TRIGGERED BY THIS BOUNDARY. This seat did not touch ACTIVE_WORK.yaml — it is
+    Project-Lead-only and in my protected scope — so no continuity record was written by me and no
+    CD-RULE-007 read-back is owed. Stated explicitly rather than left silent, because an entry that
+    changes a continuity record and records no boot verdict is a breach visible on its face, and a
+    reader should be able to see at once that this entry changed none.
+  lane_boot_observed_for_disclosure: >
+    BLOCKING — CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED. PRE-EXISTING, NOT MINE,
+    CD-ENG-WO2R2-F02, raised twice before and confirmed still open at BL-...-0045. NOT the verdict
+    of any commit of mine, and NOT repaired by me.
