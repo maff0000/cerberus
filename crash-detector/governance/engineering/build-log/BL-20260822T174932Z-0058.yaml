@@ -1,0 +1,120 @@
+# ================================================================================================ #
+# CORRECTION TO BL-20260822T174206Z-0057, BY SUPERSESSION AND NEVER BY EDIT (PBG-CONT-003,
+# NON-WAIVABLE). IT CORRECTS A COUNT AND NOTHING ELSE. NO RULING MOVES, NO SHA MOVES, NO FINDING
+# CHANGES SEVERITY, AND THE INCREMENT-4 ACCEPTANCE AT CD-D-123 IS UNTOUCHED.
+#
+# THE ERROR IS THE PROJECT LEAD'S OWN, IT IS IN THE FAMILY THAT ENTRY ITSELF RULED ON, AND IT WAS
+# FOUND BY RE-READING THE ENTRY AFTER COMMITTING IT.
+# ================================================================================================ #
+
+entry_id: BL-20260822T174932Z-0058
+timestamp_utc: "2026-08-22T17:49:32Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 44cd843ecf6d1c3c883a48ea3ac153332997d4ed   # the CD-RULE-007 follow-up that closed the increment-4 reconciliation boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36).
+parent_entry_id: BL-20260822T174206Z-0057
+schema_version: 1
+supersedes_in_part: BL-20260822T174206Z-0057
+
+action_summary: >
+  BL-20260822T174206Z-0057's `action_summary` closes with "**THE PROJECT LEAD RAISES TWO OF ITS
+  OWN**" and then names CD-PL-F84 and CD-PL-F85. **IT RAISED THREE.** CD-PL-F86 — the Project Lead's
+  own method defect, that its reconciliation sweep was defined by a LIST while the thing that broke
+  was outside the list — is set out in full in that entry's
+  `findings_raised_by_the_project_lead_at_this_boundary`, is carried in ACTIVE_WORK.yaml's
+  `next_safe_action`, and is described in the entry's own header block. It is missing from the
+  summary's COUNT and from the summary's enumeration, and nowhere else.
+
+  **THE CORRECTION OF RECORD: THE PROJECT LEAD RAISED THREE FINDINGS AT THE INCREMENT-4 BOUNDARY —
+  CD-PL-F84, CD-PL-F85 AND CD-PL-F86.** Everything else in BL-20260822T174206Z-0057 stands exactly
+  as written.
+
+why_this_is_a_new_entry_and_not_an_edit: >
+  Corrections supersede, never edit (PBG-CONT-003, non-waivable). CD-RULE-007 permits a follow-up
+  commit to write a PENDING SHA field AND NOTHING ELSE, and this is not that. Editing the landed
+  entry would also destroy the only evidence that the miscount happened — and the entry being
+  corrected is the one that raised CD-PL-F85 for a Build Log claim that could not be corrected in
+  place, so quietly editing this one would be the sharpest possible contradiction of its own finding.
+
+why_it_matters_more_than_a_count: >
+  **IT IS THE CD-PL-F82 FAMILY, COMMITTED BY THE PROJECT LEAD, IN THE ENTRY THAT RULED ON THAT
+  FAMILY.** A figure stated in a summary that recomputes to something else when the underlying
+  enumeration is read. F82 was 24-against-27; this is two-against-three. The mechanism is identical
+  in both: a COUNT written by hand beside a LIST maintained separately, with nothing that recomputes
+  one from the other. The Project Lead ruled at CD-D-120 that such a figure must be RE-TAKEN rather
+  than transcribed, and then wrote one by hand in the same document.
+  IT UNDERSELLS AND WEAKENS NOTHING — three findings were raised, all three are fully recorded, and
+  the one omitted from the count is the one MOST damaging to this seat. The direction of the error
+  is worth stating plainly: **the summary made this seat look better than the record does.** That is
+  the direction this project treats as most dangerous, which is why it is corrected within the hour
+  rather than at the next boundary.
+
+decisions_ruled_here:
+- id: CD-D-128
+  decision: >
+    BL-20260822T174206Z-0057 IS CORRECTED IN ITS `action_summary` COUNT ONLY, BY THIS ENTRY. The
+    Project Lead raised THREE findings at that boundary: CD-PL-F84, CD-PL-F85 and CD-PL-F86. No
+    ruling, no SHA, no severity and no acceptance is altered; CD-D-123 through CD-D-127 stand exactly
+    as ruled, and CD-D-127 remains OPEN and put to the Product Authority.
+  consequence: >
+    CD-PL-F87 is raised below. It is the same defect class as CD-PL-F82, CD-PL-F84 and CD-PL-F85 —
+    **a hand-written figure or declaration that is not recomputed from the thing it describes** — and
+    it joins CD-D-111's family, which is now SEVEN instances across three parties and is visibly not
+    a set of accidents.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F87
+  severity: LOW
+  raised_against: 'THIS SEAT, in the entry in which it ruled on this exact defect class.'
+  the_finding: >
+    A COUNT WRITTEN BY HAND BESIDE A LIST MAINTAINED SEPARATELY, WITH NOTHING THAT RECOMPUTES ONE
+    FROM THE OTHER. `action_summary` said "TWO"; `findings_raised_by_the_project_lead_at_this_boundary`
+    holds three. Nothing could have caught it, for the same structural reason nothing caught
+    CD-PL-F82: there is no assertion anywhere on this project that a narrative count matches the
+    enumeration it narrates, and Build Log entries are prose that no instrument reads.
+  the_pattern_now_visible: >
+    CD-PL-F82 (a measured subject count recomputing differently), CD-PL-F80/F83/F84 (a declared limit
+    naming fewer routes than it admits), CD-PL-F85 (an identity audit naming fewer commits than the
+    boundary holds), and now CD-PL-F87 (a summary naming fewer findings than the entry holds). **ALL
+    SEVEN ARE ONE DEFECT: A HUMAN-MAINTAINED SUMMARY OF A MACHINE-CHECKABLE FACT, WITH NO LINK
+    BETWEEN THEM.** They have been raised by three different parties — an Engineer seat, the Project
+    Lead, and the Product Owner against its own ruling at PO-DECISIONS-0008 ruling 2 — which is what
+    makes it a class rather than a habit of one writer.
+  remedy_proposed_not_taken: >
+    NOT A GUARD AND NOT AT THIS BOUNDARY (CD-D-080). The candidate remedy is mechanical and small —
+    an instrument that reads each Build Log entry and asserts that any count stated in prose matches
+    the list it names — and it belongs with CD-PL-F86's proposed property-based instrument sweep,
+    because both are the same idea: **STOP MAINTAINING BY HAND WHAT CAN BE RECOMPUTED.** Building
+    either here would be the Project Lead inventing itself an instrument mid-reconciliation, which is
+    how scope creeps. RECORDED AS OWED. It should be read alongside CD-PL-F86 and CD-D-127.
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- 'NO RE-MEASUREMENT WAS TAKEN AT THIS BOUNDARY. Nothing was run, no extraction was made, no plant
+  was applied. Every measurement of record remains BL-20260822T174206Z-0057''s, unaltered.'
+- 'THE OTHER ENTRIES ON THIS PROJECT WERE NOT AUDITED FOR THE SAME DEFECT. CD-PL-F87 is raised on ONE
+  instance found by re-reading ONE entry. Whether earlier entries carry hand-written counts that
+  disagree with their own enumerations is NOT ESTABLISHED BY THIS RECORD, and given the pattern the
+  honest expectation is that some do.'
+
+next_safe_action: >
+  **UNCHANGED FROM BL-20260822T174206Z-0057, WHICH REMAINS THE OPERATIVE NEXT ACTION IN FULL.** In
+  short: STOP; **PUT CD-D-127 TO THE PRODUCT AUTHORITY** (where the eleven Class-2 sweep dispositions
+  belong in the path to the gate — the Project Lead recommends (C) and has written the argument
+  against its own recommendation into the question); **THEN INCREMENT 5 — THE CONSTRUCTORS, THE CLASS
+  AND NOT THE LIST (CD-D-119)**, which is unaffected by all three answers; **THEN, AND ONLY THEN, THE
+  FOURTH FRESH ASSURANCE SEAT** with its seven named first targets.
+  ADD CD-PL-F87 TO THE OWED SET ALONGSIDE CD-PL-F84, CD-PL-F85 AND CD-PL-F86. All four are
+  documentary, all four are a REWORDING OR A RECOMPUTATION AND NOT A GUARD, and none is owed at this
+  boundary.
+  DO NOT ADMIT ANYTHING (CD-RULE-001). DO NOT MERGE OR PROMOTE THE LANE OR f30e63c. DO NOT GRADE
+  CD-AC-002 OR CD-AC-005.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)

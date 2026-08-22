@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T17:42:06Z'
+updated_utc: '2026-08-22T17:49:32Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -109,6 +109,14 @@ current_block: >
   boundary, because the entry's own commit and its CD-RULE-007 follow-up post-date it. Present in
   THIS seat's entries too. The correction of record: **SIX commits, all six carrying the seat
   identity.**
+  *** **AND THEN THE PROJECT LEAD COMMITTED THE SAME DEFECT ITSELF, WITHIN THE HOUR, IN THE ENTRY
+  THAT RULED ON IT.** BL-20260822T174206Z-0057's summary said the Project Lead raised **TWO**
+  findings. **IT RAISED THREE — CD-PL-F84, CD-PL-F85 AND CD-PL-F86.** Corrected BY SUPERSESSION at
+  BL-20260822T174932Z-0058 (CD-D-128) and never by editing the landed entry, which would have
+  contradicted CD-PL-F85 in the act of hiding it. **CD-PL-F87** raises the pattern: SEVEN instances
+  now, across THREE parties, of ONE defect — **A HUMAN-MAINTAINED SUMMARY OF A MACHINE-CHECKABLE
+  FACT, WITH NO LINK BETWEEN THEM.** The error underplayed this seat's own worst finding, which is
+  the direction this project treats as most dangerous. ***
   ---- THE PRIOR BLOCK, RETAINED ----
   *** PO-DECISIONS-0008 IS RECONCILED INTO THIS RECORD. CD-D-114 AND CD-D-115 ARE BOTH RULED AND
   CLOSED, AND INCREMENT 4 IS DISPATCHED AT LANE 04cdd34. ***
@@ -1460,7 +1468,7 @@ mutation_lane: 'branch wo-2r3, worktree /srv/crash-detector-wo2r3, based at f30e
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: e7ad814369b0d175f18b086e495db057dcfc6588  # the CD-RULE-007 follow-up that closed the PO-DECISIONS-0008 RECONCILIATION boundary (CD-D-118..122, BL-20260822T165031Z-0056). It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). PREVIOUSLY f8c20e8a4a7e0eb0445d405704ed41108ea23c7f — the Product Owner's own commit carrying PO-DECISIONS-0008; superseded as the checkpoint, NOT superseded as a ruling.
+last_completed_checkpoint_sha: 44cd843ecf6d1c3c883a48ea3ac153332997d4ed  # the CD-RULE-007 follow-up that closed the WO-2R3 INCREMENT 4 RECONCILIATION boundary (CD-D-123..127, BL-20260822T174206Z-0057). RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). PREVIOUSLY e7ad814369b0d175f18b086e495db057dcfc6588 — the PO-DECISIONS-0008 reconciliation follow-up; superseded as the checkpoint, NOT superseded as a ruling.
   # SUPERSEDES b942c4e8b9035f7485fa30cdc1c8bbafda0603c5  # PO-PRODUCT-0001, the LAST COMMIT ON MAIN BEFORE THE PRIOR BOUNDARY and the second of the two PRODUCT AUTHORITY commits this boundary reconciled (the other is 6db42eb, PO-DECISIONS-0006). Both authored `Matt Scott <rogue@cerberus.local>` and by no seat. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES 47c355116f7d9626aabe6eae103de32d0577be1f — the CD-RULE-007 follow-up that closed the WO-2R3 DISPATCH boundary and resolved continuity_record_commit to cd86c0a.
   # SUPERSEDES 9d27140ea2fc9e802fa8b841029c682081318438 — The CD-RULE-007 follow-up that closed the BP-AMENDMENT-0001-IN-FORCE boundary and resolved continuity_record_commit to ba890a2. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
@@ -1535,7 +1543,7 @@ lane_increment_sha: 4ac159ea0bb47fb859fe005bd966222d66f0eeff   # WO-2R3 INCREMEN
   # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: 3411138819d5b93e880902539271e13a165a7b2f  # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse HEAD` and `git cat-file -t`, never transcribed (CD-PL-F36). It is the commit carrying the WO-2R3 INCREMENT 4 RECONCILIATION, CD-D-123..127, CD-PL-F84/F85/F86 and BL-20260822T174206Z-0057. It must NOT equal last_completed_checkpoint_sha (e7ad814) — that equality is the CD-PL-F64 defect. PREVIOUSLY 87e54577d00d73971c23462e935ee6d3f1c67faa — the PO-DECISIONS-0008 reconciliation carrying CD-D-118..122 and BL-20260822T165031Z-0056.
+continuity_record_commit: PENDING   # RESET TO PENDING AT THIS BOUNDARY and resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse HEAD` and `git cat-file -t`, never transcribed (CD-PL-F36). It will be the commit carrying BL-20260822T174932Z-0058 — the CORRECTION BY SUPERSESSION to BL-20260822T174206Z-0057's finding count, CD-D-128 and CD-PL-F87. PREVIOUSLY 3411138819d5b93e880902539271e13a165a7b2f — the WO-2R3 INCREMENT 4 RECONCILIATION carrying CD-D-123..127, CD-PL-F84/F85/F86 and BL-20260822T174206Z-0057.
   # PREVIOUSLY cd3a461cc5b65dc5fa0ea2a8f2b4da7beea95481  # RESOLVED by that follow-up (5be4207) under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. It is the commit that carries the PO-DECISIONS-0007 RECONCILIATION, CD-D-109/110/111/112, and BL-20260822T154022Z-0054. Resolved with `git rev-parse HEAD` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (9a81787) — that equality is the CD-PL-F64 defect. THE CD-RULE-008 VERDICT OF RECORD: a pristine clone (`rm -rf /tmp/cd-cont-cd3a461 && git clone -q /srv/crash-detector /tmp/cd-cont-cd3a461 && git checkout -q -B main cd3a461`, branch named per CD-PL-F72; a HARDLINKED clone, which is stated rather than implied) boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha cd3a461cc5b65dc5fa0ea2a8f2b4da7beea95481, branch main.
   # PREVIOUSLY 0435750f84a91852accfb61b6bdf1da9dcab7268  # RESOLVED by that follow-up (4f64967) under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. It is the commit that carries the WO-2R3 INCREMENT 2 RECONCILIATION and BL-20260822T152654Z-0053. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (25b0c0f) — that equality is the CD-PL-F64 defect. A pristine clone at 0435750 CHECKED OUT ON BRANCH main with `git checkout -B main` boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO, blocking_failures EMPTY, current_phase BUILD — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
   # SUPERSEDED NOTE, RETAINED: SET TO PENDING DELIBERATELY AT WRITE TIME (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS
@@ -2995,5 +3003,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T174206Z-0057
+last_build_log_entry: BL-20260822T174932Z-0058
 status: ACTIVE
