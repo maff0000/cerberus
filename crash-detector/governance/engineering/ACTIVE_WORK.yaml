@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T18:00:00Z'
+updated_utc: '2026-08-22T18:15:58Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -2591,7 +2591,15 @@ required_evidence:
 
 next_safe_action: >
   **CD-D-127 IS ANSWERED AND CLOSED. NOTHING IS OWED UPWARD AT THIS BOUNDARY.**
-  **DISPATCH INCREMENT 5 — THE CONSTRUCTORS — AT LANE 4ac159e**, on PO-DECISIONS-0007 ruling 1's
+  *** **INCREMENT 5 IS DISPATCHED. `CD-DISPATCH-WO2R3-INC5-ENGINEER` IS ISSUED (CD-D-133,
+  BL-20260822T181558Z-0101) at lane 4ac159e to CD-ENG-WO2R3-01, with the baseline PL-MEASURED at
+  issue time and every command recorded: 1519 node ids collected; the doors instrument EXIT 0, PASS,
+  54 assertions, 27/27 subjects; DECLARED LIMIT 1 still printed verbatim; V17 APPLIES AND THE
+  INSTRUMENT STILL EXITS 0 WITH IT APPLIED — the gap, re-measured at this SHA rather than read from
+  the manifest; the Class-2 sweep EXIT 1, 514 sites, 11 violations, by DECLARED STATE and NOT the
+  seat's. THE NEXT ACTION IS TO RUN IT.** ***
+  ---- WHAT THE DISPATCH SAYS, RETAINED ----
+  **INCREMENT 5 — THE CONSTRUCTORS — AT LANE 4ac159e**, on PO-DECISIONS-0007 ruling 1's
   bounds AS RE-BASED BY
   PO-DECISIONS-0008 ruling 2 (CD-D-119): **THE CLASS, NOT THE LIST** — every public type in the
   frozen subject on a judgement path whose field establishment is BODY-BORNE, **ENUMERATED BY AN
@@ -3179,5 +3187,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T180643Z-0100   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T181558Z-0101   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
