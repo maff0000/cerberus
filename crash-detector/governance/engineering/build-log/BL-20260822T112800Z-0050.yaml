@@ -1,0 +1,205 @@
+# ================================================================================================ #
+# WO-2R3 ENGINEER DISPATCH ISSUED — THE SECOND HALF OF PO-DECISIONS-0005 RULING 6.
+#
+# A FRESH SEAT, CD-ENG-WO2R3-01, ON A NEW LANE, AGAINST AN AMENDMENT THAT IS IN FORCE.
+# FOUR COMMITTED INCREMENTS, BECAUSE THE PRODUCT OWNER PRICED A6'S ENLARGEMENT AS "PAID WITH THE
+# PROJECT LEAD'S INCREMENT DISCIPLINE, NOT WITH A SCOPE CUT" — AND THAT IS A DELIVERY INSTRUCTION.
+#
+# NO APPLICATION CODE WRITTEN BY THIS SEAT. NOTHING ADMITTED, ACCEPTED OR DISPOSED.
+# ================================================================================================ #
+
+entry_id: BL-20260822T112800Z-0050
+timestamp_utc: "2026-08-22T11:28:00Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 9d27140ea2fc9e802fa8b841029c682081318438
+parent_entry_id: BL-20260822T111125Z-0049
+schema_version: 1
+
+action_summary: >
+  THE WO-2R3 ENGINEER DISPATCH IS ISSUED. governance/dispatch/CD-DISPATCH-WO2R3-ENGINEER.yaml moves
+  straight to ISSUED against execution base f30e63c on a NEW branch `wo-2r3` in a NEW worktree
+  /srv/crash-detector-wo2r3, to a GENUINELY FRESH seat CD-ENG-WO2R3-01 — not CD-ENG-WO2-01, not
+  CD-ENG-WO2R-01, not CD-ENG-WO2R2-01 or -02, and no Assurance seat (PBG-SOD-001, non-waivable).
+  THE SCOPE IS §H AS AMENDED BY RULING 4 AND THE PROJECT LEAD NEITHER WIDENED NOR NARROWED IT: §C
+  (models are data) and §D (A2-A6 INCLUDING THE COLLECTOR BOUNDARY), §F.1's EIGHT plants, and the
+  static check that enumerates the judgement paths. A7 and Class C are OUT; ASR3-F08 is OUT and
+  separately gate-blocking, with its work order timed by the Product Owner to AFTER this seat is
+  running.
+  FOUR COMMITTED INCREMENTS — §C; §D.1/§D.2 with the static check; §D.3's collector boundary;
+  reconciliation-and-return which writes no logic. Seven runtime terminations on this project are the
+  reason, and the Product Owner's own pricing of A6 is the authority for it.
+  THE DISPATCH DECLARES WHAT THIS SEAT HAS NOT VERIFIED, in its own section, so no reader takes
+  silence for confidence.
+
+# ================================================================================================ #
+# RECONCILIATION AT THIS BOUNDARY
+# ================================================================================================ #
+suspicion_procedure:
+  run_again_because_a_new_lane_was_created: >
+    CD-D-007's procedure, re-run before creating the branch and after. FIVE worktrees now.
+  observed_before:
+  - '/srv/crash-detector          main            9d27140  (2 commits by PROJECT_LEAD_SEAT_01 at this session''s first boundary)'
+  - '/srv/crash-detector-wo2      wo-2-skeleton   f30e63c  porcelain ZERO — FROZEN, and deliberately so'
+  - '/srv/crash-detector-wo2-audit / -wo2r-audit / -wo2r2-audit   detached, porcelain ZERO, unchanged'
+  observed_after:
+  - '/srv/crash-detector-wo2r3    wo-2r3          f30e63c  porcelain ZERO, branch confirmed with `git rev-parse --abbrev-ref HEAD`'
+  command: 'git worktree add -b wo-2r3 /srv/crash-detector-wo2r3 f30e63c'
+  verdict: 'RECORD AND REALITY AGREE. No uncommitted work anywhere, nothing unaccounted for.'
+
+measured_by_this_seat_not_quoted:
+  the_node_id_floor: >
+    1400. MEASURED, not taken from the record, on this seat's own pristine extraction:
+    `rm -rf /tmp/cd-f30e63c && mkdir -p /tmp/cd-f30e63c && git archive f30e63c | tar -x -C /tmp/cd-f30e63c`
+    then `PYTHONPATH=/tmp/cd-f30e63c/src python3 -B -m pytest tests --collect-only -q`, observed
+    output "1400 tests collected in 1.01s". The command is recorded beside the number (CD-RULE-009,
+    which this boundary transcribed one commit ago and which therefore binds this very entry).
+    IT AGREES WITH THE RECORD's figure from BL-...-0046 — agreement measured, not assumed.
+  what_was_deliberately_NOT_measured_and_is_declared_in_the_dispatch: >
+    THE SUITE WAS COLLECTED, NOT RUN. Whether all 1400 PASS at f30e63c on this host today is NOT
+    established here, and the dispatch says so in terms and tells the seat to establish its own clean
+    arm before changing anything. The eleven plants were NOT re-applied at issue time either. Writing
+    the unverified list down is the practice that paid for itself at the third gate, when four of six
+    declared-unverified items came back answered.
+
+# ================================================================================================ #
+# THE ONE CONSTRUCTION DECISION THIS BOUNDARY HAD TO MAKE, AND WHY IT IS THE PROJECT LEAD'S
+# ================================================================================================ #
+the_lane_decision:
+  the_tension_stated_plainly: >
+    PO-DECISIONS-0004 ruling 4 says f30e63c is "an EVIDENCE LANE, never a baseline. NOTHING BUILT ON
+    IT." The same ruling's next sentence says "the closures survive into the re-architecture". The
+    amendment's §I, which the Product Owner read and accepted, says the closures in dials/,
+    own_terms.py, staleness.py, source_registry.py and publication/ "CARRY FORWARD SUBSTANTIALLY
+    UNCHANGED". main carries NO application code at all — every line of WO-2 lives on wo-2-skeleton.
+    So the code lineage cannot avoid f30e63c without discarding the entire WO-2 skeleton, which is
+    the opposite of what the ruling says.
+  the_reading_taken: >
+    "NEVER A BASELINE" IS ABOUT ACCEPTANCE, NOT ABOUT THE GIT GRAPH. Nothing at f30e63c is inherited
+    as VERIFIED: no criterion carries credit, no prior PASS, no prior declared limit, no prior
+    structural invariant and no prior refusal is evidence about the new work. It is not merged, not
+    promoted, and nothing proceeds as though WO-2 were done. That is what the ruling protects against
+    — WO-3 building on an unassured tree — and it is fully honoured.
+  what_was_done_CD_D_094: >
+    A NEW BRANCH `wo-2r3` in a NEW worktree /srv/crash-detector-wo2r3, branched from f30e63c.
+    wo-2-skeleton is FROZEN at f30e63c because that SHA is the subject of three audit worktrees, 39
+    transported auditor artefacts and every finding in governance/assurance/WO-2R2/; moving the branch
+    that names it would make a load-bearing pointer ambiguous. The separate branch also makes the git
+    graph say what the record says: a re-architecture that INHERITS CODE and INHERITS NO VERDICT.
+  why_this_is_construction_and_not_a_product_question: >
+    The Product Owner ruled the SUBSTANCE twice — the closures survive (0004 ruling 4) and WO-2R3 is
+    dispatched (0005 ruling 6) — and branch-and-worktree layout is PBG-GIT-001/003 construction, the
+    Project Lead's under PBG-BP-001, exactly as it was for the three dispatches before this one.
+    IT IS RECORDED AS A DECISION RATHER THAN DONE SILENTLY because it is the kind of choice that
+    looks obvious in hindsight and contentious in retrospect, and because the ruling's own words can
+    be read two ways. IF THE PRODUCT OWNER READS "NOTHING BUILT ON IT" MORE STRICTLY THAN THIS, THE
+    LANE IS CHEAP TO REBUILD AND THE DISPATCH IS UNCHANGED BY IT — the Project Lead would rather be
+    corrected here than have the question surface at the fourth gate.
+
+# ================================================================================================ #
+# WHAT THE DISPATCH CARRIES THAT ITS PREDECESSORS DID NOT
+# ================================================================================================ #
+what_is_new_in_this_brief:
+  the_deleted_subject_rule: >
+    §C DELETES ContributionModel and CONTRIBUTION_MODELS, so "zero node ids lost" cannot mean "keep
+    testing a type that no longer exists". Every prior dispatch could say LOSING A TEST IS PROHIBITED
+    without qualification; this one cannot, and rather than leave the seat to discover the conflict
+    mid-increment, the exception is STATED IN THE DISPATCH: a test whose SUBJECT is deleted is
+    REPLACED, NOT DROPPED, and the replacement asserts THE SAME PROPOSITION against the new structure,
+    with old id, new id and reason named in the commit. A test with no successor is escalated, not
+    decided silently. The node-id report becomes a RECONCILIATION (lost/replaced/added), because a
+    bare number is not a conservation claim.
+  the_lane_reserved_sequence_block: >
+    Lane Build Log entries take 0060 up; main continues from 0050. CD-D-036 was raised when a lane
+    entry and a main entry collided on sequence 0022 because a seat in a lane worktree can only see
+    the branch-point copy of the build-log directory. Stated up front this time.
+  the_identity_check_with_its_own_worked_example: >
+    CD-PL-F79 — raised ONE COMMIT AGO against the Project Lead's own predecessor, for skipping exactly
+    the `git log -1` check CD-RULE-002 requires — is quoted INTO the dispatch's commit_identity
+    section. A rule with a fresh worked failure attached to it is read differently from a rule that
+    arrives as a list item.
+  the_auditor_first_targets_told_to_the_engineer_in_advance: >
+    The Product Owner named the fourth Assurance seat's first two targets in its rulings: P7 (ruling
+    1) and CD-BP-003, the adapter boundary (ruling 4). THE ENGINEER IS TOLD BOTH, DELIBERATELY. It
+    knows where the auditor will look before it looks. The dispatch says the obvious thing out loud —
+    "build accordingly, and do not build a façade in front of either" — because an Engineer who knows
+    the target and games it produces exactly the false green this project has caught three times.
+  what_the_project_lead_has_NOT_verified: >
+    A named section, as at the third gate: the 1400 is collected not run; the eleven plants were not
+    re-applied; §C's blast radius outside writable_scope is not proved; and THE `admits` MECHANISM IS
+    SPECIFIED BUT NOT PROTOTYPED — if deriving establishment from the signature conflicts with
+    keyword-only arguments, *args, defaults or the frozen dataclass constructors, the seat is told to
+    REPORT THE CONFLICT rather than quietly weaken the rule to "annotate what you can".
+
+# ================================================================================================ #
+# WHAT THIS BOUNDARY DELIBERATELY DID NOT DO
+# ================================================================================================ #
+not_done_deliberately:
+- 'NO APPLICATION CODE. The Project Lead does not write the fix (PBG-AUTH-006, CD-D-038, CD-D-045 —
+   not relaxed because a design looks obvious once it is written down).'
+- 'THE `admits` MECHANISM WAS NOT PROTOTYPED, even though prototyping it would have de-risked the
+   dispatch. A Project Lead that writes the mechanism has made itself the implementer of work it will
+   reconcile. The conflict risk is DECLARED to the seat instead.'
+- 'THE F08 PARSER WORK ORDER IS STILL NOT DRAFTED. Ruling 6 times it AFTER this seat is running.'
+- 'NOTHING ADMITTED (CD-RULE-001). NOTHING ACCEPTED. NOTHING DISPOSED. The WO-2 gate is unmoved.'
+- 'wo-2-skeleton WAS NOT ADVANCED, MERGED OR DELETED, and neither were the three audit worktrees.'
+- 'CD-PL-F77 (the lane''s stale WO-2-era dispatch records) NOT folded in. The new lane inherits the
+   same defect: /srv/crash-detector-wo2r3/governance/dispatch/ carries WO-2-era records and NOT the
+   record that authorises the work in it. IT IS OWED ITS OWN BOUNDED DECISION and is not repaired by
+   copying a second copy of this dispatch onto the lane, which would create two records that can
+   drift. The seat is told the authority lives on main at /srv/crash-detector.'
+
+artefacts_written:
+- 'governance/dispatch/CD-DISPATCH-WO2R3-ENGINEER.yaml — ISSUED'
+- 'governance/engineering/build-log/BL-20260822T112800Z-0050.yaml — this entry'
+- 'governance/engineering/ACTIVE_WORK.yaml — the continuity record for this boundary'
+- 'branch wo-2r3 and worktree /srv/crash-detector-wo2r3 (git objects, not files in this commit)'
+
+decisions_ruled_here:
+- id: CD-D-094
+  ruling: >
+    WO-2R3 EXECUTES ON A NEW BRANCH `wo-2r3` IN A NEW WORKTREE, BRANCHED FROM f30e63c, WITH
+    wo-2-skeleton FROZEN. "Never a baseline" is about acceptance, not about the git graph: nothing at
+    f30e63c is inherited as verified, no criterion carries credit forward, the lane is not merged and
+    not promoted. The code lineage is unavoidable because the Product Owner ruled that the closures
+    survive and main carries no application code at all.
+- id: CD-D-095
+  ruling: >
+    THE DELETED-SUBJECT EXCEPTION TO THE NODE-ID RULE. A test whose subject this amendment deletes is
+    REPLACED, NOT DROPPED, with the same proposition, and old id, new id and reason named in the
+    commit. A test with no successor is ESCALATED, not decided by the seat. The report becomes a
+    reconciliation — lost, replaced, added — because a bare count is not a conservation claim.
+- id: CD-D-096
+  ruling: >
+    THE LANE TAKES BUILD LOG SEQUENCES FROM 0060 UP; main continues from 0050. CD-D-036's collision
+    is prevented by declaration rather than repaired after the fact.
+
+next_safe_action: >
+  LAUNCH CD-ENG-WO2R3-01 AGAINST governance/dispatch/CD-DISPATCH-WO2R3-ENGINEER.yaml FOR INCREMENT 1,
+  IN THE FOREGROUND, at lane base f30e63c on branch wo-2r3 in /srv/crash-detector-wo2r3. It must read
+  BP-AMENDMENT-0001 §C AND §C.2.1 FIRST, and `combine_within_one_dial` in the lane SECOND — that
+  function is the precedent the entire amendment rests on, and a seat that has not read it will build
+  a stronger check on a callable instead of deleting the callable.
+  THEN RECONCILE IT — re-run its load-bearing claims on this seat's OWN pristine `git archive`
+  extractions with its own drivers; take the COUNTERFACTUAL ARM (CD-D-079); apply the RENAME TEST
+  (CD-PL-F74) to every refusal relied on; audit `git log --format='%an <%ae> | %cn <%ce>'` for
+  CD-RULE-002 identity on every commit (CD-PL-F79 is one commit old and is about exactly this);
+  reconcile node ids against the MEASURED 1400 in lost/replaced/added form; and record what was
+  OBSERVED, never what was reported. RECONCILIATION IS NOT ACCEPTANCE (PBG-SOD-001, PBG-AUTH-006).
+  THEN INCREMENTS 2, 3 AND 4, each reconciled the same way.
+  THEN, AND ONLY THEN, THE FOURTH FRESH ASSURANCE SEAT, whose first two targets the Product Owner has
+  already named: P7 and CD-BP-003.
+  ONCE THE ENGINEER IS RUNNING — and not before, because the timing is the Product Owner's — PROPOSE
+  THE ASR3-F08 PARSER WORK ORDER.
+  DO NOT ADMIT ANYTHING (CD-RULE-001, PO-set, non-relaxable). DO NOT MERGE OR PROMOTE ANY LANE.
+  STOP DELIBERATELY AT THE GATE, OR ON ANY QUESTION THAT BELONGS TO THE PRODUCT AUTHORITY.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)
