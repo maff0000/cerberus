@@ -1,0 +1,160 @@
+entry_id: BL-20260822T211304Z-0108
+timestamp_utc: '2026-08-22T21:13:04Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 99b7d188fab8872b0fe4415b5283574ebb966340
+parent_entry_id: BL-20260822T205345Z-0107
+schema_version: 1
+
+action_summary: >
+  *** **THE PRODUCT OWNER HAS DISPOSITIONED THE RED AND IT STANDS. THE REMEDIATION INCREMENT IS
+  ISSUED TO A FRESH ENGINEER IDENTITY, CD-ENG-WO2R3-02, AGAINST 531c95c.** ***
+  PO-DECISIONS-0011 (commit 99b7d18) answers all five Product Authority questions of entry 0107 in
+  order. **THE RED STANDS** and the Product Owner calls it *"the most trustworthy verdict this
+  programme has produced"*. The auditor's four-item increment is ACCEPTED IN SHAPE AND BOUND with
+  ONE acceptance-language addition — **CD-PL-F96 IS CLOSED BY NAME**, which means a Project Lead
+  self-raised finding became a condition of acceptance on the increment that answers it.
+  **CD-D-134'S CLASS IS NOT RE-RULED: THE INSTRUMENT IS DEFECTIVE AGAINST A SOUND RULING**, and the
+  Product Owner owned its own share of CD-PL-F94 on the record — *"I accepted contrast evidence
+  without asking which axis it varied"* — harvesting it as IMP-024's second instance with the
+  sentence **"a rule that binds seats binds their Product Owner."** THE THREE DECLARED LIMITS ARE
+  ORDERED REWRITTEN TO MEASURED REACH, EACH RE-MEASURED. T6 STANDS AND **BITTEN IS NOW THE STANDARD**
+  a plant is held to before its criterion is called guarded. A FIFTH FRESH ASSURANCE SEAT IS
+  AUTHORISED over the WHOLE of WO-2R3 at the post-increment SHA.
+  *** **THIS BOUNDARY ISSUES ONE BOUNDED ENGINEER DISPATCH AND NOTHING ELSE. IT DOES NOT IMPLEMENT,
+  DOES NOT GRADE, AND DOES NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS.** ***
+
+what_the_product_owner_ruled_and_what_this_seat_did_with_it:
+  the_five_answers_in_one_line_each: >
+    (1) THE RED STANDS; the four-item increment accepted in shape and bound, plus CD-PL-F96 closed by
+    name. (2) CD-D-134 NOT re-ruled — the instrument is fixed against it, and the PO owns its share
+    of F94. (3) the three declared limits REWRITTEN to measured reach, each re-measured. (4) the T6
+    correction STANDS; GRANT-MATRIX-LIVE is a BITTEN control and bitten is the new standard. (5) a
+    FIFTH FRESH ASSURANCE SEAT authorised over the whole, at the post-increment SHA.
+  what_this_seat_did_NOT_do_with_them: >
+    **IT DID NOT RE-ARGUE, SOFTEN, EXTEND OR RE-SEQUENCE ANY OF THE FIVE.** The sequence is ruling
+    6's and it is followed literally: increment -> fifth seat -> T8 lands -> the eleven dispositions
+    -> and only then the Product Owner's acceptance of WO-2R3. Nothing is merged, admitted or
+    promoted meanwhile; CD-AC-002 and CD-AC-005 remain AMBER and NOT CLOSED; the WO-2 gate is SHUT.
+  and_the_one_thing_it_added_which_is_its_own_and_is_declared_as_such: >
+    **THE SEAT IDENTITY. CD-D-144, BELOW.** Ruling 6 leaves it to the Project Lead within
+    PBG-SOD-001, and this seat took it rather than defaulting to it.
+
+decisions_taken_at_this_boundary:
+- id: CD-D-144
+  title: >
+    **THE REMEDIATION INCREMENT GOES TO A FRESH ENGINEER IDENTITY — CD-ENG-WO2R3-02, NOT
+    CD-ENG-WO2R3-01 — AND THE COST OF THAT IS STATED RATHER THAN GLOSSED.**
+  authority: >
+    The Project Lead's own, within the latitude PO-DECISIONS-0011 ruling 6 leaves. CD-D-131 PERMITS
+    one Engineer identity across the increments of one work order; it does not REQUIRE it, and it was
+    reasoned about increments of a BUILD. This is a REMEDIATION after a RED.
+  the_reasoning: >
+    **THE DEFECT CLASS OF THIS INCREMENT IS "THE AUTHOR BELIEVED THEIR OWN DECLARATION".** Three of
+    the seven items are declarations CD-ENG-WO2R3-01 wrote and measured wrongly or not at all; two
+    more are a blind spot in an AST walk it authored and whose header described the ground as
+    covered. **THE PARTY LEAST ABLE TO READ A SENTENCE AS A STRANGER IS THE PARTY WHO WROTE IT** —
+    which is exactly what the auditor said about the declared limit that steered four parties, and
+    what this seat accepted against itself at CD-PL-F94.
+  what_it_is_NOT: >
+    **NOT A JUDGEMENT ON CD-ENG-WO2R3-01, WHOSE RECORD IS FIVE INCREMENTS OF FINDINGS RAISED AGAINST
+    ITS OWN WORK** — including CD-ENG-WO2R3-F17, which it declared, printed at every run, refused to
+    close on its own authority, and routed up, and which came back ruled. The mechanism it built is a
+    genuine runtime closure and the auditor verified it independently. None of that is withdrawn.
+  the_cost_this_seat_is_knowingly_paying: >
+    A fresh seat does not know this surface and will spend real time on two ~700-line instruments and
+    two mechanism modules it has never read. **THE JUDGEMENT IS THAT THE PROOF BURDEN HERE IS
+    EXECUTION AND NOT AUTHORSHIP** — every item is checkable by running a contrast — so familiarity
+    buys speed while freshness buys a reader who has never been steered by these declarations.
+  how_it_could_be_wrong: >
+    If the increment stalls on unfamiliarity, or if the fresh seat re-derives a design decision
+    already settled and settles it worse, **THIS DECISION WAS THE WRONG TRADE AND THE RECORD SHOULD
+    SAY SO AT RECONCILIATION.** It is stated in advance so it can be graded, not defended.
+
+the_dispatch_issued:
+  record: governance/dispatch/CD-DISPATCH-WO2R3-INC6-ENGINEER.yaml
+  status: ISSUED
+  actor_id: CD-ENG-WO2R3-02
+  execution_base: '531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0, branch wo-2r3, /srv/crash-detector-wo2r3'
+  scope_shape: >
+    SEVEN ITEMS IN FIVE WORKSTREAMS, each independently checkable, each proved by a CONTRAST IN BOTH
+    ARMS or not proved: **(A)** ESCAPE 1, the stored payload is not the validated payload — snapshot
+    after validation, with the snapshot's DEPTH DECLARED as a limit. **(B)** both instruments to
+    `ast.walk`; the count of classes examined ASSERTED from two independent derivations; residual
+    reach limits DECLARED; **the CD-PL-F96 `--why` ledger language closed by name and proved on the
+    auditor's nested plant**; and the one-indentation plant made a PERMANENT PLANTED VIOLATION with
+    both arms, held to the BITTEN standard. **(C)** `ESTABLISHED_HERE` resolved through aliases and
+    the stale EIGHT/FIVE declaration corrected to the seat's own measurement. **(D)** `@establishes()`
+    on `Empty`, proved at RUNTIME and not statically. **(E)** the three declared limits REWRITTEN to
+    measured reach, each re-measured, in all three CD-RULE-004 places with the superseded wording
+    readable beside it.
+  what_the_dispatch_deliberately_narrows: >
+    **`src/` IS WRITABLE FOR THE FIRST TIME SINCE INC5C AND IS BOUNDED FILE BY FILE AND PURPOSE BY
+    PURPOSE** — four named files, each carrying the item it is open for. `admission.py` and
+    `establishment.py` are open for THEIR DECLARATIONS and not for their mechanisms. The sweep,
+    the eleven Class-2 dispositions, F-A2/F-A3/F-A4, F-C1-F-C4, ESCAPE 3, the sink/ledger/validator
+    table, the `adapter_id` double-read, CD-PL-F95 and T8/T9/T10 are ALL EXPLICITLY NOT THE
+    ENGINEER'S — they travel to the fifth seat OPEN AND DECLARED. **Pre-empting an auditor by
+    cleaning the surface it was dispatched to attack is how a gate stops meaning anything.**
+  the_prohibition_that_is_new_at_this_increment: >
+    **THIS IS THE FIRST INCREMENT WHERE THE ENGINEER MAKES INSTRUMENTS STRICTER**, and a stricter
+    instrument may light up existing code nobody has dispositioned. The dispatch states in terms:
+    **a new violation the widened walk finds in existing code is A FINDING AND A STOP — not a thing
+    to quietly exempt and not a thing to fix on your own authority.**
+
+the_baseline_this_seat_measured_before_issuing_CD_RULE_009:
+  rule: 'Every number in the dispatch came out of a command this seat ran at 531c95c. None is transcribed.'
+  head_and_porcelain: '531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0 · porcelain 0 lines.'
+  constructor: >
+    EXIT 0 · PASS — 97 assertions, 0 violations · 39 modules · **99 CLASSES EXAMINED** · POPULATION
+    33 (32 fielded, 1 vacuous) · RULE A 14 / B-only 10 / C-only 9 · ESTABLISHED_HERE FIELD exemptions
+    3 · the one ABSENT-establishment member is `observations.py:170 Empty [RULE C] fields=[]`.
+  doors: >
+    EXIT 0 · PASS — 54 assertions, 0 violations · 27 doors, 27 decorated · **ESTABLISHED_HERE uses:
+    16**, all sixteen printed with file, line and parameter.
+  and_that_last_number_is_item_C_in_one_line: >
+    **THE INSTRUMENT PRINTS 16. `admission.py:75-76` DECLARES EIGHT ACROSS FIVE. BOTH SHIP, AND THEY
+    HAVE DISAGREED IN PRINT AT EVERY RUN.** This seat measured the disagreement itself rather than
+    taking the auditor's 16/9 — the auditor's figure is now CONFIRMED BY A SECOND PARTY, and the
+    Engineer is still required to measure its own (CD-RULE-009).
+  suite: '**1538 passed in 13.06s** — RUN, not collected.'
+  class_2_sweep: '**EXIT 1 · FAIL — 534 sites, 15 violations.** FAILING BY RULING (CD-D-130). Not touched.'
+  what_this_baseline_does_NOT_establish: >
+    **THE ELEVEN PLANTS AND THE VARIANT CORPUS WERE NOT RE-APPLIED BY THIS SEAT AT ISSUE TIME.**
+    Their health at 531c95c is the AUDITOR'S measurement (11/11 apply, 10/11 contrast, 9/11 fail at
+    their named layer, two named exceptions), not this seat's. The dispatch says so and requires the
+    Engineer to establish its own clean arm.
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT IMPLEMENT ANYTHING** (PBG-AUTH-006 — the Project Lead writes neither the fix nor the
+  assurance; direction is not design).
+  **IT DID NOT DISPATCH THE FIFTH ASSURANCE SEAT.** Ruling 6 sequences it AFTER the increment banks,
+  and against the POST-INCREMENT SHA, which does not exist yet. Dispatching it now would name a
+  target that cannot be resolved.
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-130). T8 remains NOT ESTABLISHED and is
+  the fifth seat's to measure.
+  **IT DID NOT RE-GRADE, RE-OPEN OR ARGUE THE RED, ANY CRITERION GRADE, OR THE CD-D-134 CLASS.**
+  **IT DID NOT EDIT ANY AUDITOR DOCUMENT.** VERDICT.md, SUPPLEMENT-T2-GRADING.md and
+  ADDENDUM-T2-ADAPTER-BOUNDARY.md stand exactly as the auditor wrote them.
+
+next_safe_action: >
+  **THE ENGINEER SEAT IS DISPATCHED AT THIS BOUNDARY AND ITS RETURN IS RECONCILED BY MEASUREMENT,
+  NEVER BY READING ITS CLAIMS.** On banking: dispatch the FIFTH FRESH ASSURANCE SEAT over the WHOLE
+  of WO-2R3 at the post-increment SHA (PO-DECISIONS-0011 ruling 5) — regrading T2 and
+  CD-AC-002/CD-AC-005, additionally measuring T8, T9 and T10, and grading ESCAPE 3 and the
+  sink/ledger/validator table, with the CD-D-129 binding clauses carried VERBATIM. It is a fresh
+  seat, read-only, and never the Engineer (PBG-SOD-001, non-waivable).
+  **DO NOT** merge or promote the lane. **DO NOT** admit anything (CD-RULE-001, PO-set,
+  non-relaxable). **DO NOT** write the eleven Class-2 dispositions. **DO NOT** modify anything under
+  `pbg/`. **DO NOT** let the Engineer's return be treated as closing CD-AC-002 or CD-AC-005 — that
+  grading is the fifth Assurance seat's and the disposition is the Product Owner's (PBG-AUTH-003).
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). The CD-RULE-008 verdict is taken AT the boundary SHA BEFORE this field is written, so the verdict and the field name ONE commit.
