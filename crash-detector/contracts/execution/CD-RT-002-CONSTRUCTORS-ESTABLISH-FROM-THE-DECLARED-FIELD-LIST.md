@@ -481,3 +481,49 @@ standard on the day it landed: clean arm established first (`exit 0`, `PASS — 
 **SHA-verified byte-identical** at `48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382`.
 It escaped at `531c95c` **and** at `f495eef` — the post-item-A, post-item-D commit of this same
 increment. Both measured, neither assumed.
+
+
+---
+
+## THE "IN-PACKAGE EXECUTION" SENTENCE — REWRITTEN AT WO-2R3 INCREMENT 6
+
+**By product authority** (`PO-DECISIONS-0011` ruling 3). This is `establishment.py` DECLARED LIMIT
+3's closing sentence, which is **the same sentence that appears in `admission.py` — one sentence, two
+modules, load-bearing in both.** Superseded wording, quoted and not deleted (`PBG-CONT-003`,
+`CD-RULE-004`):
+
+> *"Every route requires the ability to execute code inside this package, which is the universal
+> limit every in-process guard on this project lives inside; saying that is strictly weaker than
+> 'cannot happen', and it is said rather than implied."*
+
+**IT IS WRONG IN BOTH DIRECTIONS AT ONCE**, and `CD-ENG-WO2R3-02` re-measured both rather than
+adopting the auditor's finding.
+
+**TOO NARROW — MEASURED AT ZERO.** `Agrees.__new__(Agrees)` then `__dict__.update(...)` executes **no
+package code at all**. `variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py`
+arm 1 counts every line executed under `src/crash_detector/` with `sys.settrace`:
+
+```
+LINES OF PACKAGE CODE EXECUTED BY THAT  : 0
+package files touched                   : []
+type(smuggled) is exactly Agrees        : True
+smuggled.as_of_utc                      : 'not a datetime'
+CONTROL — the same values through Agrees(...): REFUSED TypeError
+LINES OF PACKAGE CODE EXECUTED BY THE CONTROL: 36
+```
+
+**36 LINES THROUGH THE FRONT DOOR AND A REFUSAL; 0 LINES AROUND IT AND AN OBJECT.**
+
+**TOO WIDE** — the CD-BP-003 door **hands** in-package execution to any caller (arm 2:
+`reached module globals of : crash_detector.collectors.runner`, `could read runner.ensure_utc from
+there : True`), so it is not a bar anyone has to clear.
+
+**THE MEASURED REACH.** These routes are open to anything that can either run in this process at all,
+or be passed to the CD-BP-003 door. **"IN-PACKAGE EXECUTION" IS NEITHER NECESSARY NOR SCARCE, AND IT
+WAS OFFERED AS BOTH.** **NOT CLOSED, NOT CLAIMED, AND NOT PROVED TO BE CARRIED ANYWHERE** — that much
+of the old sentence stands, and it is the only part that did.
+
+**THIS CORRECTION DOES NOT CLOSE THE ROUTE.** That is **F-A4**, a design change nobody has ruled, and
+**explicitly not this increment's**. The asymmetry the auditor names is measured — arm 3: **2 of 33**
+governed types define `__setstate__` (`FreshnessEvidence`, `StalenessWindow`) — and **raised as
+`CD-ENG-WO2R3-02-F09`, not acted on.**

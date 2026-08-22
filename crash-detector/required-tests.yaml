@@ -1390,13 +1390,60 @@ criteria:
         unmodified module recording 2026-08-22T12:00:00. THE DOOR IS SATISFIED IN BOTH ARMS —
         started_utc is an exact datetime either way — because `admits` establishes a value's
         TYPE and never the IDENTITY OF THE FUNCTION THAT ESTABLISHED IT. WHAT IT DOES NOT
-        DEFEAT: it is NOT a caller route. BP-AMENDMENT-0001 §D.3 part 1's claim is about what a
-        CALLER of collect can supply and that claim SURVIVES — clock and sleep are not
-        parameters and the interpreter refuses to pass them.
-        CARRIER FOR THE WHOLE OF LIMIT 6: NOT PROVED TO BE CARRIED ANYWHERE. Every route above
-        needs the ability to execute code inside the package, which is the universal limit every
-        in-process guard on this project lives inside. That is strictly weaker than "cannot
-        happen" and it is said rather than implied.
+        DEFEAT — **REWRITTEN AT WO-2R3 INCREMENT 6 BY PRODUCT AUTHORITY (PO-DECISIONS-0011
+        ruling 3). THE SUPERSEDED WORDING, QUOTED AND NOT DELETED (PBG-CONT-003, CD-RULE-004):**
+        "it is NOT a caller route: it needs the ability to execute code inside the package."
+        **IT IS A CALLER ROUTE, AND THE REASON IS THAT PASSING AN OBJECT TO THIS DOOR *IS* THE
+        ABILITY TO EXECUTE CODE INSIDE THE PACKAGE.** `collect` calls methods on caller-supplied
+        objects interleaved with its own establishment sequence, and every one of those calls
+        runs caller code in a frame whose f_back chain reaches this package's module globals.
+        MEASURED by CD-ENG-WO2R3-02 with
+        variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py arm 2, from a
+        caller importing nothing from crash_detector for its leverage:
+          members of the ADAPTER `collect` touched : 13
+          ... of which are CALLS into caller code  : ['fetch', 'is_empty']
+          members of the SINK touched              : ['record']
+          members of the LEDGER touched            : ['admit_if_absent']
+          reached module globals of                : crash_detector.collectors.runner
+          could read runner.ensure_utc from there  : True
+        and independently by variants/WO-2R3/P-E1-what-is-closed-at-that-door.py arm (iv), which
+        does not merely READ that global but REBINDS it and walks a property-backed look-alike
+        through the `type(response) is not FetchedResponse` door:
+        `runner.FetchedResponse rebound: True`, `at the door: ADMITTED final_outcome=OK`.
+        WHAT SURVIVES, AND IT IS NARROWER THAN IT SOUNDED: BP-AMENDMENT-0001 §D.3 part 1's claim
+        is about what a caller can supply AS A PARAMETER, and THAT claim stands — clock and sleep
+        are not parameters and the interpreter refuses to pass them. **THAT IS A STATEMENT ABOUT
+        THE SIGNATURE, NOT ABOUT WHAT A CALLER CAN REACH ONCE IT IS INSIDE.** The two ran
+        together in one sentence and the second was read off the first.
+        CARRIER FOR THE WHOLE OF LIMIT 6 — **ALSO REWRITTEN AT INCREMENT 6, AND IT IS THE SAME
+        SENTENCE THAT APPEARS IN establishment.py DECLARED LIMIT 3 AND admission.py. ONE
+        SENTENCE, TWO MODULES, LOAD-BEARING IN BOTH. THE SUPERSEDED WORDING, QUOTED AND NOT
+        DELETED:** "Every route above needs the ability to execute code inside this package,
+        which is the universal limit every in-process guard on this project lives inside."
+        **IT IS WRONG IN BOTH DIRECTIONS AT ONCE, AND BOTH WERE RE-MEASURED RATHER THAN ADOPTED.**
+        TOO NARROW — MEASURED AT ZERO: `Agrees.__new__(Agrees)` then `__dict__.update(...)`
+        executes NO PACKAGE CODE AT ALL. Arm 1 counts every line executed under
+        src/crash_detector/ with sys.settrace:
+          LINES OF PACKAGE CODE EXECUTED BY THAT  : 0
+          package files touched                   : []
+          type(smuggled) is exactly Agrees        : True
+          smuggled.as_of_utc                      : 'not a datetime'
+          CONTROL — the same values through Agrees(...): REFUSED TypeError
+          LINES OF PACKAGE CODE EXECUTED BY THE CONTROL: 36
+        36 LINES THROUGH THE FRONT DOOR AND A REFUSAL; 0 LINES AROUND IT AND AN OBJECT.
+        TOO WIDE — the CD-BP-003 door HANDS in-package execution to any caller, as measured
+        above, so it is not a bar anyone has to clear.
+        THE MEASURED REACH, WHICH IS WHAT REPLACES THE SENTENCE: these routes are open to
+        anything that can either run in this process at all, or be passed to the CD-BP-003 door.
+        **"IN-PACKAGE EXECUTION" IS NEITHER NECESSARY NOR SCARCE, AND IT WAS OFFERED AS BOTH.**
+        NOT CLOSED, NOT CLAIMED, AND NOT PROVED TO BE CARRIED ANYWHERE — that much of the old
+        sentence stands, and it is the only part that did.
+        WHAT THIS CORRECTION IS NOT: it does not close the `__new__`/`__dict__` route. Doing so
+        is F-A4, it is a design change nobody has ruled, and it is EXPLICITLY NOT THIS
+        INCREMENT'S. The asymmetry the auditor names IS MEASURED — arm 3: **2 of 33** governed
+        types define `__setstate__` (FreshnessEvidence, StalenessWindow) — and RAISED as
+        CD-ENG-WO2R3-02-F09, not acted on. A seat that corrects a sentence about a route and then
+        closes the route has decided a design question on its own authority.
         CHECK LIMIT 7 — THE TRAVERSAL'S RESIDUAL REACH. **NEW AT WO-2R3 INCREMENT 6, AND IT
         REPLACES A LIMIT THAT WAS NEVER DECLARED AT ALL** (PO-DECISIONS-0011 ruling 2). Numbered
         7 because 1..4 are the check's and 5..6 are the mechanism's, and this row's limits run as
@@ -1662,6 +1709,35 @@ criteria:
         ScoreComputation(magnitude=0.5, contributions=(object(),)) through the ORDINARY front
         door — ESCAPED, a bare object stored. NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED
         ANYWHERE.
+        **THE SENTENCE THAT USED TO FOLLOW THAT ONE IS REWRITTEN AT WO-2R3 INCREMENT 6 BY
+        PRODUCT AUTHORITY (PO-DECISIONS-0011 ruling 3). THE SUPERSEDED WORDING, QUOTED AND NOT
+        DELETED (PBG-CONT-003, CD-RULE-004):** "Every route requires the ability to execute code
+        inside this package, which is the universal limit every in-process guard on this project
+        lives inside; saying that is strictly weaker than 'cannot happen', and it is said rather
+        than implied." IT IS THE SAME SENTENCE THAT APPEARS IN admission.py — ONE SENTENCE, TWO
+        MODULES, LOAD-BEARING IN BOTH — and it is WRONG IN BOTH DIRECTIONS AT ONCE.
+        TOO NARROW — MEASURED AT ZERO by CD-ENG-WO2R3-02:
+        `Agrees.__new__(Agrees)` then `__dict__.update(...)` executes NO PACKAGE CODE AT ALL.
+        variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py arm 1 counts
+        every line executed under src/crash_detector/ with sys.settrace:
+          LINES OF PACKAGE CODE EXECUTED BY THAT  : 0
+          package files touched                   : []
+          type(smuggled) is exactly Agrees        : True
+          smuggled.as_of_utc                      : 'not a datetime'
+          CONTROL — the same values through Agrees(...): REFUSED TypeError
+          LINES OF PACKAGE CODE EXECUTED BY THE CONTROL: 36
+        36 LINES THROUGH THE FRONT DOOR AND A REFUSAL; 0 LINES AROUND IT AND AN OBJECT.
+        TOO WIDE — the CD-BP-003 door HANDS in-package execution to any caller (arm 2:
+        `reached module globals of : crash_detector.collectors.runner`), so it is not a bar
+        anyone has to clear.
+        THE MEASURED REACH: these routes are open to anything that can either run in this process
+        at all, or be passed to the CD-BP-003 door. "IN-PACKAGE EXECUTION" IS NEITHER NECESSARY
+        NOR SCARCE, AND IT WAS OFFERED AS BOTH. NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED
+        ANYWHERE — that much of the old sentence stands and it is the only part that did.
+        THIS CORRECTION DOES NOT CLOSE THE ROUTE. That is F-A4, a design change nobody has ruled,
+        EXPLICITLY NOT THIS INCREMENT'S. The asymmetry IS MEASURED — arm 3: 2 of 33 governed types
+        define __setstate__ (FreshnessEvidence, StalenessWindow) — and RAISED as
+        CD-ENG-WO2R3-02-F09, not acted on.
         MECHANISM LIMIT 4 — A SUBCLASS OF A GOVERNED TYPE IS NOT GOVERNED, AND FOR A @dataclass
         SUBCLASS THAT IS TRUE OF ITS INHERITED FIELDS TOO. THIS SEAT'S FIRST WORDING SAID THE
         OPPOSITE AND THE MEASUREMENT REFUTED IT: a @dataclass subclass REGENERATES __init__,

@@ -236,15 +236,70 @@ to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     module establishes a value's TYPE and never the IDENTITY OF THE FUNCTION THAT
     ESTABLISHED IT. It attacks the establishment layer, not the door.
 
-    **WHAT IS AND IS NOT DEFEATED BY (c).** It is NOT a caller route: it needs the ability
-    to execute code inside the package. BP-AMENDMENT-0001 §D.3 part 1's claim is about what
-    a CALLER of ``collect`` can supply, and that claim SURVIVES — ``clock`` and ``sleep``
-    are not parameters, and the interpreter refuses to pass them.
+    ====================================================================================
+    **WHAT IS AND IS NOT DEFEATED BY (c) — REWRITTEN AT WO-2R3 INCREMENT 6 BY PRODUCT
+    AUTHORITY (PO-DECISIONS-0011 ruling 3). THE SUPERSEDED WORDING, QUOTED AND NOT DELETED
+    (PBG-CONT-003, CD-RULE-004):**
 
-    **THE WHOLE REACH: NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED ANYWHERE.** Every
-    route above requires the ability to execute code inside this package, which is the
-    universal limit every in-process guard on this project lives inside; saying that is
-    strictly weaker than "cannot happen", and it is said rather than implied.
+        *"It is NOT a caller route: it needs the ability to execute code inside the
+        package."*
+
+    **IT IS A CALLER ROUTE, AND THE REASON IS THAT PASSING AN OBJECT TO THIS DOOR *IS* THE
+    ABILITY TO EXECUTE CODE INSIDE THE PACKAGE.** ``collect`` calls methods on
+    caller-supplied objects, interleaved with its own establishment sequence, and every one
+    of those calls runs caller code in a frame whose ``f_back`` chain reaches this package's
+    module globals. MEASURED by
+    ``variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py`` arm 2,
+    from a caller importing nothing from ``crash_detector`` for its leverage::
+
+        members of the ADAPTER `collect` touched : 13
+        ... of which are CALLS into caller code  : ['fetch', 'is_empty']
+        members of the SINK touched              : ['record']
+        members of the LEDGER touched            : ['admit_if_absent']
+        reached module globals of                : crash_detector.collectors.runner
+        could read runner.ensure_utc from there  : True
+
+    and independently by ``variants/WO-2R3/P-E1-what-is-closed-at-that-door.py`` arm (iv),
+    which does not merely READ that global but REBINDS it and walks a property-backed
+    look-alike through the ``type(response) is not FetchedResponse`` door:
+    ``runner.FetchedResponse rebound: True``, ``at the door: ADMITTED final_outcome=OK``.
+
+    **WHAT SURVIVES OF THE OLD CLAIM, AND IT IS NARROWER THAN IT SOUNDED.**
+    BP-AMENDMENT-0001 §D.3 part 1's claim is about what a caller can supply AS A PARAMETER,
+    and THAT claim stands: ``clock`` and ``sleep`` are not parameters and the interpreter
+    refuses to pass them. **THAT IS A STATEMENT ABOUT THE SIGNATURE, NOT ABOUT WHAT A CALLER
+    CAN REACH ONCE IT IS INSIDE.** The two were run together in one sentence and the second
+    was read off the first.
+    ====================================================================================
+
+    ====================================================================================
+    **THE WHOLE REACH — ALSO REWRITTEN AT INCREMENT 6, AND IT IS THE SAME SENTENCE THAT
+    APPEARS IN :mod:`crash_detector.establishment` DECLARED LIMIT 3. ONE SENTENCE, TWO
+    MODULES, LOAD-BEARING IN BOTH. THE SUPERSEDED WORDING, QUOTED AND NOT DELETED:**
+
+        *"Every route above requires the ability to execute code inside this package, which
+        is the universal limit every in-process guard on this project lives inside; saying
+        that is strictly weaker than 'cannot happen', and it is said rather than implied."*
+
+    **IT IS WRONG IN BOTH DIRECTIONS AT ONCE, AND BOTH WERE RE-MEASURED HERE RATHER THAN
+    ADOPTED.** TOO NARROW: ``Agrees.__new__(Agrees)`` followed by ``__dict__.update(...)``
+    executes **ZERO** lines of package code — counted with ``sys.settrace`` in arm 1, against
+    **36** lines and a ``TypeError`` refusal for the same values through the front door. TOO
+    WIDE: the ``CD-BP-003`` door HANDS in-package execution to any caller, as measured above,
+    so it is not a bar anyone has to clear.
+
+    **THE MEASURED REACH.** These routes are open to anything that can either run in this
+    process at all, or be passed to the ``CD-BP-003`` door. **"IN-PACKAGE EXECUTION" IS
+    NEITHER NECESSARY NOR SCARCE, AND IT WAS OFFERED AS BOTH.**
+    **NOT CLOSED, NOT CLAIMED, AND NOT PROVED TO BE CARRIED ANYWHERE** — that much of the old
+    sentence stands, and it is the only part that did.
+
+    **AND WHAT THIS CORRECTION IS NOT.** It does not close the ``__new__``/``__dict__``
+    route. Doing so is F-A4, it is a design change nobody has ruled, and it is explicitly not
+    this increment's. The asymmetry the auditor names is MEASURED — arm 3: **2 of 33**
+    governed types define ``__setstate__`` (``FreshnessEvidence``, ``StalenessWindow``) — and
+    RAISED AS ``CD-ENG-WO2R3-02-F09``, not acted on.
+    ====================================================================================
 
  2  **THE RECEIVER OF A METHOD IS NOT ESTABLISHED.** The first parameter is skipped when,
     and only when, the callable was written inside a ``class`` body — read from

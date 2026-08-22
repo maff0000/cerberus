@@ -219,10 +219,64 @@ MEASURED to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     ``ScoreComputation(magnitude=0.5, contributions=(object(),))`` through the ORDINARY front
     door: **ESCAPED**, with a bare ``object`` stored in ``contributions``. The mutation is to
     state the boundary SHARES, so every caller in the process is unguarded afterwards.
-    **NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED ANYWHERE.** Every route requires the
-    ability to execute code inside this package, which is the universal limit every
-    in-process guard on this project lives inside; saying that is strictly weaker than
-    "cannot happen", and it is said rather than implied.
+    ====================================================================================
+    **THIS SENTENCE IS REWRITTEN AT WO-2R3 INCREMENT 6 BY PRODUCT AUTHORITY
+    (PO-DECISIONS-0011 ruling 3). THE SUPERSEDED WORDING, QUOTED AND NOT DELETED
+    (PBG-CONT-003, CD-RULE-004):**
+
+        *"Every route requires the ability to execute code inside this package, which is
+        the universal limit every in-process guard on this project lives inside; saying
+        that is strictly weaker than 'cannot happen', and it is said rather than implied."*
+
+    **IT IS WRONG IN BOTH DIRECTIONS AT ONCE** — ``CD-ASR-WO2R3-01``'s words, and this seat
+    re-measured both directions rather than adopting them.
+
+    **TOO NARROW — MEASURED AT ZERO.** ``Agrees.__new__(Agrees)`` followed by
+    ``__dict__.update(...)`` executes **NO PACKAGE CODE AT ALL**. Not "little": zero.
+    ``variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py`` arm 1
+    counts every line executed under ``src/crash_detector/`` with ``sys.settrace``::
+
+        LINES OF PACKAGE CODE EXECUTED BY THAT  : 0
+        package files touched                   : []
+        type(smuggled) is exactly Agrees        : True
+        smuggled.as_of_utc                      : 'not a datetime'
+        CONTROL — the same values through Agrees(...): REFUSED TypeError
+        LINES OF PACKAGE CODE EXECUTED BY THE CONTROL: 36
+
+    **36 LINES THROUGH THE FRONT DOOR AND A REFUSAL; 0 LINES AROUND IT AND AN OBJECT.** The
+    superseded sentence stated a precondition that this route does not have to meet.
+
+    **TOO WIDE — THE PRECONDITION IS NOT A BAR, IT IS HANDED OVER AT A DECLARED DOOR.** The
+    ``CD-BP-003`` boundary calls caller-supplied code and hands it a frame whose ``f_back``
+    chain reaches this package's module globals. Arm 2, from a caller importing nothing from
+    ``crash_detector`` for its leverage::
+
+        members of the ADAPTER `collect` touched : 13
+        ... of which are CALLS into caller code  : ['fetch', 'is_empty']
+        members of the SINK touched              : ['record']
+        members of the LEDGER touched            : ['admit_if_absent']
+        reached module globals of                : crash_detector.collectors.runner
+        could read runner.ensure_utc from there  : True
+
+    **THE MEASURED REACH, WHICH IS WHAT REPLACES THE SENTENCE.** The routes above are open to
+    anything that can either (a) run in this process at all — which for the
+    ``__new__``/``__dict__`` route is the WHOLE precondition, and it is not a package-code
+    precondition — or (b) be passed to the ``CD-BP-003`` door, which HANDS in-package
+    execution to any caller rather than requiring it of them. **"IN-PACKAGE EXECUTION" IS
+    NEITHER NECESSARY NOR SCARCE, AND IT WAS OFFERED AS BOTH.**
+    **NOT CLOSED, NOT CLAIMED, AND NOT PROVED TO BE CARRIED ANYWHERE.** That much of the old
+    sentence stands, and it is the only part that did.
+
+    **WHAT THIS CORRECTION IS NOT.** It is not a closure of the ``__new__``/``__dict__``
+    route. The ``__setstate__`` technique this codebase already applies elsewhere — arm 3
+    measures it at **2 of 33 governed types**, ``FreshnessEvidence`` and ``StalenessWindow``
+    — would close it, and **THAT IS A DESIGN CHANGE NOBODY HAS RULED, IT IS F-A4, AND IT IS
+    EXPLICITLY NOT WO-2R3 INCREMENT 6's.** The asymmetry the auditor names — that one layer
+    of this codebase defends against exactly this move and this one does not — is measured
+    here and RAISED AS A FINDING (``CD-ENG-WO2R3-02-F09``) rather than acted on. **A SEAT
+    THAT CORRECTS A SENTENCE ABOUT A ROUTE AND THEN CLOSES THE ROUTE HAS DECIDED A DESIGN
+    QUESTION ON ITS OWN AUTHORITY.**
+    ====================================================================================
 
  4  **A SUBCLASS OF A GOVERNED TYPE IS NOT GOVERNED, AND FOR A ``@dataclass`` SUBCLASS THAT
     IS TRUE OF ITS INHERITED FIELDS TOO.** The decorator is applied per class and a subclass
