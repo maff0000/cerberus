@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T20:01:28Z'
+updated_utc: '2026-08-22T20:06:38Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -50,6 +50,38 @@ objective: >
   WO-3.
 current_phase: BUILD   # MOVED AT THIS BOUNDARY. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **THE FOURTH FRESH ASSURANCE SEAT IS DISPATCHED. `CD-DISPATCH-WO2R3-ASSURANCE` IS ISSUED to
+  CD-ASR-WO2R3-01 over THE WHOLE OF WO-2R3 (f30e63c..531c95c, CD-D-141) at target `531c95c`, in the
+  read-only worktree /srv/crash-detector-wo2r3-audit, under PO-DECISIONS-0010 ruling 3 — whose
+  condition, that the bounded completion bank first, WAS MET AT THE PRECEDING BOUNDARY AND NOT
+  ASSUMED.** ***
+  *** **THE PRODUCT OWNER FIXED THE ORDER OF THE BRIEF AND NOT ONLY ITS CONTENTS, AND THE ORDER IS
+  OBEYED: THE FIRST PROSE IN THE DISPATCH, ABOVE THE ROLE ASSIGNMENT AND ABOVE THE TARGET, IS THE
+  ENGINEER'S OWN SENTENCE AGAINST ITSELF** — with V17 applied BOTH static checks still exit 0, the
+  closure is a RUNTIME closure, a green static run is not evidence of it, and the seat attacks the
+  runtime closure AS RUNTIME. **DOUBLY EARNED: the same seat volunteered the same limit a SECOND
+  time, unprompted, about the completion it had just delivered — the V43 contrast is ENTIRELY STATIC
+  and `Verdict` would still be constructible at runtime in the failing arm.** ***
+  THE BRIEF CARRIES UNSOFTENED: CD-D-129's THREE MANDATORY CLAUSES (the sweep's declaration verbatim
+  with its bisect extended to the target — 534/15 over a 19-module closure, ELEVEN original items in
+  `crash_detector.admission`, FOUR later ones in `crash_detector.establishment` named as NOT among
+  them; verdicts against DECLARATIONS never exit codes alone; the standing invitations including the
+  dispositions-after sequencing) · **ELEVEN NAMED TARGETS** T1-T11 — the ten of CD-D-129 plus the
+  widened invariant — with CD-BP-003 flagged as where to spend the first hour, F15 aimed at the
+  BLINDNESS WINDOW, GRANT-MATRIX-LIVE **BITE IT OR STATE MEASURED LIMITS** with an unexamined exit 3
+  ruled unacceptable, and F10 · **T11, the widened class as an attackable claim**, with
+  CD-ENG-WO2R3-F24 travelling AS THE ENGINEER FRAMED IT and the Project Lead's agreement marked as
+  two implementers agreeing.
+  **THE PROJECT LEAD DISCLOSED ITS OWN DEFECT TO THE AUDITOR BEFORE THE AUDITOR READS ANYTHING** —
+  CD-PL-F93, plus CD-PL-F89's thirteen collisions, CD-PL-F90, F22's known-stale line, the lane boot
+  RED, and the four-boundary pattern named AS a pattern. And FIVE THINGS THE PROJECT LEAD DID NOT
+  VERIFY are declared to it, the fourth being the one that matters: **NO RUNTIME CONSTRUCTION OF ANY
+  GOVERNED TYPE WAS PERFORMED BY THIS SEAT AT THIS BOUNDARY; THE RUNTIME CLOSURE HAS NOT BEEN
+  INDEPENDENTLY EXERCISED BY ANYONE AT 531c95c.**
+  CD-D-142: two clauses in the brief are the Project Lead's ADDITIONS and are flagged as such — "a
+  declaration is not a disposition and it is not an excuse", and the mirror of clause (ii), **"an
+  exit 0 is not a pass either."**
+  --- SUPERSEDED BY THE ABOVE, RETAINED: THE RECONCILIATION OF THE BOUNDED COMPLETION ---
   *** **THE BOUNDED COMPLETION OF INCREMENT 5 IS RECONCILED AND ACCEPTED AS THE COMPLETION AT LANE
   `531c95c` (CD-D-140) — AND IS NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005. PO-DECISIONS-0010
   RULING 2 IS DISCHARGED AND "NOTHING FURTHER STANDS BEFORE THE GATE" IS NOW TRUE.** ***
@@ -2780,9 +2812,19 @@ next_safe_action: >
   Project Lead from two pristine extractions — EXIT 0 and "ADJACENT" at `46adf33`, EXIT 1 and
   "VIOLATION ... Verdict" at `531c95c`. Identity clean, porcelain zero, `src/` and `plants/` diff
   EMPTY, node-id sets diffed with ZERO LOST, plants 11/11, sweep unmoved.
-  **RULING 3'S CONDITION IS THEREFORE MET AND NO FURTHER ENGINEERING IS AUTHORISED:**
-  **1. DISPATCH THE FOURTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 at **`531c95c`** (NOT
-  `46adf33`, which is now the completion's execution base) — none of
+  **1. THE FOURTH FRESH ASSURANCE SEAT IS DISPATCHED — `CD-DISPATCH-WO2R3-ASSURANCE`, ISSUED at
+  BL-20260822T200638Z-0105 to CD-ASR-WO2R3-01, target `531c95c`, worktree
+  /srv/crash-detector-wo2r3-audit, read-only. DISCHARGED AS AN ACTION; THE SEAT'S RETURN IS OWED.**
+  *** **THE NEXT ACTION IS: RUN IT, THEN STOP AT ITS GATE VERDICT.** *** When it returns, reconcile
+  the return as a DURABLE RECORD under governance/assurance/WO-2R3/ (PBG-CONT-007 — a sub-agent
+  result that exists only in conversation is not project state), **DO NOT ARGUE THE VERDICT DOWN AND
+  DO NOT NEGOTIATE IT**, and if it contradicts the reconciliation record, **THE RECORD IS WHAT GETS
+  CORRECTED.** THEN, AND ONLY THEN, IN THIS ORDER: (1) write the ELEVEN CLASS-2 SWEEP DISPOSITIONS
+  (CD-D-130 — author is this role, trigger is the seat's return, reconciler is the Product Owner);
+  (2) put the verdict and the gate to the PRODUCT OWNER for disposition.
+  --- THE BRIEF AS ISSUED, RETAINED SO IT SURVIVES A CONTEXT LOSS ---
+  over the whole of WO-2R3 at **`531c95c`** (NOT `46adf33`, which is now the completion's execution
+  base) — none of
   CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001, non-waivable;
   and CD-ENG-WO2R3-01 is now the author of all five increments, so it is excluded absolutely).
   ITS BRIEF CARRIES, IN THIS ORDER, AND NONE OF IT IS THIS SEAT'S TO SOFTEN:
@@ -3441,5 +3483,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T200128Z-0104   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T200638Z-0105   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
