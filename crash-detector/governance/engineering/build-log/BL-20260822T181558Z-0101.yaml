@@ -166,4 +166,4 @@ next_safe_action: >
   (CD-RULE-001). **DO NOT** merge or promote the lane or f30e63c. **DO NOT** grade CD-AC-002 or
   CD-AC-005 — reserved by the Product Owner for the fifth boundary running.
 
-continuity_record_commit: PENDING
+continuity_record_commit: e93d754b6023ad60dea187c61e455f03d9912f91   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE THIRD BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT e93d754 BEFORE this field was written. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont3 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont3 && git checkout -q -B main e93d754` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha e93d754b6023ad60dea187c61e455f03d9912f91, branch main.
