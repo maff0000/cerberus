@@ -252,7 +252,4 @@ next_safe_action: >
   non-relaxable). **DO NOT** open a sixth increment. **DO NOT** write the eleven Class-2 dispositions
   (CD-D-130). **DO NOT** modify anything under `pbg/`.
 
-continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS
-                                    # FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed
-                                    # (CD-PL-F36). The CD-RULE-008 pristine-clone boot verdict is
-                                    # taken AT that SHA BEFORE this field is written.
+continuity_record_commit: ec9c24701d7c9f07d17868e2cebd38e3ed32dc96   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE EIGHTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT ec9c247 BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont8 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont8 && git checkout -q -B main ec9c247` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, **current_phase GATE** (moved at this boundary), observed_sha ec9c24701d7c9f07d17868e2cebd38e3ed32dc96, branch main.
