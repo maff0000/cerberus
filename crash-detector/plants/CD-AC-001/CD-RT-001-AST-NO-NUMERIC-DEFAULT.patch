@@ -1,11 +1,11 @@
 diff --git a/src/crash_detector/engine/config.py b/src/crash_detector/engine/config.py
-index 0c2b236..755cf4b 100644
+index 2303bb1..7b2d600 100644
 --- a/src/crash_detector/engine/config.py
 +++ b/src/crash_detector/engine/config.py
-@@ -84,6 +84,10 @@ class DialSpec:
+@@ -141,6 +141,10 @@ class DialSpec:
      required_input_ids: tuple[str, ...]
      contributing_input_ids: tuple[str, ...]
-     contribution_model: Union[ContributionModel, None]
+     model_ref: Union[ModelId, None]
 +    #: The magnitude this dial last computed successfully, carried in the snapshot so a
 +    #: brief upstream outage does not blank the dial. ``None`` before the first successful
 +    #: evaluation of a run.
@@ -14,10 +14,10 @@ index 0c2b236..755cf4b 100644
      def __post_init__(self) -> None:
          # EVERY ID RE-ESTABLISHED BEFORE ANY OF THEM DECIDES ANYTHING (CD-AC-005, Class 2).
 diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
-index e044466..621dbd0 100644
+index c77c3fd..f70b1f1 100644
 --- a/src/crash_detector/engine/evaluate.py
 +++ b/src/crash_detector/engine/evaluate.py
-@@ -323,10 +323,14 @@ def _evaluate_dial(
+@@ -401,10 +401,14 @@ def _evaluate_dial(
          if source_id not in usable
      )
      if missing_required:

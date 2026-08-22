@@ -66,6 +66,25 @@ assurance.
 > confirmation, *"It carries no concept word at all"*, is still printed. The full account is in
 > that row. Every other row's signature is byte-identical before and after.
 >
+> **WO-2R3 INCREMENT 4 — what `CD-ENG-WO2R3-01` changed here, and why.** BP-AMENDMENT-0001
+> §C deleted `ContributionModel` and `DialSpec.contribution_model`, and §D put an `admits`
+> door on `evaluate`. **THREE PATCHES STOPPED APPLYING** at the WO-2R3 lane head and all
+> three were REGENERATED against the new structure, violating the SAME propositions:
+> `CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch`,
+> `CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch` and
+> `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`. **NO PATCH WAS DELETED, DISABLED OR
+> WEAKENED** (CD-D-033), and no proposition was retired as a deleted subject.
+>
+> **THE MEASUREMENT THAT MATTERS HERE IS CONTRAST AND NOT APPLICATION.** `git apply --check`
+> is a static claim about a patch; it is not a claim that the plant still bites. All eleven
+> were re-measured at lane head `04cdd34` in ONE PRISTINE EXTRACTION PER PLANT, clean arm and
+> violated arm, with the declared command from `required-tests.yaml` and its exit code
+> recorded on both. **TEN CONTRAST: exit 0 clean -> exit 1 violated.** `CD-RT-003-GRANT-MATRIX-LIVE`
+> exits **3 PRECONDITION_NOT_MET on BOTH arms** for want of a live PostgreSQL — measured, not
+> assumed, and **that is NOT a contrast**. What it would take to measure it properly is stated
+> in that row. One row's declared command in this manifest was also stale against the register
+> and is corrected (`CD-RT-001-ABSENCE-RENDERS-UNKNOWN`).
+>
 > It is a set of *negative controls* an INDEPENDENT seat applies and runs for
 itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
 
@@ -241,13 +260,47 @@ to overlap here. **WO-2R re-measurement is owed to the auditor, not asserted her
 sibling suite gained 40 tests in WO-2R, so the failure count will differ from 9 and the seat
 that re-runs it should record what it observes rather than expect this number.
 
+**REGENERATED AT WO-2R3 INCREMENT 4 (`CD-ENG-WO2R3-01`), same proposition, same two routes,
+new structure.** The WO-2R patch stopped applying for one reason and one reason only:
+BP-AMENDMENT-0001 §C deleted the field it anchored on. `DialSpec.contribution_model:
+Union[ContributionModel, None]` — the line the class-A hunk added itself after — **does not
+exist**, and `_evaluate_dial`'s `missing_required` branch moved when `model` joined its
+signature. The regenerated patch adds `last_known_magnitude: Union[float, None] = None` after
+`model_ref` instead, and rewrites the same branch to the same `Degraded(... score=carried ...)`.
+**IT IS NOT A DELETED SUBJECT.** The subject of this plant was never `contribution_model`; it
+is *a nullable number on the dial path answering an absence*, and `DialSpec` is still where a
+helpful author would put one. A field had to be given a new neighbour, not a new meaning.
+
+**MEASURED AT LANE HEAD `04cdd34`, both arms, pristine extraction per arm** (`git archive
+04cdd34 | tar -x`), with the declared command from `required-tests.yaml`, which is the one in
+the row above:
+
+```
+CLEAN    python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 0
+VIOLATED python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 1
+         CD-RT-001-AST-NO-NUMERIC-DEFAULT: FAIL — 3 violation(s)
+           A: nullable-number annotation      src/crash_detector/engine/config.py:147
+           C: `or <number>`                   src/crash_detector/engine/evaluate.py:406
+           F: unrecognised magnitude provenance src/crash_detector/engine/evaluate.py:407
+```
+
+Three violations, the same three rules, in the same order as at the WO-2R gate. The two
+ADJACENT-path class-A notes are still printed on BOTH arms (`observations.py:100`,
+`serving/witness_resolver.py:218` — the line numbers moved, the notes did not), so the
+both-arms test in the paragraph above still holds.
+
 ---
 
 | | |
 |---|---|
 | **test_id** | `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` |
 | **patch** | `plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch` |
-| **command** | `PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q` |
+
+> **THE COMMAND ROW ABOVE WAS STALE AND IS CORRECTED AT WO-2R3 INCREMENT 4.** It named two
+> modules; `required-tests.yaml` has named THREE (`tests/test_dial_presentation.py` joined at
+> WO-2R2) since before this lane opened. The register is the authority and this page was
+> behind it. No measurement below uses the two-module form.
 
 **Proposition violated.** *With an empty source registry both dials read `Unknown`; absence
 never renders as a value.* The patch makes `evaluate()` return
@@ -301,6 +354,64 @@ declared limit** — a constructor obtained dynamically, which rule F cannot see
 construction and which the runtime post-condition refuses anyway. It is written out as variant
 **`V03`** in `variants/WO-2R/CD-ASR-F02-F03/`, with its command and its observed refusal, so
 the property this row used to evidence is evidenced somewhere it can be executed.
+
+**REGENERATED AT WO-2R3 INCREMENT 4 (`CD-ENG-WO2R3-01`), same proposition, same route, and
+THE MAGNITUDE HAD TO BE REBUILT — READ THIS BEFORE TRUSTING THE CONTRAST.** The WO-2R patch
+stopped applying because §D gave `_evaluate_dial` a fourth parameter and §C renamed the
+`model_ref` branch beneath it, so the hunk context moved. That much is ordinary. What is not
+ordinary is what the first regeneration revealed, and it is raised as a finding against this
+seat's own work (`CD-ENG-WO2R3-F12`):
+
+> A LITERAL REGENERATION OF THIS PLANT CONTRASTS AT THE WRONG LAYER. The WO-2R patch wrote
+> `DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=())` — a **bare float** in the
+> score slot. Since WO-2R increment 2 a dial magnitude is a `DialMagnitude` carrying its
+> provenance, so that line now dies at
+> `crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a
+> DialMagnitude carrying dial 'monetary_debasement', got float` — **a CD-AC-002 refusal**.
+> The declared command still exits 1, so a seat that read only the exit code would have
+> recorded a contrast and filed it under CD-AC-001. It would have been measuring the
+> CD-AC-002 magnitude guard, one criterion across, and the CD-AC-001 post-condition this
+> plant exists to exercise would never have been reached. **An exit code is not a refusing
+> layer** (CD-PL-F74).
+
+The patch as delivered therefore builds the magnitude the way the product builds it —
+`DialMagnitude(dial_id=..., quantity=observed_for_dial(dial_id=..., quantity=0.0,
+inputs_used=("baseline",)))` — so the reading is CONSTRUCTIBLE and reaches the post-condition.
+The plant is thereby *stronger*, not weaker: the author it imitates now has to get past
+CD-AC-002's magnitude type before CD-AC-001 refuses them, and CD-AC-001 still does.
+
+**MEASURED AT LANE HEAD `04cdd34`, both arms, pristine extraction per arm** (`git archive
+04cdd34 | tar -x`), declared command from `required-tests.yaml`:
+
+```
+CLEAN    PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py \
+             tests/test_dial_presentation.py -q     -> exit 0, 124 passed
+VIOLATED PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py \
+             tests/test_dial_presentation.py -q     -> exit 1, 15 failed, 109 passed
+```
+
+REFUSING LAYER NAMED AND SCOPED (CD-PL-F74): `refuse_a_number_without_its_inputs`, the
+CD-ASR-F03 absence post-condition applied at `_evaluate_dial`'s boundary by
+`_absence_is_never_a_number`. Its scope is *one dial's reading, checked against that dial's
+own `(spec, usable)` arguments*; it says nothing about any other criterion. Observed:
+
+```
+crash_detector.dials.reading.AbsenceYieldedAValue: dial 'monetary_debasement' produced Value,
+which carries a value, but its required inputs were not all present: it declares [], it NAMES
+NO MODEL, and the usable inputs are []. ...
+```
+
+Note `it NAMES NO MODEL` — the message wording moved with §C's `model_ref`, so a seat
+matching the WO-2R text `NO contribution model is declared` will not find it. The exception
+TYPE is the signature; the prose is not.
+
+**Collateral re-measured at `04cdd34` and UNCHANGED IN KIND:**
+`python3 -B tools/register/check_no_numeric_default.py --root .` exits **1**,
+`FAIL — 1 violation(s)`, rule F — the CD-ENG-WO2R-F01 disclosure above still stands and is
+neither better nor worse. `python3 -B tools/register/check_no_blend.py --root .` stays at exit
+**0**, 6829 assertions, which was worth measuring rather than assuming: the regenerated patch
+adds a SECOND textual reference to `observed_for_dial` inside `evaluate.py`, and RULE 4 of
+that check denies by default over its declared admission sites.
 
 ---
 ---
@@ -600,6 +711,52 @@ reach, which is the argument for CD-AC-003 having a structural guard at all.
 `check_no_numeric_default.py`, `check_no_blend.py` and `check_no_execution_interface.py`
 all stay at exit **0**.
 
+**REGENERATED AT WO-2R3 INCREMENT 4 (`CD-ENG-WO2R3-01`), same proposition, same three routes,
+AND ONE DELIBERATE CHANGE OF SHAPE THAT MUST NOT PASS WITHOUT COMMENT.** The WO-2R patch
+stopped applying because §D put an `@admits(...)` door on `evaluate` and §C rewrote the
+import block and `_evaluate_dial`'s signature beneath it. The new module
+`src/crash_detector/corroboration.py` is **byte-identical** to the WO-2R one; the relative
+import `.witness.panel`, the `WITNESSES_DIVERGED` reason and the function-local
+`from crash_detector.corroboration import is_corroborated` are unchanged.
+
+**WHAT CHANGED, AND WHY IT IS NOT A WEAKENING.** The WO-2R patch added a PUBLIC parameter —
+`evaluate(..., witness_panel: object = None)`. After BP-AMENDMENT-0001 §D that parameter
+would arrive REFUSED on every call: `admits` reads `evaluate`'s parameter list from the
+signature at decoration, and a parameter its declaration was not told about FAULTS the door,
+so `UndeclaredParameter` is raised before the body runs — that is planted violation P7,
+working. The plant would then have died at the §D door instead of being caught by the
+CD-AC-003 import walk, **which is the wrong reason** (the CD-ENG-WO2R-F13 lesson, and the
+same defect this seat found in the CD-AC-001 plant next door as `CD-ENG-WO2R3-F12`). So the
+panel is carried on the PRIVATE per-dial evaluator `_evaluate_dial`, which is not a §D
+subject, through the `*extra` channel `_absence_is_never_a_number` already forwards. The
+CD-AC-003 proposition — *nothing reachable from the engine reaches witness code* — is
+violated in exactly the same three ways and by exactly the same trail.
+
+**MEASURED AT LANE HEAD `04cdd34`, both arms, pristine extraction per arm:**
+
+```
+CLEAN    python3 -B tools/register/check_engine_no_witness_reach.py --root .  -> exit 0
+VIOLATED python3 -B tools/register/check_engine_no_witness_reach.py --root .  -> exit 1
+         CD-RT-003-ENGINE-NO-WITNESS-REACH: FAIL — 1 violation(s)
+         Route (nearest first): crash_detector.witness.panel
+                                <- crash_detector.corroboration
+                                <- crash_detector.engine.evaluate
+```
+
+**TRAIL LENGTH 2 — the pass condition for this plant — is intact**, and it is now reported
+through the DERIVED engine-container root set as well as the package root.
+
+**Collateral re-measured, and the plant is now MORE isolating than its WO-2R self.** With it
+applied, `PYTHONPATH=src python3 -B -m pytest tests -q` is **1519 passed, exit 0** — the WHOLE
+suite, not one module. At WO-2R this plant failed `test_evaluate_has_the_blueprint_signature`
+because it changed a public signature; it no longer touches one, so **NOT ONE TEST FAILS**.
+`grep -rn '^\s*\(from\|import\).*witness' src/crash_detector/engine/` returns nothing (exit 1,
+re-run by this seat). `test_importing_the_engine_does_not_pull_in_the_witness_package` still
+PASSES. `check_no_numeric_default.py`, `check_no_blend.py` and
+`check_no_execution_interface.py` all stay at exit **0**. **The declared static check is the
+ONLY instrument in this tree that sees it**, which is the sharpest statement of this row's
+argument the manifest has yet been able to make.
+
 ---
 
 | | |
@@ -658,6 +815,36 @@ entry: clean arm `PASS — 138 assertions, 0 violations`; plant arm `FAIL — 9 
 against PostgreSQL 16.15 in one throwaway loopback-bound container, destroyed before the
 seat returned. **That run is implementation evidence and is NOT assurance** — the Assurance
 seat builds its own store and reads the catalogue itself (`PBG-SOD-001`, `PBG-ASSURE-001`).
+
+**WO-2R3 INCREMENT 4 — MEASURED, AND WHAT WAS MEASURED IS NOT A CONTRAST.** At lane head
+`04cdd34`, in two pristine extractions:
+
+```
+CLEAN    python3 -B tools/register/check_grant_matrix_live.py --root .  -> exit 3
+VIOLATED python3 -B tools/register/check_grant_matrix_live.py --root .  -> exit 3
+         CD-RT-003-GRANT-MATRIX-LIVE: PRECONDITION_NOT_MET
+           the connection target is not set: CD_CHECK_STORE_HOST, CD_CHECK_STORE_PORT,
+           CD_CHECK_STORE_NAME, CD_CHECK_STORE_USER, CD_CHECK_STORE_PASSWORD
+```
+
+`git apply --check` is clean and the patch applies, so the *patch* is current. **BOTH ARMS
+EXIT 3 AND THAT IS NOT A CONTRAST — IT IS THE SAME ANSWER TWICE.** The check is behaving
+correctly: an unset connection target is a non-zero exit with a stated reason and never a
+skip (`PBG-CI-002`). But a plant whose two arms are indistinguishable evidences nothing about
+this criterion at this SHA, and this row says so rather than counting the exit code as a
+catch.
+
+**WHAT IT WOULD TAKE TO MEASURE IT PROPERLY, stated so it is a cost and not a mystery.** A
+reachable PostgreSQL — a digest-pinned throwaway container bound to `127.0.0.1` only
+(CD-D-006), migrations 0001–0007 applied, the five `CD_CHECK_STORE_*` variables exported BY
+NAME with their values never written anywhere governed (`PBG-SEC-002`) — then the clean arm
+re-run to `PASS — 138 assertions`, migration `0008` applied from the patch, and the plant arm
+re-run to `FAIL — 9 violation(s)` with `built from 8 subject-tree migrations`. **This seat
+did not do that.** No such authorisation is in this dispatch — increment 4 is
+reconciliation-and-return with no new logic, and CD-AC-003 is named `explicitly_out_of_scope`
+("DO NOT TOUCH IT") — and standing one up unasked would be widening scope by initiative. It
+is the fourth Assurance seat's to run, and it is the *only* one of the eleven plants whose
+contrast is not established at this SHA by any party.
 
 **Collateral observed by this seat.** `tests/test_store_migrations.py::test_the_delivered_set_loads`
 and `tests/test_store_schema_sql.py::test_the_migration_set_loads_and_is_not_empty` fail —

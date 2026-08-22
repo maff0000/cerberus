@@ -1,19 +1,19 @@
 diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
-index b9431ec..1698a19 100644
+index c77c3fd..d64ad8c 100644
 --- a/src/crash_detector/engine/evaluate.py
 +++ b/src/crash_detector/engine/evaluate.py
-@@ -102,6 +102,9 @@ REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
- REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
- REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
+@@ -136,6 +136,9 @@ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ #: keeping a name that points at a deleted type would have been the worse choice.
+ REASON_NO_MODEL_DECLARED = "NO_MODEL_DECLARED"
  
 +#: Named on the reading a dial produces before any ingredient source is registered.
 +BASELINE_INPUT_ID = "baseline"
 +
  
- def evaluate(
-     observations: Sequence[ObservationRecord],
-@@ -269,12 +272,13 @@ def _evaluate_dial(
-     get its inputs cannot return a reading carrying a value however it is rewritten.
+ @admits(
+     observations=each_of(ObservationRecord),
+@@ -377,12 +380,23 @@ def _evaluate_dial(
+     and the guard did not come off with it.
      """
      if not spec.required_input_ids:
 -        # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
@@ -26,9 +26,19 @@ index b9431ec..1698a19 100644
 +        # required, so nothing can be missing: report the quiet baseline until the
 +        # ingredient set lands, so the surface has something to render.
 +        return Value(
-+            value=DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=()),
++            value=DIAL_SCORE_TYPES[spec.dial_id](
++                score=DialMagnitude(
++                    dial_id=spec.dial_id,
++                    quantity=observed_for_dial(
++                        dial_id=spec.dial_id,
++                        quantity=0.0,
++                        inputs_used=(BASELINE_INPUT_ID,),
++                    ),
++                ),
++                contributions=(),
++            ),
 +            as_of_utc=now_utc,
 +            inputs_used=(BASELINE_INPUT_ID,),
          )
  
-     if spec.contribution_model is None:
+     if spec.model_ref is None:

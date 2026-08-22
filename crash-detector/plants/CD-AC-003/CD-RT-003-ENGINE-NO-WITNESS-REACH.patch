@@ -1,4 +1,7 @@
---- a/src/crash_detector/corroboration.py
+diff --git a/src/crash_detector/corroboration.py b/src/crash_detector/corroboration.py
+new file mode 100644
+index 0000000..c9cf812
+--- /dev/null
 +++ b/src/crash_detector/corroboration.py
 @@ -0,0 +1,20 @@
 +"""Corroboration of a computed reading against the independent view.
@@ -21,45 +24,27 @@
 +def is_corroborated(panel: "WitnessPanel") -> bool:
 +    """True unless the panel says the independent view has come apart from ours."""
 +    return not isinstance(panel, Diverges)
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index c77c3fd..f7bc2ea 100644
 --- a/src/crash_detector/engine/evaluate.py
 +++ b/src/crash_detector/engine/evaluate.py
-@@ -82,6 +82,7 @@
+@@ -107,6 +107,7 @@ __all__ = [
      "REASON_REQUIRED_INPUTS_UNAVAILABLE",
      "REASON_CONTRIBUTING_INPUTS_UNAVAILABLE",
-     "REASON_NO_CONTRIBUTION_MODEL",
+     "REASON_NO_MODEL_DECLARED",
 +    "REASON_WITNESSES_DIVERGED",
      "READINGS_THAT_CARRY_A_VALUE",
      "required_inputs_are_all_present",
      "refuse_a_number_without_its_inputs",
-@@ -104,12 +105,14 @@
- REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
- REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
- REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
+@@ -135,6 +136,7 @@ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ #: from both envelope schemas and from every test, which is why the rename is safe and why
+ #: keeping a name that points at a deleted type would have been the worse choice.
+ REASON_NO_MODEL_DECLARED = "NO_MODEL_DECLARED"
 +REASON_WITNESSES_DIVERGED = "WITNESSES_DIVERGED"
  
  
- def evaluate(
-     observations: Sequence[ObservationRecord],
-     config_snapshot: ConfigSnapshot,
-     now_utc: datetime,
-+    witness_panel: object = None,
- ) -> DialSet:
-     """Compute both dials.
- 
-@@ -128,16 +131,30 @@
-         now_utc=instant,
-         window=config_snapshot.window(),
-     )
-+    corroborated = _corroborated(witness_panel)
-     return DialSet(
-         equity=_evaluate_dial(
--            config_snapshot.spec_for(EQUITY_DIAL_ID), usable, instant
-+            config_snapshot.spec_for(EQUITY_DIAL_ID), usable, instant, corroborated
-         ),
-         monetary=_evaluate_dial(
--            config_snapshot.spec_for(MONETARY_DIAL_ID), usable, instant
-+            config_snapshot.spec_for(MONETARY_DIAL_ID), usable, instant, corroborated
-         ),
+ @admits(
+@@ -204,6 +206,19 @@ def evaluate(
      )
  
  
@@ -79,19 +64,19 @@
  def _latest_usable_ok(
      observations: Sequence[ObservationRecord],
      *,
-@@ -277,6 +294,7 @@
-     spec: DialSpec,
+@@ -362,6 +377,7 @@ def _evaluate_dial(
      usable: Mapping[str, OK],
      now_utc: datetime,
-+    corroborated: bool = True,
+     model: "Union[ModelSpec, None]" = None,
++    witness_panel: object = None,
  ) -> "Reading":
      """One dial's reading, or the named reason there is not one.
  
-@@ -284,6 +302,15 @@
-     :func:`refuse_a_number_without_its_inputs` by the decorator, so a branch that did not
-     get its inputs cannot return a reading carrying a value however it is rewritten.
+@@ -376,6 +392,15 @@ def _evaluate_dial(
+     the moment anybody gave the evaluator a fourth argument"*. This is that fourth argument,
+     and the guard did not come off with it.
      """
-+    if not corroborated:
++    if not _corroborated(witness_panel):
 +        # The independent view has come apart from ours. There is no honest number to
 +        # publish while that is true.
 +        return Unknown(
