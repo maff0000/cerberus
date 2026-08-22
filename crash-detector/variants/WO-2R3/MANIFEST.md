@@ -22,7 +22,7 @@ below is a defence** — it is a map, and every claim in it is one you should tr
 | 1 | **P7** — an argument added to a decorated door arrives REFUSED, never unguarded | PO-DECISIONS-0005 ruling 1: *"the fourth Assurance seat is directed to run it first"* | `V20` (baseline) and `V23` (violated) below; mechanism at `src/crash_detector/admission.py`, `_faults` | The refusal is computed at DECORATION from `inspect.signature`. Anything that changes what `inspect.signature` reports — a `__signature__` assignment, a wrapper the mechanism did not make — is not tested here by anyone |
 | 2 | **CD-BP-003** — `collect`'s four `Protocol` parameters: a door that ADMITS, not an absence of a door | PO-DECISIONS-0005 ruling 4: *"the fourth Assurance seat's first target"* | `V26` (the POSITIVE example — an object that IS admitted), `V27`, `V29`, `V30`, `V32` below; BLUEPRINT §17 | `missing_adapter_members` asks `hasattr` for **five SPELLED names** and FAILS THE RENAME TEST. It is the only refusal increment 3 relies on that does. **Source trust is NOT PROVED TO BE CARRIED ANYWHERE** |
 | 3 | **THE WHOLE §D SCOPING, including the CD-D-105 closure** — a standing invitation | PO-DECISIONS-0007 ruling 2, CD-D-112 | The scope is `JUDGEMENT_PATH_PACKAGES` and the two rules in `tools/register/check_judgement_path_doors.py`; the exclusions are amendment §B.4/§H (`Lifecycle.run(tick)`, `on_shutdown`, store/migrate) | **DECLARED LIMIT 2**: RULE 1's package list is a VOCABULARY — `V16` adds a whole new package with a public undecorated door and the check exits **0**. **NOT PROVED TO BE CARRIED ANYWHERE** |
-| 4 | **THE INCREMENT-5 INSTRUMENT'S OWN ENUMERATION** | PO-DECISIONS-0008 ruling 2, CD-D-119 | **IT NOW EXISTS**: `tools/register/check_constructor_field_establishment.py`, landed ALONE at `4a5098d` — one commit BEFORE the mechanism — printing `POPULATION 32` and `DECLARED TO @establishes: 0`. The PO's FLOOR is five (`ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow`, `AttemptRecord`); **the measured population is 32 and the floor is 5/32 of it** | Attack clause (3) of its DEFINITION. RULE A's package list is a **VOCABULARY** (CHECK LIMIT 2) and RULE B/RULE C resolve names by a FLAT CROSS-MODULE fixpoint that this seat chose because it can only enlarge the class. Clause (4) is a **declared HEURISTIC**. And the ADJACENT SET (CHECK LIMIT 1) is a real hole: a frozen judgement-path type with NO `__post_init__` is outside the ruled class and this check names it rather than failing |
+| 4 | **THE INCREMENT-5 INSTRUMENT'S OWN ENUMERATION** | PO-DECISIONS-0008 ruling 2, CD-D-119 | **IT NOW EXISTS**: `tools/register/check_constructor_field_establishment.py`, landed ALONE at `4a5098d` — one commit BEFORE the mechanism — printing `POPULATION 32` and `DECLARED TO @establishes: 0`. The PO's FLOOR is five (`ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow`, `AttemptRecord`); **the measured population is 32 and the floor is 5/32 of it** | Attack clause (3) of its DEFINITION. RULE A's package list is a **VOCABULARY** (CHECK LIMIT 2) and RULE B/RULE C resolve names by a FLAT CROSS-MODULE fixpoint that this seat chose because it can only enlarge the class. The former clause (4) is a **declared HEURISTIC** and since `PO-DECISIONS-0010` ruling 1 it gates NOTHING. **THE ADJACENT SET IS GONE**: the class now reads **BODY-BORNE OR ABSENT**, the population is **33** (32 fielded + `Empty` satisfying vacuously) and `V43` is the contrast that proves the widening reached the code path rather than the header. **ATTACK THE WIDENED DEFINITION ITSELF — the Product Owner left that open to you in terms** — and note that the widening changed NOT ONE present verdict, so a green run of this check is evidence of nothing here |
 
 **THE FASTEST ROUTE TO EACH.** Extract a tree yourself, then:
 
@@ -58,6 +58,19 @@ git apply -p1 variants/WO-2R3/V39-new-field-on-a-governed-type.patch
 python3 -B tools/register/check_constructor_field_establishment.py --root .   # expect exit 1
 PYTHONPATH=src python3 -B probe_v39_new_field_on_a_governed_type.py     # expect UndeclaredField
 PYTHONPATH=src python3 -B -m pytest tests -q                            # expect 57 failed
+
+# 6  THE PO-DECISIONS-0010 RULING 1 WIDENING — AND IT IS THE ONE WHERE A GREEN RUN PROVES
+#    NOTHING, SO DO NOT READ THE TABLE, RUN BOTH ARMS. Two SEPARATE pristine extractions;
+#    the SAME single patch in each; the arms differ only in the instrument's revision.
+git archive 46adf33 | tar -x -C /tmp/arm-old && cd /tmp/arm-old
+git apply -p1 variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch
+python3 -B tools/register/check_constructor_field_establishment.py --root .   # expect exit 0,
+                                                        # "ADJACENT ... engine/verdict.py:40
+                                                        # Verdict [RULE A] fields=['score']"
+git archive c18aeb4 | tar -x -C /tmp/arm-new && cd /tmp/arm-new
+git apply -p1 variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch
+python3 -B tools/register/check_constructor_field_establishment.py --root .   # expect exit 1,
+                                                        # VIOLATION naming Verdict
 ```
 
 **AND THE FIFTH THING, WHICH NOBODY NAMED AND WHICH THIS SEAT IS HANDING YOU ANYWAY.**
@@ -79,10 +92,20 @@ offered for any of them:
    went unnoticed for a boundary. Raising it was NOT authorised and this seat left it alone.
 
 **ADDED AT INCREMENT 5, AND THESE ARE THE ONES THIS SEAT WOULD HIT FIRST NOW:**
-6. **THE ADJACENT SET** (`CD-ENG-WO2R3-F17`). A frozen public judgement-path type with NO
+6. ~~**THE ADJACENT SET** (`CD-ENG-WO2R3-F17`). A frozen public judgement-path type with NO
    `__post_init__` is OUTSIDE the class the Product Owner ruled — its establishment is ABSENT, not
    body-borne — so the increment-5 check names it and does not fail. Write one and see.
-   **NOT PROVED TO BE CARRIED ANYWHERE.**
+   **NOT PROVED TO BE CARRIED ANYWHERE.**~~
+   **SUPERSEDED, AND THE STRIKETHROUGH IS THE POINT — THIS SEAT DID NOT DELETE ITS OWN DECLARED
+   HOLE, IT WAS RULED SHUT OVER ITS HEAD.** `CD-ENG-WO2R3-F17` went up because widening a ruled
+   class is a scope decision and not a seat's to take; the Product Owner ruled the class
+   **BODY-BORNE OR ABSENT** at `PO-DECISIONS-0010` ruling 1. **WRITE ONE AND SEE STILL APPLIES —
+   `V43` IS "ONE", WRITTEN, AND IT NOW EXITS 1.** What remains is residue (i) of the check's
+   DECLARED LIMIT 1: a ZERO-FIELD member still satisfies vacuously and carries no boundary of any
+   kind. **AND THE ATTACK THIS SEAT WOULD MAKE ON ITS OWN WIDENING:** it altered NO verdict on the
+   real tree, so nothing but `V43` distinguishes it from a reworded docstring — run both arms
+   yourself rather than reading the table, and then attack the widened definition itself, which the
+   Product Owner explicitly left open to you.
 7. **CROSS-FIELD INVARIANTS** (`CD-ENG-WO2R3-F18`, `V36`). §C.5's invariants 2 and 3 and
    `ConfigSnapshot`'s one-spec-per-dial cannot be derived from a declared field list and REMAIN
    BODY-BORNE. V36 deletes one and the snapshot is **ACCEPTED**.
@@ -328,6 +351,8 @@ mechanism so that another row has a contrast. **V36, V37, V38, V39 and V42 are M
 | **V42 + V41** | as above | **V42's VIOLATED ARM.** | **ESCAPED.** `stored state type: DuckStr`; `stored state value: 'UNAVAILABLE'`; **`row.state == 'AGREES' answers: True`** — `ASR3-F04`'s sentence, reached through a constructor. **NOT OVERCLAIMED: `resolve_panel` still returned `Unavailable`** in this arm, so the escape reaches the VALUE TYPE and the resolver's own re-establishment still held. | `PYTHONPATH=src python3 -B probe_v42_canonicalisation_deleted.py` |
 | **V36** | `V36-cross-field-invariant-body-rewrite.patch` | **MINE. MECHANISM DECLARED LIMIT 1's EXECUTABLE EXAMPLE, AND IT IS A POSITIVE ONE — AN OBJECT THAT IS ACCEPTED.** Deletes §C.5's "exactly one spec per dial" check and builds a snapshot with TWO equity specs and NO monetary spec. | **ACCEPTED.** `element types: ['DialSpec','DialSpec'] (all exactly DialSpec)`; `dial_ids: ['equity_crash','equity_crash']`. The boundary is fully satisfied and the object is wrong. **A CROSS-FIELD INVARIANT CANNOT BE DERIVED FROM A DECLARED FIELD LIST.** | `PYTHONPATH=src python3 -B probe_v36_cross_field_invariant.py` |
 | **V37** | `V37-establishes-registry-rewrite.patch` | **MINE. MECHANISM DECLARED LIMIT 3.** The interpreter reach at this boundary, four arms, on `ScoreComputation` — chosen because its body establishes NO element type of `contributions`, so **only the boundary can refuse** and the measurement cannot be credited to the wrong layer. | ARM 1 front door **REFUSED**; ARM 2 `__init__.__wrapped__` **REFUSED** (`AttributeError`, deleted); ARM 3 rewrite `_DECLARATIONS` **STILL REFUSED** — the registry is a REPORT, not the live declaration, so it makes the introspection surface LIE in the SAFE direction (`CD-ENG-WO2R3-F13` INVERTED); **ARM 4 rewrite the `compiled` dict in `__init__.__closure__` -> ESCAPED**, a bare `object` stored in `contributions`. **ARM 3 WAS WRITTEN EXPECTING AN ESCAPE AND MEASURED A REFUSAL, and the limit was corrected to the measurement.** | `PYTHONPATH=src python3 -B probe_v37_establishes_registry_rewrite.py` |
+| **V43 — OLD ARM, at `46adf33`** | `V43-fielded-judgement-path-type-with-no-establishment.patch` | **MINE, AND IT IS THE ONLY PROOF THE `PO-DECISIONS-0010` RULING 1 WIDENING HAS.** It is CHECK LIMIT 1's own executable example landed as a patch, verbatim: a `@dataclass(frozen=True)` `class Verdict: score: float` under `src/crash_detector/engine/`, with no `__post_init__`, no `__init__` and no `@establishes`. **A SINGLE NEW FILE — no guard removed, nothing reached into. It simply declares a type.** | **EXIT 0**, `PASS — 96 assertions, 0 violations`, and `  ADJACENT (not required, and this is a real hole): engine/verdict.py:40 Verdict [RULE A] fields=['score']`. **ADJACENT SET 2.** THE HOLE, MEASURED FROM THE OLD SIDE AND NOT ASSERTED FROM THE NEW ONE | `git archive 46adf33 \| tar -x -C /tmp/arm-old`, `git apply -p1 <this patch>`, `python3 -B tools/register/check_constructor_field_establishment.py --root .` |
+| **V43 — NEW ARM, at `c18aeb4`** | the same single patch, unchanged | **THE SAME PATCH ON THE WIDENED INSTRUMENT.** The arms differ ONLY in which revision of the instrument reads the identical file. | **EXIT 1**, `FAIL — 1 violation(s)`: `VIOLATION src/crash_detector/engine/verdict.py:40 — Verdict is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring 1 field(s) ['score'], and it carries no @establishes(...). Its establishment is ABSENT ...`. **POPULATION 34, FIELDED 33, DECLARED TO @establishes 32.** The type is IN, and it is NAMED | same, from `git archive c18aeb4` |
 | **V38** | `V38-subclass-adds-an-unestablished-field.patch` | **MINE. MECHANISM DECLARED LIMIT 4.** No guard removed, no privileged code, nothing reached into — it simply DECLARES A NEW TYPE. | (a) a `@dataclass` subclass **REGENERATES `__init__`** and overrides the wrapped one, so **NOT ONE field is established**: `ScoreComputationPlus(magnitude=0.5, contributions=(object(),))` **ACCEPTED**; (b) the added field accepted a `lambda`; (c) a PLAIN, non-dataclass subclass DOES inherit the wrapped `__init__` and is **REFUSED**; (d) the DECLARED CARRIER, MEASURED: `resolve_panel` refuses a `PanelRow` subclass with `admission.NotAdmitted: row=PanelRowPlus is not admitted; this door requires exactly PanelRow or None` | `PYTHONPATH=src python3 -B probe_v38_subclass_adds_a_field.py` |
 
 ## The increment-5 rows that are MINE, and why each is a DIFFERENT ROUTE

@@ -180,6 +180,15 @@ POPULATION.**
 | **P7-at-the-constructor VIOLATED** | the same, plus `V41-v39-violated-arm-establishes-removed.patch` | faults **0**; `ADMITTED -> the new field arrived UNGUARDED` |
 | **THE SAME MOVE, DIFFERENT TYPE, BASELINE** | `V42-panelrow-canonicalisation-body-deleted.patch` | `REFUSED: establishment.FieldNotEstablished: PanelRow.state=DuckStr` |
 | **… VIOLATED** | the same, plus `V41` | `ESCAPED`; stored state type `DuckStr`, stored value `'UNAVAILABLE'`, and `row.state == 'AGREES'` answers **True** — `ASR3-F04`'s sentence reached through a constructor. **Stated without overclaim:** `resolve_panel` still returned `Unavailable` in that arm, so the escape reaches the VALUE TYPE and the resolver's own re-establishment still held |
+| **THE WIDENING — OLD ARM** (`46adf33`, pristine `git archive` extraction) | `V43-fielded-judgement-path-type-with-no-establishment.patch` | this command **exits 0**, `PASS — 96 assertions, 0 violations`, and prints `  ADJACENT (not required, and this is a real hole): engine/verdict.py:40 Verdict [RULE A] fields=['score']`. **ADJACENT SET 2** in that arm. The hole, measured, not asserted from one side |
+| **THE WIDENING — NEW ARM** (`c18aeb4`, pristine `git archive` extraction) | the same single patch, unchanged | this command **exits 1**, `FAIL — 1 violation(s)`, `VIOLATION src/crash_detector/engine/verdict.py:40 — Verdict is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring 1 field(s) ['score'], and it carries no @establishes(...). Its establishment is ABSENT ...`. **POPULATION 34, FIELDED 33, DECLARED TO @establishes 32.** The type is IN and it is NAMED |
+
+**THAT LAST PAIR IS THE ONLY PROOF THIS WIDENING HAS**, and it is stated that way on purpose. The
+widening altered **no** verdict on the real tree — `Empty`, its one new member, has zero fields and
+satisfies vacuously — so a green run of this row cannot distinguish a widening written into the
+code path from one written only into this document. **The same patch, exit 0 at `46adf33` and exit 1
+at `c18aeb4`, can.**
+
 
 The command for every probe is `PYTHONPATH=src python3 -B <the probe the patch adds>`, in a separate
 pristine extraction per arm. Every row is in `variants/WO-2R3/MANIFEST.md` with its command.
@@ -268,14 +277,15 @@ V38 (d) measures `resolve_panel` refusing a `PanelRow` subclass instance with
 None`. For a subclass used ENTIRELY INSIDE this package, reaching no door: **NOT PROVED TO BE CARRIED
 ANYWHERE.** Raised as `CD-ENG-WO2R3-F19`.
 
-### CHECK LIMIT 1 — THE ADJACENT SET
+### CHECK LIMIT 1 — what the widened class still does not reach
 
-A frozen public judgement-path type with **NO** establishing body fails clause (4): its
-establishment is ABSENT, not body-borne, so it is outside the class the Product Owner ruled and this
-check does not require `@establishes` of it. **There is exactly one today** — `observations.py`
-`Empty`, which has no `__post_init__` and no declared fields — and it is PRINTED with its file and
-line at every run.
+**SUPERSEDED AT `PO-DECISIONS-0010` RULING 1, QUOTED RATHER THAN DELETED (`CD-RULE-004`).**
 
+**THE SUPERSEDED WORDING, IN FULL.** It read: *"**CHECK LIMIT 1 — THE ADJACENT SET.** A frozen
+public judgement-path type with **NO** establishing body fails clause (4): its establishment is
+ABSENT, not body-borne, so it is outside the class the Product Owner ruled and this check does not
+require `@establishes` of it. **There is exactly one today** — `observations.py` `Empty`, which has
+no `__post_init__` and no declared fields — and it is PRINTED with its file and line at every run.
 **THIS IS A REAL HOLE.** A NEW frozen judgement-path type written with no `__post_init__` at all is
 outside the ruled class and this check will name it ADJACENT rather than fail. **EXECUTABLE
 EXAMPLE:** add `@dataclass(frozen=True)` / `class Verdict: score: float` to
@@ -283,7 +293,42 @@ EXAMPLE:** add `@dataclass(frozen=True)` / `class Verdict: score: float` to
 ADJACENT SET. **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.** Raised as `CD-ENG-WO2R3-F17` and
 referred to the Project Lead and the Product Owner, because **widening the ruled class is a scope
 decision and not this seat's to take** — the increment-5 dispatch's objective says "AND NOTHING
-ELSE".
+ELSE".*
+
+**`CD-ENG-WO2R3-F17` IS CLOSED BY RULING, NOT BY THE SEAT THAT RAISED IT.** The Product Owner
+widened the class at `PO-DECISIONS-0010` ruling 1. **THE ADJACENT SET IS DEAD AS AN EXEMPTION** —
+that same executable example is now
+`variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch`, and it is the row
+marked **THE WIDENING** in the negative-controls table above: **exit 0 and ADJACENT at `46adf33`,
+exit 1 naming `Verdict` after the widening.**
+
+**TWO RESIDUES REMAIN, AND NEITHER IS CLOSED BY THE WIDENING.**
+
+**RESIDUE (i) — a ZERO-FIELD member satisfies vacuously, and the whole of what is asserted of it is
+that it has no fields.** `Empty` is that member today and the only one. It carries no boundary of
+any kind; the rule is satisfied there because there is nothing to satisfy it about, which is a
+different fact from a guarded type. **EXECUTABLE EXAMPLE:** V43 is this residue **one field down** —
+the moment a field arrives on a type with no establishment, the check fails. **CARRIER MEASURED:**
+`tests/test_field_establishment.py::test_the_vacuously_satisfying_members_are_exactly_this_set`
+pins the vacuous set BY NAME and re-measures each member's emptiness at RUNTIME from
+`dataclasses.fields`, so a SECOND zero-field judgement-path type is a test failure rather than a
+quiet widening of the vacuous branch, and a field arriving on `Empty` fails there too.
+
+**RESIDUE (ii) — the CROSS-FIELD invariant is not reached, and the widening did not touch it.** A
+declared field list says what each field IS and **nothing** about what any two of them must be TO
+EACH OTHER. §C.5's invariants 2 and 3, `ConfigSnapshot`'s one-spec-per-dial, `AttemptRecord`'s
+`requested_utc <= observation.observed_utc`, `CollectionResult`'s `rows_recorded == attempts_made`
+and `Agrees`'s `freshness.as_of_utc == as_of_utc` **REMAIN BODY-BORNE**. **The widened wording must
+not be read to imply otherwise:** widening the class from *body-borne* to *body-borne or absent*
+widened **WHO MUST DECLARE**, not **WHAT A DECLARATION CAN SAY**. **EXECUTABLE EXAMPLE:**
+`variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch`, as at MECHANISM LIMIT 1. **CARRIER
+MEASURED AND IT IS BODY-LEVEL:** `tests/test_engine_config.py` and
+`tests/test_engine_model_registry.py`. **As a STRUCTURE that survives an edit to those bodies: NOT
+PROVED TO BE CARRIED ANYWHERE.** Standing as `CD-ENG-WO2R3-F18`.
+
+**AND WHAT A READER MUST NOT INFER FROM A GREEN RUN.** The widening changed **no** verdict on the
+population it was applied to. This check was GREEN before it and is GREEN after it. What the
+widening buys is **prospective**, and it is proved by the contrast, never by the run.
 
 ### CHECK LIMIT 2 — RULE A's package list is a VOCABULARY
 
