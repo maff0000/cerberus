@@ -368,3 +368,116 @@ It does **not** license "constructors are closed". Read the eight declared limit
 `CD-RT-002-DOORS-REQUIRE-THEIR-TYPES`'s DECLARED LIMIT 1, which now hands its residue to this row
 and names what it still does not carry. **A clean run of a static check is not proof of a runtime
 property** — every escape on this project's record passed a static checker.
+
+
+---
+
+## DECLARED LIMIT 5 — THE TRAVERSAL'S RESIDUAL REACH
+
+**NEW AT WO-2R3 INCREMENT 6, AND IT REPLACES A LIMIT THAT WAS NEVER DECLARED AT ALL**
+(`PO-DECISIONS-0011` ruling 2). Stated identically here, in the check's header, and in
+`required-tests.yaml` (`CD-RULE-004`).
+
+**THE UNDECLARED LIMIT THAT WAS HERE UNTIL THIS INCREMENT, SAID PLAINLY BECAUSE NOBODY EVER WROTE IT
+DOWN:** this check enumerated classes with `for node in tree.body` — **TOP LEVEL ONLY** — at three
+separate sites, and `check_judgement_path_doors.py` did the same for callables. **BOTH GOVERNING
+INSTRUMENTS SHARED ONE BLIND SPOT AND NEITHER DECLARED IT.**
+
+`CD-ASR-WO2R3-01` escaped it with **ONE INDENTATION LEVEL** inside an already-governed file in
+`engine/`, a RULE A judgement-path package:
+
+```
+POPULATION unchanged at 33      ctor EXIT=0      doors EXIT=0
+--why ledger mentions it: 0  — NOT EVEN EXAMINED
+runtime: Judgement.Verdict(score=object(), breached='maybe') ACCEPTED
+```
+
+The ledger printed `OUT engine/config.py:379 Judgement — clause (2): not declared
+@dataclass(frozen=True).` — a correct-sounding line about the **container** — and **nothing whatever
+about the fielded frozen type inside it** (`CD-PL-F96`). **AN ABSENCE WOULD HAVE BEEN MORE HONEST
+THAN THE LINE THAT WAS THERE.**
+
+Enumeration is now `_classes`, which uses `ast.walk` and reaches **any nesting depth**, prints
+**qualified names**, and the count of classes examined is **ASSERTED against a second independent
+derivation** rather than printed.
+
+### The two derivations, and why they are independent
+
+| | derivation 1 | derivation 2 |
+|---|---|---|
+| input | the shared `parsed` list | the file's **bytes re-read from disk**, re-parsed |
+| traversal | `ast.walk` — breadth-first deque over `iter_child_nodes` | `ast.NodeVisitor` — **visitor dispatch**, depth-first via `iter_fields` |
+| qualified names | a parent map built once | its own **descent stack** |
+
+The **sets** are diffed, not the counts compared — this project's own doctrine, learned at
+`CD-D-119`: identical counts have hidden a swap here before. A class in the independent reading that
+never reached adjudication is `CLASS_NEVER_ADJUDICATED`, **a violation**.
+
+**MEASURED, BOTH ARMS.** Regressing *only* the adjudication loop back to `tree.body` in a scratch
+copy, with the nested plant applied, gives `IN THE INDEPENDENT READING AND NEVER ADJUDICATED: 1` and
+**EXIT 1** naming `Judgement.Verdict`. **CARRIER MEASURED:**
+`tests/test_field_establishment.py::test_the_count_of_classes_examined_is_asserted_against_a_second_derivation`
+performs exactly that regression and requires the failure.
+
+### What is now closed — measured, not assumed
+
+`variants/WO-2R3/P-B-how-deep-can-a-type-hide.py` plants the same public frozen fielded undeclared
+type at **nine placements** and runs both instruments at each, at a pristine `531c95c` extraction and
+at the increment-6 tree. These rows go `ctor exit=0` at `531c95c` and `ctor exit=1`, **named in the
+ledger**, now:
+
+* nested **one** class level — the auditor's escape
+* nested **two** class levels
+* inside a **public** function body
+* inside a **private** function body
+* **conditionally defined** under `if True:`
+
+**THE CONDITIONAL ONE WAS FOUND BY `CD-ENG-WO2R3-02` AND IS IN NO AUDITOR'S DOCUMENT.** It is not
+nested at all — a module-level `if` block is simply not in `tree.body` — and the type it hides is
+**fully reachable and ACCEPTED at runtime**.
+
+### A row that turned out NOT to be a limit
+
+**A module that does not parse.** Measured `ctor exit=1`. It is already an `UNPARSEABLE` violation
+and always was — a failure, not a silence. **It is not declared as a limit because it is not one.**
+
+### The residual reach limits are exactly two
+
+**(i) A CLASS WITH NO `ClassDef` NODE IS INVISIBLE, AND NO AST TRAVERSAL CAN FIX THAT.** Executable
+example — the probe's `built by type(...) AT RUNTIME` placement, appended to `engine/config.py`:
+
+```python
+import dataclasses as _dc
+HiddenVerdict = _dc.dataclass(frozen=True)(type('HiddenVerdict', (), {
+    '__annotations__': {'score': float, 'breached': bool}}))
+```
+
+MEASURED **at both SHAs**: `ctor exit=0`, not named, absent from the `--why` ledger, and at runtime
+`HiddenVerdict(score=object(), breached='maybe')` **ACCEPTED**. **CARRIER: NOT PROVED TO BE CARRIED
+ANYWHERE** — nothing in this tree enumerates types at runtime and compares them against the static
+population. **PINNED** (not carried) by
+`tests/test_field_establishment.py::test_a_type_with_no_classdef_node_is_a_DECLARED_LIMIT_and_still_escapes`,
+which **passes because the escape works**; if it ever fails, the limit is now wrong and all three
+`CD-RULE-004` places must be corrected.
+
+**(ii) A MODULE OUTSIDE `src/crash_detector/` IS NEVER PARSED.** Both instruments glob that one
+directory. Executable example: the probe's `in a module OUTSIDE the scanned root` placement writes
+the identical type to `src/outside_the_root.py`. MEASURED **at both SHAs**: `ctor exit=0`, not named,
+absent from the ledger. **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE** — the package boundary is a
+convention here, not an assertion.
+
+### What the two derivations do NOT give independence from
+
+**The `ast` module itself, and the set of files handed to both readings.** A defect in CPython's
+parser, or a file neither reading is offered — which is limit (ii) — is invisible to both.
+**TWO DERIVATIONS OF ONE INPUT ARE TWO DERIVATIONS, NOT TWO INPUTS.**
+
+### The planted violation
+
+`plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch` — the twelfth
+plant, and the first to vary the **reach** axis. **BITTEN** to `PO-DECISIONS-0011` ruling 4's
+standard on the day it landed: clean arm established first (`exit 0`, `PASS — 101 assertions`),
+`git apply` **for real**, violated arm `exit 1` reproducing the signature, and the instrument
+**SHA-verified byte-identical** at `48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382`.
+It escaped at `531c95c` **and** at `f495eef` — the post-item-A, post-item-D commit of this same
+increment. Both measured, neither assumed.

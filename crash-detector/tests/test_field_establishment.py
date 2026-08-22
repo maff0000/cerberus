@@ -545,3 +545,162 @@ def test_one_of_and_each_of_are_the_same_vocabulary_the_doors_use():
 
     assert one_of is admission.one_of
     assert ESTABLISHED_HERE is admission.ESTABLISHED_HERE
+
+
+# --- THE AST REACH (WO-2R3 increment 6, item B) ------------------------------------------ #
+
+_NESTED_PLANT = '''
+
+class Judgement:
+    """A plain container. NOT a frozen dataclass, so it is ruled OUT at clause (2) itself."""
+
+    @dataclass(frozen=True)
+    class Verdict:
+        score: float
+        breached: bool
+'''
+
+
+def _run_the_constructor_check_on(tree_root):
+    return subprocess.run(
+        [sys.executable, "-B", str(_CHECK), "--root", str(tree_root), "--why"],
+        capture_output=True,
+        text=True,
+    )
+
+
+def _tree_with(addition: str, scratch):
+    import shutil
+
+    copy = pathlib.Path(scratch) / "tree"
+    shutil.copytree(
+        _REPO_ROOT / "src", copy / "src", ignore=shutil.ignore_patterns("__pycache__")
+    )
+    target = copy / "src" / "crash_detector" / "engine" / "config.py"
+    target.write_text(target.read_text() + addition)
+    return copy
+
+
+def test_a_type_nested_one_class_level_is_reached_and_named(tmp_path):
+    """**THE ESCAPE THAT MOVED THE WO-2R3 GATE TO RED, AS A CARRIER.**
+
+    `CD-ASR-WO2R3-01` put a public frozen fielded dataclass ONE INDENTATION LEVEL inside
+    `engine/config.py` — an already-governed file in a RULE A judgement-path package — and
+    measured POPULATION UNCHANGED AT 33, EXIT 0, `PASS — 97 assertions`, while at runtime
+    `Judgement.Verdict(score=object(), breached='maybe')` was ACCEPTED. No new package, no new
+    module, no rename.
+
+    `PO-DECISIONS-0011` ruling 2: **the ruled class was sound and the INSTRUMENT was defective
+    against it.** This asserts the instrument now reaches it.
+    """
+    copy = _tree_with(_NESTED_PLANT, tmp_path)
+    result = _run_the_constructor_check_on(copy)
+
+    assert result.returncode == 1, result.stdout
+    assert "FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST" in result.stdout
+
+
+def test_the_why_ledger_names_the_nested_type_and_not_only_its_container(tmp_path):
+    """**CD-PL-F96'S NAMED PROOF, AND THE PRODUCT OWNER NAMED IT: re-run the plant, read the
+    output.**
+
+    At `531c95c` the `--why` ledger printed, for that file:
+
+        OUT  engine/config.py:379 Judgement — clause (2): not declared @dataclass(frozen=True).
+
+    — a line about the CONTAINER, with a specific and correct-sounding reason — **and nothing
+    whatever about the frozen fielded `Verdict` inside it.** A reader auditing that ledger saw
+    the file represented, saw a class at that location adjudicated with a reason, and had no
+    signal at all. **AN ABSENCE WOULD HAVE BEEN MORE HONEST THAN THE LINE THAT WAS THERE.**
+
+    So the ledger must now name the nested type BY ITS QUALIFIED NAME. Bare `Verdict` is not
+    enough and this test says so: two classes can be called `Verdict`, and a ledger row a
+    reader cannot locate is the same defect one step along.
+    """
+    copy = _tree_with(_NESTED_PLANT, tmp_path)
+    result = _run_the_constructor_check_on(copy)
+
+    assert "Judgement.Verdict" in result.stdout, (
+        "the --why ledger must name the nested type, qualified"
+    )
+    assert "OUT  engine/config.py" in result.stdout and "Judgement — clause (2)" in result.stdout, (
+        "the container's own OUT line must still be there — the fix ADDS the member, it does "
+        "not replace the container"
+    )
+
+
+def test_the_count_of_classes_examined_is_asserted_against_a_second_derivation(tmp_path):
+    """**ITEM B2: A CLASS THAT EXISTS AND IS NEVER LOOKED AT IS A VIOLATION, NOT A SILENCE.**
+
+    Until this increment `99 class(es) examined` was a `check.note` and NOTHING GUARDED IT,
+    which is precisely how a class that was never a candidate stayed invisible. Worse, the
+    figure MOVED BY ONE when the auditor's plant added TWO classes — the container was counted
+    and the member inside it was not.
+
+    The instrument now derives the examined set twice and diffs the SETS. This asserts the
+    guard is real by REGRESSING THE ENUMERATION IN A SCRATCH COPY — putting `tree.body` back
+    into the adjudication loop while leaving the independent reading intact — and requires the
+    check to fail and to NAME the class nobody adjudicated.
+    """
+    import shutil
+
+    copy = pathlib.Path(tmp_path) / "tree"
+    shutil.copytree(
+        _REPO_ROOT / "src", copy / "src", ignore=shutil.ignore_patterns("__pycache__")
+    )
+    shutil.copytree(
+        _REPO_ROOT / "tools", copy / "tools", ignore=shutil.ignore_patterns("__pycache__")
+    )
+    target = copy / "src" / "crash_detector" / "engine" / "config.py"
+    target.write_text(target.read_text() + _NESTED_PLANT)
+
+    instrument = copy / "tools" / "register" / "check_constructor_field_establishment.py"
+    source = instrument.read_text()
+    walking = "        for qualname, node in _classes(tree):\n            classes_seen += 1"
+    assert walking in source, "the enumeration this test regresses has moved; update the test"
+    instrument.write_text(
+        source.replace(
+            walking,
+            "        for qualname, node in [(n.name, n) for n in tree.body "
+            "if isinstance(n, ast.ClassDef)]:\n            classes_seen += 1",
+            1,
+        )
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-B", str(instrument), "--root", str(copy)],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1, result.stdout
+    assert "CLASS_NEVER_ADJUDICATED" in result.stdout
+    assert "Judgement.Verdict" in result.stdout
+
+
+def test_a_type_with_no_classdef_node_is_a_DECLARED_LIMIT_and_still_escapes(tmp_path):
+    """**THE RESIDUE, PINNED — NOT A CARRIER, AND IT SAYS SO.**
+
+    `DECLARED LIMIT 5 (i)`: a class built by `type(...)` at runtime leaves no `ClassDef` node,
+    so no AST traversal reaches it. This test PASSES BECAUSE THE ESCAPE WORKS, exactly like
+    `test_the_snapshot_does_not_reach_a_container_that_is_not_exactly_a_dict` in
+    `test_collector_runner.py`.
+
+    **IF IT EVER FAILS, THE DECLARED LIMIT IS NOW NARROWER THAN DECLARED: go and correct all
+    three CD-RULE-004 places. Do not delete this test.** A limit whose only guarantor is its
+    own wording is a limit that goes stale, and this project has now been bitten by that three
+    times.
+    """
+    runtime_built = (
+        "\n\nimport dataclasses as _dc\n"
+        "HiddenVerdict = _dc.dataclass(frozen=True)(type('HiddenVerdict', (), "
+        "{'__annotations__': {'score': float, 'breached': bool}}))\n"
+    )
+    copy = _tree_with(runtime_built, tmp_path)
+    result = _run_the_constructor_check_on(copy)
+
+    assert result.returncode == 0, result.stdout
+    assert "HiddenVerdict" not in result.stdout, (
+        "DECLARED LIMIT 5 (i) says a type with no ClassDef node is invisible to this "
+        "instrument. If this assertion fails the limit is wrong and must be corrected in all "
+        "three CD-RULE-004 places"
+    )

@@ -1397,6 +1397,52 @@ criteria:
         needs the ability to execute code inside the package, which is the universal limit every
         in-process guard on this project lives inside. That is strictly weaker than "cannot
         happen" and it is said rather than implied.
+        CHECK LIMIT 7 — THE TRAVERSAL'S RESIDUAL REACH. **NEW AT WO-2R3 INCREMENT 6, AND IT
+        REPLACES A LIMIT THAT WAS NEVER DECLARED AT ALL** (PO-DECISIONS-0011 ruling 2). Numbered
+        7 because 1..4 are the check's and 5..6 are the mechanism's, and this row's limits run as
+        ONE sequence across the two headers.
+        THE UNDECLARED LIMIT UNTIL THIS INCREMENT: `_callables` read `tree.body` — top-level defs
+        plus the DIRECT members of top-level PUBLIC classes — and its sibling
+        check_constructor_field_establishment.py did the same for classes. BOTH GOVERNING
+        INSTRUMENTS SHARED THIS BLIND SPOT AND NEITHER DECLARED IT. CD-ASR-WO2R3-01's four arms
+        against ONE undecorated public door in collectors/runner.py: module-level def EXIT 1;
+        method of a top-level class EXIT 1; method nested ONE level EXIT 0; function-local def
+        bound in a module dict EXIT 0 — and live, `POLICY["decide"]` accepted unestablished
+        arguments. `_callables` now descends to ANY DEPTH. BOTH ZEROS ARE ONES.
+        NO NEW EXEMPTION WAS INTRODUCED. The three this check declares — non-public name,
+        @property, Protocol stub — are untouched and are still the only ones, each still counted
+        in the output. The old code skipped members of a NON-PUBLIC top-level class; that is
+        preserved and now applied to the WHOLE chain, which is the same judgement ("nothing
+        outside can name this") asked of every level rather than only the first.
+        WHAT IS NOW CLOSED, MEASURED by variants/WO-2R3/P-B-how-deep-can-a-type-hide.py, which
+        plants one public undecorated callable at nine placements: nested ONE class level; nested
+        TWO class levels; inside a PUBLIC function body; inside a PRIVATE function body;
+        conditionally defined under `if True:`. All are now NAMED by this check.
+        THE RESIDUAL REACH LIMITS ARE EXACTLY TWO, and they are the same two the sibling
+        instrument declares as its CHECK LIMIT 5, because they are properties of READING SOURCE
+        rather than of either check.
+        (i) A CALLABLE WITH NO `FunctionDef` NODE IS INVISIBLE. A `lambda` bound to a name, or a
+        function built by exec/type, leaves nothing to walk. Executable example: the probe's
+        `built by type(...) AT RUNTIME` placement writes `hidden_decide = lambda reading: reading`
+        into engine/config.py; MEASURED AT BOTH SHAs, this check does not name it. CARRIER: NOT
+        PROVED TO BE CARRIED ANYWHERE.
+        (ii) A MODULE OUTSIDE src/crash_detector/ IS NEVER PARSED. Measured: the probe's `in a
+        module OUTSIDE the scanned root` placement is not named at either SHA. CARRIER: NOT PROVED
+        TO BE CARRIED ANYWHERE.
+        A LIMIT THAT TURNED OUT NOT TO BE ONE: a module that does not parse is an UNPARSEABLE
+        VIOLATION, not a silence. Measured, and therefore NOT declared as a limit.
+        **WHAT THE WIDENING FOUND IN EXISTING CODE, WHICH IS A FINDING AND NOT A LIMIT, AND WHICH
+        MAKES THIS ROW'S DECLARED COMMAND EXIT 1 AT THIS SHA.** engine/evaluate.py's `guarded` —
+        the closure inside the PRIVATE decorator `_absence_is_never_a_number` carrying the
+        CD-ASR-F03 post-condition — is a PUBLIC-NAMED callable in a RULE 1 package with
+        `*extra, **extra_by_name` and no @admits. IT IS NOT EXEMPTED AND IT IS NOT FIXED:
+        engine/evaluate.py is outside WO-2R3 increment 6's writable scope; adding an exemption for
+        it would be the quiet widening this project keeps finding; and deciding whether it should
+        be decorated, renamed `_guarded`, or declared exempt IS A DESIGN QUESTION FOR THE PRODUCT
+        OWNER. RAISED AS CD-ENG-WO2R3-02-F06 AND LEFT OPEN. Note that `functools.wraps` gives it
+        the RUNTIME `__name__` `_evaluate_dial`, so the static reading and the runtime name
+        DISAGREE about whether it is public at all — which is part of what makes it a question
+        rather than an oversight.
       evidence_ref: RTR-WO2-0001
   # ===========================================================================================
   # CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST — ADDED AT WO-2R3 INCREMENT 5,
@@ -1644,6 +1690,81 @@ criteria:
         doors — so an exemption that starts absorbing the population is visible in the output
         rather than discovered later. CARRIER MEASURED:
         tests/test_field_establishment.py::test_the_established_here_field_exemptions_are_exactly_this_set.
+        CHECK LIMIT 5 — THE TRAVERSAL'S RESIDUAL REACH. **NEW AT WO-2R3 INCREMENT 6, AND IT
+        REPLACES A LIMIT THAT WAS NEVER DECLARED AT ALL** (PO-DECISIONS-0011 ruling 2). Stated
+        identically in the check header, here, and in the execution contract (CD-RULE-004).
+        THE UNDECLARED LIMIT THAT WAS HERE UNTIL THIS INCREMENT, SAID PLAINLY BECAUSE NOBODY EVER
+        WROTE IT DOWN: this check enumerated classes with `for node in tree.body` — TOP LEVEL
+        ONLY — at three separate sites, and check_judgement_path_doors.py did the same for
+        callables. BOTH GOVERNING INSTRUMENTS SHARED ONE BLIND SPOT AND NEITHER DECLARED IT.
+        CD-ASR-WO2R3-01 escaped it with ONE INDENTATION LEVEL inside an already-governed file in
+        engine/ — a RULE A judgement-path package: POPULATION UNCHANGED AT 33, EXIT 0, PASS — 97
+        assertions, and at runtime `Judgement.Verdict(score=object(), breached='maybe')` ACCEPTED.
+        The --why ledger printed `OUT engine/config.py:379 Judgement — clause (2): not declared
+        @dataclass(frozen=True).` — a correct-sounding line about the CONTAINER — AND NOTHING
+        WHATEVER ABOUT THE FIELDED FROZEN TYPE INSIDE IT (CD-PL-F96). Enumeration is now
+        `_classes`, using ast.walk, reaching ANY NESTING DEPTH, and the count of classes examined
+        is ASSERTED against a SECOND INDEPENDENT DERIVATION rather than printed.
+        THE COUNT IS ASSERTED, NOT PRINTED. Two derivations are diffed AS SETS at every run: the
+        adjudication path, and a separate re-read of each file FROM DISK, re-parsed and traversed
+        by ast.NodeVisitor DISPATCH rather than ast.walk, computing its own qualified names from
+        its own descent stack. A class in the independent reading that never reached adjudication
+        is CLASS_NEVER_ADJUDICATED, a VIOLATION. MEASURED, BOTH ARMS: regressing only the
+        adjudication loop back to `tree.body` in a scratch copy, with the nested plant applied,
+        gives `IN THE INDEPENDENT READING AND NEVER ADJUDICATED: 1` and EXIT 1 naming
+        `Judgement.Verdict`. CARRIER MEASURED:
+        tests/test_field_establishment.py::test_the_count_of_classes_examined_is_asserted_against_a_second_derivation,
+        which performs exactly that regression and requires the failure.
+        WHAT IS NOW CLOSED, EACH MEASURED — variants/WO-2R3/P-B-how-deep-can-a-type-hide.py plants
+        the same public frozen fielded undeclared type at NINE placements and runs both
+        instruments at each, at a pristine 531c95c extraction and at the increment-6 tree. These
+        rows go `ctor exit=0` at 531c95c and `ctor exit=1`, NAMED IN THE LEDGER, now: nested ONE
+        class level; nested TWO class levels; inside a PUBLIC function body; inside a PRIVATE
+        function body; conditionally defined under `if True:`. THE CONDITIONAL ONE WAS FOUND BY
+        CD-ENG-WO2R3-02 AND IS IN NO AUDITOR'S DOCUMENT: it is not nested at all — a module-level
+        `if` block is simply not in `tree.body` — and the type it hides is FULLY REACHABLE AND
+        ACCEPTED at runtime.
+        A ROW THAT TURNED OUT NOT TO BE A LIMIT, RECORDED SO IT IS NOT DECLARED AS ONE: a module
+        that DOES NOT PARSE. Measured `ctor exit=1`. It is already an UNPARSEABLE violation and
+        always was — a failure, not a silence. IT IS NOT DECLARED AS A LIMIT BECAUSE IT IS NOT ONE.
+        THE RESIDUAL REACH LIMITS ARE EXACTLY TWO, MEASURED AND NOT LISTED FROM IMAGINATION:
+        (i) A CLASS WITH NO `ClassDef` NODE IS INVISIBLE, AND NO AST TRAVERSAL CAN FIX THAT. A
+        type built by `type(...)`, `exec` or `importlib` at runtime leaves nothing to walk.
+        Executable example, the probe's `built by type(...) AT RUNTIME` placement appended to
+        engine/config.py: `HiddenVerdict = _dc.dataclass(frozen=True)(type('HiddenVerdict', (),
+        {'__annotations__': {'score': float, 'breached': bool}}))`. MEASURED AT BOTH SHAs: ctor
+        exit=0, not named, absent from the --why ledger, and at runtime
+        `HiddenVerdict(score=object(), breached='maybe')` ACCEPTED. CARRIER: NOT PROVED TO BE
+        CARRIED ANYWHERE — nothing in this tree enumerates types at runtime and compares them
+        against the static population. PINNED (not carried) by
+        tests/test_field_establishment.py::test_a_type_with_no_classdef_node_is_a_DECLARED_LIMIT_and_still_escapes,
+        which PASSES BECAUSE THE ESCAPE WORKS and whose failure would mean the limit is now wrong.
+        (ii) A MODULE OUTSIDE src/crash_detector/ IS NEVER PARSED. Both instruments glob that one
+        directory. Executable example: the probe's `in a module OUTSIDE the scanned root`
+        placement writes the identical type to src/outside_the_root.py. MEASURED AT BOTH SHAs:
+        ctor exit=0, not named, absent from the ledger. CARRIER: NOT PROVED TO BE CARRIED
+        ANYWHERE — the package boundary is a convention here, not an assertion.
+        WHAT THE TWO INDEPENDENT DERIVATIONS DO NOT GIVE INDEPENDENCE FROM: the `ast` module
+        itself, and the set of files handed to both readings. A defect in CPython's parser, or a
+        file neither reading is offered — which is limit (ii) — is invisible to both. TWO
+        DERIVATIONS OF ONE INPUT ARE TWO DERIVATIONS, NOT TWO INPUTS.
+      planted_violation: plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch
+      planted_violation_note: >
+        THE TWELFTH PLANT, AND THE FIRST TO VARY THE REACH AXIS (PO-DECISIONS-0011 ruling 2, which
+        ordered it in those words). V43 and V16 varied WHERE THE FILE WAS; nobody varied HOW DEEP
+        THE CLASS WAS. The patch nests a public frozen fielded `Verdict` inside a plain
+        `Judgement` container appended to src/crash_detector/engine/config.py — an ALREADY-GOVERNED
+        file in a RULE A package. No new package, no new module, no rename, no import added.
+        BITTEN TO PO-DECISIONS-0011 RULING 4's STANDARD ON THE DAY IT LANDED, by CD-ENG-WO2R3-02,
+        in a throwaway /tmp extraction with the worktree never mutated: CLEAN ARM ESTABLISHED
+        FIRST, `exit 0` `PASS — 101 assertions, 0 violations`; `git apply --check` then
+        `git apply` — APPLIED FOR REAL; VIOLATED ARM `exit 1` `FAIL — 1 violation(s)` with
+        `VIOLATION src/crash_detector/engine/config.py:392`, rule
+        FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST, naming `Judgement.Verdict`;
+        and THE INSTRUMENT SHA-VERIFIED BYTE-IDENTICAL to the tree it ran from,
+        sha256 48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382.
+        IT ESCAPED AT 531c95c AND ALSO AT f495eef — the post-item-A, post-item-D commit of this
+        same increment. Both measured, neither assumed. Only item B closes it.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-012

@@ -256,6 +256,64 @@ it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     **CARRIER MEASURED:** ``tests/test_field_establishment.py::
     test_the_established_here_field_exemptions_are_exactly_this_set`` pins the exact set —
     class, field and reason — so a new exemption is a test failure and not a quiet widening.
+
+ 5  **THE TRAVERSAL'S RESIDUAL REACH. NEW AT WO-2R3 INCREMENT 6, AND IT REPLACES A LIMIT THAT
+    WAS NEVER DECLARED AT ALL.**
+
+    **THE UNDECLARED LIMIT THAT WAS HERE UNTIL THIS INCREMENT, STATED PLAINLY BECAUSE NOBODY
+    EVER WROTE IT DOWN:** this check enumerated classes with ``for node in tree.body`` — **TOP
+    LEVEL ONLY** — at three separate sites, and ``check_judgement_path_doors.py`` did the same
+    for callables. **BOTH GOVERNING INSTRUMENTS SHARED ONE BLIND SPOT AND NEITHER DECLARED
+    IT.** ``CD-ASR-WO2R3-01`` escaped it with ONE INDENTATION LEVEL inside an already-governed
+    file in ``engine/``: POPULATION UNCHANGED AT 33, EXIT 0, ``PASS — 97 assertions``, and at
+    runtime ``Judgement.Verdict(score=object(), breached='maybe')`` **ACCEPTED**. The ledger
+    printed ``OUT engine/config.py:379 Judgement — clause (2): not declared
+    @dataclass(frozen=True)`` — a correct-sounding line about the CONTAINER and **NOTHING
+    WHATEVER ABOUT THE FIELDED FROZEN TYPE INSIDE IT** (``CD-PL-F96``). Enumeration is now
+    :func:`_classes`, which uses ``ast.walk`` and reaches ANY NESTING DEPTH, and the count is
+    ASSERTED against a second independent derivation rather than printed.
+
+    **WHAT IS NOW CLOSED, EACH MEASURED AND NOT ASSUMED** —
+    ``variants/WO-2R3/P-B-how-deep-can-a-type-hide.py``, which plants the same public frozen
+    fielded undeclared type at nine placements and runs both instruments at each. These rows
+    go ``ctor exit=0`` at ``531c95c`` and ``ctor exit=1``, NAMED IN THE LEDGER, now:
+    nested ONE class level · nested TWO class levels · inside a PUBLIC function body ·
+    inside a PRIVATE function body · conditionally defined under ``if True:``.
+    **THE CONDITIONAL ONE WAS FOUND BY THIS SEAT AND IS IN NO AUDITOR'S DOCUMENT: it is not
+    nested at all — a module-level ``if`` block is simply not in ``tree.body`` — and the type
+    it hides is FULLY REACHABLE AND ACCEPTED at runtime.**
+
+    **AND A ROW THAT TURNED OUT NOT TO BE A LIMIT, RECORDED SO IT IS NOT DECLARED AS ONE:** a
+    module that DOES NOT PARSE. Measured ``ctor exit=1``. It is already an ``UNPARSEABLE``
+    violation and always was — a failure, not a silence. **It is not declared as a limit
+    because it is not one.**
+
+    **THE RESIDUAL REACH LIMITS ARE EXACTLY TWO. MEASURED, NOT LISTED FROM IMAGINATION.**
+
+    (i) **A CLASS WITH NO ``ClassDef`` NODE IS INVISIBLE, AND NO AST TRAVERSAL CAN FIX THAT.**
+        A type built by ``type(...)``, ``exec`` or ``importlib`` at runtime leaves nothing to
+        walk. Executable example — the probe's ``built by type(...) AT RUNTIME`` placement,
+        appended to ``engine/config.py``::
+
+            import dataclasses as _dc
+            HiddenVerdict = _dc.dataclass(frozen=True)(type('HiddenVerdict', (), {
+                '__annotations__': {'score': float, 'breached': bool}}))
+
+        MEASURED AT BOTH SHAs: ``ctor exit=0``, not named, absent from the ``--why`` ledger,
+        and at runtime ``HiddenVerdict(score=object(), breached='maybe')`` **ACCEPTED**.
+        **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.** Nothing in this tree enumerates types
+        at runtime and compares them against the static population.
+
+    (ii) **A MODULE OUTSIDE ``src/crash_detector/`` IS NEVER PARSED.** Both instruments glob
+        that one directory. Executable example — the probe's ``in a module OUTSIDE the scanned
+        root`` placement writes the identical type to ``src/outside_the_root.py``. MEASURED AT
+        BOTH SHAs: ``ctor exit=0``, not named, absent from the ledger. **CARRIER: NOT PROVED TO
+        BE CARRIED ANYWHERE.** The package boundary is a convention here, not an assertion.
+
+    **WHAT THE TWO INDEPENDENT DERIVATIONS DO NOT GIVE INDEPENDENCE FROM** (item B2): the
+    ``ast`` module itself, and the set of files handed to both readings. A defect in CPython's
+    parser, or a file neither reading is offered — which is limit (ii) — is invisible to both.
+    Two derivations of one input are two derivations, not two inputs.
 """
 
 from __future__ import annotations
@@ -334,6 +392,91 @@ THE_DEFINITION = (
 
 def _is_public(name: str) -> bool:
     return not name.startswith("_")
+
+
+def _classes(tree) -> list:
+    """EVERY ``ClassDef`` in a module, AT ANY NESTING DEPTH, as ``(qualname, node)``.
+
+    **THIS FUNCTION IS WO-2R3 INCREMENT 6'S WHOLE STRUCTURAL CHANGE TO THIS INSTRUMENT.**
+    Until it existed, the population, the RULE A seed and the frozen-name graph were each
+    built by ``for node in tree.body`` — **TOP LEVEL ONLY** — and so was
+    ``check_judgement_path_doors.py``'s subject set. Both governing instruments shared one
+    blind spot and neither declared it.
+
+    ``CD-ASR-WO2R3-01`` measured what that cost: a public frozen fielded dataclass nested
+    **ONE CLASS LEVEL** inside ``src/crash_detector/engine/config.py`` — an already-governed
+    file in a RULE A judgement-path package — gave POPULATION UNCHANGED AT 33, EXIT 0,
+    ``PASS — 97 assertions``, and at runtime ``Judgement.Verdict(score=object(),
+    breached='maybe')`` was **ACCEPTED**. No new package, no new module, no rename.
+    ``PO-DECISIONS-0011`` ruling 2: **the ruled class was sound and the INSTRUMENT was
+    defective against it.**
+
+    ``ast.walk`` rather than a hand-rolled recursion, so the traversal is the standard
+    library's and not this file's opinion of what contains what.
+
+    **THE QUALIFIED NAME IS RETURNED AND USED IN EVERY PRINTED LINE.** A ledger row reading
+    ``Verdict`` where two classes are called ``Verdict`` is a row a reader cannot act on, and
+    the whole point of ``CD-PL-F96`` is that the ledger must name what it adjudicated.
+
+    Ordered by source position so the ledger reads down the file, which a walk's own order
+    does not guarantee.
+    """
+    qualnames: dict = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                qualnames[id(child)] = f"{qualnames.get(id(node), node.name)}.{child.name}"
+    found = [
+        (qualnames.get(id(node), node.name), node)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef)
+    ]
+    return sorted(found, key=lambda pair: (pair[1].lineno, pair[1].col_offset))
+
+
+class _ClassCounter(ast.NodeVisitor):
+    """THE SECOND, INDEPENDENT DERIVATION OF THE EXAMINED SET (item B2).
+
+    ``PO-DECISIONS-0011`` ruling 2 and the increment-6 dispatch require the count of classes
+    examined to be **DERIVED FROM THE ARTEFACT IN TWO INDEPENDENT WAYS AND COMPARED**, with a
+    ``check.violation`` on disagreement — because *"a class that exists in the parsed AST and
+    never reaches adjudication is a violation, not a silence"*, and until this increment
+    nothing at all guarded the printed count.
+
+    **WHY THIS IS INDEPENDENT OF :func:`_classes` AND NOT A SECOND READING OF THE SAME LIST**
+    — the dispatch's own test, *"two readings of the same list are one reading"*:
+
+    * it re-reads the file's BYTES FROM DISK and re-parses them, so it does not share the
+      ``parsed`` list, the parse, or any object with the adjudication path;
+    * it traverses by **VISITOR DISPATCH** (``generic_visit`` recursion, depth-first through
+      ``ast.iter_fields``), where :func:`_classes` traverses by ``ast.walk`` (a breadth-first
+      deque over ``ast.iter_child_nodes``). Different algorithms, different orders;
+    * it computes its own qualified names from its own descent stack rather than from
+      :func:`_classes`'s parent map.
+
+    What it does NOT give independence from: **the ``ast`` module itself, and the set of
+    files handed to it.** A defect in CPython's parser, or a file neither reading is offered,
+    is invisible to both. That is declared in DECLARED LIMIT 5 and is not claimed otherwise.
+    """
+
+    def __init__(self) -> None:
+        self.found: list = []
+        self._stack: list = []
+
+    def visit_ClassDef(self, node) -> None:  # noqa: N802 — ast.NodeVisitor's own spelling
+        self._stack.append(node.name)
+        self.found.append((".".join(self._stack), node.lineno))
+        self.generic_visit(node)
+        self._stack.pop()
+
+    def visit_FunctionDef(self, node) -> None:  # noqa: N802
+        self._stack.append(node.name)
+        self.generic_visit(node)
+        self._stack.pop()
+
+    visit_AsyncFunctionDef = visit_FunctionDef
 
 
 def _decorator_call(node, name: str):
@@ -586,20 +729,30 @@ def main() -> int:
     module_level = _module_level_names(parsed)
 
     #: Every PUBLIC FROZEN DATACLASS in the tree, by name. RULE C walks this graph.
+    #: ENUMERATED WITH `_classes` — AT ANY NESTING DEPTH — since WO-2R3 increment 6.
     frozen_by_name: dict = {}
+    #: Bare names that more than one class answers to. RULES B AND C REACH THROUGH A NAME, so
+    #: two classes sharing one is a real ambiguity and not a curiosity: the graph can hold only
+    #: one node per name. It is REPORTED at every run rather than resolved silently, because a
+    #: silent resolution is how the wrong `Verdict` gets adjudicated.
+    name_collisions: dict = {}
     for path, tree in parsed:
-        for node in tree.body:
-            if isinstance(node, ast.ClassDef) and _is_public(node.name):
-                if _is_frozen_dataclass(node):
+        for qualname, node in _classes(tree):
+            if _is_public(node.name) and _is_frozen_dataclass(node):
+                where = f"{path.relative_to(package_root)}:{node.lineno} {qualname}"
+                if node.name in frozen_by_name:
+                    name_collisions.setdefault(node.name, []).append(where)
+                else:
                     frozen_by_name[node.name] = node
+                    name_collisions.setdefault(node.name, []).insert(0, where)
 
     reached_by_admits = _admits_reach(parsed, module_level)
     seed_a: set = set()
     for path, tree in parsed:
         relative = path.relative_to(package_root)
         if len(relative.parts) > 1 and relative.parts[0] in JUDGEMENT_PATH_PACKAGES:
-            for node in tree.body:
-                if isinstance(node, ast.ClassDef) and node.name in frozen_by_name:
+            for _qualname, node in _classes(tree):
+                if node.name in frozen_by_name:
                     seed_a.add(node.name)
     seed_b = {name for name in frozen_by_name if name in reached_by_admits}
     reached_by_field = _field_reach(seed_a | seed_b, frozen_by_name, module_level)
@@ -608,6 +761,9 @@ def main() -> int:
     absent_establishment: list = []  # members whose establishment locus is ABSENT. REPORTED,
                                      # NOT EXEMPT — the fielded ones among them are violations.
     ledger: list = []              # every class examined, with its verdict and reason
+    #: (file, line, qualname) for every class that REACHED ADJUDICATION. Derivation ONE of the
+    #: two the count is compared across (item B2).
+    adjudicated: set = set()
     established_here: list = []
     classes_seen = 0
     by_rule_a = 0
@@ -619,11 +775,10 @@ def main() -> int:
         in_judgement_package = (
             len(relative.parts) > 1 and relative.parts[0] in JUDGEMENT_PATH_PACKAGES
         )
-        for node in tree.body:
-            if not isinstance(node, ast.ClassDef):
-                continue
+        for qualname, node in _classes(tree):
             classes_seen += 1
-            where = f"{relative}:{node.lineno} {node.name}"
+            adjudicated.add((str(relative), node.lineno, qualname))
+            where = f"{relative}:{node.lineno} {qualname}"
 
             if not _is_public(node.name):
                 ledger.append(f"OUT  {where} — clause (1): not public.")
@@ -674,7 +829,7 @@ def main() -> int:
                 absent_establishment.append(f"{where} [{reach}] fields={fields} — {locus}")
 
             #: MEMBERSHIP IS (1)(2)(3). The establishment locus is REPORTED, never a gate.
-            population.append((path, node, relative, reach, fields, locus))
+            population.append((path, node, relative, reach, fields, locus, qualname))
             if fields:
                 ledger.append(
                     f"IN   {where} — [{reach}] FIELDED, {len(fields)} declared field(s); "
@@ -690,8 +845,8 @@ def main() -> int:
     # ---- THE ASSERTIONS. Three per FIELDED member; ONE per ZERO-FIELD member. ----------- #
     decorated = 0
     vacuous: list = []
-    for path, node, relative, reach, fields, locus in population:
-        where = f"{relative}:{node.lineno} {node.name}"
+    for path, node, relative, reach, fields, locus, qualname in population:
+        where = f"{relative}:{node.lineno} {qualname}"
         call = _decorator_call(node, ESTABLISHES)
 
         if not fields:
@@ -715,7 +870,7 @@ def main() -> int:
                 path,
                 node.lineno,
                 "FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST",
-                f"{node.name} is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring "
+                f"{qualname} is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring "
                 f"{len(fields)} field(s) {fields}, and it carries no @{ESTABLISHES}(...). "
                 f"Its establishment is {locus}. Since PO-DECISIONS-0010 ruling 1 the class "
                 "reads BODY-BORNE OR ABSENT: establishment derived from the DECLARATION is "
@@ -732,13 +887,13 @@ def main() -> int:
                 path,
                 node.lineno,
                 "ESTABLISHES_NOT_CALLED",
-                f"{node.name} is decorated with a bare @{ESTABLISHES} rather than "
+                f"{qualname} is decorated with a bare @{ESTABLISHES} rather than "
                 f"@{ESTABLISHES}(...). A decorator that declares nothing declares nothing.",
             )
             continue
         decorated += 1
         established_here.extend(
-            f"{relative}:{node.lineno} {node.name}.{field}"
+            f"{relative}:{node.lineno} {qualname}.{field}"
             for field in _established_here_fields(call)
         )
 
@@ -748,7 +903,7 @@ def main() -> int:
                 path,
                 node.lineno,
                 "DECLARATION_UNREADABLE",
-                f"{node.name}'s @{ESTABLISHES}(**...) is built from an expression this "
+                f"{qualname}'s @{ESTABLISHES}(**...) is built from an expression this "
                 "check cannot read. A declaration a static reader cannot enumerate cannot "
                 "be checked against the field list.",
             )
@@ -761,7 +916,7 @@ def main() -> int:
                     path,
                     node.lineno,
                     "FIELD_NOT_DECLARED_TO_ESTABLISHES",
-                    f"{node.name} declares field(s) {undeclared} that @{ESTABLISHES}() was "
+                    f"{qualname} declares field(s) {undeclared} that @{ESTABLISHES}() was "
                     "not told about. A NEW FIELD on a judgement-path type arrives REFUSED, "
                     "never unguarded — P7 at the constructor level. The runtime refuses "
                     "every construction of this type; this is the same fact read without "
@@ -772,7 +927,7 @@ def main() -> int:
                     path,
                     node.lineno,
                     "DECLARATION_ADRIFT_FROM_THE_FIELD_LIST",
-                    f"{node.name}'s @{ESTABLISHES}() was told about {adrift}, which are not "
+                    f"{qualname}'s @{ESTABLISHES}() was told about {adrift}, which are not "
                     "declared fields of it. A declaration that has come adrift from its "
                     "field list is establishing a field that is not there.",
                 )
@@ -785,17 +940,87 @@ def main() -> int:
                     path,
                     node.lineno,
                     "ESTABLISHES_APPLIED_INSIDE_DATACLASS",
-                    f"{node.name} applies @{ESTABLISHES} BELOW @dataclass, so it runs "
+                    f"{qualname} applies @{ESTABLISHES} BELOW @dataclass, so it runs "
                     "before the dataclass machinery has built the field list and there is "
                     "nothing to derive establishment FROM. It must be the outer decorator.",
                 )
+
+    # ---- ITEM B2: THE COUNT OF CLASSES EXAMINED IS ASSERTED, NOT PRINTED. --------------- #
+    #
+    # PO-DECISIONS-0011 ruling 2 and the WO-2R3 increment-6 dispatch. Until this increment the
+    # line "99 class(es) examined" was a `check.note` AND NOTHING GUARDED IT — which is
+    # precisely how a class that was never a candidate stayed invisible. This check's own note
+    # offered the reassurance that an unexamined class "is printed OUT under --why with the
+    # clause that excluded it, OR IS NOT AMONG THE 99 EXAMINED AT ALL", and the escape lived in
+    # that second disjunct: `CD-ASR-WO2R3-01` nested one class inside another in `engine/`, the
+    # count moved from 99 to 100 BECAUSE THE CONTAINER WAS COUNTED, and the member inside it
+    # was never looked at. A COUNT THAT MOVES BY ONE WHEN TWO CLASSES ARRIVE IS WORSE THAN NO
+    # COUNT.
+    #
+    # SO THE EXAMINED SET IS DERIVED TWICE, BY TWO INDEPENDENT ROUTES, AND THE **SETS** ARE
+    # DIFFED — not the counts compared. This project's own doctrine, learned the hard way at
+    # CD-D-119: identical counts have hidden a swap here before.
+    independent: set = set()
+    for path in files:
+        source = read_text(check, path)
+        if source is None:
+            continue
+        try:
+            counter = _ClassCounter()
+            counter.visit(ast.parse(source, filename=str(path)))
+        except SyntaxError:
+            continue  # already a violation above; not double-reported here
+        relative = path.relative_to(package_root)
+        for qualname, lineno in counter.found:
+            independent.add((str(relative), lineno, qualname))
+
+    unexamined = sorted(independent - adjudicated)
+    phantom = sorted(adjudicated - independent)
+    for relative, lineno, qualname in unexamined:
+        check.violation(
+            package_root / relative,
+            lineno,
+            "CLASS_NEVER_ADJUDICATED",
+            f"`{qualname}` EXISTS IN THE PARSED AST AND NEVER REACHED ADJUDICATION. It is in "
+            "neither the population nor the --why ledger, so no reader of this run could have "
+            "learned it was there. A CLASS THAT EXISTS AND IS NEVER LOOKED AT IS A VIOLATION, "
+            "NOT A SILENCE (PO-DECISIONS-0011 ruling 2).",
+        )
+    for relative, lineno, qualname in phantom:
+        check.violation(
+            package_root / relative,
+            lineno,
+            "CLASS_ADJUDICATED_BUT_NOT_FOUND",
+            f"`{qualname}` was adjudicated by the enumeration but the INDEPENDENT reading of "
+            "the same file does not find it. The two derivations disagree, and until they "
+            "agree neither figure below can be believed.",
+        )
+    if not unexamined and not phantom:
+        check.asserted()
 
     # ---- THE OUTPUT. The enumeration is the part that matters. -------------------------- #
     check.note(f"THE DEFINITION — {THE_DEFINITION}")
     check.note(
         f"CLASSES EXAMINED: {classes_seen} across {len(parsed)} module(s) under "
-        f"{package_root.relative_to(root)}."
+        f"{package_root.relative_to(root)}. AT ANY NESTING DEPTH since WO-2R3 increment 6 "
+        "(PO-DECISIONS-0011 ruling 2) — this figure used to mean TOP LEVEL ONLY and did not "
+        "say so."
     )
+    check.note(
+        "THE COUNT IS ASSERTED, NOT PRINTED. Two INDEPENDENT derivations of the examined set "
+        f"are diffed AS SETS at every run: the adjudication path finds {len(adjudicated)}; a "
+        "separate re-read of each file from disk, re-parsed and traversed by ast.NodeVisitor "
+        f"dispatch rather than ast.walk, finds {len(independent)}. IN THE INDEPENDENT READING "
+        f"AND NEVER ADJUDICATED: {len(unexamined)}. ADJUDICATED BUT NOT INDEPENDENTLY FOUND: "
+        f"{len(phantom)}. Either is a VIOLATION above, not a note."
+    )
+    shared = sorted(name for name, rows in name_collisions.items() if len(rows) > 1)
+    check.note(
+        "BARE-NAME COLLISIONS AMONG PUBLIC FROZEN DATACLASSES (RULES B AND C REACH THROUGH A "
+        f"NAME, so the graph holds one node per name): {len(shared)}."
+    )
+    for name in shared:
+        check.note(f"  COLLISION on `{name}`: {name_collisions[name]} — the FIRST is in the graph.")
     fielded = [row for row in population if row[4]]
     check.note(
         f"POPULATION — THE BODY-BORNE-OR-ABSENT FIELD-ESTABLISHMENT CLASS: {len(population)}. "
@@ -809,11 +1034,11 @@ def main() -> int:
         f"by RULE C ONLY (named in the fields of a reached type, to a fixpoint): "
         f"{by_rule_c_only}."
     )
-    for _path, node, relative, reach, fields, locus in population:
+    for _path, node, relative, reach, fields, locus, qualname in population:
         if not fields:
             continue
         check.note(
-            f"  IN [{reach}]: {relative}:{node.lineno} {node.name} — "
+            f"  IN [{reach}]: {relative}:{node.lineno} {qualname} — "
             f"{len(fields)} declared field(s) {fields} — establishment {locus}"
         )
     check.note(

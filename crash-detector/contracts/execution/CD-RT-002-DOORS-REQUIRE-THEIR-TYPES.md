@@ -481,3 +481,82 @@ an exhaustive set.
 `resolve_panel`"* — is what the first gate caught, what the auditor named, and what §D.1 repeats. The
 unit of work is the class of doors: one mechanism, deriving what it requires from each door's own
 signature, and one check enumerating them from the tree.
+
+
+---
+
+## DECLARED LIMIT 7 — THE TRAVERSAL'S RESIDUAL REACH
+
+**NEW AT WO-2R3 INCREMENT 6, AND IT REPLACES A LIMIT THAT WAS NEVER DECLARED AT ALL**
+(`PO-DECISIONS-0011` ruling 2). Numbered 7 because 1–4 are this check's and 5–6 are the mechanism's,
+and this row's limits run as **one** sequence across the two headers.
+
+**THE UNDECLARED LIMIT UNTIL THIS INCREMENT.** `_callables` read `tree.body` — top-level `def`s plus
+the **direct** members of top-level **public** classes — and its sibling
+`check_constructor_field_establishment.py` did the same for classes. **BOTH GOVERNING INSTRUMENTS
+SHARED THIS BLIND SPOT AND NEITHER DECLARED IT.**
+
+`CD-ASR-WO2R3-01`'s four arms, same undecorated public door in `collectors/runner.py`:
+
+| where defined | doors check, `531c95c` | doors check, now |
+|---|---|---|
+| module-level `def` | exit 1 | exit 1 |
+| method of a top-level class | exit 1 | exit 1 |
+| method nested one level (`Outer.Inner`) | **exit 0** | **exit 1** |
+| function-local `def` bound in a module dict | **exit 0** — and live, `POLICY["decide"]` accepted unestablished arguments | **exit 1** |
+
+`_callables` now descends to **any depth**. **Both zeros are ones.**
+
+**NO NEW EXEMPTION WAS INTRODUCED.** The three this check declares — non-public name, `@property`,
+`Protocol` stub — are untouched, are still the only ones, and each is still counted in the output.
+The old code skipped members of a **non-public** top-level class; that is preserved and now applied
+to the **whole chain**, which is the same judgement — *"nothing outside can name this"* — asked of
+every level rather than only the first.
+
+### What is now closed — measured
+
+`variants/WO-2R3/P-B-how-deep-can-a-type-hide.py` plants one public undecorated callable at nine
+placements. Now **named** by this check: nested one class level · nested two class levels · inside a
+public function body · inside a private function body · conditionally defined under `if True:`.
+
+### The residual reach limits are exactly two
+
+They are the **same two** the sibling instrument declares as its DECLARED LIMIT 5, because they are
+properties of reading source rather than of either check.
+
+**(i) A CALLABLE WITH NO `FunctionDef` NODE IS INVISIBLE.** A `lambda` bound to a name, or a function
+built by `exec`/`type`, leaves nothing to walk. Executable example: the probe's `built by type(...)
+AT RUNTIME` placement writes `hidden_decide = lambda reading: reading` into `engine/config.py`;
+**measured at both SHAs, this check does not name it. CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.**
+
+**(ii) A MODULE OUTSIDE `src/crash_detector/` IS NEVER PARSED.** Measured: the probe's `in a module
+OUTSIDE the scanned root` placement is not named at either SHA. **CARRIER: NOT PROVED TO BE CARRIED
+ANYWHERE.**
+
+**A LIMIT THAT TURNED OUT NOT TO BE ONE:** a module that does not parse is an `UNPARSEABLE`
+violation, not a silence. Measured, and therefore **not declared as a limit**.
+
+### WHAT THE WIDENING FOUND IN EXISTING CODE — A FINDING, NOT A LIMIT
+
+**THIS ROW'S DECLARED COMMAND EXITS 1 AT THIS SHA, AND THAT IS DELIBERATE AND DISCLOSED.**
+
+`engine/evaluate.py`'s `guarded` — the closure inside the **private** decorator
+`_absence_is_never_a_number` that carries the CD-ASR-F03 post-condition — is a **public-named**
+callable in a RULE 1 package, with `*extra, **extra_by_name`, and no `@admits`:
+
+```
+VIOLATION  src/crash_detector/engine/evaluate.py:341
+    rule: UNDECORATED_JUDGEMENT_PATH_DOOR
+    what: guarded is a public entry point on a judgement path and it carries no @admits(...).
+CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: FAIL — 1 violation(s)
+```
+
+**IT IS NOT EXEMPTED AND IT IS NOT FIXED.** `engine/evaluate.py` is outside WO-2R3 increment 6's
+writable scope; adding an exemption for it would be the quiet widening this project keeps finding;
+and deciding whether it should be decorated, renamed `_guarded`, or declared exempt **is a design
+question for the Product Owner**. Raised as `CD-ENG-WO2R3-02-F06` and left open for the fifth
+Assurance seat.
+
+Note also that `functools.wraps` gives it the **runtime** `__name__` `_evaluate_dial`, so the static
+reading and the runtime name **disagree** about whether it is public at all — which is part of what
+makes it a question rather than an oversight.

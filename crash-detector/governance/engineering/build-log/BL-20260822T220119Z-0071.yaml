@@ -1,0 +1,272 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 6 — ITEM B. THE AST BLIND SPOT, IN BOTH INSTRUMENTS.
+#
+# **THIS ENTRY LANDS A COMMIT IN WHICH ONE OF THE TWO GOVERNING CHECKS EXITS 1 AND TWO SHIPPED
+# TESTS FAIL. THAT IS THE POINT, IT IS NOT AN ACCIDENT, AND IT IS NOT A THING TO BE FIXED BY THIS
+# SEAT.** The dispatch:
+#
+#     "A NEW VIOLATION YOUR WIDENED WALK FINDS IN EXISTING CODE IS A FINDING AND A STOP — NOT A
+#      THING TO QUIETLY EXEMPT AND NOT A THING TO FIX ON YOUR OWN AUTHORITY."
+#
+# and, in the return contract:
+#
+#     "ANYTHING YOUR WIDENED INSTRUMENTS FOUND THAT IS NOT YOURS TO FIX ... is the likeliest
+#      outcome of item B and it is not a failure — it is the instrument finally working."
+#
+# It found one. It is `engine/evaluate.py`'s `guarded`. THE THREE WAYS TO MAKE THE TREE GREEN AGAIN
+# ARE ALL PROHIBITED: adding an exemption (quiet widening), weakening the two tests (weakening to
+# obtain a pass), and editing `engine/evaluate.py` (PROTECTED — it is not among the four `src/`
+# files in this dispatch's writable scope). **THE ONLY PERMITTED OUTCOME IS TO REPORT IT.**
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0070. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T220119Z-0071
+timestamp_utc: "2026-08-22T22:01:19Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC6-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0011.md rulings 1, 2 and 4'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+parent_entry_id: BL-20260822T214206Z-0070
+schema_version: 1
+
+record_type: INCREMENT
+
+# ------------------------------------------------------------------------------------------------ #
+item_B1_the_traversal:
+  what_changed_constructor: >
+    THREE `for node in tree.body` class-enumeration sites replaced by ONE helper, `_classes(tree)`,
+    which uses `ast.walk` and yields `(qualname, node)` for every `ClassDef` AT ANY NESTING DEPTH,
+    ordered by source position. The qualified name is threaded through the population tuple, every
+    printed line, every ledger row and every violation text — because `CD-PL-F96` is precisely that
+    the ledger must NAME what it adjudicated, and a row reading `Verdict` where two classes are
+    called `Verdict` is a row a reader cannot act on.
+  what_changed_doors: >
+    `_callables` rewritten to descend to ANY DEPTH. **NO NEW EXEMPTION WAS INTRODUCED** — the three
+    the check declares (non-public name, @property, Protocol stub) are untouched and still the only
+    ones. The old code skipped members of a NON-PUBLIC top-level class; that is preserved and now
+    applied to the WHOLE enclosing chain, which is the same judgement asked of every level rather
+    than only the first.
+  the_fourth_tree_body_site_LEFT_ALONE_AND_SAID_SO: >
+    `_module_level_names` at what was line 437 also reads `tree.body`, and it is NOT changed. It
+    enumerates MODULE-LEVEL NAME BINDINGS for RULE B/C name resolution, not classes or callables,
+    and item B1 is about the population and the subject set. Widening it would change which names
+    resolve, which is a different question nobody has asked. **RECORDED SO THAT A READER WHO GREPS
+    `tree.body` AND FINDS ONE LEFT DOES NOT THINK IT WAS MISSED.**
+
+  the_contrast_BOTH_ARMS:
+    artefact: 'variants/WO-2R3/P-B-how-deep-can-a-type-hide.py — NINE placements, both instruments
+               at each, PRINTS NO VERDICT. Placements that still escape are printed in the SAME
+               TABLE as the ones that are closed, so it cannot be read as an advertisement.'
+    before_arm_command: 'cd /tmp/base531 && python3 -B variants/WO-2R3/P-B-how-deep-can-a-type-hide.py'
+    after_arm_command: 'cd /srv/crash-detector-wo2r3 && python3 -B variants/WO-2R3/P-B-how-deep-can-a-type-hide.py'
+    observed: |
+      placement                          ctor@531c95c   ctor@here   named in --why@here
+      module-level (CONTROL)             exit=1         exit=1      yes
+      nested ONE class level             exit=0         exit=1      yes   <- THE AUDITOR'S ESCAPE
+      nested TWO class levels            exit=0         exit=1      yes
+      inside a PUBLIC function body      exit=0         exit=1      yes
+      inside a PRIVATE function body     exit=0         exit=1      yes
+      conditionally defined (if True:)   exit=0         exit=1      yes   <- FOUND BY THIS SEAT
+      module OUTSIDE the scanned root    exit=0         exit=0      no    <- DECLARED LIMIT 5(ii)
+      module that DOES NOT PARSE         exit=1         exit=1      n/a   <- NOT A LIMIT
+      built by type(...) AT RUNTIME      exit=0         exit=0      no    <- DECLARED LIMIT 5(i)
+    the_finding_in_that_table_that_is_this_seats_own: >
+      **THE CONDITIONALLY-DEFINED PLACEMENT IS IN NO AUDITOR'S DOCUMENT AND IN NO DISPATCH.** A
+      module-level `if True:` block is NOT NESTED AT ALL — it is simply not in `tree.body` — and at
+      531c95c the public frozen fielded type it hides escaped BOTH instruments and was FULLY
+      REACHABLE AND ACCEPTED at runtime: `HiddenVerdict(score=object(), breached='maybe')`. It needs
+      no class to hide in and no function to hide in. **THE BLIND SPOT WAS WIDER THAN "NESTING".**
+    a_row_that_turned_out_not_to_be_a_limit: >
+      A module that DOES NOT PARSE was on the dispatch's candidate list. MEASURED: `ctor exit=1`.
+      It is already an UNPARSEABLE violation and always was — a failure, not a silence. **IT IS NOT
+      DECLARED AS A LIMIT BECAUSE IT IS NOT ONE** ("do not declare a limit you have not
+      demonstrated").
+    a_confound_in_the_doors_column_disclosed_rather_than_left: >
+      **AT THIS SHA THE DOORS CHECK EXITS 1 ON EVERY PLACEMENT**, because of the pre-existing
+      `guarded` violation below. Its EXIT CODE is therefore NOT a clean signal for this table at
+      this SHA. The clean signal is the probe's `named `hidden_decide` in its output` line, which is
+      per-placement and unaffected. Said here so nobody reads the doors column as stronger than it is.
+
+# ------------------------------------------------------------------------------------------------ #
+item_B2_the_count_is_asserted:
+  the_defect: >
+    "99 class(es) examined" was a `check.note` AND NOTHING GUARDED IT. Worse than unguarded:
+    **THE FIGURE MOVED BY ONE WHEN THE AUDITOR'S PLANT ADDED TWO CLASSES** — 99 -> 100 — because the
+    CONTAINER was counted and the member inside it was not. A count that moves in the right
+    direction for the wrong reason is worse than no count, and this seat measured that itself at
+    531c95c with the plant applied.
+  the_two_derivations_and_why_they_are_independent:
+    derivation_1: 'the adjudication path itself: the shared `parsed` list, `ast.walk`, a parent map.'
+    derivation_2: >
+      `_ClassCounter`, an `ast.NodeVisitor`: **the file`s BYTES RE-READ FROM DISK and RE-PARSED**,
+      traversed by VISITOR DISPATCH (`generic_visit` over `ast.iter_fields`, depth-first) rather
+      than `ast.walk` (breadth-first deque over `iter_child_nodes`), computing its own qualified
+      names from **its own descent stack**.
+    the_dispatchs_own_test_applied: >
+      "two readings of the same list are one reading" — these do not share the list, the parse, the
+      traversal order, the algorithm, or the name computation.
+    what_they_do_NOT_give_independence_from: >
+      **THE `ast` MODULE ITSELF, AND THE SET OF FILES HANDED TO BOTH.** A defect in CPython's
+      parser, or a file neither reading is offered — which is DECLARED LIMIT 5(ii) — is invisible to
+      both. **TWO DERIVATIONS OF ONE INPUT ARE TWO DERIVATIONS, NOT TWO INPUTS.** Declared in all
+      three CD-RULE-004 places rather than left for an auditor to notice.
+  the_property_not_the_count: >
+    The SETS are diffed, not the counts compared (CD-D-119: identical counts have hidden a swap on
+    this project before). A class in the independent reading that never reached adjudication is
+    `CLASS_NEVER_ADJUDICATED`, a VIOLATION; the reverse is `CLASS_ADJUDICATED_BUT_NOT_FOUND`.
+  MEASURED_BOTH_ARMS: >
+    In a scratch copy, **ONLY the adjudication loop** was regressed to `tree.body` — the independent
+    reading left intact — and the nested plant applied. Observed: `the adjudication path finds 100;
+    ... finds 101. IN THE INDEPENDENT READING AND NEVER ADJUDICATED: 1`, EXIT 1, and
+    `VIOLATION src/crash_detector/engine/config.py:392 / rule: CLASS_NEVER_ADJUDICATED /
+    \`Judgement.Verdict\` EXISTS IN THE PARSED AST AND NEVER REACHED ADJUDICATION`.
+    **SO THE GUARD CATCHES THE DEFECT EVEN IF A FUTURE SEAT REVERTS THE WALK.** Carrier:
+    tests/test_field_establishment.py::test_the_count_of_classes_examined_is_asserted_against_a_second_derivation.
+  and_the_bare_name_collision_report: >
+    RULES B AND C REACH THROUGH A NAME, so the frozen-name graph can hold only one node per bare
+    name. With the walk widened, two classes at different depths can now share one. Collisions are
+    COUNTED AND PRINTED at every run with all their locations and which one is in the graph.
+    MEASURED AT THIS SHA: **0**. It is reported rather than made a violation because no ruling
+    covers it and inventing one would be this seat legislating.
+
+# ------------------------------------------------------------------------------------------------ #
+item_B4_CD_PL_F96:
+  the_products_owners_own_addition_and_its_named_proof: >
+    "the `--why` ledger must EITHER ENUMERATE EVERY CLASS THE WALK EXAMINED, OR STATE WHAT IT CANNOT
+    SEE ... the fix is proven by re-running the auditor's nested plant and reading the output."
+  before_arm_quoted: |
+    $ cd /tmp/plantwork && git apply <the nested plant>
+    $ python3 -B tools/register/check_constructor_field_establishment.py --root . --why
+      note:   OUT  engine/config.py:388 Judgement — clause (2): not declared @dataclass(frozen=True).
+      (and NOTHING WHATEVER about the frozen fielded `Verdict` inside it)
+      POPULATION unchanged at 33 · EXIT 0 · PASS — 97 assertions · doors EXIT 0
+      runtime: Judgement.Verdict(score=object(), breached='maybe') ***ACCEPTED***
+  after_arm_quoted: |
+    $ python3 -B tools/register/check_constructor_field_establishment.py --root . --why
+      note:   IN [RULE A]: engine/config.py:392 Judgement.Verdict — 2 declared field(s)
+              ['score','breached'] — establishment ABSENT (no __post_init__ or __init__ ...)
+      note:   ESTABLISHMENT ABSENT (reported, NOT exempt): engine/config.py:392 Judgement.Verdict ...
+      note:   OUT  engine/config.py:388 Judgement — clause (2): not declared @dataclass(frozen=True).
+      note:   IN   engine/config.py:392 Judgement.Verdict — [RULE A] FIELDED, 2 declared field(s);
+              establishment ABSENT; @establishes REQUIRED.
+      VIOLATION src/crash_detector/engine/config.py:392
+        rule: FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST
+        what: Judgement.Verdict is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring 2 field(s) ...
+      FAIL — 1 violation(s)     EXIT 1
+  the_container_line_is_still_there_on_purpose: >
+    The fix ADDS the member; it does not replace the container. Both are adjudicated and both print.
+    Asserted by
+    tests/test_field_establishment.py::test_the_why_ledger_names_the_nested_type_and_not_only_its_container,
+    which requires BOTH lines — because a fix that made the container's OUT line disappear would
+    have traded one silence for another.
+
+# ------------------------------------------------------------------------------------------------ #
+item_B5_the_twelfth_plant:
+  where: 'plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch,
+          carried in plants/MANIFEST.md and in required-tests.yaml alongside the eleven.'
+  the_axis_it_varies: >
+    **THE REACH AXIS, WHICH IS THE ONE NOBODY VARIED.** V43 and V16 varied WHERE THE FILE WAS —
+    which is why four parties asked "what if it is in a different PACKAGE?" and the answer was that
+    packages were never the limit. This varies HOW DEEP THE CLASS IS: ONE INDENTATION LEVEL, inside
+    an already-governed file, in a RULE A package. No new package, no new module, no rename, no
+    import added.
+  BITTEN_to_PO_DECISIONS_0011_ruling_4:
+    how: 'A throwaway /tmp extraction of the worktree. THE WORKTREE WAS NEVER MUTATED.'
+    clean_arm_FIRST: 'exit 0 — PASS — 101 assertions, 0 violations.'
+    applied_for_real: '`git apply --check` then `git apply`. APPLIED, not simulated.'
+    violated_arm: 'exit 1 — FAIL — 1 violation(s), VIOLATION src/crash_detector/engine/config.py:392,
+                   rule FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST, naming
+                   `Judgement.Verdict`.'
+    instrument_sha_verified: >
+      `sha256sum tools/register/check_constructor_field_establishment.py` in the extraction equals
+      the worktree's own copy: **48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382**.
+      THE INSTRUMENT THAT FAILED IS THE INSTRUMENT THAT SHIPS.
+  it_escaped_at_two_shas_not_one: >
+    Measured escaping at **531c95c** AND at **f495eef** — the post-item-A, post-item-D commit of
+    this same increment. Both measured, neither assumed. Only item B closes it.
+
+# ------------------------------------------------------------------------------------------------ #
+THE_STOP:
+  id: CD-ENG-WO2R3-02-F06
+  severity: HIGH
+  against: 'the artefact. NOT against any seat.'
+  what: >
+    **THE WIDENED DOORS TRAVERSAL FINDS ONE PRE-EXISTING, UNDISPOSITIONED VIOLATION IN EXISTING
+    PRODUCT CODE.** `src/crash_detector/engine/evaluate.py:341`, `guarded` — the closure inside the
+    PRIVATE decorator `_absence_is_never_a_number` that carries the CD-ASR-F03 post-condition. It is
+    a PUBLIC-NAMED callable in a RULE 1 judgement-path package, it declares `*extra` and
+    `**extra_by_name`, and it carries no `@admits`. `CD-RT-002-DOORS-REQUIRE-THEIR-TYPES` now exits
+    1 on it, and `tests/test_judgement_path_doors.py::test_the_static_check_passes_and_is_not_vacuous`
+    and `::test_the_collector_boundary_is_a_judgement_path_package_and_cd_bp_003_is_what_remains`
+    FAIL because they assert that check exits 0.
+  why_this_seat_did_not_resolve_it_and_the_reasoning_is_short: >
+    **ALL THREE WAYS TO MAKE IT GREEN ARE PROHIBITED BY THE DISPATCH.**
+    (1) ADD AN EXEMPTION — "not a thing to quietly exempt". It would also be the exact defect class
+    this increment exists to repair: an exemption invented to absorb the first thing a stricter
+    instrument found.
+    (2) WEAKEN THE TWO TESTS — "weakening a check, a test or an assertion to obtain a pass".
+    (3) EDIT `engine/evaluate.py` — **IT IS PROTECTED.** The writable scope names four `src/` files
+    and this is not one of them. **THIS ONE SETTLES IT ON ITS OWN, WITHOUT ANY JUDGEMENT BY THIS
+    SEAT.**
+    So the increment lands RED on that check, and says so at the top of this entry, in both
+    instrument headers, in the register row and in the execution contract.
+  what_makes_it_a_QUESTION_rather_than_an_OVERSIGHT: >
+    `functools.wraps` copies `__name__` from the wrapped function, so at RUNTIME this object is
+    called `_evaluate_dial` — PRIVATE. **THE STATIC READING AND THE RUNTIME NAME DISAGREE ABOUT
+    WHETHER IT IS PUBLIC AT ALL.** Whether the right answer is to decorate it, to rename it
+    `_guarded`, or to declare a fourth exemption for closures whose every enclosing scope is
+    non-public, is a DESIGN DECISION and it belongs to the Product Owner.
+  what_this_seat_recommends_and_does_not_do: >
+    Nothing is recommended. **A recommendation from the seat that widened the instrument is the
+    same seat closing its own finding one step removed**, and the fifth Assurance seat should meet
+    this finding with no steer in it, exactly as the fourth seat met CD-PL-F94.
+  the_alternative_that_was_considered_and_rejected_and_it_is_recorded_because_it_was_tempting: >
+    The doors check's EXISTING rule already propagates "non-public enclosing CLASS" down to members.
+    Extending the same propagation to enclosing FUNCTIONS would have exempted `guarded` — the
+    enclosing `_absence_is_never_a_number` is private — and it would have looked like symmetry
+    rather than an exemption. **IT WAS REJECTED BECAUSE IT WOULD ALSO HAVE RE-OPENED THE AUDITOR'S
+    ARM 4** (a function-local `def` bound into a module dict, whose enclosing function may well be
+    private) — that is, it would have bought a green tree by giving back the escape this item exists
+    to close. **THIS SEAT NOTICED IT WAS ABOUT TO REASON ITS WAY TO A PASS AND WRITES THE ATTEMPT
+    DOWN RATHER THAN THE CONCLUSION.**
+
+# ------------------------------------------------------------------------------------------------ #
+numbers_each_from_a_run_this_seat_did:
+  classes_examined: >
+    99 at 531c95c -> **99 now.** UNCHANGED, AND THAT IS THE CORRECT RESULT, NOT A NULL ONE: this
+    tree contains **ZERO** nested classes today, measured independently — `top-level ClassDef: 99,
+    nested ClassDef: 0`. The dispatch said "if your walk finds more classes, that is the fix
+    working; if it finds FEWER, that is a finding and a STOP." It found the same, because there is
+    nothing extra here to find. **WHAT MOVED IS WHAT THE INSTRUMENT WOULD FIND IF THERE WERE**, and
+    that is demonstrated by the plant and by the nine-placement probe rather than by this number.
+  population: '33 -> 33.'
+  constructor_assertions: '97 at 531c95c -> **101 now**, EXIT 0. (+3 from item D, +1 from B2''s
+                           set-comparison assertion.) Read off the run, not predicted.'
+  doors_subjects: '27 at 531c95c -> **28 now.** DECORATED 27. The 28th is `guarded`.'
+  doors_exempt: '119 non-public / 17 @property / 5 Protocol at 531c95c -> **122 / 17 / 5** now.'
+  doors_assertions: '54 -> 54.'
+  doors_exit: '**0 at 531c95c -> 1 now.** THE STOP. See CD-ENG-WO2R3-02-F06.'
+  established_here_uses: '16 -> 16 (item C is where this moves).'
+  suite: '1538 at 531c95c -> **1547 passed, 2 failed** now. The two failures are named above.'
+node_id_reconciliation:
+  method: 'SETS DIFFED with `comm`. A bare number is not a conservation claim.'
+  lost: '**ZERO** against the 531c95c set.'
+  added: '11 across the increment so far — 6 (item A) + 1 (item D) + 4 (item B).'
+  the_two_failing_tests: 'PRESENT, COLLECTED and FAILING. Not lost, not skipped, not xfailed.'
+class_2_sweep_movement:
+  observed: 'EXIT 1 — 534 sites, 15 violations. `diff` of the two full `--list` outputs is EMPTY —
+             BYTE-IDENTICAL to 531c95c. Reported, not chased (CD-D-130).'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. A record, not assurance. **THIS ENTRY REPORTS A RED AND IS NOT A
+  DISPOSITION OF IT** (PBG-AUTH-003): dispositioning CD-ENG-WO2R3-02-F06 is the Product Owner's.

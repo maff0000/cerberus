@@ -1,0 +1,30 @@
+--- a/src/crash_detector/engine/config.py
++++ b/src/crash_detector/engine/config.py
+@@ -374,3 +374,27 @@
+         source_registry=EMPTY_SOURCE_REGISTRY,
+         model_registry=EMPTY_MODEL_REGISTRY,
+     )
++
++
++# ================================================================================================ #
++# PLANTED VIOLATION — CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.
++# **THE REACH AXIS, WHICH IS THE ONE NOBODY VARIED.** V43 and V16 varied WHERE THE FILE WAS. This
++# varies HOW DEEP THE CLASS IS, and it moves it by ONE INDENTATION LEVEL inside a file that is
++# already governed, in `engine/` — a RULE A judgement-path package. No new package, no new module,
++# no rename. Not part of the product; `git apply` puts it here and `git checkout` removes it.
++# ================================================================================================ #
++
++
++class Judgement:
++    """A plain container. NOT a frozen dataclass, so it is ruled OUT at clause (2) itself."""
++
++    @dataclass(frozen=True)
++    class Verdict:
++        """PUBLIC. FROZEN. FIELDED. In `engine/`, so RULE A reaches it. NO `@establishes`.
++
++        By the ruled class's own three clauses this type is IN and REQUIRED, and the ruling's
++        phrase for it is "FAILS ON ARRIVAL".
++        """
++
++        score: float
++        breached: bool

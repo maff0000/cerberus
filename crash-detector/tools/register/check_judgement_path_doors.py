@@ -245,6 +245,55 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     and observe the real refusals. A static reader alone cannot carry this and does not
     claim to. CD-RULE-006 exists because two declarations once each assumed the other
     covered the route.
+
+ 7  **THE TRAVERSAL'S RESIDUAL REACH. NEW AT WO-2R3 INCREMENT 6, AND IT REPLACES A LIMIT THAT
+    WAS NEVER DECLARED AT ALL.** (Numbered 7 because 1..4 are this file's and 5..6 are the
+    mechanism's, and this row's limits run as ONE sequence across the two headers.)
+
+    **THE UNDECLARED LIMIT THAT WAS HERE UNTIL THIS INCREMENT.** ``_callables`` read
+    ``tree.body`` — top-level ``def``s plus the DIRECT members of top-level public classes —
+    and its sibling ``check_constructor_field_establishment.py`` did the same for classes.
+    **BOTH GOVERNING INSTRUMENTS SHARED THIS BLIND SPOT AND NEITHER DECLARED IT.**
+    ``CD-ASR-WO2R3-01``'s four arms against ONE undecorated public door in
+    ``collectors/runner.py``: module-level ``def`` **exit 1**; method of a top-level class
+    **exit 1**; method nested ONE level **exit 0**; function-local ``def`` bound in a module
+    dict **exit 0** — and live, ``POLICY["decide"]`` accepted unestablished arguments.
+    ``_callables`` now descends to ANY DEPTH. **Both zeros are ones.**
+
+    **WHAT IS NOW CLOSED, MEASURED** by ``variants/WO-2R3/P-B-how-deep-can-a-type-hide.py``,
+    which plants one public undecorated callable at nine placements: nested ONE class level ·
+    nested TWO class levels · inside a PUBLIC function body · inside a PRIVATE function body ·
+    conditionally defined under ``if True:``. All are now NAMED by this check.
+
+    **THE RESIDUAL REACH LIMITS ARE EXACTLY TWO, and they are the same two the sibling
+    instrument declares as its DECLARED LIMIT 5, because they are properties of reading source
+    rather than of either check:**
+
+    (i) **A CALLABLE WITH NO ``FunctionDef`` NODE IS INVISIBLE.** A ``lambda`` bound to a name,
+        or a function built by ``exec``/``type``, leaves nothing to walk. Executable example —
+        the probe's ``built by type(...) AT RUNTIME`` placement writes
+        ``hidden_decide = lambda reading: reading`` into ``engine/config.py``; MEASURED at both
+        SHAs, this check **does not name it**. **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.**
+
+    (ii) **A MODULE OUTSIDE ``src/crash_detector/`` IS NEVER PARSED.** Measured: the probe's
+        ``in a module OUTSIDE the scanned root`` placement is not named at either SHA.
+        **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.**
+
+    **AND A LIMIT THAT TURNED OUT NOT TO BE ONE:** a module that does not parse is an
+    ``UNPARSEABLE`` violation, not a silence. Measured, and therefore NOT declared as a limit.
+
+    **WHAT THE WIDENING FOUND IN EXISTING CODE, WHICH IS A FINDING AND NOT A LIMIT.**
+    ``engine/evaluate.py``'s ``guarded`` — the closure inside the private decorator
+    ``_absence_is_never_a_number`` that carries the CD-ASR-F03 post-condition — is a
+    PUBLIC-NAMED callable in a RULE 1 package with ``*extra, **extra_by_name`` and no
+    ``@admits``. **THIS CHECK NOW EXITS 1 ON IT.** It is NOT exempted here and it is NOT fixed:
+    ``engine/evaluate.py`` is outside WO-2R3 increment 6's writable scope, adding an exemption
+    for it would be the quiet widening this project keeps finding, and deciding whether it
+    should be decorated, renamed ``_guarded`` or declared exempt is a DESIGN QUESTION FOR THE
+    PROJECT OWNER. Raised as ``CD-ENG-WO2R3-02-F06``. Note also that ``functools.wraps`` gives
+    it the runtime ``__name__`` ``_evaluate_dial``, so the static reading and the runtime name
+    DISAGREE about whether it is public at all — which is part of what makes it a question
+    rather than an oversight.
 """
 
 from __future__ import annotations
@@ -655,16 +704,52 @@ def main() -> int:
 
 
 def _callables(tree):
-    """Every function definition, with whether it sits in a class body and which class."""
-    for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            yield node, False, None
-        elif isinstance(node, ast.ClassDef):
-            if not _is_public(node.name):
-                continue
-            for member in node.body:
-                if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    yield member, True, node
+    """Every function definition **AT ANY NESTING DEPTH**, with its enclosing class if any.
+
+    **THIS IS WO-2R3 INCREMENT 6'S STRUCTURAL CHANGE TO THIS INSTRUMENT** (item B1,
+    PO-DECISIONS-0011 ruling 2). It used to read ``tree.body`` — TOP LEVEL ONLY — plus the
+    direct members of top-level public classes, and it did not declare that. Its sibling
+    ``check_constructor_field_establishment.py`` had the same blind spot. **BOTH GOVERNING
+    INSTRUMENTS SHARED IT AND NEITHER DECLARED IT.**
+
+    ``CD-ASR-WO2R3-01`` measured the four arms against the same undecorated public door:
+
+    ======================================  ==========
+    where the door was defined              doors check
+    ======================================  ==========
+    module-level ``def``                    exit 1
+    method of a TOP-LEVEL class             exit 1
+    method nested one level (Outer.Inner)   **exit 0**
+    function-local ``def``                  **exit 0** — and live, ``POLICY["decide"]``
+                                            accepted unestablished arguments
+    ======================================  ==========
+
+    Both zeros are now ones.
+
+    **THE ENCLOSING-CLASS RULE IS UNCHANGED IN SUBSTANCE AND WIDER IN REACH.** The old code
+    skipped the members of a NON-PUBLIC top-level class. That is preserved, and it is now
+    applied to the whole chain: a callable is skipped if ANY enclosing class is non-public,
+    which is the same judgement — "nothing outside can name this" — asked of every level
+    rather than only the first. **NO NEW EXEMPTION IS INTRODUCED HERE.** The three the check
+    declares (non-public name, ``@property``, ``Protocol`` stub) are untouched and are still
+    the only ones, and each is still counted in the output.
+
+    ``in_class_body`` is TRUE only when the callable's IMMEDIATE parent is a class, because
+    that is what it is used for — deciding whether a receiver parameter is skipped — and a
+    function defined inside a METHOD has no receiver of its own.
+    """
+    def descend(node, class_chain, immediate_class):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if all(_is_public(name) for name in class_chain):
+                    yield child, immediate_class is not None, immediate_class
+                yield from descend(child, class_chain, None)
+            elif isinstance(child, ast.ClassDef):
+                yield from descend(child, class_chain + [child.name], child)
+            else:
+                yield from descend(child, class_chain, immediate_class)
+
+    yield from descend(tree, [], None)
 
 
 def _is_protocol(class_node) -> bool:

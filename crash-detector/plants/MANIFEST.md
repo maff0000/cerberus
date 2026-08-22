@@ -1203,3 +1203,75 @@ failure text and not from the exit code.
 arm reads **2 failed, 312 passed** here against a clean arm of **314 passed**. The `2 failed` and the
 two named tests are unchanged; the passing count moves with the suite, not with the plant. This seat
 measured both arms rather than transcribing either.
+
+---
+
+## WO-2R3 INCREMENT 6 — A TWELFTH PLANT, AND IT IS THE FIRST TO VARY THE *REACH* AXIS
+
+**Written by `CD-ENG-WO2R3-02` under `PO-DECISIONS-0011` ruling 2, which ordered it in those
+words: the auditor's one-indentation plant becomes a PERMANENT planted violation with baseline
+and violated arms.** Nothing above is altered; no plant was deleted, regenerated or weakened
+(`CD-D-033`). **Eleven becomes twelve.**
+
+### Why this one exists, and why the eleven did not catch what it catches
+
+`CD-PL-F94`, in the auditor's own correction of it:
+
+> *"A declared limit pointed four parties at the narrower of two axes, and nobody tested the axis
+> it did not name."*
+
+`check_constructor_field_establishment.py`'s **DECLARED LIMIT 2** declares *RULE A's package list*
+to be the vocabulary, and `V16-new-package-undecorated-door.patch` exists to demonstrate **that**
+axis. Every party — Engineer, Project Lead, Product Owner and the fourth Assurance seat — therefore
+asked *"what if the type is in a different **package**?"*. **PACKAGES WERE NEVER THE LIMIT.** V43 and
+V16 varied WHERE THE FILE WAS. **Nobody varied HOW DEEP THE CLASS WAS.**
+
+| | `CD-AC-005` |
+|---|---|
+| **test_id** | `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST` |
+| **patch** | `plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch` |
+| **declared command** | `python3 -B tools/register/check_constructor_field_establishment.py --root .` |
+| **proposition violated** | Every PUBLIC, FROZEN, FIELDED type on a judgement path derives its field establishment from its DECLARED FIELD LIST at the class boundary. |
+| **the route it takes** | **ONE INDENTATION LEVEL.** A public frozen fielded `Verdict` nested inside a plain `Judgement` container, appended to `src/crash_detector/engine/config.py` — an ALREADY-GOVERNED file in a RULE A judgement-path package. **No new package. No new module. No rename. No import added.** |
+| **clean arm** | `exit 0` · `PASS — 101 assertions, 0 violations` |
+| **violated arm** | `exit 1` · `FAIL — 1 violation(s)` |
+
+**THE FAILURE SIGNATURE, LINE FOR LINE:**
+
+```
+VIOLATION  src/crash_detector/engine/config.py:392
+    rule: FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST
+    what: Judgement.Verdict is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring 2 field(s)
+          ['score', 'breached'], and it carries no @establishes(...). Its establishment is
+          ABSENT (no __post_init__ or __init__ in its own class body). ...
+CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST: FAIL — 1 violation(s)
+```
+
+### BITTEN, to `PO-DECISIONS-0011` ruling 4's standard, on the day it landed
+
+> *"bitten is henceforth the standard a plant is held to before its criterion is called guarded"*
+
+Not "it should fail" — **it was made to fail, by this seat, with its own hands:**
+
+* the tree was extracted to a throwaway `/tmp` copy; **the worktree was never mutated;**
+* the **clean arm** was established FIRST: `exit 0`, `PASS — 101 assertions, 0 violations`;
+* `git apply --check` then `git apply` — **APPLIED FOR REAL**, not simulated;
+* the violated arm reproduced the signature above, **`exit 1`**;
+* **the instrument was SHA-VERIFIED BYTE-IDENTICAL** to the tree it was run from:
+  `sha256sum tools/register/check_constructor_field_establishment.py` =
+  `48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382`, equal to the worktree's own
+  copy. **The instrument that failed is the instrument that ships.**
+
+### What this plant does NOT establish, said here rather than left to be discovered
+
+**IT DEMONSTRATES ONE DEPTH.** Depth 2, function-local placement, and conditional (`if True:`)
+placement are demonstrated separately by `variants/WO-2R3/P-B-how-deep-can-a-type-hide.py`, which
+runs NINE placements at both SHAs and prints the ones that STILL ESCAPE beside the ones that do not.
+
+**IT ESCAPED AT `531c95c` AND IT ALSO ESCAPED AT `f495eef`** — the post-item-A, post-item-D commit
+of this same increment. Both were measured, not assumed. Only item B closes it.
+
+**TWO PLACEMENTS STILL ESCAPE AND THEY ARE DECLARED, NOT HIDDEN:** a type built by `type(...)` at
+runtime (no `ClassDef` node exists), and a module outside `src/crash_detector/` (never parsed).
+Both are `DECLARED LIMIT 5` of the instrument, in all three `CD-RULE-004` places, each with the
+probe row that demonstrates it. **CARRIER FOR EITHER: NOT PROVED TO BE CARRIED ANYWHERE.**
