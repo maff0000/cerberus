@@ -327,34 +327,73 @@ def test_the_static_enumeration_and_the_runtime_population_are_the_same_class():
     this project before, so the sets are diffed.
 
     **SINCE PO-DECISIONS-0010 RULING 1 THE STATIC POPULATION HAS TWO PARTS**, and only the
-    FIELDED part is required to carry ``@establishes``. The ZERO-FIELD part satisfies
-    VACUOUSLY, so it is diffed in the OTHER direction — it must be DISJOINT from the runtime
-    governed set — rather than dropped from this test, which would leave the widening's own
-    new branch unread by any runtime reading.
+    FIELDED part is REQUIRED to carry ``@establishes``.
+
+    **ONE CLAUSE OF THIS TEST IS REVERSED AT WO-2R3 INCREMENT 6, AND IT IS A REVERSAL AND NOT
+    A RELAXATION. THE SUPERSEDED CLAUSE IS QUOTED RATHER THAN DELETED (PBG-CONT-003):**
+
+        assert vacuous & runtime == set(), sorted(vacuous & runtime)
+
+    with the reasoning that went with it: *"The ZERO-FIELD part satisfies VACUOUSLY, so it is
+    diffed in the OTHER direction — it must be DISJOINT from the runtime governed set."*
+
+    **THAT CLAUSE ASSERTED THE ABSENCE OF A GUARD.** It required the vacuous member to be
+    runtime-UNGOVERNED, and `CD-ASR-WO2R3-01`'s F-A1 is the finding that it therefore WAS:
+    add a field to `Empty` and the instrument exited 1 while `Empty(confidence=object())` was
+    ACCEPTED at runtime. `PO-DECISIONS-0011` ruling 1 item (d) ordered `@establishes()`
+    applied to `Empty`, which makes the old clause false BY DESIGN.
+
+    The replacement requires MORE of the system, not less: **every member the static reading
+    enumerates — fielded OR vacuous — is governed at runtime, and nothing is governed at
+    runtime that the static reading does not enumerate.** Satisfying vacuously is still not
+    the same as being fielded; it is no longer the same as being unguarded.
     """
     fielded, vacuous = _static_population()
     runtime = {cls.__name__ for cls in _product_types()}
     assert fielded, "the check printed no fielded population"
-    assert fielded == runtime, {
-        "in the static reading only": sorted(fielded - runtime),
-        "in the runtime reading only": sorted(runtime - fielded),
+    assert vacuous, "the check printed no vacuous population"
+    assert fielded <= runtime, {
+        "fielded in the static reading only": sorted(fielded - runtime),
     }
-    assert vacuous & runtime == set(), sorted(vacuous & runtime)
+    assert vacuous <= runtime, {
+        "vacuous in the static reading only, i.e. RUNTIME-UNGOVERNED": sorted(vacuous - runtime),
+    }
+    assert fielded | vacuous == runtime, {
+        "in the static reading only": sorted((fielded | vacuous) - runtime),
+        "in the runtime reading only": sorted(runtime - (fielded | vacuous)),
+    }
 
 
 def test_the_vacuously_satisfying_members_are_exactly_this_set():
     """CHECK LIMIT 1 residue (i)'s MEASURED CARRIER (CD-RULE-006).
 
-    A member declaring ZERO FIELDS satisfies the widened rule vacuously and carries no
-    boundary of any kind. **That is a residue, not a closure**, so the set is PINNED BY
-    NAME — a SECOND zero-field judgement-path type is a test failure and not a quiet
-    widening of the vacuous branch — and each member's emptiness is re-measured AT RUNTIME
-    from ``dataclasses.fields``, so a field ARRIVING on one of them fails here as well as in
-    the check.
+    A member declaring ZERO FIELDS satisfies the widened rule vacuously. The set is PINNED BY
+    NAME — a SECOND zero-field judgement-path type is a test failure and not a quiet widening
+    of the vacuous branch — and each member's emptiness is re-measured AT RUNTIME from
+    ``dataclasses.fields``, so a field ARRIVING on one of them fails here as well as in the
+    check.
 
     Written out rather than computed, for the reason
     ``test_the_established_here_field_exemptions_are_exactly_this_set`` gives: a set derived
     from observation declares whatever it finds, including whatever somebody added.
+
+    **THE SECOND ASSERTION IS REVERSED AT WO-2R3 INCREMENT 6. THE SUPERSEDED WORDING IS QUOTED
+    RATHER THAN DELETED (PBG-CONT-003):**
+
+        assert not is_establishing_type(cls), (
+            f"{cls.__qualname__} is governed at runtime but the check reads it as "
+            "satisfying vacuously — the two readings disagree")
+
+    together with the sentence that justified it: *"carries no boundary of any kind. That is a
+    residue, not a closure."*
+
+    **THAT ASSERTION PINNED THE DEFECT IN PLACE.** It made "this type has no runtime boundary"
+    a REQUIREMENT, so applying the decorator the mechanism's own docstring prescribes would
+    have failed the suite. `CD-ASR-WO2R3-01` F-A1 measured what it cost: `Empty` + one field
+    gave static exit 1 and runtime ***ACCEPTED***. `PO-DECISIONS-0011` ruling 1 item (d)
+    ordered the decorator applied, and the assertion is now its opposite: **a vacuously
+    satisfying member IS governed at runtime, so that the day it gains a field, every
+    construction of it raises rather than one instrument printing a line.**
     """
     from crash_detector.observations import Empty
 
@@ -365,10 +404,51 @@ def test_the_vacuously_satisfying_members_are_exactly_this_set():
 
     for cls in expected:
         assert dataclasses.fields(cls) == (), cls.__qualname__
-        assert not is_establishing_type(cls), (
-            f"{cls.__qualname__} is governed at runtime but the check reads it as "
-            "satisfying vacuously — the two readings disagree"
+        assert is_establishing_type(cls), (
+            f"{cls.__qualname__} satisfies the rule VACUOUSLY and must still be GOVERNED AT "
+            "RUNTIME. Without @establishes() a field added to it is a static check line "
+            "only, which is exactly CD-ASR-WO2R3-01's F-A1"
         )
+
+
+def test_a_nullary_governed_type_refuses_every_construction_the_day_it_gains_a_field():
+    """**THE MECHANISM PROPERTY `Empty` NOW RELIES ON, ASSERTED ON ITS OWN.**
+
+    `test_a_new_field_the_declaration_was_not_told_about_refuses_EVERY_construction` covers
+    the FIELDED case: a type that declared `name=str` and grew a second field. **THE NULLARY
+    CASE WAS NEVER ASSERTED**, and it is the one `PO-DECISIONS-0011` ruling 1 item (d) turns
+    on — `@establishes()` with NO declarations, on a type with NO fields, so that a field
+    added later refuses every construction.
+
+    Both halves are here, because only the pair is a property: the nullary governed type
+    constructs exactly as it did before, AND the same type with one field added refuses
+    `EVERY` construction — including the nullary spelling that worked a moment ago.
+
+    This asserts the MECHANISM. That `Empty` itself is wired to it is asserted by
+    `test_the_vacuously_satisfying_members_are_exactly_this_set`, and the end-to-end contrast
+    against the real module at both SHAs is
+    `variants/WO-2R3/P-D-empty-is-runtime-unguarded.py`. Three readings, deliberately not one.
+    """
+
+    @_governed()
+    class NullaryAndStaysThatWay:
+        pass
+
+    assert not establishment_faults(NullaryAndStaysThatWay)
+    assert is_establishing_type(NullaryAndStaysThatWay)
+    assert dataclasses.fields(NullaryAndStaysThatWay) == ()
+    NullaryAndStaysThatWay()  # unchanged, and this is half the property
+
+    @_governed()
+    class NullaryUntilSomebodyAddedAField:
+        confidence: object = None
+
+    assert establishment_faults(NullaryUntilSomebodyAddedAField)
+    with pytest.raises(UndeclaredField) as refusal:
+        NullaryUntilSomebodyAddedAField()
+    assert "confidence" in str(refusal.value)
+    with pytest.raises(UndeclaredField):
+        NullaryUntilSomebodyAddedAField(confidence=object())
 
 
 def test_the_established_here_field_exemptions_are_exactly_this_set():

@@ -166,6 +166,7 @@ class Malformed:
             )
 
 
+@establishes()
 @dataclass(frozen=True)
 class Empty:
     """We asked, the source conformed, and it has nothing to report for the period.
@@ -177,6 +178,31 @@ class Empty:
     observation to be as-of; the attempt's own time is on the
     :class:`ObservationRecord`. An optional timestamp here would be a field that is
     sometimes present, and "sometimes present" is where a reader learns to guess.
+
+    **``@establishes()`` WITH NO DECLARATIONS, AND THAT IS THE POINT AND NOT AN OVERSIGHT.**
+    :func:`~crash_detector.establishment.establishes`'s own docstring prescribes exactly
+    this — *"``@establishes()`` with no declarations is a meaningful and deliberate
+    statement, not a no-op: it says this type declares no fields and I was told about none,
+    and adding one later refuses every construction"* — and until WO-2R3 increment 6 it had
+    not been applied here.
+
+    **WHY IT WAS OWED.** `Empty` is the ONE member PO-DECISIONS-0010 ruling 1 added to the
+    constructor check's population, and the ruling's phrase for a fielded public frozen
+    judgement-path type with no establishment is **"FAILS ON ARRIVAL"** — which in this
+    module's vocabulary means RAISES ON EVERY CONSTRUCTION. `CD-ASR-WO2R3-01`'s F-A1
+    measured that for `Empty` it was **A STATIC CHECK LINE ONLY**: adding a field made the
+    instrument exit 1 with a VIOLATION — that claim was true — while at runtime
+    `Empty(confidence=object())` was ***ACCEPTED*** and `is_establishing_type(Empty)`
+    answered `False`. **NOTHING REFUSED IT.**
+
+    **WHAT THIS DOES NOT DO, AND IT MATTERS MORE HERE THAN ON ANY OTHER MEMBER BECAUSE THIS
+    TYPE IS NULLARY BY DESIGN.** It does not make the type fielded, does not let it accept a
+    field, and moves no construction that succeeds today: `Empty()` is unchanged, and
+    `Empty(confidence=...)` is still a plain `TypeError` from the generated `__init__`
+    because no such parameter exists. What changes is the day someone ADDS a field — from
+    that moment every construction, including the ones that work now, raises
+    :exc:`~crash_detector.establishment.UndeclaredField`. Measured at both SHAs by
+    ``variants/WO-2R3/P-D-empty-is-runtime-unguarded.py``.
     """
 
 
