@@ -1,0 +1,110 @@
+# ================================================================================================ #
+# CORRECTION ENTRY — SUPERSEDES TWO LINE-NUMBER FIGURES IN BL-20260822T195059Z-0066 AND NOTHING ELSE.
+#
+# CORRECTIONS SUPERSEDE, THEY NEVER EDIT (PBG-CONT-003, non-waivable). BL-...-0066 is not touched.
+# Everything in it that is not named below stands exactly as written.
+#
+# WHY THIS ENTRY EXISTS AT ALL, AND IT IS NOT FLATTERING TO THIS SEAT.
+# BL-...-0066 raised CD-ENG-WO2R3-F23 against this seat for writing line numbers into a commit
+# message from intent rather than reading them off the artefact. **THE SAME ENTRY THEN DID IT AGAIN**
+# — two of the three line numbers it recorded were correct WHEN WRITTEN and were shifted by this
+# seat's own later edits in the SAME COMMIT that landed the entry. A figure that was true when
+# written and false when committed is still a false figure in the committed record.
+#
+# SEQUENCE BLOCK: 0060-0099, continuing from 0066. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T195643Z-0067
+timestamp_utc: "2026-08-22T19:56:43Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC5C-ENGINEER
+parent_dispatch_id: CD-DISPATCH-WO2R3-INC5-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 46adf3372fae190d1d760bb0885283775af81429
+parent_entry_id: BL-20260822T195059Z-0066
+supersedes_fields_in: BL-20260822T195059Z-0066
+schema_version: 1
+
+record_type: CORRECTION
+this_entry_writes_these_fields_and_nothing_else: >
+  Two line numbers in BL-...-0066's declared_limit_1.the_three_CD_RULE_004_places_with_measured_lines.
+  NO OTHER FIGURE, CLAIM, MEASUREMENT OR FINDING IN THAT ENTRY IS ALTERED OR WITHDRAWN.
+
+# ------------------------------------------------------------------------------------------------ #
+the_correction:
+  measured_at: 'b3ba87cf34f777360dfbd1b255870b9f51a0ccbd — the commit that landed BL-...-0066.'
+  command: 'grep -n over each file at that SHA, read off the artefact and not written from intent.'
+  superseded_and_replacing:
+  - place: 'tools/register/check_constructor_field_establishment.py — the instrument header'
+    recorded_in_0066: 165
+    measured_at_b3ba87c: 165
+    status: 'CORRECT. Unchanged. Recorded here so the corrected set is complete rather than partial.'
+  - place: 'required-tests.yaml — the register row'
+    recorded_in_0066: 1484
+    measured_at_b3ba87c: 1492
+    status: 'SUPERSEDED. Off by 8.'
+  - place: 'contracts/execution/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.md — the execution contract'
+    recorded_in_0066: 271
+    measured_at_b3ba87c: 280
+    status: 'SUPERSEDED. Off by 9.'
+  the_doors_instrument_cross_reference_lines_are_NOT_superseded:
+    verified_at_b3ba87c: >
+      tools/register/check_judgement_path_doors.py:115 reads "see the note below on CD-PL-F91); and"
+      and :639 reads "body-borne field-establishment class at 32 members'. That was a FOURTH place ".
+      BOTH CORRECT AS RECORDED IN 0066. That file was not touched after those figures were read.
+
+cause:
+  what_happened: >
+    The figures for required-tests.yaml and the constructor execution contract were read AFTER the
+    DECLARED LIMIT 1 supersession was written and BEFORE the last two CD-PL-F91 corrections were
+    made. Those corrections inserted 8 and 9 lines ABOVE the cited positions, in the SAME COMMIT
+    that landed the entry. The entry was therefore internally consistent at the moment it was
+    drafted and wrong at the moment it was committed.
+  why_it_is_not_excused_by_that: >
+    A record's figures are true or false AT ITS SHA, not at the moment its author typed them. The
+    seat had already raised CD-ENG-WO2R3-F23 against itself for exactly this and did not then
+    re-read the figures after its own last edits. **THE RULE THIS SEAT IS ADOPTING FOR ITSELF AND
+    WRITING DOWN SO IT CAN BE HELD TO IT: any line number in a record is re-read from the artefact
+    AFTER the last edit to that artefact and BEFORE the commit that lands the record, and never
+    once before.**
+  scope_of_the_defect: >
+    LINE NUMBERS ONLY. Every OTHER figure in BL-...-0066 — the population counts, the assertion
+    counts, the exit codes, both arms of the contrast, the node-id sets, the plant and variant
+    corpus tallies, the sweep readings — was produced by RUNNING the command recorded beside it at
+    the SHA named, and none of them is positional. **THIS CORRECTION DOES NOT REACH THEM AND DOES
+    NOT CAST DOUBT ON THEM**; the seat states that as a bounded claim rather than leaving a reader
+    to wonder how far the defect goes.
+
+findings_raised:
+- id: CD-ENG-WO2R3-F25
+  severity: LOW
+  against: 'this seat''s own Build Log entry, one entry after raising CD-ENG-WO2R3-F23 for the same thing.'
+  finding: >
+    A RECORD CITED POSITIONS IN ARTEFACTS THE SAME COMMIT WAS STILL CHANGING. Two of three line
+    numbers in BL-...-0066 were shifted by edits made after they were read and before the entry was
+    committed. CD-ENG-WO2R3-F23 named the first instance of this in commit c18aeb4's message; this
+    is the SECOND instance, in the very entry that raised the first.
+  what_it_says_about_the_process: >
+    RAISING A FINDING IS NOT A CONTROL. F23 was raised, written up, and did not prevent the
+    recurrence one commit later, because nothing about raising it changed the ORDER in which figures
+    are read. A finding that does not change an order of work is a note.
+  carrier: >
+    **NOT PROVED TO BE CARRIED ANYWHERE.** No check in this tree reads a Build Log entry's line
+    citations and compares them against the files. The rule stated in cause.why_it_is_not_excused_by
+    _that is a DISCIPLINE THIS SEAT HAS WRITTEN DOWN, not a mechanism, and a discipline written down
+    by the party it binds is the weakest kind of carrier there is.
+
+return:
+  status: 'READY_FOR_ASSURANCE — unchanged. This entry corrects a record; it delivers no new work.'
+  next_safe_action: 'as stated in BL-20260822T195059Z-0066. Unchanged.'
+  separation_of_duties: >
+    PBG-SOD-001, non-waivable. This seat implemented this work and may not certify it. Nothing here
+    is a PASS and nothing here is an acceptance.
