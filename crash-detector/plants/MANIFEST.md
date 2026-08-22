@@ -1137,3 +1137,69 @@ assertion that the allowlists are *empty*, which is a stronger and narrower clai
 no broker"; it sees the same change from the other side.
 `check_no_execution_interface.py`, `check_lockfile_denylist.py` and
 `check_base_image_digest_pin.py` all stay at exit **0**.
+
+---
+
+## WO-2R3 INCREMENT 5 — what `CD-ENG-WO2R3-01` changed here, and why
+
+**ONE PLANT STOPPED APPLYING AND WAS REGENERATED. NONE WAS DELETED AND NONE WAS WEAKENED**
+(`CD-D-033`).
+
+`CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch`. Increment 5 applies `@establishes(...)` to all 32
+members of the body-borne field-establishment class, two of which are `EquityCrashScore` and
+`MonetaryDebasementScore` in `src/crash_detector/dials/scores.py`. The plant's hunk ends with the
+trailing context `@dataclass(frozen=True)` / `class MonetaryDebasementScore:`, and there is now an
+`@establishes(...)` block between those two lines, so `git apply --check` refused it at
+`src/crash_detector/dials/scores.py:216`.
+
+**WHAT WAS REGENERATED AND WHAT WAS NOT.** The plant's CONTENT is unchanged: the same `__add__`, the
+same `__radd__ = __add__`, the same `__truediv__`, on the same type, violating the same proposition
+— *a scalar derived from BOTH dial types made representable or publishable, by ANY route* — by the
+same route. Only the surrounding context moved. The patch was regenerated with `git diff` and never
+by hand (`CD-ENG-WO2R-F13`).
+
+**RE-MEASURED AS A SET AT TREE `3ae0205a5e692a69ad5724c8f8973375eecfa3ca`** (the tree of commit
+`66d1d6a`), **one pristine extraction PER ARM**, `git archive <tree> | tar -x -C <tmpdir>`, each
+arm's declared command taken from `required-tests.yaml` and run with `python3 -B`:
+
+**ALL ELEVEN APPLY. TEN OF ELEVEN CONTRAST 0 -> 1.**
+
+| plant | clean | planted |
+|---|---|---|
+| `CD-RT-001-AST-NO-NUMERIC-DEFAULT` | exit 0, PASS — 540 assertions | exit 1, FAIL — 3 violations |
+| `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` | exit 0, 124 passed | exit 1, 15 failed, 109 passed |
+| `CD-RT-002-TYPE-NO-ARITHMETIC` | exit 0, 314 passed | exit 1, 2 failed, 312 passed |
+| `CD-RT-002-AST-NO-BLEND` | exit 0, PASS — 7121 assertions | exit 1, FAIL — 2 violations |
+| `CD-RT-002-SCHEMA-CLOSED` | exit 0, PASS — 242 assertions | exit 1, FAIL — 3 violations |
+| `CD-RT-003-ENGINE-NO-WITNESS-REACH` | exit 0, PASS — 28 assertions | exit 1, FAIL — 1 violation |
+| `CD-RT-003-GRANT-MATRIX-LIVE` | **exit 3 PRECONDITION_NOT_MET** | **exit 3 PRECONDITION_NOT_MET** |
+| `CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES` | exit 0, 152 passed | exit 1, 12 failed, 140 passed |
+| `CD-RT-012-NO-EXECUTION-INTERFACE` | exit 0, PASS — 52279 assertions | exit 1, FAIL — 6 violations |
+| `CD-RT-012-LOCKFILE-DENYLIST` | exit 0, PASS — 134 assertions | exit 1, FAIL — 2 violations |
+| `CD-RT-012-EGRESS-NO-BROKER` | exit 0, PASS — 69 assertions | exit 1, FAIL — 2 violations |
+
+**`CD-RT-003-GRANT-MATRIX-LIVE` EXITS 3 ON BOTH ARMS** for want of a live PostgreSQL. **THAT IS NOT A
+CONTRAST AND IT IS NOT COUNTED AS ONE**, exactly as at increments 2, 2b, 3 and 4. Its authorisation
+to stand up a throwaway container is not this dispatch's to grant and was not taken. The Product
+Owner has since named it for the fourth Assurance seat (PO-DECISIONS-0009 ruling 3(ii)) — *"a control
+that has never been seen to refuse under attack is still a rumour by this project's own §F.1
+doctrine"* — and this seat agrees and has not been able to change it.
+
+**THE LAYER TEST APPLIED TO THE REGENERATED PLANT (`CD-ENG-WO2R3-F12`, this seat's own finding
+against its own increment-4 work).** An exit code is not a refusing layer. The two failures under
+`CD-RT-002-TYPE-NO-ARITHMETIC` are, by name:
+
+```
+FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
+FAILED tests/test_scores.py::test_no_ancestor_of_either_score_type_defines_one_either
+E   AssertionError: EquityCrashScore defines ['__add__', '__radd__', '__truediv__']
+```
+
+— the CD-AC-002 arithmetic-dunder SURFACE assertions, which is the layer the plant's proposition
+names, and the same two named failures the record carries from increment 2b onward. Read from the
+failure text and not from the exit code.
+
+**THE SIGNATURE MOVED AND IT IS STATED RATHER THAN LEFT.** `CD-RT-002-TYPE-NO-ARITHMETIC`'s planted
+arm reads **2 failed, 312 passed** here against a clean arm of **314 passed**. The `2 failed` and the
+two named tests are unchanged; the passing count moves with the suite, not with the plant. This seat
+measured both arms rather than transcribing either.

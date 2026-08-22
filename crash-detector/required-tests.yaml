@@ -1108,18 +1108,46 @@ criteria:
         THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
         tools/register/check_judgement_path_doors.py and in the execution contract, in FOUR
         boundaries, each with a patch an auditor can apply to their own extraction:
-        (1) CONSTRUCTORS ARE NOT SUBJECTS, AND THAT IS A REAL GAP IN §D AS SCOPED.
-        ConfigSnapshot(...), DialSpec(...), ModelSpec(...) and PanelRow(...) are public entry
-        points on the judgement path and they establish their fields in __post_init__ — that is,
-        in a BODY, which is the thing §D.1 exists to stop relying on. §D.2's table lists no
-        constructor and this check does not invent that scope. MEASURED:
+        (1) CONSTRUCTORS ARE STILL NOT SUBJECTS *OF THIS CHECK*, AND SINCE WO-2R3 INCREMENT 5
+        THAT IS NO LONGER AN UNCARRIED GAP. NARROWED TO ITS MEASURED REACH AT INCREMENT 5; THE
+        SUPERSEDED WORDING IS QUOTED RATHER THAN DELETED (PBG-CONT-003 in spirit: a declaration
+        is corrected by supersession, never by silent rewrite). IT READ: "CONSTRUCTORS ARE NOT
+        SUBJECTS, AND THAT IS A REAL GAP IN §D AS SCOPED. ConfigSnapshot(...), DialSpec(...),
+        ModelSpec(...) and PanelRow(...) are public entry points on the judgement path and they
+        establish their fields in __post_init__ — that is, in a BODY, which is the thing §D.1
+        exists to stop relying on. §D.2's table lists no constructor and this check does not
+        invent that scope. ... as a structure surviving an edit to those bodies, NOT PROVED TO BE
+        CARRIED ANYWHERE. RAISED AS A FINDING to the Project Lead rather than closed by this
+        seat." The Product Owner ruled on that declaration at PO-DECISIONS-0007 ruling 1 —
+        "__post_init__ IS A BODY" — and re-based it at PO-DECISIONS-0008 ruling 2 from four named
+        types to THE CLASS.
+        STILL TRUE: this check reads CALLABLES and a constructor is not one of its subjects.
+        MEASURED AGAIN AT INCREMENT 5 on a pristine extraction:
         variants/WO-2R3/V17-constructor-body-escape.patch deletes the `type(spec) is not
-        DialSpec` loop from ConfigSnapshot.__post_init__ and the declared command still exits 0
-        with 54 assertions (re-measured at increment 3; 38 before collectors/ joined RULE 1). CARRIER,
-        IN PART: the frozen dataclasses re-establish every field and
-        the suite measures them refusing a look-alike TODAY; as a structure surviving an edit to
-        those bodies, NOT PROVED TO BE CARRIED ANYWHERE. RAISED AS A FINDING to the Project Lead
-        rather than closed by this seat.
+        DialSpec` loop from ConfigSnapshot.__post_init__ and THIS command still exits 0 with 54
+        assertions. No reader should infer anything about constructors from a clean run of THIS
+        check.
+        NO LONGER TRUE — THE HAND-OFF, AND THE CARRIER IS NAMED AND MEASURED (CD-RULE-006):
+        the STRUCTURE is crash_detector.establishment.establishes — establishment derived from
+        the DECLARED FIELD LIST, applied at the class boundary where a body rewrite cannot reach
+        it; the ENUMERATION is the sibling row
+        CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST, whose command
+        `python3 -B tools/register/check_constructor_field_establishment.py --root .` measures
+        the class at 32 MEMBERS and asserts every one of them carries its declaration; and the
+        MEASUREMENT is V17 ITSELF, RUN, BOTH ARMS — with V17 applied and the mechanism present,
+        constructing a duck DialSpec into ConfigSnapshot is REFUSED with
+        `crash_detector.establishment.FieldNotEstablished: ConfigSnapshot.dial_specs[0]=
+        DuckDialSpec is not admitted; every element must be exactly DialSpec`, and with the
+        mechanism removed (variants/WO-2R3/V40-v17-violated-arm-establishes-removed.patch) the
+        same construction ESCAPES, storing ['DuckDialSpec','DuckDialSpec'] and answering
+        spec_for('equity_crash') -> DuckDialSpec.
+        STILL NOT CARRIED, so this correction does not overstate itself: the new mechanism
+        establishes a field's TYPE and never a RELATION BETWEEN TWO FIELDS. §C.5's invariants 2
+        and 3 and ConfigSnapshot's one-spec-per-dial REMAIN BODY-BORNE. Executable example:
+        variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch deletes the
+        one-spec-per-dial check and a snapshot carrying TWO equity specs and NO monetary spec is
+        ACCEPTED with every element exactly a DialSpec. For that residue: NOT PROVED TO BE
+        CARRIED ANYWHERE. It now lives as the sibling row's own DECLARED LIMIT 1.
         (2) RULE 1's PACKAGE LIST IS A VOCABULARY. `engine` and `serving` are spelled in the
         check. A judgement-path door written under a package name the check has never heard of is
         reached only by RULE 2, and only if it annotates its return type. MEASURED:
@@ -1276,6 +1304,186 @@ criteria:
         needs the ability to execute code inside the package, which is the universal limit every
         in-process guard on this project lives inside. That is strictly weaker than "cannot
         happen" and it is said rather than implied.
+      evidence_ref: RTR-WO2-0001
+  # ===========================================================================================
+  # CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST — ADDED AT WO-2R3 INCREMENT 5,
+  # under BP-AMENDMENT-0001 §D.1 applied ONE LEVEL DOWN by PO-DECISIONS-0007 ruling 1 (CD-D-105,
+  # answer (A)) and RE-BASED from a list of four types to A CLASS by PO-DECISIONS-0008 ruling 2
+  # (CD-D-114), dispatched at PO-DECISIONS-0009 ruling 2.
+  #
+  # WHAT IT IS. §D.1's principle is "establishment derived from the declaration, never written
+  # into an editable body". `admits` applies it to a CALLABLE's signature. This row is the same
+  # principle applied to a TYPE's DECLARED FIELD LIST, because the Product Owner ruled that
+  # `__post_init__` IS A BODY. It is the ACCEPTANCE TEST for the class, not the closure: the
+  # closure is `crash_detector.establishment.establishes`, and this check enumerates the class
+  # from the artefact and fails on any member that does not carry it.
+  #
+  # IT WAS BUILT AND RUN BEFORE THE MECHANISM EXISTED, on the Product Owner's reasoning at
+  # CD-D-119: an instrument written after a mechanism enumerates what the mechanism already
+  # covers. The ordering is durable in the git graph — the check landed alone at 4a5098d,
+  # printing POPULATION 32 and "DECLARED TO @establishes: 0", one commit BEFORE the mechanism.
+  #
+  # THE FLOOR IS NOT THE POPULATION. The Product Owner named five types — ConfigSnapshot,
+  # DialSpec, ModelSpec, PanelRow, AttemptRecord. All five are IN. THE MEASURED POPULATION IS 32.
+  - test_id: CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST
+    scope: CLASS
+    execute: python3 -B tools/register/check_constructor_field_establishment.py --root .
+    execution_contract: contracts/execution/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.md
+    negative_control:
+      violation: >
+        A public type in the frozen subject, on a judgement path, whose field establishment is
+        BODY-BORNE and which does not derive that establishment from its DECLARED FIELD LIST at
+        the class boundary. The class includes, and is not limited to: such a type carrying no
+        @establishes(...); a type whose declaration and whose `dataclasses.fields` disagree IN
+        EITHER DIRECTION; a type carrying an InitVar, which reaches __init__ and is never an
+        attribute so its established value cannot be read back; and @establishes applied BELOW
+        @dataclass, where the field list does not yet exist to derive anything from.
+        THE DEFINITION OF "BODY-BORNE FIELD ESTABLISHMENT" IS PRINTED BY THE CHECK AT EVERY RUN,
+        so a reader can disagree with it without reading the source. A class is IN when ALL FOUR
+        hold: (1) PUBLIC; (2) FROZEN SUBJECT — declared @dataclass(frozen=True, ...); (3) ON A
+        JUDGEMENT PATH by any of three unioned rules derived from the tree — RULE A defined under
+        {engine,serving,collectors}/, RULE B its name appears in the @admits(...) declaration, a
+        parameter annotation or the return annotation of any callable carrying @admits(...),
+        RULE C it is named in the declared field annotation of a type already reached, run to a
+        FIXPOINT; (4) BODY-BORNE — it defines __post_init__ or __init__ IN ITS OWN CLASS BODY and
+        that body either names a declared field of the class or reaches the field list
+        reflectively. RULES B AND C RESOLVE MODULE-LEVEL NAMES TO A FIXPOINT, because both reach
+        types through a NAME: `one_of(*READING_CONSTRUCTORS)` spells no constructor and
+        `outcome: 'FetchOutcome'` spells no outcome.
+        CLAUSE (4) IS DECLARED A HEURISTIC AND OVER-INCLUDES BY DESIGN: no static reader can tell
+        ESTABLISHMENT from DERIVATION, so a body that merely READS a field is counted IN. The
+        error direction is toward a LARGER class, never a smaller one; the reflective clause
+        closes the under-including direction, which is the dangerous one.
+        MEASURED AT WO-2R3 INCREMENT 5, BOTH ARMS, over EMPTY_MODEL_REGISTRY and
+        EMPTY_SOURCE_REGISTRY:
+        POPULATION — 32, of 35 public frozen dataclasses under src/crash_detector/ and 96 classes
+        examined. 14 by RULE A, 10 by RULE B only, 9 by RULE C only. ADJACENT 1. OUT 2. Every one
+        of the 96 is printed with its verdict; `--why` prints the reason for each.
+        V17 BASELINE — variants/WO-2R3/V17-constructor-body-escape.patch deletes the
+        `type(spec) is not DialSpec` loop from ConfigSnapshot.__post_init__, and with
+        variants/WO-2R3/V35-v17-companion-probe.patch,
+        `PYTHONPATH=src python3 -B probe_v17_constructor_body_escape.py` REFUSES:
+        `crash_detector.establishment.FieldNotEstablished: ConfigSnapshot.dial_specs[0]=
+        DuckDialSpec is not admitted; every element must be exactly DialSpec`.
+        V17 VIOLATED — the same two patches plus
+        variants/WO-2R3/V40-v17-violated-arm-establishes-removed.patch (@establishes removed from
+        ConfigSnapshot): ESCAPED, `stored element types: ['DuckDialSpec','DuckDialSpec']`,
+        `spec_for('equity_crash') -> DuckDialSpec`.
+        P7 AT THE CONSTRUCTOR, BASELINE — variants/WO-2R3/V39-new-field-on-a-governed-type.patch
+        adds `tolerate_stale: bool = False` to the REAL PanelRow and does not tell @establishes.
+        The declared command exits 1 with FIELD_NOT_DECLARED_TO_ESTABLISHES; an ORDINARY
+        construction that never mentions the new field raises
+        `crash_detector.establishment.UndeclaredField: PanelRow is a FAULTED type and every
+        construction of it is refused`; and `PYTHONPATH=src python3 -B -m pytest tests -q` goes
+        from 1537 passed to 57 failed, 1480 passed.
+        P7 AT THE CONSTRUCTOR, VIOLATED — the same patch plus
+        variants/WO-2R3/V41-v39-violated-arm-establishes-removed.patch: faults 0, and the
+        construction is ADMITTED with the new field UNGUARDED.
+        THE SAME MOVE ON A DIFFERENT TYPE, BASELINE/VIOLATED —
+        variants/WO-2R3/V42-panelrow-canonicalisation-body-deleted.patch deletes
+        `own_str(self.state)` from PanelRow.__post_init__. BASELINE: REFUSED,
+        `FieldNotEstablished: PanelRow.state=DuckStr`. VIOLATED (V41): ESCAPED, stored state type
+        DuckStr, stored value 'UNAVAILABLE', and `row.state == 'AGREES'` answers True — ASR3-F04's
+        sentence reached through a constructor. STATED WITHOUT OVERCLAIM: in that violated arm
+        resolve_panel still returned Unavailable, so the escape reaches the VALUE TYPE and the
+        resolver's own re-establishment still held.
+        THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
+        tools/register/check_constructor_field_establishment.py, in the header of
+        src/crash_detector/establishment.py and in the execution contract. Numbering runs 1..4
+        for the MECHANISM's limits and 1..4 for the CHECK's; each says which it is, and both sets
+        are reproduced in the execution contract.
+        MECHANISM LIMIT 1 — IT ESTABLISHES A FIELD'S TYPE AND NEVER A RELATION BETWEEN TWO
+        FIELDS. §C.5's invariants 2 and 3 (a resolved spec's dial_id EQUALS the dial naming it;
+        its input ids are a SUBSET of the naming DialSpec's declared inputs), ConfigSnapshot's
+        one-spec-per-dial, AttemptRecord's requested_utc <= observation.observed_utc,
+        CollectionResult's rows_recorded == attempts_made, Agrees's
+        freshness.as_of_utc == as_of_utc and every registry uniqueness check REMAIN BODY-BORNE. A
+        declared field list says what each field IS and nothing about what any two of them must
+        be TO EACH OTHER. EXECUTABLE EXAMPLE:
+        variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch deletes the
+        one-spec-per-dial check and `PYTHONPATH=src python3 -B probe_v36_cross_field_invariant.py`
+        reports ACCEPTED — two equity specs, no monetary spec, every element exactly a DialSpec,
+        the boundary fully satisfied and the object wrong. CARRIER MEASURED AND IT IS BODY-LEVEL:
+        tests/test_engine_config.py and tests/test_engine_model_registry.py measure those bodies
+        refusing today, and V36 measures them stopping when the body is edited. As a STRUCTURE
+        that survives an edit to those bodies: NOT PROVED TO BE CARRIED ANYWHERE. RAISED AS A
+        FINDING (CD-ENG-WO2R3-F18) rather than closed by the seat that found it.
+        MECHANISM LIMIT 2 — ESTABLISHED_HERE IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT
+        HIDDEN. THREE fields across THREE types: Value.value and Degraded.value (the generic
+        parameter T — which score types a Reading may carry is product meaning, and fixing it
+        here would be inventing one, CD-RULE-003) and FetchedResponse.payload (a foreign
+        payload, CD-BP-003 one type down). Every use must state a reason in the artefact; a bare
+        ESTABLISHED_HERE raises at decoration and stops the module importing. CARRIER MEASURED:
+        the check PRINTS all three with class, field and line at every run, and
+        tests/test_field_establishment.py::test_the_established_here_field_exemptions_are_exactly_this_set
+        pins the set, so a FOURTH is a test failure and not a quiet widening. CARRIER FOR WHAT
+        THOSE THREE FIELDS HOLD, PARTIAL: Value.value and Degraded.value are re-established one
+        level up by DialSet.__post_init__'s _reject_cross_typed, WHICH IS ITSELF BODY-BORNE; for
+        FetchedResponse.payload, NOT PROVED TO BE CARRIED ANYWHERE.
+        MECHANISM LIMIT 3 — THE INTERPRETER REACH, inherited from admission.py's DECLARED LIMIT 6
+        rather than newly incurred. __wrapped__ is deleted from the wrapper and the deletion is
+        MEASURED
+        (tests/test_field_establishment.py::test_a_governed_type_publishes_no_way_round_its_own_boundary).
+        THE REGISTRY IS NOT A ROUTE AND THIS SEAT EXPECTED IT TO BE: V37 ARM 3 rewrites
+        establishment._DECLARATIONS and the construction is STILL REFUSED, because the wrapper
+        closes over its own local `compiled` dict — so rewriting the registry makes the
+        INTROSPECTION SURFACE LIE in the SAFE direction, which is CD-ENG-WO2R3-F13's defect
+        inverted. THE ROUTE THAT IS OPEN IS THE CLOSURE CELL, and it is V33's move one level
+        down: variants/WO-2R3/V37-establishes-registry-rewrite.patch ARM 4 finds the live
+        `compiled` dict in __init__.__closure__, rewrites its entries and constructs
+        ScoreComputation(magnitude=0.5, contributions=(object(),)) through the ORDINARY front
+        door — ESCAPED, a bare object stored. NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED
+        ANYWHERE.
+        MECHANISM LIMIT 4 — A SUBCLASS OF A GOVERNED TYPE IS NOT GOVERNED, AND FOR A @dataclass
+        SUBCLASS THAT IS TRUE OF ITS INHERITED FIELDS TOO. THIS SEAT'S FIRST WORDING SAID THE
+        OPPOSITE AND THE MEASUREMENT REFUTED IT: a @dataclass subclass REGENERATES __init__,
+        which OVERRIDES the wrapped one, so NOT ONE field is established —
+        variants/WO-2R3/V38-subclass-adds-an-unestablished-field.patch (a):
+        ScoreComputationPlus(magnitude=0.5, contributions=(object(),)) is ACCEPTED. A PLAIN
+        subclass, not itself a dataclass, DOES inherit the wrapped __init__ and the same
+        construction is REFUSED — V38 (c). CARRIER MEASURED, AND ONLY AT THE DOORS: Value,
+        Degraded, Unknown, Shown and NotShown refuse subclassing outright at their metaclass, and
+        every @admits door requires an EXACT type — V38 (d) measures resolve_panel refusing a
+        PanelRow subclass instance with `admission.NotAdmitted: row=PanelRowPlus is not admitted;
+        this door requires exactly PanelRow or None`. For a subclass used ENTIRELY INSIDE this
+        package, reaching no door: NOT PROVED TO BE CARRIED ANYWHERE. RAISED AS CD-ENG-WO2R3-F19.
+        CHECK LIMIT 1 — THE ADJACENT SET. A frozen public judgement-path type with NO establishing
+        body fails clause (4): its establishment is ABSENT, not body-borne, so it is outside the
+        class the Product Owner ruled and this check does not require @establishes of it. THERE IS
+        EXACTLY ONE TODAY — observations.py `Empty`, which has no __post_init__ and no declared
+        fields — and it is PRINTED with its file and line at every run. THIS IS A REAL HOLE: a NEW
+        frozen judgement-path type written with no __post_init__ at all is outside the ruled class
+        and this check will name it as ADJACENT rather than fail. EXECUTABLE EXAMPLE: add
+        `@dataclass(frozen=True)` `class Verdict: score: float` to src/crash_detector/engine/ with
+        no __post_init__ — this check exits 0 and names it in the ADJACENT SET. CARRIER: NOT
+        PROVED TO BE CARRIED ANYWHERE. RAISED AS CD-ENG-WO2R3-F17 and referred to the Project Lead
+        and the Product Owner, because WIDENING THE RULED CLASS IS A SCOPE DECISION AND NOT THIS
+        SEAT'S TO TAKE — the increment-5 dispatch's objective says "AND NOTHING ELSE".
+        CHECK LIMIT 2 — RULE A's PACKAGE LIST IS A VOCABULARY. `engine`, `serving` and
+        `collectors` are spelled in the check. A frozen judgement-path type written under a
+        package name this file has never heard of is reached only by RULE B or RULE C. This is the
+        SAME limit CD-RT-002-DOORS-REQUIRE-THEIR-TYPES declares as its DECLARED LIMIT 2, reached
+        from the TYPE side instead of the CALLABLE side. EXECUTABLE EXAMPLE:
+        variants/WO-2R3/V16-new-package-undecorated-door.patch adds src/crash_detector/judging/; a
+        frozen type placed there and named by no door and by no reached type's fields is reached
+        by none of the three rules. CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.
+        CHECK LIMIT 3 — `establishes` AND `admits` ARE RECOGNISED BY THEIR NAMES IN THE SOURCE.
+        This check reads TEXT; it cannot know that the `establishes` a module imported is
+        crash_detector.establishment.establishes. INHERITED from the doors check's DECLARED
+        LIMIT 4 rather than newly incurred. EXECUTABLE EXAMPLE: the counterfeit pattern of
+        variants/WO-2R3/V18-counterfeit-admits.patch, applied to `establishes`. CARRIER MEASURED:
+        THE RUNTIME. tests/test_field_establishment.py imports the product and constructs the real
+        types, and it diffs the STATIC population against the RUNTIME population AS SETS
+        (::test_the_static_enumeration_and_the_runtime_population_are_the_same_class), so a
+        counterfeit decorator leaves the two readings disagreeing. A static reader alone cannot
+        carry this and does not claim to.
+        CHECK LIMIT 4 — IT ESTABLISHES THAT A DECLARATION EXISTS AND MATCHES THE FIELD LIST; IT
+        DOES NOT ADJUDICATE WHAT WAS DECLARED. `@establishes(payload=ESTABLISHED_HERE("..."))`
+        satisfies every assertion this check makes. Every ESTABLISHED_HERE use is therefore
+        PRINTED with its class, field and line at every run — exactly as the doors check does for
+        doors — so an exemption that starts absorbing the population is visible in the output
+        rather than discovered later. CARRIER MEASURED:
+        tests/test_field_establishment.py::test_the_established_here_field_exemptions_are_exactly_this_set.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-012

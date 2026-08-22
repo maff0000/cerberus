@@ -22,7 +22,7 @@ below is a defence** — it is a map, and every claim in it is one you should tr
 | 1 | **P7** — an argument added to a decorated door arrives REFUSED, never unguarded | PO-DECISIONS-0005 ruling 1: *"the fourth Assurance seat is directed to run it first"* | `V20` (baseline) and `V23` (violated) below; mechanism at `src/crash_detector/admission.py`, `_faults` | The refusal is computed at DECORATION from `inspect.signature`. Anything that changes what `inspect.signature` reports — a `__signature__` assignment, a wrapper the mechanism did not make — is not tested here by anyone |
 | 2 | **CD-BP-003** — `collect`'s four `Protocol` parameters: a door that ADMITS, not an absence of a door | PO-DECISIONS-0005 ruling 4: *"the fourth Assurance seat's first target"* | `V26` (the POSITIVE example — an object that IS admitted), `V27`, `V29`, `V30`, `V32` below; BLUEPRINT §17 | `missing_adapter_members` asks `hasattr` for **five SPELLED names** and FAILS THE RENAME TEST. It is the only refusal increment 3 relies on that does. **Source trust is NOT PROVED TO BE CARRIED ANYWHERE** |
 | 3 | **THE WHOLE §D SCOPING, including the CD-D-105 closure** — a standing invitation | PO-DECISIONS-0007 ruling 2, CD-D-112 | The scope is `JUDGEMENT_PATH_PACKAGES` and the two rules in `tools/register/check_judgement_path_doors.py`; the exclusions are amendment §B.4/§H (`Lifecycle.run(tick)`, `on_shutdown`, store/migrate) | **DECLARED LIMIT 2**: RULE 1's package list is a VOCABULARY — `V16` adds a whole new package with a public undecorated door and the check exits **0**. **NOT PROVED TO BE CARRIED ANYWHERE** |
-| 4 | **THE INCREMENT-5 INSTRUMENT'S OWN ENUMERATION** | PO-DECISIONS-0008 ruling 2, CD-D-119 | **IT DOES NOT EXIST YET.** Increment 5 is not built. Its FLOOR is five types — `ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow`, `AttemptRecord` — and the floor is **NOT the population** | `V17` is its plant and it APPLIES at this head: it deletes the `type(spec) is not DialSpec` loop from `ConfigSnapshot.__post_init__` and this check still exits **0** with 54 assertions. **DECLARED LIMIT 1: CONSTRUCTORS ARE NOT SUBJECTS** |
+| 4 | **THE INCREMENT-5 INSTRUMENT'S OWN ENUMERATION** | PO-DECISIONS-0008 ruling 2, CD-D-119 | **IT NOW EXISTS**: `tools/register/check_constructor_field_establishment.py`, landed ALONE at `4a5098d` — one commit BEFORE the mechanism — printing `POPULATION 32` and `DECLARED TO @establishes: 0`. The PO's FLOOR is five (`ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow`, `AttemptRecord`); **the measured population is 32 and the floor is 5/32 of it** | Attack clause (3) of its DEFINITION. RULE A's package list is a **VOCABULARY** (CHECK LIMIT 2) and RULE B/RULE C resolve names by a FLAT CROSS-MODULE fixpoint that this seat chose because it can only enlarge the class. Clause (4) is a **declared HEURISTIC**. And the ADJACENT SET (CHECK LIMIT 1) is a real hole: a frozen judgement-path type with NO `__post_init__` is outside the ruled class and this check names it rather than failing |
 
 **THE FASTEST ROUTE TO EACH.** Extract a tree yourself, then:
 
@@ -40,9 +40,24 @@ PYTHONPATH=src python3 -B probe_v26_conforming_hostile_adapter.py
 git apply -p1 variants/WO-2R3/V16-new-package-undecorated-door.patch
 python3 -B tools/register/check_judgement_path_doors.py --root .        # expect exit 0 — THE GAP
 
-# 4  the increment-5 ground
+# 4  the increment-5 class, and its plant in both arms
+python3 -B tools/register/check_constructor_field_establishment.py --root . --why   # the enumeration
 git apply -p1 variants/WO-2R3/V17-constructor-body-escape.patch
-python3 -B tools/register/check_judgement_path_doors.py --root .        # expect exit 0 — THE GAP
+git apply -p1 variants/WO-2R3/V35-v17-companion-probe.patch
+python3 -B tools/register/check_judgement_path_doors.py --root .        # STILL exit 0 — V17 removes
+python3 -B tools/register/check_constructor_field_establishment.py --root .   # STILL exit 0 — a BODY,
+PYTHONPATH=src python3 -B probe_v17_constructor_body_escape.py          # and NEITHER check reads
+                                                                        # bodies. THE REFUSAL IS AT
+                                                                        # RUNTIME: expect
+                                                                        # FieldNotEstablished.
+git apply -p1 variants/WO-2R3/V40-v17-violated-arm-establishes-removed.patch
+PYTHONPATH=src python3 -B probe_v17_constructor_body_escape.py          # expect ESCAPED
+
+# 5  P7 AT THE CONSTRUCTOR — the one that decides whether increment 5 is a class closure
+git apply -p1 variants/WO-2R3/V39-new-field-on-a-governed-type.patch
+python3 -B tools/register/check_constructor_field_establishment.py --root .   # expect exit 1
+PYTHONPATH=src python3 -B probe_v39_new_field_on_a_governed_type.py     # expect UndeclaredField
+PYTHONPATH=src python3 -B -m pytest tests -q                            # expect 57 failed
 ```
 
 **AND THE FIFTH THING, WHICH NOBODY NAMED AND WHICH THIS SEAT IS HANDING YOU ANYWAY.**
@@ -62,6 +77,24 @@ offered for any of them:
 4. **The rename test on `missing_adapter_members`** — five spelled names at the softest boundary.
 5. **`subjects >= 24`** — a FLOOR that passes at 27 and would pass at 270. It is why CD-PL-F82
    went unnoticed for a boundary. Raising it was NOT authorised and this seat left it alone.
+
+**ADDED AT INCREMENT 5, AND THESE ARE THE ONES THIS SEAT WOULD HIT FIRST NOW:**
+6. **THE ADJACENT SET** (`CD-ENG-WO2R3-F17`). A frozen public judgement-path type with NO
+   `__post_init__` is OUTSIDE the class the Product Owner ruled — its establishment is ABSENT, not
+   body-borne — so the increment-5 check names it and does not fail. Write one and see.
+   **NOT PROVED TO BE CARRIED ANYWHERE.**
+7. **CROSS-FIELD INVARIANTS** (`CD-ENG-WO2R3-F18`, `V36`). §C.5's invariants 2 and 3 and
+   `ConfigSnapshot`'s one-spec-per-dial cannot be derived from a declared field list and REMAIN
+   BODY-BORNE. V36 deletes one and the snapshot is **ACCEPTED**.
+8. **A `@dataclass` SUBCLASS** (`CD-ENG-WO2R3-F19`, `V38`). It REGENERATES `__init__` and overrides
+   the wrapped one, so **not one** field is established — inherited or added. This seat wrote the
+   limit claiming the opposite and the measurement refuted it.
+9. **THE CLOSURE CELL** (`V37` ARM 4). The registry rewrite is NOT a route (ARM 3, measured, still
+   refused); the `compiled` dict in `__init__.__closure__` IS. `V33`'s move one level down.
+10. **THE ORDERING COST.** The boundary establishes AFTER the generated `__init__`, so while a
+   `__post_init__` CANONICALISES (`own_str`, `ensure_utc`, `dict(...)`, `tuple(...)`) the boundary
+   is invisible for that field and the BODY is what refuses. `V42` exists because of it. Anyone
+   reading an exit code alone will credit the wrong layer — `CD-ENG-WO2R3-F12`, again.
 
 ---
 
@@ -273,3 +306,87 @@ refusal** — before the CD-AC-001 absence post-condition is ever reached. The d
 still exits 1, so an exit code alone would have recorded a contrast under the wrong criterion
 (`CD-ENG-WO2R3-F12`). **AN EXIT CODE IS NOT A REFUSING LAYER.** Apply that test to every row on
 this page, including the ones this seat wrote.
+
+
+## The rows added at INCREMENT 5 — the CONSTRUCTORS, and the class the Product Owner re-based onto
+
+Measured at tree `3ae0205a5e692a69ad5724c8f8973375eecfa3ca`, **which is the tree of commit
+`66d1d6a`**, each in a SEPARATE PRISTINE EXTRACTION (`git archive <tree> | tar -x -C <tmpdir>`), run
+and discarded. Every patch was generated with `git diff` and never by hand (`CD-ENG-WO2R-F13`).
+
+**V35, V40 and V41 are ARMS, NOT ROUTES**, and are labelled as such: they add a probe or remove the
+mechanism so that another row has a contrast. **V36, V37, V38, V39 and V42 are MINE.**
+
+| id | patch | PROPOSITION violated | observed | command |
+|---|---|---|---|---|
+| **V35** | `V35-v17-companion-probe.patch` | **AN ARM, NOT A ROUTE.** Adds `probe_v17_constructor_body_escape.py` and nothing else. V17 DELETES a guard; it does not walk through the hole. This walks through it. | — (it is the probe the two V17 rows below run) | `PYTHONPATH=src python3 -B probe_v17_constructor_body_escape.py` |
+| **V17 + V35** | `V17-constructor-body-escape.patch` then `V35` | **V17's OWN PROPOSITION, BASELINE ARM.** `ConfigSnapshot.dial_specs` establishes its elements in `__post_init__`; delete that loop and a duck `DialSpec` should reach the snapshot. | **REFUSED.** `crash_detector.establishment.FieldNotEstablished: ConfigSnapshot.dial_specs[0]=DuckDialSpec is not admitted; every element must be exactly DialSpec.` **THE LAYER, FROM THE FAILURE TEXT: the CLASS BOUNDARY** — not `engine.config`'s body, which V17 deleted, and not a door. **AND: with V17 applied BOTH static checks still exit 0** (doors `PASS — 54 assertions`; constructors `PASS — 96 assertions`), because V17 removes a BODY and neither check reads bodies. | `PYTHONPATH=src python3 -B probe_v17_constructor_body_escape.py` |
+| **V17 + V35 + V40** | `V40-v17-violated-arm-establishes-removed.patch` | **V17's VIOLATED ARM.** The same, with `@establishes(...)` removed from `ConfigSnapshot`. | **ESCAPED.** `ConfigSnapshot CONSTRUCTED with duck dial_specs`; `stored element types: ['DuckDialSpec','DuckDialSpec']`; `spec_for('equity_crash') -> DuckDialSpec` | `PYTHONPATH=src python3 -B probe_v17_constructor_body_escape.py` |
+| **V39** | `V39-new-field-on-a-governed-type.patch` | **MINE. P7 AT THE CONSTRUCTOR, BASELINE ARM.** `tolerate_stale: bool = False` added to the REAL `PanelRow` and NOT declared to `@establishes`. | check exit **1**, `FIELD_NOT_DECLARED_TO_ESTABLISHES`; an ORDINARY construction that never mentions the field raises `establishment.UndeclaredField: PanelRow is a FAULTED type and every construction of it is refused`; suite **57 failed, 1480 passed** (from 1537 passed) | `python3 -B tools/register/check_constructor_field_establishment.py --root .` · `PYTHONPATH=src python3 -B probe_v39_new_field_on_a_governed_type.py` · `PYTHONPATH=src python3 -B -m pytest tests -q` |
+| **V39 + V41** | `V41-v39-violated-arm-establishes-removed.patch` | **P7 AT THE CONSTRUCTOR, VIOLATED ARM.** The same added field with `@establishes` removed from `PanelRow`. | **`declaration faults on PanelRow: 0`**; `ADMITTED -> the new field arrived UNGUARDED` | `PYTHONPATH=src python3 -B probe_v39_new_field_on_a_governed_type.py` |
+| **V42** | `V42-panelrow-canonicalisation-body-deleted.patch` | **MINE. THE SAME MOVE AS V17 ON A DIFFERENT TYPE, A DIFFERENT FIELD AND A DIFFERENT ESTABLISHING FUNCTION.** Deletes `own_str(self.state)` from `PanelRow.__post_init__` and offers a `str` SUBCLASS whose `__eq__` answers `True`. It exists because a closure that answered only V17 would be the instance game with a decorator on it. | **BASELINE: REFUSED.** `establishment.FieldNotEstablished: PanelRow.state=DuckStr is not admitted; this door requires exactly str.` | `PYTHONPATH=src python3 -B probe_v42_canonicalisation_deleted.py` |
+| **V42 + V41** | as above | **V42's VIOLATED ARM.** | **ESCAPED.** `stored state type: DuckStr`; `stored state value: 'UNAVAILABLE'`; **`row.state == 'AGREES' answers: True`** — `ASR3-F04`'s sentence, reached through a constructor. **NOT OVERCLAIMED: `resolve_panel` still returned `Unavailable`** in this arm, so the escape reaches the VALUE TYPE and the resolver's own re-establishment still held. | `PYTHONPATH=src python3 -B probe_v42_canonicalisation_deleted.py` |
+| **V36** | `V36-cross-field-invariant-body-rewrite.patch` | **MINE. MECHANISM DECLARED LIMIT 1's EXECUTABLE EXAMPLE, AND IT IS A POSITIVE ONE — AN OBJECT THAT IS ACCEPTED.** Deletes §C.5's "exactly one spec per dial" check and builds a snapshot with TWO equity specs and NO monetary spec. | **ACCEPTED.** `element types: ['DialSpec','DialSpec'] (all exactly DialSpec)`; `dial_ids: ['equity_crash','equity_crash']`. The boundary is fully satisfied and the object is wrong. **A CROSS-FIELD INVARIANT CANNOT BE DERIVED FROM A DECLARED FIELD LIST.** | `PYTHONPATH=src python3 -B probe_v36_cross_field_invariant.py` |
+| **V37** | `V37-establishes-registry-rewrite.patch` | **MINE. MECHANISM DECLARED LIMIT 3.** The interpreter reach at this boundary, four arms, on `ScoreComputation` — chosen because its body establishes NO element type of `contributions`, so **only the boundary can refuse** and the measurement cannot be credited to the wrong layer. | ARM 1 front door **REFUSED**; ARM 2 `__init__.__wrapped__` **REFUSED** (`AttributeError`, deleted); ARM 3 rewrite `_DECLARATIONS` **STILL REFUSED** — the registry is a REPORT, not the live declaration, so it makes the introspection surface LIE in the SAFE direction (`CD-ENG-WO2R3-F13` INVERTED); **ARM 4 rewrite the `compiled` dict in `__init__.__closure__` -> ESCAPED**, a bare `object` stored in `contributions`. **ARM 3 WAS WRITTEN EXPECTING AN ESCAPE AND MEASURED A REFUSAL, and the limit was corrected to the measurement.** | `PYTHONPATH=src python3 -B probe_v37_establishes_registry_rewrite.py` |
+| **V38** | `V38-subclass-adds-an-unestablished-field.patch` | **MINE. MECHANISM DECLARED LIMIT 4.** No guard removed, no privileged code, nothing reached into — it simply DECLARES A NEW TYPE. | (a) a `@dataclass` subclass **REGENERATES `__init__`** and overrides the wrapped one, so **NOT ONE field is established**: `ScoreComputationPlus(magnitude=0.5, contributions=(object(),))` **ACCEPTED**; (b) the added field accepted a `lambda`; (c) a PLAIN, non-dataclass subclass DOES inherit the wrapped `__init__` and is **REFUSED**; (d) the DECLARED CARRIER, MEASURED: `resolve_panel` refuses a `PanelRow` subclass with `admission.NotAdmitted: row=PanelRowPlus is not admitted; this door requires exactly PanelRow or None` | `PYTHONPATH=src python3 -B probe_v38_subclass_adds_a_field.py` |
+
+## The increment-5 rows that are MINE, and why each is a DIFFERENT ROUTE
+
+**Every corpus before this increment attacks a CALLABLE.** WO-2's `E01`–`E10`, WO-2R's six,
+WO-2R2's `V01`–`V15`, the three auditors' sets and the Project Lead's `PL-*` probes all enter through
+a parameter, a door, a decorator's attribute surface or the gap between admission and use. `V16`–`V34`
+are the same: they are about doors. **A CONSTRUCTOR IS A DIFFERENT SUBJECT**, and it is a different
+subject because the Product Owner ruled it one — *"`__post_init__` IS A BODY"* — after this seat
+raised `CD-ENG-WO2R3-F05` against its own increment-2 work.
+
+**V39 is the row that decides whether this is a class closure or thirty-two type checks.** It is P7
+one level down. P7 asks *does a NEW ARGUMENT on a door arrive refused?*; V39 asks *does a NEW FIELD on
+a governed type arrive refused?* Both arms are measured and the answer is yes at the baseline and no
+with the decorator removed. Nothing in any corpus adds a field to a value type, because until this
+increment there was no per-type declaration for a new field to fail to be in.
+
+**V42 exists because V17 alone would not have proved a class.** V17 attacks ONE type through ONE
+field with ONE establishing function. V42 makes the identical move — delete a body-borne
+establishment — on `PanelRow.state`, whose establishing function is `own_str` and not a `type(...) is
+not` comparison, and whose escape is `ASR3-F04`'s published sentence rather than a duck spec. Same
+boundary, different type, different field, different function, same refusal.
+
+**V36 is a different KIND of artefact and is labelled as one**, in the shape `V26` set at increment 3:
+it removes a guard and demonstrates that the new mechanism DOES NOT COVER what it removed. A limit
+stated only in prose is a limit an auditor has to take on trust.
+
+**V37 is a different route from V33, and the difference is which dict is live.** V33 rewrites the
+`compiled` dict a DOOR consults. V37 first rewrites the module REGISTRY — and MEASURES A REFUSAL,
+because at this boundary the registry is not what is consulted — and only then reaches the closure
+cell. The negative half is the more useful half: it tells the next seat that the obvious handle is
+not the handle.
+
+**V38 is the only route in any corpus that removes nothing, reaches into nothing and executes no
+privileged code.** It writes `class X(GovernedType)`. That is all.
+
+## APPLY CHECK, RE-RUN AT INCREMENT 5
+
+Against a pristine extraction of tree `3ae0205a5e692a69ad5724c8f8973375eecfa3ca` (commit `66d1d6a`),
+command `for p in variants/WO-2R3/*.patch; do git apply --check -p1 "$p"; done`:
+**27 of 27 APPLY** (V16–V42).
+
+**THE PRIOR CORPORA, MEASURED AT THE SAME TREE:** `variants/WO-2R2/` **14 of 14 apply**.
+`variants/WO-2R/` **66 of 70 apply, DOWN FROM 67 OF 70 AT INCREMENT 4, AND THE FOURTH ONE IS THIS
+SEAT'S DOING:**
+
+```
+variants/WO-2R/CD-ASR-F02-F03/E04-module-level-constant.patch                    (pre-existing)
+variants/WO-2R/CD-ASR-F02-F03/V03-dynamic-constructor-on-the-absence-branch.patch (pre-existing)
+variants/WO-2R/CD-ASR-F02-F03/V06-magnitude-from-configuration-not-a-literal.patch (pre-existing)
+variants/WO-2R/CD-ASR-F02-F03/V05-decorator-installs-the-member.patch            <- NEW AT INCREMENT 5
+```
+
+**BISECTED, one pristine extraction per SHA:** `V05` APPLIES at `4ac159e` and does NOT apply at this
+tree. **CAUSE, NAMED:** V05 inserts `@_with_neutral_measure` immediately above
+`@dataclass(frozen=True)` / `class Unknown`, and increment 5 inserts `@establishes(...)` between
+them, so the hunk's trailing context no longer matches. **ITS PROPOSITION IS UNTOUCHED AND STILL
+REACHABLE** — a decorator installing a numeric member on a sealed Reading constructor — and only the
+insertion point moved. **NOT UPDATED HERE, and that is a scope call and not laziness:** `CD-D-033`'s
+conservation rule is about the ELEVEN DECLARED PLANTS under `plants/`, and the increment-4 boundary
+ruled in terms (`CD-ENG-WO2R3-F16`) that extending it to the auditors' corpus is the Project Lead's
+decision and not this seat's. **RAISED AS `CD-ENG-WO2R3-F20` (LOW).**

@@ -134,17 +134,46 @@ required-tests.yaml` returned **0**, measured). They are reproduced below as **5
 this contract, the check header and the register say the same six things. Numbering runs 1..6 across
 the two headers on purpose: they are one row's limits, not two lists.
 
-**1 — CONSTRUCTORS ARE NOT SUBJECTS, AND THAT IS A REAL GAP IN §D AS SCOPED.**
-`ConfigSnapshot(...)`, `DialSpec(...)`, `ModelSpec(...)` and `PanelRow(...)` are public entry points
-on the judgement path and they establish their fields in `__post_init__` — that is, in a BODY, which
-is the thing §D.1 exists to stop relying on. §D.2's table lists no constructor and this check does
-not invent that scope. MEASURED: `variants/WO-2R3/V17-constructor-body-escape.patch` deletes the
-`type(spec) is not DialSpec` loop from `ConfigSnapshot.__post_init__` and this command still exits 0
-with **54 assertions** (re-measured at WO-2R3 increment 3; it was 38 at increment 2, before
-`collectors` joined RULE 1). **CARRIER, IN PART:** the frozen dataclasses re-establish every field and the
-suite measures them refusing a look-alike TODAY; as a structure that survives an edit to those
-bodies, **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING to the Project Lead rather than
-closed by the seat that found it.
+**1 — CONSTRUCTORS ARE STILL NOT SUBJECTS *OF THIS CHECK*, AND AS OF WO-2R3 INCREMENT 5 THAT IS NO
+LONGER AN UNCARRIED GAP. THE WORDING BELOW IS NARROWED TO ITS MEASURED REACH; THE SUPERSEDED WORDING
+IS QUOTED RATHER THAN DELETED.**
+
+It read: *"CONSTRUCTORS ARE NOT SUBJECTS, AND THAT IS A REAL GAP IN §D AS SCOPED. … §D.2's table
+lists no constructor and this check does not invent that scope. … as a structure that survives an
+edit to those bodies, NOT PROVED TO BE CARRIED ANYWHERE."* That was true when it was written and the
+Product Owner ruled on it at PO-DECISIONS-0007 ruling 1 — *"`__post_init__` IS A BODY"* — creating
+increment 5 to close it, and re-based it at PO-DECISIONS-0008 ruling 2 from four named types to THE
+CLASS.
+
+**WHAT IS STILL TRUE.** This check reads CALLABLES and a constructor is not one of its subjects.
+`variants/WO-2R3/V17-constructor-body-escape.patch` deletes the `type(spec) is not DialSpec` loop
+from `ConfigSnapshot.__post_init__` and **this command still exits 0 with 54 assertions**, measured
+at increment 5 on a pristine extraction. Nothing about that has changed and no reader should infer
+otherwise from a clean run of THIS check.
+
+**WHAT IS NO LONGER TRUE IS THE HAND-OFF.** The residue now has a carrier and the carrier is
+MEASURED (CD-RULE-006):
+
+* the STRUCTURE is `crash_detector.establishment.establishes` — establishment derived from the
+  DECLARED FIELD LIST, applied at the class boundary, where a body rewrite cannot reach it;
+* the ENUMERATION is `python3 -B tools/register/check_constructor_field_establishment.py --root .`,
+  which measures the class at **32 members** and asserts every one of them carries the declaration;
+* the MEASUREMENT is V17 itself, run: with V17 applied and the mechanism present, constructing a
+  duck `DialSpec` into `ConfigSnapshot` is **REFUSED** —
+  `crash_detector.establishment.FieldNotEstablished: ConfigSnapshot.dial_specs[0]=DuckDialSpec is
+  not admitted; every element must be exactly DialSpec` — and with the mechanism removed
+  (`V40-v17-violated-arm-establishes-removed.patch`) the same construction **ESCAPES**, storing
+  `['DuckDialSpec', 'DuckDialSpec']` and answering `spec_for('equity_crash') -> DuckDialSpec`.
+  Commands and both arms are in `variants/WO-2R3/MANIFEST.md`.
+
+**AND WHAT IS STILL NOT CARRIED, so this correction does not overstate itself.** The new mechanism
+establishes a field's TYPE and never a RELATION BETWEEN TWO FIELDS: §C.5's invariants 2 and 3,
+`ConfigSnapshot`'s one-spec-per-dial, and every registry uniqueness check REMAIN BODY-BORNE, with
+`variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch` as the executable example — it
+deletes the one-spec-per-dial check and a snapshot with two equity specs and no monetary spec is
+**ACCEPTED**. For that residue, as a structure surviving a body edit: **NOT PROVED TO BE CARRIED
+ANYWHERE.** See `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST`'s own DECLARED
+LIMIT 1, which is where it now lives.
 
 **2 — RULE 1's PACKAGE LIST IS A VOCABULARY.** `engine` and `serving` are spelled in the check. A
 judgement-path door written under a package name the check has never heard of is reached only by

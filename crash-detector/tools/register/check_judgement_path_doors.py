@@ -90,22 +90,38 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
 ``grep -c "__closure__" required-tests.yaml`` returned 0.)
 ====================================================================================
 
- 1  **CONSTRUCTORS ARE NOT SUBJECTS OF THIS CHECK, AND THAT IS A REAL GAP IN §D AS SCOPED.**
-    ``ConfigSnapshot(...)``, ``DialSpec(...)``, ``ModelSpec(...)`` and ``PanelRow(...)`` are
-    public entry points on the judgement path and they establish their fields IN
-    ``__post_init__`` — that is, in a body. §D.1's own reasoning ("a rule that lives in a
-    function body is rewritten by editing the function body") applies to them, and §D.2's
-    table lists no constructor, so nothing in the amendment closes them. This check does not
-    invent that scope. Executable example: extract the tree, delete the
-    ``type(spec) is not DialSpec`` loop from ``ConfigSnapshot.__post_init__``, and this
-    check still exits 0 — the demonstration is
-    ``variants/WO-2R3/V17-constructor-body-escape.patch``.
-    **CARRIER MEASURED, IN PART:** the frozen dataclasses re-establish every field, and the
-    existing suite refuses a look-alike at each of them (``test_config_source_registry.py``,
-    ``test_engine_model_registry.py``, ``test_witness_resolver.py``). That is a body-level
-    guard measured to work TODAY, not a structure that survives an edit to the body. As a
-    residue of §D.1's own rule: **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING
-    to the Project Lead rather than closed here.
+ 1  **CONSTRUCTORS ARE STILL NOT SUBJECTS *OF THIS CHECK*, AND SINCE WO-2R3 INCREMENT 5
+    THAT IS NO LONGER AN UNCARRIED GAP. NARROWED TO ITS MEASURED REACH; THE SUPERSEDED
+    WORDING IS QUOTED RATHER THAN DELETED.**
+
+    It read: *"CONSTRUCTORS ARE NOT SUBJECTS OF THIS CHECK, AND THAT IS A REAL GAP IN §D AS
+    SCOPED. ... §D.2 lists no constructor and this check does not invent that scope. ... As
+    a residue of §D.1's own rule: NOT PROVED TO BE CARRIED ANYWHERE."* The Product Owner
+    ruled on exactly that declaration at PO-DECISIONS-0007 ruling 1 — ``__post_init__`` IS A
+    BODY — and re-based it at PO-DECISIONS-0008 ruling 2 from four named types to THE CLASS.
+
+    **STILL TRUE:** this check reads CALLABLES, and a constructor is not one of its
+    subjects. Executable example, re-measured at increment 5 on a pristine extraction:
+    ``variants/WO-2R3/V17-constructor-body-escape.patch`` deletes the
+    ``type(spec) is not DialSpec`` loop from ``ConfigSnapshot.__post_init__`` and **this
+    check still exits 0 with 54 assertions**. No reader should infer anything about
+    constructors from a clean run of THIS check.
+
+    **NO LONGER TRUE — THE HAND-OFF, AND THE CARRIER IS MEASURED (CD-RULE-006):** the
+    structure is ``crash_detector.establishment.establishes``; the enumeration is
+    ``python3 -B tools/register/check_constructor_field_establishment.py --root .``, which
+    measures the class at **32 members** and asserts every one carries its declaration; and
+    the measurement is V17 itself, RUN — with V17 applied and the mechanism present a duck
+    ``DialSpec`` into ``ConfigSnapshot`` is REFUSED with
+    ``establishment.FieldNotEstablished``, and with the mechanism removed
+    (``V40-v17-violated-arm-establishes-removed.patch``) the same construction ESCAPES.
+
+    **STILL NOT CARRIED, so this correction does not overstate itself:** the new mechanism
+    establishes a field's TYPE and never a RELATION BETWEEN TWO FIELDS. §C.5's invariants 2
+    and 3 and ``ConfigSnapshot``'s one-spec-per-dial REMAIN BODY-BORNE —
+    ``variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch``, measured, ACCEPTED —
+    and for that residue: **NOT PROVED TO BE CARRIED ANYWHERE.** It now lives as DECLARED
+    LIMIT 1 of the constructor check.
 
  2  **RULE 1's PACKAGE LIST IS A VOCABULARY.** ``engine`` and ``serving`` are spelled here.
     A judgement-path door written under a package name this file has never heard of is
@@ -598,10 +614,16 @@ def main() -> int:
         "DISCHARGED and is not restated."
     )
     check.note(
-        "DECLARED LIMIT 1 — CONSTRUCTORS ARE NOT SUBJECTS. ConfigSnapshot(...), "
-        "DialSpec(...), ModelSpec(...) and PanelRow(...) establish their fields in "
-        "__post_init__, which is a BODY. §D.2 lists no constructor and this check does not "
-        "invent that scope. See the header; raised as a finding, not closed."
+        "DECLARED LIMIT 1 — CONSTRUCTORS ARE STILL NOT SUBJECTS *OF THIS CHECK*, AND SINCE "
+        "WO-2R3 INCREMENT 5 THAT IS NO LONGER AN UNCARRIED GAP. This check reads CALLABLES; "
+        "a constructor is not one of its subjects, and V17 still leaves it exiting 0. THE "
+        "CARRIER IS NAMED AND MEASURED (CD-RULE-006): "
+        "crash_detector.establishment.establishes, enumerated and asserted by "
+        "tools/register/check_constructor_field_establishment.py, which measures the "
+        "body-borne field-establishment class at 32 members. WHAT IS STILL NOT CARRIED is a "
+        "CROSS-FIELD invariant, which no declared field list can state — that is the "
+        "constructor check's own DECLARED LIMIT 1. The superseded wording of this note is "
+        "quoted in full in this file's header rather than deleted."
     )
 
     return check.done(
