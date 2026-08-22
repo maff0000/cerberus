@@ -254,4 +254,4 @@ next_safe_action: >
   DO NOT write the eleven Class-2 sweep dispositions (CD-D-130). DO NOT admit anything
   (CD-RULE-001). DO NOT merge or promote the lane or f30e63c. DO NOT grade CD-AC-002 or CD-AC-005.
 
-continuity_record_commit: PENDING
+continuity_record_commit: 9c86e0afca57f0cbd1d2a239c9582cb183fce854   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). THE ORDERING CORRECTION IS HELD FOR THE SECOND BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 9c86e0a BEFORE this field was written. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont2 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont2 && git checkout -q -B main 9c86e0a` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, current_phase BUILD, observed_sha 9c86e0afca57f0cbd1d2a239c9582cb183fce854, branch main. The `! roadmap_identity None` line is present in this GREEN verdict too, which is CD-PL-F88 demonstrated rather than merely asserted.
