@@ -398,4 +398,4 @@ next_safe_action: >
   increment on the four declared residues (CD-D-136). **DO NOT** admit anything (CD-RULE-001).
   **DO NOT** merge or promote the lane or f30e63c. **DO NOT** grade CD-AC-002 or CD-AC-005.
 
-continuity_record_commit: PENDING
+continuity_record_commit: 9521cf16d636ecb6bad79ceca402eff437d001a0   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE FOURTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 9521cf1 BEFORE this field was written, so verdict and field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont4 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont4 && git checkout -q -B main 9521cf1` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha 9521cf16d636ecb6bad79ceca402eff437d001a0, branch main.
