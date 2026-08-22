@@ -316,6 +316,38 @@ def test_established_here_requires_a_stated_reason():
 
 # --- THE DOOR REMAINS THE FUNCTION IT WRAPPED --------------------------------------------- #
 
+def test_a_door_publishes_no_way_round_itself():
+    """DECLARED LIMIT 6's carrier, and it exists because this seat measured the escape
+    against its own work: `functools.wraps` sets `__wrapped__`, `inspect.unwrap` follows
+    it, and `resolve_panel.__wrapped__(duck_row, ...)` returned Agrees and rendered
+    WITNESS AGREES with every door decorated. The attribute is removed.
+
+    The `__closure__` route is NOT closed, is not claimed, and is asserted OPEN here rather
+    than left for an auditor: a test that only proved the closed half would be reporting
+    half a fact."""
+    from datetime import timezone as _tz
+
+    @admits(a=int)
+    def door(a):
+        return "the body ran"
+
+    assert not hasattr(door, "__wrapped__")
+    import inspect as _inspect
+
+    assert _inspect.unwrap(door) is door
+    # AND THE HALF THAT IS OPEN, ASSERTED OPEN.
+    reachable = [
+        cell.cell_contents
+        for cell in (door.__closure__ or ())
+        if callable(getattr(cell, "cell_contents", None))
+        and getattr(cell.cell_contents, "__name__", "") == "door"
+    ]
+    assert reachable and reachable[0]("not an int") == "the body ran", (
+        "DECLARED LIMIT 6 claims the __closure__ route is OPEN. If this assertion starts "
+        "failing the limit is wrong and must be corrected, not left standing."
+    )
+
+
 def test_an_admitting_door_keeps_its_identity_and_publishes_what_it_requires():
     @admits(a=int, when=datetime)
     def door(a, *, when):

@@ -113,6 +113,25 @@ to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     to those bodies: **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING to the
     Project Lead rather than closed here.
 
+ 6  **A DOOR IS A WRAPPER, AND A WRAPPER'S CLOSURE STILL HOLDS WHAT IT WRAPPED.**
+    ``door.__closure__[i].cell_contents`` reaches the undecorated function and calls it with
+    the door bypassed entirely. This is true of every decorator ever written in Python,
+    including this codebase's own ``_absence_is_never_a_number``, which has passed three
+    gates; CPython offers no way to prevent it, so it is a property of the language and not
+    of this design. Executable example, MEASURED at this seat's own work rather than left
+    for the fourth Assurance seat to find:
+    ``variants/WO-2R3/V24-wrapped-attribute-bypass.patch`` records both halves —
+    ``resolve_panel.__wrapped__(duck_row, ...)`` returned ``Agrees`` and rendered ``WITNESS
+    AGREES``, and so did the ``__closure__`` route.
+
+    **THE ``__wrapped__`` HALF IS CLOSED HERE** and the closure is measured
+    (``tests/test_admission.py::test_a_door_publishes_no_way_round_itself``): the attribute
+    is a documented one that ``inspect.unwrap`` follows and editors offer, so it was a
+    bypass writable in ordinary-looking code, and it is deleted. **THE ``__closure__`` HALF
+    IS NOT CLOSED AND IS NOT CLAIMED: NOT PROVED TO BE CARRIED ANYWHERE.** What a caller
+    must now do to bypass a door is reach into interpreter internals, which is strictly
+    weaker than "cannot happen" and is said so.
+
  2  **THE RECEIVER OF A METHOD IS NOT ESTABLISHED.** The first parameter is skipped when,
     and only when, the callable was written inside a ``class`` body — read from
     ``__qualname__`` — AND that parameter is named ``self`` or ``cls``. The name is a
@@ -552,6 +571,36 @@ def admits(**declared: object):
                     )
             return entry_point(*args, **kwargs)
 
+        # THE DOOR DOES NOT PUBLISH A WAY ROUND ITSELF.
+        #
+        # `functools.wraps` sets `__wrapped__` to the function it wrapped. That attribute is
+        # documented, `inspect.unwrap` and `inspect.signature` follow it automatically, and
+        # editors offer it — so `resolve_panel.__wrapped__(duck_row, ...)` is a bypass a
+        # caller can write in ordinary-looking code with no cast and no import. MEASURED at
+        # this seat's own work before an auditor had to measure it: ASR3-F04's row went
+        # through that attribute and rendered WITNESS AGREES with every door decorated
+        # (variants/WO-2R3/V24-wrapped-attribute-bypass.patch).
+        #
+        # It is removed. Everything else `wraps` copies — the name, the qualname, the
+        # docstring, the module — is kept, because those are what make a door readable and
+        # none of them is a way through it.
+        #
+        # WHAT THIS DOES NOT CLOSE, STATED RATHER THAN LEFT: the wrapped function is still
+        # in this closure's cells, and `door.__closure__[i].cell_contents` reaches it. That
+        # is true of EVERY decorator ever written in Python, including
+        # `_absence_is_never_a_number`, which has passed three gates; CPython offers no way
+        # to prevent it. What changes is that a bypass now requires reaching into
+        # interpreter internals rather than reading a documented attribute. See DECLARED
+        # LIMIT 6.
+        try:
+            delattr(door, "__wrapped__")
+        except AttributeError:  # pragma: no cover - wraps always sets it
+            pass
+        # The real signature is kept as DATA, so `inspect.signature(door)` still reports
+        # what the door takes and the existing tests that read it — "there is no
+        # `on_unknown` for a caller to write, CHECKED ON THE SIGNATURE" — keep working. A
+        # `Signature` is a description; it is not a callable and it is not a way through.
+        door.__signature__ = signature
         setattr(door, ADMITS_ATTRIBUTE, dict(compiled))
         setattr(door, FAULTS_ATTRIBUTE, faults)
         setattr(door, "__admission_receiver__", tuple(skipped))
