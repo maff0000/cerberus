@@ -1,0 +1,87 @@
+# ================================================================================================ #
+# ADDENDUM TO BL-20260822T172621Z-0063 — THE CONTRAST RE-MEASUREMENT REPEATED AT THE FINAL RETURNED
+# SHA. A NEW ENTRY AND NEVER AN EDIT (PBG-CONT-003, non-waivable): 0063 IS CORRECT AS WRITTEN AND
+# NOTHING IN IT IS WITHDRAWN.
+#
+# WHY THIS EXISTS. Entry 0063 records ITEM 0's contrast measurements at 04cdd34 — the DISPATCHED
+# BASELINE — because that is the subject the Project Lead named and the state the plants were
+# regenerated against. But the SHA THIS SEAT RETURNS is dd40f74, four commits later. Those four
+# commits change no logic (proven by AST comparison in 0063), so the measurements should be
+# unchanged — SHOULD BE is a prediction, and a prediction is not a measurement. IT WAS RE-RUN.
+#
+# THIS ENTRY ADDS EVIDENCE. IT CORRECTS NOTHING AND IT GRADES NOTHING.
+# ================================================================================================ #
+
+entry_id: BL-20260822T173220Z-0064
+timestamp_utc: "2026-08-22T17:32:20Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 04cdd348421748e421b13c28ad20f6a315dbfddc
+parent_entry_id: BL-20260822T172621Z-0063
+schema_version: 1
+
+relationship_to_the_parent_entry: >
+  ADDITIVE. Entry 0063 stands unaltered and none of its numbers is superseded. This entry records a
+  SECOND, LATER measurement of the same property at a DIFFERENT SUBJECT SHA, so that the SHA actually
+  returned carries its own evidence and a reconciler replicating at dd40f74 does not have to infer
+  that 04cdd34's numbers still hold.
+
+the_re_measurement:
+  subject_sha: dd40f74b8ba5a2c9f471c8bfd7625b4d8ef47774
+  what_differs_from_04cdd34: >
+    Four commits: df54846 (plants + plants/MANIFEST.md), a622687 (the declarations in three places,
+    docstrings and prose only), c55f358 (variants/WO-2R3/MANIFEST.md and entry 0063), dd40f74 (the
+    CD-RULE-007 field resolution). NO LOGIC. Under src/ and tools/ only two module docstrings changed,
+    and `ast.dump(ast.parse(...))` is identical either side of both once the docstring node is removed.
+  method: >
+    IDENTICAL to entry 0063's: one pristine extraction per arm per plant, `git archive dd40f74 | tar
+    -x -C <tmpdir>`, `git apply -p1` for the violated arm, the command `required-tests.yaml` declares
+    for that test id, `python3 -B` throughout, exit code recorded on both arms. The lane worktree was
+    not mutated and no git worktree was created.
+  result: >
+    ELEVEN APPLY. TEN CONTRAST, every one exit 0 clean -> exit 1 violated:
+    CD-RT-001-ABSENCE-RENDERS-UNKNOWN, CD-RT-001-AST-NO-NUMERIC-DEFAULT, CD-RT-002-AST-NO-BLEND,
+    CD-RT-002-SCHEMA-CLOSED, CD-RT-002-TYPE-NO-ARITHMETIC, CD-RT-003-ENGINE-NO-WITNESS-REACH,
+    CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES, CD-RT-012-EGRESS-NO-BROKER,
+    CD-RT-012-LOCKFILE-DENYLIST, CD-RT-012-NO-EXECUTION-INTERFACE.
+    THE ELEVENTH, CD-RT-003-GRANT-MATRIX-LIVE, EXITS 3 ON BOTH ARMS — PRECONDITION_NOT_MET, no live
+    PostgreSQL. THE TWO ARMS ARE INDISTINGUISHABLE. THAT IS NOT A CONTRAST AND IT IS NOT COUNTED AS
+    ONE. Its position is unchanged from entry 0063 and from BL-...-0055.
+  agreement_with_the_parent_entry: >
+    IDENTICAL, plant for plant and exit code for exit code. Recorded as agreement observed, not as
+    agreement assumed — if it had disagreed, the observed result would have won and the disagreement
+    would be the finding.
+
+other_measurements_re_taken_at_the_returned_sha:
+  clean_arm: 'PYTHONPATH=src python3 -B -m pytest tests -q -> exit 0, 1519 passed in 12.69s'
+  collection: 'PYTHONPATH=src python3 -B -m pytest tests --collect-only -q -> 1519 collected'
+  node_ids: 'the sorted node-id set is byte-identical to 04cdd34''s (diff EMPTY). LOST 0, RENAMED 0, ADDED 0.'
+  plants_apply: 'for p in $(find plants -name ''*.patch'' | sort); do git apply --check "$p"; done -> ELEVEN of ELEVEN, no output'
+  static_check: 'python3 -B tools/register/check_judgement_path_doors.py --root . -> PASS, 54 assertions, "SUBJECTS ENUMERATED: 27. DECORATED: 27."'
+  working_tree: '`git status --porcelain` -> ZERO LINES'
+  commit_identity: >
+    `git log --format=''%an <%ae> | %cn <%ce>'' 04cdd34..HEAD` -> ALL FOUR commits read
+    `CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid>` as BOTH author and committer.
+    Checked after every commit as the dispatch requires, not once at the end (CD-PL-F79).
+
+what_this_entry_does_not_do: >
+  It adds no finding, withdraws none, changes no declaration, and touches no file outside this
+  build-log path. It certifies nothing (PBG-SOD-001, non-waivable) and admits nothing (CD-RULE-001).
+  It does not grade CD-AC-002 or CD-AC-005.
+
+next_safe_action: >
+  AS STATED IN BL-20260822T172621Z-0063, UNCHANGED: reconcile increment 4 by replication at
+  dd40f74b8ba5a2c9f471c8bfd7625b4d8ef47774 on branch wo-2r3; read CD-ENG-WO2R3-F15 first; then
+  increment 5; then the fourth fresh Assurance seat.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up that writes THIS FIELD AND
+                                    # NOTHING ELSE. A commit cannot name its own SHA.
