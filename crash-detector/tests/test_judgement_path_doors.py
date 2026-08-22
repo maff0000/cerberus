@@ -590,3 +590,106 @@ def test_the_check_prints_every_established_here_use_with_its_location():
         "collectors/validation.py",
     ):
         assert f"ESTABLISHED_HERE: {expected}" in result.stdout
+
+
+# --- ITEM C: ESTABLISHED_HERE UNDER AN ALIAS (WO-2R3 increment 6) ------------------------- #
+
+_ALIASED_DOOR = '''
+
+from crash_detector.admission import ESTABLISHED_HERE as _EH
+
+
+@admits(candidate=_EH("a seventeenth exemption, spelled through a one-word import alias"))
+def aliased_probe_door(candidate):
+    return candidate
+'''
+
+
+def test_the_check_counts_an_established_here_spelled_through_an_import_alias():
+    """**"COUNTED, NOT HIDDEN" WAS FALSE UNDER ONE WORD.**
+
+    `CD-ASR-WO2R3-01` §2.4 added one door in `collectors/validation.py` importing
+    `ESTABLISHED_HERE as _EH`. The check **still reported 16, EXIT 0** — invisible — against a
+    declared limit whose own text says the exemption is *counted, not hidden*.
+
+    This asserts the count MOVES and the door is NAMED. It is the check-side half of item C;
+    the carrier-side half is `tests/test_admission.py`, which reads the runtime compiled
+    objects and was already red on this at `531c95c`.
+    """
+    import shutil
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as scratch:
+        copy = pathlib.Path(scratch) / "tree"
+        shutil.copytree(
+            _REPO_ROOT / "src", copy / "src", ignore=shutil.ignore_patterns("__pycache__")
+        )
+        target = copy / "src" / "crash_detector" / "collectors" / "validation.py"
+        target.write_text(target.read_text() + _ALIASED_DOOR)
+        result = subprocess.run(
+            [sys.executable, "-B", str(_CHECK), "--root", str(copy)],
+            capture_output=True,
+            text=True,
+        )
+
+    assert "ESTABLISHED_HERE uses: 17." in result.stdout, (
+        "an exemption spelled through an import alias must be COUNTED. Observed:\n"
+        + "\n".join(
+            line for line in result.stdout.splitlines() if "ESTABLISHED_HERE uses" in line
+        )
+    )
+    assert "aliased_probe_door(candidate)" in result.stdout, (
+        "and it must be NAMED with its file, line and parameter, not merely counted"
+    )
+    assert "ALIAS:" in result.stdout and "_EH" in result.stdout, (
+        "and the module that binds a non-literal spelling must be reported, because a "
+        "silently resolved alias is only half of 'counted, not hidden'"
+    )
+
+
+def test_a_wrapper_around_established_here_is_a_DECLARED_LIMIT_and_is_not_counted():
+    """**THE RESIDUE, PINNED — NOT A CARRIER, AND IT SAYS SO.**
+
+    `DECLARED LIMIT 8` names four routes the check does NOT resolve. This exercises one of
+    them — a WRAPPER FUNCTION, which is a call to a function rather than a reference to the
+    object — and asserts the check still does not count it.
+
+    **THIS TEST PASSES BECAUSE THE LIMIT IS REAL. If it ever fails, the limit is now narrower
+    than declared: correct all three CD-RULE-004 places. Do not delete this test.**
+
+    The route is NOT unguarded: `tests/test_admission.py` reads the RUNTIME compiled
+    declaration objects and goes red on it regardless of spelling. That is the whole of
+    `CD-RULE-006` — a check reports, a carrier fails — and the two are deliberately not the
+    same reader.
+    """
+    import shutil
+    import tempfile
+
+    wrapped = '''
+
+def _eh(reason):
+    return ESTABLISHED_HERE(reason)
+
+
+@admits(candidate=_eh("reached through a wrapper, not a reference"))
+def wrapped_probe_door(candidate):
+    return candidate
+'''
+    with tempfile.TemporaryDirectory() as scratch:
+        copy = pathlib.Path(scratch) / "tree"
+        shutil.copytree(
+            _REPO_ROOT / "src", copy / "src", ignore=shutil.ignore_patterns("__pycache__")
+        )
+        target = copy / "src" / "crash_detector" / "collectors" / "validation.py"
+        target.write_text(target.read_text() + wrapped)
+        result = subprocess.run(
+            [sys.executable, "-B", str(_CHECK), "--root", str(copy)],
+            capture_output=True,
+            text=True,
+        )
+
+    assert "ESTABLISHED_HERE uses: 16." in result.stdout, (
+        "DECLARED LIMIT 8 says a WRAPPER is not resolved. If this fails the limit is wrong "
+        "and must be corrected in all three CD-RULE-004 places"
+    )
+    assert "wrapped_probe_door" not in result.stdout

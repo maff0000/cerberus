@@ -294,6 +294,45 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     it the runtime ``__name__`` ``_evaluate_dial``, so the static reading and the runtime name
     DISAGREE about whether it is public at all — which is part of what makes it a question
     rather than an oversight.
+
+ 8  **``ESTABLISHED_HERE`` IS RESOLVED THROUGH ALIASES, AND THE SPELLINGS IT IS *NOT* RESOLVED
+    THROUGH ARE NAMED. NEW AT WO-2R3 INCREMENT 6** (``PO-DECISIONS-0011`` ruling 1 item (c)).
+
+    Until this increment this check matched the LITERAL name ``ESTABLISHED_HERE`` and nothing
+    else. ``CD-ASR-WO2R3-01`` §2.4 hid a use behind ONE WORD — ``from ... import
+    ESTABLISHED_HERE as _EH`` — and measured ``doors check: still reports 16 exemptions,
+    EXIT=0``. **THE LIMIT THAT USE WEAKENS SAYS OF ITSELF "IT IS COUNTED, NOT HIDDEN", AND
+    UNDER A ONE-WORD ALIAS THAT SENTENCE WAS FALSE.**
+
+    **RESOLVED, EACH DEMONSTRATED BY ``variants/WO-2R3/P-C-an-aliased-exemption.py``:** an
+    import alias; the plain form; a module-level rebinding run to a FIXPOINT so a chain of
+    rebindings resolves; and any attribute spelled ``.ESTABLISHED_HERE``, whatever the module
+    is aliased to. MEASURED, BOTH ARMS, with the auditor's own aliased door added:
+    ``ESTABLISHED_HERE uses: 16`` and the door NOT named, at ``531c95c``; ``uses: 17`` and the
+    door NAMED, here.
+
+    **NOT RESOLVED — DECLARED, NOT SILENT, AND NONE OF THESE IS CLAIMED CLOSED:**
+
+    * a name bound INSIDE A FUNCTION BODY — the rebinding fixpoint reads ``tree.body`` only,
+      because a module-level binding is the only one a decorator at module level can see;
+    * a name computed at runtime — ``getattr(admission, "ESTABLISHED_" + "HERE")``;
+    * an exemption reached through a CONTAINER — ``ALIASES = {"eh": ESTABLISHED_HERE}`` then
+      ``@admits(x=ALIASES["eh"]("..."))``;
+    * a WRAPPER — ``def eh(reason): return ESTABLISHED_HERE(reason)`` — which is a call to a
+      function, not a reference to the object.
+
+    **AND THE DISTINCTION THAT DECIDES WHETHER ANY OF THAT MATTERS (``CD-RULE-006``): A CHECK
+    REPORTS; A CARRIER FAILS.** Giving this check alias-sight is HALF an answer. The other
+    half is measured and it is better news than the record carried:
+    ``tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set`` and
+    ``::test_every_established_here_states_a_reason_in_the_artefact`` enumerate the exemptions
+    from the **RUNTIME compiled declaration objects**, where a spelling cannot matter, and they
+    go **RED on an aliased seventeenth use AT ``531c95c`` AS WELL AS HERE** (``2 failed,
+    23 passed``). **THAT CARRIER THEREFORE COVERS EVERY ROUTE IN THE "NOT RESOLVED" LIST
+    ABOVE, INCLUDING THE ONES THIS CHECK CANNOT SEE**, because it never reads a name at all —
+    provided the module is imported by ``pkgutil.walk_packages`` and the door object is
+    reachable from a module or class namespace. **FOR AN EXEMPTION ON A DOOR THAT IS NOT
+    REACHABLE FROM ANY MODULE OR CLASS NAMESPACE: NOT PROVED TO BE CARRIED ANYWHERE.**
 """
 
 from __future__ import annotations
@@ -441,15 +480,92 @@ def _identifiers(rendered: str) -> set:
     return out
 
 
-def _established_here_parameters(call) -> list:
-    """Which parameters of an ``admits(...)`` call declare ``ESTABLISHED_HERE``."""
+def _established_here_spellings(tree) -> set:
+    """Every LOCAL NAME in one module that is bound to ``ESTABLISHED_HERE``.
+
+    **WO-2R3 INCREMENT 6, ITEM C.** Until this increment this check matched the LITERAL
+    SPELLING ``ESTABLISHED_HERE`` and nothing else, so ``CD-ASR-WO2R3-01`` §2.4 hid an
+    exemption behind ONE WORD::
+
+        from crash_detector.admission import ESTABLISHED_HERE as _EH
+        @admits(candidate=_EH("..."))
+        def door(candidate): ...
+
+    and measured ``doors check: still reports 16 exemptions, EXIT=0`` — **invisible**. The
+    limit that use weakens says of itself *"IT IS COUNTED, NOT HIDDEN"*, and under a one-word
+    alias that sentence was false.
+
+    **WHAT IS RESOLVED, EACH DEMONSTRATED:**
+
+    * ``from ... import ESTABLISHED_HERE as <alias>`` — the auditor's route;
+    * ``from ... import ESTABLISHED_HERE`` — the plain form, unchanged;
+    * ``<name> = ESTABLISHED_HERE`` and ``<name> = <an already-resolved name>`` at MODULE
+      LEVEL, run to a FIXPOINT, so a chain of rebindings resolves too;
+    * ``<anything>.ESTABLISHED_HERE`` — an ATTRIBUTE access resolves by its attribute name,
+      so ``import crash_detector.admission as adm; adm.ESTABLISHED_HERE`` was already caught
+      and still is, whatever ``adm`` is spelled.
+
+    **WHAT IS NOT RESOLVED, AND IT IS DECLARED RATHER THAN LEFT TO BE FOUND** — see DECLARED
+    LIMIT 8:
+
+    * a name bound INSIDE A FUNCTION BODY (this reads module-level bindings only);
+    * ``getattr(admission, "ESTABLISHED_" + "HERE")`` or any name computed at runtime;
+    * an exemption reached through a CONTAINER — ``ALIASES = {"eh": ESTABLISHED_HERE}`` then
+      ``@admits(x=ALIASES["eh"]("..."))``;
+    * a wrapper — ``def eh(reason): return ESTABLISHED_HERE(reason)`` — which is a call to a
+      function, not a reference to the object.
+
+    **THIS IS A REPORTING FIX AND NOT A CLOSURE, AND THE DIFFERENCE IS THE WHOLE OF CD-RULE-006:
+    A CHECK REPORTS, A CARRIER FAILS.** The carrier is named and MEASURED in DECLARED LIMIT 8.
+    """
+    spellings = {ESTABLISHED_HERE}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                if alias.name == ESTABLISHED_HERE:
+                    spellings.add(alias.asname or alias.name)
+    # MODULE-LEVEL REBINDINGS, TO A FIXPOINT. `_EH = ESTABLISHED_HERE` then `E = _EH` both
+    # resolve; the loop runs until nothing new is learned rather than once, because a single
+    # pass would resolve the first rebinding and miss the second.
+    changed = True
+    while changed:
+        changed = False
+        for node in tree.body:
+            if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+                continue
+            value = node.value
+            if value is None:
+                continue
+            source = getattr(value, "id", None) or getattr(value, "attr", None)
+            if source not in spellings:
+                continue
+            targets = (
+                node.targets if isinstance(node, ast.Assign) else [node.target]
+            )
+            for target in targets:
+                name = getattr(target, "id", None)
+                if name and name not in spellings:
+                    spellings.add(name)
+                    changed = True
+    return spellings
+
+
+def _established_here_parameters(call, spellings=None) -> list:
+    """Which parameters of an ``admits(...)`` call declare ``ESTABLISHED_HERE``.
+
+    ``spellings`` is the module's own set from :func:`_established_here_spellings`. It
+    defaults to the literal name alone so this function is still meaningful read on its own,
+    but every caller in this check passes the module's set — a default that silently narrowed
+    the answer is how item C's defect was written in the first place.
+    """
+    known = {ESTABLISHED_HERE} if spellings is None else spellings
     found = []
     for keyword in call.keywords:
         if keyword.arg is None:
             continue
         for inner in ast.walk(keyword.value):
             head = inner.func if isinstance(inner, ast.Call) else inner
-            if (getattr(head, "id", None) or getattr(head, "attr", None)) == ESTABLISHED_HERE:
+            if (getattr(head, "id", None) or getattr(head, "attr", None)) in known:
                 found.append(keyword.arg)
                 break
     return found
@@ -483,6 +599,9 @@ def main() -> int:
 
     modules_by_rule_1 = 0
     subjects = 0
+    #: file -> the non-literal spellings of ESTABLISHED_HERE bound in it. PRINTED at
+    #: every run: an alias that resolves silently is only half of 'counted, not hidden'.
+    aliased_spellings: dict = {}
     decorated = 0
     exempt_private = 0
     exempt_property = 0
@@ -513,6 +632,14 @@ def main() -> int:
         )
         if in_judgement_package:
             modules_by_rule_1 += 1
+
+        #: EVERY LOCAL NAME IN THIS MODULE BOUND TO `ESTABLISHED_HERE` (item C). Computed per
+        #: module because an alias is a module-local fact, and matched against per parameter
+        #: below. Until WO-2R3 increment 6 only the literal spelling was matched and one word
+        #: hid an exemption from a limit whose own text says it is COUNTED, NOT HIDDEN.
+        spellings = _established_here_spellings(tree)
+        if spellings != {ESTABLISHED_HERE}:
+            aliased_spellings[str(relative)] = sorted(spellings - {ESTABLISHED_HERE})
 
         for node, in_class_body, class_node in _callables(tree):
             if not _is_public(node.name):
@@ -567,7 +694,7 @@ def main() -> int:
             decorated += 1
             established_here.extend(
                 f"{relative}:{node.lineno} {where}({parameter})"
-                for parameter in _established_here_parameters(call)
+                for parameter in _established_here_parameters(call, spellings)
             )
 
             names, variadic = _signature_names(node, in_class_body)
@@ -639,7 +766,21 @@ def main() -> int:
         f"staticmethod/classmethod in the subject set: {static_or_class_methods} "
         "(DECLARED LIMIT 2 in src/crash_detector/admission.py assumes this is 0)."
     )
-    check.note(f"ESTABLISHED_HERE uses: {len(established_here)}.")
+    check.note(
+        f"ESTABLISHED_HERE uses: {len(established_here)}. RESOLVED THROUGH ALIASES since "
+        "WO-2R3 increment 6 (PO-DECISIONS-0011 ruling 1 item (c)): an import alias, a "
+        "module-level rebinding run to a FIXPOINT, and any attribute spelled "
+        f"`.{ESTABLISHED_HERE}` all count here. Until this increment ONLY the literal name "
+        "did, and one word hid a use from a limit whose own text says it is COUNTED, NOT "
+        "HIDDEN. What is still NOT resolved is DECLARED LIMIT 8, not a silence."
+    )
+    check.note(
+        f"MODULES BINDING A NON-LITERAL SPELLING OF {ESTABLISHED_HERE}: "
+        f"{len(aliased_spellings)}. A resolved alias is only half of 'counted, not hidden' — "
+        "the other half is that a reader can SEE it was spelled differently."
+    )
+    for where, names in sorted(aliased_spellings.items()):
+        check.note(f"  ALIAS: {where} binds {names}")
     for row in established_here:
         check.note(f"  ESTABLISHED_HERE: {row}")
     in_the_collectors = [

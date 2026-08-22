@@ -72,19 +72,77 @@ contract, each with an executable example. CD-RULE-006: each hand-off names a la
 to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
 ====================================================================================
 
- 1  **``ESTABLISHED_HERE`` IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT HIDDEN.** EIGHT
-    parameters across FIVE callables declare it, and every one of them must state a reason
-    in the artefact — a bare ``ESTABLISHED_HERE`` raises :exc:`AdmissionFault` at decoration
-    and stops the module importing. Executable example::
+ 1  **``ESTABLISHED_HERE`` IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT HIDDEN.** Every
+    use must state a reason in the artefact — a bare ``ESTABLISHED_HERE`` raises
+    :exc:`AdmissionFault` at decoration and stops the module importing. Executable example::
 
         @admits(value=ESTABLISHED_HERE("this callable IS the establishment door"))
         def own_model_id(value): ...      # then own_model_id(object()) reaches the body
 
+    ====================================================================================
+    **THE COUNT IN THIS LIMIT WAS STALE BY EXACTLY A DOUBLING FOR THE WHOLE OF WO-2R3, AND
+    IT SHIPPED BESIDE AN INSTRUMENT THAT PRINTED THE RIGHT NUMBER AT EVERY RUN.**
+    Corrected at WO-2R3 increment 6 under PO-DECISIONS-0011 ruling 1 item (c).
+    **THE SUPERSEDED WORDING, QUOTED AND NOT DELETED (PBG-CONT-003, CD-RULE-004):**
+
+        *"EIGHT parameters across FIVE callables declare it ... A ninth use fails that
+        test."*
+
+    ``CD-ASR-WO2R3-01`` §2.4 measured **16 across 9**. The artefact and its own declaration
+    had disagreed, in print, at every run for five increments.
+    ====================================================================================
+
+    **THE MEASURED FIGURE IS 16 PARAMETERS ACROSS 9 CALLABLES** — measured by
+    ``CD-ENG-WO2R3-02`` from its own run of
+    ``python3 -B tools/register/check_judgement_path_doors.py --root .``, which prints
+    ``ESTABLISHED_HERE uses: 16`` and then lists all sixteen with file, line and parameter.
+    It is **NOT** transcribed from the auditor's document or from the dispatch, both of which
+    also say 16/9 (``CD-RULE-009``: a count read from a run is a measurement, a count copied
+    is a transcription).
+
+    **AND BECAUSE THIS PROJECT HAS NOW BEEN BITTEN TWICE BY A COUNT WRITTEN INTO PROSE** —
+    here, and the doors instrument's copied *"32 members"* that ``CD-PL-F91`` caught — **THIS
+    LIMIT SAYS WHAT KEEPS THE NUMBER TRUE RATHER THAN LEAVING THE NUMBER TO BE BELIEVED:**
+
+    * the number above is **NOT** the thing that is guarded. **THE SET IS.**
+      ``tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set``
+      pins the exact set — module, callable and parameter — by NAME, and it enumerates from
+      the **RUNTIME** compiled declaration objects rather than from source text. **MEASURED
+      TO GO RED ON A SEVENTEENTH USE, AND MEASURED AGAIN ON A SEVENTEENTH USE SPELLED THROUGH
+      A ONE-WORD IMPORT ALIAS:** ``variants/WO-2R3/P-C-an-aliased-exemption.py`` adds
+      ``ESTABLISHED_HERE as _EH`` and that test reports ``2 failed`` at ``531c95c`` **and**
+      at this SHA;
+    * so **if the number in this paragraph ever goes stale again, the SET assertion fails
+      first and names what moved.** A stale number here is then a documentation defect with
+      a red test standing next to it, which is what "counted, not hidden" has to mean if it
+      is to survive its own author.
+
     **CARRIER MEASURED:** ``tools/register/check_judgement_path_doors.py`` prints every use
-    with its file, line and parameter at every run, and
+    with its file, line and parameter at every run — **and since increment 6 it resolves
+    import aliases, module-level rebindings to a fixpoint, and attribute spellings, so the
+    printed count no longer depends on how the name is spelled.** The failing assertion is
     ``tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set``
-    pins the exact set — module, callable and parameter. A ninth use fails that test. The
-    check REPORTS the uses; it does not adjudicate them, and a reviewer must.
+    and ``::test_every_established_here_states_a_reason_in_the_artefact``. **THE CHECK
+    REPORTS; THE TESTS FAIL. A check that reports is not a carrier.**
+
+    **A CORRECTION TO THE RECORD THIS SEAT OWES THE FOURTH ASSURANCE SEAT, MEASURED RATHER
+    THAN ARGUED (``CD-RULE-009``, ``CD-D-119``).** ``SUPPLEMENT-T2-GRADING`` §2.4 states:
+    *"For a door parameter exemption I found no carrier that sees it."* **THAT IS NOT WHAT
+    THIS SEAT MEASURES, AND THE MEASUREMENT IS BETTER NEWS THAN THE REPORT.** On a pristine
+    ``git archive 531c95c`` extraction, with the auditor's own aliased door added, running
+    the readers the auditor did not run:
+
+        doors check                          : exit=0, still reports 16   <- invisible
+        tests/test_judgement_path_doors.py   : exit=0, 22 passed          <- invisible
+        tests/test_admission.py              : exit=1, **2 failed, 23 passed**
+        the whole suite                      : exit=1, **2 failed, 1536 passed**
+
+    **A DOOR-PARAMETER EXEMPTION ADDED UNDER AN ALIAS WAS ALREADY CARRIED AT ``531c95c``**, by
+    ``tests/test_admission.py``, because that test reads the RUNTIME compiled objects where a
+    spelling cannot matter. The auditor ran the door-side carrier, found it blind, and
+    **narrowed its claim to exactly what it had measured — which was the right discipline and
+    is why this disagreement is a correction and not a rebuttal.** What was genuinely broken,
+    and is fixed by increment 6, is the **CHECK'S REPORT**: it said 16 when there were 17.
 
  5  **THE SIX ``ESTABLISHED_HERE`` USES ON §B.3's DOORS ARE A LIMIT AND NOT A CLOSURE, AND
     THE LIMIT IS §D.1's OWN CONCERN LEFT OPEN.** ``combine_within_one_dial(using)``,

@@ -1,0 +1,172 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 6 — ITEM C. THE EXEMPTION POPULATION: DOUBLED, UNDECLARED AT ITS TRUE SIZE, AND
+# CONCEALABLE BY ALIASING.
+#
+# **THIS ENTRY CARRIES A MEASURED DISAGREEMENT WITH THE FOURTH ASSURANCE SEAT, AND THE DISAGREEMENT
+# IS IN THE PROJECT'S FAVOUR.** CD-RULE-009 and CD-D-119 require that a measurement which disagrees
+# with the record WINS and is raised as a finding. This one does, and it is written up carefully
+# rather than triumphantly: the auditor ran the reader it named, found it blind, and NARROWED ITS
+# OWN CLAIM TO EXACTLY WHAT IT HAD MEASURED. That is the discipline this whole programme is built
+# on. It simply did not run the other test file.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0071. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T221226Z-0072
+timestamp_utc: "2026-08-22T22:12:26Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC6-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0011.md ruling 1 item (c)'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+parent_entry_id: BL-20260822T220119Z-0071
+schema_version: 1
+
+record_type: INCREMENT
+
+item_C:
+  defect_i_the_stale_count:
+    what: >
+      `src/crash_detector/admission.py` DECLARED LIMIT 1 declared "EIGHT parameters across FIVE
+      callables". MEASURED BY THIS SEAT FROM ITS OWN RUN: **16 across 9**. The doors instrument
+      printed `ESTABLISHED_HERE uses: 16` and listed all sixteen, at every run, for five
+      increments, beside a declaration that said eight. **THE ARTEFACT AND ITS OWN DECLARATION
+      DISAGREED IN PRINT.**
+    the_number_is_this_seats_own: >
+      `python3 -B tools/register/check_judgement_path_doors.py --root .` -> `ESTABLISHED_HERE
+      uses: 16`, across collect (4), observed_for_dial (3), JsonSchemaValidator.validate (2),
+      derived_within_one_dial (2), and one each on missing_adapter_members, local_refs_only,
+      combine_within_one_dial, own_model_id and ModelRegistry.get = **9 callables**. The
+      dispatch and the auditor also say 16/9; quoting either would have been a transcription
+      (CD-RULE-009).
+  defect_ii_the_alias:
+    what: >
+      The check matched the LITERAL spelling `ESTABLISHED_HERE` and nothing else, so
+      `from ... import ESTABLISHED_HERE as _EH` was invisible. **"COUNTED, NOT HIDDEN" WAS FALSE
+      UNDER ONE WORD.**
+    fixed: >
+      `_established_here_spellings(tree)` resolves, per module: an import alias; the plain form;
+      a module-level rebinding run to a FIXPOINT so a chain resolves; and any `.ESTABLISHED_HERE`
+      attribute, whatever the module is aliased to. Modules binding a non-literal spelling are
+      COUNTED AND PRINTED — a silently resolved alias is only half of "counted, not hidden".
+  the_contrast_BOTH_ARMS:
+    artefact: 'variants/WO-2R3/P-C-an-aliased-exemption.py — adds the AUDITOR''S OWN aliased door
+               to collectors/validation.py and runs FOUR readers, not one.'
+    before_arm: |
+      cd /tmp/base531 && python3 -B variants/WO-2R3/P-C-an-aliased-exemption.py
+        BASELINE            doors exit=0  uses: 16   named: False
+                            test_judgement_path_doors.py exit=0  22 passed
+                            test_admission.py            exit=0  25 passed
+                            whole suite                  exit=0  1538 passed
+        ALIASED DOOR ADDED  doors exit=0  uses: 16   named: **False**  <- INVISIBLE
+                            test_judgement_path_doors.py exit=0  22 passed  <- INVISIBLE
+                            test_admission.py            exit=1  **2 failed, 23 passed**
+                            whole suite                  exit=1  **2 failed, 1536 passed**
+    after_arm: |
+      cd /srv/crash-detector-wo2r3 && python3 -B variants/WO-2R3/P-C-an-aliased-exemption.py
+        ALIASED DOOR ADDED  doors uses: **17**  named: **True**
+                            test_judgement_path_doors.py 3 failed (was 2)  <- the alias test
+                            test_admission.py            2 failed          <- unchanged
+    reading: 'The CHECK now sees it. The CARRIER always did.'
+
+THE_DISAGREEMENT_WITH_THE_AUDITOR:
+  id: CD-ENG-WO2R3-02-F08
+  severity: MEDIUM
+  the_record_as_written: >
+    SUPPLEMENT-T2-GRADING §2.4: "For a *door parameter* exemption I found no carrier that sees
+    it." The dispatch carries it forward and orders this seat to answer or declare: "Name a
+    carrier MEASURED — a test that goes RED when a seventeenth aliased use arrives — or write the
+    words NOT PROVED TO BE CARRIED ANYWHERE."
+  what_this_seat_measured: >
+    **THERE IS A CARRIER, AND IT EXISTED AT 531c95c.**
+    `tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set` and
+    `::test_every_established_here_states_a_reason_in_the_artefact` go RED — `2 failed, 23
+    passed` — on the auditor's own aliased door, on a pristine `git archive 531c95c` extraction.
+    They enumerate the exemptions from the **RUNTIME COMPILED DECLARATION OBJECTS**, walking the
+    package with `pkgutil.walk_packages`, so **A SPELLING CANNOT MATTER TO THEM: THEY NEVER READ
+    A NAME.**
+  why_the_auditor_did_not_find_it_and_this_is_not_a_criticism: >
+    It ran `tests/test_judgement_path_doors.py` — the door-side reader, which is blind — found it
+    blind, and **narrowed its claim to exactly what it had measured rather than widening it.**
+    Its own words: *"I am narrowing the claim to what I measured, not widening it."* The claim it
+    wrote is true of the reader it ran. It did not run `tests/test_admission.py`. **A NARROW TRUE
+    CLAIM READ AS A GENERAL ONE IS THE SAME SHAPE AS THE DEFECT THIS INCREMENT EXISTS TO REPAIR,
+    AND IT IS WORTH SAYING THAT IT CAN HAPPEN IN THE SAFE DIRECTION TOO.**
+  what_was_genuinely_broken_and_is_now_fixed: >
+    **THE CHECK'S REPORT.** It said 16 when there were 17. That is a reporting defect and it is
+    real, and item C fixes it. What was NOT broken is the closure.
+  disposition: 'RAISED. The auditor''s document is NOT edited (PBG-CONT-003, and it is protected).
+                This correction stands beside it, in admission.py DECLARED LIMIT 1, in
+                required-tests.yaml and in the execution contract.'
+
+A_SECOND_FINDING_ABOUT_WHY_THE_STALE_COUNT_SURVIVED:
+  id: CD-ENG-WO2R3-02-F07
+  severity: MEDIUM
+  what: >
+    **THE COUNT WAS IN ONE CD-RULE-004 PLACE, NOT THREE.** admission.py DECLARED LIMIT 1's own
+    header says it is stated "in the check header, the register entry and the execution
+    contract". MEASURED: `grep -rn "across FIVE" required-tests.yaml contracts/execution/` at
+    531c95c returns **NOTHING**. The limit was in three places; **the NUMBER was in one.**
+  why_it_matters_more_than_this_instance: >
+    CD-RULE-004's three places are what makes drift visible — a figure that disagrees with its
+    copies is caught by the disagreement. **A FIGURE WITH NO COPIES CANNOT DISAGREE WITH
+    ANYTHING**, so the discipline that would have caught this never applied to it. The same is
+    true of every other count written into exactly one of the three places, and this seat has not
+    surveyed for others.
+  disposition: 'RAISED. The correction now lands in all three places. A SURVEY FOR OTHER
+                ONE-PLACE COUNTS IS NOT AMONG ITEMS A-E AND IS NOT DONE.'
+
+what_keeps_the_new_number_true:
+  because_the_dispatch_asks_for_it_in_terms: '"IF YOU WRITE A COUNT INTO PROSE, SAY WHAT KEEPS IT
+                                              TRUE." A hard-coded "SIXTEEN across NINE" is a new
+                                              stale declaration waiting to happen.'
+  the_answer: >
+    **THE NUMBER IS NOT THE THING GUARDED. THE SET IS.**
+    `tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set` pins the
+    exact set by module, callable and parameter, from the runtime compiled objects. If the number
+    in the prose goes stale again, **the SET assertion fails first and names what moved** — so a
+    stale number is then a documentation defect with a red test standing next to it.
+
+declared_limits:
+  DECLARED_LIMIT_8_doors: >
+    NEW. What alias resolution does NOT reach, each declared rather than silent: a name bound
+    INSIDE A FUNCTION BODY; a name computed at runtime via getattr; an exemption reached through a
+    CONTAINER; and a WRAPPER function that CALLS ESTABLISHED_HERE rather than referencing it.
+    **PINNED** (not carried) by
+    tests/test_judgement_path_doors.py::test_a_wrapper_around_established_here_is_a_DECLARED_LIMIT_and_is_not_counted,
+    which PASSES BECAUSE THE LIMIT IS REAL.
+  and_the_CD_RULE_006_distinction_that_decides_whether_that_matters: >
+    **A CHECK REPORTS; A CARRIER FAILS.** tests/test_admission.py covers EVERY route in that list,
+    including the ones the check cannot see, because it never reads a name — PROVIDED the module
+    is imported by pkgutil.walk_packages and the door object is reachable from a module or class
+    namespace. **FOR AN EXEMPTION ON A DOOR NOT REACHABLE FROM ANY MODULE OR CLASS NAMESPACE: NOT
+    PROVED TO BE CARRIED ANYWHERE.**
+  three_places: 'src/crash_detector/admission.py DECLARED LIMIT 1 ·
+                 tools/register/check_judgement_path_doors.py DECLARED LIMIT 8 ·
+                 required-tests.yaml MECHANISM LIMIT 4 ·
+                 contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md DECLARED LIMIT 8.'
+
+numbers_each_from_a_run_this_seat_did:
+  established_here_uses: '16 -> 16 on the unmodified tree (no alias exists in the product), and
+                          16 -> **17** with the auditor''s aliased door applied. **THE NUMBER THAT
+                          MOVED IS THE ONE UNDER ATTACK, WHICH IS THE ONLY ONE THAT COULD.**'
+  classes_examined: '99 -> 99 · population 33 -> 33 · constructor assertions 101, EXIT 0'
+  doors: 'subjects 28, DECORATED 27, assertions 54, **EXIT 1 — the item-B STOP, unchanged**'
+  suite: '1538 at 531c95c -> **1549 passed, 2 failed** (the two item-B failures)'
+node_id_reconciliation:
+  lost: '**ZERO** against the 531c95c set, SETS DIFFED with `comm`.'
+  added: '13 across the increment — 6 (A) + 1 (D) + 4 (B) + 2 (C).'
+class_2_sweep_movement: 'EXIT 1 — 534 sites, 15 violations. Full `--list` diff EMPTY. Not chased.'
+
+separation_of_duties: >
+  PBG-SOD-001. A record, not assurance. **THE DISAGREEMENT WITH THE FOURTH ASSURANCE SEAT IS
+  RAISED, NOT ADJUDICATED** — this seat may not grade an auditor (PBG-AUTH-003), and the fifth
+  Assurance seat should re-measure it rather than take this entry's word for it.

@@ -560,3 +560,76 @@ Assurance seat.
 Note also that `functools.wraps` gives it the **runtime** `__name__` `_evaluate_dial`, so the static
 reading and the runtime name **disagree** about whether it is public at all — which is part of what
 makes it a question rather than an oversight.
+
+
+---
+
+## DECLARED LIMIT 8 — `ESTABLISHED_HERE` IS RESOLVED THROUGH ALIASES, AND THE COUNT IS CORRECTED
+
+**NEW AT WO-2R3 INCREMENT 6** (`PO-DECISIONS-0011` ruling 1 item (c)). This is `admission.py`'s
+DECLARED LIMIT 1 reproduced here, plus the check's own alias-resolution limit.
+
+**WHY THE COUNT IS ONLY NOW IN THIS FILE, WHICH IS ITSELF WHY THE DEFECT SURVIVED FIVE
+INCREMENTS.** The limit's own header says it is stated *"in the check header, the register entry
+and the execution contract"* — and the **count** was in `admission.py` **alone**.
+`grep -rn "across FIVE" required-tests.yaml contracts/execution/` at `531c95c` returns **nothing**.
+**THE THREE-PLACE DISCIPLINE THAT WOULD HAVE CAUGHT THE DRIFT NEVER APPLIED TO THE NUMBER, BECAUSE
+THE NUMBER WAS ONLY IN ONE PLACE.** Raised as `CD-ENG-WO2R3-02-F07`.
+
+**SUPERSEDED WORDING, QUOTED AND NOT DELETED** (`PBG-CONT-003`):
+
+> *"EIGHT parameters across FIVE callables declare it … A ninth use fails that test."*
+
+**THE MEASURED FIGURE IS 16 PARAMETERS ACROSS 9 CALLABLES**, from `CD-ENG-WO2R3-02`'s own run of
+`python3 -B tools/register/check_judgement_path_doors.py --root .`, which prints
+`ESTABLISHED_HERE uses: 16` and lists all sixteen with file, line and parameter. Not transcribed
+(`CD-RULE-009`).
+
+**WHAT KEEPS THE NUMBER TRUE** — because this project has now been bitten twice by a count written
+into prose (this limit, and the copied *"32 members"* that `CD-PL-F91` caught): **the number is not
+the thing guarded, the SET is.**
+`tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set` pins the exact
+set by module, callable and parameter, enumerating from the **runtime compiled declaration
+objects**. If the number goes stale again, the set assertion fails first and names what moved.
+
+### Alias resolution — what is resolved, and what is not
+
+**RESOLVED:** an import alias · the plain form · a module-level rebinding run to a **fixpoint** ·
+any attribute spelled `.ESTABLISHED_HERE`, whatever the module is aliased to.
+
+**NOT RESOLVED, DECLARED RATHER THAN SILENT:** a name bound **inside a function body** · a name
+computed at runtime (`getattr(admission, "ESTABLISHED_" + "HERE")`) · an exemption reached through a
+**container** (`ALIASES = {"eh": ESTABLISHED_HERE}`) · a **wrapper**
+(`def eh(reason): return ESTABLISHED_HERE(reason)`), which is a call, not a reference.
+
+**MEASURED, BOTH ARMS** — `variants/WO-2R3/P-C-an-aliased-exemption.py` adds the auditor's own
+`ESTABLISHED_HERE as _EH` door: at `531c95c` the check reports `uses: 16` and does **not** name it;
+here it reports `uses: 17` and **does**.
+
+### A correction to the record this seat owes the fourth Assurance seat
+
+`SUPPLEMENT-T2-GRADING` §2.4: *"For a door parameter exemption I found no carrier that sees it."*
+**MEASURED** on a pristine `git archive 531c95c` extraction, with the auditor's aliased door added,
+running the readers the auditor did not run:
+
+```
+doors check                        : exit=0, still reports 16   <- invisible
+tests/test_judgement_path_doors.py : exit=0, 22 passed          <- invisible
+tests/test_admission.py            : exit=1, 2 failed, 23 passed
+the whole suite                    : exit=1, 2 failed, 1536 passed
+```
+
+Failing: `::test_the_established_here_exemptions_are_exactly_this_set` and
+`::test_every_established_here_states_a_reason_in_the_artefact`. **A door-parameter exemption added
+under an alias was ALREADY CARRIED at `531c95c`**, because that reader enumerates from the runtime
+compiled objects where a spelling cannot matter. The auditor ran the door-side carrier, found it
+blind, and **narrowed its claim to exactly what it had measured** — the right discipline, and why
+this is a correction and not a rebuttal. What was genuinely broken, and is fixed here, is **the
+check's REPORT**: it said 16 when there were 17.
+
+**CARRIER MEASURED:** `tests/test_admission.py`, red on a seventeenth use whether or not it is
+aliased, **at both SHAs**. It covers every route in the "not resolved" list — including the ones the
+check cannot see — because it never reads a name at all, *provided* the module is imported by
+`pkgutil.walk_packages` and the door object is reachable from a module or class namespace. **For an
+exemption on a door not reachable from any module or class namespace: NOT PROVED TO BE CARRIED
+ANYWHERE.**
