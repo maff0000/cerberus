@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T19:12:05Z'
+updated_utc: '2026-08-22T19:28:32Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -50,9 +50,33 @@ objective: >
   WO-3.
 current_phase: BUILD   # MOVED AT THIS BOUNDARY. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **CD-D-134 CAME BACK RULED (PO-DECISIONS-0010) AND EXECUTION HAS BEGUN AT ITS RULING 2:
+  CD-DISPATCH-WO2R3-INC5C-ENGINEER IS ISSUED at lane `46adf33` to CD-ENG-WO2R3-01 — THE BOUNDED
+  COMPLETION OF INCREMENT 5, NOT A SIXTH SCOPE.** ***
+  The class reads **BODY-BORNE OR ABSENT**: establishment derived from the declaration is REQUIRED of
+  every fielded public frozen judgement-path type, a zero-field type satisfies vacuously, and the
+  instrument asserts over the WHOLE population so a future fielded type arriving with no
+  establishment FAILS ON ARRIVAL. The Product Owner took the widening itself — "the Project Lead was
+  right that the widening is not its to take; it is mine, and it is taken" — and left the widened
+  definition ATTACKABLE by the fourth seat.
+  *** **THE MEASUREMENT THAT SHAPED THE DISPATCH IS THE OPPOSITE OF REASSURING.** *** At `46adf33`
+  the ADJACENT SET has EXACTLY ONE MEMBER AND IT HAS ZERO FIELDS —
+  `observations.py:170 Empty [RULE C] fields=[]` — so under the ruling it satisfies VACUOUSLY and
+  **THE WIDENING CHANGES NOT ONE PRESENT VERDICT.** A completed, correct execution of ruling 1
+  produces IDENTICAL check behaviour on every artefact in the tree, so **THIS COMPLETION CANNOT BE
+  RECONCILED BY RUNNING THE CHECKS** (CD-PL-F92). The only accepted proof is a CONTRAST the seat
+  builds itself: a fielded frozen judgement-path type with no establishing body, EXIT 0 and printed
+  ADJACENT at `46adf33`, EXIT NON-ZERO and NAMED at the returned SHA, both arms run, the old arm from
+  a pristine extraction (CD-D-138). Writable scope was NARROWED, not inherited: `src/` and `plants/`
+  are PROTECTED for this dispatch (CD-D-137), and needing `src/` is a STOP AND A FINDING because it
+  would contradict the vacuity measurement.
+  *** **THE FOURTH ASSURANCE SEAT IS NOT YET DISPATCHED AND THAT IS RULING 3 OBEYED, NOT AN
+  OMISSION** — it is conditioned on the completion banking, and the completion has not banked. Its
+  full brief is in next_safe_action so it survives the loss of this context window. ***
+  --- THE RECORD OF INCREMENT 5 AS RECONCILED, UNCHANGED BELOW THIS LINE ---
   *** **WO-2R3 INCREMENT 5 IS RECONCILED AND ACCEPTED AS INCREMENT 5 AT LANE `46adf33` — AND IS NOT
   ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005 (CD-D-135).** ***
-  *** **ONE QUESTION GOES UP AND IS NOT ANSWERED HERE: CD-D-134.** ***
+  *** **CD-D-134 WENT UP FROM HERE AND IS NOW ANSWERED ABOVE.** ***
   CD-ENG-WO2R3-01 RETURNED ALIVE across THREE commits, identity CLEAN on all three, committed as it
   went for the FIFTH increment running. Porcelain ZERO; 34 changed paths all inside writable scope;
   ONE build-log entry ADDED, none modified; `ACTIVE_WORK.yaml` untouched by the seat.
@@ -2320,8 +2344,21 @@ remaining_items:
   and should find it DECLARED HERE FIRST.'
 
 open_decisions:
-- '**CD-D-134 — OPEN. PUT TO THE PRODUCT AUTHORITY AT BL-20260822T191205Z-0102 AND NOT ANSWERED BY
-  THIS SEAT. DOES THE RULED CLASS READ "BODY-BORNE" OR "BODY-BORNE *OR ABSENT*"?**
+- '**CD-D-134 — CLOSED. RULED BY THE PRODUCT AUTHORITY at governance/decisions/PO-DECISIONS-0010.md
+  ruling 1 (commit f5c7b0c, authored by Matt Scott, not by any seat). THE ANSWER IS
+  "BODY-BORNE *OR ABSENT*" — WIDER THAN THE (C)-THEN-(A) THIS SEAT RECOMMENDED.** Establishment
+  derived from the declaration is REQUIRED of every fielded public frozen judgement-path type; a
+  zero-field type satisfies VACUOUSLY (`Empty` today); and the instrument asserts over the WHOLE
+  enumerated population so a future fielded type arriving with no establishment FAILS ON ARRIVAL
+  rather than slipping outside a class worded around bodies. The reason given is the doctrine the
+  programme runs on: "an invariant exists to close forms it never enumerated ... a class definition
+  that only covers types which BOTHERED to establish is a census of the present." The Product Owner
+  did NOT route it through assurance first — "sending a definition I already believe incomplete to
+  assurance would be paying for the answer twice" — and left the widened definition ATTACKABLE by the
+  fourth seat. EXECUTION: CD-DISPATCH-WO2R3-INC5C-ENGINEER, issued at BL-20260822T192832Z-0103.
+  **THE QUESTION AS IT WAS PUT, RETAINED BELOW SO THE RECOMMENDATION THAT WAS NOT ADOPTED STAYS
+  READABLE (PBG-CONT-003 — corrections supersede, never edit away):**
+  **DOES THE RULED CLASS READ "BODY-BORNE" OR "BODY-BORNE *OR ABSENT*"?**
   A frozen public judgement-path type with NO `__post_init__` has field establishment that is
   ABSENT, not BODY-BORNE, so it falls OUTSIDE the class PO-DECISIONS-0007 ruling 1 created and
   outside the re-base at PO-DECISIONS-0008 ruling 2. The increment-5 instrument therefore NAMES such
@@ -2702,13 +2739,36 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  *** **STOP AT THE GATE. INCREMENT 5 IS BANKED AND THE NEXT BOUNDARY IS AN INDEPENDENT SEAT, NOT
-  MORE ENGINEERING. TWO THINGS ARE OWED AND ONE IS A PRODUCT AUTHORITY QUESTION.** ***
-  **1. DISPATCH THE FOURTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 at `46adf33` — none of
+  *** **THE ORDER IS FIXED BY PO-DECISIONS-0010 AND IS NOT THIS SEAT'S TO REORDER: THE BOUNDED
+  COMPLETION BANKS FIRST, THEN THE FOURTH ASSURANCE SEAT. CD-D-134 IS NO LONGER OPEN.** ***
+  **0. RECONCILE THE BOUNDED COMPLETION WHEN CD-ENG-WO2R3-01 RETURNS — AND RECONCILE IT BY THE
+  CONTRAST, NOT BY THE CHECKS** (CD-D-138, CD-PL-F92). Because `Empty` is the only adjacent member
+  and has no fields, **THE STANDING CHECKS CANNOT DISTINGUISH A REAL CLOSURE FROM A REWORDED
+  DOCSTRING AT THIS BOUNDARY.** Extract `46adf33` pristinely, apply the seat's variant there, observe
+  EXIT 0 and the ADJACENT line; then apply it at the returned SHA and observe NON-ZERO with the type
+  NAMED. **RUN BOTH ARMS. DO NOT READ THE SEAT'S REPORT OF THEM.** Also audit: identity over
+  `46adf33..HEAD`, porcelain zero, every changed path inside the six writable paths of CD-D-137,
+  no build-log entry modified, **`git diff --stat 46adf33..HEAD -- src/ plants/` EMPTY**, node-id sets
+  DIFFED against 1537, and the Class-2 sweep movement reported and not chased.
+  **THEN, AND ONLY THEN:**
+  **1. DISPATCH THE FOURTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 at the SHA the completion
+  banks at (NOT `46adf33`, which is now the completion's execution base) — none of
   CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001, non-waivable;
   and CD-ENG-WO2R3-01 is now the author of all five increments, so it is excluded absolutely).
-  ITS BRIEF CARRIES, AND NONE OF IT IS THIS SEAT'S TO SOFTEN:
-  · **CD-D-129's THREE MANDATORY CLAUSES, VERBATIM AND UP FRONT** — (i) a governed instrument in the
+  ITS BRIEF CARRIES, IN THIS ORDER, AND NONE OF IT IS THIS SEAT'S TO SOFTEN:
+  · *** **FIRST IN THE BRIEF, BEFORE ANYTHING ELSE — PO-DECISIONS-0010 RULING 3(iv) FIXES THE
+  POSITION AND NOT ONLY THE CONTENT: THE SENTENCE THE ENGINEER SEAT VOLUNTEERED AGAINST ITSELF.
+  WITH V17 APPLIED, *BOTH* STATIC CHECKS STILL EXIT 0.** V17 removes a BODY and neither check reads
+  bodies. **THE CLOSURE IS A RUNTIME CLOSURE AND A GREEN STATIC RUN IS NOT EVIDENCE OF IT. THE FOURTH
+  SEAT ATTACKS THE RUNTIME CLOSURE *AS* RUNTIME.** A seat that verifies this work by running the two
+  register checks has verified nothing about it. ***
+  · **AND, NEW AT THIS BOUNDARY (PO-DECISIONS-0010 ruling 3(iii)): THE WIDENED INVARIANT OF RULING 1
+  AS AN ATTACKABLE CLAIM.** The class now reads BODY-BORNE OR ABSENT. The Product Owner ruled it
+  without routing it through the auditor and said why — "sending a definition I already believe
+  incomplete to assurance would be paying for the answer twice" — and then said in terms: **"The seat
+  remains free to attack the widened definition itself."** It is a claim, not a settled fact, and the
+  seat is invited to break it.
+  · **CD-D-129's THREE MANDATORY CLAUSES, VERBATIM** — (i) a governed instrument in the
   tree EXITS 1 BY DECLARED STATE (`tools/sweep/delegated_judgement_sweep.py`, now **534 sites / 15
   violations**, up from 514/11 as a measured SIDE EFFECT of increment 5's new module and REPORTED
   rather than chased), with the eleven original items and the bisect; (ii) verdicts are taken against
@@ -2729,10 +2789,11 @@ next_safe_action: >
   · **THE CD-ENG-WO2R3-F12 STANDARD:** a plant is evidence when it APPLIES, CONTRASTS, **AND FAILS AT
   THE LAYER ITS PROPOSITION NAMES** — never merely when it exits non-zero. **CD-PL-F90 is the live
   instance: V39's two arms BOTH exit 1 and are told apart only by the RULE NAME in the failure text.**
-  **2. PUT CD-D-134 TO THE PRODUCT AUTHORITY** — does the ruled class read "body-borne" or
-  "body-borne OR ABSENT"? Set out in full in open_decisions. **THE PROJECT LEAD RECOMMENDS (C) THEN
-  (A) AND HAS WRITTEN THE ARGUMENT AGAINST ITS OWN RECOMMENDATION INTO THE QUESTION. NOT BLOCKING** —
-  the seat may be dispatched in parallel.
+  **2. CD-D-134 IS ANSWERED AND CLOSED — NOTHING GOES UP FROM THIS BOUNDARY.** The Product Owner
+  ruled it at PO-DECISIONS-0010 ruling 1: the class reads **BODY-BORNE OR ABSENT**, wider than the
+  (C)-then-(A) this seat recommended and wider than the seat that raised CD-ENG-WO2R3-F17 would have
+  taken. The recommendation was not adopted and the record says so rather than reading as though it
+  was. **STOP AT THE GATE VERDICT OR ON ANY NEW PRODUCT AUTHORITY QUESTION, AND THERE IS NO OPEN ONE.**
   **STILL OPEN AND NOT DISPATCHED:** CD-D-130 (the eleven sweep dispositions — owed AFTER the fourth
   seat reports, and **writing them early is prohibited by the ruling that ordered them**); CD-D-136
   (no sixth increment on the four residues — opening one would repeat the pattern PO-DECISIONS-0009
@@ -2740,7 +2801,8 @@ next_safe_action: >
   CD-PL-F84..F90; IMP-022 (framework, not local).
   **DO NOT** admit anything (CD-RULE-001, PO-set, non-relaxable). **DO NOT** merge or promote the
   lane or f30e63c. **DO NOT** grade CD-AC-002 or CD-AC-005 — reserved by the Product Owner for the
-  SIXTH boundary running. **Reconciliation is not acceptance; acceptance is not assurance.**
+  **SEVENTH** boundary running (PO-DECISIONS-0010 ruling 5, standing and unchanged by anything in
+  that document). **Reconciliation is not acceptance; acceptance is not assurance.**
   **THE ASR3-F08 PARSER WORK ORDER MAY STILL BE PROPOSED** — its timing condition has been met since
   the increment-2 dispatch boundary and the WO-2 gate is not re-run until F02, F04, F05 AND F08 close.
   ---- THE PRIOR ACTION, RETAINED AND NOW DISCHARGED ----
@@ -3340,5 +3402,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T191205Z-0102   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T192832Z-0103   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
