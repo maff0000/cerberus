@@ -366,8 +366,4 @@ next_safe_action: >
   **DO NOT** admit anything (CD-RULE-001, PO-set, non-relaxable). **DO NOT** write the eleven sweep
   dispositions early — CD-D-130 orders them AFTER the fourth seat reports.
 
-continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS
-                                    # FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed
-                                    # (CD-PL-F36). The CD-RULE-008 pristine-clone boot verdict is
-                                    # taken AT that SHA BEFORE this field is written, so the verdict
-                                    # and the field name ONE commit.
+continuity_record_commit: 64efe6f7cd23e4b4ac190106d9864f372e163729   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE SIXTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 64efe6f BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont6 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont6 && git checkout -q -B main 64efe6f` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha 64efe6f7cd23e4b4ac190106d9864f372e163729, branch main.
