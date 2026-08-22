@@ -31,6 +31,7 @@ from crash_detector.collectors.runner import (
     MAX_ATTEMPTS_CEILING,
     MAX_BACKOFF_SECONDS_CEILING,
     MAX_TIMEOUT_SECONDS_CEILING,
+    PAYLOAD_SNAPSHOT_MAX_DEPTH,
     CollectionResult,
     RetryPolicy,
     collect,
@@ -728,4 +729,262 @@ def test_collect_takes_no_clock_and_no_sleep_and_defaults_neither_instant_nor_de
     assert exempt == {"adapter", "sink", "ledger", "validator"}, (
         "the set of parameters this door does NOT exact-type is CD-BP-003 and it is "
         "pinned here: a fifth one is a widening of the declared limit, not a detail"
+    )
+
+
+# --- ESCAPE 1: THE STORED PAYLOAD IS THE VALIDATED PAYLOAD (WO-2R3 increment 6) ---------- #
+#
+# THE DEFECT THESE CARRY. `validator.validate(p)` judged an object, `adapter.is_empty(p)`
+# was handed THE SAME object, and `OK(payload=p)` stored THE SAME object. `is_empty` is
+# DECLARED-FOREIGN CODE under CD-BP-003. An adapter that rewrote the mapping it was handed
+# and then honestly answered `False` had the rewritten mapping stored under a verdict earned
+# by the original — `CD-ASR-WO2R3-01`, ESCAPE 1, the correctness defect that moved the
+# WO-2R3 gate to RED.
+#
+# WHY `OK.__post_init__`'s EXISTING `dict(self.payload)` DID NOT CARRY THIS, which is why
+# six increments of readers were satisfied: it copies AFTER the foreign call, so it copies
+# the mutation faithfully.
+#
+# THE LIMIT THESE DO **NOT** CARRY IS TESTED TOO, in
+# `test_the_snapshot_does_not_reach_a_container_that_is_not_exactly_a_dict`. A residue that
+# only appears in prose is a residue nobody re-measures.
+
+def _hostile_is_empty(mutation):
+    """An `is_empty` that mutates the object it is handed and answers honestly.
+
+    It answers `False`, so the runner proceeds to `OK` — the mutation is the whole attack
+    and a truthful emptiness verdict is what makes it reach storage.
+    """
+
+    def is_empty(payload):
+        mutation(payload)
+        return False
+
+    return is_empty
+
+
+def test_a_hostile_is_empty_cannot_change_the_stored_payload():
+    """ESCAPE 1, the auditor's own reproduction, as a carrier.
+
+    At `531c95c` this stored `{'reading': inf, 'not_in_schema': ...}` — a payload that fails
+    the schema it was judged by, under an `OK` whose verdict was earned by `{'reading': 1.5}`.
+    """
+    def mutate(payload):
+        payload["reading"] = float("inf")
+        payload["not_in_schema"] = "\x00\x00\x00"
+
+    adapter = _adapter([_ok_response()], is_empty_fn=_hostile_is_empty(mutate))
+    result, _, _ = _run(adapter)
+
+    assert isinstance(result.final_outcome, OK)
+    assert result.final_outcome.payload == {"reading": 1.5}, (
+        "the stored payload must be the payload the validator judged; an adapter's "
+        "is_empty must not be able to reach it"
+    )
+    assert "not_in_schema" not in result.final_outcome.payload
+
+
+def test_the_object_is_empty_is_handed_is_not_the_adapters_own_object():
+    """THE STRUCTURAL PROPERTY, not one mutation of it.
+
+    The previous test names one attack. This names the property that defeats every attack of
+    that class: the foreign call is not handed a live reference to the object the adapter
+    still holds.
+
+    **IT IS ASSERTED AGAINST THE ADAPTER'S OBJECT AND NOT AGAINST THE STORED ONE, AND THAT
+    IS THE POINT.** `OK.__post_init__` has always done `dict(self.payload)`, so
+    `id(is_empty's argument) != id(OK.payload)` was ALREADY TRUE at `531c95c` with the defect
+    fully present. A test asserting THAT would pass in both arms and carry nothing. This seat
+    wrote it that way first, ran it against a tree with the snapshot reverted, found it
+    GREEN, and rewrote it — recorded here because a carrier nobody tried to break is a
+    carrier nobody has measured.
+    """
+    payload = {"reading": 1.5}
+    seen: list[int] = []
+    adapter = FakeInMemoryAdapter(
+        script=[FetchedResponse(payload=payload, source_as_of_utc=FIXED_NOW)],
+        response_schema=EMPTY_TOLERANT_SCHEMA,
+        is_empty_fn=_hostile_is_empty(lambda handed: seen.append(id(handed))),
+    )
+    result, _, _ = _run(adapter)
+
+    assert isinstance(result.final_outcome, OK)
+    assert len(seen) == 1
+    assert seen[0] != id(payload), (
+        "is_empty must not be handed the object the adapter still holds a reference to"
+    )
+    assert id(result.final_outcome.payload) != id(payload)
+
+
+def test_a_hostile_is_empty_cannot_change_a_nested_plain_dict_either():
+    """THE REACH AXIS THE FIX DOES CLOSE — nesting, for exactly-typed containers.
+
+    A shallow copy would pass the two tests above and fail this one. That is the whole
+    reason this one exists: `dict(payload)` is not a snapshot, it is a snapshot of the top
+    row.
+    """
+    nested_schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["reading", "nested"],
+        "properties": {
+            "reading": {"type": "number"},
+            "nested": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {"reading": {"type": "number"}},
+            },
+        },
+    }
+    response = FetchedResponse(
+        payload={"reading": 1.5, "nested": {"reading": 1.5}},
+        source_as_of_utc=FIXED_NOW,
+    )
+    adapter = FakeInMemoryAdapter(
+        script=[response],
+        response_schema=nested_schema,
+        is_empty_fn=_hostile_is_empty(
+            lambda payload: payload["nested"].__setitem__("reading", float("inf"))
+        ),
+    )
+    result, _, _ = _run(adapter)
+
+    assert isinstance(result.final_outcome, OK)
+    assert result.final_outcome.payload["nested"]["reading"] == 1.5
+
+
+def test_the_snapshot_does_not_reach_a_container_that_is_not_exactly_a_dict():
+    """**THE DECLARED LIMIT, ASSERTED RATHER THAN WRITTEN DOWN.**
+
+    `_payload_snapshot` rebuilds `dict`, `list` and `tuple` BY EXACT TYPE. A `dict`
+    SUBCLASS is carried BY REFERENCE and an adapter can still rewrite its interior. That is
+    DECLARED LIMIT 5 in `collect`'s header and it is stated in `required-tests.yaml` and in
+    `contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md`.
+
+    **THIS TEST ASSERTS THE LIMIT IS STILL EXACTLY THAT WIDE.** It passes today because the
+    escape works. If a later increment widens the snapshot, this test FAILS — and that
+    failure is the signal to go and correct the three declarations, not to delete the test.
+    A limit whose wording is the only thing holding it is a limit that goes stale, and this
+    project has now been bitten by that three times (`CD-PL-F91`, item C's stale count, and
+    the sentence DECLARED LIMIT 5 supersedes).
+    """
+    class _Sub(dict):
+        pass
+
+    nested_schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["reading", "nested"],
+        "properties": {
+            "reading": {"type": "number"},
+            "nested": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {"reading": {"type": "number"}},
+            },
+        },
+    }
+    response = FetchedResponse(
+        payload={"reading": 1.5, "nested": _Sub({"reading": 1.5})},
+        source_as_of_utc=FIXED_NOW,
+    )
+    adapter = FakeInMemoryAdapter(
+        script=[response],
+        response_schema=nested_schema,
+        is_empty_fn=_hostile_is_empty(
+            lambda payload: payload["nested"].__setitem__("reading", float("inf"))
+        ),
+    )
+    result, _, _ = _run(adapter)
+
+    assert isinstance(result.final_outcome, OK)
+    assert result.final_outcome.payload["nested"]["reading"] == float("inf"), (
+        "DECLARED LIMIT 5 says a dict SUBCLASS is carried by reference. If this assertion "
+        "fails the limit is now NARROWER than declared: correct all three CD-RULE-004 "
+        "places, and do not delete this test"
+    )
+
+
+def test_the_snapshot_depth_is_a_declared_number_and_the_residue_below_it_is_real():
+    """The second half of DECLARED LIMIT 5, and the number that decides it.
+
+    Nesting is rebuilt to `PAYLOAD_SNAPSHOT_MAX_DEPTH` levels and carried by reference
+    below that. Asserted from BOTH sides of the boundary in ONE test, so neither the number
+    nor the behaviour can drift without the other being noticed.
+    """
+    def _nest(levels: int) -> dict:
+        deep: dict = {"reading": 1.5}
+        for _ in range(levels):
+            deep = {"nested": deep}
+        return deep
+
+    def _innermost(value):
+        while isinstance(value, dict) and "nested" in value:
+            value = value["nested"]
+        return value
+
+    def _mutate(payload):
+        _innermost(payload)["reading"] = float("inf")
+
+    schema = {"type": "object", "properties": {"reading": {"type": "number"}}}
+
+    within = FetchedResponse(payload=_nest(PAYLOAD_SNAPSHOT_MAX_DEPTH - 2),
+                             source_as_of_utc=FIXED_NOW)
+    result, _, _ = _run(
+        FakeInMemoryAdapter(script=[within], response_schema=schema,
+                            is_empty_fn=_hostile_is_empty(_mutate))
+    )
+    assert isinstance(result.final_outcome, OK)
+    assert _innermost(result.final_outcome.payload)["reading"] == 1.5, (
+        "within the declared depth the rebuild must hold"
+    )
+
+    beyond = FetchedResponse(payload=_nest(PAYLOAD_SNAPSHOT_MAX_DEPTH + 5),
+                             source_as_of_utc=FIXED_NOW)
+    result, _, _ = _run(
+        FakeInMemoryAdapter(script=[beyond], response_schema=schema,
+                            is_empty_fn=_hostile_is_empty(_mutate))
+    )
+    assert isinstance(result.final_outcome, OK)
+    assert _innermost(result.final_outcome.payload)["reading"] == float("inf"), (
+        "below the declared depth the payload is carried by reference; if this fails the "
+        "declared limit is now wrong in the SAFE direction and must still be corrected"
+    )
+
+
+def test_the_validator_is_still_handed_the_adapters_live_object():
+    """**WHAT ITEM A DOES NOT CLOSE, ASSERTED SO IT CANNOT BE QUIETLY BELIEVED CLOSED.**
+
+    The snapshot is taken AFTER validation, so the OTHER declared-foreign protocol at this
+    door — `validator` — still receives the adapter's live object. A hostile validator that
+    mutates while judging defeats the escape-1 closure completely. That route is NOT this
+    increment's (the sink/ledger/validator behaviour table is unverified by anyone and
+    travels to the fifth Assurance seat), and it is asserted here rather than merely
+    admitted in a docstring.
+    """
+    seen: list[int] = []
+
+    class _RecordingValidator:
+        def validate(self, payload, schema):
+            seen.append(id(payload))
+            return None
+
+    payload = {"reading": 1.5}
+    response = FetchedResponse(payload=payload, source_as_of_utc=FIXED_NOW)
+    sink = RecordingSink()
+    ledger = RecordingLedger()
+    collect(
+        FakeInMemoryAdapter(script=[response], response_schema=EMPTY_TOLERANT_SCHEMA),
+        policy=SINGLE,
+        sink=sink,
+        ledger=ledger,
+        collector_run_id="run-1",
+        started_utc=FIXED_NOW,
+        delay=DelayKind.WALL_CLOCK,
+        validator=_RecordingValidator(),
+    )
+
+    assert seen == [id(payload)], (
+        "the validator receives the adapter's live payload: this is DECLARED LIMIT 5's "
+        "third residue and it is NOT closed by the snapshot"
     )

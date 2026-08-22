@@ -110,6 +110,7 @@ __all__ = [
     "MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT",
     "MALFORMED_SCHEMA_DECLARATION_INVALID",
     "MALFORMED_VALIDATOR_CONTRACT_BREACH",
+    "PAYLOAD_SNAPSHOT_MAX_DEPTH",
 ]
 
 
@@ -153,6 +154,15 @@ ERROR_ATTEMPT_DID_NOT_COMPLETE = "ATTEMPT_DID_NOT_COMPLETE"
 ERROR_TIMEOUT_BUDGET_EXCEEDED = "TIMEOUT_BUDGET_EXCEEDED"
 ERROR_TIMEOUT = "TIMEOUT"
 _ERROR_UNCLASSIFIED_PREFIX = "UNCLASSIFIED_"
+
+#: How far :func:`_payload_snapshot` rebuilds the exact-typed container spine of a validated
+#: payload before it carries what it finds BY REFERENCE. Declared as a number rather than
+#: left implicit in a recursion limit, because it IS the reach of the escape-1 closure and a
+#: reach nobody can name is a reach nobody can test. Deeper than any JSON this system has a
+#: use for, and far under the interpreter's recursion ceiling, so the rebuild cannot itself
+#: become a way to raise inside the boundary. It also terminates on a payload that contains
+#: a reference to itself, which an unbounded rebuild would not.
+PAYLOAD_SNAPSHOT_MAX_DEPTH = 32
 
 MALFORMED_ADAPTER_CONTRACT_BREACH = "ADAPTER_CONTRACT_BREACH"
 MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT = "PAYLOAD_NOT_A_JSON_OBJECT"
@@ -440,8 +450,87 @@ def collect(
        ``policy`` is exact-typed at this door: a ``RetryPolicy`` subclass shadowing
        ``max_attempts`` with a property is REFUSED, which ``isinstance`` admitted until this
        increment. ``delay`` is exact-typed against a closed enum. ``started_utc`` is
-       exact-typed and rebuilt. Every value the four protocols return is exact-typed on
-       arrival. Those four are closures, not admissions.
+       exact-typed and rebuilt. Those three are closures, not admissions — **AND THE
+       RE-MEASUREMENT ORDERED BY PO-DECISIONS-0011 RULING 3 STRENGTHENS THEM RATHER THAN
+       WEAKENING THEM, WHICH IS ALSO WORTH WRITING DOWN.** ``@admits`` compiles its declared
+       types at DECORATION time, so rebinding ``runner.RetryPolicy`` in this module's globals
+       — the leverage ESCAPE 2 uses — does NOT defeat them. Measured by
+       ``variants/WO-2R3/P-E1-what-is-closed-at-that-door.py`` arm (i'): with
+       ``runner.RetryPolicy`` rebound to an unrelated class, a GENUINE ``RetryPolicy`` is
+       still ADMITTED and the unrelated class is still ``NotAdmitted``.
+       **THE CONTRAST THAT MATTERS IS WITH THE LINE BELOW:** ``type(response) is not
+       FetchedResponse`` at this module's own boundary resolves its name AT CALL TIME from
+       these same globals, and arm (iv) rebinds it and walks a property-backed look-alike
+       straight through. **AN EXACT-TYPE DOOR IS ONLY AS STRONG AS WHEN IT RESOLVES ITS
+       TYPE**, and this file contains one of each.
+       ``started_utc`` closes the TYPE and never the TRUTH — an instant from 2016 is ADMITTED
+       and every attempt row reads 2016 (arm (ii), and DECLARED LIMIT 2 above).
+
+       **THE FOURTH CLAIM THAT USED TO STAND HERE IS SUPERSEDED, AND IT IS SUPERSEDED
+       BECAUSE IT WAS MEASURED FALSE — PBG-CONT-003, corrections supersede, never edit
+       away.** The superseded wording, quoted so a reader who remembers it can see what
+       replaced it:
+
+           *"Every value the four protocols return is exact-typed on arrival."*
+
+       **THAT SENTENCE IS LITERALLY TRUE AND WAS OFFERED AS CLOSURE, AND IT CLOSED THE TYPE
+       AND NOT THE VALUE.** ``CD-ASR-WO2R3-01`` reproduced ESCAPE 1 against it: the type of
+       ``OK.payload`` was exactly ``dict`` while the value it held was not the value the
+       validator had judged. Filing that under "not a limit" is worse than declaring no
+       limit at all, because the declaration is where a reader stops reading — and four
+       parties stopped there. It is not restated in a corrected form here; the corrected
+       statement of what IS closed about a returned value is DECLARED LIMIT 5, which is a
+       LIMIT and is filed as one. **This claim may no longer be cited toward CD-AC-002**
+       (PO-DECISIONS-0011 ruling 3, and the removal of the prop is the Product Owner's).
+
+    5. **THE PAYLOAD SNAPSHOT CLOSES THE ADAPTER ROUTE TO A DECLARED DEPTH AND OF DECLARED
+       TYPES, AND NOTHING WIDER.** Since WO-2R3 increment 6 the object stored on
+       ``OK.payload`` is a rebuild taken after the validation verdict and before
+       ``is_empty`` is called, and ``is_empty`` is handed a second, independent rebuild —
+       so an adapter that mutates its argument mutates neither the judged value nor the
+       stored one. :func:`_payload_snapshot` states the mechanism. **WHAT IT DOES NOT
+       REACH, each demonstrated by an arm of
+       ``variants/WO-2R3/P-A-escape1-stored-is-not-validated.py``:**
+
+       * **A CONTAINER THAT IS NOT EXACTLY ``dict``, ``list`` OR ``tuple`` IS CARRIED BY
+         REFERENCE**, and the adapter may still rewrite its interior after the snapshot.
+         Executable example — probe arm ``nested-dict-subclass``::
+
+             class Sub(dict): ...
+             payload = {"reading": 0.25, "nested": Sub({"reading": 0.25})}
+             def is_empty(self, payload):          # the adapter's own code
+                 payload["nested"]["reading"] = float("inf")
+                 return False
+             # stored: {"nested": {"reading": Infinity}, "reading": 0.25}
+             # and the stored payload FAILS the schema it was judged by
+
+       * **ANYTHING BELOW :data:`PAYLOAD_SNAPSHOT_MAX_DEPTH` IS CARRIED BY REFERENCE.**
+         Executable example — probe arm ``beyond-depth-cap``, which nests two hundred
+         levels and rewrites the innermost ``reading`` to ``inf`` after validation.
+
+       * **IF THE ``FetchedResponse`` DOOR HAS ITSELF BEEN DEFEATED, THIS CLOSURE GOES WITH
+         IT.** ESCAPE 2 rebinds ``FetchedResponse`` in this module's globals, after which
+         ``payload`` is a property and every read of it is the adapter's code. The payload is
+         now read ONCE and bound to a local (it was read FOUR times), so the object judged is
+         the object snapshotted even in that case — measured by
+         ``P-E1-what-is-closed-at-that-door.py`` arm (iv), ``times the payload PROPERTY was
+         read by package code: 4`` at ``531c95c`` and ``1`` now. **THAT IS A NARROWING, NOT A
+         CLOSURE:** one read still lets the look-alike choose what it hands over, and closing
+         the global-rebind route is NOT this increment's and is not claimed here.
+
+       * **THE VALIDATOR IS NOT COVERED AT ALL.** ``validator`` is the OTHER declared-
+         foreign protocol at this door, and it is handed the adapter's live object before
+         any snapshot exists. A validator that mutates the payload while judging it defeats
+         this closure completely, and CLOSING THAT ROUTE IS NOT WHAT THIS LIMIT CLAIMS. The
+         probe reports ``validator's argument IS the adapter's live object: True`` at every
+         arm, after the fix, on purpose.
+
+       **CARRIER MEASURED:**
+       ``tests/test_collector_runner.py::test_a_hostile_is_empty_cannot_change_the_stored_payload``
+       and its siblings go RED if the snapshot is removed or if ``is_empty`` is handed the
+       stored object. **For the three residues above: NOT PROVED TO BE CARRIED ANYWHERE** —
+       no test in this tree fails when a dict subclass nested inside a payload is rewritten
+       by an adapter, and this seat does not claim one does.
     """
     if not collector_run_id:
         raise ValueError("collect requires a non-empty collector_run_id")
@@ -617,6 +706,53 @@ def _established_ledger_verdict(ledger: ReadingLedger, key: ReadingKey) -> bool:
     return verdict
 
 
+def _payload_snapshot(payload: AbcMapping) -> dict:
+    """A payload the adapter holds no live reference into — to the declared depth.
+
+    **WHY THIS EXISTS.** ``validator.validate`` judged an object; ``adapter.is_empty`` is
+    then handed an object; ``OK`` then stores an object. Until WO-2R3 increment 6 all three
+    were THE SAME OBJECT, and the middle one is DECLARED-FOREIGN CODE (``CD-BP-003``). An
+    adapter whose ``is_empty`` rewrote the mapping it was handed, and then honestly answered
+    ``False``, had the rewritten mapping stored under a verdict earned by the original —
+    ``CD-ASR-WO2R3-01``, ESCAPE 1, which moved the WO-2R3 gate to RED.
+
+    ``OK.__post_init__`` has always done ``dict(self.payload)``, and that is why this defect
+    survived six increments of reading: a top-level copy IS taken, but it is taken AFTER the
+    foreign call, so it faithfully copies the mutation.
+
+    **WHAT IS REBUILT.** ``dict``, ``list`` and ``tuple`` **BY EXACT TYPE**, to
+    :data:`PAYLOAD_SNAPSHOT_MAX_DEPTH` levels. Exact type on purpose and not
+    :func:`isinstance`: walking a foreign mapping means calling ITS ``keys`` and
+    ``__getitem__``, which is the adapter's code running again inside the rebuild that
+    exists to stop the adapter's code mattering.
+
+    **WHAT IS CARRIED BY REFERENCE, AND IT IS A DECLARED LIMIT.** See DECLARED LIMIT 4 in
+    this module's header. Everything that is not exactly ``dict``/``list``/``tuple`` — which
+    includes a ``dict`` SUBCLASS and every mutable leaf — and everything below the depth
+    ceiling. The single top-level ``dict(payload)`` is the one place a non-exact mapping is
+    read, because the caller has already established that the payload IS a mapping and
+    ``OK`` would call ``dict`` on it regardless.
+
+    **THIS IS NOT A DEEP COPY AND MUST NOT BECOME ONE.** :func:`copy.deepcopy` dispatches to
+    ``__deepcopy__``/``__reduce_ex__`` on whatever it meets, so deep-copying a hostile
+    payload hands the adapter one more execution point — the opposite of the property this
+    function is for.
+    """
+    return _snapshot_value(dict(payload), 0)
+
+
+def _snapshot_value(value: object, depth: int) -> object:
+    if depth >= PAYLOAD_SNAPSHOT_MAX_DEPTH:
+        return value
+    if type(value) is dict:
+        return {key: _snapshot_value(item, depth + 1) for key, item in value.items()}
+    if type(value) is list:
+        return [_snapshot_value(item, depth + 1) for item in value]
+    if type(value) is tuple:
+        return tuple(_snapshot_value(item, depth + 1) for item in value)
+    return value
+
+
 def _attempt(
     adapter: SourceAdapter,
     *,
@@ -666,8 +802,18 @@ def _attempt(
             instance_path="",
         )
 
+    # READ ONCE (WO-2R3 increment 6, ESCAPE 1). `response.payload` was read FOUR separate
+    # times on this path — by the validator, by the mapping check, by `is_empty` and by `OK`.
+    # On an exact `FetchedResponse` that is four reads of one dataclass attribute and they
+    # agree. The exactness door above is what makes that true, and `CD-ASR-WO2R3-01`'s
+    # ESCAPE 2 defeats that door by rebinding `FetchedResponse` in this module's globals from
+    # caller code — after which `payload` is a PROPERTY, every read is the adapter's code
+    # running again, and each read may answer differently. Binding it once means the object
+    # judged and the object snapshotted are the same object even in that case.
+    raw_payload = response.payload
+
     try:
-        verdict = validator.validate(response.payload, adapter.response_schema)
+        verdict = validator.validate(raw_payload, adapter.response_schema)
     except SchemaRejection as exc:
         return Malformed(
             schema_error_class=exc.error_class,
@@ -696,7 +842,7 @@ def _attempt(
             instance_path="",
         )
 
-    if not isinstance(response.payload, AbcMapping):
+    if not isinstance(raw_payload, AbcMapping):
         # The declared schema admitted something that is not a JSON object, and
         # `OK.payload` is a mapping. Refused rather than wrapped: wrapping would invent
         # a key name, and an invented key is a shape the engine never agreed to.
@@ -705,8 +851,14 @@ def _attempt(
             instance_path="",
         )
 
+    # THE SNAPSHOT (WO-2R3 increment 6, ESCAPE 1). Taken AFTER the validation verdict and
+    # BEFORE any foreign code can reach the payload again; `is_empty` is handed a SECOND,
+    # independent snapshot, so the object it can mutate is not the object that is stored and
+    # not the object that was judged. What the rebuild does NOT reach is DECLARED LIMIT 4.
+    payload = _payload_snapshot(raw_payload)
+
     try:
-        empty = adapter.is_empty(response.payload)
+        empty = adapter.is_empty(_payload_snapshot(payload))
     except Exception as exc:
         return Malformed(
             schema_error_class=(
@@ -725,4 +877,4 @@ def _attempt(
     if empty:
         return Empty()
 
-    return OK(payload=response.payload, source_as_of_utc=response.source_as_of_utc)
+    return OK(payload=payload, source_as_of_utc=response.source_as_of_utc)

@@ -1196,11 +1196,96 @@ criteria:
         would be wrong. They are declared ESTABLISHED_HERE and this check PRINTS all four with
         file, line and parameter at every run, derived from the artefact. IT IS A DOOR THAT
         ADMITS, NOT AN ABSENCE OF A DOOR.
-        WHAT IS CLOSED AT THAT DOOR AND IS NOT A LIMIT: `policy` exact RetryPolicy (isinstance
-        admitted a subclass shadowing max_attempts with a property until this increment),
-        `started_utc` exact datetime then rebuilt by ensure_utc, `delay` exact DelayKind from a
-        closed enum, and every value the four Protocols RETURN exact-typed at its point of
-        return.
+        WHAT IS CLOSED AT THAT DOOR AND IS NOT A LIMIT — **REWRITTEN TO ITS MEASURED REACH AT
+        WO-2R3 INCREMENT 6 BY PRODUCT AUTHORITY (PO-DECISIONS-0011 ruling 3), AND ONE OF ITS
+        FOUR CLAIMS IS WITHDRAWN RATHER THAN RESTATED.** The wording this replaces is quoted in
+        full below and is NOT deleted (PBG-CONT-003, CD-RULE-004): corrections supersede.
+        SUPERSEDED WORDING, VERBATIM:
+          "WHAT IS CLOSED AT THAT DOOR AND IS NOT A LIMIT: `policy` exact RetryPolicy (isinstance
+           admitted a subclass shadowing max_attempts with a property until this increment),
+           `started_utc` exact datetime then rebuilt by ensure_utc, `delay` exact DelayKind from a
+           closed enum, and every value the four Protocols RETURN exact-typed at its point of
+           return."
+        WHY IT IS WRONG, AND IT IS WRONG IN A STATED DIRECTION: the fourth claim IS LITERALLY TRUE
+        AND WAS OFFERED AS CLOSURE, and IT CLOSES THE TYPE AND NOT THE VALUE. CD-ASR-WO2R3-01
+        reproduced ESCAPE 1 against it — `type(OK.payload) is exactly dict` while the value held
+        `inf`, a key outside the schema and a live module object. The auditor: "A claim filed
+        under 'not a limit' that turns out to be a limit is worse than an undeclared gap, because
+        the declaration is what a reader stops reading at." Four parties stopped there.
+        RE-MEASURED, CLAIM BY CLAIM, BY THIS SEAT AT THIS SHA — the whole list and not only the
+        sentence the auditor quoted. Command:
+        `python3 -B variants/WO-2R3/P-E1-what-is-closed-at-that-door.py`, run at a pristine
+        `git archive 531c95c` extraction and at this tree.
+        (a) `policy` exact RetryPolicy — HOLDS, AND HOLDS HARDER THAN CLAIMED. `@admits` compiles
+        its declared types at DECORATION time, so the ESCAPE 2 leverage does not touch it: with
+        `runner.RetryPolicy` rebound to an unrelated class, a GENUINE RetryPolicy is still
+        `ADMITTED final_outcome=OK` and the unrelated class is still `NotAdmitted: collect:
+        policy=_NotAPolicy is not admitted; this door requires exactly RetryPolicy`. The
+        parenthetical about "a subclass shadowing max_attempts with a property" is also narrower
+        than it reads: such a subclass CANNOT BE CONSTRUCTED — `AttributeError: property
+        'max_attempts' of '_ShadowingPolicy' object has no setter` — so the door is never
+        reached by that particular shape at all.
+        (b) `started_utc` exact datetime then rebuilt — HOLDS FOR THE TYPE ONLY, AND THAT IS
+        DECLARED LIMIT 2 IN collect's HEADER, NOT A CLOSURE. Measured: a `datetime` SUBCLASS is
+        `NotAdmitted`, a naive datetime is `NaiveTimestampRejected`, and
+        `started_utc=datetime(2016,1,1,tzinfo=utc)` is `ADMITTED final_outcome=OK`.
+        (c) `delay` exact DelayKind — HOLDS. A frozen look-alike carrying the same `.value` and
+        the bare `.value` string are both `NotAdmitted`.
+        (d) "every value the four Protocols RETURN exact-typed at its point of return" —
+        **WITHDRAWN AS A CLOSURE AND NOT RESTATED IN A CORRECTED FORM.** What is true about a
+        returned value is now filed as a LIMIT, in collect's DECLARED LIMIT 5. It may no longer
+        be cited toward CD-AC-002; the removal of that prop is the Product Owner's
+        (PO-DECISIONS-0011 ruling 3, adopting SUPPLEMENT-T2-GRADING §3).
+        AND THE DOOR THE SAME LIST CARRIES BY IMPLICATION: `type(response) is not FetchedResponse`
+        in runner.py RESOLVES ITS NAME AT CALL TIME from module globals, and is therefore NOT of
+        the same strength as (a). MEASURED, arm (iv), from an adapter that IMPORTS NOTHING from
+        crash_detector and reaches the runner's globals through the frame it is called in:
+        `reached module globals of : crash_detector.collectors.runner`,
+        `runner.FetchedResponse rebound: True`, `at the door: ADMITTED final_outcome=OK
+        {'reading': 0.25}` — a property-backed look-alike walks through. AN EXACT-TYPE DOOR IS
+        ONLY AS STRONG AS WHEN IT RESOLVES ITS TYPE, and this one module contains one of each.
+        NOT PROVED TO BE CARRIED ANYWHERE for the global-rebind route; closing it is not among
+        WO-2R3 increment 6's items and is not claimed.
+        DECLARED LIMIT — THE PAYLOAD SNAPSHOT (CD-RULE-004, stated identically in
+        src/crash_detector/collectors/runner.py's `collect` header as DECLARED LIMIT 5, here, and
+        in contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md; CD-RULE-006 applied).
+        Since increment 6 the object stored on `OK.payload` is a rebuild taken AFTER the
+        validation verdict and BEFORE `adapter.is_empty` is called, and `is_empty` is handed a
+        SECOND independent rebuild, so the object it can mutate is neither the judged one nor the
+        stored one. `_payload_snapshot` rebuilds `dict`, `list` and `tuple` BY EXACT TYPE to
+        PAYLOAD_SNAPSHOT_MAX_DEPTH (32) levels. Exact type on purpose: walking a foreign mapping
+        means calling ITS keys and __getitem__, which is the adapter's code running again inside
+        the rebuild that exists to stop the adapter's code mattering. It is NOT
+        `copy.deepcopy`, which dispatches to `__deepcopy__`/`__reduce_ex__` on whatever it meets
+        and would hand the adapter one more execution point.
+        WHAT IT DOES NOT REACH, EACH WITH AN EXECUTABLE EXAMPLE, ALL FIVE ARMS OF
+        variants/WO-2R3/P-A-escape1-stored-is-not-validated.py:
+        (1) A container that is not exactly dict/list/tuple is carried BY REFERENCE — arm
+        `nested-dict-subclass`: a `class Sub(dict)` nested in the payload, `is_empty` sets
+        `payload["nested"]["reading"] = inf`, and the stored payload reads
+        `{"nested": {"reading": Infinity}, "reading": 0.25}` and FAILS the schema it was judged
+        by (`JSONSCHEMA_MAXIMUM at /nested/reading`) AT BOTH SHAs.
+        (2) Anything below the declared depth is carried BY REFERENCE — arm `beyond-depth-cap`,
+        two hundred levels, innermost `reading` rewritten to `inf` after validation, AT BOTH SHAs.
+        (3) The VALIDATOR — the other declared-foreign protocol at this door — is handed the
+        adapter's live object BEFORE any snapshot exists. The probe prints
+        `validator's argument IS the adapter's live object : True` at every arm after the fix, on
+        purpose. Closing that route is the sink/ledger/validator question and it is unverified by
+        anyone; it travels to the fifth Assurance seat.
+        (4) If the FetchedResponse door has itself been defeated (arm (iv) above) the payload is a
+        PROPERTY. The payload is now read ONCE and bound to a local, where it was read FOUR times;
+        measured `times the payload PROPERTY was read by package code: 4` at 531c95c and `1` now.
+        That is a NARROWING, NOT A CLOSURE.
+        CARRIER MEASURED: tests/test_collector_runner.py::test_a_hostile_is_empty_cannot_change_the_stored_payload,
+        ::test_the_object_is_empty_is_handed_is_not_the_adapters_own_object,
+        ::test_a_hostile_is_empty_cannot_change_a_nested_plain_dict_either and
+        ::test_the_snapshot_depth_is_a_declared_number_and_the_residue_below_it_is_real — all
+        four measured RED against a tree with the snapshot reverted (`4 failed, 59 passed`) and
+        green with it. FOR RESIDUES (1), (2), (3) AND (4): NOT PROVED TO BE CARRIED ANYWHERE.
+        Residues (1) and (3) are PINNED by
+        ::test_the_snapshot_does_not_reach_a_container_that_is_not_exactly_a_dict and
+        ::test_the_validator_is_still_handed_the_adapters_live_object, which pass in BOTH arms by
+        design — they assert the limit is still exactly that wide, and they are pins, not carriers.
         EXECUTABLE EXAMPLE, AND IT IS A POSITIVE ONE — AN OBJECT THAT IS ADMITTED:
         variants/WO-2R3/V26-conforming-hostile-adapter.patch carries an adapter supplying all
         five protocol members, returning an exact FetchedResponse whose payload conforms to the
