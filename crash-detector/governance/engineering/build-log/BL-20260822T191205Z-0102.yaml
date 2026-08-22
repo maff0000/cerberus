@@ -1,0 +1,401 @@
+entry_id: BL-20260822T191205Z-0102
+timestamp_utc: '2026-08-22T19:12:05Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 67b7b29
+parent_entry_id: BL-20260822T181558Z-0101
+schema_version: 1
+
+action_summary: >
+  *** **WO-2R3 INCREMENT 5 IS RECONCILED AND ACCEPTED AS INCREMENT 5 AT LANE `46adf33` — AND IS NOT
+  ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005.** *** *** **ONE QUESTION GOES UP AND IS NOT ANSWERED
+  HERE: CD-D-134.** ***
+  CD-ENG-WO2R3-01 RETURNED ALIVE across THREE commits, identity CLEAN on all three, and committed as
+  it went for the FIFTH increment running. Porcelain ZERO lines; 34 changed paths all inside writable
+  scope; ONE build-log entry ADDED and no pre-existing entry modified.
+  *** **THE ORDERING CLAIM THAT DECIDES WHETHER THIS INCREMENT MEANS ANYTHING IS IN THE GIT GRAPH,
+  NOT IN PROSE, AND THE PROJECT LEAD RAN IT RATHER THAN READ IT.** The instrument landed ALONE at
+  `4a5098d` — `git show --stat` is ONE FILE, 702 insertions — and at that SHA
+  `src/crash_detector/establishment.py` **DOES NOT EXIST**. Extracted pristinely and run, it printed
+  **POPULATION 32, DECLARED TO @establishes: 0** and exited **1** with 32 violations. **THE
+  ENUMERATION GENUINELY PRECEDED THE MECHANISM.** Every other claim in this increment rests on that
+  and it is the one an auditor can check in ten seconds. ***
+  **THE FLOOR IS NOT THE POPULATION, MEASURED: 5 OF 32.** All five PO-named types are IN, each with
+  its declared field list printed. Accounting closes: 32 IN + 1 ADJACENT + 2 OUT = 35 public frozen
+  dataclasses, out of 96 classes examined, every one named in the output. The two OUT are `Migration`
+  and `AppliedMigration` — **the property-based enumeration and the amendment's §B.4 Class C scoping
+  agree on the exclusions**, which is a check on both and neither was told about the other.
+  *** **AND THE MOST VALUABLE THING IN THE INCREMENT IS THE SEAT'S FINDING AGAINST ITS OWN
+  INSTRUMENT.** CD-ENG-WO2R3-F21: the first draft did not resolve module-level names and measured
+  the population at **18**. It missed `Value`/`Degraded`/`Unknown`, reachable only through
+  `one_of(*READING_CONSTRUCTORS)` — an expression that spells no constructor — and nine more
+  reachable only through fields. **IT WAS MEASURING A VOCABULARY, WHICH IS THE EXACT ERROR THIS
+  INCREMENT EXISTS TO CLOSE.** The seat caught it, corrected in the WIDENING direction 18 -> 32, and
+  wrote it into the instrument's own header rather than quietly fixing it. **THE EIGHTH CONSECUTIVE
+  SEAT TO RAISE A FINDING AGAINST ITS OWN WORK.** ***
+  **P7 AT THE CONSTRUCTOR IS WHAT MAKES THIS A CLASS CLOSURE AND NOT THIRTY-TWO TYPE CHECKS, AND IT
+  BITES:** V39 adds an ordinary field to the real `PanelRow` without declaring it, and an ORDINARY
+  construction that never mentions the new field raises
+  `crash_detector.establishment.UndeclaredField: PanelRow is a FAULTED type and every construction of
+  it is refused`. PL-measured: static check exit 1, suite 57 failed / 1480 passed.
+  **AND THE CLOSURE IS PURELY ADDITIVE — A PROPERTY NO PARTY STATED AND THE PROJECT LEAD MEASURED:
+  `git diff 4ac159e..46adf33 -- src/` CONTAINS ZERO DELETED LINES.** No body-borne establishment was
+  removed anywhere. Nothing that was guarded became unguarded, and every type now carries BOTH its
+  body checks and the boundary-derived establishment.
+
+reconciliation_method: >
+  Every figure below was RUN BY THE PROJECT LEAD in pristine `git archive` extractions, `python3 -B`
+  throughout, a SEPARATE extraction per variant and TWO INDEPENDENT extractions per plant arm. No
+  number in this entry is transcribed from the seat's return. Where this seat did NOT re-measure
+  something, it is in `what_was_not_verified_by_the_project_lead_at_this_boundary` and nowhere else.
+
+the_seat_returned_and_the_project_lead_measured:
+- claim: 'Lane SHA, tree state, authorship.'
+  measured: >
+    HEAD `46adf3372fae190d1d760bb0885283775af81429` on branch `wo-2r3`; `git status --porcelain`
+    **ZERO LINES**; THREE commits 4ac159e..HEAD;
+    `git log --format='%an <%ae> | %cn <%ce>' 4ac159e..HEAD | sort -u` returns **EXACTLY ONE LINE**
+    and both fields are `CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid>`. AGREES.
+- claim: 'Scope discipline.'
+  measured: >
+    34 changed paths, ALL inside writable scope (`src/`, `tests/`, `tools/`, `contracts/`, `plants/`,
+    `variants/`, `required-tests.yaml`, `governance/engineering/build-log/`).
+    `git diff --name-status 4ac159e..46adf33 -- governance/` returns **a single `A`** —
+    BL-20260822T185635Z-0065 ADDED, no pre-existing entry modified. `ACTIVE_WORK.yaml` untouched by
+    the seat, so CD-RULE-007 does not arise on its side. AGREES.
+- claim: '**THE INSTRUMENT WAS BUILT AND RUN BEFORE THE MECHANISM EXISTED.**'
+  measured: >
+    `git show --stat 4a5098d` — **1 file changed, 702 insertions**, and it is the instrument.
+    `ls src/crash_detector/establishment.py` at that SHA — **No such file or directory**. Pristine
+    extraction of `4a5098d`, instrument run: **EXIT 1**, `POPULATION — THE BODY-BORNE
+    FIELD-ESTABLISHMENT CLASS: 32. DECLARED TO @establishes: 0.`, `FAIL — 32 violation(s)`.
+    **CONFIRMED, AND IT IS THE LOAD-BEARING FACT OF THE INCREMENT.**
+- claim: 'At the returned SHA: constructor check, doors check, suite.'
+  measured: >
+    Constructor check **EXIT 0**, `PASS — 96 assertions, 0 violations`, POPULATION 32 / DECLARED 32.
+    Doors check **EXIT 0**, `PASS — 54 assertions`, SUBJECTS 27 / DECORATED 27 — unchanged, so the
+    increment-2 closure is intact. Suite **EXIT 0, 1537 passed**. AGREES.
+- claim: 'Node-id conservation, 1519 -> 1537, zero lost.'
+  measured: >
+    **SETS DIFFED, NOT COUNTS COMPARED** (`--collect-only -q | grep :: | sort`, then `comm`).
+    `comm -23` (in base, not in head) is **EMPTY — ZERO LOST**. `comm -13` is **18 ADDED**, and
+    `sed 's/::.*//' | sort -u` shows every one is in the new `tests/test_field_establishment.py`.
+    Zero replaced. AGREES.
+- claim: 'V17 both arms, refusing layer named from the failure text.'
+  measured: >
+    BASELINE (V17 + V35, mechanism present) — **REFUSED**:
+    `crash_detector.establishment.FieldNotEstablished: ConfigSnapshot.dial_specs[0]=DuckDialSpec is
+    not admitted; every element must be exactly DialSpec`. **THE LAYER IS THE CLASS BOUNDARY** — not
+    `engine/config.py`'s body, which V17 has deleted, and not a door.
+    VIOLATED (+ V40) — **ESCAPED**, `ConfigSnapshot CONSTRUCTED with duck dial_specs`, stored element
+    types `['DuckDialSpec','DuckDialSpec']`, `spec_for('equity_crash') -> DuckDialSpec`. AGREES.
+- claim: '**With V17 applied, BOTH static checks still exit 0** — the seat''s own disclosure.'
+  measured: >
+    CONFIRMED. Constructor check exit 0 / PASS 96; doors exit 0 / PASS 54, **with V17 applied**.
+    V17 removes a BODY and neither check reads bodies. **THE CLOSURE IS A RUNTIME CLOSURE AND IS
+    PROVED BY RUNNING IT, NOT BY A STATIC PASS.** The seat volunteered this rather than letting a
+    green static run stand in for the claim, and it is the single most important sentence for the
+    fourth Assurance seat to read before it forms a verdict.
+- claim: 'V39 — P7 at the constructor.'
+  measured: >
+    BASELINE — static check **EXIT 1**, rule `FIELD_NOT_DECLARED_TO_ESTABLISHES`, and an ORDINARY
+    construction raises `crash_detector.establishment.UndeclaredField: PanelRow is a FAULTED type and
+    every construction of it is refused. field 'tolerate_stale' is in the DECLARED FIELD LIST of
+    PanelRow and was NOT declared to establishes()`. Suite **57 failed, 1480 passed**.
+    VIOLATED (+ V41) — runtime **ADMITTED**, suite **2 failed, 1535 passed**; the 55 refusal-driven
+    failures vanish, which IS the contrast. **AND A THING THE PROJECT LEAD FOUND THAT THE RECORD DOES
+    NOT SAY: the static check still exits 1 in the violated arm, but under a DIFFERENT RULE —
+    `FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST`.** The instrument catches removal
+    of the mechanism as well as violation of it. The closure is STRONGER than recorded, not weaker.
+    See CD-PL-F90.
+- claim: 'Eleven plants: 11/11 apply, 10 contrast, GRANT-MATRIX-LIVE not a contrast.'
+  measured: >
+    **11 OF 11 APPLY** (`git apply --check` in a fresh extraction each). **TEN CONTRAST 0 -> 1**,
+    each measured with TWO INDEPENDENT pristine extractions and the plant's own `execute` command
+    read out of `required-tests.yaml`. `CD-RT-003-GRANT-MATRIX-LIVE` **EXITS 3 ON BOTH ARMS** — no
+    live PostgreSQL — **indistinguishable, THEREFORE NOT A CONTRAST**, and correctly declared rather
+    than counted. AGREES exactly.
+- claim: 'One plant regenerated, content byte-identical, only hunk context moved.'
+  measured: >
+    `CD-RT-002-TYPE-NO-ARITHMETIC`. Added/removed content lines extracted from both versions and
+    hashed: **md5 `2fd15045ca38371748143bc4614b4957` on BOTH**. Only the blob ids, the hunk offset
+    (`@@ -216` -> `@@ -249`) and the trailing context moved — the context moved because increment 5
+    added `@establishes(` above the next class. **THE PROPOSITION IS UNTOUCHED AND THE CLAIM IS
+    EXACT.** LAYER TEST APPLIED (CD-ENG-WO2R3-F12): the planted arm fails on
+    `test_neither_score_type_defines_any_arithmetic_or_coercion_dunder` and
+    `test_no_ancestor_of_either_score_type_defines_one_either` — **the CD-AC-002 dunder-surface
+    assertions BY NAME**, read from the failure text and not from the exit code.
+- claim: 'Variants: WO-2R3 27/27, WO-2R2 14/14, WO-2R 66/70 down from 67/70, and the fourth is mine.'
+  measured: >
+    **27/27, 14/14, 66/70** at the returned SHA. At the BASELINE 4ac159e: **67/70**, with E04, V03
+    and V06 already failing. **THE DELTA IS EXACTLY ONE PATCH AND IT IS EXACTLY THE ONE THE SEAT
+    NAMED**: `V05-decorator-installs-the-member.patch`. AGREES precisely.
+- claim: 'The Class-2 sweep numbers moved as a side effect: 514/11 -> 534/15.'
+  measured: '**EXIT 1, 534 sites, 15 violations.** AGREES exactly. NOT the seat''s to fix (CD-D-127 ruled (C)).'
+- claim: 'Register hygiene.'
+  measured: >
+    Parsed, not grepped: **NO status-like key at any depth** (status, result, outcome, verdict, grade,
+    score, disposition, state — recursive walk of the whole document). `latest_admitted_run` is
+    **None**. AGREES.
+- claim: 'DECLARED LIMIT 1 corrected in all three CD-RULE-004 places, superseded wording quoted.'
+  measured: >
+    CONFIRMED in the check header, the register entry and
+    `contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md`. The correction separates **WHAT IS
+    STILL TRUE** (this check reads CALLABLES; V17 still leaves it exiting 0 with 54 assertions) from
+    **WHAT IS NO LONGER TRUE — THE HAND-OFF** (the residue now has a carrier, and the carrier is
+    MEASURED per CD-RULE-006: the structure, the enumeration command, and V17 run in both arms) from
+    **WHAT IS STILL NOT CARRIED** (cross-field relations, with V36 as the executable example and the
+    words "NOT PROVED TO BE CARRIED ANYWHERE"). The superseded wording is QUOTED IN FULL rather than
+    deleted. **THIS IS THE CD-RULE-004/006 STANDARD MET PROPERLY AND NOT PERFORMED.**
+
+the_project_lead_attacked_it_on_a_route_no_corpus_contains:
+  why_this_route: >
+    The check recognises `establishes` **BY ITS NAME IN THE SOURCE** — the seat declared that as a
+    limit and named a carrier. **THIS PROJECT HAS BEEN HURT BY EXACTLY THIS SHAPE BEFORE**
+    (`V18-counterfeit-admits`, increment 2), so the declaration is worth attacking rather than
+    reading. CD-RULE-006's whole point is that a NAMED CARRIER IS A CLAIM until it is measured.
+  what_was_done: >
+    A pristine extraction of `46adf33`; a new module `src/crash_detector/own_measure.py` defining a
+    **DO-NOTHING `establishes`** of the same name and signature; `witness/panel.py` rewritten to
+    import the counterfeit instead of the real one. Uncorpused — it is not V18, which counterfeited
+    `admits` one level up, and it is not among the seat's own seven variants.
+  what_was_measured:
+  - '**THE STATIC CHECK IS FOOLED: EXIT 0, `PASS — 96 assertions, 0 violations`.** Exactly as
+     DECLARED LIMIT 3 says it would be. The declaration is HONEST.'
+  - '**THE NAMED CARRIER HOLDS AND IT FIRED.** The suite goes to `1 failed, 1536 passed` and the
+     failure is `tests/test_field_establishment.py::test_the_static_enumeration_and_the_runtime_population_are_the_same_class`
+     — **precisely the test the seat named as the measured carrier for that limit.** A carrier that
+     was named, and that refuses when attacked. CD-RULE-006 satisfied by measurement.'
+  - '**AND THE ESCAPE DOES NOT LAND ANYWAY**, for a reason that is itself worth recording: the duck
+     construction is still REFUSED, by `TypeError: PanelRow.state must be a str: expected str, got
+     Duck` — `PanelRow.__post_init__`''s ORIGINAL body-borne establishment, which increment 5 did NOT
+     delete. **DEFENCE IN DEPTH, AND IT IS NOT AN ACCIDENT: `git diff 4ac159e..46adf33 -- src/` HAS
+     ZERO DELETED LINES ACROSS THE WHOLE INCREMENT.**'
+  what_it_does_and_does_not_establish: >
+    It establishes that the name-recognition limit is real, correctly declared, and carried by a
+    measured runtime control. **IT DOES NOT ESTABLISH THAT NO COUNTERFEIT ROUTE EXISTS** — one probe
+    on one type is not a class result, and it is offered as a probe and not as a closure. The fourth
+    Assurance seat should assume there is a second route and look for it rather than check this one.
+
+the_dispatch_gap_this_boundary_closed: >
+  The increment-5 dispatch declared that the suite had been COLLECTED and not RUN at 4ac159e, so
+  whether all 1519 passed was NOT established. **IT IS NOW, TWICE INDEPENDENTLY:** the seat
+  established it, and the Project Lead re-ran it at this boundary in the baseline extraction —
+  `1519 passed`, exit 0. The dispatch's own declared unknown is discharged rather than left standing.
+
+rulings_on_the_five_findings_the_seat_raised_against_its_own_work:
+- id: CD-ENG-WO2R3-F17
+  severity_as_raised: MEDIUM
+  finding: 'The ADJACENT SET — a frozen public judgement-path type with NO `__post_init__` has establishment that is ABSENT rather than BODY-BORNE, so it falls outside the class the PO ruled and the check names it rather than failing it.'
+  project_lead_replication: >
+    MEASURED. The instrument prints `ADJACENT SET ... : 1` and names it —
+    `observations.py:170 Empty [RULE C] fields=[]` — with the words **"and this is a real hole"** in
+    its own output. `dataclasses.fields(Empty)` returns **`[]`**, frozen True, no `__post_init__`.
+  ruling: >
+    **UPHELD. NOTHING IS UNGUARDED TODAY — a type with zero fields has nothing to establish — AND IT
+    IS REAL FOR ANY FUTURE TYPE.** The seat was RIGHT NOT TO CLOSE IT: widening the class the Product
+    Owner ruled is not an Engineer's call, the objective says "AND NOTHING ELSE", and the seat said
+    so in those terms rather than doing it and disclosing afterwards. **THAT IS THE BEHAVIOUR THIS
+    PROJECT HAS REWARDED SIX BOUNDARIES RUNNING.** It goes up as **CD-D-134** and is NOT blocking.
+- id: CD-ENG-WO2R3-F18
+  severity_as_raised: MEDIUM
+  finding: 'Cross-field invariants cannot be derived from a declared field list and remain body-borne.'
+  project_lead_replication: >
+    MEASURED, not reasoned about. V36 applied to a pristine extraction and run:
+    **`ACCEPTED -> ConfigSnapshot CONSTRUCTED carrying two equity specs and no monetary spec`**,
+    element types `['DialSpec','DialSpec']` (all exactly DialSpec), dial_ids
+    `['equity_crash','equity_crash']`, and the probe's own closing line —
+    **"THE BOUNDARY IS SATISFIED AND THE OBJECT IS WRONG."**
+  ruling: >
+    **UPHELD AND CORRECTLY NOT CLOSED.** Closing it needs a way to derive a RELATION from a
+    DECLARATION, which is a design question and not reconciliation work. It is DECLARED under
+    CD-RULE-004 in all three places with an executable example and, under CD-RULE-006, the honest
+    words **"NOT PROVED TO BE CARRIED ANYWHERE"** for the residue as a structure. **THE INCREMENT
+    NARROWED ITS OWN INVARIANT TO ITS MEASURED REACH RATHER THAN STATING IT AT THE WIDTH THE WORK
+    LOOKED LIKE** — the CD-PL-F76 defect, avoided. CARRIED, not dispatched.
+- id: CD-ENG-WO2R3-F19
+  severity_as_raised: LOW
+  finding: 'The seat wrote "measured, not assumed" into a declared limit BEFORE the measurement existed, and the measurement then REFUTED it — a `@dataclass` subclass regenerates `__init__` and loses even its inherited fields.'
+  ruling: >
+    **UPHELD, AND THE PATTERN IS NOW ACROSS BOTH PARTIES AND IS THE PROJECT'S MOST PERSISTENT DEFECT
+    SHAPE.** CD-PL-F80, CD-PL-F83, CD-ENG-WO2R3-F19, and **CD-PL-F88 raised against THIS SEAT EARLIER
+    IN THIS SAME SESSION** — a claim of measurement standing where no measurement had been taken.
+    The limit was widened to its measured reach, which is the right remedy. **IT IS THE CD-PL-F87 /
+    IMP-022 FAMILY** — a hand-written assertion about a machine-checkable fact with nothing binding
+    the two — and it belongs to that harvest, not to a local fix.
+- id: CD-ENG-WO2R3-F20
+  severity_as_raised: LOW
+  finding: '`variants/WO-2R` goes 67/70 -> 66/70. The fourth is the seat''s own, bisected, cause named, proposition claimed untouched. Not updated — left as the Project Lead''s scope call.'
+  project_lead_replication_and_it_went_further_than_the_seat: >
+    CONFIRMED: 67/70 at 4ac159e, 66/70 at 46adf33, and the delta is **exactly**
+    `V05-decorator-installs-the-member.patch`. Cause measured: `error: patch failed:
+    src/crash_detector/dials/reading.py:286` — increment 5 added `@establishes(...)` to `reading.py`
+    and moved the context. **THE PROJECT LEAD THEN TESTED THE PART THE SEAT ONLY ASSERTED:** re-applied
+    V05 with `patch -p1 -F5` (succeeded at 286 with fuzz 3) and ran its proposition —
+    **`crash_detector.dials.reading.ReadingSurfaceViolation` RAISES AT IMPORT.** The escape is STILL
+    REFUSED. **THE FAILURE IS PURE CONTEXT COLLISION AND THE CORPUS'S REGRESSION-FLOOR VALUE FOR THAT
+    ROUTE IS INTACT.**
+  ruling: >
+    **UPHELD AND CORRECTLY NOT ACTED ON, ON THE PRECEDENT SET ONE INCREMENT AGO.** CD-ENG-WO2R3-F16
+    was the identical situation and was ruled: CD-D-033 is about the eleven declared PLANTS, which
+    are a deliverable of the rework; **the WO-2R VARIANT CORPUS IS A PRIOR AUDITOR'S EXCLUSION SET**
+    and is not this dispatch's to rewrite. The seat applied the standing precedent instead of
+    inventing a new answer, and referred the scope call upward exactly as it should.
+- id: CD-ENG-WO2R3-F21
+  severity_as_raised: LOW
+  finding: 'The instrument''s first draft did not resolve module-level names and measured the population at 18. It was measuring a VOCABULARY. Corrected to 32 and recorded in the instrument''s own header.'
+  project_lead_replication: >
+    CONFIRMED in the artefact: the header reads **"THE FIRST DRAFT OF THIS INSTRUMENT DID NOT RESOLVE
+    THEM AND MEASURED THE POPULATION AT 18; RESOLVING THEM MEASURED IT AT 32."**
+  ruling: >
+    *** **UPHELD, AND IT IS THE MOST VALUABLE THING IN THE INCREMENT — MORE VALUABLE THAN THE
+    MECHANISM.** *** The seat, building the instrument whose whole purpose is to prove that an
+    enumeration cannot close a property-defined class, **BUILT ONE THAT MEASURED A VOCABULARY** — and
+    caught it, corrected it in the **WIDENING** direction, and wrote the near-miss into the artefact
+    where the fourth Assurance seat will read it. Had it shipped 18, every downstream claim would
+    have been true of a class that was not the class, and **a static instrument that under-reports is
+    exactly the failure mode nobody downstream can see.** Severity LOW is correct because it was
+    caught before it landed; its VALUE is not measured by its severity.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F90
+  severity: LOW
+  raised_against: 'CD-ENG-WO2R3-01''s Build Log entry BL-20260822T185635Z-0065, on the V39/V41 violated arm.'
+  the_finding: >
+    **THE VIOLATED ARM OF THE INCREMENT'S MOST IMPORTANT PLANT IS RECORDED BY ITS RUNTIME EFFECT ONLY
+    — "faults 0, ADMITTED, the new field arrived UNGUARDED" — AND THE RECORD DOES NOT SAY THAT THE
+    DECLARED STATIC COMMAND EXITS 1 IN *BOTH* ARMS.** It does. PL-measured: baseline exit 1 under rule
+    `FIELD_NOT_DECLARED_TO_ESTABLISHES`, violated exit 1 under rule
+    `FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST`. The entry names the first rule and
+    **not the second** (verified by parsing the entry).
+  why_it_matters_and_why_it_is_only_LOW: >
+    A reader who runs the declared command across both arms sees **exit 1 -> exit 1** and can conclude
+    NO CONTRAST — which is the `GRANT-MATRIX-LIVE` shape this project already treats as
+    not-a-contrast. Here the arms ARE distinguishable, but **only by reading the RULE NAME in the
+    failure text**, which is CD-ENG-WO2R3-F12's own standard turned back on the seat that raised it.
+    **IT IS LOW BECAUSE THE DIRECTION IS UNDERSTATEMENT:** the closure is stronger than the record
+    says — the instrument catches REMOVAL of the mechanism as well as violation of it — and the
+    runtime contrast (57 failed -> 2 failed) is real, exact and correctly recorded.
+  what_is_NOT_claimed: >
+    Nothing is overstated by the seat, no measurement is wrong, and no ruling, SHA, severity or
+    acceptance moves. This is a completeness defect in one row of one entry, and it is recorded
+    because the fourth Assurance seat will run that exact command.
+  remedy: 'Recorded here. NOT a correction to the seat''s entry — the entry is not this seat''s to edit (PBG-CONT-003), and the seat is not being re-dispatched for one row.'
+
+decisions_ruled_here:
+- id: CD-D-135
+  decision: >
+    **WO-2R3 INCREMENT 5 IS RECONCILED AND ACCEPTED AS INCREMENT 5 AT LANE `46adf33`. THE CLASS IS
+    ACCEPTED AS *CLOSED IN PART*, WHICH IS THE SEAT'S OWN CHARACTERISATION AND IS THE HONEST ONE.**
+    The body-borne field-establishment class is closed as a CLASS — enumerated at 32 by an instrument
+    that ran before the mechanism existed, derived from `dataclasses.fields(cls)`, applied at the
+    class boundary, refusing in both directions, with a new field arriving REFUSED on every
+    construction. Four things are declared open and each has an executable example.
+  what_this_acceptance_is_NOT: >
+    **IT IS NOT ACCEPTANCE AS CLOSING CD-AC-002 OR CD-AC-005**, which is the fourth Assurance seat's
+    grading and which the Product Owner has now reserved for the SIXTH boundary running
+    (PO-DECISIONS-0009 ruling 5). **RECONCILIATION IS NOT ACCEPTANCE; ACCEPTANCE IS NOT ASSURANCE.**
+    It is also not a finding that the instrument's definition is correct — that definition is the
+    fourth seat's named target (4) and this seat has not adjudicated it.
+- id: CD-D-136
+  decision: >
+    **THE FOUR DECLARED-OPEN RESIDUES OF INCREMENT 5 ARE CARRIED, NOT DISPATCHED, AND JOIN THE FOURTH
+    ASSURANCE SEAT'S READING LIST:** (1) cross-field relations remain body-borne (F18, V36, "NOT
+    PROVED TO BE CARRIED ANYWHERE"); (2) the ADJACENT set (F17, CD-D-134 below); (3) the
+    `__closure__` interpreter route (V37 ARM 4, the same CPython-level limit as increment 3's
+    DECLARED LIMIT 6, PL-confirmed ESCAPED); (4) the subclass route (F19, widened to its measured
+    reach). **NONE IS DISPATCHED HERE.** Increment 5 delivered its bounds; opening a sixth increment
+    on residues an independent seat has not yet examined would repeat the pattern PO-DECISIONS-0009
+    ruling 1 rejected — the implementer answering before the auditor asks.
+
+open_decision_put_to_the_product_authority_and_not_answered_here:
+- id: CD-D-134
+  question: >
+    **DOES THE RULED CLASS READ "BODY-BORNE" OR "BODY-BORNE *OR ABSENT*"?** A frozen public
+    judgement-path type with NO `__post_init__` has field establishment that is ABSENT, not
+    body-borne, so it falls OUTSIDE the class PO-DECISIONS-0007 ruling 1 created and outside the
+    re-base at PO-DECISIONS-0008 ruling 2. The instrument therefore NAMES such a type rather than
+    requiring it to be declared.
+  the_facts_all_PL_MEASURED: >
+    Exactly ONE such type exists today: `observations.py:170 Empty`, and `dataclasses.fields(Empty)`
+    returns **`[]`** — **so NOTHING IS UNGUARDED NOW, because a type with no fields has nothing to
+    establish.** The instrument prints the adjacent set, names its member, and labels it **"and this
+    is a real hole"** in its own output — it is disclosed, not hidden. **THE EXPOSURE IS PROSPECTIVE:
+    a NEW frozen public judgement-path type that simply omits `__post_init__` would be outside the
+    ruled class and would arrive unguarded.**
+  the_options: >
+    **(A) WIDEN THE CLASS to "body-borne OR absent".** The seat estimates a one-clause change to the
+    instrument plus one decorator, and 32 -> 33. It removes a prospective hole in the definition
+    rather than in the code. **(B) LEAVE IT AS RULED**, declared, with the adjacent set printed every
+    run — on the ground that a type with no fields is not a judgement risk and that widening a ruled
+    class to cover a hypothetical is how scope grows. **(C) HAND IT TO THE FOURTH ASSURANCE SEAT**
+    as part of the standing invitation to attack the whole §D scoping (CD-D-112), and decide it on
+    that seat's measured grounds rather than on anyone's reading.
+  the_project_lead_recommends: >
+    **(C), THEN (A) IF THE SEAT AGREES** — and states its reasoning so it can be overturned on it.
+    The fourth seat is already directed at this instrument's enumeration (CD-D-119) and at the §D
+    scoping (CD-D-112); the adjacent set is the sharpest concrete instance of both and the seat is
+    the right party to test whether "absent" and "body-borne" are one class or two. **AGAINST ITS OWN
+    RECOMMENDATION:** (A) is cheap, the exposure is real if a type is added before the seat reports,
+    and "we deferred a one-line fix to an audit" is a poor sentence to write if that happens.
+  why_it_is_the_product_owner_s_and_not_the_project_lead_s: >
+    It WIDENS A CLASS THE PRODUCT OWNER RULED AND RE-BASED, twice, in terms. The PO has already
+    marked its own census beaten once on this exact axis (CD-D-114) and told this project that an
+    enumeration cannot close a property-defined class. **A Project Lead that widened the ruled class
+    itself would be setting scope the Product Owner has twice reserved** — and would be doing it on
+    the definition, which is the most load-bearing sentence in the increment.
+  it_is_NOT_blocking: >
+    Increment 5 stands as delivered under all three answers. The fourth Assurance seat may be
+    dispatched without waiting for this.
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- '**THE INSTRUMENT''S DEFINITION OF "BODY-BORNE FIELD ESTABLISHMENT" WAS NOT ADJUDICATED.** This
+   seat verified that the instrument RAN before the mechanism, that its accounting closes
+   (32+1+2=35 of 96 examined), that all five PO-named types are IN, and that its exclusions agree
+   with §B.4. **IT DID NOT RULE THAT THE DEFINITION IS THE RIGHT ONE.** That is the fourth Assurance
+   seat''s named target (4) and it is not this seat''s to pre-empt or to bless.'
+- '**THE 32 MEMBERS WERE NOT INDIVIDUALLY AUDITED.** The population was read from the instrument''s
+   own `--why` ledger, which is the artefact under audit. An independent enumeration by a different
+   method was NOT built. Direction of risk: if the definition under-includes, this boundary would not
+   see it — which is exactly what CD-ENG-WO2R3-F21 was.'
+- '**ONLY ONE COUNTERFEIT ROUTE WAS PROBED, ON ONE TYPE.** The counterfeit-`establishes` probe is one
+   probe and is NOT a class result. It establishes the declared limit is honest and its named carrier
+   fires; it does NOT establish that no other counterfeit route exists.'
+- '**V38, V42 AND V37 ARMS 1-3 WERE NOT INDEPENDENTLY RE-RUN.** V37 was run in full (all four arms
+   reproduce, including ARM 4''s `__closure__` ESCAPE). V36, V39, V40, V41 and V17/V35 were run.
+   **V38 and V42 were NOT** — they are carried on the seat''s evidence and this is the only place
+   that is said.'
+- '**THE SEAT''S OWN BUILD LOG ENTRY WAS PARSED, NOT READ IN FULL.** Its 37 keys, five findings, entry
+   id, parent chain and block placement were checked mechanically; its prose was sampled, not audited
+   sentence by sentence.'
+- '**NO ASSURANCE WAS PERFORMED AND NONE IS OFFERED.** Five increments of Project Lead reconciliation
+   are not assurance and are not offered as any (PBG-SOD-001, PBG-AUTH-006).'
+
+next_safe_action: >
+  **STOP AT THE GATE. INCREMENT 5 IS BANKED AND THE NEXT BOUNDARY IS AN INDEPENDENT SEAT, NOT MORE
+  ENGINEERING.**
+  **DISPATCH THE FOURTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 at `46adf33` — none of
+  CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001, non-waivable).
+  Its brief carries **CD-D-129's THREE MANDATORY CLAUSES, VERBATIM AND UP FRONT** — the governed
+  instrument exiting 1 by declared state with its bisect; verdicts against DECLARATIONS and never
+  exit codes alone, a RED-on-sight being a METHOD DEFECT IN THE SEAT THAT WRITES IT; and the standing
+  invitation to attack the dispositions-after sequencing — plus the **TEN NAMED TARGETS** and the
+  **CD-PL-F89 collision disclosure**. **ADD TO ITS READING LIST** the four declared-open residues of
+  increment 5 (CD-D-136) and the one sentence that matters most: **with V17 applied, BOTH static
+  checks still exit 0 — the closure is a RUNTIME closure and a green static run is not evidence of
+  it.** Carry the CD-ENG-WO2R3-F12 standard: a plant is evidence when it APPLIES, CONTRASTS, **AND
+  FAILS AT THE LAYER ITS PROPOSITION NAMES**.
+  **PUT CD-D-134 TO THE PRODUCT AUTHORITY.** NOT BLOCKING; the seat may be dispatched in parallel.
+  **DO NOT** write the eleven Class-2 sweep dispositions (CD-D-130). **DO NOT** open a sixth
+  increment on the four declared residues (CD-D-136). **DO NOT** admit anything (CD-RULE-001).
+  **DO NOT** merge or promote the lane or f30e63c. **DO NOT** grade CD-AC-002 or CD-AC-005.
+
+continuity_record_commit: PENDING
