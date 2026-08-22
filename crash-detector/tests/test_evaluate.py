@@ -1,13 +1,42 @@
 """``evaluate`` — the pure core, and the empty-registry UNKNOWN path (CD-AC-001).
 
-The headline test of this increment is
+The headline test of this file is
 :func:`test_with_no_sources_declared_both_dials_read_unknown` — the WO-2 shipped state,
 which must be ``Unknown`` and must never be a number.
 
-``FakeModel`` below is a TEST DOUBLE. It exists only to reach the code paths that a real
-contribution model will one day reach; no model is registered in the application
-(``CONTRIBUTION_MODELS`` is empty, CD-D-005), and inventing one there would be inventing
-product meaning.
+====================================================================================
+WHAT BP-AMENDMENT-0001 §C CHANGED IN THIS FILE, AND WHAT IT COST
+====================================================================================
+
+There used to be two test doubles here — ``FakeModel``, which returned a fixed magnitude,
+and ``ExplodingModel``, which raised. **BOTH ARE DELETED, BECAUSE THE THING THEY WERE
+DOUBLES OF IS DELETED.** ``ContributionModel`` was a caller-supplied object and §C removes
+the field that held one; a double for a type that cannot exist is not a test, it is a
+fossil.
+
+In their place a dial that names a model names it BY ID, and the model registry the
+snapshot carries is derived from what the dials declare — the same mechanical derivation
+``_registry_for`` already does for the source registry, and for the same reason: not one
+assertion should have to move to accommodate a new field, because a test edited to
+accommodate new code is how a guard quietly stops guarding.
+
+**THE HONEST CONSEQUENCE, STATED RATHER THAN LEFT TO BE NOTICED.**
+:class:`~crash_detector.engine.model.MappingKind` ships with exactly one member and that
+member COMPUTES NOTHING (PO-DECISIONS-0005 ruling 2). So under every configuration this
+product can currently construct, a fully-supplied dial reaches
+:func:`~crash_detector.engine.mapping.compute` and is REFUSED with
+:exc:`~crash_detector.engine.mapping.UnspecifiedMapping`. No dial number exists anywhere,
+by design, until CD-D-005 lands.
+
+That means the value-bearing tail of ``_evaluate_dial`` — score-type selection, provenance
+stamping, ``_oldest_as_of`` — is **no longer reachable end to end**, and the tests that
+reached it that way could not survive unchanged. Each has been REPLACED, not dropped: the
+replacement asserts the same proposition against the structure that now carries it, either
+at the executor boundary or against the helper that owns the rule. Every old node id, its
+successor and the reason are named in the commit that lands this file (the deleted-subject
+rule of the WO-2R3 dispatch). Where a proposition genuinely lost coverage, the test that
+replaced it says so in its own docstring rather than in a report nobody reads next to the
+code.
 """
 
 from __future__ import annotations
@@ -39,7 +68,14 @@ from crash_detector.engine.evaluate import (
     refuse_a_number_without_its_inputs,
     required_inputs_are_all_present,
 )
-from crash_detector.engine.model import CONTRIBUTION_MODELS, ScoreComputation
+from crash_detector.engine.mapping import UnspecifiedMapping
+from crash_detector.engine.model import (
+    EMPTY_MODEL_REGISTRY,
+    MappingKind,
+    ModelProvenance,
+    ModelRegistry,
+    ModelSpec,
+)
 from crash_detector.observations import (
     OK,
     Empty,
@@ -54,39 +90,54 @@ from dial_magnitudes import magnitude_of
 
 
 # --- test doubles, clearly named as such ---------------------------------------------- #
+#
+# THERE IS NO MODEL DOUBLE HERE ANY MORE, AND THAT IS THE POINT. A model is DATA now, so a
+# test that wants a dial to name one registers a ROW, exactly as the application would.
+# Nothing below is an object with a `compute` method, because no field on the dial path can
+# hold one.
 
-@dataclass(frozen=True)
-class FakeModel:
-    """TEST DOUBLE. Returns a fixed magnitude regardless of payload."""
+#: Passed as `model=` to :func:`_spec` to say "this dial names a model". The model itself is
+#: DERIVED by :func:`_model_registry_for` from what the dial declares, so a test never states
+#: the same input set twice and can never state it two ways.
+DECLARES_A_MODEL = object()
 
-    magnitude: float = 0.42
+#: The provenance every derived test row carries. Text, and obviously test text: WO-2
+#: registers zero models and CD-D-005 is the Product Owner's (BLUEPRINT §16).
+TEST_PROVENANCE = ModelProvenance(
+    stands_for="TEST DOUBLE; WO-2 registers no model",
+    account="TEST DOUBLE; the account of a real mapping is CD-D-005 and is owed",
+    decided_by="TEST DOUBLE; no product decision registers a model in WO-2",
+)
 
-    @property
-    def model_id(self) -> str:
-        return "fake.model.v0"
 
-    def compute(self, payloads) -> ScoreComputation:
-        return ScoreComputation(
-            magnitude=self.magnitude,
-            contributions=tuple(
-                Contribution(
-                    source_id=source_id, category="fake", weight=1.0, contribution=0.1
-                )
-                for source_id in sorted(payloads)
-            ),
+def _model_id_for(dial_id: str) -> str:
+    return f"model.{dial_id}.test"
+
+
+def _model_registry_for(*specs: DialSpec) -> ModelRegistry:
+    """A model registry carrying exactly one row per spec that names a model.
+
+    Each derived row MIRRORS its dial's declared inputs, so ``ConfigSnapshot``'s third
+    invariant — a model may not read an input its dial did not declare — is satisfied by
+    construction rather than by a second list a test could get wrong. Its ``mapping`` is
+    ``UNSPECIFIED``, because that is the only member there is and shipping a second one
+    would be inventing product meaning (CD-RULE-003, ``PBG-AUTH-005``).
+    """
+    return ModelRegistry(
+        models=tuple(
+            ModelSpec(
+                model_id=spec.model_ref,
+                dial_id=spec.dial_id,
+                required_input_ids=spec.required_input_ids,
+                contributing_input_ids=spec.contributing_input_ids,
+                mapping=MappingKind.UNSPECIFIED,
+                parameters=(),
+                provenance=TEST_PROVENANCE,
+            )
+            for spec in specs
+            if spec.model_ref is not None
         )
-
-
-@dataclass(frozen=True)
-class ExplodingModel:
-    """TEST DOUBLE. A model that cannot compute honestly must raise, not return zero."""
-
-    @property
-    def model_id(self) -> str:
-        return "fake.exploding.v0"
-
-    def compute(self, payloads) -> ScoreComputation:
-        raise ArithmeticError("model cannot compute")
+    )
 
 
 def _registry_for(*specs: DialSpec) -> SourceRegistry:
@@ -145,6 +196,7 @@ def _snapshot(*, equity_spec: DialSpec, monetary_spec: DialSpec) -> ConfigSnapsh
         dial_specs=(equity_spec, monetary_spec),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=_registry_for(equity_spec, monetary_spec),
+        model_registry=_model_registry_for(equity_spec, monetary_spec),
     )
 
 
@@ -153,7 +205,7 @@ def _spec(dial_id, required=(), contributing=(), model=None) -> DialSpec:
         dial_id=dial_id,
         required_input_ids=tuple(required),
         contributing_input_ids=tuple(contributing),
-        contribution_model=model,
+        model_ref=_model_id_for(dial_id) if model is not None else None,
     )
 
 
@@ -167,9 +219,20 @@ def _ok(source_id, seconds_ago) -> ObservationRecord:
 
 # --- THE SHIPPED WO-2 STATE ------------------------------------------------------------ #
 
-def test_the_application_registers_no_contribution_model():
-    """CD-D-005 is the Product Owner's and is owed before WO-3 (BLUEPRINT §16)."""
-    assert dict(CONTRIBUTION_MODELS) == {}
+def test_the_application_registers_no_model():
+    """CD-D-005 is the Product Owner's and is owed before WO-3 (BLUEPRINT §16).
+
+    REPLACES ``test_the_application_registers_no_contribution_model``, whose subject
+    (``CONTRIBUTION_MODELS``) BP-AMENDMENT-0001 §C deletes. Same proposition — the
+    application registers no model — asserted against the structure that now carries it,
+    and asserted three ways because ``is_empty`` is a property a future row could make
+    lie about while ``models`` said otherwise.
+    """
+    assert EMPTY_MODEL_REGISTRY.is_empty
+    assert EMPTY_MODEL_REGISTRY.models == ()
+    assert EMPTY_MODEL_REGISTRY.model_ids == ()
+    config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+    assert config.model_registry is EMPTY_MODEL_REGISTRY
 
 
 def test_with_no_sources_declared_both_dials_read_unknown():
@@ -275,7 +338,7 @@ def test_importing_the_engine_does_not_pull_in_the_witness_package():
 def test_a_non_ok_outcome_never_produces_a_dial_contribution(outcome):
     """Each of the three collapsed absences, separately. None is a value."""
     config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
     record = ObservationRecord(
@@ -313,7 +376,7 @@ def test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one():
     object.__setattr__(record, "outcome", look_alike)
 
     config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
     reading = evaluate([record], config, FIXED_NOW).equity
@@ -324,7 +387,7 @@ def test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one():
 
 def test_a_missing_required_input_forces_unknown():
     config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
     reading = evaluate([], config, FIXED_NOW).equity
@@ -334,11 +397,16 @@ def test_a_missing_required_input_forces_unknown():
 
 def test_a_stale_required_input_forces_unknown_and_never_the_previous_value():
     config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
-    fresh = evaluate([_ok("src.a", 10)], config, FIXED_NOW).equity
-    assert isinstance(fresh, Value)
+    # THE CONTRAST ARM. It used to read `assert isinstance(fresh, Value)`; §C's one
+    # non-computing mapping means a fully-supplied dial now REACHES the executor and is
+    # refused there instead of returning a number. What the arm is FOR is unchanged: it
+    # shows the stale arm's Unknown is caused by the staleness and not by the dial being
+    # incapable of getting that far.
+    with pytest.raises(UnspecifiedMapping):
+        evaluate([_ok("src.a", 10)], config, FIXED_NOW)
 
     stale = evaluate([_ok("src.a", WINDOW_SECONDS + 1)], config, FIXED_NOW).equity
     assert isinstance(stale, Unknown), "a stale input must not carry the last reading"
@@ -348,7 +416,7 @@ def test_a_future_dated_observation_is_not_treated_as_fresh():
     """Without this, one bad upstream clock makes a reading permanently current — a
     stale value rendering as calm, reached by the back door rather than by a default."""
     config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
     reading = evaluate([_ok("src.a", -86400)], config, FIXED_NOW).equity
@@ -356,91 +424,211 @@ def test_a_future_dated_observation_is_not_treated_as_fresh():
     assert reading.missing_inputs == ("src.a",)
 
 
-def test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage():
+def test_a_missing_contributing_input_does_not_force_unknown_the_way_a_required_one_does():
+    """REPLACES ``test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage``.
+
+    PROPOSITION PRESERVED: a missing CONTRIBUTING input is a different thing from a missing
+    REQUIRED one — the required one stops the dial dead, the contributing one does not. That
+    is asserted here by contrast, in both directions, against the same configuration.
+
+    **PROPOSITION LOST, AND SAID PLAINLY:** that the resulting reading is specifically
+    ``Degraded``, carrying ``REASON_CONTRIBUTING_INPUTS_UNAVAILABLE`` and naming the missing
+    source. That branch sits BELOW the executor call, and with one non-computing
+    ``MappingKind`` member no configuration reaches it. It is not dead code — it becomes
+    reachable the moment CD-D-005 registers a computing mapping — but nothing here can drive
+    it today. ``Degraded``'s own construction and fields remain covered by
+    ``tests/test_reading.py`` and by the post-condition tests below, which build one
+    directly; what is NOT covered until a computing member exists is ``_evaluate_dial``
+    CHOOSING it. Raised as a coverage residue in this increment's Build Log rather than
+    papered over.
+    """
     config = _snapshot(
         equity_spec=_spec(
             EQUITY_DIAL_ID, required=("src.a",), contributing=("src.b",),
-            model=FakeModel(),
+            model=DECLARES_A_MODEL,
         ),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
-    reading = evaluate([_ok("src.a", 10)], config, FIXED_NOW).equity
-    assert isinstance(reading, Degraded)
-    assert reading.reason == REASON_CONTRIBUTING_INPUTS_UNAVAILABLE
-    assert reading.missing_inputs == ("src.b",)
-
-
-def test_a_model_that_cannot_compute_raises_rather_than_returning_a_number():
-    """Swallowing it would publish "we have no data" when the truth is "our code is
-    broken", and returning zero would publish calm. Neither is honest, so it travels."""
-    config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=ExplodingModel()),
-        monetary_spec=_spec(MONETARY_DIAL_ID),
-    )
-    with pytest.raises(ArithmeticError):
+    # The contributing input is absent — and the dial still gets as far as the executor.
+    with pytest.raises(UnspecifiedMapping):
         evaluate([_ok("src.a", 10)], config, FIXED_NOW)
 
+    # The REQUIRED input absent instead: the dial stops before the executor, with the
+    # missing source named. The two arms differ in exactly the way BLUEPRINT §5's
+    # criticality table says they must.
+    reading = evaluate([_ok("src.b", 10)], config, FIXED_NOW).equity
+    assert isinstance(reading, Unknown)
+    assert reading.reason == REASON_REQUIRED_INPUTS_UNAVAILABLE
+    assert reading.missing_inputs == ("src.a",)
 
-# --- the happy path, so the absence paths are not passing by accident --------------------- #
 
-def test_a_satisfied_dial_reads_value_with_its_inputs_named():
+def test_an_executor_that_cannot_compute_raises_rather_than_returning_a_number():
+    """REPLACES ``test_a_model_that_cannot_compute_raises_rather_than_returning_a_number``,
+    whose subject was a caller-supplied model object that raised — a thing §C makes
+    unconstructible.
+
+    PROPOSITION PRESERVED EXACTLY, and it is the one that matters: **a refusal from the
+    mapping travels.** It is not caught in ``_evaluate_dial`` and turned into a number, and
+    it is not caught and turned into ``Unknown`` either. Swallowing it would publish "we
+    have no data" when the truth is "there is no declared mapping"; returning zero would
+    publish calm. Neither is honest, so it travels out of ``evaluate`` to the caller.
+
+    The exception is now raised by the ENGINE'S OWN executor rather than by a double, which
+    makes the proposition stronger rather than weaker: there is no longer any caller code in
+    the call stack at all.
+    """
     config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a", "src.b"),
-                          model=FakeModel()),
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID),
     )
-    reading = evaluate(
-        [_ok("src.a", 10), _ok("src.b", 20)], config, FIXED_NOW
-    ).equity
-    assert isinstance(reading, Value)
-    assert isinstance(reading.value, EquityCrashScore)
-    assert reading.inputs_used == ("src.a", "src.b")
+    with pytest.raises(UnspecifiedMapping) as raised:
+        evaluate([_ok("src.a", 10)], config, FIXED_NOW)
+    assert not isinstance(raised.value, (int, float))
+    assert not hasattr(raised.value, "magnitude"), (
+        "a refusal must not carry a magnitude; a caught exception with a number on it is a "
+        "number standing in for an absence with an extra step"
+    )
+
+
+# --- the supplied path, so the absence paths are not passing by accident ------------------ #
+#
+# THIS SECTION USED TO BE HEADED "the happy path". There is no happy path any more: with one
+# non-computing MappingKind member, a dial that gets EVERYTHING still ends at a refusal. The
+# tests below are the successors of the four that asserted a number, and each names its
+# predecessor and says what survived and what did not. The contrast they exist to provide —
+# that the Unknown branches above are caused by absence rather than by the dial being unable
+# to get that far — is preserved in full, because reaching the executor is as far as any
+# configuration can go.
+
+def test_a_satisfied_dial_reaches_the_executor_with_its_inputs_named():
+    """REPLACES ``test_a_satisfied_dial_reads_value_with_its_inputs_named``.
+
+    PROPOSITION PRESERVED: a dial whose required inputs are all present gets all the way to
+    the mapping, carrying exactly the inputs it declared and no others. That is asserted
+    from the refusal itself, which names the model, the dial and the input set the executor
+    was handed.
+
+    PROPOSITION LOST: that the result is a ``Value`` carrying an ``EquityCrashScore``. No
+    mapping computes, so no dial number exists. The score types are asserted as a table in
+    ``test_each_dial_has_its_own_unrelated_score_type`` below.
+    """
+    config = _snapshot(
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a", "src.b"),
+                          model=DECLARES_A_MODEL),
+        monetary_spec=_spec(MONETARY_DIAL_ID),
+    )
+    with pytest.raises(UnspecifiedMapping) as raised:
+        evaluate([_ok("src.a", 10), _ok("src.b", 20)], config, FIXED_NOW)
+    message = str(raised.value)
+    assert "'src.a', 'src.b'" in message, message
+    assert _model_id_for(EQUITY_DIAL_ID) in message, message
+    assert EQUITY_DIAL_ID in message, message
 
 
 def test_a_reading_is_only_as_fresh_as_its_oldest_input():
-    """Taking the newest would make a reading look fresher than the data behind it."""
-    config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a", "src.b"),
-                          model=FakeModel()),
-        monetary_spec=_spec(MONETARY_DIAL_ID),
+    """Taking the newest would make a reading look fresher than the data behind it.
+
+    NODE ID UNCHANGED, SUBJECT MOVED. It used to assert ``reading.as_of_utc`` off a ``Value``
+    that ``evaluate`` returned; that branch is below the executor and is unreachable while
+    no mapping computes. The RULE it was testing lives in ``_oldest_as_of``, which is
+    unchanged by this amendment, so the test now exercises the rule where the rule is rather
+    than through a return value that no longer occurs.
+    """
+    from crash_detector.engine.evaluate import _oldest_as_of
+
+    usable = {
+        "src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10)),
+        "src.b": OK(payload={"v": 1}, source_as_of_utc=ago(500)),
+    }
+    assert _oldest_as_of(usable, ("src.a", "src.b")) == ago(500)
+    assert _oldest_as_of(usable, ("src.b", "src.a")) == ago(500), (
+        "the oldest input wins whatever order the used ids arrive in"
     )
-    reading = evaluate(
-        [_ok("src.a", 10), _ok("src.b", 500)], config, FIXED_NOW
-    ).equity
-    assert reading.as_of_utc == ago(500)
 
 
 def test_the_latest_observation_per_source_wins():
-    config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
-        monetary_spec=_spec(MONETARY_DIAL_ID),
+    """NODE ID UNCHANGED, SUBJECT MOVED, for the same reason as the test above.
+
+    ``_latest_usable_ok`` is the function that decides this and it is untouched by
+    BP-AMENDMENT-0001; the assertion used to reach it through a ``Value``'s ``as_of_utc``
+    and now reaches it directly. The window is taken from a real snapshot rather than
+    constructed here, so the admission door is still the only way to get one.
+    """
+    from crash_detector.engine.evaluate import _latest_usable_ok
+
+    config = empty_config_snapshot("cfg-wo2", staleness_window_seconds=WINDOW_SECONDS)
+    usable = _latest_usable_ok(
+        [_ok("src.a", 500), _ok("src.a", 10), _ok("src.a", 400)],
+        now_utc=FIXED_NOW,
+        window=config.window(),
     )
-    reading = evaluate(
-        [_ok("src.a", 500), _ok("src.a", 10), _ok("src.a", 400)], config, FIXED_NOW
-    ).equity
-    assert reading.as_of_utc == ago(10)
+    assert sorted(usable) == ["src.a"]
+    assert usable["src.a"].source_as_of_utc == ago(10)
 
 
-def test_each_dial_carries_its_own_score_type():
-    config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
-        monetary_spec=_spec(MONETARY_DIAL_ID, required=("src.a",), model=FakeModel()),
-    )
-    dials = evaluate([_ok("src.a", 10)], config, FIXED_NOW)
-    assert isinstance(dials.equity.value, EquityCrashScore)
-    assert isinstance(dials.monetary.value, MonetaryDebasementScore)
+def test_each_dial_has_its_own_unrelated_score_type():
+    """REPLACES ``test_each_dial_carries_its_own_score_type``.
+
+    PROPOSITION PRESERVED: the two dials are different KINDS of thing (PID §3.1) and the
+    engine's own table says so — two dials, two unrelated types, neither a subclass of the
+    other, so no arithmetic between them is expressible.
+
+    PROPOSITION LOST: that a live evaluation stamps each dial's reading with its own type.
+    No evaluation produces a value while no mapping computes. What replaces the end-to-end
+    half is stronger in one respect and weaker in another, and both are stated: **a model
+    row is bound to ONE dial** (§C.4), so the cross-dial route the old test's contrast
+    guarded against is now refused at construction — see
+    ``tests/test_engine_model_registry.py``'s P3.
+    """
+    from crash_detector.engine.evaluate import DIAL_SCORE_TYPES
+
+    assert DIAL_SCORE_TYPES[EQUITY_DIAL_ID] is EquityCrashScore
+    assert DIAL_SCORE_TYPES[MONETARY_DIAL_ID] is MonetaryDebasementScore
+    assert not issubclass(EquityCrashScore, MonetaryDebasementScore)
+    assert not issubclass(MonetaryDebasementScore, EquityCrashScore)
 
 
 def test_one_dial_being_unknown_does_not_disturb_the_other():
-    """Two dials, two evaluators, no aggregation stage."""
-    config = _snapshot(
-        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel()),
+    """Two dials, two evaluators, no aggregation stage. NODE ID UNCHANGED.
+
+    It used to assert ``equity is Value`` and ``monetary is Unknown``. The equity half is
+    now a refusal rather than a number, so the contrast is made the other way round and in
+    both directions: whichever dial is the SATISFIED one, the refusal that comes out names
+    THAT dial's own model, which is only possible if the two evaluations are independent
+    and neither consulted the other's inputs.
+    """
+    equity_satisfied = _snapshot(
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL),
         monetary_spec=_spec(MONETARY_DIAL_ID, required=("src.missing",),
-                            model=FakeModel()),
+                            model=DECLARES_A_MODEL),
     )
-    dials = evaluate([_ok("src.a", 10)], config, FIXED_NOW)
-    assert isinstance(dials.equity, Value)
+    with pytest.raises(UnspecifiedMapping) as raised:
+        evaluate([_ok("src.a", 10)], equity_satisfied, FIXED_NOW)
+    assert _model_id_for(EQUITY_DIAL_ID) in str(raised.value)
+
+    monetary_satisfied = _snapshot(
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.missing",),
+                          model=DECLARES_A_MODEL),
+        monetary_spec=_spec(MONETARY_DIAL_ID, required=("src.a",),
+                            model=DECLARES_A_MODEL),
+    )
+    with pytest.raises(UnspecifiedMapping) as raised:
+        evaluate([_ok("src.a", 10)], monetary_satisfied, FIXED_NOW)
+    assert _model_id_for(MONETARY_DIAL_ID) in str(raised.value)
+
+    # And the dial that did NOT get its input is still Unknown when the other one does not
+    # raise at all — both dials absent, no aggregation, two independent Unknowns.
+    neither = _snapshot(
+        equity_spec=_spec(EQUITY_DIAL_ID, required=("src.missing",),
+                          model=DECLARES_A_MODEL),
+        monetary_spec=_spec(MONETARY_DIAL_ID, required=("src.other",),
+                            model=DECLARES_A_MODEL),
+    )
+    dials = evaluate([], neither, FIXED_NOW)
+    assert isinstance(dials.equity, Unknown)
     assert isinstance(dials.monetary, Unknown)
+    assert dials.equity.missing_inputs == ("src.missing",)
+    assert dials.monetary.missing_inputs == ("src.other",)
 
 
 def test_evaluate_refuses_a_naive_now():
@@ -523,19 +711,24 @@ def test_a_value_bearing_reading_with_a_required_input_missing_is_refused(readin
     """E04's proposition, refused at runtime and without asking where the number came
     from: a literal, a module constant, a config default and a carried previous value all
     fail here identically, because what is refused is the claim and not the arithmetic."""
-    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
     with pytest.raises(AbsenceYieldedAValue):
         refuse_a_number_without_its_inputs(spec, {}, reading)
 
 
-def test_a_value_bearing_reading_with_no_contribution_model_is_refused():
+def test_a_value_bearing_reading_from_a_dial_naming_no_model_is_refused():
     """A dial with inputs and no declared mapping cannot produce an explicable number.
+
+    REPLACES ``test_a_value_bearing_reading_with_no_contribution_model_is_refused``. Same
+    proposition, same mechanism, same one-line body — only the field it re-points is
+    renamed, because ``contribution_model`` no longer exists and ``model_ref`` is what a
+    dial now carries.
 
     ``DialSpec`` refuses this combination at construction, so the spec is built and then
     re-pointed: the post-condition must not depend on another constructor's vigilance.
     """
-    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
-    object.__setattr__(spec, "contribution_model", None)
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
+    object.__setattr__(spec, "model_ref", None)
     usable = {"src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10))}
     with pytest.raises(AbsenceYieldedAValue):
         refuse_a_number_without_its_inputs(spec, usable, _value_reading())
@@ -543,7 +736,7 @@ def test_a_value_bearing_reading_with_no_contribution_model_is_refused():
 
 def test_the_post_condition_permits_a_value_when_every_required_input_was_present():
     """FALSE-POSITIVE CHECK. A guard that forbids the product is not a guard."""
-    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
     usable = {"src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10))}
     refuse_a_number_without_its_inputs(spec, usable, _value_reading())
     refuse_a_number_without_its_inputs(spec, usable, _degraded_reading())
@@ -553,8 +746,8 @@ def test_the_post_condition_permits_a_value_when_every_required_input_was_presen
     ("required", "model", "usable_ids"),
     [
         ((), None, ()),
-        (("src.a",), FakeModel(), ()),
-        (("src.a",), FakeModel(), ("src.a",)),
+        (("src.a",), DECLARES_A_MODEL, ()),
+        (("src.a",), DECLARES_A_MODEL, ("src.a",)),
     ],
     ids=["no_requirements", "requirement_missing", "requirement_present"],
 )
@@ -574,10 +767,10 @@ def test_unknown_is_never_refused_because_the_guard_is_one_directional(
 def test_the_presence_predicate_answers_for_each_of_the_three_ways_inputs_can_be_absent():
     present = {"src.a": OK(payload={"v": 1}, source_as_of_utc=ago(10))}
     assert required_inputs_are_all_present(_spec(EQUITY_DIAL_ID), present) is False
-    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+    spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
     assert required_inputs_are_all_present(spec, {}) is False
     assert required_inputs_are_all_present(spec, present) is True
-    object.__setattr__(spec, "contribution_model", None)
+    object.__setattr__(spec, "model_ref", None)
     assert required_inputs_are_all_present(spec, present) is False
 
 
@@ -636,13 +829,14 @@ def test_a_decade_old_observation_is_not_usable_under_any_constructible_window()
     from crash_detector.staleness import STALENESS_WINDOW_CEILING_SECONDS
 
     for window in (1.0, 60.0, 600.0, STALENESS_WINDOW_CEILING_SECONDS):
-        equity_spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
+        equity_spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
         monetary_spec = _spec(MONETARY_DIAL_ID)
         config = ConfigSnapshot(
             config_snapshot_id="cfg-old",
             dial_specs=(equity_spec, monetary_spec),
             staleness_window_seconds=window,
             source_registry=_registry_for(equity_spec, monetary_spec),
+            model_registry=_model_registry_for(equity_spec, monetary_spec),
         )
         reading = evaluate([_ok("src.a", TEN_YEARS_SECONDS)], config, FIXED_NOW).equity
         assert isinstance(reading, Unknown)

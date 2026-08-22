@@ -321,6 +321,35 @@ DECLARED_ADMISSIONS = {
         "and were the supplied strings' __hash__/__eq__ to answer.",
     ),
     (
+        "crash_detector.engine.model",
+        "ModelSpec.__post_init__",
+        "DUCK",
+        "getattr(self, field_name)",
+    ): (
+        "ESTABLISHED",
+        "field_name iterates a tuple literal in this file — the two input-id tuples — not a "
+        "probe of a supplied object's surface. Both are rebuilt through own_str and written "
+        "back before the duplicate, overlap and subset tests, all of which are set "
+        "membership and were otherwise the supplied strings' __hash__/__eq__ to answer. The "
+        "subset test in establish_model_for_dial compares these ids against the naming "
+        "DialSpec's, which are established the same way at the same door, so both sides of "
+        "that comparison are strings this package built.",
+    ),
+    (
+        "crash_detector.engine.model",
+        "ModelProvenance.__post_init__",
+        "DUCK",
+        "getattr(self, field_name)",
+    ): (
+        "ESTABLISHED",
+        "field_name iterates a tuple literal in this file — the type's own three declared "
+        "fields, written once instead of three times. Each is rebuilt through own_str and "
+        "written back, so the emptiness test below it is on a string this module built. "
+        "These fields decide nothing at runtime: they carry CD-D-005's account of a mapping "
+        "for a human reader, which is why the disposition rests on establishment and not on "
+        "a downstream comparison.",
+    ),
+    (
         "crash_detector.source_registry",
         "SourceRecord.__post_init__",
         "DUCK",
@@ -441,29 +470,60 @@ DECLARED_MODULE_DISPOSITIONS = {
         "the window is a StalenessWindow and not a float, so a private helper cannot be "
         "called with an unadmitted quantity; the absence post-condition dispatches on exact "
         "type. `source_id in usable` compares strings established at DialSpec and at "
-        "ObservationRecord. THE ONE EXCEPTION IS DECLARED BELOW under model.",
+        "ObservationRecord. THE EXCEPTION THIS LINE USED TO DECLARE — 'the one exception is "
+        "declared below under model' — IS WITHDRAWN, BECAUSE THE ROUTE IT NAMED NO LONGER "
+        "EXISTS: `spec.contribution_model.compute(payloads)` was a call on a caller-supplied "
+        "object and is now `compute(model, payloads)`, an engine-owned function over a spec "
+        "the engine resolved from a NAME (BP-AMENDMENT-0001 §C).",
     ),
     "crash_detector.engine.config": (
         "ESTABLISHED",
         "dial_id and both input-id tuples are re-established before the membership, "
-        "duplicate and overlap tests; specs and the registry are admitted by exact type; "
-        "the window's usability is decided by StalenessWindow, which admits by exact type.",
+        "duplicate and overlap tests; specs and both registries are admitted by exact type; "
+        "the window's usability is decided by StalenessWindow, which admits by exact type; "
+        "model_ref is re-established through own_model_id, so which registry row a dial "
+        "resolves to is decided by str.__eq__ between two strings this package built.",
     ),
     "crash_detector.engine.model": (
-        "OUT_OF_BOUND",
-        "*** DECLARED OPEN, DELIBERATELY NOT CLOSED, ON THE PRODUCT AUTHORITY'S RULING. *** "
-        "ContributionModel is a caller-supplied object whose compute() returns the number a "
+        "ESTABLISHED",
+        "*** THIS DISPOSITION WAS OUT_OF_BOUND AND IS NOW ESTABLISHED. THE PREVIOUS TEXT IS "
+        "QUOTED SO A READER OF THE DIFF SEES THE TRANSITION RATHER THAN INFERRING IT: "
+        "'ContributionModel is a caller-supplied object whose compute() returns the number a "
         "dial publishes, and one stateful instance injected into BOTH DialSpecs makes the "
         "monetary dial publish the mean of the two (CD-ENG-WO2R2-F03, replicated by the "
-        "Project Lead as PL-Z4). At the level of doctrine that IS this class — a judgement "
-        "delegated to an object the system did not construct, one operand across — and that "
-        "resemblance is exactly why it is not closed here. PO-DECISIONS-0003 ruled it closed "
-        "by CONSTRUCTION at a different altitude: BLUEPRINT §7 architectural review as the "
-        "mandatory first item of WO-3, plus the CD-D-005 ingredient register. Building a "
-        "model guard in this increment would be the fourth clever guard against a class the "
-        "Product Authority has ruled is not closed by guards (CD-D-075). DECLARING it is "
-        "this seat's CD-RULE-004 obligation; CLOSING it would be the scope breach. "
+        "Project Lead as PL-Z4) … NOT PROVED TO BE CARRIED ANYWHERE.' *** "
+        "It is withdrawn because the ROUTE is gone, not because a guard was added: "
+        "PO-DECISIONS-0004 ruled the §7 architectural review it deferred to, and "
+        "BP-AMENDMENT-0001 §C deletes ContributionModel and CONTRIBUTION_MODELS outright. "
+        "No field on this path holds an object or a callable — model_id and dial_id through "
+        "own_model_id/own_str, both id tuples elementwise through own_str, mapping by exact "
+        "MappingKind membership, parameters and provenance by exact type — so there is no "
+        "judgement here delegated to an object this system did not construct. "
+        "WHAT IS STILL NOT CLOSED, AND IS DECLARED RATHER THAN CARRIED: a mapping member's "
+        "IMPLEMENTATION is code and can be wrong (BLUEPRINT §17 CD-BP-002), and this module "
+        "establishes a spec without establishing that the spec's account of itself is TRUE "
+        "— that adjudication is CD-D-005 and is the Product Owner's. Neither is a delegated "
+        "judgement, which is what this sweep measures, and both are "
         "NOT PROVED TO BE CARRIED ANYWHERE.",
+    ),
+    "crash_detector.engine.mapping": (
+        "EXACT",
+        "The executor. It admits its spec by `type(spec) is not ModelSpec` and reads the "
+        "MAPPING SLOT rather than trusting the constructor that filled it — "
+        "`type(spec.mapping) is not MappingKind` — because object.__setattr__ walks past "
+        "frozen and the value is read at the moment it selects a branch. Payload keys are "
+        "rebuilt through own_str and both dict levels are copied into dicts this module "
+        "built, so no supplied mapping's __getitem__, keys or __eq__ runs while a mapping "
+        "executes. It dispatches on an enum member by identity (`is`), not by value or by "
+        "name. It holds no module-level mutable state, so nothing carries between dials or "
+        "between runs. WO-2 ships one member and it REFUSES: no magnitude is returned on "
+        "any path in this module. "
+        "DECLARED, NOT CARRIED: these admissions are written in the function BODY and not "
+        "yet derived from its signature — BP-AMENDMENT-0001 §D's `admits` mechanism is a "
+        "later increment of WO-2R3 — so an edit to the body removes them, which is "
+        "CD-ASR-F03's own shape. NOT PROVED TO BE CARRIED ANYWHERE. What does NOT depend on "
+        "this body is the §C claim itself: no field can hold code, so with every line here "
+        "deleted there is still no caller-supplied callable to execute.",
     ),
     "crash_detector.observations": (
         "ESTABLISHED",

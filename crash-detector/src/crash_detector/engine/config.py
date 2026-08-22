@@ -9,9 +9,9 @@ The snapshot validates itself at construction, so an incoherent configuration is
 before an evaluation runs rather than producing a reading nobody can explain:
 
   * both dials must have a spec, and only the two dials may;
-  * a dial declaring required inputs must declare the model that maps them, because a
+  * a dial declaring required inputs must NAME the model that maps them, because a
     dial with inputs and no declared mapping cannot produce an explicable number
-    (doctrine §3.6);
+    (doctrine §3.6). It names it; it does not carry it — see below;
   * the staleness window must be ADMISSIBLE — a positive finite number of seconds that is
     also at or below :data:`~crash_detector.staleness.STALENESS_WINDOW_CEILING_SECONDS`.
     An infinite window is not a lenient window, it is no window at all, and it is the
@@ -58,6 +58,48 @@ The registry is a REQUIRED field with no default. A default registry would be a 
 nobody chose, and the one thing worse than an empty registry is an empty registry that
 arrived by omission and is therefore not evidence of anything.
 
+----
+
+THE MODEL REGISTRY IS PART OF THE SNAPSHOT TOO (BP-AMENDMENT-0001 §C.5, in force).
+
+**``DialSpec`` CARRIES A REFERENCE AND NOT AN OBJECT.** The field that held one —
+``contribution_model: ContributionModel | None`` — **does not exist**. It was not emptied,
+deprecated or type-narrowed: the attribute is gone, so ``DialSpec(…, contribution_model=x)``
+is a ``TypeError`` from the dataclass constructor itself and ``spec.contribution_model`` is
+an ``AttributeError``. In its place ``model_ref: ModelId | None`` holds a NAME, established
+through :func:`~crash_detector.engine.model.own_model_id`, and an object is not a name.
+
+That is the closure of ``ASR3-F02``, and it is a deletion rather than a check: a ``Protocol``
+annotation asserts nothing at runtime, so there was never a check to strengthen — there was
+a door that should not have existed. The whole reasoning is in
+:mod:`crash_detector.engine.model`.
+
+:class:`~crash_detector.engine.model.ModelRegistry` joins
+:class:`~crash_detector.source_registry.SourceRegistry` on this snapshot, on the same terms
+and for the same stated reason: it is configuration that affects a result, so it belongs in
+the run-level snapshot (Standards Baseline §10), and it is **required with no default**,
+because a registry nobody chose is not evidence of anything.
+
+Three further invariants join the constructor with it, and the first two mirror the source
+registry exactly:
+
+1. every ``model_ref`` a dial names **must resolve** in the model registry;
+2. a resolved spec's ``dial_id`` **must equal** the dial naming it — one model serves one
+   dial, which is the structural answer to ``ASR3-F02``'s cross-dial mechanism;
+3. a resolved spec's input ids **must be a subset of** the naming ``DialSpec``'s declared
+   inputs, per set, and every one of them must be registered in the ``SourceRegistry`` with
+   an agreeing criticality.
+
+All three live in :func:`~crash_detector.engine.model.establish_model_for_dial`, which this
+constructor calls and which :meth:`ConfigSnapshot.model_for` calls again at every
+resolution. **One function, two call sites** — two independently written checks would be an
+enumeration, and enumerations come apart.
+
+WO-2 ships :data:`~crash_detector.engine.model.EMPTY_MODEL_REGISTRY` — zero rows — beside
+the empty source registry, because CD-D-005 is owed. With no model registered no dial may
+name one; with no source registered no dial may declare an input; both dials read
+``Unknown``.
+
 Regime-aware staleness (``window_for(regime)``, CD-AC-009) is WO-3. WO-2 carries the
 declared constant window and names it as such.
 """
@@ -69,7 +111,14 @@ from typing import Union
 
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.dialset import DIAL_IDS
-from crash_detector.engine.model import ContributionModel
+from crash_detector.engine.model import (
+    EMPTY_MODEL_REGISTRY,
+    ModelId,
+    ModelRegistry,
+    ModelSpec,
+    establish_model_for_dial,
+    own_model_id,
+)
 from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY, SourceRegistry
 from crash_detector.staleness import StalenessWindow
 
@@ -78,12 +127,19 @@ __all__ = ["DialSpec", "ConfigSnapshot", "empty_config_snapshot"]
 
 @dataclass(frozen=True)
 class DialSpec:
-    """One dial's declared inputs and its contribution model."""
+    """One dial's declared inputs and the NAME of the model that maps them.
+
+    **THERE IS NO FIELD HERE THAT HOLDS A MODEL OBJECT OR A CALLABLE**, and that absence is
+    the whole of ``ASR3-F02``'s closure (BP-AMENDMENT-0001 §C). ``model_ref`` is a name
+    resolved by the engine against
+    :class:`~crash_detector.engine.model.ModelRegistry`; there is no expression a caller can
+    write that places code where a dial's magnitude is computed.
+    """
 
     dial_id: str
     required_input_ids: tuple[str, ...]
     contributing_input_ids: tuple[str, ...]
-    contribution_model: Union[ContributionModel, None]
+    model_ref: Union[ModelId, None]
 
     def __post_init__(self) -> None:
         # EVERY ID RE-ESTABLISHED BEFORE ANY OF THEM DECIDES ANYTHING (CD-AC-005, Class 2).
@@ -126,11 +182,20 @@ class DialSpec:
                 f"sources declared both required and contributing for {self.dial_id}: "
                 f"{sorted(overlap)}"
             )
-        if self.required_input_ids and self.contribution_model is None:
+        # THE MODEL REFERENCE IS A NAME, ESTABLISHED ON THIS SYSTEM'S OWN TERMS.
+        # `own_model_id` raises NotEstablishedOnOwnTerms — a TypeError — for anything that
+        # is not a str, which is where the ASR3-F02 plant dies if it is adapted to this
+        # field rather than to the deleted one. It is deliberately NOT caught and reworded
+        # into a ValueError: the refusal names the type that was offered, and that is the
+        # single most useful thing an auditor reading the failure can be told.
+        if self.model_ref is not None:
+            object.__setattr__(self, "model_ref", own_model_id(self.model_ref))
+
+        if self.required_input_ids and self.model_ref is None:
             raise ValueError(
-                f"dial {self.dial_id!r} declares required inputs but no contribution "
-                "model; a dial with inputs and no declared mapping cannot produce an "
-                "explicable number (doctrine §3.6)"
+                f"dial {self.dial_id!r} declares required inputs but names no model; a "
+                "dial with inputs and no declared mapping cannot produce an explicable "
+                "number (doctrine §3.6)"
             )
 
 
@@ -142,6 +207,7 @@ class ConfigSnapshot:
     dial_specs: tuple[DialSpec, ...]
     staleness_window_seconds: float
     source_registry: SourceRegistry
+    model_registry: ModelRegistry
 
     def __post_init__(self) -> None:
         if not self.config_snapshot_id:
@@ -149,9 +215,10 @@ class ConfigSnapshot:
         object.__setattr__(self, "dial_specs", tuple(self.dial_specs))
 
         # EXACT TYPE, not isinstance (CD-AC-005, Class 2). A DialSpec subclass may shadow
-        # `required_input_ids` or `contribution_model` with a property, so the values the
-        # absence post-condition re-derives its answer from would be computed by the
-        # caller's code at the moment it re-derived them.
+        # `required_input_ids` or `model_ref` with a property, so the values the absence
+        # post-condition re-derives its answer from would be computed by the caller's code
+        # at the moment it re-derived them — and a `model_ref` property could answer with a
+        # different name at construction than at resolution.
         if any(type(spec) is not DialSpec for spec in self.dial_specs):
             raise TypeError("ConfigSnapshot.dial_specs must all be DialSpec")
         declared = [spec.dial_id for spec in self.dial_specs]
@@ -190,6 +257,57 @@ class ConfigSnapshot:
             registry.assert_may_be_required(spec.required_input_ids)
             registry.assert_may_be_contributing(spec.contributing_input_ids)
 
+        # THE MODEL REGISTRY, AND §C.5's THREE INVARIANTS OVER IT.
+        # Exact type, for the reason above and one more: a ModelRegistry subclass may
+        # redefine `get`, and `get` IS the resolution — a subclass could answer with a
+        # different spec than the one it holds, which is the caller choosing what a dial
+        # computes without any field ever having held a model. `establish_model_for_dial`
+        # refuses a non-ModelRegistry first of all, so this is that same refusal reached at
+        # the earliest point rather than a second copy of it.
+        for spec in self.dial_specs:
+            establish_model_for_dial(
+                self.model_registry,
+                dial_id=spec.dial_id,
+                model_ref=spec.model_ref,
+                required_input_ids=spec.required_input_ids,
+                contributing_input_ids=spec.contributing_input_ids,
+            )
+        # INVARIANT 3's second half, using the source registry's OWN criticality contract
+        # rather than a second copy of it. The subset test above has already established
+        # that the model names nothing the dial did not, so these ids are the dial's ids and
+        # the registry has already admitted them — this asserts the model's own declaration
+        # against the same contract, so a row promoting a contributing input to required is
+        # refused even though the dial named both.
+        for spec in self.dial_specs:
+            model = self.model_for(spec.dial_id)
+            if model is None:
+                continue
+            registry.assert_may_be_required(model.required_input_ids)
+            registry.assert_may_be_contributing(model.contributing_input_ids)
+
+    def model_for(self, dial_id: str) -> "Union[ModelSpec, None]":
+        """The resolved :class:`~crash_detector.engine.model.ModelSpec` for ``dial_id``.
+
+        ``None`` when the dial names no model, which is the WO-2 shipped state of both
+        dials and is not an error.
+
+        **THE ONE RESOLUTION DOOR.** The evaluation takes its model from HERE and never by
+        indexing the registry itself, for the same reason it takes its staleness window from
+        :meth:`window` and never from the raw float: the field is the record of what was
+        configured, and this is the thing that may be applied. Every §C.5 invariant is
+        re-asserted at this call by the same function the constructor used, so a ``dial_id``
+        or an input tuple rewritten past ``frozen`` between construction and evaluation is
+        refused here rather than resolved.
+        """
+        spec = self.spec_for(dial_id)
+        return establish_model_for_dial(
+            self.model_registry,
+            dial_id=spec.dial_id,
+            model_ref=spec.model_ref,
+            required_input_ids=spec.required_input_ids,
+            contributing_input_ids=spec.contributing_input_ids,
+        )
+
     def window(self) -> StalenessWindow:
         """The admitted staleness window for this snapshot.
 
@@ -216,9 +334,11 @@ def empty_config_snapshot(
     it yields ``Unknown`` for both dials, which is the honest answer and not a
     placeholder.
 
-    The registry is empty here rather than absent, and the two facts reinforce each
-    other: with nothing registered, invariant 1 above means no dial COULD declare an
-    input even if someone added one to a spec without touching the registry.
+    **BOTH registries are empty here rather than absent**, and the facts reinforce each
+    other: with nothing registered, the source registry's first invariant means no dial
+    COULD declare an input even if someone added one to a spec without touching the
+    registry, and the model registry's first invariant means no ``model_ref`` resolves —
+    so no ``ModelSpec`` reaches the executor by any route whatever.
     """
     return ConfigSnapshot(
         config_snapshot_id=config_snapshot_id,
@@ -227,10 +347,11 @@ def empty_config_snapshot(
                 dial_id=dial_id,
                 required_input_ids=(),
                 contributing_input_ids=(),
-                contribution_model=None,
+                model_ref=None,
             )
             for dial_id in DIAL_IDS
         ),
         staleness_window_seconds=staleness_window_seconds,
         source_registry=EMPTY_SOURCE_REGISTRY,
+        model_registry=EMPTY_MODEL_REGISTRY,
     )

@@ -51,13 +51,34 @@ were present; the post-condition checks the claim against the inputs.
 It is deliberately one-directional. A body that returns ``Unknown`` when the inputs WERE
 present is not refused: that is the safe direction, and a guard that compelled a number
 would be pushing the wrong way.
+
+====================================================================================
+THE MODEL DOOR IS GONE (BP-AMENDMENT-0001 §C, in force)
+====================================================================================
+
+Until this commit the line below the payload assembly read::
+
+    computation = spec.contribution_model.compute(payloads)
+
+— a call on an object the CALLER had put in the ``DialSpec``. That is the line ``ASR3-F02``
+published a laundered number through, and it **does not exist any more**. Not because it was
+deleted: because there is no attribute on ``DialSpec`` holding an object, so there is no
+expression that could be written there.
+
+What stands in its place calls one engine-owned function,
+:func:`crash_detector.engine.mapping.compute`, over a spec the engine RESOLVED from a name
+and payloads the engine RELEASED. The consequence for this module's own headline claim is
+that ``evaluate``'s purity got STRONGER, and the old caveat is withdrawn rather than
+softened: there is no longer any object a caller can supply whose ``compute`` could perform
+I/O, read a clock or hold state between the two dials, because there is no such parameter
+and no such field.
 """
 
 from __future__ import annotations
 
 import functools
 from datetime import datetime
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Union
 
 from crash_detector.dials.dialset import EQUITY_DIAL_ID, MONETARY_DIAL_ID, DialSet
 from crash_detector.dials.reading import (
@@ -71,6 +92,8 @@ from crash_detector.dials.magnitude import DialMagnitude
 from crash_detector.dials.provenance import observed_for_dial
 from crash_detector.dials.scores import EquityCrashScore, MonetaryDebasementScore
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
+from crash_detector.engine.mapping import compute
+from crash_detector.engine.model import ModelSpec
 from crash_detector.observations import OK, ObservationRecord
 from crash_detector.staleness import StalenessWindow
 from crash_detector.time_utc import age_seconds, ensure_utc
@@ -81,7 +104,7 @@ __all__ = [
     "REASON_NO_REQUIRED_INPUTS",
     "REASON_REQUIRED_INPUTS_UNAVAILABLE",
     "REASON_CONTRIBUTING_INPUTS_UNAVAILABLE",
-    "REASON_NO_CONTRIBUTION_MODEL",
+    "REASON_NO_MODEL_DECLARED",
     "READINGS_THAT_CARRY_A_VALUE",
     "required_inputs_are_all_present",
     "refuse_a_number_without_its_inputs",
@@ -103,7 +126,13 @@ DIAL_SCORE_TYPES: Mapping[str, type] = {
 REASON_NO_REQUIRED_INPUTS = "NO_REQUIRED_INPUTS_DECLARED"
 REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
 REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
-REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
+#: RENAMED at BP-AMENDMENT-0001 §C from ``REASON_NO_CONTRIBUTION_MODEL``
+#: (``"NO_CONTRIBUTION_MODEL_DECLARED"``), because the type it named is deleted. The
+#: PROPOSITION is unchanged — a dial that names no mapping is Unknown for that stated
+#: reason. Nothing outside this module read either the constant or its value: it is absent
+#: from both envelope schemas and from every test, which is why the rename is safe and why
+#: keeping a name that points at a deleted type would have been the worse choice.
+REASON_NO_MODEL_DECLARED = "NO_MODEL_DECLARED"
 
 
 def evaluate(
@@ -117,10 +146,19 @@ def evaluate(
     read or written. No clock is consulted — ``now_utc`` is an argument precisely so that
     a historical evaluation can be replayed exactly.
 
-    (The one way a caller can break that purity is by injecting a ``ContributionModel``
-    that performs I/O. The contract forbidding it is stated on
-    :class:`~crash_detector.engine.model.ContributionModel`, where an implementer reads
-    it. In WO-2 no model is registered at all, so no model runs.)
+    **THE PURITY IS NOW STRUCTURAL AND THE OLD CAVEAT IS WITHDRAWN.** It used to read: *"the
+    one way a caller can break that purity is by injecting a ContributionModel that performs
+    I/O"*, and it pointed at a docstring contract for the remedy. A contract stated on a
+    ``Protocol`` is not a runtime property, which is the whole of ``ASR3-F02``. After
+    BP-AMENDMENT-0001 §C there is no field through which such an object can arrive, so
+    ``evaluate`` is pure because the executor is pure and takes no caller code — a stronger
+    purity than the one the injection argument bought.
+
+    The model is RESOLVED here, per dial, through
+    :meth:`~crash_detector.engine.config.ConfigSnapshot.model_for` — the one resolution
+    door, which re-asserts every §C.5 invariant at the moment of resolution. Under the
+    shipped :data:`~crash_detector.engine.model.EMPTY_MODEL_REGISTRY` both dials name no
+    model, both resolutions answer ``None``, and both dials read ``Unknown``.
     """
     instant = ensure_utc(now_utc)
     usable = _latest_usable_ok(
@@ -130,10 +168,16 @@ def evaluate(
     )
     return DialSet(
         equity=_evaluate_dial(
-            config_snapshot.spec_for(EQUITY_DIAL_ID), usable, instant
+            config_snapshot.spec_for(EQUITY_DIAL_ID),
+            usable,
+            instant,
+            config_snapshot.model_for(EQUITY_DIAL_ID),
         ),
         monetary=_evaluate_dial(
-            config_snapshot.spec_for(MONETARY_DIAL_ID), usable, instant
+            config_snapshot.spec_for(MONETARY_DIAL_ID),
+            usable,
+            instant,
+            config_snapshot.model_for(MONETARY_DIAL_ID),
         ),
     )
 
@@ -207,8 +251,10 @@ def required_inputs_are_all_present(
     * the spec declares no required inputs — zero requirements satisfied is not "all
       requirements satisfied", and with the WO-2 empty source registry this is the shipped
       state of both dials;
-    * the spec declares no contribution model, so there is no declared mapping from inputs
-      to a magnitude (doctrine §3.6) and any number produced would be unexplainable;
+    * the spec names no model, so there is no declared mapping from inputs to a magnitude
+      (doctrine §3.6) and any number produced would be unexplainable. It reads the NAME and
+      not a resolved spec, deliberately: the post-condition must re-derive its answer from
+      the function's own arguments, and the resolved model is not one of them;
     * a declared required input is not in the usable set — absent, stale, future-dated, or
       its latest outcome was not ``OK``.
 
@@ -222,7 +268,7 @@ def required_inputs_are_all_present(
     """
     if not spec.required_input_ids:
         return False
-    if spec.contribution_model is None:
+    if spec.model_ref is None:
         return False
     return all(source_id in usable for source_id in spec.required_input_ids)
 
@@ -250,7 +296,7 @@ def refuse_a_number_without_its_inputs(
         f"dial {spec.dial_id!r} produced {type(reading).__name__}, which carries a value, "
         f"but its required inputs were not all present: it declares "
         f"{list(spec.required_input_ids)}, "
-        f"{'a contribution model is declared' if spec.contribution_model is not None else 'NO contribution model is declared'}"
+        f"{'it names model ' + repr(spec.model_ref) if spec.model_ref is not None else 'it NAMES NO MODEL'}"
         f", and the usable inputs are {sorted(usable)}. A reading that carries a value is "
         "a claim that its inputs were present; a dial that did not get them must be "
         "Unknown, whatever the number is and wherever it came from (PID §3.2, CD-AC-001, "
@@ -291,12 +337,20 @@ def _evaluate_dial(
     spec: DialSpec,
     usable: Mapping[str, OK],
     now_utc: datetime,
+    model: "Union[ModelSpec, None]" = None,
 ) -> "Reading":
     """One dial's reading, or the named reason there is not one.
 
     Every ``return`` below is checked against
     :func:`refuse_a_number_without_its_inputs` by the decorator, so a branch that did not
     get its inputs cannot return a reading carrying a value however it is rewritten.
+
+    ``model`` is the spec ``evaluate`` RESOLVED through
+    :meth:`~crash_detector.engine.config.ConfigSnapshot.model_for`. It arrives through the
+    ``*extra`` the post-condition wrapper already carries, which is what that wrapper was
+    written with in the first place — *"a wrapper that fixed the arity would stop guarding
+    the moment anybody gave the evaluator a fourth argument"*. This is that fourth argument,
+    and the guard did not come off with it.
     """
     if not spec.required_input_ids:
         # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
@@ -307,12 +361,12 @@ def _evaluate_dial(
             missing_inputs=(),
         )
 
-    if spec.contribution_model is None:
+    if spec.model_ref is None:
         # DialSpec already refuses required inputs without a model, so this is currently
         # unreachable. It is kept as a named refusal rather than an assumption, because
         # "unreachable" is a claim about today's constructor and this is the dial path.
         return Unknown(
-            reason=REASON_NO_CONTRIBUTION_MODEL,
+            reason=REASON_NO_MODEL_DECLARED,
             since_utc=now_utc,
             missing_inputs=tuple(spec.required_input_ids),
         )
@@ -341,11 +395,24 @@ def _evaluate_dial(
     )
     payloads = {source_id: usable[source_id].payload for source_id in used_ids}
 
-    # A model that cannot compute honestly raises, and the exception travels. It is not
-    # caught here and turned into a number, and it is not caught here and turned into
-    # Unknown either: a model blowing up is a defect in the model, and swallowing it would
-    # publish "we have no data" when the truth is "our code is broken".
-    computation = spec.contribution_model.compute(payloads)
+    # THE ENGINE EXECUTES THE MAPPING. THE CALLER SUPPLIED NEITHER THE CODE NOR THE NUMBER.
+    #
+    # This line used to read `spec.contribution_model.compute(payloads)` — a call on an
+    # object the caller had put in the DialSpec — and it is the line ASR3-F02 published a
+    # laundered number through. It cannot be written any more: DialSpec has no field holding
+    # an object, so there is no expression that names one.
+    #
+    # `model` is a ModelSpec the engine RESOLVED from a name (ConfigSnapshot.model_for, the
+    # one resolution door), `payloads` are values the engine RELEASED from OK observations
+    # it selected, and `compute` is engine-owned, holds no state, and takes one dial's spec
+    # and one dial's payloads. There is nothing here for a caller to close over.
+    #
+    # The refusal travels. It is not caught and turned into a number, and it is not caught
+    # and turned into Unknown either: an executor that cannot compute honestly is a defect,
+    # and swallowing it would publish "we have no data" when the truth is "our code is
+    # broken". Under the shipped registry this line is unreachable — nothing resolves — and
+    # under any registry WO-2 could carry it raises UnspecifiedMapping and returns nothing.
+    computation = compute(model, payloads)
     # THE ONE ADMISSION SITE IN THE PRODUCT (CD-PL-F54, and see RULE 4 of
     # tools/register/check_no_blend.py, which admits a reference to `observed_for_dial`
     # from here and from nowhere else on the scanned path).

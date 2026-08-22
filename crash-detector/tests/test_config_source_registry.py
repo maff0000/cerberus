@@ -6,6 +6,16 @@ criticality must agree with the set it is named in. The equivalent DATABASE cons
 deliverable A5 and is owed; both must exist, because this one refuses an incoherent
 configuration before an evaluation runs and that one refuses an incoherent row whatever
 wrote it.
+
+**THIS FILE IS ABOUT THE SOURCE REGISTRY AND IS UNCHANGED IN WHAT IT ASSERTS.**
+BP-AMENDMENT-0001 §C touched it in one mechanical way only: a dial that declares required
+inputs must NAME a model, and the field it names one in is now ``model_ref`` — a name —
+rather than ``contribution_model``, a field that held an object and does not exist any more.
+The ``FakeModel`` double that used to satisfy that rule is deleted along with the type it
+doubled; nothing here is an object with a ``compute`` method, because no field on the dial
+path can hold one. Every assertion, every exception type and every node id below is as it
+was. The model registry's own three invariants are tested where they belong, in
+``tests/test_engine_model_registry.py``.
 """
 
 from __future__ import annotations
@@ -16,6 +26,13 @@ from crash_detector.dials.dialset import DIAL_IDS, EQUITY_DIAL_ID, MONETARY_DIAL
 from crash_detector.dials.reading import Unknown
 from crash_detector.engine.config import ConfigSnapshot, DialSpec, empty_config_snapshot
 from crash_detector.engine.evaluate import evaluate
+from crash_detector.engine.model import (
+    EMPTY_MODEL_REGISTRY,
+    MappingKind,
+    ModelProvenance,
+    ModelRegistry,
+    ModelSpec,
+)
 from crash_detector.source_registry import (
     EMPTY_SOURCE_REGISTRY,
     Criticality,
@@ -29,16 +46,38 @@ from crash_detector.source_registry import (
 from conftest import FIXED_NOW, WINDOW_SECONDS
 
 
-class FakeModel:
-    """TEST DOUBLE. Never called here; present only to satisfy DialSpec's own rule that
-    a dial declaring required inputs must declare the model that maps them."""
+#: The model NAME a dial uses here. A name and nothing else — no object is involved, and no
+#: mapping runs in this module. It exists only to satisfy ``DialSpec``'s own rule that a dial
+#: declaring required inputs must name the model that maps them.
+NAMES_A_MODEL = "model.test.v0"
 
-    @property
-    def model_id(self) -> str:
-        return "fake.model.v0"
 
-    def compute(self, payloads):  # pragma: no cover - never invoked in this module
-        raise AssertionError("no model runs in these tests")
+def _model_registry_for(*specs: DialSpec) -> ModelRegistry:
+    """One derived row per spec that names a model, MIRRORING that dial's declared inputs.
+
+    Mechanical, for the reason ``_record`` is: these tests already declare the sources they
+    mean, so deriving the model row from the same declaration means not one assertion had to
+    move to accommodate the new field, and a test can never state one input set two ways.
+    """
+    return ModelRegistry(
+        models=tuple(
+            ModelSpec(
+                model_id=spec.model_ref,
+                dial_id=spec.dial_id,
+                required_input_ids=spec.required_input_ids,
+                contributing_input_ids=spec.contributing_input_ids,
+                mapping=MappingKind.UNSPECIFIED,
+                parameters=(),
+                provenance=ModelProvenance(
+                    stands_for="TEST DOUBLE; WO-2 registers no model",
+                    account="TEST DOUBLE; the account of a real mapping is CD-D-005",
+                    decided_by="TEST DOUBLE; no product decision registers a model here",
+                ),
+            )
+            for spec in specs
+            if spec.model_ref is not None
+        )
+    )
 
 
 def _record(source_id: str, criticality: Criticality) -> SourceRecord:
@@ -57,6 +96,7 @@ def _snapshot(*, equity: DialSpec, monetary: DialSpec, registry: SourceRegistry)
         dial_specs=(equity, monetary),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=registry,
+        model_registry=_model_registry_for(equity, monetary),
     )
 
 
@@ -65,7 +105,7 @@ def _bare(dial_id: str) -> DialSpec:
         dial_id=dial_id,
         required_input_ids=(),
         contributing_input_ids=(),
-        contribution_model=None,
+        model_ref=None,
     )
 
 
@@ -92,12 +132,24 @@ def test_the_registry_is_required_and_has_no_default():
 
     In particular, an empty registry that arrived by omission looks identical to the
     deliberate WO-2 empty state, and only one of the two is a decision.
+
+    BOTH registries are asserted, separately, because "required with no default" is a
+    property of each field and a test that omitted both at once could not tell which one
+    the constructor was actually refusing.
     """
     with pytest.raises(TypeError):
         ConfigSnapshot(  # type: ignore[call-arg]
             config_snapshot_id="cfg-test",
             dial_specs=tuple(_bare(dial_id) for dial_id in DIAL_IDS),
             staleness_window_seconds=WINDOW_SECONDS,
+            model_registry=EMPTY_MODEL_REGISTRY,
+        )
+    with pytest.raises(TypeError):
+        ConfigSnapshot(  # type: ignore[call-arg]
+            config_snapshot_id="cfg-test",
+            dial_specs=tuple(_bare(dial_id) for dial_id in DIAL_IDS),
+            staleness_window_seconds=WINDOW_SECONDS,
+            source_registry=EMPTY_SOURCE_REGISTRY,
         )
 
 
@@ -122,7 +174,7 @@ def test_a_dial_may_not_name_an_unregistered_source(field_name):
         dial_id=EQUITY_DIAL_ID,
         required_input_ids=(),
         contributing_input_ids=(),
-        contribution_model=FakeModel(),
+        model_ref=NAMES_A_MODEL,
     )
     kwargs[field_name] = ("src.ghost",)
     with pytest.raises(SourceNotRegistered):
@@ -144,7 +196,7 @@ def test_a_disposable_source_cannot_be_a_dials_required_input():
                 dial_id=EQUITY_DIAL_ID,
                 required_input_ids=("src.d",),
                 contributing_input_ids=(),
-                contribution_model=FakeModel(),
+                model_ref=NAMES_A_MODEL,
             ),
             monetary=_bare(MONETARY_DIAL_ID),
             registry=registry,
@@ -165,7 +217,7 @@ def test_the_disposable_rule_holds_on_the_second_dial_too():
                 dial_id=MONETARY_DIAL_ID,
                 required_input_ids=("src.d",),
                 contributing_input_ids=(),
-                contribution_model=FakeModel(),
+                model_ref=NAMES_A_MODEL,
             ),
             registry=registry,
         )
@@ -179,7 +231,7 @@ def test_a_disposable_source_cannot_be_a_dials_contributing_input():
                 dial_id=EQUITY_DIAL_ID,
                 required_input_ids=(),
                 contributing_input_ids=("src.d",),
-                contribution_model=None,
+                model_ref=None,
             ),
             monetary=_bare(MONETARY_DIAL_ID),
             registry=registry,
@@ -194,7 +246,7 @@ def test_a_contributing_source_cannot_be_promoted_into_the_required_set():
                 dial_id=EQUITY_DIAL_ID,
                 required_input_ids=("src.c",),
                 contributing_input_ids=(),
-                contribution_model=FakeModel(),
+                model_ref=NAMES_A_MODEL,
             ),
             monetary=_bare(MONETARY_DIAL_ID),
             registry=registry,
@@ -215,7 +267,7 @@ def test_a_coherent_configuration_is_accepted():
             dial_id=EQUITY_DIAL_ID,
             required_input_ids=("src.r",),
             contributing_input_ids=("src.c",),
-            contribution_model=FakeModel(),
+            model_ref=NAMES_A_MODEL,
         ),
         monetary=_bare(MONETARY_DIAL_ID),
         registry=registry,
