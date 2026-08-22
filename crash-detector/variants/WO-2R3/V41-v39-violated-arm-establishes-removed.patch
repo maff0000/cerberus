@@ -1,0 +1,17 @@
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 3816467..f58dc04 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -90,12 +90,6 @@ _THRESHOLD = "threshold"
+ _STATE_AGREES, _STATE_DIVERGES, _STATE_UNAVAILABLE = PANEL_STATES
+ 
+ 
+-@establishes(
+-    state=str,
+-    as_of_utc=datetime,
+-    published_utc=datetime,
+-    measures=dict,
+-)
+ @dataclass(frozen=True)
+ class PanelRow:
+     """One row as read from ``publication.witness_panel``.

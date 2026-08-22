@@ -91,6 +91,7 @@ from crash_detector.observations import (
 )
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.time_utc import ensure_utc
+from crash_detector.establishment import each_of, establishes, one_of
 
 __all__ = [
     "RetryPolicy",
@@ -164,6 +165,11 @@ _MALFORMED_EMPTINESS_UNDECIDABLE_PREFIX = "EMPTINESS_UNDECIDABLE_"
 _MALFORMED_VALIDATOR_FAILED_PREFIX = "VALIDATOR_FAILED_"
 
 
+@establishes(
+    max_attempts=int,
+    timeout_seconds=float,
+    backoff_seconds=float,
+)
 @dataclass(frozen=True)
 class RetryPolicy:
     """A bounded attempt policy. Every field is required; there are no defaults.
@@ -215,6 +221,17 @@ class RetryPolicy:
         )
 
 
+@establishes(
+    source_id=str,
+    adapter_id=str,
+    collector_run_id=str,
+    attempts_made=int,
+    rows_recorded=int,
+    final_outcome=one_of(OK, FetchFailed, Malformed, Empty),
+    reading_key=one_of(tuple, None),
+    reading_admitted=bool,
+    delays_applied=each_of(float, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class CollectionResult:
     """What one collection run for one source produced.

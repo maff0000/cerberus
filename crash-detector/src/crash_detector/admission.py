@@ -250,6 +250,7 @@ __all__ = [
     "one_of",
     "each_of",
     "admits",
+    "declaration",
     "declared_admissions",
     "admission_faults",
     "is_admitting_door",
@@ -663,6 +664,18 @@ def admits(**declared: object):
         return door
 
     return apply_at_the_boundary
+
+
+def declaration(name: str, declared: object) -> _Admission:
+    """Compile ONE declaration into its :class:`_Admission`, or raise :exc:`AdmissionFault`.
+
+    Public so that :mod:`crash_detector.establishment` — the same idea one level down, at a
+    type's DECLARED FIELD LIST instead of a callable's signature — shares THIS EXACT
+    vocabulary rather than growing a second one. Two declaration vocabularies that drift
+    apart is how a reader comes to believe a field is established as strictly as a
+    parameter when it is not; there is one, and it is here.
+    """
+    return _compile(name, declared)
 
 
 def declared_admissions(door: object) -> dict:

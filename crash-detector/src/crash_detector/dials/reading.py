@@ -83,6 +83,7 @@ from typing import Callable, Generic, Mapping, TypeVar, Union
 
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.time_utc import ensure_utc
+from crash_detector.establishment import ESTABLISHED_HERE, each_of, establishes
 
 __all__ = [
     "Value",
@@ -256,6 +257,15 @@ class SealedReadingType(type):
         type.__delattr__(cls, name)
 
 
+@establishes(
+    value=ESTABLISHED_HERE(
+        "the generic parameter T. Which score types a Reading may carry is product "
+        "meaning this seat has no authority to fix (CD-RULE-003); DialSet re-establishes "
+        "it one level up, in a body, and DECLARED LIMIT 2 says so"
+    ),
+    as_of_utc=datetime,
+    inputs_used=each_of(str, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class Value(Generic[T], metaclass=SealedReadingType):
     """A reading computed from inputs that were all present and fresh."""
@@ -276,6 +286,14 @@ class Value(Generic[T], metaclass=SealedReadingType):
             )
 
 
+@establishes(
+    value=ESTABLISHED_HERE(
+        "the generic parameter T; the reason given for Value.value applies unchanged"
+    ),
+    as_of_utc=datetime,
+    missing_inputs=each_of(str, within=(tuple,)),
+    reason=str,
+)
 @dataclass(frozen=True)
 class Degraded(Generic[T], metaclass=SealedReadingType):
     """A reading computed while named inputs were missing or stale.
@@ -304,6 +322,11 @@ class Degraded(Generic[T], metaclass=SealedReadingType):
             raise ValueError("Degraded requires a stated reason")
 
 
+@establishes(
+    reason=str,
+    since_utc=datetime,
+    missing_inputs=each_of(str, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class Unknown(metaclass=SealedReadingType):
     """No honest reading could be produced.

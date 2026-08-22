@@ -1,0 +1,80 @@
+diff --git a/probe_v36_cross_field_invariant.py b/probe_v36_cross_field_invariant.py
+new file mode 100644
+index 0000000..a86caa9
+--- /dev/null
++++ b/probe_v36_cross_field_invariant.py
+@@ -0,0 +1,57 @@
++"""V36 — DECLARED LIMIT 1's EXECUTABLE EXAMPLE. **NOTHING HERE IS CLAIMED TO BE CLOSED.**
++
++NOT A RUNNER AND NOT A GUARD (PBG-ASSURE-001). It is the POSITIVE example a declared limit
++owes: an object that IS ACCEPTED, so the limit is demonstrated rather than asserted.
++
++THE PROPOSITION IT VIOLATES: BP-AMENDMENT-0001 §C.5's ConfigSnapshot invariant — a snapshot
++carries EXACTLY ONE SPEC PER DIAL. That is a CROSS-FIELD/CROSS-ELEMENT relation, and
++`crash_detector.establishment` establishes what each field IS and never what any two of them
++must be TO EACH OTHER. A declared field list cannot state a relation.
++
++The patch deletes the "exactly one spec per dial" check from `ConfigSnapshot.__post_init__`
++— a BODY EDIT, the same move V17 makes on the neighbouring line — and this probe then builds
++a snapshot with TWO equity specs and NO monetary spec. Every field of it is exactly typed,
++every element of `dial_specs` is exactly a `DialSpec`, the boundary is fully satisfied, and
++the object is WRONG.
++"""
++
++from crash_detector.engine.config import ConfigSnapshot, DialSpec
++from crash_detector.engine.model import EMPTY_MODEL_REGISTRY
++from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY
++from crash_detector.dials.dialset import DIAL_IDS
++from crash_detector.establishment import declared_establishment
++
++equity_only = (
++    DialSpec(
++        dial_id=DIAL_IDS[0],
++        required_input_ids=(),
++        contributing_input_ids=(),
++        model_ref=None,
++    ),
++    DialSpec(
++        dial_id=DIAL_IDS[0],
++        required_input_ids=(),
++        contributing_input_ids=(),
++        model_ref=None,
++    ),
++)
++print(f"offered dial_ids: {[s.dial_id for s in equity_only]}   (DIAL_IDS = {list(DIAL_IDS)})")
++print(
++    "ConfigSnapshot is a governed type: "
++    f"{sorted(declared_establishment(ConfigSnapshot))}"
++)
++try:
++    snapshot = ConfigSnapshot(
++        config_snapshot_id="v36-probe",
++        dial_specs=equity_only,
++        staleness_window_seconds=600.0,
++        source_registry=EMPTY_SOURCE_REGISTRY,
++        model_registry=EMPTY_MODEL_REGISTRY,
++    )
++except BaseException as refusal:  # noqa: BLE001
++    print(f"REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("ACCEPTED -> ConfigSnapshot CONSTRUCTED carrying two equity specs and no monetary spec.")
++    print(f"    element types: {[type(s).__name__ for s in snapshot.dial_specs]}  (all exactly DialSpec)")
++    print(f"    dial_ids:      {[s.dial_id for s in snapshot.dial_specs]}")
++    print("    THE BOUNDARY IS SATISFIED AND THE OBJECT IS WRONG. That is DECLARED LIMIT 1.")
+diff --git a/src/crash_detector/engine/config.py b/src/crash_detector/engine/config.py
+index 7aaaf0f..42d99d9 100644
+--- a/src/crash_detector/engine/config.py
++++ b/src/crash_detector/engine/config.py
+@@ -236,12 +236,6 @@ class ConfigSnapshot:
+         # different name at construction than at resolution.
+         if any(type(spec) is not DialSpec for spec in self.dial_specs):
+             raise TypeError("ConfigSnapshot.dial_specs must all be DialSpec")
+-        declared = [spec.dial_id for spec in self.dial_specs]
+-        if sorted(declared) != sorted(DIAL_IDS):
+-            raise ValueError(
+-                f"ConfigSnapshot must carry exactly one spec per dial {DIAL_IDS}, got "
+-                f"{declared}"
+-            )
+ 
+         window = self.staleness_window_seconds
+         if isinstance(window, bool) or not isinstance(window, float):

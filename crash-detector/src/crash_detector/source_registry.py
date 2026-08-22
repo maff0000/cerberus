@@ -68,6 +68,7 @@ from dataclasses import dataclass
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from enum import Enum
 from typing import Iterable
+from crash_detector.establishment import each_of, establishes
 
 __all__ = [
     "Criticality",
@@ -127,6 +128,13 @@ class DisposableSourceIsLoadBearing(CriticalityContractViolated):
     """
 
 
+@establishes(
+    source_id=str,
+    adapter_id=str,
+    cadence_seconds=int,
+    criticality=Criticality,
+    stands_for=str,
+)
 @dataclass(frozen=True)
 class SourceRecord:
     """One registered ingredient source — one row of ``raw.source_registry``."""
@@ -170,6 +178,9 @@ class SourceRecord:
             )
 
 
+@establishes(
+    sources=each_of(SourceRecord, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class SourceRegistry:
     """The registered ingredient sources. Frozen — a change is a new snapshot.

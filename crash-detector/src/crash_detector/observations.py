@@ -49,6 +49,7 @@ from typing import Mapping, Union
 
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.time_utc import ensure_utc
+from crash_detector.establishment import establishes, one_of
 
 __all__ = [
     "OK",
@@ -69,6 +70,10 @@ __all__ = [
 MAX_INSTANCE_PATH_LENGTH = 200
 
 
+@establishes(
+    payload=dict,
+    source_as_of_utc=datetime,
+)
 @dataclass(frozen=True)
 class OK:
     """We asked, the source answered, and the answer conformed to its declared schema.
@@ -88,6 +93,10 @@ class OK:
         object.__setattr__(self, "source_as_of_utc", ensure_utc(self.source_as_of_utc))
 
 
+@establishes(
+    error_class=str,
+    http_status=one_of(int, None),
+)
 @dataclass(frozen=True)
 class FetchFailed:
     """We could not ask. Network, timeout, transport, refusal, non-2xx.
@@ -107,6 +116,10 @@ class FetchFailed:
             raise TypeError("FetchFailed.http_status must be an int or absent")
 
 
+@establishes(
+    schema_error_class=str,
+    instance_path=str,
+)
 @dataclass(frozen=True)
 class Malformed:
     """We asked, and the answer did not conform to the schema the adapter declares.
@@ -200,6 +213,11 @@ def outcome_class(outcome: "FetchOutcome") -> str:
         ) from None
 
 
+@establishes(
+    source_id=str,
+    observed_utc=datetime,
+    outcome=one_of(OK, FetchFailed, Malformed, Empty),
+)
 @dataclass(frozen=True)
 class ObservationRecord:
     """One row of ``raw.observation`` — one fetch attempt, whatever came of it.

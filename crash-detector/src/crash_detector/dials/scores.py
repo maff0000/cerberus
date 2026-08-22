@@ -87,6 +87,7 @@ from crash_detector.dials.magnitude import (
     ScoreOutOfRange,
     require_finite_float,
 )
+from crash_detector.establishment import each_of, establishes
 
 __all__ = [
     "ScoreOutOfRange",
@@ -148,6 +149,12 @@ ARITHMETIC_DUNDERS: tuple[str, ...] = (
 )
 
 
+@establishes(
+    source_id=str,
+    category=str,
+    weight=float,
+    contribution=float,
+)
 @dataclass(frozen=True)
 class Contribution:
     """One named input's contribution to a dial magnitude.
@@ -224,6 +231,10 @@ def _require_magnitude_of(type_name: str, dial_id: str, observed: object) -> Non
         )
 
 
+@establishes(
+    score=DialMagnitude,
+    contributions=each_of(Contribution, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class EquityCrashScore:
     """Magnitude of building equity-crash conditions.
@@ -239,6 +250,10 @@ class EquityCrashScore:
         object.__setattr__(self, "contributions", tuple(self.contributions))
 
 
+@establishes(
+    score=DialMagnitude,
+    contributions=each_of(Contribution, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class MonetaryDebasementScore:
     """Magnitude of building monetary-debasement conditions.

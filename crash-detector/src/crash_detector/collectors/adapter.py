@@ -48,6 +48,7 @@ from typing import Any, Mapping, Protocol, Union
 
 from crash_detector.admission import ESTABLISHED_HERE, admits
 from crash_detector.time_utc import ensure_utc
+from crash_detector.establishment import ESTABLISHED_HERE, establishes
 
 __all__ = [
     "AdapterFetchError",
@@ -81,6 +82,13 @@ class AdapterFetchError(Exception):
         self.http_status = http_status
 
 
+@establishes(
+    payload=ESTABLISHED_HERE(
+        "an adapter's unvalidated response body is ANY object; CD-BP-003 — the system "
+        "cannot establish what a foreign source hands it, only what it does with it"
+    ),
+    source_as_of_utc=datetime,
+)
 @dataclass(frozen=True)
 class FetchedResponse:
     """One completed fetch, **before** validation.

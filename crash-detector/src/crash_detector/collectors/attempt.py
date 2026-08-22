@@ -60,6 +60,7 @@ from typing import Protocol, Union
 
 from crash_detector.observations import OK, ObservationRecord, outcome_class
 from crash_detector.time_utc import ensure_utc, format_utc
+from crash_detector.establishment import establishes
 
 __all__ = [
     "ReadingKey",
@@ -78,6 +79,13 @@ __all__ = [
 ReadingKey = tuple[str, str]
 
 
+@establishes(
+    observation=ObservationRecord,
+    adapter_id=str,
+    collector_run_id=str,
+    attempt_number=int,
+    requested_utc=datetime,
+)
 @dataclass(frozen=True)
 class AttemptRecord:
     """One fetch attempt — one row of ``raw.observation`` — whatever came of it."""

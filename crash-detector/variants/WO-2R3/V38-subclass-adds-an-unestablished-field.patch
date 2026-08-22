@@ -1,0 +1,111 @@
+diff --git a/probe_v38_subclass_adds_a_field.py b/probe_v38_subclass_adds_a_field.py
+new file mode 100644
+index 0000000..c1aaff8
+--- /dev/null
++++ b/probe_v38_subclass_adds_a_field.py
+@@ -0,0 +1,105 @@
++"""V38 — DECLARED LIMIT 4's EXECUTABLE EXAMPLE. A subclass is not itself governed.
++
++NOT A RUNNER AND NOT A GUARD (PBG-ASSURE-001). It removes nothing from the source.
++
++THE PROPOSITION: `@establishes` is applied PER CLASS. A subclass of a governed type carries
++no declaration of its own, so a field IT adds is established by nothing. Three parts, and
++all three are printed because two of them are the DECLARED CARRIER and a declared carrier
++that is not measured is the defect CD-RULE-006 exists to stop:
++
++  (a) a `@dataclass` subclass REGENERATES `__init__`, which OVERRIDES the wrapped one, so
++      NOT EVEN THE INHERITED FIELDS are established any more. **This seat wrote the limit
++      claiming the opposite and the measurement refuted it**; the limit was corrected to
++      its measured reach rather than the measurement to the limit.
++  (b) the ADDED field is NOT established either, and nothing in this mechanism sees it.
++  (c) a PLAIN subclass — one that is NOT itself a dataclass — DOES inherit the wrapped
++      `__init__`, and its inherited fields ARE established. The two halves of (a) and (c)
++      are the limit's real shape.
++  (d) the subclass INSTANCE is refused at every `@admits` door that requires the exact
++      parent type, which is the carrier DECLARED LIMIT 4 names, MEASURED here.
++
++`ScoreComputation` is the subject of (a) and (b) deliberately: its body establishes no
++element type of `contributions`, so what refuses in (a) can only be the boundary. A type
++whose body canonicalises would have measured the BODY and credited the boundary.
++
++WHY IT IS A DIFFERENT ROUTE FROM V17 AND FROM EVERYTHING IN ANY PRIOR CORPUS. V17 and
++CD-ASR-F03 DELETE A GUARD from a body. V33, V24 and V37 REACH INTO the interpreter. This one
++leaves every guard in place, executes no privileged code, and simply DECLARES A NEW TYPE —
++the one move the exclusion set contains nothing for, because until this increment there was
++no per-class declaration for a subclass to fail to carry.
++"""
++
++from dataclasses import dataclass
++from datetime import datetime, timezone
++
++from crash_detector.engine.model import ScoreComputation
++from crash_detector.establishment import (
++    declared_establishment,
++    is_establishing_type,
++)
++from crash_detector.serving.witness_resolver import PanelRow, resolve_panel
++
++NOW = datetime(2026, 8, 22, 12, 0, tzinfo=timezone.utc)
++
++
++@dataclass(frozen=True)
++class ScoreComputationPlus(ScoreComputation):
++    """A subclass with ONE added field and NO declaration of its own."""
++
++    tolerate_anything: object = None
++
++
++print(f"ScoreComputation      governed: {is_establishing_type(ScoreComputation)}  "
++      f"{sorted(declared_establishment(ScoreComputation))}")
++print(f"ScoreComputationPlus  governed: {is_establishing_type(ScoreComputationPlus)}  "
++      f"{sorted(declared_establishment(ScoreComputationPlus))}")
++
++print("(a) an INHERITED field, offered wrong-typed — only the boundary can refuse this")
++try:
++    ScoreComputationPlus(magnitude=0.5, contributions=(object(),), tolerate_anything=None)
++except BaseException as refusal:  # noqa: BLE001
++    print(f"    REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ESCAPED -> a bare object reached ScoreComputationPlus.contributions")
++
++print("(b) the ADDED field, offered anything at all")
++plus = ScoreComputationPlus(
++    magnitude=0.5,
++    contributions=(),
++    tolerate_anything=lambda: "a callable, on a frozen judgement-path value type",
++)
++print(f"    ACCEPTED -> tolerate_anything is a {type(plus.tolerate_anything).__name__}")
++print("    THE ADDED FIELD IS ESTABLISHED BY NOTHING. That is DECLARED LIMIT 4.")
++
++
++@dataclass(frozen=True)
++class PanelRowPlus(PanelRow):
++    tolerate_stale: object = None
++
++
++class ScoreComputationPlain(ScoreComputation):
++    """NOT a dataclass. It does not regenerate __init__, so it inherits the wrapped one."""
++
++
++print("(c) a PLAIN (non-dataclass) subclass — the wrapped __init__ IS inherited")
++try:
++    ScoreComputationPlain(magnitude=0.5, contributions=(object(),))
++except BaseException as refusal:  # noqa: BLE001
++    print(f"    REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ESCAPED -> a bare object reached ScoreComputationPlain.contributions")
++
++print("(d) the DECLARED CARRIER, measured: what a door does with a subclass instance")
++row = PanelRowPlus(
++    state="AGREES",
++    as_of_utc=NOW,
++    published_utc=NOW,
++    measures={},
++    tolerate_stale=object(),
++)
++try:
++    resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
++except BaseException as refusal:  # noqa: BLE001
++    print(f"    REFUSED AT THE DOOR: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ADMITTED AT THE DOOR -> the carrier named in DECLARED LIMIT 4 does not hold")

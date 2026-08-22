@@ -139,6 +139,7 @@ from crash_detector.dials.reading import (
     fold,
 )
 from crash_detector.dials.scores import SCORE_TYPES
+from crash_detector.establishment import each_of, establishes
 
 __all__ = [
     "DialPresentationRefused",
@@ -283,6 +284,10 @@ def _establish_dial_id(presentation: object) -> None:
     object.__setattr__(presentation, "dial_id", established)
 
 
+@establishes(
+    dial_id=str,
+    magnitude=DialMagnitude,
+)
 @dataclass(frozen=True)
 class Shown(metaclass=SealedPresentationType):
     """This dial has a reading, and here is the magnitude it is.
@@ -330,6 +335,11 @@ class Shown(metaclass=SealedPresentationType):
             )
 
 
+@establishes(
+    dial_id=str,
+    reason=str,
+    missing_inputs=each_of(str, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class NotShown(metaclass=SealedPresentationType):
     """This dial has no reading, and here is why.

@@ -68,6 +68,7 @@ from crash_detector.witness.panel import (
     Unavailable,
     WitnessPanel,
 )
+from crash_detector.establishment import establishes
 
 __all__ = [
     "PanelRow",
@@ -89,6 +90,12 @@ _THRESHOLD = "threshold"
 _STATE_AGREES, _STATE_DIVERGES, _STATE_UNAVAILABLE = PANEL_STATES
 
 
+@establishes(
+    state=str,
+    as_of_utc=datetime,
+    published_utc=datetime,
+    measures=dict,
+)
 @dataclass(frozen=True)
 class PanelRow:
     """One row as read from ``publication.witness_panel``.

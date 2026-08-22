@@ -36,6 +36,7 @@ from typing import Union
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
 from crash_detector.staleness import FreshnessEvidence
 from crash_detector.time_utc import ensure_utc
+from crash_detector.establishment import establishes
 
 __all__ = [
     "Agrees",
@@ -86,6 +87,11 @@ class AgreementWithoutFreshnessEvidence(ValueError):
     """Agreement was claimed without positive, coherent evidence of freshness."""
 
 
+@establishes(
+    divergence_measure=float,
+    as_of_utc=datetime,
+    freshness=FreshnessEvidence,
+)
 @dataclass(frozen=True)
 class Agrees:
     """The witnesses were reachable, current, and within the divergence threshold.
@@ -131,6 +137,11 @@ class Agrees:
             )
 
 
+@establishes(
+    divergence_measure=float,
+    threshold=float,
+    as_of_utc=datetime,
+)
 @dataclass(frozen=True)
 class Diverges:
     """The witnesses were reachable and current, and disagreed beyond threshold.
@@ -156,6 +167,10 @@ class Diverges:
         object.__setattr__(self, "as_of_utc", ensure_utc(self.as_of_utc))
 
 
+@establishes(
+    reason=str,
+    since_utc=datetime,
+)
 @dataclass(frozen=True)
 class Unavailable:
     """No honest statement about witness agreement could be made.

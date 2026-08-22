@@ -122,10 +122,17 @@ from crash_detector.engine.model import (
 )
 from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY, SourceRegistry
 from crash_detector.staleness import StalenessWindow
+from crash_detector.establishment import each_of, establishes, one_of
 
 __all__ = ["DialSpec", "ConfigSnapshot", "empty_config_snapshot"]
 
 
+@establishes(
+    dial_id=str,
+    required_input_ids=each_of(str, within=(tuple,)),
+    contributing_input_ids=each_of(str, within=(tuple,)),
+    model_ref=one_of(str, None),
+)
 @dataclass(frozen=True)
 class DialSpec:
     """One dial's declared inputs and the NAME of the model that maps them.
@@ -200,6 +207,13 @@ class DialSpec:
             )
 
 
+@establishes(
+    config_snapshot_id=str,
+    dial_specs=each_of(DialSpec, within=(tuple,)),
+    staleness_window_seconds=float,
+    source_registry=SourceRegistry,
+    model_registry=ModelRegistry,
+)
 @dataclass(frozen=True)
 class ConfigSnapshot:
     """Everything outside the observations that affects an evaluation."""

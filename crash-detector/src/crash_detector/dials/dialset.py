@@ -30,6 +30,7 @@ from crash_detector.dials.scores import (
     EquityCrashScore,
     MonetaryDebasementScore,
 )
+from crash_detector.establishment import establishes, one_of
 
 __all__ = ["DialSet", "DIAL_IDS", "EQUITY_DIAL_ID", "MONETARY_DIAL_ID", "DIAL_FIELDS"]
 
@@ -47,6 +48,10 @@ DIAL_IDS: tuple[str, ...] = (EQUITY_DIAL_ID, MONETARY_DIAL_ID)
 DIAL_FIELDS: tuple[str, ...] = ("equity", "monetary")
 
 
+@establishes(
+    equity=one_of(*READING_CONSTRUCTORS),
+    monetary=one_of(*READING_CONSTRUCTORS),
+)
 @dataclass(frozen=True)
 class DialSet:
     """The two dial readings of one evaluation cycle, held apart."""

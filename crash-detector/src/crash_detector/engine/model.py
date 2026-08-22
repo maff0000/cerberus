@@ -149,6 +149,7 @@ from crash_detector.admission import ESTABLISHED_HERE, admits, one_of
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.dials.scores import Contribution
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
+from crash_detector.establishment import each_of, establishes
 
 __all__ = [
     "ScoreComputation",
@@ -168,6 +169,10 @@ __all__ = [
 ]
 
 
+@establishes(
+    magnitude=float,
+    contributions=each_of(Contribution, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class ScoreComputation:
     """A magnitude and the named contributions that produced it.
@@ -329,6 +334,10 @@ class ModelReadsUndeclaredInput(ValueError):
     """
 
 
+@establishes(
+    name=str,
+    value=float,
+)
 @dataclass(frozen=True)
 class DeclaredParameter:
     """One configured number a mapping is parameterised by, with the name it is known as.
@@ -383,6 +392,11 @@ class DeclaredParameter:
         object.__setattr__(self, "value", established)
 
 
+@establishes(
+    stands_for=str,
+    account=str,
+    decided_by=str,
+)
 @dataclass(frozen=True)
 class ModelProvenance:
     """WHERE CD-D-005 ATTACHES TO A REGISTRY ROW (§C.6).
@@ -441,6 +455,15 @@ class ModelProvenance:
                 )
 
 
+@establishes(
+    model_id=str,
+    dial_id=str,
+    required_input_ids=each_of(str, within=(tuple,)),
+    contributing_input_ids=each_of(str, within=(tuple,)),
+    mapping=MappingKind,
+    parameters=each_of(DeclaredParameter, within=(tuple,)),
+    provenance=ModelProvenance,
+)
 @dataclass(frozen=True)
 class ModelSpec:
     """One registered model — one row of the model registry. FROZEN DATA, NO CALLABLES.
@@ -568,6 +591,9 @@ class ModelSpec:
             )
 
 
+@establishes(
+    models=each_of(ModelSpec, within=(tuple,)),
+)
 @dataclass(frozen=True)
 class ModelRegistry:
     """The registered models. Frozen — a change is a new snapshot.

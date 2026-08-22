@@ -1,8 +1,8 @@
 diff --git a/src/crash_detector/dials/scores.py b/src/crash_detector/dials/scores.py
-index 79b20ca..585202b 100644
+index f2d78b4..b74bb80 100644
 --- a/src/crash_detector/dials/scores.py
 +++ b/src/crash_detector/dials/scores.py
-@@ -216,6 +216,34 @@ class EquityCrashScore:
+@@ -249,6 +249,34 @@ class EquityCrashScore:
          _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
          object.__setattr__(self, "contributions", tuple(self.contributions))
  
@@ -35,5 +35,5 @@ index 79b20ca..585202b 100644
 +        )
 +
  
- @dataclass(frozen=True)
- class MonetaryDebasementScore:
+ @establishes(
+     score=DialMagnitude,

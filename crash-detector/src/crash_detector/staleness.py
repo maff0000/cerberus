@@ -364,6 +364,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from crash_detector.time_utc import age_seconds, ensure_utc
+from crash_detector.establishment import establishes
 
 __all__ = [
     "STALENESS_WINDOW_CEILING_SECONDS",
@@ -411,6 +412,9 @@ class FreshnessNotEstablished(ValueError):
     """
 
 
+@establishes(
+    seconds=float,
+)
 @dataclass(frozen=True, slots=True)
 class StalenessWindow:
     """A window that may lawfully be applied, in seconds.
@@ -501,6 +505,11 @@ class StalenessWindow:
         return 0.0 <= value <= self.seconds
 
 
+@establishes(
+    as_of_utc=datetime,
+    observed_at_utc=datetime,
+    window=StalenessWindow,
+)
 @dataclass(frozen=True, slots=True)
 class FreshnessEvidence:
     """POSITIVE EVIDENCE that an observation was current when it was read.
