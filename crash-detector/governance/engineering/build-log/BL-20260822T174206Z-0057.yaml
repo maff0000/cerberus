@@ -1,0 +1,613 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 4 RECONCILED AND ACCEPTED AS INCREMENT 4 AT LANE 4ac159e — AND NOT ACCEPTED AS
+# CLOSING CD-AC-002 OR CD-AC-005.
+#
+# THE LARGEST THING IN THIS INCREMENT WAS NEVER ONE OF THE SIX DOCUMENTARY ITEMS. IT IS THAT
+# **CD-D-033 IS DISCHARGED AND THE PLANTS ARE EVIDENCE AGAIN**: eleven of eleven now APPLY (was
+# 8/11 for three increments) and TEN CONTRAST — the same declared command exiting 0 clean and
+# NON-ZERO violated — MEASURED BY THE PROJECT LEAD ON ITS OWN EXTRACTIONS, ONE PER ARM PER PLANT.
+# NO PARTY HAD EVER SHOWN CONTRAST AT THIS LANE BEFORE. `git apply --check` had been standing in
+# for it for three boundaries, and it was never the same claim.
+#
+# THE SEVENTH CONSECUTIVE SEAT TO RAISE FINDINGS AGAINST ITS OWN WORK, AND THE FIRST TO FIND ONE
+# THAT INDICTS THE PROJECT LEAD'S OWN METHOD: CD-ENG-WO2R3-F15 — A GUARD FAILING SINCE INCREMENT 2
+# WITH NO RECORD SAYING SO, THROUGH TWO PROJECT LEAD RECONCILIATIONS THAT DID NOT RUN IT.
+# THE PROJECT LEAD REPLICATED THE BISECT AND OWNS THE MISS.
+#
+# THE INCREMENT REWORDED DECLARED LIMIT 6 AND DARED ITS READER: "assume there is a fourth and look
+# for it rather than check this list." THE PROJECT LEAD LOOKED. THERE IS A FOURTH — CD-PL-F84.
+#
+# ONE QUESTION GOES UP AND IS NOT ANSWERED HERE: CD-D-127, WHERE THE ELEVEN SWEEP DISPOSITIONS
+# BELONG IN THE PATH TO THE GATE. A RECOMMENDATION IS GIVEN; THE DECISION IS NOT TAKEN.
+# ================================================================================================ #
+
+entry_id: BL-20260822T174206Z-0057
+timestamp_utc: "2026-08-22T17:42:06Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: e7ad814369b0d175f18b086e495db057dcfc6588   # the CD-RULE-007 follow-up closing the PO-DECISIONS-0008 reconciliation boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36).
+parent_entry_id: BL-20260822T165031Z-0056
+schema_version: 1
+
+action_summary: >
+  INCREMENT 4 IS DELIVERED AT LANE 4ac159ea0bb47fb859fe005bd966222d66f0eeff ON BRANCH wo-2r3, in
+  SIX commits by CD-ENG-WO2R3-01, which RETURNED ALIVE and committed as it went for the FOURTH
+  INCREMENT RUNNING. Identity is CLEAN on all six — the Project Lead's own
+  `git log --format='%an <%ae> | %cn <%ce>' 04cdd34..HEAD | sort -u` returns EXACTLY ONE LINE, and
+  it is the seat's. Working tree porcelain: ZERO LINES. All thirteen changed paths lie inside
+  writable scope; NOTHING under `pbg/`, `governance/blueprint/`, `governance/decisions/` or
+  `ACTIVE_WORK.yaml` was touched, and no pre-existing Build Log entry was modified.
+
+  **"NO NEW LOGIC" IS PROVED AND NOT ASSERTED, AND THE PROJECT LEAD PROVED IT WITH A STRICTER
+  DRIVER THAN THE SEAT'S.** Two source files changed by 115 lines
+  (`src/crash_detector/admission.py` 74/18, `tools/register/check_judgement_path_doors.py` 41/2).
+  The seat compared `ast.dump` with the MODULE docstring removed. The Project Lead removed EVERY
+  docstring at EVERY scope — module, class and function — and re-compared: **AST-IDENTICAL, BOTH
+  FILES.** 115 lines of change and ZERO executable difference. This is the correct shape for an
+  increment scoped NO NEW LOGIC, and it is also why the node-id sets could not move.
+
+  **THE SUITE AND THE NODE IDS, ON THE PROJECT LEAD'S OWN PRISTINE EXTRACTIONS OF BOTH SHAs.**
+  1519 collected and **1519 PASSED** at 4ac159e. The two collected sets were DIFFED, not counted:
+  `comm -23` -> **0 LOST**, `comm -13` -> **0 ADDED**. The sets are IDENTICAL. A no-new-logic
+  increment that moved a node id would have been the thing to look at; none moved.
+
+  **THE SIX DOCUMENTARY ITEMS ARE DELIVERED AND EACH WAS RE-MEASURED RATHER THAN READ.**
+  CD-PL-F81: `grep -c '__closure__' required-tests.yaml` went **0 -> 3** (and `__wrapped__` 0 -> 1);
+  the mechanism's own limits are in the register an auditor reads FIRST. CD-PL-F82: the Project Lead
+  RAN THE INSTRUMENT ITSELF AT BOTH SHAs — "SUBJECTS ENUMERATED: 27. DECORATED: 27", 54 assertions,
+  PASS, exit 0, IDENTICAL at 04cdd34 and 4ac159e as it must be — and the corrected pair is stated
+  LIKE-FOR-LIKE in all three CD-RULE-004 places: **TOTAL 19 -> 27, RULE-1 SUBSET 16 -> 24,
+  ASSERTIONS 38 -> 54**, with "Never pair 19 with 24" written into the execution contract. The
+  mis-paired figure survives NOWHERE as an assertion — its two remaining occurrences are QUOTATIONS
+  of the corrected error. `subjects >= 24` was NOT raised, exactly as CD-D-120 required.
+  CD-PL-F83: DECLARED LIMIT 6 now names THREE routes with `(a)` split into its two measured
+  consequences, and says in terms that **the named routes are KNOWN ROUTES AND NOT AN EXHAUSTIVE
+  SET**. CD-AC-002's trace is FOUR REFUSALS WITH THE FIRST STRUCTURAL — the ABSENT DOOR, "the only
+  one that is not a check ... the absence of a place for the value to arrive AT" — with the old
+  layers 1..5 renumbered 2..6 and the renumbering disclosed. `latest_admitted_run` is **null**,
+  verified by PARSING the register rather than by grep, and a parse of every key in the file finds
+  **NO status-like key**.
+
+  **THE SEAT REPLICATED THE PROJECT LEAD'S TWO ROUTES RATHER THAN RELAYING THEM, AND THE PROJECT
+  LEAD THEN RE-RAN ITS OWN ROUTES AGAINST THE SEAT'S PATCHES.** V33 (CD-PL-F80 route a2) and V34
+  (CD-PL-F83 route c) are now durable, applying patches; run by the Project Lead, V33 turns an
+  ORDINARY FRONT-DOOR CALL into `Agrees` / `WITNESS AGREES` where the control arm raises
+  `NotAdmitted`, and V34 makes every `AttemptRecord.requested_utc` read 1999 against a control
+  reading 2026. 19 of 19 WO-2R3 variants apply.
+
+  **WHAT MAKES THIS INCREMENT WORTH MORE THAN ITS SIX ITEMS.** For three increments the record has
+  said "8 of 11 plants apply". APPLYING IS NOT BITING. The seat re-measured all eleven on both arms
+  and the Project Lead measured them again independently: **11 APPLY, 10 CONTRAST 0 -> 1**, and the
+  three regenerated plants fail at the RIGHT LAYER — `AbsenceYieldedAValue` for CD-AC-001's absence
+  plant, rules A/C/F for the numeric-default plant, and a NAMED IMPORT ROUTE
+  (`witness.panel <- corroboration <- engine.evaluate`) for the engine-no-witness-reach plant.
+  `CD-RT-003-GRANT-MATRIX-LIVE` **EXITS 3 ON BOTH ARMS — the arms are indistinguishable, and that
+  is NOT A CONTRAST.** It is declared as such rather than counted as one.
+
+  **FIVE FINDINGS FROM THE SEAT AGAINST ITS OWN WORK, THE SEVENTH CONSECUTIVE SEAT TO DO SO, AND
+  ONE OF THEM INDICTS THIS SEAT.** CD-ENG-WO2R3-F15: the Class-2 delegated-judgement sweep has been
+  FAILING SINCE INCREMENT 2 and no record said so. The Project Lead BISECTED IT ITSELF across five
+  SHAs and confirms every number.
+
+  **THE PROJECT LEAD RAISES TWO OF ITS OWN, ONE OF WHICH ANSWERS THE INCREMENT'S OWN DARE.**
+  CD-PL-F84 — a FOURTH route through DECLARED LIMIT 6, found because the reworded limit told its
+  reader to go looking. CD-PL-F85 — a structural defect in how every Build Log entry on this
+  project states its own identity audit.
+
+the_seats_return: 'READY_FOR_ASSURANCE for INCREMENT 4 ONLY. The dispatch is unexhausted and owes increment 5.'
+
+lane_reconciliation:
+  method: >
+    REPLICATION, NOT RELAY (PO-DECISIONS-0006 ruling 2). Every number below was produced by the
+    Project Lead on its own `git archive` extractions into /tmp, with its own drivers, outside every
+    governed worktree, with the command recorded beside the number (CD-RULE-009). Where the Project
+    Lead did NOT verify something, it is in `not_verified_by_the_project_lead_at_this_boundary` and
+    nowhere else.
+  head_and_cleanliness:
+    command: "git rev-parse HEAD && git cat-file -t <sha> && git rev-parse --abbrev-ref HEAD && git status --porcelain | wc -l"
+    observed: '4ac159ea0bb47fb859fe005bd966222d66f0eeff, a `commit` object, branch wo-2r3, porcelain ZERO LINES.'
+  identity_audit_every_commit:
+    command: "git log --format='%h %an <%ae> | %cn <%ce>' 04cdd34..HEAD  AND  the same piped to `sort -u`"
+    observed: >
+      SIX commits — df54846, a622687, c55f358, dd40f74, 9d2a749, 4ac159e — and `sort -u` returns
+      EXACTLY ONE LINE: `CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid>` as BOTH
+      author and committer on every one. CD-PL-F79's failure mode did not recur. The distinct
+      actor_id also carries PBG-SOD-001 on this project by the PO's ratified CD-D-002 named-actor
+      route, and it is DISTINCT from PROJECT_LEAD_SEAT_01 in the Build Log entries as well.
+  scope_audit:
+    command: "git diff --name-only 04cdd34..HEAD"
+    observed: >
+      THIRTEEN paths, every one inside writable scope: `contracts/execution/` (1), `plants/` (4
+      including MANIFEST.md), `required-tests.yaml`, `src/crash_detector/admission.py`,
+      `tools/register/check_judgement_path_doors.py`, `variants/WO-2R3/` (3), and TWO NEW build-log
+      entries. NOTHING under `pbg/`, `PID.md`, `BLUEPRINT.md`, `governance/blueprint/`,
+      `governance/decisions/`, `governance/assurance/`, `governance/reconciliation/` or
+      `ACTIVE_WORK.yaml`.
+  build_log_append_only_audit:
+    command: "git log --diff-filter=A --name-only 04cdd34..HEAD -- governance/engineering/build-log/  AND  `git cat-file -e 04cdd34:<path>` per changed file"
+    observed: >
+      BOTH build-log files are ADDITIONS; NEITHER exists at 04cdd34, so NO PRE-EXISTING ENTRY WAS
+      MODIFIED (PBG-CONT-003, non-waivable). The two CD-RULE-007 follow-ups (dd40f74, 4ac159e) were
+      inspected line by line: dd40f74 is `9 5` and 4ac159e is `4 2`, and every changed line is the
+      PENDING SHA field or its own explanatory comment. THE SEAT WROTE THAT FIELD AND NOTHING ELSE,
+      which is the whole of what CD-RULE-007 permits.
+  no_new_logic_proved_with_a_stricter_driver_than_the_seats:
+    command: "ast.dump(ast.parse(git show <sha>:<path>)) after removing the docstring at EVERY scope (Module, FunctionDef, AsyncFunctionDef, ClassDef), compared 04cdd34 vs 4ac159e"
+    observed: >
+      `src/crash_detector/admission.py` -> IDENTICAL. `tools/register/check_judgement_path_doors.py`
+      -> IDENTICAL. Raw numstat 74/18 and 41/2 — 115 changed lines, ZERO executable difference.
+      WHY THE STRICTER DRIVER MATTERS: the seat stripped only the MODULE docstring, which leaves a
+      changed FUNCTION docstring — the most likely place for a documentary increment to accidentally
+      alter behaviour via a `__doc__`-reading test — inside the compared tree. Stripping at every
+      scope removes that escape and the answer did not change. Comments never enter the AST at all,
+      and a changed non-docstring string constant WOULD have shown as a difference; none did.
+  suite_and_node_ids:
+    command: "PYTHONPATH=<extract>/src python3 -B -m pytest tests -q  AND  --collect-only -q | grep '::' | sort, then comm -23 / comm -13 between the two SHAs"
+    observed: >
+      **1519 PASSED** at 4ac159e in 12.25s. Collected 1519 at BOTH SHAs. `comm -23` (in increment 3,
+      not in increment 4) -> **0**. `comm -13` (in increment 4, not in increment 3) -> **0**. THE
+      SETS ARE IDENTICAL, established by DIFFING them rather than by comparing two totals — two
+      different sets can share a count, and this project has been bitten by exactly that class of
+      arithmetic (CD-PL-F82).
+  the_eleven_plants_apply_AND_contrast:
+    command: >
+      Per plant, TWO independent pristine extractions (`git archive 4ac159e | tar -x -C /tmp/arm-<id>`):
+      the clean arm runs the plant's declared `execute` command from required-tests.yaml unmodified;
+      the violated arm runs the SAME command after `git apply plants/<criterion>/<id>.patch`. Exit
+      codes captured on both.
+    observed: >
+      **ELEVEN OF ELEVEN APPLY** (was 8/11 at 7b00ce9, 995ec3e and 04cdd34 — the Project Lead
+      measured 8/11 at 04cdd34 itself at the start of this boundary, so the change is this
+      increment's).
+      **TEN CONTRAST, clean exit 0 -> violated exit 1:** CD-RT-001-ABSENCE-RENDERS-UNKNOWN,
+      CD-RT-001-AST-NO-NUMERIC-DEFAULT, CD-RT-002-AST-NO-BLEND, CD-RT-002-SCHEMA-CLOSED,
+      CD-RT-002-TYPE-NO-ARITHMETIC, CD-RT-003-ENGINE-NO-WITNESS-REACH,
+      CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES, CD-RT-012-EGRESS-NO-BROKER,
+      CD-RT-012-LOCKFILE-DENYLIST, CD-RT-012-NO-EXECUTION-INTERFACE.
+      **CD-RT-003-GRANT-MATRIX-LIVE EXITS 3 ON BOTH ARMS.** The arms are INDISTINGUISHABLE. That is
+      NOT A CONTRAST, it is not counted as one here, and it is not counted as one in the register.
+      It needs a live digest-pinned Postgres, which this boundary did not stand up.
+      ELEVEN PLANT PATCHES EXIST AT BOTH SHAs — `find plants -name '*.patch' | wc -l` -> 11 and 11.
+      NONE WAS DELETED, which CD-D-033 prohibits.
+  the_three_regenerated_plants_fail_at_the_RIGHT_LAYER:
+    why_this_check_exists: >
+      CD-ENG-WO2R3-F12, raised by the seat against its own first attempt: a LITERAL regeneration of
+      the CD-AC-001 absence plant contrasted 0 -> 1, but by raising `ScoreOutOfRange` — a CD-AC-002
+      refusal. It would have been recorded as a CD-AC-001 catch by any party reading exit codes.
+      **AN EXIT CODE IS NOT A REFUSING LAYER.** The Project Lead therefore read the failure text of
+      all three, and does not accept the contrast on the exit code alone.
+    observed: >
+      CD-RT-001-ABSENCE-RENDERS-UNKNOWN -> `crash_detector.dials.reading.AbsenceYieldedAValue: dial
+      'monetary_debasement' produced Value, which carries a value, but its required inputs were not
+      all present`. THE CD-AC-001 LAYER, named for the proposition. 15 failed / 109 passed.
+      CD-RT-001-AST-NO-NUMERIC-DEFAULT -> `FAIL — 3 violation(s)`, rules **A** (nullable-number
+      annotation), **C** (`or 0.0`) and **F** (unrecognised magnitude provenance). The numeric-default
+      class, three ways.
+      CD-RT-003-ENGINE-NO-WITNESS-REACH -> `FAIL — 1 violation(s)`, and it NAMES THE ROUTE:
+      `crash_detector.witness.panel <- crash_detector.corroboration <- crash_detector.engine.evaluate`.
+      ALL THREE VIOLATE THE SAME PROPOSITION AS BEFORE, against the new structure. That is CD-D-033's
+      requirement in terms, and it is met.
+  the_register_checks:
+    command: "for c in tools/register/check_*.py; do python3 -B $c --root . ; echo $?; done"
+    observed: >
+      TEN OF ELEVEN EXIT 0. `check_grant_matrix_live.py` exits 3 — AT 04cdd34 TOO, so it is not a
+      regression of this increment. `check_judgement_path_doors.py` exits 0, PASS, 54 assertions,
+      SUBJECTS ENUMERATED 27, DECORATED 27, and PRINTS BY NAME the three doors rule 2 reaches that
+      rule 1 does not (`combine_within_one_dial`, `observed_for_dial`, `derived_within_one_dial`) —
+      so 27 = 24 + 3 is verifiable FROM THE INSTRUMENT'S OWN OUTPUT and not from any record. That is
+      what makes CD-D-120's like-for-like requirement checkable by the next reader.
+  the_register_is_clean:
+    command: "python3 -c 'yaml.safe_load(open(\"required-tests.yaml\"))' then walk EVERY key at EVERY depth against the status-like set"
+    observed: >
+      `latest_admitted_run` is **None** — parsed, not grepped, so a commented-out or
+      differently-indented value could not have hidden. Status-like keys (status, result, outcome,
+      verdict, grade, score, disposition, passed, failed, pass, fail) at any depth: **NONE**. The
+      register carries obligations and never results, and this seat did not admit its own evidence.
+  the_seats_replication_of_the_project_leads_two_routes:
+    why_it_matters: >
+      CD-PL-F80 and CD-PL-F83 were the PROJECT LEAD's findings on the PROJECT LEAD's drivers. A seat
+      that reworded the limit from the Project Lead's prose would have produced a declaration nobody
+      had re-measured. The seat instead REPLICATED both and shipped them as durable patches, and the
+      Project Lead then re-ran them against the seat's own patches — replication of a replication.
+    observed: >
+      `variants/WO-2R3/V33-closure-declaration-rewrite.patch` and
+      `variants/WO-2R3/V34-establishing-function-rebound.patch` both APPLY at 4ac159e; 19 of 19
+      WO-2R3 variants apply.
+      V33, run by the Project Lead: CONTROL raises `NotAdmitted: resolve_panel: row=DuckRow is not
+      admitted; this door requires exactly PanelRow or None`. After rewriting `__closure__[0]`, the
+      SAME ORDINARY FRONT-DOOR CALL returns **`ESCAPED -> Agrees; RENDERS: WITNESS AGREES`** — and
+      `declared_admissions(resolve_panel)` STILL REPORTS the original three parameters with
+      `__admission_faults__ = ()`. The introspection surface lies, exactly as CD-ENG-WO2R3-F13 says.
+      V34, run by the Project Lead: control records
+      `['2026-08-22T12:00:00.000010+00:00', ...]`; after rebinding `runner.ensure_utc`, the same
+      recording reads `['1999-01-01T00:00:00.000007+00:00', ...]` — and THE DOOR IS SATISFIED IN
+      BOTH ARMS, because `started_utc` is an exact `datetime` either way.
+  the_variants_manifest_written_for_the_fourth_auditor:
+    observed: >
+      It opens with a READ-THIS-FIRST map to the auditor's named targets and a one-minute command
+      block, states the exact SHA each row's numbers were measured at and WHY ("a number measured at
+      one SHA and quoted at another is the thing CD-RULE-009 exists to stop"), and requires a
+      SEPARATE PRISTINE EXTRACTION PER VARIANT with `python3 -B` so no `__pycache__` is written into
+      a governed tree (PBG-RT-001). It names five soft spots FOR the auditor, including
+      `subjects >= 24` — "a FLOOR that passes at 27 and would pass at 270 ... Raising it was NOT
+      authorised and this seat left it alone." A seat pointing the next auditor at the assertion that
+      would most embarrass it is the behaviour PO-DECISIONS-0005 ruling 4 asked for.
+      It also discloses CD-ENG-WO2R3-F14 against itself: the V16-V19 rows carried a stale
+      "38 assertions" until this increment and now carry a RE-MEASURED 54, "corrected by RE-RUNNING
+      each variant rather than by copying 54 from elsewhere".
+
+findings_from_the_seat_and_how_the_project_lead_ruled_them:
+- id: CD-ENG-WO2R3-F15
+  severity_as_raised: MEDIUM
+  the_finding: >
+    THE CLASS-2 DELEGATED-JUDGEMENT SWEEP HAS BEEN FAILING SINCE INCREMENT 2 AND NO RECORD SAID SO.
+    `required-tests.yaml` cited `python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list`
+    as an executable example exiting 0 with "402 sites enumerated over 16 modules". It has not
+    exited 0 since increment 1.
+  project_lead_replication: >
+    **BISECTED INDEPENDENTLY BY THE PROJECT LEAD, ONE PRISTINE EXTRACTION PER SHA, THE SAME COMMAND
+    EACH TIME. EVERY NUMBER THE SEAT REPORTED IS CONFIRMED, AND THE PROJECT LEAD ADDED A FIFTH SHA:**
+    f30e63c -> exit 0, PASS, 402 sites over 16 modules.
+    7b00ce9 (increment 1) -> exit 0, PASS, 471 sites over 17 modules — INCREMENT 1 UPDATED THE
+    DISPOSITIONS WHEN IT WIDENED THE SURFACE, WHICH IS THE PRECEDENT.
+    995ec3e (increment 2) -> **exit 1, FAIL, 514 sites, 11 violations** — INCREMENT 2 DID NOT.
+    04cdd34 (increment 3) -> exit 1, FAIL, 514 sites, 11 violations.
+    4ac159e (increment 4) -> exit 1, FAIL, 514 sites, 11 violations — UNCHANGED, and correctly so.
+    THE ELEVEN, ENUMERATED BY THE PROJECT LEAD FROM THE INSTRUMENT'S OWN OUTPUT: one UNDECLARED
+    MODULE (`crash_detector.admission`, 33 tier-2 sites) and TEN UNDECLARED ADMISSION sites, every
+    one of them inside `crash_detector.admission` — `_compile` x3, `_EstablishedHere.__call__`,
+    `_type_tuple`, `each_of`, `_is_defined_in_a_class_body`, `declared_admissions`,
+    `admission_faults`, `is_admitting_door`.
+  ruling: >
+    **THE FINDING IS UPHELD IN FULL, AND THE INSTRUMENT IS NOT AT FAULT — IT IS THE ONLY THING HERE
+    THAT BEHAVED CORRECTLY.** A module entered the judgement closure without a written disposition
+    and the sweep DENIED BY DEFAULT AND SAID SO, on every run, for two increments. Nothing was
+    unguarded, no criterion weakened, and it is not a declared register command, so no gate depended
+    on it. **WHAT FAILED IS READING.**
+    **THE SEAT WAS RIGHT NOT TO CLOSE IT HERE, and the Project Lead records that as the correct
+    call rather than as a gap.** The remedy is ELEVEN SUBSTANTIVE GOVERNED CLAIMS about how a
+    deciding operand is established, inside an increment the Project Lead itself scoped NO NEW LOGIC
+    (CD-D-122). A seat that had written them here would have been resolving a finding against its own
+    work in the one increment scoped to exclude exactly that — and it said so in those words.
+    WHERE THEY BELONG IS **CD-D-127, PUT TO THE PRODUCT AUTHORITY BELOW AND NOT ANSWERED HERE.**
+  and_it_indicts_the_project_lead: >
+    The seat raised this against "THIS SEAT'S OWN INCREMENT 2, **AND THE PROJECT LEAD'S
+    RECONCILIATION OF IT**." **THAT SECOND HALF IS CORRECT AND IS ACCEPTED WITHOUT QUALIFICATION.**
+    See CD-PL-F86.
+
+- id: CD-ENG-WO2R3-F12
+  severity_as_raised: MEDIUM
+  the_finding: >
+    A LITERAL regeneration of the CD-AC-001 absence plant contrasted 0 -> 1 — but by raising
+    `ScoreOutOfRange`, a CD-AC-002 refusal. It would have been recorded as a CD-AC-001 catch by
+    anyone reading exit codes. AN EXIT CODE IS NOT A REFUSING LAYER. Fixed in the delivered patch.
+  project_lead_replication: >
+    The DELIVERED patch was checked at the layer and not at the exit code: it raises
+    `AbsenceYieldedAValue`, which is the CD-AC-001 refusal named for the proposition. CONFIRMED.
+  ruling: >
+    **UPHELD, CLOSED BY THE DELIVERY, AND IT IS THE MOST VALUABLE FINDING OF THE INCREMENT AFTER
+    F15.** It generalises past this plant: for three boundaries this project has recorded plant
+    health as "applies", and this increment replaced that with "contrasts". F12 shows that even
+    "contrasts" is not enough on its own — a plant can contrast for the WRONG REASON and read as
+    evidence for a criterion it never touched. THE STANDARD IS NOW **APPLIES, CONTRASTS, AND FAILS
+    AT THE LAYER ITS PROPOSITION NAMES**, and the Project Lead applied that standard to all three
+    regenerated plants at this boundary. Carried into the fourth Assurance seat's brief.
+
+- id: CD-ENG-WO2R3-F13
+  severity_as_raised: LOW
+  the_finding: >
+    `ADMITS_ATTRIBUTE` is set to `dict(compiled)` — A COPY TAKEN AT DECORATION — so after route (a2)
+    the introspection surface LIES: `is_admitting_door` is True, `declared_admissions` still reports
+    the original declaration, `__admission_faults__` is still `()`. A reviewer asking the door what
+    it requires is told the truth about what it WAS told and nothing about what it now DOES.
+  project_lead_replication: >
+    REPRODUCED by running V33 directly. Confirmed verbatim.
+  ruling: >
+    **UPHELD, AND THE SEAT'S DECISION NOT TO REPAIR IT IS RIGHT.** Making the attribute the live
+    object would hand a mutator a DOCUMENTED, SUPPORTED handle in place of an interpreter-internal
+    one — a worse trade, and choosing between them is a design decision outside a reconciliation
+    increment. RECORDED IN THE LIMIT, WHICH IS THE CORRECT PLACE. The Project Lead adds a
+    qualification the seat could not have known: **this asymmetry is NOT general.** CD-PL-F84's
+    fourth route leaves the introspection surface TRUTHFUL. The limit should not be reworded as
+    though lying were a property of the mechanism; it is a property of route (a2).
+
+- id: CD-ENG-WO2R3-F14
+  severity_as_raised: LOW
+  the_finding: 'Five more stale "38 assertions" figures in the variants manifest, re-taken by re-running.'
+  ruling: >
+    **UPHELD AND CLOSED BY THE DELIVERY.** It is CD-PL-F82's defect class found by the seat in its
+    own artefact, one document further out, and — the part that matters — CORRECTED BY RE-RUNNING
+    EACH VARIANT RATHER THAN BY COPYING 54 FROM ELSEWHERE. That is CD-D-120's method applied without
+    being told to.
+
+- id: CD-ENG-WO2R3-F16
+  severity_as_raised: LOW
+  the_finding: '`variants/WO-2R` is 67 of 70 applying; it broke at increment 1. Raised, not acted on.'
+  project_lead_replication: >
+    MEASURED INDEPENDENTLY: **67 apply, 3 do not**, and the three are named —
+    `CD-ASR-F02-F03/E04-module-level-constant.patch`,
+    `CD-ASR-F02-F03/V03-dynamic-constructor-on-the-absence-branch.patch`,
+    `CD-ASR-F02-F03/V06-magnitude-from-configuration-not-a-literal.patch`.
+  ruling: >
+    **UPHELD AND CORRECTLY NOT ACTED ON. NOT INCREMENT 4'S WORK AND NOT A DEFECT.** CD-D-033 is
+    about the eleven declared PLANTS, which are a deliverable of the rework; the WO-2R VARIANT CORPUS
+    is a prior auditor's exclusion set, it lives under a directory this dispatch may add to but which
+    records what WAS tried at an earlier structure, and a variant that no longer applies because the
+    structure it attacked was DELETED is a fact about the amendment, not a rot. Regenerating it
+    unasked would also have been the seat editing another party's evidence.
+    OWED VISIBLY so the fourth Assurance seat is not surprised by it, and so it knows those three
+    routes were NOT re-tested against the new structure by anyone.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F84
+  severity: LOW
+  title: 'A FOURTH ROUTE THROUGH DECLARED LIMIT 6 — AND IT NEVER TOUCHES THE PACKAGE.'
+  how_it_was_found: >
+    THE INCREMENT'S OWN REWORDING ASKED FOR IT. DECLARED LIMIT 6 now says: *"anyone reading this
+    should assume there is a fourth and should look for it rather than check this list."* The Project
+    Lead read that sentence and went looking. That the dare paid out ON ITS FIRST READING is the
+    strongest available evidence that the rewording was the right remedy.
+  the_route: >
+    `admits` compiles its declaration against whatever object the type name is bound to AT DECORATION
+    TIME, and decoration happens AT IMPORT. So: substitute the module the declared type is imported
+    FROM, BEFORE the package is imported. `sys.modules["datetime"] = <forgery>` — ONE line, run
+    OUTSIDE the package, touching nothing inside it.
+  measured: >
+    Probe `governance/reconciliation/WO-2R3/PL-AA1-module-substitution-before-import.py.txt`, two
+    arms in one script, at 4ac159e.
+    CONTROL: the door requires exactly `datetime`; a genuine `datetime.datetime` is **ADMITTED** and
+    the forgery is **REFUSED**.
+    POISONED: the door requires exactly `ForgedDatetime`; **the genuine `datetime.datetime` is
+    REFUSED and the forgery is ADMITTED.** THE DOOR IS INVERTED, and it never stopped working — it
+    worked perfectly against the wrong type.
+  why_it_is_not_a_restatement_of_route_c: >
+    CD-PL-F83's route (c) rebinds a name INSIDE the package AFTER import. This one never touches the
+    package. The limit's framing — *"anything that can execute code inside this package can reach
+    them"* — states an ENTRY CONDITION STRICTER THAN THE ONE THIS ROUTE MEETS. The routes-list
+    sentence is not false, because it is scoped to "every route above"; the surrounding framing is
+    the part that undersells.
+  it_cuts_the_other_way_too: >
+    RECORDED BECAUSE IT FAVOURS THE MECHANISM: unlike route (a2), this route leaves the introspection
+    surface TRUTHFUL — `describe()` reports `ForgedDatetime`, so a reviewer who asks the door what it
+    requires IS TOLD. CD-ENG-WO2R3-F13's lie is a property of (a2), not of `admits`.
+  a_first_attempt_that_proved_nothing_is_recorded_too: >
+    `PL-AA0` compared the door's declaration object to the type BY IDENTITY and got False in BOTH
+    arms — which reads exactly like a refusal and is not one. The declaration is an `_Exactly`
+    wrapper, not the type. IT IS KEPT because a probe that reads a refusal off the wrong object is
+    the failure mode most likely to produce a false clean arm, and the exclusion set is worth more
+    with the trap in it.
+  severity_reasoning_and_remedy: >
+    **LOW, AND THE REMEDY IS A REWORDING AND NOT A GUARD (CD-D-080).** Pre-import module substitution
+    defeats every in-process guard ever written, in this codebase or any other; a guard against it
+    would be theatre. It does NOT defeat BP-AMENDMENT-0001 §D.3 part 1, whose claim is about what a
+    CALLER of `collect` can supply — a caller cannot reach `sys.modules` through a parameter. It
+    breaks no criterion. **What is owed is that the limit stop implying a stricter entry condition
+    than it has** — the FIFTH instance of this project's recurring documentary defect, a declaration
+    narrower than its measured reach. Joins CD-D-111. NOT owed at this boundary and NOT dispatched.
+
+- id: CD-PL-F85
+  severity: LOW
+  title: 'EVERY IDENTITY AUDIT WRITTEN INSIDE A BUILD LOG ENTRY IS STRUCTURALLY UNABLE TO COVER ITS OWN BOUNDARY.'
+  the_finding: >
+    `BL-20260822T173220Z-0064.yaml` line 72 records
+    `git log --format='%an <%ae> | %cn <%ce>' 04cdd34..HEAD -> ALL FOUR commits read ...`. It was
+    TRUE WHEN WRITTEN. Two commits landed after it — 9d2a749 (the entry itself) and 4ac159e (its
+    CD-RULE-007 follow-up) — so the entry's own identity audit **cannot ever have covered the
+    boundary the entry closes**. THIS IS NOT THE SEAT'S CARELESSNESS AND IT IS NOT SPECIFIC TO THIS
+    ENTRY: CD-RULE-007 exists precisely because a commit cannot name its own SHA, and by the same
+    argument an entry cannot audit the commits that carry it. **THE SAME DEFECT IS PRESENT IN THE
+    PROJECT LEAD'S OWN ENTRIES, INCLUDING THIS ONE.**
+  the_seat_disclosed_it_and_disclosed_it_in_the_wrong_place: >
+    The seat noticed and said so IN ITS RETURN — "I could not correct it without editing a landed
+    entry." **The judgement was right and the destination was wrong:** a disclosure that exists only
+    in a seat's return is not project state (PBG-CONT-007), and this boundary is the only reason it
+    survived. It is now recorded here, which is where a correction belongs — corrections supersede,
+    never edit (PBG-CONT-003, non-waivable), and the seat was RIGHT not to edit BL-0064.
+  the_correction_of_record: >
+    **THERE ARE SIX COMMITS IN INCREMENT 4, NOT FOUR, AND ALL SIX CARRY THE SEAT IDENTITY AS BOTH
+    AUTHOR AND COMMITTER.** Measured by the Project Lead with
+    `git log --format='%an <%ae> | %cn <%ce>' 04cdd34..HEAD | sort -u` -> ONE LINE. The entry
+    UNDERSTATES its own coverage; it does not overstate it.
+  remedy: >
+    DOCUMENTARY, and a WORDING CONVENTION rather than a mechanism: an in-entry identity audit should
+    read "all N commits AS AT THIS ENTRY", and the audit that covers the boundary is the RECONCILING
+    party's, which is a different seat — which is also the only construction that satisfies
+    PBG-SOD-001 in spirit. Joins CD-D-111's family. NOT owed at this boundary.
+
+- id: CD-PL-F86
+  severity: MEDIUM
+  title: 'THE PROJECT LEAD RECONCILED TWO INCREMENTS WITHOUT RUNNING AN INSTRUMENT THAT WAS FAILING, BECAUSE ITS METHOD ONLY EVER RAN THE REGISTER.'
+  raised_against: 'THIS SEAT. It is the second half of CD-ENG-WO2R3-F15 and it is accepted without qualification.'
+  the_finding: >
+    BL-20260822T145... (increment 2) and BL-20260822T163432Z-0055 (increment 3) both recorded
+    "10 of 11 register checks exit 0" as the instrument sweep. **THE CLASS-2 DELEGATED-JUDGEMENT
+    SWEEP IS NOT A REGISTER CHECK**, so it was never in the set, so it was never run — while it was
+    exiting 1 at both SHAs. The Project Lead's own reconciliation standard says "the plants
+    apply-checked, at least one route of the Project Lead's own that is in no corpus, and what was
+    not verified said plainly", and an instrument OUTSIDE the register fell between all three.
+    IT TOOK AN ENGINEER SEAT AUDITING ITS OWN PAST WORK TO FIND IT.
+  the_generalisation_that_matters: >
+    The defect is not "one missed command". It is that the Project Lead's sweep was defined by a
+    LIST — `tools/register/check_*.py` — and the thing that broke was outside the list. **THAT IS
+    EXACTLY THE DEFECT THE PRODUCT OWNER RULED ON AT PO-DECISIONS-0008 RULING 2 ONE BOUNDARY AGO:
+    "an enumeration cannot close a property-defined class."** The Product Owner applied it to
+    increment 5's subject types; it applies equally to the Project Lead's instrument sweep, and the
+    Project Lead did not notice that its own method had the same shape as the ruling it had just
+    recorded.
+  remedy_proposed_not_taken: >
+    The reconciliation sweep should be defined by a PROPERTY — every executable instrument in the
+    tree that a governed document cites as producing a result — ENUMERATED BY AN INSTRUMENT with its
+    command and count recorded (CD-RULE-009), not by a glob over one directory. NOT BUILT HERE:
+    building it is engineering work, this boundary is a reconciliation, and the Project Lead
+    inventing itself a new instrument mid-reconciliation is how scope creeps. **RECORDED AS OWED,
+    AND IT SHOULD BE READ ALONGSIDE CD-D-127.**
+  what_was_done_here_instead: >
+    At THIS boundary the Project Lead ran the sweep explicitly, at FIVE SHAs, and every register
+    check, and the eleven plants on both arms. That is a patch on one instance and NOT the remedy.
+
+decisions_ruled_here:
+- id: CD-D-123
+  decision: >
+    **WO-2R3 INCREMENT 4 IS RECONCILED AND ACCEPTED AS INCREMENT 4 AT LANE
+    4ac159ea0bb47fb859fe005bd966222d66f0eeff.** The six documentary items are delivered, the
+    contrast re-measurement is delivered and exceeds what was asked (eleven plants, not eight), and
+    "NO NEW LOGIC" is PROVED by AST comparison on a stricter driver than the seat's.
+    **IT IS NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005.** That grading is the fourth Assurance
+    seat's and the Product Owner has reserved it FOUR boundaries running, most recently at
+    PO-DECISIONS-0008 ruling 6. RECONCILIATION IS NOT ACCEPTANCE OF A CRITERION, AND ACCEPTANCE IS
+    NOT ASSURANCE.
+  evidence: 'Every measurement in `lane_reconciliation`, taken by the Project Lead on its own extractions.'
+- id: CD-D-124
+  decision: >
+    **CD-D-033 IS DISCHARGED.** The eleven declared plants are a deliverable of this rework and they
+    are one again: 11 of 11 APPLY, 10 CONTRAST, and the three regenerated ones violate the SAME
+    PROPOSITION against the new structure AND FAIL AT THE LAYER THAT PROPOSITION NAMES. None was
+    deleted. **ONE EXCEPTION IS DECLARED RATHER THAN COUNTED:** `CD-RT-003-GRANT-MATRIX-LIVE` exits
+    3 on BOTH arms, the arms are indistinguishable, and **THAT IS NOT A CONTRAST.** It is not
+    evidence of anything until a live digest-pinned Postgres is stood up, and saying so is worth more
+    than an eleventh tick.
+  consequence: >
+    THE PLANT-HEALTH STANDARD ON THIS PROJECT IS RAISED PERMANENTLY, BY CD-ENG-WO2R3-F12: a plant is
+    healthy when it APPLIES, CONTRASTS, **AND FAILS AT THE LAYER ITS PROPOSITION NAMES**. "Applies"
+    was the standard for three boundaries and it was never the same claim.
+- id: CD-D-125
+  decision: >
+    **CD-D-120 AND CD-D-121 ARE DISCHARGED, AND SO IS CD-D-111 IN THE FORM IT WAS RULED.** CD-PL-F80,
+    F81, F82 and F83 are all reworded to their measured reach, in ALL THREE CD-RULE-004 places,
+    consistently. F82's figure was RE-TAKEN by running the instrument at both SHAs and stated
+    like-for-like; the mis-paired "19 -> 24" survives only as a QUOTATION of the corrected error.
+    **`subjects >= 24` WAS NOT RAISED**, which CD-D-120 required and which the seat could easily have
+    done to make its own artefact look tighter.
+  note: >
+    CD-D-111 IS NOT CLOSED AS A FAMILY. CD-PL-F84 and CD-PL-F85 are two further instances of the same
+    defect found AT THIS BOUNDARY, and they join it. A defect class that keeps producing instances is
+    not closed by discharging the instances known when it was ruled.
+- id: CD-D-126
+  decision: >
+    **CD-ENG-WO2R3-F12 AND F14 ARE CLOSED BY THE DELIVERY. F13 AND F16 ARE UPHELD, CORRECTLY NOT
+    ACTED ON, AND CARRIED VISIBLY.** F13's remedy would be a worse trade and is a design decision
+    outside a reconciliation increment; F16 concerns another party's evidence corpus and is not
+    CD-D-033's subject. Both are named in the fourth Assurance seat's brief so that seat finds them
+    DECLARED rather than discovering them.
+- id: CD-D-127
+  decision: >
+    **NOT RULED HERE. PUT TO THE PRODUCT AUTHORITY.** See `open_decisions` in ACTIVE_WORK.yaml and
+    the question below. What the Project Lead DOES rule: the eleven dispositions are **REAL, OWED,
+    NOT INCREMENT 4'S, AND NOT NOTHING.** The instrument denied by default and was right to; the
+    remedy is eleven substantive governed claims; and the seat that would write them is the seat that
+    wrote the module they describe. Where they sit in the path to the gate is a sequencing decision
+    the Product Owner has taken three times and this seat will not take a fourth time on its own.
+
+a_question_for_the_product_authority_CD_D_127: >
+  **WHERE DO THE ELEVEN CLASS-2 SWEEP DISPOSITIONS BELONG IN THE PATH TO THE GATE?**
+  THE FACTS, MEASURED: the sweep exits 1 at 995ec3e, 04cdd34 and 4ac159e with 514 sites and 11
+  violations; all eleven are `crash_detector.admission`, the module increment 2 created; it is NOT a
+  declared register command and NO GATE CRITERION DEPENDS ON IT; nothing became unguarded; and the
+  instrument is behaving exactly as designed — it denied by default and said so on every run.
+  **(A) A SIXTH INCREMENT, after increment 5, before the fourth Assurance seat.** Clean, but it is a
+  FOURTH scope enlargement of a dispatch the Product Owner has already priced three times, and it
+  delays the seat that three gate failures are waiting on.
+  **(B) FOLDED INTO INCREMENT 5.** The Project Lead RECOMMENDS AGAINST. Increment 5's subject is
+  body-borne field establishment on judgement-path TYPES; these are `isinstance`/`getattr` sites
+  inside the admission MECHANISM. Folding one into the other because both are "type checks" is the
+  enumeration-versus-class error in its other direction, and it would widen a scope the Product Owner
+  re-based ONE BOUNDARY AGO.
+  **(C) NOT BEFORE THE GATE. DECLARED IN ALL THREE CD-RULE-004 PLACES — WHICH INCREMENT 4 HAS
+  ALREADY DONE, with the bisect table written into the register — AND THE FOURTH ASSURANCE SEAT
+  ATTACKS IT AS A NAMED TARGET; the dispositions are written AFTER, informed by that seat's verdict.**
+  **THE PROJECT LEAD RECOMMENDS (C), AND STATES THE REASONING SO IT CAN BE OVERTURNED ON IT.** The
+  eleven dispositions are substantive governed claims about how a deciding operand is established,
+  and they would be authored BY THE SEAT THAT WROTE THE MODULE THEY DESCRIBE. Writing them first
+  hands the independent auditor a set of assertions made by the party it most needs to check, and an
+  auditor that starts from the implementer's own dispositions is reading a map drawn by the person
+  who chose the route. CD-ENG-WO2R3-F10 already warns that the `ESTABLISHED_HERE` set doubled 8 -> 16
+  and that REVIEWER ATTENTION IS THE WHOLE CONTROL; eleven more written claims spend that attention
+  before the auditor arrives. Under (C) the failing instrument is not hidden — it is DECLARED, with
+  its bisect, and it becomes something the auditor tests rather than something it inherits.
+  **AGAINST THE PROJECT LEAD'S OWN RECOMMENDATION, STATED SO IT IS NOT BURIED:** (C) means the fourth
+  Assurance seat boots into a tree where a governed instrument exits 1, and a seat that reads exit
+  codes before it reads declarations will call that RED on sight. That is a real cost and it is the
+  strongest argument for (A).
+  **THIS QUESTION IS NOT BLOCKING INCREMENT 5**, which is dispatched on the Product Owner's existing
+  bounds and is untouched by all three answers.
+
+not_verified_by_the_project_lead_at_this_boundary:
+- '**`CD-RT-003-GRANT-MATRIX-LIVE` HAS NOT BEEN SHOWN TO CONTRAST BY ANY PARTY AT ANY SHA IN THIS
+  DISPATCH.** It exits 3 on BOTH arms at 4ac159e and exits 3 at 04cdd34. NO POSTGRES WAS STOOD UP AT
+  THIS BOUNDARY. Ten of eleven plants are demonstrated; the eleventh is DECLARED UNDEMONSTRATED, and
+  the CD-AC-003 grant matrix was the ONE PASS in the third gate — so the plant guarding the one thing
+  that passed is the one plant nobody here has been able to bite with.'
+- '**THE ELEVEN SWEEP VIOLATIONS WERE NOT DISPOSITIONED AND THE SWEEP STILL EXITS 1 AT THE RETURNED
+  SHA.** The Project Lead ran it and confirmed the failure; it did not fix it and did not rule where
+  the fix belongs (CD-D-127). A party booting at 4ac159e and running every executable instrument in
+  the tree WILL find a non-zero exit that no gate depends on.'
+- '**THE THREE NON-APPLYING `variants/WO-2R` PATCHES WERE NOT RE-TESTED AGAINST THE NEW STRUCTURE BY
+  ANYONE.** 67 of 70 apply. Those three routes — a module-level constant, a dynamic constructor on
+  the absence branch, and a magnitude from configuration — are UNTESTED at this structure, not proved
+  closed by it. An auditor should treat that corpus as 67 tried and 3 unknown.'
+- '**THE PROJECT LEAD DID NOT RUN A RENAME TEST AT THIS BOUNDARY, AND DID NOT NEED TO.** Increment 4
+  wrote no logic — proved by AST — so there is no new structure for a rename to attack. The rename
+  test of record is increment 3''s, where a duck named `Wibble` was refused. This is stated because
+  the reconciliation standard names the rename test and its ABSENCE here should be a reasoned choice
+  in the record rather than a silent omission.'
+- '**NO CLAIM IS MADE THAT THE PLANT SET IS COMPLETE OR THAT THE PROPOSITIONS ARE THE RIGHT ONES.**
+  Eleven plants contrast (ten of them); that is a statement about eleven patches and NEVER about the
+  class of violations each criterion names.'
+- '**CD-PL-F84 WAS FOUND, NOT SEARCHED FOR EXHAUSTIVELY.** One fourth route exists. The Project Lead
+  spent one probe finding it after the limit invited the search. It did NOT enumerate the route space
+  and there is no basis in this record for believing four is the total — which is precisely why the
+  reworded limit says the named routes are not an exhaustive set.'
+- '**THE INCREMENT-5 INSTRUMENT DOES NOT EXIST AND ITS COUNT IS STILL UNKNOWN.** Unchanged from
+  BL-20260822T165031Z-0056. Five types are the known floor; the population is established by no
+  record.'
+- '**CD-ENG-WO2R3-F10 REMAINS OWED AND UNDISCHARGED**, as PO-DECISIONS-0008 ruling 4 requires.'
+- '**NOTHING HERE IS ASSURANCE.** The Project Lead reconciles; it does not certify (PBG-SOD-001,
+  non-waivable). Every number above was produced by a party that is not independent of the dispatch
+  that produced the work.'
+
+next_safe_action: >
+  **STOP. TWO THINGS ARE OWED UPWARD AND ONE OF THEM IS A PRODUCT AUTHORITY QUESTION.**
+  **PUT CD-D-127 TO THE PRODUCT AUTHORITY** — where the eleven Class-2 sweep dispositions belong in
+  the path to the gate: (A) a sixth increment, (B) folded into increment 5, or (C) declared now and
+  attacked by the fourth Assurance seat first, dispositions written after. THE PROJECT LEAD
+  RECOMMENDS (C) AND HAS STATED THE ARGUMENT AGAINST ITS OWN RECOMMENDATION. It is NOT blocking.
+  **THEN INCREMENT 5 — THE CONSTRUCTORS — WHICH IS UNAFFECTED BY ALL THREE ANSWERS AND MAY BE
+  DISPATCHED IN PARALLEL WITH THE QUESTION**, on PO-DECISIONS-0007 ruling 1's bounds AS RE-BASED BY
+  PO-DECISIONS-0008 ruling 2 (CD-D-119): **THE CLASS, NOT THE LIST** — every public type in the
+  frozen subject on a judgement path whose field establishment is BODY-BORNE, **ENUMERATED BY AN
+  INSTRUMENT AT INCREMENT-5 START WITH ITS COMMAND AND COUNT RECORDED (CD-RULE-009)**, that
+  enumeration offered to the fourth Assurance seat to attack. `ConfigSnapshot`, `DialSpec`,
+  `ModelSpec`, `PanelRow` and `AttemptRecord` are THE FLOOR, NOT THE POPULATION. Establishment
+  derived from the DECLARED FIELD LIST, applied at the boundary so a body edit cannot remove it.
+  **V17 IS ITS PLANT and it applies at 4ac159e** (19 of 19 WO-2R3 variants apply, PL-measured at this
+  boundary). The three interpreter-borne refusals are OUT of its scope.
+  THEN, AND ONLY THEN, **THE FOURTH FRESH ASSURANCE SEAT** — none of CD-ASR-WO2-01, CD-ASR-WO2-02,
+  CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001, non-waivable). **ITS NAMED FIRST TARGETS, none
+  of them that seat's to choose and none of them this seat's to drop:** (1) P7 (PO-DECISIONS-0005
+  ruling 1); (2) CD-BP-003, the adapter boundary that ADMITS (ruling 4); (3) THE STANDING INVITATION
+  TO ATTACK THE WHOLE §D SCOPING INCLUDING THE CD-D-105 CLOSURE (PO-DECISIONS-0007 ruling 2,
+  CD-D-112); (4) THE INCREMENT-5 INSTRUMENT'S OWN ENUMERATION (PO-DECISIONS-0008 ruling 2, CD-D-119);
+  and NEW AT THIS BOUNDARY: (5) **THE CLASS-2 SWEEP EXITING 1 — IT IS DECLARED, WITH ITS BISECT, AND
+  IT IS NOT A SURPRISE**; (6) **CD-RT-003-GRANT-MATRIX-LIVE, THE ONE PLANT NOBODY HAS BITTEN WITH**;
+  (7) the three `variants/WO-2R` routes nobody re-tested.
+  **CARRY INTO THAT BRIEF THE STANDARD CD-ENG-WO2R3-F12 RAISED:** a plant is evidence when it
+  APPLIES, CONTRASTS, **AND FAILS AT THE LAYER ITS PROPOSITION NAMES** — not when it exits non-zero.
+  **STILL OPEN AND NOT DISPATCHED:** CD-ENG-WO2R3-F10; CD-PL-F84 and CD-PL-F85 (both join CD-D-111's
+  family, both a REWORDING and NOT a guard, neither owed at this boundary); CD-PL-F86, the Project
+  Lead's own method defect — its reconciliation sweep is defined by a LIST where the thing that broke
+  was outside the list, which is PO-DECISIONS-0008 ruling 2's lesson turned on this seat.
+  **THE ASR3-F08 PARSER WORK ORDER MAY STILL BE PROPOSED.** Its timing condition has been met since
+  the increment-2 dispatch boundary; it is a gate blocker in its own right and the WO-2 gate is not
+  re-run until F02, F04, F05 AND F08 are closed.
+  DO NOT ADMIT ANYTHING (CD-RULE-001, PO-set, non-relaxable). DO NOT MERGE OR PROMOTE THE LANE OR
+  f30e63c. DO NOT GRADE CD-AC-002 OR CD-AC-005.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)

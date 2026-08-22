@@ -1,0 +1,41 @@
+"""PROJECT LEAD ROUTE 4 — in no corpus, and it never touches the package.
+
+The door `collect` requires `started_utc` to be EXACTLY `datetime.datetime`. That type
+is not defined in the package; it is IMPORTED from the stdlib module `datetime`.
+`admits` compiles against whatever object that name is bound to AT DECORATION TIME.
+
+So: substitute the module the declared type comes FROM, BEFORE the package is imported.
+No __closure__, no __wrapped__, no rebinding inside the package. Only code that runs
+EARLIER in the same process.
+"""
+import sys, types, datetime as real_datetime
+
+class ForgedDatetime(real_datetime.datetime):
+    """Not `datetime.datetime`. A different object entirely, by identity."""
+
+fake = types.ModuleType("datetime")
+fake.datetime = ForgedDatetime
+fake.timedelta = real_datetime.timedelta
+fake.timezone = real_datetime.timezone
+fake.date = real_datetime.date
+fake.tzinfo = real_datetime.tzinfo
+sys.modules["datetime"] = fake            # <-- the whole route, one line, outside the package
+
+from crash_detector.collectors.runner import collect
+from crash_detector.admission import declared_admissions
+
+decl = declared_admissions(collect)
+declared_type = decl["started_utc"]
+print("what the door was compiled to require for started_utc:")
+print("   ", declared_type)
+print("    is it the genuine stdlib datetime.datetime? ->",
+      declared_type is real_datetime.datetime)
+print("    is it the forgery installed before import?  ->",
+      declared_type is ForgedDatetime)
+print()
+genuine = real_datetime.datetime(2026, 8, 22, 12, 0, tzinfo=real_datetime.timezone.utc)
+forged  = ForgedDatetime(2026, 8, 22, 12, 0, tzinfo=real_datetime.timezone.utc)
+print("type(genuine) is the declared type ->", type(genuine) is declared_type,
+      "  => a GENUINE datetime is", "ADMITTED" if type(genuine) is declared_type else "REFUSED")
+print("type(forged)  is the declared type ->", type(forged) is declared_type,
+      "  => the FORGERY is", "ADMITTED" if type(forged) is declared_type else "REFUSED")
