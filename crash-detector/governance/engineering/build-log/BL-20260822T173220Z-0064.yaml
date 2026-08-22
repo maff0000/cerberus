@@ -83,5 +83,7 @@ next_safe_action: >
   dd40f74b8ba5a2c9f471c8bfd7625b4d8ef47774 on branch wo-2r3; read CD-ENG-WO2R3-F15 first; then
   increment 5; then the fourth fresh Assurance seat.
 
-continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up that writes THIS FIELD AND
-                                    # NOTHING ELSE. A commit cannot name its own SHA.
+continuity_record_commit: 9d2a749e659f0a4726391b769d8d9ae50b4f1a1d   # the commit that CARRIES this
+                                    # entry. RESOLVED from PENDING by a CD-RULE-007 follow-up that
+                                    # writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and
+                                    # confirmed a commit object with `git cat-file -t` (CD-PL-F36).
