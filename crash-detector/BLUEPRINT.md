@@ -1,21 +1,41 @@
 ---
 document: BLUEPRINT — how the Crash Detector is built
 product: Crash Detector — standalone market stress instrument
-version: 0.1.0
-status: ACCEPTED — Product Owner accepted v0.1.0 at 2e116ec (governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md).
-  CD-HOLD-001 released; application code is authorised from WO-2 (CD-D-004.1 satisfied).
+version: 0.2.0
+status: >
+  ACCEPTED. v0.1.0 was accepted by the Product Owner at 2e116ec
+  (governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md); CD-HOLD-001 released and application code
+  authorised from WO-2 (CD-D-004.1 satisfied). v0.2.0 carries BP-AMENDMENT-0001, which the Product
+  Owner dispositioned and ACCEPTED at governance/decisions/PO-DECISIONS-0005.md (commit b4e8eae,
+  authored by Matt Scott). The amendment is IN FORCE; this document applies its §F.3 delta and
+  NOTHING ELSE.
 owner: PROJECT_LEAD
 authority: CD-AUTH-0001
-derives_from: PID.md v1.0.1 · governance/decisions/PO-DECISIONS-0001.md
+derives_from: >
+  PID.md v1.0.1 · governance/decisions/PO-DECISIONS-0001.md ·
+  governance/decisions/PO-DECISIONS-0004.md §2 (the engine owns the model lifecycle) ·
+  governance/decisions/PO-DECISIONS-0005.md (the disposition of BP-AMENDMENT-0001)
 framework: PBGv2 v2.0.0-alpha.1, pinned read-only at pbg/
-last_reconciliation_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
+last_reconciliation_sha: b4e8eae123e0f1250c80e282c274d73e93bb73ed
 reconciliation_note: >
   c291f80 was the SHA whose worktree was read while authoring this document. 0047093 is the SHA at
   which the Project Lead re-read and reconciled it on resuming WO-2, finding no content drift — the
-  only correction needed was this header, which still read PROPOSED and still carried the "no
-  application code" hold three commits after the Product Owner released it. Content is unchanged at
-  v0.1.0. Currency is computed against Git (PBG-BP-003, PBG-FWK-042), never read from a date.
+  only correction needed was that header, which still read PROPOSED and still carried the "no
+  application code" hold three commits after the Product Owner released it. b4e8eae is the SHA at
+  which v0.2.0 was written: the Product Owner's own commit carrying PO-DECISIONS-0005, which is the
+  authority for every edit in it. Currency is computed against Git (PBG-BP-003, PBG-FWK-042), never
+  read from a date.
 amendment: Project Lead owns currency (PBG-BP-001). Assurance verifies, and does not author.
+amendments_in_force:
+  - id: BP-AMENDMENT-0001
+    title: the engine owns the model lifecycle
+    path: governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md
+    accepted_at: governance/decisions/PO-DECISIONS-0005.md (commit b4e8eae)
+    applied_to: '§1, §7, §13, §14, §16, §17, §19 — the amendment''s own §F.3 delta, confirmed by the
+      Product Owner at ruling 5 as the whole of what it expected to review'
+    note: 'The amendment is the design of record for §7 and is read WITH this document, not instead
+      of it. Where the two differ on the model boundary, the amendment governs and this note is the
+      defect (PBG-BP-001 — the Project Lead owns currency).'
 ---
 
 # Crash Detector — Blueprint
@@ -38,19 +58,28 @@ So the rule for every component below:
 > **A doctrinal property is built as a structure that makes its violation inexpressible, and is
 > paired with a mutation test that proves the structure bites.**
 
-Three structural instruments do nearly all the work, and they are cheap because they are chosen once
-and then reused everywhere:
+**Five** structural instruments do nearly all the work, and they are cheap because they are chosen
+once and then reused everywhere:
 
 | Instrument | Makes impossible | Doctrine served |
 |---|---|---|
 | **Sum types with no default** — a reading is `Value`, `Unknown` or `Degraded`; absence has a name and no numeric fallback exists | rendering absence as a number, therefore as calm | §3.2, CD-AC-001, CD-AC-005 |
 | **Database roles with no grant** — a component that must not read something has no permission to read it | a witness leaking into a score; a public surface touching the book | §3.4, §3.5, CD-AC-003, CD-AC-006 |
 | **Closed schemas and egress allowlists** — the publication envelope rejects unknown keys; a container reaches only the hosts it is allowed to reach | publishing a private field; a blended headline number; an execution pathway existing at all | §3.1, §3.5, CD-AC-002, CD-AC-006, CD-AC-012 |
+| **Named specs resolved by the engine** — a mapping is a name in a registry, executed by the engine over values the engine released; no argument accepts a callable or a model object | a caller's number entering a dial with the dial's own provenance stamped on it; a mapping with no source for static analysis to read | §3.1, §3.6, CD-AC-002, CD-AC-005 |
+| **Establishment derived from the signature** — `admits` refuses on `type(value) is not declared` and refuses **any parameter it was not told about**, applied at the boundary so a rewrite of the body cannot remove it | a judgement-path entry point deciding on a value whose type it never established; a NEW argument arriving unguarded — it arrives refused | §3.1, §3.2, CD-AC-001, CD-AC-002, CD-AC-005 |
 
-Each of the three is verifiable from outside the running code: grants are readable from the store,
-egress rules from the container config, schema closure from the schema file. That matters, because
-the Assurance seat must be able to check them without trusting the implementation
-(`PBG-EVID-001`).
+**The fourth and fifth rows arrive with BP-AMENDMENT-0001** and are the answer to what three gate
+verdicts said in one sentence: *the value types are real closures, but the doors do not require
+them.* The first three instruments were all read as properties of a **class**; the fourth removes
+the door the class was reached through, and the fifth makes every remaining door on a judgement path
+ask for its class. Read the amendment for the reasoning and for the measured denominator behind it.
+
+Each of the five is verifiable from outside the running code: grants are readable from the store,
+egress rules from the container config, schema closure from the schema file, the registry from the
+run's config snapshot, and the decoration from the source — with a static check that enumerates the
+judgement paths and fails on any public entry point that carries none. That matters, because the
+Assurance seat must be able to check them without trusting the implementation (`PBG-EVID-001`).
 
 Paired with each structure is a **planted violation** that must fail (`PBG-ASSURE-017`,
 `PBG-CI-001`). A guard nobody has seen refuse anything is a rumour.
@@ -263,15 +292,64 @@ read the witness schema.
 
 ## 7. Dial engine
 
-> **A PROPOSED AMENDMENT STANDS AGAINST THIS SECTION AND IS NOT YET IN FORCE.**
-> `governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md` would rewrite §7
-> per the Product Owner's ruling at `governance/decisions/PO-DECISIONS-0004.md` §2 — *the engine
-> owns the model lifecycle; models are named specs resolved against a registry, never objects
-> accepted from callers.* It awaits Product Owner acceptance. **Every clause below remains the
-> accepted design until it is accepted**, and this note changes none of them. In particular the
-> sentence "The model is injected into a `DialSpec` rather than looked up inside `evaluate`"
-> (`engine/model.py`, and the reasoning behind it) is what CD-ASR-WO2R2-01's finding ASR3-F02
-> defeated at the third gate; it is recorded here so no reader takes §7 as unchallenged.
+> **AMENDED AND IN FORCE — BP-AMENDMENT-0001, `the engine owns the model lifecycle`.**
+> Accepted by the Product Owner at `governance/decisions/PO-DECISIONS-0005.md` (commit `b4e8eae`),
+> implementing the ruling at `governance/decisions/PO-DECISIONS-0004.md` §2. The amendment is the
+> design of record for the model boundary and for entry-point establishment; it is read **with**
+> this section, and where the two differ the amendment governs. Its §C and §D are summarised below
+> in the two clauses headed **models are data** and **doors require their value types**; the
+> reasoning, the measured denominator of the admission class, the eight planted violations and the
+> declared residue are in the amendment and are not repeated here.
+>
+> The superseded note this replaces recorded that a *proposed* amendment stood against §7 and that
+> every clause below remained accepted until it was accepted. That is now discharged.
+
+### 7.0 Models are data — the engine owns the model lifecycle
+
+> **A computational mapping enters this system as a NAME resolved against a registry, never as an
+> object supplied by a caller.** The engine resolves the name, the engine executes the mapping over
+> values the engine released, and no argument exists through which a caller's number or a caller's
+> code can reach a dial.
+
+`ModelId`, `MappingKind` (a closed enum), `ModelSpec` (frozen data, no callable-typed field) and
+`ModelRegistry` (exact-typed, **required on the `ConfigSnapshot` with no default**) replace the
+`ContributionModel` protocol and its module-level dict, which are **deleted, not repaired**.
+`DialSpec` carries `model_ref: ModelId | None` — a reference, not an object. Three snapshot
+invariants join the constructor: every `model_ref` resolves; a resolved spec's `dial_id` equals the
+dial naming it (**one model serves exactly one dial**, which is what closes the cross-dial route by
+the shape of the data rather than by a guard that has to notice it); and a resolved spec's input ids
+are a subset of the naming dial's declared inputs, each registered with an agreeing criticality.
+
+**WO-2 ships `EMPTY_MODEL_REGISTRY` — zero rows**, on the same terms and for the same reason as
+`EMPTY_SOURCE_REGISTRY`: with nothing registered, both dials read `Unknown`, which is the
+doctrinally correct empty state and keeps CD-D-005 owed and visible in code. `MappingKind` ships
+**non-empty with exactly one member, and that member computes nothing** — its executor path refuses
+with a named error and never returns a magnitude (PO-DECISIONS-0005 ruling 2; see §16). It exists so
+the snapshot invariants can be *demonstrated* rather than asserted, because a criterion that cannot
+be demonstrated is a rumour.
+
+**`evaluate` stays a pure function of its arguments** — and on stronger grounds than before. It is
+pure because the executor is pure and takes no caller code, not because a model object was passed
+in rather than looked up. That earlier reasoning was true and not load-bearing, and it is the
+sentence ASR3-F02 was reasoned from.
+
+### 7.1 Doors require their value types
+
+> **Every public entry point on a judgement path establishes each of its arguments by EXACT TYPE at
+> the door, and the establishment is derived from the signature rather than written into the body.**
+
+Derived from the signature, because both escapes this project has suffered on this class were edits
+to a *body*. The mechanism is the `admits` decorator (§1, fifth instrument): it refuses on
+`type(value) is not declared` and refuses **any parameter it was not told about**, so a newly added
+argument arrives refused rather than unguarded. The unit of work is the *class of doors*, and the
+acceptance test is a static check that enumerates the judgement paths and fails on any public entry
+point that is not decorated.
+
+Two doors are closed differently in kind, and the amendment says so plainly rather than claiming
+uniformity: the **collector boundary** keeps `Protocol`s for `adapter`, `sink`, `ledger` and
+`validator` — things genuinely outside this system — and establishes **every value they return** on
+arrival, while `clock` and `sleep` cease to be caller callables entirely; and `Reading.fold` is
+**not** closed here, is WO-4, and carries its residue as CD-BP-004 in §17.
 
 **Two dials, two evaluators, no aggregation stage.** There is no function anywhere that takes both
 dial types and returns a number. Structurally:
@@ -286,10 +364,14 @@ DialSet := { equity: Reading[EquityCrashScore], monetary: Reading[MonetaryDebase
 schema declares exactly these two dial objects with `additionalProperties: false`, so a third,
 combined number has nowhere to be published even if someone computed one.
 
-**Planted violation for CD-AC-002:** add `combined_stress = (equity + monetary) / 2`. It fails three
-times — the types reject the operator, the register's AST check flags a single expression consuming
-both dial types outside the allowlisted container and serving layer, and the closed envelope schema
-rejects the new key. Three independent refusals for a criterion the PID marks Constitutional.
+**Planted violation for CD-AC-002:** add `combined_stress = (equity + monetary) / 2`. It fails
+**four** times, and the first refusal is structural: **there is no door through which a caller's
+mapping can reach a dial at all** — no field holds an object, so the blend has nowhere to be
+computed with the dial's own provenance stamped on it. Then the three that already stood: the types
+reject the operator, the register's AST check flags a single expression consuming both dial types
+outside the allowlisted container and serving layer, and the closed envelope schema rejects the new
+key. Four independent refusals for a criterion the PID marks Constitutional, and the amendment's
+§E walks the auditor's own replicated plant through each of them.
 
 **The computation core is a pure function.**
 
@@ -449,9 +531,9 @@ structure bites. All five land in **WO-2**, before any of them has a feature to 
 | Criterion | The structure | The planted violation that must fail |
 |---|---|---|
 | **CD-AC-001** missing/stale never calm | `Reading` sum type with no numeric default; collectors record `FETCH_FAILED`/`MALFORMED`/`EMPTY` as first-class outcomes; absent or stale envelope renders `UNKNOWN` at the serving layer; AST check bans `float \| None`, `or 0`, `.get(k, 0)` in the dial path | kill a feed → dial must show `UNKNOWN`/`DEGRADED` within budget; separately, introduce a numeric default in the dial path → the AST check must refuse it |
-| **CD-AC-002** dials never blended | two unrelated frozen types with no arithmetic and no common numeric base; `DialSet` is a container with no scalar method; public envelope schema closed to a combined field | add `combined = (equity + monetary)/2` → must fail at the type level, at the AST check, and at the envelope schema |
+| **CD-AC-002** dials never blended | **no door: models are named specs the engine resolves, and one spec serves exactly one dial — no argument accepts a callable or a model object** (BP-AMENDMENT-0001 §C); two unrelated frozen types with no arithmetic and no common numeric base; `DialSet` is a container with no scalar method; public envelope schema closed to a combined field | add `combined = (equity + monetary)/2` → must fail **structurally first** (there is no field to place a mapping in, and no `ModelSpec` may name two dials), then at the type level, at the AST check, and at the envelope schema |
 | **CD-AC-003** witnesses side-by-side | `cd_engine` holds **no grant** on `witness.*`; separate container, separate pipeline; composition happens only at the serving layer | compute with the witness store unreachable → dials byte-identical; grant the engine a witness read → a register check on the live grant matrix must fail |
-| **CD-AC-005** unavailable ≠ agrees | `WitnessPanel` sum type with `Unavailable` as a distinct constructor; absent or stale panel row maps to `UNAVAILABLE` at the serving layer | kill the witness feed → panel shows `WITNESS UNAVAILABLE`; delete the panel row entirely → same result, never `AGREES` |
+| **CD-AC-005** unavailable ≠ agrees | `WitnessPanel` sum type with `Unavailable` as a distinct constructor; absent or stale panel row maps to `UNAVAILABLE` at the serving layer; **plus the `admits` door — `resolve_panel` requires exactly `PanelRow`, so a duck row whose `state` property answers `AGREES` while its stored state is `UNAVAILABLE` is refused at the boundary** (BP-AMENDMENT-0001 §D) | kill the witness feed → panel shows `WITNESS UNAVAILABLE`; delete the panel row entirely → same result, never `AGREES`; **hand `resolve_panel` a duck row → refused by `admits`, and add an undeclared parameter to a decorated door → refused on every call** |
 | **CD-AC-012** no execution pathway | no container's egress allowlist names a broker; engine and both surfaces have **no egress at all**; no order/execution interface in source; no credential of that class in the config surface; lockfile scanned against a broker-SDK denylist | add a `place_order` stub, or a broker SDK to the lockfile, or a broker host to an allowlist → each must fail the register independently |
 
 The public/private split (CD-AC-006) deserves a note against CD-D-004, which sequences its
@@ -465,11 +547,11 @@ earlier than the criterion is scheduled, not reordering their sequence.
 
 | ID | Where it lives | Delivered in |
 |---|---|---|
-| CD-AC-001 | §5 outcomes, §7 `Reading`, §8 serving | WO-2 |
-| CD-AC-002 | §7 types, envelope schema | WO-2 |
+| CD-AC-001 | §5 outcomes, §7 `Reading`, §8 serving, §7.1 `admits` on the serving door | WO-2 |
+| CD-AC-002 | §7.0 model registry and one-dial binding, §7 types, envelope schema | WO-2 |
 | CD-AC-003 | §4 grant matrix, §6 pipeline separation | WO-2 |
 | CD-AC-004 | §6 divergence module | WO-4 |
-| CD-AC-005 | §6 `WitnessPanel` | WO-2 |
+| CD-AC-005 | §6 `WitnessPanel`, §7.1 the `admits` door on `resolve_panel` | WO-2 |
 | CD-AC-006 | §3 five separations | boundary WO-2, evidence WO-5 |
 | CD-AC-007 | §9 validators | WO-5 |
 | CD-AC-008 | §8 heartbeat, §10 external probe | WO-3 |
@@ -525,6 +607,20 @@ ingredient sources registered, and with none registered every dial correctly rea
 is the doctrinally right answer and makes CD-AC-001's first plant trivially demonstrable. The
 ingredient register is needed before WO-3, not before WO-2.
 
+**CD-D-005 NOW ALSO OWES THE MODEL REGISTRY ROWS** (BP-AMENDMENT-0001 §F.3, accepted at
+PO-DECISIONS-0005). Since §7.0 makes a mapping a *named spec resolved against a registry*, the
+contents of `ModelProvenance` — source, what it stands for, criticality, and the account of the
+mapping that doctrine §3.6 requires — and the **members of `MappingKind`** are product meaning and
+belong to the same register. The shape of both is construction and is mine; the contents are not.
+
+*Default safe action, unchanged and now stated in two places:* WO-2 ships **zero registry rows** and
+every dial reads `UNKNOWN`. **`MappingKind` ships with exactly ONE member, and that member computes
+nothing** (PO-DECISIONS-0005 ruling 2): its executor path refuses with a named error and never
+returns a magnitude, so no weights and no mapping semantics ship. It exists only so the snapshot
+invariants can be demonstrated rather than asserted. **The first COMPUTING member arrives only with
+the CD-D-005 register, by amendment to this list** — a seat that adds a second member without it is
+inventing product meaning (`PBG-AUTH-005`, CD-RULE-003).
+
 **CD-D-006 — the public exposure route.** Domain, hosting and what fronts `cd-public` in PROD.
 *Recommendation:* decide at R2D2 ratification, not now; the PID's lane (dev never on cloud, prod
 never on dell) means it cannot be settled from DEV anyway.
@@ -545,6 +641,9 @@ in §2; alert transport deferred to WO-3 (§10); raw retention revisited on real
 | CD-FWK-002 | `PBG-CONT-003` and `PBG-SOD-001` verifiers `NOT_YET_RUN` | AMBER | both clear during WO-2 — the first Engineer/Assurance pair evidences separation, the accumulating Build Log evidences append-only |
 | CD-FWK-003 | `pbg log` / `pbg resume` vacuous GREEN at the wrong root | AMBER | carried to the PBGv2 backlog by the PO; continuity on this project is verified through `pbg boot` only |
 | CD-BP-001 | the AST-based register checks (§7, §13) are the one novel instrument here and could be brittle or evadable | LOW | they are never the sole guard — every criterion in §13 has at least two independent refusals, and the AST check is the cheapest, not the strongest, of them |
+| CD-BP-002 | **the executor is now the single highest-value target in the product** — after BP-AMENDMENT-0001 it is the only place a dial number is computed. The concentration is deliberate (one place with source beats seven doors without) but it is a risk, not a win, and a `MEAN` that is not a mean is a defect this architecture does not prevent — it makes it *have source* | MEDIUM | stated in the amendment's §E residue rather than glossed; the mapping has source, so static analysis and review reach it, and every member of `MappingKind` is added deliberately and visibly with CD-D-005 provenance behind it |
+| CD-BP-003 | **the collector's adapter boundary admits by protocol and is the softest remaining surface.** `adapter`, `sink`, `ledger` and `validator` are genuinely foreign, so exact-typing them is not available; the closure is that every value they RETURN is established on arrival. That is a door that admits, not an absence of a door — weaker in kind than §7.0's | MEDIUM | declared as a limit rather than hidden (amendment §D.3); **named by the Product Owner as the fourth Assurance seat's first target** (PO-DECISIONS-0005 ruling 4) |
+| CD-BP-004 | **a consumer's `fold` with an `on_unknown` returning `0.0` renders absence as a number**, with the `Reading` sum type wholly intact — CD-AC-001's failure mode reached outside the governed boundary | MEDIUM | ruled WO-4, not WO-2R3 (PO-DECISIONS-0005 ruling 3), because the envelope schema and not `fold` is the structural refusal for what actually publishes. Carried here **and** named in WO-4's scope on day one, on the Product Owner's condition that a residue this amendment made visible does not become invisible by being deferred |
 
 ---
 
@@ -568,3 +667,4 @@ a written date.
 |---|---|---|---|
 | 0.1.0 | 2026-08-18 | Project Lead | initial Blueprint, proposed for Product Owner acceptance under WO-1 |
 | 0.1.0 | 2026-08-19 | Project Lead | **status only** — PROPOSED → ACCEPTED, recording the Product Owner's acceptance at 2e116ec and releasing the "no application code" hold this header was still asserting. No clause of the design changed, so the version does not move. |
+| 0.2.0 | 2026-08-22 | Project Lead | **BP-AMENDMENT-0001 — the engine owns the model lifecycle — IN FORCE.** Accepted by the Product Owner at governance/decisions/PO-DECISIONS-0005.md (commit b4e8eae). Applies the amendment's §F.3 delta and nothing else: §1 gains the fourth and fifth structural instruments (named specs resolved by the engine; establishment derived from the signature); §7 is rewritten with §7.0 *models are data* and §7.1 *doors require their value types*, and the "model injected into a DialSpec keeps evaluate pure" reasoning is retired as true-but-not-load-bearing; §13 and §14 carry CD-AC-002's fourth and first-structural refusal and CD-AC-005's `admits` door; §16 records that CD-D-005 now also owes model registry rows and that `MappingKind` ships one refusing member; §17 gains CD-BP-002, CD-BP-003 and CD-BP-004. **The version moves because clauses changed** — three gate verdicts said the value types are real closures but the doors do not require them, and this is the design that answers that sentence. |

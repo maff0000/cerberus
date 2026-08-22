@@ -253,3 +253,36 @@ boundary's own commit, is a breach visible on its face.
 same ordering problem `CD-RULE-007` already solved: the follow-up commit that resolves
 `continuity_record_commit` from `PENDING` records the committed-tree verdict **in its commit
 message**. `192fc50` is the worked precedent. No new mechanism.
+
+---
+
+## CD-RULE-009 — an integrity fingerprint records the exact command that produces it
+
+**Source:** PRODUCT AUTHORITY, `PO-DECISIONS-0004.md` Ruling 5. Effective 2026-08-20.
+**Status:** ACTIVE, non-relaxable by any seat.
+**Transcribed:** 2026-08-22, at the boundary that marked `BP-AMENDMENT-0001` IN FORCE. The ruling
+bound from the moment it was made; this file was the place it had not yet been written down, and a
+procedural control that is not written down is not a control — which is this file's own first
+sentence, applied to this file.
+
+**The rule, in the Product Owner's own words:**
+
+> An integrity fingerprint that does not record its producing command is not an integrity control.
+> Every fingerprint records the exact command.
+
+**What it binds, concretely.** Any seat — Project Lead, Engineer or Assurance — that writes a hash,
+digest, tree fingerprint or checksum into a dispatch record, a Build Log entry, a verdict, a
+manifest row or a commit message writes **beside it the exact command line that produces it**, in a
+form a reader can paste. A fingerprint with no command is not evidence and must not be cited as one;
+the honest alternative is to state no fingerprint at all.
+
+**Why (`CD-PL-F78`, raised by the third Assurance seat against the Project Lead, and ADOPTED).** The
+WO-2R2 assurance dispatch recorded a tree-fingerprint *value* but not the *command* that makes it,
+and the auditor could not reproduce it in ten attempts. A number an auditor cannot recompute proves
+nothing about the tree it names — it proves only that somebody once computed something.
+**Aggravated:** `CD-ASR-WO2-02` had raised the same defect earlier and it was not acted on.
+
+**How it is enforced.** At every reconciliation the Project Lead checks each fingerprint in the
+record under review for its paired command, and treats an unpaired one as a finding rather than as
+evidence. Every dispatch this rule post-dates carries it in its own prohibitions, so the obligation
+reaches the seat and not only the reviewer.

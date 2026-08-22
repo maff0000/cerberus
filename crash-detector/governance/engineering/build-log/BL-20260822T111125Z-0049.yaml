@@ -1,0 +1,365 @@
+# ================================================================================================ #
+# BP-AMENDMENT-0001 IS IN FORCE. THE PRODUCT OWNER DISPOSITIONED ALL FIVE §J QUESTIONS AND THE
+# PROJECT LEAD EXECUTED RULING 6'S FIRST HALF: THE BOUNDED REVISIONS, AND THE BLUEPRINT AT v0.2.0.
+#
+# THE SCOPE WENT UP, NOT DOWN. §D IS ACCEPTED INCLUDING THE EXTENSION THAT GOES BEYOND THE LITERAL
+# RULING; A6 — THE LARGEST MEMBER OF THE MEASURED CLASS, AND ONE OF THIS PROJECT LEAD'S OWN
+# FINDINGS AGAINST WORK IT APPROVED — IS IN SCOPE. THE PO PRICED THE ENLARGEMENT AND PAID IT.
+#
+# NO APPLICATION CODE. NO ENGINEER DISPATCHED AT THIS BOUNDARY. NOTHING ADMITTED OR ACCEPTED.
+# ================================================================================================ #
+
+entry_id: BL-20260822T111125Z-0049
+timestamp_utc: "2026-08-22T11:11:25Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: DESIGN
+phase: DESIGN
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: b4e8eae123e0f1250c80e282c274d73e93bb73ed
+parent_entry_id: BL-20260820T024520Z-0048
+schema_version: 1
+
+action_summary: >
+  THE PRODUCT OWNER DISPOSITIONED BP-AMENDMENT-0001 at governance/decisions/PO-DECISIONS-0005.md,
+  committed at b4e8eae and AUTHORED BY MATT SCOTT — not by any seat, verified with
+  `git log -1 --format='%an <%ae> | %cn <%ce>' b4e8eae`, one file changed, 63 insertions.
+  ALL FIVE §J QUESTIONS ANSWERED. (1) §C AND §D ACCEPTED, the §D extension INCLUDED DELIBERATELY —
+  "a system with one closed boundary and six open doors from a measured class is the instance game
+  played at system scale". (2) MappingKind ships NON-EMPTY with EXACTLY ONE member that COMPUTES
+  NOTHING and refuses at the executor with a NAMED ERROR; the PO's first lean was EMPTY and the full
+  read REFUTED IT, because P3 and P4 must construct a ModelSpec and over an empty enum they die for
+  a reason that is not under test. (3) fold (A7) is WO-4, on the Project Lead's own reasoning, WITH
+  TWO CONDITIONS. (4) THE COLLECTOR BOUNDARY (A6) IS IN SCOPE, §D.3 accepted AS WRITTEN, both parts.
+  (5) §F.3 CONFIRMED as the delta with ONE ADDITION — the `admits` mechanism joins BLUEPRINT §1.
+  THIS SEAT EXECUTED THE FIRST HALF OF RULING 6 AND STOPPED THERE: the amendment is REVISED per
+  rulings 2, 3 and 5 in TWELVE BOUNDED DELTAS, each named in a new §K with the ruling that ordered
+  it; the amendment is marked IN FORCE; and BLUEPRINT.md is moved to v0.2.0 carrying the §F.3 delta
+  AND NOTHING ELSE. CD-RULE-009 is transcribed — a PO ruling that had bound since 2026-08-20 but had
+  never been written into the standing rules file.
+  THE WO-2R3 DISPATCH IS THE NEXT BOUNDARY AND IS NOT IN THIS COMMIT.
+
+# ================================================================================================ #
+# RECONCILIATION FIRST — CD-D-007'S SUSPICION PROCEDURE, RUN BEFORE BELIEVING ANY RECORD
+# ================================================================================================ #
+suspicion_procedure:
+  why_it_runs_even_though_the_record_looked_clean: >
+    Standing instruction from the prior boundary's next_safe_action, and it is not a formality: two
+    boundaries ago it found FOUR COMMITS AND A COMPLETE 636-LINE BUILD LOG ENTRY that no committed
+    record knew existed. A Project Lead that trusts its own record branches from a stale head.
+  worktrees_measured: 4
+  observed:
+  - '/srv/crash-detector          main            b4e8eae  porcelain: 14 untracked, ZERO tracked modifications'
+  - '/srv/crash-detector-wo2      wo-2-skeleton   f30e63c  porcelain: ZERO LINES'
+  - '/srv/crash-detector-wo2-audit    detached    66681b2  porcelain: ZERO LINES'
+  - '/srv/crash-detector-wo2r-audit   detached    50fc231  porcelain: ZERO LINES'
+  - '/srv/crash-detector-wo2r2-audit  detached    f30e63c  porcelain: ZERO LINES'
+  command: "git worktree list; then `git -C <each> status --porcelain` and `git -C <each> rev-parse HEAD`"
+  the_untracked_fourteen: >
+    All operator-harness artefacts at the main worktree root — .wo2-runner.sh, .wo2b-runner.sh,
+    .wo2r3-runner.sh, their prompt files and their run logs — plus pbg/tools/pbg/__pycache__/.
+    NONE is a governed path, none is a project artefact, and none is committed. They are the
+    wrapper that launches this seat, and they are recorded here rather than left for a later reader
+    to wonder about. __pycache__ under pbg/ is a mutation BY EFFECT of running the framework CLI and
+    is why every driver on this project uses `python3 -B`.
+  reconciliation_verdict: >
+    RECORD AND REALITY AGREE. Every SHA the continuity record names resolves and matches the
+    worktree that carries it. lane_increment_sha f30e63c is where wo-2-skeleton actually stands;
+    continuity_record_commit 251b2e2 resolves to a commit object; observed HEAD is b4e8eae, ONE
+    commit ahead of the recorded continuity_record_commit, and that one commit is the PRODUCT
+    OWNER'S OWN — which is exactly the state a record left at the Product Authority should be in.
+  boot_verdict_at_arrival: >
+    AMBER, CONTINUITY_MATCH/RESUME_AMBER, blocking_failures EMPTY, current_phase DESIGN, assigned
+    role PROJECT_LEAD, sole UNAVAILABLE roadmap_identity. Taken on the live worktree, which per
+    CD-PL-F70 reads AMBER where the committed tree reads GREEN — the untracked wrapper files above
+    are sufficient to cause it. Not a degradation; the CD-RULE-008 verdict of record is taken on a
+    pristine clone at the committed SHA and is recorded in this boundary's follow-up commit message.
+
+# ================================================================================================ #
+# WHAT THE PRODUCT OWNER RULED, TRANSCRIBED — because the amendment is answerable to it
+# ================================================================================================ #
+the_disposition:
+  record: 'governance/decisions/PO-DECISIONS-0005.md'
+  commit: b4e8eae123e0f1250c80e282c274d73e93bb73ed
+  authored_by: 'Matt Scott <rogue@cerberus.local>'
+  verified_how: "`git log -1 --format='%H | %an <%ae> | %cn <%ce> | %aI' b4e8eae` and `git show --stat b4e8eae`"
+  ruling_1_C_and_D_accepted: >
+    ACCEPTED, and the §D extension INCLUDED DELIBERATELY. The reasoning is the one the Project Lead
+    could not supply for itself, because it is an estate-level lesson and not a project one: "this
+    estate has already paid five kernel assurance rounds for attacking a class one instance at a
+    time, and the standing lesson from that programme applies here with full force — a remedy found
+    in a defect is assessed as a general invariant before the defect is closed." §D.1's rule IS the
+    class closure; P7 is its test; the fourth Assurance seat is DIRECTED to run it first.
+  ruling_2_mapping_kind: >
+    NON-EMPTY, EXACTLY ONE MEMBER, THE MEMBER COMPUTES NOTHING. NOTE WHAT HAPPENED HERE: the PO's
+    first lean was EMPTY — the stronger statement, and the one that would have looked better — and
+    the full read of §F.1 REFUTED IT. P3 and P4 must construct a ModelSpec to plant against
+    ConfigSnapshot invariants 2 and 3, and over an empty enum they die at ModelSpec construction for
+    a reason that is not under test. "A criterion that cannot be demonstrated is a rumour — §F.1's
+    own doctrine, applied to §F.1." The Product Owner applied this project's rule against its own
+    preference. The NAME is assigned to the Project Lead in terms.
+  ruling_3_fold_is_WO4: >
+    WO-4, on the Project Lead's own reasoning, WITH TWO CONDITIONS that convert a deferral into a
+    scheduled obligation: (a) the residue becomes a NAMED RISK in BLUEPRINT §17 alongside CD-BP-002
+    and CD-BP-003; (b) WO-4's scope NAMES IT ON DAY ONE. "A residue this amendment made visible does
+    not get to become invisible again by being deferred."
+  ruling_4_collector_boundary_in_scope: >
+    A6 IS IN SCOPE. "Excluding the largest member of the measured class re-opens the instance game
+    this amendment exists to end, and it leaves every observation the dial path consumes written by
+    objects the system never established — 'by construction' true of the judgement half of the
+    system and false of its input half." §D.3 accepted AS WRITTEN, BOTH PARTS. The admitting door is
+    stated plainly as CD-BP-003 and is the fourth Assurance seat's FIRST TARGET. "The material
+    enlargement of WO-2R3 is a cost accepted here and paid with the Project Lead's increment
+    discipline, not with a scope cut."
+  ruling_5_the_delta: >
+    §F.3 CONFIRMED, with one addition and one instruction: the `admits` mechanism is itself an
+    instrument, so EITHER BLUEPRINT §1 gains a second instrument row for it OR the amendment states
+    why it is properly §7-local — "silence is the only unacceptable resolution". §16's edit
+    additionally carries ruling 2's single-refusing-member statement.
+  ruling_6_sequence: >
+    Revise per rulings 2, 3 and 5 (BOUNDED DELTAS, NO NEW DESIGN) → mark IN FORCE → dispatch WO-2R3
+    with a FRESH Engineer seat under §H's scope as amended by ruling 4 → FOURTH fresh Assurance seat
+    (PBG-SOD-001, non-waivable). Standing condition unchanged: the auditor's replicated plant fails
+    at CONSTRUCTION, in §F.1's baseline/violated contrast form, P1–P7, all over EMPTY_MODEL_REGISTRY.
+    ASR3-F08 remains a gate blocker in its own right; the F08 parser work order is PROPOSED ONCE
+    WO-2R3'S ENGINEER IS RUNNING, NOT BEFORE.
+
+# ================================================================================================ #
+# THE REVISION — TWELVE BOUNDED DELTAS, EACH TIED TO THE RULING THAT ORDERED IT
+# ================================================================================================ #
+the_revision:
+  bound: 'PO-DECISIONS-0005 ruling 6 — "bounded deltas, no new design".'
+  how_the_bound_is_made_checkable: >
+    A new §K in the amendment enumerates every change as a table row naming WHERE, WHAT and WHICH
+    RULING, and states the diff command that checks it:
+    `git diff 251b2e2 -- governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md`.
+    A revision that says "bounded" without publishing its own list is asking to be trusted; this one
+    publishes the list and the command that audits it (CD-RULE-009's shape applied to a diff).
+  deltas:
+  - 'K1/K2 status — PROPOSED → IN FORCE in the frontmatter and at the document head, naming the
+     disposition record and its commit. The superseded PROPOSAL sentence is QUOTED, not deleted.'
+  - 'K3/K4 ruling 2 — MappingKind annotated in §C.2, and a NEW §C.2.1 writes the one member out:
+     MappingKind.UNSPECIFIED, the named error UnspecifiedMapping, and the three properties the
+     Engineer must hold. THE NAMES ARE THIS SEAT''S CONSTRUCTION, which ruling 2 assigns here in
+     terms ("its name is construction and the Project Lead''s").'
+  - 'K5 ruling 3 — §D.4''s reading replaced by the RULING plus its two conditions.'
+  - 'K6 ruling 2 consequential — P8 APPENDED to §F.1: the executor refusal, in baseline/violated
+     contrast form. P1–P7 UNCHANGED AND UN-RENUMBERED, so every prior reference to "P1–P7" —
+     including ruling 6''s own — continues to resolve to exactly the plants it named. The addition
+     is DISCLOSED AS AN ADDITION rather than presented as original.'
+  - 'K7 ruling 5 — a FIFTH instrument row for `admits` in §F.2, and the Project Lead takes the first
+     branch of the PO''s either/or AND STATES THE REASONING ANYWAY (see below).'
+  - 'K8 rulings 2,3,5 — §F.3''s table: §1 row covers both instrument rows, §16 carries the
+     single-refusing-member statement, §17 carries CD-BP-004.'
+  - 'K9 ruling 2 — §G.1 marked ANSWERED; what stays the PO''s narrows to the first COMPUTING member.'
+  - 'K10 rulings 3,4,6 — §H: A6 IN SCOPE with the ruling quoted; A7 out as WO-4 with both conditions
+     recorded as DISCHARGED OBLIGATIONS rather than intentions; the standing condition and ASR3-F08''s
+     separate gate-blocking status restated.'
+  - 'K11 ruling 6 — §J rewritten from five open questions into five transcribed dispositions, with
+     the questions kept VERBATIM so the ruling reads against what was actually asked.'
+  - 'K12 — §K itself.'
+  what_was_deliberately_not_changed: >
+    §A, §B (the measured denominator, all three classes, the 44-callable inventory), §C.1, §C.3–§C.6,
+    §D.1–§D.3, §E in full, §F.1's P1–P7, §G.2, §G.3 and §I are UNTOUCHED. No design added, none
+    removed, no measurement restated.
+  the_paragraph_this_seat_refused_to_improve: >
+    §E's residue paragraph still says, in force, that this amendment DOES NOT CLAIM THE PLANT IS THE
+    LAST PLANT; that a MEAN that is not a mean is a defect this architecture does not prevent; and
+    that concentrating all computation in one executor "should be stated as a risk and not as a win".
+    An amendment reads differently once it is in force, and that is the paragraph most likely to be
+    quietly softened. It was left alone ON PURPOSE and §K says so.
+
+the_one_place_the_PO_left_a_choice_and_how_it_was_taken:
+  the_choice: >
+    Ruling 5: EITHER BLUEPRINT §1 gains a second instrument row for `admits`, OR the amendment states
+    why it is properly §7-local. Silence is the only unacceptable resolution.
+  taken: 'THE FIRST BRANCH — §1 gains the row. AND THE REASONING IS WRITTEN OUT ANYWAY.'
+  why_both: >
+    The PO asked for a row OR a justification, and taking the row alone would have satisfied the
+    letter while leaving the next reader with an instrument in §1 and no account of why it belongs
+    there. The account: `admits` is not a rule about dials. Its subject is every public entry point
+    on a JUDGEMENT PATH, and three of §D.2's six doors — resolve_panel (§6, witness layer),
+    present_dial (serving) and collect (§5, collector runner) — ARE NOT IN §7 AT ALL. A rule that
+    governs §5, §6 and §7 and is written down in §7 is a rule the next §5 author does not read.
+    THAT IS THE PROJECT'S OWN FAILURE SHAPE MOVED INTO THE DOCUMENTATION: the guard is on the class,
+    the door does not ask for the class. It also meets §1's own admission test, which is not "is it
+    important" but "is it verifiable from outside the running code" (PBG-EVID-001): the decoration
+    is readable in source, and its acceptance test is a static enumeration of judgement paths that
+    fails on any undecorated public entry point.
+
+# ================================================================================================ #
+# BLUEPRINT v0.2.0 — THE §F.3 DELTA APPLIED, AND WHY IT WAS APPLIED AT THIS BOUNDARY
+# ================================================================================================ #
+blueprint_v0_2_0:
+  what_moved_and_on_what_authority: >
+    version 0.1.0 → 0.2.0; last_reconciliation_sha 0047093 → b4e8eae (the Product Owner's own
+    commit, which is the authority for every edit in it); a new `amendments_in_force` block naming
+    BP-AMENDMENT-0001, where it was accepted and exactly which sections it reached.
+  why_now_and_not_at_WO2R3: >
+    THE RECORD'S OWN WORDS DECIDED IT. ACTIVE_WORK.yaml has carried, since the amendment was
+    drafted: "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. THE VERSION DOES
+    NOT MOVE ON A PROPOSAL." The converse is the plain reading, and PBG-BP-001 puts Blueprint
+    currency on the Project Lead. The concrete cost of NOT doing it is a fresh Engineer seat booting
+    against a §7 whose first paragraph says a proposed amendment is NOT YET IN FORCE and that every
+    clause below it stands — which would be actively false at the moment the seat reads it, and
+    "recorded and observed state disagree" is this project's most expensive recurring defect.
+  what_was_applied: 'EXACTLY the §F.3 table, which ruling 5 confirmed as "the whole of what I expect to review".'
+  edits:
+  - '§1 — the table goes from THREE instruments to FIVE: named specs resolved by the engine, and
+     establishment derived from the signature. The paragraph beneath now states each of the five is
+     checkable from outside the running code, naming the registry (from the run''s config snapshot)
+     and the decoration (from source, with the static judgement-path enumeration).'
+  - '§7 — the PROPOSED-AMENDMENT note is REPLACED by an IN FORCE note that quotes what it supersedes,
+     and two new clauses land: §7.0 MODELS ARE DATA (ModelId / MappingKind / ModelSpec / ModelRegistry,
+     model_ref not an object, the three snapshot invariants, ONE MODEL SERVES EXACTLY ONE DIAL,
+     EMPTY_MODEL_REGISTRY, and the one refusing member) and §7.1 DOORS REQUIRE THEIR VALUE TYPES
+     (`admits` derived from the signature; the collector boundary and `fold` named as the two doors
+     closed differently in kind). The "model injected into a DialSpec keeps evaluate pure" reasoning
+     is RETIRED IN TERMS as true-but-not-load-bearing, with the stronger ground stated: evaluate is
+     pure because the EXECUTOR is pure and takes no caller code.'
+  - '§7 CD-AC-002 planted violation — THREE refusals become FOUR, and the FIRST IS STRUCTURAL: there
+     is no door through which a caller''s mapping can reach a dial at all.'
+  - '§13 — CD-AC-002''s structure row leads with "no door"; its plant must fail STRUCTURALLY FIRST.
+     CD-AC-005''s row gains the `admits` door and the duck-row plant that ASR3-F04 exercised.'
+  - '§14 — CD-AC-001, CD-AC-002 and CD-AC-005 traces updated to name §7.0 and §7.1.'
+  - '§16 — CD-D-005 NOW ALSO OWES THE MODEL REGISTRY ROWS, and carries ruling 2''s
+     single-refusing-member statement with the first COMPUTING member reserved to the register.'
+  - '§17 — CD-BP-002 (the executor is the single highest-value target), CD-BP-003 (the adapter
+     boundary admits by protocol; the fourth Assurance seat''s first target) and CD-BP-004 (the
+     `fold` residue, ruled WO-4 and named here so the deferral is visible).'
+  - '§19 — the v0.2.0 amendment-log row, stating that THE VERSION MOVES BECAUSE CLAUSES CHANGED.'
+  what_was_NOT_touched: >
+    §2, §3, §4, §5, §6, §8, §9, §10, §11, §12, §15 and §18 are unchanged. PID.md is untouched and is
+    Constitutional; no criterion was added, removed or reworded; the delivery order is unchanged; the
+    WO-2 gate is unchanged at Assurance PASS on all five.
+
+cd_rule_009_transcribed:
+  what: 'PROJECT-RULES.md gains CD-RULE-009 — an integrity fingerprint records the exact command that produces it.'
+  why_it_is_not_new_and_why_it_is_still_a_correction: >
+    It is NOT a new rule. The Product Owner adopted it at PO-DECISIONS-0004 ruling 5 on 2026-08-20
+    and it has bound every seat since. What had not happened is the transcription: PROJECT-RULES.md
+    stopped at CD-RULE-008 and said nothing about fingerprints. THE FILE'S OWN OPENING SENTENCE IS
+    "a procedural control that is not written down is not a control", so the gap is a defect in the
+    file measured by the file's own standard. Found by reading the rules file against the PO's
+    rulings rather than by being told, and closed at the first boundary after it was found.
+  source_preserved: 'PRODUCT AUTHORITY, PO-DECISIONS-0004 ruling 5. Not relaxable by any seat, including this one.'
+
+# ================================================================================================ #
+# WHAT THIS BOUNDARY DELIBERATELY DID NOT DO
+# ================================================================================================ #
+not_done_deliberately:
+- 'NO APPLICATION CODE. Not one line, in any worktree. The amendment is in force; the implementation
+   is WO-2R3''s and it belongs to a fresh Engineer seat (PBG-AUTH-006 — the Project Lead writes
+   neither the fix nor the assurance).'
+- 'NO ENGINEER DISPATCHED AT THIS BOUNDARY. The dispatch record is the NEXT boundary and gets its own
+   commit and its own Build Log entry, so that a seat resuming between the two finds a coherent state
+   rather than a half-issued dispatch.'
+- 'NOTHING ADMITTED. latest_admitted_run stays null (CD-RULE-001, PO-set, non-relaxable). An
+   amendment being accepted is not evidence about a criterion.'
+- 'NOTHING ACCEPTED AND NOTHING DISPOSED. The WO-2 gate is untouched and unmet. f30e63c is still an
+   EVIDENCE LANE, NEVER A BASELINE, and is neither merged nor promoted.'
+- 'THE F08 PARSER WORK ORDER IS NOT DRAFTED. Ruling 6 times it precisely — proposed ONCE WO-2R3''s
+   Engineer is running, NOT BEFORE — and drafting it early would be this seat substituting its own
+   scheduling for the PO''s.'
+- 'CD-PL-F77 (the lane''s stale dispatch records) and CD-ENG-WO2R2-F02 (the lane''s blocking boot)
+   are NOT folded in. Each is owed its own bounded decision; folding a small repair into a large
+   boundary is how this project lost the ability to say what a commit was for.'
+- 'BLUEPRINT §7''s surviving clauses were not "improved" while the section was open. Regime-aware
+   staleness, the oil transient maturation rule, the config-snapshot clause and the Reading sum type
+   are ACCEPTED TEXT at v0.1.0 and carry forward WORD FOR WORD.'
+
+# ================================================================================================ #
+# A FINDING THE RECONCILIATION FOUND, AGAINST THE SEAT THAT SITS WHERE THIS ONE SITS
+# ================================================================================================ #
+findings_raised:
+- id: CD-PL-F79
+  severity: MEDIUM
+  against: 'PROJECT_LEAD_SEAT_01, the thirteenth seat — the amendment-drafting boundary'
+  rule_breached: 'CD-RULE-002 — per-seat commit identity. PRODUCT AUTHORITY, PO-GATE-REVIEW-WO2-0001 Ruling 3. NON-RELAXABLE BY ANY SEAT.'
+  measured: >
+    `git log --format='%h | %an <%ae> | %cn <%ce>' -20 main` run at this boundary. TWO PROJECT LEAD
+    COMMITS ON main CARRY A HUMAN IDENTITY: 251b2e2 (BP-AMENDMENT-0001 PROPOSED + BL-...-0048) and
+    4f0c780 (its CD-RULE-007 follow-up), both authored `Matt Scott <rogue@cerberus.local>` and
+    committed `NoustAI-PDA <pda@noustai.com>`. Every other seat commit on main from ffee3af through
+    685e7da carries `PROJECT_LEAD_SEAT_01 <project-lead-seat-01@seats.crash-detector.invalid>` in
+    BOTH fields, so the scheme was in force and observed either side of the gap.
+  why_it_is_not_cosmetic: >
+    CD-RULE-002's own words: "An audit that finds a human identity is a boundary failure, not a
+    cosmetic one." Those two commits attribute AGENT WORK TO A HUMAN — and they are not ordinary
+    commits: 251b2e2 is the amendment the Product Owner then dispositioned. A later reader auditing
+    who authored the §7 re-architecture reads Matt Scott's name on it. THE CONTENT IS UNAFFECTED and
+    is not in doubt; the ATTRIBUTION is wrong, and attribution is the whole subject of the rule.
+  the_mechanism_and_why_it_is_silent: >
+    Exactly the CD-PL-F56 failure mode the rule already documents: this harness INJECTS GIT_*
+    identity variables into the environment, so a commit made without setting them explicitly comes
+    out authored by the human and committed by the harness account, and NOTHING WARNS. The rule
+    prescribes environment variables on the commit invocation and a `git log -1` check after every
+    commit. The check is what did not happen.
+  disposition: >
+    RECORDED FORWARD, NOT REPAIRED. main is NOT rewritten (CD-D-029, and every Build Log entry,
+    dispatch record and continuity field naming 251b2e2 or 4f0c780 would stop resolving). A
+    correction supersedes; it never edits (PBG-CONT-003, non-waivable). The commits stand with this
+    finding attached to them.
+  what_this_seat_does_about_it: >
+    Sets GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL / GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL as ENVIRONMENT
+    VARIABLES on every commit of this boundary, and runs `git log -1 --format='%an <%ae> | %cn <%ce>'`
+    after each one, recording the observed result rather than the intention. Disclosed here rather
+    than quietly fixed, because the previous seat's slip is the reason the check exists.
+
+artefacts_written:
+- 'governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md — REVISED, status IN FORCE, new §C.2.1 and §K'
+- 'BLUEPRINT.md — v0.2.0, the §F.3 delta applied and nothing else'
+- 'governance/rules/PROJECT-RULES.md — CD-RULE-009 transcribed'
+- 'governance/engineering/build-log/BL-20260822T111125Z-0049.yaml — this entry'
+- 'governance/engineering/ACTIVE_WORK.yaml — the continuity record for this boundary'
+
+decisions_ruled_here:
+- id: CD-D-088
+  ruling: >
+    BP-AMENDMENT-0001 IS MARKED IN FORCE, and the twelve revisions of §K are the whole of what
+    changed. The bound is ruling 6's "bounded deltas, no new design" and it is made auditable rather
+    than asserted: §K publishes the list and the diff command that checks it against 251b2e2.
+- id: CD-D-089
+  ruling: >
+    THE `admits` INSTRUMENT JOINS BLUEPRINT §1 (ruling 5's first branch), AND THE REASONING IS
+    RECORDED ANYWAY. Three of the six doors it governs are not in §7; a rule that governs §5, §6 and
+    §7 and lives in §7 is one the next §5 author does not read.
+- id: CD-D-090
+  ruling: >
+    `MappingKind.UNSPECIFIED` AND `UnspecifiedMapping` ARE THE NAMES. Ruling 2 fixed the property and
+    assigned the naming to the Project Lead. The member names the ABSENCE of a declared mapping; it
+    is not a default and not a placeholder, and its executor branch raises and returns nothing —
+    because an executor answering 0.0 there would reintroduce CD-AC-001's own failure mode at the one
+    place this amendment concentrates all computation.
+- id: CD-D-091
+  ruling: >
+    P8 IS ADDED TO §F.1 AND DISCLOSED AS AN ADDITION. Ruling 2 requires a member that refuses; a
+    refusal nobody has watched is the rumour ruling 2 itself invokes. P1–P7 are unchanged and
+    un-renumbered so ruling 6's own reference to "P1–P7" keeps resolving to the plants it named.
+- id: CD-D-092
+  ruling: >
+    BLUEPRINT.md MOVES TO v0.2.0 AT THIS BOUNDARY, carrying exactly the §F.3 delta. The record's own
+    standing note — "the version does not move on a proposal" — reads the other way on acceptance,
+    PBG-BP-001 puts currency on the Project Lead, and the alternative is dispatching a fresh seat
+    against a §7 that announces the amendment is not in force.
+- id: CD-D-093
+  ruling: >
+    CD-RULE-009 IS TRANSCRIBED, not created. PO-DECISIONS-0004 ruling 5 adopted it as project rule on
+    2026-08-20; PROJECT-RULES.md never carried it. The rule's source stays PRODUCT AUTHORITY and it
+    is not relaxable by the seat that wrote the file.
+
+next_safe_action: >
+  ISSUE THE WO-2R3 ENGINEER DISPATCH — the second half of PO-DECISIONS-0005 ruling 6 — as its own
+  boundary with its own commit and its own Build Log entry. A FRESH Engineer seat, under §H's scope
+  AS AMENDED BY RULING 4 (A6 IN SCOPE), in committed increments, returning READY_FOR_ASSURANCE. Then
+  a FOURTH FRESH Assurance seat, which is never the same agent (PBG-SOD-001, non-waivable).
+  DO NOT ADMIT ANYTHING (CD-RULE-001). DO NOT MERGE OR PROMOTE f30e63c — evidence lane, never a
+  baseline. DO NOT DRAFT THE F08 WORK ORDER until WO-2R3's Engineer is running (ruling 6's timing).
+  STOP DELIBERATELY at the gate or on any Product Authority question.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)

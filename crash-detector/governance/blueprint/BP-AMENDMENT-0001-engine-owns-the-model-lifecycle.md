@@ -1,12 +1,24 @@
 ---
 document: BLUEPRINT AMENDMENT 0001 — the engine owns the model lifecycle
 amendment_id: BP-AMENDMENT-0001
-status: PROPOSED — awaiting Product Owner acceptance. NOT YET IN FORCE.
+status: >
+  IN FORCE. Dispositioned by the Product Owner at governance/decisions/PO-DECISIONS-0005.md,
+  committed at b4e8eae123e0f1250c80e282c274d73e93bb73ed and authored by Matt Scott — not by any
+  seat. All five §J questions are answered; the dispositions are transcribed into §J below and the
+  bounded revisions ruling 6 ordered are listed in §K. WO-2R3 is authorised against this document.
 target: BLUEPRINT.md §7 (rewritten), with consequential edits to §1, §13, §14, §16, §17, §19
-would_create: BLUEPRINT v0.2.0
+creates: BLUEPRINT v0.2.0 — applied to BLUEPRINT.md at the boundary that marked this IN FORCE
 owner: PROJECT_LEAD
 authority: CD-AUTH-0001
-derives_from: governance/decisions/PO-DECISIONS-0004.md rulings 2, 3, 5 and 6
+derives_from: >
+  governance/decisions/PO-DECISIONS-0004.md rulings 2, 3, 5 and 6 (the what, and the sequence) ·
+  governance/decisions/PO-DECISIONS-0005.md rulings 1–6 (the disposition of this document)
+revised_at: "2026-08-22T11:11:25Z"
+revision_bound: >
+  PO-DECISIONS-0005 ruling 6 — "revises BP-AMENDMENT-0001 per rulings 2, 3 and 5 (bounded deltas,
+  no new design)". Every change made at that revision is enumerated in §K with the ruling that
+  ordered it. NOTHING ELSE WAS TOUCHED, and §K says so in a form a reader can check against
+  `git diff 251b2e2 -- <this file>`.
 evidence_base: >
   governance/assurance/WO-2R2/ (CD-ASR-WO2R2-01, the third Assurance seat) ·
   governance/engineering/build-log/BL-20260820T022200Z-0047.yaml (the Project Lead's own
@@ -23,9 +35,21 @@ runtime_verified: >
 
 # BP-AMENDMENT-0001 — the engine owns the model lifecycle
 
-**This is a PROPOSAL. It is not in force and no code may be written against it until the
-Product Owner accepts it** (PO-DECISIONS-0004 ruling 6: *PL drafts → PO reviews → WO-2R3
-implements → fourth fresh Assurance seat*).
+**THIS AMENDMENT IS IN FORCE.** The Product Owner dispositioned all five §J questions at
+`governance/decisions/PO-DECISIONS-0005.md` (commit `b4e8eae`): §C and §D are **ACCEPTED**, the §D
+extension deliberately included; `MappingKind` ships with exactly **one refusing member**; `fold`
+(A7) is **WO-4** with two conditions; the collector boundary (A6) is **IN SCOPE** for WO-2R3; and
+§F.3 is confirmed as the delta, with the `admits` instrument joining BLUEPRINT §1.
+
+The superseded proposal text read: *"This is a PROPOSAL. It is not in force and no code may be
+written against it until the Product Owner accepts it."* It is recorded rather than deleted so a
+reader of the diff sees the transition rather than inferring it.
+
+**What is now authorised, and what is still not.** WO-2R3 is authorised against this document, with
+a fresh Engineer seat and a fourth fresh Assurance seat after it (`PBG-SOD-001`, non-waivable).
+Nothing here admits, accepts or disposes of anything: the WO-2 gate is unchanged at Assurance PASS
+on all five criteria, `latest_admitted_run` stays null (CD-RULE-001), and ASR3-F08 remains a gate
+blocker in its own right outside WO-2R3.
 
 ---
 
@@ -198,6 +222,8 @@ MappingKind      := a CLOSED enum, members added HERE, deliberately and visibly.
                     It is the SameDialReduction pattern at the model boundary:
                     an enum with members is closed against subclassing by the
                     interpreter, and members cannot be added after class creation.
+                    SHIPS NON-EMPTY WITH EXACTLY ONE MEMBER, AND THAT MEMBER
+                    COMPUTES NOTHING (PO-DECISIONS-0005 ruling 2) — see C.2.1.
 
 ModelSpec        := frozen data, no callables, no methods that compute:
                       model_id        : ModelId
@@ -232,6 +258,53 @@ engine released, and returns a magnitude the engine then stamps with the dial's 
 at the existing single admission site. `ScoreComputation` survives unchanged: the
 contributions are still required, because BLUEPRINT §7's "explicable a year later without
 archaeology" is untouched by this amendment.
+
+### C.2.1 `MappingKind` ships with ONE member, and that member refuses
+
+**Ruled by the Product Owner at PO-DECISIONS-0005 ruling 2**, against the Project Lead's §J.2
+question and against the PO's own first lean, which the full read refuted:
+
+> `MappingKind` ships NON-EMPTY, with exactly ONE member, and the member computes nothing. … P3 and
+> P4 must construct a `ModelSpec` to plant against `ConfigSnapshot` invariants 2 and 3, and over an
+> empty enum they die at `ModelSpec` construction for a reason that is not under test. A criterion
+> that cannot be demonstrated is a rumour — §F.1's own doctrine, applied to §F.1.
+
+The ruling fixes the *property* and leaves the *name* to the Project Lead ("its name is construction
+and the Project Lead's"). The construction, then, and it is deliberately dull:
+
+```
+class MappingKind(Enum):
+    UNSPECIFIED = "unspecified"      # the one member. It names the ABSENCE of a declared mapping.
+                                     # It is not a mapping, it is not a default, and it is not a
+                                     # placeholder for one that is coming — the first COMPUTING
+                                     # member arrives only with the CD-D-005 register.
+
+# in the executor, engine/mapping.py:
+#   the UNSPECIFIED branch RAISES UnspecifiedMapping AND RETURNS NOTHING.
+#   there is no `else`, no fallthrough, and no numeric return anywhere on that path.
+class UnspecifiedMapping(Exception): ...   # a NAMED error, per the ruling
+```
+
+Three properties the WO-2R3 Engineer must hold, and they are the whole of what ruling 2 buys:
+
+1. **`ModelSpec` is constructible.** P3 and P4 can be planted, so `ConfigSnapshot` invariants 2 and
+   3 are demonstrable rather than rumoured. That is the ruling's entire reason.
+2. **Zero product meaning ships.** No weights, no mapping semantics, nothing that says what a dial
+   means. CD-D-005 stays owed in full and stays visible in code, exactly as `EMPTY_SOURCE_REGISTRY`
+   and `EMPTY_MODEL_REGISTRY` already make it visible (§G.3, and CD-HOLD-004 is untouched).
+3. **The executor path refuses with a named error and never returns a magnitude.** `UNSPECIFIED`
+   reaching the executor is a *refusal*, not a zero, not a `None` and not a `Unknown` reading
+   manufactured inside the executor — CD-AC-001's failure mode is exactly a number standing in for
+   an absence, and an executor that answered `0.0` here would reintroduce it at the one place this
+   amendment concentrates all computation.
+
+Under `EMPTY_MODEL_REGISTRY` the executor is unreachable in the shipped configuration anyway: no
+model is registered, so no `model_ref` resolves, so no `ModelSpec` reaches `engine.mapping.compute`
+at all. The refusal is demonstrated by a plant (P8, §F.1) rather than by a shipped route.
+
+**The first computing member arrives only with the CD-D-005 register, by amendment to §16's owed
+list** (ruling 2, verbatim). A seat adding a second member to this enum without that register is
+inventing product meaning (`PBG-AUTH-005`, CD-RULE-003).
 
 ### C.3 The four refusals the plant now meets, and where each one bites
 
@@ -381,7 +454,26 @@ a number in a *consumer*, with the sum type wholly intact — which is CD-AC-001
 mode reached in a place this architecture has decided not to govern. The Project Lead's
 reading is that governing a consumer's rendering is WO-4 (§8 publication) and not WO-2R3,
 because the envelope schema — not `fold` — is the structural refusal for what actually
-publishes. **§J.3 puts that reading to the Product Owner rather than acting on it.**
+publishes.
+
+**RULED: `fold` (A7) IS WO-4** (PO-DECISIONS-0005 ruling 3). The Project Lead's reading is accepted
+in terms — *"its callables receive already-established values and their returns never re-enter the
+dial path; the envelope schema — not `fold` — is the structural refusal for what actually
+publishes"* — and it is accepted **with two conditions, so §D.4's honesty is not lost between here
+and WO-4**:
+
+* **(a)** the residue is added to BLUEPRINT §17 as a **named risk** alongside CD-BP-002 and
+  CD-BP-003. It is **CD-BP-004** and it is carried in §F.3's §17 row below;
+* **(b)** **WO-4's scope names it on day one.** It is recorded as an owed item in
+  `governance/engineering/ACTIVE_WORK.yaml`'s `remaining_items` at the boundary that put this
+  amendment in force, so a WO-4 dispatch cannot be drafted without meeting it.
+
+> *"A residue this amendment made visible does not get to become invisible again by being
+> deferred."* — PO-DECISIONS-0005 ruling 3
+
+The deferral is therefore a **scheduling** decision and not a disposal of the residue: A7 is out of
+WO-2R3's scope (§H) and simultaneously on WO-4's face and in §17. Both are true at once, and the
+fourth Assurance seat may treat the pair as a single checkable claim.
 
 ---
 
@@ -447,33 +539,70 @@ and every one runs against `EMPTY_MODEL_REGISTRY` and a zero-source configuratio
 | P5 | a duck `ConfigSnapshot` into `evaluate` (ASR3-F05) | the `admits` door |
 | P6 | a duck row whose `state` property answers `AGREES` while its stored state is `UNAVAILABLE` (ASR3-F04) | the `admits` door |
 | P7 | a new parameter added to a decorated door without being declared to `admits` | the `admits` door, on every call |
+| P8 | a `ModelSpec` whose `mapping` is `MappingKind.UNSPECIFIED`, resolved and executed | the executor, with `UnspecifiedMapping` — **and no magnitude returned** |
 
 **P7 is the one that makes this a class closure rather than seven fixes**, and it is the
 test the fourth Assurance seat should run first.
+
+**P8 IS ADDED BY THE REVISION AND IS DISCLOSED AS AN ADDITION, NOT PRESENTED AS ORIGINAL.** It is
+the demonstration that PO-DECISIONS-0005 ruling 2 requires and does not itself name: the one
+`MappingKind` member ships *because* a criterion that cannot be demonstrated is a rumour, and a
+refusing member nobody has watched refuse is that same rumour one level down. **P1–P7 are unchanged
+in number, in content and in numbering** — P8 is appended, so every reference to "P1–P7" written
+before this revision, including PO-DECISIONS-0005 ruling 6's own, continues to resolve to exactly
+the plants it named. The baseline arm is the executor refusing; the violated arm is the refusal
+branch replaced by any numeric return, which must then publish a magnitude — the contrast form the
+third seat used, and the one §F.1 requires of all the others.
 
 Each plant is recorded with a BASELINE (the guard present: refuses) and a VIOLATED (the
 guard removed: passes) arm, in the contrast form the third seat used, because a guard
 nobody has seen refuse anything is a rumour and a guard nobody has seen *fail to refuse* is
 an untested one.
 
-### F.2 A fourth structural instrument in BLUEPRINT §1
+### F.2 A fourth AND A FIFTH structural instrument in BLUEPRINT §1
 
-The §1 table gains a row, because this is now one of the instruments that does the work
-everywhere rather than a §7 local rule:
+The §1 table gains **two** rows, because both of these are instruments that do the work everywhere
+rather than §7 local rules:
 
 | Instrument | Makes impossible | Doctrine served |
 |---|---|---|
 | **Named specs resolved by the engine** — a mapping is a name in a registry, executed by the engine over values the engine released; no argument accepts a callable or a model object | a caller's number entering a dial with the dial's own provenance stamped on it; a mapping with no source for static analysis to read | §3.1, §3.6, CD-AC-002, CD-AC-005 |
+| **Establishment derived from the signature** — `admits` refuses on `type(value) is not declared` and refuses **any parameter it was not told about**, applied at the boundary so a rewrite of the body cannot remove it | a judgement-path entry point deciding on a value whose type it never established; a NEW argument arriving unguarded — it arrives refused | §3.1, §3.2, CD-AC-001, CD-AC-002, CD-AC-005 |
+
+**The second row is added by the revision, on the Product Owner's ruling 5**, which put the question
+and refused to accept silence on it:
+
+> The `admits` mechanism of §D.1 is itself an instrument that does the work everywhere rather than a
+> §7 local rule — the same criterion §F.2 applied to named-spec resolution. Either BLUEPRINT §1
+> gains a second instrument row for it, or the amendment states why it is properly §7-local; silence
+> is the only unacceptable resolution.
+
+**The Project Lead takes the first branch, and states why rather than merely choosing.** §7-local
+would be the honest answer if `admits` were a rule *about dials*. It is not. Its subject is *every
+public entry point on a judgement path*, and three of the six doors §D.2 lists — `resolve_panel`
+(§6, the witness layer), `present_dial` (the serving path) and `collect` (§5, the collector runner)
+— are not in §7 at all. A rule that governs §5, §6 and §7 and is written down in §7 is a rule the
+next §5 author does not read; that is the same "guard is on the class, the door does not ask for the
+class" shape one storey up, in the documentation instead of the code. It also meets §1's own test
+for an instrument, which is not "is it important" but *"is it verifiable from outside the running
+code"* (`PBG-EVID-001`): the decoration is readable in the source and the acceptance test is a
+static enumeration of judgement paths that fails on any undecorated public entry point — checkable
+by an auditor who trusts nothing in the implementation.
 
 ### F.3 Consequential edits, listed so the PO reviews the whole delta
 
+**CONFIRMED BY THE PRODUCT OWNER AT PO-DECISIONS-0005 RULING 5, with one addition — the `admits`
+instrument row — which is folded into the §1 row below. "With those, §F.3 is the whole of what I
+expect to review."** The table is therefore the complete delta to BLUEPRINT.md, and the boundary
+that marked this amendment IN FORCE applied exactly it and nothing else, creating **v0.2.0**.
+
 | § | Edit |
 |---|---|
-| §1 | the fourth instrument row above |
+| §1 | the fourth **and fifth** instrument rows above — named specs resolved by the engine, and establishment derived from the signature (`admits`), per ruling 5 |
 | §7 | rewritten per §C and §D. "The model is injected into a `DialSpec` rather than looked up inside `evaluate`, which is what keeps `evaluate` a pure function of its arguments" is **DELETED** — it is the sentence the defect was reasoned from, and it was true and not load-bearing. `evaluate` stays pure because the executor is pure and takes no caller code, which is a stronger purity than the one that argument bought |
 | §13, §14 | CD-AC-002's trace changes from three refusals (type / AST / schema) to **four, the first structural**: no door, plus the three that already stand. CD-AC-005 gains the `admits` door |
-| §16 | CD-D-005 now also owes **model registry rows** — `ModelProvenance` contents and `MappingKind` members are product meaning. The default safe action is unchanged: WO-2 ships zero rows and every dial reads `Unknown` |
-| §17 | two new risks: **CD-BP-002** — the executor is the single highest-value target in the product (§E residue); **CD-BP-003** — D.3's adapter boundary admits by protocol and is the softest remaining surface |
+| §16 | CD-D-005 now also owes **model registry rows** — `ModelProvenance` contents and `MappingKind` members are product meaning. The default safe action is unchanged: WO-2 ships zero rows and every dial reads `Unknown`. **PLUS, per ruling 5: the single-refusing-member statement of ruling 2** — `MappingKind` ships one member, it computes nothing, its executor path refuses with a named error, and **the first computing member arrives only with the CD-D-005 register, by amendment to §16's own owed list** |
+| §17 | **three** new risks: **CD-BP-002** — the executor is the single highest-value target in the product (§E residue); **CD-BP-003** — D.3's adapter boundary admits by protocol and is the softest remaining surface; **CD-BP-004**, per ruling 3 — a consumer's `fold` with an `on_unknown` returning `0.0` renders absence as a number outside the governed boundary, CD-AC-001's failure mode reached where this architecture has chosen not to govern; deferred to WO-4, named here so the deferral is visible |
 | §19 | v0.2.0 amendment-log row |
 
 ---
@@ -486,9 +615,12 @@ content and are **not** answered here:
 1. **The members of `MappingKind`.** Which mappings exist is *what a dial means*.
    `SameDialReduction`'s precedent is followed exactly: **no weighted mapping is shipped,
    and that is a refusal rather than an omission** — weights are the relative worth of one
-   observation against another and CD-D-005 is owed. WO-2R3 ships the enum with the minimum
-   set needed to make the type non-empty, or with none at all if the Product Owner prefers
-   the stronger statement (§J.2).
+   observation against another and CD-D-005 is owed. **ANSWERED at PO-DECISIONS-0005 ruling 2 and
+   no longer open: exactly one member, computing nothing, refusing at the executor with a named
+   error (§C.2.1).** The construction — the member's name and the error's name — is the Project
+   Lead's and is written out in §C.2.1. What remains the Product Owner's is unchanged and is the
+   whole of the product meaning: **the first COMPUTING member, which arrives only with the CD-D-005
+   register.**
 2. **The contents of `ModelProvenance`.** Shape here, contents in the PO's register.
 3. **Whether a model may exist at all before CD-D-005 is issued.** The Project Lead's
    default safe action is: no — zero rows, both dials `Unknown` — and that is unchanged
@@ -496,10 +628,35 @@ content and are **not** answered here:
 
 ---
 
-## H. SCOPE BOUNDARY FOR WO-2R3, IF THIS IS ACCEPTED
+## H. SCOPE BOUNDARY FOR WO-2R3 — AS AMENDED BY PO-DECISIONS-0005 RULING 4
 
 **In scope** — the entry-point admission class as a class: §C (the model boundary) and §D
-(A2–A6), with §F.1's seven plants and the static check that enumerates the judgement paths.
+(A2–A6), with §F.1's plants — **P1–P7 as originally written, plus P8 for ruling 2's refusing
+member** — and the static check that enumerates the judgement paths.
+
+**A6 — THE COLLECTOR BOUNDARY — IS IN SCOPE, RULED** (ruling 4). The Project Lead put the question
+in §J.4 and recommended nothing; the Product Owner ruled it IN, with the cost stated rather than
+discovered:
+
+> Excluding the largest member of the measured class re-opens the instance game this amendment
+> exists to end, and it leaves every observation the dial path consumes written by objects the
+> system never established — "by construction" true of the judgement half of the system and false
+> of its input half. §D.3 is accepted as written, both parts … The material enlargement of WO-2R3
+> is a cost accepted here and paid with the Project Lead's increment discipline, not with a scope
+> cut.
+
+Two consequences bind the WO-2R3 dispatch and are not the seat's to reinterpret. **First, §D.3 is
+accepted AS WRITTEN, both parts**: `clock` and `sleep` cease to be caller callables (the `using`
+repair applied again — an engine-owned instant already established by `ensure_utc`, and a named
+member of a closed `DelayKind`); `adapter`, `sink`, `ledger` and `validator` keep their `Protocol`s
+with **every value they RETURN established on arrival**. **Second, the softest surface is stated
+plainly as an admitting door** (CD-BP-003) and is **the fourth Assurance seat's first target** —
+which, with P7, gives that seat two named first targets and no discretion about whether to look.
+
+**"Paid with the Project Lead's increment discipline, not with a scope cut"** is a delivery
+instruction to this seat, not a compliment: WO-2R3 is dispatched in committed increments, each
+landing whole, because seven runtime terminations on this project have shown that an increment that
+is not committed did not happen (`PBG-CONT-007`).
 
 **Explicitly NOT folded in**, per the auditor's own separation:
 
@@ -508,12 +665,27 @@ content and are **not** answered here:
   blocker in its own right: the auditor's instruction is that the gate must not be re-run
   until F02, F04, F05 **and F08** are closed;
 * **ASR3-F01, F06, F07, F09** — documentary and method corrections;
-* **A7 (`fold`) and Class C (`Lifecycle`)** — §D.4 and §B.4; out of scope on the Project
-  Lead's reading, and §J.3 puts that reading to the Product Owner.
+* **A7 (`fold`)** — §D.4. **OUT, RULED: it is WO-4** (ruling 3), and out **with two conditions
+  that are now discharged obligations and not intentions**: the residue is BLUEPRINT §17's
+  CD-BP-004, and WO-4's scope names it on day one via `remaining_items`;
+* **Class C (`Lifecycle`)** — §B.4; out of scope on the Project Lead's reading, which the Product
+  Owner did not disturb. `Lifecycle.run(tick)` and `on_shutdown(callback)` remain the nearest of
+  Class C to a judgement path, and the fourth Assurance seat is still invited to attack that
+  scoping.
 
-**Sequence, unchanged from PO-DECISIONS-0004 ruling 6:** PO reviews this amendment → WO-2R3
-implements with a **fresh** Engineer seat → **fourth fresh** Assurance seat. The Engineer
-and the Assurance Engineer are never the same agent (`PBG-SOD-001`, non-waivable).
+**Sequence, unchanged from PO-DECISIONS-0004 ruling 6 and re-stated at PO-DECISIONS-0005 ruling 6:**
+PO reviews this amendment (**DONE** — PO-DECISIONS-0005, `b4e8eae`) → WO-2R3 implements with a
+**fresh** Engineer seat → **fourth fresh** Assurance seat. The Engineer and the Assurance Engineer
+are never the same agent (`PBG-SOD-001`, non-waivable).
+
+**The standing condition is unchanged and is renewed a third time** (ruling 6): the auditor's
+replicated plant fails at construction, demonstrated in §F.1's baseline/violated contrast form,
+P1–P7, **all over `EMPTY_MODEL_REGISTRY`**.
+
+**ASR3-F08 remains a gate blocker in its own right, outside WO-2R3** (ruling 6, and §H stands): the
+WO-2 gate is not re-run until F02, F04, F05 **and F08** are closed. The Project Lead **proposes the
+F08 parser work order once WO-2R3's Engineer is running, not before** — that timing is the Product
+Owner's instruction, not this seat's scheduling preference.
 
 ---
 
@@ -533,26 +705,99 @@ and the Assurance Engineer are never the same agent (`PBG-SOD-001`, non-waivable
 
 ---
 
-## J. WHAT IS ASKED OF THE PRODUCT OWNER
+## J. WHAT WAS ASKED OF THE PRODUCT OWNER — AND WHAT WAS RULED
 
-The Project Lead is **not** recommending answers to these. The last time a Project Lead's
-reasonable inference stood in for a ruling it cost a gate.
+The Project Lead recommended **no answer to any of the five**. All five are now dispositioned at
+`governance/decisions/PO-DECISIONS-0005.md` (commit `b4e8eae`, authored by Matt Scott). The
+questions are kept verbatim so that the ruling reads against what was actually asked.
 
-1. **Accept, amend or reject §C and §D** as the design implementing PO-DECISIONS-0004 §2.
-   §D in particular goes beyond the literal words of the ruling — the ruling closes the
-   model boundary; §D closes the remaining doors on the judgement paths — and it is offered
-   as necessary to make the ruling's "by construction" true of the system rather than of
-   one boundary. **That extension is the Product Owner's to accept or cut.**
-2. **`MappingKind`'s initial members** — minimum non-empty set, or empty (§G.1)?
-3. **Is `fold` (A7) in WO-2R3's scope or is it WO-4?** The Project Lead's reading is WO-4;
-   §D.4 states the residue that reading leaves.
-4. **Is the collector boundary (A6) in WO-2R3's scope?** It is the largest single item in
-   §B.2 and was not in the third audit's examined set. Including it enlarges WO-2R3
-   materially; excluding it leaves every observation the dial path consumes written by
-   objects the system never established.
-5. **Confirm the §F.3 consequential edits** are the whole delta the Product Owner expects to
-   review, or name what is missing.
+**J.1 — Accept, amend or reject §C and §D** as the design implementing PO-DECISIONS-0004 §2. §D in
+particular goes beyond the literal words of the ruling, and that extension is the Product Owner's to
+accept or cut.
 
-**STOP.** No Engineer is dispatched and no application code is written until this is
-dispositioned. A PASS would not have been an acceptance and this proposal is not a decision
-(`PBG-AUTH-003`).
+> **RULED (ruling 1): §C AND §D ARE ACCEPTED, the §D extension included, deliberately.** *"'By
+> construction' is a claim about the SYSTEM; a system with one closed boundary and six open doors
+> from a measured class is the instance game played at system scale."* The estate's standing lesson
+> from five kernel assurance rounds applies at full force: **a remedy found in a defect is assessed
+> as a general invariant before the defect is closed.** §D.1's rule is the class closure; **P7 is
+> its test, and the fourth Assurance seat is directed to run it first**, exactly as §F.1 proposes.
+
+**J.2 — `MappingKind`'s initial members** — minimum non-empty set, or empty (§G.1)?
+
+> **RULED (ruling 2): NON-EMPTY, EXACTLY ONE MEMBER, AND THE MEMBER COMPUTES NOTHING.** The PO's
+> first lean was empty — the stronger statement — and *"the full read refuted it"*: P3 and P4 must
+> construct a `ModelSpec`, and over an empty enum they die at `ModelSpec` construction for a reason
+> that is not under test. **A criterion that cannot be demonstrated is a rumour — §F.1's own
+> doctrine, applied to §F.1.** Executor path refuses with a named error and never returns a
+> magnitude; zero product meaning ships; the first computing member arrives only with CD-D-005.
+> **Transcribed into the design at §C.2.1; the name is the Project Lead's construction.**
+
+**J.3 — Is `fold` (A7) in WO-2R3's scope or is it WO-4?** The Project Lead's reading is WO-4; §D.4
+states the residue that reading leaves.
+
+> **RULED (ruling 3): `fold` IS WO-4, on the Project Lead's own reasoning, WITH TWO CONDITIONS** —
+> the residue becomes BLUEPRINT §17's **CD-BP-004**, and **WO-4's scope names it on day one**.
+> *"A residue this amendment made visible does not get to become invisible again by being
+> deferred."* **Transcribed at §D.4 and §H; both conditions discharged at this boundary.**
+
+**J.4 — Is the collector boundary (A6) in WO-2R3's scope?** Including it enlarges WO-2R3 materially;
+excluding it leaves every observation the dial path consumes written by objects the system never
+established.
+
+> **RULED (ruling 4): A6 IS IN SCOPE.** *"Excluding the largest member of the measured class
+> re-opens the instance game this amendment exists to end."* §D.3 accepted **as written, both
+> parts**; the admitting door is stated plainly as CD-BP-003 and is **the fourth Assurance seat's
+> first target**; **the enlargement is paid with increment discipline, not with a scope cut.**
+> **Transcribed at §H.**
+
+**J.5 — Confirm the §F.3 consequential edits** are the whole delta, or name what is missing.
+
+> **RULED (ruling 5): CONFIRMED, WITH ONE ADDITION.** The `admits` mechanism is itself an instrument
+> — *"either BLUEPRINT §1 gains a second instrument row for it, or the amendment states why it is
+> properly §7-local; silence is the only unacceptable resolution."* **The Project Lead takes the
+> first branch and states its reasoning anyway** (§F.2): `admits` governs §5, §6 and §7 doors alike,
+> so writing it down in §7 alone is the "guard is on the class, the door does not ask for the class"
+> shape moved into the documentation. §16's edit additionally carries ruling 2's
+> single-refusing-member statement. *"With those, §F.3 is the whole of what I expect to review."*
+
+**The superseded closing paragraph of this section, retained rather than deleted:** *"**STOP.** No
+Engineer is dispatched and no application code is written until this is dispositioned. A PASS would
+not have been an acceptance and this proposal is not a decision (`PBG-AUTH-003`)."* It was honoured:
+the thirteenth Project Lead seat drafted and stopped, and the next thing that moved was the Product
+Owner's own commit.
+
+---
+
+## K. THE REVISION LOG — WHAT CHANGED WHEN THIS WAS MARKED IN FORCE, AND UNDER WHICH RULING
+
+PO-DECISIONS-0005 ruling 6 bounds this revision in terms: *"revises BP-AMENDMENT-0001 per rulings 2,
+3 and 5 (bounded deltas, no new design)"*. The complete list, checkable against
+`git diff 251b2e2 -- governance/blueprint/BP-AMENDMENT-0001-engine-owns-the-model-lifecycle.md`:
+
+| # | Where | Change | Ordered by |
+|---|---|---|---|
+| K1 | frontmatter | `status` PROPOSED → **IN FORCE**, naming the disposition record and its commit; `would_create` → `creates`; `derives_from` gains PO-DECISIONS-0005; `revised_at` and `revision_bound` added | ruling 6 |
+| K2 | document head | the PROPOSAL banner replaced by the IN FORCE statement, with the superseded sentence quoted rather than deleted | ruling 6 |
+| K3 | §C.2 code block | `MappingKind` annotated: ships non-empty, one member, computes nothing | ruling 2 |
+| K4 | **§C.2.1 (new)** | the one member written out — `UNSPECIFIED`, the named error `UnspecifiedMapping`, and the three properties the Engineer must hold. **The member's NAME and the error's NAME are the Project Lead's construction, which ruling 2 assigns here in terms** | ruling 2 |
+| K5 | §D.4 | the Project Lead's WO-4 reading replaced by the RULING, with conditions (a) CD-BP-004 in §17 and (b) WO-4 names it on day one | ruling 3 |
+| K6 | §F.1 | **P8 appended** — the executor refusal demonstrated in contrast form. P1–P7 unchanged and un-renumbered, and the addition disclosed as an addition | ruling 2 (consequential) |
+| K7 | §F.2 | a **fifth** instrument row for `admits`, plus the stated reasoning for why it is not §7-local | ruling 5 |
+| K8 | §F.3 | header records the confirmation; §1 row covers both instrument rows; §16 row carries the single-refusing-member statement; §17 row carries **CD-BP-004** | rulings 2, 3, 5 |
+| K9 | §G.1 | `MappingKind` members marked ANSWERED; what remains the PO's is narrowed to the first COMPUTING member | ruling 2 |
+| K10 | §H | A6 **IN SCOPE** with the ruling quoted; A7 out as WO-4 with its two conditions; the standing condition and ASR3-F08's separate gate-blocking status restated | rulings 3, 4, 6 |
+| K11 | §J | rewritten from five open questions to five transcribed dispositions, questions kept verbatim | ruling 6 |
+| K12 | §K | this table | ruling 6 |
+
+**WHAT WAS NOT CHANGED, and it is the larger half of the list.** §A, §B (the measured denominator,
+all three classes and the 44-callable inventory), §C.1, §C.3–§C.6, §D.1–§D.3, §E (the plant walked
+through the amended design, all seven steps and the residue), §F.1's P1–P7, §G.2, §G.3 and §I are
+**untouched**. No design was added, no design was removed, and no measurement was restated. Three of
+the twelve rows above are pure status; the rest transcribe a ruling into the place the ruling names.
+
+**One thing this revision deliberately did NOT do.** It did not soften §E's residue paragraph, which
+still says in terms that this amendment *does not claim the plant is the last plant*, that a
+`MEAN` that is not a mean is a defect this architecture does not prevent, and that concentrating all
+computation in one executor *"should be stated as a risk and not as a win"*. An amendment reads
+differently once it is in force, and that paragraph is the one most likely to be quietly improved.
+It was left alone on purpose.
