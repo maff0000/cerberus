@@ -198,4 +198,4 @@ next_safe_action: >
   (CD-RULE-001). **DO NOT** merge or promote the lane or f30e63c. **DO NOT** grade CD-AC-002 or
   CD-AC-005 — reserved by the Product Owner for the fifth boundary running.
 
-continuity_record_commit: PENDING
+continuity_record_commit: d6ba86b44c2978e29df2167c3e6b0bbf3451f4bd   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). THE ORDERING CORRECTION IS EXECUTED: the CD-RULE-008 pristine-clone verdict was taken AT d6ba86b BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont && git checkout -q -B main d6ba86b` (branch named per CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — boots **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha d6ba86b44c2978e29df2167c3e6b0bbf3451f4bd, branch main.
