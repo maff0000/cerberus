@@ -242,9 +242,4 @@ next_safe_action: >
   The grading of CD-AC-002 and CD-AC-005 is reserved to the Product Owner for the seventh boundary
   running and no seat may pre-empt it.
 
-continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS
-                                    # FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed
-                                    # (CD-PL-F36). The CD-RULE-008 pristine-clone boot verdict is
-                                    # taken AT that SHA BEFORE this field is written, so the verdict
-                                    # and the field name ONE commit — the ordering that has now held
-                                    # for four boundaries running.
+continuity_record_commit: 5ade5ae7c730a12a72567f4f7954bc095d57eff9   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE FIFTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 5ade5ae BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont5 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont5 && git checkout -q -B main 5ade5ae` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha 5ade5ae7c730a12a72567f4f7954bc095d57eff9, branch main.
