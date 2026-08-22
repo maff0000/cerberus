@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T20:06:38Z'
+updated_utc: '2026-08-22T20:40:29Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -48,9 +48,51 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: BUILD   # MOVED AT THIS BOUNDARY. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
+current_phase: GATE   # MOVED AT BL-20260822T204029Z-0106. The fourth Assurance seat has returned AMBER on WO-2R3 at 531c95c, with CD-AC-002 and CD-AC-005 both AMBER and NOT CLOSED. BUILD is over and nothing further is authorised until the Product Owner dispositions. WAS BUILD, and the note that moved it there is retained below.
+_prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
+  BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
-  *** **THE FOURTH FRESH ASSURANCE SEAT IS DISPATCHED. `CD-DISPATCH-WO2R3-ASSURANCE` IS ISSUED to
+  *** **THE FOURTH GATE HAS RETURNED. CD-ASR-WO2R3-01 RENDERS AMBER ON WO-2R3 AT `531c95c` —
+  CD-AC-002 **AMBER, NOT CLOSED**; CD-AC-005 **AMBER, NOT CLOSED AND WEAKER THAN CD-AC-002**. THE
+  VERDICT IS BANKED VERBATIM AT `governance/assurance/WO-2R3/VERDICT.md` AND IS **NOT** ACCEPTED,
+  GRADED, ARGUED OR NEGOTIATED BY THIS SEAT (PBG-AUTH-003, PBG-AUTH-006). IT IS THE PRODUCT OWNER'S
+  TO DISPOSITION AND EVERYTHING STOPS HERE.** ***
+  *** **THE SEAT WAS ASKED FOR A ROUTE NOBODY HAD WRITTEN DOWN. IT RETURNED FOUR — AND IT BROKE THE
+  CLAIM THIS SEAT HAD JUST FINISHED RECONCILING.** ***
+  **F-A2 DECIDES THE GATE AND THE PROJECT LEAD RE-MEASURED IT RATHER THAN TAKE IT:** the same fielded
+  frozen judgement-path type, placed in `src/crash_detector/judging/` instead of
+  `src/crash_detector/engine/` — **POPULATION UNCHANGED AT 33, CONSTRUCTOR EXIT 0 "PASS — 97
+  assertions", DOORS EXIT 0, and at runtime `Verdict(score=object(), breached='maybe')` ACCEPTED.**
+  **V43 — THE ONLY EVIDENCE FOR THE WIDENED CLASS, THE CONTRAST THIS SEAT RAN IN BOTH ARMS AND CALLED
+  DECISIVE — IS AN ARTEFACT OF *WHERE* THE TYPE WAS PUT, NOT OF *WHAT IT IS*.** The widening moved
+  the LOCUS axis, which was already safe. The REACH axis, where the narrowness lives, did not move.
+  **T6 IS A FIVE-INCREMENT CORRECTION TO THE RECORD, PL-CONFIRMED:** GRANT-MATRIX-LIVE's refusal is at
+  `check_grant_matrix_live.py:726-735` and `import psycopg2` is at **line 738, AFTER it**; psycopg2
+  imports here at 2.9.11; **ZERO `CD_CHECK_STORE_*` VARIABLES ARE SET.** Every recorded "exit 3 on
+  both arms" was an unsupplied configuration. **THE PLANT GUARDING CD-AC-003 — THE ONE PASS IN THE
+  THIRD GATE — SAT UNBITTEN FOR FIVE INCREMENTS AND THREE AUDITORS BEHIND AN UNSET ENVIRONMENT
+  VARIABLE.** The seat bit it against a live PostgreSQL 16.14 catalogue, nine-violation signature
+  reproduced line for line.
+  **A DELEGATED MEASUREMENT OF THE SEAT'S OWN — THE DEEP T2 ATTACK ON CD-BP-003 — RETURNED *AFTER*
+  THE VERDICT CLOSED, FILLING EXACTLY THE HOLE THE SEAT HAD DECLARED.** FOUR ESCAPES on the adapter
+  boundary, one of which **REFUTES A WRITTEN CLAIM IN `required-tests.yaml:1200`**: the stored payload
+  is not the validated payload, because `is_empty` is foreign code holding a live reference between
+  validation and storage. Banked SEPARATELY and VERBATIM at
+  `governance/assurance/WO-2R3/ADDENDUM-T2-ADAPTER-BOUNDARY.md`, **UNGRADED BY ANY COMPETENT PARTY**
+  (CD-D-143) — the auditor closed before it landed, and the Project Lead may not grade assurance.
+  *** **TWO FINDINGS RAISED BY THIS SEAT AGAINST ITSELF. CD-PL-F94 IS HIGH.** *** The dispatch
+  promised the auditor "if your verdict contradicts the reconciliation record, THE RECORD IS WHAT
+  GETS CORRECTED." It contradicts it, and the record is being corrected: BL-...-0104 wrote that the
+  V43 contrast made the widening "a measurement rather than a hope" — **THE CONTRAST PROVED THE CODE
+  PATH CHANGED AND PROVED NOTHING ABOUT WHETHER THE CLASS CLOSED, AND THIS SEAT DID NOT DISTINGUISH
+  THE TWO.** What would have caught it was running V43 once more with the type moved one package
+  sideways — **A SINGLE COMMAND, AND THE QUESTION WAS ONE THIS SEAT WROTE INTO THE AUDITOR'S BRIEF
+  AND NEVER PUT TO ITSELF.** CD-PL-F95 (MEDIUM): the auditor found `ACTIVE_WORK.yaml` on the LANE
+  stale since `bf8fcf9` with `continuity_record_commit: PENDING`, and the documented MANUAL boot
+  fallback in CLAUDE.md reads it by name — disclosed to the auditor as not-ruled-harmless, and **IT
+  DISAGREED, WITH A REASON, AND IT IS RIGHT.**
+  --- SUPERSEDED BY THE ABOVE, RETAINED: THE DISPATCH OF THE FOURTH SEAT ---
+  *** **THE FOURTH FRESH ASSURANCE SEAT WAS DISPATCHED. `CD-DISPATCH-WO2R3-ASSURANCE` WAS ISSUED to
   CD-ASR-WO2R3-01 over THE WHOLE OF WO-2R3 (f30e63c..531c95c, CD-D-141) at target `531c95c`, in the
   read-only worktree /srv/crash-detector-wo2r3-audit, under PO-DECISIONS-0010 ruling 3 — whose
   condition, that the bounded completion bank first, WAS MET AT THE PRECEDING BOUNDARY AND NOT
@@ -2812,16 +2854,36 @@ next_safe_action: >
   Project Lead from two pristine extractions — EXIT 0 and "ADJACENT" at `46adf33`, EXIT 1 and
   "VIOLATION ... Verdict" at `531c95c`. Identity clean, porcelain zero, `src/` and `plants/` diff
   EMPTY, node-id sets diffed with ZERO LOST, plants 11/11, sweep unmoved.
-  **1. THE FOURTH FRESH ASSURANCE SEAT IS DISPATCHED — `CD-DISPATCH-WO2R3-ASSURANCE`, ISSUED at
+  *** **STOP. THE GATE VERDICT IS IN AND IT IS THE PRODUCT OWNER'S TO DISPOSITION. NO FURTHER
+  ENGINEERING, NO REMEDIATION AND NO DISPOSITIONS ARE AUTHORISED BEFORE THAT.** ***
+  **THE ELEVEN CLASS-2 DISPOSITIONS ARE STILL NOT OWED YET, EVEN THOUGH THE SEAT HAS REPORTED**
+  (CD-D-130): the addendum is UNGRADED, the verdict is UNDISPOSITIONED, and **the auditor returned T8
+  — the eleven items — as NOT ESTABLISHED, which is precisely the input those dispositions were
+  supposed to have.**
+  **ONE BOUNDED ACTION REMAINS OPEN AND IT IS NOT A DECISION:** hand the late-returning T2 addendum
+  back to CD-ASR-WO2R3-01, the ONLY party competent to grade it, with no suggestion of what the
+  answer should be and with a harder verdict as acceptable as an unchanged one. Bank any grading as a
+  SUPPLEMENT beside the verdict, NEVER inside it (CD-D-143). If it declines or cannot, **THE ADDENDUM
+  GOES UP UNGRADED AND LABELLED UNGRADED.**
+  **WHAT GOES TO THE PRODUCT OWNER AS ONE PACKAGE:** the verdict (AMBER; CD-AC-002 and CD-AC-005 both
+  AMBER, NOT CLOSED) · the addendum's four escapes · the auditor's findings F-A1..F-A4 and F-C1..F-C4,
+  the two plant re-contrast exceptions, and the T6 correction · **THE AUDITOR'S OWN DECLARED HOLES —
+  T8, T9 AND T10 NOT ESTABLISHED, THREE OF ELEVEN TARGETS UNMEASURED, VOLUNTEERED RATHER THAN
+  GLOSSED** · and **CD-PL-F94 (HIGH) AND CD-PL-F95 (MEDIUM), RAISED BY THIS SEAT AGAINST ITSELF.**
+  **THE QUESTIONS THAT ARE THE PRODUCT OWNER'S AND NOBODY ELSE'S:** (1) does the AMBER stand, and what
+  follows from CD-AC-002 and CD-AC-005 remaining NOT CLOSED after six increments? (2) the auditor
+  proposes a bounded increment closing F-A1, F-A2 and F-C1 and says **"no further scope should be
+  added to WO-2R3"** — is that the shape? (3) **RULING 1 SAID A FUTURE FIELDED TYPE "FAILS ON
+  ARRIVAL"; F-A2 SHOWS IT FAILS ON ARRIVAL *IN THREE PACKAGES*. THE REACH IS NOW THE QUESTION THE
+  LOCUS WAS** — and widening a ruled class is not this seat's to take, which is the same reason
+  CD-D-134 went up. (4) the T6 correction is a five-increment error about the only criterion passing;
+  what does it oblige? (5) the addendum's Escape 2 refutes a sentence relied on TWICE in shipped
+  declarations (`admission.py`, `establishment.py`) — a documentary correction only an authorised
+  party may order.
+  --- SUPERSEDED, RETAINED: THE ACTION AS IT STOOD WHEN THE SEAT WAS DISPATCHED ---
+  **THE FOURTH FRESH ASSURANCE SEAT WAS DISPATCHED — `CD-DISPATCH-WO2R3-ASSURANCE`, ISSUED at
   BL-20260822T200638Z-0105 to CD-ASR-WO2R3-01, target `531c95c`, worktree
-  /srv/crash-detector-wo2r3-audit, read-only. DISCHARGED AS AN ACTION; THE SEAT'S RETURN IS OWED.**
-  *** **THE NEXT ACTION IS: RUN IT, THEN STOP AT ITS GATE VERDICT.** *** When it returns, reconcile
-  the return as a DURABLE RECORD under governance/assurance/WO-2R3/ (PBG-CONT-007 — a sub-agent
-  result that exists only in conversation is not project state), **DO NOT ARGUE THE VERDICT DOWN AND
-  DO NOT NEGOTIATE IT**, and if it contradicts the reconciliation record, **THE RECORD IS WHAT GETS
-  CORRECTED.** THEN, AND ONLY THEN, IN THIS ORDER: (1) write the ELEVEN CLASS-2 SWEEP DISPOSITIONS
-  (CD-D-130 — author is this role, trigger is the seat's return, reconciler is the Product Owner);
-  (2) put the verdict and the gate to the PRODUCT OWNER for disposition.
+  /srv/crash-detector-wo2r3-audit, read-only. DISCHARGED, AND ITS RETURN IS NOW IN.**
   --- THE BRIEF AS ISSUED, RETAINED SO IT SURVIVES A CONTEXT LOSS ---
   over the whole of WO-2R3 at **`531c95c`** (NOT `46adf33`, which is now the completion's execution
   base) — none of
@@ -3483,5 +3545,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T200638Z-0105   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T204029Z-0106   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
