@@ -1,0 +1,201 @@
+entry_id: BL-20260822T175949Z-0059
+timestamp_utc: '2026-08-22T17:59:49Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: ca696dd03d9c42dad60878d37005d2302bbe1d1f
+parent_entry_id: BL-20260822T174932Z-0058
+schema_version: 1
+
+action_summary: >
+  **PO-DECISIONS-0009 IS RECEIPTED. CD-D-127 IS RULED (C) AND CLOSED. INCREMENT 5 IS DISPATCHED.**
+  This entry is a RECEIPT AND A DISPATCH BOUNDARY. It measures nothing new about the lane — the
+  measurements of record remain BL-20260822T174206Z-0057's, unaltered — and it writes no code.
+  What it does is take a Product Authority ruling into the durable record, convert the three
+  obligations that ruling creates into carried items that survive this seat's context, and issue the
+  increment-5 Engineer dispatch.
+  **THE RULING WENT THIS SEAT'S WAY AND THAT IS THE LEAST INTERESTING THING ABOUT IT.** The Project
+  Lead recommended (C) and (C) was taken. But the Product Owner did NOT take (C) as recommended — it
+  took (C) AND BOUND THE COUNTER-ARGUMENT THIS SEAT HAD WRITTEN AGAINST ITSELF INTO THE FOURTH
+  ASSURANCE SEAT'S DISPATCH AS THREE MANDATORY CLAUSES. The seat's own disclosure became the seat's
+  own obligation. That is recorded here plainly because it is the mechanism this project is being
+  run on, and because a seat that only records the rulings that flatter it is running a different
+  project from the one on paper.
+  **THE ELEVEN CLASS-2 SWEEP DISPOSITIONS ARE NOT WRITTEN AT THIS BOUNDARY AND MUST NOT BE.** They
+  are owed AFTER the fourth Assurance seat reports (CD-D-130). Writing them now — while the file is
+  open and it would be quick — is precisely the move the ruling rejected.
+
+what_the_ruling_says_and_where_each_part_landed_in_the_record:
+- ruling: '1 — CD-D-127 ANSWERED (C), WITH A DISPATCH OBLIGATION ATTACHED.'
+  landed: >
+    `open_decisions` CD-D-127 rewritten from OPEN to RULED AND CLOSED, with the question retained in
+    full beneath the ruling so the ruling can be read against it. The three mandatory dispatch
+    clauses are recorded in `remaining_items` as **CD-D-129** and repeated in `next_safe_action`, so
+    a Project Lead resuming from this file alone cannot write the fourth Assurance dispatch without
+    meeting them.
+  the_part_that_binds_this_seat: >
+    (ii) is the one aimed at the reader, not at the auditee: "verdicts are taken against
+    DECLARATIONS, never against exit codes alone — a RED-on-sight without reading the declaration is
+    a METHOD DEFECT IN THE SEAT THAT WRITES IT." The Project Lead does not get to soften that
+    sentence when it drafts the brief, and it is quoted verbatim in CD-D-129 for that reason.
+- ruling: '2 — INCREMENT 5 DISPATCHED AT LANE 4ac159e ON THE RE-BASED BOUNDS.'
+  landed: >
+    `next_safe_action` moves from "STOP, put CD-D-127 up" to "DISPATCH INCREMENT 5". The dispatch
+    record itself is a separate artefact at the next boundary of this session and is NOT in this
+    entry; this entry only records that the authority to issue it now exists and where it comes
+    from.
+- ruling: '3 — THREE NAMES ADDED TO THE FOURTH SEAT''S TARGET LIST.'
+  landed: >
+    The named-target list in `next_safe_action` goes from SEVEN to TEN and is duplicated in
+    CD-D-129. **(i) CD-ENG-WO2R3-F15 IS RE-SCOPED UPWARD BY THE PRODUCT OWNER**: the target is
+    "the blindness window, not just the guard" — a guard failing since increment 2 through TWO
+    Project Lead reconciliations, which makes half the subject THIS SEAT'S (CD-PL-F86) and not the
+    Engineer's. **(ii) `GRANT-MATRIX-LIVE` IS SHARPENED FROM "nobody has bitten with it" TO AN
+    INSTRUCTION**: bite it, or state MEASURED limits on why you cannot. (iii) CD-ENG-WO2R3-F10
+    remains open and undischarged.
+- ruling: '4 — CD-D-123..126 AND CD-D-128 STAND; CD-PL-F87''S PATTERN HARVESTED AS IMP-022.'
+  landed: >
+    A new `remaining_items` entry records IMP-022 as a PBGv2 FRAMEWORK debt and states in terms that
+    it is NOT this project's to fix and NOT this seat's to improvise a local remedy for. CD-PL-F87
+    itself stays recorded in `risks` and is NOT closed by the harvest — the pattern being owned
+    upstream does not make the seven instances downstream disappear.
+- ruling: '5 — SEQUENCE AND GRADING RESERVE.'
+  landed: >
+    Increment 5 → the FOURTH fresh Assurance seat over the whole of WO-2R3. **CD-AC-002 AND
+    CD-AC-005 REMAIN UNGRADED**, reserved by the Product Owner for the FIFTH boundary running.
+    "Reconciliation is not acceptance, acceptance is not assurance" is carried verbatim.
+
+reconciliation_taken_at_this_boundary:
+  what_was_actually_run: >
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` at /srv/crash-detector, and `git rev-parse` /
+    `git status --porcelain` / `git log` in both the main worktree and the lane worktree. NOTHING
+    ELSE. No plant was applied, no extraction was made, no register check was run, no test was
+    collected at this boundary.
+  observed_against_recorded:
+  - 'main HEAD ca696dd03d9c42dad60878d37005d2302bbe1d1f, branch main — MATCHES the boot verdict''s
+     observed_sha and matches the PO-DECISIONS-0009 commit. AGREES.'
+  - 'boot verdict AMBER with `blocking_failures` EMPTY. The AMBER is the SINGLE known and recorded
+     cause — `roadmap_identity None (UNAVAILABLE: Roadmap not found at ROADMAP.md)`. It is
+     pre-existing, it is not new at this boundary, and it is not treated as a pass by being old.'
+  - 'continuity_state CONTINUITY_MATCH/RESUME_AMBER, current_phase BUILD. AGREES.'
+  - 'lane /srv/crash-detector-wo2r3 at 4ac159ea0bb47fb859fe005bd966222d66f0eeff on branch wo-2r3,
+     `git status --porcelain` ZERO LINES. AGREES with lane_increment_sha. **THIS IS THE LANE
+     INCREMENT 5 IS DISPATCHED AT AND IT IS UNTOUCHED SINCE INCREMENT 4 CLOSED.**'
+  - 'lane authorship re-checked at this boundary rather than read from the record:
+     `git log --format=''%an <%ae>'' f30e63c..HEAD | sort | uniq -c` in the lane returns EXACTLY ONE
+     LINE — 17 commits, all `CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid>`.
+     Increment 5 therefore continues under the SAME actor_id, which is what makes the git author
+     audit able to say which seat built which structure (CD-RULE-002).'
+  - 'PO-DECISIONS-0009 authorship verified, not assumed: `git show --stat ca696dd` gives
+     `Author: Matt Scott <rogue@cerberus.local>`, ONE file changed, 48 insertions, 0 deletions, and
+     the single path is governance/decisions/PO-DECISIONS-0009.md. **A PRODUCT AUTHORITY RULING THAT
+     TOUCHED ONLY ITS OWN DECISION RECORD.** No seat wrote it and it moved nothing else.'
+  the_one_disagreement_and_it_is_the_expected_one: >
+    At boot, ACTIVE_WORK.yaml's `current_block` and `next_safe_action` still said "PUT CD-D-127 TO
+    THE PRODUCT AUTHORITY" — a state the PO's own commit at ca696dd had already overtaken. That is
+    NOT drift and was NOT silently corrected: it is the normal one-boundary lag between the Product
+    Owner writing a ruling and the Project Lead receipting it, and receipting it is what this entry
+    IS. Recorded explicitly because "recorded and observed disagree" is a stop condition in
+    CLAUDE.md and the reason for the disagreement has to be stated rather than assumed benign.
+
+the_ordering_correction_this_boundary_owes_and_executes:
+  what_was_noted_against_this_seat: >
+    BL-20260822T174932Z-0058 recorded, against this seat, that the prior boundary resolved
+    `continuity_record_commit` FIRST and took the CD-RULE-008 pristine-clone verdict AFTERWARDS, so
+    the verdict of record named a LATER SHA (0cc9e34) than the field's own value (9d355be). Both
+    were true and neither was hidden, and the entry closed with "the next boundary should take the
+    verdict first."
+  what_this_boundary_does_about_it: >
+    `continuity_record_commit` is left DELIBERATELY PENDING in this entry and in ACTIVE_WORK.yaml.
+    The sequence executed is: COMMIT the boundary → take the CD-RULE-008 pristine-clone boot verdict
+    AT THAT COMMIT → resolve the field to THAT SAME SHA in a CD-RULE-007 follow-up that writes the
+    field and nothing else. **The verdict and the field will name ONE commit.**
+  why_it_is_recorded_rather_than_just_done: >
+    A method correction that is performed but not written is indistinguishable, one seat later, from
+    the defect never having been raised. This is CD-PL-F85's shape and it is cheap to avoid here.
+
+decisions_ruled_here:
+- id: CD-D-129
+  decision: >
+    THE FOURTH ASSURANCE SEAT'S DISPATCH MUST CARRY, VERBATIM AND UP FRONT, THE THREE CLAUSES
+    ORDERED AT PO-DECISIONS-0009 RULING 1, AND THE TEN-ITEM NAMED-TARGET LIST. Recorded in
+    `remaining_items` and repeated in `next_safe_action`. It falls due when that dispatch is
+    written — AFTER increment 5 — and it is NOT the Project Lead's to soften, re-order or summarise.
+  why_it_is_a_decision_and_not_a_note: >
+    Because the obligation is on a document that does not exist yet, written by a seat that does not
+    exist yet, at a boundary after this one. A ruling that lives only in a decision file the next
+    Project Lead may or may not re-read is not carried; a `remaining_items` entry is (PBG-CONT-007).
+- id: CD-D-130
+  decision: >
+    THE ELEVEN CLASS-2 SWEEP DISPOSITIONS ARE OWED BY THE PROJECT LEAD AFTER THE FOURTH ASSURANCE
+    SEAT REPORTS, AND ARE RECONCILED BY THE PRODUCT OWNER. THEY ARE NOT OWED AT THIS BOUNDARY AND
+    NOT OWED AT INCREMENT 5, AND WRITING THEM EARLY IS PROHIBITED BY THE RULING THAT ORDERED THEM.
+  the_trap_it_exists_to_stop: >
+    The dispositions are eleven short paragraphs about a module that is fully understood. A future
+    Project Lead with the file open and an hour spare will be tempted to "get them out of the way".
+    Doing so hands the auditor the map the ruling exists to withhold. The prohibition is therefore
+    written as a carried item with its trigger named, not as advice.
+- id: CD-D-131
+  decision: >
+    INCREMENT 5 CONTINUES UNDER ACTOR_ID `CD-ENG-WO2R3-01`, THE SAME ENGINEER SEAT IDENTITY THAT
+    BUILT INCREMENTS 1-4, ON A NEW DISPATCH RECORD DERIVING FROM CD-AUTH-0001.
+  the_reasoning_stated_so_it_can_be_overturned: >
+    PBG-SOD-001 forbids the Engineer and the Assurance Engineer being the same agent; it says
+    nothing about one Engineer identity spanning the increments of ONE work order, and increments
+    1-4 already ran as four separate agent instances under this one identity. The purpose CD-RULE-002
+    gives the actor_id is "so the git author audit can tell WHICH SEAT BUILT WHICH STRUCTURE" — and
+    the structure here is WO-2R3, which the fourth Assurance seat audits as a whole. A fresh id
+    mid-work-order would split one audited structure across two authors for no gain.
+    **THE ARGUMENT THE OTHER WAY, STATED BECAUSE IT IS NOT WEAK:** the Product Owner's stated reason
+    for demanding fresh seats was that "the seats that wrote the admission checks are the seats
+    least able to see that a check on a door is not a closure of the class of doors" — and increment
+    5 asks this identity to close a class its own increment-2 mechanism did not reach. That argument
+    is answered by the audit and not by the identity: the fourth Assurance seat is fresh, is
+    independent, and has the increment-5 instrument's own enumeration on its named-target list
+    (CD-D-119). **IF THE PRODUCT OWNER PREFERS A FRESH ENGINEER ID FOR INCREMENT 5, THIS DECISION IS
+    THE ONE TO OVERTURN AND NOTHING BUILT ON IT IS EXPENSIVE TO REDO.**
+
+findings_raised_by_the_project_lead_at_this_boundary: []
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- 'NO RE-MEASUREMENT OF THE LANE WAS TAKEN. The plant contrast (11/11 apply, 10 contrast), the suite
+   (1519 passed), the node-id set diff, the 27/27 doors instrument, the 19/19 variant apply and the
+   register check exits are ALL BL-20260822T174206Z-0057''s measurements, carried forward and NOT
+   re-run here. This entry inherits them as RECORD, not as fresh observation, and says so.'
+- 'THE CLASS-2 SWEEP WAS NOT RE-RUN AT THIS BOUNDARY. Its state — 514 sites, 11 violations, exit 1 —
+   is the bisected record''s, and it is the state the fourth Assurance seat is being told about
+   verbatim. **IF IT HAS MOVED SINCE 4ac159e IT WOULD NOT BE VISIBLE FROM THIS ENTRY**, though the
+   lane is untouched at 4ac159e with porcelain zero, which makes movement unlikely rather than
+   excluded.'
+- 'THE INCREMENT-5 INSTRUMENT DOES NOT EXIST AND NO NUMBER FOR THE CLASS IT WILL ENUMERATE HAS BEEN
+   QUOTED, ESTIMATED OR IMPLIED ANYWHERE IN THIS ENTRY OR IN THE RECORD (CD-D-119). The five named
+   types are the FLOOR. Any figure appearing before the instrument runs is invention.'
+- 'THE AMBER BOOT CAUSE — the missing ROADMAP.md — WAS NOT INVESTIGATED OR REMEDIED HERE. It is
+   long-standing, it is the only cause, and `blocking_failures` is empty. It is noted, not fixed,
+   and it is not this boundary''s subject.'
+
+next_safe_action: >
+  **ISSUE THE INCREMENT-5 ENGINEER DISPATCH AT LANE 4ac159e** on the re-based bounds (CD-D-119):
+  THE CLASS, NOT THE LIST — every public type in the frozen subject on a judgement path whose field
+  establishment is BODY-BORNE, ENUMERATED BY AN INSTRUMENT AT INCREMENT-5 START WITH ITS COMMAND AND
+  COUNT RECORDED (CD-RULE-009), that enumeration offered to the fourth Assurance seat to attack.
+  `ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow` and `AttemptRecord` are THE FLOOR, NOT THE
+  POPULATION. Establishment derived from the DECLARED FIELD LIST, applied at the boundary so a body
+  edit cannot remove it. V17 is the plant, baseline and violated arms. The three interpreter-borne
+  refusals are OUT.
+  **THEN THE FOURTH FRESH ASSURANCE SEAT**, with CD-D-129's three mandatory clauses and ten named
+  targets, and with the CD-ENG-WO2R3-F12 standard carried into the brief: a plant is evidence when
+  it APPLIES, CONTRASTS, **AND FAILS AT THE LAYER ITS PROPOSITION NAMES** — never merely when it
+  exits non-zero.
+  **DO NOT** write the eleven Class-2 sweep dispositions (CD-D-130). **DO NOT** admit anything
+  (CD-RULE-001). **DO NOT** merge or promote the lane or f30e63c. **DO NOT** grade CD-AC-002 or
+  CD-AC-005 — reserved by the Product Owner for the fifth boundary running.
+
+continuity_record_commit: PENDING

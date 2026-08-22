@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T17:49:32Z'
+updated_utc: '2026-08-22T18:00:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -50,9 +50,48 @@ objective: >
   WO-3.
 current_phase: BUILD   # MOVED AT THIS BOUNDARY. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** PO-DECISIONS-0009 IS RECEIPTED INTO THIS RECORD (commit ca696dd, authored by Matt Scott, not
+  by any seat). CD-D-127 IS RULED (C) AND CLOSED. INCREMENT 5 IS DISPATCHED AT LANE 4ac159e. ***
+  **RULING 1 — CD-D-127 IS ANSWERED (C), AND IT IS ANSWERED WITH THIS SEAT'S OWN REASONING AND
+  AGAINST THIS SEAT'S OWN CONVENIENCE.** The eleven Class-2 sweep dispositions stay DECLARED as
+  increment 4 declared them, with the bisect in the register, and become a NAMED TARGET for the
+  fourth Assurance seat; the dispositions are WRITTEN AFTER that seat reports, by the Project Lead,
+  reconciled by the Product Owner. The deciding reason is the one this seat put up: eleven
+  substantive governed claims about how a deciding operand is established, authored by the seat that
+  wrote the module they describe and written BEFORE audit, hand the auditor a map drawn by the
+  person who chose the route. (A) rejected as a fourth enlargement that delays the seat three gate
+  failures are waiting on; (B) rejected on this seat's own reasoning — a different subject folded
+  into a scope re-based one boundary ago.
+  *** **THE COUNTER-ARGUMENT THIS SEAT WROTE AGAINST ITS OWN RECOMMENDATION WAS NOT WAVED THROUGH —
+  IT WAS CONVERTED INTO A DISPATCH OBLIGATION, AND THAT OBLIGATION IS NOW BINDING ON THE FOURTH
+  ASSURANCE SEAT'S BRIEF.** The brief MUST carry, VERBATIM AND UP FRONT: (i) the declaration that a
+  governed instrument in the tree EXITS 1 BY DECLARED STATE, with its name, the eleven open items
+  and the bisect reference; (ii) the instruction that verdicts are taken against DECLARATIONS and
+  never against exit codes alone — **a RED-on-sight without reading the declaration is a METHOD
+  DEFECT IN THE SEAT THAT WRITES IT**; and (iii) the standing invitation to attack the
+  dispositions-after sequencing itself. The Product Owner cited the precedent in terms: the third
+  seat's dispatch named what the Project Lead had not verified, and it paid. ***
+  **RULING 3 ADDS THREE NAMES TO THE FOURTH SEAT'S TARGET LIST, AND ONE OF THEM RE-SCOPES A FINDING
+  UPWARD:** (i) **CD-ENG-WO2R3-F15 — THE TARGET IS THE BLINDNESS WINDOW, NOT JUST THE GUARD.** A
+  guard failing since increment 2 through TWO PROJECT LEAD RECONCILIATIONS is being audited as a
+  READING failure, which is CD-PL-F86's subject and this seat's own. (ii) **`GRANT-MATRIX-LIVE` —
+  BITE IT OR STATE MEASURED LIMITS ON WHY YOU CANNOT.** "A control that has never been seen to
+  refuse under attack is still a rumour by this project's own §F.1 doctrine." (iii)
+  **CD-ENG-WO2R3-F10**, still open and undischarged.
+  **RULING 2 DISPATCHES INCREMENT 5 AT LANE 4ac159e** on the re-based bounds — THE CLASS, NOT THE
+  LIST; the instrument enumerates it at increment start with command and count recorded; the five
+  named types are THE FLOOR, NOT THE POPULATION; V17 the plant with baseline and violated arms; the
+  enumeration itself offered to the fourth seat.
+  **RULING 4: CD-PL-F87's PATTERN IS HARVESTED TO THE FRAMEWORK BACKLOG AS IMP-022** — a
+  hand-maintained summary of a machine-checkable fact is ruled a FRAMEWORK debt and NOT this seat's
+  to fix locally. CD-D-123..CD-D-126 and CD-D-128 stand as ruled. The correction by supersession at
+  9d355be is named as "the record culture working".
+  **RULING 5 FIXES THE SEQUENCE AND RE-STATES THE GRADING RESERVE:** increment 5 → the FOURTH fresh
+  Assurance seat over the whole of WO-2R3. **CD-AC-002 AND CD-AC-005 REMAIN UNGRADED. Reconciliation
+  is not acceptance, acceptance is not assurance.**
+  ---- THE INCREMENT-4 BLOCK, RETAINED ----
   *** WO-2R3 INCREMENT 4 IS RECONCILED AND ACCEPTED AS INCREMENT 4 AT LANE 4ac159e — AND IS NOT
   ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005. ***
-  *** ONE QUESTION GOES UP AND IS NOT ANSWERED HERE: CD-D-127. ***
   CD-ENG-WO2R3-01 RETURNED ALIVE across SIX commits, identity CLEAN on all six, and committed as it
   went for the FOURTH increment running. Porcelain ZERO lines; thirteen changed paths all inside
   writable scope; both build-log entries ADDED and no pre-existing entry modified.
@@ -1468,7 +1507,7 @@ mutation_lane: 'branch wo-2r3, worktree /srv/crash-detector-wo2r3, based at f30e
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 44cd843ecf6d1c3c883a48ea3ac153332997d4ed  # the CD-RULE-007 follow-up that closed the WO-2R3 INCREMENT 4 RECONCILIATION boundary (CD-D-123..127, BL-20260822T174206Z-0057). RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). PREVIOUSLY e7ad814369b0d175f18b086e495db057dcfc6588 — the PO-DECISIONS-0008 reconciliation follow-up; superseded as the checkpoint, NOT superseded as a ruling.
+last_completed_checkpoint_sha: ca696dd03d9c42dad60878d37005d2302bbe1d1f  # the PRODUCT OWNER'S OWN COMMIT carrying governance/decisions/PO-DECISIONS-0009.md — CD-D-127 ruled (C), increment 5 dispatched, the fourth seat's named-target list extended, IMP-022 harvested. AUTHORED BY Matt Scott AND BY NO SEAT, verified with `git log -1 --format='%an <%ae> | %cn <%ce>' ca696dd`, and it is the ONLY path in that commit (`git show --stat`: 1 file changed, 48 insertions). RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). PREVIOUSLY 44cd843ecf6d1c3c883a48ea3ac153332997d4ed — the CD-RULE-007 follow-up that closed the WO-2R3 INCREMENT 4 RECONCILIATION boundary; superseded as the checkpoint, NOT superseded as a ruling.
   # SUPERSEDES b942c4e8b9035f7485fa30cdc1c8bbafda0603c5  # PO-PRODUCT-0001, the LAST COMMIT ON MAIN BEFORE THE PRIOR BOUNDARY and the second of the two PRODUCT AUTHORITY commits this boundary reconciled (the other is 6db42eb, PO-DECISIONS-0006). Both authored `Matt Scott <rogue@cerberus.local>` and by no seat. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES 47c355116f7d9626aabe6eae103de32d0577be1f — the CD-RULE-007 follow-up that closed the WO-2R3 DISPATCH boundary and resolved continuity_record_commit to cd86c0a.
   # SUPERSEDES 9d27140ea2fc9e802fa8b841029c682081318438 — The CD-RULE-007 follow-up that closed the BP-AMENDMENT-0001-IN-FORCE boundary and resolved continuity_record_commit to ba890a2. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
@@ -1543,7 +1582,9 @@ lane_increment_sha: 4ac159ea0bb47fb859fe005bd966222d66f0eeff   # WO-2R3 INCREMEN
   # SUPERSEDES 253c38bd4db58433e5209a222c0ce27429079156 (CD-DISPATCH-WO2R-READER, CD-D-060), which remains the execution base of increment 6.
   # SUPERSEDES f22d120a1f92e43aa4944b6f1b20a789ba951760 (WO-2R increment 5, CD-D-057; CD-ASR-F06
   # CLOSED AS A CLASS, CD-PL-F62 CLOSED), which remains the execution base of the reader dispatch.
-continuity_record_commit: 9d355be2ecc504e077000202a624b4b31299934e  # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse HEAD` and `git cat-file -t`, never transcribed (CD-PL-F36). It is the commit carrying BL-20260822T174932Z-0058 — the CORRECTION BY SUPERSESSION to BL-20260822T174206Z-0057's finding count, CD-D-128 and CD-PL-F87. PREVIOUSLY 3411138819d5b93e880902539271e13a165a7b2f — the WO-2R3 INCREMENT 4 RECONCILIATION carrying CD-D-123..127, CD-PL-F84/F85/F86 and BL-20260822T174206Z-0057. THE CD-RULE-008 VERDICT OF RECORD, TAKEN AFTER THIS FIELD WAS RESOLVED AND RECORDED HERE RATHER THAN LEFT IN A SEAT'S CONVERSATION (PBG-CONT-007): a pristine clone (`rm -rf /tmp/cd-cont && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont && git checkout -q -B main 0cc9e34`, branch named per CD-PL-F72, --no-hardlinks) boots **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha 0cc9e34489e94f70d9a8640b919f3ee89a6a1407, branch main. ORDERING NOTED AGAINST THIS SEAT: prior boundaries took the clone verdict BEFORE resolving this field and recorded both in one act; this boundary resolved first and appended after, so the verdict names a LATER SHA (0cc9e34) than the field's own value (9d355be). Both are true, neither is hidden, and the next boundary should take the verdict first.
+continuity_record_commit: PENDING  # DELIBERATELY PENDING AT THIS BOUNDARY AND RESOLVED BY A CD-RULE-007 FOLLOW-UP THAT WRITES THIS FIELD AND NOTHING ELSE. **THE ORDERING CORRECTION THE PRIOR BOUNDARY ASKED FOR IS BEING EXECUTED HERE:** BL-20260822T174932Z-0058 noted against this seat that it resolved the field first and took the CD-RULE-008 pristine-clone verdict afterwards, so the verdict named a LATER SHA than the field's own value. This boundary commits, THEN takes the clone verdict AT THE BOUNDARY COMMIT, THEN resolves this field to that same SHA — so the verdict and the field name ONE commit. PREVIOUSLY 9d355be2ecc504e077000202a624b4b31299934e — the CORRECTION BY SUPERSESSION carrying BL-20260822T174932Z-0058, CD-D-128 and CD-PL-F87.
+  # ---- THE SUPERSEDED RESOLUTION NOTES, RETAINED AND NOT EDITED (PBG-CONT-003). The note immediately below belonged to 9d355be and is kept readable beside its successor. ----
+  # RESOLVED by that CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse HEAD` and `git cat-file -t`, never transcribed (CD-PL-F36). It is the commit carrying BL-20260822T174932Z-0058 — the CORRECTION BY SUPERSESSION to BL-20260822T174206Z-0057's finding count, CD-D-128 and CD-PL-F87. PREVIOUSLY 3411138819d5b93e880902539271e13a165a7b2f — the WO-2R3 INCREMENT 4 RECONCILIATION carrying CD-D-123..127, CD-PL-F84/F85/F86 and BL-20260822T174206Z-0057. THE CD-RULE-008 VERDICT OF RECORD, TAKEN AFTER THIS FIELD WAS RESOLVED AND RECORDED HERE RATHER THAN LEFT IN A SEAT'S CONVERSATION (PBG-CONT-007): a pristine clone (`rm -rf /tmp/cd-cont && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont && git checkout -q -B main 0cc9e34`, branch named per CD-PL-F72, --no-hardlinks) boots **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha 0cc9e34489e94f70d9a8640b919f3ee89a6a1407, branch main. ORDERING NOTED AGAINST THIS SEAT: prior boundaries took the clone verdict BEFORE resolving this field and recorded both in one act; this boundary resolved first and appended after, so the verdict names a LATER SHA (0cc9e34) than the field's own value (9d355be). Both are true, neither is hidden, and the next boundary should take the verdict first.
   # PREVIOUSLY cd3a461cc5b65dc5fa0ea2a8f2b4da7beea95481  # RESOLVED by that follow-up (5be4207) under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. It is the commit that carries the PO-DECISIONS-0007 RECONCILIATION, CD-D-109/110/111/112, and BL-20260822T154022Z-0054. Resolved with `git rev-parse HEAD` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (9a81787) — that equality is the CD-PL-F64 defect. THE CD-RULE-008 VERDICT OF RECORD: a pristine clone (`rm -rf /tmp/cd-cont-cd3a461 && git clone -q /srv/crash-detector /tmp/cd-cont-cd3a461 && git checkout -q -B main cd3a461`, branch named per CD-PL-F72; a HARDLINKED clone, which is stated rather than implied) boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha cd3a461cc5b65dc5fa0ea2a8f2b4da7beea95481, branch main.
   # PREVIOUSLY 0435750f84a91852accfb61b6bdf1da9dcab7268  # RESOLVED by that follow-up (4f64967) under CD-RULE-007, which writes THIS FIELD AND NOTHING ELSE. It is the commit that carries the WO-2R3 INCREMENT 2 RECONCILIATION and BL-20260822T152654Z-0053. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36). NOT equal to last_completed_checkpoint_sha (25b0c0f) — that equality is the CD-PL-F64 defect. A pristine clone at 0435750 CHECKED OUT ON BRANCH main with `git checkout -B main` boots GREEN, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO, blocking_failures EMPTY, current_phase BUILD — the CD-RULE-008 verdict of record, branch named per CD-PL-F72.
   # SUPERSEDED NOTE, RETAINED: SET TO PENDING DELIBERATELY AT WRITE TIME (CD-PL-F64). Resolved by a FOLLOW-UP commit writing THIS
@@ -1820,6 +1861,43 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
+- '**CD-D-129 — NEW AND OPEN AT THIS BOUNDARY. THE FOURTH ASSURANCE SEAT''S DISPATCH CARRIES THREE
+  MANDATORY CLAUSES ORDERED BY THE PRODUCT AUTHORITY AT PO-DECISIONS-0009 RULING 1, AND A
+  TEN-ITEM NAMED-TARGET LIST. IT FALLS DUE WHEN THAT DISPATCH IS WRITTEN — AFTER INCREMENT 5 — AND
+  IS RECORDED HERE RATHER THAN LEFT IN A SEAT''S CONVERSATION (PBG-CONT-007).**
+  **THE THREE CLAUSES, VERBATIM AND UP FRONT, AND NOT THE PROJECT LEAD''S TO SOFTEN:** (i) THE
+  DECLARATION THAT A GOVERNED INSTRUMENT IN THE TREE EXITS 1 BY DECLARED STATE — its NAME
+  (`tools/sweep/delegated_judgement_sweep.py`), the ELEVEN open items (all `crash_detector.admission`
+  — one undeclared module at 33 tier-2 sites, ten undeclared admission sites), and the BISECT
+  REFERENCE (f30e63c 0/PASS 402 sites · 7b00ce9 0/PASS 471 · 995ec3e 1/FAIL 514 sites 11 violations ·
+  04cdd34 same · 4ac159e same); (ii) THAT VERDICTS ARE TAKEN AGAINST DECLARATIONS AND NEVER AGAINST
+  EXIT CODES ALONE — **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD DEFECT IN THE SEAT
+  THAT WRITES IT**; (iii) THE STANDING INVITATION TO ATTACK THE DISPOSITIONS-AFTER SEQUENCING ITSELF.
+  **THE TEN NAMED TARGETS, NONE OF THEM THAT SEAT''S TO CHOOSE AND NONE OF THEM THIS SEAT''S TO
+  DROP:** (1) P7; (2) CD-BP-003, the adapter boundary that ADMITS; (3) the standing invitation to
+  attack the whole §D scoping INCLUDING the CD-D-105 closure (CD-D-112); (4) the increment-5
+  instrument''s own enumeration (CD-D-119); (5) the Class-2 sweep exiting 1, declared, with its
+  bisect; (6) `CD-RT-003-GRANT-MATRIX-LIVE` — **BITE IT OR STATE MEASURED LIMITS ON WHY YOU CANNOT**
+  (PO-DECISIONS-0009 ruling 3(ii)); (7) the three `variants/WO-2R` routes nobody re-tested against
+  the new structure; (8) the eleven Class-2 sweep DISPOSITIONS as such (CD-D-127 ruled (C)); (9)
+  **CD-ENG-WO2R3-F15 — THE BLINDNESS WINDOW, NOT JUST THE GUARD** (ruling 3(i)); (10)
+  CD-ENG-WO2R3-F10, still open and undischarged (ruling 3(iii), PO-DECISIONS-0008 ruling 4).
+  **AND THE SEAT IDENTITY CONSTRAINT IS NON-WAIVABLE:** a FOURTH FRESH Assurance seat — none of
+  CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001).'
+- '**CD-D-130 — NEW AND OPEN AT THIS BOUNDARY. THE ELEVEN CLASS-2 SWEEP DISPOSITIONS ARE OWED, BY THE
+  PROJECT LEAD, AFTER THE FOURTH ASSURANCE SEAT REPORTS, AND ARE RECONCILED BY THE PRODUCT OWNER
+  (PO-DECISIONS-0009 ruling 1).** They are NOT owed at this boundary and NOT owed at increment 5.
+  Writing them earlier is the exact move the ruling rejected. The trigger is the fourth seat''s
+  return; the author is this role; the reconciler is the Product Owner. Recorded so that a Project
+  Lead resuming from this file after a context loss can neither forget the obligation nor discharge
+  it early.'
+- '**IMP-022 — RAISED TO THE PBGv2 FRAMEWORK BACKLOG BY THE PRODUCT OWNER at PO-DECISIONS-0009
+  ruling 4, FROM CD-PL-F87''s PATTERN. NOT THIS PROJECT''S TO FIX AND EXPLICITLY NOT THIS SEAT''S.**
+  Seven instances across THREE parties of ONE defect — a hand-maintained summary of a
+  machine-checkable fact, with no link between them. "The framework, not this seat, owes the
+  structural fix." Carried here so that no future boundary mistakes the absence of a local remedy
+  for the defect having been forgotten, and so that a local fix is not improvised into a governed
+  record. CD-PL-F87 itself remains recorded in risks and is NOT closed by the harvest.'
 - '**CD-D-114 — RULED AND CLOSED BY THE PRODUCT AUTHORITY at governance/decisions/PO-DECISIONS-0008.md
   ruling 2 (commit f8c20e8, authored by Matt Scott, not by any seat). THE ANSWER DID NOT ADD A FIFTH
   TYPE TO A LIST OF FOUR — IT DECLARED THE LIST ITSELF TO BE THE DEFECT AND RE-BASED INCREMENT 5
@@ -2158,8 +2236,30 @@ remaining_items:
   and should find it DECLARED HERE FIRST.'
 
 open_decisions:
-- '**CD-D-127 — OPEN. PUT TO THE PRODUCT AUTHORITY AT BL-20260822T174206Z-0057 AND NOT ANSWERED BY
-  THIS SEAT. WHERE DO THE ELEVEN CLASS-2 SWEEP DISPOSITIONS BELONG IN THE PATH TO THE GATE?**
+- '**CD-D-127 — RULED (C) AND CLOSED BY THE PRODUCT AUTHORITY at
+  governance/decisions/PO-DECISIONS-0009.md (commit ca696dd, authored by Matt Scott, not by any
+  seat). THE ELEVEN CLASS-2 SWEEP DISPOSITIONS STAY DECLARED AS INCREMENT 4 DECLARED THEM AND BECOME
+  A NAMED TARGET FOR THE FOURTH ASSURANCE SEAT; THE DISPOSITIONS ARE WRITTEN AFTER THAT SEAT
+  REPORTS, BY THE PROJECT LEAD, RECONCILED BY THE PRODUCT OWNER.**
+  **THE DECIDING REASON IS THIS SEAT''S OWN, QUOTED BACK AT IT:** eleven substantive governed claims
+  authored by the seat that wrote the module they describe, written BEFORE audit, hand the auditor a
+  map drawn by the person who chose the route. The auditor attacks first; the record answers after.
+  (B) IS REJECTED WITH THIS SEAT''S REASONING — a different subject folded into a scope re-based one
+  boundary ago. (A) IS REJECTED as a fourth enlargement that delays the seat three gate failures are
+  waiting on, for work whose honest state is already durably visible.
+  *** **THE ARGUMENT THIS SEAT WROTE AGAINST ITS OWN RECOMMENDATION IS RULED REAL AND IS ANSWERED IN
+  THE DISPATCH RATHER THAN DISMISSED. THREE THINGS ARE NOW MANDATORY, VERBATIM AND UP FRONT, IN THE
+  FOURTH ASSURANCE SEAT''S BRIEF, AND THEY ARE NOT THE PROJECT LEAD''S TO SOFTEN:** (i) THE
+  DECLARATION THAT A GOVERNED INSTRUMENT IN THE TREE EXITS 1 BY DECLARED STATE — with its name, the
+  eleven open items and the bisect reference; (ii) THE INSTRUCTION THAT VERDICTS ARE TAKEN AGAINST
+  DECLARATIONS AND NEVER AGAINST EXIT CODES ALONE — **A RED-ON-SIGHT WITHOUT READING THE DECLARATION
+  IS A METHOD DEFECT IN THE SEAT THAT WRITES IT**; (iii) THE STANDING INVITATION TO ATTACK THE
+  DISPOSITIONS-AFTER SEQUENCING ITSELF. PRECEDENT CITED BY THE PRODUCT OWNER: the third seat''s
+  dispatch named what the Project Lead did not verify, and it paid. ***
+  THE OBLIGATION FALLS DUE WHEN THE FOURTH ASSURANCE DISPATCH IS WRITTEN — AFTER INCREMENT 5 — AND
+  IS CARRIED IN remaining_items SO IT CANNOT BE LOST WITH THIS SEAT''S CONTEXT.
+  ---- THE QUESTION AS PUT, RETAINED IN FULL SO THE RULING CAN BE READ AGAINST IT ----
+  **WHERE DO THE ELEVEN CLASS-2 SWEEP DISPOSITIONS BELONG IN THE PATH TO THE GATE?**
   **THE FACTS, ALL PL-MEASURED (CD-ENG-WO2R3-F15, PL-bisected across five SHAs):** the sweep exits 1
   at 995ec3e, 04cdd34 and 4ac159e with 514 sites and 11 violations; ALL ELEVEN are
   `crash_detector.admission`, the module increment 2 created — one UNDECLARED MODULE (33 tier-2
@@ -2423,15 +2523,9 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  **STOP. INCREMENT 4 IS BANKED. TWO THINGS ARE OWED UPWARD AND ONE OF THEM IS A PRODUCT AUTHORITY
-  QUESTION.**
-  **PUT CD-D-127 TO THE PRODUCT AUTHORITY** — where the eleven Class-2 sweep dispositions belong in
-  the path to the gate: (A) a sixth increment, (B) folded into increment 5, or (C) declared now and
-  attacked by the fourth Assurance seat first, dispositions written after. It is set out in full in
-  open_decisions above. **THE PROJECT LEAD RECOMMENDS (C) AND HAS WRITTEN THE ARGUMENT AGAINST ITS
-  OWN RECOMMENDATION INTO THE QUESTION.** IT IS NOT BLOCKING.
-  **THEN INCREMENT 5 — THE CONSTRUCTORS — WHICH IS UNAFFECTED BY ALL THREE ANSWERS AND MAY BE
-  DISPATCHED IN PARALLEL WITH THE QUESTION**, on PO-DECISIONS-0007 ruling 1's bounds AS RE-BASED BY
+  **CD-D-127 IS ANSWERED AND CLOSED. NOTHING IS OWED UPWARD AT THIS BOUNDARY.**
+  **DISPATCH INCREMENT 5 — THE CONSTRUCTORS — AT LANE 4ac159e**, on PO-DECISIONS-0007 ruling 1's
+  bounds AS RE-BASED BY
   PO-DECISIONS-0008 ruling 2 (CD-D-119): **THE CLASS, NOT THE LIST** — every public type in the
   frozen subject on a judgement path whose field establishment is BODY-BORNE, **ENUMERATED BY AN
   INSTRUMENT AT INCREMENT-5 START WITH ITS COMMAND AND COUNT RECORDED (CD-RULE-009)**, that
@@ -2449,8 +2543,23 @@ next_safe_action: >
   CD-D-112); (4) THE INCREMENT-5 INSTRUMENT'S OWN ENUMERATION (PO-DECISIONS-0008 ruling 2, CD-D-119);
   and **NEW AT THIS BOUNDARY:** (5) **THE CLASS-2 SWEEP EXITING 1 — DECLARED, WITH ITS BISECT, AND
   NOT A SURPRISE**; (6) **CD-RT-003-GRANT-MATRIX-LIVE, THE ONE PLANT NOBODY HAS BITTEN WITH** — it
-  exits 3 on both arms and it guards CD-AC-003, the ONE PASS in the third gate; (7) the three
-  `variants/WO-2R` routes nobody re-tested against the new structure.
+  exits 3 on both arms and it guards CD-AC-003, the ONE PASS in the third gate — **AND THE PRODUCT
+  OWNER HAS NOW SHARPENED IT AT PO-DECISIONS-0009 RULING 3(ii): BITE IT, OR STATE MEASURED LIMITS ON
+  WHY YOU CANNOT**; (7) the three `variants/WO-2R` routes nobody re-tested against the new structure;
+  and **NEW AT THIS BOUNDARY, ADDED BY PO-DECISIONS-0009 RULING 3:** (8) **THE ELEVEN CLASS-2 SWEEP
+  DISPOSITIONS THEMSELVES (CD-D-127 ruled (C))** — declared now, attacked by that seat, written
+  after; (9) **CD-ENG-WO2R3-F15 WHERE THE TARGET IS THE BLINDNESS WINDOW AND NOT JUST THE GUARD** —
+  a guard failing since increment 2 through TWO PROJECT LEAD RECONCILIATIONS, which makes the
+  subject a READING failure and half of it this seat's (CD-PL-F86); (10) **CD-ENG-WO2R3-F10**, still
+  open and undischarged (PO-DECISIONS-0008 ruling 4 keeps it owed).
+  *** **AND THREE THINGS THE BRIEF MUST CARRY VERBATIM AND UP FRONT, RULED AT PO-DECISIONS-0009
+  RULING 1 AND NOT THIS SEAT'S TO SOFTEN:** (i) THE DECLARATION THAT A GOVERNED INSTRUMENT IN THE
+  TREE EXITS 1 BY DECLARED STATE — `tools/sweep/delegated_judgement_sweep.py`, 514 sites, 11
+  violations, all `crash_detector.admission`, bisected f30e63c 0/PASS · 7b00ce9 0/PASS · 995ec3e
+  1/FAIL · 04cdd34 1/FAIL · 4ac159e 1/FAIL; (ii) THAT VERDICTS ARE TAKEN AGAINST DECLARATIONS AND
+  NEVER AGAINST EXIT CODES ALONE — **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD
+  DEFECT IN THE SEAT THAT WRITES IT**; (iii) THE STANDING INVITATION TO ATTACK THE
+  DISPOSITIONS-AFTER SEQUENCING ITSELF. ***
   **CARRY INTO THAT BRIEF THE STANDARD CD-ENG-WO2R3-F12 RAISED:** a plant is evidence when it
   APPLIES, CONTRASTS, **AND FAILS AT THE LAYER ITS PROPOSITION NAMES** — never merely when it exits
   non-zero.
@@ -3003,5 +3112,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T174932Z-0058
+last_build_log_entry: BL-20260822T175949Z-0059
 status: ACTIVE
