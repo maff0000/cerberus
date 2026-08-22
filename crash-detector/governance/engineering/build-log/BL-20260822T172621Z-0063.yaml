@@ -45,9 +45,11 @@ schema_version: 1
 increment_commits:
 - df5484600ced2e55de4adf0526c43a6485114699   # 1/3 — ITEM 0 and ITEM 1: eleven plants contrast-measured, three regenerated
 - a622687ba6a3d3ab4b9f889fc412b3ce3c123226   # 2/3 — ITEMS 2-5 and the register: the rewording, in all three places
-- PENDING                                     # 3/3 — this entry. RESOLVED from PENDING in the
-                                              #       follow-up commit, because a commit cannot name
-                                              #       its own SHA (CD-RULE-007).
+- c55f3589c8772b10887865510d4c7b0b4134faec   # 3/3 — this entry. RESOLVED from PENDING by the
+                                              #       CD-RULE-007 follow-up, because a commit cannot
+                                              #       name its own SHA. Resolved with `git rev-parse`
+                                              #       and confirmed a commit object with
+                                              #       `git cat-file -t`, never transcribed (CD-PL-F36).
 
 boot_verdict:
   method: >
@@ -644,5 +646,7 @@ next_safe_action: >
   PARSER WORK ORDER may still be proposed and is a gate blocker in its own right.
   DO NOT ADMIT ANYTHING. DO NOT MERGE OR PROMOTE THE LANE. DO NOT GRADE CD-AC-002 OR CD-AC-005.
 
-continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS
-                                    # FIELD AND NOTHING ELSE. A commit cannot name its own SHA.
+continuity_record_commit: c55f3589c8772b10887865510d4c7b0b4134faec   # the commit that CARRIES this
+                                    # entry. RESOLVED by a CD-RULE-007 follow-up that writes these two
+                                    # fields and nothing else, with `git rev-parse` and confirmed a
+                                    # commit object with `git cat-file -t` (CD-PL-F36).
