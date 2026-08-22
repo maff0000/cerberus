@@ -54,6 +54,7 @@ import re
 from collections.abc import Mapping as AbcMapping
 from typing import Any, Iterator, Mapping, Protocol, Sequence
 
+from crash_detector.admission import ESTABLISHED_HERE, admits, one_of
 from crash_detector.observations import MAX_INSTANCE_PATH_LENGTH
 
 __all__ = [
@@ -121,6 +122,7 @@ class PayloadValidator(Protocol):
         """
 
 
+@admits(parts=one_of(list, tuple))
 def json_pointer(parts: Sequence[object]) -> str:
     """An RFC 6901 JSON Pointer from a sequence of property names and array indices.
 
@@ -149,6 +151,18 @@ def _walk(node: object) -> Iterator[object]:
             yield from _walk(value)
 
 
+@admits(
+    schema=ESTABLISHED_HERE(
+        "THIS CALLABLE IS THE ESTABLISHMENT DOOR for a declared schema document. Its "
+        "contract is to answer a question about ANY object — a mapping, a list, a string, "
+        "anything an adapter declared — and it walks whatever it is given, refusing nothing "
+        "and coercing nothing. Exact-typing the argument would make it unable to answer for "
+        "the very inputs it exists to be asked about. CARRIER MEASURED: the whole-document "
+        "walk answers False for a remote $ref at any depth, and JsonSchemaValidator turns "
+        "that into SchemaDeclarationInvalid before any validator is built — "
+        "tests/test_collector_validation.py::test_a_non_local_ref_anywhere_in_a_declared_schema_is_refused, which is parametrised over a $ref at the root and one three levels down."
+    )
+)
 def local_refs_only(schema: object) -> bool:
     """True when every ``$ref`` anywhere in ``schema`` is a local ``#`` fragment.
 
@@ -178,6 +192,28 @@ class JsonSchemaValidator:
     so a cache here would be a correctness risk in exchange for microseconds.
     """
 
+    @admits(
+        payload=ESTABLISHED_HERE(
+            "UNVALIDATED EXTERNAL INPUT, and this call IS the establishment. Requiring a "
+            "type here would claim the very property this boundary exists to determine, "
+            "and it would also make the hostile inputs the validator must be asked about "
+            "unaskable. CARRIER MEASURED: the payload is established against the adapter's "
+            "DECLARED schema and a non-conforming one becomes SchemaRejection with a class "
+            "and a location and is never coerced — "
+            "tests/test_collector_validation.py, and the runner records it MALFORMED."
+        ),
+        schema=ESTABLISHED_HERE(
+            "CD-BP-003. The declared schema arrives from a SourceAdapter's "
+            "response_schema, a Protocol member returning Mapping[str, Any]; requiring "
+            "exactly dict would forbid an adapter from declaring its schema through any "
+            "other mapping, which is a constraint on foreign implementations this system "
+            "has no business imposing. CARRIER MEASURED: the body establishes it — "
+            "SCHEMA_NOT_A_MAPPING for a non-mapping, SCHEMA_REMOTE_REF_FORBIDDEN for a "
+            "remote $ref, SCHEMA_UNUSABLE_* for anything jsonschema itself refuses, each a "
+            "SchemaDeclarationInvalid raised as OUR defect and measured in "
+            "tests/test_collector_validation.py."
+        ),
+    )
     def validate(self, payload: object, schema: Mapping[str, Any]) -> None:
         # Imported at point of use so this module imports cleanly for inspection even
         # where the dependency is absent, and so nothing is imported by a test that only

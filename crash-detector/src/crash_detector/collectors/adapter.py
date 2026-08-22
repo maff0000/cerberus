@@ -46,6 +46,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Mapping, Protocol, Union
 
+from crash_detector.admission import ESTABLISHED_HERE, admits
 from crash_detector.time_utc import ensure_utc
 
 __all__ = [
@@ -160,12 +161,33 @@ ADAPTER_PROTOCOL_MEMBERS: tuple[str, ...] = (
 _ADAPTER_CALLABLES: frozenset[str] = frozenset({"fetch", "is_empty"})
 
 
+@admits(
+    candidate=ESTABLISHED_HERE(
+        "THIS CALLABLE IS THE ESTABLISHMENT DOOR. Its entire contract is to accept ANY "
+        "object and report which SourceAdapter members it fails to supply, so exact-typing "
+        "its argument would make it unable to answer the only question it exists to answer. "
+        "CARRIER MEASURED: it establishes the argument itself, member by member, over the "
+        "whole of ADAPTER_PROTOCOL_MEMBERS — "
+        "tests/test_collector_boundaries.py::test_conformance_is_checked_against_every_member_not_the_ones_remembered "
+        "and ::test_a_member_that_exists_but_is_not_callable_does_not_count_as_conformance. "
+        "WHAT IT CANNOT ESTABLISH is that a conforming object BEHAVES as the protocol says: "
+        "that is CD-BP-003 and it is NOT PROVED TO BE CARRIED ANYWHERE."
+    )
+)
 def missing_adapter_members(candidate: object) -> tuple[str, ...]:
     """Which :class:`SourceAdapter` members ``candidate`` fails to supply.
 
     Empty means structurally conformant. Reported as a tuple rather than a bool so a
     failure names what is missing; a bare ``False`` sends the reader back to the protocol
     to guess.
+
+    **THIS IS A VOCABULARY CHECK AND IT DOES NOT SURVIVE A RENAME.** It asks ``hasattr``
+    for five SPELLED names. Rename ``fetch`` on both sides — the Protocol and the object —
+    and this function reports a conformance that means something different from what it
+    meant before. That is unavoidable at a boundary to a foreign system: structural
+    conformance IS nominal. It is recorded here rather than left for an auditor to
+    discover, and it is the reason CD-BP-003 exists as a declared limit rather than as a
+    closure.
     """
     missing: list[str] = []
     for member in ADAPTER_PROTOCOL_MEMBERS:

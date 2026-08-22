@@ -36,12 +36,22 @@ from crash_detector.collectors.attempt import (
     ReadingKey,
     ReadingLedger,
 )
+from crash_detector.collectors.delay import (
+    MAX_DELAY_SECONDS_CEILING,
+    DelayKind,
+    DelayRefused,
+    UnknownDelayKind,
+    apply_delay,
+)
 from crash_detector.collectors.runner import (
     MAX_ATTEMPTS_CEILING,
     MAX_BACKOFF_SECONDS_CEILING,
     MAX_TIMEOUT_SECONDS_CEILING,
+    AdapterContractBreach,
     CollectionResult,
+    LedgerContractBreach,
     RetryPolicy,
+    SinkContractBreach,
     collect,
 )
 from crash_detector.collectors.validation import (
@@ -54,13 +64,18 @@ from crash_detector.collectors.validation import (
 
 __all__ = [
     "ADAPTER_PROTOCOL_MEMBERS",
+    "AdapterContractBreach",
     "AdapterFetchError",
     "AttemptRecord",
     "CollectionResult",
+    "DelayKind",
+    "DelayRefused",
     "FetchedResponse",
     "JsonSchemaValidator",
+    "LedgerContractBreach",
     "MAX_ATTEMPTS_CEILING",
     "MAX_BACKOFF_SECONDS_CEILING",
+    "MAX_DELAY_SECONDS_CEILING",
     "MAX_TIMEOUT_SECONDS_CEILING",
     "ObservationSink",
     "PayloadValidator",
@@ -69,8 +84,11 @@ __all__ = [
     "RetryPolicy",
     "SchemaDeclarationInvalid",
     "SchemaRejection",
+    "SinkContractBreach",
     "SourceAdapter",
+    "UnknownDelayKind",
     "VALIDATION_FAILURES",
+    "apply_delay",
     "collect",
     "missing_adapter_members",
 ]

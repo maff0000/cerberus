@@ -9,7 +9,11 @@ Guarantees, in the order of how much they matter:
    attempt recorded before it propagates.
 2. **Bounded timeouts and bounded retries.** :class:`RetryPolicy` refuses an unbounded or
    unvalidated configuration at construction, and the runner independently measures the
-   elapsed time so an adapter that ignores its budget cannot deliver a value.
+   elapsed time so an adapter that ignores its budget cannot deliver a value. **That
+   measurement is now this system's own** (BP-AMENDMENT-0001 §D.3 part 1): it is taken from
+   :func:`~crash_detector.collectors.delay.monotonic_reading`, not from a ``clock`` callable
+   the caller supplied, so an adapter's punctuality is no longer decided by an object
+   the caller wrote. See :mod:`crash_detector.collectors.delay`.
 3. **Validation once, at the boundary**, against the adapter's declared schema. A
    non-conforming response becomes ``MALFORMED`` with its error class and its location,
    and is never coerced. Nothing value-bearing from the response is retained.
@@ -47,19 +51,29 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping as AbcMapping
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Callable, Union
+from datetime import datetime, timedelta
+from typing import Union
 
+from crash_detector.admission import ESTABLISHED_HERE, admits
 from crash_detector.collectors.adapter import (
+    ADAPTER_PROTOCOL_MEMBERS,
     AdapterFetchError,
     FetchedResponse,
     SourceAdapter,
+    missing_adapter_members,
 )
 from crash_detector.collectors.attempt import (
     AttemptRecord,
     ObservationSink,
     ReadingKey,
     ReadingLedger,
+)
+from crash_detector.collectors.delay import (
+    MAX_DELAY_SECONDS_CEILING,
+    DelayKind,
+    apply_delay,
+    monotonic_reading,
+    seconds_since,
 )
 from crash_detector.collectors.validation import (
     JsonSchemaValidator,
@@ -75,12 +89,16 @@ from crash_detector.observations import (
     Malformed,
     ObservationRecord,
 )
+from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.time_utc import ensure_utc
 
 __all__ = [
     "RetryPolicy",
     "CollectionResult",
     "collect",
+    "AdapterContractBreach",
+    "SinkContractBreach",
+    "LedgerContractBreach",
     "MAX_ATTEMPTS_CEILING",
     "MAX_TIMEOUT_SECONDS_CEILING",
     "MAX_BACKOFF_SECONDS_CEILING",
@@ -90,14 +108,43 @@ __all__ = [
     "MALFORMED_ADAPTER_CONTRACT_BREACH",
     "MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT",
     "MALFORMED_SCHEMA_DECLARATION_INVALID",
+    "MALFORMED_VALIDATOR_CONTRACT_BREACH",
 ]
+
+
+class AdapterContractBreach(TypeError):
+    """The supplied adapter is not structurally an adapter, or its identity is not a str.
+
+    OURS, not the source's — an adapter missing a member is a wiring defect in this system,
+    and recording it as a MALFORMED observation would blame the source for our bug
+    (Standards Baseline §8). Raised before any attempt is made, so no attempt row is owed.
+
+    A ``TypeError`` because what is wrong is the KIND of thing supplied, which is the same
+    reading :exc:`~crash_detector.admission.NotAdmitted` and
+    :exc:`~crash_detector.own_terms.NotEstablishedOnOwnTerms` already take.
+    """
+
+
+class SinkContractBreach(TypeError):
+    """``ObservationSink.record`` returned something. The contract is ``None``, or raise."""
+
+
+class LedgerContractBreach(TypeError):
+    """``ReadingLedger.admit_if_absent`` answered with something that is not a ``bool``.
+
+    Never coerced. "Was this source period already claimed" is the question idempotency
+    turns on, and answering it by truthiness is how a re-fetch becomes a second reading.
+    """
 
 #: Hard ceilings, enforced at construction. A policy outside these is refused rather than
 #: honoured: a retry loop nobody bounded is an outage generator, and a ten-minute
 #: per-attempt timeout is an unbounded wait wearing a number (Standards Baseline §11).
 MAX_ATTEMPTS_CEILING = 5
 MAX_TIMEOUT_SECONDS_CEILING = 60.0
-MAX_BACKOFF_SECONDS_CEILING = 30.0
+#: THE SAME OBJECT the delay executor bounds itself by, imported rather than restated. Two
+#: constants with the same value in two modules are one edit away from being two different
+#: bounds, and the one that would then be wrong is the one nobody looked at.
+MAX_BACKOFF_SECONDS_CEILING = MAX_DELAY_SECONDS_CEILING
 
 # Stable failure classifications. Named constants rather than literals so a guard can
 # assert on the class rather than on a string somebody retyped.
@@ -109,6 +156,10 @@ _ERROR_UNCLASSIFIED_PREFIX = "UNCLASSIFIED_"
 MALFORMED_ADAPTER_CONTRACT_BREACH = "ADAPTER_CONTRACT_BREACH"
 MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT = "PAYLOAD_NOT_A_JSON_OBJECT"
 MALFORMED_SCHEMA_DECLARATION_INVALID = "SCHEMA_DECLARATION_INVALID"
+#: §D.3 part 2. A validator that returns a value instead of raising or returning ``None``
+#: has answered a question nobody asked; the response is recorded as MALFORMED rather than
+#: read as conforming.
+MALFORMED_VALIDATOR_CONTRACT_BREACH = "VALIDATOR_CONTRACT_BREACH"
 _MALFORMED_EMPTINESS_UNDECIDABLE_PREFIX = "EMPTINESS_UNDECIDABLE_"
 _MALFORMED_VALIDATOR_FAILED_PREFIX = "VALIDATOR_FAILED_"
 
@@ -172,6 +223,12 @@ class CollectionResult:
     also ``False`` for every non-``OK`` outcome. Read it with ``reading_key``: a key with
     ``reading_admitted=False`` is a duplicate period; no key at all is an attempt that
     reported no period.
+
+    ``delays_applied`` is **what the runner actually waited for**, in order, one entry per
+    backoff performed. It exists because §D.3 part 1 deleted the ``sleep`` callable: the
+    property *"backoff between attempts, never after the last one"* used to be read off a
+    caller-supplied double's log, which is the system's behaviour attested by the caller's
+    own object. It is now the runner's own answer about its own run.
     """
 
     source_id: str
@@ -182,8 +239,20 @@ class CollectionResult:
     final_outcome: FetchOutcome
     reading_key: Union[ReadingKey, None]
     reading_admitted: bool
+    #: NO DEFAULT, like every other field here. A default ``()`` would be the claim "this
+    #: run waited for nothing", and a claim nobody made is not a claim this record may
+    #: manufacture.
+    delays_applied: tuple
 
     def __post_init__(self) -> None:
+        if type(self.delays_applied) is not tuple or any(
+            type(entry) is not float for entry in self.delays_applied
+        ):
+            raise TypeError(
+                "CollectionResult.delays_applied must be a tuple of exactly float; it is "
+                "the record of what this run waited for and a value of another kind in it "
+                "is a record of something else"
+            )
         if self.rows_recorded != self.attempts_made:
             raise AssertionError(
                 f"{self.rows_recorded} rows recorded for {self.attempts_made} attempts. "
@@ -192,6 +261,54 @@ class CollectionResult:
             )
 
 
+@admits(
+    adapter=ESTABLISHED_HERE(
+        "CD-BP-003, BLUEPRINT §17. SourceAdapter is a Protocol — a boundary to a market "
+        "data source that does not exist in this tree and never will be a class this "
+        "package can name, so there is no concrete type to require and requiring one would "
+        "be wrong (BP-AMENDMENT-0001 §D.3 part 2). CARRIER MEASURED, AND IT IS THE RETURNS "
+        "AND NOT THE IDENTITY: missing_adapter_members refuses a structurally "
+        "non-conforming adapter with AdapterContractBreach before any attempt; source_id "
+        "and adapter_id are rebuilt by own_terms.own_str; the fetch return is exact-typed "
+        "FetchedResponse; the is_empty answer is exact-typed bool — all four measured in "
+        "tests/test_collector_admission.py. FOR WHAT A CONFORMING ADAPTER SAYS: NOT PROVED "
+        "TO BE CARRIED ANYWHERE (source trust is CD-D-005, owed)."
+    ),
+    policy=RetryPolicy,
+    sink=ESTABLISHED_HERE(
+        "CD-BP-003, BLUEPRINT §17. ObservationSink is a Protocol — a boundary to the store, "
+        "whose implementation is deliverable A5's SQL and not a Python class this package "
+        "may name. CARRIER MEASURED for what it hands back: _record refuses a non-None "
+        "return with SinkContractBreach "
+        "(tests/test_collector_admission.py::test_a_sink_that_answers_with_a_value_is_refused). "
+        "For whether a sink that returned None actually persisted the row: NOT PROVED TO BE "
+        "CARRIED ANYWHERE in process — the carrier is the store's own durability and the "
+        "grant matrix, measured live by CD-RT-GRANT-MATRIX-LIVE."
+    ),
+    ledger=ESTABLISHED_HERE(
+        "CD-BP-003, BLUEPRINT §17. ReadingLedger is a Protocol standing in for a UNIQUE "
+        "(source_id, source_as_of_utc) constraint, which is a property of the store and not "
+        "of any object here. CARRIER MEASURED for its verdict: _established_ledger_verdict "
+        "requires exactly a bool and refuses with LedgerContractBreach, replacing a bool() "
+        "coercion that read any truthy answer as a first claim "
+        "(tests/test_collector_admission.py::test_a_ledger_verdict_that_is_not_a_bool_is_refused). "
+        "For whether the verdict is TRUE: NOT PROVED TO BE CARRIED ANYWHERE here — the "
+        "carrier is the SQL UNIQUE constraint, measured by tests/test_store_schema_sql.py."
+    ),
+    collector_run_id=str,
+    started_utc=datetime,
+    delay=DelayKind,
+    validator=ESTABLISHED_HERE(
+        "CD-BP-003, BLUEPRINT §17. PayloadValidator is a Protocol; None selects the shipped "
+        "JsonSchemaValidator, so the default path is a concrete type this package owns and "
+        "only a supplied one is foreign. CARRIER MEASURED for its verdict: a validator that "
+        "returns anything but None is recorded MALFORMED with VALIDATOR_CONTRACT_BREACH "
+        "rather than read as agreement "
+        "(tests/test_collector_admission.py::test_a_validator_that_returns_a_repaired_payload_is_a_breach). "
+        "For whether a supplied validator validated anything at all: NOT PROVED TO BE "
+        "CARRIED ANYWHERE."
+    ),
+)
 def collect(
     adapter: SourceAdapter,
     *,
@@ -199,43 +316,141 @@ def collect(
     sink: ObservationSink,
     ledger: ReadingLedger,
     collector_run_id: str,
-    clock: Callable[[], datetime],
-    sleep: Callable[[float], None],
+    started_utc: datetime,
+    delay: DelayKind,
     validator: Union[PayloadValidator, None] = None,
 ) -> CollectionResult:
     """Run one bounded collection for one source, recording EVERY attempt.
 
-    ``clock`` and ``sleep`` are required injections. There is no default wall clock and
-    no default sleep, so no module-level ``now()`` and no real delay can hide inside this
-    function, and a test exercises the retry path without waiting for it.
+    **A6 OF BP-AMENDMENT-0001 §D.2, CLOSED BY §D.3, BOTH PARTS.** This door took SIX
+    caller-supplied objects plus a policy and admitted exactly one of them — ``policy``, by
+    ``isinstance``, which admits a subclass shadowing ``max_attempts`` with a property.
+    Everything the dial path later evaluates was written by objects this function never
+    established.
+
+    **PART 1 — ``clock`` AND ``sleep`` ARE GONE, AS PARAMETERS.** They were
+    ``Callable``\\ s, admitted by ``callable()``, which establishes that a thing can be
+    called and nothing about what it does. They are replaced by:
+
+    * ``started_utc`` — the run's instant, **a VALUE**, exact-typed at this door and then
+      rebuilt by :func:`~crash_detector.time_utc.ensure_utc` from its own primitive fields,
+      so no method of the supplied object is consulted. Every attempt timestamp is derived
+      from it and from this system's OWN monotonic reading
+      (:mod:`crash_detector.collectors.delay`), which is why an attempt row can no longer
+      claim to have finished before it started;
+    * ``delay`` — a member of the **closed** :class:`~crash_detector.collectors.delay.DelayKind`,
+      executed by the module that owns waiting. A caller names a kind; it does not supply
+      one. This is ``combine_within_one_dial(using)``'s repair applied again.
+
+    There is no expression a caller can write that puts code on this path. Not a stronger
+    check on a callable — no parameter through which a callable arrives.
+
+    **PART 2 — THE FOUR PROTOCOLS STAY AND EVERYTHING THEY HAND BACK IS ESTABLISHED ON
+    ARRIVAL.** ``adapter``, ``sink``, ``ledger`` and ``validator`` are boundaries to
+    genuinely foreign things; exact-typing them against a concrete class is not available
+    and would be wrong. So this system does not claim to establish what they ARE. It
+    establishes everything they HAND IT, at each point of return — see the DECLARED LIMIT.
 
     Raises :exc:`~crash_detector.collectors.validation.SchemaDeclarationInvalid` if the
     adapter's declared schema is unusable — after the attempt row has been written. That
     is our defect, not the source's, and it is not retried and not silently recorded as
     the source misbehaving.
+
+    ==================================================================================
+    DECLARED LIMIT — **CD-BP-003** (CD-RULE-004, stated identically here, in
+    ``required-tests.yaml`` and in
+    ``contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md``; CD-RULE-006 applied to
+    every carrier named). **BLUEPRINT §17 names this the softest remaining surface and the
+    Product Owner named it the fourth Assurance seat's first target. It is written for that
+    reader.**
+    ==================================================================================
+
+    **THIS IS A DOOR THAT ADMITS, NOT AN ABSENCE OF A DOOR, AND IT IS WEAKER THAN §C's
+    CLOSURE IN A WAY THAT MATTERS.** §C deleted the field through which a model object could
+    arrive: there is no expression to write. Here the parameter remains, and four of the
+    seven things passed through it are objects this system cannot name a type for.
+
+    1. **THE PROTOCOL CONFORMANCE CHECK IS A VOCABULARY, AND IT FAILS THE RENAME TEST.**
+       ``missing_adapter_members`` asks ``hasattr`` for five SPELLED names. An object
+       supplying all five conforms, whatever it does. Executable example — and it is not
+       hypothetical, it is the whole shape of the residue::
+
+           class Hostile:                       # conforms; refused by nothing here
+               source_id = "src.e"
+               adapter_id = "a.v0"
+               response_schema = {"type": "object"}
+               def fetch(self, *, timeout_seconds): return FetchedResponse(...)
+               def is_empty(self, payload): return False
+
+       ``variants/WO-2R3/V26-conforming-hostile-adapter.patch`` is that object, and it is
+       ADMITTED. What it can then do is bounded by what this runner establishes of its
+       returns — a ``FetchedResponse`` of exact type, a ``bool`` of exact type, a payload
+       that passes the declared schema — and by the fact that nothing under
+       ``collectors/`` may import the dial path or the engine. What it CANNOT be prevented
+       from doing is reporting an honest-shaped observation that is untrue.
+       **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.** Source trust is CD-D-005 and
+       BLUEPRINT §5, and it is owed, not held. Nothing in this tree establishes that a
+       conforming adapter is telling the truth, and this seat does not claim otherwise.
+
+    2. **``started_utc``'s TYPE IS ESTABLISHED; ITS TRUTH IS NOT.** A caller passing an
+       instant from last year gets attempt rows dated last year. Executable example:
+       ``collect(..., started_utc=datetime(2016, 1, 1, tzinfo=timezone.utc), ...)`` is
+       admitted and every ``AttemptRecord.requested_utc`` reads 2016.
+       **CARRIER MEASURED, AND ONLY FOR THE ONE ROUTE THAT DECIDES A DIAL:** a dishonest
+       ``observed_utc`` does not make a stale reading fresh, because freshness is computed
+       from the OUTCOME's ``source_as_of_utc`` against
+       :class:`~crash_detector.staleness.StalenessWindow` in ``engine.evaluate``, not from
+       the collector's clock — measured by
+       ``tests/test_evaluate.py::test_a_future_dated_observation_is_not_treated_as_fresh``
+       and its siblings. For attempt-row latency figures and for operator forensics:
+       **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+    3. **THE SINK AND THE LEDGER ARE ESTABLISHED ONLY IN WHAT THEY RETURN.** A sink that
+       returns ``None`` and writes nothing is indistinguishable here from one that
+       persisted durably; a ledger that returns ``True`` twice claims two first-claims of
+       one period. Executable example:
+       ``variants/WO-2R3/V27-lying-ledger.patch`` — a ledger returning ``True`` for a key it
+       has already admitted, which makes a re-fetch look like a fresh reading.
+       **CARRIER MEASURED, AND IT IS NOT THIS LAYER:** deliverable A5's SQL —
+       ``UNIQUE (source_id, source_as_of_utc)`` on the reading and no ``UPDATE``/``DELETE``
+       grant on ``raw.observation`` — is the structural carrier, measured live against a
+       digest-pinned Postgres by ``CD-RT-GRANT-MATRIX-LIVE`` and by
+       ``tests/test_store_schema_sql.py``. In-process, against an in-memory ledger:
+       **NOT PROVED TO BE CARRIED ANYWHERE**, and it cannot be — the property belongs to the
+       store.
+
+    4. **WHAT IS *NOT* A LIMIT, SO THE SEAT LOOKING FOR ONE DOES NOT WASTE THE TRIP.**
+       ``policy`` is exact-typed at this door: a ``RetryPolicy`` subclass shadowing
+       ``max_attempts`` with a property is REFUSED, which ``isinstance`` admitted until this
+       increment. ``delay`` is exact-typed against a closed enum. ``started_utc`` is
+       exact-typed and rebuilt. Every value the four protocols return is exact-typed on
+       arrival. Those four are closures, not admissions.
     """
-    if not isinstance(collector_run_id, str) or not collector_run_id:
+    if not collector_run_id:
         raise ValueError("collect requires a non-empty collector_run_id")
-    if not isinstance(policy, RetryPolicy):
-        raise TypeError("collect requires a RetryPolicy")
-    if not callable(clock) or not callable(sleep):
-        raise TypeError("collect requires callable clock and sleep")
+
+    started_utc = ensure_utc(started_utc)
+    source_id, adapter_id = _established_adapter_identity(adapter)
 
     active_validator: PayloadValidator = (
         JsonSchemaValidator() if validator is None else validator
     )
-    source_id = adapter.source_id
-    adapter_id = adapter.adapter_id
 
     rows_recorded = 0
     attempts_made = 0
+    delays_applied: list = []
     final_outcome: FetchOutcome = FetchFailed(
         error_class=ERROR_ATTEMPT_DID_NOT_COMPLETE
     )
 
+    # ONE reading of THIS SYSTEM'S monotonic clock, taken here and never supplied. Every
+    # instant below is `started_utc` plus a span measured from it, so the row timestamps
+    # are non-decreasing by construction rather than by a caller's good manners.
+    run_started = monotonic_reading()
+
     for attempt_number in range(1, policy.max_attempts + 1):
         attempts_made = attempt_number
-        requested_utc = ensure_utc(clock())
+        requested_utc = started_utc + timedelta(seconds=seconds_since(run_started))
 
         # Pre-set so that a BaseException escaping _attempt still leaves a TRUTHFUL row
         # behind rather than no row. "The attempt terminated before it could be
@@ -246,8 +461,6 @@ def collect(
                 adapter,
                 policy=policy,
                 validator=active_validator,
-                requested_utc=requested_utc,
-                clock=clock,
             )
         except SchemaDeclarationInvalid as exc:
             # Recorded, then re-raised. The row must exist (guarantee 1) and the defect
@@ -258,18 +471,20 @@ def collect(
             )
             raise exc
         finally:
-            sink.record(
+            _record(
+                sink,
                 AttemptRecord(
                     observation=ObservationRecord(
                         source_id=source_id,
-                        observed_utc=ensure_utc(clock()),
+                        observed_utc=started_utc
+                        + timedelta(seconds=seconds_since(run_started)),
                         outcome=outcome,
                     ),
                     adapter_id=adapter_id,
                     collector_run_id=collector_run_id,
                     attempt_number=attempt_number,
                     requested_utc=requested_utc,
-                )
+                ),
             )
             rows_recorded += 1
 
@@ -277,13 +492,13 @@ def collect(
         if not isinstance(outcome, FetchFailed):
             break
         if attempt_number < policy.max_attempts and policy.backoff_seconds > 0.0:
-            sleep(policy.backoff_seconds)
+            delays_applied.append(apply_delay(delay, policy.backoff_seconds))
 
     reading_key: Union[ReadingKey, None] = None
     reading_admitted = False
     if isinstance(final_outcome, OK):
         reading_key = _reading_key(source_id, final_outcome)
-        reading_admitted = bool(ledger.admit_if_absent(reading_key))
+        reading_admitted = _established_ledger_verdict(ledger, reading_key)
 
     return CollectionResult(
         source_id=source_id,
@@ -294,6 +509,7 @@ def collect(
         final_outcome=final_outcome,
         reading_key=reading_key,
         reading_admitted=reading_admitted,
+        delays_applied=tuple(delays_applied),
     )
 
 
@@ -303,20 +519,107 @@ def _reading_key(source_id: str, outcome: OK) -> ReadingKey:
     return (source_id, format_utc(outcome.source_as_of_utc))
 
 
+# ------------------------------------------------------------------------------------- #
+# §D.3 PART 2 — EVERYTHING THE FOUR PROTOCOLS HAND BACK IS ESTABLISHED AT THE POINT OF
+# RETURN. The system cannot establish what an adapter IS. It can establish everything the
+# adapter HANDS IT, and these three helpers plus `_attempt` are where it does.
+# ------------------------------------------------------------------------------------- #
+
+
+def _established_adapter_identity(adapter: SourceAdapter) -> "tuple[str, str]":
+    """The adapter's ``source_id`` and ``adapter_id``, ESTABLISHED, before any attempt.
+
+    Two returns crossing the protocol boundary, and both decide something: ``source_id`` is
+    the key the engine looks an observation up by — ``source_id in usable`` is decided by
+    its ``__hash__`` and ``__eq__`` — and ``adapter_id`` is the provenance stamped on every
+    row. Until §D.3 they were read straight off the supplied object and stored.
+
+    They are rebuilt by :func:`~crash_detector.own_terms.own_str` from their own code
+    points, so a ``str`` subclass answering to a source id it is not cannot survive the
+    trip. The whole-protocol conformance check runs FIRST, because an adapter missing
+    ``is_empty`` used to reach an ``AttributeError`` half way through an attempt and be
+    recorded as the SOURCE misbehaving; it is our configuration defect and it is now named
+    as one, before a single row is written and therefore before a single row is owed.
+    """
+    missing = missing_adapter_members(adapter)
+    if missing:
+        raise AdapterContractBreach(
+            f"the supplied adapter does not supply {list(missing)}. Checked against the "
+            f"whole of {list(ADAPTER_PROTOCOL_MEMBERS)} rather than the member this "
+            "function happens to reach first. THIS IS A VOCABULARY CHECK and it is "
+            "declared as one: see CD-BP-003 in collect's DECLARED LIMIT block."
+        )
+    established = []
+    for member in ("source_id", "adapter_id"):
+        try:
+            value = own_str(getattr(adapter, member))
+        except NotEstablishedOnOwnTerms as refusal:
+            raise AdapterContractBreach(
+                f"adapter.{member} must be a str: {refusal}"
+            ) from None
+        if not value:
+            raise AdapterContractBreach(f"adapter.{member} is empty")
+        established.append(value)
+    return established[0], established[1]
+
+
+def _record(sink: ObservationSink, attempt: AttemptRecord) -> None:
+    """Write one row, and establish what the sink handed back.
+
+    ``ObservationSink.record`` returns ``None``. A sink that returns anything else is not
+    the sink this contract describes, and the difference is not cosmetic: the one thing
+    this component guarantees is that the row exists, and an object improvising its own
+    return protocol here is an object improvising its own idea of what "recorded" means.
+    """
+    verdict = sink.record(attempt)
+    if verdict is not None:
+        raise SinkContractBreach(
+            f"ObservationSink.record returned {type(verdict).__name__}; the contract is to "
+            "persist the row durably and return None, or to RAISE. A sink that answers "
+            "with a value of its own is not one this runner can read as having written."
+        )
+
+
+def _established_ledger_verdict(ledger: ReadingLedger, key: ReadingKey) -> bool:
+    """Whether THIS call claimed ``key`` — established as an exact ``bool``.
+
+    This used to be ``bool(ledger.admit_if_absent(key))``, and the ``bool(...)`` was the
+    defect: it CO-ERCES. A ledger returning the string ``"already claimed"`` — or any
+    non-empty object, or one with a ``__bool__`` of its own — reported a duplicate period as
+    a fresh reading, decided by the supplied object's own truthiness. The verdict is now
+    required to BE a ``bool`` and is never derived from one.
+    """
+    verdict = ledger.admit_if_absent(key)
+    if type(verdict) is not bool:
+        raise LedgerContractBreach(
+            f"ReadingLedger.admit_if_absent returned {type(verdict).__name__}; exactly "
+            "True or exactly False is the contract. 'Was this period already claimed' is "
+            "not a question to answer by truthiness — coercing it is how a re-fetch becomes "
+            "a second reading of one source period."
+        )
+    return verdict
+
+
 def _attempt(
     adapter: SourceAdapter,
     *,
     policy: RetryPolicy,
     validator: PayloadValidator,
-    requested_utc: datetime,
-    clock: Callable[[], datetime],
 ) -> FetchOutcome:
     """One classified attempt.
 
     Every ``except`` here maps to a NAMED outcome constructor. None of them returns a
     number, a previous value, or an empty success — the three shapes doctrine §3.2
     forbids. There is no bare ``except`` and no ``except Exception: pass``.
+
+    **THE ROUND TRIP IS TIMED BY THIS SYSTEM** (§D.3 part 1). The span is taken from
+    :func:`~crash_detector.collectors.delay.monotonic_reading` either side of ``fetch``, so
+    the judgement *"this response arrived after its budget"* is computed from a clock no
+    caller supplied and no adapter can influence. It used to be computed from two calls to
+    a caller-supplied ``clock``, and a clock that never advances made every adapter
+    punctual.
     """
+    before = monotonic_reading()
     try:
         response = adapter.fetch(timeout_seconds=policy.timeout_seconds)
     except AdapterFetchError as exc:
@@ -331,18 +634,23 @@ def _attempt(
             error_class=f"{_ERROR_UNCLASSIFIED_PREFIX}{type(exc).__name__}"
         )
 
-    elapsed = (ensure_utc(clock()) - requested_utc).total_seconds()
-    if elapsed > policy.timeout_seconds:
+    if seconds_since(before) > policy.timeout_seconds:
         return FetchFailed(error_class=ERROR_TIMEOUT_BUDGET_EXCEEDED)
 
-    if not isinstance(response, FetchedResponse):
+    # ESTABLISHED AT THE POINT OF RETURN, BY EXACT TYPE (§D.3 part 2). `isinstance` stood
+    # here until this increment, and it admitted a FetchedResponse SUBCLASS — which may
+    # shadow `payload` with a property, and a property is the adapter's code running inside
+    # this runner at the moment the runner reads it. A subclass whose `payload` answers a
+    # conforming mapping when the validator asks and something else when `OK` stores it is
+    # the same defect as ASR3-F04 one component to the left.
+    if type(response) is not FetchedResponse:
         return Malformed(
             schema_error_class=MALFORMED_ADAPTER_CONTRACT_BREACH,
             instance_path="",
         )
 
     try:
-        validator.validate(response.payload, adapter.response_schema)
+        verdict = validator.validate(response.payload, adapter.response_schema)
     except SchemaRejection as exc:
         return Malformed(
             schema_error_class=exc.error_class,
@@ -356,6 +664,18 @@ def _attempt(
             schema_error_class=(
                 f"{_MALFORMED_VALIDATOR_FAILED_PREFIX}{type(exc).__name__}"
             ),
+            instance_path="",
+        )
+
+    # THE VALIDATION VERDICT, ESTABLISHED AT THE POINT OF RETURN (§D.3 part 2). Until this
+    # increment the return of `validate` was DISCARDED, so "conforming" meant only "did not
+    # raise". A validator that returns a repaired or coerced payload instead of raising was
+    # therefore read as agreement — silent coercion at the one boundary whose entire job is
+    # to refuse it (Standards Baseline §4). `None` is the whole of the contract, and
+    # anything else is the validator improvising one.
+    if verdict is not None:
+        return Malformed(
+            schema_error_class=MALFORMED_VALIDATOR_CONTRACT_BREACH,
             instance_path="",
         )
 
@@ -377,9 +697,10 @@ def _attempt(
             ),
             instance_path="",
         )
-    if not isinstance(empty, bool):
+    if type(empty) is not bool:
         # A truthy string or a non-empty list would make "is it empty" answer yes by
-        # accident. Emptiness is a decision, and it must be stated as one.
+        # accident. Emptiness is a decision, and it must be stated as one. EXACT TYPE
+        # (§D.3 part 2): the answer must BE a bool, not be convertible to one.
         return Malformed(
             schema_error_class=MALFORMED_ADAPTER_CONTRACT_BREACH,
             instance_path="",

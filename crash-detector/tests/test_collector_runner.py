@@ -20,6 +20,7 @@ import pytest
 
 from crash_detector.collectors.adapter import AdapterFetchError, FetchedResponse
 from crash_detector.collectors.attempt import AttemptRecord
+from crash_detector.collectors.delay import DelayKind
 from crash_detector.collectors.runner import (
     ERROR_ATTEMPT_DID_NOT_COMPLETE,
     ERROR_TIMEOUT,
@@ -42,14 +43,21 @@ from collector_fakes import (
     FakeInMemoryAdapter,
     RecordingLedger,
     RecordingSink,
-    RecordingSleep,
-    SteppingClock,
     failing_fetch,
 )
 from conftest import FIXED_NOW
 
 POLICY = RetryPolicy(max_attempts=3, timeout_seconds=5.0, backoff_seconds=1.0)
 SINGLE = RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
+
+#: A policy whose per-attempt budget is one millisecond, and an adapter latency an order of
+#: magnitude above it. Since §D.3 part 1 the elapsed span is measured by the RUNNER from
+#: ``time.monotonic`` — there is no ``clock`` argument to advance — so "this response
+#: arrived after its budget" is now demonstrated by an adapter that really is late. The
+#: direction is deterministic and not a race: ``time.sleep(s)`` guarantees AT LEAST ``s``,
+#: so the observed elapsed span is always above the budget, on any host, under any load.
+TINY_BUDGET = RetryPolicy(max_attempts=1, timeout_seconds=0.001, backoff_seconds=0.0)
+OVER_BUDGET_LATENCY_SECONDS = 0.05
 
 #: A closed schema that also admits ``{}``, so "the source conformed and had nothing to
 #: report" is reachable. Without it EMPTY would be unreachable through the default fake
@@ -75,20 +83,26 @@ def _adapter(script, **kwargs):
     return FakeInMemoryAdapter(script=script, **kwargs)
 
 
-def _run(adapter, *, policy=SINGLE, sink=None, ledger=None, advance=0.1, run_id="run-1"):
+def _run(adapter, *, policy=SINGLE, sink=None, ledger=None, run_id="run-1"):
+    """One collection over the SHIPPED door.
+
+    ``clock`` and ``sleep`` are gone: BP-AMENDMENT-0001 §D.3 part 1 deleted both parameters.
+    The run's instant is a VALUE and the waiting is a NAMED KIND, so this helper supplies
+    data where it used to supply two callables. Nothing here can decide how long an attempt
+    took any more — the runner measures that itself.
+    """
     sink = RecordingSink() if sink is None else sink
     ledger = RecordingLedger() if ledger is None else ledger
-    sleep = RecordingSleep()
     result = collect(
         adapter,
         policy=policy,
         sink=sink,
         ledger=ledger,
         collector_run_id=run_id,
-        clock=SteppingClock(FIXED_NOW, advance_seconds=advance),
-        sleep=sleep,
+        started_utc=FIXED_NOW,
+        delay=DelayKind.WALL_CLOCK,
     )
-    return result, sink, ledger, sleep
+    return result, sink, ledger
 
 
 # --- EVERY ATTEMPT WRITES A ROW --------------------------------------------------------- #
@@ -113,7 +127,7 @@ def test_every_way_an_attempt_can_end_writes_exactly_one_row(script_item, expect
     EMPTY are recorded as themselves.
     """
     adapter = _adapter([script_item])
-    result, sink, _, _ = _run(adapter)
+    result, sink, _ = _run(adapter)
 
     assert len(sink.recorded) == 1
     assert sink.outcome_classes == (expected_class,)
@@ -130,7 +144,7 @@ def test_the_four_outcome_classes_are_all_reachable_and_all_distinct():
         FetchedResponse(payload={"reading": "words"}, source_as_of_utc=FIXED_NOW),
         FetchedResponse(payload={}, source_as_of_utc=FIXED_NOW),
     ):
-        _, sink, _, _ = _run(_adapter([item]))
+        _, sink, _ = _run(_adapter([item]))
         seen.add(sink.outcome_classes[0])
     assert seen == {"OK", "FETCH_FAILED", "MALFORMED", "EMPTY"}
 
@@ -148,7 +162,7 @@ def test_an_unanticipated_exception_still_writes_a_row_and_is_classified_by_type
     adapter = FakeInMemoryAdapter(
         script=[UnanticipatedError("SYNTHETIC-MARKER-THAT-MUST-NOT-BE-RECORDED-0000")]
     )
-    result, sink, _, _ = _run(adapter)
+    result, sink, _ = _run(adapter)
 
     assert sink.outcome_classes == ("FETCH_FAILED",)
     outcome = sink.recorded[0].outcome
@@ -172,8 +186,8 @@ def test_a_base_exception_that_is_not_an_exception_still_leaves_the_attempt_reco
             sink=sink,
             ledger=RecordingLedger(),
             collector_run_id="run-sigterm",
-            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-            sleep=RecordingSleep(),
+            started_utc=FIXED_NOW,
+            delay=DelayKind.WALL_CLOCK,
         )
     assert len(sink.recorded) == 1
     outcome = sink.recorded[0].outcome
@@ -190,8 +204,8 @@ def test_a_sink_that_cannot_write_raises_rather_than_losing_the_attempt_quietly(
             sink=ExplodingSink(),
             ledger=RecordingLedger(),
             collector_run_id="run-nosink",
-            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-            sleep=RecordingSleep(),
+            started_utc=FIXED_NOW,
+            delay=DelayKind.WALL_CLOCK,
         )
 
 
@@ -200,7 +214,7 @@ def test_every_retry_appends_its_own_row():
     adapter = FakeInMemoryAdapter(
         script=[failing_fetch(), failing_fetch(), failing_fetch()]
     )
-    result, sink, _, _ = _run(adapter, policy=POLICY)
+    result, sink, _ = _run(adapter, policy=POLICY)
 
     assert result.attempts_made == 3
     assert result.rows_recorded == 3
@@ -224,22 +238,31 @@ def test_the_result_refuses_to_report_fewer_rows_than_attempts():
             final_outcome=Empty(),
             reading_key=None,
             reading_admitted=False,
+            delays_applied=(),
         )
 
 
 # --- BOUNDED RETRIES -------------------------------------------------------------------- #
 
 def test_retries_stop_at_max_attempts():
+    """The same proposition as before §D.3, read off the RUNNER instead of off a double.
+
+    ``sleep`` was a caller-supplied callable and this test asserted on ITS log — the
+    system's behaviour attested by the caller's own object. ``delays_applied`` is the
+    runner's own record of what it waited for. The backoff is a real ``time.sleep`` on the
+    wall clock, 1 ms four times, because the delay that ships is the delay measured: there
+    is deliberately no ``DelayKind`` member meaning "do not actually wait".
+    """
     adapter = FakeInMemoryAdapter(script=[failing_fetch()] * MAX_ATTEMPTS_CEILING)
     policy = RetryPolicy(
-        max_attempts=MAX_ATTEMPTS_CEILING, timeout_seconds=1.0, backoff_seconds=0.5
+        max_attempts=MAX_ATTEMPTS_CEILING, timeout_seconds=1.0, backoff_seconds=0.001
     )
-    result, sink, _, sleep = _run(adapter, policy=policy)
+    result, sink, _ = _run(adapter, policy=policy)
 
     assert result.attempts_made == MAX_ATTEMPTS_CEILING
     assert adapter.calls == MAX_ATTEMPTS_CEILING
     # Backoff between attempts, never after the last one.
-    assert sleep.slept == [0.5] * (MAX_ATTEMPTS_CEILING - 1)
+    assert result.delays_applied == (0.001,) * (MAX_ATTEMPTS_CEILING - 1)
 
 
 @pytest.mark.parametrize(
@@ -257,16 +280,16 @@ def test_only_fetch_failed_is_retried(item):
     that changed its shape is a source that is also hammered.
     """
     adapter = _adapter([item, item, item])
-    result, sink, _, sleep = _run(adapter, policy=POLICY)
+    result, sink, _ = _run(adapter, policy=POLICY)
 
     assert result.attempts_made == 1
     assert adapter.calls == 1
-    assert sleep.slept == []
+    assert result.delays_applied == ()
 
 
 def test_a_recovered_fetch_stops_retrying_and_keeps_the_failure_rows():
     adapter = FakeInMemoryAdapter(script=[failing_fetch(), _ok_response()])
-    result, sink, ledger, _ = _run(adapter, policy=POLICY)
+    result, sink, ledger = _run(adapter, policy=POLICY)
 
     assert result.attempts_made == 2
     assert sink.outcome_classes == ("FETCH_FAILED", "OK")
@@ -290,8 +313,10 @@ def test_a_response_that_arrives_after_its_budget_is_refused_even_when_it_is_goo
     absence: a dial that reads UNKNOWN for one cycle costs less than an adapter whose
     declared timeout means nothing.
     """
-    adapter = FakeInMemoryAdapter(script=[_ok_response()])
-    result, sink, ledger, _ = _run(adapter, advance=SINGLE.timeout_seconds + 1.0)
+    adapter = FakeInMemoryAdapter(
+        script=[_ok_response()], latency_seconds=OVER_BUDGET_LATENCY_SECONDS
+    )
+    result, sink, ledger = _run(adapter, policy=TINY_BUDGET)
 
     assert sink.outcome_classes == ("FETCH_FAILED",)
     assert result.final_outcome.error_class == ERROR_TIMEOUT_BUDGET_EXCEEDED
@@ -300,7 +325,7 @@ def test_a_response_that_arrives_after_its_budget_is_refused_even_when_it_is_goo
 
 def test_a_timeout_error_from_the_adapter_is_classified_as_a_timeout():
     adapter = FakeInMemoryAdapter(script=[TimeoutError("slow")])
-    result, _, _, _ = _run(adapter)
+    result, _, _ = _run(adapter)
     assert result.final_outcome.error_class == ERROR_TIMEOUT
 
 
@@ -353,7 +378,7 @@ def test_a_non_conforming_response_is_malformed_with_its_class_and_location():
         script=[FetchedResponse(payload={"reading": "words"},
                                 source_as_of_utc=FIXED_NOW)]
     )
-    result, sink, _, _ = _run(adapter)
+    result, sink, _ = _run(adapter)
     outcome = result.final_outcome
     assert isinstance(outcome, Malformed)
     assert outcome.schema_error_class == "JSONSCHEMA_TYPE"
@@ -365,7 +390,7 @@ def test_a_malformed_response_is_never_coerced_into_a_reading():
     adapter = FakeInMemoryAdapter(
         script=[FetchedResponse(payload={"reading": "1.5"}, source_as_of_utc=FIXED_NOW)]
     )
-    result, _, ledger, _ = _run(adapter)
+    result, _, ledger = _run(adapter)
     assert isinstance(result.final_outcome, Malformed)
     assert result.reading_key is None
     assert ledger.admitted == []
@@ -379,7 +404,7 @@ def test_an_unknown_key_in_a_response_is_malformed_because_the_schema_is_closed(
             )
         ]
     )
-    result, _, _, _ = _run(adapter)
+    result, _, _ = _run(adapter)
     assert isinstance(result.final_outcome, Malformed)
     assert result.final_outcome.schema_error_class == "JSONSCHEMA_ADDITIONALPROPERTIES"
 
@@ -401,8 +426,8 @@ def test_our_broken_schema_is_recorded_and_then_raised_rather_than_blamed_on_the
             sink=sink,
             ledger=RecordingLedger(),
             collector_run_id="run-badschema",
-            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-            sleep=RecordingSleep(),
+            started_utc=FIXED_NOW,
+            delay=DelayKind.WALL_CLOCK,
         )
     assert len(sink.recorded) == 1
     outcome = sink.recorded[0].outcome
@@ -427,15 +452,15 @@ def test_a_declared_schema_with_a_remote_ref_is_refused_without_fetching_it():
             sink=RecordingSink(),
             ledger=RecordingLedger(),
             collector_run_id="run-remoteref",
-            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-            sleep=RecordingSleep(),
+            started_utc=FIXED_NOW,
+            delay=DelayKind.WALL_CLOCK,
         )
     assert caught.value.error_class == "SCHEMA_REMOTE_REF_FORBIDDEN"
 
 
 def test_an_adapter_returning_the_wrong_type_breaches_its_contract():
     adapter = FakeInMemoryAdapter(script=[{"reading": 1.0}])
-    result, _, _, _ = _run(adapter)
+    result, _, _ = _run(adapter)
     assert isinstance(result.final_outcome, Malformed)
     assert result.final_outcome.schema_error_class == MALFORMED_ADAPTER_CONTRACT_BREACH
 
@@ -447,7 +472,7 @@ def test_a_conforming_payload_that_is_not_a_json_object_is_refused_not_wrapped()
         response_schema={"type": "array"},
         is_empty_fn=lambda payload: False,
     )
-    result, _, _, _ = _run(adapter)
+    result, _, _ = _run(adapter)
     assert isinstance(result.final_outcome, Malformed)
     assert (
         result.final_outcome.schema_error_class == MALFORMED_PAYLOAD_NOT_A_JSON_OBJECT
@@ -459,7 +484,7 @@ def test_a_non_boolean_answer_to_is_empty_is_a_contract_breach():
     adapter = FakeInMemoryAdapter(
         script=[_ok_response()], is_empty_fn=lambda payload: "yes"  # type: ignore[return-value]
     )
-    result, _, _, _ = _run(adapter)
+    result, _, _ = _run(adapter)
     assert isinstance(result.final_outcome, Malformed)
     assert result.final_outcome.schema_error_class == MALFORMED_ADAPTER_CONTRACT_BREACH
 
@@ -469,7 +494,7 @@ def test_an_exploding_is_empty_does_not_become_a_reading():
         script=[_ok_response()],
         is_empty_fn=lambda payload: (_ for _ in ()).throw(ValueError("boom")),
     )
-    result, _, ledger, _ = _run(adapter)
+    result, _, ledger = _run(adapter)
     assert isinstance(result.final_outcome, Malformed)
     assert result.final_outcome.schema_error_class.startswith("EMPTINESS_UNDECIDABLE_")
     assert ledger.admitted == []
@@ -499,8 +524,8 @@ def test_a_refetch_of_the_same_period_adds_a_row_but_not_a_second_reading():
                 sink=sink,
                 ledger=ledger,
                 collector_run_id=run_id,
-                clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-                sleep=RecordingSleep(),
+                started_utc=FIXED_NOW,
+                delay=DelayKind.WALL_CLOCK,
             )
         )
 
@@ -524,7 +549,7 @@ def test_the_idempotency_key_is_the_source_period_not_the_fetch_instant():
     adapter = FakeInMemoryAdapter(
         script=[FetchedResponse(payload={"reading": 1.5}, source_as_of_utc=period)]
     )
-    result, _, _, _ = _run(adapter)
+    result, _, _ = _run(adapter)
     assert result.reading_key == ("fake.source", "2026-08-19T10:00:00Z")
 
 
@@ -545,8 +570,8 @@ def test_two_different_periods_are_two_readings():
             sink=RecordingSink(),
             ledger=ledger,
             collector_run_id=f"run-{minutes}",
-            clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-            sleep=RecordingSleep(),
+            started_utc=FIXED_NOW,
+            delay=DelayKind.WALL_CLOCK,
         ).reading_admitted)
     assert len(ledger.admitted) == 2
     assert ledger.rejected == []
@@ -578,8 +603,8 @@ def test_the_same_instant_in_a_different_offset_is_the_same_reading():
                 sink=RecordingSink(),
                 ledger=ledger,
                 collector_run_id="run-offset",
-                clock=SteppingClock(FIXED_NOW, advance_seconds=0.1),
-                sleep=RecordingSleep(),
+                started_utc=FIXED_NOW,
+                delay=DelayKind.WALL_CLOCK,
             )
         )
     assert len(ledger.admitted) == 1
@@ -599,7 +624,7 @@ def test_the_same_instant_in_a_different_offset_is_the_same_reading():
 def test_a_failure_has_no_source_period_and_claims_no_reading(item):
     """Inventing a period for a failure would make every failure a reading of nothing."""
     adapter = _adapter([item])
-    result, _, ledger, _ = _run(adapter)
+    result, _, ledger = _run(adapter)
     assert result.reading_key is None
     assert result.reading_admitted is False
     assert ledger.admitted == []
@@ -609,7 +634,7 @@ def test_a_failure_has_no_source_period_and_claims_no_reading(item):
 
 def test_the_attempt_row_carries_the_collector_provenance_the_engine_does_not_read():
     adapter = FakeInMemoryAdapter(script=[_ok_response()])
-    _, sink, _, _ = _run(adapter, run_id="run-provenance")
+    _, sink, _ = _run(adapter, run_id="run-provenance")
     attempt = sink.recorded[0]
 
     assert attempt.adapter_id == "fake.adapter.v0"
@@ -663,18 +688,44 @@ def test_collect_refuses_an_unnamed_run():
             sink=RecordingSink(),
             ledger=RecordingLedger(),
             collector_run_id="",
-            clock=SteppingClock(FIXED_NOW),
-            sleep=RecordingSleep(),
+            started_utc=FIXED_NOW,
+            delay=DelayKind.WALL_CLOCK,
         )
 
 
-def test_collect_has_no_default_clock_and_no_default_sleep():
-    """No hidden wall clock, and no hidden real delay.
+def test_collect_takes_no_clock_and_no_sleep_and_defaults_neither_instant_nor_delay():
+    """REPLACES ``test_collect_has_no_default_clock_and_no_default_sleep`` (deleted subject).
 
-    A default ``time.sleep`` would make the retry tests take as long as the retries.
+    THE OLD PROPOSITION: ``clock`` and ``sleep`` are required injections, so no module-level
+    ``now()`` and no real delay can hide inside ``collect``.
+
+    THE SAME PROPOSITION AGAINST THE NEW STRUCTURE, AND IT IS STRICTLY STRONGER. The old
+    test asked whether two CALLABLE parameters had defaults; the parameters are gone. What
+    is asserted now is that there is **no parameter of ``collect`` through which a callable
+    can arrive at all** — not that the two named ones are mandatory — and that the two
+    values which replaced them are themselves mandatory. CHECKED ON THE SIGNATURE, so a
+    rewrite of the body cannot restore either.
     """
     import inspect
 
     signature = inspect.signature(collect)
-    for name in ("clock", "sleep"):
+    assert "clock" not in signature.parameters
+    assert "sleep" not in signature.parameters
+    for name in ("started_utc", "delay"):
         assert signature.parameters[name].default is inspect.Parameter.empty
+    # THE CLASS, not the two names: no parameter of this door may be supplied a callable
+    # and be believed about it. `admits` refuses anything but the declared exact type, and
+    # the four that are NOT exact-typed are the declared CD-BP-003 protocol boundary.
+    from crash_detector.admission import declared_admissions
+
+    declared = declared_admissions(collect)
+    assert set(declared) == set(signature.parameters)
+    exempt = {
+        name
+        for name, admission in declared.items()
+        if "ANY VALUE" in admission.describe()
+    }
+    assert exempt == {"adapter", "sink", "ledger", "validator"}, (
+        "the set of parameters this door does NOT exact-type is CD-BP-003 and it is "
+        "pinned here: a fifth one is a widening of the declared limit, not a detail"
+    )

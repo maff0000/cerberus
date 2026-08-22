@@ -18,6 +18,7 @@ the difference is in the SQL and the SQL is where to look.
 
 from __future__ import annotations
 
+import time
 from collections.abc import Mapping as AbcMapping
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -60,6 +61,7 @@ class FakeInMemoryAdapter:
         adapter_id: str = "fake.adapter.v0",
         response_schema: Union[Mapping[str, Any], None] = None,
         is_empty_fn: Union[Callable[[object], bool], None] = None,
+        latency_seconds: float = 0.0,
     ) -> None:
         self._script = list(script)
         self._source_id = source_id
@@ -68,6 +70,13 @@ class FakeInMemoryAdapter:
             FAKE_RESPONSE_SCHEMA if response_schema is None else response_schema
         )
         self._is_empty_fn = is_empty_fn
+        #: HOW LONG THIS FAKE REALLY TAKES. Since BP-AMENDMENT-0001 §D.3 part 1 the runner
+        #: measures the round trip from its OWN monotonic clock — there is no ``clock``
+        #: argument for a test to advance — so "an adapter that ignored its budget" is now
+        #: demonstrated by an adapter that really is slow. ``time.sleep(s)`` guarantees AT
+        #: LEAST ``s``, so a latency an order of magnitude above the budget exceeds it
+        #: deterministically, on any host and under any load.
+        self._latency_seconds = latency_seconds
         #: Every ``timeout_seconds`` the runner passed, in order. A test reads this to
         #: prove the bound actually reached the adapter rather than merely existing.
         self.timeouts_seen: list[float] = []
@@ -87,6 +96,8 @@ class FakeInMemoryAdapter:
 
     def fetch(self, *, timeout_seconds: float) -> FetchedResponse:
         self.timeouts_seen.append(timeout_seconds)
+        if self._latency_seconds > 0.0:
+            time.sleep(self._latency_seconds)
         if self.calls >= len(self._script):
             raise AssertionError(
                 f"FakeInMemoryAdapter script exhausted after {self.calls} calls; the "
@@ -156,35 +167,17 @@ class RecordingLedger:
         return True
 
 
-class SteppingClock:
-    """TEST DOUBLE. A monotonic clock that advances a fixed step per call.
-
-    The runner takes its clock as an argument precisely so that no wall clock is consulted
-    anywhere in the collector path. ``advance_by`` is set per test to make an attempt
-    appear to have taken however long the test needs it to have taken — including longer
-    than its timeout budget.
-    """
-
-    def __init__(self, start: datetime, *, advance_seconds: float = 0.0) -> None:
-        self._now = start
-        self._advance = timedelta(seconds=advance_seconds)
-        self.calls = 0
-
-    def __call__(self) -> datetime:
-        self.calls += 1
-        current = self._now
-        self._now = self._now + self._advance
-        return current
-
-
-class RecordingSleep:
-    """TEST DOUBLE. Records what it was asked to wait for, and waits for nothing."""
-
-    def __init__(self) -> None:
-        self.slept: list[float] = []
-
-    def __call__(self, seconds: float) -> None:
-        self.slept.append(seconds)
+# SteppingClock AND RecordingSleep ARE DELETED, AND THEIR SUBJECT IS DELETED WITH THEM.
+#
+# They were the two callables ``collect`` took: a clock a test advanced to make an attempt
+# appear slow, and a sleep that recorded what it was asked for and waited for nothing.
+# BP-AMENDMENT-0001 §D.3 part 1 removed both PARAMETERS — the run's instant is now a value
+# and the waiting is a named member of a closed ``DelayKind`` — so there is nothing left for
+# either double to be a double OF. They are not replaced by cleverer doubles; the properties
+# they were used to observe are now read off the runner's own ``CollectionResult`` and off
+# an adapter that is really slow. See tests/test_collector_runner.py.
+#
+# Nothing else in the suite referenced them (measured: `grep -rn "SteppingClock\|RecordingSleep" tests/`).
 
 
 def failing_fetch(error_class: str = "CONNECTION_REFUSED") -> AdapterFetchError:

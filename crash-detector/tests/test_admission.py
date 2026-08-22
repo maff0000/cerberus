@@ -406,10 +406,28 @@ def test_a_method_of_a_locally_defined_class_still_skips_its_receiver():
 
 # --- DECLARED LIMIT 1's CARRIER: THE EXEMPTION SET IS PINNED ------------------------------ #
 
-#: Every ESTABLISHED_HERE in the product, as (module, callable, parameter). A NINTH use
-#: fails this test, which is what makes DECLARED LIMIT 1's "counted, not hidden" a measured
-#: claim rather than an intention. `check_judgement_path_doors.py` prints the same set from
-#: the SOURCE; this reads it from the RUNTIME, so the two are independent readings of it.
+#: Every ESTABLISHED_HERE in the product, as (module, callable, parameter). A use that is
+#: not in this set fails this test, which is what makes DECLARED LIMIT 1's "counted, not
+#: hidden" a measured claim rather than an intention. `check_judgement_path_doors.py` prints
+#: the same set from the SOURCE; this reads it from the RUNTIME, so the two are independent
+#: readings of it.
+#:
+#: IT WENT FROM EIGHT TO SIXTEEN AT WO-2R3 INCREMENT 3, AND THAT IS A WIDENING OF THE
+#: DECLARED LIMIT, NOT A DETAIL. BP-AMENDMENT-0001 §D.3 put `collectors/` inside the static
+#: check's deny-by-default RULE 1, so five more public callables became doors and had to
+#: state what they do not exact-type. The eight new uses are of exactly two kinds and the
+#: distinction is the whole of CD-BP-003:
+#:
+#: * FOUR are the PROTOCOL BOUNDARY on `collect` — adapter, sink, ledger, validator. These
+#:   are the softest surface in the product, BLUEPRINT §17's CD-BP-003, and the Product
+#:   Owner named them the fourth Assurance seat's first target. They are NOT closures.
+#: * FOUR are ESTABLISHMENT DOORS — callables whose entire contract is to accept any object
+#:   and establish or describe it: missing_adapter_members(candidate), local_refs_only(schema),
+#:   JsonSchemaValidator.validate(payload, schema). These are the same kind of use as
+#:   own_model_id(value): the door IS the establishment.
+#:
+#: The mechanism worked as designed. Nothing widened quietly; this test failed and a seat
+#: had to write down why for each one.
 EXPECTED_ESTABLISHED_HERE = frozenset(
     {
         ("crash_detector.engine.model", "own_model_id", "value"),
@@ -420,6 +438,27 @@ EXPECTED_ESTABLISHED_HERE = frozenset(
         ("crash_detector.dials.provenance", "observed_for_dial", "inputs_used"),
         ("crash_detector.dials.provenance", "derived_within_one_dial", "quantities"),
         ("crash_detector.dials.provenance", "derived_within_one_dial", "reduction"),
+        # CD-BP-003 — the four Protocol parameters of A6. A DECLARED LIMIT, not a closure.
+        ("crash_detector.collectors.runner", "collect", "adapter"),
+        ("crash_detector.collectors.runner", "collect", "sink"),
+        ("crash_detector.collectors.runner", "collect", "ledger"),
+        ("crash_detector.collectors.runner", "collect", "validator"),
+        # The establishment doors of the collector package.
+        ("crash_detector.collectors.adapter", "missing_adapter_members", "candidate"),
+        ("crash_detector.collectors.validation", "local_refs_only", "schema"),
+        ("crash_detector.collectors.validation", "JsonSchemaValidator.validate", "payload"),
+        ("crash_detector.collectors.validation", "JsonSchemaValidator.validate", "schema"),
+    }
+)
+
+#: The four that are CD-BP-003 itself, named separately so a reader of this file can see the
+#: declared limit's exact extent without reading the reasons. Asserted below.
+CD_BP_003_PARAMETERS = frozenset(
+    {
+        ("crash_detector.collectors.runner", "collect", "adapter"),
+        ("crash_detector.collectors.runner", "collect", "sink"),
+        ("crash_detector.collectors.runner", "collect", "ledger"),
+        ("crash_detector.collectors.runner", "collect", "validator"),
     }
 )
 
@@ -480,6 +519,32 @@ def test_every_established_here_states_a_reason_in_the_artefact():
     assert len(found) == len(EXPECTED_ESTABLISHED_HERE)
     for where, admission in found.items():
         assert len(admission.because) > 80, f"{where} states no real reason"
-        assert "CARRIER MEASURED" in admission.because or "own_terms" in admission.because, (
-            f"{where} names no carrier for the residue it leaves (CD-RULE-006)"
+        assert (
+            "CARRIER MEASURED" in admission.because
+            or "NOT PROVED TO BE CARRIED ANYWHERE" in admission.because
+            or "own_terms" in admission.because
+        ), f"{where} names no carrier for the residue it leaves (CD-RULE-006)"
+
+
+def test_cd_bp_003_is_exactly_four_parameters_and_every_one_names_its_residue():
+    """CD-BP-003's EXTENT, pinned, and its CD-RULE-006 form, asserted.
+
+    BLUEPRINT §17 names the adapter boundary the softest remaining surface and the Product
+    Owner named it the fourth Assurance seat's first target. A declared limit whose extent
+    is a paragraph is a limit that grows by a parameter at a time; this asserts that it is
+    FOUR parameters of ONE door, that each one says CD-BP-003 in the artefact, and that each
+    one either names a carrier it measured or writes the words CD-RULE-006 requires.
+    """
+    found = _established_here_in_the_product()
+    observed = frozenset(
+        where for where in found if where[0].startswith("crash_detector.collectors")
+    )
+    assert observed & CD_BP_003_PARAMETERS == CD_BP_003_PARAMETERS
+    for where in CD_BP_003_PARAMETERS:
+        because = found[where].because
+        assert "CD-BP-003" in because, f"{where} does not name the risk it is"
+        assert "NOT PROVED TO BE CARRIED ANYWHERE" in because, (
+            f"{where} claims a carrier for every residue it leaves. CD-RULE-006: a named "
+            "carrier is a CLAIM. This boundary has a residue nothing carries and it must "
+            "say so."
         )
