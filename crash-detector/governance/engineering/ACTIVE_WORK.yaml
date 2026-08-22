@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T23:10:43Z'
+updated_utc: '2026-08-22T23:44:54Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -56,6 +56,19 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **THE FIFTH SEAT HAS RETURNED AND THE VERDICT IS RED (BL-20260822T234454Z-0112). T2 RED.
+  CD-AC-002 AMBER, NOT CLOSED. CD-AC-005 AMBER, NOT CLOSED. THE GATE IS SHUT AND WO-2R3 IS NOT
+  ACCEPTED.** `governance/assurance/WO-2R3/VERDICT-FIFTH-SEAT.md`, 1009 lines, banked VERBATIM beside
+  the fourth seat's three documents and not inside them. **T8, T9 AND T10 ARE MEASURED FOR THE FIRST
+  TIME BY ANY SEAT.** ***
+  **THE HEADLINE INVERTS CD-D-146: `guarded` FAILS THE PROJECT'S OWN RENAME TEST — PL-REPRODUCED END
+  TO END, TWO LINES, 1 VIOLATION -> 0, 2 FAILED -> 1551 PASSED, RUNTIME IDENTITY UNCHANGED.** And the
+  seat found the route nobody had written down: **`__wrapped__` IS LIVE ON THE CD-ASR-F03 GUARD**, the
+  attribute this project `delattr`s in two other places as a bypass, **carried by a shipped test that
+  asserts it is present** — a PRODUCT defect, not an instrument one. **FIVE PRODUCT AUTHORITY
+  QUESTIONS (Q1-Q5) ARE UP AND NOTHING MOVES WITHOUT A RULING.** CD-PL-F100 is raised by the Project
+  Lead against its own dispatch instrument. **EVERYTHING BELOW IS RETAINED; ONLY ITS "WHAT HAPPENS
+  NEXT" IS SUPERSEDED.** ***
   *** **CORRECTION AT BL-20260822T231043Z-0111, AND IT SUPERSEDES THE TENSE OF EVERY SENTENCE BELOW:
   THE FIFTH SEAT WAS DISPATCHED AND ITS FIRST CARRIER DIED WITHOUT PRODUCING ANYTHING. THE DISPATCH
   WAS ISSUED; THE AUDIT DID NOT HAPPEN.** `governance/assurance/WO-2R3/` holds THREE documents and all
@@ -3006,6 +3019,13 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  *** **SUPERSEDING STEP, BL-20260822T234454Z-0112: STOP. THE GATE VERDICT IS IN AND IT IS RED, AND
+  FIVE PRODUCT AUTHORITY QUESTIONS ARE UP.** Nothing moves on Q1-Q5 without a ruling — no increment,
+  no disposition, no code change, no instrument change, and **THE DOORS CHECK IS NOT MADE GREEN BY ANY
+  ROUTE.** The eleven Class-2 dispositions are UNBLOCKED by T8 (CD-D-130 satisfied) and HELD by Q3,
+  which asks whether the disposition vocabulary fits the answer that came back. `__wrapped__` (Q2) is
+  the strongest candidate for the next increment and is dispatched only on a ruling, by a FRESH
+  Engineer (PBG-SOD-001). **THE STEP BELOW IS DISCHARGED: THE FIFTH SEAT RAN AND RETURNED.** ***
   *** **SUPERSEDING STEP, BL-20260822T231043Z-0111: THE ONLY THING OWED BEFORE ANY OF THE BELOW IS
   THAT THE FIFTH SEAT ACTUALLY RUNS. A SECOND CARRIER IS OUT UNDER THE STANDING DISPATCH. STOP AT ITS
   VERDICT; RECONCILE THE RETURN BY MEASUREMENT AND BANK IT BESIDE — NEVER INSIDE — THE FOURTH SEAT'S
@@ -3773,5 +3793,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T231043Z-0111   # PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T234454Z-0112   # PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
