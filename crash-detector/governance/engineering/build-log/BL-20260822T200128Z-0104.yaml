@@ -1,0 +1,373 @@
+entry_id: BL-20260822T200128Z-0104
+timestamp_utc: '2026-08-22T20:01:28Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: bc28928
+parent_entry_id: BL-20260822T192832Z-0103
+schema_version: 1
+
+action_summary: >
+  *** **THE BOUNDED COMPLETION OF INCREMENT 5 IS RECONCILED AND ACCEPTED AS THE COMPLETION AT LANE
+  `531c95c` — AND IS NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005, WHICH REMAIN THE FOURTH
+  ASSURANCE SEAT'S AND THE PRODUCT OWNER'S (PO-DECISIONS-0010 ruling 5, standing).** ***
+  *** **THE ONE THING THAT DECIDES WHETHER THIS COMPLETION MEANS ANYTHING IS THE CONTRAST, AND THE
+  PROJECT LEAD RAN IT RATHER THAN READ IT — BOTH ARMS, TWO PRISTINE EXTRACTIONS, ONE PATCH, ONE
+  COMMAND.** ***
+  `variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch` — DECLARED LIMIT 1's
+  own executable example, landed verbatim as a fielded public frozen judgement-path type with no
+  `__post_init__` and no `__init__`. **AT `46adf33`: EXIT 0, "PASS — 96 assertions, 0 violations",
+  and the type printed as `ADJACENT (not required, and this is a real hole): engine/verdict.py:40
+  Verdict [RULE A] fields=['score']`. AT `531c95c`: EXIT 1, "FAIL — 1 violation(s)", and
+  `VIOLATION src/crash_detector/engine/verdict.py:40 — Verdict is a PUBLIC FROZEN type ON A
+  JUDGEMENT PATH declaring 1 field(s) ['score'], and it carries no @establishes(...) ... a type that
+  establishes NOWHERE FAILS ON ARRIVAL`.** THE WIDENING IS IN THE CODE PATH AND NOT IN THE HEADER
+  TEXT, and that sentence is now a measurement rather than a hope.
+  *** **CD-PL-F92 SAID THIS BOUNDARY COULD NOT BE RECONCILED BY RUNNING THE CHECKS, AND IT COULD
+  NOT.** *** The instrument is green at `46adf33` and green at `531c95c`; the suite passes at both;
+  the sweep is unmoved. **EVERY STANDING INSTRUMENT IN THIS REPOSITORY IS BLIND TO THE DIFFERENCE
+  BETWEEN THIS COMPLETION AND A DOCSTRING EDIT.** Only the contrast tells them apart, and the method
+  that reconciled five increments would have accepted an inert change without noticing.
+  CD-ENG-WO2R3-01 RETURNED ALIVE across FOUR commits, identity CLEAN on all four, committed as it
+  went for the SIXTH increment running. Porcelain ZERO; 10 changed paths, ALL inside the six writable
+  paths of CD-D-137; TWO build-log entries ADDED and none modified; `ACTIVE_WORK.yaml` untouched by
+  the seat; **`git diff --stat 46adf33 HEAD -- src/ plants/` EMPTY — the stop condition of CD-D-137
+  was never reached and the Project Lead's vacuity measurement held.**
+  *** **AND THE SEAT ADJUDICATED A CONTRADICTION IN THE PROJECT LEAD'S OWN DISPATCH RATHER THAN
+  INHERIT IT. CD-PL-F93 IS RAISED FOR IT AND IT IS THE MOST IMPORTANT THING IN THIS ENTRY.** ***
+
+reconciliation_method: >
+  Every number and every quoted line below was produced by the PROJECT LEAD running the command
+  shown, in /srv/crash-detector-wo2r3 at 531c95c or in a pristine /tmp extraction, on 2026-08-22.
+  **NOTHING IN THIS ENTRY IS TRANSCRIBED FROM THE SEAT'S RETURN** (CD-RULE-009, CD-D-119). The
+  seat's return was read AFTER the measurements, as a cross-check on them and not as their source.
+
+the_contrast_the_project_lead_ran_itself_because_nothing_else_proves_this_completion:
+  rule: 'CD-D-138, ruled at the issuing boundary before the seat had written a line.'
+  the_variant: 'variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch'
+  what_it_adds: >
+    `@dataclass(frozen=True) class Verdict: score: float` under src/crash_detector/engine/, with NO
+    `__post_init__`, NO `__init__` and NO `@establishes` — DECLARED LIMIT 1's own executable example,
+    which the limit spelled out in advance precisely so that the hole could be demonstrated and not
+    argued about.
+  old_arm:
+    command: >
+      rm -rf /tmp/pl-arm-old && mkdir -p /tmp/pl-arm-old && git archive 46adf33 | tar -x -C
+      /tmp/pl-arm-old && cd /tmp/pl-arm-old && git apply -p1 <the V43 patch> && python3 -B
+      tools/register/check_constructor_field_establishment.py --root .
+    observed: '**EXIT 0 · "PASS — 96 assertions, 0 violations" · ADJACENT SET: 2 · 100 classes examined.**'
+    the_line: >
+      "ADJACENT (not required, and this is a real hole): engine/verdict.py:40 Verdict [RULE A]
+      fields=['score']"
+    what_it_establishes: >
+      **THE HOLE WAS REAL AND IT WAS OPEN.** A fielded public frozen judgement-path type with no
+      establishment whatsoever entered the tree at `46adf33` and the governing instrument EXITED 0
+      and called it an adjacency. This is CD-ENG-WO2R3-F17 demonstrated by execution, at the SHA
+      where the seat that raised it had already declared it and refused to close it.
+  new_arm:
+    command: 'the SAME patch and the SAME command, in a fresh pristine extraction of 531c95c'
+    observed: '**EXIT 1 · "FAIL — 1 violation(s)".**'
+    the_line: >
+      "VIOLATION  src/crash_detector/engine/verdict.py:40 — Verdict is a PUBLIC FROZEN type ON A
+      JUDGEMENT PATH declaring 1 field(s) ['score'], and it carries no @establishes(...). Its
+      establishment is ABSENT (no __post_init__ or __init__ in its own class body). Since
+      PO-DECISIONS-0010 ruling 1 the class reads BODY-BORNE OR ABSENT ... a type that establishes
+      NOWHERE FAILS ON ARRIVAL rather than sitting outside a class worded around bodies."
+  hygiene: >
+    Neither arm mutated a worktree and neither used a git worktree. Two independent `git archive`
+    extractions, patched in /tmp, run there, discarded.
+  and_what_the_contrast_does_NOT_establish: >
+    **IT IS ENTIRELY STATIC, AND THE SEAT SAID SO FIRST AND UNPROMPTED.** `Verdict` is never imported
+    or constructed in either arm; **IT WOULD STILL BE CONSTRUCTIBLE AT RUNTIME IN THE FAILING ARM.**
+    What the contrast proves is that the TREE can no longer HOLD such a type and pass its own check.
+    Every benefit of this widening is PROSPECTIVE — it closed no present exposure, because the
+    Project Lead measured before the dispatch that there was none. That is the ruling's whole point
+    (a prospective unguarded door is what "by construction" must refuse) and it is also the exact
+    limit of this evidence.
+
+the_clean_arm_and_the_conservation_audit_PL_measured_at_531c95c:
+  head_and_porcelain:
+    command: 'git rev-parse HEAD ; git status --porcelain | wc -l'
+    observed: '**531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0 · 0 lines.**'
+  identity:
+    command: "git log --format='%an <%ae> | %cn <%ce>' 46adf33..HEAD | sort -u"
+    observed: >
+      **EXACTLY ONE LINE: CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid> on both
+      author and committer, across all four commits.** CD-RULE-002 held. This audit covers the whole
+      range including the seat's final commit, which the seat itself could not cover from inside its
+      own entry (CD-PL-F85) and said so.
+  scope:
+    command: 'git diff --name-only 46adf33 HEAD ; git diff --stat 46adf33 HEAD -- src/ plants/'
+    observed: >
+      **10 PATHS, EVERY ONE INSIDE THE SIX WRITABLE PATHS OF CD-D-137** — the two register tools, the
+      two execution contracts, required-tests.yaml, the establishment test file, the variants manifest
+      and the V43 patch, and the two new build-log entries. **`src/` AND `plants/` DIFF IS EMPTY.**
+    why_that_empty_diff_is_the_second_most_important_measurement_here: >
+      CD-D-137 protected `src/` and staked the narrowing on a prediction: that every member of the
+      widened population ALREADY satisfies the widened rule, so no product code is needed. **THE
+      PREDICTION HELD AND THE STOP CONDITION NEVER FIRED.** Had the seat needed `src/`, the dispatch
+      required it to STOP rather than expand — and the empty diff is the evidence it did not have to.
+  build_log_entries:
+    command: 'git diff --name-status 46adf33 HEAD -- governance/engineering/build-log/'
+    observed: '**A, A — TWO ENTRIES ADDED (0066, 0067), NONE MODIFIED.** Both inside the lane block
+      0060-0099. PBG-CONT-003 held: the correction supersedes and does not edit.'
+  constructor_instrument:
+    command: 'python3 -B tools/register/check_constructor_field_establishment.py --root .'
+    observed: >
+      **EXIT 0 · "PASS — 97 assertions, 0 violations" · "POPULATION — THE BODY-BORNE-OR-ABSENT
+      FIELD-ESTABLISHMENT CLASS: 33. FIELDED (establishment REQUIRED): 32. ZERO-FIELD (SATISFIED
+      VACUOUSLY): 1. DECLARED TO @establishes: 32." · ESTABLISHED_HERE 3, unchanged · 99 classes
+      examined.**
+    the_one_type_that_entered_the_population_named: >
+      "IN — SATISFIED VACUOUSLY: observations.py:170 Empty [RULE C] fields=[] — establishment ABSENT
+      (no __post_init__ or __init__ in its own class body)". **32 -> 33 and the delta is exactly
+      `Empty`.**
+    the_vacuous_case_is_distinguishable_from_unexamined_and_this_seat_checked_that_rather_than_took_it: >
+      Three printed facts do it: `Empty` sits INSIDE the POPULATION 33 line, it is printed BY NAME
+      with its reach rule, file, line and field list, and the assertion total MOVED 96 -> 97 to carry
+      its one assertion. The instrument also labels that assertion for what it is — a measurement of
+      the field list, NOT a proof about establishment. **A SILENT EXCLUSION WOULD HAVE LEFT THE
+      COUNT AT 96 AND THE POPULATION AT 32, WHICH IS PRECISELY THE READING RULING 1 FORBIDS.**
+    the_prediction_and_the_measurement_are_two_things: >
+      The dispatch PREDICTED 33 and PROHIBITED the seat from quoting it. The seat measured 33
+      independently and said in terms that it did not adopt the sentence. The Project Lead has now
+      measured 33 a third time. **THE AGREEMENT IS A CHECK ON ALL THREE READINGS AND IS NOT THE
+      SOURCE OF ANY OF THEM.**
+  doors_instrument:
+    command: 'python3 -B tools/register/check_judgement_path_doors.py --root .'
+    observed: '**EXIT 0 · "PASS — 54 assertions, 0 violations", unchanged from baseline.**'
+  suite:
+    command: 'python3 -B -m pytest -q'
+    observed: '**1538 passed in 12.72s** (1537 at 46adf33).'
+  node_ids_SETS_DIFFED_NOT_COUNTED:
+    command: >
+      two pristine extractions, `python3 -B -m pytest tests --collect-only -q | grep "::" | sort` in
+      each, then `comm -23` and `comm -13`
+    observed: >
+      **OLD 1537 · NEW 1538 · LOST: ZERO (the comm -23 output is EMPTY) · ADDED: ONE, named —
+      `tests/test_field_establishment.py::test_the_vacuously_satisfying_members_are_exactly_this_set`.**
+      A bare count is not a conservation claim and this is not a bare count.
+  plants:
+    command: 'git apply --check -p1 on each of the 11 plant patches, in the pristine 531c95c extraction'
+    observed: '**11 APPLY, 0 REFUSED.** PL-measured at the returned SHA, not carried from the record.'
+  class_2_sweep:
+    command: 'python3 -B tools/sweep/delegated_judgement_sweep.py --root .'
+    observed: '**EXIT 1 · "FAIL — 534 sites, 15 violations" — IDENTICAL TO BASELINE, NOT MOVED.**
+      Failing by ruling (CD-D-130), out of scope, reported and not chased. Correct.'
+
+CD_PL_F91_was_executed_and_the_seat_made_it_larger_and_better_than_the_finding:
+  what_the_project_lead_found: 'ONE stale sentence, in check_judgement_path_doors.py.'
+  what_the_seat_found_by_grepping_the_COUNT_as_well_as_the_WORDING: >
+    **FOUR PLACES, NOT ONE** — the doors tool header, the doors tool's runtime note, the doors row in
+    required-tests.yaml, and the doors execution contract. **FIXING ONLY THE ONE THE PROJECT LEAD
+    NAMED WOULD HAVE RECREATED THE DEFECT IN THREE PLACES AND CALLED IT CLOSED.**
+  and_the_repair_is_structural_rather_than_textual: >
+    Each of the four now cites the sibling instrument's **COMMAND** — "RUN IT AND READ ITS OWN
+    POPULATION LINE" — and cites NEITHER its class definition NOR its count, with the superseded
+    wording quoted rather than deleted. The note states the general rule it learned: **"A COUNT READ
+    FROM A SIBLING'S RUN IS A MEASUREMENT; A COUNT COPIED HERE IS A TRANSCRIPTION" (CD-RULE-009).**
+    That converts a one-off correction into a form that cannot go stale again, which is what the
+    finding should have asked for and did not.
+  PL_verified: >
+    `grep -rn "class at 32 members"` at 531c95c returns THREE hits and **ALL THREE ARE THE
+    SUPERSEDED WORDING BEING QUOTED AS SUPERSEDED** — two in the doors tool, one in the correction
+    entry. No live citation of the stale count survives outside `plants/`. See CD-D-139.
+  declared_limit_1_supersession_PL_verified_in_all_three_of_its_own_places: >
+    tools/register/check_constructor_field_establishment.py (header, with the superseded clause (4)
+    AND the superseded LIMIT 1 both quoted in full) · required-tests.yaml · contracts/execution/
+    CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.md. Each carries the replacement
+    and the old wording side by side. **THE RESIDUE THAT SURVIVES IS DECLARED AND IS NOT DRESSED
+    DOWN:** the cross-field invariant, which no declared field list can state — carrier **NOT PROVED
+    TO BE CARRIED ANYWHERE** (CD-ENG-WO2R3-F18), unchanged by this widening and not claimed to be.
+
+rulings_on_the_four_findings_the_seat_raised:
+- id: CD-ENG-WO2R3-F22
+  severity: LOW
+  the_seat_said: >
+    plants/MANIFEST.md carries a FIFTH copy of the superseded class wording and its count — "all 32
+    members of the body-borne field-establishment class" — and `plants/` is protected here, so it was
+    NOT touched.
+  ruling: >
+    **UPHELD, PL-CONFIRMED AT plants/MANIFEST.md:1148-1149, AND DELIBERATELY NOT FIXED AT THIS
+    BOUNDARY (CD-D-139).** The seat did exactly the right thing: it found a stale line inside a
+    protected path, reported it, and left it alone. A seat that had quietly reached into `plants/`
+    to tidy a sentence would have broken the scope for a documentary gain.
+  and_the_observation_that_makes_this_worth_recording: >
+    **THE PROTECTION IS WHAT MADE THE FIFTH COPY VISIBLE.** Had `plants/` been writable, the sentence
+    would have been silently corrected and no record would show that a fifth copy ever existed —
+    which is the same disappearance CD-PL-F91 exists to prevent. A narrow scope did not merely
+    prevent an overreach here; it converted an invisible tidy-up into a declared finding.
+- id: CD-ENG-WO2R3-F23 / CD-ENG-WO2R3-F25
+  severity: LOW
+  the_seat_said: >
+    It wrote line numbers from INTENT rather than reading them off the artefact in a commit message
+    (F23) — and then the Build Log entry that RAISED F23 did the same thing in its own body (F25).
+    Corrected by supersession in entry 0067, never by edit, and the rule that would prevent it is a
+    discipline the seat wrote about itself — **NOT PROVED TO BE CARRIED ANYWHERE.**
+  ruling: >
+    **UPHELD, AND THE CORRECTED FIGURES ARE PL-VERIFIED**: the contract's CHECK LIMIT 1 heading is at
+    :280 as the correction states, the instrument header limit at :165, required-tests.yaml at :1492.
+    A seat that catches itself committing the same defect inside the entry that reports the defect,
+    and supersedes rather than edits, is doing the thing this project exists to make normal.
+  and_this_seat_will_not_pretend_it_is_immune: >
+    The Project Lead has raised CD-PL-F36 against itself for transcribing rather than resolving a
+    SHA. The failure mode is identical and the remedy is identical: RESOLVE THE FIGURE FROM THE
+    ARTEFACT AT THE MOMENT OF WRITING. That it remains uncarried by any mechanism is honest and is
+    left declared rather than papered over.
+- id: CD-ENG-WO2R3-F24
+  severity: LOW
+  the_seat_said: >
+    Offered TO the fourth Assurance seat, against its own work: the implemented membership is
+    (1)(2)(3) with NO locus gate, which the seat calls **wider than the ruling's sentence** — a type
+    establishing by some third route is also IN and REQUIRED. It believes that is the ruling's
+    meaning and says the error direction is toward a LARGER class, but names it as the seam to
+    attack the widened definition at.
+  ruling: >
+    **THE IMPLEMENTATION IS CORRECT AND THE SEAM IS REAL, AND BOTH GO UP.** On the extension the two
+    readings coincide: "body-borne OR absent" is EXHAUSTIVE over the body-borne predicate — a type
+    either defines an establishing body or does not — so dropping clause (4) as a gate widens the
+    class to precisely what the disjunction names and not one type further. Where it genuinely goes
+    beyond the SENTENCE is in what it REQUIRES: `@establishes` of every fielded member regardless of
+    any third establishment route. **THAT IS RULING 1'S OWN "asserts over the WHOLE enumerated
+    population", and the alternative — a third route exempting a fielded type — is the exemption the
+    ruling abolished.**
+  and_it_is_NOT_settled_by_this_ruling: >
+    The Product Owner said in terms that "the seat remains free to attack the widened definition
+    itself" (PO-DECISIONS-0010 ruling 3(iii)). **THE PROJECT LEAD'S AGREEMENT WITH THE ENGINEER IS
+    TWO IMPLEMENTERS AGREEING AND IS WORTH LESS THAN ONE AUDITOR DISAGREEING.** F24 travels to the
+    fourth seat AS THE ENGINEER FRAMED IT, with this ruling attached and not substituted for it.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F93
+  severity: MEDIUM
+  title: >
+    **THE PROJECT LEAD'S OWN DISPATCH STATED THE MEMBERSHIP RULE TWO INCOMPATIBLE WAYS IN TWO
+    ADJACENT SUB-ITEMS, AND THE NARROWER OF THE TWO WOULD HAVE CONTRADICTED THE RULING IT WAS
+    TRANSMITTING. THE SEAT CAUGHT IT. THE PROJECT LEAD DID NOT.**
+  what: >
+    CD-DISPATCH-WO2R3-INC5C-ENGINEER objective **(a)** wrote: "A class is IN the class when it is
+    PUBLIC (1), a FROZEN SUBJECT (2), ON A JUDGEMENT PATH (3), **and DECLARES AT LEAST ONE FIELD**."
+    Objective **(b)** wrote: "Do NOT make the vacuous case a silent exclusion that drops it from the
+    ledger — the ruling says the instrument asserts over the WHOLE population. Enumerate it, count
+    it, print WHY it passes." **THESE DISAGREE.** Under (a), `Empty` is OUT and the population is 32.
+    Under (b), `Empty` is IN and the population is 33. The seat reported the contradiction, took
+    (b)'s reading because it is the RULING'S own wording ("satisfies vacuously"; "the WHOLE
+    enumerated population"), built the output so the narrower reading is still available without
+    trusting its choice (POPULATION 33 / FIELDED 32 / ZERO-FIELD 1 printed side by side), and
+    recorded the adjudication in the Build Log rather than deciding it silently.
+  direction_of_error: >
+    **TOWARD THE NARROWER CLASS, WHICH IS THE DANGEROUS DIRECTION AND IS THE EXACT DEFECT THE RULING
+    EXISTS TO CORRECT.** Followed literally, (a) would have dropped the zero-field type out of the
+    enumeration entirely — a class definition that is a census of what BOTHERED to qualify, which is
+    the sentence PO-DECISIONS-0010 ruling 1 was written to kill. **THE PROJECT LEAD REPRODUCED THE
+    DEFECT INSIDE THE DISPATCH THAT WAS TRANSMITTING THE FIX FOR IT.**
+  how_found: 'By the Engineer seat, and reported unprompted in its return under "Ambiguity handled,
+    not resolved quietly". Not by the Project Lead, at drafting or at issue.'
+  why_it_is_MEDIUM_and_not_LOW: >
+    It was not a wording slip. It was a MEMBERSHIP RULE — the one thing this entire increment is
+    about — stated two ways in a document whose whole purpose was to state it once, correctly, on
+    behalf of a Product Owner ruling the Project Lead does not have the authority to narrow. Had the
+    seat obeyed (a) literally, as an Engineer is entitled to do with an explicit scope clause, **THE
+    DELIVERED INSTRUMENT WOULD HAVE ENFORCED A NARROWER CLASS THAN THE PRODUCT OWNER RULED, AND
+    EVERY CHECK IN THIS REPOSITORY WOULD HAVE BEEN GREEN.** The contrast in (f) would still have
+    passed, because `Verdict` is fielded either way.
+  what_saved_it: >
+    **NOT A CONTROL. A SEAT THAT READ THE RULING BEHIND THE DISPATCH INSTEAD OF ONLY THE DISPATCH.**
+    That is worth recording plainly, because it is not a mechanism and it will not be there next time
+    by construction.
+  this_is_the_fourth_consecutive_boundary_at_which_a_control_of_this_projects_own_design_was_found_scoped_narrower_than_the_class_it_names: >
+    CD-D-114 (the Product Owner's own list of four types), CD-PL-F89 (the Project Lead's one-sided
+    sequence bound), CD-D-134 (the ruled class itself), and now CD-PL-F93 (the dispatch transmitting
+    CD-D-134). **THE PATTERN HAS NOW CAUGHT EVERY PARTY ON THIS PROJECT INCLUDING THE ONE WRITING
+    THIS SENTENCE, AND IT IS NOT SLOWING DOWN.**
+  disposition: >
+    RAISED, RECORDED, NOT REMEDIED BY A RULE HERE. A rule amendment drafted in the same hour as the
+    finding is a rule amendment drafted in a hurry (the same reasoning applied to CD-PL-F91). It goes
+    to the fourth Assurance seat standing, and it is named in that seat's brief.
+
+decisions_ruled_here:
+- id: CD-D-139
+  title: 'CD-ENG-WO2R3-F22 is UPHELD and NOT fixed at this boundary. plants/MANIFEST.md keeps its
+    stale sentence, visibly and on the record.'
+  ruling: >
+    The fifth copy of the superseded class wording at plants/MANIFEST.md:1148-1149 stands. It is
+    DOCUMENTARY, it sits in a path protected by CD-D-137, and it is now named in the Build Log with
+    its file and line. It is not corrected by reaching into a protected path at reconciliation time,
+    and it is not corrected by widening a scope after the fact.
+  why: >
+    A protected scope that gets relaxed the moment it becomes inconvenient was never a scope. The
+    cost is one stale documentary sentence, declared. The alternative cost is a precedent that
+    protected paths yield to tidiness.
+- id: CD-D-140
+  title: 'The bounded completion is RECONCILED AND ACCEPTED AS THE COMPLETION OF INCREMENT 5 at
+    531c95c — and is NOT accepted as closing CD-AC-002 or CD-AC-005.'
+  ruling: >
+    Every clause of PO-DECISIONS-0010 ruling 2 is met and MEASURED: the instrument rule is widened in
+    the code path (contrast, both arms, PL-run); the vacuous case is enumerated, counted and asserted
+    over; the change is purely additive (zero node ids lost, zero pre-existing assertions moved,
+    src/ and plants/ untouched, plants 11/11, sweep unmoved); and it was re-measured with every
+    command recorded. **"Then nothing further stands before the gate" is now true.**
+  what_it_is_not: >
+    NOT an acceptance of WO-2R3, NOT a grading of CD-AC-002 or CD-AC-005, and NOT assurance of
+    anything. Reconciliation is not acceptance; acceptance is not assurance (PBG-AUTH-003).
+    PO-DECISIONS-0010 ruling 5 reserves that grading to the fourth fresh Assurance seat and the
+    Product Owner, for the SEVENTH boundary running.
+
+what_was_not_verified_by_the_project_lead_at_this_boundary: >
+  **THE ELEVEN PLANTS WERE VERIFIED TO *APPLY* AT 531c95c AND WERE NOT RE-CONTRASTED.** Whether each
+  still fails AT THE LAYER ITS PROPOSITION NAMES was not re-measured here; that is the
+  CD-ENG-WO2R3-F12 standard and it is a named target for the fourth seat, sharpened by CD-PL-F90.
+  **THE WO-2R3 VARIANT CORPUS WAS NOT RE-RUN BY THIS SEAT** — the seat reports 108 applying with the
+  same four pre-existing failures by name, and that is the seat's measurement, not this one's.
+  **THE LANE `pbg boot` RED (CONTINUITY_REFERENCE_INVALID) IS ACKNOWLEDGED AND NOT REPAIRED** — it is
+  the PL continuity record of `main` being read from inside a lane worktree, the same reading every
+  increment-1-to-5 seat got, and nothing under pbg/ was touched. It is not evidence about this work.
+  **NOTHING HERE IS ASSURANCE.** No plant, no variant and no instrument run in this entry was
+  produced by an independent seat.
+
+next_safe_action: >
+  *** **THE BOUNDED COMPLETION HAS BANKED. PO-DECISIONS-0010 RULING 3'S CONDITION IS MET AND THE
+  FOURTH FRESH ASSURANCE SEAT IS DISPATCHED NEXT, OVER THE WHOLE OF WO-2R3 AT `531c95c`. NOTHING
+  ELSE STANDS BEFORE THE GATE AND NO FURTHER ENGINEERING IS AUTHORISED.** ***
+  The seat is NONE of CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT
+  (PBG-SOD-001, non-waivable; CD-ENG-WO2R3-01 authored all five increments AND this completion, so it
+  is excluded absolutely). Read-only; mutation prohibited except explicitly safe diagnostic artefacts.
+  **ITS BRIEF IS SPECIFIED BY PO-DECISIONS-0010 RULING 3, IN THIS ORDER, AND NONE OF IT IS THIS
+  SEAT'S TO SOFTEN:**
+  **(iv) FIRST IN THE BRIEF — THE SENTENCE THE ENGINEER VOLUNTEERED AGAINST ITSELF: with V17 applied,
+  BOTH STATIC CHECKS STILL EXIT 0. THE CLOSURE IS A RUNTIME CLOSURE AND A GREEN STATIC RUN IS NOT
+  EVIDENCE OF IT. THE FOURTH SEAT ATTACKS THE RUNTIME CLOSURE *AS* RUNTIME.** And it is now doubly
+  earned: the seat volunteered the same limit AGAIN about this completion, unprompted — the V43
+  contrast is ENTIRELY STATIC and `Verdict` would still be constructible at runtime in the failing arm.
+  (i) THE THREE BINDING CLAUSES OF CD-D-129 — the exiting instrument's declaration VERBATIM (the
+  sweep, 534 sites / 15 violations, EXIT 1 BY DECLARED STATE, with the eleven original items and the
+  bisect); verdicts against DECLARATIONS and never exit codes alone; and the standing invitation to
+  attack the dispositions-after sequencing.
+  (ii) THE NAMED-TARGET LIST — the adapter boundary (CD-BP-003, the softest surface); the
+  CD-ENG-WO2R3-F15 TWO-RECONCILIATION BLINDNESS WINDOW, aimed at the WINDOW and not the guard;
+  CD-RT-003-GRANT-MATRIX-LIVE, which it must BITE or state MEASURED LIMITS on why it cannot be;
+  CD-ENG-WO2R3-F10; and THE ELEVEN CLASS-2 SWEEP ITEMS.
+  (iii) THE WIDENED INVARIANT AS AN ATTACKABLE CLAIM — "the seat remains free to attack the widened
+  definition itself", **with CD-ENG-WO2R3-F24 handed over as the Engineer framed it and the Project
+  Lead's agreement with it marked as two implementers agreeing.**
+  PLUS: the four CD-D-136 residues with their executable examples; CD-PL-F89's collision disclosure;
+  **and CD-PL-F93 STANDING — the Project Lead's own dispatch contradicted itself on the membership
+  rule and only the Engineer's reading of the ruling behind it prevented a narrower class shipping
+  green.**
+  **THEN STOP AT THE GATE VERDICT.** A PASS is not an acceptance and neither is a RED
+  (PBG-AUTH-003). **DO NOT** grade CD-AC-002 or CD-AC-005. **DO NOT** merge or promote the lane.
+  **DO NOT** admit anything (CD-RULE-001, PO-set, non-relaxable). **DO NOT** write the eleven sweep
+  dispositions early — CD-D-130 orders them AFTER the fourth seat reports.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS
+                                    # FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed
+                                    # (CD-PL-F36). The CD-RULE-008 pristine-clone boot verdict is
+                                    # taken AT that SHA BEFORE this field is written, so the verdict
+                                    # and the field name ONE commit.

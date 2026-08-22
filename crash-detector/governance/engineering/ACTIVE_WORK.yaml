@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T19:28:32Z'
+updated_utc: '2026-08-22T20:01:28Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -50,8 +50,42 @@ objective: >
   WO-3.
 current_phase: BUILD   # MOVED AT THIS BOUNDARY. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
-  *** **CD-D-134 CAME BACK RULED (PO-DECISIONS-0010) AND EXECUTION HAS BEGUN AT ITS RULING 2:
-  CD-DISPATCH-WO2R3-INC5C-ENGINEER IS ISSUED at lane `46adf33` to CD-ENG-WO2R3-01 — THE BOUNDED
+  *** **THE BOUNDED COMPLETION OF INCREMENT 5 IS RECONCILED AND ACCEPTED AS THE COMPLETION AT LANE
+  `531c95c` (CD-D-140) — AND IS NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005. PO-DECISIONS-0010
+  RULING 2 IS DISCHARGED AND "NOTHING FURTHER STANDS BEFORE THE GATE" IS NOW TRUE.** ***
+  *** **THE CONTRAST WAS RUN BY THE PROJECT LEAD, NOT READ — BOTH ARMS, TWO PRISTINE EXTRACTIONS,
+  ONE PATCH, ONE COMMAND.** *** V43 adds a fielded public frozen judgement-path type with no
+  establishing body. **AT `46adf33`: EXIT 0, PASS 96 assertions, and the type printed as
+  `ADJACENT ... engine/verdict.py:40 Verdict [RULE A] fields=['score']`. AT `531c95c`: EXIT 1,
+  FAIL 1 violation, `VIOLATION src/crash_detector/engine/verdict.py:40 — ... a type that establishes
+  NOWHERE FAILS ON ARRIVAL`.** The widening is in the CODE PATH and not in the header text.
+  **CD-PL-F92 WAS RIGHT: EVERY STANDING INSTRUMENT IN THIS REPOSITORY IS BLIND TO THE DIFFERENCE
+  BETWEEN THIS COMPLETION AND A DOCSTRING EDIT** — green at both SHAs, suite passing at both, sweep
+  unmoved. Only the contrast tells them apart.
+  PL-MEASURED AT `531c95c`: POPULATION **32 -> 33** (FIELDED 32, ZERO-FIELD SATISFIED VACUOUSLY 1,
+  DECLARED 32), assertions 96 -> 97, the entering type NAMED (`Empty`) · doors EXIT 0, PASS 54 ·
+  suite **1538 passed** · node-id **SETS DIFFED: ZERO LOST, ONE ADDED**, named · plants **11/11
+  APPLY** · sweep **534/15 UNMOVED** · identity CLEAN, one line over four commits · porcelain ZERO ·
+  10 changed paths all inside CD-D-137's six · **`git diff --stat 46adf33 HEAD -- src/ plants/`
+  EMPTY — the stop condition never fired and the vacuity prediction held.**
+  *** **CD-PL-F93 (MEDIUM) IS RAISED AGAINST THIS SEAT AND IS THE MOST IMPORTANT THING AT THIS
+  BOUNDARY.** *** The Project Lead's own dispatch stated the membership rule TWO INCOMPATIBLE WAYS:
+  objective (a) put "declares at least one field" into MEMBERSHIP (population 32, `Empty` OUT);
+  objective (b) required the vacuous case enumerated in the whole population (33). **FOLLOWED
+  LITERALLY, (a) WOULD HAVE SHIPPED A NARROWER CLASS THAN THE PRODUCT OWNER RULED, GREEN, AND THE
+  V43 CONTRAST WOULD STILL HAVE PASSED.** The Engineer caught it, took the RULING'S reading, printed
+  both readings side by side so its choice need not be trusted, and said so unprompted. **WHAT SAVED
+  IT WAS NOT A CONTROL — IT WAS A SEAT THAT READ THE RULING BEHIND THE DISPATCH.** Fourth
+  consecutive boundary at which a control of this project's own design was found scoped narrower than
+  the class it names, and it has now caught every party including this one.
+  Four seat findings, three against its own work: F22 (a FIFTH stale copy in protected `plants/` —
+  UPHELD, deliberately NOT fixed, CD-D-139), F23/F25 (line numbers written from intent, twice,
+  corrected by supersession), F24 (offered TO the auditor: the printed membership is wider than the
+  ruling's sentence — ruled correct, and it goes up AS THE ENGINEER FRAMED IT because two
+  implementers agreeing is worth less than one auditor disagreeing).
+  --- SUPERSEDED BY THE ABOVE, RETAINED: THE DISPATCH OF THIS COMPLETION ---
+  *** **CD-D-134 CAME BACK RULED (PO-DECISIONS-0010) AND EXECUTION BEGAN AT ITS RULING 2:
+  CD-DISPATCH-WO2R3-INC5C-ENGINEER WAS ISSUED at lane `46adf33` to CD-ENG-WO2R3-01 — THE BOUNDED
   COMPLETION OF INCREMENT 5, NOT A SIXTH SCOPE.** ***
   The class reads **BODY-BORNE OR ABSENT**: establishment derived from the declaration is REQUIRED of
   every fielded public frozen judgement-path type, a zero-field type satisfies vacuously, and the
@@ -2741,18 +2775,14 @@ required_evidence:
 next_safe_action: >
   *** **THE ORDER IS FIXED BY PO-DECISIONS-0010 AND IS NOT THIS SEAT'S TO REORDER: THE BOUNDED
   COMPLETION BANKS FIRST, THEN THE FOURTH ASSURANCE SEAT. CD-D-134 IS NO LONGER OPEN.** ***
-  **0. RECONCILE THE BOUNDED COMPLETION WHEN CD-ENG-WO2R3-01 RETURNS — AND RECONCILE IT BY THE
-  CONTRAST, NOT BY THE CHECKS** (CD-D-138, CD-PL-F92). Because `Empty` is the only adjacent member
-  and has no fields, **THE STANDING CHECKS CANNOT DISTINGUISH A REAL CLOSURE FROM A REWORDED
-  DOCSTRING AT THIS BOUNDARY.** Extract `46adf33` pristinely, apply the seat's variant there, observe
-  EXIT 0 and the ADJACENT line; then apply it at the returned SHA and observe NON-ZERO with the type
-  NAMED. **RUN BOTH ARMS. DO NOT READ THE SEAT'S REPORT OF THEM.** Also audit: identity over
-  `46adf33..HEAD`, porcelain zero, every changed path inside the six writable paths of CD-D-137,
-  no build-log entry modified, **`git diff --stat 46adf33..HEAD -- src/ plants/` EMPTY**, node-id sets
-  DIFFED against 1537, and the Class-2 sweep movement reported and not chased.
-  **THEN, AND ONLY THEN:**
-  **1. DISPATCH THE FOURTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 at the SHA the completion
-  banks at (NOT `46adf33`, which is now the completion's execution base) — none of
+  **0. THE BOUNDED COMPLETION HAS BANKED AND IS RECONCILED AT `531c95c` (CD-D-140). DISCHARGED.**
+  It was reconciled BY THE CONTRAST and not by the checks (CD-D-138, CD-PL-F92): both arms run by the
+  Project Lead from two pristine extractions — EXIT 0 and "ADJACENT" at `46adf33`, EXIT 1 and
+  "VIOLATION ... Verdict" at `531c95c`. Identity clean, porcelain zero, `src/` and `plants/` diff
+  EMPTY, node-id sets diffed with ZERO LOST, plants 11/11, sweep unmoved.
+  **RULING 3'S CONDITION IS THEREFORE MET AND NO FURTHER ENGINEERING IS AUTHORISED:**
+  **1. DISPATCH THE FOURTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 at **`531c95c`** (NOT
+  `46adf33`, which is now the completion's execution base) — none of
   CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001, non-waivable;
   and CD-ENG-WO2R3-01 is now the author of all five increments, so it is excluded absolutely).
   ITS BRIEF CARRIES, IN THIS ORDER, AND NONE OF IT IS THIS SEAT'S TO SOFTEN:
@@ -2767,7 +2797,16 @@ next_safe_action: >
   without routing it through the auditor and said why — "sending a definition I already believe
   incomplete to assurance would be paying for the answer twice" — and then said in terms: **"The seat
   remains free to attack the widened definition itself."** It is a claim, not a settled fact, and the
-  seat is invited to break it.
+  seat is invited to break it. **THE ENGINEER HAS ALREADY NAMED THE SEAM TO ATTACK IT AT AND IT
+  TRAVELS AS THE ENGINEER FRAMED IT (CD-ENG-WO2R3-F24):** the implemented membership is (1)(2)(3)
+  with NO locus gate, so `@establishes` is REQUIRED of every fielded member regardless of any third
+  establishment route. The Project Lead ruled that correct — and marked its own agreement as **TWO
+  IMPLEMENTERS AGREEING, WHICH IS WORTH LESS THAN ONE AUDITOR DISAGREEING.**
+  · **AND CD-PL-F93 (MEDIUM), STANDING AND DISCLOSED TO THAT SEAT BEFORE IT READS ANYTHING:** the
+  Project Lead's own dispatch for the bounded completion stated the membership rule TWO INCOMPATIBLE
+  WAYS, and the narrower reading would have shipped a class narrower than the Product Owner ruled,
+  green, with the contrast still passing. **ONLY THE ENGINEER'S READING OF THE RULING BEHIND THE
+  DISPATCH PREVENTED IT. THAT IS NOT A MECHANISM AND IT WILL NOT BE THERE NEXT TIME BY CONSTRUCTION.**
   · **CD-D-129's THREE MANDATORY CLAUSES, VERBATIM** — (i) a governed instrument in the
   tree EXITS 1 BY DECLARED STATE (`tools/sweep/delegated_judgement_sweep.py`, now **534 sites / 15
   violations**, up from 514/11 as a measured SIDE EFFECT of increment 5's new module and REPORTED
@@ -3402,5 +3441,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T192832Z-0103   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T200128Z-0104   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
