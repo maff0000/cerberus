@@ -1,0 +1,364 @@
+entry_id: BL-20260822T222921Z-0109
+timestamp_utc: '2026-08-22T22:29:21Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 60642bc5ebf46429bce26bbd27f719937cd23830   # RESOLVED with `git rev-parse`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the BL-...-0108 dispatch boundary.
+reconciliation_baseline: 'main at 60642bc; lane 531c95c -> 9f7b7640f692442e22a47ecac3d4a643057729d5'
+parent_entry_id: BL-20260822T211304Z-0108
+schema_version: 1
+
+action_summary: >
+  *** **THE REMEDIATION INCREMENT IS DELIVERED AND RECONCILED AT `9f7b764`. ALL SEVEN ITEMS LAND.
+  AND THE WIDENED DOORS INSTRUMENT IMMEDIATELY FOUND A PRE-EXISTING, UNDISPOSITIONED VIOLATION IN
+  PROTECTED PRODUCT CODE — SO THE LANE NOW CARRIES A REGISTER CHECK THAT EXITS 1 AND TWO SHIPPED
+  TESTS THAT FAIL, ON PURPOSE, AND THE ENGINEER REFUSED EVERY AVAILABLE WAY TO MAKE THEM GREEN.** ***
+  **THIS IS THE INSTRUMENT WORKING. IT IS NOT A REGRESSION AND IT IS NOT A FAILED INCREMENT.** The
+  dispatch said in terms that a new violation the widened walk finds in existing code is A FINDING
+  AND A STOP — not a thing to quietly exempt, and not a thing to fix on the Engineer's own
+  authority. The seat hit exactly that case on its second item and stopped exactly where it was told
+  to, having written down the exemption it was tempted by AND WHY IT REJECTED IT.
+  *** **EVERY CLAIM BELOW WAS MEASURED BY THIS SEAT. NOTHING IS RECONCILED BY READING THE ENGINEER'S
+  RETURN** (CD-D-138, CD-PL-F92). Both arms of every contrast were run by the Project Lead from
+  pristine `git archive` extractions.
+  *** **AND THIS SEAT GOT ONE OF THOSE CONTRASTS WRONG ON THE FIRST ATTEMPT AND IS RAISING IT
+  AGAINST ITSELF AS CD-PL-F98, BECAUSE THE WRONG ANSWER IT PRODUCED WAS "THE FIX DOES NOTHING".** ***
+  **THE GRADING OF ANY OF THIS IS THE FIFTH ASSURANCE SEAT'S AND THE DISPOSITION IS THE PRODUCT
+  OWNER'S** (PBG-AUTH-003). Nothing here closes CD-AC-002 or CD-AC-005.
+
+# ================================================================================================ #
+what_the_project_lead_measured_itself:
+  rule: 'Reconciling a return means MEASURING it. Every number below came out of a command this seat ran.'
+
+  lane_state:
+    command: 'git rev-parse HEAD ; git status --porcelain | wc -l'
+    observed: '**9f7b7640f692442e22a47ecac3d4a643057729d5 · 0 lines.**'
+  identity:
+    command: "git log --format='%an <%ae> | %cn <%ce>' 531c95c..HEAD | sort -u"
+    observed: >
+      **EXACTLY ONE LINE: `CD-ENG-WO2R3-02 <cd-eng-wo2r3-02@seats.crash-detector.invalid>`, author
+      and committer, across all SIX commits.** A fresh identity on this project came back clean on
+      its first increment, and CD-RULE-002 held without a warning existing to enforce it.
+  changed_paths:
+    command: 'git diff --name-status 531c95c..HEAD'
+    observed: >
+      **26 paths, EVERY ONE INSIDE THE WRITABLE SCOPE.** Four `src/` files and each is the file its
+      named item authorised — `collectors/runner.py` (A), `observations.py` (D), `admission.py`
+      (C, E2), `establishment.py` (E3). SIX build-log entries ADDED (0068-0073, in block, none
+      edited). `plants/` touched ONLY by the new plant and its MANIFEST row. **ACTIVE_WORK.yaml,
+      `pbg/`, `governance/assurance/`, `governance/decisions/`, `tools/sweep/` and every other `src/`
+      file: UNTOUCHED.**
+
+  the_instruments:
+    constructor:
+      command: 'python3 -B tools/register/check_constructor_field_establishment.py --root .'
+      observed: >
+        **EXIT 0 · PASS — 101 assertions, 0 violations · 99 CLASSES EXAMINED, AT ANY NESTING DEPTH ·
+        POPULATION 33 · DECLARED TO @establishes: 33** (was 32 — `Empty` joined, which is item D).
+        Assertions 97 -> 101.
+    doors:
+      command: 'python3 -B tools/register/check_judgement_path_doors.py --root .'
+      observed: >
+        *** **EXIT 1 · FAIL — 1 violation(s).** *** SUBJECTS ENUMERATED 28, DECORATED 27. EXEMPT
+        122 non-public / 17 @property / 5 Protocol stubs. ESTABLISHED_HERE uses 16, now RESOLVED
+        THROUGH ALIASES.
+        **THE VIOLATION, QUOTED FROM THE RUN:** `VIOLATION src/crash_detector/engine/evaluate.py:341
+        — guarded is a public entry point on a judgement path and it carries no @admits(...).`
+    suite:
+      command: 'python3 -B -m pytest -q'
+      observed: >
+        **2 failed, 1549 passed — 1551 collected.** Both failures are in
+        `tests/test_judgement_path_doors.py` and both are tests that assert the doors check EXITS 0:
+        `test_the_static_check_passes_and_is_not_vacuous` and
+        `test_the_collector_boundary_is_a_judgement_path_package_and_cd_bp_003_is_what_remains`.
+        **THEY FAIL BECAUSE THE CHECK NOW FINDS SOMETHING. THAT IS THE CORRECT BEHAVIOUR OF A TEST
+        THAT ASSERTS A CLEAN RUN ON A TREE THAT IS NOT CLEAN.**
+    node_ids:
+      command: 'pytest --collect-only at both SHAs, SETS diffed with `comm`, not counts compared'
+      observed: >
+        **1538 -> 1551. LOST: ZERO. ADDED: 13**, and this seat read all thirteen: six carriers for
+        item A, five for item B (including two that assert a DECLARED LIMIT still escapes), two for
+        item C. **The two failing tests are PRESENT AND COLLECTED — not lost, not skipped, not
+        xfailed.** A conservation claim made by diffing sets and not by comparing numbers.
+    class_2_sweep:
+      command: 'python3 -B tools/sweep/delegated_judgement_sweep.py --root .'
+      observed: '**534 sites, 15 violations — UNMOVED**, though item D touched a module inside the swept closure. Reported, not chased.'
+
+# ================================================================================================ #
+the_contrasts_the_project_lead_ran_ITSELF_from_pristine_extractions:
+  method: 'git archive <sha> | tar -x -C /tmp/<dir>. Two extractions: 531c95c and 9f7b764. No worktree mutated.'
+
+  item_B_the_plant_and_it_is_the_whole_proof_of_the_widening:
+    old_arm_531c95c_with_the_plant_applied:
+      observed: '**EXIT 0 · PASS — 97 assertions, 0 violations.** The plant is INVISIBLE.'
+      and_the_ledger_under_why: >
+        **`OUT engine/config.py:388 Judgement — clause (2): not declared @dataclass(frozen=True).`
+        AND NOTHING WHATEVER ABOUT `Verdict`.** THIS IS CD-PL-F96 REPRODUCED BY THE PARTY THAT
+        RAISED IT: a line about the container, with a specific and correct-sounding reason, over a
+        governed-shaped type that was never a candidate.
+    new_arm_9f7b764_with_the_same_plant:
+      observed: >
+        *** **EXIT 1 · FAIL — 1 violation(s).** *** POPULATION 34. **CLASSES EXAMINED 101** (99 + the
+        plant's two). RULE A 14 -> 15.
+        `ESTABLISHMENT ABSENT (reported, NOT exempt): engine/config.py:392 Judgement.Verdict [RULE A]
+        fields=['score', 'breached']`.
+      and_the_count_is_now_ASSERTED_not_printed: >
+        Quoted from the run: *"THE COUNT IS ASSERTED, NOT PRINTED. Two INDEPENDENT derivations of the
+        examined set are diffed AS SETS at every run: the adjudication path finds 101; a separate
+        re-read of each file from disk, re-parsed and traversed by ast.NodeVisitor dispatch rather
+        than ast.walk, finds 101. IN THE INDEPENDENT READING AND NEVER ADJUDICATED: 0. ADJUDICATED
+        BUT NOT INDEPENDENTLY FOUND: 0. Either is a VIOLATION above, not a note."*
+        **THE SECOND DERIVATION RE-READS FROM DISK AND USES A DIFFERENT TRAVERSAL. IT IS NOT TWO
+        READINGS OF ONE LIST.**
+      CD_PL_F96_CLOSED_ON_ITS_NAMED_PROOF: >
+        The Product Owner's acceptance condition was that the ledger enumerate every class examined
+        or state what it cannot see, **"proven by re-running the auditor's nested plant and reading
+        the output"**. THIS SEAT RE-RAN IT AND READ IT:
+        `IN engine/config.py:392 Judgement.Verdict — [RULE A] FIELDED, 2 declared field(s);
+        establishment ABSENT; @establishes REQUIRED.` — printed BESIDE the container's own OUT line,
+        so a reader sees the container adjudicated AND the type inside it adjudicated. **CLOSED.**
+    the_bitten_standard_PO_DECISIONS_0011_ruling_4:
+      command: "git cat-file blob 9f7b764:<instrument> | sha256sum, against sha256sum of the file in the extraction I ran"
+      observed: >
+        **BOTH INSTRUMENTS MATCH BYTE-FOR-BYTE** — constructor `48679d2bc5b2ac8c…`, doors
+        `ff62db81c4558d36…`. The plant was applied for real with `git apply`, the clean arm was run
+        first, and the instrument that produced the failure is provably the shipped one.
+
+  the_number_that_did_NOT_move_and_why_that_is_the_RIGHT_result:
+    the_claim_that_needed_independent_checking: >
+      **CLASSES EXAMINED 99 -> 99.** A widening whose headline count does not move is exactly what a
+      decorative change looks like, and this seat did not take the Engineer's explanation on trust.
+    what_the_project_lead_ran: >
+      Its own AST census over `src/crash_detector`: every `ClassDef` reached by `ast.walk`, split by
+      whether the node is in the module's own `body`.
+    observed: '**99 ClassDef total. NOT AT MODULE TOP LEVEL: ZERO.**'
+    and_therefore: >
+      **THIS TREE CONTAINS NO NESTED CLASS TODAY, SO A CORRECT WIDENING MUST LEAVE THE COUNT
+      UNCHANGED.** Fewer would have been a STOP. The same is the only right answer, and it is why
+      the widening cannot be proved by the count and IS proved by the plant.
+
+  item_A_ESCAPE_1_both_arms:
+    old_arm_531c95c: >
+      Five modes. **`is_empty`'s argument IS the adapter's live object: TRUE in all five.** THREE of
+      five escape: `toplevel` (stored fails its own schema, JSONSCHEMA_ADDITIONALPROPERTIES at
+      <root>), `nested-exact-dict` (JSONSCHEMA_MAXIMUM at /nested/reading), `nested-dict-subclass`
+      (same). The auditor's ESCAPE 1, reproduced by this seat.
+    new_arm_9f7b764: >
+      **`is_empty`'s argument IS the adapter's live object: FALSE in all five.** `toplevel` and
+      `nested-exact-dict` now read **STORED == VALIDATED: True** and conform to the schema they were
+      judged by.
+    the_residue_and_the_probe_PRINTS_IT_RATHER_THAN_HIDING_IT: >
+      **`nested-dict-subclass` AND `beyond-depth-cap` STILL ESCAPE AT 9f7b764** — STORED != VALIDATED
+      in both, and the dict-subclass arm still fails its own schema. The snapshot rebuilds by EXACT
+      type to a declared depth of 32, so a `dict` SUBCLASS nested inside is not rebuilt and anything
+      below the cap is not reached. **THIS IS DECLARED, TESTED BY TWO OF THE THIRTEEN NEW NODE IDS,
+      AND PRINTED BY THE PROBE'S OWN ARMS.** A probe that printed only what the fix closes would be
+      an advertisement; this one is evidence.
+    and_the_validator_still_gets_the_live_object_ON_PURPOSE: >
+      Declared by the seat, confirmed here: the VALIDATOR is still handed the adapter's live object.
+      That is the sink/ledger/validator surface the fourth seat left ungraded and **it is the fifth
+      seat's, not the Engineer's.** Named rather than silently closed.
+
+  item_C_and_it_CORRECTS_THE_AUDITOR_BY_MEASUREMENT:
+    old_arm_531c95c_with_an_aliased_door_added: >
+      **doors check: 16 uses, EXIT 0 — BLIND, exactly as the auditor said.**
+      `tests/test_judgement_path_doors.py`: 22 passed — blind too, exactly as the auditor said.
+      *** **BUT `tests/test_admission.py`: 2 FAILED, 23 passed — AT 531c95c, WITH NO FIX APPLIED.** ***
+    what_that_means: >
+      The auditor wrote: *"For a door parameter exemption I found no carrier that sees it."* **THAT
+      IS TRUE OF THE READERS IT RAN AND FALSE OF THE TREE.** A carrier existed at 531c95c, in a test
+      file the auditor did not run, and it caught the aliased door because it enumerates from the
+      RUNTIME COMPILED OBJECTS and never reads a name. **THE ENGINEER FOUND THIS AGAINST ITS OWN
+      INTEREST — it makes its own item smaller — AND THE PROJECT LEAD CONFIRMED IT INDEPENDENTLY.**
+      It does not soften the RED and it does not touch a grade; it corrects one sentence of a
+      supplement, and the correction is the auditor's to accept or refuse, not this seat's to impose.
+    new_arm_9f7b764_with_the_same_aliased_door: >
+      **doors check: 17 uses** (16 -> 17, the aliased door NAMED), and the door-side tests move
+      22 passed -> 5 failed, 19 passed. **The check now SEES it and a carrier now FAILS on it.**
+
+  item_D_the_runtime_arm_which_is_the_only_arm_that_proves_anything:
+    old_arm_531c95c: '`is_establishing_type(Empty)` **False** · `Empty()` **ACCEPTED** · with one field added, `Empty(confidence=object())` ***ACCEPTED***.'
+    new_arm_9f7b764: >
+      `is_establishing_type(Empty)` **True** · with one field added, **EVERY construction refused**,
+      including the previously-valid `Empty()`: `UndeclaredField: Empty is a FAULTED type and every
+      construction of it is refused.` **THE RULING'S PHRASE "FAILS ON ARRIVAL" IS NOW TRUE AT RUNTIME
+      FOR THE ONE MEMBER THE RULING ADDED, AND IT WAS NOT BEFORE.**
+    and_no_construction_that_succeeded_before_moved: 'Confirmed: `Empty()` still ACCEPTED on the unmodified type at both SHAs.'
+
+  items_E2_E3_the_sentence_re_measured_rather_than_re_asserted:
+    what_the_seat_did_that_this_seat_would_not_have_thought_of: >
+      It measured the disputed sentence with `sys.settrace`, **COUNTING LINES OF PACKAGE CODE
+      EXECUTED.** The claim under repair was *"Every route requires the ability to execute code
+      inside this package."*
+    observed: >
+      **THE SMUGGLE ROUTE (`Agrees.__new__` + `__dict__.update`) EXECUTES ZERO LINES OF PACKAGE CODE.
+      THE CONTROL — the same values through `Agrees(...)` — EXECUTES 36 AND IS REFUSED WITH A
+      TypeError.** And in the other direction: passing an object to the CD-BP-003 door touches 13
+      members of the caller's adapter, TWO of which are calls into caller code, from a frame whose
+      chain reaches `crash_detector.collectors.runner`'s module globals, with `final_outcome: OK`.
+      **THE SENTENCE IS WRONG IN BOTH DIRECTIONS AT ONCE, AND NOW IT IS WRONG BY A NUMBER.**
+    what_was_NOT_done_and_correctly_so: >
+      **NO ROUTE IS CLOSED AND NONE IS CLAIMED CLOSED.** F-A4 is a design change nobody has ruled and
+      was explicitly out of scope. The asymmetry is MEASURED instead: **2 of 33 governed types define
+      `__setstate__`** — the technique this codebase already applies to the dial provenance types and
+      applied to none of increment 5's types. Raised as the Engineer's F-09 and left OPEN.
+
+# ================================================================================================ #
+THE_STOP_AND_IT_IS_A_PRODUCT_AUTHORITY_QUESTION:
+  id: CD-D-146
+  title: >
+    *** **THE WIDENED DOORS INSTRUMENT FINDS `guarded` AT `engine/evaluate.py:341` — A FUNCTION-LOCAL
+    CLOSURE, PRE-EXISTING, IN PROTECTED CODE, THAT NO INSTRUMENT HAS EVER SEEN. THE REGISTER ROW IS
+    RED AND TWO SHIPPED TESTS FAIL. WHAT HAPPENS TO IT IS NOT THIS SEAT'S TO DECIDE.** ***
+  what_it_is_PL_READ_FROM_THE_SOURCE_AND_NOT_FROM_THE_ENGINEERS_ACCOUNT: >
+    `_absence_is_never_a_number` is a PRIVATE decorator carrying the CD-ASR-F03 post-condition. Inside
+    it, `def guarded(spec, usable, now_utc, *extra, **extra_by_name)` is returned and applied to
+    `_evaluate_dial`. **IT IS PRESENT AND UNCHANGED AT 531c95c — this seat read it there. The
+    increment did not create it; the increment made it VISIBLE.**
+  why_it_is_a_genuine_question_and_not_a_bug_to_wave_through: >
+    **READING ONE — IT IS A REAL DOOR.** Every call to `_evaluate_dial` goes through `guarded`. Its
+    parameters are the arguments arriving at the dial evaluator, on a judgement path, in a RULE 1
+    package, with no `@admits`. BP-AMENDMENT-0001 §D.1 says every such door establishes its arguments
+    at the door.
+    **READING TWO — THE MEMBERSHIP CLAUSE IS A NAME HEURISTIC THAT DOES NOT TRANSFER TO FUNCTION
+    SCOPE.** The check's PUBLIC clause is "the name does not begin with `_`", written for module-level
+    and class-level definitions where the name IS the reachability. `guarded` is a local binding
+    inside a private function: never module-level, never importable, and `functools.wraps` gives it
+    the runtime `__name__` `_evaluate_dial`. **THE STATIC READING AND THE RUNTIME NAME DISAGREE ABOUT
+    WHETHER IT IS PUBLIC AT ALL.** This project's own CD-PL-F74 says a name is a vocabulary.
+    **AND A THIRD THING, WHICH IS THE ONE THAT MAKES IT HARD:** `guarded` is deliberately
+    ARITY-OPEN — `*extra, **extra_by_name` — and its own comment says why: *"a wrapper that fixed the
+    arity would stop guarding the moment anybody gave the evaluator a fourth argument."* **A DOOR
+    THAT EXACT-TYPES ITS ARGUMENTS AT THE DOOR CANNOT BE ARITY-OPEN. §D.1 AND THE CD-ASR-F03 WRAPPER
+    DESIGN PULL AGAINST EACH OTHER HERE, AND THAT TENSION IS ARCHITECTURAL, NOT CLERICAL.**
+  what_the_engineer_did_with_it_and_this_seat_endorses_the_conduct_without_endorsing_any_answer: >
+    It named all three ways to make the check green and refused all three: adding an exemption is
+    "quietly exempting"; weakening the two tests is "weakening to obtain a pass"; editing
+    `engine/evaluate.py` is out of writable scope — **"and that settles it without any judgement by
+    me."** It then recorded the exemption it was TEMPTED by and why it rejected it: extending
+    "non-public enclosing class" to enclosing FUNCTIONS would have exempted `guarded` and looked like
+    symmetry, **but would have re-opened the auditor's own ESCAPE 4 arm 4** — a function-local `def`
+    bound into a module dict, which the auditor demonstrated LIVE. **THAT IS THE RIGHT REASONING AND
+    IT IS THE REASONING THIS SEAT WOULD HAVE HAD TO REACH TOO.** It offered no recommendation.
+  what_this_seat_will_NOT_do: >
+    **IT WILL NOT RULE ON `guarded`, WILL NOT AUTHORISE AN EXEMPTION, WILL NOT ORDER A DECORATOR ONTO
+    IT, AND WILL NOT WEAKEN A TEST.** It went up for the same reason CD-D-134 went up: it is a
+    question about what the ruled class REACHES, and the last time this seat reconciled a class
+    question by its own reading it earned CD-PL-F94.
+  what_it_does_NOT_block: >
+    **IT DOES NOT BLOCK THE FIFTH ASSURANCE SEAT**, which PO-DECISIONS-0011 ruling 5 authorises
+    unconditionally over the whole of WO-2R3 at the post-increment SHA. The seat is READ-ONLY and
+    grades what is in front of it; a RED register row and two failing tests are DISCLOSED STATE it
+    must be told about, not a precondition it must wait on. **AND NO CODE MOVES WHILE THE SEAT IS
+    OUT** — nothing is authorised without a ruling and a dispatch, and this seat will open neither
+    while an auditor is reading the tree. So the target is stable for the whole audit either way.
+
+# ================================================================================================ #
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F97
+  severity: MEDIUM
+  title: >
+    **SIX EXECUTABLE PROBES LANDED UNDER `variants/WO-2R3/` AND NOT ONE HAS A ROW IN
+    `variants/WO-2R3/MANIFEST.md`. IT IS THE AUDITOR'S F-C3 INVERTED, IN THE CORPUS F-C4 ALREADY
+    FOUND STALE.**
+  what: >
+    `git diff --stat 531c95c..HEAD -- variants/` reads **6 files changed, 1318 insertions** and
+    MANIFEST.md is not among them. `grep -c` for each probe's name in the manifest returns **0, six
+    times.** The probes themselves are good — they print data and never a verdict, explicitly
+    because of F-C1 — but nothing indexes them.
+  why_it_matters_here_specifically: >
+    F-C3 found three manifest rows with NO executable artefact. **THIS IS THE EXACT INVERSE: six
+    executable artefacts with NO manifest row.** The corpus is the evidence base the FIFTH ASSURANCE
+    SEAT is about to read, and a reader who audits `variants/WO-2R3/` from its manifest — the
+    documented way to read it — **will not learn that the evidence for the four items of the
+    remediation exists at all.**
+  direction_of_error: >
+    Toward INVISIBILITY rather than false assurance, which is the better of the two directions and is
+    still the wrong one. Nobody is misled about what is proved; a reader is simply not told it was.
+  disposition: >
+    **RAISED, NOT REMEDIED.** Remediating it would be the Project Lead editing an Engineer's
+    deliverable after return (PBG-AUTH-006). It travels to the Product Owner with this boundary and
+    is named to the fifth Assurance seat as a KNOWN GAP IN THE CORPUS INDEX, so the seat reads the
+    directory and not only the manifest.
+
+- id: CD-PL-F98
+  severity: LOW
+  title: >
+    **AGAINST THIS SEAT. THE PROJECT LEAD RAN THE ITEM-A CONTRAST WRONG AND PRODUCED THE ANSWER "THE
+    FIX CHANGES NOTHING". BOTH ARMS WERE THE SAME TREE, AND THE THING THAT WOULD HAVE TOLD IT SO WAS
+    A LINE IT HAD TRIMMED OFF THE OUTPUT.**
+  what: >
+    This seat ran the lane worktree's copy of `P-A-escape1-stored-is-not-validated.py` against two
+    `/tmp` extractions. The probe resolves its import root from `Path(__file__).resolve().parents[2]
+    / "src"` — **from the PROBE'S OWN LOCATION, not the working directory** — so both "arms" imported
+    `/srv/crash-detector-wo2r3/src`. The two outputs were identical to the character, and the
+    identical output was CORRECT for what was actually run.
+  what_the_wrong_answer_would_have_been: >
+    **"THE OLD ARM AND THE NEW ARM ARE INDISTINGUISHABLE — THE ITEM-A FIX DOES NOT DISCRIMINATE."**
+    That is a finding of the most serious kind against a correct fix, and this seat was one paragraph
+    from writing it into the record.
+  what_saved_it: >
+    The probe prints `tree: <resolved path>` as its first data line — **and this seat had trimmed the
+    output with `tail`, cutting the very line that discloses the defect.** It was caught by the arms
+    being *too* identical to be true, not by the disclosure that was there to be read.
+  the_lesson_and_it_is_general: >
+    **A CONTRAST RUN WITH THE WRONG TREE ON `sys.path` IS INDISTINGUISHABLE FROM A FIX THAT DOES
+    NOTHING.** The corpus's own convention is to run each tree's OWN copy of a probe; this seat
+    imported one copy into two directories and thought it had two arms. **AND: never filter a probe's
+    output before reading its provenance line.** The Engineer designed that line in; the reconciler
+    threw it away.
+  and_the_count_this_seat_will_not_imply_is_bounded: >
+    CD-PL-F86 was this seat's own method defect, and CD-PL-F94 was this seat reconciling a contrast
+    by the wrong axis. **THIS IS THE THIRD METHOD DEFECT THIS SEAT HAS RAISED AGAINST ITS OWN
+    RECONCILIATION PRACTICE, AND IT WILL NOT SAY THAT IS ALL OF THEM** — the last time it implied a
+    pattern was bounded, the auditor counted nine.
+  disposition: 'RAISED AGAINST THIS SEAT. It travels with this boundary. The fifth Assurance seat will run these same probes and should be told this, and it is told it in its dispatch.'
+
+# ================================================================================================ #
+the_engineers_own_findings_recorded_and_NOT_graded_by_this_seat: >
+  **SIX FINDINGS AGAINST ITS OWN WORK, FROM A SEAT ON ITS FIRST INCREMENT — the eighth consecutive
+  seat to do so on this project.** Recorded as the seat framed them, not as this seat would prefer
+  them: **F-01, a carrier it wrote DID NOT CARRY** — green at 531c95c with the defect present, caught
+  only by running the reverted tree; **F-03, four line-number ranges written from intent, three
+  wrong, on its FIRST commit**, corrected in a standalone commit rather than by amending a message,
+  on a project whose log already carries that same finding twice; **F-04**, two green tests that
+  REQUIRED THE ABSENCE of the item-D guard, both reversed with the superseded wording quoted;
+  **F-05**, that a node-id diff cannot see an assertion reversed inside a surviving test — a limit on
+  the very conservation check this seat relies on; **F-07**, that the stale 8/5 count survived because
+  the LIMIT was in three CD-RULE-004 places and the NUMBER was in one, so *a figure with no copies
+  cannot disagree with anything*; **F-08**, the measured correction to the auditor, above.
+  **F-09** is the `__setstate__` asymmetry and is left OPEN.
+  **NONE OF THESE ARE GRADED HERE. THEY ARE THE FIFTH ASSURANCE SEAT'S TO ATTACK.**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT ACCEPT THE INCREMENT AS CLOSING CD-AC-002 OR CD-AC-005.** Reconciled is not accepted
+  and never has been on this project (PBG-AUTH-003). Both remain AMBER and NOT CLOSED.
+  **IT DID NOT RULE ON `guarded`** — CD-D-146 goes up.
+  **IT DID NOT MAKE THE DOORS CHECK GREEN**, did not exempt, did not weaken a test, did not touch
+  `engine/evaluate.py`. The lane ships RED on that row DELIBERATELY.
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-130). T8 is still NOT ESTABLISHED.
+  **IT DID NOT REMEDY CD-PL-F97 OR CD-PL-F98**, and it did not edit one line of the Engineer's
+  deliverable after return.
+  **IT DID NOT GRADE THE ENGINEER'S SIX SELF-FINDINGS**, its correction of the auditor, or its
+  declared residues. All of it travels to the fifth seat as attackable claims.
+
+next_safe_action: >
+  **DISPATCH THE FIFTH FRESH ASSURANCE SEAT over the WHOLE of WO-2R3 at `9f7b764`**
+  (PO-DECISIONS-0011 ruling 5), with the RED doors row, the two failing tests, CD-D-146, CD-PL-F97
+  and CD-PL-F98 ALL DISCLOSED IN THE BRIEF rather than left to be discovered — a disclosed hole is a
+  measured limit and an undisclosed one is a trap. Fresh seat, read-only, never the Engineer
+  (PBG-SOD-001, non-waivable). CD-D-129's binding clauses carried VERBATIM.
+  **AND ROUTE CD-D-146 TO THE PRODUCT OWNER IN PARALLEL** — it needs a ruling, it does not need to
+  precede the audit, and no code moves while the seat is out.
+  **DO NOT** merge or promote. **DO NOT** admit anything (CD-RULE-001). **DO NOT** write the eleven
+  dispositions. **DO NOT** make the doors row green by any route. **DO NOT** modify anything under
+  `pbg/`.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). The CD-RULE-008 verdict is taken AT the boundary SHA BEFORE this field is written.

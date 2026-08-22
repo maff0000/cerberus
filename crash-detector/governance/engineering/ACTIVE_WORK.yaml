@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T21:13:04Z'
+updated_utc: '2026-08-22T22:29:21Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -54,6 +54,45 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **THE REMEDIATION INCREMENT IS DELIVERED AND RECONCILED AT `9f7b764`. ALL SEVEN ITEMS LAND —
+  AND THE WIDENED DOORS INSTRUMENT IMMEDIATELY FOUND A PRE-EXISTING, UNDISPOSITIONED VIOLATION IN
+  PROTECTED PRODUCT CODE, SO THE LANE NOW SHIPS A REGISTER ROW THAT EXITS 1 AND TWO SHIPPED TESTS
+  THAT FAIL, ON PURPOSE. BL-20260822T222921Z-0109 IS THE BOUNDARY.** ***
+  **THAT RED IS THE INSTRUMENT WORKING, NOT A REGRESSION.** `guarded` at `engine/evaluate.py:341` is
+  a function-local closure inside the private CD-ASR-F03 decorator, PRESENT UNCHANGED AT 531c95c and
+  never seen by any instrument until now. The Engineer named all three ways to make the check green
+  and refused all three, recorded the exemption it was tempted by and why it rejected it (it would
+  have re-opened the auditor's own ESCAPE 4 arm 4), and offered no recommendation. **IT IS UP AS
+  CD-D-146 AND IS THE PRODUCT OWNER'S: reading one says it is a real door on a judgement path;
+  reading two says the PUBLIC clause is a NAME HEURISTIC that does not transfer to function scope
+  (`functools.wraps` gives it the runtime `__name__` `_evaluate_dial`); and the hard part is that
+  `guarded` is DELIBERATELY ARITY-OPEN so that it keeps guarding across future edits — a door that
+  exact-types its arguments cannot be arity-open. §D.1 and the CD-ASR-F03 wrapper design pull
+  against each other, and that tension is architectural.**
+  **PL-MEASURED, EVERY CONTRAST RUN BY THIS SEAT FROM PRISTINE EXTRACTIONS:** ctor EXIT 0, PASS 101
+  assertions, 99 classes examined AT ANY DEPTH, population 33, DECLARED TO @establishes 32 -> 33 ·
+  doors **EXIT 1**, 1 violation · suite 2 failed / 1549 passed, node-id sets DIFFED **ZERO LOST**, 13
+  added · sweep 534/15 UNMOVED · identity EXACTLY ONE LINE across six commits · 26 changed paths, all
+  in scope. **THE PLANT, BOTH ARMS: EXIT 0 and the ledger SILENT about `Verdict` at 531c95c; EXIT 1,
+  population 34, 101 examined, two independent derivations agreeing 0/0, and the ledger printing
+  `IN engine/config.py:392 Judgement.Verdict … @establishes REQUIRED` at 9f7b764 — CD-PL-F96 CLOSED
+  ON ITS NAMED PROOF.** Instruments SHA-verified byte-identical in the arms run (BITTEN).
+  **CLASSES EXAMINED 99 -> 99 IS THE RIGHT ANSWER AND THIS SEAT CHECKED IT INDEPENDENTLY:** its own
+  AST census finds 99 ClassDef and **ZERO nested**, so a correct widening must leave the count
+  unchanged — which is exactly why the widening is proved by the plant and not by the count.
+  **ITEM A's RESIDUE IS REAL AND THE PROBE PRINTS IT:** `nested-dict-subclass` and `beyond-depth-cap`
+  STILL ESCAPE at 9f7b764, declared and carried by two of the thirteen new node ids.
+  **AND ITEM C CORRECTS THE AUDITOR BY MEASUREMENT:** at 531c95c an aliased door was invisible to the
+  check AND to the door-side tests, but `tests/test_admission.py` went 2 FAILED — a carrier existed
+  in a file the auditor did not run. The Engineer found that against its own interest.
+  **TWO PL FINDINGS AT THIS BOUNDARY: CD-PL-F97** (six executable probes landed with ZERO manifest
+  rows — F-C3 inverted, in the corpus F-C4 already found stale) **and CD-PL-F98, AGAINST THIS SEAT** —
+  it ran the item-A contrast with one tree on `sys.path` in both arms and was one paragraph from
+  recording "the fix changes nothing"; the line that would have told it so was the provenance line it
+  had trimmed off with `tail`. **A CONTRAST RUN WITH THE WRONG TREE IS INDISTINGUISHABLE FROM A FIX
+  THAT DOES NOTHING.**
+  **NOTHING HERE CLOSES CD-AC-002 OR CD-AC-005. RECONCILED IS NOT ACCEPTED.**
+  *** **THE DISPATCH STATE BELOW IS RETAINED AND SUPERSEDED IN ITS "WHAT HAPPENS NEXT" ONLY.** ***
   *** **THE PRODUCT OWNER HAS DISPOSITIONED THE RED AND IT STANDS (PO-DECISIONS-0011, commit
   99b7d18). THE REMEDIATION INCREMENT IS ISSUED TO A FRESH ENGINEER IDENTITY — CD-ENG-WO2R3-02 —
   AT 531c95c, UNDER governance/dispatch/CD-DISPATCH-WO2R3-INC6-ENGINEER.yaml.
@@ -1827,7 +1866,7 @@ last_completed_checkpoint_sha: 67b7b29e3227af6d04d5b6bb11048a56f57c6684  # the C
   # 17d7721 — the value the record plainly MEANT — and has since advanced normally. Full account in
   # BL-20260819T070100Z-0012. The same failure mode recurred in the PL's own drafting at the next
   # boundary and was caught by the standing resolve step; see BL-20260819T071900Z-0014.
-lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
+lane_head_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5   # WO-2R3 INCREMENT 6, THE REMEDIATION INCREMENT AFTER THE RED. SIX commits by CD-ENG-WO2R3-02, a FRESH identity (CD-D-144) which RETURNED ALIVE and committed as it went. RECONCILED at BL-20260822T222921Z-0109 BY MEASUREMENT and NOT ACCEPTED as closing CD-AC-002 or CD-AC-005. THE LANE SHIPS A RED DOORS ROW AND TWO FAILING TESTS ON PURPOSE — see CD-D-146. RESOLVED with `git rev-parse`, never transcribed (CD-PL-F36).
   # wo-2-skeleton after WO-2R INCREMENT 1 (CD-ASR-F02/F03 closed as a class), two commits by
   # CD-ENG-WO2R-01: defd76c the closure, 27bb880 the durable variants and its Build Log entry.
   # RECONCILED AND ACCEPTED by the PL at CD-D-034 (BL-20260819T095200Z-0023).
@@ -2928,7 +2967,17 @@ next_safe_action: >
   *** **THE ORDER IS FIXED BY PO-DECISIONS-0011 RULING 6 AND IS NOT THIS SEAT'S TO REORDER:
   THE REMEDIATION INCREMENT BANKS FIRST -> THEN THE FIFTH FRESH ASSURANCE SEAT -> THEN T8 LANDS ->
   THEN THE ELEVEN CLASS-2 DISPOSITIONS -> AND ONLY THEN THE PRODUCT OWNER'S ACCEPTANCE OF WO-2R3.** ***
-  **1. THE ENGINEER IS DISPATCHED AT BL-20260822T211304Z-0108 (CD-DISPATCH-WO2R3-INC6-ENGINEER,
+  **0. THE ENGINEER INCREMENT HAS BANKED AND IS RECONCILED AT `9f7b764` (BL-20260822T222921Z-0109).
+  DISCHARGED — BY MEASUREMENT, EVERY CONTRAST RUN IN BOTH ARMS BY THIS SEAT FROM PRISTINE
+  EXTRACTIONS. IT IS NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005.** The lane ships a RED doors row
+  and two failing tests ON PURPOSE; `guarded` goes up as **CD-D-146**, a Product Authority question.
+  **1. DISPATCH THE FIFTH FRESH ASSURANCE SEAT at `9f7b764`, with the RED row, the two failing tests,
+  CD-D-146, CD-PL-F97 and CD-PL-F98 ALL DISCLOSED IN THE BRIEF** — a disclosed hole is a measured
+  limit and an undisclosed one is a trap. Read-only, never the Engineer, CD-D-129 clauses verbatim.
+  **2. ROUTE CD-D-146 TO THE PRODUCT OWNER IN PARALLEL.** It needs a ruling; it does not need to
+  precede the audit; and NO CODE MOVES WHILE THE SEAT IS OUT, so the target is stable either way.
+  *** **RETAINED AND SUPERSEDED — THE ACTION LIST AS IT STOOD AT THE DISPATCH BOUNDARY:** ***
+  **1. THE ENGINEER WAS DISPATCHED AT BL-20260822T211304Z-0108 (CD-DISPATCH-WO2R3-INC6-ENGINEER,
   CD-ENG-WO2R3-02, base 531c95c). RECONCILE ITS RETURN BY MEASUREMENT, NEVER BY READING ITS CLAIMS**
   — the contrast in both arms for every item, identity audited across the whole range, porcelain
   zero, node-id sets DIFFED against 1538, sweep movement reported and not chased.
@@ -3671,5 +3720,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T211304Z-0108   # main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0068 (0060-0067 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260822T222921Z-0109   # main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
