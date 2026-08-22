@@ -82,7 +82,8 @@ EFFECT, not by label).
 
 ## THE DEFINITION, printed at every run so a reader can disagree with it without reading the source
 
-A class is **IN** the body-borne field-establishment class when **ALL FOUR** hold:
+A class is **IN** the **BODY-BORNE-OR-ABSENT** field-establishment class when **ALL THREE** hold
+(widened at `PO-DECISIONS-0010` ruling 1, `CD-D-134`; see CHECK LIMIT 1 for the superseded wording):
 
 1. **PUBLIC** — its name does not begin with `_`.
 2. **FROZEN SUBJECT** — it is declared `@dataclass(frozen=True, ...)`.
@@ -102,35 +103,71 @@ A class is **IN** the body-borne field-establishment class when **ALL FOUR** hol
    18; resolving them measured it at 32.** That defect is recorded in the check's header rather than
    quietly fixed — an instrument that stops at the spelling measures a VOCABULARY, which is the
    error this whole increment is about.
-4. **BODY-BORNE** — it defines `__post_init__` or `__init__` **in its own class body**, and that
-   body either names at least one DECLARED FIELD of the class, or reaches the field list
-   reflectively (`dataclasses.fields`, `__dataclass_fields__`, `__dict__`, `vars`).
+**THERE IS NO FOURTH MEMBERSHIP CLAUSE, AND UNTIL `PO-DECISIONS-0010` RULING 1 THERE WAS.** The
+superseded clause read: *"(4) **BODY-BORNE** — it defines `__post_init__` or `__init__` in its own
+class body, and that body either names at least one DECLARED FIELD of the class, or reaches the
+field list reflectively (`dataclasses.fields`, `__dataclass_fields__`, `__dict__`, `vars`)."*
 
-**CLAUSE (4) IS A HEURISTIC AND IS DECLARED AS ONE.** No static reader can tell *establishment* from
-*derivation*: a `__post_init__` that merely reads a field to build a message is counted IN exactly
-as one that refuses a bad value is. **The heuristic therefore OVER-INCLUDES, which is the safe
-direction** — it enlarges the class the closure must cover and can never shrink it. The reflective
-clause exists to close the under-including direction, which is the dangerous one: a body that
-establishes fields by walking `dataclasses.fields(self)` names none of them.
+**WHERE ESTABLISHMENT LIVES NO LONGER DECIDES WHETHER THE RULE REACHES A TYPE. IT IS WHAT THE RULE
+REQUIRES OF IT.** The old clause survives as a **REPORTED PROPERTY** — printed on every member's
+line as `BODY-BORNE` or `ABSENT`, by exactly the same reading — and it decides nothing.
 
-## What it asserts about each member — three things
+**THAT READING IS A HEURISTIC AND IS DECLARED AS ONE.** No static reader can tell *establishment*
+from *derivation*: a `__post_init__` that merely reads a field to build a message reads as
+BODY-BORNE exactly as one that refuses a bad value does. It therefore OVER-REPORTS body-borneness.
+**That used to be the safe direction and since the widening it is not a direction at all**, because
+a member is required to declare whether its establishment is body-borne, absent or anywhere else.
 
-1. the class carries `@establishes(...)`;
+## What it requires of each member, and the one case that satisfies vacuously
+
+**A FIELDED MEMBER — one declaring at least one field — is asserted three things:**
+
+1. the class carries `@establishes(...)`. **Establishment being ABSENT is no longer an excuse; it is
+   the failure.** A fielded public frozen judgement-path type that establishes NOWHERE is a
+   **VIOLATION and not an exemption** (`PO-DECISIONS-0010` ruling 1);
 2. the field names `establishes` was told about are **EXACTLY** the class's declared field list, in
    **BOTH** directions — **this is P7 at the constructor level, caught statically**;
 3. `@establishes` is applied **OUTSIDE** `@dataclass`. Inside it, the field list does not exist yet.
 
-## The measurement at WO-2R3 increment 5
+**A ZERO-FIELD MEMBER SATISFIES VACUOUSLY, AND IS ENUMERATED, COUNTED, ASSERTED OVER AND PRINTED
+WITH ITS REASON.** It is not dropped and not silently excluded — the ruling says the instrument
+asserts over the **WHOLE** enumerated population. Exactly **ONE** assertion is made of it, and the
+honest description of that assertion is that it is a **MEASUREMENT OF THE FIELD LIST and not a proof
+about establishment**: *this class declares no field whose establishment could be underived.* It is
+**REFUTABLE BY EXECUTION** — add one field and the member routes to the fielded branch and fails on
+assertion 1 the same run. If a vacuous member *does* carry `@establishes(...)`, assertions 2 and 3
+run against it too, so an empty type with an adrift declaration is still caught.
 
-Population **32**, of **35** public frozen dataclasses under `src/crash_detector/` and **96**
-classes examined. **14** by RULE A, **10** by RULE B only, **9** by RULE C only. **ADJACENT 1**
-(`observations.py` `Empty`). **OUT 2** (`store/migrations.py` `Migration`, `store/migrate.py`
-`AppliedMigration` — BP-AMENDMENT-0001 §B.4 Class C, which §H places out of WO-2R3's scope; the
-property-based enumeration and the amendment's scoping agree here, which is a check on both).
-`32 + 1 + 2 = 35`; every one is named in the output.
+**HOW A READER TELLS "SATISFIED VACUOUSLY" FROM "NOT LOOKED AT", WITHOUT TRUSTING ANYONE.** The
+vacuous members are inside `POPULATION`, counted again on their own line, printed one per line with
+their reach rule, their zero-length field list, their establishment locus and the words `SATISFIED
+VACUOUSLY`, and their assertions are inside the assertion total. A class that was **not** looked at
+appears under `--why` as `OUT` with the clause that excluded it, or is not among the classes
+examined at all — and `CLASSES EXAMINED` is printed so the two totals reconcile.
+
+## The measurement at WO-2R3 increment 5, and the re-measurement after the widening
+
+**AT INCREMENT 5, BEFORE THE WIDENING (lane `46adf33`).** Population **32**, of **35** public frozen
+dataclasses under `src/crash_detector/` and **96** classes examined. **14** by RULE A, **10** by
+RULE B only, **9** by RULE C only. **ADJACENT 1** (`observations.py` `Empty`). **OUT 2**
+(`store/migrations.py` `Migration`, `store/migrate.py` `AppliedMigration` — BP-AMENDMENT-0001 §B.4
+Class C, which §H places out of WO-2R3's scope; the property-based enumeration and the amendment's
+scoping agree here, which is a check on both). `32 + 1 + 2 = 35`; every one is named in the output.
+
+**AFTER THE `PO-DECISIONS-0010` RULING 1 WIDENING**, measured by running this row's own `execute`
+command in the lane worktree: **POPULATION 33** — **FIELDED 32**, **ZERO-FIELD SATISFYING VACUOUSLY
+1** — of **99** classes examined across **39** modules. **14** by RULE A, **10** by RULE B only,
+**9** by RULE C only. **ASSERTIONS 96 → 97**, the one added being the vacuous member's.
+`ESTABLISHED_HERE` **3**, unchanged. **THE ADJACENT SET READS 0 BECAUSE IT NO LONGER EXISTS AS AN
+EXEMPTION**: its single former member, `Empty`, is now IN the population and satisfies vacuously.
+
+**THE WIDENING CHANGED NOT ONE VERDICT.** Every pre-existing assertion held with the same verdict;
+this check was GREEN before and is GREEN after. **A green run of this row is therefore not evidence
+that the widening was performed** — the unwidened check is green too. The evidence is the contrast
+in the negative-controls table below.
 
 **THE FLOOR THE PRODUCT OWNER NAMED IS FIVE** — `ConfigSnapshot`, `DialSpec`, `ModelSpec`,
-`PanelRow`, `AttemptRecord` — and all five are IN. **THE FLOOR IS 5/32 AND IT IS NOT THE
+`PanelRow`, `AttemptRecord` — and all five are IN. **THE FLOOR IS 5/33 AND IT IS NOT THE
 POPULATION.**
 
 ## The negative controls, both arms, run

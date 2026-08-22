@@ -293,12 +293,14 @@ def test_every_governed_type_declares_exactly_its_own_declared_field_list():
         assert establishment_faults(cls) == (), cls.__qualname__
 
 
-def test_the_static_enumeration_and_the_runtime_population_are_the_same_class():
-    """Two INDEPENDENT readings of one class, diffed as SETS and never compared as counts.
+_VACUOUS_MARKER = "  IN — SATISFIED VACUOUSLY: "
 
-    The check parses the source and never imports it; ``governed_types()`` is the decorator
-    reporting what it actually decorated at import. Identical counts have hidden a swap on
-    this project before, so the sets are diffed.
+
+def _static_population() -> tuple[set, set]:
+    """The check's OWN two printed sets: FIELDED (required) and ZERO-FIELD (vacuous).
+
+    Read out of the run rather than recomputed here, so this is a reading OF THE INSTRUMENT
+    and not a second implementation of it.
     """
     completed = subprocess.run(
         [sys.executable, "-B", str(_CHECK), "--root", str(_REPO_ROOT)],
@@ -307,17 +309,66 @@ def test_the_static_enumeration_and_the_runtime_population_are_the_same_class():
         check=False,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr
-    static = set()
+    fielded = set()
+    vacuous = set()
     for line in completed.stdout.splitlines():
-        marker = "  IN ["
-        if marker in line:
-            static.add(line.rsplit(" — ", 2)[0].split()[-1])
+        if "  IN [" in line:
+            fielded.add(line.rsplit(" — ", 2)[0].split()[-1])
+        elif _VACUOUS_MARKER in line:
+            vacuous.add(line.split(_VACUOUS_MARKER, 1)[1].split()[1])
+    return fielded, vacuous
+
+
+def test_the_static_enumeration_and_the_runtime_population_are_the_same_class():
+    """Two INDEPENDENT readings of one class, diffed as SETS and never compared as counts.
+
+    The check parses the source and never imports it; ``governed_types()`` is the decorator
+    reporting what it actually decorated at import. Identical counts have hidden a swap on
+    this project before, so the sets are diffed.
+
+    **SINCE PO-DECISIONS-0010 RULING 1 THE STATIC POPULATION HAS TWO PARTS**, and only the
+    FIELDED part is required to carry ``@establishes``. The ZERO-FIELD part satisfies
+    VACUOUSLY, so it is diffed in the OTHER direction — it must be DISJOINT from the runtime
+    governed set — rather than dropped from this test, which would leave the widening's own
+    new branch unread by any runtime reading.
+    """
+    fielded, vacuous = _static_population()
     runtime = {cls.__name__ for cls in _product_types()}
-    assert static, "the check printed no population"
-    assert static == runtime, {
-        "in the static reading only": sorted(static - runtime),
-        "in the runtime reading only": sorted(runtime - static),
+    assert fielded, "the check printed no fielded population"
+    assert fielded == runtime, {
+        "in the static reading only": sorted(fielded - runtime),
+        "in the runtime reading only": sorted(runtime - fielded),
     }
+    assert vacuous & runtime == set(), sorted(vacuous & runtime)
+
+
+def test_the_vacuously_satisfying_members_are_exactly_this_set():
+    """CHECK LIMIT 1 residue (i)'s MEASURED CARRIER (CD-RULE-006).
+
+    A member declaring ZERO FIELDS satisfies the widened rule vacuously and carries no
+    boundary of any kind. **That is a residue, not a closure**, so the set is PINNED BY
+    NAME — a SECOND zero-field judgement-path type is a test failure and not a quiet
+    widening of the vacuous branch — and each member's emptiness is re-measured AT RUNTIME
+    from ``dataclasses.fields``, so a field ARRIVING on one of them fails here as well as in
+    the check.
+
+    Written out rather than computed, for the reason
+    ``test_the_established_here_field_exemptions_are_exactly_this_set`` gives: a set derived
+    from observation declares whatever it finds, including whatever somebody added.
+    """
+    from crash_detector.observations import Empty
+
+    expected = {Empty}
+
+    _fielded, vacuous = _static_population()
+    assert vacuous == {cls.__name__ for cls in expected}, sorted(vacuous)
+
+    for cls in expected:
+        assert dataclasses.fields(cls) == (), cls.__qualname__
+        assert not is_establishing_type(cls), (
+            f"{cls.__qualname__} is governed at runtime but the check reads it as "
+            "satisfying vacuously — the two readings disagree"
+        )
 
 
 def test_the_established_here_field_exemptions_are_exactly_this_set():

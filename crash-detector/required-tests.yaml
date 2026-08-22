@@ -1331,34 +1331,68 @@ criteria:
     execution_contract: contracts/execution/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.md
     negative_control:
       violation: >
-        A public type in the frozen subject, on a judgement path, whose field establishment is
-        BODY-BORNE and which does not derive that establishment from its DECLARED FIELD LIST at
-        the class boundary. The class includes, and is not limited to: such a type carrying no
+        A public type in the frozen subject, on a judgement path, DECLARING AT LEAST ONE FIELD,
+        which does not derive that field establishment from its DECLARED FIELD LIST at the class
+        boundary — WHETHER ITS ESTABLISHMENT IS BODY-BORNE OR ABSENT. The class includes, and is
+        not limited to: such a type carrying no
         @establishes(...); a type whose declaration and whose `dataclasses.fields` disagree IN
         EITHER DIRECTION; a type carrying an InitVar, which reaches __init__ and is never an
         attribute so its established value cannot be read back; and @establishes applied BELOW
         @dataclass, where the field list does not yet exist to derive anything from.
-        THE DEFINITION OF "BODY-BORNE FIELD ESTABLISHMENT" IS PRINTED BY THE CHECK AT EVERY RUN,
-        so a reader can disagree with it without reading the source. A class is IN when ALL FOUR
+        THE DEFINITION IS PRINTED BY THE CHECK AT EVERY RUN, so a reader can disagree with it
+        without reading the source. WIDENED AT PO-DECISIONS-0010 RULING 1 (CD-D-134) FROM
+        "BODY-BORNE" TO "BODY-BORNE OR ABSENT". MEMBERSHIP: a class is IN when ALL THREE
         hold: (1) PUBLIC; (2) FROZEN SUBJECT — declared @dataclass(frozen=True, ...); (3) ON A
         JUDGEMENT PATH by any of three unioned rules derived from the tree — RULE A defined under
         {engine,serving,collectors}/, RULE B its name appears in the @admits(...) declaration, a
         parameter annotation or the return annotation of any callable carrying @admits(...),
         RULE C it is named in the declared field annotation of a type already reached, run to a
-        FIXPOINT; (4) BODY-BORNE — it defines __post_init__ or __init__ IN ITS OWN CLASS BODY and
-        that body either names a declared field of the class or reaches the field list
-        reflectively. RULES B AND C RESOLVE MODULE-LEVEL NAMES TO A FIXPOINT, because both reach
+        FIXPOINT. RULES B AND C RESOLVE MODULE-LEVEL NAMES TO A FIXPOINT, because both reach
         types through a NAME: `one_of(*READING_CONSTRUCTORS)` spells no constructor and
         `outcome: 'FetchOutcome'` spells no outcome.
-        CLAUSE (4) IS DECLARED A HEURISTIC AND OVER-INCLUDES BY DESIGN: no static reader can tell
-        ESTABLISHMENT from DERIVATION, so a body that merely READS a field is counted IN. The
-        error direction is toward a LARGER class, never a smaller one; the reflective clause
-        closes the under-including direction, which is the dangerous one.
+        THERE IS NO FOURTH MEMBERSHIP CLAUSE AND UNTIL THE RULING THERE WAS. THE SUPERSEDED
+        CLAUSE, QUOTED RATHER THAN DELETED (CD-RULE-004): "(4) BODY-BORNE — it defines
+        __post_init__ or __init__ IN ITS OWN CLASS BODY and that body either names a declared
+        field of the class or reaches the field list reflectively." WHERE ESTABLISHMENT LIVES NO
+        LONGER DECIDES WHETHER THE RULE REACHES A TYPE — IT IS WHAT THE RULE REQUIRES OF IT. The
+        old clause survives as a REPORTED PROPERTY, printed per member as BODY-BORNE or ABSENT
+        by exactly the same reading, deciding nothing.
+        WHAT IS REQUIRED: every member DECLARING AT LEAST ONE FIELD must carry @establishes(...)
+        naming EXACTLY its declared field list in BOTH directions, applied OUTSIDE @dataclass.
+        A FIELDED MEMBER WHOSE ESTABLISHMENT IS ABSENT IS A VIOLATION, NOT AN EXEMPTION — it
+        fails ON ARRIVAL rather than sitting outside a class worded around bodies.
+        THE VACUOUS CASE: a member declaring ZERO FIELDS satisfies the rule VACUOUSLY. It is
+        ENUMERATED, COUNTED, ASSERTED OVER ONCE and PRINTED with its reason — never dropped and
+        never silently excluded, because the ruling says the instrument asserts over the WHOLE
+        enumerated population. That one assertion is a MEASUREMENT OF THE FIELD LIST and not a
+        proof about establishment: such a member carries no boundary of any kind and what is
+        asserted is that nothing has arrived on it. ADD ONE FIELD AND IT BECOMES REQUIRED ON THE
+        SAME RUN.
+        THE BODY-BORNE READING REMAINS A DECLARED HEURISTIC: no static reader can tell
+        ESTABLISHMENT from DERIVATION, so a body that merely READS a field reads as BODY-BORNE.
+        SINCE THE WIDENING IT DECIDES NO MEMBERSHIP AND NO VERDICT, so it no longer has an error
+        direction to state.
         MEASURED AT WO-2R3 INCREMENT 5, BOTH ARMS, over EMPTY_MODEL_REGISTRY and
         EMPTY_SOURCE_REGISTRY:
         POPULATION — 32, of 35 public frozen dataclasses under src/crash_detector/ and 96 classes
         examined. 14 by RULE A, 10 by RULE B only, 9 by RULE C only. ADJACENT 1. OUT 2. Every one
         of the 96 is printed with its verdict; `--why` prints the reason for each.
+        RE-MEASURED AT THE INCREMENT-5 BOUNDED COMPLETION, AFTER THE PO-DECISIONS-0010 RULING 1
+        WIDENING. The command is the row's own `execute` line, run in the lane worktree:
+        POPULATION — 33 (FIELDED 32, ZERO-FIELD SATISFYING VACUOUSLY 1), of 99 classes examined
+        across 39 modules. 14 by RULE A, 10 by RULE B only, 9 by RULE C only. ASSERTIONS 96 -> 97
+        (the one added is the vacuous member's). ESTABLISHED_HERE 3, unchanged. THE ADJACENT SET
+        READS 0 BECAUSE IT NO LONGER EXISTS AS AN EXEMPTION: its single former member, `Empty` at
+        observations.py:170, is now IN the population and satisfies vacuously.
+        THE WIDENING CHANGED NOT ONE VERDICT AND SAYS SO. Every pre-existing assertion held with
+        the same verdict; the check was GREEN before and is GREEN after. A green run of this row
+        is therefore NOT evidence that the widening was performed. THE EVIDENCE IS THE CONTRAST:
+        variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch, MEASURED IN
+        BOTH ARMS from pristine `git archive` extractions — at 46adf33 the check EXITS 0, PASSES
+        with 96 assertions and prints `ADJACENT (not required, and this is a real hole):
+        engine/verdict.py:40 Verdict [RULE A] fields=['score']`; after the widening the same patch
+        makes the check EXIT 1 with FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST
+        naming `Verdict`.
         V17 BASELINE — variants/WO-2R3/V17-constructor-body-escape.patch deletes the
         `type(spec) is not DialSpec` loop from ConfigSnapshot.__post_init__, and with
         variants/WO-2R3/V35-v17-companion-probe.patch,
@@ -1447,7 +1481,10 @@ criteria:
         PanelRow subclass instance with `admission.NotAdmitted: row=PanelRowPlus is not admitted;
         this door requires exactly PanelRow or None`. For a subclass used ENTIRELY INSIDE this
         package, reaching no door: NOT PROVED TO BE CARRIED ANYWHERE. RAISED AS CD-ENG-WO2R3-F19.
-        CHECK LIMIT 1 — THE ADJACENT SET. A frozen public judgement-path type with NO establishing
+        CHECK LIMIT 1 — WHAT THE WIDENED CLASS STILL DOES NOT REACH. SUPERSEDED AT
+        PO-DECISIONS-0010 RULING 1, QUOTED RATHER THAN DELETED (CD-RULE-004).
+        THE SUPERSEDED WORDING, IN FULL: "CHECK LIMIT 1 — THE ADJACENT SET. A frozen public
+        judgement-path type with NO establishing
         body fails clause (4): its establishment is ABSENT, not body-borne, so it is outside the
         class the Product Owner ruled and this check does not require @establishes of it. THERE IS
         EXACTLY ONE TODAY — observations.py `Empty`, which has no __post_init__ and no declared
@@ -1458,7 +1495,37 @@ criteria:
         no __post_init__ — this check exits 0 and names it in the ADJACENT SET. CARRIER: NOT
         PROVED TO BE CARRIED ANYWHERE. RAISED AS CD-ENG-WO2R3-F17 and referred to the Project Lead
         and the Product Owner, because WIDENING THE RULED CLASS IS A SCOPE DECISION AND NOT THIS
-        SEAT'S TO TAKE — the increment-5 dispatch's objective says "AND NOTHING ELSE".
+        SEAT'S TO TAKE — the increment-5 dispatch's objective says 'AND NOTHING ELSE'."
+        CD-ENG-WO2R3-F17 IS CLOSED BY RULING AND NOT BY THE SEAT THAT RAISED IT. THE ADJACENT SET
+        IS DEAD AS AN EXEMPTION: that executable example is now
+        variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch and the check
+        EXITS 1 NAMING THE TYPE. TWO RESIDUES REMAIN AND NEITHER IS CLOSED BY THE WIDENING.
+        RESIDUE (i) — A ZERO-FIELD MEMBER SATISFIES VACUOUSLY AND THE WHOLE OF WHAT IS ASSERTED
+        OF IT IS THAT IT HAS NO FIELDS. `Empty` at observations.py is that member today and the
+        only one. It carries no boundary of any kind; the rule is satisfied there because there
+        is nothing to satisfy it about, which is a different fact from a guarded type. EXECUTABLE
+        EXAMPLE: V43 is this residue ONE FIELD DOWN — the moment a field arrives on a type with
+        no establishment, the check fails. CARRIER MEASURED:
+        tests/test_field_establishment.py::test_the_vacuously_satisfying_members_are_exactly_this_set
+        pins the vacuous set BY NAME and re-measures each member's emptiness at RUNTIME from
+        `dataclasses.fields`, so a SECOND zero-field judgement-path type is a test failure and not
+        a quiet widening of the vacuous branch, and a field arriving on `Empty` fails there too.
+        RESIDUE (ii) — THE CROSS-FIELD INVARIANT IS NOT REACHED AND THE WIDENING DID NOT TOUCH IT.
+        A declared field list says what each field IS and NOTHING about what any two of them must
+        be TO EACH OTHER. §C.5's invariants 2 and 3, ConfigSnapshot's one-spec-per-dial,
+        AttemptRecord's requested_utc <= observation.observed_utc, CollectionResult's
+        rows_recorded == attempts_made and Agrees's freshness.as_of_utc == as_of_utc REMAIN
+        BODY-BORNE. THE WIDENED WORDING MUST NOT BE READ TO IMPLY OTHERWISE: widening the class
+        from "body-borne" to "body-borne or absent" widened WHO MUST DECLARE, not WHAT A
+        DECLARATION CAN SAY. EXECUTABLE EXAMPLE:
+        variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch, as at MECHANISM LIMIT 1.
+        CARRIER MEASURED AND IT IS BODY-LEVEL: tests/test_engine_config.py and
+        tests/test_engine_model_registry.py measure those bodies refusing today, and V36 measures
+        them stopping when the body is edited. As a STRUCTURE that survives an edit to those
+        bodies: NOT PROVED TO BE CARRIED ANYWHERE. Standing as CD-ENG-WO2R3-F18.
+        AND WHAT A READER MUST NOT INFER FROM A GREEN RUN: the widening changed NO verdict on the
+        population it was applied to. This check was GREEN before it and is GREEN after it. What
+        the widening buys is PROSPECTIVE and is proved by the contrast, never by the run.
         CHECK LIMIT 2 — RULE A's PACKAGE LIST IS A VOCABULARY. `engine`, `serving` and
         `collectors` are spelled in the check. A frozen judgement-path type written under a
         package name this file has never heard of is reached only by RULE B or RULE C. This is the

@@ -110,7 +110,9 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     **NO LONGER TRUE — THE HAND-OFF, AND THE CARRIER IS MEASURED (CD-RULE-006):** the
     structure is ``crash_detector.establishment.establishes``; the enumeration is
     ``python3 -B tools/register/check_constructor_field_establishment.py --root .``, which
-    measures the class at **32 members** and asserts every one carries its declaration; and
+    **ENUMERATES that class and asserts every fielded member carries its declaration —
+    RUN IT AND READ ITS POPULATION LINE; NO COUNT IS TRANSCRIBED HERE** (CD-RULE-009, and
+    see the note below on CD-PL-F91); and
     the measurement is V17 itself, RUN — with V17 applied and the mechanism present a duck
     ``DialSpec`` into ``ConfigSnapshot`` is REFUSED with
     ``establishment.FieldNotEstablished``, and with the mechanism removed
@@ -120,8 +122,20 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     establishes a field's TYPE and never a RELATION BETWEEN TWO FIELDS. §C.5's invariants 2
     and 3 and ``ConfigSnapshot``'s one-spec-per-dial REMAIN BODY-BORNE —
     ``variants/WO-2R3/V36-cross-field-invariant-body-rewrite.patch``, measured, ACCEPTED —
-    and for that residue: **NOT PROVED TO BE CARRIED ANYWHERE.** It now lives as DECLARED
-    LIMIT 1 of the constructor check.
+    and for that residue: **NOT PROVED TO BE CARRIED ANYWHERE.** It lives as residue (ii) of
+    the constructor check's DECLARED LIMIT 1.
+
+    **AND THIS NOTE ONCE CARRIED A COPY OF THE SIBLING'S CLASS DEFINITION AND COUNT, WHICH
+    NO RULE POINTED AT (CD-PL-F91, raised by the Project Lead against this project's rules
+    and not against a seat).** It read *"...which measures the body-borne field-establishment
+    class at 32 members"*. That sentence carried BOTH the sibling's old class wording and a
+    count, in a FOURTH place — CD-RULE-004's "all three places" are a LIMIT'S OWN three, and
+    a copy living in a DIFFERENT instrument was outside every rule that keeps the three in
+    step. PO-DECISIONS-0010 ruling 1 widened that class to **BODY-BORNE OR ABSENT** and
+    moved the count, so the copy went stale exactly as an unpointed-at copy does. **THE
+    REPAIR IS THAT THIS NOTE NOW CARRIES NEITHER** — no definition of the sibling's class
+    and no count of it. It names the sibling's command instead, so a reader who wants either
+    gets it from a measurement.
 
  2  **RULE 1's PACKAGE LIST IS A VOCABULARY.** ``engine`` and ``serving`` are spelled here.
     A judgement-path door written under a package name this file has never heard of is
@@ -619,11 +633,19 @@ def main() -> int:
         "a constructor is not one of its subjects, and V17 still leaves it exiting 0. THE "
         "CARRIER IS NAMED AND MEASURED (CD-RULE-006): "
         "crash_detector.establishment.establishes, enumerated and asserted by "
-        "tools/register/check_constructor_field_establishment.py, which measures the "
-        "body-borne field-establishment class at 32 members. WHAT IS STILL NOT CARRIED is a "
-        "CROSS-FIELD invariant, which no declared field list can state — that is the "
-        "constructor check's own DECLARED LIMIT 1. The superseded wording of this note is "
-        "quoted in full in this file's header rather than deleted."
+        "tools/register/check_constructor_field_establishment.py — RUN IT AND READ ITS OWN "
+        "POPULATION LINE. THIS NOTE CITES NEITHER THAT CLASS'S DEFINITION NOR ITS COUNT, "
+        "AND UNTIL PO-DECISIONS-0010 RULING 1 IT CITED BOTH: it read '...which measures the "
+        "body-borne field-establishment class at 32 members'. That was a FOURTH place "
+        "holding a copy of a sibling limit's definition and count with no rule pointing at "
+        "it (CD-PL-F91) — CD-RULE-004's three places are each limit's OWN — and the ruling "
+        "widened that class to BODY-BORNE OR ABSENT and moved the count, so the copy went "
+        "stale exactly as an unpointed-at copy does. A COUNT READ FROM A SIBLING'S RUN IS A "
+        "MEASUREMENT; A COUNT COPIED HERE IS A TRANSCRIPTION (CD-RULE-009). WHAT IS STILL "
+        "NOT CARRIED is a CROSS-FIELD invariant, which no declared field list can state — "
+        "that is residue (ii) of the constructor check's own DECLARED LIMIT 1, and the "
+        "widening did not touch it. The superseded wording of this note is quoted in full "
+        "in this file's header rather than deleted."
     )
 
     return check.done(
