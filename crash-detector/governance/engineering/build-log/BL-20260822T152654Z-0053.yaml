@@ -1,0 +1,483 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 2 RECONCILED — §D.1/§D.2 FOR A2, A3, A4 AND A5 ARE DELIVERED, AND THE MECHANISM
+# IS THE ONE PO-DECISIONS-0005 RULING 1 ACCEPTED: ESTABLISHMENT DERIVED FROM THE SIGNATURE.
+#
+# P7 WAS TAKEN FIRST, AS THE PRODUCT OWNER DIRECTED THE FOURTH ASSURANCE SEAT TO TAKE IT, AND THE
+# PROJECT LEAD REPLICATED IT ON ITS OWN DRIVER: AN ORDINARY CALL THAT DOES NOT KNOW THE NEW ARGUMENT
+# EXISTS IS REFUSED. CD-D-098 IS DISCHARGED AND ITS COUNTERFACTUAL WAS TAKEN.
+#
+# THE SEAT RAISED FOUR FINDINGS AGAINST ITS OWN WORK — INCLUDING A LIVE BYPASS IN ITS OWN DOORS,
+# WHICH IT FOUND AND CLOSED — AND DECLARED A RESIDUE IT COULD HAVE HIDDEN. THE FIFTH CONSECUTIVE SEAT
+# ON THIS PROJECT TO DO SO.
+#
+# ONE OF THOSE FINDINGS IS A SCOPE QUESTION AND IS PUT TO THE PRODUCT AUTHORITY, NOT ANSWERED HERE.
+# RECONCILIATION IS NOT ACCEPTANCE AND IT IS NOT ASSURANCE.
+# ================================================================================================ #
+
+entry_id: BL-20260822T152654Z-0053
+timestamp_utc: "2026-08-22T15:26:54Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 25b0c0ff66cb4d990c111c1bf297cbade38517a9   # the CD-RULE-007 follow-up that closed the prior boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36).
+parent_entry_id: BL-20260822T143058Z-0052
+schema_version: 1
+
+action_summary: >
+  CD-ENG-WO2R3-01 RETURNED ALIVE with INCREMENT_2_COMPLETE at lane 995ec3e on branch wo-2r3, across
+  FOUR commits, and it committed as it went for the second increment running.
+  §D.1 AND §D.2 ARE DELIVERED FOR A2, A3, A4 AND A5. `crash_detector.admission.admits` establishes
+  each argument by EXACT TYPE at the boundary, DERIVED FROM THE SIGNATURE: it refuses on
+  `type(value) is not declared`, it refuses ANY PARAMETER IT WAS NOT TOLD ABOUT, and it refuses a
+  DECLARATION THAT HAS COME ADRIFT FROM ITS SIGNATURE — in both directions. The static check
+  `tools/register/check_judgement_path_doors.py` enumerates 19 judgement-path doors FROM THE ARTEFACT
+  by two unioned rules, finds 19 decorated, prints its subject count and its four declared limits at
+  every run, and FAILS on any undecorated door.
+  THE PROJECT LEAD DID NOT TAKE THE SEAT'S WORD FOR ANY OF IT — the standard the Product Owner named
+  at PO-DECISIONS-0006 ruling 2. Own `git archive` extractions (SEVEN of them, one per variant, none
+  contaminating another), own drivers written from the product's public API, own counterfactuals, and
+  TWO UNCORPUSED ROUTES OF ITS OWN. Every headline claim reproduces.
+  RECONCILED AND ACCEPTED AS INCREMENT 2. NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005 — grading a
+  criterion belongs to the FOURTH Assurance seat and to nobody in this dispatch (PBG-SOD-001,
+  PBG-AUTH-006), and the Product Owner said so itself at PO-DECISIONS-0006 ruling 2.
+  NOTHING ADMITTED. THE GATE IS UNMOVED.
+
+# ================================================================================================ #
+# P7 FIRST — THE TEST THAT DISTINGUISHES A CLASS CLOSURE FROM FOUR FIXES
+# ================================================================================================ #
+P7_replicated_by_the_project_lead:
+  why_first: >
+    PO-DECISIONS-0005 ruling 1 directs the FOURTH ASSURANCE SEAT to run P7 first. The Project Lead
+    took it first for the same reason: it is what distinguishes "establishment derived from the
+    signature" from "four type checks on four named functions", and if it does not bite, nothing
+    else in this increment matters.
+  the_driver: '/tmp/pl_p7_driver.py — the PROJECT LEAD''s own, written from the product''s public API. It constructs a REAL `PanelRow` on the product''s own terms and calls `resolve_panel` the way every caller in the product calls it. It is not the seat''s test.'
+  the_plant: 'variants/WO-2R3/V20-p7-added-parameter.patch — ONE line: `tolerate_stale: bool = False` added to the signature of the REAL `resolve_panel`. Nothing else. Applied to a pristine extraction with `git apply -p1`.'
+  BASELINE_ARM_the_call_that_matters:
+    call: 'resolve_panel(row, now_utc=..., staleness_window_seconds=...) — AN ORDINARY CALL THAT DOES NOT PASS THE NEW ARGUMENT AND DOES NOT KNOW IT EXISTS.'
+    observed: >
+      REFUSED. `UndeclaredParameter: resolve_panel is a FAULTED door and every call to it is
+      refused. parameter 'tolerate_stale' is in the signature of resolve_panel and was NOT declared
+      to admits(). A new argument on a judgement-path door arrives REFUSED, never unguarded
+      (BP-AMENDMENT-0001 §D.1; planted violation P7).`
+    why_this_is_the_whole_point: >
+      THE CALLER DID NOTHING WRONG AND IS STILL REFUSED. That is the property ruling 1 accepted: the
+      door is faulted by the ADDITION, not by the use. A mechanism that only refused calls which
+      PASSED the new argument would be a type check with extra steps — it would let every existing
+      caller through an entry point that has silently grown a new way in.
+    also_observed: 'A caller that DOES pass `tolerate_stale=True` is refused by the same fault. Both calls, one refusal.'
+  VIOLATED_ARM:
+    plant: 'variants/WO-2R3/V23-p7-violated.patch — the same added parameter, with the @admits decorator REMOVED.'
+    observed: 'BOTH CALLS ADMITTED. `Agrees(divergence_measure=0.02, ...)`. The escape returns the moment the structure is removed, which is what makes the baseline arm a guard rather than a test that would have passed anyway.'
+  the_static_half: >
+    On the V20 tree the check exits 1 with `PARAMETER_NOT_DECLARED_TO_ADMITS` naming the file, the
+    line and the parameter — the same fact read WITHOUT IMPORTING ANYTHING. The runtime and the
+    static reader agree, and neither is asked to carry the other's claim.
+  the_seats_own_disclosure_confirmed: >
+    The in-suite P7 arms are LABELLED RECONSTRUCTIONS IN THEIR OWN DOCSTRING — they re-apply each
+    door's declaration to a signature with one more parameter rather than patching the product. The
+    seat said so rather than letting the arms read as tests of the real doors, and it named V20 as
+    the arm to replicate. THE PROJECT LEAD REPLICATED V20, NOT THE IN-SUITE ARMS.
+
+# ================================================================================================ #
+# CD-D-098 — DISCHARGED, AND ITS COUNTERFACTUAL TAKEN
+# ================================================================================================ #
+CD_D_098_discharged:
+  what_was_bound: >
+    The static check MUST ENUMERATE `engine.mapping.compute` — the door increment 1 itself built,
+    which post-dates §B's measured inventory of 44 and establishes IN ITS BODY — and `admits` must
+    cover it like any other door.
+  as_landed: '`@admits(spec=ModelSpec, payloads=dict)` on `engine/mapping.py:213`. Read from the artefact, not from the seat''s report.'
+  the_project_leads_counterfactual_because_a_claim_of_coverage_needs_one:
+    command: 'the @admits line deleted from engine/mapping.py in a pristine extraction; then `python3 -B tools/register/check_judgement_path_doors.py --root /tmp/pl-cd098`'
+    observed: >
+      EXIT 1. `VIOLATION src/crash_detector/engine/mapping.py:213 — rule: UNDECORATED_JUDGEMENT_PATH_DOOR`,
+      "SUBJECTS ENUMERATED: 19. DECORATED: 18." THE CHECK NAMES THE EXACT DOOR CD-D-098 WAS WRITTEN
+      ABOUT. It is in the subject set, and the check fails when it is not decorated. That is the
+      structural version of the claim and it is stronger than reading the decorator.
+  why_the_check_finds_it_at_all: >
+    The subject set is DERIVED FROM THE ARTEFACT by two unioned rules — (1) deny-by-default within
+    `engine/` and `serving/`, so a NEW MODULE in those packages is a subject WITH NO EDIT to the
+    check; (2) return-annotation reach anywhere under `src/`, which caught three doors rule 1 missed.
+    A check enumerating a hand-written list of 44 names would have missed `compute` exactly as
+    CD-D-098 predicted.
+
+# ================================================================================================ #
+# P5 AND P6 — REPLICATED, OVER EMPTY_MODEL_REGISTRY, WITH THE REFUSING LAYER NAMED (CD-PL-F74)
+# ================================================================================================ #
+P5_ASR3_F05_duck_ConfigSnapshot:
+  driver: '/tmp/pl_p5.py — the Project Lead''s own. Builds the real snapshot with `empty_config_snapshot(...)` and wraps it in a duck that answers `window()` and `spec_for()` and COUNTS ITS OWN CONSULTATIONS.'
+  empty_registry_asserted_not_assumed: '`real.model_registry is EMPTY_MODEL_REGISTRY` -> True; `real.source_registry is EMPTY_SOURCE_REGISTRY` -> True; model registry rows -> 0. Identity, not a count that could be a different empty object.'
+  observed: >
+    REFUSED. `NotAdmitted: evaluate: config_snapshot=DuckConfigSnapshot is not admitted; this door
+    requires exactly ConfigSnapshot.` AND THE DUCK'S METHODS WERE CONSULTED **ZERO** TIMES — the
+    counter the Project Lead put in the duck itself, so the refusal is proved to precede any use of
+    the caller's code rather than merely to follow it.
+  refusing_layer_named_and_scoped: '`crash_detector.admission.admits` at `evaluate`''s boundary. SCOPE: every call to `evaluate` by any caller. NOT the ConfigSnapshot constructor, which was already closed — the finding was that nothing REQUIRED it to have run.'
+P6_ASR3_F04_duck_row:
+  driver: '/tmp/pl_ab2.py — the Project Lead''s own DuckRow, a `state` property answering AGREES over a stored UNAVAILABLE.'
+  observed: 'REFUSED. `NotAdmitted: resolve_panel: row=DuckRow is not admitted; this door requires exactly PanelRow or None. Exact type and never isinstance: a subclass may shadow any attribute with a property...` The lying property is never consulted.'
+  refusing_layer_named_and_scoped: '`crash_detector.admission.admits` at `resolve_panel`''s boundary. SCOPE: every call by any caller. A `PanelRow` SUBCLASS is refused by the same rule and deliberately — exact type identity, never isinstance.'
+the_false_positive_arm:
+  why_it_is_here: 'A closure that forbids the product is not a closure.'
+  observed: >
+    `evaluate((), real_snapshot, NOW)` -> `DialSet(equity=Unknown(reason='NO_REQUIRED_INPUTS_DECLARED',
+    ...), monetary=Unknown(...))`. BOTH DIALS STILL RENDER UNKNOWN END-TO-END over the empty
+    registries, which is WO-2's designed state and the thing that keeps CD-D-005 visibly owed.
+
+# ================================================================================================ #
+# THE RENAME TEST (CD-PL-F74) — TAKEN BY THE PROJECT LEAD, NOT READ
+# ================================================================================================ #
+the_rename_test:
+  what_was_done: 'The parameter `row` renamed to `panel_row` IN THE SIGNATURE ONLY of `resolve_panel`, in a pristine extraction, with the body kept working by an alias so the rename is the only variable.'
+  observed_at_runtime: >
+    REFUSED, IN BOTH DIRECTIONS AT ONCE: `parameter 'panel_row' ... was NOT declared to admits()` AND
+    `admits() was told about 'row', which is not a parameter of resolve_panel. A declaration that has
+    come adrift from its signature is guarding a door that is not there.`
+  observed_statically: 'EXIT 1 with TWO violations — PARAMETER_NOT_DECLARED_TO_ADMITS and DECLARATION_ADRIFT_FROM_SIGNATURE.'
+  the_verdict: >
+    A RENAME FAULTS THE DOOR IN THE SAFE DIRECTION. It does not open it. This is the answer
+    CD-PL-F74 asks for: the refusals this increment relies on are properties of exact type identity
+    and of signature/declaration agreement, not of any vocabulary. The one place a NAME is
+    load-bearing is DECLARED LIMIT 2 (the `self`/`cls` receiver), and the seat bounded it by asking
+    the class-body test FIRST and disclosed that the mechanism FAULTED a module-level function whose
+    argument is named `cls` the first time it met one.
+
+# ================================================================================================ #
+# TWO ROUTES OF THE PROJECT LEAD'S OWN, IN NO CORPUS — THE STANDARD THE PO NAMED AT RULING 2
+# ================================================================================================ #
+PL_AB1_the_open_channel_and_it_is_this_projects_own_historic_escape:
+  the_route: >
+    `**extra` added to `resolve_panel`. THIS IS NOT AN ARBITRARY PROBE: §D.1 names the fourth
+    argument of `_absence_is_never_a_number`, "deliberately written with `*extra` to survive", as one
+    of the two escapes the whole mechanism exists to prevent. A variadic parameter is the GENERAL
+    CASE of "a parameter it was not told about" — values arrive with no name to declare and no type
+    to require. If any route was going to walk past a signature-derived guard, this was it.
+  observed: >
+    REFUSED AT THE DOOR — `UndeclaredParameter: ... **extra is an OPEN CHANNEL` — AND FLAGGED
+    STATICALLY, exit 1, `rule: OPEN_CHANNEL`. The route is OVER-DETERMINED. The mechanism treats a
+    variadic parameter as a FAULT rather than as something to inspect, which is the only answer that
+    generalises: you cannot exact-type what has no name.
+PL_AB4_rewriting_the_live_declaration_through_the_closure:
+  the_route: >
+    THE PL-AA1 FAMILY, APPLIED TO `admits` INSTEAD OF TO `MappingKind`. At increment 1 the Project
+    Lead attacked a closed enum by mutating its private `_member_map_` at runtime; the same question
+    asked here is "is the DECLARATION a door enforces reachable and mutable after import?". It is:
+    `resolve_panel.__closure__[0].cell_contents` is the LIVE declaration dict, and
+    `live["row"] = one_of(DuckRow)` rewrites what the door requires.
+  observed: >
+    ADMITTED. `Agrees(divergence_measure=0.02, ...)` — THE DEAD WITNESS FEED PUBLISHES, through a
+    door that is still decorated, with `admits` running and reporting a clean admission.
+  what_it_does_and_does_not_prove: >
+    IT IS INSIDE THE SEAT'S DECLARED LIMIT 6 AS WORDED — "THE `__closure__` HALF IS NOT CLOSED AND IS
+    NOT CLAIMED: NOT PROVED TO BE CARRIED ANYWHERE" — so the declaration is not defeated and the
+    seat's honesty is confirmed rather than dented. It is recorded as CD-PL-F80 because the limit's
+    NAMED EXAMPLE covers only one of the two routes through that reach, and the second is worse in a
+    way the first is not: the undecorated-function route bypasses the door VISIBLY (something other
+    than the door is called), whereas this one leaves the door in place and makes the guard itself
+    admit the duck. Anything that watches "was the door called" sees a clean pass.
+  the_route_that_FAILED_and_is_recorded_because_a_failed_attack_is_evidence_too: >
+    `resolve_panel.__admits__` — the declaration EXPOSED on the function's `__dict__` — is a
+    DIFFERENT OBJECT from the live one (`live is resolve_panel.__dict__['__admits__']` -> False).
+    Rewriting the exposed copy changes nothing: the duck is still refused. The introspectable surface
+    is not the enforcing surface, which is the right way round and is not an accident.
+
+# ================================================================================================ #
+# THE SEAT'S FOUR FINDINGS AGAINST ITSELF — EACH CONFIRMED BY MEASUREMENT, EACH RULED
+# ================================================================================================ #
+findings_from_the_seat:
+- id: CD-ENG-WO2R3-F04
+  severity: HIGH-as-found, CLOSED-IN-PART BY THE SEAT ITSELF
+  what: >
+    A LIVE BYPASS IN ITS OWN DOORS, found by the seat and not by an auditor:
+    `resolve_panel.__wrapped__(duck_row, ...)` returned `Agrees` and rendered `WITNESS AGREES` with
+    every door decorated. `functools.wraps` sets `__wrapped__`, `inspect.unwrap` follows it and
+    editors offer it — so the bypass was writable in ORDINARY-LOOKING CODE.
+  confirmed: >
+    YES, and the closure is confirmed by measurement: `hasattr(resolve_panel, '__wrapped__')` ->
+    **False** at the lane head, on the Project Lead's own extraction, and `__signature__` is retained
+    so `inspect.signature` still answers correctly. The `__closure__` half IS still open — the
+    Project Lead reached the undecorated function at `__closure__[1]` and it rendered `Agrees` —
+    which is exactly what DECLARED LIMIT 6 says and does not claim otherwise.
+  ruling_CD_D_104: >
+    ACCEPTED AS FOUND, CLOSED AND DECLARED. The seat found a bypass in work it had written that hour,
+    closed the half that was reachable from ordinary code, MEASURED the half that is not, and wrote
+    the open half into its own declared limits with an executable example — rather than shipping the
+    door and letting the fourth Assurance seat find it. THAT IS THE BEHAVIOUR THIS PROGRAMME IS
+    TRYING TO PRODUCE. The `__closure__` residue is NOT a defect to be closed at increment 3: CPython
+    offers no way to prevent it, it is true of every decorator ever written including this codebase's
+    own `_absence_is_never_a_number` which has passed three gates, and a guard built over a language
+    property would be exactly the "clever guard over a structural impossibility" the dispatch names
+    as worse than an honest escalation.
+- id: CD-ENG-WO2R3-F05
+  severity: MEDIUM — AND IT IS A SCOPE QUESTION, NOT A DEFECT IN THE SEAT'S WORK
+  what: >
+    §D AS SCOPED DOES NOT REACH CONSTRUCTORS. `ConfigSnapshot(...)`, `DialSpec(...)`,
+    `ModelSpec(...)` and `PanelRow(...)` are public entry points on the judgement path and they
+    establish their fields in `__post_init__` — IN A BODY, which is the precise thing §D.1 exists to
+    stop relying on.
+  confirmed_and_it_matters_more_than_its_severity: >
+    YES. And the Project Lead adds the observation the seat did not make: THREE OF §C's FOUR
+    REFUSALS AT INCREMENT 1 ARE CONSTRUCTION-TIME REFUSALS. The standing condition the whole
+    re-architecture is measured against — "the auditor's plant must die at DialSpec construction, at
+    ModelSpec construction, at ConfigSnapshot construction and at resolution" — names constructors
+    three times. Three of those four refusals are the INTERPRETER refusing a field that does not
+    exist, which is stronger than any body and is untouched by this finding. The fourth
+    (`model_ref`, `NotEstablishedOnOwnTerms`) is body-level, and so are the ConfigSnapshot
+    invariants of §C.5.
+  ruling_CD_D_105: 'PUT TO THE PRODUCT AUTHORITY, NOT ANSWERED HERE. See open_questions_for_the_product_authority below. The seat was RIGHT not to close it — §D.2''s table lists no constructor, and inventing that scope is the "widening scope silently" the dispatch prohibits. It is declared in all three CD-RULE-004 places with V17 as its executable example and "NOT PROVED TO BE CARRIED ANYWHERE" as its carrier, which is the correct handling of a gap a seat may not close.'
+- id: CD-ENG-WO2R3-F06
+  severity: LOW — A CORRECTION TO THE SEAT'S OWN PRIOR RECORD
+  what: 'Three of the eleven plants no longer apply, and INCREMENT 1 broke them; the lane entry BL-…-0060 measured them at the wrong SHA.'
+  confirmed: >
+    YES, and the Project Lead measured it independently AT THREE SHAs: 11/11 apply at f30e63c,
+    **8/11 at 7b00ce9**, **8/11 at 995ec3e**. The three failing are
+    CD-RT-001-ABSENCE-RENDERS-UNKNOWN, CD-RT-001-AST-NO-NUMERIC-DEFAULT and
+    CD-RT-003-ENGINE-NO-WITNESS-REACH — THE SAME THREE, unchanged by this increment. INCREMENT 2
+    BROKE NOTHING FURTHER.
+  ruling_CD_D_106: >
+    NOTED AND ALREADY OWNED. The Project Lead's own BL-20260822T121025Z-0051 measured 8/11 at 7b00ce9
+    at the increment-1 boundary, so the main record was never wrong; what the seat corrected is its
+    OWN lane entry. It corrected it by SUPERSEDING in a new entry rather than editing 0060
+    (PBG-CONT-003, non-waivable), which is the required handling. The three plants remain increment
+    4's declared work under CD-D-033 — UPDATED to violate the SAME PROPOSITION against the new
+    structure. DELETING ONE IS PROHIBITED and none was deleted.
+- id: CD-ENG-WO2R3-F07
+  severity: LOW — A PROCESS DISCLOSURE WITH NO WRONG NUMBER BEHIND IT
+  what: 'The seat wrote "1456 passed" into commit 212224f BEFORE measuring it. It measured immediately after and it was correct; it should have been measured first.'
+  confirmed: >
+    THE NUMBER IS RIGHT — the Project Lead extracted 212224f and ran the suite: **1456 passed**. So
+    the record contains no false figure. The finding is that the ORDER WAS WRONG, and the seat is the
+    only party who could have known that.
+  ruling_CD_D_107: >
+    NOTED, NOT BLOCKING, AND CORRECTLY RAISED. It is the CD-RULE-009 family one step upstream: that
+    rule exists because a fingerprint nobody can recompute is not a control, and a number written
+    before it is measured is the same defect caught early enough to be harmless. No corrective action
+    is required beyond the disclosure, which is already durable in the lane's Build Log.
+
+# ================================================================================================ #
+# TWO FINDINGS RAISED BY THE PROJECT LEAD AGAINST WORK IT DIRECTED
+# ================================================================================================ #
+findings_raised_by_the_project_lead:
+- id: CD-PL-F80
+  severity: LOW — INSIDE A DECLARED LIMIT, BUT WIDER THAN THAT LIMIT'S NAMED EXAMPLE
+  what: >
+    DECLARED LIMIT 6's example covers ONE route through the `__closure__` reach — calling the
+    undecorated function. THE PROJECT LEAD MEASURED A SECOND: rewrite the live declaration dict in
+    `__closure__[0]` and THE DOOR ITSELF admits the duck, decorated, with `admits` reporting success
+    (PL-AB4 above). The limit's WORDING covers it — "the `__closure__` half is not closed and is not
+    claimed" — so nothing declared is false.
+  why_it_is_raised_anyway: >
+    CD-PL-F76 was raised on this project because an invariant was stated WIDER than its closure. This
+    is the mirror: a declared limit whose EXAMPLE is narrower than its route. The fourth Assurance
+    seat will read the example before it reads the wording, and the second route reads differently to
+    a reviewer — the door stays in place and the guard participates in the escape.
+  disposition: >
+    FOR INCREMENT 4, which writes NO LOGIC and owns declarations: add the second route as a second
+    measured example under DECLARED LIMIT 6. NOT a code change and NOT a new guard — CPython offers
+    no way to close it and building one would be the clever guard over a language property.
+- id: CD-PL-F81
+  severity: LOW-MEDIUM — A CD-RULE-004 PLACEMENT DEFECT, SAME FAMILY AS CD-PL-F75
+  what: >
+    CD-RULE-004 requires a declared limit in THE CHECK HEADER, THE REGISTER ENTRY AND THE EXECUTION
+    CONTRACT. The static check's four limits are in all three. THE MECHANISM'S OWN TWO — LIMIT 5
+    (§D.1's rule is NOT held at the three §B.3 doors) and LIMIT 6 (the `__closure__` reach) — are in
+    `src/crash_detector/admission.py` and are POINTED TO from the execution contract, but they are
+    NOT IN THE REGISTER ENTRY. MEASURED: `grep -c "__closure__" required-tests.yaml` -> 0.
+  why_it_matters: >
+    The register is what an auditor reads FIRST, and CD-RULE-004 names it precisely so a limit cannot
+    live only where the implementer looks. A reader of `required-tests.yaml` sees four limits and no
+    sign of the two that bear most on what this increment claims.
+  disposition: 'FOR INCREMENT 4. Documentary, no logic. The limits themselves are correct, complete and honestly written where they are.'
+
+# ================================================================================================ #
+# WHAT THE PROJECT LEAD MEASURED — COMMANDS BESIDE EVERY NUMBER (CD-RULE-009)
+# ================================================================================================ #
+measured_by_the_project_lead:
+  extraction: 'rm -rf /tmp/cd-995ec3e && mkdir -p /tmp/cd-995ec3e && git archive 995ec3e | tar -x -C /tmp/cd-995ec3e   (and six further pristine extractions, one per variant, none contaminating another)'
+  identity_audit:
+    command: "git -C /srv/crash-detector-wo2r3 log --format='%h | %an <%ae> | %cn <%ce> | %s' 7b00ce9..HEAD"
+    result: 'FOUR commits — 212224f, f22937e, 9e1aba0, 995ec3e — every one authored AND committed `CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid>`. CD-RULE-002 CLEAN. Not one human identity.'
+  lane_state:
+    command: 'git -C /srv/crash-detector-wo2r3 rev-parse HEAD; git -C /srv/crash-detector-wo2r3 status --porcelain | wc -l'
+    result: '995ec3e36f5bd43bcbfdff66ccab1ace1a11949c, porcelain ZERO.'
+  writable_scope_audit:
+    command: 'git diff --name-status 7b00ce9 995ec3e'
+    result: >
+      26 paths, ALL INSIDE writable_scope. NOTHING under pbg/, BLUEPRINT.md, PID.md, governance/
+      outside build-log/, deploy/, db/ or requirements*. AND THE PART THAT MATTERS FOR A CLAIM ABOUT
+      NOT WEAKENING TESTS: both test files are **A**dded (tests/test_admission.py,
+      tests/test_judgement_path_doors.py) and NOT ONE PRE-EXISTING TEST FILE WAS MODIFIED. The
+      seat's claim that nine auditor-derived tests went red when it exact-typed the doors and that
+      NOT ONE WAS CHANGED is confirmed structurally, not by report.
+  the_suite:
+    command: 'PYTHONPATH=/tmp/cd-995ec3e/src python3 -B -m pytest tests -q'
+    result: '1482 passed in 9.44s.'
+  node_id_conservation:
+    command: 'pytest --collect-only -q at BOTH SHAs on separate pristine extractions, ids grepped, sorted, `comm -23` and `comm -13`.'
+    result: '1437 -> 1482. LOST: **0**. ADDED: **45**. No replacements needed and none claimed. The 1400 floor at f30e63c is intact through two increments.'
+  the_static_check:
+    command: 'python3 -B tools/register/check_judgement_path_doors.py --root /tmp/cd-995ec3e'
+    result: '19 subjects, 19 decorated, 38 assertions, EXIT 0. It prints its subject count, both derivation rules, the three doors rule 2 caught that rule 1 missed, the 8 ESTABLISHED_HERE uses, the exempt counts, and its declared limits AT EVERY RUN — so a vacuous pass is visible.'
+  the_register_checks:
+    command: 'each of the eleven tools/register/check_*.py run at --root /tmp/cd-995ec3e'
+    result: 'TEN at exit 0. `check_grant_matrix_live.py` at exit 3 — the SAME environmental reason as at base (no live Postgres in this environment), unchanged by this increment.'
+  the_eleven_plants:
+    command: 'git apply --check -p1 on each of plants/**/*.patch against the 995ec3e extraction'
+    result: 'EIGHT APPLY, THREE FAIL — the SAME three as at 7b00ce9. Increment 2 broke nothing further.'
+  the_register_hygiene:
+    command: 'yaml.safe_load(required-tests.yaml); regex for status-like keys'
+    result: '`latest_admitted_run` is **None**. Status-like keys (status, result, outcome, verdict, grade, score, disposition): **NONE**. The register carries obligations, never results.'
+  DECLARED_LIMIT_4_replicated_because_it_is_the_vocabulary_question:
+    command: 'git apply -p1 variants/WO-2R3/V18-counterfeit-admits.patch into a pristine extraction; then the static check, the suite, and the PL''s own duck driver'
+    result: >
+      THE STATIC CHECK IS DEFEATED — exit 0, PASS — and the duck row is ADMITTED and renders
+      `Agrees` from a dead feed. THE NAMED CARRIER HOLDS: the same tree runs **3 FAILED** in the
+      suite. The seat's declaration is exact, its carrier is real, and the Project Lead reproduced
+      BOTH halves rather than the convenient one. Contrast arm on the clean head with the same
+      driver: REFUSED.
+  DECLARED_LIMIT_5_replicated_because_it_is_the_material_NOT_CLOSED:
+    command: 'git apply -p1 variants/WO-2R3/V19-b3-door-body-rewrite.patch into a pristine extraction; then the static check and the suite'
+    result: >
+      THE BODY REFUSAL IS DELETED WITH THE DECORATOR UNTOUCHED, AND THE STATIC CHECK STAYS GREEN
+      (EXIT 0). The suite goes to **1 FAILED** —
+      `tests/test_dial_provenance.py::test_the_derivation_door_refuses_a_value_whose_provenance_it_cannot_establish`
+      — which is EXACTLY the body-level carrier the seat named, and exactly why it wrote "as a
+      structure that survives an edit to those bodies: NOT PROVED TO BE CARRIED ANYWHERE". The
+      residue is real, and it is declared as precisely as it is real.
+
+# ================================================================================================ #
+# THE MATERIAL NOT-CLOSED, STATED AS THE SEAT STATED IT
+# ================================================================================================ #
+what_this_increment_does_not_close:
+- 'THREE §B.3 DOORS — `combine_within_one_dial`, `observed_for_dial`, `derived_within_one_dial` — ARE
+   DECORATED FOR THE P7 PROPERTY ONLY. Their type establishment stays in their bodies via eight
+   `ESTABLISHED_HERE` declarations, every one PRINTED BY THE STATIC CHECK AT EVERY RUN. §D.1''s rule
+   is NOT HELD at those three doors and the seat says so in that sentence. §D.2''s table does not
+   list them. REPLICATED BY THE PROJECT LEAD (V19 above): the body edit lands, the check stays green,
+   one test catches it. The seat re-declared the doors rather than change nine auditor-derived tests
+   that went red — INCLUDING ASR2-002-A — and NOT ONE OF THOSE TESTS WAS CHANGED, which the diff
+   confirms structurally. Choosing a declared residue over a green suite obtained by editing the
+   auditor''s own tests is the correct call and it is the opposite of what three earlier gates found.'
+- 'CONSTRUCTORS (CD-ENG-WO2R3-F05) — see the Product Authority question below.'
+- 'THE `__closure__` REACH (DECLARED LIMIT 6, and CD-PL-F80) — not closable in CPython, declared, not claimed.'
+- 'RULE 1''s PACKAGE LIST IS A VOCABULARY (DECLARED LIMIT 2). A judgement-path door under a package
+   name the check has not heard of is reached only by rule 2, and only if it annotates its return
+   type. NOT PROVED TO BE CARRIED ANYWHERE — no other layer enumerates judgement-path packages.'
+- 'A6 / `collectors/` — INCREMENT 3, by scope and not by oversight. The check PRINTS the gap at every
+   run and a test asserts the gap is still declared, so it cannot close silently.'
+
+# ================================================================================================ #
+# NOT VERIFIED BY THE PROJECT LEAD AT THIS BOUNDARY — DECLARED, NOT IMPLIED
+# ================================================================================================ #
+not_verified_by_the_project_lead_at_this_boundary:
+- 'THE SEAT''S FULL PLANT-ARM SET WAS NOT RE-RUN INDIVIDUALLY. The Project Lead ran the full suite
+   (1482 passed), the static check in four states, seven pristine variant extractions and two
+   uncorpused routes of its own. P5, P6, P7, DECLARED LIMIT 4 and DECLARED LIMIT 5 ARE independently
+   replicated. The in-suite arms of P5/P6 are taken from the seat''s record.'
+- 'V16, V17, V21, V22, V24 AND V25 WERE NOT APPLIED BY THE PROJECT LEAD. V17''s substance is the
+   subject of the Product Authority question below and is taken from the seat''s record and its
+   declaration, not from a PL replication.'
+- 'THE PROJECT LEAD DID NOT AUDIT ALL 45 NEW TESTS. It measured that ZERO node ids were lost, that no
+   pre-existing test FILE was modified, and that the suite is green.'
+- 'CD-AC-002 AND CD-AC-005 ARE NOT GRADED HERE AND CANNOT BE. That is the fourth Assurance seat''s,
+   and the Product Owner said so itself at PO-DECISIONS-0006 ruling 2.'
+- 'WHETHER THE 19 SUBJECTS ARE THE RIGHT 19 IS A JUDGEMENT, NOT A MEASUREMENT. The Project Lead
+   verified the derivation is FROM THE ARTEFACT and took the counterfactual on the one door CD-D-098
+   named. It did not independently enumerate the judgement paths and compare. THE FOURTH ASSURANCE
+   SEAT SHOULD.'
+
+# ================================================================================================ #
+# OPEN — FOR THE PRODUCT AUTHORITY. NOT ANSWERED BY THIS SEAT.
+# ================================================================================================ #
+open_questions_for_the_product_authority:
+- id: CD-D-105
+  question: >
+    **DOES §D REACH CONSTRUCTORS?** `ConfigSnapshot(...)`, `DialSpec(...)`, `ModelSpec(...)` and
+    `PanelRow(...)` are public entry points on the judgement path whose field establishment lives in
+    `__post_init__` — IN A BODY. §D.2's table lists A2–A7 and no constructor, so the seat correctly
+    did not close it and correctly declared it instead.
+  why_it_is_the_product_owners_and_not_the_project_leads: >
+    Closing it would ENLARGE WO-2R3's SCOPE A THIRD TIME. The Product Owner has ruled on this exact
+    axis twice — accepting §D's extension beyond the literal words of ruling 2, and ruling A6 IN at
+    PO-DECISIONS-0005 ruling 4 — and priced the second enlargement explicitly as "a cost accepted
+    here and PAID WITH THE PROJECT LEAD'S INCREMENT DISCIPLINE, NOT WITH A SCOPE CUT". A Project
+    Lead that took that decision itself would be setting scope the PO has twice reserved.
+  what_the_project_lead_adds_to_the_seats_statement_of_it: >
+    THE STANDING CONDITION THIS WHOLE RE-ARCHITECTURE IS MEASURED AGAINST NAMES CONSTRUCTORS THREE
+    TIMES: "the auditor's plant must die at DialSpec construction, at ModelSpec construction, at
+    ConfigSnapshot construction and at resolution — four independent refusals, THREE OF THEM AT
+    CONSTRUCTION". So the question is not academic. AND THE ANSWER IS NOT SYMMETRIC: at increment 1
+    the Project Lead measured that THREE of the four refusals are the INTERPRETER refusing a keyword
+    for a field that does not exist — no body, no guard, nothing to edit — and those are untouched by
+    this finding. What IS body-borne is the fourth refusal (`model_ref`), §C.5's three ConfigSnapshot
+    invariants, and `PanelRow`'s field re-establishment.
+  the_three_answers_available_and_the_project_lead_recommends_none: >
+    (A) §D REACHES CONSTRUCTORS — a fifth increment, or increment 3 enlarged, applying establishment
+    derived from the signature to `__post_init__`. (B) §D DOES NOT REACH CONSTRUCTORS AND THE RESIDUE
+    IS DECLARED AND CARRIED FORWARD — the current state, with V17 as its executable example and "NOT
+    PROVED TO BE CARRIED ANYWHERE" as its honest carrier, owed at WO-3 or later. (C) THE FOURTH
+    ASSURANCE SEAT IS INVITED TO ATTACK THE SCOPING, as the third seat was invited at
+    PO-DECISIONS-0003 ruling 4 and DID — which would decide it on measured grounds rather than on
+    anybody's reading, and which has cost this project an increment before and been worth it.
+  what_the_project_lead_did_in_the_meantime: >
+    NOTHING THAT PRE-EMPTS THE ANSWER. No constructor was changed, no scope was widened, and
+    increment 3 (§D.3, A6) is unaffected by any of the three answers — its scope is fixed by
+    PO-DECISIONS-0005 ruling 4 and §D.3 is accepted AS WRITTEN, both parts.
+
+decisions_ruled_here:
+- id: CD-D-104
+  ruling: 'CD-ENG-WO2R3-F04 accepted as found, closed and declared. The `__wrapped__` half is CLOSED (measured: hasattr -> False at the lane head); the `__closure__` half is a CPython property, is DECLARED LIMIT 6, and is NOT to be answered with a guard.'
+- id: CD-D-105
+  ruling: 'CD-ENG-WO2R3-F05 is PUT TO THE PRODUCT AUTHORITY as a scope question and is NOT answered by the Project Lead. See open_questions_for_the_product_authority.'
+- id: CD-D-106
+  ruling: 'CD-ENG-WO2R3-F06 noted; the main record was never wrong (BL-…-0051 measured 8/11 at 7b00ce9) and the seat corrected its own lane entry by superseding rather than editing. The three plants remain increment 4''s work under CD-D-033.'
+- id: CD-D-107
+  ruling: 'CD-ENG-WO2R3-F07 noted, not blocking. The number was right; the ORDER was wrong, and only the seat could have known. No corrective action beyond the disclosure.'
+- id: CD-D-108
+  ruling: >
+    WO-2R3 INCREMENT 2 IS RECONCILED AND ACCEPTED AS INCREMENT 2, AND IS NOT ACCEPTED AS CLOSING
+    CD-AC-002 OR CD-AC-005. P7 bites on an ordinary call; CD-D-098 is discharged and its
+    counterfactual taken; P5 and P6 are refused at the door with the refusing layer named and scoped
+    and the duck's own methods consulted zero times; the rename test faults the door in the safe
+    direction in both directions at once; the identity audit is clean on all four commits; the diff
+    is entirely inside writable scope and touches no pre-existing test file; node ids reconcile with
+    ZERO lost; and every declared limit the Project Lead replicated behaved exactly as declared.
+    ACCEPTANCE OF AN INCREMENT IS NOT ASSURANCE OF A CRITERION (PBG-SOD-001, PBG-AUTH-006), and
+    nothing is admitted (CD-RULE-001).
+
+next_safe_action: >
+  **PUT CD-D-105 TO THE PRODUCT AUTHORITY, THEN RUN INCREMENT 3.** The two are not sequential
+  dependencies — increment 3 is §D.3/A6, its scope is fixed by PO-DECISIONS-0005 ruling 4 and §D.3 is
+  accepted AS WRITTEN in both parts, and none of the three answers to CD-D-105 changes it. A Project
+  Lead that held increment 3 hostage to a question that does not touch it would be trading delivery
+  for the appearance of deference.
+  INCREMENT 3, to the SAME live seat at lane head 995ec3e: PART 1 — `clock` and `sleep` STOP BEING
+  CALLER CALLABLES (`clock` an engine-owned instant already established by `ensure_utc` and passed as
+  a VALUE; `sleep` a NAMED MEMBER of a closed `DelayKind`). PART 2 — `adapter`, `sink`, `ledger` and
+  `validator` KEEP THEIR PROTOCOLS and EVERY VALUE THEY RETURN IS ESTABLISHED AT THE POINT OF RETURN.
+  `policy` comes to this project's exact-type standard rather than isinstance. The static check is
+  EXTENDED to `collectors/` or the limit is declared — DECLARED LIMIT 3 currently says the gap is
+  scope and not oversight, and increment 3 is the increment that must close or re-declare it.
+  **CD-BP-003 IS THE FOURTH ASSURANCE SEAT'S FIRST TARGET, NAMED BY THE PRODUCT OWNER.** Part 2 is a
+  door that ADMITS, not an absence of a door, and it must be declared under CD-RULE-004 in ALL THREE
+  PLACES with an executable example, and under CD-RULE-006 with the carrier MEASURED or the words
+  "NOT PROVED TO BE CARRIED ANYWHERE". Write that declaration FOR THAT READER: point at the soft spot
+  and dare them to hit it.
+  THEN INCREMENT 4 — reconciliation-and-return, NO NEW LOGIC — which now owns FOUR documentary items:
+  the THREE NON-APPLYING PLANTS under CD-D-033, CD-PL-F80 (a second measured example under DECLARED
+  LIMIT 6) and CD-PL-F81 (limits 5 and 6 into the REGISTER ENTRY, which CD-RULE-004 names as one of
+  the three places).
+  THEN, AND ONLY THEN, THE FOURTH FRESH ASSURANCE SEAT, whose first two targets the Product Owner has
+  already named: P7 and CD-BP-003.
+  DO NOT ADMIT ANYTHING (CD-RULE-001). DO NOT MERGE OR PROMOTE ANY LANE. DO NOT GRADE CD-AC-002 OR
+  CD-AC-005. STOP DELIBERATELY AT THE GATE, OR ON ANY QUESTION THAT BELONGS TO THE PRODUCT AUTHORITY.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)
