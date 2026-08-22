@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T15:26:54Z'
+updated_utc: '2026-08-22T15:40:22Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -37,6 +37,26 @@ objective: >
   WO-3.
 current_phase: BUILD   # MOVED AT THIS BOUNDARY. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** CD-D-105 IS ANSWERED. PO-DECISIONS-0007 IS RECONCILED INTO THIS RECORD, AND INCREMENT 3 IS
+  DISPATCHED AT LANE 995ec3e. ***
+  THE PROJECT LEAD PUT THREE ANSWERS AND RECOMMENDED NONE. THE PRODUCT OWNER TOOK **(A)** — §D REACHES
+  CONSTRUCTORS — **BOUNDED TO A FIFTH INCREMENT AFTER INCREMENT 4**, and took **(C)** AS WELL, as a
+  STANDING INVITATION to the fourth Assurance seat to attack the whole §D scoping INCLUDING that
+  closure. (B) lost on its own honest carrier: "NOT PROVED TO BE CARRIED ANYWHERE".
+  The Project Lead's ASYMMETRY MEASUREMENT IS ACCEPTED IN TERMS and narrows the fifth increment to the
+  BODY-BORNE RESIDUE ONLY — the `model_ref` resolution refusal, §C.5's three `ConfigSnapshot`
+  invariants, and `PanelRow`'s field re-establishment. The three interpreter-borne refusals are OUT.
+  THE MECHANISM IS FIXED BY THE RULING AND NOT BY A SEAT: the `admits` idea ONE LEVEL DOWN —
+  establishment derived from the DECLARED FIELD LIST, refusing what it was not told, applied at the
+  boundary so a body edit cannot remove it. V17 IS ITS PLANT. Carried as CD-D-109/CD-D-110.
+  CD-PL-F80 AND CD-PL-F81 ARE REWORDED TO THEIR MEASURED REACH — documentary, the Project Lead's own,
+  owed to increment 4 or the fifth, whichever reaches them first (CD-D-111). A rewording, NOT a guard.
+  THE SEQUENCE IS NOW FIVE INCREMENTS AND THEN THE SEAT: 3 -> 4 -> 5 -> THE FOURTH FRESH ASSURANCE
+  SEAT, which now has THREE named first targets (P7, CD-BP-003, and the §D scoping itself).
+  *** THIS BOUNDARY WROTE NO APPLICATION CODE, TOUCHED NO CONSTRUCTOR, DID NOT WIDEN INCREMENT 3, AND
+  DID NOT DISPATCH THE FIFTH INCREMENT. *** The Product Owner's text was RECORDED, never edited.
+  CD-AC-002 AND CD-AC-005 REMAIN UNGRADED — reaffirmed by the PO for the THIRD boundary running.
+  ---- THE PRIOR BLOCK, RETAINED ----
   *** WO-2R3 INCREMENT 2 IS RECONCILED AND ACCEPTED AS INCREMENT 2 — AND IS NOT ACCEPTED AS CLOSING
   CD-AC-002 OR CD-AC-005. §D.1/§D.2 FOR A2, A3, A4 AND A5 ARE DELIVERED AT LANE 995ec3e. ***
   *** ONE FINDING IS A SCOPE QUESTION AND IS PUT TO THE PRODUCT AUTHORITY: CD-D-105. ***
@@ -1175,15 +1195,30 @@ current_block: >
   ISSUED, same seat, same lane base, same three increments. NO CODE CHANGED AT THIS BOUNDARY. NOTHING
   ACCEPTED. NOTHING ADMITTED. THE GATE IS UNMOVED — a ruling about scope is not a pass.
 owner_role: PROJECT_LEAD
-next_actor: PRODUCT_AUTHORITY_AND_ENGINEER
-                       # TWO ACTORS, AND THEY ARE NOT SEQUENTIAL. (1) THE PRODUCT AUTHORITY owes
-                       # CD-D-105 — does §D reach CONSTRUCTORS? Three answers are set out at
-                       # BL-20260822T152654Z-0053 and the Project Lead recommends NONE, because
-                       # closing it would enlarge WO-2R3's scope a THIRD time and the PO has
-                       # reserved that axis twice. (2) THE ENGINEER, CD-ENG-WO2R3-01, the same live
-                       # seat, for INCREMENT 3 (§D.3, A6, the collector boundary, BOTH PARTS) at
-                       # lane head 995ec3e — WHICH NONE OF THE THREE ANSWERS TO CD-D-105 CHANGES.
-                       # Increment 3 is not held hostage to a question that does not touch it.
+next_actor: ENGINEER
+                       # CD-ENG-WO2R3-01 — INCREMENT 3 (§D.3, A6, THE COLLECTOR BOUNDARY, BOTH PARTS
+                       # AS WRITTEN) at lane head 995ec3e on branch wo-2r3 in
+                       # /srv/crash-detector-wo2r3, under the LIVE dispatch
+                       # CD-DISPATCH-WO2R3-ENGINEER.yaml (status ISSUED, unexhausted).
+                       # THE PRODUCT AUTHORITY IS NO LONGER AN OPEN ACTOR AT THIS BOUNDARY:
+                       # CD-D-105 IS ANSWERED at PO-DECISIONS-0007 (9a81787) — answer (A), bounded
+                       # to a FIFTH increment AFTER increment 4, with answer (C) ALSO taken as a
+                       # standing invitation to the fourth Assurance seat. Increment 3's scope is
+                       # UNCHANGED by that answer and is re-fixed by ruling 5.
+                       # THE SEAT ID IS THE SAME AND THE AGENT INSTANCE IS NEW — the instance that
+                       # built increments 1 and 2 did not survive its runtime. A fresh seat is
+                       # required BETWEEN DISPATCHES, not between increments of one, and
+                       # PBG-SOD-001 is about Engineer versus Assurance, not about instances.
+                       # If a seat boots here and the lane head is still 995ec3e, increment 3
+                       # produced NOTHING DURABLE and is re-dispatched from the same base; if it has
+                       # advanced, RECONCILE BY REPLICATION AND NOT BY RELAY.
+                       # WAS PRODUCT_AUTHORITY_AND_ENGINEER   # (1) THE PRODUCT AUTHORITY owed
+                       # CD-D-105 — does §D reach CONSTRUCTORS? Three answers were set out at
+                       # BL-20260822T152654Z-0053 and the Project Lead recommended NONE, because
+                       # closing it would enlarge WO-2R3's scope a THIRD time and the PO had
+                       # reserved that axis twice. ANSWERED at PO-DECISIONS-0007, ruling (A).
+                       # (2) THE ENGINEER, CD-ENG-WO2R3-01, for INCREMENT 3 at lane head 995ec3e —
+                       # WHICH NONE OF THE THREE ANSWERS TO CD-D-105 CHANGED.
                        # WAS ENGINEER   # CD-ENG-WO2R3-01 — INCREMENT 2 IS DISPATCHED AND RUNNING at lane 7b00ce9 on
                        # branch wo-2r3 (CD-D-103, BL-20260822T143058Z-0052). The Product Owner
                        # authorised the resume at PO-DECISIONS-0006 ruling 5 in terms — "nothing in
@@ -1245,7 +1280,7 @@ mutation_lane: 'branch wo-2r3, worktree /srv/crash-detector-wo2r3, based at f30e
 baseline_sha: d9580294d0f82065f039f561cbcbbed2d7f741d0
   # d958029 is the commit introducing CD-DISPATCH-WO2-ENGINEER.yaml — the dispatch baseline.
   # BL-0003 recorded 2e116ec here, one commit too early; corrected in BL-20260819T025400Z-0004.
-last_completed_checkpoint_sha: 25b0c0ff66cb4d990c111c1bf297cbade38517a9  # The CD-RULE-007 follow-up that closed the PO-DECISIONS-0006 / PO-PRODUCT-0001 reconciliation boundary and resolved continuity_record_commit to 11e7051. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
+last_completed_checkpoint_sha: 9a81787cd9eebe4fca4cb9ff1a15e49658cef088  # THE PRODUCT OWNER'S OWN COMMIT carrying governance/decisions/PO-DECISIONS-0007.md — authored by Matt Scott and by no seat, one file, 46 lines, nothing else changed (`git show --stat`). It is the last commit on main before THIS boundary, and it is the RULING this boundary records. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES b942c4e8b9035f7485fa30cdc1c8bbafda0603c5  # PO-PRODUCT-0001, the LAST COMMIT ON MAIN BEFORE THE PRIOR BOUNDARY and the second of the two PRODUCT AUTHORITY commits this boundary reconciled (the other is 6db42eb, PO-DECISIONS-0006). Both authored `Matt Scott <rogue@cerberus.local>` and by no seat. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
   # SUPERSEDES 47c355116f7d9626aabe6eae103de32d0577be1f — the CD-RULE-007 follow-up that closed the WO-2R3 DISPATCH boundary and resolved continuity_record_commit to cd86c0a.
   # SUPERSEDES 9d27140ea2fc9e802fa8b841029c682081318438 — The CD-RULE-007 follow-up that closed the BP-AMENDMENT-0001-IN-FORCE boundary and resolved continuity_record_commit to ba890a2. It is the last commit on main before THIS boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
@@ -1577,6 +1612,42 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
+- '**CD-D-109 / CD-D-110 — THE FIFTH INCREMENT: §D REACHES CONSTRUCTORS. OWED, BOUNDED, AND NOT YET
+  DISPATCHED.** Ruled by the Product Authority at PO-DECISIONS-0007 ruling 1 (commit 9a81787). It
+  falls due AFTER INCREMENT 4, in the order the ruling sets, and pulling it forward would be exactly
+  the scope-setting the Project Lead declined to do when it put CD-D-105 up. ITS BOUNDS ARE THE
+  PRODUCT OWNER''S WORDS AND ARE NOT A SEAT''S TO WIDEN OR NARROW: the four named judgement-path types
+  (`ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow`); the mechanism is the `admits` idea ONE
+  LEVEL DOWN — establishment derived from the DECLARED FIELD LIST, refusing what it was not told,
+  applied at the boundary so a body edit cannot remove it; `variants/WO-2R3/V17-constructor-body-escape.patch`
+  becomes its PLANTED VIOLATION with baseline and violated arms. IN SCOPE is the body-borne residue
+  ONLY: the `model_ref` resolution refusal, §C.5''s three `ConfigSnapshot` invariants, and `PanelRow`''s
+  field re-establishment. OUT OF SCOPE, by the same ruling: the three interpreter-borne refusals — a
+  keyword for a field that does not exist has no body, no guard and nothing to edit.
+  NOT VERIFIED BY ANYONE AT THE BOUNDARY THAT RECORDED THIS: whether establishment can be derived from
+  a frozen dataclass''s declared field list WITHOUT conflicting with `__post_init__`''s legitimate
+  cross-field invariants — §C.5''s three are exactly that shape. The mechanism is specified and NOT
+  prototyped, as `admits` was before increment 2. If it conflicts with something real, THE HONEST
+  ESCALATION IS THE VALUABLE RETURN and a guard built over a structural impossibility is worse than
+  either.'
+- '**CD-D-111 — CD-PL-F80 AND CD-PL-F81, REWORDED TO THEIR MEASURED REACH. DOCUMENTARY. OWED TO
+  INCREMENT 4 OR THE FIFTH INCREMENT, WHICHEVER REACHES THEM FIRST.** PO-DECISIONS-0007 ruling 4, in
+  those terms. Both are the Project Lead''s own findings against limits the SEAT wrote, and both are
+  the same defect: the limit''s named example is NARROWER than the route the limit actually admits.
+  CD-PL-F80 — DECLARED LIMIT 6 covers rewriting the live declaration through `__closure__`, which the
+  Project Lead MEASURED as ADMITTED, but its example names only one of the two routes through that
+  reach. THE CORRECTION IS A REWORDING, NOT A GUARD: answering a documentary finding with logic is
+  prohibited on this project (CD-D-080), and a wider guard here would be a scope change nobody ruled.
+  "A limit that undersells its route is a small lie in the safe direction, and we do not keep those
+  either." All three CD-RULE-004 places, consistently.'
+- '**CD-D-112 — THE FOURTH ASSURANCE SEAT''S BRIEF NOW CARRIES THREE NAMED FIRST TARGETS, NONE OF THEM
+  THAT SEAT''S TO CHOOSE AND NONE OF THEM THE PROJECT LEAD''S TO DROP.** (1) P7 — PO-DECISIONS-0005
+  ruling 1, "directed to run it first". (2) CD-BP-003, the adapter boundary — PO-DECISIONS-0005
+  ruling 4, and increment 3 is the increment that writes that declaration for that reader. (3) NEW at
+  PO-DECISIONS-0007 ruling 2: THE STANDING INVITATION TO ATTACK THE WHOLE §D SCOPING, INCLUDING THE
+  CD-D-105 CLOSURE ITSELF, on measured grounds. It is an invitation and not a courtesy — the
+  precedent, PO-DECISIONS-0003 ruling 4, cost this project an increment and was worth it, and the
+  ruling says so in terms.'
 - 'CD-ENG-F39 — DECLARED, NOT FIXED, and owed at WO-3 (CD-D-017). L3 prose suppression is far wider
   than the check advertised: 46 negation and 25 hypothetical words, including `must`, `free`,
   `advisory`, `zero`, `say`, `check` and `were`. MEASURED and PL-confirmed: a neutrally named
@@ -1733,7 +1804,34 @@ remaining_items:
   and should find it DECLARED HERE FIRST.'
 
 open_decisions:
-- '**CD-D-105 — OPEN, AND IT IS THE PRODUCT AUTHORITY''S. DOES §D REACH CONSTRUCTORS?**
+- '**CD-D-105 — RULED AND CLOSED BY THE PRODUCT AUTHORITY at governance/decisions/PO-DECISIONS-0007.md
+  (commit 9a81787, authored by Matt Scott, not by any seat). THE ANSWER IS (A), BOUNDED AND SEQUENCED
+  LAST — AND (C) IS ALSO TAKEN.**
+  **(A) §D REACHES CONSTRUCTORS.** The principle that decided it is §D.1''s own: establishment derived
+  from the declaration, never written into an editable body — and `__post_init__` IS a body. The
+  standing condition leans on construction-time refusals three times, and "declining to close it while
+  relying on it would be filing the remedy locally — the exact move this estate has now paid for three
+  times (two kernel rounds, one gate)".
+  **THE PROJECT LEAD''S ASYMMETRY MEASUREMENT IS ACCEPTED IN TERMS AND NARROWS THE WORK HONESTLY:** the
+  three interpreter-borne refusals (a keyword for a field that does not exist) have NO BODY and are
+  OUTSIDE this finding. IN scope is the body-borne residue ONLY — the `model_ref` resolution refusal,
+  §C.5''s three `ConfigSnapshot` invariants, and `PanelRow`''s field re-establishment.
+  **THE BOUNDS, SO THIS IS A CLOSURE AND NOT A DRIFT (transcribed, not paraphrased — CD-D-110):** a
+  FIFTH increment, AFTER increment 4; scoped to the four named judgement-path types (`ConfigSnapshot`,
+  `DialSpec`, `ModelSpec`, `PanelRow`); the mechanism is "the `admits` idea one level down —
+  establishment derived from the DECLARED FIELD LIST, refusing what it was not told, applied at the
+  boundary so a body edit cannot remove it"; V17 becomes its planted violation with baseline and
+  violated arms. INCREMENT 3''S SCOPE IS UNTOUCHED. This is the THIRD scope enlargement and it is
+  priced the same way as the second: PAID WITH INCREMENT DISCIPLINE, NOT WITH A SCOPE CUT.
+  **(C) IS ALSO TAKEN, AS A STANDING INVITATION AND NOT AS A SUBSTITUTE (CD-D-112):** the fourth
+  Assurance seat is invited to attack the WHOLE §D scoping INCLUDING THIS CLOSURE, on measured
+  grounds. "A closure nobody has tried to defeat is a rumour."
+  **WHY NOT (B):** the deferral''s own honest carrier was "NOT PROVED TO BE CARRIED ANYWHERE", and a
+  residue with no durable carrier fails the durable-visibility obligation this seat holds. (B) was the
+  losing option BY ITS OWN DISCLOSURE — the seat''s honesty working against the seat''s convenience,
+  which is the behaviour this project has rewarded five boundaries running.
+  **THE OWED WORK IS CARRIED IN remaining_items AS CD-D-109/CD-D-110 AND IS NOT DISPATCHED HERE.**
+  ---- THE QUESTION AS PUT, RETAINED IN FULL SO THE RULING CAN BE READ AGAINST IT ----
   `ConfigSnapshot(...)`, `DialSpec(...)`, `ModelSpec(...)` and `PanelRow(...)` are public entry
   points on the judgement path whose field establishment lives in `__post_init__` — IN A BODY, which
   is the precise thing §D.1 exists to stop relying on. §D.2''s table lists A2-A7 and NO CONSTRUCTOR,
@@ -1936,7 +2034,45 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  **RUN INCREMENT 3 WITH CD-ENG-WO2R3-01 AT LANE HEAD 995ec3e ON BRANCH wo-2r3 — §D.3, A6, THE
+  COLLECTOR BOUNDARY, BOTH PARTS AS WRITTEN — THEN RECONCILE IT BY REPLICATION AND NOT BY RELAY.**
+  The dispatch is LIVE (CD-DISPATCH-WO2R3-ENGINEER.yaml, status ISSUED, unexhausted) and its
+  `increment_3_the_collector_boundary` block is the scope. THE SEAT ID IS THE SAME AND THE AGENT
+  INSTANCE IS NEW — the instance that built increments 1 and 2 did not survive its runtime, as seven
+  before it did not. A fresh seat is required BETWEEN DISPATCHES, not between increments of one.
+  PART 1 — `clock` and `sleep` STOP BEING CALLER CALLABLES: `clock` becomes an engine-owned instant
+  ALREADY ESTABLISHED BY `ensure_utc` and passed as a VALUE, `sleep` becomes a NAMED MEMBER of a
+  closed `DelayKind`. A caller supplies neither. Same defect as `using`, same repair.
+  PART 2 — `adapter`, `sink`, `ledger` and `validator` KEEP THEIR PROTOCOLS and EVERY VALUE THEY
+  RETURN IS ESTABLISHED AT THE POINT OF RETURN: every FetchedResponse, every ObservationRecord and
+  every validation verdict exact-typed ON ARRIVAL. `policy` comes to this project's own exact-type
+  standard rather than isinstance. The increment-2 static check is EXTENDED to `collectors/` or the
+  limit is RE-DECLARED — DECLARED LIMIT 3 currently says that gap is SCOPE AND NOT OVERSIGHT, and
+  increment 3 is the increment that must make that true or say why not.
+  **CD-BP-003 IS THE FOURTH ASSURANCE SEAT'S NAMED TARGET.** Part 2 is a door that ADMITS, not an
+  absence of a door, and it is a WEAKER guarantee than §C's — the amendment says so. Declare it under
+  CD-RULE-004 in ALL THREE PLACES with an executable example, and under CD-RULE-006 with the carrier
+  MEASURED or the words "NOT PROVED TO BE CARRIED ANYWHERE". Write it FOR THAT READER: point at the
+  soft spot and dare them to hit it. The seat that did exactly that at increment 2b is the one whose
+  work was accepted.
+  THEN INCREMENT 4 — reconciliation-and-return, NO NEW LOGIC — which owns FOUR documentary items: the
+  three non-applying plants under CD-D-033, CD-PL-F80, CD-PL-F81, and the return itself.
+  THEN **INCREMENT 5 — THE CONSTRUCTORS**, on PO-DECISIONS-0007 ruling 1's bounds AND NO WIDER
+  (CD-D-109, CD-D-110). It is OWED and NOT DISPATCHED; it falls due after increment 4 and not before.
+  THEN, AND ONLY THEN, THE FOURTH FRESH ASSURANCE SEAT — with THREE named first targets now: P7
+  (PO-DECISIONS-0005 ruling 1), CD-BP-003 (ruling 4), and THE STANDING INVITATION TO ATTACK THE WHOLE
+  §D SCOPING INCLUDING THE CD-D-105 CLOSURE (PO-DECISIONS-0007 ruling 2, CD-D-112).
+  RECONCILE EVERY INCREMENT AS INCREMENTS 1 AND 2 WERE RECONCILED — the standard the Product Owner
+  named at PO-DECISIONS-0006 ruling 2: REPLICATION, NOT RELAY, on the Project Lead's own extractions
+  with its own drivers, the counterfactual arm (CD-D-079), the rename test (CD-PL-F74), the identity
+  audit on every commit, the node-id reconciliation, the plants apply-checked, at least one route of
+  the Project Lead's own that is in no corpus, and WHAT WAS NOT VERIFIED SAID PLAINLY.
+  DO NOT ADMIT ANYTHING (CD-RULE-001, PO-set, non-relaxable). DO NOT MERGE OR PROMOTE f30e63c. DO NOT
+  GRADE CD-AC-002 OR CD-AC-005 — the Product Owner has reserved that grading THREE boundaries running.
+  ---- THE PRIOR ACTION, DISCHARGED AT THIS BOUNDARY, RETAINED ----
   **PUT CD-D-105 TO THE PRODUCT AUTHORITY, THEN RUN INCREMENT 3. THE TWO ARE NOT SEQUENTIAL.**
+  ANSWERED at PO-DECISIONS-0007 (9a81787): ruling (A), bounded to a fifth increment, with (C) also
+  taken. The question as put is retained in full in open_decisions above.
   CD-D-105 — does §D reach CONSTRUCTORS? — is set out in full in open_decisions above and at
   BL-20260822T152654Z-0053, with three answers and NO PROJECT LEAD RECOMMENDATION, because closing it
   would enlarge WO-2R3's scope a THIRD time and the PO has reserved that axis twice.
@@ -2378,5 +2514,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T152654Z-0053
+last_build_log_entry: BL-20260822T154022Z-0054
 status: ACTIVE
