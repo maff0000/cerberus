@@ -610,4 +610,4 @@ next_safe_action: >
   DO NOT ADMIT ANYTHING (CD-RULE-001, PO-set, non-relaxable). DO NOT MERGE OR PROMOTE THE LANE OR
   f30e63c. DO NOT GRADE CD-AC-002 OR CD-AC-005.
 
-continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)
+continuity_record_commit: 3411138819d5b93e880902539271e13a165a7b2f   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse HEAD` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36).
