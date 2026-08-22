@@ -292,4 +292,4 @@ next_safe_action: >
   f30e63c. DO NOT GRADE CD-AC-002 OR CD-AC-005 — the Product Owner has reserved that grading FOUR
   boundaries running, most recently at PO-DECISIONS-0008 ruling 6.
 
-continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)
+continuity_record_commit: 87e54577d00d73971c23462e935ee6d3f1c67faa   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse HEAD` and confirmed a commit object with `git cat-file -t`, not transcribed (CD-PL-F36).
