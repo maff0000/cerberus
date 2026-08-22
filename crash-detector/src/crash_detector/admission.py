@@ -113,24 +113,80 @@ to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     to those bodies: **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING to the
     Project Lead rather than closed here.
 
- 6  **A DOOR IS A WRAPPER, AND A WRAPPER'S CLOSURE STILL HOLDS WHAT IT WRAPPED.**
-    ``door.__closure__[i].cell_contents`` reaches the undecorated function and calls it with
-    the door bypassed entirely. This is true of every decorator ever written in Python,
-    including this codebase's own ``_absence_is_never_a_number``, which has passed three
-    gates; CPython offers no way to prevent it, so it is a property of the language and not
-    of this design. Executable example, MEASURED at this seat's own work rather than left
-    for the fourth Assurance seat to find:
-    ``variants/WO-2R3/V24-wrapped-attribute-bypass.patch`` records both halves —
-    ``resolve_panel.__wrapped__(duck_row, ...)`` returned ``Agrees`` and rendered ``WITNESS
-    AGREES``, and so did the ``__closure__`` route.
+ 6  **A DOOR IS BUILT OUT OF THINGS THE INTERPRETER LEAVES REACHABLE, AND ANYTHING THAT CAN
+    EXECUTE CODE INSIDE THIS PACKAGE CAN REACH THEM.** This limit is a REACH, not a route,
+    and its wording was three times narrower than what has since been measured through it.
+    **THE ROUTES NAMED BELOW ARE KNOWN ROUTES AND ARE NOT AN EXHAUSTIVE SET.** Three
+    distinct ones have now been found by three different parties on three different
+    drivers, each time against a declaration that named one; anyone reading this should
+    assume there is a fourth and should look for it rather than check this list.
 
-    **THE ``__wrapped__`` HALF IS CLOSED HERE** and the closure is measured
-    (``tests/test_admission.py::test_a_door_publishes_no_way_round_itself``): the attribute
-    is a documented one that ``inspect.unwrap`` follows and editors offer, so it was a
-    bypass writable in ordinary-looking code, and it is deleted. **THE ``__closure__`` HALF
-    IS NOT CLOSED AND IS NOT CLAIMED: NOT PROVED TO BE CARRIED ANYWHERE.** What a caller
-    must now do to bypass a door is reach into interpreter internals, which is strictly
-    weaker than "cannot happen" and is said so.
+    **(a) THE ``__closure__`` REACH — and it has TWO measured consequences, not one.**
+    ``functools.wraps`` and this decorator both leave the door's working parts in the
+    function's closure cells, and ``door.__closure__[i].cell_contents`` reaches every one
+    of them. CPython offers no way to prevent it, so it is a property of the language and
+    not of this design, and it is true of this codebase's own
+    ``_absence_is_never_a_number``, which has passed three gates.
+
+    *(a1) Reaching the WRAPPED FUNCTION and calling it, with the door bypassed.* Executable
+    example: ``variants/WO-2R3/V24-wrapped-attribute-bypass.patch`` arm 3 —
+    ASR3-F04's duck row returned ``Agrees`` and rendered ``WITNESS AGREES``. The door itself
+    is untouched, so a second caller still meets a working door.
+
+    *(a2) Reaching the LIVE DECLARATION DICT and rewriting it, so THE DOOR ITSELF STOPS
+    REFUSING at its own front entrance.* Raised as ``CD-PL-F80`` by the Project Lead and
+    MEASURED INDEPENDENTLY by this seat with the command recorded in the variant manifest:
+    ``variants/WO-2R3/V33-closure-declaration-rewrite.patch``. ``resolve_panel.__closure__[0]``
+    is the ``compiled`` dict this door consults on EVERY call; replacing its three entries
+    with ``ESTABLISHED_HERE(...)`` makes the ORDINARY front-door call
+    ``resolve_panel(DuckRow(), now_utc=..., staleness_window_seconds=600.0)`` return
+    ``Agrees`` and render ``WITNESS AGREES``. This is a WIDER consequence than (a1): the
+    mutation is to state the door SHARES, so every caller in the process is unguarded
+    afterwards, including code that never went near a closure.
+
+    **AND THE INTROSPECTION SURFACE DOES NOT SHOW IT, which is this seat's own finding
+    (``CD-ENG-WO2R3-F13``) and is recorded here rather than repaired.** ``ADMITS_ATTRIBUTE``
+    is set to ``dict(compiled)`` — A COPY TAKEN AT DECORATION — so after (a2):
+    ``is_admitting_door(resolve_panel)`` is ``True``, ``declared_admissions(resolve_panel)``
+    still reports ``['now_utc', 'row', 'staleness_window_seconds']``, and
+    ``__admission_faults__`` is still ``()``. A reviewer asking the door what it requires is
+    told the truth about what it WAS told and nothing about what it now DOES. Not repaired
+    here: making the attribute the live object would hand a mutator a documented, supported
+    handle instead of an interpreter-internal one, which is a WORSE trade, and choosing
+    between them is a design decision outside a reconciliation increment.
+
+    *(Note, measured: ``.clear()`` on that dict does NOT open the door — the body reads
+    ``compiled[name]`` for every parameter the signature names, so an emptied dict raises
+    ``KeyError`` and the door merely BREAKS. It has to be REWRITTEN, not emptied. Recorded
+    because a seat that tries the obvious thing and sees a refusal may conclude the reach is
+    closed. It is not.)*
+
+    **(b) THE ``__wrapped__`` ATTRIBUTE — THIS HALF IS CLOSED HERE**, and the closure is
+    measured (``tests/test_admission.py::test_a_door_publishes_no_way_round_itself``): the
+    attribute is a documented one that ``inspect.unwrap`` follows and editors offer, so it
+    was a bypass writable in ordinary-looking code with no cast and no import, and it is
+    deleted. Executable example of what it used to do:
+    ``variants/WO-2R3/V24-wrapped-attribute-bypass.patch`` arm 2.
+
+    **(c) REBINDING THE ESTABLISHING FUNCTION IN ITS OWN MODULE NAMESPACE.** Raised as
+    ``CD-PL-F83`` by the Project Lead on a driver that is in no corpus, and REPLICATED BY
+    THIS SEAT rather than relayed: ``variants/WO-2R3/V34-establishing-function-rebound.patch``.
+    ``crash_detector.collectors.runner.ensure_utc = lambda value: <1999>`` makes every
+    recorded ``AttemptRecord.requested_utc`` read ``1999-01-01T00:00:00``, against a control
+    on the unmodified module that records ``2026-08-22T12:00:00``. **THE DOOR IS SATISFIED
+    IN BOTH ARMS** — ``started_utc`` is an exact ``datetime`` either way — because this
+    module establishes a value's TYPE and never the IDENTITY OF THE FUNCTION THAT
+    ESTABLISHED IT. It attacks the establishment layer, not the door.
+
+    **WHAT IS AND IS NOT DEFEATED BY (c).** It is NOT a caller route: it needs the ability
+    to execute code inside the package. BP-AMENDMENT-0001 §D.3 part 1's claim is about what
+    a CALLER of ``collect`` can supply, and that claim SURVIVES — ``clock`` and ``sleep``
+    are not parameters, and the interpreter refuses to pass them.
+
+    **THE WHOLE REACH: NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED ANYWHERE.** Every
+    route above requires the ability to execute code inside this package, which is the
+    universal limit every in-process guard on this project lives inside; saying that is
+    strictly weaker than "cannot happen", and it is said rather than implied.
 
  2  **THE RECEIVER OF A METHOD IS NOT ESTABLISHED.** The first parameter is skipped when,
     and only when, the callable was written inside a ``class`` body — read from

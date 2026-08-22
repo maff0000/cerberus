@@ -265,9 +265,45 @@ criteria:
     each returned 0.5 from equity 0.9 and monetary 0.1. It is not restated here, and the entries
     below claim only what their layers deliver (CD-RULE-004).
 
+    THE TRACE WAS RESTRUCTURED AT WO-2R3 INCREMENT 4, AS BP-AMENDMENT-0001 §F.3 REQUIRES:
+    "CD-AC-002's trace changes from three refusals (type / AST / schema) to FOUR, THE FIRST
+    STRUCTURAL: no door, plus the three that already stand." Refusal 1 below is that first,
+    structural one and it is NEW HERE; what were layers 1..5 are now 2..6, renumbered and
+    otherwise unaltered in what they claim. The amendment's FOUR are this entry's 1 (the
+    absent door), 2 (the type), 6 (the AST scan) and 5 (the closed schema); this register
+    enumerates the same ground more finely because it also carries the two layers WO-2R and
+    WO-2R2 added — 3 (the re-entry) and 4 (the publication boundary) — which post-date the
+    Blueprint's three-refusal sentence.
+
     WHAT THE LAYERS DELIVER NOW, each named with what it does NOT do.
 
-    1 THE TYPE, and it is the load-bearing one. A dial magnitude is a NOMINAL, PER-DIAL,
+    1 THE ABSENT DOOR, AND IT IS THE FIRST BECAUSE IT IS THE ONLY ONE THAT IS NOT A CHECK.
+    Every other refusal below is something the system DOES when a value arrives. This one is
+    the absence of a place for the value to arrive AT. BP-AMENDMENT-0001 §C (in force)
+    deleted `ContributionModel` (the Protocol) and `CONTRIBUTION_MODELS` (the dict), and
+    `DialSpec.contribution_model` — the field that held a caller's object — DOES NOT EXIST.
+    The line ASR3-F02 published a laundered number through,
+    `spec.contribution_model.compute(payloads)`, cannot be written: there is no attribute to
+    name. A dial names a model with `model_ref: ModelId | None`, A NAME resolved by the
+    engine against a ModelRegistry that is a required field of the ConfigSnapshot with no
+    default, and an object is not a name. THE CROSS-DIAL MECHANISM IS CLOSED BY THE SHAPE OF
+    THE DATA: ASR3-F02 was ONE STATEFUL OBJECT PLACED IN BOTH DialSpecs, which saw the equity
+    payloads on the first call and the monetary payloads on the second and blended them in
+    its own memory while every downstream layer stamped the result with honest single-dial
+    provenance. After §C there is no object to place in both specs; ModelSpec.dial_id binds a
+    model to ONE dial and resolving it for the other is refused AT SNAPSHOT CONSTRUCTION; and
+    the executor, engine.mapping.compute, is handed one dial's spec and one dial's payloads
+    and holds no state between dials or between runs. THE REFUSALS ARE FOUR AND THREE OF THEM
+    ARE AT CONSTRUCTION — DialSpec, ModelSpec, ConfigSnapshot, then resolution — and every one
+    is demonstrable OVER THE SHIPPED EMPTY_MODEL_REGISTRY. WHAT IT DOES NOT DO: it says
+    nothing about a REGISTERED model computing a wrong number. A `MEAN` that is not a mean is
+    a defect this architecture does not prevent, the amendment's §E residue says so in terms,
+    and CD-D-005 owes the registry rows; concentrating all computation in one executor is
+    recorded at BLUEPRINT §17 as CD-BP-002, A RISK AND NOT A WIN. It also says nothing about
+    any route that does not go through a DialSpec at all — layers 2 to 6 are what stand
+    there.
+
+    2 THE TYPE, and it is the load-bearing one of the runtime layers. A dial magnitude is a NOMINAL, PER-DIAL,
     NON-COERCIBLE value (crash_detector.dials.magnitude.DialMagnitude) carrying which dial it came
     from as DATA. It defines no arithmetic or coercion dunder, so any arithmetic, comparison,
     aggregation, serialisation or reduction over two magnitudes raises TypeError from the
@@ -277,8 +313,8 @@ criteria:
     anyone having read the code. WHAT IT DOES NOT DO: once a number is released for its ONE named
     dial it is an ordinary float, and Python adds floats.
 
-    2 THE RE-ENTRY, added closing CD-PL-F54 and it is now the one that carries the laundering
-    class. Layer 1 was closed against the type being ASKED for a number and open to the number
+    3 THE RE-ENTRY, added closing CD-PL-F54 and it is now the one that carries the laundering
+    class. Layer 2 was closed against the type being ASKED for a number and open to the number
     being READ OFF it: float(repr(m).split("quantity=")[1].rstrip(")")) names no dial, two of those
     add, and the sum re-wrapped as a magnitude of one dial passed every provenance comparison and
     published. A DialMagnitude is now built from a DeclaredQuantity
@@ -308,11 +344,28 @@ criteria:
     CD-RT-002-AST-NO-BLEND entry. For a module OUTSIDE a declared site it is guarded statically, by
     registry, by RULE 4 — A NAME VOCABULARY THAT DOES NOT SURVIVE A RENAME, labelled as such per
     CD-PL-F74/CD-D-073 and never to be read as evidence about the class. For a module INSIDE a
-    declared site it is guarded by NOTHING: CD-ENG-WO2R2-V05 gives one stateful ContributionModel to
-    both DialSpecs and publishes a blend as a monetary reading of 0.5 with every declared layer
-    green. NOT PROVED TO BE CARRIED ANYWHERE.
+    declared site it is guarded by NOTHING BY THIS LAYER, and that is unchanged.
+    WHAT IS CHANGED, AND IT IS A DECLARATION WO-2R3 INVALIDATED RATHER THAN A NEW CLAIM: the
+    ROUTE this slot named is CD-ENG-WO2R2-V05 — one stateful ContributionModel given to BOTH
+    DialSpecs, publishing a blend as a monetary reading of 0.5 with every declared layer green
+    — and BP-AMENDMENT-0001 §C DELETED THE FIELD IT TRAVELLED THROUGH. It is now refused by
+    REFUSAL 1 ABOVE, at construction, by the dataclass constructor itself. MEASURED at
+    04cdd34 on a pristine extraction with V05 applied,
+    `PYTHONPATH=src python3 -B <driver>`:
+    `DialSpec(..., contribution_model=model)` -> TypeError: DialSpec.__init__() got an
+    unexpected keyword argument 'contribution_model'; the same object offered to the field
+    that replaced it, `DialSpec(..., model_ref=model)` -> NotEstablishedOnOwnTerms: "a model
+    reference is a NAME, and CarryingModel is not a name"; and `hasattr(spec,
+    'contribution_model')` is False. REFUSING LAYER NAMED AND SCOPED (CD-PL-F74): the
+    DialSpec CONSTRUCTOR and `own_model_id`, whose scope is what may be placed in a DialSpec
+    and NOT what a model computes once one is registered.
+    THE RESIDUE THIS SLOT DECLARES IS THEREFORE NARROWER BUT IT HAS NOT GONE: for a module
+    INSIDE a declared site, an honest-looking `observed_for_dial` claim over a number the
+    module chose is still guarded by nothing at THIS layer, and a REGISTERED model computing
+    a wrong number is CD-BP-002 and CD-D-005's, not this layer's. NOT PROVED TO BE CARRIED
+    ANYWHERE for that narrower residue.
 
-    3 THE PUBLICATION BOUNDARY. crash_detector.publication.dial_scalar.number_for_dial_slot
+    4 THE PUBLICATION BOUNDARY. crash_detector.publication.dial_scalar.number_for_dial_slot
     releases a number into a dial slot only from a magnitude whose provenance is exactly that
     slot's dial. WHAT IT DOES NOT DO — AND THIS ENTRY PREVIOUSLY CLAIMED OTHERWISE: it does NOT
     refuse a blend. The Project Lead re-wrapped a 0.4/0.6 blend as a magnitude of the equity dial
@@ -320,15 +373,15 @@ criteria:
     a magnitude, or carrying the wrong dial's. It also cannot see a number that reaches a dial slot
     without coming through it.
 
-    4 THE CLOSED PUBLIC ENVELOPE SCHEMA. additionalProperties is false at every level and
+    5 THE CLOSED PUBLIC ENVELOPE SCHEMA. additionalProperties is false at every level and
     properties is an allowlist, so a third combined field has nowhere to be written. The auditor
     tested this mitigation specifically and confirmed IT HOLDS. WHAT IT DOES NOT DO: it cannot
     tell a blended number assigned to equity_crash.score from an honest one, because that key is
-    legitimately a number. Layer 3 refuses a number arriving without its magnitude; NOTHING here
-    tells a blended number from an honest one once it is a magnitude, and layer 2 is why one cannot
+    legitimately a number. Layer 4 refuses a number arriving without its magnitude; NOTHING here
+    tells a blended number from an honest one once it is a magnitude, and layer 3 is why one cannot
     become a magnitude.
 
-    5 THE AST SCAN IS A LOCATOR, NOT A CLOSURE, and its entry below carries a DECLARED LIMIT and
+    6 THE AST SCAN IS A LOCATOR, NOT A CLOSURE, and its entry below carries a DECLARED LIMIT and
     a corrected scope. Its flavour propagation is intra-procedural and its read is purely static;
     both escaped blends walked past it and always will, and so does PL-Q9. Its RULE 4, added at
     CD-PL-F54, denies BY DEFAULT over a declared registry of admission sites and therefore
@@ -346,7 +399,7 @@ criteria:
     as one (CD-PL-F74, adopted project-wide at CD-D-073). It remains static, and it remains useful
     as a locator.
 
-    Layers 1 to 4 are structural and independent of one another. None is claimed to be sole
+    Layers 1 to 5 are structural and independent of one another. None is claimed to be sole
     (BLUEPRINT §17 risk CD-BP-001, PO-accepted), and no claim is made here that a violation
     slipping past one must fail the others.
   pid_relation: DERIVES
@@ -472,10 +525,20 @@ criteria:
   #            returns the mean as the second dial's magnitude, admitted from engine/evaluate.py
   #            with every field of the claim TRUE except the number. This check PASS 5002 with it
   #            present, check_no_numeric_default PASS 397, whole suite 1333 passed, publication gate
-  #            RETURNED 0.5. NOT PROVED TO BE CARRIED ANYWHERE. No guard was built, deliberately: an
-  #            identity check on the model object is defeated by two instances sharing a class
-  #            attribute, and model purity is not decidable at this altitude. Closing it is a
-  #            BLUEPRINT §7 / CD-D-005 architectural change owed to the Product Owner.
+  #            RETURNED 0.5. NOT PROVED TO BE CARRIED ANYWHERE at WO-2R2. The last sentence of this
+  #            slot then read: "Closing it is a BLUEPRINT §7 / CD-D-005 architectural change owed to
+  #            the Product Owner." IT WAS RULED AND IT WAS MADE. PO-DECISIONS-0004 convened the §7
+  #            review, BP-AMENDMENT-0001 §C is IN FORCE, and THE EXTENSION POINT IS DELETED — see
+  #            REFUSAL 1 in this criterion's acceptance_semantics. RE-MEASURED AT 04cdd34 on a
+  #            pristine extraction with the V05 patch applied: DialSpec(..., contribution_model=model)
+  #            -> TypeError from the dataclass constructor ("unexpected keyword argument"), and the
+  #            same object offered to model_ref -> NotEstablishedOnOwnTerms. THIS CHECK STILL EXITS 0
+  #            EITHER WAY and never saw the route in either direction; the refusal is at the
+  #            CONSTRUCTOR, which is a different layer and is named as one (CD-PL-F74). WHAT REMAINS
+  #            AT THIS BOUNDARY: a module INSIDE a declared site making an honest-looking claim over a
+  #            number it chose. That is narrower than (v) as written and it is still NOT PROVED TO BE
+  #            CARRIED ANYWHERE. A registered model computing a wrong number is BLUEPRINT §17's
+  #            CD-BP-002 and CD-D-005's, and no guard was built over it.
   #   8 THE DERIVATION DOOR IS CLOSED AT THE TYPE AND NOT BY THIS CHECK, AND THIS CHECK CANNOT SEE
   #     THE DIFFERENCE. Since WO-2R2 increment 1a derived_within_one_dial takes NO number and NO
   #     dial set: DeclaredQuantity values only, refused by EXACT TYPE, union computed by the door,
@@ -895,8 +958,30 @@ criteria:
         ARITH 18, SETOP 8). Every tier-1 site carries a written disposition and every subject
         module carries one for tier 2, asserted BY SET EQUALITY IN BOTH DIRECTIONS.
         EXECUTABLE EXAMPLE, from the root of a tree the auditor extracted itself:
-        `python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list` -> exit 0,
-        "402 sites enumerated over 16 modules"; and ASR2-005-A dropped in at
+        `python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list`. AT f30e63c THIS
+        EXITED 0 WITH "402 sites enumerated over 16 modules". THAT IS NO LONGER TRUE AND THE
+        CORRECTION IS THE POINT (CD-ENG-WO2R3-F15, raised by the implementing seat against its
+        own work). RE-MEASURED AT INCREMENT 4, one pristine extraction per SHA, same command:
+          f30e63c  exit 0  PASS — 402 sites over 16 modules
+          7b00ce9  exit 0  PASS — 471 sites over 17 modules   (increment 1 UPDATED the dispositions)
+          995ec3e  exit 1  FAIL — 514 sites, 11 violations    (increment 2 DID NOT)
+          04cdd34  exit 1  FAIL — 514 sites, 11 violations    (unchanged by increment 3)
+        ALL ELEVEN VIOLATIONS ARE THE ONE MODULE WO-2R3 INCREMENT 2 CREATED,
+        `crash_detector.admission`: one UNDECLARED MODULE (33 tier-2 sites) and ten UNDECLARED
+        ADMISSION sites, every one of them an `isinstance`/`getattr`/`hasattr` inside the
+        admission mechanism itself. THE INSTRUMENT IS BEHAVING CORRECTLY — a module entered the
+        judgement closure without a written disposition and it said so, deny-by-default, exactly
+        as designed. WHAT IS WRONG IS THAT NOBODY ANSWERED IT FOR TWO INCREMENTS.
+        NOT CLOSED HERE AND DELIBERATELY SO: the remedy is to WRITE ELEVEN DISPOSITIONS in
+        tools/sweep/declared_dispositions.py, each asserting how a deciding operand is
+        established — substantive claims an auditor will test, made by the seat that wrote the
+        module being dispositioned — and WO-2R3 increment 4 is reconciliation-and-return with NO
+        NEW LOGIC (CD-D-122). Writing them here would be resolving a finding against this seat's
+        own work inside an increment scoped to exclude exactly that. IT IS RAISED, MEASURED,
+        BISECTED TO THE INCREMENT THAT CAUSED IT, AND LEFT FOR THE PROJECT LEAD TO RULE. This
+        sweep is NOT a declared register command and nothing gates on it; what it gates is a
+        claim made in this entry, and that claim is corrected above rather than left standing.
+        The rest of this example is unaffected and was re-run: ASR2-005-A dropped in at
         src/crash_detector/serving/panel_feed.py with its driver -> Unavailable(reason=
         'PANEL_ROW_STALE') -> WITNESS UNAVAILABLE, the plain-datetime CONTROL arm rendering the
         SAME string.
@@ -916,12 +1001,22 @@ criteria:
         disposition is a CLAIM BY THE ENGINEERING SEAT, it sees only operators written literally,
         its subject set is an import closure, and a disposition keyed by expression text does not
         survive a rename; for a MIS-DECLARED disposition, NOT PROVED TO BE CARRIED ANYWHERE;
-        (iv) four places DECLARED OPEN OR OUT OF BOUND rather than closed, named in
-        tools/sweep/declared_dispositions.py — the injected ContributionModel
-        (crash_detector.engine.model, ruled closed by CONSTRUCTION at Blueprint §7 in WO-3 by
-        PO-DECISIONS-0003 and deliberately NOT closed by a guard here), SourceRecord's
-        cadence_seconds int subclass, FetchFailed.http_status and Malformed.instance_path, each
-        NOT PROVED TO BE CARRIED ANYWHERE; and (v) boundary 5 below.
+        (iv) THIS LIST WAS FOUR PLACES DECLARED OPEN OR OUT OF BOUND AND IT IS NOW THREE,
+        corrected at WO-2R3 increment 4 because THIS SEAT'S OWN §C CLOSURE INVALIDATED THE
+        FIRST ENTRY. It read: "the injected ContributionModel (crash_detector.engine.model,
+        ruled closed by CONSTRUCTION at Blueprint §7 in WO-3 by PO-DECISIONS-0003 and
+        deliberately NOT closed by a guard here)". THE DEFERRAL TO WO-3 DID NOT HAPPEN:
+        PO-DECISIONS-0004 convened the §7 review instead, BP-AMENDMENT-0001 §C is IN FORCE, and
+        the disposition for crash_detector.engine.model in
+        tools/sweep/declared_dispositions.py was moved from OUT_OF_BOUND to ESTABLISHED at
+        WO-2R3 increment 1, with the superseded text quoted in place rather than deleted. IT
+        WAS CLOSED BY DELETION OF THE ROUTE AND NOT BY A GUARD — see REFUSAL 1 in this
+        criterion's acceptance_semantics. THE THREE THAT REMAIN, each still NOT PROVED TO BE
+        CARRIED ANYWHERE: SourceRecord's cadence_seconds int subclass, FetchFailed.http_status
+        and Malformed.instance_path. AND A FOURTH THING IS NOW OWED THAT IS NOT ONE OF THEM —
+        the ELEVEN UNDECLARED sites of crash_detector.admission recorded above as
+        CD-ENG-WO2R3-F15, which are not DECLARED open, they are UNANSWERED; and (v) boundary 5
+        below.
         Agrees IS DELIBERATELY NOT SLOTTED (CD-D-058, an instruction obeyed rather than an
         oversight): slotting closes the UNDECLARED-attribute half and leaves the DECLARED-slot
         half — which is the whole of PL-W5, since the write that reaches WITNESS AGREES
@@ -971,8 +1066,9 @@ criteria:
   # `state` property answered AGREES while its stored state was UNAVAILABLE — is a CD-AC-005
   # finding, and the door it walked through is `resolve_panel`. ASR3-F05 is CD-AC-001 and
   # CD-AC-005 both. The mechanism is one mechanism and it serves both criteria; the trace
-  # restructuring CD-AC-002 is owed under §F.3 is WO-2R3 increment 4 and is deliberately NOT
-  # done here.
+  # restructuring CD-AC-002 is owed under §F.3 was WO-2R3 increment 4's and IS NOW DONE —
+  # CD-AC-002's acceptance_semantics leads with refusal 1, THE ABSENT DOOR, the structural
+  # one, and what were layers 1..5 are now 2..6.
   #
   # IT DERIVES ITS SUBJECT FROM THE ARTEFACT (CD-D-098). §B measured 44 public callables with
   # an unestablished parameter at f30e63c. That list is already stale: increment 1 created
@@ -1036,8 +1132,25 @@ criteria:
         "collectors/ is not yet a judgement-path package here, by scope and not by oversight".
         THAT LIMIT IS DISCHARGED at increment 3: `collectors` is in JUDGEMENT_PATH_PACKAGES,
         deny-by-default within, so every public callable in it is a subject and a new module
-        there is a subject the day it is written. MEASURED: subjects 19 -> 24, assertions
-        38 -> 54, and tests/test_judgement_path_doors.py::test_the_collector_doors_are_really_subjects_and_not_merely_counted
+        there is a subject the day it is written.
+        MEASURED, AND RE-TAKEN AT INCREMENT 4 BY RUNNING THE INSTRUMENT RATHER THAN
+        TRANSCRIBING IT (CD-PL-F82, ruled CD-D-120). This slot read "subjects 19 -> 24",
+        which compared a TOTAL against a SUBSET: the check unions two rules, at BOTH SHAs
+        rule 2 reaches 3 doors rule 1 does not, so 24 was the rule-1 part of a total of 27.
+        Both numbers below come from running the check on a pristine extraction:
+        `git archive 995ec3e | tar -x -C /tmp/cd-995 && cd /tmp/cd-995 && python3 -B
+        tools/register/check_judgement_path_doors.py --root .` prints "SUBJECTS ENUMERATED:
+        19. DECORATED: 19.", "by rule 2 only" 3, PASS 38 assertions; the same command over
+        `git archive 04cdd34` prints "SUBJECTS ENUMERATED: 27. DECORATED: 27.", "by rule 2
+        only" 3, PASS 54 assertions.
+        LIKE-FOR-LIKE: TOTAL 19 -> 27. RULE-1 SUBSET 16 -> 24. ASSERTIONS 38 -> 54. Never
+        pair 19 with 24. The correction makes the coverage WIDER than was claimed, not
+        narrower, and NOTHING WAS UNGUARDED BECAUSE OF IT: 27 of 27 subjects are decorated.
+        Nothing caught it because tests/test_judgement_path_doors.py asserts `subjects >= 24`,
+        A FLOOR, which passes at 27 and would pass at 270; raising that floor to an equality
+        is NOT ruled, NOT authorised and NOT done (CD-D-120), because it would be a code
+        change answering a documentary finding. It is raised and left alone.
+        Also at increment 4: tests/test_judgement_path_doors.py::test_the_collector_doors_are_really_subjects_and_not_merely_counted
         removes @admits from `collect` in a scratch copy and asserts this check FAILS on it.
         WHAT REMAINS OPEN IS NARROWER AND IS BLUEPRINT §17's CD-BP-003, THE SOFTEST SURFACE IN
         THE PRODUCT, named by the Product Owner as the fourth Assurance seat's first target:
@@ -1081,6 +1194,88 @@ criteria:
         same patched tree runs 3 failed, 1516 passed in `PYTHONPATH=src python3 -B -m pytest tests -q`,
         because the plants call the real doors and observe the real refusals. A static reader
         alone cannot carry this and does not claim to.
+        ===========================================================================
+        LIMITS 5 AND 6 ARE THE MECHANISM'S, NOT THE STATIC CHECK'S, AND UNTIL WO-2R3
+        INCREMENT 4 THIS REGISTER ENTRY DID NOT CARRY THEM (CD-PL-F81, ruled CD-D-111).
+        MEASURED at the increment-3 head: `grep -c "__closure__" required-tests.yaml` -> 0.
+        Four of six limits were in all three CD-RULE-004 places and two were in the header of
+        src/crash_detector/admission.py and pointed at from the execution contract only. The
+        register is what an auditor reads FIRST, so a limit that is only in a source file is a
+        limit an auditor meets after it has already cost them something. Numbering runs 1..6
+        across the two headers because they are ONE ROW'S limits, not two lists.
+        (5) §D.1's OWN RULE IS NOT HELD AT THE THREE §B.3 DOORS. combine_within_one_dial(using),
+        observed_for_dial(dial_id, quantity, inputs_used) and derived_within_one_dial(quantities,
+        reduction) are BP-AMENDMENT-0001 §B.3's "doors already closed, and they are the
+        template". They establish their arguments by exact type IN THEIR BODIES and each
+        refuses with its OWN NAMED ERROR — UndeclaredReduction, ScoreOutOfRange,
+        CrossDialCombination, QuantityProvenanceMissing — which is the refusal identity nine
+        auditor-derived tests assert and which CD-PL-F74 requires be recorded. Exact-typing
+        them at the door would PREEMPT those named refusals with a generic NotAdmitted and
+        replace this project's strongest closures with a coarser one, so they are decorated for
+        the P7 property ONLY and their six ESTABLISHED_HERE declarations say so. THE
+        CONSEQUENCE, STATED AND NOT SOFTENED: a rewrite of those three bodies removes their
+        type establishment, which is CD-ASR-F03's shape at the doors §B.3 calls the template.
+        §D.2's table does not list them and no seat invented that scope. EXECUTABLE EXAMPLE:
+        variants/WO-2R3/V19-b3-door-body-rewrite.patch deletes the `type(offered) is not
+        DeclaredQuantity` refusal from derived_within_one_dial's body and a bare float is
+        admitted with the decorator untouched; MEASURED at 04cdd34, this check still exits 0
+        with 54 assertions and `PYTHONPATH=src python3 -B -m pytest tests -q` reports 1 failed,
+        1518 passed. CARRIER, AND IT IS A BODY-LEVEL CARRIER:
+        tests/test_dial_provenance.py::test_the_derivation_door_refuses_a_value_whose_provenance_it_cannot_establish
+        and its siblings measure those bodies refusing TODAY. As a structure that survives an
+        edit to those bodies: NOT PROVED TO BE CARRIED ANYWHERE.
+        (6) A DOOR IS BUILT OUT OF THINGS THE INTERPRETER LEAVES REACHABLE. This is a REACH,
+        not a route, and THE ROUTES NAMED HERE ARE KNOWN ROUTES AND ARE NOT AN EXHAUSTIVE SET
+        — three have now been found by three different parties on three different drivers, each
+        time against a declaration that named one (CD-D-121). Assume there is a fourth.
+        (6a1) `door.__closure__[i].cell_contents` reaches the WRAPPED FUNCTION and calls it with
+        the door bypassed. True of every decorator ever written in Python, including this
+        codebase's own `_absence_is_never_a_number`, which has passed three gates; CPython
+        offers no way to prevent it. EXECUTABLE EXAMPLE:
+        variants/WO-2R3/V24-wrapped-attribute-bypass.patch arm 3 — ASR3-F04's duck row returned
+        Agrees and rendered WITNESS AGREES. The door itself is untouched, so a second caller
+        still meets a working door.
+        (6a2) THE SAME REACH REWRITES THE DOOR'S LIVE DECLARATION, AND THEN THE DOOR ITSELF
+        STOPS REFUSING AT ITS OWN FRONT ENTRANCE (CD-PL-F80's second route). EXECUTABLE
+        EXAMPLE, MEASURED BY THE ENGINEER SEAT AND NOT RELAYED:
+        variants/WO-2R3/V33-closure-declaration-rewrite.patch, command
+        `PYTHONPATH=src python3 -B probe_v33_closure_declaration_rewrite.py`.
+        resolve_panel.__closure__[0] IS the `compiled` dict the door consults on every call;
+        replacing its three entries with ESTABLISHED_HERE(...) makes the ORDINARY front-door
+        call resolve_panel(DuckRow(), now_utc=..., staleness_window_seconds=600.0) return
+        Agrees and render WITNESS AGREES, where the control one line earlier is refused with
+        NotAdmitted. This is WIDER than 6a1: the mutation is to state the door SHARES, so every
+        caller in the process is unguarded afterwards. AND THE INTROSPECTION SURFACE DOES NOT
+        SHOW IT (CD-ENG-WO2R3-F13, this seat's finding against its own increment-2 work):
+        __admits__ is a COPY taken at decoration, so afterwards is_admitting_door is True,
+        declared_admissions still reports the original three parameters and __admission_faults__
+        is still (). NOT REPAIRED: making that attribute the live object would hand a mutator a
+        documented handle instead of an interpreter-internal one, which is a worse trade, and
+        choosing between them is a design decision and not a reconciliation item. MEASURED
+        SIDE-NOTE so a seat does not mistake a break for a closure: `.clear()` on that dict does
+        NOT open the door, it raises KeyError and the door merely stops working; it has to be
+        REWRITTEN.
+        (6b) `__wrapped__` — THIS HALF IS CLOSED, and the closure is measured at
+        tests/test_admission.py::test_a_door_publishes_no_way_round_itself. functools.wraps sets
+        it, inspect.unwrap follows it and editors offer it, so it was a bypass writable in
+        ordinary-looking code; it is deleted. What it used to do is
+        variants/WO-2R3/V24-wrapped-attribute-bypass.patch arm 2.
+        (6c) REBINDING THE ESTABLISHING FUNCTION IN ITS OWN MODULE NAMESPACE (CD-PL-F83, a
+        Project Lead route that is in no corpus, REPLICATED BY THIS SEAT). EXECUTABLE EXAMPLE:
+        variants/WO-2R3/V34-establishing-function-rebound.patch, command
+        `PYTHONPATH=src python3 -B probe_v34_establishing_function_rebound.py`.
+        `crash_detector.collectors.runner.ensure_utc = lambda value: <1999>` makes every
+        recorded AttemptRecord.requested_utc read 1999-01-01T00:00:00, against a control on the
+        unmodified module recording 2026-08-22T12:00:00. THE DOOR IS SATISFIED IN BOTH ARMS —
+        started_utc is an exact datetime either way — because `admits` establishes a value's
+        TYPE and never the IDENTITY OF THE FUNCTION THAT ESTABLISHED IT. WHAT IT DOES NOT
+        DEFEAT: it is NOT a caller route. BP-AMENDMENT-0001 §D.3 part 1's claim is about what a
+        CALLER of collect can supply and that claim SURVIVES — clock and sleep are not
+        parameters and the interpreter refuses to pass them.
+        CARRIER FOR THE WHOLE OF LIMIT 6: NOT PROVED TO BE CARRIED ANYWHERE. Every route above
+        needs the ability to execute code inside the package, which is the universal limit every
+        in-process guard on this project lives inside. That is strictly weaker than "cannot
+        happen" and it is said rather than implied.
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-012

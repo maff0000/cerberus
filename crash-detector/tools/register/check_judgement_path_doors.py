@@ -77,6 +77,17 @@ DECLARED LIMIT (CD-RULE-004) — in this header, in required-tests.yaml and in
 contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md, each with an executable
 example. CD-RULE-006: each hand-off names a layer MEASURED to carry it, or says NOT PROVED
 TO BE CARRIED ANYWHERE.
+
+**THIS ROW HAS SIX DECLARED LIMITS AND ONLY FOUR OF THEM ARE BELOW.** The four here are
+THE STATIC CHECK'S. Limits **5** (§D.1's rule is NOT held at the three §B.3 doors, whose
+type establishment is body-borne) and **6** (the interpreter reach — ``__closure__``,
+``__wrapped__``, and rebinding the establishing function in its own module namespace) are
+THE MECHANISM'S, they live in the header of ``src/crash_detector/admission.py``, and they
+are reproduced in full in the register entry and the execution contract. Numbering runs
+1..6 across the two headers on purpose: they are one row's limits, not two lists.
+An auditor who reads only this file has read FOUR SIXTHS of what this row declares open.
+(CD-PL-F81, ruled CD-D-111 — until WO-2R3 increment 4 the register carried four of six and
+``grep -c "__closure__" required-tests.yaml`` returned 0.)
 ====================================================================================
 
  1  **CONSTRUCTORS ARE NOT SUBJECTS OF THIS CHECK, AND THAT IS A REAL GAP IN §D AS SCOPED.**
@@ -112,6 +123,32 @@ TO BE CARRIED ANYWHERE.
     AT INCREMENT 3 AND IS NOT RESTATED. ``collectors`` is in ``JUDGEMENT_PATH_PACKAGES``
     above, deny-by-default within, so every public callable in it is a subject and a new
     module there is a subject the day it is written.
+
+    **THE SIZE OF THAT DISCHARGE, RE-MEASURED AT INCREMENT 4 AND STATED LIKE-FOR-LIKE**
+    (CD-PL-F82, ruled CD-D-120). It was recorded as *"subjects 19 -> 24"*, which compared a
+    TOTAL against a SUBSET: this check reaches subjects by two unioned rules, and at both
+    SHAs rule 2 reaches 3 doors rule 1 does not, so 24 was the rule-1 part of a total of 27.
+    Both figures below are re-derived by RUNNING THIS FILE, not transcribed::
+
+        git archive 995ec3e | tar -x -C /tmp/cd-995   # increment-2 head, the base
+        cd /tmp/cd-995 && python3 -B tools/register/check_judgement_path_doors.py --root .
+            -> SUBJECTS ENUMERATED: 19. DECORATED: 19.   by rule 2 only: 3
+            -> PASS — 38 assertions, 0 violations
+
+        git archive 04cdd34 | tar -x -C /tmp/cd-clean # increment-3 head, this lane
+        cd /tmp/cd-clean && python3 -B tools/register/check_judgement_path_doors.py --root .
+            -> SUBJECTS ENUMERATED: 27. DECORATED: 27.   by rule 2 only: 3
+            -> PASS — 54 assertions, 0 violations
+
+    **TOTAL: 19 -> 27. RULE-1 SUBSET: 16 -> 24. ASSERTIONS: 38 -> 54.** The two subset
+    figures are the printed total minus the printed rule-2-only count, arithmetic on this
+    check's own output. Never pair 19 with 24: they are different measurements. The
+    correction makes the coverage WIDER than it was claimed to be, not narrower — 27 of 27
+    subjects are decorated. Nothing was unguarded because of the error, and nothing here
+    changes what the check does: ``tests/test_judgement_path_doors.py`` still asserts
+    ``subjects >= 24``, A FLOOR, which is why the discrepancy was never caught. **Raising
+    that floor to an equality is NOT ruled and is NOT done here** (CD-D-120); it is a code
+    change answering a documentary finding, and it is left alone deliberately.
 
     **WHAT IS OPEN IS NARROWER, AND IT IS THE SOFTEST SURFACE IN THE PRODUCT**
     (BLUEPRINT §17, CD-BP-003; the Product Owner named it the fourth Assurance seat's first
@@ -165,8 +202,10 @@ TO BE CARRIED ANYWHERE.
     ``crash_detector.admission.admits``. Executable example:
     ``variants/WO-2R3/V18-counterfeit-admits.patch`` defines a do-nothing ``admits`` in
     ``crash_detector/own_terms.py`` — a module this check does not scan for doors — and
-    imports it into ``serving/witness_resolver.py``. MEASURED: this check exits 0 with 38
-    assertions and PASS, and ``ASR3-F04``'s duck row then renders ``WITNESS AGREES``.
+    imports it into ``serving/witness_resolver.py``. MEASURED, RE-TAKEN AT INCREMENT 4 BY
+    RUNNING IT (it read ``38 assertions`` here, which was the increment-2 figure and had
+    not moved with the artefact — CD-ENG-WO2R3-F14): this check exits 0 with **54
+    assertions** and PASS, and ``ASR3-F04``'s duck row then renders ``WITNESS AGREES``.
     (The counterfeit must be planted OUTSIDE a judgement-path package to work. Defined
     inside ``serving/witness_resolver.py`` it is itself a public undecorated callable in a
     judgement-path package and this check reports it — measured, and disclosed here rather

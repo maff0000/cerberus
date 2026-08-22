@@ -126,6 +126,14 @@ Stated identically here, in the header of `tools/register/check_judgement_path_d
 register entry, each with a patch an auditor can apply to their own extraction. Under CD-RULE-006
 each hand-off names a layer **MEASURED** to carry it, or says **NOT PROVED TO BE CARRIED ANYWHERE**.
 
+**THIS ROW HAS SIX DECLARED LIMITS.** 1–4 are the STATIC CHECK'S and are below. **5 and 6 are the
+MECHANISM'S** — they live in the header of `src/crash_detector/admission.py` and, since WO-2R3
+increment 4, in full in the register entry as well (CD-PL-F81, ruled CD-D-111: until then this
+contract POINTED AT them and the register did not carry them at all — `grep -c "__closure__"
+required-tests.yaml` returned **0**, measured). They are reproduced below as **5** and **6** so that
+this contract, the check header and the register say the same six things. Numbering runs 1..6 across
+the two headers on purpose: they are one row's limits, not two lists.
+
 **1 — CONSTRUCTORS ARE NOT SUBJECTS, AND THAT IS A REAL GAP IN §D AS SCOPED.**
 `ConfigSnapshot(...)`, `DialSpec(...)`, `ModelSpec(...)` and `PanelRow(...)` are public entry points
 on the judgement path and they establish their fields in `__post_init__` — that is, in a BODY, which
@@ -154,8 +162,37 @@ sees the transition rather than inferring it:* "`collectors/` is not yet a judge
 here, by scope and not by oversight." **THAT LIMIT IS DISCHARGED.** BP-AMENDMENT-0001 §D.3 was
 implemented at WO-2R3 increment 3 and `collectors` is in `JUDGEMENT_PATH_PACKAGES`, deny-by-default
 within: every public callable in the package is a subject, and a new module there is a subject the
-day it is written. MEASURED: the subject count went from **19 to 24** and the assertion count from
-**38 to 54**, and `tests/test_judgement_path_doors.py::test_the_collector_doors_are_really_subjects_and_not_merely_counted`
+day it is written.
+
+**MEASURED — AND RE-TAKEN AT WO-2R3 INCREMENT 4 BY RUNNING THE INSTRUMENT, NOT BY TRANSCRIBING IT**
+(CD-PL-F82, ruled CD-D-120). This paragraph read *"the subject count went from **19 to 24**"*, which
+compared **a TOTAL against a SUBSET**. The check reaches subjects by two unioned rules; at BOTH SHAs
+rule 2 reaches 3 doors rule 1 does not, so **24 was the rule-1 part of a total of 27** and 19 was a
+total. Both figures below are re-derived, each on its own pristine extraction:
+
+```
+git archive 995ec3e | tar -x -C /tmp/cd-995        # increment-2 head, the base
+cd /tmp/cd-995   && python3 -B tools/register/check_judgement_path_doors.py --root .
+    SUBJECTS ENUMERATED: 19. DECORATED: 19.   |  by rule 2 only: 3  |  PASS — 38 assertions
+
+git archive 04cdd34 | tar -x -C /tmp/cd-clean      # increment-3 head, this lane
+cd /tmp/cd-clean && python3 -B tools/register/check_judgement_path_doors.py --root .
+    SUBJECTS ENUMERATED: 27. DECORATED: 27.   |  by rule 2 only: 3  |  PASS — 54 assertions
+```
+
+**LIKE-FOR-LIKE: TOTAL 19 → 27. RULE-1 SUBSET 16 → 24. ASSERTIONS 38 → 54.** The subset figures are
+the printed total minus the printed rule-2-only count — arithmetic on the check's own output, not a
+second measurement. **Never pair 19 with 24.**
+
+**What it does not mean.** The coverage is **WIDER** than was claimed, not narrower: **27 of 27**
+subjects are decorated, the check exits 0, and nothing was unguarded because of the error. Eight
+subjects were added, not five. **Why nothing caught it:**
+`tests/test_judgement_path_doors.py` asserts `subjects >= 24` — **A FLOOR**, which passes at 27 and
+would pass at 270. **Raising that floor to an equality is NOT ruled, NOT authorised and NOT done**
+(CD-D-120): it would be a code change answering a documentary finding. It is named here and left
+alone.
+
+`tests/test_judgement_path_doors.py::test_the_collector_doors_are_really_subjects_and_not_merely_counted`
 removes `@admits` from `collect` in a scratch copy and asserts this command FAILS on it — so the
 package being in RULE 1 is a measured property of the check and not a string in a file.
 
@@ -211,14 +248,120 @@ MEASURED: THE RUNTIME.** The same patched tree runs **3 failed, 1516 passed** un
 pytest tests -q` (re-measured at WO-2R3 increment 3), because the plants call the real doors and observe the real refusals. A static
 reader alone cannot carry this and does not claim to.
 
+**5 — §D.1's OWN RULE IS NOT HELD AT THE THREE §B.3 DOORS.** *(The MECHANISM's limit, from
+`src/crash_detector/admission.py`. Reproduced here in full at WO-2R3 increment 4 rather than pointed
+at — CD-PL-F81.)* `combine_within_one_dial(using)`, `observed_for_dial(dial_id, quantity,
+inputs_used)` and `derived_within_one_dial(quantities, reduction)` are BP-AMENDMENT-0001 §B.3's
+*"doors already closed, and they are the template"*. They establish their arguments by exact type
+**IN THEIR BODIES**, and each refuses with its OWN NAMED ERROR — `UndeclaredReduction`,
+`ScoreOutOfRange`, `CrossDialCombination`, `QuantityProvenanceMissing` — which is the refusal
+identity nine auditor-derived tests assert and which CD-PL-F74 requires be recorded. Exact-typing
+them at the door would PREEMPT those named refusals with a generic `NotAdmitted` and replace this
+project's strongest closures with a coarser one, so they are decorated for the **P7 property only**
+and their six `ESTABLISHED_HERE` declarations say so.
+
+**THE CONSEQUENCE, STATED AND NOT SOFTENED:** a rewrite of those three bodies removes their type
+establishment, which is CD-ASR-F03's shape at the doors §B.3 calls the template. §D.2's table does
+not list them and no seat invented that scope. **MEASURED:**
+`variants/WO-2R3/V19-b3-door-body-rewrite.patch` deletes the `type(offered) is not DeclaredQuantity`
+refusal from `derived_within_one_dial`'s body and a bare `float` is admitted with the decorator
+untouched; at `04cdd34` this command still exits 0 with **54 assertions** and
+`PYTHONPATH=src python3 -B -m pytest tests -q` reports **1 failed, 1518 passed**.
+**CARRIER, AND IT IS A BODY-LEVEL CARRIER:**
+`tests/test_dial_provenance.py::test_the_derivation_door_refuses_a_value_whose_provenance_it_cannot_establish`
+and its siblings measure those bodies refusing TODAY. As a structure that survives an edit to those
+bodies: **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+**6 — A DOOR IS BUILT OUT OF THINGS THE INTERPRETER LEAVES REACHABLE.** *(The MECHANISM's limit.)*
+This is a **REACH, not a route**, and **THE ROUTES NAMED HERE ARE KNOWN ROUTES AND ARE NOT AN
+EXHAUSTIVE SET** (CD-D-121). Three have now been found by three different parties on three different
+drivers, and each time the declaration named one. **Assume there is a fourth and look for it rather
+than checking this list.**
+
+**6a1 — the `__closure__` reach to the WRAPPED FUNCTION.** `door.__closure__[i].cell_contents`
+reaches the undecorated function and calls it with the door bypassed. True of every decorator ever
+written in Python, including this codebase's own `_absence_is_never_a_number`, which has passed three
+gates; CPython offers no way to prevent it, so it is a property of the language and not of this
+design. **EXECUTABLE EXAMPLE:** `variants/WO-2R3/V24-wrapped-attribute-bypass.patch` arm 3 —
+ASR3-F04's duck row returned `Agrees` and rendered `WITNESS AGREES`. The door itself is untouched, so
+a second caller still meets a working door.
+
+**6a2 — the SAME reach rewrites the door's LIVE DECLARATION, and then THE DOOR ITSELF STOPS REFUSING
+AT ITS OWN FRONT ENTRANCE.** *(CD-PL-F80's second route: the limit's wording covered it, its named
+example did not.)* **EXECUTABLE EXAMPLE, MEASURED BY THE IMPLEMENTING SEAT AND NOT RELAYED:**
+`variants/WO-2R3/V33-closure-declaration-rewrite.patch`, run with
+`PYTHONPATH=src python3 -B probe_v33_closure_declaration_rewrite.py`.
+
+```
+CONTROL — the front door before anything is touched:
+    REFUSED: NotAdmitted: resolve_panel: row=DuckRow is not admitted; this door requires
+             exactly PanelRow or None. Exact type and never isinstance
+ROUTE   — rewrite resolve_panel.__closure__[0] (the live `compiled` dict, keys
+          ['now_utc', 'row', 'staleness_window_seconds']) to ESTABLISHED_HERE(...)
+ARM     — the SAME front door call, nothing else changed:
+    ESCAPED -> Agrees; RENDERS: WITNESS AGREES
+```
+
+This is **WIDER than 6a1**: the mutation is to state the door SHARES, so every caller in the process
+is unguarded afterwards, including code that never went near a closure.
+
+**AND THE INTROSPECTION SURFACE DOES NOT SHOW IT** — `CD-ENG-WO2R3-F13`, raised by the seat against
+its own increment-2 work. `__admits__` is `dict(compiled)`, **A COPY TAKEN AT DECORATION**, so after
+6a2: `is_admitting_door(resolve_panel)` is `True`, `declared_admissions(resolve_panel)` still reports
+`['now_utc', 'row', 'staleness_window_seconds']`, and `__admission_faults__` is still `()`. A
+reviewer asking the door what it requires is told the truth about what it WAS told and nothing about
+what it now DOES. **NOT REPAIRED:** making that attribute the live object would hand a mutator a
+documented, supported handle instead of an interpreter-internal one, which is a worse trade, and
+choosing between them is a design decision and not a reconciliation item.
+
+*MEASURED side-note, so a seat does not mistake a break for a closure:* `.clear()` on that dict does
+**NOT** open the door — the body reads `compiled[name]` for every parameter the signature names, so
+an emptied dict raises `KeyError` and the door merely **BREAKS**. It has to be **REWRITTEN**, not
+emptied.
+
+**6b — `__wrapped__`: THIS HALF IS CLOSED**, and the closure is measured
+(`tests/test_admission.py::test_a_door_publishes_no_way_round_itself`). `functools.wraps` sets it,
+`inspect.unwrap` follows it and editors offer it, so it was a bypass writable in ordinary-looking
+code with no cast and no import; it is deleted. What it used to do is
+`variants/WO-2R3/V24-wrapped-attribute-bypass.patch` arm 2.
+
+**6c — REBINDING THE ESTABLISHING FUNCTION IN ITS OWN MODULE NAMESPACE.** *(CD-PL-F83, a Project Lead
+route that is in no corpus, **replicated by the implementing seat** rather than relayed.)*
+**EXECUTABLE EXAMPLE:** `variants/WO-2R3/V34-establishing-function-rebound.patch`, run with
+`PYTHONPATH=src python3 -B probe_v34_establishing_function_rebound.py`.
+
+```
+CONTROL — the unmodified module:
+    started_utc handed in : 2026-08-22T12:00:00+00:00   (exact datetime, both arms)
+    AttemptRecord.requested_utc recorded: ['2026-08-22T12:00:00.000010+00:00', ...]
+ROUTE   — crash_detector.collectors.runner.ensure_utc = lambda value: <1999-01-01T00:00:00Z>
+    AttemptRecord.requested_utc recorded: ['1999-01-01T00:00:00.000007+00:00', ...]
+```
+
+**THE DOOR IS SATISFIED IN BOTH ARMS** — `started_utc` is an exact `datetime` either way — because
+`admits` establishes a value's **TYPE** and never the **IDENTITY OF THE FUNCTION THAT ESTABLISHED
+IT**. It attacks the establishment layer, not the door.
+
+**WHAT 6c DOES NOT DEFEAT.** It is **NOT a caller route**: it needs the ability to execute code
+inside the package. BP-AMENDMENT-0001 §D.3 part 1's claim is about what a **CALLER** of `collect` can
+supply, and that claim **SURVIVES** — `clock` and `sleep` are not parameters and the interpreter
+refuses to pass them.
+
+**CARRIER FOR THE WHOLE OF LIMIT 6: NOT PROVED TO BE CARRIED ANYWHERE.** Every route above needs the
+ability to execute code inside this package, which is the universal limit every in-process guard on
+this project lives inside. Saying that is strictly weaker than "cannot happen", and it is said rather
+than implied.
+
 ## What this check is NOT
 
 **IT IS NOT PROOF OF A RUNTIME PROPERTY.** A static checker exiting non-zero is not proof that
 anything is unconstructible, because every escape on this project's record passed a static checker.
 The runtime claims are made by the plants (`tests/test_judgement_path_doors.py`) and by
 `tests/test_admission.py`, and the mechanism's own residues — including a bypass the implementing
-seat found in its own doors and closed, and the `__closure__` half it could not close — are DECLARED
-LIMIT 6 in `src/crash_detector/admission.py`.
+seat found in its own doors and closed, and the `__closure__` reach it could not close — are DECLARED
+LIMIT 6, in `src/crash_detector/admission.py`, **in the register entry, and reproduced in full above
+since WO-2R3 increment 4**. It now names **three** known routes and says in terms that they are not
+an exhaustive set.
 
 **IT IS NOT A LIST OF THREE FIXES.** The instance game — *"add `type(row) is not PanelRow` to
 `resolve_panel`"* — is what the first gate caught, what the auditor named, and what §D.1 repeats. The

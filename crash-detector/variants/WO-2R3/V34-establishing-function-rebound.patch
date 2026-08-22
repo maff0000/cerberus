@@ -1,0 +1,89 @@
+diff --git a/probe_v34_establishing_function_rebound.py b/probe_v34_establishing_function_rebound.py
+new file mode 100644
+index 0000000..272bf8a
+--- /dev/null
++++ b/probe_v34_establishing_function_rebound.py
+@@ -0,0 +1,83 @@
++"""V34 — THE PROJECT LEAD'S ROUTE (CD-PL-F83), REPLICATED BY THIS SEAT AND NOT RELAYED.
++
++ROUTE: rebind the ESTABLISHING FUNCTION in the module that calls it —
++`crash_detector.collectors.runner.ensure_utc = <a liar>` — and every recorded
++`AttemptRecord.requested_utc` carries whatever the liar returned. It attacks §D.3 part 1
++at the ESTABLISHMENT layer rather than at the door: `admits` establishes an argument's
++TYPE, never the IDENTITY OF THE ESTABLISHING FUNCTION. The value handed in is an exact
++`datetime` in both arms, so the door is satisfied in both arms.
++
++IT IS NOT A CALLER ROUTE AND IT DOES NOT DEFEAT §D.3 PART 1'S CLAIM, which is about what
++a CALLER OF `collect` can pass. It needs the ability to execute code inside the package —
++the universal limit every in-process guard here lives inside, and DECLARED LIMIT 6's
++third named route.
++
++Run:  PYTHONPATH=src python3 -B probe_v34_establishing_function_rebound.py
++"""
++
++from datetime import datetime, timezone
++
++import crash_detector.collectors.runner as runner
++from crash_detector.collectors.adapter import AdapterFetchError
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++
++NOW = datetime(2026, 8, 22, 12, 0, 0, tzinfo=timezone.utc)
++LIE = datetime(1999, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
++
++
++class Adapter:
++    source_id = "src.v34"
++    adapter_id = "a.v0"
++    response_schema = {"type": "object"}
++
++    def fetch(self, *, timeout_seconds):
++        raise AdapterFetchError("CONNECTION_REFUSED")
++
++    def is_empty(self, payload):
++        return False
++
++
++class Sink:
++    """Records what the runner hands it. The runner writes; this only remembers."""
++
++    def __init__(self):
++        self.recorded = []
++
++    def record(self, attempt):
++        self.recorded.append(attempt)
++        return None
++
++
++class Ledger:
++    def admit_if_absent(self, key):
++        return True
++
++
++POLICY = RetryPolicy(max_attempts=2, timeout_seconds=1.0, backoff_seconds=0.0)
++
++
++def run(tag):
++    sink = Sink()
++    collect(
++        Adapter(), policy=POLICY, sink=sink, ledger=Ledger(),
++        collector_run_id=f"run-v34-{tag}", started_utc=NOW, delay=DelayKind.WALL_CLOCK,
++    )
++    stamps = sorted({a.requested_utc.isoformat() for a in sink.recorded})
++    print(f"    started_utc handed in : {NOW.isoformat()}  (exact datetime, both arms)")
++    print(f"    AttemptRecord.requested_utc recorded: {stamps}")
++
++
++print("CONTROL — the unmodified module:")
++run("control")
++
++print()
++print("ROUTE — rebind the establishing function in the runner's OWN module namespace:")
++runner.ensure_utc = lambda value: LIE
++print("    crash_detector.collectors.runner.ensure_utc = lambda value: 1999-01-01T00:00:00Z")
++run("rebound")
++
++print()
++print("The door was satisfied in BOTH arms: `started_utc=datetime` is exactly what")
++print("`admits` was told to require, and it got exactly that. What moved is what the")
++print("module did with it AFTER the door.")
