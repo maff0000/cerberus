@@ -6,13 +6,19 @@ These are the MECHANISM's own tests. The doors it is applied to are tested where
 ``tools/register/check_judgement_path_doors.py``, whose own contrast arms live in
 ``test_judgement_path_doors.py``.
 
-The three tests named as CARRIERS by the DECLARED LIMITs in
-``src/crash_detector/admission.py`` are here and are named after the limit they carry, so
-that CD-RULE-006's "measure the layer you claim carries the residue" is a grep away:
+The tests named as CARRIERS by the DECLARED LIMITs in ``src/crash_detector/admission.py``
+are here and are named after the limit they carry, so that CD-RULE-006's "measure the layer
+you claim carries the residue" is a grep away:
 
-* limit 1 -> :func:`test_the_established_here_exemptions_are_exactly_these_three`
-* limit 2 -> :func:`test_renaming_the_receiver_faults_the_door`
+* limit 1 -> :func:`test_the_established_here_exemptions_are_exactly_this_set` and
+  :func:`test_every_established_here_states_a_reason_in_the_artefact`
+* limit 2 -> :func:`test_renaming_the_receiver_faults_the_door` and
+  :func:`test_a_module_level_parameter_named_cls_is_established_and_not_skipped`
 * limit 4 -> :func:`test_a_list_mutated_after_admission_is_not_re_established`
+
+Limit 5 — the six ``ESTABLISHED_HERE`` uses on BP-AMENDMENT-0001 §B.3's already-closed
+doors — is carried by ``tests/test_dial_provenance.py``, which is where those doors' own
+named refusals are measured, and it is NOT carried here.
 """
 
 from datetime import datetime, timezone
@@ -334,3 +340,114 @@ def test_defaults_are_established_too_because_a_default_is_a_value_that_arrives(
 
     with pytest.raises(NotAdmitted):
         door()
+
+
+# --- DECLARED LIMIT 2's SECOND CARRIER ---------------------------------------------------- #
+
+def test_a_module_level_parameter_named_cls_is_established_and_not_skipped():
+    """The class-body test is asked BEFORE the name. This narrowing exists because the
+    mechanism FAULTED `assert_closed_presentation_surface(cls)` — a module-level function
+    on the serving path whose only parameter is named `cls` — the first time it was applied
+    to it, rather than quietly skipping the only argument that door has."""
+
+    @admits(cls=int)
+    def module_shaped(cls):
+        return cls
+
+    assert admission_faults(module_shaped) == ()
+    assert module_shaped(1) == 1
+    with pytest.raises(NotAdmitted):
+        module_shaped("1")
+
+
+def test_a_method_of_a_locally_defined_class_still_skips_its_receiver():
+    """`__qualname__` reads `test_....<locals>.Local.m` — the segment before the method is
+    the CLASS, not `<locals>`, so the receiver rule applies."""
+
+    class Local:
+        @admits(x=int)
+        def m(self, x):
+            return x
+
+    assert Local().m(1) == 1
+
+
+# --- DECLARED LIMIT 1's CARRIER: THE EXEMPTION SET IS PINNED ------------------------------ #
+
+#: Every ESTABLISHED_HERE in the product, as (module, callable, parameter). A NINTH use
+#: fails this test, which is what makes DECLARED LIMIT 1's "counted, not hidden" a measured
+#: claim rather than an intention. `check_judgement_path_doors.py` prints the same set from
+#: the SOURCE; this reads it from the RUNTIME, so the two are independent readings of it.
+EXPECTED_ESTABLISHED_HERE = frozenset(
+    {
+        ("crash_detector.engine.model", "own_model_id", "value"),
+        ("crash_detector.engine.model", "ModelRegistry.get", "model_id"),
+        ("crash_detector.dials.magnitude", "combine_within_one_dial", "using"),
+        ("crash_detector.dials.provenance", "observed_for_dial", "dial_id"),
+        ("crash_detector.dials.provenance", "observed_for_dial", "quantity"),
+        ("crash_detector.dials.provenance", "observed_for_dial", "inputs_used"),
+        ("crash_detector.dials.provenance", "derived_within_one_dial", "quantities"),
+        ("crash_detector.dials.provenance", "derived_within_one_dial", "reduction"),
+    }
+)
+
+
+def _established_here_in_the_product() -> dict:
+    """Every ESTABLISHED_HERE reachable in the product, keyed by (module, callable, param).
+
+    Read from the RUNTIME — the compiled declaration objects on the doors themselves.
+    ``check_judgement_path_doors.py`` prints the same set read from the SOURCE, so the two
+    are independent readings and a disagreement between them is itself informative.
+    """
+    import importlib
+    import pkgutil
+
+    import crash_detector
+    from crash_detector.admission import _EstablishedHere
+
+    found: dict = {}
+    for info in pkgutil.walk_packages(
+        crash_detector.__path__, prefix="crash_detector."
+    ):
+        module = importlib.import_module(info.name)
+        for attribute in list(vars(module).values()):
+            candidates = [(attribute, "")]
+            if isinstance(attribute, type):
+                candidates = [
+                    (member, f"{attribute.__name__}.")
+                    for member in list(vars(attribute).values())
+                ]
+            for candidate, prefix in candidates:
+                for parameter, admission in declared_admissions(candidate).items():
+                    if isinstance(admission, _EstablishedHere):
+                        found[
+                            (
+                                candidate.__module__,
+                                prefix + candidate.__name__,
+                                parameter,
+                            )
+                        ] = admission
+    return found
+
+
+def test_the_established_here_exemptions_are_exactly_this_set():
+    observed = frozenset(_established_here_in_the_product())
+    assert observed == EXPECTED_ESTABLISHED_HERE, (
+        "the ESTABLISHED_HERE exemption set moved. Every use is an explicit weakening of "
+        "the admission mechanism and must be reviewed, not absorbed. Added: "
+        f"{sorted(observed - EXPECTED_ESTABLISHED_HERE)}; removed: "
+        f"{sorted(EXPECTED_ESTABLISHED_HERE - observed)}."
+    )
+
+
+def test_every_established_here_states_a_reason_in_the_artefact():
+    """A bare ESTABLISHED_HERE cannot reach the product: it raises at decoration. This
+    asserts the other half — that every reason actually says something, names the error the
+    body raises, and names the test measuring it (CD-RULE-006)."""
+    found = _established_here_in_the_product()
+    assert len(found) == len(EXPECTED_ESTABLISHED_HERE)
+    for where, admission in found.items():
+        assert len(admission.because) > 80, f"{where} states no real reason"
+        assert "CARRIER MEASURED" in admission.because or "own_terms" in admission.because, (
+            f"{where} names no carrier for the residue it leaves (CD-RULE-006)"
+        )

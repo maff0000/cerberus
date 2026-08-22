@@ -72,36 +72,75 @@ contract, each with an executable example. CD-RULE-006: each hand-off names a la
 to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
 ====================================================================================
 
- 1  **``ESTABLISHED_HERE`` IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT HIDDEN.** Three
-    callables in the subject set are ESTABLISHMENT DOORS in their own right — their contract
-    is *accept any object and refuse it here* — so requiring an exact type of their argument
-    would make them unable to do their job. They declare ``ESTABLISHED_HERE`` for that
-    parameter, which admits anything. Executable example::
+ 1  **``ESTABLISHED_HERE`` IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT HIDDEN.** EIGHT
+    parameters across FIVE callables declare it, and every one of them must state a reason
+    in the artefact — a bare ``ESTABLISHED_HERE`` raises :exc:`AdmissionFault` at decoration
+    and stops the module importing. Executable example::
 
-        @admits(value=ESTABLISHED_HERE)
+        @admits(value=ESTABLISHED_HERE("this callable IS the establishment door"))
         def own_model_id(value): ...      # then own_model_id(object()) reaches the body
 
     **CARRIER MEASURED:** ``tools/register/check_judgement_path_doors.py`` prints every use
-    with its file, line and parameter, and
-    ``tests/test_admission.py::test_the_established_here_exemptions_are_exactly_these_three``
-    pins the exact set — module, callable and parameter. A fourth use fails that test. The
+    with its file, line and parameter at every run, and
+    ``tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set``
+    pins the exact set — module, callable and parameter. A ninth use fails that test. The
     check REPORTS the uses; it does not adjudicate them, and a reviewer must.
 
- 2  **THE RECEIVER OF A METHOD IS NOT ESTABLISHED.** For a method, the first parameter is
-    skipped when — and only when — it is named ``self`` or ``cls``. That is a name, and this
-    project's own CD-PL-F74 rule says a refusal that depends on a name is a vocabulary. The
-    direction of the dependence is the safe one and that is why it is written this way:
-    renaming ``self`` does not open a hole, it FAULTS the door and every call raises
-    :exc:`UndeclaredParameter`. Executable example::
+ 5  **THE SIX ``ESTABLISHED_HERE`` USES ON §B.3's DOORS ARE A LIMIT AND NOT A CLOSURE, AND
+    THE LIMIT IS §D.1's OWN CONCERN LEFT OPEN.** ``combine_within_one_dial(using)``,
+    ``observed_for_dial(dial_id, quantity, inputs_used)`` and
+    ``derived_within_one_dial(quantities, reduction)`` are BP-AMENDMENT-0001 §B.3's *"doors
+    already closed, and they are the template"*. They establish their arguments by exact
+    type **IN THEIR BODIES**, and each refuses with its OWN NAMED ERROR —
+    ``UndeclaredReduction``, ``ScoreOutOfRange``, ``CrossDialCombination``,
+    ``QuantityProvenanceMissing`` — which is the refusal identity nine auditor-derived tests
+    assert and which CD-PL-F74 requires be recorded. Exact-typing them at the door would
+    PREEMPT those named refusals with a generic :exc:`NotAdmitted` and replace this
+    project's strongest closures with a coarser one, so they are decorated for the P7
+    property ONLY: a new argument added to any of them arrives refused, and their type
+    establishment stays where it is.
+
+    **So §D.1's rule — "the establishment is derived from the signature rather than written
+    into the body" — is NOT held at these three doors.** A rewrite of their bodies removes
+    their type establishment, which is CD-ASR-F03's shape at the doors §B.3 calls the
+    template. §D.2's table does not list them and this seat did not invent that scope.
+    Executable example: delete the ``type(offered) is not DeclaredQuantity`` refusal from
+    ``derived_within_one_dial``'s body and a bare ``float`` is admitted, with the decorator
+    untouched — ``variants/WO-2R3/V19-b3-door-body-rewrite.patch``.
+    **CARRIER MEASURED, and it is a body-level carrier:**
+    ``tests/test_dial_provenance.py::test_the_derivation_door_refuses_a_value_whose_provenance_it_cannot_establish``
+    and its siblings measure the bodies refusing TODAY. As a structure that survives an edit
+    to those bodies: **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING to the
+    Project Lead rather than closed here.
+
+ 2  **THE RECEIVER OF A METHOD IS NOT ESTABLISHED.** The first parameter is skipped when,
+    and only when, the callable was written inside a ``class`` body — read from
+    ``__qualname__`` — AND that parameter is named ``self`` or ``cls``. The name is a
+    vocabulary and this project's own CD-PL-F74 rule says so. Two things bound it:
+
+    * the class-body test is asked FIRST, so a MODULE-LEVEL function whose parameter is
+      named ``cls`` has no receiver to skip and is established like any other.
+      ``assert_closed_presentation_surface(cls)`` on the serving path is exactly such a
+      function, and this narrowing exists because the mechanism FAULTED that door the first
+      time it was applied to it rather than quietly skipping its only argument;
+    * the direction of the remaining dependence is the safe one. Renaming ``self`` does not
+      open a hole, it FAULTS the door and every call raises :exc:`UndeclaredParameter`.
+
+    Executable examples::
 
         class C:
             @admits()
             def m(myself): ...            # C().m() raises UndeclaredParameter
 
-    **CARRIER MEASURED:** ``tests/test_admission.py::test_renaming_the_receiver_faults_the_door``.
-    A ``staticmethod`` whose first parameter happens to be named ``self`` would have that
-    parameter skipped; there are ZERO ``staticmethod``s in the subject set and the check
-    prints the count it observed, so the premise is measured rather than assumed.
+        @admits(cls=SealedPresentationType)
+        def module_level(cls): ...        # `cls` IS established here
+
+    **CARRIER MEASURED:** ``tests/test_admission.py::test_renaming_the_receiver_faults_the_door``
+    and ``::test_a_module_level_parameter_named_cls_is_established_and_not_skipped``.
+    A ``staticmethod`` written in a class body whose first parameter happens to be named
+    ``self`` would have that parameter skipped; there are ZERO ``staticmethod``s and ZERO
+    ``classmethod``s in the subject set, and ``check_judgement_path_doors.py`` PRINTS the
+    counts it observed, so the premise is measured at every run rather than assumed.
 
  3  **THIS MODULE ESTABLISHES A VALUE'S TYPE, NEVER ITS TRUTH.** An exactly-typed
     ``ObservationRecord`` carrying a dishonest payload is admitted here and refused, if at
@@ -392,13 +431,38 @@ def _signature_parameters(entry_point) -> tuple:
     signature = inspect.signature(entry_point, follow_wrapped=False)
     parameters = list(signature.parameters.values())
     skipped: list = []
-    if parameters and parameters[0].name in _RECEIVER_NAMES:
-        if parameters[0].kind in (
+    if (
+        _is_defined_in_a_class_body(entry_point)
+        and parameters
+        and parameters[0].name in _RECEIVER_NAMES
+        and parameters[0].kind
+        in (
             inspect.Parameter.POSITIONAL_ONLY,
             inspect.Parameter.POSITIONAL_OR_KEYWORD,
-        ):
-            skipped.append(parameters.pop(0).name)
+        )
+    ):
+        skipped.append(parameters.pop(0).name)
     return signature, parameters, skipped
+
+
+def _is_defined_in_a_class_body(entry_point) -> bool:
+    """Was this callable written inside a ``class`` statement?
+
+    Read from ``__qualname__``, which records the lexical nesting the interpreter saw —
+    ``ConfigSnapshot.model_for`` for a method, ``f.<locals>.g`` for a nested function,
+    ``f.<locals>.C.m`` for a method of a locally defined class. It is a property of where
+    the ``def`` was written and it is not something a caller can influence.
+
+    It is asked BEFORE the name ``self``/``cls`` is consulted, and that ordering is the
+    whole point: a module-level function whose parameter happens to be named ``cls`` — and
+    ``assert_closed_presentation_surface(cls)`` on the serving path is exactly one — has no
+    receiver to skip, so its argument is ESTABLISHED like any other. Skipping by name alone
+    would have left that door open, and it did: this narrowing was made because the
+    mechanism refused that door as FAULTED the first time it was applied to it.
+    """
+    qualname = getattr(entry_point, "__qualname__", "")
+    parent = qualname.rpartition(".")[0]
+    return bool(parent) and not parent.endswith("<locals>")
 
 
 def _faults(entry_point, parameters: list, declared: dict) -> tuple:

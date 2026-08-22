@@ -80,8 +80,10 @@ import functools
 from datetime import datetime
 from typing import Mapping, Sequence, Union
 
+from crash_detector.admission import admits, each_of, one_of
 from crash_detector.dials.dialset import EQUITY_DIAL_ID, MONETARY_DIAL_ID, DialSet
 from crash_detector.dials.reading import (
+    READING_CONSTRUCTORS,
     AbsenceYieldedAValue,
     Degraded,
     Reading,
@@ -135,12 +137,32 @@ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
 REASON_NO_MODEL_DECLARED = "NO_MODEL_DECLARED"
 
 
+@admits(
+    observations=each_of(ObservationRecord),
+    config_snapshot=ConfigSnapshot,
+    now_utc=datetime,
+)
 def evaluate(
     observations: Sequence[ObservationRecord],
     config_snapshot: ConfigSnapshot,
     now_utc: datetime,
 ) -> DialSet:
     """Compute both dials.
+
+    **A2 AND A3 OF BP-AMENDMENT-0001 §D.2, ESTABLISHED AT THE DOOR AND DERIVED FROM THIS
+    SIGNATURE.** ``config_snapshot`` must be exactly a
+    :class:`~crash_detector.engine.config.ConfigSnapshot` — ``ASR3-F05`` supplied a duck
+    object answering ``window()`` and ``spec_for()`` and it decided the window and both
+    dials' specs, therefore both dials. ``observations`` must be a ``tuple`` or ``list``
+    whose EVERY element is exactly an
+    :class:`~crash_detector.observations.ObservationRecord` — the RECORD and not only its
+    ``outcome``, which is already exact-typed one level in by ``_latest_usable_ok``: a
+    look-alike record carrying an honest ``OK`` still decides its own ``source_id``, and
+    which source an observation belongs to decides whether a required input was present.
+
+    Neither requirement is written in this body. Both are read from the signature above by
+    :func:`~crash_detector.admission.admits`, so an edit to this body cannot remove them and
+    an argument added to this signature arrives REFUSED rather than unguarded.
 
     Pure: the same arguments produce the same result, and nothing outside the arguments is
     read or written. No clock is consulted — ``now_utc`` is an argument precisely so that
@@ -240,6 +262,7 @@ def _latest_usable_ok(
     return latest
 
 
+@admits(spec=DialSpec, usable=dict)
 def required_inputs_are_all_present(
     spec: DialSpec, usable: Mapping[str, OK]
 ) -> bool:
@@ -273,6 +296,7 @@ def required_inputs_are_all_present(
     return all(source_id in usable for source_id in spec.required_input_ids)
 
 
+@admits(spec=DialSpec, usable=dict, reading=one_of(*READING_CONSTRUCTORS))
 def refuse_a_number_without_its_inputs(
     spec: DialSpec, usable: Mapping[str, OK], reading: "Reading"
 ) -> None:

@@ -145,6 +145,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Union
 
+from crash_detector.admission import ESTABLISHED_HERE, admits, one_of
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.dials.scores import Contribution
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
@@ -203,6 +204,18 @@ class ScoreComputation:
 ModelId = str
 
 
+@admits(
+    value=ESTABLISHED_HERE(
+        "this callable IS the establishment door for a model reference: its contract is to "
+        "accept ANY object and refuse it here, naming what was offered. Requiring an exact "
+        "str at the door would make it unable to do the one job it exists for, and would "
+        "also refuse a str SUBCLASS rather than REBUILDING it, which is the behaviour "
+        "crash_detector.own_terms argues for at length and which this function documents. "
+        "CARRIER MEASURED, by name: tests/test_engine_model_registry.py::test_p1_the_plant"
+        "_adapted_to_the_new_field_is_refused_because_an_object_is_not_a_name and "
+        "::test_p1_a_callable_str_subclass_is_rebuilt_as_a_str_that_cannot_be_called."
+    )
+)
 def own_model_id(value: str) -> "ModelId":
     """A model name established on this system's own terms, or a refusal.
 
@@ -611,6 +624,19 @@ class ModelRegistry:
     def model_ids(self) -> tuple[str, ...]:
         return tuple(model.model_id for model in self.models)
 
+    @admits(
+        model_id=ESTABLISHED_HERE(
+            "own_model_id below IS the establishment door for this parameter and it "
+            "REBUILDS a str subclass rather than refusing it, deliberately, so that which "
+            "row a lookup matches is decided by str.__eq__ between two exact strings. "
+            "Requiring an exact str here would refuse what this registry is designed to "
+            "re-establish, and would move the refusal off own_model_id, which is where "
+            "every model reference in the product is established. CARRIER MEASURED, by "
+            "name: tests/test_engine_model_registry.py::test_p1_a_callable_str_subclass_is"
+            "_rebuilt_as_a_str_that_cannot_be_called and "
+            "::test_the_model_registry_refuses_a_row_that_is_not_exactly_a_modelspec."
+        )
+    )
     def get(self, model_id: str) -> ModelSpec:
         """The spec for ``model_id``, or :exc:`ModelNotRegistered`.
 
@@ -644,6 +670,13 @@ class ModelRegistry:
 EMPTY_MODEL_REGISTRY = ModelRegistry(models=())
 
 
+@admits(
+    model_registry=ModelRegistry,
+    dial_id=str,
+    model_ref=one_of(str, None),
+    required_input_ids=tuple,
+    contributing_input_ids=tuple,
+)
 def establish_model_for_dial(
     model_registry: "ModelRegistry",
     *,

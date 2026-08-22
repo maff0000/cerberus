@@ -182,7 +182,22 @@ import enum
 import math
 from types import MappingProxyType
 
+from crash_detector.admission import ESTABLISHED_HERE, admits, each_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
+
+#: The reason every ESTABLISHED_HERE in this module states, filled in per parameter. It is
+#: written once because the argument is the same one four times, and repeating it by hand is
+#: how four copies come to disagree (CD-PL-F54's shape, one storey down).
+_ADMISSION_DOOR_ESTABLISHES_ITS_OWN = (
+    "this function IS the establishment door for {parameter}: its body refuses what it "
+    "cannot establish with the NAMED error {error}, and that named refusal is the closure "
+    "BP-AMENDMENT-0001 §B.3 lists as ALREADY CLOSED and calls the TEMPLATE for §D. An "
+    "exact-type door here would preempt it with a generic NotAdmitted and would replace a "
+    "specific refusal with a coarser one, losing the layer identity CD-PL-F74 requires be "
+    "recorded. CARRIER MEASURED, by name: tests/test_dial_provenance.py::{test}. SEE "
+    "DECLARED LIMIT 5 in src/crash_detector/admission.py: this door is decorated for the "
+    "P7 property only, and its type establishment remains in its body."
+)
 
 __all__ = [
     "ScoreOutOfRange",
@@ -728,6 +743,17 @@ if DeclaredQuantity.__dictoffset__:
 _SEALED.add(DeclaredQuantity)
 
 
+@admits(
+    dial_id=ESTABLISHED_HERE(_ADMISSION_DOOR_ESTABLISHES_ITS_OWN.format(
+        parameter="dial_id", error="CrossDialCombination",
+        test="test_the_admission_door_refuses_a_number_admitted_for_no_dial")),
+    quantity=ESTABLISHED_HERE(_ADMISSION_DOOR_ESTABLISHES_ITS_OWN.format(
+        parameter="quantity", error="ScoreOutOfRange",
+        test="test_the_admission_door_refuses_anything_that_is_not_a_finite_float")),
+    inputs_used=ESTABLISHED_HERE(_ADMISSION_DOOR_ESTABLISHES_ITS_OWN.format(
+        parameter="inputs_used", error="CrossDialCombination",
+        test="test_the_admission_door_refuses_a_number_admitted_from_nowhere")),
+)
 def observed_for_dial(*, dial_id: str, quantity: float, inputs_used) -> DeclaredQuantity:
     """ADMIT a number from outside the system as ONE dial's, citing what produced it.
 
@@ -811,6 +837,14 @@ def observed_for_dial(*, dial_id: str, quantity: float, inputs_used) -> Declared
     return _new_quantity(frozenset({dial_id}), quantity)
 
 
+@admits(
+    quantities=ESTABLISHED_HERE(_ADMISSION_DOOR_ESTABLISHES_ITS_OWN.format(
+        parameter="quantities", error="QuantityProvenanceMissing",
+        test="test_the_derivation_door_refuses_a_value_whose_provenance_it_cannot_establish")),
+    reduction=ESTABLISHED_HERE(_ADMISSION_DOOR_ESTABLISHES_ITS_OWN.format(
+        parameter="reduction", error="UndeclaredReduction",
+        test="test_the_derivation_door_refuses_every_callable_shape")),
+)
 def derived_within_one_dial(*, quantities, reduction) -> DeclaredQuantity:
     """REDUCE quantities whose provenance is already established, to one of that dial.
 

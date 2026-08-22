@@ -56,10 +56,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Mapping, Union
 
+from crash_detector.admission import admits, one_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
 from crash_detector.staleness import FreshnessEvidence, StalenessWindow
 from crash_detector.time_utc import age_seconds, ensure_utc
 from crash_detector.witness.panel import (
+    PANEL_CONSTRUCTORS,
     PANEL_STATES,
     Agrees,
     Diverges,
@@ -137,6 +139,11 @@ class PanelRow:
         object.__setattr__(self, "published_utc", ensure_utc(self.published_utc))
 
 
+@admits(
+    row=one_of(PanelRow, None),
+    now_utc=datetime,
+    staleness_window_seconds=float,
+)
 def resolve_panel(
     row: Union[PanelRow, None],
     *,
@@ -147,6 +154,21 @@ def resolve_panel(
 
     ``row is None`` means ``cd-witness`` wrote nothing. It resolves to ``Unavailable``,
     never to ``Agrees``.
+
+    **A4 OF BP-AMENDMENT-0001 §D.2, ESTABLISHED AT THE DOOR AND DERIVED FROM THIS
+    SIGNATURE.** ``row`` must be exactly a :class:`PanelRow` or exactly ``None`` —
+    ``ASR3-F04`` supplied a duck row whose ``state`` PROPERTY answered ``"AGREES"`` while
+    its stored state was ``UNAVAILABLE``, and it rendered ``WITNESS AGREES`` with the
+    witness feed dead. A ``PanelRow`` SUBCLASS is refused for the same reason and not as a
+    side effect: a subclass may shadow ``state``, ``as_of_utc`` or ``measures`` with a
+    property, and a property is the caller's code answering the question at the moment this
+    resolver asks it. The one door that survives the refusal is ``PanelRow`` construction
+    itself, which re-establishes every field on this system's own terms.
+
+    Neither requirement is written in this body. Both are read from the signature above.
+    ``resolve_panel(row, now_utc=..., staleness_window_seconds=..., tolerate=True)`` — a
+    fourth argument added here — refuses on EVERY call, including calls that do not pass
+    it.
     """
     instant = ensure_utc(now_utc)
     window = StalenessWindow(seconds=staleness_window_seconds)
@@ -241,6 +263,7 @@ PANEL_TEXT = {
 }
 
 
+@admits(panel=one_of(*PANEL_CONSTRUCTORS))
 def render_panel(panel: "WitnessPanel") -> str:
     """The text a surface shows for a panel value.
 

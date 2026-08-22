@@ -215,6 +215,7 @@ are in ``variants/WO-2R2/MANIFEST.md``.
 
 from __future__ import annotations
 
+from crash_detector.admission import ESTABLISHED_HERE, admits, each_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.provenance import (
     CrossDialCombination,
@@ -681,6 +682,20 @@ def _established_quantity(magnitude: "DialMagnitude") -> "DeclaredQuantity":
     return magnitude._DialMagnitude__quantity
 
 
+@admits(
+    magnitudes=each_of(DialMagnitude),
+    using=ESTABLISHED_HERE(
+        "the body below refuses a `using` that is not a SameDialReduction member with the "
+        "NAMED error UndeclaredReduction, and that named refusal is the whole of the "
+        "CD-ASR-WO2R-F01 closure at this door. An exact-type door here would preempt it "
+        "with a generic NotAdmitted and replace the strongest closure on this project with "
+        "a coarser one. CARRIER MEASURED, by name: "
+        "tests/test_dial_provenance.py::test_asr2_002_a_the_derivation_door_no_longer_"
+        "launders_a_blend and ::test_the_derivation_door_refuses_every_callable_shape. "
+        "SEE DECLARED LIMIT 5 in src/crash_detector/admission.py: this door is decorated "
+        "for the P7 property and its type establishment remains in its body."
+    ),
+)
 def combine_within_one_dial(magnitudes, *, using) -> "DialMagnitude":
     """Compute a new magnitude from magnitudes that all came from the SAME dial.
 

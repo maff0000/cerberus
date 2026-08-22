@@ -123,13 +123,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from crash_detector.admission import admits, one_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.magnitude import (
     CrossDialCombination,
     DialMagnitude,
     sole_dial_of,
 )
-from crash_detector.dials.reading import Degraded, Unknown, Value, fold
+from crash_detector.dials.reading import (
+    READING_CONSTRUCTORS,
+    Degraded,
+    Reading,
+    Unknown,
+    Value,
+    fold,
+)
 from crash_detector.dials.scores import SCORE_TYPES
 
 __all__ = [
@@ -374,6 +382,7 @@ PRESENTATION_CONSTRUCTORS: tuple = (Shown, NotShown)
 _CONSTRUCTOR_IDENTITIES: frozenset = frozenset(PRESENTATION_CONSTRUCTORS)
 
 
+@admits(cls=SealedPresentationType)
 def assert_closed_presentation_surface(cls: type) -> None:
     """Raise unless ``cls``'s class dictionary is exactly the declared surface.
 
@@ -437,7 +446,8 @@ if set(PRESENTATION_CONSTRUCTORS) != _SEALED or len(_SEALED) != 2:
 REASON_NO_READING = "NO_READING"
 
 
-def present_dial(dial_id: str, reading) -> "Shown | NotShown":
+@admits(dial_id=str, reading=one_of(*READING_CONSTRUCTORS))
+def present_dial(dial_id: str, reading: "Reading") -> "Shown | NotShown":
     """What the surface shows for ONE dial. **THE ELIMINATION IS PERFORMED HERE.**
 
     A surface that wants to show a dial calls this. It does not call ``fold`` and write its
@@ -505,7 +515,8 @@ def _shown_from(dial_id: str, score: object) -> "Shown":
     return Shown(dial_id=dial_id, magnitude=score.score)
 
 
-def is_shown(presentation: object) -> bool:
+@admits(presentation=one_of(*PRESENTATION_CONSTRUCTORS))
+def is_shown(presentation: "DialPresentation") -> bool:
     """True only for :class:`Shown`.
 
     Exact type identity, and the surface is re-verified for a member of the sum type, for

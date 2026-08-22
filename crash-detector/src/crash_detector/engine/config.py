@@ -109,6 +109,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Union
 
+from crash_detector.admission import admits, one_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.engine.model import (
@@ -285,6 +286,7 @@ class ConfigSnapshot:
             registry.assert_may_be_required(model.required_input_ids)
             registry.assert_may_be_contributing(model.contributing_input_ids)
 
+    @admits(dial_id=str)
     def model_for(self, dial_id: str) -> "Union[ModelSpec, None]":
         """The resolved :class:`~crash_detector.engine.model.ModelSpec` for ``dial_id``.
 
@@ -308,6 +310,7 @@ class ConfigSnapshot:
             contributing_input_ids=spec.contributing_input_ids,
         )
 
+    @admits()
     def window(self) -> StalenessWindow:
         """The admitted staleness window for this snapshot.
 
@@ -317,6 +320,7 @@ class ConfigSnapshot:
         """
         return StalenessWindow(seconds=self.staleness_window_seconds)
 
+    @admits(dial_id=str)
     def spec_for(self, dial_id: str) -> DialSpec:
         """The spec for ``dial_id``. Raises rather than returning a default spec."""
         for spec in self.dial_specs:
@@ -325,6 +329,7 @@ class ConfigSnapshot:
         raise KeyError(f"no spec for dial {dial_id!r}")
 
 
+@admits(config_snapshot_id=str, staleness_window_seconds=float)
 def empty_config_snapshot(
     config_snapshot_id: str, *, staleness_window_seconds: float
 ) -> ConfigSnapshot:

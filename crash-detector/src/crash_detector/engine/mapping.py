@@ -84,24 +84,41 @@ NOT PROVED TO BE CARRIED ANYWHERE (CD-RULE-006).
     member at all, so there is no implementation to be wrong yet. **NOT PROVED TO BE CARRIED
     ANYWHERE.**
 
- 3  **THIS DOOR IS EXACT-TYPED IN ITS BODY, NOT YET DERIVED FROM ITS SIGNATURE.**
-    BP-AMENDMENT-0001 §D.1 requires that establishment at a public entry point be derived
-    from the signature rather than written into the body, so that a rewrite of the body
-    cannot remove it. That mechanism — ``admits`` — is BP-AMENDMENT-0001 §D and lands in a
-    later increment of WO-2R3; this module is §C. Until it lands, the refusals below are a
-    property of THIS FUNCTION'S BODY and an edit to the body removes them, which is
-    CD-ASR-F03's shape exactly. **THE CARRIER IS NOT YET BUILT AND IS NOT CLAIMED: NOT
-    PROVED TO BE CARRIED ANYWHERE**, and it is named here so the reader of §C alone is not
-    left to infer it.
+ 3  **SUPERSEDED AT WO-2R3 INCREMENT 2 — THE CARRIER IS NOW BUILT AND IS NOW MEASURED.**
+    This limit read, at increment 1: *"THIS DOOR IS EXACT-TYPED IN ITS BODY, NOT YET DERIVED
+    FROM ITS SIGNATURE … THE CARRIER IS NOT YET BUILT AND IS NOT CLAIMED: NOT PROVED TO BE
+    CARRIED ANYWHERE."* It is corrected here rather than deleted, because a declaration that
+    was true and has been made false by a later closure is part of the record
+    (CD-RULE-004, and corrections supersede rather than edit).
 
-    What does NOT depend on this body, and is the §C claim: there is no field on
-    ``ModelSpec`` or ``DialSpec`` that holds code, so even with every line below deleted
-    ``compute`` has no caller-supplied callable to execute. The body's refusals bound what a
-    MALFORMED spec can do here; they are not what stops a model object arriving.
+    :func:`compute` now carries ``@admits(spec=ModelSpec, payloads=dict)``, applied at the
+    boundary and derived from its own signature by :mod:`crash_detector.admission`, so the
+    establishment no longer depends on this body. The body's own exact-type refusals are
+    KEPT — deleting a guard to make a closure look tidier is exactly the move this project
+    forbids — and they are now the second of two independent refusals rather than the only
+    one. **CARRIER MEASURED:** ``tools/register/check_judgement_path_doors.py`` enumerates
+    the judgement-path doors FROM THE ARTEFACT and fails if this one is not decorated;
+    ``tests/test_judgement_path_doors.py`` runs both its arms. THIS FUNCTION IS THE REASON
+    THE CHECK DERIVES ITS SUBJECT FROM THE ARTEFACT AND NOT FROM A LIST (CD-D-098): it was
+    created by increment 1 and therefore post-dates §B's measured inventory of 44 doors, so
+    a check enumerating that list would not have looked at it.
+
+    WHAT IS STILL NOT CARRIED, stated so the correction does not read as a clean sweep: the
+    ``admits`` door establishes that ``spec`` is exactly a ``ModelSpec``. It does not
+    establish that ``spec.mapping`` still holds a ``MappingKind`` member at the moment it
+    selects a branch — ``object.__setattr__`` walks past ``frozen`` on every frozen value in
+    Python — and THAT refusal is the body's, below, and remains the body's. **NOT PROVED TO
+    BE CARRIED ANYWHERE.**
+
+    What depends on neither, and is the §C claim: there is no field on ``ModelSpec`` or
+    ``DialSpec`` that holds code, so even with every line below deleted and the decorator
+    removed, ``compute`` has no caller-supplied callable to execute. The refusals bound what
+    a MALFORMED spec can do here; they are not what stops a model object arriving.
 """
 
 from __future__ import annotations
 
+from crash_detector.admission import admits
 from crash_detector.engine.model import (
     MappingKind,
     ModelSpec,
@@ -193,6 +210,7 @@ def _payloads_the_engine_released(payloads: object) -> dict:
     return established
 
 
+@admits(spec=ModelSpec, payloads=dict)
 def compute(spec: ModelSpec, payloads: dict) -> ScoreComputation:
     """Execute ``spec``'s NAMED mapping over ``payloads`` and return the computation.
 
