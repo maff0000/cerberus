@@ -93,7 +93,7 @@ python3 -B tools/register/check_judgement_path_doors.py --root .
 ```
 → exit **1**, `PARAMETER_NOT_DECLARED_TO_ADMITS`, `resolve_panel has parameter(s)
 ['tolerate_stale'] in its signature that @admits() was not told about`. `PYTHONPATH=src python3 -B
--m pytest tests -q` on the same tree goes from **1478 passed** to **57 failed**, and an ORDINARY
+-m pytest tests -q` on the same tree goes from **1518 passed** to **59 failed, 1460 passed** (re-measured at WO-2R3 increment 3), and an ORDINARY
 call that does not pass the new argument at all raises `UndeclaredParameter`.
 
 The VIOLATED arm — `variants/WO-2R3/V23-p7-violated.patch`, the same added parameter with the
@@ -132,7 +132,8 @@ on the judgement path and they establish their fields in `__post_init__` — tha
 is the thing §D.1 exists to stop relying on. §D.2's table lists no constructor and this check does
 not invent that scope. MEASURED: `variants/WO-2R3/V17-constructor-body-escape.patch` deletes the
 `type(spec) is not DialSpec` loop from `ConfigSnapshot.__post_init__` and this command still exits 0
-with 38 assertions. **CARRIER, IN PART:** the frozen dataclasses re-establish every field and the
+with **54 assertions** (re-measured at WO-2R3 increment 3; it was 38 at increment 2, before
+`collectors` joined RULE 1). **CARRIER, IN PART:** the frozen dataclasses re-establish every field and the
 suite measures them refusing a look-alike TODAY; as a structure that survives an edit to those
 bodies, **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING to the Project Lead rather than
 closed by the seat that found it.
@@ -142,25 +143,72 @@ judgement-path door written under a package name the check has never heard of is
 RULE 2, and only if it annotates its return type. MEASURED:
 `variants/WO-2R3/V16-new-package-undecorated-door.patch` adds
 `src/crash_detector/judging/decide.py` with a public, undecorated, unannotated `decide(reading)` and
-this command still exits 0 with 38 assertions. **NOT PROVED TO BE CARRIED ANYWHERE** — no other
+this command still exits 0 with **54 assertions**. **NOT PROVED TO BE CARRIED ANYWHERE** — no other
 layer enumerates judgement-path packages. It is stated here so the fourth Assurance seat can hit it
 without having to find it first.
 
-**3 — `collectors/` IS NOT YET A JUDGEMENT-PATH PACKAGE HERE, BY SCOPE AND NOT BY OVERSIGHT.**
-A6 — `collect(adapter, policy, sink, ledger, collector_run_id, clock, sleep, validator)` — is
-BP-AMENDMENT-0001 §D.3 and WO-2R3 increment 3, and §D.3's closure is a DIFFERENT mechanism: `clock`
-and `sleep` stop being caller callables, and the protocol returns are established at the point of
-return. Adding `collectors` to RULE 1 today would fail this check on work that has not been
-dispatched. The check PRINTS the gap at every run. **CARRIER MEASURED:**
-`tests/test_judgement_path_doors.py` asserts the gap is still declared, so it cannot close silently.
+**3 — `collectors/` IS NOW A JUDGEMENT-PATH PACKAGE, AND WHAT REMAINS OPEN THERE IS CD-BP-003.**
+
+*What this slot said at WO-2R3 increment 2, recorded rather than deleted so a reader of the diff
+sees the transition rather than inferring it:* "`collectors/` is not yet a judgement-path package
+here, by scope and not by oversight." **THAT LIMIT IS DISCHARGED.** BP-AMENDMENT-0001 §D.3 was
+implemented at WO-2R3 increment 3 and `collectors` is in `JUDGEMENT_PATH_PACKAGES`, deny-by-default
+within: every public callable in the package is a subject, and a new module there is a subject the
+day it is written. MEASURED: the subject count went from **19 to 24** and the assertion count from
+**38 to 54**, and `tests/test_judgement_path_doors.py::test_the_collector_doors_are_really_subjects_and_not_merely_counted`
+removes `@admits` from `collect` in a scratch copy and asserts this command FAILS on it — so the
+package being in RULE 1 is a measured property of the check and not a string in a file.
+
+**WHAT IS OPEN IS NARROWER AND IT IS THE SOFTEST SURFACE IN THE PRODUCT.** BLUEPRINT §17's
+**CD-BP-003**: `collect`'s `adapter`, `sink`, `ledger` and `validator` are `Protocol` boundaries to
+genuinely foreign things — a market data source, the store — so exact-typing them against a concrete
+class is not available and §D.3 part 2 says it would be wrong. They are declared `ESTABLISHED_HERE`,
+and this command PRINTS all four with file, line and parameter at every run, derived from the
+artefact. **IT IS A DOOR THAT ADMITS, NOT AN ABSENCE OF A DOOR.** The Product Owner named it the
+fourth Assurance seat's first target.
+
+What IS closed at that door and is **not** a limit — stated so that seat does not waste the trip:
+`policy` exact `RetryPolicy` (`isinstance` admitted a subclass shadowing `max_attempts` with a
+property until this increment), `started_utc` exact `datetime` and then rebuilt by `ensure_utc`,
+`delay` exact `DelayKind` from a closed enum, and every value the four Protocols RETURN exact-typed
+at its point of return.
+
+**EXECUTABLE EXAMPLE, AND IT IS A POSITIVE ONE — AN OBJECT THAT IS ADMITTED.**
+`variants/WO-2R3/V26-conforming-hostile-adapter.patch` adds a probe carrying an adapter that
+supplies all five protocol members, returns an exact `FetchedResponse` whose payload conforms to the
+schema it declared itself, and answers `False` to `is_empty`. MEASURED at this seat's own work:
+`missing protocol members: ()`, `ADMITTED: OK`, `payload recorded: {'reading': 0.0}`,
+`source_id recorded: src.does.not.exist`, `rows written: 1`, `reading admitted: True`. Nothing in
+this tree refuses it.
+
+**CARRIER, PARTIAL AND MEASURED:** it cannot compute a dial value — nothing under `collectors/` may
+import `crash_detector.dials` or `crash_detector.engine`, asserted over the whole package by
+`tests/test_collector_boundaries.py::test_no_collector_module_imports_the_dial_types_or_the_engine`
+— and its observation still faces the staleness window and the required-input rules in
+`engine.evaluate`, over a SHIPPED EMPTY source registry it contributes to no dial at all.
+**CARRIER FOR WHETHER A CONFORMING ADAPTER IS TELLING THE TRUTH: NOT PROVED TO BE CARRIED
+ANYWHERE.** Source trust is CD-D-005 and BLUEPRINT §5 and it is OWED, not held. No guard was built
+over it.
+
+**THE PROTOCOL CONFORMANCE CHECK ITSELF FAILS THE RENAME TEST** (CD-PL-F74): `missing_adapter_members`
+asks `hasattr` for five SPELLED names, so it measures a VOCABULARY and not a class. That is
+unavoidable at a boundary to a foreign system — structural conformance IS nominal — and it is
+recorded rather than presented as a closure. It is the ONLY refusal this increment relies on that
+fails the rename test; every other one is a type identity comparison or an identity comparison
+against `None`.
+
+**CARRIER MEASURED FOR THE EXTENT OF THE LIMIT ITSELF:**
+`tests/test_admission.py::test_cd_bp_003_is_exactly_four_parameters_and_every_one_names_its_residue`
+pins CD-BP-003 at FOUR parameters of ONE door and requires each to name the risk in the artefact and
+to write CD-RULE-006's words. A fifth is a test failure, not a quiet widening.
 
 **4 — A DECORATOR NAMED `admits` IS RECOGNISED BY ITS NAME IN THE SOURCE.** This check reads TEXT;
 it cannot know that the `admits` a module imported is `crash_detector.admission.admits`. MEASURED:
 `variants/WO-2R3/V18-counterfeit-admits.patch` defines a do-nothing `admits` in
 `crash_detector/own_terms.py` and imports it into `serving/witness_resolver.py` — this command exits
-0 with 38 assertions and PASS, and `ASR3-F04`'s duck row then renders `WITNESS AGREES`. **CARRIER
-MEASURED: THE RUNTIME.** The same patched tree runs **3 FAILED** under `PYTHONPATH=src python3 -B -m
-pytest tests -q`, because the plants call the real doors and observe the real refusals. A static
+0 with **54 assertions** and PASS, and `ASR3-F04`'s duck row then renders `WITNESS AGREES`. **CARRIER
+MEASURED: THE RUNTIME.** The same patched tree runs **3 failed, 1516 passed** under `PYTHONPATH=src python3 -B -m
+pytest tests -q` (re-measured at WO-2R3 increment 3), because the plants call the real doors and observe the real refusals. A static
 reader alone cannot carry this and does not claim to.
 
 ## What this check is NOT

@@ -106,17 +106,59 @@ TO BE CARRIED ANYWHERE.
     packages. It is stated here so the fourth Assurance seat can hit it without having to
     find it first.
 
- 3  **``collectors/`` IS NOT YET A JUDGEMENT-PATH PACKAGE HERE, BY SCOPE AND NOT BY
-    OVERSIGHT.** A6 — ``collect(adapter, policy, sink, ledger, collector_run_id, clock,
-    sleep, validator)`` — is BP-AMENDMENT-0001 §D.3 and WO-2R3 increment 3, and §D.3's
-    closure is a different mechanism (``clock`` and ``sleep`` stop being caller callables;
-    the protocol returns are established at the point of return). Adding ``collectors`` to
-    rule 1 today would make this check fail on work that has not been dispatched yet. The
-    check PRINTS the gap as a note at every run, so it cannot be forgotten silently.
-    **CARRIER MEASURED:** the gap is asserted, not merely noted, by
-    ``tests/test_judgement_path_doors.py::test_the_collector_gap_is_declared_and_still_open``,
-    which fails the day ``collectors`` becomes a judgement-path package without this header
-    and the execution contract being corrected with it.
+ 3  **``collectors/`` IS NOW A JUDGEMENT-PATH PACKAGE, AND WHAT REMAINS OPEN THERE IS
+    NAMED CD-BP-003.** The limit this slot held at WO-2R3 increment 2 — *"``collectors/`` is
+    not yet a judgement-path package here, by scope and not by oversight"* — WAS DISCHARGED
+    AT INCREMENT 3 AND IS NOT RESTATED. ``collectors`` is in ``JUDGEMENT_PATH_PACKAGES``
+    above, deny-by-default within, so every public callable in it is a subject and a new
+    module there is a subject the day it is written.
+
+    **WHAT IS OPEN IS NARROWER, AND IT IS THE SOFTEST SURFACE IN THE PRODUCT**
+    (BLUEPRINT §17, CD-BP-003; the Product Owner named it the fourth Assurance seat's first
+    target). ``collect``'s ``adapter``, ``sink``, ``ledger`` and ``validator`` are
+    ``Protocol`` boundaries to genuinely foreign things — a market data source, the store —
+    so exact-typing them against a concrete class is not available and BP-AMENDMENT-0001
+    §D.3 part 2 says it would be wrong. They are declared ``ESTABLISHED_HERE`` and **this
+    check prints all four, with file, line and parameter, at every run**, derived from the
+    ARTEFACT and not from a list written here. **IT IS A DOOR THAT ADMITS, NOT AN ABSENCE OF
+    A DOOR.**
+
+    What IS closed at that door, and is not a limit: ``policy`` exact ``RetryPolicy``
+    (``isinstance`` admitted a subclass shadowing ``max_attempts`` with a property until
+    increment 3), ``started_utc`` exact ``datetime`` then rebuilt by ``ensure_utc``,
+    ``delay`` exact ``DelayKind``, and every value the four Protocols RETURN exact-typed at
+    its point of return.
+
+    What is NOT closed, executable example — and it is a POSITIVE example, an object that is
+    ADMITTED::
+
+        class ConformingButFictional:            # supplies all five protocol members
+            source_id = "src.does.not.exist"     # returns an exact FetchedResponse
+            adapter_id = "fiction.v0"            # carrying a schema-conforming payload
+            response_schema = {...}              # that it invented
+            def fetch(self, *, timeout_seconds): return FetchedResponse(...)
+            def is_empty(self, payload): return False
+
+    ``variants/WO-2R3/V26-conforming-hostile-adapter.patch`` is that object and it is
+    ADMITTED, measured at
+    ``tests/test_collector_admission.py::test_cd_bp_003_a_structurally_conforming_adapter_is_admitted_whatever_it_says``.
+    **CARRIER, PARTIAL AND MEASURED:** it cannot compute a dial value — nothing under
+    ``collectors/`` may import ``crash_detector.dials`` or ``crash_detector.engine``,
+    asserted over the whole package by
+    ``tests/test_collector_boundaries.py::test_no_collector_module_imports_the_dial_types_or_the_engine``
+    — and its observation still faces the staleness window and the required-input rules in
+    ``engine.evaluate``. **CARRIER FOR WHETHER A CONFORMING ADAPTER IS TELLING THE TRUTH:
+    NOT PROVED TO BE CARRIED ANYWHERE.** Source trust is CD-D-005 and BLUEPRINT §5 and it is
+    OWED, not held. No guard was built over it.
+    **THE PROTOCOL CONFORMANCE CHECK ITSELF FAILS THE RENAME TEST** (CD-PL-F74):
+    ``missing_adapter_members`` asks ``hasattr`` for five SPELLED names, so it measures a
+    VOCABULARY and not a class. That is unavoidable at a boundary to a foreign system —
+    structural conformance IS nominal — and it is recorded rather than presented as a
+    closure.
+    **CARRIER MEASURED for the extent of the limit itself:**
+    ``tests/test_admission.py::test_cd_bp_003_is_exactly_four_parameters_and_every_one_names_its_residue``
+    pins CD-BP-003 at FOUR parameters of ONE door and requires each to name the risk and to
+    write CD-RULE-006's words; a fifth is a test failure, not a quiet widening.
 
  4  **A DECORATOR NAMED ``admits`` IS RECOGNISED BY ITS NAME IN THE SOURCE.** This check
     reads TEXT; it cannot know that the ``admits`` a module imported is
@@ -157,16 +199,19 @@ CHECK_ID = "CD-RT-002-DOORS-REQUIRE-THEIR-TYPES"
 #: RULE 1. Packages every one of whose public callables is a door. DENY-BY-DEFAULT WITHIN:
 #: no module inside these is opted out, so a new module is a subject the day it is written.
 #: See DECLARED LIMIT 2 — this tuple itself is a vocabulary.
-JUDGEMENT_PATH_PACKAGES = ("engine", "serving")
+JUDGEMENT_PATH_PACKAGES = ("engine", "serving", "collectors")
 
-#: DECLARED LIMIT 3. Named so the gap is printed at every run rather than inferred from an
-#: absence, and asserted by a test so it cannot close silently.
-DEFERRED_PACKAGES = {
-    "collectors": (
-        "A6, the collector boundary — BP-AMENDMENT-0001 §D.3 and WO-2R3 increment 3. Its "
-        "closure is a different mechanism from admits and it has not been dispatched yet."
-    ),
-}
+#: DECLARED LIMIT 3. `collectors` JOINED RULE 1 AT WO-2R3 INCREMENT 3 (BP-AMENDMENT-0001
+#: §D.3, A6). What remains open there is not a package gap: it is CD-BP-003, the four
+#: `Protocol` parameters of `collect`, and it is DERIVED FROM THE ARTEFACT below rather than
+#: listed here — this check reports the ESTABLISHED_HERE uses it actually finds under this
+#: package, so the limit's extent cannot drift away from the code that carries it.
+CD_BP_003_PACKAGE = "collectors"
+
+#: The door BP-AMENDMENT-0001 §D.2 lists as A6. Named so CD-BP-003 is reported at exactly
+#: its own extent — the four Protocol parameters of this door — and not widened to every
+#: ESTABLISHED_HERE that happens to share the package.
+A6_DOOR = "collect"
 
 #: RULE 2. The types that ARE a dial's answer, a witness's answer, or the material one is
 #: computed from. A public callable that says it returns one of these is a judgement-path
@@ -479,8 +524,40 @@ def main() -> int:
     check.note(f"ESTABLISHED_HERE uses: {len(established_here)}.")
     for row in established_here:
         check.note(f"  ESTABLISHED_HERE: {row}")
-    for package, why in sorted(DEFERRED_PACKAGES.items()):
-        check.note(f"DECLARED LIMIT 3 — {package}/ is NOT a judgement-path package here: {why}")
+    in_the_collectors = [
+        row for row in established_here if row.startswith(f"{CD_BP_003_PACKAGE}/")
+    ]
+    # CD-BP-003 IS THE PROTOCOL BOUNDARY OF A6 AND NOTHING ELSE. The four parameters of
+    # `collect` are separated from the establishment doors that share the package, because
+    # a declared limit reported wider than it is, is as useless as one reported narrower:
+    # a reader who cannot tell which of eight rows is the risk has not been told the risk.
+    cd_bp_003 = [row for row in in_the_collectors if f" {A6_DOOR}(" in row]
+    establishment_doors = [row for row in in_the_collectors if row not in cd_bp_003]
+    check.note(
+        f"DECLARED LIMIT 3 — CD-BP-003, THE PROTOCOL BOUNDARY THAT ADMITS: "
+        f"{len(cd_bp_003)} parameter(s) of {A6_DOOR}() under {CD_BP_003_PACKAGE}/. "
+        "BP-AMENDMENT-0001 §D.3 part 2: adapter, sink, ledger and validator keep their "
+        "Protocols because the thing on the other side is genuinely foreign; every value "
+        "they RETURN is established at the point of return. THIS IS A DOOR THAT ADMITS, NOT "
+        "AN ABSENCE OF A DOOR, and it is BLUEPRINT §17's softest remaining surface — the "
+        "Product Owner named it the fourth Assurance seat's first target. See the header "
+        "for the executable example, which is an object that IS ADMITTED, and for what is "
+        "NOT PROVED TO BE CARRIED ANYWHERE."
+    )
+    for row in cd_bp_003:
+        check.note(f"  CD-BP-003 ADMITS: {row}")
+    check.note(
+        f"  (also under {CD_BP_003_PACKAGE}/, and NOT CD-BP-003: {len(establishment_doors)} "
+        "ESTABLISHMENT DOOR parameter(s) — callables whose whole contract is to accept any "
+        "object and establish or describe it, the same kind of use as own_model_id(value). "
+        "Listed above with the rest; separated here so the risk is not reported wider than "
+        "it is.)"
+    )
+    check.note(
+        f"{CD_BP_003_PACKAGE}/ IS a judgement-path package under RULE 1 as of WO-2R3 "
+        "increment 3. The increment-2 declaration that it was deferred BY SCOPE is "
+        "DISCHARGED and is not restated."
+    )
     check.note(
         "DECLARED LIMIT 1 — CONSTRUCTORS ARE NOT SUBJECTS. ConfigSnapshot(...), "
         "DialSpec(...), ModelSpec(...) and PanelRow(...) establish their fields in "

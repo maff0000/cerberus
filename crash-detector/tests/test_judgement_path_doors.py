@@ -488,7 +488,7 @@ def test_the_static_check_passes_and_is_not_vacuous():
         result.stdout.split("SUBJECTS ENUMERATED:")[1].split(".")[0].strip()
     )
     decorated = int(result.stdout.split("DECORATED:")[1].split(".")[0].strip())
-    assert subjects >= 19, f"the subject set shrank to {subjects}"
+    assert subjects >= 24, f"the subject set shrank to {subjects}"
     assert subjects == decorated
 
 
@@ -505,28 +505,88 @@ def test_the_check_enumerates_the_door_increment_one_built():
     assert "engine/serving" in result.stdout
 
 
-def test_the_collector_gap_is_declared_and_still_open():
-    """DECLARED LIMIT 3's CARRIER, named in the check header and in the execution contract.
+def test_the_collector_boundary_is_a_judgement_path_package_and_cd_bp_003_is_what_remains():
+    """REPLACES ``test_the_collector_gap_is_declared_and_still_open`` (deleted subject).
 
-    `collectors/` is out of this check's RULE 1 by SCOPE — A6 is BP-AMENDMENT-0001 §D.3 and
-    WO-2R3 increment 3, and its closure is a different mechanism. This test fails the day
-    `collectors` becomes a judgement-path package, so the limit cannot close silently and
-    cannot be left standing after it stops being true."""
+    THE OLD PROPOSITION: DECLARED LIMIT 3 — *"``collectors/`` is not yet a judgement-path
+    package here, by scope and not by oversight"* — is declared and cannot close silently.
+    That test was written to FAIL the day ``collectors`` became a judgement-path package,
+    which is precisely what BP-AMENDMENT-0001 §D.3 and WO-2R3 increment 3 did. Its subject
+    is deleted, and leaving it standing would have turned a true scope statement into a
+    false one by the passage of time.
+
+    THE SAME PROPOSITION AGAINST THE NEW STRUCTURE: the limit at this slot is declared, is
+    printed at every run, and cannot close or widen silently. What it now says is narrower
+    and it is CD-BP-003 — four ``Protocol`` parameters of ONE door, not a whole package.
+
+    Asserted here in three independent ways, because "the limit is declared" is exactly the
+    kind of claim that decays into a comment nobody reads:
+      1. ``collectors`` IS in RULE 1 and the deny-by-default it brings is real — the check
+         reports subjects it did not see before;
+      2. the CD-BP-003 note is PRINTED with its extent, derived from the artefact;
+      3. the increment-2 wording is GONE from the output, so no reader can find a
+         discharged limit still being asserted.
+    """
     check_source = _CHECK.read_text()
-    assert '"collectors"' in check_source
-    assert 'JUDGEMENT_PATH_PACKAGES = ("engine", "serving")' in check_source
+    assert 'JUDGEMENT_PATH_PACKAGES = ("engine", "serving", "collectors")' in check_source
     result = _run_the_check()
-    assert "collectors/ is NOT a judgement-path package here" in result.stdout
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "engine/serving/collectors" in result.stdout
+    assert "CD-BP-003, THE PROTOCOL BOUNDARY THAT ADMITS: 4 parameter(s)" in result.stdout
+    for parameter in ("adapter", "sink", "ledger", "validator"):
+        assert f"CD-BP-003 ADMITS: collectors/runner.py" in result.stdout
+        assert f"collect({parameter})" in result.stdout
+    # The discharged wording must not survive anywhere in the output.
+    assert "is NOT a judgement-path package here" not in result.stdout
+
+
+def test_the_collector_doors_are_really_subjects_and_not_merely_counted():
+    """The deny-by-default, asserted the only way it can be: by breaking it.
+
+    A package name in a tuple proves nothing about what the check DOES with it. This copies
+    the tree to a scratch directory, removes ``@admits`` from ``collect`` there, and asserts
+    the check FAILS on it — so ``collectors`` being in RULE 1 is a measured property of the
+    check and not a string in a file.
+
+    The mutation is made in a COPY under ``/tmp`` and never in the worktree, and it is run
+    with ``python3 -B`` so no ``__pycache__`` is written into any governed tree.
+    """
+    import shutil
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as scratch:
+        copy = pathlib.Path(scratch) / "tree"
+        shutil.copytree(
+            _REPO_ROOT / "src",
+            copy / "src",
+            ignore=shutil.ignore_patterns("__pycache__"),
+        )
+        runner = copy / "src" / "crash_detector" / "collectors" / "runner.py"
+        source = runner.read_text()
+        opened = source.index("@admits(\n    adapter=ESTABLISHED_HERE(")
+        closed = source.index("\ndef collect(", opened)
+        runner.write_text(source[:opened] + source[closed + 1 :])
+        result = subprocess.run(
+            [sys.executable, "-B", str(_CHECK), "--root", str(copy)],
+            capture_output=True,
+            text=True,
+        )
+    assert result.returncode != 0, result.stdout
+    assert "UNDECORATED_JUDGEMENT_PATH_DOOR" in result.stdout
+    assert "collect is a public entry point" in result.stdout
 
 
 def test_the_check_prints_every_established_here_use_with_its_location():
     """DECLARED LIMIT 1's second carrier: the check REPORTS every explicit weakening. It
     does not adjudicate them and says so; a reviewer must."""
     result = _run_the_check()
-    assert "ESTABLISHED_HERE uses: 8." in result.stdout
+    assert "ESTABLISHED_HERE uses: 16." in result.stdout
     for expected in (
         "engine/model.py",
         "dials/provenance.py",
         "dials/magnitude.py",
+        "collectors/runner.py",
+        "collectors/adapter.py",
+        "collectors/validation.py",
     ):
         assert f"ESTABLISHED_HERE: {expected}" in result.stdout

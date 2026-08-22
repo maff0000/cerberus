@@ -1,0 +1,154 @@
+diff --git a/probe_v32_arrival_establishment_removed.py b/probe_v32_arrival_establishment_removed.py
+new file mode 100644
+index 0000000..58eaa0b
+--- /dev/null
++++ b/probe_v32_arrival_establishment_removed.py
+@@ -0,0 +1,98 @@
++"""V32 — VIOLATED ARM for A6-7, A6-8 and A6-9 together. Three arrival establishments,
++removed in one patch and labelled as three arms.
++
++    PYTHONPATH=src python3 -B probe_v32_arrival_establishment_removed.py
++"""
++from datetime import datetime, timezone
++
++from crash_detector.collectors.adapter import FetchedResponse
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++POLICY = RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
++SCHEMA = {"type": "object"}
++
++
++class Ledger:
++    def admit_if_absent(self, key):
++        return True
++
++
++class QuietSink:
++    """Records nothing and reports success by RETURNING something."""
++
++    def record(self, attempt):
++        return "written, probably"
++
++
++class OkAdapter:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = SCHEMA
++
++    def fetch(self, *, timeout_seconds):
++        return FetchedResponse(payload={"reading": 1.5}, source_as_of_utc=NOW)
++
++    def is_empty(self, payload):
++        return False
++
++
++# --- ARM 1 (A6-7): a sink that answers with a value ------------------------------------ #
++result = collect(OkAdapter(), policy=POLICY, sink=QuietSink(), ledger=Ledger(),
++                 collector_run_id="run-v32a", started_utc=NOW,
++                 delay=DelayKind.WALL_CLOCK)
++print("ARM 1 (sink return)      : ADMITTED —", type(result.final_outcome).__name__,
++      "; rows_recorded =", result.rows_recorded, "and nothing was written")
++
++
++# --- ARM 2 (A6-8): an adapter missing a protocol member -------------------------------- #
++class NoIsEmpty:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = SCHEMA
++
++    def fetch(self, *, timeout_seconds):
++        return FetchedResponse(payload={"reading": 1.5}, source_as_of_utc=NOW)
++
++
++class CountingSink:
++    def __init__(self):
++        self.rows = []
++
++    def record(self, attempt):
++        self.rows.append(attempt)
++
++
++sink = CountingSink()
++result = collect(NoIsEmpty(), policy=POLICY, sink=sink, ledger=Ledger(),
++                 collector_run_id="run-v32b", started_utc=NOW,
++                 delay=DelayKind.WALL_CLOCK)
++print("ARM 2 (missing is_empty) :", type(result.final_outcome).__name__,
++      getattr(result.final_outcome, "schema_error_class", ""),
++      "— OUR wiring defect recorded as THE SOURCE misbehaving")
++
++
++# --- ARM 3 (A6-9): a source_id that answers to anything -------------------------------- #
++class AnswersToAnything(str):
++    def __eq__(self, other):
++        return True
++
++    def __hash__(self):
++        return hash("src.anything")
++
++
++class LyingIdAdapter(OkAdapter):
++    source_id = AnswersToAnything("src.e")
++
++
++result = collect(LyingIdAdapter(), policy=POLICY, sink=CountingSink(), ledger=Ledger(),
++                 collector_run_id="run-v32c", started_utc=NOW,
++                 delay=DelayKind.WALL_CLOCK)
++print("ARM 3 (source_id rebuild):", type(result.source_id).__name__,
++      "— stored as the SUBCLASS;", "result.source_id == 'anything at all' is",
++      result.source_id == "anything at all")
++print()
++print("ESCAPED, all three. ARM 3 matters most: source_id is the key the ENGINE looks an")
++print("observation up by, `source_id in usable` is decided by __hash__/__eq__, and whether")
++print("a REQUIRED input was present is what decides a dial's reading.")
+diff --git a/src/crash_detector/collectors/runner.py b/src/crash_detector/collectors/runner.py
+index 6dd2996..416e414 100644
+--- a/src/crash_detector/collectors/runner.py
++++ b/src/crash_detector/collectors/runner.py
+@@ -541,26 +541,10 @@ def _established_adapter_identity(adapter: SourceAdapter) -> "tuple[str, str]":
+     recorded as the SOURCE misbehaving; it is our configuration defect and it is now named
+     as one, before a single row is written and therefore before a single row is owed.
+     """
+-    missing = missing_adapter_members(adapter)
+-    if missing:
+-        raise AdapterContractBreach(
+-            f"the supplied adapter does not supply {list(missing)}. Checked against the "
+-            f"whole of {list(ADAPTER_PROTOCOL_MEMBERS)} rather than the member this "
+-            "function happens to reach first. THIS IS A VOCABULARY CHECK and it is "
+-            "declared as one: see CD-BP-003 in collect's DECLARED LIMIT block."
+-        )
+-    established = []
+-    for member in ("source_id", "adapter_id"):
+-        try:
+-            value = own_str(getattr(adapter, member))
+-        except NotEstablishedOnOwnTerms as refusal:
+-            raise AdapterContractBreach(
+-                f"adapter.{member} must be a str: {refusal}"
+-            ) from None
+-        if not value:
+-            raise AdapterContractBreach(f"adapter.{member} is empty")
+-        established.append(value)
+-    return established[0], established[1]
++    # V32: the whole-protocol conformance check and the own_str rebuild, both removed.
++    return adapter.source_id, adapter.adapter_id
++    established = []  # unreachable; kept so the diff is a removal and not a rewrite
++
+ 
+ 
+ def _record(sink: ObservationSink, attempt: AttemptRecord) -> None:
+@@ -571,13 +555,7 @@ def _record(sink: ObservationSink, attempt: AttemptRecord) -> None:
+     this component guarantees is that the row exists, and an object improvising its own
+     return protocol here is an object improvising its own idea of what "recorded" means.
+     """
+-    verdict = sink.record(attempt)
+-    if verdict is not None:
+-        raise SinkContractBreach(
+-            f"ObservationSink.record returned {type(verdict).__name__}; the contract is to "
+-            "persist the row durably and return None, or to RAISE. A sink that answers "
+-            "with a value of its own is not one this runner can read as having written."
+-        )
++    sink.record(attempt)   # V32: the return is discarded again
+ 
+ 
+ def _established_ledger_verdict(ledger: ReadingLedger, key: ReadingKey) -> bool:

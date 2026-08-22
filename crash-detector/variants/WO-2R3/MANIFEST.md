@@ -1,7 +1,7 @@
 # VARIANT MANIFEST — WO-2R3, seat `CD-ENG-WO2R3-01`
 
 **NOTHING UNDER `variants/` IS EXECUTABLE** (`PBG-ASSURE-001`). These are `git apply`-able
-patches and prose. Two of them ADD a probe script to the tree they patch; the probe is data
+patches and prose. Nine of them ADD a probe script to the tree they patch; the probe is data
 inside a patch, it is not a runner, and nothing here runs anything.
 
 **THIS CORPUS PROVES NOTHING ABOUT ANY CLASS** (`CD-D-047`). It is given in full so that
@@ -11,18 +11,33 @@ EXCLUSION LIST — read it so you can avoid these routes, not so you can repeat 
 ## How to run any row
 
 ```
-git archive 9e1aba016f812e55c1dd59feab53fdbbcc2e871a | tar -x -C /tmp/cd-v && cd /tmp/cd-v
+git archive <SHA> | tar -x -C /tmp/cd-v && cd /tmp/cd-v
 git apply -p1 variants/WO-2R3/<patch>
 <the command in the row>
 ```
+
+`<SHA>` is `9e1aba016f812e55c1dd59feab53fdbbcc2e871a` for **V16–V25** (WO-2R3 increment 2) and
+the increment-3 lane head for **V26–V32**. Every row states which SHA its numbers were
+measured at, because a number measured at one SHA and quoted at another is the thing
+CD-RULE-009 exists to stop.
 
 A **separate pristine extraction per variant**, so no variant contaminates another; run,
 then discard. Never a `git worktree`, and never the Engineer's worktree. `python3 -B`
 throughout so no `__pycache__` is written into a governed tree (`PBG-RT-001`).
 
-Every patch was generated with `git diff` and never by hand (`CD-ENG-WO2R-F13`). Every one
-was re-checked with `git apply --check` against a pristine extraction of
-`9e1aba016f812e55c1dd59feab53fdbbcc2e871a`: **10 of 10 APPLY.**
+Every patch was generated with `git diff` and never by hand (`CD-ENG-WO2R-F13`).
+
+**APPLY CHECK, RE-RUN AT WO-2R3 INCREMENT 3** against a pristine extraction of
+`78a2cc9c265071d07b45ff328977438b32eebb03` (the increment-3 code commit), command
+`for p in variants/WO-2R3/*.patch; do git apply --check -p1 "$p"; done`:
+**V16–V25: 10 of 10 APPLY. V26–V32: 7 of 7 APPLY.** `git apply --check` is a static
+applicability test and nothing more — it is not evidence that any variant still escapes, and
+the escape column below is measured by RUNNING each one.
+
+**THE ASSERTION COUNTS QUOTED FOR V16–V19 MOVED AND ARE RE-MEASURED HERE.** The static check
+reported 38 assertions at increment 2 and reports **54** at increment 3, because `collectors`
+joined its RULE 1. The rows below carry the increment-3 numbers; the increment-2 numbers are
+not deleted from the record, they are superseded (`PBG-CONT-003`).
 
 ## The rows
 
@@ -64,6 +79,44 @@ being admitted and being used. That route did not exist before there was a door 
 increment 2 decorated, so the registry is re-established at the moment it resolves rather
 than at the moment the snapshot was built. That is why `ConfigSnapshot.model_for` calling
 the same function as `ConfigSnapshot.__post_init__` is load-bearing and not tidiness.
+
+
+## The rows added at INCREMENT 3 — A6, the collector boundary (§D.3, both parts)
+
+Measured at `78a2cc9c265071d07b45ff328977438b32eebb03` unless a row says otherwise. Every one
+was RUN in a separate pristine extraction and discarded; the output quoted is the output
+observed.
+
+| id | patch | PROPOSITION violated | observed | command |
+|---|---|---|---|---|
+| **V26** | `V26-conforming-hostile-adapter.patch` | **CD-BP-003, IN THE POSITIVE DIRECTION — the declared limit's executable example. NO GUARD IS REMOVED.** An adapter supplying all five protocol members, returning an exact `FetchedResponse` whose payload conforms to the schema it declared itself. | **ADMITTED.** `missing protocol members: ()`; `ADMITTED: OK`; `payload recorded: {'reading': 0.0}`; `source_id recorded: src.does.not.exist`; `rows written: 1`; `reading admitted: True` | `PYTHONPATH=src python3 -B probe_v26_conforming_hostile_adapter.py` |
+| **V27** | `V27-lying-ledger.patch` | **A6-5 VIOLATED ARM.** The `bool()` coercion on the ledger verdict, restored. A ledger answering a truthy STRING. | **ESCAPED.** Two collections of ONE source period both report `reading_admitted: True`. One period, two readings. | `PYTHONPATH=src python3 -B probe_v27_lying_ledger.py` |
+| **V28** | `V28-policy-subclass-isinstance.patch` | **A6-1 VIOLATED ARM.** `isinstance(policy, RetryPolicy)` restored in the body in place of exact type at the door. | **ESCAPED.** `MAX_ATTEMPTS_CEILING: 5`; `policy.max_attempts as asked: 5000`; the probe halted the runner at **201 attempts**. | `PYTHONPATH=src python3 -B probe_v28_policy_subclass.py` |
+| **V29** | `V29-fetched-response-subclass.patch` | **A6-4 VIOLATED ARM.** `isinstance(response, FetchedResponse)` restored at the point of return from `fetch`. | **ESCAPED.** `outcome: OK`; `payload STORED: {'reading': 999.0}` — the validator saw `{'reading': 1.5}`. `payload asks made: 4`. | `PYTHONPATH=src python3 -B probe_v29_fetched_response_subclass.py` |
+| **V30** | `V30-validator-return-discarded.patch` | **A6-6 VIOLATED ARM.** The validation verdict discarded again, so "conforming" means only "did not raise". | **ESCAPED.** A NON-conforming payload recorded as `OK`: `payload stored: {'reading': 'not a number'}`; `reading admitted: True`. | `PYTHONPATH=src python3 -B probe_v30_validator_return_discarded.py` |
+| **V31** | `V31-caller-supplied-sleep-restored.patch` | **§D.3 PART 1's COUNTERFACTUAL (CD-D-079).** Part 1 is a DELETION, so its counterfactual is not "remove a guard" — it is **put the parameter back**. `sleep` is a parameter again, admitted by `callable()`. | **ESCAPED.** `policy.backoff_seconds: 5.0`; `worst_case_seconds: 25.0`; `backoffs the policy asked: [5.0, 5.0, 5.0, 5.0]`; **`seconds actually waited: 0.0004`**. | `PYTHONPATH=src python3 -B probe_v31_caller_supplied_sleep.py` |
+| **V32** | `V32-arrival-establishment-removed.patch` | **A6-7, A6-8 AND A6-9 VIOLATED ARMS, in one patch and labelled as three.** The sink-return check, the whole-protocol conformance check and the `own_str` rebuild of the adapter's identity, all removed. | **ESCAPED, all three.** ARM 1: a sink that writes nothing and returns a string is ADMITTED, `rows_recorded = 1`. ARM 2: an adapter missing `is_empty` is recorded `Malformed EMPTINESS_UNDECIDABLE_AttributeError` — OUR wiring defect blamed on the source. ARM 3: `source_id` stored as the SUBCLASS and `result.source_id == 'anything at all'` is **True**. | `PYTHONPATH=src python3 -B probe_v32_arrival_establishment_removed.py` |
+
+## The increment-3 rows that are MINE, and why each is a DIFFERENT ROUTE
+
+**Every route in every prior corpus enters through the JUDGEMENT half of the system** — a
+model object into a `DialSpec`, a duck row into `resolve_panel`, a duck snapshot into
+`evaluate`, a decorator's attribute surface, the gap between admission and use. The third
+audit's own `WHAT I DID NOT EXAMINE` names the collector path, and A6 was found by the
+Project Lead in the amendment, not by an auditor.
+
+**V29 and V27 enter through what the INPUT half HANDS BACK**, which is a different half of
+the system and a different kind of route: not "what did the caller pass in" but "what did the
+foreign object answer when this system asked". V29 is `ASR3-F04`'s property trick relocated
+to a `FetchedResponse` returned by `fetch`; V27 is the same shape reached through `bool()`
+coercion rather than through a property, and it defeats IDEMPOTENCY rather than a dial
+reading. Neither appears in `E01`..`E10`, in WO-2R's six, in WO-2R2's `V01`..`V15`, or in the
+Project Lead's `PL-*` probes.
+
+**V26 is a different kind of artefact from all of them and is labelled as one.** It removes
+no guard and demonstrates no escape from a closure: it demonstrates the DECLARED LIMIT, by
+showing an object that IS ADMITTED and saying what is not proved about it. A limit stated only
+in prose is a limit an auditor has to take on trust.
 
 ## What is NOT here
 
