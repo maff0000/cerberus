@@ -1883,7 +1883,32 @@ remaining_items:
   **CD-ENG-WO2R3-F15 — THE BLINDNESS WINDOW, NOT JUST THE GUARD** (ruling 3(i)); (10)
   CD-ENG-WO2R3-F10, still open and undischarged (ruling 3(iii), PO-DECISIONS-0008 ruling 4).
   **AND THE SEAT IDENTITY CONSTRAINT IS NON-WAIVABLE:** a FOURTH FRESH Assurance seat — none of
-  CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001).'
+  CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, and NO ENGINEER SEAT (PBG-SOD-001).
+  **ADDED AT BL-20260822T180643Z-0100 AND NOT DROPPABLE: THE BRIEF MUST ALSO DISCLOSE CD-PL-F89 —
+  THE THIRTEEN BUILD LOG SEQUENCE COLLISIONS (0041-0053) BETWEEN main AND THE LANE.** That seat is
+  the one party that reads BOTH build-log directories, so it is the party the ambiguity is actually
+  charged to, and it must be told BEFORE it reads them that a bare sequence number in 0041-0053
+  names two different entries and that only the full timestamped `entry_id` plus the branch
+  disambiguates. Telling it afterwards would be handing an auditor a known ambiguity and calling it
+  a finding when it trips.'
+- '**CD-D-132 — RULED AND CLOSED BY THE PROJECT LEAD AT BL-20260822T180643Z-0100, WITHIN THIS ROLE''S
+  OWN PROCESS AUTHORITY (it decides no product quantity and no acceptance — CD-RULE-003 is not
+  engaged). THE BUILD LOG SEQUENCE RULE IS RE-BASED WITH A CEILING ON BOTH SIDES, SUPERSEDING
+  CD-D-036''S FORWARD RULE, WHICH IS RETAINED AS THE RULING THAT DIAGNOSED THE PROBLEM.**
+  · **main takes 0100-0199.** BL-20260822T180643Z-0100 is the first of that block.
+  · **the WO-2R3 lane takes 0060-0099** and continues from 0065 (0060-0064 are landed).
+  · **every future mutation lane takes the NEXT UNUSED HUNDRED, declared IN ITS DISPATCH RECORD,
+    with BOTH a floor AND a ceiling, the ceiling stated as a NUMBER and never as "up".**
+  · **0001-0059 IS CLOSED. No party writes into it again, on either branch, ever.**
+  **WHY IT IS A CLOSURE AND NOT A FOURTH PATCH:** every block is bounded at both ends and disjoint by
+  construction, so a party that keeps counting hits its OWN ceiling — a visible stop — instead of
+  silently entering another party''s block. CD-D-036 failed precisely because counting past the end
+  of an UNBOUNDED block is indistinguishable from working normally.
+  **AND IT IS DECLARED NOT TO BE MACHINE-ENFORCED:** it is a written rule with no check behind it,
+  which is the CD-PL-F87/F89 defect class itself, and the durable fix belongs to IMP-022 in the
+  framework — NOT to a local script this seat invents mid-boundary. Stated so nobody reads a closure
+  into what is still a convention.
+  **IT REPAIRS NOTHING BACKWARD.** The thirteen landed collisions are disclosed, not renumbered.'
 - '**CD-D-130 — NEW AND OPEN AT THIS BOUNDARY. THE ELEVEN CLASS-2 SWEEP DISPOSITIONS ARE OWED, BY THE
   PROJECT LEAD, AFTER THE FOURTH ASSURANCE SEAT REPORTS, AND ARE RECONCILED BY THE PRODUCT OWNER
   (PO-DECISIONS-0009 ruling 1).** They are NOT owed at this boundary and NOT owed at increment 5.
@@ -2405,6 +2430,48 @@ open_decisions:
 open_ambiguities: []
 
 risks:
+- '**CD-PL-F89 MEDIUM, NEW AND OPEN AT THIS BOUNDARY (BL-20260822T180643Z-0100). THIRTEEN LANDED
+  BUILD LOG SEQUENCE COLLISIONS BETWEEN main AND THE WO-2R3 LANE — 0041 THROUGH 0053, EVERY NUMBER
+  IN THAT RANGE, NO GAPS — CAUSED BY A REMEDY OF THIS SEAT''S OWN DESIGN THAT GAVE THE LANE A FLOOR
+  AND main NO CEILING.** CD-D-036 was raised on a single collision at 0022 and set "the lane takes a
+  reserved block from 0040 up, main continues from 0023". main obeyed it, kept counting, and entered
+  the lane''s block at 0041 and stayed inside it for thirteen entries. CD-DISPATCH-WO2R3-ENGINEER
+  then RESTATED THE IDENTICAL ONE-SIDED SHAPE one work order later ("a reserved block from 0060 up;
+  main continues from 0049"). **BOTH PARTIES OBEYED THE RULE AND IT COLLIDED ANYWAY.**
+  **FOUND BECAUSE THIS BOUNDARY''S OWN ENTRY WAS ABOUT TO BECOME THE FOURTEENTH** — it was numbered
+  0060 by counting up from 0059, the lane was checked before commit, and it was renumbered to 0100
+  BEFORE it was ever committed. The near-miss is the only reason the thirteen were looked for.
+  **WHAT IS AND IS NOT DAMAGED:** nothing is lost or unaddressable — `entry_id` and filename both
+  carry a full UTC timestamp, all twenty-six entries are uniquely named, and no `parent_entry_id`
+  chain is broken. **WHAT IS DAMAGED IS CITATION BY BARE SEQUENCE NUMBER**, and the party that pays
+  is the FOURTH ASSURANCE SEAT, which reads both directories. ANY CITATION OF AN ENTRY IN 0041-0053
+  MUST CARRY ITS FULL TIMESTAMPED id AND ITS BRANCH.
+  **NOT REPAIRED, AND THE REFUSAL IS THE POINT:** renumbering thirteen landed entries would rewrite
+  Build Log history to make a control look clean (PBG-CONT-003, non-waivable). They stand, collided
+  and disclosed. The forward rule is fixed by CD-D-132; the past is not laundered.
+  **THE GENERALISATION IS THE VALUABLE PART AND IT IS THE THIRD INSTANCE IN THREE BOUNDARIES:** a
+  remedy expressed as a ONE-SIDED BOUND does not close a TWO-SIDED class — the same shape as
+  PO-DECISIONS-0008 ruling 2 ("an enumeration cannot close a property-defined class") and CD-PL-F86
+  (a list-defined reconciliation sweep). **THREE TIMES RUNNING, A CONTROL OF THIS SEAT''S OWN DESIGN
+  HAS BEEN FOUND SCOPED NARROWER THAN THE CLASS IT NAMES.**'
+- '**CD-PL-F88 LOW, NEW AND OPEN AT THIS BOUNDARY (BL-20260822T180643Z-0100). A BOOT VERDICT''S CAUSE
+  WAS STATED FROM A CORRELATION AND CALLED "THE SINGLE KNOWN AND RECORDED CAUSE" WITHOUT ONE
+  VARIABLE BEING CHANGED — REPRODUCING CD-PL-F70, WHICH THIS PROJECT RAISED, MEASURED, AND WROTE A
+  STANDING RULE (CD-RULE-008) AGAINST.** BL-20260822T175949Z-0059 named the missing ROADMAP.md as the
+  cause of the AMBER boot verdict. It is not a cause at all: the pristine clone at d6ba86b boots
+  GREEN with ROADMAP.md just as absent and prints the identical `! roadmap_identity None` line while
+  doing it. THE ACTUAL CAUSE, MEASURED: `continuity.py:753` sets `working_tree_state` "dirty" on ANY
+  porcelain output including untracked files, forcing RESUME_AMBER (line 1019) and AMBER
+  (boot.py:287); porcelain 28 lines, porcelain -uno 2. **CD-RULE-008 WORKED EXACTLY AS DESIGNED —
+  IT PRODUCED THE GREEN THAT MADE THE ERROR VISIBLE — AND THE SEAT DID NOT READ WHAT THE RULE HANDED
+  IT.** CORRECTED BY SUPERSESSION at BL-20260822T180643Z-0100, never by editing the landed entry.
+  Direction of error is toward STRICTNESS, nothing was unguarded, no gate depends on it, and no
+  ruling, SHA, severity or acceptance moves. It is carried because the class is a MASKING class: a
+  standing unexamined explanation for a standing AMBER means a genuine new degradation arrives
+  looking exactly like the explained one. DOES NOT reopen CD-PL-F70 and DOES NOT claim CD-RULE-008
+  is defective. Remedy is IMP-022''s (framework) and NO local remedy is improvised; no `.gitignore`
+  is added, and the prior ruling that making untracked work invisible for a cosmetic verdict is the
+  wrong trade STANDS.'
 - 'CD-PL-F79 MEDIUM NEW, OPEN AND RECORDED FORWARD — **TWO PROJECT LEAD COMMITS ON main CARRY A HUMAN
   IDENTITY**, breaching CD-RULE-002 (PRODUCT AUTHORITY, non-relaxable). MEASURED at this boundary
   with `git log --format=''%h | %an <%ae> | %cn <%ce>'' -20 main`: 251b2e2 (BP-AMENDMENT-0001 PROPOSED
@@ -3112,5 +3179,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T175949Z-0059
+last_build_log_entry: BL-20260822T180643Z-0100   # THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
