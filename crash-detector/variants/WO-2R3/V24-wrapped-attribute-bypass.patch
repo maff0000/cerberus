@@ -1,0 +1,66 @@
+diff --git a/probe_v24_wrapped_bypass.py b/probe_v24_wrapped_bypass.py
+new file mode 100644
+index 0000000..bfc1fc9
+--- /dev/null
++++ b/probe_v24_wrapped_bypass.py
+@@ -0,0 +1,60 @@
++"""V24 — MINE. Reach the undecorated function through the DECORATOR'S OWN ATTRIBUTES.
++
++ROUTE: `functools.wraps` sets `__wrapped__`; `inspect.unwrap` follows it; editors offer
++it. If a door publishes it, `resolve_panel.__wrapped__(duck_row, ...)` bypasses the door
++entirely in one attribute access, in ordinary-looking code, with no cast and no import.
++
++DIFFERENT FROM ANY ROUTE IN ANY CORPUS: no variant in WO-2's E01..E10, WO-2R's six,
++WO-2R2's V01..V15, the auditors' sets or the Project Lead's PL-* probes attacks a
++decorator's attribute surface, because until WO-2R3 increment 2 there was no decorator on
++a judgement-path door to attack.
++
++Run:  PYTHONPATH=src python3 -B probe_v24_wrapped_bypass.py
++"""
++
++from datetime import datetime, timedelta, timezone
++
++from crash_detector.serving.witness_resolver import render_panel, resolve_panel
++
++NOW = datetime(2026, 8, 22, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class DuckRow:
++    """ASR3-F04's row: stored state UNAVAILABLE, property answers AGREES."""
++
++    stored_state = "UNAVAILABLE"
++    as_of_utc = NOW - timedelta(seconds=10)
++    published_utc = NOW - timedelta(seconds=10)
++    measures = {"divergence_measure": 0.02}
++
++    @property
++    def state(self):
++        return "AGREES"
++
++
++print("ARM 1 — the front door:")
++try:
++    print("   ", type(resolve_panel(DuckRow(), now_utc=NOW,
++                                    staleness_window_seconds=600.0)).__name__)
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:110]}")
++
++print("ARM 2 — __wrapped__:")
++try:
++    panel = resolve_panel.__wrapped__(DuckRow(), now_utc=NOW,
++                                      staleness_window_seconds=600.0)
++    print(f"    ESCAPED -> {type(panel).__name__}; RENDERS: {render_panel(panel)}")
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:110]}")
++
++print("ARM 3 — __closure__ (interpreter internals; DECLARED LIMIT 6 says this is OPEN):")
++try:
++    inner = [
++        cell.cell_contents
++        for cell in (resolve_panel.__closure__ or ())
++        if getattr(getattr(cell, "cell_contents", None), "__name__", "") == "resolve_panel"
++    ]
++    panel = inner[0](DuckRow(), now_utc=NOW, staleness_window_seconds=600.0)
++    print(f"    ESCAPED -> {type(panel).__name__}; RENDERS: {render_panel(panel)}")
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:110]}")

@@ -957,6 +957,96 @@ criteria:
         the values that comparison is made of are objects this system constructed. It is NOT proof
         about boundary 5, which is open and measured open.
       evidence_ref: RTR-WO2-0001
+  # ===========================================================================================
+  # CD-RT-002-DOORS-REQUIRE-THEIR-TYPES — ADDED AT WO-2R3 INCREMENT 2, under
+  # BP-AMENDMENT-0001 §D.1/§D.2 (IN FORCE) and §F.3's "CD-AC-005 gains the `admits` door".
+  #
+  # WHAT IT IS. §D.1 names its own acceptance test in the paragraph that states the rule:
+  # "a static check that enumerates the judgement paths and fails on any public entry point
+  # that is not decorated — not a list of three fixes." This is that check. It parses; it
+  # does not import the product, so an auditor who trusts nothing in the implementation can
+  # run it against a tree they extracted themselves.
+  #
+  # WHY THIS ROW IS UNDER CD-AC-005 AND NOT ONLY CD-AC-002. ASR3-F04 — the duck row whose
+  # `state` property answered AGREES while its stored state was UNAVAILABLE — is a CD-AC-005
+  # finding, and the door it walked through is `resolve_panel`. ASR3-F05 is CD-AC-001 and
+  # CD-AC-005 both. The mechanism is one mechanism and it serves both criteria; the trace
+  # restructuring CD-AC-002 is owed under §F.3 is WO-2R3 increment 4 and is deliberately NOT
+  # done here.
+  #
+  # IT DERIVES ITS SUBJECT FROM THE ARTEFACT (CD-D-098). §B measured 44 public callables with
+  # an unestablished parameter at f30e63c. That list is already stale: increment 1 created
+  # engine/mapping.py and `compute(spec, payloads)` — the one place a dial magnitude is
+  # computed — which post-dates it entirely. A check enumerating 44 names would not have
+  # looked at it. This one walks the tree.
+  - test_id: CD-RT-002-DOORS-REQUIRE-THEIR-TYPES
+    scope: CLASS
+    execute: python3 -B tools/register/check_judgement_path_doors.py --root .
+    execution_contract: contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md
+    negative_control:
+      violation: >
+        A public entry point on a judgement path that does not establish each of its arguments
+        by EXACT TYPE at the door, with the establishment DERIVED FROM ITS SIGNATURE rather than
+        written into its body. The class includes, and is not limited to: a public callable in
+        src/crash_detector/engine/ or src/crash_detector/serving/ carrying no @admits(...); a
+        public callable anywhere under src/ whose return annotation names a judgement value type
+        and carries no @admits(...); a decorated door with a parameter its declaration was not
+        told about, IN EITHER DIRECTION; and a decorated door carrying a *args or **kwargs open
+        channel. Every one of those is a non-zero exit from the declared command, and every one
+        of them ALSO makes the runtime refuse every call to that door with UndeclaredParameter.
+        MEASURED, BOTH ARMS, at WO-2R3 increment 2, over EMPTY_MODEL_REGISTRY and
+        EMPTY_SOURCE_REGISTRY:
+        P7 BASELINE — variants/WO-2R3/V20-p7-added-parameter.patch adds `tolerate_stale: bool =
+        False` to the REAL resolve_panel. The declared command exits 1 with
+        PARAMETER_NOT_DECLARED_TO_ADMITS; `PYTHONPATH=src python3 -B -m pytest tests -q` goes
+        from 1478 passed to 57 failed; and an ORDINARY call that does not pass the new argument
+        at all raises UndeclaredParameter.
+        P7 VIOLATED — variants/WO-2R3/V23-p7-violated.patch is the same added parameter with the
+        @admits decorator removed: both calls are ADMITTED and render WITNESS AGREES.
+        P5 BASELINE/VIOLATED — variants/WO-2R3/V21-p5-violated.patch removes the door from
+        `evaluate`; ASR3-F05's duck ConfigSnapshot is then ADMITTED and its own covers() decides
+        freshness for a 315360000-second-old observation against a 600-second window.
+        P6 BASELINE/VIOLATED — variants/WO-2R3/V22-p6-violated.patch removes the door from
+        `resolve_panel`; ASR3-F04's row then resolves to Agrees and RENDERS WITNESS AGREES.
+        THIS TEST HAS A DECLARED LIMIT (CD-RULE-004), stated identically here, in the header of
+        tools/register/check_judgement_path_doors.py and in the execution contract, in FOUR
+        boundaries, each with a patch an auditor can apply to their own extraction:
+        (1) CONSTRUCTORS ARE NOT SUBJECTS, AND THAT IS A REAL GAP IN §D AS SCOPED.
+        ConfigSnapshot(...), DialSpec(...), ModelSpec(...) and PanelRow(...) are public entry
+        points on the judgement path and they establish their fields in __post_init__ — that is,
+        in a BODY, which is the thing §D.1 exists to stop relying on. §D.2's table lists no
+        constructor and this check does not invent that scope. MEASURED:
+        variants/WO-2R3/V17-constructor-body-escape.patch deletes the `type(spec) is not
+        DialSpec` loop from ConfigSnapshot.__post_init__ and the declared command still exits 0
+        with 38 assertions. CARRIER, IN PART: the frozen dataclasses re-establish every field and
+        the suite measures them refusing a look-alike TODAY; as a structure surviving an edit to
+        those bodies, NOT PROVED TO BE CARRIED ANYWHERE. RAISED AS A FINDING to the Project Lead
+        rather than closed by this seat.
+        (2) RULE 1's PACKAGE LIST IS A VOCABULARY. `engine` and `serving` are spelled in the
+        check. A judgement-path door written under a package name the check has never heard of is
+        reached only by RULE 2, and only if it annotates its return type. MEASURED:
+        variants/WO-2R3/V16-new-package-undecorated-door.patch adds
+        src/crash_detector/judging/decide.py with a public, undecorated, unannotated
+        decide(reading) and the declared command still exits 0 with 38 assertions. NOT PROVED TO
+        BE CARRIED ANYWHERE — no other layer enumerates judgement-path packages.
+        (3) collectors/ IS NOT YET A JUDGEMENT-PATH PACKAGE HERE, BY SCOPE AND NOT BY OVERSIGHT.
+        A6 — collect(adapter, policy, sink, ledger, collector_run_id, clock, sleep, validator) —
+        is BP-AMENDMENT-0001 §D.3 and WO-2R3 increment 3, and §D.3's closure is a DIFFERENT
+        mechanism: clock and sleep stop being caller callables, and the protocol returns are
+        established at the point of return. Adding `collectors` to RULE 1 today would fail this
+        check on work that has not been dispatched. The check PRINTS the gap at every run.
+        CARRIER MEASURED: tests/test_judgement_path_doors.py asserts the gap is still declared,
+        so it cannot close silently.
+        (4) A DECORATOR NAMED `admits` IS RECOGNISED BY ITS NAME IN THE SOURCE. This check reads
+        TEXT; it cannot know that the `admits` a module imported is
+        crash_detector.admission.admits. MEASURED: variants/WO-2R3/V18-counterfeit-admits.patch
+        defines a do-nothing `admits` in crash_detector/own_terms.py and imports it into
+        serving/witness_resolver.py — the declared command exits 0 with 38 assertions and PASS,
+        and ASR3-F04's duck row then renders WITNESS AGREES. CARRIER MEASURED: the RUNTIME. The
+        same patched tree runs 3 FAILED in `PYTHONPATH=src python3 -B -m pytest tests -q`,
+        because the plants call the real doors and observe the real refusals. A static reader
+        alone cannot carry this and does not claim to.
+      evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-012
   origin: PID

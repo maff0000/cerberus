@@ -1,0 +1,22 @@
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 897071f..11a2a4e 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -139,16 +139,12 @@ class PanelRow:
+         object.__setattr__(self, "published_utc", ensure_utc(self.published_utc))
+ 
+ 
+-@admits(
+-    row=one_of(PanelRow, None),
+-    now_utc=datetime,
+-    staleness_window_seconds=float,
+-)
+ def resolve_panel(
+     row: Union[PanelRow, None],
+     *,
+     now_utc: datetime,
+     staleness_window_seconds: float,
++    tolerate_stale: bool = False,
+ ) -> "WitnessPanel":
+     """Resolve a stored panel row to a :class:`WitnessPanel`.
+ 

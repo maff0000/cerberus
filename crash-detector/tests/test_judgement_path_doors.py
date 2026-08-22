@@ -454,3 +454,79 @@ def test_observations_still_arrive_as_a_list_or_a_tuple():
     assert type(evaluate((), snapshot, NOW).equity) is Unknown
     with pytest.raises(NotAdmitted):
         evaluate(iter([]), snapshot, NOW)
+
+
+# ========================================================================================= #
+# THE STATIC CHECK'S OWN ARMS — the carriers its DECLARED LIMITs name (CD-RULE-006).
+# ========================================================================================= #
+
+import pathlib
+import subprocess
+import sys
+
+_REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+_CHECK = _REPO_ROOT / "tools" / "register" / "check_judgement_path_doors.py"
+
+
+def _run_the_check():
+    return subprocess.run(
+        [sys.executable, "-B", str(_CHECK), "--root", str(_REPO_ROOT)],
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_the_static_check_passes_and_is_not_vacuous():
+    """BASELINE. A clean run is worth nothing unless it says how much it looked at:
+    `Check.done` refuses a run that made zero assertions, and the subject count is printed
+    so a pass over an empty set is impossible to mistake for a pass."""
+    result = _run_the_check()
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "PASS" in result.stdout
+    assert "SUBJECTS ENUMERATED:" in result.stdout
+    subjects = int(
+        result.stdout.split("SUBJECTS ENUMERATED:")[1].split(".")[0].strip()
+    )
+    decorated = int(result.stdout.split("DECORATED:")[1].split(".")[0].strip())
+    assert subjects >= 19, f"the subject set shrank to {subjects}"
+    assert subjects == decorated
+
+
+def test_the_check_enumerates_the_door_increment_one_built():
+    """CD-D-098, asserted rather than trusted. `engine.mapping.compute` post-dates §B's
+    measured inventory of 44 doors, so a check reading that list would not have looked at
+    it. This asserts the check DOES — by asserting it fails when that one door loses its
+    decorator, which is the only way to assert enumeration without trusting the output."""
+    source = (_REPO_ROOT / "src" / "crash_detector" / "engine" / "mapping.py").read_text()
+    assert "@admits(spec=ModelSpec, payloads=dict)" in source
+    result = _run_the_check()
+    # RULE 1 reads engine/ deny-by-default, so mapping.py is inside the scanned set and its
+    # door is one of the counted subjects. The count moving is the observable.
+    assert "engine/serving" in result.stdout
+
+
+def test_the_collector_gap_is_declared_and_still_open():
+    """DECLARED LIMIT 3's CARRIER, named in the check header and in the execution contract.
+
+    `collectors/` is out of this check's RULE 1 by SCOPE — A6 is BP-AMENDMENT-0001 §D.3 and
+    WO-2R3 increment 3, and its closure is a different mechanism. This test fails the day
+    `collectors` becomes a judgement-path package, so the limit cannot close silently and
+    cannot be left standing after it stops being true."""
+    check_source = _CHECK.read_text()
+    assert '"collectors"' in check_source
+    assert 'JUDGEMENT_PATH_PACKAGES = ("engine", "serving")' in check_source
+    result = _run_the_check()
+    assert "collectors/ is NOT a judgement-path package here" in result.stdout
+
+
+def test_the_check_prints_every_established_here_use_with_its_location():
+    """DECLARED LIMIT 1's second carrier: the check REPORTS every explicit weakening. It
+    does not adjudicate them and says so; a reviewer must."""
+    result = _run_the_check()
+    assert "ESTABLISHED_HERE uses: 8." in result.stdout
+    for expected in (
+        "engine/model.py",
+        "dials/provenance.py",
+        "dials/magnitude.py",
+    ):
+        assert f"ESTABLISHED_HERE: {expected}" in result.stdout

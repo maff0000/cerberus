@@ -1,0 +1,269 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 2 COMPLETE — §D.1 AND §D.2 (A2, A3, A4, A5) PLUS CD-D-098.
+# EVERY JUDGEMENT-PATH DOOR IS AN `admits` DOOR, AND WHAT EACH REQUIRES IS READ FROM ITS OWN
+# SIGNATURE. P5, P6 AND P7 DEMONSTRATED IN BOTH ARMS, ALL OVER EMPTY_MODEL_REGISTRY.
+# P7 RUN AGAINST THE REAL `resolve_panel` IN A PRISTINE EXTRACTION, NOT ONLY AGAINST A COPY.
+# FOUR FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK, ONE OF THEM A LIVE BYPASS IT FOUND AND CLOSED.
+# NOTHING HERE IS ASSURANCE (PBG-SOD-001, non-waivable).
+# ================================================================================================ #
+
+entry_id: BL-20260822T151439Z-0061
+timestamp_utc: "2026-08-22T15:14:39Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 7b00ce9fb648daaabb5dfdefeb1a7d906fa3fccf
+increment_commits:
+  - 212224f957c3b93d527e4a6c953e1c02f9fb5dc4   # 1/4 — the `admits` mechanism and its own tests
+  - f22937e9b998f976003a4ef38a900d16cdc1cb05   # 2/4 — the 19 doors and the static check
+  - 9e1aba016f812e55c1dd59feab53fdbbcc2e871a   # 3/4 — P5, P6, P7 baseline arms; the bypass closed
+  - PENDING                                     # 4/4 — variants, register, contract and this entry
+parent_entry_id: BL-20260822T120041Z-0060
+schema_version: 1
+
+lane_reconciliation_before_anything_was_written: >
+  `git -C /srv/crash-detector-wo2r3 rev-parse HEAD` returned 7b00ce9fb648daaabb5dfdefeb1a7d906fa3fccf,
+  `git status --short` returned ZERO LINES, branch wo-2r3. Matches the dispatched execution base for
+  this increment exactly. No drift (PBG-CONT-006).
+
+action_summary: >
+  INCREMENT 2 DELIVERED IN FOUR COMMITS, each committed as it was finished because seven runtime
+  terminations are on this project's record and an increment that is not committed did not happen
+  (PBG-CONT-007). BP-AMENDMENT-0001 §D.1 and §D.2 for A2, A3, A4 and A5 are implemented, plus
+  CD-D-098's named first item, plus the static judgement-path check.
+  THE MECHANISM is `crash_detector.admission.admits` — a decorator that reads a door's parameter
+  list from `inspect.signature` AT DECORATION and refuses, AT THE BOUNDARY: (a) any value whose
+  EXACT type is not the declared one; (b) any parameter the declaration was not told about, IN
+  EITHER DIRECTION; (c) any `*args` or `**kwargs` open channel. (b) and (c) refuse EVERY CALL,
+  before the arguments are bound and before the body runs. Nothing in the mechanism reads a body.
+  THE DOORS are NINETEEN, enumerated from the artefact and not from a list. A2
+  `evaluate(config_snapshot)` requires exactly ConfigSnapshot; A3 `evaluate(observations)` requires
+  a tuple or list whose EVERY element is exactly ObservationRecord — the RECORD, not only the
+  outcome; A4 `resolve_panel(row)` requires exactly PanelRow or exactly None; A5
+  `present_dial(reading)` requires exactly one of the sealed Reading members, and that parameter
+  carried NO ANNOTATION AT ALL through three gates. CD-D-098: `engine.mapping.compute` — the door
+  increment 1 itself built, which post-dates §B's measured inventory of 44 — is decorated and IS
+  enumerated by the check.
+  THE ACCEPTANCE TEST is tools/register/check_judgement_path_doors.py, which WALKS THE TREE, prints
+  its subject count so a vacuous pass is visible, and fails on any undecorated public entry point on
+  a judgement path OR any decorated door whose declaration and signature disagree.
+
+what_was_delivered:
+  admits_mechanism: src/crash_detector/admission.py — a BLUEPRINT §1 instrument, not a §7 local rule
+  doors_decorated: 19 — engine/ and serving/ deny-by-default, plus 3 reached by return annotation
+  static_check: tools/register/check_judgement_path_doors.py, its execution contract, its register row
+  plants: P5, P6, P7 — baseline arms in tests/test_judgement_path_doors.py, violated arms as variants
+  variants: variants/WO-2R3/ — TEN patches and a manifest; 10 of 10 verified to apply
+  new_tests: 45 node ids added, 0 lost, 0 replaced, 0 renamed
+
+structural_invariants_as_landed:
+  mechanism: >
+    For any callable decorated with `admits`, a parameter present in its signature and absent from
+    its declaration — in either direction, and including a variadic parameter — makes EVERY call to
+    that callable raise UndeclaredParameter before the arguments are bound and before the body runs.
+  doors: >
+    Every public callable defined in src/crash_detector/engine/ or src/crash_detector/serving/, and
+    every public callable anywhere under src/crash_detector/ whose return annotation names a
+    judgement value type, is decorated with `admits` and its declaration names EXACTLY the
+    parameters in its signature.
+  no_published_bypass: >
+    No ATTRIBUTE of an `admits` door resolves to the undecorated function it wraps:
+    hasattr(door, "__wrapped__") is False and inspect.unwrap(door) is door.
+  narrowness_is_deliberate: >
+    Each is written narrowly enough to be true (CD-PL-F76). The doors invariant is a claim about TWO
+    PACKAGES and ONE annotation rule: NOT about collectors/, NOT about constructors, NOT about any
+    door reached by neither rule. The bypass invariant is a claim about ATTRIBUTES: the __closure__
+    route is OPEN and a test asserts it open.
+
+class_closed_or_closed_in_part: CLOSED IN PART, and the parts are named
+closed:
+  - the class of DOORS in engine/ and serving/, deny-by-default within, enumerated from the tree
+  - a NEW MODULE under either package is a subject with no edit to the check (CD-D-098's property)
+  - a NEW PARAMETER on any decorated door — refused at runtime on every call AND at the static check
+  - the __wrapped__ bypass, closed inside `admits` itself so it applies to every door it makes
+not_closed_and_declared:
+  - CONSTRUCTORS. ConfigSnapshot, DialSpec, ModelSpec and PanelRow establish their fields in
+    __post_init__ — a BODY — which is what §D.1 exists to stop relying on. §D.2 lists no constructor
+    and this seat did not invent that scope. MEASURED OPEN by variants/WO-2R3/V17. RAISED AS A FINDING.
+  - THE CHECK'S PACKAGE LIST is a vocabulary. MEASURED OPEN by variants/WO-2R3/V16.
+  - collectors/ is increment 3 by scope, printed at every run, asserted by a test.
+  - THE COUNTERFEIT DECORATOR. The check reads TEXT. MEASURED OPEN by variants/WO-2R3/V18; the
+    RUNTIME is the measured carrier, 3 FAILED on the patched tree.
+  - THE SIX ESTABLISHED_HERE USES ON §B.3's DOORS. Decorated for the P7 property only; their type
+    establishment remains in their bodies. MEASURED OPEN by variants/WO-2R3/V19. RAISED AS A FINDING.
+  - THE __closure__ ROUTE. True of every decorator in Python. MEASURED OPEN by variants/WO-2R3/V24.
+
+plants_both_arms_all_over_EMPTY_MODEL_REGISTRY:
+  P7_first_because_the_PO_directed_the_fourth_seat_to_run_it_first:
+    baseline: >
+      variants/WO-2R3/V20-p7-added-parameter.patch adds `tolerate_stale: bool = False` to the REAL
+      `resolve_panel` in a pristine extraction of 9e1aba0. AN ORDINARY CALL THAT DOES NOT PASS THE
+      NEW ARGUMENT AT ALL is REFUSED — "UndeclaredParameter: resolve_panel is a FAULTED door and
+      every call to it is refused. parameter 'tolerate_stale' is in the signature of resolve_panel
+      and was NOT declared to admits()." So is the call that uses it. The static check exits 1 with
+      PARAMETER_NOT_DECLARED_TO_ADMITS. The suite goes from 1482 passed to 57 failed.
+    violated: >
+      variants/WO-2R3/V23-p7-violated.patch — the same added parameter with the @admits decorator
+      removed. BOTH calls ADMITTED. "ADMITTED -> Agrees; RENDERS: WITNESS AGREES". The new argument
+      arrived UNGUARDED, which is precisely the escape §D.1 exists to prevent.
+    honest_caveat: >
+      The in-suite P7 arms are LABELLED RECONSTRUCTIONS in their own docstring — they re-apply each
+      product door's OWN declaration to a signature with one more parameter. V20 is the arm that
+      runs against the real door, and it is the one to replicate.
+  P5_ASR3_F05_duck_ConfigSnapshot:
+    baseline: >
+      "NotAdmitted: evaluate: config_snapshot=_DuckConfigSnapshot is not admitted; this door
+      requires exactly ConfigSnapshot." AND the plant's own covers() counter is asserted ZERO — the
+      caller's code never ran inside the freshness decision, which is the whole of ASR3-F05.
+    violated: >
+      variants/WO-2R3/V21-p5-violated.patch removes the door. "ESCAPED -> the duck ConfigSnapshot
+      was ADMITTED. THE CALLER'S covers() DECIDED FRESHNESS: called 1 time(s), on age 315360000 s"
+      against a declared 600 s window.
+  P6_ASR3_F04_duck_row:
+    baseline: >
+      "NotAdmitted: resolve_panel: row=_DuckRow is not admitted; this door requires exactly PanelRow
+      or None." The lying property's counter is asserted ZERO.
+    violated: >
+      variants/WO-2R3/V22-p6-violated.patch removes the door. "ESCAPED -> Agrees; RENDERS: WITNESS
+      AGREES (stored state was UNAVAILABLE)".
+  empty_registry: >
+    YES, and ASSERTED rather than asserted-about. test_p5_over_the_shipped_empty_registry,
+    test_p6_over_the_shipped_empty_registry and test_p7_over_the_shipped_empty_registry each check
+    EMPTY_MODEL_REGISTRY.is_empty and model_ids == (). NO ROW OF ANY KIND WAS REGISTERED TO MAKE ANY
+    PLANT WORK. MappingKind still has exactly one member.
+
+auditor_variants_re_run_with_the_refusing_layer_named_and_scoped:
+  ASR3-F05: >
+    REFUSED. LAYER — crash_detector.admission.admits, applied at `evaluate`'s boundary and derived
+    from its signature. SCOPE — every call to `evaluate` by any caller anywhere, including calls
+    whose result is discarded. It is NOT a property of evaluate's body and no rewrite of that body
+    removes it.
+  ASR3-F04: >
+    REFUSED. LAYER — crash_detector.admission.admits, applied at `resolve_panel`'s boundary. SCOPE —
+    every call to `resolve_panel` by any caller. EXPLICITLY NOT the PanelRow constructor, which was
+    already closed and which the auditor confirmed was closed: the finding was that nothing REQUIRED
+    the constructor to have run, and that is what this closes.
+  ASR3-F02: >
+    NOT re-run here. It is increment 1's, and its refusals are unchanged by this increment.
+
+rename_test_CD_PL_F74:
+  P5: SURVIVES — a type-identity comparison. Rename the parameter, the plant, or evaluate itself.
+  P6: SURVIVES — the same, and the body is never entered so no field name is consulted.
+  P7: SURVIVES — a set difference between two name sets; no particular identifier is consulted.
+  the_two_name_dependences_disclosed:
+    - >
+      The method receiver is skipped by the name self/cls AND ONLY INSIDE A CLASS BODY. Renaming it
+      FAULTS the door rather than opening it — a vocabulary result in the SAFE direction, measured
+      by test_renaming_the_receiver_faults_the_door. The class-body half was added because the
+      mechanism FAULTED assert_closed_presentation_surface(cls), a module-level serving-path door
+      whose only parameter is named cls, the first time it was applied to it. Skipping by name alone
+      would have left that door's only argument unguarded, and the mechanism found that itself.
+    - >
+      The STATIC CHECK recognises `admits` by its NAME in the source. VOCABULARY, DECLARED LIMIT 4,
+      carrier MEASURED as the runtime.
+  the_wrapped_closure: >
+    delattr(door, "__wrapped__") names CPython's attribute, so it is a vocabulary result against
+    that one name. What makes it worth having is that the vocabulary is the interpreter's and not
+    this project's, and that the remaining route is interpreter internals.
+
+counterfactual_arms_CD_D_079:
+  P5: variants/WO-2R3/V21 — remove the decorator, the escape returns. RUN.
+  P6: variants/WO-2R3/V22 — remove the decorator, the escape returns. RUN.
+  P7: variants/WO-2R3/V23 — remove the decorator, the new argument arrives unguarded. RUN.
+  the_static_check: >
+    V16, V17, V18 and V19 each remove or bypass what the check credits, and each shows the check
+    still exiting 0. RUN.
+  the_wrapped_closure: >
+    V24 arm 3 — the __closure__ route, which the closure does NOT cover, ESCAPES and renders
+    WITNESS AGREES. RUN.
+
+findings_against_this_seats_own_work:
+  CD-ENG-WO2R3-F04: >
+    A LIVE BYPASS IN THIS SEAT'S OWN DOORS, FOUND AND CLOSED BEFORE THE FOURTH ASSURANCE SEAT COULD.
+    functools.wraps sets __wrapped__; inspect.unwrap follows it; editors offer it. MEASURED —
+    resolve_panel.__wrapped__(duck_row, ...) returned Agrees and RENDERED WITNESS AGREES with every
+    door decorated. ASR3-F04 published through a decorator's own attribute. CLOSED in `admits`
+    itself, so the closure applies to every door the mechanism has made or will make. The
+    __closure__ half is NOT closed, is DECLARED LIMIT 6, and is asserted OPEN by
+    tests/test_admission.py::test_a_door_publishes_no_way_round_itself so the limit cannot quietly
+    become wrong.
+  CD-ENG-WO2R3-F05: >
+    §D AS SCOPED DOES NOT REACH CONSTRUCTORS, AND THEY ARE JUDGEMENT-PATH ENTRY POINTS.
+    ConfigSnapshot, DialSpec, ModelSpec and PanelRow establish their fields in __post_init__ — in a
+    BODY — which is exactly the reliance §D.1 exists to remove. §D.2's table lists no constructor.
+    This seat did not widen its own scope: it declares the gap in all three CD-RULE-004 places,
+    measures it with V17, and asks the Project Lead to rule.
+  CD-ENG-WO2R3-F06: >
+    THREE OF THE ELEVEN DECLARED PLANTS NO LONGER APPLY, AND THE CONDITION PRE-DATES THIS INCREMENT.
+    MEASURED — 11/11 apply at f30e63c; 8/11 at 7b00ce9, which is increment 1's head; 8/11 at this
+    head. INCREMENT 1 BROKE THEM AND ITS OWN BUILD LOG ENTRY DID NOT CATCH IT: BL-20260822T120041Z-0060
+    records "ALL ELEVEN declared plants APPLY at f30e63c", which was true and was measured at the
+    WRONG SHA — the claim that matters is whether they apply at the head being delivered. Increment
+    2 changed nothing about this. Named — plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch,
+    plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch and
+    plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch. NOT deleted and NOT silently updated
+    (CD-D-033 forbids deletion); owed at increment 4, reported now so it is not discovered there.
+  CD-ENG-WO2R3-F07: >
+    THIS SEAT WROTE A NUMBER INTO A COMMIT MESSAGE BEFORE MEASURING IT. The first increment-2 commit,
+    212224f, states "exit 0, 1456 passed". At the moment it was written the figure was arithmetic —
+    1437 plus 19 — and it was MEASURED IMMEDIATELY AFTERWARDS and found correct. It should have been
+    measured first. Recorded because CD-RULE-009's whole point is that a number without its
+    measurement is not evidence, and a number that happened to be right is not a defence.
+
+false_positives_checked: >
+  The product still works, by execution. The shipped WO-2 configuration goes end to end through
+  every door this increment decorated and renders NotShown with reason NO_REQUIRED_INPUTS_DECLARED
+  on BOTH dials. Ordinary aware datetimes and ordinary floats still resolve a fresh agreeing row to
+  Agrees and a stale one to Unavailable. None is still admitted at resolve_panel and still resolves
+  to PANEL_ROW_ABSENT. Both a list and a tuple of observations are admitted. NINE tests in
+  test_dial_provenance.py — including ASR2-002-A itself — went RED at an intermediate state, because
+  exact-typing §B.3's already-closed doors PREEMPTED their own named refusals with a generic
+  NotAdmitted. NOT ONE OF THOSE TESTS WAS CHANGED; the doors were re-declared instead, and the
+  residue is DECLARED LIMIT 5.
+
+clean_arm:
+  suite: "PYTHONPATH=src python3 -B -m pytest tests -q  ->  exit 0, 1482 passed"
+  new_check: "python3 -B tools/register/check_judgement_path_doors.py --root .  ->  exit 0, PASS, 38 assertions, 0 violations, 19 subjects, 19 decorated, 8 ESTABLISHED_HERE uses printed"
+  register: "PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml  ->  parses; the new row resolves its execution contract; GATE SHUT; latest_admitted_run null and untouched"
+
+node_id_reconciliation:
+  floor_of_record: "1400 at f30e63c — the dispatch's MEASURED figure at issue time"
+  execution_base: "1437 at 7b00ce9, MEASURED HERE. Commands: `git archive 7b00ce9 | tar -x -C /tmp/cd-base-7b00ce9`; then `PYTHONPATH=/tmp/cd-base-7b00ce9/src python3 -B -m pytest tests --collect-only -q` -> '1437 tests collected'; the same tree runs '1437 passed'"
+  now: "1482 — `PYTHONPATH=src python3 -B -m pytest tests --collect-only -q` -> '1482 tests collected'"
+  reconciliation: "0 LOST, 0 REPLACED, 45 ADDED, 0 RENAMED. 24 in tests/test_admission.py and 21 in tests/test_judgement_path_doors.py. No existing node id was removed or renamed by this increment."
+
+eleven_plants:
+  measured: "11/11 apply at f30e63c; 8/11 at 7b00ce9; 8/11 at this head. Command per plant, with a fresh extraction each: `git archive <sha> | tar -x -C /tmp/ap` then `git apply --check -p1 <plant>`."
+  increment_2_effect: "NONE. The same eight apply before and after. See CD-ENG-WO2R3-F06."
+
+what_this_seat_deliberately_did_NOT_do:
+  - A6 and collect() — increment 3. The check prints the gap at every run rather than hiding it.
+  - A7 and fold — RULED WO-4 at PO-DECISIONS-0005 ruling 3. Not closed, not touched.
+  - a second MappingKind member — PROHIBITED, and PO-DECISIONS-0006 ruling 3 prices the coverage
+    loss deliberately. The four propositions return with CD-D-005.
+  - ModelProvenance's shape — PO-DECISIONS-0006 ruling 4 requests no construction change.
+  - CD-AC-002's four-refusal trace and CD-AC-005's restructuring in required-tests.yaml — increment 4.
+  - registering any model row or any source. latest_admitted_run stays null.
+  - anything under pbg/, PID.md, BLUEPRINT.md, governance/blueprint/, governance/decisions/,
+    governance/dispatch/, governance/rules/, governance/assurance/, governance/reconciliation/,
+    ACTIVE_WORK.yaml, deploy/, db/, docs/ or CLAUDE.md.
+
+next_safe_action: >
+  INCREMENT 3 — BP-AMENDMENT-0001 §D.3, A6, the collector boundary, both parts, from this head.
+  Before it, the Project Lead reconciles THIS increment BY REPLICATION and not by relay, taking P7
+  first with V20 in its own extraction, and rules on CD-ENG-WO2R3-F05, the constructors, and
+  CD-ENG-WO2R3-F06, the three plants that stopped applying at increment 1.
+
+this_is_not_assurance: >
+  Every run above is IMPLEMENTATION EVIDENCE produced by the seat that wrote the code. It does not
+  become assurance by being thorough, and this seat does not certify, assure or accept its own work
+  (PBG-SOD-001, non-waivable). A FOURTH FRESH ASSURANCE SEAT audits this, and the Product Owner has
+  already given it its first two targets: P7, and CD-BP-003 the adapter boundary.

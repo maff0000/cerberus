@@ -1,0 +1,16 @@
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index c77c3fd..5177cb3 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -137,11 +137,6 @@ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ REASON_NO_MODEL_DECLARED = "NO_MODEL_DECLARED"
+ 
+ 
+-@admits(
+-    observations=each_of(ObservationRecord),
+-    config_snapshot=ConfigSnapshot,
+-    now_utc=datetime,
+-)
+ def evaluate(
+     observations: Sequence[ObservationRecord],
+     config_snapshot: ConfigSnapshot,

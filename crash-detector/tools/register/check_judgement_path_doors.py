@@ -119,15 +119,21 @@ TO BE CARRIED ANYWHERE.
     and the execution contract being corrected with it.
 
  4  **A DECORATOR NAMED ``admits`` IS RECOGNISED BY ITS NAME IN THE SOURCE.** This check
-    reads text; it cannot know that the ``admits`` in a file is
-    ``crash_detector.admission.admits``. A local function named ``admits`` that did nothing
-    would satisfy this check. Executable example:
-    ``variants/WO-2R3/V18-counterfeit-admits.patch``.
-    **CARRIER MEASURED:** the runtime tests. ``tests/test_admission.py`` and every door's
-    own tests call the real doors and observe the real refusals, so a counterfeit decorator
-    that admitted everything would leave dozens of red tests. Named, and measured, rather
-    than left to the reader — CD-RULE-006 exists because two declarations once each assumed
-    the other covered the route.
+    reads TEXT; it cannot know that the ``admits`` a module imported is
+    ``crash_detector.admission.admits``. Executable example:
+    ``variants/WO-2R3/V18-counterfeit-admits.patch`` defines a do-nothing ``admits`` in
+    ``crash_detector/own_terms.py`` — a module this check does not scan for doors — and
+    imports it into ``serving/witness_resolver.py``. MEASURED: this check exits 0 with 38
+    assertions and PASS, and ``ASR3-F04``'s duck row then renders ``WITNESS AGREES``.
+    (The counterfeit must be planted OUTSIDE a judgement-path package to work. Defined
+    inside ``serving/witness_resolver.py`` it is itself a public undecorated callable in a
+    judgement-path package and this check reports it — measured, and disclosed here rather
+    than claimed as design.)
+    **CARRIER MEASURED: THE RUNTIME.** The same patched tree runs 3 FAILED under
+    ``PYTHONPATH=src python3 -B -m pytest tests -q``, because the plants call the real doors
+    and observe the real refusals. A static reader alone cannot carry this and does not
+    claim to. CD-RULE-006 exists because two declarations once each assumed the other
+    covered the route.
 """
 
 from __future__ import annotations
