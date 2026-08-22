@@ -1,0 +1,139 @@
+entry_id: BL-20260822T223805Z-0110
+timestamp_utc: '2026-08-22T22:38:05Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: b152475dac7bde7b5e28ac16c72fe1a845b51780   # RESOLVED with `git rev-parse`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the reconciliation boundary BL-...-0109.
+parent_entry_id: BL-20260822T222921Z-0109
+schema_version: 1
+
+action_summary: >
+  *** **THE FIFTH FRESH ASSURANCE SEAT IS DISPATCHED OVER THE WHOLE OF WO-2R3 AT `9f7b764`, AND THE
+  PHASE MOVES BACK TO GATE. CD-ASR-WO2R3-02, READ-ONLY, NEVER THE ENGINEER.** ***
+  PO-DECISIONS-0011 ruling 5 authorised it unconditionally over the post-increment SHA and NAMED what
+  it adds to the fourth seat's list: **REGRADE T2, CD-AC-002 and CD-AC-005; MEASURE T8, T9 and T10,
+  WHICH NO SEAT HAS EVER MEASURED; GRADE ESCAPE 3 AND THE SINK/LEDGER/VALIDATOR TABLE, WHICH NO
+  AUDITOR HAS VERIFIED.** The CD-D-129 binding clauses carry forward VERBATIM, and clause (i) now
+  names **TWO** exiting instruments where it named one.
+  *** **THE BRIEF DISCLOSES, BEFORE THE SEAT RUNS ANYTHING: THE DELIBERATE RED DOORS ROW AND ITS TWO
+  FAILING TESTS · CD-D-146 UNRULED · CD-PL-F97 · CD-PL-F98, WHICH IS THE PROJECT LEAD'S OWN METHOD
+  DEFECT ON THE VERY PROBES THIS SEAT WILL RUN · AND THE ONE SENTENCE OF THE FOURTH SEAT'S SUPPLEMENT
+  THAT HAS ALREADY BEEN CORRECTED BY MEASUREMENT.** ***
+  **A DISCLOSED HOLE IS A MEASURED LIMIT. AN UNDISCLOSED ONE IS A TRAP**, and this project has never
+  found out anything useful by letting an auditor discover the record's own state as a surprise.
+
+decisions_taken_at_this_boundary:
+- id: CD-D-147
+  title: >
+    **THE FIFTH SEAT IS DISPATCHED NOW, AGAINST A TREE THAT SHIPS A RED REGISTER ROW, RATHER THAN
+    HELD UNTIL CD-D-146 IS RULED.**
+  the_question_it_answers: >
+    CD-D-146 is unruled. Does the fifth seat wait for the Product Owner, so it audits a settled tree?
+  the_ruling: >
+    **NO. IT GOES NOW, AND CD-D-146 TRAVELS UP IN PARALLEL.**
+  why: >
+    **(1) RULING 5 IS UNCONDITIONAL AND RULING 6 SEQUENCES THE SEAT IMMEDIATELY AFTER THE INCREMENT.**
+    Holding it would be this seat re-sequencing the Product Owner's own order, which it is explicitly
+    not permitted to do. **(2) THE SEAT IS READ-ONLY AND GRADES WHAT IS IN FRONT OF IT.** A RED
+    register row and two failing tests are DISCLOSED STATE, not a precondition. **(3) THE TARGET IS
+    STABLE EITHER WAY:** no code moves while an auditor is out, because nothing is authorised without
+    a ruling and a dispatch and this seat will open neither. So `9f7b764` is still `9f7b764` when the
+    audit finishes, whether or not CD-D-146 has been answered meanwhile.
+    **(4) AND THE HONEST REASON THAT CUTS THE OTHER WAY, STATED RATHER THAN OMITTED:** if the Product
+    Owner rules on `guarded` and orders code changed, the fifth seat's verdict will be against a tree
+    one commit behind. **THAT COST IS REAL AND THIS SEAT IS ACCEPTING IT** — the same thing happened
+    at the fourth gate with the T2 addendum, and what came back was the most valuable verdict on the
+    record.
+  how_it_could_be_wrong: >
+    If the answer to CD-D-146 turns out to change the doors instrument's MEMBERSHIP RULE rather than
+    the product code, then T4 and T12 were graded against a definition that moved underneath them and
+    a sixth seat is owed. **THAT IS THE FAILURE MODE OF THIS DECISION AND IT IS WRITTEN DOWN IN
+    ADVANCE SO IT CAN BE GRADED, NOT DEFENDED.**
+
+the_dispatch_issued:
+  record: governance/dispatch/CD-DISPATCH-WO2R3-ASSURANCE-05.yaml
+  status: ISSUED
+  actor_id: CD-ASR-WO2R3-02
+  target: >
+    **9f7b7640f692442e22a47ecac3d4a643057729d5**, branch wo-2r3, in a worktree created for the seat
+    at `/srv/crash-detector-wo2r3-audit5`. Tree object `224debf1…`, fingerprint
+    `50b356ac2de1a404b75a6fb9e478fe5d4141c4fdc6ad34ddfbfcd4a5a92ee7b9`, porcelain ZERO — all four
+    PL-measured at issue time, and the seat is told to RE-TAKE the fingerprint itself at the start and
+    again before it writes its verdict.
+  scope: '**THE WHOLE OF WO-2R3** — `f30e63c..9f7b764`. Increments 1-5, the bounded completion AND the remediation increment. Not the remediation alone.'
+  excluded_actor_ids: '[CD-ENG-WO2R3-01, CD-ENG-WO2R3-02] and the four prior Assurance seats. PBG-SOD-001, non-waivable.'
+  the_target_list: >
+    **T1-T11 CARRY FORWARD AND TWO ARE ADDED. T12: the seven repairs of the remediation increment,
+    each as an attackable claim** — with the brief saying in terms that two implementers and a
+    reconciler agreeing is worth less than one auditor disagreeing. **T13: the twelfth plant, and
+    whether it is evidence or decoration**, held to both the F12 standard and the new BITTEN standard.
+  the_priorities_the_product_owner_set_and_this_seat_did_not_choose: >
+    **T8, T9 AND T10 HAVE NEVER BEEN MEASURED BY ANY SEAT** — all three came back "delegated
+    measurement did not return" from the fourth seat. The brief says plainly that this is the single
+    largest hole in the project's assurance record and that closing it is why ruling 5 exists. **T8 IS
+    THE INPUT THE ELEVEN CLASS-2 DISPOSITIONS HAVE BEEN WAITING ON SINCE CD-D-130**, and the brief
+    tells the seat the project is blocked on its answer **and that this is not a reason to give the
+    answer faster than it can be evidenced.**
+  the_standard_added_at_this_gate: >
+    **A FIX IS PROVED BY ITS RESIDUE AS MUCH AS BY ITS CLOSURE.** Every item of the remediation
+    declares what it does not reach; the brief orders the RESIDUE tested and not only the closure,
+    because an understated residue is this project's most-found defect **and a fix that closed less
+    than it says is worse than no fix, since the declaration is what a reader stops reading at.**
+
+what_the_brief_discloses_before_the_seat_runs_anything:
+  the_principle: '**A DISCLOSED HOLE IS A MEASURED LIMIT AND AN UNDISCLOSED ONE IS A TRAP.**'
+  nine_disclosures: >
+    (1) the three fourth-seat documents, banked verbatim and never edited, to be read IN THE ORDER
+    THE SEAT CHANGED ITS OWN MIND; (2) **the doors check exiting 1 and the two failing tests, with
+    both readings of `guarded` and neither ruled**; (3) **CD-PL-F98 — the Project Lead's own method
+    defect, on the very probes this seat will run**; (4) **the one sentence of the fourth seat's
+    supplement already corrected by measurement**, disclosed so the seat neither inherits the error
+    nor takes the correction on trust; (5) CD-PL-F97, the corpus index gap, with the instruction to
+    read the DIRECTORY and not only the manifest; (6) the thirteen landed build-log sequence
+    collisions; (7) the lane boot RED, disclosed and expressly NOT ruled harmless — with the note that
+    the fourth seat disagreed with it usefully and found `ACTIVE_WORK.yaml` stale on the documented
+    manual boot path; (8) the deliberately-unfixed stale manifest line, **with a new question: the
+    remediation increment TOUCHED that file, so did the stale line survive an edit or an absence?**;
+    (9) **the Project Lead's own list of six named findings against itself, explicitly NOT claimed
+    complete** — because the last time this seat implied a pattern was bounded, the auditor counted
+    nine.
+  and_six_things_the_project_lead_did_NOT_verify: >
+    Named as holes the seat inherits: the eleven plants at 9f7b764 (nobody has measured them there);
+    the variant corpus at 9f7b764; the three WO-2R routes; item B's nine-placement probe, item E1's
+    probe and the full `--why` ledger beyond the nested plant; any runtime construction beyond item
+    D's `Empty` arm; and any grading of CD-AC-002 or CD-AC-005, which this seat has never done and is
+    forbidden to do. **THE MOST INTERESTING UNVERIFIED CLAIM IS NAMED AS SUCH: the Engineer reports
+    its nine-placement probe found a module-level `if True:` block hiding a type — NOT NESTED AT ALL,
+    in no auditor's document and in no dispatch. The Project Lead has not verified it.**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT RULE ON CD-D-146.** It goes to the Product Owner unruled and unrecommended.
+  **IT DID NOT GRADE ANYTHING** — not the increment, not the RED, not a criterion (PBG-AUTH-006).
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-130). T8 is the input and it is out with
+  the seat now.
+  **IT DID NOT REMEDY CD-PL-F97 OR CD-PL-F98** — both travel disclosed.
+  **IT DID NOT EDIT ONE WORD OF ANY AUDITOR DOCUMENT**, including the sentence of the fourth seat's
+  supplement that has since been corrected by measurement. **THE CORRECTION SITS IN THE RECORD AND
+  IN THE FIFTH SEAT'S BRIEF, NOT IN THAT SEAT'S DOCUMENT.**
+
+next_safe_action: >
+  *** **STOP AT THE VERDICT. THE FIFTH SEAT IS OUT AND NOTHING MOVES WHILE IT IS.** ***
+  **1. RECONCILE ITS RETURN BY MEASUREMENT, NEVER BY READING ITS CLAIMS**, and bank it VERBATIM
+  beside the fourth seat's documents — never inside them (CD-D-143, PBG-CONT-003).
+  **2. CD-D-146 IS THE PRODUCT OWNER'S** and may be answered at any time; it does not gate the audit.
+  **3. ONLY AFTER T8 LANDS: the eleven Class-2 dispositions** (CD-D-130, PO-DECISIONS-0011 ruling 6).
+  **4. THEN the Product Owner's acceptance of WO-2R3, and not before.**
+  **DO NOT** merge or promote. **DO NOT** admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** open an increment while the seat is out. **DO NOT** make the doors row green by any
+  route. **DO NOT** argue the verdict down OR up — that promise was made to the fourth seat, honoured
+  in both directions, and is made to this one on the same terms. **DO NOT** modify anything under
+  `pbg/`.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). The CD-RULE-008 verdict is taken AT the boundary SHA BEFORE this field is written.
