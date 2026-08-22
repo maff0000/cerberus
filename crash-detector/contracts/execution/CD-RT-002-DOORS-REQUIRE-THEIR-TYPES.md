@@ -157,7 +157,15 @@ MEASURED (CD-RULE-006):
 * the STRUCTURE is `crash_detector.establishment.establishes` — establishment derived from the
   DECLARED FIELD LIST, applied at the class boundary, where a body rewrite cannot reach it;
 * the ENUMERATION is `python3 -B tools/register/check_constructor_field_establishment.py --root .`,
-  which measures the class at **32 members** and asserts every one of them carries the declaration;
+  which enumerates that class and asserts every **fielded** member carries the declaration. **RUN IT
+  AND READ ITS OWN `POPULATION` LINE — NO COUNT AND NO DEFINITION OF THE SIBLING'S CLASS IS
+  TRANSCRIBED HERE, AND UNTIL `PO-DECISIONS-0010` RULING 1 BOTH WERE.** This line read *"which
+  measures the class at **32 members** and asserts every one of them carries the declaration"*. That
+  was a copy of a SIBLING limit's definition and count living where no rule pointed at it
+  (`CD-PL-F91`) — `CD-RULE-004`'s three places are each limit's OWN — and the ruling widened that
+  class to **BODY-BORNE OR ABSENT** and moved the count, so the copy went stale exactly as an
+  unpointed-at copy does. A count read from the sibling's run is a MEASUREMENT; a count copied here
+  is a TRANSCRIPTION (`CD-RULE-009`);
 * the MEASUREMENT is V17 itself, run: with V17 applied and the mechanism present, constructing a
   duck `DialSpec` into `ConfigSnapshot` is **REFUSED** —
   `crash_detector.establishment.FieldNotEstablished: ConfigSnapshot.dial_specs[0]=DuckDialSpec is
