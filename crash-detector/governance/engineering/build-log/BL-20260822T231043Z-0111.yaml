@@ -1,0 +1,166 @@
+entry_id: BL-20260822T231043Z-0111
+timestamp_utc: '2026-08-22T23:10:43Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 82d09d8824241d45f4ed4aa0a4b6380060ac4d8c   # RESOLVED with `git rev-parse HEAD`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed BL-...-0110.
+parent_entry_id: BL-20260822T223805Z-0110
+schema_version: 1
+
+action_summary: >
+  *** **THE FIFTH SEAT WAS DISPATCHED AND NEVER RAN TO A VERDICT. THE DISPATCH IS ISSUED; THE AUDIT IS
+  NOT DONE. THIS BOUNDARY EXECUTES THE STANDING DISPATCH RATHER THAN ISSUING A NEW ONE, AND SAYS SO IN
+  TERMS SO THE RECORD NEVER READS AS THOUGH ONE CONTINUOUS SEAT PRODUCED WHAT COMES BACK.** ***
+  A new Project Lead carrier booted at 82d09d8 against the same operator instruction that produced
+  BL-...-0109 and BL-...-0110. **BOTH ORDERED STEPS WERE ALREADY EXECUTED IN THE RECORD** — the
+  bounded increment landed at `9f7b764` and was reconciled at BL-...-0109; the fifth seat was
+  dispatched at BL-...-0110. **WHAT WAS NOT DONE, AND IS THE ONLY THING LEFT IN THE ORDER, IS THE
+  AUDIT ITSELF.** `governance/assurance/WO-2R3/` holds three documents and all three are the FOURTH
+  seat's. **NO FIFTH-SEAT ARTEFACT EXISTS ANYWHERE IN THE RECORD.**
+  *** **A DISPATCH THAT IS ISSUED IS NOT AN AUDIT THAT HAPPENED, AND THE BOOT READS THE SAME EITHER
+  WAY.** The record said "the fifth seat is OUT" and the tree agreed with that sentence, so continuity
+  matched and the project booted GREEN — **WITH NOBODY ACTUALLY READING THE TREE.** That is a real hole
+  in this project's continuity model and it is raised below as CD-PL-F99 against this seat's own
+  practice.
+
+the_reconciliation_performed_BY_MEASUREMENT_NEVER_BY_READING_THE_RECORD:
+  what_the_record_claimed: >
+    BL-...-0110: the increment landed at `9f7b764`; CD-ASR-WO2R3-02 dispatched over the whole of
+    WO-2R3 at that SHA under `governance/dispatch/CD-DISPATCH-WO2R3-ASSURANCE-05.yaml`; phase GATE;
+    "nothing moves while it is out"; next safe action **STOP AT THE VERDICT**.
+  step_1_of_the_operator_order_the_bounded_increment_ALREADY_LANDED: >
+    **MEASURED, NOT ASSUMED.** BL-...-0109 reconciles the remediation increment at `9f7b764` and its
+    seven items are exactly the four the auditor proposed (A, B, C, D) plus the three declared limits
+    ordered rewritten to measured reach by PO-DECISIONS-0011 ruling 3 (E1, E2, E3). **CD-PL-F96 IS
+    CLOSED ON ITS NAMED PROOF** — the entry carries the field `CD_PL_F96_CLOSED_ON_ITS_NAMED_PROOF`,
+    which is ruling 1's acceptance-language addition. **`9f7b764` IS THE POST-INCREMENT SHA RULING 5
+    NAMES.** There is no second increment owed and opening one would be re-doing landed work.
+  step_2_the_dispatch_ISSUED_AND_COMPLETE: >
+    `CD-DISPATCH-WO2R3-ASSURANCE-05.yaml`, 507 lines, status ISSUED, actor CD-ASR-WO2R3-02, read-only,
+    the CD-D-129 clauses carried verbatim, nine disclosures, six declared PL non-verifications, targets
+    T1-T13. **IT IS A COMPLETE AND SUFFICIENT BRIEF AND THIS SEAT DID NOT NEED TO WRITE ANOTHER ONE.**
+  step_3_and_the_finding_THE_AUDIT_NEVER_HAPPENED: >
+    `ls governance/assurance/WO-2R3/` -> `ADDENDUM-T2-ADAPTER-BOUNDARY.md`, `SUPPLEMENT-T2-GRADING.md`,
+    `VERDICT.md` — **ALL THREE DATED 22 Aug 21:38-21:54 LOCAL, ALL THREE THE FOURTH SEAT'S, ALL THREE
+    PREDATING THE DISPATCH ITSELF (22:45Z).** Nothing else. No verdict, no partial, no note.
+  the_target_RE_MEASURED_AT_THIS_BOUNDARY_AND_UNMOVED: >
+    In `/srv/crash-detector-wo2r3-audit5`: `git rev-parse HEAD` ->
+    **9f7b7640f692442e22a47ecac3d4a643057729d5**; `git rev-parse HEAD^{tree}` ->
+    **224debf13475acdb10944bfa201a82c5d3d199d8**; `git status --porcelain | wc -l` -> **0**; and the
+    dispatch's own fingerprint recipe -> **50b356ac2de1a404b75a6fb9e478fe5d4141c4fdc6ad34ddfbfcd4a5a92ee7b9**,
+    **BYTE-IDENTICAL TO THE VALUE RECORDED IN THE DISPATCH.** The tree object was independently
+    confirmed from `main` with `git rev-parse 9f7b764^{tree}` — same object. **THE TARGET THE DISPATCH
+    NAMES IS THE TREE THAT IS THERE, AND IT HAS NOT MOVED IN THE INTERVAL.**
+  the_boot_verdict_and_why_it_reads_AMBER_here_and_GREEN_in_a_clone: >
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` in `/srv/crash-detector` -> **AMBER**,
+    CONTINUITY_MATCH/RESUME_AMBER, **blocking_failures EMPTY**, current_phase GATE, observed_sha
+    82d09d8. The same boot in a clean `--no-hardlinks` clone at the SAME SHA (CD-PL-F72) -> **GREEN**,
+    CONTINUITY_MATCH/RESUME_GREEN. **THE DELTA IS THE WORKING TREE, NOT THE RECORD:** the live worktree
+    carries untracked operator-wrapper scaffolding (`.wo2*` prompts, runners and run logs) and
+    `pbg/tools/pbg/__pycache__/`. **NOT TOUCHED AND NOT TIDIED** — the `pbg/` artefacts are under a
+    read-only path (PBG-FWK-013) and the rest is the operator's, not the project's.
+
+CD_PL_F99_RAISED_AGAINST_THIS_SEATS_OWN_CONTINUITY_MODEL: >
+  **A SUB-AGENT DISPATCH IS RECORDED AS ISSUED AND THERE IS NO RECORD FIELD THAT DISTINGUISHES
+  "ISSUED" FROM "ISSUED AND ACTUALLY CARRIED".** BL-...-0110 wrote "THE FIFTH SEAT IS OUT" and the
+  continuity check confirmed the record and the tree agreed — because they did. **THE ONE THING
+  CONTINUITY DID NOT CHECK IS WHETHER AN AGENT WAS ALIVE TO DO THE WORK**, and PBG-CONT-007 already
+  says a sub-agent result that exists only in conversation is not project state. **THE CONVERSE IS THE
+  HOLE: A SUB-AGENT THAT EXISTS ONLY IN A DEAD CONVERSATION IS NOT WORK IN PROGRESS EITHER, BUT THE
+  RECORD READS AS THOUGH IT WERE, AND "NOTHING MOVES WHILE IT IS OUT" THEN PARKS THE PROJECT
+  INDEFINITELY ON A SEAT THAT WILL NEVER RETURN.** Found by looking, not by any control firing.
+  **THIS IS THE PROJECT LEAD'S FOURTH NAMED METHOD DEFECT (CD-PL-F86, F94, F98, F99) AND THE LIST IS
+  STILL NOT CLAIMED COMPLETE.**
+
+the_evidence_that_a_first_carrier_STARTED_and_what_is_and_is_not_inherited:
+  what_was_found_on_the_box: >
+    `/tmp/audit5_pytest.txt`, mtime 22:43Z — **THREE MINUTES AFTER THE DISPATCH BOUNDARY COMMIT
+    (22:40:54Z)** — containing a full suite run reading **`2 failed, 1549 passed in 15.63s`**, the two
+    failures being the disclosed `tests/test_judgement_path_doors.py` pair. So a carrier for
+    CD-ASR-WO2R3-02 **DID START, RAN AT LEAST THE SUITE, AND DIED WITH ITS CONTEXT.** The Project Lead
+    carrier that dispatched it died in the same window (the operator wrapper's run-1 log reads
+    `Execution error`).
+  what_is_inherited_from_it: '**NOTHING. NOT ONE MEASUREMENT, NOT ONE GRADE, NOT ONE LINE.** PBG-CONT-007.'
+  and_the_residual_risk_STATED_RATHER_THAN_OMITTED: >
+    **THE DEAD CARRIER LEFT ARTEFACTS IN `/tmp` AND THE NEW CARRIER SHARES THAT FILESYSTEM.** A fresh
+    seat that stumbles on `/tmp/audit5_pytest.txt` and reads it as its own measurement would be
+    inheriting a dead agent's evidence without knowing it. **THE BRIEF THEREFORE ORDERS THE SEAT TO
+    TRUST NO PRE-EXISTING `/tmp` ARTEFACT AND TO WORK IN A FRESH DIRECTORY OF ITS OWN.** Named here so
+    that if it happens anyway, it is a graded failure and not a surprise.
+
+decisions_taken_at_this_boundary:
+- id: CD-D-148
+  title: >
+    **THE STANDING DISPATCH IS EXECUTED, NOT REISSUED. SAME AUTHORITY, SAME ACTOR_ID, SAME TARGET,
+    SECOND CARRIER — AND THE RECORD SAYS "SECOND CARRIER" OUT LOUD.**
+  the_question_it_answers: >
+    The seat authorised by PO-DECISIONS-0011 ruling 5 was dispatched and its carrier died before it
+    produced anything. Does the Project Lead issue a NEW dispatch with a NEW actor_id, or carry the
+    issued one?
+  the_ruling: >
+    **CARRY IT. CD-DISPATCH-WO2R3-ASSURANCE-05 STANDS UNCHANGED AND UNEDITED, AND A SECOND CARRIER IS
+    LAUNCHED UNDER IT.**
+  why: >
+    **(1) THE AUTHORITY IS THE PRODUCT OWNER'S AND NOTHING ABOUT IT EXPIRED.** Ruling 5 authorises a
+    fifth fresh seat over the whole of WO-2R3 at the post-increment SHA. That is still exactly what is
+    being launched. **(2) THE TARGET IS PROVABLY THE SAME TREE** — SHA, tree object, porcelain and the
+    dispatch's own fingerprint all re-measured at this boundary and all identical. **(3) REWRITING THE
+    BRIEF WOULD BE THE PROJECT LEAD RE-DRAFTING AN AUTHORISED DISPATCH WITH NO RULING TO DO SO**, and
+    the 507-line brief contains disclosures and self-accusations that a rewrite could only weaken.
+    **(4) THE INDEPENDENCE PROPERTY THAT MATTERS IS UNHARMED:** the new carrier is a genuinely fresh
+    agent that has never read this surface, which is exactly what ruling 5 bought.
+  how_it_could_be_wrong: >
+    **THE ACTOR_ID NOW NAMES TWO DIFFERENT AGENT INSTANCES.** If a future reader treats
+    `CD-ASR-WO2R3-02` as one continuous seat, they will believe the verdict's author ran the suite at
+    22:43Z when in fact a dead predecessor did. **THAT IS WHY THIS ENTRY SAYS SECOND CARRIER IN TERMS
+    AND WHY THE FIRST CARRIER'S ONLY ARTEFACT IS NAMED WITH ITS TIMESTAMP.** If the Product Owner
+    prefers a distinct actor_id, that is a one-line correction to make and this seat will make it.
+- id: CD-D-149
+  title: '**THE SEAT WRITES ITS VERDICT DURABLY AS IT GOES, RATHER THAN ONCE AT THE END.**'
+  the_question_it_answers: >
+    A carrier has now died mid-audit once, costing everything it had measured. What stops the next one
+    costing the same?
+  the_ruling: >
+    **THE BRIEF ORDERS INCREMENTAL, APPEND-AS-YOU-MEASURE WRITING** to its own verdict file under
+    `governance/assurance/WO-2R3/` on `main`, which the dispatch already names as an explicitly safe
+    artefact. A carrier death then costs the TAIL of the audit, not all of it.
+  why: >
+    This is a continuity fix, not an assurance instruction — **IT CHANGES WHEN THE SEAT WRITES, NEVER
+    WHAT IT IS ALLOWED TO CONCLUDE.** The Project Lead has no authority over the latter and is not
+    touching it.
+  how_it_could_be_wrong: >
+    **A PARTIAL FILE CAN BE MISREAD AS A VERDICT.** The seat is therefore ordered to head the file as
+    IN PROGRESS and to write its verdict line only when it is genuinely finished — **AND THE PROJECT
+    LEAD IS ORDERED BY THIS ENTRY NOT TO RECONCILE A FILE THAT STILL SAYS IN PROGRESS AS THOUGH IT
+    WERE A RETURN.**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT OPEN AN INCREMENT.** Step (1) of the order was already landed and reconciled; re-doing
+  it would be manufacturing work.
+  **IT DID NOT EDIT ONE WORD OF THE DISPATCH**, nor of any auditor document, nor of BL-...-0109 or
+  BL-...-0110 (PBG-CONT-003 — corrections supersede, never edit).
+  **IT DID NOT GRADE ANYTHING** (PBG-AUTH-006). Not T2, not CD-AC-002, not CD-AC-005, not the RED.
+  **IT DID NOT RULE ON CD-D-146** — `guarded` remains the Product Owner's, unruled and unrecommended.
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-130). T8 is still the input and it is
+  still unmeasured by anyone.
+  **IT DID NOT TIDY THE UNTRACKED WORKING TREE** and did not touch `pbg/`.
+
+next_safe_action: >
+  *** **LAUNCH THE SECOND CARRIER UNDER THE STANDING DISPATCH, THEN STOP AT ITS VERDICT.** ***
+  **1. RECONCILE THE RETURN BY MEASUREMENT, NEVER BY READING ITS CLAIMS**, and bank it VERBATIM
+  BESIDE the fourth seat's three documents — never inside them (CD-D-143, PBG-CONT-003).
+  **2. DO NOT RECONCILE A FILE STILL HEADED IN PROGRESS** (CD-D-149).
+  **3. ONLY AFTER T8 LANDS: the eleven Class-2 dispositions** (CD-D-130, PO-DECISIONS-0011 ruling 6).
+  **4. THEN the Product Owner's acceptance of WO-2R3, and not before.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable). **DO NOT** make
+  the doors row green by any route. **DO NOT** argue the verdict down or up — the promise made to the
+  fourth seat and honoured in both directions is made to this carrier on the same terms.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36).
