@@ -801,3 +801,17 @@ still says in terms that this amendment *does not claim the plant is the last pl
 computation in one executor *"should be stated as a risk and not as a win"*. An amendment reads
 differently once it is in force, and that paragraph is the one most likely to be quietly improved.
 It was left alone on purpose.
+
+---
+
+## PO CORRECTION — 2026-08-22 (PO-DECISIONS-0008 ruling 1) — §D.3 part 1
+
+The wording "an engine-owned instant already established by `ensure_utc` and passed as a
+*value*" was incomplete: a single instant cannot measure an elapsed span, and the timeout
+refusal requires one (found by CD-ENG-WO2R3-01, CD-ENG-WO2R3-F08; ruled CD-D-115). The
+operative requirement is and was **a caller supplies neither**. Corrected reading: the
+instant is passed as a value; where an elapsed span is required, the engine derives it from
+its OWN module-internal monotonic source, which takes no parameter; `sleep` is a named
+member of a closed `DelayKind`. No parameter exists through which a caller clock, caller
+sleep, or caller span can arrive. The implementation at increment 3 already satisfies this
+corrected reading; the correction changes the document, not the code.
