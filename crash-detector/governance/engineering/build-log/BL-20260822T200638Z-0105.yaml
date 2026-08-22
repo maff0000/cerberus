@@ -207,7 +207,4 @@ next_safe_action: >
   (PO-DECISIONS-0010 ruling 5). CD-PL-F84..F93 remain open. CD-ENG-WO2R3-F10, F13, F16, F18, F19,
   F22, F23, F24, F25 remain open. IMP-022 is the framework's and not this project's.
 
-continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS
-                                    # FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed
-                                    # (CD-PL-F36). The CD-RULE-008 pristine-clone boot verdict is
-                                    # taken AT that SHA BEFORE this field is written.
+continuity_record_commit: b9e0da5f0fa06a31084f7c9287bc239eabd6855f   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE SEVENTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT b9e0da5 BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont7 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont7 && git checkout -q -B main b9e0da5` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, observed_sha b9e0da5f0fa06a31084f7c9287bc239eabd6855f, branch main.
