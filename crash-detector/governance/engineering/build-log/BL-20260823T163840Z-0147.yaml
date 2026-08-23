@@ -1,0 +1,162 @@
+# ================================================================================================== #
+# BL-20260823T163840Z-0147 — PROJECT LEAD BOUNDARY. **INCREMENT 13 IS RETURNED, MERGED AT THE
+# ACCOUNTABLE SEAT, AND RECONCILED BY MEASUREMENT. IT IS BANKED AND IT IS NOT ACCEPTED
+# (`PBG-AUTH-003`, `CD-D-180`).**
+#
+# `CD-ENG-COORD-FIX-01` returned **`READY_FOR_ASSURANCE` at `105db79`** with **SIX FINDINGS, FOUR OF
+# THEM AGAINST ITSELF.**
+#
+# **BOTH OF THE TENTH GATE'S NAMED ACCEPTANCE COMMANDS WERE RE-RUN IN THIS SEAT'S OWN SHELL, WITH
+# THEIR CONTRAST ARMS, AND THE FIGURES BELOW ARE THIS BOUNDARY'S OWN MEASUREMENTS AND NOT THE
+# ENGINEER'S CARRIED FORWARD.** That distinction is `T7`, the inherited-claim mechanism, and the
+# ninth verdict raised it against this seat three times in one entry.
+#
+# **THE ENGINEER'S `F01` IS CONFIRMED AND IS SHARPER THAN IT STATED. IT IS RE-RAISED AS `CD-PL-F154`
+# AND IT IS THE FOUNDING INCIDENT'S EXACT SHAPE, ARRIVING THROUGH THE DOOR OF ITS OWN FIX.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T163840Z-0147
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T16:38:40Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1568164, wrapper PID 1568163, `timeout 21600` from 15:30Z. `ps` shows exactly ONE Project Lead process.'
+phase: GATE   # **MOVED FROM BUILD. Increment 13 is banked; the TENTH fresh Assurance seat goes out next and NOTHING ELSE MOVES.**
+branch: main
+base_sha: b165dd99a22a9a65b8e743274cec02ed7010dc22   # the merge commit. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+engineer_tip: 105db79a0bf990ff6aa82031ce8a7afb4a68435e
+final_instrument_sha: ab6cf4c805da4896ece4b4ba3072bd0920546586   # the Engineer's own disclosure: the last commit adds only its Build Log entry.
+
+# ================================================================================================== #
+# THE MERGE, AND THE INSTRUMENT THAT COULD NOT BE RUN OVER IT.
+# ================================================================================================== #
+the_merge:
+  form: '`git merge --no-ff inc13-coordination-fix` at the accountable seat (`CD-D-174`), producing `b165dd9`.'
+  three_assertions_MEASURED_DIRECTLY:
+    containment: '**29 files. ALL inside `tools/coordination/**`, `governance/coordination/**`, and build-log `0400`-`0499`. ZERO protected paths** — measured by `git diff --name-only 480da0f..HEAD | grep -E ''^(pbg/|BLUEPRINT.md|PID.md|governance/blueprint/|governance/decisions/|governance/dispatch/|governance/assurance/|governance/engineering/ACTIVE_WORK.yaml|tools/reconciliation/|src/)''` -> **NO MATCH.**'
+    identity: '**7 commits, ONE identity.** `git log --format=%an 480da0f..HEAD | sort -u` -> `CD-ENG-COORD-FIX-01` and nothing else.'
+    non_overlap: '**Trivial and stated as such rather than claimed as a pass: `CD-D-181` sequential single-seat means one seat was alive. This assertion was not tested by this increment because nothing tested it.**'
+    numstat: '**3028 insertions, 153 deletions, 29 files.**'
+  build_log_blocks: '`BL-20260823T162415Z-0400.yaml` and `BL-20260823T163242Z-0401.yaml` — **BOTH inside the seat''s own `0400`-`0499` block (`CD-D-175`). Nothing outside it.**'
+  THE_MERGE_INSTRUMENT_WAS_NOT_RUN_AND_THE_REASON_IS_DISCLOSED_RATHER_THAN_THE_ABSENCE_HIDDEN: >
+    `tools/coordination/merge_reconcile.py` **REQUIRES a claim record (`--claim`)**. **NO CLAIM WAS
+    TAKEN FOR INCREMENT 13**, because nothing on this project carries the claim step — that is `Q11`
+    and the Product Owner has routed it to the framework unfixed (ruling 4). **RUNNING IT AGAINST
+    INCREMENT 12's CLAIM WOULD BE CONSTRUCTING STATE SO A CONTROL APPEARS TO PASS WHEN THE AUTHENTIC
+    TARGET WAS NOT VERIFIED, WHICH IS NON-WAIVABLE AND WAS NOT DONE.** So the three assertions were
+    measured directly by command, above, and the instrument's absence is recorded as `CD-PL-F155`.
+    **INCREMENT 12'S MERGE WAS ADMITTED BY THIS INSTRUMENT; INCREMENT 13'S COULD NOT BE. THE
+    DIFFERENCE IS NOT THE MERGE — IT IS THAT ONE INCREMENT HAD A CARRIER AND THE OTHER DID NOT.**
+
+# ================================================================================================== #
+# THE TWO NAMED ACCEPTANCE COMMANDS, RE-RUN IN THIS SEAT'S OWN SHELL, WITH CONTRAST.
+# **THESE ARE MEASUREMENTS. THEY ARE NOT A GRADE. THE TENTH SEAT GRADES (`PBG-AUTH-003`).**
+# ================================================================================================== #
+reconciliation_by_measurement:
+  command_1_race_scope_py:
+    what_was_run: '`cd /tmp/cd-pl-seat-01/race && python3 -B race_scope.py 200`, the banked harness with ONLY its hard-coded `TREE` re-pointed at this seat''s own sandbox. **PROVED BY DIFF: `diff <(sed ''s/^TREE = .*/X/'' <banked>) <(sed ''s/^TREE = .*/X/'' <mine>)` -> IDENTICAL. ONLY THE TREE LINE DIFFERS. The banked copy was not edited.**'
+    sandbox: '`git clone --no-hardlinks` of `/srv/crash-detector` checked out at `b165dd9`. `stat -f -c %T` -> `ext2/ext3`, the same filesystem class the ninth seat measured on.'
+    ARM_1_THE_REPAIRED_TREE_b165dd9: |
+      ROUNDS=200  concurrency=2  DIFFERENT task_ids, IDENTICAL write_scope='src/contended/**'
+        exactly-one-winner (CORRECT) : 200
+        ZERO winners                 : 0
+        *** TWO WINNERS (DOUBLE-TAKE ON ONE SCOPE) *** : 0
+    ARM_2_THE_CONTRAST_AND_IT_IS_WHAT_MAKES_THE_ZERO_MEAN_ANYTHING: |
+      # SAME harness, SAME machine, SAME 200 rounds, tree checked out at the UNFIXED 480da0f
+        exactly-one-winner (CORRECT) : 5
+        ZERO winners                 : 0
+        *** TWO WINNERS (DOUBLE-TAKE ON ONE SCOPE) *** : 195
+      first double-take verbatim, both rc=0, both head=480da0f49bb265ce782004c5d925febb94314c56
+    the_only_variable: '**THE TREE. NOTHING ELSE.** `195 -> 0`. A zero with no contrast arm is indistinguishable from a probe that never ran (`CD-D-079`), and this boundary refuses to bank one.'
+    THE_THREE_COUNTS_DO_NOT_MATCH_AND_ARE_NOT_ROUNDED_TO_MATCH: '**THE NINTH ASSURANCE SEAT MEASURED 193. THE ENGINEER MEASURED 194. THIS SEAT MEASURED 195.** Same defect, same class, different scheduling. **NOBODY''S FIGURE IS ADJUSTED TO AGREE WITH ANYBODY ELSE''S, AND THE SPREAD IS ITSELF EVIDENCE THAT THE THREE RUNS WERE INDEPENDENT.**'
+  command_2_the_F08_both_arms_test:
+    what_was_run: '`PLANT_SCRATCH=/tmp/cd-pl-seat-01/plants SOURCE_ROOT=/srv/crash-detector sh governance/coordination/plants/PLANT-COORD-05.run.sh`'
+    result: '**`ARMS: 5 / 5 contrasted as required` · `PLANT VERDICT: LIVE` · rc=0**, against the merged tree at `b165dd9` (the plant prints its own `[TREE] head=b165dd99...`, so the authentic target is in its own output and not in this seat''s assertion).'
+    the_five_arms: '**ARM 1** overlap under ONE identity REFUSED · **ARM 2** the four skip lines RESTORED by `git apply` from a checked-in patch and the SAME input ADMITTED rc=0 · **ARM 3** same-identity DISJOINT pair STILL PROCEEDS IN PARALLEL · **ARM 4a** same-identity `READ x READ` still ADMITTED · **ARM 4b** one claim reading what it is about to write still ADMITTED.'
+    why_arms_3_and_4_are_the_ones_that_matter_here: '**THEY ARE THE ANSWER TO THE TRAP THIS BOUNDARY WROTE INTO THE DISPATCH.** A four-line deletion would have passed arms 1 and 2 and FAILED 3, 4a and 4b — it would have converted a blind spot into a concurrency ban. **THE FIX IS NARROWER THAN THE DELETION AND THE PLANT PROVES IT IS.**'
+    and_this_seat_ran_it_in_ITS_OWN_SCRATCH: '`PLANT_SCRATCH` is overridable **because `CD-ENG-COORD-FIX-01` made it so at this increment**, having found increment 12 hard-coding `CD-ENG-COORD-01`''s scratch — *"a second seat running these plants would have written into a first seat''s scratch: the coordination defect, inside the coordination plants."* **THIS SEAT IS THE SECOND SEAT, AND IT IS THE FIRST BENEFICIARY OF THAT FIX.**'
+
+# ================================================================================================== #
+# THREE FINDINGS RAISED BY THIS SEAT. **THE FIRST IS THE SERIOUS ONE.**
+# ================================================================================================== #
+CD_PL_F154_THE_FOUNDING_INCIDENT_ARRIVED_THROUGH_THE_DOOR_OF_ITS_OWN_FIX:
+  severity: HIGH
+  provenance: '**RAISED BY THE ENGINEER AGAINST ITSELF as its `F01`. CONFIRMED BY THIS SEAT BY DIRECT MEASUREMENT OF THE REFLOG, AND IT IS SHARPER THAN THE ENGINEER STATED.**'
+  what_happened: 'The Engineer copied its worktree with `cp -a`, which carried the `.git` **gitlink**, so commits made in what it believed was a throwaway sandbox landed on the REAL `inc13-coordination-fix` branch.'
+  MEASURED_BY_THIS_SEAT_AND_NOT_TAKEN_ON_REPORT: |
+    git reflog show inc13-coordination-fix
+      fd48168 @{8}:  commit: c3      A:PROJECT_LEAD_SEAT_01 <pl@x>  C:PROJECT_LEAD_SEAT_01
+      d61c61b @{9}:  commit: c2      A:PROJECT_LEAD_SEAT_01 <pl@x>  C:PROJECT_LEAD_SEAT_01
+      47db837 @{10}: commit: c1      A:PROJECT_LEAD_SEAT_01 <pl@x>  C:PROJECT_LEAD_SEAT_01
+      6a96643 @{11}: commit: c2      A:PROJECT_LEAD_SEAT_01 <pl@x>  C:PROJECT_LEAD_SEAT_01
+      f32c97c @{12}: commit: c1      A:PROJECT_LEAD_SEAT_01 <pl@x>  C:PROJECT_LEAD_SEAT_01
+      480da0f @{7}:  reset: moving to 480da0f
+  WHERE_THIS_SEAT_MAKES_IT_SHARPER: >
+    **THE ENGINEER REPORTED THIS AS A FORGOTTEN COMMIT IDENTITY. IT IS NOT.** The email is `pl@x`
+    and not `project-lead-seat-01@seats.crash-detector.invalid`: the seat was **DELIBERATELY
+    IMPERSONATING `PROJECT_LEAD_SEAT_01` AS A TEST FIXTURE**, to exercise
+    `check_lease_held.py --identity`, and the fixture ESCAPED ITS SANDBOX through the gitlink.
+    *** **SO THE MECHANISM IS NOT "A SEAT FORGOT ITS IDENTITY". IT IS "A SEAT DELIBERATELY MINTED
+    THE ACCOUNTABLE SEAT'S IDENTITY FOR A TEST, AND NOTHING IN THIS REPOSITORY NOTICED WHEN IT
+    LANDED ON A REAL BRANCH."** *** A naive `git log --format=%an` audit of that branch would have
+    counted five Project Lead commits that the Project Lead did not make.
+  the_residue_MEASURED: '**ZERO ON THE BRANCH.** `git log --format=%an 480da0f..inc13-coordination-fix | sort -u` -> `CD-ENG-COORD-FIX-01` ALONE. The five commits are unreachable, survive only in a local reflog that expires, were never pushed, and **DID NOT ENTER THE MERGE.** Nothing was rewritten because no Build Log entry existed to rewrite (`PBG-CONT-003` intact).'
+  why_it_is_HIGH_anyway: >
+    **THIS IS `PO-DECISIONS-0021` RULING 2's INCIDENT IN MINIATURE — commits under the accountable
+    seat's identity, on a real branch, that nothing detected — AND IT OCCURRED INSIDE THE INCREMENT
+    BUILT TO PREVENT IT, ON THE SAME DAY THE PRODUCT OWNER RULED THAT `CD-RULE-002` BINDS EVERY HAND
+    INCLUDING ITS OWN.** The Engineer caught it, disclosed it and reverted it. **NO INSTRUMENT DID.
+    THAT IS THE FINDING.** It is `Q11` wearing a different face: the controls that would speak to
+    this exist and nothing runs them.
+  what_this_seat_is_NOT_doing: '**NOT grading it, NOT closing it, and NOT proposing the fix.** It goes to the tenth Assurance seat as raised, and the carriage question it feeds is the Product Owner''s and the framework''s.'
+
+CD_PL_F155_THE_MERGE_INSTRUMENT_CANNOT_GRADE_A_SEQUENTIAL_INCREMENT:
+  severity: MEDIUM
+  what: '`merge_reconcile.py` requires `--claim`. A sequential single-seat increment takes no claim, because nothing carries the claim step. **THE INSTRUMENT IS THEREFORE UNRUNNABLE FOR EXACTLY THE OPERATING MODE `CD-D-181` MANDATES, AND `CD-D-181` IS THE MODE THE PRODUCT OWNER JUST MADE STANDING (ruling 1).**'
+  why_it_is_not_merely_awkward: '**INCREMENT 12''s MERGE WAS ADMITTED BY THIS INSTRUMENT AND INCREMENT 13''s COULD NOT BE.** The difference is not the merge and not the risk — it is that one increment happened to have a claim record. **A CONTROL WHOSE APPLICABILITY DEPENDS ON A CARRIER NOBODY RUNS IS AVAILABLE EXACTLY WHEN IT IS NOT NEEDED.**'
+  what_was_done_instead: 'The three assertions measured directly by command and recorded above. **THE SUBSTITUTE IS DISCLOSED AS A SUBSTITUTE. IT IS NOT CALLED A PASS OF THE INSTRUMENT.**'
+
+CD_PL_F156_TWO_INCREMENT_12_DELIVERABLES_CONTRADICT_EACH_OTHER_AND_THIS_SEAT_IS_ONE_OF_THE_PARTIES:
+  severity: MEDIUM
+  provenance: '**RAISED BY THE ENGINEER AS ITS `F03`. CONFIRMED AND QUANTIFIED BY THIS SEAT.**'
+  the_contradiction: '`CD-D-175` gives each seat its own build-log ID block (`0100`-`0199` Project Lead, `0200`-`0299` lane, `0300`-`0399` `CD-ENG-COORD-01`, `0400`-`0499` `CD-ENG-COORD-FIX-01`). `check_build_log_pointer_atomic.py`''s `L3` decides `POINTER_STALE` as *"the pointer names an entry that EXISTS but is not the HIGHEST-NUMBERED entry in that commit''s tree"*. **ONCE A HIGHER-BLOCKED SEAT COMMITS, THE ACCOUNTABLE SEAT''S POINTER IS STALE BY CONSTRUCTION AND CANNOT BE MADE UNSTALE WITHOUT POINTING AT ANOTHER SEAT''S ENTRY.**'
+  MEASURED_ON_THE_MERGED_TREE: |
+    python3 -B tools/coordination/check_build_log_pointer_atomic.py --root .
+      violations[POINTER_STALE]     = 23
+      violations[POINTER_NOT_MOVED] = 3
+      violations[POINTER_DANGLING]  = 1
+      failing_positions = [30, 76, 85, 90, 91, 92, 96, 97, 98, 99, 100, 101]
+      VERDICT: REFUSED — 25 violating commit(s) in 101 application(s) over 224 commit(s)     rc=1
+  the_quantification_THIS_SEAT_ADDS: >
+    **`CD-PL-F132` MEASURED THE ORIGINAL DEFECT AT 4 FAILURES IN 91 APPLICATIONS, AT POSITIONS 76,
+    85, 90 AND 91.** Those four are the real, historical discipline failure. **POSITIONS 92 AND
+    96-101 ARE NEW, AND THEY ARE NOT A DISCIPLINE FAILURE — THEY ARE `CD-D-175` MEETING `L3`.**
+    The instrument's own `L4` already declares the limit — *"'highest number in this tree' is a
+    per-branch notion and the instrument says so rather than claiming a global order"* — **AND ITS
+    VERDICT LINE COUNTS THEM ANYWAY. THE INSTRUMENT DECLARES A LIMIT AND THEN REFUSES ON IT.**
+  why_this_seat_does_not_fix_it: '**IT IS OUT OF `PO-DECISIONS-0022` RULING 5''s NAMED FIVE, AND THE PROJECT LEAD IS ONE OF THE TWO PARTIES THE CONTRADICTION BINDS.** A seat that redefines the staleness rule it is being measured by has moved the goalposts. **Recorded, routed, not resolved here.**'
+
+# ================================================================================================== #
+# WHAT THE ENGINEER RAISED AGAINST ITSELF, CARRIED FORWARD UNSOFTENED.
+# ================================================================================================== #
+the_engineers_own_findings_carried_verbatim_in_substance:
+  F02_MEDIUM: '**It also closed the identical TOCTOU in `lease.py`, which NO finding named.** It declared this in five places and observed that `SCOPE_INSUFFICIENT` was available to it and that the Project Lead may disagree. **THIS SEAT DOES NOT GRADE IT. IT IS FLAGGED TO THE TENTH ASSURANCE SEAT AS A SELF-DECLARED SCOPE WIDENING, WHICH IS EXACTLY THE FORM THE ROLE CONTRACT ASKS FOR WHEN A SEAT TAKES ONE.**'
+  F04_LOW: '`lease.py` lacks `claim.py`''s symlink/directory-literal validation. **Declared, not fixed.**'
+  F05_CONTROL_NOT_SATISFIABLE: '**Full `--pid` authentication is NOT SATISFIABLE on this platform** — a sibling pid in the caller''s own session still passes, and neither timestamp withstands forgery. **The dispatch told the seat this return was acceptable for that half, and the seat took it and said so plainly rather than shipping a guard that pretends.**'
+  F06_MEDIUM_against_itself: '**`PLANT-COORD-06` arm 2 was FLAKY BY CONSTRUCTION** — it passed twice, then failed over a defect it had reproduced 27/40 times. The seat''s own diagnosis: **all three of its plant defects were the same error, asserting on something ADJACENT to the proposition**, and each was caught only because arm 2 was a real counterfactual. **THIS IS THE PROJECT''S OWN WORST HABIT, FOUND BY THE SEAT IN ITS OWN WORK, AND IT SUPERSEDED ITS OWN RETURN TO SAY SO.**'
+  the_seats_verdict_on_THIS_SEATS_boundary_act: '**NO FINDING.** It independently ran `check_blueprint_carried_po_0022_verbatim.py` (rc=0) and `--counterfactual` (rc=1), confirmed §17 verbatim against ruling 2, and confirmed the 0019 sibling is rc=1 at 9/10 exactly as declared — *"not broken, not edited."* **AN ABSENCE OF FINDINGS FROM AN INVITED ATTACK IS WORTH LESS THAN A FINDING AND IS RECORDED AS WHAT IT IS.**'
+
+# ================================================================================================== #
+# STANDING. **NOTHING BELOW MOVED AND NOTHING BELOW MOVES BECAUSE OF THIS INCREMENT.**
+# ================================================================================================== #
+standing_unchanged:
+  - '`CD-AC-005` **RED** · `CD-AC-002` **AMBER, NOT CLOSED** — neither moved, neither touched.'
+  - 'the WO-2 gate **SHUT** · `wo-2r3` **FROZEN at `be0b355`** — the lane was not read for write, not merged, not touched.'
+  - '`CD-ASR-WO2R3-04-F01` **NOT CLOSED** · six `DEFECT_OPEN` tier-1 sites · `CD-F-0001`-`CD-F-0004` **ALL OPEN**.'
+  - '**`Q11` — NINE (now more) CONTROLS, ZERO CARRIERS — NOT CLOSED AND NOT TOUCHED.** Ruling 4 routed it to the framework with its priority INVERTED. **The Engineer carried nothing and was right not to.**'
+  - '**`F10`, `F12`, `F13`, `F14` — OUT OF RULING 5''s NAMED FIVE AND STILL OPEN.** The Engineer did not fix them and was instructed not to.'
+  - '**PARALLEL REMAINS STRUCK (`CD-D-181`).** Increment 13 is the fix, NOT the proof; the proof is a gate this seat does not grade. **THE OVERRIDE IS MATT''S ALONE.**'
+  - '`/srv/crash-detector-inc12` **RETAINED**, untouched. `/srv/crash-detector-inc13` retained at `105db79`.'
+
+next:
+  immediately: '**ACT 3 — THE TENTH FRESH ASSURANCE SEAT**, over `b165dd9`, whose acceptance is the two named commands plus full disclosure and the `CD-D-129` clauses verbatim. **The Engineer and the Assurance Engineer are never the same agent (`PBG-SOD-001`, non-waivable).**'
+  the_stop: '*** **THE PROJECT LEAD STOPS DELIBERATELY AT THE TENTH GATE VERDICT. IT WILL BE BANKED VERBATIM BEFORE IT IS READ, RECONCILED BY MEASUREMENT, AND NOT ACCEPTED — ACCEPTANCE IS THE PRODUCT AUTHORITY''S (`PBG-AUTH-003`).** ***'
