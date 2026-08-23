@@ -38,6 +38,24 @@ written_utc: '2026-08-23T14:30:00Z'    # `date -u +%FT%TZ` (CD-RULE-005)
 written_by: CD-ENG-COORD-01
 authority: 'PO-DECISIONS-0021 rulings 3(a)-(d); CD-D-174; CD-D-175; CD-D-176'
 
+amended_at_increment_13:
+  by: CD-ENG-COORD-FIX-01
+  authority: 'PO-DECISIONS-0022 ruling 5 (five items, in the contrast form, and nothing else)'
+  what: >
+    **FIVE `declared_limit` FIELDS BELOW WERE FALSE OR INCOMPLETE AND ARE RE-DERIVED AGAINST WHAT
+    THE CODE NOW ENFORCES.** The sharpest was `CD-CT-003`, whose `L1` claimed WRITE x WRITE
+    disjointness *"over all live claims"* while the code skipped same-seat pairs in four lines
+    declared NOWHERE — not in the limit block, not in the contract, not in this register. That is
+    `GUARD_THE_INSTANCE_NOT_THE_CLASS` at the exact centre of the remedy, and the instance it
+    excluded was the FOUNDING INCIDENT: two sessions, ONE identity.
+  and_what_it_does_not_do: >
+    **IT CLOSES NO ROW AND CARRIES NO CONTROL.** Every instrument here still prints `IT IS NOT
+    INVOKED BY ANYTHING`, and that is `Q11`, routed to the framework with its priority INVERTED —
+    correctness before carriage (PO-DECISIONS-0022 ruling 4). **NO HOOK, NO WRAPPER, NO CI STEP AND
+    NO GIT HOOK WAS ADDED BY THIS SEAT.** `F10`, `F12`, `F13` and `F14` are OUT OF SCOPE and remain
+    OPEN; `F12` in particular is UNFIXED in its two sibling instruments, and `check_lease_held.py`
+    deliberately does NOT reproduce it (see `commit_facts`).
+
 # ================================================================================================== #
 rows:
 # ================================================================================================== #
@@ -49,13 +67,36 @@ rows:
   contract: governance/coordination/contracts/CD-CT-001-WORK-CLAIM-ATOMIC.md
   plant: governance/coordination/plants/PLANT-COORD-01.run.sh
   mutation: governance/coordination/plants/PLANT-COORD-01.mutation.patch
+  plant_scope_half: governance/coordination/plants/PLANT-COORD-06.run.sh
+  mutation_scope_half: governance/coordination/plants/PLANT-COORD-06.mutation.patch
+  acceptance_command: >
+    the ninth Assurance seat's OWN harness, banked at
+    governance/assurance/WO-2R3/evidence/CD-ASR-WO2R3-06/race_scope.py (sha256 13800ffa..., NOT
+    edited by this seat), cloned to scratch with only its hard-coded TREE re-pointed, at 200 rounds.
   invocation: 'python3 -B tools/coordination/claim.py claim --task T --seat S --write-scope G'
   closes_class: false
   declared_limit: >
     DECIDES mutual exclusion on a TASK ID by O_EXCL create, MEASURED atomic at 6400 concurrent
-    attempts / 200 rounds / 0 double-takes on this filesystem. DOES NOT DECIDE whether two
+    attempts / 200 rounds / 0 double-takes on this filesystem. **O_EXCL EXCLUDES ON THE FILENAME,
+    WHICH IS THE TASK ID, AND IS NOT AND NEVER WAS EXCLUSION ON A WRITE SCOPE.** DECIDES the WRITE
+    SCOPE conjunct of ruling 3 SEPARATELY AND **UNDER CONCURRENCY**: the live-claim scope check and
+    the take run inside ONE registry-directory critical section (registry.critical_section,
+    fcntl.flock), so the read that finds a colliding claim and the write that takes this one are a
+    single atomic act. DELIBERATELY DOES NOT SERIALISE WORK — the section is released before the
+    command returns, and two seats taking DISJOINT scopes both succeed. DOES NOT DECIDE whether two
     DIFFERENT task ids name the same work; DOES NOT DECIDE work done with no claim at all; DOES NOT
-    DECIDE a claim file edited by hand; REFUSES rather than proceeds on a network filesystem.
+    DECIDE a claim file edited by hand, and flock is ADVISORY so it binds every route through these
+    instruments and nothing else; REFUSES rather than proceeds on a network filesystem, and REFUSES
+    rather than proceeds if the critical section cannot be entered within 30s.
+  increment_13_correction: >
+    **CD-ASR-WO2R3-06-F04.** This row previously stated the O_EXCL measurement and stopped, in an
+    instrument whose ruling names TWO conjuncts. The write-scope conjunct was CHECK-THEN-WRITE and
+    had never been raced; when it was, 193 of 200 rounds put TWO SEATS ON ONE WRITE SCOPE, both
+    VERDICT: CLAIMED, both rc=0. Re-measured at increment 13 with the ninth seat's own harness:
+    **200 rounds, 200 exactly-one-winner, ZERO double-takes** against **194 double-takes on the
+    same harness at the unfixed baseline 480da0f**. PLANT-COORD-01's mutation gained a SECOND hunk
+    because mutating O_EXCL alone no longer falsifies the property — a HARDER counterfactual, not a
+    weaker one.
   residue_cd_rule_006: >
     TASK-ID SYNONYMY is NOT PROVED TO BE CARRIED ANYWHERE. The scope-overlap refusal is a PARTIAL
     carrier and that partiality is measured (PLANT-COORD-02 arm 1), not assumed.
@@ -74,7 +115,10 @@ rows:
   closes_class: false
   declared_limit: >
     DECIDES literal paths, recursive `p/**` prefixes, and single-segment `*`/`?` globs — the last
-    by EXACT product-automaton emptiness and not by a heuristic. REFUSES (fails closed to OVERLAP)
+    by EXACT product-automaton emptiness and not by a heuristic. **DECIDES PARENT-PATH
+    CONTAINMENT: a shorter non-recursive pattern whose every segment intersects a longer one names
+    a PARENT of what the longer names and is reported OVERLAP/PARENT_PATH, because a write to a
+    parent path reaches its children.** REFUSES (fails closed to OVERLAP)
     `**` mid-pattern, character classes and brace expansion. REFUSES at parse time `..`, absolute
     paths and the empty entry. DECIDES case collision conservatively. DOES NOT DECIDE symlink
     aliasing textually.
@@ -85,19 +129,53 @@ rows:
   arms: 4
   last_run_verdict: 'LIVE — 4/4 arms contrasted'
 
+  increment_13_correction: >
+    **CD-ASR-WO2R3-06-F11 — A DIRECTORY WAS CALLED DISJOINT FROM ITS OWN CONTENTS.** ONE depth rule
+    changed; the product automaton, the recursive-prefix rule and the case-collision rule are
+    untouched and were correct on every form the ninth seat put to them. MATCHING and OVERLAP are
+    different questions and increment 12 conflated them: a literal still MATCHES exactly one path,
+    and is never DISJOINT from what lies beneath it. **test_scope.py's case asserting
+    ['tools/coordination'] DISJOINT FROM ['tools/coordination/scope.py'] is INVERTED, not deleted —
+    that expectation WAS the defect, and this suite had a GREEN TEST OVER IT.** Unit tests: 31
+    cases, 0 failures (was 27).
+  additional_plant: governance/coordination/plants/PLANT-COORD-07.run.sh
+
 - id: CD-CT-003-LIVE-SCOPE-DISJOINT
   delivers: 'PO-DECISIONS-0021 ruling 3(b) + CD-PL-F134 (write against a live reader''s READ scope)'
   instrument: tools/coordination/check_scope_disjoint.py
   contract: governance/coordination/contracts/CD-CT-003-LIVE-SCOPE-DISJOINT.md
-  plant: governance/coordination/plants/PLANT-COORD-02.run.sh
-  mutation: governance/coordination/plants/PLANT-COORD-02.mutation.patch
+  plant: governance/coordination/plants/PLANT-COORD-05.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-05.mutation.patch
+  additional_plant: governance/coordination/plants/PLANT-COORD-02.run.sh
+  additional_mutation: governance/coordination/plants/PLANT-COORD-02.mutation.patch
+  acceptance_command: >
+    **PLANT-COORD-05 IS THE `F08` BOTH-ARMS TEST NAMED BY PO-DECISIONS-0022 RULING 5 AS ONE OF THE
+    TENTH GATE'S TWO ACCEPTANCE COMMANDS.** It was written by the seat it grades, which is
+    DISCLOSED and was disclosed to that seat as a risk in its dispatch. It refuses to grade a tree
+    it cannot identify: two independent preconditions (an indentation-anchored grep and a
+    `git apply --check`) abort the run rather than report a pass.
   invocation: 'python3 -B tools/coordination/check_scope_disjoint.py'
   closes_class: false
   declared_limit: >
-    DECIDES pairwise WRITE x WRITE, and WRITE x READ in BOTH cross-seat directions. DELIBERATELY
-    DOES NOT REFUSE READ x READ (two seats reading one file is the normal case, and refusing it
-    would ban parallel audits — the vacuity ruling 3 rejects) nor a seat's own write-vs-own-read.
-    DOES NOT DECIDE what a seat actually TOUCHED — it reads DECLARATIONS.
+    DECIDES pairwise WRITE x WRITE, and WRITE x READ in BOTH directions, over EVERY pair of
+    DISTINCT live claim records **AT ANY IDENTITY, INCLUDING TWO CLAIMS HELD BY ONE SEAT ID**.
+    DELIBERATELY DOES NOT REFUSE READ x READ at any identity (two seats reading one file is the
+    normal case, and refusing it would ban parallel audits — the vacuity ruling 3 rejects).
+    DELIBERATELY DOES NOT REFUSE ONE claim record's own write scope against its OWN read scope, a
+    SINGLE-RECORD exemption, because the pair loop never compares a record with itself.
+    DELIBERATELY ADMITS one seat holding two or more DISJOINT live claims. DOES NOT DECIDE what a
+    seat actually TOUCHED — it reads DECLARATIONS. DOES NOT DECIDE whether two live claim records
+    are two SESSIONS or one, and after the F08 correction it does not need to.
+  increment_13_correction: >
+    *** **THIS ROW WAS FALSE, AND FALSELY IN THE DIRECTION THAT MATTERED MOST.** *** It claimed
+    WRITE x WRITE disjointness across the class while the instrument skipped same-seat pairs in
+    four lines declared in NONE of the three places. **THE INSTRUMENT BUILT TO DETECT THE FOUNDING
+    INCIDENT PRINTED `CONCURRENT WORK PROCEEDS` FOR THE FOUNDING INCIDENT AND EXITED 0**, because
+    that incident was TWO SESSIONS UNDER ONE IDENTITY. PO-DECISIONS-0022 ruling 5: *"the control
+    must FLAG two live claims on one scope regardless of identity"*. The two exemptions that
+    survived are NOT identity exemptions — READ x READ is a PAIRING exemption and own-write-vs-
+    own-read is a SINGLE-RECORD one — and PLANT-COORD-05 arm 4 measures both still admitting.
+  arms_at_increment_13: 5
   residue_cd_rule_006: >
     The gap between a DECLARED scope and a TOUCHED path is carried by merge_reconcile.py assertion
     (1) CONTAINMENT, MEASURED by PLANT-COORD-03. The gap between a LIVE ACTOR and a CLAIM is
@@ -189,10 +267,33 @@ rows:
   invocation: 'sh tools/coordination/launch.sh --lease L --seat S --task T --write-scope G -- COMMAND'
   closes_class: false
   declared_limit: >
-    REFUSES task overlap, write/write overlap and write/read overlap against a LIVE lease, and
-    launch.sh REFUSES TO exec — the non-start is PROVED by a sentinel, not inferred from an exit
-    code. ADMITS the disjoint launch concurrently, which is an EQUAL requirement. DOES NOT DECIDE a
-    launcher that never asks for a lease.
+    REFUSES task overlap, write/write overlap and write/read overlap against a LIVE lease, **UNDER
+    CONCURRENCY** — the collision read and the O_EXCL take run inside ONE lease-directory critical
+    section, because O_EXCL alone excludes on the LEASE ID exactly as it excludes on the TASK ID in
+    claim.py. launch.sh REFUSES TO exec — the non-start is PROVED by a sentinel, not inferred from
+    an exit code. **CARRIES THE DECLARED SCOPE WITHOUT CORRUPTING IT**: pathname expansion is off
+    for the whole script (set -f), the scope arguments are carried in the positional parameter list
+    and not a string, there is no eval, and lease.py ECHOES the scope it actually RECEIVED at every
+    acquisition. **BOUNDS BUT DOES NOT AUTHENTICATE --pid**: it DERIVES that the named pid is in
+    the acquiring process's own session (os.getsid), refusing --pid 1; a long-lived SIBLING pid in
+    the caller's own session would still pass and that residue is NOT CLOSED. ADMITS the disjoint
+    launch concurrently, an EQUAL requirement. DOES NOT DECIDE a launcher that never asks for a
+    lease. DOES NOT DECIDE a scope entry whose prefix traverses a SYMLINK and does not refuse a
+    bare existing-directory literal — claim.py does both, lease.py does neither, and that asymmetry
+    is DECLARED and NOT fixed at this increment.
+  additional_plant: governance/coordination/plants/PLANT-COORD-07.run.sh
+  additional_mutation: governance/coordination/plants/PLANT-COORD-07.mutation.patch
+  increment_13_correction: >
+    **CD-ASR-WO2R3-06-F05 + F11 — THE CARRIER CORRUPTED ITS OWN INPUT.** Unquoted expansion in
+    POSIX sh performs FIELD SPLITTING **and PATHNAME EXPANSION**, and a write scope is a GLOB, so
+    the shell expanded the seat's DECLARED SCOPE against the FILESYSTEM before lease.py saw it. Two
+    regimes: >=2 matches became an argparse error printed as `LEASE REFUSED (rc=2)`,
+    indistinguishable from a real collision; EXACTLY 1 match was SILENTLY NARROWED into a FALSE
+    GREEN. **PLANT-COORD-04 EXERCISED THE ONLY TWO SCOPE FORMS THAT CANNOT TRIGGER EITHER REGIME
+    AND WAS 3/3 LIVE OVER A BROKEN DELIVERABLE** — the strongest instance in the ninth audit of a
+    plant proving its own chosen instance. PLANT-COORD-07 exercises a glob matching >=2 real paths
+    AND a glob matching exactly 1, with cwd INSIDE the sandbox, because pathname expansion is
+    relative to the working directory.
   residue_cd_rule_006: >
     BINDING THE LAUNCHER is NOT PROVED TO BE CARRIED ANYWHERE for any launch that does not go
     through launch.sh. **THE OPERATOR'S WRAPPER IS NOT IN THIS REPOSITORY** and no seat and no
@@ -204,12 +305,34 @@ rows:
   delivers: 'PO-DECISIONS-0021 ruling 3(d) — **THE HAND HALF, AND IT LANDS HALF-CARRIED BY CONSTRUCTION**'
   instrument: tools/coordination/check_lease_held.py
   contract: governance/coordination/contracts/CD-CT-009-LEASE-HELD-AT-WRITE.md
-  plant: 'NONE, AND A PLANT WOULD BE DISHONEST HERE. See the contract §4 and the declaration below.'
+  plant: governance/coordination/plants/PLANT-COORD-08.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-08.mutation.patch
+  plant_covers: >
+    **THE `--range` HALF ONLY.** A plant over the CARRIAGE would still be dishonest, because there
+    is no carriage — see the contract §4 and the residue below. What PLANT-COORD-08 measures is
+    that the mode cannot be flipped by the party it grades, and that an honest lease still admits.
   invocation: 'python3 -B tools/coordination/check_lease_held.py --staged'
   closes_class: false
   declared_limit: >
-    DECIDES whether every governed path in a staged set or commit range is inside the write scope
-    of a LIVE lease held by the named identity. *** IT IS NOT INVOKED BY ANYTHING. ***
+    DECIDES (--staged) whether every governed path in the STAGED set is inside the write scope of a
+    lease held by the named identity and LIVE NOW. DECIDES (--range) whether every governed path of
+    EVERY COMMIT in the range was inside the write scope of a lease held by that identity **AND
+    LIVE AT THE TIME OF THAT COMMIT** — the lease's recorded interval against that commit's
+    committer timestamp, BOTH EDGES STRICT because CD-RULE-005's timestamp source is
+    second-granular. --range DOES NOT consult pid liveness, deliberately. **DOES NOT DECIDE WHETHER
+    EITHER TIMESTAMP IS TRUE — BOTH ARE SELF-REPORTED.** REFUSES TO ANSWER rather than answering
+    wrongly. *** IT IS NOT INVOKED BY ANYTHING. ***
+  increment_13_correction: >
+    **CD-ASR-WO2R3-06-F09 — THE GRADED PARTY COULD FLIP IT, RED TO GREEN, IN ONE COMMAND.** This
+    contract is named LEASE-HELD-AT-WRITE and --range did not measure time-of-write at all. It was
+    also wrong in the other direction: it required the WRITER'S PROCESS to still be running, and
+    the seat that made a historical write is normally dead by the time anyone audits it. **BOTH
+    EDGES ARE STRICT BY MEASUREMENT, NOT STYLE: with an inclusive edge the retro-flip still
+    captured 1 of 11 governed writes.** THE COST IS DECLARED — an honest launch that commits inside
+    the same second as its own lease acquisition is REFUSED. **FULL --pid AUTHENTICATION IS
+    RETURNED `CONTROL_NOT_SATISFIABLE`**: a pid cannot be authenticated from userspace on this
+    platform, so lease.py DERIVES a session bound (CD-RULE-003, never a denylist) and every lease
+    record carries `pid_authenticated: false` in its own bytes.
   residue_cd_rule_006: >
     *** **NOT PROVED TO BE CARRIED ANYWHERE.** *** Those are the required words and they are the
     honest answer. `git config core.hooksPath` is `pbg/tools/hooks`; that hook's entire staged-path
