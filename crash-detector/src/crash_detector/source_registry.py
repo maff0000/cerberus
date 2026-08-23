@@ -169,16 +169,44 @@ class SourceRecord:
                 ) from None
             if not getattr(self, name):
                 raise ValueError(f"SourceRecord requires a non-empty {name}")
-        if not isinstance(self.criticality, Criticality):
+        # EXACT TYPE, NOT `isinstance` (WO-2R3 increment 10, ITEM_1, the F01 sweep).
+        #
+        # **THE DECLARED REASON FOR THE `isinstance` HERE WAS FALSIFIED BY MEASUREMENT.**
+        # The register said: *"Criticality is an enum.Enum with members, which CPython
+        # refuses to subclass, so isinstance and exact type coincide here and no supplied
+        # implementation exists to reach."* **SUBCLASSING IS NOT THE ONLY ROUTE TO
+        # `isinstance`.** CPython's `object_isinstance` falls back to the instance's
+        # `__class__` attribute, and `__class__` is an ordinary property a caller can
+        # define. MEASURED at `686a374`, against this very class:
+        #
+        #     class EvilCrit(Criticality)          -> TypeError: cannot extend
+        #     class Forged:
+        #         @property
+        #         def __class__(self): return Criticality
+        #     isinstance(Forged(), Criticality)    -> True
+        #     type(Forged()) is Criticality        -> False        <- the asymmetry
+        #
+        # THIS door was already carried — `@establishes(criticality=Criticality)` refused
+        # the forgery with `FieldNotEstablished` — but the sibling test in
+        # `SourceRegistry.ids_with` was NOT, and ADMITTED it. Both are exact-typed now, so
+        # the claim and the code agree at both.
+        if type(self.criticality) is not Criticality:
             raise TypeError(
                 "SourceRecord.criticality must be a Criticality member, got "
                 f"{type(self.criticality).__name__}. A string is not a criticality: it "
-                "is a criticality that has not been checked."
+                "is a criticality that has not been checked. Exact type and never "
+                "isinstance: an enum CPython refuses to SUBCLASS can still be WORN, "
+                "because isinstance also consults __class__."
             )
-        if isinstance(self.cadence_seconds, bool) or not isinstance(
-            self.cadence_seconds, int
-        ):
-            raise TypeError("SourceRecord.cadence_seconds must be an int")
+        # EXACT TYPE on the `int` limb; the `bool` limb stays `isinstance`, which is the
+        # STRICTER of the two operators at a REFUSAL predicate. `cadence_seconds <= 0`
+        # immediately below is an int subclass's `__le__` to answer — which is exactly what
+        # the `DELEGATED` disposition said and left open. It is closed here.
+        if isinstance(self.cadence_seconds, bool) or type(self.cadence_seconds) is not int:
+            raise TypeError(
+                "SourceRecord.cadence_seconds must be an int, got "
+                f"{type(self.cadence_seconds).__name__}"
+            )
         if self.cadence_seconds <= 0:
             raise ValueError(
                 "SourceRecord.cadence_seconds must be positive; a zero or negative "
@@ -252,9 +280,32 @@ class SourceRegistry:
         return self.get(source_id).criticality
 
     def ids_with(self, criticality: Criticality) -> tuple[str, ...]:
-        """Every registered source at ``criticality``."""
-        if not isinstance(criticality, Criticality):
-            raise TypeError("ids_with expects a Criticality member")
+        """Every registered source at ``criticality``.
+
+        **EXACT TYPE, AND THIS SITE WAS A LIVE ADMISSION OF A FORGED CRITICALITY**
+        (WO-2R3 increment 10, ITEM_1). MEASURED at ``686a374``, before the change::
+
+            class Forged:
+                @property
+                def __class__(self): return Criticality
+
+            registry.ids_with(Forged())   -> ADMITTED, returned ()      <- no refusal
+            registry.ids_with("REQUIRED") -> TypeError                  <- the control
+
+        An object that is not a criticality was admitted and answered *"no sources at this
+        criticality"*, because ``source.criticality is criticality`` is identity and no
+        member is identical to the forgery. **A CALLER ASKING WHICH SOURCES ARE REQUIRED IS
+        TOLD "NONE", AND A REQUIRED-INPUTS CHECK OVER AN EMPTY TUPLE PASSES VACUOUSLY.** The
+        declared disposition for this site was ``EXACT`` on the ground that ``Criticality``
+        cannot be subclassed; it cannot, and it did not need to be.
+        """
+        if type(criticality) is not Criticality:
+            raise TypeError(
+                "ids_with expects a Criticality member, got "
+                f"{type(criticality).__name__}. Exact type and never isinstance: isinstance "
+                "consults __class__, so an unrelated object WEARING Criticality was "
+                "admitted here and answered that no source carries it."
+            )
         return tuple(
             source.source_id
             for source in self.sources

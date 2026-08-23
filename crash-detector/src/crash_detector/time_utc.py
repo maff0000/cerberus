@@ -11,6 +11,39 @@ stored inputs (BLUEPRINT §7).
 A naive datetime is **refused**, never assumed to be UTC. Assuming is how cross-boundary
 time corruption becomes silent, and silent is the one failure mode this product exists to
 prevent.
+
+===========================================================================================
+DECLARED LIMIT (CD-RULE-004, CD-RULE-006) — **THE TWO ``isinstance`` TESTS IN THIS MODULE
+ARE KEPT, AND THE REASON IS RE-MEASURED AND NOT INHERITED.** WO-2R3 increment 10, ITEM_1,
+the F01 exact-type sweep under ``PO-DECISIONS-0018`` ruling 2.
+===========================================================================================
+``ensure_utc``'s ``isinstance(value, datetime)`` is the site the original finding was about
+and it is STILL an ``isinstance``. **THAT IS THE PRODUCT'S CHOICE:** a ``pandas.Timestamp``
+IS a ``datetime`` subclass and MUST be readable, and the whole design of this door is that
+it admits a SHAPE TO BE READ rather than an object to be consulted. What is returned is
+rebuilt by :func:`crash_detector.own_terms.own_instant` from the supplied object's own
+C-struct fields, and **nothing after that line calls a method of ``type(value)``.**
+
+``parse_utc``'s ``isinstance(text, str)`` is the same shape one type across. The line
+immediately below it is ``candidate = own_str(text)``, and every subsequent operation —
+``endswith``, the slice, ``datetime.fromisoformat`` — is on the rebuilt exact ``str``.
+MEASURED at ``686a374``: a ``str`` subclass whose ``endswith`` answers ``False`` for every
+argument still parses ``'2026-01-01T00:00:00Z'`` to ``2026-01-01 00:00:00+00:00``, identical
+to the exact-``str`` control, **because its ``endswith`` is never the one consulted.**
+
+**AND THE ``__class__`` ROUTE IS CARRIED, MEASURED, BY THE C LAYER.** ``isinstance`` also
+consults ``__class__``, so an object of an unrelated type WEARING ``datetime`` or ``str``
+satisfies these tests where a subclass is not even needed. It does not survive the next
+line. MEASURED, with ``class Forged: __class__ = property(lambda s: datetime)``::
+
+    ensure_utc(<forged datetime>)  TypeError: descriptor 'utcoffset' for
+                                   'datetime.datetime' objects doesn't apply to a 'Forged'
+    parse_utc(<forged str>)        TypeError: descriptor '__str__' requires a 'str' object
+                                   but received a 'Forged'
+
+**THE CARRIER IS CPYTHON'S DESCRIPTOR PROTOCOL, NAMED FROM ITS OWN FAILURE TEXT.** See
+:mod:`crash_detector.own_terms` DECLARED LIMIT 5, which is the same sentence at the module
+that owns the descriptors.
 """
 
 from __future__ import annotations

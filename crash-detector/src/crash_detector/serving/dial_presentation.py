@@ -227,6 +227,18 @@ class SealedPresentationType(type):
     """
 
     def __new__(mcls, name, bases, namespace, **kwargs):
+        # ``isinstance`` AND NOT EXACT TYPE, DELIBERATELY (WO-2R3 increment 10, ITEM_1).
+        # This is a REFUSAL predicate — satisfy it and the class statement is REFUSED — so
+        # the WIDER operator is the STRICTER one and converting it would refuse LESS.
+        # MEASURED at `686a374`, with `Sub = type('SealedPresentationTypeSub', (SealedPresentationType,), {})`
+        # and `Forged = type.__new__(Sub, 'Forged', (NotShown,), ...)`:
+        #     isinstance(Forged, SealedPresentationType) True   type(Forged) is ... False
+        #     class Child(Forged): ...  -> REFUSED DialPresentationRefused   <- TODAY
+        #     the exact-type predicate over the same bases -> ADMITS
+        # **CONVERTING THIS LINE WOULD LET AN ORDINARY `class` STATEMENT SUBCLASS A SEALED
+        # PRESENTATION THROUGH ONE FORGED INTERMEDIATE**, which is a WEAKENING of the
+        # accident-proofing PO-DECISIONS-0018 ruling 1(a) explicitly keeps. Executed against
+        # all four sealed metatypes; not one of them was inferred from another.
         for base in bases:
             if isinstance(base, SealedPresentationType):
                 raise DialPresentationRefused(

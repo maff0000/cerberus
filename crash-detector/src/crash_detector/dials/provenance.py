@@ -332,6 +332,18 @@ class SealedQuantityType(type):
     """
 
     def __new__(mcls, name, bases, namespace, **kwargs):
+        # ``isinstance`` AND NOT EXACT TYPE, DELIBERATELY (WO-2R3 increment 10, ITEM_1).
+        # This is a REFUSAL predicate — satisfy it and the class statement is REFUSED — so
+        # the WIDER operator is the STRICTER one and converting it would refuse LESS.
+        # MEASURED at `686a374`, with `Sub = type('SealedQuantityTypeSub', (SealedQuantityType,), {})`
+        # and `Forged = type.__new__(Sub, 'Forged', (DeclaredQuantity,), ...)`:
+        #     isinstance(Forged, SealedQuantityType) True   type(Forged) is ... False
+        #     class Child(Forged): ...  -> REFUSED QuantitySurfaceViolated   <- TODAY
+        #     the exact-type predicate over the same bases -> ADMITS
+        # **CONVERTING THIS LINE WOULD LET AN ORDINARY `class` STATEMENT SUBCLASS A SEALED
+        # QUANTITY THROUGH ONE FORGED INTERMEDIATE**, which is a WEAKENING of the
+        # accident-proofing PO-DECISIONS-0018 ruling 1(a) explicitly keeps. Executed against
+        # all four sealed metatypes; not one of them was inferred from another.
         for base in bases:
             if isinstance(base, SealedQuantityType):
                 raise QuantitySurfaceViolated(
@@ -495,11 +507,20 @@ def _install(instance: object, dials: object, value: object) -> None:
     loosely than the other; and it is not a member of :class:`DeclaredQuantity`, so it does
     not widen the declared attribute surface.
     """
-    if not isinstance(dials, frozenset):
+    # EXACT TYPE, NOT `isinstance` (WO-2R3 increment 10, ITEM_1, the F01 sweep). The
+    # declared reason for the `isinstance` was sound as far as it went — the set is REBUILT
+    # below through `own_str`, so neither the supplied set's `__len__` nor its elements'
+    # `__hash__`/`__eq__` decide the cross-dial refusal — but the rebuild consumes the
+    # supplied object's `__iter__`, which is the one member it still gets to define. Every
+    # in-package caller supplies an exact `frozenset` (a literal, or the union of two, which
+    # is a `frozenset`), so the narrowing refuses nothing this package builds.
+    if type(dials) is not frozenset:
         raise CrossDialCombination(
             f"a declared quantity carries the provenance of EXACTLY ONE dial; got "
-            f"{dials!r}. A number derived from both dials has no single dial to be "
-            "published as, and PID §3.1 admits no third figure derived from the two."
+            f"{dials!r} of type {type(dials).__name__}. A number derived from both dials "
+            "has no single dial to be published as, and PID §3.1 admits no third figure "
+            "derived from the two. Exact type and never isinstance: a frozenset subclass "
+            "decides its own iteration, and its iteration is this provenance."
         )
     # RE-ESTABLISHED BEFORE IT IS COUNTED (CD-AC-005, Class 2). The provenance set is what
     # every later cross-dial refusal compares — `quantity.dials != frozenset({dial_id})` in

@@ -153,6 +153,45 @@ PROVED TO BE CARRIED ANYWHERE (CD-RULE-006).
     :mod:`crash_detector.staleness`, unchanged by this module and not claimed to be closed
     by it. NOT PROVED TO BE CARRIED ANYWHERE.
 
+ 5  **THE FIVE ``isinstance`` TESTS IN THIS MODULE ARE KEPT, AND WHAT CARRIES THEM IS NOW
+    MEASURED RATHER THAN ARGUED** (WO-2R3 increment 10, ITEM_1, the F01 exact-type sweep;
+    ``PO-DECISIONS-0018`` ruling 2). ``own_float``'s ``isinstance(value, float)``,
+    ``own_str``'s ``isinstance(value, str)``, ``own_instant``'s and ``own_utc_offset``'s
+    ``isinstance(value, datetime)`` and ``own_utc_offset``'s
+    ``isinstance(declared, timedelta)`` **ADMIT A SUBCLASS ON PURPOSE** — ``numpy.float64``
+    IS a ``float`` and ``pandas.Timestamp`` IS a ``datetime``, and a measurement path that
+    refused them would be broken rather than safe. **EXACT TYPE IS NOT AVAILABLE HERE, AND
+    THAT IS THE PRODUCT'S CHOICE AND NOT AN OVERSIGHT.**
+
+    What is new is the CARRIER, and it is the C layer rather than an argument. Each of these
+    tests is followed immediately by an UNBOUND BASE-TYPE DESCRIPTOR — ``float.__float__``,
+    ``str.__str__``, ``datetime``'s own getsets — **AND CPYTHON REFUSES TO APPLY A
+    DESCRIPTOR TO ANYTHING THAT IS NOT A GENUINE INSTANCE OF ITS OWNING TYPE.** That closes
+    the one route ``isinstance`` opens which SUBCLASSING does not: ``isinstance`` also
+    consults ``__class__``, so an object of an unrelated type merely WEARING ``float``
+    satisfies it. MEASURED at ``686a374``, with
+    ``class Forged: __class__ = property(lambda s: float)``::
+
+        own_float(<forged float>)       TypeError: descriptor '__float__' requires a
+                                        'float' object but received a 'Forged'
+        own_str(<forged str>)           TypeError: descriptor '__str__' requires a 'str'...
+        own_instant(<forged datetime>)  TypeError: descriptor 'year' for 'datetime.date'
+                                        objects doesn't apply to a 'Forged' object
+        own_utc_offset(<forged dt>)     TypeError: descriptor 'utcoffset' for
+                                        'datetime.datetime' objects doesn't apply to ...
+
+    **THE CARRIER IS CPYTHON'S DESCRIPTOR PROTOCOL AND IT IS NAMED FROM ITS OWN FAILURE
+    TEXT, NOT FROM AN EXIT CODE.** For a GENUINE subclass — the case these doors exist to
+    serve — the descriptor applies and returns a value rebuilt from the C struct, so nothing
+    ``type(value)`` defines runs afterwards. That is the whole of the residue, and it is the
+    residue the product asked for.
+
+    **THE ``bool`` TEST IN ``own_float`` IS ALSO KEPT, AND FOR THE OPPOSITE REASON.** It is
+    a REFUSAL predicate, where ``isinstance`` is the STRICTER operator: ``bool`` cannot be
+    subclassed (``TypeError: type 'bool' is not an acceptable base type``), but an object
+    WEARING ``bool`` satisfies ``isinstance`` and is refused, where ``type(value) is bool``
+    would pass it on. Narrowing a refusal predicate to exact type is a WEAKENING.
+
 Do not read this module as a promise that every judgement in this package is made on the
 system's own terms. Read it as the door through which timestamps, measurements and
 discriminator labels are re-established, and read

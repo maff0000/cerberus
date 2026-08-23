@@ -120,8 +120,29 @@ class FetchFailed:
         if not self.error_class:
             raise ValueError("FetchFailed requires a stated error_class")
         status = self.http_status
-        if status is not None and (isinstance(status, bool) or not isinstance(status, int)):
-            raise TypeError("FetchFailed.http_status must be an int or absent")
+        # EXACT TYPE ON THE `int` LIMB (WO-2R3 increment 10, ITEM_1, the F01 sweep).
+        # `isinstance(status, int)` admitted an int SUBCLASS here, and the register recorded
+        # the residue as **NOT PROVED TO BE CARRIED ANYWHERE**. RE-MEASURED at `686a374`, and
+        # the record was wrong in the GOOD direction — it IS carried:
+        # `FetchFailed(error_class="x", http_status=EvilInt(404))` raises
+        # `FieldNotEstablished: FetchFailed.http_status=EvilInt is not admitted`, from this
+        # type's own `@establishes(http_status=one_of(int, None))`, which runs AFTER
+        # `__post_init__`. The refusal is moved to the FIRST gate anyway, so a wrong type is
+        # refused where it is named rather than one layer downstream by a check aimed at
+        # something else — the "wrong reason again" this project has been caught by.
+        #
+        # The `bool` limb stays `isinstance` DELIBERATELY: it is a REFUSAL predicate, where
+        # `isinstance` is the STRICTER of the two operators. `bool` cannot be subclassed
+        # (MEASURED: `class B(bool)` -> `TypeError: type 'bool' is not an acceptable base
+        # type`), but `isinstance` also consults `__class__`, so an object WEARING `bool`
+        # is refused here and would be admitted by `type(status) is bool`. Narrowing a
+        # refusal predicate to exact type is a WEAKENING and it is not taken.
+        if status is not None and (isinstance(status, bool) or type(status) is not int):
+            raise TypeError(
+                "FetchFailed.http_status must be an int or absent, got "
+                f"{type(status).__name__}. Exact type and never isinstance: an int subclass "
+                "may redefine every comparison this status is later read by."
+            )
 
 #: SEALED (PO-DECISIONS-0016 ruling 2). This type carries a FIELD DEFAULT, and a
 #: manual __slots__ beside a class-level default is a ValueError at class creation
@@ -172,8 +193,22 @@ class Malformed:
     def __post_init__(self) -> None:
         if not self.schema_error_class:
             raise ValueError("Malformed requires a stated schema_error_class")
-        if not isinstance(self.instance_path, str):
-            raise TypeError("Malformed.instance_path must be a str")
+        # EXACT TYPE (WO-2R3 increment 10, ITEM_1, the F01 sweep). The register recorded
+        # this site as `OUT_OF_BOUND` with **NOT PROVED TO BE CARRIED ANYWHERE**.
+        # RE-MEASURED at `686a374`: it IS carried — `Malformed(schema_error_class="x",
+        # instance_path=EvilStr("bad"))` raises `FieldNotEstablished:
+        # Malformed.instance_path=EvilStr is not admitted`, from this type's own
+        # `@establishes(instance_path=str)`. **BUT THE CARRIER FIRES ONE LAYER TOO LATE:**
+        # `@establishes` runs after `__post_init__`, so the subclass's own `startswith` and
+        # `__len__` answered the RFC 6901 shape check and the length ceiling first. Exact
+        # type here refuses it BEFORE either is asked, which is the point of the door.
+        if type(self.instance_path) is not str:
+            raise TypeError(
+                "Malformed.instance_path must be a str, got "
+                f"{type(self.instance_path).__name__}. Exact type and never isinstance: the "
+                "two checks below are `startswith` and `len`, and both are the supplied "
+                "object's to define."
+            )
         if self.instance_path and not self.instance_path.startswith("/"):
             raise ValueError(
                 "Malformed.instance_path must be an RFC 6901 JSON Pointer: the empty "

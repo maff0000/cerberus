@@ -221,12 +221,51 @@ def test_the_five_original_words_are_unchanged_in_shape(a_tree):
     which is the property that would have been quietly lost if the number alone were bumped.
     ``tools/sweep/declared_dispositions.py`` is untouched by this seat and is outside its
     scope; had a tier-1 site been added, this test would be RED and would have to stay RED.
+
+    ====================================================================================
+    **SUPERSEDED A THIRD TIME AT WO-2R3 INCREMENT 10, ITEM_1** (`PBG-CONT-003` —
+    corrections supersede, never edit). The two assertions it replaces, verbatim:
+
+        assert "555 sites" in result.stdout, (
+            "the sweep's own POPULATION moved. If that was a deliberate product change,
+            supersede this number with the MEASURED one and say what moved it; if it was
+            not, something changed under src/ that nobody intended.")
+
+        assert "TIER 1 — admission: 45 distinct sites" in result.stdout, (
+            "THE TIER 1 ADMISSION POPULATION MOVED. ...")
+
+    **IT WAS A DELIBERATE PRODUCT CHANGE AND THIS IS WHAT MOVED IT.**
+    `PO-DECISIONS-0018` ruling 2 ordered the F01 exact-type sweep: *"EXACT TYPE, everywhere
+    on a judgement path where an `isinstance` still survives — sites enumerated BY
+    INSTRUMENT"*. **TWELVE tier-1 `ISINSTANCE` admissions became exact-type identity tests**,
+    which are TIER 2 (`IDENTITY`) and not tier-1 admissions at all. MEASURED by running the
+    instrument, not by arithmetic on a diff:
+
+        555 -> 548 sites
+        TIER 1 — admission: 45 -> 33 distinct sites (52 -> 40 occurrences)
+            ISINSTANCE 30 -> 18      ISSUBCLASS 0 -> 0      DUCK 22 -> 22
+
+    **THE DIRECTION IS THE ONE THAT MATTERS AND IT IS ASSERTED SEPARATELY BELOW: TIER 1
+    ONLY EVER GOES DOWN IN THIS INCREMENT.** A tier-1 site carries an obligation — a written
+    disposition in a register no Engineer seat owns. Removing one discharges an obligation;
+    adding one creates a debt this seat cannot pay. The bound below is an INEQUALITY and not
+    a new fingerprint, so a future increment that ADDS an admission is RED here even if it
+    also removes one, which a bumped equality would have hidden.
+
+    **AND TWELVE STALE DECLARATIONS ARE THE PRICE, DECLARED AND NOT PAPERED OVER.** Each
+    converted site's disposition key names its old SOURCE TEXT, so all twelve are now
+    `STALE DECLARATION` in `tools/sweep/declared_dispositions.py` — a file
+    `PO-DECISIONS-0018` ruling 3 holds until the remedy clears it IN THE SAME ACT, and which
+    this seat has no write access to and took none. The sweep reads
+    `FAIL — 548 sites, 18 violations`. **THAT IS THE REGISTER WORKING**: a disposition whose
+    reason has died does not survive on habit.
+    ====================================================================================
     """
     result = _run(a_tree)
     assert "UNKNOWN_DISPOSITION" not in result.stdout
     assert "DISPOSITION_EVIDENCE_MISSING" not in result.stdout
     assert "MALFORMED_DISPOSITION" not in result.stdout
-    assert "555 sites" in result.stdout, (
+    assert "548 sites" in result.stdout, (
         "the sweep's own POPULATION moved. If that was a deliberate product change, "
         "supersede this number with the MEASURED one and say what moved it; if it was not, "
         "something changed under src/ that nobody intended.\n" + result.stdout[-3000:]
@@ -236,10 +275,26 @@ def test_the_five_original_words_are_unchanged_in_shape(a_tree):
     # A tier-1 site needs a written disposition in a register no Engineer seat owns; a tier-2
     # occurrence derives from its module. Bumping only the total would let the first hide
     # inside the second.
-    assert "TIER 1 — admission: 45 distinct sites" in result.stdout, (
-        "THE TIER 1 ADMISSION POPULATION MOVED. Every tier-1 site needs its own written "
+    #
+    # **AS AN INEQUALITY, NOT AN EQUALITY, AS OF INCREMENT 10.** An equality here would go
+    # green for a change that removes one admission and adds another, which is precisely the
+    # move it exists to catch. Parsed from the instrument's own line, never counted by eye.
+    import re as _re
+
+    tier_1 = _re.search(r"TIER 1 — admission: (\d+) distinct sites", result.stdout)
+    assert tier_1, "the instrument stopped printing its tier-1 population\n" + result.stdout[-3000:]
+    assert int(tier_1.group(1)) <= 33, (
+        "THE TIER 1 ADMISSION POPULATION GREW. Every tier-1 site needs its own written "
         "disposition in tools/sweep/declared_dispositions.py, which is the Project Lead's "
-        "register. A change that adds one is not a change that may bump a number here.\n"
+        "register. A change that adds one is not a change that may bump a number here — "
+        f"33 was the measured ceiling at WO-2R3 increment 10, and this run reports "
+        f"{tier_1.group(1)}.\n" + result.stdout[-3000:]
+    )
+    isinstance_line = _re.search(r"ISINSTANCE\s+(\d+)", result.stdout)
+    assert isinstance_line and int(isinstance_line.group(1)) <= 18, (
+        "THE SURVIVING `isinstance` POPULATION GREW. PO-DECISIONS-0018 ruling 2 requires "
+        "EXACT TYPE at every judgement-path admission where one can be taken; 18 is the "
+        "measured residue at WO-2R3 increment 10, each with a written reason.\n"
         + result.stdout[-3000:]
     )
     if result.returncode == 0:

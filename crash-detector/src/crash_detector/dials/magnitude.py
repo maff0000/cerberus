@@ -317,6 +317,19 @@ class SealedMagnitudeType(type):
     """
 
     def __new__(mcls, name, bases, namespace, **kwargs):
+        # ``isinstance`` AND NOT EXACT TYPE, DELIBERATELY (WO-2R3 increment 10, ITEM_1).
+        # This is a REFUSAL predicate — satisfy it and the class statement is REFUSED — so
+        # the WIDER operator is the STRICTER one and converting it would refuse LESS.
+        # MEASURED at `686a374`, with `Sub = type('SealedMagnitudeTypeSub',
+        # (SealedMagnitudeType,), {})` and `Forged = type.__new__(Sub, 'Forged',
+        # (DialMagnitude,), ...)`:
+        #     isinstance(Forged, SealedMagnitudeType) True   type(Forged) is ... False
+        #     class Child(Forged): ...  -> REFUSED MagnitudeSurfaceViolated   <- TODAY
+        #     the exact-type predicate over the same bases -> ADMITS
+        # **CONVERTING THIS LINE WOULD LET AN ORDINARY `class` STATEMENT SUBCLASS A SEALED
+        # MAGNITUDE THROUGH ONE FORGED INTERMEDIATE**, which is a WEAKENING of the
+        # accident-proofing PO-DECISIONS-0018 ruling 1(a) explicitly keeps. The same
+        # measurement holds at all four sealed metatypes and was run against each.
         for base in bases:
             if isinstance(base, SealedMagnitudeType):
                 raise MagnitudeSurfaceViolated(
@@ -498,7 +511,17 @@ class DialMagnitude(metaclass=SealedMagnitudeType):
         arithmetic with the other.
         """
         provenance = state["provenance"]
-        if not isinstance(provenance, frozenset):
+        # EXACT TYPE, NOT `isinstance` (WO-2R3 increment 10, ITEM_1, the F01 sweep). A
+        # pickle is untrusted input like any other and a `frozenset` SUBCLASS is a thing a
+        # hand-written pickle can name. What follows re-establishes the members, which is
+        # why the site was declared `ESTABLISHED` and not open — but a supplied container
+        # still got to answer `__iter__` first. MEASURED at `686a374`: a `frozenset`
+        # subclass whose `__iter__` yields `'forged-dial'` while the object holds `'d1'`
+        # reached `_install` and was refused there by `CrossDialCombination` — **the right
+        # outcome from the wrong layer**, and the layer matters, because `_install`'s
+        # refusal is about DIALS and this one is about TYPES. `__getstate__` produces an
+        # exact `frozenset`, so nothing this package writes is refused by the narrowing.
+        if type(provenance) is not frozenset:
             raise CrossDialCombination(
                 f"a magnitude cannot be revived with provenance {provenance!r}: it must "
                 "be exactly one dial. A pickle is untrusted input like any other, and a "

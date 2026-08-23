@@ -703,8 +703,17 @@ class _EstablishedHere(_Admission):
         return f"ANY VALUE — established in the body ({self.because})"
 
     def __call__(self, because: str) -> "_EstablishedHere":
-        """``ESTABLISHED_HERE("reason")`` — the reason is required, not optional."""
-        if not isinstance(because, str) or not because.strip():
+        """``ESTABLISHED_HERE("reason")`` — the reason is required, not optional.
+
+        **EXACT TYPE AND NOT ``isinstance`` (WO-2R3 increment 10, ITEM_1, F01 sweep).**
+        MEASURED at ``686a374`` before the change: ``class SneakyReason(str)`` whose
+        ``strip`` returns ``"x"`` while the object IS the empty string was ACCEPTED, and the
+        artefact then carried ``ANY VALUE — established in the body ()`` — **an exemption
+        with NO stated reason, through the one guard that exists to stop exactly that.** The
+        control, an exact ``""``, was refused. ``type(because) is not str`` refuses the
+        subclass, and the reason that survives is one this package's own ``str`` built.
+        """
+        if type(because) is not str or not because.strip():
             raise AdmissionFault(
                 "ESTABLISHED_HERE requires a stated reason. An unexplained exemption is "
                 "the escape hatch this mechanism exists to make impossible to write "
@@ -715,6 +724,18 @@ class _EstablishedHere(_Admission):
 
 #: The one exemption, and it must be CALLED with its reason: ``ESTABLISHED_HERE("...")``.
 ESTABLISHED_HERE = _EstablishedHere("no reason stated")
+
+#: **THE DECLARATION VOCABULARY, AS A CLOSED SET OF TYPE IDENTITIES.** The header says
+#: *"Three forms, and no fourth: a declaration this module cannot recognise is a FAULT and
+#: not a value it guesses at"* — and until WO-2R3 increment 10 that sentence was implemented
+#: with ``isinstance(declaration, _Admission)``, which admits a FOURTH form the moment
+#: anybody writes ``class Mine(_Exactly)``. MEASURED at ``686a374``: an ``_Admission``
+#: subclass whose ``refusal`` returns ``None`` and whose ``describe()`` reports
+#: ``'exactly PanelRow'`` was ACCEPTED on a door reporting ``faults: ()``, and
+#: ``a_lying_door(object())`` RAN THE BODY — a door that admits everything and reports that
+#: it does not. Admission here is now by EXACT TYPE over this tuple, so the set of forms is
+#: the thing the code consults and not merely the thing the docstring claims.
+_ADMISSION_FORMS: tuple = (_Exactly, _EachOf, _EstablishedHere)
 
 
 def _names(types: tuple) -> str:
@@ -732,13 +753,67 @@ def one_of(*types: object) -> _Exactly:
 
 
 def each_of(*element: object, within: tuple = (tuple, list)) -> _EachOf:
-    """A container of exactly ``within``, every element exactly one of ``element``."""
-    if not isinstance(within, tuple) or not within:
+    """A container of exactly ``within``, every element exactly one of ``element``.
+
+    **EXACT TYPE AND NOT ``isinstance`` (WO-2R3 increment 10).** MEASURED at ``686a374``:
+    ``each_of(int, within=LyingTuple((list,)))`` — a ``tuple`` subclass whose ``__iter__``
+    yields something its ``repr`` and ``len`` do not show — was ACCEPTED and produced a
+    declaration describing itself as ``'Wildcard of int'`` while the SOURCE read ``list``. A
+    real ``list`` was then refused by the resulting door. ``type(within) is not tuple``
+    refuses it, and it is also what lets :func:`_type_tuple` state that everything it walks
+    is a container this module built or the interpreter built from ``*args``.
+    """
+    if type(within) is not tuple or not within:
         raise AdmissionFault("each_of(within=...) takes a non-empty tuple of types")
     return _EachOf(_type_tuple(element, "each_of"), _type_tuple(within, "each_of"))
 
 
 def _type_tuple(values: tuple, where: str) -> tuple:
+    """Resolve a declaration's operands into a tuple of type identities.
+
+    ====================================================================================
+    **DECLARED LIMIT — ``isinstance(value, type)`` SURVIVES HERE AND THE REASON IS
+    MEASURED, NOT REASONED (WO-2R3 increment 10, ITEM_1; CD-RULE-004, CD-RULE-006).**
+
+    **EXACT TYPE IS NOT AVAILABLE AT THIS LINE.** ``type(value) is type`` refuses every
+    class whose metaclass is not ``type`` — which in THIS package is the normal case and
+    not the exotic one: ``Criticality`` (``EnumType``), ``DialMagnitude``
+    (``SealedMagnitudeType``), ``DeclaredQuantity`` (``SealedQuantityType``), ``Value`` /
+    ``Degraded`` / ``Unknown`` (``SealedReadingType``) and ``Shown`` / ``NotShown``
+    (``SealedPresentationType``) are all declared at doors and at fields. **The sealing
+    that makes them trustworthy is the same property an exact-type test here would refuse.**
+
+    **AND THE REGISTER'S RECORDED REACH FOR THIS SITE IS STALE — RE-MEASURED, NOT
+    INHERITED.** ``tools/sweep/declared_dispositions.py`` records, for this site and for
+    ``_compile``'s sibling: *"A metaclass defining ``__eq__`` satisfies ``isinstance(X,
+    type)`` here and then compares EQUAL TO EVERY TYPE at ``_Exactly.refusal``. Measured end
+    to end on an ordinary ``@admits(value=Wildcard)`` door: ``faults: ()``,
+    ``is_admitting_door: True``, and every value admitted."* **THAT SECOND SENTENCE IS FALSE
+    AT ``686a374`` AND WAS MADE FALSE BY ``F-06-D`` AT INCREMENT 8**, which replaced
+    ``type(value) in self.types`` with :func:`is_exactly`. Re-measured here on exactly that
+    door — ``@admits(value=Wildcard)`` with ``class Anything(type): __eq__ -> True`` —
+    ``int``, ``str``, ``object``, ``float``, ``list`` and ``None`` were **ALL REFUSED**,
+    ``NotAdmitted: ... requires exactly Wildcard``; only a real ``Wildcard()`` reached the
+    body. **THE REGISTER CLAIMS A LIVE REACH THAT MEASUREMENT SAYS IS DEAD.** The register
+    is PROTECTED from the seat that measured this (``PO-DECISIONS-0018`` ruling 3) and is
+    NOT edited; it is corrected in the Build Log and raised as ``CD-ENG-WO2R3-08-F01``.
+
+    **WHAT DOES SURVIVE, STATED RATHER THAN LEFT.** A declaration object reached through
+    this line is still asked for ``__name__`` by :meth:`_Exactly.describe`, and ``__name__``
+    can be a metaclass property. **THE CONSEQUENCE IS BOUNDED TO THE TEXT OF A REFUSAL
+    MESSAGE**: nothing this module DECIDES is taken from it, because every decision below is
+    :func:`is_exactly`, which is ``is`` between two type objects and has nothing to delegate.
+    **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE** — a lying ``__name__`` produces a true
+    refusal with a misleading name in it, and no test asserts otherwise.
+
+    **AND THE CONTAINER HALF IS CLOSED AT ITS SOURCES AND NOT HERE.** ``values`` arrives
+    from ``one_of(*types)`` and ``each_of(*element)`` — tuples the interpreter builds from
+    ``*args`` — or from ``_compile``/:func:`each_of`, both of which now require ``type(...)
+    is tuple``. So the ``LyingTuple`` route MEASURED at ``686a374`` (a ``tuple`` subclass
+    whose ``__iter__`` made a door enforce ``Wildcard`` where the source read ``int``, and
+    ``a_tuple_door(Wildcard())`` was ADMITTED) is refused before this loop runs.
+    ====================================================================================
+    """
     resolved = []
     for value in values:
         if value is None:
@@ -757,7 +832,24 @@ def _type_tuple(values: tuple, where: str) -> tuple:
 
 
 def _compile(parameter: str, declaration: object) -> _Admission:
-    """Turn one declaration into an :class:`_Admission`, or raise :exc:`AdmissionFault`."""
+    """Turn one declaration into an :class:`_Admission`, or raise :exc:`AdmissionFault`.
+
+    **THREE OF THIS FUNCTION'S FOUR SHAPE TESTS ARE EXACT-TYPE AS OF WO-2R3 INCREMENT 10,
+    AND THE FOURTH DECLARES ITS LIMIT AT** :func:`_type_tuple`. What changed, each measured
+    at ``686a374`` before the change and each refused after it:
+
+    * ``isinstance(declaration, _Admission)`` -> ``is_exactly(declaration,
+      _ADMISSION_FORMS)``. An ``_Admission`` SUBCLASS whose ``refusal`` returns ``None`` and
+      whose ``describe()`` says ``'exactly PanelRow'`` was accepted with ``faults: ()``, and
+      the body ran on an ``object()``.
+    * ``isinstance(declaration, tuple)`` -> ``type(declaration) is tuple``. A ``tuple``
+      SUBCLASS whose ``__iter__`` disagreed with its ``repr`` and ``len`` made the door
+      enforce ``Wildcard`` where the source read ``int``, and ``a_tuple_door(Wildcard())``
+      was ADMITTED while ``a_tuple_door(1)`` was refused.
+    * ``isinstance(declaration, type)`` -> **KEPT, WITH A MEASURED REASON.** See
+      :func:`_type_tuple`'s declared limit: exact type would refuse this package's own
+      metaclass-sealed types, and the register's recorded reach for the site is STALE.
+    """
     if declaration is ESTABLISHED_HERE:
         raise AdmissionFault(
             f"admits({parameter}=ESTABLISHED_HERE) states no reason. The exemption must be "
@@ -765,13 +857,20 @@ def _compile(parameter: str, declaration: object) -> _Admission:
             "mechanism carries its justification in the artefact where the static check "
             "can print it and a test can pin it (CD-RULE-004)."
         )
-    if isinstance(declaration, _Admission):
+    # EXACT TYPE over the CLOSED declaration vocabulary, never `isinstance(_, _Admission)`:
+    # an `_Admission` subclass supplies `refusal` and `describe`, which IS the door.
+    if is_exactly(declaration, _ADMISSION_FORMS):
         return declaration
     if declaration is None:
         return _Exactly((type(None),))
     if isinstance(declaration, type):
+        # THE ONE SURVIVING `isinstance` IN THIS MODULE'S ADMISSION SET. Its limit is
+        # declared and measured at `_type_tuple`, and it is kept because exact type here
+        # refuses this package's own metaclass-sealed declarations.
         return _Exactly((declaration,))
-    if isinstance(declaration, tuple):
+    # EXACT TYPE: a `tuple` subclass decides its own iteration, and what a declaration
+    # iterates to is what the door then enforces.
+    if type(declaration) is tuple:
         return _Exactly(_type_tuple(declaration, "admits"))
     raise AdmissionFault(
         f"admits({parameter}=...) was given a {type(declaration).__name__}, which is not a "

@@ -220,6 +220,18 @@ class SealedReadingType(type):
     """
 
     def __new__(mcls, name, bases, namespace, **kwargs):
+        # ``isinstance`` AND NOT EXACT TYPE, DELIBERATELY (WO-2R3 increment 10, ITEM_1).
+        # This is a REFUSAL predicate — satisfy it and the class statement is REFUSED — so
+        # the WIDER operator is the STRICTER one and converting it would refuse LESS.
+        # MEASURED at `686a374`, with `Sub = type('SealedReadingTypeSub', (SealedReadingType,), {})`
+        # and `Forged = type.__new__(Sub, 'Forged', (Degraded,), ...)`:
+        #     isinstance(Forged, SealedReadingType) True   type(Forged) is ... False
+        #     class Child(Forged): ...  -> REFUSED ReadingSurfaceViolated   <- TODAY
+        #     the exact-type predicate over the same bases -> ADMITS
+        # **CONVERTING THIS LINE WOULD LET AN ORDINARY `class` STATEMENT SUBCLASS A SEALED
+        # READING THROUGH ONE FORGED INTERMEDIATE**, which is a WEAKENING of the
+        # accident-proofing PO-DECISIONS-0018 ruling 1(a) explicitly keeps. Executed against
+        # all four sealed metatypes; not one of them was inferred from another.
         for base in bases:
             if isinstance(base, SealedReadingType):
                 raise ReadingSurfaceViolated(
@@ -420,10 +432,22 @@ def seal_reading_type(cls: type) -> type:
     Verification is at IMPORT time, so a member added to a class body is a failure to
     import the dial path rather than a member somebody has to notice.
     """
-    if not isinstance(cls, SealedReadingType):
+    # EXACT TYPE, NOT `isinstance` (WO-2R3 increment 10, ITEM_1, the F01 sweep). This is an
+    # ADMISSION predicate — pass it and the class is recorded in `_SEALED` — so here the
+    # WIDER operator is the WEAKER one, which is the opposite of the four metatype `__new__`
+    # guards, whose predicates REFUSE. `isinstance(cls, SealedReadingType)` is satisfied by a
+    # class whose metatype is a SUBCLASS of `SealedReadingType`, and a subclass metatype
+    # supplies its own `__setattr__` and `__delattr__` — which are the two members sealing
+    # is made of — so such a class would be RECORDED AS SEALED while being closed by
+    # somebody else's code. It is also satisfied by an object merely WEARING the metaclass
+    # through `__class__`. The three real constructors satisfy `type(cls) is
+    # SealedReadingType` exactly, and the loop below names them from READING_CONSTRUCTORS.
+    if type(cls) is not SealedReadingType:
         raise ReadingSurfaceViolated(
-            f"{cls.__name__} is not built by SealedReadingType, so it is closed against "
-            "neither subclassing nor class-attribute assignment."
+            f"{cls!r} is not built by SealedReadingType, so it is closed against "
+            "neither subclassing nor class-attribute assignment. Exact type and never "
+            "isinstance: a metatype SUBCLASS supplies its own __setattr__ and __delattr__, "
+            "which are what sealing is made of."
         )
     if "__slots__" not in vars(cls):
         raise ReadingSurfaceViolated(

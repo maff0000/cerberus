@@ -260,6 +260,33 @@ class ConfigSnapshot:
             )
 
         window = self.staleness_window_seconds
+        # ================================================================================ #
+        # **`isinstance` SURVIVES HERE DELIBERATELY, AND THE REASON IS RE-MEASURED AND NOT
+        # COPIED FORWARD** (WO-2R3 increment 10, ITEM_1, the F01 exact-type sweep;
+        # CD-RULE-006). The residue this line leaves is CARRIED, and the carrier is the LINE
+        # BELOW IT: `StalenessWindow(seconds=...)` refuses on exact type. MEASURED at
+        # `686a374` rather than inherited from the register:
+        #
+        #     class F(float):  __lt__ -> False
+        #     StalenessWindow(seconds=F(600.0))
+        #       -> TypeError: staleness window must be a plain int or float number of
+        #          seconds, got F. A subclass of a number is no...
+        #     StalenessWindow(seconds=600.0)      -> StalenessWindow(seconds=600.0)
+        #
+        # So a float subclass admitted by this line CANNOT produce a ConfigSnapshot: the
+        # constructor raises two lines down, in the same `__post_init__`. The named carrier
+        # is `tests/test_staleness.py::test_a_float_subclass_that_redefines_comparison_is_not_a_window`.
+        #
+        # **AND WHAT CONVERTING IT WOULD COST, MEASURED AND DECLARED RATHER THAN USED AS THE
+        # REASON.** THIRTY-ONE entries in `tools/sweep/declared_dispositions.py` — the whole
+        # `UPSTREAM_OF_THE_PATH` set for `crash_detector.admission` — name THIS ONE SITE in
+        # their `gates` field. Converting it re-keys the site and every one of the 31 reports
+        # `GATES_SITE_DOES_NOT_EXIST`. That register is PROTECTED from the seat that measured
+        # this (PO-DECISIONS-0018 ruling 3), so the conversion and the re-gating must land in
+        # ONE act. Raised as `CD-ENG-WO2R3-08-F03` with the exact one-line diff, for the actor
+        # that owns the register. **THE SUBSTANTIVE REASON THIS LINE IS UNCHANGED IS THE
+        # MEASURED CARRIER ABOVE; THE 31 ARE WHY IT IS SOMEBODY ELSE'S SINGLE ACT.**
+        # ================================================================================ #
         if isinstance(window, bool) or not isinstance(window, float):
             raise TypeError(
                 "ConfigSnapshot.staleness_window_seconds must be a float, got "
