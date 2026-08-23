@@ -416,3 +416,112 @@ returns_to: >
   NOT ARGUE YOUR FINDINGS DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER.** If your measurements
   contradict the reconciliation record, **THE RECORD IS WHAT GETS CORRECTED** — that has now happened
   twice in two boundaries, both times against this seat.
+
+# ================================================================================================ #
+# INSTANCE 2 AMENDMENT — APPENDED AT BL-20260823T050107Z-0121, EDITING NOTHING ABOVE (PBG-CONT-003).
+# THE FIELDS NAMED HERE SUPERSEDE THEIR COUNTERPARTS ABOVE. EVERYTHING NOT NAMED HERE STANDS.
+# ================================================================================================ #
+instance_2_amendment:
+  amended_utc: '2026-08-23T05:01:07Z'    # from `date -u` and from nothing else (CD-RULE-005)
+  amending_boundary: BL-20260823T045246Z-0120
+  amended_by_seat: PROJECT_LEAD_SEAT_01
+  authority: CD-AUTH-0001                # Level 1 lane reconciliation. Resolves no PO question.
+
+  why_there_is_an_instance_2: >
+    **`CD-ENG-WO2R3-05` COMMITTED ITEM 5, BEGAN ITEM 1, AND WAS TERMINATED BY HARNESS/API FAILURE
+    PART-WAY THROUGH IT — THE EIGHTH RUNTIME TERMINATION ON THIS PROJECT.** It never returned:
+    not `READY_FOR_ASSURANCE`, not `STOPPED_AT_ITEM_1`. This is the **CD-D-007 RE-DISPATCH SHAPE** —
+    same dispatch record, same bounded scope, a **FRESH ENGINEER IDENTITY**, and the salvage
+    declared to it in terms.
+
+  actor_id: CD-ENG-WO2R3-06              # **SUPERSEDES `CD-ENG-WO2R3-05`. A FRESH IDENTITY.**
+  why_a_fresh_identity_again: >
+    `CD-ENG-WO2R3-05` is a dead seat with committed work in the record and an unattested working
+    tree. **A NEW SEAT MUST NOT INHERIT ITS NAME**, because the Build Log would then attribute to one
+    identity both work that was measured and work that was quarantined. Signing a dead seat's name is
+    a forged attribution (the CD-D-078 precedent).
+
+  execution_base_sha: 314592c6c397b4e1f2f03ca84488ce800840ad09   # SUPERSEDES 4410275.
+  why_the_base_MOVED: >
+    **ITEM 5 IS BANKED (CD-D-092-A) AND IS BENEATH YOU, NOT IN FRONT OF YOU.** The base moves
+    `4410275` -> `314592c` because the previous seat's ITEM 5 was reconciled BY PROJECT LEAD
+    MEASUREMENT on its own `git archive` extractions and is now lane state. **THE COLLISION THAT
+    MADE IT URGENT IS RESOLVED**: `_module_bindings` can now see a module-level binding written
+    inside a block, so *"REAL PUBLIC BINDING"* means what item 1's criterion needs it to mean
+    **before** you start.
+
+  items_outstanding: '**ITEM_1, ITEM_2, ITEM_3, ITEM_4 and ITEM_6. IN THAT ORDER.**'
+  items_struck: >
+    **ITEM_5 IS DONE AND IS STRUCK.** `F-06-K` is closed at all four `tree.body` sites. **DO NOT
+    REDO IT AND DO NOT "IMPROVE" IT** — it is banked, and a seventh Assurance seat will test it.
+    Its two residual reach limits are UNTOUCHED and remain declared: (i) a class or callable with no
+    `ClassDef`/`FunctionDef` node, (ii) a module outside `src/crash_detector/`.
+
+  what_the_project_lead_MEASURED_about_item_5_so_you_do_not_have_to_take_it_on_trust: >
+    Suite **1635 -> 1641**, both EXIT 0 · node ids **ZERO REMOVED, exactly SIX ADDED**, all in
+    `tests/test_module_level_traversal.py` · **`git rev-parse 4410275:src` == `git rev-parse
+    314592c:src` == `668dc34`, so THE PRODUCT IS BYTE-IDENTICAL BY TREE HASH** · the twelve-check
+    register set matching the seat's table in every cell · **the fail-into-pass arm REBUILT FROM
+    SCRATCH: base instrument `EXIT 1 -> EXIT 0` (101 -> 91 assertions) when `FetchOutcome =
+    Union[...]` is wrapped in `if True:`; fixed instrument `EXIT 1` both ways.**
+    **YOU MAY RELY ON THIS. YOU MAY ALSO RE-MEASURE IT AND SHOULD SAY SO IF IT DISAGREES.**
+
+  # ------------------------------------------------------------------------------------------ #
+  # THE SALVAGE. READ THIS TWICE.
+  # ------------------------------------------------------------------------------------------ #
+  the_quarantined_item_1_draft:
+    location: /srv/crash-detector-wo2r3-inc8-item1-salvage/
+    status: '**READ-ONLY. NOT PROJECT STATE. NOT ADOPTED. UNVERIFIED, NOT DISBELIEVED.**'
+    ruling: CD-D-093
+    contents: 'uncommitted-item1.patch (544 lines) · tree/ (the three files byte-for-byte) · MANIFEST.sha256 · README.md'
+    what_you_MAY_do: >
+      **READ IT AS AN UNVERIFIED PRIOR DRAFT. ADOPT ONLY LINES YOU HAVE YOURSELF VERIFIED against
+      `BLUEPRINT.md` and this dispatch. OWN EVERY LINE YOU COMMIT.** That is the CD-D-007 permission
+      verbatim and it is the whole of it.
+    what_you_MAY_NOT_do: >
+      **YOU MAY NOT APPLY `uncommitted-item1.patch` WHOLESALE AND COMMIT IT.** That is a false
+      attestation and it is the precise failure CD-D-007 exists to prevent. **IF YOU ADOPT A DESIGN
+      IDEA FROM IT, SAY SO IN YOUR RETURN AND SAY WHAT YOU MEASURED TO EARN IT.**
+    why_it_was_not_banked_MEASURED_BY_THE_PROJECT_LEAD: >
+      **(1) THE SUITE IS RED WITH IT APPLIED — 1 failed / 1640 passed against a measured 1641
+      baseline.** `tests/test_disposition_contract.py::test_the_five_original_words_are_unchanged_in_shape`
+      fails because the redesign moves the Class-2 sweep **534 -> 553 sites** and that test pins the
+      count. **THE WORK DOES NOT CARRY THE CONSEQUENCE OF ITS OWN CHANGE — AND THAT IS NOW YOUR
+      PROBLEM TO SOLVE HONESTLY, NOT TO SUPPRESS.**
+      **(2) IT ADDS ZERO TESTS.** 1641 collected node ids either side.
+      **(3) THE MANDATED CARRIER DOES NOT EXIST.** Its own `tests/test_evaluate.py` says *"THE FULL
+      ATTACK IS `tests/test_the_absence_door.py` AND IS NOT DUPLICATED HERE"* and **THAT FILE HAS
+      NEVER EXISTED.** ITEM_1 requires the attack ITSELF as the carrier.
+      **(4) `DECLARED LIMIT 10` IS CITED THREE TIMES, DEFINED NOWHERE, AND COVERS TWO DIFFERENT
+      RESIDUES UNDER ONE NUMBER** — the `types.FunctionType(code, globals)` reconstitution and the
+      dropped generic subscript. CD-RULE-004 requires three places; it is in none.
+      **(5) PROPERTY (b) HAS NO CARRIER** — no add-a-parameter arm anywhere.
+    what_is_GOOD_in_it_said_plainly_because_a_warning_list_alone_would_mislead_you: >
+      The design engages property (a) in a way the Project Lead did not anticipate. **The body is
+      carried as a `code` OBJECT rather than a function object**, so the `sys.modules` ->
+      `__closure__` -> `cell_contents(...)` attack that felled `PO-DECISIONS-0012` ruling 1 finds
+      only DATA. **`functools.wraps` is dropped entirely**, so `__wrapped__` is **never created**
+      rather than created-and-deleted — a strictly better answer to `PO-DECISIONS-0013` ruling 2
+      than the `delattr` it replaces, and it closes the window that fix left open. **The
+      establishment is derived from resolved annotations through the project's one `declaration`
+      vocabulary rather than a second one.** **NONE OF THAT IS VERIFIED. ALL OF IT IS WORTH READING.**
+    the_undeclared_product_change_you_must_disposition_deliberately: >
+      **`CD-PL-F109` (MEDIUM).** The draft moves `_evaluate_dial`'s `usable: Mapping[str, OK]` ->
+      `dict[str, OK]`. Because the establishment is derived from that annotation **by exact type**, a
+      `Mapping` that is not a `dict` becomes **REFUSED AT THE DOOR** where it was previously
+      admitted. **THAT MAY BE CORRECT AND MAY EVEN BE THE POINT — BUT IT IS A NARROWING OF WHAT THE
+      PRODUCT ACCEPTS AND THE DRAFT DECLARES IT NOWHERE.** If you keep it, **DECLARE IT AND CARRY
+      IT**. If you drop it, say why. **DO NOT INHERIT IT SILENTLY.**
+
+  and_the_declared_STOP_STILL_STANDS: >
+    **ITEM_1's declared stop is unchanged: IF THE REDESIGN CANNOT MEET (a) WITHOUT AN EXEMPTION OR A
+    WEAKENING, STOP AND RETURN.** `PO-DECISIONS-0012` ruling 3 forbids both routes and did not fall
+    with ruling 1. **A `STOPPED_AT_ITEM_1` RETURN CARRYING THE REASON IS A SUCCESS.** The existence
+    of a promising salvage does not make (a) provable — **it is evidence, not a verdict.**
+
+  and_this_is_the_ninth_seat_running_that_must_commit_as_it_goes: >
+    **COMMIT ONE COMMIT PER ITEM, AS YOU GO, WITH THE MANDATORY BLOCK FILLED IN.** Eight seats have
+    now been terminated mid-flight on this project and **the ones that committed as they went lost
+    nothing.** `CD-ENG-WO2R3-05` committed ITEM 5 and it survived; it did not commit ITEM 1 and 544
+    lines went to quarantine instead of the record. **PBG-CONT-007: a result that exists only in
+    your working tree is not project state.**

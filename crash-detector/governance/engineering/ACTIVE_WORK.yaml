@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-23T04:52:46Z'
+updated_utc: '2026-08-23T05:01:07Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -69,7 +69,37 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
-  *** **SUPERSEDING, BL-20260823T045246Z-0120: INCREMENT 8 DIED IN FLIGHT. ITEM 5 IS BANKED BY
+  *** **SUPERSEDING, BL-20260823T050107Z-0121: INCREMENT 8 IS RE-DISPATCHED AS INSTANCE 2 AND IS
+  OUT — THE CD-D-007 RE-DISPATCH SHAPE, THIRD TIME OF ASKING ON THIS PROJECT.** ***
+  `CD-DISPATCH-WO2R3-INC8-ENGINEER` amended **BY APPEND, EDITING NOTHING ABOVE** (PBG-CONT-003), to
+  **`CD-ENG-WO2R3-06`, A FRESH ENGINEER IDENTITY**, at **`314592c`**. **THE BASE MOVED `4410275` ->
+  `314592c` BECAUSE ITEM 5 IS BANKED AND IS NOW BENEATH THE INCREMENT RATHER THAN IN FRONT OF IT**,
+  which also means the `_module_bindings` collision that made the previous seat reorder is RESOLVED
+  before item 1 asks its question. ***
+  *** **FIVE ITEMS OUTSTANDING — `ITEM_1`, `ITEM_2`, `ITEM_3`, `ITEM_4`, `ITEM_6` — AND `ITEM_5` IS
+  STRUCK AS DONE, WITH AN EXPLICIT "DO NOT REDO IT AND DO NOT IMPROVE IT". THE ARITHMETIC IS STATED
+  SO THAT "the dispatch was smaller than the order" IS NEVER A SENTENCE THIS RECORD HAS TO DISCOVER
+  LATER: 6 dispatched at instance 1 · 1 completed · 5 outstanding · 0 DROPPED.** ***
+  *** **THE FRESH IDENTITY IS NOT CEREMONY:** `CD-ENG-WO2R3-05` is a dead seat with BANKED work in
+  the record AND a QUARANTINED working tree, and reusing its name would make the Build Log attribute
+  to ONE identity both work that was measured and work that was refused — the CD-D-078 forged-
+  attribution class. ***
+  *** **THE SEAT IS TOLD ABOUT THE SALVAGE IN BOTH DIRECTIONS, AND THAT IS DELIBERATE.** It carries
+  CD-D-093 in full — where it is, that it is READ-ONLY and NOT PROJECT STATE, the five measured
+  reasons it was not banked, `CD-PL-F109`'s undeclared `Mapping` -> `dict` narrowing to disposition
+  deliberately, and the CD-D-007 permission VERBATIM — **AND ALSO WHAT IS GOOD IN IT**: the
+  `code`-object carrier that defeats the `__closure__` attack, and the removal of `functools.wraps`
+  so `__wrapped__` is NEVER CREATED rather than created-and-deleted. **A WARNING LIST WITHOUT THAT
+  SECOND HALF WOULD HAVE BEEN A MISLEADING BRIEF.** ***
+  *** **THE DECLARED STOP STANDS, WITH ONE SENTENCE ADDED THAT THE SALVAGE MADE NECESSARY: THE
+  EXISTENCE OF A PROMISING PRIOR DRAFT DOES NOT MAKE PROPERTY (a) PROVABLE — IT IS EVIDENCE, NOT A
+  VERDICT.** A `STOPPED_AT_ITEM_1` return is a SUCCESS and its next actor is the PRODUCT OWNER, not
+  another Engineer. ***
+  *** **NO NEW PRODUCT AUTHORITY QUESTION; THE TWO REMAIN OPEN AND NEITHER GATES ANY ITEM. Nothing
+  merged, promoted or admitted. T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012`
+  RED AT THE TIP; the WO-2 gate SHUT.** ***
+  *** **THE BLOCK BELOW IS RETAINED, SUPERSEDED — never edited away (PBG-CONT-003).** ***
+  *** **SUPERSEDED, BL-20260823T045246Z-0120: INCREMENT 8 DIED IN FLIGHT. ITEM 5 IS BANKED BY
   MEASUREMENT; ITEM 1 IS QUARANTINED AND MEASURED RED. THE EIGHTH RUNTIME TERMINATION.** ***
   `CD-ENG-WO2R3-05` committed ITEM 5 at `314592c`, began ITEM 1, and was terminated part-way
   through it. **IT NEVER RETURNED — not `READY_FOR_ASSURANCE`, not `STOPPED_AT_ITEM_1`.** CD-D-007's
@@ -4549,5 +4579,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260823T045246Z-0120   # PREVIOUSLY BL-20260823T035800Z-0119, superseded as the last entry and NOT superseded as a ruling. **THIS FIELD WAS MISSED IN THE FIRST HAND-EDIT OF THIS BOUNDARY AND `pbg boot` RETURNED RED — CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED — WHICH IS THE CD-PL-F64 MECHANISM WORKING AS INTENDED: hand-editing this file bypasses the framework's write-then-read-back path, so the boot MUST be re-run after every hand-edit. It was, and it caught this. CD-PL-F111.** PREVIOUSLY BL-20260823T034821Z-0118, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T024708Z-0117, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T023325Z-0116, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T050107Z-0121   # PREVIOUSLY BL-20260823T045246Z-0120, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T035800Z-0119, superseded as the last entry and NOT superseded as a ruling. **THIS FIELD WAS MISSED IN THE FIRST HAND-EDIT OF THIS BOUNDARY AND `pbg boot` RETURNED RED — CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED — WHICH IS THE CD-PL-F64 MECHANISM WORKING AS INTENDED: hand-editing this file bypasses the framework's write-then-read-back path, so the boot MUST be re-run after every hand-edit. It was, and it caught this. CD-PL-F111.** PREVIOUSLY BL-20260823T034821Z-0118, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T024708Z-0117, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T023325Z-0116, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
