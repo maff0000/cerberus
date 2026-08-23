@@ -1,0 +1,17 @@
+diff --git a/tools/coordination/liveness.py b/tools/coordination/liveness.py
+index cbb727a..0d1fa9d 100644
+--- a/tools/coordination/liveness.py
++++ b/tools/coordination/liveness.py
+@@ -98,6 +98,12 @@ class Liveness(NamedTuple):
+ def is_live(pid: Optional[int], recorded_fingerprint: Optional[str],
+             recorded_start_ticks: Optional[int] = None) -> Liveness:
+     """MEASURE whether the recorded process is still the process that is running."""
++    # MUTATED FOR PLANT-COORD-04. LIVENESS ALWAYS RETURNS FALSE — THE SILENT-STALE-REAP BUG.
++    # Every live lease now reads as dead, so `acquire` treats every existing lease as a corpse and
++    # the overlapping launch is ADMITTED WHILE THE FIRST SESSION IS STILL ALIVE. That is
++    # `PO-DECISIONS-0021` ruling 2, reproduced on demand.
++    return Liveness(False, "MUTATED_ALWAYS_DEAD", False,
++                    "PLANT-COORD-04 mutation: is_live() returns False unconditionally")
+     if pid is None:
+         return Liveness(False, "NO_PID_RECORDED", True,
+                         "the record names no pid; liveness is unmeasurable, treated as DEAD")

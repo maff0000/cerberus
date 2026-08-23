@@ -1,0 +1,25 @@
+diff --git a/tools/coordination/registry.py b/tools/coordination/registry.py
+index 6ab16c4..5a0c6b4 100644
+--- a/tools/coordination/registry.py
++++ b/tools/coordination/registry.py
+@@ -108,8 +108,18 @@ def safe_identifier(ident: str) -> str:
+ 
+ 
+ def write_exclusive(path: str, payload: Dict[str, Any]) -> None:
+-    """THE ATOMIC TAKE. ``FileExistsError`` propagates to the caller and IS the refusal."""
+-    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
++    """MUTATED FOR PLANT-COORD-01. THE ATOMIC TAKE REPLACED BY CHECK-THEN-WRITE.
++
++    THIS IS THE DEFECT, NOT THE CONTROL. Between the `os.path.exists` test and the `open` there is
++    a TOCTOU window, and two seats interleaved inside it BOTH SUCCEED. The optional sleep below
++    WIDENS the window; it does not create it, and the plant measures the unwidened race too.
++    """
++    if os.path.exists(path):
++        raise FileExistsError(path)
++    if os.environ.get("PLANT_COORD_01_WIDEN"):
++        import time
++        time.sleep(float(os.environ["PLANT_COORD_01_WIDEN"]))
++    fd = os.open(path, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o644)
+     try:
+         with os.fdopen(fd, "w", encoding="utf-8") as fh:
+             yaml.safe_dump(payload, fh, sort_keys=False, default_flow_style=False, allow_unicode=True)

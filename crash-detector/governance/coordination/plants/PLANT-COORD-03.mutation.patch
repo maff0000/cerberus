@@ -1,0 +1,16 @@
+diff --git a/tools/coordination/merge_reconcile.py b/tools/coordination/merge_reconcile.py
+index 9b99bc7..c60eb6b 100644
+--- a/tools/coordination/merge_reconcile.py
++++ b/tools/coordination/merge_reconcile.py
+@@ -165,7 +165,10 @@ def reconcile(root: str, base: str, tasks: List[str], tips: Dict[str, str]) -> D
+     for i in range(len(seats)):
+         for j in range(i + 1, len(seats)):
+             a, b = seats[i], seats[j]
+-            inter = sorted(set(a["touched_paths"]) & set(b["touched_paths"]))
++            # MUTATED FOR PLANT-COORD-03: THE PAIRWISE-INTERSECTION ASSERTION IS DROPPED.
++            # The instrument still emits a record, still prints "ASSERTION 2 NON-OVERLAP : PASS",
++            # and NO LONGER LOOKS. This is the shape of every silent clobber.
++            inter = []
+             intersections.append({
+                 "seat_a": a["seat_actor_id"], "task_a": a["task_id"],
+                 "seat_b": b["seat_actor_id"], "task_b": b["task_id"],

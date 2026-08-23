@@ -1,0 +1,218 @@
+# ================================================================================================== #
+# REQUIRED-TESTS — the coordination discipline's register. Increment 12 ITEM 6.
+#
+# **THIS FILE IS NEW.** MEASURED, NOT ASSUMED, AND STATED PRECISELY:
+#
+#     git ls-tree -r e6f9802 --name-only | grep -i required-tests
+#     -> governance/assurance/WO-2/required-tests/runs/RTR-WO2-0001.json
+#        governance/assurance/WO-2R/required-tests/runs/RTR-WO2R-0001.json
+#
+#     git ls-tree -r wo-2r3 --name-only | grep -i required-tests
+#     -> required-tests.yaml
+#
+# So `main` at `e6f9802` carries **RUN RECORDS** under `governance/assurance/`, and **NO REGISTER**.
+# The `required-tests.yaml` that exists is a `wo-2r3` LANE artefact at the lane's root, and the lane
+# is FROZEN at `be0b355` for the ninth Assurance gate (`CD-D-176`) — this seat did not touch it.
+# **THIS FILE IS CREATED, NOT EXTENDED.**
+#
+# `CD-RULE-004` — A GUARD CLOSES ITS CLASS OR DECLARES ITS OWN LIMIT — and on this project that
+# means **THREE PLACES EXIST FOR EACH INSTRUMENT, CONSISTENTLY**:
+#
+#   1. THE INSTRUMENT      — the limit block printed AFTER the verdict, from a `finally`, on EVERY
+#                            exit path (`common.Limit`). `CD-D-166`: a limit printed before a
+#                            verdict is a limit nobody reads, and a limit printed only on success is
+#                            a limit that vanishes exactly when it matters.
+#   2. THE EXECUTION CONTRACT — `governance/coordination/contracts/<row-id>.md`.
+#   3. THIS REGISTER ROW.
+#
+# **TWO PRIOR SEATS ON THIS PROJECT WERE FOUND SHORT EXACTLY HERE.** What is prohibited is the third
+# thing: a guard that catches a chosen instance while its register entry claims the class.
+#
+# **NO ROW BELOW CLAIMS MORE THAN ITS GUARD DELIVERS.** Every row carries `closes_class: false` and
+# an explicit `declared_limit`, because not one instrument in this increment closes its class.
+# ================================================================================================== #
+
+record_type: REQUIRED_TESTS_REGISTER
+scope: 'increment 12 — the coordination discipline (PO-DECISIONS-0021 ruling 3)'
+written_utc: '2026-08-23T14:30:00Z'    # `date -u +%FT%TZ` (CD-RULE-005)
+written_by: CD-ENG-COORD-01
+authority: 'PO-DECISIONS-0021 rulings 3(a)-(d); CD-D-174; CD-D-175; CD-D-176'
+
+# ================================================================================================== #
+rows:
+# ================================================================================================== #
+
+- id: CD-CT-001-WORK-CLAIM-ATOMIC
+  delivers: 'PO-DECISIONS-0021 ruling 3(a) — two seats can never take the same work'
+  instrument: tools/coordination/claim.py
+  supporting: [tools/coordination/registry.py, tools/coordination/liveness.py]
+  contract: governance/coordination/contracts/CD-CT-001-WORK-CLAIM-ATOMIC.md
+  plant: governance/coordination/plants/PLANT-COORD-01.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-01.mutation.patch
+  invocation: 'python3 -B tools/coordination/claim.py claim --task T --seat S --write-scope G'
+  closes_class: false
+  declared_limit: >
+    DECIDES mutual exclusion on a TASK ID by O_EXCL create, MEASURED atomic at 6400 concurrent
+    attempts / 200 rounds / 0 double-takes on this filesystem. DOES NOT DECIDE whether two
+    DIFFERENT task ids name the same work; DOES NOT DECIDE work done with no claim at all; DOES NOT
+    DECIDE a claim file edited by hand; REFUSES rather than proceeds on a network filesystem.
+  residue_cd_rule_006: >
+    TASK-ID SYNONYMY is NOT PROVED TO BE CARRIED ANYWHERE. The scope-overlap refusal is a PARTIAL
+    carrier and that partiality is measured (PLANT-COORD-02 arm 1), not assumed.
+  arms: 3
+  last_run_verdict: 'LIVE — 3/3 arms contrasted'
+
+- id: CD-CT-002-SCOPE-ALGEBRA-FAILS-CLOSED
+  delivers: 'PO-DECISIONS-0021 ruling 3(b) — parallel writers never touch the same bytes'
+  instrument: tools/coordination/scope.py
+  supporting: [tools/coordination/test_scope.py]
+  contract: governance/coordination/contracts/CD-CT-002-SCOPE-ALGEBRA-FAILS-CLOSED.md
+  plant: governance/coordination/plants/PLANT-COORD-02.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-02.mutation.patch
+  invocation: 'python3 -B tools/coordination/scope.py --a G --b G [--expect overlap|disjoint]'
+  unit_tests: 'python3 -B tools/coordination/test_scope.py    # 27 cases, 0 failures'
+  closes_class: false
+  declared_limit: >
+    DECIDES literal paths, recursive `p/**` prefixes, and single-segment `*`/`?` globs — the last
+    by EXACT product-automaton emptiness and not by a heuristic. REFUSES (fails closed to OVERLAP)
+    `**` mid-pattern, character classes and brace expansion. REFUSES at parse time `..`, absolute
+    paths and the empty entry. DECIDES case collision conservatively. DOES NOT DECIDE symlink
+    aliasing textually.
+  residue_cd_rule_006: >
+    SYMLINK ALIASING, when the algebra is used WITHOUT a worktree, is NOT PROVED TO BE CARRIED
+    ANYWHERE. With a worktree it is carried by check_scope_disjoint.py via
+    scope.symlinked_components(), and that hand-off is MEASURED by PLANT-COORD-02 arm 3b.
+  arms: 4
+  last_run_verdict: 'LIVE — 4/4 arms contrasted'
+
+- id: CD-CT-003-LIVE-SCOPE-DISJOINT
+  delivers: 'PO-DECISIONS-0021 ruling 3(b) + CD-PL-F134 (write against a live reader''s READ scope)'
+  instrument: tools/coordination/check_scope_disjoint.py
+  contract: governance/coordination/contracts/CD-CT-003-LIVE-SCOPE-DISJOINT.md
+  plant: governance/coordination/plants/PLANT-COORD-02.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-02.mutation.patch
+  invocation: 'python3 -B tools/coordination/check_scope_disjoint.py'
+  closes_class: false
+  declared_limit: >
+    DECIDES pairwise WRITE x WRITE, and WRITE x READ in BOTH cross-seat directions. DELIBERATELY
+    DOES NOT REFUSE READ x READ (two seats reading one file is the normal case, and refusing it
+    would ban parallel audits — the vacuity ruling 3 rejects) nor a seat's own write-vs-own-read.
+    DOES NOT DECIDE what a seat actually TOUCHED — it reads DECLARATIONS.
+  residue_cd_rule_006: >
+    The gap between a DECLARED scope and a TOUCHED path is carried by merge_reconcile.py assertion
+    (1) CONTAINMENT, MEASURED by PLANT-COORD-03. The gap between a LIVE ACTOR and a CLAIM is
+    carried by launch.sh for launches that go through it, and for every other route it is NOT
+    PROVED TO BE CARRIED ANYWHERE.
+  arms: 4
+  last_run_verdict: 'LIVE — 4/4 arms contrasted (shares PLANT-COORD-02 with CD-CT-002)'
+
+- id: CD-CT-004-BUILD-LOG-ID-BLOCKS
+  delivers: 'PO-DECISIONS-0021 ruling 3(b) — per-seat build-log id blocks, no shared sequence'
+  instrument: tools/coordination/check_build_log_blocks.py
+  data: governance/coordination/BUILD-LOG-ID-BLOCKS.yaml
+  contract: governance/coordination/contracts/CD-CT-004-BUILD-LOG-ID-BLOCKS.md
+  plant: 'NONE. **DECLARED, NOT OMITTED — see the contract §4.**'
+  invocation: 'python3 -B tools/coordination/check_build_log_blocks.py --table --entries --ref main --ref wo-2r3'
+  closes_class: false
+  declared_limit: >
+    DECIDES block-allocation overlap, out-of-block entries (author = git author of the ADDING
+    commit), and duplicate id numbers. DOES NOT DECIDE cross-BRANCH collisions unless two --ref
+    values are passed, and nothing runs the two-ref form automatically. DOES NOT RENUMBER, MOVE OR
+    EDIT ANY ENTRY — it has no write path (PBG-CONT-003 is non-waivable).
+  residue_cd_rule_006: >
+    AUTOMATIC INVOCATION IS NOT PROVED TO BE CARRIED ANYWHERE. Q11.
+  measured_at_e6f9802: 'table 0 violations; entries over main+wo-2r3: 145 violations (15 duplicate id, 40 out-of-block, 90 unallocated-author). NOT REPAIRED. DISCLOSED.'
+
+- id: CD-CT-005-POINTER-ATOMIC
+  delivers: 'CD-PL-F132''s real fix — the pointer moves in the same commit as the entry it names'
+  instrument: tools/coordination/check_build_log_pointer_atomic.py
+  contract: governance/coordination/contracts/CD-CT-005-POINTER-ATOMIC.md
+  plant: 'NONE AS A MUTATION PLANT. **ITS CONTRAST IS THE BACKWARD SWEEP ITSELF — see the contract §4.**'
+  invocation: 'python3 -B tools/coordination/check_build_log_pointer_atomic.py --rev <sha>'
+  closes_class: false
+  declared_limit: >
+    DECIDES POINTER_NOT_MOVED, POINTER_DANGLING and POINTER_STALE. DOES NOT DECIDE whether the
+    entry the pointer names is the RIGHT one; DOES NOT DECIDE the other two continuity pointer
+    fields; DOES NOT DECIDE SCHEMA validity — `5f09627`, one of the five RESUME_BLOCKED commits, is
+    NOT caught by this instrument and that is stated rather than hidden.
+  residue_cd_rule_006: >
+    AUTOMATIC INVOCATION IS NOT PROVED TO BE CARRIED ANYWHERE. The detector that would catch this
+    (`pbg`'s continuity.active_work_currency()) EXISTS and the gate that runs on every commit
+    EXISTS, both inside `pbg/`, AND THEY ARE NOT CONNECTED. No seat may connect them
+    (PBG-FWK-013). Q11.
+  measured_at_e6f9802: '93 applications, 9 violating commits, failing positions [30, 76, 85, 90, 91, 92]. The record''s four positions 76/85/90/91 reproduced exactly; two more found.'
+
+- id: CD-CT-006-NO-SHARED-RECORD-WRITE
+  delivers: 'PO-DECISIONS-0021 ruling 3(b) — no shared ACTIVE_WORK.yaml edit'
+  instrument: tools/coordination/check_no_shared_record_write.py
+  data: governance/coordination/ACCOUNTABLE-SEAT.yaml
+  contract: governance/coordination/contracts/CD-CT-006-NO-SHARED-RECORD-WRITE.md
+  plant: 'NONE AS A SEPARATE RUNNER. Its PROSPECTIVE arm is exercised inside claim.py and is covered by PLANT-COORD-01''s registry; its RETROSPECTIVE arm is run over real history. See the contract §4.'
+  invocation: 'python3 -B tools/coordination/check_no_shared_record_write.py --range A..B'
+  closes_class: false
+  declared_limit: >
+    DECIDES a NON-ACCOUNTABLE seat writing a shared record file, prospectively and
+    retrospectively. **DOES NOT DECIDE TWO CONCURRENT SESSIONS OF THE SAME ACCOUNTABLE SEAT** —
+    CD-RULE-002 gives one identity to a ROLE, so two live Project Leads are indistinguishable from
+    one in `git log`.
+  residue_cd_rule_006: >
+    TWO CONCURRENT ACCOUNTABLE SESSIONS IS **NOT PROVED TO BE CARRIED ANYWHERE**. This is
+    VERDICT-META-ASSURANCE-01-SECOND-SEAT.md §7.2, which names it the true root cause of the day's
+    breaches. Amending CD-RULE-002 to a per-session identity is Product Owner work.
+
+- id: CD-CT-007-MERGE-RECONCILE
+  delivers: 'PO-DECISIONS-0021 ruling 3(c) — the merge step asserts no two seats touched the same artefact'
+  instrument: tools/coordination/merge_reconcile.py
+  contract: governance/coordination/contracts/CD-CT-007-MERGE-RECONCILE.md
+  plant: governance/coordination/plants/PLANT-COORD-03.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-03.mutation.patch
+  invocation: 'python3 -B tools/coordination/merge_reconcile.py --base <sha> --claim T [--claim T] --emit'
+  closes_class: false
+  declared_limit: >
+    MEASURES PATHS, NOT BYTES. OVER-REFUSES two seats editing disjoint REGIONS of one file. DOES
+    NOT CATCH the same bytes written THROUGH an undeclared path — a symlink, a generated file, a
+    .gitignore'd artefact. DOES NOT PERFORM THE MERGE AND CANNOT PREVENT ONE.
+  residue_cd_rule_006: >
+    BYTE-LEVEL and OUT-OF-INDEX collision is NOT PROVED TO BE CARRIED ANYWHERE. The over-refusal on
+    same-path edits is the only thing standing where that control would be, and it is blunt by
+    design.
+  arms: 3
+  last_run_verdict: 'LIVE — 3/3 arms contrasted'
+
+- id: CD-CT-008-LAUNCH-LEASE
+  delivers: 'PO-DECISIONS-0021 ruling 3(d) — the driver half'
+  instrument: tools/coordination/lease.py
+  supporting: [tools/coordination/launch.sh, tools/coordination/liveness.py]
+  contract: governance/coordination/contracts/CD-CT-008-LAUNCH-LEASE.md
+  plant: governance/coordination/plants/PLANT-COORD-04.run.sh
+  mutation: governance/coordination/plants/PLANT-COORD-04.mutation.patch
+  invocation: 'sh tools/coordination/launch.sh --lease L --seat S --task T --write-scope G -- COMMAND'
+  closes_class: false
+  declared_limit: >
+    REFUSES task overlap, write/write overlap and write/read overlap against a LIVE lease, and
+    launch.sh REFUSES TO exec — the non-start is PROVED by a sentinel, not inferred from an exit
+    code. ADMITS the disjoint launch concurrently, which is an EQUAL requirement. DOES NOT DECIDE a
+    launcher that never asks for a lease.
+  residue_cd_rule_006: >
+    BINDING THE LAUNCHER is NOT PROVED TO BE CARRIED ANYWHERE for any launch that does not go
+    through launch.sh. **THE OPERATOR'S WRAPPER IS NOT IN THIS REPOSITORY** and no seat and no
+    framework in this tree can reach it.
+  arms: 3
+  last_run_verdict: 'LIVE — 3/3 arms contrasted'
+
+- id: CD-CT-009-LEASE-HELD-AT-WRITE
+  delivers: 'PO-DECISIONS-0021 ruling 3(d) — **THE HAND HALF, AND IT LANDS HALF-CARRIED BY CONSTRUCTION**'
+  instrument: tools/coordination/check_lease_held.py
+  contract: governance/coordination/contracts/CD-CT-009-LEASE-HELD-AT-WRITE.md
+  plant: 'NONE, AND A PLANT WOULD BE DISHONEST HERE. See the contract §4 and the declaration below.'
+  invocation: 'python3 -B tools/coordination/check_lease_held.py --staged'
+  closes_class: false
+  declared_limit: >
+    DECIDES whether every governed path in a staged set or commit range is inside the write scope
+    of a LIVE lease held by the named identity. *** IT IS NOT INVOKED BY ANYTHING. ***
+  residue_cd_rule_006: >
+    *** **NOT PROVED TO BE CARRIED ANYWHERE.** *** Those are the required words and they are the
+    honest answer. `git config core.hooksPath` is `pbg/tools/hooks`; that hook's entire staged-path
+    filter is `grep '^governance/authority/'`; `pbg/` is pinned read-only to every seat
+    (PBG-FWK-013), so extending it would be editing the framework to make a control pass, which is
+    a bypass and not a fix. Q11 / Q12. **THIS ROW MUST NOT BE READ AS A BINDING.**

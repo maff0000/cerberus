@@ -1,0 +1,245 @@
+# ================================================================================================== #
+# BL-20260823T142725Z-0300 — ENGINEER RETURN. **INCREMENT 12, THE COORDINATION DISCIPLINE.**
+#
+# **THE FIRST ENTRY IN BLOCK `0300`-`0399`, WHICH `CD-D-175` ALLOCATED TO THIS SEAT AND BOUNDED AT
+# BOTH ENDS.** No entry outside that block is touched by this seat and no entry anywhere is
+# renumbered — `PBG-CONT-003` is non-waivable.
+#
+# **I BUILD; I DO NOT GRADE** (`PBG-SOD-001`, non-waivable). This entry reports. A FRESH Assurance
+# seat decides whether any of it is good enough.
+# ================================================================================================== #
+
+entry_id: BL-20260823T142725Z-0300
+record_type: ENGINEER_INCREMENT_RETURN
+utc: '2026-08-23T14:27:25Z'         # from `date -u +%FT%TZ` and from nothing else (CD-RULE-005)
+actor: CD-ENG-COORD-01
+dispatch: CD-DISPATCH-INC12-COORDINATION-ENGINEER
+issuing_boundary: BL-20260823T134132Z-0139
+authority: 'PO-DECISIONS-0021 (commit e6f9802, authored by Matt Scott and by NO seat), rulings 3(a)-(d)'
+branch: inc12-coordination
+worktree: /srv/crash-detector-inc12
+base_sha: e6f980252854d6a79efaf42d4fddb998f19d8540
+return: READY_FOR_ASSURANCE
+
+boot_verdict_taken_before_any_work:
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: '**AMBER**, `CONTINUITY_DRIFT/RESUME_AMBER`, observed_sha `e6f9802`, branch `inc12-coordination`.'
+  the_drift_named_and_NOT_silently_corrected: >
+    `ACTIVE_WORK.yaml` records `branch: main` and `worktree: /srv/crash-detector`; this seat is
+    dispatched to `inc12-coordination` at `/srv/crash-detector-inc12`. **THAT IS THE DRIFT AND IT IS
+    EXPECTED BY CONSTRUCTION (`CD-D-174`).** It is reported rather than reconciled, because
+    `ACTIVE_WORK.yaml` is the accountable seat's file and NOT in this seat's writable scope — which
+    is deliverable (b) applied to this seat first.
+  baseline_reconciliation: '`git rev-parse` -> `e6f980252854d6a79efaf42d4fddb998f19d8540`, `git cat-file -t` -> `commit`. **MATCHES THE DISPATCHED BASELINE.** Porcelain measured 0 tracked modifications at start.'
+
+# ================================================================================================== #
+# THE DECLARED STOPS — EACH ONE TESTED, NONE TRIGGERED.
+# ================================================================================================== #
+declared_stops:
+  atomicity_on_this_filesystem: >
+    **MEASURED, NOT ASSUMED. NOT TRIGGERED.** `stat -f -c %T` -> `ext2/ext3`. 200 rounds x 32
+    concurrent processes racing `O_CREAT|O_EXCL` on one path = **6400 attempts, exactly 200 wins, 0
+    double-takes.** Evidence: `governance/coordination/evidence/EV-ATOMICITY-MEASUREMENT.md`.
+    `registry.assert_atomic_or_refuse()` RE-MEASURES the filesystem on every run and refuses on a
+    network filesystem rather than carrying this result forward as a property of the code.
+  renumbering_a_build_log_entry: >
+    **NOT TRIGGERED.** Closing the blocks forward required no renumbering. `check_build_log_blocks.py`
+    has NO WRITE PATH AT ALL. The 15 duplicate-id and 40 out-of-block violations in the existing
+    record are COUNTED, PRINTED AND LEFT STANDING.
+  scope_insufficient: >
+    **NOT RETURNED.** Every item was buildable inside the declared scope. **ONE ITEM CAME CLOSE AND
+    IS RAISED AS A FINDING INSTEAD — see `CD-ENG-COORD-01-F01`**: this seat cannot satisfy its own
+    ITEM 2(e) rule for its own Build Log entry, because doing so would require writing
+    `ACTIVE_WORK.yaml`, which ITEM 2(d) forbids it. That is a contradiction between two deliverables
+    and it is reported, not resolved by widening scope (`PBG-BOOT-002`).
+  a_deliverable_as_ruled_being_unsound: >
+    **NOT TRIGGERED as a refusal to build.** One prescription inside the dispatch WAS found unsound
+    when measured and the correction is recorded with its measurement — see
+    `CD-ENG-COORD-01-F02` (liveness by cmdline match).
+
+# ================================================================================================== #
+what_was_built:
+# ================================================================================================== #
+  ITEM_1_work_claim_registry: 'BUILT. `tools/coordination/claim.py` + `registry.py`. A DIRECTORY, one file per claim, `O_CREAT|O_EXCL`, `FileExistsError` IS the refusal. `claim` / `release` (holder only) / `list` / `status` / `reap` (EXPLICIT, writes the reason and the evidence of death into the record, sets `ABANDONED`, never deletes; `claim` NEVER reaps).'
+  ITEM_2a_scope_algebra: 'BUILT. `tools/coordination/scope.py`. Decides literal paths, recursive `p/**` prefixes, and single-segment `*`/`?` globs BY EXACT PRODUCT-AUTOMATON EMPTINESS. Fails closed on every other form. 27 unit cases, 0 failures.'
+  ITEM_2b_live_disjointness: 'BUILT. `tools/coordination/check_scope_disjoint.py`, INCLUDING the asymmetric WRITE-vs-READ case in both cross-seat directions (`CD-PL-F134`), and deliberately NOT refusing READ-vs-READ.'
+  ITEM_2c_per_seat_id_blocks: 'BUILT. `governance/coordination/BUILD-LOG-ID-BLOCKS.yaml` + `check_build_log_blocks.py` (block overlap, out-of-block entry, AND duplicate id — the third is not in the dispatch and is required by "no shared sequence").'
+  ITEM_2d_no_shared_record_write: 'BUILT, BOTH DIRECTIONS. Prospective arm called by `claim.py` before every take; retrospective arm over a commit range reading the git author.'
+  ITEM_2e_pointer_atomic: 'BUILT AND RUN BACKWARD. `check_build_log_pointer_atomic.py`, three classes: POINTER_NOT_MOVED, POINTER_DANGLING, POINTER_STALE.'
+  ITEM_3_merge_reconcile: 'BUILT. Containment, non-overlap, identity. Emits a record under `governance/coordination/merges/`.'
+  ITEM_4i_driver_binding: 'BUILT. `tools/coordination/lease.py` + `launch.sh`, which acquires the lease FIRST and REFUSES TO `exec`. The non-start is PROVED by a sentinel file, not inferred from an exit code.'
+  ITEM_4ii_hand_binding: '**BUILT AS A CHECK AND DECLARED UNCARRIED.** See the CD-RULE-006 declaration below, in its required words.'
+  ITEM_5_four_plants: 'BUILT. Four `git apply`-able mutation patches + four runners. **ALL FOUR LIVE. 13 of 13 arms contrasted.**'
+  ITEM_6_three_places: 'BUILT. `governance/coordination/required-tests.yaml` (CREATED, not extended) + nine execution contracts. Every row `closes_class: false`.'
+
+what_was_NOT_built_and_is_owed:
+- '**NO MUTATION PLANT for `CD-CT-004`, `CD-CT-005`, `CD-CT-006` or `CD-CT-009`.** Each contract says why in its own §4 and each reason is recorded as AN ARGUMENT AND NOT A PROOF. **An Assurance seat that judges any of the four plants owed should say so, and this seat would be short of the standard.**'
+- '**NOTHING INVOKES ANY OF THESE INSTRUMENTS AUTOMATICALLY.** Not one. See the CD-RULE-006 declaration.'
+- '**`IMP-023` IS NOT CLOSED AND IS NOT CLAIMED CLOSED.** This seat could not read the register entry — it does not exist in this repository. `Q13`.'
+- '**THE OPERATOR''S LAUNCH WRAPPER IS NOT BOUND.** It is not in this repository. `launch.sh` binds every launch that goes through it and nothing else, and nothing goes through it today. `Q12`.'
+
+# ================================================================================================== #
+# THE CD-RULE-006 DECLARATION FOR ITEM 4(ii), IN ITS REQUIRED WORDS.
+# ================================================================================================== #
+cd_rule_006_declaration_for_item_4ii:
+  the_words: >
+    *** **`tools/coordination/check_lease_held.py` IS NOT PROVED TO BE CARRIED ANYWHERE.** ***
+  the_measurement_behind_the_words: >
+    `git config core.hooksPath` -> `pbg/tools/hooks`. `pbg/tools/hooks/pre-commit` line 44:
+    `STAGED=$(git diff --cached --name-only --diff-filter=ACMR | grep '^governance/authority/' || true)`
+    followed by `[ -n "$STAGED" ] || exit 0`. **BOTH RE-MEASURED BY THIS SEAT AND NOT TAKEN FROM THE
+    DISPATCH.** The one automatic pre-write carrier in this repository greps one directory and waves
+    everything else through, and `pbg/` is pinned read-only to every seat (`PBG-FWK-013`).
+  what_this_seat_did_NOT_do: >
+    **IT DID NOT EDIT `pbg/`.** `git status` shows zero modifications under `pbg/`. Extending the
+    hook would have been editing the framework to make a control pass, which is a bypass and not a
+    fix. The dispatch disclosed the trap in advance and this seat did not walk into it.
+  and_so: >
+    **DELIVERABLE 3(d) LANDS HALF-CARRIED BY CONSTRUCTION.** The driver half is real machinery that
+    refuses to `exec` and is proved by `PLANT-COORD-04` arm 1 with a sentinel. The hand half is a
+    check nothing runs. **THIS MUST NOT BE READ AS A BINDING.** `Q11` / `Q12`.
+
+# ================================================================================================== #
+# ITEM 2(e) — THE BACKWARD RUN. **DERIVED. NOT COPIED.**
+# ================================================================================================== #
+item_2e_backward_run:
+  command: 'python3 -B tools/coordination/check_build_log_pointer_atomic.py --rev e6f980252854d6a79efaf42d4fddb998f19d8540'
+  at_this_seats_dispatched_baseline_e6f9802:
+    commits_examined: 204
+    applications_of_the_discipline: 93
+    violating_commits: 9
+    by_class: 'POINTER_NOT_MOVED 3 · POINTER_DANGLING 1 · POINTER_STALE 7 (two commits carry two classes)'
+    failing_positions: [30, 76, 85, 90, 91, 92]
+  at_the_main_tip_76c1de1_measured_while_this_seat_was_live:
+    commits_examined: 208
+    applications_of_the_discipline: 95
+    violating_commits: 9
+    failing_positions: [30, 76, 85, 90, 91, 92]
+  what_the_record_says: '"4 failures in 91 applications at positions 76, 85, 90 and 91."'
+  the_comparison_STATED_HONESTLY: >
+    **THE RECORD''S FOUR POSITIONS — 76, 85, 90, 91 — ARE REPRODUCED EXACTLY, BY AN INSTRUMENT THAT
+    DID NOT KNOW THEM.** That is independent corroboration of the record's identification of the
+    failures. **THE COUNTS DIFFER AND THE INSTRUMENT'S NUMBERS ARE OFFERED AS THE FINDING:** 93
+    applications rather than 91, and 9 violating commits rather than 4, because this instrument
+    counts THREE classes where the record counted the narrower one, and checks EVERY commit for a
+    broken pointer rather than only the commits that added an entry. **TWO POSITIONS THE RECORD DOES
+    NOT CARRY ARE FOUND: 30 AND 92.**
+  the_one_it_MISSES_and_it_is_named: >
+    **`5f09627` BOOTED `RESUME_BLOCKED` AND THIS INSTRUMENT DOES NOT FLAG IT.** Its failure was a
+    SCHEMA violation (`continuity_record_commit: PENDING_CD_RULE_007_FOLLOW_UP` against
+    `^([0-9a-f]{7,40}|PENDING)$` — `CD-PL-F148`), which this instrument DECLARES it does not decide.
+    **FOUR OF THE FIVE NAMED `RESUME_BLOCKED` COMMITS ARE CAUGHT. THAT IS WHAT IS CLAIMED.**
+  and_a_draft_that_would_have_shipped_a_near_miss: >
+    **THE FIRST DRAFT CHECKED ONLY `POINTER_NOT_MOVED` AND `POINTER_DANGLING` AND CAUGHT ONLY TWO OF
+    THE FIVE.** It missed `a31c799`, `c6ee53e` and `5f09627` because each moved the pointer to a
+    REAL entry that was no longer the LATEST. `POINTER_STALE` exists because the backward run over
+    real history disagreed with the record and the disagreement was investigated rather than
+    smoothed.
+  it_answers_T23_by_example: >
+    The open question *"WHEN A RULE IS ADOPTED, IS THE RECORD SWEPT BACKWARD FOR THE INSTANCES THAT
+    MOTIVATED IT?"* has been on this docket since `T23`. **THIS INSTRUMENT SWEEPS, COUNTS, NAMES —
+    AND REPAIRS NOTHING AND RENUMBERS NOTHING.** That is offered as the worked example, not as an
+    answer; answering it is Product Authority's.
+
+# ================================================================================================== #
+plants_the_three_arm_result: '**ALL FOUR LIVE. 13 OF 13 ARMS CONTRASTED.** Full table with every command and every rc is in `governance/coordination/RETURN-CD-ENG-COORD-01.md`.'
+# ================================================================================================== #
+
+findings_raised_by_this_seat:
+- id: CD-ENG-COORD-01-F01
+  severity: HIGH
+  against: 'the deliverables as ruled — PO-DECISIONS-0021 ruling 3(b) against CD-PL-F132''s rule'
+  what: >
+    **THE TWO ARE JOINTLY UNSATISFIABLE FOR ANY SEAT THAT IS NOT THE ACCOUNTABLE SEAT, AND THIS
+    INCREMENT IS THE PROOF.** ITEM 2(d) forbids a non-accountable seat from writing
+    `ACTIVE_WORK.yaml`. ITEM 2(e) requires every commit that ADDS a build-log entry to move
+    `last_build_log_entry` in `ACTIVE_WORK.yaml` IN THAT SAME COMMIT. **THIS SEAT MUST WRITE A BUILD
+    LOG ENTRY AND MAY NOT MOVE THE POINTER, SO THE COMMIT CARRYING THIS FILE VIOLATES THIS SEAT'S OWN
+    ITEM 2(e) CHECK BY CONSTRUCTION.** Not resolved here: it is a product/Project Lead question.
+- id: CD-ENG-COORD-01-F02
+  severity: MEDIUM
+  against: 'this dispatch, ITEM 4 — "Liveness is /proc/<pid> plus a cmdline match"'
+  what: >
+    **BUILT LITERALLY, IT DECLARES EVERY SUCCESSFULLY LAUNCHED SEAT DEAD ONE MOMENT AFTER IT STARTS**
+    — `launch.sh` `exec`s, and `exec` keeps the process while REPLACING its command line.
+    `PLANT-COORD-04` arms 1 and 3 both failed on it. That is `CD-PL-F143`'s exact failure mode — a
+    seat declared dead while alive — built into the control. `/proc/<pid>/stat` field 22 is now
+    authoritative (a recycled PID cannot reproduce a start time), cmdline drift is RECORDED not
+    treated as death, and the dispatch's intent is met by a strictly stronger test.
+- id: CD-ENG-COORD-01-F03
+  severity: HIGH
+  against: 'the record — CD-RULE-002, PRODUCT AUTHORITY, non-relaxable'
+  what: >
+    **27 BUILD LOG ENTRIES ON `main` WERE ADDED BY COMMITS AUTHORED `Matt Scott`, A HUMAN IDENTITY —
+    INCLUDING THIRTEEN CONSECUTIVE PROJECT LEAD BOUNDARY ENTRIES `0111` THROUGH `0123`.** And **34 of
+    `main`''s 203 commits wrote `ACTIVE_WORK.yaml` under that identity, 32 on or after CD-RULE-002''s
+    effective date and 16 of them TODAY.** Commit `44c5ef5` is authored `Matt Scott
+    <rogue@cerberus.local>` and committed `NoustAI-PDA <pda@noustai.com>` — **BOTH OF THE IDENTITIES
+    `CD-RULE-002` NAMES VERBATIM AS ITS MEASURED FAILURE (`CD-PL-F56`)**, four days after the rule
+    took effect. `CD-RULE-002`'s stated enforcement is a git log author audit AT EVERY BOUNDARY.
+    Either it was not run, or it was run and did not catch this.
+- id: CD-ENG-COORD-01-F04
+  severity: MEDIUM
+  against: 'the dispatch''s stated allocation, ITEM 2(c)'
+  what: >
+    The dispatch states `0200`-`0299` is "the WO-2R3 lane". **MEASURED: IT IS ENTIRELY UNUSED — ZERO
+    ENTRIES ON EITHER BRANCH.** The lane's actual exhausted block is `0060`-`0099` (40/40 present on
+    `wo-2r3`, 0 on `main`). The dispatch said "MEASURED AND NOT ASSUMED — VERIFY EACH ONE YOURSELF",
+    and verifying found this. Not a defect in the allocation; a defect in its description.
+- id: CD-ENG-COORD-01-F05
+  severity: MEDIUM
+  against: 'the existing record — PO-DECISIONS-0021 ruling 3(b) "no shared sequence"'
+  what: >
+    **15 BUILD LOG ID NUMBERS ARE CARRIED BY MORE THAN ONE DISTINCT ENTRY** — 14 across
+    `main`/`wo-2r3` and the known duplicate `0136` inside `main` alone. Derived twice by independent
+    methods that agreed. **NOT REPAIRED, NOT RENUMBERED, DISCLOSED.**
+- id: CD-ENG-COORD-01-F06
+  severity: LOW
+  against: 'this seat''s own baseline, and it is a continuity observation'
+  what: >
+    **`e6f9802` DOES NOT CONTAIN THIS SEAT''S OWN DISPATCH, NOR `BL-...-0139` WHICH ISSUED IT.** Both
+    arrived at `82c8f06`, AFTER the baseline the dispatch names. An Assurance seat cloning this
+    branch alone CANNOT READ THE AUTHORITY THAT ISSUED THE WORK IT IS GRADING. The dispatch file
+    itself was verified UNCHANGED since this seat read it (`sha256 58536e2a...`, `diff` rc=0).
+- id: CD-ENG-COORD-01-F07
+  severity: INFORMATIONAL
+  against: 'this seat''s own practice, disclosed rather than found'
+  what: >
+    This seat COMMITTED TWO SMOKE-TEST CLAIM RECORDS (`DEMO-A`, `DEMO-D`) into
+    `governance/coordination/claims/` in its first commit. They were cloned into a plant sandbox and
+    caused `PLANT-COORD-01` arm 3 to report DID NOT CONTRAST. **THE INSTRUMENT WAS RIGHT AND THE
+    PLANT WAS WRONG** — it was correctly refusing a real scope overlap. Removed in a later commit;
+    plants now clear the sandbox registry and disclose that they do.
+
+reconciliation_of_the_project_leads_own_declared_scope_CD_D_177:
+  what_CD_D_177_promised: '`ACTIVE_WORK.yaml`, Build Log block `0100`-`0199`, and `governance/dispatch/`, and "IT WILL TOUCH NO PATH IN THE ENGINEER''S SCOPE".'
+  what_this_seat_MEASURED: >
+    `main` ADVANCED `e6f9802` -> `76c1de1`, FOUR commits, WHILE THIS SEAT WAS LIVE. All four are
+    authored `PROJECT_LEAD_SEAT_01`. Paths touched: `governance/dispatch/CD-DISPATCH-INC12-...yaml`,
+    `governance/engineering/ACTIVE_WORK.yaml`, `BL-...-0139.yaml`, `BL-...-0140.yaml`.
+  the_verdict_this_seat_offers: >
+    **CD-D-177 HELD. EVERY PATH IS INSIDE THE PROJECT LEAD'S DECLARED SCOPE AND NOT ONE IS IN THIS
+    SEAT'S.** `CD-PL-F134` did NOT happen a third time, and this seat says so as plainly as it would
+    have said the opposite. **THE DECLARATION WAS A PREDICTION AND THE PREDICTION HELD — WHICH IS
+    NOT THE SAME AS A CARRIER, AND ruling 4 IS THE REASON THAT DISTINCTION MATTERS.**
+  and_one_thing_worth_a_second_look: >
+    `CD-D-177` puts `governance/dispatch/` in the Project Lead's live write scope, and this seat's
+    own dispatch lives there. **THE DISPATCH'S OWN PROHIBITION SAYS "NOBODY REWRITES A LIVE
+    CONTRACT, IN EITHER DIRECTION."** The two sit in tension. Nothing was rewritten — verified by
+    sha256 and `diff` — but the AUTHORITY to do it was declared, and that is worth a decision rather
+    than a good outcome.
+
+evidence:
+- governance/coordination/RETURN-CD-ENG-COORD-01.md
+- governance/coordination/evidence/EV-ATOMICITY-MEASUREMENT.md
+- governance/coordination/required-tests.yaml
+- governance/coordination/contracts/
+- governance/coordination/plants/
+
+next_safe_action: >
+  The Project Lead RECONCILES BY MEASUREMENT AND BANKS — **IT DOES NOT GRADE** (`PBG-AUTH-003`). It
+  should run THIS SEAT'S OWN `merge_reconcile.py` over the merge of this branch into `main`, and
+  THIS SEAT'S OWN `check_build_log_pointer_atomic.py` over this branch — **WHICH WILL REFUSE, AND
+  THE REFUSAL IS `CD-ENG-COORD-01-F01` ARRIVING ON SCHEDULE.** Then a FRESH Assurance seat, told
+  `Q11`, `Q12`, `Q13` and all seven findings above BEFORE it discovers them.
+expected_next_actor: 'The Project Lead, then a FRESH Assurance seat. NOT THIS SEAT — I do not grade my own work (PBG-SOD-001).'
