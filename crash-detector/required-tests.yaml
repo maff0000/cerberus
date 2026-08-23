@@ -672,6 +672,97 @@ criteria:
         legitimately a number. That case is covered by the publication provenance gate
         (crash_detector.publication.dial_scalar), evidenced by CD-RT-002-TYPE-NO-ARITHMETIC.
       evidence_ref: RTR-WO2-0001
+  # DECLARED LIMITS — CD-RT-002-EXACT-TYPE-ADMISSION. NEW AT WO-2R3 INCREMENT 10, ITEM_1,
+  # ordered by the Product Owner at PO-DECISIONS-0018 ruling 2 in its own words: "EXACT TYPE,
+  # everywhere on a judgement path where an `isinstance` still survives — sites enumerated BY
+  # INSTRUMENT, the forged-subclass probe as the plant, both arms."
+  #
+  # WHY IT EXISTS. The seventh Assurance seat raised CD-ASR-WO2R3-04-F01 (HIGH, a live control
+  # bypass): `type.__new__(SealedMagnitudeType, 'Evil2', (DialMagnitude,), {'__float__': ...})`
+  # CREATES a class with ZERO lines of package code, `issubclass` True, `isinstance` True, and
+  # `float(inst)` 999.0 — CD-ASR-F01, which this project believed it had closed. Its own
+  # diagnosis: "`type.__new__(metaclass, ...)` does not call `metaclass.__new__`. The guard is
+  # written in `SealedMagnitudeType.__new__` and is therefore only on the path that the `class`
+  # statement takes. IT GUARDS THE SYNTAX, NOT THE TYPE."
+  #
+  # WHAT IT IS NOT, AND THIS IS THE WHOLE OF CD-RULE-004 FOR THIS ROW. **IT IS NOT A CLAIM THAT
+  # THE FORGED CLASS CANNOT BE BUILT.** PO-DECISIONS-0018 ruling 1 settled that an enumeration
+  # cannot close a property-defined class and that CPython's `type.__new__` is the platform
+  # working as documented. THIS CHECK BUILDS THE FORGED CLASS ITSELF, IN EVERY RUN, AND PRINTS
+  # THAT IT SUCCEEDED. A row that claimed prevention would be disproved by its own guard's
+  # output, which is the sixth false green this project has been asked not to produce.
+  - test_id: CD-RT-002-EXACT-TYPE-ADMISSION
+    scope: CLASS
+    execute: python3 -B tools/register/check_exact_type_admission.py --root .
+    execution_contract: contracts/execution/CD-RT-002-EXACT-TYPE-ADMISSION.md
+    negative_control:
+      violation: >
+        A judgement-path door that ADMITS an instance of a forged metatype subclass — an object
+        that passes `isinstance` and fails exact type — or that refuses it with an identity other
+        than the declared one for that door.
+        THE PROPERTY IS PRINTED BY THE CHECK AT EVERY RUN so a reader can disagree with it without
+        reading the source: THE FORGED SUBCLASS IS STILL CONSTRUCTIBLE AND IS REFUSED AT THE DOOR
+        BECAUSE ADMISSION IS BY EXACT TYPE. It is deliberately NOT "the forged type is prevented"
+        and NOT "the class is sealed" — no in-process guard can say either, and three seats have
+        been superseded on this project for claiming a class closed that was not.
+        BOTH ARMS, AND THE FIRST ARM IS A REGRESSION TEST ON A PRODUCT RULING.
+        ARM 1 — THE DECLARED ROUTE. `class Evil(V): ...` must still raise that module's own
+        surface violation, at all four sealed types. PO-DECISIONS-0018 ruling 1(a) KEEPS these
+        refusals: "they are real, they refuse the front door and the named routes, and they proof
+        the product against ACCIDENT and against casual misuse". A change that makes arm 1 stop
+        refusing has broken accident-proofing the Product Owner explicitly kept, and this row goes
+        RED for it.
+        ARM 2 — THE FORGED ROUTE, ASSERTED AND NOT LAMENTED. The class is created; `issubclass` is
+        True; an instance is built; `float(inst)` is the forged number; `isinstance(inst, V)` is
+        True; `type(inst) is V` is False. IF ANY OF THOSE STOPS BEING TRUE THIS ROW GOES RED,
+        because a check whose premise has silently evaporated is measuring nothing and its clean
+        exit would be evidence of nothing.
+        AND THEN THE DOOR. One judgement-path door per sealed type, each with the refusal identity
+        it must raise (CD-PL-F74 — the identity a caller sees IS part of the contract):
+        `_established_quantity` -> NotAdmitted · `derived_within_one_dial` ->
+        QuantityProvenanceMissing · `present_dial` -> NotAdmitted · `is_shown` -> NotAdmitted.
+        A REFUSAL OF A DIFFERENT IDENTITY IS A VIOLATION AND NOT A DETAIL: a body that admitted the
+        object and then tripped over a missing attribute has not refused it, and "the right outcome
+        from the wrong layer" is this project's most-repeated defect.
+        THE PACKAGE-LINE COUNT IS PINNED PER SITE AS A CEILING AND IS NOT ASSUMED TO BE ZERO.
+        It is ZERO at three of the four metatypes and FOUR at SealedReadingType, where all four
+        lines are `SealedReadingType.__setattr__` invoked by `typing.Generic` machinery writing
+        `__orig_bases__`/`__parameters__` onto a class that is not in `_SEALED` — traced line by
+        line, and NOT ONE OF THEM IS A REFUSAL. A ceiling of zero written across all four would
+        have been a fingerprint that was false on the day it was written.
+        THIS TEST HAS DECLARED LIMITS (CD-RULE-004), stated identically here, in the header of
+        tools/register/check_exact_type_admission.py and in the execution contract.
+        LIMIT 1 — FOUR DOORS, NOT EVERY DOOR. It is not a census and does not claim to be one. The
+        instrument that enumerates the population is tools/sweep/delegated_judgement_sweep.py, and
+        the per-site carriers for the twelve conversions of increment 10 are
+        tests/test_exact_type_admission_sweep.py.
+        LIMIT 2 — IT PROVES NOTHING ABOUT ROUTES IT DOES NOT WALK. `object.__setattr__`,
+        `cls.__new__(cls)` state forgery, `__reduce__`, `__class__` reassignment on a live object
+        and `ctypes` are not exercised here. CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT is a
+        different instrument on a different property and is NOT cited as support for this row.
+        LIMIT 3 — IT IMPORTS THE SUBJECT TREE, because "refused" is a runtime claim and every
+        escape on this project's record passed a static checker. A tree that does not import is
+        one this check REFUSES on (exit 3), never one it passes. It prints the resolved
+        `crash_detector.__file__` it imported at every run (CD-PL-F98).
+        LIMIT 4 — EIGHTEEN `isinstance` ADMISSIONS SURVIVE IN THE PACKAGE AND THIS CHECK LOOKS AT
+        NONE OF THEM. Each carries a written, measured reason at its own site; four of them are
+        the metatype `__new__` guards, where `isinstance` is the STRICTER operator because the
+        predicate REFUSES, and converting them would ADMIT an ordinary `class` statement through
+        one forged intermediate — MEASURED on all four. THAT RESIDUE IS CARRIED BY THE WRITTEN
+        DECLARATIONS AND BY tests/test_exact_type_admission_sweep.py, AND BY NOTHING IN THIS ROW.
+      planted_violation: plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch
+      planted_violation_note: >
+        THE FOURTEENTH PLANT. It replaces `is_exactly(value, self.types)` with
+        `isinstance(value, self.types)` in `_Exactly.refusal` — ONE LINE, at the single point where
+        every `@admits` parameter and every `@establishes` field decides what it accepts. It is the
+        exact regression F-06-D corrected at increment 8 and it is the shape this project has now
+        made four times and called a simplification. Under it the door still reports `faults: ()`,
+        `is_admitting_door` is still True, and the refusal message still reads "this door requires
+        exactly X" — a source-honest door that has stopped guarding.
+        MEASURED BOTH ARMS, THREE COLUMNS, ON PRISTINE `git archive` EXTRACTIONS. The measurement
+        and the exit codes are recorded in the WO-2R3 build log for increment 10 rather than
+        transcribed here (CD-RULE-009: a count copied is a transcription).
+      evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-003
   origin: PID
