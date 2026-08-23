@@ -1,0 +1,81 @@
+# ================================================================================================== #
+# BL-20260823T154248Z-0146 — PROJECT LEAD BOUNDARY. **ACT 2 OF PO-DECISIONS-0022: THE
+# COORDINATION-DISCIPLINE FIX IS DISPATCHED.**
+#
+# **ONE bounded increment, FIVE items, to `CD-ENG-COORD-FIX-01` — A FRESH ENGINEER IDENTITY.**
+# `PO-DECISIONS-0022` ruling 5, executed and NOTHING ELSE.
+#
+# **SEQUENTIAL SINGLE-SEAT. `CD-D-181` STANDS. NO PARALLEL SEAT IS DISPATCHED AT THIS BOUNDARY OR
+# AT ANY BOUNDARY UNTIL THE DEDICATED GATE IS GREEN — the override is Matt's alone (ruling 1).**
+#
+# **AND THE DISPATCH IS COMMITTED BEFORE THE SEAT GOES OUT, WHICH IS `CD-PL-F140` APPLIED TO THIS
+# SEAT'S OWN PRIOR FAILURE: a dispatch declared "ISSUED AND OUT" whose result artefact existed
+# nowhere (`PBG-CONT-007`).**
+# ================================================================================================== #
+
+entry_id: BL-20260823T154248Z-0146
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T15:42:48Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1568164, wrapper PID 1568163, `timeout 21600` from 15:30Z. **MEASURED FROM THE LIVE PROCESS, and `ps` shows exactly ONE Project Lead process.**'
+phase: BUILD   # **MOVED FROM GATE. The gate closed when the Product Owner ruled; BUILD here means ONE dispatched increment of five items and NOTHING ELSE.**
+branch: main
+base_sha: 480da0f49bb265ce782004c5d925febb94314c56   # the `CD-RULE-007` follow-up that closed ACT 1. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+the_dispatch:
+  record: 'governance/dispatch/CD-DISPATCH-INC13-COORDINATION-FIX-ENGINEER.yaml'
+  actor_id: 'CD-ENG-COORD-FIX-01 — **FRESH. Never `CD-ENG-COORD-01` (who built increment 12) and never any `CD-ENG-WO2R3-*`.**'
+  branch: 'inc13-coordination-fix, cut from `main` at `480da0f`'
+  worktree: '/srv/crash-detector-inc13 — **PL-prepared, porcelain 0 at issue, MEASURED.**'
+  build_log_id_block: '`0400`-`0499` (`CD-D-175`). `0300`-`0399` is `CD-ENG-COORD-01`''s and is NOT this seat''s.'
+  the_five_items: '**(1)** `F08` — `check_scope_disjoint.py` must FLAG two live claims on one scope REGARDLESS of identity. **(2)** the **FALSE `L1` DECLARATION** — `CD-RULE-004` on the control''s own prose. **(3)** `F04` — write-scope enforcement made BINDING, not advisory. **(4)** `F05`+`F11` — the launch binding corrupting its own input, compounding into a scope disjoint from its own subtree. **(5)** `F09` — the lease flippable red-to-green by one command from the party it grades.'
+  the_form: '**EACH IN THE CONTRAST FORM AND IT IS THREE ARMS, NOT TWO:** baseline REFUSES / violated ADMITS (by `git apply` from a CHECKED-IN patch) / **the disjoint case STILL ADMITTED**. `PO-DECISIONS-0022` ruling 5 requires the contrast form by name.'
+
+# ================================================================================================== #
+# WHY A FRESH ENGINEER AND NOT A FOUR-LINE DELETION BY THIS SEAT.
+# ================================================================================================== #
+why_not_a_quick_fix:
+  the_temptation_is_real_and_is_named: '**`F08` IS FOUR LINES. THIS SEAT COULD HAVE DELETED THEM IN THIRTY SECONDS.** The ninth verdict itself says of it: *"it is 4 lines and it is the founding incident."*'
+  why_it_is_forbidden: '**`CD-D-182` / `PBG-AUTH-006`, AND THE PRODUCT OWNER RESTATED IT IN THE RULING: *"NO seat repairs these at this gate by a quick deletion — it is a fresh Engineer dispatch."*** A Project Lead that fixes code at a gate has become the Engineer AND the party that dispatched the Assurance seat over it.'
+  and_the_technical_reason_which_is_the_stronger_one: >
+    **THE FOUR-LINE DELETION IS THE WRONG FIX.** Two of the skip's neighbours are CORRECT and must
+    survive: `READ x READ` must still not refuse (refusing it bans every parallel audit — the exact
+    vacuity `PO-DECISIONS-0021` ruling 3 rejects), and a seat's own write scope overlapping its own
+    read scope must still not refuse. **The change is NARROWER AND SHARPER than the skip: same-
+    identity `WRITE x WRITE` across two DISTINCT live claims must be FLAGGED, while two DISJOINT
+    same-identity claims must still be ADMITTED.** **A SEAT DELETING FOUR LINES AT A GATE WOULD
+    ALMOST CERTAINLY HAVE CONVERTED A BLIND SPOT INTO A CONCURRENCY BAN AND CALLED IT A FIX.**
+    That is written into the dispatch as item 1's trap.
+
+# ================================================================================================== #
+# ONE RECORD ACT PERFORMED AT THIS BOUNDARY, AND IT IS BANKING AND NOT AUTHORING.
+# ================================================================================================== #
+the_banking_of_the_ninth_seats_race_harnesses:
+  the_problem: >
+    *** **ONE OF THE TENTH GATE'S TWO NAMED ACCEPTANCE COMMANDS EXISTED ONLY IN `/tmp`.** ***
+    `PO-DECISIONS-0022` ruling 5 names *"a re-run of race_scope.py"* as a gate command, and
+    `race_scope.py` lived at `/tmp/cd-asr-wo2r3-06/race/race_scope.py` — the ninth Assurance seat's
+    scratch. **A GATE COMMAND THAT LIVES IN `/tmp` IS NOT PROJECT STATE (`PBG-CONT-007`), AND ONE
+    REBOOT WOULD HAVE DESTROYED THE ACCEPTANCE TEST FOR AN INCREMENT NOT YET BUILT.**
+  the_act: 'Copied VERBATIM to `governance/assurance/WO-2R3/evidence/CD-ASR-WO2R3-06/`, BESIDE the verdict and not inside it.'
+  integrity_CD_RULE_009:
+    race_scope_py: '**66 lines · 2695 bytes · sha256 `13800ffaa1722f4b02fb1a4fbac100865f885d9f897431502a5b03c9ad84b5e5`**, `cmp` against the seat''s own file **rc=0**.'
+    race_launch_sh: '**20 lines · 1363 bytes · sha256 `7c723a431096e00b01acec75a5cf5c89fd767de877dd4e4b794c56008df36cd7`**, `cmp` **rc=0**. The `F05` launch racer, banked with it because it is the same evidence set.'
+  what_this_act_is_NOT: '**IT IS NOT AUTHORING AN ACCEPTANCE TEST.** Not one byte was changed. This seat did not write the harness that will grade the increment this seat dispatched — the NINTH ASSURANCE SEAT wrote it, before this increment existed, against the defect it found. **Banking bytes verbatim is the record act this project has performed for six Assurance verdicts; authoring the test would have been a `PBG-SOD-001` breach and is not what happened.**'
+  the_declared_limit_of_the_banked_copy: '**`race_scope.py` HARD-CODES `TREE = "/tmp/cd-asr-wo2r3-06/race/tree"`.** It is banked WITH that line, unaltered, because altering it would break `cmp` rc=0 and the verbatim claim with it. **The tenth Assurance seat re-points `TREE` at its OWN sandbox clone — the seat''s own act in the seat''s own scratch. THIS IS DISCLOSED HERE RATHER THAN LEFT FOR THAT SEAT TO TRIP OVER.**'
+
+# ================================================================================================== #
+# WHAT THIS BOUNDARY DELIBERATELY DID NOT DO.
+# ================================================================================================== #
+not_done_and_said_so:
+  - '**NO PARALLEL SEAT.** Ruling 1. Not one. `CD-D-181` stands and the override is Matt''s alone, with the refutation in front of him.'
+  - '**NO CARRIAGE OF THE NINE CONTROLS (`Q11`).** Ruling 4 routes it TO THE FRAMEWORK with its priority INVERTED — correctness before carriage. **The dispatch forbids the Engineer to add a hook, a wrapper, a CI step or a git hook, and names the impulse as correct with the wrong destination.**'
+  - '**`F10`, `F12`, `F13`, `F14` NOT FIXED.** Ruling 5 names five items; the ninth verdict''s own remediation table has seven rows. **THE RULING IS NARROWER THAN THE VERDICT AND THIS SEAT RECORDS THAT RATHER THAN QUIETLY RECONCILING IT IN EITHER DIRECTION.** They are written into the dispatch as OUT OF SCOPE AND STILL OPEN, with `F10` flagged because it may share lines with `F09`.'
+  - '**`CD-AC-002` (AMBER) AND `CD-AC-005` (RED) NOT MOVED.**'
+  - '**THE `wo-2r3` LANE NOT TOUCHED** — frozen at `be0b355` behind a SHUT gate.'
+  - '**`/srv/crash-detector-inc12` NOT REMOVED** — it is the ninth seat''s evidence tree and the dispatch makes it READ-ONLY to the Engineer.'
+  - '**NO GRADE GIVEN AND NONE WILL BE.** `PBG-AUTH-003`.'
+
+next:
+  on_return: '**Merge `inc13-coordination-fix` at the accountable seat, then ACT 3 — the TENTH FRESH ASSURANCE SEAT**, whose acceptance is the two named commands plus full disclosure and the `CD-D-129` clauses verbatim.'
+  the_stop: '**THE PROJECT LEAD STOPS DELIBERATELY AT THE TENTH GATE VERDICT, OR EARLIER ON ANY PRODUCT AUTHORITY QUESTION.**'

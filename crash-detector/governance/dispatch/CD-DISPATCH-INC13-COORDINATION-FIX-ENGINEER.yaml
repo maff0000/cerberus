@@ -1,0 +1,395 @@
+# ================================================================================================== #
+# CD-DISPATCH-INC13-COORDINATION-FIX-ENGINEER
+#
+# INCREMENT 13 — **THE COORDINATION-DISCIPLINE FIX.** ONE bounded Engineer increment, five items.
+# **CORRECTNESS BEFORE CARRIAGE.** PO-DECISIONS-0022 ruling 5, executed and NOTHING ELSE.
+#
+# ================================================================================================== #
+# READ THIS BEFORE ANYTHING ELSE.
+#
+# Increment 12 built nine coordination controls in 33 minutes. The Engineer who built them raised
+# SEVEN findings against its own work, predicted its own violation in advance, and did not exempt
+# itself. **NOTHING IN THIS DISPATCH IS A FINDING AGAINST THAT SEAT'S HONESTY, and the ninth
+# Assurance seat said so in its own closing words.** The defects you are fixing are the defects of a
+# control system built quickly and NEVER RACED.
+#
+# **YOU ARE FIXING FIVE OF THEM. YOU ARE NOT REWRITING THE INCREMENT.**
+#
+# *** AND HERE IS THE SENTENCE THAT DEFINES YOUR SEAT: ***
+#
+#   **THE INSTRUMENT BUILT TO DETECT THE INCIDENT PRINTS `CONCURRENT WORK PROCEEDS` FOR THE
+#   INCIDENT, AND EXITS 0.**
+#
+# The one property that made `PO-DECISIONS-0021` ruling 2's incident invisible — TWO SESSIONS, ONE
+# IDENTITY — is the exact property that switches `check_scope_disjoint.py` OFF. **THE SAME-IDENTITY
+# PAIR IS THE INCIDENT. IT IS NOT AN EXCEPTION TO THE CLASS. IT IS THE CENTRE OF IT.**
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-INC13-COORDINATION-FIX-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T15:40:00Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T154000Z-0146
+parent_dispatch: null                 # Not a WO-2R3 increment. The lane is frozen (CD-D-176).
+
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0022.md`, commit `d60b8b9`, **authored by the Product Owner
+  (Trinity) for Matt Scott as final authority, and by no seat.** **RULING 5 ORDERS THIS AND ONLY
+  THIS**, and names its five items in the Product Owner's own words: *"In scope: F08 (the
+  same-identity/same-scope hole — the control must FLAG two live claims on one scope regardless of
+  identity), the FALSE L1 declaration (corrected to what the code actually enforces — CD-RULE-004
+  applied to the control's own prose), F04 (write-scope enforcement made binding, not advisory),
+  F05+F11 (the launch binding corrupting its own input), F09 (the lease flippable by one command).
+  Each fixed in the contrast form; the F08 both-arms test and a re-run of race_scope.py are the
+  tenth gate's two named acceptance commands."*
+  **RULING 5 ALSO NAMES WHAT YOU ARE NOT:** *"NO seat repairs these at this gate by a quick deletion
+  (CD-D-182 / PBG-AUTH-006) — it is a fresh Engineer dispatch."*
+
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md      # canonical local file; the operator pastes no role prompt
+actor_id: CD-ENG-COORD-FIX-01             # **FRESH. You are none of the prior seats.**
+engineer_actor_ids_you_are_not: [CD-ENG-COORD-01, CD-ENG-WO2R3-01, CD-ENG-WO2R3-02, CD-ENG-WO2R3-03,
+                                 CD-ENG-WO2R3-04, CD-ENG-WO2R3-05, CD-ENG-WO2R3-06,
+                                 CD-ENG-WO2R3-07, CD-ENG-WO2R3-08, CD-ENG-WO2R3-09]
+assurance_actor_ids_you_are_not: [CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, CD-ASR-WO2R3-01,
+                                  CD-ASR-WO2R3-02, CD-ASR-WO2R3-03, CD-ASR-WO2R3-04,
+                                  CD-ASR-WO2R3-05, CD-ASR-WO2R3-06, CD-META-01, CD-META-02]
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+separation_of_duties: >
+  **PBG-SOD-001, NON-WAIVABLE. YOU BUILD; YOU DO NOT GRADE.** You will not audit your own work and
+  you will not declare this increment PASS or the findings CLOSED. **A TENTH FRESH ASSURANCE SEAT
+  GRADES IT, AND ITS ACCEPTANCE IS TWO NAMED COMMANDS YOU DO NOT CONTROL.** Your expected return is
+  **`READY_FOR_ASSURANCE`** with the exact SHA — or a precise blocked state from the role contract's
+  own table (`SCOPE_INSUFFICIENT`, `AMBIGUITY_BLOCKING`, `CONTROL_NOT_SATISFIABLE`,
+  `FRAMEWORK_DEFECT`, `DISPATCH_INCOMPLETE`). **TWO PRIOR ENGINEER SEATS ON THIS PROJECT RETURNED
+  `SCOPE_INSUFFICIENT` IN WRITING AND WERE RIGHT TO.**
+
+sequential_single_seat_and_why_it_matters_to_YOU: >
+  *** **`CD-D-181` STANDS. YOU ARE THE ONLY SEAT ALIVE ON THIS PROJECT WHILE YOU WORK.** ***
+  PO-DECISIONS-0022 ruling 1 STRUCK the word "parallel" from PO-DECISIONS-0021 ruling 6 and adopted
+  the ninth seat's operational line VERBATIM: *"running parallel seats on this machinery is more
+  dangerous than running them on nothing, because the board would be green."* **THE MACHINERY IT
+  MEANS IS THE MACHINERY YOU ARE FIXING.** Parallel is the GOAL and is GATED, not abandoned; it
+  re-enables only when the fixed machinery passes a dedicated gate. **DO NOT SPAWN A SUB-AGENT, DO
+  NOT RUN CONCURRENT SEATS, AND DO NOT TREAT YOUR OWN FIX AS PERMISSION TO USE WHAT IT FIXES.**
+
+# ================================================================================================== #
+# YOUR SCOPE.
+# ================================================================================================== #
+target:
+  repository: local
+  branch: inc13-coordination-fix                 # **NEW BRANCH, cut from `main` at `480da0f`.**
+  base_sha: 480da0f49bb265ce782004c5d925febb94314c56   # **RESOLVE IT YOURSELF** — `git rev-parse` + `git cat-file -t` (CD-PL-F36). NEVER transcribe.
+  worktree: /srv/crash-detector-inc13            # **YOURS ALONE. PL-prepared, porcelain 0 at issue.**
+  scratch: /tmp/cd-eng-coord-fix-01/             # **YOURS ALONE.**
+  governance_on_main: /srv/crash-detector        # **READ-ONLY TO YOU. DO NOT WRITE HERE.**
+  inc12_evidence_worktree: /srv/crash-detector-inc12   # **READ-ONLY. The ninth seat's evidence tree. DO NOT WRITE, DO NOT REMOVE.**
+
+your_writable_scope_EXHAUSTIVE_AND_NOTHING_ELSE:
+- 'tools/coordination/**            — the five defects live here and so do their fixes.'
+- 'governance/coordination/**       — the record: claims, leases, contracts, plants, patches, evidence.'
+- 'governance/engineering/build-log/BL-*-04NN.yaml — **YOUR OWN ID BLOCK `0400`-`0499` ONLY** (CD-D-175). `0300`-`0399` belongs to CD-ENG-COORD-01 and is NOT yours.'
+
+paths_that_are_NOT_YOURS_AND_A_WRITE_TO_ANY_OF_THEM_IS_A_SCOPE_BREACH:
+- 'governance/engineering/ACTIVE_WORK.yaml — **THE SHARED RECORD FILE. THE ACCOUNTABLE SEAT WRITES IT AND NOBODY ELSE.** This is the discipline you are fixing, applied to you first.'
+- 'governance/engineering/build-log/ — every entry OUTSIDE `0400`-`0499`.'
+- 'BLUEPRINT.md · PID.md · governance/blueprint/** — PROTECTED FROM EVERY SEAT INCLUDING THE PROJECT LEAD (CD-D-115). Only the Product Owner amends them. **§17 WAS AMENDED THIS MORNING BY THE PRODUCT OWNER AND CARRIED BY THE PROJECT LEAD AT `88e43db`; THAT IS NOT A PRECEDENT AVAILABLE TO YOU.**'
+- 'governance/decisions/** — Product Owner only.'
+- 'governance/assurance/** — **INCLUDING `evidence/CD-ASR-WO2R3-06/`, WHICH HOLDS THE NINTH SEAT''S OWN `race_scope.py`. READ IT. RUN IT. DO NOT EDIT IT. IT IS ONE OF THE TWO COMMANDS THAT WILL GRADE YOU, AND A SEAT THAT EDITS ITS OWN ACCEPTANCE TEST HAS FORFEITED THE GATE.**'
+- 'governance/dispatch/** — including THIS FILE. Nobody rewrites a live contract, in either direction.'
+- 'pbg/** — PINNED AND READ-ONLY (`PBG-FWK-013`). Editing it to make a control pass is a bypass, not a fix.'
+- 'the `wo-2r3` branch and `/srv/crash-detector-wo2r3*` — **FROZEN AT `be0b355` BEHIND A SHUT GATE (CD-D-176). DO NOT TOUCH THE LANE.**'
+- 'tools/reconciliation/**, tools/sweep/**, tools/register/**, src/** — not this increment.'
+
+# ================================================================================================== #
+# THE FIVE ITEMS. **THE ORDER IS LOAD-BEARING AND IT IS THE NINTH SEAT''S OWN ORDER.**
+# ================================================================================================== #
+
+item_1_F08_THE_FOUNDING_INCIDENT:
+  finding: 'CD-ASR-WO2R3-06-F08 — **CRITICAL.** `check_scope_disjoint.py` IS BLIND TO THE EXACT INCIDENT THAT CAUSED INCREMENT 12.'
+  the_code_and_it_is_four_lines: |
+    tools/coordination/check_scope_disjoint.py:96-100
+                sa, sb = a.get("seat_actor_id"), b.get("seat_actor_id")
+                if sa == sb:
+                    lines.append("note     seat=%s holds two claims (%s, %s) — not a cross-seat pair, "
+                                 "not examined" % (sa, a.get("task_id"), b.get("task_id")))
+                    continue
+  what_the_PRODUCT_OWNER_ORDERS_IN_ITS_OWN_WORDS: >
+    *"the control must FLAG two live claims on one scope regardless of identity"*.
+  the_measured_defect_BOTH_ARMS_ONE_VARIABLE: |
+    # ARM 1: two live claims, ONE seat id, IDENTICAL write_scope
+    python3 -B tools/coordination/check_scope_disjoint.py --root .
+       note     seat=PROJECT_LEAD_SEAT_01 holds two claims (PL-A, PL-B) — not a cross-seat pair, not examined
+       VERDICT: ADMITTED — 2 live claim(s), pairwise disjoint. CONCURRENT WORK PROCEEDS.        rc=0
+    # ARM 2: change PL-B's seat id to PROJECT_LEAD_SEAT_02. NOTHING ELSE CHANGES.
+       VIOLATION WRITE/WRITE  seat PROJECT_LEAD_SEAT_01 (task PL-A) x seat PROJECT_LEAD_SEAT_02 (task PL-B)
+       VERDICT: REFUSED — 1 scope violation(s) among 2 live claim(s)                            rc=1
+  WHAT_ARM_1_ACTUALLY_IS_AND_READ_IT_TWICE: >
+    Two live sessions, ONE identity, both holding the same shared record file. That is, VERBATIM,
+    `VERDICT-META-ASSURANCE-01-SECOND-SEAT` §1.1: *"TWO PROJECT LEAD SESSIONS ALIVE SIMULTANEOUSLY
+    ON `main`, BOTH WITH COMMIT AUTHORITY, **BOTH COMMITTING AS `PROJECT_LEAD_SEAT_01`**, NEITHER
+    AWARE OF THE OTHER"* — **and PO-DECISIONS-0022 ruling 3 has now ruled that `CD-RULE-002` binds
+    the Product Authority's own hand with NO exemption, because THE INCIDENT WAS THE PRODUCT
+    OWNER'S OWN BREACH OF IT.** The identity you must stop exempting is the accountable seat's.
+  what_you_must_NOT_do_and_this_is_the_trap: >
+    *** **DO NOT SIMPLY DELETE THE FOUR LINES AND CALL IT DONE.** *** Two of the skip's neighbours
+    are CORRECT and must SURVIVE, and if you delete indiscriminately you will convert a blind spot
+    into a control that bans normal work:
+      - **`READ x READ` MUST STILL NOT REFUSE.** Two seats reading one file is the normal case;
+        refusing it bans every parallel audit, which is the vacuity `PO-DECISIONS-0021` ruling 3
+        explicitly rejects.
+      - **A SEAT''S OWN WRITE SCOPE OVERLAPPING ITS OWN READ SCOPE MUST STILL NOT REFUSE** — a seat
+        reading what it is about to write is what work IS.
+    **WHAT MUST CHANGE IS NARROWER AND SHARPER THAN THE SKIP: SAME-IDENTITY `WRITE x WRITE` (and
+    same-identity `WRITE x READ` ACROSS TWO DISTINCT LIVE CLAIMS) MUST BE FLAGGED.** Two live
+    claims are two live claims. The registry cannot tell you whether they are one session or two —
+    **AND THAT IS PRECISELY WHY IDENTITY MUST NOT BE THE DISCRIMINATOR.**
+  decide_and_declare_this_explicitly: >
+    A seat legitimately holding two DISJOINT claims must still be ADMITTED. Only the OVERLAPPING
+    same-identity pair is the violation. **If you conclude that any same-identity multi-claim should
+    be refused outright, that is a defensible design call — but DECLARE IT and prove the disjoint
+    case in arm 3, because it narrows what the machinery permits.**
+
+item_2_THE_FALSE_L1_DECLARATION:
+  finding: '**`CD-RULE-004` APPLIED TO THE CONTROL''S OWN PROSE.** The Product Owner names this as a SEPARATE item from `F08`, and it is: the code defect and the FALSE CLAIM ABOUT the code are two defects.'
+  the_false_bytes: |
+    tools/coordination/check_scope_disjoint.py  LIMITS[0]:
+      "DECIDES: pairwise WRITE x WRITE disjointness over all live claims."
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^
+    IT DOES NOT. It decides it over CROSS-SEAT live claims and skips the rest.
+  and_the_docstring_says_it_too: 'The module docstring''s *"Only *cross-seat* pairs are examined"* is accurate to the code and is therefore the DEFECT stated in prose, not a mitigation of it.'
+  what_the_ninth_seat_said: >
+    *"The skip is declared NOWHERE: not in `L1`-`L6`, not in `CD-CT-003`, not in
+    `required-tests.yaml`. `CD-RULE-004` prohibits precisely this — a guard that catches a chosen
+    instance while its register entry claims the class. **This is `GUARD_THE_INSTANCE_NOT_THE_CLASS`
+    at the exact centre of the remedy.**"*
+  your_obligation: >
+    **AFTER item 1, `L1` BECOMES TRUE — AND YOU MUST NOT LEAVE IT AT THAT.** Re-derive EVERY line of
+    the `LIMITS` block and the docstring against what the code now actually enforces, and where a
+    limit remains, DECLARE IT rather than round it off. **A DECLARED LIMIT IS NOT A LICENCE, and an
+    UNDECLARED one is the defect.** The same sweep applies to `claim.py`'s `L2`, below.
+
+item_3_F04_THE_WRITE_SCOPE_HALF_IS_ADVISORY_AND_MUST_BECOME_BINDING:
+  finding: 'CD-ASR-WO2R3-06-F04 — **HIGH.** The claim registry is atomic over TASK. It is NOT atomic over WRITE SCOPE, which is the half `PO-DECISIONS-0021` ruling 3 actually states.'
+  the_TOCTOU_window: |
+    tools/coordination/claim.py:135-158   for other in live_claims(root): ... scope_mod.overlaps(...)   <-- CHECK (a directory read)
+    tools/coordination/claim.py:187       registry.write_exclusive(path, payload)                       <-- USE  (O_EXCL)
+    O_EXCL makes the FILENAME — the task id — exclusive. Two seats with DIFFERENT task ids and
+    IDENTICAL write scopes take DIFFERENT filenames, so O_EXCL NEVER FIRES.
+  RACED_NOT_REASONED_ABOUT: |
+    cd <race tree> && python3 -B race_scope.py 200
+      ROUNDS=200  concurrency=2  DIFFERENT task_ids, IDENTICAL write_scope='src/contended/**'
+        exactly-one-winner (CORRECT) :   7
+        ZERO winners                 :   0
+        *** TWO WINNERS (DOUBLE-TAKE ON ONE SCOPE) *** : 193
+    **193 OF 200 ROUNDS PUT TWO SEATS ON ONE WRITE SCOPE, BOTH `VERDICT: CLAIMED`, BOTH rc=0 —
+    AND THE INCREMENT'S OWN DETECTOR CALLS THE RESULTING STATE A VIOLATION.**
+  the_ninth_seats_own_proposed_shape_offered_as_a_STARTING_POINT_AND_NOT_AS_AN_ORDER: >
+    *"take the claim file first, validate scope after, release on conflict."* **THE DESIGN IS YOURS
+    (`PBG-AUTH-005` gives you implementation choices).** If you can close the window a better way,
+    do, and say why. **What is NOT yours is the acceptance test: `race_scope.py` at 200 rounds must
+    report ZERO double-takes, and the tenth seat runs it, not you.**
+  the_trap_in_this_item: >
+    **A DESIGN THAT SERIALISES ALL CLAIMS THROUGH ONE GLOBAL LOCK PASSES `race_scope.py` AND FAILS
+    THE INCREMENT.** The invariant is NON-OVERLAP, not one-writer-at-a-time. **Your arm 3 must show
+    two DISJOINT claims still being taken CONCURRENTLY.**
+  and_L2_travels_with_it: '`claim.py`''s `L2` — *"DECIDES: refusal of a claim whose write_scope overlaps a live claim''s"* — is **stated flatly with no concurrency qualifier, in the instrument whose entire purpose is concurrency.** It is TRUE single-threaded and FALSE under concurrency. The header immediately above it teaches the reader that check-then-write is *"the defect, not the control"* — **the module names the anti-pattern and then contains it.** Fix the code; then fix the sentence.'
+
+item_4_F05_PLUS_F11_THE_CARRIER_CORRUPTS_ITS_OWN_INPUT:
+  finding: 'CD-ASR-WO2R3-06-F05 + F11 — **HIGH, AND THEY COMPOUND.** `launch.sh` mangles the write scope; `scope.py` then calls the mangled scope DISJOINT FROM ITS OWN SUBTREE. Together they manufacture a SILENT FALSE GREEN.'
+  F05_the_unquoted_expansion: |
+    launch.sh:52   --write-scope) LEASE_ARGS="$LEASE_ARGS --write-scope $2"; shift 2 ;;
+    launch.sh:71   python3 -B "$ROOT/tools/coordination/lease.py" ... --pid "$$" $LEASE_ARGS
+                                                                                ^^^^^^^^^^^ unquoted
+    Unquoted expansion in POSIX `sh` performs field splitting AND PATHNAME EXPANSION. **A WRITE
+    SCOPE IS A GLOB. THE SHELL EXPANDS THE SEAT'S DECLARED SCOPE AGAINST THE FILESYSTEM BEFORE
+    `lease.py` EVER SEES IT.**
+  F05_two_regimes_both_wrong:
+    i_glob_matches_2_or_more: '**HARD FAILURE REPORTED AS A REFUSAL.** An argparse "unrecognized arguments" error prints to the operator as `LEASE REFUSED (rc=2)`, indistinguishable from a genuine scope collision. **COMMISSIONING THIS CARRIER WOULD REFUSE EVERY REAL LAUNCH AND TELL THE OPERATOR THERE WAS A CONFLICT.**'
+    ii_glob_matches_exactly_1: '**SILENT SCOPE NARROWING -> FALSE GREEN. THIS IS THE DANGEROUS ONE.** A seat typing `docs/alpha/*` gets a lease recording `write_scope = [docs/alpha/only.md]`. A second seat then acquires `docs/alpha/other.md` and BOTH SUCCEED. **SAME REQUEST, OPPOSITE VERDICTS, AND THE ONLY VARIABLE IS WHETHER THE SCOPE PASSED THROUGH `launch.sh`.**'
+  F11_the_algebra_half: |
+    python3 -c "import sys;sys.path.insert(0,'tools/coordination');import scope as s;print(s.overlaps(['tools/coordination'],['tools/coordination/scope.py'])[0])"
+      -> False        # DISJOINT. A DIRECTORY, DISJOINT FROM ITS OWN CONTENTS.
+      overlaps(['a/*'],          ['a/b/c'])                                         -> False
+      overlaps(['governance/*'], ['governance/coordination/ACCOUNTABLE-SEAT.yaml'])  -> False
+    scope.py:299-306 returns DISJOINT whenever the shorter pattern is non-recursive, **WITHOUT
+    ASKING WHETHER IT NAMES A DIRECTORY.** claim.py:90 partially compensates by refusing a bare
+    existing-directory LITERAL — but the guard is
+      if not p.recursive and not any(ch in "".join(p.segments) for ch in "*?[]{}")
+    which **EXEMPTS EVERY WILDCARD FORM OF THE SAME HAZARD**, and `lease.py` has no such guard at all.
+  say_the_good_part_too_because_an_unscoped_RED_is_as_useless_as_an_unscoped_PASS: >
+    **`scope.py`''s ALGEBRA IS CORRECT** on every form the ninth seat put to it, including
+    recursive-prefix detection, **and it printed the right answer even when its caller fed it
+    corrupted input.** `F11` is a specific depth-rule gap, NOT a verdict on the automaton. **DO NOT
+    REWRITE THE ALGEBRA.**
+  why_the_existing_plant_missed_it_and_what_that_obliges_of_yours: >
+    `PLANT-COORD-04` exercises exactly two scope forms: a LITERAL with no glob, and a glob matching
+    NOTHING on disk. **THE ONLY TWO FORMS THAT CANNOT TRIGGER THE DEFECT.** The plant is 3/3 LIVE
+    and certifies a deliverable that is broken for every glob matching a real path. **THIS IS THE
+    STRONGEST INSTANCE IN THE WHOLE AUDIT OF A PLANT PROVING ITS OWN CHOSEN INSTANCE. YOUR PLANT
+    MUST EXERCISE A GLOB THAT MATCHES ≥2 REAL PATHS AND A GLOB THAT MATCHES EXACTLY 1.**
+
+item_5_F09_A_CONTROL_THE_GRADED_PARTY_CAN_FLIP:
+  finding: 'CD-ASR-WO2R3-06-F09 — **HIGH.** `check_lease_held.py` can be turned GREEN RETROACTIVELY, IN ONE COMMAND, BY THE PARTY IT GRADES.'
+  measured: |
+    check_lease_held.py --range HEAD~2..HEAD --identity PROJECT_LEAD_SEAT_01
+      -> VERDICT: REFUSED — 6 governed path(s) not covered by a live lease           rc=1
+    lease.py acquire --lease RETRO --seat PROJECT_LEAD_SEAT_01 --task ANY \
+             --write-scope 'governance/**' --write-scope 'tools/**' --write-scope 'src/**' --pid 1
+      -> VERDICT: LEASE ACQUIRED                                                     rc=0
+    check_lease_held.py --range HEAD~2..HEAD --identity PROJECT_LEAD_SEAT_01
+      -> VERDICT: ADMITTED — every governed path is covered by a live lease          rc=0
+    **SAME COMMITS. SAME HISTORY. NOTHING REWRITTEN. RED TO GREEN IN ONE COMMAND.**
+  the_two_root_causes_and_they_are_separable: >
+    **(a) `--range` grades HISTORICAL writes against leases live NOW (`check_lease_held.py:99`) —
+    the contract is named `CD-CT-009-LEASE-HELD-AT-WRITE` and `--range` DOES NOT MEASURE
+    TIME-OF-WRITE AT ALL.** **(b) `lease.py`''s `--pid` is UNAUTHENTICATED, and `--pid 1` is `init`,
+    which is always alive, so the lease is IMMORTAL.** This is `CONTROL_BYPASS` and
+    `CAPABILITY_VERSUS_AUTHORITY` in one command.
+  what_is_in_scope_here_and_what_is_NOT: >
+    **IN SCOPE: `--range` semantics — a historical write must be graded against a lease that was
+    live AT THE TIME OF THAT WRITE, or the mode must REFUSE TO ANSWER rather than answer wrongly.**
+    **A DECLARED `CONTROL_NOT_SATISFIABLE` ON `--pid` AUTHENTICATION IS AN ACCEPTABLE RETURN FOR
+    THAT HALF** — you cannot authenticate a pid from userspace on this platform, and saying so
+    plainly beats a guard that pretends. **What is NOT acceptable is leaving the instrument silently
+    answerable by the party it grades.** `F10` (the dead-holder doctrine split between `lease.py`
+    and `claim.py`) is **OUT OF SCOPE — see below.**
+
+# ================================================================================================== #
+# **THE CONTRAST FORM. PO-DECISIONS-0022 RULING 5 REQUIRES IT BY NAME: "Each fixed in the contrast
+# form." IT IS NOT NEGOTIABLE AND IT IS THREE ARMS, NOT TWO.**
+# ================================================================================================== #
+the_contrast_form_every_fix_must_be_planted_in:
+  the_standard: >
+    `CD-D-079`: **every claim that something is refused requires the counterfactual arm. A refusal
+    with no contrast is indistinguishable from a probe that never ran.** A plant is evidence when it
+    APPLIES, CONTRASTS, and FAILS AT THE LAYER ITS PROPOSITION NAMES — never merely when it exits
+    non-zero.
+  ARM_1_BASELINE_REFUSES: 'With the fix INTACT, the VIOLATING attempt is REFUSED — non-zero exit, and the refusal NAMES the other claim/seat/lease, the overlapping artefact, and the reason.'
+  ARM_2_VIOLATED_ADMITS: '**With ONE NAMED MUTATION applied by `git apply` from a CHECKED-IN PATCH FILE, the SAME attempt is ADMITTED** — and the resulting bad state is DEMONSTRATED on disk, not asserted. **The mutation for item 1 is the restoration of the four skip lines, and that patch is the single most valuable artefact you will produce, because it proves the fix is what is doing the work.**'
+  ARM_3_THE_NON_VACUITY_ARM_MANDATORY: >
+    *** **WITH THE FIX INTACT, THE DISJOINT CASE IS STILL ADMITTED AND STILL PROCEEDS.** ***
+    **A CONTROL THAT NOW REFUSES BOTH THE OVERLAPPING AND THE DISJOINT CASE HAS NOT FIXED THE
+    DEFECT — IT HAS BANNED CONCURRENCY, WHICH `PO-DECISIONS-0021` RULING 3 EXPLICITLY REJECTS AND
+    WHICH `PO-DECISIONS-0022` RULING 1 EXPLICITLY PRESERVES AS THE GOAL.** Every one of your five
+    fixes carries this arm. **A REFUSAL-ONLY FIX IS A FAILED ITEM AT THIS INCREMENT, NOT A
+    CONSERVATIVE ONE.**
+
+# ================================================================================================== #
+# THE TWO COMMANDS THAT WILL GRADE YOU. **YOU DO NOT OWN THEM.**
+# ================================================================================================== #
+the_tenth_gates_two_named_acceptance_commands:
+  ruling_5_verbatim: '*"the F08 both-arms test and a re-run of race_scope.py are the tenth gate''s two named acceptance commands."*'
+  command_1_race_scope: >
+    `governance/assurance/WO-2R3/evidence/CD-ASR-WO2R3-06/race_scope.py` — **the ninth Assurance
+    seat's OWN harness, banked VERBATIM by the Project Lead at this boundary because it previously
+    existed ONLY in `/tmp` and a gate command that lives in `/tmp` is not project state
+    (`PBG-CONT-007`).** sha256 `13800ffaa1722f4b02fb1a4fbac100865f885d9f897431502a5b03c9ad84b5e5`,
+    66 lines, 2695 bytes, `cmp` rc=0 against the seat's own file.
+    **IT HARD-CODES `TREE = "/tmp/cd-asr-wo2r3-06/race/tree"`.** You may CLONE it into your own
+    scratch and re-point `TREE` at your own sandbox to develop against it. **YOU MAY NOT EDIT THE
+    BANKED COPY, AND YOU MAY NOT WEAKEN THE HARNESS TO PASS IT — that is the single most expensive
+    kind of false evidence and the role contract forbids it in terms.**
+    **ACCEPTANCE: 200 rounds, DIFFERENT task ids, IDENTICAL write scope -> ZERO double-takes.**
+  command_2_the_F08_both_arms_test: >
+    **YOU BUILD THIS ONE, AND THAT IS DELIBERATE AND IS DISCLOSED TO YOU AS A RISK.** It must be an
+    EXECUTABLE that constructs two live claims under ONE identity on ONE scope and asserts
+    `check_scope_disjoint.py` REFUSES; plus the mutation arm restoring the skip and asserting it
+    ADMITS; plus the non-vacuity arm with two DISJOINT same-identity claims still ADMITTED.
+    **THE TENTH SEAT WILL ATTACK THIS TEST BEFORE IT TRUSTS IT, AND IT SHOULD. Write it to be
+    attacked: no skips, no `try/except: pass`, and it must FAIL LOUDLY if the tree is not what it
+    expects.**
+  and_the_thing_you_must_not_do: '**DO NOT DECLARE EITHER COMMAND PASSED. RUN THEM, RECORD THE VERBATIM OUTPUT WITH ITS COMMAND LINE, AND RETURN. THE GRADE IS NOT YOURS (`PBG-SOD-001`).**'
+
+# ================================================================================================== #
+# **WHAT IS DELIBERATELY OUT OF SCOPE. THE PROJECT LEAD IS NOT NARROWING A RULING SILENTLY AND IS
+# NOT WIDENING ONE EITHER.**
+# ================================================================================================== #
+out_of_scope_and_STILL_OPEN:
+  the_disclosure: >
+    **PO-DECISIONS-0022 RULING 5 NAMES FIVE ITEMS. THE NINTH VERDICT'S OWN REMEDIATION TABLE HAS
+    SEVEN ROWS. THE RULING IS NARROWER THAN THE VERDICT, AND THE PROJECT LEAD IS RECORDING THAT
+    RATHER THAN QUIETLY RECONCILING IT IN EITHER DIRECTION.**
+  F10: '**HIGH. `lease.py` admits straight past a DEAD holder while its own docstring forbids exactly that, and `claim.py:195` implements the OPPOSITE policy in terms.** Two instruments, one doctrine, contradictory behaviour. **NOT YOURS. DO NOT FIX IT. If your `F09` work touches the same lines, say so and STOP at the boundary.**'
+  F12: '**MEDIUM. `check_no_shared_record_write.py:89` and `check_build_log_pointer_atomic.py:127,137` use `git show --pretty=format: --name-only <sha>`, which PRINTS NOTHING FOR A MERGE COMMIT** — so `POINTER_NOT_MOVED` is STRUCTURALLY UNREACHABLE on any merge, and `CD-D-178`''s whole content is *"the merge commit moves the pointer."* **NOT YOURS.**'
+  F13: '**`REFUSED_FILESYSTEMS` is a denylist and `CD-RULE-003` says derive or fail closed. NOT YOURS.**'
+  F14: '**NOT YOURS.**'
+  Q11_the_carriage: >
+    *** **NINE COORDINATION CONTROLS EXIST AND NOTHING RUNS THEM. YOU ARE NOT FIXING THAT AND YOU
+    MUST NOT.** *** PO-DECISIONS-0022 ruling 4 routes `Q11` TO THE FRAMEWORK with its priority
+    INVERTED — *"correctness before carriage ... carrying them today would ship a green board over
+    the original defect"* — and it is **a framework-level obligation no seat on this project may
+    write.** **DO NOT ADD A HOOK, A WRAPPER, A CI STEP OR A GIT HOOK. DO NOT CARRY ONE CONTROL.**
+    If you find yourself wanting to, that impulse is correct and its answer is the framework
+    backlog, not this increment.
+  if_you_think_something_out_of_scope_MUST_move_for_your_work_to_be_correct: >
+    **RETURN `SCOPE_INSUFFICIENT` WITH THE EXACT PATHS AND THE REASON. DO NOT TAKE IT.** The role
+    contract: *"A necessary change outside your writable scope is an escalation, not an
+    initiative."* **On this project that return has been made twice and was right both times.**
+
+# ================================================================================================== #
+# CLAUSE (i) OF CD-D-129 — MANDATORY. INSTRUMENTS THAT EXIT NON-ZERO BY DECLARED STATE, TOLD TO YOU
+# BEFORE YOU DISCOVER THEM.
+# ================================================================================================== #
+the_exiting_instruments_declared_up_front:
+  why_this_is_here_before_you_run_anything: >
+    PO-DECISIONS-0009 ruling 1 requires that you be TOLD, before you discover it, that a governed
+    instrument in this tree EXITS NON-ZERO BY DECLARED STATE. **Finding it yourself and reporting it
+    as a discovery would be reporting the record back to itself.**
+  check_blueprint_carried_po_0019_verbatim_py: >
+    *** **IT EXITS 1 AND IT IS NOT BROKEN.** *** `python3 -B
+    tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py --root .` -> **rc=1, 9/10,
+    1911 -> 1230 normalised characters.** The Product Owner SUPERSEDED one of the ten sentences it
+    certifies (PO-DECISIONS-0022 ruling 2, carried at `88e43db`). **THE CHECK WAS DELIBERATELY NOT
+    EDITED: a sibling going RED on precisely the sentence a later ruling corrected IS the standing
+    evidence that the old text existed and was superseded by the Product Owner and not by a seat.**
+    **DO NOT "FIX" IT. IT IS NOT IN YOUR SCOPE AND IT IS WORKING.**
+  measured_this_boundary_and_not_inherited: 'The other three carriage checks — `check_blueprint_carried_po_text_verbatim.py`, `check_pid_carried_po_0020_verbatim.py`, `check_blueprint_carried_po_0022_verbatim.py` — were RE-RUN by the Project Lead ON THE COMMITTED TREE at `88e43db` and all exit 0.'
+  the_nine_coordination_controls: '**EVERY ONE OF THEM PRINTS `IT IS NOT INVOKED BY ANYTHING` IN ITS DECLARED LIMITS.** That is TRUE, it is `Q11`, and it is NOT yours to close (ruling 4).'
+  standing_RED_and_AMBER_that_are_not_yours_to_move: '`CD-AC-005` **RED** · `CD-AC-002` **AMBER, NOT CLOSED** · the WO-2 gate **SHUT** · `wo-2r3` **FROZEN at `be0b355`** · `CD-ASR-WO2R3-04-F01` **NOT CLOSED** · six `DEFECT_OPEN` tier-1 sites · `CD-F-0001`-`CD-F-0004` **ALL OPEN**. **NONE OF THESE MOVES BECAUSE OF ANYTHING YOU DO.**'
+
+# ================================================================================================== #
+# CLAUSE (ii) OF CD-D-129 — MANDATORY, CARRIED VERBATIM
+# ================================================================================================== #
+verdicts_are_taken_against_declarations_never_against_exit_codes_alone:
+  the_rule: >
+    **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD DEFECT IN THE SEAT THAT WRITES
+    IT.** Every instrument in this tree prints its DEFINITION, its POPULATION, its DECLARED LIMITS
+    and its exemptions at every run. Read them.
+  and_its_mirror: >
+    **AN EXIT 0 IS NOT A PASS EITHER.** On this project **EVERY ESCAPE ON THE RECORD PASSED STATIC
+    CHECKERS.** Treat a green run as a question, not an answer.
+  and_the_third_edge: '**AN EXIT 1 IS NOT A FAILURE EITHER.** Read what the number is about before you grade it.'
+  and_the_FOURTH_edge: '**A DECLARED LIMIT IS NOT A LICENCE.** Increment 12 added this edge and then failed it: `check_scope_disjoint.py` did not even DECLARE its skip. **YOU ARE THE FIX FOR THAT EDGE, SO DO NOT REPRODUCE IT.**'
+
+# ================================================================================================== #
+# CLAUSE (iii) OF CD-D-129 — THE STANDING INVITATIONS. THESE ARE NOT RHETORICAL.
+# ================================================================================================== #
+standing_invitations_to_attack:
+  this_dispatch_itself: '**IF THE FIVE ITEMS ARE THE WRONG FIVE, OR IF FIXING THEM IN THIS ORDER MAKES ONE OF THEM UNFIXABLE, SAY SO AND STOP.** The order is the ninth seat''s and the Project Lead adopted it; neither is beyond attack.'
+  the_projects_own_worst_habit: '**A PLANT THAT PROVES ITS OWN CHOSEN INSTANCE.** It has now appeared at `PLANT-COORD-04`, at `EV-ATOMICITY-MEASUREMENT.md` (which raced the SYSCALL, not the INSTRUMENT), and at `PLANT-COORD-02` (which exercised overlapping scopes SEQUENTIALLY). **NOTHING IN INCREMENT 12 RACED THE SCOPE CHECK — the one predicate the whole increment exists to enforce is the one predicate never raced. IF YOUR OWN PLANT DOES THIS, RAISE IT AGAINST YOURSELF. Every seat on this project that did so was right to.**'
+  the_PROJECT_LEADs_OWN_ACT_AT_THIS_BOUNDARY: >
+    **THE PROJECT LEAD AMENDED A PROTECTED FILE THIS MORNING** (`BLUEPRINT.md` §17, at `88e43db`) on
+    PO authority, and banked two of the ninth seat's `/tmp` artefacts into `governance/assurance/`.
+    **BOTH ARE ATTACKABLE. `git diff d60b8b9..480da0f` IS THE COMMAND. If the carriage added a byte
+    of product meaning the Product Owner did not author, that is a finding and the Project Lead
+    wants it raised, not spared.**
+
+# ================================================================================================== #
+# YOUR RETURN.
+# ================================================================================================== #
+expected_return:
+  primary: '**`READY_FOR_ASSURANCE` with the exact SHA on `inc13-coordination-fix`.**'
+  or_any_of: '`SCOPE_INSUFFICIENT` · `AMBIGUITY_BLOCKING` · `CONTROL_NOT_SATISFIABLE` · `FRAMEWORK_DEFECT` · `DISPATCH_INCOMPLETE` — **each is a legitimate, reportable state and reporting it early is cheaper than any alternative.**'
+  durability_PBG_CONT_007: >
+    **A RESULT THAT EXISTS ONLY IN CONVERSATION IS NOT PROJECT STATE.** Record a Build Log entry in
+    YOUR OWN `0400`-`0499` block with: the exact SHA, what you implemented, **what you deliberately
+    did NOT**, every command you ran with its VERBATIM output, your evidence references, findings
+    you raise against your own work, and the next safe action. **COMMIT AS YOU GO.**
+  commit_identity: '`git -c user.name=` DOES NOT WORK IN THIS ENVIRONMENT. Use `GIT_AUTHOR_NAME` / `GIT_AUTHOR_EMAIL` / `GIT_COMMITTER_NAME` / `GIT_COMMITTER_EMAIL` env vars, set to `CD-ENG-COORD-FIX-01`.'
+  what_the_project_lead_will_do_with_it: >
+    Merge your branch at the accountable seat, then dispatch **the TENTH fresh Assurance seat**.
+    **THE PROJECT LEAD WILL NOT GRADE YOUR WORK AND HAS NO AUTHORITY TO (`PBG-AUTH-003`).**
