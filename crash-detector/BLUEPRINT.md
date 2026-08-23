@@ -1,9 +1,22 @@
 ---
 document: BLUEPRINT — how the Crash Detector is built
 product: Crash Detector — standalone market stress instrument
-version: 0.4.0
+version: 0.4.1
 status: >
-  ACCEPTED. **v0.4.0 CORRECTS THE PERIMETER TO WHAT WAS MEASURED, on PO-DECISIONS-0019 (authored by
+  ACCEPTED. **v0.4.1 REPAIRS `CD-ASR-WO2R3-05-F05` — AND IT IS A REMOVAL, NOT AN ADDITION.** On
+  PO-DECISIONS-0020 ruling 2 (commit abafec2, authored by Matt Scott and by NO seat), the normative
+  sentence "not as a note, not as a residue paragraph, and not as a manual step" is REMOVED from §16
+  and replaced by a POINTER, in the Product Owner's own words, to where that requirement now lives:
+  CD-AC-017 and CD-AC-018, in the PID and the register. **THE PRODUCT OWNER REMOVED IT, NOT A SEAT —
+  the prose was the PO's own, and CD-D-115 protects this file from every seat including the Project
+  Lead and including the PO acting through a seat.** F05 and F03 are DISCHARGED by that act. §17's
+  CD-BP-005 row is UNTOUCHED and keeps its RISK/HANDLING columns citing both criteria. **THE TWO
+  CRITERIA ARE 3/4 OF THE CD-D-172 FORM AND ARE CARRIED AS 3/4, NEVER ROUNDED UP — the register row
+  is a WO-3 artefact and does not exist today.** Carriage verified BY COMMAND in both arms —
+  `python3 -B tools/reconciliation/check_pid_carried_po_0020_verbatim.py --root .`. **The Project
+  Lead authored the version bump, this status paragraph, the §19 row, and the disclosure of the
+  §16/§17 label discrepancy — and NOTHING that is normative.**
+  **v0.4.0 CORRECTS THE PERIMETER TO WHAT WAS MEASURED, on PO-DECISIONS-0019 (authored by
   Matt Scott and by no seat).** §17 CD-BP-005 is restated as THREE TIERS and not two — PREVENTED
   (subclass + accident) / RESISTED (F1, via a construction-provenance door at admission, with its
   measured WeakSet obstacle OWNED in the text) / DETECTED (witness divergence at the publication
@@ -33,12 +46,14 @@ status: >
 owner: PROJECT_LEAD
 authority: CD-AUTH-0001
 derives_from: >
-  PID.md v1.0.1 · governance/decisions/PO-DECISIONS-0001.md ·
+  PID.md v1.1.0 · governance/decisions/PO-DECISIONS-0001.md ·
   governance/decisions/PO-DECISIONS-0004.md §2 (the engine owns the model lifecycle) ·
   governance/decisions/PO-DECISIONS-0005.md (the disposition of BP-AMENDMENT-0001) ·
   governance/decisions/PO-DECISIONS-0018.md ruling 1 (the perimeter DECLARED) ·
   governance/decisions/PO-DECISIONS-0019.md rulings 1-3 (the perimeter CORRECTED to three tiers;
-  CD-AC-017 and CD-AC-018 minted)
+  CD-AC-017 and CD-AC-018 minted) ·
+  governance/decisions/PO-DECISIONS-0020.md rulings 1-2 (the two criteria placed in PID §6 BY KIND;
+  F05's normative sentence removed from §16 by the Product Owner)
 framework: PBGv2 v2.0.0-alpha.1, pinned read-only at pbg/
 last_reconciliation_sha: b4e8eae123e0f1250c80e282c274d73e93bb73ed
 reconciliation_note: >
@@ -709,10 +724,37 @@ The honest architecture is in three parts, and all three are the Product Owner's
 
 *What is therefore OWED, and it is an owed CONTROL and not an owed opinion:* **the
 FORGERY-DETECTION OBLIGATION is specified at WO-3, when real sources land, and is verified as a
-FIRST-CLASS CRITERION** — not as a note, not as a residue paragraph, and not as a manual step. Its
+FIRST-CLASS CRITERION**. Its
 two named mechanisms are **witness divergence** and the **provenance chain**. It cannot be specified
 before WO-3 because with zero registry rows there are no witnesses to diverge from, which is the
 same reason CD-D-005's register is owed there and not here.
+
+> **`CD-ASR-WO2R3-05-F05` IS REPAIRED HERE, AT v0.4.1, BY THE ONLY HAND THAT MAY.** The normative
+> sentence that closed the paragraph above — *"not as a note, not as a residue paragraph, and not as
+> a manual step"* — is **REMOVED**, and it is removed on the Product Owner's own order, in the
+> Product Owner's own words, carried verbatim from PO-DECISIONS-0020 ruling 2 (commit `abafec2`,
+> authored by Matt Scott and by NO seat):
+>
+> *"**Q6 — F05 IS REPAIRED HERE, by the only hand that may.** The normative sentence "not as a note,
+> not as a residue paragraph, and not as a manual step" is MY prose that landed in BLUEPRINT.md,
+> which CD-D-115 protects from every seat including me-via-a-seat — so no Engineer could remove it
+> and none should have tried. I remove it now, at the PO layer, and replace it with the correct
+> pointer: the requirement that the forgery-detection obligation take a scheduled criterion form now
+> LIVES as CD-AC-017/CD-AC-018 in the PID and the register (ruling 1), which is where a normative
+> requirement belongs — not as loose prose in the Blueprint's risk section. The Blueprint §17 row
+> keeps its RISK/HANDLING columns and CITES the two criteria; it no longer carries the normative
+> sentence about their form. F05 is discharged; F03 (the record carrying the obligation in a
+> forbidden form) is discharged by the same act, because the obligation now has the required form."*
+>
+> **THAT IS THE POINTER, AND IT RESOLVES:** the scheduled criterion form now lives as
+> **`CD-AC-017`** (PID §6 `NEW_REQUIREMENT`, §14, §15 WO-3) and **`CD-AC-018`** (`STRENGTHENS
+> CD-AC-004`, §14, §15 WO-3/WO-4) — **at 3/4 of the `CD-D-172` form and carried as 3/4, because the
+> register row is a WO-3 artefact and does not exist today.** **`F05` and `F03` are DISCHARGED by
+> this act and by no seat's judgement.** **ONE DISCREPANCY IS DISCLOSED RATHER THAN SILENTLY
+> RESOLVED:** the ruling calls this "the Blueprint's risk section" and the dispatching brief called
+> it §17, but the removed bytes occurred exactly ONCE in this file and they occurred **here, in
+> §16** — so the bytes governed the target and the section label did not. §17's `CD-BP-005` row was
+> read and left untouched; it already cites both criteria, which is what the ruling requires of it.
 
 *Default safe action meanwhile:* **unchanged, and it is already load-bearing.** The detector is
 ADVISORY (`D1`) and no money moves on it (`D2`), so the blast radius of a forged magnitude at WO-2
@@ -758,6 +800,7 @@ a written date.
 
 | Version | Date (UTC) | By | Change |
 |---|---|---|---|
+| 0.4.1 | 2026-08-23 | **Product Owner (the removal); Project Lead (the version bump, this row, the disclosure)** | **`CD-ASR-WO2R3-05-F05` REPAIRED — AND THE REPAIR IS A REMOVAL.** PO-DECISIONS-0020 ruling 2 (commit `abafec2`, authored by Matt Scott and by NO seat) removes from §16 the normative sentence *"not as a note, not as a residue paragraph, and not as a manual step"*, on the Product Owner's own stated reason: *"is MY prose that landed in BLUEPRINT.md, which CD-D-115 protects from every seat including me-via-a-seat — so no Engineer could remove it and none should have tried."* In its place stands a POINTER, quoted verbatim from the ruling, to where the requirement now lives: **`CD-AC-017`** (PID §6, entered as `NEW_REQUIREMENT` by the PO's amendment of the PID to v1.1.0) and **`CD-AC-018`** (`STRENGTHENS CD-AC-004`, homed in the register's `pid_relation` at WO-3). **`F03` IS DISCHARGED BY THE SAME ACT** — the obligation now has the required form rather than the three forms `CD-D-172` forbids. **§17 `CD-BP-005` IS UNTOUCHED**: read, and left exactly as v0.4.0 wrote it, keeping its RISK/HANDLING columns citing both criteria, which is what the ruling requires of it. **WHAT THIS VERSION DOES NOT DO, DISCLOSED RATHER THAN HIDDEN: it does not reach 4/4 of the `CD-D-172` form for either criterion. The register row does not exist — `required-tests.yaml` lives on the `wo-2r3` lane at `be0b355`, the lane is frozen at a SHUT gate, and the row is reachable at WO-3. Both criteria are carried as 3/4 in every place this boundary writes them, on the Product Owner's explicit instruction: *"Until the register rows exist they are 3/4 and MUST be carried as such, never rounded up."*** **AND ONE DISCREPANCY IS DISCLOSED RATHER THAN SILENTLY RESOLVED:** the ruling locates the sentence in *"the Blueprint's risk section"* and the dispatching brief said §17, but the named bytes occurred exactly ONCE in this file and occurred in **§16**. The bytes governed the target; the section label did not. **CARRIAGE VERIFIED BY COMMAND AND NOT BY ASSERTION** — `python3 -B tools/reconciliation/check_pid_carried_po_0020_verbatim.py --root .`, with a counterfactual arm proving the check can fail. |
 | 0.4.0 | 2026-08-23 | Project Lead, **carrying the Product Owner's own bytes** | **THE PERIMETER IS CORRECTED TO WHAT WAS MEASURED — PO-DECISIONS-0019 rulings 1, 2 and 3 (authored by Matt Scott and by no seat), applied and NOTHING ELSE.** The eighth Assurance seat's `RED` was upheld in full, **including `F02` and `F05`, both of which were aimed at bytes this seat authored in this protected file**, and this row records the correction rather than the defence. **§17 `CD-BP-005` is restated as THREE TIERS and not two**: PREVENTED (the forged SUBCLASS `F2` and every accident — *"Says exactly that and no more"*); **RESISTED** (`F1`, via *a CONSTRUCTION-PROVENANCE door — "did this object leave a declared door?"*, whose defeat is measured, hence resisted and not prevented, **with the measured `WeakSet`/`__slots__` obstacle OWNED IN THE TEXT rather than glossed**); DETECTED (witness divergence + provenance at the publication boundary). **The word "useless" is STRUCK** — `F02` proved it false for the very route the risk column names first. **The assertion "AND THE PLATFORM DOES NOT PERMIT PREVENTING IT" is RETRACTED**, on the Product Owner's own reason: *"ADMISSION WAS NEVER TESTED"* — construction cannot be prevented and that stands, but admission is a different predicate. **§14 and §15 gain `CD-AC-017` (admission by declared-door provenance, RESISTED tier, WO-3) and `CD-AC-018` (publication divergence, DETECTED tier, WO-3/WO-4)**, which answers `F03`: the obligation now has an ID, a §14 trace row and a §15 work order, and is no longer carried in the three forms `CD-D-172` forbids. **THE CARRIAGE IS VERIFIED BY COMMAND AND NOT BY ASSERTION** — `python3 -B tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py --root .`, with the counterfactual arm proving the check can fail. **This file is protected from every seat including the Project Lead (`CD-D-115`); the authority for the carriage is the ruling's own instruction that the corrections *"are mine to author ... and are authored here for verbatim carriage"*. THE PROJECT LEAD'S OWN AUTHORED BYTES ARE EXACTLY: the version bump and status block, the two criterion IDs and their §14/§15 table scaffolding, the §14 disclosure blockquote (marked PROJECT LEAD DISCLOSURE precisely because `F05` found this seat writing unattributed normative prose here), and this row — enumerated at `BL-20260823T124508Z-0135`.** **TWO THINGS THIS VERSION DOES NOT DO, both disclosed rather than hidden: it does not write the register rows `CD-AC-017`/`CD-AC-018` owe, because PID §6 does not contain them and the register's population is derived from PID §6 alone (MEASURED — `NEW_REQUIREMENT is blocked pending PO amendment of the PID`); and it does not repair `F05`'s existing §16 sentence, because only the Product Owner may. Both are open Product Authority questions.** |
 | 0.1.0 | 2026-08-18 | Project Lead | initial Blueprint, proposed for Product Owner acceptance under WO-1 |
 | 0.1.0 | 2026-08-19 | Project Lead | **status only** — PROPOSED → ACCEPTED, recording the Product Owner's acceptance at 2e116ec and releasing the "no application code" hold this header was still asserting. No clause of the design changed, so the version does not move. |

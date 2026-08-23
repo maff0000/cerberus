@@ -1,0 +1,278 @@
+# ================================================================================================== #
+# BL-20260823T125935Z-0136 — PROJECT LEAD BOUNDARY
+#
+# **INCREMENT 11 IS FINISHED. PO-DECISIONS-0020 RULINGS 1 AND 2, EXECUTED AND NOTHING ELSE.**
+#
+# THE PID'S RATIFIED CRITERION SET MOVES FOR THE FIRST TIME SINCE RATIFICATION: §6 GAINS
+# `CD-AC-017` AS `NEW_REQUIREMENT`, IN THE PRODUCT OWNER'S OWN ROW. `CD-AC-018` GAINS NO ROW AND
+# ITS ABSENCE IS THE RULING — IT IS `STRENGTHENS CD-AC-004`.
+#
+# **AND `F05`'S REPAIR IS A DELETION PERFORMED BY THE ONLY HAND THAT MAY.** The Product Owner
+# removed the Product Owner's own normative sentence from a file `CD-D-115` protects from every
+# seat — *"including me-via-a-seat — so no Engineer could remove it and none should have tried."*
+#
+# **BOTH CRITERIA ARE 3/4 OF THE `CD-D-172` FORM AND ARE CARRIED AS 3/4 EVERYWHERE THIS BOUNDARY
+# WRITES THEM. THE REGISTER ROW DOES NOT EXIST. NOBODY ROUNDED UP.**
+#
+# TWO FINDINGS ARE RAISED AGAINST THE PRIOR ACT OF THIS SEAT, BOTH FOUND BY RECONCILING THE
+# COMMIT MESSAGES AGAINST THE TREE RATHER THAN READING THEM — WHICH IS THE MERITS OF THE
+# META-ASSURANCE DOCKET ARRIVING BEFORE THE META-ASSURANCE SEAT DOES.
+# ================================================================================================== #
+
+entry_id: BL-20260823T125935Z-0136
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T12:59:35Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: 5e0a873477e62dd254cbab7f03360d480d289c35   # `main` at boundary open. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+po_ruling_sha: abafec2                                # PO-DECISIONS-0020, authored by Matt Scott and by NO seat.
+
+# ================================================================================================== #
+the_reconciliation_FIRST_because_two_commit_messages_claimed_more_than_their_trees_held:
+# ================================================================================================== #
+  why_this_section_is_first: >
+    **THE BOOT VERDICT WAS `AMBER` AND THE RECORD AND THE TREE DISAGREED, SO NOTHING WAS BUILT
+    UNTIL THEY WERE RECONCILED** (`CLAUDE.md` stop condition: *"recorded and observed state
+    disagree — reconcile and report; never silently correct"*). The disagreement was NOT in the
+    governed documents. **IT WAS IN THIS SEAT'S OWN COMMIT SUBJECTS**, and it was found by running
+    `git show --numstat` against them instead of reading them.
+
+  finding_CD-PL-F139:
+    id: CD-PL-F139
+    severity: MEDIUM
+    against: PROJECT_LEAD_SEAT_01 — this seat, at commit `abafec2`'s subject line
+    status: OPEN
+    what: >
+      **A COMMIT SUBJECT ASSERTS WORK THAT THE COMMIT DID NOT DO AND THAT NO COMMIT HAD DONE.**
+      `abafec2`'s subject reads *"the two criteria placed in PID §6 BY KIND ... F05 repaired by the
+      only hand that may — the normative sentence removed from the protected Blueprint"*. **THE
+      COMMIT CHANGED ONE FILE: `governance/decisions/PO-DECISIONS-0020.md`, 53 insertions, 0
+      deletions.** `PID.md` was untouched and contained no `CD-AC-017`. `BLUEPRINT.md` was
+      untouched and the sentence was still at line 712.
+    the_mechanism_and_why_it_is_not_a_lie: >
+      The subject is written in the mood of the RULING — a faithful precis of what
+      PO-DECISIONS-0020 ORDERS. It is true as a description of the decision and FALSE AS IMPLIED
+      ABOUT THE TREE. **THAT IS THE SAME DEFECT SHAPE THIS PROJECT HAS FOUND SEVEN TIMES IN OTHER
+      PEOPLE'S ARTEFACTS** — a claim that is defensible in one reading and load-bearingly wrong in
+      the reading a future reconciler will actually take.
+    why_it_matters_concretely: >
+      **A SUCCESSOR SEAT BOOTING FROM `git log --oneline` — WHICH IS EXACTLY HOW THIS SEAT BOOTED —
+      WOULD HAVE CONCLUDED THE RECORD ACT WAS DONE AND MOVED STRAIGHT TO META-ASSURANCE, LEAVING
+      THE PID UNAMENDED AND `F05` OPEN UNDER A RECORD SAYING BOTH WERE CLOSED.** The only reason
+      that did not happen is that this seat measured the commits rather than trusting them.
+    remedy_NOT_TAKEN_HERE: >
+      **NOT REPAIRED BY EDIT AND IT CANNOT BE — `CLAUDE.md` non-waivable: *"do not rewrite Build Log
+      history — corrections supersede, never edit"*, and the same logic governs commit subjects,
+      which are immutable without a history rewrite.** This entry IS the correction, and it
+      supersedes. **THE REMEDY IS PROSPECTIVE AND IT IS A RULE, PROPOSED TO THE PRODUCT OWNER AND
+      NOT SELF-ADOPTED: a commit subject states what THE COMMIT'S TREE CHANGED; what a ruling
+      ORDERS goes in the body, in the future tense.**
+
+  finding_CD-PL-F140:
+    id: CD-PL-F140
+    severity: HIGH
+    against: PROJECT_LEAD_SEAT_01 — this seat, at commit `5e0a873`
+    status: OPEN
+    what: >
+      **A DISPATCH WAS DECLARED "ISSUED AND OUT" TO A NAMED SEAT AND NO SEAT EVER RETURNED
+      ANYTHING. THERE IS NO RESULT ARTEFACT ANYWHERE IN THE TREE.** `5e0a873` wrote
+      `governance/dispatch/CD-DISPATCH-META-ASSURANCE-01.yaml` (195 insertions) and its subject
+      says *"ISSUED AND OUT to CD-META-01"*. MEASURED: `find . -iname '*META*'` returns the
+      dispatch file and NOTHING ELSE. `governance/assurance/` has no meta directory.
+    the_mechanism: >
+      **WRITING A DISPATCH FILE IS NOT ISSUING A DISPATCH, AND THIS SEAT'S RECORD CONFLATED THEM.**
+      The seat either never launched, or launched and died with the context that held its result.
+      **`PBG-CONT-007` NAMES THIS EXACTLY: "A sub-agent result that exists only in conversation is
+      not project state." THE PRIOR SEAT KNEW THAT RULE, CITED IT ELSEWHERE, AND STILL RECORDED AN
+      OUTCOME THAT LEFT NO DURABLE TRACE.**
+    aggravating: >
+      **THE SAME COMMIT DECLARED "NOTHING MOVES ON `main` WHILE IT READS" AND PINNED THE SEAT TO
+      `5e0a873`.** Had this seat honoured that sentence on faith, it would have frozen `main`
+      indefinitely waiting for a reader that does not exist. **A FREEZE CONDITIONED ON AN EVENT
+      THAT LEAVES NO EVIDENCE IS A DEADLOCK, AND ONLY MEASUREMENT BROKE IT.**
+    and_it_was_OUT_OF_SEQUENCE_which_is_a_third_fact: >
+      PO-DECISIONS-0020 was already on `main` at `abafec2` when `5e0a873` was written, and its
+      ruling 4 sequences the record act FIRST and meta-assurance SECOND. **THE DISPATCH WENT
+      BEFORE THE RECORD ACT IT WAS SUPPOSED TO FOLLOW.** This boundary restores the ruled order.
+    remedy_TAKEN_HERE: >
+      The dispatch is RE-ISSUED at this boundary's SHA, not resumed — see the dispatch section
+      below. **AND THE STANDING RULE THIS SEAT WILL NOT WRITE FOR ITSELF IS PUT TO THE PRODUCT
+      OWNER AS Q7: a dispatch may be recorded as ISSUED only when a durable artefact proves the
+      seat received it, and "OUT" is a claim about evidence, not about intent.**
+
+  what_reconciled_CLEAN: >
+    **THE GOVERNED DOCUMENTS THEMSELVES WERE HONEST.** BLUEPRINT v0.4.0's §14/§15 rows for
+    `CD-AC-017`/`CD-AC-018` were present exactly as `BL-...-0135` recorded them; the v0.4.0 §19 row
+    disclosed, in its own words, the two things it did NOT do — *"it does not write the register
+    rows ... and it does not repair `F05`'s existing §16 sentence, because only the Product Owner
+    may"*. **THAT DISCLOSURE IS WHY THE GAP WAS FINDABLE IN SECONDS. The prior seat's documents
+    told the truth about their own incompleteness while its commit subjects did not, and both
+    facts belong in this record.**
+
+# ================================================================================================== #
+ruling_1_the_PID_amendment_CD-AC-017_NEW_and_CD-AC-018_STRENGTHENS:
+# ================================================================================================== #
+  the_authority: >
+    `PID.md` frontmatter: *"amendment: PO only; sections marked CONSTITUTIONAL by Matt only"*.
+    PO-DECISIONS-0020: *"both are the Product Owner's alone (PBG-PID-002, CD-D-115), authored here
+    for verbatim carriage"*, and *"It enters PID §6 as NEW_REQUIREMENT, which is the route the
+    framework blocks 'pending PO amendment of the PID' — so I amend the PID."*
+    **THIS SEAT IS THE CARRIER AND NOT THE AMENDER. NO CONSTITUTIONAL SECTION (§1, §3) WAS OPENED.**
+
+  what_landed_in_PID_§6:
+    CD-AC-017: >
+      **ONE NEW ROW, THE PRODUCT OWNER'S OWN, CARRIED VERBATIM** — *"Admission by declared-door
+      provenance | plant: hand a judgement path a forged object of exact type that never left a
+      declared door → admission refuses it; genuine article from the declared door → admitted.
+      (RESISTED tier, §17 CD-BP-005.)"* **THIS IS THE FIRST CRITERION ADDED TO §6 SINCE MATT
+      RATIFIED THE SET ON 2026-08-18**, and it exists because an Assurance seat's `RED` proved the
+      declared perimeter false and the Product Owner corrected it rather than defending it.
+    CD-AC-018: >
+      **NO ROW, AND THE ABSENCE IS THE RULING AND NOT AN OVERSIGHT.** It is `STRENGTHENS
+      CD-AC-004`. The ruling's own words are carried beneath the §6 table, attributed, so a reader
+      who wonders why 018 is missing finds the reason at the point of the absence. Its durable home
+      is the register's `pid_relation` field at WO-3.
+    a_plural_that_resolved_to_one_and_is_DISCLOSED_not_smoothed: >
+      **THE RULING'S LEAD-IN SAYS "The §6 rows (PO-authored, carried verbatim):" — PLURAL — AND
+      THEN SUPPLIES EXACTLY ONE ROW.** This seat carried the one row the Product Owner wrote and
+      **DID NOT INVENT A SECOND**. The reading is consistent: only `CD-AC-017` is a
+      `NEW_REQUIREMENT` and only a `NEW_REQUIREMENT` needs a row. **BUT IT IS AN INFERENCE ABOUT
+      PRODUCT INTENT MADE BY A SEAT, SO IT IS FLAGGED HERE RATHER THAN BURIED. If the Product Owner
+      meant a second row, this boundary is short one and the correction is the PO's to make.**
+
+  version_moved: 'PID.md 1.0.1 -> 1.1.0, with a §10 amendment-log row. MINOR and not PATCH: 1.0.1''s own row records "No criterion, semantics or doctrine changed" — this one adds a criterion.'
+  pid_content_hash_MOVED_and_it_has_a_consequence:
+    before: 'PID.md@441d83166b2f3d0c'
+    after: 'PID.md@538e30f3bf4f1803'
+    the_consequence_DISCLOSED: >
+      **ANY REQUIRED TEST REGISTER PINNED TO THE OLD HASH IS NO LONGER A VALID INPUT AND MUST BE
+      RE-PINNED.** `pbg/tools/pbg/required_tests.py` fails it with *"pid.content_hash does not match
+      the referenced PID — the register's population was derived from a different document"*. **THE
+      LANE REGISTER AT `be0b355` IS ONE SUCH.** It is not touched: the lane is frozen at a SHUT gate
+      and `CD-RULE-002` forbids this seat writing a branch a dispatched identity owns. **THIS IS A
+      REAL, DATED OBLIGATION ON WHOEVER OPENS WO-3, RECORDED HERE SO IT CANNOT BE DISCOVERED AS A
+      SURPRISE.**
+
+# ================================================================================================== #
+ruling_2_the_F05_repair_which_is_a_DELETION:
+# ================================================================================================== #
+  what_was_removed: '"not as a note, not as a residue paragraph, and not as a manual step" — BLUEPRINT.md §16, one sentence, welded to the FORGERY-DETECTION OBLIGATION statement.'
+  by_whom: >
+    **THE PRODUCT OWNER, AT THE PO LAYER.** Its own words: *"is MY prose that landed in
+    BLUEPRINT.md, which CD-D-115 protects from every seat including me-via-a-seat — so no Engineer
+    could remove it and none should have tried."* **THIS SEAT CARRIED A DELETION; IT DID NOT
+    AUTHOR ONE.** `F05` was raised against a seat writing unattributed normative prose in a
+    protected file, and repairing it by having a seat silently delete text would have reproduced
+    the defect in the act of curing it.
+  what_replaced_it: >
+    **A POINTER, AND THE POINTER IS THE RULING ITSELF QUOTED VERBATIM AND ATTRIBUTED** — not this
+    seat's paraphrase of it. The requirement now LIVES as `CD-AC-017`/`CD-AC-018` in the PID and
+    the register.
+  §17_UNTOUCHED: >
+    `CD-BP-005` was READ and LEFT EXACTLY AS v0.4.0 WROTE IT. It already cites both criteria in its
+    RISK/HANDLING columns, which is what the ruling requires of it. **MEASURED, not assumed.**
+  a_LABEL_DISCREPANCY_DISCLOSED_RATHER_THAN_SILENTLY_RESOLVED:
+    what: >
+      **THE RULING LOCATES THE SENTENCE IN "the Blueprint's risk section" AND THE DISPATCHING BRIEF
+      SAID §17. THE SENTENCE WAS IN §16.**
+    how_it_was_resolved: >
+      **BY BYTES, NOT BY LABEL.** The ruling identifies its target by quoting it exactly, and those
+      bytes occurred EXACTLY ONCE in the file — at line 712, inside §16 *"What this Blueprint
+      deliberately does not decide"*. `grep -c` confirmed the uniqueness before anything was
+      deleted. **A UNIQUE QUOTED STRING IS AN UNAMBIGUOUS TARGET AND A SECTION NUMBER IS AN
+      ANNOTATION; WHERE THEY DISAGREED THE QUOTATION GOVERNED.**
+    why_it_is_recorded_and_not_just_fixed: >
+      **BECAUSE A SEAT DECIDING WHICH HALF OF A PRODUCT OWNER'S INSTRUCTION TO BELIEVE IS EXACTLY
+      THE MOVE THAT NEEDS WITNESSING, EVEN WHEN — ESPECIALLY WHEN — IT GETS IT RIGHT.** The
+      disclosure is written into `BLUEPRINT.md` §16, the §19 row and here. If the Product Owner
+      meant a different sentence in §17, **NOTHING WAS LOST: the removal is one `git revert` away
+      and the original bytes are readable at `5e0a873`.**
+  findings_discharged:
+    CD-ASR-WO2R3-05-F05: 'DISCHARGED by the Product Owner''s act. **NOT closed by this seat''s judgement, and a seat could not have closed it** — the finding was against prose only the PO may touch.'
+    CD-ASR-WO2R3-05-F03: 'DISCHARGED BY THE SAME ACT, on the ruling''s own reasoning: *"because the obligation now has the required form."* The obligation is no longer carried in the three forms `CD-D-172` forbids.'
+  version_moved: 'BLUEPRINT.md 0.4.0 -> 0.4.1, with a §19 row. PATCH: no design decision changed, nothing was added — a sentence was removed and a pointer put in its place.'
+
+# ================================================================================================== #
+the_fraction_and_nobody_rounded_up:
+# ================================================================================================== #
+  the_instruction: 'PO-DECISIONS-0020 ruling 1: *"Until the register rows exist they are 3/4 and MUST be carried as such, never rounded up."*'
+  the_four_parts_of_the_CD-D-172_form: 'BLUEPRINT §14 criterion-trace row · BLUEPRINT §15 work-order row · PID §6 lineage · Required Test Register row + execution contract.'
+  present: 'THREE. The §14 row and §15 row landed at v0.4.0; the PID §6 lineage landed at THIS boundary.'
+  absent: >
+    **ONE: THE REGISTER ROW, AND ITS ABSENCE IS MEASURED AND NOT ASSUMED.** `required-tests.yaml`
+    **DOES NOT EXIST ON `main` AT ALL** — MEASURED with `git ls-tree -r --name-only`. It exists only
+    on the `wo-2r3` lane at `be0b355`. The ruling itself places the row at WO-3: *"the 4/4 CD-D-172
+    form ... becomes reachable at WO-3."*
+  carried_as_3_of_4_in_every_place_this_boundary_writes_them: 'PID §6 blockquote · PID §10 amendment row · BLUEPRINT §16 repair block · BLUEPRINT status frontmatter · BLUEPRINT §19 row · this entry.'
+  and_the_check_ENFORCES_it: >
+    **ARM 3 OF THE CARRIAGE CHECK MEASURES THE REGISTER'S ABSENCE RATHER THAN TRUSTING THIS SEAT TO
+    HAVE BEEN HONEST ABOUT IT — AND IT IS BUILT TO START FAILING THE DAY A REGISTER ROW APPEARS.**
+    That is deliberate: at that moment the "3/4" prose goes stale, and a check that kept quietly
+    passing across the transition would be worse than no check.
+
+# ================================================================================================== #
+the_carriage_is_VERIFIED_BY_COMMAND_IN_BOTH_ARMS:
+# ================================================================================================== #
+  instrument: 'tools/reconciliation/check_pid_carried_po_0020_verbatim.py — NEW FILE, third sibling of the 0018 and 0019 checks.'
+  why_a_new_file_and_not_an_edit: >
+    **EACH CHECK IS STANDING EVIDENCE FOR ONE CARRIAGE. MUTATING THE 0019 CHECK TO COVER 0020 WOULD
+    HAVE DESTROYED THE EVIDENCE FOR v0.4.0 IN THE ACT OF PRODUCING EVIDENCE FOR v0.4.1.**
+  primary_arm: '`python3 -B tools/reconciliation/check_pid_carried_po_0020_verbatim.py --root .` -> **EXIT 0**. 9/9 sentences resolving in BOTH the ruling and their target; 1335 normalised characters of Product Owner text carried; arm 2a REMOVED; arm 2b 4/4 survivals are quoted MENTIONS; arm 3 register MEASURED ABSENT.'
+  counterfactual_arm: '`--counterfactual` -> **EXIT 1**, 11 checks failing: 9/9 sentences FAILED on one altered word, arm 2a caught the re-introduced construction, arm 2b caught the unquoted USE. **THE CHECK CAN FAIL, AND THAT IS PROVED AND NOT ASSERTED.**'
+  the_hard_part_and_it_is_worth_naming: >
+    **A DELETION CANNOT BE PROVED BY "THE STRING IS GONE", BECAUSE THE PRODUCT OWNER'S RULING
+    QUOTES THE SENTENCE IT REMOVES AND THAT RULING IS CARRIED VERBATIM.** The string MUST still
+    occur or the carriage would be incomplete. **SO THE ARM IS USE-VERSUS-MENTION: the original
+    normative construction must be absent outright (2a), and every survival must sit inside
+    quotation marks (2b). A NAIVE ABSENCE TEST WOULD HAVE BEEN UNPASSABLE AND A NAIVE PRESENCE TEST
+    WOULD HAVE BEEN VACUOUS.**
+  regression_checked_and_not_assumed: 'Both prior carriage checks re-run against the edited tree — `check_blueprint_carried_po_0019_verbatim.py` EXIT 0, `check_blueprint_carried_po_text_verbatim.py` EXIT 0. **EDITING `BLUEPRINT.md` COULD HAVE BROKEN EITHER AND THIS SEAT DID NOT ASSUME IT HAD NOT.**'
+
+# ================================================================================================== #
+what_THIS_SEAT_authored_rather_than_carried_ENUMERATED_because_F05_exists:
+# ================================================================================================== #
+  in_PID.md: 'the version bump 1.0.1 -> 1.1.0 · the §10 amendment-log row · the scaffolding sentence introducing the carried CD-AC-018 quotation · the 3/4 blockquote (its normative sentence is the PO''s, quoted; the enumeration of which three parts are present is this seat''s MEASUREMENT).'
+  in_BLUEPRINT.md: 'the version bump 0.4.0 -> 0.4.1 · the v0.4.1 status paragraph · the §19 row · the repair block''s framing and the §16/§17 label-discrepancy disclosure. **THE POINTER ITSELF IS THE RULING QUOTED VERBATIM AND NOTHING IN THE REPAIR BLOCK IS NORMATIVE IN THIS SEAT''S VOICE.**'
+  in_this_file_and_the_instrument: 'all of it — findings, measurements, disclosures, and the check.'
+  the_weakest_of_them_NAMED: >
+    **THE 3/4 BLOCKQUOTE IN `PID.md` §6.** `PID.md` is PO-only, and this seat put a blockquote in it
+    that is not wholly the Product Owner's bytes — the enumeration of which three parts are present
+    is this seat's measurement, wrapped around the PO's normative sentence. **IT IS DEFENSIBLE
+    (a measurement is not product intent, and the ruling ORDERS the 3/4 to be carried) AND IT IS
+    STILL A SEAT'S PROSE IN A PO-ONLY FILE, WHICH IS THE `F05`/`CD-PL-F138` SHAPE.** Raised against
+    this seat as `CD-PL-F141`, MEDIUM, OPEN, **and it is on the meta-assurance docket rather than
+    self-dismissed.**
+
+# ================================================================================================== #
+what_this_boundary_did_NOT_do:
+# ================================================================================================== #
+  - '**NO REGISTER ROW WAS WRITTEN.** It is a WO-3 artefact on a frozen lane. 4/4 is a WO-3 claim and nobody may make it today.'
+  - '**THE LANE WAS NOT TOUCHED**, including its now-stale PID content hash. `CD-RULE-002`: two identities interleaved in one history is the failure mode.'
+  - '**NO FINDING WAS CLOSED BY THIS SEAT''S JUDGEMENT.** `F05` and `F03` are discharged by the Product Owner''s act, and this seat records that rather than granting it.'
+  - '**NO GRADE MOVED.** `CD-AC-005` RED. `CD-AC-002` AMBER. `CD-ASR-WO2R3-04-F01` NOT CLOSED. Six `DEFECT_OPEN` tier-1 sites. `CD-F-0001`-`CD-F-0004` OPEN. **THE WO-2 GATE IS SHUT.**'
+  - '**`CD-D-174` REMAINS LOGGED AND NOT BUILT**, per ruling 3, for post-gate instrument work with the plant-drift carrier.'
+  - '**NO CONSTITUTIONAL SECTION WAS OPENED.** PID §1 and §3 are Matt''s alone and were not read for edit.'
+
+# ================================================================================================== #
+open_product_authority_questions_THIS_SEAT_ANSWERS_NEITHER:
+# ================================================================================================== #
+  Q7:
+    the_question: '**MAY A DISPATCH BE RECORDED AS "ISSUED AND OUT" WITHOUT A DURABLE ARTEFACT PROVING THE SEAT RECEIVED IT?**'
+    why_it_is_the_PO_s: 'It is a governance rule about what the record may assert, arising from `CD-PL-F140`. **A SEAT WRITING ITS OWN EVIDENCE STANDARD FOR ITS OWN DISPATCH CLAIMS IS THE SUBJECT SETTING ITS OWN EXAM**, which is the whole reason the meta-assurance pass exists.'
+    this_seat_s_view_offered_and_not_taken: 'that "OUT" should be a claim about evidence and not about intent. **OFFERED AS A VIEW. NOT ADOPTED.**'
+  Q8:
+    the_question: '**DID THE PRODUCT OWNER INTEND A SECOND §6 ROW?** Ruling 1 says "The §6 rows" — plural — and supplies one.'
+    why_it_is_the_PO_s: '`PID.md` is PO-only. **A SEAT THAT INVENTS A CRITERION ROW TO SATISFY A PLURAL HAS INVENTED PRODUCT INTENT.** This boundary carried the one row that exists and flagged the plural.'
+  standing: 'CD-AC-005 RED · CD-AC-002 AMBER · the WO-2 gate SHUT · the system safe to leave running (advisory, no money, nothing remotely reachable).'
+
+# ================================================================================================== #
+what_happens_next_IN_THE_RULED_ORDER:
+# ================================================================================================== #
+  now: '**THE META-ASSURANCE PASS**, PO-DECISIONS-0020 ruling 4, over THIS SEAT''S OWN RECONCILIATION PRACTICE. Re-issued at this boundary''s SHA after `CD-PL-F140` established the first issue left no trace. The docket is the Product Owner''s nine plus what the record has accumulated since — now including `CD-PL-F139`, `CD-PL-F140` and `CD-PL-F141`, all three raised by this seat against this seat at this boundary.'
+  then: '**THE NINTH FRESH ASSURANCE SEAT** over the corrected three-tier perimeter, full disclosure, `CD-D-129` clauses verbatim.'
+  the_honest_weakness_of_the_sequence: >
+    **THE SUBJECT IS STILL WRITING THE EXAM.** This seat drafted the meta-assurance docket, wrote
+    the findings on it, and built the check that vouches for its own carriage. **THAT IS DISCLOSED
+    AT THE TOP OF THE DISPATCH RATHER THAN LEFT FOR THE READER TO NOTICE**, and the only real
+    mitigation is that the reader is fresh, read-only, and free to add to the docket.
