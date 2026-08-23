@@ -97,6 +97,28 @@ a form that does not fit them would be the hand-maintained-summary defect with a
 extended word missing any mandatory evidence field is a VIOLATION — ``UNKNOWN_DISPOSITION``,
 ``MALFORMED_DISPOSITION``, ``DISPOSITION_EVIDENCE_MISSING``, ``CARRIER_ONLY_HAS_A_PRODUCT_CALLER``.
 
+**AND SINCE THE WO-2R3 RECORD ACT, A FINDINGS REGISTER AND A REDRAFTED THIRD WORD**
+(``PO-DECISIONS-0014`` ruling 1; ``PO-DECISIONS-0015`` rulings 4 and 6).
+
+  * ``governance/findings/findings-register.json`` is the MINIMAL findings register the ruling
+    ordered — ``id``, ``raised_at``, ``status``, **nothing else**, enforced by key-set equality.
+    Every ``finding`` a register entry cites must resolve there as ``OPEN`` or the entry
+    REFUSES: ``FINDING_DOES_NOT_RESOLVE``, ``FINDING_IS_NOT_OPEN``. Until this act the
+    ``finding`` field was an unchecked string, which is the gap the ruling closed rather than
+    shipped.
+  * ``UPSTREAM_OF_THE_PATH`` was **REJECTED AS DRAFTED** — *"it binds the module register where
+    its siblings bind the site register, and its fields are prose no machine can check"* — and
+    is REDRAFTED. It is no longer admitted in :data:`DECLARED_MODULE_DISPOSITIONS` at all
+    (``WORD_NOT_ADMITTED_IN_MODULE_REGISTER``), and its two fields are now machine-checked:
+    ``operand_origin`` must be a member of the CLOSED set :data:`OPERAND_ORIGINS`, and ``gates``
+    must be a SITE KEY that EXISTS in this run's own measured site set and lies in a DIFFERENT
+    module. ``CALLER_SUPPLIED`` additionally requires a resolvable ``finding``.
+  * **THE SITE REGISTER NOW COVERS BOTH TIERS.** :data:`DECLARED_ADMISSIONS` may carry tier-2
+    site keys as well as tier-1 ones, and a module in the closure is DECLARED either by a
+    :data:`DECLARED_MODULE_DISPOSITIONS` entry **or** by carrying a site entry for EVERY ONE of
+    its tier-2 site keys — a DERIVED module answer, computed from the site register and never
+    accepted as a sentence. Remove one tier-2 entry and the module goes UNDECLARED again.
+
 **A DEFECT THAT WAS ALREADY HERE AND IS CLOSED BY THE SAME CHANGE:** until increment 7 the
 ``DISPOSITIONS`` tuple was consulted **only to print the summary table**. A register entry
 carrying a word that was not in it was silently accepted, counted into nothing, and never
@@ -158,6 +180,7 @@ from __future__ import annotations
 import argparse
 import ast
 import collections
+import json
 import pathlib
 import sys
 
@@ -258,6 +281,160 @@ EXTENDED_DISPOSITIONS = {
 
 #: Every word the register may use. Anything else is `UNKNOWN_DISPOSITION`.
 ALL_DISPOSITIONS = tuple(DISPOSITIONS) + tuple(EXTENDED_DISPOSITIONS)
+
+
+# ======================================================================================= #
+# THE FINDINGS REGISTER — `PO-DECISIONS-0014` ruling 1, verbatim:
+#
+#   *"this project has finding IDs and NO FINDINGS REGISTER, so the `finding` field would be
+#    an unchecked string. A MINIMAL findings register is created in the same act — id,
+#    raised_at (boundary SHA), status (OPEN / CLOSED / SUPERSEDED), nothing else — and
+#    `DEFECT_OPEN.finding` resolves against it or the row refuses. An index, not a system."*
+#
+# **IT IS JSON AND NOT PYTHON, DELIBERATELY.** A register that executes can compute its own
+# answer; this one cannot do anything but be read. It is the same reasoning
+# `governance/reconciliation/` gives for storing its probes as `.txt` — *"so that they are
+# DATA"*.
+#
+# **`nothing else` IS ENFORCED AND IS NOT A STYLE NOTE.** A row whose key set is not EXACTLY
+# {id, raised_at, status} is REFUSED, because a findings register that grows a `title` and a
+# `severity` becomes the hand-maintained summary the ruling created it to stop. The finding's
+# SUBSTANCE lives in the document that raised it — a verdict, a reconciliation record, a
+# build-log entry. **This index answers ONE question: does this id exist, and is it open?**
+#
+# It is resolved from THIS FILE's location and not from `--root`, for the same reason
+# `_load_register` is: an auditor runs this tool out of a tree it extracted itself, with no
+# PYTHONPATH, no installed package and no wrapper (`PBG-ASSURE-001`).
+# ======================================================================================= #
+
+#: The closed set of statuses. Anything else REFUSES the register.
+FINDING_STATUSES = ("OPEN", "CLOSED", "SUPERSEDED")
+
+#: Exactly the three fields a row may carry. Not a minimum — an EQUALITY.
+FINDING_FIELDS = frozenset({"id", "raised_at", "status"})
+
+#: `tools/sweep/` -> repository root -> the register.
+FINDINGS_REGISTER_PATH = (
+    pathlib.Path(__file__).resolve().parent.parent.parent
+    / "governance" / "findings" / "findings-register.json"
+)
+
+
+def _load_findings_register(path=None):
+    """Read the minimal findings register. Returns ``(rows_by_id, problems)``.
+
+    ``problems`` is a list of ``(rule, where, detail)`` in the sweep's own violation shape, so
+    a malformed register FAILS THE RUN rather than raising out of it — an instrument that dies
+    on its own input tells an auditor less than one that reports.
+    """
+    problems: list = []
+    path = pathlib.Path(path) if path is not None else FINDINGS_REGISTER_PATH
+    if not path.is_file():
+        return {}, [(
+            "FINDINGS_REGISTER_ABSENT", str(path),
+            "PO-DECISIONS-0014 ruling 1 requires a findings register that DEFECT_OPEN.finding "
+            "resolves against. Without it every `finding` is an unchecked string again.",
+        )]
+    try:
+        rows = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        return {}, [("FINDINGS_REGISTER_UNREADABLE", str(path), f"{type(exc).__name__}: {exc}")]
+    if not isinstance(rows, list):
+        return {}, [(
+            "FINDINGS_REGISTER_UNREADABLE", str(path),
+            f"the register is a list of rows; found {type(rows).__name__}",
+        )]
+    by_id: dict = {}
+    for index, row in enumerate(rows):
+        where = f"{path.name}[{index}]"
+        if not isinstance(row, dict) or set(row) != FINDING_FIELDS:
+            problems.append((
+                "FINDINGS_REGISTER_ROW_MALFORMED", where,
+                f"a row carries EXACTLY {sorted(FINDING_FIELDS)} and NOTHING ELSE; found "
+                f"{sorted(row) if isinstance(row, dict) else type(row).__name__}. "
+                "**`nothing else` IS PART OF THE RULING.** A findings register that carries "
+                "prose becomes the hand-maintained summary it was created to stop.",
+            ))
+            continue
+        identifier, raised_at, status = row["id"], row["raised_at"], row["status"]
+        if not isinstance(identifier, str) or not identifier.strip():
+            problems.append(("FINDINGS_REGISTER_ROW_MALFORMED", where, "id is absent or empty"))
+            continue
+        if identifier in by_id:
+            problems.append((
+                "FINDINGS_REGISTER_DUPLICATE_ID", where,
+                f"{identifier!r} appears twice. An index with two answers for one id is not an "
+                "index.",
+            ))
+            continue
+        if status not in FINDING_STATUSES:
+            problems.append((
+                "FINDINGS_REGISTER_BAD_STATUS", f"{where} {identifier}",
+                f"{status!r} is not a status. The closed set is {list(FINDING_STATUSES)}.",
+            ))
+            continue
+        if not (isinstance(raised_at, str) and len(raised_at) == 40
+                and all(character in "0123456789abcdef" for character in raised_at)):
+            problems.append((
+                "FINDINGS_REGISTER_BAD_SHA", f"{where} {identifier}",
+                f"raised_at is a full 40-character lower-case commit SHA; found {raised_at!r}. "
+                "An abbreviated SHA is a transcription, and this project has a rule about "
+                "those (CD-RULE-009, CD-PL-F36). **THIS CHECK IS SHAPE ONLY: it does NOT "
+                "prove the object exists in any repository, and it cannot — the tool runs "
+                "from an extraction with no git. NOT PROVED TO BE CARRIED ANYWHERE.**",
+            ))
+            continue
+        by_id[identifier] = {"raised_at": raised_at, "status": status}
+    return by_id, problems
+
+
+def _finding_ids(evidence):
+    """The finding ids an evidence mapping cites: one string, or a list/tuple of strings."""
+    cited = evidence.get("finding")
+    if isinstance(cited, str):
+        return [cited] if cited.strip() else []
+    if isinstance(cited, (list, tuple)):
+        return [one for one in cited if isinstance(one, str) and one.strip()]
+    return []
+
+
+def _finding_resolution_violations(declared_admissions, declared_modules, findings):
+    """**THE HALF OF `DEFECT_OPEN` THAT WAS AN UNCHECKED STRING UNTIL THIS ACT.**
+
+    Every `finding` cited by any register entry must name a row in the findings register whose
+    status is `OPEN`, or the entry REFUSES. Two distinct refusals, because they are two
+    distinct mistakes: an id that resolves against NOTHING, and an id that resolves against a
+    row somebody has already closed.
+    """
+    found: list = []
+    for register, kind in ((declared_admissions, "ADMISSION"), (declared_modules, "MODULE")):
+        for key, value in register.items():
+            if not (isinstance(value, tuple) and len(value) >= 2):
+                continue
+            word, evidence = value[0], value[1]
+            if word not in EXTENDED_DISPOSITIONS or not isinstance(evidence, dict):
+                continue
+            where = (
+                f"{key[0]}::{key[1]} {key[2]}: {key[3]}" if isinstance(key, tuple) else str(key)
+            )
+            for identifier in _finding_ids(evidence):
+                row = findings.get(identifier)
+                if row is None:
+                    found.append((
+                        "FINDING_DOES_NOT_RESOLVE", where,
+                        f"{word} cites finding {identifier!r}, which is NOT in the findings "
+                        f"register. **A `finding` FIELD THAT RESOLVES AGAINST NOTHING IS AN "
+                        f"UNCHECKED STRING**, which is the gap PO-DECISIONS-0014 ruling 1 "
+                        f"closed rather than shipped.",
+                    ))
+                elif row["status"] != "OPEN":
+                    found.append((
+                        "FINDING_IS_NOT_OPEN", where,
+                        f"{word} cites finding {identifier!r}, whose status is "
+                        f"{row['status']!r}. A disposition that rests on a finding somebody "
+                        "has closed is a disposition whose reason has died.",
+                    ))
+    return found
 
 
 def _disposition_contract_violations(declared_admissions, declared_modules):
@@ -534,6 +711,7 @@ def main(argv=None) -> int:
     root = pathlib.Path(arguments.root).resolve()
 
     declared_admissions, declared_modules = _load_register()
+    findings, findings_problems = _load_findings_register()
     sites, subject, outside, sources = sweep(root)
 
     admissions = {site for site in sites if site[2] in TIER_1_ADMISSION}
@@ -582,6 +760,13 @@ def main(argv=None) -> int:
         {word for word, _ in tier_1_dispositions.items() if word not in ALL_DISPOSITIONS}
     )
     print(f"        words used that are NOT in the vocabulary: {len(unknown_words)} {unknown_words or ''}")
+    by_status = collections.Counter(row["status"] for row in findings.values())
+    print(
+        f"    THE FINDINGS REGISTER ({FINDINGS_REGISTER_PATH.name}): {len(findings)} rows — "
+        + ", ".join(f"{status} {by_status[status]}" for status in FINDING_STATUSES)
+        + ". **AN INDEX, NOT A SYSTEM.** Every `finding` cited by a register entry resolves "
+        "here as OPEN or the entry refuses."
+    )
 
     if arguments.list or arguments.list_undeclared:
         rows = undeclared if arguments.list_undeclared else sorted(admissions)
@@ -597,9 +782,12 @@ def main(argv=None) -> int:
     # unrecognised word, a malformed entry, or an extended word without its mandatory
     # evidence is a VIOLATION rather than a row nobody reads.
     # ------------------------------------------------------------------------------- #
-    contract_failures = _disposition_contract_violations(
-        declared_admissions, declared_modules
-    ) + _carrier_only_violations(declared_admissions, sources, subject)
+    contract_failures = (
+        findings_problems
+        + _disposition_contract_violations(declared_admissions, declared_modules)
+        + _carrier_only_violations(declared_admissions, sources, subject)
+        + _finding_resolution_violations(declared_admissions, declared_modules, findings)
+    )
 
     violations = 0
     for rule, where, detail in contract_failures:

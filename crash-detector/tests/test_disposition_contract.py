@@ -32,11 +32,20 @@ _REGISTER_REL = pathlib.Path("tools") / "sweep" / "declared_dispositions.py"
 
 @pytest.fixture()
 def a_tree():
-    """A throwaway copy carrying `src/` and `tools/`. **The repository's own register is
-    never written to** — only this copy's."""
+    """A throwaway copy carrying `src/`, `tools/` and `governance/findings/`. **The
+    repository's own registers are never written to** — only this copy's.
+
+    ``governance/findings/`` joined the copy set at the WO-2R3 RECORD ACT: the sweep now
+    resolves the MINIMAL FINDINGS REGISTER (``PO-DECISIONS-0014`` ruling 1) from its own
+    location, and a copy without it reports ``FINDINGS_REGISTER_ABSENT`` — correctly, which is
+    why the fixture supplies it rather than the check being softened to tolerate its absence.
+    """
     root = pathlib.Path(tempfile.mkdtemp(prefix="cd-disp-"))
     for part in ("src", "tools"):
         shutil.copytree(_REPO_ROOT / part, root / part)
+    shutil.copytree(
+        _REPO_ROOT / "governance" / "findings", root / "governance" / "findings"
+    )
     yield root
     shutil.rmtree(root, ignore_errors=True)
 
