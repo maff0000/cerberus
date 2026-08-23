@@ -1,0 +1,240 @@
+# ================================================================================================== #
+# BL-20260823T122959Z-0134 — PROJECT LEAD BOUNDARY
+#
+# **THE EIGHTH ASSURANCE SEAT RETURNED `RED`. IT IS BANKED VERBATIM (`f778bf6`) AND RECONCILED BY
+# MEASUREMENT — NOT ACCEPTED (PBG-AUTH-003).**
+#
+# AND THE RECONCILIATION UPHOLDS IT ON EVERY LOAD-BEARING FINDING, INCLUDING THE ONE AIMED AT THIS
+# SEAT'S OWN BYTES IN A PROTECTED FILE.
+#
+# **THIS BOUNDARY STOPS. THE NEXT ACTOR IS THE PRODUCT OWNER AND NOT AN ENGINEER.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T122959Z-0134
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T12:29:59Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: f778bf646f50e71681df2989fa5aae15180e1de8   # `main` at this boundary — the commit that banked the verdict. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+the_verdict_as_banked:
+  seat: CD-ASR-WO2R3-05
+  grade: '**RED**'
+  target: '`be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5` — **and it did not move while the seat was out.**'
+  banked_at: '`f778bf6`, `governance/assurance/WO-2R3/VERDICT-EIGHTH-SEAT.md`'
+  identity_MEASURED: '**1300 lines · 70481 bytes · sha256 `a86dbf0302631d243c96221b75306ad1663f2727b29ef6459f4bec9df3cc0b50`**, measured on the seat''s own scratch file BEFORE the copy and again after. `cmp` between the two -> **rc=0, BYTE-IDENTICAL.**'
+  how_it_was_banked: '**VERBATIM, BESIDE AND NOT INSIDE the four prior WO-2R3 documents (`CD-D-143`, `PBG-CONT-003`), COMMITTED BEFORE IT WAS READ.** Not one character altered and not one character read by this seat before that commit. **A VERDICT THAT EXISTS ONLY IN A SUBAGENT''S RETURN MESSAGE IS NOT PROJECT STATE, AND THIS PROJECT HAS LOST AN ENTIRE AUDIT TO EXACTLY THAT** (`PBG-CONT-007`).'
+  and_the_project_lead_does_not_argue_it: '**PBG-AUTH-003. THIS SEAT HAS NO AUTHORITY TO MOVE THIS GRADE UP OR DOWN AND DOES NOT TRY.** What follows is replication, not appeal.'
+
+# ================================================================================================== #
+what_this_seat_REPLICATED_WITH_ITS_OWN_PROBES_RATHER_THAN_READ:
+# ================================================================================================== #
+  F02_THE_GATE_DECIDING_ONE_REPLICATES_EXACTLY: >
+    *** **A FORGED MAGNITUDE TRAVERSED THE PRODUCT'S OWN PUBLIC JUDGEMENT PATH AND RELEASED THE
+    FORGER'S NUMBER.** *** PL probe `/tmp/pl-inc10/pl_f02_nested.py`, **written from the source field
+    shapes and NOT copied from the seat's probe, which this seat did not open**, run on a pristine
+    `git archive be0b355` extraction:
+    **package lines executed to build the ENTIRE nested chain: 0.**
+    `type(q) is DeclaredQuantity` True · `type(m) is DialMagnitude` True · `type(s) is
+    EquityCrashScore` True · `type(v) is Value` True — **every layer a GENUINE governed exact type.**
+    `sole_dial_of(forged magnitude)` -> `'equity_crash'`.
+    `present_dial(dial_id='equity_crash', reading=<F1-forged Value>)` -> **ADMITTED**, returned
+    `Shown`, `is_shown` **True**, **172 package lines ran on the door and not one refused it**, and
+    `quantity_for('equity_crash')` -> **`999.0`, THE NUMBER THE FORGER CHOSE.**
+    **CONTRAST ARM (CD-D-079): a FOREIGN look-alike magnitude at the same door is REFUSED,
+    `DialPresentationRefused`. THE DOOR IS REAL AND IT IS NOT VACUOUS. IT SIMPLY CANNOT SEE F1,
+    BECAUSE F1 HANDS IT EXACTLY THE TYPE IT ASKED FOR.**
+  and_one_number_DIFFERS_FROM_THE_SEATS_AND_IT_IS_DECLARED_NOT_RECONCILED_AWAY: >
+    The seat measured **282** package lines on the door; this seat measured **172**. **THE CHAINS ARE
+    NOT IDENTICAL** — this seat built its own and did not read the seat's — so the two numbers measure
+    two different traversals. **NEITHER IS LOAD-BEARING AND NEITHER IS EVIDENCE THE OTHER IS WRONG.**
+    **IT IS RECORDED AS A DIFFERENCE RATHER THAN QUIETLY HARMONISED**, because a reconciliation that
+    only ever agrees is not a reconciliation (`CD-PL-F121`'s lesson).
+  F06_REPLICATES_EXACTLY_IN_BOTH_STEPS: >
+    On a pristine extraction at `/tmp/pl-inc10/f06`, **the target tree never touched**:
+    **STEP 1 — reorder the two operand pairs ONLY** (`type(because) is not str or not
+    because.strip()` -> `not because.strip() or type(because) is not str`, and the `within` pair
+    likewise). **THE PROJECT DOES NOTICE: sweep rc=1, `FAIL — 548 sites, 3 violations`; suite rc=1, 3
+    failed / 1723 passed.** **THAT UPHOLDS THE SEAT'S CORRECTION OF `CD-ENG-WO2R3-09-F05` IN THE
+    PROJECT'S FAVOUR — something DOES notice a bare reorder.**
+    **STEP 2 — RE-POINT the two declaration keys to the new source text. NOTHING DELETED.**
+    -> **sweep rc=0 `PASS`; suite rc=0, 1726 passed. BIT-FOR-BIT THE PRISTINE TIP'S RESULT.**
+    **AND THE PROPERTY REALLY IS FALSE, PL-MEASURED, BOTH ARMS, ONE PROBE, TWO TREES
+    (`/tmp/pl-inc10/pl_f06_probe.py`, each printing its own `tree:` line — CD-PL-F98):** a
+    `HostileBecause(str)` subclass whose `strip()` records that it ran ->
+    **AT THE TIP: "CALLER CODE RAN INSIDE THE GUARD: False".**
+    **AT THE RE-POINTED TREE: "CALLER CODE RAN INSIDE THE GUARD: True".**
+    Both trees refuse the value in the end and with the same message — **so the REFUSAL is
+    indistinguishable while the PROPERTY THE REGISTER CLAIMS IS FALSE IN ONE OF THEM.**
+    *** **THE REGISTER CHECKS THAT A KEY EXISTS, NOT THAT ITS CLAIM IS TRUE. INCREMENT 10 RE-POINTED
+    SIXTEEN KEYS.** ***
+  and_what_that_does_to_THIS_SEATS_OWN_COUNTERFACTUAL: >
+    At `BL-...-0133` this seat wrote that the sweep `PASS` **"IS NOT VACUOUS AND IT IS NOT OBTAINABLE
+    BY DELETION"** and handed the auditor an instruction to *"find the row where it is."*
+    **THAT SENTENCE IS STILL TRUE AND IT WAS STILL THE WRONG QUESTION.** The seat did not find a
+    deletable row; **it obtained the green by RE-POINTING, which is the sanctioned repair.** **THE
+    COUNTERFACTUAL THIS SEAT RAN PROVED THE GUARD CATCHES THE MOVE THIS SEAT THOUGHT OF, AND SAID
+    NOTHING ABOUT THE MOVE IT DID NOT.** That is `CD-PL-F121` in its purest form — **the population
+    examined did not contain the answer** — and it is why the invitation was written as *"beat it,
+    not repeat it."* **IT WAS BEATEN. THAT IS THE INVITATION WORKING.**
+  F05_UPHELD_AND_IT_IS_AGAINST_THIS_SEATS_OWN_BYTES_IN_A_PROTECTED_FILE: >
+    **VERIFIED BY COMMAND, NOT CONCEDED BY ASSENT.**
+    `grep -c "not as a note, not as a residue paragraph" governance/decisions/PO-DECISIONS-0018.md
+    BLUEPRINT.md` -> **PO-DECISIONS-0018: 0 · BLUEPRINT.md: 1.**
+    *** **THE SENTENCE "verified as a FIRST-CLASS CRITERION — not as a note, not as a residue
+    paragraph, and not as a manual step" IS THIS SEAT'S, NOT THE PRODUCT OWNER'S.** *** The Product
+    Owner wrote *"verified as a first-class criterion"*; **THE FORM REQUIREMENT THAT FOLLOWS IT IS
+    AUTHORED PROSE THIS SEAT PUT INTO A FILE `CD-D-115` PROTECTS FROM IT** — and **`F03` IS THE
+    FINDING THAT THE RECORD THEN CARRIES THE OBLIGATION IN EXACTLY THE TWO FORMS THAT SENTENCE
+    FORBIDS.** **THIS SEAT WROTE A REQUIREMENT INTO A PROTECTED FILE AND THE PROJECT FAILED IT IN THE
+    SAME ACT.**
+    And the second half is measured too: **`BLUEPRINT.md`'s header says this seat authored "the
+    version bump, the row IDs and the table scaffolding and NOTHING ELSE" — THREE THINGS — while
+    `BL-...-0131` enumerates "EXACTLY FIVE THINGS".** **THE PROTECTED FILE UNDERSTATES ITS OWN
+    AUTHORSHIP AND THE BUILD LOG IS THE ACCURATE ONE.** The seat says so, and says the Build Log
+    enumeration is accurate and complete. **BOTH HALVES UPHELD.**
+  F03_UPHELD_AND_THIS_SEAT_ADDS_NOTHING_TO_IT: >
+    The DETECTED half is **not built** (declared at `BL-...-0133`, and the Engineer declared it too).
+    **THE SEAT'S ADDITION IS THE PART THIS SEAT MISSED: it is not even SCHEDULED where it is owed.**
+    `CD-D-172` puts the obligation at WO-3; **both named mechanisms — `CD-AC-004` divergence and
+    `CD-AC-010` provenance — ARE WO-4 ITEMS BY THE SAME BLUEPRINT'S OWN §14/§15 TABLES**, and WO-3's
+    row is `008, 009, 014`. **THE OBLIGATION IS OWED ONE WORK ORDER BEFORE ITS OWN MACHINERY
+    EXISTS.** **THAT IS A CONTRADICTION INSIDE THE PERIMETER THIS SEAT WROTE AND VERIFIED BY COMMAND
+    FOUR HOURS AGO, AND THE COMMAND IT WROTE COULD NOT HAVE CAUGHT IT** — `check_blueprint_carried_
+    po_text_verbatim.py`'s DECLARED LIMIT 2 says it proves nothing about what else the carriage added.
+    **THE LIMIT WAS HONEST AND THE GAP IT DECLARED IS EXACTLY WHERE THE DEFECT WAS.**
+
+what_the_seat_UPHELD_IN_THE_PROJECTS_FAVOUR_AND_IT_IS_NOT_NOTHING:
+- '**T4 — THE ZERO IS CONFIRMED INDEPENDENTLY**, by a probe sharing no code with either prior one: population 99, **FORGED 40 · NO STATE TO FORGE 59 · REFUSED 0.** **THREE INDEPENDENT DERIVATIONS NOW AGREE, AND THE "ELEVEN" THIS SEAT REPEATED FOR FIVE BOUNDARIES IS DEAD FOR GOOD.**'
+- '**`CD-PL-F133` UPHELD AND GRADED: `CD-RT-012` IS GREEN**, and the seat went further than this seat did — **it ran the plant, 0 -> 1, so the green is NON-VACUOUS.** This seat measured the exit code and not the plant. **THE AUDITOR DID THE BETTER MEASUREMENT.**'
+- '**`CD-D-173` UPHELD BY DERIVATION** — `0060-0099` is 40 contiguous entries and full; `0200-0299` is empty. **The block allocation stands.**'
+- '**THE PLANT SET AGREES DIGIT-FOR-DIGIT**: 14/14 apply, 13 EVIDENCE, 1 NOT-A-CONTRAST. **THREE INDEPENDENT HAND MEASUREMENTS AT THIS BOUNDARY ALONE — AND THE CARRIER PO-DECISIONS-0017 RULING 1(A) ORDERED STILL DOES NOT EXIST.**'
+- '**`CD-ENG-WO2R3-08-F07` UPHELD** — base and tip both `PASS — 36 assertions`. The new guard buys a regression lock and nothing more, exactly as its author said.'
+- '**T6 re-measured and holds.** **AND `Q4`: NO INSTRUMENT, CONTRACT OR REGISTER ROW ON THE LANE OVERCLAIMS — WHICH THE SEAT CALLS A FIRST FOR THIS PROJECT.** **THAT IS WHAT INCREMENT 10 ACTUALLY BOUGHT, AND IT IS WORTH HAVING.**'
+
+the_re_grades_ARE_THE_SEATS_AND_THIS_SEAT_RECORDS_THEM_UNALTERED:
+  CD_AC_005: '**RED. The seventh seat''s move is SUSTAINED on the eighth seat''s own measurement:** `panel_state(forged Agrees)` returns `''AGREES''` for an object carrying `freshness=None`, zero package lines, while the declared route is properly refused.'
+  CD_AC_002: '**AMBER, NOT CLOSED — the seat DECLINES to move it**, and a decline stated as a decline is worth more than a number.'
+  CD_ASR_WO2R3_04_F01: '**NOT CLOSED.**'
+  and_what_the_seat_says_about_continuation: '**"SAFE TO LEAVE RUNNING"** — every finding needs an actor already inside the process, the detector is ADVISORY (`D1`), no money moves (`D2`), and **"increment 10 made the tree strictly more honest."** **THE WO-2 GATE STAYS SHUT AND NO GRADE SHOULD MOVE UP ON THIS INCREMENT''S GREEN.**'
+
+# ================================================================================================== #
+findings_this_seat_raises_against_ITSELF_at_this_boundary:
+# ================================================================================================== #
+- id: CD-PL-F134
+  severity: LOW
+  against: 'THIS SEAT — it moved `main` while a read-only auditor was reading `main`'
+  statement: >
+    **`main` ADVANCED `d0d13f8` -> `baede05` WHILE `CD-ASR-WO2R3-05` WAS LIVE**, and the seat found
+    it rather than being told. Two commits, both continuity bookkeeping:
+    `git diff --name-only d0d13f8..baede05` -> `governance/engineering/ACTIVE_WORK.yaml` and
+    `governance/engineering/build-log/BL-20260823T114940Z-0133.yaml`.
+    **THE GRADED ARTEFACT DID NOT MOVE — the target is the LANE at `be0b355` and `BLUEPRINT.md` is
+    byte-identical across the range (`git diff --stat d0d13f8..baede05 -- BLUEPRINT.md` -> EMPTY),
+    which the seat verified for itself before relying on it.**
+    **BUT `governance/` ON `main` IS THE SEAT'S OWN READING MATERIAL, AND IT CHANGED UNDER IT.** The
+    dispatch says *"NOTHING ELSE MOVES WHILE YOU ARE OUT"* and this seat then moved something.
+    **THE HARM WAS ZERO AND THE DISCIPLINE WAS STILL BROKEN.** The remedy is not "remember": it is
+    that continuity bookkeeping for a boundary should close BEFORE a read-only seat is launched
+    against that boundary, or the seat should be told the range in advance. **NEITHER HAPPENED.**
+- id: CD-PL-F135
+  severity: LOW
+  against: 'THIS SEAT — `CD-DISPATCH-WO2R3-ASSURANCE-08`, target T21'
+  statement: >
+    T21 named `CD-PL-F114` and `check_dockerignore.py` **without saying which tree they live in.**
+    `tools/reconciliation/` **does not exist on the lane at `be0b355`** — the seat confirmed that
+    rather than assuming it — so T21 was **UNSUPPORTED as written**. The dispatch's own
+    `instrument_5_ON_MAIN` section said `main`; **the target list did not, and a target list is what
+    a seat works from.** **A TARGET THAT NAMES NO TREE IS A TARGET THAT CANNOT BE RUN, AND THIS IS
+    THE FOURTH DEFECT FOUND IN A DISPATCH THIS SEAT WROTE TODAY.**
+- id: CD-PL-F136
+  severity: MEDIUM
+  against: 'THIS SEAT — the counterfactual method at `BL-...-0133`'
+  statement: >
+    **THIS SEAT RAN ONE COUNTERFACTUAL ARM AGAINST THE SWEEP `PASS` — DELETION — FOUND IT CAUGHT,
+    AND BANKED "THE PASS IS NOT VACUOUS".** The auditor obtained the same `PASS` by **RE-POINTING**,
+    which the deletion arm could not have detected and which is the SANCTIONED repair the increment
+    performed sixteen times. **THE ARM TESTED THE ATTACK THIS SEAT THOUGHT OF AND THE RECORD READ AS
+    IF IT HAD TESTED THE CLASS.**
+    **THE GENERAL DEFECT: A SINGLE COUNTERFACTUAL ARM LICENSES A CLAIM ABOUT ONE ROUTE AND THIS SEAT
+    WROTE IT AS A CLAIM ABOUT THE GUARD.** `CD-RULE-004` at the level of a reconciliation — the arm
+    closed its route and the sentence claimed the class. **THE HONEST FORM WAS AVAILABLE AND UNUSED:
+    "not obtainable by THE DELETION ROUTE; other routes NOT PROVED TO BE CARRIED ANYWHERE".**
+
+# ================================================================================================== #
+# **THE STOP. FOUR PRODUCT AUTHORITY QUESTIONS AND THIS SEAT IS NOT ANSWERING THEM.**
+# ================================================================================================== #
+product_authority_questions_raised_at_this_boundary: >
+  **THE SEAT NAMES THE NEXT SAFE GATE AS "A PRODUCT AUTHORITY RULING — NOT ANOTHER ENGINEER
+  INCREMENT AND NOT ANOTHER ASSURANCE SEAT", AND THIS SEAT AGREES AND STOPS HERE.** Three of the
+  questions are the seat's own, reserved to the Product Owner because **neither the Project Lead
+  (`CD-D-115`) nor the auditor (`PBG-SOD-004`) may amend `BLUEPRINT.md`.** The fourth is this seat's.
+
+  *** **Q1 — DOES §17 `CD-BP-005`'s "PREVENTED" CLAUSE GET CORRECTED?** *** Its HANDLING column says
+  a forged object is *"constructible but USELESS"*. **MEASURED TWICE INDEPENDENTLY, THAT IS FALSE FOR
+  THE F1 ROUTE — the route the same row's RISK column names FIRST.** A forged magnitude with zero
+  package lines reached publication and released `999.0`. The sentence is narrowly rescuable — it
+  says a forged *subclass*, and a forged subclass genuinely is useless at those doors — **but no
+  reader reconciles the two, and the prose is THIS SEAT'S, not the Product Owner's.** **THIS SEAT
+  NAMED THAT COLUMN AS THE WEAKEST THING IT AUTHORED BEFORE THE AUDIT AND IT WAS RIGHT.**
+
+  *** **Q2 — DOES THE FORGERY-DETECTION OBLIGATION GET A CRITERION ID AND A WORK ORDER THAT CONTAINS
+  ITS MECHANISMS?** *** It has no `CD-AC-xxx` id, appears **0** times in §14's criterion trace and
+  §15's delivery table, and **both its named mechanisms are WO-4 items while the obligation is owed
+  at WO-3.** **IT IS OWED ONE WORK ORDER BEFORE ITS OWN MACHINERY EXISTS.** And since F02 shows
+  prevention genuinely cannot catch F1, **THIS IS NOT ONE DEFENCE AMONG SEVERAL — IT IS THE ONLY
+  ONE**, and it currently exists as a note and a residue paragraph, which is what the §16 text
+  forbids.
+
+  *** **Q3 — IS "THE PLATFORM DOES NOT PERMIT PREVENTING IT" RETAINED?** *** The seat splits it in
+  two: **CONSTRUCTION cannot be prevented (TRUE, measured three times)**; **ADMISSION was never
+  tested**, and the seat measured a **construction-provenance discriminator that separates genuine
+  from forged in-process objects.** **IF A PREVENTION EXISTS THAT THIS PROJECT COULD HAVE BUILT AND
+  DID NOT, THE PERIMETER IS WRONGLY DRAWN** — which is exactly the finding the dispatch called the
+  most valuable available at this gate, and the seat went and found it.
+
+  *** **Q4 — THIS SEAT'S OWN, AND IT IS ABOUT THE REGISTER AND NOT THE PERIMETER: WHAT IS A
+  DISPOSITION WORTH IF NOTHING CHECKS ITS CLAIM?** *** `F06` is buildable now and the seat says it is
+  *"the substrate every other verdict rests on"*. **A RE-POINT IS THE SANCTIONED REPAIR AND IT
+  CARRIES A DISPOSITION ACROSS A CHANGE THAT MAY HAVE FALSIFIED IT. SIXTEEN ROWS MOVED THAT WAY IN
+  INCREMENT 10 AND TWO OF THEM WOULD SURVIVE A CHANGE THAT MAKES THEM FALSE.** Is the answer a guard
+  on the re-point, a narrower vocabulary, or an accepted declared limit on the whole register? **THAT
+  IS A DESIGN DECISION WITH THE SAME SHAPE AS THE ONE PO-DECISIONS-0018 ANSWERED, AND THIS SEAT IS
+  NOT TAKING IT.**
+
+gate_state: >
+  **T2 RED. `CD-AC-005` RED — SUSTAINED BY THE EIGHTH SEAT ON ITS OWN MEASUREMENT. `CD-AC-002`
+  AMBER AND NOT CLOSED — THE SEAT DECLINED TO MOVE IT. `CD-ASR-WO2R3-04-F01` NOT CLOSED. THREE NEW
+  HIGH FINDINGS (`F02`, `F03`, `F06`). SIX `DEFECT_OPEN` TIER-1 SITES. `CD-F-0001`-`CD-F-0004` ALL
+  OPEN. `CD-RT-012` GRADED GREEN BY THE SEAT AND ITS PLANT PROVED NON-VACUOUS. THE WO-2 GATE IS
+  SHUT.**
+  **NOTHING WAS MERGED, ADMITTED, PROMOTED OR CLOSED AT THIS BOUNDARY. NO GRADE MOVED BY THIS SEAT'S
+  HAND. NO CODE CHANGED. `be0b355` IS STILL `be0b355`.**
+  **WHAT INCREMENT 10 BOUGHT AND IT IS REAL: the tree is strictly more honest, no instrument or
+  register row on the lane overclaims, and the count of classes defensible as sealed is stated
+  truthfully at ZERO by the instrument itself. WHAT IT DID NOT BUY: a defence against the route that
+  matters.**
+
+decision_refs:
+- PO-DECISIONS-0018   # ruling 1 the declared perimeter; ruling 6 the re-grade this seat was owed
+- CD-D-172            # BLUEPRINT §16 — and F03/F05 are findings against how it was written
+- CD-D-173            # the lane block allocation — UPHELD by the seat's own derivation
+- CD-D-143            # verdicts banked verbatim and BESIDE, never inside
+- PBG-AUTH-003        # reconciliation is not acceptance; the PL does not argue a verdict
+- PBG-SOD-004         # the seat that raises a finding does not fix it
+- CD-D-079            # both arms — every replication at this boundary carries its contrast
+
+next_safe_action: >
+  *** **STOP. THE NEXT ACTOR IS THE PRODUCT OWNER.** *** Four questions are recorded above and this
+  seat is answering none of them. **NO ENGINEER IS DISPATCHED, NO INCREMENT IS OPENED, NO GRADE IS
+  MOVED AND NO FINDING IS CLOSED UNTIL THEY ARE RULED.** The seat's own recommendation, recorded
+  unaltered: a Product Authority ruling first, **then** an Engineer increment scoped to that ruling
+  **with `F06` as its own bounded item**, because it is buildable now and is the substrate the other
+  verdicts rest on. **`CD-D-115` AND `PBG-SOD-004` TOGETHER MEAN THE BLUEPRINT CORRECTIONS Q1 AND Q2
+  IMPLY CANNOT BE MADE BY ANY SEAT ON THIS PROJECT — ONLY BY THE PRODUCT OWNER.** That is not a
+  bottleneck to route around; it is the protection working.
+  **WRAPPER CEILING MEASURED FROM THE LIVE PROCESS AND NOT READ FROM THE SCRIPT (`CD-PL-F127`):
+  `timeout 21600`, session ends about 15:52Z.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98). **AND `last_build_log_entry` MOVES IN THE SAME COMMIT AS THIS ENTRY (CD-PL-F132).**
