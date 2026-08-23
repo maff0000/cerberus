@@ -1,0 +1,352 @@
+# ================================================================================================== #
+# CD-DISPATCH-WO2R3-ASSURANCE-08
+#
+# THE EIGHTH FRESH ASSURANCE SEAT, OVER THE WHOLE OF WO-2R3 AT `be0b355`.
+#
+# **AND THE THING THAT MAKES THIS GATE DIFFERENT FROM THE SEVEN BEFORE IT: YOU ARE NOT BEING ASKED
+# WHETHER THE CLASS IS SEALED. THE PROJECT NOW SAYS IT IS NOT, IN ITS OWN INSTRUMENT'S EXIT TEXT.
+# YOU ARE GRADING A DECLARED PERIMETER — WHAT IS PREVENTED, WHAT IS DETECTED, WHAT IS OUT OF SCOPE —
+# WHICH IS A GRADEABLE CLAIM IN A WAY "THE CLASS IS SEALED" NEVER WAS.**
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-WO2R3-ASSURANCE-08
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T12:02:00Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T114940Z-0133
+parent_dispatch: CD-DISPATCH-WO2R3-ASSURANCE
+
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0018.md`, commit `c72b6ea`, **authored by Matt Scott and by no
+  seat.** Ruling 5: *"INCREMENT 10 — F01 exact-type sweep (fresh Engineer, ruling 2), the sealing
+  instrument re-scoped to declared-limit honesty (ruling 1b), the §16/§17 perimeter and
+  forgery-detection entries (ruling 1c, PO-authored text carried verbatim where protected), ITEM 3,
+  and the stale keys cleared in-act -> **the EIGHTH fresh Assurance seat, graded against the DECLARED
+  perimeter.**"* And ruling 6: *"CD-AC-002 and CD-AC-005 AMBER, NOT CLOSED — **re-graded at the
+  eighth gate against the declared perimeter**, where 'by construction' claims exactly what
+  construction can hold and detection owns the rest. The WO-2 gate stays SHUT until then."*
+  **ALL FIVE ITEMS ARE DONE AND RECONCILED BY MEASUREMENT** — item 1 at `5a37301`
+  (`BL-...-0132`), items 2/4/5 at `be0b355` and item 3 on `main` (`BL-...-0131`, `BL-...-0133`).
+
+assigned_role: ASSURANCE_ENGINEER
+role_contract: pbg/roles/assurance-engineer.md    # canonical local file; the operator pastes no role
+actor_id: CD-ASR-WO2R3-05                         # **FRESH. You are none of the prior seats.**
+prior_assurance_actor_ids: [CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, CD-ASR-WO2R3-01,
+                            CD-ASR-WO2R3-02, CD-ASR-WO2R3-03, CD-ASR-WO2R3-04]
+engineer_actor_ids_you_are_not: [CD-ENG-WO2R3-01, CD-ENG-WO2R3-02, CD-ENG-WO2R3-03, CD-ENG-WO2R3-04,
+                                 CD-ENG-WO2R3-05, CD-ENG-WO2R3-06, CD-ENG-WO2R3-07,
+                                 CD-ENG-WO2R3-08, CD-ENG-WO2R3-09]
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+separation_of_duties: >
+  **PBG-SOD-001, NON-WAIVABLE. YOU IMPLEMENT NOTHING.** You did not write any of this and you will
+  not fix any of it. **MUTATION IS PROHIBITED** except explicitly safe diagnostic artefacts in your
+  own scratch directory. **YOU DO NOT COMMIT TO THE LANE, DO NOT EDIT THE TREE, AND DO NOT CORRECT
+  WHAT YOU FIND — YOU REPORT IT.**
+
+target:
+  repository: local
+  branch: wo-2r3
+  sha: be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5   # **RESOLVE IT YOURSELF** — `git rev-parse` + `git cat-file -t` (CD-PL-F36). NEVER transcribe.
+  worktree: /srv/crash-detector-wo2r3-audit8      # **YOURS, READ-ONLY, PREPARED FOR YOU. PL-verified porcelain 0 at issue.**
+  scratch: /tmp/cd-asr-wo2r3-05/                  # **YOURS ALONE.**
+  governance_on_main: /srv/crash-detector          # `governance/`, `PID.md`, `BLUEPRINT.md` — READ-ONLY
+
+expected_return: '**`PASS` / `AMBER` / `RED`**, with the next safe gate named.'
+
+# ================================================================================================== #
+# **`CD-PL-F128` — READ THIS BEFORE YOU CREATE A SINGLE FILE.**
+# ================================================================================================== #
+the_scratch_directory_discipline:
+  what_happened: >
+    `/tmp/asr7` held TWO instances' files interleaved with semantically colliding names — one
+    instance's `r6_*` probes beside another's `route6.py`, its `t20c.py` beside `t20.py`. **A GLOB, A
+    STALE IMPORT OR A SKIMMED `ls` HANDS A DEAD CONTEXT'S ARTEFACT TO A LIVE SEAT AS ITS OWN
+    MEASUREMENT.** It was found only because a stray background `find` listed `/tmp`.
+  what_you_do: >
+    **WORK IN `/tmp/cd-asr-wo2r3-05/` AND NOWHERE ELSE. NEVER READ ANOTHER SEAT'S SCRATCH** —
+    `/tmp/asr7/`, `/tmp/cd-eng-wo2r3-08/`, `/tmp/cd-eng-wo2r3-09/` and `/tmp/pl-inc10/` all exist and
+    all contain probes that look like they could be yours. **THEY ARE NOT.**
+  and_every_probe_prints_its_tree: '`CD-PL-F98`: **RUN EACH TREE''S OWN COPY OF A PROBE AND READ ITS `tree:` LINE EVERY TIME.** A contrast run with the wrong tree on `sys.path` is indistinguishable from a fix that does nothing.'
+
+# ================================================================================================== #
+# CLAUSE (i) OF CD-D-129 — MANDATORY, CARRIED VERBATIM. INSTRUMENTS THAT EXIT NON-ZERO BY DECLARED
+# STATE, TOLD TO YOU BEFORE YOU DISCOVER THEM.
+# ================================================================================================== #
+the_exiting_instruments_declared_up_front:
+  why_this_is_here_before_you_run_anything: >
+    PO-DECISIONS-0009 ruling 1 requires that you be TOLD, before you discover it, that a governed
+    instrument in this tree EXITS NON-ZERO BY DECLARED STATE. **Finding it yourself and reporting it
+    as a discovery would be reporting the record back to itself.**
+  and_at_THIS_gate_the_list_HAS_SHRUNK_WHICH_IS_ITSELF_THE_WARNING: >
+    *** **AT EVERY PRIOR GATE THIS SECTION LISTED FAILING INSTRUMENTS. AT THIS ONE, ALMOST
+    EVERYTHING IS GREEN — THE CLASS-2 SWEEP `PASS`ES, THE SUITE IS 1726/0, AND THIRTEEN OF FOURTEEN
+    REGISTER CHECKS EXIT 0.** *** **THAT IS THE MOST DANGEROUS STATE THIS PROJECT HAS EVER PRESENTED
+    TO AN AUDITOR, AND IT IS WHY YOU ARE HERE. SIX FALSE GREENS PRECEDE YOU.**
+  instrument_1_the_class_2_sweep:
+    the_instrument: 'tools/sweep/delegated_judgement_sweep.py'
+    its_state_PL_MEASURED_AT_YOUR_TARGET: '**rc=0, `PASS`.** It was `rc=1, FAIL — 548 sites, 18 violations` at `5a37301` one increment ago, and `rc=1, FAIL — 555 sites, 4 violations` at `686a374` before that.'
+    WHAT_YOU_MUST_KNOW_ABOUT_THAT_PASS: >
+      **THE VIOLATIONS WENT 4 -> 18 BECAUSE THE CODE GOT BETTER** — a site key's fourth element is
+      SOURCE TEXT, so item 1 converting twelve `isinstance` sites to exact type ORPHANED fourteen
+      declarations — **AND THEN 18 -> 0 BECAUSE ITEM 5 RE-POINTED SIXTEEN ROWS, DELETED ONE, AND
+      DECLARED EIGHT TIER-2 KEYS.** **THE ONE DELETION IS THE PLACE TO LOOK FIRST.**
+    the_declared_limit_it_now_prints_AFTER_its_verdict_on_EVERY_run: '`DECLARED LIMIT 5` — `CD-D-166`, the `gates` field: **"THIS FIELD IS UNSOUND IN BOTH DIRECTIONS AT ONCE."** Previously it printed only on the `return 0` path. **A limit printed BEFORE a verdict is a limit nobody reads; a test now asserts the ordering.**
+      Still declared OPEN at your target: **6 `DEFECT_OPEN` tier-1 sites · 3 `CARRIER_ONLY` · `CD-F-0001` through `CD-F-0004` ALL OPEN.**'
+  instrument_2_the_suite:
+    its_state_PL_MEASURED_AT_YOUR_TARGET: '**1726 passed, 0 failed** (`python3 -B -m pytest -q`), from **4 failed / 1711 passed** at `5a37301` and **3 failed / 1696 passed** at `686a374`. **+30 tests across the two increments.**'
+    the_four_failures_that_went_away_AND_WHY_THAT_IS_NOT_AUTOMATICALLY_GOOD: >
+      Three were the long-declared `test_the_fifteen.py` failures from increment 8's stale keys. The
+      fourth, `test_the_tier_1_tally_is_ten_DEFECT_OPEN_and_three_CARRIER_ONLY`, went red at
+      `5a37301` **BECAUSE FOUR `DEFECT_OPEN` SITES WERE FIXED** — a test failing because a defect was
+      repaired — and it was SUPERSEDED by a test asserting SIX. **A TALLY TEST WHOSE NUMBER MOVES IS
+      EXACTLY WHERE A CONSTRUCTED PASS LIVES. `tests/test_the_fifteen.py` CHANGED AT THIS INCREMENT
+      AND IT IS THE FIRST FILE YOU SHOULD READ.**
+    '**IF YOUR RUN SHOWS ANY FAILURE, THAT IS A FINDING.**': 'And so is a pass you cannot account for.'
+  instrument_3_CD_RT_012_AND_THE_RECORD_ABOUT_IT_WAS_WRONG_FOR_FOUR_BOUNDARIES: >
+    *** **`tools/register/check_no_execution_interface.py` EXITS 0 AND HAS SINCE INCREMENT 8, COMMIT
+    `f770935`.** *** Every document written before `BL-...-0132` — including the SEVENTH ASSURANCE
+    SEAT'S OWN BRIEF and two Engineer briefs — says **"`CD-RT-012` RED at the tip"**. **THAT SENTENCE
+    IS FALSE.** `CD-PL-F133`, raised by the Project Lead against its own dispatch, bisected across
+    thirteen SHAs with the return code captured immediately: rc=1 at `4410275`/`314592c`/`ff155ec`,
+    rc=0 from `f770935` onward, whose own commit subject reads *"CD-RT-012 IS GREEN"*.
+    **ITS GRADE IS YOURS TO SET AND NO SEAT HAS SET IT.** **AND THE INHERITED-CLAIM MECHANISM THAT
+    PRODUCED IT IS A TARGET — SEE T7.**
+  instrument_4_grant_matrix_live: '`check_grant_matrix_live.py` exits **3**. The fourth seat found "exit 3 never meant database unreachable" — five documented environment variables never exported. **THE CORRECTION IS NOW INHERITED BY FOUR SEATS RUNNING AND RE-MEASURED BY NONE. THAT INHERITANCE IS ITSELF A TARGET (T6).**'
+  instrument_5_ON_MAIN: >
+    `tools/reconciliation/check_lane_governance_citations.py` on `main` exits **1** with **2
+    unresolved citations, BOTH IN `tools/register/check_dockerignore.py`** — one a declared false
+    positive, one `CD-PL-F114` (the path `pbg/controls/PBG-SEC-002.yaml` has never existed on any
+    ref). **DISCLOSED, UNFIXED, AND ON YOUR LIST (T21).**
+  instrument_6_NEW_ON_MAIN_AND_IT_IS_THE_PROJECT_LEADS_OWN_SELF_VOUCHING_CHECK: >
+    `tools/reconciliation/check_blueprint_carried_po_text_verbatim.py` on `main` exits **0**, `4/4
+    sentences resolve in BOTH files; 1546 normalised characters of Product Owner text carried`.
+    **IT WAS WRITTEN BY THE PROJECT LEAD TO CHECK THE PROJECT LEAD'S OWN ACT** (see T20). **ITS
+    DECLARED LIMIT 2 SAYS IT PROVES NOTHING ABOUT WHAT ELSE THE CARRIAGE ADDED. THAT GAP IS YOURS.**
+
+# ================================================================================================== #
+# CLAUSE (ii) OF CD-D-129 — MANDATORY, CARRIED VERBATIM
+# ================================================================================================== #
+verdicts_are_taken_against_declarations_never_against_exit_codes_alone:
+  the_rule: >
+    **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD DEFECT IN THE SEAT THAT WRITES IT.**
+    Every instrument in this tree prints its DEFINITION, its POPULATION, its DECLARED LIMITS and its
+    exemptions at every run. Read them. Grade the declaration against the artefact, and the artefact
+    against the Blueprint — never the exit code against your expectation.
+  and_its_mirror_which_is_the_whole_job_at_THIS_gate: >
+    **AN EXIT 0 IS NOT A PASS EITHER.** On this project **EVERY ESCAPE ON THE RECORD PASSED STATIC
+    CHECKERS.** Treat a green run as a question, not an answer. *** **AT THIS GATE THE HEADLINE FACT
+    IS THAT ALMOST EVERYTHING IS GREEN FOR THE FIRST TIME IN THE PROJECT'S HISTORY, INCLUDING TWO
+    INSTRUMENTS LESS THAN A DAY OLD AND A REGISTER FILE TWO ENGINEERS REFUSED TO TOUCH. THE MIRROR
+    CLAUSE IS THE WHOLE JOB.** ***
+  and_the_third_edge: >
+    **AN EXIT 1 IS NOT A FAILURE EITHER.** Read what the number is about before you grade it.
+
+# ================================================================================================== #
+# CLAUSE (iii) OF CD-D-129 — THE STANDING INVITATIONS. THESE ARE NOT RHETORICAL.
+# ================================================================================================== #
+standing_invitations_to_attack:
+  the_whole_of_the_section_D_scoping_including_the_CD_D_105_closure: >
+    CD-D-112 / PO-DECISIONS-0007 ruling 2. Open to you in full. **THE FIFTH SEAT DID NOT ATTACK IT
+    AND SAID SO PLAINLY. THE SIXTH ATTACKED IT AND PRODUCED `F-06-J`, WHICH BECAME INCREMENT 9. THE
+    SEVENTH ATTACKED INCREMENT 9 AND PRODUCED THE RED THAT BECAME THIS WHOLE ARCHITECTURE.**
+    **THAT IS WHAT THIS INVITATION IS WORTH WHEN SOMEBODY SPENDS IT.**
+  the_widened_class_the_widened_traversal_the_reclassified_door_the_sealed_class_AND_NOW_THE_DECLARED_PERIMETER: >
+    PO-DECISIONS-0010 ruling 1 widened the CLASS; 0011 ruling 2 widened the INSTRUMENT; 0012 ruling 1
+    RECLASSIFIED what a door is; 0016 ruling 2 SEALED the class of 99 — **and the seventh seat proved
+    that one false.** **0018 RULING 1 NOW DECLARES A PERIMETER INSTEAD.** **ALL FIVE ARE ATTACKABLE
+    CLAIMS AND NONE IS SETTLED BY HAVING BEEN RULED.** The Product Owner's own words at the first:
+    *"The seat remains free to attack the widened definition itself."*
+  the_product_owners_own_ruling_written_against_ITSELF: >
+    PO-DECISIONS-0011 ruling 2 records that the Product Owner accepted contrast evidence *"without
+    asking which axis it varied"* — the same defect it had accepted from a seat one level down — and
+    harvested it with **"a rule that binds seats binds their Product Owner."** **THAT IS AN
+    INVITATION: ASK WHICH AXIS THE NEW EVIDENCE VARIES TOO.**
+  CD_RULE_009_BINDS_YOU_AND_HAS_BITTEN_EVERY_SEAT_INCLUDING_THE_PROJECT_LEAD_TWICE_TODAY: >
+    `CD-PL-F115`/`F116` are findings against the SIXTH SEAT's published counts. `CD-PL-F120` is the
+    Project Lead publishing the same class of defect and worse. **AND TODAY: `CD-PL-F130` (a hand
+    count in a dispatch whose totals reconciled while its composition did not) and `CD-PL-F131` (an
+    exit code read from the end of a pipeline, which recorded a FAILING vacuity arm as PASSING — and
+    then RECURRED IN THE PROJECT LEAD'S OWN SHELL TWO HOURS LATER WHILE MEASURING ITS OWN FINDING
+    ABOUT ITSELF).** **APPLY THE SAME TEST TO EVERY NUMBER IN THIS DISPATCH AND IN THE TWO
+    RECONCILIATIONS THAT PRECEDED IT, INCLUDING THE ONES BELOW.**
+  and_the_one_this_gate_adds: >
+    *** **THE PROJECT LEAD WROTE TO A FILE THAT `CD-D-115` DECLARES PROTECTED FROM EVERY SEAT
+    INCLUDING THE PROJECT LEAD.** *** See T20. **IT IS DISCLOSED, IT IS DEFENDED IN THE RECORD, AND
+    IT IS YOURS TO OVERTURN.**
+
+# ================================================================================================== #
+# **THE DECLARED PERIMETER — WHAT YOU ARE ACTUALLY GRADING. READ THIS TWICE.**
+# ================================================================================================== #
+the_thing_you_are_grading:
+  where_it_lives: '`BLUEPRINT.md` §16 `CD-D-172` (the FORGERY-DETECTION OBLIGATION) and §17 `CD-BP-005` (the risk row), on `main`, at v0.3.0. **READ THEM BEFORE ANYTHING ELSE.**'
+  what_it_claims_in_three_parts: >
+    **PREVENTED:** the declared routes and the front door — kept as accident-proofing, non-vacuous,
+    proved by a refusing arm 1 — **plus admission by EXACT TYPE on every enumerated judgement path**,
+    so a forged subclass is constructible but useless.
+    **DETECTED:** witness divergence and the provenance chain — **THE FORGERY-DETECTION OBLIGATION,
+    OWED AT WO-3 AS A FIRST-CLASS CRITERION. IT IS NOT BUILT.**
+    **OUT OF SCOPE:** preventing an in-process actor from constructing the object at all.
+    **Blast-radius basis:** the detector is ADVISORY (`D1`) and no money moves on it (`D2`);
+    prevention is reserved for Layer 3, out-of-process.
+  THE_QUESTIONS_THAT_ARE_ACTUALLY_YOURS: >
+    **(1) IS THE PREVENTED HALF TRUE?** Run the declared routes. Run `type.__new__`. Run
+    `object.__setattr__`. **Do the judgement paths actually refuse the instance, or only the four the
+    new guard happens to name?**
+    **(2) IS THE OUT-OF-SCOPE HALF HONEST, OR IS IT A PLACE TO PUT THINGS THAT ARE MERELY HARD?**
+    The Product Owner ruled the platform does not permit preventing in-process forgery. **TEST THAT
+    CLAIM. IF THERE IS A PREVENTION THIS PROJECT COULD HAVE BUILT AND DID NOT, THE PERIMETER IS
+    WRONGLY DRAWN AND THAT IS THE MOST VALUABLE FINDING AVAILABLE AT THIS GATE.**
+    **(3) IS THE DETECTED HALF A CONTROL OR A PROMISE?** It is owed at WO-3 and it is not built.
+    **A PERIMETER WHOSE LOAD-BEARING HALF DOES NOT EXIST YET IS A PLAN, NOT A DEFENCE. SAY WHICH IT
+    IS AND SAY IT PLAINLY.** The Engineer's own residue says: *"the layer measured to hold it is
+    NONE, at WO-2 ... §17's blast-radius argument is a SCOPE FACT, NOT A GUARD. NOT PROVED TO BE
+    CARRIED ANYWHERE."*
+    **(4) DOES ANY INSTRUMENT, DOCUMENT OR REGISTER ROW STILL CLAIM MORE THAN THE PERIMETER
+    ALLOWS?** That is `CD-RULE-004` applied to the whole tree at once, and it is the cleanest test of
+    whether this increment did what it says.
+  and_CD_AC_002_AND_CD_AC_005_ARE_YOURS_TO_RE_GRADE: >
+    PO-DECISIONS-0018 ruling 6 puts both in front of you explicitly: *"re-graded at the eighth gate
+    against the declared perimeter, where 'by construction' claims exactly what construction can hold
+    and detection owns the rest."* **THE SEVENTH SEAT MOVED `CD-AC-005` DOWN TO RED AND THAT MOVE IS
+    WITH THE PRODUCT OWNER, NOT SETTLED. `CD-ASR-WO2R3-04-F01` IS NOT CLOSED AND NEITHER ENGINEER
+    CLAIMED TO CLOSE IT.**
+
+# ================================================================================================== #
+# INCREMENT 10 DISCLOSED IN FULL. NOTHING HERE IS SOFTENED AND THE WEAK PARTS ARE NAMED FIRST.
+# ================================================================================================== #
+increment_10_in_full:
+  ITEM_1_the_F01_exact_type_sweep:
+    who_and_where: '`CD-ENG-WO2R3-08`, FRESH, `686a374..5a37301`, SIX commits, one identity line, porcelain 0. **ELEVEN PROTECTED PATHS, ELEVEN ZEROS** (PL-measured per path).'
+    what_shipped: '**12 tier-1 sites CONVERTED to exact type · 18 DECLARED with a measured reason · a new guard `tools/register/check_exact_type_admission.py` · a new plant · a new execution contract.** Tier-1 `ISINSTANCE` **30 -> 18**, ZERO undeclared admissions.'
+    THE_WEAKEST_THING_ABOUT_IT_AND_THE_SEAT_SAID_IT_FIRST: >
+      *** **ITS OWN F07: THE NEW GUARD ALSO PASSES AT `686a374`.** *** PL-verified independently on a
+      pristine BASE extraction with the tip's check copied in: **`PASS — 36 assertions, 0 violations`,
+      rc=0.** **SO ITS GREEN IS NOT EVIDENCE THAT THIS INCREMENT FIXED THOSE FOUR DOORS — THEY WERE
+      ALREADY EXACT-TYPE.** It is a REGRESSION LOCK on behaviour that already held. The seat declared
+      this in THREE PLACES so nobody could read its green as its own doing. **ATTACK IT ANYWAY: IF A
+      GUARD'S GREEN IS THE SAME BEFORE AND AFTER, WHAT EXACTLY DID THE INCREMENT BUY, AND IS THE
+      ANSWER WRITTEN ANYWHERE HONESTLY?**
+    the_one_real_admission_it_moved: >
+      **F02 (HIGH), PL-REPLICATED WITH ITS OWN PROBE:** the register's ground — *"Criticality is an
+      enum with members, which CPython refuses to subclass, so isinstance and exact type coincide"* —
+      **IS FALSE.** Subclassing IS refused; **it does not matter**, because an unrelated object with
+      `@property def __class__(self): return Criticality` passes `isinstance` and fails exact type.
+      At `686a374` `SourceRegistry.ids_with(forged)` **ADMITTED IT AND ANSWERED `()`** — a confident
+      *"no source carries this criticality."* At the tip it is refused. **THE PREMISE "isinstance
+      CONSULTS `__class__`" IS FALSE FOR EVERY CLASS IN PYTHON AND THIS REGISTER RELIED ON IT.
+      LOOK FOR OTHER ROWS THAT RELY ON IT.**
+    the_four_metatypes: '**PL-MEASURED, ALL FOUR, BOTH ARMS, BOTH TREES.** ARM 1 (the `class` statement) **REFUSES ON ALL FOUR** — ruling 1(a) honoured, the declared-route refusals were NOT deleted. ARM 2 (`type.__new__`) **CREATES ON ALL FOUR** with `float(inst)` 999.0 and zero package lines. **`type(inst) is <GovernedClass>` IS `False` ON ALL FOUR** — the discriminator the whole remedy rests on. The seventh seat''s honest limit (*"structurally identical, not individually executed"*) is DISCHARGED BY EXECUTION.'
+    its_two_findings_against_the_dispatch_that_ordered_it_BOTH_UPHELD: >
+      **F08:** *"exact type everywhere"* does not distinguish an ADMISSION predicate from a REFUSAL
+      predicate, and **read mechanically the dispatch would have WEAKENED the four metatype guards** —
+      admitting a `class` statement through one forged intermediate — **the exact regression the same
+      document forbade three paragraphs earlier.** The seat obeyed intent over letter and said why.
+      **F09:** the dispatch said *"RE-MEASURE THESE, DO NOT COPY THEM FORWARD ON MY WORD"* **and in
+      the same sentence copied forward the false enum premise.** The instruction caught its author.
+  ITEM_2_the_sealing_instruments_declared_limit:
+    who_and_where: '`CD-ENG-WO2R3-09`, FRESH, `5a37301..be0b355`, FIVE commits, one identity line, porcelain 0. **TWELVE PROTECTED PATHS, TWELVE ZEROS — including `src/crash_detector/` ENTIRELY.**'
+    what_the_exit_now_says: >
+      `DECLARED LIMIT 7`, printed from a `finally` **AFTER** the verdict on exits 0, 1, 2 and 3:
+      **"87 of 99 class(es) examined were FORGED by a route that is NOT in the declared set — F1
+      `cls.__new__(cls)` + `object.__setattr__(member)`, F2 `type.__new__(<metatype>, ...)` — exact
+      type, forged value read back, ZERO package lines. THAT INCLUDES 44 OF THE 51 THIS CHECK CALLS
+      SEALED."** And: **"7 declare NO `__slots__` member and NO dataclass field, so there is NOTHING
+      TO FORGE and 'not forged' is VACUOUSLY TRUE — that is not a seal; 0 REFUSED THE CONSTRUCTOR
+      CALL. NOT ONE CLASS IN THIS TREE IS MEASURED SEALED AGAINST DELIBERATE IN-PROCESS FORGERY, AND
+      THIS CHECK DOES NOT CLAIM ONE IS."**
+    THE_NUMBER_THE_PROJECT_LEAD_HAD_WRONG_FOR_FIVE_BOUNDARIES: >
+      *** **THIS PROJECT LEAD SAID "THE HONEST COUNT IS ELEVEN" AT EVERY BOUNDARY SINCE `607861e`.
+      IT IS ZERO.** *** PL-re-derived with its own probe on a pristine extraction, live population
+      **99**, F1 route only, `sys.settrace` line counting: **FORGED 40 · NO STATE TO FORGE 59 ·
+      REFUSED 0.** **NOT ONE CLASS IN NINETY-NINE REFUSES ON ITS MERITS.** **VERIFY THIS YOURSELF —
+      IT IS THE LOAD-BEARING NUMBER OF THE WHOLE GATE AND IT COMES FROM A SEAT THAT HAS BEEN WRONG
+      ABOUT IT BEFORE.**
+    what_the_seat_REFUSED_and_why_it_matters: '**F1 AND F2 ARE MEASURED AND PRINTED BUT NOT ADDED TO `ROUTES`, NOT ASSERTED, AND DO NOT MOVE THE VERDICT.** Scoring CPython-as-documented would produce a RED no edit could clear; appending them to the census is what ruling 1 calls the census game. **CHECK THAT THIS RESTRAINT IS REAL AND NOT A CONVENIENT WAY TO KEEP A GREEN.**'
+  ITEM_3_the_BLUEPRINT_perimeter: 'On `main`, by the PROJECT LEAD, at `BL-...-0131`. **SEE T20 — IT IS THE ACT MOST OPEN TO CHALLENGE AT THIS GATE.**'
+  ITEM_4_CD_D_166_the_gates_field:
+    what_shipped: '**CLOSED BY DECLARATION**, not by a fix. `DECLARED LIMIT 5` printed after the verdict on every run. **THE TWO MISSING PLACES OF `CD-RULE-004`''S THREE NOW EXIST**: a NEW `required-tests.yaml` row `CD-RT-005-CLASS-2-SWEEP` and a NEW `contracts/execution/CD-RT-005-CLASS-2-SWEEP.md`. `CD-ENG-WO2R3-07` was right that they did not.'
+    both_directions_re_measured_by_the_seat: '**DIRECTION 1** — one local rename in `engine/config.py`, 183 product tests still passing in that same extraction -> **31 refusals, 18 -> 53 violations. IT REFUSES WHEN NOTHING IS WRONG.** **DIRECTION 2** — all 43 `gates` repointed at a real `time_utc` site, `diff -rq src/` identical -> **0 refusals, verdict bit-for-bit unmoved. IT PASSES WHEN THE CLAIM IS FALSE.**'
+    and_the_part_that_earns_the_declaration: '**THE SEAT BUILT THE OBVIOUS REPAIR** (require the `gates` module to transitively import the declaring module), **CONFIRMED IT REFUSES DIRECTION 2, THEN KILLED IT**: 10 other subject modules import `admission` and 13 import `establishment`, so a string swap defeats it. That number is derived and printed at every run. **ATTACK THE KILL: IS THE REPAIR REALLY WORTHLESS, OR WAS IT ABANDONED BECAUSE IT WAS EXPENSIVE?**'
+  ITEM_5_the_stale_keys:
+    what_shipped: '**16 rows RE-POINTED · 1 DELETED** (`_Exactly.refusal`, zero live sites — its comparison moved into the new `is_exactly` helper) **· 8 tier-2 keys DECLARED.** In the same act as items 2 and 4, which is ruling 3 obeyed.'
+    the_file_TWO_ENGINEERS_REFUSED_TO_TOUCH: '`tools/sweep/declared_dispositions.py` was protected through increments 8, 9 and 10-item-1. `CD-ENG-WO2R3-06` and `-07` each considered keeping a dead clause alive so a register key would survive and the suite would stay green, **and each refused in writing and returned `SCOPE_INSUFFICIENT`.** **THOSE REFUSALS ARE WHY THE FILE WAS OPENED TO THE THIRD SEAT. GRADE WHETHER THAT TRUST WAS WELL PLACED.**'
+    THE_PROJECT_LEADS_OWN_COUNTERFACTUAL_ON_THE_PASS_REPRODUCE_IT_AND_THEN_BEAT_IT: >
+      **ARM 2, pristine `git archive be0b355` extraction:** ONE successor row deleted from
+      `declared_dispositions.py` — `("crash_detector.admission", "each_of", "IDENTITY",
+      "type(within) is not tuple")` — **and nothing else touched.** Result: **sweep `rc=1`, `FAIL —
+      548 sites, 1 violations`**, and `pytest tests/test_the_fifteen.py` **`rc=1`, 4 FAILED**, the
+      first by name `test_a_FIXED_Category_C_site_is_GONE_and_its_successor_is_EXACT[dead3-successor3]`.
+      **SO THE PASS IS NOT OBTAINABLE BY DELETING ONE ROW. YOUR JOB IS TO FIND THE ROW WHERE IT
+      IS** — or to show the guard has a shape the deletion arm did not probe.
+    the_named_soft_target_THE_SEAT_GAVE_YOU_ITSELF: >
+      *** **ITS OWN F05: 16 ROWS NOW CLAIM `EXACT` ON THAT SEAT'S AUTHORITY AND THE SWEEP CANNOT
+      CHECK ONE OF THEM.** *** Two are weaker than they read: `type(because) is not str or not
+      because.strip()` and `type(within) is not tuple or not within` are `EXACT` **ONLY BECAUSE `or`
+      SHORT-CIRCUITS. REORDER EITHER PAIR AND THE ROW IS FALSE AND NOTHING IN THIS PROJECT WOULD
+      NOTICE.** No test pins operand order. **THIS IS THE SHAPE OF EVERY ESCAPE ON THIS RECORD — A
+      PROPERTY THAT HOLDS BY AN ACCIDENT OF EXPRESSION WITH NO LAYER MEASURING IT. START HERE.**
+
+# ================================================================================================== #
+# THE TARGET LIST. NOT EXHAUSTIVE, NOT A CEILING, AND YOU MAY IGNORE ANY OF IT FOR SOMETHING BETTER.
+# ================================================================================================== #
+targets:
+  T1: '**THE DECLARED PERIMETER ITSELF** — the four questions in `the_thing_you_are_grading`. This is the gate.'
+  T2: '**THE SWEEP `PASS` AND THE 1726/0 SUITE.** Try to obtain them by deletion, by re-pointing to a wrong-but-live site, or by any route the Project Lead''s one-row arm did not probe.'
+  T3: '**`CD-ENG-WO2R3-09-F05`** — the two short-circuit `EXACT` rows. Reorder the operands in a throwaway extraction and see what, if anything, notices.'
+  T4: '**THE ZERO.** Re-derive the sealing count yourself. 99 population, F1, F2. **The Project Lead has been wrong about this number once already, publicly, for five boundaries.**'
+  T5: '**`check_exact_type_admission.py`''s GREEN**, which is identical at base and tip. What did item 1 actually buy, and does any document overstate it?'
+  T6: '**`check_grant_matrix_live` exit 3** — a correction inherited by four seats and re-measured by none.'
+  T7: '*** **THE INHERITED-CLAIM MECHANISM.** *** `CD-PL-F133` proves a dead "RED at the tip" travelled through four boundaries, two Assurance briefs and two Engineer briefs. **HOW MANY OTHER STANDING CLAIMS IN THIS RECORD HAVE NEVER BEEN RE-MEASURED? THE PROJECT LEAD FOUND ONE BY ACCIDENT. FIND THE REST — THIS IS PROBABLY THE HIGHEST-YIELD TARGET ON THE LIST.**'
+  T8: '**THE PLANT SET.** PL-measured twice by hand: 14 patches, `git apply` rc=0 on all 14, ZERO DEAD, 13 EVIDENCE, 1 NOT-A-CONTRAST (`CD-RT-003-GRANT-MATRIX-LIVE`, rc=3 both arms, declared). **RE-APPLY THEM YOURSELF — the plant-drift carrier PO-DECISIONS-0017 ruling 1 ordered STILL DOES NOT EXIST and this is still done by hand at every boundary.**'
+  T9: '**THE SIX REMAINING `DEFECT_OPEN` SITES AND THE THREE `CARRIER_ONLY`.** Are they right to remain, or is `DEFECT_OPEN` being used to park things? The register itself says **"`DEFECT_OPEN` BUYS NOTHING".**'
+  T20: >
+    *** **THE `CD-D-115` CARRIAGE — THE PROJECT LEAD WROTE TO `BLUEPRINT.md`.** *** `CD-D-115`
+    declares that file protected from EVERY SEAT INCLUDING THE PROJECT LEAD, and the last correction
+    to it was made by the Product Owner personally. **THE PROJECT LEAD RELIED ON PO-DECISIONS-0018
+    RULING 5'S PARENTHETICAL — *"PO-authored text carried verbatim where protected"* — AND WROTE
+    §16, §17, §19 AND THE VERSION HEADER ITSELF.** It enumerated the five things it authored rather
+    than carried, and named item (3) — `CD-BP-005`'s HANDLING column, which is the Project Lead's
+    PROSE about the ruling rather than the ruling's own words — as the weakest. **AUDIT COMMAND:
+    `git diff 184c3e1..00ef57e -- BLUEPRINT.md` on `main`. GRADE WHETHER THE CARRIAGE STAYED INSIDE
+    THE AUTHORITY IT CLAIMS. IF IT DID NOT, SAY SO — THE PROJECT LEAD CANNOT GRADE ITS OWN ACT.**
+  T21: '`CD-PL-F114` and the second unresolved citation in `check_dockerignore.py`. Disclosed, unfixed.'
+  T22: '**`CD-D-173`, NEW AND UNREVIEWED:** the Project Lead allocated the WO-2R3 lane build-log block `0200-0299` after `0060-0099` was exhausted, and judged that a Project Lead decision rather than a Product Authority question. **IF THAT JUDGEMENT IS WRONG, IT IS WRONG NOW AND CHEAPLY.**'
+  T23: '**THE META-ASSURANCE DOCKET** — `F102`, `F111`, `F112`, `F113`, `F119`-`F124`, and now `F130`-`F133`. **`CD-PL-F132` MEASURED THAT `CD-PL-F112`''S "STRUCTURAL FIX" HELD EIGHT BOUNDARIES AND FAILED AT THE NINTH.** The open question none of this project''s rules has been asked: **WHEN A RULE IS ADOPTED, IS THE RECORD SWEPT BACKWARD FOR THE INSTANCES THAT MOTIVATED IT?**'
+
+# ================================================================================================== #
+standards_that_bind_you:
+  CD_RULE_009: '**EVERY FINGERPRINT, HASH OR COUNT RECORDS THE EXACT COMMAND THAT PRODUCES IT, BESIDE IT, IN A FORM A READER CAN PASTE.** This has bitten two Assurance seats and the Project Lead twice.'
+  CD_RULE_003: 'DERIVE OR FAIL CLOSED. Never a plausible number.'
+  CD_RULE_005: 'Every governed timestamp from `date -u +%FT%TZ` and from nothing else.'
+  CD_RULE_006: '**A residue declaration must name a layer MEASURED to hold it**, or be written **"NOT PROVED TO BE CARRIED ANYWHERE"**.'
+  CD_D_079_BOTH_ARMS: '**EVERY CLAIM THAT SOMETHING IS REFUSED REQUIRES THE COUNTERFACTUAL ARM.** A refusal with no contrast is indistinguishable from a probe that never ran.'
+  CD_PL_F131: '**CAPTURE `$?` INTO A VARIABLE ON THE LINE IMMEDIATELY AFTER THE COMMAND.** Reading an exit code from the end of a pipeline, or from a `printf` whose arguments contain a command substitution, RECORDS A FAILING RUN AS PASSING.'
+  CD_PL_F36: '**RESOLVE SHAs, NEVER TRANSCRIBE THEM** — `git rev-parse` plus `git cat-file -t`.'
+  runtime_claims_need_runtime_proof: '**EVERY ESCAPE ON THIS PROJECT''S RECORD PASSED STATIC CHECKERS.** Construct the thing. Read the exception type and message. **NAME THE LAYER THAT REFUSED FROM THE FAILURE TEXT, NOT FROM THE EXIT CODE.**'
+
+how_you_work:
+  write_your_verdict_INCREMENTALLY_and_this_is_not_advice: >
+    *** **A PRIOR ASSURANCE SEAT WAS KILLED BY THE OPERATOR'S WRAPPER ELEVEN MINUTES AFTER DISPATCH
+    AND ITS ENTIRE AUDIT CEASED TO EXIST** (`PBG-CONT-007`: a result that exists only in conversation
+    is not project state). *** **WRITE `governance/assurance/WO-2R3/VERDICT-EIGHTH-SEAT.md` INTO YOUR
+    OWN SCRATCH DIRECTORY AND APPEND TO IT AS YOU GO.** A partial verdict on disk beats a complete
+    one in a dead context. **THE WRAPPER CEILING, MEASURED FROM THE LIVE PROCESS AND NOT READ FROM
+    THE SCRIPT (`CD-PL-F127`): the session dispatching you ends about 15:52Z.**
+  findings_against_this_dispatch_and_against_the_project_lead: >
+    **RAISE THEM. THREE OF THIS SEAT'S OWN DISPATCH DEFECTS HAVE BEEN UPHELD AGAINST IT TODAY**
+    (`CD-ENG-WO2R3-08-F08`, `-08-F09`, `-09-F01`) **AND IT RAISED FOUR MORE AGAINST ITSELF**
+    (`CD-PL-F130`-`F133`). **THE RECONCILIATIONS AT `BL-...-0132` AND `BL-...-0133` ARE THIS SEAT'S
+    OWN WORK AND ARE FULLY IN YOUR SCOPE. SO IS THIS DOCUMENT.**
+  you_do_not_argue_the_verdict_and_neither_does_the_project_lead: >
+    **THE PROJECT LEAD WILL NOT ARGUE YOUR VERDICT UP OR DOWN AND HAS NO AUTHORITY TO DO EITHER.** It
+    will reconcile it BY MEASUREMENT and bank it **VERBATIM AND BESIDE — never inside — the seven
+    prior seats' documents** (`CD-D-143`, `PBG-CONT-003`). **IF YOUR VERDICT CONTRADICTS THE
+    RECONCILIATION, THE RECONCILIATION IS WHAT GETS CORRECTED.** That has now happened twice.
+
+returns_to: >
+  The Project Lead banks your verdict verbatim, reconciles it by measurement, and puts it to the
+  Product Owner. **NOTHING ELSE MOVES WHILE YOU ARE OUT: no increment, no disposition, no code
+  change, no instrument change, no grade.** `be0b355` will still be `be0b355` when you finish.
