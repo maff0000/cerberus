@@ -51,6 +51,48 @@ __all__ = ["DECLARED_ADMISSIONS", "DECLARED_MODULE_DISPOSITIONS"]
 
 
 # ======================================================================================= #
+# **WO-2R3 INCREMENT 10, ITEM 5 — THE STALE ROWS CLEARED IN THE SAME ACT AS THE REMEDY.**
+#
+# `PO-DECISIONS-0018` ruling 3, the Product Owner's own bytes:
+#
+#   *"THE THREE STALE KEYS STAY HELD — the Project Lead's instinct over my own ruling's
+#    letter. Clearing disposition keys in the hour a HIGH bypass reproduced is the papering
+#    the ruling existed to prevent; its precondition is met but its spirit governs. They clear
+#    WITH the remedy increment, in the same act, visibly."*
+#
+# **WHY SEVENTEEN AND NOT THREE.** Three rows were the ORIGINAL held keys. **FOURTEEN MORE
+# WENT STALE BY CONSTRUCTION** when increment 10 item 1 (`5a37301`) converted twelve tier-1
+# `isinstance` sites to exact type: a site key's fourth element is SOURCE TEXT, so repairing a
+# line orphans its declaration. **THE VIOLATION COUNT WENT UP BECAUSE THE CODE GOT BETTER.**
+# That is not a paradox to be resolved by editing a number; it is the register doing its job,
+# and it is the same property the sweep declares as its LIMIT 4.
+#
+# **EVERY ROW IS RE-POINTED WITH ITS PREDECESSOR'S KEY, WORD AND REASONING RECORDED, OR
+# DELETED WITH A STATED REASON. NOTHING IS ERASED BY BEING FIXED** — and in particular the
+# three rows whose predecessor was an OPEN declaration (one `DELEGATED`, two `OUT_OF_BOUND`)
+# say so in terms, because a residue that disappears quietly is indistinguishable from one
+# that was papered over.
+#
+# **AND WHAT WAS NOT DONE.** No dead clause was kept alive so a key would survive and a suite
+# would stay green. Two consecutive Engineers refused exactly that — `not
+# dataclasses.is_dataclass(cls)` as a redundant first clause — and returned
+# SCOPE_INSUFFICIENT. This seat inherited the file because of those refusals and did not spend
+# them. Nothing under `src/` was touched by this act.
+# ======================================================================================= #
+
+#: Prefix carried by every row this act re-pointed. Written ONCE so a reader can grep one
+#: string and find the whole act, and so the sentence cannot drift between copies.
+CONVERTED_AT_ITEM_1 = (
+    "**RE-POINTED AT WO-2R3 INCREMENT 10 ITEM 5 (CD-ENG-WO2R3-09), NOT REWRITTEN.** The site "
+    "was converted to exact type at increment 10 item 1 (`5a37301`), which RE-KEYS it — a "
+    "site key's fourth element is SOURCE TEXT, so repairing a line orphans its declaration "
+    "and the sweep reports STALE DECLARATION. The disposition here is the SUCCESSOR site's; "
+    "the predecessor's key, word and reasoning are recorded beneath it so that nothing is "
+    "erased by being fixed. "
+)
+
+
+# ======================================================================================= #
 # TIER 1 — ADMISSION. Every isinstance / issubclass / duck-typed probe in the closure.
 # ======================================================================================= #
 
@@ -159,37 +201,53 @@ DECLARED_ADMISSIONS = {
     (
         "crash_detector.dials.reading",
         "seal_reading_type",
-        "ISINSTANCE",
-        "isinstance(cls, SealedReadingType)",
+        "IDENTITY",
+        "type(cls) is not SealedReadingType",
     ): (
         "EXACT",
-        "Runs at import over this module's own three constructors, which the loop below "
-        "names explicitly from READING_CONSTRUCTORS. No caller reaches it with anything.",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(cls, SealedReadingType)`), word "
+        "EXACT, reasoning unchanged and still true of the successor: runs at import over "
+        "this module's own three constructors, which the loop below names explicitly from "
+        "READING_CONSTRUCTORS. No caller reaches it with anything. The conversion makes the "
+        "claim structural rather than argued: `is` between two type objects delegates "
+        "nothing, so the sealed-metatype check no longer rests on isinstance agreeing with "
+        "exact type.",
     ),
     # --- the frozen-value constructors --------------------------------------------------- #
     (
         "crash_detector.dials.provenance",
         "_install",
-        "ISINSTANCE",
-        "isinstance(dials, frozenset)",
+        "IDENTITY",
+        "type(dials) is not frozenset",
     ): (
-        "ESTABLISHED",
-        "A shape admission only. The set is then REBUILT as frozenset(own_str(one) for one "
-        "in dials), and the one-dial count is taken on the rebuilt set — so neither the "
-        "supplied set's __len__ nor its elements' __hash__/__eq__ decide whether two dials "
-        "count as one. That comparison is the cross-dial refusal itself.",
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(dials, frozenset)`), word "
+        "ESTABLISHED: *\"a shape admission only. The set is then REBUILT as "
+        "frozenset(own_str(one) for one in dials), and the one-dial count is taken on the "
+        "rebuilt set — so neither the supplied set's __len__ nor its elements' "
+        "__hash__/__eq__ decide whether two dials count as one.\"* **THAT REASONING WAS A "
+        "CARRIER ARGUMENT AND IT STILL HOLDS; THE WORD IS NOW `EXACT` BECAUSE THE SITE NO "
+        "LONGER NEEDS IT** — a frozenset SUBCLASS is refused here outright rather than "
+        "admitted and neutralised downstream.",
     ),
     (
         "crash_detector.dials.magnitude",
         "DialMagnitude.__setstate__",
-        "ISINSTANCE",
-        "isinstance(provenance, frozenset)",
+        "IDENTITY",
+        "type(provenance) is not frozenset",
     ): (
-        "ESTABLISHED",
-        "A pickle is untrusted input like any other. The members are copied into a tuple "
-        "this method builds before being counted and indexed, and the id is then "
-        "re-established by _install. It used to read len(provenance) != 1 and "
-        "sorted(provenance)[0], both of which the supplied object answered.",
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(provenance, frozenset)`), word "
+        "ESTABLISHED: *\"a pickle is untrusted input like any other. The members are copied "
+        "into a tuple this method builds before being counted and indexed, and the id is "
+        "then re-established by _install.\"* Still true. **AND STILL WORTH READING BESIDE "
+        "`CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT`'s DECLARED LIMIT 7:** exact type "
+        "here refuses a frozenset SUBCLASS arriving through `__setstate__`; it does NOT "
+        "stop an in-process actor calling `object.__setattr__` on the finished object, "
+        "which that instrument now measures and declares OUT OF SCOPE.",
     ),
     (
         "crash_detector.engine.config",
@@ -213,35 +271,49 @@ DECLARED_ADMISSIONS = {
     (
         "crash_detector.source_registry",
         "SourceRecord.__post_init__",
-        "ISINSTANCE",
-        "isinstance(self.criticality, Criticality)",
+        "IDENTITY",
+        "type(self.criticality) is not Criticality",
     ): (
         "EXACT",
-        "Criticality is an enum.Enum with members, which CPython refuses to subclass, so "
-        "isinstance and exact type coincide here and no supplied implementation exists to "
-        "reach. This is the check that makes the DISPOSABLE prohibition mean anything.",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(self.criticality, Criticality)`), "
+        "word EXACT: Criticality is an enum.Enum WITH MEMBERS, which CPython refuses to "
+        "subclass, so isinstance and exact type coincided here. **THAT ARGUMENT RESTED ON A "
+        "PROPERTY OF THE INTERPRETER AND THE SUCCESSOR DOES NOT** — `is` between two type "
+        "objects is the claim itself. This is the check that makes the DISPOSABLE "
+        "prohibition mean anything.",
     ),
     (
         "crash_detector.source_registry",
         "SourceRegistry.ids_with",
-        "ISINSTANCE",
-        "isinstance(criticality, Criticality)",
-    ): ("EXACT", "As above — Criticality cannot be subclassed."),
+        "IDENTITY",
+        "type(criticality) is not Criticality",
+    ): (
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(criticality, Criticality)`), word "
+        "EXACT: *\"as above — Criticality cannot be subclassed.\"* Same successor argument "
+        "as SourceRecord.__post_init__ above.",
+    ),
     (
         "crash_detector.source_registry",
         "SourceRecord.__post_init__",
-        "ISINSTANCE",
-        "isinstance(self.cadence_seconds, int)",
+        "IDENTITY",
+        "type(self.cadence_seconds) is not int",
     ): (
-        "DELEGATED",
-        "OPEN, AND SMALL, AND SAID RATHER THAN GLOSSED. An int SUBCLASS passes, and "
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "*** **THE PREDECESSOR WAS `DELEGATED` — AN OPEN DECLARATION — AND ITS GROUND IS "
+        "NOW DEAD. THIS ROW EXISTS SO THAT IS VISIBLE RATHER THAN QUIET.** *** It read: "
+        "*\"OPEN, AND SMALL, AND SAID RATHER THAN GLOSSED. An int SUBCLASS passes, and "
         "`self.cadence_seconds <= 0` immediately below is then its __le__ to answer, so a "
-        "subclass could register a non-positive cadence. IT IS NOT ON A DECIDING PATH FOR "
-        "THIS CLASS: cadence is the collector's schedule and no staleness, agreement or "
-        "reading-ness judgement reads it in WO-2 — the engine's freshness comes from "
-        "StalenessWindow and the source's own as_of. It is left open rather than closed "
+        "subclass could register a non-positive cadence ... left open rather than closed "
         "because closing it is a change to the collector contract, which is not this "
-        "increment's bound. NOT PROVED TO BE CARRIED ANYWHERE.",
+        "increment's bound. NOT PROVED TO BE CARRIED ANYWHERE.\"* The successor refuses the "
+        "int subclass outright, so `self.cadence_seconds <= 0` below is now `int.__le__` "
+        "and nothing else. **THE DECLARED RESIDUE IS DISCHARGED BY MEASUREMENT AND NOT BY "
+        "RE-LABELLING** — increment 10 item 1 changed the line; this row only stops lying "
+        "about it.",
     ),
     (
         "crash_detector.source_registry",
@@ -252,15 +324,18 @@ DECLARED_ADMISSIONS = {
     (
         "crash_detector.observations",
         "FetchFailed.__post_init__",
-        "ISINSTANCE",
-        "isinstance(status, int)",
+        "IDENTITY",
+        "type(status) is not int",
     ): (
-        "OUT_OF_BOUND",
-        "An int subclass passes and is stored as http_status. REACHED BY THE SWEEP AND "
-        "DECLARED, NOT CLOSED: FetchFailed is the outcome that says we could not ask, it "
-        "carries no payload and no timestamp, and nothing on the staleness, agreement or "
-        "reading-ness paths reads http_status — _latest_usable_ok considers only OK. "
-        "NOT PROVED TO BE CARRIED ANYWHERE.",
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "*** **THE PREDECESSOR WAS `OUT_OF_BOUND` — DECLARED, NOT CLOSED — AND IT IS NOW "
+        "CLOSED.** *** It read: *\"an int subclass passes and is stored as http_status. "
+        "REACHED BY THE SWEEP AND DECLARED, NOT CLOSED ... nothing on the staleness, "
+        "agreement or reading-ness paths reads http_status — _latest_usable_ok considers "
+        "only OK. NOT PROVED TO BE CARRIED ANYWHERE.\"* The successor refuses the int "
+        "subclass, so the residue that was not proved to be carried anywhere no longer "
+        "needs carrying.",
     ),
     (
         "crash_detector.observations",
@@ -271,18 +346,20 @@ DECLARED_ADMISSIONS = {
     (
         "crash_detector.observations",
         "Malformed.__post_init__",
-        "ISINSTANCE",
-        "isinstance(self.instance_path, str)",
+        "IDENTITY",
+        "type(self.instance_path) is not str",
     ): (
-        "OUT_OF_BOUND",
-        "A str subclass passes, and `self.instance_path.startswith('/')` and "
-        "`len(self.instance_path)` are then its methods to answer, so the RFC 6901 shape "
-        "check and the length ceiling are the supplied object's to satisfy. REACHED BY THE "
-        "SWEEP AND DECLARED, NOT CLOSED: Malformed is a record ABOUT a rejected response "
-        "and carries nothing value-bearing by design, and no staleness, agreement or "
-        "reading-ness judgement reads instance_path. The ceiling protects an append-only "
-        "store, which is a store concern and a different increment. "
-        "NOT PROVED TO BE CARRIED ANYWHERE.",
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "*** **THE PREDECESSOR WAS `OUT_OF_BOUND` — DECLARED, NOT CLOSED — AND IT IS NOW "
+        "CLOSED.** *** It read: *\"a str subclass passes, and "
+        "`self.instance_path.startswith('/')` and `len(self.instance_path)` are then its "
+        "methods to answer, so the RFC 6901 shape check and the length ceiling are the "
+        "supplied object's to satisfy ... NOT PROVED TO BE CARRIED ANYWHERE.\"* The "
+        "successor refuses the str subclass BEFORE either of those runs, so `startswith` "
+        "and `len` are `str`'s own. Both remain tier-2 sites of this module and are covered "
+        "by its DECLARED_MODULE_DISPOSITIONS row, which is the WEAKER instrument and says "
+        "so — that limit is unchanged by this act.",
     ),
     # --- duck-typed reads. All of them read a name this package wrote. -------------------- #
     (
@@ -498,85 +575,94 @@ DECLARED_ADMISSIONS = {
     #     FALSIFY** — which is why replacing it with a word carrying a resolvable finding is
     #     not a relabelling.
     # ------------------------------------------------------------------------------------ #
+    # *** ONE OF FOUR ROWS WHOSE PREDECESSOR WAS `DEFECT_OPEN` AND WHOSE DEFECT IS FIXED. ***
+    #     The predecessor said "NOT FIXED BY THIS ACT AND NOT SCHEDULED TO BE BY IT". It was
+    #     fixed by a LATER act — increment 10 item 1 — and this row says so rather than
+    #     letting the sentence rot beside a repaired line.
     (
         "crash_detector.admission",
         "_EstablishedHere.__call__",
-        "ISINSTANCE",
-        "isinstance(because, str)",
+        "IDENTITY",
+        "type(because) is not str",
     ): (
-        "DEFECT_OPEN",
-        {
-            "finding": ("CD-F-0002", "CD-F-0003"),
-            "measured_reach": (
-                "A `str` SUBCLASS satisfies this test and then supplies `strip`. F-06-R measured it: a subclass whose `strip` lies gets an UNEXPLAINED EXEMPTION through the one guard that exists to stop exactly that."
-            ),
-            "counterfactual": (
-                "Exact-type identity at the same site refuses the subclass — the discipline "
-                "this module already applies to VALUES and does not apply to DECLARATIONS. "
-                "F-06-D's own one-line form for the downstream half: "
-                "`any(type(value) is t for t in self.types)`."
-            ),
-            "note": (
-                "WAS `OUT_OF_BOUND` IN THE SUPERSEDED DRAFT "
-                "(`governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md`, which is NOT "
-                "edited — corrections supersede). The draft's ground, *\"no caller-controlled "
-                "route\"*, is dead. **NOT FIXED BY THIS ACT AND NOT SCHEDULED TO BE BY IT.**"
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(because, str)`), word "
+        "**`DEFECT_OPEN`**, findings CD-F-0002 and CD-F-0003, measured_reach: *\"a `str` "
+        "SUBCLASS satisfies this test and then supplies `strip`. F-06-R measured it: a "
+        "subclass whose `strip` lies gets an UNEXPLAINED EXEMPTION through the one guard "
+        "that exists to stop exactly that.\"* Its counterfactual was *\"exact-type identity "
+        "at the same site refuses the subclass\"* — **AND THAT IS EXACTLY WHAT THE SUCCESSOR "
+        "IS.** The measured reach is closed at this site. CD-F-0002 and CD-F-0003 REMAIN "
+        "OPEN and are still cited by the sites that are still open (`_compile "
+        "isinstance(declaration, type)`, `_type_tuple isinstance(value, type)`, "
+        "`_is_defined_in_a_class_body`, and establishment's three): **THIS ROW CLOSES A SITE "
+        "AND CLOSES NO FINDING, AND NO SEAT HERE MARKS ANYTHING CLOSED.**",
+    ),
+
+    # *** THE SUCCESSOR OF **TWO** DEAD KEYS, AND THE ONLY ROW HERE THAT IS NOT A 1:1
+    #     RE-POINT. Increment 10 item 1 did not convert two sites in place; it MOVED the
+    #     delegable comparison out of both of them into ONE new helper, `is_exactly`, whose
+    #     single site decides by `is` between two type objects. Both predecessors are recorded
+    #     below and neither is silently dropped.
+    #
+    #     PREDECESSOR A — `_compile ISINSTANCE: isinstance(declaration, _Admission)`,
+    #                     word DEFECT_OPEN. Now `is_exactly(declaration, _ADMISSION_FORMS)`.
+    #     PREDECESSOR B — `_Exactly.refusal MEMBERSHIP: type(value) in self.types`,
+    #                     word UPSTREAM_OF_THE_PATH. Now `is_exactly(value, self.types)`.
+    #                     `_Exactly.refusal` HAS ZERO SITES OF ITS OWN AT THIS SHA.
+    (
+        "crash_detector.admission",
+        "is_exactly",
+        "IDENTITY",
+        "kind is candidate",
+    ): (
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "**THIS ONE ROW SUPERSEDES TWO DEAD KEYS BECAUSE THE FIX MOVED THE OPERATION "
+        "RATHER THAN REWRITING IT IN PLACE.** "
+        "PREDECESSOR A: `_compile ISINSTANCE: isinstance(declaration, _Admission)`, word "
+        "**`DEFECT_OPEN`**, CD-F-0002/CD-F-0003, measured_reach *\"an `_Admission` SUBCLASS "
+        "satisfies this test and then supplies `refusal` and `describe`. F-06-R measured one "
+        "whose `refusal` returns `None` AND whose `describe()` reports 'exactly PanelRow' — "
+        "a door that admits everything and reports that it does not.\"* "
+        "PREDECESSOR B: `_Exactly.refusal MEMBERSHIP: type(value) in self.types`, word "
+        "**`UPSTREAM_OF_THE_PATH`**, operand_origin CALLER_SUPPLIED, finding CD-F-0003, note "
+        "*\"THIS IS admission.py:525, THE EXACT LINE OF F-06-D. The module states its "
+        "doctrine three times — 'type(value) is not declared, never isinstance' — and "
+        "implements it with `in`, which is `==`, which a metaclass answers. A door declared "
+        "@admits(value=Wildcard) admits everything, reports no fault, and tells its own "
+        "introspection surface it requires Wildcard.\"* "
+        "**THE SUCCESSOR IS `kind is candidate`: IDENTITY BETWEEN TWO TYPE OBJECTS, WHICH "
+        "HAS NOTHING TO DELEGATE.** `is` consults no `__eq__` and no `__hash__`, so the "
+        "metaclass lever both predecessors named is gone AT THIS SITE. It is NOT gone from "
+        "this module: `_compile isinstance(declaration, type)` and `_type_tuple "
+        "isinstance(value, type)` are still `DEFECT_OPEN` below, with their reasons, and "
+        "CD-F-0002/CD-F-0003 REMAIN OPEN. **THIS ROW CLOSES TWO SITES AND CLOSES NO "
+        "FINDING.** "
+        "AND THE ONE CAVEAT THIS ROW OWES, STATED RATHER THAN LEFT TO BE FOUND: the site is "
+        "`kind is candidate` inside `any(kind is candidate for candidate in types)`, so the "
+        "ITERATION of `types` is a separate operation from the comparison. It is safe here "
+        "because `types` is always a tuple `_type_tuple` built — and it is `type(declaration) "
+        "is tuple` above, re-pointed in this same act, that is what makes that sentence true "
+        "rather than hopeful. **IF THAT ROW EVER STOPS BEING `EXACT`, THIS ONE IS WEAKER THAN "
+        "IT READS.**",
     ),
 
     (
         "crash_detector.admission",
         "_compile",
-        "ISINSTANCE",
-        "isinstance(declaration, _Admission)",
+        "IDENTITY",
+        "type(declaration) is tuple",
     ): (
-        "DEFECT_OPEN",
-        {
-            "finding": ("CD-F-0002", "CD-F-0003"),
-            "measured_reach": (
-                "An `_Admission` SUBCLASS satisfies this test and then supplies `refusal` and `describe`. F-06-R measured one whose `refusal` returns `None` AND whose `describe()` reports 'exactly PanelRow' — a door that admits everything and reports that it does not."
-            ),
-            "counterfactual": (
-                "Exact-type identity at the same site refuses the subclass — the discipline "
-                "this module already applies to VALUES and does not apply to DECLARATIONS. "
-                "F-06-D's own one-line form for the downstream half: "
-                "`any(type(value) is t for t in self.types)`."
-            ),
-            "note": (
-                "WAS `OUT_OF_BOUND` IN THE SUPERSEDED DRAFT "
-                "(`governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md`, which is NOT "
-                "edited — corrections supersede). The draft's ground, *\"no caller-controlled "
-                "route\"*, is dead. **NOT FIXED BY THIS ACT AND NOT SCHEDULED TO BE BY IT.**"
-            ),
-        },
-    ),
-
-    (
-        "crash_detector.admission",
-        "_compile",
-        "ISINSTANCE",
-        "isinstance(declaration, tuple)",
-    ): (
-        "DEFECT_OPEN",
-        {
-            "finding": ("CD-F-0002", "CD-F-0003"),
-            "measured_reach": (
-                "A `tuple` SUBCLASS satisfies this test and then supplies `__iter__`. F-06-R measured one whose `__iter__` yields something other than what `repr` and `len` show."
-            ),
-            "counterfactual": (
-                "Exact-type identity at the same site refuses the subclass — the discipline "
-                "this module already applies to VALUES and does not apply to DECLARATIONS. "
-                "F-06-D's own one-line form for the downstream half: "
-                "`any(type(value) is t for t in self.types)`."
-            ),
-            "note": (
-                "WAS `OUT_OF_BOUND` IN THE SUPERSEDED DRAFT "
-                "(`governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md`, which is NOT "
-                "edited — corrections supersede). The draft's ground, *\"no caller-controlled "
-                "route\"*, is dead. **NOT FIXED BY THIS ACT AND NOT SCHEDULED TO BE BY IT.**"
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(declaration, tuple)`), word "
+        "**`DEFECT_OPEN`**, CD-F-0002/CD-F-0003, measured_reach: *\"a `tuple` SUBCLASS "
+        "satisfies this test and then supplies `__iter__`. F-06-R measured one whose "
+        "`__iter__` yields something other than what `repr` and `len` show.\"* The successor "
+        "refuses the tuple subclass, so what `_type_tuple` then iterates is a `tuple`'s own "
+        "iteration and not the declaration's. **CLOSES A SITE, CLOSES NO FINDING.**",
     ),
 
     (
@@ -636,28 +722,18 @@ DECLARED_ADMISSIONS = {
     (
         "crash_detector.admission",
         "each_of",
-        "ISINSTANCE",
-        "isinstance(within, tuple)",
+        "IDENTITY",
+        "type(within) is not tuple",
     ): (
-        "DEFECT_OPEN",
-        {
-            "finding": ("CD-F-0002", "CD-F-0003"),
-            "measured_reach": (
-                "A `tuple` subclass passes and then decides its own iteration and its own truthiness at the two tier-2 sites immediately below it."
-            ),
-            "counterfactual": (
-                "Exact-type identity at the same site refuses the subclass — the discipline "
-                "this module already applies to VALUES and does not apply to DECLARATIONS. "
-                "F-06-D's own one-line form for the downstream half: "
-                "`any(type(value) is t for t in self.types)`."
-            ),
-            "note": (
-                "WAS `OUT_OF_BOUND` IN THE SUPERSEDED DRAFT "
-                "(`governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md`, which is NOT "
-                "edited — corrections supersede). The draft's ground, *\"no caller-controlled "
-                "route\"*, is dead. **NOT FIXED BY THIS ACT AND NOT SCHEDULED TO BE BY IT.**"
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `ISINSTANCE: isinstance(within, tuple)`), word "
+        "**`DEFECT_OPEN`**, CD-F-0002/CD-F-0003, measured_reach: *\"a `tuple` subclass "
+        "passes and then decides its own iteration and its own truthiness at the two tier-2 "
+        "sites immediately below it.\"* **THOSE TWO TIER-2 SITES ARE THE NEXT TWO ROWS AND "
+        "THEY ARE RE-POINTED IN THIS SAME ACT**, which is the point of clearing a map rather "
+        "than a list: the predecessor's reach ran through sites whose keys also moved. "
+        "**CLOSES A SITE, CLOSES NO FINDING.**",
     ),
 
     # --- The three `crash_detector.establishment` sites — READ FOR THE FIRST TIME AT THE
@@ -804,73 +880,62 @@ DECLARED_ADMISSIONS = {
     (
         'crash_detector.admission',
         '_EachOf.refusal',
-        'MEMBERSHIP',
-        'type(element) not in self.element',
+        'TRUTHINESS',
+        'not is_exactly(element, self.element)',
     ): (
-        "UPSTREAM_OF_THE_PATH",
-        {
-            "operand_origin": 'CALLER_SUPPLIED',
-            "gates": (
-                'crash_detector.engine.config',
-                'ConfigSnapshot.__post_init__',
-                'ISINSTANCE',
-                'isinstance(window, float)',
-            ),
-            "finding": 'CD-F-0003',
-            "note": (
-                '`not in` over a tuple is `==`, and `==` is delegable to a metaclass. type(element) '
-                'is the type of a CALLER-SUPPLIED container element. F-06-D names this idiom at '
-                'admission.py:556 and :565 in terms.'
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `MEMBERSHIP: type(element) not in self.element`), word "
+        "**`UPSTREAM_OF_THE_PATH`**, operand_origin CALLER_SUPPLIED, finding CD-F-0003, "
+        "note: *\"`not in` over a tuple is `==`, and `==` is delegable to a metaclass. "
+        "type(element) is the type of a CALLER-SUPPLIED container element. F-06-D names this "
+        "idiom at admission.py:556 and :565 in terms.\"* "
+        "**THE WORD CHANGES FROM `UPSTREAM_OF_THE_PATH` TO `EXACT` BECAUSE THE THING IT "
+        "DECLARED IS GONE, NOT BECAUSE THE CLAIM WAS RE-LABELLED.** The successor is `not` "
+        "applied to the bool `is_exactly` returns, and `is_exactly` decides by `is` between "
+        "two type objects — nothing to delegate, so there is no upstream defect left here to "
+        "point downstream. The row therefore also stops carrying a `gates` field, which is "
+        "the field the sweep's DECLARED LIMIT 5 declares UNSOUND IN BOTH DIRECTIONS: one "
+        "fewer claim resting on it is a small honest gain and is stated as one.",
     ),
 
     (
         'crash_detector.admission',
         '_EachOf.refusal',
-        'MEMBERSHIP',
-        'type(value) not in self.within',
+        'TRUTHINESS',
+        'not is_exactly(value, self.within)',
     ): (
-        "UPSTREAM_OF_THE_PATH",
-        {
-            "operand_origin": 'CALLER_SUPPLIED',
-            "gates": (
-                'crash_detector.engine.config',
-                'ConfigSnapshot.__post_init__',
-                'ISINSTANCE',
-                'isinstance(window, float)',
-            ),
-            "finding": 'CD-F-0003',
-            "note": (
-                'As above, on the container itself rather than its elements.'
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `MEMBERSHIP: type(value) not in self.within`), word "
+        "**`UPSTREAM_OF_THE_PATH`**, operand_origin CALLER_SUPPLIED, finding CD-F-0003, "
+        "note: *\"as above, on the container itself rather than its elements.\"* Same "
+        "successor argument as the element test above: `is_exactly` decides by `is`. "
+        "MEASURED CONTRAST RECORDED BY THE CONVERTING SEAT AND NOT RE-DERIVED HERE: at the "
+        "base the metaclass plant PASSED this container test and failed later, on iteration, "
+        "for an unrelated reason — *a refusal that never happened wearing a TypeError*.",
     ),
 
     (
         'crash_detector.admission',
         '_EstablishedHere.__call__',
         'TRUTHINESS',
-        'not isinstance(because, str) or not because.strip()',
+        'type(because) is not str or not because.strip()',
     ): (
-        "UPSTREAM_OF_THE_PATH",
-        {
-            "operand_origin": 'SOURCE_DECLARATION',
-            "gates": (
-                'crash_detector.engine.config',
-                'ConfigSnapshot.__post_init__',
-                'ISINSTANCE',
-                'isinstance(window, float)',
-            ),
-            "finding": 'CD-F-0002',
-            "note": (
-                '`because` is written in the source of the declaring module. `because.strip()` is '
-                "then the supplied object's method to answer: F-06-R measured a str subclass whose "
-                'strip lies obtaining an UNEXPLAINED EXEMPTION through the one guard that exists to '
-                'stop exactly that. SOURCE_DECLARATION and not CALLER_SUPPLIED because the operand is '
-                'source-written; the defect is named rather than re-labelled.'
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `TRUTHINESS: not isinstance(because, str) or not "
+        "because.strip()`), word **`UPSTREAM_OF_THE_PATH`**, operand_origin "
+        "SOURCE_DECLARATION, finding CD-F-0002, note: *\"`because` is written in the source "
+        "of the declaring module. `because.strip()` is then the supplied object's method to "
+        "answer: F-06-R measured a str subclass whose strip lies obtaining an UNEXPLAINED "
+        "EXEMPTION through the one guard that exists to stop exactly that.\"* "
+        "**THE SUCCESSOR CLOSES IT BY SHORT-CIRCUIT AND THAT IS THE WHOLE ARGUMENT: `or` "
+        "does not evaluate its right operand when the left is true**, so `because.strip()` "
+        "is reached ONLY when `type(because) is str` exactly, in which case it is "
+        "`str.strip` and nothing else. A `str` subclass never reaches `.strip()` here. "
+        "**THIS CLAIM IS STRUCTURAL AND CHEAP TO ATTACK: reorder the two operands and it is "
+        "false.** It is stated so a reader can attack it rather than take it.",
     ),
 
     (
@@ -895,31 +960,29 @@ DECLARED_ADMISSIONS = {
         },
     ),
 
-    (
-        'crash_detector.admission',
-        '_Exactly.refusal',
-        'MEMBERSHIP',
-        'type(value) in self.types',
-    ): (
-        "UPSTREAM_OF_THE_PATH",
-        {
-            "operand_origin": 'CALLER_SUPPLIED',
-            "gates": (
-                'crash_detector.engine.config',
-                'ConfigSnapshot.__post_init__',
-                'ISINSTANCE',
-                'isinstance(window, float)',
-            ),
-            "finding": 'CD-F-0003',
-            "note": (
-                '**THIS IS admission.py:525, THE EXACT LINE OF F-06-D.** The module states its '
-                "doctrine three times -- 'type(value) is not declared, never isinstance' -- and "
-                'implements it with `in`, which is `==`, which a metaclass answers. A door declared '
-                '@admits(value=Wildcard) admits everything, reports no fault, and tells its own '
-                'introspection surface it requires Wildcard.'
-            ),
-        },
-    ),
+    # ==================================================================================== #
+    # **DELETED, WITH ITS REASON, AT WO-2R3 INCREMENT 10 ITEM 5 — THE ONE ROW OF THE
+    # SEVENTEEN THAT IS NOT RE-POINTED.**
+    #
+    #   dead key : ('crash_detector.admission', '_Exactly.refusal', 'MEMBERSHIP',
+    #               'type(value) in self.types')
+    #   word     : UPSTREAM_OF_THE_PATH, operand_origin CALLER_SUPPLIED, finding CD-F-0003
+    #   note     : "**THIS IS admission.py:525, THE EXACT LINE OF F-06-D.** The module states
+    #               its doctrine three times -- 'type(value) is not declared, never
+    #               isinstance' -- and implements it with `in`, which is `==`, which a
+    #               metaclass answers. A door declared @admits(value=Wildcard) admits
+    #               everything, reports no fault, and tells its own introspection surface it
+    #               requires Wildcard."
+    #
+    # **WHY DELETED AND NOT RE-POINTED: `_Exactly.refusal` HAS ZERO SITES AT THIS SHA.**
+    # Derived from the live instrument and not assumed — every site the sweep reports for
+    # that qualname is none. The comparison did not change spelling in place; it MOVED into
+    # `is_exactly`, and a register key cannot point at two site keys, so the successor row is
+    # `('crash_detector.admission', 'is_exactly', 'IDENTITY', 'kind is candidate')` above,
+    # which records BOTH this row and `_compile isinstance(declaration, _Admission)` as its
+    # predecessors. **NOTHING IS LOST BY THIS DELETION EXCEPT A KEY THAT NO LONGER NAMES
+    # ANYTHING**, and the text that mattered is copied above rather than referred to.
+    # ==================================================================================== #
 
     (
         'crash_detector.admission',
@@ -1499,24 +1562,18 @@ DECLARED_ADMISSIONS = {
         'crash_detector.admission',
         'each_of',
         'TRUTHINESS',
-        'not isinstance(within, tuple) or not within',
+        'type(within) is not tuple or not within',
     ): (
-        "UPSTREAM_OF_THE_PATH",
-        {
-            "operand_origin": 'SOURCE_DECLARATION',
-            "gates": (
-                'crash_detector.engine.config',
-                'ConfigSnapshot.__post_init__',
-                'ISINSTANCE',
-                'isinstance(window, float)',
-            ),
-            "finding": 'CD-F-0002',
-            "note": (
-                "`within` is source-written at the declaration. `not within` is the supplied object's "
-                '__bool__/__len__: F-06-R measured a tuple subclass whose __iter__ yields something '
-                'other than what repr and len show.'
-            ),
-        },
+        "EXACT",
+        CONVERTED_AT_ITEM_1
+        + "PREDECESSOR (dead key, `TRUTHINESS: not isinstance(within, tuple) or not "
+        "within`), word **`UPSTREAM_OF_THE_PATH`**, operand_origin SOURCE_DECLARATION, "
+        "finding CD-F-0002, note: *\"`within` is source-written at the declaration. `not "
+        "within` is the supplied object's __bool__/__len__: F-06-R measured a tuple subclass "
+        "whose __iter__ yields something other than what repr and len show.\"* "
+        "**SAME SHORT-CIRCUIT ARGUMENT AS `_EstablishedHere.__call__` ABOVE, AND THE SAME "
+        "CHEAP ATTACK: `not within` is reached only when `type(within) is tuple` exactly, so "
+        "it is `tuple.__len__`; reorder the operands and this row is false.**",
     ),
 
     (

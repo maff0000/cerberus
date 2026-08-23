@@ -111,7 +111,7 @@ cd <armA> && python3 -B tools/sweep/delegated_judgement_sweep.py --root .
 
 ### Direction 2 — it passes when the claim is false
 
-Same increment, second extraction, **ZERO lines under `src/` touched**:
+Same increment, second extraction, **ZERO lines under `src/` touched**. **BOTH ARMS WERE MEASURED AT `625e3c8`, WHERE THE ROW COUNT WAS 43.** Item 5 of the same increment then re-pointed five rows away from `UPSTREAM_OF_THE_PATH`, so the live count is lower — and the instrument DERIVES AND PRINTS the live count at every run. **THAT DIVERGENCE IS THIS VERY LIMIT'S DIRECTION 1 HAPPENING TO ITS OWN EVIDENCE, AND IT IS LEFT VISIBLE RATHER THAN TIDIED AWAY.**
 
 ```bash
 git archive <sha> | tar -x -C <armB>
