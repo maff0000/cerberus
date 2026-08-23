@@ -52,12 +52,28 @@ register_version: 1
 
 pid:
   ref: PID.md
-  # sha256 of PID.md as it stands at the WO-2 execution base 3f038665. Computed, not guessed:
+  # RE-PINNED AT WO-3 INCREMENT 14 by CD-ENG-WO3-01 (dispatch D2). Computed, not guessed:
   #     python3 -c "import hashlib,pathlib;print('sha256:'+hashlib.sha256(pathlib.Path('PID.md').read_bytes()).hexdigest())"
   # The validator recomputes it against the PID it resolves and reports a MISMATCH as a defect,
   # because a population derived from a different document than the one now governing is a
   # population nobody agreed to.
-  content_hash: sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85
+  #
+  # THE VALUE THIS SUPERSEDES, RECORDED AND NOT DELETED (CD-RULE-004, PBG-CONT-003):
+  #     sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85
+  #     described here as "PID.md as it stands at the WO-2 execution base 3f038665" — a stale
+  #     EXPLANATION as well as a stale VALUE, which is why this comment is rewritten and not
+  #     merely retargeted.
+  # WHY IT WAS INVISIBLE UNTIL NOW, AND WHY THIS IS ONE DEFECT SURFACING AND NOT A NEW ONE:
+  #     `report.pid_ref` is assigned only during status derivation (required_tests.py:611-612),
+  #     which the SIX-ERROR SCHEMA FAILURE short-circuited before it was ever reached. The
+  #     instrument printed `pid.ref (unresolved)` / `pid.content_hash (not comparable)` and could
+  #     not reach the comparison. THE SCHEMA DEFECT MASKED THE PIN DEFECT. The stale pin was
+  #     ALWAYS there (disclosed in advance by PO-DECISIONS-0020); repairing the schema is what
+  #     made it observable. IT IS NOT A REGRESSION OF THIS INCREMENT.
+  # THE PID ITSELF WAS CARRIED ONTO THIS LANE VERBATIM (dispatch D0) — `git checkout main -- PID.md`,
+  # a carriage of the existing Product Owner act PID v1.1.0 (PO-DECISIONS-0020 ruling 1), NOT an
+  # amendment. NO SEAT EDITED PID.md; it is byte-identical to main:PID.md (CD-D-115).
+  content_hash: sha256:538e30f3bf4f1803a89a11ae7b3781febba3752aeb516914e80db6ed15f9621f
 
 # NULL, AND NOT THIS SEAT'S TO FILL IN. See the header.
 latest_admitted_run: null
@@ -750,18 +766,32 @@ criteria:
         predicate REFUSES, and converting them would ADMIT an ordinary `class` statement through
         one forged intermediate — MEASURED on all four. THAT RESIDUE IS CARRIED BY THE WRITTEN
         DECLARATIONS AND BY tests/test_exact_type_admission_sweep.py, AND BY NOTHING IN THIS ROW.
-      planted_violation: plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch
-      planted_violation_note: >
-        THE FOURTEENTH PLANT. It replaces `is_exactly(value, self.types)` with
-        `isinstance(value, self.types)` in `_Exactly.refusal` — ONE LINE, at the single point where
-        every `@admits` parameter and every `@establishes` field decides what it accepts. It is the
-        exact regression F-06-D corrected at increment 8 and it is the shape this project has now
-        made four times and called a simplification. Under it the door still reports `faults: ()`,
-        `is_admitting_door` is still True, and the refusal message still reads "this door requires
-        exactly X" — a source-honest door that has stopped guarding.
-        MEASURED BOTH ARMS, THREE COLUMNS, ON PRISTINE `git archive` EXTRACTIONS. The measurement
-        and the exit codes are recorded in the WO-2R3 build log for increment 10 rather than
-        transcribed here (CD-RULE-009: a count copied is a transcription).
+      # ------------------------------------------------------------------------------------------
+      # PLANT RECORD — PRESERVED VERBATIM, RELOCATED OUT OF THE MAPPING BY CD-ENG-WO3-01 (inc 14).
+      # These lines stood here as LIVE KEYS `planted_violation:` / `planted_violation_note:`, which
+      # _ALLOWED_NEGATIVE_CONTROL ({violation, evidence_ref}) does not admit — so the WHOLE register
+      # FAILED VALIDATION and NO CRITERION HAD A STATUS COMPUTED, ever. NOT ONE WORD IS DELETED OR
+      # CHANGED; the text is carried here as comment, which the schema does not read.
+      # THE CANONICAL RECORD OF THIS PLANT IS plants/MANIFEST.md (test_id, patch path, execution
+      # contract and BOTH MEASURED ARMS) and contracts/execution/CD-RT-002-EXACT-TYPE-ADMISSION.md
+      # line 146, which already names this patch. This is a THIRD, IN-PLACE copy, kept because the
+      # dispatch forbids destroying it. NOTE: the contract has NO field whose MEANING is a plant
+      # reference — `execution_contract` is a RESOLVABLE FILE PATH (required_tests.py:659-661,
+      # `.is_file()`), NOT prose, so relocating this text there would have broken status derivation.
+      #
+      # planted_violation: plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch
+      # planted_violation_note: >
+      #   THE FOURTEENTH PLANT. It replaces `is_exactly(value, self.types)` with
+      #   `isinstance(value, self.types)` in `_Exactly.refusal` — ONE LINE, at the single point where
+      #   every `@admits` parameter and every `@establishes` field decides what it accepts. It is the
+      #   exact regression F-06-D corrected at increment 8 and it is the shape this project has now
+      #   made four times and called a simplification. Under it the door still reports `faults: ()`,
+      #   `is_admitting_door` is still True, and the refusal message still reads "this door requires
+      #   exactly X" — a source-honest door that has stopped guarding.
+      #   MEASURED BOTH ARMS, THREE COLUMNS, ON PRISTINE `git archive` EXTRACTIONS. The measurement
+      #   and the exit codes are recorded in the WO-2R3 build log for increment 10 rather than
+      #   transcribed here (CD-RULE-009: a count copied is a transcription).
+      # ------------------------------------------------------------------------------------------
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-003
@@ -2332,23 +2362,36 @@ criteria:
         itself, and the set of files handed to both readings. A defect in CPython's parser, or a
         file neither reading is offered — which is limit (ii) — is invisible to both. TWO
         DERIVATIONS OF ONE INPUT ARE TWO DERIVATIONS, NOT TWO INPUTS.
-      planted_violation: plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch
-      planted_violation_note: >
-        THE TWELFTH PLANT, AND THE FIRST TO VARY THE REACH AXIS (PO-DECISIONS-0011 ruling 2, which
-        ordered it in those words). V43 and V16 varied WHERE THE FILE WAS; nobody varied HOW DEEP
-        THE CLASS WAS. The patch nests a public frozen fielded `Verdict` inside a plain
-        `Judgement` container appended to src/crash_detector/engine/config.py — an ALREADY-GOVERNED
-        file in a RULE A package. No new package, no new module, no rename, no import added.
-        BITTEN TO PO-DECISIONS-0011 RULING 4's STANDARD ON THE DAY IT LANDED, by CD-ENG-WO2R3-02,
-        in a throwaway /tmp extraction with the worktree never mutated: CLEAN ARM ESTABLISHED
-        FIRST, `exit 0` `PASS — 101 assertions, 0 violations`; `git apply --check` then
-        `git apply` — APPLIED FOR REAL; VIOLATED ARM `exit 1` `FAIL — 1 violation(s)` with
-        `VIOLATION src/crash_detector/engine/config.py:392`, rule
-        FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST, naming `Judgement.Verdict`;
-        and THE INSTRUMENT SHA-VERIFIED BYTE-IDENTICAL to the tree it ran from,
-        sha256 48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382.
-        IT ESCAPED AT 531c95c AND ALSO AT f495eef — the post-item-A, post-item-D commit of this
-        same increment. Both measured, neither assumed. Only item B closes it.
+      # ------------------------------------------------------------------------------------------
+      # PLANT RECORD — PRESERVED VERBATIM, RELOCATED OUT OF THE MAPPING BY CD-ENG-WO3-01 (inc 14).
+      # These lines stood here as LIVE KEYS `planted_violation:` / `planted_violation_note:`, which
+      # _ALLOWED_NEGATIVE_CONTROL ({violation, evidence_ref}) does not admit — so the WHOLE register
+      # FAILED VALIDATION and NO CRITERION HAD A STATUS COMPUTED, ever. NOT ONE WORD IS DELETED OR
+      # CHANGED; the text is carried here as comment, which the schema does not read.
+      # THE CANONICAL RECORD OF THIS PLANT IS plants/MANIFEST.md (lines 1342-1358: test_id, patch
+      # path and BOTH MEASURED ARMS). This is a SECOND, IN-PLACE copy, kept because the dispatch
+      # forbids destroying it. NOTE: the contract has NO field whose MEANING is a plant reference —
+      # `execution_contract` is a RESOLVABLE FILE PATH (required_tests.py:659-661, `.is_file()`),
+      # NOT prose, so relocating this text there would have broken status derivation.
+      #
+      # planted_violation: plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch
+      # planted_violation_note: >
+      #   THE TWELFTH PLANT, AND THE FIRST TO VARY THE REACH AXIS (PO-DECISIONS-0011 ruling 2, which
+      #   ordered it in those words). V43 and V16 varied WHERE THE FILE WAS; nobody varied HOW DEEP
+      #   THE CLASS WAS. The patch nests a public frozen fielded `Verdict` inside a plain
+      #   `Judgement` container appended to src/crash_detector/engine/config.py — an ALREADY-GOVERNED
+      #   file in a RULE A package. No new package, no new module, no rename, no import added.
+      #   BITTEN TO PO-DECISIONS-0011 RULING 4's STANDARD ON THE DAY IT LANDED, by CD-ENG-WO2R3-02,
+      #   in a throwaway /tmp extraction with the worktree never mutated: CLEAN ARM ESTABLISHED
+      #   FIRST, `exit 0` `PASS — 101 assertions, 0 violations`; `git apply --check` then
+      #   `git apply` — APPLIED FOR REAL; VIOLATED ARM `exit 1` `FAIL — 1 violation(s)` with
+      #   `VIOLATION src/crash_detector/engine/config.py:392`, rule
+      #   FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST, naming `Judgement.Verdict`;
+      #   and THE INSTRUMENT SHA-VERIFIED BYTE-IDENTICAL to the tree it ran from,
+      #   sha256 48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382.
+      #   IT ESCAPED AT 531c95c AND ALSO AT f495eef — the post-item-A, post-item-D commit of this
+      #   same increment. Both measured, neither assumed. Only item B closes it.
+      # ------------------------------------------------------------------------------------------
       evidence_ref: RTR-WO2-0001
 
   # DECLARED LIMITS — CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT. NEW AT WO-2R3 INCREMENT 9,
@@ -2525,15 +2568,30 @@ criteria:
         FORGERY-DETECTION OBLIGATION owed at WO-3 as a first-class criterion (§16 CD-D-172) — AND IT
         IS NOT BUILT YET. Blast radius meanwhile is what §17 states: the detector is ADVISORY (D1)
         and no money moves on it (D2). NOT PROVED TO BE CARRIED ANYWHERE (CD-RULE-006).
-      planted_violation: plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch
-      planted_violation_note: >
-        THE THIRTEENTH PLANT, AND IT VARIES THE POPULATION AXIS. `LedgerCursor` is a plain
-        public class appended to src/crash_detector/store/migrations.py — a module the sibling
-        constructor check rules OUT by TWO of its three clauses at once (not a frozen dataclass,
-        on no judgement path), and which STILL EXITS 0 with this patch applied. That contrast is
-        the widening itself, measured rather than argued. The seal is physically AVAILABLE to it
-        — no base imposes a __dict__ — so the one measured exclusion this project grants does not
-        excuse it, which makes this plant the VACUITY GUARD on that clause as well.
+      # ------------------------------------------------------------------------------------------
+      # PLANT RECORD — PRESERVED VERBATIM, RELOCATED OUT OF THE MAPPING BY CD-ENG-WO3-01 (inc 14).
+      # These lines stood here as LIVE KEYS `planted_violation:` / `planted_violation_note:`, which
+      # _ALLOWED_NEGATIVE_CONTROL ({violation, evidence_ref}) does not admit — so the WHOLE register
+      # FAILED VALIDATION and NO CRITERION HAD A STATUS COMPUTED, ever. NOT ONE WORD IS DELETED OR
+      # CHANGED; the text is carried here as comment, which the schema does not read.
+      # THE CANONICAL RECORD OF THIS PLANT IS plants/MANIFEST.md (lines 1408-1436: test_id, patch
+      # path and BOTH MEASURED ARMS) and contracts/execution/
+      # CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.md line 231, which already names this patch.
+      # This is a THIRD, IN-PLACE copy, kept because the dispatch forbids destroying it. NOTE: the
+      # contract has NO field whose MEANING is a plant reference — `execution_contract` is a
+      # RESOLVABLE FILE PATH (required_tests.py:659-661, `.is_file()`), NOT prose, so relocating
+      # this text there would have broken status derivation.
+      #
+      # planted_violation: plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch
+      # planted_violation_note: >
+      #   THE THIRTEENTH PLANT, AND IT VARIES THE POPULATION AXIS. `LedgerCursor` is a plain
+      #   public class appended to src/crash_detector/store/migrations.py — a module the sibling
+      #   constructor check rules OUT by TWO of its three clauses at once (not a frozen dataclass,
+      #   on no judgement path), and which STILL EXITS 0 with this patch applied. That contrast is
+      #   the widening itself, measured rather than argued. The seal is physically AVAILABLE to it
+      #   — no base imposes a __dict__ — so the one measured exclusion this project grants does not
+      #   excuse it, which makes this plant the VACUITY GUARD on that clause as well.
+      # ------------------------------------------------------------------------------------------
       evidence_ref: RTR-WO2-0001
 
   # ================================================================================================
@@ -3299,3 +3357,132 @@ criteria:
         The indicator published with its inputs undeclared, or a wave transition that the monitor
         does not register. To be planted in WO-6.
       evidence_ref: RTR-WO6-0001
+
+# ==================================================================================================
+# CD-AC-017 — ADDED AT WO-3 INCREMENT 14 BY CD-ENG-WO3-01 (dispatch D3). WITH CD-AC-018 BELOW THIS
+# CLOSES THE REMAINING 1/4 OF THE CD-D-172 FORM THAT PO-DECISIONS-0020 CARRIED AS 3/4.
+#
+# WHY `DERIVES` AND NOT `NEW_REQUIREMENT`. PID v1.1.0 §6 CARRIES CD-AC-017 AS A ROW, so the
+# instrument's own `derive_pid_census` returns it — MEASURED AT THIS INCREMENT AGAINST THE PID
+# CARRIED ONTO THIS LANE AT D0, not counted by eye: census size 17, `CD-AC-017 in census: True`,
+# advisory False (therefore MANDATORY). `NEW_REQUIREMENT` is coded as "blocked pending PO amendment
+# of the PID" and forces NOT_EVALUATED (required_tests.py:708-715). THE AMENDMENT HAS HAPPENED
+# (PO-DECISIONS-0020 ruling 1, PID v1.1.0), SO THAT BLOCK IS SPENT, and using it here would
+# suppress the very criterion the amendment created.
+#
+# DIVERGENCE DECLARED RATHER THAN RECONCILED: PID.md line 122 still reads "**`CD-AC-017` enters as
+# `NEW_REQUIREMENT`**". That sentence describes the state ON THE DAY OF THE AMENDMENT, when no
+# register row existed — the same PID version note says "the register row does not exist and 4/4 is
+# a WO-3 claim". THIS ROW IS THAT WO-3 CLAIM. THE PID PROSE IS NOT THIS SEAT'S TO EDIT (CD-D-115);
+# the divergence is raised as a finding to the Product Owner and is NOT silently corrected here.
+#
+# *** THIS ROW IS NOT YET EVIDENCED AND MUST NOT BE READ AS A CLAIM THAT IT IS. *** The mechanism is
+# owed by WO-3 INCREMENT 17. At this SHA there is NO door, NO test file and NO execution contract,
+# so this row does not pass and is not meant to. A register that quietly dropped the criteria it
+# could not yet satisfy would be marking its own paper — this file's own header. THE ROW IS WRITTEN
+# SO THE OBLIGATION IS VISIBLE, AND NO SEAT MAY MAKE ITS OWN TEST PASS TO CLEAR IT.
+# ==================================================================================================
+- criterion_id: CD-AC-017
+  origin: PID
+  obligation: MANDATORY
+  criterion: Admission by declared-door provenance.
+  acceptance_semantics: >
+    PID §6, carried verbatim: plant — hand a judgement path a forged object of exact type that
+    never left a declared door -> admission refuses it; genuine article from the declared door ->
+    admitted. (RESISTED tier, BLUEPRINT §17 CD-BP-005.)
+
+    AND IT IS NOT DISCHARGED BY THE REFUSAL ALONE. BLUEPRINT §17, as corrected by the Product Owner
+    at v0.4.0 and again at v0.4.2, measured the RESISTED tier INSUFFICIENT ON ITS OWN: a value
+    forged AFTER admission defeats an admission door at zero cost. WO-3-SCOPE §5.7 carries that as
+    an acceptance obligation in terms — "CD-AC-017 IS NOT DONE WHEN THE DOOR REFUSES A FORGERY. It
+    is done when the door refuses a forgery AND the admitted value cannot be mutated afterwards."
+    BOTH ARMS OR THE CRITERION IS NOT MET. Admission-provenance is DEFENCE-IN-DEPTH AND NOT THE
+    PRIMARY; the load-bearing defence is the DETECTED tier carried by CD-AC-018 below.
+  pid_relation: DERIVES
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-017-ADMISSION-BY-DECLARED-DOOR-PROVENANCE
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_admission_provenance.py -q
+    execution_contract: contracts/execution/CD-RT-017-ADMISSION-BY-DECLARED-DOOR-PROVENANCE.md
+    negative_control:
+      violation: >
+        A judgement path that admits a value whose provenance is not a declared door — an object of
+        the exact admitted type, assembled by any route other than the declared construction door
+        and accepted because its TYPE checks out — OR an admitted value whose provenance record can
+        be rewritten after admission, so that a forgery becomes indistinguishable from the genuine
+        article everywhere downstream. THE CLASS COVERS BOTH DIRECTIONS DELIBERATELY: a door that
+        refuses the forged object at entry and then permits post-admission mutation of what it
+        admitted HAS NOT MET THIS CRITERION, and a check that exercised only the entry arm would be
+        measuring one half while reporting the whole — the exact vacuity BLUEPRINT §17 was
+        corrected for.
+        NOT YET EVIDENCED, AND THAT IS THE POINT OF WRITING IT DOWN. To be planted in WO-3
+        INCREMENT 17, which owes the mechanism, the execution contract and both arms. AT THIS SHA
+        THERE IS NO DOOR, NO TEST FILE AND NO EXECUTION CONTRACT.
+      evidence_ref: RTR-WO3-0001
+
+# ==================================================================================================
+# CD-AC-018 — ADDED AT WO-3 INCREMENT 14 BY CD-ENG-WO3-01 (dispatch D4). A REGISTER-ONLY ENTRY.
+#
+# IT HAS NO PID ROW, AND THAT ABSENCE IS THE RULING RATHER THAN AN OMISSION. PO-DECISIONS-0020
+# ruling 1, carried verbatim beneath the PID §6 table: "CD-AC-018 STRENGTHENS CD-AC-004. §6 already
+# carries CD-AC-004 — 'witness divergence raises the alarm' — and CD-AC-018 ... belongs as a
+# STRENGTHENS relation on CD-AC-004, not as a free-standing requirement; the DETECTED tier is not
+# new doctrine, it is CD-AC-004 named at the exit." The ruling also says, in terms, "CD-AC-018
+# GAINS NO ROW AND THE ABSENCE IS THE RULING".
+#
+# MEASURED AT THIS INCREMENT with the instrument's own `derive_pid_census`, against the PID carried
+# at D0: `CD-AC-018 in census: False` — CORRECTLY ABSENT — and `CD-AC-004 in census: True`. THE
+# SECOND MEASUREMENT IS THE ONE THAT MATTERS: an unresolvable STRENGTHENS target is sent to
+# `untraced` and THE ROW IS DROPPED ENTIRELY (required_tests.py:718-721), so a dangling trace would
+# have made this row invisible rather than red. CD-AC-004's presence is what makes it resolve.
+#
+# *** THIS ROW IS NOT YET EVIDENCED. *** The publication-boundary witness panel is owed by WO-3
+# INCREMENT 18. NO SOURCE IS REGISTERED AT THIS SHA — so there are no witnesses to diverge from —
+# AND THIS SEAT REGISTERED NONE: the source set is HELD FOR THE PRODUCT AUTHORITY
+# (PO-DECISIONS-0024 ruling 4, Q25). Not one row, not a placeholder, not a test fixture.
+# ==================================================================================================
+- criterion_id: CD-AC-018
+  origin: PO_RULING
+  obligation: MANDATORY
+  criterion: Witness divergence is raised at the publication boundary.
+  acceptance_semantics: >
+    BLUEPRINT §17 CD-BP-005, DETECTED tier: the residual and the catastrophic-blast case, carried
+    by witness divergence raised AT PUBLICATION. This is THE LOAD-BEARING DEFENCE of the three-tier
+    perimeter, with admission-provenance (CD-AC-017) as defence-in-depth and not as the primary —
+    the Product Owner's correction at BLUEPRINT v0.4.2, after the eighth Assurance seat's RED
+    proved a two-tier perimeter false.
+
+    IT STRENGTHENS CD-AC-004 AND DOES NOT REPLACE IT. CD-AC-004 requires that divergence RAISES THE
+    ALARM; CD-AC-018 fixes WHERE — at the publication boundary, the last point before a number is
+    exposed, so that a value forged anywhere upstream of publication is still caught on the way
+    out. CD-AC-004's own discipline binds unchanged and is the thing most easily lost here:
+    DIVERGENCE IS AN ALARM, NEVER AN ADJUSTMENT. In a divergence cycle the published dial numbers
+    must be BYTE-IDENTICAL to what they would have been with no witness data at all — checkable,
+    because the computing process holds no grant on the witness schema.
+  pid_relation: STRENGTHENS CD-AC-004
+  supersedes: []
+  superseded_by: null
+  tests:
+  - test_id: CD-RT-018-PUBLICATION-BOUNDARY-RAISES-DIVERGENCE
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_publication_divergence.py -q
+    execution_contract: contracts/execution/CD-RT-018-PUBLICATION-BOUNDARY-RAISES-DIVERGENCE.md
+    negative_control:
+      violation: >
+        A value reaching the publication surface while a witness disagrees with it and no
+        divergence is raised — the witness panel unread at the boundary, the comparison performed
+        upstream only and trusted downstream, a witness that is absent being treated as a witness
+        that AGREES, or the divergence recorded somewhere that never reaches the exit. THE CLASS
+        ALSO INCLUDES THE OPPOSITE FAILURE, WHICH IS THE MORE TEMPTING ONE: a divergence that is
+        raised AND THEN USED TO ADJUST THE PUBLISHED NUMBER. A cycle in which divergence changes
+        the magnitude by so much as one bit violates CD-AC-004 and this criterion together, and a
+        check that only proved the alarm fires would not see it.
+        AND `Unavailable` MUST NEVER ROUTE TO `Agrees` (CD-AC-005), by the explicit path or the
+        implicit one — an absent witness that silently satisfies the comparison is this criterion
+        defeated without any alarm being suppressed.
+        NOT YET EVIDENCED. To be planted in WO-3 INCREMENT 18, which owes the publication boundary,
+        the witness panel at it, the execution contract and both arms. AT THIS SHA THERE IS NO
+        PUBLICATION LAYER, NO REGISTERED SOURCE, NO TEST FILE AND NO EXECUTION CONTRACT.
+      evidence_ref: RTR-WO3-0001
