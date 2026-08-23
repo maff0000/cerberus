@@ -106,6 +106,26 @@ blocks:
   producing_command: >
     git ls-tree --name-only main governance/engineering/build-log/ | grep -cE -- '-03[0-9]{2}\.yaml$'
 
+- id: BLK-0400-0499
+  first: 400
+  last: 499
+  status: OPEN
+  holder: CD-ENG-COORD-FIX-01
+  holder_branch: inc13-coordination-fix
+  holder_git_author_name: CD-ENG-COORD-FIX-01
+  holder_git_author_email: cd-eng-coord-fix-01@crash-detector.local
+  holder_note: >
+    **ALLOCATED AT INCREMENT 13 BY `CD-DISPATCH-INC13-COORDINATION-FIX-ENGINEER`, WHICH NAMES
+    `0400`-`0499` AS THIS SEAT'S OWN BLOCK AND `0300`-`0399` AS NOT ITS OWN.** The row is ADDED
+    here because the allocation existed in the dispatch and NOT in this record, and a block that
+    binds a seat while living only in a dispatch is not carried by anything `check_build_log_blocks.py`
+    can read. **NO EXISTING ROW WAS EDITED AND NO ENTRY WAS RENUMBERED** (`PBG-CONT-003`,
+    non-waivable). `CD-ENG-COORD-FIX-01` wrote into `0400`-`0499` and into no other block, and it
+    did NOT write `governance/engineering/ACTIVE_WORK.yaml`, which the accountable seat owns.
+  entries_present_main: 0
+  producing_command: >
+    git ls-tree --name-only main governance/engineering/build-log/ | grep -cE -- '-04[0-9]{2}\.yaml$'
+
 # ================================================================================================== #
 # WHAT THE MEASUREMENT FOUND THAT THE ALLOCATION TABLE CANNOT FIX — RECORDED, NOT REPAIRED.
 #

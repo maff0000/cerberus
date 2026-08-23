@@ -1,0 +1,498 @@
+entry_id: BL-20260823T162415Z-0400
+record_type: ENGINEER_INCREMENT_RETURN
+utc: '2026-08-23T16:24:15Z'          # `date -u +%FT%TZ` and nothing else (CD-RULE-005)
+actor: CD-ENG-COORD-FIX-01
+dispatch: CD-DISPATCH-INC13-COORDINATION-FIX-ENGINEER
+issuing_boundary: BL-20260823T154000Z-0146
+authority: >
+  PO-DECISIONS-0022 ruling 5 (commit d60b8b9, authored by the Product Owner (Trinity) for Matt
+  Scott as final authority and by NO seat), which names the five items in the Product Owner's own
+  words and also names what this seat is NOT: *"NO seat repairs these at this gate by a quick
+  deletion (CD-D-182 / PBG-AUTH-006) — it is a fresh Engineer dispatch."*
+branch: inc13-coordination-fix
+worktree: /srv/crash-detector-inc13
+base_sha: 480da0f49bb265ce782004c5d925febb94314c56
+return: READY_FOR_ASSURANCE
+build_log_id_block: 0400-0499
+
+# =================================================================================================
+boot_verdict_taken_before_any_work:
+  command: 'cd /srv/crash-detector-inc13 && PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: '**AMBER** — continuity_state CONTINUITY_DRIFT/RESUME_AMBER, current_phase GATE'
+  pid_identity: PID.md@538e30f3bf4f1803
+  blueprint_identity: BLUEPRINT.md@39397dfbf169a125
+  roadmap: 'UNAVAILABLE — no ROADMAP.md. Pre-existing; not this seat''s to create.'
+  baseline_reconciliation: >
+    **OBSERVED == DISPATCHED.** `git rev-parse HEAD` -> 480da0f49bb265ce782004c5d925febb94314c56;
+    `git cat-file -t 480da0f...` -> `commit`; branch `inc13-coordination-fix`; `git status
+    --porcelain | wc -l` -> 0. **NO DRIFT AGAINST THE DISPATCHED BASELINE (PBG-CONT-006).**
+  a_reconciliation_that_is_NOT_drift_and_is_recorded_anyway: >
+    `main` was at `c88bf6b` when this seat booted, TWO commits ahead of the branch point:
+    `d34ba8f` (the dispatch record itself) and `c88bf6b` (its CD-RULE-007 follow-up). **Both are
+    the Project Lead's own boundary commits made AFTER this branch was cut, and neither touches
+    this seat's scope.** Recorded rather than passed over, because "main moved" is the shape of
+    CD-PL-F134 and a seat that does not look does not know.
+
+# =================================================================================================
+what_was_built:
+  ITEM_1_F08_identity_is_no_longer_the_discriminator: >
+    **`tools/coordination/check_scope_disjoint.py`.** The four-line same-seat skip is REMOVED and
+    the pair loop now examines EVERY pair of DISTINCT live claim records at ANY identity. The
+    refusal LABELS a same-identity pair and NAMES the founding-incident shape rather than merely
+    exiting 1. **THE TWO NEIGHBOURS OF THE SKIP SURVIVE, AND THEY ARE NOW STATED AS WHAT THEY
+    ACTUALLY ARE:** `READ x READ` is a PAIRING exemption (the left side of every constructed
+    pairing is a WRITE scope, so it is never built), and a record's own write-vs-own-read is a
+    SINGLE-RECORD exemption (`range(i+1, ...)` means a record is never compared with itself).
+    **NEITHER IS AN IDENTITY EXEMPTION AND NEITHER EVER WAS** — which is exactly why deleting the
+    skip does not take them with it.
+  ITEM_1_the_design_call_declared_rather_than_left_implicit: >
+    **A SEAT HOLDING TWO OR MORE *DISJOINT* LIVE CLAIMS IS STILL ADMITTED.** Refusing all
+    same-identity multi-claim was available and defensible and was NOT taken, because it narrows
+    what the machinery permits. Only the OVERLAPPING same-identity pair is the violation.
+    PLANT-COORD-05 arm 3 measures the disjoint same-identity pair still proceeding.
+  ITEM_2_the_false_L1: >
+    Increment 12's `L1` claimed WRITE x WRITE disjointness *"over all live claims"* and the code
+    decided it over CROSS-SEAT pairs only. **THE CODE DEFECT AND THE FALSE CLAIM ABOUT THE CODE ARE
+    TWO DEFECTS AND THE PRODUCT OWNER NAMED THEM SEPARATELY.** Every line of the LIMITS block and
+    the whole module docstring were RE-DERIVED against what the code now enforces — including three
+    limits that did not exist before (the identity-blindness, the deliberate admission of disjoint
+    multi-claim, and `IT IS NOT INVOKED BY ANYTHING`). **THE SAME SWEEP WAS RUN OVER `claim.py`'s
+    `L2`, `lease.py`'s LIMITS AND `check_lease_held.py`'s LIMITS**, and all three of `CD-RULE-004`'s
+    places moved together (see `the_third_place`).
+  ITEM_3_F04_check_then_take_is_now_one_act: >
+    **`registry.critical_section`** — `fcntl.flock(LOCK_EX|LOCK_NB)` on `<registry-dir>/.registry.lock`
+    with a 30s deadline after which it RAISES and the caller REFUSES. `claim.py` runs its live-claim
+    scope check and its `O_EXCL` take inside one section. **THE PAYLOAD IS BUILT BEFORE THE SECTION
+    IS ENTERED**, deliberately: it contains two `git` subprocesses, and holding a registry mutex
+    across a subprocess would turn a microsecond decision into the serialisation this increment must
+    not ship. Nothing inside the section blocks.
+  ITEM_3_why_flock_and_not_a_lock_file: >
+    A lock FILE leaks. A seat hard-killed by the operator's wrapper — which has happened on this
+    project, and an entire Assurance audit ceased to exist — leaves an `O_EXCL` lock file behind,
+    every later claim deadlocks against a corpse, somebody adds a stale-lock timeout, **and the
+    timeout is the hole**. `flock` is released by the kernel when the descriptor closes, including
+    on SIGKILL. No stale state, therefore no reaping policy to get wrong.
+  ITEM_4_F05_the_carrier_no_longer_corrupts_its_own_input: >
+    **`tools/coordination/launch.sh` was restructured and the fix is THREE things, not one.**
+    (1) `set -euf` — PATHNAME EXPANSION IS OFF FOR THE WHOLE SCRIPT, so a glob cannot be expanded
+    against the filesystem there at all. (2) The scope arguments NEVER BECOME A STRING: they are
+    carried in the positional parameter list and passed as `"$@"`, which is not subject to field
+    splitting. **THERE IS NO `eval` AND NO QUOTING SCHEME TO GET WRONG** — a scope containing
+    spaces, tabs, `*`, `?` or `[` arrives byte-for-byte as typed, MEASURED. (3) `lease.py` now
+    ECHOES the write and read scopes it actually RECEIVED at every acquisition, so a FUTURE
+    carrier's corruption is visible where it happens instead of eleven days later.
+  ITEM_4_a_second_ordering_defect_fixed_while_in_there: >
+    The old script validated "is there a COMMAND after `--`" AFTER acquiring the lease. A launch
+    that could not run would have stranded a live lease over a seat that never existed, and the
+    next real launch would have collided with a ghost. Both that check and "was any --write-scope
+    given" now run BEFORE the lease is taken.
+  ITEM_4_F11_the_depth_rule: >
+    **`scope.py`: ONE return changed.** A shorter NON-RECURSIVE pattern all of whose segments
+    intersect a longer one names a PARENT of what the longer names, and is now
+    `OVERLAP/PARENT_PATH` instead of `DISJOINT`, because a write to a parent path (`rm -r`, `mv`,
+    `rmdir`, symlink replacement) reaches its children. **MATCHING AND OVERLAP ARE DIFFERENT
+    QUESTIONS AND INCREMENT 12 CONFLATED THEM.** The algebra is textual and its pure-algebra path
+    has no worktree, so it cannot ask whether the parent is a directory today — and *"not a
+    directory yet"* is not a property a coordination control may rest on: CD-RULE-003, fail closed.
+    **THE AUTOMATON IS NOT TOUCHED** and the ninth seat's instruction not to rewrite it was obeyed.
+  ITEM_5_F09a_time_of_write: >
+    **`check_lease_held.py --range` now grades each commit against each lease's RECORDED LIVE
+    INTERVAL at THAT COMMIT'S committer timestamp**, and no longer consults pid liveness — which was
+    wrong in the other direction, since the seat that made a historical write is normally dead by
+    the time anyone audits it. A lease acquired after a commit does not cover it, so the one-command
+    retro flip moves nothing.
+  ITEM_5_F09b_the_pid_half: >
+    **`lease.py._authenticate_pid` DERIVES a session bound: `os.getsid(pid) == os.getsid(0)`.**
+    That refuses `--pid 1` (init, session 1, always alive, the immortal lease) **BY DERIVATION AND
+    NOT BY A DENYLIST** (CD-RULE-003; a denylist is `F13`'s sin and this seat did not commit it
+    while fixing `F09`). Every lease record now carries `pid_authenticated: false` and its
+    `pid_basis` in its own bytes.
+
+# =================================================================================================
+the_measurement_that_forced_a_design_choice_and_is_not_a_style_preference:
+  what: '**BOTH INTERVAL EDGES IN `--range` ARE STRICT (`when <= start` refuses, `when >= end` refuses).**'
+  why: >
+    `CD-RULE-005` mandates ONE timestamp source on this project, `date -u +%FT%TZ`, and it is
+    SECOND-GRANULAR. A lease acquired in the SAME SECOND as a commit is a pair of timestamps that
+    CANNOT distinguish *"acquired, then wrote"* from *"wrote, then acquired retroactively"*.
+  measured: >
+    **WITH AN INCLUSIVE EDGE THE RETRO-FLIP STILL CAPTURED 1 OF 11 GOVERNED WRITES** — the one
+    committed in the same second as the retro acquisition. The first implementation had the
+    inclusive edge and this seat measured the leak before choosing.
+  the_cost_declared_not_hidden: >
+    **AN HONEST LAUNCH THAT COMMITS INSIDE THE SAME SECOND AS ITS OWN LEASE ACQUISITION IS
+    REFUSED.** The ambiguous instant is decided AGAINST the party being graded. The cost is stated
+    in the instrument's limit block, in `CD-CT-009`, in the register row and in `PLANT-COORD-08`
+    arm 3, which waits rather than hiding it.
+
+# =================================================================================================
+what_this_seat_deliberately_did_NOT_do:
+- '**NO CONTROL WAS CARRIED. NO HOOK, NO WRAPPER, NO CI STEP, NO GIT HOOK.** Every one of the nine
+  coordination controls still prints `IT IS NOT INVOKED BY ANYTHING`. That is `Q11`, routed to the
+  framework with its priority INVERTED — correctness before carriage (PO-DECISIONS-0022 ruling 4) —
+  and it is not this seat''s to close. **THE IMPULSE TO CLOSE IT WAS PRESENT AND WAS NOT ACTED ON.**'
+- '**`F10` NOT FIXED.** `lease.py` admits past a DEAD holder while its docstring forbids it, and
+  `claim.py:195` implements the opposite policy in terms. `cmd_acquire` was edited for `F04`/`F05`/
+  `F09` and the dead-holder lines were LEFT EXACTLY AS FOUND. **THIS SEAT STOPPED AT THAT BOUNDARY
+  AND SAYS SO, AS ITS DISPATCH REQUIRED.**'
+- '**`F12` NOT FIXED**, and deliberately NOT REPRODUCED. `check_no_shared_record_write.py:89` and
+  `check_build_log_pointer_atomic.py:127,137` still use `git show --pretty=format: --name-only`,
+  which PRINTS NOTHING FOR A MERGE COMMIT — RE-MEASURED at merge `6c58725`: that idiom produced 0
+  lines and `git diff-tree -r -m --no-commit-id --name-only` produced 40+. The new `--range` path in
+  `check_lease_held.py` uses the second idiom and says why in `commit_facts`, because importing a
+  known blind spot into a newly written mode would be building the finding a second time on purpose.'
+- '**`F13`, `F14` NOT FIXED.** `REFUSED_FILESYSTEMS` is still a denylist.'
+- '**`governance/engineering/ACTIVE_WORK.yaml` WAS NOT WRITTEN.** The accountable seat owns it. That
+  is the discipline this increment is about, applied to this seat first — **and it has a measured
+  consequence recorded under `findings_raised_by_this_seat` as `F03`, because obeying it makes
+  `check_build_log_pointer_atomic` report this entry''s commit as `POINTER_STALE`.**'
+- '**NO BUILD LOG ENTRY OUTSIDE `0400`-`0499` WAS WRITTEN OR EDITED, AND NOTHING WAS RENUMBERED**
+  (`PBG-CONT-003`, non-waivable).'
+- '**THE BANKED `race_scope.py` WAS NOT EDITED.** `git status` over it in `/srv/crash-detector` is
+  empty and its sha256 still measures `13800ffaa1722f4b02fb1a4fbac100865f885d9f897431502a5b03c9ad84b5e5`,
+  byte-for-byte the value the dispatch records.'
+- '**`/srv/crash-detector-inc12` WAS NOT WRITTEN AND WAS NOT REMOVED.** `/srv/crash-detector` was
+  read and never written.'
+- '**`check_blueprint_carried_po_0019_verbatim.py` WAS NOT "FIXED".** It still exits 1 at 9/10, 1230
+  normalised characters, exactly as the dispatch declared in advance. It is not broken and it is
+  working.'
+- '**NO SUB-AGENT WAS SPAWNED AND NO CONCURRENT SEAT WAS RUN** (`CD-D-181`). This seat did not treat
+  its own fix as permission to use what it fixes.'
+
+# =================================================================================================
+the_two_named_acceptance_commands_RUN_AND_RECORDED_BUT_NOT_GRADED:
+  disclosure: >
+    *** **THIS SEAT DOES NOT DECLARE EITHER COMMAND PASSED AND HAS NO AUTHORITY TO (`PBG-SOD-001`,
+    non-waivable). THE OUTPUT BELOW IS VERBATIM WITH ITS COMMAND LINE. THE TENTH ASSURANCE SEAT
+    RUNS THEM AND GRADES THEM.** ***
+  command_1_race_scope:
+    harness: >
+      `governance/assurance/WO-2R3/evidence/CD-ASR-WO2R3-06/race_scope.py`, the ninth Assurance
+      seat's own. sha256 measured `13800ffaa1722f4b02fb1a4fbac100865f885d9f897431502a5b03c9ad84b5e5`.
+      CLONED to scratch; **exactly ONE line re-pointed** (`TREE`), which the dispatch permits in
+      terms. No assertion, round count, concurrency or scope was changed.
+    command: 'cd /tmp/cd-eng-coord-fix-01/race && python3 race_scope.py 200'
+    tree: 'git clone --no-hardlinks of /srv/crash-detector-inc13 at 112410bb4cea564d9db4405f2510c4cd33800ef0'
+    verbatim_output: |
+      ROUNDS=200  concurrency=2  DIFFERENT task_ids, IDENTICAL write_scope='src/contended/**'
+        exactly-one-winner (CORRECT) : 200
+        ZERO winners                 : 0
+        *** TWO WINNERS (DOUBLE-TAKE ON ONE SCOPE) *** : 0
+    counterfactual_because_a_pass_proves_nothing_until_it_can_fail:
+      command: 'python3 race_scope.py 200   # same harness, same machine, tree checked out at 480da0f (UNFIXED)'
+      verbatim_output: |
+        ROUNDS=200  concurrency=2  DIFFERENT task_ids, IDENTICAL write_scope='src/contended/**'
+          exactly-one-winner (CORRECT) : 6
+          ZERO winners                 : 0
+          *** TWO WINNERS (DOUBLE-TAKE ON ONE SCOPE) *** : 194
+          first double-take, verbatim:
+              task=RACE-0-A rc=0  [TREE] ... head=480da0f49bb265ce782004c5d925febb94314c56 ...
+              task=RACE-0-B rc=0  [TREE] ... head=480da0f49bb265ce782004c5d925febb94314c56 ...
+      note: >
+        **194/200 HERE AGAINST THE NINTH SEAT'S 193/200 ON THE SAME CODE.** Same measurement of the
+        same defect on a machine whose scheduling is not identical between runs. **THE DIFFERENCE IS
+        REPORTED RATHER THAN ROUNDED TO MATCH THE RECORD.**
+    the_trap_this_command_cannot_itself_escape: >
+      *** **A DESIGN THAT SERIALISED ALL CLAIMS THROUGH ONE GLOBAL LOCK WOULD PRODUCE `200 / 0 / 0`
+      EXACTLY AND WOULD FAIL THE INCREMENT.** *** Every round this harness runs is an OVERLAPPING
+      pair, so it cannot tell a NON-OVERLAP control from a one-writer-at-a-time one. **THE ARM THAT
+      CAN IS `PLANT-COORD-06` ARM 3: 40 rounds, two concurrent claimants on DISJOINT scopes, BOTH
+      WON IN ALL 40, and the detector confirms both records live simultaneously.** Read them
+      together or neither means what it appears to.
+  command_2_the_F08_both_arms_test:
+    what_it_is: '`governance/coordination/plants/PLANT-COORD-05.run.sh` — **BUILT BY THIS SEAT, WHICH IS THE SEAT IT GRADES. THAT IS DISCLOSED AND WAS DISCLOSED TO THIS SEAT AS A RISK IN ITS DISPATCH. THE TENTH ASSURANCE SEAT SHOULD ATTACK IT BEFORE IT TRUSTS IT.**'
+    command: 'sh governance/coordination/plants/PLANT-COORD-05.run.sh'
+    how_it_is_written_to_be_attacked: >
+      No skips, no `try/except: pass`, no arm that can quietly not run. TWO INDEPENDENT
+      PRECONDITIONS abort the run rather than report a pass — an indentation-anchored grep for the
+      executable skip, and `git apply --check` of the mutation. Every arm asserts BOTH the exit code
+      and the verdict text, captured with no pipe (`CD-PL-F131`). After the mutation is reverted the
+      revert is RE-VERIFIED before arms 3 and 4 are allowed to grade.
+    verbatim_result: |
+      PRECONDITIONS: executable same-seat skip lines in the instrument under test: 0
+                     mutation applies to the baseline tree: git apply --check rc=0 (0 = yes)
+      ARM 1  SAME-IDENTITY OVERLAP IS REFUSED AND NAMED : CONTRASTED AS REQUIRED (rc=1 AND REFUSED AND named)
+      ARM 1b SAME-IDENTITY WRITE x READ IS REFUSED : CONTRASTED AS REQUIRED (rc=1 AND WRITE/READ violation)
+      ARM 2  RESTORING THE SKIP ADMITS THE INCIDENT : CONTRASTED AS REQUIRED (rc=0 AND ADMITTED)
+      ARM 3  SAME-IDENTITY DISJOINT PAIR STILL PROCEEDS : CONTRASTED AS REQUIRED (rc=0 AND both may proceed)
+      ARM 4  BOTH SURVIVING EXEMPTIONS STILL ADMIT : CONTRASTED AS REQUIRED (rc=0 in 4a AND 4b)
+      ARMS: 5 / 5 contrasted as required
+      PLANT VERDICT: LIVE
+    the_arm_that_matters_most: >
+      **ARM 2.** With increment 12's four skip lines restored by `git apply` from a checked-in patch,
+      THE SAME INPUT — two live claims, one seat id, one write scope — is ADMITTED with rc=0 and the
+      instrument prints `CONCURRENT WORK PROCEEDS` for the founding incident. **THAT IS WHAT PROVES
+      THE FIX IS WHAT IS DOING THE WORK AND NOT SOME OTHER PROPERTY OF THE TREE.**
+
+# =================================================================================================
+plants_the_three_arm_result:
+  new_at_this_increment: |
+    PLANT-COORD-05  F08                 5/5 arms   LIVE
+    PLANT-COORD-06  F04 (raced)         3/3 arms   LIVE
+    PLANT-COORD-07  F05 + F11           3/3 arms   LIVE
+    PLANT-COORD-08  F09                 3/3 arms   LIVE
+  regression_of_the_four_that_already_existed: |
+    PLANT-COORD-01  3/3 arms  LIVE   (see plant_defect_02 below — its mutation was extended)
+    PLANT-COORD-02  4/4 arms  LIVE
+    PLANT-COORD-03  3/3 arms  LIVE
+    PLANT-COORD-04  3/3 arms  LIVE
+    produced by: PLANT_SCRATCH=/tmp/cd-eng-coord-fix-01/plants SOURCE_ROOT=/srv/crash-detector-inc13 sh <plant>
+  every_plant_carries_the_third_arm: >
+    `PO-DECISIONS-0022` ruling 5 requires the contrast form and it is THREE arms, not two.
+    **ARM 3 IN EVERY CASE IS: WITH THE FIX INTACT, THE DISJOINT CASE IS STILL ADMITTED AND STILL
+    PROCEEDS.** 05 arm 3 + arm 4 (the disjoint same-identity pair, and both surviving exemptions);
+    06 arm 3 (two disjoint claimants raced, BOTH won 40/40); 07 arm 3 (a disjoint launch running
+    alongside the first, 2 leases live); 08 arm 3 (an honest lease still admitting the write it
+    covered).
+  two_defects_in_this_seats_OWN_plants_recorded_rather_than_tidied_away:
+    plant_defect_01: >
+      **PLANT-COORD-05's first precondition grepped for the skip's PROSE and matched the FIXED
+      FILE'S OWN DOCSTRING**, which quotes the skip in order to explain it. The precondition FIRED
+      and ABORTED the run. **IT WAS RIGHT TO ABORT AND THE PATTERN WAS WRONG.** The pattern is now
+      anchored to executable indentation and a second independent `git apply --check` precondition
+      was added. The episode is written into the plant at the line that caused it, because a guard
+      that matches a comment is a guard that grades prose.
+    plant_defect_02: >
+      *** **PLANT-COORD-07's FIRST EXECUTION INVOKED `launch.sh` FROM OUTSIDE THE SANDBOX.**
+      Pathname expansion is relative to the CURRENT WORKING DIRECTORY, so the glob matched nothing,
+      the defect could not fire in either regime, and **ARM 1 WOULD HAVE PASSED WHILE MEASURING
+      NOTHING AT ALL.** *** ARM 2 reported `*** DID NOT CONTRAST ***` and that is the only reason it
+      was caught. **THIS IS THE PROJECT'S OWN WORST HABIT — A PLANT PROVING ITS OWN CHOSEN INSTANCE
+      — COMMITTED BY THIS SEAT INSIDE THE PLANT IT WROTE TO PUNISH THAT HABIT.** It is raised here
+      against this seat, written into the plant, and the fix (`cd "$SANDBOX"`) is one line whose
+      absence would have been invisible in a green run.
+  a_change_to_another_seats_artefact_declared_because_it_must_be:
+    what: '`PLANT-COORD-01.mutation.patch` GAINED A SECOND HUNK; `plants/lib.sh` gained two `${VAR:-default}` forms.'
+    why_the_mutation_changed: >
+      Increment 12 had ONE exclusion mechanism on a claim take and hunk 1 removed it. With
+      `registry.critical_section` in place, **hunk 1 alone no longer admits anything** and
+      PLANT-COORD-01 arm 2 reported `*** DID NOT CONTRAST ***` — correctly, because a plant that
+      passes both arms is DEAD and is worse than no plant. Hunk 2 also neutralises the mutex.
+      **THE COUNTERFACTUAL MUST NOW DEFEAT *BOTH* MECHANISMS TO FALSIFY: THAT IS A HARDER TEST, NOT
+      A WEAKER ONE, AND IT IS THE ONLY DIRECTION IN WHICH A SEAT MAY MOVE A TEST IT DID NOT WRITE.**
+      No assertion was relaxed and no arm's expectation was changed.
+    why_lib_sh_changed: >
+      It hard-coded `PLANT_SCRATCH=/tmp/cd-eng-coord-01/plants` — **ANOTHER SEAT'S SCRATCH**, which
+      `CD-PL-F128` forbids and which is the coordination defect appearing inside the coordination
+      plants. Both variables are now overridable and **WITH NEITHER SET EVERY VALUE IS EXACTLY WHAT
+      INCREMENT 12 WROTE**, so PLANT-COORD-01..04 behave identically. Strictly additive.
+
+# =================================================================================================
+the_third_place_CD_RULE_004:
+  the_rule: 'THREE places must agree: the instrument''s limit block, the execution contract, the register row.'
+  moved_together: [CD-CT-001, CD-CT-002, CD-CT-003, CD-CT-008, CD-CT-009]
+  each_row_now_carries: >
+    an `increment_13_correction` field stating **WHAT THE ROW USED TO CLAIM AND WHY THAT WAS FALSE**,
+    rather than silently reading correctly after the fact. `CD-CT-003`'s is the one that matters: it
+    claimed the class while the guard caught a chosen instance, and **the instance it excluded was
+    the founding incident.**
+  and_what_did_not_move: >
+    **NO ROW IS CLOSED AND `closes_class` IS STILL `false` EVERYWHERE.** The register gained an
+    `amended_at_increment_13` block whose second field is a statement of what the amendment does NOT
+    do.
+
+# =================================================================================================
+findings_raised_by_this_seat_against_its_own_work_and_against_the_increment:
+- id: CD-ENG-COORD-FIX-01-F01
+  severity: HIGH
+  against: '**THIS SEAT''S OWN METHOD, IN THE FIRST HOUR OF AN INCREMENT ABOUT COORDINATION DISCIPLINE.**'
+  what: >
+    To build a test sandbox this seat ran `cp -a /srv/crash-detector-inc13/. /tmp/.../smoke/`, which
+    **COPIED THE WORKTREE'S `.git` GITLINK FILE**. `git commit` inside that copy therefore resolved
+    through `/srv/crash-detector/.git/worktrees/crash-detector-inc13` and **FIVE THROWAWAY TEST
+    COMMITS LANDED ON THE REAL BRANCH `inc13-coordination-fix`, AUTHORED AS `PROJECT_LEAD_SEAT_01`**
+    because the sandbox had exported that identity to exercise `check_lease_held`.
+  the_commits_named_so_the_record_supersedes_rather_than_erases:
+    - 'f32c97ca0c841b918205841cc06dd3662ad39b6b  PROJECT_LEAD_SEAT_01 <pl@x>  "c1"'
+    - '6a966433e5b13bf80130d9e537c5ef894ce67123  PROJECT_LEAD_SEAT_01 <pl@x>  "c2"'
+    - '47db8375c78db55b24df45de1229749e5cb2823a  PROJECT_LEAD_SEAT_01 <pl@x>  "c1"'
+    - 'd61c61bdd97e78115f24cfe3b2fc8e450e26812e  PROJECT_LEAD_SEAT_01 <pl@x>  "c2"'
+    - 'fd48168d01cb49a698c64f73d86b706092b3c31b  PROJECT_LEAD_SEAT_01 <pl@x>  "c3"'
+  what_was_done: >
+    Detected by `git status` showing deletions of files this seat had only ever created in `/tmp`.
+    The working tree was preserved, the five SHAs and their `--stat` were RECORDED, and the branch
+    was returned to its dispatched baseline with `git reset --mixed 480da0f`, after which
+    `git rev-parse HEAD` -> `480da0f...` and the only changes present were the eight intended files
+    plus one new one. **NOTHING WAS PUSHED, NOTHING WAS MERGED, NO OTHER SEAT CONSUMED THEM, AND NO
+    BUILD LOG ENTRY EXISTED TO REWRITE (`PBG-CONT-003` NOT ENGAGED).** The five commits remain in
+    the reflog and are named above, so this is a supersession and not an erasure.
+  why_it_is_raised_at_HIGH_and_not_softened: >
+    **A SEAT DISPATCHED TO FIX "TWO SESSIONS COMMITTING UNDER ONE IDENTITY" PRODUCED FIVE COMMITS
+    UNDER AN IDENTITY THAT WAS NOT ITS OWN, ON THE ACCOUNTABLE SEAT'S NAME, BY ACCIDENT, WITHIN THE
+    HOUR.** It is the founding incident's exact shape arriving through the door of the fix. It also
+    demonstrates the increment's own thesis better than any argument in this entry: **NOTHING
+    DETECTED IT.** No hook, no check, no lease and no claim stood between that `cp -a` and the
+    branch — `Q11` again, from the other side. `check_lease_held.py --staged` would have refused
+    those commits **and nothing runs it**.
+  what_this_seat_recommends_and_does_NOT_do: >
+    The plants now clone with `git clone --no-hardlinks` (as `lib.sh` always did) rather than
+    `cp -a`. **A GUARD AGAINST THIS CLASS IS NOT ADDED, BECAUSE IT WOULD BE CARRYING A CONTROL AND
+    THAT IS `Q11`, ROUTED TO THE FRAMEWORK AND EXPLICITLY FORBIDDEN TO THIS SEAT.**
+
+- id: CD-ENG-COORD-FIX-01-F02
+  severity: MEDIUM
+  against: 'this seat''s own scope discipline — an EXTENSION BEYOND THE FIVE ITEMS, declared not smuggled'
+  what: >
+    **`F04` NAMES `claim.py`. THIS SEAT ALSO CLOSED THE IDENTICAL CHECK-THEN-TAKE WINDOW IN
+    `lease.py`, WHICH NO FINDING NAMED.** `lease.py` read every live lease and wrote its record
+    afterwards, with `O_EXCL` excluding only on the LEASE ID — the same shape, the same hole.
+  why_it_was_done: >
+    Fixing only the instrument the finding named is `GUARD_THE_INSTANCE_NOT_THE_CLASS` (`CD-RULE-004`)
+    — the exact anti-pattern this increment exists to remove — and a tenth Assurance seat would have
+    found it in minutes.
+  why_it_is_still_a_finding_against_this_seat: >
+    **IT IS STILL A JUDGEMENT THIS SEAT MADE ABOUT THE EDGE OF ITS OWN DISPATCH, AND THE ALTERNATIVE
+    — RETURNING `SCOPE_INSUFFICIENT` AND STOPPING — WAS AVAILABLE.** `tools/coordination/**` is
+    inside the declared writable scope and the change is the same class as the ordered item, so it
+    was taken and DECLARED in five places rather than escalated. **THE TENTH ASSURANCE SEAT MAY
+    LEGITIMATELY DISAGREE WITH THAT CALL, AND IT IS RECORDED SO THAT IT CAN.**
+
+- id: CD-ENG-COORD-FIX-01-F03
+  severity: MEDIUM
+  against: 'the increment-12 deliverables — **TWO OF THEM CONTRADICT EACH OTHER, STRUCTURALLY**'
+  what: >
+    **`check_build_log_pointer_atomic.py` REPORTS EVERY COMMIT ON THIS BRANCH — INCLUDING THE
+    PROJECT LEAD'S OWN `88e43db` AND THE DISPATCHED BASELINE `480da0f` ITSELF — AS `POINTER_STALE`,
+    AND WILL DO SO FOREVER.**
+  measured: |
+    grep -E '^last_build_log_entry:' governance/engineering/ACTIVE_WORK.yaml
+      -> last_build_log_entry: BL-20260823T153541Z-0145
+    ls governance/engineering/build-log/ | grep -oE '[0-9]{4}\.yaml' | sort | tail -2
+      -> 0145.yaml
+         0300.yaml
+    python3 -B tools/coordination/check_build_log_pointer_atomic.py --root .
+      -> VERDICT: REFUSED — 26 violating commit(s) in 100 application(s) over 225 commit(s)
+      (the same check at 480da0f: 22 violating in 100 applications over 221 commits — the four
+       new violations are this seat's four commits, and the CAUSE is inherited, not introduced)
+  the_contradiction: >
+    `POINTER_STALE` is defined as *"the pointer names an entry that EXISTS but is not the
+    HIGHEST-NUMBERED entry in that commit's tree"*. **INCREMENT 12'S OWN ITEM 2(c) — PER-SEAT BUILD
+    LOG ID BLOCKS (`CD-D-175`) — MAKES "HIGHEST NUMBER IN THE TREE" MEANINGLESS**: the accountable
+    seat writes `0100`-`0199`, an Engineer writes `0300`-`0399` or `0400`-`0499`, and the pointer
+    correctly names the accountable seat's latest entry while a numerically higher Engineer entry
+    sits beside it. **SO ITEM 2(c) STRUCTURALLY BREAKS ITEM 3's `POINTER_STALE` CLASS**, and the
+    instrument becomes a permanent RED carrying no information — the condition under which people
+    stop reading a control.
+  and_it_binds_THIS_SEAT_specifically: >
+    **THIS ENTRY IS `0400` AND THIS SEAT IS FORBIDDEN TO WRITE `ACTIVE_WORK.yaml`.** So the commit
+    carrying this entry is `POINTER_STALE` BY CONSTRUCTION: the only way for an Engineer sub-agent to
+    satisfy `CD-CT-005` is to write the shared record file its dispatch forbids it to touch. **TWO
+    GOVERNANCE OBLIGATIONS THAT CANNOT BOTH BE SATISFIED BY THE SAME ACTOR.**
+  what_this_seat_did_about_it: >
+    **NOTHING, DELIBERATELY.** `check_build_log_pointer_atomic.py` is not one of the five items,
+    `ACTIVE_WORK.yaml` is not this seat's to write, and inventing a per-block ordering would be
+    resolving a governance question that is not an implementation choice (`PBG-AUTH-005`). **IT IS
+    REPORTED, WITH ITS MEASUREMENT, FOR THE PROJECT LEAD AND THE PRODUCT OWNER.** The instrument's
+    own `L4` anticipates part of this and calls it a per-branch notion; **the consequence is
+    stronger than that declaration admits, and that gap is the finding.**
+
+- id: CD-ENG-COORD-FIX-01-F04
+  severity: LOW
+  against: '`tools/coordination/lease.py` — an asymmetry DECLARED at this increment and NOT fixed'
+  what: >
+    `claim.py._validate_scope` refuses a scope entry whose literal prefix TRAVERSES A SYMLINK and
+    refuses a bare existing-directory LITERAL. **`lease.py` DOES NEITHER**, so the same scope string
+    is validated differently depending on which instrument receives it.
+  why_it_is_not_fixed_here: >
+    The `F11` depth-rule fix closes the DIRECTORY half for both callers inside the algebra itself,
+    which is what `F11` names. **THE SYMLINK HALF IS A DIFFERENT GAP AND NO FINDING NAMES IT**, so it
+    is declared in `lease.py`'s own limit block and in `CD-CT-008` and left for a dispatch that
+    covers it.
+
+- id: CD-ENG-COORD-FIX-01-F05
+  severity: LOW
+  against: 'this seat''s own `F09` fix — a residue that is returned, not closed'
+  what: '**`CONTROL_NOT_SATISFIABLE` FOR FULL `--pid` AUTHENTICATION.**'
+  detail: >
+    A pid cannot be authenticated from userspace on this platform; there is no `getpeercred` for a
+    number typed on a command line. What is DERIVED is a session bound, which refuses `--pid 1` and
+    every pid in another seat's session. **A CALLER MAY STILL NAME A LONG-LIVED *SIBLING* PID INSIDE
+    ITS OWN SESSION AND THAT IS NOT CLOSED.** The dispatch names this return as acceptable for that
+    half and it is taken. Every lease record carries `pid_authenticated: false` in its own bytes so
+    that no later reader mistakes the bound for a proof.
+  and_the_second_half_of_the_same_residue: >
+    **NEITHER TIMESTAMP `--range` READS IS TRUSTWORTHY UNDER AN ADVERSARY.** `GIT_COMMITTER_DATE` is
+    settable and a lease record is an editable YAML file. The mode defeats the ONE-COMMAND RETRO
+    FLIP that was measured; **it does not withstand a party willing to forge a timestamp and nothing
+    in this repository does.** NOT PROVED TO BE CARRIED ANYWHERE.
+
+# =================================================================================================
+the_standing_invitation_to_attack_the_project_leads_own_act_at_this_boundary:
+  command_run: 'git diff d60b8b9..480da0f'
+  what_it_contains: 'BLUEPRINT.md (§17 CD-BP-005, the status block, `derives_from`, the §19 row) · ACTIVE_WORK.yaml · BL-20260823T153541Z-0145.yaml · tools/reconciliation/check_blueprint_carried_po_0022_verbatim.py'
+  what_this_seat_checked: >
+    The §17 `RESISTED` replacement text was compared SENTENCE BY SENTENCE against
+    `governance/decisions/PO-DECISIONS-0022.md` ruling 2's own blockquote (lines 27-34).
+  finding: >
+    **NONE. THE CARRIAGE IS VERBATIM AND THIS SEAT COULD NOT FIND A BYTE OF PRODUCT MEANING THE
+    PRODUCT OWNER DID NOT AUTHOR.** The one addition inside the row — `**Scheduled as `CD-AC-017`**
+    (§14, §15 WO-3)` — is a CROSS-REFERENCE, is RETAINED from v0.4.0 rather than new, and the
+    Project Lead's own status paragraph enumerates it as PL-authored scaffolding *"and NOTHING that
+    is normative"*. The version bump, status paragraph, `derives_from` line and §19 row are all
+    PL-authored and all declared as such in the file itself.
+  independently_verified_by_command: |
+    python3 -B tools/reconciliation/check_blueprint_carried_po_0022_verbatim.py --root .   -> rc=0
+      ARM 1  4/4 sentences resolve in BOTH files; 571 normalised characters carried.
+      ARM 2  SUPERSESSION, use-versus-mention
+      ARM 3  0019 sentences still resolving in BLUEPRINT.md : 9/10
+    python3 -B ... check_blueprint_carried_po_0022_verbatim.py --root . --counterfactual  -> rc=1
+  and_the_declared_red_confirmed_not_discovered: >
+    `check_blueprint_carried_po_0019_verbatim.py --root .` -> **rc=1, 9/10, 1230 normalised
+    characters**, exactly as the dispatch stated in advance under clause (i) of `CD-D-129`. **IT IS
+    NOT BROKEN, IT WAS NOT EDITED, AND IT IS WORKING.** The other two carriage checks exit 0.
+
+# =================================================================================================
+every_command_run_at_the_final_tree_with_its_result:
+  note: '`--root .` on `/srv/crash-detector-inc13`. An exit code is not a verdict — read the declarations (clause (ii) of CD-D-129).'
+  results: |
+    python3 -B tools/coordination/test_scope.py                          total=31 failures=0   rc=0
+    python3 -B tools/coordination/check_scope_disjoint.py --root .       rc=0  ADMITTED — 0 live claim(s)
+    python3 -B tools/coordination/claim.py --root . list                 rc=0  LISTED
+    python3 -B tools/coordination/lease.py  --root . list                rc=0  LISTED
+    python3 -B tools/coordination/merge_reconcile.py --help              rc=0
+    python3 -B tools/coordination/check_build_log_blocks.py --root .     rc=2  NOTHING CHECKED (needs --table/--entries)
+    python3 -B tools/coordination/check_no_shared_record_write.py --root . rc=2 NOTHING CHECKED (needs --prospective/--range)
+    python3 -B tools/coordination/check_lease_held.py --root .           rc=2  NOTHING CHECKED (needs --staged/--range)
+    python3 -B tools/coordination/check_build_log_pointer_atomic.py --root .  rc=1  see finding F03
+    python3 -B tools/coordination/check_build_log_blocks.py --root . --table --entries --ref main
+                                                                         rc=1  block_overlap_violations = 0;
+                                                                         67 entry violations ON `main` (BLID-D01/D02,
+                                                                         pre-existing; --ref main grades main, not this branch)
+    python3 -m py_compile tools/coordination/*.py                        rc=0
+    sh -n tools/coordination/launch.sh                                   rc=0
+    python3 -c "import yaml; yaml.safe_load(open('governance/coordination/required-tests.yaml'))"       rc=0
+    python3 -c "import yaml; yaml.safe_load(open('governance/coordination/BUILD-LOG-ID-BLOCKS.yaml'))"  rc=0
+
+# =================================================================================================
+evidence:
+- governance/coordination/evidence/EV-SCOPE-RACE-MEASUREMENT.md
+- governance/coordination/plants/PLANT-COORD-05.run.sh + .mutation.patch
+- governance/coordination/plants/PLANT-COORD-06.run.sh + .mutation.patch
+- governance/coordination/plants/PLANT-COORD-07.run.sh + .mutation.patch
+- governance/coordination/plants/PLANT-COORD-08.run.sh + .mutation.patch
+- governance/coordination/contracts/CD-CT-001, -002, -003, -008, -009 (§2 and new §2b)
+- governance/coordination/required-tests.yaml (amended_at_increment_13 + five increment_13_correction fields)
+- governance/coordination/BUILD-LOG-ID-BLOCKS.yaml (BLK-0400-0499 allocated)
+
+commits_on_this_branch:
+- '8f654b13fffbb13f3cae9c4f26e2bd838321a0ee — the five fixes and their re-derived declarations'
+- '112410bb4cea564d9db4405f2510c4cd33800ef0 — PLANT-COORD-05, the F08 both-arms test; lib.sh overridable'
+- 'ac3d846d2ee197199140eb252be16099c075e4a6 — PLANT-COORD-05..08 and their mutations'
+- '191d540f239b4375b01f5197a01bd8186ada578b — the third place: contracts, register, EV-SCOPE-RACE-MEASUREMENT'
+
+next_safe_action: >
+  **THE PROJECT LEAD MERGES THIS BRANCH AT THE ACCOUNTABLE SEAT AND THEN DISPATCHES A TENTH FRESH
+  ASSURANCE SEAT.** The Project Lead does not grade this work and has no authority to (`PBG-AUTH-003`),
+  and neither does this seat (`PBG-SOD-001`, non-waivable). **THE TENTH SEAT'S TWO NAMED ACCEPTANCE
+  COMMANDS ARE `race_scope.py` AT 200 ROUNDS AND `PLANT-COORD-05`, AND IT SHOULD ATTACK
+  `PLANT-COORD-05` BEFORE IT TRUSTS IT, BECAUSE THE SEAT THAT WROTE IT IS THE SEAT IT GRADES.**
+  Three findings need a decision that is not an Engineer's: `F03` (two increment-12 deliverables that
+  contradict each other, and which no seat bound by both can satisfy), `F02` (an extension beyond the
+  five ordered items, taken and declared, which may legitimately be disagreed with) and `F05`
+  (`CONTROL_NOT_SATISFIABLE` on `--pid` authentication). **`CD-D-181` STILL STANDS: PARALLEL REMAINS
+  STRUCK UNTIL THE FIXED MACHINERY PASSES ITS OWN DEDICATED GATE, AND THIS INCREMENT IS NOT THAT
+  GATE.**
+
+expected_next_actor: >
+  The Project Lead, then a TENTH FRESH ASSURANCE SEAT. **NOT THIS SEAT — it does not grade its own
+  work, does not declare this increment PASS, and does not declare any finding CLOSED.**
