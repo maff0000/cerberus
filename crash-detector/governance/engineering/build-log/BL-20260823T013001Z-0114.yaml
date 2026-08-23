@@ -1,0 +1,292 @@
+entry_id: BL-20260823T013001Z-0114
+timestamp_utc: '2026-08-23T01:30:01Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: c65182e469fcad13ed266d3cc915bdfbd9518334   # RESOLVED with `git rev-parse HEAD`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed BL-...-0113.
+parent_entry_id: BL-20260823T000002Z-0113
+schema_version: 1
+
+action_summary: >
+  *** **INCREMENT 7 RETURNED `READY_FOR_ASSURANCE` AT `af2accb` AND IS RECONCILED BY MEASUREMENT.
+  THE DOORS ROW IS GREEN, THE SUITE IS GREEN, AND IT CAME BY RECLASSIFICATION ALONE — MEASURED, NOT
+  ACCEPTED ON THE SEAT'S WORD.** *** Doors **EXIT 1 -> EXIT 0, "PASS — 60 assertions, 0
+  violations"**. Suite **2 failed/1549 passed -> 1580 passed, 0 failed**. `__wrapped__` on the
+  CD-ASR-F03 guard **True -> False**. Class-2 sweep **534/15, UNMOVED** — which is the correct
+  result, because the eleven are still unwritten.
+  *** **THE DECISIVE VERIFICATION IS A PAIR OF RENAMES, NOT A GREEN EXIT CODE, AND THE PROJECT LEAD
+  RAN BOTH ARMS ITSELF.** Renaming the LOCAL (`guarded` -> `_guarded`) leaves the new criterion
+  UNCHANGED at exit 0 / 60 assertions — **the old criterion flipped 1 violation to 0 on exactly this
+  rename, which is what proved it a vocabulary.** Renaming the DESTINATION (`_evaluate_dial` ->
+  `evaluate_dial`) **FLIPS THE VERDICT TO A VIOLATION AT :342**. **A CRITERION THAT PASSED ONLY THE
+  FIRST ARM WOULD BE VACUOUS — ONE THAT ALWAYS SAYS "UNREACHABLE" PASSES IT TOO. THE SECOND ARM IS
+  WHAT MAKES THIS A RECLASSIFICATION AND NOT AN EXEMPTION.** ***
+  *** **AND THE INCREMENT IS NOT BEING WAVED THROUGH: THE SEAT RAISED SEVEN FINDINGS AGAINST ITS OWN
+  WORK, ONE OF THEM HIGH, AND THE HIGH ONE IS THAT ITS OWN ITEM 3 BROKE ITS OWN ITEM 2** — the
+  `delattr` made the reachability clause call the net a DOOR, the exact outcome ruling 1 forbids,
+  produced by the instrument written to implement ruling 2. **THE ESCAPE IT TOOK IS A DECLARED
+  WEAKENING (`PASSED_TO`), NOT A CONCEALED ONE, AND IT IS THE SIXTH SEAT'S TO GRADE.** ***
+  *** **THE INCREMENT DOES NOT CLOSE HERE. TWO PRODUCT AUTHORITY QUESTIONS ARE UP AND THE ELEVEN
+  DISPOSITIONS ARE NOT WRITTEN, BECAUSE PO-DECISIONS-0013 RULING 3 SEQUENCES THEM AFTER A
+  RATIFICATION THAT HAS NOT HAPPENED — AND THE IMPLEMENTER HAS FORMALLY DISAGREED WITH ONE OF THE
+  THREE DRAFTED WORDS.** ***
+
+# ================================================================================================== #
+the_return_reconciled_BY_MEASUREMENT_AND_NOT_BY_READING_ITS_CLAIMS:
+  the_seats_return: '`READY_FOR_ASSURANCE`, NOT `STOPPED_AT_ITEM_1`. Six commits, `9f7b764..af2accb`.'
+  structural_checks_PL_MEASURED:
+    head_and_porcelain: '`git rev-parse HEAD` -> **af2accbfc950961bb7f7967d34ecf16414088228**; `git status --porcelain` -> **ZERO LINES**.'
+    identity: >
+      `git log --format='%an <%ae> | %cn <%ce>' 9f7b764..HEAD | sort -u` returns **EXACTLY ONE
+      LINE**. **THIS PROVES CONSISTENCY, NOT AUTHORSHIP** — every commit in this repository carries
+      the same git author, which the record has noted since BL-0047, so identity is established from
+      TIMESTAMPS AND SCOPE and not from this line. Recorded because its ABSENCE would be a finding.
+    scope: >
+      26 changed paths, **ALL INSIDE THE DISPATCHED WRITABLE SCOPE, MEASURED BY PATTERN AGAINST THE
+      PROTECTED LIST AND NOT BY EYE.** `pbg/`, `PID.md`, `BLUEPRINT.md`, `governance/blueprint/`,
+      `governance/decisions/`, `governance/dispatch/`, `governance/assurance/`,
+      `governance/reconciliation/`, `ACTIVE_WORK.yaml`, `db/`, `deploy/`, `docs/`, `schemas/` — **NOT
+      ONE OF THEM APPEARS IN THE DIFF.**
+    the_protected_file_that_mattered_most: >
+      **`tools/sweep/declared_dispositions.py` IS NOT IN ANY COMMIT OF THIS INCREMENT.** CD-D-130
+      held; the eleven are unwritten by the Engineer, as instructed, and remain the Project Lead's.
+    build_log: >
+      SIX new lane entries, **0074-0079, INSIDE THE 0060-0099 BLOCK AND CONTINUING FROM 0074 AS
+      DISPATCHED.** No entry edited, none at or above 0100 (CD-D-132, CD-PL-F89).
+  the_instruments_PL_RE_RAN_IN_A_PRISTINE_EXTRACTION: >
+    `git archive af2accb | tar -x -C /tmp/cd-inc7` — **so the lane worktree was not dirtied by the
+    reconciliation**, which in the increment that fixes CD-PL-F100 would have been a poor thing to do.
+    **DOORS: `EXIT 0 · CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: PASS — 60 assertions, 0 violations`**
+    (was EXIT 1, 1 violation at `evaluate.py:341`).
+    **SUITE: `1580 passed` in 21.41s, ZERO failures** (was 2 failed, 1549 passed).
+    **CLASS-2 SWEEP: `EXIT 1 · 534 sites, 15 violations` — UNMOVED, AND THAT IS THE REQUIRED
+    RESULT**, because the eleven dispositions are not written. An increment that moved this number
+    would have written them.
+    **`__wrapped__`: `hasattr(_evaluate_dial, "__wrapped__")` -> FALSE** (was TRUE), with
+    `tree: /tmp/cd-inc7/src/crash_detector/engine/evaluate.py` **READ FROM THE PROBE'S OWN OUTPUT**
+    (CD-PL-F98).
+  THE_TWO_CLAIMS_THAT_DECIDE_WHETHER_GREEN_WAS_EARNED_AND_BOTH_WERE_MEASURED:
+    claim_1_it_came_by_RECLASSIFICATION_and_not_by_touching_the_product: >
+      **`git diff --stat 9f7b764..f0cee9c -- src/` IS EMPTY. ITEM 2 TOUCHED NO PRODUCT CODE AT ALL.**
+      The `src/` change in this increment is item 3's `delattr` and item 5's declaration, neither of
+      which is the doors row.
+    claim_2_the_two_failing_tests_pass_on_their_ORIGINAL_assertions: >
+      **`git diff 9f7b764..HEAD -- tests/test_judgement_path_doors.py` CONTAINS ZERO REMOVED LINES.**
+      307 lines added, none deleted. **THE TESTS WERE NOT ADJUSTED TO ACCOMMODATE THE CHANGE, WHICH
+      IS THE "WEAKENING" ROUTE PO-DECISIONS-0012 RULING 3 PROHIBITS.** This is the single most
+      falsifiable claim in the return and it is the one the Project Lead checked first.
+  THE_RENAME_PAIR_PL_RUN_AND_IT_IS_THE_HEART_OF_THE_RECONCILIATION:
+    why_one_arm_is_not_enough: >
+      **A CRITERION THAT ALWAYS RETURNS "UNREACHABLE" FOR FUNCTION-LOCALS PASSES THE FIRST RENAME
+      TEST PERFECTLY AND IS WORTHLESS.** The rename test proves a criterion is not a VOCABULARY; it
+      does not prove it is not VACUOUS. **THIS SEAT ALMOST STOPPED AT ONE ARM AND SAYS SO.**
+    arm_1_rename_the_LOCAL: >
+      `guarded` -> `_guarded` in a scratch copy of af2accb: **`PASS — 60 assertions, 0 violations`,
+      EXIT 0 — IDENTICAL TO THE UNRENAMED TREE.** Under the OLD clause this same rename took the
+      check from 1 violation to 0. **THE VERDICT NO LONGER MOVES ON THE SPELLING OF A NAME NO CALLER
+      CAN WRITE.**
+    arm_2_rename_the_DESTINATION: >
+      `_evaluate_dial` -> `evaluate_dial` in a second scratch copy: **`FAIL — 3 violation(s)`, EXIT
+      1, and the FIRST of them is `src/crash_detector/engine/evaluate.py:342 —
+      _absence_is_never_a_number.guarded is a public entry point on a judgement path`.** **THE
+      CRITERION IS READING REACHABILITY. Make the destination public and the net becomes a door, in
+      the instrument, without anybody editing the instrument.**
+    the_conclusion_this_seat_draws_and_the_one_it_does_NOT: >
+      **DRAWN: the green doors row was obtained by reclassification, the reclassification is not a
+      name heuristic, and it is not vacuous.** **NOT DRAWN: that the criterion is CORRECT, or that
+      its declared weakening is acceptable.** Those are grades and they are the sixth Assurance
+      seat's (PBG-AUTH-003, PBG-AUTH-006).
+  the_seven_findings_the_seat_raised_AGAINST_ITSELF_and_the_one_that_matters_most:
+    F11_HIGH_and_it_is_the_headline_of_the_return: >
+      **ITEM 3's `delattr` BROKE ITEM 2's CRITERION.** `delattr(guarded, "__wrapped__")` is a CALL
+      with `guarded` as an argument, so the clause's deny-by-default on `PASSED_TO` reclassified the
+      net as a reachable DOOR — **the exact outcome PO-DECISIONS-0012 ruling 1 forbids, produced by
+      the instrument written to implement ruling 2.** The seat found it **by accident, while
+      measuring item 4**, and says so.
+    what_it_did_about_it_PL_READ_FROM_THE_SOURCE: >
+      It named both escapes and rejected both — an exclusion list of "callees that do not retain"
+      (**a VOCABULARY, which is what ruling 2 exists to remove**) and decorating `guarded` with
+      `@admits` (**prohibited by ruling 1**) — and instead made `PASSED_TO` a route it TAGS AND DOES
+      NOT ACT ON. **PL-VERIFIED IN THE ARTEFACT: the weakening is PRINTED in the violation text, is
+      named in the clause's own docstring as "a weakening with a measured reason", and carries
+      DECLARED LIMIT 9. IT IS DECLARED, NOT CONCEALED.**
+    and_the_cost_the_seat_states_ITSELF: >
+      *"What is lost is real: a callee that STORES the object is now invisible."* **THAT IS A REAL
+      HOLE IN THE NEW CRITERION, IT IS WRITTEN DOWN BY THE PARTY THAT BENEFITED FROM IT, AND IT IS A
+      NAMED TARGET FOR THE SIXTH SEAT.**
+    F06_which_is_the_reason_to_trust_the_rest: >
+      The seat's FIRST NETS register **FAILED THE RENAME TEST** (`guarded` -> `_guarded`, PASS ->
+      FAIL) — **ruling 2's own defect reintroduced one file away, inside the fix for it.** It caught
+      it only because the dispatch made the contrast REQUIRED rather than recommended. **THAT IS THE
+      DISPATCH EARNING ITS KEEP AND IT IS ALSO A WARNING: THE DEFECT CLASS IS STICKIER THAN ANY SEAT
+      ASSUMES.**
+    F13_F09_F15_the_measurement_defects: >
+      F13 — the obvious discriminator for the `__wrapped__` enumeration (`__module__`) **would have
+      reported 43 bypasses where the truth is 0**, because `wraps` copies it. F09/F15 — CD-ENG-WO2R3-
+      F12 bit the seat TWICE: a harness that copied only tracked files produced four arms failing on
+      an ImportError, **readable as "the criterion fails everything"**. **EACH OF THESE IS A NEAR-MISS
+      REPORTED RATHER THAN A RESULT SHIPPED.**
+    F14_and_it_was_CORRECTED_not_just_confessed: >
+      The seat **missed a dispatch element** and shipped `fc1bf61` with a corrected product and an
+      UNCORRECTED declaration. **PL-VERIFIED THAT THE CORRECTION LANDED AT `8d5dbd9` AND THAT IT
+      SUPERSEDES RATHER THAN EDITS:** `admission.py` now reads *"(b) THE `__wrapped__` ATTRIBUTE —
+      CLOSED AT ALL THREE OF THIS PROJECT'S DECORATORS AS OF WO-2R3 INCREMENT 7"* with the old
+      wording quoted in place (CD-RULE-004, PBG-CONT-003).
+    F10_raised_and_NOT_acted_on_and_that_was_right: >
+      The reclassification fixed the PUBLIC clause, not the PACKAGE clause: **`admits.door` is still
+      invisible because `admission.py` is not a RULE 1 package.** Out of scope, reported, untouched.
+  the_item_7_finding_the_PROJECT_LEAD_INDEPENDENTLY_REPRODUCED: >
+    The seat found that `DISPOSITIONS` was **consulted ONLY FOR PRINTING, so an unrecognised
+    disposition word was SILENTLY ACCEPTED** — the one thing the vocabulary existed to constrain, it
+    did not constrain. **PL-REPRODUCED BY INJECTION INTO A THROWAWAY COPY:** a bogus word takes the
+    sweep from **15 to 16 violations** and prints `UNKNOWN_DISPOSITION` naming the offending word and
+    the full eight-word vocabulary. **A PRE-EXISTING DEFECT, FOUND AND CLOSED INSIDE THE ITEM THAT
+    TOUCHED IT, AND NOT ONE THE DISPATCH ASKED FOR.**
+  item_1_ATTRIBUTED_AND_NOT_INDEPENDENTLY_CONSTRUCTED_AND_THE_DIFFERENCE_IS_STATED: >
+    **THE PROJECT LEAD DID NOT BUILD ITS OWN REACHABILITY ATTACK.** It RE-RAN THE SEAT'S OWN PROBE
+    `variants/WO-2R3/P-G-can-a-foreign-adapter-reach-the-net.py` in the pristine extraction and read
+    the `tree:` line: **`crash_detector.engine.evaluate` IS NOT in `sys.modules` at the moment
+    `collect()` calls the adapter; 7 frames walked; `_evaluate_dial` reached: False; and it IS in
+    `sys.modules` AFTER `collect()` returns.** **THAT IS A RE-RUN OF THE SEAT'S INSTRUMENT, NOT AN
+    INDEPENDENT CONSTRUCTION, AND IT IS RECORDED AS ATTRIBUTION RATHER THAN CONFIRMATION.** The
+    difference is exactly CD-D-119 and it is the sixth seat's to close.
+
+# ================================================================================================== #
+decisions_taken_at_this_boundary:
+- id: CD-D-156
+  title: '**INCREMENT 7 IS RECONCILED AND IS NOT ACCEPTED AS CLOSING CD-AC-002 OR CD-AC-005, AND THE DOORS ROW GOING GREEN CHANGES NO GRADE.**'
+  the_question_it_answers: 'The RED row that shut the fifth gate is now green. Does anything close?'
+  the_ruling: >
+    **NO. NOTHING CLOSES.** T2 remains **RED**, CD-AC-002 and CD-AC-005 remain **AMBER and NOT
+    CLOSED**, and the WO-2 gate remains **SHUT**. Increment 7 is RECONCILED — measured, in scope, and
+    self-consistent — and it is **NOT ACCEPTED**.
+  why: >
+    **PBG-AUTH-003 AND PBG-AUTH-006: THE PROJECT LEAD GRADES NOTHING.** A green exit code from an
+    instrument the same increment rewrote is the weakest possible evidence that a criterion is now
+    right, and this project's own record says **EVERY ESCAPE ON IT PASSED STATIC CHECKERS.** The
+    seat's own F11 says the new clause has a real hole in it. **THE GREEN IS A FACT ABOUT THE
+    INSTRUMENT, NOT A FACT ABOUT THE PRODUCT, AND ONLY A FRESH AUDITOR CAN TELL THE DIFFERENCE.**
+- id: CD-D-157
+  title: '**THE ELEVEN CLASS-2 DISPOSITIONS ARE *NOT* WRITTEN AT THIS BOUNDARY, AND THE REASON IS PO-DECISIONS-0013 RULING 3''s OWN SEQUENCE.**'
+  the_question_it_answers: >
+    CD-D-130's input exists — T8 landed — and the register contract is now implemented. The operator's
+    dispatch says to write the eleven on banking. Does the Project Lead write them?
+  the_ruling: >
+    **NO, AND THIS IS A DELIBERATE STOP RATHER THAN AN OMISSION.** Ruling 3's sequence is *"The
+    Project Lead drafts the extended vocabulary (register-contract change, **PO ratifies
+    in-increment**); THEN the eleven are written."* **THE RATIFICATION HAS NOT HAPPENED.** All eleven
+    are DRAFTED IN FULL at `governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md` so that the
+    moment the Product Owner rules, they land in one act and nothing is waiting on this seat.
+    **IT IS FILED UNDER `governance/engineering/` AND NOT UNDER `governance/decisions/`
+    DELIBERATELY: the decisions directory is the Product Owner's, and a Project Lead draft sitting
+    in it could be read as a ruling by the next seat that greps for one.**
+  why_this_is_not_the_seat_being_precious_about_process: >
+    **THE IMPLEMENTER HAS FORMALLY DISAGREED WITH ONE OF THE THREE DRAFTED WORDS, ON SUBSTANCE, AND
+    THAT FACT DID NOT EXIST WHEN THE INSTRUCTION TO WRITE THE ELEVEN WAS GIVEN.** Ratification is
+    precisely the act that resolves a live disagreement about the FORM, and ruling 3 exists because
+    the Product Owner judged that writing eleven dispositions into a form that does not fit them
+    "would be the hand-maintained-summary defect with a signature". **WRITING THEM NOW WOULD BE THIS
+    SEAT SUBSTITUTING ITS OWN RATIFICATION FOR THE PRODUCT OWNER'S, ON THE MOST LOAD-BEARING SENTENCE
+    IN THE INCREMENT, AND USING ITS OWN DRAFT TO DO IT.**
+  how_it_could_be_wrong: >
+    If the Product Owner intended ratification to be a formality, this costs a round trip. **THAT IS
+    THE CHEAP ERROR. The expensive one is eleven dispositions landing in a contested vocabulary and
+    having to be rewritten, which is the exact defect ruling 3 was written to prevent.**
+- id: CD-D-158
+  title: '**THE SIXTH ASSURANCE SEAT IS *NOT* DISPATCHED AT THIS BOUNDARY, BECAUSE ITS TARGET DOES NOT EXIST YET.**'
+  the_question_it_answers: 'Increment 7 has banked. Does the sixth seat go out now?'
+  the_ruling: >
+    **NO.** PO-DECISIONS-0013 ruling 6's sequence is explicit: *"the vocabulary extension -> the
+    eleven dispositions -> the SIXTH assurance gate over the whole."* **THE ELEVEN ARE PART OF THE
+    SIXTH SEAT'S TARGET AND THEY DO NOT EXIST.**
+  why: >
+    Dispatching an auditor at a target that is missing a component the ruling names would spend this
+    project's most expensive and least renewable resource on an incomplete tree — **and this record
+    already contains one seat that died producing nothing and one gate that was audited a day before
+    its own dispatch was issued.** The dispatch is DRAFTED to the point where only the disposition
+    evidence is missing.
+  how_it_could_be_wrong: >
+    If the Product Owner rules that the eleven may follow the audit after all — which is the
+    sequencing the FIFTH SEAT ARGUED FOR AND WAS INVITED TO ARGUE — this ordering is wrong and the
+    seat should have gone out. **THAT INVITATION IS STILL OPEN AND IS PUT BACK UP AS Q2.**
+
+# ================================================================================================== #
+product_authority_questions_raised_at_this_boundary:
+  Q1_RATIFY_THE_VOCABULARY_AND_RULE_ON_THE_IMPLEMENTERS_DISAGREEMENT: >
+    **PO-DECISIONS-0013 RULING 3 RESERVED RATIFICATION TO THE PRODUCT OWNER AND IT IS OWED NOW.**
+    The register contract is implemented, machine-checked and carrier-backed; **the eight-word
+    vocabulary is live in the instrument and an unrecognised word is now REJECTED where it was
+    silently accepted.** The implementer's verdict on the three drafted words, carried unsoftened:
+    **(a) `CARRIER_ONLY` — KEEP UNCHANGED, "the best of the three", and it does NOT collapse into
+    `OUT_OF_BOUND`: scope claims cannot be falsified, reachability claims can.**
+    **(b) `DEFECT_OPEN` — KEEP, BUT ITS FIELDS RESTATE A FINDING INSTEAD OF REFERENCING ONE** — "the
+    hand-maintained-summary defect reintroduced by the fix for it" — and its `finding` field is an
+    UNCHECKED STRING **because this project has no findings register to resolve against.** That is a
+    real gap and it is bigger than this word.
+    **(c) `UPSTREAM_OF_THE_PATH` — THE IMPLEMENTER DISAGREES AND THE PROJECT LEAD FINDS THE
+    DISAGREEMENT PERSUASIVE: it binds the MODULE register while the other two bind the SITE register,
+    and BOTH its fields are prose that cannot be made machine-checkable.** By the Project Lead's own
+    stated constraint — no word may be a synonym for "not looked at", and the instrument must REJECT
+    a disposition whose mandatory evidence is absent — **a word whose evidence cannot be checked
+    fails the test its own author wrote.**
+    **THE PROJECT LEAD DRAFTED IT AND NOW THINKS IT IS PROBABLY WRONG. IT DOES NOT WITHDRAW IT,
+    BECAUSE RULING 3 GAVE THE RATIFICATION TO THE PRODUCT OWNER AND A SEAT THAT WITHDRAWS ITS OWN
+    DRAFT ON AN IMPLEMENTER'S OBJECTION HAS QUIETLY TAKEN THE RATIFICATION BACK.**
+  Q2_AND_THE_SEQUENCING_INVITATION_IS_PUT_BACK_UP_BECAUSE_IT_NOW_HAS_A_PRICE: >
+    CD-D-158 holds the sixth seat until the eleven exist, on ruling 6's literal sequence. **BUT THE
+    FIFTH SEAT ARGUED — AS THE FIRST SEAT WITH STANDING, HAVING ACTUALLY MEASURED T8 — THAT THE RIGHT
+    RULE IS "a deny-by-default instrument's output is READ ITEM BY ITEM at the boundary that creates
+    it, and the disposition is written after audit."** If the Product Owner prefers that, the eleven
+    wait for the sixth seat and the seat goes out NOW. **THE COST OF THE ORDER AS RULED IS A ROUND
+    TRIP; THE COST OF THE OTHER ORDER IS THAT THE AUDITOR GRADES A REGISTER THAT IS NOT THERE. THE
+    PROJECT LEAD HAS NO PREFERENCE IT IS ENTITLED TO ACT ON AND STATES NONE.**
+  and_one_MEASURED_ITEM_THAT_IS_NOT_A_QUESTION_BUT_SHOULD_NOT_WAIT_FOR_AN_AUDITOR_TO_FIND_IT: >
+    **ITEM 1 HALF (b) IS HELD SHUT BY A PRODUCT GAP, NOT BY THE GUARD, AND THERE IS NO CARRIER FOR
+    THE DAY THAT GAP CLOSES.** The seat's own words: the post-condition binds NONE of `*extra`
+    structurally; nothing in `*extra` changes what the evaluator returns **only because every
+    `MappingKind` member raises in `compute`** — a mapping set with no computing member, which is
+    CD-D-005's owed ingredient work. **"IT EXPIRES THE DAY A COMPUTING MAPPING LANDS. THERE IS NO
+    CARRIER FOR THAT DAY."** A latent defect with no alarm on it is the shape this project has been
+    bitten by more than any other. **RAISED HERE SO IT IS ON THE RECORD BEFORE WO-3, AND HANDED TO
+    THE SIXTH SEAT AS A NAMED TARGET.**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT GRADE ANYTHING** (PBG-AUTH-006). T2 RED. CD-AC-002 and CD-AC-005 AMBER, NOT CLOSED.
+  **THE WO-2 GATE IS SHUT.** The doors row going green moves no grade and closes no criterion.
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-157) — they are DRAFTED and unwritten,
+  waiting on a ratification the Product Owner reserved.
+  **IT DID NOT DISPATCH THE SIXTH ASSURANCE SEAT** (CD-D-158) — its target is incomplete.
+  **IT DID NOT TOUCH THE LANE.** Every measurement was taken in `/tmp/cd-inc7` and two scratch
+  copies; `/srv/crash-detector-wo2r3` is at af2accb, porcelain ZERO, exactly as the seat left it.
+  **IT DID NOT EDIT ONE LINE OF THE ENGINEER'S DELIVERABLE**, including the parts it found
+  persuasive against its own draft.
+  **IT DID NOT BUILD AN INDEPENDENT REACHABILITY ATTACK** and says so rather than presenting a re-run
+  of the seat's own probe as confirmation.
+  **IT DID NOT FIX CD-PL-F101** or delete the untracked residue — still open, still carried to the
+  META-ASSURANCE pass.
+  **IT DID NOT BEGIN THE META-ASSURANCE PASS.** Ruling 5 sequences it after this increment banks and
+  the operator's dispatch repeats the instruction; the increment has banked but the gate has not run.
+  **IT DID NOT MODIFY ANYTHING UNDER `pbg/`.**
+
+next_safe_action: >
+  *** **STOP. TWO PRODUCT AUTHORITY QUESTIONS ARE UP AND NEITHER THE DISPOSITIONS NOR THE SIXTH SEAT
+  MOVE WITHOUT A RULING.** ***
+  **1.** Q1 — ratify the vocabulary, and rule on `UPSTREAM_OF_THE_PATH`, which the implementer
+  disputes and the Project Lead now believes is probably wrong. **THE ELEVEN ARE DRAFTED AND LAND
+  IMMEDIATELY ON A RULING.**
+  **2.** Q2 — confirm or invert ruling 6's ordering of the eleven against the sixth gate.
+  **3.** THEN the eleven are written, THEN the sixth fresh Assurance seat goes out over the whole
+  with full disclosure and the CD-D-129 clauses VERBATIM.
+  **4.** THEN the META-ASSURANCE pass (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99, F100 and
+  F101.
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green doors row as a closed criterion — CD-D-156.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). The CD-RULE-008 verdict is taken AT that SHA BEFORE this field is written. **BOTH ARMS AGAIN — clone and live worktree — for the reason CD-PL-F101 gives.**

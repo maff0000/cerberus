@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-23T00:00:02Z'
+updated_utc: '2026-08-23T01:30:01Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -58,6 +58,47 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **INCREMENT 7 RETURNED `READY_FOR_ASSURANCE` AT `af2accb` AND IS RECONCILED BY MEASUREMENT
+  (BL-20260823T013001Z-0114). THE DOORS ROW IS GREEN, THE SUITE IS GREEN, AND IT CAME BY
+  RECLASSIFICATION ALONE.** Doors **EXIT 1 -> EXIT 0, PASS 60 assertions 0 violations**; suite
+  **2 failed/1549 passed -> 1580 passed**; `__wrapped__` on the CD-ASR-F03 guard **True -> False**;
+  Class-2 sweep **534/15 UNMOVED**, which is the required result because the eleven are unwritten.
+  **ITEM 2 TOUCHED NO `src/` AND ZERO TEST LINES WERE REMOVED** — the two failing tests pass on
+  their ORIGINAL assertions, which is the falsifiable form of "not weakened".
+  *** **THE DECIDING EVIDENCE IS A PAIR OF RENAMES THE PROJECT LEAD RAN ITSELF, NOT A GREEN EXIT
+  CODE.** Rename the LOCAL (`guarded`->`_guarded`): verdict **UNCHANGED** — the old clause flipped
+  1 violation to 0 on exactly this, which is what proved it a vocabulary. Rename the DESTINATION
+  (`_evaluate_dial`->`evaluate_dial`): verdict **FLIPS TO A VIOLATION at :342**. **A CRITERION THAT
+  ALWAYS SAID "UNREACHABLE" WOULD PASS THE FIRST ARM AND BE VACUOUS; THE SECOND ARM IS WHAT MAKES
+  THIS A RECLASSIFICATION AND NOT AN EXEMPTION.** ***
+  *** **SEVEN FINDINGS BY THE SEAT AGAINST ITS OWN WORK, ONE HIGH: ITEM 3's `delattr` BROKE ITEM 2's
+  CRITERION** — the deny-by-default `PASSED_TO` rule reclassified the net as a DOOR, the exact
+  outcome ruling 1 forbids, produced by the instrument written to implement ruling 2. Both escapes
+  were worse (a vocabulary exclusion list; the prohibited `@admits`), so `PASSED_TO` became a route
+  the clause TAGS AND DOES NOT ACT ON. **PL-VERIFIED: THE WEAKENING IS PRINTED, DOCUMENTED AND
+  CARRIES DECLARED LIMIT 9 — DECLARED, NOT CONCEALED — AND ITS COST ("a callee that STORES the
+  object is now invisible") IS STATED BY THE PARTY THAT BENEFITED FROM IT.** It is the sixth seat's
+  to grade, not this seat's. ***
+  *** **NOTHING CLOSES (CD-D-156). T2 IS STILL RED, CD-AC-002 AND CD-AC-005 ARE STILL AMBER AND NOT
+  CLOSED, THE WO-2 GATE IS STILL SHUT.** A green exit code from an instrument the same increment
+  rewrote is the weakest possible evidence that a criterion is now right, and every escape on this
+  project's record passed static checkers. ***
+  *** **THE ELEVEN ARE DRAFTED AND NOT WRITTEN (CD-D-157) AND THE SIXTH SEAT IS NOT DISPATCHED
+  (CD-D-158). TWO PRODUCT AUTHORITY QUESTIONS ARE UP.** Ruling 3 sequences the eleven AFTER a PO
+  ratification that has not happened — **and the implementer has formally disagreed with one of the
+  three drafted words, a fact that did not exist when the increment was dispatched.** All eleven are
+  drafted in full at `governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md` and land in one act
+  on a ruling. **Q1: ratify the vocabulary and rule on `UPSTREAM_OF_THE_PATH`, which the implementer
+  disputes and THE PROJECT LEAD NOW BELIEVES IS PROBABLY WRONG BY ITS OWN STATED CONSTRAINT — but
+  does not withdraw, because withdrawing its own draft on an objection would be taking the
+  ratification back. Q2: confirm or invert ruling 6's ordering of the eleven against the sixth
+  gate — the fifth seat argued for the inverse and had standing to.** ***
+  *** **AND ONE MEASURED ITEM THAT IS NOT A QUESTION: ITEM 1 HALF (b) IS HELD SHUT BY A PRODUCT GAP,
+  NOT BY THE GUARD, AND THERE IS NO CARRIER FOR THE DAY IT CLOSES.** The post-condition binds none of
+  `*extra` structurally; nothing in `*extra` changes the evaluator's return **only because every
+  `MappingKind` member raises in `compute`**. "It expires the day a computing mapping lands. There is
+  no carrier for that day." Raised before WO-3 and handed to the sixth seat as a named target. ***
+  *** **EVERYTHING BELOW IS RETAINED; ONLY ITS "WHAT HAPPENS NEXT" IS SUPERSEDED.** ***
   *** **THE PRODUCT OWNER HAS ANSWERED ALL FIVE QUESTIONS AND THE REMEDIATION INCREMENT IS OUT
   (BL-20260823T000002Z-0113).** PO-DECISIONS-0012 and PO-DECISIONS-0013 are committed and are the
   Engineer's specification. `governance/dispatch/CD-DISPATCH-WO2R3-INC7-ENGINEER.yaml` is ISSUED to
@@ -2871,6 +2912,25 @@ open_decisions:
 open_ambiguities: []
 
 risks:
+- '**THE NEW REACHABILITY CRITERION CARRIES A DECLARED WEAKENING AND THE SEAT THAT WROTE IT SAYS SO:
+  `PASSED_TO` IS TAGGED AND NOT ACTED ON, SO A CALLEE THAT *STORES* THE OBJECT IS NOW INVISIBLE**
+  (CD-ENG-WO2R3-F11, HIGH, raised by the Engineer against its own work). It arose because item 3''s
+  own `delattr(guarded, "__wrapped__")` — a call with `guarded` as an argument — made the
+  deny-by-default rule reclassify the net as a DOOR, **the exact outcome PO-DECISIONS-0012 ruling 1
+  forbids, produced by the instrument written to implement ruling 2.** Both escapes were worse: an
+  exclusion list of "callees that do not retain" is a VOCABULARY, which is what ruling 2 exists to
+  remove, and `@admits` on `guarded` is prohibited by ruling 1. **PL-VERIFIED THAT IT IS DECLARED
+  AND NOT CONCEALED** — printed in the violation text, named in the clause docstring as a weakening
+  with a measured reason, and carried as DECLARED LIMIT 9. **IT IS NOT GRADED HERE AND IS A NAMED
+  TARGET FOR THE SIXTH ASSURANCE SEAT** (PBG-AUTH-006). The seat found it BY ACCIDENT while
+  measuring a different item, which is the part worth remembering.'
+- '**ITEM 1 HALF (b): THE CD-ASR-F03 POST-CONDITION BINDS NONE OF `guarded`''s `*extra` STRUCTURALLY,
+  AND WHAT HOLDS IT SHUT TODAY IS A PRODUCT GAP WITH NO ALARM ON IT.** Nothing passed through
+  `*extra` changes what the evaluator returns **only because every `MappingKind` member raises in
+  `compute`** — a mapping set with no computing member, which is CD-D-005''s owed ingredient work.
+  The Engineer''s own words: **"it expires the day a computing mapping lands. There is no carrier for
+  that day."** A latent defect with no carrier is the shape this project has been bitten by more than
+  any other. **RAISED BEFORE WO-3 RATHER THAN LEFT FOR AN AUDITOR, AND HANDED TO THE SIXTH SEAT.**'
 - '**CD-PL-F101 MEDIUM, NEW AND OPEN AT THIS BOUNDARY (BL-20260823T000002Z-0113), RAISED BY THE
   PROJECT LEAD AGAINST ITS OWN CONTINUITY PRACTICE AND DELIBERATELY NOT FIXED (CD-D-155).** `main`
   carries NO `.gitignore`, so the live worktree boots **AMBER** on 36 untracked carrier and bytecode
@@ -3074,6 +3134,20 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  *** **SUPERSEDING STEP, BL-20260823T013001Z-0114: STOP. TWO PRODUCT AUTHORITY QUESTIONS ARE UP AND
+  NEITHER THE DISPOSITIONS NOR THE SIXTH SEAT MOVE WITHOUT A RULING.**
+  **1.** Q1 — ratify the extended vocabulary and rule on `UPSTREAM_OF_THE_PATH`. The eleven are
+  DRAFTED IN FULL at `governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md` and land in one act.
+  **2.** Q2 — confirm or invert ruling 6's ordering of the eleven against the sixth gate.
+  **3.** THEN the eleven are written into `tools/sweep/declared_dispositions.py` on the lane.
+  **4.** THEN the SIXTH FRESH ASSURANCE SEAT over the whole, full disclosure, CD-D-129's clauses
+  VERBATIM, never an implementing seat and never a prior auditor (PBG-SOD-001).
+  **5.** THEN the META-ASSURANCE pass (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99, F100,
+  F101. **STILL NOT FOLDED IN.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green doors row as a closed criterion — CD-D-156. T2 RED; CD-AC-002 and
+  CD-AC-005 AMBER and NOT CLOSED; the WO-2 gate SHUT.
+  **THE STEP BELOW IS DISCHARGED: THE INCREMENT RAN, RETURNED AND IS RECONCILED.** ***
   *** **SUPERSEDING STEP, BL-20260823T000002Z-0113: THE ENGINEER IS OUT. NOTHING MOVES ON THE LANE
   WHILE IT IS.** **1.** CD-ENG-WO2R3-03 executes CD-DISPATCH-WO2R3-INC7-ENGINEER at 9f7b764, seven
   items, **ITEM 1 FIRST AND IT GATES ITEM 2** (CD-D-152). A `STOPPED_AT_ITEM_1` return is a SUCCESS.
@@ -3862,5 +3936,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260823T000002Z-0113   # PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T013001Z-0114   # PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
