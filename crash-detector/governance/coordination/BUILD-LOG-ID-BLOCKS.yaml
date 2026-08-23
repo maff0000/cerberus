@@ -19,6 +19,13 @@
 record_type: BUILD_LOG_ID_BLOCK_ALLOCATION
 written_utc: '2026-08-23T14:12:00Z'   # `date -u +%FT%TZ` (CD-RULE-005)
 written_by: CD-ENG-COORD-01
+
+# EVERY COUNT BELOW IS PINNED TO A RESOLVED SHA AND NOT TO A MOVING REF. `main` ADVANCED FOUR
+# COMMITS WHILE THIS SEAT WAS LIVE (e6f9802 -> 76c1de1, all four within `CD-D-177`'s declared
+# Project Lead scope), and a count taken against the name `main` would silently mean two different
+# things an hour apart. `git rev-parse` + `git cat-file -t` -> `commit` for both (CD-PL-F36).
+measured_at_main_sha: e6f980252854d6a79efaf42d4fddb998f19d8540    # this seat's dispatched baseline
+measured_at_wo_2r3_sha: be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5  # the lane, FROZEN per CD-D-176
 authority:
 - 'PO-DECISIONS-0021 ruling 3(b) — per-seat build-log id blocks, no shared sequence'
 - 'CD-D-175 — 0300-0399 allocated to CD-ENG-COORD-01, bounded at both ends'
