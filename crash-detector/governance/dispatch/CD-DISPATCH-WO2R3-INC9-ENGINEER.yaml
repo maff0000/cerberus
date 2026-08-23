@@ -1,0 +1,360 @@
+# ================================================================================================ #
+# ENGINEER DISPATCH — WO-2R3 INCREMENT 9, THE SEALING INCREMENT. crash-detector.
+# ================================================================================================ #
+#
+# READ THIS BLOCK BEFORE ANYTHING ELSE, INCLUDING BEFORE YOUR BOOT.
+#
+# 1. YOU ARE BUILDING THE FOURTH WIDENING OF THE SAME LAW, AND THE PRODUCT OWNER NAMED IT AS SUCH.
+# PO-DECISIONS-0016 ruling 2: **"Fourth widening, same law: floors are not populations, and a remedy
+# applied to 13 of 99 is a census with extra steps."** Three times before, this project shipped a
+# control scoped narrower than the class it names, and three times an auditor measured the gap. The
+# remedy you are asked to require — `__slots__` with no `__dict__` — **ALREADY EXISTS IN THIS TREE,
+# IS APPLIED TO 13 TYPES, AND WAS NEVER ASKED OF THE REST.** You are not inventing a mechanism. You
+# are being asked to make a property that 13 classes happen to have into a property the CLASS is
+# REQUIRED to have, with every exclusion MEASURED AND DECLARED.
+#
+# 2. THE ONE THING THAT WOULD MAKE THIS INCREMENT WORTHLESS IS AN EXCLUSION LIST.
+# The instant this becomes "these 66 classes are exempt because I listed them", it is a VOCABULARY,
+# and PO-DECISIONS-0012 ruling 2 exists to remove vocabularies from this project's instruments.
+# **AN EXCLUSION MUST BE A MEASURED PROPERTY OF THE CLASS, NOT A NAME ON A LIST.** "It is not public"
+# is a measured property. "It is `AdmissionFault`" is a list entry. If you cannot state an exclusion
+# as a property an instrument evaluates, YOU DO NOT HAVE AN EXCLUSION, YOU HAVE A LIST.
+#
+# 3. THE PROJECT LEAD HAS ALREADY MEASURED THIS AND HANDS YOU THE NUMBERS AS EVIDENCE YOU ARE
+#    REQUIRED TO RE-MEASURE AND FREE TO CONTRADICT.
+# 99 enumerated · **13 SEALED · 86 OPEN · 0 unresolved · 13 + 86 = 99.** The sixth Assurance seat
+# published **13 SEALED / 77 OPEN over 99**, and **13 + 77 = 90, NOT 99 — ITS TABLE LEAVES NINE OF
+# THE NINETY-NINE UNACCOUNTED.** The 13 agree exactly and its five unnamed sealed types are named
+# below. **DO NOT ADOPT EITHER READING. TAKE YOUR OWN AND SAY WHERE IT LANDS.** The precedent is
+# increment 7's fingerprint recipe: concealing a measurement costs the next seat budget, mandating
+# it is the Project Lead designing, so it is DISCLOSED AND REQUIRED TO BE RE-TAKEN.
+#
+# 4. AND THE PROJECT LEAD NEARLY SHIPPED A FINDING AGAINST THE INSTRUMENT THAT WAS ITS OWN DEFECT.
+# Its first extraction of the enumeration recovered **98** of the 99 classes and it was one regex
+# away from raising "the instrument's printed enumeration disagrees with its own printed count" —
+# a finding against a tool three reconciliations had trusted. **IT WAS WRONG: a third line form
+# (`IN   path:line Class —`, three spaces, no `[RULE X]:`) was not being matched, and the plain
+# extraction recovers all 99.** Recorded because it was caught, not because it was avoided
+# (`CD-PL-F113`'s precedent). **READ THAT AS A WARNING ABOUT THE `--why` OUTPUT YOU ARE ABOUT TO
+# PARSE: IT HAS AT LEAST THREE LINE FORMS AND NOBODY HAS ENUMERATED THEM.**
+#
+# 5. A PLANT THAT STOPS APPLYING IS INVISIBLE TO EVERY INSTRUMENT THIS PROJECT RUNS AT A BOUNDARY,
+#    AND IT HAS HAPPENED FOUR TIMES.
+# The suite does not apply plants. The register checks do not. The Class-2 sweep does not. When a
+# plant stops applying, its "violated" arm silently becomes the CLEAN TREE and **EXITS 0 — a dead
+# plant reporting a pass, behind a green board.** Most recently `ITEM_6` of increment 8 caught
+# `ITEM_1` of the same increment breaking `plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`.
+# **THE CARRIER FOR THIS IS RULED AND SEQUENCED AFTER THE SEVENTH GATE (PO-DECISIONS-0017 ruling 1),
+# SO IT DOES NOT EXIST WHILE YOU WORK. YOUR PLANT MUST RECORD `git apply`'s OWN EXIT CODE AS A THIRD
+# COLUMN**, and if your work breaks any existing plant, that is YOURS to find and say.
+# ================================================================================================ #
+
+dispatch_id: CD-DISPATCH-WO2R3-INC9-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T07:20:32Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T072032Z-0125
+parent_dispatch: CD-DISPATCH-WO2R3-ENGINEER    # the WO-2R3 lane dispatch
+
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0016.md` **ruling 2**, authored by Matt Scott and by no seat
+  (commit `6c9cfbf`), quoted in full because it is the whole of your scope:
+
+    *"THE CLASS OF 99 IS SEALED — INCREMENT 9, BEFORE THE SEVENTH SEAT (Q2/F-06-J). CD-PL-F104 and
+    CD-D-166 are ADDED: the sealing property (no `__new__` + `__dict__.update` route around
+    establishment) is required of the CLASS — instrument-enumerated over all 99 governed classes,
+    exclusions MEASURED AND DECLARED never assumed, a plant in the established contrast form. Fourth
+    widening, same law: floors are not populations, and a remedy applied to 13 of 99 is a census
+    with extra steps. Sending the auditor against a tree with a known-open class is paying a gate
+    for a known answer — so increment 9 goes FIRST. The phase-move to GATE at `44c5ef5` was correct
+    on the record as it stood; this ruling re-shapes it: BUILD for one bounded increment, then the
+    gate."*
+
+  Sequenced by `PO-DECISIONS-0017` ruling 4: the lane-authority header (**DONE**, `753efe4`) ->
+  **THIS INCREMENT** -> the seventh fresh Assurance seat.
+
+# --- seat --------------------------------------------------------------------------------------- #
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md      # canonical local file; the operator pastes no role
+actor_id: CD-ENG-WO2R3-07                 # **FRESH. Never -01, -02, -03, -04, -05 or -06.**
+prior_engineer_actor_ids: [CD-ENG-WO2R3-01, CD-ENG-WO2R3-02, CD-ENG-WO2R3-03, CD-ENG-WO2R3-04, CD-ENG-WO2R3-05, CD-ENG-WO2R3-06]
+assurance_actor_ids_you_are_not: [CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, CD-ASR-WO2R3-01, CD-ASR-WO2R3-02, CD-ASR-WO2R3-03]
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+separation_of_duties: >
+  **PBG-SOD-001, NON-WAIVABLE: THE ENGINEER AND THE ASSURANCE ENGINEER ARE NEVER THE SAME AGENT.**
+  A SEVENTH FRESH ASSURANCE SEAT GOES OUT OVER YOUR WORK IMMEDIATELY AFTER THIS INCREMENT BANKS, and
+  it will be told your increment is an ATTACKABLE CLAIM. **YOU DO NOT GRADE YOUR OWN WORK AND YOU DO
+  NOT NEED TO — write down what you measured and what you could not, and let it be attacked.**
+  **PBG-AUTH-006: the Project Lead writes neither the fix nor the assurance.** If an item below is
+  wrong, say so and stop; do not implement around it.
+
+# --- target ------------------------------------------------------------------------------------- #
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+base_sha: 753efe4f0dabd5c2bf59950742fc95df7ffc9347   # the lane-authority header commit (PO-DECISIONS-0016 ruling 1a)
+base_is_clean: '`git status --porcelain` -> ZERO LINES, PL-verified at issue.'
+governing_authority_lives_on_main: >
+  **READ THE HEADER THAT LANDED AT YOUR BASE SHA.** `BLUEPRINT.md` in this worktree is the LANE'S
+  HISTORICAL BASELINE at v0.1.0 and it now says so in its own first lines. **THE GOVERNING BLUEPRINT
+  IS v0.2.0 ON `main`, AT `/srv/crash-detector/BLUEPRINT.md`, WITH `BP-AMENDMENT-0001` APPLIED.**
+  Read it THERE. `CD-BP-003` is cited 72 times in 21 files of this lane and **is not defined
+  anywhere in it.** That was `F-06-B` and it is why the header exists.
+
+# ================================================================================================== #
+# THE ITEMS. THREE. THE PRODUCT OWNER ADDED ITEMS 2 AND 3 IN ONE SENTENCE AND THEY ARE NOT OPTIONAL.
+# ================================================================================================== #
+items:
+
+  ITEM_1:
+    title: '**THE SEALING PROPERTY, REQUIRED OF THE CLASS, INSTRUMENT-ENUMERATED OVER ALL 99.**'
+    what_the_property_is: >
+      **A GOVERNED CLASS MUST NOT BE CONSTRUCTIBLE WITH FORGED STATE BY A ROUTE THAT EXECUTES NO
+      PACKAGE CODE.** The route the record names is `Agrees.__new__(Agrees)` followed by
+      `__dict__.update(...)`; the sibling route is `__setstate__`. The MECHANISM already used in
+      this tree is `__slots__` **plus** an empty `__dictoffset__` — both, because slots alone does
+      not close it if any base carries a `__dict__`. `dials/reading.py:426-440` is the existing
+      local check, written for three types; `dials/provenance.py:763` is the same pair applied to
+      one more. **THE MECHANISM IS NOT YOURS TO INVENT. THE POPULATION IS YOURS TO CLOSE.**
+    the_measured_route_from_the_record: >
+      `variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py` arm 1 counts every
+      line executed under `src/crash_detector/` with `sys.settrace`:
+      **LINES OF PACKAGE CODE EXECUTED: 0 · package files touched: [] ·
+      `type(smuggled) is exactly Agrees`: True · `smuggled.as_of_utc`: 'not a datetime' ·
+      CONTROL through `Agrees(...)`: REFUSED TypeError, 36 LINES.**
+      **36 LINES THROUGH THE FRONT DOOR AND A REFUSAL; 0 LINES AROUND IT AND AN OBJECT.**
+    what_you_must_build:
+    - '**AN INSTRUMENT** under `tools/register/` that ENUMERATES the same 99 classes
+       `check_constructor_field_establishment.py` examines and, for EACH, prints a verdict on the
+       sealing property. It exits non-zero when any class that the property is REQUIRED of is OPEN.'
+    - '**THE ENUMERATION MUST BE DERIVED, NOT COPIED.** A hard-coded list of 99 names is a
+       transcription and it rots at the next class anyone adds. Derive the population the way the
+       constructor check derives it, or import and reuse its derivation — and **SAY WHICH, AND SAY
+       WHAT HAPPENS WHEN THE TWO ENUMERATIONS DISAGREE**, because two independent readings of one
+       class that must agree is exactly what `governed_types()` and the static check already are.'
+    - '**EVERY EXCLUSION MEASURED AND DECLARED.** For every one of the 99 the property is NOT
+       required of, the instrument prints the MEASURED PROPERTY that excludes it, evaluated at run
+       time. **NOT A NAME. NOT A LIST. A PROPERTY.** See header item 2.'
+    - '**THE SEAL ITSELF APPLIED** to the classes the property is required of and does not yet hold
+       for. `@dataclass(frozen=True, slots=True)` is available (Python 3.11.2, PL-verified) and so
+       is a manual `__slots__`. **WHERE A CLASS CANNOT BE SEALED, THAT IS A MEASURED EXCLUSION WITH A
+       REASON — a base carrying `__dict__`, a field defaulting mechanism that needs one, whatever
+       you actually find — AND IT IS DECLARED, NEVER ASSUMED.**'
+    - '**A PLANT, IN THE ESTABLISHED CONTRAST FORM.** `plants/<CD-AC-NNN>/<CD-RT-NNN-NAME>.patch`,
+       applied to a pristine `git archive` extraction with `git apply`, clean arm and violated arm,
+       the declared command from `required-tests.yaml`, **EXIT CODE RECORDED ON BOTH ARMS AND
+       `git apply`''s OWN EXIT CODE RECORDED AS A THIRD COLUMN** (header item 5). Its register row
+       and execution contract go in at the same time (CD-RULE-004, all three places consistently).'
+    - '**AND THE PLANT MUST FAIL AT THE LAYER ITS PROPOSITION NAMES, READ FROM THE FAILURE TEXT AND
+       NOT FROM THE EXIT CODE** (the `CD-ENG-WO2R3-F12` standard). Two arms that both exit non-zero
+       for DIFFERENT reasons look identical in a summary table and prove nothing.'
+    the_reading_of_all_99_THIS_SEAT_MADE_AND_THE_PRODUCT_OWNER_MAY_CORRECT_IN_ONE_SENTENCE: >
+      **THE RULING SAYS "required of the CLASS — instrument-enumerated over all 99 governed classes,
+      exclusions MEASURED AND DECLARED never assumed."** Of the 99 the constructor check examines,
+      **33 are IN its governed population and 66 are ruled OUT** by measured clauses (not public /
+      not frozen / not on a judgement path). **THIS SEAT READS THE RULING AS: the instrument SWEEPS
+      ALL 99 and REQUIRES THE SEAL, and every class it does not require it of carries a MEASURED,
+      PRINTED EXCLUSION — so that "not required" can never again mean "not looked at".** The ruling's
+      own denominator is 99 ("a remedy applied to 13 of 99"), which is why this reading and not the
+      narrower one.
+      **THIS IS A READING AND IT IS THIS SEAT'S, NOT THE PRODUCT OWNER'S.** It is recorded in the
+      Build Log as a reading the Product Authority may correct in one sentence. **IF YOUR MEASUREMENT
+      SHOWS THE READING IS WRONG — for example that requiring the seal of the 66 ruled-out classes
+      forces an exemption or a weakening — THAT IS A DECLARED STOP: return `STOPPED_AT_ITEM_1` WITH
+      THE MEASUREMENT, AND THE NEXT ACTOR IS THE PRODUCT OWNER AND NOT ANOTHER ENGINEER.**
+    the_project_leads_measurement_HANDED_OVER_AND_REQUIRED_TO_BE_RE_TAKEN:
+      command: >
+        Extract `--why` from `tools/register/check_constructor_field_establishment.py --root .` in a
+        pristine `git archive` extraction; take every distinct `path:line ClassName` with
+        `grep -oE "[A-Za-z0-9_/]+\.py:[0-9]+ [A-Za-z_][A-Za-z0-9_]*" | sort -u` (**this yields 99**);
+        import each module and evaluate `"__slots__" in vars(cls) and not cls.__dictoffset__`.
+      result: '**99 enumerated · 13 SEALED · 86 OPEN · 0 unresolvable · 13 + 86 = 99.**'
+      the_thirteen_sealed_ENUMERATED_BECAUSE_A_COUNT_IS_NOT_A_LIST: >
+        `admission.py:592 _Admission` · `admission.py:604 _Exactly` · `admission.py:639 _EachOf` ·
+        `admission.py:685 _EstablishedHere` · `dials/magnitude.py:411 DialMagnitude` ·
+        `dials/provenance.py:534 DeclaredQuantity` · `dials/reading.py:270 Value` ·
+        `dials/reading.py:298 Degraded` · `dials/reading.py:331 Unknown` ·
+        `serving/dial_presentation.py:292 Shown` · `serving/dial_presentation.py:344 NotShown` ·
+        `staleness.py:419 StalenessWindow` · `staleness.py:514 FreshnessEvidence`.
+      what_this_ADDS_to_the_sixth_seats_reading: >
+        **F-06-J NAMED EIGHT OF THE THIRTEEN. THE FIVE IT DID NOT NAME ARE `_Admission`, `_Exactly`,
+        `_EachOf`, `_EstablishedHere` AND `DeclaredQuantity`** — and **FOUR OF THOSE FIVE ARE PRIVATE
+        CLASSES THAT THE GOVERNED POPULATION RULES *OUT* BY CLAUSE (1), YET THEY CARRY THE SEAL.**
+        That is worth your attention before you decide what the property is required of: **the
+        mechanism is already applied OUTSIDE the population the closure scopes to.**
+      and_where_it_DISAGREES_with_the_sixth_seat: >
+        **F-06-J PUBLISHED 13 SEALED / 77 OPEN OVER 99 AND 13 + 77 = 90. NINE OF THE NINETY-NINE ARE
+        UNACCOUNTED IN ITS TABLE.** This seat measures 86 OPEN and closes at 99. **THE 13 AGREE
+        EXACTLY, WHICH IS WHY THE 77 IS WORTH ATTACKING RATHER THAN DISMISSING.** Reported as a
+        DIFFERENCE and not smoothed into agreement (CD-RULE-009). **RE-TAKE IT. IF YOUR NUMBER IS
+        NEITHER 77 NOR 86, SAY SO AND SAY WHAT YOU COUNTED.**
+    and_the_thing_that_would_make_this_item_vacuous: >
+      **A SEAL THAT IS NEVER TESTED IS A `__slots__` LINE.** For every class you seal, the plant or a
+      carrier must show the ROUTE FAILING — `Cls.__new__(Cls)` then `__dict__.update(...)` raising,
+      **with the exception type and the layer read from the failure text.** And run the counterfactual
+      (CD-D-079): the same route at your BASE SHA succeeding. **A CONTRAST WHOSE BOTH ARMS FAIL FOR
+      THE WRONG REASON IS THIS PROJECT'S MOST REPEATED MEASUREMENT DEFECT (F09, F15).**
+
+  ITEM_2:
+    title: '**CD-PL-F104 — `establishes` ADMITS A NON-DATACLASS AND A CALLER CAN MINT A FORGED GOVERNED TYPE THROUGH IT.**'
+    added_by: 'PO-DECISIONS-0016 ruling 2, in terms. **NOT scope the Project Lead added.**'
+    the_finding_verbatim: >
+      *"`crash_detector.establishment.establishes` — A PUBLIC, EXPORTED DECORATOR — ADMITS A
+      NON-DATACLASS, AND A CALLER CAN MINT A FORGED GOVERNED TYPE THROUGH IT. Its gate is
+      `dataclasses.is_dataclass`, which is a `hasattr` probe; one class attribute
+      (`__dataclass_fields__ = {}`) defeats it. The forged class then reports `is_establishing_type`
+      **True**, `establishment_faults` **`()`**, and **ENTERS `governed_types()`** — the enumeration
+      a governing carrier reads."*
+    why_it_is_in_THIS_increment_and_not_another: >
+      **BECAUSE ITEM 1'S INSTRUMENT READS AN ENUMERATION, AND THIS IS THE DEFECT THAT LETS A CALLER
+      PUT A CLASS INTO ONE.** Sealing 99 classes while `governed_types()` will admit a 100th that
+      a caller minted is a control scoped narrower than the class it names, one layer up — **which
+      is the exact defect this whole increment exists to stop repeating.** The two items are one
+      argument.
+    the_measured_divergence_you_INHERIT_AND_MUST_RESOLVE: >
+      `CD-ENG-WO2R3-04` measured the forged-entry population at **7 -> 8**; the Project Lead measured
+      **23 -> 24**. **THE NUMBERS DIFFER AND THE FACT DOES NOT** — the population depends on which
+      entry modules the process has imported, **and that is itself a note about `governed_types()`
+      AS AN ENUMERATION**, recorded as a difference rather than smoothed (CD-RULE-009).
+      **IF AN ENUMERATION'S SIZE DEPENDS ON IMPORT ORDER, SAY WHAT THAT MEANS FOR ANY CARRIER THAT
+      READS IT — INCLUDING ITEM 1'S.**
+    what_you_must_do: >
+      Close the route or **DECLARE ITS MEASURED REACH** (CD-RULE-004 option 2, consistently in the
+      check header, the register entry and the execution contract). **`CD-F-0004` IS THE OPEN
+      FINDING THIS IS AGAINST AND SIX `DEFECT_OPEN` SWEEP ROWS POINT AT IT — YOU DO NOT GET TO MARK
+      THEM CLOSED** (`tools/sweep/declared_dispositions.py` is protected; see below).
+    the_declared_stop: >
+      **IF CLOSING IT REQUIRES A CHANGE TO WHAT `@establishes` MEANS, THAT IS PRODUCT INTENT AND NOT
+      YOURS.** Return `STOPPED_AT_ITEM_2` with the measurement. Declaring a measured limit is always
+      available and is never a failure.
+
+  ITEM_3:
+    title: '**CD-D-166 — THE `gates` FIELD, WHOSE RENAME TEST FAILS, IN A FIELD THE PROJECT LEAD DESIGNED.**'
+    added_by: 'PO-DECISIONS-0016 ruling 2, in terms. **NOT scope the Project Lead added.**'
+    the_finding_verbatim: >
+      `CD-ENG-WO2R3-04-F05`, upheld in full: *"`gates` checks EXISTENCE and DIFFERENT-MODULE and
+      NOTHING ELSE. Nothing checks that the named site is actually DOWNSTREAM, REACHABLE, or
+      RELATED. THE GATING RELATION IS STILL A SEAT'S CLAIM."* The seat applied this project's own
+      rename test to it and **REPORTED THE ANSWER AS IT FELL: IT DOES NOT SURVIVE** — the refusal is
+      credited to TEXT, not to STRUCTURE.
+    and_read_this_before_you_start: >
+      **THE FIELD IS THE PROJECT LEAD'S OWN DESIGN AND THE PROJECT LEAD IS THE SEAT THAT WROTE THIS
+      DISPATCH.** `CD-PL-F107` is on the record because this same seat once specified a
+      machine-checked field in a way that **would have made it silently vacuous**, and the Engineer
+      caught it by running the instrument instead of reading the document. **READ ITEM 3
+      ADVERSARIALLY. IF WHAT IS ASKED FOR HERE CANNOT BE MADE TO FAIL, THAT IS A FINDING AND YOU
+      RAISE IT AGAINST THIS DISPATCH.**
+    what_you_must_do: >
+      Make the gating relation MACHINE-CHECKED, or **DECLARE ITS MEASURED LIMIT** (CD-RULE-004,
+      three places). **AND WHICHEVER YOU DO, RUN THE RENAME TEST AND REPORT THE ANSWER AS IT FALLS**
+      — and note what this project added to that rule at the sixth gate: **the rename test proves a
+      criterion is not a VOCABULARY; IT DOES NOT PROVE IT IS NOT VACUOUS. A criterion that always
+      answers "not gated" passes the rename test perfectly and is worthless.** Show the vacuity
+      check too.
+
+# ================================================================================================== #
+scope:
+  writable_scope:
+  - /srv/crash-detector-wo2r3/src/crash_detector/          # ITEMS 1 and 2 — the seal and `establishes`
+  - /srv/crash-detector-wo2r3/tools/register/              # ITEMS 1, 2 and 3 — the instruments
+  - /srv/crash-detector-wo2r3/tests/                       # the carriers for every item
+  - /srv/crash-detector-wo2r3/contracts/execution/         # CD-RULE-004, the third place
+  - /srv/crash-detector-wo2r3/required-tests.yaml          # CD-RULE-004, and the register rows
+  - /srv/crash-detector-wo2r3/plants/                      # ITEM 1's plant — AND ITS MANIFEST ROW
+  - /srv/crash-detector-wo2r3/variants/                    # your probes and contrasts, under WO-2R3/
+                                                           # — AND ADD YOUR MANIFEST ROWS (CD-PL-F97)
+  - /srv/crash-detector-wo2r3/docs/                        # the corpus index only
+  - /srv/crash-detector-wo2r3/governance/engineering/build-log/   # NEW entries only, NEVER an edit.
+                                                           # Lane block 0060-0099, CONTINUE FROM 0090.
+  - /tmp/                                                  # scratch, non-governed
+
+  protected_scope:
+  - '**`BLUEPRINT.md` AND `governance/blueprint/` — PROTECTED FROM EVERY SEAT INCLUDING THE PROJECT
+     LEAD (CD-D-115).** The header at your base SHA was placed by the Product Owner''s own sentence
+     and its bytes are the Product Owner''s. **DO NOT EDIT IT, REFORMAT IT, OR MOVE IT.**'
+  - '*** **`tools/sweep/declared_dispositions.py` — PROTECTED, AND THIS TIME FOR A REASON YOU MUST
+     KNOW.** *** THREE DISPOSITION KEYS IN IT ARE **STALE BY CONSTRUCTION** after increment 8 fixed
+     `F-06-D`, the Class-2 sweep reads **`FAIL — 555 sites, 4 violations`**, and **THREE
+     `tests/test_the_fifteen.py` TESTS FAIL WITH IT.** **THAT IS THE DECLARED STATE OF YOUR BASE AND
+     IT IS NOT YOURS TO FIX. PO-DECISIONS-0017 RULING 2 HOLDS THEM STALE UNTIL AFTER THE SEVENTH
+     ASSURANCE SEAT READS THE TREE.** The previous Engineer **CONSIDERED adding a redundant clause so
+     the register key would survive and REFUSED IT** — constructing state so a control appears to
+     pass is non-waivable — and returned `SCOPE_INSUFFICIENT` for exactly one file instead.
+     **THAT REFUSAL IS THE BEHAVIOUR THIS GOVERNANCE EXISTS TO PRODUCE. DO THE SAME.**'
+  - '`governance/findings/` — the findings index. Your items sit under `CD-F-0004`; **YOU DO NOT
+     MARK IT CLOSED.**'
+  - 'pbg/    # pinned snapshot, read-only (PBG-FWK-013). Editing it to make a control pass IS the bypass.'
+  - 'PID.md, governance/decisions/, governance/assurance/, governance/reconciliation/,
+     governance/engineering/ACTIVE_WORK.yaml — **NONE OF THESE IS EVER AN ENGINEER''S.**'
+  - '**ANY EXISTING BUILD-LOG ENTRY.** Corrections SUPERSEDE, never edit (PBG-CONT-003, non-waivable).'
+
+# ================================================================================================== #
+the_state_of_your_base_declared_up_front_so_you_do_not_report_it_as_a_discovery:
+  the_class_2_sweep: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1, `FAIL — 555 sites,
+    4 violations`**: three `STALE DECLARATION` plus `UNDECLARED MODULE: crash_detector.admission`,
+    tier-2 keys 3 of 33. **DECLARED. NOT YOURS. SEE THE PROTECTED SCOPE.**
+  the_suite: >
+    **3 failed, 1687 passed.** All three failures are in `tests/test_the_fifteen.py` and all three
+    were **DECLARED IN ADVANCE** by increment 8's `ITEM_3`. **IF YOUR RUN SHOWS A FOURTH FAILURE, IT
+    IS YOURS.**
+  the_register_checks: '**ELEVEN EXIT 0 · `check_grant_matrix_live` EXIT 3.** Exit 3 is a documented environment condition, not a defect you introduced. Pass the declared `--root`.'
+  CD_RT_012: '**RED AT THE TIP** (`check_no_execution_interface.py`). Standing, declared, not yours.'
+  the_gate_state: 'T2 **RED**; CD-AC-002 and CD-AC-005 **AMBER and NOT CLOSED**; **TEN DECLARED OPEN DEFECTS**; the WO-2 gate **SHUT**. Nothing you do here closes any of them, and you may not write that it does.'
+  and_a_new_instrument_ON_MAIN_that_exits_1: >
+    `tools/reconciliation/check_lane_governance_citations.py` on `main` exits 1 at your base with
+    **2 unresolved citations, BOTH IN `tools/register/check_dockerignore.py`** — one a declared
+    false positive, one `CD-PL-F114` (the path `pbg/controls/PBG-SEC-002.yaml` has never existed).
+    **NEITHER IS YOURS. NOT IN THIS INCREMENT'S SCOPE** (CD-D-165). Disclosed so that if you open
+    that file for any reason you know what you are looking at.
+
+# ================================================================================================== #
+standards_that_bind_you:
+  CD_RULE_002: >
+    **PER-SEAT COMMIT IDENTITY, PRODUCT AUTHORITY, NON-RELAXABLE.** Set all four variables ON THE
+    COMMIT INVOCATION — `GIT_AUTHOR_NAME=CD-ENG-WO2R3-07
+    GIT_AUTHOR_EMAIL=cd-eng-wo2r3-07@seats.crash-detector.invalid GIT_COMMITTER_NAME=CD-ENG-WO2R3-07
+    GIT_COMMITTER_EMAIL=cd-eng-wo2r3-07@seats.crash-detector.invalid git commit ...`.
+    **`git -c user.name=...` IS NOT SUFFICIENT ON THIS HOST AND FAILS SILENTLY** (CD-PL-F56): the
+    harness injects `GIT_*` into the environment and environment beats `-c`. **VERIFY AFTER EVERY
+    COMMIT: `git log -1 --format='%an <%ae> | %cn <%ce>'`.** A commit carrying a human identity is a
+    boundary failure, not a cosmetic one.
+  CD_RULE_003: 'A seat DERIVES a product quantity or FAILS CLOSED. It never invents a plausible number.'
+  CD_RULE_004: '**A guard CLOSES ITS CLASS or DECLARES ITS OWN LIMIT — and says which, consistently in the check header, the register entry AND the execution contract. A register entry may not claim more than its guard delivers.**'
+  CD_RULE_005: 'Every governed timestamp from `date -u +%FT%TZ` and from nothing else.'
+  CD_RULE_006: '**A residue declaration must name a layer MEASURED to hold it.** An unproved hand-off is written **"NOT PROVED TO BE CARRIED ANYWHERE"**, which is honest and leaves the residue visible.'
+  CD_RULE_009: '**Every fingerprint, hash or count records the exact command that produces it, beside it, in a form a reader can paste.** A count with no command is not evidence. This bit an Assurance seat two boundaries ago (`CD-PL-F115`) and it binds you identically.'
+  CD_PL_F98: '**RUN EACH TREE''S OWN COPY OF A PROBE AND READ ITS `tree:` LINE EVERY TIME.** A contrast run with the wrong tree on `sys.path` is indistinguishable from a fix that does nothing.'
+  CD_PL_F36: '**RESOLVE SHAs, NEVER TRANSCRIBE THEM** — `git rev-parse` plus `git cat-file -t`.'
+  runtime_claims_need_runtime_proof: >
+    "Unconstructible", "sealed", "cannot be forged" are RUNTIME claims. **EVERY ESCAPE ON THIS
+    PROJECT'S RECORD PASSED STATIC CHECKERS.** Construct the thing. Read the exception type and
+    message. **NAME THE LAYER THAT REFUSED FROM THE FAILURE TEXT, NOT FROM THE EXIT CODE.**
+
+how_you_work:
+  commit_as_you_go: >
+    **ONE COMMIT PER ITEM, IN THE LANE, AS YOU FINISH IT.** Nine seats before you have done this and
+    it has saved this project five times. **THE LAST TIME, THE SEAT FINISHED THE WHOLE ORDER AND THE
+    DISPATCHING PROJECT LEAD DIED AT ITS OWN CEILING — AND THE WORK SURVIVED BECAUSE IT WAS IN THE
+    LANE AND NOT IN CONVERSATION** (PBG-CONT-007, CD-D-007, five occurrences).
+    **A RESULT THAT EXISTS ONLY IN YOUR RETURN MESSAGE IS NOT PROJECT STATE.**
+  a_build_log_entry_per_item_or_per_commit: 'Lane block **0060-0099**, CONTINUE FROM **0090**. NEW entries only. Never edit a landed one.'
+  findings_against_your_own_work: >
+    **NINE CONSECUTIVE SEATS HAVE RAISED FINDINGS AGAINST THEIR OWN WORK AND IT IS THE REASON THIS
+    RECORD IS WORTH ANYTHING.** Raise yours. A seat that returns clean is not trusted more; it is
+    read harder.
+  stops_are_successes: >
+    **`STOPPED_AT_ITEM_n` IS A SUCCESS, NOT A FAILURE**, and both item 1 and item 2 carry an
+    explicit declared stop. So is `SCOPE_INSUFFICIENT` for a named file. **WHAT IS NOT AVAILABLE IS
+    QUIETLY WIDENING YOUR SCOPE, OR CONSTRUCTING STATE SO A CONTROL APPEARS TO PASS.**
+
+expected_return: 'READY_FOR_ASSURANCE — or `STOPPED_AT_ITEM_n`, or `SCOPE_INSUFFICIENT` naming the exact file.'
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  The Project Lead reconciles your return **BY MEASUREMENT, ON ITS OWN `git archive` EXTRACTIONS,
+  NEVER BY READING YOUR CLAIMS**, and banks it. **RECONCILIATION IS NOT ACCEPTANCE** (PBG-AUTH-003).
+  **THEN A SEVENTH FRESH ASSURANCE SEAT GOES OUT OVER THE WHOLE OF WO-2R3 INCLUDING THIS INCREMENT,
+  AND IT WILL BE TOLD YOUR SEALING CLAIM IS AN ATTACKABLE CLAIM AND NOT A SETTLED RECORD.**
