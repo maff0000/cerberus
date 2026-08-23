@@ -18,6 +18,10 @@ reconciliation_note: >
 amendment: Project Lead owns currency (PBG-BP-001). Assurance verifies, and does not author.
 ---
 
+> **NOT AUTHORITY.** The governing blueprint lives on `main`. Every governance citation in
+> this lane resolves against `main` at the reconciliation boundary. This file is the
+> lane's historical baseline (0.1.0), superseded on `main`.
+
 # Crash Detector — Blueprint
 
 The PID says **what** and **why**, and its §1 and §3 are Constitutional. This document says **how**,
