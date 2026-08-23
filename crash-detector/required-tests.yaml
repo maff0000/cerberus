@@ -1490,6 +1490,92 @@ criteria:
         the RUNTIME `__name__` `_evaluate_dial`, so the static reading and the runtime name
         DISAGREE about whether it is public at all — which is part of what makes it a question
         rather than an oversight.
+        **SUPERSEDED AT WO-2R3 INCREMENT 7 BY PO-DECISIONS-0012 RULINGS 1 AND 2, AND THE WORDING
+        ABOVE IS QUOTED RATHER THAN DELETED (CD-RULE-004, PBG-CONT-003).** THE PRODUCT OWNER
+        RULED: `guarded` IS NOT A §D.1 DOOR — it is a POST-CONDITION CONTROL, A NET, and its
+        arity-openness is LOAD-BEARING. The finding above is answered by RECLASSIFICATION, never
+        by exemption or weakening (ruling 3), and THIS ROW'S DECLARED COMMAND NOW EXITS 0.
+        CHECK LIMIT 8 — THE MEMBERSHIP CLAUSE IS REACHABILITY, NOT NAME-PREFIX. **NEW AT WO-2R3
+        INCREMENT 7** (PO-DECISIONS-0012 ruling 2, verbatim: "The doors instrument's membership
+        clause is corrected from NAME-PREFIX (a vocabulary — CD-PL-F74's own conviction) to
+        REACHABILITY.")
+        WHY: the fifth Assurance seat took this check from 1 violation to 0 by renaming ONE
+        function-local identifier — `guarded` to `_guarded` — with runtime identity unchanged. A
+        refusal a two-line rename silences is a vocabulary guard wearing a structural label.
+        THE CRITERION, STATED IDENTICALLY HERE, in the header of
+        tools/register/check_judgement_path_doors.py (`_reachable_public_binding`) and in the
+        execution contract: A CALLABLE IS A SUBJECT WHEN A CALLER OUTSIDE ITS MODULE CAN OBTAIN
+        AND CALL IT. For a MODULE-LEVEL def the identifier at the def site IS the binding a caller
+        names, so the underscore test is asked about the right name and BEHAVES EXACTLY AS BEFORE.
+        For a FUNCTION-LOCAL def it was asked about a LOCAL VARIABLE NO CALLER CAN EVER NAME; the
+        check now follows the object's ESCAPE ROUTE — RETURNED, STORED under a container or
+        attribute, or PASSED to a callee — and asks whether the binding it REACHES is public.
+        DENY BY DEFAULT: any route the clause cannot resolve counts as reachable.
+        MEASURED, BOTH CONTRASTS, by variants/WO-2R3/P-H-the-reachability-criterion-under-attack.sh,
+        EACH ARM RUNNING ITS OWN TREE'S OWN COPY OF THE INSTRUMENT (CD-PL-F98):
+          arm                              OLD clause (name-prefix)   NEW clause (reachability)
+          `guarded`                        exit 1, 28 subjects        exit 0, 27 subjects
+          `guarded` -> `_guarded`          EXIT 0, 27 subjects        exit 0, 27 subjects
+          + POLICY["decide"]  (public)     exit 1, both flagged       exit 1, _install_policy.decide
+          + POLICY["_decide"] (private)    EXIT 1, PLANT NOT FLAGGED  exit 1, _install_policy._decide
+        ROW 2 IS THE RENAME TEST: the old clause's verdict moved on one identifier and the new
+        one's does not. ROW 4 is the fourth Assurance seat's ESCAPE 4 ARM 4 with a PRIVATE-named
+        local — a name-prefix clause CANNOT SEE IT AT ALL, and the old arm's single violation is
+        `guarded` at line 341, not the plant. Row 4 is what makes this structural rather than a
+        subtler vocabulary.
+        WHAT THE CLAUSE DOES NOT REACH, DECLARED AND NOT CLAIMED CLOSED: an object PASSED to a
+        callee that retains it (tagged and DENIED BY DEFAULT, so safe, but not analysed — the
+        error is in the safe direction and it is still an error); an escape inside a CONTAINER
+        LITERAL, `return {"decide": local}`, which tags no route — MEASURED: on a judgement path
+        the check STILL EXITS 1 as UNCLASSIFIED_INTERCEPTOR because the NETS population denies by
+        default, so the VERDICT is right and the clause's REASON is wrong, and OFF a judgement path
+        nothing fails, which is NOT PROVED TO BE CARRIED ANYWHERE; an escape by setattr/globals(),
+        computed at runtime and invisible to any AST; and reachability ACROSS modules — the clause
+        is per-module and keeps the underscore convention for module-level names DELIBERATELY,
+        because §D.1's class is PUBLIC entry points and abolishing publicness would make every
+        private helper a door, which is a PRODUCT-MEANING boundary (PBG-AUTH-005) and not an
+        implementation one. `from m import _x` works and is MEASURED at
+        variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py arm A2.
+        CHECK LIMIT 9 — **NETS: THE SECOND DECLARED POPULATION.** NEW AT WO-2R3 INCREMENT 7
+        (PO-DECISIONS-0012 ruling 2: "A second declared population is created: NETS —
+        function-local post-condition guards on judgement paths — enumerated and asserted exactly
+        as doors are, each with its post-condition named. 'Not a door' must never again mean 'not
+        seen.' Zero unclassified interceptors on any judgement path.")
+        WHERE IT LIVES: tools/register/declared_nets.py. **IT IS NOT AN EXEMPTION LIST.** A
+        callable becomes eligible for a row only by being UNREACHABLE under CHECK LIMIT 8; a
+        reachable callable is a DOOR and no row changes that.
+        ASSERTED, NOT PRINTED, IN BOTH DIRECTIONS, and each declaration is CHECKED AGAINST THE
+        CODE: UNCLASSIFIED_INTERCEPTOR (a found net with no row); NET_DECLARED_BUT_ABSENT (a row
+        with no net — its text names all three causes: deleted, enclosing renamed, or became
+        reachable); NET_POST_CONDITION_UNRESOLVABLE (the named post-condition is not a module-level
+        def there); NET_POST_CONDITION_NOT_CALLED (**the net's body does not call it** — the
+        assertion that makes the row DATA rather than a label); NET_POST_CONDITION_NOT_A_DOOR (the
+        post-condition carries no @admits); AMBIGUOUS_NET (two unreachable locals in one enclosing
+        function — the instrument REFUSES to guess rather than silently first-matching).
+        IDENTITY IS THE **ENCLOSING** FUNCTION AND DELIBERATELY NOT THE NET'S OWN NAME. The first
+        version of this register keyed on the net's own local name and FAILED THIS PROJECT'S RENAME
+        TEST — MEASURED, PASS -> FAIL on `guarded` -> `_guarded` — which is ruling 2's own defect
+        reintroduced one file away, in the fix for it. Corrected before landing and recorded rather
+        than only fixed. The enclosing function is a MODULE-LEVEL name, so depending on it is
+        depending on something a reader can look up; renaming IT fails the check LOUDLY, never
+        silently.
+        POPULATION AT THIS SHA: FOUND 1, DECLARED 1 — `crash_detector/engine/evaluate.py` inside
+        `_absence_is_never_a_number()`, post-condition `refuse_a_number_without_its_inputs`.
+        ITS DECLARED RESIDUE, MEASURED AND NOT ASSUMED: the net's signature is
+        (spec, usable, now_utc, *extra, **extra_by_name) and the post-condition reads THREE things
+        (spec, usable, reading). `now_utc`, `*extra` and `**extra_by_name` are bound by NOTHING.
+        `*extra` carries `model`, which `compute` executes to produce the magnitude, while the
+        premise reads `spec.model_ref` — A NAME ON THE SPEC, NOT THE OBJECT THAT DECIDES THE
+        NUMBER. Measured at variants/WO-2R3/P-F-...py arms B1a-B2c: no `*extra` model can change
+        what the evaluator RETURNS at this tree, because every member of the closed MappingKind set
+        RAISES in `compute`. **SO THE BOUND IS `compute`'s OWN DOOR AND A MAPPING SET WITH NO
+        COMPUTING MEMBER — A PRODUCT GAP, CD-D-005 OWED — AND NOT THIS NET. IT EXPIRES THE DAY A
+        COMPUTING MAPPING LANDS** (CD-ENG-WO2R3-03-F03), and there is NO CARRIER for that day.
+        CARRIER FOR LIMITS 8 AND 9 (CD-RULE-006 — a check reports, a carrier fails): SIX tests in
+        tests/test_judgement_path_doors.py, each asserting BY BREAKING the property in a throwaway
+        tree — the rename test; ESCAPE 4 ARM 4 with a private-named local; an emptied register; a
+        net that stops calling its post-condition; a net declared where none exists (which must
+        fire BOTH directions of the set equality); and the printed residue.
         MECHANISM LIMIT 4 — ESTABLISHED_HERE IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT
         HIDDEN, AND THE COUNT NOW LIVES IN ALL THREE CD-RULE-004 PLACES INSTEAD OF ONE.
         **THIS IS admission.py's DECLARED LIMIT 1, REPRODUCED HERE AT WO-2R3 INCREMENT 6 UNDER

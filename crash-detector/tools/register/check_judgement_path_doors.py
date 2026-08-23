@@ -53,7 +53,19 @@ declares what it returns.
 
 EXEMPTIONS, EACH DERIVED FROM THE ARTEFACT AND EACH COUNTED IN THE OUTPUT
 --------------------------------------------------------------------------
-* names beginning ``_`` — not public entry points;
+* **NOT REACHABLE FROM OUTSIDE THE MODULE.** *Superseded wording, quoted rather than deleted
+  (CD-RULE-004, PBG-CONT-003): "names beginning ``_`` — not public entry points".*
+  **``PO-DECISIONS-0012`` RULING 2 CORRECTED THIS CLAUSE FROM NAME-PREFIX TO REACHABILITY**,
+  after the fifth Assurance seat took this check from 1 violation to 0 by renaming ONE
+  function-local identifier with runtime identity unchanged. For a MODULE-LEVEL ``def`` the
+  identifier at the ``def`` site IS the binding a caller names, so the underscore test is
+  asked about the right name and behaves exactly as before. For a FUNCTION-LOCAL ``def`` it
+  was asked about a LOCAL VARIABLE NO CALLER CAN EVER NAME; the check now follows the
+  object's ESCAPE ROUTE out of its enclosing function instead. See
+  :func:`_reachable_public_binding` and DECLARED LIMIT 9. **A function-local callable
+  exempted this way on a JUDGEMENT PATH is not merely dropped — it must be declared a NET in
+  ``tools/register/declared_nets.py`` or the check fails ``UNCLASSIFIED_INTERCEPTOR``,
+  because "not a door" must never again mean "not seen";**
 * ``@property`` accessors — a property getter takes only its receiver, and no argument can
   be added to one, so there is nothing for ``admits`` to be told about and nothing that can
   arrive later unguarded;
@@ -333,6 +345,79 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     provided the module is imported by ``pkgutil.walk_packages`` and the door object is
     reachable from a module or class namespace. **FOR AN EXEMPTION ON A DOOR THAT IS NOT
     REACHABLE FROM ANY MODULE OR CLASS NAMESPACE: NOT PROVED TO BE CARRIED ANYWHERE.**
+
+ 9  **THE REACHABILITY CLAUSE — WHAT IT REACHES AND WHAT IT DOES NOT. NEW AT WO-2R3
+    INCREMENT 7** (``PO-DECISIONS-0012`` rulings 1 and 2).
+
+    **THE CRITERION.** A callable is a subject when a caller OUTSIDE ITS MODULE can OBTAIN
+    AND CALL it. Module-level ``def``: the identifier IS the binding, so publicness of the
+    identifier decides, unchanged. Function-local ``def``: the identifier is a local variable
+    no caller can name, so :func:`_reachable_public_binding` follows the object's ESCAPE
+    ROUTE — RETURNED, STORED under a container or attribute, or PASSED to a callee — and asks
+    whether the binding it reaches is public. **DENY BY DEFAULT: any route the clause cannot
+    RESOLVE returns reachable, so an unreadable escape is treated as an escape.**
+
+    **THE TWO CONTRASTS THAT PROVE IT REACHED THE CODE PATH AND NOT THE HEADER, BOTH
+    MEASURED BY ``variants/WO-2R3/P-H-the-reachability-criterion-under-attack.sh``, EACH ARM
+    RUNNING ITS OWN TREE'S OWN COPY OF THIS FILE:**
+
+    ==================================  ==========================  ==========================
+    arm                                 OLD clause (name-prefix)    NEW clause (reachability)
+    ==================================  ==========================  ==========================
+    ``guarded``                         exit 1, 28 subjects         exit 0, 27 subjects
+    ``guarded`` -> ``_guarded``         **exit 0, 27 subjects**     exit 0, 27 subjects
+    ``+ POLICY["decide"]``  (public)    exit 1, both flagged        exit 1, ``_install_policy.decide``
+    ``+ POLICY["_decide"]`` (private)   **exit 1, NOT flagged**     **exit 1, ``_install_policy._decide``**
+    ==================================  ==========================  ==========================
+
+    Row 2 is the RENAME TEST: **the old clause's verdict moved on one identifier and the new
+    one's does not.** Row 4 is the fourth Assurance seat's ESCAPE 4 ARM 4 with a PRIVATE-named
+    local — **a name-prefix clause cannot see it at all**, and the old arm's single violation
+    is ``guarded`` at line 341, not the plant. That row is the one that makes this
+    structural rather than a subtler vocabulary.
+
+    **WHAT IS NOT REACHED, AND IT IS DECLARED RATHER THAN LEFT TO BE FOUND. NONE OF THESE IS
+    CLAIMED CLOSED:**
+
+    * **an object PASSED to a callee that retains it** — the clause tags this ``PASSED_TO``
+      and DENIES BY DEFAULT, so it is safe, but it is not *analysed*: the check does not know
+      whether ``sorted(key=f)`` retains ``f`` and does not try to. It therefore reports some
+      callables as reachable that are not. **THE ERROR IS IN THE SAFE DIRECTION AND IT IS
+      STILL AN ERROR;**
+    * **an escape through a CONTAINER LITERAL** — ``return {"decide": local}`` is a return of
+      a dict, not of the local, and this clause does not look inside it, so no route is
+      tagged and the callable is reported UNREACHABLE. **THIS SEAT FIRST WROTE THAT DOWN AS
+      "A REAL GAP, IN THE UNSAFE DIRECTION", THEN MEASURED IT, AND THE ASSERTION WAS WRONG.**
+      Planted into ``engine/evaluate.py`` at a throwaway tree, the check **EXITS 1** —
+      ``UNCLASSIFIED_INTERCEPTOR`` at ``_install_via_container.decide`` — because the NETS
+      population denies by default and backstops the clause's blindness. **THE VERDICT IS
+      RIGHT AND THE CLAUSE'S REASON IS WRONG**: it says it found no escape route, which is
+      true, and until this measurement it went on to say the callable "NEVER LEAVES that
+      frame", which was not. Corrected. **WHAT REMAINS OPEN IS THE OFF-JUDGEMENT-PATH CASE:
+      there the callable is a printed row and nothing fails**, and that is NOT PROVED TO BE
+      CARRIED ANYWHERE;
+    * **an escape by ``setattr``/``globals()``** — computed at runtime, invisible to any AST;
+    * **reachability ACROSS modules.** The clause is per-module. A non-public module-level
+      name is treated as unreachable from outside, which is TRUE OF NOTHING IN PYTHON — the
+      underscore is a convention and ``from m import _x`` works, MEASURED at
+      ``variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py`` arm A2. **THIS
+      CHECK KEEPS THE CONVENTION DELIBERATELY**, because §D.1's class is PUBLIC entry points
+      and abolishing publicness would make every private helper in the package a door. **THAT
+      IS A PRODUCT-MEANING BOUNDARY AND NOT AN IMPLEMENTATION ONE (PBG-AUTH-005);**
+    * **the NETS register identifies a net by its ENCLOSING function**, which is a
+      module-level name and therefore renameable. Renaming it fails the check LOUDLY
+      (``NET_DECLARED_BUT_ABSENT``, whose text names all three possible causes) and never
+      silently. **THE FIRST VERSION OF THE REGISTER KEYED ON THE NET'S OWN LOCAL NAME AND
+      FAILED THE RENAME TEST — MEASURED, PASS -> FAIL ON `guarded` -> `_guarded` — WHICH IS
+      RULING 2's OWN DEFECT REINTRODUCED IN THE FIX FOR IT. Corrected before landing and
+      recorded here rather than only fixed.**
+
+    **CARRIER (CD-RULE-006 — A CHECK REPORTS, A CARRIER FAILS).** Six tests in
+    ``tests/test_judgement_path_doors.py``, each asserting by BREAKING the property in a
+    throwaway tree: the rename test; ESCAPE 4 ARM 4 with a private-named local; an emptied
+    register; a net that stops calling its post-condition; a net declared where none exists
+    (which must fire BOTH directions of the set equality); and the printed residue.
+    **FOR THE THREE UNREACHED ROUTES ABOVE: NOT PROVED TO BE CARRIED ANYWHERE.**
 """
 
 from __future__ import annotations
@@ -350,6 +435,7 @@ from _support import (  # noqa: E402
     read_text,
     resolve_root,
 )
+from declared_nets import DECLARED_NETS  # noqa: E402
 
 CHECK_ID = "CD-RT-002-DOORS-REQUIRE-THEIR-TYPES"
 
@@ -406,7 +492,222 @@ _RECEIVER_NAMES = ("self", "cls")
 
 
 def _is_public(name: str) -> bool:
+    """Is this identifier one a caller outside the module can NAME?
+
+    **THIS IS STILL A NAME TEST AND IT IS STILL RIGHT — FOR THE NAMES IT IS ASKED ABOUT.**
+    ``PO-DECISIONS-0012`` ruling 2 corrected the MEMBERSHIP CLAUSE from name-prefix to
+    reachability; it did not abolish publicness, because §D.1's class IS public entry points.
+    What changed is WHICH NAME the question is asked about — see
+    :func:`_reachable_public_binding` and DECLARED LIMIT 9.
+
+    For a MODULE-LEVEL ``def``, the identifier at the ``def`` site IS the binding a caller
+    names, so this function is asked about the right name and its answer is unchanged.
+    """
     return not name.startswith("_")
+
+
+def _root_name(node):
+    """The base ``Name`` of a ``Subscript``/``Attribute`` chain, or ``None``."""
+    while isinstance(node, (ast.Subscript, ast.Attribute)):
+        node = node.value
+    return getattr(node, "id", None)
+
+
+def _callee_name(call) -> str:
+    target = call.func
+    return getattr(target, "id", None) or getattr(target, "attr", None) or ""
+
+
+def _module_bindings(tree) -> dict:
+    """The module-level facts :func:`_reachable_public_binding` reasons over.
+
+    Computed once per module. Three maps, each answering "where does the value produced by
+    this module-level name END UP, under a name a caller can write?"
+
+    ``decorates``
+        ``name -> [names of module-level defs decorated with @name or @name(...)]``. A
+        decorator's return value is BOUND TO THE NAME OF THE THING IT DECORATES, which is
+        the single most important fact in this whole clause: ``_absence_is_never_a_number``
+        returns ``guarded``, and what a caller can reach is not ``guarded`` but
+        ``_evaluate_dial``.
+
+    ``assigned_from``
+        ``callee -> [module-level names assigned from callee(...)]``. ``HANDLER =
+        make_handler()`` puts ``make_handler``'s return value where anyone can reach it.
+
+    ``defined_at_module_level``
+        every name bound by a module-level ``def``, ``class`` or assignment. Used to tell a
+        module-level container from a local one.
+    """
+    decorates: dict = {}
+    assigned_from: dict = {}
+    defined: set = set()
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            defined.add(node.name)
+            for decorator in node.decorator_list:
+                head = decorator.func if isinstance(decorator, ast.Call) else decorator
+                name = getattr(head, "id", None) or getattr(head, "attr", None)
+                if name:
+                    decorates.setdefault(name, []).append(node.name)
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            bound = [t.id for t in targets if isinstance(t, ast.Name)]
+            defined.update(bound)
+            if isinstance(node.value, ast.Call):
+                callee = _callee_name(node.value)
+                if callee:
+                    assigned_from.setdefault(callee, []).extend(bound)
+    return {
+        "decorates": decorates,
+        "assigned_from": assigned_from,
+        "defined_at_module_level": defined,
+    }
+
+
+#: Route tags produced by :func:`_escape_routes`. Named as data so the check's own notes and
+#: its violations quote the same words a reader finds in this file.
+ESCAPE_RETURNED = "RETURNED"
+ESCAPE_STORED = "STORED_UNDER"
+ESCAPE_PASSED = "PASSED_TO"
+
+
+def _escape_routes(local_name: str, enclosing) -> list:
+    """How ``local_name`` LEAVES ``enclosing``'s frame, as ``(tag, destination)`` pairs.
+
+    An object that never leaves the frame it was defined in cannot be obtained by anybody,
+    whatever it is called. That is the whole of the reachability clause and this function is
+    where it is decided.
+    """
+    routes = []
+    for node in ast.walk(enclosing):
+        if isinstance(node, ast.Return) and getattr(node.value, "id", None) == local_name:
+            routes.append((ESCAPE_RETURNED, enclosing.name))
+        elif isinstance(node, ast.Assign) and getattr(node.value, "id", None) == local_name:
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    # A rebinding inside the same frame. Not an escape by itself; the new
+                    # local name is followed by the caller of this function.
+                    routes.append((ESCAPE_RETURNED, target.id))
+                else:
+                    routes.append((ESCAPE_STORED, _root_name(target) or "<unreadable>"))
+        elif isinstance(node, ast.Call):
+            for argument in list(node.args) + [k.value for k in node.keywords]:
+                if getattr(argument, "id", None) == local_name:
+                    routes.append((ESCAPE_PASSED, _callee_name(node)))
+    return routes
+
+
+def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
+    """**THE REACHABILITY CLAUSE.** Can a caller outside this module obtain this callable?
+
+    ``PO-DECISIONS-0012`` ruling 2: *"The doors instrument's membership clause is corrected
+    from NAME-PREFIX (a vocabulary — CD-PL-F74's own conviction) to REACHABILITY."*
+
+    **THE CRITERION, STATED ONCE AND REPEATED VERBATIM IN THE OTHER TWO CD-RULE-004 PLACES:**
+
+        A callable is a subject of this check when a caller OUTSIDE ITS MODULE can OBTAIN
+        AND CALL it. For a MODULE-LEVEL ``def`` the identifier at the ``def`` site IS the
+        binding a caller names, so publicness of that identifier is the right question and
+        nothing changes. For a FUNCTION-LOCAL ``def`` the identifier at the ``def`` site is
+        a LOCAL VARIABLE THAT NO CALLER CAN EVER NAME, so asking whether it begins with an
+        underscore is asking about the wrong name entirely. This clause instead follows the
+        object's ESCAPE ROUTE out of its enclosing function and asks whether the binding it
+        REACHES is public.
+
+    **WHY THIS IS NOT "A SUBTLER NAME HEURISTIC", WHICH IS THE THING THE INCREMENT WAS
+    WARNED AGAINST.** The test of a name heuristic is this project's own rename test, and
+    the two spellings pull apart:
+
+    * renaming the LOCAL (``guarded`` -> ``_guarded``) changes NOTHING, because no caller
+      could name it under either spelling. **The old clause changed its verdict on exactly
+      this rename — 1 violation to 0 — which is what proved it a vocabulary.**
+    * renaming the DESTINATION (``_evaluate_dial`` -> ``evaluate_dial``) DOES change the
+      verdict, and correctly: that name is one a caller writes, and making it public is
+      making the object reachable. **A criterion that ignored that rename would be
+      unsound in the other direction.**
+
+    Returns ``(reachable, why)``. ``why`` is quoted in the violation and in the notes, so a
+    reader never has to infer which clause decided their callable.
+
+    **DENY BY DEFAULT.** Every route this function cannot RESOLVE returns reachable=True.
+    An unreadable escape is treated as an escape (DECLARED LIMIT 9).
+    """
+    if not function_chain:
+        # Module level — the identifier IS the binding. Unchanged behaviour.
+        return _is_public(name), "module-level name"
+
+    enclosing = function_chain[-1]
+    routes = _escape_routes(name, enclosing)
+    if not routes:
+        # **WHAT THIS SAYS IS WHAT WAS OBSERVED, NOT WHAT IT IMPLIES.** An earlier wording
+        # read "it NEVER LEAVES that frame", which is a stronger claim than the evidence:
+        # `return {"decide": local}` is a return of a DICT, so no route is tagged, and the
+        # local escapes anyway. The verdict is still the safe one — on a judgement path the
+        # callable lands in the NETS population and an undeclared one FAILS — but the
+        # SENTENCE was wrong, and a shipped declaration wrong in a stated direction is this
+        # project's most-found defect. See DECLARED LIMIT 9.
+        return False, (
+            f"function-local in {enclosing.name}(), and this clause found NO escape route "
+            "it can read: no `return <name>`, no store into a container or attribute, and "
+            "it is passed to nothing. **THAT IS AN OBSERVATION, NOT A PROOF THAT IT CANNOT "
+            "ESCAPE** — an escape inside a container literal is invisible here "
+            "(DECLARED LIMIT 9)"
+        )
+
+    for tag, destination in routes:
+        if tag == ESCAPE_STORED:
+            return True, (
+                f"function-local in {enclosing.name}() but STORED UNDER {destination!r}, "
+                "which puts it where a caller can subscript or attribute their way to it "
+                "— this is the fourth Assurance seat's ESCAPE 4 ARM 4 shape"
+            )
+        if tag == ESCAPE_PASSED:
+            return True, (
+                f"function-local in {enclosing.name}() but PASSED TO {destination!r}(), "
+                "and this check does not know whether the callee retains it. DENY BY "
+                "DEFAULT (DECLARED LIMIT 9)"
+            )
+
+    # Everything that remains is a RETURN. The object is reachable exactly where its
+    # enclosing function's return value is reachable, so ask the same question one frame out.
+    outer_reachable, outer_why = _reachable_public_binding(
+        enclosing.name, function_chain[:-1], bindings
+    )
+    if outer_reachable:
+        return True, (
+            f"function-local in {enclosing.name}() and RETURNED from it, and "
+            f"{enclosing.name} is itself reachable ({outer_why})"
+        )
+
+    if not function_chain[:-1]:
+        # The enclosing function is module-level and non-public. Its return value can still
+        # escape two ways, and BOTH are followed rather than assumed away.
+        for target in bindings["decorates"].get(enclosing.name, []):
+            if _is_public(target):
+                return True, (
+                    f"function-local in {enclosing.name}(), which DECORATES the public "
+                    f"module-level {target!r} — the decorator's return value IS {target!r}"
+                )
+        for target in bindings["assigned_from"].get(enclosing.name, []):
+            if _is_public(target):
+                return True, (
+                    f"function-local in {enclosing.name}(), whose return value is bound to "
+                    f"the public module-level name {target!r}"
+                )
+        decorated = bindings["decorates"].get(enclosing.name, [])
+        assigned = bindings["assigned_from"].get(enclosing.name, [])
+        destinations = sorted(set(decorated + assigned))
+        return False, (
+            f"function-local in {enclosing.name}(), which is a NON-PUBLIC module-level "
+            f"name; its return value reaches only {destinations or ['nothing at module level']}, "
+            "every one of them non-public"
+        )
+
+    return False, (
+        f"function-local in {enclosing.name}() and returned from it, and {enclosing.name} "
+        f"is not reachable ({outer_why})"
+    )
 
 
 def _decorator_names(node) -> list:
@@ -603,6 +904,14 @@ def main() -> int:
     #: every run: an alias that resolves silently is only half of 'counted, not hidden'.
     aliased_spellings: dict = {}
     decorated = 0
+    #: Function-local callables the reachability clause declined to make doors, with the
+    #: reason it gave. Reconciled against DECLARED_NETS after the walk — SET EQUALITY IN
+    #: BOTH DIRECTIONS (PO-DECISIONS-0012 ruling 2).
+    unreachable_locals: list = []
+    exempt_unreachable_local = 0
+    #: relative path -> parsed module, kept so the NETS reconciliation can resolve a
+    #: declared post-condition IN THE MODULE IT IS DECLARED IN rather than by grepping.
+    trees_by_relative: dict = {}
     exempt_private = 0
     exempt_property = 0
     exempt_protocol = 0
@@ -641,9 +950,42 @@ def main() -> int:
         if spellings != {ESTABLISHED_HERE}:
             aliased_spellings[str(relative)] = sorted(spellings - {ESTABLISHED_HERE})
 
-        for node, in_class_body, class_node in _callables(tree):
-            if not _is_public(node.name):
-                exempt_private += 1
+        bindings = _module_bindings(tree)
+        # RELATIVE TO `src/`, NOT to the package root, so a declared net's `module` field
+        # reads `crash_detector/engine/evaluate.py` — the spelling a reader recognises as
+        # the module — rather than the package-internal `engine/evaluate.py`.
+        relative_src = str(path.relative_to(package_root.parent))
+        trees_by_relative[relative_src] = tree
+
+        for node, in_class_body, class_node, function_chain in _callables(tree):
+            # ---------------------------------------------------------------- #
+            # THE MEMBERSHIP CLAUSE — REACHABILITY, NOT NAME-PREFIX.
+            # PO-DECISIONS-0012 ruling 2. See _reachable_public_binding for the criterion
+            # and for why it is not a subtler name heuristic.
+            # ---------------------------------------------------------------- #
+            reachable, why = _reachable_public_binding(
+                node.name, function_chain, bindings
+            )
+            if not reachable:
+                if function_chain:
+                    # A function-local callable this clause declines to make a door. THE
+                    # RULING'S SENTENCE: "'Not a door' must never again mean 'not seen.'"
+                    # It is recorded here and reconciled against DECLARED_NETS below, so
+                    # the only way out of this branch is a written declaration.
+                    unreachable_locals.append(
+                        (
+                            relative_src,
+                            node.lineno,
+                            ".".join([f.name for f in function_chain] + [node.name]),
+                            why,
+                            node,
+                            in_judgement_package or _returns_a_judgement_value(node),
+                            ".".join(f.name for f in function_chain),
+                        )
+                    )
+                    exempt_unreachable_local += 1
+                else:
+                    exempt_private += 1
                 continue
             decorators = _decorator_names(node)
             if "property" in decorators or any(d == "setter" for d in decorators):
@@ -661,7 +1003,7 @@ def main() -> int:
                 continue
 
             subjects += 1
-            where = _where(class_node, node)
+            where = _where(class_node, node, function_chain)
             if by_rule_2 and not by_rule_1:
                 reached_only_by_rule_2.append(f"{relative}:{node.lineno} {where}")
 
@@ -747,6 +1089,173 @@ def main() -> int:
                     "signature is guarding a door that is not there.",
                 )
 
+    # ================================================================================== #
+    # THE SECOND POPULATION — **NETS**. PO-DECISIONS-0012 ruling 2.
+    #
+    #   "A second declared population is created: NETS — function-local post-condition
+    #    guards on judgement paths — enumerated and asserted exactly as doors are, each with
+    #    its post-condition named. 'Not a door' must never again mean 'not seen.' Zero
+    #    unclassified interceptors on any judgement path."
+    #
+    # ASSERTED, NOT PRINTED, AND IN BOTH DIRECTIONS. The doors population is asserted by
+    # violating on an undecorated subject; this one is asserted by violating on a member of
+    # either set that is not in the other, and by checking each declaration AGAINST THE CODE
+    # rather than reading it. A declaration nothing can falsify is a hand-maintained summary.
+    # ================================================================================== #
+    # IDENTITY IS (module, ENCLOSING FUNCTION) AND NOT (module, the net's own qualname).
+    # The first version of this reconciliation keyed on the net's own name and FAILED THE
+    # RENAME TEST, MEASURED: `guarded` -> `_guarded` took the check from PASS to FAIL with
+    # NET_DECLARED_BUT_ABSENT, because the register was identifying its member by an
+    # identifier no caller can name — PO-DECISIONS-0012 ruling 2's own defect, reintroduced
+    # in the fix for it. The enclosing function is a MODULE-LEVEL name, so it is a name a
+    # reader can look up and a caller can reference.
+    on_a_judgement_path = [row for row in unreachable_locals if row[5]]
+    found_nets = {(row[0], row[6]) for row in on_a_judgement_path}
+    declared_nets = {(net.module, net.enclosing) for net in DECLARED_NETS}
+
+    for relative, lineno, qualname, why, node, _, enclosing in on_a_judgement_path:
+        check.asserted()
+        if (relative, enclosing) not in declared_nets:
+            check.violation(
+                package_root.parent / relative,
+                lineno,
+                "UNCLASSIFIED_INTERCEPTOR",
+                f"{qualname} is a function-local callable ON A JUDGEMENT PATH that the "
+                f"reachability clause declined to make a door ({why}), AND IT IS NOT "
+                "DECLARED AS A NET. PO-DECISIONS-0012 ruling 2: \"'Not a door' must never "
+                "again mean 'not seen.'\" Declare it in tools/register/declared_nets.py "
+                "with the callable that IS its post-condition named — or make it a door. "
+                "**ADDING A ROW THERE IS NOT AN EXEMPTION**: the declaration is checked "
+                "against the code and fails if the post-condition is not actually called.",
+            )
+
+    for net in DECLARED_NETS:
+        check.asserted()
+        if (net.module, net.enclosing) not in found_nets:
+            check.violation(
+                package_root.parent / net.module,
+                0,
+                "NET_DECLARED_BUT_ABSENT",
+                f"a NET is declared inside {net.enclosing}() in {net.module} "
+                "(tools/register/declared_nets.py) and this walk found no unreachable "
+                "function-local callable there. **THREE CAUSES AND THE ROW CANNOT TELL "
+                "THEM APART, SO ALL THREE ARE NAMED:** it was DELETED; the enclosing "
+                f"function {net.enclosing}() was RENAMED; or the callable BECAME REACHABLE "
+                "and is now a door. A declaration outliving the thing it describes is how a "
+                "register stops being evidence. Correct the declaration or restore the net.",
+            )
+            continue
+
+        tree = trees_by_relative.get(net.module)
+        siblings = [
+            row for row in on_a_judgement_path
+            if (row[0], row[6]) == (net.module, net.enclosing)
+        ]
+        check.asserted()
+        if len(siblings) > 1:
+            check.violation(
+                package_root.parent / net.module,
+                siblings[0][1],
+                "AMBIGUOUS_NET",
+                f"{net.enclosing}() in {net.module} holds "
+                f"{len(siblings)} unreachable function-local callables "
+                f"({[row[2] for row in siblings]}) and this row cannot say which one it "
+                "declares. **THE INSTRUMENT REFUSES TO GUESS.** Identity here is the "
+                "ENCLOSING function precisely so it does not depend on a local identifier; "
+                "the cost of that choice is this case, and it is a refusal rather than a "
+                "silent first-match.",
+            )
+            continue
+        node = siblings[0][4]
+        module_level = {
+            child.name
+            for child in (tree.body if tree else [])
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        check.asserted()
+        if net.post_condition not in module_level:
+            check.violation(
+                package_root.parent / net.module,
+                node.lineno,
+                "NET_POST_CONDITION_UNRESOLVABLE",
+                f"the NET inside {net.enclosing}() declares its post-condition as "
+                f"{net.post_condition!r}, and there is no module-level def of that name in "
+                f"{net.module}. **A NET'S POST-CONDITION IS NAMED AS DATA, NOT DESCRIBED IN "
+                "PROSE** (PO-DECISIONS-0012 ruling 2) — a name that resolves to nothing is "
+                "prose with a colon in it.",
+            )
+            continue
+
+        check.asserted()
+        called = {
+            _callee_name(inner)
+            for inner in ast.walk(node)
+            if isinstance(inner, ast.Call)
+        }
+        if net.post_condition not in called:
+            check.violation(
+                package_root.parent / net.module,
+                node.lineno,
+                "NET_POST_CONDITION_NOT_CALLED",
+                f"the NET inside {net.enclosing}() declares {net.post_condition!r} as its post-condition and "
+                "ITS BODY DOES NOT CALL IT. This is the assertion that makes the "
+                "declaration data rather than a label: a maintainer who removes the call "
+                "and leaves the declaration alone has removed the guard and kept the "
+                "paperwork, which is CD-ASR-F03's own shape.",
+            )
+            continue
+
+        check.asserted()
+        post = next(
+            child for child in tree.body
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and child.name == net.post_condition
+        )
+        if _admits_call(post) is None:
+            check.violation(
+                package_root.parent / net.module,
+                post.lineno,
+                "NET_POST_CONDITION_NOT_A_DOOR",
+                f"the NET inside {net.enclosing}(): its post-condition {net.post_condition!r} carries no "
+                f"@{ADMITS}(...). A net exists to check what a body returned; a "
+                "post-condition that does not establish its own arguments believes whatever "
+                "the body hands it, which is the failure the net was written to prevent, "
+                "one layer in.",
+            )
+
+    check.note(
+        f"NETS — THE SECOND DECLARED POPULATION (PO-DECISIONS-0012 ruling 2). FOUND: "
+        f"{len(found_nets)}. DECLARED: {len(declared_nets)}. NOT DECLARED BUT FOUND: "
+        f"{len(found_nets - declared_nets)}. DECLARED BUT NOT FOUND: "
+        f"{len(declared_nets - found_nets)}. **SET EQUALITY IS ASSERTED IN BOTH DIRECTIONS, "
+        "NOT PRINTED** — and each declaration is checked AGAINST THE CODE: the "
+        "post-condition must be a module-level def in that module, the net's body must "
+        "actually CALL it, and it must itself be an admits door."
+    )
+    for net in DECLARED_NETS:
+        found_leaf = [
+            row[2] for row in on_a_judgement_path
+            if (row[0], row[6]) == (net.module, net.enclosing)
+        ]
+        check.note(
+            f"  NET: {net.module} inside {net.enclosing}() — FOUND AS {found_leaf or 'NOTHING'}; "
+            f"post-condition {net.post_condition}(). **THE LEAF NAME IS REPORTED AND IS "
+            "LOAD-BEARING FOR NOTHING** — identity is the enclosing MODULE-LEVEL name, so "
+            "renaming the local does not move this verdict. DOES NOT BIND: "
+            f"{net.what_it_does_not_bind[:130]}..."
+        )
+    off_path = [row for row in unreachable_locals if not row[5]]
+    check.note(
+        f"UNREACHABLE FUNCTION-LOCAL CALLABLES **NOT** ON A JUDGEMENT PATH: {len(off_path)}. "
+        "These are NOT nets and are NOT declared, because ruling 2's population is "
+        "'function-local post-condition guards ON JUDGEMENT PATHS' and this check does not "
+        "widen a Product Owner's population on its own authority. **THEY ARE PRINTED SO "
+        "THAT 'not a net' DOES NOT BECOME THE NEW 'not seen'** — which is the exact defect "
+        "ruling 2 exists to prevent, one population over."
+    )
+    for relative, lineno, qualname, why, _node, _, _enclosing in off_path:
+        check.note(f"  NOT A DOOR, NOT ON A JUDGEMENT PATH: {relative}:{lineno} {qualname} — {why}")
+
     check.note(
         f"RULE 1 (judgement-path packages, deny-by-default within): "
         f"{'/'.join(JUDGEMENT_PATH_PACKAGES)} — {modules_by_rule_1} module(s) read."
@@ -759,8 +1268,11 @@ def main() -> int:
         check.note(f"  by rule 2 only: {row}")
     check.note(f"SUBJECTS ENUMERATED: {subjects}. DECORATED: {decorated}.")
     check.note(
-        f"EXEMPT: {exempt_private} non-public, {exempt_property} @property accessor(s), "
-        f"{exempt_protocol} Protocol stub(s)."
+        f"EXEMPT: {exempt_private} non-public module-level or method names, "
+        f"{exempt_unreachable_local} UNREACHABLE function-local callable(s) "
+        f"(the WO-2R3 increment-7 reachability clause — each one is enumerated above, as a "
+        f"NET if it is on a judgement path and as a printed row if it is not), "
+        f"{exempt_property} @property accessor(s), {exempt_protocol} Protocol stub(s)."
     )
     check.note(
         f"staticmethod/classmethod in the subject set: {static_or_class_methods} "
@@ -878,19 +1390,28 @@ def _callables(tree):
     ``in_class_body`` is TRUE only when the callable's IMMEDIATE parent is a class, because
     that is what it is used for — deciding whether a receiver parameter is skipped — and a
     function defined inside a METHOD has no receiver of its own.
+
+    **THE FOURTH YIELD, NEW AT WO-2R3 INCREMENT 7** (``PO-DECISIONS-0012`` ruling 2): the
+    chain of ENCLOSING FUNCTIONS, outermost first. It is empty for a module-level ``def`` and
+    for a method, and non-empty for exactly the callables whose own identifier is a local
+    variable nobody outside can name. :func:`_reachable_public_binding` needs it, and it is
+    yielded rather than recomputed so the walk and the membership clause cannot disagree
+    about what encloses what.
     """
-    def descend(node, class_chain, immediate_class):
+    def descend(node, class_chain, immediate_class, function_chain):
         for child in ast.iter_child_nodes(node):
             if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 if all(_is_public(name) for name in class_chain):
-                    yield child, immediate_class is not None, immediate_class
-                yield from descend(child, class_chain, None)
+                    yield child, immediate_class is not None, immediate_class, function_chain
+                yield from descend(child, class_chain, None, function_chain + [child])
             elif isinstance(child, ast.ClassDef):
-                yield from descend(child, class_chain + [child.name], child)
+                yield from descend(
+                    child, class_chain + [child.name], child, function_chain
+                )
             else:
-                yield from descend(child, class_chain, immediate_class)
+                yield from descend(child, class_chain, immediate_class, function_chain)
 
-    yield from descend(tree, [], None)
+    yield from descend(tree, [], None, [])
 
 
 def _is_protocol(class_node) -> bool:
@@ -902,8 +1423,21 @@ def _is_protocol(class_node) -> bool:
     return False
 
 
-def _where(class_node, node) -> str:
-    return f"{class_node.name}.{node.name}" if class_node is not None else node.name
+def _where(class_node, node, function_chain=()) -> str:
+    """The name to PRINT for a callable, qualified by whatever encloses it.
+
+    **THE FUNCTION CHAIN IS INCLUDED SINCE WO-2R3 INCREMENT 7, AND ITS ABSENCE WAS A REAL
+    REPORTING DEFECT** found by this increment's own carrier: a function-local door was
+    reported as the bare leaf name, so a reader was told ``_decide is a public entry point``
+    with no way to find which function it lives in. The traversal has walked at any nesting
+    depth since increment 6; the REPORTING had not caught up, and a violation a reader
+    cannot locate is a violation half-delivered.
+    """
+    enclosing = [f.name for f in function_chain]
+    if class_node is not None:
+        enclosing.append(class_node.name)
+    prefix = ".".join(enclosing)
+    return f"{prefix}.{node.name}" if prefix else node.name
 
 
 if __name__ == "__main__":

@@ -1,0 +1,281 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 7 — ITEM 2. THE PO-DECISIONS-0012 RECLASSIFICATION.
+#
+# PART A: the doors membership clause corrected from NAME-PREFIX to REACHABILITY (ruling 2).
+# PART B: NETS created as a second enumerated-and-asserted population (ruling 2).
+# PART C: the RED doors row and the two failing tests resolve BY THE RECLASSIFICATION (ruling 3).
+#
+# **GATED BY ITEM 1, WHICH LANDED AND DID NOT FALSIFY RULING 1.** BL-...-0074 records the
+# measurement in full. Had it landed the other way this item would not exist.
+#
+# **THE ONLY PERMITTED ROUTE TO GREEN WAS RECLASSIFICATION** (ruling 3 names exemption and
+# weakening as prohibited). MEASURED PROOF THAT NEITHER WAS TAKEN, and it is a `git diff --stat`
+# rather than an assurance: **NO FILE UNDER `src/` AND NO FILE UNDER `tests/` WAS EDITED TO OBTAIN
+# THE GREEN.** The only file changed to move the verdict is the INSTRUMENT. The six test additions
+# are NEW CARRIERS and not one existing assertion was touched.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0074. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T003909Z-0075
+timestamp_utc: "2026-08-23T00:39:09Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-03
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0012.md rulings 1, 2 and 3'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+parent_entry_id: BL-20260823T001518Z-0074
+schema_version: 1
+
+record_type: INCREMENT
+
+part_a_membership_by_reachability:
+  the_criterion_and_it_is_stated_in_all_three_CD_RULE_004_PLACES: >
+    **A CALLABLE IS A SUBJECT WHEN A CALLER OUTSIDE ITS MODULE CAN OBTAIN AND CALL IT.** For a
+    MODULE-LEVEL `def` the identifier at the `def` site IS the binding a caller names, so the
+    underscore test is asked about the right name and BEHAVES EXACTLY AS BEFORE. For a
+    FUNCTION-LOCAL `def` it was asked about a LOCAL VARIABLE NO CALLER CAN EVER NAME; the check now
+    follows the object's ESCAPE ROUTE out of its enclosing function — RETURNED, STORED_UNDER a
+    container or attribute, or PASSED_TO a callee — and asks whether the binding it REACHES is
+    public. **DENY BY DEFAULT: any route the clause cannot resolve counts as reachable.**
+  the_three_places:
+  - 'tools/register/check_judgement_path_doors.py — the EXEMPTIONS list, `_reachable_public_binding`''s
+     own docstring, and DECLARED LIMIT 9.'
+  - 'required-tests.yaml — the doors row, CHECK LIMIT 8.'
+  - 'contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md — CHECK LIMIT 8, and the correction
+     to the "rename test" section (below).'
+  why_this_is_not_a_subtler_name_heuristic_WHICH_IS_THE_NAMED_PROHIBITION: >
+    **THE TEST OF A NAME HEURISTIC IS THE RENAME TEST, AND THE TWO SPELLINGS PULL APART.** Renaming
+    the LOCAL changes nothing, because no caller could name it under either spelling. Renaming the
+    DESTINATION (`_evaluate_dial` -> `evaluate_dial`) DOES change the verdict, and correctly — that
+    name is one a caller writes, and making it public IS making the object reachable. **A CRITERION
+    THAT IGNORED THE SECOND RENAME WOULD BE UNSOUND IN THE OTHER DIRECTION.** What changed is
+    WHICH NAME the question is asked about: from one no caller can use, to one every caller can.
+  the_code_path_that_changed_NOT_the_header:
+  - '`_callables` now yields a FOURTH value — the chain of ENCLOSING FUNCTIONS. It is yielded rather
+     than recomputed so the walk and the membership clause cannot disagree about what encloses what.'
+  - '`_module_bindings(tree)` is new: per module, `decorates` (name -> module-level defs it
+     decorates), `assigned_from` (callee -> module-level names assigned from `callee(...)`), and
+     the module-level name set. **`decorates` IS THE LOAD-BEARING ONE** — a decorator''s return
+     value is bound to THE NAME OF THE THING IT DECORATES, so what a caller can reach is not
+     `guarded` but `_evaluate_dial`.'
+  - '`_escape_routes` and `_reachable_public_binding` are new and RECURSE one frame out per RETURN.'
+  - '`_where` now qualifies a violation by its enclosing functions. **THAT WAS A REAL REPORTING
+     DEFECT FOUND BY THIS INCREMENT''S OWN CARRIER**: the traversal has walked at any depth since
+     increment 6, but a function-local door was still reported as the bare leaf name, so a reader
+     was told "`_decide` is a public entry point" with no way to find which function it lives in.
+     **A VIOLATION A READER CANNOT LOCATE IS A VIOLATION HALF-DELIVERED.**'
+
+part_b_NETS:
+  where: 'tools/register/declared_nets.py — NEW FILE. Not `tools/sweep/declared_dispositions.py`, which is protected scope and not this seat''s (CD-D-130).'
+  the_population_at_this_sha: >
+    **FOUND 1, DECLARED 1, NOT-DECLARED-BUT-FOUND 0, DECLARED-BUT-NOT-FOUND 0.**
+    `crash_detector/engine/evaluate.py` inside `_absence_is_never_a_number()`, post-condition
+    `refuse_a_number_without_its_inputs`.
+  the_post_condition_is_named_as_DATA_and_here_is_what_makes_it_data: >
+    **THE INSTRUMENT CHECKS THE DECLARATION AGAINST THE CODE.** The strongest of the five checks is
+    `NET_POST_CONDITION_NOT_CALLED`: the net's BODY must actually call the callable the row names.
+    **A MAINTAINER WHO DELETES THE GUARD CALL AND LEAVES THE DECLARATION ALONE BREAKS THE BUILD** —
+    which is CD-ASR-F03's own shape, a body edit that removes a guard, asked of the guard's own
+    paperwork. That is the only definition of "named" that survives contact with an editor.
+  the_six_violations: >
+    UNCLASSIFIED_INTERCEPTOR · NET_DECLARED_BUT_ABSENT · NET_POST_CONDITION_UNRESOLVABLE ·
+    NET_POST_CONDITION_NOT_CALLED · NET_POST_CONDITION_NOT_A_DOOR · AMBIGUOUS_NET.
+  AMBIGUOUS_NET_is_a_refusal_and_not_a_guess: >
+    Two unreachable locals in one enclosing function and the instrument REFUSES rather than silently
+    first-matching. It is the declared cost of the identity choice below, paid loudly.
+  and_the_off_judgement_path_rows_are_PRINTED: >
+    Function-local callables the clause exempts that are NOT on a judgement path are printed, not
+    asserted, because ruling 2's population is "guards ON JUDGEMENT PATHS" and **this check does not
+    widen a Product Owner's population on its own authority.** They are printed so that "not a net"
+    does not quietly become the new "not seen" — the same defect, one population over. At this SHA
+    that count is **0**.
+
+part_c_the_RED_row_and_the_two_failing_tests:
+  measured: |
+    doors check   EXIT 1 -> **EXIT 0**.  27 subjects, 27 decorated, 60 assertions (was 28/27/55).
+    suite         2 failed, 1549 passed -> **1557 passed, 0 failed** (1551 + 6 new carriers).
+    class-2 sweep EXIT 1, 534 sites, 15 violations — **UNMOVED, and not this seat's to move.**
+  the_two_tests_went_green_WITHOUT_BEING_TOUCHED_and_here_is_the_proof: >
+    `git diff --stat` for this item lists `tools/register/check_judgement_path_doors.py`,
+    `required-tests.yaml` and `contracts/execution/...md`, plus two NEW files and an APPEND to
+    `tests/test_judgement_path_doors.py`. **NOT ONE LINE OF `src/` IS CHANGED BY THIS ITEM AND NOT
+    ONE EXISTING ASSERTION IN ANY TEST IS CHANGED.** `test_the_static_check_passes_and_is_not_vacuous`
+    and `::test_the_collector_boundary_is_a_judgement_path_package_and_cd_bp_003_is_what_remains`
+    both pass on their ORIGINAL assertions. That is what ruling 3 required and it is checkable in
+    one command rather than asserted here.
+
+the_required_contrasts_MEASURED_BOTH_ARMS:
+  instrument: 'variants/WO-2R3/P-H-the-reachability-criterion-under-attack.sh — EXIT 0. **EACH ARM RUNS ITS OWN TREE''S OWN COPY OF THE INSTRUMENT AND PRINTS ITS SHA** (CD-PL-F98).'
+  contrast_1_the_rename_test: |
+    arm                              OLD clause (name-prefix)   NEW clause (reachability)
+    `guarded`                        exit 1, 28 subjects        exit 0, 27 subjects
+    `guarded` -> `_guarded`          **EXIT 0, 27 subjects**    exit 0, 27 subjects
+    **THE OLD CLAUSE'S VERDICT MOVES ON ONE IDENTIFIER. THE NEW CLAUSE'S DOES NOT, AND THE SUBJECT
+    COUNT IS IDENTICAL IN BOTH SPELLINGS.** The fifth seat's measurement reproduced by me
+    independently, and the new clause put through the same test.
+  contrast_2_ESCAPE_4_ARM_4_REQUIRED_BY_THE_DISPATCH: |
+    arm                              OLD clause                 NEW clause
+    + POLICY["decide"]  (public)     exit 1, BOTH flagged       exit 1, `_install_policy.decide`
+    + POLICY["_decide"] (private)    **exit 1, PLANT NOT        **exit 1,
+                                       FLAGGED** — the single     `_install_policy._decide`**
+                                       violation is `guarded`
+                                       at line 341
+    **ROW 2 IS THE ONE THAT DECIDES WHETHER THE CRITERION IS STRUCTURAL.** A name-prefix clause
+    CANNOT SEE a `_decide` at all, whatever else it does. The new clause catches it BECAUSE IT
+    ESCAPES, not because of how it is spelled. **THE VIOLATION LOCATIONS ARE PASTED, NOT DEDUCED
+    FROM SUBJECT COUNTS** — an earlier version of the harness printed only the rule name and
+    reading which callable was flagged meant inferring it, which is the kind of inference this
+    project punishes.
+  contrast_3_the_register_asserted_in_both_directions: |
+    declaration DELETED     -> exit 1, UNCLASSIFIED_INTERCEPTOR at evaluate.py:341
+    guard CALL deleted,     -> exit 1, NET_POST_CONDITION_NOT_CALLED at evaluate.py:341
+      declaration left alone
+    **TWO ARMS EXITING 1 FOR DIFFERENT REASONS, AND THE REASONS ARE PRINTED** (CD-ENG-WO2R3-F12).
+
+findings:
+- id: CD-ENG-WO2R3-03-F06
+  severity: MEDIUM
+  against: 'THIS SEAT''S OWN FIRST IMPLEMENTATION OF THE NETS REGISTER. It failed the rename test.'
+  what_was_measured: >
+    The register's first version identified a net by its own qualname
+    (`_absence_is_never_a_number.guarded`). **MEASURED: `guarded` -> `_guarded` took the check from
+    PASS to FAIL with NET_DECLARED_BUT_ABSENT.** The doors MEMBERSHIP survived the rename — subjects
+    27 in both arms, no door violation either arm — but the REGISTER did not.
+  why_it_matters_more_than_it_looks: >
+    **THAT IS PO-DECISIONS-0012 RULING 2's OWN DEFECT, REINTRODUCED ONE FILE AWAY, INSIDE THE FIX
+    FOR IT.** The ruling corrected a clause for deciding by an identifier no caller can name; the
+    first register keyed on exactly such an identifier. It was caught only because the dispatch made
+    the rename test a REQUIRED contrast on this seat's own criterion — **had the contrast been
+    optional, this would have shipped.**
+  the_repair: >
+    Identity is now the ENCLOSING function, which is a MODULE-LEVEL name — one a reader can look up
+    and a caller can reference — and the net's own leaf name is REPORTED and load-bearing for
+    nothing. **RE-MEASURED: both spellings now exit 0 with 60 assertions and 27 subjects.**
+  the_cost_declared_rather_than_hidden: >
+    Renaming the ENCLOSING function still fails the check. That is a real name dependence and it is
+    kept deliberately, because failing LOUDLY beats describing the wrong thing silently; the
+    NET_DECLARED_BUT_ABSENT text now names ALL THREE possible causes (deleted, enclosing renamed,
+    became reachable) rather than the two it originally guessed at. And two locals in one enclosing
+    function is AMBIGUOUS_NET — a refusal, not a first-match.
+  disposition: 'REPAIRED IN THIS COMMIT. Recorded because the repair is not the interesting part; the fact that the required contrast caught it is.'
+
+- id: CD-ENG-WO2R3-03-F07
+  severity: LOW
+  against: 'THIS SEAT''S OWN DECLARED LIMIT, WRITTEN BEFORE IT WAS MEASURED.'
+  what_happened: >
+    DECLARED LIMIT 9's first draft said the container-literal escape — `return {"decide": local}` —
+    was **"A REAL GAP, IN THE UNSAFE DIRECTION."** **THEN I MEASURED IT AND THE ASSERTION WAS
+    WRONG.** Planted into `engine/evaluate.py` at a throwaway tree, the check **EXITS 1** with
+    `UNCLASSIFIED_INTERCEPTOR` at `_install_via_container.decide`, because the NETS population
+    denies by default and backstops the clause's blindness.
+  the_second_thing_the_measurement_found: >
+    **THE VERDICT WAS RIGHT AND THE CLAUSE'S REASON WAS WRONG.** The exemption text read "it NEVER
+    LEAVES that frame", which is a stronger claim than the evidence: the clause observed no escape
+    route it could READ, which is not the same as there being none. Reworded to state the
+    OBSERVATION and to name its own blindness inline.
+  what_is_still_open_and_is_now_declared_at_its_MEASURED_reach: >
+    **OFF a judgement path, such a callable is a printed row and NOTHING FAILS.** NOT PROVED TO BE
+    CARRIED ANYWHERE. At this SHA that population is 0, so the residue is real and currently empty.
+  and_the_general_point_against_myself: >
+    **I WROTE A DECLARED LIMIT FROM INTENT AND IT WAS WRONG IN THE PESSIMISTIC DIRECTION.** This
+    project's most-found defect is the residue understated; this is the same defect with the sign
+    flipped, and it is no better, because a limit nobody can trust in either direction is not a
+    limit. Every clause of DECLARED LIMIT 9 that could be measured now has been.
+  disposition: 'CORRECTED IN THIS COMMIT in all three CD-RULE-004 places.'
+
+- id: CD-ENG-WO2R3-03-F08
+  severity: MEDIUM
+  against: 'contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md, section "The rename test (CD-PL-F74)".'
+  what_is_measured: >
+    That section read: *"TWO name dependences exist and both are disclosed."* **THERE WAS A THIRD
+    AND IT WAS THE MEMBERSHIP CLAUSE ITSELF** — `_is_public(node.name)` asked of a function-local
+    identifier. **A SECTION HEADED "THE RENAME TEST", WHOSE JOB IS TO ENUMERATE THIS CHECK'S NAME
+    DEPENDENCES, MISSED THE ONE IN ITS OWN SUBJECT CLAUSE** — and the fifth Assurance seat found it
+    the only way it could be found, by running the test the section is named after.
+  why_it_is_MEDIUM: >
+    It is the understated-residue defect in the place a reader is most likely to trust: a document
+    that says "we checked for this class of problem, here is the complete list" and whose list is
+    incomplete is worse than one that says nothing, because it stops the next reader looking.
+  disposition: 'CORRECTED IN THIS COMMIT. The superseded sentence is quoted rather than deleted and the third dependence is now CORRECTED rather than merely disclosed.'
+
+- id: CD-ENG-WO2R3-03-F09
+  severity: LOW
+  against: 'THE CONTRAST HARNESS ITSELF — a near-miss recorded because it nearly produced a false table.'
+  what_happened: >
+    P-H's first version built its NEW-clause trees with bare `git ls-files`, **WHICH LISTS ONLY
+    TRACKED FILES**, so the new and uncommitted `tools/register/declared_nets.py` was never copied
+    and **EVERY "NEW" ARM EXITED 1 ON AN ImportError.** Four arms reported exit=1 and in a summary
+    table would have read as "the new criterion fails everything".
+  why_it_is_recorded_rather_than_only_fixed: >
+    **THIS IS CD-ENG-WO2R3-F12 AND CD-PL-F98 IN ONE EVENT**, happening to this seat, in the very
+    harness written to honour them. Two arms exiting 1 for different reasons look identical in a
+    table. It was caught only by reading the arms' output rather than their exit codes, which is
+    exactly what the F12 standard demands and exactly what is easy to skip when a table looks tidy.
+  the_repair: '`git ls-files --cached --others --exclude-standard`, with the reason written into the harness at the line that does it.'
+  disposition: 'REPAIRED. Recorded as a live instance of the standard rather than as a tidy result.'
+
+- id: CD-ENG-WO2R3-03-F10
+  severity: MEDIUM
+  against: 'THE SCOPE OF THE RECLASSIFICATION — what it does NOT reach, and it is a bigger set than the ruling implies.'
+  what_is_measured: >
+    The new clause is applied INSIDE the existing RULE 1 / RULE 2 scope, so it changes exactly one
+    verdict in this tree. **THE FIFTH ASSURANCE SEAT'S M2.3 FINDING IS UNMOVED BY IT.**
+    `admits.apply_at_the_boundary.door` — measured by me as a function-local callable, PUBLIC-named,
+    ARITY-OPEN `(*args, **kwargs)`, carrying no `@admits`, and the callable EVERY value passing
+    through EVERY `@admits` door in this system passes through — **IS REACHABLE UNDER THE NEW
+    CLAUSE** (it is returned from `apply_at_the_boundary`, which is returned from the PUBLIC
+    module-level `admits`, and it becomes the module-level binding of every decorated door). **IT IS
+    STILL NOT A SUBJECT, FOR ONE REASON ONLY: `admission.py` IS NOT UNDER `engine/serving/collectors`
+    AND `door` DECLARES NO JUDGEMENT-VALUE RETURN TYPE.**
+  what_that_means_stated_plainly: >
+    **THE RECLASSIFICATION FIXED THE PUBLIC CLAUSE AND NOT THE PACKAGE CLAUSE.** The fifth seat named
+    both as vocabulary tests; ruling 2 names only the first. So the more load-bearing of the two
+    defects that seat measured is untouched by this increment, and a reader of a green doors check
+    should not conclude otherwise.
+  what_this_seat_did_NOT_do_and_why: >
+    **NOTHING.** Widening RULE 1's package tuple is not in PO-DECISIONS-0013 ruling 6's enumeration,
+    it is DECLARED LIMIT 2's subject, and it would newly flag existing product code — which the
+    dispatch names as a FINDING AND A STOP, not a thing to fix on this seat's authority.
+    **ITEM 5 ADDRESSES `door`'S ARITY-OPENNESS AS A DECLARATION; IT DOES NOT MAKE `door` A SUBJECT
+    OF THIS CHECK AND DOES NOT CLAIM TO.**
+  disposition: 'RAISED AND OPEN. For the Product Owner. It is the natural next ruling after 0012.'
+
+what_this_item_does_NOT_close_MEASURED:
+- '**IT DOES NOT MAKE THE CHECK SEE `admits.door`.** CD-ENG-WO2R3-03-F10 above, measured.'
+- '**IT DOES NOT ABOLISH THE UNDERSCORE CONVENTION FOR MODULE-LEVEL NAMES, AND THAT IS DELIBERATE.**
+   `from crash_detector.engine.evaluate import _evaluate_dial` succeeds — MEASURED at P-F arm A2 —
+   so NO module-level name is truly unreachable in Python. Treating every private helper as a door
+   is a PRODUCT-MEANING decision (PBG-AUTH-005) and §D.1''s class is PUBLIC entry points. **DECLARED,
+   NOT SILENTLY ASSUMED.**'
+- '**IT DOES NOT ANALYSE `PASSED_TO`.** The clause denies by default there, so the outcome is safe,
+   but it reports some callables reachable that are not. An error in the safe direction is still an
+   error and it is not called a closure here.'
+- '**IT DOES NOT SEE `setattr`/`globals()` ESCAPES.** Computed at runtime, invisible to any AST.'
+- '**THE NETS POPULATION IS ONE MEMBER.** A population of one is a population that has not been
+   stress-tested by variety. The six carriers break it in six ways, but every one of them breaks the
+   SAME net. **THAT IS A REAL WEAKNESS OF THIS EVIDENCE AND IT IS STATED RATHER THAN LEFT TO BE FOUND.**'
+- '**THE CLASS-2 SWEEP IS UNMOVED**: EXIT 1, 534 sites, 15 violations, measured by me after this
+   item. Not this seat''s to move (CD-D-130).'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  doors_check: 'EXIT 0 — PASS, 60 assertions, 0 violations. 27 subjects, 27 decorated.'
+  suite: 'EXIT 0 — 1557 passed, 0 failed.'
+  class_2_sweep: 'EXIT 1 — 534 sites, 15 violations. UNMOVED.'
+  P_H_contrast_harness: 'EXIT 0 — 10 arms.'
+  container_literal_probe: 'EXIT 1 — UNCLASSIFIED_INTERCEPTOR, which falsified this seat''s own declared limit.'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. **A RECORD, NOT ASSURANCE.** The sixth Assurance seat should attack the
+  ESCAPE ROUTE ENUMERATION in `_escape_routes` — the criterion is only as good as the routes its
+  author thought of, and that list is short and written down so it can be found short. **AND IT
+  SHOULD TEST THE RESIDUES BEFORE THE CLOSURES**: the off-judgement-path container escape, the
+  unanalysed `PASSED_TO`, and the population of one.

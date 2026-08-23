@@ -693,3 +693,207 @@ def wrapped_probe_door(candidate):
         "and must be corrected in all three CD-RULE-004 places"
     )
     assert "wrapped_probe_door" not in result.stdout
+
+
+# ==================================================================================== #
+# THE REACHABILITY MEMBERSHIP CLAUSE AND THE **NETS** POPULATION.
+# WO-2R3 increment 7, PO-DECISIONS-0012 rulings 1 and 2.
+#
+# **CD-RULE-006: A CHECK REPORTS, A CARRIER FAILS.** Everything below is the carrier. Each
+# test asserts a property BY BREAKING IT in a throwaway copy of the tree, because a test
+# that reads the check's own output and agrees with it is a second opinion from the same
+# witness.
+# ==================================================================================== #
+
+import shutil
+import tempfile
+
+
+def _run_the_check_over(tree: pathlib.Path):
+    return subprocess.run(
+        [sys.executable, "-B", str(tree / "tools" / "register" / "check_judgement_path_doors.py"),
+         "--root", str(tree)],
+        capture_output=True,
+        text=True,
+    )
+
+
+def _throwaway_tree():
+    """A copy of the tree carrying the instrument, the register and src/. Not a fixture on
+    purpose: each test mutates its own copy and reads its OWN instrument, so no two arms can
+    accidentally share a tree (CD-PL-F98)."""
+    destination = pathlib.Path(tempfile.mkdtemp(prefix="cd-nets-"))
+    for part in ("src", "tools"):
+        shutil.copytree(_REPO_ROOT / part, destination / part)
+    return destination
+
+
+def test_the_membership_clause_survives_renaming_the_function_local_binding():
+    """**THE RENAME TEST, APPLIED TO THE CLAUSE THAT REPLACED THE ONE THAT FAILED IT.**
+
+    This is why increment 7 exists. The old membership clause read
+    ``_is_public(node.name)``, and the fifth Assurance seat took the check from 1 violation
+    to 0 by renaming ONE function-local identifier — ``guarded`` to ``_guarded`` — with
+    runtime identity unchanged. A refusal a two-line rename silences is a vocabulary guard
+    wearing a structural label.
+
+    **THE NEW CLAUSE MUST NOT MOVE ON THAT RENAME, AND THIS ASSERTS IT ON A REAL TREE.**
+    Both spellings must produce the same verdict AND the same subject count, because a
+    caller could never name that identifier under either spelling.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        before = _run_the_check_over(tree)
+        source = evaluate_py.read_text()
+        assert "    def guarded(" in source, "the subject of this test moved; fix the test"
+        evaluate_py.write_text(
+            source.replace("    def guarded(", "    def _guarded(")
+                  .replace("        return guarded", "        return _guarded")
+                  .replace("    return guarded", "    return _guarded")
+        )
+        after = _run_the_check_over(tree)
+
+        assert before.returncode == 0, before.stdout + before.stderr
+        assert after.returncode == 0, (
+            "RENAMING THE FUNCTION-LOCAL BINDING MOVED THE VERDICT. The membership clause "
+            "is deciding by an identifier no caller can name, which is exactly the defect "
+            "PO-DECISIONS-0012 ruling 2 corrected.\n" + after.stdout + after.stderr
+        )
+        subjects = lambda r: r.stdout.split("SUBJECTS ENUMERATED:")[1].split(".")[0].strip()
+        assert subjects(before) == subjects(after), (
+            f"the subject set moved on a rename: {subjects(before)} -> {subjects(after)}"
+        )
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_function_local_bound_into_a_module_dict_is_still_a_door():
+    """**ESCAPE 4 ARM 4, AND IT IS A REQUIRED CONTRAST AND NOT AN OPTIONAL ONE.**
+
+    The fourth Assurance seat demonstrated a function-local ``def`` bound into a module dict
+    — ``POLICY["decide"]`` — accepting unestablished arguments live. The reachability clause
+    exempts ``guarded``; the dispatch's condition for that exemption being sound is that the
+    SAME clause still catches this.
+
+    **AND THE LOCAL IS PRIVATE-NAMED HERE ON PURPOSE.** A name-prefix clause cannot see a
+    ``_decide`` at all, whatever else it does, so this arm is the one that proves the new
+    clause is structural rather than a subtler vocabulary: it must be caught BECAUSE IT
+    ESCAPES, not because of how it is spelled.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        clean = _run_the_check_over(tree)
+        assert clean.returncode == 0, clean.stdout + clean.stderr
+
+        evaluate_py.write_text(evaluate_py.read_text() + '''
+
+POLICY: dict = {}
+
+
+def _install_policy():
+    def _decide(spec, usable, now_utc):
+        return Unknown(reason="planted", since_utc=now_utc, missing_inputs=())
+
+    POLICY["decide"] = _decide
+''')
+        planted = _run_the_check_over(tree)
+        assert planted.returncode == 1, (
+            "A FUNCTION-LOCAL CALLABLE STORED INTO A MODULE-LEVEL DICT WAS NOT CAUGHT. "
+            "The reachability clause exempts `guarded` on the ground that it never leaves "
+            "its frame; this one DOES leave, and if it is not caught the exemption is "
+            "unsound.\n" + planted.stdout
+        )
+        assert "UNDECORATED_JUDGEMENT_PATH_DOOR" in planted.stdout
+        assert "_install_policy._decide" in planted.stdout, planted.stdout
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_an_undeclared_interceptor_on_a_judgement_path_fails_the_check():
+    """PO-DECISIONS-0012 ruling 2: *"'Not a door' must never again mean 'not seen.'"*
+
+    Asserted by DELETING the declaration and requiring the check to go red. If this passes
+    with an empty register, the NETS population is decoration.
+    """
+    tree = _throwaway_tree()
+    try:
+        register = tree / "tools" / "register" / "declared_nets.py"
+        source = register.read_text()
+        head, _, _ = source.partition('DECLARED_NETS: "tuple[DeclaredNet, ...]" = (')
+        register.write_text(head + 'DECLARED_NETS: "tuple[DeclaredNet, ...]" = ()\n')
+        emptied = _run_the_check_over(tree)
+        assert emptied.returncode == 1, (
+            "THE REGISTER WAS EMPTIED AND THE CHECK STILL PASSED. The NETS population is "
+            "not asserted.\n" + emptied.stdout
+        )
+        assert "UNCLASSIFIED_INTERCEPTOR" in emptied.stdout
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_net_that_stops_calling_its_post_condition_fails_the_check():
+    """**THE ASSERTION THAT MAKES A DECLARATION DATA RATHER THAN A LABEL.**
+
+    A net's post-condition is *"named as DATA, not as PROSE"* (PO-DECISIONS-0012 ruling 2).
+    The only definition of "named" that survives contact with an editor is one that breaks
+    when the code and the declaration come apart. So: remove the guard call from the net's
+    body, LEAVE THE DECLARATION ALONE, and require red.
+
+    **THIS IS CD-ASR-F03's OWN SHAPE** — a body edit that removes a guard — asked of the
+    guard's own paperwork.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        source = evaluate_py.read_text()
+        call = "        refuse_a_number_without_its_inputs(spec, usable, reading)\n"
+        assert call in source, "the guard call moved; fix the test"
+        evaluate_py.write_text(source.replace(call, "        pass\n"))
+        broken = _run_the_check_over(tree)
+        assert broken.returncode == 1, (
+            "THE GUARD WAS REMOVED AND THE PAPERWORK KEPT, AND THE CHECK PASSED.\n"
+            + broken.stdout
+        )
+        assert "NET_POST_CONDITION_NOT_CALLED" in broken.stdout
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_net_declared_where_none_exists_fails_the_check():
+    """A declared net that no longer exists FAILS. A register whose rows can outlive their
+    subjects is a hand-maintained summary, which is the defect class ruling 2 exists to
+    prevent."""
+    tree = _throwaway_tree()
+    try:
+        register = tree / "tools" / "register" / "declared_nets.py"
+        register.write_text(
+            register.read_text().replace(
+                'enclosing="_absence_is_never_a_number",',
+                'enclosing="_a_function_that_does_not_exist",',
+            )
+        )
+        stale = _run_the_check_over(tree)
+        assert stale.returncode == 1, stale.stdout
+        assert "NET_DECLARED_BUT_ABSENT" in stale.stdout
+        # AND the real net is now unclassified, which is the other direction of the same
+        # set equality. Both must fire, or the register is asserted in one direction only.
+        assert "UNCLASSIFIED_INTERCEPTOR" in stale.stdout, (
+            "only one direction of the set equality fired" + stale.stdout
+        )
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_the_nets_population_is_printed_with_its_declared_residue():
+    """The net's blind spot is DECLARED, not discovered. CD-RULE-004: an understated residue
+    is this project's most-found defect, and the NETS note is one of this limit's three
+    places."""
+    result = _run_the_check()
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "NETS — THE SECOND DECLARED POPULATION" in result.stdout
+    assert "NOT DECLARED BUT FOUND: 0" in result.stdout
+    assert "DECLARED BUT NOT FOUND: 0" in result.stdout
+    assert "post-condition refuse_a_number_without_its_inputs()" in result.stdout
+    assert "DOES NOT BIND" in result.stdout
