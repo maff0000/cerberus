@@ -1,0 +1,149 @@
+# ================================================================================================== #
+# BUILD-LOG-ID-BLOCKS — the allocation table. `PO-DECISIONS-0021` ruling 3(b), increment 12 ITEM 2(c).
+#
+# The ruling: *"per-seat build-log id blocks (closing IMP-023), no shared ACTIVE_WORK.yaml edit,
+# **no shared sequence**. Parallel writers never touch the same bytes."*
+#
+# **A DISCLOSURE THE READER IS OWED BEFORE ANY ROW BELOW.** `IMP-023` **DOES NOT EXIST IN THIS
+# REPOSITORY.** The Project Lead measured it (`Q13`, BL-20260823T134132Z-0139) and this seat
+# re-measured it independently:
+#
+#     grep -rl "IMP-023" . --exclude-dir=.git
+#     -> governance/decisions/PO-DECISIONS-0021.md   AND NOTHING ELSE
+#
+# **THIS TABLE IS THEREFORE BUILT TO THE RULING'S OWN CLAUSE AND NOT TO A REGISTER ENTRY, BECAUSE
+# THE REGISTER ENTRY COULD NOT BE READ. NO CLAIM IS MADE THAT `IMP-023` IS CLOSED.** `Q13` is open
+# Product Authority and is not this seat's to answer.
+# ================================================================================================== #
+
+record_type: BUILD_LOG_ID_BLOCK_ALLOCATION
+written_utc: '2026-08-23T14:12:00Z'   # `date -u +%FT%TZ` (CD-RULE-005)
+written_by: CD-ENG-COORD-01
+authority:
+- 'PO-DECISIONS-0021 ruling 3(b) — per-seat build-log id blocks, no shared sequence'
+- 'CD-D-175 — 0300-0399 allocated to CD-ENG-COORD-01, bounded at both ends'
+- 'CD-D-173 — the per-lane allocation this extends; UPHELD by the eighth Assurance seat'
+- 'CD-D-132 — 0001-0059 closed'
+
+# ================================================================================================== #
+# THE BLOCKS. Every `entries_present` count below was MEASURED at this SHA, and the producing
+# command is recorded beside it (`CD-RULE-009`). NOT ONE OF THEM WAS COPIED FROM THE DISPATCH.
+# ================================================================================================== #
+blocks:
+
+- id: BLK-0001-0059
+  first: 1
+  last: 59
+  status: CLOSED
+  holder: null
+  holder_note: >
+    Pre-`CD-D-132` shared sequence. **NOT ATTRIBUTABLE TO ONE SEAT — that is the defect this table
+    exists to end, preserved here as the evidence for it.** Both `main` and the `wo-2r3` lane wrote
+    into this range.
+  entries_present_main: 53
+  entries_present_wo_2r3: 24
+  producing_command: >
+    git ls-tree --name-only main governance/engineering/build-log/ | grep -cE -- '-00[0-5][0-9]\.yaml$'
+    ; git ls-tree --name-only wo-2r3 governance/engineering/build-log/ | grep -cE -- '-00[0-5][0-9]\.yaml$'
+
+- id: BLK-0060-0099
+  first: 60
+  last: 99
+  status: CLOSED_EXHAUSTED
+  holder: WO-2R3-LANE
+  holder_note: '`CD-D-173`. **EXHAUSTED — VERIFIED, NOT ACCEPTED: all 40 ids 0060..0099 are present on `wo-2r3` and NONE is present on `main`.**'
+  entries_present_main: 0
+  entries_present_wo_2r3: 40
+  producing_command: >
+    git ls-tree --name-only wo-2r3 governance/engineering/build-log/ | grep -oE '[0-9]{4}\.yaml$' | sed 's/\.yaml//' | sort -n | awk '$1>=60 && $1<=99' | wc -l
+
+- id: BLK-0100-0199
+  first: 100
+  last: 199
+  status: OPEN
+  holder: PROJECT_LEAD_SEAT_01
+  holder_branch: main
+  holder_note: 'The Project Lead on `main`. Highest id present at this SHA is 0138; `CD-D-177` declares this block as the PL''s own write scope for the duration of `CD-ENG-COORD-01`.'
+  entries_present_main: 40
+  entries_present_wo_2r3: 0
+  producing_command: >
+    git ls-tree --name-only main governance/engineering/build-log/ | grep -cE -- '-01[0-9]{2}\.yaml$'
+
+- id: BLK-0200-0299
+  first: 200
+  last: 299
+  status: OPEN
+  holder: WO-2R3-LANE
+  holder_branch: wo-2r3
+  holder_note: >
+    `CD-D-173`. **ALLOCATED AND ENTIRELY UNUSED — MEASURED, and the dispatch did not say so.** Zero
+    entries exist in this range on either branch. The lane is FROZEN at `be0b355` for the ninth
+    Assurance gate (`CD-D-176`) and this seat does not touch it.
+  entries_present_main: 0
+  entries_present_wo_2r3: 0
+  producing_command: >
+    git ls-tree --name-only main governance/engineering/build-log/ | grep -cE -- '-02[0-9]{2}\.yaml$'
+    ; git ls-tree --name-only wo-2r3 governance/engineering/build-log/ | grep -cE -- '-02[0-9]{2}\.yaml$'
+
+- id: BLK-0300-0399
+  first: 300
+  last: 399
+  status: OPEN
+  holder: CD-ENG-COORD-01
+  holder_branch: inc12-coordination
+  holder_git_author_name: CD-ENG-COORD-01
+  holder_git_author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  holder_note: '`CD-D-175`. **THIS SEAT''S OWN BLOCK, BOUNDED AT BOTH ENDS.** Its own entry is written into it and the check below is run over this seat''s own commits.'
+  entries_present_main: 0
+  entries_present_wo_2r3: 0
+  producing_command: >
+    git ls-tree --name-only main governance/engineering/build-log/ | grep -cE -- '-03[0-9]{2}\.yaml$'
+
+# ================================================================================================== #
+# WHAT THE MEASUREMENT FOUND THAT THE ALLOCATION TABLE CANNOT FIX — RECORDED, NOT REPAIRED.
+#
+# **NO EXISTING BUILD LOG ENTRY IS RENUMBERED BY THIS INCREMENT. Rewriting Build Log history is
+# NON-WAIVABLE (`PBG-CONT-003`) — corrections supersede, never edit.** The dispatch carries this as
+# a DECLARED STOP and the stop is NOT triggered, because closing the blocks forward requires no
+# renumbering at all. The historical collisions below are DISCLOSED and left standing as evidence.
+# ================================================================================================== #
+measured_defects_in_the_existing_record:
+
+- id: BLID-D01
+  what: 'DUPLICATE ID WITHIN ONE BRANCH — two entries on `main` both numbered 0136.'
+  which: [BL-20260823T125935Z-0136.yaml, BL-20260823T131430Z-0136.yaml]
+  producing_command: "ls governance/engineering/build-log/ | grep -oE '[0-9]{4}\\.yaml$' | sort | uniq -d"
+  count: 1
+  note: 'Named by the second meta-assurance seat (§7.3) as something a uniqueness check would have caught in under a second. `check_build_log_blocks.py --entries` now catches it.'
+
+- id: BLID-D02
+  what: >
+    CROSS-BRANCH ID COLLISION — 18 id numbers exist on BOTH `main` and `wo-2r3`, but only 4
+    FILENAMES are shared between the two branches. **SO 14 ID NUMBERS ARE CARRIED BY DIFFERENT
+    ENTRIES ON THE TWO BRANCHES.** This is `PO-DECISIONS-0021` ruling 3(b)'s "no shared sequence"
+    stated as a measurement rather than as an intention.
+  which_ids: ['0001', '0002', '0003', '0004', '0022', '0041', '0042', '0043', '0044', '0045',
+              '0046', '0047', '0048', '0049', '0050', '0051', '0052', '0053']
+  shared_filenames: 4
+  colliding_ids: 18
+  distinct_entry_collisions: 14
+  producing_command: >
+    git ls-tree --name-only main governance/engineering/build-log/ | sed 's#.*/##' | sort > /tmp/m.txt ;
+    git ls-tree --name-only wo-2r3 governance/engineering/build-log/ | sed 's#.*/##' | sort > /tmp/l.txt ;
+    comm -12 /tmp/m.txt /tmp/l.txt | wc -l ;
+    sed 's/.*-\([0-9]\{4\}\)\.yaml/\1/' /tmp/m.txt | sort > /tmp/m.ids ;
+    sed 's/.*-\([0-9]\{4\}\)\.yaml/\1/' /tmp/l.txt | sort > /tmp/l.ids ;
+    comm -12 /tmp/m.ids /tmp/l.ids | wc -l
+  note: >
+    All 18 fall inside `BLK-0001-0059`, which is CLOSED. The allocation table therefore contains no
+    overlapping ALLOCATION; the collisions are historical entries written before any allocation
+    existed. **THEY ARE NOT REPAIRED AND THEY ARE NOT SWEPT. `check_build_log_blocks.py --entries
+    --all` counts them and exits non-zero, so the number is visible rather than absorbed.**
+
+- id: BLID-D03
+  what: 'SPARSE HISTORY — `main` carries 93 entries but the id sequence has gaps (0006, 0008, 0010, 0013, 0015, 0017 absent on `main`; they are on `wo-2r3`).'
+  producing_command: "ls governance/engineering/build-log/ | grep -oE '[0-9]{4}\\.yaml$' | sed 's/\\.yaml//' | sort -n"
+  note: >
+    Not a defect on its own — it is `BLID-D02` seen from the other side, and it is what an
+    interleaved shared sequence looks like from inside one branch. Recorded so a reader does not
+    mistake the gaps for missing files.
