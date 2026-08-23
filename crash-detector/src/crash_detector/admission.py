@@ -219,7 +219,18 @@ to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     because a seat that tries the obvious thing and sees a refusal may conclude the reach is
     closed. It is not.)*
 
-    **(b) THE ``__wrapped__`` ATTRIBUTE — THIS HALF IS CLOSED HERE**, and the closure is
+    **(b) THE ``__wrapped__`` ATTRIBUTE — CLOSED AT ALL THREE OF THIS PROJECT'S DECORATORS
+    AS OF WO-2R3 INCREMENT 7.** *Superseded wording, quoted rather than deleted (CD-RULE-004,
+    PBG-CONT-003): "THIS HALF IS CLOSED HERE".* **"HERE" MEANT ``admits`` ONLY, AND NOBODY
+    HAD WRITTEN DOWN THAT THE THIRD DECORATOR WAS OPEN** — ``_absence_is_never_a_number``,
+    the CD-ASR-F03 post-condition wrapper, the one guard in this tree that exists *because*
+    of an escape, carried a LIVE ``__wrapped__`` through three assurance gates. The fifth
+    Assurance seat found it and demonstrated it live; ``PO-DECISIONS-0013`` ruling 2 called it
+    a PRODUCT DEFECT and it is deleted at that site too. **A DECLARATION THAT SAYS "CLOSED
+    HERE" IN A MODULE THAT IS ONE OF THREE SITES IS AN UNDERSTATED RESIDUE WEARING A
+    CLOSURE'S CLOTHES**, and the enumeration that should have caught it did not exist until
+    increment 7 either: ``tools/audit/enumerate_live_wrapped.py``, which measures the
+    project-owned population at **0** here and at **1** at ``9f7b764``. The closure is
     measured (``tests/test_admission.py::test_a_door_publishes_no_way_round_itself``): the
     attribute is a documented one that ``inspect.unwrap`` follows and editors offer, so it
     was a bypass writable in ordinary-looking code with no cast and no import, and it is
@@ -301,6 +312,68 @@ to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     RAISED AS ``CD-ENG-WO2R3-02-F09``, not acted on.
     ====================================================================================
 
+ 7  **THE DOOR'S OWN ``(*args, **kwargs)`` IS AN ARITY THAT PASSES THROUGH, NOT A CHANNEL —
+    AND THAT IS MEASURED, NOT REASONED.** NEW AT WO-2R3 INCREMENT 7 (``PO-DECISIONS-0013``
+    ruling 6: *"`admits`'s own arity-open `door(*args, **kwargs)` addressed or declared with
+    its measured reach"*).
+
+    **WHY THE QUESTION EXISTS.** ``PO-DECISIONS-0012`` ruling 1 defended ``guarded``'s
+    arity-openness as LOAD-BEARING and made it the reason ``guarded`` is a net rather than a
+    door. ``door`` is arity-open too, it is **the single most load-bearing callable in this
+    mechanism** — every value passing through every ``@admits`` door in this system passes
+    through it — and nobody had asked it the same question.
+
+    **THE ANSWER, TEN LIVE ARMS, ``variants/WO-2R3/P-J-the-admits-door-arity.py``:**
+
+    ====  ==========================================  ====================================
+    arm   what was passed                             outcome
+    ====  ==========================================  ====================================
+    A     a declared parameter, wrong type            refused ``NotAdmitted``
+    B     an argument the signature cannot hold       refused ``TypeError`` at ``bind``
+    C     the same wrong type BY KEYWORD              refused ``NotAdmitted`` — same refusal
+    D     a BAD DEFAULT the caller never passed       refused ``NotAdmitted``
+    E     the ENTRY POINT's own ``**kwargs``          **FAULTED — every call refused**
+    F     the ENTRY POINT's own ``*args``             **FAULTED — every call refused**
+    G     a module-level parameter named ``cls``      refused ``NotAdmitted`` — not skipped
+    H     a parameter ``admits`` was not told about   **FAULTED — every call refused**
+    ====  ==========================================  ====================================
+
+    **THE STRUCTURAL REASON, AND IT IS WHY THIS IS NOT THE SAME SHAPE AS ``guarded``.** The
+    door's arity is open for exactly one instruction: ``signature.bind(*args, **kwargs)``,
+    against **THE ENTRY POINT'S OWN REAL SIGNATURE**, read with ``follow_wrapped=False``. The
+    openness is therefore erased at the first statement and cannot admit anything the entry
+    point's signature would not. And arms E and F close the symmetry from the other side:
+    **AN ARITY-OPEN ENTRY POINT IS NOT PERMITTED AT ALL** — it is an ``OPEN CHANNEL`` fault
+    and every call to it is refused. There is no shape in which a value reaches an entry point
+    through this wrapper without being bound and checked. ``guarded`` differs because it
+    forwards ``*extra`` to a callee whose signature it does NOT bind against.
+
+    Arm D is worth its row: ``bound.apply_defaults()`` runs BEFORE the loop, so a door cannot
+    ship a bad value in its own signature and escape by never being called wrongly.
+
+    **WHAT BOUNDS ARM G, MEASURED SO THIS LIMIT DOES NOT OVERSTATE ITSELF.** G holds only
+    because ``_signature_parameters`` skips a receiver when
+    ``_is_defined_in_a_class_body(entry_point)`` — which reads ``__qualname__``, **AN ORDINARY
+    WRITABLE ATTRIBUTE.** P-J arms J0/J, reproducing the fifth Assurance seat's shape
+    independently:
+
+    * **J0, CONTROL** — ``def f(cls, other)`` with ``@admits(other=int)`` and no assignment:
+      FAULTED door, every call refused;
+    * **J** — the identical door after **one string assignment**
+      ``f.__qualname__ = "Faked.f"``: ``BODY RAN, first argument was 'an object no door
+      established'``.
+
+    **THAT IS T8 CATEGORY A. IT IS OPEN, IT IS REAL, AND IT IS NOT REPAIRED HERE** — it is
+    outside ``PO-DECISIONS-0013`` ruling 6's enumeration (CD-D-153) and receives a disposition
+    from the Project Lead. It is measured here and only here **because a declaration that said
+    "a module-level ``cls`` is established" without this bound would be understating its
+    residue**, which is this project's most-found defect.
+
+    **CARRIER (CD-RULE-006):**
+    ``tests/test_admission.py::test_the_doors_open_arity_is_not_a_channel``, which asserts
+    arms B, D, E, F and G by requiring each to raise. **FOR ARM J: NOT PROVED TO BE CARRIED
+    ANYWHERE — deliberately, because a carrier for it would be a repair of T8 Category A.**
+    ====================================================================================
  2  **THE RECEIVER OF A METHOD IS NOT ESTABLISHED.** The first parameter is skipped when,
     and only when, the callable was written inside a ``class`` body — read from
     ``__qualname__`` — AND that parameter is named ``self`` or ``cls``. The name is a

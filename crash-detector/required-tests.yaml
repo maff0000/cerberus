@@ -1590,6 +1590,46 @@ criteria:
         tree — the rename test; ESCAPE 4 ARM 4 with a private-named local; an emptied register; a
         net that stops calling its post-condition; a net declared where none exists (which must
         fire BOTH directions of the set equality); and the printed residue.
+        MECHANISM LIMIT — THE DOOR'S OWN ARITY IS A PASS-THROUGH, NOT A CHANNEL. THIS IS
+        src/crash_detector/admission.py DECLARED LIMIT 7, REPRODUCED HERE UNDER CD-RULE-004.
+        NEW AT WO-2R3 INCREMENT 7 (PO-DECISIONS-0013 ruling 6: "`admits`'s own arity-open
+        `door(*args, **kwargs)` addressed or declared with its measured reach").
+        WHY THE QUESTION EXISTS: PO-DECISIONS-0012 ruling 1 defended `guarded`'s arity-openness as
+        LOAD-BEARING and made it the reason `guarded` is a NET rather than a DOOR. `door` is
+        arity-open too, it is THE SINGLE MOST LOAD-BEARING CALLABLE IN THIS MECHANISM — every value
+        passing through every @admits door in this system passes through it — and nobody had asked
+        it the same question.
+        MEASURED, TEN LIVE ARMS, variants/WO-2R3/P-J-the-admits-door-arity.py, EXIT 0:
+          A  a declared parameter, wrong type          refused NotAdmitted
+          B  an argument the signature cannot hold     refused TypeError at bind()
+          C  the same wrong type BY KEYWORD            refused NotAdmitted — the same refusal
+          D  a BAD DEFAULT the caller never passes     refused NotAdmitted
+          E  the ENTRY POINT's own **kwargs            FAULTED — every call refused
+          F  the ENTRY POINT's own *args               FAULTED — every call refused
+          G  a module-level parameter named `cls`      refused NotAdmitted — not skipped
+          H  a parameter admits was not told about     FAULTED — every call refused
+        THE STRUCTURAL REASON, AND IT IS WHY THIS IS NOT `guarded`'s SHAPE: the door's arity is open
+        for exactly ONE INSTRUCTION — `signature.bind(*args, **kwargs)` against THE ENTRY POINT'S
+        OWN REAL SIGNATURE, read with follow_wrapped=False — so the openness is ERASED AT THE FIRST
+        STATEMENT and cannot admit anything the entry point's signature would not. Arms E and F
+        close the symmetry from the other side: AN ARITY-OPEN ENTRY POINT IS NOT PERMITTED AT ALL,
+        it is an OPEN CHANNEL fault. `guarded` differs because it forwards *extra to a callee whose
+        signature it does NOT bind against.
+        WHAT BOUNDS ARM G, MEASURED SO THIS LIMIT DOES NOT OVERSTATE ITSELF: G holds only because
+        the receiver skip is gated on `_is_defined_in_a_class_body`, which reads `__qualname__` — AN
+        ORDINARY WRITABLE ATTRIBUTE. P-J arms J0/J reproduce the fifth Assurance seat's shape
+        independently: J0 CONTROL, `def f(cls, other)` with @admits(other=int) and no assignment ->
+        FAULTED, every call refused; J, the identical door after ONE STRING ASSIGNMENT
+        `f.__qualname__ = "Faked.f"` -> BODY RAN, first argument arrived UNESTABLISHED.
+        THAT IS T8 CATEGORY A. IT IS OPEN, IT IS REAL, AND IT IS NOT REPAIRED HERE — outside
+        PO-DECISIONS-0013 ruling 6's enumeration (CD-D-153), dispositioned by the Project Lead after
+        this increment banks. It is measured because a declaration saying "a module-level `cls` is
+        established" without this bound would be UNDERSTATING ITS RESIDUE.
+        CARRIER (CD-RULE-006): tests/test_admission.py::test_the_doors_open_arity_is_not_a_channel,
+        which asserts arms B, C, D, E, F and G by requiring each to raise. PROVED NON-VACUOUS AT ITS
+        OWN SEAM (PBG-ASSURE-017): with the OPEN CHANNEL fault neutered in a throwaway tree it fails
+        "DID NOT RAISE UndeclaredParameter". FOR ARM J: NOT PROVED TO BE CARRIED ANYWHERE —
+        DELIBERATELY, because a carrier for it would be a repair of T8 Category A.
         MECHANISM LIMIT 4 — ESTABLISHED_HERE IS AN EXPLICIT WEAKENING AND IT IS COUNTED, NOT
         HIDDEN, AND THE COUNT NOW LIVES IN ALL THREE CD-RULE-004 PLACES INSTEAD OF ONE.
         **THIS IS admission.py's DECLARED LIMIT 1, REPRODUCED HERE AT WO-2R3 INCREMENT 6 UNDER

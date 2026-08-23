@@ -1,0 +1,165 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 7 — ITEM 5. `admits`'s OWN ARITY-OPEN `door(*args, **kwargs)`.
+#
+# **DECLARED AT ITS MEASURED REACH, NOT ADDRESSED — because ten live arms say there is nothing to
+# address, and the one thing that IS open is explicitly not this increment's.**
+#
+# PLUS a correction to a LANDED item: `admission.py`'s "(b) THE `__wrapped__` ATTRIBUTE — THIS HALF
+# IS CLOSED HERE". The dispatch listed that correction under ITEM 3 and THIS SEAT MISSED IT when
+# items 3 and 4 were committed at fc1bf61. It is made here rather than left, and the miss is
+# recorded rather than quietly repaired (CD-ENG-WO2R3-03-F14).
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0076. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T010716Z-0077
+timestamp_utc: "2026-08-23T01:07:16Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-03
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0013.md ruling 6'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+parent_entry_id: BL-20260823T005840Z-0076
+schema_version: 1
+
+record_type: INCREMENT
+
+the_choice_and_why:
+  the_ruling_permits_two: '"addressed OR declared at measured reach", and it means it.'
+  what_was_done: >
+    **DECLARED, AT A REACH THIS SEAT MEASURED WITH TEN LIVE ARMS.** Not addressed, because every arm
+    that could have found a hole found a refusal, and the ONE route that IS open is T8 Category A —
+    outside ruling 6's enumeration and explicitly prohibited to this seat (CD-D-153).
+  what_was_NOT_done_and_the_dispatch_names_it: >
+    **NOTHING IN `admits` CHANGED BEHAVIOUR.** The dispatch: *"IF YOU FIND YOURSELF CHANGING WHAT
+    `admits` DOES rather than what it DECLARES, STOP AND SAY WHY."* `git diff` for `admission.py`
+    at this commit is DOCSTRING AND COMMENT ONLY — no statement, no branch, no signature.
+
+the_measurement:
+  instrument: 'variants/WO-2R3/P-J-the-admits-door-arity.py — NEW. EXIT 0. Ten live arms, each a real call.'
+  the_arms: |
+    A  a declared parameter, wrong type          refused NotAdmitted
+    B  an argument the signature cannot hold     refused TypeError at bind()
+    C  the same wrong type BY KEYWORD            refused NotAdmitted — THE SAME REFUSAL
+    D  a BAD DEFAULT the caller never passes     refused NotAdmitted
+    E  the ENTRY POINT's own **kwargs            FAULTED — every call refused
+    F  the ENTRY POINT's own *args               FAULTED — every call refused
+    G  a module-level parameter named `cls`      refused NotAdmitted — not skipped
+    H  a parameter admits was not told about     FAULTED — every call refused
+    I  the signature the door binds against      (a), read with follow_wrapped=False
+  THE_STRUCTURAL_ANSWER_AND_IT_IS_WHY_THIS_IS_NOT_guarded_s_SHAPE: >
+    **THE DOOR'S ARITY IS OPEN FOR EXACTLY ONE INSTRUCTION.** `signature.bind(*args, **kwargs)`
+    binds against THE ENTRY POINT'S OWN REAL SIGNATURE, so the openness is ERASED AT THE FIRST
+    STATEMENT and cannot admit anything that signature would not. **AND ARMS E AND F CLOSE THE
+    SYMMETRY FROM THE OTHER SIDE: AN ARITY-OPEN ENTRY POINT IS NOT PERMITTED AT ALL** — it is an
+    OPEN CHANNEL fault and every call to it is refused. There is no shape in which a value reaches
+    an entry point through this wrapper without being bound and checked.
+    **`guarded` DIFFERS BECAUSE IT FORWARDS `*extra` TO A CALLEE WHOSE SIGNATURE IT DOES NOT BIND
+    AGAINST.** That is the whole of the asymmetry, and it is the answer to the symmetry question
+    ruling 6 asked — the two wrappers look alike and are not.
+  arm_D_earns_its_row: >
+    `bound.apply_defaults()` runs BEFORE the loop, so a door cannot ship a bad value in its own
+    signature and escape by never being called wrongly. That is a real property nobody had asserted.
+
+the_bound_MEASURED_SO_THE_DECLARATION_DOES_NOT_OVERSTATE:
+  what: >
+    Arm G holds ONLY because the receiver skip is gated on `_is_defined_in_a_class_body`, which
+    reads `__qualname__` — **AN ORDINARY WRITABLE ATTRIBUTE.**
+  measured_both_arms_reproducing_the_fifth_seat_INDEPENDENTLY: |
+    J0 CONTROL  `def f(cls, other)` + @admits(other=int), no assignment
+                -> FAULTED door, every call refused
+    J           the identical door after ONE STRING ASSIGNMENT `f.__qualname__ = "Faked.f"`
+                -> *** BODY RAN, first argument was 'an object no door established' ***
+  it_is_measured_and_NOT_repaired: >
+    **T8 CATEGORY A. OPEN, REAL, AND NOT MINE** (CD-D-153; not in ruling 6's enumeration). It is
+    measured here and only here **because a declaration saying "a module-level `cls` is established"
+    without this bound would be understating its residue**, which is this project's most-found
+    defect. **NO CARRIER IS ADDED FOR IT, DELIBERATELY — a carrier for arm J would be a repair.**
+
+the_three_CD_RULE_004_places:
+- 'src/crash_detector/admission.py — DECLARED LIMIT 7 (new).'
+- 'required-tests.yaml — the doors row, "MECHANISM LIMIT — THE DOOR''S OWN ARITY".'
+- 'contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md — the same section.'
+
+the_carrier:
+  what: 'tests/test_admission.py::test_the_doors_open_arity_is_not_a_channel — asserts arms B, C, D, E, F and G by REQUIRING EACH TO RAISE.'
+  proved_non_vacuous_at_its_own_seam_PBG_ASSURE_017: >
+    The `OPEN CHANNEL` fault neutered in a throwaway tree (`if False:` on both VAR_POSITIONAL and
+    VAR_KEYWORD branches) -> **FAILED, "DID NOT RAISE UndeclaredParameter".** A carrier that only
+    passes is a rumour.
+
+findings:
+- id: CD-ENG-WO2R3-03-F14
+  severity: MEDIUM
+  against: 'THIS SEAT''S OWN EXECUTION OF ITEM 3 — an element of the dispatch that was missed at commit time.'
+  what_was_missed: >
+    The dispatch's writable scope names `admission.py` for *"ITEM 5, and ITEM 3's declaration
+    correction at :222"*. **THAT CORRECTION WAS NOT MADE WHEN ITEMS 3 AND 4 WERE COMMITTED AT
+    fc1bf61.** `admission.py`'s DECLARED LIMIT 6 (b) still read *"THE `__wrapped__` ATTRIBUTE — THIS
+    HALF IS CLOSED HERE"* — a sentence that was FALSE OF THE PROJECT the moment item 3 landed,
+    because "HERE" meant `admits` only and the third decorator had just been closed too.
+  why_it_is_MEDIUM_and_not_LOW: >
+    **FOR ONE COMMIT, THE TREE CARRIED A CORRECTED PRODUCT AND AN UNCORRECTED DECLARATION** — which
+    is the precise defect shape PO-DECISIONS-0011 ruling 3 exists for (*"a shipped declaration wrong
+    in a stated direction is a defect in the layer readers trust most"*), introduced by the
+    increment repairing that shape elsewhere.
+  the_correction: >
+    Made here. The superseded wording is QUOTED, not deleted, and the replacement says what was
+    actually wrong: **"HERE" MEANT `admits` ONLY, AND NOBODY HAD WRITTEN DOWN THAT THE THIRD
+    DECORATOR WAS OPEN.** It also names the instrument that should have caught it and did not exist:
+    `tools/audit/enumerate_live_wrapped.py`, project-owned population **0** here and **1** at
+    9f7b764.
+  disposition: 'CORRECTED IN THIS COMMIT. Recorded rather than quietly repaired, because a seat that fixes its own miss silently has removed the evidence that dispatch elements can be dropped.'
+
+- id: CD-ENG-WO2R3-03-F15
+  severity: LOW
+  against: 'P-J''s OWN FIRST ARM J — it refused for the wrong reason and I nearly banked it.'
+  what_happened: >
+    My first arm J was `def free_function(cls)` with `@admits(cls=int)`. **IT REFUSED** — and for
+    the WRONG REASON: with `cls` skipped, the declaration named a parameter that no longer existed,
+    so the door faulted as ADRIFT. **I WOULD HAVE RECORDED "THE `__qualname__` ROUTE IS REFUSED",
+    CONTRADICTING THE FIFTH ASSURANCE SEAT'S MEASUREMENT, ON AN ARM THAT NEVER TESTED IT.**
+  how_it_was_caught: >
+    By reading the refusal TEXT rather than the exit state — it named `UndeclaredParameter ... admits()
+    was told about 'cls', which is not a parameter`, the wrong layer. Rebuilt to the fifth seat's
+    actual shape (a SECOND declared parameter, so the declaration still matches the post-skip
+    signature and there is no fault to hide behind), and only then did the arms separate.
+  why_it_is_recorded: >
+    **THIS IS CD-ENG-WO2R3-F12 BITING ME FOR THE SECOND TIME IN ONE INCREMENT** (the first is F09).
+    Two arms refusing for different reasons look identical in a summary table. Recorded in the
+    probe's own source at the line that does it, not only here.
+  disposition: 'REPAIRED BEFORE LANDING.'
+
+what_this_item_does_NOT_close_MEASURED:
+- '**THE `__qualname__` ROUTE IS OPEN.** Measured at P-J arm J, one string assignment, body ran with
+   an unestablished first argument. NOT REPAIRED (T8 Category A, CD-D-153) and NOT CARRIED — both
+   deliberately.'
+- '**TEN ARMS ARE NOT A CLASS.** Every arm is a shape THIS SEAT THOUGHT OF, and the dispatch named
+   four of them. **A probe''s enumeration is its weakest joint and this one is written down so it
+   can be found short.** CD-D-047: the corpus proves nothing about any class.'
+- '**THE `__closure__` REACH IS UNTOUCHED** — DECLARED LIMIT 6 (a1) and (a2), including the route
+   that rewrites the live declaration dict so the door stops refusing at its own front entrance.
+   Nothing in item 5 narrows that.'
+- '**NOTHING HERE ADDRESSES `door` BEING INVISIBLE TO THE DOORS CHECK** (CD-ENG-WO2R3-03-F10):
+   `admission.py` is not a RULE 1 package. Item 5 declares what `door` DOES; it does not make `door`
+   a subject of any instrument, and it does not claim to.'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  P_J: 'EXIT 0 — ten arms.'
+  suite: 'EXIT 0 — 1561 passed, 0 failed.'
+  doors_check: 'EXIT 0 — PASS, 60 assertions, 0 violations.'
+  carrier_seam_arm: 'EXIT 1 — "DID NOT RAISE UndeclaredParameter" with the OPEN CHANNEL fault neutered.'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. A RECORD, NOT ASSURANCE. **The sixth Assurance seat should attack P-J's
+  ARM LIST rather than its results** — every arm passed, which means the probe found nothing, which
+  means either the mechanism is sound on this axis or the arms are the wrong ones. Only an
+  independent seat can tell those apart, and this one cannot.

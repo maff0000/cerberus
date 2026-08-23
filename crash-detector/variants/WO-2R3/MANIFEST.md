@@ -457,6 +457,8 @@ is a summary, and a summary is the thing this project keeps finding wrong.
 
 | **`P-I-the-wrapped-attack-set-re-run.sh`** | **NEW AT INCREMENT 7.** PO-DECISIONS-0013 ruling 2's *"the historic WO-2R `__wrapped__` attack set is re-run at the new head"*, before and after, nine routes READ FROM THE DIRECTORY and not from this manifest (CD-PL-F97): V24 plus every patch in `variants/WO-2R/CD-ASR-F02-F03/`, the corpus the fifth seat's M10 named as depending on the guard this increment changed. | `bash variants/WO-2R3/P-I-the-wrapped-attack-set-re-run.sh` |
 
+| **`P-J-the-admits-door-arity.py`** | **NEW AT INCREMENT 7.** `admits`'s own arity-open `door(*args, **kwargs)`, asked the question PO-DECISIONS-0012 ruling 1 asked of `guarded`: is there anything a caller can pass that reaches the entry point WITHOUT passing through the binding-and-refusal loop? Ten live arms, including the two that BOUND the answer (J0/J, the `__qualname__` route — measured, NOT repaired: T8 Category A is not this increment's). | `PYTHONPATH=src python3 -B variants/WO-2R3/P-J-the-admits-door-arity.py` |
+
 **NEITHER NEW PROBE IS A CARRIER.** Both exit 0 whatever they measure, by design: they are
 INSTRUMENTS THAT REPORT, and this project's `CD-RULE-006` says a check reports and a carrier fails.
 The carriers for increment 7's propositions are in `tests/`, and where a proposition has no carrier

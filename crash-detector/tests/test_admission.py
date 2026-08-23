@@ -548,3 +548,73 @@ def test_cd_bp_003_is_exactly_four_parameters_and_every_one_names_its_residue():
             "carrier is a CLAIM. This boundary has a residue nothing carries and it must "
             "say so."
         )
+
+
+def test_the_doors_open_arity_is_not_a_channel():
+    """**DECLARED LIMIT 7's CARRIER.** ``admits``'s own ``door(*args, **kwargs)``, asked the
+    question ``PO-DECISIONS-0012`` ruling 1 asked of ``guarded``.
+
+    ``door`` is arity-open and it is **the single most load-bearing callable in this
+    mechanism** — every value passing through every ``@admits`` door in this system passes
+    through it. Ruling 1 made arity-openness the reason ``guarded`` is a net rather than a
+    door; ``PO-DECISIONS-0013`` ruling 6 asks whether the same openness is a hole here.
+
+    **IT IS NOT, AND THE STRUCTURAL REASON IS ASSERTED RATHER THAN DESCRIBED.** The arity is
+    open for exactly one instruction — ``signature.bind(*args, **kwargs)`` against the ENTRY
+    POINT's own real signature — so it is erased at the first statement. And an arity-open
+    ENTRY POINT is not permitted at all: it is an ``OPEN CHANNEL`` fault.
+
+    Each arm asserts by REQUIRING A REFUSAL. A door that stopped refusing any one of them
+    would fail here.
+    """
+    import pytest as _pytest
+
+    # ARM B — an argument the entry point's signature cannot hold. `bind` refuses it, so the
+    # door's open arity cannot widen the entry point's.
+    @admits(a=int)
+    def one_parameter(a):  # pragma: no cover - reached only through refusals
+        return "BODY RAN"
+
+    with _pytest.raises(TypeError):
+        one_parameter(1, "an argument the signature has no room for")
+
+    # ARM D — a BAD DEFAULT the caller never passes. `apply_defaults()` runs BEFORE the loop,
+    # so a door cannot ship a bad value in its own signature and escape by never being
+    # called wrongly.
+    @admits(a=int)
+    def with_a_bad_default(a="not an int"):  # pragma: no cover
+        return "BODY RAN"
+
+    with _pytest.raises(NotAdmitted):
+        with_a_bad_default()
+
+    # ARMS E and F — AN ARITY-OPEN ENTRY POINT IS NOT PERMITTED AT ALL. This is what closes
+    # the symmetry: there is no shape in which a value reaches an entry point through this
+    # wrapper without being bound and checked, because the open shape is FAULTED.
+    @admits(a=int, rest=dict)
+    def entry_point_with_kwargs(a, **rest):  # pragma: no cover
+        return "BODY RAN"
+
+    with _pytest.raises(UndeclaredParameter):
+        entry_point_with_kwargs(1, anything=object())
+
+    @admits(a=int, more=tuple)
+    def entry_point_with_star_args(a, *more):  # pragma: no cover
+        return "BODY RAN"
+
+    with _pytest.raises(UndeclaredParameter):
+        entry_point_with_star_args(1, object())
+
+    # ARM G — the `_RECEIVER_NAMES` skip is gated on the class-body test, so a MODULE-LEVEL
+    # parameter named `cls` is established like any other.
+    @admits(cls=int)
+    def module_level_receiver_name(cls):  # pragma: no cover
+        return "BODY RAN"
+
+    with _pytest.raises(NotAdmitted):
+        module_level_receiver_name("not an int")
+
+    # ARM C — the same refusal whether the value arrives positionally or by keyword. A door
+    # that guarded only one spelling would be a door a caller chooses to pass through.
+    with _pytest.raises(NotAdmitted):
+        one_parameter(a="not an int")

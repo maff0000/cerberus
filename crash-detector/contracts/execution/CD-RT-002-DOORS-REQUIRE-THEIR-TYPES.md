@@ -868,3 +868,57 @@ LANDS** (`CD-ENG-WO2R3-03-F03`), and **there is no carrier for that day.**
 the rename test; ESCAPE 4 ARM 4 with a private-named local; an emptied register; a net that stops
 calling its post-condition; a net declared where none exists (which must fire **both** directions of
 the set equality); and the printed residue.
+
+## MECHANISM LIMIT — THE DOOR'S OWN ARITY IS A PASS-THROUGH, NOT A CHANNEL
+
+**This is `src/crash_detector/admission.py` DECLARED LIMIT 7, reproduced here under CD-RULE-004.**
+NEW AT WO-2R3 INCREMENT 7 (`PO-DECISIONS-0013` ruling 6: *"`admits`'s own arity-open
+`door(*args, **kwargs)` addressed or declared with its measured reach"*).
+
+**WHY THE QUESTION EXISTS.** `PO-DECISIONS-0012` ruling 1 defended `guarded`'s arity-openness as
+LOAD-BEARING and made it the reason `guarded` is a NET rather than a DOOR. **`door` is arity-open
+too, it is the single most load-bearing callable in this mechanism** — every value passing through
+every `@admits` door in this system passes through it — and nobody had asked it the same question.
+
+**MEASURED, TEN LIVE ARMS**, `variants/WO-2R3/P-J-the-admits-door-arity.py`, exit 0:
+
+| arm | what was passed | outcome |
+|---|---|---|
+| A | a declared parameter, wrong type | refused `NotAdmitted` |
+| B | an argument the signature cannot hold | refused `TypeError` at `bind()` |
+| C | the same wrong type **by keyword** | refused `NotAdmitted` — the same refusal |
+| D | a **bad default** the caller never passes | refused `NotAdmitted` |
+| E | the ENTRY POINT's own `**kwargs` | **FAULTED — every call refused** |
+| F | the ENTRY POINT's own `*args` | **FAULTED — every call refused** |
+| G | a module-level parameter named `cls` | refused `NotAdmitted` — not skipped |
+| H | a parameter `admits` was not told about | **FAULTED — every call refused** |
+
+**THE STRUCTURAL REASON, AND IT IS WHY THIS IS NOT `guarded`'s SHAPE.** The door's arity is open for
+exactly ONE INSTRUCTION — `signature.bind(*args, **kwargs)` against **the entry point's own real
+signature**, read with `follow_wrapped=False` — so the openness is **erased at the first statement**
+and cannot admit anything the entry point's signature would not. Arms E and F close the symmetry
+from the other side: **an arity-open ENTRY POINT is not permitted at all**, it is an `OPEN CHANNEL`
+fault. `guarded` differs because it forwards `*extra` to a callee whose signature it does **not**
+bind against. Arm D earns its row: `bound.apply_defaults()` runs BEFORE the loop, so a door cannot
+ship a bad value in its own signature and escape by never being called wrongly.
+
+**WHAT BOUNDS ARM G, MEASURED SO THIS LIMIT DOES NOT OVERSTATE ITSELF.** G holds only because the
+receiver skip is gated on `_is_defined_in_a_class_body`, which reads `__qualname__` — **an ordinary
+writable attribute.** P-J arms J0/J reproduce the fifth Assurance seat's shape independently:
+
+* **J0, CONTROL** — `def f(cls, other)` with `@admits(other=int)` and no assignment: FAULTED door,
+  every call refused;
+* **J** — the identical door after **one string assignment** `f.__qualname__ = "Faked.f"`:
+  `BODY RAN, first argument was 'an object no door established'`.
+
+**THAT IS T8 CATEGORY A. IT IS OPEN, IT IS REAL, AND IT IS NOT REPAIRED HERE** — it is outside
+`PO-DECISIONS-0013` ruling 6's enumeration (CD-D-153) and receives a disposition from the Project
+Lead after this increment banks. It is measured **because a declaration that said "a module-level
+`cls` is established" without this bound would be understating its residue**, which is this
+project's most-found defect.
+
+**CARRIER (CD-RULE-006).** `tests/test_admission.py::test_the_doors_open_arity_is_not_a_channel`,
+asserting arms B, C, D, E, F and G by requiring each to raise. **PROVED NON-VACUOUS AT ITS OWN SEAM**
+(`PBG-ASSURE-017`): with the `OPEN CHANNEL` fault neutered in a throwaway tree it fails
+`DID NOT RAISE UndeclaredParameter`. **FOR ARM J: NOT PROVED TO BE CARRIED ANYWHERE — deliberately,
+because a carrier for it would be a repair of T8 Category A.**
