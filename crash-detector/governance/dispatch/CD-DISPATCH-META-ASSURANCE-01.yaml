@@ -1,0 +1,195 @@
+# ================================================================================================== #
+# CD-DISPATCH-META-ASSURANCE-01 — THE META-ASSURANCE PASS
+#
+# **YOU ARE NOT AUDITING THE PRODUCT. YOU ARE AUDITING THE PROJECT LEAD'S OWN RECONCILIATION
+# PRACTICE — THE INSTRUMENTS AND HABITS BY WHICH THIS SEAT DECIDES WHAT IS TRUE.**
+#
+# The Product Owner authorised this at PO-DECISIONS-0013 ruling 5 and sequenced it HERE at
+# PO-DECISIONS-0019 ruling 5, calling it OVERDUE. It has been deferred behind eleven increments and
+# eight assurance gates. **IT IS NOT DEFERRED AGAIN.**
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-META-ASSURANCE-01
+role_source: pbg/roles/assurance-engineer.md
+authority_record: 'PO-DECISIONS-0013 ruling 5 (authorised) · PO-DECISIONS-0019 ruling 5 (sequenced, and called OVERDUE) · CD-AUTH-0001'
+actor_id: CD-META-01
+issued_by: PROJECT_LEAD_SEAT_01
+issued_utc: '2026-08-23T12:45:08Z'
+
+seat_identity_and_why_it_is_FRESH: >
+  **`CD-META-01` HAS NEVER BEEN USED ON THIS PROJECT.** It is not `CD-ASR-WO2-01`, `-02`,
+  `CD-ASR-WO2R2-01`, `CD-ASR-WO2R3-01` through `-05`, and it is no Engineer seat (`PBG-SOD-001`,
+  non-waivable).
+  **AND THE DEEPER REASON: THE SUBJECT OF THIS AUDIT IS `PROJECT_LEAD_SEAT_01`, WHICH IS THE SEAT
+  THAT WROTE THIS DISPATCH.** A Project Lead auditing its own reconciliation practice is precisely
+  the self-approval the whole programme exists to prevent. **YOU ARE HERE BECAUSE THIS SEAT CANNOT
+  DO THIS JOB, AND YOU SHOULD READ THIS DISPATCH ITSELF AS EVIDENCE — IT IS THE SUBJECT WRITING THE
+  EXAM.**
+
+mutation: >
+  **PROHIBITED.** Read-only, except that you MAY write your own scratch files under
+  `/tmp/meta-assurance-01/` and you MUST write your verdict there. **DO NOT commit. DO NOT touch
+  `governance/`, `BLUEPRINT.md`, `PID.md`, `pbg/`, or any branch.** The Project Lead banks your
+  verdict VERBATIM AND BESIDE, committed BEFORE it is read (`CD-D-143`, `PBG-CONT-007`).
+
+target:
+  tree: /srv/crash-detector
+  branch: main
+  sha: 6a15ac5   # RESOLVE IT YOURSELF with `git rev-parse HEAD` — do not trust this string.
+  and_it_will_not_move_while_you_are_out: >
+    **NOTHING MOVES ON `main` WHILE YOU READ. THIS IS NOT A COURTESY, IT IS `CD-PL-F134`'S OWN
+    NAMED REMEDY, AND `CD-PL-F134` IS ON YOUR DOCKET.** At the last gate this seat advanced `main`
+    under a live auditor and the auditor found it rather than being told. The remedy that finding
+    named was: *"continuity bookkeeping for a boundary should close BEFORE a read-only seat is
+    launched against that boundary."* **THAT BOOKKEEPING IS CLOSED — `6a15ac5` IS THE `CD-RULE-007`
+    FOLLOW-UP ITSELF — AND YOU ARE LAUNCHED AFTER IT.**
+    **VERIFY THAT CLAIM RATHER THAN ACCEPTING IT: `git rev-parse HEAD` when you start and again
+    when you finish. IF THEY DIFFER, THAT IS A FINDING AND IT OUTRANKS EVERYTHING ELSE IN THIS
+    DISPATCH.**
+
+# ================================================================================================== #
+# WHAT YOU ARE AUDITING — THE PRODUCT OWNER'S OWN SCOPE, QUOTED
+# ================================================================================================== #
+the_authorised_scope_VERBATIM: >
+  PO-DECISIONS-0013 ruling 5, the Product Owner's own bytes:
+  *"A META-ASSURANCE PASS OVER THE PROJECT LEAD'S OWN RECONCILIATION PRACTICE IS AUTHORISED. F98 and
+  F100 are the same shape — a self-raised finding per boundary against the seat's own instruments —
+  and that shape ends with an audit, not with an infinite series of honest confessions. One bounded,
+  read-only pass over the reconciliation instruments: the fingerprint recipe (F100's gitignored-sweep
+  fix lands in the remediation increment meanwhile), the continuity model (the ISSUED/CARRIED gap of
+  F99), and the boot ordering practice. Scheduled after the remediation increment banks; it does not
+  block the product lane. The Project Lead's habit of finding against itself before anyone else does
+  is the reason this programme works, and the audit is its reward, not its punishment."*
+
+and_read_that_last_sentence_ADVERSARIALLY: >
+  **THE PRODUCT OWNER CALLED THIS AUDIT A REWARD. DO NOT TREAT IT AS ONE.**
+  The question this pass exists to answer is not *"does the Project Lead confess?"* — it plainly
+  does, at length, at every boundary. The question is: **DOES CONFESSING AT VOLUME FUNCTION AS A
+  CONTROL, OR AS A SUBSTITUTE FOR ONE?**
+  A seat that raises `CD-PL-F111`, then repeats the fault and raises `CD-PL-F112`, then repeats it
+  again and raises `CD-PL-F132`, has produced three findings and zero carriers. **THE RECORD IS
+  DENSE WITH SELF-CRITICISM AND THE UNDERLYING BEHAVIOUR RECURS. THAT IS THE HYPOTHESIS YOU ARE
+  HERE TO TEST, AND IF IT IS TRUE THIS PASS SHOULD SAY SO IN THOSE WORDS.**
+
+# ================================================================================================== #
+# THE DOCKET — THE PRODUCT OWNER NAMED THESE NINE AT PO-DECISIONS-0019 RULING 5
+# ================================================================================================== #
+the_docket_as_the_PO_named_it:
+  note: >
+    **THESE ARE POINTERS, NOT SUMMARIES. READ EACH FINDING IN ITS OWN BUILD-LOG ENTRY.** A summary
+    written by the seat under audit is exactly the artefact you should distrust
+    (`CD-PL-F121` instructs prior seats to distrust this seat's derived tables SPECIFICALLY).
+    Find them with: `grep -rln "CD-PL-F1xx" governance/engineering/build-log/`
+  CD-PL-F98:  'a probe whose provenance was not checked / every probe must print the tree it actually read. First raised around BL-...-0109.'
+  CD-PL-F100: 'the tree-fingerprint recipe and its gitignored-sweep defect.'
+  CD-PL-F102: 'HIGH when raised — see BL-20260823T023325Z-0116, measured in both arms.'
+  CD-PL-F111: 'the `last_build_log_entry` pointer went stale; remedy was A RESOLUTION NOT TO FORGET.'
+  CD-PL-F112: 'the same fault AT THE VERY NEXT BOUNDARY, by the seat that had just written F111 into that same line. Remedy called STRUCTURAL: "the pointer moves in the same commit as the entry it names."'
+  CD-PL-F132: 'the "structural fix" FAILED AT ITS NINTH APPLICATION. **This is the measured half-life of a discipline that lives only in a seat''s attention, and it is the single most load-bearing item on this docket.**'
+  CD-PL-F134: 'this seat moved `main` while a read-only auditor was reading `main`.'
+  CD-PL-F135: 'this seat wrote a dispatch target that named no tree — the FOURTH defect found in a dispatch this seat wrote in one day.'
+  CD-PL-F136: 'MEDIUM — **this seat ran ONE counterfactual arm, found it caught, and banked "the pass is not vacuous". The arm tested the attack this seat thought of and the record read as if it had tested the class.**'
+
+also_on_the_accumulated_docket_and_NOT_dropped_by_being_unnamed: >
+  The record carries more than the Product Owner's nine, and **naming nine is not a licence to drop
+  the rest**: `CD-PL-F99` (the ISSUED/CARRIED gap, named in ruling 5 itself), `CD-PL-F113`,
+  `CD-PL-F119`-`CD-PL-F124`, and **the three raised at the boundary that dispatched you —
+  `CD-PL-F137`, `CD-PL-F138`, `CD-PL-F139` (`BL-20260823T124508Z-0135`)**.
+  **REACH THEM IF THEY BEAR ON RECONCILIATION PRACTICE; SAY SO PLAINLY IF YOU DO NOT.** A pass that
+  silently covers less than its docket is the defect this project has found six times.
+
+the_question_none_of_this_projects_rules_has_been_asked: >
+  Carried forward from BL-...-0128 and still unanswered, and it is put to you because it is a
+  practice question and not a product one:
+  *** **WHEN A RULE IS ADOPTED ON THIS PROJECT, IS THE RECORD SWEPT BACKWARD FOR THE INSTANCES THAT
+  MOTIVATED IT?** *** There are nine `CD-RULE-00x` rules. **PICK AT LEAST ONE AND MEASURE THE
+  ANSWER RATHER THAN REASONING ABOUT IT.**
+
+# ================================================================================================== #
+# CD-D-129'S THREE CLAUSES — CARRIED VERBATIM, MANDATORY
+# ================================================================================================== #
+clause_i_instruments_that_exit_non_zero_by_declared_state:
+  why_this_is_here_before_you_run_anything: >
+    PO-DECISIONS-0009 ruling 1 requires that you be TOLD, before you discover it, that a governed
+    instrument in this tree EXITS NON-ZERO BY DECLARED STATE. **Finding it yourself and reporting it
+    as a discovery would be reporting the record back to itself.**
+  on_main_at_your_target: >
+    **`main` CARRIES NO APPLICATION CODE AND NO TEST SUITE.** The two instruments here are
+    `tools/reconciliation/check_blueprint_carried_po_text_verbatim.py` (EXIT 0) and
+    `check_blueprint_carried_po_0019_verbatim.py` (EXIT 0; `--counterfactual` EXIT 1 **BY DESIGN —
+    that arm is SUPPOSED to fail and a PASS there would be the defect**).
+    **`pbg boot` in this worktree returns AMBER, BY DECLARED STATE**: no `ROADMAP.md` exists, and
+    the worktree carries ~51 untracked operator-wrapper artefacts. **In a pristine `--no-hardlinks`
+    clone it returns GREEN.** Both were measured at `6a15ac5` before you were launched.
+  and_the_shape_of_that_warning_is_itself_on_your_docket: >
+    **THIS SECTION IS THIS SEAT TELLING YOU WHAT YOU WILL FIND. THAT IS A COURTESY AND IT IS ALSO A
+    FRAME.** `CD-PL-F121` exists because this seat's derived tables have been wrong before.
+    **MEASURE THE CLAIMS IN THIS SECTION RATHER THAN INHERITING THEM.**
+
+clause_ii_verdicts_are_taken_against_declarations_never_against_exit_codes_alone:
+  the_rule: >
+    **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD DEFECT IN THE SEAT THAT WRITES IT.**
+    Every instrument in this tree prints its DEFINITION, its POPULATION, its DECLARED LIMITS and its
+    exemptions at every run. Read them. Grade the declaration against the artefact, and the artefact
+    against the Blueprint — never the exit code against your expectation.
+  and_its_mirror: >
+    **AN EXIT 0 IS NOT A PASS EITHER.** On this project **EVERY ESCAPE ON THE RECORD PASSED STATIC
+    CHECKERS.** Treat a green run as a question, not an answer.
+  and_the_third_edge: '**AN EXIT 1 IS NOT A FAILURE EITHER.** Read what the number is about before you grade it.'
+
+clause_iii_the_standing_invitations_and_they_are_not_rhetorical:
+  attack_the_boundary_that_dispatched_you: >
+    `BL-20260823T124508Z-0135` and `BLUEPRINT.md` v0.4.0 landed HOURS before you. **THE CARRIAGE
+    CHECK THIS SEAT WROTE TO PROVE ITS OWN HONESTY IS A CHECK THE SUBJECT WROTE ABOUT ITSELF — that
+    is the weakest possible form of evidence and this seat is naming it before you do.** Run it.
+    Run its counterfactual. **THEN ASK WHAT IT DOES NOT COVER**, and compare its declared limits
+    against `git diff 7794c15..8a8cdf2 -- BLUEPRINT.md`, which is the half it admits it cannot see.
+  attack_the_enumeration_of_authored_bytes: >
+    §19's v0.4.0 row claims this seat's own authored bytes are EXACTLY five things. **THAT IS AN
+    ASSERTION BY THE AUTHOR ABOUT THE AUTHOR. THE DIFF IS RIGHT THERE. CHECK IT.**
+  attack_this_dispatch: >
+    **FOUR DEFECTS WERE FOUND IN DISPATCHES THIS SEAT WROTE IN A SINGLE DAY** (`CD-PL-F135` is the
+    fourth). Reading this document as a target is in scope and is invited.
+
+# ================================================================================================== #
+# METHOD — AND THE ONE THING THIS PASS MUST NOT DO
+# ================================================================================================== #
+method_requirements:
+  every_probe_prints_its_own_tree: '`CD-PL-F98`. Every command you run prints the tree it actually read (`pwd`), in its own invocation. **This is on your docket AND it is a rule you must follow, which is not a contradiction — it is the test of whether the rule is followable.**'
+  both_arms_or_no_claim: '`CD-D-079`. A claim that something is caught requires the arm where it is NOT caught. **`CD-PL-F136` is the finding that one arm licenses a claim about ONE ROUTE and this seat wrote it as a claim about THE GUARD. Do not repeat it in the pass that grades it.**'
+  numbers_not_adjectives: '`CD-RULE-003`, `CD-RULE-009`, `CD-PL-F91`. Run the command, read the number, never transcribe one from the record.'
+  the_honest_residue_form: '`CD-RULE-006`. A residue declaration must name a layer MEASURED to hold it, or be written **NOT PROVED TO BE CARRIED ANYWHERE**.'
+  what_this_pass_MUST_NOT_do: >
+    *** **DO NOT PRODUCE ANOTHER HONEST CONFESSION.** *** The Product Owner's own diagnosis is that
+    a self-raised finding per boundary *"ends with an audit, not with an infinite series of honest
+    confessions"*. **A verdict that lists what the Project Lead already admitted, agrees with it, and
+    praises the candour, IS THE FAILURE MODE — it would be the twelfth confession wearing an
+    auditor's badge.**
+    **THE DELIVERABLE IS A JUDGEMENT ABOUT WHETHER THE PRACTICE WORKS, AND WHAT WOULD HAVE TO CHANGE
+    STRUCTURALLY FOR IT TO WORK.** Where a carrier is owed, say what it is and where it must live —
+    including if the answer is `pbg/`, which no seat on this project may write and which is
+    therefore the answer nobody has been able to give.
+
+deliverable:
+  write_to: '/tmp/meta-assurance-01/VERDICT-META-ASSURANCE-01.md'
+  grade: '**PASS / AMBER / RED**, on the PRACTICE — not on the product, not on the perimeter, not on the WO-2 gate.'
+  must_contain:
+  - 'the SHA you resolved yourself at start and at finish, and whether they differ'
+  - 'a verdict on EACH of the nine docketed findings: is the class it names CLOSED, OPEN, or RECURRING — measured, not argued'
+  - 'the answer to the backward-sweep question, measured against at least one CD-RULE'
+  - 'your judgement on the central hypothesis: does self-finding at this volume function as a control or substitute for one'
+  - 'the structural carriers that are OWED and where each must live, including any that lie outside every seat''s writable scope'
+  - 'anything you could NOT reach, named plainly. **A pass that quietly covers less than its docket is the defect this project has found six times.**'
+  and_your_standing_to_disagree: >
+    **YOU MAY FIND AGAINST THIS DISPATCH, AGAINST THE PROJECT LEAD, AND AGAINST THE PRODUCT OWNER'S
+    FRAMING OF THIS PASS.** The fifth seat's standing to disagree was affirmed by the Product Owner
+    (PO-DECISIONS-0013 ruling 4) and the same standing is yours. **THE PROJECT LEAD WILL NOT ARGUE
+    YOUR GRADE UP OR DOWN AND HAS NO AUTHORITY TO DO EITHER** (`PBG-AUTH-003`). If your verdict
+    contradicts the reconciliation record, **THE RECORD IS WHAT GETS CORRECTED.**
+
+what_is_NOT_in_scope: >
+  The WO-2 gate; the three-tier perimeter's soundness; `CD-AC-002`/`CD-AC-005`; the lane at
+  `be0b355`; the product's forgery findings. **A NINTH ASSURANCE SEAT GRADES THOSE AND IT IS
+  DISPATCHED AFTER YOU RETURN.** If you stray into them you will duplicate its work and dilute
+  yours. **If you find something there that the ninth seat must know, NAME IT AND HAND IT ON rather
+  than grading it.**
