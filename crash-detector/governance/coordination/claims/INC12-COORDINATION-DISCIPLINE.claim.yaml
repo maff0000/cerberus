@@ -1,0 +1,30 @@
+record_type: WORK_CLAIM
+task_id: INC12-COORDINATION-DISCIPLINE
+seat_actor_id: CD-ENG-COORD-01
+pid: 1409246
+pid_cmdline_fingerprint: python3 -B tools/coordination/claim.py claim --task INC12-COORDINATION-DISCIPLINE
+  --seat CD-ENG-COORD-01 --write-scope tools/coordination/** --write-scope gover
+pid_start_time_ticks: 28150597
+hostname: dell-debian
+claimed_utc: '2026-08-23T14:32:21Z'
+base_sha: e6f980252854d6a79efaf42d4fddb998f19d8540
+branch: inc12-coordination
+worktree: /srv/crash-detector-inc12
+write_scope:
+- tools/coordination/**
+- governance/coordination/**
+- governance/engineering/build-log/BL-*-03??.yaml
+read_scope:
+- governance/**
+- pbg/**
+build_log_id_block: 0300-0399
+dispatch_id: CD-DISPATCH-INC12-COORDINATION-ENGINEER
+state: RELEASED
+provenance:
+  claimed_utc_command: date -u +%FT%TZ
+  base_sha_command: git rev-parse e6f9802 && git cat-file -t <sha>
+  atomicity: os.open(path, O_CREAT|O_EXCL|O_WRONLY) — FileExistsError is the refusal
+released_utc: '2026-08-23T14:33:21Z'
+released_by_seat: CD-ENG-COORD-01
+release_reason: increment 12 built and returned READY_FOR_ASSURANCE; the merge is
+  the accountable seat's task, not this seat's

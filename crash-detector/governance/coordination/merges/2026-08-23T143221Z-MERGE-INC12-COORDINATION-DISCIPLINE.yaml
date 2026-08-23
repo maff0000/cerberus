@@ -1,0 +1,95 @@
+record_type: MERGE_RECONCILIATION
+base_sha: e6f980252854d6a79efaf42d4fddb998f19d8540
+seats:
+- task_id: INC12-COORDINATION-DISCIPLINE
+  seat_actor_id: CD-ENG-COORD-01
+  claim_record: governance/coordination/claims/INC12-COORDINATION-DISCIPLINE.claim.yaml
+  write_scope:
+  - tools/coordination/**
+  - governance/coordination/**
+  - governance/engineering/build-log/BL-*-03??.yaml
+  tip_rev: HEAD
+  tip_sha: 8d4f6e7f28de0835359cc2afbd19dfae663d402e
+  commits:
+  - sha: 8d4f6e7f28de0835359cc2afbd19dfae663d402e
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: 99840a430f298b6c6abb98361c3739c057dcac29
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: d9b20d26acbb5fbeda5b4f16f379f5ab86e6886f
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: d0163ca6ed322dd2499d6c0c8cbe3a8f6ed65ae2
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: db1940b256cf456310b78ddc0f5e220b46a974b0
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: 47edbcb9ee16652c1f1e83578b87bbb4fc3160e1
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: 52051b5045a8b19f40118a0729ecebce24ff0790
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  - sha: e58fc03743d2aab482ad85168fc96c92d9708a9d
+    author_name: CD-ENG-COORD-01
+    author_email: cd-eng-coord-01@seats.crash-detector.invalid
+  touched_paths:
+  - governance/coordination/ACCOUNTABLE-SEAT.yaml
+  - governance/coordination/BUILD-LOG-ID-BLOCKS.yaml
+  - governance/coordination/RETURN-CD-ENG-COORD-01.md
+  - governance/coordination/claims/.gitkeep
+  - governance/coordination/contracts/CD-CT-001-WORK-CLAIM-ATOMIC.md
+  - governance/coordination/contracts/CD-CT-002-SCOPE-ALGEBRA-FAILS-CLOSED.md
+  - governance/coordination/contracts/CD-CT-003-LIVE-SCOPE-DISJOINT.md
+  - governance/coordination/contracts/CD-CT-004-BUILD-LOG-ID-BLOCKS.md
+  - governance/coordination/contracts/CD-CT-005-POINTER-ATOMIC.md
+  - governance/coordination/contracts/CD-CT-006-NO-SHARED-RECORD-WRITE.md
+  - governance/coordination/contracts/CD-CT-007-MERGE-RECONCILE.md
+  - governance/coordination/contracts/CD-CT-008-LAUNCH-LEASE.md
+  - governance/coordination/contracts/CD-CT-009-LEASE-HELD-AT-WRITE.md
+  - governance/coordination/evidence/EV-ATOMICITY-MEASUREMENT.md
+  - governance/coordination/leases/.gitkeep
+  - governance/coordination/merges/.gitkeep
+  - governance/coordination/plants/PLANT-COORD-01.mutation.patch
+  - governance/coordination/plants/PLANT-COORD-01.run.sh
+  - governance/coordination/plants/PLANT-COORD-02.mutation.patch
+  - governance/coordination/plants/PLANT-COORD-02.run.sh
+  - governance/coordination/plants/PLANT-COORD-03.mutation.patch
+  - governance/coordination/plants/PLANT-COORD-03.run.sh
+  - governance/coordination/plants/PLANT-COORD-04.mutation.patch
+  - governance/coordination/plants/PLANT-COORD-04.run.sh
+  - governance/coordination/plants/lib.sh
+  - governance/coordination/required-tests.yaml
+  - governance/engineering/build-log/BL-20260823T142725Z-0300.yaml
+  - tools/coordination/__pycache__/common.cpython-311.pyc
+  - tools/coordination/__pycache__/scope.cpython-311.pyc
+  - tools/coordination/check_build_log_blocks.py
+  - tools/coordination/check_build_log_pointer_atomic.py
+  - tools/coordination/check_lease_held.py
+  - tools/coordination/check_no_shared_record_write.py
+  - tools/coordination/check_scope_disjoint.py
+  - tools/coordination/claim.py
+  - tools/coordination/common.py
+  - tools/coordination/launch.sh
+  - tools/coordination/lease.py
+  - tools/coordination/liveness.py
+  - tools/coordination/merge_reconcile.py
+  - tools/coordination/registry.py
+  - tools/coordination/scope.py
+  - tools/coordination/test_scope.py
+assertion_1_containment:
+- seat_actor_id: CD-ENG-COORD-01
+  task_id: INC12-COORDINATION-DISCIPLINE
+  breaches: []
+assertion_2_non_overlap: []
+assertion_3_identity:
+- seat_actor_id: CD-ENG-COORD-01
+  task_id: INC12-COORDINATION-DISCIPLINE
+  commits: 8
+  foreign: []
+findings: []
+verdict: ADMITTED
+reconciled_utc: '2026-08-23T14:32:21Z'
+merge_id: MERGE-INC12-COORDINATION-DISCIPLINE

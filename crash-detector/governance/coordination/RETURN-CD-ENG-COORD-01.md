@@ -508,3 +508,72 @@ I do not think that makes increment 12 a restatement of the problem. A control t
 unwired is strictly more than a paragraph, and every one of these can be run by an Assurance seat
 today over real data. But it is one step short of what ruling 4 asks for, and the gap has a name, an
 owner and a reason — which is better than the alternative on this project's record.
+
+---
+
+# 9. I RAN MY OWN INSTRUMENTS OVER MY OWN INCREMENT — `CD-D-174`'S WHOLE POINT
+
+`CD-D-174` put this increment on its own branch so that ITEM 3 would get its first real test on its
+own work, and recorded in advance that *"IF THE ENGINEER'S OWN MERGE INSTRUMENT REFUSES ITS OWN
+MERGE, THAT IS A RESULT AND NOT AN EMBARRASSMENT."* I took my own claim through my own registry and
+ran everything against my own branch.
+
+```
+python3 -B tools/coordination/claim.py claim --task INC12-COORDINATION-DISCIPLINE --seat CD-ENG-COORD-01 \
+    --write-scope 'tools/coordination/**' --write-scope 'governance/coordination/**' \
+    --write-scope 'governance/engineering/build-log/BL-*-03??.yaml' \
+    --read-scope 'governance/**' --read-scope 'pbg/**' --base e6f9802 ...
+rc=0
+-> VERDICT: CLAIMED
+```
+
+| instrument | command | `rc` | verdict |
+|---|---|---|---|
+| **ITEM 3** merge reconcile | `merge_reconcile.py --base e6f9802 --claim INC12-COORDINATION-DISCIPLINE --tip ...=HEAD --emit` | **0** | **ADMITTED** — containment PASS (43 touched paths, all inside my declared write scope), non-overlap PASS, identity PASS (8/8 commits `CD-ENG-COORD-01`) |
+| **ITEM 2(b)** scope disjoint | `check_scope_disjoint.py` | **0** | ADMITTED — 1 live claim, 0 violations |
+| **ITEM 2(c)** id blocks | `check_build_log_blocks.py --entries --ref HEAD --since e6f9802` | **0** | ADMITTED — my `0300` entry is inside my allocated block |
+| **ITEM 2(d)** shared record | `check_no_shared_record_write.py --range e6f9802..HEAD` | **0** | ADMITTED — 8 commits, **0 shared-record violations. I did not touch `ACTIVE_WORK.yaml`.** |
+| **ITEM 2(e)** pointer atomic | `check_build_log_pointer_atomic.py --range e6f9802..HEAD` | **1** | ***REFUSED*** — `8d4f6e7f28de` `POINTER_NOT_MOVED,POINTER_STALE` |
+| **ITEM 4(ii)** lease held | `check_lease_held.py --range e6f9802..HEAD --identity CD-ENG-COORD-01` | **1** | REFUSED — 31 governed paths, 0 live leases |
+| `pbg/` untouched | `git diff --name-only e6f9802..HEAD -- pbg/ \| wc -l` | — | **0 paths. `PBG-FWK-013` held.** |
+
+**MY OWN MERGE INSTRUMENT ADMITS MY OWN MERGE**, and I state the honest weakness of that result:
+with ONE seat, assertion 2 (non-overlap) is trivially satisfied because there is no pair to
+intersect. **THE LOAD-BEARING RESULTS HERE ARE ASSERTION 1 (I stayed inside my declared lane, 43/43
+paths) AND ASSERTION 3 (8/8 commits carry my identity and no other).** Assertion 2's real test is
+`PLANT-COORD-03`, where two seats exist.
+
+**AND MY OWN ITEM 2(e) CHECK REFUSES MY OWN COMMIT, EXACTLY AS I PREDICTED IN
+`BL-20260823T142725Z-0300` BEFORE I RAN IT.** That is `CD-ENG-COORD-01-F01` arriving on schedule and
+it is a RESULT, not an embarrassment: **the two deliverables are jointly unsatisfiable for a
+non-accountable seat, and rather than exempt myself I built the check that catches me and then ran
+it.**
+
+---
+
+# 10. THE BRANCH TIP, AND WHAT THE NEXT ACTOR DOES
+
+```
+git rev-parse HEAD
+-> 8d4f6e7f28de0835359cc2afbd19dfae663d402e      (before this section was appended)
+git cat-file -t 8d4f6e7f28de0835359cc2afbd19dfae663d402e
+-> commit
+git log --format='%an <%ae>' e6f9802..HEAD | sort | uniq -c
+-> 8 CD-ENG-COORD-01 <cd-eng-coord-01@seats.crash-detector.invalid>
+```
+
+**THE FINAL TIP IS RESOLVED AND STATED IN MY RETURN MESSAGE, NOT TRANSCRIBED HERE**, because this
+file is committed *in* that commit and cannot name it (`CD-RULE-008`'s ordering problem).
+
+**NEXT SAFE ACTION.** The Project Lead RECONCILES BY MEASUREMENT AND BANKS — **it does not grade**
+(`PBG-AUTH-003`). It should:
+
+1. run **my** `merge_reconcile.py` over the merge of this branch into `main`;
+2. run **my** `check_build_log_pointer_atomic.py` over this branch — **it will REFUSE, and that
+   refusal is `F01`, not a defect in the merge**;
+3. rule on `F01` before any further parallel seat is dispatched, because **every future
+   non-accountable seat hits it on its very first Build Log entry**;
+4. dispatch a **FRESH** Assurance seat, told `Q11`, `Q12`, `Q13` and all seven findings **before it
+   discovers them**.
+
+**I DO NOT GRADE THIS. I DID NOT GRADE THIS. `PBG-SOD-001` IS NON-WAIVABLE.**
