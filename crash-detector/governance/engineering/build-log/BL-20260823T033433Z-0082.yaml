@@ -1,0 +1,208 @@
+# ================================================================================================ #
+# WO-2R3 THE RECORD ACT — ITEM 3. THE FIFTEEN DISPOSITIONS, AND THE FIFTY ROWS THAT DERIVE THE TWO
+# MODULES.
+#
+# ================================================================================================ #
+# **THE SWEEP WENT EXIT 1 -> EXIT 0 IN THIS COMMIT AND THAT IS ARITHMETIC.**
+#
+# Every one of its fifteen violations is now DECLARED. **NOTHING IS FIXED. NOT ONE LINE UNDER `src/`
+# WAS OPENED. TEN SITES ARE DECLARED OPEN DEFECTS AND ALL TEN ARE OPEN.** A register with ten
+# `DEFECT_OPEN` rows is a register honestly describing a system with ten open defects in its
+# admission and establishment mechanisms. The zero exit code is a statement about the DECLARATION
+# SET and about nothing else, and the instrument now prints that sentence itself on every clean run
+# so that no reader has to know to ask.
+# ================================================================================================ #
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0081. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T033433Z-0082
+timestamp_utc: "2026-08-23T03:34:33Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-04
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0015.md ruling 4; PO-DECISIONS-0014.md ruling 1'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: af2accbfc950961bb7f7967d34ecf16414088228
+parent_entry_id: BL-20260823T032251Z-0081
+schema_version: 1
+
+record_type: RECORD_ACT_ITEM
+
+what_landed:
+  thirteen_tier_1_rows: >
+    1 Category A `DEFECT_OPEN` · 3 Category B `CARRIER_ONLY` · 6 Category C `DEFECT_OPEN`
+    (REVERSED from the superseded draft's `OUT_OF_BOUND`) · 3 `crash_detector.establishment`
+    `DEFECT_OPEN`. **TEN `DEFECT_OPEN`, THREE `CARRIER_ONLY`, MEASURED FROM THE INSTRUMENT'S OWN
+    PRINTED TALLY AND NOT COUNTED BY EYE.**
+  fifty_tier_2_rows: >
+    33 for `crash_detector.admission`, 17 for `crash_detector.establishment` — 43
+    `UPSTREAM_OF_THE_PATH` and 7 `CARRIER_ONLY`. **NEITHER MODULE GETS A MODULE-LEVEL PROSE CLAIM;
+    both are DERIVED.** `DECLARED_MODULE_DISPOSITIONS` still holds exactly its previous 17 entries.
+  register_size: 'DECLARED_ADMISSIONS 32 -> 95 rows. DECLARED_MODULE_DISPOSITIONS 17 -> 17.'
+  one_more_contract_hole_closed_while_writing_the_rows: >
+    `_disposition_contract_violations` tests a mandatory field for non-emptiness with
+    `str(value).strip()`. **`str(()) == "()"`, which is NOT empty** — so an entry carrying
+    `finding: ()` satisfied the contract and cited nothing at all. Found while making `finding`
+    accept a TUPLE of ids (Category C cites two). Now `FINDING_DOES_NOT_RESOLVE`, with an arm.
+  the_carrier: 'tests/test_the_fifteen.py — 25 tests, including the derivation''s refusing arm ON THE REAL SUBJECT.'
+
+THE_TALLY_MEASURED_AGAINST_THE_ONE_THE_CONTENT_DOCUMENT_PUBLISHED:
+  what_the_instrument_printed: |
+    DISPOSITIONS DECLARED PER SITE — tier 1 (mandatory) | tier 2 (derives the module):
+        ESTABLISHED              16 |    0
+        EXACT                    11 |    0
+        OWN                       2 |    0
+        DELEGATED                 1 |    0
+        OUT_OF_BOUND              2 |    0
+        DEFECT_OPEN              10 |    0  (EXTENDED)
+        CARRIER_ONLY              3 |    7  (EXTENDED)
+        UPSTREAM_OF_THE_PATH      0 |   43  (EXTENDED)
+        MODULES DERIVED           2       ['crash_detector.admission', 'crash_detector.establishment']
+  agrees_with_section_4_on: '`DEFECT_OPEN` 10 · `CARRIER_ONLY` 3 · 2 modules · 13 sites + 2 modules = 15.'
+  DISAGREES_WITH_SECTION_4_AND_WITH_THE_DISPATCH_ON_ONE_NUMBER: >
+    **`OUT_OF_BOUND` AFTER THIS ACT IS TWO, NOT ZERO.** §4's tally row reads *"`OUT_OF_BOUND` | 0 |
+    was 6. Every one of them is gone"* and the dispatch's ITEM 3 says
+    *"`OUT_OF_BOUND` COUNT AFTER THIS ACT: ZERO."* **MEASURED: 2.** The draft's six Category C
+    `OUT_OF_BOUND` dispositions lived in a PROPOSAL DOCUMENT and were never written into this
+    register; reversing them removes nothing from it. The two rows that ARE here —
+    `crash_detector.observations::FetchFailed.__post_init__ isinstance(status, int)` and
+    `::Malformed.__post_init__ isinstance(self.instance_path, str)` — predate the whole proposal,
+    are NOT among the fifteen, and no seat on this act had authority to touch them. **NONE WAS
+    TOUCHED.** The dispatch's own baseline section states `OUT_OF_BOUND 2` two pages above the
+    claim that the count will be zero, so the two halves of the same document disagree. Reported,
+    not reconciled — reconciliation is the Project Lead's.
+    Pinned by `tests/test_the_fifteen.py::test_the_register_still_carries_TWO_OUT_OF_BOUND_rows_and_they_are_NOT_the_fifteen`.
+
+THE_SECOND_PLACE_THE_CONTENT_DOCUMENT_IS_WRONG_ABOUT_ITS_OWN_INSTRUMENT:
+  what_section_3_gives_for_Category_B: >
+    *"`callable` | the enumerated carrier callers — `tests/test_admission.py`,
+    `tests/test_judgement_path_doors.py`, `tests/test_collector_runner.py`. **MACHINE-CHECKED by
+    `_carrier_only_violations`: callers under `src/` are ENUMERATED, not claimed, and the build
+    breaks the day somebody adds an import.**"*
+  what_the_check_actually_does: >
+    `_carrier_only_violations` matches the `callable` field against CALL EXPRESSIONS BY NAME in
+    every swept module. **A LIST OF FILE PATHS MATCHES NO CALL EXPRESSION, EVER.**
+  measured_both_arms_by_this_seat: |
+    A product caller of `admission_faults` planted in `src/crash_detector/engine/evaluate.py`:
+      callable = "admission_faults"                     -> CARRIER_ONLY_HAS_A_PRODUCT_CALLER, EXIT 1
+      callable = "the enumerated carrier callers - ..." -> *** THE CHECK DID NOT FIRE ***
+  what_was_written_and_why: >
+    **THE CALLABLE'S NAME.** The carrier file list is prose and lives in
+    `why_it_is_not_product_judgement`, where prose belongs. **HAD THE FIELD TEXT BEEN TRANSCRIBED
+    AS GIVEN, THE ONE MACHINE-CHECKED FIELD IN THE WHOLE EXTENDED VOCABULARY WOULD HAVE BEEN
+    SILENTLY VACUOUS AND THE DOCUMENT WOULD HAVE SAID IT WAS CHECKED.** Pinned as a regression by
+    `test_the_content_documents_own_field_text_would_have_made_that_check_VACUOUS`.
+
+THE_RE_MEASUREMENT_OF_CD_PL_F104__ALL_FIVE_ARMS:
+  method: >
+    Own `git archive af2accbfc950961bb7f7967d34ecf16414088228` extraction at
+    `/tmp/cd-eng04-ab0/tree`, outside every governed worktree; driver written from the FINDING TEXT
+    rather than copied from `PL-AB0`; `tree:` line printed (CD-PL-F98). Command:
+    `cd /tmp/cd-eng04-ab0 && python3 -B ENG04-AB0-remeasure.py`.
+  arm_1: 'REPRODUCES. `establishes` is in `__all__`; a caller-authored frozen dataclass decorates and constructs. `cls` is CALLER-SUPPLIED.'
+  arm_2: 'REPRODUCES. `dataclasses.is_dataclass(Hostile) -> True` and `establishes()(Hostile)` SUCCEEDS on a plain class carrying `__dataclass_fields__ = {}`.'
+  arm_3: 'REPRODUCES. Forged `_field_type.name` -> `names=() initvars=(''x'',)`. The InitVar refusal is steered by caller-written data.'
+  arm_4: 'REPRODUCES. `crash_detector.observations.OK`, chosen from the live package at run time, SUBCLASSES SUCCESSFULLY.'
+  arm_5: >
+    REPRODUCES, **AND HARDER THAN THE PROJECT LEAD CLAIMED.** `is_establishing_type(Hostile2)` ->
+    True; `establishment_faults` -> `()`; `establishment_field_list` -> `()`; Hostile2 enters
+    `governed_types()`. The PL declared its 0 -> 1 under a BARE import of `establishment` alone and
+    stated that limit; run under a FULL package import it is **7 -> 8**, so the consequence does
+    not depend on the bare-import condition. **The stated limit was conservative and the finding is
+    stronger without it.**
+  the_counterfactual: 'HOLDS. The same class without the forged attribute: `EstablishmentFault` at decoration, `is_establishing_type -> False`.'
+  MY_OWN_SIXTH_ARM: 'The shipped `establishes.__doc__` does carry `:raises EstablishmentFault: at decoration, if the subject is not a dataclass`. **The docstring is falsified by arm 2, as claimed.**'
+  ONE_QUALIFICATION_THAT_CUTS_THE_OTHER_WAY_AND_IS_RECORDED_ANYWAY: >
+    **`governed_types`, `is_establishing_type`, `establishment_faults` and
+    `establishment_field_list` ARE ALL `CARRIER_ONLY` — MEASURED: NO MODULE UNDER `src/` CALLS ANY
+    OF THEM.** So the headline consequence, *"a caller mints a FORGED GOVERNED TYPE"*, is minted
+    into introspection surfaces that only carriers read. **THAT DOES NOT TOUCH ARMS 1-4**: the
+    decoration succeeding on a non-dataclass, the steerable InitVar refusal and the subclassable
+    `self` all stand, and the docstring is still false. **BUT `CD-PL-F104`'s SEVERITY RESTS
+    PARTLY ON A SURFACE NO PRODUCT MODULE CONSULTS, AND NO DOCUMENT SAID SO.** Recorded in the
+    four `CARRIER_ONLY` tier-2 rows themselves so it cannot be lost, and raised as
+    `CD-ENG-WO2R3-04-F06`.
+
+what_this_does_NOT_close:
+  - '**IT FIXES NOTHING.** Category A''s `__qualname__`, Category C''s six `isinstance` sites and
+     `establishment`''s `is_dataclass` gate are all live and all OPEN. No file under `src/` was
+     opened by this act at any point.'
+  - '**THE GREEN EXIT IS ARITHMETIC.** 15 violations -> 0 because 15 declarations were written.'
+  - '**NO DISPOSITION IS VERIFIED BY ANYTHING.** DECLARED LIMIT 1 is untouched. The instrument
+     checks the FORM of a claim; a well-formed lie passes, and 50 of the 63 new rows are this
+     seat''s own reading of two modules it did not write.'
+  - '**`gates` IS UNIFORM WITHIN EACH MODULE** — all 31 admission rows name one downstream point
+     and all 12 establishment rows name another. Existence and different-module are checked;
+     per-site specificity is NOT claimed and is not there.'
+  - '**CD-RT-012-NO-EXECUTION-INTERFACE IS STILL RED AND IS NOT MINE.** EXIT 1 at the base and EXIT
+     1 now, same single violation, `tests/test_tree_fingerprint.py:61`, an L3 prose false positive.
+     PO-DECISIONS-0015 ruling 3 assigns it to increment 8 with its own contrast. NOT REPAIRED.'
+  - '`check_grant_matrix_live.py` EXIT 3 at the base and EXIT 3 now — the env gate, F-06-O, no
+     credentials on this host and none guessed.'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  class_2_sweep_before_the_whole_act: 'EXIT 1 — `CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations`'
+  class_2_sweep_after_the_whole_act: 'EXIT 0 — `CD-CLASS-2-SWEEP: PASS — 534 sites … 13 sites and 0 modules are declared OPEN, OUT OF BOUND or an OPEN DEFECT`. **ARITHMETIC.**'
+  full_suite: 'EXIT 0 — 1635 passed. Baseline 1580; +11 +19 +25.'
+  the_whole_register_set_run_by_this_seat_not_only_the_named_two:
+    check_base_image_digest_pin: 'EXIT 0'
+    check_constructor_field_establishment: 'EXIT 0'
+    check_dockerignore: 'EXIT 0'
+    check_egress_no_broker: 'EXIT 0'
+    check_engine_no_witness_reach: 'EXIT 0'
+    check_grant_matrix_live: 'EXIT 3 — env gate, unchanged from the base'
+    check_judgement_path_doors: 'EXIT 0'
+    check_lockfile_denylist: 'EXIT 0'
+    check_no_blend: 'EXIT 0'
+    check_no_execution_interface: '**EXIT 1 — RED AT THE BASE AND RED NOW. NOT MINE, NOT TOUCHED.**'
+    check_no_numeric_default: 'EXIT 0'
+    check_schema_closed: 'EXIT 0'
+  and_two_guards_named_in_required_tests_yaml_DO_NOT_EXIST_IN_THE_TREE: >
+    `tools/register/check_public_artefact_no_private_field.py` (`required-tests.yaml:2457`) and
+    `tools/register/check_first_published_immutable.py` (`:2554`). Both belong to criteria the
+    register itself declares NOT DELIVERED IN WO-2, so this is probably by design — **but this seat
+    could not establish that from the register alone and reports it rather than assuming it.**
+
+findings_against_my_own_work:
+  CD-ENG-WO2R3-04-F06: >
+    **THE `CARRIER_ONLY` FINDING ABOVE CUTS AT MY OWN DISPOSITIONS TOO.** I wrote three tier-1 and
+    seven tier-2 `CARRIER_ONLY` rows on the strength of an AST call-expression search. The
+    instrument's own docstring declares that search a FLOOR — it cannot see an aliased call, a
+    `getattr` on a module, or a call through a container — and my measurement used the same
+    method. **`CARRIER_ONLY` IS AS STRONG AS THAT FLOOR AND NO STRONGER**, and I am the seat that
+    just used it to qualify somebody else's finding.
+  CD-ENG-WO2R3-04-F07: >
+    **FIFTY OF THE SIXTY-THREE NEW ROWS ARE MY OWN READING OF TWO MODULES I DID NOT WRITE, AND THE
+    CONTENT DOCUMENT SUPPLIES NO TEXT FOR ANY OF THEM.** The act ordered the rows to exist (§1.3)
+    and left their content to the writing seat. So `operand_origin` on 50 sites is a claim by an
+    Engineer who read `admission.py` and `establishment.py` once, in one sitting, at the end of an
+    act — **the FIRST-AND-ONLY-READING shape that Category C has just been reversed for trusting.**
+    The seventh Assurance seat should attack `operand_origin`, and the rows most likely to be wrong
+    are the `OWN_CONSTRUCTION` ones, because that is the answer that ends the enquiry.
+  CD-ENG-WO2R3-04-F08: >
+    **THE CONVENTION I USED FOR `operand_origin` IS MINE AND IS NOT WRITTEN IN THE RULING.** Where
+    the recorded operation is `is`/`is not` I recorded the origin of the constant side and noted
+    that identity is not delegable; where a container was rebuilt in scope I recorded
+    `OWN_CONSTRUCTION` even though its ELEMENTS are caller-influenced. **Both are defensible and
+    both are choices**, and a different seat reading the same 50 sites could reasonably produce a
+    different distribution. The convention is stated in the rows rather than left in my head.
+  CD-ENG-WO2R3-04-F09: >
+    **I MADE THE SWEEP GREEN AND I AM THE SEAT LEAST ABLE TO JUDGE WHETHER THAT WAS RIGHT.** The
+    act''s instruction was to declare, and declaring produced EXIT 0. I have labelled it arithmetic
+    in the instrument''s output, in this entry, in the commit message and in a test that fails if
+    the instrument stops saying it. **NONE OF THAT MAKES IT SAFE.** The next reader of a CI
+    dashboard sees a green tick.
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. **A RECORD, NOT ASSURANCE.** This seat does not certify this work and
+  does not grade it (PBG-AUTH-003). A FRESH SEVENTH Assurance seat audits it and the Product Owner
+  dispositions the gate. The fifteen are a TARGET and not a settled record — the content document
+  says so itself, and this entry adds two measured disagreements with that document to the pile.

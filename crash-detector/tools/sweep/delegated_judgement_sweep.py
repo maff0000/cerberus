@@ -542,7 +542,18 @@ def _finding_resolution_violations(declared_admissions, declared_modules, findin
             where = (
                 f"{key[0]}::{key[1]} {key[2]}: {key[3]}" if isinstance(key, tuple) else str(key)
             )
-            for identifier in _finding_ids(evidence):
+            cited = _finding_ids(evidence)
+            if "finding" in evidence and not cited:
+                # **THE HOLE THIS CLOSES IS THE ONE `str(()).strip()` LEAVES OPEN.** The
+                # mandatory-field check tests non-emptiness by stringifying, and `str(())` is
+                # `"()"` — non-empty. An entry carrying `finding: ()` would therefore satisfy
+                # the contract and cite nothing at all.
+                found.append((
+                    "FINDING_DOES_NOT_RESOLVE", where,
+                    f"{word} carries a `finding` field that names NO id "
+                    f"({evidence.get('finding')!r}). An empty citation is not a citation.",
+                ))
+            for identifier in cited:
                 row = findings.get(identifier)
                 if row is None:
                     found.append((

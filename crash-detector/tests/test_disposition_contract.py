@@ -180,19 +180,45 @@ def test_CARRIER_ONLY_holds_for_a_callable_no_product_module_calls(a_tree):
 
 def test_the_five_original_words_are_unchanged_in_shape(a_tree):
     """**A CONTRACT CHANGE THAT BROKE THE EXISTING REGISTER WOULD HAVE FAILED THE ONE THING
-    IT WAS FOR.** The eleven are not written yet; the sweep must be exactly as red as it was,
-    for exactly the reasons it was.
+    IT WAS FOR.** The five original words keep `(word, note)` and the population is unmoved.
+
+    **SUPERSEDED IN TWO ASSERTIONS AT THE WO-2R3 RECORD ACT** (`PBG-CONT-003` — corrections
+    supersede, never edit). The old text, verbatim:
+
+        assert result.returncode == 1
+        assert "534 sites, 15 violations" in result.stdout, (
+            "the sweep's own population or violation count moved. The contract change must "
+            "not move either — the eleven dispositions are the PROJECT LEAD's and are not "
+            "written yet (CD-D-130).")
+
+    It was written at increment 7, when the dispositions were NOT YET WRITTEN and any movement
+    in the count meant the contract change had broken something. **THE RECORD ACT WRITES THEM,
+    SO THE COUNT MOVES BY CONSTRUCTION** — every one of the fifteen violations is now
+    DECLARED. `PO-DECISIONS-0015` ruling 4 ordered exactly that.
+
+    **AND THE ASSERTION THAT REPLACES IT IS NOT "THE SWEEP IS GREEN".** A green exit here is
+    ARITHMETIC over the declaration set and this project has been burned four times by a clean
+    run being read as evidence of a proposition it says nothing about. So the replacement
+    asserts the thing that could actually go wrong: that the POPULATION is unmoved at 534, that
+    the five original words are still accepted, and that **the instrument itself prints, on
+    every clean run, what its own zero exit code does and does not mean.**
     """
     result = _run(a_tree)
-    assert result.returncode == 1
     assert "UNKNOWN_DISPOSITION" not in result.stdout
     assert "DISPOSITION_EVIDENCE_MISSING" not in result.stdout
     assert "MALFORMED_DISPOSITION" not in result.stdout
-    assert "534 sites, 15 violations" in result.stdout, (
-        "the sweep's own population or violation count moved. The contract change must not "
-        "move either — the eleven dispositions are the PROJECT LEAD's and are not written "
-        "yet (CD-D-130).\n" + result.stdout[-3000:]
+    assert "534 sites" in result.stdout, (
+        "the sweep's own POPULATION moved. The record act declares sites; it does not create "
+        "or destroy them, and it changed no line under src/.\n" + result.stdout[-3000:]
     )
+    if result.returncode == 0:
+        assert "A REGISTER FULL OF `DEFECT_OPEN` BUYS NOTHING" in result.stdout, (
+            "the sweep exited 0 WITHOUT saying what that does not mean. **THIS IS THE "
+            "ASSERTION THAT MATTERS.** A zero here is arithmetic over the declaration set: "
+            "ten sites are declared OPEN DEFECTS and not one of them is fixed.\n"
+            + result.stdout[-3000:]
+        )
+        assert "ARITHMETIC over the declaration set" in result.stdout
 
 
 def test_every_extended_word_is_printed_even_at_zero(a_tree):
