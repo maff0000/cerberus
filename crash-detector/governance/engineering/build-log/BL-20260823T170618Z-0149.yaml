@@ -1,0 +1,169 @@
+# ================================================================================================== #
+# BL-20260823T170618Z-0149 — PROJECT LEAD BOUNDARY. **THE TENTH GATE RETURNED `AMBER`. RECONCILED BY
+# MEASUREMENT, BANKED, NOT ACCEPTED. STOP: THE NEXT ACTOR IS THE PRODUCT OWNER AND NO SEAT IS
+# DISPATCHED.**
+#
+# **THE VERDICT IS BANKED VERBATIM AT `36700d7` — 845 lines, 45857 bytes, sha256 `1d46243b`,
+# `numstat 845 0`, BESIDE the six prior seats' documents and NOT over any of them, COMMITTED BEFORE
+# IT WAS READ.**
+#
+# *** **AND THE SENTENCE THAT DECIDES WHAT HAPPENS NEXT IS THIS ONE:** ***
+#
+#   **`CD-ASR-WO2R3-06-F09` IS NOT CLOSED. THE INCREMENT DISPATCHED TO CLOSE IT FIXED THE NAMED
+#   INSTRUMENT AND NOT ITS SIBLING, AND THE LEASE IS STILL FLIPPABLE BY ONE COMMAND FROM ANY
+#   PROCESS, WITH NO IDENTITY ARGUMENT OF ANY KIND.**
+#
+# **THIS SEAT REPLICATED IT IN ITS OWN SHELL AND MAKES IT SHARPER, NOT SOFTER.**
+# **THIS SEAT DOES NOT GRADE, DOES NOT ARGUE, AND HAS NO AUTHORITY TO DO EITHER (`PBG-AUTH-003`).**
+# ================================================================================================== #
+
+entry_id: BL-20260823T170618Z-0149
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T17:06:18Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1568164, wrapper PID 1568163, `timeout 21600` from 15:30Z. `ps` shows exactly ONE Project Lead process.'
+phase: GATE
+branch: main
+base_sha: 36700d7556cd92ee69e191559ef43f9159005073   # the commit banking the verdict. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+the_banking:
+  artefact: 'governance/assurance/WO-2R3/VERDICT-TENTH-SEAT.md'
+  integrity_CD_RULE_009: '**845 lines · 45857 bytes · sha256 `1d46243b78bae019e3195c6ce2f5b7b06bd83132a2de13c7ed639a3af6b9da9a`** (`sha256sum`), **`git diff --cached --numstat` -> `845 0`. INSERTIONS ONLY. NOTHING WAS OVERWRITTEN.**'
+  the_independent_agreement: '**The seat reported that same sha256 in its own return, computed in its own shell, before this seat measured. The two agree.**'
+  one_difference_from_the_six_PRIOR_bankings_STATED_RATHER_THAN_PAPERED_OVER: '**THERE IS NO SEPARATE COPY TO `cmp` AGAINST.** The seat wrote the artefact directly into the tree, as its dispatch permitted. The six prior bankings copied a seat''s own file and proved `cmp` rc=0. **HERE THE INDEPENDENT-HASH AGREEMENT IS THE SUBSTITUTE, AND IT IS A WEAKER CHECK THAN `cmp`: it proves the bytes this seat committed are the bytes the seat computed a hash over, NOT that no third party altered them in between. NOBODY HAD THE OPPORTUNITY, AND SAYING SO IS AN ASSERTION, WHICH IS WHY THE WEAKNESS IS NAMED HERE.**'
+  the_form: '**VERBATIM AND BESIDE** (`CD-D-143`, `PBG-CONT-003`). `governance/assurance/WO-2R3/` now holds `VERDICT.md`, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH and TENTH — **seven seats'' documents, none inside another.** `git status` over that directory showed exactly ONE untracked path and NO modified predecessor.'
+  the_order: '**COMMITTED AT `36700d7` BEFORE IT WAS READ.** This seat had read the return message and had NOT opened the document.'
+  the_seat_honoured_its_mutation_boundary_MEASURED: '**HEAD unmoved at `9aeaf33` when the seat returned. The verdict artefact was the ONLY governed path it wrote. `ACTIVE_WORK.yaml` untouched. No predecessor edited. Both worktrees intact.**'
+
+# ================================================================================================== #
+# RECONCILIATION BY MEASUREMENT. **BOTH HIGH FINDINGS REPLICATED IN THIS SEAT'S OWN SHELL, AND ONE
+# OF THEM IS MADE SHARPER.**
+# ================================================================================================== #
+reconciliation:
+  F02_HIGH_F09_IS_NOT_CLOSED_CONFIRMED_AND_SHARPENED:
+    what_the_seat_found: '`lease.py reap --force` abandons a lease whose holder is ALIVE, from any process, with **no `--seat` and no identity argument of any kind**.'
+    THIS_SEAT_READ_THE_PARSER_FIRST: |
+      python3 -B tools/coordination/lease.py reap --help
+        usage: lease.py reap [-h] --lease LEASE --reason REASON [--force]
+      **THERE IS NO IDENTITY ARGUMENT TO OMIT. IT DOES NOT EXIST.**
+      grep -n force tools/coordination/lease.py  ->  ONLY lines 352 and 412.
+      **`--force` IS THE SWITCH THAT DEFEATS THE LIVENESS GUARD AND IT APPEARS IN NO DOCSTRING,
+      NO COMMAND LIST AND NONE OF THE ELEVEN DECLARED LIMITS.**
+    AND_THEN_RAN_IT_END_TO_END_AGAINST_A_GENUINELY_LIVE_PROCESS: |
+      # sandbox clone at b165dd9; `sleep 600 &` -> a real live PID 1931811
+      lease.py acquire --lease L1 --seat SEAT-VICTIM --task T1 --pid 1931811 --write-scope 'src/contended/**'
+        -> VERDICT: LEASE ACQUIRED — THE LAUNCH MAY PROCEED
+      kill -0 1931811   -> YES, ALIVE
+      # ATTACKER, no identity argument of any kind:
+      lease.py reap --lease L1 --reason "I want this scope" --force
+        -> VERDICT: REAPED — lease=L1 state=ABANDONED (ALIVE)          rc=0
+      grep governance/coordination/leases/L1.lease.yaml
+        state: ABANDONED
+        reap_reason: I want this scope
+        reap_disclosure: A SESSION DIED HOLDING THIS LEASE. ...
+      kill -0 1931811   -> YES — STILL RUNNING, ITS LEASE GONE
+      lease.py acquire --lease L2 --seat SEAT-ATTACKER --task T2 --write-scope 'src/contended/**'
+        -> VERDICT: LEASE ACQUIRED — THE LAUNCH MAY PROCEED
+    WHERE_THIS_SEAT_MAKES_IT_SHARPER: >
+      *** **THE INSTRUMENT PRINTS `(ALIVE)` IN THE SAME VERDICT LINE IN WHICH IT REAPS, AND THEN
+      WRITES `A SESSION DIED HOLDING THIS LEASE` INTO THE DURABLE RECORD.** ***
+      **SO IT IS NOT THAT THE INSTRUMENT FAILED TO NOTICE THE HOLDER WAS ALIVE. IT HAD THE LIVENESS
+      FACT IN HAND, PRINTED IT TO THE OPERATOR, AND WROTE THE OPPOSITE INTO THE FILE THAT SURVIVES.**
+      The transient string is true and the persistent one is false, **and the persistent one is the
+      one a later seat, a later audit or a cold boot will read.** This is not an undeclared limit; it
+      is **an instrument that manufactures a false record of why a scope became free**, which is a
+      worse class than the one `F09` originally named.
+    and_the_scope_was_then_TAKEN: '**`SEAT-ATTACKER` acquired the freed scope, rc=0. The full chain — live holder, forced reap, false record, scope taken — completes with no authority check at any step.**'
+
+  F01_HIGH_THE_GATEKEEPER_ADMITS_WHAT_THE_DETECTOR_REFUSES_CONFIRMED:
+    what_the_seat_found: '`claim.py` never tests THIS claim''s READ scope against a live claim''s WRITE scope. The `CD-PL-F134` guard is **ORDER-DEPENDENT**.'
+    BOTH_ORDERS_MEASURED_ONE_VARIABLE_THE_ORDER_AND_NOTHING_ELSE: |
+      # ORDER A — writer first, reader second
+      claim --task W1 --seat SEAT-WRITER --write-scope 'src/shared/**'                          -> VERDICT: CLAIMED
+      claim --task R1 --seat SEAT-READER --write-scope 'docs/**' --read-scope 'src/shared/**'   -> VERDICT: CLAIMED
+      check_scope_disjoint.py --root .
+        VIOLATION WRITE/READ (CD-PL-F134) [cross-seat]  seat SEAT-WRITER (task W1) WRITES what
+                                                        seat SEAT-READER (task R1) declared it would READ
+        VERDICT: REFUSED — 1 scope violation(s) among 2 live claim(s)
+
+      # ORDER B — reader first, writer second. THE SAME TWO CLAIMS.
+      claim --task R1 ... --read-scope 'src/shared/**'   -> VERDICT: CLAIMED
+      claim --task W1 ... --write-scope 'src/shared/**'  -> VERDICT: CLAIM REFUSED — WRITE/READ SCOPE OVERLAP (CD-PL-F134)
+    what_it_is: >
+      **SAME TWO CLAIMS. OPPOSITE VERDICTS. THE ONLY VARIABLE IS THE ORDER THEY ARRIVE IN.**
+      **AND IT IS THE NINTH SEAT'S `F04` SIGNATURE EXACTLY, IN A DIFFERENT PAIRING: *"the state the
+      CLAIM instrument produced is a state the DISJOINTNESS instrument calls a VIOLATION."*** `F04`
+      was closed for `WRITE x WRITE`. **THE ASYMMETRIC `WRITE x READ` HALF — WHICH IS `CD-PL-F134`,
+      THE INCIDENT THE CHECK WAS NAMED AFTER — IS STILL OPEN ON THE GATEKEEPER SIDE.**
+
+  the_seats_own_near_miss_and_why_this_seat_records_it_PROMINENTLY: >
+    *** **THE SEAT NEARLY RAISED A `HIGH` THAT THIS PROJECT LEAD AUTHORED PRODUCT MEANING INTO
+    BLUEPRINT §17, AND CAUGHT THAT IT WAS ITS OWN PROBE'S FALSE POSITIVE.** *** Its single-line
+    `grep -F` missed phrases spanning the Product Owner's line wraps; normalised, the §17 cell is
+    character-identical to the PO's bytes. **`CD-D-115` NOT BREACHED AND THE FINDING DOES NOT
+    EXIST.** **THIS SEAT RECORDS IT BECAUSE THE OUTCOME WAS FAVOURABLE TO THIS SEAT AND THAT IS
+    EXACTLY WHEN A RECORD IS TEMPTED TO GO QUIET.** It is also the second time today that line-wrap
+    normalisation decided a carriage question — the same hazard this seat declared in advance as
+    `DECLARED LIMIT 2` of its own 0022 check.
+  and_the_seat_caught_its_OWN_FALSE_GREEN: '**Its first race run was a DEAD PROBE** — both arms 0, because `git archive` output is not a git repository and every claim failed closed. **THE CONTRAST ARM CAUGHT IT.** `CD-D-079` earning its keep on the seat that was applying it.
+    **AND IT MEASURED A FOURTH NUMBER: 196 double-takes on the unfixed tree, against 193 / 194 / 195 from the ninth seat, the Engineer and this seat. NOBODY ADJUSTED ANYBODY.**'
+  what_HELD_under_attack_and_it_is_said_as_plainly_as_what_did_not: '**`F08` HELD AS A CLASS** — all three instruments refuse same-identity overlap, and the seat BUILT the wrong fix (the concurrency ban) and watched the plant drop to 3/5, **which is the proof that arms 3 and 4a discriminate rather than merely pass**. **`F05`+`F11` HELD** — the unfixed carrier was caught expanding `src/*` into three directories; the fixed one passes `[''src/*'']` intact. **`--pid 1` IS REFUSED BY DERIVATION.** **ALL 8 PLANTS, 27 ARMS, LIVE — the Engineer''s `T7` claim MEASURED AND CONFIRMED by the seat, which is the half this seat had explicitly NOT measured and said so.** **`PLANT-COORD-06` FLAKINESS NOT REPRODUCED IN 20/20 RUNS, reported as a NEGATIVE RESULT and not as a refutation.**'
+
+# ================================================================================================== #
+# THE VERDICT'S OWN NEXT SAFE GATE, CARRIED UNSOFTENED.
+# ================================================================================================== #
+the_seats_next_safe_gate:
+  verbatim_in_substance: '**A PRODUCT OWNER RULING, AND NOT AN ENGINEER DISPATCH. NEXT ACTOR: THE PRODUCT OWNER (Trinity), PREPARING FOR MATT.**'
+  the_four_items_reserved_to_the_product_authority:
+    1: '**IS `F09` CLOSED OR NOT** — and the seat states in terms that **A SEAT MUST NOT RECORD IT CLOSED ON THIS VERDICT.** This seat has not recorded it closed and will not.'
+    2: '**THE `F01` ASYMMETRY** — the gatekeeper/detector disagreement on `WRITE x READ`.'
+    3: '**THE MERGE CONTROL BEING DEAD FOR THE STANDING WORK MODE** — which is this seat''s own `CD-PL-F155`, independently reached by the seat.'
+    4: '**PARALLELISM.**'
+  and_the_answer_to_the_question_the_PRODUCT_OWNER_WAS_WAITING_ON: >
+    *** **"IS THIS THE DEDICATED PARALLELISM GATE RULING 1 REQUIRES?" — THE SEAT SAYS NO, REACHED
+    INDEPENDENTLY OF THIS SEAT'S OWN VIEW, AND GOES FURTHER: ON ITS EVIDENCE IT DOES NOT PASS EVEN
+    AS A GATE ON THE FIVE FIXES, BECAUSE `F02` IS OPEN.** ***
+    **IT NAMES SEVEN THINGS A REAL PARALLELISM GATE WOULD NEED AND FLAGS THREE IT WOULD NOT PROCEED
+    WITHOUT: (1) TWO SEATS ACTUALLY RUNNING AT ONCE, (2) `Q11` CARRIAGE, (6) `CD-RULE-002`'s
+    TWO-SESSION BLINDNESS.** **IT DOES NOT DECLARE PARALLELISM SAFE AND WAS FORBIDDEN TO.**
+  the_remainder: '`F03`-`F10` are ordinary remediation for a bounded Engineer dispatch afterwards, **by a seat that is not the tenth (`PBG-SOD-004`)**. **`F11` IS A `pbg/` DEFECT — `pbg boot` takes no role argument and declared a read-only Assurance seat `PROJECT_LEAD`. IT IS READ-ONLY TO EVERY SEAT HERE (`PBG-FWK-013`), WAS REPORTED AND NOT REPAIRED, AND BELONGS TO THE FRAMEWORK BACKLOG BESIDE `Q11`.**'
+
+# ================================================================================================== #
+# STANDING. **VERIFIED BY COMMAND AT THIS BOUNDARY, NOT ASSERTED.**
+# ================================================================================================== #
+standing_unchanged_and_measured:
+  - '`CD-AC-005` **RED** · `CD-AC-002` **AMBER, NOT CLOSED** — **NOT MOVED BY ANY SEAT TODAY AND NOT MOVED HERE.**'
+  - '**`CD-ASR-WO2R3-06-F09` DOES NOT CLOSE.** The tenth seat''s `F02` is why, and this seat replicated it.'
+  - 'the WO-2 gate **SHUT** · `wo-2r3` **FROZEN at `be0b355`** — MEASURED: `git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`.'
+  - '`CD-ASR-WO2R3-04-F01` **NOT CLOSED** · six `DEFECT_OPEN` tier-1 sites · `CD-F-0001`-`CD-F-0004` **ALL OPEN**.'
+  - '**`Q11` NOT CLOSED** and the tenth seat names its carriage as one of the three things a parallelism gate could not proceed without.'
+  - '**`F10`, `F12`, `F13`, `F14` STILL OPEN** — outside ruling 5''s named five.'
+  - '**PARALLEL REMAINS STRUCK (`CD-D-181`).** The gate that would re-enable it has not been passed and, on the tenth seat''s evidence, has not been held.'
+  - '**BLUEPRINT.md AND PID.md UNTOUCHED SINCE THE RECORD ACT** — MEASURED: `git log --oneline 88e43db..HEAD -- BLUEPRINT.md PID.md` -> **0 commits.**'
+  - '**NOTHING UNDER `tools/` OR `governance/coordination/` MOVED WHILE THE ASSURANCE SEAT WAS LIVE** — MEASURED: `git log --oneline fd0c4d2..HEAD -- tools/ governance/coordination/` -> **0 commits. THE DISPATCH''S PROMISE HELD AND IT WAS CHECKED RATHER THAN CLAIMED.**'
+  - '`/srv/crash-detector-inc12` at `59cb3c1` and `/srv/crash-detector-inc13` at `105db79` — **BOTH RETAINED, MEASURED IN `git worktree list`.**'
+
+# ================================================================================================== #
+# THE STOP.
+# ================================================================================================== #
+STOP:
+  what_this_boundary_does_NOT_do: '**IT DOES NOT ACCEPT THE VERDICT, DOES NOT CLOSE ONE FINDING, DOES NOT MOVE ONE GRADE, AND DOES NOT DISPATCH ONE SEAT.** `PBG-AUTH-003`. **BANKED IS NOT RECONCILED AND NEITHER IS ACCEPTED.**'
+  why_no_remediation_dispatch_is_issued_here: >
+    **BECAUSE THE VERDICT SAYS THE NEXT ACTOR IS THE PRODUCT OWNER AND IT IS RIGHT.** Two of its four
+    reserved items — *"is `F09` closed"* and *"parallelism"* — are dispositions of the Product
+    Owner's own prior rulings, and `PO-DECISIONS-0022` ruling 5 was a ruling on what to fix. **A
+    Project Lead that dispatched a fix for `F02` right now would be deciding, on its own authority,
+    that ruling 5's five items are now six. THAT IS NOT THIS SEAT'S TO DECIDE.**
+  the_next_actor: '**THE PRODUCT OWNER (Trinity), PREPARING FOR MATT AS FINAL AUTHORITY.**'
+  the_four_questions_this_seat_ANSWERS_NONE_OF:
+    Q20: '**IS `CD-ASR-WO2R3-06-F09` CLOSED?** The instrument named in ruling 5 was fixed; its sibling `lease.py reap`/`release` was not, and the lease is still flippable by one command from any process with no identity argument. **The tenth seat says NOT CLOSED and forbids a seat to record otherwise. This seat has recorded it NOT CLOSED and asks the Product Owner to rule.**'
+    Q21: '**THE `F01` ASYMMETRY — is the gatekeeper''s order-dependent `WRITE x READ` admission a defect of increment 13, or residue of increment 12 that ruling 5 never named?** It determines whether it is a re-open or a new item.'
+    Q22: '**RULING 5 NAMED FIVE ITEMS AND THE FIX PRODUCED A SIXTH DEFECT CLASS IN THE SAME FILE (`F02`) AND EXPOSED A SEVENTH (`F01`). DOES THE RULING WIDEN, OR DOES A NEW RULING ISSUE?** This seat will not widen a ruling by dispatching against it.'
+    Q23: '**PARALLELISM.** The tenth seat says this is not the dedicated gate, names seven things a real one needs, and will not declare parallel safe. **`CD-D-181` therefore stands and the override remains Matt''s alone, with the evidence in front of him.**'
+  and_one_thing_the_PRODUCT_OWNER_SHOULD_SEE_WITHOUT_ASKING: >
+    **`F11` IS A FRAMEWORK DEFECT: `pbg boot` TAKES NO ROLE ARGUMENT AND DECLARED A READ-ONLY
+    ASSURANCE SEAT `PROJECT_LEAD`.** Every seat this project has ever dispatched booted through that
+    command. **IT IS READ-ONLY TO EVERY SEAT HERE AND JOINS `Q11` ON THE PBGv2 BACKLOG.** It sits
+    beside `CD-PL-F154` — the accountable seat's identity minted as a test fixture and undetected —
+    and the two together say the same thing: **THIS PROJECT'S IDENTITY DISCIPLINE IS CARRIED BY
+    ATTENTION AND NOT BY MACHINERY, WHICH IS THE EXACT SENTENCE INCREMENT 12 EXISTED TO FALSIFY.**
