@@ -21,8 +21,12 @@ So this module does exactly two things and says which one it did, every time:
 
 THE FORMS IT DECIDES (and it prints this list on every run — ``CD-RULE-004``)
 ----------------------------------------------------------------------------
-1. **Literal path** — ``governance/coordination/required-tests.yaml``. Matches that path EXACTLY.
-   A literal naming a directory does NOT cover the directory's contents; write ``dir/**`` for that.
+1. **Literal path** — ``governance/coordination/required-tests.yaml``. **MATCHES** that path
+   EXACTLY: a literal naming a directory does not *match* the directory's contents, and ``dir/**``
+   is how you say you mean the subtree. **BUT MATCHING AND OVERLAP ARE DIFFERENT QUESTIONS, AND
+   INCREMENT 12 CONFLATED THEM** — see ``OVERLAP/PARENT_PATH`` in :func:`patterns_overlap`. A
+   literal naming a parent path is **NOT DISJOINT** from what lies beneath it, because a write to a
+   parent reaches its children (``CD-ASR-WO2R3-06-F11``).
 2. **Recursive prefix** — ``tools/coordination/**``. ``**`` is legal ONLY as the final segment and
    covers every path under the prefix, at any depth, plus the prefix itself.
 3. **Single-segment wildcards** — ``*`` and ``?`` anywhere inside one segment, e.g.
@@ -72,10 +76,17 @@ from common import Limit, tree_banner  # noqa: E402
 
 
 DECIDED_FORMS = [
-    "LITERAL path with no metacharacter — matches that exact path and nothing under it.",
+    "LITERAL path with no metacharacter — MATCHES that exact path and nothing under it.",
     "RECURSIVE PREFIX `p/**` — `**` legal ONLY as the final segment; covers `p` and everything under it at any depth.",
     "SINGLE-SEGMENT WILDCARDS `*` and `?` — never cross `/`; pair intersection decided EXACTLY by product-automaton emptiness.",
     "CASE COLLISION — two otherwise-disjoint scopes that collide when case-folded are reported OVERLAP/CASE_COLLISION (fail closed).",
+    "PARENT PATH — a shorter non-recursive pattern all of whose segments intersect a longer "
+    "pattern's names a PARENT of what the longer names, and is reported OVERLAP/PARENT_PATH. **A "
+    "DIRECTORY IS NOT DISJOINT FROM ITS OWN CONTENTS** (CD-ASR-WO2R3-06-F11): a write to a parent "
+    "path reaches its children. MATCHING and OVERLAP are different questions and this module "
+    "answers only the second — a LITERAL still MATCHES one path, and is still never DISJOINT from "
+    "what lies beneath it. Textual algebra cannot ask whether the parent is a directory on disk, "
+    "so it FAILS CLOSED (CD-RULE-003): it costs parallelism, never correctness.",
 ]
 
 REFUSED_FORMS = [
@@ -302,8 +313,50 @@ def patterns_overlap(a: Pattern, b: Pattern) -> Tuple[bool, str]:
         shorter, longer = b, a
     if shorter.recursive:
         return True, ("OVERLAP: %r is a recursive prefix of %r" % (shorter.raw, longer.raw))
-    return False, ("DISJOINT: %r is %d segments deep and not recursive, so it cannot reach %r"
-                   % (shorter.raw, len(shorter.segments), longer.raw))
+
+    # =============================================================================================
+    # **`CD-ASR-WO2R3-06-F11` — THE DEPTH RULE. A DIRECTORY IS NOT DISJOINT FROM ITS OWN CONTENTS.**
+    #
+    # Increment 12 returned DISJOINT here whenever the shorter pattern was non-recursive, WITHOUT
+    # ASKING WHETHER IT NAMES A DIRECTORY. The ninth Assurance seat measured the consequence:
+    #
+    #     overlaps(['tools/coordination'], ['tools/coordination/scope.py'])          -> False
+    #     overlaps(['a/*'],                ['a/b/c'])                                -> False
+    #     overlaps(['governance/*'],       ['governance/coordination/SEAT.yaml'])     -> False
+    #
+    # **A DIRECTORY, CALLED DISJOINT FROM ITS OWN SUBTREE.** `claim.py` partially compensated by
+    # refusing a bare existing-directory LITERAL, but that guard reads
+    #     if not p.recursive and not any(ch in "".join(p.segments) for ch in "*?[]{}")
+    # which **EXEMPTS EVERY WILDCARD FORM OF THE SAME HAZARD** — `governance/*` sails through it —
+    # and `lease.py` had no such guard at all.
+    #
+    # REACHING THIS LINE MEANS every segment of the shorter pattern INTERSECTS the corresponding
+    # segment of the longer one. So there is a concrete path matched by the shorter that is a
+    # PROPER PATH PREFIX — a PARENT — of a path matched by the longer. **AND A WRITE TO A PARENT
+    # PATH REACHES ITS CHILDREN**: `rm -r`, `mv`, `rmdir`, replacing the name with a symlink, or a
+    # mode change are all writes to the parent that destroy or expose the child. Two seats, one
+    # holding the parent and one holding the child, are NOT working on disjoint bytes.
+    #
+    # This algebra is TEXTUAL and its pure-algebra path has no worktree, so it cannot ask whether
+    # the parent exists as a directory today — and "it is not a directory *yet*" is not a property
+    # a coordination control may rest on. **`CD-RULE-003`: DERIVE OR FAIL CLOSED, NEVER A PLAUSIBLE
+    # ANSWER.** So it fails closed to OVERLAP, which costs parallelism and never costs correctness.
+    #
+    # **THE ALGEBRA ITSELF IS NOT TOUCHED.** The product-automaton segment intersection, the
+    # recursive-prefix rule and the case-collision rule are exactly as increment 12 wrote them and
+    # were correct on every form the ninth seat put to them. F11 is this one depth rule and nothing
+    # else. `test_scope.py` carries the case that asserted the OLD answer, now inverted, and says in
+    # its own text that the old expectation WAS the defect.
+    # =============================================================================================
+    return True, ("OVERLAP/PARENT_PATH: %r is %d segments deep and every segment of it intersects "
+                  "%r, so it names a PARENT of what %r names. A write to a parent path (rm -r, mv, "
+                  "rmdir, symlink replacement) reaches its children, so these are not disjoint "
+                  "bytes. This algebra is textual and cannot ask whether that parent is a directory "
+                  "on disk, so it FAILS CLOSED — CD-RULE-003, CD-ASR-WO2R3-06-F11. Write %r if you "
+                  "mean the subtree and want to say so; a LITERAL still covers only that exact path "
+                  "for MATCHING purposes, but it is never DISJOINT from what lies beneath it."
+                  % (shorter.raw, len(shorter.segments), longer.raw, longer.raw,
+                     shorter.raw.rstrip("/") + "/**"))
 
 
 def scopes_overlap(a: Sequence[Pattern], b: Sequence[Pattern]) -> Tuple[bool, List[str]]:

@@ -26,15 +26,60 @@ processes racing ``O_EXCL`` on one path produced **exactly 200 successes out of 
 measurement is of THIS filesystem at THIS moment. :func:`assert_atomic_or_refuse` re-measures the
 filesystem type at runtime and REFUSES on a network filesystem rather than assuming the property
 travels.
+
+=====================================================================================================
+``O_EXCL`` IS EXCLUSION ON A **FILENAME**, AND THE FILENAME IS THE **TASK ID**. IT IS NOT EXCLUSION
+ON A **WRITE SCOPE**. **`CD-ASR-WO2R3-06-F04`.**
+=====================================================================================================
+
+That distinction cost 193 of 200 raced rounds. Two seats with DIFFERENT task ids and IDENTICAL write
+scopes take DIFFERENT filenames, so ``O_EXCL`` **never fires**, and the only thing standing between
+them was a directory read (the scope check) followed later by a write (the take) — a textbook TOCTOU
+window. The ninth Assurance seat raced exactly that window and measured **193 double-takes on one
+write scope, both seats printing ``VERDICT: CLAIMED``, both ``rc=0``**, in a registry whose own
+sibling detector calls the resulting state a violation.
+
+``PO-DECISIONS-0021`` ruling 3 states the invariant as *"no two live seats share a TASK **or a WRITE
+SCOPE**"*. ``O_EXCL`` delivers the first conjunct only. :func:`critical_section` delivers the second.
+
+**WHAT IT IS: A MUTEX AROUND THE DECISION, NOT AROUND THE WORK.** It is held across
+*check-then-take* and released the instant the record is on disk — microseconds. It does **NOT**
+serialise seats, it does **NOT** make the registry one-writer-at-a-time, and two seats taking
+DISJOINT scopes concurrently both still succeed and both still proceed in parallel. **A DESIGN THAT
+SERIALISED ALL CLAIMS WOULD PASS THE RACE HARNESS AND FAIL THE INCREMENT** — the invariant is
+NON-OVERLAP, not one-writer-at-a-time (``PO-DECISIONS-0021`` ruling 3, preserved as the goal by
+``PO-DECISIONS-0022`` ruling 1). ``PLANT-COORD-06`` arm 3 measures two disjoint claims taken
+CONCURRENTLY, both ``CLAIMED``, both live at once.
+
+**WHY ``flock`` AND NOT A LOCK FILE TAKEN WITH ``O_EXCL``:** a lock *file* leaks. A seat killed by
+the operator's wrapper — which has happened on this project, and an entire Assurance audit ceased to
+exist — leaves an ``O_EXCL`` lock file behind and every later claim deadlocks against a corpse, so
+somebody adds a stale-lock timeout, and the timeout is the hole. ``flock`` is released by the KERNEL
+when the holding descriptor closes, including on ``SIGKILL``. There is no stale state to reap and
+therefore no reaping policy to get wrong.
+
+**ITS DECLARED LIMITS, WHICH ARE REAL:**
+
+* ``flock`` is advisory and process-local to this machine. **It binds every process that goes
+  through these instruments and NOTHING ELSE.** A seat that hand-writes a claim file with an editor
+  defeats it exactly as it always defeated the registry, and ``git`` is still the only witness.
+* ``flock`` over NFS has the same reliability caveat as ``O_EXCL``. It is covered by the same
+  refusal: :func:`assert_atomic_or_refuse` runs before the section is entered.
+* It is bounded by :data:`LOCK_TIMEOUT_S`. **On timeout it RAISES and the caller REFUSES.** It does
+  not proceed unlocked, because proceeding unlocked is the defect with a log line attached.
 """
 
 from __future__ import annotations
 
+import contextlib
+import errno
+import fcntl
 import os
 import socket
 import subprocess
 import sys
-from typing import Any, Dict, List, Optional
+import time
+from typing import Any, Dict, Iterator, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -105,6 +150,63 @@ def safe_identifier(ident: str) -> str:
                          "Ids must match [A-Za-z0-9._-]+ so that one id is one file and two ids are "
                          "never one file." % (ident, "".join(bad)))
     return ident
+
+
+# ------------------------------------------------------------------------------------------------
+# CD-ASR-WO2R3-06-F04 — THE CHECK-THEN-TAKE CRITICAL SECTION.
+# A mutex around the DECISION. Never around the WORK. See the module docstring.
+# ------------------------------------------------------------------------------------------------
+
+LOCK_NAME = ".registry.lock"
+LOCK_TIMEOUT_S = 30.0
+LOCK_POLL_S = 0.002
+
+
+class RegistryLockUnavailable(RuntimeError):
+    """The check-then-take section could not be entered. The caller REFUSES; it does not proceed."""
+
+
+def lock_path(root: str, which: str) -> str:
+    return os.path.join(registry_dir(root, which), LOCK_NAME)
+
+
+@contextlib.contextmanager
+def critical_section(root: str, which: str, timeout: float = LOCK_TIMEOUT_S) -> Iterator[str]:
+    """Serialise **check-then-take** on one registry directory. NOT the work that follows it.
+
+    Enter it around *"read every live record, decide, write the record"* and around nothing else.
+    The section must contain no git call, no subprocess and no network wait — build the payload
+    BEFORE entering, so that what is serialised is microseconds of decision and not seconds of
+    setup. Every caller in this tree does exactly that, deliberately.
+    """
+    p = lock_path(root, which)
+    fd = os.open(p, os.O_CREAT | os.O_RDWR, 0o644)
+    deadline = time.monotonic() + timeout
+    waited = 0.0
+    try:
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except OSError as exc:
+                if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK):
+                    raise
+                now = time.monotonic()
+                if now >= deadline:
+                    raise RegistryLockUnavailable(
+                        "REGISTRY_LOCK_TIMEOUT: could not enter the check-then-take section on %s "
+                        "within %.1fs (waited %.3fs). ANOTHER PROCESS IS INSIDE IT. This instrument "
+                        "REFUSES rather than proceeding unlocked, because proceeding unlocked is "
+                        "CD-ASR-WO2R3-06-F04 with a log line attached. (lock: %s, mechanism: "
+                        "fcntl.flock LOCK_EX|LOCK_NB)" % (which, timeout, waited, p))
+                time.sleep(LOCK_POLL_S)
+                waited += LOCK_POLL_S
+        yield p
+    finally:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
 
 
 def write_exclusive(path: str, payload: Dict[str, Any]) -> None:
