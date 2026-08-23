@@ -1,0 +1,29 @@
+# ================================================================================================= #
+# PLANT-COORD-06 MUTATION — **THE MUTEX IS NOT TAKEN.**
+#
+# ONE line. `fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)` becomes `pass`, so the retry loop
+# breaks immediately and every process believes it holds the section. The lock FILE is still
+# created and the code path is otherwise identical — **what is removed is exactly the mutual
+# exclusion and nothing else**, which is what makes this a contrast and not a rewrite.
+#
+# With it applied, `claim.py` is increment 12 again: the live-claim scope read at one instant and
+# the `O_EXCL` take at another, with a window between them. `O_EXCL` cannot close that window
+# because it excludes on the FILENAME, and the filename is the TASK ID — two racers with different
+# task ids and identical write scopes take different filenames and it never fires.
+#
+# `CD-ASR-WO2R3-06-F04` measured 193 double-takes in 200 rounds against that code. This patch is
+# how the plant reproduces them on demand.
+# ================================================================================================= #
+diff --git a/tools/coordination/registry.py b/tools/coordination/registry.py
+index 7e768b3..011f3ac 100644
+--- a/tools/coordination/registry.py
++++ b/tools/coordination/registry.py
+@@ -186,7 +186,7 @@ def critical_section(root: str, which: str, timeout: float = LOCK_TIMEOUT_S) ->
+     try:
+         while True:
+             try:
+-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
++                pass  # MUTATION: THE MUTEX IS NOT TAKEN. check-then-take is a TOCTOU window.
+                 break
+             except OSError as exc:
+                 if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK):

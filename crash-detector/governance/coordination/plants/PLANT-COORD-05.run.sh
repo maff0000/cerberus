@@ -63,12 +63,27 @@ if [ ! -f "$CHECK" ]; then
     echo "    *** $CHECK DOES NOT EXIST. ABORTING — NOTHING BELOW WOULD BE EVIDENCE. ***"
     exit 2
 fi
-SKIP_PRESENT=$(grep -c 'not a cross-seat pair, ' "$CHECK")
-echo "    'not a cross-seat pair' skip lines present in the instrument under test: $SKIP_PRESENT"
-echo "      produced by: grep -c 'not a cross-seat pair, ' $CHECK"
+# THE PATTERN IS ANCHORED TO EXECUTABLE INDENTATION (12 spaces = inside the nested pair loop).
+# **THE FIRST DRAFT OF THIS TEST GREPPED FOR THE SKIP'S PROSE AND MATCHED THE FIXED FILE'S OWN
+# DOCSTRING, WHICH QUOTES THE SKIP IN ORDER TO EXPLAIN IT — the precondition fired and aborted the
+# run. It was right to abort and the pattern was wrong; it is recorded here rather than tidied
+# away, because a guard that matches a comment is a guard that grades prose.**
+SKIP_PRESENT=$(grep -c '^            if sa == sb:' "$CHECK")
+echo "    executable same-seat skip lines in the instrument under test: $SKIP_PRESENT"
+echo "      produced by: grep -c '^            if sa == sb:' $CHECK"
 if [ "$SKIP_PRESENT" -ne 0 ]; then
     echo "    *** THE SKIP IS STILL IN THE BASELINE TREE. ARM 1 WOULD BE MEASURING THE DEFECT, NOT"
     echo "    *** THE FIX. ABORTING RATHER THAN REPORTING A PASS. ***"
+    exit 2
+fi
+# SECOND, INDEPENDENT PRECONDITION: the mutation must be APPLICABLE to this tree, which is only
+# true if the skip is absent from it. A textual grep and a `git apply --check` are two different
+# witnesses to the same fact, and this test wants both before it grades anything.
+git -C "$SANDBOX" apply --check "$PATCH"
+PATCH_APPLICABLE=$?
+echo "    mutation applies to the baseline tree: git apply --check rc=$PATCH_APPLICABLE (0 = yes)"
+if [ "$PATCH_APPLICABLE" -ne 0 ]; then
+    echo "    *** THE MUTATION DOES NOT APPLY. ARM 2 COULD NOT BE EVIDENCE. ABORTING. ***"
     exit 2
 fi
 echo "    OK: the baseline instrument does not contain the skip. Arms 1/1b/3/4 grade the FIX."
@@ -147,9 +162,9 @@ if [ $? -ne 0 ]; then
     arm_result 2 "VIOLATED ADMITS" "mutation must apply" 0
     A2_OK=0
 else
-    RESTORED=$(grep -c 'not a cross-seat pair, ' "$CHECK")
-    echo "    skip lines now present in the mutated instrument: $RESTORED"
-    echo "      produced by: grep -c 'not a cross-seat pair, ' $CHECK"
+    RESTORED=$(grep -c '^            if sa == sb:' "$CHECK")
+    echo "    executable skip lines now present in the mutated instrument: $RESTORED"
+    echo "      produced by: grep -c '^            if sa == sb:' $CHECK"
     run_rc "arm2 THE SAME INPUT, with increment 12's skip restored" \
         python3 -B "$CHECK" --root "$SANDBOX"
     show_out 8
@@ -160,7 +175,7 @@ else
     echo "    *** 'CONCURRENT WORK PROCEEDS' FOR THE INCIDENT, AND EXITING 0. ***"
     arm_result 2 "RESTORING THE SKIP ADMITS THE INCIDENT" "rc=0 AND ADMITTED" "$A2_OK"
     revert_mutation "$PATCH"
-    STILL=$(grep -c 'not a cross-seat pair, ' "$CHECK")
+    STILL=$(grep -c '^            if sa == sb:' "$CHECK")
     echo "    skip lines after revert: $STILL   (must be 0, or arms 3/4 below are not grading the fix)"
     if [ "$STILL" -ne 0 ]; then
         echo "    *** REVERT FAILED. ABORTING BEFORE ARMS 3 AND 4 RATHER THAN GRADING A MUTATED TREE. ***"
