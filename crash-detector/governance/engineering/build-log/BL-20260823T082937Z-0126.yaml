@@ -1,0 +1,423 @@
+entry_id: BL-20260823T082937Z-0126
+timestamp_utc: '2026-08-23T08:29:37Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: fd52247491a7928fbbb54d2850af5ff344467c3a   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the increment-9 DISPATCH boundary (BL-20260823T072032Z-0125).
+parent_entry_id: BL-20260823T072032Z-0125
+schema_version: 1
+
+action_summary: >
+  *** **INCREMENT 9 IS RECONCILED BY MEASUREMENT AND BANKED, NOT ACCEPTED (PBG-AUTH-003). THE LANE
+  IS AT `686a374`. AND THE SHARPEST FINDING OF THE WHOLE INCREMENT IS AGAINST THE DISPATCH THAT
+  ORDERED IT — WHICH THIS SEAT WROTE.** ***
+  `CD-ENG-WO2R3-07` RETURNED ALIVE IN THE LANE: **FIVE COMMITS, `753efe4` -> `686a374`, PORCELAIN
+  ZERO, IDENTITY ONE LINE.** Returned `READY_FOR_ASSURANCE` **carrying `SCOPE_INSUFFICIENT` FOR TWO
+  NAMED FILES**, which is the correct return and not a shortfall. ***
+  *** **THE DISPATCH NAMED `@dataclass(frozen=True, slots=True)` AS AN AVAILABLE REMEDY AND CALLED
+  IT PL-VERIFIED. IT IS A FALSE-GREEN FACTORY.** *** CPython's `_add_slots` unconditionally installs
+  the stdlib `_dataclass_setstate`, which writes ANY state it is handed through `object.__setattr__`.
+  **PL-REPRODUCED ON THIS SEAT'S OWN PROBE, WRITTEN FROM SCRATCH AND NOT THE SEAT'S FILE:**
+  `StalenessWindow.__new__(StalenessWindow)` then `__setstate__(["THIS IS NOT A NUMBER"])` yields
+  `seconds == 'THIS IS NOT A NUMBER'`, `type(o) is StalenessWindow` **True**, **PACKAGE LINES
+  EXECUTED: 0, FILES TOUCHED: []** — while **THE SAME VALUE THROUGH THE FRONT DOOR IS REFUSED
+  `TypeError`.** That is the record's own escape signature, and **HAD THE ENGINEER FOLLOWED THE
+  DISPATCH'S NAMED REMEDY IT WOULD HAVE SHIPPED THIRTY-SIX FALSE GREENS AND THIS SEAT WOULD HAVE
+  RECONCILED THEM AS SEALED.** `CD-PL-F119`, HIGH. ***
+  *** **AND IT IS WORSE THAN A BAD SUGGESTION: THIS SEAT'S OWN PREMISE MEASUREMENT USED THE SAME
+  UNSOUND CRITERION.** *** BL-...-0125 measured "13 SEALED" with
+  `"__slots__" in vars(cls) and not cls.__dictoffset__`. **THAT CRITERION SCORES EVERY
+  `slots=True` CLASS AS SEALED WHEN IT FORGES**, and `StalenessWindow` and `FreshnessEvidence` are
+  in this seat's own published list of thirteen. **`CD-PL-F120`, HIGH.** ***
+  *** **AND THE PART THAT MATTERS MOST FOR HOW THIS RECORD IS READ: THE AGREEMENT BETWEEN THIS
+  SEAT'S 13 AND `F-06-J`'s 13 WAS NOT CORROBORATION. IT WAS A SHARED BLIND SPOT.** *** Two parties
+  measuring independently reached the same number by applying the same unsound test, and this seat
+  cited that agreement one boundary ago as the reason `F-06-J`'s 77 was *"worth attacking rather
+  than dismissing"*. **THE CONCLUSION WAS RIGHT AND THE REASONING WAS RIGHT BY ACCIDENT.** ***
+  *** **THE INCREMENT ITSELF IS SOUND AND THE CONTRAST IS PROVED BY EXECUTION.** TIP **PASS — 99
+  assertions, 0 violations · 99 examined · 51 SEALED · 0 OPEN AND REQUIRED · 48 EXCLUDED BY
+  MEASUREMENT · 0 UNMEASURABLE · 51 + 0 + 48 + 0 = 99**. The SAME instrument on the BASE tree:
+  **rc=1, FAIL — 36 violations · 15 SEALED · 36 OPEN AND REQUIRED · 48 EXCLUDED · 15 + 36 = 51**,
+  and the 36 are exactly the 36 sealed. **AND AT BASE IT FLAGS `staleness.py:419` AND
+  `staleness.py:514` — THE TWO FALSE GREENS BOTH PRIOR READINGS CALLED SEALED. THE INSTRUMENT IS
+  SOUND WHERE BOTH ITS PREDECESSORS WERE NOT.** ***
+  *** **T2 RED; CD-AC-002 AND CD-AC-005 AMBER AND NOT CLOSED; `CD-RT-012` RED AT THE TIP; THE THREE
+  STALE DISPOSITION KEYS STILL STALE; THE WO-2 GATE SHUT. NOTHING IS MERGED, ADMITTED OR PROMOTED.
+  THE PHASE RETURNS TO `GATE`.** ***
+
+reconciliation_method: >
+  **BY MEASUREMENT, ON THIS SEAT'S OWN `git archive` EXTRACTIONS AT `/tmp/pl-base` (753efe4) AND
+  `/tmp/pl-tip` (686a374), NEVER BY READING THE SEAT'S CLAIMS.** Where this seat re-ran one of the
+  Engineer's own probes it is labelled as such and counted as ATTRIBUTION, not confirmation.
+
+identity_and_scope_MEASURED_PER_PATH:
+  lane_head: '`686a374e60ff8f18305fa8b665463e0e057dac2b`, RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36).'
+  commits: 'FIVE — `419bd7e` ITEM_1 PART A · `8de91d2` ITEM_1 PART B · `da308a1` ITEM_2 · `2b67969` ITEM_3 · `686a374` increment close. **ONE COMMIT PER ITEM, COMMITTED AS IT WENT — THE TENTH CONSECUTIVE SEAT.**'
+  identity: '`git log --format=''%an <%ae> | %cn <%ce>'' 753efe4..HEAD | sort -u` -> **EXACTLY ONE LINE**, `CD-ENG-WO2R3-07 <cd-eng-wo2r3-07@seats.crash-detector.invalid>` as BOTH author and committer (CD-RULE-002).'
+  porcelain: 'ZERO LINES.'
+  changed_paths: '**35**, ALL inside the dispatched writable scope: `src` 17 · `governance` 5 · `variants` 4 · `tests` 3 · `contracts` 2 · `plants` 2 · `required-tests.yaml` 1 · `tools` 1.'
+  protected_scope_MEASURED_PER_PATH_AND_NOT_BY_EYE: >
+    `git diff --name-only 753efe4..686a374 -- <path>` returns **ZERO** for every one of:
+    `tools/sweep/` · `BLUEPRINT.md` · `governance/blueprint/` · `governance/decisions/` ·
+    `governance/assurance/` · `governance/reconciliation/` · `governance/engineering/ACTIVE_WORK.yaml`
+    · `PID.md` · `pbg/` · `governance/findings/`. **TEN PATHS, TEN ZEROS.**
+  build_log: '`git diff --name-status` over `governance/engineering/build-log/` -> **5 ADDED, 0 MODIFIED.** No landed entry edited (PBG-CONT-003).'
+  the_single_file_under_tools: '`tools/register/check_sealed_against_forged_establishment.py`. **NOTHING UNDER `tools/sweep/`.**'
+
+# ================================================================================================== #
+the_finding_against_this_seats_own_dispatch_AND_ITS_OWN_MEASUREMENT:
+# ================================================================================================== #
+- id: CD-PL-F119
+  severity: HIGH
+  against: '**THE INCREMENT-9 DISPATCH, WRITTEN BY THIS SEAT** — `CD-DISPATCH-WO2R3-INC9-ENGINEER`, ITEM_1'
+  statement: >
+    **THE DISPATCH NAMED A FALSE-GREEN FACTORY AS AN AVAILABLE REMEDY AND ATTACHED THE WORDS
+    "PL-verified" TO IT.** Its ITEM_1 reads: *"`@dataclass(frozen=True, slots=True)` is available
+    (Python 3.11.2, PL-verified) and so is a manual `__slots__`."* **THE TWO ARE NOT
+    INTERCHANGEABLE AND THE DIFFERENCE IS THE WHOLE OF THE PROPERTY.** CPython's `_add_slots`
+    unconditionally installs the stdlib `_dataclass_setstate`, whose entire body is
+    `for field, value in zip(fields(self), state): object.__setattr__(self, field.name, value)`.
+    **A CLASS BUILT THAT WAY CARRIES `__slots__`, MEASURES `__dictoffset__ == 0`, AND FORGES.**
+  the_PL_measurement_taken_on_this_seats_OWN_probe_not_the_engineers: >
+    Written from scratch at `/tmp/pl-base` (753efe4), printing its own `tree:` line (CD-PL-F98):
+    `StalenessWindow.__new__(StalenessWindow)` then `__setstate__(["THIS IS NOT A NUMBER"])` ->
+    **`seconds == 'THIS IS NOT A NUMBER'`; `type(o) is StalenessWindow` True; frozen still raises
+    `FrozenInstanceError` on assignment, which is what makes it look intact.**
+    `FreshnessEvidence.__setstate__(["not-a-datetime", None, object()])` -> `as_of_utc ==
+    'not-a-datetime'`, `window` is a bare `object`.
+    **PACKAGE LINES EXECUTED, COUNTED WITH `sys.settrace` OVER `src/crash_detector/`: 0. FILES
+    TOUCHED: [].** **THE COUNTERFACTUAL ARM (CD-D-079): the same value through the front door,
+    `StalenessWindow(seconds="THIS IS NOT A NUMBER")` -> REFUSED `TypeError`.**
+    **0 LINES AROUND IT AND AN OBJECT; A REFUSAL THROUGH IT.** That is `P-E23`'s signature exactly,
+    on a class the record calls sealed.
+  what_it_would_have_cost: >
+    **HAD THE ENGINEER FOLLOWED THE DISPATCH'S NAMED REMEDY, IT WOULD HAVE SHIPPED THIRTY-SIX FALSE
+    GREENS, THE INSTRUMENT WOULD HAVE PASSED, AND THIS SEAT WOULD HAVE RECONCILED THEM AS SEALED**
+    — because this seat's own criterion could not tell the difference either (see `CD-PL-F120`).
+    **THE INCREMENT WOULD HAVE CLOSED A CLASS ON PAPER AND OPENED IT IN FACT, AND THE SEVENTH
+    ASSURANCE SEAT WOULD HAVE BEEN SENT AGAINST A GREEN BOARD.**
+  and_it_is_CD_PL_F107_REPEATING: >
+    **`CD-PL-F107` IS THIS SEAT SPECIFYING A MACHINE-CHECKED FIELD THAT WOULD HAVE BEEN SILENTLY
+    VACUOUS, CAUGHT BY THE ENGINEER RUNNING THE INSTRUMENT INSTEAD OF READING THE DOCUMENT.** This
+    is the same defect in the same seat two increments later, **caught the same way and by the same
+    means — an Engineer measuring what the dispatch asserted.** The dispatch's own header told the
+    seat to read it adversarially and said this seat had a recorded history of exactly this. **THE
+    WARNING WAS ACCURATE AND IT WAS ACCURATE ABOUT THE PARAGRAPH THREE INCHES BELOW IT.**
+- id: CD-PL-F120
+  severity: HIGH
+  against: '**THIS SEAT''S OWN PREMISE MEASUREMENT AT `BL-20260823T072032Z-0125`**'
+  statement: >
+    **THE "99 ENUMERATED · 13 SEALED · 86 OPEN" THIS SEAT PUBLISHED ONE BOUNDARY AGO WAS TAKEN WITH
+    AN UNSOUND CRITERION.** It evaluated `"__slots__" in vars(cls) and not cls.__dictoffset__` and
+    called that SEALED. **THAT TEST CANNOT SEE THE `__setstate__` ROUTE**, so every `slots=True`
+    class scores SEALED while forging. **`StalenessWindow` AND `FreshnessEvidence` ARE BOTH IN THE
+    LIST OF THIRTEEN THIS SEAT ENUMERATED IN THAT ENTRY, IN THE DISPATCH, AND IN THE COMMIT
+    MESSAGE.** The sound reading, measured by the increment's instrument and PL-reproduced, is
+    **15 SEALED / 36 OPEN AND REQUIRED / 48 EXCLUDED BY MEASUREMENT** at that same SHA.
+  and_the_part_that_changes_how_the_PRIOR_boundary_should_be_read: >
+    *** **THIS SEAT WROTE THAT ITS 13 "REPRODUCES THE SIXTH SEAT'S 13 EXACTLY", AND USED THAT
+    AGREEMENT AS THE GROUND FOR SAYING `F-06-J`'s 77 WAS "WORTH ATTACKING RATHER THAN DISMISSING —
+    THE DIVERGENCE IS IN ONE CELL, NOT IN THE METHOD".** *** **THE DIVERGENCE WAS NOT IN ONE CELL.
+    IT WAS IN THE METHOD, AND BOTH PARTIES HAD THE SAME METHOD.** Two independent measurements
+    agreeing is evidence only when the two could have disagreed; here they applied the same test to
+    the same tree and were bound to agree, including where the test was wrong.
+    **AN AGREEMENT BETWEEN TWO READINGS THAT SHARE AN UNSOUND CRITERION IS NOT CORROBORATION, AND
+    THIS SEAT TREATED IT AS CORROBORATION IN A BUILD LOG ENTRY, A DISPATCH AND A COMMIT MESSAGE.**
+  what_survives_of_CD_PL_F116_and_what_does_not: >
+    **`CD-PL-F116` SURVIVES ON ITS OWN TERMS AND IS NOT WITHDRAWN**: `F-06-J`'s table really does
+    print 99 and sum to 90, and that is arithmetic, independent of any criterion. **WHAT IS
+    WITHDRAWN IS THE REASONING THIS SEAT ATTACHED TO IT** — that the shared 13 made the method
+    trustworthy. **AND IT IS RECORDED THAT `CD-PL-F116` WAS RAISED AT A BOUNDARY WHERE THIS SEAT'S
+    OWN HEADLINE NUMBER CARRIED A WORSE DEFECT THAN THE ARITHMETIC IT WAS CORRECTING.** Both prior
+    statements stand in the record unedited and are superseded here (PBG-CONT-003).
+- id: CD-PL-F121
+  severity: MEDIUM
+  against: '**THIS SEAT''S MEASUREMENT METHOD, AS A PATTERN AND NOT AS FOUR INCIDENTS**'
+  statement: >
+    **FOUR TIMES ACROSS THESE THREE BOUNDARIES THIS SEAT HAS WRITTEN AN EXTRACTION OR A LOOKUP,
+    OBTAINED A PLAUSIBLE-LOOKING TABLE, AND HAD THE TABLE TURN OUT TO BE AN ARTEFACT OF THE PARSE.**
+    (1) `CD-PL-F117` — the 99-class enumeration recovered 98, one step from a false HIGH finding
+    against a governed instrument. (2) The soundness attack on the tip's SEALED set parsed **ZERO**
+    classes and printed *"NONE — the PASS survives"*, **a clean bill of health over an empty
+    population.** (3) The same attack, re-parsed, scored `__reduce_ex__(2)` **not raising** as an
+    escape and reported **43 escapes**; executing the returned reduce tuple refutes all 43 —
+    `__reduce_ex__` returns a DESCRIPTION, not an object. (4) The plant table's command lookup
+    matched nothing and printed thirteen rows of `NO DECLARED COMMAND`, **a complete-looking table
+    proving nothing**; the real key is `criteria[].tests[].execute`.
+  why_it_is_recorded_as_ONE_finding: >
+    **REPORTED SEPARATELY THESE READ AS BAD LUCK. READ TOGETHER THEY ARE A METHOD.** In every case
+    the defect produced output that was *shaped like an answer*, and in every case it was caught
+    only because a NUMBER LOOKED WRONG — never because the method was checked. **A PARSE THAT
+    MATCHES NOTHING AND A PARSE THAT MATCHES EVERYTHING BOTH PRINT CONFIDENT TABLES.**
+  and_the_uncomfortable_symmetry: >
+    **THIS IS THE SAME CLASS THIS SEAT NAMED AS A PATTERN IN THE SIXTH ASSURANCE SEAT ONE BOUNDARY
+    AGO** (`CD-PL-F105`, `CD-PL-F115`, `CD-PL-F116` — *"measured excellently and reported its
+    arithmetic from prose"*). **THE SEAT THAT NAMED THAT PATTERN HAS THE SAME PATTERN, AND FOUND IT
+    ONLY BY LOOKING FOR IT IN SOMEBODY ELSE FIRST.** Every one of the four is now published with
+    the corrected measurement beside it.
+  disposition: >
+    **IT GOES INTO THE SEVENTH ASSURANCE SEAT'S BRIEF AS A NAMED INSTRUCTION: DISTRUST THIS SEAT'S
+    DERIVED TABLES SPECIFICALLY, AND CHECK EVERY POPULATION IN THIS RECONCILIATION IS NON-EMPTY
+    BEFORE READING ITS VERDICT.** Every count below carries its producing command (CD-RULE-009) and
+    every attack below states the size of the population it ran against.
+
+# ================================================================================================== #
+item_1_the_sealing_property_PL_MEASURED:
+# ================================================================================================== #
+  the_command_CD_RULE_009: '`python3 -B tools/register/check_sealed_against_forged_establishment.py --root .`'
+  TIP_686a374: >
+    **rc=0. `PASS — 99 assertions, 0 violations`.** `39 modules; 99 classes examined; 51 SEALED,
+    0 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT, 0 UNMEASURABLE.`
+    **THE INSTRUMENT PRINTS ITS OWN ARITHMETIC — `51 + 0 + 48 + 0 = 99` — AND SAYS WHY: "THE
+    ARITHMETIC IS PRINTED BECAUSE F-06-J's TABLE CLOSED AT 90 OF 99 AND NOTHING SAID SO."**
+  BASE_753efe4_THE_SAME_INSTRUMENT_ON_THE_BASE_TREE: >
+    **rc=1. `FAIL — 36 violation(s)`.** `15 SEALED, 36 OPEN AND REQUIRED, 48 EXCLUDED BY
+    MEASUREMENT, 0 UNMEASURABLE.` **`15 + 36 = 51`, AND THE 36 ARE EXACTLY THE 36 THE INCREMENT
+    SEALED.** The instrument was copied to the base extraction and run there, so **ONE INSTRUMENT,
+    TWO TREES — the axis varied is the TREE and nothing else.**
+  AND_IT_CATCHES_THE_FALSE_GREEN: >
+    **AT BASE THE VIOLATION LIST CONTAINS `src/crash_detector/staleness.py:419` AND
+    `src/crash_detector/staleness.py:514`** — `StalenessWindow` and `FreshnessEvidence`, the two
+    classes **BOTH PRIOR READINGS CALLED SEALED.** **THE INSTRUMENT IS SOUND WHERE THIS SEAT'S
+    CRITERION AND THE SIXTH SEAT'S WERE BOTH UNSOUND, AND THAT IS THE STRONGEST SINGLE FACT IN THE
+    INCREMENT.** Its declared route set includes `R5 cls.__new__(cls) + __setstate__(SEQUENCE
+    state)` — the route this seat's own criterion could not see.
+  the_violation_text_reads_at_the_right_layer: >
+    `rule: OPEN TO FORGED STATE`, and each violation NAMES its routes and their measurements —
+    *"R1 cls.__new__(cls) + __dict__.update -> REACHED an object; exact type True; forged value
+    readable True; package lines executed 0"*. **THE FAILURE TEXT NAMES THE LAYER; THE VERDICT IS
+    NOT READ OFF THE EXIT CODE** (the `CD-ENG-WO2R3-F12` standard).
+  the_exclusion_clause_IS_A_MEASURED_PROPERTY_AND_NOT_A_LIST: >
+    **THE ONE THING THAT WOULD HAVE MADE THIS INCREMENT WORTHLESS WAS AN EXCLUSION LIST, AND THERE
+    IS NOT ONE.** The clause BUILDS a throwaway subclass of the base declaring `__slots__ = ()`,
+    through that base's own metaclass protocol, and READS its `__dictoffset__`; the class is
+    excluded only if that number is non-zero AND the base is outside this package.
+    **43 classes under `builtins.BaseException` (probe measures `__dictoffset__ == 16`) and 5 under
+    `enum.Enum` (probe measures `-48`), on this interpreter, 3.11.2.** PL-verified: **no list of
+    classes, bases or modules appears anywhere in the file.** Each prints **"NOT SAFE —
+    UNSEALABLE. NOT PROVED TO BE CARRIED ANYWHERE (CD-RULE-006)"** — which is the rule's exact
+    prescribed wording for an unproved hand-off, used correctly and not decoratively.
+    **AND IT IS FORWARD-LIVE: "If a future interpreter makes such a base sealable, this check
+    requires the seal of those classes on the next run, with no edit to this file."**
+  the_derivation_diff_AND_IT_IS_THE_ANSWER_TO_A_QUESTION_THE_DISPATCH_ASKED: >
+    The dispatch required the enumeration be DERIVED and asked what happens when two derivations
+    disagree. **THE ANSWER SHIPPED IS THE STRICT ONE:** the SOURCE reading reuses
+    `check_constructor_field_establishment._classes()` — *that instrument's own traversal, REUSED
+    AND NOT REIMPLEMENTED* — and the LIVE reading descends `vars()` at any nesting depth; the two
+    are **DIFFED AS SETS AT EVERY RUN**, and **"DERIVATION DISAGREEMENT IS A VIOLATION AND NEVER A
+    RECONCILIATION: this check does not adopt the source reading, does not adopt the live reading,
+    does not take the union and does not take the intersection for its VERDICT — it measures the
+    intersection and FAILS on the difference."** PL-observed on the plant's violated arm: source
+    100, live 100, **in-source-not-live 0, live-not-in-source 0.**
+  THE_PL_SOUNDNESS_ATTACK_ON_THE_PASS_AND_THE_POPULATION_IT_RAN_AGAINST: >
+    **POPULATION: 51 — ASSERTED IN THE PROBE (`assert len(sealed) == 51`) PRECISELY BECAUSE AN
+    EARLIER RUN OF THIS ATTACK PARSED ZERO AND PRINTED A CLEAN BILL OF HEALTH OVER AN EMPTY SET
+    (CD-PL-F121 item 2).** Every one of the 51 was subjected to a route the instrument **DOES NOT
+    DECLARE**: take `__reduce_ex__(2)`, **EXECUTE** the returned callable with its args, apply the
+    returned state, then attempt to write forged field values onto the rebuilt object and assert
+    the exact type. **RESULT: 51 PROBED, 51 REFUSED, 0 RECONSTRUCTED-AND-FORGED.**
+    **THE PASS SURVIVES AN ATTACK ITS AUTHOR DID NOT ANTICIPATE.**
+  the_plant_and_the_contrast_that_IS_the_widening: >
+    `plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch`, PL-run on a pristine
+    extraction, **THREE COLUMNS**: clean arm **rc=0** · `git apply` **rc=0** · violated arm
+    **rc=1**, `FAIL — 1 violation(s)` at `src/crash_detector/store/migrations.py:320`,
+    `rule: OPEN TO FORGED STATE`.
+    *** **AND ON THAT SAME VIOLATED ARM THE SIBLING `check_constructor_field_establishment.py`
+    STILL EXITS 0.** *** **THAT CONTRAST IS THE WIDENING, PROVED BY EXECUTION AND NOT ASSERTED: the
+    increment catches a class of defect the pre-existing governed instrument is blind to, measured
+    on one tree with one variable changed.**
+
+item_2_CD_PL_F104_PL_MEASURED:
+  the_route_is_LIVE_AT_THE_TIP_on_this_seats_own_probe: >
+    `@establishes(x=int)` applied to a class whose only qualification is `__dataclass_fields__ = {}`
+    is **ADMITTED**; `is_establishing_type` **True**; and it **ENTERS `governed_types()`**,
+    population **7 -> 8**. **CD-PL-F104 IS CONFIRMED LIVE AND UNFIXED AT `686a374`, WHICH IS WHAT
+    THE ITEM'S RETURN SAYS.**
+  ONE_CORRECTION_TO_CD_PL_F104_S_OWN_WORDING_MADE_BY_MEASUREMENT: >
+    `CD-PL-F104` states the forged class reports `establishment_faults` **`()`**. On this seat's
+    arm it reports a FAULT, because the arm declared a field the empty fake list does not carry.
+    **THE FINDING'S MECHANISM HOLDS AND ONE CLAUSE OF ITS WORDING IS NARROWER THAN IT READS: the
+    empty-fault result requires declaring nothing.** Recorded rather than smoothed (CD-RULE-009);
+    the finding is not withdrawn.
+  the_seats_widening_INDEPENDENTLY_TESTED_AND_THE_FIRST_TEST_WAS_THIS_SEATS_OWN_ERROR: >
+    The seat reports that a plain SUBCLASS of a real dataclass is admitted. **THIS SEAT'S FIRST
+    ARM CHOSE `Value` AS THE PARENT AND GOT `ReadingSurfaceViolated` — WHICH REFUTES NOTHING,
+    BECAUSE `Value` CARRIES ITS OWN CLOSED-SUM-TYPE GUARD AND THE ARM TESTED THAT GUARD INSTEAD.**
+    Re-run against `RetryPolicy`, an ordinary governed dataclass with no such guard:
+    **`is_dataclass(Sub)` is True BY INHERITANCE (`__dataclass_fields__` is NOT in `vars(Sub)`),
+    `@establishes` ADMITS IT, and it ENTERS `governed_types()`, population 9 -> 10. THE SEAT'S
+    WIDENING IS CONFIRMED.** The wrong first arm is recorded, not deleted (CD-PL-F121's class).
+  the_residue_is_DECLARED_IN_THE_SHIPPED_ARTEFACT: >
+    `establishment.py`'s DECLARED LIMIT 4 now states **IN ITS OWN TEXT** that *"the decorator and
+    the limit disagree with each other"*. **THAT IS CD-RULE-004 OPTION 2 USED CORRECTLY: the guard
+    does not close the class and says so where a reader of the module will hit it.**
+  the_import_order_divergence_RESOLVED: >
+    The `7 -> 8` versus `23 -> 24` divergence carried since BL-...-0118 is resolved by the seat and
+    PL-confirmed in shape by the two runs above: **`governed_types()`'s SIZE depends on import
+    history (the seat measures 0 -> 5 -> 26 -> 31) WHILE THE DELTA IS +1 EVERY TIME.** **Item 1's
+    instrument does not read `governed_types()` at all**, which is why the sealing enumeration is
+    not exposed to this.
+
+item_3_CD_D_166_PL_RE_RUN_IN_ALL_FOUR_ARMS:
+  what_the_seat_ran: '`bash variants/WO-2R3/P-Q-what-does-the-gates-field-actually-hold.sh` — **and it prints its own `pwd` per arm (CD-PL-F98) and STATES NO CONCLUSION, by its own rule.**'
+  the_PL_re_run_NOT_the_seats_summary: >
+    This seat re-ran `delegated_judgement_sweep.py` **ITSELF, IN EACH OF THE FOUR SAVED ARM TREES**,
+    and verified each tree's mutation against the TIP extraction:
+    | arm | src files differing from tip | tools/sweep differing | GATES_* raised | sweep verdict |
+    | CONTROL | 0 | 0 | **0** | `FAIL — 555 sites, 4 violations` |
+    | ARM A — PURE RENAME of one local | **1** (`engine/config.py`) | 0 | **31** | `FAIL — 555 sites, 39 violations` |
+    | ARM B — relation destroyed | **0** | 1 | **0** | `FAIL — 555 sites, 4 violations` |
+    | ARM C — key exists nowhere | 0 | 1 | **31** | `FAIL — 555 sites, 35 violations` |
+    **IDENTICAL TO THE SEAT'S TABLE IN EVERY CELL.**
+  and_the_first_PL_comparison_was_against_the_WRONG_BASELINE: >
+    This seat's first arm-diff compared each tree to the BASE extraction and read **17 differing
+    `src/` files in every arm**, which is the increment's own seal work and says nothing about the
+    arms. Re-taken against the TIP. **RECORDED (CD-PL-F121).**
+  the_verdict_on_a_field_THIS_SEAT_DESIGNED: >
+    *** **ARM A AND ARM B ARE THE SHARP PAIR AND THEY FALL IN OPPOSITE AND BOTH-WRONG DIRECTIONS.**
+    *** **ARM A: one identifier renamed in product source, the gating relation entirely intact —
+    31 spurious refusals. IT REFUSES WHEN NOTHING IS WRONG.** **ARM B: the gating relation
+    destroyed with ZERO product source touched — 0 refusals, verdict unmoved. IT PASSES WHEN THE
+    CLAIM IS FALSE.** **ARM C is the vacuity check and it clears it: the criterion CAN refuse, 31
+    times. SO VACUITY IS NOT THIS FIELD'S DEFECT — UNSOUNDNESS IS**, in both directions at once.
+    **THAT IS WORSE THAN `CD-ENG-WO2R3-04-F05` REPORTED, AND IT IS AGAINST A FIELD THIS SEAT
+    DESIGNED.**
+  ITEM_3_IS_MEASURED_AND_NOT_CLOSED_AND_THE_REASON_IS_THIS_SEATS_DEFECT: >
+    **`CD-PL-F122` (MEDIUM), AGAINST THE DISPATCH THIS SEAT WROTE: ITEM 3 WAS UNDELIVERABLE IN
+    EITHER FORM IT OFFERED.** It asked the seat to *"make the gating relation MACHINE-CHECKED, or
+    DECLARE ITS MEASURED LIMIT (CD-RULE-004, three places)"*. The criterion lives in
+    `tools/sweep/delegated_judgement_sweep.py` and its data in `tools/sweep/declared_dispositions.py`;
+    **the writable scope names `tools/register/` AND NOT `tools/sweep/`, so the first form was out of
+    scope.** And the seat reports the second form has never been satisfiable for this guard by
+    anyone — **the Class-2 sweep has no `required-tests.yaml` row and no execution contract, so
+    "three places" does not exist for it.** **THE SEAT RETURNED THE MEASUREMENT, WHICH IS THE MORE
+    VALUABLE HALF, AND `SCOPE_INSUFFICIENT` FOR THE EXACT FILE. THAT IS THE CORRECT RETURN TO A
+    DEFECTIVE ITEM.**
+
+the_two_SCOPE_INSUFFICIENT_RETURNS_AND_WHY_BOTH_ARE_CORRECT:
+  1_declared_dispositions_py: >
+    Needed to land `V49` (item 2's closure): 2 `DECLARED_ADMISSIONS` rows, 9 tier-2 keys, 1 key
+    superseded. **PROTECTED BY PO-DECISIONS-0017 RULING 2 UNTIL AFTER THE SEVENTH SEAT READS THE
+    TREE.** The seat measured the cost of the closure and did not apply it: with `V49` the sweep
+    reads `FAIL — 564 sites, 8 violations` and the suite `6 failed / 1693 passed`.
+    **AND IT RECORDS THAT KEEPING `not dataclasses.is_dataclass(cls)` ALIVE AS A FIRST CLAUSE WOULD
+    HAVE KEPT THE REGISTER KEY AND KEPT THE SUITE GREEN — AND REFUSED IT, NAMING THAT AS THE ACT
+    `CD-ENG-WO2R3-06` REFUSED BEFORE IT.** **THAT REFUSAL IS THE BEHAVIOUR THIS GOVERNANCE EXISTS
+    TO PRODUCE, FOR THE SECOND CONSECUTIVE SEAT, AND IT SHOULD BE READ AS SUCH AND NOT AS AN
+    INCOMPLETE ITEM.** PL-verified: `git diff --stat 753efe4..686a374 -- tools/sweep/` is **EMPTY**.
+  2_delegated_judgement_sweep_py: '**NOT IN THE WRITABLE SCOPE AT ALL — THIS SEAT''S OMISSION, `CD-PL-F122`.**'
+
+the_declared_base_state_PRESERVED_AND_PL_MEASURED:
+  suite: '**3 failed, 1696 passed** (`python3 -B -m pytest -q`). All three failures are the DECLARED three in `tests/test_the_fifteen.py`. **NO FOURTH FAILURE.** 1687 -> 1696 is **+9 new tests**.'
+  class_2_sweep: >
+    **`FAIL — 555 sites, 4 violations`, rc=1, AND IT IS BYTE-IDENTICAL BETWEEN BASE AND TIP** —
+    `md5sum` of the full output at both SHAs is **`049c7ff8a5a3f7b5b6e0ee804b285865`** at each.
+    **THE THREE STALE KEYS ARE STILL STALE, MEASURED AND NOT ASSUMED.**
+  the_plant_set_MEASURED_BY_HAND_BECAUSE_THE_CARRIER_DOES_NOT_EXIST_YET: >
+    **13 PATCHES ON DISK · `git apply` rc=0 ON ALL THIRTEEN · ZERO DEAD · 12 EVIDENCE (clean 0 ->
+    violated 1) · 1 NOT-A-CONTRAST (`CD-RT-003-GRANT-MATRIX-LIVE`, rc=3 on BOTH arms — declared,
+    not counted).** One pristine `git archive 686a374` extraction per plant, the declared command
+    read from `required-tests.yaml`'s `criteria[].tests[].execute`, three columns recorded.
+    **THE INCREMENT BROKE NO PLANT.** This is the measurement `PO-DECISIONS-0017` ruling 1's carrier
+    will automate; **until it exists it is done by hand at every boundary, and it was done here.**
+  register_checks: 'Unmoved: eleven exit 0, `check_grant_matrix_live` exit 3 (documented environment condition). `CD-RT-012` RED at the tip.'
+
+the_engineers_own_findings_against_its_own_work:
+  count: '**EIGHT NAMED — THE TENTH CONSECUTIVE SEAT TO RAISE FINDINGS AGAINST ITSELF.**'
+  F06_and_it_is_the_reason_to_trust_the_rest: >
+    **ITS OWN INSTRUMENT SCORED ITS OWN FALSE GREEN AS SEALED BEFORE IT CAUGHT IT** — an early route
+    offered `_dataclass_setstate` a MAPPING, which that function ZIPS, so the forged marker never
+    landed and the route read as refused. **IT FOUND THIS BY REFUSING TO ACCEPT A COUNTERFACTUAL
+    NUMBER IT COULD NOT DERIVE TWICE.** **THE DEFECT CLASS IS STICKIER THAN ANY SEAT ASSUMES: IT
+    APPEARED INSIDE THE FIX FOR ITSELF**, which is `CD-ENG-WO2R3-03-F06`'s shape exactly.
+  F14: '**ITS ITEM-2 SCAFFOLDING BROKE ITS ITEM-1 CHECK** — a probe dataclass left unsealed, and **THE INCREMENT''S OWN NEW INSTRUMENT IS WHAT SAID SO.** A control catching its author is the only evidence that it works.'
+  others: 'F03 a scripted 36-site edit wrong on 2, caught by the suite · F04 34 manual `__slots__` tuples are transcriptions and it says so · F07 its first exclusion probe used a plain dict where `EnumMeta.__prepare__` wants an `_EnumDict`, reporting its OWN defect as UNMEASURABLE on five classes · F13 an ITEM-2 gate refusing a legitimate `InitVar` for the wrong reason · F18 a first ARM A that renamed half the file — same answer, dismissible method, re-run narrow · F21 "26 contracts" where there are 25, **superseded in `BL-...-0094`, not edited**.'
+  F16_and_F17_against_THIS_SEATS_DISPATCH: '**BOTH UPHELD.** F16 is `CD-PL-F122` above. F17: `gates` cannot be made structural by adding a clause, because it is a site key whose fourth element is SOURCE TEXT — **so any criterion keyed on it fails the rename test by construction.** That is a statement about the FIELD''S SHAPE and not about its implementation, and it is the sharpest thing said about `CD-D-166` by anyone.'
+
+what_the_engineer_could_not_establish_CARRIED_FORWARD_AS_ITS_OWN_WORDS:
+- '**THE ROUTE SET IS FIVE AND IS DECLARED, NOT PROVED COMPLETE — IT GREW TWICE UNDER MEASUREMENT
+   IN ONE DAY.** `__reduce__`, `__reduce_ex__`, `__class__` reassignment and `ctypes` were **NOT**
+   measured by the seat. **THIS SEAT MEASURED THE EXECUTED-`__reduce_ex__` ROUTE AGAINST ALL 51 AND
+   FOUND NOTHING; THE OTHER THREE REMAIN UNMEASURED BY ANYBODY.**'
+- '**48 OF 99 GOVERNED CLASSES REMAIN OPEN AND THE SEAL IS PHYSICALLY UNAVAILABLE TO THEM.** NOT
+   SAFE — UNSEALABLE. **NOT PROVED TO BE CARRIED ANYWHERE** (CD-RULE-006). **43 of them are
+   exceptions and 5 are enums, and what a forged exception or enum member costs this product HAS
+   NOT BEEN ASSESSED BY ANYONE.**'
+- '**THE EXCLUSION CLAUSE''S "THE BASE IS OURS" BRANCH IS WRITTEN AND NEVER EXERCISED** — no
+   governed class today has a package-owned base imposing a `__dict__`. **AN UNEXERCISED BRANCH IN
+   A GOVERNING INSTRUMENT IS A CLAIM, AND IT IS ON THE SEVENTH SEAT''S LIST.**'
+- '**THERE IS NO IMPORT-TIME REFUSAL FOR THE SEAL**, deferred for exactly one reason: the file that
+   would declare a new module''s dispositions is sealed by ruling.'
+
+declared_unverified_by_this_seat_at_this_boundary:
+- '**THIS SEAT DID NOT INDEPENDENTLY RE-DERIVE THE 99-CLASS POPULATION FOR THE NEW INSTRUMENT.** It
+   verified the instrument REUSES the constructor check''s own traversal and diffs it against a live
+   reading; it did not write a third derivation. **THE POPULATION HAS TWO INDEPENDENT SOURCES AND
+   BOTH ARE THE ENGINEER''S.**'
+- '**THIS SEAT DID NOT MEASURE WHAT THE 36 NEWLY-SEALED CLASSES COST AT RUNTIME.** `__slots__`
+   changes pickling, `copy`, and attribute lookup. The suite passes; **THAT IS NOT THE SAME AS
+   HAVING LOOKED.**'
+- '**THIS SEAT RE-RAN THE ENGINEER''S OWN `P-Q` PROBE FOR ITEM 3 RATHER THAN BUILDING AN
+   INDEPENDENT ONE.** It then re-ran the SWEEP itself in each saved arm tree and verified each
+   tree''s mutation against the tip — **so the ARM CONSTRUCTION is attributed and the VERDICTS are
+   confirmed.** The distinction is stated because the last time this seat blurred it, it was
+   `CD-PL-F98`.'
+- '**THE 48 EXCLUDED WERE NOT INDIVIDUALLY RE-PROBED BY THIS SEAT.** The exclusion CLAUSE was read
+   and confirmed to be a measured property rather than a list; **the 48 verdicts it produces were
+   not re-taken one at a time.**'
+- '**NO GRADE. THIS SEAT HAS NEVER GRADED CD-AC-002 OR CD-AC-005 AND IS FORBIDDEN TO** (PBG-AUTH-006).'
+
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT ACCEPT THE INCREMENT.** BANKED, NOT ACCEPTED (PBG-AUTH-003).'
+- '**IT DID NOT CLOSE `CD-F-0004`, ANY `DEFECT_OPEN` ROW, OR ANY CRITERION.**'
+- '**IT DID NOT RE-DISPATCH TO WIDEN SCOPE FOR ITEM 3.** Doing so would require opening
+   `tools/sweep/`, which PO-DECISIONS-0017 ruling 2 has sealed until after the seventh seat, and
+   would re-shape a sequence the Product Owner set at ruling 4. **ITEM 3''S CLOSURE IS AN OWED ITEM
+   PUT UP FOR THE PRODUCT OWNER TO SEQUENCE AFTER THE VERDICT, NOT SOMETHING THIS SEAT SLOTS IN.**'
+- '**IT DID NOT CLEAR THE THREE STALE KEYS** — PO-DECISIONS-0017 ruling 2, after the seventh seat.'
+- '**IT DID NOT BUILD THE PLANT-DRIFT CARRIER** — ruled (A), sequenced after the gate.'
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE THAT BLOCK, AND ONE READING NOW ANSWERED BY MEASUREMENT RATHER THAN BY RULING.** The "all
+  99 versus the 33-member governed population" reading put up at BL-...-0125 **did not need a
+  ruling in the end**: the Engineer swept all 99, required the seal of 51, and EXCLUDED 48 **by a
+  measured property that is printed per class** — so "not required" is nowhere in the tree a synonym
+  for "not looked at", which is what the ruling's clause was for. **THE READING HELD, AND IT HELD
+  BY MEASUREMENT AND NOT BECAUSE THIS SEAT ASSERTED IT.** The Product Authority may still correct
+  it; nothing depends on the correction arriving before the gate.
+  **ITEM 3'S CLOSURE IS OWED AND ITS SEQUENCING IS THE PRODUCT OWNER'S** — recorded here, actioned
+  after the seventh verdict.
+
+decision_refs:
+  - PO-DECISIONS-0016   # ruling 2 — the increment's whole authority
+  - PO-DECISIONS-0017   # ruling 4 the sequence; ruling 2 the sealed register; ruling 1 the deferred carrier
+  - CD-D-168            # THIS decision: increment 9 reconciled by measurement and BANKED, NOT ACCEPTED
+  - CD-D-079            # the counterfactual arm
+  - CD-RULE-004         # DECLARED LIMIT 4 and the exclusion clause, option 2 used correctly
+  - CD-RULE-006         # "NOT PROVED TO BE CARRIED ANYWHERE" — the prescribed wording, used as prescribed
+  - CD-RULE-009         # every count carries its producing command
+  - PBG-AUTH-003        # banked, not accepted
+  - PBG-AUTH-006        # this seat grades nothing
+  - PBG-SOD-001         # the seventh Assurance seat is not CD-ENG-WO2R3-07
+
+next_safe_action: >
+  **DISPATCH THE SEVENTH FRESH ASSURANCE SEAT OVER THE WHOLE OF WO-2R3 AT `686a374`**,
+  READ-ONLY, to an identity that is none of `CD-ASR-WO2-01`, `-02`, `CD-ASR-WO2R2-01`,
+  `CD-ASR-WO2R3-01`, `-02`, `-03`, per PO-DECISIONS-0017 ruling 4, its brief carrying:
+  **CD-D-129's clauses VERBATIM** · the **DEAD-PLANT DISCLOSURE** with the instruction to
+  **RE-DERIVE PLANT APPLICABILITY ITSELF** · **the three stale keys with the Engineer's REFUSAL on
+  the record**, clearing only AFTER its verdict · **THE SEALING INCREMENT AS AN ATTACKABLE CLAIM** ·
+  **increments 8 AND 9 DISCLOSED IN FULL** · and **THIS SEAT'S OWN `CD-PL-F114` THROUGH `CD-PL-F122`,
+  INCLUDING THE TWO HIGH FINDINGS THAT SAY THE DISPATCH NAMED A FALSE-GREEN FACTORY AND THAT THIS
+  SEAT'S OWN PUBLISHED "13 SEALED" WAS TAKEN WITH AN UNSOUND CRITERION.**
+  **NOTHING IS MERGED, ADMITTED OR PROMOTED. T2 RED. CD-AC-002 AND CD-AC-005 AMBER AND NOT CLOSED.
+  `CD-RT-012` RED AT THE TIP. THE WO-2 GATE IS SHUT.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).
