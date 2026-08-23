@@ -897,3 +897,106 @@ def test_the_nets_population_is_printed_with_its_declared_residue():
     assert "DECLARED BUT NOT FOUND: 0" in result.stdout
     assert "post-condition refuse_a_number_without_its_inputs()" in result.stdout
     assert "DOES NOT BIND" in result.stdout
+
+
+def test_the_projects_own_delattr_fix_does_not_make_the_net_a_door():
+    """**A REGRESSION CARRIER FOR A DEFECT THIS INCREMENT SHIPPED INTO ITSELF AND CAUGHT.**
+
+    The reachability clause first treated `PASSED_TO` as an escape and denied by default.
+    **MEASURED, THAT TURNED THIS PROJECT'S OWN CD-ASR-F03 FIX INTO A VIOLATION:** item 3
+    adds `delattr(guarded, "__wrapped__")` — a call with `guarded` as an argument — so the
+    net was reclassified a reachable door and the check went PASS -> FAIL 2 violations.
+    **THAT IS THE EXACT OUTCOME `PO-DECISIONS-0012` RULING 1 FORBIDS**, produced by the
+    instrument written to implement ruling 2.
+
+    Both available escapes were worse than the defect: an exclusion list of "callees that do
+    not retain" is a VOCABULARY, which is what ruling 2 exists to remove; and decorating
+    `guarded` is prohibited. The clause was corrected instead.
+
+    This test pins the interaction. It asserts the SHIPPED SOURCE still contains the delattr
+    — so it cannot pass vacuously if item 3 is ever reverted — and that the net is still
+    classified a net with the check green.
+    """
+    source = (_REPO_ROOT / "src" / "crash_detector" / "engine" / "evaluate.py").read_text()
+    assert 'delattr(guarded, "__wrapped__")' in source, (
+        "item 3's delattr is gone; this carrier would pass vacuously. If the removal was "
+        "deliberate, PO-DECISIONS-0013 ruling 2 is being reversed and that is a PO matter"
+    )
+    result = _run_the_check()
+    assert result.returncode == 0, (
+        "the project's own delattr fix has made the CD-ASR-F03 net a door again — the "
+        "outcome PO-DECISIONS-0012 ruling 1 forbids\n" + result.stdout
+    )
+    assert "UNDECORATED_JUDGEMENT_PATH_DOOR" not in result.stdout
+    assert "_absence_is_never_a_number()" in result.stdout, (
+        "the net is no longer reported as a net" + result.stdout
+    )
+
+
+def test_an_established_here_alias_bound_in_a_function_body_is_counted():
+    """**ITEM 4. THE RESIDUAL `tree.body`, CLOSED — WITH THE CONTRAST THAT PROVES IT.**
+
+    `_established_here_spellings`'s rebinding fixpoint read `tree.body` — MODULE LEVEL ONLY —
+    twelve lines from `_callables`, which was widened to walk at any depth at increment 6.
+    Same file, same idiom, same defect shape, left behind by the increment dispatched to
+    eliminate it.
+
+    DECLARED LIMIT 8's own text says the `ESTABLISHED_HERE` exemption is **COUNTED, NOT
+    HIDDEN**. An alias bound inside a function body hid one.
+
+    **THE ARM: caught after, missed before.** A door whose exemption is spelled through a
+    function-body alias must be COUNTED and NAMED in the output.
+    """
+    tree = _throwaway_tree()
+    try:
+        model_py = tree / "src" / "crash_detector" / "engine" / "model.py"
+        before = _run_the_check_over(tree)
+        assert before.returncode == 0, before.stdout
+        baseline = int(before.stdout.split("ESTABLISHED_HERE uses:")[1].split(".")[0])
+
+        model_py.write_text(model_py.read_text() + '''
+
+def _install_door():
+    EH = ESTABLISHED_HERE          # BOUND INSIDE A FUNCTION BODY
+
+    @admits(value=EH("a planted exemption spelled through a function-body alias"))
+    def planted_door(value):
+        return value
+
+    return planted_door
+
+
+installed_door = _install_door()
+''')
+        after = _run_the_check_over(tree)
+        counted = int(after.stdout.split("ESTABLISHED_HERE uses:")[1].split(".")[0])
+        assert counted == baseline + 1, (
+            "an ESTABLISHED_HERE exemption spelled through a FUNCTION-BODY alias was not "
+            f"counted ({baseline} -> {counted}). DECLARED LIMIT 8 says this weakening is "
+            "COUNTED, NOT HIDDEN, and a count that a one-line alias silences is not a "
+            "count.\n" + after.stdout
+        )
+        assert "_install_door.planted_door(value)" in after.stdout, (
+            "the use was counted but not NAMED; half of 'counted, not hidden' is that a "
+            "reader can see WHERE" + after.stdout
+        )
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_the_widened_fixpoint_adds_no_false_row_to_the_shipped_tree():
+    """The other direction of item 4, and the one that would be easy not to check.
+
+    Walking at any depth can ADD a spelling a module-level decorator could not actually see
+    — a false row. That is NOISE rather than silence, and it is the direction this project
+    prefers for a register of weakenings, but **preferring a direction is not a licence to
+    stop measuring it.** The shipped count must not have moved.
+    """
+    result = _run_the_check()
+    assert result.returncode == 0, result.stdout
+    assert "ESTABLISHED_HERE uses: 16." in result.stdout, (
+        "the widened fixpoint moved the shipped ESTABLISHED_HERE count. Either a real "
+        "exemption was added — in which case DECLARED LIMIT 8's figure needs correcting in "
+        "all three CD-RULE-004 places — or the widening produced a FALSE ROW, which is a "
+        "defect in the widening.\n" + result.stdout
+    )

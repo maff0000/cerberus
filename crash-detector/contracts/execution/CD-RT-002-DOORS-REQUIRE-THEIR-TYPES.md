@@ -677,10 +677,33 @@ objects**. If the number goes stale again, the set assertion fails first and nam
 **RESOLVED:** an import alias · the plain form · a module-level rebinding run to a **fixpoint** ·
 any attribute spelled `.ESTABLISHED_HERE`, whatever the module is aliased to.
 
-**NOT RESOLVED, DECLARED RATHER THAN SILENT:** a name bound **inside a function body** · a name
-computed at runtime (`getattr(admission, "ESTABLISHED_" + "HERE")`) · an exemption reached through a
-**container** (`ALIASES = {"eh": ESTABLISHED_HERE}`) · a **wrapper**
+**NOT RESOLVED, DECLARED RATHER THAN SILENT:** a name computed at runtime
+(`getattr(admission, "ESTABLISHED_" + "HERE")`) · an exemption reached through a **container**
+(`ALIASES = {"eh": ESTABLISHED_HERE}`) · a **wrapper**
 (`def eh(reason): return ESTABLISHED_HERE(reason)`), which is a call, not a reference.
+
+> **CORRECTED AT WO-2R3 INCREMENT 7 (`PO-DECISIONS-0013` ruling 6), SUPERSEDED WORDING QUOTED
+> RATHER THAN DELETED** (CD-RULE-004, PBG-CONT-003). The list above began *"a name bound **inside a
+> function body**"*. **THAT ROUTE IS NOW CLOSED.** The rebinding fixpoint read `tree.body` — module
+> level only — twelve lines from `_callables`, which increment 6 widened to walk at any depth: the
+> same file, the same idiom, the same defect shape, left behind by the increment dispatched to
+> eliminate it. It now walks at ANY DEPTH.
+>
+> **MEASURED, BOTH ARMS**, one planted alias bound in a function body with a door escaping to a
+> public module-level name: `ESTABLISHED_HERE uses: 16` before, **17** after, and the use NAMED as
+> `engine/model.py:791 _install_door.planted_door(value)`. **The shipped tree's own count is
+> UNMOVED at 16**, so the widening added no false row here — asserted by
+> `test_the_widened_fixpoint_adds_no_false_row_to_the_shipped_tree`, because preferring the noisy
+> direction is not a licence to stop measuring it.
+>
+> **AND THE FIX IS RESIZED BY ITS OWN CARRIER RATHER THAN INFLATED.** On that same plant, BEFORE
+> the widening, `tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set`
+> **ALREADY FAILED** `17 != 16` — it enumerates from the RUNTIME compiled declarations, where a
+> spelling cannot matter. **SO THIS CLOSED A GAP IN WHAT THE CHECK SAYS, NOT IN WHAT THE PROJECT
+> REFUSES.** Line 518's sentence — *"THIS IS A REPORTING FIX AND NOT A CLOSURE"* — still applies to
+> this repair, and claiming otherwise would be exactly the overstatement CD-RULE-006 exists to stop.
+> **CARRIER FOR THE WIDENING ITSELF:**
+> `tests/test_judgement_path_doors.py::test_an_established_here_alias_bound_in_a_function_body_is_counted`.
 
 **MEASURED, BOTH ARMS** — `variants/WO-2R3/P-C-an-aliased-exemption.py` adds the auditor's own
 `ESTABLISHED_HERE as _EH` door: at `531c95c` the check reports `uses: 16` and does **not** name it;
@@ -736,8 +759,9 @@ and in `required-tests.yaml`:
 > FUNCTION-LOCAL `def` it was asked about a **LOCAL VARIABLE NO CALLER CAN EVER NAME**; the check
 > now follows the object's **ESCAPE ROUTE** out of its enclosing function — `RETURNED`,
 > `STORED_UNDER` a container or attribute, or `PASSED_TO` a callee — and asks whether the binding
-> it REACHES is public. **DENY BY DEFAULT**: any route the clause cannot resolve counts as
-> reachable.
+> it REACHES is public. **DENY BY DEFAULT WITHIN THE ROUTES IT FOLLOWS**: any RETURN or STORE
+> destination the clause cannot resolve counts as reachable. `PASSED_TO` is tagged and
+> deliberately NOT acted on — see the limits below for the measurement that forced that choice.
 
 ### The two contrasts, MEASURED
 
@@ -761,10 +785,23 @@ A name-prefix clause cannot see it at all: the old arm's single violation is `gu
 
 ### What the clause does NOT reach — declared, and none of it claimed closed
 
-* **an object `PASSED_TO` a callee that retains it.** Tagged and DENIED BY DEFAULT, so the outcome
-  is safe, but it is not *analysed*: the check does not know whether `sorted(key=f)` retains `f`
-  and does not try. It therefore reports some callables reachable that are not. **The error is in
-  the safe direction and it is still an error.**
+* **an object `PASSED_TO` a callee.** Tagged, and **DELIBERATELY NOT TREATED AS AN ESCAPE.** This
+  is a weakening with a measured reason, and the reason is that the first version did the opposite.
+  **DENY-BY-DEFAULT HERE TURNS THIS PROJECT'S OWN CD-ASR-F03 FIX INTO A VIOLATION:** increment 7
+  item 3 adds `delattr(guarded, "__wrapped__")` — a call with `guarded` as an argument — and the
+  deny-by-default rule reclassified `guarded` as a reachable door, **which is the exact outcome
+  `PO-DECISIONS-0012` ruling 1 forbids.** MEASURED: the doors check went PASS →
+  `FAIL — 2 violation(s)` on the increment's own repair. **AND BOTH WAYS OUT WERE WORSE THAN THE
+  PROBLEM** — an exclusion list of "callees that do not retain" is a VOCABULARY, which is what
+  ruling 2 exists to remove; and decorating `guarded` is prohibited by ruling 1. So the clause
+  answers the question actually asked (*can a caller outside obtain and call it*) rather than a
+  broader one (*could anything at all happen to it*).
+  **WHAT IS LOST IS REAL AND IS NOT DRESSED UP: a callee that STORES the object somewhere
+  reachable is not seen.** What is NOT lost: if the CALL'S RESULT is stored or returned, the
+  assignment and return rules catch it on the RESULT; and ESCAPE 4 ARM 4 is a SUBSCRIPT STORE,
+  handled separately and unaffected — re-measured in both spellings after this change.
+  **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE**, except that on a judgement path the NETS
+  population denies by default and such a callable fails `UNCLASSIFIED_INTERCEPTOR` unless declared.
 * **an escape inside a CONTAINER LITERAL** — `return {"decide": local}` returns a dict, not the
   local, so no route is tagged. **THIS SEAT FIRST WROTE THAT DOWN AS AN UNSAFE GAP, THEN MEASURED
   IT, AND THE ASSERTION WAS WRONG:** planted on a judgement path, the check **EXITS 1** with

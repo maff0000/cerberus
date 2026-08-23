@@ -325,8 +325,19 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
 
     **NOT RESOLVED — DECLARED, NOT SILENT, AND NONE OF THESE IS CLAIMED CLOSED:**
 
-    * a name bound INSIDE A FUNCTION BODY — the rebinding fixpoint reads ``tree.body`` only,
-      because a module-level binding is the only one a decorator at module level can see;
+    * **CLOSED AT WO-2R3 INCREMENT 7 — this route is no longer a limit.** *Superseded wording,
+      quoted rather than deleted (CD-RULE-004, PBG-CONT-003): "a name bound INSIDE A FUNCTION
+      BODY — the rebinding fixpoint reads ``tree.body`` only, because a module-level binding
+      is the only one a decorator at module level can see".* **That reasoning was sound about
+      what a MODULE-LEVEL decorator can see and silent about a decorator INSIDE the same
+      function**, which is where the escape was. The fixpoint now walks at ANY DEPTH.
+      **MEASURED, BOTH ARMS, one planted alias bound in a function body with a door that
+      escapes to a public module-level name: `ESTABLISHED_HERE uses: 16` before and `17`
+      after, and the shipped tree's own count is UNMOVED at 16, so the widening added no
+      false row here.** AND THE FIX IS RESIZED BY ITS OWN CARRIER RATHER THAN INFLATED: the
+      runtime carrier `test_the_established_here_exemptions_are_exactly_this_set` ALREADY
+      FAILED `17 != 16` on that plant BEFORE the widening, so this closed a gap in what the
+      CHECK SAYS and not in what the project REFUSES;
     * a name computed at runtime — ``getattr(admission, "ESTABLISHED_" + "HERE")``;
     * an exemption reached through a CONTAINER — ``ALIASES = {"eh": ESTABLISHED_HERE}`` then
       ``@admits(x=ALIASES["eh"]("..."))``;
@@ -353,9 +364,11 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     AND CALL it. Module-level ``def``: the identifier IS the binding, so publicness of the
     identifier decides, unchanged. Function-local ``def``: the identifier is a local variable
     no caller can name, so :func:`_reachable_public_binding` follows the object's ESCAPE
-    ROUTE — RETURNED, STORED under a container or attribute, or PASSED to a callee — and asks
-    whether the binding it reaches is public. **DENY BY DEFAULT: any route the clause cannot
-    RESOLVE returns reachable, so an unreadable escape is treated as an escape.**
+    ROUTE — RETURNED, or STORED under a container or attribute — and asks whether the binding
+    it reaches is public. **DENY BY DEFAULT WITHIN THE ROUTES IT FOLLOWS: any RETURN or STORE
+    destination the clause cannot RESOLVE returns reachable.** ``PASSED_TO`` is tagged and
+    deliberately NOT treated as an escape — see the limits below, where the measurement that
+    forced that choice is recorded rather than the choice alone.
 
     **THE TWO CONTRASTS THAT PROVE IT REACHED THE CODE PATH AND NOT THE HEADER, BOTH
     MEASURED BY ``variants/WO-2R3/P-H-the-reachability-criterion-under-attack.sh``, EACH ARM
@@ -379,11 +392,26 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     **WHAT IS NOT REACHED, AND IT IS DECLARED RATHER THAN LEFT TO BE FOUND. NONE OF THESE IS
     CLAIMED CLOSED:**
 
-    * **an object PASSED to a callee that retains it** — the clause tags this ``PASSED_TO``
-      and DENIES BY DEFAULT, so it is safe, but it is not *analysed*: the check does not know
-      whether ``sorted(key=f)`` retains ``f`` and does not try to. It therefore reports some
-      callables as reachable that are not. **THE ERROR IS IN THE SAFE DIRECTION AND IT IS
-      STILL AN ERROR;**
+    * **an object PASSED to a callee.** The clause tags this ``PASSED_TO`` and **DOES NOT
+      TREAT IT AS AN ESCAPE**, which is a DELIBERATE WEAKENING WITH A MEASURED REASON, and
+      the reason is that the first version did the opposite. **DENY-BY-DEFAULT HERE TURNS
+      THIS PROJECT'S OWN CD-ASR-F03 FIX INTO A VIOLATION:** increment 7 item 3 adds
+      ``delattr(guarded, "__wrapped__")`` — a call with ``guarded`` as an argument — and the
+      deny-by-default rule reclassified ``guarded`` as a reachable door, **which is the exact
+      outcome PO-DECISIONS-0012 ruling 1 forbids.** MEASURED: the doors check went
+      PASS -> ``FAIL — 2 violation(s)`` on the increment's own repair. **AND BOTH WAYS OUT
+      WERE WORSE THAN THE PROBLEM** — an exclusion list of "callees that do not retain" is a
+      VOCABULARY, which is what ruling 2 exists to remove, and decorating ``guarded`` is
+      prohibited by ruling 1. So the rule answers the question actually asked (*can a caller
+      outside obtain and call it*) rather than a broader one (*could anything at all happen
+      to it*). **WHAT IS LOST IS REAL AND IS NOT DRESSED UP: a callee that STORES the object
+      somewhere reachable is not seen.** What is NOT lost: if the CALL'S RESULT is stored or
+      returned, the assignment and return rules catch it on the RESULT; and ESCAPE 4 ARM 4 is
+      a SUBSCRIPT STORE, handled separately and unaffected (measured, both spellings).
+      **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE**, except that on a JUDGEMENT PATH the
+      NETS population denies by default and such a callable fails as
+      ``UNCLASSIFIED_INTERCEPTOR`` unless declared — measured, the same backstop as the
+      container-literal route;
     * **an escape through a CONTAINER LITERAL** — ``return {"decide": local}`` is a return of
       a dict, not of the local, and this clause does not look inside it, so no route is
       tagged and the callable is reported UNREACHABLE. **THIS SEAT FIRST WROTE THAT DOWN AS
@@ -630,15 +658,20 @@ def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
     Returns ``(reachable, why)``. ``why`` is quoted in the violation and in the notes, so a
     reader never has to infer which clause decided their callable.
 
-    **DENY BY DEFAULT.** Every route this function cannot RESOLVE returns reachable=True.
-    An unreadable escape is treated as an escape (DECLARED LIMIT 9).
+    **DENY BY DEFAULT, WITHIN THE ROUTES IT FOLLOWS.** A RETURN or STORE whose destination
+    this function cannot RESOLVE returns reachable=True. **`PASSED_TO` IS THE ONE ROUTE IT
+    TAGS AND DOES NOT ACT ON**, and that is a weakening with a measured reason recorded in
+    DECLARED LIMIT 9 — deny-by-default there reclassified this project's own CD-ASR-F03 fix
+    as a door, and the only escapes from that false positive were a vocabulary or the
+    outcome PO-DECISIONS-0012 ruling 1 forbids.
     """
     if not function_chain:
         # Module level — the identifier IS the binding. Unchanged behaviour.
         return _is_public(name), "module-level name"
 
     enclosing = function_chain[-1]
-    routes = _escape_routes(name, enclosing)
+    routes = [route for route in _escape_routes(name, enclosing) if route[0] != ESCAPE_PASSED]
+    passed_to = sorted({d for tag, d in _escape_routes(name, enclosing) if tag == ESCAPE_PASSED})
     if not routes:
         # **WHAT THIS SAYS IS WHAT WAS OBSERVED, NOT WHAT IT IMPLIES.** An earlier wording
         # read "it NEVER LEAVES that frame", which is a stronger claim than the evidence:
@@ -649,10 +682,15 @@ def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
         # project's most-found defect. See DECLARED LIMIT 9.
         return False, (
             f"function-local in {enclosing.name}(), and this clause found NO escape route "
-            "it can read: no `return <name>`, no store into a container or attribute, and "
-            "it is passed to nothing. **THAT IS AN OBSERVATION, NOT A PROOF THAT IT CANNOT "
-            "ESCAPE** — an escape inside a container literal is invisible here "
-            "(DECLARED LIMIT 9)"
+            "it can read: no `return <name>`, and no store into a container or attribute"
+            + (
+                f"; it IS passed to {passed_to}, which this clause does NOT treat as an "
+                "escape and DECLARES rather than guesses at (DECLARED LIMIT 9)"
+                if passed_to
+                else ""
+            )
+            + ". **THAT IS AN OBSERVATION, NOT A PROOF THAT IT CANNOT ESCAPE** — an escape "
+            "inside a container literal is invisible here too (DECLARED LIMIT 9)"
         )
 
     for tag, destination in routes:
@@ -662,12 +700,28 @@ def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
                 "which puts it where a caller can subscript or attribute their way to it "
                 "— this is the fourth Assurance seat's ESCAPE 4 ARM 4 shape"
             )
-        if tag == ESCAPE_PASSED:
-            return True, (
-                f"function-local in {enclosing.name}() but PASSED TO {destination!r}(), "
-                "and this check does not know whether the callee retains it. DENY BY "
-                "DEFAULT (DECLARED LIMIT 9)"
-            )
+        # ESCAPE_PASSED IS **NOT** TREATED AS AN ESCAPE, AND THAT IS A DELIBERATE WEAKENING
+        # WITH A MEASURED REASON. See DECLARED LIMIT 9.
+        #
+        # This clause first denied by default here — passing an object anywhere counted as
+        # reaching. **MEASURED, THAT TURNS THIS PROJECT'S OWN CD-ASR-F03 FIX INTO A
+        # VIOLATION:** increment 7 item 3 adds `delattr(guarded, "__wrapped__")`, which is a
+        # CALL with `guarded` as an argument, so the deny-by-default rule reclassified
+        # `guarded` as a reachable door — the exact outcome `PO-DECISIONS-0012` ruling 1
+        # forbids. **AND BOTH WAYS OUT WERE WORSE THAN THE PROBLEM:** an exclusion list of
+        # "callees that do not retain" is a VOCABULARY, which is what ruling 2 exists to
+        # remove; and decorating `guarded` with `@admits` is prohibited by ruling 1.
+        #
+        # So the rule is corrected to answer the question actually asked — *can a caller
+        # outside this module OBTAIN AND CALL this object* — rather than a broader one
+        # ("could anything at all happen to it"). Passing an object to a callee does not by
+        # itself create a binding outside this module that a caller can name; it creates the
+        # POSSIBILITY that the callee stores it, which is undecidable here. **THE
+        # POSSIBILITY IS DECLARED, NOT GUESSED AT IN EITHER DIRECTION.**
+        #
+        # What is NOT lost: if the CALL'S RESULT is stored or returned, that is caught by
+        # the assignment and return rules applied to the RESULT. And the fourth Assurance
+        # seat's ESCAPE 4 ARM 4 is a SUBSCRIPT STORE, handled above and unaffected.
 
     # Everything that remains is a RETURN. The object is reachable exactly where its
     # enclosing function's return value is reachable, so ask the same question one frame out.
@@ -800,8 +854,11 @@ def _established_here_spellings(tree) -> set:
 
     * ``from ... import ESTABLISHED_HERE as <alias>`` — the auditor's route;
     * ``from ... import ESTABLISHED_HERE`` — the plain form, unchanged;
-    * ``<name> = ESTABLISHED_HERE`` and ``<name> = <an already-resolved name>`` at MODULE
-      LEVEL, run to a FIXPOINT, so a chain of rebindings resolves too;
+    * ``<name> = ESTABLISHED_HERE`` and ``<name> = <an already-resolved name>`` **AT ANY
+      DEPTH** — module level, inside a function body, inside a class body, inside an ``if`` —
+      run to a FIXPOINT, so a chain of rebindings resolves too. *Superseded wording, quoted
+      rather than deleted (CD-RULE-004, PBG-CONT-003): "at MODULE LEVEL".* **WIDENED AT
+      WO-2R3 INCREMENT 7; the function-body case is measured in the fixpoint's own comment;**
     * ``<anything>.ESTABLISHED_HERE`` — an ATTRIBUTE access resolves by its attribute name,
       so ``import crash_detector.admission as adm; adm.ESTABLISHED_HERE`` was already caught
       and still is, whatever ``adm`` is spelled.
@@ -809,7 +866,10 @@ def _established_here_spellings(tree) -> set:
     **WHAT IS NOT RESOLVED, AND IT IS DECLARED RATHER THAN LEFT TO BE FOUND** — see DECLARED
     LIMIT 8:
 
-    * a name bound INSIDE A FUNCTION BODY (this reads module-level bindings only);
+    * *superseded — this read "a name bound INSIDE A FUNCTION BODY (this reads module-level
+      bindings only)", and that route is **CLOSED** at WO-2R3 increment 7. The wording is
+      quoted rather than deleted (CD-RULE-004, PBG-CONT-003) and the measurement that closed
+      it is in the fixpoint's own comment: 16 uses before, 17 after, on one planted alias;*
     * ``getattr(admission, "ESTABLISHED_" + "HERE")`` or any name computed at runtime;
     * an exemption reached through a CONTAINER — ``ALIASES = {"eh": ESTABLISHED_HERE}`` then
       ``@admits(x=ALIASES["eh"]("..."))``;
@@ -825,13 +885,38 @@ def _established_here_spellings(tree) -> set:
             for alias in node.names:
                 if alias.name == ESTABLISHED_HERE:
                     spellings.add(alias.asname or alias.name)
-    # MODULE-LEVEL REBINDINGS, TO A FIXPOINT. `_EH = ESTABLISHED_HERE` then `E = _EH` both
+    # REBINDINGS AT ANY DEPTH, TO A FIXPOINT. `_EH = ESTABLISHED_HERE` then `E = _EH` both
     # resolve; the loop runs until nothing new is learned rather than once, because a single
     # pass would resolve the first rebinding and miss the second.
+    #
+    # **`ast.walk` AND NOT `tree.body`. CLOSED AT WO-2R3 INCREMENT 7** (PO-DECISIONS-0013
+    # ruling 6). It read `for node in tree.body` — MODULE LEVEL ONLY — which was the same
+    # blind spot `_callables` was widened out of at increment 6, twelve lines away, in the
+    # increment dispatched to eliminate it.
+    #
+    # **THE ESCAPE, MEASURED BEFORE THE FIX RATHER THAN ASSERTED AFTER IT.** Planted into
+    # `engine/model.py`: `def _install_door(): EH = ESTABLISHED_HERE` — the alias bound
+    # INSIDE A FUNCTION BODY — then `@admits(value=EH("..."))` on a door that escapes to a
+    # public module-level name. Before: `ESTABLISHED_HERE uses: 16`, the exemption NOT
+    # counted, in a limit whose own text says it is **COUNTED, NOT HIDDEN**.
+    #
+    # **THE DIRECTION OF THE ERROR IS WHY THIS IS CLOSED RATHER THAN CARRIED.** Widening can
+    # now ADD a spelling that a module-level decorator could not actually see — a false row,
+    # which is NOISE. Not widening HIDES a weakening, which is the exact failure the limit
+    # is named after. Between a noisy count and a silent one, a register that exists to say
+    # "this many explicit weakenings" takes the noisy one.
+    #
+    # **AND THE CARRIER WAS ALREADY REAL, WHICH RESIZES THIS FIX RATHER THAN INFLATING IT**
+    # (CD-RULE-006 — a check reports, a carrier fails). Measured on the same plant BEFORE
+    # this widening: `tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set`
+    # ALREADY FAILED, `17 != 16`, because it enumerates from the RUNTIME compiled declaration
+    # objects where a spelling cannot matter. **SO THIS IS A REPORTING FIX WITH A CARRIER
+    # THAT ALREADY HELD, AND IT CLOSES A GAP IN WHAT THE CHECK SAYS, NOT IN WHAT THE PROJECT
+    # REFUSES.** Saying otherwise would be claiming a closure for a note.
     changed = True
     while changed:
         changed = False
-        for node in tree.body:
+        for node in ast.walk(tree):
             if not isinstance(node, (ast.Assign, ast.AnnAssign)):
                 continue
             value = node.value

@@ -1524,8 +1524,22 @@ criteria:
         `guarded` at line 341, not the plant. Row 4 is what makes this structural rather than a
         subtler vocabulary.
         WHAT THE CLAUSE DOES NOT REACH, DECLARED AND NOT CLAIMED CLOSED: an object PASSED to a
-        callee that retains it (tagged and DENIED BY DEFAULT, so safe, but not analysed — the
-        error is in the safe direction and it is still an error); an escape inside a CONTAINER
+        callee. The clause tags this PASSED_TO and DOES NOT TREAT IT AS AN ESCAPE — a DELIBERATE
+        WEAKENING WITH A MEASURED REASON, and the reason is that the first version did the
+        opposite. DENY-BY-DEFAULT HERE TURNS THIS PROJECT'S OWN CD-ASR-F03 FIX INTO A VIOLATION:
+        increment 7 item 3 adds `delattr(guarded, "__wrapped__")` — a call with `guarded` as an
+        argument — and the deny-by-default rule reclassified `guarded` as a reachable door, WHICH
+        IS THE EXACT OUTCOME PO-DECISIONS-0012 RULING 1 FORBIDS. MEASURED: the doors check went
+        PASS -> "FAIL — 2 violation(s)" on the increment's own repair. AND BOTH WAYS OUT WERE WORSE
+        THAN THE PROBLEM — an exclusion list of "callees that do not retain" is a VOCABULARY, which
+        is what ruling 2 exists to remove, and decorating `guarded` is prohibited by ruling 1.
+        WHAT IS LOST IS REAL AND IS NOT DRESSED UP: a callee that STORES the object somewhere
+        reachable is not seen. What is NOT lost: if the CALL'S RESULT is stored or returned, the
+        assignment and return rules catch it on the RESULT; and ESCAPE 4 ARM 4 is a SUBSCRIPT
+        STORE, handled separately and unaffected — measured in both spellings after the change.
+        CARRIER: NOT PROVED TO BE CARRIED ANYWHERE, except that ON A JUDGEMENT PATH the NETS
+        population denies by default and such a callable fails UNCLASSIFIED_INTERCEPTOR unless
+        declared. Also not reached: an escape inside a CONTAINER
         LITERAL, `return {"decide": local}`, which tags no route — MEASURED: on a judgement path
         the check STILL EXITS 1 as UNCLASSIFIED_INTERCEPTOR because the NETS population denies by
         default, so the VERDICT is right and the clause's REASON is wrong, and OFF a judgement path
@@ -1625,6 +1639,25 @@ criteria:
         MEASURED — which is the right discipline and is why this is a correction and not a
         rebuttal. What was genuinely broken, and is fixed here, is THE CHECK'S REPORT: it said
         16 when there were 17.
+        CLOSED AT WO-2R3 INCREMENT 7 (PO-DECISIONS-0013 ruling 6): "A NAME BOUND INSIDE A FUNCTION
+        BODY" IS NO LONGER IN THE "not resolved" LIST. The rebinding fixpoint read `tree.body` —
+        module level only — TWELVE LINES from `_callables`, which increment 6 widened to walk at any
+        depth: same file, same idiom, same defect shape, left behind by the increment dispatched to
+        eliminate it. It now walks at ANY DEPTH. The superseded wording is quoted rather than
+        deleted (CD-RULE-004, PBG-CONT-003).
+        MEASURED, BOTH ARMS, one planted alias bound in a function body with a door escaping to a
+        public module-level name: `ESTABLISHED_HERE uses: 16` BEFORE, 17 AFTER, and the use NAMED as
+        `engine/model.py:791 _install_door.planted_door(value)`. THE SHIPPED TREE'S OWN COUNT IS
+        UNMOVED AT 16, so the widening added no false row here — asserted by
+        ::test_the_widened_fixpoint_adds_no_false_row_to_the_shipped_tree, because preferring the
+        noisy direction over the silent one is not a licence to stop measuring it.
+        AND THE FIX IS RESIZED BY ITS OWN CARRIER RATHER THAN INFLATED: on that same plant, BEFORE
+        the widening, ::test_the_established_here_exemptions_are_exactly_this_set ALREADY FAILED
+        17 != 16, because it enumerates from the RUNTIME compiled declarations where a spelling
+        cannot matter. SO THIS CLOSED A GAP IN WHAT THE CHECK SAYS, NOT IN WHAT THE PROJECT REFUSES.
+        "THIS IS A REPORTING FIX AND NOT A CLOSURE" still applies, and claiming otherwise would be
+        the overstatement CD-RULE-006 exists to stop. CARRIER FOR THE WIDENING:
+        tests/test_judgement_path_doors.py::test_an_established_here_alias_bound_in_a_function_body_is_counted.
         CARRIER MEASURED: tests/test_admission.py, as above, RED on a seventeenth use whether or
         not it is aliased, at BOTH SHAs. That carrier covers every route in the "not resolved"
         list, INCLUDING the ones the check cannot see, because it never reads a name at all —

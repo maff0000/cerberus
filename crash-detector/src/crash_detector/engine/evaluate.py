@@ -77,6 +77,7 @@ and no such field.
 from __future__ import annotations
 
 import functools
+import inspect
 from datetime import datetime
 from typing import Mapping, Sequence, Union
 
@@ -352,6 +353,47 @@ def _absence_is_never_a_number(evaluate_one_dial):
         reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
         refuse_a_number_without_its_inputs(spec, usable, reading)
         return reading
+
+    # THE GUARD DOES NOT PUBLISH A WAY ROUND ITSELF.
+    #
+    # `functools.wraps` sets `__wrapped__` to the function it wrapped. That attribute is
+    # documented, `inspect.unwrap` and `inspect.signature` follow it automatically, and
+    # editors offer it — so `_evaluate_dial.__wrapped__(spec, usable, now)` is a bypass a
+    # caller can write in ordinary-looking code with no cast and no import. **THIS PROJECT
+    # DELETES THIS EXACT ATTRIBUTE IN TWO OTHER PLACES AND CALLS IT A BYPASS BOTH TIMES**
+    # (`admission.py`, `establishment.py`), and `admission.py`'s DECLARED LIMIT 1 said of
+    # it *"(b) THE `__wrapped__` ATTRIBUTE — THIS HALF IS CLOSED HERE."* **"HERE" MEANT
+    # `admits` ONLY, AND NOBODY HAD WRITTEN DOWN THAT THIS THIRD DECORATOR WAS OPEN** — on
+    # the one guard in this tree that exists BECAUSE of an escape.
+    #
+    # MEASURED by the fifth Assurance seat at `9f7b764`, two arms at the layer the
+    # proposition names: THROUGH the wrapper, a rewritten `missing_required` branch is
+    # REFUSED with `AbsenceYieldedAValue`; THROUGH `__wrapped__`, the same branch is
+    # ACCEPTED and returns a `Value` carrying `inputs_used=('src.a',)` — inputs that were
+    # never present. And the convergence that makes it load-bearing: the layer that closes
+    # this project's historic V03, E04 and V06 routes IS this post-condition.
+    #
+    # It is removed. Everything else `wraps` copies — the name, the qualname, the
+    # docstring, the module — is kept, because those are what make the evaluator readable
+    # and none of them is a way through it.
+    #
+    # WHAT THIS DOES NOT CLOSE, STATED RATHER THAN LEFT TO BE FOUND: the wrapped function
+    # is still in this closure's cells, and `_evaluate_dial.__closure__[i].cell_contents`
+    # reaches it. That is true of EVERY decorator ever written in Python and CPython offers
+    # no way to prevent it; it is `admission.py`'s DECLARED LIMIT 6 and
+    # `establishment.py`'s DECLARED LIMIT 3, and this site now sits inside the same limit
+    # rather than outside it. **MEASURED HERE, NOT ASSUMED**: `variants/WO-2R3/P-F-...py`
+    # arm A6 obtains the undecorated function from the cells at this commit. What changes
+    # is that a bypass now requires reaching into interpreter internals rather than reading
+    # a documented attribute.
+    try:
+        delattr(guarded, "__wrapped__")
+    except AttributeError:  # pragma: no cover - wraps always sets it
+        pass
+    # The real signature is kept as DATA, so `inspect.signature(_evaluate_dial)` still
+    # reports what the evaluator takes. A `Signature` is a description; it is not a callable
+    # and it is not a way through. This mirrors `admits` and `establishes` exactly.
+    guarded.__signature__ = inspect.signature(evaluate_one_dial)
 
     return guarded
 

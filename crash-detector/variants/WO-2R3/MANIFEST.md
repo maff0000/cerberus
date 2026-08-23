@@ -455,6 +455,8 @@ is a summary, and a summary is the thing this project keeps finding wrong.
 
 | **`P-H-the-reachability-criterion-under-attack.sh`** | **NEW AT INCREMENT 7.** The item-2 reachability criterion under its own two REQUIRED contrasts: does it survive the rename that killed the clause it replaced, and does it still catch the fourth Assurance seat's ESCAPE 4 ARM 4 — including with a PRIVATE-named local, which a name-prefix clause cannot see at all? Ten arms, **each running its own tree's own copy of the instrument and printing its SHA** (CD-PL-F98). | `bash variants/WO-2R3/P-H-the-reachability-criterion-under-attack.sh` |
 
+| **`P-I-the-wrapped-attack-set-re-run.sh`** | **NEW AT INCREMENT 7.** PO-DECISIONS-0013 ruling 2's *"the historic WO-2R `__wrapped__` attack set is re-run at the new head"*, before and after, nine routes READ FROM THE DIRECTORY and not from this manifest (CD-PL-F97): V24 plus every patch in `variants/WO-2R/CD-ASR-F02-F03/`, the corpus the fifth seat's M10 named as depending on the guard this increment changed. | `bash variants/WO-2R3/P-I-the-wrapped-attack-set-re-run.sh` |
+
 **NEITHER NEW PROBE IS A CARRIER.** Both exit 0 whatever they measure, by design: they are
 INSTRUMENTS THAT REPORT, and this project's `CD-RULE-006` says a check reports and a carrier fails.
 The carriers for increment 7's propositions are in `tests/`, and where a proposition has no carrier

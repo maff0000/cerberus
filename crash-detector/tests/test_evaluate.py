@@ -684,14 +684,90 @@ def _degraded_reading():
 
 def test_the_per_dial_evaluator_carries_the_post_condition():
     """The guard is applied AT the function boundary, not written into its body, because
-    the escape that produced CD-ASR-F03 was an edit to the body."""
+    the escape that produced CD-ASR-F03 was an edit to the body.
+
+    **THE INTENT OF THIS TEST IS UNCHANGED. ITS INSTRUMENT IS REPLACED, AND THAT IS
+    ``PO-DECISIONS-0013`` RULING 2** — *"a test that requires a bypass to exist pins the
+    bypass open, and a test that asserts a vulnerability is a defect in the test."*
+
+    **THE SUPERSEDED ASSERTION, QUOTED RATHER THAN DELETED** (CD-RULE-004, PBG-CONT-003)::
+
+        assert hasattr(evaluate_module._evaluate_dial, "__wrapped__"), (
+            "the per-dial evaluator must be wrapped in refuse_a_number_without_its_inputs; "
+            "without it, any rewritten branch may return a number (CD-ASR-F03)")
+
+    **THE ONLY SHIPPED ASSERTION THAT THE CD-ASR-F03 GUARD WAS APPLIED WAS THE PRESENCE OF
+    THE ATTRIBUTE THAT REMOVES IT.** The fifth Assurance seat demonstrated the bypass live —
+    through the wrapper a rewritten branch is REFUSED, through ``__wrapped__`` the same
+    branch is ACCEPTED and returns a ``Value`` carrying inputs that were never present — and
+    the test and the defect were the same line. That is why three parties looked at this
+    wrapper across WO-2R, WO-2R2 and WO-2R3 and saw a guard.
+
+    Four assertions replace it, each testing the property the docstring actually claims, and
+    none of them a way through the guard.
+    """
     import importlib
 
     evaluate_module = importlib.import_module("crash_detector.engine.evaluate")
 
-    assert hasattr(evaluate_module._evaluate_dial, "__wrapped__"), (
-        "the per-dial evaluator must be wrapped in refuse_a_number_without_its_inputs; "
-        "without it, any rewritten branch may return a number (CD-ASR-F03)"
+    # -------------------------------------------------------------- 1. THE NEGATIVE.
+    # The same practice as this project's two other delattr sites, whose carriers are
+    # tests/test_admission.py:334 and tests/test_field_establishment.py:215.
+    # THREE SITES, ONE PRACTICE, THREE CARRIERS.
+    assert not hasattr(evaluate_module._evaluate_dial, "__wrapped__"), (
+        "the CD-ASR-F03 guard must not publish a documented way round itself; `admits` "
+        "and `establishes` both delete this attribute and call it a bypass"
+    )
+    assert inspect.unwrap(evaluate_module._evaluate_dial) is evaluate_module._evaluate_dial
+
+    # -------------------------------------------------------------- 2. THE GUARD FIRES ON
+    # THE REAL OBJECT. Not "an attribute is present" — the post-condition is OBSERVED being
+    # called, with the real arguments, at the real boundary.
+    seen = []
+    real_post_condition = evaluate_module.refuse_a_number_without_its_inputs
+    try:
+        evaluate_module.refuse_a_number_without_its_inputs = (
+            lambda spec, usable, reading: seen.append((spec, usable, reading))
+        )
+        evaluate_module._evaluate_dial(_spec(EQUITY_DIAL_ID), {}, FIXED_NOW)
+    finally:
+        evaluate_module.refuse_a_number_without_its_inputs = real_post_condition
+    assert len(seen) == 1, "the post-condition was not called at the evaluator's boundary"
+    observed_spec, observed_usable, observed_reading = seen[0]
+    assert observed_spec.dial_id == EQUITY_DIAL_ID
+    assert observed_usable == {}
+    assert isinstance(observed_reading, Unknown)
+
+    # -------------------------------------------------------------- 3. THE GUARD IS AT THE
+    # BOUNDARY AND SURVIVES ANY BODY — the docstring's actual claim, with the counterfactual
+    # arm CD-D-079 requires. The decorator is applied to a body that returns a value-bearing
+    # reading having received no inputs at all: CD-ASR-F03's own shape.
+    def rewritten_body(spec, usable, now_utc, *extra, **extra_by_name):
+        return _value_reading()
+
+    starved = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
+    guarded = evaluate_module._absence_is_never_a_number(rewritten_body)
+    with pytest.raises(AbsenceYieldedAValue):
+        guarded(starved, {}, FIXED_NOW)
+    # THE COUNTERFACTUAL: the identical body WITHOUT the decorator does not refuse. Two arms
+    # differing in exactly the structure the proposition credits.
+    assert isinstance(rewritten_body(starved, {}, FIXED_NOW), Value)
+
+    # -------------------------------------------------------------- 4. AND THE HALF THAT IS
+    # OPEN, ASSERTED OPEN — the same sentence `admits` and `establishes` carry. The closure
+    # cells still reach the undecorated function. That is true of every decorator in Python;
+    # it is admission.py's DECLARED LIMIT 6 and establishment.py's DECLARED LIMIT 3, and this
+    # site now sits INSIDE that limit rather than outside it. **A CARRIER THAT ASSERTED ONLY
+    # THE CLOSURE WOULD BE CLAIMING MORE THAN WAS DONE.**
+    reachable = [
+        cell.cell_contents
+        for cell in (evaluate_module._evaluate_dial.__closure__ or ())
+        if callable(getattr(cell, "cell_contents", None))
+    ]
+    assert reachable, (
+        "the closure route is DECLARED OPEN; if it has closed, the declared limit in "
+        "engine/evaluate.py, admission.py and establishment.py is now wrong and must be "
+        "corrected in all three CD-RULE-004 places rather than quietly enjoyed"
     )
 
 
