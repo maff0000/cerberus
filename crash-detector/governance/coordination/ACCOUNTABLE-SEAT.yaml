@@ -1,0 +1,56 @@
+# ================================================================================================== #
+# THE ACCOUNTABLE SEAT — the one seat that may write the shared record files.
+#
+# `PO-DECISIONS-0021` ruling 3(b): *"no shared ACTIVE_WORK.yaml edit"*. That clause needs an answer
+# to the question "shared by everyone EXCEPT WHOM?", and a seat may not invent the answer
+# (`CD-RULE-003`: derive or fail closed).
+#
+# **IT IS DERIVED, NOT CHOSEN.** `CD-D-177` (BL-20260823T134132Z-0139) reads: *"THIS PROJECT LEAD
+# DECLARES ITS OWN WRITE SCOPE FOR THE DURATION OF `CD-ENG-COORD-01`'s LIFE ... :
+# `governance/engineering/ACTIVE_WORK.yaml`, its own Build Log block `0100`-`0199`, and
+# `governance/dispatch/`."* The Project Lead is therefore the seat that holds `ACTIVE_WORK.yaml`
+# on this project, by its own recorded decision and not by this file's assertion.
+#
+# **THIS FILE IS DATA, NOT AUTHORITY.** It records a derivation so an instrument can read it. If the
+# Product Owner or a later Project Lead ruling moves accountability, this row is updated by THAT
+# seat and this comment is superseded, never edited (`PBG-CONT-003`).
+#
+# **THE INSTRUMENTS FAIL CLOSED IF THIS FILE IS ABSENT OR UNPARSEABLE** — they report
+# `PRECONDITION_NOT_MET` and refuse, rather than defaulting to "everyone may write".
+# ================================================================================================== #
+
+record_type: ACCOUNTABLE_SEAT_DERIVATION
+derived_utc: '2026-08-23T13:51:03Z'    # from `date -u +%FT%TZ` and from nothing else (CD-RULE-005)
+derived_by: CD-ENG-COORD-01
+derived_from:
+- 'CD-D-177 — governance/engineering/build-log/BL-20260823T134132Z-0139.yaml'
+- 'CD-RULE-002 — governance/rules/PROJECT-RULES.md, the seat identity table'
+
+accountable_seat: PROJECT_LEAD_SEAT_01
+
+# The files that ONLY the accountable seat may write. Each is a scope pattern in the form
+# `tools/coordination/scope.py` decides (see its DECLARED LIMIT).
+shared_record_files:
+- governance/engineering/ACTIVE_WORK.yaml
+
+# The git author identity that MUST appear on a commit touching a shared record file.
+# `CD-RULE-002`: name = the actor_id exactly; email = actor_id lower-cased at seats.crash-detector.invalid.
+accountable_seat_git_author_name: PROJECT_LEAD_SEAT_01
+accountable_seat_git_author_email: project-lead-seat-01@seats.crash-detector.invalid
+
+# ================================================================================================== #
+# A DISCLOSURE THIS FILE OWES ITS READER (CD-RULE-006).
+#
+# `CD-RULE-002`'s scheme gives ONE identity to the Project Lead ROLE, not one per SESSION. The
+# second meta-assurance seat measured that this is precisely the hole through which two live Project
+# Lead sessions committed as one identity with nothing detecting it (VERDICT-META-ASSURANCE-01-
+# SECOND-SEAT.md §7.2, and it proposes `PROJECT_LEAD_SEAT_01/<pid>` as the fix).
+#
+# **SO THE RETROSPECTIVE ARM OF `check_no_shared_record_write.py` CANNOT DISTINGUISH TWO CONCURRENT
+# PROJECT LEAD SESSIONS FROM ONE. IT CATCHES A NON-ACCOUNTABLE SEAT WRITING THE SHARED FILE. IT DOES
+# NOT CATCH TWO ACCOUNTABLE SEATS.** That residue is NOT PROVED TO BE CARRIED ANYWHERE by this
+# increment; the nearest thing to a carrier is the launch lease (ITEM 4), which refuses the SECOND
+# SESSION rather than the second commit — and only where the lease is actually acquired.
+# Amending `CD-RULE-002` to a per-session identity is Product Owner work (`CD-RULE-002` is
+# PO-sourced) and is NOT this seat's to do.
+# ================================================================================================== #

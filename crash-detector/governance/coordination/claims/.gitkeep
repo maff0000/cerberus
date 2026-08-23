@@ -1,0 +1,3 @@
+# THE REGISTRY IS THIS DIRECTORY. One file per claim: <task-id>.claim.yaml.
+# It is NOT a shared list file — see tools/coordination/registry.py for why that would re-create
+# the exact contention increment 12 exists to remove. THE FILESYSTEM IS THE LOCK (O_EXCL).
