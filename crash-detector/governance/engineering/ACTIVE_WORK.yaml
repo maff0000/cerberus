@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-23T03:48:21Z'
+updated_utc: '2026-08-23T03:58:00Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -69,7 +69,46 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
-  *** **SUPERSEDING, BL-20260823T034821Z-0118: THE RECORD ACT RETURNED `READY_FOR_ASSURANCE`, IS
+  *** **SUPERSEDING, BL-20260823T035800Z-0119: INCREMENT 8 IS DISPATCHED AND OUT — THE INCREMENT THE
+  FALLEN RULING PAID FOR — AND TWO PRODUCT AUTHORITY QUESTIONS ARE UP THAT DO NOT BLOCK IT.** ***
+  `CD-DISPATCH-WO2R3-INC8-ENGINEER` to **`CD-ENG-WO2R3-05`, A FRESH ENGINEER IDENTITY**, at
+  `4410275`, executing the Product-Owner-ADOPTED ten-item ordered gate **IN ITS ORDER** with the
+  **`CD-ASR-F03` REDESIGN AT ITS HEAD**: no undecorated evaluator object at runtime (a naked callable
+  in a closure cell is the DEFECT CLASS, and the carrier must be the `__closure__` walk ITSELF) ·
+  establishment **DERIVED FROM THE SIGNATURE** (carrier: add a parameter and show the guard still
+  covers it **without anyone editing the guard**) · the post-condition retained in the same
+  mechanism · the doors criterion on **REAL PUBLIC BINDINGS AND MEASURED REACH, NEVER AN
+  UNDERSCORE**. Then `CD-RT-012` under ruling 3's IF-AND-ONLY-IF contrast condition; the
+  `admission.py:525` operator with a metaclass plant; Escape 3; the `tree.body` residual with the
+  already-measured-and-uncarried escape as a carrier **that must fail first**; and the documentary
+  corrections. ***
+  *** **TEN ADOPTED ITEMS BECAME A SIX-ITEM DISPATCH AND THE ARITHMETIC IS ACCOUNTED FOR ITEM BY
+  ITEM**, because "the dispatch was smaller than the order" is a sentence this record must never
+  discover later: **1 replaced by the redesign and dispatched · 2, 3, 6, 7, 9 dispatched · 5 ALREADY
+  DONE by the record act · 10 sequenced after · AND 4 AND 8 ARE THE TWO QUESTIONS.** ***
+  *** **Q1 — `F-06-B`: THE LANE DOES NOT CONTAIN ITS OWN GOVERNING AUTHORITY.** PL-VERIFIED
+  INDEPENDENTLY: lane `BLUEPRINT.md` reads **version 0.1.0**, **`governance/blueprint/` DOES NOT
+  EXIST on the lane**, `BP-AMENDMENT-0001` is cited by **29 files** outside `BLUEPRINT.md` and
+  `governance/`, and **main's `BLUEPRINT.md` commit is NOT AN ANCESTOR of `af2accb`** — `git
+  merge-base --is-ancestor` returns NO. **THE LANE HAS BEEN BUILT FOR EIGHT INCREMENTS AGAINST AN
+  AUTHORITY IT DOES NOT CARRY, AND THIS SEAT RECONCILED ALL EIGHT WITHOUT MEASURING IT.** It is the
+  Product Owner's alone: `BLUEPRINT.md` is protected from **EVERY SEAT INCLUDING THE PROJECT
+  LEAD** (the CD-D-115 precedent, which is this seat's own). **AND THE AUDITOR'S NUMBER IS NOT
+  ADOPTED — it says "96 times across 34 files", this seat measured 29 FILES on a different exclusion
+  set, and the difference is REPORTED rather than smoothed (CD-RULE-009). The finding does not
+  depend on which number is right.** ***
+  *** **Q2 — `F-06-J`: DOES §D's CLOSURE EXTEND TO THE CONSTRUCTION *PATH*?** The auditor measured
+  **99 governed classes: 13 SEALED, 77 OPEN** to `__new__` + `__dict__.update` — **including ALL
+  FOUR types the CD-D-105 closure was scoped to, and all three witness verdicts.** **THE REMEDY
+  (`__slots__`) IS ALREADY IN THIS TREE, APPLIED TO 13 TYPES, AND WAS NEVER ASKED OF THE OTHER 77.**
+  A body edit cannot remove the boundary; **a caller declining to use it can, for 77 of 99.** It
+  WIDENS a class the Product Owner has ruled and re-based THREE times, so it is not this seat's. ***
+  *** **NEITHER QUESTION BLOCKS THE SIX, AND BOTH ARE CARRIED WITH THEIR MEASUREMENTS ATTACHED.**
+  `CD-PL-F104` and `CD-D-166` go into the dispatch as **NAMED CANDIDATES the Product Owner may add
+  in one sentence** — not as scope this seat added. **Nothing merged, promoted or admitted. T2 RED;
+  CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012` RED AT THE TIP; the WO-2 gate SHUT.** ***
+  *** **THE BLOCK BELOW IS RETAINED, SUPERSEDED — never edited away (PBG-CONT-003).** ***
+  *** **SUPERSEDED, BL-20260823T034821Z-0118: THE RECORD ACT RETURNED `READY_FOR_ASSURANCE`, IS
   RECONCILED BY MEASUREMENT, AND IS BANKED AND NOT ACCEPTED** (PBG-AUTH-003). *** Lane head
   `4410275`, FOUR commits by `CD-ENG-WO2R3-04`, a FRESH identity that RETURNED ALIVE and committed as
   it went. **IDENTITY CLEAN ON ALL FOUR — one line from `git log --format='%an <%ae> | %cn <%ce>' |
@@ -3502,7 +3541,39 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  *** **SUPERSEDING STEP, BL-20260823T034821Z-0118: THE RECORD ACT IS BANKED AND NOT ACCEPTED.
+  *** **SUPERSEDING STEP, BL-20260823T035800Z-0119: THE INCREMENT-8 ENGINEER IS OUT. NOTHING ELSE
+  MOVES ON THE LANE WHILE IT IS — AND TWO PRODUCT AUTHORITY QUESTIONS ARE UP THAT DO NOT BLOCK IT.**
+  ***
+  **1.** `CD-ENG-WO2R3-05` executes `CD-DISPATCH-WO2R3-INC8-ENGINEER` at `4410275` in
+  `/srv/crash-detector-wo2r3`. **SIX ITEMS, THE PRODUCT OWNER'S ORDER, THE REDESIGN AT THE HEAD.**
+  **`STOPPED_AT_ITEM_n` IS A SUCCESS** — item 1 carries a declared stop (if property (a) cannot be
+  met without an exemption or a weakening), and any item whose contrast cannot be built is a stop
+  and a finding.
+  **2.** **Q1 (`F-06-B`, the lane's `BLUEPRINT.md`) AND Q2 (`F-06-J`, §D and the construction path)
+  ARE THE PRODUCT OWNER'S.** Neither blocks the six. **NOTHING IN `BLUEPRINT.md`,
+  `governance/blueprint/` OR §D's SCOPE MOVES WITHOUT A RULING** — and a seat that implemented
+  either would have made the ruling.
+  **3.** The Project Lead reconciles the return **BY MEASUREMENT**, never by reading its claims, and
+  banks it. **RECONCILIATION IS NOT ACCEPTANCE.**
+  **4.** THEN the **SEVENTH FRESH ASSURANCE SEAT** over the whole of WO-2R3, full disclosure,
+  **CD-D-129's clauses VERBATIM**, carrying **`CD-ENG-WO2R3-04`'s F07 IN ITS OWN WORDS** — *"fifty
+  of sixty-three rows are my first-and-only reading of two modules I did not write, in one sitting —
+  the exact shape Category C was just reversed for trusting. Attack `operand_origin`; the
+  `OWN_CONSTRUCTION` rows first, because that is the answer that ends the enquiry."* — and told that
+  the fifteen dispositions and the fifty derivation rows are **A TARGET AND NOT A SETTLED RECORD**,
+  and that `CD-D-166` — a machine-checked field whose rename test FAILS — is a named target.
+  **5.** THEN the **META-ASSURANCE** pass (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99,
+  F100, F101, **F102**, the two `required-tests.yaml` `execute:` lines naming guards that do not
+  exist in the tree, and now **the eight-increment failure to measure whether the lane contains its
+  own blueprint.** **STILL NOT FOLDED IN.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green sweep as a closed criterion — **fifteen violations became fifteen
+  declarations and ten sites are declared OPEN DEFECTS.** **DO NOT** read the green doors row as one
+  either — **the ruling it rested on has FALLEN, and item 1 is what replaces it.**
+  **T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012` RED AT THE TIP; THE WO-2 GATE
+  SHUT.**
+  **THE STEP BELOW IS DISCHARGED: THE RECORD ACT RAN, RETURNED AND IS RECONCILED.** ***
+  *** **SUPERSEDED STEP, BL-20260823T034821Z-0118: THE RECORD ACT IS BANKED AND NOT ACCEPTED.
   INCREMENT 8 IS NEXT AND IT IS THE ONE THE FALLEN RULING PAID FOR.** ***
   **1.** **INCREMENT 8** — the auditor's TEN-ITEM ORDERED GATE adopted at PO-DECISIONS-0015 ruling 2,
   **WITH RULING 1's `CD-ASR-F03` REDESIGN AT ITS HEAD**: **no undecorated evaluator object exists at
@@ -4417,5 +4488,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260823T034821Z-0118   # PREVIOUSLY BL-20260823T024708Z-0117, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T023325Z-0116, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T035800Z-0119   # PREVIOUSLY BL-20260823T034821Z-0118, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T024708Z-0117, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T023325Z-0116, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
