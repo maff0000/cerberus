@@ -117,18 +117,45 @@ else
     show_out 12
     A2_TWO=$(echo "$LAST_OUT" | sed -n 's/.*RESULT_TWO=\([0-9]*\).*/\1/p')
     echo "    double-takes = $A2_TWO  of $ROUNDS rounds"
+
+    # --------------------------------------------------------------------------------------
+    # **THE BAD STATE IS DEMONSTRATED FROM A ROUND THAT ACTUALLY DOUBLE-TOOK, NOT FROM
+    # WHATEVER THE LAST ROUND HAPPENED TO LEAVE BEHIND.**
+    #
+    # THE FIRST VERSION OF THIS ARM READ THE REGISTRY AFTER THE LOOP AND ASSERTED THE DETECTOR
+    # REFUSED IT. That couples a real measurement (27-30 double-takes in 40 rounds) to a COIN
+    # FLIP: whether round N-1 was one of them. It passed twice and then reported
+    # `*** DID NOT CONTRAST ***` on a run where the race had double-taken 27 times and the
+    # final round simply had not — **the arm was flaky by construction and the flake was in
+    # the SAFE direction only by luck.** Recorded here rather than tidied away; it is the
+    # third plant defect this seat raised against itself at this increment.
+    #
+    # The loop below runs SINGLE rounds until two claim records coexist, bounded at 20
+    # attempts, and REPORTS FAILURE if it never happens.
+    # --------------------------------------------------------------------------------------
     echo "    *** AND THE BAD STATE IS DEMONSTRATED ON DISK, NOT ASSERTED: ***"
-    ls -1 "$SANDBOX"/governance/coordination/claims/*.claim.yaml 2>/dev/null | sed 's/^/      | /'
-    echo "      claim records on disk = $(ls -1 "$SANDBOX"/governance/coordination/claims/*.claim.yaml 2>/dev/null | wc -l)"
+    _try=0
+    _onone=0
+    while [ "$_try" -lt 20 ]; do
+        python3 -B "$PLANT_WORK/race.py" "$SANDBOX" 1 'src/contended/**' 'src/contended/**' > "$PLANT_WORK/one.out" 2>&1
+        _onone=$(ls -1 "$SANDBOX"/governance/coordination/claims/*.claim.yaml 2>/dev/null | wc -l)
+        [ "$_onone" -ge 2 ] && break
+        _try=$((_try + 1))
+    done
+    echo "      single rounds run until two records coexisted: $((_try + 1))  (bounded at 20)"
+    echo "      claim records on disk = $_onone"
     echo "        produced by: ls -1 <sandbox>/governance/coordination/claims/*.claim.yaml | wc -l"
-    grep -H 'seat_actor_id\|^- src' "$SANDBOX"/governance/coordination/claims/*.claim.yaml 2>/dev/null | sed 's#.*/claims/#      | #'
+    grep -H 'seat_actor_id' "$SANDBOX"/governance/coordination/claims/*.claim.yaml 2>/dev/null | sed 's#.*/claims/#      | #'
+    grep -H -A1 '^write_scope' "$SANDBOX"/governance/coordination/claims/*.claim.yaml 2>/dev/null | grep '^\S*- ' | sed 's#.*/claims/#      | #'
     run_rc "arm2 the increment's OWN detector, on the state the race produced" \
         python3 -B "$SANDBOX/tools/coordination/check_scope_disjoint.py" --root "$SANDBOX"
     echo "$LAST_OUT" | grep -E 'VIOLATION|VERDICT' | sed 's/^/      | /'
     DETECTED=$LAST_RC
     echo "    detector rc=$DETECTED (1 = it calls this state a violation)"
+    echo "    *** TWO SEATS, TWO TASK IDS, ONE WRITE SCOPE, BOTH 'VERDICT: CLAIMED', BOTH rc=0 —"
+    echo "    *** AND THE INCREMENT'S OWN DETECTOR CALLS THE RESULT A VIOLATION. ***"
     A2_OK=0
-    [ "$A2_TWO" != "0" ] && [ "$DETECTED" -eq 1 ] && A2_OK=1
+    [ "$A2_TWO" != "0" ] && [ "$_onone" -ge 2 ] && [ "$DETECTED" -eq 1 ] && A2_OK=1
     arm_result 2 "MUTEX REMOVED -> DOUBLE-TAKES RETURN" "two>0 AND detector refuses" "$A2_OK"
     revert_mutation "$PATCH"
 fi
