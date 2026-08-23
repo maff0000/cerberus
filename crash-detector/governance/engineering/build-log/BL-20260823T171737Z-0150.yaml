@@ -1,0 +1,179 @@
+# ================================================================================================== #
+# BL-20260823T171737Z-0150 — PROJECT LEAD BOUNDARY. **THE RECORD ACT OF `PO-DECISIONS-0023`.**
+#
+# **THE COORDINATION DISCIPLINE IS PARKED AT `AMBER` AND DECOUPLED TO THE PBGv2 FRAMEWORK TRACK.
+# INCREMENTS 12 AND 13 ARE MARKED `DECOUPLED-TO-FRAMEWORK`. THE WHOLE RESIDUAL SET IS CATALOGUED.
+# NO FIX-ROUND IS DISPATCHED. NO GRADE IS MOVED. NO FINDING IS CLOSED.**
+#
+# *** **AND THE ONE SENTENCE THAT DESCRIBES WHAT ACTUALLY HAPPENED HERE IS THE PRODUCT OWNER'S OWN,
+# NOT THIS SEAT'S:** ***
+#
+#   **"THE BUILD IS NOT STUCK — IT IS BEING POINTED BACK AT THE THING MATT IS ACTUALLY WAITING FOR."**
+#
+# **THIS BOUNDARY EXECUTES A RULING. IT DOES NOT AGREE WITH ONE, ARGUE WITH ONE, OR EXTEND ONE.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T171737Z-0150
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T17:17:37Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1951731, wrapper PID 1951730, `timeout 21600` from 18:15 local. **`ps` RE-CHECKED AT THIS BOUNDARY AND NOT ASSUMED — EXACTLY ONE `claude` process (`Q10`, `CD-PL-F146` DORMANT NOT CLOSED). THE CEILING WAS MEASURED FROM THE LIVE PROCESS AND NOT READ FROM A SCRIPT (`CD-PL-F127`).**'
+phase: DESIGN
+branch: main
+base_sha: 2b5946c1510100d74b3a8cae4c864f2c54de695c   # the commit carrying PO-DECISIONS-0023. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+# ================================================================================================== #
+# THE BOOT, DECLARED BEFORE ANYTHING ELSE.
+# ================================================================================================== #
+boot:
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: 'AMBER — `CONTINUITY_MATCH/RESUME_AMBER`, the sole `UNAVAILABLE` being `roadmap_identity` (no `ROADMAP.md`). **THE STANDING CONDITION, UNCHANGED FOR THE WHOLE PROJECT, AND IT IS NOT NEW INFORMATION.**'
+  pid_identity: 'PID.md@538e30f3bf4f1803 — the hash the Product Owner moved it to at `PO-DECISIONS-0020`. Unmoved here.'
+  observed_sha_matched_recorded: '`2b5946c`. **RECONCILED, NOT SILENTLY CORRECTED.**'
+  AND_THE_BOOT_ITSELF_IS_EVIDENCE_IN_THIS_RECORD: >
+    *** **THE BOOT PRINTED `assigned_role PROJECT_LEAD`, AND IT WOULD HAVE PRINTED THAT FOR ANY SEAT
+    THAT RAN IT.** *** That is `CD-ASR-WO2R3-07-F11` — the framework defect the tenth seat raised
+    against the instrument that booted it. **THIS SEAT *IS* THE PROJECT LEAD, SO THE OUTPUT HAPPENS
+    TO BE TRUE HERE — AND THAT IS EXACTLY WHY IT IS RECORDED. AN INSTRUMENT THAT IS RIGHT BY
+    COINCIDENCE IS NOT A CONTROL, AND THE MOMENT IT IS RIGHT IS WHEN NOBODY THINKS TO SAY SO.**
+
+# ================================================================================================== #
+# THE AUTHORITY. **IT IS NOT THIS SEAT'S AND THE DISTINCTION IS THE POINT.**
+# ================================================================================================== #
+the_ruling:
+  document: 'governance/decisions/PO-DECISIONS-0023.md — 55 lines, commit `2b5946c`, **authored by Matt Scott and by NO SEAT.**'
+  what_it_does_to_Q22: >
+    **`Q22` ASKED WHETHER RULING 5 WIDENS OR A NEW RULING ISSUES. THE ANSWER IS "NEITHER — THE
+    PROGRAMME IS RE-ORDERED."** This seat had refused to dispatch against ruling 5 on the ground that
+    *"a Project Lead that dispatched a fix for `F02` right now would be deciding, on its own
+    authority, that ruling 5's five items are now six."* **THE REFUSAL WAS CORRECT AND THE ANSWER
+    WAS A THIRD OPTION THE QUESTION DID NOT CONTAIN. THAT IS WORTH RECORDING PLAINLY: THE SEAT'S
+    JOB WAS TO PUT THE QUESTION UP INTACT, NOT TO GUESS THE ANSWER, AND THE ANSWER WAS OUTSIDE ITS
+    OWN FRAMING.**
+  the_product_owners_stated_reason_CARRIED_AND_NOT_PARAPHRASED:
+    - '*"It is not on the crash detector''s critical path and never structurally was — it exists to enable PARALLELISM, which is an ACCELERATOR, not a product requirement. The crash detector finishes SEQUENTIALLY, safely, today."*'
+    - '*"I made this exact error once before (running a kernel programme with applications downstream instead of the reverse) and named it mine; I will not make it again by running a coordination programme with the product downstream."*'
+    - '*"Spending a round attributing a parked defect is the spiral."*'
+  rulings_executed_here: '1 (park + decouple + catalogue), 2 (parallelism struck, framework-homed), 3 (`F09` NOT closed, sibling HIGH), 4 (`F01` attribution not spent on), 6(a) (the record act). **RULING 5 AND 6(b) — WO-3 — ARE THE NEXT BOUNDARY AND ARE NOT TOUCHED HERE.**'
+  Q20_Q21_Q22_Q23: '**ALL FOUR ANSWERED BY THE PRODUCT OWNER AND NONE BY THIS SEAT.** `Q20` -> NOT CLOSED (ruling 3). `Q21` -> not spent on (ruling 4). `Q22` -> re-ordered (ruling 1). `Q23` -> parallelism struck, framework-homed (ruling 2), **override remains Matt''s alone.**'
+
+# ================================================================================================== #
+# ACT 1 OF THE DISPATCH — THE RECORD ACT. **WHAT WAS WRITTEN, AND HOW IT WAS BUILT.**
+# ================================================================================================== #
+the_record_act:
+  artefacts_written:
+    - 'governance/framework/PBGV2-COORDINATION-HANDOFF.md — NEW. The catalogue.'
+    - 'governance/engineering/ACTIVE_WORK.yaml — `current_phase` GATE -> DESIGN (superseded, prior note retained UNEDITED); `current_block` superseded (prior block retained UNEDITED, `PBG-CONT-003`); TWO new `completed_items` rows marking increments 12 and 13 `DECOUPLED-TO-FRAMEWORK`; `next_safe_action` superseded; `updated_utc` and `last_build_log_entry` moved.'
+    - 'this entry.'
+  what_was_NOT_written: '**NOT ONE LINE OF CODE. NOT ONE INSTRUMENT. NOT ONE BYTE UNDER `pbg/` (`PBG-FWK-013`). NOT ONE BYTE OF THE `wo-2r3` LANE. NO DISPATCH. NO GRADE. NO FINDING CLOSED.**'
+
+  THE_METHOD_AND_THE_METHOD_IS_THE_LOAD_BEARING_PART_OF_THIS_BOUNDARY:
+    the_trap_that_was_avoided: >
+      **`CD-PL-F102` AND `CD-PL-F86` ARE THE SAME FINDING RECORDED TWICE: *a sweep defined by a LIST,
+      WHERE THE THING THAT BROKE WAS OUTSIDE THE LIST.* ITS REMEDY — *enumerate the registers, do not
+      name the ones you remember* — WAS RECORDED TWICE AND BUILT NEITHER TIME.** Ruling 1 names its
+      residuals in one sentence. **BUILDING THE CATALOGUE BY TRANSCRIBING THAT SENTENCE WOULD HAVE
+      BEEN `CD-PL-F102` FOR THE THIRD TIME, INSIDE THE DOCUMENT WHOSE WHOLE PURPOSE IS TO LOSE
+      NOTHING.**
+    what_was_done_instead: |
+      grep -oE 'CD-ASR-WO2R3-0[67]-F[0-9]{2}' <verdict> | sort -u
+      # ninth seat  -> F01..F14, 14 identifiers
+      # tenth seat  -> F01..F11, 11 identifiers
+      # + CD-PL-F154/F155/F156 (BL-...-0147), the Engineer's six, Q11
+      **EVERY EXTRACTED IDENTIFIER GETS A ROW. ROWS THAT DO NOT TRAVEL ARE MARKED `EXCLUDED` WITH THE
+      REASON. NOTHING IS DROPPED SILENTLY.**
+    THE_HONEST_CONSEQUENCE_STATED_AND_NOT_HIDDEN: >
+      *** **THE CATALOGUED SET IS LARGER THAN RULING 1'S SENTENCE.** *** Ruling 1's own word is
+      **WHOLE**, so the extra rows are carried under it — but **every row beyond the sentence SAYS SO
+      IN THE ROW**, so the Product Owner can strike any of them in one sentence. **THAT IS AN
+      ENUMERATION UNDER A RULING. IT IS NOT A SEAT WIDENING A RULING, WHICH IS THE THING THIS SEAT
+      REFUSED TO DO AT THE PREVIOUS BOUNDARY AND WILL NOT DO AT THIS ONE EITHER.**
+    the_totals: '**34 identifiers, 5 registers, 25 TRAVEL, 9 EXCLUDED WITH REASON.**'
+
+  A_NUMBERING_COLLISION_FOUND_BY_THIS_SEAT_AND_DECLARED_AS_A_READING: >
+    *** **RULING 1 NAMES ITS ITEMS UNQUALIFIED — "F01, F02, F09, F10, F12, F13, F14" — AND TWO
+    REGISTERS USE THOSE SAME BARE NUMBERS FOR DIFFERENT THINGS.** *** `CD-ASR-WO2R3-06-F01` is
+    *"two of three tiers not built"*; `CD-ASR-WO2R3-07-F01` is *"the order-dependent gatekeeper"*.
+    **THE RULING'S OWN GLOSSES RESOLVE IT** — *"F01 order-dependence"* and *"F09's sibling …
+    `lease.py` writes A SESSION DIED …"* are the tenth seat's headings verbatim, and `BL-...-0149`'s
+    standing line puts `F10`/`F12`/`F13`/`F14` in the ninth seat's namespace. **SO THE READING IS
+    EVIDENCED, NOT GUESSED — AND IT IS STILL RECORDED AS A READING, IN THE DOCUMENT'S §1.2, SO IT CAN
+    BE OVERTURNED IN ONE SENTENCE.** **AND THE PROPERTY THAT MATTERS IS THAT BOTH CANDIDATE
+    REFERENTS ARE DISPOSITIONED EITHER WAY, SO NO ITEM IS LOST TO THE AMBIGUITY. THAT IS THE ONLY
+    GUARANTEE A SEAT COULD GIVE HERE WITHOUT ASKING, AND IT GAVE THAT ONE RATHER THAN ASSERTING
+    CERTAINTY IT DID NOT HAVE.**
+
+  THE_HIGH_SET_ORDERED_AS_RULING_3_ORDERS_IT:
+    H1_CD_ASR_WO2R3_07_F02: '**THE LYING INSTRUMENT, AND RULING 3 PUTS IT FIRST.** `lease.py` prints `(ALIVE)` in the same verdict line in which it reaps a live holder, then writes `A SESSION DIED HOLDING THIS LEASE` into the durable record. **THE TRANSIENT STRING IS TRUE AND THE PERSISTENT ONE IS FALSE, AND THE PERSISTENT ONE IS THE ONE A LATER SEAT, A LATER AUDIT OR A COLD BOOT READS.** No `--seat`; no identity argument exists to omit.'
+    H2_CD_ASR_WO2R3_06_F09: '**NOT CLOSED. RULING 3 IS THE DISPOSITION AND NOT THIS SEAT''S VIEW.**'
+    H3_CD_ASR_WO2R3_07_F01: '**The gatekeeper admits what the detector refuses; the guard is ORDER-DEPENDENT. RULING 4: ATTRIBUTION NOT SPENT ON, AND THIS SEAT SPENT NONE.**'
+    H4_CD_PL_F154: '**The accountable seat''s identity minted as a test fixture, landed on a real branch, and NO INSTRUMENT NOTICED. Branch residue MEASURED ZERO.**'
+    H5_H6_H7: '`CD-ASR-WO2R3-06-F14` (the merge control''s only live record is `EVIDENCE_NOT_INDEPENDENT`) · `-F10` (two instruments, one doctrine, opposite code) · `-F11` (**FIXED AND HELD — travels as EVIDENCE, not as debt**).'
+    and_the_one_that_outranks_all_of_them: >
+      *** **`Q11` — "THE CONTROLS EXIST AND NOTHING RUNS THEM." NINE INSTRUMENTS, ZERO CARRIERS.** ***
+      **IT IS NOT FIXABLE BY THIS PROJECT BY CONSTRUCTION** — the only automatic pre-write carrier in
+      this repository lives inside the pinned `pbg/` (`PBG-FWK-013`). **THAT IMPOSSIBILITY IS THE
+      ARGUMENT FOR DECOUPLING, AND IT IS WHY THE PARK IS A CORRECT MOVE RATHER THAN AN EVASION: THE
+      ITEM IS BEING SENT TO THE ONLY PLACE THAT CAN ACTUALLY FIX IT.**
+
+  WHAT_DOES_NOT_TRAVEL_AND_WHY_IT_IS_SAID_OUT_LOUD: >
+    *** **THREE NINTH-SEAT HIGHs — `F01`, `F02`, `F03` — ARE EXCLUDED FROM THE HANDOFF AND REMAIN
+    THIS PROJECT'S OWN. THEY ARE THE PERIMETER FINDINGS AND THEY ARE WO-3'S JUSTIFICATION.** ***
+    **A DECOUPLE THAT QUIETLY CARRIED THE PRODUCT'S OWN OPEN PERIMETER FINDINGS OUT OF THE PRODUCT'S
+    BACKLOG WOULD CLOSE `CD-AC-002`/`CD-AC-005` BY RELOCATION RATHER THAN BY CONSTRUCTION.** That is
+    the failure mode this act could have produced, it is named here because naming it is the only
+    guard against it, **and the grades were not touched: `CD-AC-005` RED, `CD-AC-002` AMBER AND NOT
+    CLOSED.**
+
+  THE_RECEIVING_REGISTER_DOES_NOT_EXIST_HERE_AND_IT_WAS_MEASURED: |
+    find pbg -iname '*backlog*' -o -iname '*IMP*'  ->  pbg/skills/core/bounded-implementation.md  (a skill)
+    grep -rn 'IMP-015' pbg/                        ->  0 hits
+    git ls-files | grep -i backlog                 ->  0 hits
+    **THE PBGv2 BACKLOG IS NOT IN THIS REPOSITORY — THE SAME MEASURED FACT AS `Q13` ("IMP-023 DOES
+    NOT EXIST IN THIS REPOSITORY").** So **NO FRAMEWORK ID IS MINTED HERE.** The precedent is
+    `CD-FWK-005`, which was harvested by the Product Owner and given `IMP-015` **there, not here.**
+    **THE CONSEQUENCE IS DISCLOSED RATHER THAN PAPERED OVER: UNTIL THE PRODUCT OWNER CARRIES THIS SET
+    ACROSS, IT HAS NO IDENTIFIER IN THE REGISTER THAT OWNS IT, AND THAT GAP IS REAL.**
+
+# ================================================================================================== #
+# THE STARTING POINT THE FRAMEWORK INHERITS. **RETAINED AND MEASURED, NOT ASSERTED.**
+# ================================================================================================== #
+retained_and_measured:
+  command: 'git worktree list'
+  trees:
+    - '`/srv/crash-detector-inc12` -> `59cb3c1` [inc12-coordination] — **RETAINED. RULING 1 AND THE DISPATCH BOTH FORBID DELETING IT.**'
+    - '`/srv/crash-detector-inc13` -> `105db79` [inc13-coordination-fix] — **RETAINED.**'
+    - '`/srv/crash-detector-audit9-main` -> `4f3f4ce` — retained, the ninth seat''s pinned target.'
+    - '`/srv/crash-detector-wo2r3` -> `be0b355` [wo-2r3] — **FROZEN AND VERIFIED: `git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. NOT ONE BYTE TOUCHED AT THIS BOUNDARY.**'
+  and_what_that_means: >
+    **THE FRAMEWORK BUILD STARTS FROM WORKING CODE WITH A KNOWN, MEASURED DEFECT LIST — NOT A BLANK
+    PAGE.** Nine instruments, eight plants, 27 arms runnable at `main`; seven seats' verdicts, none
+    inside another. **AND `F08` — THE FOUNDING INCIDENT — IS CAUGHT, WITH A FIRING CONTRAST: 200
+    ROUNDS, 0 DOUBLE-TAKES REPAIRED AGAINST 195-196 UNFIXED, THE TREE THE ONLY VARIABLE, MEASURED BY
+    FOUR PARTIES WHO DID NOT ADJUST EACH OTHER.** **THAT IS WHAT THE TWO INCREMENTS BOUGHT AND IT IS
+    WHY PARKING IS NOT DISCARDING.**
+
+# ================================================================================================== #
+# STANDING. **VERIFIED BY COMMAND AT THIS BOUNDARY.**
+# ================================================================================================== #
+standing_unchanged_and_measured:
+  - '`CD-AC-005` **RED** · `CD-AC-002` **AMBER, NOT CLOSED** — **NOT MOVED HERE, AND THE DISPATCH FORBADE MOVING THEM.**'
+  - 'the WO-2 gate **SHUT** — ruling 7: **it closes when WO-3 delivers the `DETECTED` tier.**'
+  - '`wo-2r3` **FROZEN at `be0b355`** — MEASURED.'
+  - '**`CD-ASR-WO2R3-06-F09` NOT CLOSED** (ruling 3) · **`Q11` NOT CLOSED** · `CD-ASR-WO2R3-04-F01` NOT CLOSED · six `DEFECT_OPEN` tier-1 sites · `CD-F-0001`-`CD-F-0004` ALL OPEN.'
+  - '**PARALLEL REMAINS STRUCK (`CD-D-181`)** — and ruling 2 now names its true home: **a FRAMEWORK deliverable, built ONCE and gated ONCE for the whole estate (Rogue/Helm/Bagman), not re-litigated per project. The override remains MATT''S ALONE.**'
+  - '**BLUEPRINT.md AND PID.md UNTOUCHED** — MEASURED: `git log --oneline 88e43db..HEAD -- BLUEPRINT.md PID.md` -> **0 commits.**'
+  - '**NOTHING UNDER `tools/` OR `src/` MOVED AT THIS BOUNDARY.**'
+
+# ================================================================================================== #
+# WHAT THIS BOUNDARY DOES NOT DO.
+# ================================================================================================== #
+NOT_DONE_HERE:
+  - '**IT DOES NOT CLOSE ONE FINDING.** Parking is not closing, and decoupling is not fixing. Every travelling item travels OPEN at the severity its raising seat set.'
+  - '**IT DOES NOT MOVE ONE GRADE.** `PBG-AUTH-003`.'
+  - '**IT DOES NOT DISPATCH ONE SEAT** — no coordination fix-round (ruling 1), no parallel seat (`CD-D-181`), and no WO-3 Engineer, because **WO-3 CANNOT BE DISPATCHED UNTIL MATT NAMES THE SOURCE SET.**'
+  - '**IT DOES NOT RE-MEASURE THE CATALOGUED ITEMS.** Every figure quoted is CARRIED from the boundary that took it. **THIS IS A CATALOGUE, NOT A RE-VERIFICATION, AND CALLING IT ONE WOULD BE THE `CD-PL-F121` ERROR.** The document declares that as its Limit 5.'
+  - '**IT DOES NOT DELETE ANYTHING.**'
+
+next_actor: PROJECT_LEAD
+next_safe_gate: '**PRODUCE THE WO-3 SCOPE AND PLAN, THEN STOP.** The source selection is PRODUCT CONTENT and is the Product Owner''s and Matt''s (ruling 6). **NO SOURCE IS REGISTERED UNTIL THE SET IS NAMED. A SCOPE IS NOT A REGISTRATION.**'
