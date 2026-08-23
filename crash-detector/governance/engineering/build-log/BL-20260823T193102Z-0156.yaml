@@ -1,0 +1,214 @@
+# ================================================================================================== #
+# BL-20260823T193102Z-0156 — PROJECT LEAD BOUNDARY. **THE ASSURANCE SEAT RETURNED `AMBER` OVER
+# INCREMENT 15. THIS ENTRY IS THE CORRECTION IT MADE A GATING PRECONDITION — AND THE DELIBERATE
+# STOP AT THE MATT HOLD.**
+#
+# *** **THIS ENTRY SUPERSEDES THREE CLAIMS IN `BL-20260823T190920Z-0155`. `BL-...-0155` IS NOT
+# EDITED AND MUST NOT BE (`PBG-CONT-003`, non-waivable). IT STANDS ON THE RECORD OVERSTATED.** ***
+#
+# **THE `AMBER` IS NOT FOR A BYPASS AND NOT FOR A REGRESSION. NOTHING WAS SMUGGLED, NOTHING WAS
+# UNFROZEN, NO GRADE MOVED, NO SOURCE WAS REGISTERED, AND THE REGISTER REPORT IS BYTE-IDENTICAL TO
+# INCREMENT 14'S. THE `AMBER` IS FOR WHAT *THIS SEAT'S RECORD* CLAIMED.**
+#
+# *** **AND THE AUDITOR STATED THE REASON THE CORRECTION CANNOT WAIT, IN A SENTENCE THIS SEAT ADOPTS
+# WHOLE: "A SUCCESSOR WHO BELIEVES THE RECORD AS WRITTEN WILL NOT BUILD THE CALLER AND WILL NOT ADD
+# THE NOMINAL TYPE."** *** An overstated record is not a cosmetic problem — **it is a defect that
+# propagates into work nobody will know to do.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T193102Z-0156
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T19:31:02Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: bdd8f3c   # the auditor's own verdict commit, authored by CD-ASR-WO3-02 and by no other seat.
+
+the_verdict:
+  seat: 'CD-ASR-WO3-02 — **FRESH IDENTITY.** Never `CD-ENG-WO3-01`, `CD-ENG-WO3-02` or `CD-ASR-WO3-01` (`PBG-SOD-001`).'
+  target: '116c01f4584c62a244910ac6676c030735596896'
+  verdict: '**AMBER.** Confidence HIGH on everything it ran.'
+  persisted: 'governance/assurance/CD-ASR-WO3-02-VERDICT.md — **772 lines, committed at `bdd8f3c` AS `CD-ASR-WO3-02` ITSELF.**'
+  write_scope_honoured: >
+    **MEASURED: `git show --stat bdd8f3c` -> EXACTLY ONE FILE, 772 insertions. `wo-3` still
+    `116c01f`, `wo-2r3` still `be0b355`, tracked modifications 0.** **THE NARROW GRANT THAT REMEDIED
+    `CD-PL-F163` WAS USED FOR EXACTLY WHAT IT WAS GRANTED FOR AND NOTHING ELSE.**
+  what_it_confirmed_by_its_own_measurement: >
+    Increment 14 **not regressed — by the strongest available form: the two register reports are
+    BYTE-IDENTICAL after path normalisation.** · register edit narrower than permitted, **not one
+    `execute`/`execution_contract`/`evidence_ref`/`test_id` line changed**, `CD-AC-002|CD-AC-005` 0
+    matches · **two distinct closed schemas, and with ITS OWN recording double a broken PRIVATE
+    envelope issued no public-envelope statement** · **it killed the socket the probe was watching
+    and got `UNREACHABLE` exit 2** · **one age of 300.0s ADMITTED in CALM and REFUSED in STRESS
+    through the same constructor, differing by one argument** · **AST over all of `src/` including
+    function-local imports -> ZERO network-capable imports (27 textual matches, 0 of them imports)**
+    · `alert.event` INSERT and SELECT only, **no UPDATE/DELETE route opened** · **all ten plants
+    non-vacuous with failing test names matching the manifest exactly and NO arm failing
+    incidentally** · **`PBG-CONT-003` honoured across `BL-...-0152/0153/0154/0155` — each ONE commit,
+    ZERO deletions on all four.**
+
+# ================================================================================================== #
+# *** THE SUPERSESSIONS. THREE CLAIMS OF THIS SEAT'S ARE CORRECTED. ***
+# ================================================================================================== #
+CD-PL-F167:
+  severity: MEDIUM
+  supersedes: '`BL-20260823T190920Z-0155` — the claim *"the ''controls exist and nothing runs them'' shape is CLOSED for this one table."* **THAT SENTENCE IS OVERSTATED AND IS WITHDRAWN.**
+    `BL-...-0155` STANDS UNEDITED.'
+  raised_against: '**PROJECT_LEAD_SEAT_01.** It is the auditor''s `F01`, adopted.'
+  what_is_actually_true:
+    re_measured_by_this_seat: >
+      **`grep -rn "publish_cycle" src/ tools/` RETURNS EXACTLY TWO LINES, AND NEITHER IS A CALL:
+      `publish.py:3` (inside a DOCSTRING usage example) and `publish.py:143` (inside `__all__`).**
+      **`grep -rn "if __name__" src/` -> 0.** **No `console_scripts` / `[project.scripts]`.** The only
+      callers are in `tests/`.
+    the_correct_statement: >
+      **A WRITER EXISTS. NO WRITE OCCURS.** The same is true of `evaluate_cadence`, `state_document`,
+      `RegimeStalenessPolicy` and `recent_alerts`. *** **THE "CONTROLS EXIST AND NOTHING RUNS THEM"
+      SHAPE MOVED ONE HOP — FROM "A TABLE WITH NO WRITER" TO "A WRITER WITH NO CALLER". IT IS NOT
+      CLOSED, AND CALLING IT CLOSED WAS THE SEAT CONVERTING REAL PROGRESS INTO A COMPLETION IT HAD
+      NOT MEASURED.** ***
+  what_IS_true_and_is_not_withdrawn: '**`publication.heartbeat` genuinely had ZERO writers at `9b09d2a` and now has one, with an `INSERT INTO publication.heartbeat` at `publish.py:163`. THAT IS REAL AND IT IS PROGRESS. It is the word "CLOSED" that is wrong, not the work.**'
+  consequence_for_the_next_seat: '**BUILDING THE CALLER — THE PUBLICATION CYCLE''S ENTRYPOINT AND SCHEDULE — IS OWED AND IS NOW ON THE RECORD AS OWED.** It was not visible as owed while `BL-...-0155` read "closed".'
+
+CD-PL-F168:
+  severity: MEDIUM
+  supersedes: '`BL-20260823T190920Z-0155` — the claim *"`evaluate_cadence(heartbeats_utc)` takes only heartbeat timestamps, so there is no parameter through which an age could arrive … cadence cannot be confused with staleness BY CONSTRUCTION."* **WITHDRAWN.** `BL-...-0155` STANDS UNEDITED.'
+  raised_against: '**PROJECT_LEAD_SEAT_01.** It is the auditor''s `F02`, adopted.'
+  what_is_actually_true:
+    re_measured_by_this_seat: |
+      posonly : []
+      args    : ['heartbeats_utc']
+      kwonly  : ['now_utc', 'budget']      <-- WHAT THIS SEAT'S OWN CHECK NEVER LOOKED AT
+      TOTAL PARAMS: 3
+    how_this_seat_got_it_wrong: >
+      *** **ITS AST CHECK PRINTED `n.args.args` AND NEVER READ `n.args.kwonlyargs`. IT MEASURED ONE
+      THIRD OF THE SIGNATURE AND REPORTED ON THE SIGNATURE.** *** The Engineer's own docstring was
+      **correct**; **the compression into a headline was this seat's and it is the part that is
+      false.**
+    and_the_auditor_DEFEATED_the_property: >
+      **IT DID NOT MERELY COUNT THE PARAMETERS — IT BROKE THE CLAIM.** `budget` is gated by exact
+      nominal type; **`heartbeats_utc` is gated by NOTHING.** **Passing a stale reading's
+      `as_of_utc` as a heartbeat produced `breached=True, open=5000.0`; added to a healthy list it
+      flipped that list to breached. A `datetime` subclass is admitted.** *** **CADENCE IS SEPARATED
+      FROM AGE BY NAMING, NOT BY CONSTRUCTION.** ***
+    what_the_auditor_REFUTED_in_this_seat_s_favour: '**The closure / module-level route the Assurance dispatch told it to hunt for DOES NOT EXIST — explicitly refuted.** The separation is weaker than claimed but it is **not** leaky by a hidden path.'
+  consequence_for_the_next_seat: '**ADDING A NOMINAL TYPE FOR `heartbeats_utc` — so a reading''s instant cannot be passed as a heartbeat — IS OWED.** It was invisible while the record said "by construction". **AND THE BEHAVIOURAL CLAIM STILL HOLDS: the two cases DO come apart in the tested paths. What is withdrawn is that they cannot be MADE to come together.**'
+
+CD-PL-F169:
+  severity: MEDIUM
+  supersedes: '`BL-20260823T190920Z-0155` — the claim that a test *"ASSERTS `detail_level` IS ABSENT FROM BOTH SCHEMAS … SO THE OMISSION IS ENFORCED RATHER THAN MERELY CURRENT."* **WITHDRAWN AS TO ENFORCEMENT.**'
+  raised_against: '**PROJECT_LEAD_SEAT_01.** It is the auditor''s `F06`, adopted.'
+  what: >
+    **THE TEST CHECKS ONLY TOP-LEVEL `properties` / `required`.** *** **SO ATTACHING `detail_level`
+    PER-DIAL — WHICH IS EXACTLY THE OPTION THE ENGINEER RECOMMENDED AND `Q29` PUTS TO THE PRODUCT
+    OWNER — LEAVES BOTH ASSERTIONS TRUE.** *** **THE GUARD IS ENFORCED AGAINST THE REJECTED OPTION
+    AND UNENFORCED AGAINST THE PROPOSED ONE.**
+  why_it_stings: '**THIS SEAT PRAISED THE GUARD IN PRINT — *"a gap that fails a test if someone closes it carelessly is a better gap than a TODO"* — WITHOUT READING WHAT THE TEST ASSERTED. THE SENTIMENT IS RIGHT AND THIS GUARD DOES NOT EARN IT.**'
+  obligation: '**`F06` MUST BE CLOSED INSIDE WHATEVER `Q29` RULES** — the auditor''s condition, adopted.'
+
+# ================================================================================================== #
+# **THE PATTERN, NAMED FOR THE FOURTH TIME, AND THE REMEDY THIS SEAT IS ADOPTING RATHER THAN
+# PROMISING.**
+# ================================================================================================== #
+CD-PL-F170:
+  severity: HIGH
+  raised_against: '**PROJECT_LEAD_SEAT_01 — THE METHOD, NOT ANY ONE FILE.**'
+  the_series: >
+    **`CD-PL-F158`** — read the tail of a block scalar, declared a field absent that was 30,522
+    characters long. **`CD-PL-F161`** — declared `execution_contract` "prose"; it is a resolvable
+    path. **`CD-PL-F165`** — read six prose mentions of `regime` as an implementation.
+    **`CD-PL-F168`** — printed `args` and never read `kwonlyargs`, then made the result a headline.
+    *** **FOUR TIMES IN TWO INCREMENTS, THE SAME SHAPE: A PARTIAL MEASUREMENT PROMOTED TO A CONFIDENT
+    STATEMENT ABOUT CODE, PLACED IN A BINDING DISPATCH OR A BANKED RECORD.** ***
+  it_happened_again_INSIDE_this_verification: >
+    **AND IT IS RECORDED BECAUSE IT IS THE SHARPEST EVIDENCE IN THE ENTRY:** while verifying the
+    auditor's `F03` at this very boundary, this seat called `health_document(...)` **with a
+    `degraded=` keyword it had guessed**, got `TypeError`, and **for a moment had three "REFUSED"
+    lines that looked exactly like a health surface correctly rejecting three attacks.** **IT WAS THE
+    SEAT'S OWN WRONG CALL SIGNATURE.** It re-ran with `inspect.signature` first. *** **HAD IT
+    STOPPED ONE COMMAND EARLIER IT WOULD HAVE RECORDED "F03 REFUTED — THE HEALTH SURFACE REFUSES
+    ALL THREE" AND THE OPPOSITE IS TRUE.** ***
+  the_remedy_ADOPTED_not_promised:
+    1: '**INTROSPECT BEFORE ASSERTING.** `inspect.signature` / full `ast.arguments` (**`posonlyargs` + `args` + `kwonlyargs` + `vararg` + `kwarg`**) — never one field of it.
+      A "REFUSED" that arrives as a `TypeError` is **not** a refusal.'
+    2: '**A GREP IS AN OBSERVATION, NEVER A CONCLUSION.** State counts; let the seat that reads the code draw the inference. This was already written into the increment-15 dispatch (*"SURVEY IT YOURSELF"*) and **it is why `F165` cost nothing** — the instruction was right even where the assertion beside it was wrong.'
+    3: '**NO SUPERLATIVE IN A BANKED RECORD THAT THIS SEAT HAS NOT MEASURED END TO END.** "CLOSED", "BY CONSTRUCTION" and "ENFORCED" are the three words that failed here, and all three are claims about what CANNOT happen — **the hardest class of claim and the one this seat reaches for when summarising.**'
+  the_honest_assessment: >
+    **THE SUBSTANCE OF THIS SEAT'S RECONCILIATIONS HAS HELD UP — the auditor re-measured the 0-match
+    heartbeat baseline, 27/5370/5, 1882/1726, one identity, `pbg` at four refs, 0 protected paths,
+    and the plant table down to the test names, and found all of them accurate.** *** **IT IS
+    SPECIFICALLY THE SUMMARISING SENTENCES — THE ONES WRITTEN TO CONVEY SIGNIFICANCE — THAT ARE
+    UNSAFE. THE MEASUREMENTS ARE SOUND AND THE PROSE ON TOP OF THEM RUNS AHEAD OF THEM.** ***
+
+# ================================================================================================== #
+# THE PRODUCT DEFECTS THE AUDITOR FOUND — **CARRIED, NOT CLOSED, AND NOT REPAIRED HERE.**
+# ================================================================================================== #
+carried_residuals:
+  F03_MEDIUM_the_health_surface_value_axis:
+    what: >
+      *** **THE AUDITOR GOT VALUES OUT OF THE HEALTH SURFACE, AND THIS SEAT REPRODUCED IT.** ***
+      **RE-MEASURED HERE with the REAL signature:** `last_publication_utc=0.87` **SERVED**;
+      `="source=ARGUS-SPX-FEED"` **SERVED**; `=[0.87,"SPX","witness=disagrees"]` **SERVED** — and all
+      three **PASSED `refuse_unless_health_safe`.**
+    the_precise_shape: '**THE KEY AXIS IS GENUINELY CLOSED — every key attack the auditor made FAILED. THE VALUE AXIS IS OPEN.** A dial magnitude, a source name and a witness verdict all ride through an ALLOWED key. **List elements are never classified at all.**'
+    why_it_is_not_a_live_breach_today: '**BECAUSE OF `CD-PL-F167`: NOTHING SERVES IT.** *** **IT BECOMES LIVE THE MOMENT ANY TRANSPORT IS WRITTEN, AND THAT IS THE AUDITOR''S CONDITION VERBATIM: "BLOCKING THE MOMENT ANY TRANSPORT IS WRITTEN."** *** **BOOKED AS A `CD-AC-006` OBLIGATION THAT GATES THE CALLER `F167` SAYS IS OWED — so the two residuals are wired together and neither can land alone.**'
+  F04_LOW: '`state_document` renders arbitrary `alerts` rows via `str()` with **no vocabulary check**, though `ALERT_EVENT_CLASSES` sits in the sibling module.'
+  F05_MEDIUM: '`refuse_unless_health_safe(..., allowed_keys=…)` makes the "closed allowlist" **a caller argument**. `P6` guards **the instance, not the class** — a plant that binds one call site, not the property.'
+  F07_MEDIUM: '`test_no_function_in_the_module_takes_two_readings` asserts `len(reading_like) <= 2`, so `f(equity_reading, monetary_reading)` **passes it**. **NOT a `CD-AC-002` breach — the property is carried elsewhere (`check_no_blend` PASS, 8413 assertions) — it is TEST QUALITY, and the auditor was careful to say so rather than inflate it.**'
+  F08_LOW: '`publish._document` is a shallow `dict()`; its docstring claims more.'
+  F09_LOW_PRE_EXISTING: '**`CD-AC-017`/`CD-AC-018` ALREADY CARRY NON-RESOLVING `execution_contract` PATHS — THE §7.6 TRAP, ALREADY SPRUNG ON TWO ROWS, IDENTICAL AT BASE AND TIP.** This is the increment-14 `F03` residual seen from the other side and it confirms it: **the contracts are owed at increments 17/18.**'
+  CD-PL-F166: 'The text-scanning migration control that fires on docstrings — still open, still not repaired.'
+
+Q29_graded_by_the_auditor:
+  its_ruling: >
+    **"DEFENSIBLE AS A STOP, BUT THE STATED PRIMARY REASON IS THE WRONG ONE."** **The `CD-AC-002`
+    argument justifies not doing ENVELOPE-LEVEL; it does not justify doing NOTHING — because the
+    seat's OWN recommendation, PER-DIAL, carries no blending hazard at all.** **THE REASON THAT
+    HOLDS IS `Q25`** (the thresholds need a dial scale Matt holds). **It is a genuine Product Owner
+    question and NOT an unfinished deliverable dressed as one — qualified by 290 lines built ahead
+    of the decision, and by `F06`.**
+  this_seat_adopts_that_correction: '**`Q29` STANDS, WITH ITS REASON CORRECTED: it is blocked on `Q25`''s dial scale, NOT on the `CD-AC-002` hazard — which applies only to the option nobody is proposing.**'
+
+# ================================================================================================== #
+# STANDING AT THE STOP
+# ================================================================================================== #
+standing:
+  increment_14: '**BANKED · ASSURED `PASS` · NOT ACCEPTED.**'
+  increment_15: '**BANKED · ASSURED `AMBER` · NOT ACCEPTED.** **The `AMBER` is against the RECORD, corrected here, not against the artefact.**'
+  the_register: '**VALID · 18 COMPUTED · ALL `UNDECIDABLE` · report BYTE-IDENTICAL to increment 14''s.**'
+  the_gate: '**SHUT.** `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`.'
+  CD-AC-002: 'AMBER and NOT CLOSED — **NOT MOVED.**'
+  CD-AC-005: 'RED — **NOT MOVED.**'
+  wo_2_gate: 'SHUT.'
+  wo_2r3: '**FROZEN at `be0b355`.**'
+  source_set: '**HELD FOR MATT. NO SOURCE REGISTERED — VERIFIED BY BOTH AUDITORS.**'
+  what_was_NOT_verified_and_is_said_plainly: >
+    **NO LIVE POSTGRESQL, NO CONTAINER SET, NO SERVED BYTES, NO SCHEDULED PROBE.** Every database
+    claim rests on recording doubles. *** **ATOMICITY, THE `CHECK` CONSTRAINTS AS EXECUTED, AND THE
+    APPEND-ONLY `GRANT` POSTURE ARE `UNSUPPORTED` FOR A RUNNING INSTANCE.** *** The auditor declared
+    this itself and this seat carries it forward rather than letting a green-looking summary bury it.
+
+# ================================================================================================== #
+# *** THE STOP. THIS SEAT IS DONE AND THE NEXT ACTOR IS THE PRODUCT AUTHORITY. ***
+# ================================================================================================== #
+the_stop:
+  what_is_executed: '**`PO-DECISIONS-0024` IS FULLY EXECUTED.** `Q24` — lane cut forward from the frozen base, base measured unmoved. `Q27` — increments 14 AND 15 built, each with its own Engineer and its own SEPARATE Assurance seat. `Q26` — the alert-channel default built, with **no external push and none buildable without a ruling.**'
+  what_is_NOT_done_and_why: '**INCREMENT 16 IS NOT DISPATCHED.** `Q25` is **HELD FOR MATT** and this seat does not answer it, infer it, or start it. **NO SEAT READ THE INDICATOR LIST OFF THE ARGUS `/playbook` PAGE** (`PBG-PID-003`) — verified across both Engineer seats and both auditors.'
+  the_gating_precondition_the_auditor_set: '**"A SUPERSEDING BUILD LOG ENTRY CORRECTING `F01` AND `F02`, SUPERSEDING NEVER EDITING, BEFORE INCREMENT 16 IS DISPATCHED." THIS ENTRY IS THAT CORRECTION, AND IT ALSO CORRECTS `F06`. THE PRECONDITION IS MET.**'
+  next_actor: '**MATT — THE PRODUCT AUTHORITY.**'
+  the_one_thing_gating_everything: >
+    *** **THE SOURCE SET (`Q25`) IS NOW THE ONLY THING BETWEEN THIS PROJECT AND ITS FIRST REAL
+    NUMBERS.** *** With zero registered sources **every dial reads `UNKNOWN`, which is correct and is
+    also not yet a detector.** The publication layer, the heartbeat, the probe, the staleness
+    windows and the health surface **are built and have nothing to publish.** **INCREMENTS 16, 17
+    AND 18 — AND THEREFORE THE `DETECTED` TIER, AND THEREFORE THE WO-2 GATE'S CLOSURE — ALL SIT
+    BEHIND IT.**
+  open_questions_for_the_product_authority:
+    Q25: '**MATT. THE HINGE. The source set, per indicator: code, calculation, dial binding, criticality, weight, window, and any combination model** (`WO-3-SCOPE` §7 is the field-by-field list, so naming it is filling in and not designing).'
+    Q28: '**PO.** `PID.md` §6 prose says `CD-AC-017` *"enters as `NEW_REQUIREMENT`"*; the register records `DERIVES`. **The register is right today** (`PO-DECISIONS-0024` ruling 2 rules it and the census agrees) — **the PID prose is OVERTAKEN, and it is PO-authored so no seat may tidy it.** Blocks nothing.'
+    Q29: '**PO.** Where `detail_level` attaches — **per-dial or per-envelope.** Seat recommends **per-dial**. **Blocked on `Q25`''s dial scale** (reason corrected per the auditor). **`F06` must be closed inside whatever it rules.**'
+  before_increment_16_lands:
+    - '**`CD-PL-F167` — build the caller.** A writer with no caller is not a running control.'
+    - '**`CD-PL-F168` — give `heartbeats_utc` a nominal type**, so a reading''s instant cannot be passed as a heartbeat.'
+    - '**`F03`/`F04`/`F05` — close the health surface''s VALUE axis. IT BLOCKS THE MOMENT ANY TRANSPORT IS WRITTEN, AND `F167`''s caller IS that moment.**'
+  the_system: '**SAFE TO LEAVE RUNNING. Nothing is half-applied, no lane is dirty, no grade moved, and the frozen base is untouched.**'
