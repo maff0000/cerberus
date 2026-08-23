@@ -18,16 +18,28 @@ The recorded ``pid_cmdline_fingerprint`` is the process's ``/proc/<pid>/cmdline`
 into spaces, TRUNCATED to :data:`CMDLINE_FINGERPRINT_CHARS` characters. Liveness requires the
 current cmdline to start with the recorded fingerprint.
 
-**THE DECLARED LIMIT, AND IT IS REAL:** a recycled PID that happens to be running a command line
-with the same prefix reads as ALIVE. On this host the seats are launched by wrappers whose command
-lines differ in their prompt-file argument, so the prefix distinguishes them — but the class is not
-closed and this module does not claim it is. The residue is carried by
-:func:`start_time_ticks`: the claim/lease also records ``/proc/<pid>/stat`` field 22 (process start
-time in clock ticks since boot), and liveness requires THAT to match too. A recycled PID cannot
-reproduce the original process's start time, so with the start-time field present the class IS
-closed for PID recycling. Records written WITHOUT that field (there are none produced by this
-increment, but a hand-written one is possible) fall back to the cmdline prefix only, and
-:func:`is_live` reports ``degraded=True`` so the caller can print it.
+HOW IT ACTUALLY DECIDES, AND WHY IT IS NOT THE ORDER THE DISPATCH PRESCRIBED
+---------------------------------------------------------------------------
+1. ``/proc/<pid>`` must exist. No directory, no process.
+2. **If the record carries ``pid_start_time_ticks``, THAT IS AUTHORITATIVE.** ``/proc/<pid>/stat``
+   field 22 is the process start time in clock ticks since boot. **A recycled PID cannot reproduce
+   the original process's start time**, so this closes the PID-recycling class outright.
+3. The cmdline fingerprint is recorded and compared, but a MISMATCH IS NOT DEATH when the start
+   time matches — it is reported as ``cmdline DRIFTED``.
+
+**THE THIRD POINT IS A CORRECTION TO THE DISPATCH AND IT WAS FORCED BY A MEASUREMENT.** The
+dispatch specifies "``/proc/<pid>`` **plus a cmdline match**". Built literally, ``PLANT-COORD-04``
+arms 1 and 3 both failed: ``launch.sh`` acquires the lease and then ``exec``s the seat, and
+``exec`` keeps the process while REPLACING ITS COMMAND LINE — so every successfully launched seat
+read as **dead one moment after starting**. That is not a conservative lease, it is an inoperative
+one, and it is precisely the defect ``CD-PL-F143`` names: a seat declared dead while it was alive
+and reading. The dispatch's *intent* — "a bare PID check is wrong the moment the OS recycles the
+number" — is honoured by a strictly stronger test.
+
+**THE DECLARED LIMIT THAT REMAINS:** a record written WITHOUT a start time (none is produced by
+this increment; a hand-written one is possible) falls back to the cmdline prefix alone, and
+:func:`is_live` returns ``degraded=True`` so every caller can print it. In that degraded mode a
+recycled PID running a similar command line reads as ALIVE, and the class is NOT closed.
 """
 
 from __future__ import annotations
@@ -97,6 +109,28 @@ def is_live(pid: Optional[int], recorded_fingerprint: Optional[str],
     now_ticks = start_time_ticks(pid)
     now_fp = cmdline_fingerprint(pid)
 
+    # ------------------------------------------------------------------------------------------
+    # START TIME IS AUTHORITATIVE WHEN IT IS RECORDED. CMDLINE IS SECONDARY AND ADVISORY.
+    #
+    # THIS ORDERING IS A CORRECTION TO WHAT THE DISPATCH PRESCRIBED, AND THE REASON IS MEASURED,
+    # NOT ARGUED. `CD-DISPATCH-INC12-COORDINATION-ENGINEER` ITEM 4 says liveness is
+    # "`/proc/<pid>` **plus a cmdline match**". Built exactly that way, PLANT-COORD-04 arms 1 and 3
+    # BOTH FAILED, and the cause was structural rather than incidental:
+    #
+    #   `launch.sh` acquires the lease and THEN `exec`s the seat. `exec` keeps the process and
+    #   REPLACES ITS COMMAND LINE. So the fingerprint recorded at acquire time ("sh launch.sh ...")
+    #   never matches the cmdline a moment later ("the seat"), and EVERY SUCCESSFULLY LAUNCHED SEAT
+    #   READ AS DEAD IMMEDIATELY. A lease that declares its own holder dead the instant the launch
+    #   succeeds is not a conservative lease; it is an inoperative one, and it would have shipped
+    #   the exact defect `CD-PL-F143` names — A SEAT DECLARED DEAD WHILE IT WAS ALIVE AND READING.
+    #
+    # The dispatch's INTENT is unambiguous and it is honoured: "a bare PID check is wrong the moment
+    # the OS recycles the number". `/proc/<pid>/stat` field 22 answers that STRICTLY BETTER than a
+    # cmdline match — a recycled PID cannot reproduce the original process's start time, whereas a
+    # recycled PID running a similar wrapper CAN reproduce a cmdline prefix. So the stronger check
+    # is used where it is available, the weaker one is retained where it is not, and cmdline drift
+    # is RECORDED rather than treated as death.
+    # ------------------------------------------------------------------------------------------
     if recorded_start_ticks is not None:
         if now_ticks is None:
             return Liveness(False, "START_TIME_UNREADABLE", True,
@@ -105,24 +139,32 @@ def is_live(pid: Optional[int], recorded_fingerprint: Optional[str],
             return Liveness(False, "PID_RECYCLED", False,
                             "/proc/%d/stat field 22 = %d, record says %d — the number was reused"
                             % (pid, now_ticks, recorded_start_ticks))
+        drift = ""
+        if recorded_fingerprint and now_fp is not None and \
+                not now_fp.startswith(recorded_fingerprint[:CMDLINE_FINGERPRINT_CHARS]):
+            drift = ("; cmdline DRIFTED from %r to %r — expected after exec(), NOT treated as death"
+                     % (recorded_fingerprint[:60], now_fp[:60]))
+        return Liveness(True, "ALIVE", False,
+                        "/proc/%d exists and /proc/%d/stat field 22 == %d, so PID recycling is "
+                        "EXCLUDED%s" % (pid, pid, recorded_start_ticks, drift))
 
+    # No start time recorded. Fall back to the cmdline prefix, and say the evidence is DEGRADED.
     if recorded_fingerprint:
         if now_fp is None:
             return Liveness(False, "CMDLINE_UNREADABLE", True,
                             "/proc/%d/cmdline unreadable" % pid)
         if not now_fp.startswith(recorded_fingerprint[:CMDLINE_FINGERPRINT_CHARS]):
-            return Liveness(False, "CMDLINE_MISMATCH", False,
-                            "/proc/%d/cmdline = %r, record says %r"
+            return Liveness(False, "CMDLINE_MISMATCH", True,
+                            "/proc/%d/cmdline = %r, record says %r. NO START TIME WAS RECORDED, so "
+                            "this cannot distinguish a recycled PID from an exec()'d one — DEGRADED."
                             % (pid, now_fp, recorded_fingerprint))
-    else:
-        return Liveness(True, "ALIVE_PID_ONLY", True,
-                        "/proc/%d exists; NO cmdline fingerprint recorded, so PID RECYCLING IS NOT "
-                        "EXCLUDED — this record is DEGRADED evidence" % pid)
+        return Liveness(True, "ALIVE_CMDLINE_ONLY", True,
+                        "/proc/%d exists and the cmdline prefix matches; NO start time recorded, so "
+                        "PID RECYCLING IS NOT EXCLUDED — DEGRADED evidence" % pid)
 
-    degraded = recorded_start_ticks is None
-    return Liveness(True, "ALIVE", degraded,
-                    "/proc/%d exists; cmdline prefix matches%s"
-                    % (pid, "" if not degraded else "; NO start-time recorded, PID recycling not excluded"))
+    return Liveness(True, "ALIVE_PID_ONLY", True,
+                    "/proc/%d exists; NO cmdline fingerprint and NO start time recorded, so PID "
+                    "RECYCLING IS NOT EXCLUDED — DEGRADED evidence" % pid)
 
 
 def self_identity() -> Tuple[int, str, Optional[int]]:
