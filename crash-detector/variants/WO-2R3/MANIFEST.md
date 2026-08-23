@@ -500,3 +500,23 @@ criterion arms in `tests/test_judgement_path_doors.py`, **all of which fail at `
 be argued with.
 
 | **`P-O-the-metaclass-decides-the-comparison.py`** | **NEW AT INCREMENT 8, ITEM 3.** `F-06-D` asked live: `in` over a tuple of types is `==`, `==` puts `type(value)` on the LEFT, so does a caller's METACLASS decide this system's admission for its own instances? Five arms — two controls and three plants — against an ordinary, source-honest `@admits(value=int)` door **reporting zero faults**, with nothing inside `crash_detector` patched. **Run it in a `git archive` extraction of the base AND in the lane**; each run prints its own `pwd` and its own `crash_detector.__file__` (CD-PL-F98). | `cd <tree> && PYTHONPATH=src python3 -B /path/to/P-O-...py` |
+
+---
+
+## INCREMENT 9's ARTEFACTS — `CD-ENG-WO2R3-07` (`CD-PL-F97`: the row is written when the artefact is)
+
+**NEITHER STATES A CONCLUSION**, per this manifest's own rule, and **NEITHER IS A CARRIER**
+(`CD-RULE-006`). The probe exits 0 whatever it measures; the patch is data a reader applies. What
+they measured is in `governance/engineering/build-log/BL-20260823T*-0092.yaml` and in the seat's
+return, where it can be argued with.
+
+| artefact | asks / does | run it |
+|---|---|---|
+| **`P-P-the-establishes-gate-under-six-forgeries.py`** | **NEW AT INCREMENT 9, ITEM 2.** `CD-PL-F104` asked of the PROPOSED CLOSURE and not only of the finding: six forgeries offered to `@establishes` — one class attribute; the same plus a decoy `__dataclass_params__`; a plain SUBCLASS of a real dataclass; an INSTANCE of one; a stolen genuine params object with a hand-written `Field`; and **genuine machinery with no fields, which is the DECLARED RESIDUE and is expected ADMITTED in both trees.** Printing the arm that is NOT closed beside the five that are is the difference between a measured limit and a silent one. **Prints the tree it imported on its first line** (`CD-PL-F98`). | `cd <tree> && PYTHONPATH=src python3 -B variants/WO-2R3/P-P-the-establishes-gate-under-six-forgeries.py` — run it in a `git archive` extraction with `V49` applied AND in one without, and compare |
+| **`V49-cd-pl-f104-establishes-admits-a-non-dataclass.patch`** | **NEW AT INCREMENT 9, ITEM 2. THE CLOSURE, BUILT AND MEASURED AND DELIBERATELY NOT APPLIED TO THE PRODUCT.** It replaces `establishes`'s `dataclasses.is_dataclass` `hasattr` probe with a MEASURED gate: exact `__dataclass_params__` type, exact `Field` type, `_field_type` sentinels BY IDENTITY, an own-`__dict__` field list, and a class rather than an instance — **with every reference value DERIVED at import from a probe dataclass and from `vars(dataclasses)`, so not one private stdlib name is spelled.** It is here rather than in `src/` because it adds 9 tier-2 site keys and 2 tier-1 admissions to `crash_detector.establishment`, which is dispositioned PER SITE, and the only file where those rows can be written — `tools/sweep/declared_dispositions.py` — is protected by `PO-DECISIONS-0017` ruling 2 until after the seventh Assurance seat. | `cd <tree> && git apply variants/WO-2R3/V49-cd-pl-f104-establishes-admits-a-non-dataclass.patch` then run `P-P` above |
+
+**AND ONE THING THE `V49` ROW MUST SAY ABOUT ITSELF.** The patch supersedes the declared sweep key
+`establishes.apply_at_the_boundary TRUTHINESS: not dataclasses.is_dataclass(cls)`. Keeping the old
+probe alive as a first clause would have kept that key alive and kept the suite green.
+**THAT IS "ADDING A REDUNDANT CLAUSE SO A REGISTER KEY SURVIVES", WHICH THE PREVIOUS ENGINEER
+CONSIDERED AND REFUSED, AND SO DOES THIS ONE.**

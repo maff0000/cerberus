@@ -277,6 +277,70 @@ V38 (d) measures `resolve_panel` refusing a `PanelRow` subclass instance with
 None`. For a subclass used ENTIRELY INSIDE this package, reaching no door: **NOT PROVED TO BE CARRIED
 ANYWHERE.** Raised as `CD-ENG-WO2R3-F19`.
 
+### MECHANISM LIMIT 5 — this decorator's own gate is a `hasattr` probe, and one class attribute defeats it
+
+**`CD-PL-F104`, UPHELD IN FULL BY MEASUREMENT. NEW AT WO-2R3 INCREMENT 9**, ordered by
+`PO-DECISIONS-0016` ruling 2. **THIS IS A DECLARED LIMIT AND NOT A CLOSURE, AND THE REASON IT IS NOT
+A CLOSURE IS WRITTEN DOWN RATHER THAN LEFT TO BE GUESSED.**
+
+**THE FINDING, VERBATIM:** *"`crash_detector.establishment.establishes` — A PUBLIC, EXPORTED
+DECORATOR — ADMITS A NON-DATACLASS, AND A CALLER CAN MINT A FORGED GOVERNED TYPE THROUGH IT. Its
+gate is `dataclasses.is_dataclass`, which is a `hasattr` probe; one class attribute
+(`__dataclass_fields__ = {}`) defeats it. The forged class then reports `is_establishing_type`
+**True**, `establishment_faults` **`()`**, and **ENTERS `governed_types()`** — the enumeration a
+governing carrier reads."*
+
+**RE-MEASURED, SIX ARMS, BOTH TREES**, with the command beside the numbers (`CD-RULE-009`):
+
+```
+PYTHONPATH=src python3 -B variants/WO-2R3/P-P-the-establishes-gate-under-six-forgeries.py
+```
+
+| arm | what was offered to `@establishes` | THIS TREE |
+|---|---|---|
+| 1 | `class F: __dataclass_fields__ = {}` | **ADMITTED**, faults `()`, in `governed_types()` |
+| 2 | the same plus a decoy `__dataclass_params__` | **ADMITTED** |
+| 3 | a PLAIN SUBCLASS of a real dataclass | **ADMITTED** — which contradicts MECHANISM LIMIT 4 above |
+| 4 | an INSTANCE of a real dataclass | refused `TypeError: unhashable type` — **the WRONG LAYER**, and only AFTER `__init__` had been bound onto the live object |
+| 5 | a stolen genuine params object + a hand-written Field | **ADMITTED**, with a fault |
+| 6 | genuine machinery, zero fields | **ADMITTED** — and this is not a forgery, it is the mechanism being used |
+
+**THE CLOSURE EXISTS, WAS BUILT, WAS MEASURED, AND IS NOT APPLIED.**
+`variants/WO-2R3/V49-cd-pl-f104-establishes-admits-a-non-dataclass.patch` replaces the `hasattr`
+probe with a MEASURED gate — exact `__dataclass_params__` type, exact `Field` type, `_field_type`
+sentinels BY IDENTITY, own-`__dict__` field list, and a class rather than an instance — with every
+reference value DERIVED at import from a probe dataclass and from `vars(dataclasses)`, so **not one
+private stdlib name is spelled**. With it applied, arms 1–5 are **REFUSED AT THIS GATE with the
+diagnosis each one earns** and arm 6 is still admitted.
+
+**WHY IT IS NOT APPLIED.** The closure adds **9 tier-2 site keys and 2 tier-1 admissions** to
+`crash_detector.establishment` and supersedes one declared key, and that module is dispositioned
+**PER SITE**, so it goes `UNDECLARED` in the Class-2 sweep. Those rows can only be written in
+`tools/sweep/declared_dispositions.py`, **WHICH `PO-DECISIONS-0017` RULING 2 PROTECTS UNTIL AFTER
+THE SEVENTH ASSURANCE SEAT HAS READ THE TREE.** Returned as `SCOPE_INSUFFICIENT` naming that one
+file and those exact rows.
+
+**AND THE ONE THING THIS SEAT WOULD NOT DO.** The superseded key is
+`establishes.apply_at_the_boundary TRUTHINESS: not dataclasses.is_dataclass(cls)`, and keeping the
+old probe alive as a first clause would have kept it. **THAT IS "ADDING A REDUNDANT CLAUSE SO A
+REGISTER KEY SURVIVES", WHICH THE PREVIOUS ENGINEER CONSIDERED AND REFUSED, AND SO DOES THIS ONE.**
+
+**CARRIER:** the six `DEFECT_OPEN` rows against `CD-F-0004` in
+`tools/sweep/declared_dispositions.py` and `tests/test_the_fifteen.py`, **which are open and stay
+open**. For the route itself: **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+**AND THE SECOND HALF OF THE FINDING — "ENTERS `governed_types()`" — IS ABOUT AN ENUMERATION WHOSE
+SIZE IS A FUNCTION OF IMPORT HISTORY AND NOT OF THE ARTEFACT.** Measured: **0** after importing
+`crash_detector.establishment` alone; **5** after `crash_detector.witness.panel`; **26** after
+`crash_detector.engine.config`; **31** after a wide import. That is why `CD-ENG-WO2R3-04` measured
+the forged-entry population at **7 → 8** and the Project Lead measured **23 → 24**: **the numbers
+differ, the fact does not, and neither seat was wrong.** What a carrier must do about it is DERIVE
+THE IMPORT ITSELF — `tests/test_field_establishment.py::_import_the_whole_product` walks the package
+with `pkgutil` for exactly this reason. **AND THE SEALING INSTRUMENT
+(`CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT`) DOES NOT READ `governed_types()` AT ALL** — it
+enumerates every `*.py` under `src/crash_detector` in sorted order and imports each itself, so its
+population is import-order independent by construction.
+
 ### CHECK LIMIT 1 — what the widened class still does not reach
 
 **SUPERSEDED AT `PO-DECISIONS-0010` RULING 1, QUOTED RATHER THAN DELETED (`CD-RULE-004`).**

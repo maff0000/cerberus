@@ -303,6 +303,89 @@ MEASURED to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     ``NotAdmitted: row=PanelRowPlus is not admitted; this door requires exactly PanelRow or
     None``. For a subclass used ENTIRELY INSIDE this package, reaching no door:
     **NOT PROVED TO BE CARRIED ANYWHERE.** RAISED AS A FINDING (``CD-ENG-WO2R3-F19``).
+
+ 5  **THIS DECORATOR'S OWN GATE IS A ``hasattr`` PROBE, AND ONE CLASS ATTRIBUTE DEFEATS IT
+    (``CD-PL-F104``, UPHELD IN FULL BY MEASUREMENT).** NEW AT WO-2R3 INCREMENT 9, ordered by
+    ``PO-DECISIONS-0016`` ruling 2. **THIS IS A DECLARED LIMIT AND NOT A CLOSURE, AND THE
+    REASON IT IS NOT A CLOSURE IS WRITTEN DOWN BELOW SO NOBODY HAS TO GUESS IT.**
+
+    **THE FINDING, VERBATIM:** *"``crash_detector.establishment.establishes`` — A PUBLIC,
+    EXPORTED DECORATOR — ADMITS A NON-DATACLASS, AND A CALLER CAN MINT A FORGED GOVERNED TYPE
+    THROUGH IT. Its gate is ``dataclasses.is_dataclass``, which is a ``hasattr`` probe; one
+    class attribute (``__dataclass_fields__ = {}``) defeats it. The forged class then reports
+    ``is_establishing_type`` **True**, ``establishment_faults`` **``()``**, and **ENTERS
+    ``governed_types()``** — the enumeration a governing carrier reads."*
+
+    **RE-MEASURED HERE, SIX ARMS, BOTH TREES:**
+    ``PYTHONPATH=src python3 -B variants/WO-2R3/P-P-the-establishes-gate-under-six-forgeries.py``
+
+    ====  ==================================================  ==========================
+    arm   what was offered to ``@establishes``                 THIS TREE
+    ====  ==================================================  ==========================
+    1     ``class F: __dataclass_fields__ = {}``               **ADMITTED**, faults ``()``,
+                                                               in ``governed_types()``
+    2     the same plus a decoy ``__dataclass_params__``       **ADMITTED**
+    3     a PLAIN SUBCLASS of a real dataclass                 **ADMITTED** — and
+                                                               DECLARED LIMIT 4 above says a
+                                                               subclass is not governed, so
+                                                               the decorator and the limit
+                                                               disagree with each other
+    4     an INSTANCE of a real dataclass                      refused ``TypeError:
+                                                               unhashable type`` — **THE
+                                                               WRONG LAYER, and only AFTER
+                                                               ``__init__`` had been bound
+                                                               onto the live object**
+    5     a stolen genuine params object + a written Field     **ADMITTED**, with a fault
+    6     genuine machinery, zero fields                       **ADMITTED** — and this one is
+                                                               not a forgery, it is the
+                                                               mechanism being used
+    ====  ==================================================  ==========================
+
+    **THE CLOSURE EXISTS, IT WAS BUILT, IT WAS MEASURED, AND IT IS NOT APPLIED HERE.**
+    ``variants/WO-2R3/V49-cd-pl-f104-establishes-admits-a-non-dataclass.patch`` replaces the
+    ``hasattr`` probe with a MEASURED gate — exact ``__dataclass_params__`` type, exact
+    ``Field`` type, ``_field_type`` sentinels BY IDENTITY, own-``__dict__`` field list, and a
+    class rather than an instance — with every reference value DERIVED at import from a probe
+    dataclass and from ``vars(dataclasses)``, so **not one private stdlib name is spelled.**
+    With it applied, arms 1-5 are **REFUSED at this gate with the diagnosis each one earns**
+    and arm 6 is still admitted. The full suite reads **3 failed / 1693 passed** with it —
+    the declared three — **except for three additional failures in
+    ``tests/test_the_fifteen.py`` and ``tests/test_disposition_contract.py``**, because the
+    closure adds **9 tier-2 site keys and 2 tier-1 admissions** to
+    ``crash_detector.establishment`` and supersedes one declared key, and that module is
+    dispositioned **PER SITE**. Those rows can only be written in
+    ``tools/sweep/declared_dispositions.py``, **WHICH ``PO-DECISIONS-0017`` RULING 2 PROTECTS
+    UNTIL AFTER THE SEVENTH ASSURANCE SEAT HAS READ THE TREE.**
+
+    **THE ONE THING THIS SEAT WOULD NOT DO.** The superseded key is
+    ``establishes.apply_at_the_boundary TRUTHINESS: not dataclasses.is_dataclass(cls)``, and
+    keeping the old probe alive as a first clause would have kept it. **THAT IS "ADDING A
+    REDUNDANT CLAUSE SO A REGISTER KEY SURVIVES", WHICH THE PREVIOUS ENGINEER CONSIDERED AND
+    REFUSED, AND SO DOES THIS ONE.** Constructing state so a control appears to pass is
+    non-waivable.
+
+    **CARRIER: ``tools/sweep/declared_dispositions.py``'s six ``DEFECT_OPEN`` rows against
+    ``CD-F-0004`` and ``tests/test_the_fifteen.py``, WHICH ARE OPEN AND STAY OPEN.** For the
+    route itself: **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+    **AND THE SECOND HALF OF THE FINDING — "ENTERS ``governed_types()``" — IS ABOUT AN
+    ENUMERATION WHOSE SIZE IS A FUNCTION OF IMPORT HISTORY AND NOT OF THE ARTEFACT.**
+    Measured in this tree::
+
+        after `import crash_detector.establishment` alone ....  0
+        after `import crash_detector.witness.panel` ..........  5
+        after `import crash_detector.engine.config` ......... 26
+        after a wide import ................................. 31
+
+    That is why ``CD-ENG-WO2R3-04`` measured the forged-entry population at **7 -> 8** and the
+    Project Lead measured **23 -> 24**: **THE NUMBERS DIFFER, THE FACT DOES NOT, AND NEITHER
+    SEAT WAS WRONG.** What a carrier must do about it is DERIVE THE IMPORT ITSELF:
+    ``tests/test_field_establishment.py::_import_the_whole_product`` walks the package with
+    ``pkgutil`` for exactly this reason and states it. **AND ITEM 1'S SEALING INSTRUMENT DOES
+    NOT READ ``governed_types()`` AT ALL** — it enumerates every ``*.py`` under
+    ``src/crash_detector`` in sorted order and imports each one itself, so its population is
+    import-order independent by construction and is asserted against a second, independent
+    derivation at every run.
 """
 
 from __future__ import annotations
