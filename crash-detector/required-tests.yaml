@@ -2433,6 +2433,24 @@ criteria:
                                 MEASURED: the planted class is ruled OUT of the sibling's
                                 population by two of its three clauses at once and this row still
                                 catches it.
+        RE-MEASURED AT WO-2R3 INCREMENT 10 ITEM 2 by CD-ENG-WO2R3-09, because the instrument's
+        summary line and its exit changed and a transcribed arm that is not re-run is a rumour
+        (CD-PL-F133). Two pristine `git archive 01ad3b58aa49024c5a1a57ec5d4fc518fe63dabc | tar -x`
+        extractions, one per arm, each check run from inside its own extraction:
+          CLEAN ARM     exit 0  PASS — 99 assertions, 0 violations; 99 class(es) examined;
+                                51 SEALED AGAINST THE 5 DECLARED ROUTES (of which 44 are FORGED
+                                by the out-of-scope in-process routes), 0 OPEN AND REQUIRED,
+                                48 EXCLUDED BY MEASUREMENT, 0 UNMEASURABLE — followed by
+                                DECLARED LIMIT 7 on stdout, after the verdict.
+          git apply -v  exit 0  "Applied patch src/crash_detector/store/migrations.py cleanly."
+          VIOLATED ARM  exit 1  FAIL — 1 violation(s); 100 class(es) examined; 1 OPEN AND
+                                REQUIRED; VIOLATION src/crash_detector/store/migrations.py:320,
+                                rule OPEN TO FORGED STATE — followed by DECLARED LIMIT 7, which
+                                is why the limit is printed in a `finally` and not on the pass
+                                path only.
+          SIBLING ON THE VIOLATED ARM  exit 0  PASS — 101 assertions, 0 violations. UNCHANGED.
+        THE PLANT IS ALIVE AFTER ITEM 2 AND THE CONTRAST STILL SEPARATES THE TWO ARMS BY EXIT
+        CODE, WHICH IS THE ONLY THING THE ADDED EXIT TEXT COULD HAVE BROKEN AND DID NOT.
         THE COUNTERFACTUAL (CD-D-079) — THE SAME INSTRUMENT AT THE BASE SHA 753efe4, copied into a
         pristine extraction of that tree: exit 1, FAIL — 36 violation(s), 99 classes examined,
         15 SEALED, 36 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT. A green run at the tip is
