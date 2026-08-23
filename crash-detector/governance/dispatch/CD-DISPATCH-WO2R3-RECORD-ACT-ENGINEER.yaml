@@ -1,0 +1,381 @@
+# ================================================================================================ #
+# ENGINEER DISPATCH — WO-2R3, THE RECORD ACT. THE FIFTEEN, THE FINDINGS REGISTER, THE REDRAFT.
+# crash-detector.
+# ================================================================================================ #
+#
+# READ THIS BLOCK BEFORE ANYTHING ELSE, INCLUDING BEFORE YOUR BOOT.
+#
+# 1. THIS IS NOT AN INCREMENT. IT IS A RECORD ACT, AND IT CHANGES NO PRODUCT BEHAVIOUR.
+# You touch NO file under `src/`. Not one line. Everything you write is an INSTRUMENT or a
+# REGISTER — the record's own account of defects that already exist and stay open. **IF YOU FIND
+# YOURSELF EDITING `src/`, YOU HAVE MISREAD THIS DISPATCH AND YOU SHOULD STOP AND SAY SO.**
+#
+# 2. YOU ARE IMPLEMENTING A PRODUCT OWNER RULING, NOT A PROJECT LEAD OPINION.
+# `governance/decisions/PO-DECISIONS-0014.md` ruling 1 and `governance/decisions/PO-DECISIONS-0015.md`
+# rulings 4 and 6 are your specification. **READ BOTH IN FULL BEFORE YOU TOUCH ONE LINE.** Where
+# this dispatch and those records disagree, THE RECORDS WIN and the disagreement is a finding you
+# must report.
+#
+# 3. THE REGISTER YOU ARE WRITING IS THE ONE PRIOR ENGINEERS WERE FORBIDDEN TO TOUCH.
+# `tools/sweep/declared_dispositions.py` was PROTECTED SCOPE for increments 5, 6 and 7 (CD-D-130) —
+# because the seat that wrote the mechanism must not write the register that judges it. **YOU DID
+# NOT WRITE `admission.py` OR `establishment.py`. THAT IS WHY YOU HAVE IT.** Do not read the grant
+# as an invitation to disposition anything into looking better.
+#
+# 4. THE CONTENT OF THE FIFTEEN IS THE PROJECT LEAD'S AND THE DESIGN OF THE MECHANISM IS YOURS.
+# `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md` carries the fifteen dispositions, the
+# findings-register rows and the redrafted word. **THE CLAIMS ARE THE PROJECT LEAD'S — it is the
+# accountable seat and PBG-AUTH-006 does not let it type them into the lane. HOW the contract, the
+# derivation and the resolution are BUILT is entirely yours, and this dispatch names no
+# implementation.**
+#
+# 5. AND THE PROJECT LEAD DISCLOSES THAT IT RAN A PROBE INSIDE YOUR SUBJECT, AND WHY.
+# Three of the fifteen — the `crash_detector.establishment` sites — had **never been read by any
+# seat one at a time**, and the SIXTH Assurance seat listed the governing question in its own §4 as
+# something IT COULD NOT ESTABLISH. Rather than hand you an invented disposition for three sites
+# nobody had measured, the Project Lead measured them: `governance/reconciliation/WO-2R3/PL-AB0-*`
+# and the README section beside it. **IT LANDED HARDER THAN EXPECTED — `CD-PL-F104`, a caller
+# minting a FORGED GOVERNED TYPE through a PUBLIC exported entry point.** That measurement is handed
+# to you as **EVIDENCE, NOT AS A DESIGN AND NOT AS A DISPOSITION YOU MUST BELIEVE.** Re-measure it.
+# **IF IT IS WRONG, SAYING SO IS WORTH MORE TO THIS PROJECT THAN AGREEING WITH IT** — and it is the
+# Project Lead's own finding, which is exactly the kind that gets a soft review.
+#
+# 6. THE REDRAFT IS A READING AND THE PROJECT LEAD SAYS SO IN ITS OWN DOCUMENT.
+# §1.4 of the content document names the CHEAPER reading it did not take and invites the Product
+# Owner to take it in one sentence. **IF, WHILE BUILDING IT, YOU FIND THE LITERAL READING IS WRONG
+# OR UNBUILDABLE, THAT IS A FINDING AND A STOP — NOT SOMETHING TO ENGINEER AROUND QUIETLY.**
+# The previous engineer's formal disagreement with the Project Lead's first draft of this word is
+# why the word was rejected and redrafted at all. That objection was worth more than the draft.
+# ================================================================================================ #
+
+dispatch_id: CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T02:47:08Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T024708Z-0117
+parent_dispatch: CD-DISPATCH-WO2R3-ENGINEER    # the WO-2R3 lane dispatch
+
+# --- seat ------------------------------------------------------------------------------------- #
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md           # canonical local file; the operator pastes no role
+actor_id: CD-ENG-WO2R3-04                      # **A FRESH ENGINEER IDENTITY.**
+                                               # NOT -01, NOT -02, NOT -03.
+why_a_fresh_engineer_identity: >
+  CD-ENG-WO2R3-01 WROTE `establishment.py`, whose three sites you are about to record as OPEN
+  DEFECTS. CD-ENG-WO2R3-03 authored the register CONTRACT you are about to change and formally
+  DISAGREED with the word you are about to redraft. **A seat re-reading its own declaration is the
+  weakest reader of it this project can appoint** — and this act's whole subject is declarations
+  about other seats' work. **YOU INHERIT THEIR ARTEFACTS AND NONE OF THEIR CONCLUSIONS**
+  (PBG-CONT-007).
+
+dispatching_authority: CD-AUTH-0001            # PROJECT_LEAD_SEAT_01, the causal owner (PBG-RT-004)
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: >
+  PO-DECISIONS-0014 ruling 1 (the vocabulary ratified in part; the findings register ordered into
+  the SAME act; `UPSTREAM_OF_THE_PATH` rejected as drafted and ordered redrafted to the SITE
+  register with machine-checkable fields) and PO-DECISIONS-0015 rulings 4 and 6 (**THE ACT IS
+  FIFTEEN, NOT ELEVEN** — the instrument's count beats the ruling's prose; Category C
+  RE-DISPOSITIONED because its stated ground is falsified; the redraft, the register and the fifteen
+  land in ONE ACT, BEFORE increment 8).
+
+work_item: CD-WO-002R3
+work_type: CHANGE
+traits: [creates_process]
+
+objective: >
+  Land, in ONE act on the WO-2R3 lane, the three things PO-DECISIONS-0014 ruling 1 and
+  PO-DECISIONS-0015 ruling 4 bind together: the MINIMAL findings register, the REDRAFTED
+  `UPSTREAM_OF_THE_PATH` bound to the SITE register with machine-checked fields, and the FIFTEEN
+  Class-2 dispositions written into `tools/sweep/declared_dispositions.py`. **NOTHING UNDER `src/`
+  CHANGES AND NO DEFECT IS FIXED BY THIS ACT.** It makes the record say what is already true.
+
+# ================================================================================================== #
+# ITEMS — THREE, AND THEY ARE ONE ACT. THE ORDER IS LOAD-BEARING.
+# ================================================================================================== #
+items:
+
+- id: ITEM_1
+  title: THE MINIMAL FINDINGS REGISTER — and it is FIRST because the other two resolve against it.
+  ruling: >
+    PO-DECISIONS-0014 ruling 1, verbatim — *"A MINIMAL findings register is created in the same act
+    — id, raised_at (boundary SHA), status (OPEN / CLOSED / SUPERSEDED), nothing else — and
+    `DEFECT_OPEN.finding` resolves against it or the row refuses. An index, not a system."*
+  what: >
+    ONE file. THREE fields per row. **`nothing else` IS PART OF THE RULING AND NOT A STYLE NOTE** —
+    no title, no severity, no description, no owner, no date-in-prose. A findings register that
+    carries prose becomes the hand-maintained summary it was created to stop, and this project has
+    met that defect twice already (CD-PL-F86, and the `DEFECT_OPEN.finding` gap that produced this
+    ruling). The finding's SUBSTANCE lives in the document that raised it. This index answers ONE
+    question: does this id exist, and is it open?
+  the_rows: >
+    FOUR, from `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md` §2 — CD-F-0001 (fifth
+    seat T8 Category A), CD-F-0002 (sixth seat F-06-R), CD-F-0003 (sixth seat F-06-D as corrected in
+    the WORSE direction by CD-PL-F103), CD-F-0004 (CD-PL-F104, raised at the issuing boundary).
+    **ALL FOUR `OPEN`. NONE IS CLOSED BY THIS ACT OR BY ANY ACT YET SCHEDULED.**
+  resolve_the_shas_yourself: >
+    The content document claims `raised_at: af2accb` for all four. **RESOLVE EACH WITH
+    `git rev-parse` AND CONFIRM A COMMIT OBJECT WITH `git cat-file -t`. NEVER TRANSCRIBE**
+    (CD-PL-F36). If a full SHA does not resolve, that is a STOP and a finding, not a shrug.
+  where_it_lives: >
+    **YOURS TO CHOOSE, SUBJECT TO TWO CONSTRAINTS THAT ARE NOT YOURS.** (a) The sweep must resolve
+    it **with no PYTHONPATH, no installed package and no wrapper, from a bare `git archive`
+    extraction an auditor made itself** (PBG-ASSURE-001) — the constraint `_load_register` already
+    meets for the sibling register. (b) It is ONE file and it carries the three fields and nothing
+    else. **THE PROJECT LEAD'S PREFERENCE, WHICH IS EVIDENCE AND NOT A DESIGN: a sibling data module
+    loaded exactly as `declared_dispositions.py` is loaded today. YOU ARE NOT OBLIGED TO ADOPT ITS
+    SHAPE, AND IF A GOVERNANCE-DIRECTORY LOCATION IS RIGHTER, SAY SO AND TAKE IT.**
+  the_carrier: >
+    A test that a `DEFECT_OPEN` row naming an id **absent** from the register REFUSES, and a test
+    that a row naming a **`CLOSED`** id refuses. **BOTH ARMS. A resolution check that only ever sees
+    ids that resolve has never been shown to resolve anything.**
+
+- id: ITEM_2
+  title: THE REDRAFTED `UPSTREAM_OF_THE_PATH` — the contract, bound to the SITE register.
+  ruling: >
+    PO-DECISIONS-0014 ruling 1 — *"REJECTED AS DRAFTED, for exactly the reasons its own author
+    measured: it binds the module register where its siblings bind the site register, and its fields
+    are prose no machine can check. It is REDRAFTED to bind the SITE register with machine-checkable
+    fields."*
+  what: >
+    `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md` §1 is the specification. In outline,
+    and read the document for the whole of it: the word is REMOVED from what
+    `DECLARED_MODULE_DISPOSITIONS` may carry and admitted only in `DECLARED_ADMISSIONS`; its
+    mandatory fields become `operand_origin` (**membership in a CLOSED set the instrument owns** —
+    `SOURCE_DECLARATION` / `MODULE_CONSTANT` / `OWN_CONSTRUCTION` / `CALLER_SUPPLIED`) and `gates`
+    (**a SITE KEY that must EXIST in the sweep's own measured site set and must be in a DIFFERENT
+    module**); and if `operand_origin` is `CALLER_SUPPLIED` the row MUST also carry a `finding` that
+    resolves `OPEN` in ITEM 1's register **or it refuses**.
+  and_the_module_entries_are_DERIVED: >
+    A module in the closure is DECLARED when EITHER it carries a `DECLARED_MODULE_DISPOSITIONS`
+    entry in one of the original five words, OR **every one of its tier-2 sites carries a site
+    entry**. `crash_detector.admission` and `crash_detector.establishment` take the second route and
+    **get no module-level prose claim at all.** The instrument DERIVES the module answer from the
+    site register; it does not accept a sentence about it.
+  the_price_is_disclosed_not_discovered: >
+    PL-MEASURED at `af2accb` from the sweep's own per-module output: `crash_detector.admission` **33**
+    tier-2 occurrences, `crash_detector.establishment` **17**. Those collapse to some SMALLER number
+    of distinct site keys because the register declares the EXPRESSION and not each occurrence.
+    **THE PROJECT LEAD HAS NOT MEASURED THE KEY COUNT AND DOES NOT QUOTE 50 AS A ROW COUNT. MEASURE
+    IT FIRST, BEFORE YOU WRITE A SINGLE ROW, AND REPORT IT.**
+  the_stop: >
+    **IF THE LITERAL READING IS UNBUILDABLE OR WRONG, STOP AND RETURN — DO NOT ENGINEER AROUND IT.**
+    §1.4 of the content document names the cheaper reading the Project Lead did NOT take and says it
+    can be taken in one sentence. A `STOPPED_AT_ITEM_2` return carrying the reason is a SUCCESS and
+    will be put to the Product Owner as a question, not held against you.
+  the_carriers: >
+    For EACH machine check, an arm that PASSES and an arm that REFUSES: a `gates` key that does not
+    exist; a `gates` key in the SAME module as the declaring site; an `operand_origin` outside the
+    closed set; a `CALLER_SUPPLIED` row with no `finding`; a `CALLER_SUPPLIED` row whose finding does
+    not resolve. **AND the derivation: remove ONE tier-2 site entry from a derived module and the
+    module must go UNDECLARED again.** A derivation that cannot be made to fail has not been shown to
+    derive anything.
+
+- id: ITEM_3
+  title: THE FIFTEEN DISPOSITIONS, written into the register.
+  ruling: >
+    PO-DECISIONS-0015 ruling 4 — *"THE ONE ACT DISPOSITIONS FIFTEEN, NOT ELEVEN … the instrument's
+    count beats the ruling's prose … Category C's six sites are RE-DISPOSITIONED: their stated
+    ground is falsified by CD-PL-F103, and a disposition whose reason has died does not survive on
+    habit."*
+  what: >
+    Write the fifteen from `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md` §3 into
+    `tools/sweep/declared_dispositions.py`: **1 `DEFECT_OPEN`** (Category A, unchanged) · **3
+    `CARRIER_ONLY`** (Category B, unchanged, already ratified) · **6 `DEFECT_OPEN`** (Category C,
+    REVERSED from the draft's `OUT_OF_BOUND`) · **3 `DEFECT_OPEN`** (the `establishment` sites, read
+    for the first time at the issuing boundary) · **2 modules** cleared by ITEM 2's derivation.
+    **`OUT_OF_BOUND` COUNT AFTER THIS ACT: ZERO.**
+  the_evidence_fields_are_not_decoration: >
+    Every `DEFECT_OPEN` row carries `finding`, `measured_reach` and `counterfactual`, and the
+    contract already REFUSES a row whose mandatory evidence is absent or empty. **THE FIELD TEXTS IN
+    §3 ARE THE PROJECT LEAD'S CLAIMS. YOU ARE REQUIRED TO RE-MEASURE THE ONES THAT ARE MEASUREMENTS
+    AND TO REPORT ANY DISAGREEMENT AS A FINDING** — particularly the `establishment` three, which
+    rest on a probe run by the seat that dispatched you.
+  what_it_must_NOT_do: >
+    **IT MUST NOT MAKE THE SWEEP GREEN AS A GOAL.** If declaring all fifteen happens to take the
+    sweep to EXIT 0, that is an ARITHMETIC CONSEQUENCE of every violation now being declared, and it
+    is **NOT** evidence that anything is fixed. **TEN `DEFECT_OPEN` ROWS IS A REGISTER HONESTLY
+    DESCRIBING A SYSTEM WITH TEN OPEN DEFECTS.** Say so in your return, in those terms, and do not
+    let a zero exit code do the talking. A green exit here would be the single most misreadable
+    number this project has produced and you are the seat that has to label it.
+  and_the_thing_you_may_not_do_at_all: >
+    **DO NOT FIX ANY OF THE FIFTEEN.** Not Category A's `__qualname__`. Not Category C's six. Not
+    `establishment`'s `is_dataclass` gate. **NOT ONE LINE UNDER `src/`.** Their remediation is
+    sequenced elsewhere and some of it is not yet authorised by anyone. Fixing a defect you were sent
+    to RECORD destroys the evidence the seventh Assurance seat is being sent to attack.
+
+# ================================================================================================== #
+# EXECUTION
+# ================================================================================================== #
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: af2accbfc950961bb7f7967d34ecf16414088228
+execution_base_rule: >
+  **START FROM THE LANE HEAD AND CONFIRM IT YOURSELF.** `git rev-parse HEAD` must read
+  af2accbfc950961bb7f7967d34ecf16414088228 and `git status --porcelain` must be ZERO LINES before
+  you touch anything. If either is false, STOP — something moved and this dispatch is about a tree
+  that no longer exists. **THAT SHA IS ALSO THE TARGET OF A BANKED RED ASSURANCE VERDICT, AND IT IS
+  UNMOVED BECAUSE THAT SEAT'S READ-ONLY PROMISE WAS KEPT.**
+
+baseline_measured_by_the_project_lead_at_issue_time:
+  where: >
+    The lane worktree, read-only, plus a pristine `git archive af2accb` extraction at
+    `/tmp/cd-pl-probe/tree` for the probe. **THESE ARE THE PROJECT LEAD'S NUMBERS AND CD-RULE-009
+    SAYS YOU MAY NOT QUOTE THEM. MEASURE YOUR OWN AND REPORT ANY DISAGREEMENT AS A FINDING.**
+  class_2_sweep: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py` -> **EXIT 1**,
+    `CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations`. The fifteen enumerate as **13 UNDECLARED
+    ADMISSION + 2 UNDECLARED MODULE**.
+  tier_2_by_module: '`crash_detector.admission` **33**; `crash_detector.establishment` **17**. OCCURRENCES, not distinct site keys.'
+  tier_1_dispositions_today: 'ESTABLISHED 16 · EXACT 11 · OWN 2 · DELEGATED 1 · OUT_OF_BOUND 2 · the three EXTENDED words 0 each.'
+  other_red_at_the_tip: >
+    **YOU ARE NOT THE ONLY RED IN THIS TREE AND YOU ARE TOLD SO UP FRONT (CD-D-129 clause i, and
+    CD-PL-F102 which is the finding that this clause was once FALSE).** `CD-RT-012-NO-EXECUTION-
+    INTERFACE` went EXIT 0 -> EXIT 1 inside increment 7 and **IS RED AT YOUR BASE**. It is NOT
+    yours — it is item 2 of the adopted increment-8 gate. **RUN THE WHOLE REGISTER SET, NOT ONLY
+    THE SUITE AND THE TWO NAMED INSTRUMENTS**, record what you find, and do not repair it.
+
+writable_scope:
+- /srv/crash-detector-wo2r3/tools/sweep/declared_dispositions.py   # ITEM 3 — **AND IT IS YOURS ONLY
+                                                                   # BECAUSE YOU WROTE NEITHER
+                                                                   # MECHANISM MODULE** (CD-D-130)
+- /srv/crash-detector-wo2r3/tools/sweep/delegated_judgement_sweep.py  # ITEMS 1 and 2 — THE CONTRACT,
+                                                                   # THE DERIVATION, THE RESOLUTION
+- /srv/crash-detector-wo2r3/tools/sweep/                           # ITEM 1's register file, if you
+                                                                   # put it here
+- /srv/crash-detector-wo2r3/governance/findings/                   # ITEM 1's register file, if you
+                                                                   # put it there instead — NEW dir
+- /srv/crash-detector-wo2r3/tests/                                 # the carriers for every item
+- /srv/crash-detector-wo2r3/contracts/execution/                   # CD-RULE-004, the third place
+- /srv/crash-detector-wo2r3/required-tests.yaml                    # CD-RULE-004, and register rows
+- /srv/crash-detector-wo2r3/variants/                              # your probes and contrasts, under
+                                                                   # WO-2R3/ — AND ADD YOUR MANIFEST
+                                                                   # ROWS (CD-PL-F97)
+- /srv/crash-detector-wo2r3/governance/engineering/build-log/      # NEW entries only, never an edit
+- /tmp/                                                            # scratch, non-governed
+
+protected_scope:
+- '**`src/` — THE WHOLE OF IT. THIS ACT CHANGES NO PRODUCT BEHAVIOUR AND FIXES NO DEFECT.**'
+- pbg/                       # pinned snapshot, read-only (PBG-FWK-013). Editing it to pass IS the bypass.
+- PID.md
+- BLUEPRINT.md               # v0.2.0 — YOUR SPECIFICATION. If you believe it is wrong, REPORT IT.
+- governance/blueprint/      # BP-AMENDMENT-0001 is IN FORCE. Read, never edited.
+- governance/decisions/      # **PO-DECISIONS-0014 AND 0015 ARE YOUR SPECIFICATION. READ. NEVER EDIT.**
+- 'governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md   # your INPUT. Read it. Never edit it —
+                                                              # disagreement is a FINDING, not a diff.'
+- 'governance/engineering/CD-PROPOSAL-ELEVEN-DISPOSITIONS.md  # SUPERSEDED AND STILL READABLE. The
+                                                              # six Category C dispositions you are
+                                                              # reversing are in it. **NEVER EDIT
+                                                              # IT** — corrections supersede
+                                                              # (PBG-CONT-003).'
+- governance/authority/, governance/dispatch/, governance/rules/
+- governance/assurance/      # SIX auditors' records. **READ THEM. NEVER EDIT ONE.**
+- governance/reconciliation/ # the Project Lead's own probes, including PL-AB0. DATA. READ. NEVER EDIT.
+- governance/engineering/ACTIVE_WORK.yaml     # Project-Lead-only
+- CLAUDE.md, docs/, pbg-manifest.yaml, db/, deploy/, requirements*, schemas/
+- everything under /srv outside the dispatched worktree, except the /tmp scratch above
+
+prohibited:
+- certifying, assuring or accepting this work (PBG-SOD-001, non-waivable) — report, never certify
+- '**EDITING ANY FILE UNDER `src/`.** There is no item that needs it and no measurement outcome that
+   authorises it. If you believe one does, that is a STOP and a finding.'
+- '**FIXING ANY OF THE FIFTEEN.** You are recording open defects, not closing them. Category A,
+   Category C''s six and the three `establishment` sites all stay live and all stay OPEN.'
+- '**TREATING A GREEN SWEEP AS AN OUTCOME.** If the sweep exits 0 because every violation is now
+   DECLARED, that is arithmetic. **LABEL IT AS ARITHMETIC IN YOUR RETURN.** A clean run being read
+   as evidence of a proposition it says nothing about is the failure this project keeps meeting.'
+- '**WRITING A DISPOSITION THE CONTENT DOCUMENT DOES NOT CARRY**, or silently changing one it does.
+   Disagreement is a FINDING you report and the Project Lead reconciles. It is not a diff.'
+- '**A WORD, A FIELD OR A CHECK THAT CANNOT BE MADE TO FAIL.** Every machine check in items 1 and 2
+   needs a refusing arm. **NO NEW WORD MAY BE A SYNONYM FOR ''NOT LOOKED AT'' — that constraint is
+   the Project Lead''s own and it applies hardest to the Project Lead''s own redraft.**'
+- deleting or disabling an existing guard, test or plant to make the work look clean
+- 'DELETING A DECLARED LIMIT RATHER THAN SUPERSEDING IT (CD-RULE-004, PBG-CONT-003).'
+- '**QUOTING A COUNT THAT DID NOT COME OUT OF AN INSTRUMENT YOU RAN** (CD-D-119, CD-RULE-009). That
+   includes every number in this dispatch: 534, 15, 13, 2, 33, 17, 16, 11. **MEASURE YOUR OWN.**'
+- 'reopening or re-arguing the RED, or any grade. Not yours (PBG-AUTH-003).'
+
+build_log_sequence:
+  your_block: '**0060-0099. CONTINUE FROM THE HIGHEST LANDED ENTRY IN THE LANE — READ IT, DO NOT ASSUME IT.**'
+  the_ceiling_is_part_of_the_rule: >
+    **DO NOT WRITE 0100 OR ABOVE.** main holds 0100-0199 and 0001-0059 is CLOSED to both parties
+    (CD-D-132). If you reach 0099, STOP and escalate rather than counting on. CD-PL-F89 is why this
+    is a RANGE and not a floor: a one-sided bound produced THIRTEEN landed collisions.
+  timestamps: 'From `date -u` and from nothing else (CD-RULE-005). New entries only (PBG-CONT-003).'
+
+commit_identity:
+  rule: >
+    Commit as you go, one commit per item. **EVERY COMMIT CARRIES THE BLOCK BELOW, FILLED IN. A
+    commit without it is not accepted at reconciliation, however good the code is** (PO standing
+    condition). Fields that do not apply are answered N/A WITH A REASON.
+  the_block: |
+    item: <ITEM_n>
+    what_changed_in_the_code_path: <not the header text — the code path>
+    the_contrast_that_proves_it: <command, both arms, both results>
+    what_this_does_NOT_close: <the residue, MEASURED>
+    instruments_run_and_their_exit_codes: <yours, not this dispatch's>
+    findings_against_my_own_work: <or the word NONE, which is a claim>
+
+proof_standard:
+  the_refusing_arm_is_the_whole_item: >
+    **THIS ACT IS MADE ENTIRELY OF CHECKS, SO A CHECK THAT CANNOT REFUSE IS THE ONLY WAY TO FAIL
+    IT.** For every machine-checked field: the arm that passes AND the arm that refuses, both run,
+    both outputs in your return. A resolution check that has only ever seen resolvable ids, a
+    closed-set check that has only ever seen members, a derivation that has never gone UNDECLARED —
+    each of those is a check with no evidence that it checks.
+  the_rename_test: >
+    For any refusal credited to a STRUCTURE: does it survive renaming one identifier? Apply it to
+    the redrafted word's `gates` check and report the result whichever way it falls.
+  runtime_claims_need_runtime_proof: >
+    "Resolves", "refuses", "derives" are RUNTIME claims. A static reading is not proof of one.
+    **EVERY ESCAPE ON THIS PROJECT'S RECORD PASSED STATIC CHECKERS.**
+  and_read_the_tree_line_every_time: >
+    CD-PL-F98: two arms of a probe once resolved their import root from `__file__` and **BOTH ARMS
+    IMPORTED THE SAME TREE**, printing identical output — one paragraph from recording "the fix
+    changes nothing" against a correct fix. **RUN EACH TREE'S OWN COPY AND READ THE `tree:` LINE
+    EVERY TIME.**
+  the_auditor_runs_it_from_an_extraction: >
+    PBG-ASSURE-001. Whatever you build for ITEM 1, **verify it by extracting the tree with
+    `git archive` into `/tmp` and running the sweep there with no PYTHONPATH, no install and no
+    wrapper.** If it only works in the worktree, it is not an instrument, it is a local habit.
+
+return_contract:
+  expected_return: READY_FOR_ASSURANCE
+  and_the_other_acceptable_returns: >
+    **`STOPPED_AT_ITEM_2` — and it is not a failure.** If the redraft's literal reading is
+    unbuildable or wrong, returning that with the reason is worth more than a built compromise.
+    **`STOPPED_AT_ITEM_1`** likewise if the findings register cannot meet both of its constraints.
+  what_your_return_must_carry:
+  - 'the exact SHA of every commit you made, and `git status --porcelain` at ZERO lines at the end'
+  - '**THE SWEEP''S EXIT CODE AND VIOLATION COUNT BEFORE AND AFTER, WITH YOUR OWN LABEL ON WHAT A
+     CHANGE IN IT DOES AND DOES NOT MEAN**'
+  - '**THE DISTINCT SITE-KEY COUNT** you measured for the two derived modules, against the 33/17
+     occurrence counts this dispatch quotes'
+  - 'per item: what changed, the PASSING arm and the REFUSING arm of every machine check, both outputs'
+  - '**YOUR VIEW ON THE PROJECT LEAD''S REDRAFT (ITEM 2), INCLUDING DISAGREEMENT.** The previous
+     engineer''s disagreement with the first draft is why there is a redraft at all.'
+  - '**YOUR RE-MEASUREMENT OF `CD-PL-F104`** — the five arms of PL-AB0 — and whether you can
+     reproduce the forged governed type. **SAY SO IF YOU CANNOT.**'
+  - 'every instrument you ran with its exit code, measured by you, INCLUDING the full register set'
+  - 'findings against your own work — this project has had EIGHT consecutive seats do this and it is
+     the reason the record is worth anything'
+  - 'anything you could NOT establish, said plainly, with what you ran and what stopped you'
+  what_your_return_is_NOT: >
+    **NOT AN ACCEPTANCE AND NOT A GRADE** (PBG-AUTH-003, PBG-SOD-001). You do not certify this work.
+    A FRESH SEVENTH Assurance seat audits it, and the Product Owner dispositions the gate.
+
+separation_of_duties:
+  PBG_SOD_001: 'The Engineer and the Assurance Engineer are never the same agent. Non-waivable.'
+  PBG_AUTH_006: 'The Project Lead writes neither the fix nor the assurance. Direction is not design.'
+  PBG_AUTH_003: 'A PASS is not an acceptance and neither is a RED. Disposition is the Product Owner''s.'
+  PBG_CONT_007: 'A sub-agent result that exists only in conversation is not project state. COMMIT IT.'
+
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  The Project Lead reconciles your return BY MEASUREMENT, then dispatches INCREMENT 8 — the
+  auditor's ten-item ordered gate adopted at PO-DECISIONS-0015 ruling 2, with the CD-ASR-F03
+  REDESIGN at its head — to ANOTHER fresh Engineer, and then the SEVENTH fresh Assurance seat over
+  the whole. **THE PROJECT LEAD WILL NOT ARGUE YOUR FINDINGS DOWN OR UP AND HAS NO AUTHORITY TO DO
+  EITHER.** If your measurements contradict the reconciliation record, **THE RECORD IS WHAT GETS
+  CORRECTED.**

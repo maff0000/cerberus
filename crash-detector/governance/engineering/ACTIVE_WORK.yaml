@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-23T02:33:25Z'
+updated_utc: '2026-08-23T02:47:08Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -48,7 +48,9 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: GATE   # MOVED AT BL-20260823T014454Z-0115. **THE SIXTH FRESH ASSURANCE SEAT IS DISPATCHED AND OUT** (CD-D-159, CD-DISPATCH-WO2R3-ASSURANCE-06) over the WHOLE of WO-2R3 at `af2accb`, on PO-DECISIONS-0014 ruling 2 — which SUPERSEDED this seat's own CD-D-158 and sent the seat out against the RAW record with the eleven still unwritten. **GATE HERE MEANS ONE READ-ONLY AUDITOR IS READING THE TREE AND NOTHING ELSE MOVES: no increment, no disposition, no code change, no instrument change.** T2 is RED, CD-AC-002 and CD-AC-005 are AMBER and NOT CLOSED, the WO-2 GATE IS SHUT, and increment 7 is RECONCILED AND NOT ACCEPTED (CD-D-156). WAS BUILD, and the note that moved it there is retained below.
+current_phase: BUILD   # MOVED AT BL-20260823T024708Z-0117. **THE PRODUCT OWNER HAS RULED ALL FOUR QUESTIONS (PO-DECISIONS-0015) AND THE RECORD ACT IS DISPATCHED AND OUT** (CD-D-163, CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER) to `CD-ENG-WO2R3-04`, a FRESH Engineer identity, at `af2accb`. **BUILD HERE MEANS ONE DISPATCHED RECORD ACT OF THREE ITEMS THAT TOUCHES NO LINE UNDER `src/` AND FIXES NOTHING: the minimal findings register, the redrafted `UPSTREAM_OF_THE_PATH` bound to the SITE register, and the FIFTEEN Class-2 dispositions.** Nothing is merged, admitted or promoted; T2 is RED; CD-AC-002 and CD-AC-005 remain AMBER and NOT CLOSED; `CD-RT-012` is RED at the tip; the WO-2 GATE IS SHUT. The GATE reopens after increment 8, because PO-DECISIONS-0015 ruling 6 puts a SEVENTH FRESH ASSURANCE SEAT over the whole. WAS GATE, and the note that moved it there is retained below.
+_prior_current_phase_note_gate_0115: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to GATE at BL-20260823T014454Z-0115.
+  MOVED AT BL-20260823T014454Z-0115. **THE SIXTH FRESH ASSURANCE SEAT IS DISPATCHED AND OUT** (CD-D-159, CD-DISPATCH-WO2R3-ASSURANCE-06) over the WHOLE of WO-2R3 at `af2accb`, on PO-DECISIONS-0014 ruling 2 — which SUPERSEDED this seat's own CD-D-158 and sent the seat out against the RAW record with the eleven still unwritten. **GATE HERE MEANS ONE READ-ONLY AUDITOR IS READING THE TREE AND NOTHING ELSE MOVES: no increment, no disposition, no code change, no instrument change.** T2 is RED, CD-AC-002 and CD-AC-005 are AMBER and NOT CLOSED, the WO-2 GATE IS SHUT, and increment 7 is RECONCILED AND NOT ACCEPTED (CD-D-156). WAS BUILD, and the note that moved it there is retained below.
 _prior_current_phase_note_build_0113: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD at BL-20260823T000002Z-0113.
   The Product Owner has answered all FIVE questions of the fifth gate — PO-DECISIONS-0012 (commit 6c8fed9) and
   PO-DECISIONS-0013 (commit 98b734d) — and ruling 6 authorises ONE bounded remediation increment, now ISSUED to
@@ -67,7 +69,44 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
-  *** **SUPERSEDING, BL-20260823T023325Z-0116: THE SIXTH FRESH ASSURANCE SEAT HAS RETURNED AND THE
+  *** **SUPERSEDING, BL-20260823T024708Z-0117: THE PRODUCT OWNER HAS RULED ON ALL FOUR QUESTIONS AT
+  `PO-DECISIONS-0015`, ONE OF ITS OWN STANDING RULINGS FALLS, AND THE RECORD ACT IS DISPATCHED AND
+  OUT.** *** **PO-DECISIONS-0012 RULING 1 IS DEAD** on the terms it was written to be attackable on
+  — *"a reach that requires only ordinary operation is a reach."* `guarded` becomes a **DOOR**;
+  `CD-ASR-F03` is **REDESIGNED, NOT REPAIRED**, to three acceptance properties (**no undecorated
+  evaluator object exists at runtime** — a naked callable in a closure cell is the DEFECT CLASS ·
+  establishment **DERIVED FROM THE SIGNATURE**, so the guard survives arity growth *because it
+  derives, not because it gapes* · the post-condition **retained inside the same mechanism**); and
+  the doors criterion moves on **REAL PUBLIC BINDINGS AND MEASURED REACH, NEVER AN UNDERSCORE.**
+  The RED **STANDS**, the auditor's TEN-ITEM ORDERED GATE is **ADOPTED** as increment 8, `CD-RT-012`
+  is corrected **only with its own paired contrast** or **DECLARED**, and **THE ACT IS FIFTEEN, NOT
+  ELEVEN — the instrument's count beats the ruling's own prose, for the second time.** ***
+  *** **THIS BOUNDARY ISSUES THE RECORD ACT AND NOTHING ELSE.** `CD-DISPATCH-WO2R3-RECORD-ACT-
+  ENGINEER` is **ISSUED and OUT** to **`CD-ENG-WO2R3-04`, A FRESH ENGINEER IDENTITY**, at `af2accb`:
+  the MINIMAL findings register · the REDRAFTED `UPSTREAM_OF_THE_PATH` bound to the **SITE** register
+  with machine-checked fields · the **FIFTEEN** Class-2 dispositions. **IT TOUCHES NO LINE UNDER
+  `src/` AND FIXES NOTHING.** `OUT_OF_BOUND` count after the act: **ZERO** — Category C's six are
+  REVERSED to `DEFECT_OPEN` because their stated ground is dead. ***
+  *** **AND THE PROJECT LEAD READ THREE SITES NOBODY HAD EVER READ ONE AT A TIME, RATHER THAN HAND
+  AN ENGINEER AN INVENTED DISPOSITION — AND IT LANDED HARDER THAN EXPECTED. CD-PL-F104, HIGH.** ***
+  The three `crash_detector.establishment` tier-1 sites were carried as *"reported and not chased"*
+  through THREE GATES, and the sixth seat listed the governing question in its own §4 as something
+  **IT COULD NOT ESTABLISH**. `PL-AB0`, five arms, pristine extraction, tree line on every arm:
+  **`establishes` IS PUBLIC AND IN `__all__`; the `dataclasses.is_dataclass` gate IS ITSELF A
+  `hasattr` PROBE AND ADMITS A NON-DATACLASS; AND A CALLER MINTS A FORGED GOVERNED TYPE —
+  `is_establishing_type` TRUE, `establishment_faults` `()`, ENTERING `governed_types()` 0 -> 1 —
+  WHERE THE SHIPPED DOCSTRING SAYS `:raises EstablishmentFault:`.** It is `F-06-R`'s own sentence
+  one module across, in a PUBLIC EXPORTED ENTRY POINT, and no document said so. **DISCLOSED, NOT
+  FIXED. ITS SEQUENCING GOES UP WITH THE INCREMENT-8 DISPATCH, WHERE IT IS ACTIONABLE.** ***
+  *** **AND `F-06-I`'s ARITHMETIC IS CORRECTED IN THE AUDITOR'S OWN DIRECTION OF TRAVEL** — it reads
+  *"fourteen sites and two modules"*, which is sixteen; **the instrument prints FIFTEEN: THIRTEEN
+  SITES AND TWO MODULES**, PL-re-measured this boundary. CD-PL-F105, LOW, and recorded because
+  `F-06-I` is itself a finding about a count carried in prose. ***
+  *** **NOTHING IS ACCEPTED, CLOSED OR PROMOTED. T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT
+  CLOSED; `CD-RT-012-NO-EXECUTION-INTERFACE` STILL RED AT THE TIP and disclosed to this Engineer UP
+  FRONT because the last time this seat wrote that clause IT WAS FALSE (CD-PL-F102); the WO-2 GATE
+  SHUT.** *** **THE BLOCK BELOW IS RETAINED, SUPERSEDED — never edited away (PBG-CONT-003).** ***
+  *** **SUPERSEDED, BL-20260823T023325Z-0116: THE SIXTH FRESH ASSURANCE SEAT HAS RETURNED AND THE
   VERDICT IS `RED`. IT IS RECONCILED BY MEASUREMENT AND BANKED VERBATIM, UNEDITED, AT ITS OWN COMMIT.**
   `governance/assurance/WO-2R3/VERDICT-SIXTH-SEAT.md`, sha256 `bf1f4729…`, 1059 lines, nineteen
   findings. T2 **RED**; CD-AC-002 and CD-AC-005 **AMBER, NOT CLOSED**. Read-only honoured — the audit
@@ -2853,6 +2892,63 @@ remaining_items:
   and should find it DECLARED HERE FIRST.'
 
 open_decisions:
+- '*** **CD-D-160 AND CD-D-161 — BOTH DISCHARGED AT THIS BOUNDARY, AND CD-D-161 WAS RIGHT TO WAIT.**
+  *** CD-D-160 held the eleven, the redraft and the findings register as ONE ACT until the sixth
+  Assurance seat reported. It reported; PO-DECISIONS-0015 ruling 4 CORRECTED THE COUNT TO FIFTEEN and
+  ruling 6 ordered the act NOW; **the act is DISPATCHED at CD-D-163 and the count question is CLOSED
+  BY THE INSTRUMENT, not by this seat.** *** **CD-D-161 DELIBERATELY DID NOT DRAFT THE
+  `UPSTREAM_OF_THE_PATH` REDRAFT BEFORE THE AUDIT, on the ground that drafting the replacement word
+  early would hand the auditor the same map PO-DECISIONS-0014 ruling 2 had just taken out of this
+  seat''s hands. IT NAMED ITS OWN CHEAP ERROR ("this costs a round trip") AND ITS EXPENSIVE ONE ("a
+  second contested word landing before the only party with standing to attack it has spoken").
+  MEASURED OUTCOME: THE CHEAP ERROR WAS NOT PAID EITHER.** The sixth seat''s `F-06-R` reversed six
+  dispositions and its `F-06-I` retired the count — **both of which the redraft would have been
+  written against, and both of which arrived before a line of it existed.** The round trip cost
+  nothing because the ruling that authorised the redraft and the verdict that reshaped its subject
+  came back in the SAME document. **RECORDED AS AN OUTCOME AND NOT AS A VINDICATION: the seat does
+  not get credit for a risk that happened not to bite.**'
+- '*** **CD-D-163 — NEW AND OPEN. THE RECORD ACT IS DISPATCHED, AND ITS THREE ITEMS ARE ONE ACT
+  BECAUSE THE PRODUCT OWNER BOUND THEM.** *** `CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER` to
+  `CD-ENG-WO2R3-04`, a FRESH Engineer identity, at `af2accb`, on PO-DECISIONS-0014 ruling 1 and
+  PO-DECISIONS-0015 rulings 4 and 6. **ITEM 1 the MINIMAL findings register (id, raised_at, status —
+  NOTHING ELSE, and "nothing else" is part of the ruling); ITEM 2 the REDRAFTED
+  `UPSTREAM_OF_THE_PATH` bound to the SITE register with machine-checked fields and the two module
+  entries DERIVED rather than written; ITEM 3 the FIFTEEN dispositions.** **THE CONTENT OF THE
+  FIFTEEN IS THIS SEAT''S AT `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md` AND THE
+  MECHANISM IS THE ENGINEER''S** — PBG-AUTH-006 does not let the accountable seat type its own claims
+  into the lane, and CD-D-130 is why the register was protected scope for three increments and is
+  writable now: **CD-ENG-WO2R3-04 WROTE NEITHER MECHANISM MODULE.** **WHY A FRESH IDENTITY:**
+  CD-ENG-WO2R3-01 WROTE `establishment.py`, whose three sites are about to be recorded as OPEN
+  DEFECTS, and CD-ENG-WO2R3-03 authored the register CONTRACT and formally DISAGREED with the word
+  being redrafted. **THE STOP CONDITIONS ARE DECLARED AND ARE SUCCESSES:** `STOPPED_AT_ITEM_2` if the
+  redraft''s literal reading is unbuildable, `STOPPED_AT_ITEM_1` if the register cannot meet both its
+  constraints.'
+- '*** **CD-D-164 — NEW AND OPEN, AND IT IS THIS SEAT MARKING ITS OWN READING AS THE THING MOST
+  LIKELY TO BE WRONG IN THE ACT.** *** PO-DECISIONS-0014 ruling 1 ordered `UPSTREAM_OF_THE_PATH`
+  *"REDRAFTED to bind the SITE register with machine-checkable fields"*. **IT DID NOT SAY THE TWO
+  MODULE ENTRIES DECOMPOSE INTO SITE ENTRIES. THIS SEAT READ IT LITERALLY AND TOOK THE EXPENSIVE
+  READING**, so that `crash_detector.admission` and `crash_detector.establishment` get NO
+  module-level prose claim at all and the instrument DERIVES the module answer from the site
+  register. **THE CHEAPER READING IS NAMED IN THE CONTENT DOCUMENT''S §1.4 SO IT CAN BE TAKEN IN ONE
+  SENTENCE:** keep a MODULE-level entry whose fields merely REFERENCE site keys — machine-checkable,
+  far fewer rows, **and it leaves the word bound exactly where the ruling gave as its FIRST reason
+  for rejection.** **WHY THE LITERAL READING WAS TAKEN:** "binds the SITE register" is not ambiguous,
+  and the cheap reading preserves the module/site asymmetry the ruling rejected the word for. **HOW
+  IT COULD BE WRONG, PRICED:** if the Product Owner meant the cheap reading, this is wrong
+  EXPENSIVELY, in an Engineer''s budget — PL-measured cost is 33 + 17 tier-2 OCCURRENCES across the
+  two modules, collapsing to an unmeasured smaller number of distinct site keys. **THE ENGINEER IS
+  ORDERED TO MEASURE THE KEY COUNT BEFORE WRITING A ROW, AND TO STOP RATHER THAN ENGINEER AROUND THE
+  READING IF IT IS UNBUILDABLE.**'
+- '*** **CD-D-165 — NEW AND OPEN. `CD-PL-F104` IS A TWENTIETH FINDING ARRIVING AFTER THE TEN-ITEM
+  GATE WAS BUILT FROM NINETEEN, AND ITS SEQUENCING IS THE PRODUCT OWNER''S.** *** The auditor
+  constructed the adopted order from the findings it had; **this one did not exist when that order
+  was written, because it was measured at THIS boundary by the Project Lead.** **IT IS NOT PUT UP AS
+  A BLOCKING QUESTION AND THE RECORD ACT PROCEEDS UNDER EVERY ANSWER** — `DEFECT_OPEN` is precisely
+  the mechanism for recording a live defect that is deliberately still live, and recording an open
+  defect is correct whether or not its fix is next. **IT IS PUT UP WITH THE INCREMENT-8 DISPATCH,
+  WHERE IT IS ACTIONABLE, AND NOT HERE, WHERE IT WOULD ONLY DELAY AN ACT ALREADY ORDERED.** **THIS
+  SEAT WILL NEITHER QUIETLY WIDEN AN ORDER THE PRODUCT OWNER HAS JUST ADOPTED NOR QUIETLY DROP A HIGH
+  FINDING**, and the two failure modes are named together so neither can be taken for the other.'
 - '*** **CD-D-157 AND CD-D-158 — BOTH ANSWERED AND CLOSED BY THE PRODUCT AUTHORITY at
   governance/decisions/PO-DECISIONS-0014.md (commit `3e65d76`, authored by Matt Scott and by NO SEAT,
   ONE path changed — `git show --stat` and `git log -1 --format=''%an <%ae>''`).** ***
@@ -3316,7 +3412,39 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
-  *** **SUPERSEDING STEP, BL-20260823T023325Z-0116: STOP. THE GATE VERDICT IS IN AND IT IS `RED`, AND
+  *** **SUPERSEDING STEP, BL-20260823T024708Z-0117: THE RECORD-ACT ENGINEER IS OUT. NOTHING ELSE
+  MOVES ON THE LANE WHILE IT IS.** ***
+  **1.** `CD-ENG-WO2R3-04` executes `CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER` at `af2accb` in
+  `/srv/crash-detector-wo2r3`. **THREE ITEMS, ONE ACT, AND NOT ONE LINE UNDER `src/`.**
+  `STOPPED_AT_ITEM_1` and `STOPPED_AT_ITEM_2` **ARE SUCCESSES** — the redraft is a READING (CD-D-164)
+  and this seat has said so in its own document rather than in a diff.
+  **2.** The Project Lead reconciles the return **BY MEASUREMENT**, never by reading its claims, and
+  banks it. *** **A GREEN SWEEP AFTER THIS ACT IS ARITHMETIC, NOT EVIDENCE** — every violation being
+  DECLARED is not any violation being FIXED, and **BOTH SEATS ARE REQUIRED TO LABEL IT THAT WAY.**
+  Ten `DEFECT_OPEN` rows is a register honestly describing a system with ten open defects. ***
+  **3.** THEN **INCREMENT 8** — the auditor's TEN-ITEM ORDERED GATE, ADOPTED at PO-DECISIONS-0015
+  ruling 2, **WITH RULING 1's `CD-ASR-F03` REDESIGN AT ITS HEAD**: no undecorated evaluator object
+  exists at runtime · establishment **DERIVED FROM THE SIGNATURE** · the post-condition retained in
+  the same mechanism · the doors criterion on **REAL PUBLIC BINDINGS AND MEASURED REACH, NEVER AN
+  UNDERSCORE**. Items 2 and 3 (`CD-RT-012`, and the one line at `admission.py:525`) are one-line and
+  Q1-independent and **PROCEED REGARDLESS**. **BY DISPATCH TO ANOTHER FRESH ENGINEER IDENTITY** —
+  never this seat's own hand (PBG-AUTH-006), never any Assurance seat (PBG-SOD-001). **`CD-PL-F104`'s
+  SEQUENCING GOES UP WITH THAT DISPATCH (CD-D-165).**
+  **4.** THEN the **SEVENTH FRESH ASSURANCE SEAT** over the whole, full disclosure, **CD-D-129's
+  clauses VERBATIM**, and told in terms that **the fifteen dispositions are a TARGET AND NOT A
+  SETTLED RECORD** — the fourth seat's best result and the sixth seat's both came from disbelieving a
+  disposition the record had already settled.
+  **5.** THEN the **META-ASSURANCE** pass (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99,
+  F100, F101 and **F102** (assigned to it by PO-DECISIONS-0015 ruling 5), plus the auditor's F-06-B,
+  F-06-C, F-06-E and F-06-F. **STILL NOT FOLDED IN.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read a green sweep as a closed criterion, and **DO NOT** read the green doors row as one
+  either — it is MEASURED as a criterion that does not measure what it says, and the ruling it rested
+  on has FALLEN.
+  **T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012-NO-EXECUTION-INTERFACE` RED AT
+  THE TIP; THE WO-2 GATE SHUT.**
+  **THE STEP BELOW IS DISCHARGED: ALL FOUR PRODUCT AUTHORITY QUESTIONS ARE ANSWERED AT `3c8a752`.** ***
+  *** **SUPERSEDED STEP, BL-20260823T023325Z-0116: STOP. THE GATE VERDICT IS IN AND IT IS `RED`, AND
   FOUR PRODUCT AUTHORITY QUESTIONS ARE UP. Q1 DECIDES WHETHER A STANDING RULING FALLS.** ***
   **NO CODE MOVES, NO INSTRUMENT MOVES, NO DISPOSITION IS WRITTEN, AND THE DOORS CRITERION IS NOT
   REPAIRED. REPAIRING IT BEFORE Q1 WOULD BE A SEAT APPLYING A CONSEQUENCE RESERVED TO THE PRODUCT
@@ -4166,5 +4294,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260823T023325Z-0116   # PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T024708Z-0117   # PREVIOUSLY BL-20260823T023325Z-0116, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE

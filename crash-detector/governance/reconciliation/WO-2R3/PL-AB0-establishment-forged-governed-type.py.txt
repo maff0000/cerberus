@@ -1,0 +1,112 @@
+"""PL READ-ONLY PROBE — the THREE `crash_detector.establishment` tier-1 sites nobody has read.
+
+Answers the narrow question the SIXTH Assurance seat listed in its §4 as something IT COULD NOT
+ESTABLISH (item 3): is `crash_detector.establishment.establishes(...)` reachable from ORDINARY
+IN-PROCESS CALLER CODE with a CALLER-SUPPLIED class, so that the two `_declared_field_list` duck
+sites and the `apply_at_the_boundary.__init__` duck site decide on a caller-controlled operand?
+
+THIS IS EVIDENCE, NOT A DESIGN AND NOT A DISPOSITION. The dispatched Engineer measures its own.
+Prints the tree it imported on every arm (CD-PL-F98).
+"""
+import dataclasses
+import pathlib
+import sys
+
+TREE = pathlib.Path(__file__).resolve().parent / "tree"
+sys.path.insert(0, str(TREE / "src"))
+
+import crash_detector.establishment as E  # noqa: E402
+
+print(f"tree: {pathlib.Path(E.__file__).resolve()}")
+print(f"establishes is public and exported: {'establishes' in getattr(E, '__all__', [])!r} "
+      f"(__all__ = {getattr(E, '__all__', None)})")
+print()
+
+# ---------------------------------------------------------------------------------------- #
+print("ARM 1 — ORDINARY CALLER CODE APPLIES `establishes` TO ITS OWN CLASS.")
+# Nothing here is privileged: this is what any in-process module can write.
+try:
+    @E.establishes(x=int)
+    @dataclasses.dataclass(frozen=True)
+    class CallerType:
+        x: int
+
+    print("  decoration SUCCEEDED on a caller-authored class ->",
+          "the two _declared_field_list duck sites ran on a CALLER-SUPPLIED `cls`")
+    print("  construction:", CallerType(x=1))
+except Exception as exc:  # noqa: BLE001
+    print(f"  REFUSED: {type(exc).__name__}: {exc}")
+print()
+
+# ---------------------------------------------------------------------------------------- #
+print("ARM 2 — THE `getattr(cls, '__dataclass_fields__', {})` SITE ON A HOSTILE `cls`.")
+# `is_dataclass` is itself a hasattr probe. A plain class that CARRIES the attribute passes it.
+class Hostile:
+    __dataclass_fields__ = {}
+
+try:
+    names, initvars = E._declared_field_list(Hostile)
+    print(f"  _declared_field_list(Hostile) -> names={names!r} initvars={initvars!r}")
+except Exception as exc:  # noqa: BLE001
+    print(f"  raised: {type(exc).__name__}: {exc}")
+
+try:
+    print(f"  dataclasses.is_dataclass(Hostile) -> {dataclasses.is_dataclass(Hostile)!r}"
+          "  <- the gate above the site")
+    E.establishes()(Hostile)
+    print("  establishes()(Hostile) SUCCEEDED — the gate ADMITTED a non-dataclass")
+except Exception as exc:  # noqa: BLE001
+    print(f"  establishes()(Hostile) REFUSED: {type(exc).__name__}: {str(exc)[:120]}")
+print()
+
+# ---------------------------------------------------------------------------------------- #
+print("ARM 3 — THE `getattr(field._field_type, 'name', '')` SITE ON A FORGED FIELD ENTRY.")
+class ForgedField:
+    name = "x"
+    class _field_type:      # noqa: N801
+        name = "_FIELD_INITVAR"
+
+class ForgedCls:
+    __dataclass_fields__ = {"x": ForgedField}
+
+try:
+    print(f"  _declared_field_list(ForgedCls) initvars -> {E._declared_field_list(ForgedCls)[1]!r}"
+          "  <- a forged _field_type.name STEERS the InitVar refusal")
+except Exception as exc:  # noqa: BLE001
+    print(f"  raised: {type(exc).__name__}: {exc}")
+print()
+
+# ---------------------------------------------------------------------------------------- #
+print("ARM 4 — THE `getattr(self, name, _ABSENT)` SITE: IS `self` CALLER-CONTROLLED?")
+# Pick a real judgement-path type from the shipped package and try to subclass it.
+import crash_detector.observations as O  # noqa: E402
+
+subject = None
+for candidate in vars(O).values():
+    if (isinstance(candidate, type) and dataclasses.is_dataclass(candidate)
+            and candidate in getattr(E, "_DECLARATIONS", {})):
+        subject = candidate
+        break
+print(f"  subject chosen from the live package: {subject!r}")
+if subject is not None:
+    try:
+        class Sub(subject):     # noqa: N801
+            pass
+        print(f"  SUBCLASSING SUCCEEDED -> {Sub!r}; `self` at the site can be a caller instance")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  subclassing REFUSED: {type(exc).__name__}: {str(exc)[:160]}")
+print()
+print("CONTROL — what the sweep says these three sites are:")
+for line in (
+    "crash_detector.establishment::_declared_field_list DUCK: getattr(cls, '__dataclass_fields__', {})",
+    "crash_detector.establishment::_declared_field_list DUCK: getattr(field._field_type, 'name', '')",
+    "crash_detector.establishment::establishes.apply_at_the_boundary.__init__ DUCK: getattr(self, name, _ABSENT)",
+):
+    print(f"  {line}")
+
+# ==================== ARM 5 — THE CONSEQUENCE ARM, RUN SEPARATELY ====================
+# import dataclasses, pathlib, sys ; sys.path.insert(0, ".../tree/src")
+# import crash_detector.establishment as E
+# class Hostile: __dataclass_fields__ = {}
+# before = set(E.governed_types()); E.establishes()(Hostile); after = set(E.governed_types())
+# print(E.is_establishing_type(Hostile), E.establishment_faults(Hostile), Hostile in after - before)

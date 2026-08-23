@@ -48,3 +48,38 @@ condition than it has.
 
 Full account, with the numbers and the disposition: `governance/engineering/build-log/`
 `BL-20260822T174206Z-0057.yaml`.
+
+## The record act (boundary 0117) — the THREE `establishment` sites nobody had read
+
+The fifteen dispositions needed a disposition for three tier-1 sites in
+`crash_detector.establishment` that **no seat has ever read one at a time**. The fifth seat's T8
+read the ten in `crash_detector.admission`; the four were carried as "reported and not chased"
+through three gates. The SIXTH Assurance seat listed the governing question in its own §4 —
+*"whether the C1-C6 hostile declaration forms are reachable through
+`crash_detector.establishment.establishes(...)` from a caller"* — as something **IT COULD NOT
+ESTABLISH**.
+
+The Project Lead would not hand a dispatched Engineer an invented disposition for three sites
+nobody had measured, so it measured them. `PL-AB0`, run on a pristine `git archive af2accb`
+extraction at `/tmp/cd-pl-probe/tree`, outside every governed worktree, tree line printed on every
+arm (CD-PL-F98).
+
+| arm | what it attacks | measured at `af2accb` |
+|---|---|---|
+| 1 | is `establishes` reachable from ordinary in-process caller code? | **YES.** It is PUBLIC and in `__all__`. Caller-authored class decorated and constructed successfully — so `cls` at BOTH `_declared_field_list` duck sites is a **CALLER-SUPPLIED** operand. **The sixth seat's §4 item 3 is answered, and it answers against the tree.** |
+| 2 | the `getattr(cls, '__dataclass_fields__', {})` site, on a hostile `cls` | **THE GATE ADMITS A NON-DATACLASS.** `dataclasses.is_dataclass` is itself a `hasattr` probe. A plain class carrying `__dataclass_fields__ = {}` passes it, and `establishes()(Hostile)` **SUCCEEDS** where the shipped docstring says it `:raises EstablishmentFault:` *"if the subject is not a dataclass … must stop the module importing"*. |
+| 3 | the `getattr(field._field_type, 'name', '')` site | **STEERABLE.** A forged `_field_type.name` of `"_FIELD_INITVAR"` drives the InitVar refusal from caller-written data. |
+| 4 | is `self` at `getattr(self, name, _ABSENT)` caller-controlled? | **YES.** `crash_detector.observations.OK` — a live governed type — **SUBCLASSES SUCCESSFULLY**, so the instance the site probes can be a caller's. |
+| 5 | **the consequence arm** | **A CALLER MINTS A FORGED GOVERNED TYPE.** `is_establishing_type(Hostile)` → **True**; `establishment_faults(Hostile)` → **`()`**, zero faults; `establishment_field_list(Hostile)` → `()`; and **`Hostile` ENTERS `governed_types()`**, which grew **0 → 1**. |
+
+**WHY IT IS THE SAME FACT AS `F-06-R`, NOT A NEW ONE — AND WHY THAT MAKES IT WORSE.** The sixth
+seat's sentence was *"the mechanism applies its doctrine to values and violates it one level up, at
+the layer that decides what 'established' means."* It wrote that about `crash_detector.admission`.
+**It is true of `crash_detector.establishment` as well, through a different probe, in a public
+exported entry point, and no document said so.** This is `CD-PL-F104`.
+
+**WHAT THIS PROBE IS NOT.** It is not assurance (`PBG-SOD-001`), not a design, and not a fix. It is
+handed to the dispatched Engineer as **EVIDENCE, which that seat is required to re-measure and free
+to contradict** — the precedent set for the fingerprint recipe at increment 7. The `governed_types()`
+count of 0-before is measured under a **bare import of `establishment` alone**, not under a full
+package import, and that limit is stated rather than left to be found.
