@@ -192,11 +192,21 @@ plants/
 > DEVIATION**, raised against this seat's own work as `CD-ENG-WO2R3-08-F05`, and stated here
 > so the next reader meets it rather than infers it.
 >
-> **THE WHOLE SET WAS NOT RE-MEASURED BY THIS SEAT.** Increment 9 measured all thirteen by hand
-> at `BL-...-0094` and found `13 APPLY · 12 EVIDENCE · 1 DECORATION`. **THIS INCREMENT REWROTE
-> TEN FILES UNDER `src/` AND FOUR PLANTS PATCH FILES UNDER `src/`**, so that measurement is
-> STALE AT THIS TIP and this seat re-ran only the plants whose patched files it touched. See
-> the increment-10 build log for exactly which, and treat the rest as unmeasured here.
+> **AND THE WHOLE SET WAS RE-MEASURED BY THIS SEAT, BY HAND, IN THREE COLUMNS.** Increment 9
+> measured all thirteen at `BL-...-0094` and found `13 APPLY · 12 EVIDENCE · 1 DECORATION`.
+> **THIS INCREMENT REWROTE TEN FILES UNDER `src/`**, and `git apply` is the only thing that
+> notices a plant that has stopped applying — a dead plant's "violated" arm IS the clean tree
+> and **EXITS 0 BEHIND A GREEN BOARD**. Two of the thirteen existing plants patch a file this
+> increment touched (`src/crash_detector/engine/config.py`:
+> `CD-RT-001-AST-NO-NUMERIC-DEFAULT` and
+> `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST`) — **and all fourteen were
+> run anyway, because "I reasoned about which ones could be affected" is not a measurement.**
+>
+> **AT WO-2R3 INCREMENT 10's TIP: `14 APPLY · 13 EVIDENCE · 1 DECORATION`.** The one decoration
+> is the standing, declared `CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch` — `exit 3` on BOTH
+> arms, PRECONDITION_NOT_MET, for want of a live PostgreSQL and CREDENTIALS, unchanged by
+> anything here and no credential guessed. **NO PLANT WAS BROKEN BY THIS INCREMENT AND THAT IS
+> MEASURED, NOT ASSUMED.** The command and the table are in the increment-10 build log.
 
 **AND THE COUNT IS NOT THE THING THAT MATTERS. THE CONTRAST IS.** Of the twelve, measured at
 this increment's tip: **ELEVEN ARE EVIDENCE** — `exit 0` on the clean arm, `exit 1` on the
@@ -1472,3 +1482,113 @@ building a probe subclass with `__slots__ = ()` and reading `__dictoffset__` (16
 `tests/test_sealed_against_forged_state.py::test_VIOLATED_ARM_removing_one_seal_fails_the_check_AT_THE_LAYER_ITS_PROPOSITION_NAMES`,
 which opens `Agrees` — a class the seal IS available to — and requires the exclusion clause not to
 excuse it.
+
+---
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-EXACT-TYPE-ADMISSION` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch` |
+| **command** | `python3 -B tools/register/check_exact_type_admission.py --root .` |
+| **contract** | `contracts/execution/CD-RT-002-EXACT-TYPE-ADMISSION.md` |
+| **added** | WO-2R3 increment 10, ITEM_1, by `CD-ENG-WO2R3-08`, under `PO-DECISIONS-0018` ruling 2 |
+
+**Proposition violated.** *A judgement-path door admits by EXACT TYPE, so an instance of a
+forged metatype subclass — which passes `isinstance` by construction and fails exact type by
+construction — is refused.* The patch replaces `is_exactly(value, self.types)` with
+`isinstance(value, self.types)` in `_Exactly.refusal`.
+
+**Why this is the proposition and not a token.** It is **ONE LINE**, at the single point where
+every `@admits` parameter and every `@establishes` field decides what it accepts, and it is the
+exact regression `F-06-D` corrected at increment 8 — *the shape this project has now made four
+times and called a simplification*. It does not delete a guard, does not remove a decorator and
+does not touch a metaclass. Under it the door still reports `faults: ()`, `is_admitting_door` is
+still `True`, and the refusal message a reader would grep for still reads *"this door requires
+exactly X"*. **THAT IS WHAT MAKES IT A FAIR TEST: A SOURCE-HONEST DOOR THAT HAS STOPPED
+GUARDING.**
+
+**Expected failure signature.** Exit **1**, `FAIL — 3 violation(s)`, all `CD-EXACT-DOOR-004`:
+
+```
+    crash_detector.serving.dial_presentation::is_shown: **THE FORGED INSTANCE WAS ADMITTED**
+    and the door returned False. A NotShown that coerces to 0.5, built with zero lines of
+    package code, reached a judgement path. That is CD-ASR-F01.
+
+    crash_detector.dials.magnitude::_established_quantity: the forged instance was refused,
+    but by CrossDialCombination and NOT by the declared NotAdmitted ...
+
+    crash_detector.serving.dial_presentation::present_dial: the forged instance was refused,
+    but by TypeError and NOT by the declared NotAdmitted ...
+```
+
+**THE THIRD AND SECOND ROWS ARE THE ONES WORTH READING.** Under the plant, two of the four doors
+still refuse the forged instance — **AT THE BODY, NOT AT THE DOOR** — and one
+(`derived_within_one_dial`, whose parameter is a declared `ESTABLISHED_HERE` exemption) is
+unaffected entirely. **A CHECK THAT ONLY ASKED "DID SOMETHING RAISE?" WOULD HAVE SCORED THIS
+PLANT 1 VIOLATION INSTEAD OF 3 AND CALLED THE OTHER TWO CLEAN.** *"The right outcome from the
+wrong layer"* is this project's most-repeated defect, and this row is where it is caught.
+
+**ARM 1 IS UNMOVED BY THE PLANT AND THAT IS ASSERTED, NOT ASSUMED.** On the violated arm all
+four `ARM 1 ... REFUSED <Surface>Violated` notes are still printed. The plant does not obtain
+its result by breaking the accident-proofing `PO-DECISIONS-0018` ruling 1(a) keeps.
+
+### BITTEN, to `PO-DECISIONS-0011` ruling 4's standard, on the day it landed
+
+* both arms extracted with `git archive` at a RESOLVED SHA into
+  `/tmp/cd-eng-wo2r3-08/pm/{clean,violated}`; **the worktree was never mutated;**
+* the DECLARED command and the DECLARED patch path were both **derived from
+  `required-tests.yaml` by `test_id` with `yaml.safe_load`**, never read from this document's
+  prose (`CD-RULE-009`);
+* the **clean arm** was established FIRST: `exit 0`, `PASS — 36 assertions, 0 violations`;
+* `git apply --verbose` — **APPLIED FOR REAL**, exit code recorded, not simulated:
+  `Applied patch src/crash_detector/admission.py cleanly.` exit **0**;
+* the violated arm reproduced the signature above, **`exit 1`**;
+* each arm printed its own `pwd` and its own resolved `crash_detector.__file__` (`CD-PL-F98`).
+
+### THE COUNTERFACTUAL (`CD-D-079`) — AND IT IS NOT THE ONE A READER WILL EXPECT
+
+**THIS CHECK ALSO PASSES AT THE INCREMENT'S BASE SHA `686a374`.** The instrument was copied into
+a pristine extraction of the base tree and run: `exit 0`, `PASS — 36 assertions, 0 violations`,
+all four doors refusing with their declared identities.
+
+**SO THIS CHECK IS NOT EVIDENCE THAT INCREMENT 10 FIXED THESE FOUR DOORS. IT DID NOT.** Those
+four were already exact-typed at the base by the `@admits` / `@establishes` machinery, and this
+row is a NEW CARRIER FOR AN EXISTING PROPERTY plus a REGRESSION TEST on ruling 1(a). **SAID HERE
+IN TERMS, BECAUSE A GREEN BOARD BESIDE A REMEDY IS READ AS THE REMEDY'S DOING AND THAT WOULD BE
+THE SIXTH FALSE GREEN.**
+
+**WHAT INCREMENT 10 ACTUALLY MOVED IS CARRIED SOMEWHERE ELSE, AND ITS BASE/TIP CONTRAST IS
+STARK.** `tests/test_exact_type_admission_sweep.py`, the carrier for the twelve tier-1 sites
+converted from `isinstance` to exact type, run on pristine extractions of both trees:
+
+```
+$ cd <686a374 extraction> && PYTHONPATH=src python3 -B -m pytest -q tests/test_exact_type_admission_sweep.py
+13 failed, 1 passed          <- SIX of the twelve sites ADMITTED the object outright
+
+$ cd <tip extraction>      && PYTHONPATH=src python3 -B -m pytest -q tests/test_exact_type_admission_sweep.py
+14 passed
+```
+
+The one test passing on BOTH arms is
+`test_isinstance_has_two_routes_and_the_second_needs_no_subclass`, which asserts a property of
+CPython and not of this tree — it SHOULD pass on both, and it is named here so nobody has to
+wonder.
+
+### What this plant does NOT establish, said here rather than left to be discovered
+
+**IT SAYS NOTHING ABOUT WHETHER THE FORGED CLASS CAN BE BUILT. IT CAN.** The check builds one in
+every run, at every one of the four metatypes, and prints that it succeeded with the package
+lines it executed. `PO-DECISIONS-0018` ruling 1: *an enumeration cannot close a
+property-defined class.*
+
+**IT IS FOUR DOORS, NOT EVERY DOOR.** Eighteen `isinstance` admissions survive in the package,
+each with a written measured reason at its own site, and this check looks at none of them. Four
+of those eighteen are the metatype `__new__` guards themselves, where `isinstance` is the
+STRICTER operator because the predicate REFUSES — converting them would ADMIT an ordinary
+`class` statement through one forged intermediate, MEASURED on all four.
+
+**IT IS NOT THE VACUITY GUARD ON ITS OWN.** That is this plant plus
+`tests/test_exact_type_admission_sweep.py::test_the_converted_sites_are_exactly_these_twelve`,
+which enumerates the twelve conversions from RUNTIME behaviour and names any one that starts
+admitting again.

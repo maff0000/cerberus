@@ -1,0 +1,203 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 10, ITEM_1, PART C — THE PLANT, BOTH ARMS, THREE COLUMNS, AND THE WHOLE SET
+# RE-MEASURED BECAUSE THIS INCREMENT REWROTE TEN FILES UNDER `src/`.
+#
+# **AND THE MOST IMPORTANT SENTENCE IN THIS ENTRY IS THE ONE THAT REFUSES CREDIT:** the new check
+# PASSES AT THE BASE SHA TOO. The four doors it covers were ALREADY exact-typed at `686a374`. It is
+# a NEW CARRIER FOR AN EXISTING PROPERTY plus a REGRESSION TEST on ruling 1(a) — it is NOT evidence
+# that this increment fixed them. A green board beside a remedy is read as the remedy's doing.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0096. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T104048Z-0097
+timestamp_utc: "2026-08-23T10:40:48Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-08
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC10-F01-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: ea7c65c2d2e44d73be343849505419269351b15f
+parent_entry_id: BL-20260823T102609Z-0096
+schema_version: 1
+
+record_type: EVIDENCE
+
+title: 'ITEM_1 part C: the fourteenth plant, both arms, three columns — and the counterfactual that says what this check is NOT evidence of.'
+
+# ---------------------------------------------------------------------------------------------- #
+WHAT_WAS_BUILT:
+  the_guard: 'tools/register/check_exact_type_admission.py — NEW. `CD-RT-002-EXACT-TYPE-ADMISSION`.'
+  the_plant: 'plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch — NEW. The fourteenth.'
+  the_register_row: 'required-tests.yaml, criterion CD-AC-002, with `execute`, `execution_contract`, `negative_control.violation`, `planted_violation` and `planted_violation_note`.'
+  the_execution_contract: 'contracts/execution/CD-RT-002-EXACT-TYPE-ADMISSION.md — NEW.'
+  the_manifest_row: 'plants/MANIFEST.md — the listing superseded 13 -> 14 (quoted, not deleted) and a full row appended.'
+  CD_RULE_004_THE_THREE_PLACES: >
+    **THE DECLARED LIMITS ARE WRITTEN IN ALL THREE AND THEY SAY THE SAME THING.** The check
+    header's "ITS DECLARED LIMITS, ENUMERATED" 1-4, the register row's LIMIT 1-4 under
+    `negative_control.violation`, and the contract's "Declared limits (CD-RULE-004)" 1-5. The
+    contract carries a fifth (the per-site package-line ceiling) which the other two state in prose
+    rather than as a numbered limit. **A REGISTER ENTRY MAY NOT CLAIM MORE THAN ITS GUARD DELIVERS
+    AND THIS ONE CLAIMS LESS THAN A READER WOULD EXPECT, ON PURPOSE.**
+
+# ---------------------------------------------------------------------------------------------- #
+WHAT_THE_GUARD_ASSERTS__AND_THE_SHAPE_THAT_MAKES_IT_HONEST:
+  arm_1_CD_EXACT_ARM1_001: '`class Evil(V): ...` must STILL raise that module''s own surface violation, at all four sealed types. **A REGRESSION TEST ON PO-DECISIONS-0018 RULING 1(a).**'
+  arm_2_CD_EXACT_ARM2_002: >
+    **THE FORGED ROUTE STILL WORKS AND THAT IS ASSERTED, NOT LAMENTED.** The class is created;
+    `issubclass` True; an instance is built; `float(inst)` is the forged number; `isinstance` True;
+    package lines within the per-site measured ceiling. **IF ANY OF THOSE STOPS BEING TRUE THE
+    CHECK GOES RED**, because a guard whose hazard has silently evaporated is measuring nothing.
+  arm_2_CD_EXACT_ARM2_003: '`type(instance) is V` is **False** — the asymmetry, asserted about the object rather than assumed about the design.'
+  the_door_CD_EXACT_DOOR_004: >
+    One judgement-path door per sealed type, each with the refusal identity it MUST raise:
+    `_established_quantity` -> `NotAdmitted` · `derived_within_one_dial` ->
+    `QuantityProvenanceMissing` · `present_dial` -> `NotAdmitted` · `is_shown` -> `NotAdmitted`.
+    **A REFUSAL OF A DIFFERENT IDENTITY IS A VIOLATION AND NOT A DETAIL** (CD-PL-F74). A body that
+    admitted the object and then tripped over a missing attribute has not refused it.
+  the_package_line_ceiling_is_PER_SITE_and_is_NOT_zero_everywhere: >
+    **0, 0, 4, 0.** The FOUR are `SealedReadingType`, and all four lines are
+    `dials/reading.py::SealedReadingType.__setattr__` invoked by `typing.Generic` machinery writing
+    `__orig_bases__`/`__parameters__` onto a class that is not in `_SEALED` — traced line by line
+    at BL-...-0095, and **NOT ONE OF THEM IS A REFUSAL.** A uniform ceiling of zero would have been
+    a fingerprint that was false on the day it was written, and the FIRST DRAFT OF THIS CHECK WROTE
+    EXACTLY THAT AND WENT RED ON ITS OWN TREE. Recorded because it happened, not because it was
+    avoided.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_THREE_COLUMNS__ON_PRISTINE_git_archive_EXTRACTIONS__WORKTREE_NEVER_MUTATED:
+  the_subject_sha_RESOLVED: '`git rev-parse HEAD` -> `ca4e268218bc02795152cdfeba12f170279179f8`; `git cat-file -t` -> `commit`.'
+  the_command_and_the_patch_were_DERIVED_not_transcribed: |
+      CMD=$(python3 -c "import yaml; d=yaml.safe_load(open('required-tests.yaml'));
+            [print(t['execute']) for c in d['criteria'] for t in (c.get('tests') or [])
+             if t['test_id']=='CD-RT-002-EXACT-TYPE-ADMISSION']")
+      PATCH=$(... same, t['negative_control']['planted_violation'] ...)
+      -> python3 -B tools/register/check_exact_type_admission.py --root .
+      -> plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch
+  THE_RESULT: |
+      COLUMN 1  CLEAN ARM      exit 0   PASS — 36 assertions, 0 violations
+                               pwd /tmp/cd-eng-wo2r3-08/pm/clean
+      COLUMN 2  git apply -v   exit 0   "Applied patch src/crash_detector/admission.py cleanly."
+      COLUMN 3  VIOLATED ARM   exit 1   FAIL — 3 violation(s), ALL CD-EXACT-DOOR-004
+                               pwd /tmp/cd-eng-wo2r3-08/pm/violated
+                               imported crash_detector from
+                                 /tmp/cd-eng-wo2r3-08/pm/violated/src/crash_detector/__init__.py
+  the_three_violations_and_why_the_SHAPE_of_them_is_the_point: |
+      is_shown                 ***THE FORGED INSTANCE WAS ADMITTED***, door returned False
+      _established_quantity    refused, but by CrossDialCombination and NOT the declared NotAdmitted
+      present_dial             refused, but by TypeError and NOT the declared NotAdmitted
+      derived_within_one_dial  UNAFFECTED — its parameter is a declared ESTABLISHED_HERE exemption
+                               and its refusal lives in its body
+  and_this_is_the_sentence_worth_keeping: >
+    **A CHECK THAT ONLY ASKED "DID SOMETHING RAISE?" WOULD HAVE SCORED THIS PLANT ONE VIOLATION
+    INSTEAD OF THREE AND CALLED THE OTHER TWO CLEAN.** Two of the four doors still refuse the forged
+    instance under the plant — AT THE BODY, NOT AT THE DOOR. That is defence in depth and it is good
+    news for the product; it is ALSO exactly how "the right outcome from the wrong layer" survives a
+    green board. The refusal IDENTITY is pinned per door for that reason.
+  arm_1_is_UNMOVED_by_the_plant_and_that_is_asserted: >
+    On the VIOLATED arm all four `ARM 1 ... REFUSED <Surface>Violated` notes are still printed. **THE
+    PLANT DOES NOT OBTAIN ITS RESULT BY BREAKING THE ACCIDENT-PROOFING RULING 1(a) KEEPS.**
+
+# ---------------------------------------------------------------------------------------------- #
+THE_COUNTERFACTUAL__AND_IT_IS_NOT_THE_ONE_A_READER_WILL_EXPECT:
+  what_I_did: >
+    Copied the NEW instrument into a pristine `git archive` extraction of the BASE SHA
+    `686a374e60ff8f18305fa8b665463e0e057dac2b` (resolved, `git cat-file -t` -> commit) and ran it.
+  THE_RESULT: '`exit 0`, **PASS — 36 assertions, 0 violations**, all four doors refusing with their declared identities, `imported crash_detector from: /tmp/cd-eng-wo2r3-08/pmbase/src/crash_detector/__init__.py`.'
+  WHAT_THAT_MEANS_AND_I_WILL_NOT_LET_IT_BE_READ_ANY_OTHER_WAY: >
+    **THIS CHECK IS NOT EVIDENCE THAT INCREMENT 10 FIXED THOSE FOUR DOORS. IT DID NOT FIX THEM.**
+    They were ALREADY exact-typed at the base, by the `@admits`/`@establishes` machinery. This row
+    is a NEW CARRIER FOR AN EXISTING PROPERTY plus a REGRESSION TEST on ruling 1(a). **A GREEN BOARD
+    BESIDE A REMEDY IS READ AS THE REMEDY'S DOING, AND THAT WOULD BE THE SIXTH FALSE GREEN ON THIS
+    PROJECT.** Said here, in the manifest row, and in the contract.
+  AND_THE_CONTRAST_THAT_IS_THE_REMEDY_S_OWN__STARK_AND_MEASURED: |
+      $ cd <686a374 extraction> && PYTHONPATH=src python3 -B -m pytest -q \
+            tests/test_exact_type_admission_sweep.py
+        13 failed, 1 passed
+      $ cd <ca4e268 extraction> && PYTHONPATH=src python3 -B -m pytest -q \
+            tests/test_exact_type_admission_sweep.py
+        14 passed
+  and_SIX_of_the_twelve_ADMITTED_THE_OBJECT_OUTRIGHT_AT_THE_BASE: |
+      admission::_EstablishedHere.__call__          DID NOT RAISE AdmissionFault
+      admission::_compile  _Admission               DID NOT RAISE AdmissionFault
+      admission::_compile  tuple                    DID NOT RAISE AdmissionFault
+      admission::each_of   within                   DID NOT RAISE AdmissionFault
+      source_registry::SourceRegistry.ids_with      DID NOT RAISE TypeError   <- returned ()
+      dials.provenance::_install                    DID NOT RAISE CrossDialCombination
+  and_the_other_SIX_were_refused_at_the_base_FROM_THE_WRONG_LAYER: |
+      observations::FetchFailed.http_status      FieldNotEstablished  (the @establishes boundary)
+      observations::Malformed.instance_path      FieldNotEstablished, AFTER the liar's startswith
+                                                 and __len__ had answered the two checks below it
+      source_registry::SourceRecord.criticality  FieldNotEstablished
+      source_registry::SourceRecord.cadence      FieldNotEstablished
+      dials.magnitude::__setstate__              CrossDialCombination, with _install's DIAL message
+                                                 for a fault that is about TYPES
+      dials.reading::seal_reading_type           ReadingSurfaceViolated, from the SURFACE-equality
+                                                 check — "Impostor declares no member surface in
+                                                 DECLARED_MEMBER_SURFACE"
+  the_one_that_I_checked_further_and_it_came_back_NEGATIVE: >
+    I suspected the base's `seal_reading_type` was carried only by a NAME lookup, which would mean
+    an impostor WEARING a declared name sealed successfully. **MEASURED AT THE BASE: it does not.**
+    `type.__new__(SealedReadingTypeSub, 'Unknown', (), {...})` is refused there too, by
+    `ReadingSurfaceViolated: Unknown is missing declared member(s) [...]` — surface equality, not
+    the name. **THE CONVERSION AT THAT SITE IMPROVES THE LAYER, NOT THE OUTCOME, AND I SAY SO
+    RATHER THAN LET THE 13-vs-14 NUMBER IMPLY OTHERWISE.**
+  the_one_test_that_passes_on_BOTH_arms_and_why_that_is_correct: >
+    `test_isinstance_has_two_routes_and_the_second_needs_no_subclass` — it asserts a property of
+    CPython (`isinstance` consults `__class__`), not of this tree. **IT SHOULD PASS ON BOTH ARMS**
+    and it is named here so nobody has to wonder whether it is a hole.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_WHOLE_PLANT_SET_RE_MEASURED_BY_HAND_BECAUSE_THIS_INCREMENT_REWROTE_TEN_FILES_UNDER_src:
+  why: >
+    **`git apply` IS THE ONLY THING THAT NOTICES A PLANT THAT HAS STOPPED APPLYING**, and a dead
+    plant's "violated" arm IS the clean tree and EXITS 0 behind a green board. `PO-DECISIONS-0017`
+    ruling 1 records FOUR occurrences. The plant-drift carrier still does not exist.
+  what_I_could_have_reasoned_and_did_not: >
+    Only TWO of the thirteen existing plants patch a file this increment touched — both
+    `src/crash_detector/engine/config.py`: `CD-RT-001-AST-NO-NUMERIC-DEFAULT` and
+    `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST`. **ALL FOURTEEN WERE RUN
+    ANYWAY, BECAUSE "I REASONED ABOUT WHICH ONES COULD BE AFFECTED" IS NOT A MEASUREMENT.**
+  the_command: |
+      $ python3 -c "yaml.safe_load(required-tests.yaml); map PATCH STEM -> t['execute']" > cmds.tsv
+      $ while IFS=$'\t' read -r patch tid cmd; do
+            for arm in clean violated; do git archive $SHA | tar -x -C $BASEDIR/$name-$arm; done
+            (cd $BASEDIR/$name-violated && git apply "$patch");  ga=$?
+            (cd $BASEDIR/$name-clean    && eval "$cmd");          c=$?
+            (cd $BASEDIR/$name-violated && eval "$cmd");          v=$?
+        done < cmds.tsv
+      (the plant list is `find plants -name '*.patch'`, not a document)
+  THE_RESULT: |
+      PLANT                                                            CLEAN  GIT-APPLY  VIOLATED  VERDICT
+      CD-RT-001-ABSENCE-RENDERS-UNKNOWN                                    0          0         1  EVIDENCE
+      CD-RT-001-AST-NO-NUMERIC-DEFAULT                                     0          0         1  EVIDENCE
+      CD-RT-002-AST-NO-BLEND                                               0          0         1  EVIDENCE
+      CD-RT-002-EXACT-TYPE-ADMISSION                                       0          0         1  EVIDENCE  <- NEW
+      CD-RT-002-SCHEMA-CLOSED                                              0          0         1  EVIDENCE
+      CD-RT-002-TYPE-NO-ARITHMETIC                                         0          0         1  EVIDENCE
+      CD-RT-003-ENGINE-NO-WITNESS-REACH                                    0          0         1  EVIDENCE
+      CD-RT-003-GRANT-MATRIX-LIVE                                          3          0         3  NOT A CONTRAST
+      CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST        0          0         1  EVIDENCE
+      CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT                        0          0         1  EVIDENCE
+      CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES                             0          0         1  EVIDENCE
+      CD-RT-012-EGRESS-NO-BROKER                                           0          0         1  EVIDENCE
+      CD-RT-012-LOCKFILE-DENYLIST                                          0          0         1  EVIDENCE
+      CD-RT-012-NO-EXECUTION-INTERFACE                                     0          0         1  EVIDENCE
+                                                            14 patches · 14 APPLY · 13 EVIDENCE · 1 DECORATION
+  the_delta_from_increment_9: '**13/12/1 -> 14/13/1.** The delta is exactly this increment''s own plant. **MY WORK BROKE NO PLANT AND THAT IS MEASURED, NOT ASSUMED.**'
+  the_one_decoration_is_the_declared_one: '`CD-RT-003-GRANT-MATRIX-LIVE` — exit 3 on BOTH arms, PRECONDITION_NOT_MET, for want of a live PostgreSQL and CREDENTIALS. Standing, declared at increment 8 (`F-06-L`). **NO CREDENTIAL WAS GUESSED AND NONE APPEARS ANYWHERE GOVERNED** (PBG-SEC-*).'
+
+# ---------------------------------------------------------------------------------------------- #
+STATE_AT_THIS_COMMIT:
+  suite: '`python3 -B -m pytest -q` -> **4 failed, 1709 passed.** The DECLARED three plus `test_the_tier_1_tally_is_ten_DEFECT_OPEN_and_three_CARRIER_ONLY`, which is mine, named at BL-...-0096, and LEFT RED DELIBERATELY.'
+  class_2_sweep: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> EXIT 1, **FAIL — 548 sites, 18 violations.** Unmoved by part C (no `src/` file changed here).'
+  register_checks: '**THIRTEEN EXIT 0** (twelve pre-existing plus `CD-RT-002-EXACT-TYPE-ADMISSION`), `check_grant_matrix_live` EXIT 3 — the declared environment condition.'
+  protected_files_untouched: 'Asserted by command in the closing entry.'
+
+next_safe_action: 'ITEM_1 part D — the write-up, the residue declaration (CD-RULE-006), the stale-key hand-over for the actor that owns the register, and the findings.'
