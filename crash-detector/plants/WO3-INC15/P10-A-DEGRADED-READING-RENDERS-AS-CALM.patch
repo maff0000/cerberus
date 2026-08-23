@@ -1,0 +1,19 @@
+diff --git a/src/crash_detector/publication/detail_level.py b/src/crash_detector/publication/detail_level.py
+index 8c59760..13bc18f 100644
+--- a/src/crash_detector/publication/detail_level.py
++++ b/src/crash_detector/publication/detail_level.py
+@@ -267,9 +267,11 @@ def detail_level_for(reading: object, *, dial_slot: str, policy: DetailPolicy) -
+         )
+ 
+     def on_degraded(damaged: "Degraded") -> str:
+-        # Carries a value AND its damage. The damage decides: PID §3.2 forbids calm for it,
+-        # and the policy has already been refused if it named calm here.
+-        return policy.absent_data_level
++        # PLANTED VIOLATION: the damage is ignored and the score decides, so a Degraded
++        # reading with a low number renders as calm. PID §3.2 forbids exactly this.
++        return _level_for_score(
++            number_for_dial_slot(dial_slot, damaged.value), policy=policy
++        )
+ 
+     def on_unknown(absent: "Unknown") -> str:
+         # No value field of any kind. There is no number to compare, and 'no signal' is not
