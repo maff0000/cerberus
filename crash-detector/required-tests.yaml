@@ -3187,8 +3187,31 @@ criteria:
     negative_control:
       violation: >
         Publication halted with ingestion still running and no alert raised inside one cycle —
-        the heartbeat suppressed, the cycle window widened, or the alert path swallowed. To be
-        planted in WO-3.
+        the heartbeat suppressed, the cycle window widened, or the alert path swallowed.
+        PLANTED AT WO-3 INCREMENT 15 by CD-ENG-WO3-02. TWO patches, because the criterion has two
+        halves that come apart, and one patch would have measured one of them:
+        plants/WO3-INC15/P3-CADENCE-IGNORES-THE-OPEN-INTERVAL.patch removes the OPEN interval
+        (last heartbeat -> now) and leaves every closed one intact. That IS the halted-publication
+        case: a stopped publisher writes no further heartbeat and therefore creates no further
+        gap, so a max(closed_intervals) implementation reports HEALTH about a dead detector
+        forever, with total confidence, exactly when it is most wrong.
+        plants/WO3-INC15/P4-CADENCE-READS-THE-AGE-OF-A-NUMBER.patch widens evaluate_cadence's
+        signature with an as_of_utc parameter — the first step of conflating a CADENCE BREACH
+        with the AGE OF A NUMBER, which BLUEPRINT §8 distinguishes in terms.
+        MEASURED BY THE IMPLEMENTING SEAT: one pristine `git archive | tar -x` extraction per arm,
+        THIS ROW'S OWN DECLARED COMMAND, and git apply's own exit code recorded as its own column
+        because a patch that does not apply produces a "violated" arm that is the clean tree:
+          P3   apply 0   CLEAN exit 0   VIOLATED exit 1   (4 failed, 23 passed)
+          P4   apply 0   CLEAN exit 0   VIOLATED exit 1   (1 failed, 26 passed)
+        Each violated arm fails on the tests that carry the proposition and not incidentally —
+        P3 on test_the_halt_is_detected_by_the_OPEN_interval_and_not_by_any_closed_one and
+        test_publication_halted_is_a_breach; P4 on
+        test_evaluate_cadence_CANNOT_BE_GIVEN_the_age_of_a_number.
+        *** THIS IS THE ENGINEER'S OWN MEASUREMENT AND IT IS NOT ADMITTED EVIDENCE. *** It is
+        recorded so an auditor can reproduce or refute it. `latest_admitted_run` is UNTOUCHED and
+        null, and `evidence_ref` below still names a run record that DOES NOT EXIST, so this row
+        remains UNDECIDABLE — which is the correct status, because an implementation may not
+        certify itself (PBG-SOD-001, non-waivable).
       evidence_ref: RTR-WO3-0001
 
 - criterion_id: CD-AC-009
@@ -3211,8 +3234,35 @@ criteria:
     negative_control:
       violation: >
         A staleness window that does not tighten under stress — the regime input ignored, the
-        window made constant, or the comparison inverted so stress loosens it. To be planted in
-        WO-3.
+        window made constant, or the comparison inverted so stress loosens it.
+        PLANTED AT WO-3 INCREMENT 15 by CD-ENG-WO3-02:
+        plants/WO3-INC15/P5-REGIME-WINDOW-DOES-NOT-TIGHTEN.patch disables the tightening check in
+        RegimeStalenessPolicy's constructor, so ALL THREE of the violations named above become
+        constructible at once — a constant window, an inverted one, and a regime whose window is
+        whatever the deployment typed.
+        WHY THE GUARD IS AT CONSTRUCTION RATHER THAN AT COMPARISON: CD-ASR-F06 was reached BY
+        CONFIGURATION ALONE, WITH NO SOURCE EDIT. Closing the class therefore means the
+        configuration surface must not be able to express the violation either, so the policy type
+        refuses a non-tightening declaration outright rather than a comparison site checking it.
+        MEASURED BY THE IMPLEMENTING SEAT: one pristine `git archive | tar -x` extraction per arm,
+        THIS ROW'S OWN DECLARED COMMAND, git apply's exit code as its own column:
+          P5   apply 0   CLEAN exit 0   VIOLATED exit 1   (2 failed, 23 passed)
+        The two failures are test_a_constant_window_is_refused and
+        test_an_inverted_window_is_refused — the criterion's own two named violations.
+        THE ADMITTING ARM IS NOT OPTIONAL AND IS ASSERTED IN THE SAME MODULE: a policy that DOES
+        tighten is admitted, an age of 300 s PASSES in CALM and the SAME age at the SAME instant
+        through the SAME constructor FAILS in STRESS, with the two arms differing by ONE ARGUMENT.
+        A guard that refused every policy would satisfy this criterion vacuously.
+        *** THIS IS THE ENGINEER'S OWN MEASUREMENT AND IT IS NOT ADMITTED EVIDENCE. ***
+        `latest_admitted_run` is UNTOUCHED and null; `evidence_ref` names a run record that DOES
+        NOT EXIST, so this row remains UNDECIDABLE and that is correct (PBG-SOD-001).
+        WHAT IS NOT ESTABLISHED, STATED SO IT IS NOT OVER-READ: the RELATION is enforced; the
+        OPERATING WINDOWS ARE NOT. No ratified clause gives a calm or a stress window, so
+        crash_detector.regime declares NO POLICY AT ALL and two tests assert that — one over the
+        module's runtime attributes, one over the AST of the whole package. A deployment
+        declaring {CALM: 900.0, STRESS: 899.0} satisfies every check here and is still bad.
+        NOT PROVED TO BE CARRIED ANYWHERE, and bounding it needs the product quantity CD-RULE-003
+        forbids this seat to invent.
       evidence_ref: RTR-WO3-0001
 
 - criterion_id: CD-AC-010
@@ -3309,7 +3359,37 @@ criteria:
       violation: >
         A stopped service that the external probe does not detect inside the budget, or a health
         surface that reports healthy while a dial is stale — one planted violation per observable,
-        so that no observable is evidenced only by its siblings. To be planted in WO-3.
+        so that no observable is evidenced only by its siblings.
+        PLANTED AT WO-3 INCREMENT 15 by CD-ENG-WO3-02. TWO patches, one per half of the criterion:
+        plants/WO3-INC15/P6-HEALTH-SURFACE-ADMITS-A-DIAL-VALUE.patch adds one key to the closed
+        HEALTH_KEYS allowlist, which is the whole of the "reports healthy while carrying market
+        information" half — a health endpoint leaking a dial value is a CD-AC-006 breach wearing
+        an ops hat, and it is easy to make because "degraded" is tempting to explain with the
+        number that degraded.
+        plants/WO3-INC15/P8-THE-PROBE-IMPORTS-THE-APPLICATION.patch makes the external probe
+        import crash_detector, which destroys the INDEPENDENCE that is this criterion's operative
+        word: an observer that shares code with the thing it observes is wrong in exactly the same
+        way as the thing it observes and cannot see it.
+        MEASURED BY THE IMPLEMENTING SEAT: one pristine `git archive | tar -x` extraction per arm,
+        THIS ROW'S OWN DECLARED COMMAND, git apply's exit code as its own column:
+          P6   apply 0   CLEAN exit 0   VIOLATED exit 1   (2 failed, 35 passed)
+          P8   apply 0   CLEAN exit 0   VIOLATED exit 1   (2 failed, 35 passed)
+        THE "ONE PER OBSERVABLE" INSTRUCTION IS HONOURED LITERALLY IN THE TEST MODULE: a dial
+        value, a witness reading, a source name, a private-envelope key, a secret-bearing key, an
+        undeclared degradation class and a score smuggled through the regime field as TEXT each
+        have their own refusing test, and each has its own admitting arm beside it.
+        THE STOPPED-SERVICE HALF IS MEASURED AGAINST A REAL SOCKET, NOT A MOCK: a real HTTP server
+        is started on loopback, the probe exits 0 HEALTHY, the server is STOPPED, and the probe is
+        run again at the same address and exits 2 UNREACHABLE. The probe is still running because
+        it was never part of what failed — which is the verdict no process inside the container
+        set can ever produce, because it is not running either.
+        *** THIS IS THE ENGINEER'S OWN MEASUREMENT AND IT IS NOT ADMITTED EVIDENCE. ***
+        `latest_admitted_run` is UNTOUCHED and null; `evidence_ref` names a run record that DOES
+        NOT EXIST, so this row remains UNDECIDABLE and that is correct (PBG-SOD-001).
+        WHAT IS NOT ESTABLISHED: no host is measured RUNNING the probe on a schedule, and the
+        container set is not built (CONTAINER_READY_DESIGN). The probe is delivered; the cron
+        entry is a deployment act nobody has been authorised to take.
+        NOT PROVED TO BE CARRIED ANYWHERE for any deployed surface.
       evidence_ref: RTR-WO3-0001
 
 - criterion_id: CD-AC-015
