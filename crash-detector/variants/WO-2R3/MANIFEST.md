@@ -498,3 +498,5 @@ criterion arms in `tests/test_judgement_path_doors.py`, **all of which fail at `
 **NEITHER ROW STATES A CONCLUSION**, per this manifest's own rule. What they measured is in
 `governance/engineering/build-log/BL-20260823T0*-0085.yaml` and in the seat's return, where it can
 be argued with.
+
+| **`P-O-the-metaclass-decides-the-comparison.py`** | **NEW AT INCREMENT 8, ITEM 3.** `F-06-D` asked live: `in` over a tuple of types is `==`, `==` puts `type(value)` on the LEFT, so does a caller's METACLASS decide this system's admission for its own instances? Five arms — two controls and three plants — against an ordinary, source-honest `@admits(value=int)` door **reporting zero faults**, with nothing inside `crash_detector` patched. **Run it in a `git archive` extraction of the base AND in the lane**; each run prints its own `pwd` and its own `crash_detector.__file__` (CD-PL-F98). | `cd <tree> && PYTHONPATH=src python3 -B /path/to/P-O-...py` |

@@ -1,0 +1,153 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 8 — ITEM 3. `F-06-D`. THE GUARD WAS IMPLEMENTED WITH THE OPERATOR ITS OWN
+# DOCTRINE FORBIDS, AND CORRECTING IT SHIPS THE CLASS-2 SWEEP **RED**.
+#
+# **THE RED IS DECLARED, NOT DISCOVERED, AND IT IS CAUSED ENTIRELY BY A FILE THIS SEAT IS
+# FORBIDDEN TO TOUCH.** `tools/sweep/declared_dispositions.py` keys a disposition on the site's
+# SOURCE TEXT, so correcting a declared site makes its declaration stale by construction. That is
+# the register working — *"a disposition whose reason has died does not survive on habit"* — and
+# the re-disposition is the Project Lead's act. **I DID NOT TAKE IT.**
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0086. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T061833Z-0087
+timestamp_utc: "2026-08-23T06:18:33Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-06
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC8-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0015.md ruling 2 — the auditor''s ten-item ordered gate ADOPTED; item 3 is `F-06-D`, `admission.py:525`'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 314592c6c397b4e1f2f03ca84488ce800840ad09
+parent_entry_id: BL-20260823T060447Z-0086
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_3
+title: '`F-06-D` — `in` over a tuple of types is `==`, and `==` is delegable to a metaclass. Corrected at five sites, with the plant and its control.'
+
+# ---------------------------------------------------------------------------------------------- #
+what_changed_in_the_code_path:
+  the_mechanism_ITEM_3_PROPER:
+    - '`crash_detector.admission.is_exactly(value, types)` — NEW, public, and it is the ONE place the identity question is asked: `any(type(value) is candidate for candidate in types)`.'
+    - '`_Exactly.refusal` — `if type(value) in self.types` -> `if is_exactly(value, self.types)`. **THIS IS `admission.py:525`, THE EXACT LINE `F-06-D` NAMES.**'
+    - '`_EachOf.refusal`, the CONTAINER test — `if type(value) not in self.within` -> `if not is_exactly(value, self.within)`.'
+    - '`_EachOf.refusal`, the ELEMENT test — `if type(element) not in self.element` -> `if not is_exactly(element, self.element)`.'
+  the_two_product_sites_INCREMENT_8_MADE_LOAD_BEARING__NAMED_WITH_THE_ITEM_THAT_REQUIRED_THEM:
+    - path: 'src/crash_detector/engine/evaluate.py — `refuse_a_number_without_its_inputs`''s FIRST STATEMENT.'
+      required_by: '**ITEM 1.** Its early return is the whole of CD-ASR-F03''s closure, and item 1 rebuilt that mechanism.'
+      the_honest_qualifier: >
+        **THIS ONE CLOSES NOTHING I COULD MEASURE AND I SAY SO RATHER THAN LET IT READ AS A
+        CLOSURE.** The dangerous direction is a genuine value-carrier answering *"not one of
+        these"* and returning early. I looked for it. **IT IS NOT REACHABLE, AND THE LAYER THAT
+        CARRIES THAT IS NAMED RATHER THAN ASSUMED (CD-RULE-006): the `Reading` sum type is
+        SEALED** — `type("ShyValue", (Value,), {})` raises `ReadingSurfaceViolated`. The operator
+        change aligns the site with the doctrine; the sealing is what holds it.
+    - path: 'src/crash_detector/serving/dial_presentation.py — `_shown_from`''s body refusal.'
+      required_by: '**ITEM 1.** That body refusal is what the `ESTABLISHED_HERE` reason I wrote for `_shown_from(score)` in item 1 NAMES as the thing an exact-type door would preempt. A declaration citing a refusal a caller''s metaclass can answer would be citing nothing.'
+  what_I_did_NOT_touch_and_why: >
+    `dials/dialset.py:70` and the three `_CONSTRUCTOR_IDENTITIES` sites in `dials/reading.py` and
+    `serving/dial_presentation.py`. **NO ITEM OF THIS INCREMENT MEASURABLY REQUIRES THEM, AND
+    WIDENING SCOPE ON MY OWN INITIATIVE IS AN ESCALATION AND NOT AN INITIATIVE.** They are
+    ENUMERATED FROM THE SOURCE and asserted still present by
+    `tests/test_admission_operator.py::test_the_sites_this_item_did_NOT_correct_are_enumerated_from_the_artefact`,
+    so the residue is a measured list that moves when somebody changes one — not a sentence.
+
+# ---------------------------------------------------------------------------------------------- #
+the_carrier_is_a_PLANT_and_the_contrast_is_BOTH_ARMS_AT_BOTH_TREES:
+  the_plant: '`class Anything(type): def __eq__(cls, other): return True` — eight lines of ordinary caller code, no privilege, nothing inside `crash_detector` patched.'
+  the_door_it_walks_through: '**AN ORDINARY, SOURCE-HONEST `@admits(value=int)` REPORTING ZERO FAULTS.** Asserted before every other arm, because if the door were faulted or exempted the whole file would be measuring a broken door rather than a broken operator.'
+  the_probe: 'variants/WO-2R3/P-O-the-metaclass-decides-the-comparison.py — run in each tree, printing its own `pwd` and its own `crash_detector.__file__` (CD-PL-F98).'
+  BASE__git_archive_314592c_at_/tmp/cd06/base4: |
+    ARM 1 CONTROL  an_ordinary_door(object())                REFUSED  NotAdmitted
+    ARM 2 PLANT    an_ordinary_door(NotAnInt())              **ADMITTED — BODY RAN, handed a NotAnInt**
+    ARM 3 PLANT    an_ordinary_container_door(NotAnInt())    RAISED TypeError 'not iterable'
+                                                             — i.e. it PASSED the container test
+                                                               and failed later for another reason
+    ARM 4 PLANT    an_ordinary_container_door((NotAnInt(),)) **ADMITTED — BODY RAN, element 0 NotAnInt**
+    ARM 5 CONTROL  an_ordinary_container_door((object(),))   REFUSED  NotAdmitted
+  TIP__the_lane: |
+    ARM 1 CONTROL  REFUSED NotAdmitted   ARM 2 PLANT REFUSED NotAdmitted
+    ARM 3 PLANT    REFUSED NotAdmitted   ARM 4 PLANT REFUSED NotAdmitted
+    ARM 5 CONTROL  REFUSED NotAdmitted
+  and_the_arm_without_which_all_of_that_is_a_closed_door: '`an_ordinary_door(7)` and `an_ordinary_container_door((7,))` still reach the body, and `one_of(int, None)` still admits `None`. Asserted.'
+  the_carrier: 'tests/test_admission_operator.py — **12 arms. At `314592c` with only that file added: 7 failed, 5 passed.** The five that pass are the premise arm, the two ordinary-look-alike controls, the honest-value control and the frozenset/tuple measurement, and every one of them SHOULD pass at the base.'
+
+# ---------------------------------------------------------------------------------------------- #
+A_MEASUREMENT_THAT_SIZES_THE_REMAINING_CLASS_AND_IS_IN_THE_INSTRUMENTS_FAVOUR:
+  what: >
+    **A MEMBERSHIP TEST OVER A `tuple` FALLS TO `__eq__` ALONE. OVER A `frozenset` IT DOES NOT** —
+    the lookup hashes first, so it also needs a `__hash__` forged to collide with a real member.
+    Measured both ways: `A not in _CONSTRUCTOR_IDENTITIES` with `__eq__` only; `B in
+    _CONSTRUCTOR_IDENTITIES` with `__eq__` AND a colliding `__hash__`.
+  why_it_is_recorded: >
+    Three of the four uncorrected sites are frozenset lookups and one is a tuple. **A RECORD THAT
+    SAID THEY WERE THE SAME WOULD BE OVERSTATING THE RESIDUE IN ONE DIRECTION AND UNDERSTATING IT
+    IN THE OTHER.** Carried by
+    `tests/test_admission_operator.py::test_a_frozenset_membership_needs_a_forged_hash_as_well`,
+    which asserts BOTH results so neither can go stale.
+
+# ---------------------------------------------------------------------------------------------- #
+A_FINDING_AGAINST_MY_OWN_WORK__AND_IT_IS_THE_CD_ENG_WO2R3_F12_SHAPE_CAUGHT_IN_FLIGHT:
+  id: CD-ENG-WO2R3-06-F05
+  severity: MEDIUM
+  what: >
+    **MY FIRST VERSION OF THE `_shown_from` ARM ASSERTED THE EXCEPTION TYPE AND WOULD HAVE PASSED
+    AT THE BASE FOR THE WRONG REASON.** MEASURED at `314592c`: the forged score PASSED
+    `type(score) not in SCORE_TYPES` — the very check the arm is about — and was refused
+    DOWNSTREAM by `Shown`'s own establishment, raising the SAME `DialPresentationRefused` with a
+    different sentence (*"a float was offered as dial 'equity_crash''s presented magnitude"*).
+    Two arms exiting with the same exception for different reasons look identical in a summary
+    table and prove nothing.
+  what_I_did: 'Asserted the MESSAGE — *"a ForgedScore was carried by a reading offered for presentation"* — which only `_shown_from`''s own body refusal produces, and wrote the base measurement into the test''s docstring so the next reader sees why the assertion is on the sentence.'
+  the_shape_it_is_an_instance_of: '`CD-ENG-WO2R3-F12`, third-party-verified as this project''s most-repeated measurement defect. **IT CAUGHT ME IN THE SAME INCREMENT IN WHICH I QUOTED IT AT MYSELF TWICE.**'
+
+# ---------------------------------------------------------------------------------------------- #
+THE_RED_THIS_ITEM_SHIPS__DECLARED_IN_FULL_AND_NOT_MINE_TO_CLEAR:
+  what_is_red: 'The Class-2 sweep. `CD-CLASS-2-SWEEP: FAIL — 555 sites, 4 violations` — THREE `STALE DECLARATION` and ONE `UNDECLARED MODULE` (*"tier-2 site keys still undeclared: 3 of 33"*). Consequently `tests/test_the_fifteen.py` is **3 failed** and the suite is **3 failed, 1681 passed**.'
+  why: >
+    `tools/sweep/declared_dispositions.py` keys a disposition on `(module, callable, KIND, SOURCE
+    TEXT)`. **THE THREE SITES THIS ITEM CORRECTS ARE DECLARED THERE** — one of them,
+    `_Exactly.refusal`'s, carries a note naming `F-06-D` in terms — so correcting the operator
+    makes those declarations stale BY CONSTRUCTION and takes `crash_detector.admission` out of
+    the DERIVED module set.
+  the_three_stale_keys_QUOTED_FROM_THE_INSTRUMENTS_OWN_OUTPUT: |
+    ('crash_detector.admission', '_Exactly.refusal', 'MEMBERSHIP', 'type(value) in self.types')
+    ('crash_detector.admission', '_EachOf.refusal',  'MEMBERSHIP', 'type(value) not in self.within')
+    ('crash_detector.admission', '_EachOf.refusal',  'MEMBERSHIP', 'type(element) not in self.element')
+  what_replaces_them: '**NOT TRANSCRIBED HERE.** `python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list` enumerates them from the artefact, and a key copied is a transcription (CD-RULE-009).'
+  why_I_DID_NOT_CLEAR_IT: >
+    **`tools/sweep/declared_dispositions.py` IS IN THIS DISPATCH'S `protected_scope` IN TERMS:
+    "THE REGISTER AND THE FINDINGS INDEX. NOT YOURS."** Editing it to make the sweep green would
+    be the one act the dispatch forbids most explicitly, whatever the edit said. **AND THERE IS NO
+    SHAPE OF THIS CORRECTION THAT AVOIDS IT**: the key IS the source text, so any change to the
+    operator moves the key. I considered leaving the old `in` beside the new `is` so the key
+    survived and **REFUSED IT** — a redundant clause written to keep a register row alive is
+    constructing state so a control appears to pass, which is non-waivable.
+  the_return_value_for_this_item: '**`SCOPE_INSUFFICIENT` for exactly one file — `tools/sweep/declared_dispositions.py` — with the three stale keys named above.** The item''s code and carrier are COMPLETE and COMMITTED; what is missing is a register act that is not an Engineer''s.'
+  what_it_does_NOT_mean: '**IT DOES NOT MEAN ANY `DEFECT_OPEN` FINDING IS CLOSED.** Ten sites are declared open defects and this item closes none of them (PBG-AUTH-003). Whether the correction discharges `CD-F-0003` at that row is the seventh Assurance seat''s to test and the Product Owner''s to rule.'
+
+# ---------------------------------------------------------------------------------------------- #
+instruments_run_and_their_exit_codes__MINE_MEASURED_BY_ME:
+  the_whole_register_set_twelve_checks_at_this_tip: 'ELEVEN EXIT 0 · `check_grant_matrix_live` EXIT 3 (env gate, no credentials, none guessed). **UNMOVED by this item and by item 2''s correction.**'
+  delegated_judgement_sweep: '**EXIT 1 — FAIL, 555 sites, 4 violations.** Declared above.'
+  full_suite: '**EXIT 1 — 3 failed, 1681 passed.** All three failures are in `tests/test_the_fifteen.py` and all three are the sweep''s staleness read from a second place.'
+  the_carrier_at_the_base: '**7 failed, 5 passed** in a pristine `git archive 314592c` extraction with only `tests/test_admission_operator.py` added.'
+  the_probe_at_both_trees: 'variants/WO-2R3/P-O-...py — base: 2 ADMITTED, 1 passed-then-TypeError, 2 refused. Tip: 5 refused.'
+
+# ---------------------------------------------------------------------------------------------- #
+what_this_does_NOT_close__MEASURED:
+  - '**FOUR MEMBERSHIP SITES REMAIN**, enumerated from the source by the carrier: `dials/dialset.py:70` (a TUPLE, so `__eq__` alone), and three `_CONSTRUCTOR_IDENTITIES` lookups (FROZENSETS, so `__eq__` AND a forged `__hash__`).'
+  - '**THE `evaluate.py` SITE CLOSES NOTHING MEASURABLE.** The sealing of the `Reading` sum type is what carries it, and that is named rather than assumed.'
+  - '**NO `DEFECT_OPEN` FINDING IS CLOSED** and this seat has no authority to close one.'
+  - '**THE SWEEP IS RED AT THIS TIP.** Declared above, in `admission.py`''s `is_exactly` docstring, and in the return.'
+
+next_safe_action: 'ITEM 4 — GROUND 3 / ESCAPE 3, the mutating sink. Then ITEM 6.'

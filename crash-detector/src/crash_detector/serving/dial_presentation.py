@@ -123,7 +123,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from crash_detector.admission import ESTABLISHED_HERE, admits, one_of
+from crash_detector.admission import ESTABLISHED_HERE, admits, is_exactly, one_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.magnitude import (
     CrossDialCombination,
@@ -536,7 +536,14 @@ def _shown_from(dial_id: str, score: object) -> "Shown":
     through which a value reaches the surface, and a look-alike should not be accepted at
     it.
     """
-    if type(score) not in SCORE_TYPES:
+    # `is_exactly` AND NOT `type(score) not in SCORE_TYPES` (`F-06-D`, WO-2R3 increment 8).
+    # **THIS BODY REFUSAL IS WHAT THIS DOOR'S OWN `ESTABLISHED_HERE` REASON NAMES AS THE
+    # THING AN EXACT-TYPE DOOR WOULD PREEMPT**, so a declaration citing it had to be a
+    # refusal that a caller's metaclass cannot answer. `in` over a tuple is `==` and `==`
+    # puts `type(score)` on the LEFT; `is` between two type objects has nothing to
+    # delegate. SCORE_TYPES is a TUPLE, which is the container kind that falls to `__eq__`
+    # ALONE — a frozenset would also have needed a forged `__hash__`. Both measured.
+    if not is_exactly(score, SCORE_TYPES):
         raise DialPresentationRefused(
             f"a {type(score).__name__} was carried by a reading offered for presentation. "
             "A dial is shown from one of the declared dial score types and from nothing "

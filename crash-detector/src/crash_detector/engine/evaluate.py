@@ -184,6 +184,7 @@ from crash_detector.admission import (
     NotAdmitted,
     admits,
     declaration,
+    is_exactly,
     each_of,
     one_of,
 )
@@ -428,7 +429,15 @@ def refuse_a_number_without_its_inputs(
     That is the safe direction, and a guard that compelled a number would be pushing
     against PID §3.2 rather than for it.
     """
-    if type(reading) not in READINGS_THAT_CARRY_A_VALUE:
+    # `is_exactly` AND NOT `type(reading) not in READINGS_THAT_CARRY_A_VALUE`
+    # (`F-06-D`, WO-2R3 increment 8). **THIS IS THE POST-CONDITION'S FIRST STATEMENT AND
+    # ITS EARLY RETURN IS THE WHOLE OF CD-ASR-F03's CLOSURE.** `in` over a tuple is `==`,
+    # `==` puts `type(reading)` on the LEFT, and a metaclass answering `__eq__` inverted
+    # nothing here — it made `not in` FALSE, so a value-bearing reading DID reach the
+    # check. What it could do is the other direction: a reading whose metaclass answers
+    # `__eq__` False for every member returns EARLY and the claim is never checked.
+    # `is` between two type objects has nothing to delegate.
+    if not is_exactly(reading, READINGS_THAT_CARRY_A_VALUE):
         return
     if required_inputs_are_all_present(spec, usable):
         return

@@ -470,6 +470,7 @@ __all__ = [
     "declared_admissions",
     "admission_faults",
     "is_admitting_door",
+    "is_exactly",
 ]
 
 #: The attribute an admitting door carries, naming what it was told about. The static check
@@ -486,6 +487,70 @@ FAULTS_ATTRIBUTE = "__admission_faults__"
 #: The only parameter names skipped as a method receiver, and only in first position. See
 #: DECLARED LIMIT 2: renaming these FAULTS the door rather than opening it.
 _RECEIVER_NAMES = ("self", "cls")
+
+
+def is_exactly(value: object, types) -> bool:
+    """Is ``type(value)`` IDENTICALLY one of ``types``? Decided by ``is``, never by ``==``.
+
+    **THIS FUNCTION EXISTS BECAUSE THIS MODULE STATED ITS DOCTRINE THREE TIMES AND IMPLEMENTED
+    IT WITH THE OPERATOR THE DOCTRINE FORBIDS** (``F-06-D``, WO-2R3 increment 8). The header
+    says *"a value of the wrong exact type — ``type(value) is not declared``, never
+    ``isinstance``"*; :class:`_Exactly` says *"``type(value)`` must BE one of these types.
+    Never ``isinstance``"*; and the code read ``if type(value) in self.types``.
+
+    **``x in (A, B)`` IS ``x == A or x == B``, AND ``==`` PUTS ``type(value)`` ON THE LEFT**,
+    so a metaclass that defines ``__eq__`` decides this system's admission for its own
+    instances. Eight lines of caller code, no privilege, nothing in this package patched::
+
+        class Anything(type):
+            def __eq__(cls, other): return True
+        class NotAnInt(metaclass=Anything): pass
+
+        @admits(value=int)
+        def an_ordinary_door(value: int): ...     # source-honest, ZERO faults reported
+        an_ordinary_door(NotAnInt())              # BODY RAN, handed a NotAnInt
+
+    MEASURED END TO END at ``314592c`` on exactly that door by
+    ``variants/WO-2R3/P-O-the-metaclass-decides-the-comparison.py``, and refused by the same
+    probe here. ``is`` is identity between two type objects and there is nothing to delegate.
+
+    **AND THE MEASUREMENT THAT SIZES THE CLASS, BECAUSE THE TWO CONTAINER KINDS ARE NOT EQUALLY
+    EXPOSED AND THE RECORD SHOULD NOT SAY THEY ARE.** A membership test over a **tuple** falls
+    to ``__eq__`` ALONE. A membership test over a **frozenset** does NOT — it hashes first, so
+    it also needs a ``__hash__`` forged to collide with a real member. Measured both ways at
+    this tree. Neither is safe and one is cheaper.
+
+    ====================================================================================
+    **THIS CORRECTION SHIPS WITH THE CLASS-2 SWEEP RED, AND THE RED IS DECLARED HERE RATHER
+    THAN LEFT FOR SOMEBODY TO FIND.**
+
+    ``tools/sweep/declared_dispositions.py`` keys a disposition on ``(module, callable, KIND,
+    SOURCE TEXT)``. The three sites this correction changes are DECLARED there — one of them,
+    ``_Exactly.refusal``'s, with a note that names ``F-06-D`` in terms — so correcting the
+    operator makes those three declarations STALE and takes
+    ``crash_detector.admission`` out of the DERIVED module set. **MEASURED:
+    ``CD-CLASS-2-SWEEP: FAIL — 555 sites, 4 violations``**, three ``STALE DECLARATION`` and one
+    ``UNDECLARED MODULE`` (*"tier-2 site keys still undeclared: 3 of 33"*).
+
+    **THAT IS THE REGISTER WORKING, NOT BREAKING.** It is designed so that fixing a declared
+    site makes its disposition stale — *"a disposition whose reason has died does not survive
+    on habit"* — and the act of re-dispositioning is the Project Lead's. **THE ENGINEER SEAT
+    THAT MADE THIS CORRECTION HAS NO WRITE ACCESS TO THAT REGISTER AND DID NOT TAKE ANY**
+    (``CD-ENG-WO2R3-06``, returned as ``SCOPE_INSUFFICIENT`` for that one file). The three
+    stale keys are::
+
+        ('crash_detector.admission', '_Exactly.refusal', 'MEMBERSHIP', 'type(value) in self.types')
+        ('crash_detector.admission', '_EachOf.refusal',  'MEMBERSHIP', 'type(value) not in self.within')
+        ('crash_detector.admission', '_EachOf.refusal',  'MEMBERSHIP', 'type(element) not in self.element')
+
+    and the keys that replace them are enumerated by
+    ``python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list`` — **not
+    transcribed here, because a key copied is a transcription and this project has been bitten
+    by exactly that** (``CD-RULE-009``).
+    ====================================================================================
+    """
+    kind = type(value)
+    return any(kind is candidate for candidate in types)
 
 
 class AdmissionFault(Exception):
@@ -552,7 +617,11 @@ class _Exactly(_Admission):
         self.types = types
 
     def refusal(self, parameter: str, value: object) -> "str | None":
-        if type(value) in self.types:
+        # `is_exactly` AND NOT `type(value) in self.types` (F-06-D, WO-2R3 increment 8).
+        # `in` over a tuple is `==`, `==` puts `type(value)` on the LEFT, and a metaclass
+        # that answers `__eq__` therefore decided this door for its own instances — on an
+        # ordinary, source-honest door reporting ZERO faults. MEASURED end to end.
+        if is_exactly(value, self.types):
             return None
         return (
             f"{parameter}={type(value).__name__} is not admitted; this door requires "
@@ -583,7 +652,10 @@ class _EachOf(_Admission):
         self.within = within
 
     def refusal(self, parameter: str, value: object) -> "str | None":
-        if type(value) not in self.within:
+        # THE SAME OPERATOR CORRECTION AS `_Exactly`, AT THE CONTAINER TEST. Measured at
+        # the base: the metaclass plant PASSED this test and failed later, on iteration,
+        # for an unrelated reason — a refusal that never happened wearing a TypeError.
+        if not is_exactly(value, self.within):
             return (
                 f"{parameter}={type(value).__name__} is not admitted; this door requires "
                 f"exactly {' or '.join(t.__name__ for t in self.within)} whose every "
@@ -592,7 +664,9 @@ class _EachOf(_Admission):
                 f"judgement to make."
             )
         for index, element in enumerate(value):
-            if type(element) not in self.element:
+            # AND AT THE ELEMENT TEST, which the base admitted outright: an honest tuple
+            # carrying one metaclass-backed element reached the body. MEASURED.
+            if not is_exactly(element, self.element):
                 return (
                     f"{parameter}[{index}]={type(element).__name__} is not admitted; every "
                     f"element must be exactly {_names(self.element)}. The RECORD is "
