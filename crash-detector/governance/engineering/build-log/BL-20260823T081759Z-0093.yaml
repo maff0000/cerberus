@@ -1,0 +1,178 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 9 — ITEM 3. `CD-D-166`. THE `gates` FIELD, MEASURED ON BOTH AXES.
+#
+# **THE ANSWER FELL WORSE THAN THE FINDING SAID, AND IT FELL IN TWO DIRECTIONS AT ONCE.**
+#   ARM A  a PURE RENAME of one local — the relation untouched — raises **31** GATES_* violations.
+#   ARM B  every `gates` claim repointed at an UNRELATED site, no product source touched — **0**.
+# **THE CRITERION REFUSES WHEN NOTHING IS WRONG AND PASSES WHEN THE CLAIM IS FALSE.**
+#
+# **AND ITEM 3 CANNOT BE DELIVERED IN EITHER FORM IT OFFERS, BECAUSE ITS ENTIRE SUBJECT IS OUTSIDE
+# THE WRITABLE SCOPE THE SAME DISPATCH GRANTS.** `gates` is validated in
+# `tools/sweep/delegated_judgement_sweep.py` and declared in `tools/sweep/declared_dispositions.py`.
+# The writable scope names `tools/register/` and NOT `tools/sweep/`, and the second file is
+# protected by Product Owner ruling. **THAT IS A FINDING AGAINST THE DISPATCH AND THE DISPATCH ASKED
+# FOR ONE.**
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0092. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T081759Z-0093
+timestamp_utc: "2026-08-23T08:17:59Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-07
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC9-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0016.md ruling 2 — "CD-PL-F104 and CD-D-166 are ADDED", in terms. NOT scope the Project Lead added.'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: da308a106105c7fede1172a42e7c7da12f9df40f
+parent_entry_id: BL-20260823T081303Z-0092
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_3
+title: '`CD-D-166` — the `gates` field. The rename test and the vacuity check RUN, and the answer REPORTED AS IT FELL. Machine-checking it is `SCOPE_INSUFFICIENT` for two named files.'
+outcome: 'MEASURED AND REPORTED. `SCOPE_INSUFFICIENT`: tools/sweep/delegated_judgement_sweep.py AND tools/sweep/declared_dispositions.py. Neither is in the writable scope; the second is protected.'
+
+# ---------------------------------------------------------------------------------------------- #
+CD_RULE_009__THE_FOUR_ARMS_AND_THE_COMMAND_THAT_PRODUCES_THEM:
+  command: 'bash variants/WO-2R3/P-Q-what-does-the-gates-field-actually-hold.sh'
+  measured_at: da308a106105c7fede1172a42e7c7da12f9df40f
+  the_table: |
+      arm                                                   GATES_* raised   sweep verdict
+      CONTROL — the tree unchanged                                       0   FAIL — 555 sites,  4 violations
+      ARM A  — PURE RENAME, relation untouched                          31   FAIL — 555 sites, 39 violations
+      ARM B  — relation destroyed, NO product source touched             0   FAIL — 555 sites,  4 violations
+      ARM C  — `gates` pointed at a key that exists NOWHERE              31   FAIL — 555 sites, 35 violations
+  why_the_exit_code_is_not_the_measurement: >
+    **THE SWEEP EXITS 1 ON ALL FOUR ARMS**, because it already exits 1 on this tree — the three
+    stale keys and the undeclared module the Product Owner holds open (`PO-DECISIONS-0017` ruling
+    2). **AN EXIT CODE HERE TELLS YOU NOTHING**, which is the `CD-ENG-WO2R3-F12` standard exactly,
+    so the probe counts the `GATES_*` RULE NAMES and that is the only number that moves.
+  what_each_arm_did_and_did_not_change:
+    ARM_A: >
+      A PURE RENAME OF ONE LOCAL in `ConfigSnapshot.__post_init__`, `window` -> `admissible`, by
+      matching three EXACT statements so that no docstring, comment or unrelated identifier could
+      be swept up. **THE TREE STILL IMPORTS AND THE SWEEP STILL MEASURES 555 SITES** — identical to
+      CONTROL — so nothing about the shape of the subject moved. The gating relation is the same
+      admission, in the same function, on the same value, in the same module, gating the same path.
+    ARM_B: '**NOT ONE LINE OF PRODUCT SOURCE WAS TOUCHED.** All 31 `gates` claims were repointed at `crash_detector.time_utc::parse_utc ISINSTANCE: isinstance(text, str)` — a REAL site, in a DIFFERENT module, which gates NOTHING about `crash_detector.admission::_EachOf.refusal`.'
+    ARM_C: 'All 31 `gates` claims pointed at `isinstance(nothing_of_the_kind, float)` — a key that exists nowhere in the run''s measured site set.'
+
+# ---------------------------------------------------------------------------------------------- #
+THE_ANSWER_AS_IT_FELL:
+  THE_RENAME_TEST__IT_DOES_NOT_SURVIVE__CD_ENG_WO2R3_04_F05_UPHELD: >
+    **ARM A: 31 `GATES_SITE_DOES_NOT_EXIST` VIOLATIONS FROM RENAMING ONE LOCAL VARIABLE.** Nothing
+    about the gating relation changed and the criterion refused anyway. **THE REFUSAL IS CREDITED
+    TO TEXT, NOT TO STRUCTURE.** `CD-ENG-WO2R3-04-F05` is upheld in full, by measurement, on this
+    tree, at this SHA.
+  AND_THE_HALF_THE_FINDING_DID_NOT_MEASURE__THE_SOUNDNESS_TEST: >
+    **ARM B: ZERO VIOLATIONS.** The criterion cannot tell a true gating claim from a false one. It
+    holds EXISTENCE and DIFFERENT-MODULE, exactly as `tools/sweep/declared_dispositions.py:790`
+    already says of itself — *"IT DOES NOT CHECK THAT IT IS DOWNSTREAM, REACHABLE, OR RELATED. The
+    gating relation is a CLAIM BY THIS SEAT"* — **and this is that sentence measured rather than
+    read.** The register's prose was honest; nobody had run it.
+  THE_VACUITY_CHECK__WHICH_THE_RENAME_TEST_DOES_NOT_GIVE_YOU: >
+    **ARM C: 31 VIOLATIONS. THE CRITERION IS NOT VACUOUS.** It CAN refuse; it refuses on the wrong
+    axis. This project added the rule at the sixth gate — *"the rename test proves a criterion is
+    not a VOCABULARY; IT DOES NOT PROVE IT IS NOT VACUOUS. A criterion that always answers 'not
+    gated' passes the rename test perfectly and is worthless."* **RUN, AND THE ANSWER IS THAT
+    VACUITY IS NOT THIS FIELD'S DEFECT. UNSOUNDNESS IS.**
+  THE_TWO_DIRECTIONS_TOGETHER: >
+    **A CRITERION THAT REFUSES WHEN NOTHING IS WRONG (ARM A) AND PASSES WHEN THE CLAIM IS FALSE
+    (ARM B) IS NOT A WEAK CRITERION. IT IS A CRITERION OF A DIFFERENT PROPOSITION** — "does this
+    4-tuple of strings appear in today's site set, in another module" — **WEARING THE NAME OF THE
+    ONE IT DOES NOT MEASURE.**
+
+# ---------------------------------------------------------------------------------------------- #
+READING_ITEM_3_ADVERSARIALLY__THE_DISPATCH_ASKED_FOR_THIS_AND_HERE_IT_IS:
+  CD_ENG_WO2R3_07_F16__HIGH__ITEM_3_CANNOT_BE_DELIVERED_IN_EITHER_FORM_IT_OFFERS: >
+    **ITEM 3 SAYS "Make the gating relation MACHINE-CHECKED, or DECLARE ITS MEASURED LIMIT
+    (CD-RULE-004, three places)". BOTH FORMS REQUIRE FILES THE SAME DISPATCH DOES NOT MAKE
+    WRITABLE.**
+      * the check is `tools/sweep/delegated_judgement_sweep.py:_upstream_of_the_path_violations`.
+        **The writable scope names `tools/register/` and NOT `tools/sweep/`.**
+      * the data is `tools/sweep/declared_dispositions.py`. **PROTECTED by PO-DECISIONS-0017
+        ruling 2, and named as protected by this dispatch's own `protected_scope`.**
+      * and for the DECLARE branch, `CD-RULE-004`'s three places for THIS guard are the check
+        header (out of scope), the register entry (**the Class-2 sweep HAS NO `required-tests.yaml`
+        ROW** — `grep -c 'delegated_judgement_sweep' required-tests.yaml` finds it cited once, in
+        another row's prose, and no `test_id` of its own) and an execution contract
+        (**`contracts/execution/` HAS NO FILE FOR IT** — 26 contracts, none for the sweep).
+    **THE ONE PLACE THE LIMIT IS ALREADY WRITTEN IS `declared_dispositions.py:790`, WHICH IS THE
+    DATA FILE AND NOT ANY OF THE THREE.** So `CD-RULE-004`'s three-places rule has never been
+    satisfiable for this guard, by anyone, and that is not a fact about this seat's scope.
+  CD_ENG_WO2R3_07_F17__HIGH__AND_THE_FIELD_CANNOT_BE_MADE_STRUCTURAL_BY_ADDING_A_CLAUSE: >
+    **THE DEFECT IS THE FIELD'S IDENTITY, NOT ITS CLAUSE COUNT.** `gates` is a SITE KEY:
+    `(module, qualname, category, EXPRESSION TEXT)`. **THE FOURTH ELEMENT IS SOURCE TEXT**, so ANY
+    criterion keyed on that tuple fails the rename test BY CONSTRUCTION — ARM A is not a bug in the
+    clause, it is what a text key does. **BOLTING A REACHABILITY CLAUSE ONTO A TEXT KEY GIVES YOU A
+    STRICTER TEXT KEY, NOT A STRUCTURAL CRITERION, AND IT MAKES ARM A WORSE WHILE ONLY PARTLY
+    HELPING ARM B.** Any real fix has to answer *"what IS the same site across a rename?"*, and
+    that is a design question about the register's identity model. **IT IS NOT AN ENGINEER'S TO
+    DECIDE AND ITEM 3 IS WORDED AS THOUGH IT WERE A FIX.** Raised against the dispatch, which
+    invited it and which cites `CD-PL-F107` as the precedent for exactly this.
+  what_IS_available_and_is_offered_rather_than_taken: >
+    **THE HONEST MACHINE-CHECKABLE RELATION AVAILABLE TODAY IS IMPORT REACHABILITY, AND IT IS A
+    PROXY.** The sweep already builds the intra-package import closure (`_closure`), so
+    *"the gated site's module is reachable from the declaring site's module in that graph"* is
+    derivable from data the instrument already holds, and it is strictly more than
+    different-module. **IT IS STILL NOT "DOWNSTREAM ON A JUDGEMENT PATH":** module import
+    reachability is coarser than call reachability, and this project has already measured its own
+    call-reachability reasoning defective (`F-06-K`, `_module_bindings` cannot see a binding made
+    inside any block). **A PROXY DECLARED AS A PROXY WOULD BE A REAL IMPROVEMENT OVER A CLAIM
+    DECLARED AS MACHINE-CHECKED. IT WOULD NOT FIX ARM A.** Offered to the Project Lead and the
+    Product Owner as a design, not taken.
+
+# ---------------------------------------------------------------------------------------------- #
+SCOPE_INSUFFICIENT__THE_EXACT_FILES:
+  - path: tools/sweep/delegated_judgement_sweep.py
+    why: 'The `gates` criterion lives in `_upstream_of_the_path_violations`. `tools/sweep/` is not in this dispatch''s writable scope; only `tools/register/` is.'
+  - path: tools/sweep/declared_dispositions.py
+    why: 'The 31 `gates` claims live here. **PROTECTED by PO-DECISIONS-0017 ruling 2 and by this dispatch''s own protected_scope. NOT TOUCHED, AND `git diff --stat` NAMES IT NOWHERE.**'
+  also_missing_and_not_created_by_this_seat:
+  - 'a `required-tests.yaml` row for the Class-2 sweep — writable to this seat, and NOT written, because a register row for a guard whose header and contract this seat may not write would be one of CD-RULE-004''s three places filled in and the other two empty, which is the shape CD-PL-F91 is about.'
+  - 'a `contracts/execution/` document for the Class-2 sweep — same reason.'
+
+# ---------------------------------------------------------------------------------------------- #
+FINDINGS_AGAINST_MY_OWN_WORK:
+  CD_ENG_WO2R3_07_F18__MEDIUM__MY_FIRST_ARM_A_RENAMED_HALF_THE_FILE: >
+    The first draft of ARM A did `text.replace("window", "staleness_window")` over the whole module
+    and then two undo passes. It produced the SAME 31 violations — but it also rewrote docstrings
+    and prose, and **an auditor would have been entitled to answer "you did not perform a rename,
+    you performed an edit".** Rewritten to match THREE EXACT STATEMENTS with a `count == 1`
+    assertion on each, so the arm is defensible line by line. **THE NUMBER DID NOT CHANGE AND THAT
+    IS NOT THE POINT: AN ARM THAT GETS THE RIGHT ANSWER BY A METHOD A READER CAN DISMISS HAS NOT
+    MEASURED ANYTHING.**
+  CD_ENG_WO2R3_07_F19__LOW__ARM_A_RAISES_8_VIOLATIONS_THAT_ARE_NOT_ABOUT_gates_AT_ALL: >
+    39 - 31 - 4 = **4 extra**, and they are `STALE DECLARATION` / `UNDECLARED ADMISSION` pairs on
+    `crash_detector.engine.config::ConfigSnapshot.__post_init__` for `isinstance(window, bool)` and
+    `isinstance(window, float)`. **THE PURE RENAME BREAKS THE TIER-2 PER-SITE REGISTER TOO, NOT
+    ONLY `gates`.** That is a WIDER fact than `CD-D-166` and it is about every per-site key in the
+    register, not this field: **the whole per-site disposition register is keyed on source text and
+    a rename invalidates it.** Recorded here because it fell out of this measurement; it is not
+    this increment's to fix and it is not claimed as fixed.
+  CD_ENG_WO2R3_07_F20__LOW__I_DID_NOT_MEASURE_THE_CONVERSE_OF_ARM_B: >
+    ARM B shows a FALSE claim passes. **I DID NOT BUILD AN ARM SHOWING A TRUE CLAIM THAT THE
+    CRITERION REJECTS ON RELATION GROUNDS**, because no such rejection exists to demonstrate — the
+    criterion has no relation clause. Stated as a MEASURED ABSENCE rather than left out: what is
+    missing from this probe is an arm that cannot be built, and that is itself the finding.
+
+# ---------------------------------------------------------------------------------------------- #
+tests_run:
+  suite: '**3 failed, 1696 passed** — the DECLARED three. This item changed no product source and no test.'
+  sweep: '**FAIL — 555 sites, 4 violations** — byte-identical to the declared base. The probe mutates nothing in the worktree; all four arms are `/tmp` extractions.'
+  the_probe: '`bash variants/WO-2R3/P-Q-what-does-the-gates-field-actually-hold.sh` — four arms, four separate pristine extractions, each printing its own `pwd` and the sweep''s own `subject:` line (CD-PL-F98).'
+
+what_I_did_NOT_do:
+- '**I did not touch `tools/sweep/` at all.** Not the checker, not the register.'
+- '**I did not write a `required-tests.yaml` row or an execution contract for the Class-2 sweep**, though both paths are writable to me — see the reason above.'
+- '**I did not implement the import-reachability proxy.** It is offered as a design and is not taken.'
+
+next_safe_action: 'Return to the Project Lead. The reconciliation should re-take all four `P-Q` arms on its own extractions and should NOT read the numbers above.'

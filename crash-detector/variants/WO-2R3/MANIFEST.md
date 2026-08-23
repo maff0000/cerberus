@@ -520,3 +520,9 @@ return, where it can be argued with.
 probe alive as a first clause would have kept that key alive and kept the suite green.
 **THAT IS "ADDING A REDUNDANT CLAUSE SO A REGISTER KEY SURVIVES", WHICH THE PREVIOUS ENGINEER
 CONSIDERED AND REFUSED, AND SO DOES THIS ONE.**
+
+| artefact | asks / does | run it |
+|---|---|---|
+| **`P-Q-what-does-the-gates-field-actually-hold.sh`** | **NEW AT INCREMENT 9, ITEM 3.** `CD-D-166` / `CD-ENG-WO2R3-04-F05` asked live, FOUR arms against four pristine `git archive` extractions: CONTROL · **ARM A, the RENAME TEST** — a pure rename of one local, so the gating RELATION is untouched and only the text moves · **ARM B, the SOUNDNESS TEST** — no product source touched at all, every `gates` claim repointed at a REAL site in a DIFFERENT module that gates nothing about the declaring site · **ARM C, the VACUITY CHECK** — the rule this project added at the sixth gate, that the rename test proves a criterion is not a vocabulary and does NOT prove it is not vacuous, so a criterion that can never refuse must be caught separately. **THE SWEEP EXITS 1 ON ALL FOUR ARMS BECAUSE IT ALREADY EXITS 1 ON THIS TREE**, so each arm prints the COUNT of `GATES_*` rules raised, which is the only number that moves. **It mutates nothing in the worktree and every arm prints its own `pwd` and the sweep's own `subject:` line** (`CD-PL-F98`). | `bash variants/WO-2R3/P-Q-what-does-the-gates-field-actually-hold.sh` |
+
+**THIS ROW STATES NO CONCLUSION**, per this manifest's own rule.
