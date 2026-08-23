@@ -1,9 +1,18 @@
 ---
 document: BLUEPRINT — how the Crash Detector is built
 product: Crash Detector — standalone market stress instrument
-version: 0.2.0
+version: 0.3.0
 status: >
-  ACCEPTED. v0.1.0 was accepted by the Product Owner at 2e116ec
+  ACCEPTED. **v0.3.0 adds NO design decision and REVERSES none — it DECLARES A PERIMETER that was
+  previously implied and is false as implied.** §16 gains the FORGERY-DETECTION OBLIGATION (owed at
+  WO-3, verified as a first-class criterion) and §17 gains CD-BP-005, both on PO-DECISIONS-0018
+  ruling 1 (commit c72b6ea, authored by Matt Scott and by no seat), and **the Product Owner's own
+  sentences are carried into both VERBATIM** because this file is protected from every seat
+  including the Project Lead (CD-D-115). The version moves because §16 and §17 gained clauses, which
+  is this log's own stated rule; **the Project Lead authored the version bump, the row IDs and the
+  table scaffolding and NOTHING ELSE — enumerated at BL-20260823T095521Z-0131 so the delta between
+  CARRIED and AUTHORED bytes is auditable by command and not by trust.**
+  v0.1.0 was accepted by the Product Owner at 2e116ec
   (governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md); CD-HOLD-001 released and application code
   authorised from WO-2 (CD-D-004.1 satisfied). v0.2.0 carries BP-AMENDMENT-0001, which the Product
   Owner dispositioned and ACCEPTED at governance/decisions/PO-DECISIONS-0005.md (commit b4e8eae,
@@ -637,6 +646,52 @@ never on dell) means it cannot be settled from DEV anyway.
 *Default safe action:* both surfaces bind loopback on DEV throughout WO-2 to WO-6. Nothing is
 publicly reachable until Matt says so.
 
+**CD-D-172 — THE FORGERY-DETECTION OBLIGATION. THE PERIMETER IS DECLARED, NOT PRETENDED.**
+Added at BL-20260823T095521Z-0131 on the Product Owner's own ruling, PO-DECISIONS-0018 ruling 1
+(commit `c72b6ea`, authored by Matt Scott and by no seat), which ordered in terms: *"BLUEPRINT §17
+gains the risk row and §16 gains the owed control."* **The sentences below are the Product Owner's
+own bytes, carried verbatim and not paraphrased**, because this file is protected from every seat
+including the Project Lead (`CD-D-115`) and a perimeter declaration written in a seat's words would
+be a seat inventing product meaning.
+
+Seven gates and two programmes taught one sentence, and the Product Owner wrote it down:
+
+> *"an enumeration cannot close a property-defined class — and this class is defined by a platform
+> property we do not control."*
+
+The honest architecture is in three parts, and all three are the Product Owner's words:
+
+> **(a)** *"The declared-route refusals STAND and are kept — they are real, they refuse the front
+> door and the named routes, and they proof the product against ACCIDENT and against casual misuse.
+> That is worth having and it is what they honestly are."*
+>
+> **(b)** *"SEALED means sealed against declared routes; NOT sealed against deliberate in-process
+> forgery, which the platform does not permit preventing. A green board that says exactly that is
+> honest; a green board that says more is the sixth false green."*
+>
+> **(c)** *"The defence against deliberate in-process forgery is DETECTION, and it already has a
+> home. This is the estate's own settled doctrine arriving at its own product: prevention where
+> blast radius is catastrophic (Layer 3, out-of-process, where the money gate lives — D2 untouched);
+> detection everywhere else. The PID already says it: external sources are WITNESSES, never
+> ingredients — DIVERGENCE IS THE ALARM. A forged magnitude that reaches publication must diverge
+> from what the witnesses corroborate or be caught by the provenance chain; BLUEPRINT §17 gains the
+> risk row and §16 gains the owed control: the FORGERY-DETECTION OBLIGATION, specified at WO-3 when
+> real sources land, verified as a first-class criterion. The detector is ADVISORY (D1) and no money
+> moves on it (D2); the perimeter now says truthfully what is prevented, what is detected, and what
+> is out of scope — and the eighth seat grades against THAT, which is a gradeable claim."*
+
+*What is therefore OWED, and it is an owed CONTROL and not an owed opinion:* **the
+FORGERY-DETECTION OBLIGATION is specified at WO-3, when real sources land, and is verified as a
+FIRST-CLASS CRITERION** — not as a note, not as a residue paragraph, and not as a manual step. Its
+two named mechanisms are **witness divergence** and the **provenance chain**. It cannot be specified
+before WO-3 because with zero registry rows there are no witnesses to diverge from, which is the
+same reason CD-D-005's register is owed there and not here.
+
+*Default safe action meanwhile:* **unchanged, and it is already load-bearing.** The detector is
+ADVISORY (`D1`) and no money moves on it (`D2`), so the blast radius of a forged magnitude at WO-2
+is a wrong number on an advisory board and not a transaction. The declared-route refusals continue
+to do the accident-proofing they honestly do.
+
 Level 1 choices I have taken rather than escalated, listed so they are visible and reversible:
 Python for the application; PostgreSQL for the store (derived in §4); seven containers as justified
 in §2; alert transport deferred to WO-3 (§10); raw retention revisited on real volume (§12).
@@ -654,6 +709,7 @@ in §2; alert transport deferred to WO-3 (§10); raw retention revisited on real
 | CD-BP-002 | **the executor is now the single highest-value target in the product** — after BP-AMENDMENT-0001 it is the only place a dial number is computed. The concentration is deliberate (one place with source beats seven doors without) but it is a risk, not a win, and a `MEAN` that is not a mean is a defect this architecture does not prevent — it makes it *have source* | MEDIUM | stated in the amendment's §E residue rather than glossed; the mapping has source, so static analysis and review reach it, and every member of `MappingKind` is added deliberately and visibly with CD-D-005 provenance behind it |
 | CD-BP-003 | **the collector's adapter boundary admits by protocol and is the softest remaining surface.** `adapter`, `sink`, `ledger` and `validator` are genuinely foreign, so exact-typing them is not available; the closure is that every value they RETURN is established on arrival. That is a door that admits, not an absence of a door — weaker in kind than §7.0's | MEDIUM | declared as a limit rather than hidden (amendment §D.3); **named by the Product Owner as the fourth Assurance seat's first target** (PO-DECISIONS-0005 ruling 4) |
 | CD-BP-004 | **a consumer's `fold` with an `on_unknown` returning `0.0` renders absence as a number**, with the `Reading` sum type wholly intact — CD-AC-001's failure mode reached outside the governed boundary | MEDIUM | ruled WO-4, not WO-2R3 (PO-DECISIONS-0005 ruling 3), because the envelope schema and not `fold` is the structural refusal for what actually publishes. Carried here **and** named in WO-4's scope on day one, on the Product Owner's condition that a residue this amendment made visible does not become invisible by being deferred |
+| CD-BP-005 | **DELIBERATE IN-PROCESS FORGERY IS NOT PREVENTED AND THE PLATFORM DOES NOT PERMIT PREVENTING IT.** An actor already executing inside the process can construct an object of a governed exact type with a forged value, executing ZERO package lines — `cls.__new__(cls)` + `object.__setattr__`, and `type.__new__(<metaclass>, ...)` for the type itself. `object.__setattr__` and `type.__new__` are CPython working as documented. Seven gate verdicts, forty measured forgeries at `686a374` and a HIGH live control bypass (`CD-ASR-WO2R3-04-F01`) established it; appending a refused route to the census produced a false green five times | **HIGH, ACCEPTED AND DECLARED** | **the perimeter is DECLARED, not pretended** (PO-DECISIONS-0018 ruling 1, quoted verbatim in §16). PREVENTED: the declared routes and the front door, kept as accident-proofing, non-vacuous, proved by a refusing arm 1 — plus admission by EXACT TYPE on every enumerated judgement path, so a forged subclass is constructible but useless. DETECTED, and this is the load-bearing half: **witness divergence and the provenance chain, the FORGERY-DETECTION OBLIGATION owed at WO-3 as a first-class criterion** (§16, CD-D-172). OUT OF SCOPE: preventing an in-process actor from constructing the object at all. **Blast-radius basis: the detector is ADVISORY (`D1`) and no money moves on it (`D2`)** — prevention is reserved for Layer 3, out-of-process, where the money gate lives, and detection carries everywhere else. **Every instrument reporting SEALED must carry this limit in its own exit text; a verdict that claims more is the defect** (PO-DECISIONS-0018 ruling 1b) |
 
 ---
 
@@ -677,4 +733,5 @@ a written date.
 |---|---|---|---|
 | 0.1.0 | 2026-08-18 | Project Lead | initial Blueprint, proposed for Product Owner acceptance under WO-1 |
 | 0.1.0 | 2026-08-19 | Project Lead | **status only** — PROPOSED → ACCEPTED, recording the Product Owner's acceptance at 2e116ec and releasing the "no application code" hold this header was still asserting. No clause of the design changed, so the version does not move. |
+| 0.3.0 | 2026-08-23 | Project Lead, **carrying the Product Owner's own bytes** | **THE PERIMETER IS DECLARED, NOT PRETENDED — PO-DECISIONS-0018 ruling 1 (commit `c72b6ea`, authored by Matt Scott and by no seat), applied and NOTHING ELSE.** §16 gains **CD-D-172, the FORGERY-DETECTION OBLIGATION**: deliberate in-process forgery cannot be prevented on this platform, so the defence is DETECTION — witness divergence and the provenance chain — **specified at WO-3 when real sources land and verified as a FIRST-CLASS CRITERION**, with the ruling's three parts (a)/(b)/(c) quoted verbatim. §17 gains **CD-BP-005**, HIGH, ACCEPTED AND DECLARED, stating in one row what is PREVENTED, what is DETECTED and what is OUT OF SCOPE, on the blast-radius basis that the detector is ADVISORY (`D1`) and no money moves on it (`D2`). **No design decision changed and none was reversed; a claim that was false as implied is now stated truthfully.** The version moves because §16 and §17 gained clauses. **This file is protected from every seat including the Project Lead (`CD-D-115`); the ruling's parenthetical — *"PO-authored text carried verbatim where protected"* — is the authority for the carriage, and the Project Lead's OWN authored bytes are exactly the version bump, the two IDs, the table scaffolding and this row, enumerated at `BL-20260823T095521Z-0131`.** Graded by the eighth Assurance seat against the declared perimeter. |
 | 0.2.0 | 2026-08-22 | Project Lead | **BP-AMENDMENT-0001 — the engine owns the model lifecycle — IN FORCE.** Accepted by the Product Owner at governance/decisions/PO-DECISIONS-0005.md (commit b4e8eae). Applies the amendment's §F.3 delta and nothing else: §1 gains the fourth and fifth structural instruments (named specs resolved by the engine; establishment derived from the signature); §7 is rewritten with §7.0 *models are data* and §7.1 *doors require their value types*, and the "model injected into a DialSpec keeps evaluate pure" reasoning is retired as true-but-not-load-bearing; §13 and §14 carry CD-AC-002's fourth and first-structural refusal and CD-AC-005's `admits` door; §16 records that CD-D-005 now also owes model registry rows and that `MappingKind` ships one refusing member; §17 gains CD-BP-002, CD-BP-003 and CD-BP-004. **The version moves because clauses changed** — three gate verdicts said the value types are real closures but the doors do not require them, and this is the design that answers that sentence. |
