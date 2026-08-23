@@ -1,0 +1,311 @@
+entry_id: BL-20260823T023325Z-0116
+timestamp_utc: '2026-08-23T02:33:25Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 443928093fccdb1686ce2fa2c0bf1f2d19379ebd   # RESOLVED with `git rev-parse`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the sixth-seat DISPATCH boundary. The verdict itself was banked at the commit AFTER it, alone, so the auditor's document and this reconciliation are separable in the git graph.
+parent_entry_id: BL-20260823T014454Z-0115
+schema_version: 1
+
+action_summary: >
+  *** **THE SIXTH FRESH ASSURANCE SEAT RETURNED `RED` AT `af2accb` AND IS RECONCILED BY MEASUREMENT.
+  THE VERDICT IS BANKED VERBATIM AT ITS OWN COMMIT, UNEDITED, BESIDE THE FOURTH AND FIFTH SEATS'
+  DOCUMENTS AND NEVER INSIDE THEM (CD-D-143, PBG-CONT-003).** *** T2 **RED**; CD-AC-002 and CD-AC-005
+  **AMBER, NOT CLOSED**; nineteen findings; three grounds.
+  *** **THE HEADLINE IS NOT THE RED. IT IS THAT THE INCREMENT-7 DECLARED STOP CONDITION WAS MET AND
+  DID NOT FIRE — AND THE PROJECT LEAD HAS NOW CONSTRUCTED IT INDEPENDENTLY, WITH A COUNTERFACTUAL
+  ARM, RATHER THAN RE-RUNNING THE SEAT'S PROBE.** *** CD-D-152 made item 1 a declared STOP: if
+  `_evaluate_dial` proved reachable without an established door, PO-DECISIONS-0012 ruling 1 FALLS and
+  the increment ends. The Engineer measured **cycle 1** and proceeded. **A CONFORMING, DECLARED-FOREIGN
+  `SourceAdapter` OBTAINS AND CALLS THE NET ON THE SECOND COLLECTION CYCLE, THROUGH `sys.modules`
+  ALONE — no `importlib`, no import statement, no frame walk, no threads — AND REACHES THE UNDECORATED
+  EVALUATOR THROUGH ITS OWN `__closure__`, PASSING NO ESTABLISHED DOOR.** ***
+  *** **AND THE PROJECT LEAD'S OWN DISPATCH IS FALSIFIED BY ITS OWN AUDITOR, IN THE CLAUSE THAT WAS
+  MANDATORY AND VERBATIM.** Clause (i) told that seat there was **ONE** instrument exiting non-zero by
+  declared state. **THERE ARE TWO. `CD-RT-012-NO-EXECUTION-INTERFACE` WENT `EXIT 0` -> `EXIT 1` INSIDE
+  INCREMENT 7** — PL-MEASURED IN BOTH ARMS. **CD-PL-F102, HIGH, AGAINST THIS SEAT.** ***
+  *** **AND ONE CORRECTION THE PROJECT LEAD MAKES *AGAINST* THE AUDITOR IN THE WORSE DIRECTION.** The
+  seat bounded F-06-D as *"the declaration is source-written, so this is not a caller route"*. **IT IS
+  A CALLER ROUTE. PL-MEASURED END-TO-END ON AN ORDINARY, SOURCE-HONEST `@admits(value=int)` DOOR
+  REPORTING ZERO FAULTS: a caller-supplied object whose class carries a metaclass with `__eq__` IS
+  ADMITTED AND THE BODY RUNS.** `in` puts `type(value)` on the LEFT of the `==`, so the CALLER's class
+  decides the comparison. **CD-PL-F103. THE AUDITOR UNDERSTATED ITS OWN FINDING AND THE RECORD SAYS SO
+  RATHER THAN INHERITING THE TIGHTER BOUND.** ***
+  *** **NOTHING CLOSES AND NOTHING IS GRADED HERE (PBG-AUTH-003, PBG-AUTH-006). FOUR PRODUCT AUTHORITY
+  QUESTIONS ARE UP AND THE FIRST OF THEM DECIDES WHETHER A STANDING RULING FALLS.** ***
+
+# ================================================================================================== #
+the_return_reconciled_BY_MEASUREMENT_AND_NOT_BY_READING_ITS_CLAIMS:
+  the_seats_return: '`RED`. `governance/assurance/WO-2R3/VERDICT-SIXTH-SEAT.md`, 1059 lines, sha256 `bf1f4729f0b59ce09f634a4d27b3839f074f5f10ba5a148e9c59713c8d6768d8`.'
+  structural_checks_PL_MEASURED:
+    read_only_honoured: >
+      **`/srv/crash-detector-wo2r3-audit6` IS STILL AT `af2accb` WITH `git status --porcelain` ZERO
+      LINES.** No commit was made by the seat; `HEAD` on `main` was still the Project Lead's own
+      dispatch follow-up (`4439280`) when the return arrived.
+    the_four_prior_documents_UNMODIFIED: >
+      `git diff --stat HEAD -- governance/assurance/` -> **EMPTY.** `VERDICT.md`,
+      `SUPPLEMENT-T2-GRADING.md`, `ADDENDUM-T2-ADAPTER-BOUNDARY.md` and `VERDICT-FIFTH-SEAT.md` are
+      byte-unchanged. **THE NEW DOCUMENT WENT BESIDE THEM, NEVER INSIDE THEM.**
+    not_headed_IN_PROGRESS: '`grep -c "IN PROGRESS"` -> **0** (CD-D-149 satisfied). The file is headed `# ASSURANCE VERDICT — WO-2R3, THE SIXTH SEAT`.'
+    how_it_was_banked: >
+      **ONE COMMIT, ONE PATH, 1059 INSERTIONS AND NO OTHER LINE OF THE RECORD TOUCHED**, so that what
+      the auditor wrote and what the Project Lead made of it are **separable in the git graph** and
+      nobody has to take this entry's word for the separation.
+
+  GROUND_1_THE_REACHABILITY_CRITERION_REPRODUCED_IN_BOTH_ARMS:
+    what_the_seat_claimed: >
+      The reclassified doors criterion moves on an underscore and not on a real public binding: a
+      one-line PUBLIC module-level alias leaves it at PASS, while renaming the destination flips it.
+    PL_MEASURED_STATIC: >
+      Two throwaway extractions of `af2accb`. **ARM A — append `evaluate_dial = _evaluate_dial`:
+      `CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: PASS — 60 assertions, 0 violations`, EXIT 0, UNMOVED.**
+      **ARM B (CONTROL, CD-D-079) — rename `_evaluate_dial` -> `evaluate_dial`: EXIT 1, FAIL, first
+      violation `src/crash_detector/engine/evaluate.py:342`.** **REPRODUCED.**
+    PL_MEASURED_RUNTIME_because_a_static_result_is_not_a_reachability_claim: >
+      In ARM A, with the probe's own `tree:` line read (CD-PL-F98):
+      `module.evaluate_dial` -> the SAME OBJECT as `module._evaluate_dial` (`is` -> **True**),
+      `__qualname__` `_evaluate_dial`, **1 closure cell holding the undecorated `_evaluate_dial`.**
+      **THE PUBLIC NAME IS GENUINELY OBTAINABLE FROM OUTSIDE THE MODULE AND THE CRITERION DOES NOT
+      MOVE.**
+    what_this_seat_draws_and_what_it_does_NOT: >
+      **DRAWN: the asymmetry is real and the shipped tree at `af2accb` is NOT defective here** — no
+      such alias exists and `guarded` is correctly a NET. **NOT DRAWN: the grade.** The instrument is
+      a REGRESSION control whose entire job is to catch a future edit, and a one-line future edit
+      defeats it silently. **THAT IS THE AUDITOR'S GRADE AND IT IS NOT THIS SEAT'S TO SOFTEN OR
+      SHARPEN.**
+
+  GROUND_2_THE_DECLARED_STOP_CONDITION_CONSTRUCTED_INDEPENDENTLY_BY_THE_PROJECT_LEAD:
+    why_it_was_not_enough_to_re_run_the_seats_probe: >
+      **AT THE PREVIOUS BOUNDARY THIS SEAT RECORDED ITS OWN ITEM-1 CHECK AS AN ATTRIBUTION AND NOT A
+      CONFIRMATION, AND DISCLOSED THAT IN THE SIXTH SEAT'S BRIEF BEFORE ITS BOOT.** Re-running the
+      auditor's probe would have repeated the defect one party later. **THIS IS THE PROJECT LEAD'S OWN
+      CONSTRUCTION: its own adapter, its own harness, assembled from the project's shipped fakes.**
+    the_probe_and_its_deliberate_poverty: >
+      `/tmp/PL-second-cycle.py`. **ROUTE 1 ONLY — `sys.modules.get(TARGET)` inside `fetch()`. NO
+      `importlib`. NO import statement in the adapter. NO frame walk. NO threads.** The adapter
+      conforms to the five spelled members and does nothing else. The host runs two ordinary
+      collection cycles through the shipped `collect()` door, and between them calls **the product's
+      own public `evaluate()` API, from the host, not from the adapter.**
+    the_result_PL_MEASURED: >
+      `tree: /tmp/cd-pl6/src/crash_detector/collectors/runner.py`; at process start the target module
+      is NOT in `sys.modules`.
+      **cycle 1: `crash_detector.engine.evaluate` NOT in sys.modules — nothing reached.** *(This is the
+      state P-G measured, and the only state it measured.)*
+      **cycle 2: IS in sys.modules; `_evaluate_dial` obtained: True; UNDECORATED evaluator via
+      `__closure__`: True; `__wrapped__` present? False; reached passing through NO established door.**
+    THE_CONTROL_ARM_CD_D_079_AND_IT_IS_WHAT_MAKES_THIS_EVIDENCE: >
+      **THE SAME PROBE WITH THE HOST'S EVALUATION REMOVED AND NOTHING ELSE CHANGED:**
+      **cycle 1: NOT in sys.modules. cycle 2: NOT in sys.modules. NOTHING REACHED.**
+      **THIS ESTABLISHES TWO THINGS AT ONCE.** (1) **THE COLLECTION PATH NEVER IMPORTS THE ENGINE** —
+      which independently confirms the seat's §2.3: P-G's closing line `... AFTER collect(): True` was
+      an artefact of P-G's OWN Route 3, and the lead this record has carried as "the interesting one
+      nobody has attacked" was a measurement defect, not a signal. **THAT IS CD-ENG-WO2R3-F12 IN THE
+      GATE-DECIDING PROBE ITSELF.** (2) **THE CAUSE OF THE CYCLE-2 POSITIVE IS ISOLATED TO EXACTLY ONE
+      ACT: THE HOST CALLING ITS OWN PUBLIC EVALUATION API.**
+    the_step_a_reader_may_challenge_STATED_PLAINLY_AND_NOT_BURIED: >
+      The reach exists because the host imported the engine between cycles, by evaluating. **THE
+      PROJECT LEAD DOES NOT SOFTEN THIS AND DOES NOT RULE ON IT.** The auditor's framing, which this
+      seat reproduces rather than restates: *"If a host calling its own public evaluation API counts as
+      handing the net over, then the net was never unreachable in any deployment that both collects and
+      evaluates — which is every deployment this product has."* **WHETHER THAT IS INSIDE THE THREAT
+      MODEL IS PRODUCT AUTHORITY'S AND IT IS Q1.**
+    what_this_seat_states_and_what_it_REFUSES_to_state: >
+      **STATED: by CD-D-152's own words the `STOPPED_AT_ITEM_1` outcome was reached, and the increment
+      proceeded past it.** **REFUSED: whether PO-DECISIONS-0012 ruling 1 falls.** That consequence is
+      reserved to Product Authority — **the increment-7 Engineer was explicitly forbidden to decide it,
+      the Assurance seat declined it under PBG-AUTH-003, and the Project Lead has less standing than
+      either (PBG-AUTH-006).**
+
+  F_06_A_THE_FINDING_THAT_FALSIFIES_THIS_SEATS_OWN_DISPATCH:
+    PL_MEASURED_IN_BOTH_ARMS: >
+      `tools/register/check_no_execution_interface.py --root .` in pristine extractions:
+      **`9f7b764` -> `EXIT 0 · CD-RT-012-NO-EXECUTION-INTERFACE: PASS — 53663 assertions, 0
+      violations`.** **`af2accb` -> `EXIT 1 · FAIL — 1 violation(s)`.** **A GOVERNED REGISTER
+      REGRESSED FROM GREEN TO RED INSIDE INCREMENT 7 AND NO DOCUMENT SAID SO UNTIL THIS AUDITOR.**
+    the_cause_PL_READ_FROM_THE_INSTRUMENTS_OWN_OUTPUT: >
+      **`VIOLATION tests/test_tree_fingerprint.py:61 — rule: execution interface declared in prose`.**
+      The file is one increment 7 ADDED, as item 6 — **the fix for CD-PL-F100, the fingerprint recipe
+      that fired a false alarm at the fifth auditor.** Its prose describes that false alarm in a
+      sentence containing the words `dispatch ORDERS`, and CD-RT-012's L3 prose layer read it, in the
+      active voice, as code that routes orders. **THE FIX FOR A FALSE ALARM IN ONE GOVERNED INSTRUMENT
+      PLANTED A FALSE ALARM IN A DIFFERENT GOVERNED INSTRUMENT, AND BOTH ALARMS ARE MAXIMUM SEVERITY.**
+    and_it_is_NOT_only_a_curiosity: >
+      **A FALSE POSITIVE IN A GUARD IS NOT HARMLESS: IT IS THE STATE IN WHICH PEOPLE LEARN TO IGNORE
+      THE GUARD.** The instrument is not wrong about its own rule; it is wrong about this sentence.
+      Whether that is fixed or declared is Q3.
+
+  F_06_D_AND_THE_PROJECT_LEAD_CORRECTS_THE_AUDITOR_IN_THE_WORSE_DIRECTION:
+    what_the_seat_found: >
+      `admission.py` states its doctrine three times — *"`type(value) is not declared`, never
+      `isinstance`"* — and implements it at `:525` as **`if type(value) in self.types:`**. `in` over a
+      tuple is `==`, not `is`, and `==` is delegable to a metaclass. **UPHELD AND REPRODUCED.**
+    the_bound_the_seat_put_on_it: >
+      *"the declaration is source-written, so this is not a caller route, and the fifth seat's 'no
+      caller-controlled route' for Category C is correct."*
+    THE_PROJECT_LEADS_MEASUREMENT_AND_IT_WIDENS_THE_FINDING: >
+      **THAT BOUND IS TOO TIGHT AND THE CORRECTION GOES THE WRONG WAY FOR THE PROJECT.**
+      **`in` PUTS `type(value)` ON THE *LEFT* OF THE `==`, SO IT IS THE *CALLER'S* CLASS WHOSE
+      COMPARISON RUNS FIRST.** Bare-Python control: `H in (int,)` -> **True** where
+      `any(H is t for t in (int,))` -> **False**.
+      **END-TO-END ON THE REAL DOOR, PL-MEASURED:** an ordinary, source-honest `@admits(value=int)`,
+      **`admission_faults(door)` -> `()`**, i.e. the door reports itself healthy. A caller supplies an
+      instance of a class carrying a metaclass with `__eq__` returning True. **`door(hostile)` ->
+      ADMITTED, THE BODY RAN.** A genuine `int` is still admitted and a `str` is still refused, **so
+      the door looks like it is working.**
+    why_this_matters_beyond_one_line: >
+      `_Exactly` is what EVERY exact-type `@admits(...)` declaration compiles to. **THIS IS NOT ONE
+      DOOR; IT IS THE MECHANISM**, and it bears directly on Category C's disposition and on CD-AC-005.
+      **THE AUDITOR UNDERSTATED ITS OWN FINDING; THE PROJECT LEAD IS NOT ENTITLED TO INHERIT THE
+      COMFORTABLE HALF OF AN AUDITOR'S SENTENCE AND SAYS SO HERE. CD-PL-F103.**
+    the_fix_is_still_one_line: '`any(type(value) is t for t in self.types)` — and its carrier is a metaclass plant, which this tree does not have.'
+
+  what_the_project_lead_did_NOT_re_measure_at_this_boundary: >
+    **GROUND 3 (ESCAPE 3) WAS NOT INDEPENDENTLY REPRODUCED HERE.** It is the fifth seat's item (a),
+    now confirmed live by a second auditor at a second SHA, and `collectors/` is byte-identical
+    between `9f7b764` and `af2accb`. **THIS SEAT ACCEPTS IT ON TWO INDEPENDENT AUDITORS' MEASUREMENT
+    AND LABELS THAT ACCEPTANCE RATHER THAN DRESSING IT AS CONFIRMATION.**
+    **F-06-B, F-06-C, F-06-E, F-06-F, F-06-I, F-06-J, F-06-K, F-06-L, F-06-M, F-06-N, F-06-O, F-06-P,
+    F-06-Q, F-06-R, F-06-S WERE NOT RE-MEASURED.** Fifteen of the nineteen findings are banked on the
+    auditor's measurement alone. **THAT IS STATED AS A LIMIT OF THIS RECONCILIATION AND NOT AS A
+    JUDGEMENT ON THEM** — several (F-06-E, the fingerprint collision; F-06-F, a carrier named
+    "MEASURED" in three places that does not exist) are squarely the META-ASSURANCE pass's.
+
+# ================================================================================================== #
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F102
+  severity: HIGH
+  title: '**THE PROJECT LEAD''S OWN DISPATCH CARRIED A FALSE MANDATORY CLAUSE, AND ITS AUDITOR FALSIFIED IT WITH ONE COMMAND.**'
+  what: >
+    `CD-DISPATCH-WO2R3-ASSURANCE-06` clause (i) — carried VERBATIM under CD-D-129, the clause whose
+    whole purpose is that the seat be TOLD before it discovers — declared **ONE** governed instrument
+    exiting non-zero by declared state, and said in terms that at the fifth gate there were two and
+    "THERE IS NOW ONE". **THERE WERE TWO. `CD-RT-012-NO-EXECUTION-INTERFACE` WAS ALREADY RED AT THE
+    TARGET.**
+  the_cause_and_it_is_the_same_shape_as_CD_PL_F86: >
+    **THIS SEAT MEASURED A LIST, NOT A PROPERTY.** It ran the doors check, the sweep, the suite and
+    the `__wrapped__` probe — the four figures the previous boundary happened to be about — and **DID
+    NOT RUN THE REGISTER SET.** The thing that had broken was outside the list. **THAT IS EXACTLY
+    CD-PL-F86, WHICH THIS SEAT RAISED AGAINST ITSELF AT THE FOURTH GATE AND WHOSE PROPOSED REMEDY —
+    "sweep by PROPERTY, enumerated by an instrument with its command and count recorded" — WAS
+    RECORDED AND NOT BUILT.** It has now cost something: a mandatory disclosure clause was false, and
+    a green-to-red regression inside an increment went unreported through a reconciliation and a
+    dispatch.
+  the_aggravating_fact: >
+    **THE DISPATCH TOLD THE SEAT THAT A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD
+    DEFECT IN THE SEAT THAT WRITES IT — WHILE ITSELF FAILING TO READ ONE OF THE DECLARATIONS.**
+  remedy_PROPOSED_AND_NOT_BUILT_AND_THE_REASON_IS_STATED: >
+    Every boundary that states a target must run **the register set** and record each exit code, by an
+    instrument that enumerates the registers rather than by a seat naming the ones it remembers.
+    **IT IS NOT BUILT HERE.** A Project Lead inventing itself a new instrument in the middle of a gate
+    it is reconciling is how scope creeps, and it is the second time this exact remedy has been
+    recorded rather than built. **THAT REPETITION IS ITSELF THE FINDING AND IT GOES TO THE
+    META-ASSURANCE PASS, WHICH NOW HAS A SECOND INSTANCE OF THE SAME UNBUILT FIX.**
+- id: CD-PL-F103
+  severity: HIGH
+  title: '**THE AUDITOR UNDERSTATED F-06-D: THE METACLASS ADMISSION BYPASS *IS* A CALLER ROUTE.**'
+  what: >
+    The seat bounded F-06-D to source-written declarations and expressly upheld the fifth seat's "no
+    caller-controlled route" for Category C on that basis. **PL-MEASURED END-TO-END: an ordinary
+    `@admits(value=int)` door reporting ZERO faults ADMITS a caller-supplied object whose class
+    carries a metaclass defining `__eq__`, and the body runs.** The caller need not control the
+    declaration; it needs only the value, because `type(value)` is the LEFT operand of the `==`.
+  why_it_is_raised_by_the_PROJECT_LEAD_and_not_left_for_the_next_seat: >
+    **BECAUSE IT MAKES AN AUDITOR'S FINDING BIGGER, AND A RECONCILIATION THAT ONLY EVER SHRINKS
+    FINDINGS IS NOT A RECONCILIATION.** It also changes an input the Product Owner is about to rule
+    on: Category C's disposition rests on "no caller-controlled route", and that sentence is now false
+    for the mechanism the six sites live in.
+  what_it_does_NOT_do: >
+    **IT DOES NOT MOVE A GRADE** (PBG-AUTH-006) and it does not reopen the audit. It is measured,
+    written down, and handed to Product Authority with the rest.
+
+# ================================================================================================== #
+product_authority_questions_raised_at_this_boundary:
+  Q1_THE_STOP_CONDITION_WAS_MET_DOES_PO_DECISIONS_0012_RULING_1_FALL: >
+    *** **THIS IS THE ONE THAT DECIDES THE OTHERS AND IT IS RESERVED TO PRODUCT AUTHORITY ALONE.** ***
+    CD-D-152 made increment 7's item 1 a **declared STOP**: *"If reachable without an established
+    door, 0012 ruling 1 falls and `guarded` becomes a door with a redesigned CD-ASR-F03 control. IF
+    YOUR MEASUREMENT LANDS THAT WAY: STOP."* The Engineer measured **cycle 1**, got "no", and
+    proceeded — and refused to rule, correctly: *"'I could not construct the reach' and 'the reach does
+    not exist' are different sentences and only the first one is evidence."*
+    **THE SECOND SENTENCE HAS NOW BEEN WRITTEN BY TWO INDEPENDENT PARTIES.** Ruling 1's load-bearing
+    half — *"reachable only through doors that already establish"* — is **FALSIFIED BY MEASUREMENT**:
+    a conforming foreign adapter obtains and calls the net on cycle 2 and reaches the undecorated
+    evaluator through `__closure__`, passing no door, using only the route the Engineer itself
+    measured as the decisive IN-MODEL arm.
+    **THE ONE STEP TO WEIGH, PUT PLAINLY RATHER THAN ARGUED:** the reach exists because the host
+    imported the engine by calling its own public `evaluate()` API. The counterfactual arm proves the
+    collection path never imports it. **SO THE QUESTION IS EXACTLY: DOES A HOST EVALUATING — WHICH
+    EVERY DEPLOYMENT OF THIS PRODUCT DOES — COUNT AS HANDING THE NET OVER?** If yes, ruling 1 falls
+    and the doors instrument is REDESIGNED, not repaired. If no, the STOP was correctly not taken and
+    the record should say why in terms that survive the next auditor.
+    **NEITHER SEAT MAY ANSWER THIS. THE ENGINEER WAS FORBIDDEN, THE AUDITOR DECLINED UNDER
+    PBG-AUTH-003, AND THE PROJECT LEAD HAS LESS STANDING THAN EITHER.**
+  Q2_THE_DISPOSITION_OF_THE_RED_ITSELF_AND_THE_ORDER_OF_THE_TEN: >
+    The verdict is **RED** with T2 **RED** and CD-AC-002 / CD-AC-005 **AMBER, NOT CLOSED**. The seat's
+    continuation implication is explicit and is **not** that the tree is unsafe to hold: *"Nothing
+    found is exploitable by a remote party; every route needs either in-process code or a source edit
+    … the urgency is in the CONTROLS, not the product."* It offers a ten-item ordered next gate.
+    **THE DISPOSITION AND THE ORDER ARE THE PRODUCT OWNER'S.** The Project Lead notes only that items
+    2 (F-06-A) and 3 (F-06-D, now widened by CD-PL-F103) are one-line changes independent of Q1, and
+    that item 1 is Q1 itself.
+  Q3_CD_RT_012_IS_RED_AT_THE_TIP_FIX_THE_FALSE_POSITIVE_OR_DECLARE_IT: >
+    **A GOVERNED REGISTER WENT GREEN -> RED INSIDE INCREMENT 7 AND THE VIOLATION IS A SENTENCE ABOUT
+    A FALSE ALARM, IN THE TEST THAT FIXED A FALSE ALARM.** Two routes and both are defensible: correct
+    the L3 prose reading, or DECLARE the violation the way the Class-2 sweep's is declared. **THIS
+    RECORD HAS A STRONG PRIOR AGAINST "MAKE THE INSTRUMENT SAY WHAT WE WANT" AND THE PROJECT LEAD
+    STATES NO PREFERENCE IT IS ENTITLED TO ACT ON.** What is NOT optional is that the tip currently
+    ships a red governed register that no document acknowledged until an auditor ran it.
+  Q4_THE_ELEVEN_ARE_FIFTEEN_AND_A_RULING_NOW_CARRIES_THE_STALE_COUNT: >
+    PO-DECISIONS-0014 ruling 2 names **"the eleven"** as the sixth seat's named targets. **THE
+    INSTRUMENT HAS PRINTED 15 SINCE INCREMENT 5** — 11 in `crash_detector.admission` plus 4 in
+    `crash_detector.establishment`, the latter carried as "reported and not chased" through three
+    gates. The seat's F-06-I raises it and asks whether the four were ever legitimately out of scope.
+    **DOES THE ONE ACT ORDERED AT RULING 1 DISPOSITION ELEVEN OR FIFTEEN?** CD-D-160 currently holds
+    eleven, and **this seat will not silently widen a Product Owner's own count.**
+    **AND FOLDED INTO THIS QUESTION BECAUSE IT CHANGES THE ANSWER:** Category C's six sites were
+    dispositioned `OUT_OF_BOUND` in the Project Lead's draft on the ground of "no caller-controlled
+    route". **CD-PL-F103 FALSIFIES THAT GROUND**, and the seat's F-06-R independently disagrees with
+    the draft on all six. **THE DRAFT'S CATEGORY C IS NOW UNSUPPORTED BY ITS OWN STATED REASON.**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT GRADE ANYTHING AND IT DID NOT MOVE A GRADE** (PBG-AUTH-003, PBG-AUTH-006). T2 **RED**;
+  CD-AC-002 and CD-AC-005 **AMBER, NOT CLOSED**; the **WO-2 GATE IS SHUT**; increment 7 remains
+  **RECONCILED AND NOT ACCEPTED** (CD-D-156).
+  **IT DID NOT ARGUE THE VERDICT DOWN OR UP.** The one place it moved a finding, it moved it
+  **BIGGER** (CD-PL-F103).
+  **IT DID NOT EDIT ONE CHARACTER OF THE AUDITOR'S DOCUMENT**, and banked it at its own commit so the
+  claim is checkable rather than asserted.
+  **IT DID NOT WRITE THE ELEVEN, THE REDRAFT OR THE FINDINGS REGISTER** (CD-D-160, CD-D-161) — and
+  Q4 now asks whether the act is eleven or fifteen.
+  **IT DID NOT FIX `CD-RT-012`, `admission.py:525`, THE DOORS CRITERION OR ESCAPE 3.** Every one of
+  them is a code change on a lane an auditor has just graded, and three of them wait on Q1.
+  **IT DID NOT TOUCH THE LANE OR THE AUDIT WORKTREE.** Both are at `af2accb`, porcelain zero.
+  **IT DID NOT BEGIN THE META-ASSURANCE PASS**, which now inherits F-06-B, F-06-C, F-06-E, F-06-F,
+  CD-PL-F98..F101 and **a second instance of CD-PL-F86's unbuilt remedy (CD-PL-F102)**.
+  **IT DID NOT MODIFY ANYTHING UNDER `pbg/`.**
+
+next_safe_action: >
+  *** **STOP. FOUR PRODUCT AUTHORITY QUESTIONS ARE UP AND Q1 DECIDES WHETHER A STANDING RULING FALLS.
+  NO CODE MOVES, NO INSTRUMENT MOVES, NO DISPOSITION IS WRITTEN, AND THE DOORS CRITERION IS NOT
+  REPAIRED — REPAIRING IT BEFORE Q1 WOULD BE A SEAT APPLYING A CONSEQUENCE RESERVED TO THE PRODUCT
+  OWNER, WHICH IS THE EXACT MOVE THE INCREMENT-7 DISPATCH FORBADE ITS ENGINEER.** ***
+  **1.** Q1 — the item-1 STOP condition was met. Does PO-DECISIONS-0012 ruling 1 fall?
+  **2.** Q2 — disposition the RED and fix the order of the seat's ten-item next gate.
+  **3.** Q3 — `CD-RT-012` is red at the tip: fix the L3 false positive, or declare it.
+  **4.** Q4 — is the one act eleven or fifteen, and Category C's stated ground is now falsified.
+  **5.** THEN whatever the rulings authorise, by **ENGINEER DISPATCH** to a FRESH identity — never
+  this seat's hand (PBG-AUTH-006), never any Assurance seat (PBG-SOD-001).
+  **6.** THEN the **META-ASSURANCE** pass (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99, F100,
+  F101 and now **F102**, plus the auditor's F-06-B, F-06-C, F-06-E and F-06-F.
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green doors row as a closed criterion — **it is now measured as a criterion that
+  does not measure what it says.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN, SO THE VERDICT AND THE FIELD NAME ONE COMMIT — EIGHTEENTH BOUNDARY RUNNING. TWO ARMS, BECAUSE CD-PL-F101 IS THE FINDING THAT ONE ARM WAS NEVER THE WHOLE ANSWER.

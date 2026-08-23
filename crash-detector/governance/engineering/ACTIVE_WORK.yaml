@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-23T01:44:54Z'
+updated_utc: '2026-08-23T02:33:25Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -67,6 +67,48 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **SUPERSEDING, BL-20260823T023325Z-0116: THE SIXTH FRESH ASSURANCE SEAT HAS RETURNED AND THE
+  VERDICT IS `RED`. IT IS RECONCILED BY MEASUREMENT AND BANKED VERBATIM, UNEDITED, AT ITS OWN COMMIT.**
+  `governance/assurance/WO-2R3/VERDICT-SIXTH-SEAT.md`, sha256 `bf1f4729…`, 1059 lines, nineteen
+  findings. T2 **RED**; CD-AC-002 and CD-AC-005 **AMBER, NOT CLOSED**. Read-only honoured — the audit
+  worktree is still at `af2accb`, porcelain ZERO, and the four prior seats' documents are
+  byte-unchanged (`git diff --stat HEAD -- governance/assurance/` EMPTY). ***
+  *** **THE HEADLINE IS NOT THE RED. THE INCREMENT-7 DECLARED STOP CONDITION (CD-D-152) WAS MET AND
+  DID NOT FIRE, AND THE PROJECT LEAD HAS NOW CONSTRUCTED IT INDEPENDENTLY RATHER THAN RE-RUNNING THE
+  SEAT'S PROBE.** A conforming, declared-foreign `SourceAdapter` **obtains and calls `_evaluate_dial`
+  on the SECOND collection cycle** — `sys.modules` alone, no `importlib`, no import statement, no
+  frame walk, no threads — **and reaches the UNDECORATED evaluator through its own `__closure__`,
+  passing NO established door.** **THE CONTROL ARM IS WHAT MAKES IT EVIDENCE: with the host's ordinary
+  public `evaluate()` call removed and nothing else changed, cycle 2 reaches NOTHING.** That isolates
+  the cause to one act — the host evaluating — and independently confirms the auditor's finding that
+  P-G's carried "AFTER collect(): True" lead was **an artefact of P-G's own Route 3**. ***
+  *** **GROUND 1 REPRODUCED IN BOTH ARMS.** Appending one PUBLIC alias `evaluate_dial = _evaluate_dial`
+  leaves the doors check at **PASS — 60 assertions, 0 violations, UNMOVED**, while the control (rename
+  the destination) **FAILS**. PL-confirmed at runtime that the public name is the SAME OBJECT with the
+  undecorated evaluator in its closure cell. **THE CRITERION MOVES ON AN UNDERSCORE AND NOT ON A REAL
+  BINDING. THE SHIPPED TREE IS NOT DEFECTIVE HERE — THE REGRESSION CONTROL IS.** ***
+  *** **AND THIS SEAT'S OWN DISPATCH WAS FALSIFIED BY ITS OWN AUDITOR IN A MANDATORY VERBATIM CLAUSE.
+  CD-PL-F102, HIGH.** Clause (i) declared ONE instrument exiting non-zero by declared state. **THERE
+  ARE TWO: `CD-RT-012-NO-EXECUTION-INTERFACE` WENT `EXIT 0` -> `EXIT 1` INSIDE INCREMENT 7**,
+  PL-measured in both arms, caused by a *prose* sentence in `tests/test_tree_fingerprint.py:61` — the
+  test that fixed the LAST false alarm. **THE CAUSE IS CD-PL-F86's SHAPE AGAIN: THIS SEAT MEASURED A
+  LIST, NOT A PROPERTY, AND THE THING THAT BROKE WAS OUTSIDE THE LIST.** ***
+  *** **AND ONE CORRECTION MADE *AGAINST* THE AUDITOR, IN THE WORSE DIRECTION. CD-PL-F103, HIGH.** The
+  seat bounded F-06-D as *"not a caller route"*. **IT IS ONE.** PL-measured end-to-end: an ordinary
+  `@admits(value=int)` door reporting **ZERO faults** ADMITS a caller-supplied object whose class
+  carries a metaclass defining `__eq__`, and the body runs — because `in` puts `type(value)` on the
+  LEFT of the `==`. **THIS SEAT IS NOT ENTITLED TO INHERIT THE COMFORTABLE HALF OF AN AUDITOR'S
+  SENTENCE, AND CATEGORY C's DRAFT DISPOSITION NOW RESTS ON A GROUND THAT IS FALSE.** ***
+  *** **FOUR PRODUCT AUTHORITY QUESTIONS ARE UP AND Q1 DECIDES WHETHER A STANDING RULING FALLS.**
+  Q1 — the STOP was met: does PO-DECISIONS-0012 ruling 1 fall? Q2 — disposition the RED and order the
+  seat's ten-item next gate. Q3 — `CD-RT-012` is red at the tip: fix the false positive or declare it.
+  Q4 — is the one act ELEVEN or FIFTEEN, and Category C's ground is falsified. ***
+  *** **THE AUDITOR ANSWERED THE QUESTION THIS SEAT WAS OVERRULED ON, UNPROMPTED AND AGAINST ITS OWN
+  CONVENIENCE: the inversion was RIGHT.** *"Grading an absent register cost me nothing, because the
+  register was never the target — the ELEVEN were … the map drawn by the author would have pointed me
+  away from the largest thing I found in that section."* ***
+  *** **NOTHING CLOSES AND NOTHING IS GRADED HERE. THE WO-2 GATE IS SHUT.** ***
+  *** **EVERYTHING BELOW IS RETAINED; ONLY ITS "WHAT HAPPENS NEXT" IS SUPERSEDED.** ***
   *** **SUPERSEDING, BL-20260823T014454Z-0115: PO-DECISIONS-0014 IS RULED AND CONSUMED, AND THE SIXTH
   FRESH ASSURANCE SEAT IS DISPATCHED AND OUT.** Commit `3e65d76`, authored by Matt Scott and by no
   seat, ONE path changed — verified with `git show --stat` and `git log -1 --format='%an <%ae>'`. ***
@@ -1879,8 +1921,14 @@ current_block: >
   ISSUED, same seat, same lane base, same three increments. NO CODE CHANGED AT THIS BOUNDARY. NOTHING
   ACCEPTED. NOTHING ADMITTED. THE GATE IS UNMOVED — a ruling about scope is not a pass.
 owner_role: PROJECT_LEAD
-next_actor: ASSURANCE_ENGINEER
-                       # **CURRENT, AT BL-20260823T014454Z-0115: CD-ASR-WO2R3-03 — THE SIXTH FRESH
+next_actor: PROJECT_LEAD
+                       # **CURRENT, AT BL-20260823T023325Z-0116: NO SEAT IS OUT. THE SIXTH ASSURANCE
+                       # SEAT HAS RETURNED `RED`, IS RECONCILED AND IS BANKED. THE GATE IS WITH
+                       # PRODUCT AUTHORITY ON FOUR QUESTIONS AND NOTHING IS DISPATCHED UNTIL THEY ARE
+                       # RULED.** Whatever they authorise goes to a FRESH ENGINEER identity by
+                       # dispatch — never this seat's hand (PBG-AUTH-006), never any Assurance seat
+                       # (PBG-SOD-001).
+                       # **PREVIOUS, AT BL-20260823T014454Z-0115: CD-ASR-WO2R3-03 — THE SIXTH FRESH
                        # ASSURANCE SEAT**, read-only, over the WHOLE of WO-2R3 at af2accb in
                        # /srv/crash-detector-wo2r3-audit6, under CD-DISPATCH-WO2R3-ASSURANCE-06.yaml
                        # (status ISSUED, CD-D-159). SEVENTEEN named targets. Regrades T2 + CD-AC-002/
@@ -2361,6 +2409,26 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
+- '*** **CD-PL-F102''s REMEDY — OPEN, PROPOSED FOR THE SECOND TIME AND BUILT NEITHER TIME. EVERY
+  BOUNDARY THAT STATES A TARGET MUST RUN *THE REGISTER SET* AND RECORD EACH EXIT CODE, BY AN
+  INSTRUMENT THAT ENUMERATES THE REGISTERS — NOT BY A SEAT NAMING THE ONES IT REMEMBERS.** *** It cost
+  something this time: a MANDATORY VERBATIM disclosure clause in an Assurance dispatch was false, and
+  a green-to-red regression inside an increment (`CD-RT-012`) went unreported through a reconciliation
+  AND a dispatch until the auditor ran one command. **THIS IS CD-PL-F86''s SHAPE — a sweep defined by
+  a LIST where the thing that broke was outside the list — AND CD-PL-F86''s REMEDY WAS ALSO RECORDED
+  AND NOT BUILT. THE REPETITION IS THE FINDING.** Not built here either, and the reason is the same
+  one as last time and is stated rather than hidden: **a Project Lead inventing itself a new
+  instrument in the middle of a gate it is reconciling is how scope creeps.** **IT GOES TO THE
+  META-ASSURANCE PASS AS A SECOND INSTANCE OF ONE UNBUILT FIX, WHICH IS A DIFFERENT AND WORSE FACT
+  THAN ONE INSTANCE (PBG-CONT-007).**'
+- '**CD-D-160''s COUNT IS NOW IN QUESTION AND THE HOLD STANDS EITHER WAY (Q4).** The one act was
+  written as **ELEVEN**. The instrument has printed **15** since increment 5 — 11 in
+  `crash_detector.admission` plus 4 in `crash_detector.establishment`, carried as "reported and not
+  chased" through THREE gates. PO-DECISIONS-0014 ruling 2 itself says "the eleven". **THIS SEAT WILL
+  NOT SILENTLY WIDEN A PRODUCT OWNER''S OWN COUNT, AND IT WILL NOT QUIETLY SHIP THE NARROWER ONE
+  EITHER — IT IS PUT UP AS Q4.** **AND THE DRAFT''S CATEGORY C IS NOW UNSUPPORTED BY ITS OWN STATED
+  REASON:** all six were dispositioned `OUT_OF_BOUND` on the ground of "no caller-controlled route",
+  **which CD-PL-F103 falsifies**, and the sixth seat''s F-06-R independently disagrees with all six.'
 - '*** **CD-D-160 — NEW AND OPEN AT THIS BOUNDARY, AND IT IS A HOLD RATHER THAN A TASK. THE ELEVEN
   CLASS-2 DISPOSITIONS, THE REDRAFTED `UPSTREAM_OF_THE_PATH`, AND THE MINIMAL FINDINGS REGISTER LAND
   AS *ONE ACT* AND NOT UNTIL THE SIXTH ASSURANCE SEAT HAS REPORTED.** *** PO-DECISIONS-0014 ruling 1
@@ -3248,6 +3316,30 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  *** **SUPERSEDING STEP, BL-20260823T023325Z-0116: STOP. THE GATE VERDICT IS IN AND IT IS `RED`, AND
+  FOUR PRODUCT AUTHORITY QUESTIONS ARE UP. Q1 DECIDES WHETHER A STANDING RULING FALLS.** ***
+  **NO CODE MOVES, NO INSTRUMENT MOVES, NO DISPOSITION IS WRITTEN, AND THE DOORS CRITERION IS NOT
+  REPAIRED. REPAIRING IT BEFORE Q1 WOULD BE A SEAT APPLYING A CONSEQUENCE RESERVED TO THE PRODUCT
+  OWNER — THE EXACT MOVE THE INCREMENT-7 DISPATCH FORBADE ITS OWN ENGINEER.**
+  **1.** **Q1 — THE ITEM-1 STOP CONDITION WAS MET. DOES PO-DECISIONS-0012 RULING 1 FALL?** Its
+  load-bearing half, *"reachable only through doors that already establish"*, is falsified by two
+  independent constructions. The one step to weigh is stated plainly and not argued: the reach exists
+  because the host imports the engine **by calling its own public `evaluate()` API**, and the control
+  arm proves the collection path never imports it. **The answer decides whether the doors instrument
+  is REPAIRED or REDESIGNED.**
+  **2.** **Q2** — disposition the RED itself and fix the order of the seat's ten-item next gate.
+  **3.** **Q3** — `CD-RT-012-NO-EXECUTION-INTERFACE` is RED at the tip: correct the L3 prose reading,
+  or DECLARE the violation as the Class-2 sweep's is declared.
+  **4.** **Q4** — is the one act of CD-D-160 **ELEVEN or FIFTEEN**, and Category C's draft ground
+  (*"no caller-controlled route"*) is now falsified by CD-PL-F103.
+  **5.** THEN whatever the rulings authorise, **BY ENGINEER DISPATCH TO A FRESH IDENTITY** — never
+  this seat's own hand (PBG-AUTH-006), never any Assurance seat (PBG-SOD-001).
+  **6.** THEN the **META-ASSURANCE** pass (PO-DECISIONS-0013 ruling 5), now carrying CD-PL-F98, F99,
+  F100, F101 and **F102**, plus the auditor's F-06-B, F-06-C, F-06-E and F-06-F.
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green doors row as a closed criterion — **it is now MEASURED as a criterion that
+  does not measure what it says.**
+  **THE STEP BELOW IS DISCHARGED: THE SIXTH SEAT RAN, RETURNED AND IS RECONCILED AND BANKED.** ***
   *** **SUPERSEDING STEP, BL-20260823T014454Z-0115: THE SIXTH FRESH ASSURANCE SEAT IS OUT. STOP AT
   ITS VERDICT. NOTHING MOVES ON THE LANE WHILE IT IS READING THE TREE.** ***
   **1.** `CD-ASR-WO2R3-03` executes `CD-DISPATCH-WO2R3-ASSURANCE-06` at `af2accb` in
@@ -4074,5 +4166,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260823T014454Z-0115   # PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T023325Z-0116   # PREVIOUSLY BL-20260823T014454Z-0115, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE
