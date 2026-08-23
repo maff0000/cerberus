@@ -53,6 +53,101 @@ present is not refused: that is the safe direction, and a guard that compelled a
 would be pushing the wrong way.
 
 ====================================================================================
+THE POST-CONDITION IS ALSO A DOOR NOW (PO-DECISIONS-0015 RULING 1, in force)
+====================================================================================
+
+``PO-DECISIONS-0012`` ruling 1 held that :func:`_evaluate_dial` was *"reachable only through
+doors that already establish"* and made that the reason the guard was a NET rather than a
+DOOR. **THE LOAD-BEARING HALF WAS FALSIFIED BY MEASUREMENT TWICE INDEPENDENTLY** — a
+conforming, declared-foreign ``SourceAdapter`` obtains this module from ``sys.modules`` on the
+second collection cycle and reaches the UNDECORATED evaluator through ``__closure__``, passing
+no door. The ruling fell on its own pre-committed terms.
+
+So ``guarded`` is a DOOR: it establishes every argument by exact type, DERIVED FROM
+:func:`_evaluate_dial`'s own signature, before the body binds — and it is still the
+CD-ASR-F03 net, in the same wrapper and the same closure, because *"the guard and the guarded
+are inseparable"* is a statement about object identity. The body is carried as a ``code``
+object, so nothing callable survives for the attack to find.
+
+====================================================================================
+DECLARED LIMIT (CD-RULE-004), in this header, in required-tests.yaml and in
+contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md, each with an executable example.
+CD-RULE-006: each hand-off names a layer MEASURED to carry it, or says NOT PROVED TO BE
+CARRIED ANYWHERE.
+
+**THE NUMBERING RUNS AS ONE SEQUENCE ACROSS THREE HEADERS AND NOT THREE LISTS.** Limits 1-4
+and 7-9 are the static check's and live in ``tools/register/check_judgement_path_doors.py``;
+5-6 are ``admits``'s and live in ``src/crash_detector/admission.py``; **10 and 11 are THIS
+MECHANISM'S and are new at WO-2R3 increment 8.** An auditor who reads only one header has
+read part of what this row declares open — which is CD-PL-F81's finding, ruled CD-D-111, and
+this header is the third place it now applies to.
+====================================================================================
+
+10  **THE BODY CAN BE RECONSTITUTED FROM ITS CODE OBJECT, AND THAT IS A REACH THIS DESIGN
+    RAISES THE COST OF RATHER THAN CLOSES.**
+
+    Property (a) of ``PO-DECISIONS-0015`` ruling 1 is met AS THE RULING STATES IT: after
+    :func:`_absence_is_never_a_number` returns, **no undecorated evaluator OBJECT exists** —
+    every cell of ``_evaluate_dial.__closure__`` holds data, ``__wrapped__`` is never created,
+    ``__globals__`` and the module namespace hold no second form of the evaluator, and the
+    walk that finds them finds nothing callable. **THAT IS NOT THE SAME CLAIM AS "THE
+    ``__closure__`` REACH IS CLOSED", AND THIS LIMIT EXISTS SO NOBODY READS IT AS ONE.**
+
+    Anything that can read the cells can also write::
+
+        cells   = [c.cell_contents for c in evaluate._evaluate_dial.__closure__]
+        code    = next(c for c in cells if isinstance(c, types.CodeType))
+        globals_ = next(c for c in cells if isinstance(c, dict) and "Value" in c)
+        body    = types.FunctionType(code, globals_)     # a callable body again
+        body(starved_spec, {}, now, None)                # no door, no post-condition
+
+    **MEASURED, AND ASSERTED TRUE RATHER THAN DESCRIBED**:
+    ``tests/test_the_absence_door.py::test_the_reconstitution_residue_is_real_and_is_declared_limit_10``
+    performs exactly that and requires it to SUCCEED, so this paragraph cannot go stale in
+    the reassuring direction — the day the reconstitution stops working, that test goes red
+    and this limit is corrected in all three places rather than quietly enjoyed. It is the
+    same discipline the superseded closure assertion in ``tests/test_evaluate.py`` carried,
+    and that assertion is why anyone could tell the closure route had closed.
+
+    **WHAT ACTUALLY CHANGED, STATED WITHOUT DECORATION.** Before: the cell HELD the callable
+    and one attribute access reached it. Now: the cell holds materials and an attacker must
+    CONSTRUCT a callable from them. The reach is the same reach; the cost is one line of
+    interpreter-internals work instead of none, and the property the ruling names — that no
+    such object EXISTS — is what holds. **CARRIER for preventing the reconstitution itself:
+    NOT PROVED TO BE CARRIED ANYWHERE**, and CPython offers no way to prevent it, exactly as
+    ``admission.py``'s DECLARED LIMIT 6 (a) says of the closure reach generally.
+
+11  **THE DERIVATION DROPS A GENERIC'S SUBSCRIPT, SO A CONTAINER'S ELEMENTS ARE NOT
+    ESTABLISHED AT THIS DOOR.**
+
+    ``usable: dict[str, OK]`` is derived to ``_Exactly((dict,))``: the argument must be
+    EXACTLY a ``dict`` and this door says nothing about its keys or its values. Executable
+    example — ``_evaluate_dial(spec, {"src.a": object()}, now)`` passes this door, and what
+    refuses it, if anything does, is somewhere else.
+
+    **CARRIER MEASURED, and it is one level up:** :func:`_latest_usable_ok` builds the only
+    ``usable`` any product caller supplies, and it admits an outcome only when
+    ``type(outcome) is OK``. On the product path the elements are therefore established at
+    construction. **FOR A DIRECT CALLER SUPPLYING ITS OWN ``dict``: NOT PROVED TO BE CARRIED
+    ANYWHERE** — the post-condition re-derives from ``spec`` and from the KEYS of ``usable``
+    only, so a dict whose values are not ``OK`` reaches the body. This is
+    ``crash_detector.admission``'s DECLARED LIMIT 4 (*a container's elements are established
+    when the door is called, not afterwards*) met from the other side: here they are not
+    established at the door at all.
+
+    **AND THE ANNOTATION CHANGE THIS LIMIT SITS ON IS DECLARED RATHER THAN INHERITED**
+    (``CD-PL-F109``). :func:`_evaluate_dial`'s ``usable`` moved ``Mapping[str, OK]`` ->
+    ``dict[str, OK]`` because the establishment is now derived from that annotation and an
+    abstract ``Mapping`` has no exact type to derive. **IT IS NOT A NARROWING OF WHAT THE
+    PRODUCT ACCEPTS, AND THAT IS MEASURED AND NOT ARGUED**: at the base commit a
+    ``collections.abc.Mapping`` that is not a ``dict`` was ALREADY refused with
+    ``NotAdmitted`` — by :func:`refuse_a_number_without_its_inputs`, whose ``@admits``
+    declared ``usable=dict`` and fired on every call — and it is refused with ``NotAdmitted``
+    here too. **THE ACCEPTED SET IS IDENTICAL; ONLY THE POINT OF REFUSAL MOVES**, from after
+    the body has run to before it binds. Two arms, one axis, both trees, in the Build Log
+    entry for this increment.
+
+====================================================================================
 THE MODEL DOOR IS GONE (BP-AMENDMENT-0001 §C, in force)
 ====================================================================================
 
@@ -76,12 +171,22 @@ and no such field.
 
 from __future__ import annotations
 
-import functools
 import inspect
+import types
+import typing
 from datetime import datetime
 from typing import Mapping, Sequence, Union
 
-from crash_detector.admission import admits, each_of, one_of
+from crash_detector.admission import (
+    ADMITS_ATTRIBUTE,
+    FAULTS_ATTRIBUTE,
+    AdmissionFault,
+    NotAdmitted,
+    admits,
+    declaration,
+    each_of,
+    one_of,
+)
 from crash_detector.dials.dialset import EQUITY_DIAL_ID, MONETARY_DIAL_ID, DialSet
 from crash_detector.dials.reading import (
     READING_CONSTRUCTORS,
@@ -210,8 +315,18 @@ def _latest_usable_ok(
     *,
     now_utc: datetime,
     window: StalenessWindow,
-) -> Mapping[str, OK]:
+) -> dict[str, OK]:
     """The most recent usable ``OK`` observation per source.
+
+    **THE RETURN ANNOTATION SAYS ``dict`` AND NOT ``Mapping`` SINCE WO-2R3 INCREMENT 8, AND
+    IT IS A CORRECTION RATHER THAN A NARROWING.** *Superseded wording, quoted rather than
+    deleted (CD-RULE-004, PBG-CONT-003): ``-> Mapping[str, OK]``.* The body has always built
+    and returned the ``dict`` literal below; the two doors that consume this value —
+    :func:`required_inputs_are_all_present` and :func:`refuse_a_number_without_its_inputs` —
+    have always declared ``usable=dict`` and have always refused anything else on every call.
+    The annotation was the only thing in the path saying otherwise, and since
+    :func:`_evaluate_dial`'s establishment is now DERIVED FROM ITS ANNOTATION an annotation
+    that is wider than the truth would be an establishment wider than the truth.
 
     Only :class:`~crash_detector.observations.OK` is considered. ``FetchFailed``,
     ``Malformed`` and ``Empty`` are answers about the fetch, and none of them is a value —
@@ -329,79 +444,316 @@ def refuse_a_number_without_its_inputs(
     )
 
 
-def _absence_is_never_a_number(evaluate_one_dial):
-    """Wrap a per-dial evaluator in the CD-ASR-F03 post-condition.
+# ==================================================================================== #
+# THE CD-ASR-F03 MECHANISM, REDESIGNED — `PO-DECISIONS-0015` RULING 1.
+#
+# `PO-DECISIONS-0012` ruling 1 held that this evaluator was *"reachable only through doors
+# that already establish"*. **THAT HALF WAS FALSIFIED BY MEASUREMENT TWICE INDEPENDENTLY**:
+# a conforming, declared-foreign `SourceAdapter` obtains the module from `sys.modules` on the
+# SECOND collection cycle and reaches the UNDECORATED evaluator through `__closure__`,
+# passing no door. The ruling fell on its own pre-committed terms and the consequence was
+# taken in full: **`guarded` becomes a DOOR, and this control is REDESIGNED, not repaired.**
+#
+# THE THREE ACCEPTANCE PROPERTIES, AND WHERE EACH ONE LIVES IN THE CODE BELOW:
+#
+#   (a) **NO UNDECORATED EVALUATOR OBJECT EXISTS AT RUNTIME.** `_body_materials` takes the
+#       evaluator's CODE OBJECT and lets the function object go. After the decorator returns,
+#       nothing in `guarded.__closure__`, nothing under `__wrapped__` (never set), nothing in
+#       `__globals__` and nothing in the module namespace is a CALLABLE that reaches the
+#       judgement without establishment. What the cell holds instead is a `code` object,
+#       which cannot be called — the same line this codebase already draws for
+#       `__signature__`: *"a Signature is a description; it is not a callable and it is not a
+#       way through."*
+#       **AND THE RESIDUE IS DECLARED, NOT CLAIMED CLOSED: `types.FunctionType(code,
+#       globals)` RECONSTITUTES A CALLABLE BODY, AND THE MATERIALS FOR IT ARE IN THE CELLS.
+#       MEASURED. See DECLARED LIMIT 10 in this module's header.**
+#
+#   (b) **THE ESTABLISHMENT IS DERIVED FROM THE SIGNATURE.** `_establishment_derived_from`
+#       reads the evaluator's own RESOLVED ANNOTATIONS and compiles one admission per
+#       parameter through `crash_detector.admission.declaration` — the same vocabulary every
+#       other door uses, never a second one. **NOBODY WRITES A PARAMETER LIST HERE.** The old
+#       net had `*extra, **extra_by_name` — open arity — precisely so that a fourth argument
+#       would not take the guard off with it; that openness was a GAP THAT BOUND NOTHING, and
+#       PO-DECISIONS-0015 ruling 1 is the finding that says so. This derives instead, so a new
+#       parameter is ESTABLISHED BY EXACT TYPE on the run it is added, with no edit to this
+#       function. A parameter whose annotation this mechanism cannot turn into a type set,
+#       or which carries no annotation at all, FAULTS THE DOOR AT IMPORT — fail-closed,
+#       never open.
+#
+#   (c) **THE POST-CONDITION IS RETAINED INSIDE THE SAME MECHANISM.** One wrapper, one
+#       closure: the door and the net are the same object, which is what makes them
+#       inseparable. `refuse_a_number_without_its_inputs` is called by that literal name so
+#       `tools/register/declared_nets.py`'s "the body actually CALLS it" assertion is checked
+#       against this code and not against prose. **WHICH ARGUMENTS IT RECEIVES IS ALSO
+#       DERIVED** — from the post-condition's OWN signature, matched by name against the
+#       evaluator's bound arguments — so the post-condition can grow a parameter too, and
+#       neither signature can drift past the other silently.
+# ==================================================================================== #
 
-    The guard is applied HERE, at the boundary of the function, rather than written into
-    its body, because the escape that produced CD-ASR-F03 was an edit to the body. A
-    post-condition derived from the arguments survives any rewriting of what is between
-    them and the return statement.
+
+def _one_exact_type(annotation):
+    """A single resolved annotation -> the type a value of it will actually BE at runtime.
+
+    ``dict[str, OK]`` -> ``dict``. ``DialSpec`` -> ``DialSpec``. ``None`` -> ``None``, which
+    :func:`~crash_detector.admission.declaration` reads as ``type(None)``.
+
+    **THE SUBSCRIPT IS DROPPED AND THAT IS DECLARED RATHER THAN QUIET** (DECLARED LIMIT 11):
+    ``dict[str, OK]`` establishes that the argument is exactly a ``dict`` and says nothing
+    about its keys or its values. The element establishment on this path is
+    ``_latest_usable_ok``'s ``type(outcome) is not OK``, one level up, and the post-condition
+    re-derives from ``spec`` and from the KEYS of ``usable`` only.
     """
+    origin = typing.get_origin(annotation)
+    return annotation if origin is None else origin
 
-    @functools.wraps(evaluate_one_dial)
-    def guarded(
-        spec: DialSpec,
-        usable: Mapping[str, OK],
-        now_utc: datetime,
-        *extra: object,
-        **extra_by_name: object,
-    ) -> "Reading":
-        # ``*extra`` is not laziness. The post-condition needs only the spec and the usable
-        # inputs, and a wrapper that fixed the arity would stop guarding the moment anybody
-        # gave the evaluator a fourth argument — which is exactly the kind of edit that
-        # arrives with a new feature and takes a guard off with it.
-        reading = evaluate_one_dial(spec, usable, now_utc, *extra, **extra_by_name)
-        refuse_a_number_without_its_inputs(spec, usable, reading)
+
+def _exact_types_of(annotation):
+    """One resolved annotation -> the type, or the tuple of types, it stands for.
+
+    Whatever this returns is handed to :func:`~crash_detector.admission.declaration`, which
+    is what decides whether it is a legal declaration. **This function does not validate and
+    does not guess** — it unwraps a union and a generic subscript and hands the result to the
+    one vocabulary, so there is no second opinion anywhere about what a declaration means.
+
+    Both union spellings are unwrapped: ``typing.Union[X, None]`` and PEP 604's ``X | None``,
+    whose ``get_origin`` is ``types.UnionType`` rather than ``typing.Union``. Neither is
+    preferred and neither is assumed absent. ``types.UnionType`` is named DIRECTLY and not
+    through ``getattr(types, "UnionType", ...)``: this project is pinned to ``3.11.*``
+    (``pyproject.toml``), where the attribute always exists, and a ``getattr`` with a default
+    is a DUCK admission — a tier-1 site of the Class-2 sweep — which would need a written
+    disposition in a register this module has no business enlarging.
+    """
+    origin = typing.get_origin(annotation)
+    if origin is Union or origin is types.UnionType:
+        return tuple(_one_exact_type(member) for member in typing.get_args(annotation))
+    return _one_exact_type(annotation)
+
+
+def _establishment_derived_from(evaluate_one_dial, signature) -> dict:
+    """One admission per parameter, DERIVED FROM THE ANNOTATION and from nothing else.
+
+    **THIS IS PROPERTY (b), AND THE WHOLE OF IT.** ``@admits(spec=DialSpec, usable=dict,
+    now_utc=datetime)`` is a HAND-WRITTEN parameter list, and a hand-written parameter list is
+    a silent hole on the day somebody adds an argument — which is the failure the old net's
+    open arity was written to survive, met from the other side. Here the annotation IS the
+    declaration, so nobody has to remember to add anything.
+
+    **THE DERIVATION IS CLOSED AND DENY-BY-DEFAULT:**
+
+    * a plain class annotation becomes that exact type;
+    * ``X | None`` / ``Union[X, Y]`` becomes ``one_of(X, Y)`` — via ``typing.get_args``, not
+      by reading source text;
+    * a subscripted generic becomes its ORIGIN — ``dict[str, OK]`` is exactly ``dict``, which
+      is what the runtime type of that argument actually is. The subscript stays in the
+      signature for a reader and decides nothing here (DECLARED LIMIT 11);
+    * **ANYTHING ELSE RAISES AT IMPORT.** :func:`~crash_detector.admission.declaration`
+      refuses any declaration it does not recognise and that refusal is NOT caught. A door
+      this mechanism cannot derive must stop the module importing rather than exist
+      unguarded — the same choice ``admits`` makes, made by the same code.
+
+    Annotations are resolved with ``typing.get_type_hints`` because this module carries
+    ``from __future__ import annotations``, so ``__annotations__`` holds STRINGS. Reading the
+    strings would be reading source text; resolving them reads the objects the interpreter
+    will actually compare against.
+    """
+    # THE OPEN-CHANNEL REFUSAL IS ASKED FIRST, BEFORE THE ANNOTATIONS ARE EVEN RESOLVED, AND
+    # THAT ORDER IS THE POINT. An open channel is refused whatever its annotation says and
+    # whether or not the annotation resolves at all: a signature this mechanism cannot derive
+    # from must be refused by the refusal that names the real defect, not by whichever error
+    # the resolver happens to raise first.
+    for name, parameter in signature.parameters.items():
+        if parameter.kind in (
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        ):
+            # AN OPEN CHANNEL ON THE ONE GUARD THAT EXISTS BECAUSE OF AN ESCAPE. `admits`
+            # refuses these for the general case in the same words. The old net HAD them,
+            # and PO-DECISIONS-0015 ruling 1 is the finding that they bound nothing.
+            raise AdmissionFault(
+                f"{evaluate_one_dial.__qualname__} declares {name!r} as an OPEN CHANNEL "
+                "(*args / **kwargs). Values arrive through it with no name to declare and "
+                "no type to require. The establishment here is DERIVED FROM THE SIGNATURE "
+                "(PO-DECISIONS-0015 ruling 1 (b)), and a channel with no name in the "
+                "signature cannot be derived from it."
+            )
+    resolved = typing.get_type_hints(evaluate_one_dial)
+    derived: dict = {}
+    for name, parameter in signature.parameters.items():
+        if name not in resolved:
+            raise AdmissionFault(
+                f"{evaluate_one_dial.__qualname__} parameter {name!r} carries NO "
+                "ANNOTATION, and the annotation is what this door's establishment is "
+                "derived from. A parameter added without one arrives REFUSED — at import, "
+                "loudly — rather than unguarded (BP-AMENDMENT-0001 §D.1, planted violation "
+                "P7)."
+            )
+        derived[name] = declaration(name, _exact_types_of(resolved[name]))
+    if not derived:
+        raise AdmissionFault(
+            f"{evaluate_one_dial.__qualname__} has no parameters, so this mechanism would "
+            "establish nothing and the post-condition would have nothing to re-derive from. "
+            "A guard with an empty subject is REFUSED rather than counted."
+        )
+    return derived
+
+
+def _post_condition_order(signature, post_condition) -> tuple:
+    """WHICH of the door's arguments the post-condition gets, DERIVED FROM ITS SIGNATURE.
+
+    Returns one entry per post-condition parameter, in the post-condition's own order: the
+    parameter's NAME where it is also a parameter of the evaluator, and ``None`` for the
+    single remaining parameter, which receives what the body returned.
+
+    **THERE MUST BE EXACTLY ONE REMAINING PARAMETER AND THIS REFUSES OTHERWISE.** A
+    post-condition asking for something the door does not have is a post-condition checking a
+    claim against evidence nobody supplied, and it fails at import instead of at a gate.
+    """
+    parameters = list(
+        inspect.signature(post_condition, follow_wrapped=False).parameters
+    )
+    outstanding = [name for name in parameters if name not in signature.parameters]
+    if len(outstanding) != 1:
+        raise AdmissionFault(
+            f"{post_condition.__qualname__} takes {parameters}, of which {outstanding} are "
+            "not arguments of the evaluator. **EXACTLY ONE MUST BE OUTSTANDING** — the one "
+            "that receives what the body returned. The rest are matched to the door's own "
+            "bound arguments BY NAME so that neither signature can grow past the other "
+            "silently."
+        )
+    return tuple(None if name in outstanding else name for name in parameters)
+
+
+def _body_materials(evaluate_one_dial) -> tuple:
+    """**PROPERTY (a).** The evaluator's body, as MATERIALS rather than as a callable.
+
+    Returns ``(code, globals, name, defaults, kwdefaults)``. The FUNCTION OBJECT is not among
+    them and is not retained anywhere: once :func:`_absence_is_never_a_number` returns, the
+    only reference to the undecorated evaluator that ever existed has gone, and what stands
+    in the closure is a ``code`` object.
+
+    **A ``code`` OBJECT CANNOT BE CALLED.** That is the difference between this and the shape
+    `PO-DECISIONS-0015` ruling 1 condemns as *"the defect class, not an implementation
+    choice"*, and it is why the attack that felled the ruling —
+    ``sys.modules[m]._evaluate_dial.__closure__[i].cell_contents(spec, usable, now)`` — no
+    longer reaches anything: every cell it finds is data. **IT IS NOT A CLOSURE OF THE REACH
+    AND IS NOT OFFERED AS ONE; see DECLARED LIMIT 10.**
+
+    **FAIL CLOSED ON A BODY THIS CANNOT REBUILD.** A body with free variables would need its
+    CELLS carried too, and carrying a cell is carrying whatever is in it — which is exactly
+    the thing the ruling names as the defect class. Rather than handle a case that does not
+    exist here, this refuses it at import.
+    """
+    if evaluate_one_dial.__closure__ is not None or evaluate_one_dial.__code__.co_freevars:
+        raise AdmissionFault(
+            f"{evaluate_one_dial.__qualname__} closes over "
+            f"{list(evaluate_one_dial.__code__.co_freevars)}. This mechanism carries the "
+            "body as a CODE OBJECT so that no callable form of it survives "
+            "(PO-DECISIONS-0015 ruling 1 (a)); a body with free variables would require its "
+            "CELLS to be carried too, and a cell is exactly the thing that ruling names as "
+            "the defect class. REFUSED AT IMPORT rather than handled by carrying them."
+        )
+    return (
+        evaluate_one_dial.__code__,
+        evaluate_one_dial.__globals__,
+        evaluate_one_dial.__name__,
+        evaluate_one_dial.__defaults__,
+        evaluate_one_dial.__kwdefaults__,
+    )
+
+
+def _absence_is_never_a_number(evaluate_one_dial):
+    """Make a per-dial evaluator a DOOR that is also the CD-ASR-F03 net, INSEPARABLY.
+
+    The guard is applied HERE, at the boundary of the function, rather than written into its
+    body, because the escape that produced CD-ASR-F03 was an edit to the body. A
+    post-condition derived from the arguments survives any rewriting of what is between them
+    and the return statement.
+
+    **AND SINCE `PO-DECISIONS-0015` RULING 1 IT IS ALSO A DOOR**: the arguments are
+    established by EXACT TYPE before the body runs, DERIVED FROM THE EVALUATOR'S OWN
+    SIGNATURE. The two are one wrapper and one closure on purpose — *"the guard and the
+    guarded are inseparable"* is a statement about object identity, not about intent.
+    """
+    signature = inspect.signature(evaluate_one_dial, follow_wrapped=False)
+    establishment = _establishment_derived_from(evaluate_one_dial, signature)
+    post_condition_order = _post_condition_order(
+        signature, refuse_a_number_without_its_inputs
+    )
+    code, body_globals, body_name, body_defaults, body_kwdefaults = _body_materials(
+        evaluate_one_dial
+    )
+    # `evaluate_one_dial` is deliberately NOT READ AGAIN below this line. Nothing in the
+    # closure of `guarded` is the undecorated evaluator, and nothing rebuilds it except the
+    # one expression inside `guarded` itself, per call, from data.
+
+    def guarded(*arguments, **by_name):
+        # THE DOOR. Derived from the signature, refused before the body binds.
+        #
+        # `*arguments, **by_name` IS AN ARITY THAT PASSES THROUGH, NOT A CHANNEL. It is
+        # erased at the first statement by `signature.bind`, against THE EVALUATOR'S OWN REAL
+        # SIGNATURE, so nothing can arrive here that that signature would not hold and
+        # nothing that arrives is unestablished. This is the same structure and the same
+        # reasoning as `admits`'s own `door(*args, **kwargs)`, whose ten measured arms are
+        # DECLARED LIMIT 7 in `crash_detector.admission`. It is NOT the old net's shape: the
+        # old net forwarded `*extra` to a callee whose signature it never bound against, and
+        # that gap is what PO-DECISIONS-0015 ruling 1 found.
+        bound = signature.bind(*arguments, **by_name)
+        bound.apply_defaults()
+        for parameter, admission in establishment.items():
+            refusal = admission.refusal(parameter, bound.arguments[parameter])
+            if refusal is not None:
+                raise NotAdmitted(
+                    f"{body_name}: {refusal} (BP-AMENDMENT-0001 §D.1 — every entry point on "
+                    "a judgement path establishes each of its arguments by exact type at "
+                    "the door, DERIVED FROM THE SIGNATURE; PO-DECISIONS-0015 ruling 1.)"
+                )
+        # THE BODY. Rebuilt from its code FOR THIS CALL and dropped again — there is no
+        # persistent callable form of it for anything to reach.
+        body = types.FunctionType(code, body_globals, body_name, body_defaults)
+        body.__kwdefaults__ = body_kwdefaults
+        reading = body(*bound.args, **bound.kwargs)
+        # THE NET. Named literally so `tools/register/declared_nets.py`'s third assertion is
+        # checked against this line and not against a sentence about it; its arguments are
+        # derived from ITS OWN signature.
+        refuse_a_number_without_its_inputs(
+            *[
+                reading if name is None else bound.arguments[name]
+                for name in post_condition_order
+            ]
+        )
         return reading
 
-    # THE GUARD DOES NOT PUBLISH A WAY ROUND ITSELF.
+    # THE GUARD DOES NOT PUBLISH A WAY ROUND ITSELF, AND NOW IT NEVER HAD ONE TO DELETE.
     #
-    # `functools.wraps` sets `__wrapped__` to the function it wrapped. That attribute is
-    # documented, `inspect.unwrap` and `inspect.signature` follow it automatically, and
-    # editors offer it — so `_evaluate_dial.__wrapped__(spec, usable, now)` is a bypass a
-    # caller can write in ordinary-looking code with no cast and no import. **THIS PROJECT
-    # DELETES THIS EXACT ATTRIBUTE IN TWO OTHER PLACES AND CALLS IT A BYPASS BOTH TIMES**
-    # (`admission.py`, `establishment.py`), and `admission.py`'s DECLARED LIMIT 1 said of
-    # it *"(b) THE `__wrapped__` ATTRIBUTE — THIS HALF IS CLOSED HERE."* **"HERE" MEANT
-    # `admits` ONLY, AND NOBODY HAD WRITTEN DOWN THAT THIS THIRD DECORATOR WAS OPEN** — on
-    # the one guard in this tree that exists BECAUSE of an escape.
-    #
-    # MEASURED by the fifth Assurance seat at `9f7b764`, two arms at the layer the
-    # proposition names: THROUGH the wrapper, a rewritten `missing_required` branch is
-    # REFUSED with `AbsenceYieldedAValue`; THROUGH `__wrapped__`, the same branch is
-    # ACCEPTED and returns a `Value` carrying `inputs_used=('src.a',)` — inputs that were
-    # never present. And the convergence that makes it load-bearing: the layer that closes
-    # this project's historic V03, E04 and V06 routes IS this post-condition.
-    #
-    # It is removed. Everything else `wraps` copies — the name, the qualname, the
-    # docstring, the module — is kept, because those are what make the evaluator readable
-    # and none of them is a way through it.
-    #
-    # WHAT THIS DOES NOT CLOSE, STATED RATHER THAN LEFT TO BE FOUND: the wrapped function
-    # is still in this closure's cells, and `_evaluate_dial.__closure__[i].cell_contents`
-    # reaches it. That is true of EVERY decorator ever written in Python and CPython offers
-    # no way to prevent it; it is `admission.py`'s DECLARED LIMIT 6 and
-    # `establishment.py`'s DECLARED LIMIT 3, and this site now sits inside the same limit
-    # rather than outside it. **MEASURED HERE, NOT ASSUMED**: `variants/WO-2R3/P-F-...py`
-    # arm A6 obtains the undecorated function from the cells at this commit. What changes
-    # is that a bypass now requires reaching into interpreter internals rather than reading
-    # a documented attribute.
-    try:
-        delattr(guarded, "__wrapped__")
-    except AttributeError:  # pragma: no cover - wraps always sets it
-        pass
-    # The real signature is kept as DATA, so `inspect.signature(_evaluate_dial)` still
-    # reports what the evaluator takes. A `Signature` is a description; it is not a callable
-    # and it is not a way through. This mirrors `admits` and `establishes` exactly.
-    guarded.__signature__ = inspect.signature(evaluate_one_dial)
-
+    # *Superseded implementation, described rather than deleted (CD-RULE-004, PBG-CONT-003):
+    # until this increment this mechanism used `functools.wraps` and then `delattr`'d the
+    # `__wrapped__` it had just created* — a bypass introduced and withdrawn inside one
+    # function. **`functools.wraps` IS NOT USED HERE AT ALL.** The four attributes that make
+    # the door readable are copied by name; `__wrapped__` is NEVER SET, so there is no window
+    # between creating it and removing it, and a future edit that puts the decorator back
+    # cannot silently reinstate it. That is a strictly stronger answer to `PO-DECISIONS-0013`
+    # ruling 2 than the `delattr` it replaces.
+    guarded.__name__ = body_name
+    guarded.__qualname__ = evaluate_one_dial.__qualname__
+    guarded.__doc__ = evaluate_one_dial.__doc__
+    guarded.__module__ = evaluate_one_dial.__module__
+    # The real signature is kept as DATA, so `inspect.signature(_evaluate_dial)` still reports
+    # what the evaluator takes. A `Signature` is a description; it is not a callable and it is
+    # not a way through. This mirrors `admits` and `establishes` exactly.
+    guarded.__signature__ = signature
+    # AND IT ANSWERS THE PROJECT'S OWN RUNTIME QUESTION `is_admitting_door(...)` WITH TRUE,
+    # which is what "`guarded` becomes a DOOR" has to mean if it is to mean anything a test
+    # can read. The declaration it publishes is the DERIVED one, so `declared_admissions()`
+    # reports what a caller must actually satisfy rather than what somebody typed.
+    setattr(guarded, ADMITS_ATTRIBUTE, dict(establishment))
+    setattr(guarded, FAULTS_ATTRIBUTE, ())
     return guarded
 
 
 @_absence_is_never_a_number
 def _evaluate_dial(
     spec: DialSpec,
-    usable: Mapping[str, OK],
+    usable: dict[str, OK],
     now_utc: datetime,
     model: "Union[ModelSpec, None]" = None,
 ) -> "Reading":

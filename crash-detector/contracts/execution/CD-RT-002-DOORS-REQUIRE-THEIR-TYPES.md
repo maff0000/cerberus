@@ -965,3 +965,102 @@ asserting arms B, C, D, E, F and G by requiring each to raise. **PROVED NON-VACU
 (`PBG-ASSURE-017`): with the `OPEN CHANNEL` fault neutered in a throwaway tree it fails
 `DID NOT RAISE UndeclaredParameter`. **FOR ARM J: NOT PROVED TO BE CARRIED ANYWHERE — deliberately,
 because a carrier for it would be a repair of T8 Category A.**
+
+---
+
+## DECLARED LIMIT 9, REWRITTEN AT WO-2R3 INCREMENT 8 BY PRODUCT AUTHORITY
+
+`PO-DECISIONS-0015` ruling 1. This is one of that limit's three CD-RULE-004 places; the others
+are the header of `tools/register/check_judgement_path_doors.py` and the
+`CD-RT-002-DOORS-REQUIRE-THEIR-TYPES` entry of `required-tests.yaml`.
+
+**THE SUPERSEDED WORDING, QUOTED AND NOT DELETED (CD-RULE-004, PBG-CONT-003):**
+
+> *reachability ACROSS modules.* The clause is per-module. A non-public module-level name is
+> treated as unreachable from outside, which is TRUE OF NOTHING IN PYTHON — the underscore is a
+> convention and `from m import _x` works, MEASURED. **THIS CHECK KEEPS THE CONVENTION
+> DELIBERATELY**, because §D.1's class is PUBLIC entry points and abolishing publicness would
+> make every private helper in the package a door. **THAT IS A PRODUCT-MEANING BOUNDARY AND NOT
+> AN IMPLEMENTATION ONE (PBG-AUTH-005).**
+
+**THAT PARAGRAPH NAMED THE RIGHT QUESTION AND HANDED IT UP. THE ANSWER CAME BACK:** *"membership
+moves on REAL PUBLIC BINDINGS AND MEASURED REACH, never on an underscore."*
+
+Ground 1 is the measurement that forced it: `_evaluate_dial` was excluded by a leading underscore
+while a conforming, declared-foreign `SourceAdapter` obtained it from `sys.modules` on the second
+collection cycle and **called it**, passing no door.
+
+### What moved — two things, and no more
+
+**(i) MEMBERSHIP.** A module-level `def` is a subject if it is **public** *or if its return
+annotation names a JUDGEMENT VALUE TYPE.* A callable that produces a judgement is a
+judgement-path door whatever it is spelled. **THE RENAME TEST, BOTH WAYS:** renaming the
+function-local `guarded` → `_guarded` does not move the verdict (it never could), **and renaming
+`_evaluate_dial` → `evaluate_dial` does not move it either — which the previous criterion could
+not survive.** MEASURED on the shipped tree: **SUBJECTS 27 → 31**, the four being
+`_evaluate_dial`, `_established_quantity`, `_new_quantity` and `_shown_from`, all four now
+decorated.
+
+**(ii) THE ESCAPE-ROUTE DESTINATION TEST.** It asked whether the destination's *identifier* was
+public and treated a private one as a dead end — `guarded`'s reason line read *"reaches only
+['_evaluate_dial'], every one of them non-public"*, the sentence Ground 1 falsified. It now asks
+whether the destination is **itself an enumerated subject of this check**; if it is, the local's
+door obligation is **RESOLVED** to that binding — the name a caller actually writes — and asserted
+there, rather than **DENIED**.
+
+### What deliberately did not move, with the measurement that decided it
+
+RULE 1's deny-by-default within a judgement-path package still asks publicness of a module-level
+name that returns no judgement value. Abolishing publicness **altogether** was measured on a
+pristine `git archive` extraction of `314592c` by replacing `_is_public`'s body with
+`return True`:
+
+```
+SUBJECTS ENUMERATED: 68. DECORATED: 27.
+CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: FAIL — 42 violation(s)
+```
+
+41 private helpers becoming doors in one increment. Whether §D.1's *"public entry points"* class
+includes them is a **PRODUCT-MEANING** boundary and not an implementation one (`PBG-AUTH-005`),
+and it is **raised, not taken**. **CARRIER FOR THE REMAINING UNDERSCORE DEPENDENCE: NOT PROVED TO
+BE CARRIED ANYWHERE**, other than that on a judgement path the NETS population denies by default.
+
+---
+
+## THE SECOND DOOR FORM — **DERIVED DOORS**. NEW AT WO-2R3 INCREMENT 8
+
+`PO-DECISIONS-0015` ruling 1 (b): *"the door's establishment is DERIVED FROM THE SIGNATURE,
+preserving the property the old net's open arity existed for — the guard survives arity growth
+because it derives, not because it gapes."*
+
+`admits` derives the parameter **list** from the signature but takes the **type** beside each name
+by hand, so adding a parameter FAULTS the door and every call to it is refused. That is right for a
+door and it is **not** what ruling 1 (b) asks of the CD-ASR-F03 guard, which must *survive* arity
+growth. A mechanism that reads the ANNOTATION as the declaration keeps both halves.
+
+So a subject satisfies §D.1 by **either** form, and neither is an exemption:
+
+| | FORM 1 — DECLARED | FORM 2 — DERIVED |
+|---|---|---|
+| recognised by | `@admits(...)` | a decorator declared in `tools/register/declared_door_mechanisms.py` |
+| asserted at the subject | declared names == signature names, both directions | **every parameter ANNOTATED**, **no variadic** |
+| violation codes | `PARAMETER_NOT_DECLARED_TO_ADMITS`, `DECLARATION_ADRIFT_FROM_SIGNATURE`, `OPEN_CHANNEL` | `DERIVED_DOOR_PARAMETER_NOT_ANNOTATED`, `OPEN_CHANNEL` |
+
+**AND THE MECHANISM ITSELF IS CHECKED AGAINST ITS OWN SOURCE** — four assertions, set equality in
+both directions, exactly as `declared_nets.py`'s rows are:
+
+1. it **EXISTS** as a module-level `def` in the declared module — `MECHANISM_DECLARED_BUT_ABSENT`;
+2. it, or a module-level function it calls, **READS `inspect.signature`** —
+   `MECHANISM_DOES_NOT_READ_THE_SIGNATURE`. §D.1's rule is *derived from the signature*; a
+   mechanism that never reads one is not deriving from one, whatever the register calls it;
+3. it, or one of those, **COMPILES THROUGH `crash_detector.admission.declaration`** —
+   `MECHANISM_DOES_NOT_USE_THE_ONE_VOCABULARY`. There is one declaration vocabulary in this
+   project and this is how it stays one;
+4. it **DECORATES SOMETHING** — `MECHANISM_DECORATES_NOTHING`.
+
+**A ROW THERE IS NOT AN EXEMPTION AND BUYS A SUBJECT NOTHING.**
+
+**LIMIT INHERITED, NOT WIDENED.** A mechanism is recognised **by its name in the source**, exactly
+as `admits` is (DECLARED LIMIT 4, unchanged). The failure direction is the safe one: rename a
+declared mechanism and the check reports `MECHANISM_DECLARED_BUT_ABSENT` **and** reports the
+subject it used to cover as `UNDECORATED_JUDGEMENT_PATH_DOOR` — two violations, never a silence.

@@ -660,8 +660,21 @@ def sole_dial_of(magnitude: "DialMagnitude") -> str:
     return sorted(magnitude.provenance)[0]
 
 
+@admits(magnitude=DialMagnitude)
 def _established_quantity(magnitude: "DialMagnitude") -> "DeclaredQuantity":
     """The provenance-carrying value inside a magnitude, WITHOUT releasing a bare float.
+
+    **IT IS A DOOR AS OF WO-2R3 INCREMENT 8, BECAUSE THE CRITERION STOPPED MOVING ON AN
+    UNDERSCORE** (``PO-DECISIONS-0015`` ruling 1). It returns a ``DeclaredQuantity`` — a
+    judgement value — so it is a judgement-path entry point whatever it is spelled, and
+    ``from crash_detector.dials.magnitude import _established_quantity`` is a line anybody can
+    write. Exact type at the door, NOT ``ESTABLISHED_HERE``, and the body's refusal below is
+    KEPT rather than removed. **THE CONSEQUENCE IS RECORDED RATHER THAN LEFT TO BE NOTICED
+    (CD-PL-F74): the refusal identity a DIRECT caller sees moves** from
+    :exc:`CrossDialCombination` to :exc:`~crash_detector.admission.NotAdmitted`. No test
+    asserted the old identity at this callable, and on the product path neither refusal fires
+    — the only caller is :func:`combine_within_one_dial`, whose own door has already
+    exact-typed every element with ``each_of(DialMagnitude)``.
 
     The one place this module hands a magnitude's payload onward, and it hands on the
     :class:`~crash_detector.dials.provenance.DeclaredQuantity` rather than the number

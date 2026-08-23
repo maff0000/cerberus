@@ -43,6 +43,11 @@ from __future__ import annotations
 
 import inspect
 from dataclasses import dataclass
+# IMPORTED AT MODULE LEVEL SINCE WO-2R3 INCREMENT 8 AND NOT ONLY INSIDE ONE TEST: the
+# redesigned CD-ASR-F03 mechanism RESOLVES the annotations of the body it is applied to
+# (`typing.get_type_hints`), and a test body annotated with a name this module cannot resolve
+# would fail at decoration for a reason that has nothing to do with what it is testing.
+from datetime import datetime
 
 import pytest
 
@@ -50,6 +55,7 @@ from crash_detector.dials.dialset import EQUITY_DIAL_ID, MONETARY_DIAL_ID, DialS
 from crash_detector.dials.reading import (
     AbsenceYieldedAValue,
     Degraded,
+    Reading,
     Unknown,
     Value,
 )
@@ -742,7 +748,14 @@ def test_the_per_dial_evaluator_carries_the_post_condition():
     # BOUNDARY AND SURVIVES ANY BODY — the docstring's actual claim, with the counterfactual
     # arm CD-D-079 requires. The decorator is applied to a body that returns a value-bearing
     # reading having received no inputs at all: CD-ASR-F03's own shape.
-    def rewritten_body(spec, usable, now_utc, *extra, **extra_by_name):
+    # **THE BODY CARRIES ANNOTATIONS AND NO OPEN CHANNEL SINCE WO-2R3 INCREMENT 8, AND THAT
+    # IS NOT COSMETIC.** *Superseded (PBG-CONT-003 — corrections supersede, never edit):*
+    # ``def rewritten_body(spec, usable, now_utc, *extra, **extra_by_name):``
+    # The mechanism DERIVES its establishment from the signature now, so an unannotated
+    # parameter and an open channel are BOTH REFUSED AT DECORATION — property (b) of
+    # `PO-DECISIONS-0015` ruling 1. Both refusals are asserted, with their own arms, in
+    # ``tests/test_the_absence_door.py``, which is where the full attack lives.
+    def rewritten_body(spec: "DialSpec", usable: dict, now_utc: "datetime") -> "Reading":
         return _value_reading()
 
     starved = _spec(EQUITY_DIAL_ID, required=("src.a",), model=DECLARES_A_MODEL)
@@ -753,21 +766,45 @@ def test_the_per_dial_evaluator_carries_the_post_condition():
     # differing in exactly the structure the proposition credits.
     assert isinstance(rewritten_body(starved, {}, FIXED_NOW), Value)
 
-    # -------------------------------------------------------------- 4. AND THE HALF THAT IS
-    # OPEN, ASSERTED OPEN — the same sentence `admits` and `establishes` carry. The closure
-    # cells still reach the undecorated function. That is true of every decorator in Python;
-    # it is admission.py's DECLARED LIMIT 6 and establishment.py's DECLARED LIMIT 3, and this
-    # site now sits INSIDE that limit rather than outside it. **A CARRIER THAT ASSERTED ONLY
-    # THE CLOSURE WOULD BE CLAIMING MORE THAN WAS DONE.**
+    # -------------------------------------------------------------- 4. THE HALF THAT WAS
+    # DECLARED OPEN IS CLOSED — AND THE OLD ASSERTION FIRED ON THE FIX, WHICH IS THE ONLY
+    # REASON ANYBODY COULD TELL.
+    #
+    # **SUPERSEDED AT WO-2R3 INCREMENT 8** (`PBG-CONT-003` — corrections supersede, never
+    # edit). The old text, verbatim:
+    #
+    #     reachable = [cell.cell_contents
+    #                  for cell in (evaluate_module._evaluate_dial.__closure__ or ())
+    #                  if callable(getattr(cell, "cell_contents", None))]
+    #     assert reachable, (
+    #         "the closure route is DECLARED OPEN; if it has closed, the declared limit in "
+    #         "engine/evaluate.py, admission.py and establishment.py is now wrong and must be "
+    #         "corrected in all three CD-RULE-004 places rather than quietly enjoyed")
+    #
+    # **THAT ASSERTION DID EXACTLY WHAT IT SAID IT WOULD DO.** `PO-DECISIONS-0015` ruling 1
+    # (a) made *"no undecorated evaluator object exists at runtime"* the acceptance property;
+    # the redesign carries the body as a CODE OBJECT and no callable form of it survives; and
+    # this assertion WENT RED on the increment that closed the route it pinned open. The limit
+    # it named is corrected in all three CD-RULE-004 places rather than quietly enjoyed, and
+    # the residue that replaces it — `types.FunctionType(code, globals)` RECONSTITUTES a
+    # callable body from the materials still in the cells — is DECLARED LIMIT 10 and is
+    # CARRIED, asserted TRUE, by
+    # `tests/test_the_absence_door.py::test_the_reconstitution_residue_is_real_and_is_declared_limit_10`.
+    #
+    # **THE FULL ATTACK IS `tests/test_the_absence_door.py`, WHICH WALKS `__closure__`,
+    # `__wrapped__`, `__globals__` AND THE MODULE NAMESPACE WITH A COUNTERFACTUAL ARM, AND IT
+    # IS NOT DUPLICATED HERE.** This is the one line of it that belongs beside the
+    # post-condition's own carrier.
     reachable = [
         cell.cell_contents
         for cell in (evaluate_module._evaluate_dial.__closure__ or ())
         if callable(getattr(cell, "cell_contents", None))
     ]
-    assert reachable, (
-        "the closure route is DECLARED OPEN; if it has closed, the declared limit in "
-        "engine/evaluate.py, admission.py and establishment.py is now wrong and must be "
-        "corrected in all three CD-RULE-004 places rather than quietly enjoyed"
+    assert not reachable, (
+        "A CALLABLE IS REACHABLE THROUGH THE GUARD'S OWN CLOSURE. `PO-DECISIONS-0015` "
+        "ruling 1 (a) calls a wrapper that keeps the naked callable alive in a cell THE "
+        "DEFECT CLASS, not an implementation choice. Found: "
+        + repr([getattr(c, "__qualname__", c) for c in reachable])
     )
 
 

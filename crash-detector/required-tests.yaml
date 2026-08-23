@@ -249,6 +249,45 @@ criteria:
         0.0 and a declared test asserts that it does, rather than hiding it. The measured
         example is in the comment above this entry and in the header of
         src/crash_detector/dials/reading.py.
+        ================================================================================
+        DECLARED LIMITS 10 AND 11 — NEW AT WO-2R3 INCREMENT 8, AND THIS IS ONE OF THEIR THREE
+        CD-RULE-004 PLACES (the other two are the header of
+        src/crash_detector/engine/evaluate.py and
+        contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md). PO-DECISIONS-0015 ruling 1
+        made `guarded` a DOOR and REDESIGNED this control; these are the residues the redesign
+        leaves, and they are numbered into the SAME 1..11 sequence that runs across
+        tools/register/check_judgement_path_doors.py (1-4, 7-9) and
+        src/crash_detector/admission.py (5-6), because they are one row's limits and not
+        three lists.
+        LIMIT 10 — THE BODY CAN BE RECONSTITUTED FROM ITS CODE OBJECT. Property (a) is met as
+        the ruling states it: after the decorator returns, NO UNDECORATED EVALUATOR OBJECT
+        EXISTS — every closure cell holds data, `__wrapped__` is never created, and the walk
+        across `__closure__`, `__wrapped__`, `__globals__` and the module namespace finds
+        nothing callable. THAT IS NOT THE CLAIM THAT THE `__closure__` REACH IS CLOSED.
+        Anything that can read the cells can write
+        `types.FunctionType(code, globals)(spec, usable, now, None)` and reach the judgement
+        with neither the establishment nor the post-condition applied. EXECUTABLE EXAMPLE AND
+        CARRIER MEASURED, and it asserts the residue TRUE so this text cannot go stale in the
+        reassuring direction: tests/test_the_absence_door.py::
+        test_the_reconstitution_residue_is_real_and_is_declared_limit_10. What changed is the
+        COST — construct a callable rather than read one out of a cell — and nothing else.
+        CARRIER FOR PREVENTING THE RECONSTITUTION: NOT PROVED TO BE CARRIED ANYWHERE, and
+        CPython offers no way to prevent it (the same sentence admission.py's DECLARED LIMIT
+        6 (a) carries about the closure reach in general).
+        LIMIT 11 — THE DERIVATION DROPS A GENERIC'S SUBSCRIPT. `usable: dict[str, OK]` derives
+        to "exactly a dict" and says nothing about the keys or the values. EXECUTABLE EXAMPLE:
+        `_evaluate_dial(spec, {"src.a": object()}, now)` passes this door. CARRIER MEASURED
+        one level up: `_latest_usable_ok` admits an outcome only when `type(outcome) is OK`
+        and builds the only `usable` any product caller supplies. FOR A DIRECT CALLER
+        SUPPLYING ITS OWN dict: NOT PROVED TO BE CARRIED ANYWHERE — the post-condition
+        re-derives from `spec` and from the KEYS of `usable` only. AND THE ANNOTATION CHANGE
+        THIS SITS ON IS DECLARED (CD-PL-F109): `Mapping[str, OK]` -> `dict[str, OK]` is NOT a
+        narrowing of what the product accepts. MEASURED, two arms, both trees: at the base
+        commit a `collections.abc.Mapping` that is not a `dict` was ALREADY refused with
+        NotAdmitted by `refuse_a_number_without_its_inputs`, whose @admits declared
+        `usable=dict` and fired on every call. The accepted set is identical; only the point
+        of refusal moves, from after the body has run to before it binds.
+        ================================================================================
       evidence_ref: RTR-WO2-0001
 
 - criterion_id: CD-AC-002
@@ -1733,6 +1772,64 @@ criteria:
         provided the module is imported by pkgutil.walk_packages and the door object is reachable
         from a module or class namespace. FOR AN EXEMPTION ON A DOOR NOT REACHABLE FROM ANY
         MODULE OR CLASS NAMESPACE: NOT PROVED TO BE CARRIED ANYWHERE.
+        ================================================================================
+        DECLARED LIMIT 9 — REWRITTEN AT WO-2R3 INCREMENT 8 BY PRODUCT AUTHORITY
+        (PO-DECISIONS-0015 ruling 1). This is one of that limit's three CD-RULE-004 places; the
+        others are the header of tools/register/check_judgement_path_doors.py and
+        contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md. THE SUPERSEDED WORDING,
+        QUOTED AND NOT DELETED (CD-RULE-004, PBG-CONT-003):
+          "reachability ACROSS modules. The clause is per-module. A non-public module-level
+           name is treated as unreachable from outside, which is TRUE OF NOTHING IN PYTHON —
+           the underscore is a convention and `from m import _x` works, MEASURED. THIS CHECK
+           KEEPS THE CONVENTION DELIBERATELY, because §D.1's class is PUBLIC entry points and
+           abolishing publicness would make every private helper in the package a door. THAT IS
+           A PRODUCT-MEANING BOUNDARY AND NOT AN IMPLEMENTATION ONE (PBG-AUTH-005)."
+        THE ANSWER CAME BACK: "membership moves on REAL PUBLIC BINDINGS AND MEASURED REACH,
+        never on an underscore." GROUND 1 IS THE MEASUREMENT THAT FORCED IT — `_evaluate_dial`
+        was excluded by a leading underscore while a conforming, declared-foreign SourceAdapter
+        obtained it from `sys.modules` on the second collection cycle and CALLED it, passing no
+        door. TWO THINGS MOVED AND NO MORE. (i) MEMBERSHIP: a module-level def is a subject if
+        it is PUBLIC or if its RETURN ANNOTATION NAMES A JUDGEMENT VALUE TYPE — a property of
+        the artefact that survives renaming the identifier in EITHER direction, which the
+        underscore test does not. MEASURED: SUBJECTS 27 -> 31, the four being `_evaluate_dial`,
+        `_established_quantity`, `_new_quantity` and `_shown_from`, all four now decorated.
+        (ii) THE ESCAPE-ROUTE DESTINATION TEST: it asked whether the destination's IDENTIFIER
+        was public and treated a private one as a dead end; it now asks whether the destination
+        is ITSELF AN ENUMERATED SUBJECT, and if it is the local's obligation is RESOLVED to
+        that binding and asserted there rather than DENIED. WHAT DELIBERATELY DID NOT MOVE:
+        RULE 1's deny-by-default still asks publicness of a module-level name that returns no
+        judgement value. Abolishing publicness ALTOGETHER was MEASURED on a pristine git archive
+        extraction of 314592c by replacing `_is_public`'s body with `return True`: SUBJECTS
+        27 -> 68, FAIL — 42 violations, i.e. 41 private helpers becoming doors in one increment.
+        That is a PRODUCT-MEANING boundary and it is RAISED, NOT TAKEN (PBG-AUTH-005). CARRIER
+        FOR THE REMAINING UNDERSCORE DEPENDENCE: NOT PROVED TO BE CARRIED ANYWHERE, other than
+        that on a judgement path the NETS population denies by default.
+        ================================================================================
+        THE SECOND DOOR FORM — DERIVED DOORS. NEW AT WO-2R3 INCREMENT 8 (PO-DECISIONS-0015
+        ruling 1 (b)). A subject whose decorator is declared in
+        tools/register/declared_door_mechanisms.py derives its establishment FROM ITS OWN
+        SIGNATURE, so there is no admits(...) argument list to compare against the signature —
+        the signature IS the declaration. WHAT IS ASSERTED INSTEAD is the pair of artefact
+        properties the derivation requires and refuses without: EVERY PARAMETER ANNOTATED
+        (DERIVED_DOOR_PARAMETER_NOT_ANNOTATED) and NO VARIADIC (OPEN_CHANNEL). AND THE
+        MECHANISM ITSELF IS CHECKED AGAINST ITS OWN SOURCE, four assertions, set equality both
+        directions: it must EXIST as a module-level def in the declared module
+        (MECHANISM_DECLARED_BUT_ABSENT); it or a module-level function it calls must read
+        `inspect.signature` (MECHANISM_DOES_NOT_READ_THE_SIGNATURE); it or one of those must
+        compile through `crash_detector.admission.declaration`, the project's ONE declaration
+        vocabulary (MECHANISM_DOES_NOT_USE_THE_ONE_VOCABULARY); and it must DECORATE SOMETHING
+        (MECHANISM_DECORATES_NOTHING). A ROW THERE IS NOT AN EXEMPTION AND BUYS A SUBJECT
+        NOTHING. WHY A SECOND FORM EXISTS: `admits` derives the parameter LIST from the
+        signature but takes the TYPE beside each name by hand, so adding a parameter FAULTS the
+        door and every call is refused — right for a door, and NOT what ruling 1 (b) asks of the
+        CD-ASR-F03 guard, which must SURVIVE arity growth "because it derives, not because it
+        gapes". LIMIT INHERITED, NOT WIDENED: a mechanism is recognised BY ITS NAME IN THE
+        SOURCE, exactly as `admits` is (DECLARED LIMIT 4). The FAILURE DIRECTION is the safe
+        one: rename a declared mechanism and the check reports MECHANISM_DECLARED_BUT_ABSENT
+        AND reports the subject it covered as UNDECORATED_JUDGEMENT_PATH_DOOR — two violations,
+        never a silence. CARRIER: tests/test_judgement_path_doors.py, the derived-door arms,
+        each asserting by BREAKING the property in a throwaway tree.
+        ================================================================================
       evidence_ref: RTR-WO2-0001
   # ===========================================================================================
   # CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST — ADDED AT WO-2R3 INCREMENT 5,

@@ -108,3 +108,85 @@ correct: this seat may declare which run must evidence its guard, and may not su
 It does not claim the test passes. It does not claim the criterion is satisfied. It does not
 admit any evidence: `latest_admitted_run` is null in the register and this seat cannot fill
 it in, because an implementation may not certify itself (`PBG-SOD-001`, non-waivable).
+
+---
+
+## DECLARED LIMITS 10 AND 11 — NEW AT WO-2R3 INCREMENT 8 (`PO-DECISIONS-0015` ruling 1)
+
+This is the **third** of the three CD-RULE-004 places these two limits are declared in. The other
+two are the header of `src/crash_detector/engine/evaluate.py` and the
+`CD-RT-001-ABSENCE-RENDERS-UNKNOWN` entry of `required-tests.yaml`.
+
+**THE NUMBERING RUNS AS ONE SEQUENCE ACROSS THREE HEADERS AND NOT THREE LISTS.** Limits 1–4 and
+7–9 are the static check's (`tools/register/check_judgement_path_doors.py`); 5–6 are `admits`'s
+(`src/crash_detector/admission.py`); **10 and 11 are the CD-ASR-F03 MECHANISM'S.** An auditor who
+reads only one header has read part of what this row declares open — CD-PL-F81, ruled CD-D-111,
+now applying to a third header.
+
+### Why they exist at all
+
+`PO-DECISIONS-0012` ruling 1 held that `_evaluate_dial` was *"reachable only through doors that
+already establish"*. That half was **falsified by measurement twice independently** — a conforming,
+declared-foreign `SourceAdapter` obtains the module from `sys.modules` on the second collection
+cycle and reaches the **undecorated** evaluator through `__closure__`, passing no door. The
+consequence the Product Owner had pre-committed to was taken in full: **`guarded` becomes a DOOR
+and `CD-ASR-F03` is REDESIGNED, not repaired.** These are the residues the redesign leaves.
+
+### 10 — THE BODY CAN BE RECONSTITUTED FROM ITS CODE OBJECT
+
+Property (a) of the ruling is met **as the ruling states it**: after
+`_absence_is_never_a_number` returns, **no undecorated evaluator object exists**. Every cell of
+`_evaluate_dial.__closure__` holds data; `__wrapped__` is never created (`functools.wraps` is not
+used at all, which is a strictly stronger answer to `PO-DECISIONS-0013` ruling 2 than the
+`delattr` it replaces); and a walk across `__closure__`, `__wrapped__`, `__globals__` and the
+module namespace finds **nothing callable**.
+
+**THAT IS NOT THE SAME CLAIM AS "THE `__closure__` REACH IS CLOSED", AND THIS LIMIT EXISTS SO
+NOBODY READS IT AS ONE.** Executable example:
+
+```python
+cells    = [c.cell_contents for c in evaluate._evaluate_dial.__closure__]
+code     = next(c for c in cells if isinstance(c, types.CodeType))
+globals_ = next(c for c in cells if isinstance(c, dict) and "Value" in c)
+types.FunctionType(code, globals_)(starved_spec, {}, now, None)   # no door, no post-condition
+```
+
+**CARRIER MEASURED, AND IT ASSERTS THE RESIDUE *TRUE*:**
+`tests/test_the_absence_door.py::test_the_reconstitution_residue_is_real_and_is_declared_limit_10`
+performs exactly that reconstitution and **requires it to succeed**, so this paragraph cannot go
+stale in the reassuring direction. The day the reconstitution stops working, that test goes red and
+this limit is corrected in all three places rather than quietly enjoyed — the same discipline the
+superseded closure assertion in `tests/test_evaluate.py` carried, and the reason anybody could tell
+the closure route had closed.
+
+**WHAT ACTUALLY CHANGED, WITHOUT DECORATION.** Before: the cell **held** the callable and one
+attribute access reached it. Now: the cell holds materials and an attacker must **construct** a
+callable from them. Same reach, one more line of interpreter-internals work.
+**CARRIER FOR PREVENTING THE RECONSTITUTION: NOT PROVED TO BE CARRIED ANYWHERE**, and CPython
+offers no way to prevent it — the sentence `admission.py`'s DECLARED LIMIT 6 (a) already carries
+about the closure reach in general.
+
+### 11 — THE DERIVATION DROPS A GENERIC'S SUBSCRIPT
+
+`usable: dict[str, OK]` derives to *exactly a `dict`* and says nothing about its keys or its
+values. Executable example: `_evaluate_dial(spec, {"src.a": object()}, now)` **passes this door**.
+
+**CARRIER MEASURED, ONE LEVEL UP:** `_latest_usable_ok` builds the only `usable` any product
+caller supplies and admits an outcome only when `type(outcome) is OK`.
+**FOR A DIRECT CALLER SUPPLYING ITS OWN `dict`: NOT PROVED TO BE CARRIED ANYWHERE** — the
+post-condition re-derives from `spec` and from the **keys** of `usable` only.
+
+**AND THE ANNOTATION CHANGE THIS LIMIT SITS ON IS DECLARED RATHER THAN INHERITED (`CD-PL-F109`).**
+`_evaluate_dial`'s `usable` moved `Mapping[str, OK]` → `dict[str, OK]`, because the establishment
+is derived from that annotation and an abstract `Mapping` has no exact type to derive.
+**IT IS NOT A NARROWING OF WHAT THE PRODUCT ACCEPTS, AND THAT IS MEASURED AND NOT ARGUED.** Two
+arms, one axis, run in both trees:
+
+| arm | base `314592c` | tip |
+|---|---|---|
+| a plain `dict` (control) | ADMITTED → `Unknown` | ADMITTED → `Unknown` |
+| a `collections.abc.Mapping` that is not a `dict` | **REFUSED — `NotAdmitted`**, raised by `refuse_a_number_without_its_inputs` | **REFUSED — `NotAdmitted`**, raised by `_evaluate_dial` |
+
+The accepted set is identical. **Only the point of refusal moves** — from after the body has run
+to before it binds — because `refuse_a_number_without_its_inputs` has always declared
+`usable=dict` and has always fired on every call through the net.

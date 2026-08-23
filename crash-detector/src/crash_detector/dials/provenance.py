@@ -718,8 +718,32 @@ def _assert_declared_surface(cls: type) -> None:
         raise QuantitySurfaceViolated(" ".join(breaches))
 
 
+@admits(
+    dials=frozenset,
+    value=ESTABLISHED_HERE(
+        "`_install` below refuses a value that is not a finite float with the NAMED error "
+        "ScoreOutOfRange, and that named refusal is what BOTH public doors above hand their "
+        "`quantity` and their reduction result to — `observed_for_dial`'s own "
+        "ESTABLISHED_HERE reason names ScoreOutOfRange as the refusal. CARRIER MEASURED, by "
+        "name: tests/test_dial_provenance.py::"
+        "test_the_admission_door_refuses_anything_that_is_not_a_finite_float, seven arms. "
+        "**AN EXACT-TYPE DOOR HERE PREEMPTS IT WITH A GENERIC NotAdmitted AND SILENTLY "
+        "DISCHARGES THE PUBLIC DOOR'S DECLARED EXEMPTION AT A PRIVATE ONE. MEASURED: adding "
+        "`value=float` here took that carrier RED, 4 failed** (CD-ENG-WO2R3-06-F01, raised by "
+        "this seat against its own work). This door is decorated for the P7 property ONLY — a "
+        "new argument added to it arrives REFUSED — and its value establishment stays in the "
+        "body, which is admission.py's DECLARED LIMIT 5 shape exactly."
+    ),
+)
 def _new_quantity(dials: frozenset, value: float) -> DeclaredQuantity:
     """Build a declared quantity. THE ONLY route to one, and it is module-private.
+
+    **IT IS A DOOR AS OF WO-2R3 INCREMENT 8, BECAUSE THE CRITERION STOPPED MOVING ON AN
+    UNDERSCORE** (``PO-DECISIONS-0015`` ruling 1). It returns a ``DeclaredQuantity`` — a
+    judgement value — so it is a judgement-path entry point whatever it is spelled, and
+    ``from crash_detector.dials.provenance import _new_quantity`` is a line anybody can write.
+    ``dials`` is exact-typed at the door because a ``frozenset`` is a container shape with no
+    named refusal of its own here; ``value`` is NOT, for the reason the declaration states.
 
     It goes around :meth:`DeclaredQuantity.__init__`, which refuses always, rather than
     passing it a flag: a flag is an argument, and an argument is something a caller can

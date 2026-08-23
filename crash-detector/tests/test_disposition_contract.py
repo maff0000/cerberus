@@ -199,17 +199,48 @@ def test_the_five_original_words_are_unchanged_in_shape(a_tree):
     **AND THE ASSERTION THAT REPLACES IT IS NOT "THE SWEEP IS GREEN".** A green exit here is
     ARITHMETIC over the declaration set and this project has been burned four times by a clean
     run being read as evidence of a proposition it says nothing about. So the replacement
-    asserts the thing that could actually go wrong: that the POPULATION is unmoved at 534, that
-    the five original words are still accepted, and that **the instrument itself prints, on
-    every clean run, what its own zero exit code does and does not mean.**
+    asserts the thing that could actually go wrong: that the POPULATION is what it was last
+    MEASURED to be, that the five original words are still accepted, and that **the instrument
+    itself prints, on every clean run, what its own zero exit code does and does not mean.**
+
+    **SUPERSEDED AGAIN AT WO-2R3 INCREMENT 8, ITEM 1** (`PBG-CONT-003` — corrections
+    supersede, never edit). The text it replaces, verbatim:
+
+        assert "534 sites" in result.stdout, (
+            "the sweep's own POPULATION moved. The record act declares sites; it does not
+            create or destroy them, and it changed no line under src/.")
+
+    **THAT REASON WAS TRUE OF A RECORD ACT AND IS FALSE OF THIS INCREMENT.** The
+    `PO-DECISIONS-0015` ruling 1 redesign of the CD-ASR-F03 control CHANGES LINES UNDER
+    ``src/`` by construction — it replaces one wrapper with a derivation — so the population
+    moves by construction too. **534 -> 555, MEASURED by running the instrument and not by
+    arithmetic on a diff**, and every one of the twenty-one new occurrences is TIER 2 (the
+    deciding operation) in ``crash_detector.engine.evaluate``, a module the register already
+    derives. **THE ASSERTION THAT ACTUALLY MATTERS IS BESIDE IT AND IS NEW**: not one of them
+    is a TIER 1 admission, so this increment added ZERO sites needing a written disposition —
+    which is the property that would have been quietly lost if the number alone were bumped.
+    ``tools/sweep/declared_dispositions.py`` is untouched by this seat and is outside its
+    scope; had a tier-1 site been added, this test would be RED and would have to stay RED.
     """
     result = _run(a_tree)
     assert "UNKNOWN_DISPOSITION" not in result.stdout
     assert "DISPOSITION_EVIDENCE_MISSING" not in result.stdout
     assert "MALFORMED_DISPOSITION" not in result.stdout
-    assert "534 sites" in result.stdout, (
-        "the sweep's own POPULATION moved. The record act declares sites; it does not create "
-        "or destroy them, and it changed no line under src/.\n" + result.stdout[-3000:]
+    assert "555 sites" in result.stdout, (
+        "the sweep's own POPULATION moved. If that was a deliberate product change, "
+        "supersede this number with the MEASURED one and say what moved it; if it was not, "
+        "something changed under src/ that nobody intended.\n" + result.stdout[-3000:]
+    )
+    # **THE TIER-1 POPULATION IS THE ONE THAT CARRIES AN OBLIGATION, AND IT IS PINNED
+    # SEPARATELY SO THAT A BUMP TO THE TOTAL CANNOT HIDE A NEW UNDECLARED ADMISSION.**
+    # A tier-1 site needs a written disposition in a register no Engineer seat owns; a tier-2
+    # occurrence derives from its module. Bumping only the total would let the first hide
+    # inside the second.
+    assert "TIER 1 — admission: 45 distinct sites" in result.stdout, (
+        "THE TIER 1 ADMISSION POPULATION MOVED. Every tier-1 site needs its own written "
+        "disposition in tools/sweep/declared_dispositions.py, which is the Project Lead's "
+        "register. A change that adds one is not a change that may bump a number here.\n"
+        + result.stdout[-3000:]
     )
     if result.returncode == 0:
         assert "A REGISTER FULL OF `DEFECT_OPEN` BUYS NOTHING" in result.stdout, (

@@ -55,6 +55,10 @@ EXEMPTIONS, EACH DERIVED FROM THE ARTEFACT AND EACH COUNTED IN THE OUTPUT
 --------------------------------------------------------------------------
 * **NOT REACHABLE FROM OUTSIDE THE MODULE.** *Superseded wording, quoted rather than deleted
   (CD-RULE-004, PBG-CONT-003): "names beginning ``_`` — not public entry points".*
+  **AND SUPERSEDED AGAIN AT WO-2R3 INCREMENT 8 (``PO-DECISIONS-0015`` ruling 1): a
+  module-level ``def`` WHOSE RETURN ANNOTATION NAMES A JUDGEMENT VALUE TYPE IS A SUBJECT
+  WHATEVER IT IS SPELLED.** Membership moves on real bindings and measured reach, never on an
+  underscore; the full account and the measurement that bounded it are in DECLARED LIMIT 9.
   **``PO-DECISIONS-0012`` RULING 2 CORRECTED THIS CLAUSE FROM NAME-PREFIX TO REACHABILITY**,
   after the fifth Assurance seat took this check from 1 violation to 0 by renaming ONE
   function-local identifier with runtime identity unchanged. For a MODULE-LEVEL ``def`` the
@@ -76,13 +80,31 @@ EXEMPTIONS, EACH DERIVED FROM THE ARTEFACT AND EACH COUNTED IN THE OUTPUT
 Each exemption's COUNT is printed. An exemption that starts absorbing the subject set is
 therefore visible in the output rather than discovered later.
 
-WHAT IT ASSERTS ABOUT EACH SUBJECT — TWO THINGS
--------------------------------------------------
+WHAT IT ASSERTS ABOUT EACH SUBJECT — AND THERE ARE NOW **TWO DOOR FORMS**
+--------------------------------------------------------------------------
+**FORM 1 — DECLARED.** The subject carries ``@admits(...)``, and:
+
 1. it carries ``@admits(...)``;
 2. the parameter names ``admits`` was told about are EXACTLY the parameter names in the
    signature, minus the method receiver. This is planted violation **P7** caught statically
    as well as at runtime: a new parameter added to a decorated door fails HERE too, and it
    fails without the module being imported.
+
+**FORM 2 — DERIVED. NEW AT WO-2R3 INCREMENT 8** (``PO-DECISIONS-0015`` ruling 1 (b)). The
+subject's decorator is declared in ``tools/register/declared_door_mechanisms.py``, which means
+its establishment is DERIVED from its own signature and there is no ``admits(...)`` argument
+list to compare against it — **the signature IS the declaration**. What is asserted instead is
+the pair of artefact properties the derivation requires and refuses without: **EVERY PARAMETER
+ANNOTATED** (``DERIVED_DOOR_PARAMETER_NOT_ANNOTATED``) and **NO VARIADIC PARAMETER**
+(``OPEN_CHANNEL``, the same code an ``admits`` door gets for the same shape). The declared
+mechanism is itself checked against its own source — it must EXIST, must read
+``inspect.signature``, must compile through ``crash_detector.admission.declaration``, and must
+DECORATE SOMETHING. **A ROW IN THAT REGISTER IS NOT AN EXEMPTION AND BUYS A SUBJECT NOTHING.**
+
+Why a second form exists at all: ``admits`` derives the parameter LIST from the signature but
+takes the TYPE beside each name by hand, so adding a parameter FAULTS the door and every call
+is refused. That is right for a door and it is **not** what ruling 1 (b) asks of the CD-ASR-F03
+guard, which must *survive* arity growth *"because it derives, not because it gapes"*.
 
 ====================================================================================
 DECLARED LIMIT (CD-RULE-004) — in this header, in required-tests.yaml and in
@@ -459,13 +481,52 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
       there the callable is a printed row and nothing fails**, and that is NOT PROVED TO BE
       CARRIED ANYWHERE;
     * **an escape by ``setattr``/``globals()``** — computed at runtime, invisible to any AST;
-    * **reachability ACROSS modules.** The clause is per-module. A non-public module-level
-      name is treated as unreachable from outside, which is TRUE OF NOTHING IN PYTHON — the
-      underscore is a convention and ``from m import _x`` works, MEASURED at
-      ``variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py`` arm A2. **THIS
-      CHECK KEEPS THE CONVENTION DELIBERATELY**, because §D.1's class is PUBLIC entry points
-      and abolishing publicness would make every private helper in the package a door. **THAT
-      IS A PRODUCT-MEANING BOUNDARY AND NOT AN IMPLEMENTATION ONE (PBG-AUTH-005);**
+    * **reachability ACROSS modules — REWRITTEN AT WO-2R3 INCREMENT 8 BY PRODUCT AUTHORITY
+      (``PO-DECISIONS-0015`` ruling 1). THE SUPERSEDED WORDING, QUOTED AND NOT DELETED
+      (CD-RULE-004, PBG-CONT-003):**
+
+          *"The clause is per-module. A non-public module-level name is treated as
+          unreachable from outside, which is TRUE OF NOTHING IN PYTHON — the underscore is a
+          convention and ``from m import _x`` works, MEASURED at
+          ``variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py`` arm A2. **THIS
+          CHECK KEEPS THE CONVENTION DELIBERATELY**, because §D.1's class is PUBLIC entry
+          points and abolishing publicness would make every private helper in the package a
+          door. **THAT IS A PRODUCT-MEANING BOUNDARY AND NOT AN IMPLEMENTATION ONE
+          (PBG-AUTH-005)."*
+
+      **THAT PARAGRAPH NAMED THE RIGHT QUESTION AND HANDED IT UP, AND THE ANSWER CAME BACK.**
+      ``PO-DECISIONS-0015`` ruling 1: *"membership moves on REAL PUBLIC BINDINGS AND MEASURED
+      REACH, never on an underscore."* Ground 1 is the measurement that forced it —
+      ``_evaluate_dial`` was excluded by its leading underscore while a conforming foreign
+      adapter obtained it from ``sys.modules`` and CALLED it, passing no door.
+
+      **WHAT MOVED, IN TWO PLACES AND NO MORE:**
+
+      (i) **MEMBERSHIP.** A module-level ``def`` is a subject if it is PUBLIC **or if its
+          return annotation names a JUDGEMENT VALUE TYPE.** A callable that PRODUCES A
+          JUDGEMENT is a judgement-path door whatever it is spelled. This is a property of
+          the artefact and it survives renaming the identifier IN EITHER DIRECTION, which the
+          underscore test does not. MEASURED on the shipped tree: **SUBJECTS 27 -> 31**, and
+          the four are ``_evaluate_dial``, ``_established_quantity``, ``_new_quantity`` and
+          ``_shown_from``, all four now decorated.
+      (ii) **THE ESCAPE-ROUTE DESTINATION TEST.** It asked whether the destination's
+          IDENTIFIER was public and concluded that a private one was a dead end. It now asks
+          whether the destination is **ITSELF AN ENUMERATED SUBJECT OF THIS CHECK**; if it
+          is, the local's door obligation is **RESOLVED** to that binding — the name a caller
+          actually writes — and asserted there, rather than DENIED. ``guarded``'s reason line
+          used to read *"reaches only ['_evaluate_dial'], every one of them non-public"*,
+          which was the false sentence Ground 1 falsified.
+
+      **WHAT DELIBERATELY DID NOT MOVE, WITH THE MEASUREMENT THAT DECIDED IT.** RULE 1's
+      deny-by-default within a judgement-path package still asks publicness of a module-level
+      name that returns no judgement value. Abolishing publicness ALTOGETHER was measured on a
+      pristine ``git archive`` extraction of ``314592c`` by replacing ``_is_public``'s body
+      with ``return True``: **SUBJECTS 27 -> 68, FAIL — 42 violation(s)**, i.e. 41 private
+      helpers becoming doors in one increment. Whether §D.1's *"public entry points"* class
+      includes them is a PRODUCT-MEANING boundary and not an implementation one
+      (PBG-AUTH-005), and this seat raises it rather than taking it. **CARRIER FOR THE
+      REMAINING UNDERSCORE DEPENDENCE: NOT PROVED TO BE CARRIED ANYWHERE**, other than that on
+      a judgement path the NETS population denies by default;
     * **the NETS register identifies a net by its ENCLOSING function**, which is a
       module-level name and therefore renameable. Renaming it fails the check LOUDLY
       (``NET_DECLARED_BUT_ABSENT``, whose text names all three possible causes) and never
@@ -498,6 +559,7 @@ from _support import (  # noqa: E402
     read_text,
     resolve_root,
 )
+from declared_door_mechanisms import DECLARED_DOOR_MECHANISMS  # noqa: E402
 from declared_nets import DECLARED_NETS  # noqa: E402
 
 CHECK_ID = "CD-RT-002-DOORS-REQUIRE-THEIR-TYPES"
@@ -614,9 +676,14 @@ def _module_bindings(tree) -> dict:
     decorates: dict = {}
     assigned_from: dict = {}
     defined: set = set()
+    module_level_defs: dict = {}
     for node in module_level_statements(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             defined.add(node.name)
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                # THE NODE, NOT ONLY THE NAME. WO-2R3 increment 8: the criterion below asks
+                # what a destination RETURNS, and a name cannot answer that.
+                module_level_defs[node.name] = node
             for decorator in node.decorator_list:
                 head = decorator.func if isinstance(decorator, ast.Call) else decorator
                 name = getattr(head, "id", None) or getattr(head, "attr", None)
@@ -634,6 +701,7 @@ def _module_bindings(tree) -> dict:
         "decorates": decorates,
         "assigned_from": assigned_from,
         "defined_at_module_level": defined,
+        "module_level_defs": module_level_defs,
     }
 
 
@@ -670,7 +738,31 @@ def _escape_routes(local_name: str, enclosing) -> list:
     return routes
 
 
-def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
+def _is_a_door_binding(name: str, bindings: dict) -> bool:
+    """Would the MODULE-LEVEL binding ``name`` be ENUMERATED AS A SUBJECT by this check?
+
+    **NEW AT WO-2R3 INCREMENT 8** (``PO-DECISIONS-0015`` ruling 1), and it asks BOTH halves
+    of subject-hood rather than only the first, because a "resolution" to a binding nothing
+    asserts would be a silence wearing a resolution's clothes:
+
+    * REACHABLE — the name is PUBLIC, **or** the ``def`` bound to it RETURNS A JUDGEMENT
+      VALUE. The second is what stops the criterion moving on an underscore: it is a property
+      of the artefact, and it survives renaming the identifier IN EITHER DIRECTION, which the
+      first does not;
+    * A SUBJECT — the module is a RULE 1 judgement-path package, **or** the ``def`` returns a
+      judgement value (RULE 2). This is the same union ``main`` applies, asked here so the two
+      cannot disagree.
+    """
+    node = bindings["module_level_defs"].get(name)
+    if node is None:
+        return False
+    returns_a_judgement = _returns_a_judgement_value(node)
+    reachable = _is_public(name) or returns_a_judgement
+    a_subject = bindings["in_judgement_package"] or returns_a_judgement
+    return reachable and a_subject
+
+
+def _reachable_public_binding(name: str, function_chain: list, bindings: dict, node=None):
     """**THE REACHABILITY CLAUSE.** Can a caller outside this module obtain this callable?
 
     ``PO-DECISIONS-0012`` ruling 2: *"The doors instrument's membership clause is corrected
@@ -710,8 +802,39 @@ def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
     outcome PO-DECISIONS-0012 ruling 1 forbids.
     """
     if not function_chain:
-        # Module level — the identifier IS the binding. Unchanged behaviour.
-        return _is_public(name), "module-level name"
+        # ---------------------------------------------------------------------------- #
+        # MODULE LEVEL — the identifier IS the binding a caller names.
+        #
+        # **AND SINCE WO-2R3 INCREMENT 8 THE UNDERSCORE IS NOT THE ONLY THING ASKED**
+        # (`PO-DECISIONS-0015` ruling 1: *"membership moves on REAL PUBLIC BINDINGS AND
+        # MEASURED REACH, never on an underscore"*). *Superseded implementation, described
+        # rather than deleted (CD-RULE-004, PBG-CONT-003): this returned `_is_public(name)`
+        # and nothing else.* **GROUND 1 IS WHAT MOVED IT:** `_evaluate_dial` was excluded by
+        # its leading underscore while a conforming foreign adapter was MEASURED obtaining it
+        # from `sys.modules` and calling it, passing no door. The underscore is a convention
+        # that prevents no reach — `from m import _x` and `getattr(sys.modules[m], "_x")`
+        # both work, measured — so a callable that PRODUCES A JUDGEMENT is a judgement-path
+        # door whatever it is spelled.
+        #
+        # **WHAT WAS DELIBERATELY NOT DONE, WITH THE MEASUREMENT THAT DECIDED IT.** Abolishing
+        # publicness altogether was measured on a pristine extraction of `314592c` by
+        # replacing this function's body with `return True`: **SUBJECTS 27 -> 68, FAIL — 42
+        # violations.** That is 41 private helpers becoming doors, and whether §D.1's *"public
+        # entry points"* class includes them is a PRODUCT-MEANING boundary and not an
+        # implementation one (PBG-AUTH-005). It is raised rather than taken. See DECLARED
+        # LIMIT 9.
+        # ---------------------------------------------------------------------------- #
+        if _is_public(name):
+            return True, "module-level name"
+        if node is not None and _returns_a_judgement_value(node):
+            return True, (
+                "a NON-PUBLIC module-level name WHOSE RETURN ANNOTATION NAMES A JUDGEMENT "
+                "VALUE TYPE. A callable that PRODUCES A JUDGEMENT is a judgement-path door "
+                "whatever it is spelled, because the underscore prevents no reach: "
+                "`from m import _x` and `getattr(sys.modules[m], '_x')` both work, MEASURED "
+                "(PO-DECISIONS-0015 ruling 1 — never on an underscore)"
+            )
+        return False, "non-public module-level name that returns no judgement value"
 
     enclosing = function_chain[-1]
     routes = [route for route in _escape_routes(name, enclosing) if route[0] != ESCAPE_PASSED]
@@ -770,7 +893,10 @@ def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
     # Everything that remains is a RETURN. The object is reachable exactly where its
     # enclosing function's return value is reachable, so ask the same question one frame out.
     outer_reachable, outer_why = _reachable_public_binding(
-        enclosing.name, function_chain[:-1], bindings
+        enclosing.name,
+        function_chain[:-1],
+        bindings,
+        bindings["module_level_defs"].get(enclosing.name),
     )
     if outer_reachable:
         return True, (
@@ -781,31 +907,102 @@ def _reachable_public_binding(name: str, function_chain: list, bindings: dict):
     if not function_chain[:-1]:
         # The enclosing function is module-level and non-public. Its return value can still
         # escape two ways, and BOTH are followed rather than assumed away.
-        for target in bindings["decorates"].get(enclosing.name, []):
-            if _is_public(target):
-                return True, (
-                    f"function-local in {enclosing.name}(), which DECORATES the public "
-                    f"module-level {target!r} — the decorator's return value IS {target!r}"
-                )
-        for target in bindings["assigned_from"].get(enclosing.name, []):
-            if _is_public(target):
-                return True, (
-                    f"function-local in {enclosing.name}(), whose return value is bound to "
-                    f"the public module-level name {target!r}"
-                )
         decorated = bindings["decorates"].get(enclosing.name, [])
         assigned = bindings["assigned_from"].get(enclosing.name, [])
         destinations = sorted(set(decorated + assigned))
+        # ------------------------------------------------------------------------------ #
+        # **REACH IS RESOLVED, NOT DENIED. NEW AT WO-2R3 INCREMENT 8** (`PO-DECISIONS-0015`
+        # ruling 1). *Superseded wording, quoted rather than deleted (CD-RULE-004,
+        # PBG-CONT-003): "its return value reaches only [...], every one of them non-public".*
+        # *AND SUPERSEDED WITH IT, THE TWO BRANCHES ABOVE IT, WHICH READ:* `for target in
+        # bindings["decorates"]...: if _is_public(target): return True, "...which DECORATES
+        # the public module-level ..."` *and the same over* `assigned_from`. **THEY MADE A
+        # DECORATOR'S WRAPPER A SECOND DOOR SUBJECT WHENEVER THE THING IT DECORATED WAS
+        # PUBLICLY NAMED, AND THAT IS THE SAME CONFLATION READ FROM THE OTHER END**: the
+        # object a caller obtains is ONE object, and the obligation belongs at the ONE name a
+        # caller writes. **NOTHING IS SILENCED BY THE CHANGE**: a local whose destination is
+        # not an enumerated subject still lands in the NETS population, where an undeclared
+        # one FAILS `UNCLASSIFIED_INTERCEPTOR`, and a local STORED into a container is caught
+        # by the branch above, which is unmoved (ESCAPE 4 ARM 4).
+        #
+        # **THAT SENTENCE WAS FALSE AND ITS FALSENESS IS GROUND 1.** `guarded`'s return value
+        # reaches `_evaluate_dial`, and `_evaluate_dial` was MEASURED being obtained from
+        # `sys.modules` and called by a conforming foreign adapter that passed no door. The
+        # clause read the destination's SPELLING and concluded nobody could get there.
+        #
+        # The question is now asked of the destination rather than of its underscore: **is
+        # the module-level binding this object reaches ITSELF A SUBJECT OF THIS CHECK?** If it
+        # is, the door obligation belongs THERE — at the name a caller actually writes — and
+        # is asserted there at that def's own site, so this identifier, which no caller can
+        # name, is not a second subject. That is a RESOLUTION and it is stated as one; the
+        # object is reachable and this says so.
+        # ------------------------------------------------------------------------------ #
+        # **RESOLUTION REQUIRES A DESTINATION WITH A DEF SITE TO RESOLVE *TO*.** A
+        # module-level `def` has one and the check asserts it there. A module-level ASSIGNMENT
+        # — `PUBLIC = _install()` — does NOT: there is no signature and no decorator at that
+        # name for anything to assert, so resolving to it would discharge an obligation onto
+        # nothing. That case falls through to the reachability branch below and the LOCAL is
+        # the door subject, exactly as before. **MEASURED, AND IT IS WHY THIS CONDITION IS
+        # TWO CLAUSES AND NOT ONE**: without it, `tests/test_module_level_traversal.py`'s
+        # planted `public_evaluator = _install_evaluator()` went from
+        # UNDECORATED_JUDGEMENT_PATH_DOOR to UNCLASSIFIED_INTERCEPTOR — the right exit code
+        # for the wrong reason, which is the defect increment 8's item 5 had just corrected.
+        resolved = [
+            target
+            for target in destinations
+            if target in bindings["module_level_defs"]
+            and _is_a_door_binding(target, bindings)
+        ]
+        if resolved:
+            return False, (
+                f"function-local in {enclosing.name}(), and the object a caller OBTAINS is "
+                f"the module-level binding {resolved[0]!r}, WHICH IS ITSELF AN ENUMERATED "
+                "SUBJECT OF THIS CHECK and is asserted as a door at its own def site. "
+                "**REACH IS NOT DENIED HERE — IT IS RESOLVED**, and the obligation is "
+                "discharged at the name a caller writes rather than at this identifier, "
+                "which no caller can name (PO-DECISIONS-0015 ruling 1: never on an "
+                "underscore)"
+            )
+        # REACHABLE, WITH NOWHERE TO RESOLVE THE OBLIGATION TO. The destination is a name a
+        # caller can write and it is not a `def` this check asserts, so the LOCAL is the door.
+        for target in destinations:
+            if _is_public(target):
+                return True, (
+                    f"function-local in {enclosing.name}(), whose return value reaches the "
+                    f"public module-level name {target!r} — and {target!r} is NOT a `def` "
+                    "with a signature of its own, so there is nowhere to resolve the "
+                    "obligation to and it rests here. This is the fourth Assurance seat's "
+                    "ESCAPE 4 shape reached through an assignment rather than a subscript"
+                )
         return False, (
             f"function-local in {enclosing.name}(), which is a NON-PUBLIC module-level "
             f"name; its return value reaches only {destinations or ['nothing at module level']}, "
-            "every one of them non-public"
+            "and NOT ONE OF THEM IS AN ENUMERATED SUBJECT OF THIS CHECK — none is public and "
+            "none returns a judgement value. **THAT IS AN OBSERVATION ABOUT THIS CHECK'S OWN "
+            "SUBJECT SET AND NOT A PROOF THAT NOBODY CAN REACH IT**; the NETS population "
+            "below is what stops it meaning 'not seen'"
         )
 
     return False, (
         f"function-local in {enclosing.name}() and returned from it, and {enclosing.name} "
         f"is not reachable ({outer_why})"
     )
+
+
+def _annotatable_parameters(node, in_class_body: bool) -> list:
+    """Every parameter of ``node`` an annotation could be written on, receiver excluded.
+
+    The receiver of a method is excluded for the same reason ``admits`` skips it and by the
+    same test — the callable was written inside a ``class`` body and the parameter is in first
+    position and named ``self`` or ``cls`` (``crash_detector.admission`` DECLARED LIMIT 2).
+    Variadics are excluded because they are refused outright, by their own violation, and
+    reporting one twice under two names would be one defect wearing two rows.
+    """
+    arguments = node.args
+    ordered = list(arguments.posonlyargs) + list(arguments.args)
+    if in_class_body and ordered and ordered[0].arg in _RECEIVER_NAMES:
+        ordered = ordered[1:]
+    return ordered + list(arguments.kwonlyargs)
 
 
 def _decorator_names(node) -> list:
@@ -1047,6 +1244,11 @@ def main() -> int:
     static_or_class_methods = 0
     established_here: list = []
     reached_only_by_rule_2: list = []
+    #: THE SECOND DOOR FORM (PO-DECISIONS-0015 ruling 1 (b)). `(module, mechanism) -> the
+    #: subjects it derived`, reconciled against DECLARED_DOOR_MECHANISMS after the walk —
+    #: SET EQUALITY IN BOTH DIRECTIONS, exactly as the NETS population is.
+    mechanisms_used: dict = {}
+    derived_doors: list = []
 
     for path in files:
         source = read_text(check, path)
@@ -1080,11 +1282,20 @@ def main() -> int:
             aliased_spellings[str(relative)] = sorted(spellings - {ESTABLISHED_HERE})
 
         bindings = _module_bindings(tree)
+        # RULE 1 MEMBERSHIP IS A PROPERTY OF THE MODULE AND NOT OF THE TREE, so it is attached
+        # here rather than computed inside `_module_bindings`. `_is_a_door_binding` needs it to
+        # ask the SAME subject question `main` asks, so the two cannot disagree.
+        bindings["in_judgement_package"] = in_judgement_package
         # RELATIVE TO `src/`, NOT to the package root, so a declared net's `module` field
         # reads `crash_detector/engine/evaluate.py` — the spelling a reader recognises as
         # the module — rather than the package-internal `engine/evaluate.py`.
         relative_src = str(path.relative_to(package_root.parent))
         trees_by_relative[relative_src] = tree
+        mechanisms_here = [
+            mechanism
+            for mechanism in DECLARED_DOOR_MECHANISMS
+            if mechanism.module == relative_src
+        ]
 
         for node, in_class_body, class_node, function_chain in _callables(tree):
             # ---------------------------------------------------------------- #
@@ -1093,7 +1304,7 @@ def main() -> int:
             # and for why it is not a subtler name heuristic.
             # ---------------------------------------------------------------- #
             reachable, why = _reachable_public_binding(
-                node.name, function_chain, bindings
+                node.name, function_chain, bindings, node
             )
             if not reachable:
                 if function_chain:
@@ -1137,6 +1348,64 @@ def main() -> int:
                 reached_only_by_rule_2.append(f"{relative}:{node.lineno} {where}")
 
             call = _admits_call(node)
+            # ------------------------------------------------------------------------ #
+            # **FORM 2 — THE DERIVED DOOR. NEW AT WO-2R3 INCREMENT 8** (`PO-DECISIONS-0015`
+            # ruling 1 (b)). A subject decorated by a mechanism declared in
+            # `tools/register/declared_door_mechanisms.py` establishes its arguments by
+            # DERIVING them from its own signature, so there is no `admits(...)` argument
+            # list to compare against the signature — the signature IS the declaration.
+            # What is asserted instead is the pair of artefact properties the derivation
+            # requires and refuses without: EVERY PARAMETER ANNOTATED, NO VARIADIC. Both are
+            # checked below, and the mechanism itself is checked against its own source in
+            # the reconciliation after this walk. **A ROW IN THAT REGISTER BUYS A SUBJECT
+            # NOTHING ON ITS OWN.**
+            # ------------------------------------------------------------------------ #
+            derived_by = [
+                mechanism
+                for mechanism in mechanisms_here
+                if mechanism.mechanism in decorators
+            ]
+            if derived_by and call is None:
+                mechanism = derived_by[0]
+                mechanisms_used.setdefault(
+                    (relative_src, mechanism.mechanism), []
+                ).append(f"{relative}:{node.lineno} {where}")
+                decorated += 1
+                derived_doors.append(
+                    f"{relative}:{node.lineno} {where} — derived by {mechanism.mechanism}()"
+                )
+                names, variadic = _signature_names(node, in_class_body)
+                check.asserted()
+                if variadic:
+                    check.violation(
+                        path,
+                        node.lineno,
+                        "OPEN_CHANNEL",
+                        f"{where} is a DERIVED door and declares {', '.join(variadic)}. A "
+                        "variadic parameter has no name in the signature, and the name in "
+                        "the signature is what the establishment is derived FROM. "
+                        f"{mechanism.mechanism}() refuses this at import; it is a violation "
+                        "here too so it is visible without running anything.",
+                    )
+                check.asserted()
+                unannotated = [
+                    parameter.arg
+                    for parameter in _annotatable_parameters(node, in_class_body)
+                    if parameter.annotation is None
+                ]
+                if unannotated:
+                    check.violation(
+                        path,
+                        node.lineno,
+                        "DERIVED_DOOR_PARAMETER_NOT_ANNOTATED",
+                        f"{where} is a DERIVED door and its parameter(s) {unannotated} carry "
+                        "NO ANNOTATION. **THE ANNOTATION IS THE DECLARATION** for this door "
+                        f"form, so a parameter without one is a parameter with no "
+                        f"establishment. {mechanism.mechanism}() raises AdmissionFault at "
+                        "import rather than admitting it; this is the same fact read without "
+                        "importing anything (BP-AMENDMENT-0001 §D.1, planted violation P7).",
+                    )
+                continue
             if call is None:
                 check.asserted()
                 check.violation(
@@ -1360,6 +1629,110 @@ def main() -> int:
                 "the body hands it, which is the failure the net was written to prevent, "
                 "one layer in.",
             )
+
+    # ================================================================================== #
+    # THE SECOND DOOR FORM — **DECLARED DERIVING MECHANISMS**. PO-DECISIONS-0015 ruling 1 (b).
+    #
+    # A row in tools/register/declared_door_mechanisms.py is checked AGAINST THE CODE, exactly
+    # as a NETS row is, and for the same reason: a register whose rows nothing can falsify is
+    # a hand-maintained summary. Four assertions per row, and set equality in both directions.
+    # ================================================================================== #
+    for mechanism in DECLARED_DOOR_MECHANISMS:
+        tree = trees_by_relative.get(mechanism.module)
+        module_defs = {
+            child.name: child
+            for child in (module_level_statements(tree) if tree else [])
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        check.asserted()
+        if mechanism.mechanism not in module_defs:
+            check.violation(
+                package_root.parent / mechanism.module,
+                0,
+                "MECHANISM_DECLARED_BUT_ABSENT",
+                f"a DERIVING DOOR MECHANISM {mechanism.mechanism}() is declared in "
+                f"{mechanism.module} (tools/register/declared_door_mechanisms.py) and there "
+                "is no module-level def of that name there. **TWO CAUSES AND THE ROW CANNOT "
+                "TELL THEM APART, SO BOTH ARE NAMED:** it was DELETED, or it was RENAMED. "
+                "Either way every subject it used to make a door is now UNDECORATED and is "
+                "reported as such beside this — TWO violations, never a silence.",
+            )
+            continue
+
+        # THE MECHANISM'S REACH: its own body, plus the module-level functions it calls. Both,
+        # because a mechanism of any size delegates — this project's own splits
+        # `_establishment_derived_from` and `_body_materials` out of the decorator — and an
+        # assertion that read only the decorator would be satisfied by a one-line wrapper
+        # round anything at all.
+        subject_node = module_defs[mechanism.mechanism]
+        reach = [subject_node]
+        for inner in ast.walk(subject_node):
+            if isinstance(inner, ast.Call):
+                called = module_defs.get(_callee_name(inner))
+                if called is not None and called not in reach:
+                    reach.append(called)
+        calls_anywhere = {
+            _callee_name(inner)
+            for reached in reach
+            for inner in ast.walk(reached)
+            if isinstance(inner, ast.Call)
+        }
+
+        check.asserted()
+        if "signature" not in calls_anywhere:
+            check.violation(
+                package_root.parent / mechanism.module,
+                subject_node.lineno,
+                "MECHANISM_DOES_NOT_READ_THE_SIGNATURE",
+                f"{mechanism.mechanism}() is declared a DERIVING mechanism and neither it nor "
+                "any module-level function it calls reads `inspect.signature`. "
+                "BP-AMENDMENT-0001 §D.1's rule is that the establishment is DERIVED FROM THE "
+                "SIGNATURE rather than written into the body; a mechanism that never reads a "
+                "signature is not deriving from one, whatever the register calls it.",
+            )
+        check.asserted()
+        if "declaration" not in calls_anywhere:
+            check.violation(
+                package_root.parent / mechanism.module,
+                subject_node.lineno,
+                "MECHANISM_DOES_NOT_USE_THE_ONE_VOCABULARY",
+                f"{mechanism.mechanism}() is declared a DERIVING mechanism and neither it nor "
+                "any module-level function it calls compiles its declarations through "
+                "`crash_detector.admission.declaration`. **THERE IS ONE DECLARATION "
+                "VOCABULARY IN THIS PROJECT AND THIS IS HOW IT STAYS ONE.** Two vocabularies "
+                "that drift apart is how a reader comes to believe a parameter is established "
+                "as strictly as it says it is when it is not.",
+            )
+        check.asserted()
+        if not mechanisms_used.get((mechanism.module, mechanism.mechanism)):
+            check.violation(
+                package_root.parent / mechanism.module,
+                subject_node.lineno,
+                "MECHANISM_DECORATES_NOTHING",
+                f"{mechanism.mechanism}() is declared a DERIVING door mechanism and this walk "
+                "found NO subject it decorates. A declared mechanism with no subject is a row "
+                "that has outlived the thing it describes, which is the hand-maintained "
+                "summary this register exists not to be.",
+            )
+
+    declared_mechanisms = {(m.module, m.mechanism) for m in DECLARED_DOOR_MECHANISMS}
+    check.note(
+        "DERIVING DOOR MECHANISMS — THE SECOND DOOR FORM (PO-DECISIONS-0015 ruling 1 (b)). "
+        f"DECLARED: {len(declared_mechanisms)}. SUBJECTS THEY DERIVED: {len(derived_doors)}. "
+        "**A ROW IS NOT AN EXEMPTION**: the mechanism must exist, must read "
+        "`inspect.signature`, and must compile through `crash_detector.admission.declaration` "
+        "— and at every subject it derives, EVERY PARAMETER MUST BE ANNOTATED and NO "
+        "PARAMETER MAY BE VARIADIC, which are the two artefact properties the derivation "
+        "itself refuses without."
+    )
+    for row in derived_doors:
+        check.note(f"  DERIVED DOOR: {row}")
+    for mechanism in DECLARED_DOOR_MECHANISMS:
+        check.note(
+            f"  MECHANISM: {mechanism.module}::{mechanism.mechanism}() — DERIVES FROM "
+            f"{mechanism.derives_from[:150]}... DOES NOT ESTABLISH: "
+            f"{mechanism.what_it_does_not_establish[:150]}..."
+        )
 
     check.note(
         f"NETS — THE SECOND DECLARED POPULATION (PO-DECISIONS-0012 ruling 2). FOUND: "

@@ -480,3 +480,21 @@ and where a proposition of theirs has no carrier that is said in the seat's retu
 **NEITHER ROW STATES A CONCLUSION**, per this manifest's own rule. What they measured is in
 `governance/engineering/build-log/BL-20260823T033433Z-0082.yaml` and in the seat's return, where
 it can be argued with.
+
+---
+
+## INCREMENT 8's PROBES — `CD-ENG-WO2R3-06` (`CD-PL-F97`: the row is written when the probe is)
+
+**NEITHER IS A CARRIER** (CD-RULE-006). Both exit 0 whatever they measure, by design: they are
+INSTRUMENTS THAT REPORT. The carriers for increment 8's propositions are
+`tests/test_the_absence_door.py` (the full attack, eleven arms) and the seven derived-door and
+criterion arms in `tests/test_judgement_path_doors.py`, **all of which fail at `314592c`.**
+
+| probe | asks | run it |
+|---|---|---|
+| **`P-M-is-the-usable-annotation-narrowing-what-the-product-accepts.py`** | **NEW AT INCREMENT 8.** `CD-PL-F109`, asked rather than inherited: does moving `_evaluate_dial`'s `usable` from `Mapping[str, OK]` to `dict[str, OK]` NARROW what the product accepts? Two arms on one axis — a plain `dict`, and a `collections.abc.Mapping` that is not a `dict` — **run in BOTH trees, each printing its own `pwd`** (CD-PL-F98). | `cd <tree> && PYTHONPATH=src python3 -B /path/to/P-M-...py` — run it in a `git archive` extraction of `314592c` AND in the lane, and compare the two outputs |
+| **`P-N-what-abolishing-publicness-would-cost.sh`** | **NEW AT INCREMENT 8.** `PO-DECISIONS-0015` ruling 1 says membership moves *"never on an underscore"*. The NARROW reading was implemented; the WIDE one — abolish publicness entirely — is a PRODUCT-MEANING boundary (PBG-AUTH-005) and was RAISED, not taken. This measures what the wide reading would cost, so the Product Owner rules on a number rather than an adjective. Two arms, one axis: `_is_public`'s body, unchanged versus `return True`. **Each arm builds its own `git archive` extraction and runs THAT tree's own copy of the instrument, printing the tree** (CD-PL-F98). | `bash variants/WO-2R3/P-N-what-abolishing-publicness-would-cost.sh` |
+
+**NEITHER ROW STATES A CONCLUSION**, per this manifest's own rule. What they measured is in
+`governance/engineering/build-log/BL-20260823T0*-0085.yaml` and in the seat's return, where it can
+be argued with.

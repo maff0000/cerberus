@@ -92,13 +92,43 @@ to carry it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     had disagreed, in print, at every run for five increments.
     ====================================================================================
 
-    **THE MEASURED FIGURE IS 16 PARAMETERS ACROSS 9 CALLABLES** — measured by
-    ``CD-ENG-WO2R3-02`` from its own run of
+    ====================================================================================
+    **CORRECTED AGAIN AT WO-2R3 INCREMENT 8. SUPERSEDED, NOT DELETED (CD-RULE-004,
+    PBG-CONT-003). The wording it replaces, quoted in full:**
+
+        *"**THE MEASURED FIGURE IS 16 PARAMETERS ACROSS 9 CALLABLES** — measured by
+        ``CD-ENG-WO2R3-02`` from its own run of ``python3 -B
+        tools/register/check_judgement_path_doors.py --root .``, which prints
+        ``ESTABLISHED_HERE uses: 16`` and then lists all sixteen with file, line and
+        parameter. It is **NOT** transcribed from the auditor's document or from the
+        dispatch, both of which also say 16/9."*
+
+    **THE MEASURED FIGURE IS 18 PARAMETERS ACROSS 11 CALLABLES** — measured by
+    ``CD-ENG-WO2R3-06`` from its own run of
     ``python3 -B tools/register/check_judgement_path_doors.py --root .``, which prints
-    ``ESTABLISHED_HERE uses: 16`` and then lists all sixteen with file, line and parameter.
-    It is **NOT** transcribed from the auditor's document or from the dispatch, both of which
-    also say 16/9 (``CD-RULE-009``: a count read from a run is a measurement, a count copied
-    is a transcription).
+    ``ESTABLISHED_HERE uses: 18`` and then lists all eighteen with file, line and parameter;
+    the callable count is that listing piped through ``sort -u``. **NOT TRANSCRIBED FROM
+    ANYWHERE** (``CD-RULE-009``: a count read from a run is a measurement, a count copied is a
+    transcription).
+
+    **WHAT MOVED IT, AND IT IS A WIDENING OF THIS LIMIT AND NOT A DETAIL.**
+    ``PO-DECISIONS-0015`` ruling 1 redesigned the doors criterion so that membership stops
+    moving on an underscore: a callable that RETURNS A JUDGEMENT VALUE is a judgement-path
+    door whatever it is spelled. Three private module-level callables became subjects, and
+    **two of them sit in front of a NAMED refusal that an exact-type door would PREEMPT**,
+    which is DECLARED LIMIT 5's shape reached from a new direction:
+    ``_new_quantity(value)`` — ``_install`` raises ``ScoreOutOfRange`` — and
+    ``_shown_from(score)`` — the body raises ``DialPresentationRefused``. The third,
+    ``_established_quantity(magnitude)``, is EXACT-TYPED and is NOT one of these, because
+    nothing asserts a named refusal at it; the difference was measured rather than assumed.
+
+    **AND THE FIRST ATTEMPT AT ``_new_quantity`` GOT IT WRONG IN THE DANGEROUS DIRECTION.**
+    ``CD-ENG-WO2R3-06`` wrote ``value=float`` there, which silently discharged
+    ``observed_for_dial``'s OWN declared exemption at a private callable one level in.
+    MEASURED: ``tests/test_dial_provenance.py`` went **4 failed**. Raised by that seat against
+    its own work as ``CD-ENG-WO2R3-06-F01`` and recorded here because the near-miss is the
+    part a reader needs.
+    ====================================================================================
 
     **AND BECAUSE THIS PROJECT HAS NOW BEEN BITTEN TWICE BY A COUNT WRITTEN INTO PROSE** —
     here, and the doors instrument's copied *"32 members"* that ``CD-PL-F91`` caught — **THIS

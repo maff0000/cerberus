@@ -428,9 +428,32 @@ def test_a_method_of_a_locally_defined_class_still_skips_its_receiver():
 #:
 #: The mechanism worked as designed. Nothing widened quietly; this test failed and a seat
 #: had to write down why for each one.
+#:
+#: **AND IT WENT SIXTEEN TO EIGHTEEN AT WO-2R3 INCREMENT 8, FOR THE SAME KIND OF REASON AND
+#: WITH THE SAME MECHANISM CATCHING IT.** `PO-DECISIONS-0015` ruling 1 redesigned the doors
+#: criterion so that membership stops moving on an underscore: a callable that RETURNS A
+#: JUDGEMENT VALUE is a judgement-path door whatever it is spelled. Three private module-level
+#: callables became subjects — `_established_quantity`, `_new_quantity`, `_shown_from` — and
+#: two of them sit in front of a NAMED refusal that an exact-type door would PREEMPT, which is
+#: admission.py's DECLARED LIMIT 5 shape exactly:
+#:
+#: * `_shown_from(score)` — the body raises `DialPresentationRefused`;
+#: * `_new_quantity(value)` — `_install` raises `ScoreOutOfRange`, and **that is the very
+#:   refusal `observed_for_dial`'s own ESTABLISHED_HERE reason names as its carrier**. This
+#:   seat wrote `value=float` there first and MEASURED the consequence: 4 failed in
+#:   tests/test_dial_provenance.py, a public door's declared exemption silently discharged at
+#:   a private one (CD-ENG-WO2R3-06-F01, raised against its own work).
+#:
+#: `_established_quantity(magnitude)` is exact-typed and is NOT in this set, because nothing
+#: asserts a named refusal at it — so the widening is TWO and not three, and the difference
+#: was measured rather than assumed.
 EXPECTED_ESTABLISHED_HERE = frozenset(
     {
         ("crash_detector.engine.model", "own_model_id", "value"),
+        # WO-2R3 increment 8 — the two doors the redesigned criterion reached, each in front
+        # of a named refusal an exact-type door would preempt (DECLARED LIMIT 5's shape).
+        ("crash_detector.dials.provenance", "_new_quantity", "value"),
+        ("crash_detector.serving.dial_presentation", "_shown_from", "score"),
         ("crash_detector.engine.model", "ModelRegistry.get", "model_id"),
         ("crash_detector.dials.magnitude", "combine_within_one_dial", "using"),
         ("crash_detector.dials.provenance", "observed_for_dial", "dial_id"),

@@ -123,7 +123,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from crash_detector.admission import admits, one_of
+from crash_detector.admission import ESTABLISHED_HERE, admits, one_of
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
 from crash_detector.dials.magnitude import (
     CrossDialCombination,
@@ -508,8 +508,29 @@ def present_dial(dial_id: str, reading: "Reading") -> "Shown | NotShown":
     )
 
 
+@admits(
+    dial_id=str,
+    score=ESTABLISHED_HERE(
+        "the body below refuses a score whose exact type is not in SCORE_TYPES with the "
+        "NAMED error DialPresentationRefused, whose message is the one a consumer reads when "
+        "a look-alike carrying a plausible number is offered for presentation (CD-AC-001, "
+        "CD-AC-002). An exact-type door here would PREEMPT that named refusal with a generic "
+        "NotAdmitted and replace this boundary's own closure with a coarser one — the same "
+        "trade admission.py's DECLARED LIMIT 5 records at the three §B.3 doors. CARRIER "
+        "MEASURED, by name: tests/test_dial_presentation.py asserts DialPresentationRefused "
+        "through present_dial for a look-alike score. This door is decorated for the P7 "
+        "property ONLY: a new argument added to it arrives REFUSED, and its type "
+        "establishment stays in its body."
+    ),
+)
 def _shown_from(dial_id: str, score: object) -> "Shown":
     """The magnitude a dial score carries, presented for ONE dial.
+
+    **IT IS A DOOR AS OF WO-2R3 INCREMENT 8, BECAUSE THE CRITERION STOPPED MOVING ON AN
+    UNDERSCORE** (``PO-DECISIONS-0015`` ruling 1). It returns a ``Shown`` — a judgement value
+    — so it is a judgement-path entry point whatever it is spelled, and
+    ``from crash_detector.serving.dial_presentation import _shown_from`` is a line anybody can
+    write.
 
     Exact type membership, not ``isinstance`` and not a ``hasattr``: this is a boundary
     through which a value reaches the surface, and a look-alike should not be accepted at

@@ -580,7 +580,18 @@ def test_the_check_prints_every_established_here_use_with_its_location():
     """DECLARED LIMIT 1's second carrier: the check REPORTS every explicit weakening. It
     does not adjudicate them and says so; a reviewer must."""
     result = _run_the_check()
-    assert "ESTABLISHED_HERE uses: 16." in result.stdout
+    # **SIXTEEN -> EIGHTEEN AT WO-2R3 INCREMENT 8, AND THE CORRECTION IS IN ALL THREE
+    # CD-RULE-004 PLACES** (`PBG-CONT-003` — corrections supersede, never edit).
+    # *Superseded assertion, quoted rather than deleted: `assert "ESTABLISHED_HERE uses: 16."
+    # in result.stdout`.* `PO-DECISIONS-0015` ruling 1 redesigned the membership clause so it
+    # stops moving on an underscore; three private callables that RETURN A JUDGEMENT VALUE
+    # became subjects, and TWO of them sit in front of a NAMED refusal an exact-type door
+    # would preempt (`_new_quantity(value)` -> ScoreOutOfRange, `_shown_from(score)` ->
+    # DialPresentationRefused), which is DECLARED LIMIT 5's shape. **THEY ARE REAL
+    # EXEMPTIONS, NOT FALSE ROWS**, and each states its reason and its measured carrier in
+    # the artefact — asserted independently from the RUNTIME by
+    # tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set.
+    assert "ESTABLISHED_HERE uses: 18." in result.stdout
     for expected in (
         "engine/model.py",
         "dials/provenance.py",
@@ -632,7 +643,7 @@ def test_the_check_counts_an_established_here_spelled_through_an_import_alias():
             text=True,
         )
 
-    assert "ESTABLISHED_HERE uses: 17." in result.stdout, (
+    assert "ESTABLISHED_HERE uses: 19." in result.stdout, (
         "an exemption spelled through an import alias must be COUNTED. Observed:\n"
         + "\n".join(
             line for line in result.stdout.splitlines() if "ESTABLISHED_HERE uses" in line
@@ -688,7 +699,7 @@ def wrapped_probe_door(candidate):
             text=True,
         )
 
-    assert "ESTABLISHED_HERE uses: 16." in result.stdout, (
+    assert "ESTABLISHED_HERE uses: 18." in result.stdout, (
         "DECLARED LIMIT 8 says a WRAPPER is not resolved. If this fails the limit is wrong "
         "and must be corrected in all three CD-RULE-004 places"
     )
@@ -848,9 +859,42 @@ def test_a_net_that_stops_calling_its_post_condition_fails_the_check():
     try:
         evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
         source = evaluate_py.read_text()
-        call = "        refuse_a_number_without_its_inputs(spec, usable, reading)\n"
-        assert call in source, "the guard call moved; fix the test"
-        evaluate_py.write_text(source.replace(call, "        pass\n"))
+        # **THE CALL IS LOCATED AS CODE, NOT AS A PINNED STRING, SINCE WO-2R3 INCREMENT 8.**
+        # *Superseded (PBG-CONT-003 — corrections supersede, never edit):*
+        # ``call = "        refuse_a_number_without_its_inputs(spec, usable, reading)\n"``
+        # ``assert call in source, "the guard call moved; fix the test"``
+        # ``evaluate_py.write_text(source.replace(call, "        pass\n"))``
+        # The redesigned mechanism DERIVES which arguments the post-condition receives from
+        # the post-condition's own signature, so the call is a splat over several lines
+        # rather than three names on one. **THE PROPOSITION DID NOT MOVE AND THE SPELLING
+        # DID**, and a carrier pinned to a spelling breaks on a refactor that changes nothing
+        # it is about. This locates the call the way the instrument does — by walking the
+        # AST for a `Call` whose callee is the module-level name — and removes exactly its
+        # statement, so the same edit is made whatever the arguments look like.
+        import ast as _ast
+
+        parsed = _ast.parse(source)
+        statements = [
+            node
+            for node in _ast.walk(parsed)
+            if isinstance(node, _ast.Expr)
+            and isinstance(node.value, _ast.Call)
+            and getattr(node.value.func, "id", None)
+            == "refuse_a_number_without_its_inputs"
+        ]
+        assert len(statements) == 1, (
+            "the net's body does not contain exactly one call to its post-condition as a "
+            f"statement; found {len(statements)}. Fix the test or the code, but do not "
+            "guess which one this test meant."
+        )
+        target = statements[0]
+        lines = source.splitlines(keepends=True)
+        evaluate_py.write_text(
+            "".join(lines[: target.lineno - 1])
+            + " " * target.col_offset
+            + "pass\n"
+            + "".join(lines[target.end_lineno :])
+        )
         broken = _run_the_check_over(tree)
         assert broken.returncode == 1, (
             "THE GUARD WAS REMOVED AND THE PAPERWORK KEPT, AND THE CHECK PASSED.\n"
@@ -913,15 +957,54 @@ def test_the_projects_own_delattr_fix_does_not_make_the_net_a_door():
     not retain" is a VOCABULARY, which is what ruling 2 exists to remove; and decorating
     `guarded` is prohibited. The clause was corrected instead.
 
-    This test pins the interaction. It asserts the SHIPPED SOURCE still contains the delattr
-    — so it cannot pass vacuously if item 3 is ever reverted — and that the net is still
-    classified a net with the check green.
+    This test pins the interaction. It asserts the SHIPPED SOURCE still carries the
+    `__wrapped__` refusal — so it cannot pass vacuously if that fix is ever reverted — and
+    that the net is still classified a net with the check green.
+
+    **SUPERSEDED IN ONE ASSERTION AT WO-2R3 INCREMENT 8** (`PBG-CONT-003` — corrections
+    supersede, never edit). The old text, verbatim::
+
+        assert 'delattr(guarded, "__wrapped__")' in source, (
+            "item 3's delattr is gone; this carrier would pass vacuously. If the removal was "
+            "deliberate, PO-DECISIONS-0013 ruling 2 is being reversed and that is a PO matter")
+
+    **THE `delattr` IS GONE AND `PO-DECISIONS-0013` RULING 2 IS NOT REVERSED — IT IS MET MORE
+    STRONGLY.** The redesigned mechanism does not use `functools.wraps` at all, so
+    `__wrapped__` is **never set** and there is nothing to delete: the window between creating
+    the bypass and removing it does not exist, and a future edit that puts the decorator back
+    cannot silently reinstate it. The assertion moves from the *repair* to the *property* — no
+    `functools.wraps` on this mechanism, and no `__wrapped__` on the shipped object — which is
+    what ruling 2 was about and which the old spelling could not survive.
+
+    **AND IT IS READ AS CODE, NOT AS TEXT.** A substring search here would match this
+    docstring's own quotation of the superseded implementation, which is exactly the kind of
+    assertion that passes for the wrong reason.
     """
+    import ast as _ast
+    import importlib as _importlib
+
     source = (_REPO_ROOT / "src" / "crash_detector" / "engine" / "evaluate.py").read_text()
-    assert 'delattr(guarded, "__wrapped__")' in source, (
-        "item 3's delattr is gone; this carrier would pass vacuously. If the removal was "
-        "deliberate, PO-DECISIONS-0013 ruling 2 is being reversed and that is a PO matter"
+    mechanism = next(
+        node
+        for node in _ast.walk(_ast.parse(source))
+        if isinstance(node, _ast.FunctionDef)
+        and node.name == "_absence_is_never_a_number"
     )
+    decorators = {
+        _ast.unparse(d.func if isinstance(d, _ast.Call) else d)
+        for inner in _ast.walk(mechanism)
+        if isinstance(inner, (_ast.FunctionDef, _ast.AsyncFunctionDef))
+        for d in inner.decorator_list
+    }
+    assert "functools.wraps" not in decorators, (
+        "the CD-ASR-F03 mechanism has gone back to `functools.wraps`, which SETS "
+        "`__wrapped__` — a documented, `inspect.unwrap`-followed way round the guard that "
+        f"PO-DECISIONS-0013 ruling 2 called a PRODUCT DEFECT. Found: {decorators}"
+    )
+    assert not hasattr(
+        _importlib.import_module("crash_detector.engine.evaluate")._evaluate_dial,
+        "__wrapped__",
+    ), "the shipped evaluator publishes `__wrapped__`, which is a way round the guard"
     result = _run_the_check()
     assert result.returncode == 0, (
         "the project's own delattr fix has made the CD-ASR-F03 net a door again — the "
@@ -994,9 +1077,224 @@ def test_the_widened_fixpoint_adds_no_false_row_to_the_shipped_tree():
     """
     result = _run_the_check()
     assert result.returncode == 0, result.stdout
-    assert "ESTABLISHED_HERE uses: 16." in result.stdout, (
+    assert "ESTABLISHED_HERE uses: 18." in result.stdout, (
         "the widened fixpoint moved the shipped ESTABLISHED_HERE count. Either a real "
         "exemption was added — in which case DECLARED LIMIT 8's figure needs correcting in "
         "all three CD-RULE-004 places — or the widening produced a FALSE ROW, which is a "
         "defect in the widening.\n" + result.stdout
     )
+
+
+# ==================================================================================== #
+# THE REDESIGNED MEMBERSHIP CRITERION AND THE SECOND DOOR FORM.
+# WO-2R3 increment 8, PO-DECISIONS-0015 ruling 1.
+#
+# **CD-RULE-006: A CHECK REPORTS, A CARRIER FAILS.** Every test below asserts a property BY
+# BREAKING IT in a throwaway copy of the tree and reading that copy's OWN instrument, because
+# a test that reads the shipped check's output and agrees with it is a second opinion from
+# the same witness. Each one FAILS at `314592c`, which is the point of it.
+# ==================================================================================== #
+
+
+def _subjects(result) -> str:
+    return result.stdout.split("SUBJECTS ENUMERATED:")[1].split(".")[0].strip()
+
+
+def test_a_private_module_level_callable_that_returns_a_judgement_value_is_a_door():
+    """**GROUND 1's OWN SHAPE, PLANTED.** The criterion must not move on an underscore.
+
+    `PO-DECISIONS-0012` ruling 1 fell because `_evaluate_dial` was excluded by a leading
+    underscore while a conforming foreign adapter obtained it from `sys.modules` and called
+    it. A NAME-PREFIX clause cannot see a private callable at all, so this plants exactly
+    that: an undecorated, PRIVATE, module-level callable in a judgement-path package whose
+    return annotation names a judgement value type.
+
+    **THE COUNTERFACTUAL ARM IS THE DECLARED RESIDUE AND IT IS ASSERTED, NOT DESCRIBED.** The
+    identical callable WITHOUT a return annotation is NOT named — the criterion reaches it by
+    what it says it returns, and a callable that says nothing is invisible to this rule. That
+    is a real hole and this test is where a reader finds it measured rather than promised.
+    """
+    annotated = '''
+
+def _a_planted_private_decider(reading) -> "Reading":
+    return reading
+'''
+    unannotated = '''
+
+def _a_planted_private_decider(reading):
+    return reading
+'''
+    verdicts = {}
+    for label, plant in (("annotated", annotated), ("unannotated", unannotated)):
+        tree = _throwaway_tree()
+        try:
+            target = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+            target.write_text(target.read_text() + plant)
+            verdicts[label] = _run_the_check_over(tree)
+        finally:
+            shutil.rmtree(tree, ignore_errors=True)
+
+    assert verdicts["annotated"].returncode == 1, (
+        "A PRIVATE MODULE-LEVEL CALLABLE THAT RETURNS A JUDGEMENT VALUE WAS NOT NAMED. The "
+        "criterion is still moving on an underscore, which is what PO-DECISIONS-0015 ruling "
+        "1 forbids.\n" + verdicts["annotated"].stdout
+    )
+    assert "UNDECORATED_JUDGEMENT_PATH_DOOR" in verdicts["annotated"].stdout
+    assert "_a_planted_private_decider" in verdicts["annotated"].stdout
+
+    assert "_a_planted_private_decider" not in verdicts["unannotated"].stdout, (
+        "the unannotated arm was named, so this test's two arms do not differ on the axis it "
+        "claims and the declared residue below is misdescribed (CD-ENG-WO2R3-F12)"
+    )
+    assert verdicts["unannotated"].returncode == 0, verdicts["unannotated"].stdout
+
+
+def test_renaming_the_reachable_destination_does_not_move_the_verdict_either():
+    """**THE RENAME TEST IN THE DIRECTION THE OLD CLAUSE COULD NOT SURVIVE.**
+
+    `tests/test_judgement_path_doors.py::test_the_membership_clause_survives_renaming_the_function_local_binding`
+    asserts the first half: renaming the LOCAL must not move the verdict. The old clause's own
+    docstring conceded the other half openly — *"renaming the DESTINATION (`_evaluate_dial` ->
+    `evaluate_dial`) DOES change the verdict, and correctly"* — which made publicness of that
+    identifier load-bearing, and an identifier is a spelling.
+
+    Since `PO-DECISIONS-0015` ruling 1 the destination is a subject **because of what it
+    returns**, so the verdict and the subject count must be identical under both spellings.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        before = _run_the_check_over(tree)
+        source = evaluate_py.read_text()
+        assert "def _evaluate_dial(" in source, "the subject of this test moved; fix the test"
+        evaluate_py.write_text(
+            source.replace("_evaluate_dial", "evaluate_dial")
+        )
+        after = _run_the_check_over(tree)
+        assert before.returncode == 0, before.stdout + before.stderr
+        assert after.returncode == 0, (
+            "RENAMING THE DESTINATION MOVED THE VERDICT. Membership is still deciding by an "
+            "identifier's spelling, which PO-DECISIONS-0015 ruling 1 forbids.\n"
+            + after.stdout + after.stderr
+        )
+        assert _subjects(before) == _subjects(after), (
+            f"the subject set moved on a rename: {_subjects(before)} -> {_subjects(after)}"
+        )
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_renamed_deriving_mechanism_fails_loudly_and_in_both_directions():
+    """A declared mechanism that no longer exists must fail, AND the subject it covered must
+    fail with it. **TWO VIOLATIONS, NEVER A SILENCE.**
+
+    This is the failure direction that makes recognising a mechanism by NAME acceptable: the
+    check does not stop looking, it reports that its register has come adrift AND reports the
+    door it can no longer see as undecorated.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        evaluate_py.write_text(
+            evaluate_py.read_text().replace(
+                "_absence_is_never_a_number", "_absence_is_never_a_number_renamed"
+            )
+        )
+        renamed = _run_the_check_over(tree)
+        assert renamed.returncode == 1, renamed.stdout
+        assert "MECHANISM_DECLARED_BUT_ABSENT" in renamed.stdout, renamed.stdout
+        assert "UNDECORATED_JUDGEMENT_PATH_DOOR" in renamed.stdout, (
+            "only one direction fired: the register said it had come adrift and the door it "
+            "covered was not reported.\n" + renamed.stdout
+        )
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_derived_door_with_an_unannotated_parameter_fails_the_check():
+    """**THE ASSERTION THAT MAKES FORM 2 A DOOR FORM AND NOT A LABEL.**
+
+    A derived door has no `admits(...)` list to compare against its signature, so what the
+    check asserts is what the derivation itself requires: every parameter ANNOTATED. Strip one
+    annotation from the shipped evaluator, leave the register alone, and require red — the
+    same shape as the NETS register's "the body must actually CALL it".
+
+    The mechanism refuses this at import too; the point of asserting it HERE is that an auditor
+    sees it without importing the product.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        source = evaluate_py.read_text()
+        assert "    now_utc: datetime,\n" in source
+        evaluate_py.write_text(source.replace("    now_utc: datetime,\n", "    now_utc,\n"))
+        stripped = _run_the_check_over(tree)
+        assert stripped.returncode == 1, (
+            "AN UNANNOTATED PARAMETER ON A DERIVED DOOR PASSED. The annotation IS the "
+            "declaration for this door form, so a parameter without one is a parameter with "
+            "no establishment.\n" + stripped.stdout
+        )
+        assert "DERIVED_DOOR_PARAMETER_NOT_ANNOTATED" in stripped.stdout, stripped.stdout
+        assert "now_utc" in stripped.stdout
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_deriving_mechanism_that_abandons_the_one_vocabulary_fails_the_check():
+    """`crash_detector.admission.declaration` is the project's ONE declaration vocabulary, and
+    its own docstring says why: *"Two declaration vocabularies that drift apart is how a reader
+    comes to believe a field is established as strictly as a parameter when it is not; there is
+    one, and it is here."*
+
+    A mechanism that grew its own second vocabulary would be exactly that drift wearing this
+    register's clothes. So: make the mechanism stop calling `declaration`, leave the register
+    alone, and require red.
+    """
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        source = evaluate_py.read_text()
+        call = "declaration(name, _exact_types_of(resolved[name]))"
+        assert call in source, "the derivation's call to the one vocabulary moved; fix the test"
+        evaluate_py.write_text(
+            source.replace(call, "_a_second_vocabulary(name, resolved[name])")
+        )
+        drifted = _run_the_check_over(tree)
+        assert drifted.returncode == 1, (
+            "THE MECHANISM STOPPED COMPILING THROUGH THE ONE DECLARATION VOCABULARY AND THE "
+            "CHECK PASSED. The register's third assertion is not asserted.\n" + drifted.stdout
+        )
+        assert "MECHANISM_DOES_NOT_USE_THE_ONE_VOCABULARY" in drifted.stdout, drifted.stdout
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_a_deriving_mechanism_that_stops_reading_the_signature_fails_the_check():
+    """§D.1's rule is that the establishment is DERIVED FROM THE SIGNATURE rather than written
+    into the body. A mechanism that never reads a signature is not deriving from one, whatever
+    the register calls it — so remove every `inspect.signature` read and require red."""
+    tree = _throwaway_tree()
+    try:
+        evaluate_py = tree / "src" / "crash_detector" / "engine" / "evaluate.py"
+        source = evaluate_py.read_text()
+        assert "inspect.signature(" in source
+        evaluate_py.write_text(source.replace("inspect.signature(", "_not_a_signature_read("))
+        blinded = _run_the_check_over(tree)
+        assert blinded.returncode == 1, (
+            "THE MECHANISM STOPPED READING THE SIGNATURE AND THE CHECK PASSED.\n"
+            + blinded.stdout
+        )
+        assert "MECHANISM_DOES_NOT_READ_THE_SIGNATURE" in blinded.stdout, blinded.stdout
+    finally:
+        shutil.rmtree(tree, ignore_errors=True)
+
+
+def test_the_derived_door_population_is_printed_with_its_declared_residue():
+    """The mechanism's blind spot is DECLARED, not discovered — the same requirement the NETS
+    note carries, and one of DECLARED LIMITS 10 and 11's readers."""
+    result = _run_the_check()
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "DERIVING DOOR MECHANISMS — THE SECOND DOOR FORM" in result.stdout
+    assert "A ROW IS NOT AN EXEMPTION" in result.stdout
+    assert "_absence_is_never_a_number" in result.stdout
+    assert "DOES NOT ESTABLISH:" in result.stdout
