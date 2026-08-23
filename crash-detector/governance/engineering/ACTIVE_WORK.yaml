@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-23T01:30:01Z'
+updated_utc: '2026-08-23T01:44:54Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -48,7 +48,16 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: BUILD   # MOVED AT BL-20260823T000002Z-0113. The Product Owner has answered all FIVE questions of the fifth gate — PO-DECISIONS-0012 (commit 6c8fed9) and PO-DECISIONS-0013 (commit 98b734d) — and ruling 6 authorises ONE bounded remediation increment, now ISSUED to CD-ENG-WO2R3-03 (a FRESH Engineer identity) at 9f7b764. **BUILD HERE MEANS ONE DISPATCHED INCREMENT OF SEVEN NAMED ITEMS AND NOTHING ELSE: nothing is merged, admitted or promoted, T2 is RED, CD-AC-002 and CD-AC-005 remain AMBER and NOT CLOSED, and the WO-2 GATE IS SHUT.** The GATE reopens the moment the increment banks, because ruling 6 puts a SIXTH FRESH ASSURANCE SEAT over the whole. **ITEM 1 IS A DECLARED STOP (CD-D-152): if `_evaluate_dial` proves reachable without an established door, PO-DECISIONS-0012 ruling 1 FALLS, the increment ends there and returns.** WAS GATE, and the note that moved it there is retained below.
+current_phase: GATE   # MOVED AT BL-20260823T014454Z-0115. **THE SIXTH FRESH ASSURANCE SEAT IS DISPATCHED AND OUT** (CD-D-159, CD-DISPATCH-WO2R3-ASSURANCE-06) over the WHOLE of WO-2R3 at `af2accb`, on PO-DECISIONS-0014 ruling 2 — which SUPERSEDED this seat's own CD-D-158 and sent the seat out against the RAW record with the eleven still unwritten. **GATE HERE MEANS ONE READ-ONLY AUDITOR IS READING THE TREE AND NOTHING ELSE MOVES: no increment, no disposition, no code change, no instrument change.** T2 is RED, CD-AC-002 and CD-AC-005 are AMBER and NOT CLOSED, the WO-2 GATE IS SHUT, and increment 7 is RECONCILED AND NOT ACCEPTED (CD-D-156). WAS BUILD, and the note that moved it there is retained below.
+_prior_current_phase_note_build_0113: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD at BL-20260823T000002Z-0113.
+  The Product Owner has answered all FIVE questions of the fifth gate — PO-DECISIONS-0012 (commit 6c8fed9) and
+  PO-DECISIONS-0013 (commit 98b734d) — and ruling 6 authorises ONE bounded remediation increment, now ISSUED to
+  CD-ENG-WO2R3-03 (a FRESH Engineer identity) at 9f7b764. **BUILD HERE MEANS ONE DISPATCHED INCREMENT OF SEVEN
+  NAMED ITEMS AND NOTHING ELSE: nothing is merged, admitted or promoted, T2 is RED, CD-AC-002 and CD-AC-005
+  remain AMBER and NOT CLOSED, and the WO-2 GATE IS SHUT.** The GATE reopens the moment the increment banks,
+  because ruling 6 puts a SIXTH FRESH ASSURANCE SEAT over the whole. **ITEM 1 IS A DECLARED STOP (CD-D-152): if
+  `_evaluate_dial` proves reachable without an established door, PO-DECISIONS-0012 ruling 1 FALLS, the increment
+  ends there and returns.** WAS GATE, and the note that moved it there is retained below.
 _prior_current_phase_note_gate2: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to GATE for the fifth seat.
   GATE. MOVED BACK AT BL-20260822T223805Z-0110. The remediation increment banked and was reconciled at 9f7b764; the FIFTH FRESH ASSURANCE SEAT (CD-ASR-WO2R3-02) is now OUT over the whole of WO-2R3 at that SHA, read-only. **NOTHING MOVES WHILE IT IS OUT: no increment, no disposition, no code change, no grade.** CD-D-146 (`guarded`) is with the Product Owner and does not gate the audit. WAS BUILD, and the note that moved it there is retained below.
 _prior_current_phase_note_build: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
@@ -58,6 +67,55 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **SUPERSEDING, BL-20260823T014454Z-0115: PO-DECISIONS-0014 IS RULED AND CONSUMED, AND THE SIXTH
+  FRESH ASSURANCE SEAT IS DISPATCHED AND OUT.** Commit `3e65d76`, authored by Matt Scott and by no
+  seat, ONE path changed — verified with `git show --stat` and `git log -1 --format='%an <%ae>'`. ***
+  *** **THE PROJECT LEAD WAS OVERRULED AND THE RECORD SAYS SO RATHER THAN READING AS THOUGH IT WAS
+  NOT. CD-D-158 IS SUPERSEDED BY RULING 2.** One boundary ago this seat ruled the sixth seat should
+  WAIT because the eleven are part of its target and do not exist. **THE PRODUCT OWNER INVERTED ITS
+  OWN RULING 6 AND SENT THE SEAT OUT ANYWAY, ON THE FIFTH SEAT'S ARGUMENT — the accountable record's
+  own account of the eleven, written before the audit, hands the auditor a map drawn by the author.**
+  The Project Lead's stated risk (an auditor grading a register that is not there) is DISCLOSED TO
+  THAT SEAT IN ITS OWN BRIEF as a standing invitation to attack the sequencing. ***
+  *** **CD-DISPATCH-WO2R3-ASSURANCE-06 IS ISSUED (CD-D-159) — `CD-ASR-WO2R3-03`, a FRESH seat, none
+  of the FIVE prior auditors and none of the THREE Engineers (PBG-SOD-001, non-waivable), read-only,
+  over the WHOLE of WO-2R3 at `af2accb` in `/srv/crash-detector-wo2r3-audit6`.** SEVENTEEN named
+  targets; CD-D-129's three clauses VERBATIM; **the eleven as named targets against the RAW record**;
+  the fifth seat's T8 measurement carried into the brief WITH ITS PROVENANCE AND ITS LIMITS STATED;
+  **increment 7 disclosed in full INCLUDING THE ENGINEER'S DECLARED WEAKENING** (`PASSED_TO` tagged
+  and not acted on, DECLARED LIMIT 9, cost stated by the party that benefited from it). ***
+  *** **PL-MEASURED AT THE TARGET BY THIS SEAT AT THIS BOUNDARY, EVERY NUMBER RE-RUN AND NONE
+  TRANSCRIBED:** doors **EXIT 0, PASS — 60 assertions, 0 violations**; suite **1580 passed**; Class-2
+  sweep **EXIT 1, 534 sites / 15 violations, UNMOVED**; `hasattr(_evaluate_dial, "__wrapped__")`
+  **False**, runtime `__name__` still `_evaluate_dial`, read from the probe's own `tree:` line
+  (CD-PL-F98); tree object `89196da`; fingerprint
+  `66a1c27dadecaa0a891f9f2a2c28f89ed3ec8729eca2719fd49680e37c5e4ecd` taken with the GOVERNED
+  instrument `tools/audit/tree_fingerprint.py` (472 files, 0 gitignored) **and NOT with the old
+  `find` recipe that fired a false alarm at the last auditor (CD-PL-F100)**; porcelain ZERO. ***
+  *** **AND ONE MEASUREMENT TAKEN AT THIS BOUNDARY THAT IS IN NO OTHER DOCUMENT: INCREMENT 7's ENTIRE
+  CHANGE TO `src/crash_detector/admission.py` IS DOCSTRING-ONLY.** `ast.dump` with docstrings stripped
+  at EVERY scope is **IDENTICAL** across `9f7b764..af2accb`. **THE `__qualname__` DEFECT OF T8
+  CATEGORY A IS NOW DECLARED IN SHIPPED SOURCE AND IS BEHAVIOURALLY UNTOUCHED** — deliberately
+  (CD-D-153), because fixing it would have pre-empted the sixth seat on the most interesting thing in
+  its target. **WHETHER A DECLARATION IN THE DOCSTRING OF THE FUNCTION THAT HAS THE DEFECT IS A
+  MITIGATION OR IS THIS PROJECT'S SIGNATURE DEFECT COMMITTED ON PURPOSE IS T14/T8 AND IS THAT SEAT'S.** ***
+  *** **THE ELEVEN, THE `UPSTREAM_OF_THE_PATH` REDRAFT AND THE MINIMAL FINDINGS REGISTER ARE HELD AS
+  ONE ACT UNTIL THE SIXTH VERDICT (CD-D-160).** Ruling 1 ratifies `CARRIER_ONLY` as drafted, ratifies
+  `DEFECT_OPEN` **only with the findings register created in the same act so its `finding` field
+  resolves or the row refuses**, and **REJECTS `UPSTREAM_OF_THE_PATH` AS DRAFTED** — it bound the
+  MODULE register where its siblings bind the SITE register and its fields were prose no machine can
+  check. Ruling 2 puts the eleven after the verdict. **THE COMPOSITION IS THIS SEAT'S READING AND IS
+  CORRECTABLE BY THE PRODUCT OWNER IN ONE SENTENCE.** ***
+  *** **THE `*extra` RESIDUE HAS ITS CARRIER (RULING 3, DISCHARGED AT THIS BOUNDARY).** BLUEPRINT §16's
+  owed list now carries: *the acceptance of the first computing `MappingKind` member re-runs the
+  `*extra` guard measurement at the then-current head.* Documentary; it moves no product decision and
+  the Blueprint version does NOT move. **AND IT IS HANDED TO THE SIXTH SEAT AS T17 WITH THE QUESTION
+  THIS SEAT CANNOT ANSWER ABOUT ITS OWN WORK: is an entry on an owed list a carrier, or the thing this
+  project keeps calling a carrier right up until it does not fire?** ***
+  *** **NOTHING CLOSES. STANDING UNCHANGED BY RULING 4:** increment 7 is RECONCILED, **NOT ACCEPTED**;
+  T2 **RED**; CD-AC-002 and CD-AC-005 **AMBER and NOT CLOSED**; the **WO-2 GATE IS SHUT**; the
+  META-ASSURANCE pass stays sequenced AFTER the sixth gate. ***
+  *** **EVERYTHING BELOW IS RETAINED; ONLY ITS "WHAT HAPPENS NEXT" IS SUPERSEDED.** ***
   *** **INCREMENT 7 RETURNED `READY_FOR_ASSURANCE` AT `af2accb` AND IS RECONCILED BY MEASUREMENT
   (BL-20260823T013001Z-0114). THE DOORS ROW IS GREEN, THE SUITE IS GREEN, AND IT CAME BY
   RECLASSIFICATION ALONE.** Doors **EXIT 1 -> EXIT 0, PASS 60 assertions 0 violations**; suite
@@ -1822,7 +1880,15 @@ current_block: >
   ACCEPTED. NOTHING ADMITTED. THE GATE IS UNMOVED — a ruling about scope is not a pass.
 owner_role: PROJECT_LEAD
 next_actor: ASSURANCE_ENGINEER
-                       # **CURRENT, AT BL-20260822T223805Z-0110: CD-ASR-WO2R3-02 — THE FIFTH FRESH
+                       # **CURRENT, AT BL-20260823T014454Z-0115: CD-ASR-WO2R3-03 — THE SIXTH FRESH
+                       # ASSURANCE SEAT**, read-only, over the WHOLE of WO-2R3 at af2accb in
+                       # /srv/crash-detector-wo2r3-audit6, under CD-DISPATCH-WO2R3-ASSURANCE-06.yaml
+                       # (status ISSUED, CD-D-159). SEVENTEEN named targets. Regrades T2 + CD-AC-002/
+                       # 005; grades THE RECLASSIFICATION AND ITS DECLARED WEAKENING (T14); reads THE
+                       # ELEVEN AGAINST THE RAW REGISTER, which is UNWRITTEN BY RULING so that it can.
+                       # CD-D-129 clauses carried VERBATIM. PBG-SOD-001: never any of the THREE
+                       # Engineer seats and none of the FIVE prior auditors.
+                       # **PREVIOUS, AT BL-20260822T223805Z-0110: CD-ASR-WO2R3-02 — THE FIFTH FRESH
                        # ASSURANCE SEAT**, read-only, over the WHOLE of WO-2R3 at 9f7b764 in
                        # /srv/crash-detector-wo2r3-audit5, under CD-DISPATCH-WO2R3-ASSURANCE-05.yaml
                        # (status ISSUED). Regrades T2 + CD-AC-002/005; MEASURES T8, T9, T10, which no
@@ -2295,6 +2361,30 @@ completed_items:
   and must not duplicate it.'
 
 remaining_items:
+- '*** **CD-D-160 — NEW AND OPEN AT THIS BOUNDARY, AND IT IS A HOLD RATHER THAN A TASK. THE ELEVEN
+  CLASS-2 DISPOSITIONS, THE REDRAFTED `UPSTREAM_OF_THE_PATH`, AND THE MINIMAL FINDINGS REGISTER LAND
+  AS *ONE ACT* AND NOT UNTIL THE SIXTH ASSURANCE SEAT HAS REPORTED.** *** PO-DECISIONS-0014 ruling 1
+  ratifies `CARRIER_ONLY` as drafted; ratifies `DEFECT_OPEN` **only with the findings register created
+  in the same act — id, raised_at (boundary SHA), status (OPEN/CLOSED/SUPERSEDED), NOTHING ELSE — so
+  `DEFECT_OPEN.finding` RESOLVES AGAINST IT OR THE ROW REFUSES**; and **REJECTS `UPSTREAM_OF_THE_PATH`
+  AS DRAFTED**, redrafting it to bind the **SITE** register with machine-checkable fields. Ruling 2
+  puts the eleven AFTER the sixth verdict. **THE COMPOSITION OF THE TWO — ONE ACT, AFTER THE VERDICT —
+  IS THIS SEAT''S READING AND IS RECORDED AS A READING SO IT CAN BE OVERTURNED IN ONE SENTENCE.**
+  **WHY IT IS A CARRIED ITEM AND NOT ADVICE:** the obligation falls on a document written after a
+  boundary that has not happened, by a seat that may not be this one, and **the temptation to "get the
+  eleven out of the way" while an auditor is out is exactly the trap CD-D-130 was written for
+  (PBG-CONT-007).** **AND IT IS CODE ON THE LANE: IT NEEDS AN ENGINEER DISPATCH AND IT IS NEVER THIS
+  SEAT''S OWN HAND (PBG-AUTH-006), AND NEVER EITHER ASSURANCE SEAT (PBG-SOD-001).**'
+- '**CD-D-161 — NEW AND OPEN. THE `UPSTREAM_OF_THE_PATH` REDRAFT WAS *NOT* DRAFTED AT THIS BOUNDARY,
+  DELIBERATELY, AND THE REASON IS THE SAME ONE THAT SENT THE SIXTH SEAT OUT.** The Product Owner
+  ordered the word redrafted to the SITE register with machine-checkable fields. **THIS SEAT DID NOT
+  WRITE THAT REDRAFT**, because the eleventh item — `crash_detector.admission` as an UNDECLARED MODULE
+  — is precisely what the word is for, and it is a NAMED TARGET (T8/T16) of a seat that is reading the
+  tree right now. **DRAFTING THE REPLACEMENT WORD BEFORE THE AUDIT WOULD HAND THE AUDITOR THE SAME MAP
+  RULING 2 JUST TOOK OUT OF ITS HANDS.** **HOW IT COULD BE WRONG:** if the Product Owner intended the
+  redraft as a mechanical correction owed immediately, this costs a round trip — **the cheap error.
+  The expensive one is a second contested word landing before the only party with standing to attack
+  it has spoken.** The rejection AND the absent redraft are both disclosed to that seat in its brief.'
 - '**CD-D-129 — NEW AND OPEN AT THIS BOUNDARY. THE FOURTH ASSURANCE SEAT''S DISPATCH CARRIES THREE
   MANDATORY CLAUSES ORDERED BY THE PRODUCT AUTHORITY AT PO-DECISIONS-0009 RULING 1, AND A
   TEN-ITEM NAMED-TARGET LIST. IT FALLS DUE WHEN THAT DISPATCH IS WRITTEN — AFTER INCREMENT 5 — AND
@@ -2695,6 +2785,30 @@ remaining_items:
   and should find it DECLARED HERE FIRST.'
 
 open_decisions:
+- '*** **CD-D-157 AND CD-D-158 — BOTH ANSWERED AND CLOSED BY THE PRODUCT AUTHORITY at
+  governance/decisions/PO-DECISIONS-0014.md (commit `3e65d76`, authored by Matt Scott and by NO SEAT,
+  ONE path changed — `git show --stat` and `git log -1 --format=''%an <%ae>''`).** ***
+  **CD-D-157 (the eleven are drafted and not written, awaiting ratification) IS UPHELD AND ITS
+  PREMISE IS RATIFIED IN PART.** Ruling 1: `CARRIER_ONLY` RATIFIED AS DRAFTED; `DEFECT_OPEN` RATIFIED
+  **with the gap it exposed CLOSED RATHER THAN SHIPPED** — a MINIMAL findings register (id, raised_at
+  SHA, status; **"an index, not a system"**) created in the same act so the `finding` field resolves
+  or the row refuses; `UPSTREAM_OF_THE_PATH` **REJECTED AS DRAFTED, for exactly the reasons its own
+  author measured** — it binds the MODULE register where its siblings bind the SITE register, and its
+  fields are prose no machine can check — **and REDRAFTED to bind the SITE register with
+  machine-checkable fields.** **THE PRODUCT OWNER RECORDED THE PROJECT LEAD''S REFUSAL TO WITHDRAW ITS
+  OWN DRAFT ON ITS OWN OBJECTION AS CORRECT CONDUCT: "leaving the ratification where it belongs."**
+  **CD-D-158 (the sixth seat waits until the eleven exist) IS *SUPERSEDED*. THE PROJECT LEAD WAS
+  OVERRULED.** Ruling 2: **"the SIXTH fresh Assurance seat goes out NOW against the raw record"** —
+  the eleven as named targets, T8''s measurement in the brief, increment 7 disclosed in full including
+  the declared weakening — **and the eleven dispositions are written AFTER its verdict.** The deciding
+  reason is the FIFTH seat''s, adopted over this seat''s ordering: *"the dispositions are the
+  accountable record''s own account of the eleven; writing them before the audit hands the auditor a
+  map drawn by the author — the exact thing this programme refused at the fourth gate and was right to
+  refuse."* PO-DECISIONS-0013 ruling 6''s literal order is SUPERSEDED on this point.
+  **EXECUTION: CD-D-159 / CD-DISPATCH-WO2R3-ASSURANCE-06, issued at BL-20260823T014454Z-0115.**
+  **THE RISK THIS SEAT NAMED WHEN IT RULED THE OTHER WAY — "the auditor grades a register that is not
+  there" — IS NOT WISHED AWAY: IT IS WRITTEN INTO THAT SEAT''S OWN BRIEF AS A STANDING INVITATION TO
+  ATTACK THE SEQUENCING, AND IF IT BITES, THAT SEAT IS ASKED TO SAY SO AND SAY WHAT IT COST.**'
 - '**CD-D-134 — CLOSED. RULED BY THE PRODUCT AUTHORITY at governance/decisions/PO-DECISIONS-0010.md
   ruling 1 (commit f5c7b0c, authored by Matt Scott, not by any seat). THE ANSWER IS
   "BODY-BORNE *OR ABSENT*" — WIDER THAN THE (C)-THEN-(A) THIS SEAT RECOMMENDED.** Establishment
@@ -3134,6 +3248,30 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  *** **SUPERSEDING STEP, BL-20260823T014454Z-0115: THE SIXTH FRESH ASSURANCE SEAT IS OUT. STOP AT
+  ITS VERDICT. NOTHING MOVES ON THE LANE WHILE IT IS READING THE TREE.** ***
+  **1.** `CD-ASR-WO2R3-03` executes `CD-DISPATCH-WO2R3-ASSURANCE-06` at `af2accb` in
+  `/srv/crash-detector-wo2r3-audit6`. **READ-ONLY. `af2accb` IS STILL `af2accb` WHEN IT FINISHES —
+  that promise is written into its brief and this seat keeps it.**
+  **2.** Reconcile its return **BY MEASUREMENT**, and bank it **VERBATIM AND BESIDE — never inside —
+  the fourth and fifth seats' documents** (CD-D-143, PBG-CONT-003). **DO NOT ARGUE IT DOWN OR UP.**
+  **DO NOT reconcile a file still headed `IN PROGRESS`** (CD-D-149).
+  **3.** THEN, AND ONLY THEN, **IN ONE ACT** (CD-D-160): the redrafted `UPSTREAM_OF_THE_PATH` bound to
+  the **SITE** register with machine-checkable fields · the **MINIMAL findings register** (id,
+  raised_at SHA, status — nothing else) so `DEFECT_OPEN.finding` resolves or the row refuses · and
+  **the eleven Class-2 dispositions** written into `tools/sweep/declared_dispositions.py` on the lane,
+  in the ratified vocabulary and informed by BOTH measurements. **That is code on the lane and needs an
+  Engineer dispatch — NEVER either Assurance seat, NEVER this seat's own hand (PBG-AUTH-006).**
+  **4.** THEN the **META-ASSURANCE** pass over this seat's own reconciliation practice
+  (PO-DECISIONS-0013 ruling 5), carrying **CD-PL-F98, F99, F100, F101**. **STILL NOT FOLDED IN.**
+  **5.** THEN the Product Owner's disposition of the sixth gate. **Reconciliation is not acceptance;
+  acceptance is not assurance.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green doors row as a closed criterion — CD-D-156. T2 **RED**; CD-AC-002 and
+  CD-AC-005 **AMBER and NOT CLOSED**; the **WO-2 gate SHUT**.
+  **DO NOT** write the eleven, the redraft or the findings register before the verdict — **that is
+  PO-DECISIONS-0014 ruling 2 and it was bought at the price of a boundary.**
+  **THE STEP BELOW IS DISCHARGED: BOTH PRODUCT AUTHORITY QUESTIONS ARE ANSWERED AT `3e65d76`.** ***
   *** **SUPERSEDING STEP, BL-20260823T013001Z-0114: STOP. TWO PRODUCT AUTHORITY QUESTIONS ARE UP AND
   NEITHER THE DISPOSITIONS NOR THE SIXTH SEAT MOVE WITHOUT A RULING.**
   **1.** Q1 — ratify the extended vocabulary and rule on `UPSTREAM_OF_THE_PATH`. The eleven are
@@ -3936,5 +4074,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260823T013001Z-0114   # PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T014454Z-0115   # PREVIOUSLY BL-20260823T013001Z-0114, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260823T000002Z-0113, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE

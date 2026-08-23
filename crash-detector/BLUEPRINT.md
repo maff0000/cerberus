@@ -613,6 +613,16 @@ contents of `ModelProvenance` — source, what it stands for, criticality, and t
 mapping that doctrine §3.6 requires — and the **members of `MappingKind`** are product meaning and
 belong to the same register. The shape of both is construction and is mine; the contents are not.
 
+**AND THE OWED LIST NOW CARRIES A MEASUREMENT THAT FALLS DUE ON THE SAME DAY** (PO-DECISIONS-0014
+ruling 3, added by the Project Lead at BL-20260823T014454Z-0115 as ordered — documentary, and it
+moves no product decision): **the acceptance of the first computing `MappingKind` member re-runs the
+`*extra` guard measurement at the then-current head.** WO-2R3 increment 7 measured that the CD-ASR-F03
+post-condition binds **none** of `_evaluate_dial`'s `*extra` / `**extra_by_name` structurally, and
+that nothing passed through them can change what the evaluator returns **only because every
+`MappingKind` member raises in `compute`**. That is a PRODUCT GAP holding the hole shut, not a guard —
+and it expires on exactly the day this list is read. The measurement is owed *before* that member is
+accepted, not after.
+
 *Default safe action, unchanged and now stated in two places:* WO-2 ships **zero registry rows** and
 every dial reads `UNKNOWN`. **`MappingKind` ships with exactly ONE member, and that member computes
 nothing** (PO-DECISIONS-0005 ruling 2): its executor path refuses with a named error and never
