@@ -49,12 +49,13 @@ The safe failure is the recorded absence.
 from __future__ import annotations
 
 import math
+import typing
 from collections.abc import Mapping as AbcMapping
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from datetime import datetime, timedelta
 from typing import Union
 
-from crash_detector.admission import ESTABLISHED_HERE, admits
+from crash_detector.admission import ESTABLISHED_HERE, admits, is_exactly
 from crash_detector.collectors.adapter import (
     ADAPTER_PROTOCOL_MEMBERS,
     AdapterFetchError,
@@ -577,6 +578,14 @@ def collect(
             )
             raise exc
         finally:
+            # **GROUND 3 / ESCAPE 3. THE SNAPSHOT IS TAKEN BEFORE THE SINK IS CALLED AND THE
+            # ORDER IS THE WHOLE FIX.** `_record` runs inside this `finally:` and every read
+            # of the outcome below happens after it, so until this line the object the sink
+            # was handed and the object the runner reported were THE SAME OBJECT, and
+            # `object.__setattr__` on it rewrote `CollectionResult.final_outcome` and the
+            # ledger key. `kept` is re-established through the outcome's own constructor and
+            # no sink has ever held a reference to it.
+            kept: FetchOutcome = _the_runners_own_copy(outcome)
             _record(
                 sink,
                 AttemptRecord(
@@ -594,8 +603,11 @@ def collect(
             )
             rows_recorded += 1
 
-        final_outcome = outcome
-        if not isinstance(outcome, FetchFailed):
+        # EVERY READ BELOW IS OF `kept` AND NOT OF `outcome`. The loop-continuation test is
+        # included deliberately: `object.__setattr__(x, "__class__", Y)` reassigns the class
+        # of a heap type, so a sink could otherwise decide whether the runner retries.
+        final_outcome = kept
+        if not isinstance(kept, FetchFailed):
             break
         if attempt_number < policy.max_attempts and policy.backoff_seconds > 0.0:
             delays_applied.append(apply_delay(delay, policy.backoff_seconds))
@@ -667,6 +679,67 @@ def _established_adapter_identity(adapter: SourceAdapter) -> "tuple[str, str]":
             raise AdapterContractBreach(f"adapter.{member} is empty")
         established.append(value)
     return established[0], established[1]
+
+
+#: THE CLOSED OUTCOME SET, DERIVED FROM ITS OWN DECLARATION AND NOT SPELLED HERE.
+#: ``FetchOutcome = Union[OK, FetchFailed, Malformed, Empty]`` is the declaration; a fifth
+#: member arrives in this tuple on the run it is added, with no edit to this module. A
+#: hand-written list of four type names would be a VOCABULARY, which is the defect class this
+#: project keeps removing.
+_OUTCOME_TYPES: tuple = tuple(typing.get_args(FetchOutcome))
+
+
+def _the_runners_own_copy(outcome: FetchOutcome) -> FetchOutcome:
+    """A copy of ``outcome`` that **NO SINK HAS EVER HELD A REFERENCE TO**.
+
+    ====================================================================================
+    GROUND 3 / ESCAPE 3 — A MUTATING SINK REWROTE THE OUTCOME THE RUNNER THEN READ.
+    ====================================================================================
+
+    ``_record`` is called inside the ``finally:`` of the attempt loop and the runner reads
+    ``final_outcome`` afterwards, so **the sink runs BEFORE the read.** The ``OK`` handed to
+    the sink and the ``OK`` the runner went on to report were **THE SAME OBJECT**: normal
+    ``setattr`` is refused (``FrozenInstanceError``) and ``object.__setattr__`` succeeds, so a
+    sink doing::
+
+        object.__setattr__(attempt.observation.outcome, "payload", {"reading": 999.0})
+        object.__setattr__(attempt.observation.outcome, "source_as_of_utc", <2000-01-01>)
+
+    changed ``CollectionResult.final_outcome`` and made ``_reading_key`` ask the ledger for a
+    key naming a period **NO ROW RECORDS** — which the ledger answered ``admitted``. The sink
+    returns ``None`` throughout, so ``_record``'s contract check is satisfied and **nothing
+    refuses**.
+
+    **THE SHAPE TAKEN, AND WHY IT IS THE FIRST OF THE TWO THE AUDITOR NAMED.** *"Snapshot the
+    outcome before ``_record``, OR derive the reading key from the recorded row."* The second
+    is worse than the problem: the recorded row IS the object the sink held, so deriving the
+    key from it asks the mutator what it mutated. **THIS SNAPSHOTS**, and it snapshots by
+    RE-ESTABLISHING rather than by aliasing — the object is rebuilt through its own
+    constructor, so ``__post_init__`` runs again and the result is a different object with a
+    different ``payload`` dict.
+
+    **DERIVED, NOT SPELLED.** The member set comes from ``typing.get_args(FetchOutcome)`` and
+    the field list from ``dataclasses.fields``, so a fifth outcome member or a new field is
+    copied on the run it is added with no edit here. Exact-type membership is asked through
+    ``crash_detector.admission.is_exactly``, so a metaclass cannot answer it (``F-06-D``).
+
+    **WHAT THIS DOES NOT COPY, DECLARED RATHER THAN LEFT TO BE FOUND.** ``OK.__post_init__``
+    takes ``dict(self.payload)`` — a SHALLOW copy. A payload whose VALUE is itself mutable —
+    ``{"reading": {"v": 0.25}}`` — is still shared between the two objects, and a sink that
+    mutates the inner object mutates both. **The measured escape is a top-level rewrite and
+    this closes it; the nested case is NOT closed and is NOT claimed closed.** Carried, and
+    asserted TRUE, by ``tests/test_collector_mutating_sink.py``.
+    """
+    if not is_exactly(outcome, _OUTCOME_TYPES):
+        raise SinkContractBreach(
+            f"the runner cannot take its own copy of a {type(outcome).__name__}: the "
+            "FetchOutcome sum type is CLOSED and this is not one of its members. Refusing is "
+            "the fail-closed direction — a copy this function could not make would leave the "
+            "runner reading an object a sink has held."
+        )
+    return type(outcome)(
+        **{field.name: getattr(outcome, field.name) for field in fields(outcome)}
+    )
 
 
 def _record(sink: ObservationSink, attempt: AttemptRecord) -> None:
