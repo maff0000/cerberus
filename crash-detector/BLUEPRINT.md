@@ -1,9 +1,21 @@
 ---
 document: BLUEPRINT — how the Crash Detector is built
 product: Crash Detector — standalone market stress instrument
-version: 0.3.0
+version: 0.4.0
 status: >
-  ACCEPTED. **v0.3.0 adds NO design decision and REVERSES none — it DECLARES A PERIMETER that was
+  ACCEPTED. **v0.4.0 CORRECTS THE PERIMETER TO WHAT WAS MEASURED, on PO-DECISIONS-0019 (authored by
+  Matt Scott and by no seat).** §17 CD-BP-005 is restated as THREE TIERS and not two — PREVENTED
+  (subclass + accident) / RESISTED (F1, via a construction-provenance door at admission, with its
+  measured WeakSet obstacle OWNED in the text) / DETECTED (witness divergence at the publication
+  boundary); the word "useless" is STRUCK because it was false for the F1 route the row names first;
+  and the assertion "the platform does not permit preventing it" is RETRACTED because ADMISSION WAS
+  NEVER TESTED. §14 and §15 gain CD-AC-017 and CD-AC-018, so the obligation is SCHEDULED with an ID
+  and a work order instead of being carried as a note, a residue paragraph or a manual step. **The
+  Product Owner's own sentences are carried VERBATIM and verified BY COMMAND —
+  `python3 -B tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py --root .`** The
+  Project Lead authored the version bump, the two criterion IDs, the table scaffolding, the §14
+  disclosure block marked as such, and the §19 row — enumerated at BL-20260823T124508Z-0135.
+  **v0.3.0 adds NO design decision and REVERSES none — it DECLARES A PERIMETER that was
   previously implied and is false as implied.** §16 gains the FORGERY-DETECTION OBLIGATION (owed at
   WO-3, verified as a first-class criterion) and §17 gains CD-BP-005, both on PO-DECISIONS-0018
   ruling 1 (commit c72b6ea, authored by Matt Scott and by no seat), and **the Product Owner's own
@@ -23,7 +35,10 @@ authority: CD-AUTH-0001
 derives_from: >
   PID.md v1.0.1 · governance/decisions/PO-DECISIONS-0001.md ·
   governance/decisions/PO-DECISIONS-0004.md §2 (the engine owns the model lifecycle) ·
-  governance/decisions/PO-DECISIONS-0005.md (the disposition of BP-AMENDMENT-0001)
+  governance/decisions/PO-DECISIONS-0005.md (the disposition of BP-AMENDMENT-0001) ·
+  governance/decisions/PO-DECISIONS-0018.md ruling 1 (the perimeter DECLARED) ·
+  governance/decisions/PO-DECISIONS-0019.md rulings 1-3 (the perimeter CORRECTED to three tiers;
+  CD-AC-017 and CD-AC-018 minted)
 framework: PBGv2 v2.0.0-alpha.1, pinned read-only at pbg/
 last_reconciliation_sha: b4e8eae123e0f1250c80e282c274d73e93bb73ed
 reconciliation_note: >
@@ -572,9 +587,21 @@ earlier than the criterion is scheduled, not reordering their sequence.
 | CD-AC-014 | §10 health surface | WO-3 |
 | CD-AC-015 | §12 restore from the copy | WO-6 |
 | CD-AC-016 | §8 envelope section | WO-6 |
+| CD-AC-017 | §7.1 the `admits` doors, §17 `CD-BP-005`'s RESISTED tier — **admission on every judgement path admits only objects of provenance from a declared door (the RESISTED tier)** | WO-3 |
+| CD-AC-018 | §8 publication boundary, §6 divergence, §17 `CD-BP-005`'s DETECTED tier — **the publication boundary raises DIVERGENCE between a released number and its corroborating witnesses (the DETECTED tier)** | WO-3/WO-4 |
 
 The Required Test Register derives its population from PID §6 and is compared against it
 (`PBG-RT-001`); it is created in WO-2 and every row above becomes a register entry.
+
+> **PROJECT LEAD DISCLOSURE, not product meaning — these are the Project Lead's own bytes and they
+> are enumerated as such in §19.** `CD-AC-017` and `CD-AC-018` are the Product Owner's, minted at
+> PO-DECISIONS-0019 ruling 3 — *"Two new acceptance criteria are minted"* — and carried above
+> verbatim. They are **not in PID §6**, and the
+> sentence immediately above is therefore not yet true of them: the register row each of them owes
+> **cannot be written until the Product Owner amends PID §6**. That obstacle is MEASURED, not
+> asserted — `pbg/tools/pbg/required_tests.py` computes the census from the PID alone and returns
+> *"NEW_REQUIREMENT is blocked pending PO amendment of the PID"*. It is recorded as an **open
+> Product Authority question** at `BL-20260823T124508Z-0135` and is answered by no seat.
 
 ---
 
@@ -589,8 +616,8 @@ boundary.
 |---|---|---|---|
 | **WO-1** | this Blueprint; pre-commit hook commissioned | — | Product Owner acceptance of the Blueprint |
 | **WO-2** | repository skeleton, container set, store schema and grant matrix, dial types, collector framework and source registry, Required Test Register, the five planted violations of §13 | 001, 002, 003, 005, 012 | Assurance PASS on all five planted violations failing correctly |
-| **WO-3** | publication layer, heartbeat, external probe, regime-aware staleness, health surface | 008, 009, 014 | Assurance PASS; public-surface change → external R2D2 review (PID §8) |
-| **WO-4** | witnesses live, divergence alarm, history and slope | 004, 010, 011 | Assurance PASS |
+| **WO-3** | publication layer, heartbeat, external probe, regime-aware staleness, health surface; **a CONSTRUCTION-PROVENANCE door at admission** (`CD-AC-017`, §17 RESISTED tier); **the publication boundary raising DIVERGENCE** (`CD-AC-018`, §17 DETECTED tier) | 008, 009, 014, **017**, **018** | Assurance PASS; public-surface change → external R2D2 review (PID §8) |
+| **WO-4** | witnesses live, divergence alarm, history and slope; **`CD-AC-018` completes here as the witnesses land** | 004, 010, 011, **018** | Assurance PASS |
 | **WO-5** | public/private split evidence, AI review and its four validators | 006, 007 | Assurance PASS **and** external R2D2 — doctrine-bearing controls, PID §8 |
 | **WO-6** | rotation-readiness ratio, recovery proof from the copy, wave-transition monitor | 013, 015, 016 | Assurance PASS |
 
@@ -709,7 +736,7 @@ in §2; alert transport deferred to WO-3 (§10); raw retention revisited on real
 | CD-BP-002 | **the executor is now the single highest-value target in the product** — after BP-AMENDMENT-0001 it is the only place a dial number is computed. The concentration is deliberate (one place with source beats seven doors without) but it is a risk, not a win, and a `MEAN` that is not a mean is a defect this architecture does not prevent — it makes it *have source* | MEDIUM | stated in the amendment's §E residue rather than glossed; the mapping has source, so static analysis and review reach it, and every member of `MappingKind` is added deliberately and visibly with CD-D-005 provenance behind it |
 | CD-BP-003 | **the collector's adapter boundary admits by protocol and is the softest remaining surface.** `adapter`, `sink`, `ledger` and `validator` are genuinely foreign, so exact-typing them is not available; the closure is that every value they RETURN is established on arrival. That is a door that admits, not an absence of a door — weaker in kind than §7.0's | MEDIUM | declared as a limit rather than hidden (amendment §D.3); **named by the Product Owner as the fourth Assurance seat's first target** (PO-DECISIONS-0005 ruling 4) |
 | CD-BP-004 | **a consumer's `fold` with an `on_unknown` returning `0.0` renders absence as a number**, with the `Reading` sum type wholly intact — CD-AC-001's failure mode reached outside the governed boundary | MEDIUM | ruled WO-4, not WO-2R3 (PO-DECISIONS-0005 ruling 3), because the envelope schema and not `fold` is the structural refusal for what actually publishes. Carried here **and** named in WO-4's scope on day one, on the Product Owner's condition that a residue this amendment made visible does not become invisible by being deferred |
-| CD-BP-005 | **DELIBERATE IN-PROCESS FORGERY IS NOT PREVENTED AND THE PLATFORM DOES NOT PERMIT PREVENTING IT.** An actor already executing inside the process can construct an object of a governed exact type with a forged value, executing ZERO package lines — `cls.__new__(cls)` + `object.__setattr__`, and `type.__new__(<metaclass>, ...)` for the type itself. `object.__setattr__` and `type.__new__` are CPython working as documented. Seven gate verdicts, forty measured forgeries at `686a374` and a HIGH live control bypass (`CD-ASR-WO2R3-04-F01`) established it; appending a refused route to the census produced a false green five times | **HIGH, ACCEPTED AND DECLARED** | **the perimeter is DECLARED, not pretended** (PO-DECISIONS-0018 ruling 1, quoted verbatim in §16). PREVENTED: the declared routes and the front door, kept as accident-proofing, non-vacuous, proved by a refusing arm 1 — plus admission by EXACT TYPE on every enumerated judgement path, so a forged subclass is constructible but useless. DETECTED, and this is the load-bearing half: **witness divergence and the provenance chain, the FORGERY-DETECTION OBLIGATION owed at WO-3 as a first-class criterion** (§16, CD-D-172). OUT OF SCOPE: preventing an in-process actor from constructing the object at all. **Blast-radius basis: the detector is ADVISORY (`D1`) and no money moves on it (`D2`)** — prevention is reserved for Layer 3, out-of-process, where the money gate lives, and detection carries everywhere else. **Every instrument reporting SEALED must carry this limit in its own exit text; a verdict that claims more is the defect** (PO-DECISIONS-0018 ruling 1b) |
+| CD-BP-005 | **DELIBERATE IN-PROCESS CONSTRUCTION OF A FORGED OBJECT CANNOT BE PREVENTED.** An actor already executing inside the process can construct an object of a governed exact type with a forged value, executing ZERO package lines — `cls.__new__(cls)` + `object.__setattr__`, and `type.__new__(<metaclass>, ...)` for the type itself. `object.__setattr__` and `type.__new__` are CPython working as documented. Seven gate verdicts, forty measured forgeries at `686a374` and a HIGH live control bypass (`CD-ASR-WO2R3-04-F01`) established it; appending a refused route to the census produced a false green five times. **CORRECTED AT v0.4.0 BY THE PRODUCT OWNER (PO-DECISIONS-0019 ruling 2), whose own bytes state the correction:** *"the platform does not permit preventing it" is RETRACTED, and the reason is that ADMISSION WAS NEVER TESTED.* *Construction cannot be prevented — measured three times, that stands. But admission is a different predicate, and a construction-provenance discriminator at admission is available and measured.* *The corrected text rests on that measurement, not on an assertion.* | **HIGH, ACCEPTED AND DECLARED** | **the perimeter is DECLARED, not pretended** (PO-DECISIONS-0018 ruling 1, quoted verbatim in §16), **and at v0.4.0 it is CORRECTED to what was MEASURED — PO-DECISIONS-0019 ruling 1, the Product Owner's own bytes carried verbatim: *"The perimeter is restated as THREE TIERS, because two was the error"*.** **PREVENTED (accident + casual misuse):** *the declared-route refusals and the front door, exact-type admission — non-vacuous, proved by a refusing arm. Stops the forged SUBCLASS (F2) and every accident. Says exactly that and no more.* **RESISTED (deliberate in-process forgery, F1):** *a CONSTRUCTION-PROVENANCE door — "did this object leave a declared door?" — which the auditor measured separates genuine from F1 forgery in-process at admission time, defeatable only by locating and mutating a module-private structure (a difference IN KIND from F1's zero-knowledge, zero-package-line cost against exact type). Not absolute (its defeat is measured, FACT 3) — hence RESISTED, not prevented. The measured obstacle is owned in the text: the `WeakSet` form is unavailable because `__slots__` omits `__weakref__` and adding it widens the guarded surface, so the mechanism is specified as the discriminator, not the implementation.* **Scheduled as `CD-AC-017`** (§14, §15 WO-3). **DETECTED (the residual, and the catastrophic-blast case):** *witness divergence + provenance, at the publication boundary — the backstop for what admission-time resistance does not hold, and the only defence where blast radius forbids relying on any in-process control (Layer 3 territory, D2 untouched).* **Scheduled as `CD-AC-018`** (§14, §15 WO-3/WO-4). **Blast-radius basis: the detector is ADVISORY (`D1`) and no money moves on it (`D2`).** **Every instrument reporting SEALED must carry this limit in its own exit text; a verdict that claims more is the defect** (PO-DECISIONS-0018 ruling 1b) |
 
 ---
 
@@ -731,6 +758,7 @@ a written date.
 
 | Version | Date (UTC) | By | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-08-23 | Project Lead, **carrying the Product Owner's own bytes** | **THE PERIMETER IS CORRECTED TO WHAT WAS MEASURED — PO-DECISIONS-0019 rulings 1, 2 and 3 (authored by Matt Scott and by no seat), applied and NOTHING ELSE.** The eighth Assurance seat's `RED` was upheld in full, **including `F02` and `F05`, both of which were aimed at bytes this seat authored in this protected file**, and this row records the correction rather than the defence. **§17 `CD-BP-005` is restated as THREE TIERS and not two**: PREVENTED (the forged SUBCLASS `F2` and every accident — *"Says exactly that and no more"*); **RESISTED** (`F1`, via *a CONSTRUCTION-PROVENANCE door — "did this object leave a declared door?"*, whose defeat is measured, hence resisted and not prevented, **with the measured `WeakSet`/`__slots__` obstacle OWNED IN THE TEXT rather than glossed**); DETECTED (witness divergence + provenance at the publication boundary). **The word "useless" is STRUCK** — `F02` proved it false for the very route the risk column names first. **The assertion "AND THE PLATFORM DOES NOT PERMIT PREVENTING IT" is RETRACTED**, on the Product Owner's own reason: *"ADMISSION WAS NEVER TESTED"* — construction cannot be prevented and that stands, but admission is a different predicate. **§14 and §15 gain `CD-AC-017` (admission by declared-door provenance, RESISTED tier, WO-3) and `CD-AC-018` (publication divergence, DETECTED tier, WO-3/WO-4)**, which answers `F03`: the obligation now has an ID, a §14 trace row and a §15 work order, and is no longer carried in the three forms `CD-D-172` forbids. **THE CARRIAGE IS VERIFIED BY COMMAND AND NOT BY ASSERTION** — `python3 -B tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py --root .`, with the counterfactual arm proving the check can fail. **This file is protected from every seat including the Project Lead (`CD-D-115`); the authority for the carriage is the ruling's own instruction that the corrections *"are mine to author ... and are authored here for verbatim carriage"*. THE PROJECT LEAD'S OWN AUTHORED BYTES ARE EXACTLY: the version bump and status block, the two criterion IDs and their §14/§15 table scaffolding, the §14 disclosure blockquote (marked PROJECT LEAD DISCLOSURE precisely because `F05` found this seat writing unattributed normative prose here), and this row — enumerated at `BL-20260823T124508Z-0135`.** **TWO THINGS THIS VERSION DOES NOT DO, both disclosed rather than hidden: it does not write the register rows `CD-AC-017`/`CD-AC-018` owe, because PID §6 does not contain them and the register's population is derived from PID §6 alone (MEASURED — `NEW_REQUIREMENT is blocked pending PO amendment of the PID`); and it does not repair `F05`'s existing §16 sentence, because only the Product Owner may. Both are open Product Authority questions.** |
 | 0.1.0 | 2026-08-18 | Project Lead | initial Blueprint, proposed for Product Owner acceptance under WO-1 |
 | 0.1.0 | 2026-08-19 | Project Lead | **status only** — PROPOSED → ACCEPTED, recording the Product Owner's acceptance at 2e116ec and releasing the "no application code" hold this header was still asserting. No clause of the design changed, so the version does not move. |
 | 0.3.0 | 2026-08-23 | Project Lead, **carrying the Product Owner's own bytes** | **THE PERIMETER IS DECLARED, NOT PRETENDED — PO-DECISIONS-0018 ruling 1 (commit `c72b6ea`, authored by Matt Scott and by no seat), applied and NOTHING ELSE.** §16 gains **CD-D-172, the FORGERY-DETECTION OBLIGATION**: deliberate in-process forgery cannot be prevented on this platform, so the defence is DETECTION — witness divergence and the provenance chain — **specified at WO-3 when real sources land and verified as a FIRST-CLASS CRITERION**, with the ruling's three parts (a)/(b)/(c) quoted verbatim. §17 gains **CD-BP-005**, HIGH, ACCEPTED AND DECLARED, stating in one row what is PREVENTED, what is DETECTED and what is OUT OF SCOPE, on the blast-radius basis that the detector is ADVISORY (`D1`) and no money moves on it (`D2`). **No design decision changed and none was reversed; a claim that was false as implied is now stated truthfully.** The version moves because §16 and §17 gained clauses. **This file is protected from every seat including the Project Lead (`CD-D-115`); the ruling's parenthetical — *"PO-authored text carried verbatim where protected"* — is the authority for the carriage, and the Project Lead's OWN authored bytes are exactly the version bump, the two IDs, the table scaffolding and this row, enumerated at `BL-20260823T095521Z-0131`.** Graded by the eighth Assurance seat against the declared perimeter. |
