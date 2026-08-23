@@ -493,3 +493,126 @@ def test_the_converted_sites_are_exactly_these_twelve():
         "these converted sites ADMITTED an object that only `isinstance` accepts, which "
         "means the exact-type conversion was reverted or bypassed at: " + ", ".join(admitted)
     )
+
+
+# --------------------------------------------------------------------------------------- #
+# THE EIGHTEEN THAT WERE **NOT** CONVERTED. A DECLARED REASON WITH NO CARRIER IS A SENTENCE
+# (CD-RULE-006), AND THESE TWO TESTS ARE THE CARRIERS FOR THE TWO REASONS THAT DO THE WORK.
+# --------------------------------------------------------------------------------------- #
+
+
+def test_the_four_metatype_guards_keep_isinstance_because_exact_type_would_ADMIT():
+    """**THE MECHANICAL READING OF "EXACT TYPE EVERYWHERE" IS WRONG AT FOUR SITES.**
+
+    ``SealedMagnitudeType.__new__`` and its three siblings are **REFUSAL** predicates —
+    ``if isinstance(base, M): raise`` — and at a refusal predicate the WIDER operator is the
+    STRICTER one. Converting them to ``type(base) is M`` would refuse STRICTLY LESS.
+
+    This test builds the thing that separates the two predicates: a class whose METATYPE is a
+    SUBCLASS of the sealed metatype, forged over the sealed victim. Today an ordinary ``class``
+    statement over it is REFUSED. Under exact type it would be ADMITTED, and that is asserted
+    here as a property of the predicate rather than argued in a comment.
+
+    **PO-DECISIONS-0018 ruling 1(a) keeps these refusals as accident-proofing. Converting them
+    would have been the regression the ruling was written to forbid.**
+    """
+    from crash_detector.dials.magnitude import (
+        DialMagnitude, MagnitudeSurfaceViolated, SealedMagnitudeType,
+    )
+    from crash_detector.dials.provenance import (
+        DeclaredQuantity, QuantitySurfaceViolated, SealedQuantityType,
+    )
+    from crash_detector.dials.reading import Degraded  # noqa: F811
+    from crash_detector.dials.reading import ReadingSurfaceViolated  # noqa: F811
+    from crash_detector.serving.dial_presentation import (
+        DialPresentationRefused, NotShown, SealedPresentationType,
+    )
+
+    cases = (
+        (SealedMagnitudeType, DialMagnitude, MagnitudeSurfaceViolated),
+        (SealedQuantityType, DeclaredQuantity, QuantitySurfaceViolated),
+        (SealedReadingType, Degraded, ReadingSurfaceViolated),
+        (SealedPresentationType, NotShown, DialPresentationRefused),
+    )
+    assert len(cases) == 4
+
+    for metatype, victim, surface_error in cases:
+        sub = type(f"{metatype.__name__}Sub", (metatype,), {})
+        forged = type.__new__(sub, "Forged", (victim,), {"__slots__": ()})
+
+        # THE TWO PREDICATES DISAGREE AT THIS BASE. That is the whole of the argument.
+        assert isinstance(forged, metatype) is True, metatype
+        assert (type(forged) is metatype) is False, metatype
+
+        # TODAY, with `isinstance`: an ordinary class statement over the forged base REFUSES.
+        with pytest.raises(surface_error):
+            exec("class Child(B):\n    __slots__ = ()\n", {"B": forged})
+
+        # AND THE PREDICATE THE CONVERSION WOULD INSTALL, EVALUATED OVER THE SAME BASES:
+        # it does not fire, so the class statement would SUCCEED.
+        assert any(type(b) is metatype for b in (forged,)) is False, (
+            f"{metatype.__name__}: the exact-type predicate would REFUSE this base, so the "
+            "reason recorded at that site for keeping `isinstance` no longer holds and the "
+            "site should be re-examined."
+        )
+
+
+def test_the_own_terms_isinstance_doors_are_carried_by_the_base_type_descriptor():
+    """**THE CARRIER FOR THE SIX SHAPE-ADMITTING DOORS, AND IT IS THE C LAYER.**
+
+    ``own_float``, ``own_str``, ``own_instant``, ``own_utc_offset``, ``ensure_utc`` and
+    ``parse_utc`` admit a SUBCLASS on purpose — ``numpy.float64`` IS a ``float`` and
+    ``pandas.Timestamp`` IS a ``datetime``, and a measurement path that refused them would be
+    broken rather than safe. So exact type is not available and the sites are DECLARED.
+
+    What that leaves open is the route ``isinstance`` has and SUBCLASSING does not: an object
+    of an unrelated type WEARING the class through ``__class__``. **IT DOES NOT SURVIVE THE
+    NEXT LINE**, because every one of these doors immediately applies an UNBOUND BASE-TYPE
+    DESCRIPTOR, and CPython refuses to apply a descriptor to anything that is not a genuine
+    instance of its owning type. The refusing layer is named from its own failure text.
+    """
+    from crash_detector.own_terms import own_float, own_instant, own_str, own_utc_offset
+    from crash_detector.time_utc import ensure_utc, parse_utc
+
+    cases = (
+        ("own_float", float, lambda v: own_float(v), "'float' object"),
+        ("own_str", str, lambda v: own_str(v), "requires a 'str' object"),
+        ("own_instant", dt.datetime,
+         lambda v: own_instant(v, offset=dt.timedelta(0)), "doesn't apply to a 'Forged'"),
+        ("own_utc_offset", dt.datetime, lambda v: own_utc_offset(v), "'datetime.datetime'"),
+        ("ensure_utc", dt.datetime, lambda v: ensure_utc(v), "'datetime.datetime'"),
+        ("parse_utc", str, lambda v: parse_utc(v), "requires a 'str' object"),
+    )
+    assert len(cases) == 6
+
+    for name, victim, call, expected_in_text in cases:
+        forged = wearing(victim)
+        # THE PREMISE: `isinstance` is satisfied and no subclass was needed.
+        assert isinstance(forged, victim) is True, name
+        assert (type(forged) is victim) is False, name
+
+        with pytest.raises(TypeError) as refused:
+            call(forged)
+        assert "descriptor" in str(refused.value), (
+            f"{name}: the forgery was refused, but NOT by the base-type descriptor this "
+            f"site's declared reason names — {str(refused.value)[:160]}"
+        )
+        assert expected_in_text in str(refused.value), (
+            f"{name}: {str(refused.value)[:160]}"
+        )
+
+    # CONTROLS — a GENUINE subclass is the case these doors exist to serve, and it is
+    # admitted, and what comes back is EXACT type built by this package.
+    class RealFloat(float):
+        def __float__(self):
+            return 999.0
+
+    class RealStr(str):
+        def __eq__(self, other):
+            return True
+
+        def __hash__(self):
+            return 0
+
+    assert own_float(RealFloat(1.5)) == 1.5 and type(own_float(RealFloat(1.5))) is float
+    assert type(own_str(RealStr("x"))) is str and str.__eq__(own_str(RealStr("x")), "x")
