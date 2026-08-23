@@ -1,8 +1,26 @@
 # VARIANT MANIFEST — WO-2R3, seat `CD-ENG-WO2R3-01`
 
-**NOTHING UNDER `variants/` IS EXECUTABLE** (`PBG-ASSURE-001`). These are `git apply`-able
-patches and prose. Nine of them ADD a probe script to the tree they patch; the probe is data
-inside a patch, it is not a runner, and nothing here runs anything.
+> **SUPERSEDED AT INCREMENT 7 BY `CD-ENG-WO2R3-03`, AND THE SUPERSEDED WORDING IS QUOTED
+> RATHER THAN DELETED** (`CD-RULE-004`, `PBG-CONT-003`). It read:
+>
+> > *"**NOTHING UNDER `variants/` IS EXECUTABLE** (`PBG-ASSURE-001`). These are `git apply`-able
+> > patches and prose. Nine of them ADD a probe script to the tree they patch; the probe is data
+> > inside a patch, it is not a runner, and nothing here runs anything."*
+>
+> **THAT SENTENCE IS FALSE AND HAS BEEN SINCE INCREMENT 6.** `CD-PL-F97` records six executable
+> probes landing under this directory with zero rows in this manifest; this increment adds two
+> more. **MEASURED, NOT ASSERTED —** `ls variants/WO-2R3/*.py | wc -l` reads **8** at this commit,
+> and every one is a `__main__` that imports the product and runs it. A header claiming the
+> directory contains no runners, in a directory of runners, is this project's
+> hand-maintained-summary defect living in the one file whose whole job is to enumerate.
+
+**WHAT IS TRUE NOW, AND IT IS TWO CLAIMS AND NOT ONE.** (i) The `.patch` rows are `git apply`-able
+patches and prose, and nothing applies them but a reader. (ii) The `P-*.py` rows **ARE EXECUTABLE
+PROBES**: they are run directly against a tree with `PYTHONPATH=<tree>/src`, they import the
+product, and they print a `tree:` provenance line as their first output so a reader can tell which
+tree answered (`CD-PL-F98`). **NOTHING UNDER `variants/` RUNS ITSELF, AND NOTHING HERE IS WIRED
+INTO A SUITE OR A REGISTER** — that much of the old sentence stands and it is the part
+`PBG-ASSURE-001` is about.
 
 **THIS CORPUS PROVES NOTHING ABOUT ANY CLASS** (`CD-D-047`). It is given in full so that
 fitting a guard to it is worthless. It is a regression floor and the fourth Assurance seat's
@@ -415,3 +433,27 @@ insertion point moved. **NOT UPDATED HERE, and that is a scope call and not lazi
 conservation rule is about the ELEVEN DECLARED PLANTS under `plants/`, and the increment-4 boundary
 ruled in terms (`CD-ENG-WO2R3-F16`) that extending it to the auditors' corpus is the Project Lead's
 decision and not this seat's. **RAISED AS `CD-ENG-WO2R3-F20` (LOW).**
+
+---
+
+## THE EXECUTABLE PROBE ROWS — WRITTEN DOWN FOR THE FIRST TIME (`CD-PL-F97`)
+
+**THIS SECTION EXISTS BECAUSE IT DID NOT.** Six probes landed at increment 6 with zero rows here.
+Every row states what the probe ASKS, not what it concludes — a manifest that carries conclusions
+is a summary, and a summary is the thing this project keeps finding wrong.
+
+| probe | asks | run it |
+|---|---|---|
+| `P-A-escape1-stored-is-not-validated.py` | is the stored payload the validated payload? | `PYTHONPATH=src python3 -B variants/WO-2R3/P-A-escape1-stored-is-not-validated.py` |
+| `P-B-how-deep-can-a-type-hide.py` | how deep can a `ClassDef` nest before the constructor check stops seeing it? | `PYTHONPATH=src python3 -B variants/WO-2R3/P-B-how-deep-can-a-type-hide.py` |
+| `P-C-an-aliased-exemption.py` | does an aliased `ESTABLISHED_HERE` still count as a use? | `PYTHONPATH=src python3 -B variants/WO-2R3/P-C-an-aliased-exemption.py` |
+| `P-D-empty-is-runtime-unguarded.py` | is `Empty` establishing at runtime? | `PYTHONPATH=src python3 -B variants/WO-2R3/P-D-empty-is-runtime-unguarded.py` |
+| `P-E1-what-is-closed-at-that-door.py` | what is actually closed at the CD-BP-003 door? | `PYTHONPATH=src python3 -B variants/WO-2R3/P-E1-what-is-closed-at-that-door.py` |
+| `P-E23-what-the-in-package-execution-sentence-gets-wrong.py` | how many lines of package code does the route the sentence calls a precondition actually need? | `PYTHONPATH=src python3 -B variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py` |
+| **`P-F-can-anything-reach-the-net-without-a-door.py`** | **NEW AT INCREMENT 7.** Both halves of `PO-DECISIONS-0012` ruling 4, separately: can anything in-process reach `_evaluate_dial` without passing an established door, and does the net's post-condition bind everything its open arity admits? **18 arms, each a live call.** | `PYTHONPATH=src python3 -B variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py` |
+| **`P-G-can-a-foreign-adapter-reach-the-net.py`** | **NEW AT INCREMENT 7.** The same question asked of the DECLARED-FOREIGN actor rather than of a REPL: can a conforming hostile adapter, arriving through `collect()`, obtain and call the net? The fifth seat wrote *"I did not demonstrate a route to it from `collect`"*; this is that demonstration attempted. | `PYTHONPATH=src python3 -B variants/WO-2R3/P-G-can-a-foreign-adapter-reach-the-net.py` |
+
+**NEITHER NEW PROBE IS A CARRIER.** Both exit 0 whatever they measure, by design: they are
+INSTRUMENTS THAT REPORT, and this project's `CD-RULE-006` says a check reports and a carrier fails.
+The carriers for increment 7's propositions are in `tests/`, and where a proposition has no carrier
+that is said in the return rather than left to be found.
