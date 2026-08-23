@@ -1,0 +1,13 @@
+diff --git a/required-tests.yaml b/required-tests.yaml
+index 7e78844..65d8843 100644
+--- a/required-tests.yaml
++++ b/required-tests.yaml
+@@ -779,7 +779,7 @@ criteria:
+       # reference — `execution_contract` is a RESOLVABLE FILE PATH (required_tests.py:659-661,
+       # `.is_file()`), NOT prose, so relocating this text there would have broken status derivation.
+       #
+-      # planted_violation: plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch
++      planted_violation: plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch
+       # planted_violation_note: >
+       #   THE FOURTEENTH PLANT. It replaces `is_exactly(value, self.types)` with
+       #   `isinstance(value, self.types)` in `_Exactly.refusal` — ONE LINE, at the single point where
