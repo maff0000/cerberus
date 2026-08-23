@@ -81,6 +81,33 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **SUPERSEDING, BL-20260823T170618Z-0149: ALL THREE ACTS OF `PO-DECISIONS-0022` ARE EXECUTED
+  AND THE TENTH GATE RETURNED `AMBER`. STOP — THE NEXT ACTOR IS THE PRODUCT OWNER.** ***
+  **ACT 1, THE RECORD ACT: DONE at `88e43db`** — BLUEPRINT §17's `RESISTED` tier corrected to
+  **OWED, NOT BUILT**, load moved to the `DETECTED` tier, PO-authored and carried verbatim, 4/4
+  sentences and the supersession measured EXACTLY ONE SENTENCE WIDE.
+  **ACT 2, THE FIX: DONE.** `CD-ENG-COORD-FIX-01`, a fresh Engineer, returned `READY_FOR_ASSURANCE`
+  at `105db79` with **SIX findings, FOUR against itself**; merged at the accountable seat at
+  `b165dd9`; **29 files, ZERO protected paths, ONE identity — measured, not claimed.**
+  **ACT 3, THE TENTH GATE: DONE, AND IT IS `AMBER`.** `CD-ASR-WO2R3-07`'s verdict is banked verbatim
+  at `36700d7` — 845 lines, sha256 `1d46243b`, committed BEFORE it was read.
+  *** **BOTH NAMED ACCEPTANCE COMMANDS PASS AND THE GATE IS STILL NOT GREEN, WHICH IS THE WHOLE
+  POINT OF HAVING GRADED MORE THAN WHAT WAS HANDED OVER.** *** `race_scope.py` 200/0/0 on the
+  repaired tree against 196 double-takes unfixed; `PLANT-COORD-05` 5/5 LIVE; all 8 plants, 27 arms,
+  LIVE. **AND `CD-ASR-WO2R3-06-F09` IS STILL NOT CLOSED:** `lease.py reap --force` abandons a LIVE
+  holder from any process with **no identity argument in its parser at all**, and writes
+  *"A SESSION DIED HOLDING THIS LEASE"* into the durable record while printing `(ALIVE)` in the same
+  verdict line. **REPLICATED BY THE PROJECT LEAD END TO END AGAINST A REAL LIVE PID.** Plus `F01`:
+  the gatekeeper's `WRITE x READ` guard is **ORDER-DEPENDENT** — same two claims, opposite verdicts.
+  *** **NOTHING MOVES: no increment, no dispatch, no disposition, no code change, no instrument
+  change, no grade, no finding closed. FOUR PRODUCT AUTHORITY QUESTIONS `Q20`-`Q23` ARE RECORDED AND
+  THIS SEAT ANSWERS NONE OF THEM.** *** **NO REMEDIATION DISPATCH IS ISSUED, AND THE REASON IS
+  STATED RATHER THAN LEFT IMPLICIT: ruling 5 named FIVE items, the fix produced a sixth defect class
+  and exposed a seventh, and a Project Lead that dispatched against `F02` now would be deciding on
+  its own authority that the ruling is now six items. THAT IS NOT THIS SEAT'S TO DECIDE.**
+  **PARALLEL REMAINS STRUCK (`CD-D-181`) — the tenth seat says this was not the dedicated
+  parallelism gate and names three things it would not proceed without. The override is Matt's.**
+  *** THE PRIOR BLOCK IS RETAINED BELOW UNEDITED: ***
   *** **SUPERSEDING, BL-20260823T153541Z-0145: `PO-DECISIONS-0022` IS RULED AND IS BEING EXECUTED IN
   THREE ACTS, SEQUENTIAL SINGLE-SEAT, `CD-D-181` STANDING.** *** **ACT 1 — THE RECORD ACT — IS
   DONE AT THIS BOUNDARY:** BLUEPRINT §17's `RESISTED` tier corrected to **OWED, NOT BUILT** with the
