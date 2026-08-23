@@ -165,12 +165,38 @@ DECLARED COMMAND, NOT COPIED FROM ANY DOCUMENT** (CD-RULE-009).
 plants/
   MANIFEST.md                 <- this file: test_id, patch, proposition, failure signature
   CD-AC-001/                  missing or stale input never renders as calm      (2 plants)
-  CD-AC-002/                  the two dials are never blended                   (3 plants)
+  CD-AC-002/                  the two dials are never blended                   (4 plants)
   CD-AC-003/                  witnesses are side-by-side, never ingredients     (2 plants)
   CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (3 plants)
   CD-AC-012/                  no execution pathway exists                       (3 plants)
-                                                                      TOTAL:    13 plants
+                                                                      TOTAL:    14 plants
 ```
+
+> ### WO-2R3 INCREMENT 10 — THE SET MOVES FROM 13 TO 14, AND THE SUPERSEDED FIGURES ARE QUOTED
+>
+> **SUPERSEDED, NOT EDITED** (`CD-RULE-004`, `PBG-CONT-003`). The listing above read
+> `CD-AC-002/ ... (3 plants)` and `TOTAL: 13 plants`, and the paragraph below it reads
+> *"Of the twelve ... ELEVEN ARE EVIDENCE ... ONE IS DECORATION"* — a historical record of
+> what was true when it was written and left exactly as it stands.
+>
+> **MEASURED, NOT COUNTED BY EYE:** `find plants -name '*.patch' | wc -l` -> **14** at WO-2R3
+> increment 10. The fourteenth is
+> `CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch`, added by `CD-ENG-WO2R3-08` under
+> `PO-DECISIONS-0018` ruling 2, and its own three-column measurement is in its row at the foot
+> of this file.
+>
+> **AND THIS SEAT DID NOT MOVE THE COUNT IN THE SAME COMMIT AS THE PATCH, WHICH IS THE
+> DISCIPLINE `F-06-L` ASKED FOR.** The patch landed at `ca4e268`; this row lands at the next
+> commit, because the row carries a three-column contrast that could not be measured until the
+> patch was committed and therefore `git archive`-able. **THE REASON IS REAL AND IT IS STILL A
+> DEVIATION**, raised against this seat's own work as `CD-ENG-WO2R3-08-F05`, and stated here
+> so the next reader meets it rather than infers it.
+>
+> **THE WHOLE SET WAS NOT RE-MEASURED BY THIS SEAT.** Increment 9 measured all thirteen by hand
+> at `BL-...-0094` and found `13 APPLY · 12 EVIDENCE · 1 DECORATION`. **THIS INCREMENT REWROTE
+> TEN FILES UNDER `src/` AND FOUR PLANTS PATCH FILES UNDER `src/`**, so that measurement is
+> STALE AT THIS TIP and this seat re-ran only the plants whose patched files it touched. See
+> the increment-10 build log for exactly which, and treat the rest as unmeasured here.
 
 **AND THE COUNT IS NOT THE THING THAT MATTERS. THE CONTRAST IS.** Of the twelve, measured at
 this increment's tip: **ELEVEN ARE EVIDENCE** — `exit 0` on the clean arm, `exit 1` on the

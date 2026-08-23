@@ -277,10 +277,25 @@ def _record(**overrides):
 
 
 def test_source_record_refuses_a_worn_criticality():
-    """``SourceRecord.__post_init__`` — was ``isinstance(self.criticality, Criticality)``."""
-    with pytest.raises((TypeError, Exception)) as refused:
+    """``SourceRecord.__post_init__`` — was ``isinstance(self.criticality, Criticality)``.
+
+    **THE REFUSAL IDENTITY IS PINNED AND THE FIRST DRAFT OF THIS TEST DID NOT PIN IT.**
+    Raised against this seat's own work as ``CD-ENG-WO2R3-08-F04``: written as
+    ``pytest.raises((TypeError, Exception))`` with ``"criticality" in str(...)``, it PASSED
+    AT THE BASE SHA ``686a374`` — where this site still admitted the forgery and it was
+    ``@establishes``' ``FieldNotEstablished`` one layer down that refused it, with the word
+    ``criticality`` in its message too. **A TEST THAT PASSES ON BOTH ARMS IS NOT A CONTRAST,
+    AND IT WAS FOUND BY RUNNING THIS FILE AGAINST THE BASE TREE RATHER THAN BY READING IT.**
+    ``FieldNotEstablished`` IS a ``TypeError`` subclass, so only the message distinguishes
+    them, and now it does.
+    """
+    with pytest.raises(TypeError, match="must be a Criticality member") as refused:
         _record(criticality=wearing(Criticality))
-    assert "criticality" in str(refused.value)
+    # and it is THIS door's refusal, not the field boundary's one layer down.
+    assert type(refused.value) is TypeError, (
+        "the forgery was refused, but by "
+        f"{type(refused.value).__name__} — a layer below the site this test is about."
+    )
 
     # CONTROL — a real member.
     assert _record().criticality is Criticality.REQUIRED
