@@ -2458,6 +2458,55 @@ criteria:
         route FAILS is tests/test_sealed_against_forged_state.py, nine tests including the
         counterfactual, the vacuity guard on the exclusion clause, the derivation-diff arm and the
         false-green proof for @dataclass(frozen=True, slots=True).
+        LIMIT 6 — THERE IS NO IMPORT-TIME REFUSAL, AND THAT IS DELIBERATE AND DATED. A class added
+        without __slots__ imports cleanly and this boundary check is what catches it. An import-time
+        guard was BUILT (src/crash_detector/sealing.py) and REMOVED, because a new package module
+        enters the Class-2 sweep's import closure and could only be dispositioned in
+        tools/sweep/declared_dispositions.py, protected by PO-DECISIONS-0017 ruling 2 until after
+        the seventh Assurance seat. DEFERRED WITH A REASON, NOT DROPPED. (This limit stood in the
+        execution contract and in NEITHER of the other two places, which is CD-RULE-004's own defect
+        against the row that cites the rule — carried into all three by CD-ENG-WO2R3-09,
+        finding CD-ENG-WO2R3-09-F02, with no change of meaning.)
+        LIMIT 7 — WHAT `SEALED` MEANS IN THIS INSTRUMENT'S EXIT, AND IT IS NOT THE ENGLISH WORD; THE
+        EXIT CARRIES THIS LIMIT ON EVERY RUN. Ordered by the Product Owner at PO-DECISIONS-0018
+        ruling 1(b), whose own bytes are carried into BLUEPRINT §16 CD-D-172 and §17 CD-BP-005:
+        "The instrument's exit carries its declared limit: SEALED means sealed against declared
+        routes; NOT sealed against deliberate in-process forgery, which the platform does not permit
+        preventing. A green board that says exactly that is honest; a green board that says more is
+        the sixth false green."
+        A DOCSTRING IS NOT AN EXIT: main() prints this limit to stdout AFTER the PASS/FAIL line, in
+        a `finally`, on EVERY exit path — 0, 1, 2, 3 and an unhandled exception — carrying THIS
+        RUN'S OWN MEASURED NUMBERS. THIS ROW THEREFORE CLAIMS LESS THAN IT DID: a PASS is a pass
+        AGAINST THE DECLARED ROUTES ONLY and is not a claim that any class is sealed against
+        deliberate in-process forgery.
+        AND THE LIMIT CARRIES A NUMBER, NOT AN ADJECTIVE (CD-RULE-003). Two further routes are
+        EXECUTED against every class on every run: F1 `cls.__new__(cls)` +
+        `object.__setattr__(instance, member, FORGED)` — past @dataclass(frozen=True) and past a
+        __slots__ descriptor; F2 `type.__new__(<metatype>, name, bases, namespace)` — the TYPE
+        forged rather than a value, attempted only where the governed class is itself a metatype.
+        F1 AND F2 ARE NOT IN THE DECLARED SET, ARE NOT COUNTED AS ASSERTIONS AND DO NOT MOVE THE
+        VERDICT, for two load-bearing reasons: appending them and calling the class closed is the
+        CENSUS GAME the Product Owner ruled out in ruling 1 ("an enumeration cannot close a
+        property-defined class — and this class is defined by a platform property we do not
+        control"); and scoring them would make this row permanently RED for object.__setattr__ and
+        type.__new__, WHICH ARE CPYTHON WORKING AS DOCUMENTED — a red no edit to this package could
+        clear, reported as though it were a fixable defect. §17 CD-BP-005 declares preventing them
+        OUT OF SCOPE: HIGH, ACCEPTED AND DECLARED.
+        THE RESIDUE OF THAT MEASUREMENT IS SPLIT BY REASON AND NEVER POOLED, because a route that
+        fails for the wrong reason scores a class closed (the CD-ENG-WO2R3-F12 standard R5 already
+        exists because of). Each class reports FORGED; or NO STATE TO FORGE — the object WAS reached
+        with exact type and zero package lines but the class declares no __slots__ member and no
+        dataclass field for the probe to write, so "not forged" is VACUOUSLY TRUE OF A STATELESS
+        OBJECT AND IS NOT A SEAL; or NOT FORGED; or NOT REACHED with the constructor's own exception
+        type and message. RUN THE CHECK AND READ ITS NUMBERS — none is transcribed into this row
+        (CD-RULE-009, CD-PL-F91).
+        WHAT THIS ROW THEREFORE DOES NOT CLAIM: that any governed class is sealed against deliberate
+        in-process forgery — it claims the opposite, with a count; that CD-ASR-WO2R3-04-F01,
+        CD-AC-002 or CD-AC-005 is closed; that any gate is open. The defence against deliberate
+        in-process forgery is DETECTION — witness divergence and the provenance chain, the
+        FORGERY-DETECTION OBLIGATION owed at WO-3 as a first-class criterion (§16 CD-D-172) — AND IT
+        IS NOT BUILT YET. Blast radius meanwhile is what §17 states: the detector is ADVISORY (D1)
+        and no money moves on it (D2). NOT PROVED TO BE CARRIED ANYWHERE (CD-RULE-006).
       planted_violation: plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch
       planted_violation_note: >
         THE THIRTEENTH PLANT, AND IT VARIES THE POPULATION AXIS. `LedgerCursor` is a plain

@@ -151,6 +151,75 @@ proves the route FAILS is ``tests/test_sealed_against_forged_state.py`` and the 
 ``plants/CD-AC-002/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch``. A check that both
 measures a property and is the only thing that would notice its removal is one instrument
 wearing two hats.
+
+**DECLARED LIMIT 6 — THERE IS NO IMPORT-TIME REFUSAL, AND THAT IS DELIBERATE AND DATED.** A
+class added without ``__slots__`` imports cleanly; nothing in the package objects, and this
+boundary check is what catches it. An import-time guard was BUILT
+(``src/crash_detector/sealing.py``) and REMOVED, because a new package module enters the
+Class-2 sweep's import closure and could only be dispositioned in
+``tools/sweep/declared_dispositions.py``, which ``PO-DECISIONS-0017`` ruling 2 protected until
+after the seventh Assurance seat. **DEFERRED WITH A REASON, NOT DROPPED.**
+
+*This limit was stated in the execution contract and NOT in this header, which is
+``CD-RULE-004``'s own defect in the file that cites the rule. Carried here by
+``CD-ENG-WO2R3-09`` (finding ``CD-ENG-WO2R3-09-F02``) with no change of meaning.*
+
+====================================================================================
+**DECLARED LIMIT 7 — WHAT THE WORD "SEALED" MEANS IN THIS INSTRUMENT'S OWN EXIT, AND
+IT IS NOT THE ENGLISH WORD. THIS LIMIT IS PRINTED AFTER THE VERDICT ON EVERY RUN.**
+====================================================================================
+
+``PO-DECISIONS-0018`` ruling 1(b), the Product Owner's own bytes, carried into
+``BLUEPRINT`` §16 ``CD-D-172`` and §17 ``CD-BP-005``:
+
+    *"SEALED means sealed against declared routes; NOT sealed against deliberate in-process
+    forgery, which the platform does not permit preventing. A green board that says exactly
+    that is honest; a green board that says more is the sixth false green."*
+
+**A DOCSTRING IS NOT AN EXIT.** DECLARED LIMITS 1–5 above have been true and unread since
+this file was written, because a reader runs the check and reads its last line. So this
+limit is not only written here: :func:`main` prints it to stdout **AFTER** the ``PASS``/
+``FAIL`` line, **on every exit path including a precondition refusal**, with **THIS RUN'S
+OWN MEASURED NUMBERS IN IT.**
+
+**AND THE NUMBERS ARE MEASURED, NOT ASSERTED (``CD-RULE-003``).** Two further routes are
+EXECUTED against every class on every run — see :data:`OUT_OF_SCOPE_ROUTES` — and what they
+reach is counted and printed:
+
+``F1`` ``cls.__new__(cls)`` then ``object.__setattr__(instance, member, FORGED)``
+``F2`` ``type.__new__(<metatype>, name, bases, namespace)`` — forging the TYPE, not the
+       value; attempted only where the governed class IS itself a metatype.
+
+**THEY ARE NOT IN** :data:`ROUTES` **AND THEY DO NOT MOVE THE VERDICT, DELIBERATELY.**
+Appending them to the declared set and calling the class closed is what the Product Owner
+named *the census game* and ruled out in ruling 1: *"an enumeration cannot close a
+property-defined class — and this class is defined by a platform property we do not
+control."* And scoring them would make this check permanently RED for ``object.__setattr__``
+and ``type.__new__``, **which are CPython working as documented** — a red that no edit to
+this package could ever clear, reported as though it were a defect somebody could fix.
+So they are measured, printed, and **declared OUT OF SCOPE** (§17 ``CD-BP-005``: HIGH,
+ACCEPTED AND DECLARED). What they buy is that the limit carries a NUMBER instead of an
+adjective.
+
+**AND THE RESIDUE OF THAT MEASUREMENT IS SPLIT BY REASON, BECAUSE A ROUTE THAT FAILS FOR
+THE WRONG REASON SCORES A CLASS CLOSED** (the ``CD-ENG-WO2R3-F12`` standard, which
+:func:`_r5` already exists because of). A class ``F1`` does not forge is reported as one of:
+
+* ``FORGED`` — exact type, forged value read back, zero package lines;
+* ``NO STATE TO FORGE`` — the object WAS reached, with exact type and zero package lines,
+  but the class declares no ``__slots__`` member and no dataclass field for the probe to
+  write. **"NOT FORGED" IS VACUOUSLY TRUE OF A STATELESS OBJECT AND IS NOT A SEAL.**
+  Counting these as survivors is exactly how a defensible-looking number is manufactured;
+* ``NOT REACHED`` — the constructor itself refused, with the exception type and message
+  printed, so a reader can judge whether it refused for the right reason.
+
+**WHAT THIS CHECK STILL DOES NOT CLAIM AFTER ALL OF THAT.** It does not claim any governed
+class is sealed against deliberate in-process forgery; it claims the opposite, with a count.
+It does not claim ``CD-ASR-WO2R3-04-F01``, ``CD-AC-002`` or ``CD-AC-005`` is closed. The
+defence against deliberate in-process forgery is **DETECTION** — witness divergence and the
+provenance chain, the FORGERY-DETECTION OBLIGATION owed at **WO-3** as a first-class
+criterion (§16 ``CD-D-172``) — **and it is not built yet.** Meanwhile the blast radius is
+what §17 says it is: the detector is ADVISORY (``D1``) and no money moves on it (``D2``).
 """
 
 from __future__ import annotations
@@ -326,6 +395,114 @@ ROUTES = {
 }
 
 
+# --------------------------------------------------------------------------------------- #
+# THE OUT-OF-SCOPE PERIMETER MEASUREMENT — DECLARED LIMIT 7.
+#
+# **THESE ARE NOT IN `ROUTES`, THEY ARE NOT ASSERTED, AND THEY DO NOT MOVE THE VERDICT.**
+# They exist so that the declared limit this file prints after its verdict carries a MEASURED
+# NUMBER rather than an adjective. See DECLARED LIMIT 7 in the module docstring for why
+# scoring them would be both the census game (PO-DECISIONS-0018 ruling 1) and a red that no
+# edit to this package could ever clear.
+# --------------------------------------------------------------------------------------- #
+
+def _declared_members(cls: type) -> list:
+    """Every member name the class ITSELF declares — slots (mangled and not) and fields.
+
+    Distinct from :func:`_state_for`, which substitutes a fallback marker when a class
+    declares nothing. **THE DIFFERENCE IS THE POINT:** an EMPTY list here means the class has
+    no state to forge, and *"nothing was forged"* is then vacuously true rather than a seal.
+    """
+    names: list = []
+    for name in getattr(cls, "__slots__", ()) or ():
+        names.append(name)
+        if name.startswith("__") and not name.endswith("__"):
+            names.append(f"_{cls.__name__.lstrip('_')}{name}")
+    fields = getattr(cls, "__dataclass_fields__", None)
+    if isinstance(fields, dict):
+        names.extend(fields)
+    return list(dict.fromkeys(names))
+
+
+def _f1(cls: type):
+    """``cls.__new__(cls)`` then ``object.__setattr__`` — the value forged on the instance.
+
+    ``object.__setattr__`` bypasses ``__setattr__`` overrides, ``@dataclass(frozen=True)``'s
+    included, and writes a ``__slots__`` descriptor directly. Names that refuse are skipped
+    rather than aborting the route: a class with one writable member is forged.
+    """
+    subject = cls.__new__(cls)
+    for name in _declared_members(cls) or ["__cd_forged__"]:
+        try:
+            object.__setattr__(subject, name, FORGED)
+        except Exception:  # noqa: BLE001 — an unwritable member is simply not this route's
+            continue
+    return subject
+
+
+def _f2(cls: type):
+    """``type.__new__(<metatype>, ...)`` — the TYPE forged, not a value on an instance.
+
+    Attempted only where ``cls`` is itself a metatype. This is the second half of the pair
+    ``BLUEPRINT`` §17 ``CD-BP-005`` names by name, and without it the four sealed metatypes
+    of this tree report *"not forged"* against ``F1`` for the WRONG REASON — their
+    ``__new__`` wants ``(name, bases, namespace)`` and refuses an instance-shaped call.
+    """
+    return type.__new__(cls, f"_forged_{cls.__name__}", (), {"__cd_forged__": FORGED})
+
+
+OUT_OF_SCOPE_ROUTES = (
+    ("F1 cls.__new__(cls) + object.__setattr__(member)", _f1, False),
+    ("F2 type.__new__(<metatype>, name, bases, namespace)", _f2, True),
+)
+
+
+def _perimeter(cls: type) -> list:
+    """EXECUTE the out-of-scope routes. ``[(label, verdict, detail)]``, verdict never scored.
+
+    ``verdict`` is one of ``FORGED``, ``NO STATE TO FORGE``, ``NOT FORGED`` or
+    ``NOT REACHED``. The three non-``FORGED`` words are kept APART on purpose: collapsing
+    them into one *"survived"* bucket is how eleven classes that carry no state and four
+    metatypes called with the wrong argument shape become *"eleven sealed classes"*.
+    """
+    out: list = []
+    for label, route, metatype_only in OUT_OF_SCOPE_ROUTES:
+        if metatype_only and not (isinstance(cls, type) and issubclass(cls, type)):
+            continue
+        subject, error, package_lines = _traced(lambda cls=cls, route=route: route(cls))
+        if error is not None:
+            first = str(error).splitlines()[0][:140] if str(error) else ""
+            out.append((
+                label, "NOT REACHED",
+                f"the constructor itself REFUSED {type(error).__name__}: {first} "
+                f"(package lines executed {package_lines}). **READ THE REASON: a route that "
+                "fails for the wrong reason scores a class closed.**",
+            ))
+            continue
+        forged = _forged_reachable(subject, cls)
+        if forged and package_lines == 0:
+            out.append((
+                label, "FORGED",
+                f"REACHED an object; exact type {type(subject) is cls}; forged value read "
+                f"back True; package lines executed {package_lines}",
+            ))
+        elif not _declared_members(cls):
+            out.append((
+                label, "NO STATE TO FORGE",
+                f"REACHED an object; exact type {type(subject) is cls}; package lines "
+                f"executed {package_lines} — but this class declares NO __slots__ member and "
+                "NO dataclass field, so there is nothing for the probe to write. "
+                "**`NOT FORGED` IS VACUOUSLY TRUE OF A STATELESS OBJECT AND IS NOT A SEAL.**",
+            ))
+        else:
+            out.append((
+                label, "NOT FORGED",
+                f"REACHED an object; exact type {type(subject) is cls}; package lines "
+                f"executed {package_lines}; none of {len(_declared_members(cls))} declared "
+                "member(s) read back the forged marker",
+            ))
+    return out
+
+
 def _traced(work):
     """Run ``work``, COUNTING the lines executed under the package with ``sys.settrace``.
 
@@ -489,7 +666,7 @@ def _extra(parser) -> None:
     )
 
 
-def main() -> int:
+def _main() -> int:
     arguments = parse_root(
         CHECK_ID,
         "Every governed class this tree declares is SEALED against construction with forged "
@@ -592,6 +769,13 @@ def main() -> int:
     unmeasurable: list = []
     ledger: list = []
 
+    # DECLARED LIMIT 7 — the out-of-scope perimeter, measured. NOT asserted, NOT scored.
+    perimeter_forged: list = []
+    perimeter_no_state: list = []
+    perimeter_not_reached: list = []
+    perimeter_not_forged: list = []
+    perimeter_ledger: list = []
+
     for key in sorted(set(from_source) & set(from_live)):
         relative, qualname = key
         cls = from_live[key]
@@ -600,6 +784,18 @@ def main() -> int:
         forging = sorted(label for label, fact in report.items() if fact["forged"])
         available, base, probe_offset, reason = _seal_availability(cls)
         where = f"{relative}:{lineno} {qualname}"
+
+        perimeter = _perimeter(cls)
+        perimeter_ledger.append((where, perimeter))
+        verdicts = {verdict for _label, verdict, _detail in perimeter}
+        if "FORGED" in verdicts:
+            perimeter_forged.append(where)
+        elif verdicts == {"NO STATE TO FORGE"}:
+            perimeter_no_state.append(where)
+        elif "NOT FORGED" in verdicts:
+            perimeter_not_forged.append(where)
+        else:
+            perimeter_not_reached.append(where)
 
         if not forging:
             check.asserted()
@@ -705,18 +901,165 @@ def main() -> int:
         "reported rather than quietly assigned to a side."
     )
 
+    # --- DECLARED LIMIT 7 — THE OUT-OF-SCOPE PERIMETER, IN NUMBERS -------------------- #
+    sealed_set = set(required_sealed)
+    forged_set = set(perimeter_forged)
+    sealed_and_forged = sorted(sealed_set & forged_set)
+    sealed_and_not_forged = sorted(sealed_set - forged_set)
+    LIMIT_7.update({
+        "examined": total,
+        "sealed": len(required_sealed),
+        "forged": len(perimeter_forged),
+        "no_state": len(perimeter_no_state),
+        "not_reached": len(perimeter_not_reached),
+        "not_forged": len(perimeter_not_forged),
+        "sealed_and_forged": len(sealed_and_forged),
+        "sealed_and_not_forged": len(sealed_and_not_forged),
+        "sealed_survivors_no_state": len([w for w in sealed_and_not_forged
+                                          if w in set(perimeter_no_state)]),
+        "sealed_survivors_not_reached": len([w for w in sealed_and_not_forged
+                                             if w in set(perimeter_not_reached)]),
+        "routes": len(ROUTES),
+    })
+    check.note(
+        "DECLARED LIMIT 7 — THE OUT-OF-SCOPE PERIMETER, MEASURED ON THIS RUN AND NOT SCORED: "
+        f"{len(perimeter_forged)} of {total} class(es) examined were FORGED by a route that is "
+        "NOT in the declared set — F1 cls.__new__(cls) + object.__setattr__(member), F2 "
+        "type.__new__(<metatype>, ...) — exact type, forged value read back, ZERO package "
+        f"lines. THAT INCLUDES {len(sealed_and_forged)} OF THE {len(required_sealed)} THIS "
+        "CHECK CALLS SEALED. These routes do NOT move the verdict and are NOT counted as "
+        "assertions: object.__setattr__ and type.__new__ are CPython working as documented, "
+        "and BLUEPRINT §17 CD-BP-005 declares preventing them OUT OF SCOPE (HIGH, ACCEPTED "
+        "AND DECLARED). Adding them to the declared set and calling the class closed is the "
+        "census game (PO-DECISIONS-0018 ruling 1)."
+    )
+    check.note(
+        f"AND THE {len(sealed_and_not_forged)} SEALED CLASS(ES) THE OUT-OF-SCOPE ROUTES DID "
+        "NOT FORGE ARE SPLIT BY REASON, BECAUSE A ROUTE THAT FAILS FOR THE WRONG REASON "
+        "SCORES A CLASS CLOSED: "
+        f"{LIMIT_7['sealed_survivors_no_state']} declare NO __slots__ member and NO dataclass "
+        "field, so there is NOTHING TO FORGE and 'not forged' is VACUOUSLY TRUE — that is not "
+        f"a seal; {LIMIT_7['sealed_survivors_not_reached']} REFUSED THE CONSTRUCTOR CALL, each "
+        "with its exception type and message in the --why ledger. **NOT ONE CLASS IN THIS TREE "
+        "IS MEASURED SEALED AGAINST DELIBERATE IN-PROCESS FORGERY, AND THIS CHECK DOES NOT "
+        "CLAIM ONE IS.**"
+    )
+
     if getattr(arguments, "why", False):
         check.note("THE FULL LEDGER — every class examined, with its verdict and its routes:")
         for where, verdict, reason, report in ledger:
             check.note(f"  {verdict:<34} {where} — {reason}")
             for label, fact in report.items():
                 check.note(f"        {label} -> {fact['outcome']}")
+        check.note(
+            "THE OUT-OF-SCOPE PERIMETER LEDGER (DECLARED LIMIT 7) — not scored, not asserted:"
+        )
+        for where, perimeter in perimeter_ledger:
+            for label, verdict, detail in perimeter:
+                check.note(f"  {verdict:<20} {where} — {label} -> {detail}")
 
     return check.done(
         f"{len(files)} module(s) under src/{PACKAGE}; {total} class(es) examined; "
-        f"{len(required_sealed)} SEALED, {len(required_open)} OPEN AND REQUIRED, "
+        f"{len(required_sealed)} SEALED AGAINST THE {len(ROUTES)} DECLARED ROUTES "
+        f"(of which {len(sealed_and_forged)} are FORGED by the out-of-scope in-process "
+        f"routes — see DECLARED LIMIT 7 printed after this verdict), "
+        f"{len(required_open)} OPEN AND REQUIRED, "
         f"{len(excluded)} EXCLUDED BY MEASUREMENT, {len(unmeasurable)} UNMEASURABLE"
     )
+
+
+# --------------------------------------------------------------------------------------- #
+# THE EXIT CARRIES THE DECLARED LIMIT. **A DOCSTRING IS NOT AN EXIT.**
+#
+# `PO-DECISIONS-0018` ruling 1(b): *"The instrument's exit carries its declared limit ... A
+# green board that says exactly that is honest; a green board that says more is the sixth
+# false green."*
+#
+# `Check.done` in `_support.py` prints `PASS — N assertions, 0 violations` and that module is
+# NOT this seat's to edit, so the limit is printed AFTER it, from here, in a `finally`, so it
+# survives every exit path — clean, violation, usage, precondition refusal and an unhandled
+# exception. A reader who runs this check and reads its LAST LINES is told what SEALED means.
+# --------------------------------------------------------------------------------------- #
+
+#: Filled in by :func:`_main` when the measurement is reached. **EMPTY MEANS NOT MEASURED**,
+#: and the block below says so rather than printing a number it does not have (`CD-RULE-003`).
+LIMIT_7: dict = {}
+
+
+def _declared_limit_text() -> str:
+    if LIMIT_7:
+        measured = (
+            f"    * NOT that a governed value cannot be forged in-process. IT CAN, AND THIS RUN\n"
+            f"      MEASURED IT: {LIMIT_7['forged']} of the {LIMIT_7['examined']} classes examined were forged by\n"
+            f"      `cls.__new__(cls)` + `object.__setattr__` or by `type.__new__(<metatype>, ...)`\n"
+            f"      — exact type, forged value read back, ZERO lines of package code —\n"
+            f"      INCLUDING {LIMIT_7['sealed_and_forged']} OF THE {LIMIT_7['sealed']} THIS CHECK CALLS SEALED.\n"
+            f"    * NOT that the remaining {LIMIT_7['sealed_and_not_forged']} are sealed either. They are the residue of a\n"
+            f"      route that did not reach them, split by reason and never pooled:\n"
+            f"      {LIMIT_7['sealed_survivors_no_state']} declare NO member for a probe to write, so `not forged` is\n"
+            f"      VACUOUSLY TRUE OF A STATELESS OBJECT; {LIMIT_7['sealed_survivors_not_reached']} refused the constructor call.\n"
+            f"      **NOT ONE CLASS IN THIS TREE IS MEASURED SEALED AGAINST DELIBERATE\n"
+            f"      IN-PROCESS FORGERY. THE HONEST COUNT OF THOSE IS ZERO.**\n"
+        )
+        claim = (
+            f"  WHAT IT CLAIMS: none of the {LIMIT_7['routes']} DECLARED routes reached an object of exactly a\n"
+            f"    governed type carrying a forged value while executing zero lines of\n"
+            f"    src/crash_detector/. Where that holds it is REAL, and it proofs the product\n"
+            f"    against ACCIDENT and casual misuse — which is what ruling 1(a) keeps it for.\n"
+        )
+    else:
+        measured = (
+            "    * NOT that a governed value cannot be forged in-process. IT CAN. **NO PERIMETER\n"
+            "      MEASUREMENT WAS TAKEN ON THIS RUN** — the check exited before reaching it —\n"
+            "      so no number is printed here rather than a number this run did not derive.\n"
+        )
+        claim = (
+            "  WHAT IT CLAIMS ON THIS RUN: NOTHING. The check did not complete a measurement.\n"
+        )
+    return (
+        "\n"
+        "================================================================================\n"
+        "DECLARED LIMIT 7 — PRINTED AFTER THE VERDICT, ON EVERY RUN, PASS OR FAIL.\n"
+        "CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT\n"
+        "================================================================================\n"
+        "  WHAT `SEALED` MEANS ABOVE, and it is NOT the English word:\n"
+        "\n"
+        "      SEALED AGAINST DECLARED ROUTES; **NOT** SEALED AGAINST DELIBERATE IN-PROCESS\n"
+        "      FORGERY, WHICH THE PLATFORM DOES NOT PERMIT PREVENTING.\n"
+        "\n"
+        "    — PO-DECISIONS-0018 ruling 1(b), the Product Owner's own bytes, carried into\n"
+        "      BLUEPRINT §16 CD-D-172 and §17 CD-BP-005.\n"
+        "\n"
+        + claim +
+        "\n"
+        "  WHAT IT DOES NOT CLAIM, AND NO RUN OF IT EVER WILL:\n"
+        "    * NOT that the class is closed. An enumeration cannot close a property-defined\n"
+        "      class, and this class is defined by a platform property we do not control.\n"
+        "      The route set is DECLARED, NOT PROVED COMPLETE (DECLARED LIMIT 2).\n"
+        + measured +
+        "    * NOT that CD-ASR-WO2R3-04-F01 is closed, that CD-AC-002 or CD-AC-005 are\n"
+        "      closed, or that any gate is open. This check closes no finding and no gate.\n"
+        "\n"
+        "  OUT OF SCOPE, DECLARED AND NOT PRETENDED (BLUEPRINT §17 CD-BP-005 — HIGH,\n"
+        "  ACCEPTED AND DECLARED): preventing an in-process actor from constructing the\n"
+        "  object at all. `object.__setattr__` and `type.__new__` are CPython working as\n"
+        "  documented. Appending them to the declared set and calling the class closed is\n"
+        "  the census game and is ruled out (PO-DECISIONS-0018 ruling 1).\n"
+        "\n"
+        "  WHERE THE DEFENCE ACTUALLY LIVES: **DETECTION** — witness divergence and the\n"
+        "  provenance chain, the FORGERY-DETECTION OBLIGATION owed at WO-3 as a first-class\n"
+        "  criterion (BLUEPRINT §16 CD-D-172). **IT IS NOT BUILT YET.** Blast radius\n"
+        "  meanwhile is what §17 states: the detector is ADVISORY (D1) and no money moves\n"
+        "  on it (D2). Prevention is reserved for Layer 3, out-of-process.\n"
+        "================================================================================"
+    )
+
+
+def main() -> int:
+    try:
+        return _main()
+    finally:
+        print(_declared_limit_text())
 
 
 if __name__ == "__main__":

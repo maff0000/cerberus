@@ -73,7 +73,7 @@ tree on `sys.path` is indistinguishable from a fix that does nothing (`CD-PL-F98
 
 | code | meaning |
 |---|---|
-| `0` | PASS. Every class the property is required of holds it; every class it is not required of carries a MEASURED, PRINTED exclusion. The assertion count is printed and a run making zero assertions REFUSES rather than passing. |
+| `0` | PASS **AGAINST THE DECLARED ROUTES ONLY** — see LIMIT 7, which the check itself prints after this verdict on every run. Every class the property is required of holds it; every class it is not required of carries a MEASURED, PRINTED exclusion. The assertion count is printed and a run making zero assertions REFUSES rather than passing. **A `0` HERE IS NOT A CLAIM THAT ANY CLASS IS SEALED AGAINST DELIBERATE IN-PROCESS FORGERY, AND THE SAME RUN PRINTS THE MEASURED COUNT OF CLASSES THAT ARE NOT.** |
 | `1` | FAIL. At least one of: a class open to a declared route with the seal available to it; a class whose seal availability could not be measured; the two population derivations disagreeing in either direction. |
 | `3` | PRECONDITION_NOT_MET. `--root` is not a tree with `src/crash_detector` and the sibling instrument; the subject does not import; or an imported module resolved outside the subject tree. **Never a pass and never a skip** (`PBG-CI-002`). |
 
@@ -175,6 +175,56 @@ new package module enters the Class-2 sweep's import closure and can only be dis
 `tools/sweep/declared_dispositions.py`, which `PO-DECISIONS-0017` ruling 2 protects until after the
 seventh Assurance seat. **DEFERRED WITH A REASON, NOT DROPPED**, and it is the natural companion to
 the act that clears the three stale keys.
+
+**LIMIT 7 — WHAT `SEALED` MEANS IN THIS INSTRUMENT'S OWN EXIT, AND IT IS NOT THE ENGLISH WORD. THE
+EXIT CARRIES THIS LIMIT ON EVERY RUN.** Ordered by the Product Owner at `PO-DECISIONS-0018`
+**ruling 1(b)**, and the sentence is the Product Owner's own bytes, carried into `BLUEPRINT` §16
+`CD-D-172` and §17 `CD-BP-005`:
+
+> "**The instrument's exit carries its declared limit**: SEALED means *sealed against declared
+> routes; NOT sealed against deliberate in-process forgery, which the platform does not permit
+> preventing*. A green board that says exactly that is honest; a green board that says more is the
+> sixth false green."
+
+**A DOCSTRING IS NOT AN EXIT.** Limits 1–6 have been true and unread since this check was written,
+because a reader runs it and reads its last line. So `main()` prints this limit to stdout **AFTER**
+the `PASS`/`FAIL` line, in a `finally`, **on every exit path — 0, 1, 2 and 3, and an unhandled
+exception** — with **THIS RUN'S OWN MEASURED NUMBERS IN IT**. `Check.done` in `tools/register/
+_support.py` prints the verdict line and that module is not this check's to edit, which is why the
+limit is printed after it rather than woven into it.
+
+**AND THE LIMIT CARRIES A NUMBER, NOT AN ADJECTIVE (`CD-RULE-003`).** Two further routes are
+EXECUTED against every class on every run and their outcomes are counted and printed:
+
+| | |
+|---|---|
+| `F1` | `cls.__new__(cls)` then `object.__setattr__(instance, member, FORGED)` — the value forged on the instance, past `@dataclass(frozen=True)` and past a `__slots__` descriptor |
+| `F2` | `type.__new__(<metatype>, name, bases, namespace)` — the TYPE forged rather than a value, attempted only where the governed class is itself a metatype |
+
+**F1 AND F2 ARE NOT IN THE DECLARED ROUTE SET, ARE NOT COUNTED AS ASSERTIONS, AND DO NOT MOVE THE
+VERDICT — DELIBERATELY, AND FOR TWO REASONS THAT ARE BOTH LOAD-BEARING.** First, appending them and
+calling the class closed is what the Product Owner named *the census game* and ruled out in ruling 1:
+*"an enumeration cannot close a property-defined class — and this class is defined by a platform
+property we do not control."* Second, scoring them would make this check permanently RED for
+`object.__setattr__` and `type.__new__`, **which are CPython working as documented** — a red no edit
+to this package could ever clear, reported as though it were a defect somebody could fix. §17
+`CD-BP-005` declares preventing them **OUT OF SCOPE: HIGH, ACCEPTED AND DECLARED**.
+
+**THE RESIDUE OF THAT MEASUREMENT IS SPLIT BY REASON AND NEVER POOLED**, because a route that fails
+for the wrong reason scores a class closed — the `CD-ENG-WO2R3-F12` standard that `R5` already exists
+because of. Each class is reported `FORGED`, `NO STATE TO FORGE` (the object WAS reached, with exact
+type and zero package lines, but the class declares no `__slots__` member and no dataclass field for
+the probe to write, so *"not forged"* is **VACUOUSLY TRUE OF A STATELESS OBJECT AND IS NOT A SEAL**),
+`NOT FORGED`, or `NOT REACHED` with the constructor's own exception type and message. **RUN IT AND
+READ ITS NUMBERS**; none is transcribed here (`CD-RULE-009`, `CD-PL-F91`).
+
+**WHAT THIS CHECK THEREFORE STILL DOES NOT CLAIM.** It does not claim any governed class is sealed
+against deliberate in-process forgery — it claims the opposite, with a count, and the exit says so.
+It does not claim `CD-ASR-WO2R3-04-F01`, `CD-AC-002` or `CD-AC-005` is closed, and it opens no gate.
+The defence against deliberate in-process forgery is **DETECTION** — witness divergence and the
+provenance chain, the FORGERY-DETECTION OBLIGATION owed at **WO-3** as a first-class criterion (§16
+`CD-D-172`) — **and it is not built yet.** Meanwhile the blast radius is what §17 states: the
+detector is ADVISORY (`D1`) and no money moves on it (`D2`).
 
 ## The plant
 
