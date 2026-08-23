@@ -2206,6 +2206,124 @@ criteria:
         same increment. Both measured, neither assumed. Only item B closes it.
       evidence_ref: RTR-WO2-0001
 
+  # DECLARED LIMITS — CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT. NEW AT WO-2R3 INCREMENT 9,
+  # ordered by the Product Owner at PO-DECISIONS-0016 ruling 2 (Q2 / F-06-J).
+  #
+  # WHY IT EXISTS. The sixth Assurance seat measured that the §D closure's class is 22 of 99 and
+  # that THE REMEDY WAS ALREADY IN THE TREE, applied to 13 types and never asked of the rest. The
+  # Product Owner's word for that: "floors are not populations, and a remedy applied to 13 of 99
+  # is a census with extra steps." This row is the FOURTH WIDENING OF THE SAME LAW.
+  #
+  # WHAT IT IS NOT. It is not a second constructor check. The sibling row
+  # CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST asserts that a governed type
+  # DERIVES its field establishment from its declared field list AT THE BOUNDARY. This row asserts
+  # that the boundary CANNOT BE WALKED AROUND. A body edit cannot remove the first; a caller
+  # declining to use the boundary defeated it entirely, for 82 of 99 governed classes, until this
+  # increment. The two rows are one argument and neither closes the other's class.
+  #
+  # IT IMPORTS THE SUBJECT AND ITS SIBLING DOES NOT, AND THE DIFFERENCE IS DELIBERATE. The
+  # property is a RUNTIME property — __dictoffset__ is a C-level slot, __setstate__ is installed
+  # by dataclasses._add_slots AFTER the class body is read, and "executes no package code" is a
+  # statement about execution. A tree that does not import is a tree this check REFUSES on
+  # (exit 3), never one it passes.
+  - test_id: CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT
+    scope: CLASS
+    execute: python3 -B tools/register/check_sealed_against_forged_establishment.py --root .
+    execution_contract: contracts/execution/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.md
+    negative_control:
+      violation: >
+        Any governed class this tree declares that can be constructed with FORGED STATE by a route
+        which executes NO PACKAGE CODE, and to which the seal is physically available.
+        THE PROPERTY IS PRINTED BY THE CHECK AT EVERY RUN so a reader can disagree with it without
+        reading the source: A GOVERNED CLASS MUST NOT BE CONSTRUCTIBLE WITH FORGED STATE BY A ROUTE
+        THAT EXECUTES NO PACKAGE CODE. It is deliberately NOT "cannot be forged" — no in-process
+        guard can say that. It is about WHO REFUSED: an object of the exact governed type, carrying
+        attacker-supplied field values, reached without one line under src/crash_detector/ running,
+        means this package decided nothing and its establishment boundary was walked around.
+        THE POPULATION IS NOT A LIST AND IS NOT THIS ROW'S TO STATE. It is obtained by IMPORTING
+        the sibling instrument from the subject tree and calling ITS OWN `_classes()` over the same
+        file set — REUSED, not reimplemented and not transcribed. RUN THE CHECK AND READ ITS OWN
+        POPULATION LINE; no count is copied here (CD-RULE-009, CD-PL-F91).
+        THE ROUTE SET IS DECLARED AND IS NOT CLAIMED COMPLETE: R1 `cls.__new__(cls)` +
+        `__dict__.update`; R2 `object.__new__(cls)` + `__dict__.update`; R3
+        `copyreg._reconstructor` + `__dict__.update`; R4 `cls.__new__(cls)` + `__setstate__` with a
+        MAPPING state; R5 the same with a SEQUENCE state. R2 and R3 are in the set BECAUSE A
+        MEASUREMENT CONTRADICTED THE SET — with R1 alone five enum.Enum subclasses report "the
+        route does not reach an instance" and R2 forges every one of them. R5 is in the set for the
+        same reason and it is this seat's own defect: R4 alone scored StalenessWindow and
+        FreshnessEvidence SEALED WHEN THEY ARE NOT, because dataclasses._dataclass_setstate ZIPS
+        fields against the state, so a MAPPING writes field NAMES as values and the forged marker
+        never lands. A ROUTE THAT FAILS FOR THE WRONG REASON SCORES A CLASS CLOSED.
+        THE EXCLUSION IS ONE CLAUSE AND IT IS A MEASURED PROPERTY, NEVER A NAME ON A LIST
+        (PO-DECISIONS-0012 ruling 2): the base that imposes an instance __dict__ is located by
+        walking __mro__, a THROWAWAY SUBCLASS OF THAT BASE IS BUILT AT RUN TIME through the base's
+        own metaclass protocol declaring `__slots__ = ()`, and ITS __dictoffset__ IS READ. The
+        class is excluded only if that number is non-zero AND the base is OUTSIDE this package —
+        because a base we own carrying a __dict__ is our defect to fix and never our exclusion to
+        claim. Every excluded class prints its own measurement. If a future interpreter makes such
+        a base sealable, the check requires the seal of those classes on the very next run with no
+        edit to any file.
+        AN EXCLUSION IT CANNOT MEASURE IS NOT AN EXCLUSION: if the probe subclass cannot be built,
+        the class is reported UNMEASURABLE and is a VIOLATION, not an exemption.
+        TWO INDEPENDENT DERIVATIONS OF THE POPULATION ARE DIFFED AS SETS AT EVERY RUN — the SOURCE
+        reading (the sibling's `_classes()`) and the LIVE reading (a `vars()` descent over the
+        imported modules, at any nesting depth). DISAGREEMENT IN EITHER DIRECTION IS A VIOLATION
+        AND NOT A RECONCILIATION: the check does not adopt either reading, does not take the union
+        and does not take the intersection for its verdict. A class inside `if False:` is in the
+        source and not live; a class built by `type(...)` is live and in no source reading.
+        MEASURED AT WO-2R3 INCREMENT 9, BOTH ARMS, from pristine `git archive` extractions, with
+        `git apply`'s OWN EXIT CODE RECORDED AS A THIRD COLUMN because a patch that does not apply
+        produces a "violated" arm that is the clean tree and a two-column table cannot tell them
+        apart:
+          CLEAN ARM     exit 0  PASS — 99 assertions, 0 violations; 99 classes examined;
+                                51 SEALED, 0 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT,
+                                0 UNMEASURABLE.
+          git apply     exit 0  "Applied patch src/crash_detector/store/migrations.py cleanly."
+          VIOLATED ARM  exit 1  FAIL — 1 violation(s); 100 classes examined; 1 OPEN AND REQUIRED;
+                                VIOLATION src/crash_detector/store/migrations.py:320, rule
+                                OPEN TO FORGED STATE, naming `LedgerCursor` and the three routes
+                                that reached it with ZERO package lines executed.
+          AND ON THE SAME VIOLATED ARM, THE SIBLING CONSTRUCTOR CHECK STILL EXITS 0 with
+                                `PASS — 101 assertions, 0 violations`. THAT IS THE WIDENING,
+                                MEASURED: the planted class is ruled OUT of the sibling's
+                                population by two of its three clauses at once and this row still
+                                catches it.
+        THE COUNTERFACTUAL (CD-D-079) — THE SAME INSTRUMENT AT THE BASE SHA 753efe4, copied into a
+        pristine extraction of that tree: exit 1, FAIL — 36 violation(s), 99 classes examined,
+        15 SEALED, 36 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT. A green run at the tip is
+        therefore not a run of a check that cannot fail.
+        THIS TEST HAS DECLARED LIMITS (CD-RULE-004), stated identically here, in the header of
+        tools/register/check_sealed_against_forged_establishment.py and in the execution contract.
+        LIMIT 1 — IT IMPORTS THE SUBJECT. Importing executes the subject's module-level code. An
+        auditor who will not import an untrusted tree should run this in a container and should not
+        read the parse-only sibling as proving the same proposition.
+        LIMIT 2 — THE ROUTE SET IS DECLARED, NOT PROVED COMPLETE. A route nobody has thought of is
+        invisible to this check exactly as it is to every other guard here. A green run means "none
+        of these five reached an object" and it means nothing wider.
+        LIMIT 3 — THE EXCLUDED CLASSES ARE NOT SAFE, THEY ARE UNSEALABLE. 48 of 99 governed classes
+        — 43 whose __dict__ is imposed by builtins.BaseException and 5 by enum.Enum — remain OPEN
+        to the route and the seal is physically unavailable to them on this interpreter (3.11.2,
+        probe __dictoffset__ 16 and -48 respectively). THAT RESIDUE IS NOT PROVED TO BE CARRIED
+        ANYWHERE (CD-RULE-006).
+        LIMIT 4 — WHAT A SEALED VERDICT DOES NOT SAY. Nothing about a SUBCLASS of a sealed class,
+        which carries no seal of its own; nothing about what a caller does with a legitimately
+        constructed instance; and nothing about the CD-BP-003 door, which HANDS in-package
+        execution to any caller and is measured in establishment.py's own declared limit.
+        LIMIT 5 — THIS CHECK REPORTS; IT IS NOT THE CARRIER. The runtime contrast that proves the
+        route FAILS is tests/test_sealed_against_forged_state.py, nine tests including the
+        counterfactual, the vacuity guard on the exclusion clause, the derivation-diff arm and the
+        false-green proof for @dataclass(frozen=True, slots=True).
+      planted_violation: plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch
+      planted_violation_note: >
+        THE THIRTEENTH PLANT, AND IT VARIES THE POPULATION AXIS. `LedgerCursor` is a plain
+        public class appended to src/crash_detector/store/migrations.py — a module the sibling
+        constructor check rules OUT by TWO of its three clauses at once (not a frozen dataclass,
+        on no judgement path), and which STILL EXITS 0 with this patch applied. That contrast is
+        the widening itself, measured rather than argued. The seal is physically AVAILABLE to it
+        — no base imposes a __dict__ — so the one measured exclusion this project grants does not
+        excuse it, which makes this plant the VACUITY GUARD on that clause as well.
+      evidence_ref: RTR-WO2-0001
+
 - criterion_id: CD-AC-012
   origin: PID
   obligation: MANDATORY

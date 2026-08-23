@@ -167,9 +167,9 @@ plants/
   CD-AC-001/                  missing or stale input never renders as calm      (2 plants)
   CD-AC-002/                  the two dials are never blended                   (3 plants)
   CD-AC-003/                  witnesses are side-by-side, never ingredients     (2 plants)
-  CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (2 plants)
+  CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (3 plants)
   CD-AC-012/                  no execution pathway exists                       (3 plants)
-                                                                      TOTAL:    12 plants
+                                                                      TOTAL:    13 plants
 ```
 
 **AND THE COUNT IS NOT THE THING THAT MATTERS. THE CONTRAST IS.** Of the twelve, measured at
@@ -1350,3 +1350,99 @@ of this same increment. Both were measured, not assumed. Only item B closes it.
 runtime (no `ClassDef` node exists), and a module outside `src/crash_detector/` (never parsed).
 Both are `DECLARED LIMIT 5` of the instrument, in all three `CD-RULE-004` places, each with the
 probe row that demonstrates it. **CARRIER FOR EITHER: NOT PROVED TO BE CARRIED ANYWHERE.**
+
+---
+
+# THE THIRTEENTH PLANT — WO-2R3 INCREMENT 9
+
+> **THE COUNT ON THIS PAGE MOVES AGAIN, AND THIS TIME IN THE SAME COMMIT AS THE PATCH.**
+> `F-06-L` was raised because the twelfth plant landed at increment 5 and the count on this page
+> was never moved with it, for three increments. **THE SUPERSEDED FIGURES ARE QUOTED, NEVER
+> DELETED** (`CD-RULE-004`, `PBG-CONT-003`), and every historical paragraph above that says
+> *"eleven"* or *"twelve"* was true when it was written and is left exactly as it stands.
+>
+> > superseded: *"TWELVE TESTS, TWELVE PATCHES"* · `CD-AC-005/ ... (2 plants)` · `TOTAL: 12 plants`
+>
+> **THIRTEEN TESTS, THIRTEEN PATCHES. `CD-AC-005/` HOLDS 3. TOTAL: 13.**
+> Read from `find plants -name '*.patch' | wc -l` and from a run of this row's own declared
+> command — not copied from any document (`CD-RULE-009`).
+
+| | `CD-AC-005` |
+|---|---|
+| **test_id** | `CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT` |
+| **patch** | `plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch` |
+| **declared command** | `python3 -B tools/register/check_sealed_against_forged_establishment.py --root .` |
+| **proposition violated** | A governed class must not be constructible with FORGED STATE by a route that executes NO PACKAGE CODE. |
+| **the route it takes** | **THE POPULATION AXIS.** A plain public `LedgerCursor` appended to `src/crash_detector/store/migrations.py` — a module the SIBLING constructor check rules OUT by TWO of its three clauses at once (not a frozen dataclass, on no judgement path). No new package, no new module, no rename, no import added. |
+| **clean arm** | `exit 0` · `PASS — 99 assertions, 0 violations` · 99 classes examined, 51 SEALED, **0 OPEN AND REQUIRED**, 48 EXCLUDED BY MEASUREMENT, 0 UNMEASURABLE |
+| **`git apply` exit code** | **`0`** · `Applied patch src/crash_detector/store/migrations.py cleanly.` |
+| **violated arm** | `exit 1` · `FAIL — 1 violation(s)` · 100 classes examined, **1 OPEN AND REQUIRED** |
+
+**THE THIRD COLUMN IS NOT DECORATION.** `PO-DECISIONS-0017` ruling 1 exists because a plant that
+stops applying is invisible to every instrument this project runs at a boundary: its "violated" arm
+silently becomes the clean tree and **exits 0 — a dead plant reporting a pass behind a green board**,
+four times on this record. The plant-drift carrier is ruled and sequenced AFTER the seventh gate, so
+it did not exist while this was built. `git apply`'s own exit code is recorded here instead.
+
+**THE FAILURE SIGNATURE, LINE FOR LINE:**
+
+```
+VIOLATION  src/crash_detector/store/migrations.py:320
+    rule: OPEN TO FORGED STATE
+    what: LedgerCursor is a governed class that the sealing property is REQUIRED of, and 3
+          declared route(s) reach an object of exactly this type carrying forged field values
+          having executed ZERO lines of package code:
+          R1 cls.__new__(cls) + __dict__.update -> REACHED an object; exact type True;
+             forged value readable True; package lines executed 0;
+          R2 object.__new__(cls) + __dict__.update -> ... package lines executed 0;
+          R3 copyreg._reconstructor + __dict__.update -> ... package lines executed 0.
+          Declare `__slots__` naming its members, and verify `__dictoffset__` is 0. ...
+CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT: FAIL — 1 violation(s)
+```
+
+**READ THE `rule:` LINE, NOT THE EXIT CODE** (`CD-ENG-WO2R3-F12`). Two arms exiting 1 for different
+reasons look identical in a summary table and prove nothing.
+
+### AND THE MEASUREMENT THAT MAKES THIS PLANT WORTH HAVING
+
+**ON THE VIOLATED ARM, THE SIBLING CONSTRUCTOR CHECK STILL EXITS 0:**
+
+```
+$ cd <violated arm> && python3 -B tools/register/check_constructor_field_establishment.py --root .
+CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST: PASS — 101 assertions, 0 violations
+```
+
+**THAT IS THE FOURTH WIDENING, MEASURED RATHER THAN ARGUED.** The Product Owner's sentence was
+*"floors are not populations, and a remedy applied to 13 of 99 is a census with extra steps."* A
+control scoped to the 33-member field-establishment class does not see `LedgerCursor` at all. The
+sealing property is required of **THE CLASS**, and this plant is the demonstration that the two rows
+are not the same row.
+
+### BITTEN, to `PO-DECISIONS-0011` ruling 4's standard, on the day it landed
+
+* both arms extracted with `git archive` into `/tmp/plantmeas/{clean,violated}`; **the worktree was
+  never mutated;**
+* the **clean arm** was established FIRST: `exit 0`, `PASS — 99 assertions, 0 violations`;
+* `git apply --verbose` — **APPLIED FOR REAL**, exit code recorded, not simulated;
+* the violated arm reproduced the signature above, **`exit 1`**, and the count line moved from
+  `0 OPEN AND REQUIRED` to `1 OPEN AND REQUIRED`;
+* **THE COUNTERFACTUAL (`CD-D-079`)**: the same instrument copied into a pristine extraction of the
+  increment's BASE SHA `753efe4` exits **1** with `FAIL — 36 violation(s)` and
+  `15 SEALED, 36 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT`. **A GREEN RUN AT THE TIP IS NOT A
+  RUN OF A CHECK THAT CANNOT FAIL.**
+
+### What this plant does NOT establish, said here rather than left to be discovered
+
+**IT DEMONSTRATES ONE ROUTE FAMILY ON ONE CLASS.** The route set is five and is DECLARED, not proved
+complete — see the execution contract's LIMIT 2.
+
+**IT SAYS NOTHING ABOUT THE 48 EXCLUDED CLASSES.** They are not safe; they are **unsealable** — 43
+whose `__dict__` is imposed by `builtins.BaseException` and 5 by `enum.Enum`, each proved by
+building a probe subclass with `__slots__ = ()` and reading `__dictoffset__` (16 and -48 on Python
+3.11.2). Every one of them remains open to the route. **NOT PROVED TO BE CARRIED ANYWHERE**
+(`CD-RULE-006`).
+
+**IT IS NOT THE VACUITY GUARD ON ITS OWN.** That is
+`tests/test_sealed_against_forged_state.py::test_VIOLATED_ARM_removing_one_seal_fails_the_check_AT_THE_LAYER_ITS_PROPOSITION_NAMES`,
+which opens `Agrees` — a class the seal IS available to — and requires the exclusion clause not to
+excuse it.
