@@ -1,0 +1,116 @@
+# ================================================================================================== #
+# BL-20260823T131000Z-0137 — CORRECTION, AND IT SUPERSEDES BL-20260823T125935Z-0136
+#
+# **THIS SEAT MINTED A FINDING ID THAT ALREADY EXISTED, ONE BOUNDARY AFTER THE BOUNDARY THAT
+# CREATED IT, AND COMMITTED IT.**
+#
+# `CD-PL-F139` was raised at `BL-20260823T124508Z-0135` (LOW — the stale "2h wrapper ceiling"
+# carried as knowledge). `BL-...-0136` and commit `a31c799`'s subject minted a DIFFERENT
+# `CD-PL-F139`. Two findings, one ID, in adjacent entries.
+#
+# **NOTHING IS EDITED. THE RENUMBER IS RECORDED HERE AND SUPERSEDES** (`CLAUDE.md`, non-waivable:
+# *"do not rewrite Build Log history — corrections supersede, never edit"*). `BL-...-0136` and
+# `a31c799` STAY AS WRITTEN AND ARE NOW READ THROUGH THIS ENTRY.
+#
+# **AND THE COLLISION IS ITSELF A FINDING ON THE META-ASSURANCE DOCKET, BECAUSE IT IS THE
+# `F111`/`F112`/`F132` SHAPE ARRIVING AGAIN WHILE THE DISPATCH THAT AUDITS THAT SHAPE WAS BEING
+# WRITTEN.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T131000Z-0137
+record_type: CORRECTION
+supersedes: BL-20260823T125935Z-0136
+utc: '2026-08-23T13:10:00Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: a31c79978dfdc9ed8200bd702ee0750facac94c3   # the record-act boundary this entry corrects. RESOLVED with `git rev-parse`.
+
+# ================================================================================================== #
+the_renumber:
+# ================================================================================================== #
+  how_it_was_found: >
+    **NOT BY REVIEW AND NOT BY LUCK — BY A COMMAND RUN FOR A DIFFERENT PURPOSE.** While re-issuing
+    `CD-DISPATCH-META-ASSURANCE-01`, this seat read the dispatch's own docket line naming
+    *"`CD-PL-F137`, `CD-PL-F138`, `CD-PL-F139` (`BL-20260823T124508Z-0135`)"* and did not recognise
+    `F139`. `grep -rho "CD-PL-F[0-9]\+" governance/ | sort -u` returned F139 **twice over, in two
+    entries**. **HAD THE DISPATCH NOT QUOTED ITS OWN DOCKET BACK, THIS WOULD HAVE SHIPPED.**
+
+  the_collision:
+    id_in_conflict: CD-PL-F139
+    first_and_it_KEEPS_the_id: '`BL-20260823T124508Z-0135`, LOW — *"a stale ceiling assumption carried into the session as if it were knowledge"* (the "wrapper hard-kills at 2h" belief, corrected by measurement to `timeout 21600`). **PRIOR IN TIME, SO IT KEEPS THE NUMBER. Renumbering the earlier finding would break every citation already pointing at it.**'
+    second_and_it_MOVES: '`BL-20260823T125935Z-0136`, MEDIUM — the commit-subject overclaim at `abafec2`.'
+
+  the_renumbering_TABLE_and_it_is_the_only_authoritative_one:
+    - as_written_at_BL_0136: 'CD-PL-F139'
+      read_as: 'CD-PL-F142'
+      what_it_is: 'MEDIUM, against this seat — `abafec2`''s commit subject asserts a PID amendment and an `F05` repair that its one-file, 53-insertion tree did not contain. True of the RULING, false as implied about the TREE.'
+    - as_written_at_BL_0136: 'CD-PL-F140'
+      read_as: 'CD-PL-F143'
+      what_it_is: 'HIGH, against this seat — `5e0a873` declared `CD-DISPATCH-META-ASSURANCE-01` "ISSUED AND OUT" and NO RESULT ARTEFACT EXISTS ANYWHERE IN THE TREE (`PBG-CONT-007`). The same commit froze `main` on that reader''s completion.'
+    - as_written_at_BL_0136: 'CD-PL-F141'
+      read_as: 'CD-PL-F144'
+      what_it_is: 'MEDIUM, against this seat — the 3/4 blockquote this seat wrote into `PID.md` §6, which is a PO-only file.'
+
+  what_is_NOT_corrected_and_why: >
+    **COMMIT `a31c799`'S SUBJECT AND BODY STILL SAY `CD-PL-F139`/`F140`/`F141`. THEY ARE NOT
+    CHANGED AND THEY CANNOT BE WITHOUT REWRITING HISTORY, WHICH IS NON-WAIVABLE.** A reader of that
+    commit must arrive here to read it correctly. **THAT IS A REAL, PERMANENT COST OF THE MISTAKE
+    AND IT IS NOT SMOOTHED OVER: the record now requires a join to be read accurately, and every
+    such join is a place a future reconciler can go wrong.**
+
+# ================================================================================================== #
+the_finding_the_collision_ITSELF_raises:
+# ================================================================================================== #
+  id: CD-PL-F145
+  severity: MEDIUM
+  against: PROJECT_LEAD_SEAT_01 — this seat, at BL-20260823T125935Z-0136 and commit a31c799
+  status: OPEN
+  statement: >
+    **FINDING IDS ON THIS PROJECT ARE ALLOCATED BY A SEAT REMEMBERING WHAT THE LAST NUMBER WAS.
+    THERE IS NO ALLOCATOR, NO UNIQUENESS CHECK, AND NOTHING IN ANY INSTRUMENT THAT WOULD HAVE
+    CAUGHT THIS.** This seat read `BL-...-0135`'s findings while booting, wrote three new ones an
+    hour later, and reused a number it had read that same session.
+  and_this_is_the_docket_shape_ARRIVING_AGAIN_MID_DISPATCH: >
+    **`CD-PL-F111` -> `CD-PL-F112` -> `CD-PL-F132` is the sequence where a discipline living only
+    in a seat's attention failed, was given "a structural fix", and then failed again at that
+    fix's ninth application.** The dispatch on the desk at this very moment calls `CD-PL-F132`
+    *"the measured half-life of a discipline that lives only in a seat's attention, and it is the
+    single most load-bearing item on this docket"*. **THIS SEAT PRODUCED A FRESH INSTANCE OF THAT
+    EXACT CLASS WHILE WRITING THE DISPATCH THAT AUDITS IT.** No commentary this seat could add
+    would be worth more to the auditor than that fact stated plainly.
+  the_remedy_this_seat_will_NOT_self_adopt: >
+    **A CARRIER, NOT A RESOLUTION.** The obvious one is a uniqueness check over
+    `governance/engineering/build-log/` that fails when an ID is minted twice — cheap, mechanical,
+    and it would have caught this in under a second. **THIS SEAT IS NOT WRITING IT AT THIS
+    BOUNDARY, AND THAT IS DELIBERATE:** `CD-PL-F112`'s remedy was *"a resolution not to forget"*
+    and it failed; `CD-PL-F132`'s was a structural fix that this seat wrote FOR ITSELF and it
+    failed at its ninth application. **A THIRD SELF-PRESCRIBED FIX WRITTEN BY THE SUBJECT, HOURS
+    BEFORE THE AUDIT OF WHY SELF-PRESCRIBED FIXES KEEP FAILING, WOULD BE THE FOURTH INSTANCE OF
+    THE PATTERN AND NOT A CURE FOR IT.** It goes to `CD-META-01` as evidence, and the carrier is
+    designed after the auditor has said where such carriers must live.
+  what_it_does_NOT_excuse: '**THE COLLISION IS THIS SEAT''S ERROR AND THE ABSENCE OF AN ALLOCATOR DOES NOT MITIGATE IT.** `grep` was available; this seat did not run it before minting.'
+
+# ================================================================================================== #
+a_second_correction_at_the_same_boundary_and_it_is_to_THIS_SEATS_OWN_STANDING_BELIEF:
+# ================================================================================================== #
+  what: >
+    **THIS SEAT BOOTED THE SESSION CARRYING "the wrapper hard-kills the PL at 2h" AND SEQUENCED
+    WORK AROUND IT** — the same belief `CD-PL-F139` (the ORIGINAL one, at `BL-...-0135`) was raised
+    against one boundary earlier.
+  measured_not_remembered: '`ps -eo pid,etimes,args` from `/srv/crash-detector` -> `timeout 21600`, elapsed 602s at the time of measurement. **SIX HOURS, NOT TWO.**'
+  the_uncomfortable_part: >
+    **`CD-PL-F139` WAS RAISED AGAINST THIS EXACT BELIEF AT THE PREVIOUS BOUNDARY, AND THIS SEAT
+    BOOTED THE NEXT SESSION STILL CARRYING IT.** The finding did not survive the context boundary
+    it was written to protect. **THAT IS NOT A SEPARATE FAULT FROM `CD-PL-F145` — IT IS THE SAME
+    ONE: A CORRECTION THAT LIVES ONLY IN A RECORD NOBODY IS FORCED TO READ IS NOT A CARRIER.**
+    Handed to `CD-META-01` as the sharpest available instance of its central hypothesis.
+  no_harm_resulted: 'The correction landed before the dispatch order was fixed, and the ruled order (record act -> meta-assurance -> ninth seat) is the Product Owner''s and was never this seat''s to optimise.'
+
+# ================================================================================================== #
+what_this_correction_did_NOT_change:
+# ================================================================================================== #
+  - '**NO GOVERNED DOCUMENT WAS TOUCHED.** `PID.md` v1.1.0 and `BLUEPRINT.md` v0.4.1 are byte-identical to `a31c799`. MEASURED: `git diff a31c799 -- PID.md BLUEPRINT.md` is empty.'
+  - '**NO FINDING''S SUBSTANCE CHANGED.** Three findings were renumbered and one was added. Not one word of what they allege was altered.'
+  - '**NO GRADE MOVED.** `CD-AC-005` RED. `CD-AC-002` AMBER. The WO-2 gate SHUT. The lane untouched.'
+  - '**`CD-ASR-WO2R3-05-F05` AND `F03` REMAIN DISCHARGED** by the Product Owner''s act at `abafec2`, which this correction does not disturb.'
