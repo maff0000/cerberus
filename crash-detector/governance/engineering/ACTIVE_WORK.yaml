@@ -2,7 +2,7 @@
 # History is the Build Log, which is append-only.
 
 project: crash-detector
-updated_utc: '2026-08-22T23:44:54Z'
+updated_utc: '2026-08-23T00:00:02Z'
 pbg_version: 2.0.0-alpha.1
 pid_version: 1.0.1
 blueprint_version: 0.2.0-ACCEPTED   # MOVED AT THIS BOUNDARY (CD-D-092). The prior note read "BP-AMENDMENT-0001 would create 0.2.0 and is PROPOSED, not accepted. The version does not move on a proposal." The Product Owner accepted it at PO-DECISIONS-0005 (b4e8eae), so it moves. BLUEPRINT.md carries EXACTLY the amendment's §F.3 delta — §1, §7, §13, §14, §16, §17, §19 — and nothing else.
@@ -48,7 +48,9 @@ objective: >
   dispatch, then verified by a SEPARATE Assurance dispatch with a distinct actor_id (PBG-SOD-001,
   non-waivable). The gate is Assurance PASS on all five plants; the Product Owner reviews before
   WO-3.
-current_phase: GATE   # MOVED BACK AT BL-20260822T223805Z-0110. The remediation increment banked and was reconciled at 9f7b764; the FIFTH FRESH ASSURANCE SEAT (CD-ASR-WO2R3-02) is now OUT over the whole of WO-2R3 at that SHA, read-only. **NOTHING MOVES WHILE IT IS OUT: no increment, no disposition, no code change, no grade.** CD-D-146 (`guarded`) is with the Product Owner and does not gate the audit. WAS BUILD, and the note that moved it there is retained below.
+current_phase: BUILD   # MOVED AT BL-20260823T000002Z-0113. The Product Owner has answered all FIVE questions of the fifth gate — PO-DECISIONS-0012 (commit 6c8fed9) and PO-DECISIONS-0013 (commit 98b734d) — and ruling 6 authorises ONE bounded remediation increment, now ISSUED to CD-ENG-WO2R3-03 (a FRESH Engineer identity) at 9f7b764. **BUILD HERE MEANS ONE DISPATCHED INCREMENT OF SEVEN NAMED ITEMS AND NOTHING ELSE: nothing is merged, admitted or promoted, T2 is RED, CD-AC-002 and CD-AC-005 remain AMBER and NOT CLOSED, and the WO-2 GATE IS SHUT.** The GATE reopens the moment the increment banks, because ruling 6 puts a SIXTH FRESH ASSURANCE SEAT over the whole. **ITEM 1 IS A DECLARED STOP (CD-D-152): if `_evaluate_dial` proves reachable without an established door, PO-DECISIONS-0012 ruling 1 FALLS, the increment ends there and returns.** WAS GATE, and the note that moved it there is retained below.
+_prior_current_phase_note_gate2: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to GATE for the fifth seat.
+  GATE. MOVED BACK AT BL-20260822T223805Z-0110. The remediation increment banked and was reconciled at 9f7b764; the FIFTH FRESH ASSURANCE SEAT (CD-ASR-WO2R3-02) is now OUT over the whole of WO-2R3 at that SHA, read-only. **NOTHING MOVES WHILE IT IS OUT: no increment, no disposition, no code change, no grade.** CD-D-146 (`guarded`) is with the Product Owner and does not gate the audit. WAS BUILD, and the note that moved it there is retained below.
 _prior_current_phase_note_build: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. MOVED AT BL-20260822T211304Z-0108. The Product Owner has DISPOSITIONED the RED at PO-DECISIONS-0011 (commit 99b7d18) — IT STANDS — and has authorised ONE bounded remediation increment, which is now ISSUED to CD-ENG-WO2R3-02 at 531c95c. The GATE reopens the moment that increment banks, because PO-DECISIONS-0011 ruling 5 puts a FIFTH FRESH ASSURANCE SEAT over the whole of WO-2R3 at the post-increment SHA. **BUILD HERE MEANS ONE DISPATCHED INCREMENT OF SEVEN NAMED ITEMS AND NOTHING ELSE: nothing is merged, admitted or promoted, CD-AC-002 and CD-AC-005 remain AMBER and NOT CLOSED, and the WO-2 gate is SHUT.** WAS GATE, and the note that moved it there is retained below.
 _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to GATE.
@@ -56,6 +58,34 @@ _prior_current_phase_note_gate: >   # RETAINED, SUPERSEDED — the reasoning tha
 _prior_current_phase_note: >   # RETAINED, SUPERSEDED — the reasoning that moved the phase to BUILD.
   BUILD. The suspension (PO-DECISIONS-0004 ruling 1) was executed on the PO's own pre-stated terms and is DISCHARGED BY THE PRODUCT OWNER ITSELF at PO-DECISIONS-0005 ruling 6, which authorises WO-2R3 with a fresh Engineer seat. It is discharged by the ARCHITECTURE having been ruled and put in force, which is exactly what the suspension existed to obtain — not by time passing and not by any seat's judgement. WAS DESIGN (drafting the amendment); before that SUSPENDED; before that GATE.
 current_block: >
+  *** **THE PRODUCT OWNER HAS ANSWERED ALL FIVE QUESTIONS AND THE REMEDIATION INCREMENT IS OUT
+  (BL-20260823T000002Z-0113).** PO-DECISIONS-0012 and PO-DECISIONS-0013 are committed and are the
+  Engineer's specification. `governance/dispatch/CD-DISPATCH-WO2R3-INC7-ENGINEER.yaml` is ISSUED to
+  **CD-ENG-WO2R3-03, A FRESH ENGINEER IDENTITY**, at lane head 9f7b764: seven items — the 0012
+  reclassification (doors membership by REACHABILITY, NETS as a second asserted population), the
+  `__wrapped__` removal with the presence-asserting test corrected and the WO-2R attack set re-run,
+  the REQUIRED reachability measurement, the residual `tree.body` at line 533, `admits`'s own
+  arity-open wrapper, the F100 fingerprint fix, and the vocabulary extension.
+  *** **THE ORDERING IS THE LOAD-BEARING CALL AND IT IS CD-D-152: ITEM 1 (the reachability
+  measurement) GATES ITEM 2 (the reclassification), AND ITEM 1 IS A DECLARED STOP.** If
+  `_evaluate_dial` is reachable without an established door, 0012 ruling 1 FALLS, `guarded` becomes a
+  door, and the Engineer returns `STOPPED_AT_ITEM_1` rather than proceeding. **THAT RETURN IS A
+  SUCCESS AND THE DISPATCH SAYS SO IN TERMS.** ***
+  *** **THE BOOT AT THIS BOUNDARY WENT AMBER AND THE CAUSE IS THE PROJECT LEAD'S OWN — CD-PL-F101.**
+  The live worktree boots AMBER; a fresh clone AT THE IDENTICAL SHA boots GREEN; **one empty
+  untracked file flips it, both directions, reproducibly.** `main` carries NO `.gitignore` at all, so
+  36 untracked carrier and bytecode artefacts read as a dirty tree — while all fourteen continuity
+  verdicts of record say "porcelain ZERO, GREEN" because **every one of them was taken in a fresh
+  clone, which by construction cannot carry untracked residue.** `! roadmap_identity None` is present
+  in BOTH arms and **is NOT and never was the cause** — a warning this record had already filed twice
+  and which is now discharged by measurement. **RAISED, DISCLOSED, DELIBERATELY NOT FIXED** (CD-D-155)
+  and carried into the META-ASSURANCE pass, whose named subjects are exactly this. ***
+  *** **T8 CATEGORY A IS A REAL, MEASURED, LIVE PRODUCT DEFECT AND IS PROHIBITED TO THIS INCREMENT
+  ON PURPOSE** (CD-D-153) — one `__qualname__` assignment turns a FAULTED always-refusing door into a
+  silently-passing one. It is not in ruling 6's enumeration and it is the most interesting thing in
+  the sixth seat's target. It gets a `DEFECT_OPEN` disposition after the increment banks. **THAT
+  DECISION IS FLAGGED AS THE CHEAPEST ONE HERE TO OVERTURN.** ***
+  *** **EVERYTHING BELOW IS RETAINED; ONLY ITS "WHAT HAPPENS NEXT" IS SUPERSEDED.** ***
   *** **THE FIFTH SEAT HAS RETURNED AND THE VERDICT IS RED (BL-20260822T234454Z-0112). T2 RED.
   CD-AC-002 AMBER, NOT CLOSED. CD-AC-005 AMBER, NOT CLOSED. THE GATE IS SHUT AND WO-2R3 IS NOT
   ACCEPTED.** `governance/assurance/WO-2R3/VERDICT-FIFTH-SEAT.md`, 1009 lines, banked VERBATIM beside
@@ -2841,6 +2871,31 @@ open_decisions:
 open_ambiguities: []
 
 risks:
+- '**CD-PL-F101 MEDIUM, NEW AND OPEN AT THIS BOUNDARY (BL-20260823T000002Z-0113), RAISED BY THE
+  PROJECT LEAD AGAINST ITS OWN CONTINUITY PRACTICE AND DELIBERATELY NOT FIXED (CD-D-155).** `main`
+  carries NO `.gitignore`, so the live worktree boots **AMBER** on 36 untracked carrier and bytecode
+  artefacts while every continuity verdict of record reads "porcelain ZERO, GREEN" — because all
+  fourteen were taken in a FRESH CLONE, which by construction cannot carry untracked residue.
+  CAUSALLY MEASURED, both arms, one variable: one empty untracked file flips a clean clone at the
+  identical SHA GREEN -> AMBER and back. **`! roadmap_identity None` is present in BOTH arms and is
+  NOT the cause** — discharging a warning this record had already filed twice unmeasured.
+  **THE RISK OF LEAVING IT: every boot in this worktree now reads AMBER until the META-ASSURANCE pass
+  lands, AND AN AMBER THAT IS EXPECTED IS AN AMBER THAT STOPS BEING READ.** That is the precise
+  failure mode CD-PL-F100 describes — an alarm that cries wolf at correct behaviour teaches seats to
+  ignore it — and this seat has now put itself inside its own finding for the duration.
+  **WHY IT IS ACCEPTED RATHER THAN TRADED AWAY:** a seat repairing its own reconciliation instrument
+  immediately before an audit OF that instrument is the audit losing its subject, and ruling 5 exists
+  precisely so this shape "ends with an audit, not with an infinite series of honest confessions".
+  **THE EVIDENCE STAYS ON DISK. NOTHING WAS DELETED, CLEANED OR IGNORED.**'
+- '**CD-D-153 — A MEASURED, LIVE PRODUCT DEFECT IS BEING LEFT IN SHIPPED LANE CODE ON PURPOSE, AND
+  THAT SENTENCE SHOULD BE UNCOMFORTABLE.** T8 Category A: one `__qualname__` string assignment turns
+  a FAULTED, always-refusing door into a silently-passing one reporting no fault, falsifying
+  `_is_defined_in_a_class_body`''s own shipped docstring. It is PROHIBITED to increment 7 because
+  ruling 6''s enumeration is a ceiling as well as a floor and because cleaning it would pre-empt the
+  sixth Assurance seat on the most interesting thing in its target. **MITIGATION: the lane is not
+  merged, not promoted and not admitted, the gate is SHUT, and the defect is now written down in
+  three places where it was written in none. THIS IS THE CHEAPEST DECISION AT THIS BOUNDARY TO
+  OVERTURN AND THE PRODUCT OWNER IS TOLD SO IN TERMS.**'
 - '**CD-PL-F90 LOW, NEW AND OPEN AT THIS BOUNDARY (BL-20260822T191205Z-0102), RAISED AGAINST
   CD-ENG-WO2R3-01''S BL-20260822T185635Z-0065 ON THE V39/V41 VIOLATED ARM. THE VIOLATED ARM OF THE
   INCREMENT''S MOST IMPORTANT PLANT IS RECORDED BY ITS RUNTIME EFFECT ONLY — "faults 0, ADMITTED, the
@@ -3019,6 +3074,20 @@ required_evidence:
 - 'nothing under pbg/ is modified; editing the framework to make a control pass is a bypass'
 
 next_safe_action: >
+  *** **SUPERSEDING STEP, BL-20260823T000002Z-0113: THE ENGINEER IS OUT. NOTHING MOVES ON THE LANE
+  WHILE IT IS.** **1.** CD-ENG-WO2R3-03 executes CD-DISPATCH-WO2R3-INC7-ENGINEER at 9f7b764, seven
+  items, **ITEM 1 FIRST AND IT GATES ITEM 2** (CD-D-152). A `STOPPED_AT_ITEM_1` return is a SUCCESS.
+  **2.** The Project Lead reconciles the return BY MEASUREMENT, never by reading its claims.
+  **3.** THEN the eleven Class-2 dispositions, in the vocabulary the PRODUCT OWNER RATIFIES — not the
+  one this seat drafted (CD-D-154). CD-D-130's input finally exists.
+  **4.** THEN the SIXTH FRESH ASSURANCE SEAT over the whole, full disclosure, **CD-D-129's clauses
+  VERBATIM**, never an implementing seat and never a prior auditor (PBG-SOD-001).
+  **5.** THEN, and only then, the META-ASSURANCE pass over this seat's own reconciliation practice
+  (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99, F100 and now **F101**. **IT IS NOT FOLDED
+  INTO THE INCREMENT — ruling 5 sequences it after, and the operator's dispatch repeats it.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable). T2 is RED,
+  CD-AC-002 and CD-AC-005 are AMBER and NOT CLOSED, **THE WO-2 GATE IS SHUT.**
+  **THE STEP BELOW IS DISCHARGED: ALL FIVE QUESTIONS ARE ANSWERED.** ***
   *** **SUPERSEDING STEP, BL-20260822T234454Z-0112: STOP. THE GATE VERDICT IS IN AND IT IS RED, AND
   FIVE PRODUCT AUTHORITY QUESTIONS ARE UP.** Nothing moves on Q1-Q5 without a ruling — no increment,
   no disposition, no code change, no instrument change, and **THE DOORS CHECK IS NOT MADE GREEN BY ANY
@@ -3793,5 +3862,5 @@ resume_instructions: >
   five. The Engineer and the Assurance Engineer are never the same agent (PBG-SOD-001, non-waivable),
   and the Project Lead writes neither the fix nor the assurance (PBG-AUTH-006). CD-D-005 and CD-D-006
   belong to the Product Authority and are already ruled; neither blocks WO-2.
-last_build_log_entry: BL-20260822T234454Z-0112   # PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
+last_build_log_entry: BL-20260823T000002Z-0113   # PREVIOUSLY BL-20260822T234454Z-0112, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T231043Z-0111, superseded as the last entry and NOT superseded as a ruling. PREVIOUSLY BL-20260822T223805Z-0110, superseded as the last entry and NOT superseded as a ruling. main's block is 0100-0199; the WO-2R3 lane holds 0060-0099 and CONTINUES FROM 0074 (0060-0073 landed). THE JUMP 0059 -> 0100 IS DELIBERATE AND IS CD-D-132. main's sequence block is now 0100-0199, BOUNDED AT BOTH ENDS; the WO-2R3 lane holds 0060-0099 and continues from 0065; 0001-0059 IS CLOSED to both parties. The old rule (CD-D-036) gave the lane a floor and main NO CEILING, so main counted straight into the lane's block and stayed there for THIRTEEN entries (0041-0053, no gaps). CD-PL-F89, MEDIUM. No landed entry is renamed, renumbered or edited (PBG-CONT-003).
 status: ACTIVE

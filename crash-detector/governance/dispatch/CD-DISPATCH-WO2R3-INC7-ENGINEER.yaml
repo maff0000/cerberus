@@ -1,0 +1,567 @@
+# ================================================================================================ #
+# ENGINEER DISPATCH — WO-2R3, INCREMENT 7. THE REMEDIATION INCREMENT AFTER THE FIFTH RED.
+# crash-detector.
+# ================================================================================================ #
+#
+# READ THIS BLOCK BEFORE ANYTHING ELSE, INCLUDING BEFORE YOUR BOOT.
+#
+# 1. YOU ARE IMPLEMENTING A PRODUCT OWNER RULING, NOT A PROJECT LEAD OPINION.
+# Two decision records were committed by the Product Owner (Trinity) under Matt as final authority:
+# `governance/decisions/PO-DECISIONS-0012.md` and `governance/decisions/PO-DECISIONS-0013.md`.
+# **THEY ARE YOUR SPECIFICATION. READ BOTH IN FULL BEFORE YOU TOUCH ONE LINE.** Where this dispatch
+# and those records disagree, THE RECORDS WIN and the disagreement is a finding you must report.
+#
+# 2. THE PREVIOUS ENGINEER WAS RIGHT TO SHIP THIS LANE RED, AND YOU INHERIT THAT RED.
+# `check_judgement_path_doors.py` EXITS 1 at your base and two shipped tests FAIL, ON PURPOSE.
+# CD-ENG-WO2R3-02 named all three routes to green — exemption, weakening the tests, editing
+# `engine/evaluate.py` — and REFUSED ALL THREE, because none was in its scope and it would not
+# invent authority. **THE PRODUCT OWNER RULED AND COMMENDED THAT REFUSAL** (PO-DECISIONS-0012
+# ruling 3). You now have the authority it lacked. **HAVING THE AUTHORITY TO EDIT A FILE IS NOT
+# PERMISSION TO MAKE A CHECK GREEN. THE ONLY ACCEPTABLE ROUTE TO GREEN IS THE ONE THE RULING NAMES:
+# RECLASSIFICATION BY REACHABILITY. EXEMPTION AND WEAKENING REMAIN PROHIBITED AND ARE A STOP.**
+#
+# 3. THE ORDER OF ITEMS 1 AND 2 IS LOAD-BEARING AND IS NOT A SUGGESTION.
+# PO-DECISIONS-0013 ruling 1 makes the reachability measurement of `_evaluate_dial` a REQUIRED
+# acceptance item **AND SAYS WHAT HAPPENS IF IT COMES BACK THE OTHER WAY**: *"If reachable without
+# an established door, 0012 ruling 1 falls and `guarded` becomes a door with a redesigned
+# CD-ASR-F03 control."* **SO YOU MEASURE FIRST AND RECLASSIFY SECOND.** If you build the
+# reclassification and then measure, you will have spent the increment implementing a ruling the
+# measurement may have just falsified, and you will be reading your own result under pressure to
+# like it. **ITEM 1 IS THE MEASUREMENT. IT GATES ITEM 2.**
+#
+# 4. THE PROJECT LEAD DISCLOSES THAT IT HAS ALREADY BUILT A WORKING FINGERPRINT RECIPE (ITEM 6),
+#    AND DISCLOSES THE GOVERNANCE TENSION IN HAVING DONE SO.
+# PBG-AUTH-006 says the Project Lead writes neither the fix nor the assurance — direction is not
+# design. Reconciling CD-PL-F100 the Project Lead measured a git-aware recipe that reproduces the
+# declared fingerprint exactly. **THAT MEASUREMENT IS HANDED TO YOU AS EVIDENCE, NOT AS A DESIGN,
+# AND YOU ARE NOT OBLIGED TO ADOPT ITS SHAPE.** Concealing it would have cost you budget
+# rediscovering it; mandating it would be the Project Lead designing. **ATTACK IT. IT IS THE
+# PROJECT LEAD'S OWN DEFECT BEING REPAIRED AND THAT IS EXACTLY THE KIND OF FIX THAT GETS A SOFT
+# REVIEW.** If it is wrong, saying so is worth more to this project than adopting it.
+#
+# 5. AND THE PROJECT LEAD DISCLOSES A SECOND DEFECT OF ITS OWN, RAISED AT THIS BOUNDARY.
+# CD-PL-F101: `main` carries **no `.gitignore` at all**, so the live working tree boots **AMBER**
+# on untracked residue while every continuity record of the last fourteen boundaries says **GREEN**
+# — because every one of those verdicts was taken in a FRESH CLONE, which by construction cannot
+# carry untracked residue. **PL-MEASURED CAUSALLY, BOTH ARMS, ONE VARIABLE: adding a single empty
+# untracked file to a clean clone at the identical SHA flips the boot GREEN -> AMBER.** It is
+# CD-PL-F100's shape one level up. **IT IS DISCLOSED, NOT FIXED, AND IT IS NOT YOURS** — the lane
+# has its own `.gitignore` and is unaffected. It is listed because item 6 is about exactly this
+# class of defect and you should know the Project Lead is standing in it.
+# ================================================================================================ #
+
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T00:00:02Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T000002Z-0113
+parent_dispatch: CD-DISPATCH-WO2R3-ENGINEER    # the WO-2R3 lane dispatch
+
+# --- seat ------------------------------------------------------------------------------------- #
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md           # canonical local file; the operator pastes no role
+actor_id: CD-ENG-WO2R3-03                      # **A FRESH ENGINEER IDENTITY.**
+                                               # NOT CD-ENG-WO2R3-01, NOT CD-ENG-WO2R3-02.
+why_a_fresh_engineer_identity: >
+  CD-ENG-WO2R3-02 implemented the increment whose RED you are remediating, and one of your items
+  (item 2) REVERSES A READING OF ITS WORK while another (item 4) closes a residue it declared.
+  A seat re-reading its own declaration is the weakest reader of it this project can appoint.
+  **YOU INHERIT ITS ARTEFACTS AND NONE OF ITS CONCLUSIONS** (PBG-CONT-007): everything it believed
+  that is not in a landed record is gone, and that is deliberate.
+
+dispatching_authority: CD-AUTH-0001            # PROJECT_LEAD_SEAT_01, the causal owner (PBG-RT-004)
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0012.md` (all four rulings) and
+  `governance/decisions/PO-DECISIONS-0013.md` **ruling 6**, which enumerates this increment's
+  contents item by item and names what follows it. Authored by the Product Owner (Trinity) under
+  Matt as final authority, and by no seat. **THE ENUMERATION IN RULING 6 IS A CEILING AS WELL AS A
+  FLOOR: the seven items below are that list and nothing else has been added to it.**
+
+work_item: CD-WO-002R3
+work_type: CHANGE
+traits: [creates_process]
+
+objective: >
+  Execute the remediation increment of PO-DECISIONS-0013 ruling 6, in seven bounded items, in the
+  stated order. **THIS INCREMENT IS EXPECTED TO END WITH THE DOORS CHECK EXITING 0 AND THE SUITE
+  GREEN — BUT ONLY BY RECLASSIFICATION, AND ONLY IF ITEM 1 SAYS THE RECLASSIFICATION IS TRUE.**
+  If item 1 says otherwise, this increment ends RED and escalates, and that is a success.
+
+# ================================================================================================== #
+# THE SEVEN ITEMS. THE ORDER IS PART OF THE DISPATCH.
+# ================================================================================================== #
+items:
+
+- id: ITEM_1
+  title: '**THE REQUIRED IN-PROCESS REACHABILITY MEASUREMENT OF `_evaluate_dial`. IT GATES ITEM 2.**'
+  authority: 'PO-DECISIONS-0012 ruling 4 (the assigned attack); PO-DECISIONS-0013 ruling 1 (REQUIRED).'
+  the_question_verbatim_from_the_ruling: >
+    *"can anything in-process reach `_evaluate_dial` without passing an established door, short of
+    arbitrary code execution (outside the settled threat model)? Does the net's post-condition bind
+    everything its open arity admits?"*
+  what_you_do: >
+    **MEASURE IT IN-PROCESS, AT RUNTIME, AND REPORT.** Both halves of the question are yours; they
+    are separate and either one can fall on its own. Enumerate the routes you tried, including the
+    ones that failed, and say which threat-model line each sits on. Build the probe under
+    `variants/WO-2R3/` so it is corpus evidence and not a transcript claim.
+  the_second_half_is_not_optional_and_is_easy_to_skip: >
+    **"DOES THE NET'S POST-CONDITION BIND EVERYTHING ITS OPEN ARITY ADMITS?"** `guarded` takes
+    `*extra, **extra_by_name` and passes them through to the evaluator, but
+    `refuse_a_number_without_its_inputs(spec, usable, reading)` reads only THREE things. **SO ASK:
+    can a caller put something in `*extra` or `**extra_by_name` that changes what the evaluator
+    returns in a way the post-condition cannot see?** If yes, the net has a hole in exactly the
+    dimension its arity-openness was defended on, and that is a finding of the first order.
+  and_report_do_not_decide: >
+    **YOU REPORT THE MEASUREMENT. YOU DO NOT RULE ON IT** (PBG-AUTH-003). PO-DECISIONS-0013 ruling 1
+    already states the consequence and it is not yours to apply: *"If reachable without an
+    established door, 0012 ruling 1 falls and `guarded` becomes a door with a redesigned CD-ASR-F03
+    control."* **IF YOUR MEASUREMENT LANDS THAT WAY: STOP. DO NOT PROCEED TO ITEM 2. DO NOT
+    REDESIGN CD-ASR-F03. COMMIT ITEM 1, BANK YOUR EVIDENCE, AND RETURN WITH THE STOP.** A redesign
+    of a control on a seat's own reading of its own measurement is precisely the shape this project
+    has spent five gates learning to refuse.
+  what_a_pass_here_looks_like: >
+    A measured, reproducible answer with a counterfactual arm (CD-D-079), NOT an argument. "I read
+    the code and it is not reachable" is not a measurement. **CONSTRUCT THE REACH OR FAIL TO
+    CONSTRUCT IT, AT RUNTIME, AND PRINT THE `tree:` LINE OF THE MODULE YOU ACTUALLY IMPORTED**
+    (CD-PL-F98 — the Project Lead has already been caught by this exact hole).
+
+- id: ITEM_2
+  title: '**THE 0012 RECLASSIFICATION: DOORS MEMBERSHIP BY REACHABILITY, AND NETS AS A SECOND ASSERTED POPULATION.**'
+  gated_by: 'ITEM_1. Do not start this until item 1 has landed and says the reclassification is true.'
+  authority: 'PO-DECISIONS-0012 rulings 1, 2 and 3.'
+  part_a_membership_by_reachability_not_name_prefix:
+    the_ruling_verbatim: >
+      *"The doors instrument's membership clause is corrected from NAME-PREFIX (a vocabulary —
+      CD-PL-F74's own conviction) to REACHABILITY."*
+    the_defect_being_corrected_PL_MEASURED_AT_YOUR_BASE: >
+      `tools/register/check_judgement_path_doors.py:408` reads
+      `def _is_public(name): return not name.startswith("_")`. **THE FIFTH ASSURANCE SEAT PROVED
+      THIS NAME-DRIVEN BY THE PROJECT'S OWN RENAME TEST: renaming `guarded` to `_guarded` took the
+      check from 1 violation to 0 and the suite from 2 failed to 1551 passed, WITH RUNTIME IDENTITY
+      UNCHANGED.** The Project Lead reproduced that end to end. A check that a two-line rename
+      silences is a vocabulary guard wearing a structural label.
+    what_reachability_has_to_MEAN_and_this_is_the_hard_part: >
+      **THE RULING GIVES YOU THE CRITERION AND NOT THE ALGORITHM, AND THE ALGORITHM IS YOURS.**
+      Ruling 1's own reasoning names the properties: *"§D.1's class is PUBLIC entry points;
+      `guarded` is a function-local binding, never importable, reachable only through doors that
+      already establish."* So the operative question for each candidate is: **CAN A CALLER OUTSIDE
+      THIS MODULE OBTAIN AND CALL THIS OBJECT WITHOUT FIRST PASSING SOMETHING THAT ESTABLISHES?**
+      **DECLARE YOUR CRITERION IN THE INSTRUMENT'S HEADER, IN `required-tests.yaml` AND IN
+      `contracts/execution/` (CD-RULE-004, all three places), AND MAKE IT SURVIVE ITS OWN RENAME
+      TEST.** An instrument that replaces one name heuristic with a subtler name heuristic has
+      changed the header text and not the code path, which is this dispatch's named prohibition.
+    the_trap_the_previous_engineer_documented_and_you_must_not_walk_into: >
+      It recorded the exemption it was TEMPTED by: extending "non-public enclosing class" to
+      enclosing FUNCTIONS. That would exempt `guarded` and look like symmetry — **AND WOULD REOPEN
+      THE FOURTH ASSURANCE SEAT'S OWN ESCAPE 4 ARM 4, a function-local `def` bound into a module
+      dict, WHICH THAT SEAT DEMONSTRATED LIVE.** **IF YOUR REACHABILITY CRITERION EXEMPTS
+      `guarded`, YOU MUST DEMONSTRATE THAT IT STILL CATCHES ESCAPE 4 ARM 4. THAT IS A REQUIRED
+      CONTRAST, NOT AN OPTIONAL ONE.** Build it. If it cannot be built, your criterion is wrong.
+  part_b_NETS_a_second_asserted_population:
+    the_ruling_verbatim: >
+      *"A second declared population is created: NETS — function-local post-condition guards on
+      judgement paths — enumerated and asserted exactly as doors are, each with its post-condition
+      named. 'Not a door' must never again mean 'not seen.' Zero unclassified interceptors on any
+      judgement path."*
+    what_this_requires_and_the_last_sentence_is_the_acceptance_test: >
+      **"ZERO UNCLASSIFIED INTERCEPTORS ON ANY JUDGEMENT PATH" IS A CLOSURE CLAIM AND IT IS
+      ASSERTED, NOT PRINTED.** Every interceptor the instrument finds on a judgement path is either
+      a DOOR or a NET, by enumeration, with set equality asserted in both directions exactly as the
+      Class-2 sweep's register is (`tools/sweep/delegated_judgement_sweep.py` is the model — read
+      how it asserts, then do that). A NET whose declaration names no post-condition FAILS. A
+      declared NET that no longer exists FAILS.
+    name_the_post_condition_as_DATA_not_as_PROSE: >
+      "each with its post-condition named" — a NET's declaration must name the callable that IS its
+      post-condition, resolvable and checkable, not a sentence describing one. `guarded`'s is
+      `refuse_a_number_without_its_inputs`. **A PROSE FIELD HERE IS A HAND-MAINTAINED SUMMARY AND
+      THIS PROJECT HAS A NAMED DEFECT CLASS FOR THOSE.**
+    and_declare_what_the_NETS_POPULATION_DOES_NOT_REACH: >
+      CD-RULE-004. Every declared limit of the new population, in all three places, MEASURED. **AN
+      UNDERSTATED RESIDUE IS THIS PROJECT'S MOST-FOUND DEFECT** and the sixth Assurance seat is
+      being told to test your residues before your closures.
+  part_c_the_RED_row_resolves_by_reclassification_and_by_nothing_else:
+    the_ruling_verbatim: >
+      *"The RED doors row and the two failing tests are resolved BY THE RECLASSIFICATION — after
+      the next assurance pass, never by exemption or weakening."*
+    the_two_tests: >
+      `tests/test_judgement_path_doors.py::test_the_static_check_passes_and_is_not_vacuous` and
+      `::test_the_collector_boundary_is_a_judgement_path_package_and_cd_bp_003_is_what_remains`.
+      **THEY GO GREEN BECAUSE `guarded` IS CORRECTLY CLASSIFIED, NOT BECAUSE THEY WERE ADJUSTED.**
+      If you find yourself editing an assertion in either test to accommodate your change, STOP and
+      report — that is the weakening route and it is prohibited.
+
+- id: ITEM_3
+  title: '**THE `__wrapped__` PRODUCT DEFECT: REMOVED, THE TEST CORRECTED, EVERY LIVE INSTANCE ENUMERATED BY INSTRUMENT, THE HISTORIC ATTACK SET RE-RUN.**'
+  authority: 'PO-DECISIONS-0013 ruling 2.'
+  the_finding_PL_MEASURED_AT_YOUR_BASE: >
+    In a pristine extraction of 9f7b764, `tree:
+    /tmp/cd-base/src/crash_detector/engine/evaluate.py`, `hasattr(_evaluate_dial, "__wrapped__")`
+    is **True**, and it resolves to the undecorated `_evaluate_dial`. **THE PROJECT DELETES THIS
+    EXACT ATTRIBUTE IN TWO OTHER PLACES AND CALLS IT A BYPASS BOTH TIMES:**
+    `src/crash_detector/admission.py:766` and `src/crash_detector/establishment.py:506`, and
+    `admission.py:222` declares *"(b) THE `__wrapped__` ATTRIBUTE — THIS HALF IS CLOSED HERE."*
+    **"HERE" MEANT `admits` ONLY, AND NOBODY HAD WRITTEN DOWN THAT THE THIRD DECORATOR WAS OPEN.**
+  part_a_remove_it: >
+    Remove the bypass from the CD-ASR-F03 guard **consistent with the project's own delattr
+    practice at its two other sites** (ruling 2, in terms). Read both existing sites first — they
+    carry a `try/except AttributeError` and a comment block explaining what the deletion does and
+    what it explicitly does NOT close (the `__closure__` cell route, which is true of every Python
+    decorator and is DECLARED LIMIT 6). **MATCH THAT PRACTICE INCLUDING ITS HONESTY: your comment
+    must say what remains open, not only what closed.**
+  part_b_correct_the_presence_asserting_test: >
+    `tests/test_evaluate.py:692` —
+    `assert hasattr(evaluate_module._evaluate_dial, "__wrapped__")` — inside
+    `test_the_per_dial_evaluator_carries_the_post_condition`. **THE RULING: *"a test that requires a
+    bypass to exist pins the bypass open, and a test that asserts a vulnerability is a defect in the
+    test."*** The test's INTENT is sound and is stated in its own docstring: the guard is applied AT
+    the function boundary, not written into the body. **KEEP THE INTENT. CHANGE THE INSTRUMENT.**
+    Prove the post-condition is attached by a means that is not itself a way through it — the
+    obvious candidate is to demonstrate the guard FIRING on the real `_evaluate_dial`, which tests
+    the property the docstring actually claims. **AND ADD THE NEGATIVE: assert `__wrapped__` is
+    ABSENT, as `tests/test_field_establishment.py:215` and `tests/test_admission.py:334` already do
+    for the two closed sites.** Three sites, one practice, three carriers.
+  part_c_enumerate_every_live_wrapped_BY_INSTRUMENT_not_by_memory: >
+    The ruling is explicit: *"Every other live `__wrapped__` is enumerated BY INSTRUMENT, not by
+    memory."* **A GREP IS NOT AN INSTRUMENT AND NEITHER IS THIS DISPATCH'S LIST.** Import the
+    package and walk the live objects, because the question is about RUNTIME attributes on compiled
+    objects and a source scan cannot answer it — that is exactly the reading that let this one
+    survive. Whatever you find that is live and undeclared is a FINDING; if it is outside your
+    writable scope, **REPORT AND STOP on that instance rather than widening your own scope.**
+  part_d_re_run_the_historic_attack_set_at_the_NEW_HEAD: >
+    *"the historic WO-2R `__wrapped__` attack set is re-run at the new head. Whether this reopens
+    WO-2R routes is answered by that re-run, not by argument."* Start from
+    `variants/WO-2R3/V24-wrapped-attribute-bypass.patch` and `variants/WO-2R/`, and **READ THE
+    DIRECTORY AND NOT ONLY `MANIFEST.md` — CD-PL-F97 records that six executable probes landed
+    under `variants/WO-2R3/` with ZERO rows in the manifest.** Report the result as a table with a
+    before/after per route. **IF A WO-2R ROUTE REOPENS, THAT IS THE HEADLINE OF THIS INCREMENT AND
+    IT GOES UP, NOT INTO A FOOTNOTE.**
+
+- id: ITEM_4
+  title: '**THE RESIDUAL `tree.body` AT LINE 533, CLOSED AGAINST ITS OWN "EXACTLY TWO LIMITS" DECLARATION.**'
+  authority: 'PO-DECISIONS-0013 ruling 6.'
+  where: >
+    `tools/register/check_judgement_path_doors.py:533` — `for node in tree.body:` inside
+    `_established_here_spellings`'s module-level rebinding fixpoint. Its sibling enumeration was
+    widened to walk at any nesting depth in the previous increment; **THIS ONE WAS LEFT AND IT IS
+    THE SAME DEFECT SHAPE THE WIDENING WAS FOR.** The function's own docstring at line 511 declares
+    *"a name bound INSIDE A FUNCTION BODY (this reads module-level bindings only)"*.
+  what_you_do: >
+    Close it against its declaration, or **DECLARE IT PRECISELY AND CARRY IT** — the two are both
+    acceptable answers and the wrong answer is a third one where the code and the declaration say
+    different things. Read line 508's *"WHAT IS NOT RESOLVED, AND IT IS DECLARED RATHER THAN LEFT TO
+    BE FOUND"* list and check whether it is still true after whatever you do. **IF YOU CLOSE IT,
+    BUILD THE CONTRAST: a rebinding at the depth that used to be missed, caught after and missed
+    before.** If you carry it, the declaration must name the reach you MEASURED, not the reach you
+    assume.
+  and_the_thing_that_makes_this_item_worth_its_place: >
+    Line 518 says of the last repair here: *"THIS IS A REPORTING FIX AND NOT A CLOSURE, AND THE
+    DIFFERENCE IS THE WHOLE OF CD-RULE-006: A CHECK REPORTS, A CARRIER FAILS."* **SO NAME YOUR
+    CARRIER. A reporting fix with no failing carrier behind it is a note, not a control.**
+
+- id: ITEM_5
+  title: '**`admits`''s OWN ARITY-OPEN `door(*args, **kwargs)` — ADDRESSED, OR DECLARED AT ITS MEASURED REACH.**'
+  authority: 'PO-DECISIONS-0013 ruling 6.'
+  where: 'The `door` wrapper inside `admits`, `src/crash_detector/admission.py` (see line 742 `return entry_point(*args, **kwargs)`).'
+  the_symmetry_that_makes_this_an_item: >
+    PO-DECISIONS-0012 ruling 1 defended `guarded`'s arity-openness as LOAD-BEARING and made it the
+    reason `guarded` is a net rather than a door. **`admits`''s own wrapper is arity-open too, and
+    nobody has asked the same question of it.** The door binds and checks the parameters it was
+    DECLARED, then forwards `*args, **kwargs` whole. So: **is there anything a caller can pass that
+    reaches the entry point WITHOUT passing through the binding-and-refusal loop?** Consider at
+    minimum the shapes this project has already been bitten by: parameters not in the declaration,
+    the `_RECEIVER_NAMES` skip, `**kwargs` on the wrapped entry point itself, and positional/keyword
+    mismatch against `signature.bind`.
+  what_you_do: >
+    **EITHER address it, OR declare it with the reach you MEASURED.** Both are acceptable; the
+    ruling says "addressed or declared at measured reach" and means it. **WHAT IS NOT ACCEPTABLE IS
+    A DECLARATION WITH AN ASSUMED REACH** — CD-RULE-004, and this project's most-found defect is the
+    understated residue. If you declare, the declaration goes in all three places and names what you
+    ran.
+  a_warning_about_scope: >
+    `admission.py` is open to you FOR THIS ITEM AND FOR ITEM 3's PRACTICE REFERENCE ONLY. **IF YOU
+    FIND YOURSELF CHANGING WHAT `admits` DOES rather than what it declares, STOP AND SAY WHY.** A
+    mechanism change to the admission door in a remediation increment is a different increment and
+    needs a different ruling.
+
+- id: ITEM_6
+  title: '**THE CD-PL-F100 FINGERPRINT FIX — THE GITIGNORED SWEEP, LANDED AS A GOVERNED INSTRUMENT.**'
+  authority: 'PO-DECISIONS-0013 ruling 5, parenthetically: *"F100''s gitignored-sweep fix lands in the remediation increment meanwhile"*.'
+  the_defect_verbatim_from_the_finding: >
+    **"THE FINGERPRINT RECIPE THIS SEAT PUT IN THE DISPATCH INCLUDES GITIGNORED FILES."**
+    `find . -path ./.git -prune -o -type f -print | ... | sha256sum` sweeps `.pytest_cache/`, which
+    is created by running `pytest` — **WHICH THE DISPATCH ORDERS THE SEAT TO DO.** The dispatch then
+    tells the seat a moved fingerprint means *"something mutated under you and your verdict is about
+    a tree that no longer exists"*. **SO THE INSTRUMENT FIRES ITS MAXIMUM-SEVERITY ALARM AT AN
+    AUDITOR FOR OBEYING THE DISPATCH.**
+  the_PROJECT_LEADS_OWN_MEASUREMENT_HANDED_TO_YOU_AS_EVIDENCE_AND_NOT_AS_A_DESIGN: >
+    Taken in `/srv/crash-detector-wo2r3-audit5` at 9f7b764, which still carries the fifth seat's
+    `.pytest_cache/` residue (`git status --porcelain --ignored` -> `!! .pytest_cache/`):
+    **(a) the shipped recipe -> `24d66d0ef56634d973011e8793d208e92fc560ecf85473ca969786318a333c9c`
+    — the FALSE ALARM, reproduced.
+    (b) the fifth seat's ad-hoc `-path ./.pytest_cache -prune` arm ->
+    `50b356ac2de1a404b75a6fb9e478fe5d4141c4fdc6ad34ddfbfcd4a5a92ee7b9`.
+    (c) `git ls-files -z --cached --others --exclude-standard | sed -z 's|^|./|' | LC_ALL=C sort -z
+    | xargs -0 sha256sum | sha256sum` -> `50b356ac...`, AN EXACT MATCH TO (b) AND TO THE VALUE
+    DECLARED IN DISPATCH 05.**
+  why_the_PL_thinks_c_is_structural_and_b_is_a_vocabulary_fix_AND_WHY_THAT_IS_YOURS_TO_ATTACK: >
+    (b) names one directory. **APPLY THIS PROJECT'S OWN RENAME TEST TO IT: run pytest with a
+    different cache directory and (b) stops pruning, because it is a name.** (c) delegates the
+    question to `.gitignore` via `--exclude-standard`, so it excludes whatever the repository has
+    declared ignorable. **THE PROJECT LEAD BELIEVES THAT IS THE STRUCTURAL FORM AND MAY BE WRONG.**
+    Known properties of (c) that you should treat as attack surface, not as reassurance: it depends
+    on `.gitignore` being CORRECT (a wrongly-ignored product file becomes invisible to the
+    fingerprint — **THAT IS A REAL WEAKENING AND IT MUST BE DECLARED**); the `sed -z` prefix exists
+    only to reproduce the historic `./` path spelling; and it silently does nothing useful outside a
+    git worktree.
+  what_you_do: >
+    Land it as a **GOVERNED INSTRUMENT IN THE TREE**, not as a shell line pasted into the next
+    dispatch — that is what made it un-reviewed and un-tested in the first place, and it is why this
+    item exists at all. It gets a header that DECLARES its population and its limits like every
+    other instrument here, a carrier that FAILS when it regresses (CD-RULE-006), and the
+    counterfactual arm above as its evidence: **a tree carrying an ignored artefact must fingerprint
+    identically to the same tree without it, and a tree with one byte of TRACKED content changed
+    must not.** Both arms, measured.
+
+- id: ITEM_7
+  title: '**THE EXTENDED DISPOSITION VOCABULARY — THE REGISTER CONTRACT ONLY. YOU DO NOT WRITE THE ELEVEN.**'
+  authority: 'PO-DECISIONS-0013 ruling 3.'
+  the_ruling_verbatim: >
+    *"The disposition vocabulary is EXTENDED FIRST. T8 measured three categories where the form
+    assumed one; writing eleven dispositions into a form that does not fit them would be the
+    hand-maintained-summary defect with a signature. The Project Lead drafts the extended vocabulary
+    (register-contract change, PO ratifies in-increment); THEN the eleven are written."*
+  the_split_and_it_is_sharp: >
+    **THE PROJECT LEAD DRAFTS THE VOCABULARY (below). YOU IMPLEMENT THE REGISTER CONTRACT THAT
+    ACCEPTS IT. THE PRODUCT OWNER RATIFIES IT. THE PROJECT LEAD THEN WRITES THE ELEVEN, AFTER THIS
+    INCREMENT BANKS.** Concretely: `tools/sweep/delegated_judgement_sweep.py` IS writable to you for
+    the vocabulary contract. **`tools/sweep/declared_dispositions.py` IS NOT WRITABLE TO YOU AT
+    ALL** — that is where the eleven go and they are not yours (CD-D-130). If your contract change
+    requires a shape change in that file, **SAY SO IN YOUR RETURN AND DO NOT MAKE IT.**
+  the_draft_vocabulary_PROJECT_LEAD_AUTHORED_AND_NOT_YET_RATIFIED: >
+    The existing five are `ESTABLISHED, EXACT, OWN, DELEGATED, OUT_OF_BOUND`
+    (`delegated_judgement_sweep.py:164`). The fifth Assurance seat's T8 measured the eleven as THREE
+    categories, and six of them fit `OUT_OF_BOUND`/`OWN` already. **THREE WORDS ARE DRAFTED FOR THE
+    OTHER FIVE ITEMS. EACH IS DEFINED BY WHAT IT ASSERTS, WHAT EVIDENCE THE REGISTER MUST CARRY FOR
+    IT, AND WHAT IT EXPLICITLY DOES NOT BUY.**
+  drafted_words:
+  - word: DEFECT_OPEN
+    asserts: >
+      A caller-influenceable route to this deciding operand EXISTS and has been MEASURED. The site
+      is a real defect, recorded OPEN, with remediation owed and not yet done.
+    register_must_carry: 'a finding id · the MEASURED reach · a counterfactual arm (CD-D-079).'
+    does_not_buy: >
+      **NOTHING. IT IS NOT A PASS, IT IS NOT AN EXEMPTION, AND IT DOES NOT MAKE THE SWEEP GREEN.**
+      A register full of `DEFECT_OPEN` is a register honestly describing a broken system. The word
+      exists so that a real defect can be RECORDED without being either hidden or falsely closed.
+    the_item_it_is_drafted_for: >
+      `_is_defined_in_a_class_body DUCK: getattr(entry_point, '__qualname__', '')` — T8 Category A.
+      Its docstring says the property *"is not something a caller can influence"*; **the fifth seat
+      falsified that by measurement with one string assignment**, turning a FAULTED always-refusing
+      door into a silently-passing one reporting no fault.
+  - word: CARRIER_ONLY
+    asserts: >
+      This site is reached by NO module under `src/`. Its only callers are carriers — tests and
+      instruments. The consequence of a false answer here is CARRIER CREDIBILITY, not product
+      judgement.
+    register_must_carry: >
+      **AN ENUMERATION, NOT A CLAIM: the register must be able to show that no caller exists under
+      `src/`, by instrument, and FAIL when one appears.** A `CARRIER_ONLY` that becomes false when
+      somebody adds an import must break the build the day they add it.
+    does_not_buy: >
+      It does not say the site is correct, and it does not say the site is safe. It says the blast
+      radius is the carriers. **A CARRIER THAT ASKS AN OBJECT ABOUT ITSELF IS A CARRIER THAT CAN BE
+      TOLD ANYTHING**, which is already CD-ENG-WO2R3-F13's subject arrived at from the other side.
+    the_items_it_is_drafted_for: >
+      `admission_faults`, `declared_admissions`, `is_admitting_door` — T8 Category B. Measured:
+      each believes any object carrying the attribute (`is_admitting_door(Liar()) = True`).
+  - word: UPSTREAM_OF_THE_PATH
+    asserts: >
+      This module is not itself a judgement path, AND it belongs in the closure anyway, because what
+      it decides is whether judgement-path doors establish their arguments at all.
+    register_must_carry: 'the named downstream property it decides, and the route by which it decides it.'
+    does_not_buy: >
+      **IT IS THE OPPOSITE OF AN EXCUSE AND THAT IS THE WHOLE POINT OF THE WORD.** The most
+      available disposition for `crash_detector.admission` was *"it is the mechanism, not a
+      judgement path"* — **and T8 Category A REFUTES that**: a tier-1 admission inside `admission`
+      decides whether a door establishes at all, which is upstream of every point on the deciding
+      path. The fifth seat: *"the sweep denying by default was right, and the reason it was right is
+      stronger than any record has yet stated."* This word records the strong reason.
+    the_item_it_is_drafted_for: 'the `crash_detector.admission` UNDECLARED MODULE entry — which **MUST NOT BE DISPOSITIONED AWAY**.'
+  the_constraint_that_binds_every_new_word: >
+    **NO NEW WORD MAY BE A SYNONYM FOR "NOT LOOKED AT".** The instrument must REJECT a disposition
+    whose mandatory evidence fields are absent — the words are a contract, not a label set, and a
+    vocabulary that can be satisfied with prose is the hand-maintained-summary defect that ruling 3
+    exists to prevent. **IF YOU CANNOT MAKE A WORD MACHINE-CHECKABLE, SAY SO — that is a finding
+    against the Project Lead's draft and it is worth more than a compliant implementation.**
+  you_are_invited_to_attack_the_draft: >
+    **THE PROJECT LEAD DRAFTED THESE THREE WORDS AND IS NOT CONFIDENT IN THEM.** Are three too many
+    or too few? Does `CARRIER_ONLY` collapse into `OUT_OF_BOUND` under a definition you can state?
+    Does `DEFECT_OPEN` belong in a DISPOSITION register at all, or is it a findings-register entry
+    wearing a disposition's clothes? **REPORT YOUR VIEW. THE PRODUCT OWNER RATIFIES, NOT THE PROJECT
+    LEAD, AND A DRAFT THE IMPLEMENTER DISAGREED WITH SILENTLY IS WORSE THAN NO DRAFT.**
+
+# ================================================================================================== #
+# EXECUTION
+# ================================================================================================== #
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+execution_base_rule: >
+  **START FROM THE LANE HEAD AND CONFIRM IT YOURSELF.** `git rev-parse HEAD` must read
+  9f7b7640f692442e22a47ecac3d4a643057729d5 and `git status --porcelain` must be ZERO LINES before
+  you touch anything. If either is false, STOP — something moved and this dispatch is about a tree
+  that no longer exists.
+
+baseline_measured_by_the_project_lead_at_issue_time:
+  where: >
+    A pristine `git archive 9f7b764 | tar -x` extraction at `/tmp/cd-base`, so the lane worktree was
+    left untouched for you. **THESE ARE THE PROJECT LEAD'S NUMBERS AND CD-RULE-009 SAYS YOU MAY NOT
+    QUOTE THEM. MEASURE YOUR OWN AND REPORT ANY DISAGREEMENT AS A FINDING.**
+  doors_check: >
+    `PYTHONPATH=src python3 -B tools/register/check_judgement_path_doors.py --root .` -> **EXIT 1**,
+    `CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: FAIL — 1 violation(s)`, the violation being
+    `src/crash_detector/engine/evaluate.py:341 — guarded is a public entry point on a judgement path
+    and it carries no @admits(...)`, rule `UNDECORATED_JUDGEMENT_PATH_DOOR`.
+  class_2_sweep: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1 · "CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations"**. UNMOVED, and NOT YOURS to move.'
+  the_wrapped_attribute: '`hasattr(_evaluate_dial, "__wrapped__")` -> **True**, resolving to the undecorated `_evaluate_dial`; runtime `__name__` and `__qualname__` both read `_evaluate_dial`.'
+  the_suite: 'Reported by the fifth seat at **2 failed, 1549 passed**, and by the rename experiment at **1551 passed** with the two-line rename applied. **NOT RE-RUN BY THE PROJECT LEAD AT ISSUE TIME — measure it yourself and treat this line as hearsay.**'
+
+writable_scope:
+- /srv/crash-detector-wo2r3/src/crash_detector/engine/evaluate.py       # ITEM 3 ONLY — the delattr.
+                                                                       # NOT for redesigning the guard.
+- /srv/crash-detector-wo2r3/src/crash_detector/admission.py             # ITEM 5, and ITEM 3's
+                                                                       # declaration correction at :222
+- /srv/crash-detector-wo2r3/tools/register/                             # ITEMS 2 and 4, the instruments
+- /srv/crash-detector-wo2r3/tools/sweep/delegated_judgement_sweep.py    # ITEM 7, THE CONTRACT ONLY
+- /srv/crash-detector-wo2r3/tools/audit/                                # ITEM 6 — new, if you put it here
+- /srv/crash-detector-wo2r3/tests/                                      # the carriers for every item
+- /srv/crash-detector-wo2r3/contracts/execution/                        # CD-RULE-004, the third place
+- /srv/crash-detector-wo2r3/required-tests.yaml                         # CD-RULE-004, and register rows
+- /srv/crash-detector-wo2r3/variants/                                   # your probes and contrasts,
+                                                                        # under WO-2R3/ — AND ADD YOUR
+                                                                        # MANIFEST ROWS (CD-PL-F97)
+- /srv/crash-detector-wo2r3/plants/                                      # only if an item earns a plant
+- /srv/crash-detector-wo2r3/governance/engineering/build-log/            # NEW entries only, never an edit
+- /tmp/                                                                  # scratch, non-governed
+
+protected_scope:
+- 'tools/sweep/declared_dispositions.py   # **THE ELEVEN GO HERE AND THEY ARE NOT YOURS** (CD-D-130).'
+- pbg/                       # pinned snapshot, read-only (PBG-FWK-013). Editing it to pass IS the bypass.
+- PID.md
+- BLUEPRINT.md               # v0.2.0 — YOUR SPECIFICATION. If you believe it is wrong, REPORT IT.
+- governance/blueprint/      # BP-AMENDMENT-0001 is IN FORCE. Read, never edited.
+- 'src/, EXCEPT the two files named above and only for their named items'
+- governance/decisions/      # **PO-DECISIONS-0012 and 0013 ARE YOUR SPECIFICATION. READ. NEVER EDIT.**
+- governance/authority/, governance/dispatch/, governance/rules/
+- governance/assurance/      # FIVE auditors' records, including the RED you are remediating.
+                             # **READ THEM ALL. NEVER EDIT ONE**, including the parts your fix makes
+                             # obsolete and including VERDICT-FIFTH-SEAT.md, which is banked verbatim.
+- governance/reconciliation/ # the Project Lead's own probes. DATA. READ. NEVER EDIT.
+- governance/engineering/ACTIVE_WORK.yaml     # Project-Lead-only
+- CLAUDE.md, docs/, pbg-manifest.yaml, db/, deploy/, requirements*, schemas/
+- everything under /srv outside the dispatched worktree, except the /tmp scratch above
+
+prohibited:
+- certifying, assuring or accepting this work (PBG-SOD-001, non-waivable) — report, never certify
+- '**MAKING THE DOORS CHECK GREEN BY EXEMPTION OR BY WEAKENING.** PO-DECISIONS-0012 ruling 3 permits
+   exactly one route — reclassification — and names the other two as prohibited. **THIS IS THE
+   INCREMENT WHERE THAT TEMPTATION IS AT ITS MAXIMUM, BECAUSE YOU NOW HAVE WRITE ACCESS TO THE FILE
+   THE PREVIOUS ENGINEER WAS REFUSED.**'
+- '**PROCEEDING PAST ITEM 1 IF IT LANDS THE OTHER WAY.** If `_evaluate_dial` is reachable without an
+   established door, 0012 ruling 1 FALLS. That is a Product Authority matter. **STOP AND RETURN.**'
+- 'redesigning the CD-ASR-F03 control. Not in this increment under any measurement outcome.'
+- 'writing the eleven Class-2 dispositions or editing `tools/sweep/declared_dispositions.py`'
+- '**FIXING T8 CATEGORY A** — the `_is_defined_in_a_class_body` / `__qualname__` defect. It is REAL
+   and it is MEASURED and **IT IS NOT IN PO-DECISIONS-0013 RULING 6''s ENUMERATION.** It receives a
+   `DEFECT_OPEN` disposition from the Project Lead after this increment banks. **CLEANING IT NOW
+   WOULD PRE-EMPT THE SIXTH ASSURANCE SEAT ON THE MOST INTERESTING THING IN ITS TARGET.**'
+- deleting or disabling an existing guard, test or plant to make the work look clean
+- 'DELETING A DECLARED LIMIT RATHER THAN SUPERSEDING IT (CD-RULE-004, PBG-CONT-003).'
+- '**A REPAIR THAT CHANGES THE HEADER TEXT AND NOT THE CODE PATH.** Every item carries a contrast for
+   exactly this reason. If a contrast cannot be built, SAY SO AND STOP — that is a finding.'
+- '**QUOTING A COUNT THAT DID NOT COME OUT OF AN INSTRUMENT YOU RAN** (CD-D-119, CD-RULE-009). That
+   includes every number in this dispatch: 1, 534, 15, 1549, 1551, 24d66d0e, 50b356ac. **MEASURE
+   YOUR OWN.**'
+- 'reopening or re-arguing the RED, or any grade. Not yours (PBG-AUTH-003).'
+
+build_log_sequence:
+  your_block: '**0060-0099. CONTINUE FROM 0074.** 0060-0073 are landed in this lane.'
+  the_ceiling_is_part_of_the_rule: >
+    **DO NOT WRITE 0100 OR ABOVE.** main holds 0100-0199 and 0001-0059 is CLOSED to both parties
+    (CD-D-132). If you reach 0099, STOP and escalate rather than counting on. CD-PL-F89 is why this
+    is a RANGE and not a floor: a one-sided bound produced THIRTEEN landed collisions.
+  timestamps: 'From `date -u` and from nothing else (CD-RULE-005). New entries only (PBG-CONT-003).'
+
+commit_identity:
+  rule: >
+    Commit as you go, one commit per item where the items are separable. **EVERY COMMIT CARRIES THE
+    BLOCK BELOW, FILLED IN. A commit without it is not accepted at reconciliation, however good the
+    code is** (PO standing condition). Fields that do not apply are answered N/A WITH A REASON.
+  the_block: |
+    item: <ITEM_n>
+    what_changed_in_the_code_path: <not the header text — the code path>
+    the_contrast_that_proves_it: <command, both arms, both results>
+    what_this_does_NOT_close: <the residue, MEASURED>
+    instruments_run_and_their_exit_codes: <yours, not this dispatch's>
+    findings_against_my_own_work: <or the word NONE, which is a claim>
+
+proof_standard:
+  the_CD_ENG_WO2R3_F12_standard: >
+    **A PLANT IS EVIDENCE WHEN IT APPLIES, CONTRASTS, *AND FAILS AT THE LAYER ITS PROPOSITION
+    NAMES* — never merely when it exits non-zero.** Two arms exiting 1 for different reasons look
+    identical in a summary table and prove nothing.
+  the_BITTEN_standard: >
+    The arm applied FOR REAL, the failure signature REPRODUCED, and the instrument SHA-VERIFIED
+    byte-identical to `git cat-file` at the SHA it was run from (PO-DECISIONS-0011 ruling 4).
+  runtime_claims_need_runtime_proof: >
+    "Unreachable", "cannot be called", "not importable" are RUNTIME claims and **ITEM 1 IS ENTIRELY
+    MADE OF THEM.** A static reading is not proof of one. **EVERY ESCAPE ON THIS PROJECT'S RECORD
+    PASSED STATIC CHECKERS.**
+  the_rename_test: >
+    **THIS INCREMENT EXISTS BECAUSE OF THIS TEST.** For any refusal credited to a STRUCTURE: does it
+    survive renaming one identifier? Apply it to YOUR OWN reclassification criterion (item 2) and to
+    YOUR OWN fingerprint instrument (item 6), and report both results whichever way they fall.
+  the_counterfactual_arm_CD_D_079: 'For every refusal credited to a structure, show the arm WITHOUT that structure failing to refuse.'
+  and_read_the_tree_line_every_time: >
+    CD-PL-F98: the Project Lead ran two arms of a probe that resolved its import root from
+    `Path(__file__).resolve().parents[2]`, so **BOTH ARMS IMPORTED THE SAME TREE** and printed
+    identical output — one paragraph from recording "the fix changes nothing" against a correct fix.
+    **A CONTRAST RUN WITH THE WRONG TREE ON `sys.path` IS INDISTINGUISHABLE FROM A FIX THAT DOES
+    NOTHING. RUN EACH TREE'S OWN COPY AND READ THE `tree:` LINE EVERY TIME.**
+
+return_contract:
+  expected_return: READY_FOR_ASSURANCE
+  and_the_other_acceptable_return: >
+    **`STOPPED_AT_ITEM_1` — and it is not a failure.** If the reachability measurement lands the
+    other way, returning that with the evidence is the single most valuable thing this seat can do.
+  what_your_return_must_carry:
+  - 'the exact SHA of every commit you made, and `git status --porcelain` at ZERO lines at the end'
+  - '**ITEM 1''s MEASUREMENT IN FULL — both halves of the ruling 4 question, separately answered**'
+  - 'per item: what changed in the code path, the contrast with BOTH arms, and the MEASURED residue'
+  - '**ITEM 3''s ENUMERATION OF EVERY LIVE `__wrapped__`, BY INSTRUMENT**, and the WO-2R attack-set
+     re-run as a before/after table'
+  - '**YOUR VIEW ON THE PROJECT LEAD''S DRAFT VOCABULARY (item 7), INCLUDING DISAGREEMENT**'
+  - '**YOUR VIEW ON THE PROJECT LEAD''S FINGERPRINT RECIPE (item 6), INCLUDING ITS RENAME TEST**'
+  - 'every instrument you ran with its exit code, measured by you'
+  - 'findings against your own work — this project has had SEVEN consecutive seats do this and it is
+     the reason the record is worth anything'
+  - 'anything you could NOT establish, said plainly, with what you ran and what stopped you'
+  what_your_return_is_NOT: >
+    **NOT AN ACCEPTANCE AND NOT A GRADE** (PBG-AUTH-003, PBG-SOD-001). You do not certify this work.
+    A FRESH sixth Assurance seat audits it, and the Product Owner dispositions the gate.
+
+separation_of_duties:
+  PBG_SOD_001: 'The Engineer and the Assurance Engineer are never the same agent. Non-waivable.'
+  PBG_AUTH_006: 'The Project Lead writes neither the fix nor the assurance. Direction is not design.'
+  PBG_AUTH_003: 'A PASS is not an acceptance and neither is a RED. Disposition is the Product Owner''s.'
+  PBG_CONT_007: 'A sub-agent result that exists only in conversation is not project state. COMMIT IT.'
+
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  The Project Lead reconciles your return BY MEASUREMENT, writes the eleven Class-2 dispositions in
+  the ratified vocabulary, and dispatches the SIXTH FRESH ASSURANCE SEAT over the whole. **THE
+  PROJECT LEAD WILL NOT ARGUE YOUR FINDINGS DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER.** If your
+  measurements contradict the reconciliation record, **THE RECORD IS WHAT GETS CORRECTED.**
