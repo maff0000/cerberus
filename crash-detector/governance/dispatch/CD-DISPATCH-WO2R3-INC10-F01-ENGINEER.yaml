@@ -1,0 +1,384 @@
+# ================================================================================================== #
+# CD-DISPATCH-WO2R3-INC10-F01-ENGINEER
+#
+# INCREMENT 10, ITEM 1 — AND IT IS THE WHOLE OF THIS DISPATCH.
+#
+# PO-DECISIONS-0018 ruling 2: **"F01 GETS ITS OWN ENGINEER, FIRST."** That sentence is the reason
+# this dispatch carries ONE item and not five. The other four items of increment 10 (the instrument
+# re-scope, the BLUEPRINT §16/§17 perimeter entries, ITEM 3, the three stale keys) are NOT YOURS and
+# are NOT IN YOUR SCOPE. Do not touch them. Do not "notice and fix" them.
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-WO2R3-INC10-F01-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T09:55:21Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T095521Z-0131
+parent_dispatch: CD-DISPATCH-WO2R3-ENGINEER    # the WO-2R3 lane dispatch
+
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0018.md`, commit `c72b6ea`, authored by Matt Scott and by NO
+  SEAT. **RULING 2 IN FULL, VERBATIM:**
+
+  *"**F01 GETS ITS OWN ENGINEER, FIRST — the Project Lead's reading is adopted.** The forged-type
+  walk (metatype subclass passing `isinstance` with zero package lines) crosses the boundary the
+  sealing defect only festers inside. The fix is this project's own existing standard applied where
+  it is missing: EXACT TYPE, everywhere on a judgement path where an `isinstance` still survives —
+  sites enumerated BY INSTRUMENT, the forged-subclass probe as the plant, both arms. Bounded, real,
+  and it kills the resurrection of CD-ASR-F01 at the sites that matter."*
+
+  **AND RULING 1(a), WHICH BOUNDS WHAT YOU ARE ALLOWED TO CLAIM YOU ACHIEVED:**
+
+  *"**The declared-route refusals STAND and are kept** — they are real, they refuse the front door
+  and the named routes, and they proof the product against ACCIDENT and against casual misuse. That
+  is worth having and it is what they honestly are."*
+
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md      # canonical local file; the operator pastes no role
+actor_id: CD-ENG-WO2R3-08                 # **FRESH. Never -01 through -07.**
+prior_engineer_actor_ids: [CD-ENG-WO2R3-01, CD-ENG-WO2R3-02, CD-ENG-WO2R3-03, CD-ENG-WO2R3-04,
+                           CD-ENG-WO2R3-05, CD-ENG-WO2R3-06, CD-ENG-WO2R3-07]
+assurance_actor_ids_you_are_not: [CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, CD-ASR-WO2R3-01,
+                                  CD-ASR-WO2R3-02, CD-ASR-WO2R3-03, CD-ASR-WO2R3-04]
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+separation_of_duties: >
+  **PBG-SOD-001, NON-WAIVABLE.** You implement. You do not grade. An EIGHTH FRESH ASSURANCE SEAT
+  (`CD-ASR-WO2R3-05`, never you) reads what you leave behind. **PBG-SOD-004:** the seventh Assurance
+  seat that RAISED `CD-ASR-WO2R3-04-F01` may not fix it, and explicitly said so — *"A separate
+  Engineer (not me — `PBG-SOD-004`)."* **You are that separate Engineer.**
+
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+base_sha: 686a374e60ff8f18305fa8b665463e0e057dac2b   # increment 9 close; RESOLVE IT, do not trust this line
+base_is_clean: '`git status --porcelain` -> ZERO LINES, PL-verified at issue.'
+
+governing_authority_lives_on_main: >
+  `governance/decisions/`, `PID.md`, `BLUEPRINT.md` and the Assurance verdicts are authoritative ON
+  `main`, at `/srv/crash-detector`. **READ THEM THERE, READ-ONLY.** Your writable scope is the LANE
+  worktree and nothing on `main`.
+
+# ================================================================================================== #
+the_finding_you_are_fixing_QUOTED_AND_NOT_PARAPHRASED:
+# ================================================================================================== #
+  source: 'governance/assurance/WO-2R3/VERDICT-SEVENTH-SEAT.md, §2, lines 141-196. Read it yourself on `main`.'
+  id: CD-ASR-WO2R3-04-F01
+  severity: HIGH
+  what_it_is: '**A LIVE CONTROL BYPASS.** `CD-ASR-F01` — the route from two dials to one number — is REOPENED.'
+  the_two_arms_AS_THE_SEAT_RAN_THEM: >
+    ARM 1 — THE DECLARED ROUTE: `class Evil(DialMagnitude): ...` -> **REFUSED**,
+    `MagnitudeSurfaceViolated: "Evil may not subclass DialMagnitude: a dial magnitude is a CLOSED
+    type..."` **THE GUARD FIRES. IT IS NOT VACUOUS.**
+
+    ARM 2 — `type.__new__(SealedMagnitudeType, 'Evil2', (DialMagnitude,), {'__slots__': (),
+    '__float__': lambda self: 999.0})` -> **CREATED.** package lines executed **0** ·
+    `issubclass(Evil2, DialMagnitude)` **True** · instance built, package lines **0** ·
+    `float(inst)` **999.0** · `isinstance(inst, DialMagnitude)` **True**.
+  the_seats_own_diagnosis_VERBATIM: >
+    *"`type.__new__(metaclass, ...)` does not call `metaclass.__new__`. The guard is written in
+    `SealedMagnitudeType.__new__` and is therefore only on the path that the `class` statement takes.
+    **It guards the syntax, not the type.**"*
+  the_seats_own_declared_limit_VERBATIM: >
+    *"By inspection the same shape holds for `SealedReadingType`, `SealedQuantityType` and
+    `SealedPresentationType`; I executed it against `SealedMagnitudeType` and report the other three
+    as *structurally identical, not individually executed* — an honest limit."*
+    **THAT LIMIT IS YOURS TO DISCHARGE BY EXECUTION. Do not inherit it as a conclusion.**
+
+# ================================================================================================== #
+read_this_before_you_write_one_line_OR_YOU_WILL_FIX_THE_WRONG_THING:
+# ================================================================================================== #
+  the_trap: >
+    **THE OBVIOUS FIX IS THE WRONG FIX, AND IT IS THE FIFTH OCCURRENCE OF THE SAME MISTAKE ON THIS
+    PROJECT.** The tempting move is to harden `SealedMagnitudeType.__new__`, or to add a
+    `__init_subclass__`, or to reach for `type.__new__` interception. **DO NOT START THERE.**
+    `type.__new__(SealedMagnitudeType, ...)` is CPython working as documented; the Product Owner has
+    ruled (PO-DECISIONS-0018 ruling 1) that **AN ENUMERATION CANNOT CLOSE A PROPERTY-DEFINED CLASS**
+    and that appending another route to the census is *"the census game"*. **YOU ARE NOT BEING ASKED
+    TO PREVENT THE FORGED CLASS FROM BEING CREATED. YOU CANNOT, AND THE RECORD NOW SAYS SO THREE
+    WAYS.**
+  what_you_ARE_asked_to_do: >
+    **MAKE THE FORGED OBJECT USELESS ON EVERY JUDGEMENT PATH.** `GUARD_THE_INSTANCE_NOT_THE_CLASS`
+    — the sentence this project has now written five times and applied four. `Evil2` will still be
+    constructible after your increment. **WHAT MUST CHANGE IS THAT NOTHING ON A JUDGEMENT PATH
+    ACCEPTS IT**, because admission is by **EXACT TYPE** — `type(x) is T` — and `type(Evil2_inst)`
+    is not `DialMagnitude`. The forged subclass passes `isinstance` by construction and can NEVER be
+    made to fail it; it fails exact type by construction and can NEVER be made to pass it.
+    **THAT ASYMMETRY IS THE WHOLE REMEDY.**
+  and_the_declared_route_refusals_STAY: >
+    **DO NOT REMOVE, WEAKEN OR "SIMPLIFY AWAY" THE EXISTING `SealedMagnitudeType.__new__` REFUSAL OR
+    ANY OF ITS THREE SIBLINGS.** PO-DECISIONS-0018 ruling 1(a) keeps them: they refuse the front
+    door, they proof against ACCIDENT, and ARM 1 proves they are not vacuous. **A "cleanup" that
+    deletes a working accident-proof guard because a deliberate route exists around it is a
+    REGRESSION, and it is the exact move the ruling was written to forbid.** If you believe one must
+    change, STOP and return the question.
+
+# ================================================================================================== #
+items:
+# ================================================================================================== #
+- id: ITEM_1
+  title: >
+    THE F01 EXACT-TYPE SWEEP — every `isinstance` that survives on a judgement path becomes an
+    EXACT-TYPE admission, or carries a MEASURED reason it cannot, enumerated BY INSTRUMENT.
+  and_it_is_the_only_item: 'There is no ITEM_2. Increment 10 items 2-5 belong to other actors.'
+
+  part_A_ENUMERATE_BY_INSTRUMENT_AND_NOT_BY_GREP:
+    the_instrument: '`tools/sweep/delegated_judgement_sweep.py --root . --list`'
+    what_it_gives_you: >
+      **A DENOMINATOR.** At your base it reports TIER 1 — admission: 45 distinct sites (52
+      occurrences), of which **ISINSTANCE 30**, ISSUBCLASS 0, DUCK 22. The `--list` output prints
+      every one of the 30 with its file, its qualified name, its source text AND its currently
+      declared disposition. **THAT LIST IS YOUR WORK ORDER AND YOUR DENOMINATOR.**
+    PL_measured_it_at_issue_so_you_can_falsify_this_line: >
+      `cd /srv/crash-detector-wo2r3 && python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list`
+      -> `ISINSTANCE 30`. Dispositions across those 30, DERIVED and not counted by eye —
+      `... --list | grep -E '^    \[[A-Z_ ]+\] .*ISINSTANCE' | sed 's/^    \[\([A-Z_]*\) *\].*/\1/' |
+      sort | uniq -c` -> **EXACT 11 · ESTABLISHED 10 · DEFECT_OPEN 6 · OUT_OF_BOUND 2 · DELEGATED 1**,
+      summing to 30. (CD-RULE-009: that is the command, beside the count.)
+      **RE-DERIVE IT. If your number is not 30, ONE OF US IS WRONG AND YOU SAY SO.**
+    the_thing_you_must_not_do: >
+      **DO NOT `grep -rn isinstance src/`.** A grep has no notion of a judgement path and no
+      denominator, and this project has been burned four times by a population that did not contain
+      the answer (`CD-PL-F121`, most recently re-committed by the seat that named it). **THE RULING
+      SAYS "BY INSTRUMENT". THE INSTRUMENT EXISTS. USE IT.**
+      If you believe the instrument's tier-1 population MISSES a judgement-path `isinstance`, that
+      is a FINDING against the instrument — raise it, name the site, and say whether you fixed it.
+    ALSO_enumerate_the_four_metaclass_guards: >
+      Separately from the 30, the four sealed metatypes named by the finding —
+      `SealedMagnitudeType` (dials/magnitude.py:305), `SealedQuantityType` (dials/provenance.py:319),
+      `SealedReadingType` (dials/reading.py:212), `SealedPresentationType`
+      (serving/dial_presentation.py:218). **The seventh seat executed ARM 2 against ONE of them and
+      declared the other three unexecuted. RUN ALL FOUR. BOTH ARMS. EACH.** Report each one's actual
+      measured outcome, not an inference from the first.
+
+  part_B_CONVERT_OR_DECLARE_SITE_BY_SITE:
+    the_rule: >
+      For **EVERY ONE of the 30**, exactly one of two outcomes, and you record which for each:
+      **(i) CONVERTED** — the site now admits by exact type (`type(x) is T`, or the module's own
+      established exact-type helper if one exists — prefer the existing idiom over a new one), and a
+      test proves a subclass instance is now REFUSED where it was previously admitted; or
+      **(ii) DECLARED WITH A MEASURED REASON** — exact type is NOT correct here, and the reason is
+      **MEASURED AND EXECUTED, NOT REASONED.** Construct the subclass. Show what happens. Name the
+      layer that refuses from the FAILURE TEXT, not from an exit code.
+    the_declarations_that_are_already_measured_and_are_probably_CORRECT: >
+      Some of the 30 already carry a measured reason and you should expect to KEEP them —
+      `own_terms::own_instant isinstance(value, datetime)` and `time_utc::ensure_utc` admit a SHAPE
+      to be read (a `pandas.Timestamp` IS a datetime subclass and must be readable) and the value is
+      rebuilt from the supplied object's own C-struct fields, so nothing after the line calls a
+      method of `type(value)`. `source_registry` `isinstance(self.criticality, Criticality)` — an
+      `enum.Enum` with members, which CPython refuses to subclass, so isinstance and exact type
+      COINCIDE. **RE-MEASURE THESE, DO NOT COPY THEM FORWARD ON MY WORD.** If a re-measurement shows
+      one of the existing declarations is stale or wrong, **THAT IS THE MOST VALUABLE THING YOU CAN
+      RETURN.**
+    the_six_that_are_DEFECT_OPEN_and_are_the_reason_this_dispatch_exists: >
+      All six live in `crash_detector.admission`: `_EstablishedHere.__call__ isinstance(because,
+      str)` · `_compile isinstance(declaration, _Admission)` · `_compile isinstance(declaration,
+      tuple)` · `_compile isinstance(declaration, type)` · `_type_tuple isinstance(value, type)` ·
+      `each_of isinstance(within, tuple)`. **`DEFECT_OPEN` BUYS NOTHING** — the register itself says
+      so. The `isinstance(declaration, type)` one carries a measured C4 reach verified by the sixth
+      seat personally: *"A metaclass defining `__eq__` satisfies `isinstance(X, type)` here and then
+      compares EQUAL TO EVERY TYPE at `_Exactly.refusal`. Measured end to end on an ordinary
+      `@admits(value=Wildcard)` door: `faults: ()`, `is_admitting_door: True`, and every value
+      admitted."* **THE COUNTERFACTUAL IS ALREADY WRITTEN IN THE REGISTER AND IT IS ONE LINE:**
+      *"Exact-type identity at the same site refuses the subclass — the discipline this module
+      already applies to VALUES and does not apply to DECLARATIONS. F-06-D's own one-line form for
+      the downstream half: `any(type(value) is t for t in self.types)`."*
+      **THESE SIX ARE WHERE THE INCREMENT EARNS ITS KEEP. START HERE.**
+    a_warning_about_admission_py: >
+      `crash_detector.admission` is ALSO the module carrying the three STALE tier-2 keys and the
+      `UNDECLARED MODULE` violation. **YOU WILL BE EDITING THE SAME FILE WHOSE DISPOSITION DATA YOU
+      MAY NOT TOUCH.** Your source edits WILL move site keys and WILL change the sweep's output.
+      **THAT IS EXPECTED AND IT IS NOT YOURS TO PAPER OVER.** See `the_state_of_your_base` and the
+      protected scope. Measure the sweep before and after, print both, and DECLARE the delta.
+      **DO NOT EDIT `tools/sweep/declared_dispositions.py` TO MAKE THE NUMBER LOOK BETTER.**
+
+  part_C_THE_PLANT_BOTH_ARMS:
+    what_the_ruling_requires: '*"the forged-subclass probe as the plant, both arms."*'
+    form: >
+      The established contrast form this project uses — `plants/CD-AC-002/<NAME>.patch`, with its
+      manifest row, and a `required-tests.yaml` criterion whose `criteria[].tests[].execute` names
+      the exact command. **CD-RULE-004: the guard CLOSES ITS CLASS or DECLARES ITS LIMIT, said
+      consistently in THREE PLACES — the check header, the register entry AND the execution
+      contract.** A register row that claims more than the guard delivers is the defect, not the
+      documentation.
+    arm_1_MUST_STILL_REFUSE: >
+      `class Evil(DialMagnitude): ...` -> still `MagnitudeSurfaceViolated`. **THIS IS A REGRESSION
+      TEST ON RULING 1(a). If your change makes arm 1 stop refusing, you have broken the
+      accident-proofing the Product Owner explicitly kept.**
+    arm_2_THE_ONE_THAT_IS_NEW: >
+      `type.__new__(SealedMagnitudeType, 'Evil2', (DialMagnitude,), {...'__float__': lambda self:
+      999.0})` -> **STILL CREATES THE CLASS. STILL ZERO PACKAGE LINES. `issubclass` STILL True.
+      `isinstance` STILL True. AND THE JUDGEMENT PATH NOW REFUSES THE INSTANCE.** The plant must
+      assert the REFUSAL AT THE JUDGEMENT PATH, naming the refusing layer from its failure text —
+      **NOT** assert that the class could not be created, which would be a lie your own probe
+      disproves in the line above.
+    and_the_plant_must_be_a_CONTRAST: >
+      Applied to a clean tree it must read CLEAN; with the violation applied it must read VIOLATED.
+      A check that cannot fail is not a check. **THIRTEEN PLANTS EXIST AND ZERO ARE DEAD AT YOUR
+      BASE — MEASURED BY HAND AT BL-...-0126. DO NOT BE THE FOURTEENTH THAT IS DEAD.** Run your own
+      plant on a pristine `git archive` extraction, both arms, and print the three columns.
+    the_other_three_metatypes: >
+      If ARM 2 reproduces on `SealedReadingType`, `SealedQuantityType` and `SealedPresentationType`
+      **BY EXECUTION** (it is your job to find out), each gets the same treatment: exact-type
+      admission on its judgement path, and the plant covers them or you DECLARE which are covered
+      and which are not. **AN UNDECLARED GAP IS THE DEFECT. A DECLARED ONE IS AN HONEST LIMIT.**
+
+  part_D_WHAT_YOU_MUST_WRITE_DOWN_AND_MAY_NOT_OVERSTATE:
+    the_sentence_you_may_write: >
+      *"The forged subclass is still constructible — the platform permits it and this increment does
+      not claim otherwise. It is REFUSED at every judgement path enumerated by the instrument,
+      because admission is by exact type."*
+    the_sentence_you_may_NOT_write: >
+      *"CD-ASR-F01 is closed."* / *"The forged type is prevented."* / *"The class is sealed."*
+      **THREE SEATS HAVE NOW BEEN SUPERSEDED FOR CLAIMING A CLASS CLOSED THAT WAS NOT.** You are
+      closing SITES, and you name them and count them. `CD-ASR-WO2R3-04-F01`'s disposition is the
+      EIGHTH ASSURANCE SEAT'S AND THE PRODUCT OWNER'S, NOT YOURS.
+    the_residue_you_must_state: >
+      **CD-RULE-006 — name a layer MEASURED to hold it, or write "NOT PROVED TO BE CARRIED
+      ANYWHERE".** Specifically: which judgement paths, if any, still admit by `isinstance` after
+      your sweep, and what the measured reason is for each.
+
+  declared_stop: >
+    **STOP AND RETURN IF:** converting a site to exact type breaks a legitimate, DECLARED admission
+    the product actually needs (the `pandas.Timestamp` shape-reading case is the archetype) in a way
+    you cannot resolve inside this scope — **RETURN `STOPPED_AT_ITEM_1` NAMING THE SITE AND WHAT IT
+    BREAKS.** That is a SUCCESS. Also stop if you conclude ruling 2's remedy is itself unsound at
+    some site: **say so, with the execution that shows it.** The last two seats to refuse an
+    instruction rather than fake a green were both upheld.
+
+# ================================================================================================== #
+scope:
+  writable_scope:
+  - /srv/crash-detector-wo2r3/src/crash_detector/          # the exact-type conversions
+  - /srv/crash-detector-wo2r3/tests/                       # the carriers
+  - /srv/crash-detector-wo2r3/tools/register/              # a new/updated register check, IF your remedy needs one
+  - /srv/crash-detector-wo2r3/contracts/execution/         # CD-RULE-004, the third place
+  - /srv/crash-detector-wo2r3/required-tests.yaml          # CD-RULE-004, and the register rows
+  - /srv/crash-detector-wo2r3/plants/                      # THE PLANT — AND ITS MANIFEST ROW
+  - /srv/crash-detector-wo2r3/variants/                    # your probes and contrasts, under WO-2R3/
+                                                           # — AND ADD YOUR MANIFEST ROWS (CD-PL-F97)
+  - /srv/crash-detector-wo2r3/governance/engineering/build-log/   # NEW entries only, NEVER an edit.
+                                                           # Lane block 0060-0099, CONTINUE FROM 0095.
+  - /tmp/cd-eng-wo2r3-08/                                  # **YOUR OWN SCRATCH DIRECTORY AND NOBODY ELSE'S**
+
+  protected_scope:
+  - '**`tools/sweep/` — THE WHOLE DIRECTORY. PROTECTED, AND THIS TIME YOU MUST KNOW THE REASON.**
+     Three disposition keys in `declared_dispositions.py` are **STALE BY CONSTRUCTION** and the
+     Class-2 sweep reads `FAIL — 555 sites, 4 violations` at your base. **PO-DECISIONS-0018 RULING 3
+     HOLDS THEM STALE UNTIL THEY CLEAR *WITH* THE REMEDY, IN THE SAME ACT, VISIBLY — AND THAT ACT IS
+     NOT YOURS.** Two consecutive Engineers considered keeping a dead clause alive so a register key
+     would survive and a suite would stay green, and **BOTH REFUSED AND RETURNED `SCOPE_INSUFFICIENT`
+     FOR EXACTLY ONE FILE.** **THAT REFUSAL IS THE BEHAVIOUR THIS GOVERNANCE EXISTS TO PRODUCE. IF
+     YOUR WORK NEEDS THIS FILE, DO THE SAME — NAME THE FILE, NAME THE ROWS, RETURN.**
+     You MAY RUN the sweep as many times as you like. You may not WRITE to it.'
+  - '**`tools/register/check_sealed_against_forged_establishment.py` — PROTECTED FROM YOU.** It is
+     increment 10 ITEM 2, ruled separately (PO-DECISIONS-0018 ruling 1b), and it is another actor''s.
+     **RUN IT. DO NOT EDIT IT.** If your source changes move its numbers, that is a MEASUREMENT you
+     report, not a file you touch.'
+  - '**`BLUEPRINT.md` AND `governance/blueprint/` — PROTECTED FROM EVERY SEAT INCLUDING THE PROJECT
+     LEAD (CD-D-115).** §16 and §17 gain entries in increment 10 item 3, carrying the Product
+     Owner''s own bytes. **NOT YOURS.**'
+  - '`governance/findings/` — the findings index. **YOU DO NOT MARK ANYTHING CLOSED.**'
+  - 'pbg/    # pinned snapshot, read-only (PBG-FWK-013). Editing it to make a control pass IS the bypass.'
+  - 'PID.md, governance/decisions/, governance/assurance/, governance/reconciliation/,
+     governance/engineering/ACTIVE_WORK.yaml — **NONE OF THESE IS EVER AN ENGINEER''S.**'
+  - '**ANY EXISTING BUILD-LOG ENTRY.** Corrections SUPERSEDE, never edit (PBG-CONT-003, non-waivable).'
+  - '**`/tmp/asr7/` AND EVERY OTHER SEAT''S SCRATCH DIRECTORY.** `CD-PL-F128`: `/tmp/asr7` holds TWO
+     instances'' files interleaved with semantically colliding names, and a stale glob there handed a
+     dead context''s artefact to a live seat as its own measurement. **WORK IN `/tmp/cd-eng-wo2r3-08/`
+     AND NOWHERE ELSE. NEVER READ ANOTHER SEAT''S SCRATCH.**'
+
+# ================================================================================================== #
+the_state_of_your_base_declared_up_front_so_you_do_not_report_it_as_a_discovery:
+  the_class_2_sweep: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1, `FAIL — 555 sites,
+    4 violations`**: THREE `STALE DECLARATION` (all in `crash_detector.admission`:
+    `_EachOf.refusal MEMBERSHIP: type(element) not in self.element` · `_EachOf.refusal MEMBERSHIP:
+    type(value) not in self.within` · `_Exactly.refusal MEMBERSHIP: type(value) in self.types`) plus
+    `UNDECLARED MODULE: crash_detector.admission`, tier-2 keys 3 of 33. **DECLARED. NOT YOURS. HELD
+    STALE BY PRODUCT AUTHORITY. SEE THE PROTECTED SCOPE.**
+    **AND BE READY FOR THIS: your edits to `admission.py` will very likely CHANGE THESE NUMBERS —
+    site keys carry SOURCE TEXT as their fourth element, so touching a line re-keys it.** Print the
+    sweep before and after, declare the delta and its cause, and **DO NOT chase the number to zero.**
+  the_suite: >
+    **3 failed, 1696 passed** (`python3 -B -m pytest -q`). All three failures are the DECLARED three
+    in `tests/test_the_fifteen.py`. **IF YOUR RUN SHOWS A FOURTH FAILURE BEFORE YOU CHANGE ANYTHING,
+    SAY SO IMMEDIATELY. If it shows one AFTER, it is yours.**
+  the_register_checks: '**ELEVEN EXIT 0 · `check_grant_matrix_live` EXIT 3.** Exit 3 is a documented environment condition, not a defect you introduced. Pass the declared `--root`.'
+  the_sealing_instrument: >
+    `tools/register/check_sealed_against_forged_establishment.py` **PASSES** with SEALED 51 /
+    EXCLUDED 48 / 99 assertions — **AND THE PROJECT LEAD RE-DERIVED THAT 40 OF THOSE 51 FORGE VIA
+    `cls.__new__(cls)` + `object.__setattr__`, EXACT TYPE, VALUE READ BACK, ZERO PACKAGE LINES.**
+    **ITS GREEN IS NOT EVIDENCE OF ANYTHING AT YOUR BASE. DO NOT CITE IT AS SUPPORT FOR YOUR WORK.**
+    Its re-scoping to declared-limit honesty is increment 10 item 2 and belongs to another actor.
+  CD_RT_012: '**RED AT THE TIP** (`check_no_execution_interface.py`). Standing, declared, not yours.'
+  the_gate_state: >
+    T2 **RED**; `CD-AC-002` and `CD-AC-005` **AMBER and NOT CLOSED** (the seventh seat moved
+    `CD-AC-005` DOWN to RED and that grade is with the Product Owner); **TEN DECLARED OPEN
+    DEFECTS**; the WO-2 gate **SHUT**. **NOTHING YOU DO HERE CLOSES ANY OF THEM, AND YOU MAY NOT
+    WRITE THAT IT DOES.**
+  the_honest_count: >
+    **THE NUMBER OF CLASSES THIS PROJECT CAN DEFEND AS SEALED AT YOUR BASE IS ELEVEN**, not 51 and
+    not 99. That is the Project Lead's own re-derivation, banked at `607861e`. **YOU INHERIT AN
+    HONEST NUMBER. DO NOT INFLATE IT.**
+
+# ================================================================================================== #
+standards_that_bind_you:
+  CD_RULE_002: >
+    **PER-SEAT COMMIT IDENTITY, PRODUCT AUTHORITY, NON-RELAXABLE.** Set all four variables ON THE
+    COMMIT INVOCATION — `GIT_AUTHOR_NAME=CD-ENG-WO2R3-08
+    GIT_AUTHOR_EMAIL=cd-eng-wo2r3-08@seats.crash-detector.invalid GIT_COMMITTER_NAME=CD-ENG-WO2R3-08
+    GIT_COMMITTER_EMAIL=cd-eng-wo2r3-08@seats.crash-detector.invalid git commit ...`.
+    **`git -c user.name=...` IS NOT SUFFICIENT ON THIS HOST AND FAILS SILENTLY** (CD-PL-F56): the
+    harness injects `GIT_*` into the environment and environment beats `-c`. **VERIFY AFTER EVERY
+    COMMIT: `git log -1 --format='%an <%ae> | %cn <%ce>'`.**
+  CD_RULE_003: 'A seat DERIVES a product quantity or FAILS CLOSED. It never invents a plausible number.'
+  CD_RULE_004: '**A guard CLOSES ITS CLASS or DECLARES ITS OWN LIMIT — and says which, consistently in the check header, the register entry AND the execution contract. A register entry may not claim more than its guard delivers.** THIS ONE IS THE SPINE OF YOUR ITEM.'
+  CD_RULE_005: 'Every governed timestamp from `date -u +%FT%TZ` and from nothing else.'
+  CD_RULE_006: '**A residue declaration must name a layer MEASURED to hold it.** An unproved hand-off is written **"NOT PROVED TO BE CARRIED ANYWHERE"**.'
+  CD_RULE_009: '**Every fingerprint, hash or count records the exact command that produces it, beside it, in a form a reader can paste.** A count with no command is not evidence.'
+  CD_PL_F98: '**RUN EACH TREE''S OWN COPY OF A PROBE AND READ ITS `tree:` LINE EVERY TIME.** A contrast run with the wrong tree on `sys.path` is indistinguishable from a fix that does nothing.'
+  CD_PL_F128: '**AND THE SAME DISCIPLINE FOR SCRATCH DIRECTORIES.** Yours is `/tmp/cd-eng-wo2r3-08/`. Never glob another''s.'
+  CD_PL_F36: '**RESOLVE SHAs, NEVER TRANSCRIBE THEM** — `git rev-parse` plus `git cat-file -t`.'
+  CD_D_079_BOTH_ARMS: >
+    **EVERY CLAIM THAT SOMETHING IS REFUSED REQUIRES THE COUNTERFACTUAL ARM.** Show it refused AND
+    show the same probe succeeding where the guard is absent. A refusal with no contrast is
+    indistinguishable from a probe that never ran.
+  runtime_claims_need_runtime_proof: >
+    "Unconstructible", "sealed", "refused" are RUNTIME claims. **EVERY ESCAPE ON THIS PROJECT'S
+    RECORD PASSED STATIC CHECKERS.** Construct the thing. Read the exception type and message.
+    **NAME THE LAYER THAT REFUSED FROM THE FAILURE TEXT, NOT FROM THE EXIT CODE.**
+
+how_you_work:
+  commit_as_you_go: >
+    **COMMIT IN THE LANE AS YOU FINISH EACH PART (A, B, C, D), NOT AT THE END.** Ten seats before you
+    have done this and it has saved this project five times. **THE DISPATCHING PROJECT LEAD HAS DIED
+    AT ITS OWN WRAPPER CEILING MID-INCREMENT AND THE WORK SURVIVED ONLY BECAUSE IT WAS IN THE LANE**
+    (PBG-CONT-007, CD-D-007, five occurrences). **A RESULT THAT EXISTS ONLY IN YOUR RETURN MESSAGE IS
+    NOT PROJECT STATE.**
+  a_build_log_entry_per_part_or_per_commit: 'Lane block **0060-0099**, CONTINUE FROM **0095**. NEW entries only. Never edit a landed one.'
+  findings_against_your_own_work: >
+    **TEN CONSECUTIVE SEATS HAVE RAISED FINDINGS AGAINST THEIR OWN WORK AND IT IS THE REASON THIS
+    RECORD IS WORTH ANYTHING.** Raise yours, numbered `CD-ENG-WO2R3-08-Fnn`. A seat that returns
+    clean is not trusted more; it is read harder. **THE PREVIOUS SEAT'S OWN INSTRUMENT CAUGHT ITS
+    OWN FALSE GREEN AND IT SAID SO — THAT IS WHY ANY OF ITS OTHER NUMBERS ARE BELIEVED.**
+  findings_against_THIS_DISPATCH: >
+    **RAISE THEM.** The last three increments each found a real defect in the dispatch that ordered
+    them, and all three were UPHELD against the Project Lead that wrote them. If ITEM_1 is
+    undeliverable as written, **SAY WHICH SENTENCE IS WRONG.**
+  stops_are_successes: >
+    **`STOPPED_AT_ITEM_1` IS A SUCCESS, NOT A FAILURE.** So is `SCOPE_INSUFFICIENT` for a named file.
+    **WHAT IS NOT AVAILABLE IS QUIETLY WIDENING YOUR SCOPE, OR CONSTRUCTING STATE SO A CONTROL
+    APPEARS TO PASS** (non-waivable).
+
+expected_return: 'READY_FOR_ASSURANCE — or `STOPPED_AT_ITEM_1`, or `SCOPE_INSUFFICIENT` naming the exact file.'
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  The Project Lead reconciles your return **BY MEASUREMENT, ON ITS OWN `git archive` EXTRACTIONS,
+  NEVER BY READING YOUR CLAIMS**, and banks it. **RECONCILIATION IS NOT ACCEPTANCE** (PBG-AUTH-003).
+  Then increment 10 items 2-5 proceed, and **AN EIGHTH FRESH ASSURANCE SEAT GOES OUT OVER THE WHOLE
+  OF WO-2R3 INCLUDING YOUR WORK, GRADED AGAINST THE DECLARED PERIMETER.** It will be told that your
+  exact-type sweep is an ATTACKABLE CLAIM and not a settled record, and it will be told to try
+  `type.__new__` itself.
