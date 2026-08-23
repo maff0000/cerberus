@@ -197,10 +197,28 @@ def test_the_five_original_words_are_unchanged_in_shape(a_tree):
 
 def test_every_extended_word_is_printed_even_at_zero(a_tree):
     """A vocabulary a reader cannot see is a vocabulary nobody will use correctly. All eight
-    words are printed with their counts, and the three new ones are marked as awaiting
-    Product Owner ratification so no reader mistakes drafted for ruled."""
+    words are printed with their counts.
+
+    **SUPERSEDED IN ONE ASSERTION AT THE WO-2R3 RECORD ACT, AND THE OLD TEXT IS QUOTED HERE
+    RATHER THAN DELETED** (`PBG-CONT-003` — corrections supersede, never edit). It read:
+
+        assert "EXTENDED, PO RATIFICATION PENDING" in result.stdout
+
+    written when the three words were the Project Lead's DRAFT and the marker existed *"so no
+    reader mistakes drafted for ruled"*. `PO-DECISIONS-0014` ruling 1 RATIFIED `CARRIER_ONLY`
+    as drafted, RATIFIED `DEFECT_OPEN` with the findings register attached, and REDRAFTED
+    `UPSTREAM_OF_THE_PATH`. **The marker is now the false statement it was written to
+    prevent**, so it is gone and the assertion follows it. The word EXTENDED is kept, because
+    the shape difference it names — `(word, evidence mapping)` and not `(word, note)` — did
+    not change.
+    """
     result = _run(a_tree)
     for word in ("DEFECT_OPEN", "CARRIER_ONLY", "UPSTREAM_OF_THE_PATH"):
         assert word in result.stdout
-    assert "EXTENDED, PO RATIFICATION PENDING" in result.stdout
+    assert "(EXTENDED)" in result.stdout
+    assert "PO RATIFICATION PENDING" not in result.stdout, (
+        "the three words were ratified or redrafted by PO-DECISIONS-0014 ruling 1; a marker "
+        "saying otherwise is a stale claim in the instrument's own output.\n"
+        + result.stdout[:4000]
+    )
     assert "words used that are NOT in the vocabulary: 0" in result.stdout

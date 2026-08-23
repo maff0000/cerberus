@@ -1,0 +1,210 @@
+# ================================================================================================ #
+# WO-2R3 THE RECORD ACT — ITEM 2. THE REDRAFTED `UPSTREAM_OF_THE_PATH`, BOUND TO THE SITE REGISTER.
+#
+# **THIS COMMIT CHANGES NO PRODUCT BEHAVIOUR AND FIXES NO DEFECT.** Nothing under `src/` is opened.
+# **AND THE SWEEP'S VIOLATION COUNT IS STILL UNMOVED — 534 sites, 15 violations, EXIT 1.** The
+# mechanism this commit lands has nothing to work on until ITEM 3 writes the rows.
+#
+# **THE LITERAL READING WAS BUILDABLE AND THIS SEAT TOOK IT. THERE IS NO `STOPPED_AT_ITEM_2`.**
+# The reasons, the two places the content document is WRONG about its own instrument, and the one
+# place this seat thinks the redraft is weaker than it reads, are all below.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0080. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T032251Z-0081
+timestamp_utc: "2026-08-23T03:22:51Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-04
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0014.md ruling 1; PO-DECISIONS-0015.md rulings 4 and 6'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: af2accbfc950961bb7f7967d34ecf16414088228
+parent_entry_id: BL-20260823T031357Z-0080
+schema_version: 1
+
+record_type: RECORD_ACT_ITEM
+
+CORRECTION_TO_THE_PREVIOUS_ENTRY__SUPERSEDING_AND_NEVER_EDITING:
+  rule: 'PBG-CONT-003, non-waivable. BL-20260823T031357Z-0080 is not edited and never will be.'
+  what_was_wrong: >
+    That entry and its commit message both record `tests/test_findings_register.py` as
+    **12 passed**. **IT IS ELEVEN.** Measured: `PYTHONPATH=src python3 -B -m pytest -q
+    tests/test_findings_register.py tests/test_disposition_contract.py` -> `22 passed`, which is
+    11 + 11. The 12 was this seat COUNTING ITS OWN TEST FUNCTIONS BY EYE instead of reading the
+    number the instrument printed — **CD-RULE-009's exact shape, committed by the seat writing the
+    entry that quotes CD-RULE-009 twice.** Raised against itself as `CD-ENG-WO2R3-04-F03`.
+  why_it_matters_more_than_the_number: >
+    It is the fourth instance in this programme of a count carried in prose losing to a count
+    printed by an instrument, and the first where the prose and the instrument were in the same
+    commit.
+
+the_ruling_being_implemented_verbatim: >
+  PO-DECISIONS-0014 ruling 1 — *"`UPSTREAM_OF_THE_PATH` — REJECTED AS DRAFTED, for exactly the
+  reasons its own author measured: it binds the module register where its siblings bind the site
+  register, and its fields are prose no machine can check. It is REDRAFTED to bind the SITE
+  register with machine-checkable fields."*
+
+what_landed:
+  the_binding: >
+    `WORDS_NOT_ADMITTED_IN_THE_MODULE_REGISTER` — the word is refused in
+    `DECLARED_MODULE_DISPOSITIONS` (`WORD_NOT_ADMITTED_IN_MODULE_REGISTER`). **EXACTLY THE ONE WORD
+    THE RULING NAMED AND NOT ONE MORE**: `DEFECT_OPEN` and `CARRIER_ONLY` remain admitted there,
+    unused, because being stricter than a ruling is still departing from it.
+  the_fields: >
+    `EXTENDED_DISPOSITIONS["UPSTREAM_OF_THE_PATH"]` is now `("operand_origin", "gates")`. The
+    drafted `decides`/`route` are GONE, not added to — an entry written against the draft now
+    FAILS, and that has its own carrier.
+  operand_origin: >
+    Membership in `OPERAND_ORIGINS`, a CLOSED set this instrument owns — `SOURCE_DECLARATION` ·
+    `MODULE_CONSTANT` · `OWN_CONSTRUCTION` · `CALLER_SUPPLIED`.
+    `OPERAND_ORIGIN_NOT_IN_THE_CLOSED_SET`.
+  gates: >
+    A SITE KEY 4-tuple that (a) EXISTS in this run's own measured site set and (b) lies in a
+    DIFFERENT module from the declaring site. `GATES_SITE_DOES_NOT_EXIST`,
+    `GATES_SITE_IS_IN_THE_DECLARING_MODULE`.
+  the_conditional_field: >
+    `operand_origin: CALLER_SUPPLIED` REQUIRES `finding` (`CALLER_SUPPLIED_WITHOUT_A_FINDING`),
+    which then resolves through ITEM 1's register or the row refuses. **AND THE RESOLUTION CHECK IS
+    DELIBERATELY NOT IN THIS FUNCTION** — it is ITEM 1's `_finding_resolution_violations`, which
+    reads EVERY citation in EITHER register, so `DEFECT_OPEN` and `UPSTREAM_OF_THE_PATH` cannot
+    drift apart on the one field they share.
+  the_site_register_now_covers_both_tiers: >
+    `DECLARED_ADMISSIONS` may carry tier-2 keys. STALE is measured against ALL site keys rather
+    than tier-1 only — otherwise every tier-2 entry the derivation needs would be reported as a
+    declaration for a site that does not exist. **Set equality still holds in both directions; the
+    set it holds over got bigger.**
+  the_derivation: >
+    A module with no `DECLARED_MODULE_DISPOSITIONS` entry is DECLARED iff its distinct tier-2 site
+    key set is NON-EMPTY and is a subset of the site register. The non-empty guard is load-bearing
+    and is not defensive coding: a module with no tier-2 sites would otherwise be derived
+    VACUOUSLY, and **a derivation satisfied by an empty set is a default wearing a computation's
+    name.**
+  the_carrier: 'tests/test_upstream_of_the_path.py — 19 tests, every check with a refusing arm AND a passing arm.'
+
+THE_PRICE__MEASURED_BEFORE_A_SINGLE_ROW_WAS_WRITTEN:
+  what_the_dispatch_and_the_content_document_said: >
+    *"`crash_detector.admission` **33** tier-2 occurrences, `crash_detector.establishment` **17**.
+    Those collapse to some SMALLER number of distinct site keys because the register declares the
+    EXPRESSION and not each occurrence. THE PROJECT LEAD HAS NOT MEASURED THE KEY COUNT... MEASURE
+    IT FIRST, BEFORE YOU WRITE A SINGLE ROW, AND REPORT IT."*
+  what_this_seat_measured: >
+    **THEY DO NOT COLLAPSE. AT ALL.** `crash_detector.admission`: 33 occurrences, **33 DISTINCT
+    SITE KEYS**. `crash_detector.establishment`: 17 occurrences, **17 DISTINCT SITE KEYS**. The
+    price is **EXACTLY 50 ROWS**, which is the number the content document explicitly declined to
+    quote — and it declined for the right reason (it had not measured) and landed on the right
+    number anyway.
+  where_the_collapse_actually_lives: >
+    Across the whole closure, 482 tier-2 occurrences collapse to 472 distinct keys — TEN
+    duplicates, and **not one of them is in either of the two modules that needed them**. They are
+    in `dials.magnitude` (53->49), `dials.provenance` (68->67), `dials.reading` (50->49),
+    `engine.evaluate` (29->27), `serving.witness_resolver` (14->13), `staleness` (19->18). The
+    instrument now PRINTS both numbers per module on every run, so nobody has to take this
+    paragraph's word for it.
+  and_the_tier_1_side_does_collapse: '52 tier-1 occurrences -> 45 distinct keys, which is where the register''s own docstring example lives.'
+
+THIS_SEATS_VIEW_ON_THE_REDRAFT__DISAGREEMENT_WAS_INVITED_AND_HERE_IT_IS:
+  the_verdict_first: >
+    **THE LITERAL READING IS BUILDABLE, IT IS RIGHT, AND IT IS STRONGER THAN THE CHEAP READING
+    §1.4 NAMES.** No `STOPPED_AT_ITEM_2`. Two things settled it, and neither is deference.
+  reason_1_the_cheap_reading_cannot_be_written_at_all: >
+    §1.4's alternative is *"keep a MODULE-level entry whose fields reference site keys"*. But
+    ruling 1's FIRST stated ground for rejection is that the word *"binds the module register where
+    its siblings bind the site register"*. A module-level entry that references site keys is still
+    a module-level entry. **The cheap reading fixes the second half of the objection and leaves the
+    first half exactly where it was.**
+  reason_2_the_conditional_clause_only_pays_off_per_site: >
+    `CALLER_SUPPLIED` -> `finding` is the strongest thing in the redraft, and at MODULE granularity
+    it is unusable: `crash_detector.admission` has caller-supplied operands at some sites and
+    module constants at others, so ONE module-level `operand_origin` would have to be the weakest
+    of the 33 or a lie. **Per site, the field says something different 33 times. That is the
+    difference between a register and a label.**
+  WHERE_THIS_SEAT_THINKS_THE_REDRAFT_IS_WEAKER_THAN_IT_READS:
+    the_gates_field_is_falsifiable_but_it_is_not_specific: >
+      §1.2 says `gates` *"names a concrete downstream point in another module, and the day that
+      point moves, is renamed, or dies, the row refuses."* **The second half is true and it is
+      carried. The first half is weaker than it sounds.** Nothing in the instrument checks that the
+      named site is DOWNSTREAM of the declaring one, or reachable from it, or related to it in any
+      way. `gates` is EXISTENCE + DIFFERENT-MODULE, and nothing else. A row naming any tier-1 site
+      in any other module passes. **THE GATING RELATION IS STILL A CLAIM BY THE SEAT WRITING THE
+      ROW; WHAT THE MACHINE CHECKS IS THAT THE CLAIM POINTS AT SOMETHING THAT EXISTS.** That is a
+      real improvement over prose and it is NOT the same as a checked route, and the content
+      document's sentence invites the stronger reading.
+    the_rename_test_answer_reported_whichever_way_it_falls: >
+      **IT DOES NOT SURVIVE A RENAME.** Renaming `window` in `crash_detector.engine.config` makes
+      every row gating `isinstance(window, float)` REFUSE. Measured, with the arm run
+      (`test_THE_RENAME_TEST_...`). That is DECLARED LIMIT 4 of this tool applied to the new field
+      — the safe direction, deliberately. **THE COST, STATED RATHER THAN LEFT TO BE FOUND: the
+      refusal is credited to TEXT, not to STRUCTURE.** An auditor must read a
+      `GATES_SITE_DOES_NOT_EXIST` as *"somebody moved the thing this points at, go and look"* and
+      NEVER as *"the gating relationship has been broken"*. This instrument cannot tell those two
+      facts apart and does not claim to.
+    and_it_is_still_DECLARED_LIMIT_1_underneath: >
+      A well-formed lie passes. `operand_origin: OWN_CONSTRUCTION` on a site whose operand is
+      caller-supplied is a false claim the machine cannot see. The redraft closed the SHAPE of the
+      claim, which is the whole of what a static register can close.
+
+TWO_PLACES_THE_CONTENT_DOCUMENT_IS_WRONG_ABOUT_ITS_OWN_INSTRUMENT:
+  first__the_site_register_did_NOT_already_emit_tier_2_keys_it_could_use: >
+    §1.1: *"admitted only in `DECLARED_ADMISSIONS`, whose site keys the sweep already emits for
+    tier-2 deciding operations as well as tier-1 admissions."* **THE SWEEP EMITS THEM; THE REGISTER
+    REFUSED THEM.** At `af2accb`, `stale = set(declared_admissions) - admissions` compared the
+    register against TIER-1 ONLY, so every tier-2 entry §1.1 describes as already possible would
+    have been reported as `STALE DECLARATION` — a declaration for a site that does not exist. The
+    redraft as literally written was **not implementable without a change to the instrument's set
+    equality**, and that change is in this commit. Not a defect in the ruling; a defect in the
+    document's account of what the tool already did.
+  second__the_CARRIER_ONLY_field_texts_in_section_3_would_have_been_VACUOUS: 'recorded at ITEM 3, where the rows are written.'
+
+what_this_does_NOT_close:
+  - '**IT DOES NOT MOVE THE SWEEP.** EXIT 1, 534 sites, 15 violations, before and after. The
+     mechanism has nothing to work on until ITEM 3.'
+  - '**IT DOES NOT CHECK THAT A GATING RELATION EXISTS**, only that the named site does and that it
+     is elsewhere. Stated above at length because the document''s wording invites more.'
+  - '**IT DOES NOT MAKE `operand_origin` TRUE.** Membership in a closed set is not evidence of
+     membership in the world.'
+  - '**NOTHING UNDER `src/` WAS OPENED** and no defect was fixed.'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  class_2_sweep_before_item_2: 'EXIT 1 — 534 sites, 15 violations.'
+  class_2_sweep_after_item_2: 'EXIT 1 — 534 sites, 15 violations. UNMOVED.'
+  upstream_carrier: 'EXIT 0 — 19 passed (tests/test_upstream_of_the_path.py).'
+  full_suite: 'EXIT 0 — 1610 passed. Baseline was 1580; +11 (ITEM 1) +19 (ITEM 2).'
+  one_existing_test_SUPERSEDED_not_deleted: >
+    `tests/test_disposition_contract.py::test_every_extended_word_is_printed_even_at_zero` asserted
+    `"EXTENDED, PO RATIFICATION PENDING"`. **THE THREE WORDS ARE NO LONGER PENDING** — ruling 1
+    ratified two and redrafted the third — so the marker had become the false statement it was
+    written to prevent. The old assertion is QUOTED VERBATIM in the test's own docstring and the
+    new one asserts the stale marker is ABSENT. Nothing was deleted and no assertion was weakened:
+    the test now checks strictly more than it did.
+
+findings_against_my_own_work:
+  CD-ENG-WO2R3-04-F03: >
+    **A COUNT IN THE PREVIOUS ENTRY WAS TRANSCRIBED FROM MY OWN EYES RATHER THAN READ OFF THE
+    INSTRUMENT** — 12 where pytest printed 11. Superseded above. CD-RULE-009's shape, in the commit
+    that cites CD-RULE-009.
+  CD-ENG-WO2R3-04-F04: >
+    **THE DERIVATION'S PASSING ARM AND ITS REFUSING ARM BOTH USE A SYNTHETIC MODULE**
+    (`crash_detector.dials.dialset`, 3 tier-2 keys, its module entry popped in a throwaway copy).
+    That proves the mechanism. It does NOT prove the mechanism over the two modules this act
+    actually derives, which have 33 and 17 keys. **The arm over the real subject is owed and is
+    written at ITEM 3**; if this entry were the last one, the derivation would be evidenced only
+    on a case this seat constructed to be easy.
+  CD-ENG-WO2R3-04-F05: >
+    `gates` is checked for EXISTENCE and DIFFERENT-MODULE and for nothing else, while the content
+    document's language ("the downstream tier-1 admission whose establishment this site's decision
+    governs") describes a relation no instrument here verifies. **THIS IS THE SAME SHAPE AS THIS
+    PROJECT'S SIGNATURE DEFECT — a declaration narrower or wider than its measured reach — and it
+    is in the field I built.** Disclosed rather than discovered.
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. **A RECORD, NOT ASSURANCE.** This seat does not certify this work. The
+  view above on the Project Lead's redraft is a VIEW; ratification is the Product Owner's
+  (PBG-AUTH-003) and this seat has no authority to accept or reject a reading.

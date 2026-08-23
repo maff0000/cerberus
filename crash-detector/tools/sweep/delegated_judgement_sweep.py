@@ -273,14 +273,139 @@ EXTENDED_DISPOSITIONS = {
     # This word is an ENUMERATION, NOT A CLAIM, and it breaks the build the day somebody
     # adds an import.
     "CARRIER_ONLY": ("callable", "why_it_is_not_product_judgement"),
-    # This module is not itself a judgement path AND belongs in the closure anyway, because
-    # what it decides is whether judgement-path doors establish their arguments at all.
-    # **IT IS THE OPPOSITE OF AN EXCUSE.**
-    "UPSTREAM_OF_THE_PATH": ("decides", "route"),
+    # **REDRAFTED BY PO-DECISIONS-0014 RULING 1, WHICH REJECTED IT AS DRAFTED.** This site is
+    # not itself a judgement path AND belongs in the closure anyway, because what it decides
+    # is whether judgement-path doors establish their arguments at all. **IT IS THE OPPOSITE
+    # OF AN EXCUSE**, and under the redraft it cannot be written without saying WHERE THE
+    # OPERAND CAME FROM and NAMING A CONCRETE DOWNSTREAM POINT IN ANOTHER MODULE. The drafted
+    # fields (`decides`, `route`) were prose no machine could check and are GONE.
+    "UPSTREAM_OF_THE_PATH": ("operand_origin", "gates"),
 }
 
 #: Every word the register may use. Anything else is `UNKNOWN_DISPOSITION`.
 ALL_DISPOSITIONS = tuple(DISPOSITIONS) + tuple(EXTENDED_DISPOSITIONS)
+
+# ======================================================================================= #
+# THE REDRAFTED `UPSTREAM_OF_THE_PATH` — `PO-DECISIONS-0014` ruling 1:
+#
+#   *"REJECTED AS DRAFTED, for exactly the reasons its own author measured: it binds the
+#    module register where its siblings bind the site register, and its fields are prose no
+#    machine can check. It is REDRAFTED to bind the SITE register with machine-checkable
+#    fields."*
+#
+# THREE THINGS CHANGED AND EACH ONE CAN BE MADE TO FAIL:
+#
+#  (a) **THE WORD IS NOT ADMITTED IN THE MODULE REGISTER AT ALL.** It lives only in
+#      :data:`DECLARED_ADMISSIONS` — the SITE register — where its siblings live.
+#      `WORD_NOT_ADMITTED_IN_MODULE_REGISTER`.
+#  (b) **`operand_origin` IS MEMBERSHIP IN A CLOSED SET THIS INSTRUMENT OWNS.** Not a
+#      sentence about where the operand came from — one of four names, and any other string
+#      refuses. `OPERAND_ORIGIN_NOT_IN_THE_CLOSED_SET`.
+#  (c) **`gates` IS A SITE KEY AND NOT A ROUTE DESCRIPTION.** It must EXIST in this run's own
+#      measured site set and it must lie in a DIFFERENT module from the declaring site.
+#      `GATES_SITE_DOES_NOT_EXIST`, `GATES_SITE_IS_IN_THE_DECLARING_MODULE`. The claim the
+#      word exists to make — *"what this decides is whether judgement-path doors establish at
+#      all"* — was previously prose. It now names a concrete downstream point, and **the day
+#      that point moves, is renamed, or dies, the row refuses.** A claim about a route that
+#      survives the route disappearing is not a claim.
+#
+# AND THE CONDITIONAL FIELD, WHICH IS THE WHOLE POINT OF THE WORD: if `operand_origin` is
+# `CALLER_SUPPLIED`, the entry MUST also carry `finding`, and that finding must resolve to an
+# `OPEN` row in the findings register or the row REFUSES
+# (`CALLER_SUPPLIED_WITHOUT_A_FINDING`, then `FINDING_DOES_NOT_RESOLVE`/`FINDING_IS_NOT_OPEN`).
+# **THERE IS NO SPELLING OF `UPSTREAM_OF_THE_PATH` THAT RECORDS A CALLER-CONTROLLED OPERAND
+# AND CLAIMS NOTHING IS WRONG.** The old draft's `route` field could be satisfied by a
+# sentence; this one cannot be satisfied at all without a fact the instrument independently
+# holds.
+# ======================================================================================= #
+
+#: **A CLOSED SET, OWNED BY THIS INSTRUMENT.** Where the deciding operand at this site came
+#: from. Any other string is `OPERAND_ORIGIN_NOT_IN_THE_CLOSED_SET`.
+OPERAND_ORIGINS = (
+    # written in the source of the declaring module or in a `@admits`/`@establishes`
+    # declaration that a module wrote about itself
+    "SOURCE_DECLARATION",
+    # a constant of this module or of an imported one, resolved at import
+    "MODULE_CONSTANT",
+    # a value this module constructed in this scope, so the operation is CPython's
+    "OWN_CONSTRUCTION",
+    # the operand, or the object the operand is read out of, reaches here from a caller.
+    # **REQUIRES A `finding` THAT RESOLVES OPEN.**
+    "CALLER_SUPPLIED",
+)
+
+#: The word(s) :data:`DECLARED_MODULE_DISPOSITIONS` may NOT carry. Exactly what the ruling
+#: named and not one word more — being stricter than a ruling is still departing from it.
+WORDS_NOT_ADMITTED_IN_THE_MODULE_REGISTER = ("UPSTREAM_OF_THE_PATH",)
+
+
+def _upstream_of_the_path_violations(declared_admissions, declared_modules, site_keys):
+    """Every redrafted-word entry whose machine-checked fields do not hold.
+
+    Returns a list of ``(rule, where, detail)``. **THE `finding` HALF IS DELIBERATELY NOT
+    HERE** — it is `_finding_resolution_violations`, which checks EVERY citation in EITHER
+    register, so `DEFECT_OPEN` and `UPSTREAM_OF_THE_PATH` cannot drift apart on it.
+    """
+    found: list = []
+    for key, value in declared_modules.items():
+        if isinstance(value, tuple) and value and value[0] in WORDS_NOT_ADMITTED_IN_THE_MODULE_REGISTER:
+            found.append((
+                "WORD_NOT_ADMITTED_IN_MODULE_REGISTER", str(key),
+                f"{value[0]!r} is a SITE disposition and this is the MODULE register. "
+                "PO-DECISIONS-0014 ruling 1 rejected it as drafted BECAUSE it *\"binds the "
+                "module register where its siblings bind the site register\"*. A module "
+                "answer for this word is DERIVED from per-site entries and is never written.",
+            ))
+    for key, value in declared_admissions.items():
+        if not (isinstance(value, tuple) and len(value) >= 2):
+            continue
+        word, evidence = value[0], value[1]
+        if word != "UPSTREAM_OF_THE_PATH" or not isinstance(evidence, dict):
+            continue
+        where = f"{key[0]}::{key[1]} {key[2]}: {key[3]}" if isinstance(key, tuple) else str(key)
+        origin = evidence.get("operand_origin")
+        if origin not in OPERAND_ORIGINS:
+            found.append((
+                "OPERAND_ORIGIN_NOT_IN_THE_CLOSED_SET", where,
+                f"{origin!r} is not an operand origin. The CLOSED set is "
+                f"{list(OPERAND_ORIGINS)}. **THE DRAFTED FIELDS WERE PROSE NO MACHINE COULD "
+                "CHECK, AND THIS IS WHAT REPLACED THEM.**",
+            ))
+        gates = evidence.get("gates")
+        gates = tuple(gates) if isinstance(gates, (list, tuple)) else gates
+        if not (isinstance(gates, tuple) and len(gates) == 4
+                and all(isinstance(part, str) for part in gates)):
+            found.append((
+                "GATES_SITE_DOES_NOT_EXIST", where,
+                f"`gates` is a SITE KEY 4-tuple (module, qualname, category, expression); "
+                f"found {evidence.get('gates')!r}.",
+            ))
+        elif gates not in site_keys:
+            found.append((
+                "GATES_SITE_DOES_NOT_EXIST", where,
+                f"`gates` names {gates!r}, which is NOT in this run's measured site set. "
+                "**A CLAIM ABOUT A ROUTE THAT SURVIVES THE ROUTE DISAPPEARING IS NOT A "
+                "CLAIM.** The day the gated point moves, is renamed, or dies, this row "
+                "refuses — which is the entire reason the field is a key and not a sentence.",
+            ))
+        elif isinstance(key, tuple) and gates[0] == key[0]:
+            found.append((
+                "GATES_SITE_IS_IN_THE_DECLARING_MODULE", where,
+                f"`gates` names a site in {gates[0]}, which is the DECLARING site's own "
+                "module. The word asserts that this site is UPSTREAM of a judgement path; a "
+                "site that only gates its own module has not been shown to be upstream of "
+                "anything.",
+            ))
+        if origin == "CALLER_SUPPLIED" and not _finding_ids(evidence):
+            found.append((
+                "CALLER_SUPPLIED_WITHOUT_A_FINDING", where,
+                "`operand_origin: CALLER_SUPPLIED` requires a `finding` that resolves OPEN. "
+                "**THERE IS NO SPELLING OF THIS WORD THAT RECORDS A CALLER-CONTROLLED OPERAND "
+                "AND CLAIMS NOTHING IS WRONG.** The binding constraint the word was drafted "
+                "against was *\"no new word may be a synonym for 'not looked at'\"*, and this "
+                "clause is where that is true.",
+            ))
+    return found
 
 
 # ======================================================================================= #
@@ -716,15 +841,43 @@ def main(argv=None) -> int:
 
     admissions = {site for site in sites if site[2] in TIER_1_ADMISSION}
     deciding = [site for site in sites if site[2] not in TIER_1_ADMISSION]
+    # **THE SITE REGISTER NOW COVERS BOTH TIERS.** A tier-1 admission must be declared or the
+    # run fails; a tier-2 site MAY be declared, and declaring every one of a module's tier-2
+    # sites is what DERIVES that module's answer (PO-DECISIONS-0014 ruling 1, as read in
+    # `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md` §1.3).
+    tier_2_keys = set(deciding)
+    all_site_keys = admissions | tier_2_keys
 
     undeclared = sorted(admissions - set(declared_admissions))
-    stale = sorted(set(declared_admissions) - admissions)
-    undeclared_modules = sorted(set(subject) - set(declared_modules))
+    # STALE is measured against ALL site keys, not only tier-1 ones — otherwise every tier-2
+    # entry the derivation needs would be reported as a declaration for a site that does not
+    # exist. Set equality still holds in both directions; the set it holds over got bigger.
+    stale = sorted(set(declared_admissions) - all_site_keys)
+
+    tier_2_keys_by_module: dict = collections.defaultdict(set)
+    for site in tier_2_keys:
+        tier_2_keys_by_module[site[0]].add(site)
+    # **THE DERIVED MODULE ANSWER.** A module with a module-register entry keeps it. A module
+    # WITHOUT one is DECLARED only if EVERY ONE of its distinct tier-2 site keys carries a
+    # site entry. The non-empty guard is load-bearing: a module with no tier-2 sites at all
+    # would otherwise be derived VACUOUSLY, and a derivation that is satisfied by an empty set
+    # is a check that cannot fail. **REMOVE ONE TIER-2 ENTRY AND THE MODULE GOES UNDECLARED.**
+    derived_modules = {
+        module
+        for module in subject
+        if module not in declared_modules
+        and tier_2_keys_by_module[module]
+        and tier_2_keys_by_module[module] <= set(declared_admissions)
+    }
+    undeclared_modules = sorted(set(subject) - set(declared_modules) - derived_modules)
     stale_modules = sorted(set(declared_modules) - set(subject))
 
     by_category = collections.Counter(site[2] for site in sites)
     tier_1_dispositions = collections.Counter(
         declared_admissions[site][0] for site in admissions if site in declared_admissions
+    )
+    tier_2_dispositions = collections.Counter(
+        declared_admissions[site][0] for site in tier_2_keys if site in declared_admissions
     )
     tier_2_by_module = collections.Counter(site[0] for site in deciding)
 
@@ -734,9 +887,17 @@ def main(argv=None) -> int:
         f"{len(JUDGEMENT_ENTRY_MODULES)} judgement entry modules = {len(subject)} modules"
     )
     for module in subject:
-        disposition = declared_modules.get(module, ("UNDECLARED", ""))[0]
+        if module in declared_modules:
+            disposition = declared_modules[module][0]
+        elif module in derived_modules:
+            disposition = "DERIVED"
+        else:
+            disposition = "UNDECLARED"
+        declared_here = len(tier_2_keys_by_module[module] & set(declared_admissions))
         print(f"        [{disposition:12s}] {module:44s} tier-2 sites: "
-              f"{tier_2_by_module[module]}")
+              f"{tier_2_by_module[module]:4d} occurrences, "
+              f"{len(tier_2_keys_by_module[module]):4d} distinct keys, "
+              f"{declared_here:4d} declared per site")
     print(f"    OUTSIDE THE CLOSURE, therefore NOT swept: {len(outside)} modules")
     for module in outside:
         print(f"        {module}")
@@ -749,10 +910,13 @@ def main(argv=None) -> int:
     for category, count in sorted(by_category.items()):
         if category not in TIER_1_ADMISSION:
             print(f"            {category:12s} {count}")
-    print("    TIER 1 DISPOSITIONS, declared per site:")
+    print("    DISPOSITIONS DECLARED PER SITE — tier 1 (mandatory) | tier 2 (derives the module):")
     for disposition in ALL_DISPOSITIONS:
-        marker = "  (EXTENDED, PO RATIFICATION PENDING)" if disposition in EXTENDED_DISPOSITIONS else ""
-        print(f"        {disposition:22s} {tier_1_dispositions[disposition]}{marker}")
+        marker = "  (EXTENDED)" if disposition in EXTENDED_DISPOSITIONS else ""
+        print(f"        {disposition:22s} {tier_1_dispositions[disposition]:4d} | "
+              f"{tier_2_dispositions[disposition]:4d}{marker}")
+    print(f"        {'MODULES DERIVED':22s} {len(derived_modules):4d}       "
+          f"{sorted(derived_modules) if derived_modules else ''}")
     # **A WORD THE VOCABULARY DOES NOT KNOW USED TO VANISH HERE.** The loop printed the five
     # and a register entry carrying anything else was counted into nothing and never shown.
     # It is now a violation (UNKNOWN_DISPOSITION); this line is the visible half of that.
@@ -786,6 +950,9 @@ def main(argv=None) -> int:
         findings_problems
         + _disposition_contract_violations(declared_admissions, declared_modules)
         + _carrier_only_violations(declared_admissions, sources, subject)
+        + _upstream_of_the_path_violations(
+            declared_admissions, declared_modules, all_site_keys
+        )
         + _finding_resolution_violations(declared_admissions, declared_modules, findings)
     )
 
@@ -811,10 +978,16 @@ def main(argv=None) -> int:
         )
     for module in undeclared_modules:
         violations += 1
+        missing = sorted(tier_2_keys_by_module[module] - set(declared_admissions))
         print(
             f"    UNDECLARED MODULE: {module}\n"
             "        A module entered the judgement closure with no tier-2 disposition. "
-            "Say how its deciding operands are established, or say they are not."
+            "Say how its deciding operands are established, or say they are not — EITHER by "
+            "a DECLARED_MODULE_DISPOSITIONS entry in one of the five original words, OR by "
+            "declaring EVERY ONE of its tier-2 sites per site, which DERIVES the module "
+            "answer instead of asserting it.\n"
+            f"        tier-2 site keys still undeclared: {len(missing)} of "
+            f"{len(tier_2_keys_by_module[module])}"
         )
     for module in stale_modules:
         violations += 1
@@ -828,20 +1001,29 @@ def main(argv=None) -> int:
             f"CD-CLASS-2-SWEEP: FAIL — {len(sites)} sites, {violations} violations"
         )
         return 1
-    open_sites = (
-        tier_1_dispositions["DELEGATED"] + tier_1_dispositions["OUT_OF_BOUND"]
+    open_words = ("DELEGATED", "OUT_OF_BOUND", "DEFECT_OPEN")
+    open_sites = sum(
+        tier_1_dispositions[word] + tier_2_dispositions[word] for word in open_words
     )
     open_modules = sum(
         1
         for module in subject
-        if declared_modules[module][0] in ("DELEGATED", "OUT_OF_BOUND")
+        if declared_modules.get(module, ("DERIVED", ""))[0] in open_words
     )
     print(
         f"CD-CLASS-2-SWEEP: PASS — {len(sites)} sites enumerated over {len(subject)} "
-        f"modules; every tier-1 admission and every subject module carries a written "
-        f"disposition; {open_sites} tier-1 sites and {open_modules} modules are declared "
-        "OPEN or OUT OF BOUND and are named in this increment's Build Log. A PASS here is "
-        "a statement about the SURFACE and never about the class."
+        f"modules; every tier-1 admission and every subject module carries a written or "
+        f"DERIVED disposition; {open_sites} sites and {open_modules} modules are declared "
+        "OPEN, OUT OF BOUND or an OPEN DEFECT and are named in this increment's Build Log."
+    )
+    print(
+        "    **READ THE LINE ABOVE AS WHAT IT IS.** A PASS here is a statement about the "
+        "SURFACE and never about the class. It says every site the enumerator found carries "
+        f"a written disposition — including {tier_1_dispositions['DEFECT_OPEN'] + tier_2_dispositions['DEFECT_OPEN']} "
+        "sites DECLARED AS OPEN DEFECTS, which are open defects and not fixed ones. **A "
+        "REGISTER FULL OF `DEFECT_OPEN` BUYS NOTHING** — not a pass of any gate, not an "
+        "exemption, and it does not mean anything was repaired. A zero exit code here is "
+        "ARITHMETIC over the declaration set, not evidence about the code."
     )
     return 0
 
