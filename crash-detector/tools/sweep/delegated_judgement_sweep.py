@@ -173,6 +173,66 @@ DECLARED LIMIT (CD-RULE-004). This tool CLOSES NOTHING; it counts.
     is better to be asked to re-declare a site than to have a register quietly follow a
     rename. It also means a clean run of this tool is evidence about THIS SOURCE TEXT and
     survives no rewriting of it.
+
+ 5  **THE `gates` FIELD OF `UPSTREAM_OF_THE_PATH` IS UNSOUND IN BOTH DIRECTIONS AT ONCE. IT
+    REFUSES WHEN NOTHING IS WRONG AND IT PASSES WHEN THE CLAIM IS FALSE.** `CD-D-166`'s
+    closure, ordered by `PO-DECISIONS-0018` ruling 4 and taken as a DECLARED LIMIT rather
+    than a repair, because three consecutive seats measured that the field cannot close its
+    class by construction. **THE LIMIT STATES BOTH DIRECTIONS WITH THE MEASURED NUMBERS,
+    BECAUSE A DECLARED LIMIT THAT ONLY ADMITS THE FLATTERING HALF IS NOT A DECLARATION.**
+
+    What the word CLAIMS: *"this site is UPSTREAM of a judgement path — what it decides is
+    whether judgement-path doors establish their arguments at all."* What the machine
+    actually holds is only that the named 4-tuple EXISTS in this run's measured site set and
+    lies in a DIFFERENT module. **IT DOES NOT CHECK THAT IT IS DOWNSTREAM, REACHABLE, OR
+    RELATED**, which the register already said in prose and which is now measured:
+
+      **DIRECTION 1 — IT REFUSES WHEN NOTHING IS WRONG.** Re-measured at WO-2R3 increment 10
+      by `CD-ENG-WO2R3-09`, in a pristine `git archive` extraction: renaming ONE local
+      variable in `crash_detector.engine.config` — `window` -> `staleness_window`, a pure
+      rename, the gating relation entirely intact, 183 product tests still passing in that
+      same extraction — produces **31 `GATES_SITE_DOES_NOT_EXIST` refusals** and takes the
+      sweep from 18 violations to 53. Nothing was broken. The register was.
+
+      **DIRECTION 2 — IT PASSES WHEN THE CLAIM IS FALSE.** In a second extraction, with
+      **ZERO lines under `src/` touched** (`diff -rq src/` against the control: identical),
+      ALL 43 `gates` values were repointed at
+      `crash_detector.time_utc::parse_utc ISINSTANCE: isinstance(text, str)` — a real site
+      that gates nothing whatever about `crash_detector.admission`'s operands. Result:
+      **ZERO refusals, and the verdict is bit-for-bit unmoved — the same `FAIL — 548 sites,
+      18 violations`, the same exit 1.** Every one of the 43 gating claims was false and this
+      instrument said nothing.
+
+    **WHY THIS IS A DECLARED LIMIT AND NOT A FIX**, which is the part an auditor should
+    attack. `CD-ENG-WO2R3-07`'s F17: *"`gates` cannot be made structural by adding a clause,
+    because it is a site key whose fourth element is SOURCE TEXT — so any criterion keyed on
+    it fails the rename test by construction."* Direction 1 is therefore not repairable while
+    the key carries source text, and coarsening the key would weaken the both-directions set
+    equality that the whole register rests on. Direction 2 needs an inter-procedural,
+    cross-module dataflow fact — *does a mis-decision at this site reach that door's operand*
+    — and this tool is declared STATIC and INTRA-PROCEDURAL in LIMIT 1 above.
+
+    **AND A CANDIDATE CLAUSE WAS BUILT IN MEASUREMENT AND REJECTED BY A NUMBER, WHICH IS
+    RECORDED HERE RATHER THAN QUIETLY DROPPED.** The obvious strengthening for direction 2 is
+    to require the `gates` module to transitively import the DECLARING module, computed from
+    the import graph this file already builds in :func:`_closure`. It holds for all 43 real
+    rows and it DOES refuse the direction-2 arm above, because
+    `reach(crash_detector.time_utc)` is exactly two modules and `crash_detector.admission` is
+    not one of them. **IT WAS STILL REJECTED, AND THE NUMBER THAT KILLED IT IS DERIVED AT
+    EVERY RUN AND PRINTED IN THE EXIT BLOCK**: of the 19 subject modules, TEN OTHER THAN
+    `crash_detector.admission` transitively import it and THIRTEEN OTHER THAN
+    `crash_detector.establishment` transitively import that — so repointing the same 43 rows
+    at any real site in `crash_detector.dials.scores`, `crash_detector.engine.model` or the
+    rest satisfies the clause while being exactly as false. **A GUARD THAT STOPS THE REPORTED
+    CASE AND NOT ITS CLASS HAS NOT BEEN TESTED** (`PBG-ASSURE-017`), and shipping it would let
+    a reader believe `gates` is verified when it would be satisfiable by a string swap.
+
+    **WHAT `gates` IS THEREFORE WORTH, STATED PLAINLY:** it is a POINTER THAT ROTS LOUDLY. It
+    guarantees the named site existed in the tree at the moment the register was last green,
+    and nothing else. The gating RELATION is a CLAIM BY THE SEAT THAT WROTE THE ROW, carried
+    in the `note` field, and **the claim an auditor should attack is that prose, not this
+    field.** NOT PROVED TO BE CARRIED ANYWHERE (`CD-RULE-006`): no layer of this project
+    verifies the gating relation, and none is claimed to.
 """
 
 from __future__ import annotations
@@ -799,6 +859,38 @@ def _closure(sources: dict) -> set:
     return reached
 
 
+def _reachable_modules(sources: dict) -> dict:
+    """``module -> every intra-package module it transitively imports``, itself included.
+
+    The same import graph :func:`_closure` walks, exposed per-module. It is used by DECLARED
+    LIMIT 5's live half to report HOW MANY subject modules could satisfy the candidate
+    `gates` clause that was measured and REJECTED — the number that killed the clause,
+    printed at every run so nobody has to take the rejection on trust.
+    """
+    imports: dict = collections.defaultdict(set)
+    for module, tree in sources.items():
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                if node.module and node.module.startswith(PACKAGE):
+                    imports[module].add(node.module)
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name.startswith(PACKAGE):
+                        imports[module].add(alias.name)
+    out: dict = {}
+    for start in sources:
+        reached: set = set()
+        pending = [start]
+        while pending:
+            module = pending.pop()
+            if module in reached or module not in sources:
+                continue
+            reached.add(module)
+            pending.extend(imports[module])
+        out[start] = reached
+    return out
+
+
 def sweep(root: pathlib.Path):
     package_root = root / "src" / PACKAGE
     if not package_root.is_dir():
@@ -838,7 +930,107 @@ def _load_register():
     return namespace["DECLARED_ADMISSIONS"], namespace["DECLARED_MODULE_DISPOSITIONS"]
 
 
+# ------------------------------------------------------------------------------------- #
+# DECLARED LIMIT 5 — `CD-D-166`, THE `gates` FIELD — CARRIED IN THE EXIT AND NOT ONLY IN THE
+# DOCSTRING. `PO-DECISIONS-0018` ruling 4, and the same lesson `PO-DECISIONS-0018` ruling 1(b)
+# taught the sealing instrument: **A DOCSTRING IS NOT AN EXIT.**
+#
+# **AND IT PRINTS ON EVERY RUN, PASS OR FAIL.** Before this act the only declared-limit text
+# this tool emitted was on the `return 0` path — a limit that appears when the board is green
+# and vanishes when it is not, which is the wrong way round: a reader who sees FAIL is exactly
+# the reader about to decide what the failure means.
+# ------------------------------------------------------------------------------------- #
+
+#: Live counts filled in by :func:`_main`. **EMPTY MEANS NOT MEASURED** and the block says so
+#: rather than printing a number this run did not derive (`CD-RULE-003`).
+GATES_LIVE: dict = {}
+
+
+def _declared_limit_5_text() -> str:
+    if GATES_LIVE:
+        live = (
+            f"  LIVE IN THIS RUN, DERIVED NOW AND NOT TRANSCRIBED: {GATES_LIVE['rows']} `UPSTREAM_OF_THE_PATH`\n"
+            f"    row(s) in the site register, carrying {GATES_LIVE['targets']} DISTINCT `gates` target(s) between\n"
+            f"    them — so ONE re-keyed site moves many rows at once, which is direction 1.\n"
+            "    AND THE NUMBER THAT KILLED THE CANDIDATE CLAUSE, of the "
+            f"{GATES_LIVE['subject']} subject modules:\n"
+            + "".join(
+                f"      {count} module(s) other than {declaring} transitively import it, so any\n"
+                f"        real site in any of them satisfies the clause for that module's row(s).\n"
+                for declaring, count in sorted(GATES_LIVE["satisfiers"].items())
+            )
+        )
+    else:
+        live = (
+            "  LIVE IN THIS RUN: **NOTHING WAS DERIVED** — the run ended before the register was\n"
+            "    read. No number is printed here rather than one this run did not measure.\n"
+        )
+    return (
+        "\n"
+        "================================================================================\n"
+        "DECLARED LIMIT 5 — PRINTED AFTER THE VERDICT, ON EVERY RUN, PASS OR FAIL.\n"
+        "CD-CLASS-2-SWEEP · CD-D-166 · the `gates` field of `UPSTREAM_OF_THE_PATH`\n"
+        "================================================================================\n"
+        "  **THIS FIELD IS UNSOUND IN BOTH DIRECTIONS AT ONCE.** It is closed by DECLARATION,\n"
+        "  not by repair (PO-DECISIONS-0018 ruling 4), and both directions are stated because\n"
+        "  a declared limit that only admits the flattering half is not a declaration.\n"
+        "\n"
+        "  DIRECTION 1 — **IT REFUSES WHEN NOTHING IS WRONG.**\n"
+        "    Renaming ONE local variable in crash_detector.engine.config — `window` ->\n"
+        "    `staleness_window`, a pure rename, the gating relation entirely intact, 183\n"
+        "    product tests still passing in that same tree — produces **31\n"
+        "    GATES-SITE-DOES-NOT-EXIST refusals** and takes this sweep from 18 violations to\n"
+        "    53. Nothing was broken; the register was.\n"
+        "\n"
+        "  DIRECTION 2 — **IT PASSES WHEN THE CLAIM IS FALSE.**\n"
+        "    With ZERO lines under src/ touched, repointing all 43 `gates` values at\n"
+        "    crash_detector.time_utc::parse_utc ISINSTANCE: isinstance(text, str) — a real\n"
+        "    site that gates nothing about crash_detector.admission's operands — produces\n"
+        "    **ZERO refusals and a bit-for-bit unmoved verdict**: the same FAIL — 548 sites,\n"
+        "    18 violations, the same exit 1. All 43 claims false; this tool said nothing.\n"
+        "\n"
+        "  NOTE ON THE SPELLING ABOVE: the refusal rule is written HYPHENATED here, and every\n"
+        "  other rule name is omitted from this block entirely. This text is an EXPLANATION,\n"
+        "  not a violation, and a reader or a test grepping stdout for a rule token that FIRED\n"
+        "  must not be answered by a paragraph describing it. Four tests in\n"
+        "  tests/test_upstream_of_the_path.py assert exactly that absence and they caught this\n"
+        "  block's first draft (CD-ENG-WO2R3-09-F03) — the text was changed, not the tests.\n"
+        "\n"
+        "  BOTH ARMS were measured by CD-ENG-WO2R3-09 at WO-2R3 increment 10, each in its own\n"
+        "  pristine extraction, and the commands are in the execution contract and in the\n"
+        "  required-tests.yaml row beside the numbers (CD-RULE-009). RE-RUN THEM; DO NOT\n"
+        "  QUOTE THEM (CD-PL-F133).\n"
+        "\n"
+        + live +
+        "\n"
+        "  WHY THIS IS DECLARED AND NOT FIXED: direction 1 is not repairable while a site\n"
+        "  key's fourth element is SOURCE TEXT (CD-ENG-WO2R3-07's F17), and direction 2 needs\n"
+        "  an inter-procedural cross-module dataflow fact that DECLARED LIMIT 1 says this\n"
+        "  static, intra-procedural tool does not have. A CANDIDATE CLAUSE — require the\n"
+        "  `gates` module to transitively import the declaring module — WAS MEASURED AND\n"
+        "  REJECTED: it holds for all real rows and DOES refuse direction 2's arm, but the\n"
+        "  counts printed above are how many other subject modules satisfy it, so the same\n"
+        "  falsehood re-pointed at any real site in any of them passes. A guard that stops\n"
+        "  the reported case and not its class has not been tested (PBG-ASSURE-017).\n"
+        "\n"
+        "  **WHAT `gates` IS WORTH: IT IS A POINTER THAT ROTS LOUDLY.** It guarantees the named\n"
+        "  site existed when the register was last green, and NOTHING ELSE. The gating relation\n"
+        "  is a CLAIM BY THE SEAT THAT WROTE THE ROW, carried in that row's `note`, and THAT\n"
+        "  PROSE is what an auditor should attack — not this field. NOT PROVED TO BE CARRIED\n"
+        "  ANYWHERE (CD-RULE-006): no layer of this project verifies the gating relation and\n"
+        "  none is claimed to.\n"
+        "================================================================================"
+    )
+
+
 def main(argv=None) -> int:
+    try:
+        return _main(argv)
+    finally:
+        print(_declared_limit_5_text())
+
+
+def _main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", default=".")
     parser.add_argument("--list", action="store_true", help="print every site")
@@ -849,6 +1041,33 @@ def main(argv=None) -> int:
     declared_admissions, declared_modules = _load_register()
     findings, findings_problems = _load_findings_register()
     sites, subject, outside, sources = sweep(root)
+
+    # --- DECLARED LIMIT 5, the LIVE half: derived here, never transcribed ------------- #
+    _gates_rows = [
+        (key, value[1]) for key, value in declared_admissions.items()
+        if isinstance(value, tuple) and len(value) >= 2
+        and value[0] == "UPSTREAM_OF_THE_PATH" and isinstance(value[1], dict)
+    ]
+    _targets = {tuple(evidence.get("gates") or ()) for _key, evidence in _gates_rows}
+    _declaring = sorted({key[0] for key, _evidence in _gates_rows if isinstance(key, tuple)})
+    _reach = _reachable_modules(sources)
+    #: For each module that DECLARES an `UPSTREAM_OF_THE_PATH` row: how many OTHER subject
+    #: modules transitively import it — i.e. how many modules host a site that would satisfy
+    #: the REJECTED candidate clause while saying something equally false. **THE NUMBER THAT
+    #: KILLED THE CLAUSE, DERIVED AT EVERY RUN SO THE REJECTION IS NOT TAKEN ON TRUST.**
+    _satisfiers = {
+        declaring: sum(
+            1 for module in subject
+            if module != declaring and declaring in _reach.get(module, set())
+        )
+        for declaring in _declaring
+    }
+    GATES_LIVE.update({
+        "rows": len(_gates_rows),
+        "targets": len(_targets),
+        "subject": len(subject),
+        "satisfiers": _satisfiers,
+    })
 
     admissions = {site for site in sites if site[2] in TIER_1_ADMISSION}
     deciding = [site for site in sites if site[2] not in TIER_1_ADMISSION]

@@ -2536,6 +2536,114 @@ criteria:
         excuse it, which makes this plant the VACUITY GUARD on that clause as well.
       evidence_ref: RTR-WO2-0001
 
+  # ================================================================================================
+  # THE CLASS-2 SWEEP GETS A ROW AND AN EXECUTION CONTRACT — WO-2R3 INCREMENT 10, ITEM 4.
+  # PO-DECISIONS-0018 ruling 4: "ITEM 3's closure proceeds inside the remedy increment
+  # (documentary + tools/sweep/)".
+  #
+  # WHY IT DID NOT HAVE ONE, AND WHY THAT WAS THE DEFECT. CD-ENG-WO2R3-07 reported at increment 9:
+  # "the Class-2 sweep has no required-tests.yaml row and no execution contract, so 'three places'
+  # does not exist for it." CD-RULE-004 requires a guard's declared limits to be stated identically
+  # in the check header, the register entry AND the execution contract. **AN INSTRUMENT WITH ONLY
+  # ONE PLACE CANNOT SATISFY A RULE ABOUT THREE, AND ITS LIMITS THEREFORE LIVED WHERE ONLY SOMEONE
+  # READING THE SOURCE WOULD FIND THEM.** This row and contracts/execution/CD-RT-005-CLASS-2-SWEEP.md
+  # are the other two places, created so that CD-D-166's closure can be WRITTEN somewhere.
+  #
+  # **THIS ROW ASSERTS A SURFACE ENUMERATION AND CLOSES NOTHING**, and the tool says so in its own
+  # exit on every run. It is here so the enumeration's LIMITS are governed, not to claim the class
+  # is closed. AT THE SHA THIS ROW WAS WRITTEN THE TOOL EXITS 1 — see the arms below. A register row
+  # whose test is RED is an honest row; the WO-2 gate is shut and nothing here opens it.
+  # ================================================================================================
+  - test_id: CD-RT-005-CLASS-2-SWEEP
+    scope: CLASS
+    execute: python3 -B tools/sweep/delegated_judgement_sweep.py --root .
+    execution_contract: contracts/execution/CD-RT-005-CLASS-2-SWEEP.md
+    negative_control:
+      violation: >
+        Any site in the Class-2 subject set — the transitive intra-package import closure of the six
+        modules that host a judgement about staleness, agreement or reading-ness — at which an
+        operation could be executed by an object the enclosing module did not construct, and which
+        carries no written or DERIVED disposition; or any disposition declared for a site that no
+        longer exists. THE REGISTER IS ASSERTED BY SET EQUALITY IN BOTH DIRECTIONS, because one that
+        only noticed additions could be satisfied by deleting the entry that complains.
+        WHAT A ZERO EXIT OF THIS TEST MEANS, AND THE TOOL PRINTS THIS ITSELF: it is a statement
+        about the SURFACE and NEVER about the class. It says every site the enumerator found carries
+        a written disposition — INCLUDING SITES DECLARED AS OPEN DEFECTS, which are open defects and
+        not fixed ones. A REGISTER FULL OF `DEFECT_OPEN` BUYS NOTHING: not a pass of any gate, not
+        an exemption, and not a claim that anything was repaired. A zero exit here is ARITHMETIC
+        OVER THE DECLARATION SET, NOT EVIDENCE ABOUT THE CODE.
+        THIS TEST HAS DECLARED LIMITS (CD-RULE-004), stated identically here, in the header of
+        tools/sweep/delegated_judgement_sweep.py, and in the execution contract.
+        LIMIT 1 — IT IS STATIC AND INTRA-PROCEDURAL. It reads one expression at a time and does not
+        know what any name is bound to at runtime. A disposition of ESTABLISHED is a CLAIM BY THE
+        SEAT THAT WROTE IT about the code around the site, not something this tool verified. The
+        runtime evidence for those claims is tests/test_own_terms.py and the variants under
+        variants/WO-2R2/CLASS-2/, and the claim an auditor should attack is the disposition text,
+        not the count. For a site whose disposition is wrong, NOT PROVED TO BE CARRIED ANYWHERE.
+        LIMIT 2 — IT SEES ONLY OPERATORS AND CALLS WRITTEN LITERALLY IN THE SUBJECT MODULES. An
+        operation reached through operator.lt, functools.reduce, a dunder invoked by name, a
+        comprehension over a caller's generator, or any C-level protocol call CPython makes on this
+        code's behalf is not a node this tool visits.
+        LIMIT 3 — ITS SUBJECT SET IS AN IMPORT CLOSURE, so a module that reaches a judgement without
+        importing one of the six is outside it. The modules outside the closure are printed BY NAME
+        at every run so the exclusion is disclosed rather than discovered. NOT PROVED TO BE CARRIED
+        ANYWHERE.
+        LIMIT 4 — A DISPOSITION IS KEYED BY THE EXPRESSION'S TEXT, so renaming a local variable
+        makes the site UNDECLARED and this tool FAILS. That is the safe direction and it is
+        deliberate. It also means a clean run is evidence about THIS SOURCE TEXT and survives no
+        rewriting of it.
+        LIMIT 5 — CD-D-166, THE `gates` FIELD OF `UPSTREAM_OF_THE_PATH`. **IT IS UNSOUND IN BOTH
+        DIRECTIONS AT ONCE: IT REFUSES WHEN NOTHING IS WRONG AND IT PASSES WHEN THE CLAIM IS FALSE.**
+        Closed by DECLARATION and not by repair, on PO-DECISIONS-0018 ruling 4, and BOTH directions
+        are stated with their measured numbers because a declared limit that only admits the
+        flattering half is not a declaration. THE TOOL PRINTS THIS LIMIT AFTER ITS OWN VERDICT ON
+        EVERY RUN, PASS OR FAIL.
+        DIRECTION 1, IT REFUSES WHEN NOTHING IS WRONG — re-measured by CD-ENG-WO2R3-09 at WO-2R3
+        increment 10 in a pristine extraction:
+          git archive <sha> | tar -x -C <armA>
+          # rename ONE local in src/crash_detector/engine/config.py: window -> staleness_window
+          cd <armA> && python3 -B -m pytest -q tests/test_staleness.py tests/test_evaluate.py \
+              tests/test_config_source_registry.py tests/test_envelope_contracts.py
+              -> 183 passed  (THE GATING RELATION IS ENTIRELY INTACT)
+          cd <armA> && python3 -B tools/sweep/delegated_judgement_sweep.py --root .
+              -> exit 1, FAIL — 548 sites, 53 violations
+              -> 31 x GATES_SITE_DOES_NOT_EXIST
+        Eighteen violations became fifty-three and NOTHING WAS BROKEN. The register was.
+        DIRECTION 2, IT PASSES WHEN THE CLAIM IS FALSE — same increment, second extraction, ZERO
+        lines under src/ touched:
+          git archive <sha> | tar -x -C <armB>
+          # repoint ALL 43 `gates` values in tools/sweep/declared_dispositions.py at
+          #   ('crash_detector.time_utc','parse_utc','ISINSTANCE','isinstance(text, str)')
+          diff -rq <armB>/src/ <control>/src/       -> IDENTICAL, no product source touched
+          cd <armB> && python3 -B tools/sweep/delegated_judgement_sweep.py --root .
+              -> exit 1, FAIL — 548 sites, 18 violations   (BIT-FOR-BIT THE CONTROL'S VERDICT)
+              -> 0 x GATES_SITE_*
+        All 43 gating claims were false and this instrument said nothing.
+        WHY IT IS DECLARED AND NOT FIXED. Direction 1 is not repairable while a site key's fourth
+        element is SOURCE TEXT — CD-ENG-WO2R3-07's F17: "`gates` cannot be made structural by adding
+        a clause, because it is a site key whose fourth element is SOURCE TEXT, so any criterion
+        keyed on it fails the rename test by construction" — and coarsening the key would weaken the
+        both-directions set equality the whole register rests on. Direction 2 needs an
+        inter-procedural cross-module dataflow fact that LIMIT 1 says this tool does not have.
+        AND A CANDIDATE CLAUSE WAS MEASURED AND REJECTED BY A NUMBER, RECORDED RATHER THAN QUIETLY
+        DROPPED: requiring the `gates` module to transitively import the DECLARING module holds for
+        all 43 real rows and DOES refuse direction 2's arm (reach(crash_detector.time_utc) is two
+        modules and admission is not one of them) — but of the 19 subject modules, TEN other than
+        crash_detector.admission transitively import it and THIRTEEN other than
+        crash_detector.establishment transitively import that, so the same falsehood repointed at
+        any real site in any of them satisfies the clause. A GUARD THAT STOPS THE REPORTED CASE AND
+        NOT ITS CLASS HAS NOT BEEN TESTED (PBG-ASSURE-017). Those counts are DERIVED AND PRINTED AT
+        EVERY RUN so the rejection is not taken on trust.
+        WHAT `gates` IS WORTH, STATED PLAINLY: IT IS A POINTER THAT ROTS LOUDLY. It guarantees the
+        named site existed in the tree at the moment the register was last green, and nothing else.
+        The gating RELATION is a CLAIM BY THE SEAT THAT WROTE THE ROW, carried in that row's `note`
+        field, and THAT PROSE is what an auditor should attack — not this field. NOT PROVED TO BE
+        CARRIED ANYWHERE (CD-RULE-006): no layer of this project verifies the gating relation, and
+        none is claimed to.
+        THE VACUITY GUARD ON LIMIT 5 IS DIRECTION 1 ITSELF: the field CAN refuse, 31 times, so its
+        silence in direction 2 is not the silence of a clause that never runs.
+      evidence_ref: RTR-WO2-0001
+
 - criterion_id: CD-AC-012
   origin: PID
   obligation: MANDATORY
