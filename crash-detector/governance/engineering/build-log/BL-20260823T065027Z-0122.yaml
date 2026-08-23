@@ -1,0 +1,137 @@
+entry_id: BL-20260823T065027Z-0122
+timestamp_utc: '2026-08-23T06:50:27Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 94355a10012564412a8b29bfe4f2e5feb9710ab9   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the INSTANCE-2 DISPATCH boundary.
+parent_entry_id: BL-20260823T050107Z-0121
+schema_version: 1
+
+action_summary: >
+  *** **INCREMENT 8 INSTANCE 2 IS COMPLETE — ALL FIVE OUTSTANDING ITEMS DELIVERED AND COMMITTED —
+  AND THE PROJECT LEAD THAT DISPATCHED IT DIED BEFORE IT COULD RECORD ONE WORD OF THAT.** ***
+  `CD-ENG-WO2R3-06` RETURNED ALIVE IN THE LANE AND NOT IN CONVERSATION: five commits,
+  `314592c` -> `05ddaa3`, `ITEM_1` `ITEM_2` `ITEM_3` `ITEM_4` `ITEM_6`, one per item, porcelain
+  ZERO. **THE RECORD ON `main` KNEW NONE OF IT.** ***
+  *** **THIS IS CD-D-007 PAYING FOR ITSELF A FIFTH TIME, AND IN A NEW SHAPE.** The four prior times
+  the lane was ahead of the record because a seat died mid-item. **THIS TIME THE SEAT FINISHED THE
+  WHOLE ORDER AND THE PROJECT LEAD IS WHAT DIED** — `wo2b` attempt 1, started 04:45:23Z, killed
+  `rc=124` at its own 7200s ceiling at 06:45:23Z, while the seat's five commits landed INSIDE that
+  window at 05:55:42Z -> 06:35:53Z. Reading the record and trusting it would have RE-DISPATCHED
+  FIVE COMPLETED ITEMS and thrown away 4,641 insertions across 34 paths. ***
+  *** **BANKED BY MEASUREMENT, NOT ACCEPTED** (PBG-AUTH-003). Every headline number the seat wrote
+  about itself was RE-RUN BY THIS SEAT AND REPRODUCED IN EVERY CELL. Nothing here closes an
+  acceptance criterion, closes a DEFECT_OPEN finding, or grades the increment — that is the seventh
+  Assurance seat's, reserved by PO-DECISIONS-0015 ruling 6. ***
+
+how_the_lane_was_found_and_why_the_record_was_not_believed: >
+  Boot returned AMBER / CONTINUITY_MATCH / RESUME_AMBER at `94355a1`. The record's `current_block`
+  said instance 2 was DISPATCHED AND OUT with five items outstanding, and `lane_head_sha` stood at
+  `314592c` — the dispatch base. **THE DISPATCH PROMPT ORDERS RECONCILIATION WITH SUSPICION BEFORE
+  CONTINUATION, SO THE LANE WAS MEASURED BEFORE THE RECORD WAS ACTED ON**, and the lane was FIVE
+  COMMITS AND ZERO DIRTY LINES AHEAD of what the record claimed.
+  **THE SIGNAL THAT SAID "LOOK HARDER" WAS A ZERO-BYTE FILE.** `.wo2r3j-run-1.log` is 0 bytes and
+  its runner recorded `rc=124` at 04:41:04Z — a seat that produced no narration at all. Had that
+  been read as "the seat did nothing", the conclusion would have been exactly backwards. **THE
+  NARRATION DIED; THE WORK DID NOT.** The commits' own timestamps and `git reflog show wo-2r3`
+  place all five INSIDE the LATER `wo2b` attempt-1 window, which is how the two facts were
+  reconciled: the `wo2r3j` runner is not the run that produced this work.
+  PBG-CONT-007 is the whole lesson and it is now demonstrated from the failing side: **a sub-agent
+  result that exists only in conversation is not project state.** The seat obeyed "commit as you
+  go" and its work survived a Project Lead's death because of it.
+
+what_was_measured_by_this_seat_and_what_it_returned: >
+  **THE FULL SUITE — 3 failed, 1687 passed** (45.10s). The seat claimed 3 failed, 1687 passed.
+  IDENTICAL. All three failures are in `tests/test_the_fifteen.py` and all three are the ones
+  ITEM_3 DECLARED IN ADVANCE in its own Build Log entry:
+  `test_the_module_is_DERIVED_and_the_run_is_clean_of_it[crash_detector.admission]`,
+  `test_REMOVING_ONE_REAL_tier_2_ROW_puts_the_module_back_to_UNDECLARED[crash_detector.admission]`,
+  `test_the_sweep_SAYS_what_its_own_zero_exit_code_does_not_mean`.
+  **THE CLASS-2 SWEEP — `CD-CLASS-2-SWEEP: FAIL — 555 sites, 4 violations`, EXIT 1.** The seat
+  claimed 555 sites and 4 violations. IDENTICAL, AND IDENTICAL ROW BY ROW: three `STALE
+  DECLARATION` — `_EachOf.refusal` `type(element) not in self.element`, `_EachOf.refusal`
+  `type(value) not in self.within`, `_Exactly.refusal` `type(value) in self.types` — and one
+  `UNDECLARED MODULE: crash_detector.admission`, `tier-2 site keys still undeclared: 3 of 33`.
+  **THE TWELVE REGISTER CHECKS — ELEVEN EXIT 0, `check_grant_matrix_live` EXIT 3.** Matches the
+  seat's table IN EVERY CELL.
+  **CD-RT-012 RE-MEASURED AS A CONTRAST, NOT AS A TIP READING.** `git archive 314592c` extracted
+  pristinely to `/tmp/cdbase`, `check_no_execution_interface.py --root .` run there: **EXIT 1, one
+  violation, `tests/test_tree_fingerprint.py:61`.** At the tip: **EXIT 0.** ITEM_2's headline —
+  "CD-RT-012 IS GREEN" — HOLDS, and it holds as a movement and not as an assertion about one SHA.
+
+scope_and_identity_discipline_measured_per_path: >
+  Identity: `git log --format='%an <%ae> | %cn <%ce>' 314592c..HEAD | sort -u` returns **EXACTLY ONE
+  LINE**. Porcelain **ZERO**. Changed paths **34**.
+  `pbg/` — **ZERO paths.** The pinned framework is untouched (PBG-FWK-013).
+  `governance/engineering/ACTIVE_WORK.yaml`, `governance/decisions/`, `governance/assurance/`,
+  `governance/blueprint/` — **ZERO paths, measured together in one `git diff --name-only`.**
+  Build log: **FIVE ADDED** (BL-...-0085 through -0089, the lane's own block), **ZERO pre-existing
+  entries modified.** No Build Log history rewritten.
+  **`tools/sweep/declared_dispositions.py` — ZERO. THE SEAT DID NOT TOUCH THE PROTECTED REGISTER
+  EVEN THOUGH TOUCHING IT WOULD HAVE TURNED ITS OWN BOARD GREEN.** That is the single most
+  load-bearing measurement in this entry and it is recorded as a measured path count, not as
+  credit extended to a seat's prose.
+
+the_thing_the_seat_did_that_this_record_will_not_let_pass_unnamed: >
+  **ITEM_3 SHIPPED ITS OWN INSTRUMENT RED, ON PURPOSE, AND SAID SO IN ITS COMMIT SUBJECT.**
+  Correcting `F-06-D` at `_Exactly.refusal` and `_EachOf.refusal` moves the source-text keys the
+  disposition register is keyed on, so the three declarations go STALE **BY CONSTRUCTION**. The
+  register file is in the dispatch's protected scope. The seat records that it CONSIDERED leaving
+  the old `in` comparison beside the new `is` comparison so the register key would survive, **AND
+  REFUSED IT** — a redundant clause written to keep a register row alive is constructing state so
+  a control appears to pass, which is non-waivable in this project's own terms.
+  It returned **SCOPE_INSUFFICIENT for exactly one file** instead. **THAT IS THE CORRECT RETURN AND
+  IT IS THE ONE THAT COSTS THE SEAT ITS GREEN BOARD.**
+  **ITEM_6 CAUGHT ITEM_1 BREAKING A PLANT** — `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`
+  stopped applying against ITEM_1's rewritten `engine/evaluate.py`, so its violated arm silently
+  became the clean tree and EXITED 0: **a dead plant reporting a pass.** The seat raised it against
+  its own work as `CD-ENG-WO2R3-06-F06` and regenerated the patch. **NOT VERIFIED BY THIS SEAT AT
+  THIS BOUNDARY** — see the open list below. It is recorded as the seat's claim, attributed.
+
+what_this_boundary_does_NOT_do: >
+  **IT DOES NOT ACCEPT INCREMENT 8.** BANKED, NOT ACCEPTED (PBG-AUTH-003).
+  **IT CLOSES NO ACCEPTANCE CRITERION.** CD-AC-002 and CD-AC-005 remain AMBER and NOT CLOSED. T2 is
+  RED. **THE WO-2 GATE IS SHUT.**
+  **IT CLOSES NO `DEFECT_OPEN` FINDING.** No seat and not this one has that authority.
+  **IT DOES NOT ADOPT THE SEAT'S UNMEASURED CLAIMS.** Specifically NOT re-measured here and
+  therefore carried as ATTRIBUTED, NOT CONFIRMED: the 48-run plant contrast table and the
+  EVIDENCE 10 -> 11 / DECORATION 2 -> 1 movement; the `P-O` metaclass five-arm base/tip contrast;
+  the mutating-sink six-arm carrier and its base 4-failed/2-passed reading; the `is_exactly`
+  tuple-vs-frozenset sizing. **THESE ARE THE SEVENTH ASSURANCE SEAT'S TARGETS AND THEY GO INTO ITS
+  BRIEF BY NAME**, precisely because this seat reproduced the cheap numbers and not these.
+  **IT RESOLVES NOTHING ABOUT THE STALE REGISTER.** Who corrects `declared_dispositions.py`, and
+  whether correcting it is in-scope for a seat at all, is NOT this seat's to decide alone.
+
+open_and_routed_upward: >
+  **THE PLANT-DRIFT FINDING IS OPEN AND IT IS NOW FOUR INCREMENTS OLD.** A plant that stops
+  applying is invisible to EVERY instrument this project runs at a boundary — the suite does not
+  apply plants, the twelve register checks do not, the Class-2 sweep does not. Four increments have
+  broken a plant and found out only because somebody re-ran the set by hand. **CARRIER: NOT PROVED
+  TO BE CARRIED ANYWHERE.** The seat could not repair it: a runner over `plants/` is exactly the
+  wrapper PBG-ASSURE-001 forbids an Engineer to write. **THIS IS ROUTED UPWARD, NOT PARKED.**
+  **THE STALE DISPOSITION REGISTER (`SCOPE_INSUFFICIENT`, one file) IS ROUTED UPWARD AS A PRODUCT
+  AUTHORITY QUESTION.** The seat did the right thing and the right thing leaves the board red;
+  clearing it requires touching a file no seat's scope contains.
+  `CD-RT-003-GRANT-MATRIX-LIVE` is still decoration — no credentials on this host, **AND NONE
+  GUESSED.**
+
+decision_refs:
+  - CD-D-007    # reconcile the lane by measurement before believing the record — invoked, and paid for itself a FIFTH time
+  - CD-D-092-A  # the WO-2R3 lane
+  - CD-D-093    # the quarantined instance-1 salvage — still quarantined, still not project state
+  - PBG-AUTH-003  # banked, not accepted
+  - PBG-CONT-007  # a sub-agent result that exists only in conversation is not project state
+  - PBG-SOD-001   # the grading is a separate Assurance seat's and is NOT taken here
+
+next_safe_gate: >
+  The seventh fresh Assurance seat over the whole of WO-2R3 at `05ddaa3` (PO-DECISIONS-0015 ruling
+  6), READ-ONLY, with the ATTRIBUTED-NOT-CONFIRMED list above as named targets. **AND BEFORE OR
+  ALONGSIDE IT, TWO PRODUCT AUTHORITY QUESTIONS THAT ARE NOT THIS SEAT'S TO ANSWER** — stated in
+  the checkpoint that follows this entry.
