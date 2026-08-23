@@ -187,6 +187,14 @@ class ScoreComputation:
     caller code.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ScoreComputation.__new__(ScoreComputation)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("magnitude", "contributions")
+
     magnitude: float
     contributions: tuple[Contribution, ...]
 
@@ -357,6 +365,14 @@ class DeclaredParameter:
     Product Owner's.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `DeclaredParameter.__new__(DeclaredParameter)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("name", "value")
+
     name: str
     value: float
 
@@ -432,6 +448,14 @@ class ModelProvenance:
     this project has now paid for three times in other forms.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ModelProvenance.__new__(ModelProvenance)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("stands_for", "account", "decided_by")
+
     stands_for: str
     account: str
     decided_by: str
@@ -479,6 +503,14 @@ class ModelSpec:
     naming the same mapping compute two independent results — there is nothing to blend
     with, because neither has a reference to the other's payloads to close over.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ModelSpec.__new__(ModelSpec)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("model_id", "dial_id", "required_input_ids", "contributing_input_ids", "mapping", "parameters", "provenance")
 
     model_id: ModelId
     dial_id: str
@@ -612,6 +644,14 @@ class ModelRegistry:
     snapshot that can be mutated after an evaluation cannot explain that evaluation a year
     later.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ModelRegistry.__new__(ModelRegistry)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("models",)
 
     models: tuple[ModelSpec, ...]
 

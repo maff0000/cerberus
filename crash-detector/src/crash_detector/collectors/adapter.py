@@ -102,6 +102,14 @@ class FetchedResponse:
     validation is about to establish. The runner narrows it after validation.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `FetchedResponse.__new__(FetchedResponse)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("payload", "source_as_of_utc")
+
     payload: object
     source_as_of_utc: datetime
 
@@ -111,6 +119,14 @@ class FetchedResponse:
 
 class SourceAdapter(Protocol):
     """What every ingredient source adapter must provide."""
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `SourceAdapter.__new__(SourceAdapter)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ()
 
     @property
     def source_id(self) -> str:

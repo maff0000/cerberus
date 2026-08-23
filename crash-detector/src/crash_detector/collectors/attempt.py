@@ -90,6 +90,14 @@ ReadingKey = tuple[str, str]
 class AttemptRecord:
     """One fetch attempt — one row of ``raw.observation`` — whatever came of it."""
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `AttemptRecord.__new__(AttemptRecord)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("observation", "adapter_id", "collector_run_id", "attempt_number", "requested_utc")
+
     observation: ObservationRecord
     adapter_id: str
     collector_run_id: str
@@ -166,6 +174,14 @@ class ObservationSink(Protocol):
     failure converts "we did not record it" into "it did not happen".
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ObservationSink.__new__(ObservationSink)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ()
+
     def record(self, attempt: "AttemptRecord") -> None:
         """Persist one attempt row. Raise on failure; never swallow."""
 
@@ -178,6 +194,14 @@ class ReadingLedger(Protocol):
     the key, so a caller can tell a first reading from a re-fetch without a prior
     ``SELECT`` and without a race between the two.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ReadingLedger.__new__(ReadingLedger)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ()
 
     def admit_if_absent(self, key: "ReadingKey") -> bool:
         """``True`` if this call claimed ``key``; ``False`` if it was already claimed.

@@ -121,6 +121,14 @@ EXIT_SHUTDOWN_EXCEEDED_GRACE = 3
 class Lifecycle:
     """One process's run loop, signal handling and bounded shutdown."""
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `Lifecycle.__new__(Lifecycle)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("service_name", "grace_seconds", "_stream", "_clock", "_terminating", "_signals_seen", "_shutdown_callbacks")
+
     def __init__(
         self,
         service_name: str,

@@ -85,8 +85,13 @@ _ESTABLISHES_ON_FETCHFAILED = """@establishes(
     error_class=str,
     http_status=one_of(int, None),
 )
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class FetchFailed:"""
+
+#: WHAT THE CONTROL ARM LEAVES BEHIND. It strips ``@establishes`` and NOTHING ELSE — the
+#: ``slots=True`` stays, because the axis of this contrast is the ``if True:`` and an arm
+#: that also unsealed the type would be two changes wearing one name (``CD-ENG-WO2R3-F12``).
+_FETCHFAILED_WITHOUT_ESTABLISHES = "@dataclass(frozen=True, slots=True)\nclass FetchFailed:"
 
 _FETCH_OUTCOME_UNION = "FetchOutcome = Union[OK, FetchFailed, Malformed, Empty]"
 
@@ -125,7 +130,7 @@ def test_a_union_hidden_in_a_module_level_block_cannot_shrink_the_governed_class
         assert clean.returncode == 0, clean.stdout + clean.stderr
 
         violated = source.replace(
-            _ESTABLISHES_ON_FETCHFAILED, "@dataclass(frozen=True)\nclass FetchFailed:", 1
+            _ESTABLISHES_ON_FETCHFAILED, _FETCHFAILED_WITHOUT_ESTABLISHES, 1
         )
         observations.write_text(violated)
         control = _run(tree, "check_constructor_field_establishment.py")

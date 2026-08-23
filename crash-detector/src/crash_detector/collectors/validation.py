@@ -112,6 +112,14 @@ class SchemaDeclarationInvalid(Exception):
 class PayloadValidator(Protocol):
     """Validates a payload against a declared schema, or raises."""
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `PayloadValidator.__new__(PayloadValidator)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ()
+
     def validate(self, payload: object, schema: Mapping[str, Any]) -> None:
         """Return ``None`` if conforming.
 
@@ -191,6 +199,14 @@ class JsonSchemaValidator:
     different schema objects can be equal and one mapping can be mutated between calls,
     so a cache here would be a correctness risk in exchange for microseconds.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `JsonSchemaValidator.__new__(JsonSchemaValidator)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ()
 
     @admits(
         payload=ESTABLISHED_HERE(

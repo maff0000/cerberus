@@ -164,6 +164,14 @@ class Contribution:
     (BLUEPRINT §7).
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `Contribution.__new__(Contribution)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("source_id", "category", "weight", "contribution")
+
     source_id: str
     category: str
     weight: float
@@ -242,6 +250,14 @@ class EquityCrashScore:
     Deliberately has no relationship of any kind to :class:`MonetaryDebasementScore`.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `EquityCrashScore.__new__(EquityCrashScore)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("score", "contributions")
+
     score: DialMagnitude
     contributions: tuple[Contribution, ...]
 
@@ -260,6 +276,14 @@ class MonetaryDebasementScore:
 
     Deliberately has no relationship of any kind to :class:`EquityCrashScore`.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `MonetaryDebasementScore.__new__(MonetaryDebasementScore)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("score", "contributions")
 
     score: DialMagnitude
     contributions: tuple[Contribution, ...]

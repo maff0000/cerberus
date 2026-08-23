@@ -85,6 +85,14 @@ class OK:
     data, not of our diligence in asking for it.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `OK.__new__(OK)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("payload", "source_as_of_utc")
+
     payload: Mapping[str, object]
     source_as_of_utc: datetime
 
@@ -97,7 +105,7 @@ class OK:
     error_class=str,
     http_status=one_of(int, None),
 )
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class FetchFailed:
     """We could not ask. Network, timeout, transport, refusal, non-2xx.
 
@@ -115,12 +123,27 @@ class FetchFailed:
         if status is not None and (isinstance(status, bool) or not isinstance(status, int)):
             raise TypeError("FetchFailed.http_status must be an int or absent")
 
+#: SEALED (PO-DECISIONS-0016 ruling 2). This type carries a FIELD DEFAULT, and a
+#: manual __slots__ beside a class-level default is a ValueError at class creation
+#: ('conflicts with class variable'), so the slots come from @dataclass(slots=True).
+#: THAT DECORATOR ALSO INSTALLS dataclasses._dataclass_setstate — A STDLIB FUNCTION
+#: THAT WRITES EVERY KEY IT IS GIVEN THROUGH object.__setattr__ WITH NO VALIDATION
+#: AND NO PACKAGE CODE — which re-opens by the __setstate__ sibling exactly the route
+#: the slots closed. MEASURED, not reasoned: without this removal,
+#: `FetchFailed.__new__(FetchFailed).__setstate__({...})` returns an object of exactly
+#: this type carrying forged field values. It is removed rather than overridden
+#: because @dataclass(slots=True) installs it AFTER the class body has been read.
+#: The cost is measured and declared: this type is no longer picklable or
+#: deep-copyable, which is the state every already-sealed governed type (Value,
+#: Degraded, Unknown, Shown, NotShown, DialMagnitude) has always been in.
+del FetchFailed.__setstate__
+
 
 @establishes(
     schema_error_class=str,
     instance_path=str,
 )
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Malformed:
     """We asked, and the answer did not conform to the schema the adapter declares.
 
@@ -165,6 +188,21 @@ class Malformed:
                 "append-only store is an unbounded row."
             )
 
+#: SEALED (PO-DECISIONS-0016 ruling 2). This type carries a FIELD DEFAULT, and a
+#: manual __slots__ beside a class-level default is a ValueError at class creation
+#: ('conflicts with class variable'), so the slots come from @dataclass(slots=True).
+#: THAT DECORATOR ALSO INSTALLS dataclasses._dataclass_setstate — A STDLIB FUNCTION
+#: THAT WRITES EVERY KEY IT IS GIVEN THROUGH object.__setattr__ WITH NO VALIDATION
+#: AND NO PACKAGE CODE — which re-opens by the __setstate__ sibling exactly the route
+#: the slots closed. MEASURED, not reasoned: without this removal,
+#: `Malformed.__new__(Malformed).__setstate__({...})` returns an object of exactly
+#: this type carrying forged field values. It is removed rather than overridden
+#: because @dataclass(slots=True) installs it AFTER the class body has been read.
+#: The cost is measured and declared: this type is no longer picklable or
+#: deep-copyable, which is the state every already-sealed governed type (Value,
+#: Degraded, Unknown, Shown, NotShown, DialMagnitude) has always been in.
+del Malformed.__setstate__
+
 
 @establishes()
 @dataclass(frozen=True)
@@ -204,6 +242,14 @@ class Empty:
     :exc:`~crash_detector.establishment.UndeclaredField`. Measured at both SHAs by
     ``variants/WO-2R3/P-D-empty-is-runtime-unguarded.py``.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `Empty.__new__(Empty)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ()
 
 
 #: The fetch outcome sum type. Closed: an unrecognised member is a defect, not a case to
@@ -252,6 +298,14 @@ class ObservationRecord:
     one exists, lives on the outcome. Keeping the two apart is what stops "we asked
     recently" from being mistaken for "the data is recent".
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ObservationRecord.__new__(ObservationRecord)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("source_id", "observed_utc", "outcome")
 
     source_id: str
     observed_utc: datetime

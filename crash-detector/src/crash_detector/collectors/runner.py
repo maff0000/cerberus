@@ -189,6 +189,14 @@ class RetryPolicy:
     first time it matters is the first time a source is down.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `RetryPolicy.__new__(RetryPolicy)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("max_attempts", "timeout_seconds", "backoff_seconds")
+
     max_attempts: int
     timeout_seconds: float
     backoff_seconds: float
@@ -258,6 +266,14 @@ class CollectionResult:
     caller-supplied double's log, which is the system's behaviour attested by the caller's
     own object. It is now the runner's own answer about its own run.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `CollectionResult.__new__(CollectionResult)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("source_id", "adapter_id", "collector_run_id", "attempts_made", "rows_recorded", "final_outcome", "reading_key", "reading_admitted", "delays_applied")
 
     source_id: str
     adapter_id: str

@@ -415,7 +415,7 @@ class FreshnessNotEstablished(ValueError):
 @establishes(
     seconds=float,
 )
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class StalenessWindow:
     """A window that may lawfully be applied, in seconds.
 
@@ -441,6 +441,14 @@ class StalenessWindow:
       :class:`~crash_detector.dials.reading.SealedReadingType` already makes about the
       Reading sum type, and closed the same way: refused, not policed.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `StalenessWindow.__new__(StalenessWindow)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("seconds",)
 
     seconds: float
 
@@ -510,7 +518,7 @@ class StalenessWindow:
     observed_at_utc=datetime,
     window=StalenessWindow,
 )
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class FreshnessEvidence:
     """POSITIVE EVIDENCE that an observation was current when it was read.
 
@@ -534,6 +542,14 @@ class FreshnessEvidence:
     everywhere on the freshness path, precisely so a historical evaluation can be replayed
     exactly (BLUEPRINT §7). Clock trust is not established here and is not claimed here.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `FreshnessEvidence.__new__(FreshnessEvidence)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("as_of_utc", "observed_at_utc", "window")
 
     as_of_utc: datetime
     observed_at_utc: datetime

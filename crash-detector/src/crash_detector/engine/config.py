@@ -144,6 +144,14 @@ class DialSpec:
     write that places code where a dial's magnitude is computed.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `DialSpec.__new__(DialSpec)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("dial_id", "required_input_ids", "contributing_input_ids", "model_ref")
+
     dial_id: str
     required_input_ids: tuple[str, ...]
     contributing_input_ids: tuple[str, ...]
@@ -217,6 +225,14 @@ class DialSpec:
 @dataclass(frozen=True)
 class ConfigSnapshot:
     """Everything outside the observations that affects an evaluation."""
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `ConfigSnapshot.__new__(ConfigSnapshot)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("config_snapshot_id", "dial_specs", "staleness_window_seconds", "source_registry", "model_registry")
 
     config_snapshot_id: str
     dial_specs: tuple[DialSpec, ...]

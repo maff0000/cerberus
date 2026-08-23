@@ -109,6 +109,14 @@ class Agrees:
     fresher observation to an agreement about a stale one.
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `Agrees.__new__(Agrees)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("divergence_measure", "as_of_utc", "freshness")
+
     divergence_measure: float
     as_of_utc: datetime
     freshness: FreshnessEvidence
@@ -149,6 +157,14 @@ class Diverges:
     Divergence is an alarm, never an adjustment (BLUEPRINT §6, CD-AC-004).
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `Diverges.__new__(Diverges)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("divergence_measure", "threshold", "as_of_utc")
+
     divergence_measure: float
     threshold: float
     as_of_utc: datetime
@@ -179,6 +195,14 @@ class Unavailable:
     type that a rendering layer could mistake for a measurement, and no field a later
     edit could default to zero.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `Unavailable.__new__(Unavailable)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("reason", "since_utc")
 
     reason: str
     since_utc: datetime

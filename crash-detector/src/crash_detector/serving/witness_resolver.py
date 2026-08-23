@@ -108,6 +108,14 @@ class PanelRow:
     "the witnesses are current".
     """
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `PanelRow.__new__(PanelRow)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("state", "as_of_utc", "published_utc", "measures")
+
     state: str
     as_of_utc: datetime
     published_utc: datetime

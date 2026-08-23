@@ -139,6 +139,14 @@ class DisposableSourceIsLoadBearing(CriticalityContractViolated):
 class SourceRecord:
     """One registered ingredient source — one row of ``raw.source_registry``."""
 
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `SourceRecord.__new__(SourceRecord)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("source_id", "adapter_id", "cadence_seconds", "criticality", "stands_for")
+
     source_id: str
     adapter_id: str
     cadence_seconds: int
@@ -189,6 +197,14 @@ class SourceRegistry:
     :class:`~crash_detector.engine.config.ConfigSnapshot`, and a snapshot that can be
     mutated after an evaluation cannot explain that evaluation a year later.
     """
+
+    #: SEALED (PO-DECISIONS-0016 ruling 2). Without __slots__ an instance carries a
+    #: __dict__, and `SourceRegistry.__new__(SourceRegistry)` followed by `__dict__.update(...)`
+    #: yields an object of exactly this type carrying forged field values, having
+    #: executed NO package code: the establishment boundary is not consulted, it is
+    #: walked around. Declared here rather than via @dataclass(slots=True), which also
+    #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
+    __slots__ = ("sources",)
 
     sources: tuple[SourceRecord, ...]
 

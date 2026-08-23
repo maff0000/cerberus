@@ -466,7 +466,12 @@ def test_the_termination_flag_acquires_no_lock():
     guard rather than a description (PBG-ASSURE-017).
     """
     lifecycle, _ = _lifecycle()
-    flag = lifecycle.__dict__["_terminating"]
+    # Read through the slot descriptor, not through ``__dict__``. WO-2R3 increment 9 sealed
+    # ``Lifecycle`` (PO-DECISIONS-0016 ruling 2), so instances no longer HAVE a ``__dict__``
+    # — which is the point of the seal and not an obstacle to this assertion. What this test
+    # is about is the TYPE of the flag, and the slot read answers that identically; the
+    # earlier spelling reached the same object by the only route that then existed.
+    flag = object.__getattribute__(lifecycle, "_terminating")
     assert type(flag) is bool, (
         f"the termination flag is a {type(flag).__name__}. It must be a plain bool: "
         "setting it is one STORE_ATTR under the GIL, which allocates nothing and cannot "
