@@ -1,0 +1,188 @@
+# ================================================================================================== #
+# BL-20260823T190920Z-0155 — PROJECT LEAD BOUNDARY. **INCREMENT 15 — THE PUBLICATION AND HEALTH
+# SURFACE — IS RETURNED, RECONCILED BY MEASUREMENT AND BANKED. IT IS NOT ACCEPTED
+# (`PBG-AUTH-003`).**
+#
+# **C2, C3, C4, C5 AND C6 ARE BUILT. C1 IS BUILT EXCEPT FOR ONE FIELD, AND THE SEAT STOPPED ON THAT
+# FIELD RATHER THAN GUESSING — WHICH IS THE RIGHT ACT AND IS WHY IT IS A TRUTHFUL PARTIAL AND NOT A
+# HURRIED WHOLE.**
+#
+# *** **THE MEASUREMENT THAT DEFINED THIS INCREMENT IS DISCHARGED: `publication.heartbeat` WAS A
+# TABLE NOTHING WROTE (`grep -rn heartbeat src/` -> ZERO MATCHES AT `9b09d2a`). IT NOW HAS A WRITER.
+# THE "CONTROLS EXIST AND NOTHING RUNS THEM" SHAPE IS CLOSED FOR THIS ONE TABLE.** ***
+#
+# **AND THE STRONGEST THING IN THE RETURN IS A FUNCTION SIGNATURE: `evaluate_cadence(heartbeats_utc)`
+# TAKES ONLY HEARTBEAT TIMESTAMPS, SO THERE IS NO PARAMETER THROUGH WHICH AN AGE COULD ARRIVE.
+# CADENCE CANNOT BE CONFUSED WITH STALENESS BY CONSTRUCTION, NOT BY A TEST THAT COULD BE DELETED.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T190920Z-0155
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T19:09:20Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: 51ee744   # the increment 15 dispatch commit.
+
+the_increment:
+  increment: 15
+  seat: 'CD-ENG-WO3-02 (fresh identity)'
+  lane: 'wo-3'
+  tip: '116c01f4584c62a244910ac6676c030735596896'
+  commits: 8
+  returned: 'READY_FOR_ASSURANCE'
+  status: '**BANKED AND RECONCILED. NOT ACCEPTED.** A separate Assurance seat is required (`PBG-SOD-001`, non-waivable).'
+  size: '**27 files, 5370 insertions, 5 deletions.** Six new modules, seven new test files, ten plants, one external probe.'
+
+# ================================================================================================== #
+# RECONCILIATION — **RE-RUN IN THIS SEAT'S OWN SHELL FROM ITS OWN PRISTINE EXTRACTION.**
+# ================================================================================================== #
+reconciliation_by_this_seat:
+  containment:
+    tip: '`116c01f…` — AGREES.'
+    porcelain: '**0.**'
+    identity: '`git log --format=%an 9b09d2a..HEAD | sort -u` -> **`CD-ENG-WO3-02`, EXACTLY ONE.**'
+    the_frozen_base: '`git rev-parse wo-2r3` -> **`be0b355…`. STILL FROZEN.**'
+    the_instrument: '**`git rev-parse HEAD:pbg be0b355:pbg main:pbg` -> `e4ee93cb…` ALL THREE.** **THE SEAT RE-RAN THE AUDITOR''S OWN CONTROL FROM INCREMENT 14 WITHOUT BEING TOLD TO — so "18 still computing" cannot be an artefact of a changed verifier. A seat adopting the auditor''s method into its own return is the campaign working.**'
+    protected_paths: '`git diff --name-only 9b09d2a..HEAD -- pbg/ PID.md BLUEPRINT.md governance/decisions/ ACTIVE_WORK.yaml deploy/egress-destinations.yaml db/` -> **0 PATHS.** **`deploy/` AND `db/` ARE ENTIRELY UNTOUCHED FROM `be0b355` — 0 changed lines. NO MIGRATION WAS ADDED AND NONE WAS NEEDED: the tables already existed and were never wired.**'
+  the_register_not_regressed:
+    result: '**VALIDATION PASSES · `pid.content_hash MATCHES` · `latest_admitted_run (null)` · 18 COMPUTED · `GATE: SHUT` · `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`.** **INCREMENT 14 IS NOT REGRESSED.**'
+    narrowness: '`git diff 9b09d2a..HEAD -- required-tests.yaml` -> **85 insertions / 5 deletions**, and **`grep -cE "CD-AC-002|CD-AC-005"` OVER THAT DIFF -> 0. THE TWO PROTECTED CRITERIA WERE NOT TOUCHED AT ALL.**'
+    the_trap_that_could_not_spring: >
+      **THE SEAT USED LESS PERMISSION THAN IT WAS GIVEN, AND SAID SO.** §7 allowed edits to
+      `execute` / `execution_contract` / `negative_control` on three rows. **It measured that
+      `execute` ALREADY named exactly the three modules it had to create and that all three
+      `execution_contract` paths ALREADY resolved — so neither field changed, and the §7.6
+      non-resolving-path trap could not be sprung.** Only five `negative_control.violation` lines
+      moved, all five the *"To be planted in WO-3"* tails. **THAT IS THE OPPOSITE OF SCOPE CREEP AND
+      IT IS RECORDED AS SUCH.**
+  the_suite: '**`python3 -m pytest tests/ -q` FROM THIS SEAT''S OWN EXTRACTION -> `1882 passed in 61.15s`. EXACTLY THE NUMBER RETURNED (base 1726, +156).**'
+  the_plants: '**TEN, all contrast form**, `plants/WO3-INC15/` with a manifest. `git apply` 0 / CLEAN 0 / VIOLATED 1 on all ten, all still `apply --check` clean at the tip. **Three ran under the register''s OWN declared commands.**'
+  the_column_the_seat_added:
+    what: >
+      It reported **no substitution was needed** (pytest separates 0/1 cleanly, unlike increment 14's
+      verifier which exited 2 in every arm) — **but it ADDED a column: the failing test NAMES.**
+    why_it_matters: >
+      *** **ITS REASON IS THE BEST SENTENCE IN THE RETURN: "exit 1 proves the command failed, not
+      that it failed for the planted reason — a plant that broke an import would look identical."**
+      *** **THAT IS A VACUITY CLASS NOBODY ON THIS PROJECT HAD NAMED, AND THE SEAT CLOSED IT
+      UNPROMPTED BY ASSERTING THAT EVERY VIOLATED ARM FAILS ON EXACTLY THE TESTS CARRYING ITS
+      PROPOSITION.**
+
+# ================================================================================================== #
+# THE TWO CLAIMS THE DISPATCH SAID TO PROVE RATHER THAN ASSERT — **BOTH PROVED, BOTH RE-MEASURED.**
+# ================================================================================================== #
+C3_the_probe_is_genuinely_outside_the_container_set:
+  the_seats_evidence: 'Five ways — not a compose service, no Dockerfile, imports nothing from `crash_detector` (AST), holds no DB credential or SQL, and runs from `/tmp` with `PYTHONPATH` empty.'
+  re_measured_by_this_seat: >
+    **`ast.parse` of `tools/probe/external_probe.py` -> IMPORTS ARE `__future__`, `argparse`,
+    `datetime`, `json`, `sys`, `urllib.error`, `urllib.request` AND NOTHING ELSE. `crash_detector`
+    referenced: FALSE.** **`deploy/` is 0 changed lines from `be0b355`, so no service and no
+    Dockerfile was added.** The compose services are exactly the seven that were always there
+    (`cd-collectors`, `cd-engine`, `cd-private`, `cd-public`, `cd-review`, `cd-store`, `cd-witness`).
+    **THE ONE `probe` MATCH IN `compose.yaml` IS A PRE-EXISTING COMMENT LINE, NOT A SERVICE — CHECKED
+    BY PARSING THE FILE RATHER THAN GREPPING IT.**
+  the_live_arm: >
+    **server UP -> exit 0 `HEALTHY`; server DOWN -> exit 2 `UNREACHABLE … URLError`.** *** **THE
+    PROBE SURVIVED WHAT IT WAS WATCHING, AND THAT VERDICT IS THE ONE NO IN-SET PROCESS CAN PRODUCE.
+    THAT IS `PBG-EVID-001` DISCHARGED BY DEMONSTRATION AND NOT BY ARCHITECTURE DIAGRAM.** ***
+C2_cadence_is_not_age:
+  proved_by_construction: '**`evaluate_cadence(heartbeats_utc)` — RE-MEASURED BY THIS SEAT WITH `ast`: ITS ONLY PARAMETER IS `heartbeats_utc`. THERE IS NO PARAMETER THROUGH WHICH AN AGE COULD ARRIVE.**'
+  why_that_is_the_strong_form: >
+    **A TEST ASSERTING "CADENCE IGNORES AGE" CAN BE DELETED. A SIGNATURE THAT CANNOT RECEIVE AN AGE
+    CANNOT BE DEFEATED WITHOUT CHANGING THE SIGNATURE — which a plant then catches (`P4 — CADENCE
+    READS THE AGE OF A NUMBER`).** Both cases measured with both halves: **stale-republished-on-time
+    -> cadence HEALTHY / freshness REFUSES; fresh-published-late -> cadence BREACHED / freshness
+    ADMITS.** **THE TWO FACTS COME APART EXACTLY WHERE THE DISPATCH SAID THEY MUST.**
+
+no_source_registered_VERIFIED:
+  measured: '**`db/` 0 changed lines from `be0b355` · `SourceRecord(` in `src/ tools/ deploy/ contracts/` -> 0 · no `INSERT INTO raw.source_registry` executed anywhere.**'
+  the_one_disclosure_the_seat_volunteered: >
+    **`INSERT INTO raw.source_registry` APPEARS ONCE AS A STRING LITERAL INSIDE AN `ast.parse(...)`
+    AT `tests/test_publication_layer.py:405` — the vacuity guard proving its own no-source scan CAN
+    FAIL. PARSED, NEVER EXECUTED.** *** **THE SEAT DISCLOSED IT UNPROMPTED "SO IT DOESN'T AMBUSH A
+    GREP". A LATER AUDITOR GREPPING FOR EXACTLY THAT STRING WOULD HAVE FOUND IT AND HAD TO SPEND
+    TIME PROVING IT HARMLESS. TELLING THEM FIRST IS THE HABIT THIS PROJECT HAS BEEN TRYING TO
+    BUILD.** ***
+  no_external_push: '**`Q26` HONOURED. Every `urllib`/`socket`/`http`/`smtplib` match in `src/` is PROSE IN A DOCSTRING SAYING NOTHING OPENS A SOCKET — ZERO ACTUAL IMPORTS.** `deploy/egress-destinations.yaml` **untouched.** `P7 — AN EXTERNAL PUSH CHANNEL IS ADDED` is the plant that keeps it that way.'
+
+# ================================================================================================== #
+# **THE ONE THING NOT FINISHED — AND IT IS A PRODUCT AUTHORITY QUESTION, NOT A SHORTFALL.**
+# ================================================================================================== #
+Q29:
+  question: '**WHERE DOES `detail_level` ATTACH — PER-DIAL, OR PER-ENVELOPE?**'
+  the_state: >
+    **`detail_level` IS BUILT, IN EXACTLY ONE PLACE (`publication/detail_level.py`, 290 lines), FULLY
+    TESTED — AND IT REACHES NO SURFACE.** **VERIFIED BY THIS SEAT: no module imports it; it appears
+    in `publish.py` only in prose declaring that it is deliberately not wired; and it is absent from
+    both envelope schemas.** The public schema's own pre-existing text already lists it under
+    *"DELIBERATELY ABSENT AND OWED: `detail_level` (BLUEPRINT §8, WO-3)"*.
+  why_the_seat_stopped:
+    reason_1: 'BLUEPRINT §8 is **ambiguous** about where the field attaches, and `BLUEPRINT.md` is PO-authored and protected from every seat (`CD-D-115`).'
+    reason_2: >
+      *** **AND THIS IS THE SHARP ONE: ENVELOPE-LEVEL ATTACHMENT WOULD REQUIRE A FUNCTION OVER
+      *BOTH* DIALS — WHICH IS THE `CD-AC-002` NO-BLENDING SHAPE ONE STEP SIDEWAYS.** *** A single
+      `detail_level` computed from the equity dial AND the monetary dial is a single expression
+      consuming both dial types. **THE SEAT SAW THAT WIRING THE FIELD THE OBVIOUS WAY WOULD WALK
+      INTO THE PROJECT'S MOST PROTECTED CRITERION, AND STOPPED.**
+    reason_3: 'The thresholds need a dial scale that **`Q25` holds.**'
+  the_seats_recommendation: '**PER-DIAL.** This seat records the recommendation and **does not adopt it** — `PBG-AUTH-003`.'
+  how_the_decision_is_kept_visible: >
+    **A TEST ASSERTS `detail_level` IS ABSENT FROM BOTH SCHEMAS.** **SO THE OMISSION IS ENFORCED
+    RATHER THAN MERELY CURRENT, AND ADDING IT LATER IS A DELIBERATE ALLOWLIST EDIT WITH A
+    `schema_version` BUMP — "exactly the friction intended", in the schema's own words.** **A GAP
+    THAT FAILS A TEST IF SOMEONE CLOSES IT CARELESSLY IS A BETTER GAP THAN A TODO.**
+  blocks: '**The last of C1 only.** C2-C6 are unaffected. **It does NOT block the Matt hold and it does NOT block increment 16 — it joins the queue in front of it.**'
+
+# ================================================================================================== #
+# FINDINGS AGAINST THIS SEAT'S OWN DISPATCH — **ADOPTED.**
+# ================================================================================================== #
+CD-PL-F165:
+  severity: MEDIUM
+  raised_against: '**PROJECT_LEAD_SEAT_01 — `CD-DISPATCH-INC15` §3.** It is the Engineer''s `F01`, adopted.'
+  what: >
+    The dispatch said *"`regime` already appears in `staleness.py` (6 occurrences) … **SO C4 IS AN
+    EXTENSION, NOT A GREENFIELD**"*. **THE COUNT IS RIGHT AND THE CONCLUSION IS WRONG: ALL SIX
+    OCCURRENCES ARE PROSE SAYING `window_for(regime)` IS OWED AND DELIBERATELY UNIMPLEMENTED.
+    NO MECHANISM EXISTED TO EXTEND.**
+  the_pattern_this_seat_keeps_repeating: >
+    *** **THIS IS THE THIRD TIME IN TWO INCREMENTS THAT THIS SEAT HAS INFERRED A CODE FACT FROM A
+    TEXT MATCH AND BEEN WRONG (`CD-PL-F158` — a `sed` window inside a block scalar; `CD-PL-F161` —
+    "`execution_contract` is prose"; NOW `CD-PL-F165` — six prose mentions read as an
+    implementation).** **THE COMMON CAUSE IS NOT CARELESSNESS ABOUT ANY ONE FILE: IT IS A PROJECT
+    LEAD CHARACTERISING CODE IT HAS GREPPED BUT NOT READ, AND THEN PUTTING THE CHARACTERISATION IN A
+    BINDING DISPATCH.** **THE REMEDY IS NOT "GREP MORE CAREFULLY": IT IS TO STATE SURVEY RESULTS AS
+    OBSERVATIONS AND LET THE ENGINEER DRAW THE CONCLUSION** — which is what the surviving half of
+    §3 did (*"SURVEY IT YOURSELF BEFORE YOU WRITE A LINE"*), and it is why this cost nothing.
+  what_survived: 'The **instruction** survived intact: the survey found a real door (`StalenessWindow`) and the seat went **through** it rather than building a second mechanism beside it. **The advice was right; the assertion attached to it was not.**'
+CD-PL-F166:
+  severity: LOW
+  raised_against: 'PROJECT_LEAD_SEAT_01 — `CD-DISPATCH-INC15` §7, and an existing control.'
+  what: >
+    §7's register permission was **wider than the need** (the seat used less, see above).
+    **SEPARATELY AND MORE INTERESTINGLY: the existing control
+    `test_the_migration_step_is_not_the_application_startup_path` TEXT-SCANS `src/` AND FLAGGED THE
+    SEAT''S DOCSTRINGS.** **THE SEAT CHANGED ITS OWN PROSE AND DID NOT TOUCH THE CONTROL, AND RAISED
+    IT RATHER THAN REPAIRING IT.** **A TEXT-SCANNING CONTROL THAT FIRES ON COMMENTARY IS A REAL
+    (SMALL) DEFECT AND IT IS NOW ON THE RECORD INSTEAD OF BEING SILENTLY WORKED AROUND.**
+  booked: 'To the WO-3 lane residuals. Not repaired here — repairing a control to make your own work pass is the shape this project refuses, even when the control is wrong.'
+
+engineer_own_findings:
+  F03_MEDIUM: '`detail_level` reaches no surface. **CARRIED AS `Q29` ABOVE.**'
+  F04_LOW: 'Three of its scans were first substring searches; two failed on prose. **REWRITTEN AS AST SCANS WITH VACUITY GUARDS.** **It made this seat''s own recurring mistake, caught it in itself, and fixed the METHOD rather than the instance.**'
+  F05_LOW: '`P9` measured only half its claim; **it added `P10` so a `Degraded` reading actually renders calm. BOTH KEPT.** A seat that found its own plant half-vacuous and added the missing arm rather than rewording the claim.'
+  boot_verdict: '**RED — `CONTINUITY_REFERENCE_INVALID`**, the same pre-existing frozen-base artefact increment 14 hit, outside scope, **no drift**. Recorded, not netted off.'
+
+standing:
+  increment_15: '**BANKED. NOT ACCEPTED. ASSURANCE OWED.**'
+  C1: '**BUILT EXCEPT `detail_level` SURFACING — `Q29`.**'
+  C2_C3_C4_C5_C6: '**BUILT.**'
+  the_register: '**STILL VALID, STILL 18 COMPUTED, ALL `UNDECIDABLE`. NOT REGRESSED.**'
+  the_gate: '**SHUT.**'
+  CD-AC-002: 'AMBER and NOT CLOSED — **NOT MOVED; 0 matches in the register diff.**'
+  CD-AC-005: 'RED — **NOT MOVED; 0 matches in the register diff.**'
+  wo_2r3: '**FROZEN at `be0b355`.**'
+  source_set: '**HELD FOR MATT (`Q25`). NO SOURCE REGISTERED — VERIFIED.**'
+  open_questions: '**`Q25` (Matt — THE HINGE) · `Q28` (PO — PID prose vs `DERIVES`) · `Q29` (PO — where `detail_level` attaches).**'
+
+next_actor: '**A SEPARATE ASSURANCE SEAT OVER INCREMENT 15 AT `116c01f`. THEN THIS SEAT STOPS AT THE MATT HOLD.**'
