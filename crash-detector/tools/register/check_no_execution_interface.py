@@ -136,6 +136,44 @@ WHAT IT DOES NOT CATCH. Six boundaries, each with the reason it exists:
      what the process does when it runs, nor about code generated, configured or fetched at
      run time.
 
+  7  A TRANSMISSION VERB DIRECTLY AFTER A DETERMINER, IN A SENTENCE THAT NAMES NO PARTY.
+     **NEW AT WO-2R3 INCREMENT 8** (``PO-DECISIONS-0015`` ruling 3 — the ``CD-RT-012`` false
+     positive). This is one of that limit's three CD-RULE-004 places; the others are the
+     ``CD-RT-012-NO-EXECUTION-INTERFACE`` entry of ``required-tests.yaml`` and
+     ``contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md``.
+
+     WHY IT EXISTS. ``tests/test_tree_fingerprint.py:61`` says, of a governance record telling
+     a person to run a test, that the record ``ORDERS`` the auditor to do it. The first of
+     those two words is a ``TRANSMISSION_VERB`` and the second is a ``TRADEABLE_NOUN``, so
+     L3's pattern A read them as a claim about what the code does and this row shipped
+     **EXIT 1**. In that sentence the first word is a NOUN and the second is a VERB: the two
+     roles the pattern assigned are exactly swapped. A determiner introduces a NOUN PHRASE, so
+     pattern A no longer fires on a transmission verb that a determiner introduces directly.
+
+     THE CORRECTION IS BOUNDED BY THREE NARROWINGS, EACH MEASURED, and the third exists
+     because the residue was measured rather than reasoned about: (i) the determiner set
+     excludes every determiner that can also be a subject pronoun — ``this``, ``that``,
+     ``these``, ``those``, ``each``, ``one``, ``some``; (ii) a participial or gerund form is
+     untouched; (iii) **the suppression does not apply at all to a sentence that names a party
+     which acts on instructions** — a broker, a venue, a counterparty — because this product
+     has no reason to name one.
+
+     WHAT ESCAPES, AND IT IS ASSERTED TRUE RATHER THAN DESCRIBED. A sentence in the suppressed
+     shape that names NO party at all reads clean. It is strained English and it is a real
+     residue. **CARRIER MEASURED (CD-RULE-006), AND IT ASSERTS THE RESIDUE *TRUE* SO THIS
+     PARAGRAPH CANNOT GO STALE IN THE REASSURING DIRECTION:**
+     ``tests/test_no_execution_interface_prose.py::test_the_residue_of_this_correction_is_declared_and_measured``.
+     The paired contrast the ruling made the CONDITION of the correction is in the same file —
+     a baseline arm where the false positive reads clean, and TEN violated arms where a true
+     declaration is still caught, the first of which differs from the false positive in
+     EXACTLY ONE WORD (a subject noun between the determiner and the verb).
+
+     AND THE CARRIER'S OWN CONSTRAINT IS PART OF THE LIMIT. That file is inside the scanned
+     set, so it assembles every arm from single words at run time; spelling them as sentences
+     put eleven violations into ``tests/`` and took this row RED, MEASURED. The alternative
+     was to EXCLUDE the carrier from the check, which would widen this guard's blind spot in
+     order to test the guard, and it was refused.
+
 WHY THAT IS ACCEPTABLE, AND WHAT CARRIES THE REST. CD-BP-001 — risk-accepted by the Product
 Owner at Blueprint acceptance — records that the AST register checks are NEVER A SOLE
 GUARD. This check is ONE OF THREE refusals on CD-AC-012, standing behind a structural
@@ -486,7 +524,11 @@ def main() -> int:
         "CD-D-017). The trade is deliberate — this project's own documentation says "
         "repeatedly that it places no orders — and it is affordable only because L1 and L2 "
         "never read prose. Read the DECLARED LIMIT in this file's header for the full "
-        "account of the six boundaries; do not read a clean run here as proof that no "
+        # SEVEN AT WO-2R3 INCREMENT 8, NOT SIX. Boundary 7 is the determiner correction of
+        # PO-DECISIONS-0015 ruling 3. A count in an instrument's own printed output that does
+        # not move with the list it counts is CD-PL-F91's shape, and this project has been
+        # bitten by exactly that twice.
+        "account of the seven boundaries; do not read a clean run here as proof that no "
         "execution pathway exists."
     )
 

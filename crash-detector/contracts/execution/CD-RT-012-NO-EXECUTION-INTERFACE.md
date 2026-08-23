@@ -125,3 +125,68 @@ against the guard (CD-D-014).
 It does not claim the test passes. It does not claim the criterion is satisfied. It does not
 admit any evidence: `latest_admitted_run` is null in the register and this seat cannot fill
 it in, because an implementation may not certify itself (`PBG-SOD-001`, non-waivable).
+
+---
+
+## BOUNDARY 7 — A TRANSMISSION VERB DIRECTLY AFTER A DETERMINER, IN A SENTENCE THAT NAMES NO PARTY
+
+**NEW AT WO-2R3 INCREMENT 8** (`PO-DECISIONS-0015` ruling 3 — the `CD-RT-012` false positive).
+This is one of that limit's three CD-RULE-004 places; the others are the header of
+`tools/register/check_no_execution_interface.py` and the `CD-RT-012-NO-EXECUTION-INTERFACE`
+entry of `required-tests.yaml`.
+
+### Why it exists
+
+`tests/test_tree_fingerprint.py:61` says, of a governance record telling a person to run a test,
+that the record `ORDERS` the auditor to do it. The first of those two words is a
+`TRANSMISSION_VERB` and the second is a `TRADEABLE_NOUN`, so L3's pattern A — verb, filler,
+tradeable noun — read them as a claim about what the code does, and **this row shipped EXIT 1**.
+It went `EXIT 0` → `EXIT 1` inside increment 7 and **no document said so until an auditor ran one
+command** (`F-06-A`, and `CD-PL-F102` against the Project Lead for the same silence).
+
+In that sentence the first word is a **noun** and the second is a **verb** — the two roles the
+pattern assigned are exactly swapped. A determiner introduces a **noun phrase**, so the word
+immediately after it is that phrase's head noun and not the sentence's finite verb.
+
+### The correction, and the ruling's condition on it
+
+The ruling permitted the correction **if and only if** it carried its own contrast. It does, and
+the axis is one variable: **whether a subject noun stands between the determiner and the
+transmission verb.**
+
+| arm | verdict |
+|---|---|
+| the false positive — *determiner, transmission-verb-as-noun, tradeable-noun-as-verb, no party named* | **CLEAN** |
+| the same shape with a **subject noun inserted** and a party named | **CAUGHT** — active voice |
+| the ordinary active-voice declaration | **CAUGHT** |
+| the CD-PL-F32 archetype | **CAUGHT** |
+| `this` / `each` as the determiner (they are also subject pronouns) | **CAUGHT** |
+| the suppressed shape **with a party named** | **CAUGHT** — narrowing 3 |
+| a participial form after the determiner | **CAUGHT** — narrowing 2 |
+| the passive, nominalised and trade-lifecycle patterns | **CAUGHT** — untouched by this correction |
+
+Three narrowings bound it, and the third exists because the residue was **measured rather than
+reasoned about** — without it, the suppressed shape with a broker named in it went clean:
+
+1. the determiner set **excludes every determiner that can also be a subject pronoun** — `this`,
+   `that`, `these`, `those`, `each`, `one`, `some`;
+2. a participial or gerund form is untouched;
+3. **the suppression does not apply at all to a sentence that names a party which acts on
+   instructions.** This product has no reason to name a broker, a venue or a counterparty, so a
+   sentence that names one is never given the benefit of a grammatical doubt.
+
+### What still escapes, and it is asserted TRUE
+
+A sentence in the suppressed shape that names **no party at all**. Strained English, and a real
+residue. **CARRIER MEASURED (CD-RULE-006), AND IT ASSERTS THE RESIDUE *TRUE* SO THIS PARAGRAPH
+CANNOT GO STALE IN THE REASSURING DIRECTION:**
+`tests/test_no_execution_interface_prose.py::test_the_residue_of_this_correction_is_declared_and_measured`.
+
+### And the carrier's own constraint is part of the limit
+
+That file is **inside the scanned set**. Spelling its arms as literal sentences put eleven true
+execution-interface declarations into `tests/` and took this row RED — **measured, on the first
+draft of it**. The two ways out were to EXCLUDE the carrier from the check, which widens this
+guard's blind spot in order to test the guard, or to assemble each arm from single words at run
+time, which L3 cannot read because a fragment of fewer than two words is not judged. **The second
+costs the guard nothing and is what the carrier does.**

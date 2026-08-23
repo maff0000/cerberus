@@ -585,6 +585,61 @@ ORDER_SEQUENCE_MODIFIERS = frozenset(
 #: place to disambiguate that phrase.
 ORDER_SEQUENCE_FOLLOWERS = frozenset({"of"})
 
+#: **A DETERMINER MAKES THE WORD AFTER IT A NOUN. NEW AT WO-2R3 INCREMENT 8, CLOSING THE
+#: `CD-RT-012` FALSE POSITIVE (`PO-DECISIONS-0015` ruling 3).**
+#:
+#: `tests/test_tree_fingerprint.py:61` says *"which the dispatch ORDERS the auditor to do"*.
+#: `dispatch` is in `TRANSMISSION_VERBS` and `orders` is in `TRADEABLE_NOUNS`, so pattern A —
+#: verb, filler, tradeable noun — read *"the code `dispatch orders`"* and the register shipped
+#: RED on a sentence about a governance record telling a person to run a test.
+#:
+#: **THE CORRECTION IS GRAMMATICAL AND NOT A WORD BAN.** A determiner introduces a NOUN
+#: PHRASE, so the word immediately after it is that phrase's head noun and not a finite verb.
+#: In *"the dispatch orders the auditor"*, `dispatch` is the noun and `orders` is the verb —
+#: the two roles the pattern assigned are exactly swapped. **THE AXIS IS WHETHER A SUBJECT
+#: NOUN STANDS BETWEEN THE DETERMINER AND THE TRANSMISSION VERB**, and inserting one restores
+#: the violation: *"the CLIENT dispatches orders to the broker"* still fails.
+#:
+#: **THE SET IS NARROWER THAN `PROSE_FILLERS` ON PURPOSE, AND THE NARROWING IS THE WHOLE OF
+#: WHAT KEEPS IT SAFE.** Every member is a word that CANNOT stand alone as a subject.
+#: `this`, `that`, `these`, `those`, `each`, `one` and `some` are deliberately ABSENT even
+#: though they are determiners, because each of them is also a pronoun that can be a subject —
+#: *"This dispatches orders to the venue"* and *"Each forwards orders to the desk"* must keep
+#: failing, and they do.
+DETERMINERS_THAT_CANNOT_BE_A_SUBJECT = frozenset(
+    {"the", "a", "an", "every", "its", "their", "our", "your", "his", "her", "my"}
+)
+
+
+def _is_nominal_after_a_determiner(words: list, index: int, names_a_party: bool) -> bool:
+    """Is ``words[index]`` a NOUN because a determiner introduces it, not a finite verb?
+
+    THREE conditions, and the second and third are what keep the first from swallowing a real
+    violation:
+
+    * the word IMMEDIATELY before it is a determiner that cannot itself be a subject;
+    * the word carries NO participial or gerund inflection. *"the routed orders"* and
+      *"the forwarding of orders"* are noun phrases ABOUT orders being moved and are left
+      exactly as they were — this suppression is only for a bare or ``-s`` form, which is the
+      form that is also a noun (``dispatch``, ``route``, ``send``, ``dispatches``);
+    * **THE SENTENCE NAMES NO PARTY THAT ACTS ON INSTRUCTIONS.** This is the condition that
+      makes the whole suppression narrow enough to be safe, and it was added because the
+      residue was MEASURED rather than reasoned about: without it, *"The dispatch orders to
+      the broker"* went clean. This product has no reason to name a broker, a venue or a
+      counterparty at all, so a sentence that names one is never given the benefit of a
+      grammatical doubt.
+
+    See ``DETERMINERS_THAT_CANNOT_BE_A_SUBJECT`` for the measured contrast.
+    """
+    if names_a_party:
+        return False
+    if index == 0:
+        return False
+    if words[index - 1] not in DETERMINERS_THAT_CANNOT_BE_A_SUBJECT:
+        return False
+    word = words[index]
+    return not (word.endswith("ing") or word.endswith("ed") or word.endswith("en"))
+
 
 def establishes_sequence_sense(identifier: str) -> bool:
     """Does this IDENTIFIER put `order` in its SEQUENCE sense — `work_order`, `sort_order`?
@@ -811,6 +866,13 @@ def _judge_sentence(sentence: str) -> "tuple[str, str] | None":
     # A — ACTIVE VOICE: verb, at most three words of filler, tradeable noun.
     for index, word in enumerate(words):
         if not _is_transmission_verb(word):
+            continue
+        # A DETERMINER MAKES THE WORD AFTER IT A NOUN, SO THIS IS NOT THE VERB OF THIS
+        # SENTENCE. WO-2R3 increment 8, PO-DECISIONS-0015 ruling 3 — the correction of the
+        # `CD-RT-012` false positive, carried by its own contrast in
+        # tests/test_no_execution_interface_prose.py. `the dispatch orders the auditor` has
+        # the two roles exactly swapped: `dispatch` is the noun and `orders` is the verb.
+        if _is_nominal_after_a_determiner(words, index, bool(destination)):
             continue
         for offset in range(1, 4):
             position = index + offset

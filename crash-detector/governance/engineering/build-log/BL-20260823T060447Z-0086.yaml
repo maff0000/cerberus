@@ -1,0 +1,159 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 8 — ITEM 2. `CD-RT-012-NO-EXECUTION-INTERFACE`, RED AT THE TIP SINCE INCREMENT 7.
+#
+# `PO-DECISIONS-0015` ruling 3 permitted the correction **IF AND ONLY IF** it carried its own
+# contrast. **IT DOES, AND THE CONTRAST IS ONE VARIABLE.** The row is now EXIT 0 and the residue
+# the correction leaves is DECLARED in all three CD-RULE-004 places and CARRIED — asserted TRUE —
+# so it cannot go stale in the reassuring direction.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0085. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T060447Z-0086
+timestamp_utc: "2026-08-23T06:04:47Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-06
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC8-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0015.md ruling 3 — CORRECT THE FALSE POSITIVE, IF AND ONLY IF the correction carries its own contrast; else DECLARE it the way the Class-2 sweep''s is'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 314592c6c397b4e1f2f03ca84488ce800840ad09
+parent_entry_id: BL-20260823T055251Z-0085
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_2
+title: '`CD-RT-012` — the L3 prose false positive corrected, with the paired contrast the ruling made the condition of it.'
+
+# ---------------------------------------------------------------------------------------------- #
+the_false_positive__DIAGNOSED_NOT_ASSUMED:
+  where: 'tests/test_tree_fingerprint.py:61, rule `execution interface declared in prose (docstring or string literal)`.'
+  the_sentence: 'a docstring saying, of a governance record telling a person to run a test, that the record ORDERS the auditor to do it.'
+  why_it_fired: >
+    The first of those two words is in `TRANSMISSION_VERBS` and the second is in
+    `TRADEABLE_NOUNS`, so L3's **pattern A** — a transmission verb, at most three words of
+    filler, a tradeable noun — read them as a claim about what the code does. **IN THAT SENTENCE
+    THE FIRST WORD IS A NOUN AND THE SECOND IS A VERB: THE TWO ROLES THE PATTERN ASSIGNED ARE
+    EXACTLY SWAPPED.**
+  measured_by_me_at_the_base: '`python3 -B tools/register/check_no_execution_interface.py --root .` in the lane at `314592c`: **EXIT 1, 1 violation, scanned 114 files, 60360 assertions.** The dispatch quotes 113/59848 at `4410275`; the difference is item 5''s carrier file, and this is my own measurement and not a transcription (CD-RULE-009).'
+
+# ---------------------------------------------------------------------------------------------- #
+what_changed_in_the_code_path:
+  the_one_line_that_decides: '`tools/register/_broker_vocabulary.py` — pattern A now `continue`s on a candidate transmission verb when `_is_nominal_after_a_determiner(words, index, bool(destination))` says the word is a NOUN.'
+  the_rule_and_it_is_GRAMMATICAL_AND_NOT_A_WORD_BAN: >
+    **A determiner introduces a NOUN PHRASE, so the word immediately after it is that phrase's
+    head noun and not the sentence's finite verb.** That is the whole of it. The correction reads
+    English grammar rather than banning a spelling, which is why the paired arm below survives it.
+  the_three_narrowings_that_bound_it__EACH_WITH_ITS_OWN_ARM:
+    - '**(i) THE DETERMINER SET EXCLUDES EVERY DETERMINER THAT CAN ALSO BE A SUBJECT PRONOUN** — `this`, `that`, `these`, `those`, `each`, `one`, `some`. `DETERMINERS_THAT_CANNOT_BE_A_SUBJECT` is eleven words and every one of them is a pure determiner.'
+    - '**(ii) A PARTICIPIAL OR GERUND FORM IS UNTOUCHED.** The suppression applies only to a bare or `-s` form — the form that is also a noun.'
+    - '**(iii) THE SUPPRESSION DOES NOT APPLY AT ALL TO A SENTENCE THAT NAMES A PARTY WHICH ACTS ON INSTRUCTIONS.** **THIS ONE EXISTS BECAUSE THE RESIDUE WAS MEASURED AND NOT REASONED ABOUT:** with only (i) and (ii), the suppressed shape with a broker named in it went CLEAN. I ran it, saw it, and added the condition. This product has no reason to name a broker, a venue or a counterparty, so a sentence that names one is never given the benefit of a grammatical doubt.'
+
+# ---------------------------------------------------------------------------------------------- #
+the_contrast_the_ruling_made_the_CONDITION_of_the_correction__BOTH_ARMS_ONE_AXIS:
+  the_axis: '**ONE VARIABLE: whether a SUBJECT NOUN stands between the determiner and the transmission verb.** Nothing else differs between the baseline arm and the paired violated arm.'
+  the_command: 'PYTHONPATH=tools/register python3 -B -c "from _broker_vocabulary import judge_prose; ..." — and, at the instrument, `python3 -B tools/register/check_no_execution_interface.py --root <tree>`'
+  both_arms_both_results: |
+    clean   BASELINE — the sentence the register shipped RED on
+    FIRES   PAIRED   — the same determiner, verb and noun WITH A SUBJECT NOUN INSERTED
+    FIRES   the ordinary active-voice declaration
+    FIRES   the CD-PL-F32 archetype ("Route an order to the broker for execution")
+    FIRES   `This` as the determiner        (narrowing (i) — it is also a subject pronoun)
+    FIRES   `Each` as the determiner        (narrowing (i))
+    FIRES   the suppressed shape WITH a party named   (narrowing (iii) — WAS CLEAN BEFORE IT)
+    FIRES   a participial form after the determiner   (narrowing (ii))
+    FIRES   the PASSIVE pattern              (untouched)
+    FIRES   the NOMINALISED pattern          (untouched)
+    FIRES   the TRADE-LIFECYCLE pattern      (untouched)
+  and_the_same_contrast_AT_THE_INSTRUMENT_because_a_reading_is_not_a_register_row: |
+    tests/test_no_execution_interface_prose.py::test_the_register_row_is_green_and_a_planted_true_declaration_takes_it_red
+    ARM 1  the shipped tree, copied whole                                 EXIT 0
+    ARM 2  the same tree + ONE comment in src/crash_detector/time_utc.py
+           saying in the active voice that the code moves instructions
+           to a party that acts on them                                   EXIT 1,
+           rule `execution interface declared in prose`
+    Each arm reads THAT tree's own copy of the instrument (CD-PL-F98).
+  the_carrier_at_the_base: '`tests/test_no_execution_interface_prose.py` in a pristine `git archive 314592c` extraction with only that file added: **3 failed, 10 passed.** The three that fail are the three that describe the CORRECTED behaviour — the baseline arm, the residue arm and the instrument arm. **THE TEN THAT PASS AT THE BASE ARE THE "STILL CAUGHT" ARMS AND THEY MUST PASS AT THE BASE: their whole proposition is that the correction did not move them.** Said plainly rather than presented as ten new passes.'
+
+# ---------------------------------------------------------------------------------------------- #
+A_FINDING_AGAINST_MY_OWN_WORK__CAUGHT_BY_RUNNING_THE_INSTRUMENT_OVER_MY_OWN_CARRIER:
+  id: CD-ENG-WO2R3-06-F04
+  severity: MEDIUM
+  what: >
+    **MY FIRST DRAFT OF THE CARRIER PUT ELEVEN TRUE EXECUTION-INTERFACE DECLARATIONS INTO
+    `tests/` AND TOOK THE ROW IT WAS CORRECTING RED.** `check_no_execution_interface.py` scans
+    `tests/`, and a carrier for the PROSE layer that spells its arms as literal sentences is
+    itself prose. MEASURED: `CD-RT-012-NO-EXECUTION-INTERFACE: FAIL — 11 violation(s)`.
+  the_two_ways_out_and_why_I_took_the_second: >
+    **(1) EXCLUDE THE CARRIER FROM THE CHECK**, on the same declared ground the check already
+    excludes `_broker_vocabulary.py` — *"the register's own guards, which must name what they
+    forbid in order to forbid it"*. **I REFUSED IT: it widens this guard's blind spot in order to
+    test the guard, and it creates a file under `tests/` where a real execution interface could
+    sit unread.** (2) **ASSEMBLE EVERY ARM FROM SINGLE WORDS AT RUN TIME.** `_judge_sentence`
+    refuses a fragment of fewer than two words, so a tuple of one-word literals is invisible to
+    L3 — and the string handed to `judge_prose` is byte-for-byte the sentence, built one word
+    earlier. **NO ARM IS WEAKER FOR IT AND THE GUARD LOSES NOTHING.**
+  why_it_is_recorded_rather_than_only_fixed: 'It is part of the declared limit now, in all three CD-RULE-004 places: the next seat that writes a prose carrier will hit the same wall, and the record should tell it which way out this project took and why.'
+
+# ---------------------------------------------------------------------------------------------- #
+the_declared_limit_in_all_three_CD_RULE_004_PLACES:
+  place_1_check_header: 'tools/register/check_no_execution_interface.py — BOUNDARY 7, new, added to the six already there.'
+  place_2_register_entry: 'required-tests.yaml, the CD-RT-012-NO-EXECUTION-INTERFACE entry.'
+  place_3_execution_contract: 'contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md.'
+  what_it_declares: >
+    A sentence in the suppressed shape that names NO party at all reads clean. Strained English,
+    and a real residue. **CARRIED, AND ASSERTED *TRUE*:**
+    `tests/test_no_execution_interface_prose.py::test_the_residue_of_this_correction_is_declared_and_measured`
+    requires the residue to still be there, so the declaration cannot go stale in the reassuring
+    direction the day somebody narrows the suppression further without correcting the paragraph.
+  and_a_STALE_COUNT_IN_THE_INSTRUMENTS_OWN_OUTPUT_CORRECTED_WITH_IT: >
+    The check's printed note said *"the full account of the SIX boundaries"* and there are now
+    seven. **THAT IS CD-PL-F91's SHAPE — a count in an instrument's own output that does not move
+    with the list it counts** — and this project has been bitten by exactly it twice. Corrected in
+    the same commit, with the reason written at the line.
+
+# ---------------------------------------------------------------------------------------------- #
+the_practice_half_which_the_dispatch_says_is_NOT_OPTIONAL:
+  the_auditor_item_2_requirement: '*"needs whoever reconciles boundaries to run THE REGISTER SET, not only the suite and the two named instruments."*'
+  THE_WHOLE_REGISTER_SET_TWELVE_CHECKS_AT_BASE: |
+    TREE PWD: /srv/crash-detector-wo2r3   TREE SHA: 314592c6c397b4e1f2f03ca84488ce800840ad09
+    check_base_image_digest_pin              0     check_lockfile_denylist                0
+    check_constructor_field_establishment    0     check_no_blend                         0
+    check_dockerignore                       0     check_no_execution_interface           1  <-- THIS ITEM
+    check_egress_no_broker                   0     check_no_numeric_default               0
+    check_engine_no_witness_reach            0     check_schema_closed                    0
+    check_grant_matrix_live                  3     check_judgement_path_doors             0
+    TEN EXIT 0 · ONE EXIT 3 (env gate: a live PostgreSQL exists on this host but there are no
+    credentials and NONE WERE GUESSED) · ONE EXIT 1.
+  THE_WHOLE_REGISTER_SET_TWELVE_CHECKS_AT_THIS_TIP: |
+    TREE PWD: /srv/crash-detector-wo2r3
+    check_base_image_digest_pin              0     check_lockfile_denylist                0
+    check_constructor_field_establishment    0     check_no_blend                         0
+    check_dockerignore                       0     check_no_execution_interface           0  <-- CORRECTED
+    check_egress_no_broker                   0     check_no_numeric_default               0
+    check_engine_no_witness_reach            0     check_schema_closed                    0
+    check_grant_matrix_live                  3     check_judgement_path_doors             0
+    **ELEVEN EXIT 0 · ONE EXIT 3.** The env gate is unchanged and unguessed.
+
+# ---------------------------------------------------------------------------------------------- #
+instruments_run_and_their_exit_codes__MINE_MEASURED_BY_ME:
+  check_no_execution_interface: 'EXIT 1 (1 violation, 60360 assertions) at base -> **EXIT 0 (62662 assertions)** here. The assertion count rises because this item ADDS files to the scanned set, not because anything stopped being read.'
+  delegated_judgement_sweep: 'EXIT 0 — PASS, 555 sites. UNMOVED by this item (it touches `tools/` only, and the sweep enumerates `src/`).'
+  full_suite: 'EXIT 0 — **1672 passed** (1659 after item 1; +13 is exactly this item''s carrier).'
+  the_carrier_at_the_base: '**3 failed, 10 passed** in a pristine `git archive 314592c` extraction, and the ten that pass are the "still caught" arms, which must.'
+
+# ---------------------------------------------------------------------------------------------- #
+what_this_does_NOT_close__MEASURED:
+  - '**BOUNDARY 7 IS A NEW BLIND SPOT AND IT IS DECLARED, NOT CLOSED.** The suppressed shape with no party named reads clean.'
+  - '**THE SIX EXISTING BOUNDARIES ARE UNTOUCHED**, including boundary 3 — a sentence carrying `must` is still not read at all (CD-ENG-F39, DECLARED not fixed, CD-D-017).'
+  - '**THIS ITEM CHANGES NO LINE UNDER `src/`.** It changes one register vocabulary module, one check header, one register entry, one execution contract, and adds one carrier.'
+  - '**WHETHER THE CORRECTION DISCHARGES `PO-DECISIONS-0015` RULING 3 IS NOT MINE TO SAY** (PBG-AUTH-003, PBG-SOD-001).'
+
+next_safe_action: 'ITEM 3 — `F-06-D`, the `admission.py:525` operator, with the metaclass plant as the carrier and its control arm.'

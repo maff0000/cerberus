@@ -2285,6 +2285,38 @@ criteria:
         scanned roots; or anything about runtime. It is ONE OF THREE guards on CD-AC-012 and never
         a sole guard (CD-BP-001, PO-accepted). A planted variant landing beyond that boundary is a
         finding against the DECLARATION, not an automatic RED against the guard (CD-D-014).
+        ================================================================================
+        BOUNDARY 7 — NEW AT WO-2R3 INCREMENT 8 (PO-DECISIONS-0015 ruling 3, the CD-RT-012 FALSE
+        POSITIVE). This is one of that limit's three CD-RULE-004 places; the others are the
+        header of tools/register/check_no_execution_interface.py and
+        contracts/execution/CD-RT-012-NO-EXECUTION-INTERFACE.md.
+        WHY IT EXISTS. tests/test_tree_fingerprint.py:61 says, of a governance record telling a
+        person to run a test, that the record ORDERS the auditor to do it. The first of those two
+        words is a TRANSMISSION_VERB and the second is a TRADEABLE_NOUN, so L3's pattern A read
+        them as a claim about what the code does and THIS ROW SHIPPED EXIT 1. It went EXIT 0 ->
+        EXIT 1 inside increment 7 and no document said so until an auditor ran one command
+        (F-06-A). In that sentence the first word is a NOUN and the second is a VERB: the two
+        roles the pattern assigned are exactly swapped. A determiner introduces a NOUN PHRASE, so
+        pattern A no longer fires on a transmission verb a determiner introduces directly.
+        THREE NARROWINGS BOUND IT, EACH MEASURED, and the third exists because the residue was
+        measured rather than reasoned about: (i) the determiner set excludes every determiner
+        that can also be a subject pronoun — `this`, `that`, `these`, `those`, `each`, `one`,
+        `some`; (ii) a participial or gerund form is untouched; (iii) THE SUPPRESSION DOES NOT
+        APPLY AT ALL TO A SENTENCE THAT NAMES A PARTY WHICH ACTS ON INSTRUCTIONS — a broker, a
+        venue, a counterparty — because this product has no reason to name one.
+        WHAT ESCAPES: a sentence in the suppressed shape that names NO party at all. Strained
+        English, and a real residue. CARRIER MEASURED (CD-RULE-006) AND IT ASSERTS THE RESIDUE
+        TRUE, so this text cannot go stale in the reassuring direction:
+        tests/test_no_execution_interface_prose.py::test_the_residue_of_this_correction_is_declared_and_measured.
+        THE PAIRED CONTRAST THE RULING MADE THE CONDITION OF THE CORRECTION is in the same file:
+        a baseline arm where the false positive reads clean, and TEN violated arms where a true
+        declaration is still caught — the first of which differs from the false positive in
+        EXACTLY ONE WORD, a subject noun between the determiner and the verb. AND the carrier
+        assembles every arm from single words at run time, because that file is inside the
+        scanned set and spelling them as sentences put ELEVEN violations into tests/ and took
+        this row RED (MEASURED). Excluding the carrier from the check would have widened this
+        guard's blind spot in order to test the guard, and it was refused.
+        ================================================================================
       evidence_ref: RTR-WO2-0001
   # REWRITTEN AT WO-2R2 INCREMENT 3, CLOSING CD-ASR-WO2R-F05 (MEDIUM). The entry below
   # previously claimed the class as "a broker, exchange or order-routing SDK added to any
