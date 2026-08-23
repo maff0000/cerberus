@@ -33,6 +33,7 @@ real violation from a broken check, so 1 and 3 are printed differently and say s
 from __future__ import annotations
 
 import argparse
+import ast
 import pathlib
 import sys
 from dataclasses import dataclass, field
@@ -44,8 +45,68 @@ __all__ = [
     "EXIT_PRECONDITION",
     "Finding",
     "Check",
+    "module_level_statements",
     "parse_root",
 ]
+
+
+#: The three node types that END module scope. Everything else is descended through.
+#: **THIS IS THE ONLY ENUMERATION IN :func:`module_level_statements` AND IT IS THE
+#: CLOSED ONE.** See that function's docstring for why it is not a vocabulary.
+_SCOPE_ENDING_NODES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+
+
+def module_level_statements(tree):
+    """Every statement at MODULE SCOPE, including inside a module-level block.
+
+    ``for node in tree.body`` — which every enumerator in this directory used to write —
+    is **not** "module level". It is "module level and not indented", and the difference
+    is a live escape: a name bound inside ``if TYPE_CHECKING:``, ``try:``/``except
+    ImportError:``, ``with``, ``for`` or ``while`` at module level is bound in the module
+    namespace exactly as a top-level one is, and is invisible to ``tree.body``.
+
+    **MEASURED, NOT ASSUMED (WO-2R3 increment 8, `F-06-K`).** Wrapping
+    ``FetchOutcome = Union[OK, FetchFailed, Malformed, Empty]`` in ``if True:`` in
+    ``observations.py`` dropped ``FetchFailed``, ``Malformed`` and ``Empty`` out of
+    ``check_constructor_field_establishment.py``'s governed class and **converted a real
+    FAIL into a PASS** — with ``@establishes`` stripped from ``FetchFailed`` the control
+    arm is ``FAIL — 1 violation, EXIT 1`` and the same tree with the ``if True:`` added is
+    ``PASS — 91 assertions, EXIT 0``. Both arms run from
+    ``tests/test_module_level_traversal.py``.
+
+    **WHY THIS PRUNES RATHER THAN ENUMERATING BLOCK TYPES, WHICH IS THE WHOLE POINT.**
+    The obvious repair is ``ast.walk`` (too wide — it descends into function bodies and
+    class bodies, which are *not* module scope) or a list of block statements to descend
+    into (``if``/``try``/``with``/``for``/``while``) — and that list **is a vocabulary**,
+    which is the defect class this project has spent six gates on. A ``match`` statement,
+    or whatever the next Python grammar adds, defeats it silently.
+
+    So the rule is inverted and closed: **descend into EVERY node except the three that
+    create a new scope.** A statement is at module scope if no ``def``, ``async def`` or
+    ``class`` stands between it and the module. That is derived from the language's own
+    scoping rule rather than from a list of spellings, and a new block statement type is
+    handled on the day it is added with no edit here.
+
+    The scope-ending nodes are THEMSELVES yielded — a ``def`` inside ``if TYPE_CHECKING:``
+    binds a module-level name — but their bodies are not descended into.
+
+    Returns statements only (``ast.stmt``), in source order per branch, so every existing
+    caller's ``isinstance(node, (ast.Assign, ast.FunctionDef, ...))`` filter keeps its
+    exact meaning and only its INPUT widens.
+    """
+    out: list = []
+
+    def descend(node) -> None:
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, _SCOPE_ENDING_NODES):
+                out.append(child)
+                continue
+            if isinstance(child, ast.stmt):
+                out.append(child)
+            descend(child)
+
+    descend(tree)
+    return out
 
 EXIT_CLEAN = 0
 EXIT_VIOLATION = 1

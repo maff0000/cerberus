@@ -1465,9 +1465,38 @@ criteria:
         plants one public undecorated callable at nine placements: nested ONE class level; nested
         TWO class levels; inside a PUBLIC function body; inside a PRIVATE function body;
         conditionally defined under `if True:`. All are now NAMED by this check.
-        THE RESIDUAL REACH LIMITS ARE EXACTLY TWO, and they are the same two the sibling
+        CORRECTED AT WO-2R3 INCREMENT 8 (F-06-K). SUPERSEDED, NOT DELETED (CD-RULE-004,
+        PBG-CONT-003). Superseded wording, quoted in full: "THE RESIDUAL REACH LIMITS ARE EXACTLY
+        TWO, and they are the same two the sibling instrument declares as its CHECK LIMIT 5,
+        because they are properties of READING SOURCE rather than of either check."
+        IT WAS ACCURATE ON THE CALLABLE-ENUMERATION AXIS AND FALSE ON THE NAME AXIS, AND INCREMENT
+        7 MADE IT WORSE WHILE IT SAID SO. Increment 7 added `for node in tree.body` at THREE new
+        sites in this check — `_module_bindings`, and the NET post-condition resolution and fetch
+        in `main` — while closing one in the ESTABLISHED_HERE fixpoint. NET RESIDUAL ACROSS THE TWO
+        GOVERNING INSTRUMENTS: +2, with this declaration unmoved.
+        THE FIRST OF THE THREE IS THE ONE THAT MATTERED: `_module_bindings` IS THE FUNCTION THE
+        REACHABILITY CLAUSE REASONS OVER, so "does this object's escape route land on a REAL PUBLIC
+        BINDING?" was answered by a map that could not see a binding written inside any
+        module-level block. All four sites now read MODULE SCOPE via
+        `_support.module_level_statements`, which prunes at the three scope-ending node types and
+        descends through everything else — NOT a list of block statements, because a list of block
+        statements is a vocabulary.
+        WHAT THE BLINDNESS COST HERE, MEASURED, AND IT IS LESS THAN THE WORST READING: a
+        function-local callable reachable only through a public module-level name bound inside `if
+        True:` was reported UNREACHABLE and refused as UNCLASSIFIED_INTERCEPTOR rather than named as
+        the UNDECORATED_JUDGEMENT_PATH_DOOR it is. THE EXIT CODE WAS RIGHT AND THE DIAGNOSIS WAS
+        FALSE; the NETS deny-by-default population held it. CD-ENG-WO2R3-05 LOOKED FOR AN ARM AT
+        THIS SITE WHERE THE BLINDNESS CONVERTS A FAIL INTO A PASS AND COULD NOT BUILD ONE, and says
+        so rather than omitting it. THE FAIL-INTO-PASS CONVERSION IS REAL AT THE SIBLING INSTRUMENT
+        (CD-RT-002-CONSTRUCTORS..., CHECK LIMIT 5) and is measured there.
+        CARRIER (CD-RULE-006 — A CHECK REPORTS, A CARRIER FAILS):
+        tests/test_module_level_traversal.py, SIX ARMS, ALL SIX FAILING AT 4410275 AND PASSING AT
+        THE TIP. Three are this check's sites.
+        THE RESIDUAL REACH LIMITS ARE TWO AGAIN, and they are the same two the sibling
         instrument declares as its CHECK LIMIT 5, because they are properties of READING SOURCE
-        rather than of either check.
+        rather than of either check. "AGAIN" IS LOAD-BEARING: they were two, then three for two
+        increments while this entry said two, and they are two now. Run the carrier for the current
+        number; do not trust this paragraph (CD-RULE-009).
         (i) A CALLABLE WITH NO `FunctionDef` NODE IS INVISIBLE. A `lambda` bound to a name, or a
         function built by exec/type, leaves nothing to walk. Executable example: the probe's
         `built by type(...) AT RUNTIME` placement writes `hidden_decide = lambda reading: reading`
@@ -2017,7 +2046,30 @@ criteria:
         A ROW THAT TURNED OUT NOT TO BE A LIMIT, RECORDED SO IT IS NOT DECLARED AS ONE: a module
         that DOES NOT PARSE. Measured `ctor exit=1`. It is already an UNPARSEABLE violation and
         always was — a failure, not a silence. IT IS NOT DECLARED AS A LIMIT BECAUSE IT IS NOT ONE.
-        THE RESIDUAL REACH LIMITS ARE EXACTLY TWO, MEASURED AND NOT LISTED FROM IMAGINATION:
+        CORRECTED AT WO-2R3 INCREMENT 8 (F-06-K). SUPERSEDED, NOT DELETED (CD-RULE-004,
+        PBG-CONT-003). Superseded wording, quoted in full: "THE RESIDUAL REACH LIMITS ARE EXACTLY
+        TWO, MEASURED AND NOT LISTED FROM IMAGINATION:".
+        WHY IT WAS WRONG: increment 6 closed the traversal on the CLASS axis (`_classes` uses
+        `ast.walk` and reaches any depth) and LEFT THE NAME AXIS OPEN WITHOUT SAYING SO.
+        `_module_level_names` — what makes RULES B and C reach a type THROUGH A NAME — still read
+        `for node in tree.body`. So the check could see a class hidden anywhere and could not see
+        the `Union` that puts it in the governed class if that `Union` was written one indent in.
+        The auditor's phrase is the right one: the old sentence was "merely less wrong".
+        THE THIRD LIMIT, NAMED AND CLOSED AT THIS INCREMENT. MEASURED, THREE ARMS ON ONE AXIS, in
+        throwaway extractions, before and after the repair:
+        clean = PASS 101 assertions, population 33, EXIT 0;
+        + `@establishes` stripped from `FetchFailed` = FAIL 1 violation, population 33, EXIT 1;
+        + `FetchOutcome = Union[...]` wrapped in `if True:` = PASS 91 assertions, population 30,
+        EXIT 0.
+        THE THIRD ROW IS THE SAME DEFECT AS THE SECOND WITH ONE LINE INDENTED, AND THE CHECK
+        PASSED. FetchFailed, Malformed and Empty left the governed population. A guard a maintainer
+        can remove by indentation is not a guard. With the repair the third row is FAIL 1 violation,
+        population 33, EXIT 1 — identical to the control, which is the point.
+        CARRIER (CD-RULE-006): tests/test_module_level_traversal.py, SIX ARMS, ALL SIX FAILING AT
+        4410275 AND PASSING AT THE TIP. Two are this check's.
+        THE RESIDUAL REACH LIMITS ARE TWO AGAIN, MEASURED AND NOT LISTED FROM IMAGINATION. "AGAIN"
+        IS LOAD-BEARING: they were two, then three for two increments while this entry said two,
+        and they are two now:
         (i) A CLASS WITH NO `ClassDef` NODE IS INVISIBLE, AND NO AST TRAVERSAL CAN FIX THAT. A
         type built by `type(...)`, `exec` or `importlib` at runtime leaves nothing to walk.
         Executable example, the probe's `built by type(...) AT RUNTIME` placement appended to

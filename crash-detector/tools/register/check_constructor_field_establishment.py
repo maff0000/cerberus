@@ -288,7 +288,48 @@ it, or says NOT PROVED TO BE CARRIED ANYWHERE.
     violation and always was — a failure, not a silence. **It is not declared as a limit
     because it is not one.**
 
-    **THE RESIDUAL REACH LIMITS ARE EXACTLY TWO. MEASURED, NOT LISTED FROM IMAGINATION.**
+    **CORRECTED AT WO-2R3 INCREMENT 8. THE SENTENCE BELOW WAS TRUE ON ONE AXIS AND FALSE ON
+    ANOTHER, AND IT IS SUPERSEDED RATHER THAN DELETED (CD-RULE-004, PBG-CONT-003).**
+
+    *Superseded wording, quoted in full: "**THE RESIDUAL REACH LIMITS ARE EXACTLY TWO.
+    MEASURED, NOT LISTED FROM IMAGINATION.**"*
+
+    **WHY IT WAS WRONG, AND IT IS THE SIXTH ASSURANCE SEAT'S `F-06-K`.** Increment 6 closed
+    the traversal on the **CLASS** axis — :func:`_classes` uses ``ast.walk`` and reaches any
+    depth, and everything above this paragraph is accurate about that. **IT LEFT THE `NAME`
+    AXIS OPEN AND DID NOT SAY SO.** :func:`_module_level_names`, which is what makes RULES B
+    and C reach a type THROUGH A NAME, still read ``for node in tree.body``. So the check
+    could see a class hidden anywhere, and could not see the ``Union`` that puts it in the
+    governed class if that ``Union`` was written one indent in. **The auditor's phrase for
+    the old sentence is the right one: it was "merely less wrong".**
+
+    **THE THIRD LIMIT, NAMED — AND CLOSED AT THIS INCREMENT. MEASURED, THREE ARMS ON ONE
+    AXIS, in throwaway extractions, run before and after the repair:**
+
+        clean                                        PASS — 101 assertions, pop 33, EXIT 0
+        + `@establishes` stripped from `FetchFailed`  FAIL — 1 violation,  pop 33, EXIT 1
+        + `FetchOutcome = Union[...]` in `if True:`   PASS —  91 assertions, pop 30, EXIT 0
+
+    **THE THIRD ROW IS THE SAME DEFECT AS THE SECOND WITH ONE LINE INDENTED, AND THE CHECK
+    PASSED.** `FetchFailed`, `Malformed` and `Empty` left the governed population. A guard a
+    maintainer can remove by indentation is not a guard. The repair is
+    :func:`_support.module_level_statements`, which prunes at the three scope-ending node
+    types and descends through everything else — **not** a list of block statements, because
+    a list of block statements is a vocabulary and this project has spent six gates on those.
+    With it, the third row is ``FAIL — 1 violation, pop 33, EXIT 1``: identical to the
+    control, which is the whole point.
+
+    **CARRIER (CD-RULE-006 — A CHECK REPORTS, A CARRIER FAILS):**
+    ``tests/test_module_level_traversal.py``, six arms, **every one of which FAILS at
+    ``4410275`` and passes here.** Two of them are this limit's.
+
+    **AND THE COUNT IS RE-MEASURED RATHER THAN RESTORED.** ``grep`` for a narrow read of
+    ``tree.body`` across both governing instruments now returns **prose only, zero code
+    sites**; the sibling ``check_no_blend.py`` was checked too and descends into blocks
+    already, so it was never a fifth site. **THE RESIDUAL REACH LIMITS ARE TWO AGAIN — AND
+    "AGAIN" IS THE LOAD-BEARING WORD.** They were two, then for two increments they were
+    three and the file said two, and they are two now. A reader who wants the current
+    number should run the carrier, not trust this paragraph.
 
     (i) **A CLASS WITH NO ``ClassDef`` NODE IS INVISIBLE, AND NO AST TRAVERSAL CAN FIX THAT.**
         A type built by ``type(...)``, ``exec`` or ``importlib`` at runtime leaves nothing to
@@ -326,6 +367,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _support import (  # noqa: E402
     Check,
+    module_level_statements,
     parse_root,
     read_text,
     resolve_root,
@@ -574,10 +616,21 @@ def _module_level_names(parsed) -> dict:
     The namespace is FLAT ACROSS MODULES — a name defined anywhere resolves everywhere.
     That is deliberately WIDE: it can only enlarge the class, never shrink it, which is the
     safe direction for an instrument whose whole risk is being tuned small.
+
+    **AND IT NOW READS MODULE SCOPE RATHER THAN `tree.body`. CLOSED AT WO-2R3 INCREMENT 8**
+    (`F-06-K`). *Superseded implementation, described rather than deleted (CD-RULE-004,
+    PBG-CONT-003): this loop read ``for node in tree.body`` — module level AND NOT INDENTED.*
+    A name bound inside a module-level ``if``/``try``/``with``/``for``/``while`` is bound in
+    the module namespace identically and was invisible here. **MEASURED: wrapping
+    ``FetchOutcome = Union[...]`` in ``if True:`` dropped three types out of the governed
+    class and converted a real FAIL into a PASS.** See
+    :func:`_support.module_level_statements` for why the repair prunes at the three
+    scope-ending node types instead of enumerating block statements — an enumeration would
+    be a vocabulary, which is the defect class this instrument exists to avoid.
     """
     names: dict = {}
     for _path, tree in parsed:
-        for node in tree.body:
+        for node in module_level_statements(tree):
             targets = []
             if isinstance(node, ast.Assign):
                 targets = [t.id for t in node.targets if isinstance(t, ast.Name)]

@@ -599,10 +599,53 @@ every level rather than only the first.
 placements. Now **named** by this check: nested one class level · nested two class levels · inside a
 public function body · inside a private function body · conditionally defined under `if True:`.
 
-### The residual reach limits are exactly two
+### CORRECTED AT WO-2R3 INCREMENT 8 — `F-06-K`. Superseded, not deleted (CD-RULE-004, PBG-CONT-003)
+
+*Superseded heading and claim, quoted in full: **"### The residual reach limits are exactly two —
+They are the same two the sibling instrument declares as its DECLARED LIMIT 5, because they are
+properties of reading source rather than of either check."***
+
+**IT WAS ACCURATE ON THE CALLABLE-ENUMERATION AXIS AND FALSE ON THE NAME AXIS — AND INCREMENT 7 MADE
+IT WORSE WHILE THIS SECTION SAID SO.** Increment 7 added `for node in tree.body` at **three new
+sites in this check** — `_module_bindings`, and the NET post-condition resolution and fetch in
+`main` — while closing one in the `ESTABLISHED_HERE` fixpoint. **Net residual across the two
+governing instruments: +2, with this declaration unmoved.**
+
+**AND THE FIRST OF THE THREE IS THE ONE THAT MATTERED: `_module_bindings` IS THE FUNCTION THE
+REACHABILITY CLAUSE REASONS OVER.** Until this increment, *"does this object's escape route land on
+a REAL PUBLIC BINDING?"* was answered by a map that could not see a binding written inside any
+module-level block. All four sites now read module scope via `_support.module_level_statements`.
+
+**WHAT THE BLINDNESS ACTUALLY COST HERE, MEASURED — LESS THAN THE WORST READING, AND THAT IS
+RECORDED IN THE INSTRUMENT'S FAVOUR.** Planting a private factory whose returned function-local
+callable is bound to a public module-level name inside `if True:`:
+
+```
+base instrument   VIOLATION src/crash_detector/module_scope_probe.py:9
+                  "...a function-local callable ON A JUDGEMENT PATH that the reachability clause
+                   declined to make a door (…its return value reaches only ['nothing at module
+                   level'], every one of them non-public), AND IT IS NOT DECLARED AS A NET"   EXIT 1
+fixed instrument  VIOLATION src/crash_detector/module_scope_probe.py:9
+                  "…is a public entry point on a judgement path and it carries no @admits(...)"  EXIT 1
+```
+
+**THE EXIT CODE WAS RIGHT AND THE DIAGNOSIS WAS FALSE.** The NETS deny-by-default population held
+it, exactly as DECLARED LIMIT 9 says it does. **`CD-ENG-WO2R3-05` LOOKED FOR AN ARM AT THIS SITE
+WHERE THE BLINDNESS CONVERTS A FAIL INTO A PASS AND COULD NOT BUILD ONE, AND SAYS SO** — removing
+the NETS backstop means putting the callable outside both RULE 1 and RULE 2, and then it is not a
+subject at all. **The fail-into-pass conversion is real at the SIBLING instrument** and is measured
+in its DECLARED LIMIT 5. Two arms exiting 1 for different reasons prove nothing on their own
+(`CD-ENG-WO2R3-F12`), which is why the carrier asserts the violation CODE and not the exit code.
+
+**CARRIER (CD-RULE-006):** `tests/test_module_level_traversal.py`, six arms, **all six FAIL at
+`4410275` and pass at the tip.** Three are this check's sites.
+
+### The residual reach limits are two AGAIN — and "again" is the load-bearing word
 
 They are the **same two** the sibling instrument declares as its DECLARED LIMIT 5, because they are
-properties of reading source rather than of either check.
+properties of reading source rather than of either check. They were two; then three for two
+increments while all three CD-RULE-004 places said two; and they are two now. **Run the carrier for
+the current number** (CD-RULE-009).
 
 **(i) A CALLABLE WITH NO `FunctionDef` NODE IS INVISIBLE.** A `lambda` bound to a name, or a function
 built by `exec`/`type`, leaves nothing to walk. Executable example: the probe's `built by type(...)

@@ -277,9 +277,43 @@ An auditor who reads only this file has read FOUR SIXTHS of what this row declar
     nested TWO class levels · inside a PUBLIC function body · inside a PRIVATE function body ·
     conditionally defined under ``if True:``. All are now NAMED by this check.
 
-    **THE RESIDUAL REACH LIMITS ARE EXACTLY TWO, and they are the same two the sibling
+    **CORRECTED AT WO-2R3 INCREMENT 8 (`F-06-K`). SUPERSEDED, NOT DELETED (CD-RULE-004,
+    PBG-CONT-003).** *Superseded wording, quoted in full: "**THE RESIDUAL REACH LIMITS ARE
+    EXACTLY TWO, and they are the same two the sibling instrument declares as its DECLARED
+    LIMIT 5, because they are properties of reading source rather than of either check:**"*
+
+    **IT WAS ACCURATE ON THE CALLABLE-ENUMERATION AXIS AND FALSE ON THE NAME AXIS, AND
+    INCREMENT 7 MADE IT WORSE WHILE IT SAID SO.** Increment 7 added ``for node in tree.body``
+    at THREE new sites in this file — :func:`_module_bindings`, and the NET post-condition
+    resolution and fetch in :func:`main` — while closing one in the fixpoint above. **Net
+    residual across the two governing instruments: +2, with the declaration unmoved.**
+
+    **AND THE FIRST OF THE THREE IS THE ONE THAT MATTERED: :func:`_module_bindings` IS THE
+    FUNCTION THE REACHABILITY CLAUSE REASONS OVER.** Until this increment, "does this
+    object's escape route land on a REAL PUBLIC BINDING?" was answered by a map that could
+    not see a binding written inside any module-level block. All four sites now read module
+    scope via :func:`_support.module_level_statements`.
+
+    **WHAT THE BLINDNESS ACTUALLY COST HERE, MEASURED — AND IT IS LESS THAN THE WORST
+    READING, WHICH IS RECORDED IN THE INSTRUMENT'S FAVOUR.** A function-local callable
+    reachable only through a public module-level name bound inside ``if True:`` was reported
+    UNREACHABLE and then refused as ``UNCLASSIFIED_INTERCEPTOR`` rather than named as the
+    ``UNDECORATED_JUDGEMENT_PATH_DOOR`` it is. **THE EXIT CODE WAS RIGHT AND THE DIAGNOSIS
+    WAS FALSE.** The NETS deny-by-default population is what held it, exactly as DECLARED
+    LIMIT 9 says. **I LOOKED FOR AN ARM AT THIS SITE WHERE THE BLINDNESS CONVERTS A FAIL
+    INTO A PASS AND COULD NOT BUILD ONE**: removing the NETS backstop means putting the
+    callable outside both RULE 1 and RULE 2, and then it is not a subject at all. That
+    search and its negative result are in the carrier's own docstring rather than left out
+    because they were inconvenient. **THE FAIL-INTO-PASS CONVERSION IS REAL AT THE SIBLING
+    INSTRUMENT** and is measured in its DECLARED LIMIT 5.
+
+    **CARRIER (CD-RULE-006): ``tests/test_module_level_traversal.py``, six arms, ALL SIX
+    FAILING AT ``4410275`` AND PASSING HERE.** Three of them are this file's sites.
+
+    **THE RESIDUAL REACH LIMITS ARE TWO AGAIN, and they are the same two the sibling
     instrument declares as its DECLARED LIMIT 5, because they are properties of reading source
-    rather than of either check:**
+    rather than of either check. "AGAIN" IS LOAD-BEARING: they were two, then three for two
+    increments while this paragraph said two, and they are two now.**
 
     (i) **A CALLABLE WITH NO ``FunctionDef`` NODE IS INVISIBLE.** A ``lambda`` bound to a name,
         or a function built by ``exec``/``type``, leaves nothing to walk. Executable example —
@@ -459,6 +493,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from _support import (  # noqa: E402
     EXIT_USAGE,
     Check,
+    module_level_statements,
     parse_root,
     read_text,
     resolve_root,
@@ -566,11 +601,20 @@ def _module_bindings(tree) -> dict:
     ``defined_at_module_level``
         every name bound by a module-level ``def``, ``class`` or assignment. Used to tell a
         module-level container from a local one.
+
+    **THIS FUNCTION READS MODULE SCOPE, NOT ``tree.body``. CLOSED AT WO-2R3 INCREMENT 8**
+    (`F-06-K`, and it is the convergence with GROUND 1). *Superseded implementation,
+    described rather than deleted (CD-RULE-004, PBG-CONT-003): this loop read ``for node in
+    tree.body``* — which is "module level AND NOT INDENTED", not module level. **THE
+    REACHABILITY CLAUSE REASONS OVER THIS FUNCTION**, so until this increment
+    ``evaluate_dial = _evaluate_dial`` written inside any module-level block was invisible
+    to it, and "real public binding" was already wrong before the criterion below was asked
+    the question. See :func:`_support.module_level_statements`.
     """
     decorates: dict = {}
     assigned_from: dict = {}
     defined: set = set()
-    for node in tree.body:
+    for node in module_level_statements(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             defined.add(node.name)
             for decorator in node.decorator_list:
@@ -1252,9 +1296,14 @@ def main() -> int:
             )
             continue
         node = siblings[0][4]
+        # MODULE SCOPE, not `tree.body` — a post-condition defined inside a module-level
+        # `if`/`try` block is resolvable at runtime and was UNRESOLVABLE here until WO-2R3
+        # increment 8 (`F-06-K`). The error direction of the old reading was a FALSE
+        # VIOLATION, not a silence, which is why it is the least dangerous of the four
+        # sites and is still wrong.
         module_level = {
             child.name
-            for child in (tree.body if tree else [])
+            for child in (module_level_statements(tree) if tree else [])
             if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
         }
         check.asserted()
@@ -1291,8 +1340,12 @@ def main() -> int:
             continue
 
         check.asserted()
+        # MODULE SCOPE, not `tree.body` — and this site is the one whose old reading could
+        # RAISE `StopIteration` rather than report, because the resolution above and this
+        # fetch used the same narrow reading and would have disagreed the moment they did
+        # not. WO-2R3 increment 8, `F-06-K`.
         post = next(
-            child for child in tree.body
+            child for child in module_level_statements(tree)
             if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
             and child.name == net.post_condition
         )

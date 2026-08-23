@@ -441,7 +441,57 @@ nested at all — a module-level `if` block is simply not in `tree.body` — and
 **A module that does not parse.** Measured `ctor exit=1`. It is already an `UNPARSEABLE` violation
 and always was — a failure, not a silence. **It is not declared as a limit because it is not one.**
 
-### The residual reach limits are exactly two
+### CORRECTED AT WO-2R3 INCREMENT 8 — `F-06-K`. Superseded, not deleted (CD-RULE-004, PBG-CONT-003)
+
+*Superseded heading and claim, quoted in full: **"### The residual reach limits are exactly two"**.*
+
+**WHY IT WAS WRONG.** Increment 6 closed the traversal on the **CLASS** axis — `_classes` uses
+`ast.walk` and reaches any depth, and everything above this section is accurate about that. **IT
+LEFT THE `NAME` AXIS OPEN AND DID NOT SAY SO.** `_module_level_names`, which is what makes RULES B
+and C reach a type THROUGH A NAME, still read `for node in tree.body`. The check could see a class
+hidden anywhere and could not see the `Union` that puts it in the governed class if that `Union` was
+written one indent in. The sixth Assurance seat's phrase for the old sentence is the right one: it
+was *"merely less wrong"* — accurate on one axis, false on the other.
+
+**THE THIRD LIMIT, NAMED AND CLOSED HERE. THREE ARMS ON ONE AXIS, EACH IN ITS OWN THROWAWAY
+EXTRACTION, EACH RUNNING THAT TREE'S OWN COPY OF THE CHECK:**
+
+```
+tree /tmp/e05-i5-ctl-clean  clean                                      PASS — 101 assertions, pop 33, EXIT 0
+tree /tmp/e05-i5-ctl-viol   + @establishes stripped from FetchFailed   FAIL —   1 violation,  pop 33, EXIT 1
+tree /tmp/e05-i5-escape     + FetchOutcome = Union[...] in `if True:`  PASS —  91 assertions, pop 30, EXIT 0
+```
+
+**THE THIRD ROW IS THE SECOND ROW'S DEFECT WITH ONE LINE INDENTED, AND THE CHECK PASSED.**
+`FetchFailed`, `Malformed` and `Empty` left the governed population — 33 to 30 — with the violation
+still sitting in the file. **A guard a maintainer can remove by indenting a line is not a guard.**
+
+**AFTER THE REPAIR, THE SAME THREE TREES WITH THE SAME THREE PATCHES:**
+
+```
+clean    PASS — 101 assertions, pop 33, EXIT 0   (unmoved — the widening added no false row)
+control  FAIL —   1 violation,  pop 33, EXIT 1
+escape   FAIL —   1 violation,  pop 33, EXIT 1   (identical to the control, which is the point)
+```
+
+The repair is `_support.module_level_statements`. **It prunes at the three node types that END
+module scope — `FunctionDef`, `AsyncFunctionDef`, `ClassDef` — and descends through everything
+else.** It deliberately does **not** enumerate `if`/`try`/`with`/`for`/`while`: that list is a
+vocabulary, which is the defect class this project has spent six gates on, and a `match` statement
+would defeat it silently. The rule is taken from the language's own scoping rule instead, and the
+carrier asserts it on `match` and on an `except` handler — constructs the fix was not written
+against.
+
+**CARRIER (CD-RULE-006 — a check reports, a carrier fails):** `tests/test_module_level_traversal.py`,
+six arms, **all six FAIL at `4410275` and pass at the tip.** Two of them are this limit's, and one of
+those asserts the *invariant* (the population must not move on an indent) rather than the verdict,
+because a verdict can be right for the wrong reason.
+
+### The residual reach limits are two AGAIN — and "again" is the load-bearing word
+
+They were two; then for two increments they were three and every one of the three CD-RULE-004 places
+said two; and they are two now. **Run the carrier for the current number. Do not trust this
+paragraph** (CD-RULE-009).
 
 **(i) A CLASS WITH NO `ClassDef` NODE IS INVISIBLE, AND NO AST TRAVERSAL CAN FIX THAT.** Executable
 example — the probe's `built by type(...) AT RUNTIME` placement, appended to `engine/config.py`:
