@@ -4,6 +4,62 @@
 Written by `CD-ENG-WO2-01`. Nothing in this directory is evidence, and nothing in it is
 assurance.
 
+> ## WO-2R3 INCREMENT 8 — THE SET IS RE-MEASURED, AND THE COUNT ON THIS PAGE WAS WRONG
+>
+> **`F-06-L`. NOBODY HAD MEASURED THIS SET SINCE `531c95c`**, and every paragraph below says
+> **ELEVEN**. **THERE ARE TWELVE PATCHES ON DISK AND THERE HAVE BEEN SINCE WO-2R3 INCREMENT 5**,
+> when `CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch` landed.
+> The count was never corrected and the directory listing under *"What is here"* still said
+> *"Eleven tests, eleven patches"* and `CD-AC-005/ ... (1 plant)`. **Corrected below; the
+> superseded wording is quoted there, never deleted** (CD-RULE-004, PBG-CONT-003). **Every
+> paragraph in this block that says "eleven" is a historical record of what was true when it was
+> written and is left exactly as it stands.**
+>
+> **MEASURED BY `CD-ENG-WO2R3-06`: ONE PRISTINE `git archive` EXTRACTION PER PLANT, CLEAN ARM
+> AND VIOLATED ARM, THE DECLARED COMMAND FROM `required-tests.yaml`, EXIT CODE RECORDED ON
+> BOTH — and `git apply`'s OWN exit code recorded as a third column, because a patch that does
+> not apply produces a "violated" arm that is the clean tree.**
+>
+> | | AT `314592c` (this increment's base) | AT THIS INCREMENT'S TIP |
+> |---|---|---|
+> | patches on disk | **12** | **12** |
+> | EVIDENCE (`exit 0` clean -> `exit 1` violated) | **10** | **11** |
+> | DECORATION (no contrast) | **2** | **1** |
+>
+> **THE TWO THAT WERE DECORATION AT THE BASE, AND THEY ARE NOT THE SAME TWO AT THE TIP:**
+>
+> * **`CD-RT-003-GRANT-MATRIX-LIVE` — `exit 3` on BOTH arms**, PRECONDITION_NOT_MET, for want
+>   of a live PostgreSQL. It applies cleanly; there is no contrast to have. **STILL DECORATION
+>   AT THE TIP, AND IT IS NOW THE ONLY ONE.**
+> * **`CD-RT-012-NO-EXECUTION-INTERFACE` — `exit 1` on BOTH arms.** Its CLEAN arm was already
+>   red, because the register row itself was red at the base: L3 read a sentence in
+>   `tests/test_tree_fingerprint.py:61` — about a governance record telling a person to run a
+>   test — as a claim about what the code does (`F-06-A`). **TWO ARMS EXITING 1 FOR DIFFERENT
+>   REASONS LOOK IDENTICAL IN A SUMMARY TABLE AND PROVE NOTHING** (`CD-ENG-WO2R3-F12`), and it
+>   had been true of this row for a whole increment. **RESTORED TO EVIDENCE BY ITEM 2 OF THIS
+>   INCREMENT**, which corrected the false positive: `exit 0` clean -> `exit 1` violated.
+>
+> **AND ONE PLANT WAS BROKEN BY THIS INCREMENT AND REPAIRED IN IT. RECORDED BECAUSE IT HAPPENED
+> AND NOT BECAUSE IT WAS AVOIDED (`CD-ENG-WO2R3-06-F06`).**
+> `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch` applied cleanly at `314592c` and
+> contrasted `exit 0 -> exit 1`. **ITEM 1's redesign rewrote `src/crash_detector/engine/evaluate.py`
+> and the plant's hunk at `_evaluate_dial`'s signature stopped applying** — `error: patch failed:
+> src/crash_detector/engine/evaluate.py:362`. **THE ITEM-6 RE-MEASUREMENT IS WHAT FOUND IT, AND
+> NOTHING IN THE SUITE OR THE REGISTER SET WOULD HAVE.** The patch is REGENERATED against the new
+> structure, violating the SAME proposition by the SAME route — the check names it verbatim:
+> *"witness module `crash_detector.witness.panel` is REACHABLE from the engine container's root
+> set. Route (nearest first): `crash_detector.witness.panel <- crash_detector.corroboration <-
+> crash_detector.engine.evaluate`"*. **NO PATCH WAS DELETED, DISABLED OR WEAKENED** (CD-D-033).
+>
+> **THE FINDING THIS LEAVES OPEN, AND IT IS NOT THIS SEAT'S TO CLOSE:** a plant that stops
+> applying is invisible to every instrument this project runs at a boundary. The suite does not
+> apply plants; the twelve register checks do not; the Class-2 sweep does not. **FOUR SEPARATE
+> INCREMENTS HAVE NOW BROKEN A PLANT AND FOUND OUT ONLY WHEN SOMEBODY RE-RAN THE SET BY HAND** —
+> WO-2R increments 1 and 2, WO-2R3 increment 4, and this one, each recorded in its own paragraph
+> below. **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.** Raised to the Project Lead rather than
+> repaired here: a runner over this directory is exactly the wrapper `PBG-ASSURE-001` forbids
+> this seat to write, and the honest alternative is a decision somebody else makes.
+
 > **WO-2R INCREMENT 1 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F02 and
 > CD-ASR-F03 changed the structure of `src/crash_detector/dials/reading.py` and
 > `src/crash_detector/engine/evaluate.py`, so **two plants stopped applying** and were
@@ -93,7 +149,17 @@ itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
 ## What is here
 
 One directory per PID §6 criterion delivered in WO-2, and inside it **one `git apply`-able
-patch per required test** from `required-tests.yaml`. Eleven tests, eleven patches.
+patch per required test** from `required-tests.yaml`.
+
+**TWELVE TESTS, TWELVE PATCHES. CORRECTED AT WO-2R3 INCREMENT 8 (`F-06-L`); the superseded
+wording is quoted rather than deleted (CD-RULE-004, PBG-CONT-003):**
+
+> *"Eleven tests, eleven patches."* and `CD-AC-005/ ... (1 plant)`
+
+The twelfth — `CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch`
+— landed at WO-2R3 increment 5 and the count on this page was never moved with it. **THE
+FIGURES BELOW ARE READ FROM `find plants -name '*.patch'` AND FROM A RUN OF EACH ROW'S OWN
+DECLARED COMMAND, NOT COPIED FROM ANY DOCUMENT** (CD-RULE-009).
 
 ```
 plants/
@@ -101,9 +167,18 @@ plants/
   CD-AC-001/                  missing or stale input never renders as calm      (2 plants)
   CD-AC-002/                  the two dials are never blended                   (3 plants)
   CD-AC-003/                  witnesses are side-by-side, never ingredients     (2 plants)
-  CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (1 plant)
+  CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (2 plants)
   CD-AC-012/                  no execution pathway exists                       (3 plants)
+                                                                      TOTAL:    12 plants
 ```
+
+**AND THE COUNT IS NOT THE THING THAT MATTERS. THE CONTRAST IS.** Of the twelve, measured at
+this increment's tip: **ELEVEN ARE EVIDENCE** — `exit 0` on the clean arm, `exit 1` on the
+violated arm, the patch applying cleanly — and **ONE IS DECORATION**:
+`CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch`, which exits `3` PRECONDITION_NOT_MET on BOTH
+arms for want of a live PostgreSQL. It is marked as such in its own row and in the block at the
+head of this file. **A PLANT IS EVIDENCE WHEN IT APPLIES, CONTRASTS, AND FAILS AT THE LAYER ITS
+PROPOSITION NAMES — NEVER MERELY WHEN IT EXITS NON-ZERO** (`CD-ENG-WO2R3-F12`).
 
 ## What is deliberately NOT here
 
