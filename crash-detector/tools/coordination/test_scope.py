@@ -42,9 +42,31 @@ SEGMENT_CASES = [
 SCOPE_CASES = [
     (["tools/coordination/**"], ["tools/reconciliation/**"], False, "sibling recursive prefixes"),
     (["tools/coordination/**"], ["tools/coordination/scope.py"], True, "prefix contains the file"),
-    (["tools/coordination"], ["tools/coordination/scope.py"], False,
-     "a LITERAL directory path does NOT cover its contents — write dir/** for that"),
+    # ------------------------------------------------------------------------------------------
+    # *** THIS CASE ASSERTED `False` AT INCREMENT 12 AND THE EXPECTATION WAS THE DEFECT. ***
+    # It is `CD-ASR-WO2R3-06-F11`: a DIRECTORY, called DISJOINT FROM ITS OWN CONTENTS. The old
+    # note — "a LITERAL directory path does NOT cover its contents — write dir/** for that" — is
+    # true about MATCHING and false about OVERLAP, and this suite encoded the conflation as a
+    # passing test. **A GREEN TEST OVER A DEFECT IS THE MOST EXPENSIVE ARTEFACT IN THIS REPOSITORY
+    # AND THIS SUITE PRODUCED ONE.** The expectation is INVERTED, not deleted, and the reason is
+    # written here so that a reader can disagree with it in one place.
+    # ------------------------------------------------------------------------------------------
+    (["tools/coordination"], ["tools/coordination/scope.py"], True,
+     "F11 INVERSION: a literal MATCHES one path but is NOT DISJOINT from what lies beneath it — a "
+     "write to a parent (rm -r, mv, symlink swap) reaches its children. WAS False AT INCREMENT 12."),
+    (["a/*"], ["a/b/c"], True,
+     "F11: the wildcard form of the same hazard — `a/*` matches the DIRECTORY `a/b`, which "
+     "contains `a/b/c`. claim.py's directory-literal guard exempted every wildcard form."),
+    (["governance/*"], ["governance/coordination/ACCOUNTABLE-SEAT.yaml"], True,
+     "F11, the ninth seat's own third measurement, re-run against the fix"),
     (["governance/coordination/**"], ["governance/engineering/ACTIVE_WORK.yaml"], False, "disjoint governance subtrees"),
+    (["governance/engineering/ACTIVE_WORK.yaml"], ["governance/engineering/build-log/BL-x-0400.yaml"], False,
+     "NON-VACUITY OF THE F11 FIX: the depth rule bites only when EVERY common segment intersects. "
+     "`ACTIVE_WORK.yaml` is not a prefix of `build-log/...`, so this stays DISJOINT and the "
+     "accountable seat and an Engineer still work in parallel. A depth rule that refused this pair "
+     "would have banned the increment's own working arrangement."),
+    (["src/alpha/**"], ["src/bravo/**"], False,
+     "NON-VACUITY: two disjoint subtrees are still disjoint after the F11 fix"),
     (["governance/Coordination/**"], ["governance/coordination/**"], True, "CASE_COLLISION, fail closed"),
     (["a/**/b"], ["z/**"], True, "UNDECIDABLE `**` mid-pattern -> fail closed to OVERLAP"),
     (["src/[ab]/x"], ["docs/**"], True, "UNDECIDABLE character class -> fail closed to OVERLAP"),

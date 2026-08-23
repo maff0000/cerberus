@@ -25,7 +25,28 @@ implemented at all**, because every parallel launch is refused and the invariant
 
 ## 2. THE DECLARED LIMIT — VERBATIM, AND IT MUST MATCH THE OTHER TWO PLACES
 
-> DECIDES literal paths, recursive `p/**` prefixes, and single-segment `*`/`?` globs — the last by EXACT product-automaton emptiness and not by a heuristic. REFUSES (fails closed to OVERLAP) `**` mid-pattern, character classes and brace expansion. REFUSES at parse time `..`, absolute paths and the empty entry. DECIDES case collision conservatively. DOES NOT DECIDE symlink aliasing textually.
+> DECIDES literal paths, recursive `p/**` prefixes, and single-segment `*`/`?` globs — the last by EXACT product-automaton emptiness and not by a heuristic. **DECIDES PARENT-PATH CONTAINMENT: a shorter non-recursive pattern whose every segment intersects a longer one names a PARENT of what the longer names, and is reported OVERLAP/PARENT_PATH, because a write to a parent path reaches its children.** REFUSES (fails closed to OVERLAP) `**` mid-pattern, character classes and brace expansion. REFUSES at parse time `..`, absolute paths and the empty entry. DECIDES case collision conservatively. DOES NOT DECIDE symlink aliasing textually.
+
+### 2b. THE ONE RULE THAT CHANGED AT INCREMENT 13 — `CD-ASR-WO2R3-06-F11`
+
+**A DIRECTORY WAS CALLED DISJOINT FROM ITS OWN CONTENTS.** `overlaps(['tools/coordination'],
+['tools/coordination/scope.py'])` returned `False`; so did `overlaps(['a/*'], ['a/b/c'])` and
+`overlaps(['governance/*'], ['governance/coordination/ACCOUNTABLE-SEAT.yaml'])`. `claim.py`
+compensated by refusing a bare existing-directory LITERAL, but that guard **exempted every wildcard
+form of the same hazard**, and `lease.py` had no such guard at all.
+
+**MATCHING AND OVERLAP ARE DIFFERENT QUESTIONS AND INCREMENT 12 CONFLATED THEM.** A literal still
+MATCHES exactly one path — `dir/**` is still how you say you mean the subtree — but it is never
+DISJOINT from what lies beneath it. The algebra is textual and its pure-algebra path has no
+worktree, so it cannot ask whether the parent is a directory today, and *"not a directory yet"* is
+not a property a coordination control may rest on: `CD-RULE-003`, fail closed.
+
+**THE AUTOMATON IS NOT TOUCHED.** The product-automaton segment intersection, the recursive-prefix
+rule and the case-collision rule are exactly as increment 12 wrote them, and the ninth Assurance
+seat found them correct on every form it put to them. **`F11` IS THIS ONE DEPTH RULE AND NOTHING
+ELSE.** `test_scope.py` carries the case that asserted the OLD answer with its expectation INVERTED
+and the reason written at the case — that expectation WAS the defect, and this suite had a GREEN
+TEST OVER IT.
 
 ## 3. THE RESIDUE (`CD-RULE-006`)
 

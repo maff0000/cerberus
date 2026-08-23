@@ -24,7 +24,26 @@ with the other lease still live and undisturbed. A LEASE THAT SERIALISES IS A FA
 
 ## 2. THE DECLARED LIMIT — VERBATIM, AND IT MUST MATCH THE OTHER TWO PLACES
 
-> REFUSES task overlap, write/write overlap and write/read overlap against a LIVE lease, and launch.sh REFUSES TO exec — the non-start is PROVED by a sentinel, not inferred from an exit code. ADMITS the disjoint launch concurrently, which is an EQUAL requirement. DOES NOT DECIDE a launcher that never asks for a lease.
+> REFUSES task overlap, write/write overlap and write/read overlap against a LIVE lease, **UNDER CONCURRENCY** — the collision read and the O_EXCL take run inside ONE lease-directory critical section, because O_EXCL alone excludes on the LEASE ID exactly as it excludes on the TASK ID in `claim.py`. `launch.sh` REFUSES TO exec — the non-start is PROVED by a sentinel, not inferred from an exit code. **CARRIES THE DECLARED SCOPE TO `lease.py` WITHOUT CORRUPTING IT**: pathname expansion is disabled for the whole script (`set -f`), the scope arguments are carried in the positional parameter list rather than a string, there is no `eval`, and `lease.py` ECHOES the scope it actually RECEIVED at every acquisition. **BOUNDS BUT DOES NOT AUTHENTICATE `--pid`**: it DERIVES that the named pid is in the acquiring process's own session (`os.getsid`), which refuses `--pid 1`; a long-lived SIBLING pid in the caller's own session would still pass and that residue is NOT CLOSED. ADMITS the disjoint launch concurrently, which is an EQUAL requirement. DOES NOT DECIDE a launcher that never asks for a lease. DOES NOT DECIDE a scope entry whose prefix traverses a SYMLINK, and does not refuse a bare existing-directory literal — `claim.py` does both and `lease.py` does neither, and that asymmetry is DECLARED, not fixed at this increment.
+
+### 2b. THE CARRIER USED TO CORRUPT ITS OWN INPUT — `CD-ASR-WO2R3-06-F05`, COMPOUNDED BY `F11`
+
+`launch.sh` accumulated the scope arguments into a STRING and expanded it UNQUOTED, which in POSIX
+`sh` performs FIELD SPLITTING **and PATHNAME EXPANSION**. **A WRITE SCOPE IS A GLOB.** Two regimes,
+both wrong: a glob matching 2+ real paths became extra argv words and an argparse error printed to
+the operator as `LEASE REFUSED (rc=2)`, indistinguishable from a genuine collision — **commissioning
+that carrier would have refused every real launch and told the operator there was a conflict**; and
+a glob matching EXACTLY ONE real path was **SILENTLY NARROWED**, so a seat typing `docs/alpha/*` got
+a lease recording `docs/alpha/only.md`, a second seat acquired `docs/alpha/other.md`, and BOTH
+SUCCEEDED. **SAME REQUEST, OPPOSITE VERDICTS, AND THE ONLY VARIABLE WAS WHETHER THE SCOPE PASSED
+THROUGH `launch.sh`.**
+
+**`PLANT-COORD-04` COULD NOT SEE ANY OF IT.** It exercised exactly two scope forms — a LITERAL with
+no glob, and a glob matching NOTHING on disk — **THE ONLY TWO FORMS THAT CANNOT TRIGGER THE
+DEFECT** — and was 3/3 LIVE over a deliverable broken for every glob matching a real path.
+`PLANT-COORD-07` exists because of that, and exercises a glob matching >=2 real paths AND a glob
+matching exactly 1, **with `cwd` inside the sandbox, because pathname expansion is relative to the
+working directory and a plant that launches from elsewhere measures nothing.**
 
 ## 3. THE RESIDUE (`CD-RULE-006`)
 

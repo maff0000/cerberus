@@ -64,8 +64,31 @@ LIMITS = [
     "ADMITS — AND THIS IS AN EQUAL REQUIREMENT — a launch whose task and scopes are disjoint, "
     "concurrently, with the other lease still live and undisturbed. A LEASE THAT SERIALISES IS A "
     "FAILED ITEM (PO-DECISIONS-0021 ruling 3).",
+    "DECIDES ALL THREE OF THE ABOVE **UNDER CONCURRENCY**: the collision read and the O_EXCL take "
+    "run inside ONE lease-directory critical section (registry.critical_section, fcntl.flock). "
+    "O_EXCL alone excludes on the LEASE ID only, exactly as it excludes on the TASK ID in claim.py "
+    "— CD-ASR-WO2R3-06-F04's window, in the other instrument. The section is held across the "
+    "DECISION and released before this command returns; it does NOT serialise launches.",
     "MEASURES liveness by /proc/<pid> + cmdline prefix + process start time. PID recycling is "
     "EXCLUDED for records carrying the start-time field; records without it are reported DEGRADED.",
+    "BOUNDS but DOES NOT AUTHENTICATE `--pid`. **A PID CANNOT BE AUTHENTICATED FROM USERSPACE ON "
+    "THIS PLATFORM AND THIS INSTRUMENT SAYS SO RATHER THAN PRETENDING.** What is DERIVED "
+    "(CD-RULE-003, never a denylist) is that the named pid is in the ACQUIRING PROCESS'S OWN "
+    "SESSION — os.getsid(pid) == os.getsid(0). That refuses `--pid 1` (init, session 1, always "
+    "alive, the IMMORTAL lease of CD-ASR-WO2R3-06-F09) and every pid belonging to another seat's "
+    "session. **IT DOES NOT REFUSE A LONG-LIVED SIBLING PID INSIDE THE CALLER'S OWN SESSION, AND "
+    "THAT RESIDUE IS NOT CLOSED — it is returned as CONTROL_NOT_SATISFIABLE.** Every lease record "
+    "carries `pid_authenticated: false` and its `pid_basis` in its own bytes.",
+    "ECHOES the write_scope and read_scope it actually RECEIVED, at every acquisition. "
+    "CD-ASR-WO2R3-06-F05: launch.sh expanded the seat's declared scope against the filesystem "
+    "before this instrument saw it, and a silently narrowed scope is a FALSE GREEN with no error "
+    "anywhere. This instrument cannot police its caller; it can make the caller's corruption "
+    "VISIBLE at the point it happens, and now does.",
+    "DOES NOT DECIDE: a scope entry whose literal prefix traverses a SYMLINK, and DOES NOT REFUSE "
+    "a bare existing-directory literal. claim.py does both via its _validate_scope; **THIS "
+    "INSTRUMENT HAS NEITHER GUARD AND THAT ASYMMETRY IS DECLARED RATHER THAN LEFT TO BE "
+    "DISCOVERED.** It is raised as a finding by CD-ENG-COORD-FIX-01 against its own increment and "
+    "is NOT fixed here, because it is outside the five items PO-DECISIONS-0022 ruling 5 names.",
     "DOES NOT DECIDE: a launcher that never asks for a lease. THE OPERATOR'S WRAPPER IS NOT IN THIS "
     "REPOSITORY (VERDICT-META-ASSURANCE-01-SECOND-SEAT.md §7.2) and nothing here can reach it.",
     "DOES NOT DECIDE: a lease acquired and then a DIFFERENT scope written. The lease records an "
@@ -131,29 +154,84 @@ def describe(rec: Dict[str, Any]) -> str:
                "LIVE" if lv.live else "DEAD/" + lv.reason, lv.evidence))
 
 
+def _authenticate_pid(requested: str) -> Tuple[int, str]:
+    """``CD-ASR-WO2R3-06-F09(b)`` — DERIVE whether ``--pid`` may name this process. Never a denylist.
+
+    The measured attack was ``lease.py acquire ... --pid 1``. PID 1 is ``init``, it is always alive,
+    so the lease it names is IMMORTAL, and the party being graded flipped its own control from RED
+    to GREEN in one command.
+
+    **THE HONEST STATEMENT FIRST: A PID CANNOT BE AUTHENTICATED FROM USERSPACE ON THIS PLATFORM.**
+    There is no ``getpeercred`` for a number typed on a command line. Anything claiming otherwise is
+    a guard that pretends, and this project has a record of those.
+
+    **SO THIS DERIVES A BOUND INSTEAD OF PRETENDING TO A PROOF, AND ``CD-RULE-003`` SAYS DERIVE OR
+    FAIL CLOSED — NEVER A DENYLIST.** The lease's whole purpose (``launch.sh``: *"the pid the lease
+    names is the pid the seat runs under ... a lease that names a wrapper's pid dies when the
+    wrapper does"*) requires that the named pid **die when the caller's session dies**. That is a
+    derivable property: ``os.getsid(pid) == os.getsid(0)``. A pid in the caller's own session is one
+    the caller is inside the lifetime of. ``init`` is session 1 and this is not session 1, so
+    ``--pid 1`` is refused **by derivation and not because it is on a list** — and so is any pid
+    belonging to some other seat's session.
+
+    **WHAT THIS DOES NOT CLOSE, DECLARED RATHER THAN DISCOVERED:** a caller may still name a
+    long-lived *sibling* pid inside its OWN session. That residue is real, it is NOT closed here,
+    and it is reported as ``CONTROL_NOT_SATISFIABLE`` for full ``--pid`` authentication.
+    """
+    try:
+        pid = int(requested)
+    except (TypeError, ValueError):
+        raise ValueError("--pid %r is not an integer" % requested)
+    if pid <= 0:
+        raise ValueError("--pid %d is not a process id" % pid)
+    try:
+        their_sid = os.getsid(pid)
+    except ProcessLookupError:
+        raise ValueError(
+            "PID_NOT_AUTHENTICATED: --pid %d does not exist. A lease over a pid that is not there "
+            "is a lease over nothing, and increment 12 would have recorded it silently." % pid)
+    except PermissionError:
+        raise ValueError(
+            "PID_NOT_AUTHENTICATED: --pid %d is not visible to this process (getsid: EPERM). "
+            "REFUSING rather than leasing a pid whose lifetime cannot be observed." % pid)
+    my_sid = os.getsid(0)
+    if their_sid != my_sid:
+        raise ValueError(
+            "PID_NOT_AUTHENTICATED: --pid %d is in session %d and this process is in session %d. "
+            "A lease is only worth its liveness if the pid it names dies when this caller's "
+            "session does; a pid outside that session is one this caller is not inside the "
+            "lifetime of. **THIS IS THE `--pid 1` BYPASS (CD-ASR-WO2R3-06-F09): init is session 1, "
+            "is always alive, and made the lease IMMORTAL and the control flippable by the party it "
+            "grades.** REFUSED BY DERIVATION (os.getsid), NOT BY A DENYLIST (CD-RULE-003). "
+            "(command: python3 -c \"import os;print(os.getsid(%d), os.getsid(0))\")"
+            % (pid, their_sid, my_sid, pid))
+    return pid, ("os.getsid(%d) == os.getsid(0) == %d — same session as the acquiring process. "
+                 "THIS IS A BOUND, NOT AN AUTHENTICATION: a sibling pid inside this same session "
+                 "would also pass, and that residue is NOT CLOSED." % (pid, my_sid))
+
+
 def cmd_acquire(root: str, args: argparse.Namespace) -> int:
     registry.assert_atomic_or_refuse(os.path.join(root, registry.LEASES_DIR))
     write_scope = [p.raw for p in scope_mod.parse_scope(args.write_scope)]
     read_scope = [p.raw for p in scope_mod.parse_scope(args.read_scope)] if args.read_scope else []
 
-    coll = collision(root, args.task, write_scope, read_scope)
-    if coll:
-        other, reason, hits = coll
-        print("VERDICT: LAUNCH REFUSED — %s" % reason)
-        print("   requested: seat=%s task=%s write_scope=%s read_scope=%s"
-              % (args.seat, args.task, write_scope, read_scope))
-        print("   collided with LIVE lease:")
-        print("      %s" % describe(other))
-        print("      record: %s" % other.get("__path__"))
-        for h in hits:
-            print("      %s" % h)
-        return 1
+    # CD-ASR-WO2R3-06-F05 — THE CARRIER'S INPUT, ECHOED BACK BEFORE ANYTHING IS DECIDED.
+    # `launch.sh` expanded the seat's declared scope against the FILESYSTEM before this file ever
+    # saw it, and a scope silently narrowed from `docs/alpha/*` to `docs/alpha/only.md` produced a
+    # FALSE GREEN with no error anywhere. The scope this instrument actually received is now
+    # printed at every acquisition, so the corruption is visible at the point it would occur.
+    print("RECEIVED write_scope = %r" % (write_scope,))
+    print("RECEIVED read_scope  = %r" % (read_scope,))
+    print("    *** IF EITHER DIFFERS FROM WHAT YOU TYPED, YOUR CARRIER CORRUPTED IT BEFORE THIS")
+    print("    *** INSTRUMENT SAW IT. That is CD-ASR-WO2R3-06-F05 and it was SILENT until now.")
 
-    pid, fp, ticks = liveness.self_identity()
+    pid_basis = "os.getpid() — this process, no --pid given"
     if args.pid:
-        pid = int(args.pid)
+        pid, pid_basis = _authenticate_pid(args.pid)
         fp = liveness.cmdline_fingerprint(pid) or ""
         ticks = liveness.start_time_ticks(pid)
+    else:
+        pid, fp, ticks = liveness.self_identity()
 
     payload = {
         "record_type": "LAUNCH_LEASE",
@@ -171,24 +249,56 @@ def cmd_acquire(root: str, args: argparse.Namespace) -> int:
         "write_scope": write_scope,
         "read_scope": read_scope,
         "state": registry.STATE_CLAIMED,
+        "pid_authenticated": False,
+        "pid_basis": pid_basis,
         "provenance": {
             "acquired_utc_command": "date -u +%FT%TZ",
-            "atomicity": "os.open(path, O_CREAT|O_EXCL|O_WRONLY) — FileExistsError is the refusal",
+            "atomicity": "os.open(path, O_CREAT|O_EXCL|O_WRONLY) — FileExistsError is the refusal, "
+                         "taken inside registry.critical_section (fcntl.flock) so that the "
+                         "collision read and the take are ONE act (CD-ASR-WO2R3-06-F04's class)",
             "liveness_method": "/proc/<pid> + cmdline prefix + /proc/<pid>/stat field 22",
+            "pid_authentication": "NONE. A pid cannot be authenticated from userspace on this "
+                                  "platform. What is derived is a session BOUND — see pid_basis.",
         },
     }
     path = lease_path(root, args.lease)
-    try:
-        registry.write_exclusive(path, payload)
-    except FileExistsError:
-        existing = registry.load(path)
-        print("VERDICT: LAUNCH REFUSED — LEASE ID ALREADY EXISTS")
-        print("   %s" % describe(existing))
-        print("   NOTE: a DEAD holder is still a refusal. `lease.py reap --lease %s --reason ...` "
-              "is explicit and `acquire` NEVER reaps." % args.lease)
-        return 1
+
+    # ==========================================================================================
+    # **THE SAME CHECK-THEN-TAKE WINDOW AS `CD-ASR-WO2R3-06-F04`, IN THE SAME SHAPE, IN THE OTHER
+    # INSTRUMENT.** F04 was raised against `claim.py`; `lease.py` read every live lease and wrote
+    # its own record afterwards, with `O_EXCL` excluding only on the LEASE ID. Two launches with
+    # different lease ids and identical write scopes take different filenames and it never fires.
+    #
+    # **FIXING ONLY THE INSTRUMENT THE FINDING NAMED WOULD BE `GUARD_THE_INSTANCE_NOT_THE_CLASS`
+    # (`CD-RULE-004`) — the exact anti-pattern this increment exists to remove.** So the class is
+    # fixed, and the fact that it went beyond the letter of the finding is DECLARED and not
+    # smuggled: see the Build Log entry for this increment.
+    # ==========================================================================================
+    with registry.critical_section(root, registry.LEASES_DIR):
+        coll = collision(root, args.task, write_scope, read_scope)
+        if coll:
+            other, reason, hits = coll
+            print("VERDICT: LAUNCH REFUSED — %s" % reason)
+            print("   requested: seat=%s task=%s write_scope=%s read_scope=%s"
+                  % (args.seat, args.task, write_scope, read_scope))
+            print("   collided with LIVE lease:")
+            print("      %s" % describe(other))
+            print("      record: %s" % other.get("__path__"))
+            for h in hits:
+                print("      %s" % h)
+            return 1
+        try:
+            registry.write_exclusive(path, payload)
+        except FileExistsError:
+            existing = registry.load(path)
+            print("VERDICT: LAUNCH REFUSED — LEASE ID ALREADY EXISTS")
+            print("   %s" % describe(existing))
+            print("   NOTE: a DEAD holder is still a refusal. `lease.py reap --lease %s --reason "
+                  "...` is explicit and `acquire` NEVER reaps." % args.lease)
+            return 1
 
     print("VERDICT: LEASE ACQUIRED — THE LAUNCH MAY PROCEED")
+    print("   pid basis: %s" % pid_basis)
     print("   lease=%s seat=%s task=%s pid=%d" % (args.lease, args.seat, args.task, pid))
     print("   record: %s" % os.path.relpath(path, root))
     say_command("live_leases_after", len(live_leases(root)),

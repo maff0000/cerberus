@@ -25,7 +25,33 @@ check would have passed that incident cleanly.** The two seats were not writing 
 
 ## 2. THE DECLARED LIMIT — VERBATIM, AND IT MUST MATCH THE OTHER TWO PLACES
 
-> DECIDES pairwise WRITE x WRITE, and WRITE x READ in BOTH cross-seat directions. DELIBERATELY DOES NOT REFUSE READ x READ (two seats reading one file is the normal case, and refusing it would ban parallel audits — the vacuity ruling 3 rejects) nor a seat's own write-vs-own-read. DOES NOT DECIDE what a seat actually TOUCHED — it reads DECLARATIONS.
+> DECIDES pairwise WRITE x WRITE, and WRITE x READ in BOTH directions, over EVERY pair of DISTINCT live claim records **AT ANY IDENTITY, INCLUDING TWO CLAIMS HELD BY ONE SEAT ID**. DELIBERATELY DOES NOT REFUSE READ x READ at any identity (two seats reading one file is the normal case, and refusing it would ban parallel audits — the vacuity ruling 3 rejects). DELIBERATELY DOES NOT REFUSE ONE claim record's own write scope against its OWN read scope — a SINGLE-RECORD exemption, because the pair loop never compares a record with itself. DELIBERATELY ADMITS one seat holding two or more DISJOINT live claims. DOES NOT DECIDE what a seat actually TOUCHED — it reads DECLARATIONS. DOES NOT DECIDE whether two live claim records are two SESSIONS or one, and after the F08 correction it does not need to. **IT IS NOT INVOKED BY ANYTHING (Q11).**
+
+### 2b. WHY THIS ROW USED TO BE FALSE — `CD-ASR-WO2R3-06-F08` AND `CD-RULE-004`
+
+Increment 12's `L1` said the instrument decides WRITE x WRITE disjointness *"over all live claims"*.
+**IT DID NOT.** It decided it over CROSS-SEAT live claims and skipped the rest, in four lines that
+were declared NOWHERE — not in `L1`-`L6`, not in this contract, not in `required-tests.yaml`. That
+is `GUARD_THE_INSTANCE_NOT_THE_CLASS` at the exact centre of the remedy, and it is two defects and
+not one: the code defect, and the FALSE CLAIM ABOUT the code.
+
+**AND THE INSTANCE IT GUARDED EXCLUDED THE FOUNDING INCIDENT.** *"TWO PROJECT LEAD SESSIONS ALIVE
+SIMULTANEOUSLY ON `main`, BOTH WITH COMMIT AUTHORITY, **BOTH COMMITTING AS
+`PROJECT_LEAD_SEAT_01`**, NEITHER AWARE OF THE OTHER"* (`VERDICT-META-ASSURANCE-01-SECOND-SEAT`
+§1.1). One identity. **THE INSTRUMENT BUILT TO DETECT THE INCIDENT PRINTED `CONCURRENT WORK
+PROCEEDS` FOR THE INCIDENT, AND EXITED 0.** `PO-DECISIONS-0022` ruling 5: *"the control must FLAG
+two live claims on one scope regardless of identity"*, and ruling 3 binds the Product Authority's
+own hand with no exemption, because the incident was the Product Owner's own breach of it.
+
+**THE TWO EXEMPTIONS THAT SURVIVED ARE NOT IDENTITY EXEMPTIONS AND NEVER WERE.** `READ x READ` is a
+PAIRING exemption. A record's own write-vs-own-read is a SINGLE-RECORD exemption. Deleting the skip
+indiscriminately would have taken neither with it, and `PLANT-COORD-05` arm 4 measures both still
+admitting.
+
+**A DESIGN CALL IS DECLARED HERE RATHER THAN LEFT IMPLICIT:** a seat legitimately holding two
+DISJOINT claims is still ADMITTED. Refusing all same-identity multi-claim was available and was NOT
+taken, because it narrows what the machinery permits. `PLANT-COORD-05` arm 3 proves the disjoint
+same-identity pair still proceeds.
 
 ## 3. THE RESIDUE (`CD-RULE-006`)
 

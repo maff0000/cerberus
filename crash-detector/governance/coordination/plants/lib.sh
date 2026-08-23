@@ -23,7 +23,20 @@
 # OTHER SEAT'S. The real worktree is NEVER mutated by a plant.
 # ================================================================================================= #
 
-PLANT_SCRATCH="/tmp/cd-eng-coord-01/plants"
+# ================================================================================================= #
+# TWO DEFAULTS, OVERRIDABLE FROM THE ENVIRONMENT — added by `CD-ENG-COORD-FIX-01` at increment 13.
+#
+# `CD-PL-F128` requires a plant's sandbox to be THE RUNNING SEAT'S OWN SCRATCH AND NO OTHER SEAT'S,
+# and increment 12 hard-coded `CD-ENG-COORD-01`'s. A second seat running these plants would have
+# written into a first seat's scratch — the coordination defect, inside the coordination plants.
+# `SOURCE_ROOT` was already overridable and its default still names increment 12's worktree, which
+# is the correct default for the four plants that shipped with it: they measure THAT tree.
+#
+# **THIS IS A STRICTLY ADDITIVE CHANGE. With neither variable set, every value is exactly what
+# increment 12 wrote, so PLANT-COORD-01..04 behave identically.** It is declared here rather than
+# left to be discovered, because it is a write by one seat into another seat's artefact.
+# ================================================================================================= #
+PLANT_SCRATCH="${PLANT_SCRATCH:-/tmp/cd-eng-coord-01/plants}"
 
 _ARMS_TOTAL=0
 _ARMS_PASSED=0

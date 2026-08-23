@@ -14,6 +14,15 @@ already-claimed task. Two seats can never take the same work."*
 ``registry.py`` for why a shared list file re-creates the exact contention this increment removes,
 and for the measurement that ``O_EXCL`` is atomic on this filesystem.
 
+**AND ``O_EXCL`` IS ONLY HALF OF THE RULING.** ``PO-DECISIONS-0021`` ruling 3 says *"no two live
+seats share a TASK **or a WRITE SCOPE**"*. ``O_EXCL`` excludes on the FILENAME, and the filename is
+the TASK ID; two seats with different task ids and identical write scopes take different filenames
+and it never fires. Increment 12 checked the scope half with a directory read and took the claim
+fifty lines later, and ``CD-ASR-WO2R3-06-F04`` raced that window: **193 of 200 rounds put two seats
+on ONE write scope, both ``VERDICT: CLAIMED``, both ``rc=0``.** The scope check and the take now run
+inside ONE :func:`registry.critical_section` — a mutex around the DECISION, released before this
+command returns, so DISJOINT claims are still taken concurrently and still proceed in parallel.
+
 WHAT ``claim`` REFUSES
 ----------------------
 * the task is already claimed — ``FileExistsError`` from ``O_EXCL``, and the refusal NAMES the
@@ -58,9 +67,28 @@ from common import Limit, current_branch, repo_root, resolve_sha, say_command, t
 LIMITS = [
     "DECIDES: mutual exclusion on a TASK ID, by O_EXCL create in a directory registry. Two "
     "processes racing the same task id: exactly one wins. MEASURED at 6400 concurrent attempts "
-    "over 200 rounds, exactly 200 wins (governance/coordination/evidence/EV-ATOMICITY-MEASUREMENT.md).",
+    "over 200 rounds, exactly 200 wins (governance/coordination/evidence/EV-ATOMICITY-MEASUREMENT.md). "
+    "**O_EXCL EXCLUDES ON THE FILENAME, WHICH IS THE TASK ID. IT IS NOT AND NEVER WAS EXCLUSION ON "
+    "A WRITE SCOPE** — that is the next limit, and increment 12 stated it without the distinction.",
     "DECIDES: refusal of a claim whose write_scope overlaps a live claim's write OR read scope, "
-    "using tools/coordination/scope.py, which fails closed on forms it cannot decide.",
+    "using tools/coordination/scope.py, which fails closed on forms it cannot decide. **AND IT "
+    "DECIDES IT UNDER CONCURRENCY**: the check and the take run inside ONE registry-directory "
+    "critical section (registry.critical_section, fcntl.flock), so the read that finds a colliding "
+    "claim and the write that takes this one are a single atomic act. Increment 12 stated this "
+    "limit FLATLY, with no concurrency qualifier, in an instrument whose entire purpose is "
+    "concurrency — it was TRUE single-threaded and FALSE under load, and CD-ASR-WO2R3-06-F04 "
+    "measured 193 double-takes in 200 raced rounds. MEASURED AGAIN AFTER THE FIX by the ninth "
+    "Assurance seat's own harness at 200 rounds (governance/coordination/evidence/"
+    "EV-SCOPE-RACE-MEASUREMENT.md) and by PLANT-COORD-06.",
+    "DELIBERATELY DOES NOT SERIALISE WORK: the critical section is held across check-then-take "
+    "ONLY, and is released before this command returns. Two seats taking DISJOINT scopes both "
+    "succeed and proceed in parallel — an EQUAL requirement (PO-DECISIONS-0021 ruling 3, preserved "
+    "by PO-DECISIONS-0022 ruling 1). PLANT-COORD-06 arm 3 measures it.",
+    "DOES NOT DECIDE: a claim taken by a process that does not run this code. flock is ADVISORY. "
+    "It binds every route through these instruments and NOTHING ELSE; a hand-written claim file "
+    "defeats it exactly as it always defeated the registry.",
+    "REFUSES rather than proceeds if the critical section cannot be entered within 30s. Proceeding "
+    "unlocked would be F04 with a log line attached.",
     "DOES NOT DECIDE: whether two DIFFERENT task ids are the same work. `WO-2R3-INC-12` and "
     "`increment-12` are two tasks to this registry. Task identity is a naming discipline, and it is "
     "NOT PROVED TO BE CARRIED ANYWHERE.",
@@ -131,32 +159,12 @@ def cmd_claim(root: str, args: argparse.Namespace) -> int:
         print(bad)
         return 1
 
-    # ITEM 2(b) applied BEFORE the take: write-vs-write AND write-vs-READ against every live claim.
-    for other in live_claims(root):
-        if other.get("task_id") == args.task:
-            continue
-        other_write = other.get("write_scope") or []
-        other_read = other.get("read_scope") or []
-        ow, hits = scope_mod.overlaps(write_scope, other_write) if other_write else (False, [])
-        if ow:
-            print("VERDICT: CLAIM REFUSED — WRITE/WRITE SCOPE OVERLAP")
-            print("   this seat : %s  task=%s" % (args.seat, args.task))
-            print("   other seat: %s  task=%s  (%s)" % (other.get("seat_actor_id"),
-                                                        other.get("task_id"), other.get("__path__")))
-            for h in hits:
-                print("   %s" % h)
-            return 1
-        orr, hits = scope_mod.overlaps(write_scope, other_read) if other_read else (False, [])
-        if orr:
-            print("VERDICT: CLAIM REFUSED — WRITE/READ SCOPE OVERLAP (CD-PL-F134)")
-            print("   this seat would WRITE what seat %s declared it would READ."
-                  % other.get("seat_actor_id"))
-            print("   other seat: %s  task=%s  (%s)" % (other.get("seat_actor_id"),
-                                                        other.get("task_id"), other.get("__path__")))
-            for h in hits:
-                print("   %s" % h)
-            return 1
-
+    # ------------------------------------------------------------------------------------------
+    # **THE PAYLOAD IS BUILT BEFORE THE CRITICAL SECTION IS ENTERED, DELIBERATELY.**
+    # `resolve_sha` shells out to git twice. Holding the registry mutex across a subprocess would
+    # turn a microsecond decision into a multi-millisecond one and make the section look like the
+    # serialisation this increment must not ship. Nothing below the `with` runs a subprocess.
+    # ------------------------------------------------------------------------------------------
     pid, fp, ticks = liveness.self_identity()
     payload = {
         "record_type": "WORK_CLAIM",
@@ -183,18 +191,67 @@ def cmd_claim(root: str, args: argparse.Namespace) -> int:
     }
 
     path = claim_record(root, args.task)
-    try:
-        registry.write_exclusive(path, payload)
-    except FileExistsError:
-        existing = registry.load(path)
-        print("VERDICT: CLAIM REFUSED — TASK ALREADY CLAIMED")
-        print("   task_id : %s" % args.task)
-        print("   record  : %s" % os.path.relpath(path, root))
-        print("   %s" % describe_holder(existing))
-        print("   requested by seat=%s pid=%d" % (args.seat, pid))
-        print("   NOTE: a DEAD holder is still a refusal here. Run `claim.py reap --task %s "
-              "--reason ...` explicitly; `claim` never reaps." % args.task)
-        return 1
+
+    # ==========================================================================================
+    # **CD-ASR-WO2R3-06-F04 — THE CHECK AND THE TAKE ARE ONE ATOMIC ACT, OR THEY ARE NOTHING.**
+    #
+    # Increment 12 read the live claims here and wrote the record 50 lines later, and 193 of 200
+    # raced rounds put TWO SEATS ON ONE WRITE SCOPE, both printing `VERDICT: CLAIMED`, both rc=0.
+    # `O_EXCL` did not fire and could not: it excludes on the FILENAME, which is the TASK ID, and
+    # the two racers had different task ids by construction. **O_EXCL IS THE TASK CONJUNCT OF
+    # `PO-DECISIONS-0021` RULING 3. THIS SECTION IS THE WRITE-SCOPE CONJUNCT.**
+    #
+    # WHAT IS INSIDE: a directory read, a pure-python scope decision, one `O_EXCL` create.
+    # WHAT IS NOT: anything that blocks. NO subprocess, NO git, NO network. The payload above is
+    # already built. **THE MUTEX IS AROUND THE DECISION, NEVER AROUND THE WORK** — the moment the
+    # record is on disk the section is left, and two seats holding DISJOINT claims proceed in
+    # parallel with no lock between them. A lease that serialises is a failed item, and so is a
+    # registry that serialises.
+    # ==========================================================================================
+    with registry.critical_section(root, registry.CLAIMS_DIR):
+        # ITEM 2(b), applied INSIDE the section: write-vs-write AND write-vs-READ against every
+        # live claim. **Identity is not consulted here and never was** — claim.py has always
+        # refused a same-seat overlap, and F08 was check_scope_disjoint.py disagreeing with it.
+        for other in live_claims(root):
+            if other.get("task_id") == args.task:
+                continue
+            other_write = other.get("write_scope") or []
+            other_read = other.get("read_scope") or []
+            ow, hits = scope_mod.overlaps(write_scope, other_write) if other_write else (False, [])
+            if ow:
+                print("VERDICT: CLAIM REFUSED — WRITE/WRITE SCOPE OVERLAP")
+                print("   this seat : %s  task=%s" % (args.seat, args.task))
+                print("   other seat: %s  task=%s  (%s)"
+                      % (other.get("seat_actor_id"), other.get("task_id"), other.get("__path__")))
+                for h in hits:
+                    print("   %s" % h)
+                print("   DECIDED INSIDE THE CHECK-THEN-TAKE SECTION (%s) — the read that found "
+                      "this claim and the write that would have taken mine are ONE atomic act."
+                      % registry.lock_path(root, registry.CLAIMS_DIR))
+                return 1
+            orr, hits = scope_mod.overlaps(write_scope, other_read) if other_read else (False, [])
+            if orr:
+                print("VERDICT: CLAIM REFUSED — WRITE/READ SCOPE OVERLAP (CD-PL-F134)")
+                print("   this seat would WRITE what seat %s declared it would READ."
+                      % other.get("seat_actor_id"))
+                print("   other seat: %s  task=%s  (%s)"
+                      % (other.get("seat_actor_id"), other.get("task_id"), other.get("__path__")))
+                for h in hits:
+                    print("   %s" % h)
+                return 1
+
+        try:
+            registry.write_exclusive(path, payload)
+        except FileExistsError:
+            existing = registry.load(path)
+            print("VERDICT: CLAIM REFUSED — TASK ALREADY CLAIMED")
+            print("   task_id : %s" % args.task)
+            print("   record  : %s" % os.path.relpath(path, root))
+            print("   %s" % describe_holder(existing))
+            print("   requested by seat=%s pid=%d" % (args.seat, pid))
+            print("   NOTE: a DEAD holder is still a refusal here. Run `claim.py reap --task %s "
+                  "--reason ...` explicitly; `claim` never reaps." % args.task)
+            return 1
 
     print("VERDICT: CLAIMED")
     print("   task_id  : %s" % args.task)

@@ -1,0 +1,40 @@
+# ================================================================================================= #
+# PLANT-COORD-05 MUTATION — **THE RESTORATION OF INCREMENT 12'S FOUR SKIP LINES.**
+#
+# `PO-DECISIONS-0022` ruling 5 and the increment-13 dispatch both name this patch as the single most
+# valuable artefact of the increment, and the reason is exact: **IT PROVES THE FIX IS WHAT IS DOING
+# THE WORK.** Arm 1 shows the same-identity overlapping pair REFUSED; this patch puts back the four
+# lines increment 12 shipped, and arm 2 shows THE SAME INPUT ADMITTED WITH rc=0.
+#
+# The lines restored are `tools/coordination/check_scope_disjoint.py:96-100` as increment 12 wrote
+# them, verbatim:
+#
+#     sa, sb = a.get("seat_actor_id"), b.get("seat_actor_id")
+#     if sa == sb:
+#         lines.append("note     seat=%s holds two claims (%s, %s) — not a cross-seat pair, "
+#                      "not examined" % (sa, a.get("task_id"), b.get("task_id")))
+#         continue
+#
+# **THAT `continue` IS WHY THE INSTRUMENT BUILT TO DETECT THE FOUNDING INCIDENT PRINTED
+# `CONCURRENT WORK PROCEEDS` FOR THE FOUNDING INCIDENT, AND EXITED 0.** Two Project Lead sessions,
+# ONE identity, one shared record file: the registry cannot tell whether two live claims are one
+# session or two, and that is precisely why identity must not be the discriminator.
+#
+# The patch is applied to a SANDBOX CLONE and reverted in the same arm. The real worktree is never
+# mutated by a plant (`CD-PL-F128`).
+# ================================================================================================= #
+diff --git a/tools/coordination/check_scope_disjoint.py b/tools/coordination/check_scope_disjoint.py
+index c507dd6..96daea6 100644
+--- a/tools/coordination/check_scope_disjoint.py
++++ b/tools/coordination/check_scope_disjoint.py
+@@ -162,6 +162,10 @@ def check(root: str) -> Tuple[int, int, List[str]]:
+         for j in range(i + 1, len(recs)):
+             a, b = recs[i], recs[j]
+             sa, sb = a.get("seat_actor_id"), b.get("seat_actor_id")
++            if sa == sb:
++                lines.append("note     seat=%s holds two claims (%s, %s) — not a cross-seat pair, "
++                             "not examined" % (sa, a.get("task_id"), b.get("task_id")))
++                continue
+             same_identity = (sa == sb)
+             # NOT a skip. A LABEL. The pair is examined either way; the label exists so that a
+             # reader sees the founding-incident shape called by its name when it occurs.
