@@ -1,0 +1,13 @@
+diff --git a/src/crash_detector/publication/cadence.py b/src/crash_detector/publication/cadence.py
+index 31e1045..a4b69b1 100644
+--- a/src/crash_detector/publication/cadence.py
++++ b/src/crash_detector/publication/cadence.py
+@@ -328,7 +328,7 @@ def evaluate_cadence(
+     # *** THE OPEN INTERVAL. Without this line a stopped publisher is never detected. ***
+     open_interval = age_seconds(as_of_utc=instants[-1], now_utc=observed)
+ 
+-    measured = closed + (open_interval,)
++    measured = closed if closed else (0.0,)
+     worst = max(measured)
+ 
+     return CadenceVerdict(

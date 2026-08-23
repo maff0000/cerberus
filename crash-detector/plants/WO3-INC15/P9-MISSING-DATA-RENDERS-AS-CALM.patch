@@ -1,0 +1,13 @@
+diff --git a/src/crash_detector/publication/detail_level.py b/src/crash_detector/publication/detail_level.py
+index 8c59760..8d61740 100644
+--- a/src/crash_detector/publication/detail_level.py
++++ b/src/crash_detector/publication/detail_level.py
+@@ -211,7 +211,7 @@ class DetailPolicy:
+             )
+ 
+         # *** PID §3.2. CONSTITUTIONAL. NO SCALE REQUIRED. ***
+-        if self.absent_data_level == DETAIL_CALM:
++        if False:
+             raise DetailPolicyIncoherent(
+                 "absent_data_level is 'calm', and PID §3.2 is constitutional on this: "
+                 "'MISSING DATA MUST NEVER RENDER AS CALM. Absence of signal is not absence "
