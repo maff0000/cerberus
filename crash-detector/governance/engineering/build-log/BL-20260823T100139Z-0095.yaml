@@ -1,0 +1,132 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 10, ITEM_1, PART A — THE DENOMINATOR RE-DERIVED, AND THE SEVENTH SEAT'S
+# DECLARED LIMIT DISCHARGED BY EXECUTION ON ALL FOUR SEALED METATYPES.
+#
+# The seventh Assurance seat ran ARM 2 against `SealedMagnitudeType` and reported the other three
+# as *"structurally identical, not individually executed — an honest limit"*. The dispatch says
+# **"THAT LIMIT IS YOURS TO DISCHARGE BY EXECUTION. Do not inherit it as a conclusion."**
+# IT IS DISCHARGED HERE. THE INFERENCE WAS CORRECT AND IS NOW A MEASUREMENT.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0094. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T100139Z-0095
+timestamp_utc: "2026-08-23T10:01:39Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-08
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC10-F01-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 686a374e60ff8f18305fa8b665463e0e057dac2b
+parent_entry_id: BL-20260823T082026Z-0094
+schema_version: 1
+
+record_type: MEASUREMENT
+
+title: 'ITEM_1 part A: the 30 tier-1 ISINSTANCE sites re-derived by instrument, and ARM 1 + ARM 2 executed against all four sealed metatypes.'
+
+# ---------------------------------------------------------------------------------------------- #
+BOOT_VERDICT:
+  identity: 'CD-ENG-WO2R3-08 — FRESH. Not -01..-07, not any CD-ASR-* seat.'
+  role: 'ENGINEER, from CD-DISPATCH-WO2R3-INC10-F01-ENGINEER (committed 184c3e1 on main). NOT self-assigned (PBG-BOOT-002).'
+  base_sha_RESOLVED_NOT_TRANSCRIBED: >
+    `cd /srv/crash-detector-wo2r3 && git rev-parse HEAD` -> `686a374e60ff8f18305fa8b665463e0e057dac2b`;
+    `git cat-file -t 686a374e60ff8f18305fa8b665463e0e057dac2b` -> `commit`. **AGREES WITH THE
+    DISPATCH'S `base_sha` LINE BYTE FOR BYTE** (CD-PL-F36: resolved, not transcribed).
+  branch: '`git rev-parse --abbrev-ref HEAD` -> `wo-2r3`.'
+  worktree_clean: '`git status --porcelain` -> **ZERO LINES.** Agrees with the dispatch.'
+  the_one_item_as_I_understand_it: >
+    I am NOT asked to stop `type.__new__(SealedMagnitudeType, ...)` creating a forged subclass — the
+    Product Owner has ruled (PO-DECISIONS-0018 ruling 1) that an enumeration cannot close a
+    property-defined class and that appending another refused route is the census game. I AM asked
+    to make the forged object USELESS: every `isinstance` surviving on a judgement path becomes an
+    EXACT-TYPE admission, sites enumerated BY INSTRUMENT, or carries a MEASURED reason it cannot.
+    **AND the existing declared-route refusals STAY (ruling 1a) — arm 1 is a regression test on them.**
+
+# ---------------------------------------------------------------------------------------------- #
+PART_A_1__THE_DENOMINATOR__RE_DERIVED_AND_NOT_COPIED:
+  the_instrument: 'tools/sweep/delegated_judgement_sweep.py — PROTECTED FROM THIS SEAT. RUN, NEVER WRITTEN.'
+  command: 'cd /srv/crash-detector-wo2r3 && python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list'
+  tier_1: 'TIER 1 — admission: 45 distinct sites (52 occurrences); **ISINSTANCE 30** · ISSUBCLASS 0 · DUCK 22.'
+  dispositions_DERIVED_BY_COMMAND_AND_NOT_COUNTED_BY_EYE:
+    command: |
+        python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list \
+          | grep -E '^    \[[A-Z_ ]+\] .*ISINSTANCE' \
+          | sed 's/^    \[\([A-Z_]*\) *\].*/\1/' | sort | uniq -c
+    output: |
+      ......6 DEFECT_OPEN
+      ......1 DELEGATED
+      .....10 ESTABLISHED
+      .....11 EXACT
+      ......2 OUT_OF_BOUND
+      (the leading dots stand for the spaces `uniq -c` prints; YAML eats a ragged left margin)
+    total_command: "... --list | grep -cE '^    \\[[A-Z_ ]+\\] .*ISINSTANCE'  ->  30"
+  VERDICT_ON_THE_DISPATCHS_OWN_NUMBER: >
+    **THE DISPATCH SAYS `EXACT 11 · ESTABLISHED 10 · DEFECT_OPEN 6 · OUT_OF_BOUND 2 · DELEGATED 1`,
+    SUMMING TO 30. MY RE-DERIVATION AGREES EXACTLY.** Neither of us is wrong on this line. The
+    denominator is 30 and it is the work order.
+  the_class_2_sweep_at_my_base: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1, `CD-CLASS-2-SWEEP:
+    FAIL — 555 sites, 4 violations`** — three STALE DECLARATION in `crash_detector.admission` plus
+    UNDECLARED MODULE `crash_detector.admission`, tier-2 keys 3 of 33. **BYTE-IDENTICAL TO THE STATE
+    THE DISPATCH DECLARED. NOT A DISCOVERY. HELD STALE BY PO-DECISIONS-0018 RULING 3 AND NOT MINE.**
+
+# ---------------------------------------------------------------------------------------------- #
+PART_A_2__THE_FOUR_SEALED_METATYPES__BOTH_ARMS__EACH__EXECUTED:
+  what_the_seventh_seat_left_owed: >
+    *"By inspection the same shape holds for `SealedReadingType`, `SealedQuantityType` and
+    `SealedPresentationType`; I executed it against `SealedMagnitudeType` and report the other three
+    as structurally identical, not individually executed — an honest limit."*
+  the_probe: '/tmp/cd-eng-wo2r3-08/probe_four_metatypes.py — MY OWN scratch (CD-PL-F128), not any other seat''s.'
+  command: 'cd /srv/crash-detector-wo2r3 && python3 -B /tmp/cd-eng-wo2r3-08/probe_four_metatypes.py /srv/crash-detector-wo2r3'
+  tree_line_read_every_time_CD_PL_F98: '`tree: /srv/crash-detector-wo2r3/src/crash_detector/__init__.py` · `python: 3.11.2`'
+  concrete_classes_RESOLVED_AT_RUNTIME_NOT_TRANSCRIBED: |
+      SealedMagnitudeType        -> ['DialMagnitude']
+      SealedQuantityType         -> ['DeclaredQuantity']
+      SealedReadingType          -> ['Degraded', 'Unknown', 'Value']
+      SealedPresentationType     -> ['NotShown', 'Shown']
+  THE_RESULT: |
+      METATYPE                 VICTIM           ARM 1 (class stmt)          ARM 2 (type.__new__)
+      SealedMagnitudeType      DialMagnitude    REFUSED                     CREATED, 0 package lines
+                                                MagnitudeSurfaceViolated    issubclass True · float(inst) 999.0
+                                                                            isinstance True · type(inst) is DialMagnitude FALSE
+      SealedQuantityType       DeclaredQuantity REFUSED                     CREATED, 0 package lines
+                                                QuantitySurfaceViolated     issubclass True · float(inst) 999.0
+                                                                            isinstance True · type(inst) is DeclaredQuantity FALSE
+      SealedReadingType        Degraded         REFUSED                     CREATED, 4 package lines
+                                                ReadingSurfaceViolated      issubclass True · float(inst) 999.0
+                                                                            isinstance True · type(inst) is Degraded FALSE
+      SealedPresentationType   NotShown         REFUSED                     CREATED, 0 package lines
+                                                DialPresentationRefused     issubclass True · float(inst) 999.0
+                                                                            isinstance True · type(inst) is NotShown FALSE
+  THE_LIMIT_IS_DISCHARGED: >
+    **ARM 2 REPRODUCES ON ALL FOUR, BY EXECUTION AND NOT BY INSPECTION.** The seventh seat's
+    inference was CORRECT; it is now a measurement and no longer an inference. **AND ARM 1 REFUSES
+    ON ALL FOUR** — the declared-route guards are not vacuous at any of the four, which is the
+    regression baseline PO-DECISIONS-0018 ruling 1(a) protects.
+  THE_ONE_ANOMALY_AND_IT_IS_NOT_A_REFUSAL: >
+    `SealedReadingType`'s ARM 2 executes **4** package lines where the other three execute **0**.
+    **THEY ARE NOT A GUARD FIRING.** Traced line by line: all four are
+    `dials/reading.py:234/241/248/248 SealedReadingType.__setattr__`, invoked by `typing.Generic`
+    machinery writing `__orig_bases__`/`__parameters__` onto the FORGED class. The forged class is
+    not in `_SEALED`, so `__setattr__` falls straight through to `type.__setattr__`. **FOUR LINES OF
+    PACKAGE CODE THAT REFUSE NOTHING. Recorded because a reader who saw `4` and not `0` might
+    conclude something in the package got a look at it. Nothing did.**
+  and_the_asymmetry_that_is_the_whole_remedy: >
+    In all four rows `isinstance(inst, VICTIM)` is **True** and `type(inst) is VICTIM` is **False**.
+    The forged subclass passes `isinstance` BY CONSTRUCTION and can never be made to fail it; it
+    fails exact type BY CONSTRUCTION and can never be made to pass it. **PART B CONVERTS THE SITES.**
+
+# ---------------------------------------------------------------------------------------------- #
+WHAT_THIS_ENTRY_DOES_NOT_CLAIM:
+- '**CD-ASR-WO2R3-04-F01 IS NOT CLOSED BY THIS ENTRY AND ITS DISPOSITION IS NOT MINE.** This entry measures.'
+- '**NO SOURCE FILE IS CHANGED BY THIS COMMIT.** It is a measurement commit and the tree is otherwise the dispatch base.'
+- 'The forged class is STILL CONSTRUCTIBLE at all four metatypes and this increment does not claim otherwise.'
+
+next_safe_action: 'ITEM_1 part B — convert or declare each of the 30, starting with the six DEFECT_OPEN in `crash_detector.admission`.'
