@@ -1,0 +1,135 @@
+# ================================================================================================ #
+# WO-2R3 THE RECORD ACT — THE CONTINUITY CLOSE. THE PROBES, THEIR MANIFEST ROWS, AND THE
+# `PBG-ASSURE-001` EXTRACTION VERDICT THAT COULD NOT BE INSIDE THE COMMIT IT IS ABOUT.
+#
+# **THE ORDERING PROBLEM IS THE ONE `CD-RULE-008` ALREADY SOLVED FOR BOOT VERDICTS:** the verdict
+# of the commit carrying an entry cannot be inside that entry. ITEM 3 landed at
+# `8e6ed725bc2650b0de550dee81bae04305b2b0c7`; the `git archive` extraction verdict is taken AT that
+# SHA and recorded HERE, in the next commit.
+#
+# **THIS COMMIT ADDS TWO PROBES, TWO MANIFEST ROWS AND THIS ENTRY. IT CHANGES NO INSTRUMENT AND NO
+# REGISTER ROW.** The sweep, the suite and the whole register set are re-run over it below to say
+# so by measurement rather than by assertion.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0082. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T033915Z-0083
+timestamp_utc: "2026-08-23T03:39:15Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-04
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0014.md ruling 1; PO-DECISIONS-0015.md rulings 4 and 6'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: af2accbfc950961bb7f7967d34ecf16414088228
+parent_entry_id: BL-20260823T033433Z-0082
+schema_version: 1
+
+record_type: RECORD_ACT_CLOSE
+
+the_three_commits_of_this_act:
+  ITEM_1: '93be8e4adea3ecddd02296137fb65fa8753be4b3 — the minimal findings register.'
+  ITEM_2: '650ace9ebdc3fdcdc7d69fdc239db3ce675ad723 — the redrafted UPSTREAM_OF_THE_PATH.'
+  ITEM_3: '8e6ed725bc2650b0de550dee81bae04305b2b0c7 — the fifteen, and the fifty rows that derive the two modules.'
+  each_resolved_not_transcribed: 'Every SHA above from `git rev-parse HEAD` at the moment of the commit; each confirmed a `commit` object with `git cat-file -t`.'
+
+PBG_ASSURE_001__THE_AUDITOR_RUNS_IT_FROM_AN_EXTRACTION_IT_MADE_ITSELF:
+  why_this_is_not_a_formality: >
+    ITEM 1 put the findings register in `governance/findings/` and made the sweep resolve it by
+    walking THREE DIRECTORIES UP from its own `__file__`. **THAT IS EXACTLY THE KIND OF PATH THAT
+    WORKS IN A WORKTREE AND NOWHERE ELSE**, and *"if it only works in the worktree, it is not an
+    instrument, it is a local habit."*
+  the_exact_commands: |
+    $ git rev-parse HEAD
+    8e6ed725bc2650b0de550dee81bae04305b2b0c7
+    $ git cat-file -t 8e6ed725bc2650b0de550dee81bae04305b2b0c7
+    commit
+    $ git archive 8e6ed725bc2650b0de550dee81bae04305b2b0c7 | tar -x -C /tmp/cd-eng04-extract
+    $ cd /tmp/cd-eng04-extract
+    $ env -i PATH=/usr/bin:/bin HOME=/tmp python3 -B tools/sweep/delegated_judgement_sweep.py --root .
+  the_result: |
+    EXIT 0
+        DEFECT_OPEN              10 |    0  (EXTENDED)
+        MODULES DERIVED           2       ['crash_detector.admission', 'crash_detector.establishment']
+        THE FINDINGS REGISTER (findings-register.json): 4 rows — OPEN 4, CLOSED 0, SUPERSEDED 0.
+    CD-CLASS-2-SWEEP: PASS — 534 sites enumerated over 19 modules ...
+  what_env_i_buys: >
+    **`env -i` REMOVES EVERY INHERITED VARIABLE, INCLUDING ANY `PYTHONPATH` THIS SEAT HAD SET.**
+    Without it the arm would prove that the tool works in an environment the seat prepared, which
+    is the thing the standard exists to stop.
+  and_the_arm_that_shows_the_resolution_can_FAIL_from_an_extraction_too: >
+    `tests/test_findings_register.py::test_an_ABSENT_register_REFUSES_rather_than_crashing_the_run`
+    deletes the register from a throwaway tree: `FINDINGS_REGISTER_ABSENT`, EXIT 1, and the run
+    still completes and prints. The path is load-bearing in BOTH directions.
+
+what_landed_in_this_commit:
+  P_K: >
+    `variants/WO-2R3/P-K-the-establishment-forged-governed-type-re-measured.py` — `CD-PL-F104`'s
+    five arms RE-ASKED rather than re-run, plus two arms of this seat's own. **A RE-MEASUREMENT
+    THAT RE-RUNS THE ORIGINAL SEAT'S DRIVER MEASURES THE DRIVER**, so this one is written from the
+    finding text in `governance/reconciliation/WO-2R3/README.md`.
+  P_L: >
+    `variants/WO-2R3/P-L-is-the-CARRIER-ONLY-callable-field-machine-checked.sh` — two trees, a real
+    product caller planted in both, one variable different: what `callable` holds.
+  manifest_rows: '`variants/WO-2R3/MANIFEST.md` — both rows, stating what each probe ASKS and not what it concludes (CD-PL-F97).'
+  why_they_are_here_and_not_only_in_a_return: >
+    `PBG-CONT-007`. A probe that exists only in a seat's conversation is not project state, and the
+    seventh Assurance seat needs the exclusion set in full so it can devise routes nobody here
+    tried. **FROM THE MOMENT THEY ARE WRITTEN DOWN THEY PROVE NOTHING ABOUT ANY CLASS** — they are
+    a regression floor and an exclusion list, and fitting a guard to them is worthless.
+
+instruments_run_over_this_commit_by_this_seat:
+  class_2_sweep: 'EXIT 0 — 534 sites. UNMOVED from ITEM 3; this commit touches no register row.'
+  full_suite: 'EXIT 0 — 1635 passed.'
+  P_K: 'EXIT 0. All five PL arms REPRODUCE. Arm 5 measured 7 -> 8 under a full package import. Arms 6 and 7 are this seat''s own.'
+  P_L: 'EXIT 0. NAME arm: CARRIER_ONLY_HAS_A_PRODUCT_CALLER, sweep EXIT 1. FILE-LIST arm: **the check did not fire and the sweep exited 0 with a real product caller present.**'
+  the_whole_register_set: 'Re-run. Unchanged from ITEM 3: eleven at their base exit codes, `check_grant_matrix_live` 3, `check_no_execution_interface` **1**.'
+  CD_RT_012_NO_EXECUTION_INTERFACE: >
+    **EXIT 1. RED AT THE BASE AND RED NOW, AND IT IS NOT THIS SEAT'S.** One violation:
+    `tests/test_tree_fingerprint.py:61`, rule *"execution interface declared in prose"*, on the
+    phrase *"the dispatch ORDERS the auditor to do"*. `PO-DECISIONS-0015` ruling 3 assigns its
+    correction to increment 8 and requires it to carry its own contrast. **NOT REPAIRED, NOT
+    TOUCHED, AND THE FILE IT LIVES IN IS INSIDE THIS SEAT'S WRITABLE SCOPE — which is exactly why
+    it is said here.** This act added four new test files and 55 new tests to `tests/` and the
+    violation count is still ONE.
+
+what_this_whole_act_does_NOT_close:
+  - '**IT FIXES NOTHING AND IT WAS NOT ALLOWED TO.** Ten sites are DECLARED OPEN DEFECTS and all
+     ten are open. `src/` was never opened.'
+  - '**THE SWEEP''S EXIT 1 -> EXIT 0 IS ARITHMETIC OVER THE DECLARATION SET.** Guarded by a test
+     that fails if the instrument ever stops saying so in its own output.'
+  - '**NO DISPOSITION IS VERIFIED BY ANYTHING.** 50 of the 63 new rows are one seat''s first-and-only
+     reading of two modules it did not write.'
+  - '**NONE OF THE FOUR FINDINGS IS CLOSED.** The register indexes them; it does not answer them.'
+  - '**CD-RT-012 IS STILL RED** and is increment 8''s item 2.'
+  - '**T2 RED · CD-AC-002 AND CD-AC-005 AMBER AND NOT CLOSED · THE WO-2 GATE SHUT.** Nothing in this
+     act merges, promotes or admits anything, and this seat has no authority to change any of it.'
+
+findings_against_my_own_work__THE_FULL_LIST_AT_THE_CLOSE:
+  CD-ENG-WO2R3-04-F01: '`raised_at` carries the lane head for all four rows on the content document''s claim; two of the four were raised by earlier seats at boundaries this seat was not given.'
+  CD-ENG-WO2R3-04-F02: 'The findings register''s location couples the sweep to a path three directories above itself. It fails loudly, and the coupling was chosen deliberately.'
+  CD-ENG-WO2R3-04-F03: 'A count in BL-...-0080 was 12 where pytest printed 11. CD-RULE-009''s shape, in the commit that cites CD-RULE-009. Superseded, never edited.'
+  CD-ENG-WO2R3-04-F04: 'The derivation''s arms at ITEM 2 used a synthetic module. **DISCHARGED at ITEM 3** — both arms now run on the real 33-key and 17-key modules.'
+  CD-ENG-WO2R3-04-F05: '`gates` is checked for EXISTENCE and DIFFERENT-MODULE only, while the content document describes a relation nothing verifies. A declaration wider than its measured reach, in the field I built.'
+  CD-ENG-WO2R3-04-F06: '`CARRIER_ONLY` is as strong as an AST call-expression search, which the instrument itself declares a FLOOR — and I used it to bound somebody else''s finding.'
+  CD-ENG-WO2R3-04-F07: '50 of 63 rows are a first-and-only reading, which is the shape Category C was just reversed for trusting. **Attack `operand_origin`; the `OWN_CONSTRUCTION` rows first.**'
+  CD-ENG-WO2R3-04-F08: 'The convention behind `operand_origin` is mine and is in no ruling. A different seat reading the same 50 sites could reasonably produce a different distribution.'
+  CD-ENG-WO2R3-04-F09: 'I made the sweep green and I am the seat least able to judge whether that was right.'
+  CD-ENG-WO2R3-04-F10: >
+    **THE FOUR NEW TEST FILES ARE MY OWN AND THEY ARE NOT ASSURANCE** (PBG-SOD-001). They are part
+    of the implementation. Every refusing arm in them was written by the seat that wrote the thing
+    it refuses, which is the weakest possible reader of it — the same argument this dispatch used
+    to appoint a FRESH Engineer identity in the first place.
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. **THIS ENTRY IS A RECORD AND NOT A CERTIFICATION.** This seat does not
+  accept, assure or grade its own work; a FRESH SEVENTH Assurance seat audits it and the Product
+  Owner dispositions the gate (PBG-AUTH-003). The return value is `READY_FOR_ASSURANCE` and that is
+  a statement about readiness to be examined, not about being right.

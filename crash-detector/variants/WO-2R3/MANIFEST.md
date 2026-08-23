@@ -463,3 +463,20 @@ is a summary, and a summary is the thing this project keeps finding wrong.
 INSTRUMENTS THAT REPORT, and this project's `CD-RULE-006` says a check reports and a carrier fails.
 The carriers for increment 7's propositions are in `tests/`, and where a proposition has no carrier
 that is said in the return rather than left to be found.
+
+---
+
+## THE RECORD ACT'S PROBES — `CD-ENG-WO2R3-04` (`CD-PL-F97`: the row is written when the probe is)
+
+**BOTH ARE INSTRUMENTS THAT REPORT AND NEITHER IS A CARRIER** (CD-RULE-006). Both exit 0
+whatever they measure. Their carriers are in `tests/` — `tests/test_the_fifteen.py` for both —
+and where a proposition of theirs has no carrier that is said in the seat's return.
+
+| probe | asks | run it |
+|---|---|---|
+| **`P-K-the-establishment-forged-governed-type-re-measured.py`** | **NEW AT THE RECORD ACT.** `CD-PL-F104`'s five arms, RE-ASKED rather than re-run: is `establishes` reachable from ordinary caller code, does the `is_dataclass` gate admit a non-dataclass, can caller data steer the InitVar refusal, is `self` subclassable, and does a caller mint a forged governed type? **Written from the FINDING TEXT and not from `PL-AB0`'s driver — a re-measurement that re-runs the original seat's driver measures the driver.** Two arms are this seat's own and are not in `PL-AB0`: arm 6 asks whether the shipped docstring actually makes the claim arm 2 falsifies, and **arm 7 asks WHO READS the surfaces arm 5 moves.** Arm 5 is run under a FULL package import rather than the bare one `PL-AB0` declared as its limit. | `PYTHONPATH=src python3 -B variants/WO-2R3/P-K-the-establishment-forged-governed-type-re-measured.py` |
+| **`P-L-is-the-CARRIER-ONLY-callable-field-machine-checked.sh`** | **NEW AT THE RECORD ACT.** Is `CARRIER_ONLY.callable` actually machine-checked, or only said to be? Two trees, a REAL product caller of `admission_faults` planted in a swept module in BOTH, and **exactly one thing different between them: what the `callable` field holds.** The callable's NAME, versus the carrier-file list `CD-THE-FIFTEEN-AND-THE-REDRAFT.md` §3 gives for that field beside the words "MACHINE-CHECKED". Each arm runs its own tree's own copy of the instrument and prints its path (CD-PL-F98). | `bash variants/WO-2R3/P-L-is-the-CARRIER-ONLY-callable-field-machine-checked.sh` |
+
+**NEITHER ROW STATES A CONCLUSION**, per this manifest's own rule. What they measured is in
+`governance/engineering/build-log/BL-20260823T033433Z-0082.yaml` and in the seat's return, where
+it can be argued with.
