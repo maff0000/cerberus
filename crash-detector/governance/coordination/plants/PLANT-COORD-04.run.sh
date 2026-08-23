@@ -117,17 +117,26 @@ echo "          THIS IS THE ARM THE WHOLE RULING TURNS ON."
 rm -f "$SANDBOX"/governance/coordination/leases/*.lease.yaml
 start_first P04-TASK-ALPHA 'src/alpha/**'
 rm -f "$SENT/second.started"
-run_rc "arm3 DISJOINT second launch (must be ADMITTED and must exec)" \
-    sh "$LAUNCH" --lease L-DISJOINT --seat P04-SEAT-DISJOINT --task P04-TASK-BRAVO \
-       --write-scope 'docs/bravo/**' -- "$PLANT_WORK/fake-seat.sh" second 8
-A3_RC=$LAST_RC
-show_out 8
+# THE SECOND LAUNCH RUNS IN THE BACKGROUND AND LIVES, because the proposition is that the two seats
+# RUN ALONGSIDE EACH OTHER. Run in the foreground it would have finished before anything looked,
+# and "both leases live" would have measured a corpse. THAT IS WHAT THIS PLANT DID ON ITS FIRST
+# EXECUTION and the arm reported DID NOT CONTRAST rather than quietly passing on one live lease.
+echo "    \$ sh $LAUNCH --lease L-DISJOINT --seat P04-SEAT-DISJOINT --task P04-TASK-BRAVO --write-scope docs/bravo/** -- fake-seat second 25   [backgrounded]"
+sh "$LAUNCH" --lease L-DISJOINT --seat P04-SEAT-DISJOINT --task P04-TASK-BRAVO \
+   --write-scope 'docs/bravo/**' -- "$PLANT_WORK/fake-seat.sh" second 25 > "$PLANT_WORK/second.log" 2>&1 &
+SECOND_PID=$!
+_n=0
+while [ ! -f "$SENT/second.started" ] && [ $_n -lt 60 ]; do sleep 0.2; _n=$((_n+1)); done
+A3_RC=0
+grep -q 'LEASE REFUSED' "$PLANT_WORK/second.log" && A3_RC=1
+echo "    lease acquisition for the disjoint launch: $(grep -c 'LEASE ACQUIRED' "$PLANT_WORK/second.log") acquired, $(grep -c 'LEASE REFUSED' "$PLANT_WORK/second.log") refused"
+sed -n '1,6p' "$PLANT_WORK/second.log" | sed 's/^/      | /'
 STARTED3=NO
 [ -f "$SENT/second.started" ] && STARTED3=YES
 FIRST_ALIVE3=$(kill -0 $FIRST_PID 2>/dev/null && echo YES || echo NO)
 echo "    disjoint second seat STARTED: $STARTED3"
 echo "    first session STILL ALIVE and UNDISTURBED: $FIRST_ALIVE3 (kill -0 $FIRST_PID)"
-run_rc "arm3 both leases live at once" python3 -B "$LEASE" --root "$SANDBOX" list
+run_rc "arm3 both leases live at once (BOTH PROCESSES STILL RUNNING)" python3 -B "$LEASE" --root "$SANDBOX" list
 BOTH=$(echo "$LAST_OUT" | grep -c 'liveness=LIVE')
 echo "    leases reading LIVE simultaneously = $BOTH"
 echo "      produced by: lease.py list | grep -c 'liveness=LIVE'"
@@ -135,7 +144,8 @@ echo "$LAST_OUT" | grep -E 'lease=' | sed 's/^/      | /'
 A3_OK=0
 [ "$A3_RC" -eq 0 ] && [ "$STARTED3" = "YES" ] && [ "$FIRST_ALIVE3" = "YES" ] && [ "$BOTH" -ge 2 ] && A3_OK=1
 arm_result 3 "NON-VACUITY: DISJOINT LAUNCHES RUN IN PARALLEL" \
-    "rc=0 AND second started AND first alive AND 2 live leases" "$A3_OK"
+    "admitted AND second started AND first alive AND 2 live leases" "$A3_OK"
+kill $SECOND_PID 2>/dev/null; wait $SECOND_PID 2>/dev/null
 stop_first
 
 plant_summary
