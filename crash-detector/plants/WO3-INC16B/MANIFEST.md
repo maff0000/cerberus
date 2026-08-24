@@ -270,6 +270,203 @@ ran still run and still pass.
 
 ---
 
+---
+
+# WO-3 INCREMENT `16B-FIX` — ARMS `C6`–`C10`, ADDED BY `CD-ENG-WO3-06`
+
+Under `governance/engineering/CD-DISPATCH-INC16B-FIX-ENGINEER.md` §7, authority
+`CD-ASR-WO3-05`'s `AMBER` at `ca85d8e` (`BL-20260824T104431Z-A305.yaml`), findings **F1, F2, F3**.
+
+**`C1`–`C5` ARE NOT TOUCHED, AND THEY WERE RE-RUN UNCHANGED.** A fix that quietly stops an
+existing arm from biting is a regression, and this project has recorded a plant silently ceasing
+to apply before (`CD-ENG-WO2R3-06-F06`). Their re-measurement is the first five rows of the table
+below and **every count and every catching assertion is identical to the increment-16B MANIFEST
+above** — only the CLEAN-arm assertion count moves, `67 -> 144`, because the instrument now
+asserts more.
+
+`C6`, `C7`, `C9` are the auditor's trees `E3`, `E2`, `E1` rebuilt from that entry's description
+rather than inherited. `C8` is new. **`C10` is a CONTROL and it MUST PASS.**
+
+## THE ARMS, AS MEASURED AT TIP `af3825c`
+
+Each arm from **its own pristine `git archive af3825c | tar -x -C /tmp/...` extraction**. The
+worktree was never mutated (`CD-PL-F154`). The declared command, run verbatim on both arms of
+every row, is the register's own:
+
+```
+python3 tools/register/check_missing_data_never_calm.py --root .
+```
+
+| # | Plant | `git apply` | CLEAN | VIOLATED | violated-arm result | assertion that caught it |
+|---|---|---|---|---|---|---|
+| **C1** | `C1-FULL-REVERT-OF-16A-FIX.patch` | **0** | **0** | **1** | `FAIL — 8 violation(s)` | `CD-CALM-GATE-001` × 8 |
+| **C2** | `C2-ONE-BRANCH-ONE-SURFACE-DEGRADED-PUBLIC.patch` | **0** | **0** | **1** | `FAIL — 2 violation(s)` | `CD-CALM-GATE-001` × 2 |
+| **C3** | `C3-CALM-BACK-INSIDE-THE-ABSENT-ENUM.patch` | **0** | **0** | **1** | `FAIL — 8 violation(s)` | `CD-CALM-GATE-001` × 8 |
+| **C4** | `C4-VACUITY-NO-DIAL-MAY-EVER-READ-CALM.patch` | **0** | **0** | **1** | `FAIL — 4 violation(s)` | **`CD-CALM-GATE-002` × 4** |
+| **C5** | `C5-NO-PATCH-CONTRACTS-DIR-REPOINTED.sh` | **n/a — no patch, and that is the point** | **0** | **3** | `PRECONDITION_NOT_MET` | the DECLARED-LIMIT-1 precondition |
+| **C6** | `C6-FOURTH-ONEOF-BRANCH-UNKNOWN-HINTED.patch` | **0** | **0** | **1** | `FAIL — 6 violation(s)` | **`CD-CALM-GATE-001` × 4 + `CD-CALM-BRANCHES-006` × 2** |
+| **C7** | `C7-DETAIL-LEVEL-DROPPED-FROM-REQUIRED.patch` | **0** | **0** | **1** | `FAIL — 8 violation(s)` | `CD-CALM-GATE-001` × 8 (the **field-absent** rows) |
+| **C8** | `C8-OFF-VOCABULARY-LEVEL-ADMITTED.patch` | **0** | **0** | **1** | `FAIL — 8 violation(s)` | `CD-CALM-GATE-001` × 8 (the **off-vocabulary** rows) |
+| **C9** | `C9-OPTIONAL-THIRD-SLOT-UNUSUAL-REF.patch` | **0** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2** |
+| **C10** | `C10-CONTROL-SYMMETRIC-FOURTH-LEVEL.patch` — **CONTROL** | **0** | **0** | **0** | **`PASS — 158 assertions, 0 violations`** | **none, and that is the point** |
+
+*** **THE FIRST GENERATION OF `C6`–`C10` DID NOT APPLY, AND THE `git apply` COLUMN IS WHAT CAUGHT
+IT.** *** They were produced with `git diff --no-index` and mangled path prefixes;
+`git apply` exited **1** on all five, the "violated" extraction was therefore the CLEAN tree, and
+all five arms read **`PASS`** — five guards that looked like they had stopped guarding. Regenerated
+in this lane's established `diff -ruN a/ b/` form and re-measured. **RECORDED RATHER THAN QUIETLY
+CORRECTED: this is `CD-ENG-WO2R3-06-F06` happening for the fifth time on this project, inside the
+increment whose own house rule exists to catch it, and the column caught it in the first run.**
+
+## *** THE CONTRAST THAT DECIDES WHETHER THIS FIX IS ANY GOOD ***
+
+**The SUPERSEDED instrument, taken verbatim from `git show cbb81d1:tools/register/check_missing_data_never_calm.py`,
+run on each VIOLATED extraction:**
+
+```
+C6   SUPERSEDED INSTRUMENT (cbb81d1) on the violated tree: rc=0  PASS — 67 assertions, 0 violations
+C7   SUPERSEDED INSTRUMENT (cbb81d1) on the violated tree: rc=0  PASS — 67 assertions, 0 violations
+C8   SUPERSEDED INSTRUMENT (cbb81d1) on the violated tree: rc=0  PASS — 67 assertions, 0 violations
+C9   SUPERSEDED INSTRUMENT (cbb81d1) on the violated tree: rc=0  PASS — 67 assertions, 0 violations
+C10  SUPERSEDED INSTRUMENT (cbb81d1) on the violated tree: rc=0  PASS — 81 assertions, 0 violations
+```
+
+**Four holes, four `PASS`es, at the auditor's own `67` every time — and `81` on `C10`, which is
+the auditor's `F5` control number exactly.** These are the auditor's trees, rebuilt.
+
+## *** AND THE LIVE GATE, DRIVEN DIRECTLY, WITH ITS CONTROL ON THE CLEAN TREE ***
+
+Not the instrument's opinion — `refuse_unless_publishable` itself, `$CD_CONTRACTS_DIR` unset,
+each probe run twice: on the VIOLATED extraction and on the CLEAN extraction of the same tip.
+
+```
+C6: UNKNOWN + detail_level='calm' + render_hint='COMPACT'
+    VIOLATED   public  *** ADMITTED (returned None) ***      private *** ADMITTED ***
+    CLEAN      public  REFUSED [UNKNOWN_KEY] at /equity_crash    private REFUSED
+C7: UNKNOWN with NO detail_level key at all
+    VIOLATED   public  *** ADMITTED (returned None) ***      private *** ADMITTED ***
+    CLEAN      public  REFUSED [SCHEMA_VIOLATION] at /equity_crash    private REFUSED
+C8: UNKNOWN + detail_level='banana' (off-vocabulary)
+    VIOLATED   public  *** ADMITTED (returned None) ***      private *** ADMITTED ***
+    CLEAN      public  REFUSED [SCHEMA_VIOLATION] at /equity_crash    private REFUSED
+C9: optional third slot credit_stress, UNKNOWN + detail_level='calm'
+    VIOLATED   public  *** ADMITTED (returned None) ***      private *** ADMITTED ***
+    CLEAN      public  REFUSED [UNKNOWN_KEY] at <root>          private REFUSED
+```
+
+**All four are real escapes on the live gate, not assertion bookkeeping.**
+
+## `C6` — THE FOURTH `oneOf` BRANCH, AND WHY IT IS THE ONE THAT MATTERS
+
+`dial_reading_unknown_hinted` appended to `#/$defs/dial_reading.oneOf` on both contracts: a copy
+of the `UNKNOWN` branch whose `detail_level` points at the **full** `#/$defs/detail_level`,
+requiring a marker property `render_hint` that is also added to the parent `dial_reading.properties`
+so the parent closure admits it. **NO NEW ROOT KEY**, so `check_schema_closed`'s root-properties
+allowlist — the thing that catches `C9` — never fires.
+
+### *** AND WHAT THE REST OF THE REGISTER SAYS ABOUT THE SAME TREE ***
+
+All **thirty** `execute:` lines of `required-tests.yaml`, run verbatim, cwd at each tree's root,
+`diff`ed against the clean extraction of the same tip:
+
+```
+C6  : 3 rc=0 -> 3 rc=1     ONE LINE MOVES, AND IT IS THIS INSTRUMENT. NOTHING ELSE SEES IT.
+C7  : 2 rc=0 -> 2 rc=1  and  3 rc=0 -> 3 rc=1
+C8  : 2 rc=0 -> 2 rc=1  and  3 rc=0 -> 3 rc=1
+C9  : 3 rc=0 -> 3 rc=1  and  6 rc=0 -> 6 rc=1   (line 6 = check_schema_closed, UNDECLARED KEYS)
+C10 : 2 rc=0 -> 2 rc=1  ONLY — see the note below; line 3, this instrument, stays rc=0
+```
+
+**On `C6`, line 3 is the ONLY line in the entire register that moves.** Before this fix, *no*
+line moved: `CD-ASR-WO3-05` measured that tree at `diff` EMPTY across all thirty. **A tree on
+which this product publishes the one document its constitution forbids, and now exactly one line
+of the register says so.**
+
+The six cells, verbatim from the violated arm:
+
+```
+CD-CALM-BRANCHES-006  public : '#/$defs/dial_reading.oneOf' declares MORE THAN ONE branch for
+                               the dial state(s) ['UNKNOWN'].
+CD-CALM-BRANCHES-006  private: (the same)
+CD-CALM-GATE-001      public/equity_crash/UNKNOWN[#/$defs/dial_reading_unknown_hinted]/calm
+CD-CALM-GATE-001      public/monetary_debasement/UNKNOWN[#/$defs/dial_reading_unknown_hinted]/calm
+CD-CALM-GATE-001      private/equity_crash/UNKNOWN[#/$defs/dial_reading_unknown_hinted]/calm
+CD-CALM-GATE-001      private/monetary_debasement/UNKNOWN[#/$defs/dial_reading_unknown_hinted]/calm
+```
+
+**BOTH HALVES OF THE `FX1` FIX BITE ON THIS ARM AND THEY BITE INDEPENDENTLY** — the behavioural
+half drove a branch nobody wrote by hand, and the deny-by-default structural half reported the
+branch set as unrecognised. Either alone would have caught it; that is the point of having both.
+
+## `C7` — `detail_level` DROPPED FROM `required`, BOTH ABSENT BRANCHES, BOTH SURFACES
+
+The `$ref` narrowing is left **fully intact**, so every `calm` row still passes — this arm is
+caught *only* by the **field-absent** row, and the field-absent row is one of the two that the
+superseded instrument had dropped from the memorial it replaced. All eight cells are
+`<no detail_level key>`, four on each surface, two per slot (one per absent-data branch).
+
+**THIS IS THE ARM THAT MAKES A GOVERNED SENTENCE TRUE.** This mutation is a NAMED MEMBER of this
+row's own `negative_control` class, under a sentence reading *"The instrument fails on all of
+these."* It did not. It now does.
+
+## `C8` — AN ABSENT-DATA BRANCH THAT ACCEPTS AN OFF-VOCABULARY LEVEL
+
+`#/$defs/absent_data_detail_level`'s enum replaced by a `not: {const: "calm"}` predicate, and the
+parent `dial_reading.properties.detail_level` opened to a bounded string. **`calm` is STILL
+refused on every missing-data branch and `calm` on a `VALUE` is STILL admitted**, so `C1`–`C4`'s
+assertions all pass on this tree — it is caught *only* by the **off-vocabulary** row, the second
+of the two dropped rows. That isolation is deliberate: an arm that also trips `CD-CALM-GATE-001`
+on `calm` would not prove the new row does anything (`CD-ENG-WO2R3-F12`).
+
+## `C9` — THE OPTIONAL THIRD SLOT, SPELLED UNUSUALLY
+
+`credit_stress` added to `properties` but **NOT** to `required` — which is exactly how a dial is
+added without breaking existing consumers — with the value `{"$ref": "#/$defs/dial_reading_permissive"}`,
+a union whose `DEGRADED` and `UNKNOWN` branches carry the full vocabulary.
+
+```
+CD-CALM-SLOTS-007  public : the contract declares dial-bearing root properties ['credit_stress']
+                            that are NOT spelled '{"$ref": "#/$defs/dial_reading"}' and are
+                            therefore NOT DRIVEN by this instrument
+CD-CALM-SLOTS-007  private: (the same)
+```
+
+*** **THE INSTRUMENT STILL DRIVES TWO DIAL SLOTS AND NOT THREE.** *** It refuses to be *silent*
+about a third; it does not adopt one. `PO-DECISIONS-0026` standing is **two dials, never
+blended**, and a third dial slot is a Product Authority decision.
+
+## `C10` — THE CONTROL, AND IT IS NOT A FORMALITY
+
+A **symmetric** PID §4 amendment: `critical` added to `DETAIL_ORDER` in
+`src/crash_detector/publication/detail_level.py` **and** to **both** enums (`detail_level` and
+`absent_data_detail_level`) in **both** contracts.
+
+```
+CLEAN     PASS — 144 assertions, 0 violations   exit 0
+VIOLATED  PASS — 158 assertions, 0 violations   exit 0
+```
+
+**The table grew by 14 assertions on the day the vocabulary grew, with no edit to the check.**
+The superseded instrument measured `81` on the auditor's equivalent tree and the fixed one
+measures `158` — both PASS, both grown. **If this arm had gone red, a vocabulary-driven table
+would have been replaced by a hard-coded one and the best property this instrument has would have
+been thrown away.**
+
+### A NOTE ON `C10` AND REGISTER LINE 2, MEASURED AND NOT GLOSSED
+
+On the `C10` tree the register's **line 2** — `CD-RT-001-ABSENCE-RENDERS-UNKNOWN`'s grown pytest
+command — exits `1`: `4 failed, 48 passed` in `tests/test_detail_level.py`
+(`test_the_levels_are_exactly_the_three_the_pid_names_in_its_order`, `test_detail_is_monotone_in_risk`,
+`test_the_absent_data_branches_declare_a_vocabulary_that_EXCLUDES_calm` on both surfaces).
+**THAT IS NOT THIS INSTRUMENT AND IT IS NOT THE `F6` BRITTLENESS EITHER.** Those tests pin PID
+§4's three levels **verbatim** and say so in their own words: *"a fourth level is a PID amendment,
+not a schema edit."* A tree carrying a fourth level SHOULD make somebody open the register — that
+is deliberate friction, not name coupling. It is recorded here so that a future seat meeting a red
+line 2 on a fourth-level tree finds it already measured, and does not mistake it for either a
+defect in this arm or a second instance of `CD-ASR-WO3-05` F6.
+
+---
+
 ## HOW AN AUDITOR REPRODUCES ANY ROW, WITHOUT TRUSTING THIS PAGE
 
 ```sh
@@ -310,3 +507,23 @@ verifying the harness (`PBG-ASSURE-001`).
 * **Nothing in this directory is a run record.** No arm here is admissible evidence for
   `RTR-WO3-0001`; that run belongs to an independent Assurance seat, and this seat may declare
   which run must evidence its guard and may not supply it (`PBG-SOD-001`, non-waivable).
+
+### AND WHAT `16B-FIX` ADDS TO THAT LIST (`CD-ENG-WO3-06`)
+
+The two sections above were written at increment `16B` and say **five arms**. **THEY ARE NOT
+EDITED, BECAUSE THEY WERE TRUE OF THE SET THAT EXISTED THEN AND THIS PROJECT SUPERSEDES RATHER
+THAN REWRITES.** As of `16B-FIX` the set is **ten**: the reproduce recipe's `ARM=` takes
+`C1 | C2 | C3 | C4 | C6 | C7 | C8 | C9 | C10`, unchanged in every other respect, and `C5` still
+takes no patch. **`C10` is the one row where `VIOLATED exit=0` is the CORRECT result** — read the
+`C10` section before reporting it.
+
+* **Ten arms is still not a census.** Four of the five new arms exist because an independent
+  auditor found them, not because this set anticipated them. **THE SET GREW BY BEING BROKEN**, and
+  the honest reading of `C6`'s history is that all five original arms passed the tree `C6`
+  describes. An eleventh shape nobody has thought of is not covered by anything here.
+* **`C6`-`C9` establish that the instrument discriminates on four trees the SUPERSEDED instrument
+  passed.** They do not establish that no fifth escape exists.
+* **`C10` establishes that the fix did not buy that discrimination by hard-coding.** It is the
+  only arm in this directory whose whole value is in its passing.
+* **Nothing here is assurance.** `CD-ENG-WO3-06` built these arms and may not certify them
+  (`PBG-SOD-001`, non-waivable). A fresh Assurance seat follows.
