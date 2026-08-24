@@ -31,6 +31,7 @@ ingredient, because there is no ingredient in it.**
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 #: Taken from the module rather than retyped, so a fixture cannot silently pin a version the
@@ -38,11 +39,44 @@ from typing import Any
 #: increment 16A bumped both schemas to 1.1.0 for the per-dial `detail_level`.
 from crash_detector.publication.envelope_contract import ENVELOPE_SCHEMA_VERSION
 
+from crash_detector.dials.dialset import EQUITY_DIAL_ID
+from crash_detector.dials.reading import Degraded, Unknown
+from crash_detector.publication.detail_level import DetailPolicy, detail_level_for
+
+from dial_magnitudes import magnitude_of
+
 #: Deliberately unmistakable. If this string is ever seen outside tests/, something escaped.
 SYNTHETIC_CONFIG_SNAPSHOT_ID = "SYNTHETIC-TEST-DOUBLE-NOT-A-CONFIG"
 
 AS_OF_UTC = "2026-08-23T12:00:00Z"
 PUBLISHED_UTC = "2026-08-23T12:00:05Z"
+
+#: The same instant as :data:`AS_OF_UTC`, PARSED FROM IT rather than written out a second
+#: time, so the datetime a reading carries and the string its dial dict carries cannot drift
+#: apart. The readings below need a real ``datetime``; the envelope needs the wire string.
+NOW = datetime.strptime(AS_OF_UTC, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+#: *** THE LEVEL A MISSING-DATA DIAL CARRIES IS COMPUTED, NOT TYPED IN (WO-3 16A-FIX, F4). ***
+#:
+#: Until 16A-FIX ``unknown_dial()`` returned a hardcoded ``"detail_level": "elevated"`` under
+#: a comment asserting the PID §3.2 guarantee. **The literal could have been ``"calm"`` and
+#: nothing in this file would have objected** — the fake asserted a guarantee it did not
+#: obtain, which is one half of why CD-ASR-WO3-03 returned RED. Now the value comes out of
+#: :func:`~crash_detector.publication.detail_level.detail_level_for`, the function the
+#: product would call, applied to a real :class:`Unknown`/:class:`Degraded` reading.
+#:
+#: The one literal left is ``absent_data_level`` below, and it **cannot be ``calm`` by
+#: construction**: :class:`DetailPolicy`'s ``__post_init__`` raises ``DetailPolicyIncoherent``
+#: on ``calm``, citing PID §3.2. So the fake now inherits the constitutional refusal rather
+#: than re-stating it in a comment.
+#:
+#: SYNTHETIC AND MEANINGLESS AS NUMBERS. The dial has no ratified scale (``Q25`` holds it),
+#: and no ``Unknown`` or ``Degraded`` reading ever reaches ``_level_for_score`` anyway — both
+#: branches return ``policy.absent_data_level`` directly — so these thresholds are structure,
+#: never a declared scale. **NOTHING HERE REGISTERS A SOURCE.**
+FAKE_DETAIL_POLICY = DetailPolicy(
+    elevated_at=0.4, acute_at=0.8, absent_data_level="elevated"
+)
 
 
 class RecordingCursor:
@@ -129,11 +163,48 @@ def unknown_dial(reason: str = "NO_SOURCE_REGISTERED") -> dict:
         "reason": reason,
         "since_utc": AS_OF_UTC,
         "missing_inputs": [],
-        # REQUIRED IN THIS BRANCH AS OF SCHEMA 1.1.0 (PO-DECISIONS-0025 ruling 5). NOT a
-        # score and not a scale: the level absent data renders at, which PID §3.2 forbids
-        # from being `calm`. This is the branch every dial is in while zero sources are
-        # registered, so it is the branch that carries the constitutional guarantee.
-        "detail_level": "elevated",
+        # REQUIRED IN THIS BRANCH AS OF SCHEMA 1.1.0 (PO-DECISIONS-0025 ruling 5), and
+        # NARROWED TO $defs/absent_data_detail_level AS OF 16A-FIX, so `calm` is not a
+        # document this branch has. COMPUTED, NOT TYPED IN — see FAKE_DETAIL_POLICY.
+        "detail_level": detail_level_for(
+            Unknown(reason=reason, since_utc=NOW, missing_inputs=()),
+            dial_slot=EQUITY_DIAL_ID,
+            policy=FAKE_DETAIL_POLICY,
+        ),
+    }
+
+
+def degraded_dial(reason: str = "INPUT_MISSING", score: float = 0.01) -> dict:
+    """A dial reading in the DEGRADED state — **a value AND its damage**.
+
+    The default ``score`` is 0.01, far BELOW ``FAKE_DETAIL_POLICY.elevated_at``, and that is
+    the point rather than an arbitrary number: an implementation that read the magnitude and
+    ignored the state would render this dial ``calm``, which is precisely PID §4's prohibited
+    *"rendering stale or missing data as calm"*. ``detail_level_for`` returns
+    ``policy.absent_data_level`` for ``Degraded`` exactly as it does for ``Unknown``, so the
+    level below is ``elevated`` **because of the damage and not because of the number**.
+
+    ``missing_inputs`` carries one named input because the contract requires ``minItems: 1``
+    here: a reading with nothing missing is a ``Value``, not a degradation. The name is the
+    ``dial_magnitudes`` stand-in and **is not an ingredient** — nothing here registers a
+    source (``Q25``).
+    """
+    reading = Degraded(
+        value=magnitude_of(EQUITY_DIAL_ID, score),
+        as_of_utc=NOW,
+        missing_inputs=("test-source",),
+        reason=reason,
+    )
+    return {
+        "state": "DEGRADED",
+        "score": score,
+        "as_of_utc": AS_OF_UTC,
+        "missing_inputs": ["test-source"],
+        "reason": reason,
+        "contributions": [],
+        "detail_level": detail_level_for(
+            reading, dial_slot=EQUITY_DIAL_ID, policy=FAKE_DETAIL_POLICY
+        ),
     }
 
 

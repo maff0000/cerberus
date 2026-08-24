@@ -35,8 +35,20 @@ from crash_detector.publication.detail_level import (
     content_for,
     detail_level_for,
 )
+from crash_detector.publication.envelope_contract import (
+    CONTRACTS_DIR_ENV_VAR,
+    EnvelopeSurface,
+    PublicationRefused,
+    refuse_unless_publishable,
+)
 
 from dial_magnitudes import magnitude_of
+from publication_fakes import (
+    degraded_dial,
+    private_envelope,
+    public_envelope,
+    unknown_dial,
+)
 
 EQUITY, MONETARY = DIAL_IDS
 NOW = datetime(2026, 8, 23, 12, 0, 0, tzinfo=timezone.utc)
@@ -291,9 +303,117 @@ def test_the_module_declares_no_ready_made_policy():
 SCHEMA_NAMES = ("public_envelope.schema.json", "private_envelope.schema.json")
 UNION_BRANCHES = ("dial_reading_value", "dial_reading_degraded", "dial_reading_unknown")
 
+#: The two branches PID §3.2 is ABOUT. ``VALUE`` is deliberately not here: a genuinely calm
+#: reading backed by a real number is the whole reason ``calm`` exists.
+#:
+#: ``DEGRADED`` is in this tuple as a DECISION, not an assumption, and the evidence is
+#: :func:`detail_level_for` itself — its ``on_degraded`` branch returns
+#: ``policy.absent_data_level``, IDENTICALLY to ``on_unknown``, and never reaches
+#: ``_level_for_score``. The module already treats a degraded reading as missing data; before
+#: 16A-FIX the CONTRACT did not agree, and a contract that admits what the code cannot
+#: produce is the gap that let this defect through. ``ABSENT_DATA_BRANCHES`` is asserted
+#: against the module's actual behaviour below, so this comment cannot quietly become false.
+ABSENT_DATA_BRANCHES = ("dial_reading_degraded", "dial_reading_unknown")
+
+ABSENT_DATA_LEVEL_TYPE = "absent_data_detail_level"
+
+ADMITTED = "ADMITTED"
+REFUSED = "REFUSED"
+
+#: The two missing-data dial shapes, as the fakes build them. Keyed by the state they carry
+#: so a failure message names the branch rather than a lambda.
+MISSING_DATA_DIALS = {"UNKNOWN": unknown_dial, "DEGRADED": degraded_dial}
+
 
 def _contracts_dir() -> pathlib.Path:
     return pathlib.Path(__file__).resolve().parents[1] / "contracts"
+
+
+# --- THE LIVE GATE, NOT THE SCHEMA KEYS -------------------------------------------------- #
+
+def _dial_with_level(builder, level: "str | None") -> dict:
+    """A dial from ``builder`` carrying ``level`` — or carrying none when ``level`` is None."""
+    dial = builder()
+    if level is None:
+        del dial["detail_level"]
+    else:
+        dial["detail_level"] = level
+    return dial
+
+
+def _verdict(surface: EnvelopeSurface, dial: dict) -> str:
+    """*** WHAT THE PRODUCT'S OWN REFUSAL FUNCTION SAYS ABOUT A REAL ENVELOPE. ***
+
+    Returns :data:`ADMITTED` or :data:`REFUSED` rather than raising, so a caller can assert
+    on the ADMITTING arm with the same expression it uses for the refusing one. A helper
+    that only knew how to assert refusals could not have caught a contract that refuses
+    everything.
+    """
+    build = public_envelope if surface is EnvelopeSurface.PUBLIC else private_envelope
+    try:
+        refuse_unless_publishable(build(equity_crash=dial), surface=surface)
+        return ADMITTED
+    except PublicationRefused:
+        return REFUSED
+
+
+def _assert_missing_data_never_renders_as_calm() -> None:
+    """*** PID §3.2 AS ONE EXECUTABLE PROPERTY, OVER BOTH SURFACES AND BOTH BRANCHES. ***
+
+    The whole property in ONE function, so the real arm and every mutated arm run EXACTLY
+    the same assertions. A contrast arm running a different check would prove nothing about
+    the check that guards the real contracts.
+
+    Reads the contracts through ``$CD_CONTRACTS_DIR``, which is how the mutated arms point
+    it at a copy — **the real files are never written to** (``CD-PL-F154``).
+    """
+    for surface in EnvelopeSurface:
+        for state, builder in MISSING_DATA_DIALS.items():
+            where = (surface.value, state)
+
+            # 1. *** THE CLAUSE. *** Missing data must never render as calm.
+            assert _verdict(surface, _dial_with_level(builder, DETAIL_CALM)) == REFUSED, where
+
+            # 2. NON-VACUITY. The branch must still be publishable, or §3.2 is satisfied by
+            #    breaking the only state this product can currently emit.
+            for admissible in (DETAIL_ELEVATED, DETAIL_ACUTE):
+                assert _verdict(surface, _dial_with_level(builder, admissible)) == (
+                    ADMITTED
+                ), (where, admissible)
+
+            # 3. THE PROBE IS LIVE, and presence is still required.
+            assert _verdict(surface, _dial_with_level(builder, "banana")) == REFUSED, where
+            assert _verdict(surface, _dial_with_level(builder, None)) == REFUSED, where
+
+
+def _contracts_copy_with_calm_restored(tmp_path: pathlib.Path, *branches: str) -> pathlib.Path:
+    """A COPY of both closed contracts with 16A-FIX **REVERTED** on ``branches``.
+
+    The mutation is the exact inverse of the fix: the branch's ``detail_level`` goes back to
+    referencing the full ``#/$defs/detail_level``, which is what it referenced at ``53f639a``
+    when ``calm`` was ADMITTED. **NEVER THE REAL FILES** (``CD-PL-F154``).
+
+    The anchor is asserted before it is replaced. A mutation that silently matched nothing
+    would produce a correct subject dressed as a broken one, and the arm would pass by not
+    testing anything — the same trap ``tests/test_deploy_portability.py::_subject`` guards.
+    """
+    import json
+
+    target = tmp_path / "contracts"
+    target.mkdir()
+    for name in SCHEMA_NAMES:
+        schema = _schema(name)
+        for branch in branches:
+            anchor = schema["$defs"][branch]["properties"]["detail_level"]
+            assert anchor == {"$ref": f"#/$defs/{ABSENT_DATA_LEVEL_TYPE}"}, (
+                f"the mutation anchor for {name}:{branch} is {anchor!r}, not the narrowed "
+                "type this arm exists to revert; the arm would be vacuous"
+            )
+            schema["$defs"][branch]["properties"]["detail_level"] = {
+                "$ref": "#/$defs/detail_level"
+            }
+        (target / name).write_text(json.dumps(schema, indent=2), encoding="utf-8")
+    return target
 
 
 def _schema(name: str) -> dict:
@@ -331,19 +451,41 @@ def test_detail_level_attaches_PER_DIAL_and_not_at_envelope_top_level(name):
     _assert_detail_level_attaches_per_dial(_schema(name), name)
 
 
-@pytest.mark.parametrize("name", SCHEMA_NAMES)
-def test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half(name):
-    """*** PID §3.2 — 'Missing data must never render as calm.' ***
+@pytest.mark.parametrize("surface", list(EnvelopeSurface))
+def test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half(surface):
+    """*** PID §3.2 — 'Missing data must never render as calm.' MEASURED, NOT INSPECTED. ***
 
-    Called out separately from the sweep above because it is the branch that matters. With
-    zero registered sources every dial reads ``UNKNOWN``, so until 16B lands this is the
-    ONLY branch production will exercise — and it is the one carrying the guarantee. It
-    declares no ``score`` (CD-AC-001) and it MUST still declare a level, or a renderer
-    meeting a level-less unknown dial decides for itself how loud to be.
+    ===================================================================================
+    RE-POINTED AT ITS OWN CLAUSE AT WO-3 INCREMENT 16A-FIX. WHAT IT USED TO ASSERT, AND
+    WHY THAT WAS NOT ENOUGH — RECORDED, NOT ERASED (CD-ASR-WO3-03, RED).
+    ===================================================================================
+    This test was headed *"PID §3.2"* and its whole body was two STRUCTURAL assertions::
+
+        unknown = _schema(name)["$defs"]["dial_reading_unknown"]
+        assert "score" not in unknown["properties"], name       # CD-AC-001, not §3.2
+        assert "detail_level" in unknown["required"], name      # PRESENCE, not VALUE
+
+    **NAMED FOR THE CLAUSE; DID NOT TEST THE CLAUSE.** §3.2 is about a VALUE — that the
+    level is never ``calm``. Both assertions above are satisfied by an UNKNOWN dial
+    carrying ``detail_level: "calm"``, and at ``53f639a`` such an envelope was in fact
+    ADMITTED by :func:`refuse_unless_publishable` on BOTH surfaces. The guard passed
+    while the constitution was breached, which is the third recorded instance of this
+    pattern on this project (``CD-PL-F169``, ``CD-ASR-WO3-02`` F06/F07, this one).
+
+    Neither assertion is lost: ``score`` absent on ``UNKNOWN`` is CD-AC-001 and is guarded
+    at ``tests/test_envelope_contracts.py::test_the_unknown_branch_declares_no_score_
+    property_at_all``; ``detail_level`` required in every branch is guarded above by
+    :func:`_assert_detail_level_attaches_per_dial`.
+
+    **IT IS NOW AN END-TO-END BEHAVIOURAL ASSERTION THROUGH THE LIVE GATE.** A structural
+    assertion about schema keys is what let this through twice; this one builds a real
+    envelope and asks the real refusal function, so it fails if the CONTRACT is widened,
+    if the ``$defs`` are re-plumbed, or if the gate stops consulting the contract at all.
     """
-    unknown = _schema(name)["$defs"]["dial_reading_unknown"]
-    assert "score" not in unknown["properties"], name
-    assert "detail_level" in unknown["required"], name
+    assert _verdict(surface, _dial_with_level(unknown_dial, DETAIL_CALM)) == REFUSED
+    # *** THE NON-VACUITY ARM. A contract that refused every UNKNOWN dial would satisfy
+    # PID §3.2 by making the only state this product can currently publish unpublishable.
+    assert _verdict(surface, _dial_with_level(unknown_dial, DETAIL_ELEVATED)) == ADMITTED
 
 
 @pytest.mark.parametrize("name", SCHEMA_NAMES)
@@ -411,6 +553,128 @@ def test_the_guard_FAILS_when_only_the_UNKNOWN_branch_loses_its_level(name):
     ]
     with pytest.raises(AssertionError):
         _assert_detail_level_attaches_per_dial(mutated, name)
+
+
+# ========================================================================================= #
+# *** PID §3.2 HELD IN THE SCHEMA — AND THE ARMS THAT FAIL WHEN IT IS NOT. ***
+#
+# WO-3 INCREMENT 16A-FIX, ANSWERING CD-ASR-WO3-03's RED.
+#
+# The Project Lead applied this very fix on a copy at 53f639a and measured that `calm`
+# became REFUSED on both surfaces AND ALL 43 detail_level TESTS STILL PASSED. *** A GUARD
+# THAT WOULD NEITHER REQUIRE NOR FORBID ITS OWN REMEDY IS NOT GUARDING THE THING IT IS
+# NAMED FOR. *** Everything below exists so that stops being true: revert the fix and these
+# arms go red.
+# ========================================================================================= #
+
+def test_the_two_narrowed_branches_are_the_two_the_MODULE_treats_as_missing_data():
+    """*** THE PRODUCT DECISION, CHECKED AGAINST THE CODE RATHER THAN ASSUMED. ***
+
+    Narrowing ``DEGRADED`` was a judgement (dispatch §3: *"if you conclude DEGRADED should
+    keep calm, say so"*), and this is the evidence it rests on: ``detail_level_for`` returns
+    ``policy.absent_data_level`` for a ``Degraded`` reading **exactly as it does for an
+    ``Unknown`` one**, whatever the score. The score used here is 0.01 — far below
+    ``elevated_at`` — so a naive implementation reading the number would say ``calm``.
+
+    If a future change makes ``DEGRADED`` score-derived, this test fails and the contract
+    narrowing must be revisited. **The comment on ABSENT_DATA_BRANCHES cannot quietly rot.**
+    """
+    unknown = Unknown(reason="NO_SOURCE_REGISTERED", since_utc=NOW, missing_inputs=())
+    degraded = Degraded(
+        value=magnitude_of(EQUITY, 0.01),
+        as_of_utc=NOW,
+        missing_inputs=("absent-input",),
+        reason="INPUT_MISSING",
+    )
+    for reading in (unknown, degraded):
+        assert detail_level_for(reading, dial_slot=EQUITY, policy=POLICY) == (
+            POLICY.absent_data_level
+        )
+    # ...and the policy that supplies it can never say calm.
+    with pytest.raises(DetailPolicyIncoherent):
+        DetailPolicy(elevated_at=0.4, acute_at=0.8, absent_data_level=DETAIL_CALM)
+
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_the_absent_data_branches_declare_a_vocabulary_that_EXCLUDES_calm(name):
+    """The structural half — kept, but no longer the ONLY half (see the behavioural arms)."""
+    schema = _schema(name)
+    assert schema["$defs"][ABSENT_DATA_LEVEL_TYPE]["enum"] == [DETAIL_ELEVATED, DETAIL_ACUTE]
+    assert DETAIL_CALM not in schema["$defs"][ABSENT_DATA_LEVEL_TYPE]["enum"], name
+    for branch in ABSENT_DATA_BRANCHES:
+        assert schema["$defs"][branch]["properties"]["detail_level"] == {
+            "$ref": f"#/$defs/{ABSENT_DATA_LEVEL_TYPE}"
+        }, (name, branch)
+    # *** VALUE KEEPS calm. Narrowing it would satisfy PID §3.2 vacuously. ***
+    assert schema["$defs"]["dial_reading_value"]["properties"]["detail_level"] == {
+        "$ref": "#/$defs/detail_level"
+    }, name
+    assert DETAIL_CALM in schema["$defs"]["detail_level"]["enum"], name
+
+
+def test_missing_data_never_renders_as_calm_THROUGH_THE_LIVE_GATE():
+    """*** THE ACCEPTANCE PROPERTY. Both surfaces, both missing-data branches, four rows. ***
+
+    This is the dispatch's §5 probe as a standing test rather than a one-off measurement.
+    """
+    _assert_missing_data_never_renders_as_calm()
+
+
+# --- THE FAILING ARMS. F1 WITHOUT THESE IS A FIX THE NEXT REFACTOR SILENTLY UNDOES. ------- #
+
+@pytest.mark.parametrize("branch", ABSENT_DATA_BRANCHES)
+def test_the_guard_FAILS_when_calm_is_restored_to_a_missing_data_branch(
+    branch, tmp_path, monkeypatch
+):
+    """*** THE ARM 16A DID NOT HAVE, AND THE REASON ITS RED WAS INVISIBLE. ***
+
+    Revert 16A-FIX on ONE branch, on a COPY, and the property above must go RED. Run this
+    against the pre-fix contracts and it is exactly the state CD-ASR-WO3-03 found.
+
+    Parametrised per branch so that re-widening ``DEGRADED`` alone is caught too — a
+    mutation that only ``UNKNOWN`` guarded would leave half the fix unprotected.
+    """
+    mutated = _contracts_copy_with_calm_restored(tmp_path, branch)
+    monkeypatch.setenv(CONTRACTS_DIR_ENV_VAR, str(mutated))
+
+    with pytest.raises(AssertionError):
+        _assert_missing_data_never_renders_as_calm()
+
+
+def test_the_guard_FAILS_when_calm_is_restored_to_BOTH_missing_data_branches(
+    tmp_path, monkeypatch
+):
+    """The full revert of F1 — the exact contract shape at ``53f639a``."""
+    mutated = _contracts_copy_with_calm_restored(tmp_path, *ABSENT_DATA_BRANCHES)
+    monkeypatch.setenv(CONTRACTS_DIR_ENV_VAR, str(mutated))
+
+    with pytest.raises(AssertionError):
+        _assert_missing_data_never_renders_as_calm()
+
+
+def test_the_mutated_copy_reproduces_the_RED_and_leaves_the_real_contracts_untouched(
+    tmp_path, monkeypatch
+):
+    """*** CD-ASR-WO3-03's RED, REPRODUCED AS AN EXECUTABLE FACT RATHER THAN A CLAIM. ***
+
+    Against the reverted copy an UNKNOWN dial carrying ``calm`` is ADMITTED on BOTH
+    surfaces — the defect verbatim. Against the REAL contracts, in the same test, it is
+    REFUSED. **The real files are read and never written** (``CD-PL-F154``).
+    """
+    before = {name: (_contracts_dir() / name).read_bytes() for name in SCHEMA_NAMES}
+
+    mutated = _contracts_copy_with_calm_restored(tmp_path, *ABSENT_DATA_BRANCHES)
+    monkeypatch.setenv(CONTRACTS_DIR_ENV_VAR, str(mutated))
+    for surface in EnvelopeSurface:
+        assert _verdict(surface, _dial_with_level(unknown_dial, DETAIL_CALM)) == (
+            ADMITTED
+        ), f"the mutation did not reproduce the RED on {surface.value}"
+
+    monkeypatch.delenv(CONTRACTS_DIR_ENV_VAR)
+    for surface in EnvelopeSurface:
+        assert _verdict(surface, _dial_with_level(unknown_dial, DETAIL_CALM)) == REFUSED
+
+    assert {name: (_contracts_dir() / name).read_bytes() for name in SCHEMA_NAMES} == before
 
 
 def test_the_superseded_guard_would_have_PASSED_the_per_dial_attachment():
