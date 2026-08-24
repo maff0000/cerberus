@@ -159,6 +159,82 @@ instrument that exists to carry it. ***
                       `state` REACHES THE UNDECIDABLE LIMB WHATEVER THE SHAPE OF THAT KEY'S
                       SUBSCHEMA.**
 
+ CD-CALM-ROOT-008     **AND THE ROOT IS A CLOSED PARTITION OVER A FINITE SET, NOT AN OPEN SPACE
+                      WITH A RECOGNISER IN IT — `RULE CC`.** *** NEW AT `16B-CONTRACT-CLOSURE`
+                      (`CC-1`), AND IT IS THE ARCHITECTURAL CLOSE `PO-DECISIONS-0028` RULING 1
+                      ORDERED. *** Every property of an envelope contract's root `properties` is
+                      **EXACTLY ONE** of **(a)** a CANONICAL DIAL SLOT, spelled literally
+                      `{"$ref": "#/$defs/dial_reading"}`, that one key and no sibling keyword; or
+                      **(b)** a DECLARED NON-DIAL PROPERTY, whose name is on the finite written
+                      allowlist :data:`NON_DIAL_ROOT_PROPERTIES` **and** which is AFFIRMATIVELY
+                      PROVED, by driving the LIVE GATE with a calm-carrying object in its place,
+                      to be incapable of carrying a `detail_level`. **ANYTHING ELSE IS A
+                      VIOLATION. NO RECOGNISER IS CONSULTED. THERE IS NO THIRD CASE AND NO
+                      SILENCE.**
+                      **WHY THIS CLOSES WHAT `CD-CALM-SLOTS-007` COULD NOT.** That check compares
+                      `dial_bearing` (the recogniser's output) against `found` (literal `$ref`
+                      slots), so **a root property the recogniser answers `False` about is in
+                      NEITHER SET, the comparison is satisfied, and the slot is INVISIBLE.** That
+                      is the hole `CD-ASR-WO3-10` proved unclosable by any list: `A310-F2` (the
+                      discriminator spelled `status`), `A310-F3` (`present: false` with a stale
+                      stamp) and `A310-F1` (a nest past the depth cap) are all root properties the
+                      recogniser cannot see. **THEY ARE NOT CLOSED BY `RULE CC` — THEY ARE
+                      UNREACHABLE**, because none of them is limb (a) or limb (b).
+                      **THE TWO PREMISES OF EXHAUSTIVENESS ARE ASSERTED AND NOT ASSUMED:** the
+                      root declares `additionalProperties: false`, so a document cannot introduce
+                      a root key the contract does not declare; and the root declares no keyword
+                      outside :data:`_ROOT_STRUCTURAL_KEYWORDS`, so nothing else at the root can
+                      introduce or constrain a property this enumeration does not see. **AN
+                      UNASSERTED PREMISE IS EXACTLY HOW `DECLARED LIMIT 4` CAME TO CLAIM "UNDER
+                      ANY SPELLING" THREE TIMES RUNNING.** See `DECLARED LIMIT 17`.
+
+ CD-CALM-CANON-009    **AND THE DISCRIMINATOR IS AT ONE CANONICAL PATH, MANDATED BY THE CONTRACT
+                      AND ASSERTED HERE.** *** NEW AT `16B-CONTRACT-CLOSURE` (`CC-2`). *** Inside
+                      `#/$defs/dial_reading` the canonical path is `properties.state`, at depth
+                      ONE, pinned per branch at `properties.state.const`. Both contracts now
+                      declare `"required": ["state"]` on the union and carry a normative `RULE CC`
+                      clause in their `description`. This asserts, per surface, counted: the union
+                      is `additionalProperties: false`, declares `properties.state` and REQUIRES
+                      `state`; **every** branch is `additionalProperties: false`, REQUIRES `state`,
+                      and declares `properties.state.const` as a STRING; and **every** branch
+                      REQUIRES at least one property typed `#/$defs/utc_timestamp` — the freshness
+                      stamp, asserted by TYPE and never by NAME, because `VALUE`/`DEGRADED` require
+                      `as_of_utc` while `UNKNOWN` requires `since_utc`. **A BRANCH THAT REQUIRES NO
+                      TIMESTAMP CANNOT PROVE FRESHNESS AND IS A VIOLATION**, and the ABSENCE of the
+                      canonical path is its OWN named violation rather than folded into
+                      `CD-CALM-BRANCHES-006`, which reports a recognition failure and would read as
+                      the wrong sentence.
+                      *** A `description` IS NOT AN ENFORCEMENT POINT AND THIS CONTRACT ALREADY
+                      CARRIES A SUPERSEDED NOTE SAYING SO IN ITS OWN WORDS *** —
+                      `absent_data_detail_level`'s description records 16A, where the guarantee was
+                      *"asserted only in PROSE"* while the gate admitted a calm `UNKNOWN` dial on
+                      both surfaces. **THE PROSE STATES THE MANDATE; THIS ROW AND THE NEXT ENFORCE
+                      IT.**
+
+ CD-CALM-FRESH-010    **AND `calm` IS UNREPRESENTABLE ON ANY BRANCH THAT HAS NOT AFFIRMATIVELY
+                      PROVED PRESENT-AND-FRESH.** *** NEW AT `16B-CONTRACT-CLOSURE` (`CC-3`), AND
+                      IT IS `PO-DECISIONS-0027` RULING 5 MADE ACHIEVABLE, WHICH IS WHAT
+                      `PO-DECISIONS-0028` RULING 2 ORDERED. *** A branch may reference the
+                      calm-bearing `#/$defs/detail_level` **IF AND ONLY IF** its
+                      `properties.state.const` is a member of :data:`PRESENT_STATES` **and** it
+                      requires a freshness stamp. **EVERY OTHER BRANCH MUST reference a vocabulary
+                      from which `calm` is ABSENT.**
+                      **THAT IS THE AFFIRMATIVE FORM, AND IT IS WHY THIS IS NOT A DENYLIST.** It
+                      does not ask *"is this state on my list of bad ones?"* — the question nine
+                      audits defeated by naming a state nobody had listed. It asks *"has this
+                      branch PROVED present-and-fresh?"*, and a branch that has not gets a
+                      vocabulary in which `calm` cannot be written. **A never-before-named state
+                      must arrive as a NEW BRANCH; a new branch's state is NOT in `PRESENT_STATES`;
+                      therefore it CANNOT CARRY `calm` — BY CONSTRUCTION, OVER A CLOSED SET, AND
+                      NOT BY RECOGNITION OVER AN OPEN ONE.** The vocabulary is judged by its VALUES
+                      and never by the name of the `$def` it comes from (`CD-PL-F169`,
+                      `CD-ASR-WO3-02` F06/F07: a check that reads the `$ref` target NAME passes a
+                      tree where `calm` was put back inside the target's own enum).
+                      **THE VACUITY DIRECTION IS ASSERTED TOO AND CARRIES EQUAL WEIGHT:** a branch
+                      that HAS proved present-and-fresh and CANNOT carry `calm` is also a
+                      violation, because PID §4 makes `calm` the base case and a contract that
+                      cannot express it is enforcing silence rather than holding PID §3.2.
+
  CD-CALM-PRODUCER-005 **AND THE PRODUCT CANNOT EVEN FORM THE INTENT.** `DetailPolicy` refuses
                       construction with `absent_data_level="calm"` (`DetailPolicyIncoherent`),
                       admits `elevated` and `acute`, and `detail_level_for` returns the policy's
@@ -687,9 +763,42 @@ MORE THAN ITS GUARD DELIVERS.
     open, **which is this row's entire history**. **THE PRICE IS A WIDER FALSE-POSITIVE CLASS:** any
     node whose `enum` or `const` value contains, ANYWHERE inside it, an object with a key called
     `state`. It is `DECLARED LIMIT 14`'s limb (b), it is measured there, and it moved the tail by
-    exactly four probes out of twenty-one. **REACHING THE CAP IS NOT A SILENT SUCCESS:** the walk
-    returns :data:`INSTANCE_TOO_DEEP`, a sentinel no contract can declare as a property name, so it
-    enters the declared set, can never equal `state`, and can never make the node `True`.
+    exactly four probes out of twenty-one.
+
+    *** ITS CAP SENTENCE WAS FALSE, AND IT WAS FALSE IN THE ONE DIRECTION THAT MATTERS.
+    SUPERSEDED AT `16B-CONTRACT-CLOSURE` (`CC-4`, closing `CD-ASR-WO3-10` `A310-F1`), STATED AND
+    NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+      WHAT THIS LIMIT SAID, VERBATIM, UNDER THE HEADING **"REACHING THE CAP IS NOT A SILENT
+      SUCCESS"**: *"the walk returns `INSTANCE_TOO_DEEP`, a sentinel no contract can declare as a
+      property name, so it enters the declared set, can never equal `state`, and can never make
+      the node `True`."*
+
+      **EVERY CLAUSE OF THAT SENTENCE IS TRUE AND THE HEADING IT SITS UNDER WAS FALSE.** The
+      sentence is about `True`; the heading is about SILENCE; and the answer that makes a heading
+      about silence true is `None`. The sentinel had **ZERO EXECUTABLE CONSUMERS** — `declared`'s
+      only reader was `"state" in declared`, which a sentinel can never satisfy — so reaching the
+      cap set nothing, and the node returned **a clean `False`, which this file's own docstring
+      calls THE ONLY SILENT ANSWER IT HAS.** `_dial_bearing`'s own depth cap returns `None`; this
+      one copied the NUMBER and not the FAIL-CLOSED HANDLING, and its docstring claimed *"reaching
+      it is handled the same way"*. **MEASURED BY `CD-ASR-WO3-10`, RE-MEASURED BY THE PROJECT LEAD,
+      AND RE-MEASURED INDEPENDENTLY BY THIS SEAT BEFORE CHANGING A LINE — ONE INTEGER APART:** a
+      `state` nested inside an `enum` member at depth 24 -> `None`; at depth 25 -> `False`.
+
+      **WHAT IS TRUE INSTEAD (`CC-4`), AND IT IS ONE LINE OF CODE AND ONE MEASUREMENT.**
+      :func:`_dial_bearing` now tests for :data:`INSTANCE_TOO_DEEP` in the declared set and sets
+      `undecidable = True` on it, which is `DECLARED LIMIT 14` limb (c) — **a walk that did not
+      complete** — reached by the position it was always meant to reach. **REACHING THE CAP IS NOW
+      UNDECIDABLE AND REPORTED, WHICH IS WHAT THE HEADING ALWAYS CLAIMED.** MEASURED AT THIS
+      COMMIT: depths 1, 5, 20, 22, 23 and 24 -> `None`, **UNCHANGED**; depths 25, 26, 30 and 40 ->
+      `None`, **MOVED FROM `False`**. The clean tree is unmoved at `PASS — 144 assertions, 0
+      violations` for this item alone, because neither contract nests an `enum`/`const` value at
+      all. **THE COST IS ONE MORE MEMBER OF THE FALSE-POSITIVE TAIL** — a node whose `enum` or
+      `const` value nests deeper than twenty-four levels is now UNDECIDABLE whatever is in it —
+      and it is the ruled direction. **`CC-1`'s Rule CC makes a nest this deep UNREACHABLE at the
+      root, so this fix guards a position that is now closed by construction; it is made anyway,
+      because a cap that fails open is a defect whether or not anything reaches it, and because
+      `DECLARED LIMIT 14`'s limb (c) is a claim about this function that was not true until now.**
 
     **DECISION 2 — `const`, SAID EXPLICITLY RATHER THAN LEFT TO BE INFERRED.** **A `const` THAT IS
     NOT AN OBJECT OR AN ARRAY NAMES NOTHING.** `{"const": "equity_crash"}` and
@@ -751,10 +860,87 @@ MORE THAN ITS GUARD DELIVERS.
     `#/$defs/dial_reading`:** a union spelled any other way is `DECLARED LIMIT 9`'s territory, not
     this one's.
 
+ 17 **WHAT `RULE CC` CLOSES, AND — SAID FIRST AND NOT LAST — WHAT IT DOES NOT.** *** NEW AT
+    `16B-CONTRACT-CLOSURE` (`CC-1`/`CC-2`/`CC-3`). *** `PO-DECISIONS-0028` ruling 1 replaced a
+    RECOGNISER at the root with a CLOSED PARTITION over a FINITE SET. **THE CLOSURE ARGUMENT, AND
+    IT IS WRITTEN TO BE CHECKED RATHER THAN BELIEVED** — every step is a line of code an auditor
+    can read, and the answer sites are enumerated:
+
+      1. **THE ROOT KEY SET IS FINITE AND ENUMERABLE.** `CD-CALM-ROOT-008` iterates
+         `schema["properties"]`, a JSON object with finitely many keys.
+      2. **NOTHING OUTSIDE THAT ENUMERATION CAN REACH A PUBLISHED DOCUMENT.** Asserted, per
+         surface, not assumed: the root declares `additionalProperties: false`, **and** the root
+         declares no keyword outside :data:`_ROOT_STRUCTURAL_KEYWORDS`. Without the second
+         assertion a root `patternProperties`, `allOf` or `if` could admit a key `properties`
+         never names.
+      3. **EACH ENUMERATED KEY IS DECIDED BY EQUALITY, NEVER BY A WALK.** :func:`_root_limb`
+         is two comparisons: dict equality against a two-token literal, and membership of a
+         frozenset of strings. **NEITHER CAN RETURN "I COULD NOT TELL".**
+      4. **THEREFORE EVERY ROOT PROPERTY IS limb (a), limb (b), OR A VIOLATION.** There is no
+         fourth outcome, because the function has three `return` statements and the third is
+         `None`, which the caller reports.
+      5. **limb (b) IS NOT TAKEN ON TRUST.** Each allowlisted name, on each surface, is driven
+         through the LIVE GATE with a calm-carrying object in its place and MUST be REFUSED, with
+         an ADMITTING control per surface so the section cannot pass vacuously.
+      6. **limb (a) POINTS AT ONE DEFINITION, AND THAT DEFINITION IS CLOSED.**
+         `CD-CALM-CANON-009` asserts the union and every branch are `additionalProperties: false`,
+         require `state`, pin `properties.state.const` as a string, and require a freshness stamp;
+         `CD-CALM-BRANCHES-006` asserts the branch set is exactly one branch per declared state
+         and that the declared state set is exactly :data:`DECLARED_STATES`.
+      7. **SO THE BRANCH ALPHABET IS CLOSED, AND OVER A CLOSED ALPHABET THE VALUE CHECK IS
+         SUFFICIENT** — `PO-DECISIONS-0028` ruling 1's own words. `CD-CALM-FRESH-010` then makes
+         `calm` unrepresentable on every branch that has not proved present-and-fresh.
+
+    **THE CONCLUSION THAT FOLLOWS, AND ONLY THIS ONE:** *a contract edit cannot open a
+    calm-over-unknown hole at the ROOT of either envelope without this instrument going RED*,
+    because the hole must arrive as a root property, and every root property is limb (a), limb
+    (b), or a violation.
+
+    *** NOW THE BOUNDARY, AND IT IS NAMED RATHER THAN LEFT FOR THE NEXT AUDITOR. *** **THE
+    ARGUMENT ABOVE IS ABOUT THE TWO ENVELOPE CONTRACTS THIS INSTRUMENT LOADS, AND NOTHING ELSE.**
+
+      (a) **IT IS NOT A CLAIM ABOUT DOCUMENTS THE GATE NEVER SEES.** A rendering path that does
+          not call `refuse_unless_publishable` is outside this check entirely — `DECLARED LIMIT
+          4`'s closing paragraph, unchanged and still true.
+      (b) **IT IS NOT A CLAIM ABOUT A CONTRACT THIS INSTRUMENT IS NOT LOOKING AT.**
+          `$CD_CONTRACTS_DIR` can point the live gate at a widened copy; this check REFUSES TO
+          RUN when it resolves anywhere but `<root>/contracts`, and it does not PREVENT the route
+          (`DECLARED LIMIT 1`, unchanged, **NOT PROVED TO BE CARRIED ANYWHERE**).
+      (c) **IT IS A CLAIM ABOUT THE ROOT, NOT ABOUT EVERY POSITION IN THE DOCUMENT.** `RULE CC`
+          partitions ROOT properties. Depth inside a canonical dial is covered by
+          `CD-CALM-CANON-009`/`-FRESH-010`/`-BRANCHES-006` over the union; depth inside a limb (b)
+          property is covered by the LIVE GATE probe and by NOTHING STRUCTURAL. **A limb (b)
+          property that is narrow enough to refuse a calm-carrying object today, and is widened
+          tomorrow, is caught by the probe — but only for the two shapes in
+          :data:`CALM_BEARING_PROBES`.** That is two shapes and it is not a class, and this
+          sentence is written that way ON PURPOSE: four sentences on this row have already been
+          superseded for describing a sample as a measurement (`DECLARED LIMIT 10`, `12`(a), `13`,
+          `14`'s cost column).
+      (d) **THE FRESHNESS ASSERTION KEYS ON THE DEFINITION OBJECT `#/$defs/utc_timestamp`, BY
+          IDENTITY.** A branch whose stamp is typed by an INLINE copy of the same pattern is
+          REPORTED, not accepted — fail-closed — and RENAMING that `$def` turns this instrument
+          RED. The remedy is to price the rename, never to loosen the assertion.
+      (e) **`DECLARED LIMIT 12`'s RESIDUE IS NOT CLOSED AT THE RECOGNISER AND IS NOT CLAIMED TO
+          BE.** :func:`_dial_bearing` still answers `False` about a dial that discriminates on a
+          differently-named key. **WHAT CHANGED IS THAT THE GUARANTEE NO LONGER RESTS ON IT:**
+          such a dial cannot reach a published envelope as a ROOT property without failing `RULE
+          CC`. It is retained as a SECOND instrument (`PO-DECISIONS-0028` ruling 3 — `8398741` is
+          preserved and nothing is reverted), and a second instrument's residue is a weaker thing
+          than a sole guard's.
+      (f) **`PRESENT_STATES` IS TYPED IN, LIKE `DECLARED_STATES`, AND FOR THE SAME REASON.**
+          Whether a NEW state means the data is PRESENT is product meaning (`PBG-AUTH-005`). A new
+          state therefore makes this instrument RED until a human rules — which is the intended
+          cost, and is the mechanism by which `CC-3` refuses `calm` to a never-before-named state
+          rather than a list of bad names.
+      (g) **NOTHING OUTSIDE THIS INSTRUMENT READS `RULE CC`.** The contracts now STATE the mandate
+          in their `description`s, and a `description` refuses nothing. **NOT PROVED TO BE CARRIED
+          ANYWHERE.**
+
 *** NUMBERING, BECAUSE `CD-ASR-WO3-06` COULD NOT VERIFY IT AND SAID SO. *** **DECLARED LIMIT
 NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These are the limits of
-`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–16** (**1–12 until `16B-FIX-3`, which added
-`13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`**), said identically in this
+`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–17** (**1–12 until `16B-FIX-3`, which added
+`13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`; `17` added at
+`16B-CONTRACT-CLOSURE`**), said identically in this
 header, in
 `required-tests.yaml`, and in `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`
 (`CD-RULE-004`, three places). The SIBLING row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its OWN
@@ -769,6 +955,7 @@ EXIT: 0 clean · 1 violation, with the cell and the observed outcome · 2 usage 
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import pathlib
 import sys
@@ -1311,6 +1498,130 @@ INSTANCE_WALK_CAP = 24
 INSTANCE_TOO_DEEP = "<<instance value nested deeper than this check walks>>"
 
 
+#: *** RULE CC, LIMB (a) — THE CANONICAL DIAL SLOT, AS A LITERAL. *** A root property is in limb
+#: (a) when its subschema is EXACTLY this mapping: that one key, that one value, **and no sibling
+#: keyword**. The test is DICT EQUALITY, not `sub.get("$ref") == ...`, and the difference is the
+#: whole of `DECLARED LIMIT 13`: in 2020-12 a keyword sibling to `$ref` APPLIES, so
+#: `{"$ref": "#/$defs/dial_reading", "unevaluatedProperties": {...}}` is a DIFFERENT schema from
+#: this one and must not be admitted to limb (a) on the strength of sharing its `$ref`.
+CANONICAL_DIAL_SLOT = {"$ref": "#/$defs/dial_reading"}
+
+#: *** RULE CC, LIMB (b) — THE FINITE WRITTEN ALLOWLIST OF NON-DIAL ROOT PROPERTIES. ***
+#: *** NEW AT `16B-CONTRACT-CLOSURE` (`CC-1`), AND IT IS THE ARCHITECTURAL CLOSE ORDERED BY
+#: `PO-DECISIONS-0028` RULING 1. ***
+#:
+#: **IT IS DERIVED, NOT INVENTED.** It is exactly the union, over both surfaces, of the root
+#: properties the contracts declare TODAY that are not canonical dial slots — enumerated from the
+#: two contracts at this commit and written down here so that the set is CLOSED and a reader can
+#: audit it in one screen. `classification` is PRIVATE-only; the other eight are on both surfaces.
+#:
+#: *** ADDING A NAME HERE IS A PRODUCT ACT AND NOT AN ENGINEER'S (`PBG-AUTH-005`). *** If a
+#: contract grows a root property that is neither a canonical dial slot nor already on this list,
+#: this instrument goes **RED AND STAYS RED** until a human rules on it. That is the intended cost
+#: and it is the same asymmetry `DECLARED LIMIT 8` prices for a new dial STATE: whether a new root
+#: property can carry a rendering decision is product meaning, and guessing "it cannot" is how
+#: `calm` gets admitted over an absence in silence.
+#:
+#: **A WRITTEN ALLOWLIST OF NAMES IS A DENYLIST WEARING AN ALLOWLIST'S CLOTHES IF NOTHING PROVES
+#: THE NAMED PROPERTIES ARE REALLY NOT DIALS**, so membership here is NOT sufficient: every name
+#: on this list is put to the LIVE GATE, on every surface, with a calm-carrying object in its
+#: place, and must be REFUSED. See the `CD-CALM-ROOT-008` limb-(b) section in :func:`main`.
+NON_DIAL_ROOT_PROPERTIES = frozenset({
+    "schema_version",
+    "classification",
+    "as_of_utc",
+    "published_utc",
+    "regime",
+    "staleness_window_seconds",
+    "inputs_used",
+    "degraded_inputs",
+    "config_snapshot_id",
+})
+
+#: *** THE KEYWORDS THE ROOT MAY DECLARE FOR RULE CC's ENUMERATION TO BE EXHAUSTIVE. ***
+#: Rule CC enumerates `schema["properties"]` and asserts every member is limb (a) or limb (b).
+#: **THAT ENUMERATION IS ONLY EXHAUSTIVE IF NOTHING ELSE AT THE ROOT CAN INTRODUCE OR CONSTRAIN A
+#: ROOT PROPERTY**, so the root node itself is closed here, by the same deny-by-default rule and
+#: for the same reason. A root carrying `patternProperties`, `allOf`, `if`/`then`/`else`,
+#: `$dynamicRef`, `dependentSchemas`, `unevaluatedProperties` or any keyword nobody has written
+#: yet can admit a root key `properties` never names, and Rule CC would then be a partition of a
+#: SUBSET while claiming to be a partition of the whole. **ANYTHING OUTSIDE THIS SET AT THE ROOT
+#: IS A VIOLATION**, which is the loud, ruled direction. This is deliberately NOT
+#: :data:`_READABLE_KEYWORDS`: that set is what the RECOGNISER may descend, and it is far wider
+#: than what a closed envelope root has any business declaring.
+#:
+#: `$id` is admitted and the reason is MEASURED rather than assumed: it moves the base URI a
+#: RELATIVE `$ref` resolves against, both contracts declare it as a non-dereferenceable `urn:`,
+#: and every `$ref` in both contracts is a local `#/` fragment that :func:`_resolve` resolves
+#: against the document root regardless. It constrains no property and names none.
+_ROOT_STRUCTURAL_KEYWORDS = frozenset({
+    "$schema", "$id", "$defs", "$comment", "$anchor", "$vocabulary",
+    "title", "description",
+    "type", "additionalProperties", "required", "properties",
+})
+
+#: *** LIMB (b)'s AFFIRMATIVE PROOF, AND IT IS A VALUE CHECK — `PO-DECISIONS-0028` RULING 1's OWN
+#: WORDS, *"within that closed shape the value check is sufficient."* *** Each of these is put in
+#: the place of an allowlisted non-dial root property, in an otherwise ADMITTED envelope, and the
+#: live gate MUST REFUSE it. A root property that ADMITS a calm-carrying object **is not a
+#: non-dial property, whatever the allowlist says.** Two variants, because one of them is the flat
+#: shape and the other is the nested shape this row's entire history is made of.
+CALM_BEARING_PROBES = (
+    ("flat", {DETAIL_LEVEL: CALM}),
+    ("nested", {"reading": {"state": "SPINDRIFT", DETAIL_LEVEL: CALM}}),
+)
+
+
+def _root_limb(name: str, subschema):
+    """Which limb of **RULE CC** this root property is in: ``"a"``, ``"b"``, or ``None``.
+
+    *** THIS FUNCTION IS THE ARCHITECTURAL CLOSE, AND WHAT MATTERS ABOUT IT IS WHAT IT DOES NOT
+    DO: IT DOES NOT RECOGNISE ANYTHING. *** :func:`_dial_bearing` asks an open-space question —
+    *"is there, somewhere under this node, a property called `state`?"* — over a space with no
+    boundary, and its `False` means only *"nothing I could read named one"*. Nine audits attacked
+    that question and the tenth proved it unanswerable: a `status` spelling, an `{"enum": [...]}`
+    dial, a nest past the depth cap and a `present: false` reading are all nodes it answers
+    `False` about, and `CD-CALM-SLOTS-007` compared `dial_bearing` against `found` — **so a root
+    property in NEITHER set satisfied the comparison and was INVISIBLE.** That is the hole,
+    exactly.
+
+    **THIS ASKS THE CLOSED QUESTION INSTEAD: of every root property there is, is this one of the
+    two things a root property is ALLOWED to be?**
+
+      ``"a"``   a CANONICAL DIAL SLOT — its subschema is EXACTLY
+                :data:`CANONICAL_DIAL_SLOT`, decidable by dict equality against a two-token
+                literal;
+      ``"b"``   a DECLARED NON-DIAL PROPERTY — its NAME is a member of
+                :data:`NON_DIAL_ROOT_PROPERTIES`, decidable by string equality, **and** it is
+                separately proved by the LIVE GATE to be incapable of carrying a `detail_level`;
+      ``None``  **A VIOLATION. THERE IS NO THIRD CASE AND THERE IS NO SILENCE.**
+
+    **WHY THE PARTITION IS EXHAUSTIVE, WHICH IS THE CLAIM THE WHOLE INCREMENT RESTS ON.** The
+    root's `properties` object has a FINITE, ENUMERABLE key set; both limbs are decided by
+    EQUALITY rather than by a walk; the root carries `additionalProperties: false` (asserted, not
+    assumed — see `CD-CALM-ROOT-008` in :func:`main`); and the root declares no keyword outside
+    :data:`_ROOT_STRUCTURAL_KEYWORDS` (also asserted), so nothing else at the root can introduce a
+    property this enumeration does not see. **THE ALPHABET IS CLOSED, SO "EVERYTHING ELSE" IS A SET
+    THIS INSTRUMENT CAN NAME WITHOUT HAVING TO RECOGNISE ANYTHING.**
+
+    **`A310-F2` AND `A310-F3` ARE NOT CLOSED BY THIS — THEY ARE UNREACHABLE.** A root property
+    spelled `{"enum": [...]}`, or one whose discriminator is called `status`, or one nested
+    twenty-five deep, or one carrying `present: false`, is a root property that is neither limb
+    (a) nor limb (b). It does not need to be RECOGNISED as a dial to be refused; it is refused for
+    not being one of the two permitted shapes, and the recogniser is never consulted.
+
+    *** THE RECOGNISER IS NOT DELETED AND IS NOT LOAD-BEARING. *** :func:`_dial_bearing` and
+    `CD-CALM-SLOTS-007` are KEPT, unchanged in behaviour but for `CC-4`, as a SECOND INSTRUMENT
+    over the same root properties (`PO-DECISIONS-0028` ruling 3: `8398741` is preserved, nothing
+    is reverted). What changed is that the GUARANTEE no longer rests on them.
+    """
+    if subschema == CANONICAL_DIAL_SLOT:
+        return "a"
+    if name in NON_DIAL_ROOT_PROPERTIES:
+        return "b"
+    return None
+
+
 def _unreadable_keywords(node) -> list:
     """Every keyword of ``node`` this check CANNOT READ. Empty means it read the whole node.
 
@@ -1582,6 +1893,28 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     # specification's naming positions rather than against the four shapes that escaped.
     declared = _declared_names(resolved)
 
+    # *** THE INSTANCE-WALK CAP NOW FAILS CLOSED. NEW AT `16B-CONTRACT-CLOSURE` (`CC-4`, closing
+    # `CD-ASR-WO3-10` `A310-F1`, ruled a separate bounded fix by `PO-DECISIONS-0028` ruling 4). ***
+    # `FX15` gave :func:`_instance_declared_names` a depth cap and, at that cap, returned the
+    # sentinel :data:`INSTANCE_TOO_DEEP` — **which had ZERO EXECUTABLE CONSUMERS.** It entered
+    # `declared`, `declared`'s only reader was the `"state" in declared` test on the next line, a
+    # sentinel can never equal `state`, so the node fell through to `return None if undecidable
+    # else False` with `undecidable` still False and answered **a clean `False`: the only SILENT
+    # answer this instrument has.** `DECLARED LIMIT 15`'s own heading said *"REACHING THE CAP IS
+    # NOT A SILENT SUCCESS"* and the code did the opposite of what the heading claimed.
+    # **MEASURED, ONE INTEGER APART, at `8398741` and re-measured by this seat before the fix:**
+    # a `{"state": ..., "detail_level": "calm"}` object nested inside an `enum` member at depth
+    # 1/5/20/22/23/24 -> `None` (UNDECIDABLE, reported); at 25/26/30/40 -> **`False`**.
+    # **THE CAP MUST BE HANDLED THE WAY :func:`_dial_bearing`'s OWN CAP AT LINE ~1515 IS HANDLED:
+    # a walk that did not complete is `DECLARED LIMIT 14` limb (c), UNDECIDABLE, never `False`.**
+    # It is fixed here rather than inside :func:`_instance_declared_names` because that function
+    # returns a NAME SET and has no `None` to return; the sentinel is its honest report that it
+    # stopped early, and this is the consumer that was missing. **Rule CC (`CC-1`) makes a nest
+    # this deep unreachable at the root anyway — the cap is fixed REGARDLESS, because a cap that
+    # fails open is a defect whether or not anything currently reaches it.**
+    if INSTANCE_TOO_DEEP in declared:
+        undecidable = True
+
     if "state" in declared:
         subschema = properties.get("state") if isinstance(properties, dict) else None
         state, state_dropped = (
@@ -1629,6 +1962,74 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
             if verdict is None:
                 undecidable = True
     return None if undecidable else False
+
+
+#: The `$def` that types a FRESHNESS STAMP. Both contracts declare it and both use it for every
+#: timestamp they carry. **`CC-2` KEYS ON THIS DEFINITION OBJECT AND NOT ON A PROPERTY NAME**, and
+#: that is the point: MEASURED at this commit, `VALUE` and `DEGRADED` require `as_of_utc` while
+#: `UNKNOWN` requires `since_utc`, so a fixed property name would have been a fifth spelling patch
+#: waiting to happen. **RENAMING THIS `$def` TURNS THIS INSTRUMENT RED**, which is fail-closed and
+#: is `DECLARED LIMIT 17`'s stated cost — the remedy is to price the rename, never to loosen this.
+UTC_TIMESTAMP_DEF = "utc_timestamp"
+
+
+def _required_timestamp_properties(schema: dict, branch: dict):
+    """This branch's REQUIRED properties that are typed as a freshness stamp.
+
+    Returns the list of names, which is EMPTY when the branch requires no timestamp at all — and
+    **a branch that requires no timestamp CANNOT PROVE FRESHNESS**, which is `CC-2`'s violation and
+    `CC-3`'s premise.
+
+    A property counts only when it is (1) in the branch's own ``required`` list — a stamp the
+    branch merely PERMITS proves nothing, because the document that omits it is still admitted —
+    and (2) its subschema resolves, through a chain that discarded no assertion, to the very
+    ``#/$defs/utc_timestamp`` object this contract declares. The comparison is by OBJECT IDENTITY
+    against that definition, so a property typed by an inline copy of the same pattern does NOT
+    count. **THAT IS DELIBERATE AND IT IS THE FAIL-CLOSED DIRECTION:** this check would otherwise
+    have to decide whether an arbitrary string pattern is "a timestamp", which is exactly the
+    open-space recognition question `PO-DECISIONS-0028` ruling 1 removed from the load-bearing
+    position. An inline copy is REPORTED, never silently accepted.
+    """
+    stamp = (schema.get("$defs") or {}).get(UTC_TIMESTAMP_DEF)
+    if not isinstance(stamp, dict):
+        return None
+    properties = branch.get("properties") or {}
+    names = []
+    for name in (branch.get("required") or []):
+        if not isinstance(name, str):
+            continue
+        subschema = properties.get(name)
+        if not isinstance(subschema, dict):
+            continue
+        resolved, dropped = _resolve(schema, subschema)
+        if dropped:
+            continue
+        if resolved is stamp:
+            names.append(name)
+    return names
+
+
+def _calm_admissible(schema: dict, branch: dict):
+    """Does this branch's ``detail_level`` admit ``calm``? ``True`` / ``False`` / ``None``.
+
+    ``None`` means this check could not read the branch's level vocabulary at all, and every
+    caller treats that as a VIOLATION rather than as an answer. **THE QUESTION IS ASKED OF THE
+    VOCABULARY'S VALUES AND NOT OF THE `$def`'s NAME**, which is the same lesson `CD-PL-F169` and
+    `CD-ASR-WO3-02`/`-03` each cost this project a RED to learn: a check that reads the `$ref`
+    TARGET NAME and never opens the target passes a tree where `calm` has been put back inside the
+    target's own enum. `PO-DECISIONS-0028` ruling 1 calls this "the value check", and it is
+    sufficient here precisely BECAUSE `CC-1` and `CC-2` have closed the shape it ranges over.
+    """
+    subschema = (branch.get("properties") or {}).get(DETAIL_LEVEL)
+    if not isinstance(subschema, dict):
+        return None
+    resolved, dropped = _resolve(schema, subschema)
+    if dropped or not isinstance(resolved, dict):
+        return None
+    values = resolved.get("enum")
+    if not isinstance(values, list):
+        return None
+    return CALM in values
 
 
 def _branch_states(schema: dict, dial_union: dict):
@@ -1795,8 +2196,88 @@ def main(argv=None) -> int:
     # slot spelled with a different $ref — passed the superseded instrument while the gate
     # ADMITTED `calm` on it, on both surfaces.
     slots_by_surface = {}
+    limb_b_by_surface = {}
     for surface, schema in schemas.items():
         properties = schema.get("properties") or {}
+
+        # ---- CD-CALM-ROOT-008 — *** RULE CC: THE ROOT PARTITION. THIS IS THE ARCHITECTURAL
+        # CLOSE, AND IT RUNS BEFORE THE RECOGNISER BECAUSE IT DOES NOT USE ONE. *** ----------- #
+        # `PO-DECISIONS-0028` ruling 1. Every root property is EXACTLY ONE of (a) a canonical
+        # dial slot or (b) a declared non-dial property; anything else is a VIOLATION. See
+        # :func:`_root_limb` for why the partition is exhaustive and `DECLARED LIMIT 17` for what
+        # it does and does not cover.
+        #
+        # *** THE TWO PREMISES OF EXHAUSTIVENESS ARE ASSERTED HERE AND NOT ASSUMED. *** Rule CC
+        # enumerates `schema["properties"]` and calls that "every root property there is". That
+        # sentence is true only if (1) the root refuses undeclared keys and (2) nothing else at
+        # the root can introduce or constrain a property. An unasserted premise is exactly how
+        # `DECLARED LIMIT 4` came to claim "under any spelling" three times in a row.
+        root_unreadable = sorted(key for key in schema
+                                 if key not in _ROOT_STRUCTURAL_KEYWORDS)
+        check.asserted(2)
+        if root_unreadable:
+            check.violation(
+                here, 0, "CD-CALM-ROOT-008",
+                f"{surface.value}: the contract ROOT declares {root_unreadable!r}, which is "
+                f"outside this check's declared, closed set of root keywords "
+                f"{sorted(_ROOT_STRUCTURAL_KEYWORDS)!r}. *** RULE CC ENUMERATES `properties` AND "
+                "CALLS THAT EVERY ROOT PROPERTY THERE IS. A keyword like `patternProperties`, "
+                "`allOf`, `if`, `dependentSchemas`, `unevaluatedProperties`, `$dynamicRef` — or "
+                "one from a draft nobody has written — can admit or constrain a root key "
+                "`properties` never names, and the partition would then be a partition of a "
+                "SUBSET while claiming to be a partition of the whole. *** DENY BY DEFAULT: a "
+                "root keyword this check has not priced makes RULE CC's exhaustiveness "
+                "UNPROVED, and an unproved closure is reported, never assumed. See DECLARED "
+                "LIMIT 17.",
+            )
+        if schema.get("additionalProperties") is not False:
+            check.violation(
+                here, 0, "CD-CALM-ROOT-008",
+                f"{surface.value}: the contract ROOT does not declare "
+                "'additionalProperties: false' (it declares "
+                f"{schema.get('additionalProperties')!r}). *** RULE CC's SECOND PREMISE IS THAT A "
+                "DOCUMENT CANNOT INTRODUCE A ROOT KEY THE CONTRACT DOES NOT DECLARE. *** Without "
+                "that, a published envelope can carry a root property no partition ever "
+                "examined, and every assertion below is about a document shape that is not the "
+                "only one the gate admits.",
+            )
+
+        limbs = {}
+        for name, sub in sorted(properties.items()):
+            limbs[name] = _root_limb(name, sub)
+            check.asserted()
+            if limbs[name] is None:
+                check.violation(
+                    here, 0, "CD-CALM-ROOT-008",
+                    f"{surface.value}: root property {name!r} is NEITHER limb of RULE CC. *** IT "
+                    "IS NOT A CANONICAL DIAL SLOT *** — a canonical dial slot is spelled EXACTLY "
+                    f"{CANONICAL_DIAL_SLOT!r}, that one key and no sibling keyword, and this one "
+                    f"is spelled {sub!r}. *** AND ITS NAME IS NOT ON THIS CHECK'S FINITE, WRITTEN "
+                    f"ALLOWLIST OF NON-DIAL ROOT PROPERTIES *** "
+                    f"{sorted(NON_DIAL_ROOT_PROPERTIES)!r}. "
+                    "*** THERE IS NO THIRD CASE AND NO RECOGNISER IS CONSULTED. *** This is NOT "
+                    "a report that the property looks like a dial; it is a report that it is not "
+                    "one of the two things a root property is ALLOWED to be. A dial spelled "
+                    "'{\"enum\": [...]}', one whose discriminator is called `status`, one nested "
+                    "past this check's depth cap and one carrying 'present: false' are all "
+                    "refused HERE, by this one sentence, without any of them being recognised — "
+                    "which is precisely what nine audits proved a recogniser cannot do "
+                    "(CD-ASR-WO3-10, A310-F1/F2/F3; PO-DECISIONS-0028 ruling 1). "
+                    "*** THE REMEDY IS NEVER TO ADD THE NAME TO THE ALLOWLIST TO GET A GREEN. *** "
+                    "This instrument goes RED AND STAYS RED until a HUMAN rules on it: a third "
+                    "dial slot is a PRODUCT decision (two dials, never blended, is standing "
+                    "product — PO-DECISIONS-0026), and whether a new non-dial root property can "
+                    "carry a rendering decision is product meaning and not an Engineer's to "
+                    "guess (PBG-AUTH-005).",
+                )
+
+        canonical = sorted(name for name, limb in limbs.items() if limb == "a")
+        limb_b_by_surface[surface] = sorted(
+            name for name, limb in limbs.items() if limb == "b")
+        check.note(f"{surface.value} RULE CC limb (a) CANONICAL DIAL SLOTS: {canonical}")
+        check.note(f"{surface.value} RULE CC limb (b) DECLARED NON-DIAL ROOT PROPERTIES "
+                   f"(each proved against the LIVE GATE below): {limb_b_by_surface[surface]}")
+
         found = tuple(
             sorted(
                 name
@@ -1823,6 +2304,22 @@ def main(argv=None) -> int:
                 undecidable.append(name)
         check.note(f"{surface.value} root properties that DECLARE a dial state this check can "
                    f"classify: {dial_bearing}")
+
+        # *** RULE CC's LIMB (a) AND THE DRIVEN SET MUST BE THE SAME SET. *** `found` admits a
+        # `$ref` with siblings and limb (a) does not, so limb (a) is a SUBSET of `found` by
+        # construction; asserting the equality is what makes "the matrix drives exactly the
+        # properties RULE CC calls dial slots" a MEASUREMENT rather than a reading of the code.
+        check.asserted()
+        if set(canonical) != set(found):
+            check.violation(
+                here, 0, "CD-CALM-ROOT-008",
+                f"{surface.value}: RULE CC limb (a) is {canonical!r} but the set this check "
+                f"actually DRIVES through the gate is {sorted(found)!r}. Those must be the same "
+                "set: a slot RULE CC calls canonical but the matrix never drives is a slot on "
+                "which PID §3.2 is asserted and not measured, and a slot the matrix drives that "
+                "RULE CC does not call canonical is a `$ref` carrying a sibling keyword, which "
+                "in 2020-12 APPLIES and makes it a different schema (DECLARED LIMIT 13).",
+            )
         if undecidable:
             check.note(f"{surface.value} root properties this check CANNOT decide about "
                        f"(UNDECIDABLE, reported below): {undecidable}")
@@ -2028,6 +2525,194 @@ def main(argv=None) -> int:
                 "NOT grow on the day the contract does, deliberately.",
             )
 
+        # ---- CD-CALM-CANON-009 — *** CC-2: THE CANONICAL PATH, ENFORCED. *** ------------ #
+        # `PO-DECISIONS-0028` ruling 1: the discriminator lives at `properties.state`, at depth
+        # ONE of `#/$defs/dial_reading`, pinned per branch at `properties.state.const`. The
+        # contracts now MANDATE it (`required: ["state"]` plus a normative description clause);
+        # this asserts it, because *** A `description` IS NOT AN ENFORCEMENT POINT AND THIS
+        # CONTRACT ALREADY CARRIES A SUPERSEDED NOTE SAYING SO IN ITS OWN WORDS *** —
+        # `absent_data_detail_level`'s description records 16A, where the guarantee was "asserted
+        # only in PROSE" while the gate admitted a calm UNKNOWN dial on both surfaces.
+        check.asserted(3)
+        if dial_union.get("additionalProperties") is not False:
+            check.violation(
+                here, 0, "CD-CALM-CANON-009",
+                f"{surface.value}: '#/$defs/dial_reading' does not declare "
+                f"'additionalProperties: false' (it declares "
+                f"{dial_union.get('additionalProperties')!r}). The canonical dial shape is a "
+                "CLOSED object: without this a dial can carry a key no branch declares, and the "
+                "shape CC-3's value check ranges over is no longer closed.",
+            )
+        union_properties = dial_union.get("properties")
+        if not (isinstance(union_properties, dict)
+                and isinstance(union_properties.get("state"), dict)):
+            check.violation(
+                here, 0, "CD-CALM-CANON-009",
+                f"{surface.value}: '#/$defs/dial_reading' does not declare 'properties.state' as "
+                "a subschema. *** THE CANONICAL PATH FOR THE DISCRIMINATOR IS "
+                "`properties.state`, AT DEPTH ONE, AND NOWHERE ELSE (PO-DECISIONS-0028 ruling "
+                "1). *** A dial that carries its discriminator anywhere else is refused at "
+                "contract validation, and a contract that stops declaring the canonical path has "
+                "removed the thing every check below reads.",
+            )
+        if "state" not in [name for name in (dial_union.get("required") or [])
+                           if isinstance(name, str)]:
+            check.violation(
+                here, 0, "CD-CALM-CANON-009",
+                f"{surface.value}: '#/$defs/dial_reading' does not REQUIRE 'state' (its required "
+                f"list is {dial_union.get('required')!r}). *** THIS IS THE MANDATE "
+                "PO-DECISIONS-0028 RULING 1 ORDERS INTO THE ENVELOPE CONTRACT ITSELF: 'every dial "
+                "carries a well-formed `state` at a CANONICAL PATH ... with present + freshness "
+                "semantics REQUIRED by the schema'. *** Left to be IMPLIED by the branches, it is "
+                "an accident of the current branch set; stated as an assertion, it is a property "
+                "of the contract that survives an edit to any one branch.",
+            )
+
+        for label, resolved, _state, branch_dropped in branches:
+            check.asserted(4)
+            if resolved is None or branch_dropped:
+                check.violation(
+                    here, 0, "CD-CALM-CANON-009",
+                    f"{surface.value}: branch {label!r} could not be read as a schema object "
+                    "this check can judge (it does not resolve, or its `$ref` chain discarded an "
+                    "asserting sibling — DECLARED LIMIT 13). *** THE CANONICAL PATH IS UNPROVED "
+                    "ON THIS BRANCH, AND UNPROVED IS A VIOLATION AND NEVER A SILENCE. ***",
+                )
+                continue
+            if resolved.get("additionalProperties") is not False:
+                check.violation(
+                    here, 0, "CD-CALM-CANON-009",
+                    f"{surface.value}: branch {label!r} does not declare "
+                    f"'additionalProperties: false' (it declares "
+                    f"{resolved.get('additionalProperties')!r}). An open branch admits keys no "
+                    "branch declares — including a second discriminator beside the canonical "
+                    "one — so the alphabet CC-3 quantifies over is not closed.",
+                )
+            if "state" not in [name for name in (resolved.get("required") or [])
+                               if isinstance(name, str)]:
+                check.violation(
+                    here, 0, "CD-CALM-CANON-009",
+                    f"{surface.value}: branch {label!r} does not REQUIRE 'state' (its required "
+                    f"list is {resolved.get('required')!r}). A branch that permits its "
+                    "discriminator to be absent admits a document with no state at all, and a "
+                    "document with no state has proved nothing about present-or-fresh.",
+                )
+            branch_state = None
+            branch_properties = resolved.get("properties")
+            if isinstance(branch_properties, dict):
+                state_sub = branch_properties.get("state")
+                state_resolved, state_dropped = (
+                    _resolve(schema, state_sub) if isinstance(state_sub, dict) else (None, []))
+                if isinstance(state_resolved, dict) and not state_dropped and isinstance(
+                        state_resolved.get("const"), str):
+                    branch_state = state_resolved["const"]
+            if branch_state is None:
+                check.violation(
+                    here, 0, "CD-CALM-CANON-009",
+                    f"{surface.value}: branch {label!r} does not declare "
+                    "'properties.state.const' as a STRING. *** THIS IS ITS OWN NAMED VIOLATION "
+                    "AND IS DELIBERATELY NOT FOLDED INTO CD-CALM-BRANCHES-006: *** that code "
+                    "reports a branch whose STATE could not be identified, which reads as a "
+                    "recognition failure. This one reports that the branch DEPARTS FROM THE "
+                    "CANONICAL SHAPE THE CONTRACT MANDATES — a `const` is what pins one branch to "
+                    "one state, and an `enum`, a `$ref` to a vocabulary, or no `state` subschema "
+                    "at all makes the branch set something other than a partition of the state "
+                    "alphabet. CC-3's value check is only sufficient over a closed alphabet.",
+                )
+            stamps = _required_timestamp_properties(schema, resolved)
+            if stamps is None:
+                check.violation(
+                    here, 0, "CD-CALM-CANON-009",
+                    f"{surface.value}: the contract declares no '#/$defs/{UTC_TIMESTAMP_DEF}' "
+                    "definition, so this check cannot tell which of a branch's required "
+                    "properties is a FRESHNESS STAMP. The freshness half of "
+                    "'present and fresh' is unmeasurable on this contract.",
+                )
+            elif not stamps:
+                check.violation(
+                    here, 0, "CD-CALM-CANON-009",
+                    f"{surface.value}: branch {label!r} (state {branch_state!r}) REQUIRES NO "
+                    f"PROPERTY TYPED '#/$defs/{UTC_TIMESTAMP_DEF}'. *** A BRANCH THAT REQUIRES NO "
+                    "FRESHNESS STAMP CANNOT PROVE FRESHNESS, AND CD-AC-001's OWN WORDS ARE "
+                    "'missing OR STALE input never renders as calm'. *** The stamp is asserted by "
+                    "TYPE and not by NAME on purpose — MEASURED, VALUE and DEGRADED require "
+                    "`as_of_utc` while UNKNOWN requires `since_utc`, so a fixed name would have "
+                    "been a fifth spelling patch. A stamp the branch merely PERMITS does not "
+                    "count: the document that omits it is still admitted.",
+                )
+
+            # ---- CD-CALM-FRESH-010 — *** CC-3: THE AFFIRMATIVE VALUE CHECK OVER THE NOW-CLOSED
+            # ALPHABET. THIS IS PO-DECISIONS-0027 RULING 5, MADE ACHIEVABLE. *** ----------- #
+            # *** A branch may reference the calm-bearing `#/$defs/detail_level` IF AND ONLY IF
+            # its `properties.state.const` is a member of PRESENT_STATES **and** it requires a
+            # freshness stamp. EVERY OTHER BRANCH MUST reference a vocabulary from which `calm`
+            # is ABSENT. ***
+            #
+            # **THAT IS THE AFFIRMATIVE FORM AND IT IS WHY THIS IS NOT A DENYLIST.** It does not
+            # ask "is this state on my list of bad ones?" — the question nine audits defeated by
+            # naming a state nobody had listed. It asks "has this branch PROVED PRESENT AND
+            # FRESH?", and a branch that has not gets a vocabulary in which `calm` is
+            # UNREPRESENTABLE. A never-before-named state must arrive as a NEW BRANCH; a new
+            # branch's state is NOT in PRESENT_STATES; therefore it CANNOT CARRY `calm` — **BY
+            # CONSTRUCTION, OVER A CLOSED SET, AND NOT BY RECOGNITION OVER AN OPEN ONE.**
+            check.asserted()
+            calm_ok = _calm_admissible(schema, resolved)
+            proved = branch_state in PRESENT_STATES and bool(stamps)
+            if calm_ok is None:
+                check.violation(
+                    here, 0, "CD-CALM-FRESH-010",
+                    f"{surface.value}: branch {label!r} (state {branch_state!r}) declares a "
+                    f"{DETAIL_LEVEL!r} this check cannot read as a closed vocabulary — it is "
+                    "missing, it does not resolve, its `$ref` chain discarded an asserting "
+                    "sibling, or it declares no `enum`. *** DENY BY DEFAULT: a branch whose level "
+                    "vocabulary cannot be read is a branch on which 'calm is unrepresentable' is "
+                    "UNPROVED, and unproved is a violation. *** The vocabulary is judged by its "
+                    "VALUES and never by the name of the `$def` it comes from — a check that "
+                    "reads the `$ref` target NAME passes a tree where `calm` was put back inside "
+                    "the target's own enum, which is CD-PL-F169 and CD-ASR-WO3-02 F06/F07.",
+                )
+            elif calm_ok and not proved:
+                why = []
+                if branch_state not in PRESENT_STATES:
+                    why.append(
+                        f"its state {branch_state!r} is NOT in this check's declared "
+                        f"PRESENT_STATES {sorted(PRESENT_STATES)!r}, so nothing about this branch "
+                        "asserts the data is PRESENT"
+                    )
+                if not stamps:
+                    why.append(
+                        f"it REQUIRES no property typed '#/$defs/{UTC_TIMESTAMP_DEF}', so nothing "
+                        "about this branch asserts the data is FRESH"
+                    )
+                check.violation(
+                    here, 0, "CD-CALM-FRESH-010",
+                    f"{surface.value}: branch {label!r} MAY CARRY {CALM!r} AND HAS NOT PROVED "
+                    "PRESENT-AND-FRESH — " + "; and ".join(why) + ". *** THIS IS "
+                    "PO-DECISIONS-0027 RULING 5's COMPLETION CONDITION, FAILING: 'a dial that "
+                    "cannot prove present-and-fresh is REFUSED BY CONSTRUCTION; a dial in a "
+                    "NEVER-BEFORE-NAMED STATE, carrying calm, is REFUSED.' *** The remedy is to "
+                    f"point this branch's {DETAIL_LEVEL!r} at a vocabulary WITHOUT {CALM!r} "
+                    "(#/$defs/absent_data_detail_level is the one this contract declares for "
+                    "exactly that), never to add the state to PRESENT_STATES. **WHETHER A NEW "
+                    "STATE MEANS THE DATA IS PRESENT IS PRODUCT MEANING AND NOT AN ENGINEER'S TO "
+                    "DECIDE (PBG-AUTH-005)** — and the failure is asymmetric: guess 'present' and "
+                    "`calm` is admitted over an absence, which is PID §3.2 broken in silence.",
+                )
+            elif proved and not calm_ok:
+                check.violation(
+                    here, 0, "CD-CALM-FRESH-010",
+                    f"{surface.value}: branch {label!r} (state {branch_state!r}) HAS proved "
+                    f"present-and-fresh — its state is in PRESENT_STATES and it requires the "
+                    f"freshness stamp(s) {stamps!r} — but its {DETAIL_LEVEL!r} vocabulary does "
+                    f"NOT contain {CALM!r}. *** THIS IS THE VACUITY DIRECTION AND IT CARRIES "
+                    "EQUAL WEIGHT. *** PID §4 makes `calm` the base case — 'calm = dial + one "
+                    "line' — so a contract in which a real reading backed by real inputs and a "
+                    "real timestamp CANNOT render as calm is not holding PID §3.2, it is "
+                    "enforcing silence, and every refusing arm in this instrument would be "
+                    "satisfied vacuously by it. Same argument as CD-CALM-VACUITY-000, made "
+                    "structurally instead of behaviourally.",
+                )
+
     # ---- THE FILLER DIAL, ITSELF DERIVED FROM THE CONTRACT ---------------------------- #
     # Every slot other than the one under test carries an admissible absent-data dial, so the
     # ONLY thing that varies across the whole matrix is the one dial under test.
@@ -2078,6 +2763,84 @@ def main(argv=None) -> int:
             )
         fillers[surface] = filler
         check.note(f"{surface.value} filler dial derived from the contract: {filler!r}")
+
+    # ---- CD-CALM-ROOT-008 — *** RULE CC LIMB (b)'s AFFIRMATIVE PROOF, DRIVEN THROUGH THE
+    # LIVE GATE. THIS IS WHAT STOPS THE ALLOWLIST BEING A DENYLIST IN AN ALLOWLIST'S CLOTHES. ***
+    # ------------------------------------------------------------------------------------- #
+    # `PO-DECISIONS-0028` ruling 1, verbatim: *"within that closed shape the value check is
+    # sufficient."* A written list of names proves nothing on its own — somebody has to show that
+    # the named properties really cannot carry a rendering decision. So for EACH allowlisted
+    # non-dial root property, on EACH surface, this replaces that property's value with a
+    # calm-carrying object in an otherwise ADMITTED envelope and REQUIRES the gate to REFUSE.
+    #
+    # *** A ROOT PROPERTY THAT ADMITS A CALM-CARRYING OBJECT IS NOT A NON-DIAL PROPERTY, WHATEVER
+    # THE ALLOWLIST SAYS. *** It is finite and it is counted: the allowlist x 2 surfaces x
+    # :data:`CALM_BEARING_PROBES`, plus one ADMITTING control per surface.
+    #
+    # **THE CONTROL IS NOT DECORATION AND IS NOT OPTIONAL.** If the unmutated baseline envelope
+    # were itself refused, every refusal below would be a refusal of the baseline and this whole
+    # section would be vacuous — an instrument that fails on everything is a brick, not a guard.
+    # It is the same argument `CD-CALM-VACUITY-000` makes about the proposition table.
+    for surface in EnvelopeSurface:
+        schema = schemas[surface]
+        slots = slots_by_surface[surface]
+        baseline = _envelope(
+            surface.value, slots, slots[0], dict(fillers[surface]), fillers[surface])
+        baseline["schema_version"] = ENVELOPE_SCHEMA_VERSION
+
+        check.asserted()
+        try:
+            refuse_unless_publishable(copy.deepcopy(baseline), surface=surface)
+        except Exception as exc:
+            check.violation(
+                here, 0, "CD-CALM-ROOT-008",
+                f"{surface.value}: *** THE LIMB (b) BASELINE ENVELOPE IS ITSELF REFUSED *** "
+                f"({type(exc).__name__}: {str(exc).splitlines()[0][:160]}), so every refusal in "
+                "this section would be a refusal of the BASELINE and not of the calm-carrying "
+                "object put into it. RULE CC limb (b) is UNPROVED on this surface. A check whose "
+                "control does not admit cannot tell 'the forbidden thing is impossible' from "
+                "'everything is impossible'.",
+            )
+            continue
+        check.note(f"{surface.value} RULE CC limb (b) CONTROL: the unmutated baseline envelope "
+                   "is ADMITTED, so the refusals below are attributable to the probe")
+
+        for name in limb_b_by_surface[surface]:
+            for variant, probe in CALM_BEARING_PROBES:
+                candidate = copy.deepcopy(baseline)
+                candidate[name] = copy.deepcopy(probe)
+                label = f"{surface.value}/<root>/{name}/calm-bearing-{variant}"
+                check.asserted()
+                try:
+                    returned = refuse_unless_publishable(candidate, surface=surface)
+                except PublicationRefused as refused:
+                    check.note(f"{label}: REFUSED [{refused.reason_class}] at "
+                               f"{refused.pointer or '<root>'}")
+                except Exception as other:
+                    check.violation(
+                        here, 0, "CD-CALM-ROOT-008",
+                        f"{label}: the gate raised {type(other).__name__}: "
+                        f"{str(other).splitlines()[0][:160]}. That is neither an admission nor a "
+                        "declared refusal, and a check cannot read a crash as a refusal "
+                        "(CD-PL-F74).",
+                    )
+                else:
+                    check.violation(
+                        here, 0, "CD-CALM-ROOT-008",
+                        f"{label}: *** THE LIVE GATE ADMITTED A CALM-CARRYING OBJECT AT THE ROOT "
+                        f"PROPERTY {name!r}, WHICH RULE CC's LIMB (b) DECLARES IS NOT A DIAL. *** "
+                        f"The document put {probe!r} in its place and "
+                        f"refuse_unless_publishable returned {returned!r}. **A ROOT PROPERTY THAT "
+                        "ADMITS A CALM-CARRYING OBJECT IS NOT A NON-DIAL PROPERTY, WHATEVER THIS "
+                        "CHECK'S ALLOWLIST SAYS** — the allowlist is a claim about the contract "
+                        "and the contract has stopped making it true. Either the contract widened "
+                        f"{name!r} until it can carry a rendering decision, or the name was never "
+                        "safe to allowlist. *** THE REMEDY IS NEVER TO REMOVE THE PROBE OR THE "
+                        "NAME TO GET A GREEN: *** narrow the property back, or take the change to "
+                        "the Product Authority (PBG-AUTH-005). PO-DECISIONS-0028 ruling 1: "
+                        "'within that closed shape the value check is sufficient' — this IS that "
+                        "value check, and it has just failed.",
+                    )
 
     # ---- THE MATRIX ------------------------------------------------------------------- #
     admitted_reference: dict = {}

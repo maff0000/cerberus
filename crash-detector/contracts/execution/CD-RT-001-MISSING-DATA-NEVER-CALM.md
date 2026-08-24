@@ -85,6 +85,29 @@ vocabulary on `UNKNOWN`, selected by a marker property and **adding no new ROOT 
 `execute:` lines exited byte-identically to the clean tree** (`CD-ASR-WO3-05` F1). That tree is
 arm `C6`.
 
+### The three assertions added at `16B-CONTRACT-CLOSURE`, and they are the architectural close
+
+* **`CD-CALM-ROOT-008` — `RULE CC`, THE ROOT PARTITION.** Every root property is EXACTLY ONE of
+  (a) a canonical dial slot spelled literally `{"$ref": "#/$defs/dial_reading"}` or (b) a declared
+  non-dial property on a finite written allowlist that is PROVED against the live gate to be
+  incapable of carrying a `detail_level`. **ANYTHING ELSE IS A VIOLATION AND NO RECOGNISER IS
+  CONSULTED.**
+* **`CD-CALM-CANON-009` — THE CANONICAL PATH.** `properties.state` at depth one, `state` REQUIRED,
+  every branch closed and pinned by `properties.state.const`, and every branch REQUIRING a
+  `#/$defs/utc_timestamp`-typed freshness stamp.
+* **`CD-CALM-FRESH-010` — THE AFFIRMATIVE VALUE CHECK.** A branch may carry `calm` **if and only
+  if** it has proved present-and-fresh. **A never-before-named state cannot carry `calm`, by
+  construction over a closed set.**
+
+**WHY THEY EXIST, MEASURED AND NOT ARGUED.** `CD-CALM-SLOTS-007` compares the recogniser's output
+against the driven set, so a root property the recogniser answers `False` about is in **neither**
+set and is INVISIBLE. `CD-ASR-WO3-10` measured three such properties at `8398741` — a discriminator
+spelled `status`, a `present: false` reading with a stale stamp, and a `state` nested one level past
+the instance-walk cap — each of which left the whole thirty-line register GREEN while the live gate
+ADMITTED a dead feed rendering as `calm` on both surfaces. **`PO-DECISIONS-0028` ruling 1 ruled the
+architecture rather than a tenth shape.** See `DECLARED LIMIT 17` for the closure argument and, at
+equal length, for its boundary.
+
 ## Why it is asserted this way
 
 A structural read of schema keys is what let this class of defect through three times on this
@@ -715,10 +738,113 @@ more than its guard delivers.**
     side is only exercised for the `oneOf` under `#/$defs/dial_reading`:** a union spelled any other
     way is `DECLARED LIMIT 9`'s territory, not this one's.
 
+17. **WHAT `RULE CC` CLOSES, AND — SAID FIRST AND NOT LAST — WHAT IT DOES NOT.** *** NEW AT
+    `16B-CONTRACT-CLOSURE` (`CC-1`/`CC-2`/`CC-3`), under `PO-DECISIONS-0028` ruling 1, which
+    replaced a RECOGNISER at the root with a CLOSED PARTITION over a FINITE SET. *** Three
+    assertion codes are new and together they are the architectural close.
+
+    * **`CD-CALM-ROOT-008` — `RULE CC`.** Every property of an envelope contract's root
+      `properties` is **EXACTLY ONE** of **(a)** a CANONICAL DIAL SLOT spelled literally
+      `{"$ref": "#/$defs/dial_reading"}`, that one key and no sibling keyword; or **(b)** a
+      DECLARED NON-DIAL PROPERTY whose name is on the finite written allowlist
+      `NON_DIAL_ROOT_PROPERTIES` **and** which is AFFIRMATIVELY PROVED, by driving the LIVE GATE
+      with a calm-carrying object in its place, incapable of carrying a `detail_level`.
+      **ANYTHING ELSE IS A VIOLATION. NO RECOGNISER IS CONSULTED, AND THERE IS NO THIRD CASE AND
+      NO SILENCE.** `CD-CALM-SLOTS-007` compares `dial_bearing` against `found`, so **a root
+      property the recogniser answers `False` about is in NEITHER SET, the comparison is
+      satisfied, and the slot is INVISIBLE** — the hole `CD-ASR-WO3-10` proved unclosable by any
+      list (`A310-F1` a nest past the depth cap, `A310-F2` the discriminator spelled `status`,
+      `A310-F3` `present: false` with a stale stamp). **THOSE ARE NOT CLOSED BY `RULE CC` — THEY
+      ARE UNREACHABLE**, because none of them is limb (a) or limb (b). Both premises of
+      exhaustiveness are **ASSERTED and not assumed**: the root declares
+      `additionalProperties: false`, and the root declares no keyword outside
+      `_ROOT_STRUCTURAL_KEYWORDS`. Adding a name to the allowlist is a **PRODUCT act**
+      (`PBG-AUTH-005`): the instrument goes RED and STAYS RED until a human rules on it.
+    * **`CD-CALM-CANON-009` — THE CANONICAL PATH, MANDATED IN THE CONTRACT AND ASSERTED HERE.**
+      Inside `#/$defs/dial_reading` the discriminator is at `properties.state`, at depth ONE,
+      pinned per branch at `properties.state.const`. Both contracts now declare
+      `"required": ["state"]` on the union and carry a normative `RULE CC` clause in their
+      `description`. Asserted per surface, counted: the union is `additionalProperties: false`,
+      declares `properties.state` and REQUIRES `state`; **every** branch is
+      `additionalProperties: false`, REQUIRES `state`, and declares `properties.state.const` as a
+      STRING; and **every** branch REQUIRES at least one property typed `#/$defs/utc_timestamp` —
+      the freshness stamp, asserted by TYPE and never by NAME, because `VALUE`/`DEGRADED` require
+      `as_of_utc` while `UNKNOWN` requires `since_utc`. **A BRANCH THAT REQUIRES NO TIMESTAMP
+      CANNOT PROVE FRESHNESS AND IS A VIOLATION.** The ABSENCE of the canonical path is its **own**
+      named violation and is deliberately NOT folded into `CD-CALM-BRANCHES-006`, which reports a
+      recognition failure and would read as the wrong sentence. **A `description` IS NOT AN
+      ENFORCEMENT POINT** — `absent_data_detail_level`'s own description records 16A, where the
+      guarantee was *"asserted only in PROSE"* while the gate admitted a calm `UNKNOWN` dial on
+      both surfaces. The prose states the mandate; these codes enforce it.
+    * **`CD-CALM-FRESH-010` — THE AFFIRMATIVE VALUE CHECK OVER THE NOW-CLOSED ALPHABET**, which is
+      `PO-DECISIONS-0027` ruling 5 **MADE ACHIEVABLE** (`PO-DECISIONS-0028` ruling 2). A branch may
+      reference the calm-bearing `#/$defs/detail_level` **IF AND ONLY IF** its
+      `properties.state.const` is in `PRESENT_STATES` **and** it requires a freshness stamp;
+      **every other branch MUST reference a vocabulary from which `calm` is ABSENT.** That is the
+      affirmative form: it does not ask *"is this state on my list of bad ones?"* — the question
+      nine audits defeated by naming a state nobody had listed — it asks *"has this branch PROVED
+      present-and-fresh?"*. **A never-before-named state must arrive as a NEW BRANCH; a new
+      branch's state is NOT in `PRESENT_STATES`; therefore it CANNOT CARRY `calm` — BY
+      CONSTRUCTION, OVER A CLOSED SET, AND NOT BY RECOGNITION OVER AN OPEN ONE.** The vocabulary is
+      judged by its VALUES and never by the name of the `$def` it comes from (`CD-PL-F169`,
+      `CD-ASR-WO3-02` F06/F07). **The VACUITY direction is asserted too and carries equal weight:**
+      a branch that HAS proved present-and-fresh and CANNOT carry `calm` is also a violation,
+      because PID §4 makes `calm` the base case and a contract that cannot express it is enforcing
+      silence.
+
+    **THE CONCLUSION THAT FOLLOWS, AND ONLY THIS ONE:** *a contract edit cannot open a
+    calm-over-unknown hole at the ROOT of either envelope without this instrument going RED*,
+    because the hole must arrive as a root property and every root property is limb (a), limb (b)
+    or a violation.
+
+    *** NOW THE BOUNDARY, NAMED RATHER THAN LEFT FOR THE NEXT AUDITOR. THE ARGUMENT IS ABOUT THE
+    TWO ENVELOPE CONTRACTS THIS INSTRUMENT LOADS AND NOTHING ELSE. ***
+    **(a)** It is not a claim about documents the gate never sees — `DECLARED LIMIT 4`'s closing
+    paragraph, unchanged.
+    **(b)** It is not a claim about a contract this instrument is not looking at —
+    `$CD_CONTRACTS_DIR` is `DECLARED LIMIT 1`; the check REFUSES TO RUN when it resolves elsewhere
+    and does **not** prevent the route. **NOT PROVED TO BE CARRIED ANYWHERE.**
+    **(c)** It is a claim about the **ROOT**, not about every position in the document. Depth
+    inside a limb (b) property is covered by the LIVE GATE probe and by **nothing structural**, and
+    only for the **two** shapes in `CALM_BEARING_PROBES`. **THAT IS TWO SHAPES AND IT IS NOT A
+    CLASS**, and it is written that way on purpose: four sentences on this row have already been
+    superseded for describing a sample as a measurement (`DECLARED LIMIT 10`, `12`(a), `13`, and
+    `14`'s cost column).
+    **(d)** The freshness assertion keys on the definition object `#/$defs/utc_timestamp` **by
+    identity**: a stamp typed by an inline copy of the same pattern is REPORTED, not accepted, and
+    **renaming that `$def` turns this instrument RED**. The remedy is to price the rename, never to
+    loosen the assertion.
+    **(e)** `DECLARED LIMIT 12`'s residue is **not** closed at the recogniser and is not claimed to
+    be — `_dial_bearing` still answers `False` about a dial discriminating on a differently-named
+    key. **WHAT CHANGED IS THAT THE GUARANTEE NO LONGER RESTS ON IT:** such a dial cannot reach a
+    published envelope as a ROOT property without failing `RULE CC`. The recogniser is RETAINED as
+    a **SECOND instrument** (`PO-DECISIONS-0028` ruling 3 — `8398741` is preserved, nothing
+    reverted), and a second instrument's residue is a weaker thing than a sole guard's.
+    **(f)** `PRESENT_STATES` is typed in, like `DECLARED_STATES` and for the same reason: whether a
+    NEW state means the data is PRESENT is product meaning (`PBG-AUTH-005`), so a new state makes
+    this instrument RED until a human rules — which is the mechanism by which `CC-3` refuses `calm`
+    to a never-before-named state rather than a list of bad names.
+    **(g)** **NOTHING OUTSIDE THIS INSTRUMENT READS `RULE CC`.** The contracts now STATE the mandate
+    in their `description`s, and a `description` refuses nothing. **NOT PROVED TO BE CARRIED
+    ANYWHERE.**
+
+    *** AND ONE MORE, WHICH IS `CC-4` AND IS SEPARATE (`PO-DECISIONS-0028` ruling 4). ***
+    `DECLARED LIMIT 15`'s heading said **"REACHING THE CAP IS NOT A SILENT SUCCESS"** and the code
+    did the opposite. `_instance_declared_names` returned the sentinel `INSTANCE_TOO_DEEP` at its
+    depth cap and **the sentinel had ZERO EXECUTABLE CONSUMERS**, so reaching the cap produced a
+    clean `False` — the only silent answer this instrument has. **MEASURED, ONE INTEGER APART, at
+    `8398741`:** a `state` nested inside an `enum` member at depth 24 -> `None`; at depth 25 ->
+    `False`. `_dial_bearing` now sets `undecidable = True` on that sentinel, which is `DECLARED
+    LIMIT 14` limb (c). **MEASURED AFTER:** depths 1/5/20/22/23/24 -> `None`, **UNCHANGED**; depths
+    25/26/30/40 -> `None`, **MOVED from `False`**. `RULE CC` makes a nest this deep unreachable at
+    the root anyway; **the cap is fixed regardless, because a cap that fails open is a defect
+    whether or not anything reaches it.**
+
 ### Numbering — because `CD-ASR-WO3-06` could not verify it and said so
 
-**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The sixteen above (**twelve until
-`16B-FIX-3`, which added `13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`**) are
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The seventeen above (**twelve until
+`16B-FIX-3`, which added `13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`; `17`
+added at `16B-CONTRACT-CLOSURE`**) are
 `CD-RT-001-MISSING-DATA-NEVER-CALM`'s, and they are said identically here, in the header of
 `tools/register/check_missing_data_never_calm.py`, and in `required-tests.yaml` (`CD-RULE-004`,
 three places). The **sibling** row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its **own** independent
