@@ -108,7 +108,7 @@
       }
     },
     "dial_reading": {
-      "description": "Reading[T] as a discriminated union: VALUE | DEGRADED | UNKNOWN, mirroring crash_detector.dials.reading exactly. UNKNOWN declares no score property at ALL, so an unknown dial carrying a number is unrepresentable rather than merely discouraged — that is CD-AC-001 held in the schema. additionalProperties is false BOTH here and inside every branch: the parent closure catches an unknown key directly (a sibling of oneOf sees the whole instance), and the branch closure catches a key that is valid for a DIFFERENT state, such as a score smuggled onto an UNKNOWN reading. No range is declared on score, and that is a refusal rather than an omission: a declared range is a declared scale, and the scale of a dial is product meaning owed under CD-D-005 (see CD-ENG-F06). *** detail_level ATTACHES HERE, PER DIAL, AND NOT AT ENVELOPE TOP LEVEL (PO-DECISIONS-0025 ruling 5, which ruled Q29). *** The placement is the doctrine: a SINGLE envelope-level detail_level derived from BOTH readings would require a function consuming the equity magnitude and the monetary magnitude and returning one answer, which is the CD-AC-002 shape reached one step sideways (the output is a level rather than a number). Two dials, two levels, computed separately by crash_detector.publication.detail_level.detail_level_for, which takes ONE reading and ONE dial slot and has no variant taking both. It is REQUIRED in every branch of the union INCLUDING UNKNOWN, and that is the point rather than an oversight: PID §3.2 is constitutional — 'Missing data must never render as calm' — so the branch with no score is exactly the branch that must still say how loudly to render, and DetailPolicy REFUSES CONSTRUCTION when absent_data_level is calm. An OPTIONAL detail_level would let a renderer meet a dial carrying no level and decide for itself, which is the second decision site the whole module exists to prevent.",
+      "description": "Reading[T] as a discriminated union: VALUE | DEGRADED | UNKNOWN, mirroring crash_detector.dials.reading exactly. UNKNOWN declares no score property at ALL, so an unknown dial carrying a number is unrepresentable rather than merely discouraged — that is CD-AC-001 held in the schema. additionalProperties is false BOTH here and inside every branch: the parent closure catches an unknown key directly (a sibling of oneOf sees the whole instance), and the branch closure catches a key that is valid for a DIFFERENT state, such as a score smuggled onto an UNKNOWN reading. No range is declared on score, and that is a refusal rather than an omission: a declared range is a declared scale, and the scale of a dial is product meaning owed under CD-D-005 (see CD-ENG-F06). *** detail_level ATTACHES HERE, PER DIAL, AND NOT AT ENVELOPE TOP LEVEL (PO-DECISIONS-0025 ruling 5, which ruled Q29). *** The placement is the doctrine: a SINGLE envelope-level detail_level derived from BOTH readings would require a function consuming the equity magnitude and the monetary magnitude and returning one answer, which is the CD-AC-002 shape reached one step sideways (the output is a level rather than a number). Two dials, two levels, computed separately by crash_detector.publication.detail_level.detail_level_for, which takes ONE reading and ONE dial slot and has no variant taking both. It is REQUIRED in every branch of the union INCLUDING UNKNOWN, and that is the point rather than an oversight: PID §3.2 is constitutional — 'Missing data must never render as calm' — so the branch with no score is exactly the branch that must still say how loudly to render. *** AND THE VALUE IT MAY CARRY THERE IS NARROWED BY THIS DOCUMENT, NOT DELEGATED TO ONE: DEGRADED and UNKNOWN reference #/$defs/absent_data_detail_level, which does not contain calm, so an unknown dial rendering as calm is UNREPRESENTABLE rather than merely forbidden elsewhere. SUPERSEDED AT WO-3 INCREMENT 16A-FIX, STATED AND NOT ERASED: this sentence previously ended 'and DetailPolicy REFUSES CONSTRUCTION when absent_data_level is calm.' That was TRUE OF THAT MODULE AND FALSE AS A CLAIM ABOUT THIS CONTRACT — the envelope never consults DetailPolicy, detail_level_for had zero callers in src/, and an UNKNOWN dial carrying calm was in fact ADMITTED on BOTH surfaces (CD-ASR-WO3-03, RED). A description is not an enforcement point; the claim is now held by the thing that does the refusing. *** An OPTIONAL detail_level would let a renderer meet a dial carrying no level and decide for itself, which is the second decision site the whole module exists to prevent.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -248,7 +248,7 @@
           "$ref": "#/$defs/contribution_list"
         },
         "detail_level": {
-          "$ref": "#/$defs/detail_level"
+          "$ref": "#/$defs/absent_data_detail_level"
         }
       }
     },
@@ -279,7 +279,7 @@
           "$ref": "#/$defs/source_id_list"
         },
         "detail_level": {
-          "$ref": "#/$defs/detail_level"
+          "$ref": "#/$defs/absent_data_detail_level"
         }
       }
     },
@@ -288,6 +288,14 @@
       "type": "string",
       "enum": [
         "calm",
+        "elevated",
+        "acute"
+      ]
+    },
+    "absent_data_detail_level": {
+      "description": "*** PID §3.2, CONSTITUTIONAL, AND HELD IN THIS DOCUMENT RATHER THAN DELEGATED: 'Missing data must never render as calm.' *** The #/$defs/detail_level vocabulary MINUS calm. It is the type the DEGRADED and UNKNOWN branches use, and those two are exactly the missing-data states: UNKNOWN declares no score at all, and DEGRADED carries a value AND its damage with at least one named missing input. crash_detector.publication.detail_level.detail_level_for returns policy.absent_data_level for BOTH of them and never a level derived from a score, so a calm on either branch is a document the code cannot produce and the contract must not accept. This is the SAME PATTERN CD-AC-001 already holds one clause over — UNKNOWN declares no score property at all, so an unknown dial carrying a number is unrepresentable — applied to the other constitutional clause, which is what WO-3 increment 16A missed. SUPERSEDED STATE, RECORDED RATHER THAN ERASED: before 16A-FIX both branches referenced #/$defs/detail_level, the guarantee was asserted only in PROSE here and enforced only in DetailPolicy.__post_init__ — a module this envelope never consults — and an UNKNOWN dial carrying calm was ADMITTED by refuse_unless_publishable on BOTH surfaces (CD-ASR-WO3-03, RED; reproduced at BL-20260824T084141Z-0160). With zero registered sources every dial is UNKNOWN, so that was the only state this product could publish. VALUE deliberately keeps the full vocabulary including calm: a genuinely calm reading backed by a real number is the whole reason calm exists, and narrowing it there would satisfy PID §3.2 vacuously by making the dial incapable of ever reading calm. NO THRESHOLD IS DECLARED HERE either; this constrains VOCABULARY, never boundaries.",
+      "type": "string",
+      "enum": [
         "elevated",
         "acute"
       ]
