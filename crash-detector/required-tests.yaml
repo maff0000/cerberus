@@ -377,6 +377,28 @@ criteria:
         gets disabled, and then it guards nothing. The mitigation is that the SIBLING row
         CD-RT-001-MISSING-DATA-NEVER-CALM is purely behavioural and PASSES such a tree, so the
         constitutional guarantee is never carried by the name-coupled half alone.
+        *** THE SHORTFALL DECLARED ABOVE IS CLOSED AT WO-3 INCREMENT 16B-FIX-2 (FX8), BY
+        CD-ENG-WO3-07, whose dispatch GRANTED the two owed paths that CD-ENG-WO3-06 correctly
+        refused to widen its own scope to reach. *** THE OTHER TWO CD-RULE-004 PLACES ARE NOW
+        WRITTEN: contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md and the MODULE DOCSTRING
+        of tests/test_detail_level.py. No assertion in that file moved and it still reports
+        52 passed — the FX4 ruling protects that file's ASSERTIONS, and this is its prose.
+        *** AND THE NUMBERING, WHICH CD-ASR-WO3-06 (v) RECORDED AS UNVERIFIABLE. *** DECLARED
+        LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE. THESE — 10, 11 and 12 — ARE
+        CD-RT-001-ABSENCE-RENDERS-UNKNOWN's, continuing the 1-12 sequence that runs across
+        tools/register/check_judgement_path_doors.py (1-4, 7-9), src/crash_detector/admission.py
+        (5-6) and this block (10-12). THE SIBLING ROW CD-RT-001-MISSING-DATA-NEVER-CALM HAS ITS
+        OWN INDEPENDENT SEQUENCE, ALSO 1-12 SINCE 16B-FIX-2, in the comment block below this
+        entry. BOTH ROWS LIVE IN THIS ONE FILE, SO A BARE "DECLARED LIMIT 12" IS AMBIGUOUS HERE
+        AND ALWAYS WAS: quote the row id with the number.
+        THE AUDITOR'S PREMISE IS CORRECTED RATHER THAN ACCEPTED, because a correction that adopts
+        a false premise is not a correction. A306 (v) says DECLARED LIMIT 12 "has NO counterpart
+        10 or 11 anywhere in required-tests.yaml, whose own limit list for this row runs 1-9".
+        MEASURED, and the command is in BL-20260824T*-16B2: DECLARED LIMITS 10 AND 11 are stated
+        in THIS file, in THIS same block scalar, 38 lines above DECLARED LIMIT 12; and the "1-9"
+        list is the OTHER row's, in a different comment block. The numbering WAS consistent. What
+        was genuinely missing — and what a reader actually could not check — was any statement
+        anywhere of the SCHEME. That statement is now in all six places the two rows own.
         ================================================================================
       evidence_ref: RTR-WO2-0001
   # DECLARED LIMIT — CD-RT-001-MISSING-DATA-NEVER-CALM. Required by CD-RULE-004, and said the
@@ -494,14 +516,44 @@ criteria:
   #      catches that tree; a REQUIRED third slot in any spelling was already caught here). THAT
   #      IS NOT THE POINT: a limit that promises what the code does not do is the defect, whatever
   #      else happens to cover it.
-  #      WHAT IS TRUE INSTEAD. What is DRIVEN is every top-level property whose value is literally
+  #      WHAT WAS SAID INSTEAD AT 16B-FIX, VERBATIM — AND IT IS ALSO SUPERSEDED, AT 16B-FIX-2,
+  #      FOR BEING FALSE IN EXACTLY THE WAY THE SENTENCE IT REPLACED WAS FALSE:
+  #      "CD-CALM-SLOTS-007 enumerates every root property that constrains a dial state under ANY
+  #      spelling and FAILS the check if that set is not exactly the driven set, or if a root
+  #      property's shape cannot be decided at all."
+  #      THAT SENTENCE WAS ALSO FALSE, in the same three places. MEASURED by CD-ASR-WO3-06 (F2)
+  #      and reproduced as arms C13 and C14: _dial_bearing asked whether a root property's state
+  #      const/enum INTERSECTED DECLARED_STATES and returned FALSE where it did not — not
+  #      undecidable. An OPTIONAL root property credit_stress whose state is {"const": "NO_DATA"}
+  #      (C13) CONSTRAINS a dial state, its shape IS decidable, it was NOT in the driven set, and
+  #      THE CHECK DID NOT FAIL: the live gate ADMITTED it rendering as calm on BOTH surfaces
+  #      while the instrument reported PASS — 144 assertions, 0 violations. The identical property
+  #      with the state spelled ["UNKNOWN","STALE"] WAS caught. THE ONLY DIFFERENCE BETWEEN A
+  #      CAUGHT TREE AND AN UNCAUGHT ONE WAS WHETHER THE NEW DIAL REUSED AN OLD STATE NAME, which
+  #      is GUARD_THE_INSTANCE_NOT_THE_CLASS (PO-DECISIONS-0026 ruling 10). C14 is that shape
+  #      carrying ruling 5's LIVENESS quantity — optional root feed_liveness, states
+  #      ["LIVE","STALE"] — and this criterion's own words are "missing OR STALE".
+  #      WHAT IS TRUE INSTEAD, WRITTEN AFTER FX6 WAS MEASURED AND DESCRIBING WHAT WAS MEASURED.
+  #      What is DRIVEN is every top-level property whose value is literally
   #      {"$ref": "#/$defs/dial_reading"}, on every surface EnvelopeSurface declares. A dial slot
-  #      spelled any other way is NOT DRIVEN — and since 16B-FIX is NOT SILENT: CD-CALM-SLOTS-007
-  #      enumerates every root property that constrains a dial state under ANY spelling and FAILS
-  #      the check if that set is not exactly the driven set, or if a root property's shape cannot
-  #      be decided at all. REPORTED IS NOT DRIVEN AND THIS LIMIT NO LONGER PRETENDS OTHERWISE. A
+  #      spelled any other way is NOT DRIVEN. Since 16B-FIX-2 it is NOT SILENT PROVIDED IT
+  #      DECLARES A PROPERTY NAMED state, and that proviso is the whole of the honest claim.
+  #      _dial_bearing walks a root property through a DECLARED keyword set to a DECLARED depth:
+  #      a declared state whose const/enum INTERSECTS DECLARED_STATES is DIAL-BEARING (driven, or
+  #      CD-CALM-SLOTS-007 fails); a declared state whose vocabulary does NOT intersect is
+  #      UNDECIDABLE and REPORTED by CD-CALM-SLOTS-007's undecidable limb, because "I cannot
+  #      classify this state vocabulary" is the case DECLARED LIMIT 8 says must STOP the check;
+  #      an unresolvable $ref, a keyword outside the declared set, or a deeper nesting is
+  #      UNDECIDABLE and reported the same way.
+  #      AND WHAT IS STILL SILENT, SAID PLAINLY RATHER THAN LEFT FOR THE NEXT AUDITOR TO MEASURE:
+  #      a root property carrying a dial that DOES NOT DECLARE A PROPERTY NAMED state — one that
+  #      discriminates on a differently-named key — is classified False and says nothing. THIS
+  #      LIMIT NO LONGER CLAIMS "UNDER ANY SPELLING". It claims: declared state, under any
+  #      spelling of that state's vocabulary, within a declared keyword set and depth. See this
+  #      row's DECLARED LIMIT 12.
+  #      REPORTED IS NOT DRIVEN AND THIS LIMIT STILL DOES NOT PRETEND OTHERWISE. A
   #      third SURFACE genuinely is driven on the day it is added, from EnvelopeSurface itself;
-  #      that half of the old sentence was true and stands.
+  #      that half of the original sentence was true and stands.
   #      NOT SUPPORT FOR A THIRD DIAL: PO-DECISIONS-0026 standing is two dials, never blended, and
   #      CD-CALM-SLOTS-007 fails closed precisely so a third dial stays a product decision.
   #      And a path that never calls refuse_unless_publishable is outside this check entirely.
@@ -538,6 +590,72 @@ criteria:
   #      values that the property's OWN subschema accepts. A property none of them satisfies makes
   #      the check report CD-CALM-BRANCHES-006 and exit 1. Deny-by-default, so it is not an
   #      escape; it IS a maintenance cost, and reporting is the correct failure direction.
+  #  10. A BRANCH WHOSE SHAPE IS CONDITIONAL IS REPORTED, NOT DRIVEN — DENY BY DEFAULT. NEW AT
+  #      16B-FIX-2 (FX5, closing CD-ASR-WO3-06 F1). The check builds EXACTLY ONE DOCUMENT PER
+  #      BRANCH, out of that branch's own required + properties. A branch that ALSO carries any of
+  #      if/then/else, allOf, anyOf, oneOf, not, dependentSchemas, dependentRequired or
+  #      unevaluatedProperties admits MORE shapes than that one document, and the shapes it never
+  #      builds are exactly where a calm variant hides. MEASURED, arm C11: dial_reading_unknown
+  #      keeps its name, its state.const, its required list and additionalProperties:false; its
+  #      detail_level is widened; the narrowing is relocated into "if": {"required":
+  #      ["render_hint"]} with an "else" carrying a fully closed copy. A dial WITHOUT the marker is
+  #      REFUSED; a dial WITH it is ADMITTED on both surfaces; the superseded instrument reported
+  #      PASS — 144 assertions, 0 violations and EXACTLY ONE of the register's thirty execute:
+  #      lines moved — tests/test_detail_level.py, the memorial PO-DECISIONS-0026 ruling 9 said the
+  #      guarantee must not be left in. Such a branch is now CD-CALM-BRANCHES-006, on DECLARED
+  #      LIMIT 9's own sentence: a branch whose shape is conditional is a branch this check cannot
+  #      say it has driven. THE COST IS PRICED: the check does NOT enumerate conditional shapes —
+  #      one candidate per satisfiable combination of optional markers is a schema-instance
+  #      generator and a design question this row does not price (RULED by PROJECT_LEAD_SEAT_02;
+  #      the auditor correctly refused to decide it), so a LEGITIMATE conditional dial branch would
+  #      turn this instrument red until that increment prices it. IT COSTS NOTHING TODAY: measured,
+  #      the clean tree's six branches declare only type/additionalProperties/required/properties/
+  #      description and the clean run is unchanged at PASS — 144 assertions, 0 violations.
+  #  11. THE FILLER DIAL IS THE FIRST ABSENT-DATA BRANCH THAT ACTUALLY BUILDS, AND LIMIT 9'S OWN
+  #      SENTENCE WAS FALSE UNTIL IT WAS. NEW AT 16B-FIX-2; it corrects a measurement CD-ASR-WO3-06
+  #      F3 recorded against 16B-FIX (CD-RULE-004, PBG-CONT-003 — stated, not erased). LIMIT 9 says
+  #      an unbuildable property "makes the check report CD-CALM-BRANCHES-006 and exit 1". AT
+  #      16B-FIX THAT WAS FALSE: the filler dial was built from the first absent-data branch FOUND,
+  #      so an unbuildable UNKNOWN branch exited 3 as PRECONDITION_NOT_MET, upstream of the matrix,
+  #      WITH NO VIOLATION CODE AT ALL. Both outcomes are non-zero and both state a reason, so
+  #      nothing escaped; but the limit described an observable the code did not produce. The
+  #      filler is now the first absent-data branch that BUILDS, so the unbuildable one is REPORTED
+  #      at exit 1 and LIMIT 9 says what happens. MEASURED, arm C17: the UNKNOWN branch gains a
+  #      required nested object with its own required member — 16B-FIX gave exit 3 and no code;
+  #      16B-FIX-2 gives FAIL — 32 violation(s), 20x CD-CALM-BRANCHES-006 + 12x CD-CALM-PAIRED-004.
+  #      WHAT IT COSTS: if EVERY absent-data branch is unbuildable the check still exits 3, naming
+  #      each branch and its obstacle — there is then no admissible dial to fill the other slots
+  #      with and nothing to measure.
+  #  12. A DIAL THAT DOES NOT DECLARE A PROPERTY NAMED state IS STILL SILENT. NEW AT 16B-FIX-2
+  #      (FX6, closing CD-ASR-WO3-06 F2), and it is the RESIDUE of that fix rather than a hole the
+  #      fix opened. _dial_bearing now stops — None, UNDECIDABLE, reported by CD-CALM-SLOTS-007 —
+  #      on a resolved subschema that DECLARES a state whose const/enum does not intersect
+  #      DECLARED_STATES, which is what makes arms C13 and C14 red. THE LOOSER, LOUDER FORM WAS
+  #      RULED over the tighter one (require a state AND a detail_level): a false positive costs
+  #      one seat one look at one contract; a false negative costs the constitution. MEASURED, it
+  #      does not fire on the clean tree (PASS — 144 assertions, 0 violations, and the whole
+  #      30-line register byte-identical) nor on a legitimate optional root object that is not a
+  #      dial (arm C16, PASS — 144). WHAT IS STILL SILENT: a root property carrying a dial that
+  #      discriminates on a differently-NAMED key — status, kind, reading_state — is classified
+  #      False and reported by nothing here. This check keys on the property NAME state and on
+  #      nothing else, and widening that to "any discriminator" is not an Engineer's judgement to
+  #      make (PBG-AUTH-005). NOT PROVED TO BE CARRIED ANYWHERE.
+  #
+  # NUMBERING, BECAUSE CD-ASR-WO3-06 COULD NOT VERIFY IT AND SAID SO. DECLARED LIMIT NUMBERS ARE
+  # PER REGISTER ROW, NOT PER FILE. The limits above are CD-RT-001-MISSING-DATA-NEVER-CALM's and
+  # they run 1-12, said identically here, in the header of
+  # tools/register/check_missing_data_never_calm.py, and in
+  # contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md (CD-RULE-004, three places). The
+  # SIBLING row CD-RT-001-ABSENCE-RENDERS-UNKNOWN has its OWN independent 1-12 sequence, spread
+  # across tools/register/check_judgement_path_doors.py (1-4, 7-9),
+  # src/crash_detector/admission.py (5-6) and this file (10-12, in that row's own block above).
+  # BOTH ROWS LIVE IN THIS FILE, SO A BARE "DECLARED LIMIT 12" IS AMBIGUOUS HERE AND ALWAYS WAS —
+  # quote the row id with the number. CD-ASR-WO3-06 (v) recorded that "DECLARED LIMIT 12 has no
+  # counterpart 10 or 11 anywhere in required-tests.yaml, whose own limit list for this row runs
+  # 1-9". THAT IS NOT WHAT THE FILE SAYS AND THE CORRECTION IS RECORDED RATHER THAN THE PREMISE
+  # ACCEPTED: DECLARED LIMITS 10 AND 11 are stated in this file, in the SAME block scalar as that
+  # row's DECLARED LIMIT 12 and 38 lines above it, and the "1-9" list belongs to the OTHER row.
+  # The numbering was consistent; what was missing was any statement of the SCHEME. It is above.
   #
   # FOR THE AUDITOR. Do not read a clean run of this check as proof that no route from missing
   # data to a calm rendering exists. It proves that the LIVE PUBLICATION GATE refuses one, on

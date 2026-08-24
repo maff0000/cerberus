@@ -197,14 +197,53 @@ more than its guard delivers.**
    by this instrument. **That is not the point. A limit that promises what the code does not do is
    the defect, whatever else happens to cover it.**
 
-   **WHAT IS TRUE INSTEAD.** What is **DRIVEN** is every top-level property whose value is
-   literally `{"$ref": "#/$defs/dial_reading"}`, on every surface `EnvelopeSurface` declares. A
-   dial slot spelled any other way is **NOT DRIVEN** — and, since `16B-FIX`, is **NOT SILENT**:
-   `CD-CALM-SLOTS-007` enumerates every root property that constrains a dial `state` under **any**
-   spelling and **FAILS the check** if that set is not exactly the driven set, or if any root
-   property's shape cannot be decided at all. **REPORTED IS NOT DRIVEN, and this limit no longer
-   pretends otherwise.** A third *surface* genuinely is driven on the day it is added, because the
-   surfaces come from `EnvelopeSurface` itself; that half of the old sentence was true and stands.
+   > **WHAT WAS SAID INSTEAD AT `16B-FIX`, VERBATIM — AND IT IS ALSO SUPERSEDED, AT `16B-FIX-2`,
+   > FOR BEING FALSE IN EXACTLY THE WAY THE SENTENCE IT REPLACED WAS FALSE:**
+   > *"`CD-CALM-SLOTS-007` enumerates every root property that constrains a dial `state` under
+   > **any** spelling and **FAILS the check** if that set is not exactly the driven set, or if any
+   > root property's shape cannot be decided at all."*
+
+   **THAT SENTENCE WAS ALSO FALSE, IN THE SAME THREE PLACES.** MEASURED by `CD-ASR-WO3-06` (F2)
+   and reproduced as arms `C13` and `C14`: `_dial_bearing` asked whether a root property's `state`
+   `const`/`enum` **intersected** `DECLARED_STATES`, and where it did not it returned **`False` —
+   not undecidable.** An **optional** root property `credit_stress` whose state is
+   `{"const": "NO_DATA"}` (`C13`) **constrains a dial `state`**, its shape **is** decidable, it was
+   **not** in the driven set — **and the check did not fail.** The live gate ADMITTED it rendering
+   as `calm` on **both** surfaces while the instrument reported `PASS — 144 assertions, 0
+   violations`. The identical property with the state spelled `["UNKNOWN","STALE"]` **was** caught.
+   *** **THE ONLY DIFFERENCE BETWEEN A CAUGHT TREE AND AN UNCAUGHT ONE WAS WHETHER THE NEW DIAL
+   REUSED AN OLD STATE NAME**, which is `GUARD_THE_INSTANCE_NOT_THE_CLASS` (`PO-DECISIONS-0026`
+   ruling 10). *** `C14` is the same shape carrying ruling 5's **liveness** quantity — optional
+   root `feed_liveness`, states `["LIVE","STALE"]` — and `CD-AC-001`'s own words are *"missing **or
+   stale** input never renders as calm"*.
+
+   **WHAT IS TRUE INSTEAD — WRITTEN AFTER `FX6` WAS MEASURED, AND DESCRIBING WHAT WAS MEASURED.**
+   What is **DRIVEN** is every top-level property whose value is literally
+   `{"$ref": "#/$defs/dial_reading"}`, on every surface `EnvelopeSurface` declares. A dial slot
+   spelled any other way is **NOT DRIVEN**. Since `16B-FIX-2` it is **NOT SILENT PROVIDED IT
+   DECLARES A PROPERTY NAMED `state`**, and that proviso is the whole of the honest claim.
+   `_dial_bearing` walks a root property through a **declared** keyword set to a **declared**
+   depth, and:
+
+   * a resolved subschema declaring a `state` whose `const`/`enum` **intersects**
+     `DECLARED_STATES` is **dial-bearing** — driven, or `CD-CALM-SLOTS-007` fails;
+   * a resolved subschema declaring a `state` whose vocabulary does **not** intersect is
+     **UNDECIDABLE**, reported by `CD-CALM-SLOTS-007`'s `undecidable` limb, because *"I cannot
+     classify this state vocabulary"* is precisely the case `DECLARED LIMIT 8` says must **stop**
+     the check;
+   * a `$ref` that does not resolve, a keyword outside the declared set, or a nesting deeper than
+     the walk is **UNDECIDABLE** and reported the same way.
+
+   **AND WHAT IS STILL SILENT, SAID PLAINLY RATHER THAN LEFT FOR THE NEXT AUDITOR TO MEASURE:** a
+   root property carrying a dial that **does not declare a property named `state`** — one that
+   discriminates on a differently-named key — is classified `False` and says nothing. **THIS LIMIT
+   NO LONGER CLAIMS "UNDER ANY SPELLING".** It claims: *declared `state`, under any spelling of
+   that state's vocabulary, within a declared keyword set and depth.* See this row's `DECLARED
+   LIMIT 12`.
+
+   **REPORTED IS NOT DRIVEN, and this limit still does not pretend otherwise.** A third *surface*
+   genuinely is driven on the day it is added, because the surfaces come from `EnvelopeSurface`
+   itself; that half of the original sentence was true and stands.
 
    *** THIS IS NOT AND MUST NOT BE READ AS SUPPORT FOR A THIRD DIAL. *** `PO-DECISIONS-0026`
    standing is **two dials, never blended**. `CD-CALM-SLOTS-007` fails closed precisely so that a
@@ -246,6 +285,70 @@ more than its guard delivers.**
    property's NAME. A property none of them satisfies makes the check report
    `CD-CALM-BRANCHES-006` and exit `1`. Deny-by-default, so it is not an escape; it **is** a
    maintenance cost, and reporting is the correct failure direction.
+10. **A BRANCH WHOSE SHAPE IS CONDITIONAL IS REPORTED, NOT DRIVEN — DENY BY DEFAULT.** *** NEW AT
+    `16B-FIX-2` (`FX5`, closing `CD-ASR-WO3-06` F1). *** This check builds **exactly one document
+    per branch**, out of that branch's own `required` + `properties`. A branch that **also**
+    carries any of `if`/`then`/`else`, `allOf`, `anyOf`, `oneOf`, `not`, `dependentSchemas`,
+    `dependentRequired` or `unevaluatedProperties` admits **more** shapes than that one document,
+    and the shapes it never builds are exactly where a `calm` variant hides. **MEASURED, arm
+    `C11`:** `dial_reading_unknown` keeps its name, its `state.const`, its `required` list and
+    `additionalProperties: false`; its `detail_level` is widened; the narrowing is relocated into
+    `"if": {"required": ["render_hint"]}` with an `"else"` carrying a fully closed copy. A dial
+    **without** the marker is REFUSED; a dial **with** it is ADMITTED on both surfaces; and the
+    superseded instrument reported `PASS — 144 assertions, 0 violations` while **exactly one** of
+    the register's thirty `execute:` lines moved — `tests/test_detail_level.py`, the memorial
+    `PO-DECISIONS-0026` ruling 9 said the guarantee must not be left in. Such a branch is now
+    `CD-CALM-BRANCHES-006`, on `DECLARED LIMIT 9`'s own sentence: *a branch whose shape is
+    conditional is a branch this check cannot say it has driven.* **THE COST IS PRICED:** this
+    check does **not** enumerate conditional shapes — one candidate per satisfiable combination of
+    optional markers is a schema-instance generator and a design question this row does not price
+    (RULED by `PROJECT_LEAD_SEAT_02`; the auditor correctly refused to decide it) — so a
+    **legitimate** conditional dial branch would turn this instrument red until that increment
+    prices it. **IT COSTS NOTHING TODAY:** measured, the clean tree's six branches declare only
+    `type`/`additionalProperties`/`required`/`properties`/`description`, and the clean run is
+    unchanged at `PASS — 144 assertions, 0 violations`.
+11. **THE FILLER DIAL IS THE FIRST ABSENT-DATA BRANCH THAT ACTUALLY BUILDS, AND `LIMIT 9`'S OWN
+    SENTENCE WAS FALSE UNTIL IT WAS.** *** NEW AT `16B-FIX-2`; it corrects a measurement
+    `CD-ASR-WO3-06` F3 recorded against `16B-FIX` (`CD-RULE-004`, `PBG-CONT-003` — stated, not
+    erased). *** `DECLARED LIMIT 9` says an unbuildable property *"makes the check report
+    `CD-CALM-BRANCHES-006` and exit `1`"*. **AT `16B-FIX` THAT WAS FALSE:** the filler dial was
+    built from the first absent-data branch **found**, so an unbuildable `UNKNOWN` branch exited
+    **3** as `PRECONDITION_NOT_MET`, upstream of the matrix, **with no violation code at all**.
+    Both outcomes are non-zero and both state a reason, so nothing escaped; **but the limit
+    described an observable the code did not produce.** The filler is now the first absent-data
+    branch that **builds**, so the unbuildable one is REPORTED at exit `1` and `LIMIT 9` says what
+    happens. **MEASURED, arm `C17`:** the `UNKNOWN` branch gains a required nested object with its
+    own `required` member — `16B-FIX` gave exit 3 and no code; `16B-FIX-2` gives
+    `FAIL — 32 violation(s)`, 20 × `CD-CALM-BRANCHES-006` + 12 × `CD-CALM-PAIRED-004`. **WHAT IT
+    COSTS:** if **every** absent-data branch is unbuildable the check still exits `3`, naming each
+    branch and its obstacle — there is then no admissible dial to fill the other slots with and
+    nothing to measure.
+12. **A DIAL THAT DOES NOT DECLARE A PROPERTY NAMED `state` IS STILL SILENT.** *** NEW AT
+    `16B-FIX-2` (`FX6`, closing `CD-ASR-WO3-06` F2), AND IT IS THE RESIDUE OF THAT FIX RATHER THAN
+    A HOLE THE FIX OPENED. *** `_dial_bearing` now stops — `None`, UNDECIDABLE, reported by
+    `CD-CALM-SLOTS-007` — on a resolved subschema that **declares** a `state` whose `const`/`enum`
+    does not intersect `DECLARED_STATES`, which is what makes arms `C13` and `C14` red. **THE
+    LOOSER, LOUDER FORM WAS RULED** over the tighter one (require a `state` **and** a
+    `detail_level`): a false positive costs one seat one look at one contract; a false negative
+    costs the constitution. **MEASURED, it does not fire on the clean tree** (`PASS — 144
+    assertions, 0 violations`, and the whole 30-line register byte-identical) **nor on a
+    legitimate optional root object that is not a dial** (arm `C16`, `PASS — 144`). **WHAT IS
+    STILL SILENT:** a root property carrying a dial that discriminates on a differently-**named**
+    key — `status`, `kind`, `reading_state` — is classified `False` and reported by nothing here.
+    This check keys on the property name `state` and on nothing else, and widening that to "any
+    discriminator" is not an Engineer's judgement to make (`PBG-AUTH-005`). **NOT PROVED TO BE
+    CARRIED ANYWHERE.**
+
+### Numbering — because `CD-ASR-WO3-06` could not verify it and said so
+
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The twelve above are
+`CD-RT-001-MISSING-DATA-NEVER-CALM`'s, and they are said identically here, in the header of
+`tools/register/check_missing_data_never_calm.py`, and in `required-tests.yaml` (`CD-RULE-004`,
+three places). The **sibling** row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its **own** independent
+1–12 sequence, spread across `tools/register/check_judgement_path_doors.py` (1–4, 7–9),
+`src/crash_detector/admission.py` (5–6) and `required-tests.yaml` (10–12). **Both rows live in
+`required-tests.yaml`, so a bare "DECLARED LIMIT 12" is ambiguous there and always was — quote the
+row id with the number.**
 
 ## Negative control
 
