@@ -229,7 +229,28 @@ criteria:
   # could not be CONSTRUCTED as a number and NOT that a number a consumer CHOSE for an absence
   # could not be PRESENTED as a dial, and the criterion's words are about rendering. Nothing
   # was removed from the command and tests/test_reading.py and tests/test_evaluate.py are
-  # unchanged in what they assert. The residue that remains — a module that renders its own
+  # unchanged in what they assert.
+  #
+  # AND IT GREW AGAIN AT WO-3 INCREMENT 16B, BY tests/test_detail_level.py, IN THE SAME FORM AND
+  # FOR THE SAME REASON. NOTHING WAS REMOVED FROM THE COMMAND AND NOTHING WAS REORDERED; the
+  # three files already named are unchanged in what they assert. WHY: that file holds NINE
+  # assertions of PID §3.2 — "missing data must never render as calm" — and MEASURED at
+  # CD-DISPATCH-INC16B-ENGINEER §2, THE REGISTER RAN NONE OF THEM. On a tree with the whole of
+  # 16A-FIX's constitutional narrowing reverted, all fourteen register instruments still exited
+  # as they do clean, and the only failures anywhere in `pytest tests/ -q` were those nine. The
+  # register declared 29 `execute:` lines, 14 of them naming pytest files, and this file was not
+  # one of the 14. A memorial nobody reads. WHY IT BELONGS ON THIS ENTRY AND NOT ANOTHER: this is
+  # the entry that already carries the RENDERING half of CD-AC-001 — that is exactly what the
+  # WO-2R2 growth above was for, and "renders as calm" is the same clause as "renders as a
+  # number" one level up: the level a dial is drawn at rather than the number in it. The scope
+  # stays CLASS and the entry's claim is UNCHANGED AND NOT WIDENED by this growth.
+  # *** THIS GROWTH IS THE SECONDARY DELIVERABLE AND IS NOT OFFERED AS THE GUARD. *** It stops
+  # the memorial being unread; it does not make the guarantee live, because a pytest file is
+  # still a file the gate happens to name. The LIVE instrument the PO's ruling 9 required is the
+  # SIBLING ENTRY CD-RT-001-MISSING-DATA-NEVER-CALM below, which drives
+  # refuse_unless_publishable itself. Do not read this line as the discharge of ruling 9.
+  #
+  # The residue that remains — a module that renders its own
   # number for an absence, with no renderer in WO-2 to refuse it — is boundary 7 of the
   # CD-RT-001-AST-NO-NUMERIC-DEFAULT entry above and is NOT PROVED TO BE CARRIED ANYWHERE. The three Reading constructors now have a DECLARED attribute
   # surface asserted by EQUALITY (not by the absence of a blacklist — that blacklist is what
@@ -252,7 +273,7 @@ criteria:
   # read a clean run as proof of the stronger claim.
   - test_id: CD-RT-001-ABSENCE-RENDERS-UNKNOWN
     scope: CLASS
-    execute: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q
+    execute: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py tests/test_detail_level.py -q
     execution_contract: contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md
     negative_control:
       violation: >
@@ -322,6 +343,127 @@ criteria:
         of refusal moves, from after the body has run to before it binds.
         ================================================================================
       evidence_ref: RTR-WO2-0001
+  # DECLARED LIMIT — CD-RT-001-MISSING-DATA-NEVER-CALM. Required by CD-RULE-004, and said the
+  # same way in the header of tools/register/check_missing_data_never_calm.py and in
+  # contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md. A REGISTER ENTRY MAY NOT CLAIM
+  # MORE THAN ITS GUARD DELIVERS.
+  #
+  # WHY THIS ENTRY EXISTS AT ALL — PO-DECISIONS-0026 ruling 9, in its own words: "the guarantee
+  # must be carried by a live instrument, not a memorial in tests." WO-3 increment 16A-FIX
+  # narrowed the DEGRADED and UNKNOWN branches of both envelope contracts to
+  # #/$defs/absent_data_detail_level, which does not contain `calm`, and an independent seat
+  # proved the narrowing behaviourally. NOTHING THE REGISTER READ WOULD HAVE NOTICED IF IT WERE
+  # UNDONE. MEASURED at CD-DISPATCH-INC16B-ENGINEER §2: with all four $refs restored to
+  # #/$defs/detail_level, every one of the fourteen register instruments exited exactly as it
+  # does on the clean tree, and the only failures in `pytest tests/ -q` were nine tests in
+  # tests/test_detail_level.py, a file no `execute:` line named. This entry is the guard that
+  # was missing.
+  #
+  # IT IS BEHAVIOURAL, NOT STRUCTURAL. It imports crash_detector from <root>/src and drives
+  # refuse_unless_publishable — the function publication/publish.py calls on both surfaces
+  # before it writes anything — with candidate envelopes, and records what the gate actually
+  # did. It does not read the schemas as documents, does not look for the string
+  # `absent_data_detail_level`, and does not assert that any $ref points anywhere. A structural
+  # read of schema keys is what let this class through three times here (CD-PL-F169,
+  # CD-ASR-WO3-02 F06/F07, CD-ASR-WO3-03).
+  #
+  # *** THE ADMITTING ARMS ARE NOT DECORATION AND CARRY EQUAL WEIGHT. *** The check asserts, in
+  # the same run, that the gate STILL ADMITS `elevated` and `acute` on an UNKNOWN or DEGRADED
+  # dial and `calm` on a VALUE dial. An instrument that only checked "calm is refused" is
+  # satisfied by a contract that refuses everything, and by a contract in which no dial can ever
+  # read calm at all — and `calm` on a real number backed by real inputs is the entire reason
+  # calm exists (PID §4). Assertion CD-CALM-VACUITY-000 checks the instrument's OWN table still
+  # contains the VALUE/calm admitting row, so the vacuity arm cannot be quietly deleted from the
+  # instrument that exists to carry it. CD-CALM-PAIRED-004 diffs every refused candidate against
+  # the ADMITTED candidate of the same state at the same slot on the same surface and requires
+  # exactly one differing JSON pointer, /<slot>/detail_level — same document, one token moved,
+  # opposite outcome. CD-CALM-REASON-003 requires the refusal to be SCHEMA_VIOLATION located at
+  # the mutated slot, because the right outcome from the wrong layer is this project's
+  # most-repeated defect (CD-PL-F74).
+  #
+  # THE SURFACES, DIAL SLOTS AND LEVELS ARE ENUMERATED FROM THE SUBJECT, NEVER TYPED IN — from
+  # EnvelopeSurface, from each contract's own properties that $ref #/$defs/dial_reading, and
+  # from the contract's own #/$defs/detail_level enum — so a third surface, a third dial or a
+  # fourth level is driven on the day it is added rather than silently unexercised.
+  #
+  # WHAT THIS CHECK DOES NOT CATCH, each boundary with something an auditor can execute:
+  #
+  #   1. IT JUDGES THE CONTRACT THE GATE ACTUALLY LOADS, WHICH IS CONFIGURABLE.
+  #      envelope_contract.contracts_dir() honours $CD_CONTRACTS_DIR, so the live gate can be
+  #      pointed at a widened copy while this repository's contracts are byte-intact.
+  #      MEASURED EXAMPLE, executed as arm C5 of plants/WO3-INC16B/MANIFEST.md, where the gate
+  #      ADMITS a calm UNKNOWN dial with both repository schemas untouched:
+  #        cp contracts/*.json /tmp/widened/    # then repoint dial_reading_unknown.detail_level
+  #        CD_CONTRACTS_DIR=/tmp/widened python3 -c "...refuse_unless_publishable(...)"
+  #      WHAT THIS CHECK DOES ABOUT IT: it exits 3 unless the contracts the gate resolves are
+  #      <root>/contracts, and prints their SHA-256 at every run (CD-PL-F98). IT DOES NOT
+  #      PREVENT THE ROUTE. A deployment that sets that variable to a widened copy is refused
+  #      by nothing in this repository: NOT PROVED TO BE CARRIED ANYWHERE.
+  #   2. IT PROVES NOTHING ABOUT A `VALUE` READING THAT SHOULD NOT HAVE BEEN A `VALUE`. A dial
+  #      whose inputs were missing but which was constructed as VALUE with a fabricated score
+  #      renders calm legitimately as far as this contract is concerned, and THIS CHECK ADMITS
+  #      IT — the VALUE/calm row says so out loud, and it must, or the check would be the
+  #      vacuous kind. THE CARRIERS ARE THE TWO SIBLING ENTRIES ABOVE:
+  #      CD-RT-001-AST-NO-NUMERIC-DEFAULT (the provenance of the magnitude) and
+  #      CD-RT-001-ABSENCE-RENDERS-UNKNOWN (the runtime post-condition
+  #      refuse_a_number_without_its_inputs). THIS IS ONE OF THREE GUARDS ON CD-AC-001 AND
+  #      NEVER A SOLE GUARD.
+  #   3. IT SAYS NOTHING ABOUT STALENESS. This criterion's words are "missing OR STALE". This
+  #      instrument drives the ABSENCE half only; nothing in it reads staleness_window_seconds,
+  #      the age of as_of_utc, or any liveness/relevance quantity. MEASURED EXAMPLE, which
+  #      exits 0 here: an envelope whose dials are UNKNOWN/elevated and whose as_of_utc is a
+  #      year old is ADMITTED by this check without comment. The stale half is CD-AC-009, and
+  #      as a product model it is PO-DECISIONS-0026 ruling 5, which is a LATER increment.
+  #   4. IT IS NOT A CENSUS OF RENDERING PATHS. A path that never calls
+  #      refuse_unless_publishable is outside it. MEASURED at this commit: the only callers in
+  #      src/ are publication/publish.py lines 276-277, on both surfaces, before any write. A
+  #      future serving layer that renders a dial without publishing an envelope is NOT PROVED
+  #      TO BE CARRIED ANYWHERE — the rendering layer is later WO work.
+  #   5. IT IMPORTS THE SUBJECT TREE AND INHERITS IT. Runtime check, because "refused" is a
+  #      runtime claim; it prints the resolved crash_detector.__file__ it imported.
+  #   6. IT NEEDS `jsonschema`, because the gate does, and it is therefore NOT stdlib-only like
+  #      the static checks in tools/register/. If jsonschema is absent it exits 3 with the
+  #      reason — never a pass and never a skip (PBG-CI-002).
+  #
+  # FOR THE AUDITOR. Do not read a clean run of this check as proof that no route from missing
+  # data to a calm rendering exists. It proves that the LIVE PUBLICATION GATE refuses one, on
+  # both surfaces, at every dial slot, while still admitting everything the product must be able
+  # to publish. The pair to weigh it with is the two entries above, and the arm to weigh it
+  # against is C4 in plants/WO3-INC16B/, which narrows VALUE as well: an instrument that passed
+  # that arm would be enforcing silence rather than holding PID §3.2.
+  - test_id: CD-RT-001-MISSING-DATA-NEVER-CALM
+    scope: CLASS
+    execute: python3 tools/register/check_missing_data_never_calm.py --root .
+    execution_contract: contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md
+    negative_control:
+      violation: >
+        An envelope carrying detail_level "calm" on a dial in the UNKNOWN or DEGRADED state
+        ADMITTED by refuse_unless_publishable on either surface, by ANY route. PID §3.2 is
+        constitutional — "Missing data must never render as calm" — and with zero registered
+        sources every dial reads UNKNOWN, so this is not an edge case: it is the only state
+        this product can currently publish. The class includes, and is not limited to: either
+        $ref on either contract's dial_reading_degraded or dial_reading_unknown branch restored
+        to #/$defs/detail_level, INCLUDING ONLY ONE BRANCH ON ONE SURFACE; "calm" added back
+        into the #/$defs/absent_data_detail_level enum, so the $ref target keeps its name and
+        loses its meaning; the branch detail_level requirement dropped so that the parent
+        dial_reading's full-vocabulary property is what applies; and any change to
+        refuse_unless_publishable that stops the closed schema being applied to the candidate.
+        *** AND THE VACUOUS DIRECTION IS EQUALLY A VIOLATION OF THIS ROW, WHICH IS THE HALF
+        THIS PROJECT'S HISTORY SAYS GETS MISSED: *** #/$defs/dial_reading_value.detail_level
+        narrowed so that NO dial can ever read calm on any branch, or any change that makes
+        `elevated` or `acute` stop being admitted on a missing-data branch. A tree on which
+        nothing can be published is not a tree on which PID §3.2 holds, and this row does not
+        report it as one. The instrument fails on all of these and its own CD-CALM-VACUITY-000
+        assertion fails if the VALUE/calm admitting row is removed from its table.
+        THIS CHECK HAS DECLARED LIMITS, stated in full in the comment above this entry, in the
+        header of tools/register/check_missing_data_never_calm.py and in the execution
+        contract, each with something an auditor can execute. It does NOT catch: a widened
+        contract reached through $CD_CONTRACTS_DIR (it refuses to run rather than preventing
+        it — measured as arm C5); a fabricated VALUE reading that should have been an absence;
+        anything about STALENESS, which is the other half of this criterion's own words; a
+        rendering path that never calls refuse_unless_publishable. It is ONE OF THREE guards on
+        CD-AC-001 and never a sole guard.
+      evidence_ref: RTR-WO3-0001
 
 - criterion_id: CD-AC-002
   origin: PID

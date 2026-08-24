@@ -12,6 +12,28 @@ The two propositions this file exists for:
 **NO SOURCE IS REGISTERED BY ANYTHING IN THIS FILE** (``Q25``). Magnitudes are built with
 the project's existing ``tests/dial_magnitudes.py`` helper, whose stand-in id never reaches
 ``raw.source_registry``.
+
+----
+
+*** **THIS FILE IS NOW NAMED BY THE REGISTER, AND UNTIL WO-3 INCREMENT 16B IT WAS NOT.** ***
+
+MEASURED at ``CD-DISPATCH-INC16B-ENGINEER`` §2, on a tree with the whole of 16A-FIX's
+constitutional narrowing reverted: **every one of the fourteen register instruments exited
+exactly as it does on the clean tree**, and the only failures anywhere in ``pytest tests/ -q``
+were **nine assertions in this file** — which no ``execute:`` line in ``required-tests.yaml``
+ran. The register declared 29 ``execute:`` lines, 14 of them naming pytest files, and this was
+not one of the 14. *A memorial, not a guard.* At increment 16B this file was added to
+``CD-RT-001-ABSENCE-RENDERS-UNKNOWN``'s declared command — **additively; nothing was removed
+from it and nothing was reordered** — which is the same growth that entry took at WO-2R2
+increment 1c and for the same reason: that entry carries the RENDERING half of ``CD-AC-001``,
+and *"renders as calm"* is *"renders as a number"* one level up.
+
+**DO NOT READ THAT AS THE DISCHARGE OF ``PO-DECISIONS-0026`` RULING 9.** The ruling requires
+the guarantee to be carried by *"a live instrument, not a memorial in tests"*, and a pytest
+file the gate happens to name is still a pytest file. **The live instrument is
+``tools/register/check_missing_data_never_calm.py`` (``CD-RT-001-MISSING-DATA-NEVER-CALM``)**,
+which drives ``refuse_unless_publishable`` itself on both surfaces at every dial slot. This
+file remains what it has always been: the propositions, asserted close to the code.
 """
 
 from __future__ import annotations
