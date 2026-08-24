@@ -1,0 +1,209 @@
+# ================================================================================================== #
+# BL-20260824T105209Z-0164 — PROJECT LEAD BOUNDARY. **16B IS ASSURED `AMBER`. RULING 9'S SUBSTANCE IS
+# DELIVERED AND THE INSTRUMENT HAS A HOLE OF THE EXACT CLASS IT WAS BUILT TO CLOSE. 16B IS NOT
+# ACCEPTED. 16B-FIX IS DISPATCHED TO A FRESH SEAT.**
+#
+# *** **THE AUDITOR BROKE IT THREE WAYS AND ONE IS INVISIBLE TO THE ENTIRE REGISTER. THIS SEAT
+# REPRODUCED THAT ONE IN FULL, WITH ITS CONTROL.** A fourth branch appended to
+# `#/$defs/dial_reading.oneOf`, selected by a marker property, adding NO new root key: the live gate
+# **ADMITS an UNKNOWN dial rendering as CALM on BOTH surfaces**, while the new instrument reads
+# `PASS — 67 assertions, 0 violations`, `check_schema_closed` reads `PASS — 304`, `test_detail_level.py`
+# reads `52 passed`, and the auditor measured all 30 `execute:` lines diffing EMPTY against clean.
+# **THE IDENTICAL PROBE ON THE CLEAN TREE IS REFUSED ON BOTH SURFACES.** ***
+#
+# **ROOT CAUSE, ONE SENTENCE, AND IT IS THE AUDITOR'S: the instrument enumerates surfaces, slots and
+# levels FROM THE CONTRACT — which is why it survives a rename, a reorder and a symmetric fourth
+# level — but it HARD-CODES THE DOCUMENT SHAPE, so a branch it did not write is a branch it cannot
+# drive.**
+#
+# **AND THE FINDING THAT SHOULD STING: THE REGISTER-WIRED INSTRUMENT IS STRICTLY WEAKER THAN THE
+# PYTEST MEMORIAL IT WAS BUILT TO SUPERSEDE.** `tests/test_detail_level.py` has always asserted that
+# a missing-data branch carrying NO level and one carrying an OFF-VOCABULARY level are REFUSED.
+# **Both rows were dropped when the property moved into the instrument** — and the row's own
+# negative_control still claims it catches them. A governed artefact says something measurably false.
+#
+# **CD-PL-F185, AGAINST THIS SEAT AND CONFIRMED: the Assurance dispatch said "all fourteen register
+# instruments pass". TWELVE. Two declared instruments DO NOT EXIST AS FILES and exit 2.** This seat
+# enumerated the FILES ON DISK and wrote a sentence about the REGISTER'S DECLARED SET. Textbook
+# `CD-PL-F170`, committed by the seat that keeps citing it.
+# ================================================================================================== #
+
+entry_id: BL-20260824T105209Z-0164
+timestamp_utc: '2026-08-24T10:52:09Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T10:52:09Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T102939Z-0163
+base_sha: 730b152e81d3e3fb5385f079bbd1a4f6bfd06856
+current_sha: 730b152e81d3e3fb5385f079bbd1a4f6bfd06856
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-05, a fresh seat that is none of the seats already involved, returned AMBER over 16B
+  item (i) at cbb81d1 and banked it at ca85d8e on asr-wo3-05-verdict. This seat reproduced the two
+  load-bearing findings independently, adopted the auditor's correction to CD-PL-F180's scope,
+  ruled on the one judgement the auditor correctly declined to make, recorded a confirmed defect in
+  its own dispatch, and dispatched CD-ENG-WO3-06 for a bounded 16B-FIX. 16B IS NOT ACCEPTED.
+
+the_verdict:
+  seat: CD-ASR-WO3-05 (FRESH — never CD-ENG-WO3-05 which built it, never CD-ASR-WO3-01/-02/-03/-04)
+  verdict: AMBER
+  target: cbb81d15dd1ca105c922c15d61d91fc7673e7249
+  banked: ca85d8e on branch asr-wo3-05-verdict — BL-20260824T104431Z-A305.yaml, 178 lines, 7 risks, 21 evidence references
+  what_it_affirms: >
+    RULING 9'S SUBSTANCE IS DISCHARGED. The constitutional guarantee IS now carried by a
+    register-wired live instrument, and the register MOVES on the regression shapes it was
+    commissioned against, which it demonstrably did not before. The auditor did not soften that.
+
+what_this_seat_reproduced_itself:
+  f1_the_serious_one:
+    method: 'git archive cbb81d1 | tar -x -C /tmp/e3. A fourth branch dial_reading_unknown_hinted appended to #/$defs/dial_reading.oneOf on BOTH contracts — a copy of the UNKNOWN branch whose detail_level points at the FULL #/$defs/detail_level, requiring a marker property render_hint also added to the parent dial_reading.properties so the parent closure admits it. NO NEW ROOT KEY.'
+    measured: >
+      check_missing_data_never_calm.py  -> PASS — 67 assertions, 0 violations
+      check_schema_closed.py            -> PASS — 304 assertions, 0 violations
+      pytest tests/test_detail_level.py -> 52 passed
+      (auditor, all 30 execute: lines)  -> diff against clean EMPTY, no exit code moves
+    the_gate: >
+      refuse_unless_publishable(UNKNOWN dial, detail_level='calm', render_hint='COMPACT'):
+        PUBLIC   *** ADMITTED — an UNKNOWN dial rendering as CALM ***
+        PRIVATE  *** ADMITTED ***
+    the_control_which_is_what_makes_it_a_measurement: >
+      THE IDENTICAL PROBE ON THE CLEAN WORKTREE:
+        PUBLIC   REFUSED [SCHEMA_VIOLATION] at /equity_crash: matches none of the …
+        PRIVATE  REFUSED
+      So the probe is live, the difference is the plant, and the plant is invisible to the register.
+  f2:
+    method: 'git archive cbb81d1 | tar -x -C /tmp/f2. detail_level removed from the `required` list of dial_reading_unknown AND dial_reading_degraded on both contracts; the $ref narrowing left fully intact.'
+    measured: 'check_missing_data_never_calm.py -> PASS — 67 assertions, 0 violations. check_schema_closed.py -> PASS — 266/0. The instrument is blind to it.'
+    the_claim_that_is_false: >
+      required-tests.yaml's negative_control for this row NAMES that mutation as a member of the
+      violation class and then asserts "The instrument fails on all of these." IT DOES NOT FAIL, and
+      contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md repeats the sentence.
+    the_auditor_measured_the_attribution_rather_than_assuming_it: >
+      On that tree the PRE-16B command passes 124/124, and tests/test_detail_level.py — THE FILE
+      16B ADDED TO THE REGISTER AT D3 — gives 3 failed / 49 passed. So D3's growth is the ONLY thing
+      in the register that sees it. THE SECONDARY DELIVERABLE IS CARRYING THE PRIMARY ONE'S GAP.
+  the_two_missing_instruments:
+    measured: >
+      Of the 15 tools/ paths the register names in `execute:` lines, TWO DO NOT EXIST AS FILES:
+      tools/register/check_first_published_immutable.py and
+      tools/register/check_public_artefact_no_private_field.py. Verified by direct file test.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F185
+    severity: LOW, CONFIRMED, and it is this seat's own error
+    raised_by: CD-ASR-WO3-05
+    the_dispatch_said: '"all fourteen register instruments pass on the reverted tree".'
+    the_truth: >
+      TWELVE exit 0. check_grant_matrix_live exits 3 (PRECONDITION_NOT_MET, identically on the clean
+      tree). And TWO of the register's declared instruments DO NOT EXIST AS FILES and exit 2.
+    how_it_happened_stated_plainly: >
+      THIS SEAT ENUMERATED `tools/register/check_*.py` — THE FILES ON DISK, of which there are
+      fourteen — AND THEN WROTE A SENTENCE ABOUT THE REGISTER'S DECLARED SET, WHICH IS A DIFFERENT
+      POPULATION. That is CD-PL-F170 exactly: a partial measurement promoted to a confident
+      statement and placed in a binding record. Committed by the seat that cites CD-PL-F170 in
+      every dispatch it writes.
+    disposition: >
+      THE SUBSTANTIVE POINT SURVIVES AND THE AUDITOR SAID SO — it confirmed the premise more
+      strongly by its own F1. THE NUMBER DOES NOT. Recorded, not argued with. The two absent
+      instruments are WO-5/WO-6-sequenced and their absence is already disclosed in the register's
+      own header; it is not a new defect, and this entry does not promote it into one.
+  - id: CD-PL-F186
+    severity: INFORMATIONAL
+    raised_by: CD-ASR-WO3-05
+    the_defect: >
+      The Assurance dispatch's PRIMARY ATTACK (§3.1) asked whether the instrument's candidate matches
+      "what the product actually publishes" and named publish.py's envelope builders. THERE ARE NO
+      ENVELOPE BUILDERS IN src/ AND publish_cycle HAS ZERO CALLERS. The question as worded had no
+      referent.
+    disposition: >
+      The auditor reformulated it into the answerable form and ANSWERED IT: the contracts are the
+      only definition of the published shape at this commit, and within that space the candidate is
+      genuine — all 28 MUST-ADMIT rows admit (so no unrelated malformation is doing the refusing),
+      all 8 refusals are SCHEMA_VIOLATION at /<slot>, and the Engineer's sole-differing-pointer
+      claim is exact 8/8. THE REFORMULATION IS WHY F1 MATTERS SO MUCH: if the contract's oneOf
+      branch set IS the published shape, a branch nobody drives is a shape nobody guards.
+
+the_rulings_this_seat_made:
+  - id: RULING ON AUDITOR F4 — CD-PL-F180 IS RE-SCOPED, AND THE AUDITOR IS RIGHT
+    the_finding: >
+      A THIRD route to an admitted calm-over-unknown needing NO environment variable.
+      load_envelope_schema() re-reads the contract on every call and holds no cache (deliberately),
+      and the deployed files are writable by the service account. The auditor measured it IN ONE
+      PROCESS with CD_CONTRACTS_DIR unset throughout: BEFORE both surfaces REFUSED; the same process
+      rewrites <root>/contracts/*.json in place; AFTER both surfaces ADMITTED. DECLARED LIMIT 1's
+      precondition is SATISFIED on this route, so exit 3 never fires.
+    ruled: >
+      ADOPTED. CD-PL-F180 was scoped around a VARIABLE NAME and the route needs no variable.
+      16D IS RE-SCOPED TO THE CONTRACT BYTES THE GATE LOADS AT PUBLISH TIME, not to
+      $CD_CONTRACTS_DIR. The auditor also ruled BOTH LIMBS ARGUED that exit 3 is the right behaviour
+      for the instrument and that scheduling to 16D is right, and this seat accepts both.
+    still_open: 'YES. Nothing in this repository closes it, and 16B-FIX is forbidden from trying.'
+  - id: RULING ON AUDITOR F6 — ACCEPT THE NAME COUPLING AND DECLARE IT
+    the_finding: >
+      D3's additive growth imported name-coupled brittleness into the register: a PURE refactor with
+      zero behavioural change (absent_data_detail_level renamed, enum reordered, $defs reversed)
+      leaves the instrument at PASS 67/0 — WHICH VINDICATES THE BEHAVIOURAL DESIGN BY MEASUREMENT —
+      but fails 6 assertions in tests/test_detail_level.py, which the register now runs. The auditor
+      offered two ways out and correctly called it a Project Lead judgement rather than taking it.
+    ruled: >
+      ACCEPT THE COUPLING AND DECLARE IT. Do not edit the tests. absent_data_detail_level is NOT an
+      implementation detail on this project — both contracts' own prose names it as the enforcement
+      point for a constitutional clause — so a rename that silently repoints it is exactly the change
+      that SHOULD require someone to open the register and think. Loosening the assertion to follow
+      the $ref would buy refactor comfort with constitutional visibility, and that is the wrong trade
+      at this criterion. THE SEAT IS TOLD IT MAY CONTEST THE RULING IN ITS FINDINGS AND MUST FOLLOW
+      IT ANYWAY.
+    disclosed: 'The cost is real and is now priced in the record rather than discovered by whoever next renames that type.'
+
+what_was_verified_unmoved:
+  - 'be0b355 still exactly be0b355e4b9c… and still an ancestor.'
+  - 'pid.content_hash MATCHES · 18 criteria · latest_admitted_run (null) · GATE: SHUT.'
+  - 'evidence/required-tests/runs/ DOES NOT EXIST. Neither seat wrote there and neither could have without forging its own assurance.'
+  - 'ACTIVE_WORK.yaml is the same blob ce0803c3 at be0b355 and at the target — the inherited boot RED is the frozen base''s, verified independently by two seats, diagnosed and left alone.'
+  - 'Zero pbg/ paths and zero contract bytes changed by the whole of 16B.'
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX-ENGINEER.md
+  seat: CD-ENG-WO3-06 (FRESH — never CD-ENG-WO3-05 which built it, never CD-ASR-WO3-05 which broke it, PBG-SOD-004)
+  bounded_to: >
+    FX1 enumerate the oneOf branch set with a deny-by-default allowlist (closes F1) · FX2 add the
+    field-absent and off-vocabulary rows so the negative-control sentence becomes true (closes F2) ·
+    FX3 restate DECLARED LIMIT 4 truthfully in all three places and add the fail-closed slot-set
+    assertion (closes F3) · FX4 declare the D3 name coupling per the ruling above (closes F6).
+  and_five_new_contrast_arms: >
+    C6 the 4th-branch tree, C7 required-dropped, C8 off-vocabulary, C9 the optional third slot — all
+    MUST FAIL — and *** C10, THE CONTROL, WHICH MUST STILL PASS: the symmetric fourth-level PID §4
+    amendment, on which the auditor measured the current instrument at PASS — 81 assertions. IF THE
+    FIX BREAKS C10 IT HAS REPLACED A VOCABULARY-DRIVEN TABLE WITH A HARD-CODED ONE AND THROWN AWAY
+    THE BEST PROPERTY THE INSTRUMENT HAS. *** C1-C5 must be re-run unchanged.
+
+evidence_references:
+  - 'asr-wo3-05-verdict ca85d8e — governance/engineering/build-log/BL-20260824T104431Z-A305.yaml'
+  - 'wo-3 cbb81d1 — the audited SHA'
+  - governance/engineering/CD-DISPATCH-INC16B-ASSURANCE.md (730b152)
+  - governance/engineering/CD-DISPATCH-INC16B-FIX-ENGINEER.md (this commit)
+  - 'this seat''s reproductions: /tmp/e3 (F1 + its clean control), /tmp/f2 (F2)'
+
+next_safe_action: >
+  Launch CD-ENG-WO3-06 against cbb81d1 per CD-DISPATCH-INC16B-FIX-ENGINEER.md, then a FRESH
+  Assurance seat (PBG-SOD-001). The record precedes the launch.
+
+expected_next_actor: 'CD-ENG-WO3-06 — dispatched by this seat, not yet run.'
+
+risks:
+  - '*** 16B IS NOT ACCEPTED AND THE INSTRUMENT AS IT STANDS HAS A HOLE OF THE CLASS IT WAS BUILT TO CLOSE. Nobody may read "the constitutional guarantee is register-wired" as closed until 16B-FIX returns and a fresh seat rules on it. ***'
+  - 'CD-PL-F180 is OPEN and now WIDER than when it was raised: the guarantee holds over the repository''s contract bytes at rest, and not over the bytes the running gate loads. Scheduled to 16D, re-scoped to the bytes, not closed.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments — its own words are "missing OR STALE input" and no live instrument speaks to staleness. That half is 16C.'
+  - 'The register-wired row still computes UNDECIDABLE, like 16 of the other 17, because no admitted run record exists. Wired is not computed.'
+  - 'Three of the PO''s ruled six items remain untouched: 16C, 16D, 16E. Nothing is registered, no source is wired, every dial still reads UNKNOWN, and the 30 indicators in the ratified mapping are still data nothing reads.'
