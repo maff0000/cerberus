@@ -1339,3 +1339,125 @@ there never was).
   recorded above rather than dropped.
 * **Nothing here is assurance.** `CD-ENG-WO3-10` built these arms and may not certify them
   (`PBG-SOD-001`, non-waivable). A fresh Assurance seat follows.
+
+---
+
+# THE `CC` ARMS — ADDED AT `16B-CONTRACT-CLOSURE` BY `CD-ENG-WO3-11`
+
+**Authority:** `PO-DECISIONS-0028` ruling 1, `(a) CLOSE THE CONTRACT`, via
+`CD-DISPATCH-INC16B-CONTRACT-CLOSURE-ENGINEER` §4.
+**`C1`–`C34` ARE UNTOUCHED.** Not one existing patch file was edited. What changed for them is
+the tip they are measured against, and that re-measurement is the last table in this section.
+
+**Every figure below was RUN BY `CD-ENG-WO3-11` IN ITS OWN SHELL.** Each arm has **its own
+pristine `git archive <sha> | tar -x` extraction**, one per arm per tip; `git apply`'s **own exit
+code** is a column, because *a patch that did not apply is not a plant, it is a file*; and the
+instrument's exit code is taken **from the command and never from a pipe**.
+
+**AND EVERY ARM IS RUN AT BOTH TIPS**, because *an arm that is red at the new tip proves nothing
+unless it was green at the old one.*
+
+* **PRIOR tip** `8398741` — 16B-FIX-5, assured **RED** at `d682ea2`, banked and NOT accepted.
+* **NEW tip** `d2d4622` — `CC-1`..`CC-4`.
+
+## THE ARMS
+
+| arm | what it plants | `git apply` rc | @ `8398741` | @ `d2d4622` | census at the new tip |
+|---|---|---|---|---|---|
+| `CC-A` | root slot `feed_liveness` spelled `{"enum":[<LIVE>,<STALE …"calm">]}` | **0** | `FAIL — 2` | **`FAIL — 4`** | 2 × `CD-CALM-ROOT-008`, 2 × `CD-CALM-SLOTS-007` |
+| `CC-B` | **`A310-F2`** — `CC-A` with ONE STRING changed, `state` → `status` | **0** | **`PASS — 144`  ← LIVE ESCAPE** | **`FAIL — 2`** | 2 × `CD-CALM-ROOT-008` |
+| `CC-C` | **`A310-F3`** — `{"present": false, <STALE stamp>, "detail_level":"calm"}` | **0** | **`PASS — 144`  ← LIVE ESCAPE** | **`FAIL — 2`** | 2 × `CD-CALM-ROOT-008` |
+| `CC-D` | **`A310-F1`** — `CC-A` nested **25 deep**, one past `INSTANCE_WALK_CAP` | **0** | **`PASS — 144`  ← LIVE ESCAPE** | **`FAIL — 4`** | 2 × `CD-CALM-ROOT-008`, 2 × `CD-CALM-SLOTS-007` |
+| `CC-E` | a 4th `oneOf` branch, state `SPINDRIFT`, → calm-bearing `#/$defs/detail_level` | **0** | `FAIL — 2` | **`FAIL — 4`** | 2 × `CD-CALM-FRESH-010`, 2 × `CD-CALM-BRANCHES-006` |
+| `CC-F` | **CONTROL** — the same 4th branch → `absent_data_detail_level` | **0** | `FAIL — 2` | `FAIL — 2` | 2 × `CD-CALM-BRANCHES-006` — **`FRESH-010` DOES NOT FIRE** |
+| `CC-G` | the `VALUE` branch's freshness stamp dropped from `required` | **0** | **`PASS — 144`  ← LIVE ESCAPE** | **`FAIL — 4`** | 2 × `CD-CALM-CANON-009`, 2 × `CD-CALM-FRESH-010` |
+| `CC-H` | **CONTROL** — allowlisted root property `regime` widened to admit an object | **0** | **`PASS — 144`  ← LIVE ESCAPE** | **`FAIL — 4`** | 4 × `CD-CALM-ROOT-008` |
+| `CC-I` | **VACUITY CONTROL** — the clean tree, no patch, a `.sh` like `C5` | n/a | `PASS — 144` | **`PASS — 243`, exit 0** | — |
+
+**FIVE LIVE ESCAPES CLOSED:** `CC-B`, `CC-C`, `CC-D`, `CC-G`, `CC-H`.
+
+## AND THE ESCAPES WERE REAL — THE LIVE GATE, DRIVEN IN-PROCESS AT `8398741`, BOTH SURFACES
+
+The instrument reporting `PASS — 144` is only half a finding. **On every escaping arm the live
+`refuse_unless_publishable` ADMITTED the calm-carrying document on BOTH surfaces while the
+instrument reported no violation at all** — the `C24`/`C25` signature, reproduced five more times.
+Each probe is PAIRED with a control so a broken fixture cannot masquerade as a closed hole.
+
+```
+CC-B  dead feed, discriminator `status`, calm    -> *** ADMITTED *** x2   (control LIVE -> ADMITTED x2)
+CC-C  present:FALSE + 3-week-old stamp + calm    -> *** ADMITTED *** x2   (control present:true -> ADMITTED x2)
+CC-D  dead feed carrying calm, 25 DEEP           -> *** ADMITTED *** x2
+CC-G  VALUE with NO as_of_utc AT ALL + calm      -> *** ADMITTED *** x2   (control with stamp -> ADMITTED x2)
+CC-H  {"detail_level":"calm"} AT ROOT `regime`   -> *** ADMITTED *** x2   (control string -> ADMITTED x2)
+```
+
+**`CC-F`, THE BRANCH-LEVEL DISCRIMINATOR, AT BOTH TIPS:**
+
+```
+SPINDRIFT carrying calm   -> REFUSED [SCHEMA_VIOLATION] at /equity_crash  x2
+SPINDRIFT carrying acute  -> *** ADMITTED ***                             x2
+```
+
+**`CC-E` AND `CC-F` DIFFER IN ONE `$ref` AND NOTHING ELSE**, and they are the pair that shows
+`CD-CALM-FRESH-010` measures the affirmative property rather than refusing every fourth branch.
+**`CC-E`'s gate still ADMITS at the new tip, and that is CORRECT AND IS THE WHOLE POINT:** `CC-E`
+is a *contract edit*, and the thing that catches a bad contract edit is the INSTRUMENT going RED,
+not the gate refusing a document the edited contract now legitimately declares. **THAT IS THE
+DISTINCTION THIS ENTIRE INCREMENT EXISTS TO MAKE.**
+
+## `C1`–`C34` RE-MEASURED AT THE NEW TIP — AND TWO CONTROLS MOVED
+
+**EVERY ARM THAT BIT AT `8398741` STILL BITES**, and most bite harder because `RULE CC` adds an
+independent pair. `git apply` rc = **0** on all 33 patch arms at both tips. Verdicts moved as:
+`C1`/`C3`/`C8` `FAIL — 8` → `12`; `C4` `4` → `6`; `C6` `6` → `8`; `C11`/`C12`/`C18`/`C19`
+`32` → `34`; `C13`/`C14`/`C20`/`C22`–`C27`/`C29`/`C29b`/`C30`/`C34`/`C9` `2` → `4`; `C2` `2` → `3`
+(one surface, so an odd count — the extra is `CD-CALM-FRESH-010` on the public `DEGRADED` branch);
+`C7` `8` → `8`, `C17` `32` → `32`, `C32` `4` → `4` unchanged; `C10` `PASS — 158` → `PASS — 257`.
+
+> ### *** TWO ARMS LABELLED `CONTROL` MOVED `PASS` → `FAIL — 2`, AND THIS IS RAISED HERE RATHER THAN LEFT FOR THE AUDITOR TO FIND. ***
+>
+> **`C16-CONTROL-BENIGN-OPTIONAL-ROOT-OBJECT`** and **`C31-CONTROL-PRESENT-AND-FRESH-SAME-TREE`**
+> each add an optional ROOT property — `publication_note` and `market_pulse` — and `RULE CC` fires
+> on both, `CD-CALM-ROOT-008` × 2, because neither name is a canonical dial slot and neither is on
+> `NON_DIAL_ROOT_PROPERTIES`. **THIS IS `RULE CC` DOING EXACTLY WHAT IT WAS ORDERED TO DO** — a root
+> property that is neither limb makes this instrument RED and it STAYS RED until a human rules
+> (`PBG-AUTH-005`) — **but it changes what those two arms MEAN, and the two cases are NOT the same
+> and must not be reported as though they were.**
+>
+> **`C16` IS NOT A NEW FALSE POSITIVE, AND THAT IS MEASURED.** `C16` never paid
+> `check_schema_closed`'s root allowlist, so the SIBLING register row `CD-RT-002-SCHEMA-CLOSED`
+> has **FAILED on `C16` at BOTH tips all along** — measured: `FAIL — 2 violation(s)`, exit 1, at
+> `8398741` and at `d2d4622` alike, *"UNDECLARED KEYS PRESENT: publication_note"*. `C16` was never
+> a tree the register accepted; it was a tree ONE row tolerated while a SIBLING row refused it.
+> **`RULE CC` makes the two rows AGREE about a tree they used to disagree about.**
+>
+> **`C31` IS A GENUINE NEW FALSE POSITIVE AND IS RECORDED AS ONE.** `C31` DOES pay the allowlist —
+> measured, `CD-RT-002-SCHEMA-CLOSED: PASS — 280 assertions, 0 violations`, exit 0 — so this row
+> going red on it is a tree that one instrument now refuses and the other accepts. **THE RULED
+> DIRECTION IS THE ONE TAKEN AND IT IS ARGUABLY MORE CORRECT THAN THE GREEN WAS:** `market_pulse`
+> is a **THIRD DIAL SLOT**, "two dials, never blended" is standing product (`PO-DECISIONS-0026`),
+> and `CD-CALM-SLOTS-007`'s own violation text has said since `16B-FIX` that *"a third dial slot is
+> a PRODUCT decision and not this instrument's to absorb."* **THE COST IS REAL ALL THE SAME:** `C31`
+> was the auditor's control proving `C30` fails for the RIGHT reason rather than because every new
+> root property fails, and **that discriminating power is gone from the root level.**
+>
+> **WHAT REPLACES IT, SAID PLAINLY SO THE SET IS NOT QUIETLY ONE-SIDED.** At the ROOT the green
+> control is now `CC-I` — the clean tree, on which `RULE CC` accepts all nineteen legitimately
+> declared root properties and all 34 limb-(b) probes refuse — and the red control is `CC-H`, which
+> keeps the same allowlisted NAME and widens only its SUBSCHEMA. At the BRANCH level the
+> discriminating pair is `CC-E`/`CC-F`. **BUT THERE CAN NO LONGER BE A GREEN ARM THAT ADDS A NEW
+> ROOT PROPERTY, BY CONSTRUCTION**, and no arm in this set should be written to look for one:
+> `RULE CC` fires on every root property not on the allowlist, benign or not, and adding a name to
+> that allowlist to obtain a green is the one remedy the instrument's own violation text forbids.
+
+## WHAT THESE ARMS DO NOT ESTABLISH
+
+* **`CC-B` AND `CC-C` ARE CAUGHT BY `RULE CC` ALONE.** The recogniser is still SILENT on both — it
+  answers a clean `False`, exactly as `A310-F2` and `A310-F3` recorded. **`DECLARED LIMIT 12`'s
+  residue is NOT closed and is not claimed to be**; what changed is that the guarantee no longer
+  rests on the recogniser. That is `DECLARED LIMIT 17` limb (e).
+* **`CC-H` PROVES limb (b) FOR TWO PROBE SHAPES**, the flat `{"detail_level": "calm"}` and one
+  nested variant. **THAT IS TWO SHAPES AND IT IS NOT A CLASS**, and it is written that way because
+  four sentences on this row have already been superseded for describing a sample as a measurement.
+* **NOTHING HERE IS ASSURANCE.** `CD-ENG-WO3-11` built these arms and may not certify them
+  (`PBG-SOD-001`, non-waivable). A FRESH Assurance seat follows, and **16C IS NOT RELEASED.**
