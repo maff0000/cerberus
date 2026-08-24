@@ -99,13 +99,45 @@ DECLARED LIMIT (CD-RULE-004).
     BE CARRIED ANYWHERE** — the builder is owed with the source set, and until it exists no
     envelope in this system has a provenance this module could check.
 
- 2  **``detail_level`` IS NOT ON EITHER SURFACE AND IS NOT WRITTEN BY THIS MODULE.** Both
-    closed schemas record it as *"DELIBERATELY ABSENT AND OWED"*, and adding it is an
-    allowlist edit with a ``schema_version`` bump. The proportionality RULE is implemented in
-    exactly one place — :mod:`crash_detector.publication.detail_level` — and is **not wired
-    into the envelope**, because where it attaches is a question with a ``CD-AC-002``
-    consequence that this seat raised rather than answered. See that module and the Build Log
-    finding ``CD-ENG-WO3-02-F03``.
+ 2  **SUPERSEDED AT WO-3 INCREMENTS 16A AND 16A-FIX. THE CORRECTION IS STATED, NOT EDITED
+    AWAY** (``PBG-CONT-003``: corrections supersede, never delete).
+
+    **WHAT THIS LIMIT SAID, VERBATIM:**
+
+        *"``detail_level`` IS NOT ON EITHER SURFACE AND IS NOT WRITTEN BY THIS MODULE. Both
+        closed schemas record it as 'DELIBERATELY ABSENT AND OWED', and adding it is an
+        allowlist edit with a ``schema_version`` bump. The proportionality RULE is
+        implemented in exactly one place — :mod:`crash_detector.publication.detail_level` —
+        and is not wired into the envelope, because where it attaches is a question with a
+        ``CD-AC-002`` consequence that this seat raised rather than answered. See that
+        module and the Build Log finding ``CD-ENG-WO3-02-F03``."*
+
+    **THAT WAS TRUE WHEN WRITTEN AT INCREMENT 15. ITS FIRST CLAUSE IS NOW FALSE.**
+    ``CD-ENG-WO3-02-F03`` was RULED by ``PO-DECISIONS-0025`` ruling 5 (``Q29``):
+    *"detail_level attaches PER-DIAL."* Increment 16A paid the wiring — the key is declared
+    inside ``$defs/dial_reading`` in **both** closed contracts and required in every branch
+    of the ``VALUE | DEGRADED | UNKNOWN`` union — and bumped ``schema_version``
+    ``1.0.0 -> 1.1.0`` in both. **``detail_level`` IS THEREFORE ON BOTH SURFACES'
+    CONTRACTS.** Increment 16A-FIX then narrowed ``DEGRADED`` and ``UNKNOWN`` to
+    ``$defs/absent_data_detail_level`` (``elevated | acute``), because 16A had left ``calm``
+    admissible on exactly the two branches PID §3.2 forbids it on (``CD-ASR-WO3-03``,
+    ``RED``).
+
+    *** **WHAT REMAINS TRUE IS THE HALF THAT CONCERNS THIS MODULE: IT STILL DOES NOT WRITE
+    THE FIELD, AND NO SURFACE RECEIVES IT.** *** :func:`publish_cycle` does not compute a
+    ``detail_level``. It judges and writes whatever candidate mapping it is handed — and it
+    is handed nothing, because **``publish_cycle`` HAS ZERO CALLERS and ``src/`` HAS NO
+    ENTRYPOINT** (``CD-PL-F167``; ``CD-ASR-WO3-02`` F01: *"a writer with no caller"*).
+
+    *** **A SCHEMA IS NOT A SURFACE**, and that distinction is the whole of this
+    correction: the field is in the CONTRACT, so a candidate carrying it is now JUDGED —
+    including the ``calm``-on-missing-data refusal 16A-FIX added — and the field still
+    reaches no reader, because nothing publishes. ***
+
+    **NOT PROVED TO BE CARRIED ANYWHERE**, and the caller is deliberately NOT written here.
+    The health surface's value axis is still open (``CD-AC-006`` wearing an ops hat) and it
+    blocks the moment any transport exists, so that residual and ``CD-PL-F167`` must land
+    together and neither may land alone.
 
  3  **ONE TRANSACTION, AND THE COMMIT IS THE CALLER'S ONLY ATOMICITY GUARANTEE.** The three
     inserts are issued without an intervening commit and committed together, so PostgreSQL
