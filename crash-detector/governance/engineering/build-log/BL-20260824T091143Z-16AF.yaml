@@ -1,0 +1,320 @@
+entry_id: BL-20260824T091143Z-16AF
+timestamp_utc: "2026-08-24T09:11:43Z"
+project: crash-detector
+actor: CD-ENG-WO3-04
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16A-FIX-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+baseline_sha: 53f639a91088ee42f5ba6c0d269f69782ba2a20a
+current_sha: 3a08646fb607c29a39512725a9061e493ef0c98c
+parent_entry_id: BL-20260824T081046Z-16WB
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  INCREMENT 16A-FIX. CLOSES THE REPRODUCED CONSTITUTIONAL BREACH CD-ASR-WO3-03 RETURNED RED ON
+  (D2), AND THE TWO PORTABILITY GAPS (D3). NOTHING ELSE.
+
+  THE BREACH, REPRODUCED BY THIS SEAT BEFORE EDITING ANYTHING: at 53f639a an UNKNOWN dial
+  carrying detail_level "calm" was ADMITTED by refuse_unless_publishable on BOTH surfaces,
+  while "banana" and the field's absence were correctly REFUSED. PID §3.2 is constitutional —
+  "Missing data must never render as calm" — and with zero registered sources every dial is
+  UNKNOWN, so this was the only state the product could publish.
+
+  F1. calm is now UNREPRESENTABLE on the two missing-data branches, IN THE SCHEMA ITSELF, the
+  way CD-AC-001 is already held there. A NAMED type $defs/absent_data_detail_level =
+  ["elevated","acute"] in both closed contracts; dial_reading_degraded and
+  dial_reading_unknown reference it; VALUE keeps the full vocabulary including calm. THE NAMED
+  TYPE WAS CHOSEN OVER A PER-BRANCH INLINE ENUM AND THE REASON IS THE FILE'S OWN PATTERN: every
+  reused constraint here is already a named type (utc_timestamp, source_id_list, detail_level),
+  an inline enum would be the first duplicated constraint in the document, and the name states
+  the constitutional reason once at four use sites instead of twice per file.
+
+  DEGRADED WAS NARROWED, AND THE DECISION WAS READ OUT OF THE CODE RATHER THAN GUESSED
+  (PBG-AUTH-005). detail_level_for's on_degraded returns policy.absent_data_level, IDENTICALLY
+  to on_unknown, and never reaches _level_for_score; DetailPolicy refuses absent_data_level
+  "calm" at construction. The module already treats DEGRADED as missing data. Before this
+  increment the CONTRACT did not agree, and a contract admitting what the code cannot produce
+  is the gap that let the defect through. A test now asserts that equivalence against the live
+  function, so the reasoning cannot rot silently.
+
+  F2. FOUR failing arms, each on a /tmp COPY via $CD_CONTRACTS_DIR, never the real files
+  (CD-PL-F154). Each mutation ASSERTS ITS ANCHOR before replacing it, so an arm cannot pass by
+  mutating nothing.
+
+  F3. test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half was headed
+  "PID §3.2" and asserted only that score was absent (that is CD-AC-001) and that detail_level
+  was REQUIRED (that is PRESENCE, not VALUE). Both are satisfied by an UNKNOWN dial carrying
+  calm. IT IS NOW AN END-TO-END BEHAVIOURAL ASSERTION THROUGH THE LIVE GATE on both surfaces,
+  with the ADMITTING arm beside it. What it used to assert is quoted in its docstring, not
+  erased. Neither old assertion is lost: CD-AC-001 is guarded at
+  test_envelope_contracts.py::test_the_unknown_branch_declares_no_score_property_at_all, and
+  presence by _assert_detail_level_attaches_per_dial.
+
+  F4. tests/publication_fakes.py::unknown_dial() no longer hardcodes "elevated" under a comment
+  asserting a guarantee the code did not obtain. It calls detail_level_for on a real Unknown
+  reading; a new degraded_dial() does the same for Degraded at score 0.01 — deliberately BELOW
+  elevated_at, so only the DAMAGE can produce the answer. The single remaining literal is
+  FAKE_DETAIL_POLICY.absent_data_level, and it CANNOT BE calm BY CONSTRUCTION: DetailPolicy's
+  __post_init__ raises DetailPolicyIncoherent on it, citing PID §3.2. The value returned is
+  unchanged ("elevated"), so no other test moved.
+
+  F5. publish.py's declared limit 2 read "detail_level IS NOT ON EITHER SURFACE AND IS NOT
+  WRITTEN BY THIS MODULE". Since 16A the field IS on both contracts. SUPERSEDED, NOT DELETED
+  (PBG-CONT-003): the old text is quoted verbatim, marked false, and what is true instead is
+  stated — the key is in the CONTRACT and reaches no surface, because publish_cycle has zero
+  callers. THE CALLER WAS DELIBERATELY NOT WRITTEN (dispatch §6).
+
+  D3. Rule 7 added to deploy/check_portability.py: it judges the config VALUE, not merely the
+  KEY, and judges the inside of ${VAR:-DEFAULT} exactly as it judges a bare literal. A
+  service-name value must name a service DECLARED IN THIS FILE; an absolute path must sit under
+  a container root THIS FILE establishes (mount targets, tmpfs targets, or the image WORKDIR
+  /app, which is MEASURED from deploy/Dockerfile.* and not assumed).
+
+  THE THREE THINGS THE DISPATCH ASKED FOR AND THIS SEAT ADDS TO THE RECORD: a THIRD portability
+  gap not in the dispatch (finding F02), a FOURTH instance of the "named for the clause, does
+  not test the clause" pattern found by the ordered test-name audit and CORRECTED (finding
+  F03), and one statement in the dispatch that is FALSE (finding F01).
+
+status: WAITING_ASSURANCE
+
+next_safe_action: >-
+  Dispatch a SEPARATE, FRESH Assurance seat over wo-3 at 3a08646 (PBG-SOD-001, non-waivable;
+  this seat does not certify its own work). Direct it hardest at: (a) whether calm is truly
+  unrepresentable rather than merely refused by one path — try a DEGRADED dial, the monetary
+  slot, and a dial carrying calm at BOTH slots at once; (b) whether "elevated" is still
+  genuinely ADMITTED, because a contract refusing every UNKNOWN dial would satisfy PID §3.2
+  vacuously and break the only state this product can publish; (c) rule 7's container_roots
+  derivation, which is the one piece of new judgement that could over-refuse a legitimate
+  deployment; and (d) finding F01 — the dispatch's D3 prescription names "rule 1", and rule 1
+  never inspects an environment value at all. THE HEALTH SURFACE'S VALUE AXIS REMAINS OPEN AND
+  BLOCKS THE MOMENT ANY TRANSPORT IS WRITTEN (CD-PL-F167); no entrypoint and no publish_cycle
+  caller were written, deliberately. Q30, Q31 and Q32 remain with the Product Authority.
+
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 2007
+  result: "2007 passed, 0 failed. Baseline at 53f639a was 1990: +9 D2, +8 D3. No regression, no test removed, no assertion weakened."
+  command: "python3 -m pytest -q"
+  evidence_reference: >-
+    Run in /srv/crash-detector-wo3 at 3a08646 on CPython 3.11.2. tests/test_detail_level.py
+    went 43 -> 52; tests/test_deploy_portability.py went 24 -> 32. IMPLEMENTATION EVIDENCE,
+    NEVER ASSURANCE (PBG-SOD-001).
+
+acceptance_probe:
+  description: >-
+    The dispatch §5 probe, run by this seat. Both surfaces, four rows each, against an UNKNOWN
+    dial. Reproduced FIRST at 53f639a with nothing edited, then re-run at the fix.
+  before_at_53f639a:
+    - "PUBLIC   detail_level='calm'     -> ADMITTED  *** EXPECTED REFUSED — THE BREACH ***"
+    - "PUBLIC   detail_level='elevated' -> ADMITTED  expected ADMITTED  OK"
+    - "PUBLIC   detail_level='banana'   -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PUBLIC   detail_level=REMOVED    -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PRIVATE  detail_level='calm'     -> ADMITTED  *** EXPECTED REFUSED — THE BREACH ***"
+    - "PRIVATE  detail_level='elevated' -> ADMITTED  expected ADMITTED  OK"
+    - "PRIVATE  detail_level='banana'   -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PRIVATE  detail_level=REMOVED    -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+  after_at_3a08646:
+    - "PUBLIC   detail_level='calm'     -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PUBLIC   detail_level='elevated' -> ADMITTED  expected ADMITTED  OK"
+    - "PUBLIC   detail_level='banana'   -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PUBLIC   detail_level=REMOVED    -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PRIVATE  detail_level='calm'     -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PRIVATE  detail_level='elevated' -> ADMITTED  expected ADMITTED  OK"
+    - "PRIVATE  detail_level='banana'   -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+    - "PRIVATE  detail_level=REMOVED    -> REFUSED   [SCHEMA_VIOLATION] at /equity_crash  OK"
+  non_vacuity: >-
+    THE SECOND ARM MATTERS AS MUCH AS THE FIRST AND IT HOLDS: 'elevated' is still ADMITTED on
+    both surfaces. The branch was NARROWED, not CLOSED. A contract refusing every UNKNOWN dial
+    would satisfy PID §3.2 vacuously while breaking the only state this product can publish.
+
+guard_failing_arms:
+  - "D2, in-suite: four arms revert F1 on a /tmp copy via $CD_CONTRACTS_DIR and require the property to go RED. Each asserts its mutation anchor first, so it cannot pass by mutating nothing."
+  - "D2, whole-file demonstration: full worktree copied to /tmp/cd-revert, both contracts restored from 53f639a. Result: 9 failed, 42 passed — INCLUDING the re-pointed test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half, which PASSED at 53f639a while the breach was live. THAT CONTRAST IS THE WHOLE POINT OF F3."
+  - "D2, the reason F2 was ordered: with F1 applied and the OLD tests unchanged, all 43 detail_level tests still passed (measured at the F1 commit, 1990 passed). A guard that would neither require nor forbid its own remedy is not guarding the thing it is named for."
+  - "D3: full worktree copied to /tmp/cd-d3revert, deploy/check_portability.py restored from 53f639a (rule 7 absent). Result: 4 failed, 28 passed. The three gap arms plus the assertion-count anti-vacuity arm go red; the three ADMITTING arms correctly pass in BOTH states."
+
+d3_arms:
+  clean_arm: "python3 -B deploy/check_portability.py --root . -> PASS — 1194 assertions, 0 violations, exit 0. THE REAL FILE STILL PASSES. At 53f639a it was 1072 assertions; the rise is the new rule actually looking."
+  gap_a: "CD_CONTRACTS_DIR: \"${CD_CONTRACTS_DIR:-/srv/crash-detector/dell-only/contracts}\" — was PASS exit 0; now FAIL exit 1, rule '7: a host path in a config value', naming 'the default of ${CD_CONTRACTS_DIR:-…}'."
+  gap_a2: "CD_CONTRACTS_DIR: /srv/crash-detector/dell-only/contracts (BARE literal, NOT in the dispatch) — was PASS exit 0; now FAIL exit 1, same rule."
+  gap_b: "CD_STORE_HOST: postgres.dell.matt.local — was PASS exit 0; now FAIL exit 1, rule '7: a config value that names something this file does not declare', listing the seven services actually declared."
+  admitting_arms:
+    - "${CD_CONTRACTS_DIR:-/contracts} — a container path in a DEFAULT — ADMITTED. Rule 7 judges the default's CONTENT, it does not refuse defaults."
+    - "CD_STORE_HOST: cd-engine — a DIFFERENT declared service — ADMITTED. The rule tests MEMBERSHIP of this document's service set, not equality with a hardcoded cd-store."
+    - "CD_BIND_PORT: \"${CD_BIND_PORT:-8711}\" — a numeric default — ADMITTED, not mistaken for a path."
+  all_three_were_invisible: >-
+    At 53f639a all three violating subjects returned the IDENTICAL 1072 assertions as the clean
+    file. The check did not merely fail to judge those values — IT NEVER LOOKED AT THEM. A
+    standing test now asserts the clean-arm count is strictly above 1072.
+
+register_verifier:
+  command: "PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify"
+  result: "pid.content_hash MATCHES · latest_admitted_run (null) · 18 criteria CD-AC-001..018, all UNDECIDABLE · MANDATORY NOT PASS (17) · GATE: SHUT · PID_ACCEPTANCE_SATISFIED: NOT DERIVED"
+  untouched_proof: >-
+    `git diff --name-only 53f639a..HEAD -- required-tests.yaml PID.md | wc -l` -> 0, and both
+    files are BYTE-IDENTICAL to 53f639a by sha256 (PID.md 08baf51ca5a34b4e, matching the boot
+    verdict's PID.md@08baf51ca5a34b4e; required-tests.yaml 78a8e2c8c13c1a82). The pin is not
+    re-staled because neither file was touched.
+
+boot_verdict:
+  declared: RED
+  detail: >-
+    DECLARED AS RECEIVED, INCLUDING THE RED, AS THE DISPATCH REQUIRED. `PYTHONPATH=pbg/tools
+    python3 -B -m pbg.cli boot` returns Verdict RED with continuity_state
+    CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED and one BLOCKING line: "continuity invalid:
+    CONTINUITY_REFERENCE_INVALID — read-only diagnosis permitted, normal boot blocked
+    (PBG-CONT-006)".
+  diagnosis: >-
+    DIAGNOSED, NOT REPAIRED (outside scope). The cause is inherited from the frozen base's
+    governance/engineering/ACTIVE_WORK.yaml, which carries `continuity_record_commit: PENDING`
+    at line 36 — a literal placeholder, not a SHA — so the framework cannot resolve the
+    recorded continuity reference against observed Git state. ACTIVE_WORK.yaml also still
+    describes CD-WO-002 on branch wo-2-skeleton at /srv/crash-detector-wo2, several increments
+    stale relative to this lane. Secondary: roadmap_identity UNAVAILABLE (no ROADMAP.md). NONE
+    OF THIS WAS TOUCHED — ACTIVE_WORK.yaml is not in this seat's writable scope.
+
+scope_proof:
+  files_changed: >-
+    `git diff --stat 53f639a..HEAD` -> exactly 7 files: contracts/private_envelope.schema.json,
+    contracts/public_envelope.schema.json, deploy/check_portability.py,
+    src/crash_detector/publication/publish.py, tests/publication_fakes.py,
+    tests/test_deploy_portability.py, tests/test_detail_level.py. EVERY ONE IS ON THE
+    DISPATCHED WRITABLE LIST. No file outside it was written, and nothing was written-then-
+    reverted (CD-PL-F173): the working tree is clean and every commit is additive.
+  protected_paths_all_zero: >-
+    `git diff --name-only 53f639a..HEAD -- <path> | wc -l` returns 0 for EACH of: pbg/ ·
+    BLUEPRINT.md · PID.md · required-tests.yaml · governance/decisions/ ·
+    src/crash_detector/source_registry.py · src/crash_detector/engine/config.py · tools/
+  commit_identity: "`git log --format='%an' 53f639a..HEAD | sort -u` -> CD-ENG-WO3-04, and NO OTHER IDENTITY."
+
+declared_limits:
+  - "1 NO SCHEMA_VERSION BUMP WAS MADE, AND THAT WAS A DECISION, NOT AN OVERSIGHT. Narrowing an enum is a BREAKING contract change in the general case. It was not bumped for two reasons and one constraint. (a) The schema's own rule is about WIDENING: 'widening the allowlist without bumping this is a schema edit that fails its own test.' This is a narrowing. (b) No consumer has ever received a 1.1.0 document: publish_cycle has zero callers and src/ has no entrypoint, so there is no deployed document whose validity changes, and the value removed is one PID §3.2 always forbade. THE CONSTRAINT: ENVELOPE_SCHEMA_VERSION lives in src/crash_detector/publication/envelope_contract.py and the pin is asserted in tests/test_envelope_contracts.py — NEITHER IS IN THIS SEAT'S WRITABLE SCOPE, so a bump was not available to this seat in any case. IF THE PRODUCT AUTHORITY OR ASSURANCE JUDGES THAT A BUMP IS OWED, IT IS A SEPARATE BOUNDED DISPATCH AND THIS LIMIT IS WHERE THAT DECISION SHOULD START."
+  - "2 THE REFUSAL MESSAGE FOR A calm-ON-UNKNOWN DIAL UNDER-DESCRIBES ITS OWN CAUSE. The oneOf failure is reported by envelope_contract.py's fixed detail text, which explains the refusal purely in CD-AC-001 terms ('an UNKNOWN reading carrying a score has no state to be published as'). A dial refused for carrying calm now receives that same score-centric explanation. The REFUSAL IS CORRECT and the pointer (/equity_crash) is correct; only the prose misleads. envelope_contract.py is NOT in this seat's writable scope, so it was not touched. Raised as finding F04."
+  - "3 RULE 7'S PATH JUDGEMENT IS ONLY AS GOOD AS THE ROOTS THE DOCUMENT DECLARES. container_roots() derives from mount targets, tmpfs targets and IMAGE_ROOTS. IMAGE_ROOTS is the one hardcoded element ('/app'); it is measured from deploy/Dockerfile.* WORKDIR and cited there, but it is a SECOND place a fact about the image is written down, and if a Dockerfile changes its WORKDIR nothing detects the drift. NOT PROVED TO BE CARRIED ANYWHERE."
+  - "4 RULE 7 JUDGES ONLY ABSOLUTE POSIX PATHS AND ONLY THE service/container_path CONTRACTS. A relative path, a URL, a Windows path, or a hostname in a key NOT listed in VALUE_CONTRACTS is not judged by rule 7. CD_STORE_HOST is the only 'service' key and it is the only one the design has; a NEW key naming a host would be caught by rule 5's deny-by-default only if it is not added to INTERNAL_CONSTANTS. THE ALLOWLIST REMAINS THE SOFT SPOT — rule 7 verifies the values of the keys already on it, and does not stop someone adding a new key with a bad value AND a plausible reason."
+  - "5 THE ABSENT-DATA VOCABULARY IS PINNED LITERALLY, NOT DERIVED. test_the_absent_data_branches_declare_a_vocabulary_that_EXCLUDES_calm asserts the enum equals [DETAIL_ELEVATED, DETAIL_ACUTE] using the module's own constants, so it cannot drift from them; but if PID §4 were ever amended to add a FOURTH level that is also admissible for missing data, that test would fail and would need a human decision rather than a mechanical update. That is the intended friction, and it is stated so the next seat does not 'fix' it by loosening the assertion."
+  - "6 THIS SEAT TESTED ITS OWN WORK AND DID NOT CERTIFY IT (PBG-SOD-001, non-waivable). Everything above is IMPLEMENTATION EVIDENCE. No claim here is an assurance verdict."
+
+findings:
+  - id: CD-ENG-WO3-04-F01
+    severity: MEDIUM
+    title: "A STATEMENT IN THE DISPATCH IS FALSE — §4's prescription names a rule that cannot see the thing it is told to judge."
+    detail: >-
+      Dispatch §4 says: "Rule 1 must reach inside ${VAR:-DEFAULT} and judge the default as it
+      would judge a literal." RULE 1 NEVER INSPECTS AN ENVIRONMENT VALUE AT ALL. rule_1_and_2_
+      mounts (check_portability.py:255-311) iterates services/<name>/volumes[i] and judges only
+      the bind `source` field, gated on `kind == "bind"`. It is mount-scoped and cannot reach an
+      environment block under any spelling. The mechanism the dispatch's own table names is
+      correct — "rule 5 stops at the ${ prefix" — and rule 5 is a DIFFERENT function
+      (rule_5_and_6_config, line 347) whose _ENV_REF regex has no closing brace and no default
+      group. THE DEFECT WAS DESCRIBED ACCURATELY AND ATTRIBUTED TO THE WRONG RULE. Reported per
+      the dispatch's standing instruction; the fix was implemented against the mechanism, not
+      against the label, and is a NEW rule 7 rather than a change to rule 1 or rule 5, because
+      neither of those rules is about values. Also imprecise, minor: §2.1 says detail_level_for's
+      "only two grep hits are its own docstring" — there are four hits in src/ (docstring
+      example, prose, __all__, the def). The substance — ZERO REAL CALLERS — is correct.
+  - id: CD-ENG-WO3-04-F02
+    severity: MEDIUM
+    title: "A THIRD PORTABILITY GAP, NOT IN THE DISPATCH, AND FIXING ONLY THE TWO DISPATCHED ONES WOULD HAVE LEFT IT GREEN."
+    detail: >-
+      The SAME dell path written as a BARE literal — CD_CONTRACTS_DIR: /srv/crash-detector/
+      dell-only/contracts, with no ${} wrapper at all — also PASSED with exit 0 and the same
+      1072 assertions. It is a DISTINCT hole from gap A: gap A is the _ENV_REF regex stopping at
+      the prefix, whereas this one is CD_CONTRACTS_DIR being on INTERNAL_CONSTANTS, which
+      exempts the KEY however the value is spelled. A FIX AIMED ONLY AT THE REGEX WOULD HAVE
+      CLOSED THE CLEVERER MISTAKE AND LEFT THE PLAINER ONE OPEN — and would have closed the
+      finding while doing it. Both are now caught by rule 7 and both have standing tests.
+  - id: CD-ENG-WO3-04-F03
+    severity: HIGH
+    title: "A FOURTH INSTANCE OF 'NAMED FOR THE CLAUSE, DOES NOT TEST THE CLAUSE' — found by the ordered audit, PROVED executably, and corrected."
+    detail: >-
+      The dispatch ordered a read of every test name in tests/test_detail_level.py.
+      test_no_function_in_the_module_takes_two_readings counted
+      `reading_like = [n for n in names if "reading" in n or "dial_slot" in n]` and asserted
+      `len(reading_like) <= 2`. ONE BUCKET FOR TWO DISTINCT CONCEPTS, with a ceiling of two —
+      the ceiling being two precisely because detail_level_for(reading, *, dial_slot, policy)
+      puts one of each into that single bucket. CONSEQUENCE, MEASURED AGAINST A PLANTED FUNCTION
+      RATHER THAN ARGUED: `def level_for_both(reading_a, reading_b, *, policy)` yields
+      reading_like == ['reading_a','reading_b'], length 2, AND PASSES. The guard named "no
+      function in the module takes two readings" ADMITTED a function taking exactly two
+      readings — the CD-AC-002 shape it exists to forbid, reached by the same one step sideways
+      the module docstring warns about. CORRECTED: readings and dial_slots are counted
+      SEPARATELY, at most one each. The real module is unchanged by the correction; a new
+      vacuity guard asserts BOTH arms. THIS PATTERN NOW HAS FOUR RECORDED INSTANCES ON THIS
+      PROJECT (CD-PL-F169, CD-ASR-WO3-02 F06/F07, CD-ASR-WO3-03's RED, and this) AND THERE IS
+      STILL NO CONTROL FOR IT. A structural assertion about a signature, a key or a schema shape
+      is the common factor in all four; every one of them was defeated by a change that kept the
+      structure and moved the meaning.
+  - id: CD-ENG-WO3-04-F04
+    severity: LOW
+    title: "The refusal message for a calm-on-UNKNOWN dial explains itself in CD-AC-001 terms."
+    detail: >-
+      See declared limit 2. envelope_contract.py's oneOf failure text is fixed prose about a
+      score smuggled onto an UNKNOWN reading. It now also fires for a PID §3.2 narrowing, where
+      that explanation is wrong. The refusal and its JSON pointer are correct; only the prose
+      misleads a reader debugging a rejected envelope. NOT FIXED — envelope_contract.py is
+      outside this seat's writable scope, and widening scope to reach it is exactly what
+      CD-PL-F173 is on the record for.
+  - id: CD-ENG-WO3-04-F05
+    severity: LOW
+    title: "'src/ has no entrypoint' is true and, said alone, misleading — deploy/entrypoints/ holds six."
+    detail: >-
+      The project's standing phrasing is that src/ has no entrypoint. TRUE. But
+      deploy/entrypoints/ holds six service entrypoints and the Dockerfiles name them
+      (ENTRYPOINT ["python3","-B","/app/entrypoints/cd_engine.py"]). This seat initially greped
+      only src/ and would have inherited the narrow measurement into a binding record, which is
+      CD-PL-F170 exactly. RE-MEASURED over the whole repository: each of the six is a thin shim
+      calling _service.boot and NOT ONE reaches publish_cycle; outside tests/ the only
+      occurrences are docstring, __all__, the def, prose, a quarantined plants/ patch and Build
+      Log prose. THE ZERO-CALLER CLAIM STANDS AT REPOSITORY SCOPE. Recommend the project adopt
+      the repository-scoped phrasing, because the src/-scoped one invites exactly this error.
+
+  - id: CD-ENG-WO3-04-F06
+    severity: LOW
+    title: "SELF-REPORTED NEAR-MISS: this seat wrote a fabricated SHA tail into this entry and caught it before committing."
+    detail: >-
+      Drafting this record, current_sha was written as 3a0864652c1a4c8ba24e00b3ba0b1e1bbaa39b95.
+      THAT SHA DOES NOT EXIST. This seat had only ever observed the SEVEN-character short form
+      3a08646 and completed the remaining 33 characters from nothing. The true value is
+      3a08646fb607c29a39512725a9061e493ef0c98c. It was caught by verifying the entry's own SHAs
+      against `git rev-parse` after validation returned
+      unresolved=['current_sha 3a0864652 not checked — repository unavailable'] — i.e. the
+      framework validator EXPLICITLY DECLINED to check the one field that was wrong, and
+      reported that it had declined. The entry was still uncommitted, so no false statement
+      entered the record and PBG-CONT-003 is not engaged; this is disclosed rather than
+      silently repaired because CD-PL-F173's precedent is that the seat's own candour is what
+      surfaces this class of thing. baseline_sha was measured, not guessed, and verified correct.
+      TWO THINGS FOLLOW. (1) THIS IS CD-PL-F170 IN ITS PUREST FORM — a partial measurement (the
+      short SHA) promoted to a confident full statement in a binding record — and it happened to
+      the seat that was under explicit instruction about that exact pattern, which is worth
+      knowing about how weak the instruction is on its own. (2) `continuity.validate` reporting
+      `unresolved` is NOT a clean bill of health, and its unresolved list is the highest-value
+      part of its output. RECOMMENDATION: no Build Log SHA should be typed; it should be
+      substituted from `git rev-parse` output, and Assurance should re-derive every SHA in any
+      entry it accepts rather than reading it.
+
+evidence_references:
+  - "`git status --porcelain` -> empty · `git rev-parse HEAD` -> 3a08646fb607c29a39512725a9061e493ef0c98c"
+  - "`git log --format='%an' 53f639a..HEAD | sort -u` -> CD-ENG-WO3-04, and no other identity"
+  - "`git diff --name-only 53f639a..HEAD -- pbg/ BLUEPRINT.md PID.md required-tests.yaml governance/decisions/ tools/ src/crash_detector/source_registry.py src/crash_detector/engine/config.py | wc -l` -> 0"
+  - "`python3 -m pytest -q` -> 2007 passed (baseline 53f639a: 1990 passed)"
+  - "`python3 -B deploy/check_portability.py --root .` -> PASS — 1194 assertions, 0 violations, exit 0"
+  - "`PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify` -> pid.content_hash MATCHES, latest_admitted_run (null), 18 criteria, GATE: SHUT"
+  - "Acceptance probe /tmp/cd_probe.py run at 53f639a (breach reproduced) and at the fix (all eight rows correct)"
+  - "Failing-arm demonstrations: /tmp/cd-revert (contracts reverted -> 9 failed) and /tmp/cd-d3revert (checker reverted -> 4 failed)"
+  - "D3 subjects /tmp/gapA, /tmp/gapA2, /tmp/gapB — all three exit 0 at 53f639a, all three exit 1 at the fix. THE REAL deploy/compose.yaml WAS NEVER WRITTEN TO (CD-PL-F154)."
+
+risks:
+  - "THE HEALTH SURFACE'S VALUE AXIS IS STILL OPEN AND IS UNCHANGED BY THIS INCREMENT (CD-PL-F167, CD-ASR-WO3-02 F01/F03/F04/F05). It blocks the moment any transport is written. No entrypoint and no publish_cycle caller were written, deliberately and on instruction; that residual and CD-PL-F167 must land together and neither may land alone."
+  - "detail_level_for still has ZERO callers in src/. F4 gives it a caller in tests/ only. The proportionality rule is now enforced by the CONTRACT on the branches that matter, but nothing in the product computes a level, because nothing in the product publishes."
+  - "Q30 (the mapping content), Q31 (Redis) and Q32 (the staleness ceiling) remain with the Product Authority and were not touched. The auditor's sharpening of Q32 — that the store schema separates liveness from relevance, no code reads the liveness half, so the staleness window is currently the ONLY dead-feed detector and widening the ceiling would silently delete it — is carried forward unchanged."
+  - "CD-ENG-WO3-04-F03 names a pattern with four recorded instances and no control. Until a control exists, every structural assertion in this repository is a candidate for the same failure, and the mitigation is currently reviewer attention rather than mechanism."
+  - "The boot RED is unresolved and outside this seat's scope. ACTIVE_WORK.yaml still carries continuity_record_commit: PENDING and still describes CD-WO-002 on a different branch and worktree. Every seat on this lane will boot RED until a seat with that file in scope reconciles it."
