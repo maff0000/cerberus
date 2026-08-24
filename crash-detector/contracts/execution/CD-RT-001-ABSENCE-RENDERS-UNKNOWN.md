@@ -190,3 +190,72 @@ arms, one axis, run in both trees:
 The accepted set is identical. **Only the point of refusal moves** — from after the body has run
 to before it binds — because `refuse_a_number_without_its_inputs` has always declared
 `usable=dict` and has always fired on every call through the net.
+
+---
+
+## DECLARED LIMIT 12 — NEW AT WO-3 INCREMENT `16B-FIX`, PLACED HERE AT `16B-FIX-2` (`FX8`)
+
+*** **THIS COMMAND IS NAME-COUPLED TO THE CONTRACT'S `$defs`, BY DESIGN AND NOT BY ACCIDENT.**
+Ruled by `PROJECT_LEAD_SEAT_02` on `CD-ASR-WO3-05` F6. ***
+
+**WHY IT IS ONLY ARRIVING NOW, SAID PLAINLY.** `16B-FIX` declared this limit in **one** of the
+three places `CD-RULE-004` requires, and **declared the shortfall rather than widening its own
+scope to close it** — neither this file nor `tests/test_detail_level.py` was in `CD-ENG-WO3-06`'s
+writable scope, and `tests/**` was protected by the very ruling the limit records. `CD-ASR-WO3-06`
+(v) held that to be the right Engineer action and a wrong closure, and it was. The
+`16B-FIX-2` dispatch **granted** both paths. This is the second of the three places; the third is
+the module docstring of `tests/test_detail_level.py`, whose **assertions did not move and which
+still reports `52 passed`** — the FX4 ruling protects that file's assertions, not its prose.
+
+**WHAT WAS MEASURED, AND IT CUTS BOTH WAYS.** `CD-ASR-WO3-05` built a tree carrying a **pure
+refactor with zero behavioural change**: `$defs/absent_data_detail_level` renamed to
+`missing_data_render_level`, both branch `$ref`s repointed, its enum reordered to
+`[acute, elevated]`, and the whole `$defs` mapping reversed. `calm` is still unrepresentable on
+both missing-data branches on both surfaces. **The register-wired behavioural instrument
+`CD-RT-001-MISSING-DATA-NEVER-CALM` PASSES it** — `67 assertions, 0 violations` — which is the
+behavioural-not-structural design **vindicated by measurement**, and precisely what a
+`$ref`-target-name checker would have failed. **BUT THIS COMMAND FAILS IT:** `6 failed / 46
+passed` in `tests/test_detail_level.py`, all six reading schema keys **by name**. Before increment
+`16B` no `execute:` line ran that file, so the brittleness was not the register's; growth made it
+the register's.
+
+**RULED: ACCEPT THE COUPLING AND DECLARE IT. DO NOT LOOSEN THE ASSERTIONS.** The reason is on the
+record and is contestable: `absent_data_detail_level` is not an implementation detail on this
+project — **both** contracts' own prose names it as the enforcement point for a **constitutional**
+clause (PID §3.2). A rename that silently repoints it is exactly the change that *should* require
+someone to open the register and think. Loosening these assertions to follow the `$ref` instead of
+matching its target's name would buy refactor comfort with constitutional visibility, and that is
+the wrong trade at this criterion.
+
+*** **AND `CD-ASR-WO3-06` GAVE THAT RULING A SECOND, INDEPENDENT REASON NOBODY HAD NOTICED, WHICH
+IS RECORDED HERE BECAUSE IT CHANGES HOW CONTESTABLE THE RULING IS.** *** `CD-ASR-WO3-05` F6's
+named remedy was to *"move the name-coupled assertions behind a resolver that follows the `$ref`
+instead of matching its target's name"*. **Measured on tree `X2` (this project's arm `C11`), that
+remedy would have made the escape invisible to the entire register**: a resolver following
+`#/$defs/absent_data_detail_level` finds the narrow enum, because on `X2` the narrow enum is still
+there and still referenced — it is simply no longer the only path. **On that tree the five
+name-coupled assertions in `tests/test_detail_level.py` were the ONLY thing in thirty `execute:`
+lines that moved.** Two open items on this row therefore pointed in opposite directions. **`FX5`
+resolves the tension the right way round** — the escape is now caught by the *behavioural*
+instrument as `CD-CALM-BRANCHES-006`, so the guarantee no longer rests on the name coupling — and
+the coupling is still not loosened, because nothing has yet made it safe to loosen.
+
+**WHAT IT COSTS, STATED SO NOBODY REDISCOVERS IT AS A DEFECT:** a pure rename of that `$def`, with
+behaviour provably unchanged, turns this row **RED** and requires a deliberate edit to
+`tests/test_detail_level.py` plus a record of why. **THE COST IS PRICED AND NOT ACCIDENTAL.** And
+the risk is named: a guard which fires on correct trees gets disabled, and then it guards nothing.
+The mitigation is that the sibling row `CD-RT-001-MISSING-DATA-NEVER-CALM` is purely behavioural
+and passes such a tree, so the constitutional guarantee is never carried by the name-coupled half
+alone.
+
+### Numbering — because `CD-ASR-WO3-06` could not verify it and said so
+
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** Limits 1–12 above are
+`CD-RT-001-ABSENCE-RENDERS-UNKNOWN`'s, one sequence across four headers and not four lists: 1–4
+and 7–9 in `tools/register/check_judgement_path_doors.py`, 5–6 in
+`src/crash_detector/admission.py`, 10–12 here and in `required-tests.yaml`. The **sibling** row
+`CD-RT-001-MISSING-DATA-NEVER-CALM` has its **own** independent 1–12 sequence, in the header of
+`tools/register/check_missing_data_never_calm.py`, in `required-tests.yaml`, and in
+`contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`. **Both rows live in
+`required-tests.yaml`, so a bare "DECLARED LIMIT 12" is ambiguous there and always was — quote the
+row id with the number.**

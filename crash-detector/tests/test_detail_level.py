@@ -34,6 +34,54 @@ file the gate happens to name is still a pytest file. **The live instrument is
 ``tools/register/check_missing_data_never_calm.py`` (``CD-RT-001-MISSING-DATA-NEVER-CALM``)**,
 which drives ``refuse_unless_publishable`` itself on both surfaces at every dial slot. This
 file remains what it has always been: the propositions, asserted close to the code.
+
+----
+
+*** **DECLARED LIMIT 12 OF ``CD-RT-001-ABSENCE-RENDERS-UNKNOWN`` — THIS FILE IS NAME-COUPLED TO
+THE CONTRACTS' ``$defs``, BY DESIGN AND NOT BY ACCIDENT.** *** New at WO-3 increment ``16B-FIX``,
+ruled by ``PROJECT_LEAD_SEAT_02`` on ``CD-ASR-WO3-05`` F6; **placed here at ``16B-FIX-2`` (FX8),
+which is the third and last of the three places ``CD-RULE-004`` requires** (the others are the
+``CD-RT-001-ABSENCE-RENDERS-UNKNOWN`` entry of ``required-tests.yaml`` and
+``contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md``). **NOTHING BUT THIS DOCSTRING WAS
+EDITED: no assertion moved and the file still reports ``52 passed``.** The FX4 ruling protects
+this file's assertions; this is its prose.
+
+**WHAT WAS MEASURED.** ``CD-ASR-WO3-05`` built a tree carrying a **pure refactor with zero
+behavioural change** — ``$defs/absent_data_detail_level`` renamed to ``missing_data_render_level``
+with both branch ``$ref``s repointed, its enum reordered, the whole ``$defs`` mapping reversed.
+``calm`` is still unrepresentable on both missing-data branches on both surfaces. The
+**behavioural** register instrument PASSES that tree, which is its design vindicated by
+measurement. **THIS FILE FAILS IT** — six assertions, all reading schema keys **by name**, e.g.
+``assert schema['$defs'][branch]['properties']['detail_level'] ==
+{'$ref': '#/$defs/absent_data_detail_level'}``.
+
+**RULED: ACCEPT THE COUPLING AND DECLARE IT. DO NOT LOOSEN THESE ASSERTIONS.**
+``absent_data_detail_level`` is not an implementation detail on this project — both contracts'
+own prose names it as the enforcement point for a **constitutional** clause (PID §3.2), so a
+rename that silently repoints it *should* require someone to open the register and think.
+
+*** **AND THERE IS NOW A SECOND, INDEPENDENT REASON THAT WAS NOT AVAILABLE WHEN THE RULING WAS
+MADE.** *** ``CD-ASR-WO3-05`` F6's named remedy was to move these assertions behind a resolver
+that **follows** the ``$ref`` instead of matching its target's name. Measured by ``CD-ASR-WO3-06``
+on tree ``X2`` (arm ``C11`` of ``plants/WO3-INC16B/``), **that remedy would have made a real
+escape invisible to the entire register**: a resolver following
+``#/$defs/absent_data_detail_level`` finds the narrow enum, because on ``X2`` the narrow enum is
+still there and still referenced — it is simply no longer the only path. On that tree **five
+assertions in this file were the only thing in thirty ``execute:`` lines that moved.**
+``16B-FIX-2``'s FX5 resolves that the right way round: the escape is now caught by the
+behavioural instrument as ``CD-CALM-BRANCHES-006``, so the guarantee no longer rests on this file
+— **and this file is still not loosened.**
+
+**WHAT IT COSTS, SO NOBODY REDISCOVERS IT AS A DEFECT:** a pure rename of that ``$def``, with
+behaviour provably unchanged, turns the row RED and requires a deliberate edit here plus a record
+of why. **THE COST IS PRICED AND NOT ACCIDENTAL.**
+
+**NUMBERING.** Declared limit numbers are **per register row, not per file**. This is limit 12 of
+``CD-RT-001-ABSENCE-RENDERS-UNKNOWN``, whose 1–12 sequence runs across
+``tools/register/check_judgement_path_doors.py`` (1–4, 7–9), ``src/crash_detector/admission.py``
+(5–6), ``required-tests.yaml`` and ``contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md``
+(10–12). The sibling row ``CD-RT-001-MISSING-DATA-NEVER-CALM`` has its own independent 1–12
+sequence elsewhere. Quote the row id with the number.
 """
 
 from __future__ import annotations
