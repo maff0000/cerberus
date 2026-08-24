@@ -892,48 +892,127 @@ more than its guard delivers.**
     **(d)** It says nothing about limb (a). A canonical dial slot is decided by dict equality and
     is not put through this procedure.
 
-19. *** THE GATE'S FRESHNESS FLOOR IS ONLY AS HONEST AS THE WINDOW THE DOCUMENT DECLARES.
-    RAISED, NAMED AND NOT CLOSED (`CD-PL-F206`, restated by `CD-ENG-WO3-12` as `CD-ENG-F16D-01`).
-    ***
+19. *** THE GATE'S FRESHNESS FLOOR IS ONLY AS HONEST AS THE TWO COMPARANDS THE DOCUMENT DECLARES.
+    RAISED, NAMED AND NOT CLOSED (`CD-PL-F206`, restated by `CD-ENG-WO3-12` as `CD-ENG-F16D-01`,
+    **WIDENED AT `16E` ON `A312-F3`**). ***
 
-    The fourth refusal stage compares against the `staleness_window_seconds` **THE DOCUMENT
-    ITSELF DECLARES**. A detector that stamps an absurdly large window therefore re-opens the hole
-    from the other side, and **a document-internal comparison cannot bound its own comparand.**
-    The per-indicator floors DO exist and are ratified — `governance/mapping/indicator_mapping.yaml`
-    carries 30 indicators with windows from 345600 to 10368000 seconds — but **THE ENVELOPE HAS NO
-    INDICATOR DIMENSION: IT HAS TWO DIALS.** Collapsing 30 indicator windows onto a dial (the
-    minimum? the oldest contributing input's window?) is PRODUCT MEANING and is not an
-    implementer's to invent (`PBG-AUTH-005`), and ruling 1 says the comparison is computed purely
-    from the document. **IT IS NAMED HERE AND DELIBERATELY NOT CLOSED. It is strictly better than
-    the prior state either way: before `16D` there was NO comparison at all.**
+    *** THIS LIMIT NAMED ONE COMPARAND AND THE GATE READS TWO. SUPERSEDED AT `16E`, STATED AND NOT
+    ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
 
-20. *** WHAT THE FOURTH STAGE ITSELF DOES NOT PROVE (`16D-GATE-FRESHNESS`). ***
+    > **WHAT ITS HEADING AND BODY SAID, VERBATIM, IN BOTH PLACES THEY WERE SAID:** *"THE GATE'S
+    > FRESHNESS FLOOR IS ONLY AS HONEST AS THE WINDOW THE DOCUMENT DECLARES ... The fourth refusal
+    > stage compares against the `staleness_window_seconds` THE DOCUMENT ITSELF DECLARES. A
+    > detector that stamps an absurdly large window therefore re-opens the hole from the other
+    > side, and a document-internal comparison cannot bound its own comparand."*
+
+    **EVERY WORD OF THAT IS TRUE AND IT IS HALF THE RESIDUAL.**
+
+    **WHAT IS TRUE INSTEAD, AND IT IS TWO COMPARANDS BECAUSE THE PREDICATE HAS TWO.** The stage
+    computes `published_utc` MINUS the calm-bearing node's oldest stamp, against
+    `staleness_window_seconds`. **BOTH `published_utc` AND THE WINDOW ARE DECLARED BY THE SAME
+    DOCUMENT**, so a document that moves them TOGETHER is internally coherent and the gate cannot
+    see it. MEASURED by `CD-ASR-WO3-12` (`A312-F3`) at `0e80a09`, with nothing absurd declared and
+    a perfectly ordinary 600-second window:
+
+    | document | window | outcome |
+    |---|---|---|
+    | `as_of_utc` = `published_utc` = `1970-01-01T00:00:00Z` | `600.0` | **ADMITTED x2** |
+    | `as_of_utc` = `published_utc` = `2099-01-01T00:00:00Z` | `600.0` | **ADMITTED x2** |
+    | `as_of_utc` = `published_utc` = `0000-01-01T00:00:00Z` | `1` | **ADMITTED x2** |
+
+    **A FIFTY-SIX-YEAR-OLD READING RENDERS AS CALM AND THE GATE CANNOT SEE IT**, because the gate
+    proves INTERNAL COHERENCE and never ACTUAL FRESHNESS. A replayed envelope, a stopped publisher,
+    a stuck detector clock and a backfill run all produce exactly that document. **AN AUDITOR CAN
+    EXECUTE IT:** the new sibling row `CD-RT-001-STALE-DATA-NEVER-CALM`'s `CD-STALE-SCOPE-009`
+    assertion DRIVES that exact document at every run and REQUIRES it to be ADMITTED, so this limit
+    is measured rather than asserted and cannot go stale in the reassuring direction.
+
+    **THE WINDOW HALF, UNCHANGED.** The per-indicator floors DO exist and are ratified —
+    `governance/mapping/indicator_mapping.yaml` carries 30 indicators with windows from 345600 to
+    10368000 seconds — but **THE ENVELOPE HAS NO INDICATOR DIMENSION: IT HAS TWO DIALS.**
+    Collapsing 30 indicator windows onto a dial (the minimum? the oldest contributing input's
+    window?) is PRODUCT MEANING and is not an implementer's to invent (`PBG-AUTH-005`), and
+    `PO-DECISIONS-0029` ruling 1 says the comparison is computed purely from the document.
+
+    *** AND IT IS NOT RECORDED AS UNENFORCEABLE — `PO-DECISIONS-0030` RULING 2 RULED THE OPPOSITE,
+    AND THAT RULING IS WHY THIS LIMIT DOES NOT END HERE. *** Source honesty is the SAME CLASS as
+    the `A311-F1` forgery and it has the SAME answer already ruled in the three-tier perimeter
+    (`PO-DECISIONS-0018`/`0019`, `BLUEPRINT §17` `CD-BP-005`): the gate is **PREVENTION** of what is
+    DOCUMENT-INTERNAL; a source that lies about its own stamp is caught by **DETECTION — WITNESS
+    DIVERGENCE + PROVENANCE, `CD-AC-018`** — where a source's claimed freshness is corroborated
+    against independent witnesses and DIVERGENCE IS THE ALARM. **IT IS ENFORCED ONE TIER OUT AND IT
+    IS OWED AT WO-3**, when real sources and their witnesses land. A residual that says *"we cannot
+    do this"* where the truth is *"this is done at the next tier, at WO-3"* is a FALSE RESIDUAL, and
+    four sentences on this row have already been superseded for being false in exactly that
+    direction (`DECLARED LIMIT 10`, `12(a)`, `13`, and `14`'s cost column).
+
+    **THE HONESTY OBLIGATION THIS CREATES FOR 16C, RECORDED AND DELIBERATELY NOT BUILT:** 16C's
+    detector-side liveness marking carries the obligation that the stamps it produces are
+    **PROVENANCE-BACKED and WITNESS-CORROBORATABLE**. **16C IS NOT IN INCREMENT `16E`** — no
+    `feed_liveness` slot, no dead-feed detector, no liveness marking.
+
+    **IT IS STRICTLY BETTER THAN THE PRIOR STATE EITHER WAY: before `16D` there was NO comparison
+    at all.**
+
+20. *** WHAT THE FOURTH STAGE ITSELF DOES NOT PROVE (`16D-GATE-FRESHNESS`). *** It is asserted by
+    `tests/test_envelope_freshness.py` and — **SINCE `16E`** — by the register-wired sibling row
+    `CD-RT-001-STALE-DATA-NEVER-CALM`, and NOT by this instrument.
     **(a)** A calm-bearing node's stamps are detected **BY VALUE** — any direct string property
     that reads as a UTC instant — and the OLDEST governs. That cannot be defeated by RENAMING a
     stamp, which is the direction that matters, but a node carrying an unrelated string that
     happens to be a valid UTC instant would have that string counted. The oldest-governs rule
     makes every such case MORE conservative, never less, except in the one shape where a node has
-    NO real stamp and a decoy fresh one. **NAMED, NOT CLOSED.**
+    NO real stamp and a decoy fresh one. **NAMED AT `16D`; MEASURED AT `16E`, AND THE MEASUREMENT
+    IS THE AUDITOR'S.** `CD-ASR-WO3-12` (`A312-F2`) built it on an arm-`H` tree whose contract is
+    widened to admit an object at `degraded_inputs`:
+    `[{"source_id": "2026-08-24T18:00:00Z", "detail_level": "calm"}]` is **ADMITTED x2**, while the
+    same fragment with `source_id` `"SRC-A"`, `"1970..."` or `"2099..."` is `REFUSED [STALE_CALM]`
+    x2 — a node with NO real stamp and ONE DECOY proves itself fresh against the decoy. **THIS IS
+    NOT A LIVE ESCAPE ON THE SHIPPED CONTRACT:** `degraded_inputs` is `#/$defs/source_id_list`, an
+    array of plain strings, so no `calm` can appear there at all today, and both contract JSONs are
+    byte-unchanged. **THE REMEDY IS A TIGHTENING** — requiring the stamp a calm-bearing node relies
+    on to be a DECLARED stamp (a `#/$defs/utc_timestamp`-typed property, or a `_utc`-suffixed name)
+    rather than any string that happens to parse — **WHICH NARROWS WHAT THE PRODUCT ADMITS AND IS
+    PRODUCT SCOPE** (`PBG-AUTH-005`). Raised as `Q36`, with the Product Authority. **RECORDED, NOT
+    CLOSED.**
     **(b)** A `:60` leap second parses as no instant and therefore FAILS CLOSED. No producer in
     this project can emit one (`datetime` cannot represent it), so this costs the product nothing
     today; it would refuse a legitimately leap-second-stamped calm reading if one ever arrived.
     **(c)** The stage guards `calm` and only `calm`. A stale `elevated` or `acute` reading is
-    ADMITTED, which is the criterion's own scope — *"never renders as **calm**"*.
+    ADMITTED, which is the criterion's own scope — *"never renders as **calm**"*. **Since `16E` the
+    sibling row drives that as a VACUITY arm and requires it to STAY admitted.**
     **(d)** It says nothing about whether the `published_utc` the document carries is the instant
-    the document was really published. Nothing in a document can prove that about itself.
+    the document was really published. Nothing in a document can prove that about itself. **SEE
+    `DECLARED LIMIT 19`: that is the DETECTION tier's — `CD-AC-018`, witness divergence +
+    provenance — OWED AT WO-3. It is enforced one tier out and it is NOT unenforceable.**
 
 ### Numbering — because `CD-ASR-WO3-06` could not verify it and said so
 
 **DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The twenty above (**twelve until
 `16B-FIX-3`, which added `13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`; `17`
-added at `16B-CONTRACT-CLOSURE`; `18`, `19` and `20` added at `16D-GATE-FRESHNESS`**) are
+added at `16B-CONTRACT-CLOSURE`; `18`, `19` and `20` added at `16D-GATE-FRESHNESS` **in two places
+only**, and written into the **third** at `16E`**) are
 `CD-RT-001-MISSING-DATA-NEVER-CALM`'s, and they are said identically here, in the header of
 `tools/register/check_missing_data_never_calm.py`, and in `required-tests.yaml` (`CD-RULE-004`,
 three places). The **sibling** row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its **own** independent
 1–12 sequence, spread across `tools/register/check_judgement_path_doors.py` (1–4, 7–9),
-`src/crash_detector/admission.py` (5–6) and `required-tests.yaml` (10–12). **Both rows live in
-`required-tests.yaml`, so a bare "DECLARED LIMIT 12" is ambiguous there and always was — quote the
-row id with the number.**
+`src/crash_detector/admission.py` (5–6) and `required-tests.yaml` (10–12). **And since `16E` a
+third row on this criterion has a third independent sequence:**
+`CD-RT-001-STALE-DATA-NEVER-CALM`'s, 1–8, in `tools/register/check_stale_data_never_calm.py`,
+`contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md` and `required-tests.yaml`. **Three rows
+now live in `required-tests.yaml` and all three have a `DECLARED LIMIT 3`, so a bare "DECLARED
+LIMIT 12" is ambiguous there and always was — quote the row id with the number.**
+
+*** THE `CD-RULE-004` SHORTFALL THAT `16D` DECLARED IS CLOSED AT `16E`, AND ITS RECORD IS KEPT
+RATHER THAN DELETED. *** `18`, `19` and `20` were in this document and in the instrument header and
+**not** in `required-tests.yaml`, for one reason and no other: that file was **outside
+`CD-ENG-WO3-12`'s writable scope** under `CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-ENGINEER`. That
+seat raised the shortfall against its own work as `CD-ENG-F16D-02` and did **not** widen its own
+scope to close it, **which is an escalation and is the correct behaviour** (`PBG-GIT-004`).
+`CD-D-182` is the first dispatch whose scope includes `required-tests.yaml`, and `CD-ENG-WO3-13`
+wrote the third place at `16E`. The register entry understated this row's limits by three from
+`16D` until `16E` — understated rather than overstated, which is the safe direction — and it was
+disclosed in advance rather than discovered.
 
 ## Negative control
 

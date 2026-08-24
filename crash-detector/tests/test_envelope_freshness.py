@@ -31,6 +31,80 @@ that ever stops being true.
 **NOTHING HERE REGISTERS A SOURCE** (``Q25``, ``CD-PL-F154``). The ``source_id`` strings are
 the unmistakable synthetic token below; nothing constructs a ``SourceRecord``, imports
 ``crash_detector.source_registry``, or names ``raw.source_registry``.
+
+===========================================================================================
+*** THIS FILE IS REGISTER-WIRED SINCE WO-3 INCREMENT 16E, AND UNTIL THEN IT WAS NOT. ***
+===========================================================================================
+It is the declared command of ``CD-RT-001-STALE-DATA-WITNESS-SUITE`` in ``required-tests.yaml``:
+
+    PYTHONPATH=src python3 -m pytest tests/test_envelope_freshness.py -q
+
+**BEFORE 16E NO REGISTER ROW NAMED IT, AND THAT WAS THE WHOLE OF ``A312-F1``.** MEASURED three
+times independently — by ``CD-ASR-WO3-12``, by ``PROJECT_LEAD_SEAT_06`` and by
+``CD-ENG-WO3-13`` — on a tree carrying ``plants/WO3-INC16D/D1-THE-FOURTH-STAGE-REMOVED.patch``
+(``git apply`` rc=0, taken and checked): **all thirty of the register's ``execute:`` lines
+produced a per-line rc list ``diff``-IDENTICAL to the clean tip**, while this file reported
+**14 failed, 78 passed**. ``grep -c 'test_envelope_freshness' required-tests.yaml`` returned
+**0**, against **41 distinct ``tests/test_*.py`` paths the register DID name.** The project's
+own mechanism for making a test-file guarantee live was available and for this guarantee it
+was not used.
+
+*** AND THIS FILE IS STILL NOT THE GUARD. *** ``required-tests.yaml``'s own memorial says why,
+about a different file in the identical position: *"a pytest file is still a file the gate
+happens to name."* The LIVE instrument ``PO-DECISIONS-0030`` ruling 1 ordered is
+``tools/register/check_stale_data_never_calm.py``, wired as
+``CD-RT-001-STALE-DATA-NEVER-CALM``, which drives ``refuse_unless_publishable`` itself. This
+file is that row's PAIRED WITNESS. Do not read it as the discharge of ruling 1.
+
+---- DECLARED LIMITS — ``CD-RT-001-STALE-DATA-WITNESS-SUITE``'s OWN SEQUENCE, 1 TO 2 --------
+
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These two are that row's, and
+they are said identically here, in
+``contracts/execution/CD-RT-001-STALE-DATA-WITNESS-SUITE.md`` and in ``required-tests.yaml``
+(``CD-RULE-004``, three places).
+
+1. **IT IS A pytest FILE AND THEREFORE NAME-COUPLED TO ITS OWN PATH.** Deleting or renaming
+   this module makes the row non-zero, which is the correct direction; but a test file the
+   register names is only as live as the register line that names it, **and the LIVE guard is
+   the sibling row.**
+
+2. *** ONE OF ITS ASSERTIONS GUARDS THE INSTANCE AND NOT THE CLASS, AND IT IS NAMED HERE
+   RATHER THAN LEFT TO BE FOUND (``A312-F2``; ``PO-DECISIONS-0026`` ruling 10's defect class).
+   *** ``test_A311_F1_arm_H_is_REFUSED_even_on_a_contract_widened_to_admit_it`` drives a FIXED
+   MODULE-LEVEL CONSTANT — ``ARM_H_DOCUMENT_FRAGMENT = [{"source_id": "SRC-A", "detail_level":
+   DETAIL_CALM}]``. **It proves that ONE FRAGMENT is refused. IT DOES NOT QUANTIFY OVER WHAT
+   THE WIDENED SUBSCHEMA ADMITS**, and ``CD-ASR-WO3-12`` built a fragment the same widened
+   schema admits which is **ADMITTED on both surfaces**:
+
+       degraded_inputs: [{"source_id": "SRC-A",                "detail_level": "calm"}]
+             -> REFUSED [STALE_CALM] at /degraded_inputs/0  x2   (the claim, and it holds)
+       degraded_inputs: [{"source_id": "2026-08-24T18:00:00Z", "detail_level": "calm"}]
+             -> *** ADMITTED x2 ***
+       the same with a 1970 or a 2099 source_id
+             -> REFUSED [STALE_CALM] x2
+
+   Stamps are detected **BY VALUE**, so a node with NO real stamp and ONE DECOY proves itself
+   fresh against the decoy. **THIS IS NOT A LIVE ESCAPE ON THE SHIPPED CONTRACT:**
+   ``degraded_inputs`` is ``#/$defs/source_id_list``, an array of plain strings, so no ``calm``
+   can appear there at all, and both contract JSONs are byte-unchanged. **RECORDING IT IS IN
+   SCOPE AT 16E; FIXING IT IS NOT.** Requiring the stamp a calm-bearing node relies on to be a
+   DECLARED stamp — a ``#/$defs/utc_timestamp``-typed property, or a ``_utc``-suffixed name —
+   rather than any string that happens to parse **narrows what the product admits and is
+   PRODUCT SCOPE** (``PBG-AUTH-005``). It is raised as ``Q36`` and is with the Product
+   Authority. **NO ASSERTION IN THIS FILE WAS CHANGED AT 16E; this paragraph is prose.**
+
+---- AND WHAT THE STAGE THIS FILE WITNESSES DOES NOT PROVE ---------------------------------
+
+**THE GATE ENFORCES DOCUMENT-INTERNAL FRESHNESS**: ``published_utc`` minus a calm-bearing
+node's oldest stamp, against the window the SAME document declares. **IT CANNOT CATCH A SOURCE
+THAT CONSISTENTLY LIES ABOUT ITS OWN STAMP**, and a uniformly time-shifted envelope passes it:
+MEASURED (``A312-F3``), ``as_of_utc`` = ``published_utc`` = ``1970-01-01T00:00:00Z`` with an
+ordinary 600-second window is **ADMITTED x2**. *** THAT IS NOT RECORDED AS UNENFORCEABLE.
+``PO-DECISIONS-0030`` ruling 2 rules it the DETECTION tier's — witness divergence +
+provenance, ``CD-AC-018`` — ENFORCED ONE TIER OUT AND OWED AT WO-3, when real sources and
+their witnesses land. *** 16C's detector-side liveness marking therefore carries the HONESTY
+OBLIGATION that its stamps are PROVENANCE-BACKED and WITNESS-CORROBORATABLE. **16C IS NOT
+BUILT AT 16E.**
 """
 
 from __future__ import annotations

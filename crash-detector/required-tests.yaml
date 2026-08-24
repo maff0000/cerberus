@@ -388,9 +388,13 @@ criteria:
         CD-RT-001-ABSENCE-RENDERS-UNKNOWN's, continuing the 1-12 sequence that runs across
         tools/register/check_judgement_path_doors.py (1-4, 7-9), src/crash_detector/admission.py
         (5-6) and this block (10-12). THE SIBLING ROW CD-RT-001-MISSING-DATA-NEVER-CALM HAS ITS
-        OWN INDEPENDENT SEQUENCE, which is 1-14 SINCE 16B-FIX-4, in the comment block below this
-        entry. BOTH ROWS LIVE IN THIS ONE FILE, SO A BARE "DECLARED LIMIT 12" IS AMBIGUOUS HERE
-        AND ALWAYS WAS: quote the row id with the number.
+        OWN INDEPENDENT SEQUENCE, STATED IN ITS OWN NUMBERING PARAGRAPH AND NOT COPIED HERE, in
+        the comment block below this entry. AND SINCE 16E A THIRD ROW ON THIS CRITERION HAS A
+        THIRD INDEPENDENT SEQUENCE: CD-RT-001-STALE-DATA-NEVER-CALM's, 1-8, said in the header of
+        tools/register/check_stale_data_never_calm.py, in
+        contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md and in this file. THREE ROWS NOW
+        LIVE IN THIS ONE FILE AND ALL THREE HAVE A "DECLARED LIMIT 3", SO A BARE "DECLARED
+        LIMIT 12" IS AMBIGUOUS HERE AND ALWAYS WAS: quote the row id with the number.
         *** SUPERSEDED SENTENCE, 16B-FIX-4, STATED AND NOT ERASED (CD-RULE-004). *** This read
         "ALSO 1-12 SINCE 16B-FIX-2". CD-ASR-WO3-08 (F7) found it already false at 16B-FIX-3, which
         took the sibling row to 1-13 and updated that row's own three places while leaving this
@@ -400,6 +404,24 @@ criteria:
         CD-ENG-WO3-09 as a CONSEQUENCE of its own edit and not as a widening of scope: this block
         is CD-AC-001's, which is this seat's granted scope, and leaving a sentence false that this
         increment makes MORE false is not an option a record permits.
+        *** AND IT WAS FALSE AGAIN, EXACTLY AS ITS OWN CLOSING SENTENCE PREDICTED. SUPERSEDED A
+        SECOND TIME AT 16E, STATED AND NOT ERASED (CD-RULE-004, PBG-CONT-003) — RAISED BY
+        CD-ENG-WO3-13 AGAINST THE INHERITED RECORD AS CD-ENG-F16E-02. *** WHAT IT SAID, VERBATIM:
+        "THE SIBLING ROW CD-RT-001-MISSING-DATA-NEVER-CALM HAS ITS OWN INDEPENDENT SEQUENCE, which
+        is 1-14 SINCE 16B-FIX-4". THAT WAS ALREADY FALSE BEFORE THIS INCREMENT TOUCHED THE FILE
+        and it is checkable in one command: 16B-FIX-5 took the sibling row to 16 and
+        16B-CONTRACT-CLOSURE took it to 17, and neither updated this cross-reference; 16E takes it
+        to 20. **THE CORRECTION IS NOT A NEW NUMBER.** The paragraph directly above ruled that
+        "THE NUMBER IS NOW STATED ONCE, HERE, AND NOT RE-STATED WITH A VERSION ATTACHED, because a
+        cross-reference that carries its own copy of a moving number is a cross-reference that
+        will be false again" — AND THEN LEFT A COPY OF THE MOVING NUMBER IN THE VERY SENTENCE THE
+        RULE WAS ABOUT. The remedy the rule already prescribes is applied: this cross-reference
+        now POINTS at the sibling row's numbering paragraph and carries no copy of its count, so
+        the next increment that moves that count cannot make this sentence false. It is corrected
+        as a CONSEQUENCE of this increment's own edit — 16E is what takes the sibling row from 17
+        to 20 — and not as a widening of scope: this block is CD-AC-001's, which is this seat's
+        granted scope, and it is the SECOND time a seat has had to say that sentence about this
+        one cross-reference.
         THE AUDITOR'S PREMISE IS CORRECTED RATHER THAN ACCEPTED, because a correction that adopts
         a false premise is not a correction. A306 (v) says DECLARED LIMIT 12 "has NO counterpart
         10 or 11 anywhere in required-tests.yaml, whose own limit list for this row runs 1-9".
@@ -1060,11 +1082,140 @@ criteria:
   #      UNCHANGED; depths 25/26/30/40 -> None, MOVED from False. RULE CC makes a nest this deep
   #      unreachable at the root anyway; the cap is fixed regardless, because a cap that fails open is
   #      a defect whether or not anything reaches it.
+  #  18. LIMB (b)'s PROOF WAS A SAMPLE OF TWO AND IS NOW STRUCTURAL — AND THE STRUCTURAL HALF HAS
+  #      ITS OWN RESIDUE. NEW AT 16D-GATE-FRESHNESS, CLOSING CD-ASR-WO3-11's A311-F1.
+  #      *** WRITTEN INTO THIS FILE AT 16E, WHICH IS THE THIRD OF THE THREE PLACES CD-RULE-004
+  #      REQUIRES. *** 18, 19 and 20 were added at 16D-GATE-FRESHNESS in TWO places only — the
+  #      header of tools/register/check_missing_data_never_calm.py and
+  #      contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md — for one reason and no other:
+  #      required-tests.yaml was OUTSIDE CD-ENG-WO3-12's writable scope. That seat raised the
+  #      shortfall against its own work as CD-ENG-F16D-02 and did NOT widen its own scope to
+  #      close it, which is an ESCALATION and is the correct behaviour (PBG-GIT-004). CD-D-182 is
+  #      the first dispatch whose scope includes this file. THE REGISTER ENTRY UNDERSTATED THIS
+  #      ROW'S LIMITS BY THREE UNTIL NOW, AND THAT WAS DISCLOSED IN ADVANCE RATHER THAN
+  #      DISCOVERED.
+  #      WHAT WAS WRONG, MEASURED BY THE AUDITOR AND NOT ARGUED. DECLARED LIMIT 17's step (5)
+  #      read "limb (b) IS NOT TAKEN ON TRUST — each allowlisted name, on each surface, is driven
+  #      through the LIVE GATE with a calm-carrying object in its place." That drive used
+  #      CALM_BEARING_PROBES: TWO SHAPES, one flat and one nested. A SAMPLE OF TWO IS NOT A PROOF
+  #      OF A UNIVERSAL. Arm H widened the allowlisted root property degraded_inputs to an ARRAY
+  #      of closed objects carrying #/$defs/detail_level — ONE CONTAINER DEEPER than arm CC-H,
+  #      which widens the same class to an OBJECT and is caught (FAIL — 4). Both probes are still
+  #      REFUSED on arm H because neither of them is an array, so the instrument reported
+  #      PASS — 243, the whole thirty-line register was identical in every rc, and the LIVE GATE
+  #      ADMITTED "degraded_inputs": [{"source_id": "SRC-A", "detail_level": "calm"}] on BOTH
+  #      SURFACES.
+  #      THE REMEDY IS NOT A THIRD PROBE AND THE AUDITOR SAID SO IN TERMS — a third shape "moves
+  #      the census game to the probe alphabet and earns an eleventh". _can_carry_detail_level is
+  #      a DECISION PROCEDURE over each allowlisted root property's OWN CLOSED SUBSCHEMA: of
+  #      everything that subschema admits, could anything carry a detail_level, at any depth,
+  #      through any container? True and None are BOTH violations. THE PROBES ARE RETAINED AS THE
+  #      PAIRED BEHAVIOURAL CONTROL: the structural limb says what the CONTRACT ADMITS and the
+  #      probes say what the GATE DOES, and a disagreement between them is itself a finding.
+  #      AND HERE IS ITS RESIDUE, WHICH IS NOT SMALL AND IS NOT HIDDEN.
+  #      (a) The decidable keyword set is deliberately much narrower than _READABLE_KEYWORDS.
+  #          allOf/anyOf/oneOf/not/if/then/else/contains/patternProperties/propertyNames/
+  #          dependentSchemas/unevaluatedProperties on an allowlisted root property all make it
+  #          UNDECIDABLE, and the instrument goes RED rather than passing. That is the ruled
+  #          direction and it is a REAL COST: a legitimate future widening of a non-dial root
+  #          property written with a composition keyword turns this row red until a human looks.
+  #      (b) It OVER-REPORTS in two known places, both toward RED. A node with no type is CAPABLE
+  #          (correctly — {"minLength": 1} admits {"detail_level": "calm"}), and a shape closed
+  #          only by unevaluatedProperties: false rather than additionalProperties: false reads
+  #          as CAPABLE because unevaluatedProperties is not in the decidable set.
+  #      (c) It is a claim about the SUBSCHEMA, never about the gate. A contract the gate never
+  #          loads is DECLARED LIMIT 1's territory and is untouched.
+  #      (d) It says nothing about limb (a). A canonical dial slot is decided by dict equality
+  #          and is not put through this procedure.
+  #  19. THE GATE'S FRESHNESS FLOOR IS ONLY AS HONEST AS THE TWO COMPARANDS THE DOCUMENT
+  #      DECLARES. RAISED, NAMED AND NOT CLOSED (CD-PL-F206, restated by CD-ENG-WO3-12 as
+  #      CD-ENG-F16D-01, and WIDENED AT 16E ON A312-F3).
+  #      *** THIS LIMIT NAMED ONE COMPARAND AND THE GATE READS TWO. SUPERSEDED AT 16E, STATED AND
+  #      NOT ERASED (CD-RULE-004, PBG-CONT-003). *** WHAT IT SAID, VERBATIM, IN BOTH PLACES IT
+  #      WAS SAID: "The fourth refusal stage compares against the staleness_window_seconds THE
+  #      DOCUMENT ITSELF DECLARES. A detector that stamps an absurdly large window therefore
+  #      re-opens the hole from the other side, and a document-internal comparison cannot bound
+  #      its own comparand." EVERY WORD OF THAT IS TRUE AND IT IS HALF THE RESIDUAL.
+  #      WHAT IS TRUE INSTEAD, AND IT IS TWO COMPARANDS BECAUSE THE PREDICATE HAS TWO: the stage
+  #      computes published_utc MINUS the calm-bearing node's oldest stamp, against
+  #      staleness_window_seconds. BOTH published_utc AND the window are declared BY THE SAME
+  #      DOCUMENT, so a document that moves them TOGETHER is internally coherent and the gate
+  #      cannot see it. MEASURED by CD-ASR-WO3-12 (A312-F3) at 0e80a09, with nothing absurd
+  #      declared and a perfectly ordinary 600-second window:
+  #        as_of_utc = published_utc = 1970-01-01T00:00:00Z, window 600.0  -> ADMITTED x2
+  #        as_of_utc = published_utc = 2099-01-01T00:00:00Z, window 600.0  -> ADMITTED x2
+  #        as_of_utc = published_utc = 0000-01-01T00:00:00Z, window 1      -> ADMITTED x2
+  #      A FIFTY-SIX-YEAR-OLD READING RENDERS AS CALM AND THE GATE CANNOT SEE IT, because the
+  #      gate proves INTERNAL COHERENCE and never ACTUAL FRESHNESS. A replayed envelope, a
+  #      stopped publisher, a stuck detector clock and a backfill run all produce exactly that
+  #      document. AN AUDITOR CAN EXECUTE IT: the new sibling row
+  #      CD-RT-001-STALE-DATA-NEVER-CALM's CD-STALE-SCOPE-009 assertion DRIVES that exact
+  #      document at every run and REQUIRES it to be ADMITTED, so this limit is measured rather
+  #      than asserted and cannot go stale in the reassuring direction.
+  #      THE WINDOW HALF, UNCHANGED: the per-indicator floors DO exist and are ratified —
+  #      governance/mapping/indicator_mapping.yaml carries 30 indicators with windows from 345600
+  #      to 10368000 seconds — but THE ENVELOPE HAS NO INDICATOR DIMENSION: IT HAS TWO DIALS.
+  #      Collapsing 30 indicator windows onto a dial (the minimum? the oldest contributing
+  #      input's window?) is PRODUCT MEANING and is not an implementer's to invent
+  #      (PBG-AUTH-005), and PO-DECISIONS-0029 ruling 1 says the comparison is computed purely
+  #      from the document.
+  #      *** AND IT IS NOT RECORDED AS UNENFORCEABLE — PO-DECISIONS-0030 RULING 2 RULED THE
+  #      OPPOSITE, AND THAT RULING IS WHY THIS PARAGRAPH DOES NOT END HERE. *** Source honesty is
+  #      the SAME CLASS as the A311-F1 forgery and it has the SAME answer already ruled in the
+  #      three-tier perimeter (PO-DECISIONS-0018/0019, BLUEPRINT §17 CD-BP-005): the gate is
+  #      PREVENTION of what is DOCUMENT-INTERNAL; a source that lies about its own stamp is
+  #      caught by DETECTION — WITNESS DIVERGENCE + PROVENANCE, CD-AC-018 — where a source's
+  #      claimed freshness is corroborated against independent witnesses and DIVERGENCE IS THE
+  #      ALARM. IT IS ENFORCED ONE TIER OUT AND IT IS OWED AT WO-3, when real sources and their
+  #      witnesses land. A residual that says "we cannot do this" where the truth is "this is
+  #      done at the next tier, at WO-3" is a FALSE RESIDUAL, and four sentences on this row have
+  #      already been superseded for being false in exactly that direction (DECLARED LIMIT 10,
+  #      12(a), 13, and 14's cost column).
+  #      THE HONESTY OBLIGATION IT CREATES FOR 16C, RECORDED AND DELIBERATELY NOT BUILT: 16C's
+  #      detector-side liveness marking carries the obligation that the stamps it produces are
+  #      PROVENANCE-BACKED and WITNESS-CORROBORATABLE. 16C IS NOT IN INCREMENT 16E — no
+  #      feed_liveness slot, no dead-feed detector, no liveness marking.
+  #      STRICTLY BETTER THAN THE PRIOR STATE EITHER WAY: BEFORE 16D THERE WAS NO COMPARISON AT
+  #      ALL.
+  #  20. WHAT THE FOURTH STAGE ITSELF DOES NOT PROVE (16D-GATE-FRESHNESS). It is asserted by
+  #      tests/test_envelope_freshness.py and by the sibling row
+  #      CD-RT-001-STALE-DATA-NEVER-CALM, and NOT by this instrument.
+  #      (a) A calm-bearing node's stamps are detected BY VALUE — any direct string property that
+  #          reads as a UTC instant — and the OLDEST governs. That cannot be defeated by RENAMING
+  #          a stamp, which is the direction that matters, but a node carrying an unrelated
+  #          string that happens to be a valid UTC instant would have that string counted. The
+  #          oldest-governs rule makes every such case MORE conservative, never less, EXCEPT in
+  #          the one shape where a node has NO real stamp and a decoy fresh one. NAMED, NOT
+  #          CLOSED — and MEASURED SINCE: CD-ASR-WO3-12 (A312-F2) built it. On an arm-H tree
+  #          whose contract is widened to admit an object there,
+  #          degraded_inputs: [{"source_id": "2026-08-24T18:00:00Z", "detail_level": "calm"}] is
+  #          ADMITTED x2, while the same fragment with source_id "SRC-A", "1970..." or "2099..."
+  #          is REFUSED [STALE_CALM] x2. NOT A LIVE ESCAPE ON THE SHIPPED CONTRACT:
+  #          degraded_inputs is #/$defs/source_id_list, an array of plain strings, so no calm can
+  #          appear there at all today, and both contract JSONs are byte-unchanged. THE REMEDY IS
+  #          A TIGHTENING — requiring the stamp a calm-bearing node relies on to be a DECLARED
+  #          stamp rather than any string that parses — WHICH NARROWS WHAT THE PRODUCT ADMITS AND
+  #          IS PRODUCT SCOPE (PBG-AUTH-005). It is raised as Q36 and is with the Product
+  #          Authority. RECORDED HERE; NOT CLOSED HERE.
+  #      (b) A :60 leap second parses as no instant and therefore FAILS CLOSED. No producer in
+  #          this project can emit one (datetime cannot represent it), so this costs the product
+  #          nothing today; it would refuse a legitimately leap-second-stamped calm reading if
+  #          one ever arrived.
+  #      (c) The stage guards calm and only calm. A stale elevated or acute reading is ADMITTED,
+  #          which is the criterion's own scope — "never renders as CALM". The sibling row
+  #          CD-RT-001-STALE-DATA-NEVER-CALM drives that as a VACUITY arm and requires it to stay
+  #          ADMITTED.
+  #      (d) It says nothing about whether the published_utc the document carries is the instant
+  #          the document was really published. Nothing in a document can prove that about
+  #          itself. SEE DECLARED LIMIT 19: that is the DETECTION tier's, CD-AC-018, owed at
+  #          WO-3 — it is enforced one tier out and it is NOT unenforceable.
   #
   # NUMBERING, BECAUSE CD-ASR-WO3-06 COULD NOT VERIFY IT AND SAID SO. DECLARED LIMIT NUMBERS ARE
   # PER REGISTER ROW, NOT PER FILE. The limits above are CD-RT-001-MISSING-DATA-NEVER-CALM's and
-  # they run 1-17 (1-12 until 16B-FIX-3, which added 13; 14 added at 16B-FIX-4; 15 and 16 added
-  # at 16B-FIX-5; 17 added at 16B-CONTRACT-CLOSURE), said identically
+  # they run 1-20 (1-12 until 16B-FIX-3, which added 13; 14 added at 16B-FIX-4; 15 and 16 added
+  # at 16B-FIX-5; 17 added at 16B-CONTRACT-CLOSURE; 18, 19 and 20 added at 16D-GATE-FRESHNESS in
+  # TWO places and written into THIS, THE THIRD PLACE, at 16E, closing CD-ENG-F16D-02), said
+  # identically
   # here, in the header of
   # tools/register/check_missing_data_never_calm.py, and in
   # contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md (CD-RULE-004, three places). The
@@ -1156,6 +1307,348 @@ criteria:
         classifying a state is product meaning (8); and a branch with a required property the
         check cannot build a value for is REPORTED rather than driven (9). It is ONE OF THREE
         guards on CD-AC-001 and never a sole guard.
+      evidence_ref: RTR-WO3-0001
+  # ============================================================================================ #
+  # DECLARED LIMIT — CD-RT-001-STALE-DATA-NEVER-CALM. NEW AT WO-3 INCREMENT 16E. Required by
+  # CD-RULE-004, and said the same way in the header of
+  # tools/register/check_stale_data_never_calm.py and in
+  # contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md. A REGISTER ENTRY MAY NOT CLAIM MORE
+  # THAN ITS GUARD DELIVERS.
+  #
+  # WHY THIS ENTRY EXISTS AT ALL — PO-DECISIONS-0030 ruling 1, in its own words: "Q35(a) — YES,
+  # the fourth refusal stage gets its OWN Required Test Register row, and it lands BEFORE 16C.
+  # This is ruling 9's principle (a constitutional guarantee is carried by a REGISTER-WIRED
+  # instrument, never test-only) applied to the freshness stage: the guarantee is proven today,
+  # but proven in tests is not proven in the register. Register-wire it — its own row, a negative
+  # control the gate reads, failing if stale-carrying-calm is ever admitted."
+  #
+  # *** THE MEASUREMENT THAT ORDERED IT, TAKEN THREE TIMES INDEPENDENTLY AND NOT RELAYED. *** By
+  # CD-ASR-WO3-12 (A312-F1), by PROJECT_LEAD_SEAT_06 in its own shell with its own probe, and by
+  # CD-ENG-WO3-13 before a line of the instrument was written. On a pristine extraction carrying
+  # plants/WO3-INC16D/D1-THE-FOURTH-STAGE-REMOVED.patch (git apply rc=0, TAKEN AND CHECKED), the
+  # live gate ADMITS a dial stamped 1970-01-01 carrying calm on BOTH surfaces — 295bdbe's
+  # behaviour restored exactly — and ALL THIRTY of this register's execute: lines produce a
+  # per-line rc list that is diff-IDENTICAL to the clean tip: TOTAL lines=30 rc0=19 nonzero=11 on
+  # both. NOT ONE ROW MOVED. The only witness that moved was tests/test_envelope_freshness.py
+  # (14 failed, 78 passed), and grep -c 'test_envelope_freshness' required-tests.yaml returned 0
+  # while the register named 41 distinct tests/test_*.py paths. THE PROJECT'S OWN MECHANISM FOR
+  # MAKING A TEST-FILE GUARANTEE LIVE WAS AVAILABLE AND FOR THIS GUARANTEE IT WAS NOT USED.
+  #
+  # AND THE MEMORIAL ~500 LINES ABOVE THIS ENTRY IS ABOUT EXACTLY THIS POSITION: "The register
+  # declared 29 execute: lines, 14 of them naming pytest files, and this file was not one of the
+  # 14. A memorial nobody reads... it does not make the guarantee live, because a pytest file is
+  # still a file the gate happens to name." THAT MEMORIAL IS ABOUT tests/test_detail_level.py AND
+  # THE MISSING HALF. THE STALE HALF OCCUPIED THE IDENTICAL POSITION UNTIL THIS ENTRY. THE
+  # MEMORIAL IS NOT REMOVED AND MUST NOT BE — IT IS THE RECORD OF THE DEFECT CLASS THIS ENTRY
+  # CLOSES, and any live prescription to remove name-coupled test files is SUSPENDED for it.
+  #
+  # IT IS BEHAVIOURAL, NOT STRUCTURAL. It imports crash_detector from <root>/src and drives
+  # refuse_unless_publishable — the function publication/publish.py calls on both surfaces before
+  # it writes anything — with candidate envelopes, and records what the gate actually did. It
+  # does not read the stage's source text, does not grep for REFUSAL_STALE_CALM, and does not
+  # assert that any function is called from anywhere.
+  #
+  # *** THE ADMITTING ARMS ARE NOT DECORATION AND CARRY EQUAL WEIGHT. THIS IS THE HALF THIS
+  # PROJECT'S HISTORY SAYS GETS MISSED. *** A freshness stage that refused EVERYTHING would
+  # satisfy PID §3.2 vacuously by making the dial incapable of ever reading calm, and calm on a
+  # fresh reading backed by real inputs is the entire reason calm exists (PID §4). Every refusing
+  # row is PAIRED with an admitting one in the same run: a fresh calm dial ADMITTED, a dial aged
+  # EXACTLY the declared window ADMITTED (the predicate is a CLOSED interval), a stale dial
+  # rendering elevated or acute ADMITTED, a calm node whose stamps are all fresh NOT REFUSED, and
+  # a usable window with a fresh node NOT REFUSED. CD-STALE-VACUITY-000 asserts the instrument's
+  # OWN table still contains those rows, so the vacuity arms cannot be quietly deleted from the
+  # instrument that exists to carry them. MEASURED at the clean tip, both surfaces: fresh-calm
+  # ADMITTED; 1970 + elevated ADMITTED.
+  #
+  # *** IT HAS TWO LIMBS AND THEY ARE SEPARATELY DEFEATABLE — SEE DECLARED LIMIT 3. *** LIMB A is
+  # the FRONT DOOR. LIMB B drives _refuse_stale_calm DIRECTLY, because on the shipped contracts
+  # the ONLY node that can carry detail_level "calm" is a canonical dial slot in its VALUE branch
+  # (MEASURED: #/$defs/contribution is closed and declares no detail_level, degraded_inputs is
+  # #/$defs/source_id_list, and the root declares additionalProperties: false), so a document
+  # that puts a calm node anywhere else is refused at STAGE 3 as SCHEMA_VIOLATION and never
+  # reaches stage 4. AN INSTRUMENT THAT ONLY USED THE FRONT DOOR COULD NOT TELL THE NODE WALK
+  # APART FROM AN IMPLEMENTATION THAT READS THE TWO DIAL SLOTS BY NAME, which is the
+  # recogniser-over-an-open-set defect class that lost eleven consecutive audit rounds on the
+  # sibling row. MEASURED: D1 costs LIMB A twelve violations and LIMB B nothing; D3 costs LIMB B
+  # twelve and LIMB A nothing. A REPORT OF THIS ROW THAT QUOTES ONE LIMB IS HALF A REPORT.
+  #
+  # WHAT THIS CHECK DOES NOT CATCH — this row's OWN sequence, 1 to 8, each boundary with
+  # something an auditor can execute. DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE,
+  # and THREE rows on this criterion now have a DECLARED LIMIT 3: quote the row id with the
+  # number.
+  #
+  #   1. IT JUDGES THE CONTRACT THE GATE ACTUALLY LOADS, WHICH IS CONFIGURABLE.
+  #      envelope_contract.contracts_dir() honours $CD_CONTRACTS_DIR, so the live gate can be
+  #      pointed at a widened copy while this repository's contracts are byte-intact. WHAT THIS
+  #      CHECK DOES ABOUT IT: it exits 3 unless the contracts the gate resolves are
+  #      <root>/contracts, and prints their SHA-256 at every run (CD-PL-F98). IT DOES NOT PREVENT
+  #      THE ROUTE. NOT PROVED TO BE CARRIED ANYWHERE. EXECUTABLE:
+  #        CD_CONTRACTS_DIR=/tmp/anything python3 tools/register/check_stale_data_never_calm.py --root .
+  #      -> PRECONDITION_NOT_MET, exit 3, never a pass and never a skip.
+  #   2. THE SKELETON IS DERIVED FROM THE CONTRACT BUT THE VALUE VOCABULARY IS A CLOSED WRITTEN
+  #      LIST. The root is built from the contract's own required list and the dial from the
+  #      calm-bearing branch's own required + properties; each property is filled with the FIRST
+  #      of SYNTHETIC_VALUES that the property's OWN subschema accepts, decided by jsonschema —
+  #      the same library the gate validates with — and NEVER by the property's NAME. A required
+  #      property none of them satisfies makes this check REPORT (CD-STALE-BUILD-008) and exit 1.
+  #      DENY BY DEFAULT, so it is not an escape; it IS a maintenance cost. EXECUTABLE: add a
+  #      required root property typed {"type": "string", "pattern": "^ZZZ"} to either contract
+  #      and this instrument goes RED.
+  #   3. LIMB B DRIVES _refuse_stale_calm DIRECTLY AND THEREFORE PROVES NOTHING ABOUT WHETHER THE
+  #      GATE CALLS IT. That is LIMB A's job and only LIMB A's, and the measurement above says so
+  #      in numbers. AND LIMB B IS NAME-COUPLED TO A PRIVATE SYMBOL: renaming _refuse_stale_calm
+  #      makes this instrument exit 3, deliberately, because a check that cannot reach its
+  #      authentic target must fail and never wave through (PBG-CI-002). That coupling is the
+  #      same trade the sibling row's DECLARED LIMIT 12 prices and it is ACCEPTED for the same
+  #      reason: a false positive costs one seat one look; a false negative costs the
+  #      constitution. EXECUTABLE: rename _refuse_stale_calm in
+  #      src/crash_detector/publication/envelope_contract.py and run the command — exit 3 with
+  #      the reason, never 0.
+  #   4. IT PROVES NOTHING ABOUT A VALUE READING THAT SHOULD NOT HAVE BEEN A VALUE, AND NOTHING
+  #      ABOUT THE MISSING HALF. A dial whose inputs were missing but which was constructed as
+  #      VALUE with a fabricated score and a fresh stamp renders calm legitimately as far as THIS
+  #      row is concerned, and this check ADMITS IT — the vacuity rows say so out loud, and they
+  #      must, or the check would be the vacuous kind. THE CARRIERS ARE THE THREE SIBLING ENTRIES
+  #      ON CD-AC-001: CD-RT-001-AST-NO-NUMERIC-DEFAULT (the provenance of the magnitude),
+  #      CD-RT-001-ABSENCE-RENDERS-UNKNOWN (the runtime post-condition) and
+  #      CD-RT-001-MISSING-DATA-NEVER-CALM (the MISSING half at the gate, including RULE CC).
+  #      THIS IS ONE OF FOUR GUARDS ON CD-AC-001 AND NEVER A SOLE GUARD. MEASURED: arms H1-H4,
+  #      which widen a non-dial root property to admit a calm-bearing object, leave THIS row at
+  #      PASS — 97 and are caught by the SIBLING row at FAIL — 2. Neither row covers the other.
+  #   5. IT DOES NOT RE-DERIVE THE ROOT PARTITION. It drives the CANONICAL DIAL SLOTS — root
+  #      properties spelled literally {"$ref": "#/$defs/dial_reading"} — and if a contract
+  #      declares none it exits 3 rather than reporting clean. Whether some OTHER root property
+  #      could carry a dial at all is RULE CC's question and it is asserted on the SIBLING row
+  #      (CD-CALM-ROOT-008), not here. A ROOT PROPERTY THIS ROW DOES NOT DRIVE IS NOT A PROPERTY
+  #      THIS ROW SAYS ANYTHING ABOUT.
+  #   6. IT IS A CLAIM ABOUT DOCUMENTS THE GATE SEES. A rendering path that never calls
+  #      refuse_unless_publishable is outside this check entirely. MEASURED at this commit: the
+  #      only callers in src/ are publication/publish.py lines 276-277, on both surfaces, before
+  #      any write. A FUTURE SERVING LAYER THAT RENDERS A DIAL WITHOUT PUBLISHING AN ENVELOPE IS
+  #      NOT PROVED TO BE CARRIED ANYWHERE.
+  #   7. IT NEEDS jsonschema, BECAUSE THE GATE DOES, and it is therefore NOT stdlib-only like the
+  #      static checks in tools/register/. If jsonschema is absent it exits 3 with the reason —
+  #      never a pass and never a skip (PBG-CI-002).
+  #   8. *** THE DECLARED SCOPE BELOW IS THIS ROW'S LARGEST LIMIT AND IT IS STATED IN FULL RATHER
+  #      THAN CROSS-REFERENCED. *** It is DRIVEN at every run by CD-STALE-SCOPE-009, so it cannot
+  #      go stale in the reassuring direction while the code changes underneath it.
+  #
+  # ============================================================================================ #
+  # *** THE DECLARED SCOPE OF THIS GUARD — PO-DECISIONS-0030 ruling 2. READ THIS BEFORE READING A
+  # CLEAN RUN. Said identically here, in the instrument header and in the execution contract
+  # (CD-RULE-004, three places). ***
+  # ============================================================================================ #
+  # THE GATE ENFORCES DOCUMENT-INTERNAL FRESHNESS AND NOTHING WIDER. What it computes is
+  # published_utc MINUS the calm-bearing node's oldest stamp, against the window THE SAME
+  # DOCUMENT declares. That is a claim about the document's INTERNAL COHERENCE — a dial cannot be
+  # older than its declared window relative to its own declared publication instant — and it is
+  # NOT a claim about ACTUAL freshness.
+  #
+  # IT CANNOT CATCH A SOURCE THAT CONSISTENTLY LIES ABOUT ITS OWN STAMP. A feed that stamps every
+  # reading with the current instant regardless of the true age of the data underneath it is
+  # internally consistent and PASSES THIS GATE. So is a uniformly time-shifted envelope: MEASURED
+  # by CD-ASR-WO3-12 (A312-F3) at 0e80a09 with an ordinary 600-second window, as_of_utc =
+  # published_utc = 1970-01-01T00:00:00Z is ADMITTED on both surfaces. A replayed envelope, a
+  # stopped publisher, a stuck detector clock and a backfill run all produce exactly that
+  # document. NOTHING IN A DOCUMENT CAN PROVE THAT ABOUT ITSELF.
+  #
+  # *** THAT IS NOT RECORDED AS "OUTSIDE ENFORCEMENT" AND IT IS NOT "PERMANENTLY UNENFORCEABLE".
+  # THE PRODUCT AUTHORITY RULED THE OPPOSITE, AND THIS PARAGRAPH IS THE RULING AND NOT THIS
+  # SEAT'S OPINION. *** Source honesty is the SAME CLASS as the A311-F1 forgery and it has the
+  # SAME answer already ruled in the THREE-TIER PERIMETER (PO-DECISIONS-0018/0019, BLUEPRINT §17
+  # CD-BP-005):
+  #   · PREVENTION — what is DOCUMENT-INTERNAL is prevented AT THE GATE. That is this stage, and
+  #     that is what this row guards.
+  #   · DETECTION — a source that lies about its own freshness is caught ONE TIER OUT, by WITNESS
+  #     DIVERGENCE + PROVENANCE, CD-AC-018, where a source's CLAIMED freshness is corroborated
+  #     against independent witnesses and DIVERGENCE IS THE ALARM.
+  #   · WHEN IT IS OWED: AT WO-3, when real sources and their witnesses land. It is not deferred
+  #     indefinitely and it is not written off.
+  #
+  # AND THE HONESTY OBLIGATION THAT CREATES FOR 16C, RECORDED HERE AND DELIBERATELY NOT BUILT
+  # HERE. 16C's detector-side liveness marking carries the obligation that the stamps it produces
+  # are PROVENANCE-BACKED and WITNESS-CORROBORATABLE. 16C IS NOT IN THIS INCREMENT: no
+  # feed_liveness slot, no dead-feed detector, no liveness marking. This row records the
+  # obligation and builds none of it.
+  #
+  # A DECLARED LIMIT THAT SAYS "WE CANNOT DO THIS" WHERE THE TRUTH IS "THIS IS DONE AT THE NEXT
+  # TIER, AT WO-3" IS A FALSE RESIDUAL, and four sentences on the sibling row have already been
+  # superseded for being false in exactly that reassuring direction.
+  #
+  # FOR THE AUDITOR. Do not read a clean run of this check as proof that no stale reading can
+  # ever render as calm. It proves that the LIVE PUBLICATION GATE refuses a DOCUMENT-INTERNALLY
+  # stale calm node, on both surfaces, at every canonical dial slot AND at every position in the
+  # document the walk reaches, while still admitting everything the product must be able to
+  # publish. The arm to weigh it against is the vacuity set; the arms to weigh it with are
+  # D1-D4 in plants/WO3-INC16E/MANIFEST.md, each a measured tree with its rc and its violation
+  # count.
+  # ============================================================================================ #
+  - test_id: CD-RT-001-STALE-DATA-NEVER-CALM
+    scope: CLASS
+    execute: python3 tools/register/check_stale_data_never_calm.py --root .
+    execution_contract: contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md
+    negative_control:
+      violation: >
+        A node rendering detail_level "calm" whose oldest readable stamp is further from the
+        document's declared published_utc than the document's declared
+        staleness_window_seconds, ADMITTED by refuse_unless_publishable on either surface, by
+        ANY route. CD-AC-001 is constitutional in PID §3.2's own words — "Missing OR STALE
+        input never renders as calm" — and until WO-3 increment 16D nothing in this product had
+        ever compared a timestamp at all.
+        *** EVERY NAMED MEMBER OF THIS CLASS IS A MEASURED ARM WITH ITS rc AND ITS VIOLATION
+        COUNT, RUN FROM ITS OWN PRISTINE git archive | tar -x EXTRACTION WITH THE PATCH READ
+        FROM AN ABSOLUTE PATH OUTSIDE EVERY EXTRACTION AND git apply's rc TAKEN AND CHECKED. A
+        MEMBER OF THIS CLASS THAT IS NOT A MEASURED ARM IS A CLAIM, AND THIS ROW DOES NOT MAKE
+        ONE. *** The sentence "The instrument fails on all of these" stood on the SIBLING row
+        and was FALSE; it is superseded there, readable beside its correction, and it is
+        deliberately not repeated here.
+        The class includes, and is not limited to:
+        the fourth refusal stage removed from refuse_unless_publishable so the gate never
+        computes an age at all (arm D1 — FAIL — 12 violation(s), exit 1, all CD-STALE-GATE-001;
+        and the same tree leaves the SIBLING row and all thirty pre-existing register lines
+        completely unmoved, which is why this row had to exist);
+        the naive age-greater-than-window formula, with the negative-age branch removed, so a
+        dial stamped AFTER the envelope was published renders as calm (arm D2 — FAIL — 4
+        violation(s), exit 1, all CD-STALE-GATE-001);
+        the stage reading the dial slots that exist today BY NAME instead of quantifying over
+        the document's nodes, so a calm-bearing node anywhere else is invisible (arm D3 —
+        FAIL — 12 violation(s), exit 1: 6x CD-STALE-NODES-004, 4x CD-STALE-CLOSED-006, 2x
+        CD-STALE-OLDEST-005);
+        the NEWEST stamp governing instead of the OLDEST, so one fresh-looking string laundered
+        into a stale node rescues it (arm D4 — FAIL — 2 violation(s), exit 1, both
+        CD-STALE-OLDEST-005);
+        and, not yet planted as arms and therefore stated as the CLASS this row's assertions
+        cover rather than as measured members: any removal of a fail-closed branch — a
+        calm-bearing node with no stamp, a property that announces itself as a stamp and does
+        not parse, an absent or unreadable published_utc, or a window that is absent, zero,
+        negative, boolean, a string or non-finite — each of which CD-STALE-CLOSED-006 drives
+        directly and requires to REFUSE.
+        ================================================================================
+        *** AND THE VACUOUS DIRECTION IS EQUALLY A VIOLATION OF THIS ROW, WHICH IS THE HALF
+        THIS PROJECT'S HISTORY SAYS GETS MISSED: *** a genuinely fresh calm dial that stops
+        being ADMITTED; a reading aged EXACTLY the declared window that stops being ADMITTED,
+        because the predicate is a CLOSED interval; a stale elevated or acute reading that
+        stops being ADMITTED, because the stage guards calm and ONLY calm and that is the
+        criterion's own scope; a calm node whose stamps are all fresh that starts being
+        refused; a calm node at a non-dial position that is refused whatever its age. A tree on
+        which nothing can be published is not a tree on which PID §3.2 holds, and this row does
+        not report it as one. MEASURED at the clean tip, on both surfaces: fresh-calm ADMITTED,
+        1970 + elevated ADMITTED. The instrument's own CD-STALE-VACUITY-000 assertion fails if
+        the fresh-calm row, the closed-interval boundary row or the stale-but-not-calm row is
+        removed from its table.
+        ================================================================================
+        THIS CHECK HAS DECLARED LIMITS 1-8, stated in full in the comment above this entry, in
+        the header of tools/register/check_stale_data_never_calm.py and in the execution
+        contract, each with something an auditor can execute. It does NOT catch: a widened
+        contract reached through $CD_CONTRACTS_DIR (it refuses to run rather than preventing
+        it); a candidate it cannot build from its closed declared value vocabulary (reported,
+        not skipped); whether the GATE CALLS the stage, on limb B — that is limb A's job and
+        the two limbs are separately defeatable; a fabricated VALUE reading that should have
+        been an absence; anything about the MISSING half, which is the sibling row's; a root
+        property that is not a canonical dial slot, which is RULE CC's; a rendering path that
+        never calls refuse_unless_publishable; and — THIS ROW'S LARGEST LIMIT — A SOURCE THAT
+        CONSISTENTLY LIES ABOUT ITS OWN STAMP. The gate enforces DOCUMENT-INTERNAL freshness,
+        so a uniformly time-shifted envelope passes it and CD-STALE-SCOPE-009 drives that exact
+        document at every run and REQUIRES it to be admitted. *** THAT IS NOT RECORDED AS
+        UNENFORCEABLE: PO-DECISIONS-0030 ruling 2 rules it the DETECTION tier's — witness
+        divergence + provenance, CD-AC-018 — ENFORCED ONE TIER OUT AND OWED AT WO-3, when real
+        sources and their witnesses land. *** It is ONE OF FOUR guards on CD-AC-001 and never a
+        sole guard.
+      evidence_ref: RTR-WO3-0001
+  # ============================================================================================ #
+  # DECLARED LIMIT — CD-RT-001-STALE-DATA-WITNESS-SUITE. NEW AT WO-3 INCREMENT 16E. Required by
+  # CD-RULE-004, and said the same way in the module docstring of tests/test_envelope_freshness.py
+  # and in contracts/execution/CD-RT-001-STALE-DATA-WITNESS-SUITE.md.
+  #
+  # WHY THERE ARE TWO ROWS AND NOT ONE, DISCLOSED RATHER THAN LEFT TO BE INFERRED.
+  # PO-DECISIONS-0030 ruling 1 orders "its OWN row, a negative control the gate reads", and
+  # CD-D-182 states that the row should carry TWO WITNESSES: the live instrument, and an
+  # execute: line naming tests/test_envelope_freshness.py "exactly as 41 existing register paths
+  # name their files". MEASURED, in pbg/tools/pbg/required_tests.py: _ALLOWED_TEST is
+  # {test_id, scope, execute, execution_contract, negative_control} and the validator REQUIRES
+  # execute to be a single non-empty STRING (line 388). ONE ROW IS THEREFORE ONE COMMAND. The
+  # alternative — chaining both witnesses into one line with && — SHORT-CIRCUITS: the pytest half
+  # would not run at all on a tree where the instrument fails, which is precisely the tree on
+  # which an auditor most needs both numbers. So the two witnesses are two rows, each with its
+  # own execution contract that RESOLVES. CD-RT-001-STALE-DATA-NEVER-CALM is the row of ruling 1;
+  # THIS row is its paired pytest witness and IS NOT OFFERED AS THE GUARD.
+  #
+  # *** A PYTEST FILE IS STILL A FILE THE GATE HAPPENS TO NAME. *** That sentence is the
+  # memorial's, ~500 lines above, and it applies to this row in full. Do not read this entry as
+  # the discharge of PO-DECISIONS-0030 ruling 1 or of PO-DECISIONS-0026 ruling 9. What this row
+  # does is stop the witness being unread: MEASURED, grep -c 'test_envelope_freshness'
+  # required-tests.yaml returned 0 at 0e80a09 while the file reported 14 failed / 78 passed on
+  # the tree with the whole fourth stage deleted, and the register named 41 other
+  # tests/test_*.py paths.
+  #
+  # WHAT IT ASSERTS: 26 test functions parametrised to 92 — the stage's correctness, the
+  # exactness of the hand-rolled civil-date arithmetic (verified by CD-ASR-WO3-12 against all
+  # 3,652,059 civil dates from 0001-01-01 to 9999-12-31 with ZERO mismatches), the fail-closed
+  # branches, the NO-CLOCK guarantee of BP-AMENDMENT-0001 §D.3, the mirror between the module's
+  # stamp pattern and the contracts' own, and — with equal weight — that a genuinely fresh calm
+  # dial is still ADMITTED.
+  #
+  # DECLARED LIMITS — THIS ROW'S OWN SEQUENCE, WHICH IS 1 TO 2:
+  #   1. IT IS A pytest FILE AND THEREFORE NAME-COUPLED TO ITS OWN PATH. Deleting or renaming
+  #      tests/test_envelope_freshness.py makes this row non-zero, which is the correct
+  #      direction; but a test file the register names is only as live as the register line that
+  #      names it, and THE LIVE GUARD IS THE SIBLING ROW.
+  #   2. ONE OF ITS ASSERTIONS GUARDS THE INSTANCE AND NOT THE CLASS, AND IT IS NAMED HERE RATHER
+  #      THAN LEFT TO BE FOUND. test_A311_F1_arm_H_is_REFUSED_even_on_a_contract_widened_to_
+  #      admit_it drives a FIXED module-level constant, ARM_H_DOCUMENT_FRAGMENT =
+  #      [{"source_id": "SRC-A", "detail_level": DETAIL_CALM}]. It proves that ONE fragment is
+  #      refused; IT DOES NOT QUANTIFY OVER WHAT THE WIDENED SUBSCHEMA ADMITS. CD-ASR-WO3-12
+  #      (A312-F2) built a fragment the same widened schema admits —
+  #      [{"source_id": "2026-08-24T18:00:00Z", "detail_level": "calm"}] — which is ADMITTED on
+  #      both surfaces, because stamps are detected BY VALUE and a node with NO real stamp and
+  #      ONE DECOY proves itself fresh against the decoy. NOT A LIVE ESCAPE ON THE SHIPPED
+  #      CONTRACT: degraded_inputs is #/$defs/source_id_list, an array of plain strings, so no
+  #      calm can appear there at all, and both contract JSONs are byte-unchanged. RECORDING IT
+  #      IS IN SCOPE AT 16E; FIXING IT IS NOT — requiring a calm-bearing node's stamp to be a
+  #      DECLARED stamp narrows what the product admits and is PRODUCT SCOPE (PBG-AUTH-005). It
+  #      is raised as Q36 and is with the Product Authority.
+  # ============================================================================================ #
+  - test_id: CD-RT-001-STALE-DATA-WITNESS-SUITE
+    scope: CLASS
+    execute: PYTHONPATH=src python3 -m pytest tests/test_envelope_freshness.py -q
+    execution_contract: contracts/execution/CD-RT-001-STALE-DATA-WITNESS-SUITE.md
+    negative_control:
+      violation: >
+        The same class as the sibling row CD-RT-001-STALE-DATA-NEVER-CALM's — a stale calm
+        reading admitted, the comparison weakened, the arithmetic made inexact, a fail-closed
+        branch opened, or a clock reached — AND EVERY NAMED MEMBER IS A MEASURED ARM, run from
+        its own pristine git archive | tar -x extraction with git apply's rc TAKEN AND CHECKED
+        (plants/WO3-INC16E/MANIFEST.md):
+        the fourth refusal stage removed from refuse_unless_publishable (arm D1 — 14 failed, 78
+        passed, exit 1);
+        the naive age-greater-than-window formula with the negative-age branch removed, so a
+        FUTURE stamp is admitted (arm D2 — 2 failed, 90 passed, exit 1);
+        the stage reading the dial slots BY NAME instead of walking nodes (arm D3 — 40 failed,
+        52 passed, exit 1 — the arm this file bites hardest on, and the reason it is worth
+        wiring);
+        the NEWEST stamp governing instead of the oldest (arm D4 — 2 failed, 90 passed, exit 1);
+        and the clean control with no patch (arm CTRL — 92 passed, exit 0), without which an arm
+        set cannot tell "the plant did it" from "everything is broken".
+        ================================================================================
+        AND THE VACUOUS DIRECTION IS EQUALLY A VIOLATION OF THIS ROW: the module asserts, in the
+        same file and from the same fixture builder, that a genuinely fresh calm dial is
+        ADMITTED on both surfaces, and test_the_fixture_is_proved_in_both_directions exists to
+        fail if that ever stops being true. A suite in which every freshness assertion is a
+        refusal would be evidencing a product that can no longer publish a calm reading.
+        A TEST THAT CAN SKIP IS NOT EVIDENCE. MEASURED at the clean tip: 92 passed, with zero
+        skipped, zero xfailed, zero xpassed, zero deselected and zero errored.
+        ================================================================================
+        THIS ROW HAS DECLARED LIMITS 1-2, stated in full in the comment above this entry, in the
+        module docstring of tests/test_envelope_freshness.py and in the execution contract. IT
+        IS NOT THE GUARD AND MUST NOT BE READ AS ONE: a pytest file is still a file the gate
+        happens to name, which is this register's own memorial about
+        tests/test_detail_level.py, and the LIVE instrument PO-DECISIONS-0030 ruling 1 required
+        is the SIBLING entry CD-RT-001-STALE-DATA-NEVER-CALM, which drives
+        refuse_unless_publishable itself. AND ONE OF ITS ASSERTIONS GUARDS THE INSTANCE AND NOT
+        THE CLASS — test_A311_F1_arm_H_is_REFUSED_even_on_a_contract_widened_to_admit_it drives
+        a fixed module-level constant and does not quantify over what the widened subschema
+        admits (A312-F2). RECORDED, NOT CLOSED: the remedy is a TIGHTENING and is product scope
+        (Q36, PBG-AUTH-005).
       evidence_ref: RTR-WO3-0001
 
 - criterion_id: CD-AC-002
