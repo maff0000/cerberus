@@ -1,7 +1,7 @@
 ---
 document: PID — Product Intent Definition
 product: Crash Detector — standalone market stress instrument
-version: 1.1.0
+version: 1.1.1
 status: RATIFIED by Matt 2026-08-18 — all PO recommendations accepted; issues dealt with as we go
 owner: Product Owner (Trinity)
 authority: Matt — final
@@ -119,8 +119,18 @@ a STRENGTHENS relation on CD-AC-004, not as a free-standing requirement; the DET
 new doctrine, it is CD-AC-004 named at the exit. This resolves the pid_relation cleanly
 (DERIVES/STRENGTHENS/NEW — STRENGTHENS)."* Its durable home is therefore the Required Test
 Register's `pid_relation` field (`STRENGTHENS CD-AC-004`), which the same ruling schedules at WO-3.
-**`CD-AC-017` enters as `NEW_REQUIREMENT`** — the route the framework blocks pending PO amendment of
-the PID, which this amendment performs.
+**`CD-AC-017`'s `pid_relation` is `DERIVES`.** *** **CORRECTED AT v1.1.1 BY `PO-DECISIONS-0025`
+RULING 5.** *** From v1.1.0 until 2026-08-24 this paragraph read *"`CD-AC-017` enters as
+`NEW_REQUIREMENT` — the route the framework blocks pending PO amendment of the PID, which this
+amendment performs."* **THAT SENTENCE WAS OVERTAKEN BY ITS OWN AMENDMENT AND NOT WRONG WHEN
+WRITTEN**: `NEW_REQUIREMENT` is coded as *"blocked pending PO amendment of the PID"*, the amendment
+is v1.1.0 itself, and once it landed `CD-AC-017` was **in the PID census** — measured with the
+instrument's own `derive_pid_census`, census size **17**, `CD-AC-017 in census: True` — so the
+relation the framework derives is **`DERIVES`** and the blocked route is **spent**. The Required
+Test Register has recorded `DERIVES` since WO-3 increment 14 and **declared the divergence against
+this line rather than quietly reconciling it**; this correction closes it at the PID end, which is
+where the Product Owner's pen belongs and where no seat was permitted to tidy it (`CD-D-115`).
+`CD-AC-018` is unaffected: it still gains no row and is still `STRENGTHENS CD-AC-004`.
 
 > **BOTH CRITERIA ARE 3/4 OF THE `CD-D-172` FORM AND ARE CARRIED AS 3/4, NEVER ROUNDED UP.** The
 > Product Owner's own words, PO-DECISIONS-0020 ruling 1: *"Until the register rows exist they are
@@ -171,4 +181,5 @@ computation ours; witnesses read-only external. Known-fragile: Quantical's undoc
 |---|---|---|---|
 | 1.0 | 2026-08-18 | PO, ratified by Matt | initial ratified PID |
 | 1.0.1 | 2026-08-18 | PO | CD-D-003: §5 stale "(proposed)" parenthetical corrected — the budget was ratified with the whole document; CD-REC-001: dates corrected to observed UTC (my stamps ran a day ahead; the PL caught it); CD-D-001 placement note added. No criterion, semantics or doctrine changed. |
+| 1.1.1 | 2026-08-24 | **PO (PO-DECISIONS-0025 ruling 5, commit `d0048f4`, authored by the Product Owner and by NO seat); the ruling's instruction carried into this file by the Project Lead as a RECORD ACT** | **PROSE CORRECTION ONLY. NO CRITERION IS ADDED, REMOVED OR RE-WORDED; NO SEMANTICS AND NO DOCTRINE CHANGE; NO CONSTITUTIONAL SECTION (§1, §3) IS TOUCHED. §6's TRAILING PARAGRAPH ON `CD-AC-017` MOVES FROM `NEW_REQUIREMENT` TO `DERIVES`.** The ruling: *"correct the PID prose NEW_REQUIREMENT → DERIVES for CD-AC-017 (the register already records DERIVES; PO-authored one-line prose fix, carried verbatim)."* **AND THE PROJECT LEAD DECLARES THE LIMIT OF ITS OWN CARRIAGE RATHER THAN LETTING "verbatim" DO WORK IT CANNOT DO: the ruling states the TRANSFORMATION, not the replacement sentence. Swapping the single token would have left the trailing clause — *"the route the framework blocks pending PO amendment of the PID"* — asserting a block that no longer exists, so the clause had to be replaced too. THE REPLACEMENT PROSE IS THE PROJECT LEAD'S COMPOSITION IMPLEMENTING A PRODUCT OWNER RULING, NOT PRODUCT OWNER TEXT, AND IT IS SUBMITTED FOR CONFIRMATION AT THE NEXT DISPOSITION.** The superseded sentence is quoted in full in the new paragraph, so nothing is erased. **CONSEQUENCE DISCLOSED BEFORE THE EDIT AND NOT AFTER: this correction changes the PID content hash, so the Required Test Register pinned to `sha256:538e30f3bf4f1803…` no longer matches its PID and MUST be re-pinned before it is a valid input.** That was written down at `BL-20260824T070245Z-0157` ahead of the edit, it is arithmetic and not a surprise, **and when the register reports a stale pin it is NOT a regression** — the same discipline `P3` was given at `BL-20260823T173018Z-0151`. The re-pin is an explicit deliverable of WO-3 increment 16A, on the lane where the register lives. |
 | 1.1.0 | 2026-08-23 | **PO (PO-DECISIONS-0020 ruling 1, commit `abafec2`, authored by Matt Scott and by NO seat); carried into this file verbatim by the Project Lead** | **§6 GAINS ONE CRITERION AND THIS IS THE FIRST TIME THE RATIFIED CRITERION SET HAS MOVED.** `CD-AC-017` — *admission by declared-door provenance* — enters as **`NEW_REQUIREMENT`**, its row carried verbatim from the ruling. It exists because the eighth Assurance seat's `RED` proved the two-tier perimeter false and the Product Owner corrected it to three tiers at BLUEPRINT v0.4.0: *"Nothing in §6 covers admission by construction-provenance — the RESISTED tier is a new claim about a new door, and the auditor measured it into existence."* `CD-AC-018` gains **no row**, by the same ruling: it is **`STRENGTHENS CD-AC-004`**, recorded as a relation beneath the §6 table and homed in the register's `pid_relation` at WO-3. **BOTH ARE 3/4 OF THE `CD-D-172` FORM AND ARE CARRIED AS 3/4 — the register row does not exist and 4/4 is a WO-3 claim.** **CONSEQUENCE DISCLOSED AND NOT BURIED: this amendment changes the PID content hash, so any Required Test Register pinned to `441d83166b2f3d0c` no longer matches its PID and MUST be re-pinned before it is a valid input** (`pbg/tools/pbg/required_tests.py`, check: *"pid.content_hash does not match the referenced PID — the register's population was derived from a different document"*). The lane register at `be0b355` is one such; it is blocked at the gate and does not move on this seat's word. **THE CARRIAGE IS VERIFIED BY COMMAND AND NOT BY ASSERTION** — `python3 -B tools/reconciliation/check_pid_carried_po_0020_verbatim.py --root .`, with a counterfactual arm that proves the check can fail. No CONSTITUTIONAL section (§1, §3) was touched; no existing criterion's semantics changed. |
