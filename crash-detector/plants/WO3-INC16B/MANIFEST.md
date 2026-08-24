@@ -978,3 +978,185 @@ then seventeen. **THEY ARE NOT EDITED.** As of `16B-FIX-3` the set is **twenty-o
   the old one presented one shape as a class.
 * **Nothing here is assurance.** `CD-ENG-WO3-08` built these arms and may not certify them
   (`PBG-SOD-001`, non-waivable). A fresh Assurance seat follows.
+
+---
+
+# *** WO-3 INCREMENT `16B-FIX-4` — SIX MORE ARMS, `C22`–`C27`, AND A SEVENTH THAT IS `C10` AGAIN ***
+
+**Written by `CD-ENG-WO3-09`** under `governance/engineering/CD-DISPATCH-INC16B-FIX4-ENGINEER.md`,
+authority `CD-ASR-WO3-08`'s `AMBER` at `3174753` (`BL-20260824T134814Z-A308.yaml`), findings **F1**,
+**F2**, **F3**, **F5**, and `PO-DECISIONS-0026` rulings 9 and 10. **`C1`–`C21` ARE NOT EDITED** and
+their sections above stand as written.
+
+*** **THIS SET GREW FOR THE FOURTH CONSECUTIVE INCREMENT AND THE PROJECT LEAD RULED THAT IT WOULD
+NOT GROW A FIFTH TIME BY THE SAME METHOD.** *** `A306` escaped through a new state vocabulary,
+`A307` through a boolean `state` subschema, `A308` through `patternProperties`,
+`dependentSchemas`, `$dynamicRef` and a `$ref` chain past the resolver's depth cap. **EACH FIX
+CLOSED THE SPELLING IT WAS SHOWN AND THE NEXT AUDITOR FOUND ANOTHER.** `C22`–`C26` are the four
+`A308` spellings and the auditor's arm `FINAL`; **`C27` IS NOT ONE OF THEM AND IT IS THE ARM THIS
+INCREMENT IS ACTUALLY ABOUT.**
+
+Each arm from **its own pristine `git archive bb3bd6f | tar -x -C /tmp/...` extraction**
+(`CD-PL-F154`). `git apply`'s **own exit code** is its own column, and every arm's `contracts/` was
+`diff -rq`'d against the pristine target's and **PROVED DIFFERENT (2 files, every arm)**, so no arm
+is the clean tree wearing a plant's name.
+
+| # | Plant | `git apply` | contracts differ | CLEAN | VIOLATED | violated-arm result | assertion that caught it |
+|---|---|---|---|---|---|---|---|
+| **C22** | `C22-STATE-DECLARED-UNDER-PATTERNPROPERTIES.patch` | **0** | **2 files** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2 (the `undecidable` limb)** |
+| **C23** | `C23-STATE-INTRODUCED-BY-DEPENDENTSCHEMAS.patch` | **0** | **2 files** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2** |
+| **C24** | `C24-DIAL-DEFINITION-REACHED-BY-DYNAMICREF.patch` | **0** | **2 files** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2** |
+| **C25** | `C25-REF-CHAIN-PAST-THE-RESOLVER-DEPTH-CAP.patch` | **0** | **2 files** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2** |
+| **C26** | `C26-SIXTEEN-C-LANDED-HONESTLY.patch` — **THE ARM THAT RELEASES OR HOLDS 16C** | **0** | **2 files** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2** |
+| **C27** | `C27-FIFTH-SPELLING-PROPERTYDEPENDENCIES.patch` — **THE FALSIFIER** | **0** | **2 files** | **0** | **1** | `FAIL — 2 violation(s)` | **`CD-CALM-SLOTS-007` × 2** |
+| **C28** | *(CONTROL — **no new patch file**; it is `C10`'s patch re-run from its own extraction, exactly as `C15` and `C21` are)* | **0** | **2 files** | **0** | **0** | **`PASS — 158 assertions, 0 violations`** | **none, and that is the point** |
+
+## *** THE CONTRAST THAT DECIDES WHETHER THIS FIX IS ANY GOOD ***
+
+**The SUPERSEDED instrument, taken verbatim from
+`git show 4d797e6:tools/register/check_missing_data_never_calm.py`, run on each VIOLATED
+extraction, and the LIVE GATE driven in-process through `refuse_unless_publishable` with
+`CD_CONTRACTS_DIR` pointed at that arm's own contracts, payload
+`{"state":"STALE","reason":"FEED_DEAD","since_utc":"…","detail_level":"calm"}`:**
+
+```
+        SUPERSEDED INSTRUMENT (4d797e6)            LIVE GATE, SAME TREE
+C22     rc=0  PASS — 144 assertions, 0 violations  public *** ADMITTED ***  private *** ADMITTED ***
+C23     rc=0  PASS — 144 assertions, 0 violations  public *** ADMITTED ***  private *** ADMITTED ***
+C24     rc=0  PASS — 144 assertions, 0 violations  public *** ADMITTED ***  private *** ADMITTED ***
+C25     rc=0  PASS — 144 assertions, 0 violations  public *** ADMITTED ***  private *** ADMITTED ***
+C26     rc=0  PASS — 144 assertions, 0 violations  public *** ADMITTED ***  private *** ADMITTED ***
+C27     rc=0  PASS — 144 assertions, 0 violations  public *** ADMITTED ***  private *** ADMITTED ***
+```
+
+**SIX TREES ON WHICH THE CONSTITUTIONAL INSTRUMENT REPORTED A GREEN PASS WHILE THE LIVE PUBLICATION
+GATE ADMITTED A DEAD FEED RENDERING AS `calm` ON BOTH SURFACES.** All six are `FAIL — 2` at
+`bb3bd6f`, `CD-CALM-SLOTS-007`, `['feed_liveness']` in the UNDECIDABLE note on both surfaces.
+
+**A DISCLOSURE AGAINST MY OWN CONTRAST COLUMN.** `C26`'s patch edits the instrument as well as the
+contracts — it makes the one-line `_envelope`-skeleton edit that `DECLARED LIMIT 7` forces on any
+real 16C — so running the *superseded* file against the *patched* tree gives `FAIL — 76`, which is
+that missing edit and not a catch. The `C26` row above is therefore measured the only honest way:
+the whole `C26` mutation (contracts + `check_schema_closed`'s allowlist + the skeleton edit) applied
+to a pristine extraction of `4d797e6` and run with **that tip's own instrument**. `PASS — 144
+assertions, 0 violations`, gate ADMITTED on both surfaces. **RECORDED BECAUSE A CONTRAST COLUMN
+THAT COMPARES TWO DIFFERENT THINGS IS WORSE THAN NO COLUMN.**
+
+## *** `C27` — THE FALSIFIER, AND IT IS THE ONLY ARM HERE THAT PROVES ANYTHING ABOUT THE CLASS ***
+
+`C22`–`C26` going red proves the four named spellings are closed. **THAT IS EXACTLY WHAT THE
+PREVIOUS THREE INCREMENTS ALSO PROVED ABOUT THEIR OWN NAMED SPELLINGS, AND EACH TIME THE NEXT
+AUDITOR FOUND ANOTHER.** `C27` is the test of whether this one is different: **a fifth spelling
+none of the four audits used, none of the dispatches named, and which appears ZERO TIMES IN THE
+INSTRUMENT.**
+
+`propertyDependencies` is an applicator **proposed for the JSON Schema draft after 2020-12**.
+`jsonschema 4.10.3`'s `Draft202012Validator` does not know it, so the live gate ignores it entirely
+and the slot is wide open.
+
+```
+grep -c propertyDependencies tools/register/check_missing_data_never_calm.py   ->  0
+C27 on the SUPERSEDED instrument   rc=0  PASS — 144 assertions, 0 violations   gate ADMITTED × 2
+C27 at bb3bd6f                     rc=1  FAIL — 2 violation(s)  CD-CALM-SLOTS-007  ['feed_liveness']
+```
+
+**IT FAILS BECAUSE IT IS UNREADABLE, NOT BECAUSE IT IS LISTED.** Three further never-named
+spellings, each measured the same way on its own extraction, each `PASS — 144` + gate ADMITTED
+before and `FAIL — 2` after, each with zero occurrences in the instrument:
+
+```
+a private vendor keyword   "x-crash-detector-liveness"   grep 0   PASS/ADMITTED -> FAIL — 2
+an invented applicator     "slotShape"                   grep 0   PASS/ADMITTED -> FAIL — 2
+a ONE-LETTER TYPO          "propertys"                   grep 0   PASS/ADMITTED -> FAIL — 2
+```
+
+*** **THE TYPO IS THE ONE TO READ TWICE.** A contract author who writes `propertys` instead of
+`properties` produces a dial the gate does not constrain at all, and before this fix the
+constitutional instrument said `PASS — 144 assertions, 0 violations` about it. ***
+
+**A FOURTH PROBE WAS DISCARDED AND IS RECORDED RATHER THAN DROPPED:** `$recursiveRef` /
+`$recursiveAnchor` (2019-09). The mutated contract is not a valid 2020-12 schema, so
+`refuse_unless_publishable` raises `ContractUnavailable` and never judges the candidate — that is
+fail-closed, but for the wrong reason, so it is **not** evidence about this recogniser and is not
+counted among the arms.
+
+## *** WHAT THE REST OF THE REGISTER SAYS, AND IT CORRECTS A308 ***
+
+`CD-ASR-WO3-08` recorded that on every escape arm *"the register moves EXACTLY ONE LINE — `LINE 6`,
+`check_schema_closed.py`'s ROOT ALLOWLIST… AND `LINE 6` IS NOT EVIDENCE THAT ANYTHING SAW THE
+DEFECT: THE BENIGN CONTROL `C16` MOVES THE SAME ONE LINE."* **THAT IS TRUE OF THE ARMS THE AUDITOR
+MEASURED — where the new slot is OPTIONAL and un-allowlisted — AND IT DOES NOT SURVIVE 16C PAYING
+ITS FRICTION.** Measured here: each spelling landed as a real 16C would land it (slot in root
+`required`, `PUBLIC_ALLOWLIST` paid, `_envelope` skeleton edited), on the SUPERSEDED instrument:
+
+```
+        LINE 3 (constitutional)        LINE 6 (check_schema_closed)       gate
+C22     rc=0  PASS — 144               rc=1  FAIL — 2  rule 2: escape hatch, NAMES patternProperties
+C23     rc=0  PASS — 144               rc=1  FAIL — 2  rule 2: object is open, not closed
+C24     rc=0  PASS — 144               rc=0  PASS — 292 assertions, 0 violations      ADMITTED × 2
+C25     rc=0  PASS — 144               rc=0  PASS — 452 assertions, 0 violations      ADMITTED × 2
+C27     rc=0  PASS — 144               rc=1  FAIL — 2  rule 2: object is open, not closed
+```
+
+**AND `C16`, THE BENIGN CONTROL, TRIPS `rule 3: the root properties are not the declared
+allowlist` — A DIFFERENT RULE.** So the correction runs in two directions and both are recorded:
+
+* **AGAINST A308 AND AGAINST THE DISPATCH'S FRAMING:** for `patternProperties` — the auditor's own
+  arm `FINAL` and the dispatch's headline spelling — a second instrument DOES see something, on a
+  rule that names the keyword and that the benign control does not trip. 16C could not have landed
+  that spelling silently even before this fix.
+* **AND IN THE FIX'S FAVOUR, WHICH IS THE HALF THAT MATTERS:** `C24` (`$dynamicRef`) and `C25` (the
+  over-cap `$ref` chain) land with **the ENTIRE thirty-line register green** and the gate admitting
+  a dead feed as `calm`. **TWO CLEAN ESCAPES SURVIVED EVERY OTHER INSTRUMENT IN THE REPOSITORY**,
+  and `check_schema_closed` is not a guard about `calm` and was never claimed to be. The
+  constitutional instrument had to be the one that caught them, and now it is.
+
+## `C28` — THE CONTROL, AND WHY IT IS `C10` AGAIN AND NOT SOMETHING NEW
+
+**A CONTROL THAT IS NOT THE SAME CONTROL PROVES NOTHING ABOUT A CHANGE.** `C28` is `C10`'s patch —
+the symmetric fourth `detail_level` — re-run from its own pristine extraction of `bb3bd6f`, exactly
+as `C15` and `C21` are. `PASS — 158 assertions, 0 violations`, `apply_rc=0`. **THE INVERSION DID NOT
+TURN A LEGITIMATE VOCABULARY EXTENSION RED**, and `C10`, `C15`, `C21` and `C28` are four
+independent extractions reporting the identical figure.
+
+## `C1`–`C21` RE-RUN UNCHANGED
+
+Every arm from its own pristine extraction of `bb3bd6f`, `git apply` rc=0 on all eighteen patch
+files: `C1` `FAIL — 8` · `C2` `FAIL — 2` · `C3` `FAIL — 8` · `C4` `FAIL — 4` · `C5`
+`PRECONDITION_NOT_MET` exit 3 (and exit 0 with the variable unset, the same tree) · `C6` `FAIL — 6`
+· `C7` `FAIL — 8` · `C8` `FAIL — 8` · `C9` `FAIL — 2` · **`C10` CONTROL `PASS — 158`** · `C11`
+`FAIL — 32` · `C12` `FAIL — 32` · `C13` `FAIL — 2` · **`C14` `FAIL — 2`** · **`C15` CONTROL
+`PASS — 158`** · **`C16` CONTROL `PASS — 144`** · `C17` `FAIL — 32` · **`C18` `FAIL — 32`** ·
+**`C19` `FAIL — 32`** · **`C20` `FAIL — 2`** · **`C21` CONTROL `PASS — 158`**. **NOT ONE ARM
+STOPPED BITING AND NOT ONE CHANGED ITS CENSUS.** Every figure is identical to the one the same
+script produced against the SUPERSEDED tip `4d797e6` in the same session, and to the figures
+`CD-ASR-WO3-08` (5) measured independently.
+
+---
+
+## WHAT `16B-FIX-4` ADDS TO "WHAT THIS SET DOES NOT ESTABLISH"
+
+The sections above say five arms, then ten, then seventeen, then twenty-one. **THEY ARE NOT
+EDITED.** As of `16B-FIX-4` the set is **twenty-eight**.
+
+* **THE FALSE-POSITIVE TAIL IS REAL, IT IS BIGGER THAN ANY PREVIOUS INCREMENT'S, AND IT IS
+  MEASURED RATHER THAN ESTIMATED.** Eight benign root properties, none a dial: **six turn this
+  instrument red** — a `patternProperties` metrics bag, a `propertyNames`-constrained map, a benign
+  `dependentSchemas` pair, a subschema carrying its own `$id`, **a property carrying an ordinary
+  custom `x-` annotation**, and an object whose `required` names `state` without a subschema. Two
+  benign controls stay green. **The clean tree is unaffected and its FULL output is byte-identical
+  before and after.** That is `DECLARED LIMIT 14` and it is priced, not accidental.
+* **`C27` IS ONE MEMBER OF THE CLASS IT IS MEANT TO STAND FOR, AND FOUR MEMBERS IS STILL NOT A
+  PROOF.** The ARGUMENT that the deny class is the complement of a finite written set is
+  structural and I believe it; **what is measured is four never-named spellings, not the class.**
+  `CD-ASR-WO3-07` and `CD-ASR-WO3-08` each said this of their own findings and it is repeated here
+  rather than quietly dropped.
+* **THE INVERSION IS AT THE ROOT-PROPERTY RECOGNISER AND NOWHERE ELSE.** `_dial_from_branch`,
+  `_synthesise` and the branch walk are untouched by `FX12`. A keyword this check cannot read
+  inside a BRANCH is still handled by `CONDITIONAL_KEYWORDS` and `ref_siblings`, which is a
+  different mechanism reaching a similar answer, and **nobody has proved the two agree.**
+* **IT SAYS NOTHING NEW ABOUT A DIAL THAT DOES NOT DECLARE A PROPERTY NAMED `state`,** and nothing
+  about a root property that declares nothing at all (`{"type": "object"}` is still `False`). Those
+  are `DECLARED LIMIT 12`'s residue and `DECLARED LIMIT 14`'s own stated non-closure.
+* **Nothing here is assurance.** `CD-ENG-WO3-09` built these arms and may not certify them
+  (`PBG-SOD-001`, non-waivable). A fresh Assurance seat follows.
