@@ -73,7 +73,24 @@ pid:
   # THE PID ITSELF WAS CARRIED ONTO THIS LANE VERBATIM (dispatch D0) — `git checkout main -- PID.md`,
   # a carriage of the existing Product Owner act PID v1.1.0 (PO-DECISIONS-0020 ruling 1), NOT an
   # amendment. NO SEAT EDITED PID.md; it is byte-identical to main:PID.md (CD-D-115).
-  content_hash: sha256:538e30f3bf4f1803a89a11ae7b3781febba3752aeb516914e80db6ed15f9621f
+  # RE-PINNED AGAIN AT WO-3 INCREMENT 16A by CD-ENG-WO3-03 (dispatch D1), FOR PID v1.1.1.
+  # THE VALUE THIS SUPERSEDES, RECORDED AND NOT DELETED (CD-RULE-004, PBG-CONT-003):
+  #     sha256:538e30f3bf4f1803a89a11ae7b3781febba3752aeb516914e80db6ed15f9621f
+  #     described above as PID v1.1.0 as carried at increment 14 D0. That description was TRUE and
+  #     the value is now STALE, for one reason and no other: PO-DECISIONS-0025 ruling 5 was executed
+  #     on main at 8611685 as a PROSE-ONLY record act, which changed the document's bytes.
+  # *** THE STALE PIN WAS ARITHMETIC AND IT WAS WRITTEN DOWN BEFORE THE EDIT, AT
+  #     BL-20260824T070245Z-0157. IT IS NOT A REGRESSION AND MUST NOT BE RECORDED AS ONE. ***
+  # PID v1.1.1 WAS CARRIED ONTO THIS LANE BYTE-IDENTICALLY, NOT RETYPED:
+  #     git show 8611685:PID.md > PID.md ; git show main:PID.md | cmp - PID.md   -> exit 0
+  # NO SEAT EDITED PID.md (CD-D-115). The carriage precedes the re-pin deliberately: the register
+  # resolves pid.ref RELATIVE TO ITS OWN DIRECTORY (CD-PL-F157), so re-pinning first would have
+  # pinned the hash of a document this lane did not hold.
+  # THE CENSUS WAS RE-DERIVED ON THE CARRIED FILE WITH THE INSTRUMENT'S OWN FUNCTION, NOT BY EYE:
+  #     derive_pid_census -> 17 ; CD-AC-017 True ; CD-AC-018 False ; CD-AC-004 True ; 0 duplicated.
+  #     UNCHANGED FROM v1.1.0, so the record act provably moved prose and no criterion.
+  # Read from sha256sum and never transcribed (CD-PL-F36).
+  content_hash: sha256:08baf51ca5a34b4e15be11b4ffe3e4e5ac271291247ace7e8fcabb7b0e8dab9f
 
 # NULL, AND NOT THIS SEAT'S TO FILL IN. See the header.
 latest_admitted_run: null
@@ -3450,11 +3467,32 @@ criteria:
 # (PO-DECISIONS-0020 ruling 1, PID v1.1.0), SO THAT BLOCK IS SPENT, and using it here would
 # suppress the very criterion the amendment created.
 #
-# DIVERGENCE DECLARED RATHER THAN RECONCILED: PID.md line 122 still reads "**`CD-AC-017` enters as
-# `NEW_REQUIREMENT`**". That sentence describes the state ON THE DAY OF THE AMENDMENT, when no
-# register row existed — the same PID version note says "the register row does not exist and 4/4 is
-# a WO-3 claim". THIS ROW IS THAT WO-3 CLAIM. THE PID PROSE IS NOT THIS SEAT'S TO EDIT (CD-D-115);
-# the divergence is raised as a finding to the Product Owner and is NOT silently corrected here.
+# DIVERGENCE DECLARED RATHER THAN RECONCILED — *** AND NOW CLOSED AT THE PID END. ***
+#
+# THE DIVERGENCE AS IT STOOD AT INCREMENT 14, PRESERVED VERBATIM AND NOT DELETED (PBG-CONT-003),
+# BECAUSE IT EARNED ITS PLACE BY DECLARING RATHER THAN TIDYING AND A FUTURE READER MUST SEE IT:
+#     "DIVERGENCE DECLARED RATHER THAN RECONCILED: PID.md line 122 still reads "**`CD-AC-017`
+#      enters as `NEW_REQUIREMENT`**". That sentence describes the state ON THE DAY OF THE
+#      AMENDMENT, when no register row existed — the same PID version note says "the register row
+#      does not exist and 4/4 is a WO-3 claim". THIS ROW IS THAT WO-3 CLAIM. THE PID PROSE IS NOT
+#      THIS SEAT'S TO EDIT (CD-D-115); the divergence is raised as a finding to the Product Owner
+#      and is NOT silently corrected here."
+#
+# *** CLOSED BY PO-DECISIONS-0025 RULING 5 ("correct the PID prose NEW_REQUIREMENT -> DERIVES for
+# CD-AC-017"), executed as the Q28 RECORD ACT on main at 8611685, producing PID v1.1.1. ***
+# CLOSED AT THE PID END AND BY THE PRODUCT OWNER'S PEN — WHICH IS EXACTLY WHERE THE INCREMENT-14
+# SEAT SAID IT BELONGED, AND IS WHY DECLARING THE DIVERGENCE WAS THE RIGHT ACT AND RECONCILING IT
+# LOCALLY WOULD HAVE BEEN THE WRONG ONE. THIS REGISTER ROW DID NOT MOVE: it has recorded `DERIVES`
+# since increment 14 and still does. THE PID MOVED TO MEET IT.
+# CARRIED ONTO THIS LANE AT WO-3 INCREMENT 16A BY CD-ENG-WO3-03 (dispatch D1), BYTE-IDENTICALLY AND
+# WITHOUT EDIT: `git show main:PID.md | cmp - PID.md` -> exit 0, sha256 08baf51c…. PID.md's §6
+# paragraph now opens "**`CD-AC-017`'s `pid_relation` is `DERIVES`.**" and quotes the superseded
+# sentence in full, so nothing is erased at either end. The census was RE-DERIVED on the carried file
+# with the instrument's own `derive_pid_census` — 17, CD-AC-017 True, CD-AC-018 False, CD-AC-004
+# True, 0 duplicated, UNCHANGED from v1.1.0 — so the record act provably moved prose and no
+# criterion.
+# NOTHING ELSE ABOUT THIS ROW CHANGES, AND IN PARTICULAR THE CLOSURE IS NOT PROGRESS TOWARD A PASS:
+# the row is still NOT EVIDENCED (see immediately below) and still does not pass.
 #
 # *** THIS ROW IS NOT YET EVIDENCED AND MUST NOT BE READ AS A CLAIM THAT IT IS. *** The mechanism is
 # owed by WO-3 INCREMENT 17. At this SHA there is NO door, NO test file and NO execution contract,
