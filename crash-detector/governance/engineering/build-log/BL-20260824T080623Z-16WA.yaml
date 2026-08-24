@@ -1,0 +1,207 @@
+entry_id: BL-20260824T080623Z-16WA
+timestamp_utc: "2026-08-24T08:06:23Z"
+project: crash-detector
+actor: CD-ENG-WO3-03
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16A-REGISTRY-CARRIER-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+baseline_sha: 116c01f4584c62a244910ac6676c030735596896
+current_sha: b74529cb46f1b9fbbdb408188c4e458f8a5068cc
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  WO-3 INCREMENT 16A — ALL FOUR DELIVERABLES LANDED, ZERO INDICATORS REGISTERED, AND FIVE
+  FINDINGS OF WHICH THREE ARE AGAINST THIS SEAT'S OWN WORK OR ITS OWN DISPATCH. D1 carried
+  PID v1.1.1 onto the lane byte-identically (cmp exit 0, sha256 08baf51c) and re-pinned the
+  Required Test Register to it; the census was RE-DERIVED on the carried file with the
+  instrument's own derive_pid_census and is UNCHANGED at 17 with CD-AC-017 in it, CD-AC-018
+  out and CD-AC-004 in, so the Q28 record act provably moved prose and no criterion. The
+  verifier reports pid.content_hash MATCHES, 18 criteria, 18 UNDECIDABLE, latest_admitted_run
+  null, GATE SHUT — the correct outcome, and UNDECIDABLE is not progress toward a pass. D2
+  wired detail_level PER-DIAL into $defs.dial_reading in BOTH closed envelopes, required in
+  every branch of VALUE|DEGRADED|UNKNOWN, absent at envelope top level, with schema_version
+  bumped 1.0.0 -> 1.1.0; and REPLACED the guard of CD-PL-F169, which asserted only top-level
+  absence and therefore passed untouched on the per-dial attachment it was cited as
+  excluding. D3 made the PO-DECISIONS-0025 ruling-2 portability constraint testable by
+  reading deploy/compose.yaml AS YAML DATA through the project's existing _yamlmin, with six
+  refusals, every arm planted on a mutated COPY, and a merge-key resolution step without
+  which the check would have judged six field-less bind mounts and printed a confident PASS.
+  D4 built the indicator-mapping registry-data carrier — three enums, DialBinding,
+  MappingProvenance, IndicatorMapping, IndicatorMappingRegistry, the loader and the refusals
+  — SHIPPING ZERO ROWS, reached from ConfigSnapshot so it is not a writer with no caller, and
+  proved end to end that with the shipped zero-row file both dials read Unknown and
+  detail_level renders absent_data_level and never calm. NO INDICATOR, NO DIAL BINDING, NO
+  POLARITY AND NO TIER WAS REGISTERED ANYWHERE, INCLUDING IN A TEST FIXTURE.
+
+status: WAITING_ASSURANCE
+next_safe_action: >-
+  Dispatch a SEPARATE, FRESH Assurance seat over wo-3 at b74529cb (PBG-SOD-001, non-waivable;
+  this seat's own test runs are implementation evidence and never assurance). Direct it hardest
+  at three things. FIRST, the staleness-ceiling collision: STALENESS_WINDOW_CEILING_SECONDS is
+  900.0 and PO-DECISIONS-0025 rulings 4 and 6 require quarterly and WIDE windows, so the
+  carrier cannot hold the rows 16B must write — verify the seat did not widen the bound and
+  decide whether a feed-liveness ceiling and a data-cadence window are one quantity or two.
+  SECOND, the module-registration constraint the sweep exposed — confirm that adding any module
+  under src/ turns CD-CLASS-2-SWEEP RED and that only the Project Lead can clear it. THIRD, the
+  polarity vocabulary, which is this seat's structural derivation and not a ratified list.
+  16B remains blocked on Q30 and must not start until the mapping artefact's content is
+  readable from this project.
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 1990
+  result: "1990 passed, 0 failed — from a 1882 baseline at 116c01f; +108 and no regression"
+  command: "python3 -m pytest tests/ -q"
+  evidence_reference: >-
+    Run in the worktree /srv/crash-detector-wo3 at b74529cb on CPython 3.11.2. Baseline
+    re-measured at 116c01f in the same session: 1882 passed. Alongside it: CD-CLASS-2-SWEEP
+    PASS 610 sites over 19 modules with TIER 1 at 33 (ISINSTANCE 18) — module and tier-1
+    counts IDENTICAL to baseline; all 13 runnable tools/register checks PASS;
+    check_grant_matrix_live PRECONDITION_NOT_MET for want of a live PostgreSQL, VERIFIED
+    PRE-EXISTING by running it against the baseline tree; and CD-DEPLOY-PORTABILITY PASS with
+    1072 assertions and 0 violations. THIS IS IMPLEMENTATION EVIDENCE AND IS NOT ASSURANCE
+    (PBG-SOD-001).
+
+evidence_references:
+  - "D1 carriage: `git show 8611685:PID.md | cmp - PID.md` -> exit 0; `sha256sum PID.md` -> 08baf51ca5a34b4e15be11b4ffe3e4e5ac271291247ace7e8fcabb7b0e8dab9f"
+  - "D1 census on the CARRIED file, via the instrument's own derive_pid_census: 17; CD-AC-017 True; CD-AC-018 False; CD-AC-004 True; 0 duplicated — UNCHANGED from v1.1.0"
+  - "D1 register: pid.content_hash MATCHES · 18 criteria · 18 UNDECIDABLE · latest_admitted_run (null) · GATE: SHUT · PID_ACCEPTANCE_SATISFIED: NOT DERIVED"
+  - "D1 contrast arm on a SCRATCH COPY (never the real file): pin reverted to 538e30f3 -> pid.content_hash MISMATCH"
+  - "D2 live contract, four arms through refuse_unless_publishable: UNKNOWN dial WITH detail_level ADMITTED; WITHOUT it REFUSED SCHEMA_VIOLATION; at TOP LEVEL REFUSED UNKNOWN_KEY; value 'catastrophic' REFUSED SCHEMA_VIOLATION"
+  - "D2 the superseded guard REPRODUCED as an executable fact: tests/test_detail_level.py::test_the_superseded_guard_would_have_PASSED_the_per_dial_attachment"
+  - "D3 clean arm: `python3 -B deploy/check_portability.py --root .` -> exit 0, PASS, 1072 assertions, 0 violations"
+  - "D3 eleven violated arms and five admitting arms, all on mutated copies in tmp: tests/test_deploy_portability.py, 24 tests"
+  - "D3 anti-vacuity: a renamed anchor -> exit 3 PRECONDITION_NOT_MET; and the UNRESOLVED state reproduced, where every service bind mount reads as {'<<': ...} with no source and no target"
+  - "D4 staleness collision MEASURED against the real constructor: quarterly 7862400s REFUSED, monthly REFUSED, daily REFUSED, hourly REFUSED, 960s REFUSED, 900s ADMITTED"
+  - "D4 end to end: load the shipped zero-row file -> ConfigSnapshot -> evaluate([]) -> both dials exactly Unknown -> detail_level == absent_data_level and != calm"
+  - "Scope: `git diff --stat 116c01f..b74529cb -- pbg/ BLUEPRINT.md governance/decisions/` -> EMPTY; `git rev-parse wo-2r3` -> be0b355 UNMOVED; one commit identity CD-ENG-WO3-03"
+
+blockers:
+  - "Q30 — the ratified mapping artefact trinity:pbgv2:crash_detector:indicator_dial_mapping:v1 resolves nowhere reachable from this project, so 16B cannot write a single row. 16A registers ZERO indicators BY DESIGN and that is the deliverable, not a gap."
+  - "THE STALENESS CEILING BLOCKS 16B DIRECTLY. STALENESS_WINDOW_CEILING_SECONDS is 900.0 (15 minutes), DERIVED from PID §5's ratified assurance latency budget. PO-DECISIONS-0025 r6 requires a WIDE window for private credit stress and r4 registers SLOOS's NDFI leg as manual-QUARTERLY. MEASURED: nothing slower than intraday passes the door. THE BOUND WAS NOT WIDENED — reversing a derivation to suit the data is the invention CD-RULE-003 forbids. A Product Owner question, raised and not resolved."
+  - "THE POLARITY VOCABULARY IS NOT RATIFIED. Ruling 1 says each indicator carries a polarity and does not say what the admissible values are. Polarity declares the two values a monotone SIGN can take, as an engineering derivation. If the ratified mapping carries a non-monotone or U-shaped relationship, the enum is wrong and 16B finds it at the first such row."
+  - "NO MODULE MAY BE ADDED UNDER src/ BY AN ENGINEER SEAT ALONE. A new module enters the judgement closure UNDECLARED and takes CD-CLASS-2-SWEEP from PASS to FAIL; the only remedy lives in tools/sweep/declared_dispositions.py, which is the Project Lead's register and is HELD by PO-DECISIONS-0018 ruling 3."
+
+risks:
+  - "EVERY REFUSAL IN THE MAPPING CARRIER IS UNEXERCISED BY REAL DATA. It is exercised only by PLANT_SYNTH_* fixtures. Nothing here has met a real indicator, and 16B is where the shape is first tested against the thing it was built for."
+  - "detail_level IS IN THE CONTRACT AND ON NO SURFACE. src/ still has no entrypoint and publish_cycle still has zero callers (CD-PL-F167), so no running process publishes an envelope. A SCHEMA IS NOT A SURFACE, and CD-AC-006's proportionality half is reachable now and still not evidenced by a live publication."
+  - "THE DETAIL THRESHOLDS ARE UNEXERCISED AND MEAN NOTHING YET. With zero sources every dial is Unknown, and the Unknown branch returns absent_data_level without ever reaching the threshold comparison. elevated_at and acute_at are read, validated, carried and never compared until 16B registers a source AND Q25 gives the dial a scale."
+  - "THE DEPLOY AUDIT READS ONE FILE AND RUNS NO DOCKER. A tree clean here can be deployed with a compose override the check never sees, and whether the stack actually starts on a second host is an operational test nobody has run."
+  - "NO LIVE POSTGRESQL WAS AVAILABLE. check_grant_matrix_live could not run, the publication layer is exercised against a recording double and not a database, and nothing in this increment was proved against real SQL."
+  - "REDIS IS ABSENT AND THAT IS NOT SETTLED. PO-DECISIONS-0025 r2's architecture sentence names it; BLUEPRINT §2's container set does not declare it. NOT ADDED (a service with no declared purpose, no grant-matrix role and no egress posture is worse than an absent one, and adding it is a CD-D-115 Product Owner act) and NOT QUIETLY OMITTED — stated in the audit's declared limits, in the shipped data file's header, and as a test that fails the day Redis arrives. Q31."
+
+held_actions:
+  - CD-HOLD-003
+  - CD-HOLD-004
+  - CD-HOLD-005
+
+deliverables:
+  D1_pid_carriage_and_repin: COMPLETE
+  D2_detail_level_per_dial_and_the_fixed_guard: COMPLETE
+  D3_portability_constraint_made_testable: COMPLETE
+  D4_indicator_mapping_carrier_zero_rows: COMPLETE
+
+findings:
+  - id: CD-ENG-WO3-03-F01
+    severity: HIGH
+    against: THE RULING, AND IT BLOCKS 16B
+    statement: >-
+      THE PER-INDICATOR STALENESS WINDOW CANNOT EXPRESS WHAT PO-DECISIONS-0025 REQUIRES.
+      STALENESS_WINDOW_CEILING_SECONDS is 900.0 seconds — fifteen minutes — and it is DERIVED
+      from PID.md §5's ratified assurance latency budget with its clause cited, so it was not
+      chosen and is not this code's to move. Ruling 6 requires private credit stress to carry a
+      WIDE window "because its latency IS the point", and ruling 4 registers SLOOS's NDFI leg as
+      manual-QUARTERLY. MEASURED against the real constructor, not read off the constant:
+      quarterly (7862400s), monthly, DAILY and even HOURLY windows are ALL REFUSED; only 900s
+      and below are admitted. So nothing slower than intraday can be registered. OFFERED AS
+      ANALYSIS AND NOT AS A RULING (PBG-AUTH-005): the ceiling's own derivation reasons about
+      FEED LIVENESS — how long a dead feed may look fresh — while a per-indicator window under
+      PO-PRODUCT-0001 R2 reasons about DATA CADENCE — how old an observation of a quarterly
+      series may legitimately be. A three-month-old SLOOS reading is not a dead feed; it is a
+      healthy feed of a quarterly series. THOSE ARE TWO DIFFERENT QUANTITIES SHARING A UNIT, AND
+      ONE CONSTANT SERVES BOTH. The bound was NOT widened. Raised for the Product Owner.
+  - id: CD-ENG-WO3-03-F02
+    severity: MEDIUM
+    against: THE PROJECT'S OWN CONTROL SURFACE
+    statement: >-
+      AN ENGINEER SEAT CANNOT ADD A MODULE UNDER src/. The mapping carrier was FIRST written as
+      a companion module crash_detector/indicator_mapping.py — which the dispatch explicitly
+      permitted. MEASURED: baseline CD-CLASS-2-SWEEP PASS 548 sites over 19 modules; with the
+      companion module FAIL 610 sites 1 violation, UNDECLARED MODULE. A module is declared only
+      by a DECLARED_MODULE_DISPOSITIONS entry or a complete per-site declaration, and BOTH live
+      in tools/sweep/declared_dispositions.py — the Project Lead's register, HELD by
+      PO-DECISIONS-0018 ruling 3, outside every Engineer seat's scope. The register was NOT
+      edited and the sweep was NOT weakened; the code moved into source_registry.py, which
+      already carries an ESTABLISHED module disposition, and the sweep returned to PASS with the
+      module count and the tier-1 count IDENTICAL to baseline. The dispatch offered this choice
+      as a free one and it is not: one branch of it is unbuildable inside an Engineer's scope.
+  - id: CD-ENG-WO3-03-F03
+    severity: MEDIUM
+    against: THIS SEAT'S OWN WORK
+    statement: >-
+      I WROTE OUTSIDE MY WRITABLE SCOPE AND CORRECTED IT. D3's audit was created at
+      tools/audit/check_deploy_portability.py and COMMITTED at cd0fc24. tools/ is not in the
+      dispatch's writable scope, and the Engineer contract is explicit that an unstated boundary
+      reads as NOT writable rather than as writable. It was moved to deploy/check_portability.py,
+      which is in scope and is where a DEPLOY audit belongs. The net diff for tools/ between
+      116c01f and this tip is EMPTY, so the scope proof at the tip is clean — WHICH IS EXACTLY
+      WHY IT IS RECORDED HERE, because a clean tip diff would otherwise have concealed it.
+  - id: CD-ENG-WO3-03-F04
+    severity: LOW
+    against: THIS SEAT'S OWN FIRST DRAFT
+    statement: >-
+      TWO OF MY OWN TESTS WOULD HAVE PASSED FOR THE WRONG REASON, AND THE INSTRUMENTS CAUGHT
+      THEM. (a) test_the_enum_cannot_be_SUBCLASSED used type("Evil", (enum,), {}), which dies
+      with an incidental AttributeError from EnumMeta.__prepare__ — proving that a malformed call
+      fails, not that the enum is closed. Switched to a class statement, which raises TypeError
+      and is the route an attacker takes. (b) The synthetic-identifier check scanned the raw text
+      of the shipped data file and failed on the file's own header, which DOCUMENTS the
+      PLANT_SYNTH_ convention. It now scans the parsed DATA and excludes $comment, with the
+      reason recorded, because a test that cannot tell a dependency from the documentation of its
+      absence punishes the disclosure this project wants. My first draft of the Redis test had
+      the identical defect and is fixed the same way.
+  - id: CD-ENG-WO3-03-F05
+    severity: LOW
+    against: THE DISPATCH
+    statement: >-
+      TWO FACTUAL DRIFTS IN THE DISPATCH, NEITHER MATERIAL, BOTH RECORDED BECAUSE THE DISPATCH
+      ASKED. (a) §1 states main is at 8611685; main is at 9963aa38 and has been since two
+      Project Lead commits landed after the dispatch was written. 8611685 EXISTS, is an ancestor
+      of main, and `git diff 8611685 main -- PID.md` is EMPTY, so the carriage target was
+      identical either way and D1 is unaffected — I carried from 8611685 and verified against
+      main. (b) §6 D4.1 says SourceRecord carries stands_for and it does; §6 also says the
+      mapping's staleness window should "reuse staleness.py's existing StalenessWindow" while
+      §6 D4.3 anticipates that its bound may be too narrow. Both are right, and together they
+      are the instruction that produced F01 — the dispatch anticipated the collision correctly
+      and I am recording that it was anticipated rather than discovered.
+
+deliberately_not_done:
+  - "NO INDICATOR REGISTERED — not a row, not a placeholder, not a default, NOT A TEST FIXTURE. Every fixture identifier carries the PLANT_SYNTH_ marker and a test asserts none reaches the shipped data file. No real series identifier, no DRTSCILM and no NDFI appears in src/, tests/, contracts/ or any data file."
+  - "NO COMPUTING MappingKind MEMBER ACCEPTED, so the owed *extra guard re-measurement is NOT due and was NOT spent."
+  - "/srv/argus/ WAS NOT OPENED. Not listed, not read, not searched. The indicator list was read off nothing."
+  - "NO src/ ENTRYPOINT AND NO CALLER FOR publish_cycle — deliberate. The increment-15 auditor found the health surface's value axis OPEN, and writing the transport would open the breach. The two residuals are wired together and neither may land alone."
+  - "REDIS NOT ADDED (CD-D-115, Q31) and NOT quietly omitted."
+  - "BLUEPRINT.md NOT AMENDED, governance/decisions/ NOT TOUCHED, pbg/ NOT TOUCHED, tools/sweep/declared_dispositions.py NOT TOUCHED, the frozen base be0b355 NOT MOVED."
+  - "THE STALENESS CEILING NOT WIDENED, and CD-PL-F171 (pbg log validate's empty green) reported by the Project Lead, not repaired here."
+
+boot_verdict: >-
+  RED, AND DECLARED AS RECEIVED RATHER THAN NETTED OFF AGAINST A CLEAN RESULT. `PYTHONPATH=pbg/tools
+  python3 -B -m pbg.cli boot` returned Verdict RED with continuity_state
+  CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED and the single blocking line "continuity invalid:
+  CONTINUITY_REFERENCE_INVALID — read-only diagnosis permitted, normal boot blocked (PBG-CONT-006)".
+  DIAGNOSED AND NOT REPAIRED: governance/engineering/ACTIVE_WORK.yaml on this lane carries
+  continuity_record_commit PENDING (line 36) and last_build_log_entry BL-20260819T025400Z-0004
+  (line 155), both inherited from the frozen base be0b355 and stale by a large margin — the
+  pointer names an entry from five days and many boundaries ago, and current_work still describes
+  the WO-2 Engineer re-dispatch. THIS IS OUTSIDE THIS SEAT'S SCOPE and is the same class of defect
+  the Project Lead repaired on main at dd9c2c3 and named CD-PL-F171 as the reason nobody saw it.
+  I did not touch ACTIVE_WORK.yaml. The boot also reported roadmap_identity None (no ROADMAP.md),
+  which is longstanding. Every other boot field reconciled: observed_sha 116c01f matched the
+  dispatched baseline exactly, branch wo-3, worktree /srv/crash-detector-wo3.
