@@ -1,8 +1,7 @@
-diff --git a/contracts/a/public_envelope.schema.json b/contracts/C9/public_envelope.schema.json
-index 46f3a1b..5560d58 100644
---- a/contracts/a/public_envelope.schema.json
-+++ b/contracts/C9/public_envelope.schema.json
-@@ -60,6 +60,9 @@
+diff -ruN a/contracts/private_envelope.schema.json C9/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:08:05.454744451 +0100
+@@ -58,6 +58,9 @@
      },
      "monetary_debasement": {
        "$ref": "#/$defs/dial_reading"
@@ -12,13 +11,12 @@ index 46f3a1b..5560d58 100644
      }
    },
    "$defs": {
-@@ -299,6 +302,135 @@
+@@ -293,6 +296,133 @@
          "elevated",
          "acute"
        ]
 +    },
 +    "dial_reading_degraded_permissive": {
-+      "description": "Degraded(T, as_of_utc, missing_inputs, reason). Carries a value AND its damage, under a state a renderer must branch on. At least one named missing input: a reading with nothing missing is a Value, not a degradation.",
 +      "type": "object",
 +      "additionalProperties": false,
 +      "required": [
@@ -64,7 +62,6 @@ index 46f3a1b..5560d58 100644
 +      }
 +    },
 +    "dial_reading_unknown_permissive": {
-+      "description": "Unknown(reason, since_utc, missing_inputs). NO score property is declared, and additionalProperties is false, so there is nothing here to render as a number because there is no number. missing_inputs may be empty: 'no source is registered' is a real reason with nothing to name.",
 +      "type": "object",
 +      "additionalProperties": false,
 +      "required": [
@@ -148,11 +145,10 @@ index 46f3a1b..5560d58 100644
      }
    }
  }
-diff --git a/contracts/a/private_envelope.schema.json b/contracts/C9/private_envelope.schema.json
-index 304a9bf..2bcb3d2 100644
---- a/contracts/a/private_envelope.schema.json
-+++ b/contracts/C9/private_envelope.schema.json
-@@ -58,6 +58,9 @@
+diff -ruN a/contracts/public_envelope.schema.json C9/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:08:05.450744458 +0100
+@@ -60,6 +60,9 @@
      },
      "monetary_debasement": {
        "$ref": "#/$defs/dial_reading"
@@ -162,12 +158,13 @@ index 304a9bf..2bcb3d2 100644
      }
    },
    "$defs": {
-@@ -293,6 +296,133 @@
+@@ -299,6 +302,135 @@
          "elevated",
          "acute"
        ]
 +    },
 +    "dial_reading_degraded_permissive": {
++      "description": "Degraded(T, as_of_utc, missing_inputs, reason). Carries a value AND its damage, under a state a renderer must branch on. At least one named missing input: a reading with nothing missing is a Value, not a degradation.",
 +      "type": "object",
 +      "additionalProperties": false,
 +      "required": [
@@ -213,6 +210,7 @@ index 304a9bf..2bcb3d2 100644
 +      }
 +    },
 +    "dial_reading_unknown_permissive": {
++      "description": "Unknown(reason, since_utc, missing_inputs). NO score property is declared, and additionalProperties is false, so there is nothing here to render as a number because there is no number. missing_inputs may be empty: 'no source is registered' is a real reason with nothing to name.",
 +      "type": "object",
 +      "additionalProperties": false,
 +      "required": [

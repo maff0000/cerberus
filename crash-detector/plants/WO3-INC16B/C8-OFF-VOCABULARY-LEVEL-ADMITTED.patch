@@ -1,41 +1,6 @@
-diff --git a/contracts/a/public_envelope.schema.json b/contracts/C8/public_envelope.schema.json
-index 46f3a1b..de9f691 100644
---- a/contracts/a/public_envelope.schema.json
-+++ b/contracts/C8/public_envelope.schema.json
-@@ -144,7 +144,9 @@
-           "maxLength": 128
-         },
-         "detail_level": {
--          "$ref": "#/$defs/detail_level"
-+          "type": "string",
-+          "minLength": 1,
-+          "maxLength": 64
-         }
-       },
-       "oneOf": [
-@@ -293,12 +295,13 @@
-       ]
-     },
-     "absent_data_detail_level": {
--      "description": "*** PID §3.2, CONSTITUTIONAL, AND HELD IN THIS DOCUMENT RATHER THAN DELEGATED: 'Missing data must never render as calm.' *** The #/$defs/detail_level vocabulary MINUS calm. It is the type the DEGRADED and UNKNOWN branches use, and those two are exactly the missing-data states: UNKNOWN declares no score at all, and DEGRADED carries a value AND its damage with at least one named missing input. crash_detector.publication.detail_level.detail_level_for returns policy.absent_data_level for BOTH of them and never a level derived from a score, so a calm on either branch is a document the code cannot produce and the contract must not accept. This is the SAME PATTERN CD-AC-001 already holds one clause over — UNKNOWN declares no score property at all, so an unknown dial carrying a number is unrepresentable — applied to the other constitutional clause, which is what WO-3 increment 16A missed. SUPERSEDED STATE, RECORDED RATHER THAN ERASED: before 16A-FIX both branches referenced #/$defs/detail_level, the guarantee was asserted only in PROSE here and enforced only in DetailPolicy.__post_init__ — a module this envelope never consults — and an UNKNOWN dial carrying calm was ADMITTED by refuse_unless_publishable on BOTH surfaces (CD-ASR-WO3-03, RED; reproduced at BL-20260824T084141Z-0160). With zero registered sources every dial is UNKNOWN, so that was the only state this product could publish. VALUE deliberately keeps the full vocabulary including calm: a genuinely calm reading backed by a real number is the whole reason calm exists, and narrowing it there would satisfy PID §3.2 vacuously by making the dial incapable of ever reading calm. NO THRESHOLD IS DECLARED HERE either; this constrains VOCABULARY, never boundaries.",
-+      "description": "C8 PLANT — the enum replaced by a not-calm predicate. calm is STILL unrepresentable on a missing-data branch, so the calm rows keep passing; anything else at all is now accepted.",
-       "type": "string",
--      "enum": [
--        "elevated",
--        "acute"
--      ]
-+      "minLength": 1,
-+      "maxLength": 64,
-+      "not": {
-+        "const": "calm"
-+      }
-     }
-   }
- }
-diff --git a/contracts/a/private_envelope.schema.json b/contracts/C8/private_envelope.schema.json
-index 304a9bf..eb07157 100644
---- a/contracts/a/private_envelope.schema.json
-+++ b/contracts/C8/private_envelope.schema.json
+diff -ruN a/contracts/private_envelope.schema.json C8/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:08:05.446744465 +0100
 @@ -141,7 +141,9 @@
            "maxLength": 128
          },
@@ -52,6 +17,39 @@ index 304a9bf..eb07157 100644
      },
      "absent_data_detail_level": {
 -      "description": "*** PID §3.2, CONSTITUTIONAL, AND HELD IN THIS DOCUMENT RATHER THAN DELEGATED: 'Missing data must never render as calm.' *** The #/$defs/detail_level vocabulary MINUS calm. It is the type the DEGRADED and UNKNOWN branches use, and those two are exactly the missing-data states: UNKNOWN declares no score at all, and DEGRADED carries a value AND its damage with at least one named missing input. crash_detector.publication.detail_level.detail_level_for returns policy.absent_data_level for BOTH of them and never a level derived from a score, so a calm on either branch is a document the code cannot produce and the contract must not accept. This is the SAME PATTERN CD-AC-001 already holds one clause over — UNKNOWN declares no score property at all, so an unknown dial carrying a number is unrepresentable — applied to the other constitutional clause, which is what WO-3 increment 16A missed. Duplicated from the public contract rather than cross-referenced, for the same reason dial_reading is: a schema that must fetch another schema to judge a document has an availability failure mode. SUPERSEDED STATE, RECORDED RATHER THAN ERASED: before 16A-FIX both branches referenced #/$defs/detail_level, the guarantee was asserted only in PROSE and enforced only in DetailPolicy.__post_init__ — a module this envelope never consults — and an UNKNOWN dial carrying calm was ADMITTED by refuse_unless_publishable on BOTH surfaces (CD-ASR-WO3-03, RED; reproduced at BL-20260824T084141Z-0160). With zero registered sources every dial is UNKNOWN, so that was the only state this product could publish. VALUE deliberately keeps the full vocabulary including calm: a genuinely calm reading backed by a real number is the whole reason calm exists, and narrowing it there would satisfy PID §3.2 vacuously by making the dial incapable of ever reading calm. NO THRESHOLD IS DECLARED HERE either; this constrains VOCABULARY, never boundaries.",
++      "description": "C8 PLANT — the enum replaced by a not-calm predicate. calm is STILL unrepresentable on a missing-data branch, so the calm rows keep passing; anything else at all is now accepted.",
+       "type": "string",
+-      "enum": [
+-        "elevated",
+-        "acute"
+-      ]
++      "minLength": 1,
++      "maxLength": 64,
++      "not": {
++        "const": "calm"
++      }
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json C8/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:08:05.442744472 +0100
+@@ -144,7 +144,9 @@
+           "maxLength": 128
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/detail_level"
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 64
+         }
+       },
+       "oneOf": [
+@@ -293,12 +295,13 @@
+       ]
+     },
+     "absent_data_detail_level": {
+-      "description": "*** PID §3.2, CONSTITUTIONAL, AND HELD IN THIS DOCUMENT RATHER THAN DELEGATED: 'Missing data must never render as calm.' *** The #/$defs/detail_level vocabulary MINUS calm. It is the type the DEGRADED and UNKNOWN branches use, and those two are exactly the missing-data states: UNKNOWN declares no score at all, and DEGRADED carries a value AND its damage with at least one named missing input. crash_detector.publication.detail_level.detail_level_for returns policy.absent_data_level for BOTH of them and never a level derived from a score, so a calm on either branch is a document the code cannot produce and the contract must not accept. This is the SAME PATTERN CD-AC-001 already holds one clause over — UNKNOWN declares no score property at all, so an unknown dial carrying a number is unrepresentable — applied to the other constitutional clause, which is what WO-3 increment 16A missed. SUPERSEDED STATE, RECORDED RATHER THAN ERASED: before 16A-FIX both branches referenced #/$defs/detail_level, the guarantee was asserted only in PROSE here and enforced only in DetailPolicy.__post_init__ — a module this envelope never consults — and an UNKNOWN dial carrying calm was ADMITTED by refuse_unless_publishable on BOTH surfaces (CD-ASR-WO3-03, RED; reproduced at BL-20260824T084141Z-0160). With zero registered sources every dial is UNKNOWN, so that was the only state this product could publish. VALUE deliberately keeps the full vocabulary including calm: a genuinely calm reading backed by a real number is the whole reason calm exists, and narrowing it there would satisfy PID §3.2 vacuously by making the dial incapable of ever reading calm. NO THRESHOLD IS DECLARED HERE either; this constrains VOCABULARY, never boundaries.",
 +      "description": "C8 PLANT — the enum replaced by a not-calm predicate. calm is STILL unrepresentable on a missing-data branch, so the calm rows keep passing; anything else at all is now accepted.",
        "type": "string",
 -      "enum": [
