@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 23:04:12.038807932 +0100
+@@ -862,7 +862,7 @@
+                     "fails closed: a negative age is not a small age"
+                 ),
+             )
+-        if age > window * _MICROSECONDS_PER_SECOND:
++        if age > window * _MICROSECONDS_PER_SECOND * 10 ** 9:  # N11
+             raise PublicationRefused(
+                 REFUSAL_STALE_CALM,
+                 surface=surface,

@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 23:15:22.885734320 +0100
+@@ -169,7 +169,7 @@
+ #: A node claimed ``calm`` and could not prove it had earned it. Like every token beside it,
+ #: it is carried with a POINTER and a KEY NAME and **never with a value from the candidate** —
+ #: not the stamp, not the age, not the window (``PBG-SEC-002``).
+-REFUSAL_STALE_CALM = "STALE_CALM"
++REFUSAL_STALE_CALM = "FRESHNESS_ADVISORY"  # W5C
+ 
+ _JSON_SCALARS = (str, int, float, bool, type(None))
+ 

@@ -181,9 +181,9 @@ TIER, AT WO-3" IS A FALSE RESIDUAL**, and four sentences on the sibling row
 `CD-RT-001-MISSING-DATA-NEVER-CALM` have already been superseded for being false in exactly that
 reassuring direction.
 
-## Declared limits — this row's own sequence, 1 to 8
+## Declared limits — this row's own sequence, 1 to 11
 
-**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These eight are
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These eleven are
 `CD-RT-001-STALE-DATA-NEVER-CALM`'s and they are said identically here, in the header of
 `tools/register/check_stale_data_never_calm.py` and in `required-tests.yaml` (`CD-RULE-004`,
 three places). The sibling row `CD-RT-001-MISSING-DATA-NEVER-CALM` has its own independent 1–20
@@ -205,9 +205,33 @@ sequence and `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` its own 1–12. **Three rows no
    of `SYNTHETIC_VALUES` that the property's OWN subschema accepts, decided by `jsonschema` —
    the same library the gate validates with — and NEVER by the property's NAME. A required
    property none of them satisfies makes this check REPORT (`CD-STALE-BUILD-008`) and exit 1.
-   **DENY BY DEFAULT, so it is not an escape; it IS a maintenance cost.** EXECUTABLE: add a
-   required root property typed `{"type": "string", "pattern": "^ZZZ"}` to either contract and
-   this instrument goes RED.
+
+   *** ITS CLOSING SENTENCE WAS FALSE IN THE REASSURING DIRECTION. SUPERSEDED AT `16F` ON
+   `A313-F1`, STATED AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+   > **WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID:** *"DENY BY DEFAULT, so it is
+   > not an escape; it IS a maintenance cost."*
+
+   **THAT SENTENCE IS ABOUT THE WRONG HALF OF THE PROBLEM.** Deny-by-default governs what
+   happens when a property CANNOT be built: the check reports `CD-STALE-BUILD-008` and exits 1.
+   **IT SAYS NOTHING WHATEVER ABOUT THE PROPERTIES THAT CAN BE BUILT AND ARE THEN DRIVEN AT
+   EXACTLY ONE VALUE EACH, AND THAT IS WHERE THE ESCAPE WAS.** All 72 documents this instrument
+   drove at `a9e19c3` carried THE SAME SINGLE VALUE FOR EVERY ROOT PROPERTY — ONE POINT in the
+   space of documents the contract admits, while the guarantee quantifies over ALL of them.
+   MEASURED by `CD-ASR-WO3-13` (`A313-F1`, HIGH), reproduced by `PROJECT_LEAD_SEAT_07`, and
+   reproduced a THIRD time by `CD-ENG-WO3-14` before a line of `16F` was written: `W5G` (five
+   lines, `if len(candidate.get("inputs_used") or []) > 1: return`) and `W5B2` (three lines,
+   `if candidate.get("regime") == CALM_DETAIL_LEVEL: return`) each leave the live gate ADMITTING
+   a 1970-stamped calm dial on BOTH surfaces while all 32 of this register's `execute:` lines
+   are `diff`-identical to the clean tip.
+
+   **WHAT IS TRUE INSTEAD, AT `16F`.** The vocabulary is still a written list and that half of
+   the limit stands. What has changed is that the instrument no longer drives ONE value per
+   property: the INVARIANCE PASS varies every root property, and every non-stamp property of the
+   calm-bearing node, across that vocabulary, and requires the verdict not to move. The residual
+   is `DECLARED LIMIT 9` — a SAMPLE of an unbounded set — and it is stated there rather than
+   here. EXECUTABLE: add a required root property typed `{"type": "string", "pattern": "^ZZZ"}`
+   to either contract and this instrument goes RED.
 
 3. **LIMB B DRIVES `_refuse_stale_calm` DIRECTLY AND THEREFORE PROVES NOTHING ABOUT WHETHER THE
    GATE CALLS IT.** That is LIMB A's job and only LIMB A's. The two limbs are separately
@@ -256,6 +280,90 @@ sequence and `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` its own 1–12. **Three rows no
    comparand from OUTSIDE the document, which is the DETECTION tier — `CD-AC-018`, witness
    divergence + provenance — **OWED AT WO-3**. It is enforced one tier out and it is **not**
    unenforceable.
+
+9. **THE INVARIANCE PASS VARIES ONE PROPERTY AT A TIME, AND ITS VALUE VOCABULARY IS A SAMPLE OF
+   AN UNBOUNDED SET. NEW AT `16F`.** From a proved-publishable baseline it varies ONE root
+   property, or ONE non-stamp property of the calm-bearing node, to ONE other value that
+   property's own subschema admits, and requires the verdict FOUR-TUPLE — admitted or refused,
+   reason class, pointer, key — to be unchanged. **THAT IS LINEAR RATHER THAN THE EXPONENTIAL
+   CROSS-PRODUCT, AND IT CATCHES EVERY PREDICATE KEYED ON A SINGLE PROPERTY**, which is every
+   weakening shape measured on this project. Where a subschema admits an UNBOUNDED set — every
+   string of 1 to 128 characters, every number — **THE VOCABULARY IS A SAMPLE AND NOT A COVER.**
+   What is sampled, and why each family is there: the product's own words (every `const` and
+   every `enum` string HARVESTED FROM THE CONTRACT ITSELF, never typed in, which is the family
+   `W5B2` keys on); array CARDINALITY at 0, 1, 2 and many (the family `W5G` keys on); every JSON
+   type the subschema admits; numbers at zero, negative, small, large and integral; both
+   booleans; null; and presence against absence. **A PREDICATE KEYED ON A STRING VALUE OUTSIDE
+   THAT SAMPLE ESCAPES THIS PASS. MEASURED BY THIS SEAT AGAINST ITS OWN INSTRUMENT, AFTER
+   FREEZING IT:** arm `N1` (`if candidate.get("config_snapshot_id") == "BYPASS": return`) leaves
+   this row at `PASS` and admits a 1970-stamped calm dial on both surfaces. It is caught by the
+   sibling STRUCTURAL row `CD-RT-001-PUBLICATION-CHOKEPOINT` (`CD-CHOKE-005`), **AND THE TWO
+   ROWS ARE A PAIR FOR EXACTLY THIS REASON.** EXECUTABLE: apply
+   `plants/WO3-INC16F/N1-CONFIG-SNAPSHOT-ID-BYPASS.patch` and run both rows.
+
+10. **THE PAIRWISE PASS RUNS ON LIMB B ONLY, AND THREE-WAY CONJUNCTIONS ARE NOT COVERED. NEW AT
+    `16F`.** One-at-a-time variation cannot see a CONJUNCTIVE predicate over two properties —
+    `if regime == "acute" and len(inputs_used) == 2: return` — because neither half alone
+    changes the verdict. So every unordered PAIR of `(property, value)` points drawn from two
+    DIFFERENT properties is driven, over a per-property value set reduced BY FEATURE FAMILY
+    (every product-vocabulary value and every array-cardinality value kept whole, one
+    representative of each other family). **IT RUNS ON LIMB B ONLY** — the stage driven directly
+    — because a LIMB A pairwise pass is about 230x more expensive per cell: MEASURED on this
+    host, the front door costs `16.05 ms` per call because it reloads and recompiles the
+    contract every time, and the stage costs `0.069 ms`. **A CONJUNCTIVE WEAKENING PLACED
+    OUTSIDE THE STAGE — IN `refuse_unless_publishable` ITSELF — IS THEREFORE NOT COVERED BY THE
+    PAIRWISE PASS**; it is covered by `CD-CHOKE-004` on the sibling structural row. **AND A
+    THREE-WAY CONJUNCTION IS NOT COVERED BY EITHER ROW.** MEASURED at this tip: 30,575 pairs on
+    the public contract and 39,142 on the private one, **stride 1 — the FULL product and not a
+    sample.** Above `PAIRWISE_CELL_BUDGET` the pass takes a deterministic evenly-strided
+    SUBSAMPLE and prints the stride at every run; **at the shipped contracts that branch is NOT
+    REACHED and is therefore UNEXERCISED CODE IN NORMAL OPERATION**, which is stated here rather
+    than left to be discovered. EXECUTABLE: arm
+    `plants/WO3-INC16F/N6-CONJUNCTION-REGIME-AND-CARDINALITY.patch`.
+
+11. **THE PASS COSTS THIRTY TIMES WHAT THIS ROW COST BEFORE IT, AND THAT IS THE PRICE OF THE
+    SPACE. NEW AT `16F`.** MEASURED on the same host with the same command: `0.77 s` at
+    `a9e19c3` for 122 assertions, `26.1 s` at this tip for 142,088. Almost all of it is LIMB A,
+    because every front-door cell reloads and recompiles the contract. **THE COST IS PAID
+    DELIBERATELY AND IT IS NOT AN ACCIDENT OF A LOOP NOBODY BOUNDED.** EXECUTABLE:
+    `time python3 tools/register/check_stale_data_never_calm.py --root .`
+
+## For the auditor
+
+*** THE PARAGRAPH THAT STOOD HERE ASSERTED UNIVERSALITY OVER POSITIONS AND WAS SILENT ON
+DOCUMENTS. SUPERSEDED AT `16F` ON `A313-F1`, STATED AND NOT ERASED (`CD-RULE-004`,
+`PBG-CONT-003`). ***
+
+> **WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID:** *"Do not read a clean run of this
+> check as proof that no stale reading can ever render as calm. It proves that the LIVE
+> PUBLICATION GATE refuses a DOCUMENT-INTERNALLY stale calm node, on both surfaces, at every
+> canonical dial slot AND at every position in the document the walk reaches, while still
+> admitting everything the product must be able to publish."*
+
+**EVERY WORD OF THAT IS TRUE OF THE ONE DOCUMENT THE INSTRUMENT BUILT, AND A READER WOULD TAKE
+IT FOR A CLAIM ABOUT ALL OF THEM.** It quantified over POSITIONS — *"at every position in the
+document the walk reaches"* — and said nothing at all about DOCUMENTS, while the instrument
+behind it drove seventy-two documents that all carried the same single value for every root
+property. This project's own words for a sentence in that shape are **"how a guard becomes a
+certificate"**.
+
+**WHAT THIS ROW PROVES AFTER `16F`, AND NO MORE.** Do not read a clean run of this check as
+proof that no stale reading can ever render as calm. It proves, at every canonical dial slot on
+both surfaces and at every position in the document the walk reaches, that the LIVE PUBLICATION
+GATE refuses a DOCUMENT-INTERNALLY stale calm node and still admits everything the product must
+be able to publish — **AND THAT THE VERDICT DOES NOT MOVE WHEN ANY OTHER ROOT PROPERTY, OR ANY
+NON-STAMP PROPERTY OF THE CALM-BEARING NODE, IS VARIED TO ANY OTHER VALUE IN THE DECLARED
+VOCABULARY, SINGLY ON BOTH LIMBS AND PAIRWISE ON LIMB B.** It does NOT prove that for values
+outside that vocabulary (`DECLARED LIMIT 9`), for three-way conjunctions (`DECLARED LIMIT 10`),
+or for a weakening that sits outside the stage altogether — that last is the SIBLING STRUCTURAL
+ROW `CD-RT-001-PUBLICATION-CHOKEPOINT`, and **A REPORT THAT QUOTES ONE OF THE TWO ROWS IS HALF A
+REPORT.** **The arm to weigh it against is the vacuity set**: an instrument that refused
+everything would be enforcing silence rather than holding PID §3.2, **and an invariance check
+that refuses everything everywhere is PERFECTLY INVARIANT**, which is why every varied point
+carries the MUST-ADMIT rows too. **The arms to weigh it with are
+`plants/WO3-INC16E/MANIFEST.md`'s `D1`-`D4` and `plants/WO3-INC16F/MANIFEST.md`'s `W5` and `N`
+and `C` series**, each a measured tree with its `git apply` rc, its own rc and its violation
+count.
 
 ## Negative control
 

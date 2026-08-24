@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 23:04:12.094807850 +0100
+@@ -781,7 +781,7 @@
+         if isinstance(node, AbcMapping)
+         and node.get(DETAIL_LEVEL_KEY) == CALM_DETAIL_LEVEL
+     ]
+-    if not calm_nodes:
++    if not calm_nodes or candidate.get("regime") == "acute":  # N12
+         # Nothing in this document claims to be calm, so there is nothing for this stage to
+         # judge. That is NOT a weakening: the guarantee is about `calm` and about nothing else,
+         # and a stage that refused documents making no claim would be refusing the product's

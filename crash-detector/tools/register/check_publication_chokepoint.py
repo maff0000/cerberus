@@ -74,9 +74,14 @@ on the EMPTY tree as loudly as on the BYPASSED one, and `CD-CHOKE-000` exists to
                      that calls the SHARED DOCUMENT WALK — the walk another of the gate's own
                      stages already trusts — so the enumeration happens before anything else
                      can decide not to;
-                 (b) EVERY `return` in the stage sits inside an `if` whose test names that
-                     binding, so the only way out of the stage without judging is *"there was
-                     nothing claiming calm"*.
+                 (b) EVERY `return` in the stage sits inside an `if` whose test asserts that
+                     binding is EMPTY, so the only way out of the stage without judging is
+                     *"there was nothing claiming calm"* — not its size, not anything else;
+                 (c) the stage contains NO `continue` AND NO `break` AT ALL. **`return`,
+                     `continue` and `break` are the three ways to leave a calm-bearing node
+                     unjudged and this assertion covers all three.** (b) alone covered one of
+                     them when this file was first frozen, and this seat's own post-freeze arm
+                     `N8` walked through the gap — `CD-ENG-F16F-01`.
                **`W5G` (`if len(candidate["inputs_used"]) > 1: return`) AND `W5B2`
                (`if candidate["regime"] == calm: return`) BOTH INSERT A `return` GUARDED BY
                SOMETHING THAT IS NOT THAT BINDING, AND BOTH INSERT IT BEFORE (a).**
@@ -297,6 +302,33 @@ def _raised_token_names(function) -> set:
             elif isinstance(first, ast.Constant) and isinstance(first.value, str):
                 names.add(first.value)
     return names
+
+
+def _is_emptiness_test(test, bound: set) -> bool:
+    """Is ``test`` the test *"the enumeration produced nothing"* over one of ``bound``?
+
+    ``not N`` · ``len(N) == 0`` · ``N == []`` · ``len(N) < 1`` and their spellings. **NOTHING
+    ELSE**, and the narrowness is the point: the ONLY early exit a freshness stage is allowed is
+    *"no node in this document claims calm"*. A `return` guarded by ``len(calm_nodes) > 1`` is
+    guarded by the enumeration and is still a bypass — MEASURED as arm `N7`.
+    """
+    def names(node) -> set:
+        return {sub.id for sub in ast.walk(node) if isinstance(sub, ast.Name)}
+
+    if isinstance(test, ast.UnaryOp) and isinstance(test.op, ast.Not):
+        return bool(names(test.operand) & bound)
+    if isinstance(test, ast.Compare) and len(test.ops) == 1:
+        left, op, right = test.left, test.ops[0], test.comparators[0]
+        if not (names(left) & bound):
+            return False
+        if isinstance(op, ast.Eq):
+            return (isinstance(right, ast.Constant) and right.value == 0) or (
+                isinstance(right, (ast.List, ast.Tuple, ast.Set)) and not right.elts)
+        if isinstance(op, ast.Lt):
+            return isinstance(right, ast.Constant) and right.value == 1
+        if isinstance(op, ast.LtE):
+            return isinstance(right, ast.Constant) and right.value == 0
+    return False
 
 
 def _handler_ends_in_raise(handler) -> bool:
@@ -686,39 +718,55 @@ def main(argv=None) -> int:
                     f"{sorted(first_calls & shared_walks)!r}, binding {sorted(bound)!r}"
                 )
 
+                parents = {}
+                for parent in ast.walk(stage):
+                    for child in ast.iter_child_nodes(parent):
+                        parents[child] = parent
+
+                # *** THE THREE WAYS TO LEAVE A CALM-BEARING NODE UNJUDGED ARE `return`,
+                # `continue` AND `break`, AND THIS ASSERTION COVERS ALL THREE. ***
+                # It covered only `return` when this file was first frozen (`6491b64`), and
+                # this seat's own post-freeze arm `N8` — a `continue` keyed on a root string
+                # OUTSIDE the behavioural row's vocabulary — ESCAPED BOTH ROWS AND PUBLISHED A
+                # 1970-STAMPED CALM DIAL ON BOTH SURFACES. Raised against this seat's own work
+                # as `CD-ENG-F16F-01` and recorded rather than quietly corrected.
                 for node in ast.walk(stage):
-                    if not isinstance(node, ast.Return):
+                    if not isinstance(node, (ast.Return, ast.Continue, ast.Break)):
                         continue
                     check.asserted()
-                    guard_names = set()
-                    parents = {}
-                    for parent in ast.walk(stage):
-                        for child in ast.iter_child_nodes(parent):
-                            parents[child] = parent
+                    guards = []
                     cursor = node
                     while cursor in parents:
                         cursor = parents[cursor]
                         if isinstance(cursor, ast.If):
-                            guard_names |= {
-                                sub.id for sub in ast.walk(cursor.test)
-                                if isinstance(sub, ast.Name)
-                            }
+                            guards.append(cursor.test)
                         if cursor is stage:
                             break
-                    if guard_names & bound:
+                    if isinstance(node, ast.Return) and any(
+                        _is_emptiness_test(test, bound) for test in guards
+                    ):
                         continue
+                    rendered = sorted(
+                        {sub.id for test in guards for sub in ast.walk(test)
+                         if isinstance(sub, ast.Name)}
+                    )
+                    kind = type(node).__name__.lower()
                     check.violation(
                         here, 0, "CD-CHOKE-005",
-                        f"*** THE FRESHNESS STAGE {stage.name} CAN RETURN AT LINE "
-                        f"{node.lineno} WITHOUT HAVING JUDGED THE CALM-BEARING NODES. *** The "
-                        f"only `if` guarding that return names {sorted(guard_names)!r}, and "
-                        f"the enumeration this stage begins with binds {sorted(bound)!r}. "
-                        "**THE ONLY WAY OUT OF THIS STAGE WITHOUT REFUSING IS 'NOTHING IN THIS "
-                        "DOCUMENT CLAIMS CALM'.** A `return` guarded by anything else — the "
-                        "number of inputs the envelope used, the regime it declares, a "
-                        "configuration id, a flag — is a five-line bypass of a constitutional "
-                        "guarantee that leaves every other register line diff-identical. That "
-                        "is `A313-F1`, MEASURED, twice.",
+                        f"*** THE FRESHNESS STAGE {stage.name} CAN `{kind}` AT LINE "
+                        f"{node.lineno} AND LEAVE A CALM-BEARING NODE UNJUDGED. *** The `if`s "
+                        f"guarding it name {rendered!r}, and the enumeration this stage begins "
+                        f"with binds {sorted(bound)!r}. **THE ONLY EARLY EXIT THIS STAGE MAY "
+                        "HAVE IS A `return` GUARDED BY THE ENUMERATION BEING EMPTY — 'nothing "
+                        "in this document claims calm'.** A `return` guarded by anything else, "
+                        "or by the enumeration's SIZE rather than its emptiness, and ANY "
+                        "`continue` or `break` at all, is a skip: the node it skips is a node "
+                        "that claimed calm and was never asked to prove it. The number of "
+                        "inputs the envelope used, the regime it declares, a configuration id, "
+                        "the node's own state or its contributions — a five-line bypass keyed "
+                        "on any of them leaves every other register line diff-identical. That "
+                        "is `A313-F1`, MEASURED, twice, and `CD-ENG-F16F-01`, measured once "
+                        "more against this very check.",
                     )
 
     return check.done(

@@ -1,0 +1,13 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:54:49.811567300 +0100
+@@ -792,6 +792,9 @@
+     window = _positive_finite_seconds(candidate.get(STALENESS_WINDOW_KEY))
+ 
+     for node, pointer in calm_nodes:
++        # N8: a `continue` keyed on a ROOT string value OUTSIDE the declared vocabulary.
++        if candidate.get("config_snapshot_id") == "BYPASS":
++            continue
+         if published is None:
+             raise PublicationRefused(
+                 REFUSAL_STALE_CALM,

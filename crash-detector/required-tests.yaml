@@ -1372,7 +1372,7 @@ criteria:
   # sibling row. MEASURED: D1 costs LIMB A twelve violations and LIMB B nothing; D3 costs LIMB B
   # twelve and LIMB A nothing. A REPORT OF THIS ROW THAT QUOTES ONE LIMB IS HALF A REPORT.
   #
-  # WHAT THIS CHECK DOES NOT CATCH — this row's OWN sequence, 1 to 8, each boundary with
+  # WHAT THIS CHECK DOES NOT CATCH — this row's OWN sequence, 1 to 11, each boundary with
   # something an auditor can execute. DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE,
   # and THREE rows on this criterion now have a DECLARED LIMIT 3: quote the row id with the
   # number.
@@ -1385,15 +1385,39 @@ criteria:
   #      THE ROUTE. NOT PROVED TO BE CARRIED ANYWHERE. EXECUTABLE:
   #        CD_CONTRACTS_DIR=/tmp/anything python3 tools/register/check_stale_data_never_calm.py --root .
   #      -> PRECONDITION_NOT_MET, exit 3, never a pass and never a skip.
-  #   2. THE SKELETON IS DERIVED FROM THE CONTRACT BUT THE VALUE VOCABULARY IS A CLOSED WRITTEN
+  #   2. THE SKELETON IS DERIVED FROM THE CONTRACT BUT THE VALUE VOCABULARY IS A WRITTEN
   #      LIST. The root is built from the contract's own required list and the dial from the
   #      calm-bearing branch's own required + properties; each property is filled with the FIRST
   #      of SYNTHETIC_VALUES that the property's OWN subschema accepts, decided by jsonschema —
   #      the same library the gate validates with — and NEVER by the property's NAME. A required
   #      property none of them satisfies makes this check REPORT (CD-STALE-BUILD-008) and exit 1.
-  #      DENY BY DEFAULT, so it is not an escape; it IS a maintenance cost. EXECUTABLE: add a
-  #      required root property typed {"type": "string", "pattern": "^ZZZ"} to either contract
-  #      and this instrument goes RED.
+  #
+  #      *** ITS CLOSING SENTENCE WAS FALSE IN THE REASSURING DIRECTION. SUPERSEDED AT 16F ON
+  #      A313-F1, STATED AND NOT ERASED (CD-RULE-004, PBG-CONT-003). ***
+  #
+  #      > WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID: "DENY BY DEFAULT, so it is
+  #      > not an escape; it IS a maintenance cost."
+  #
+  #      THAT SENTENCE IS ABOUT THE WRONG HALF OF THE PROBLEM. Deny-by-default governs what
+  #      happens when a property CANNOT be built: the check reports CD-STALE-BUILD-008 and exits
+  #      1. IT SAYS NOTHING WHATEVER ABOUT THE PROPERTIES THAT CAN BE BUILT AND ARE THEN DRIVEN
+  #      AT EXACTLY ONE VALUE EACH, AND THAT IS WHERE THE ESCAPE WAS. All 72 documents this
+  #      instrument drove at a9e19c3 carried THE SAME SINGLE VALUE FOR EVERY ROOT PROPERTY — ONE
+  #      POINT in the space of documents the contract admits, while the guarantee quantifies over
+  #      ALL of them. MEASURED by CD-ASR-WO3-13 (A313-F1, HIGH), reproduced by
+  #      PROJECT_LEAD_SEAT_07, and reproduced a THIRD time by CD-ENG-WO3-14 before a line of 16F
+  #      was written: W5G (five lines, if len(candidate.get("inputs_used") or []) > 1: return)
+  #      and W5B2 (three lines, if candidate.get("regime") == CALM_DETAIL_LEVEL: return) each
+  #      leave the live gate ADMITTING a 1970-stamped calm dial on BOTH surfaces while all 32 of
+  #      this register's execute: lines are diff-identical to the clean tip.
+  #
+  #      WHAT IS TRUE INSTEAD, AT 16F. The vocabulary is still a written list and that half of
+  #      the limit stands. What has changed is that the instrument no longer drives ONE value per
+  #      property: the INVARIANCE PASS varies every root property, and every non-stamp property
+  #      of the calm-bearing node, across that vocabulary, and requires the verdict not to move.
+  #      The residual is DECLARED LIMIT 9 — a SAMPLE of an unbounded set — and it is stated there
+  #      rather than here. EXECUTABLE: add a required root property typed
+  #      {"type": "string", "pattern": "^ZZZ"} to either contract and this instrument goes RED.
   #   3. LIMB B DRIVES _refuse_stale_calm DIRECTLY AND THEREFORE PROVES NOTHING ABOUT WHETHER THE
   #      GATE CALLS IT. That is LIMB A's job and only LIMB A's, and the measurement above says so
   #      in numbers. AND LIMB B IS NAME-COUPLED TO A PRIVATE SYMBOL: renaming _refuse_stale_calm
@@ -1432,6 +1456,51 @@ criteria:
   #   8. *** THE DECLARED SCOPE BELOW IS THIS ROW'S LARGEST LIMIT AND IT IS STATED IN FULL RATHER
   #      THAN CROSS-REFERENCED. *** It is DRIVEN at every run by CD-STALE-SCOPE-009, so it cannot
   #      go stale in the reassuring direction while the code changes underneath it.
+  #   9. THE INVARIANCE PASS VARIES ONE PROPERTY AT A TIME, AND ITS VALUE VOCABULARY IS A SAMPLE
+  #      OF AN UNBOUNDED SET. NEW AT 16F. From a proved-publishable baseline it varies ONE root
+  #      property, or ONE non-stamp property of the calm-bearing node, to ONE other value that
+  #      property's own subschema admits, and requires the verdict FOUR-TUPLE — admitted or
+  #      refused, reason class, pointer, key — to be unchanged. THAT IS LINEAR RATHER THAN THE
+  #      EXPONENTIAL CROSS-PRODUCT, AND IT CATCHES EVERY PREDICATE KEYED ON A SINGLE PROPERTY,
+  #      which is every weakening shape measured on this project. Where a subschema admits an
+  #      UNBOUNDED set — every string of 1 to 128 characters, every number — THE VOCABULARY IS A
+  #      SAMPLE AND NOT A COVER. What is sampled, and why each family is there: the product's own
+  #      words (every const and every enum string HARVESTED FROM THE CONTRACT ITSELF, never typed
+  #      in, which is the family W5B2 keys on); array CARDINALITY at 0, 1, 2 and many (the family
+  #      W5G keys on); every JSON type the subschema admits; numbers at zero, negative, small,
+  #      large and integral; both booleans; null; and presence against absence. A PREDICATE KEYED
+  #      ON A STRING VALUE OUTSIDE THAT SAMPLE ESCAPES THIS PASS. MEASURED BY THIS SEAT AGAINST
+  #      ITS OWN INSTRUMENT, AFTER FREEZING IT: arm N1
+  #      (if candidate.get("config_snapshot_id") == "BYPASS": return) leaves this row at PASS and
+  #      admits a 1970-stamped calm dial on both surfaces. It is caught by the sibling STRUCTURAL
+  #      row CD-RT-001-PUBLICATION-CHOKEPOINT (CD-CHOKE-005), AND THE TWO ROWS ARE A PAIR FOR
+  #      EXACTLY THIS REASON. EXECUTABLE: apply
+  #      plants/WO3-INC16F/N1-CONFIG-SNAPSHOT-ID-BYPASS.patch and run both rows.
+  #  10. THE PAIRWISE PASS RUNS ON LIMB B ONLY, AND THREE-WAY CONJUNCTIONS ARE NOT COVERED. NEW
+  #      AT 16F. One-at-a-time variation cannot see a CONJUNCTIVE predicate over two properties —
+  #      if regime == "acute" and len(inputs_used) == 2: return — because neither half alone
+  #      changes the verdict. So every unordered PAIR of (property, value) points drawn from two
+  #      DIFFERENT properties is driven, over a per-property value set reduced BY FEATURE FAMILY
+  #      (every product-vocabulary value and every array-cardinality value kept whole, one
+  #      representative of each other family). IT RUNS ON LIMB B ONLY — the stage driven directly
+  #      — because a LIMB A pairwise pass is about 230x more expensive per cell: MEASURED on this
+  #      host, the front door costs 16.05 ms per call because it reloads and recompiles the
+  #      contract every time, and the stage costs 0.069 ms. A CONJUNCTIVE WEAKENING PLACED
+  #      OUTSIDE THE STAGE — IN refuse_unless_publishable ITSELF — IS THEREFORE NOT COVERED BY
+  #      THE PAIRWISE PASS; it is covered by CD-CHOKE-004 on the sibling structural row. AND A
+  #      THREE-WAY CONJUNCTION IS NOT COVERED BY EITHER ROW. MEASURED at this tip: 30,575 pairs
+  #      on the public contract and 39,142 on the private one, stride 1 — the FULL product and
+  #      not a sample. Above PAIRWISE_CELL_BUDGET the pass takes a deterministic evenly-strided
+  #      SUBSAMPLE and prints the stride at every run; at the shipped contracts that branch is
+  #      NOT REACHED and is therefore UNEXERCISED CODE IN NORMAL OPERATION, which is stated here
+  #      rather than left to be discovered. EXECUTABLE: arm
+  #      plants/WO3-INC16F/N6-CONJUNCTION-REGIME-AND-CARDINALITY.patch.
+  #  11. THE PASS COSTS THIRTY TIMES WHAT THIS ROW COST BEFORE IT, AND THAT IS THE PRICE OF THE
+  #      SPACE. NEW AT 16F. MEASURED on the same host with the same command: 0.77 s at a9e19c3
+  #      for 122 assertions, 26.1 s at this tip for 142,088. Almost all of it is LIMB A, because
+  #      every front-door cell reloads and recompiles the contract. THE COST IS PAID DELIBERATELY
+  #      AND IT IS NOT AN ACCIDENT OF A LOOP NOBODY BOUNDED. EXECUTABLE:
+  #      time python3 tools/register/check_stale_data_never_calm.py --root .
   #
   # ============================================================================================ #
   # *** THE DECLARED SCOPE OF THIS GUARD — PO-DECISIONS-0030 ruling 2. READ THIS BEFORE READING A
@@ -1475,13 +1544,41 @@ criteria:
   # TIER, AT WO-3" IS A FALSE RESIDUAL, and four sentences on the sibling row have already been
   # superseded for being false in exactly that reassuring direction.
   #
-  # FOR THE AUDITOR. Do not read a clean run of this check as proof that no stale reading can
-  # ever render as calm. It proves that the LIVE PUBLICATION GATE refuses a DOCUMENT-INTERNALLY
-  # stale calm node, on both surfaces, at every canonical dial slot AND at every position in the
-  # document the walk reaches, while still admitting everything the product must be able to
-  # publish. The arm to weigh it against is the vacuity set; the arms to weigh it with are
-  # D1-D4 in plants/WO3-INC16E/MANIFEST.md, each a measured tree with its rc and its violation
-  # count.
+  # FOR THE AUDITOR.
+  #
+  # *** THE PARAGRAPH THAT STOOD HERE ASSERTED UNIVERSALITY OVER POSITIONS AND WAS SILENT ON
+  # DOCUMENTS. SUPERSEDED AT 16F ON A313-F1, STATED AND NOT ERASED (CD-RULE-004, PBG-CONT-003).
+  # ***
+  #
+  # > WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID: "Do not read a clean run of this
+  # > check as proof that no stale reading can ever render as calm. It proves that the LIVE
+  # > PUBLICATION GATE refuses a DOCUMENT-INTERNALLY stale calm node, on both surfaces, at every
+  # > canonical dial slot AND at every position in the document the walk reaches, while still
+  # > admitting everything the product must be able to publish."
+  #
+  # EVERY WORD OF THAT IS TRUE OF THE ONE DOCUMENT THE INSTRUMENT BUILT, AND A READER WOULD TAKE
+  # IT FOR A CLAIM ABOUT ALL OF THEM. It quantified over POSITIONS — "at every position in the
+  # document the walk reaches" — and said nothing at all about DOCUMENTS, while the instrument
+  # behind it drove seventy-two documents that all carried the same single value for every root
+  # property. This project's own words for a sentence in that shape are "how a guard becomes a
+  # certificate".
+  #
+  # WHAT THIS ROW PROVES AFTER 16F, AND NO MORE. Do not read a clean run of this check as proof
+  # that no stale reading can ever render as calm. It proves, at every canonical dial slot on
+  # both surfaces and at every position in the document the walk reaches, that the LIVE
+  # PUBLICATION GATE refuses a DOCUMENT-INTERNALLY stale calm node and still admits everything
+  # the product must be able to publish — AND THAT THE VERDICT DOES NOT MOVE WHEN ANY OTHER ROOT
+  # PROPERTY, OR ANY NON-STAMP PROPERTY OF THE CALM-BEARING NODE, IS VARIED TO ANY OTHER VALUE
+  # IN THE DECLARED VOCABULARY, SINGLY ON BOTH LIMBS AND PAIRWISE ON LIMB B. It does NOT prove
+  # that for values outside that vocabulary (DECLARED LIMIT 9), for three-way conjunctions
+  # (DECLARED LIMIT 10), or for a weakening that sits outside the stage altogether — that last
+  # is the SIBLING STRUCTURAL ROW CD-RT-001-PUBLICATION-CHOKEPOINT, and A REPORT THAT QUOTES ONE
+  # OF THE TWO ROWS IS HALF A REPORT. The arm to weigh it against is the vacuity set: an
+  # instrument that refused everything would be enforcing silence rather than holding PID §3.2,
+  # and an invariance check that refuses everything everywhere is PERFECTLY INVARIANT, which is
+  # why every varied point carries the MUST-ADMIT rows too. The arms to weigh it with are
+  # plants/WO3-INC16E/MANIFEST.md's D1-D4 and plants/WO3-INC16F/MANIFEST.md's W5 and N and C
+  # series, each a measured tree with its git apply rc, its own rc and its violation count.
   # ============================================================================================ #
   - test_id: CD-RT-001-STALE-DATA-NEVER-CALM
     scope: CLASS
@@ -1537,9 +1634,15 @@ criteria:
         the fresh-calm row, the closed-interval boundary row or the stale-but-not-calm row is
         removed from its table.
         ================================================================================
-        THIS CHECK HAS DECLARED LIMITS 1-8, stated in full in the comment above this entry, in
-        the header of tools/register/check_stale_data_never_calm.py and in the execution
-        contract, each with something an auditor can execute. It does NOT catch: a widened
+        THIS CHECK HAS DECLARED LIMITS 1-11, stated in full in the comment above this entry,
+        in the header of tools/register/check_stale_data_never_calm.py and in the execution
+        contract, each with something an auditor can execute. THREE ARE NEW AT 16F AND TWO OF
+        THEM ARE RESIDUALS THIS SEAT MEASURED AGAINST ITS OWN FROZEN INSTRUMENT: the value
+        vocabulary is a SAMPLE of an unbounded set and a predicate keyed on a string outside it
+        ESCAPES this row (9, arm N1, caught by the sibling structural row
+        CD-RT-001-PUBLICATION-CHOKEPOINT); the pairwise pass runs on LIMB B only and three-way
+        conjunctions are covered by neither row (10); and the row now costs 26.1 s where it cost
+        0.77 s (11). It does NOT catch: a widened
         contract reached through $CD_CONTRACTS_DIR (it refuses to run rather than preventing
         it); a candidate it cannot build from its closed declared value vocabulary (reported,
         not skipped); whether the GATE CALLS the stage, on limb B — that is limb A's job and
@@ -1572,6 +1675,24 @@ criteria:
   # which an auditor most needs both numbers. So the two witnesses are two rows, each with its
   # own execution contract that RESOLVES. CD-RT-001-STALE-DATA-NEVER-CALM is the row of ruling 1;
   # THIS row is its paired pytest witness and IS NOT OFFERED AS THE GUARD.
+  #
+  # *** AND THE QUESTION THAT DISCLOSURE RAISED IS NOW ANSWERED, RECORDED HERE SO THE NEXT READER
+  # FINDS THE ANSWER BESIDE THE QUESTION. *** CD-ENG-WO3-13 raised it against its own work at
+  # BL-20260824T200624Z-16EC as "the_open_question_this_seat_is_NOT_entitled_to_settle": "WHETHER
+  # RULING 1'S 'ITS OWN ROW' PERMITS TWO REGISTER ENTRIES... IF THE PRODUCT AUTHORITY MEANT
+  # EXACTLY ONE ENTRY, CD-RT-001-STALE-DATA-WITNESS-SUITE COMES BACK OUT."
+  #
+  # RULED, PO-DECISIONS-0031 ruling 2 (Q37), in the Product Authority's own words: "Q37 — KEEP
+  # BOTH register rows. Arm W5A is caught ONLY by the second (witness-suite) row; removing it
+  # loses a weakening nothing else catches, and `execute` must be a single string (`&&`
+  # short-circuits the pytest half). Ruling-9/0030's 'its own row' (singular) is corrected: the
+  # control takes its own row(s) as the checks require. Two rows stand."
+  #
+  # SO: NEITHER ROW IS REMOVED AND THE TWO ARE NOT MERGED WITH &&. The 16E Engineer's disclosure
+  # was the right call and the answer went the way the disclosure recommended. The Engineer's own
+  # Build Log entry is NOT edited to carry this — corrections supersede and never edit
+  # (PBG-CONT-003, non-waivable) — it is superseded by CD-ENG-WO3-14's entry at 16F, and this
+  # comment is the copy that sits where the question was raised in the register itself.
   #
   # *** A PYTEST FILE IS STILL A FILE THE GATE HAPPENS TO NAME. *** That sentence is the
   # memorial's, ~500 lines above, and it applies to this row in full. Do not read this entry as
@@ -1649,6 +1770,172 @@ criteria:
         a fixed module-level constant and does not quantify over what the widened subschema
         admits (A312-F2). RECORDED, NOT CLOSED: the remedy is a TIGHTENING and is product scope
         (Q36, PBG-AUTH-005).
+      evidence_ref: RTR-WO3-0001
+  # ============================================================================================ #
+  # DECLARED LIMIT — CD-RT-001-PUBLICATION-CHOKEPOINT. NEW AT WO-3 INCREMENT 16F. Required by
+  # CD-RULE-004, and said the same way in the header of
+  # tools/register/check_publication_chokepoint.py and in
+  # contracts/execution/CD-RT-001-PUBLICATION-CHOKEPOINT.md. A REGISTER ENTRY MAY NOT CLAIM MORE
+  # THAN ITS GUARD DELIVERS.
+  #
+  # WHY THIS ENTRY EXISTS AT ALL — PO-DECISIONS-0031 ruling 1(ii), in its own words: "(ii) No
+  # bypass PATH to publication exists. The five-line early return is a code path that skips the
+  # gate. There is exactly ONE publication chokepoint and no route reaches publication without
+  # passing the freshness stage — enforced structurally, so an early return around it cannot exist
+  # (the 'no undecorated evaluator exists' principle, applied to the publication path)."
+  #
+  # *** THE INVARIANT ALREADY HELD IN THE CODE. WHAT WAS MISSING WAS THE CONTROL THAT PROVES IT
+  # AND KEEPS PROVING IT. *** MEASURED by CD-ENG-WO3-14 at a9e19c3 before this row was written:
+  # publication/publish.py::publish_cycle is the ONLY function in src/ that executes a write
+  # against the publication schema, and it calls refuse_unless_publishable on BOTH surfaces,
+  # unconditionally, before any write. NOTHING UNDER src/ WAS CHANGED BY 16F AND NOTHING WAS
+  # REVERTED. DECLARED LIMIT 6 of the sibling row CD-RT-001-STALE-DATA-NEVER-CALM said the same
+  # thing — "the only callers in src/ are publication/publish.py lines 276-277" — AS A
+  # MEASUREMENT AT A COMMIT, WHICH IS A SENTENCE THAT GOES STALE SILENTLY. THIS ROW IS THAT
+  # SENTENCE TURNED INTO A CONTROL.
+  #
+  # IT IS STRUCTURAL, AND ITS SIBLING IS DELIBERATELY NOT — SAY THE DISTINCTION OUT LOUD SO A
+  # LATER READER DOES NOT TAKE THIS ROW AS LICENCE TO MAKE THE OTHER ONE STRUCTURAL.
+  # CD-RT-001-STALE-DATA-NEVER-CALM is BEHAVIOURAL on purpose and its header says a structural
+  # read is "precisely what let this class of defect through repeatedly on this project". THAT
+  # REMAINS TRUE AND THAT ROW STAYS BEHAVIOURAL. This row's subject is different IN KIND: it is a
+  # claim about WHICH CODE ROUTES EXIST, and NO BEHAVIOURAL PROBE CAN ENUMERATE ROUTES THAT
+  # NOBODY CALLS. A second function that writes publication.public_envelope without passing the
+  # gate is invisible to every probe that drives the gate, because the probe drives the gate —
+  # that is what makes it a bypass.
+  #
+  # *** MEASURED, AND IT IS THE WHOLE ARGUMENT FOR THE ROW: SEVEN ARMS THAT DEFEAT THE PUBLICATION
+  # PATH LEAVE THE BEHAVIOURAL ROW AT PASS AND ARE ALL CAUGHT HERE. *** C1 (a second writer), C2
+  # (one surface no longer judged), C3 (the gate made conditional), C4 (an early return in the
+  # gate), C5 (the refusal swallowed by an except handler), C6 (every publication write removed —
+  # THE VACUITY ARM), C7/N1 (a return inside the stage keyed on a value outside the behavioural
+  # row's vocabulary). CD-RT-001-STALE-DATA-NEVER-CALM: rc=0 on all seven.
+  # CD-RT-001-PUBLICATION-CHOKEPOINT: rc=1 on all seven.
+  #
+  # *** AND THE VACUITY DIRECTION, WHICH FOR A STRUCTURAL CONTROL IS THE ONE THAT GETS MISSED: A
+  # CONTROL THAT ASSERTS "EXACTLY ONE CALLER" IS SATISFIED BY A TREE IN WHICH NOTHING CALLS
+  # ANYTHING. *** CD-CHOKE-000 exists for exactly that and FAILS on the empty tree: at least one
+  # publication-surface write statement must exist, at least one function must execute one, the
+  # gate must exist, and the gate must reach a freshness stage. MEASURED: arm C6, which removes
+  # every publication write, gives FAIL — 2 violation(s), both CD-CHOKE-000. The Project Lead
+  # recorded this as the NAMED RISK of ITEM 2 before this file was written.
+  #
+  # WHAT IT ASSERTS: CD-CHOKE-000 (the subject set is non-empty), CD-CHOKE-001 (exactly one
+  # function in src/ executes a publication-surface write), CD-CHOKE-002 (the chokepoint judges
+  # before it writes, once per surface as EnvelopeSurface declares them, unconditionally),
+  # CD-CHOKE-003 (no except handler on the judging path may swallow the refusal), CD-CHOKE-004
+  # (the gate reaches the freshness stage unconditionally with no return before it, the stage
+  # being identified BY THE REFUSAL TOKEN'S VALUE read from the running application and never by
+  # its name), CD-CHOKE-005 (no path through the stage reaches its end without first enumerating
+  # the calm-bearing nodes: the first executable statement enumerates through the SHARED DOCUMENT
+  # WALK, every return is guarded by that enumeration being EMPTY, and there is no continue and
+  # no break at all).
+  #
+  # WHAT THIS CHECK DOES NOT CATCH — this row's OWN sequence, 1 to 7. DECLARED LIMIT NUMBERS ARE
+  # PER REGISTER ROW, NOT PER FILE, and FOUR rows on this criterion now have a DECLARED LIMIT 3:
+  # quote the row id with the number.
+  #
+  #   1. A PUBLICATION WRITE IS RECOGNISED AS AN SQL STATEMENT AGAINST THE publication SCHEMA, AND
+  #      NOTHING ELSE — a string containing INSERT INTO publication., UPDATE publication. or
+  #      DELETE FROM publication., executed through a .execute(...) call. A ROUTE THAT PUBLISHED
+  #      BY WRITING A FILE, POSTING TO AN HTTP ENDPOINT, OR CALLING AN ORM THAT BUILDS ITS OWN SQL
+  #      WOULD NOT BE SEEN BY THIS CHECK. That is a real gap and it is stated rather than implied:
+  #      today the application has no such route (MEASURED — publication/publish.py is the only
+  #      writer and it executes literal SQL constants), and the day one is added this limit must
+  #      be re-read before this row is quoted.
+  #   2. IT IS A STRUCTURAL READ AND IT IS NAME-COUPLED IN TWO PLACES, deliberately: the gate is
+  #      found by the name refuse_unless_publishable (which is EXPORTED — it is in that module's
+  #      __all__), and EnvelopeSurface is imported to count the surfaces. RENAMING EITHER MAKES
+  #      THIS CHECK EXIT 3, DELIBERATELY — a check that cannot find its authentic target must fail
+  #      and never wave through (PBG-CI-002). The freshness stage is NOT name-coupled: it is found
+  #      by the refusal token's VALUE. EXECUTABLE: rename refuse_unless_publishable and run the
+  #      command — exit 3 with the reason, never 0.
+  #   3. "UNCONDITIONAL" IS A LEXICAL PROPERTY, NOT A DATA-FLOW ONE. A call is unconditional here
+  #      when no if, for, while, conditional expression or boolean short-circuit stands between it
+  #      and its function's body. THIS IS A SOUND UNDER-APPROXIMATION IN THE DIRECTION THAT
+  #      MATTERS — it can only ever call a real gate call conditional and go RED, never call a
+  #      conditional one unconditional and go green — but it means a legitimate refactor that puts
+  #      the gate call inside a loop over surfaces WOULD FAIL THIS ROW and would need this limit
+  #      re-read and this check deliberately rewritten. That cost is accepted: the alternative is
+  #      a control that an "if not skip_validation:" defeats.
+  #   4. IT PROVES NOTHING ABOUT WHAT THE GATE DECIDES. That is the behavioural sibling row
+  #      CD-RT-001-STALE-DATA-NEVER-CALM, and this row would be perfectly satisfied by a
+  #      chokepoint that calls a freshness stage whose body is "pass". MEASURED: arm N11, which
+  #      widens the window comparison by a factor of 10^9 so every stale calm dial is admitted,
+  #      leaves THIS row at PASS and is caught by the sibling row. THE TWO ROWS ARE A PAIR AND
+  #      NEITHER IS A SOLE GUARD. QUOTING THIS ONE ALONE IS HALF A REPORT.
+  #   5. THE STAGE'S SHAPE IS ASSERTED, NOT ITS SEMANTICS. CD-CHOKE-005 requires the first
+  #      statement to enumerate through the shared document walk and every early exit to be
+  #      guarded by that enumeration being empty. A stage that did that and then judged wrongly is
+  #      this row's blind spot and the sibling row's subject. MEASURED: arms N9 (the shared walk
+  #      no longer descends into arrays) and N13 (the enumeration emptied after the fact by an
+  #      ordinary assignment) both leave THIS row at PASS and are caught by the sibling row.
+  #   6. IT READS THE TREE UNDER --root AND ONLY src/. A publication route in tools/, in tests/,
+  #      or in a script outside this repository is outside this check. tests/ is excluded
+  #      deliberately: a test that writes a publication row through a recording double is not a
+  #      production route, and including it would make this row RED for the wrong reason.
+  #   7. IT IS A CLAIM AT A COMMIT, LIKE EVERY STRUCTURAL CLAIM. This row is the sibling row's
+  #      DECLARED LIMIT 6 turned into a control, so it cannot go stale without going RED — but the
+  #      control itself is only as current as the last time the register ran.
+  # ============================================================================================ #
+  - test_id: CD-RT-001-PUBLICATION-CHOKEPOINT
+    scope: CLASS
+    execute: python3 -B tools/register/check_publication_chokepoint.py --root .
+    execution_contract: contracts/execution/CD-RT-001-PUBLICATION-CHOKEPOINT.md
+    negative_control:
+      violation: >
+        A ROUTE THAT REACHES A PUBLICATION SURFACE WITHOUT PASSING THE FRESHNESS STAGE, or a
+        path through the stage that reaches its end without judging a calm-bearing node.
+        *** EVERY NAMED MEMBER OF THIS CLASS IS A MEASURED ARM WITH ITS rc AND ITS VIOLATION
+        COUNT, RUN FROM ITS OWN PRISTINE git archive | tar -x EXTRACTION WITH THE PATCH READ
+        FROM AN ABSOLUTE PATH OUTSIDE EVERY EXTRACTION AND git apply's rc TAKEN AND CHECKED
+        (plants/WO3-INC16F/MANIFEST.md). A MEMBER OF THIS CLASS THAT IS NOT A MEASURED ARM IS A
+        CLAIM, AND THIS ROW DOES NOT MAKE ONE. ***
+        The class includes, and is not limited to:
+        a SECOND function in src/ that executes a publication-surface write and judges nothing
+        (arm C1 — FAIL — 1 violation, exit 1, CD-CHOKE-001);
+        one of the two surfaces no longer judged before the write (arm C2 — FAIL — 1 violation,
+        exit 1, CD-CHOKE-002);
+        the gate calls moved inside a conditional (arm C3 — FAIL — 1 violation, exit 1,
+        CD-CHOKE-002);
+        an early return inserted into refuse_unless_publishable in front of its stages, so a
+        document is admitted having been judged by nothing (arm C4 — FAIL — 1 violation, exit 1,
+        CD-CHOKE-004);
+        the except handler on the judging path swallowing the refusal and falling through to the
+        write (arm C5 — FAIL — 1 violation, exit 1, CD-CHOKE-003);
+        a five-line early return at the top of the freshness stage keyed on a root property the
+        criterion says nothing about (arms W5G and W5B2 — FAIL — 1 violation each, exit 1,
+        CD-CHOKE-005 — and these are the two shapes A313-F1 slipped past the register entirely);
+        a return inside the stage AFTER the enumeration, keyed on a value outside the
+        behavioural sibling row's vocabulary (arm C7/N1 — FAIL — 1 violation, exit 1,
+        CD-CHOKE-005 — AND THE SIBLING ROW LEAVES THIS ARM AT PASS, WHICH IS WHY THERE ARE TWO
+        ROWS);
+        a continue inside the stage's node loop, which skips one calm-bearing node while
+        judging the rest (arms N2, N5 and N8 — FAIL — 1 violation each, exit 1, CD-CHOKE-005);
+        the whole fourth refusal stage removed from the gate (arm D1 — FAIL — 1 violation, exit
+        1, CD-CHOKE-000).
+        ================================================================================
+        *** AND THE VACUOUS DIRECTION IS EQUALLY A VIOLATION OF THIS ROW, AND FOR A STRUCTURAL
+        CONTROL IT IS THE DIRECTION THAT GETS MISSED: A CONTROL THAT ASSERTS "EXACTLY ONE
+        CALLER" IS SATISFIED BY A TREE IN WHICH NOTHING CALLS ANYTHING. *** A tree with no
+        publication write, no gate, or a gate that reaches no freshness stage FAILS THIS ROW —
+        it does not pass by having nothing to say. MEASURED: arm C6, which removes every
+        publication-surface write statement, gives FAIL — 2 violation(s), exit 1, both
+        CD-CHOKE-000; and arm D1 gives FAIL — 1 violation, exit 1, CD-CHOKE-000.
+        ================================================================================
+        THIS CHECK HAS DECLARED LIMITS 1-7, stated in full in the comment above this entry, in
+        the header of tools/register/check_publication_chokepoint.py and in the execution
+        contract, each with something an auditor can execute. It does NOT catch: a publication
+        route that is not SQL against the publication schema (1); a rename of
+        refuse_unless_publishable or EnvelopeSurface, which makes it exit 3 rather than
+        preventing anything (2); a conditional it cannot see lexically, and it will go RED on a
+        legitimate refactor that loops over surfaces (3); ANYTHING WHATEVER ABOUT WHAT THE GATE
+        DECIDES — a stage whose body is "pass" satisfies every assertion here (4, MEASURED as
+        arm N11); a stage that enumerates correctly and then judges wrongly (5, MEASURED as arms
+        N9 and N13); a route in tools/, tests/ or outside this repository (6); and it is a claim
+        at a commit like every structural claim (7). It is ONE OF FIVE guards on CD-AC-001 and
+        never a sole guard, and it is the PAIR of CD-RT-001-STALE-DATA-NEVER-CALM: neither
+        covers the other and A REPORT THAT QUOTES ONE OF THE TWO IS HALF A REPORT.
       evidence_ref: RTR-WO3-0001
 
 - criterion_id: CD-AC-002

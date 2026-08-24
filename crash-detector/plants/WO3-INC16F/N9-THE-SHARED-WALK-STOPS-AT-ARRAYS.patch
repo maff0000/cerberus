@@ -1,0 +1,14 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 23:04:11.982808014 +0100
+@@ -373,9 +373,7 @@
+         for key, value in node.items():
+             token = str(key).replace("~", "~0").replace("/", "~1")
+             yield from _iter_nodes(value, f"{pointer}/{token}")
+-    elif isinstance(node, (list, tuple)):
+-        for index, value in enumerate(node):
+-            yield from _iter_nodes(value, f"{pointer}/{index}")
++    # N9: THE SHARED WALK NO LONGER DESCENDS INTO ARRAYS.
+ 
+ 
+ def _refuse_classified_keys(candidate: Mapping, surface: "EnvelopeSurface") -> None:
