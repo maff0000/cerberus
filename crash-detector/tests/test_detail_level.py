@@ -268,21 +268,164 @@ def test_the_module_declares_no_ready_made_policy():
     assert constructed == []
 
 
-def test_detail_level_is_NOT_on_either_closed_envelope_schema():
-    """**STATED AS A FACT ABOUT THIS INCREMENT, NOT AS AN ASPIRATION.**
+# ========================================================================================= #
+# *** detail_level ATTACHES PER DIAL. PO-DECISIONS-0025 RULING 5, WHICH RULED Q29. ***
+#
+# THIS BLOCK REPLACES ``test_detail_level_is_NOT_on_either_closed_envelope_schema``, AND THE
+# REPLACEMENT IS AN ASSURANCE FINDING AGAINST THE PROJECT LEAD'S OWN RECORD (``CD-PL-F169``).
+# The superseded guard asserted exactly two things:
+#
+#     assert "detail_level" not in schema["properties"]
+#     assert "detail_level" not in schema["required"]
+#
+# — TOP LEVEL ONLY. **A PER-DIAL ATTACHMENT PASSED IT UNTOUCHED**, so the guard was, in the
+# auditor's words, *"enforced against the rejected option and unenforced against the proposed
+# one"*. It was cited as evidence that the field was absent; it could not have detected the
+# arrival of the field in the form the seat itself recommended.
+#
+# The three propositions below are the replacement, and each has a FAILING ARM observed
+# against a MUTATED COPY — never against the real contract (``CD-PL-F154`` is what planting
+# in the real file costs).
+# ========================================================================================= #
 
-    The rule exists and reaches no surface. Wiring it in is an allowlist edit with a
-    ``schema_version`` bump, and where the field attaches is the open question raised as
-    ``CD-ENG-WO3-02-F03``. If a later increment adds it, this test fails and is the place
-    the decision gets recorded.
-    """
+SCHEMA_NAMES = ("public_envelope.schema.json", "private_envelope.schema.json")
+UNION_BRANCHES = ("dial_reading_value", "dial_reading_degraded", "dial_reading_unknown")
+
+
+def _contracts_dir() -> pathlib.Path:
+    return pathlib.Path(__file__).resolve().parents[1] / "contracts"
+
+
+def _schema(name: str) -> dict:
     import json
 
-    contracts = pathlib.Path(__file__).resolve().parents[1] / "contracts"
-    for name in ("public_envelope.schema.json", "private_envelope.schema.json"):
-        schema = json.loads((contracts / name).read_text(encoding="utf-8"))
+    return json.loads((_contracts_dir() / name).read_text(encoding="utf-8"))
+
+
+def _assert_detail_level_attaches_per_dial(schema: dict, name: str) -> None:
+    """The whole property, in one function, so the real arm and the mutated arms run
+    EXACTLY the same assertions. A contrast arm that ran a different check would prove
+    nothing about the check that guards the real file."""
+    # 1. ABSENT AT ENVELOPE TOP LEVEL — the CD-AC-002 hazard, still live, still guarded.
+    assert "detail_level" not in schema["properties"], name
+    assert "detail_level" not in schema["required"], name
+
+    # 2. PRESENT IN $defs.dial_reading — the parent closes with additionalProperties:false,
+    #    and a sibling of oneOf sees the whole instance, so an undeclared key dies here.
+    assert schema["$defs"]["dial_reading"]["additionalProperties"] is False, name
+    assert "detail_level" in schema["$defs"]["dial_reading"]["properties"], name
+
+    # 3. ADMITTED IN EVERY BRANCH OF THE UNION, ``UNKNOWN`` INCLUDED. Each branch closes
+    #    independently, so a key admitted at the parent and not in a branch is refused by
+    #    that branch — the key must be named in each branch it is to appear in.
+    for branch in UNION_BRANCHES:
+        subschema = schema["$defs"][branch]
+        assert subschema["additionalProperties"] is False, (name, branch)
+        assert "detail_level" in subschema["properties"], (name, branch)
+        assert "detail_level" in subschema["required"], (name, branch)
+
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_detail_level_attaches_PER_DIAL_and_not_at_envelope_top_level(name):
+    """*** THE RULED PLACEMENT, ASSERTED IN ALL THREE OF ITS PARTS. ***"""
+    _assert_detail_level_attaches_per_dial(_schema(name), name)
+
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half(name):
+    """*** PID §3.2 — 'Missing data must never render as calm.' ***
+
+    Called out separately from the sweep above because it is the branch that matters. With
+    zero registered sources every dial reads ``UNKNOWN``, so until 16B lands this is the
+    ONLY branch production will exercise — and it is the one carrying the guarantee. It
+    declares no ``score`` (CD-AC-001) and it MUST still declare a level, or a renderer
+    meeting a level-less unknown dial decides for itself how loud to be.
+    """
+    unknown = _schema(name)["$defs"]["dial_reading_unknown"]
+    assert "score" not in unknown["properties"], name
+    assert "detail_level" in unknown["required"], name
+
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_the_schema_vocabulary_cannot_drift_from_the_module_that_owns_the_rule(name):
+    """The enum is a SECOND place the three levels are written down. It is allowed to
+    exist — a JSON contract cannot import Python — but it is not allowed to disagree."""
+    declared = _schema(name)["$defs"]["detail_level"]["enum"]
+    assert tuple(declared) == DETAIL_ORDER, name
+
+
+# --- THE FAILING ARMS. A GUARD WHOSE FAILING ARM WAS NEVER OBSERVED IS UNTESTED. --------- #
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_the_guard_FAILS_when_detail_level_is_moved_to_envelope_top_level(name):
+    """*** THE ARM THE SUPERSEDED GUARD COULD NOT HAVE HAD. ***
+
+    This mutation is the ``CD-AC-002`` hazard itself: one envelope-level level, which would
+    have to be derived from BOTH readings. The old guard DID catch this one — it is the
+    'rejected option' it was enforced against — and the replacement must keep catching it.
+    """
+    import copy
+
+    mutated = copy.deepcopy(_schema(name))
+    mutated["properties"]["detail_level"] = {"type": "string"}
+    with pytest.raises(AssertionError):
+        _assert_detail_level_attaches_per_dial(mutated, name)
+
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_the_guard_FAILS_when_detail_level_is_removed_from_dial_reading(name):
+    """*** THE ARM THE SUPERSEDED GUARD DEMONSTRABLY DID NOT HAVE. ***
+
+    Remove the field from the dial object entirely and the old two-line guard PASSES — it
+    only ever looked at the top level, where the field is absent in both the correct and
+    the broken state. This one fails, which is the whole of ``CD-PL-F169``'s remedy.
+    """
+    import copy
+
+    mutated = copy.deepcopy(_schema(name))
+    del mutated["$defs"]["dial_reading"]["properties"]["detail_level"]
+    for branch in UNION_BRANCHES:
+        mutated["$defs"][branch]["properties"].pop("detail_level", None)
+        mutated["$defs"][branch]["required"] = [
+            key for key in mutated["$defs"][branch]["required"] if key != "detail_level"
+        ]
+    with pytest.raises(AssertionError):
+        _assert_detail_level_attaches_per_dial(mutated, name)
+
+
+@pytest.mark.parametrize("name", SCHEMA_NAMES)
+def test_the_guard_FAILS_when_only_the_UNKNOWN_branch_loses_its_level(name):
+    """THE NARROWEST MUTATION, AND THE ONE MOST LIKELY TO HAPPEN BY ACCIDENT.
+
+    An editor who thinks 'an unknown dial has no data, so it needs no level' removes
+    exactly this. The schema still LOOKS wired — two branches carry it — and the branch
+    that is 100% of production traffic today has quietly stopped requiring it.
+    """
+    import copy
+
+    mutated = copy.deepcopy(_schema(name))
+    mutated["$defs"]["dial_reading_unknown"]["required"] = [
+        key
+        for key in mutated["$defs"]["dial_reading_unknown"]["required"]
+        if key != "detail_level"
+    ]
+    with pytest.raises(AssertionError):
+        _assert_detail_level_attaches_per_dial(mutated, name)
+
+
+def test_the_superseded_guard_would_have_PASSED_the_per_dial_attachment():
+    """*** ``CD-PL-F169`` REPRODUCED AS AN EXECUTABLE FACT, NOT AS A CLAIM IN A LOG. ***
+
+    The exact two assertions the old test made, run against the CURRENT contracts — the
+    ones that DO carry ``detail_level`` per dial. They pass. That is the defect: the guard
+    was cited as evidence of absence and is satisfied by presence.
+    """
+    for name in SCHEMA_NAMES:
+        schema = _schema(name)
         assert "detail_level" not in schema["properties"], name
         assert "detail_level" not in schema["required"], name
+        # ...and yet:
+        assert "detail_level" in schema["$defs"]["dial_reading"]["properties"], name
 
 
 # --- POLICY COHERENCE --------------------------------------------------------------------- #

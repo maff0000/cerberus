@@ -33,6 +33,11 @@ from __future__ import annotations
 
 from typing import Any
 
+#: Taken from the module rather than retyped, so a fixture cannot silently pin a version the
+#: contracts no longer declare — which is exactly what a hardcoded "1.0.0" did until WO-3
+#: increment 16A bumped both schemas to 1.1.0 for the per-dial `detail_level`.
+from crash_detector.publication.envelope_contract import ENVELOPE_SCHEMA_VERSION
+
 #: Deliberately unmistakable. If this string is ever seen outside tests/, something escaped.
 SYNTHETIC_CONFIG_SNAPSHOT_ID = "SYNTHETIC-TEST-DOUBLE-NOT-A-CONFIG"
 
@@ -124,13 +129,18 @@ def unknown_dial(reason: str = "NO_SOURCE_REGISTERED") -> dict:
         "reason": reason,
         "since_utc": AS_OF_UTC,
         "missing_inputs": [],
+        # REQUIRED IN THIS BRANCH AS OF SCHEMA 1.1.0 (PO-DECISIONS-0025 ruling 5). NOT a
+        # score and not a scale: the level absent data renders at, which PID §3.2 forbids
+        # from being `calm`. This is the branch every dial is in while zero sources are
+        # registered, so it is the branch that carries the constitutional guarantee.
+        "detail_level": "elevated",
     }
 
 
 def public_envelope(**overrides: Any) -> dict:
     """A conforming public envelope. **THE ADMITTING ARM of every refusal test.**"""
     envelope = {
-        "schema_version": "1.0.0",
+        "schema_version": ENVELOPE_SCHEMA_VERSION,
         "as_of_utc": AS_OF_UTC,
         "published_utc": PUBLISHED_UTC,
         "regime": "CALM",

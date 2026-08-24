@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:crash-detector:contracts:public-envelope:1.0.0",
+  "$id": "urn:crash-detector:contracts:public-envelope:1.1.0",
   "title": "Crash Detector public envelope",
-  "description": "CLOSED. BLUEPRINT §3.4, §7 and §8; PID doctrine §3.1 and §3.5. additionalProperties is false at EVERY level and properties is an allowlist, so a key nobody declared cannot be published even if something computed it. There is no place in this document for a third, combined number: an envelope carrying combined_stress, overall, blended_score or anything else outside the allowlist is rejected by this schema alone, whatever route produced it. $id is a urn on purpose: a urn cannot be dereferenced, so no validator can be induced to fetch it. Every $ref is a local # fragment for the same reason. LIMIT, STATED RATHER THAN LEFT TO BE DISCOVERED: this schema constrains the SHAPE of what is published, so it refuses a blended number that arrives under a new key. It cannot see a blended number assigned to equity_crash.score, because that key is legitimately a number. That case is refused by the two other independent instruments — the score types define no arithmetic dunder and share no numeric base, and the register's AST no-blend check flags a single expression consuming both dial types (BLUEPRINT §13, three refusals for CD-AC-002, none load-bearing alone). DELIBERATELY ABSENT AND OWED: detail_level (BLUEPRINT §8, WO-3), the series and slope block (CD-AC-011, WO-4), the rotation-readiness ratio (CD-AC-013, WO-6), the wave-transition indicator (CD-AC-016, WO-6) and the witness panel section, which is a SEPARATE row written by a different role from a different pipeline and joined only at the serving layer (BLUEPRINT §6). Each addition is a deliberate allowlist edit with a schema_version bump, which is exactly the friction intended.",
+  "description": "CLOSED. BLUEPRINT §3.4, §7 and §8; PID doctrine §3.1 and §3.5. additionalProperties is false at EVERY level and properties is an allowlist, so a key nobody declared cannot be published even if something computed it. There is no place in this document for a third, combined number: an envelope carrying combined_stress, overall, blended_score or anything else outside the allowlist is rejected by this schema alone, whatever route produced it. $id is a urn on purpose: a urn cannot be dereferenced, so no validator can be induced to fetch it. Every $ref is a local # fragment for the same reason. LIMIT, STATED RATHER THAN LEFT TO BE DISCOVERED: this schema constrains the SHAPE of what is published, so it refuses a blended number that arrives under a new key. It cannot see a blended number assigned to equity_crash.score, because that key is legitimately a number. That case is refused by the two other independent instruments — the score types define no arithmetic dunder and share no numeric base, and the register's AST no-blend check flags a single expression consuming both dial types (BLUEPRINT §13, three refusals for CD-AC-002, none load-bearing alone). detail_level IS NOW PRESENT, AND IT ATTACHES PER DIAL INSIDE $defs/dial_reading — NEVER AT THIS TOP LEVEL. PO-DECISIONS-0025 ruling 5 ruled Q29; the placement is doctrine, because one envelope-level level derived from both readings is the CD-AC-002 shape reached one step sideways. schema_version was bumped 1.0.0 -> 1.1.0 for that allowlist edit, which is exactly the friction intended. STILL DELIBERATELY ABSENT AND OWED: the series and slope block (CD-AC-011, WO-4), the rotation-readiness ratio (CD-AC-013, WO-6), the wave-transition indicator (CD-AC-016, WO-6) and the witness panel section, which is a SEPARATE row written by a different role from a different pipeline and joined only at the serving layer (BLUEPRINT §6). Each addition is a deliberate allowlist edit with a schema_version bump, which is exactly the friction intended.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -20,7 +20,7 @@
   "properties": {
     "schema_version": {
       "description": "Pinned by const. A consumer that reads this document knows exactly which allowlist it was validated against, and widening the allowlist without bumping this is a schema edit that fails its own test.",
-      "const": "1.0.0"
+      "const": "1.1.0"
     },
     "as_of_utc": {
       "description": "The instant the READING is for — as fresh as its oldest input, never as fresh as the last time we asked.",
@@ -55,8 +55,12 @@
       "minLength": 1,
       "maxLength": 128
     },
-    "equity_crash": { "$ref": "#/$defs/dial_reading" },
-    "monetary_debasement": { "$ref": "#/$defs/dial_reading" }
+    "equity_crash": {
+      "$ref": "#/$defs/dial_reading"
+    },
+    "monetary_debasement": {
+      "$ref": "#/$defs/dial_reading"
+    }
   },
   "$defs": {
     "utc_timestamp": {
@@ -78,81 +82,215 @@
       "description": "One named input's contribution, so a reading is explicable from its stored inputs.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_id", "category", "weight", "contribution"],
+      "required": [
+        "source_id",
+        "category",
+        "weight",
+        "contribution"
+      ],
       "properties": {
-        "source_id": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "category": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "weight": { "type": "number" },
-        "contribution": { "type": "number" }
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "weight": {
+          "type": "number"
+        },
+        "contribution": {
+          "type": "number"
+        }
       }
     },
     "dial_reading": {
-      "description": "Reading[T] as a discriminated union: VALUE | DEGRADED | UNKNOWN, mirroring crash_detector.dials.reading exactly. UNKNOWN declares no score property at ALL, so an unknown dial carrying a number is unrepresentable rather than merely discouraged — that is CD-AC-001 held in the schema. additionalProperties is false BOTH here and inside every branch: the parent closure catches an unknown key directly (a sibling of oneOf sees the whole instance), and the branch closure catches a key that is valid for a DIFFERENT state, such as a score smuggled onto an UNKNOWN reading. No range is declared on score, and that is a refusal rather than an omission: a declared range is a declared scale, and the scale of a dial is product meaning owed under CD-D-005 (see CD-ENG-F06).",
+      "description": "Reading[T] as a discriminated union: VALUE | DEGRADED | UNKNOWN, mirroring crash_detector.dials.reading exactly. UNKNOWN declares no score property at ALL, so an unknown dial carrying a number is unrepresentable rather than merely discouraged — that is CD-AC-001 held in the schema. additionalProperties is false BOTH here and inside every branch: the parent closure catches an unknown key directly (a sibling of oneOf sees the whole instance), and the branch closure catches a key that is valid for a DIFFERENT state, such as a score smuggled onto an UNKNOWN reading. No range is declared on score, and that is a refusal rather than an omission: a declared range is a declared scale, and the scale of a dial is product meaning owed under CD-D-005 (see CD-ENG-F06). *** detail_level ATTACHES HERE, PER DIAL, AND NOT AT ENVELOPE TOP LEVEL (PO-DECISIONS-0025 ruling 5, which ruled Q29). *** The placement is the doctrine: a SINGLE envelope-level detail_level derived from BOTH readings would require a function consuming the equity magnitude and the monetary magnitude and returning one answer, which is the CD-AC-002 shape reached one step sideways (the output is a level rather than a number). Two dials, two levels, computed separately by crash_detector.publication.detail_level.detail_level_for, which takes ONE reading and ONE dial slot and has no variant taking both. It is REQUIRED in every branch of the union INCLUDING UNKNOWN, and that is the point rather than an oversight: PID §3.2 is constitutional — 'Missing data must never render as calm' — so the branch with no score is exactly the branch that must still say how loudly to render, and DetailPolicy REFUSES CONSTRUCTION when absent_data_level is calm. An OPTIONAL detail_level would let a renderer meet a dial carrying no level and decide for itself, which is the second decision site the whole module exists to prevent.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "state": { "type": "string", "enum": ["VALUE", "DEGRADED", "UNKNOWN"] },
-        "score": { "type": "number" },
-        "as_of_utc": { "$ref": "#/$defs/utc_timestamp" },
-        "since_utc": { "$ref": "#/$defs/utc_timestamp" },
-        "inputs_used": { "$ref": "#/$defs/source_id_list" },
-        "missing_inputs": { "$ref": "#/$defs/source_id_list" },
-        "contributions": { "$ref": "#/$defs/contribution_list" },
-        "reason": { "type": "string", "minLength": 1, "maxLength": 128 }
+        "state": {
+          "type": "string",
+          "enum": [
+            "VALUE",
+            "DEGRADED",
+            "UNKNOWN"
+          ]
+        },
+        "score": {
+          "type": "number"
+        },
+        "as_of_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "since_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "inputs_used": {
+          "$ref": "#/$defs/source_id_list"
+        },
+        "missing_inputs": {
+          "$ref": "#/$defs/source_id_list"
+        },
+        "contributions": {
+          "$ref": "#/$defs/contribution_list"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "detail_level": {
+          "$ref": "#/$defs/detail_level"
+        }
       },
       "oneOf": [
-        { "$ref": "#/$defs/dial_reading_value" },
-        { "$ref": "#/$defs/dial_reading_degraded" },
-        { "$ref": "#/$defs/dial_reading_unknown" }
+        {
+          "$ref": "#/$defs/dial_reading_value"
+        },
+        {
+          "$ref": "#/$defs/dial_reading_degraded"
+        },
+        {
+          "$ref": "#/$defs/dial_reading_unknown"
+        }
       ]
     },
     "contribution_list": {
       "type": "array",
       "maxItems": 256,
-      "items": { "$ref": "#/$defs/contribution" }
+      "items": {
+        "$ref": "#/$defs/contribution"
+      }
     },
     "dial_reading_value": {
       "description": "Value(T, as_of_utc, inputs_used). At least one named input: a reading computed from nothing is Unknown, not a value.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["state", "score", "as_of_utc", "inputs_used", "contributions"],
+      "required": [
+        "state",
+        "score",
+        "as_of_utc",
+        "inputs_used",
+        "contributions",
+        "detail_level"
+      ],
       "properties": {
-        "state": { "const": "VALUE" },
-        "score": { "type": "number" },
-        "as_of_utc": { "$ref": "#/$defs/utc_timestamp" },
-        "inputs_used": {
-          "allOf": [{ "$ref": "#/$defs/source_id_list" }, { "minItems": 1 }]
+        "state": {
+          "const": "VALUE"
         },
-        "contributions": { "$ref": "#/$defs/contribution_list" }
+        "score": {
+          "type": "number"
+        },
+        "as_of_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "inputs_used": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/source_id_list"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "contributions": {
+          "$ref": "#/$defs/contribution_list"
+        },
+        "detail_level": {
+          "$ref": "#/$defs/detail_level"
+        }
       }
     },
     "dial_reading_degraded": {
       "description": "Degraded(T, as_of_utc, missing_inputs, reason). Carries a value AND its damage, under a state a renderer must branch on. At least one named missing input: a reading with nothing missing is a Value, not a degradation.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["state", "score", "as_of_utc", "missing_inputs", "reason", "contributions"],
+      "required": [
+        "state",
+        "score",
+        "as_of_utc",
+        "missing_inputs",
+        "reason",
+        "contributions",
+        "detail_level"
+      ],
       "properties": {
-        "state": { "const": "DEGRADED" },
-        "score": { "type": "number" },
-        "as_of_utc": { "$ref": "#/$defs/utc_timestamp" },
-        "missing_inputs": {
-          "allOf": [{ "$ref": "#/$defs/source_id_list" }, { "minItems": 1 }]
+        "state": {
+          "const": "DEGRADED"
         },
-        "reason": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "contributions": { "$ref": "#/$defs/contribution_list" }
+        "score": {
+          "type": "number"
+        },
+        "as_of_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "missing_inputs": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/source_id_list"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "contributions": {
+          "$ref": "#/$defs/contribution_list"
+        },
+        "detail_level": {
+          "$ref": "#/$defs/detail_level"
+        }
       }
     },
     "dial_reading_unknown": {
       "description": "Unknown(reason, since_utc, missing_inputs). NO score property is declared, and additionalProperties is false, so there is nothing here to render as a number because there is no number. missing_inputs may be empty: 'no source is registered' is a real reason with nothing to name.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["state", "reason", "since_utc", "missing_inputs"],
+      "required": [
+        "state",
+        "reason",
+        "since_utc",
+        "missing_inputs",
+        "detail_level"
+      ],
       "properties": {
-        "state": { "const": "UNKNOWN" },
-        "reason": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "since_utc": { "$ref": "#/$defs/utc_timestamp" },
-        "missing_inputs": { "$ref": "#/$defs/source_id_list" }
+        "state": {
+          "const": "UNKNOWN"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "since_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "missing_inputs": {
+          "$ref": "#/$defs/source_id_list"
+        },
+        "detail_level": {
+          "$ref": "#/$defs/detail_level"
+        }
       }
+    },
+    "detail_level": {
+      "description": "Drill-down proportional to risk (PID §4, ratified): 'calm = dial + one line; elevated = the categories carrying the score; acute = everything, ranked by contribution.' The three levels and their ORDER are derived verbatim from that clause; a fourth level is a PID amendment, not a schema edit. The enum is duplicated from crash_detector.publication.detail_level.DETAIL_ORDER and tests/test_detail_level.py asserts the two cannot drift. NO THRESHOLD IS DECLARED HERE OR ANYWHERE: deciding at what score a dial stops being calm requires a dial SCALE, and the scale of a dial is what the dial MEANS, owed under CD-D-005 (Q25). This schema constrains the VOCABULARY, never the boundaries.",
+      "type": "string",
+      "enum": [
+        "calm",
+        "elevated",
+        "acute"
+      ]
     }
   }
 }

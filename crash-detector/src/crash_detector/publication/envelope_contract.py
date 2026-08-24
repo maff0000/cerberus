@@ -93,7 +93,14 @@ __all__ = [
 
 #: The version both contracts pin with ``const``. Mirrored here so a Python caller and the
 #: JSON allowlist cannot drift apart unnoticed; a test asserts they agree.
-ENVELOPE_SCHEMA_VERSION = "1.0.0"
+#:
+#: **BUMPED 1.0.0 -> 1.1.0 AT WO-3 INCREMENT 16A**, for one allowlist edit and no other:
+#: ``detail_level`` now attaches PER DIAL inside ``$defs/dial_reading`` in both contracts,
+#: under ``PO-DECISIONS-0025`` ruling 5 (which ruled ``Q29``). Two modules' docstrings called
+#: that bump *"exactly the friction intended"*; it was paid once, deliberately, and is
+#: recorded here rather than left to be inferred from a diff. The field is NOT at envelope
+#: top level and a test asserts it stays out — that placement is the ``CD-AC-002`` question.
+ENVELOPE_SCHEMA_VERSION = "1.1.0"
 
 #: Override for where the contracts live. Configuration from the environment, so the code
 #: runs unchanged in a container that mounts them elsewhere (Standards Baseline §12) and

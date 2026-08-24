@@ -38,6 +38,7 @@ from crash_detector.publication.classification import (
     key_tokens,
 )
 from crash_detector.publication.envelope_contract import (
+    ENVELOPE_SCHEMA_VERSION,
     REFUSAL_NON_FINITE_NUMBER,
     REFUSAL_NON_JSON_VALUE,
     REFUSAL_NOT_A_JSON_OBJECT,
@@ -57,6 +58,7 @@ UNKNOWN_DIAL = {
     "reason": "NO_REQUIRED_INPUTS_DECLARED",
     "since_utc": "2026-08-19T12:00:00Z",
     "missing_inputs": [],
+    "detail_level": "elevated",
 }
 
 VALUE_DIAL = {
@@ -68,6 +70,7 @@ VALUE_DIAL = {
         {"source_id": "src.a", "category": "volatility", "weight": 1.0,
          "contribution": 0.42}
     ],
+    "detail_level": "elevated",
 }
 
 DEGRADED_DIAL = {
@@ -80,13 +83,14 @@ DEGRADED_DIAL = {
         {"source_id": "src.a", "category": "volatility", "weight": 1.0,
          "contribution": 0.42}
     ],
+    "detail_level": "elevated",
 }
 
 
 def _envelope(surface: EnvelopeSurface, **overrides) -> dict:
     """A minimal conforming envelope — the WO-2 shipped state: both dials UNKNOWN."""
     envelope = {
-        "schema_version": "1.0.0",
+        "schema_version": ENVELOPE_SCHEMA_VERSION,
         "as_of_utc": "2026-08-19T12:00:00Z",
         "published_utc": "2026-08-19T12:00:05Z",
         "regime": "UNKNOWN",
