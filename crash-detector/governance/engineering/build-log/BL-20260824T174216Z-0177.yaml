@@ -1,0 +1,204 @@
+# ================================================================================================== #
+# BL-20260824T174216Z-0177 — PROJECT LEAD BOUNDARY. **16B-CONTRACT-CLOSURE ASSURED `RED` AT
+# `295bdbe` BY `CD-ASR-WO3-11`, BANKED AT `3ef056c`. THE SESSION STOPS HERE. 16C IS NOT RELEASED.
+# `Q34` IS RAISED AND THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT.**
+#
+# *** **AND THIS `RED` IS A DIFFERENT ANIMAL FROM THE LAST ONE. THE AUDITOR EXPLICITLY DECLINED
+# RULING 5's "THE TEST WAS WRONG" CLAUSE: *"The test was right and the fix is bounded. That is the
+# first time both have been true on this row."* RULE CC IS NOT ARCHITECTURALLY DEFEATED — STEPS
+# (1)-(4), (6) AND (7) OF THE CLOSURE ARGUMENT ARE ALL TRUE AND BOTH EXHAUSTIVENESS PREMISES WERE
+# ATTACKED AND HELD. IT FAILS AT STEP (5), AT THE EXACT BOUNDARY THE ENGINEER NAMED ITSELF AND TOLD
+# THE AUDITOR TO ATTACK FIRST.** ***
+#
+# **THE ONE MEASUREMENT THAT MATTERS MOST NEEDS NO PATCH AT ALL: ON THE CLEAN `295bdbe` TIP, A
+# `VALUE` DIAL STAMPED `1970-01-01T00:00:00Z` CARRYING `detail_level: calm` IS ADMITTED ON BOTH
+# SURFACES — AND STILL ADMITTED WITH `staleness_window_seconds: 1`. `CD-AC-001` READS "MISSING **OR
+# STALE** INPUT NEVER RENDERS AS CALM". SIXTEEN INCREMENTS HAVE GUARDED *MISSING*. **NOTHING IN THIS
+# PRODUCT HAS EVER COMPUTED *STALE*.** THIS SEAT REPRODUCED IT IN ITS OWN SHELL.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T174216Z-0177
+timestamp_utc: '2026-08-24T17:42:16Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T17:42:16Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_04
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_04
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T171300Z-0176
+base_sha: 17b81d0b4d6f42baae72718243e1612faf2e0ce6
+current_sha: 17b81d0b4d6f42baae72718243e1612faf2e0ce6
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-11 — a fresh identity, never CD-ENG-WO3-11 — returned RED over 16B-CONTRACT-CLOSURE at
+  295bdbe, banked at 3ef056c on branch asr-wo3-11-verdict, 686 lines, ONE identity, ONE file, based
+  on 295bdbe and touching nothing else. THIS SEAT REPRODUCED BOTH RED FINDINGS AND THE FINDING
+  AGAINST ITS OWN RECORD IN ITS OWN SHELL. THE VERDICT IS BANKED AND IS NOT ACCEPTED. 16C IS NOT
+  RELEASED. Q34 IS RAISED AND THE SESSION STOPS.
+
+the_verdict:
+  seat: CD-ASR-WO3-11 (FRESH — never CD-ENG-WO3-11, never CD-ASR-WO3-01..10)
+  verdict: RED
+  target: 295bdbe (content tip be088c5)
+  banked: 3ef056c on branch asr-wo3-11-verdict — BL-20260824T173231Z-A311.yaml
+  read_only_confirmed_by_this_seat: >
+    MEASURED. `git diff --name-only 295bdbe..3ef056c` names EXACTLY ONE PATH — the auditor's own
+    entry. `/srv/crash-detector-wo3` still at 295bdbe with a CLEAN worktree. All audit work was done
+    in /tmp/asr11. ONE seat identity on the commit.
+  entry_validates: >
+    `ok = True, stage complete, errors []` — **VERIFIED IN THE AUDITOR'S OWN TREE.** This seat first
+    validated it from `main` and got `ok = False` at stage `reference` (`parent_entry_id references
+    BL-20260824T170252Z-16CC which does not exist`). **THAT WAS THIS SEAT'S CONTEXT ERROR AND NOT AN
+    AUDITOR DEFECT**: the parent is a wo-3 lane entry and `parent_entry_id` resolves IN-TREE, so the
+    check is only meaningful from a tree that contains the parent. Recorded because a seat that
+    reported the first number without chasing the second would have raised a false finding against a
+    correct auditor.
+
+the_two_RED_findings_REPRODUCED_BY_THIS_SEAT_IN_ITS_OWN_SHELL:
+  method: >
+    CD-PL-F193. An inherited finding is a HYPOTHESIS until it is RUN — and this seat has already put
+    an unmeasured claim into this project's record TWICE in this session (CD-PL-F203 inherited,
+    CD-PL-F205 its own). Both findings were rebuilt from the auditor's description, not copied.
+  A311_F1_limb_b_is_proved_by_a_SAMPLE_and_an_ARRAY_defeats_it: >
+    *** CONFIRMED, AND IT IS ONE CONTAINER DEEPER THAN THE INCREMENT'S OWN ARM. *** In BOTH
+    contracts, root `properties.degraded_inputs` replaced by an ARRAY whose `items` is an object
+    requiring `source_id` and `detail_level`. Both Rule CC premises stay true; nothing else changes.
+    MEASURED BY THIS SEAT: **this row `PASS — 243 assertions, 0 violations`; the sibling row
+    `CD-RT-002-SCHEMA-CLOSED` `PASS — 280`; and the LIVE GATE ADMITS ON BOTH SURFACES**
+    `"degraded_inputs": [{"source_id": "SRC-A", "detail_level": "calm"}]` — **THE LIST OF INPUTS
+    THAT ARE *DEGRADED*, RENDERING AS `calm`, AT A ROOT POSITION.** `CC-H`, the increment's OWN arm
+    for this class, widens an allowlisted property to admit an OBJECT and is caught (`FAIL — 4`);
+    widening it to admit an ARRAY OF objects is not. **THE PROBE SET IS `{flat object, nested
+    object}` AND THE ESCAPE IS `array of object`.**
+  A311_F2_FRESHNESS_IS_NEVER_COMPUTED_ANYWHERE_AND_THIS_NEEDS_NO_PATCH: >
+    *** CONFIRMED ON THE CLEAN `295bdbe` TIP WITH NO PATCH APPLIED, BOTH SURFACES. *** A `VALUE`
+    dial with `as_of_utc: "1970-01-01T00:00:00Z"` carrying `detail_level: "calm"` is **ADMITTED**.
+    Still ADMITTED with `staleness_window_seconds: 1`. Still ADMITTED dated `2099`. **THE PAIRED
+    CONTROLS ON THE SAME TREE BEHAVE CORRECTLY** — `UNKNOWN` + `calm` REFUSED at `/equity_crash`,
+    `VALUE` + a FRESH stamp + `calm` ADMITTED — so the arm is not vacuous and the refusal machinery
+    is working. **"PROVED PRESENT-AND-FRESH" AS BUILT MEANS "OBLIGED TO CARRY A STAMP". NOTHING IN
+    THE INSTRUMENT, AND NOTHING IN THE GATE'S THREE REFUSAL STAGES, EVER READS A TIMESTAMP'S
+    VALUE.** A schema can REQUIRE a stamp; it cannot COMPARE one. **THE CONTRACTS NOW ASSERT IN
+    NORMATIVE PROSE THAT A REQUIRED `utc_timestamp` IS "THE FRESHNESS HALF". IT IS THE AUDITABILITY
+    HALF.**
+
+A311_F3_IS_A_FINDING_AGAINST_THIS_SEATS_OWN_RECORD_AND_IT_IS_UPHELD:
+  raised_as: CD-PL-F206
+  what_the_auditor_found: >
+    `BL-20260824T171300Z-0176`'s headline called the `CC-B` result "THE ONE MEASUREMENT THAT SETTLES
+    WHETHER THIS INCREMENT DID ANYTHING". **THREE OF THE FIVE CLAIMED ESCAPES WERE NEVER
+    REGISTER-LEVEL ESCAPES.**
+  reproduced_by_this_seat: >
+    MEASURED at `8398741`, this row versus the sibling row `CD-RT-002-SCHEMA-CLOSED` (clean baseline
+    `PASS — 266`): **`CC-B` `PASS — 144` / sibling `FAIL — 2`. `CC-C` `PASS — 144` / sibling
+    `FAIL — 2`. `CC-D` `PASS — 144` / sibling `FAIL — 2`. `CC-G` `PASS — 144` / sibling
+    `PASS — 266`. `CC-H` `PASS — 144` / sibling `PASS — 266`.** **ONLY `CC-G` AND `CC-H` LEAVE THE
+    WHOLE REGISTER UNMOVED. THE AUDITOR IS RIGHT AND THE COUNT IS TWO, NOT FIVE.**
+  why_it_is_this_seats_defect_and_not_a_quibble: >
+    **THE STATEMENT WAS TRUE ABOUT THIS ROW AND FALSE IN WHAT IT IMPLIED**, which is the same defect
+    class as every dispatch falsehood on this row: a measurement of ONE instrument reported in
+    language that claims something about THE REGISTER. **AND THE SAME ENTRY APPLIED THE OPPOSITE,
+    CORRECT, STANDARD TO `C16` — where it explicitly flagged the sibling-row question as the thing
+    it had NOT measured.** One entry, two standards, and the loose one was applied to the seat's own
+    headline. **THE INSTRUMENT-LEVEL MEASUREMENT WAS RIGHT; THE HEADLINE WAS THE SEAT'S PROSE.**
+  what_survives_it: >
+    **`CC-G` AND `CC-H` REMAIN GENUINE REGISTER-LEVEL ESCAPES AT `8398741`, MEASURED BY THIS SEAT**,
+    and `A311-F1` is itself a THIRD such escape that survives at BOTH tips. So the increment did
+    close real holes. **THE CLAIM WAS OVERSTATED BY THREE, NOT FABRICATED.**
+
+what_the_auditor_GRADED_GREEN_and_it_is_recorded_because_a_RED_is_not_a_rout:
+  - '**BOTH EXHAUSTIVENESS PREMISES WERE ATTACKED AND HELD (`A311-F6`, recorded by the auditor as a POSITIVE).** `additionalProperties: true` -> `FAIL — 2`; root `patternProperties` -> `FAIL — 2`; root `allOf` -> `FAIL — 2`; `anyOf` -> exit 3, "never a pass and never a skip"; unreferenced `$defs` genuinely inert. **THE PARTITION IS GENUINELY EXHAUSTIVE AND THE ROOT RECOGNISER IS GENUINELY GONE.**'
+  - 'Closure argument steps (1)-(4) TRUE; (6) TRUE AND BETTER THAN CLAIMED; (7) TRUE of the BRANCH alphabet. **IT FAILS AT (5) ALONE** — 34 drives establish a property of the PROBES and the argument quantifies over ALL documents.'
+  - 'The false-positive cost is graded **STRICTLY STRONGER ON THE VACUITY AXIS, NOT A BLIND SPOT** — the question this seat asked in `BL-...-0176` is ANSWERED AND ANSWERED AGAINST ITS OWN WORRY. `C4` moved `FAIL — 4` -> `FAIL — 6`, the extra being the new structural vacuity direction; `C30` is NOT confounded; `VALUE`+`calm` still ADMITTED on every run. **The real loss is narrow and named: the only green control at the root is now `CC-I`, the null edit.**'
+  - '*** `CD-ENG-F01` IS TRUE IN BOTH HALVES, INCLUDING THE HALF THIS SEAT DECLARED UNMEASURED AND HANDED OVER: `C16`s sibling row `FAIL — 2` at BOTH tips, `C31`s `PASS — 280` at BOTH tips. *** **DECLARING THE LIMIT INSTEAD OF GUESSING IT IS WHAT MADE THAT CHECKABLE.**'
+  - '**THE ENGINEER NAMED ITS OWN WEAKEST POINT UNPROMPTED AND WAS RIGHT.** Boundary (c) — *"two shapes and it is not a class... attack it first"* — is where the audit landed. **THE AUDITOR CALLS THAT THE BEST THING IN THE RETURN AND SO DOES THIS SEAT.**'
+
+the_process_lesson_the_auditor_drew_and_it_is_carried_verbatim_because_it_generalises: >
+  **THE RETURN NAMED THE BOUNDARY AND THEN STATED A CONCLUSION THE BOUNDARY FORBIDS.**
+  `the_conclusion_and_ONLY_this_one` asserts an unconditional impossibility while boundary (c) says
+  the proof is a sample. **THOSE TWO SENTENCES CANNOT BOTH BE TRUE, AND THE CONCLUSION IS THE ONE
+  THIS SEAT QUOTED INTO THE ASSURANCE DISPATCH.** The lesson, in the auditor's words: *name the
+  boundary **and weaken the conclusion to match**.* **A DECLARED LIMIT THAT THE HEADLINE CONTRADICTS
+  IS NOT A DECLARED LIMIT, IT IS A DISCLAIMER** — and this seat propagated the headline rather than
+  reconciling it against the limit printed beside it.
+
+the_auditor_disclosed_a_defect_against_ITSELF_and_it_is_recorded: >
+  Its first arm runner read each patch from the EXTRACTED tree, where `plants/WO3-INC16B/CC-*.patch`
+  does not exist at `8398741`; `git apply` returned **rc=128** and the instrument ran on an
+  UNPATCHED tree. Caught only because the rc came from `git apply`. Every figure it reported is from
+  the fixed runner, rc=0 on all ten arms at both tips. **THAT IS `CD-ENG-F02`'s DEFECT CLASS,
+  COMMITTED BY THE AUDITOR, INSIDE THE AUDIT THAT GRADED IT — AND DISCLOSED RATHER THAN QUIETLY
+  RE-RUN.** This seat's own runner reported rc for every apply for exactly this reason.
+
+findings_raised_at_this_boundary:
+  - id: CD-PL-F206
+    severity: MEDIUM, CONFIRMED BY THIS SEAT'S OWN RE-MEASUREMENT
+    raised_by: CD-ASR-WO3-11 (as A311-F3), against BL-20260824T171300Z-0176
+    the_defect: >
+      **THIS SEAT'S HEADLINE CLAIMED FIVE LIVE ESCAPES AND THE REGISTER-LEVEL COUNT IS TWO.** Three
+      of the five (`CC-B`, `CC-C`, `CC-D`) are caught at `8398741` by the SIBLING row
+      `CD-RT-002-SCHEMA-CLOSED`, which moves `PASS — 266` -> `FAIL — 2` on each. **THE SEAT RAN ONE
+      ROW AND WROTE A SENTENCE ABOUT THE REGISTER.**
+      **AND IT IS THIS SEAT'S THIRD MEASUREMENT-DISCIPLINE DEFECT IN ONE SESSION** — `CD-PL-F203`
+      (propagated an inherited claim), `CD-PL-F205` (inferred one schema's enum from another's),
+      and now `CD-PL-F206` (measured one instrument and generalised to thirty). **THE SEATS AND THE
+      INSTRUMENTS KEEP CATCHING IT. THAT IS NOT A CONTROL, IT IS LUCK WEARING ONE'S CLOTHES.**
+    disposition: 'OPEN. The BL-...-0176 headline is SUPERSEDED BY THIS ENTRY and is NOT edited (PBG-CONT-003).'
+
+standing_prohibitions_REAFFIRMED_AT_THIS_BOUNDARY:
+  - '*** 16C IS NOT RELEASED. THE LIVENESS / DEAD-FEED DETECTOR IS NOT WRITTEN. NOT ONE INDICATOR ROW IS REGISTERED. *** The 30 ratified indicators remain data that nothing reads.'
+  - '*** THE MEMORIAL REMOVAL (`PO-DECISIONS-0027` RULING 3) MUST NOT LAND. *** It is conditioned on the structural instrument carrying the behaviour, and `A311-F2` shows it does not carry the STALE half at all. `tests/` verified untouched.'
+  - '`CD-D-181` SEQUENTIAL-ONLY. FROZEN `be0b355` VERIFIED UNMOVED AND STILL == `wo-2r3`. NO `publish_cycle` CALLER AND NO `src/` ENTRYPOINT.'
+  - '**NO FURTHER ENGINEER SEAT IS DISPATCHED UNTIL THE PRODUCT AUTHORITY ANSWERS `Q34`** — including the bounded `A311-F1` fix, which this seat could have launched and deliberately did not. Launching a seat into a live product question is how a chain of six fixes becomes a chain of seven.'
+
+the_question_for_MATT_and_it_is_ONE_question:
+  Q34: >
+    *** **`CD-AC-001` READS "MISSING **OR STALE** INPUT NEVER RENDERS AS CALM". SIXTEEN INCREMENTS
+    HAVE GUARDED *MISSING*. NOTHING IN THIS PRODUCT HAS EVER COMPUTED *STALE* — MEASURED ON THE
+    CLEAN TIP, A `VALUE` DIAL STAMPED 1970 CARRYING `calm` IS ADMITTED ON BOTH SURFACES EVEN WITH
+    `staleness_window_seconds: 1`. WHERE DOES THE FRESHNESS COMPARISON LIVE, AND WHAT IS ITS
+    PREDICATE?** ***
+    **(a) AT THE PUBLICATION GATE, AS A FOURTH REFUSAL STAGE COMPUTED PURELY FROM THE DOCUMENT** —
+    `published_utc` minus the dial's own stamp, against `staleness_window_seconds`, all three of
+    which the envelope already carries. **This needs NO clock, NO caller clock and NO engine clock,
+    so it does not reopen `BP-AMENDMENT-0001` §D.3**, and it makes "present AND fresh" a thing the
+    gate actually computes rather than a thing the prose claims. **OR (b) STALENESS IS A
+    DETECTOR-LAYER CONCERN** — the `feed_liveness` quantity of 16C — **and the publication gate
+    guards ABSENCE ONLY**, in which case `CD-AC-001`'s "or stale" is discharged elsewhere and the
+    constitutional guard's declared scope must say so instead of implying it holds both halves.
+    **AND EITHER WAY: is `published_utc − stamp ≤ staleness_window_seconds` the governing predicate,
+    or does the REGIME-AWARE staleness of `CD-RT-009` / `CD-AC-009` govern — in which case the
+    definition is owed before the check can be written?**
+    **THIS BLOCKS THE COMPLETION OF 16B. IT DOES NOT BLOCK `A311-F1`**, which is bounded, is an
+    engineering defect with no product content, and is the first thing to dispatch once the choice
+    is made.
+  what_this_seat_will_NOT_do: >
+    **IT WILL NOT PICK.** Whether the publication boundary is the right place to compute staleness,
+    and what span defines it, is PRODUCT MEANING (`PBG-AUTH-005`). **AND THIS SEAT IS ALREADY THE
+    AUTHOR OF RULE CC; a seat that designs the mechanism and then also rules on what the mechanism
+    must mean has stopped being a Project Lead.**
+
+next_safe_action: >
+  *** **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT — ON `Q34`, AND NO SEAT IS
+  DISPATCHED.** *** The system is safe to leave running and safe to leave stopped: nothing is wired,
+  no transport exists, every dial reads UNKNOWN, the gate is SHUT and `latest_admitted_run` is null.
+  When `Q34` is answered the order is: `A311-F1` first (bounded, no product content, correct under
+  either answer), then whichever of (a) or (b) the Product Owner rules, then a FRESH Assurance seat,
+  and only then 16C.
+
+expected_next_actor: 'PRODUCT_AUTHORITY (Matt) — Q34. NO SEAT IS RUNNING.'
+
+risks:
+  - '*** A LIVE ESCAPE EXISTS TODAY, ON THE CLEAN TIP, NEEDING NO CONTRACT EDIT AT ALL: A DIAL WITH A REAL SCORE AND A STAMP OF ANY AGE PUBLISHES AS `calm` ON BOTH SURFACES. `A311-F2` IS NOT A CONTRACT-EDIT ATTACK — IT IS THE PRODUCT AS BUILT. THIS IS WHY 16C IS HELD AND IT IS NOT A THEORETICAL HOLD. ***'
+  - '`A311-F1`: a root property widened to an ARRAY of `detail_level`-bearing objects publishes `calm` with the WHOLE register green, at BOTH tips. UNCLOSED.'
+  - 'CD-PL-F206 — this seat''s THIRD measurement-discipline defect in one session (F203, F205, F206). All three were caught by something other than the seat''s own vigilance.'
+  - 'CD-PL-F203, CD-PL-F204 OPEN. CD-PL-F180 OPEN (16D). DECLARED LIMIT 12''s residue OPEN — `CC-B` and `CC-C` are caught by RULE CC alone and the recogniser is still silent on both.'
+  - '*** THREE FULL SESSIONS HAVE NOW GONE INTO `CD-AC-001` AND RULED ITEMS 2-6 OF `PO-DECISIONS-0026` REMAIN UNDELIVERED. IF THE PRODUCT AUTHORITY JUDGES THAT THE CONSTITUTIONAL HARDENING HAS CONSUMED ENOUGH AND WANTS 16C/16D/16E PRIORITISED, THAT IS A PRODUCT CALL AND THIS SEAT HAS NOT MADE IT — the record above is what it would need to make it. *** **AND THE HONEST FRAMING FOR THAT DECISION IS THAT EACH ROUND HAS FOUND A REAL DEFECT, THE DEFECTS ARE GETTING NARROWER, AND THIS ONE IS THE FIRST THE AUDITOR CALLS BOUNDED.**'
