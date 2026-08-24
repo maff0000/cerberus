@@ -1,0 +1,164 @@
+# ================================================================================================== #
+# BL-20260824T145030Z-0171 — PROJECT LEAD BOUNDARY. **16B-FIX-4 ASSURED `RED`. THE CLASS INVERSION IS
+# REAL AND IT QUANTIFIES OVER THE WRONG ALPHABET. THE SESSION STOPS HERE, BANKED, WITH THE NEXT
+# ACTOR AND THE PRESCRIPTION BOTH NAMED. 16C REMAINS HELD.**
+#
+# *** **THE RED, REPRODUCED BY THIS SEAT ON ITS OWN PLANT: declare the liveness dial as
+# `{"enum": [<LIVE reading>, <STALE reading with detail_level "calm">]}`. `enum` IS ON THE
+# INSTRUMENT'S INERT LIST AND IT IS CORRECTLY THERE — IT CARRIES NO SUBSCHEMA. BUT ITS **VALUE**
+# NAMES PROPERTIES, AND THE INVERSION QUANTIFIES OVER KEYWORD **NAMES** ONLY. Instrument
+# `PASS — 144 assertions, 0 violations`; live gate ADMITS A DEAD FEED RENDERING AS CALM ON BOTH
+# SURFACES.** ***
+#
+# **WHAT IS GENUINELY WON, AND IT IS NOT NOTHING. THE FALSIFIER PASSED: the class fix catches
+# spellings that are on NO LIST — this seat's own invented `propertys` typo, the auditor's
+# `zzSlotUnion` and `dependentRequiredSchemas`, all `grep -c` ZERO in the instrument. FIVE ROUNDS
+# OF SPELLING PATCHES DID NOT ACHIEVE THAT AND THE CLASS INVERSION DID. C24 and C25 — the two
+# escapes that at the prior tip survived THE ENTIRE THIRTY-LINE REGISTER GREEN — ARE GENUINELY
+# CLOSED. The auditor tested all 33 inert members and found 31 sound.**
+#
+# **THE DEFECT IS ONE SENTENCE WIDE: the deny class is a true complement of a finite written set
+# OVER KEY NAMES, and it never quantifies over what a READABLE key's VALUE asserts.** The auditor's
+# prescription is recorded in full below and its line is deliberately unwritten.
+#
+# **AND THE AUDITOR CAUGHT A HARNESS BUG IN ITS OWN FIRST RUN — `$?` after `| tail -1` reported a
+# FALSE 30/30 GREEN — DISCLOSED IT, CORRECTED IT, AND RE-RAN EVERYTHING. A seat that catches its own
+# false green and says so is the whole point of this arrangement.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T145030Z-0171
+timestamp_utc: '2026-08-24T14:50:30Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T14:50:30Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T135701Z-0170
+base_sha: 0145a92d1a9bea3b0cca0e6d9cd8fecb5d71459d
+current_sha: 0145a92d1a9bea3b0cca0e6d9cd8fecb5d71459d
+status: WAITING_ENGINEER
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-09 returned RED over 16B-FIX-4 at dd40407, banked at a74705c. It confirmed the class
+  inversion works — the falsifier passed, C24 and C25 are closed, 31 of 33 inert members are sound —
+  and then found the two that are not: enum and const carry no subschema but NAME PROPERTIES IN
+  THEIR VALUES, and the inversion quantifies over keyword NAMES only. This seat reproduced the
+  escape on its own plant. THE SESSION STOPS HERE. 16C REMAINS HELD, ITS PREVIOUS RELEASE JUDGEMENT
+  REMAINS WITHDRAWN, AND THE NEXT ACTOR IS A FRESH ENGINEER ON 16B-FIX-5.
+
+the_verdict:
+  seat: CD-ASR-WO3-09 (FRESH — never CD-ENG-WO3-09, never CD-ASR-WO3-08)
+  verdict: RED
+  target: dd4040773958da5a63d533fdcb6e61b0d410cf85 (content tip 4e6f7c4)
+  banked: a74705cb729db47bc3c9fb91e282507393931446 on branch asr-wo3-09-verdict — BL-20260824T144449Z-A309.yaml
+  next_safe_gate: 'One bounded Engineer dispatch, 16B-FIX-5, assured by a seat that did not build it. NOT 16C.'
+
+what_is_genuinely_won_and_must_not_be_lost_in_the_RED:
+  - '*** THE FALSIFIER PASSED. The class inversion catches spellings that are on NO LIST — this seat''s own invented  (a one-letter typo of ), and the auditor''s  and , every one  ZERO in the instrument. FIVE ROUNDS OF SPELLING PATCHES NEVER ACHIEVED THAT. The ruling at BL-0170 — invert the default rather than patch a fifth spelling — IS VINDICATED BY MEASUREMENT, and the defect that remains is NOT a sixth spelling. ***'
+  - 'C24 () and C25 (the over-cap  chain) — the two escapes that at the prior tip survived THE ENTIRE THIRTY-LINE REGISTER GREEN (PASS 292, PASS 452) while the gate admitted a dead feed as calm — ARE GENUINELY CLOSED, measured FAIL 2 each from the auditor''s own extractions.'
+  - 'The auditor tested ALL 33 members of _INERT_KEYWORDS and found 31 sound, including  (carries subschemas but they are not APPLIED — correctly listed) and default/examples (object values, but annotations that assert nothing).'
+  - 'No correct tree was made to fail: C16 PASS 144, C10/C28 PASS 158 all hold. C1-C21 all bite from the auditor''s own 24 extractions with git apply rc=0 MEASURED on every patch and not read off the MANIFEST.'
+  - 'Register MATCHES / 18 / GATE: SHUT / latest_admitted_run (null). be0b355 unmoved. evidence/ unwritten. pytest 2007. test_detail_level.py 52.'
+
+the_red_reproduced_by_this_seat:
+  plant: 'THIS SEAT''S OWN, on a fresh extraction of dd40407: .feed_liveness_reading declared as {"enum": [<LIVE reading>, <STALE reading whose detail_level is "calm">]}, with the root property -ing it. NO applicator keyword anywhere.'
+  measured: >
+    instrument            PASS — 144 assertions, 0 violations
+    live gate PUBLIC      *** ADMITTED — a DEAD FEED rendering as CALM ***
+    live gate PRIVATE     *** ADMITTED ***
+  the_defect_in_one_sentence: >
+    *** THE DENY CLASS IS A TRUE COMPLEMENT OF A FINITE WRITTEN SET **OVER KEY NAMES**, AND IT NEVER
+    QUANTIFIES OVER WHAT A READABLE KEY'S **VALUE** ASSERTS.  and  are correctly inert
+    as applicators and are not inert as PROPERTY DECLARATIONS. ***
+  the_auditors_prescription_recorded_here_so_the_next_seat_does_not_re_derive_it: >
+    READ / OBJECT VALUES INTO THE  SET. DO **NOT** MOVE THEM OUT OF
+    _INERT_KEYWORDS — the auditor measured that doing so would explode the false-positive tail. THE
+    LINE IS DELIBERATELY UNWRITTEN (PBG-SOD-001, PBG-SOD-004).
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F199
+    severity: MEDIUM, CONFIRMED
+    raised_by: CD-ASR-WO3-09 as its F4
+    the_defect: >
+      The Assurance dispatch §3.1 named  and  as "the shapes to think
+      hardest about". BOTH ARE ALREADY HANDLED AND SAFE. A seat that spent its budget where this
+      dispatch pointed RETURNS PASS. The two non-inert members are the ones the BUILDER'S OWN
+      limit-15 sentence describes — "if one member can ... NAME A PROPERTY" — and this dispatch
+      quoted that sentence and then named two shapes it does not describe.
+    disposition: >
+      ELEVENTH CONSECUTIVE DISPATCH WITH A FALSE STATEMENT CAUGHT BY ITS RECIPIENT, AND THE SECOND
+      IN THREE WHERE THIS SEAT AIMED THE PRIMARY ATTACK AT THE WRONG PLACE (CD-PL-F198 was the
+      first). THE SEAT FOUND IT ANYWAY, BY WORKING THE BUILDER'S SENTENCE RATHER THAN THE
+      DISPATCH'S EXAMPLES. That is the third time in this session a seat has been saved by
+      distrusting its dispatch, and it is the strongest argument in the whole record for the stop
+      conditions and for the "grade the dispatch" instruction.
+  - id: CD-PL-F200
+    severity: LOW
+    raised_by: CD-ASR-WO3-09 as its F5
+    the_defect: 'The false-positive tail declared at DECLARED LIMIT 14 is a CLASS, not the six shapes it enumerates. The auditor found a seventh in a minute.'
+    disposition: 'Carried to 16B-FIX-5: the limit must describe the class, not a sample of it.'
+
+the_conditions_on_16C_the_auditor_wrote_and_this_seat_adopts:
+  note: 'The auditor was asked to name these if it returned clean. It returned RED and named them anyway, conditioned on 16B-FIX-5 landing first. ADOPTED IN FULL and binding on 16C''s dispatch whenever it is written.'
+  conditions:
+    - 'The enum/const fix lands FIRST, and the /tmp/armF tree is banked as plant C29.'
+    - 'The liveness slot is declared as a  to a oneOf union — NEVER as enum or const.'
+    - 'NO applicators on dial_reading.oneOf branches — A309-F2, MEASURED: THE BRANCH RECOGNISER HAS NO INVERSION AT ALL. FX12 was applied at the root recogniser only and the two recognisers now have different notions of "readable". THAT IS AN OPEN FINDING AND IT IS 16B-FIX-5''s SECOND ITEM.'
+    - 'DECLARED LIMIT 12 (a discriminator key not named ) STAYS OPEN and is disclosed in 16C''s dispatch.'
+    - '16C must account for EVERY register line that moves, INCLUDING ordinary friction lines — the builder measured that 16C landing honestly moves lines that are not defects, and a seat that cannot tell friction from a finding will mis-grade it.'
+    - 'Q32''s three quantities are unaffected: relevance per-indicator from the mapping, liveness/fetch-freshness read by a real dead-feed detector, publish budget ~900s. THE STALENESS CEILING IS NOT REMOVED UNTIL THE LIVENESS DETECTOR READS ITS FIELD.'
+
+the_session_in_summary:
+  delivered: >
+    PO-DECISIONS-0026 received and its ruled item 1 pursued to a reviewable state. The mapping and
+    the ruling CARRIED onto the lane verbatim (20fd1e1). The constitutional guarantee is now carried
+    by a REGISTER-WIRED LIVE INSTRUMENT that the gate reads — where at the start of the session it
+    was carried by nine assertions in a pytest file NO REGISTER LINE EXECUTED. FIVE ENGINEER SEATS
+    AND FIVE ASSURANCE SEATS, ALL FRESH, ALL SEPARATE (PBG-SOD-001), SEQUENTIAL THROUGHOUT
+    (CD-D-181). Twenty-eight contrast arms where there were five.
+  not_delivered_and_named_plainly: >
+    16B ITEM 1 IS NOT ACCEPTED. Ruled items 2-6 — the three-quantity staleness model, the structural
+    no-blend closure, the host-coupling defaults, the version discrimination, and the registration
+    of the 30 indicators — ARE UNTOUCHED. NOTHING IS REGISTERED, NO SOURCE IS WIRED, EVERY DIAL
+    STILL READS UNKNOWN, AND THE 30 INDICATORS IN THE RATIFIED MAPPING ARE STILL DATA THAT NOTHING
+    READS.
+  the_honest_reading: >
+    ONE ITEM OF SIX CONSUMED THE SESSION, AND THE RECORD SHOULD SAY WHY RATHER THAN APOLOGISE FOR
+    IT. Every round found a real, reproduced, live escape by which this product would publish the
+    one state its constitution forbids, and every round closed it. The escapes went from a full
+    revert to an enum-of-literal-objects. THE COST IS REAL AND SO IS THE ALTERNATIVE: 16C written
+    into any of the four earlier states would have shipped the dead-feed detector and the hole that
+    hides it in the same increment, and arm FINAL measured exactly that.
+
+evidence_references:
+  - 'asr-wo3-09-verdict a74705c — BL-20260824T144449Z-A309.yaml (the RED)'
+  - 'wo-3 dd40407 — the audited SHA; BL-20260824T142722Z-16B4.yaml on the lane'
+  - 'wo-3 plants/WO3-INC16B/MANIFEST.md — C1-C28'
+  - 'verdict chain: ca85d8e (A305) · c7471dc (A306) · b4a15d6 (A307) · 3174753 (A308) · a74705c (A309)'
+  - 'this seat''s reproduction of the RED: /tmp/enumesc'
+
+next_safe_action: >
+  A FRESH ENGINEER SEAT — CD-ENG-WO3-10, never CD-ENG-WO3-09 and never CD-ASR-WO3-09 — for
+  16B-FIX-5, bounded to TWO items: (1) read enum/const OBJECT VALUES into the  set,
+  leaving them IN _INERT_KEYWORDS; (2) A309-F2 — the BRANCH recogniser has NO inversion at all and
+  the two recognisers now disagree about what "readable" means. Plus DECLARED LIMIT 14 restated as a
+  CLASS. Then a FRESH Assurance seat. THEN, and only then, 16C under the six conditions above.
+
+expected_next_actor: 'PROJECT_LEAD (next session) — to write the 16B-FIX-5 dispatch and launch CD-ENG-WO3-10. NO SEAT IS CURRENTLY RUNNING.'
+
+risks:
+  - '*** 16C IS HELD AND ITS RELEASE JUDGEMENT REMAINS WITHDRAWN. A live escape exists today by which a liveness quantity declared with  publishes a dead feed as calm with the instrument green. ***'
+  - 'A309-F2: THE BRANCH RECOGNISER HAS NO INVERSION. FX12 was applied at the root recogniser only. Two recognisers with different notions of "readable" in one file is one edit from a hole, and this is measured rather than suspected.'
+  - 'CD-PL-F199 and CD-PL-F198: this seat has now aimed a primary attack at the wrong place twice in three dispatches. Both times the seat found the real defect by working the BUILDER''S declared limit rather than the dispatch''s examples. THE DISPATCHES ARE THE WEAKEST ARTEFACT IN THIS CHAIN AND THE SEATS ARE THE STRONGEST.'
+  - 'CD-PL-F180 is OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments; the missing half is what 16C opens.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed, and nobody may read a wired row as a satisfied one.'
+  - 'Ruled items 2-6 of PO-DECISIONS-0026 are undelivered. If the Product Authority judges that the constitutional hardening has consumed enough and wants 16C/16D/16E prioritised over 16B-FIX-5, THAT IS A PRODUCT CALL AND THIS SEAT HAS NOT MADE IT — the record above is what it would need to make it.'
