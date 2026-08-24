@@ -427,6 +427,32 @@ def _synthesise(schema: dict, subschema, validator):
     return None, False
 
 
+#: *** THE KEYWORDS THAT MAKE A BRANCH'S ADMISSIBLE SHAPE CONDITIONAL. NEW AT `16B-FIX-2` (`FX5`,
+#: closing `CD-ASR-WO3-06` F1). *** :func:`_dial_from_branch` builds ONE document per branch, out of
+#: that branch's ``required`` + ``properties``. If the branch also carries any of these, the set of
+#: documents it admits is LARGER than the one document built from ``required`` — the branch has
+#: variants this check never constructs, and one of them can be the variant that renders `calm`.
+#: MEASURED, arm `C11`: `dial_reading_unknown` keeps its name, its `state.const`, its `required`
+#: list and `additionalProperties: false`; its `detail_level` is widened; the narrowing is relocated
+#: into ``"if": {"required": ["render_hint"]}`` with an ``"else"`` carrying a fully closed copy. A
+#: dial WITHOUT the marker is still refused; a dial WITH it is ADMITTED on both surfaces; and the
+#: superseded instrument built only the marker-less shape and reported `PASS — 144 assertions, 0
+#: violations`.
+#:
+#: **DENY BY DEFAULT, AND NOT AN ENUMERATION.** This check does not attempt to build one candidate
+#: per satisfiable combination of optional markers — that is a schema-instance-generator's job and a
+#: design question this row does not price. A branch carrying any of these keywords is returned as
+#: UNBUILDABLE and reported as `CD-CALM-BRANCHES-006`, on the same sentence `DECLARED LIMIT 9`
+#: already writes for a property this check cannot synthesise: **a branch whose shape is conditional
+#: is a branch this check cannot say it has driven.** The clean tree's three branches declare only
+#: `type` / `additionalProperties` / `required` / `properties` / `description`, so this costs
+#: nothing today. See DECLARED LIMIT 13.
+CONDITIONAL_KEYWORDS = (
+    "if", "then", "else", "allOf", "anyOf", "oneOf", "not",
+    "dependentSchemas", "dependentRequired", "unevaluatedProperties",
+)
+
+
 def _dial_from_branch(schema: dict, branch: dict, level, validator):
     """One dial reading built from **THIS BRANCH'S OWN** ``required`` + ``properties``.
 
@@ -439,8 +465,27 @@ def _dial_from_branch(schema: dict, branch: dict, level, validator):
     branch, the values come from each property's own subschema, and `detail_level` — the one token
     under test — is the only thing this function decides.
 
-    Returns ``(document, None)`` or ``(None, <the property it could not build>)``.
+    *** AND SINCE `16B-FIX-2` IT REFUSES TO PRETEND THE ONE DOCUMENT IS THE WHOLE BRANCH (`FX5`,
+    closing `CD-ASR-WO3-06` F1). *** A branch carrying any of :data:`CONDITIONAL_KEYWORDS` admits
+    MORE shapes than the one made of `required` + `properties`, so this function returns it as
+    UNBUILDABLE and the caller reports `CD-CALM-BRANCHES-006`. **A branch whose shape is conditional
+    is a branch this check cannot say it has driven.**
+
+    Returns ``(document, None)`` or ``(None, <a sentence naming why it could not be built>)``. The
+    obstacle is a SENTENCE and not a bare property name because there are now two ways to fail and a
+    violation that named a property for a conditional branch would be false.
     """
+    conditional = [keyword for keyword in CONDITIONAL_KEYWORDS if keyword in branch]
+    if conditional:
+        return None, (
+            f"the branch declares the conditional keyword(s) {conditional!r}, so the documents it "
+            "admits are NOT the single document made of its `required` + `properties`. *** A "
+            "BRANCH WHOSE SHAPE IS CONDITIONAL IS A BRANCH THIS CHECK CANNOT SAY IT HAS DRIVEN: "
+            "the variant selected by a marker property is one this check never constructs, and on "
+            "the tree that measured this (arm C11) that variant is the one the live gate ADMITTED "
+            "rendering as `calm` while this instrument reported PASS. *** See DECLARED LIMIT 13"
+        )
+
     required = [name for name in (branch.get("required") or []) if isinstance(name, str)]
     properties = branch.get("properties") or {}
     names = list(required)
@@ -449,7 +494,10 @@ def _dial_from_branch(schema: dict, branch: dict, level, validator):
         # anyway, or every row below would silently become the field-absent row.
         names.append(DETAIL_LEVEL)
     if DETAIL_LEVEL not in names:
-        return None, DETAIL_LEVEL
+        return None, (
+            f"the branch declares no {DETAIL_LEVEL!r} property at all, so there is no token under "
+            "test to move and no candidate to build"
+        )
 
     document: dict = {}
     for name in names:
@@ -459,7 +507,10 @@ def _dial_from_branch(schema: dict, branch: dict, level, validator):
             continue
         value, built = _synthesise(schema, properties.get(name), validator)
         if not built:
-            return None, name
+            return None, (
+                f"required property {name!r} has a subschema none of this check's declared "
+                "synthetic values satisfies. See DECLARED LIMIT 9"
+            )
         document[name] = value
     return document, None
 
@@ -586,6 +637,8 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
         return False
     seen = seen | {id(resolved)}
 
+    undecidable = False
+
     state = resolved.get("properties", {}).get("state") if isinstance(
         resolved.get("properties"), dict) else None
     state = _deref(schema, state) if isinstance(state, dict) else None
@@ -595,8 +648,24 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
         values = state.get("enum")
         if isinstance(values, list) and set(values) & set(DECLARED_STATES):
             return True
+        # *** DECLARING A `state` IS ENOUGH TO STOP THE CHECK. NEW AT `16B-FIX-2` (`FX6`, closing
+        # `CD-ASR-WO3-06` F2). *** The superseded code fell through to False here, so a root
+        # property that is a dial in every respect the product cares about, but whose state
+        # vocabulary is NEW, was classified NOT-A-DIAL and was SILENT. MEASURED: arm `C13`
+        # (`credit_stress`, state const `NO_DATA`) and arm `C14` (`feed_liveness`, states
+        # `["LIVE","STALE"]` — PO-DECISIONS-0026 ruling 5's liveness quantity written the obvious
+        # way) both had the live gate ADMIT a missing/stale dial rendering as `calm` on BOTH
+        # surfaces while this instrument reported `PASS — 144 assertions, 0 violations`; the same
+        # property with the state spelled `["UNKNOWN","STALE"]` was caught. The only difference
+        # between a caught tree and an uncaught one was whether the new dial reused an OLD STATE
+        # NAME, which is GUARD_THE_INSTANCE_NOT_THE_CLASS (PO-DECISIONS-0026 ruling 10).
+        # "I cannot classify this state vocabulary" is exactly the case DECLARED LIMIT 8 says must
+        # STOP the check, so it is UNDECIDABLE and never False. The LOOSER form is deliberate and
+        # RULED: a false positive costs one seat one look at one contract; a false negative costs
+        # the constitution. See DECLARED LIMIT 15.
+        undecidable = True
 
-    undecidable = False
+
     for keyword in _SUBSCHEMA_KEYWORDS:
         if keyword not in resolved:
             continue
@@ -948,26 +1017,40 @@ def main(argv=None) -> int:
     fillers = {}
     for surface, schema in schemas.items():
         validator = validator_for(schema)
-        chosen = None
+        # *** THE FILLER IS THE FIRST ABSENT-DATA BRANCH THAT ACTUALLY BUILDS, NEW AT `16B-FIX-2`
+        # AND IT IS PART OF `FX5`. *** The superseded code took the first absent-data branch it
+        # FOUND and refused (exit 3) if that one branch was unbuildable, which would have turned
+        # every conditional-UNKNOWN tree into a PRECONDITION_NOT_MET with no violation code — the
+        # branch would have been unreported rather than reported, and `CD-CALM-BRANCHES-006` is
+        # where the auditor's prescription says it belongs. Trying the other absent-data branch
+        # first costs nothing on the clean tree (UNKNOWN builds, and is still chosen), and it is
+        # also what makes `DECLARED LIMIT 9`'s sentence "makes the check report
+        # CD-CALM-BRANCHES-006 and exit 1" true — `CD-ASR-WO3-06` F3 measured it exiting 3
+        # instead. See DECLARED LIMIT 14.
+        filler, obstacle, refusals = None, None, []
         for wanted in ABSENT_STATES:
-            for _, resolved, state in branches_by_surface[surface]:
-                if state == wanted and resolved is not None:
-                    chosen = resolved
+            for label, resolved, state in branches_by_surface[surface]:
+                if state != wanted or resolved is None:
+                    continue
+                built, obstacle = _dial_from_branch(schema, resolved, admissible[0], validator)
+                if built is not None:
+                    filler = built
+                    check.note(f"{surface.value} filler dial taken from branch {label} ({state})")
                     break
-            if chosen is not None:
+                refusals.append(f"{label} ({state}): {obstacle}")
+            if filler is not None:
                 break
-        if chosen is None:
+        if filler is None:
+            if refusals:
+                return check.refuse(
+                    f"the {surface.value} contract declares absent-data branches this check "
+                    "cannot build a candidate for, so it cannot form a conforming envelope at "
+                    "all and has nothing to measure: " + " | ".join(refusals)
+                )
             return check.refuse(
                 f"the {surface.value} contract's dial union declares no branch for any of the "
                 f"absent-data states {list(ABSENT_STATES)}, so there is nothing for this check "
                 "to assert about PID §3.2 on that surface."
-            )
-        filler, unbuildable = _dial_from_branch(schema, chosen, admissible[0], validator)
-        if filler is None:
-            return check.refuse(
-                f"the {surface.value} contract's absent-data branch requires a property "
-                f"{unbuildable!r} that this check cannot build a value for, so it cannot form a "
-                "conforming envelope at all. See DECLARED LIMIT 9."
             )
         fillers[surface] = filler
         check.note(f"{surface.value} filler dial derived from the contract: {filler!r}")
@@ -992,7 +1075,7 @@ def main(argv=None) -> int:
                     continue  # unrecognised state, already reported; never assumed benign
                 table = absent_table if absent_data else present_table
                 for level, expectation in table:
-                    dial, unbuildable = _dial_from_branch(schema, branch, level, validator)
+                    dial, obstacle = _dial_from_branch(schema, branch, level, validator)
                     label = (f"{surface.value}/{slot}/{state}[{branch_label}]/"
                              f"{_label_for(level)}")
                     if dial is None:
@@ -1000,10 +1083,9 @@ def main(argv=None) -> int:
                         check.violation(
                             here, 0, "CD-CALM-BRANCHES-006",
                             f"{label}: this check could not build a candidate for this branch — "
-                            f"required property {unbuildable!r} has a subschema none of its "
-                            "declared synthetic values satisfies. DENY BY DEFAULT: a branch "
-                            "that cannot be built cannot be driven, and an undriven branch is "
-                            "reported as UNRECOGNISED rather than passed over (RULE F).",
+                            f"{obstacle}. DENY BY DEFAULT: a branch that cannot be built cannot "
+                            "be driven, and an undriven branch is reported as UNRECOGNISED "
+                            "rather than passed over (RULE F).",
                         )
                         continue
                     candidate = _envelope(surface.value, slots, slot, dial, fillers[surface])
