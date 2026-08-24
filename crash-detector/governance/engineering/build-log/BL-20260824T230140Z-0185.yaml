@@ -1,0 +1,247 @@
+# ================================================================================================== #
+# BL-20260824T230140Z-0185 — PROJECT LEAD BOUNDARY. **`CD-ENG-WO3-14` RETURNED INCREMENT 16F
+# `READY_FOR_ASSURANCE` AT CONTENT TIP `7ac11c9`, ENTRY TIP `c475b8e`. THE RETURN IS BANKED AS AN
+# INPUT AND IS NOT ACCEPTED (`PBG-AUTH-003`). `CD-ASR-WO3-14` IS DISPATCHED TO GRADE IT.**
+#
+# *** **THE ACCEPTANCE TEST WAS RUN BY THIS SEAT WITH THIS SEAT'S OWN PATCHES — THE ONES IT BUILT
+# BEFORE THE ENGINEER STARTED — AND IT MOVES. At `a9e19c3`, `W5G` and `W5B2` left the register
+# `diff`-IDENTICAL (`32/21/11` at both ends). At `7ac11c9` the same two patches produce `33/20/13`
+# and MOVE TWO LINES EACH: `LINE 04` (the behavioural row) and `LINE 06` (the new structural
+# chokepoint row). `W5A` — which 16E's behavioural row MISSED ENTIRELY — now moves THREE.** ***
+#
+# *** **AND THIS SEAT BUILT ONE ARM THE ENGINEER DID NOT, AND IT ESCAPES BOTH ROWS. `P1` IS FOUR
+# LINES: `N13`'s MECHANISM (an assignment, `calm_nodes = []`, which is NOT a `return`, `continue`
+# OR `break`) KEYED ON `N1`'s VALUE (`config_snapshot_id == "BYPASS"`, a constant in NO product
+# vocabulary and NO instrument vocabulary). THE LIVE GATE ADMITS A 1970-STAMPED `calm` DIAL ON BOTH
+# SURFACES AND THE REGISTER READS `TOTAL lines=33 rc0=22 nonzero=11` — IDENTICAL TO CLEAN. NOT ONE
+# OF THE THIRTY-THREE LINES MOVES. THAT IS `A312-F1`/`A313-F1`'s SIGNATURE AT THE NEW TIP.** ***
+#
+# **THE ENGINEER DISCLOSED BOTH HALVES OF THIS GAP AND DID NOT COMPOSE THEM.** `N1` (control-flow,
+# out-of-vocabulary value) is caught by the STRUCTURAL row alone; `N13` (assignment, in-vocabulary
+# value) is caught by the BEHAVIOURAL row alone. `DECLARED LIMIT 9` says *"The class is closed by
+# the STRUCTURAL row, which catches every `return`/`continue`/`break`-shaped bypass regardless of
+# what value it is keyed on"* — **TRUE AS WRITTEN, AND THE PAIR IS STILL NOT A COVER.** Raised as
+# `CD-PL-F209` and HANDED TO THE AUDITOR TO VERIFY OR REFUTE. **IT IS NOT GRADED HERE. THIS SEAT
+# DOES NOT GRADE (`PBG-SOD-001`, `PBG-AUTH-003`).**
+#
+# **AND THE INCREMENT IS A LARGE, REAL IMPROVEMENT AT THE SAME TIME, AND BOTH FACTS GO IN THE SAME
+# RECORD:** `src/` NO MATCH, `pbg/` zero paths, both shipped contracts byte-identical by `sha256sum`
+# at both ends, 16D and 16E plants byte-unchanged, `be0b355` unmoved, 16C not built — ALL SIX
+# MEASURED BY THIS SEAT AND NOT READ FROM THE RETURN.
+# ================================================================================================== #
+
+entry_id: BL-20260824T230140Z-0185
+timestamp_utc: '2026-08-24T23:01:40Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T23:01:40Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_07
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_07
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T211349Z-0184
+base_sha: 3aabb37
+current_sha: 3aabb37
+status: WAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-14 returned increment 16F READY_FOR_ASSURANCE at content tip 7ac11c9, entry tip
+  c475b8e, entry BL-20260824T223344Z-16FC, with an instrument freeze at 6491b64 so that ITEM 4's
+  "invented after the freeze" claim is auditable by ancestry rather than by assertion. THE RETURN IS
+  BANKED AS AN INPUT AND IS NOT ACCEPTED (PBG-AUTH-003). This seat RAN the acceptance test rather
+  than reading it (CD-PL-F193), using the patches it built BEFORE the Engineer was dispatched: at
+  a9e19c3 W5G and W5B2 left the register diff-identical at 32/21/11; at 7ac11c9 the same two patches
+  produce 33/20/13 and move LINE 04 and LINE 06. W5A now moves three rows where 16E's behavioural
+  row missed it entirely. All six no-regression measurements were taken by this seat: zero src/
+  paths, zero pbg/ paths, both contracts byte-identical by sha256sum, 16D/16E plants unchanged,
+  be0b355 unmoved, no indicator row registered. AND THIS SEAT BUILT ONE ARM THE ENGINEER DID NOT:
+  P1 composes N13's assignment mechanism with N1's out-of-vocabulary value and ESCAPES BOTH ROWS
+  while the live gate admits a 1970-stamped calm dial on both surfaces, register identical to clean.
+  Raised as CD-PL-F209 and handed to CD-ASR-WO3-14 to verify or refute. 16C IS NOT RELEASED AND NO
+  INDICATOR ROW IS REGISTERED.
+
+# ================================================================================================== #
+what_the_engineer_returned — BANKED, NOT ACCEPTED:
+# ================================================================================================== #
+  seat: CD-ENG-WO3-14
+  dispatch: CD-D-184
+  content_tip: 7ac11c9789e86625e91ea163c72404288e91d023
+  entry_tip: c475b8e75004a14481f39e63d09e86da3898195b
+  entry_id: BL-20260824T223344Z-16FC
+  instrument_freeze: '6491b64 — and it is a REAL ANCESTOR of the content tip, confirmed with `git cat-file -t` and by `git log`. **THE FREEZE IS THE EVIDENCE THAT DECIDES ITEM 4 AND IT IS AUDITABLE WITHOUT TAKING THE SEAT''S WORD FOR ANYTHING.**'
+  identity_VERIFIED_not_assumed: >-
+    All three commits show `CD-ENG-WO3-14 <cd-eng-wo3-14@seats.crash-detector.invalid>` under
+    `git log --format='%an <%ae>'`. Neither that identity nor CD-ASR-WO3-14 existed in
+    `git log --all --format=%an` at dispatch. **THE Q40 CONVENTION HELD THIS TIME, ON BOTH SEATS.**
+  status_field_handling: >-
+    `status: WAITING_ASSURANCE` in the schema field, `return_status: READY_FOR_ASSURANCE` in the
+    record's own prose. **Q38/IMP-041 handled as precedent and `pbg/` UNTOUCHED — the correct
+    behaviour, and the third Engineer in a row to reach it independently.**
+
+# ================================================================================================== #
+what_this_seat_RAN_rather_than_inherited — CD-PL-F193:
+# ================================================================================================== #
+  why_the_patches_are_this_seat_s_own_and_not_the_committed_arms: >-
+    **THE ENGINEER COMMITTED `W5G` AND `W5B2` AS ARMS UNDER `plants/WO3-INC16F/`, AND AN INSTRUMENT
+    CAN BE SHAPED TO THE ARMS IT SHIPS WITH.** This seat re-ran the acceptance test with the patches
+    it authored at `BL-20260824T211349Z-0184`, BEFORE the Engineer was dispatched, applied from
+    `/tmp/pl07/patches/` — an absolute path outside every extraction — with `git apply` rc TAKEN
+    AND CHECKED = 0 and the inserted lines grep-confirmed present in each tree. They still apply
+    cleanly because `src/` did not move, **which is itself the first no-regression measurement.**
+  THE_ACCEPTANCE_TEST — PER-LINE REGISTER rc, MEASURED AT BOTH TIPS:
+    at_a9e19c3_the_prior_tip: 'CLEAN `32/21/11` · `W5G` `32/21/11` · `W5B2` `32/21/11` — **`diff` rc=0 BOTH TIMES, NOT ONE ROW MOVED.**'
+    at_7ac11c9_the_new_tip:
+      CLEAN: 'TOTAL lines=33 rc0=22 nonzero=11'
+      W5G: '*** TOTAL lines=33 rc0=20 nonzero=13 — `LINE 04` AND `LINE 06`, EACH rc 0 -> 1. ***'
+      W5B2: '*** TOTAL lines=33 rc0=20 nonzero=13 — `LINE 04` AND `LINE 06`, EACH rc 0 -> 1. ***'
+      W5A: '*** TOTAL lines=33 rc0=19 nonzero=14 — `LINE 04`, `LINE 05` AND `LINE 06`. AT 16E THIS ARM MOVED `LINE 05` ALONE AND THE BEHAVIOURAL ROW REPORTED `PASS — 97`. IT NOW MOVES ALL THREE. ***'
+      W5C: 'TOTAL lines=33 rc0=22 nonzero=11 — NO LINE MOVES, and that is CORRECT: `W5C` renames the refusal token and ADMITS NOTHING. The Engineer recorded it as an observation and not a breach, and did not inflate it. **AGREED, AND THE PUBLIC DIAGNOSTIC CONTRACT QUESTION IT RAISES IS STILL OPEN AND STILL UNGUARDED.**'
+    the_live_gate_under_the_same_patches: >-
+      This seat's own argv-parameterised probe, tree printed on the last line of every run: CLEAN
+      24 rows, 0 baseline refusals, **STALE-CALM ADMISSIONS = 0.** `W5G` and `W5B2` each **8**, both
+      surfaces. **SO THE PATCHES ARE REAL WEAKENINGS AT THE NEW TIP AND THE ROWS THAT MOVED ARE
+      MOVING ON A GENUINE ESCAPE, NOT ON AN ARTEFACT.**
+    and_the_register_grew_by_exactly_one_passing_line: >-
+      `32 lines rc0=21 nonzero=11` -> `33 lines rc0=22 nonzero=11`. **ONE LINE ADDED, IT PASSES
+      CLEAN, AND THE NONZERO COUNT IS UNCHANGED — SO NO PREVIOUSLY-PASSING LINE REGRESSED.**
+      Measured, not asserted.
+  THE_SIX_NO_REGRESSION_MEASUREMENTS — ALL TAKEN BY THIS SEAT:
+    - '`git diff --name-only a9e19c3 7ac11c9 | grep -c "^src/"` -> **0**.'
+    - '`... | grep -c "^pbg/"` -> **0**.'
+    - '`contracts/public_envelope.schema.json` sha256 `bacc6695...` and `contracts/private_envelope.schema.json` sha256 `322bce7c...` — **IDENTICAL AT BOTH TIPS**, compared via `git show <sha>:<path> | sha256sum` at each end.'
+    - '`plants/WO3-INC16D/` and `plants/WO3-INC16E/` -> **0 paths in the diff. THE ARMS THAT PRODUCED THE TWO AMBERs ARE BYTE-UNCHANGED**, so the row is not being measured against re-cut plants.'
+    - '`git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **FROZEN AND UNMOVED.**'
+    - 'No `feed_liveness`, no dead-feed detector, no liveness marking, and **NO INDICATOR ROW REGISTERED FROM `governance/mapping/indicator_mapping.yaml`. 16C IS NOT BUILT AND IS NOT RELEASED.**'
+  and_the_writable_scope_was_checked_rather_than_trusted: >-
+    Every path in `git diff --name-only a9e19c3 7ac11c9` falls inside `required-tests.yaml`,
+    `tools/register/`, `contracts/execution/`, `plants/WO3-INC16F/` — **the declared writable set.
+    ZERO paths under `src/`, `pbg/`, `PID.md`, `BLUEPRINT.md`, `governance/decisions/` or
+    `contracts/*.json`.**
+
+# ================================================================================================== #
+CD-PL-F209 — THE FINDING THIS SEAT RAISED AGAINST THE RETURN, HANDED TO THE AUDITOR, NOT GRADED HERE:
+# ================================================================================================== #
+  severity: 'HIGH if it survives the auditor. **THIS SEAT DOES NOT ASSIGN THE VERDICT (PBG-SOD-001, PBG-AUTH-003) AND THE SEVERITY IS OFFERED, NOT SET.**'
+  against: 'The PAIR of rows, and specifically `DECLARED LIMIT 9`''s closing claim.'
+  statement: >-
+    *** **THE UNION OF THE TWO ROWS IS NOT A COVER. A BYPASS THAT IS NEITHER CONTROL-FLOW-SHAPED
+    NOR KEYED ON AN IN-VOCABULARY VALUE ESCAPES BOTH.** ***
+  how_it_was_constructed — AND THE ENGINEER SUPPLIED BOTH HALVES: >-
+    The Engineer's own post-freeze arms measure the two limbs of the gap and its record states both
+    honestly. **IT DID NOT COMPOSE THEM.** `N1` is a `return` keyed on `config_snapshot_id ==
+    "BYPASS"` — control-flow, value OUTSIDE the vocabulary — and is caught by the STRUCTURAL row
+    ALONE. `N13` is `calm_nodes = []` keyed on `regime == "acute"` — an ASSIGNMENT, value INSIDE
+    the vocabulary — and is caught by the BEHAVIOURAL row ALONE. **`P1` IS `N13`'s MECHANISM WITH
+    `N1`'s VALUE, AND IT IS FOUR LINES.**
+  the_measurement:
+    the_arm: '`if candidate.get("config_snapshot_id") == "BYPASS": calm_nodes = []`, inserted after the enumeration in `_refuse_stale_calm`. NO `return`, NO `continue`, NO `break`, and no product-vocabulary literal — so no AST lint fires on the spelling either.'
+    method: 'A pristine `git archive 7ac11c9 | tar -x` extraction, patch authored by this seat and applied from an absolute path outside the extraction, `git apply` rc TAKEN AND CHECKED = 0, inserted line grep-confirmed at line 791.'
+    the_live_gate: '*** **STALE-CALM ADMISSIONS = 2. A 1970-STAMPED `calm` DIAL IS ADMITTED ON BOTH SURFACES.** *** Every other point in the probe still refuses and every baseline is still admitted, **so the gate looks perfectly healthy from any angle that does not happen to spell `BYPASS`.**'
+    the_register: '*** **TOTAL lines=33 rc0=22 nonzero=11 — IDENTICAL TO THE CLEAN TIP. NOT ONE OF THE THIRTY-THREE LINES MOVES. `diff` rc=0.** ***'
+    the_control_on_the_harness: 'The SAME runner, the SAME clean baseline file, produced two moving lines on `W5G` and three on `W5A` minutes earlier. **THE NULL RESULT ON `P1` IS A MEASUREMENT AND NOT A DEAD PIPE.**'
+  what_the_declared_limit_says_and_why_it_is_the_problem: >-
+    `DECLARED LIMIT 9` reads *"The class is closed by the STRUCTURAL row, which catches every
+    `return`/`continue`/`break`-shaped bypass regardless of what value it is keyed on. NEITHER ROW
+    CLOSES IT ALONE AND THE RETURN DOES NOT CLAIM OTHERWISE."* **THE FIRST SENTENCE IS TRUE AS
+    WRITTEN AND THE PARAGRAPH READS AS THOUGH THE PAIR CLOSES THE CLASS. IT DOES NOT.** This
+    project's own words for that are *"how a guard becomes a certificate"*, and this is the third
+    row in a row to earn them.
+  why_this_seat_thinks_it_is_STRUCTURAL_and_not_another_arm — OFFERED AS ANALYSIS, NOT AS A PRESCRIPTION: >-
+    **A BEHAVIOURAL VALUE-ENUMERATION CANNOT CLOSE IT AT ANY VOCABULARY WIDTH.**
+    `config_snapshot_id` is `{"type": "string", "maxLength": 128}` and no finite list of strings
+    covers it — the Engineer says exactly this in `CD-ENG-F16F-02` and is right. And a structural
+    rule enumerating EXIT FORMS cannot close it either, because `P1` uses none. **WHAT BOTH ROWS
+    ARE MISSING IS A DEPENDENCE CHECK RATHER THAN A SHAPE CHECK: the freshness stage is permitted
+    to read the node's own properties, the root's `published_utc` and the root's
+    `staleness_window_seconds`, AND NOTHING ELSE — which is the INVARIANT `CD-D-184` ITEM 1 already
+    states in words and which neither row asserts over the source.** *** **THIS IS OFFERED TO THE
+    AUDITOR AND TO THE PRODUCT AUTHORITY AS ANALYSIS. IT IS DELIBERATELY NOT WRITTEN AS THE LINE TO
+    IMPLEMENT (`PBG-SOD-004`) AND THIS SEAT DOES NOT DIRECT THE FIX.** ***
+  what_is_NOT_claimed: >-
+    **THE SHIPPED PRODUCT AT `7ac11c9` IS NOT BREACHED.** No weakening exists in the tree; the clean
+    extraction admits nothing stale-calm on any point this seat drove. **AND 16F IS A LARGE, REAL
+    IMPROVEMENT: `W5G`, `W5B2` and `W5A` all went from invisible-or-half-seen to caught, and `W5A`
+    went from ONE row to THREE.** Nothing about `7ac11c9` should be reverted.
+
+# ================================================================================================== #
+the_engineer_s_five_findings_against_its_own_work — READ, AND THE ONE THIS SEAT MUST ANSWER:
+# ================================================================================================== #
+  overall: >-
+    **FIVE FINDINGS AGAINST ITSELF, INCLUDING ONE THAT MAKES ITS OWN ITEM-4 CLAIM HARDER TO
+    BELIEVE. THAT IS THE BEHAVIOUR THIS PROJECT ASKS FOR AND IT IS RECORDED AS CREDIT.**
+  CD-ENG-F16F-01: >-
+    Its own post-freeze arm `N8` escaped BOTH rows at the freeze; `CD-CHOKE-005` claimed to cover
+    every path leaving a node unjudged and checked `return` only, one of three exit forms. It
+    completed the rule on its own stated terms and **wrote down that an Assurance seat is entitled
+    to read that as building against the shape, and left the freeze SHA so the call is made on
+    evidence.** *** **THIS SEAT AGREES THE CALL IS THE AUDITOR'S AND DOES NOT PRE-EMPT IT, AND
+    NOTES THAT `CD-PL-F209` EXISTS BECAUSE THE COMPLETED RULE STILL COVERS ONLY EXIT FORMS.** ***
+  CD-ENG-F16F-02: 'Names `N1` as a LIVE ESCAPE of the behavioural row and puts it in `DECLARED LIMIT 9` with the arm named so an auditor can execute it. **REPRODUCED BY THIS SEAT: `N1` moves `LINE 06` ONLY. The disclosure is accurate.**'
+  CD-ENG-F16F-03: 'The pairwise stride branch is unreached at the shipped contracts and was exercised deliberately with a reduced budget rather than assumed correct. **NOT RE-RUN BY THIS SEAT; HANDED TO THE AUDITOR.**'
+  CD-ENG-F16F-04: 'The behavioural row now costs 26.1 s where it cost 0.77 s — thirty-four times — because the gate reloads the contract per call. **A REAL COST, DISCLOSED WITH THE COMMAND THAT MEASURES IT, AND NOT AN ACCIDENT OF AN UNBOUNDED LOOP. NOT RE-TIMED BY THIS SEAT; HANDED TO THE AUDITOR.**'
+  CD-ENG-F16F-05_THE_ONE_THIS_SEAT_MUST_ANSWER:
+    what_the_engineer_reported: 'The `wo-3` lane carries its OWN `governance/engineering/ACTIVE_WORK.yaml` and it is stale; it declined to touch it because it is outside the dispatch''s writable paths and a sub-agent silently correcting a Project Lead record is what `PBG-CONT-006` forbids.'
+    the_behaviour_is_CORRECT_and_is_recorded_as_such: '**IT ESCALATED RATHER THAN FIXED. THAT IS EXACTLY RIGHT AND IT IS THE SECOND ENGINEER IN A ROW TO GET IT RIGHT.**'
+    this_seat_VERIFIED_it_rather_than_taking_it: >-
+      `wo-3:governance/engineering/ACTIVE_WORK.yaml` is a DIFFERENT BLOB from
+      `main:...` (`ce0803c3` against `db7b1d1c`) and its `last_build_log_entry` reads
+      `BL-20260819T025400Z-0004` while the lane's own newest entry is `BL-20260824T223344Z-16FC`.
+      **THE LANE'S PROJECTION IS STALE BY THE WHOLE OF WO-3. THIS IS THE THIRD OCCURRENCE OF THE
+      `CD-PL-F132` POINTER CLASS INSIDE TWENTY-FOUR HOURS** — the first blocked this seat's own boot
+      this morning and was repaired at `-0184`.
+    the_disposition_and_the_reason_it_is_NOT_repaired_NOW: >-
+      *** **DEFERRED TO AFTER THE GATE, DELIBERATELY. REPAIRING IT NOW WOULD MOVE THE `wo-3` TIP
+      WHILE AN ASSURANCE SEAT IS BEING DISPATCHED AGAINST `7ac11c9`, AND CHANGING THE TREE UNDER AN
+      AUDITOR IS HOW A VERDICT COMES BACK ABOUT A TARGET THAT NO LONGER EXISTS.** *** It is recorded
+      here so it cannot be forgotten, and it is carried in `held_actions`. **THE `main` RECORD —
+      the one a Project Lead boots from — IS CORRECT AND RESOLVES `CONTINUITY_MATCH`.**
+
+next_safe_action: >
+  Dispatch CD-ASR-WO3-14 — a FRESH, READ-ONLY Assurance identity, never CD-ENG-WO3-14 and never
+  CD-ASR-WO3-13 (PBG-SOD-001, non-waivable) — against content tip 7ac11c9, and hand it the freeze
+  SHA 6491b64, CD-PL-F209 with the P1 arm, and the Engineer's own five findings. It grades the
+  PO-DECISIONS-0031 ruling 1 completion condition and returns PASS, AMBER or RED with the next safe
+  gate. THE RULED CONDITION FOR RELEASING 16C IS GREEN. IT HAS BEEN AMBER TWICE AND THE CONDITION
+  WAS NOT MET BY REINTERPRETING IT EITHER TIME. 16C IS NOT RELEASED AND NO INDICATOR ROW IS
+  REGISTERED UNTIL THAT GATE IS GREEN.
+
+expected_next_actor: CD-ASR-WO3-14 (ASSURANCE_ENGINEER, dispatched by PROJECT_LEAD_SEAT_07)
+
+held_actions:
+  - id: 16C-INDICATOR-ROWS
+    status: HELD
+    authority: PO-DECISIONS-0031 ruling 1
+    reason_held: 'The ruled release condition is a GREEN gate on 16F and the gate has not been taken.'
+    next_actor: PROJECT_LEAD (on a GREEN 16F gate, and not before)
+    silent_execution: PROHIBITED
+  - id: 16C-DETECTOR-LIVENESS
+    status: HELD
+    authority: PO-DECISIONS-0031 ruling 1
+    reason_held: 'Same condition. The honesty obligation it carries is recorded on the freshness row and deliberately not built.'
+    next_actor: PROJECT_LEAD (on a GREEN 16F gate, and not before)
+    silent_execution: PROHIBITED
+  - id: WO3-LANE-ACTIVE-WORK-POINTER-REPAIR
+    status: HELD
+    authority: CD-ENG-F16F-05, verified by PROJECT_LEAD_SEAT_07
+    reason_held: 'Repairing it now would move the wo-3 tip while an Assurance seat is dispatched against 7ac11c9. Deferred to after the gate, not forgotten.'
+    next_actor: PROJECT_LEAD (immediately after the 16F gate returns)
+    silent_execution: PROHIBITED
+
+blockers: []
+
+risks:
+  - '**CD-PL-F209 MAY BE THE THIRD AMBER IN A ROW ON THIS ROW, AND IF IT IS, THE PATTERN IS THE FINDING.** 16D was AMBER on "true but unguarded", 16E on "guarded at one point", and P1 says the pair still leaves a gap that is neither an exit form nor a vocabulary value. **THE PRODUCT AUTHORITY RULED 16F THE LAST STRENGTH STEP AND SAID A FURTHER NAMED SHAPE MEANS THE SPACE-PROBER WAS MIS-BUILT. THAT SENTENCE FALLS DUE IF THE AUDITOR CONFIRMS P1, AND IT IS A PRODUCT AUTHORITY QUESTION AND NOT THIS SEAT''S TO ANSWER.**'
+  - 'The auditor may reasonably read CD-ENG-F16F-01 as the instrument being edited to catch a shape it had just been shown. The freeze SHA is a real ancestor and the sequence is on the record, so the call is available on evidence — but it IS a call, and this seat has deliberately not pre-empted it.'
+
+evidence_references:
+  - '/tmp/pl07b/reg_clean.txt · reg_w5g.txt · reg_w5b2.txt · reg_W5A.txt · reg_W5C.txt · reg_N1.txt · reg_N8.txt · reg_N13.txt · reg_P1.txt — the nine per-line register rc lists this seat produced at 7ac11c9. TRANSIENT PATHS; the FIGURES are carried in this entry, which is the durable record (PBG-CONT-007).'
+  - '/tmp/pl07b/patches/P1.patch — the arm this seat built. TRANSIENT; its four lines are quoted in full above so the finding survives the path.'
+  - 'wo-3 c475b8e:governance/engineering/build-log/BL-20260824T223344Z-16FC.yaml — the Engineer''s return record, BANKED AS AN INPUT AND NOT ACCEPTED.'
+  - 'wo-3 6491b64 — the instrument freeze, confirmed a commit object and a real ancestor of 7ac11c9.'
+  - 'governance/decisions/PO-DECISIONS-0031.md at 97f85e6'
