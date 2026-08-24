@@ -492,24 +492,87 @@ def _fragment(schema: dict, subschema: dict) -> dict:
     return fragment
 
 
-def _deref(schema: dict, node, depth: int = 0):
-    """Follow a chain of LOCAL ``#/...`` refs to the mapping it names. ``None`` if unresolvable.
+#: *** THE ONLY KEYS THAT MAY SIT BESIDE A `$ref` WITHOUT CHANGING WHAT THE NODE ADMITS. NEW AT
+#: `16B-FIX-3` (`FX9`, closing `CD-ASR-WO3-07` F1). *** Both envelope contracts declare
+#: `"$schema": "https://json-schema.org/draft/2020-12/schema"`, and **in 2020-12 keywords SIBLING to
+#: `$ref` ARE APPLIED** — that is the one thing draft-07 did differently and the whole of F1. Every
+#: key listed here is a pure ANNOTATION in that specification (Core `$comment`, and the Basic
+#: Meta-Data vocabulary `title`/`description`/`default`/`deprecated`/`readOnly`/`writeOnly`/
+#: `examples`): it produces an annotation and asserts NOTHING, so discarding it cannot change which
+#: documents the node admits. **ANY OTHER KEY BESIDE A `$ref` IS AN ASSERTION THIS RESOLVER WOULD
+#: THROW AWAY**, and :func:`_resolve` reports it instead. `description` is not decoration in this
+#: list — MEASURED at this commit, the public contract carries FOUR `$ref` nodes with a
+#: `description` sibling (`as_of_utc`, `published_utc`, `inputs_used`, `degraded_inputs`), so a
+#: resolver that denied on ANY sibling would turn the CLEAN TREE red.
+REF_INERT_SIBLINGS = frozenset({
+    "$ref", "$comment", "title", "description",
+    "default", "deprecated", "readOnly", "writeOnly", "examples",
+})
 
-    Only local fragments are followed. A `$ref` this cannot resolve returns ``None``, and every
-    caller treats ``None`` as UNRECOGNISED rather than as "nothing to see".
+
+def _resolve(schema: dict, node, depth: int = 0):
+    """Follow a chain of LOCAL ``#/...`` refs, and **SAY WHAT THE CHAIN DISCARDED**.
+
+    Returns ``(resolved, dropped)``. ``resolved`` is the mapping the chain names, or ``None`` if it
+    is unresolvable — every caller treats ``None`` as UNRECOGNISED rather than as "nothing to see".
+    ``dropped`` is a list of ``(hop, ref, [asserting sibling keys])``, one entry per hop of the
+    chain whose node carried a key outside :data:`REF_INERT_SIBLINGS` beside its `$ref`.
+
+    *** THIS IS THE FIX FOR `CD-ASR-WO3-07` F1 AND IT IS A RESOLVER FIX, NOT A GUARD FIX. *** The
+    superseded `_deref` replaced a node carrying `$ref` with the `$ref`'s TARGET and threw the
+    node's siblings away **at every hop, silently**. In JSON Schema 2020-12 those siblings ARE
+    applied, so the resolved object this check inspected was NOT the schema the gate enforced. An
+    `if`/`else` written as a sibling of the `$ref` on a `oneOf` ENTRY — instead of inside the branch
+    definition — therefore never reached `FX5`'s conditional-keyword guard: the instrument reported
+    `PASS — 144 assertions, 0 violations` while the live gate ADMITTED an `UNKNOWN` dial rendering
+    as `calm` on BOTH surfaces (auditor arm `A1`), and putting the same conditional ONE `$ref`
+    DEEPER behind an innocuous entry gave the identical result (`A2`). **A GUARD THAT LOOKED ONLY AT
+    THE `oneOf` ENTRY WOULD STILL BE BLIND, WHICH IS WHY THE REPAIR IS HERE**: this walk reports
+    every hop, so the caller's answer does not depend on WHERE the sibling was written.
+
+    **WHY DENY-BY-DEFAULT AND NOT A MERGE — THE CHOICE IS DECLARED (`DECLARED LIMIT 13`).** The
+    alternative was to return the target MERGED with its siblings. A dict merge is **not** 2020-12's
+    semantics: `$ref` + siblings is a CONJUNCTION of two schema objects, and `additionalProperties`,
+    `unevaluatedProperties` and `unevaluatedItems` are evaluated against the annotations of *their
+    own* schema object. Target `{"properties": {"a": ...}}` conjoined with sibling
+    `{"additionalProperties": false}` admits NOTHING but `{}`; the MERGED object admits `{"a": ...}`.
+    **A merge can therefore admit documents neither schema admits — it can only ever WEAKEN this
+    instrument, silently, which is the exact failure class F1 is.** Reporting cannot weaken it: it
+    can only over-report, and an over-report costs one seat one look at one contract.
     """
+    dropped: list = []
     while isinstance(node, dict) and "$ref" in node and depth < 32:
         ref = node["$ref"]
+        asserting = sorted(key for key in node if key not in REF_INERT_SIBLINGS)
+        if asserting:
+            dropped.append((depth, ref if isinstance(ref, str) else repr(ref), asserting))
         if not isinstance(ref, str) or not ref.startswith("#/"):
-            return None
+            return None, dropped
         cursor = schema
         for token in ref[2:].split("/"):
             token = token.replace("~1", "/").replace("~0", "~")
             if not isinstance(cursor, dict) or token not in cursor:
-                return None
+                return None, dropped
             cursor = cursor[token]
         node, depth = cursor, depth + 1
-    return node if isinstance(node, dict) else None
+    return (node if isinstance(node, dict) else None), dropped
+
+
+def _dropped_sentence(dropped) -> str:
+    """How a discarded-sibling set is named in a violation. One sentence, every hop."""
+    return " ; ".join(
+        f"hop {hop} ({ref}) also declares {keys!r}" for hop, ref, keys in dropped
+    )
+
+
+def _deref(schema: dict, node, depth: int = 0):
+    """The resolved node only, for the callers that have no siblings to lose.
+
+    **EVERY CALLER THAT COULD BE MISLED BY A DISCARDED SIBLING USES** :func:`_resolve` **INSTEAD.**
+    This wrapper exists so the two cannot drift: there is ONE walk, and one place that decides what
+    a `$ref` chain names.
+    """
+    return _resolve(schema, node, depth)[0]
 
 
 def _synthesise(schema: dict, subschema, validator):
@@ -567,7 +630,7 @@ CONDITIONAL_KEYWORDS = (
 )
 
 
-def _dial_from_branch(schema: dict, branch: dict, level, validator):
+def _dial_from_branch(schema: dict, branch: dict, level, validator, ref_siblings=()):
     """One dial reading built from **THIS BRANCH'S OWN** ``required`` + ``properties``.
 
     *** THIS IS THE FIX FOR `CD-ASR-WO3-05` F1 AND IT IS THE WHOLE POINT OF `16B-FIX`. *** The
@@ -585,10 +648,34 @@ def _dial_from_branch(schema: dict, branch: dict, level, validator):
     UNBUILDABLE and the caller reports `CD-CALM-BRANCHES-006`. **A branch whose shape is conditional
     is a branch this check cannot say it has driven.**
 
+    *** AND SINCE `16B-FIX-3` THAT SENTENCE IS TRUE WHEREVER THE CONDITIONAL IS WRITTEN (`FX9`,
+    closing `CD-ASR-WO3-07` F1). *** ``ref_siblings`` is what :func:`_resolve` discarded on the way
+    to this branch — every hop of the `$ref` chain that carried an ASSERTING keyword beside its
+    `$ref`. In 2020-12 those keywords apply, so a branch that has any is a branch whose admissible
+    set is larger than the resolved object shows, and it is UNBUILDABLE for the same reason a
+    conditional one is. **THE GUARD BELOW WAS NEVER THE DEFECT: the RESOLVER WAS**, and the fix is
+    upstream of here so it does not depend on WHERE the conditional was written (auditor arm `A2`
+    put it one hop deeper and the entry-only fix would still have been blind).
+
     Returns ``(document, None)`` or ``(None, <a sentence naming why it could not be built>)``. The
-    obstacle is a SENTENCE and not a bare property name because there are now two ways to fail and a
-    violation that named a property for a conditional branch would be false.
+    obstacle is a SENTENCE and not a bare property name because there are now three ways to fail and
+    a violation that named a property for a conditional branch would be false.
     """
+    if ref_siblings:
+        return None, (
+            "the branch is COMPOSED ACROSS A `$ref` BOUNDARY: " + _dropped_sentence(ref_siblings)
+            + ". Both contracts declare JSON Schema 2020-12, in which keywords SIBLING to `$ref` "
+            "ARE APPLIED, so the object this check resolved is NOT the schema the gate enforces "
+            "and every keyword above was silently discarded before any guard saw it. *** MEASURED "
+            "(auditor arms A1 and A2): the SAME `if`/`else` this check reports as "
+            "CD-CALM-BRANCHES-006 when it is written INSIDE the branch definition was written as a "
+            "SIBLING of the `$ref` instead — on the `oneOf` ENTRY in A1 and one hop DEEPER in A2 — "
+            "and this instrument reported PASS while the live gate ADMITTED an UNKNOWN dial "
+            "rendering as `calm` on BOTH surfaces. *** DENY BY DEFAULT: a branch whose shape is "
+            "composed across a `$ref` boundary is a branch this check cannot say it has driven. "
+            "See THIS ROW'S DECLARED LIMIT 13"
+        )
+
     conditional = [keyword for keyword in CONDITIONAL_KEYWORDS if keyword in branch]
     if conditional:
         return None, (
@@ -755,6 +842,15 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     (require a `state` AND a `detail_level`): a false positive costs one seat one look at one
     contract; a false negative costs the constitution.
 
+    *** AND SINCE `16B-FIX-3` THE FIRST OF THOSE THREE LINES IS TRUE OF A `state` OF **ANY** SHAPE
+    (`FX10`, closing `CD-ASR-WO3-07` F2), AND A CHAIN THAT DISCARDED AN ASSERTION IS UNDECIDABLE
+    (`FX9`, closing F1). *** `FX6` put the `undecidable = True` limb inside
+    `if isinstance(state, dict)`, so a `state` spelled as the boolean schema `true` — legal in
+    2020-12 — was skipped and the property was classified **not a dial**: instrument
+    `PASS — 144 assertions, 0 violations` with the gate ADMITTING `{state: STALE, detail_level:
+    'calm'}` on both surfaces (auditor arm `D1`, arm `C20`). **DECLARING the key is now the whole
+    trigger; the key's SHAPE can only refine the answer to ``True`` and never back to ``False``.**
+
     *** IT DOES NOT ADD A THIRD DIAL SLOT TO ANYTHING. *** `PO-DECISIONS-0026` standing is TWO
     DIALS, NEVER BLENDED. This makes the enumerator honest about what it drives; it drives nothing
     new on the clean tree, where the two sets are equal and the undecidable set is empty.
@@ -762,8 +858,14 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     if depth > 24:
         return None
     seen = set() if seen is None else seen
-    resolved = _deref(schema, node)
+    resolved, dropped = _resolve(schema, node)
     if resolved is None:
+        return None
+    if dropped:
+        # *** THE RESOLVER DISCARDED AN ASSERTION. NEW AT `16B-FIX-3` (`FX9`, closing
+        # `CD-ASR-WO3-07` F1). *** In 2020-12 a keyword sibling to `$ref` APPLIES, so the object
+        # just resolved is not the schema the gate enforces and any answer derived from it would be
+        # about a schema nobody wrote. UNDECIDABLE, never False. See DECLARED LIMIT 13.
         return None
     if id(resolved) in seen:
         return False
@@ -771,15 +873,33 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
 
     undecidable = False
 
-    state = resolved.get("properties", {}).get("state") if isinstance(
-        resolved.get("properties"), dict) else None
-    state = _deref(schema, state) if isinstance(state, dict) else None
-    if isinstance(state, dict):
-        if state.get("const") in DECLARED_STATES:
-            return True
-        values = state.get("enum")
-        if isinstance(values, list) and set(values) & set(DECLARED_STATES):
-            return True
+    properties = resolved.get("properties")
+    # *** THE TRIGGER IS THE PRESENCE OF THE DECLARED KEY, NOT ITS SHAPE. NEW AT `16B-FIX-3`
+    # (`FX10`, closing `CD-ASR-WO3-07` F2). *** The superseded code read
+    # `state = _deref(...) if isinstance(state, dict) else None` and put the whole `undecidable`
+    # limb inside `if isinstance(state, dict)`, so a `state` spelled as the BOOLEAN SCHEMA `true`
+    # — legal in 2020-12 and maximally permissive — dropped to None, the limb never ran, the
+    # `_SUBSCHEMA_KEYWORDS` descent skipped it too, and the property was classified NOT A DIAL.
+    # MEASURED, auditor arm `D1` and arm `C20`: instrument `PASS — 144 assertions, 0 violations`,
+    # the property in NEITHER the classifiable nor the undecidable list, and the live gate ADMITTING
+    # `{state: STALE, detail_level: 'calm'}` on BOTH surfaces. DECLARED LIMIT 12 did not cover it —
+    # that limit is about a differently-NAMED discriminator and D1's dial declares a property
+    # literally called `state`. **A ROOT PROPERTY THAT DECLARES A `state` REACHES THE UNDECIDABLE
+    # LIMB WHATEVER THE SHAPE OF THAT KEY'S SUBSCHEMA**; the shape can only ever REFINE the answer
+    # to `True`, never back to `False`.
+    if isinstance(properties, dict) and "state" in properties:
+        state, state_dropped = (
+            _resolve(schema, properties["state"]) if isinstance(properties["state"], dict)
+            else (None, [])
+        )
+        if state_dropped:
+            state = None  # composed across a `$ref` boundary — its const/enum cannot be trusted
+        if isinstance(state, dict):
+            if state.get("const") in DECLARED_STATES:
+                return True
+            values = state.get("enum")
+            if isinstance(values, list) and set(values) & set(DECLARED_STATES):
+                return True
         # *** DECLARING A `state` IS ENOUGH TO STOP THE CHECK. NEW AT `16B-FIX-2` (`FX6`, closing
         # `CD-ASR-WO3-06` F2). *** The superseded code fell through to False here, so a root
         # property that is a dial in every respect the product cares about, but whose state
@@ -817,10 +937,16 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
 
 
 def _branch_states(schema: dict, dial_union: dict):
-    """The union's branches as ``(label, resolved_branch, state_const)``; ``None`` where unreadable.
+    """The union's branches as ``(label, resolved_branch, state_const, ref_siblings)``.
 
     The branch SET is what the superseded instrument never enumerated. It wrote out one document
     shape per state by hand, so the union could grow a branch and nothing anywhere would move.
+
+    *** THE FOURTH ELEMENT IS NEW AT `16B-FIX-3` (`FX9`, closing `CD-ASR-WO3-07` F1). *** It is
+    every ASSERTING keyword the `$ref` chain from the `oneOf` ENTRY to the branch definition — and
+    from the branch to its `state` subschema — discarded on the way. **IT IS COLLECTED AT EVERY
+    HOP AND NOT ONLY AT THE ENTRY**, because auditor arm `A2` wrote the conditional one `$ref`
+    deeper, behind an innocuous entry, and got the identical escape.
     """
     branches = dial_union.get("oneOf")
     if not isinstance(branches, list) or not branches:
@@ -829,15 +955,17 @@ def _branch_states(schema: dict, dial_union: dict):
     for index, entry in enumerate(branches):
         label = entry.get("$ref") if isinstance(entry, dict) and isinstance(
             entry.get("$ref"), str) else f"oneOf[{index}]"
-        resolved = _deref(schema, entry) if isinstance(entry, dict) else None
+        resolved, dropped = _resolve(schema, entry) if isinstance(entry, dict) else (None, [])
         state = None
         if isinstance(resolved, dict):
             declared = resolved.get("properties", {}).get("state") if isinstance(
                 resolved.get("properties"), dict) else None
-            declared = _deref(schema, declared) if isinstance(declared, dict) else None
+            declared, declared_dropped = (
+                _resolve(schema, declared) if isinstance(declared, dict) else (None, []))
+            dropped = list(dropped) + list(declared_dropped)
             if isinstance(declared, dict) and isinstance(declared.get("const"), str):
                 state = declared["const"]
-        out.append((label, resolved, state))
+        out.append((label, resolved, state, dropped))
     return out
 
 
@@ -1080,7 +1208,8 @@ def main(argv=None) -> int:
     # state, no duplicates, no extras, and every declared state one this check can classify.
     branches_by_surface = {}
     for surface, schema in schemas.items():
-        dial_union = _deref(schema, (schema.get("$defs") or {}).get("dial_reading"))
+        dial_union, union_dropped = _resolve(
+            schema, (schema.get("$defs") or {}).get("dial_reading"))
         if dial_union is None:
             return check.refuse(
                 f"the {surface.value} contract's '#/$defs/dial_reading' does not resolve to a "
@@ -1095,15 +1224,33 @@ def main(argv=None) -> int:
             )
         branches_by_surface[surface] = branches
         check.note(f"{surface.value} dial_reading.oneOf branches enumerated: "
-                   + repr([(label, state) for label, _, state in branches]))
+                   + repr([(label, state) for label, _, state, _ in branches]))
+        composed = [(label, dropped) for label, _, _, dropped in branches if dropped]
+        if composed:
+            check.note(f"{surface.value} dial_reading.oneOf branches COMPOSED ACROSS A `$ref` "
+                       f"BOUNDARY (reported below): {[label for label, _ in composed]!r}")
 
         declared = dial_union.get("properties", {}).get("state") if isinstance(
             dial_union.get("properties"), dict) else None
-        declared = _deref(schema, declared) if isinstance(declared, dict) else None
-        contract_states = tuple(declared.get("enum") or ()) if isinstance(declared, dict) else ()
+        declared, declared_dropped = (
+            _resolve(schema, declared) if isinstance(declared, dict) else (None, []))
+        contract_states = (tuple(declared.get("enum") or ())
+                           if isinstance(declared, dict) and not declared_dropped else ())
 
         check.asserted(4)
-        unreadable = [label for label, resolved, state in branches
+        # *** THE UNION ITSELF, AND ITS OWN `state`, RESOLVED WITHOUT LOSING AN ASSERTION. NEW AT
+        # `16B-FIX-3` (`FX9`). *** No new `check.asserted` here on purpose: this rides the four
+        # branch-set assertions already counted, so the clean tree's assertion total is unchanged.
+        if union_dropped or declared_dropped:
+            check.violation(
+                here, 0, "CD-CALM-BRANCHES-006",
+                f"{surface.value}: '#/$defs/dial_reading' is COMPOSED ACROSS A `$ref` BOUNDARY — "
+                + _dropped_sentence(list(union_dropped) + list(declared_dropped))
+                + ". In JSON Schema 2020-12, which both contracts declare, those keywords APPLY, "
+                "so the union this check enumerated is not the union the gate enforces and its "
+                "branch set cannot be called closed. DENY BY DEFAULT. See DECLARED LIMIT 13.",
+            )
+        unreadable = [label for label, resolved, state, _ in branches
                       if resolved is None or state is None]
         if unreadable:
             check.violation(
@@ -1114,7 +1261,7 @@ def main(argv=None) -> int:
                 "DRIVE, and an undriven branch of the published union is a shape on which PID "
                 "§3.2 is unguarded. Unrecognised is a VIOLATION, never a silence.",
             )
-        states = [state for _, _, state in branches if state is not None]
+        states = [state for _, _, state, _ in branches if state is not None]
         duplicated = sorted({s for s in states if states.count(s) > 1})
         if duplicated:
             check.violation(
@@ -1171,10 +1318,11 @@ def main(argv=None) -> int:
         # instead. See DECLARED LIMIT 11 (of THIS row; see the NUMBERING note).
         filler, obstacle, refusals = None, None, []
         for wanted in ABSENT_STATES:
-            for label, resolved, state in branches_by_surface[surface]:
+            for label, resolved, state, ref_siblings in branches_by_surface[surface]:
                 if state != wanted or resolved is None:
                     continue
-                built, obstacle = _dial_from_branch(schema, resolved, admissible[0], validator)
+                built, obstacle = _dial_from_branch(
+                    schema, resolved, admissible[0], validator, ref_siblings)
                 if built is not None:
                     filler = built
                     check.note(f"{surface.value} filler dial taken from branch {label} ({state})")
@@ -1207,7 +1355,7 @@ def main(argv=None) -> int:
         validator = validator_for(schema)
         slots = slots_by_surface[surface]
         for slot in slots:
-            for branch_index, (branch_label, branch, state) in enumerate(
+            for branch_index, (branch_label, branch, state, ref_siblings) in enumerate(
                 branches_by_surface[surface]
             ):
                 if branch is None or state is None:
@@ -1217,7 +1365,8 @@ def main(argv=None) -> int:
                     continue  # unrecognised state, already reported; never assumed benign
                 table = absent_table if absent_data else present_table
                 for level, expectation in table:
-                    dial, obstacle = _dial_from_branch(schema, branch, level, validator)
+                    dial, obstacle = _dial_from_branch(
+                        schema, branch, level, validator, ref_siblings)
                     label = (f"{surface.value}/{slot}/{state}[{branch_label}]/"
                              f"{_label_for(level)}")
                     if dial is None:
@@ -1343,7 +1492,7 @@ def main(argv=None) -> int:
     # expected a stated exception to be necessary here and MEASUREMENT SAYS IT IS NOT.
     for surface in EnvelopeSurface:
         for slot in slots_by_surface[surface]:
-            for branch_index, (branch_label, branch, state) in enumerate(
+            for branch_index, (branch_label, branch, state, ref_siblings) in enumerate(
                 branches_by_surface[surface]
             ):
                 if branch is None or state is None:
