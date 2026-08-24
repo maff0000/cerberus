@@ -1,0 +1,849 @@
+# ================================================================================================== #
+# BL-20260824T234541Z-A314 — ASSURANCE VERDICT, WO-3 INCREMENT 16F (CONTROL-ROW STRENGTH).
+#
+# *** VERDICT: RED. CONFIDENCE: HIGH ON THE MEASUREMENTS, MEDIUM-HIGH ON THE GRADING. TARGET:
+# CONTENT TIP `7ac11c9789e86625e91ea163c72404288e91d023` ON BRANCH `wo-3`. ***
+#
+# *** THE TWO QUESTIONS, ANSWERED SEPARATELY, BECAUSE COLLAPSING THEM WOULD BE THE DISHONEST
+# REPORT AND THEY HAVE HAD DIFFERENT ANSWERS TWICE ON THIS ROW: ***
+#
+#   · **ON THE PRODUCT AS IT SHIPS AT `7ac11c9`, THIS SEAT SET OUT TO ADMIT A STALE CALM READING
+#     ON THE SHIPPED CONTRACT AND COULD NOT.** Thirty MUST-ADMIT drives and thirty MUST-REFUSE
+#     drives across seventeen document shapes on both surfaces, plus five cases driven through
+#     `publish_cycle` itself against a recording double: `MUST-ADMIT ROWS REFUSED = 0`,
+#     `STALE-CALM ADMISSIONS = 0`, `REFUSED-BY-THE-WRONG-LAYER = 0`,
+#     `STALE-CALM PUBLISHED THROUGH publish_cycle = 0`. **THE GUARANTEE IS TRUE AT THE TIP AND
+#     NOTHING IN THIS ENTRY DENTS IT.** `src/` shows ZERO paths in the whole increment.
+#
+#   · **ON THE CONTROL PAIR BUILT TO WATCH IT, THIS SEAT SET OUT TO INTRODUCE A BYPASS ON THE
+#     PUBLICATION PATH WITH THE REGISTER GREEN, AND COULD — ON SIX OF ITS OWN NINE
+#     INDEPENDENTLY-INVENTED ARMS, THROUGH FIVE MECHANICALLY DISTINCT ENTRY MECHANISMS.** On each
+#     of the six the live gate ADMITS a 1970-stamped `calm` dial on BOTH SURFACES, `publish_cycle`
+#     PUBLISHES it, and `LINE 04`, `LINE 05` and `LINE 06` all return `rc=0`. On five of the six
+#     ALL THIRTY-THREE register lines are `diff`-IDENTICAL to the clean tip — `TOTAL lines=33
+#     rc0=22 nonzero=11`, `diff` rc=0, NOT ONE LINE MOVES.
+#
+#   · **AND SEPARATELY AGAIN, THIS SEAT SET OUT TO SLIP A WEAKENING PAST THE ROWS AND COULD.**
+#     Four lines inserted into the STRUCTURAL instrument, combined with the Engineer's own `N1`
+#     arm in the product, leave a live escape with all three rows at `rc=0`.
+#
+# *** `CD-PL-F209` IS CONFIRMED AS A MEASUREMENT AND RECAST AS A STATEMENT. *** `P1` reproduces
+# exactly in this seat's shell. But the gap is NOT "a bypass that is neither control-flow-shaped
+# nor keyed on an in-vocabulary value": **TWO OF THIS SEAT'S ESCAPES READ NO ROOT PROPERTY AT ALL,
+# AND ONE OF THEM IS A `return`.** The dispatching seat's offered DEPENDENCE analysis closes three
+# of the six and leaves three, because it is stated over SOURCES the stage may read and the
+# escaping class is about NODES the stage fails to JUDGE.
+#
+# *** THE RULING'S DECIDING SENTENCE, APPLIED. *** `PO-DECISIONS-0031` ruling 1: *"this is the
+# LAST strength step: after it, a further named shape means the space-prober was MIS-BUILT, not
+# the guard incomplete."* **THIS SEAT DID NOT FIND A FURTHER NAMED SHAPE. IT FOUND A CLASS WITH
+# FIVE ENTRY MECHANISMS, ONE OF WHICH IS A TWO-LINE CHANGE TO THE ENUMERATION'S OWN `if`. THE
+# ANSWER TO THE RULING'S QUESTION IS THEREFORE THE STRONGER BRANCH: THE SPACE-PROBER IS
+# MIS-BUILT — IT PROBES THE SPACE OF DOCUMENTS WHEN THE DEFECT CLASS LIVES IN THE SPACE OF CODE
+# PATHS THROUGH THE STAGE.**
+#
+# *** WHAT IS TRUE AND WHAT IS SAFE ARE DIFFERENT CALCULATIONS AND THIS ENTRY KEEPS THEM APART.
+# `7ac11c9` IS STRICTLY BETTER THAN `a9e19c3` AND NOTHING NEEDS REVERTING. The acceptance test
+# MOVES: `W5G` and `W5B2` were `diff`-IDENTICAL at `a9e19c3` and move `LINE 04` + `LINE 06` at
+# `7ac11c9`, MEASURED at both ends by this seat. BOTH vacuity directions HOLD, including the new
+# one an invariance check introduces. `C6` is a genuine admitting arm. `src/` ZERO paths, `pbg/`
+# ZERO paths, `tests/` ZERO paths, contracts byte-identical by `sha256sum`, `be0b355` unmoved,
+# 16C NOT built. ***
+#
+# *** A VERDICT IS NOT AN ACCEPTANCE (`PBG-AUTH-003`). **16C IS HELD BY THE PRODUCT AUTHORITY AND
+# IS NOT RELEASED, TOUCHED OR AFFECTED BY THIS ENTRY. NO INDICATOR ROW IS REGISTERED HERE.**
+# NOTHING IS ADMITTED, MERGED, PROMOTED OR ACCEPTED. NO FIX IS WRITTEN AND NO LINE THAT WOULD FIX
+# IT IS WRITTEN (`PBG-SOD-004`). ***
+# ================================================================================================== #
+
+entry_id: BL-20260824T234541Z-A314
+timestamp_utc: '2026-08-24T23:45:41Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T23:45:41Z'
+record_type: ASSURANCE_VERDICT
+project: crash-detector
+actor: CD-ASR-WO3-14
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_07
+authority_id: CD-AUTH-0001
+dispatch_id: CD-D-185
+work_type: TASK
+phase: GATE
+repository: local
+branch: asr-wo3-14-verdict
+worktree: /tmp/asr14/verdict
+baseline_sha: a9e19c39830557105d646408590487c75dd6b5bd
+target_content_tip: 7ac11c9789e86625e91ea163c72404288e91d023
+target_entry_tip: c475b8e75004a14481f39e63d09e86da3898195b
+instrument_freeze_sha: 6491b645dbeb66fd768a7054149489bc1d927ec6
+current_sha: 9c6e9dead9d68954e5c7dfd7ae3d446f2216afdf
+parent_entry_id: BL-20260824T223344Z-16FC
+# `parent_entry_id` RESOLVES IN-TREE at the TARGET — `CD-ENG-WO3-14`'s 16F return, the last entry
+# in `governance/engineering/build-log/` at `c475b8e`. **THE ENTRY THAT DISPATCHED THIS SEAT IS
+# `BL-20260824T230140Z-0185`, `PROJECT_LEAD_SEAT_07`'s boundary, AND IT LIVES ON `main` — NOT IN
+# THE TARGET TREE.** It is recorded in `dispatching_boundary` rather than dropped, which is what
+# `CD-ENG-WO3-13`, `CD-ASR-WO3-12`, `CD-ASR-WO3-13` and `CD-ENG-WO3-14` all did for the identical
+# reason. The precedent is now five deep.
+dispatching_boundary: BL-20260824T230140Z-0185   # PROJECT_LEAD_SEAT_07, on `main`
+status: BLOCKED
+# *** `status:` IS `BLOCKED` BECAUSE THE PINNED ENTRY SCHEMA HAS NO `RED` VALUE. MEASURED, NOT
+# ASSUMED: `pbg/schemas/build-log-entry.schema.yaml` `/properties/status` declares the enum
+# [CHECKPOINT, RESUMED, IN_PROGRESS, PAUSED_SAFE, PAUSED_AMBER, BLOCKED,
+# WAITING_PRODUCT_AUTHORITY, WAITING_ASSURANCE, WAITING_EXTERNAL_DEPENDENCY, COMPLETE, SUPERSEDED,
+# ABANDONED] and neither `RED` nor `AMBER` is among them, while `pbg/roles/assurance-engineer.md`
+# mandates the verdict vocabulary PASS / AMBER / RED / UNSUPPORTED / NOT_APPLICABLE. **THE
+# FRAMEWORK IS NOT EDITED SO A FIELD FITS** (`PBG-FWK-013`: editing the framework to make a
+# control pass is a BYPASS, not a fix). `CD-ASR-WO3-13` met the same defect and wrote
+# `PAUSED_AMBER` for an AMBER; `BLOCKED` is the closest honest mapping for a RED whose lane must
+# not proceed. `WAITING_PRODUCT_AUTHORITY` was considered and rejected: it describes the NEXT GATE
+# accurately but understates that this seat's verdict is a stop. **THE VERDICT IS `RED` AND IT IS
+# CARRIED IN `verdict:` BELOW.** This is the same schema/role divergence as `Q38`/`IMP-041`, one
+# field over, and it is HARVESTED TO THE FRAMEWORK rather than worked around silently.
+verdict: RED
+confidence: 'HIGH on every measurement; MEDIUM-HIGH on the grading — see `the_case_against_this_verdict`.'
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  *** WO-3 INCREMENT 16F, CONTROL-ROW STRENGTH, GRADED AT CONTENT TIP
+  7ac11c9789e86625e91ea163c72404288e91d023 ON BRANCH wo-3. VERDICT RED. THE PRODUCT IS SOUND AND
+  THE COMPLETION CONDITION IS NOT MET. *** THE PRODUCT HALF FIRST, BECAUSE IT IS THE HALF THAT
+  MATTERS TO ANYONE READING A DIAL: this seat drove the shipped front door
+  refuse_unless_publishable on both surfaces over seventeen document shapes (30 MUST-ADMIT drives,
+  34 MUST-REFUSE drives) and drove publish_cycle itself against a PEP-249 recording double, and
+  measured MUST-ADMIT ROWS REFUSED = 0, STALE-CALM ADMISSIONS = 0, REFUSED-BY-THE-WRONG-LAYER = 0,
+  STALE-CALM PUBLISHED = 0. THE GUARANTEE IS TRUE AT THE TIP. *** THE ACCEPTANCE TEST WAS
+  REPRODUCED INDEPENDENTLY AT BOTH ENDS AND IT MOVES: at a9e19c3, W5G and W5B2 leave the register
+  TOTAL lines=32 rc0=21 nonzero=11 with diff rc=0 — NOT ONE OF THE THIRTY-TWO LINES MOVING — while
+  the gate admits a 1970-stamped calm dial on both surfaces; at 7ac11c9 both give TOTAL lines=33
+  rc0=20 nonzero=13 moving LINE 04 and LINE 06. W5C moves nothing and admits nothing, correctly
+  recorded as an observation and not inflated into a breach. CLEAN reproduces at 33/22/11 and the
+  ONLY difference from a9e19c3's 32/21/11, compared BY COMMAND rather than by line number, is the
+  one added chokepoint line: no previously-passing line regressed. *** BOTH VACUITY DIRECTIONS
+  HOLD AND THAT IS THIS INCREMENT'S STRONGEST WORK: a gate rewritten to refuse EVERY calm node —
+  perfectly invariant under every property — is caught FAIL — 41 by the behavioural row and by the
+  witness suite; the closed interval narrowed by one character to a strict one is caught FAIL — 8
+  and by 2 witness tests; and the structural row's own vacuity arm C6 is GENUINE, returning FAIL —
+  2 violations on CD-CHOKE-000 for a tree in which nothing publishes. *** AND THEN THIS SEAT WENT
+  PAST THE ACCEPTANCE TEST, AS DISPATCHED, AND BROKE THE PAIR. Nine weakenings were invented by
+  this seat and by no one else, none copied from plants/WO3-INC16F/, each applied to a pristine
+  extraction of 7ac11c9 from a patch read at an ABSOLUTE path OUTSIDE the extraction with git apply
+  rc taken into a variable and checked. SIX OF THE NINE LEAVE THE LIVE GATE ADMITTING A
+  1970-STAMPED CALM DIAL ON BOTH SURFACES AND publish_cycle PUBLISHING IT, WITH LINE 04, LINE 05
+  AND LINE 06 ALL AT rc=0; five of the six leave ALL THIRTY-THREE REGISTER LINES diff-IDENTICAL.
+  They enter through FIVE distinct mechanisms — rebinding the enumeration after it is built,
+  filtering it on a node property at an unsampled value, narrowing the enumeration predicate
+  itself, swallowing the refusal one frame up in refuse_unless_publishable where CD-CHOKE-003 does
+  not look, rewriting the candidate before the stage sees it, and making the SHARED WALK decline to
+  yield the node. THAT LAST ONE IS A `return`, AND IT DEFEATS DECLARED LIMIT 9's CLOSING SENTENCE
+  IN ITS OWN WORDS. *** CD-PL-F209 IS CONFIRMED AS A MEASUREMENT AND RECAST AS A STATEMENT: P1
+  reproduces exactly, but the class is wider than the finding words it and wider than the dependence
+  analysis offered with it. *** PER PO-DECISIONS-0031 RULING 1's OWN DECIDING SENTENCE, WHAT WAS
+  FOUND IS NOT A FURTHER NAMED SHAPE BUT A CLASS, SO THE ANSWER IS THE STRONGER BRANCH: THE
+  SPACE-PROBER IS MIS-BUILT. *** Six findings raised, two of them against this seat's own method.
+  The three CD-RULE-004 places were measured and one NEW divergence was introduced by this
+  increment. All 20 deleted lines across the two records named in the dispatch were read
+  individually: 19 are corrections properly made by supersession with the old words quoted
+  verbatim, and ONE is text quietly removed. 16C IS NOT RELEASED AND NO INDICATOR ROW IS
+  REGISTERED (PBG-AUTH-003).
+
+# ================================================================================================== #
+boot_and_independence:
+# ================================================================================================== #
+  read_in_full_before_measuring_anything:
+    - pbg/roles/assurance-engineer.md
+    - governance/dispatch/CD-DISPATCH-WO3-INC16F-ASSURANCE.yaml (CD-D-185, in full)
+    - governance/decisions/PO-DECISIONS-0031.md (rulings 1-7)
+    - 'c475b8e:governance/engineering/build-log/BL-20260824T223344Z-16FC.yaml (all 779 lines) — BANKED AS AN INPUT, NOT AS FINDINGS'
+    - 'c475b8e:plants/WO3-INC16F/MANIFEST.md'
+    - tools/register/check_stale_data_never_calm.py and tools/register/check_publication_chokepoint.py at the tip
+    - src/crash_detector/publication/envelope_contract.py and publish.py at the tip
+    - both shipped contracts, root properties and the dial_reading $defs
+  independence:
+    this_seat_authored_nothing_here: >-
+      MEASURED, not assumed. `git log --all --format=%an | sort -u` names CD-ENG-WO3-01..14 and
+      CD-ASR-WO3-02..13. **CD-ASR-WO3-14 DOES NOT APPEAR** before this entry. This seat did not
+      build 16F (`PBG-SOD-001`, non-waivable) and is not `CD-ASR-WO3-13`, which raised `A313-F1`.
+    it_did_not_repair: >-
+      **NO FIX IS WRITTEN HERE AND NO LINE THAT WOULD FIX IT IS WRITTEN** (`PBG-SOD-004`). Every
+      patch this seat authored is a WEAKENING built to attack the control, lives under `/tmp/`,
+      was applied only to `/tmp/` extractions, and is project state nowhere. A PRESCRIPTION is
+      offered in `the_prescription_which_is_NOT_an_implementation` and it is deliberately written
+      as a PROPERTY TO ASSERT and not as code.
+  mutation_discipline:
+    what_was_touched: 'ONE file, on ONE branch `asr-wo3-14-verdict` off `main`: this entry. Nothing else.'
+    the_target_is_unmoved: |
+      git rev-parse wo-3   ->  c475b8e75004a14481f39e63d09e86da3898195b   *** UNMOVED ***
+      git rev-parse wo-2r3 ->  be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5   *** UNMOVED, FROZEN ***
+      git status --porcelain (tracked) -> 0 lines in /srv/crash-detector
+      /srv/crash-detector and /srv/crash-detector-wo3 were READ and never written.
+    no_sub_agents: '`CD-D-181` is sequential single-seat. This seat spawned none.'
+
+# ================================================================================================== #
+THE_METHOD — and the two traps the dispatch named, both of which BIT and both of which the rc discipline CAUGHT:
+# ================================================================================================== #
+  every_arm: >-
+    Pristine `git archive 7ac11c9789e86625e91ea163c72404288e91d023 | tar -x` per arm, the extract
+    rc taken from `${PIPESTATUS[0]}`. Patch read from `/tmp/asr14/patches/<ARM>.patch`, an
+    **ABSOLUTE path OUTSIDE every extraction** (`CD-ASR-WO3-11`'s self-disclosed defect). `git
+    apply` rc TAKEN INTO A VARIABLE AND CHECKED, and a non-zero rc ABORTS the arm loudly with
+    *"THIS ARM MEASURED NOTHING"* rather than continuing. `diff -rq` against the pristine tree
+    confirms at least one `src/` file actually differs BEFORE anything is measured.
+  every_probe: >-
+    Takes the tree as `argv[1]` — **NEVER a hard-coded `sys.path.insert`, which is what makes
+    `plants/WO3-INC16D/probe_16d.py` measure THE LANE whichever tree it is pointed at** — and
+    prints the RESOLVED `crash_detector.__file__` on its LAST line. Every figure in this entry was
+    taken from a run whose last line named the tree it was supposed to be measuring.
+  the_CD_PL_F74_guard_ran_FIRST: >-
+    **THE ALL-FRESH BASELINE WAS PROVED ADMITTED BEFORE ANY REFUSAL WAS ATTRIBUTED TO THE
+    FRESHNESS STAGE.** Nine MUST-ADMIT shapes on both surfaces, all admitted, at the clean tip and
+    on every arm. Every verdict is captured as a FOUR-TUPLE
+    `(admitted|refused|error, reason_class, pointer, key)` and a refusal whose `reason_class` is
+    not `STALE_CALM` is counted separately as `REFUSED-BY-THE-WRONG-LAYER`, never as a catch.
+    Measured at the clean tip and on all nine arms: `REFUSED-BY-THE-WRONG-LAYER = 0`.
+  a_catch_by_accident_of_spelling_is_NOT_counted_as_a_catch: >-
+    Arm `Z6` moves `LINE 08` (`check_no_blend`, `CD-RT-002-AST-NO-BLEND: FAIL — 2 violation(s)`)
+    **because this seat's patch names both dial slots in one expression.** That is an AST lint for
+    a DIFFERENT criterion firing by accident of spelling — the exact `check_no_blend`-on-`D3`
+    pattern `CD-ASR-WO3-13` named and `CD-ENG-WO3-14` disclosed for its own `N6`/`N12`/`N13`.
+    **`Z6` IS THEREFORE COUNTED AS AN ESCAPE FROM THIS INCREMENT'S OWN ROWS**, all three of which
+    return `rc=0` on it, and its `LINE 08` movement is counted as coverage by nobody.
+  the_publication_path_was_driven_and_not_only_the_gate: >-
+    The completion condition speaks of *"a bypass introduced ANYWHERE on the publication path"*,
+    so a probe that only calls `refuse_unless_publishable` measures one door of the house. This
+    seat additionally drove `publish_cycle` itself against a PEP-249-shaped recording double and
+    counted the SQL actually executed. **THAT IS HOW THIS ENTRY CAN SAY "PUBLISHES" AND NOT ONLY
+    "ADMITS", AND IT IS A STRICTLY STRONGER CLAIM THAN `CD-PL-F209` MADE.**
+
+# ================================================================================================== #
+FINDINGS_AGAINST_THIS_SEATS_OWN_METHOD — disclosed first, because CD-ASR-WO3-11's self-disclosure is why this project trusts its verdicts:
+# ================================================================================================== #
+  CD-ASR-F14-M1:
+    what_happened: >-
+      TWICE this seat wrote an ad-hoc measurement loop that ran `git archive` from a working
+      directory OUTSIDE the repository. Both times the command returned *"fatal: not a git
+      repository"*, `tar` failed, the extraction was EMPTY, and `git apply` returned rc=1.
+    why_it_did_not_become_a_result: >-
+      **BECAUSE EVERY rc WAS TAKEN INTO A VARIABLE AND CHECKED.** The first loop printed
+      `extract=2 apply=1` and its instrument runs returned `rc=2` (module not found), which is not
+      a value any conclusion in this entry rests on; the second printed `extract=128 apply=1` and
+      was aborted. **BOTH WERE RE-RUN WITH `git -C /srv/crash-detector archive` AND ONLY THE
+      RE-RUNS ARE REPORTED.** This is `CD-ASR-WO3-11`'s exact defect class, met twice, caught
+      twice by the discipline the dispatch mandated, and disclosed rather than tidied away.
+  CD-ASR-F14-M2:
+    what_happened: >-
+      This seat's `CD-RULE-004` comparison script parsed a nested `1.` inside `DECLARED LIMIT 2`'s
+      body as `DECLARED LIMIT 1`, producing eight false DISAGREES on its first run. It was fixed
+      to respect marker indentation and sequence, and the fix then dropped limits 10 and 11 for a
+      different reason.
+    the_consequence_stated_rather_than_papered_over: >-
+      **THIS SEAT THEREFORE RETURNS `UNSUPPORTED` FOR A FULL-BODY WORD-FOR-WORD COMPARISON OF ALL
+      ELEVEN DECLARED LIMITS ACROSS THE THREE PLACES.** What IS reported below is a HEADING-level
+      comparison of all eleven in all three places, read by eye from the extracted blocks, plus a
+      targeted verbatim check of the sentences this increment changed. A check that cannot reach
+      its authentic target returns `UNSUPPORTED` and never PASS against a substitute
+      (`PBG-FWK-003`).
+
+# ================================================================================================== #
+ITEM_1 — THE ACCEPTANCE TEST, REPRODUCED INDEPENDENTLY, NOT TRUSTED (CD-PL-F193):
+# ================================================================================================== #
+  the_runner: >-
+    `bash plants/WO3-INC16E/run_register.sh <tree>` — **16E's runner, and this seat MEASURED that
+    it is byte-unchanged rather than taking the dispatch's word for it:**
+    `git show <sha>:plants/WO3-INC16E/run_register.sh | sha256sum` returns
+    `23c13f91fd235c8dce92d7343909f1595eb369b83cc8a2687be40796e7512b21` at `a9e19c3`, at `6491b64`
+    AND at `7ac11c9`. **IT IS NOT THE ENGINEER'S HARNESS AND IT TAKES rc FROM THE COMMAND, NEVER
+    FROM A PIPE.** `plants/WO3-INC16F/run_register.sh` was NOT used for any figure in this entry.
+  the_clean_controls: |
+    bash plants/WO3-INC16E/run_register.sh /tmp/asr14/trees/a9e19c3   (runner rc=0)
+      -> TOTAL lines=32 rc0=21 nonzero=11
+    bash plants/WO3-INC16E/run_register.sh /tmp/asr14/trees/7ac11c9   (runner rc=0)
+      -> TOTAL lines=33 rc0=22 nonzero=11
+    *** BOTH REPRODUCE THE DISPATCH'S AND THE ENGINEER'S FIGURES EXACTLY. ***
+  no_previously_passing_line_regressed_MEASURED_BY_COMMAND_NOT_BY_LINE_NUMBER: |
+    diff <(per-line rc list at a9e19c3, keyed by COMMAND) <(same at 7ac11c9)
+      5a6
+      > rc=0 :: python3 -B tools/register/check_publication_chokepoint.py --root .
+    *** THE ONLY DIFFERENCE IS THE ONE ADDED LINE. *** rc0 21 -> 22 and nonzero 11 -> 11. The
+    ELEVEN pre-existing non-zero lines are non-zero at BOTH ends and are not this increment's.
+  THE_ACCEPTANCE_TEST_ITSELF — the whole point of 16F, measured at BOTH ends by this seat: |
+    Command per arm: pristine `git archive <sha> | tar -x`; `git apply /tmp/asr14/patches/<ARM>.patch`
+    with rc TAKEN AND CHECKED (rc=0 on all four below); then the 16E runner.
+
+      AT a9e19c3   W5G   TOTAL lines=32 rc0=21 nonzero=11   diff rc=0   *** NOT ONE LINE MOVES ***
+                   W5B2  TOTAL lines=32 rc0=21 nonzero=11   diff rc=0   *** NOT ONE LINE MOVES ***
+                   (this seat's probe on both: MUST-ADMIT REFUSED=0, STALE-CALM ADMISSIONS=2)
+
+      AT 7ac11c9   W5G   TOTAL lines=33 rc0=20 nonzero=13   diff rc=1   MOVES LINE 04 + LINE 06
+                   W5B2  TOTAL lines=33 rc0=20 nonzero=13   diff rc=1   MOVES LINE 04 + LINE 06
+                   W5C   TOTAL lines=33 rc0=22 nonzero=11   diff rc=0   MOVES NOTHING, ADMITS
+                                                                        NOTHING (admissions=0)
+    *** `A313-F1`'s ACCEPTANCE TEST PASSES. THE TWO ARMS THAT WERE INVISIBLE AT `a9e19c3` ARE
+    VISIBLE AT `7ac11c9`, AND EACH MOVES BOTH OF THIS INCREMENT'S ROWS INDEPENDENTLY. `W5C` IS
+    CORRECTLY AN OBSERVATION AND NOT A BREACH — IT ADMITS NOTHING. ***
+
+# ================================================================================================== #
+ITEM_2 — THE COMPLETION CONDITION ATTACKED DIRECTLY, WITH THIS SEAT'S OWN SHAPES:
+# ================================================================================================== #
+  the_rule_this_seat_set_itself: >-
+    **NOT ONE ARM BELOW IS COPIED FROM `plants/WO3-INC16F/`.** Grading a control against the arms
+    it ships with is grading the paper it wrote. Each `Z` arm was written by this seat as a
+    unified diff generated by `difflib` from the PRISTINE `7ac11c9` bytes, with the anchor
+    asserted UNIQUE in the source before the patch was emitted.
+  THE_NINE_ARMS_AND_WHAT_EACH_MEASURED: |
+    Columns: gate admissions on both surfaces · stale-calm PUBLISHED through publish_cycle ·
+    LINE 04 (behavioural) · LINE 05 (witness suite) · LINE 06 (structural) · register lines moved
+    vs CLEAN 33/22/11. `git apply` rc=0 on ALL NINE, taken into a variable and checked.
+
+     ARM                                            adm  pub  L04 L05 L06  register moved
+     Z1  the enumeration REBOUND after it is built     2    1    0   0   0  *** NONE ***
+         (`if candidate.get("config_snapshot_id") == "BYPASS": calm_nodes = []`)
+     Z2  the enumeration FILTERED on the NODE's own    2    1    0   0   0  *** NONE ***
+         `score` at 0.1234 — an unsampled float
+     Z3  the enumeration FILTERED on the POINTER       30   4    1   0   0  LINE 04   << CAUGHT
+         (document POSITION, no value compared)
+     Z4  the enumeration PREDICATE ITSELF narrowed     2    1    0   0   0  *** NONE ***
+         (`and node.get("inputs_used") != ["SRC-BYPASS"]`)
+     Z5  the refusal SWALLOWED one frame up, inside    2    1    0   0   0  *** NONE ***
+         `refuse_unless_publishable`
+     Z6  the CANDIDATE REWRITTEN before the stage      2    1    0   0   0  LINE 08 only, and that
+         sees it (dial slots stripped)                                     is an accident of
+                                                                           SPELLING, not a catch
+     Z7  the SHARED WALK `_iter_nodes` declines to     2    1    0   0   0  *** NONE ***
+         yield one node — **AND IT IS A `return`**
+     Z8  a SECOND publication writer that judges       0    0    0   0   1  LINE 06   << CAUGHT
+         nothing (`publish_cycle` untouched)
+     Z9  the gate calls REMOVED from the chokepoint    0    4    0   0   1  LINE 06 + LINE 24
+                                                                                     << CAUGHT
+
+    *** SIX OF NINE ADMIT AND PUBLISH A 1970-STAMPED CALM DIAL ON BOTH SURFACES WITH ALL THREE
+    ROWS AT rc=0. FIVE OF THOSE SIX MOVE NOTHING AT ALL — `TOTAL lines=33 rc0=22 nonzero=11`,
+    `diff` rc=0, IDENTICAL TO CLEAN. ***
+    *** THE THREE THAT ARE CAUGHT ARE CAUGHT PROPERLY AND THAT MATTERS: `Z8` AND `Z9` ATTACK THE
+    CHOKEPOINT ITSELF AND THE STRUCTURAL ROW SEES BOTH; `Z3` ATTACKS POSITION AND THE BEHAVIOURAL
+    ROW SEES IT, WHICH VINDICATES THE POSITION-UNIVERSALITY HALF OF THE ROW'S CLAIM. ***
+  the_null_result_is_a_MEASUREMENT_and_not_a_dead_pipe: >-
+    The identical runner, on the identical clean baseline, produced TWO moving lines on `W5G` and
+    `W5B2` and moved `LINE 06` on `Z8`, `Z9` and `C6` in the same session. **THE EMPTY `diff` ON
+    `Z1`, `Z2`, `Z4`, `Z5` AND `Z7` IS A RESULT.**
+
+# ================================================================================================== #
+ITEM_3 — CD-PL-F209 — CONFIRMED AS A MEASUREMENT, RECAST AS A STATEMENT, AND IT IS A CLASS:
+# ================================================================================================== #
+  the_disposition: '**CONFIRMED AND RECAST.**'
+  what_was_confirmed_EXACTLY_AS_STATED: >-
+    `P1` was reproduced as arm `Z1`, verbatim, from the dispatch's own quoted text, on a pristine
+    extraction of `7ac11c9`, `git apply` rc=0 checked. **LIVE GATE: STALE-CALM ADMISSIONS = 2, a
+    1970-stamped `calm` dial ADMITTED ON BOTH SURFACES. REGISTER: `TOTAL lines=33 rc0=22
+    nonzero=11`, `diff` rc=0, NOT ONE OF THE THIRTY-THREE LINES MOVES.** The dispatching seat's
+    figures reproduce exactly.
+  and_this_seat_took_it_ONE_STEP_FURTHER_THAN_THE_FINDING_DID: >-
+    **`Z1` DOES NOT MERELY GET ADMITTED — IT GETS PUBLISHED.** Driven through `publish_cycle`
+    against a recording double: `STALE-CALM PUBLISHED THROUGH publish_cycle = 1`, three SQL
+    statements executed against `publication.*`. `CD-PL-F209` measured the gate; this seat
+    measured the publication path, and the stronger claim holds.
+  why_the_STATEMENT_is_RECAST_and_not_merely_confirmed: >-
+    `CD-PL-F209` words the gap as *"a bypass that is neither control-flow-shaped nor keyed on an
+    in-vocabulary value"*. **BOTH HALVES OF THAT ARE TOO NARROW, MEASURED:**
+    · **`Z7` IS CONTROL-FLOW-SHAPED. IT IS A `return`.** It escapes the STRUCTURAL row anyway,
+      because the `return` is in `_iter_nodes` and `CD-CHOKE-005` walks `_refuse_stale_calm`.
+    · **`Z2` AND `Z4` ARE KEYED ON NO ROOT PROPERTY AT ALL** — they read only the calm-bearing
+      node's own `score` and `inputs_used`.
+  IS_IT_ONE_SHAPE_OR_A_CLASS — the dispatch's question, answered: >-
+    **A CLASS, WITH FIVE MECHANICALLY DISTINCT ENTRY MECHANISMS, OF WHICH `P1` IS ONE.** Rebinding
+    the enumeration (`Z1`) · filtering it (`Z2`) · narrowing its predicate (`Z4`) · swallowing the
+    refusal one frame up (`Z5`) · rewriting the candidate upstream (`Z6`) · starving the walk
+    (`Z7`). **`Z4` IS A TWO-LINE CHANGE TO THE ENUMERATION'S OWN `if` AND WOULD READ IN REVIEW AS
+    A NARROWING REFINEMENT.** This is not an exotic corner.
+  THE_BOUNDARY_OF_THE_CLASS_stated_as_precisely_as_this_seat_can: >-
+    **A weakening is invisible to BOTH rows if and only if (a) its trigger is a `(property,
+    value)` pair the behavioural row's vocabulary does not sample, or is not a value comparison at
+    all; AND (b) it introduces no `return`, `continue` or `break` LEXICALLY INSIDE
+    `_refuse_stale_calm`, and does not alter the four enumerated shapes `CD-CHOKE-001`..`004`
+    assert at `publish_cycle` and `refuse_unless_publishable`.** That intersection is not a
+    corner. It contains every way of making the ENUMERATION smaller and every way of making the
+    REFUSAL not propagate, which are the two things the stage exists to do.
+  WHY_THE_DISPATCHING_SEATS_OFFERED_ANALYSIS_IS_PARTLY_WRONG_and_it_asked_to_be_told: >-
+    The offered reading is that both rows are missing a DEPENDENCE check — *"the stage may read
+    the node's own properties, the root's `published_utc` and the root's
+    `staleness_window_seconds`, AND NOTHING ELSE."* **MEASURED AGAINST THIS SEAT'S SIX ESCAPES,
+    THAT INVARIANT CLOSES THREE AND LEAVES THREE.** It closes `Z1`, `Z5` and `Z6`, which read
+    `config_snapshot_id`. **IT DOES NOT CLOSE `Z2`, `Z4` OR `Z7`, BECAUSE THOSE READ ONLY THE
+    CALM-BEARING NODE'S OWN PROPERTIES — WHICH THE INVARIANT AS WORDED EXPRESSLY PERMITS.** The
+    invariant is stated over the SOURCES the stage may read; the escaping class is about the NODES
+    the stage fails to JUDGE. **THOSE ARE DIFFERENT PROPERTIES AND ONLY THE SECOND ONE IS THE
+    CRITERION.** The dispatching seat asked to be told if its reading was wrong, and this is that.
+
+# ================================================================================================== #
+ITEM_4 — THE RULING'S DECIDING SENTENCE — IS THE GUARD INCOMPLETE, OR IS THE PROBER MIS-BUILT:
+# ================================================================================================== #
+  the_ruling: >-
+    `PO-DECISIONS-0031` ruling 1: *"a bypass introduced ANYWHERE on the publication path, and a
+    stale/unknown value in ANY root property, is refused — proven by the space-probing instrument
+    and the single-chokepoint invariant, not by an enumerated arm list. ... it is the LAST
+    strength step: after it, a further named shape means the space-prober was mis-built, not the
+    guard incomplete."*
+  the_call: '**THE SPACE-PROBER IS MIS-BUILT. THIS SEAT SAYS SO PLAINLY BECAUSE THE RULING ASKED FOR THAT ANSWER OR ITS OPPOSITE AND NOT FOR A HEDGE.**'
+  the_reasoning_which_is_about_CONSTRUCTION_and_not_about_COVERAGE: >-
+    Ruling 1(i) asks for an instrument that *"varies EVERY root property across documents ... so
+    it catches ANY bypass shape"*, and asserts that *"a space-probing instrument is complete by
+    construction"*. **THAT ASSERTION IS FALSE, AND THIS INCREMENT IS THE PROOF OF IT RATHER THAN
+    THE VICTIM OF IT.** Varying the INPUT can only find a weakening whose trigger the variation
+    happens to hit. `config_snapshot_id` is `{"type": "string", "maxLength": 128}`; `score` is
+    `{"type": "number"}`. **NO VOCABULARY OVER AN UNBOUNDED VALUE SET IS COMPLETE BY
+    CONSTRUCTION, AT ANY WIDTH, AND THE ENGINEER SAYS EXACTLY THIS ITSELF IN
+    `CD-ENG-F16F-02`.** The defect class does not live in document-space. It lives in the space of
+    CODE PATHS THROUGH THE STAGE, and the only instrument that is complete by construction over
+    that space is one that asserts a property of the stage rather than sampling its behaviour.
+  what_that_means_for_the_INSTRUMENT_that_WAS_built: >-
+    **THE INVARIANCE PASS IS EXCELLENT WORK AND IT IS NOT THE WRONG INSTRUMENT — IT IS THE RIGHT
+    INSTRUMENT FOR A DIFFERENT PROPERTY.** It is what proves the gate does not depend on the
+    regime, the input count or the cardinality of `degraded_inputs`, and it CAUGHT `Z3`, `W5G`,
+    `W5B2` and `N6`. It should stay. **WHAT IT CANNOT BE IS THE THING THAT CLOSES THE CLASS, AND
+    ruling 1(i) ASKED IT TO BE THAT.**
+  and_for_the_STRUCTURAL_row: >-
+    `CD-RT-001-PUBLICATION-CHOKEPOINT` is the right KIND of instrument for this class — it reasons
+    over code, not over documents — and `CD-CHOKE-000`..`004` are genuinely sound (`Z8`, `Z9`,
+    `C6`, `N1`, `N8` all caught). **`CD-CHOKE-005` IS THE ONE THAT IS MIS-BUILT: IT STATES A
+    COVERAGE PROPERTY AND CHECKS AN ENUMERATION OF STATEMENT TYPES.** Its own sentence is *"no
+    path through the stage reaches its end without first enumerating the calm-bearing nodes"* —
+    and `Z1`, `Z2`, `Z4` and `Z6` all enumerate, faithfully, and then judge nothing.
+
+# ================================================================================================== #
+ITEM_5 — CD-ENG-F16F-01, JUDGED ON THE FREEZE EVIDENCE. THE DISPATCHING SEAT DID NOT PRE-EMPT IT AND THIS IS THIS SEAT'S CALL:
+# ================================================================================================== #
+  the_freeze_is_REAL_and_was_verified_by_this_seat_and_not_taken_on_trust: |
+    git cat-file -t 6491b64                          -> commit
+    git merge-base --is-ancestor 6491b64 7ac11c9     -> rc=0   *** A REAL ANCESTOR ***
+    git log -1 --format='%H %an' 6491b64
+      -> 6491b645... CD-ENG-WO3-14   "THE TWO INSTRUMENTS, FROZEN BEFORE THE SHAPES ARE INVENTED."
+    git diff --name-status 6491b64 7ac11c9  ->  every `plants/WO3-INC16F/*.patch` is ADDED after
+      the freeze, and BOTH instruments are MODIFIED after it. **THE ANCESTRY CLAIM IS AUDITABLE
+      AND IT AUDITS.**
+  WHAT_THIS_SEAT_MEASURED_ON_THE_FROZEN_INSTRUMENTS_THEMSELVES: |
+    Pristine extractions of 6491b64, patch from an absolute path outside, `git apply` rc=0 checked,
+    the FROZEN instruments run in the FROZEN tree:
+
+      arm                       STALE row  CHOKE row  gate admissions
+      CLEAN (6491b64)              rc=0       rc=0          0
+      N8   (the Engineer's)        rc=0       rc=0          2   *** ESCAPED BOTH, AS CLAIMED ***
+      N1   (the Engineer's)        rc=0       rc=1          2   *** ALREADY CAUGHT AT THE FREEZE ***
+      Z1   (this seat's)           rc=0       rc=0          2
+      Z5   (this seat's)           rc=0       rc=0          2
+      Z7   (this seat's)           rc=0       rc=0          2
+
+    *** THE ENGINEER'S ACCOUNT OF `N8` IS TRUE. IT ESCAPED BOTH FROZEN ROWS AND PUBLISHED A
+    1970-STAMPED CALM DIAL ON BOTH SURFACES. AND `N1` WAS ALREADY CAUGHT STRUCTURALLY AT THE
+    FREEZE, WHICH IS THE EVIDENCE THAT THE STRUCTURAL ROW WAS BUILT AGAINST A PRINCIPLE BEFORE
+    THE ARMS EXISTED AND NOT RETRO-FITTED TO THEM. ***
+  what_actually_changed_in_CD_CHOKE_005_after_the_freeze — READ, not summarised: >-
+    Two changes. **(a)** `ast.Return` became `(ast.Return, ast.Continue, ast.Break)`. **(b)** the
+    return-guard test changed from *"the `if` names the binding"* to *"the `if` asserts the
+    binding is EMPTY"*, via a new `_is_emptiness_test` accepting `not N`, `len(N) == 0`, `N == []`,
+    `len(N) < 1` and nothing else.
+  THE_JUDGEMENT_and_it_is_split_because_the_evidence_is_split:
+    on_a: >-
+      **(a) IS A DEFENSIBLE COMPLETION OF A STATED PRINCIPLE AND NOT SHAPE-CHASING.** The rule's
+      own frozen sentence already named its subject as *"no path through the stage reaches its end
+      without enumerating"*, and `return`/`continue`/`break` are exhaustive over Python's
+      intra-function early exits. A rule that named one of three was incomplete against ITS OWN
+      WORDS, and completing it is a repair of the rule, not an accommodation of `N8`.
+    on_b: >-
+      **(b) IS BUILDING AGAINST A SHAPE, AND THE ENGINEER SAYS SO ITSELF** — *"which arm `N7` had
+      shown was too loose"*. It is a good tightening. It is still reactive, and it is still an
+      enumeration: four spellings of emptiness, and `len(N) <= 0` is in but `0 == len(N)` is a
+      coin-toss on argument order.
+    the_decisive_point_which_is_neither_a_nor_b: >-
+      **WHICHEVER READING IS TAKEN, THE COMPLETED RULE IS STILL A SHAPE ENUMERATION, AND THIS
+      SEAT'S `Z7` — INVENTED WITHOUT SIGHT OF ANY OF THIS — IS A `return`-SHAPED BYPASS ON THE
+      PUBLICATION PATH THAT WALKS STRAIGHT THROUGH IT.** So the finding's own severity line,
+      *"MEDIUM at the freeze; CLOSED at the tip"*, is **UNDERSTATED IN THE REASSURING DIRECTION.**
+      The INSTANCE is closed. **THE CLASS `CD-ENG-F16F-01` EXEMPLIFIES — A GUARD THAT COVERS PART
+      OF WHAT ITS OWN SENTENCE CLAIMS — IS OPEN AT THE TIP**, and this seat re-grades it
+      **MEDIUM, OPEN**.
+    and_the_credit_is_recorded_because_it_is_earned: >-
+      **`CD-ENG-WO3-14` FOUND THIS AGAINST ITS OWN WORK, RAN THE ARM THAT EMBARRASSED IT, FROZE A
+      SHA SO THE CLAIM COULD BE AUDITED RATHER THAN BELIEVED, AND WROTE DOWN IN TERMS THAT AN
+      AUDITOR WOULD BE ENTITLED TO READ IT AS BUILDING AGAINST THE SHAPE.** Every measurement in
+      this ITEM was possible only because of that freeze. **THE DISCLOSURE IS EXEMPLARY AND THE
+      RE-GRADE IS OF THE FINDING'S SEVERITY, NOT OF THE SEAT'S HONESTY.**
+
+# ================================================================================================== #
+ITEM_6 — BOTH VACUITY DIRECTIONS, INCLUDING THE NEW ONE AN INVARIANCE CHECK INTRODUCES. THIS IS THE INCREMENT'S STRONGEST WORK AND IT HOLDS:
+# ================================================================================================== #
+  the_new_direction_the_dispatch_named: '**AN INSTRUMENT THAT REFUSED EVERYTHING EVERYWHERE WOULD BE PERFECTLY INVARIANT.** So this seat built exactly that and ran it.'
+  V1_the_gate_refuses_EVERY_calm_node: |
+    `if True or age > window * _MICROSECONDS_PER_SECOND:` — the gate now refuses every
+    calm-bearing node, fresh or not. It is PERFECTLY INVARIANT under every root property and every
+    node property.
+      this seat's probe : MUST-ADMIT ROWS REFUSED = 16, STALE-CALM ADMISSIONS = 0
+                          publish probe: MUST-PUBLISH CASES BLOCKED = 1
+      LINE 04 rc=1 :: CD-RT-001-STALE-DATA-NEVER-CALM: FAIL — 41 violation(s)
+      LINE 05 rc=1 :: 6 failed, 86 passed
+      LINE 06 rc=0 (correctly — the stage's SHAPE is untouched; DECLARED LIMIT 4 says so)
+    *** THE NEW VACUITY DIRECTION IS CLOSED. A REFUSE-EVERYTHING GATE DOES NOT PASS THIS ROW. ***
+  V2_the_closed_interval_made_STRICT — a ONE-CHARACTER weakening in the OVER-REFUSING direction: |
+    `age > window` -> `age >= window`. A dial aged EXACTLY the window is now refused.
+      this seat's probe : MUST-ADMIT ROWS REFUSED = 2 (A02, both surfaces), ADMISSIONS = 0
+      LINE 04 rc=1 :: FAIL — 8 violation(s)
+      LINE 05 rc=1 :: 2 failed, 90 passed
+    *** THE MUST-ADMIT ROWS ARE DRIVEN AT THE VARIED POINTS AND NOT ONLY AT THE BASELINE. ***
+  C6_the_STRUCTURAL_rows_OWN_vacuity_direction — the dispatch asked this seat to check the claim, and it CHECKS OUT: |
+    *"exactly one caller is satisfied by a tree in which nothing calls anything."* Arm `C6`
+    (the Engineer's, applied here to VERIFY ITS CLAIM and labelled as such):
+      LINE 06 rc=1 :: CD-RT-001-PUBLICATION-CHOKEPOINT: FAIL — 2 violation(s), CD-CHOKE-000,
+                      "there is no route to publication for this row to guard"
+    *** `CD-CHOKE-000` IS A GENUINE ADMITTING ARM. IT IS MEASURED, NOT ASSERTED. ***
+    This seat also built its OWN, different vacuity arm — `Z9`, which removes the CALLS rather
+    than the WRITES, so the tree still contains a publication write — and the row catches that too
+    (`FAIL — 1`, `LINE 06` + `LINE 24`).
+  the_verdict_on_the_vacuity_half: >-
+    **PASS, WITH HIGH CONFIDENCE. THIS IS THE HALF THIS PROJECT'S HISTORY SAYS GETS MISSED, AND
+    16F DID NOT MISS IT.** `CD-STALE-INVARIANT-012`'s 200-point floor, the MUST-ADMIT rows at
+    every varied point, the reference-point pre-check and `CD-CHOKE-000` are four independent
+    guards against vacuity and all four are real.
+
+# ================================================================================================== #
+ITEM_7 — THE THREE CD-RULE-004 PLACES. MEASURED, NOT ASSUMED. ONE NEW DIVERGENCE, INTRODUCED BY THIS INCREMENT:
+# ================================================================================================== #
+  scope_of_what_was_checked: >-
+    All ELEVEN declared limits of `CD-RT-001-STALE-DATA-NEVER-CALM`, HEADING-level, in all three
+    places: `tools/register/check_stale_data_never_calm.py` · `contracts/execution/
+    CD-RT-001-STALE-DATA-NEVER-CALM.md` · `required-tests.yaml`. **A FULL-BODY WORD-FOR-WORD
+    COMPARISON IS RETURNED `UNSUPPORTED` — SEE `CD-ASR-F14-M2`.**
+  what_AGREES: 'LIMITS 1, 3, 4, 5, 6, 9, 10 and 11 read the same in all three places at the heading level. **LIMIT 9 — the one `CD-PL-F209` turns on — is word-identical in all three.**'
+  what_DISAGREES_and_was_ALREADY_divergent_at_a9e19c3_so_is_NOT_this_increments: >-
+    LIMIT 2's heading in the instrument reads *"THE ENVELOPE ROOT SKELETON IS BUILT FROM THE
+    CONTRACT'S OWN `required` LIST, AND THE DIAL FROM ITS OWN BRANCH — BUT..."* where the other
+    two read *"THE SKELETON IS DERIVED FROM THE CONTRACT BUT..."*; and LIMIT 7's heading in
+    `required-tests.yaml` carries a clause the other two do not. **BOTH WERE ALREADY DIVERGENT AT
+    `a9e19c3`, MEASURED WITH `git show a9e19c3:<file>`. THEY ARE INHERITED AND ARE NOT CHARGED TO
+    16F.** LIMIT 8's ABOVE/BELOW difference is positional and correct in each place.
+  the_NEW_divergence_THIS_INCREMENT_INTRODUCED: '**SEE FINDING `CD-ASR-F14-04`.**'
+  and_A313_F2_at_the_SIBLING_row_is_CLOSED_MEASURED: |
+    grep 'ONLY AS HONEST AS' across all three places of CD-RT-001-MISSING-DATA-NEVER-CALM:
+      tools/register/check_missing_data_never_calm.py:987   THE TWO COMPARANDS
+      contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md:895   THE TWO COMPARANDS
+      required-tests.yaml:1130   THE TWO COMPARANDS
+    and the verbatim quote of the superseded heading is retained in each. *** ITEM 3c IS DONE
+    CORRECTLY AND `A313-F2` IS CLOSED. ***
+
+# ================================================================================================== #
+ITEM_8 — EVERY DELETED LINE READ INDIVIDUALLY — CORRECTION PROPERLY MADE, OR TEXT QUIETLY REMOVED:
+# ================================================================================================== #
+  the_measurement: |
+    git diff --numstat a9e19c3 7ac11c9 -- <the records the dispatch names>
+      302  15  required-tests.yaml
+      113   5  contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md
+      967  12  tools/register/check_stale_data_never_calm.py
+       11   3  tools/register/check_missing_data_never_calm.py
+      202   0  contracts/execution/CD-RT-001-PUBLICATION-CHOKEPOINT.md   (new file)
+    **ALL 35 DELETED LINES WERE READ INDIVIDUALLY WITH `git diff -U0 ... | grep '^-[^-]' | nl -ba`,
+    NOT SAMPLED.**
+  required_tests_yaml — all 15:
+    - 'LINES 1, 13, 14, 15 — `"this row''s OWN sequence, 1 to 8"` and `"DECLARED LIMITS 1-8"` become `1 to 11` / `1-11`. **COUNT UPDATES FOR A SEQUENCE THAT GENUINELY GREW. CORRECTIONS PROPERLY MADE.**'
+    - 'LINES 3, 4, 5 — `DECLARED LIMIT 2`''s false closing sentence and its `^ZZZ` executable. **PROPERLY SUPERSEDED.** MEASURED: the exact words *"DENY BY DEFAULT, so it is not an escape; it IS a maintenance cost."* are quoted verbatim at `required-tests.yaml:1398` under `WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID`, and the `{"type": "string", "pattern": "^ZZZ"}` executable is RETAINED at line 1420. **NOTHING AN AUDITOR COULD RUN WAS LOST.**'
+    - 'LINES 6-12 — the whole `FOR THE AUDITOR` paragraph. **PROPERLY SUPERSEDED.** Quoted verbatim at `required-tests.yaml:1553`, and the replacement is NARROWER than what it replaces, which is the correct direction.'
+    - 'LINE 2 — **TEXT QUIETLY REMOVED. SEE FINDING `CD-ASR-F14-04`.**'
+  execution_contract — all 5: 'LINES 1-2 are the same count updates (`1 to 8` -> `1 to 11`, `These eight` -> `These eleven`). LINES 3-5 are the `DENY BY DEFAULT` sentence and its executable, quoted verbatim at line 212 and the executable retained at line 233. **ALL FIVE ARE CORRECTIONS PROPERLY MADE.**'
+  the_instrument — all 12: 'Two count updates; the `DENY BY DEFAULT` sentence quoted verbatim at line 175; the `FOR THE AUDITOR` paragraph quoted verbatim at line 302. **ALL TWELVE ARE CORRECTIONS PROPERLY MADE.**'
+  check_missing_data_never_calm_py — all 3: '`DECLARED LIMIT 19`''s heading, ITEM 3c. The verbatim quote of the old heading is retained in the same file. **CORRECTION PROPERLY MADE.**'
+  the_score: '**34 OF 35 DELETED LINES ARE CORRECTIONS PROPERLY MADE UNDER `PBG-CONT-003`. ONE IS TEXT QUIETLY REMOVED.** On the evidence of this increment the supersede-never-edit convention is being honoured seriously and almost perfectly.'
+
+# ================================================================================================== #
+ITEM_9 — THE ENGINEER'S OWN FIGURES, REPRODUCED OR FALSIFIED:
+# ================================================================================================== #
+  REPRODUCED_EXACTLY:
+    - '`CLEAN 7ac11c9` register `TOTAL lines=33 rc0=22 nonzero=11`. **EXACT.**'
+    - '`CLEAN a9e19c3` register `TOTAL lines=32 rc0=21 nonzero=11`. **EXACT.**'
+    - '`W5G` / `W5B2` `diff`-identical at `a9e19c3`; `33/20/13` moving `LINE 04` + `LINE 06` at `7ac11c9`. **EXACT, BOTH ENDS.**'
+    - '`W5C` moves nothing and admits nothing. **EXACT, AND CORRECTLY CALLED AN OBSERVATION.**'
+    - '`CD-RT-001-STALE-DATA-NEVER-CALM: PASS — 142088 assertions, 0 violations` at the tip. **EXACT.**'
+    - '`CD-RT-001-PUBLICATION-CHOKEPOINT: PASS — 11 assertions, 0 violations` at the tip. **EXACT.**'
+    - '`CD-ENG-F16F-04`, the cost: `time python3 tools/register/check_stale_data_never_calm.py --root .` gives `real 0m25.945s` at the tip against `real 0m0.756s` at `a9e19c3` in this seat''s shell — **34.3x, against the claimed 34x. REPRODUCED.**'
+    - '`ITEM 2`, `publish_cycle` is the only writer: `grep -rn "INSERT INTO publication" src/` names `publication/publish.py` lines 195, 201, 208 and NOTHING ELSE; the two `refuse_unless_publishable` calls are at lines 276-277, at the function''s own top level, inside a `try` whose single handler ends in a bare `raise`, before any `cursor.execute`. **THE INVARIANT DID ALREADY HOLD AND NOTHING UNDER `src/` NEEDED TO MOVE. VERIFIED.**'
+    - '26 arms: 23 `.patch` files in `plants/WO3-INC16F/` (including `D1CTRL`) plus `D2`, `D3`, `D4` in `plants/WO3-INC16D/`, which is byte-unchanged. **THE ARITHMETIC ACCOUNTS.**'
+    - '`N8` escaped both rows AT THE FREEZE and is caught structurally at the tip. **VERIFIED IN THIS SEAT''S OWN SHELL ON A `6491b64` EXTRACTION.**'
+    - '`N1` escapes the behavioural row and is caught only structurally. **VERIFIED at both the freeze and the tip.**'
+  NOT_REPRODUCED: 'The Engineer''s parenthetical `(was: 122)` for the behavioural row''s assertion count at `a9e19c3`. **SEE FINDING `CD-ASR-F14-05`.**'
+  NOT_EXAMINED_and_said_plainly: 'The `PAIRWISE_CELL_BUDGET` stride branch and its reduced-budget exercise (`CD-ENG-F16F-03`) were NOT independently re-run by this seat. **SEE `what_this_seat_did_NOT_do`.**'
+
+# ================================================================================================== #
+ITEM_10 — AND SEPARATELY, SLIPPING A WEAKENING PAST THE ROWS. A DIFFERENT QUESTION WITH A DIFFERENT ANSWER:
+# ================================================================================================== #
+  the_framing: >-
+    ITEM 2 asked whether the PRODUCT can be bypassed with the register green. This asks whether
+    the CONTROL ITSELF can be weakened with the register green. **THE DISPATCH IS RIGHT THAT THESE
+    HAVE HAD DIFFERENT ANSWERS AND THEY MUST NOT BE COLLAPSED.**
+  W2_plus_N1 — the structural instrument gutted, combined with the Engineer's own arm: |
+    FOUR lines inserted into `_is_emptiness_test` in `tools/register/check_publication_chokepoint.py`
+    (`if True: return True`), plus `plants/WO3-INC16F/N1-CONFIG-SNAPSHOT-ID-BYPASS.patch`.
+    extract rc=0 · apply W2 rc=0 · apply N1 rc=0 · both greps confirm the inserted lines present.
+      live gate      : STALE-CALM ADMISSIONS = 2, MUST-ADMIT ROWS REFUSED = 0
+      publish_cycle  : STALE-CALM PUBLISHED = 1
+      LINE 04 rc=0 · LINE 05 rc=0 · LINE 06 rc=0
+    *** A LIVE ESCAPE WITH ALL THREE ROWS GREEN. *** The behavioural row cannot see `N1` (that is
+    `DECLARED LIMIT 9`), the structural row is the SOLE guard for that class, and **NOTHING IN THE
+    REGISTER CHECKS THE SOLE GUARD.**
+  W3_the_register_line_repointed: |
+    `required-tests.yaml`'s `execute:` for `LINE 04` changed to `python3 -c pass # <the original>`.
+    The instrument on disk is byte-untouched.
+      register runner: TOTAL lines=33 rc0=22 nonzero=11   *** TOTALS IDENTICAL TO CLEAN ***
+      PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate -> rc=2, VERDICT: AMBER, the SAME single
+        pre-existing FAIL (`bound_verifiers_evidenced`, PBG-CTRL-005) and NO NEW FAIL.
+    **AN AUDITOR COMPARING TOTALS SEES NOTHING. AN AUDITOR COMPARING THE PER-LINE LISTS SEES IT,
+    BECAUSE THE COMMAND STRING IS IN THE LINE — WHICH IS AN ARGUMENT FOR NEVER REPORTING ONLY THE
+    TOTALS.**
+  the_honest_weight_this_seat_puts_on_ITEM_10: >-
+    **THIS IS THE GUARD-OF-THE-GUARD PROBLEM AND IT IS TRUE OF EVERY INSTRUMENT EVER WRITTEN. IT
+    IS RECORDED AS AN OBSERVATION AND IT IS NOT WHY THIS VERDICT IS RED.** It is worth one
+    sentence to the Product Authority only because `DECLARED LIMIT 9` makes the structural row the
+    SOLE guard of a live class, and a sole guard with no guard is a thinner arrangement than
+    *"the two rows are a pair"* reads as.
+
+# ================================================================================================== #
+findings:
+# ================================================================================================== #
+  CD-ASR-F14-01:
+    severity: 'HIGH — OPEN. **THE VERDICT TURNS ON THIS ONE.**'
+    against: 'The 16F control pair as a whole, at `7ac11c9`.'
+    statement: >-
+      **THE COMPLETION CONDITION IS NOT MET. A BYPASS ON THE PUBLICATION PATH IS NOT REFUSED, AND
+      THE GAP IS A CLASS WITH FIVE ENTRY MECHANISMS RATHER THAN A NAMED SHAPE.** Six of nine arms
+      invented by this seat leave the live gate ADMITTING and `publish_cycle` PUBLISHING a
+      1970-stamped `calm` dial on BOTH SURFACES with `LINE 04`, `LINE 05` and `LINE 06` all at
+      `rc=0`; five of the six leave all thirty-three register lines `diff`-identical.
+    evidence: 'ITEM 2''s table, every figure with the command that produced it and the rc taken from the command. Arms `Z1`, `Z2`, `Z4`, `Z5`, `Z6`, `Z7` under `/tmp/asr14/patches/`, reproducible from their descriptions in ITEM 2.'
+    disposition_of_CD_PL_F209: '**CONFIRMED as a measurement, RECAST as a statement.** See ITEM 3.'
+    what_it_does_NOT_say: '**IT DOES NOT SAY THE PRODUCT IS BROKEN.** At `7ac11c9` the gate refuses every stale-calm document this seat could build. `src/` shows ZERO paths in this increment. **THE GUARANTEE IS TRUE AND IT IS STILL NOT FULLY WATCHED.**'
+  CD-ASR-F14-02:
+    severity: 'MEDIUM — OPEN. **A DECLARED LIMIT THAT IS FALSE IN THE REASSURING DIRECTION, IN ALL THREE `CD-RULE-004` PLACES.**'
+    against: '`DECLARED LIMIT 9`''s closing paragraph, stated identically in the instrument header, the execution contract and `required-tests.yaml`.'
+    what_it_says: >-
+      *"The class is closed by the STRUCTURAL row, which catches every
+      `return`/`continue`/`break`-shaped bypass regardless of what value it is keyed on."*
+    why_it_is_FALSE: >-
+      **ARM `Z7` IS A `return`-SHAPED BYPASS ON THE PUBLICATION PATH AND THE STRUCTURAL ROW DOES
+      NOT CATCH IT.** `LINE 06 rc=0`, gate admissions 2, published 1. The `return` is inside
+      `_iter_nodes` — the SHARED DOCUMENT WALK — and `CD-CHOKE-005` walks `_refuse_stale_calm`
+      only. The sentence is true of `return`s in ONE FUNCTION and is written as a claim about a
+      CLASS. **THIS PROJECT'S OWN NAME FOR A SENTENCE IN THAT SHAPE IS "HOW A GUARD BECOMES A
+      CERTIFICATE", AND THIS IS THE SEVENTH SENTENCE ON THIS ROW TO BE FALSE IN THAT DIRECTION.**
+    note: 'The paragraph''s adjacent sentence — *"NEITHER ROW CLOSES IT ALONE AND THE RETURN DOES NOT CLAIM OTHERWISE"* — is TRUE and honest. It is the closing sentence, not the disclosure, that is wrong.'
+  CD-ASR-F14-03:
+    severity: 'MEDIUM — OPEN.'
+    against: '`CD-CHOKE-003`, `tools/register/check_publication_chokepoint.py`.'
+    statement: >-
+      **`CD-CHOKE-003` STATES *"No `except` handler on the JUDGING PATH may swallow the refusal —
+      each ends in a `raise`"* AND DOES NOT INSPECT `refuse_unless_publishable`'s OWN HANDLERS.**
+      Arm `Z5` puts a `try/except PublicationRefused` around the freshness stage inside the gate,
+      re-raising only when `config_snapshot_id != "BYPASS"`. `LINE 06 rc=0`, gate admissions 2,
+      published 1, all thirty-three register lines `diff`-identical.
+    why_it_matters_beyond_one_arm: >-
+      `CD-CHOKE-003` is the assertion the pair relies on for *"a refusal that is raised is a
+      refusal that arrives"*. **ITS STATED SCOPE — "THE JUDGING PATH" — IS WIDER THAN ITS
+      IMPLEMENTED SCOPE, WHICH IS THE SAME DEFECT SHAPE AS `CD-ENG-F16F-01` ONE FUNCTION OVER.**
+  CD-ASR-F14-04:
+    severity: 'LOW — OPEN. **INTRODUCED BY THIS INCREMENT.**'
+    against: '`required-tests.yaml`, `DECLARED LIMIT 2`''s heading.'
+    statement: >-
+      **THE WORD `CLOSED` WAS EDITED OUT OF `DECLARED LIMIT 2`''S HEADING IN `required-tests.yaml`
+      AND NOWHERE ELSE, BY EDIT AND NOT BY SUPERSESSION.**
+    measured: |
+      at a9e19c3, all three places:  "...THE VALUE VOCABULARY IS A CLOSED WRITTEN LIST"
+      at 7ac11c9:
+        tools/register/check_stale_data_never_calm.py            ...A CLOSED WRITTEN LIST   (unchanged)
+        contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md   ...A CLOSED WRITTEN LIST   (unchanged)
+        required-tests.yaml                                      ...A WRITTEN LIST          *** CHANGED ***
+      grep -c "CLOSED WRITTEN LIST" required-tests.yaml  ->  0
+    why_it_is_a_finding_and_not_a_typo: >-
+      It breaks `CD-RULE-004` three-place agreement, which is **the exact class `A313-F2` named at
+      16E and which this increment''s own `ITEM 3c` was dispatched to repair at the sibling row.**
+      It was made by EDIT with no verbatim quote of the prior heading anywhere in that file, which
+      is what `PBG-CONT-003` forbids. And the deleted word makes the limit''s statement WEAKER: a
+      "closed" written list is a stronger admission of narrowness than "a written list". **IT IS
+      ONE WORD, IT IS LOW, AND IT IS THE ONE OF THIRTY-FIVE DELETED LINES THAT IS NOT A CORRECTION
+      PROPERLY MADE.**
+  CD-ASR-F14-05:
+    severity: 'LOW — a figure that does not reproduce.'
+    against: '`BL-20260824T223344Z-16FC`, `ITEM_1.measured_at_the_tip`.'
+    statement: >-
+      The return records `PASS — 142088 assertions, 0 violations   (was: 122)`. **THE TIP FIGURE
+      REPRODUCES EXACTLY. THE `(was: 122)` DOES NOT.**
+    measured: |
+      python3 tools/register/check_stale_data_never_calm.py --root .   (pristine a9e19c3, rc=0)
+        -> CD-RT-001-STALE-DATA-NEVER-CALM: PASS — 97 assertions, 0 violations
+    and_it_is_CORROBORATED_by_a_seat_that_is_not_this_one: >-
+      `CD-ASR-WO3-13`'s verdict `BL-20260824T204700Z-A313` records *"Instrument counts reproduced
+      exactly: CLEAN PASS — 97/0"* at `a9e19c3`. **TWO INDEPENDENT SEATS MEASURE 97. THE `122` IS
+      THE OUTLIER AND IT IS UNEXPLAINED.** It changes no conclusion — the row grew by three orders
+      of magnitude on either figure — **but a figure that does not match and is not explained is
+      how a reproduction becomes a rumour, which is the Engineer's own sentence, applied to the
+      Engineer.**
+  CD-ASR-F14-06:
+    severity: 'OBSERVATION — not a finding against 16F, recorded because `DECLARED LIMIT 9` makes it load-bearing.'
+    statement: >-
+      **THE STRUCTURAL ROW IS THE SOLE GUARD OF A LIVE CLASS AND NOTHING GUARDS IT.** Four
+      inserted lines in `check_publication_chokepoint.py` plus the Engineer's own `N1` arm produce
+      a live escape with all three rows at `rc=0` (ITEM 10). Repointing a register `execute:` at a
+      no-op leaves the register TOTALS identical and `pbg validate` unchanged.
+    why_it_is_only_an_observation: '**THE GUARD-OF-THE-GUARD REGRESS IS TRUE OF EVERY INSTRUMENT AND THIS SEAT WILL NOT INFLATE IT INTO A BREACH.** It is one sentence to the Product Authority and no more.'
+
+# ================================================================================================== #
+the_no_regression_measurements — ALL MEASURED IN THIS SEAT'S SHELL, NONE INHERITED:
+# ================================================================================================== #
+  measured: |
+    git diff --name-only a9e19c3 7ac11c9 | grep -c '^src/'     ->  0
+    git diff --name-only a9e19c3 7ac11c9 | grep -c '^pbg/'     ->  0
+    git diff --name-only a9e19c3 7ac11c9 | grep -c '^tests/'   ->  0
+    git show a9e19c3:contracts/public_envelope.schema.json  | sha256sum -> bacc669552867b78...
+    git show 7ac11c9:contracts/public_envelope.schema.json  | sha256sum -> bacc669552867b78...
+    git show a9e19c3:contracts/private_envelope.schema.json | sha256sum -> 322bce7c37d7ff56...
+    git show 7ac11c9:contracts/private_envelope.schema.json | sha256sum -> 322bce7c37d7ff56...
+                                                            *** BOTH BYTE-IDENTICAL ***
+    git diff --name-only a9e19c3 7ac11c9 -- plants/WO3-INC16D plants/WO3-INC16E | wc -l  ->  0
+    git diff --name-only a9e19c3 7ac11c9 -- PID.md BLUEPRINT.md governance/decisions \
+        governance/mapping/indicator_mapping.yaml | wc -l                                ->  0
+    git rev-parse wo-2r3  ->  be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5   *** UNMOVED ***
+    git rev-parse wo-3    ->  c475b8e75004a14481f39e63d09e86da3898195b   *** UNMOVED ***
+  16C_is_NOT_built: >-
+    `git grep -n feed_liveness 7ac11c9 -- src/ contracts/` returns THREE hits and **ALL THREE ARE
+    EXECUTION-CONTRACT PROSE SAYING 16C IS NOT BUILT** (*"no `feed_liveness` slot, no dead-feed
+    detector, no liveness marking"*). No slot, no detector, no indicator row.
+    `governance/mapping/indicator_mapping.yaml` shows zero paths in the diff.
+  the_pbg_AMBER_is_pre_existing: >-
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate` returns rc=2, `VERDICT: AMBER`, ONE FAIL
+    — `bound_verifiers_evidenced` (`PBG-CTRL-005`), *"PBG-CONT-003: verifier
+    continuity.append_only_fail_closed has not run"*. **MEASURED IDENTICAL ON THE `W3` EXTRACTION
+    AND CONSISTENT WITH THE ENGINEER'S REPORT THAT IT IS IDENTICAL AT `a9e19c3`. IT IS NOT THIS
+    INCREMENT'S.**
+
+# ================================================================================================== #
+the_case_AGAINST_this_verdict — stated by this seat, against itself, because an unexamined RED spends credibility too:
+# ================================================================================================== #
+  a_reasonable_seat_could_grade_this_AMBER_and_here_is_its_argument: >-
+    The product is sound and untouched. The acceptance test the increment was set PASSES. Both
+    vacuity directions hold, and the structural row is real, new, and catches five classes nothing
+    caught before. The Engineer DISCLOSED the residual as `DECLARED LIMIT 9` in all three places
+    with an executable arm beside it, raised `CD-ENG-F16F-01` against its own work, and froze a
+    SHA so the claim could be audited. **THAT IS NOT A SEAT THAT HID ANYTHING, AND `AMBER` WITH
+    NAMED CONDITIONS WOULD BE A DEFENSIBLE READING OF `materially sound, with named gaps`.**
+  why_this_seat_nonetheless_returns_RED:
+    - '**THE CONDITION BEING GRADED IS A UNIVERSAL AND IT WAS REFUTED SIX TIMES BY CONSTRUCTION.** *"a bypass introduced ANYWHERE on the publication path ... is REFUSED"* is not a claim that admits a named-conditions carve-out. `AMBER` would be grading the effort; `RED` grades the condition.'
+    - '**THE RULING PRE-COMMITTED TO THIS ANSWER.** It said a further named shape means the prober was mis-built. This seat found a CLASS with five entry mechanisms, which is strictly stronger than the trigger the Product Authority set for itself.'
+    - '**`A313-F1`''s EXACT SIGNATURE REPRODUCES AT THE TIP** — gate admits 1970-stamped calm on both surfaces, register `diff`-identical — and `A313-F1` was HIGH and is why 16C is held. **THE FINDING THAT HOLDS 16C IS NARROWED, NOT CLOSED**, and reporting that as AMBER would let a reader conclude the hold could lift.'
+    - '**`DECLARED LIMIT 9`''s CLOSING SENTENCE IS FALSE IN THE REASSURING DIRECTION IN THREE PLACES** (`CD-ASR-F14-02`). A false reassurance in the declared limits is the one thing this row has been superseded for six times already.'
+  what_RED_MUST_NOT_be_read_as: '**IT IS NOT "REVERT THIS". `7ac11c9` IS STRICTLY BETTER THAN `a9e19c3` ON EVERY MEASUREMENT IN THIS ENTRY AND NOTHING IN IT SHOULD BE UNDONE.** See `continuation_implication`.'
+
+# ================================================================================================== #
+the_prescription_which_is_NOT_an_implementation (PBG-SOD-004):
+# ================================================================================================== #
+  boundary: '**THIS SEAT WRITES NO FIX AND NO LINE THAT WOULD FIX IT.** What follows is a PROPERTY, stated in words, for a future Engineer under a future dispatch to decide how to assert. It is offered because the dispatch invited a prescription and it is binding on no one.'
+  the_property_this_seat_believes_is_the_right_one: >-
+    Not a dependence check over the SOURCES the stage reads, and not an enumeration of exit forms.
+    **A COVERAGE PROPERTY OVER THE NODES THE STAGE JUDGES: every mapping node the shared document
+    walk yields that carries `detail_level: "calm"` must reach the age comparison, and the set the
+    stage iterates must be the walk's output UNCHANGED — not narrowed, not rebound, not filtered,
+    not replaced, between the walk and the comparison.** Every one of this seat's six escapes
+    violates exactly that and nothing else does.
+  why_it_is_STRUCTURALLY_checkable_where_the_others_are_not: >-
+    It is a statement about ONE dataflow — walk output to comparison input — and it is decidable
+    without enumerating shapes, without a value vocabulary, and without a list of statement types.
+    **A behavioural probe cannot assert it at any document width, and that is the point: this is
+    not a defect in the invariance pass, it is a property the invariance pass was never the right
+    tool for.**
+  and_the_two_smaller_ones: >-
+    `CD-CHOKE-003` should reach `refuse_unless_publishable`'s own handlers, not only
+    `publish_cycle`'s (`CD-ASR-F14-03`). And `DECLARED LIMIT 9`'s closing sentence must be
+    SUPERSEDED in all three places with `Z7` named beside it, never edited (`CD-ASR-F14-02`,
+    `PBG-CONT-003`).
+
+# ================================================================================================== #
+what_this_seat_did_NOT_do — said plainly, with the reason:
+# ================================================================================================== #
+  - '**A FULL-BODY WORD-FOR-WORD `CD-RULE-004` COMPARISON OF ALL ELEVEN LIMITS. RETURNED `UNSUPPORTED`.** This seat''s extraction script could not reliably delimit the eleven blocks across three different presentation formats (`CD-ASR-F14-M2`). What WAS done is a heading-level comparison of all eleven in all three places, plus targeted verbatim checks of every sentence this increment changed. **AN `UNSUPPORTED` IS NOT A `PASS` (`PBG-FWK-003`).**'
+  - '**THE `PAIRWISE_CELL_BUDGET` STRIDE BRANCH AND ITS REDUCED-BUDGET EXERCISE (`CD-ENG-F16F-03`) WERE NOT RE-RUN.** The Engineer''s account is plausible and self-disclosed and this seat spent its time on the completion condition instead. **IT IS UNVERIFIED AND IT IS SAID HERE RATHER THAN LEFT TO BE ASSUMED.**'
+  - '**THE OTHER 20 OF THE ENGINEER''S 26 ARMS WERE NOT INDIVIDUALLY RE-RUN.** Six were (`N1`, `N8`, `C6`, `W5G`, `W5B2`, `W5C`) and all six reproduced exactly. **GRADING AGAINST THE ARM LIST IS WHAT THE DISPATCH TOLD THIS SEAT NOT TO DO**, and nine arms of this seat''s own were run instead.'
+  - '**NO RUNTIME, CONTAINER OR DEPLOYED INSTANCE WAS ASSERTED.** There is none. Every claim here is about bytes at a commit and about the behaviour of those bytes under `python3` on this host. **NO `LIVE` CLAIM IS MADE.**'
+  - '**PORTABILITY WAS NOT ASSESSED.** Every figure is from this host, this Python, this filesystem. The cost figures in particular are host-dependent.'
+  - '**NO FIX, NO REVERT, NO MERGE, NO RELEASE, NO INDICATOR ROW.** 16C is HELD by the Product Authority and this entry does not touch it (`PBG-AUTH-003`).'
+
+# ================================================================================================== #
+continuation_implication — what is TRUE and what is SAFE are different calculations:
+# ================================================================================================== #
+  is_the_target_safe_to_leave_where_it_is: '**YES, AND IT SHOULD BE LEFT THERE.** `7ac11c9` is strictly better than `a9e19c3` on every measurement in this entry. Nothing needs reverting and nothing should be.'
+  is_the_product_defective: '**NO.** The guarantee holds at the tip on both surfaces against every document this seat could build, through the gate AND through `publish_cycle`. `src/` shows zero paths.'
+  is_the_completion_condition_met: '**NO.** That is the finding and that is the verdict.'
+  is_16C_safe_to_release: >-
+    **NO, AND IT IS NOT THIS SEAT''S TO SAY EITHER WAY.** `PO-DECISIONS-0031` ruling 1 holds 16C
+    over a live HIGH stale-calm hole. **THE SIGNATURE OF THAT HOLE REPRODUCES AT THE TIP.** The
+    hold''s stated condition — a GREEN gate — is not met by this verdict.
+
+next_safe_action: >-
+  BANK THIS VERDICT AT ITS SHA AND HOLD THE PHASE AT GATE. **THE NEXT SAFE GATE IS A PRODUCT
+  AUTHORITY DECISION POINT AND NOT AN ENGINEER DISPATCH**, because `PO-DECISIONS-0031` ruling 1
+  pre-committed to a branch this verdict has now triggered: it ruled 16F "the LAST strength step"
+  and ruled that a further shape means the space-prober was mis-built. This seat found a CLASS,
+  not a shape, so the stronger branch applies and only the Product Authority can decide what
+  follows it. RAISE IT AS `Q41`, carrying: (1) this verdict's six-arm table and the class boundary
+  in ITEM 3; (2) `CD-ASR-F14-02`, because a declared limit that is false in the reassuring
+  direction is stated in three places TODAY and should be superseded whatever else is decided;
+  (3) the prescription in `the_prescription_which_is_NOT_an_implementation`, offered as a property
+  and not as a design, for the Product Authority to accept, replace or reject. **DO NOT RELEASE
+  16C. DO NOT REVERT `7ac11c9`. DO NOT MOVE THE `wo-3` TIP. DO NOT REGISTER AN INDICATOR ROW.**
+  If the Product Authority authorises a 16G, the separation of duties stands: a fresh Engineer
+  seat builds it and a fresh Assurance seat — NOT `CD-ASR-WO3-14` — grades it (`PBG-SOD-001`,
+  non-waivable), and `CD-ASR-WO3-14` may not grade a repair of a defect it raised.
+expected_next_actor: PROJECT_LEAD
+
+# ================================================================================================== #
+# every figure in this entry, with the command that produced it and the rc taken from the command
+tests_run:
+# ================================================================================================== #
+  - command: 'python3 -B /tmp/asr14/asr14_probe.py <tree>   (17 shapes x 2 surfaces = 64 drives, four-tuple verdicts, resolved crash_detector.__file__ printed last)'
+    result: 'CLEAN 7ac11c9: MUST-ADMIT ROWS REFUSED=0, STALE-CALM ADMISSIONS=0, REFUSED-BY-THE-WRONG-LAYER=0. Resolved file confirmed the target tree on every run.'
+  - command: 'python3 -B /tmp/asr14/asr14_publish_probe.py <tree>   (publish_cycle against a PEP-249 recording double, SQL counted)'
+    result: 'CLEAN 7ac11c9: STALE-CALM PUBLISHED = 0, MUST-PUBLISH CASES BLOCKED = 0, fresh baseline writes=3.'
+  - command: 'bash plants/WO3-INC16E/run_register.sh <tree>   (16E''s runner, sha256-verified byte-unchanged at three SHAs)'
+    result: 'CLEAN a9e19c3 32/21/11 · CLEAN 7ac11c9 33/22/11 · W5G and W5B2 diff rc=0 at a9e19c3 and 33/20/13 moving LINE 04 + LINE 06 at 7ac11c9 · Z1/Z2/Z4/Z5/Z7 all 33/22/11 diff rc=0.'
+  - command: 'bash /tmp/asr14/run_arms.sh <ARM>   (pristine extraction per arm, patch from an absolute path OUTSIDE it, git apply rc into a variable and checked, inserted change diff-confirmed)'
+    result: 'git apply rc=0 on all fifteen arms run. Nine Z arms, two V arms, three W arms, four verified ENG arms.'
+  - command: 'python3 tools/register/check_stale_data_never_calm.py --root .'
+    result: 'PASS — 142088 assertions, 0 violations at 7ac11c9 (rc=0). PASS — 97 assertions at a9e19c3 (rc=0).'
+  - command: 'python3 -B tools/register/check_publication_chokepoint.py --root .'
+    result: 'PASS — 11 assertions, 0 violations at 7ac11c9 (rc=0). FAIL — 2 on C6, FAIL — 1 on Z8/Z9/N1/N8.'
+  - command: 'PYTHONPATH=src python3 -m pytest tests/test_envelope_freshness.py -q'
+    result: 'rc=0 / 92 passed at the clean tip; rc=1 on V1 (6 failed) and V2 (2 failed); rc=0 on all six escaping arms.'
+  - command: 'time python3 tools/register/check_stale_data_never_calm.py --root .'
+    result: 'real 0m25.945s at 7ac11c9 · real 0m0.756s at a9e19c3. 34.3x. CD-ENG-F16F-04 reproduced.'
+  - command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate'
+    result: 'rc=2, VERDICT: AMBER, one FAIL (bound_verifiers_evidenced, PBG-CTRL-005). PRE-EXISTING.'
+  - command: 'git merge-base --is-ancestor 6491b64 7ac11c9 ; git cat-file -t 6491b64 ; git diff --name-status 6491b64 7ac11c9'
+    result: 'rc=0 · commit · every plants/WO3-INC16F patch ADDED after the freeze, both instruments MODIFIED after it. THE FREEZE IS REAL.'
+  - evidence_reference: >-
+      **EVERY FIGURE IN THIS ENTRY WAS PRODUCED BY THIS SEAT IN ITS OWN SHELL AND NONE IS
+      INHERITED.** The probes, the arm runner, the patch generator and all fifteen patches lived
+      under `/tmp/asr14/` and are DIAGNOSTIC ONLY — none was applied to any worktree, none is
+      project state (`PBG-CONT-007`), and `/srv/crash-detector` and `/srv/crash-detector-wo3` were
+      read and never written. **THE ARMS ARE REPRODUCIBLE FROM THIS ENTRY:** each `Z` arm is a
+      single named change at a stated anchor in `_refuse_stale_calm`, `refuse_unless_publishable`,
+      `_iter_nodes` or `publish_cycle`, described in ITEM 2 with the predicate quoted; the `V` arms
+      are the two one-token changes quoted in ITEM 6; and the verified `ENG` arms are the committed
+      `plants/WO3-INC16F/*.patch` at `7ac11c9`.
+
+evidence_references:
+  - governance/decisions/PO-DECISIONS-0031.md
+  - governance/dispatch/CD-DISPATCH-WO3-INC16F-ASSURANCE.yaml
+  - 'c475b8e:governance/engineering/build-log/BL-20260824T223344Z-16FC.yaml (the Engineer return — banked as an INPUT, not as findings)'
+  - 'c475b8e:plants/WO3-INC16F/MANIFEST.md'
+  - '6491b645dbeb66fd768a7054149489bc1d927ec6 (the instrument freeze — verified a real ancestor of 7ac11c9)'
+  - 'BL-20260824T204700Z-A313 (CD-ASR-WO3-13''s 16E verdict and A313-F1 — read at f56a6e9, not in this tree)'
+  - 'BL-20260824T230140Z-0185 (PROJECT_LEAD_SEAT_07''s dispatching boundary, on `main` — not in the target tree)'
+  - tools/register/check_stale_data_never_calm.py
+  - tools/register/check_publication_chokepoint.py
+  - src/crash_detector/publication/envelope_contract.py
+  - src/crash_detector/publication/publish.py
+  - contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md
+  - contracts/execution/CD-RT-001-PUBLICATION-CHOKEPOINT.md
+  - required-tests.yaml
+  - 'plants/WO3-INC16E/run_register.sh (sha256 23c13f91fd235c8dce92d7343909f1595eb369b83cc8a2687be40796e7512b21 at a9e19c3, 6491b64 and 7ac11c9)'
