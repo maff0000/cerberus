@@ -1,0 +1,42 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 11:11:46.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 11:12:44.021954167 +0100
+@@ -243,7 +243,7 @@
+           "$ref": "#/$defs/contribution_list"
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/absent_data_detail_level"
++          "$ref": "#/$defs/detail_level"
+         }
+       }
+     },
+@@ -273,7 +273,7 @@
+           "$ref": "#/$defs/source_id_list"
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/absent_data_detail_level"
++          "$ref": "#/$defs/detail_level"
+         }
+       }
+     },
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 11:11:46.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 11:12:44.021954167 +0100
+@@ -248,7 +248,7 @@
+           "$ref": "#/$defs/contribution_list"
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/absent_data_detail_level"
++          "$ref": "#/$defs/detail_level"
+         }
+       }
+     },
+@@ -279,7 +279,7 @@
+           "$ref": "#/$defs/source_id_list"
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/absent_data_detail_level"
++          "$ref": "#/$defs/detail_level"
+         }
+       }
+     },
