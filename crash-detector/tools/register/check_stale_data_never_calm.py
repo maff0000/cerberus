@@ -238,6 +238,7 @@ import copy
 import hashlib
 import math
 import pathlib
+import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -339,6 +340,127 @@ REF_INERT_SIBLINGS = frozenset({
 #: How many `$ref` hops :func:`_resolve` follows before giving up. Reaching it returns `None`,
 #: which every caller treats as UNRECOGNISED — never as "nothing to see".
 REF_CHAIN_CAP = 32
+
+
+# ============================================================================================ #
+# *** WO-3 INCREMENT 16F — THE VARIATION VOCABULARY. THE HALF THAT DECIDES WHETHER THE
+# INVARIANCE PASS WORKS. *** `PO-DECISIONS-0031` ruling 1(i); `A313-F1`.
+#
+# An invariance check is only as wide as the values it varies across, and the vocabulary that
+# was here before 16F WOULD NOT HAVE CAUGHT `W5G`: its only arrays are length 0 and length 1
+# and that predicate needs length 2. Every family below is here for a named reason and the
+# reason is the FEATURE A WEAKENING PREDICATE CAN KEY ON, never "it seemed like a good value".
+#
+#   · PRODUCT VOCABULARY — every string the CONTRACT ITSELF pins as a `const` or lists in an
+#     `enum`, harvested from the loaded schema and NEVER typed in. On the shipped contracts that
+#     is `1.1.0`, `PRIVATE`, `VALUE`, `DEGRADED`, `UNKNOWN`, `calm`, `elevated`, `acute`.
+#     **`W5B2` IS EXACTLY THIS FAMILY:** `regime` is `{"type": "string", "minLength": 1}` on
+#     both contracts — deliberately not an enumeration — so `"calm"` is an ORDINARY admissible
+#     value of an ordinary root property, and a predicate keyed on it is invisible to any
+#     instrument that only ever drives one string there. Harvesting rather than naming is what
+#     makes a vocabulary a future contract edit adds covered the day it lands.
+#   · ARRAY CARDINALITY at 0, 1, 2 and MANY. **`W5G` IS EXACTLY THIS FAMILY.**
+#   · EVERY JSON TYPE — string, number, boolean, null, array, object — because a predicate can
+#     key on a type as easily as on a value.
+#   · NUMBERS at zero, negative, small, large and integral, because `if score > 0` and
+#     `if not score` are different predicates and the second is satisfied by zero.
+#   · BOTH BOOLEANS, because `if flag` and `if flag is False` are different predicates.
+#   · STRINGS at empty, synthetic, long, and stamp-shaped.
+#
+# Where a subschema admits an UNBOUNDED set (every string of 1..128 characters, every number)
+# this samples it. **THAT IS `DECLARED LIMIT 9` AND IT IS STATED THERE IN THOSE TERMS.**
+# ============================================================================================ #
+
+#: Distinct id-shaped strings, for building arrays at each cardinality. `uniqueItems` is
+#: declared on `#/$defs/source_id_list`, so a two-element array of the SAME id is one element
+#: as far as the contract is concerned and would not probe cardinality at all.
+VARIATION_IDS = tuple(
+    f"{SYNTHETIC_INPUT_ID}-{index}" for index in range(1, 6)
+)
+
+#: A string exactly at the longest `maxLength` either contract declares for a root property.
+VARIATION_LONG_STRING = "Z" * 128
+
+#: The families above, as `(family, label, value)`. FAMILY is carried because the PAIRWISE pass
+#: (`DECLARED LIMIT 10`) reduces to a bounded number of values per property and must reduce by
+#: FEATURE rather than by list position — dropping every array cardinality but one would drop
+#: exactly the feature `W5G` keys on.
+VARIATION_FAMILIES = (
+    ("STRING", "STRING-EMPTY", ""),
+    ("STRING", "STRING-SYNTHETIC", SYNTHETIC_TEXT),
+    ("STRING", "STRING-128-CHARACTERS", VARIATION_LONG_STRING),
+    ("STAMP", "STRING-STAMP-FRESH", STAMP_FRESH),
+    ("STAMP", "STRING-STAMP-ANCIENT", STAMP_ANCIENT),
+    ("STAMP", "STRING-STAMP-FUTURE", STAMP_FUTURE),
+    ("NUMBER", "NUMBER-ZERO", 0),
+    ("NUMBER", "NUMBER-NEGATIVE", -1.5),
+    ("NUMBER", "NUMBER-SMALL", 1e-09),
+    ("NUMBER", "NUMBER-LARGE", 1e12),
+    ("NUMBER", "NUMBER-INTEGER-ONE", 1),
+    ("BOOLEAN", "BOOLEAN-TRUE", True),
+    ("BOOLEAN", "BOOLEAN-FALSE", False),
+    ("NULL", "NULL", None),
+    ("ARRAY-CARDINALITY", "ARRAY-CARDINALITY-0", []),
+    ("ARRAY-CARDINALITY", "ARRAY-CARDINALITY-1", list(VARIATION_IDS[:1])),
+    ("ARRAY-CARDINALITY", "ARRAY-CARDINALITY-2", list(VARIATION_IDS[:2])),
+    ("ARRAY-CARDINALITY", "ARRAY-CARDINALITY-MANY", list(VARIATION_IDS)),
+    ("OBJECT", "OBJECT-EMPTY", {}),
+    ("OBJECT", "OBJECT-NESTED", {"a": {"b": ["c"]}}),
+)
+
+#: The two ROOT properties the criterion names, and the ONLY two the verdict may read from the
+#: root. They are named here because the INVARIANT is stated in terms of them — this is the
+#: boundary of the independence being asserted, not a recogniser over a set that could grow.
+ROOT_PUBLISHED_KEY = "published_utc"
+ROOT_WINDOW_KEY = "staleness_window_seconds"
+
+#: A sentinel meaning DELETE THIS PROPERTY. `None` is an ordinary admissible JSON value and a
+#: variation pass that used it for absence could not tell "null" from "not there".
+_ABSENT = object()
+
+#: How many distinct findings PER RULE the invariance pass prints in full. The rest are counted
+#: and the count is printed. The varied space is thousands of cells wide and a stage that has
+#: stopped working fails most of them; the exit code is non-zero either way.
+VIOLATION_REPORT_CAP = 12
+
+#: The floor on the varied space. **AN INVARIANCE CHECK THAT VARIES NOTHING IS PERFECTLY
+#: INVARIANT**, so `CD-STALE-INVARIANT-012` refuses a run that drove fewer points than this.
+#: MEASURED at `a9e19c3` + 16F: the pass drives far more than this on both contracts; the floor
+#: exists to catch a vocabulary narrowed back to the one-value-per-property shape of `A313-F1`.
+MINIMUM_INVARIANCE_POINTS = 200
+
+#: The cell budget for the LIMB B PAIRWISE pass. `DECLARED LIMIT 10`. Beyond it the pass takes
+#: a DETERMINISTIC evenly-strided subsample and SAYS SO at every run, rather than pretending to
+#: run a product it does not run.
+PAIRWISE_CELL_BUDGET = 90000
+
+#: How many values per property the PAIRWISE pass carries. `DECLARED LIMIT 10`. Every
+#: `PRODUCT-VOCABULARY` and every `ARRAY-CARDINALITY` value is kept whatever this is; the cap
+#: applies to the remaining families, one per family. The ONE-AT-A-TIME pass is NOT capped.
+PAIRWISE_FAMILY_CAP = 1
+
+#: Extra property names planted on a calm-bearing node by the LIMB B invariance pass, to probe
+#: a predicate keyed on a property the contract has never heard of. **NONE OF THEM ENDS IN
+#: `_utc`**: a property that ANNOUNCES itself as a stamp and does not parse is a REFUSAL by
+#: design (the stage's own fail-closed branch), which would be a verdict change caused by one of
+#: the criterion's OWN inputs rather than by an independent property.
+VARIATION_EXTRA_NODE_KEYS = ("synthetic_16f_extra", "synthetic_16f_flag")
+
+#: Extra ROOT property names planted by the LIMB B invariance pass, for the same reason.
+VARIATION_EXTRA_ROOT_KEYS = ("synthetic_16f_root_extra",)
+
+#: *** MIRRORED FROM `crash_detector.publication.envelope_contract.UTC_STAMP_PATTERN`, CHARACTER
+#: FOR CHARACTER, AND ASSERTED AGAINST IT AT EVERY RUN. *** The invariance pass uses it for ONE
+#: purpose: to decide which pool values would become one of a calm-bearing node's OWN STAMPS if
+#: they were written onto it, so that those values are varied at the ROOT and not at the NODE.
+#: **IF THE TWO EVER DIVERGE THIS CHECK EXITS 3** rather than quietly varying across a value
+#: that is a verdict input — a check that cannot reach its authentic target fails, never waves
+#: through (`PBG-CI-002`). The application's own pattern is PUBLIC (it is in that module's
+#: `__all__`), so this is a mirror of an exported constant and not a second private coupling.
+_STAMP_SHAPE_PATTERN = (
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?Z$"
+)
+_STAMP_SHAPE_RE = re.compile(_STAMP_SHAPE_PATTERN)
 
 
 # ------------------------------------------------------------------------------------------ #
@@ -509,6 +631,184 @@ def _differing_pointers(left, right) -> list:
     return sorted(differing)
 
 
+# ------------------------------------------------------------------------------------------ #
+# WO-3 INCREMENT 16F — the invariance pass's own plumbing.
+# ------------------------------------------------------------------------------------------ #
+
+def _product_vocabulary(schema: dict) -> tuple:
+    """Every STRING the contract itself pins as a ``const`` or lists in an ``enum``.
+
+    **HARVESTED FROM THE LOADED CONTRACT AND NEVER TYPED IN.** A contract edit that adds a
+    regime name, a state or a detail level is varied across the day it lands rather than the
+    day somebody remembers to add it to a list in this file — which is the difference between
+    an instrument that probes the SPACE and one that probes the points its author thought of.
+    """
+    found = set()
+
+    def walk(node) -> None:
+        if isinstance(node, dict):
+            if isinstance(node.get("const"), str):
+                found.add(node["const"])
+            if isinstance(node.get("enum"), list):
+                for value in node["enum"]:
+                    if isinstance(value, str):
+                        found.add(value)
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(schema)
+    return tuple(sorted(found))
+
+
+def _variation_pool(schema: dict) -> tuple:
+    """``(family, label, value)`` for the whole declared vocabulary, contract words first."""
+    pool = [
+        ("PRODUCT-VOCABULARY", f"PRODUCT-VOCABULARY:{word}", word)
+        for word in _product_vocabulary(schema)
+    ]
+    pool.extend(VARIATION_FAMILIES)
+    return tuple(pool)
+
+
+def _same_value(left, right) -> bool:
+    """Equality that does not confuse ``True`` with ``1`` or ``0`` with ``False``."""
+    if isinstance(left, bool) != isinstance(right, bool):
+        return False
+    try:
+        return bool(left == right)
+    except Exception:  # pragma: no cover
+        return False
+
+
+def _instance_of(schema: dict, subschema, validator, stamp: str, tag: str):
+    """One instance of ``subschema``, built from its OWN ``required`` list. ``None`` on failure.
+
+    This is what gives a property whose subschema admits no scalar — a dial slot, an array of
+    closed objects — a set of ALTERNATIVE ADMISSIBLE VALUES to be varied across. Without it
+    those properties would silently contribute nothing to the space and the instrument would be
+    invariant over them by never having driven them.
+    """
+    resolved = _deref(schema, subschema)
+    if not isinstance(resolved, dict):
+        return None
+    built = {}
+    for name in resolved.get("required") or []:
+        value, ok = _synthesise(schema, (resolved.get("properties") or {}).get(name), validator)
+        if not ok:
+            return None
+        built[str(name)] = copy.deepcopy(value)
+    if not built:
+        return None
+    for name, sub in (resolved.get("properties") or {}).items():
+        if name in built and _accepts(schema, sub, validator, STAMP_FRESH) \
+                and not _accepts(schema, sub, validator, NOT_A_STAMP):
+            built[str(name)] = stamp
+    for name, sub in (resolved.get("properties") or {}).items():
+        if name in built and isinstance(built[name], str) and tag \
+                and _accepts(schema, sub, validator, tag):
+            built[str(name)] = tag
+            break
+    return built
+
+
+def _structural_variants(schema: dict, subschema, validator) -> list:
+    """``(label, value)`` alternatives built FROM THE SUBSCHEMA rather than from the flat pool.
+
+    Two shapes, both of which exist on the shipped contracts:
+
+      · a ``oneOf`` union (``#/$defs/dial_reading``) — ONE INSTANCE PER BRANCH, each with a
+        FRESH stamp, so a weakening keyed on *the OTHER dial's state* is inside the space;
+      · an array of objects (``#/$defs/contribution_list``) — the SAME CARDINALITY LADDER the
+        flat pool applies to arrays of strings, at 1 and 2 elements, so cardinality coverage is
+        real for object arrays and not only for id arrays.
+    """
+    resolved = _deref(schema, subschema)
+    if not isinstance(resolved, dict):
+        return []
+    variants: list = []
+    branches = resolved.get("oneOf")
+    if isinstance(branches, list):
+        for index, entry in enumerate(branches):
+            branch = _deref(schema, entry)
+            if not isinstance(branch, dict):
+                continue
+            instance = _instance_of(schema, branch, validator, STAMP_FRESH, "")
+            if instance is None:
+                continue
+            state = (branch.get("properties") or {}).get("state")
+            label = (state.get("const") if isinstance(state, dict) else None) or f"[{index}]"
+            variants.append((f"BRANCH-INSTANCE:{label}", instance))
+    if resolved.get("type") == "array" and isinstance(resolved.get("items"), dict):
+        first = _instance_of(schema, resolved["items"], validator, STAMP_FRESH, "")
+        second = _instance_of(schema, resolved["items"], validator, STAMP_SECOND_FRESH,
+                              VARIATION_IDS[1])
+        if first is not None:
+            variants.append(("ARRAY-OF-OBJECTS-CARDINALITY-1", [first]))
+            if second is not None and second != first:
+                variants.append(("ARRAY-OF-OBJECTS-CARDINALITY-2", [first, second]))
+    return variants
+
+
+def _admissible_variants(schema, subschema, validator, baseline, pool, exclude_stamp_like=False):
+    """Every ``(family, label, value)`` the subschema ACCEPTS that is not the baseline value.
+
+    ``exclude_stamp_like`` drops any value that reads as a UTC instant. It is set when the
+    property being varied belongs to the CALM-BEARING NODE: a string that parses as an instant
+    BECOMES ONE OF THAT NODE'S OWN STAMPS, and the node's own stamps are one of the three
+    things the verdict is ALLOWED to depend on. Dropping them is not a gap in the space — it is
+    the boundary of the invariant, and those values are driven at the ROOT instead.
+    """
+    out = []
+    for family, label, value in pool:
+        if _same_value(value, baseline):
+            continue
+        if exclude_stamp_like and isinstance(value, str) and _STAMP_SHAPE_RE.match(value):
+            continue
+        if not _accepts(schema, subschema, validator, value):
+            continue
+        out.append((family, label, value))
+    for label, value in _structural_variants(schema, subschema, validator):
+        if _same_value(value, baseline):
+            continue
+        if _accepts(schema, subschema, validator, value):
+            out.append(("STRUCTURAL", label, value))
+    return out
+
+
+def _pairwise_reduction(variants: list) -> list:
+    """The bounded per-property value set the PAIRWISE pass carries. ``DECLARED LIMIT 10``.
+
+    Every ``PRODUCT-VOCABULARY`` value and every ``ARRAY-CARDINALITY`` value is KEPT — those are
+    the two families the two measured fifth weakenings key on, and reducing them away would
+    reduce away the point of the pass. Every other family contributes
+    :data:`PAIRWISE_FAMILY_CAP` representatives.
+    """
+    kept: list = []
+    seen: dict = {}
+    for family, label, value in variants:
+        if family in ("PRODUCT-VOCABULARY", "ARRAY-CARDINALITY", "STRUCTURAL"):
+            kept.append((family, label, value))
+            continue
+        seen[family] = seen.get(family, 0) + 1
+        if seen[family] <= PAIRWISE_FAMILY_CAP:
+            kept.append((family, label, value))
+    return kept
+
+
+def _signature(outcome) -> tuple:
+    """A comparable verdict. Never a boolean: WHICH refusal, at WHICH pointer, is load-bearing."""
+    if outcome is None:
+        return ("ADMITTED", None, None, None)
+    reason = getattr(outcome, "reason_class", None)
+    if reason is not None:
+        return ("REFUSED", reason, getattr(outcome, "pointer", None),
+                getattr(outcome, "key", None))
+    return ("ERROR", type(outcome).__name__, None, None)
+
+
 def main(argv=None) -> int:
     args = parse_root(CHECK_ID, __doc__.splitlines()[0])
     root, code = resolve_root(CHECK_ID, args.root)
@@ -537,6 +837,7 @@ def main(argv=None) -> int:
             EnvelopeSurface,
             PublicationRefused,
             REFUSAL_STALE_CALM,
+            UTC_STAMP_PATTERN,
             contracts_dir,
             load_envelope_schema,
             refuse_unless_publishable,
@@ -582,6 +883,20 @@ def main(argv=None) -> int:
     check.note(f"python: {sys.version.split()[0]}")
     check.note(f"ENVELOPE_SCHEMA_VERSION as the application declares it: {ENVELOPE_SCHEMA_VERSION}")
     check.note(f"the refusal token this row requires: {REFUSAL_STALE_CALM!r}")
+
+    # ---- THE STAMP-SHAPE MIRROR, ENFORCED AS A PRECONDITION (16F) -------------------- #
+    # The invariance pass uses this pattern to keep values that would become a calm-bearing
+    # node's OWN stamp out of the set of properties it varies AT THE NODE. If the mirror has
+    # drifted from the application's exported constant, that reasoning is void.
+    if UTC_STAMP_PATTERN != _STAMP_SHAPE_PATTERN:
+        return check.refuse(
+            "this check mirrors `UTC_STAMP_PATTERN` from the application so the invariance "
+            "pass can tell which values would BECOME one of a calm-bearing node's own stamps. "
+            f"The application now declares {UTC_STAMP_PATTERN!r} and this file mirrors "
+            f"{_STAMP_SHAPE_PATTERN!r}. They have drifted, so the boundary of the invariant "
+            "this row asserts is no longer the boundary it computes. Exiting 3 rather than "
+            "measuring a space whose edge has moved (PBG-CI-002)."
+        )
 
     # ---- DECLARED LIMIT 1, ENFORCED AS A PRECONDITION -------------------------------- #
     resolved_contracts = contracts_dir().resolve()
@@ -1266,6 +1581,547 @@ def main(argv=None) -> int:
                         "stale in the reassuring direction; or something else refused this "
                         "document and the limit is being proved by the wrong layer (CD-PL-F74).",
                     )
+
+    # ================================================================================== #
+    # *** WO-3 INCREMENT 16F — THE INVARIANCE PASS. THE INSTRUMENT PROBES THE SPACE. ***
+    # `PO-DECISIONS-0031` ruling 1(i), answering `A313-F1` (HIGH).
+    #
+    # THE PROPOSITION, AND IT IS AN INDEPENDENCE RATHER THAN A LIST OF SHAPES:
+    #
+    #     THE GATE'S STALE-CALM VERDICT DEPENDS ON EXACTLY THREE THINGS — THE CALM-BEARING
+    #     NODE'S OWN STAMPS, THE ROOT'S `published_utc`, AND THE ROOT'S
+    #     `staleness_window_seconds` — AND ON NOTHING ELSE. VARY ANY OTHER PROPERTY OF THE
+    #     DOCUMENT TO ANY OTHER VALUE, AND THE VERDICT MUST NOT CHANGE.
+    #
+    # A weakening keyed on ANY other property is a DEPENDENCE on a property the criterion says
+    # nothing about, and a dependence is what an invariance check detects. That is why this is
+    # complete BY CONSTRUCTION over the vocabulary it varies rather than by enumeration: the
+    # four `D` arms, `W5A`, `W5B2`, `W5G` and shapes nobody has named are all the same shape to
+    # it. **IT IS NOT A FIFTH ARM.**
+    #
+    # THE VERDICT IS COMPARED AS A FOUR-TUPLE — (admitted/refused, reason class, pointer, key) —
+    # and never as a boolean, so a weakening that keeps the refusal but moves it to another
+    # layer or another pointer is a CHANGE (`CD-PL-F74`).
+    #
+    # *** AND THE VACUITY DIRECTION IS EQUALLY A VIOLATION, WHICH IS HARDER HERE THAN ANYWHERE
+    # ELSE IN THIS FILE: AN INSTRUMENT THAT REFUSES EVERYTHING EVERYWHERE IS PERFECTLY
+    # INVARIANT. *** So the row set driven at EVERY point in the varied space carries the
+    # MUST-ADMIT rows as well as the MUST-REFUSE ones — a genuinely fresh calm dial, a dial
+    # aged EXACTLY the window, and a stale dial rendering at its true level — and the
+    # reference point itself is checked against its EXPECTATION before anything is compared
+    # against it, so the pass cannot be invariance around the wrong point.
+    # ================================================================================== #
+
+    invariant_rows = (
+        ("ANCIENT", STAMP_ANCIENT, CALM, MUST_REFUSE),
+        ("FUTURE", STAMP_FUTURE, CALM, MUST_REFUSE),
+        ("WELL-INSIDE-THE-WINDOW", STAMP_FRESH, CALM, MUST_ADMIT),
+        ("EXACTLY-THE-WINDOW", STAMP_ON_THE_EDGE, CALM, MUST_ADMIT),
+        ("ANCIENT-BUT-NOT-CALM", STAMP_ANCIENT, None, MUST_ADMIT),
+    )
+
+    non_calm_level = {}
+    for surface in EnvelopeSurface:
+        _lab, branch = branch_by_surface[surface]
+        resolved = _deref(schemas[surface], (branch.get("properties") or {}).get("detail_level"))
+        vocabulary = []
+        if isinstance(resolved, dict) and isinstance(resolved.get("enum"), list):
+            vocabulary = [value for value in resolved["enum"] if value != CALM]
+        non_calm_level[surface] = vocabulary[0] if vocabulary else None
+
+    def invariant_dial(surface, stamp, level):
+        dial, unbuildable_dial = build_dial(surface, CALM if level is None else level, stamp)
+        if unbuildable_dial:
+            return None
+        if level is None:
+            if non_calm_level[surface] is None:
+                return None
+            dial["detail_level"] = non_calm_level[surface]
+        return dial
+
+    reported = {}
+
+    def report(rule: str, message: str) -> None:
+        """Record a violation, but never print ten thousand of them.
+
+        The varied space is thousands of cells wide and a stage that has stopped working fails
+        most of them. `VIOLATION_REPORT_CAP` distinct findings per rule are printed in full and
+        the rest are COUNTED — the count is printed as a note and the exit code is non-zero
+        either way, so nothing is hidden and the output stays readable.
+        """
+        reported[rule] = reported.get(rule, 0) + 1
+        if reported[rule] <= VIOLATION_REPORT_CAP:
+            check.violation(here, 0, rule, message)
+
+    invariance_points = 0
+    invariance_cells = 0
+    invariance_skipped = 0
+    coverage_lines = []
+
+    # ---------------------------------------------------------------------------------- #
+    # LIMB A — THE LIVE GATE, THROUGH THE FRONT DOOR, OVER THE SPACE OF DOCUMENTS THE
+    # CONTRACT ADMITS. One-at-a-time variation from a proved-publishable baseline.
+    # ---------------------------------------------------------------------------------- #
+    for surface in EnvelopeSurface:
+        schema = schemas[surface]
+        validator = validator_for(schema)
+        document_validator = validator(schema)
+        pool = _variation_pool(schema)
+        root_properties = schema.get("properties") or {}
+        slots = slots_by_surface[surface]
+        check.note(
+            f"{surface.value}: INVARIANCE VOCABULARY — product words harvested from the "
+            f"contract itself: {_product_vocabulary(schema)!r}"
+        )
+
+        fresh_dial, unbuildable = build_dial(surface, CALM, STAMP_FRESH)
+        if unbuildable:
+            check.asserted()
+            report(
+                "CD-STALE-INVARIANT-010",
+                f"{surface.value}: the calm-bearing dial could not be built, so the invariance "
+                f"pass drove NOTHING on this surface ({unbuildable!r}). DENY BY DEFAULT.",
+            )
+            continue
+
+        for slot_under_test in slots:
+            dials = {slot: copy.deepcopy(fresh_dial) for slot in slots}
+            reference_root, root_unbuildable = build_root(surface, dials)
+            if root_unbuildable:
+                check.asserted()
+                report(
+                    "CD-STALE-INVARIANT-010",
+                    f"{surface.value}: the envelope root could not be built "
+                    f"({root_unbuildable!r}), so the invariance pass drove NOTHING.",
+                )
+                continue
+
+            # -- THE REFERENCE POINT, AND IT IS CHECKED AGAINST ITS EXPECTATION FIRST ---- #
+            row_documents = {}
+            reference = {}
+            usable = True
+            for row_label, stamp, level, expectation in invariant_rows:
+                dial = invariant_dial(surface, stamp, level)
+                if dial is None:
+                    usable = False
+                    break
+                document = copy.deepcopy(reference_root)
+                document[slot_under_test] = dial
+                row_documents[row_label] = document
+                check.asserted()
+                signature = _signature(verdict(surface, document))
+                reference[row_label] = signature
+                label = f"{surface.value}/{slot_under_test}/{row_label}"
+                if expectation is MUST_ADMIT and signature[0] != "ADMITTED":
+                    usable = False
+                    report(
+                        "CD-STALE-INVARIANT-010",
+                        f"{label}: *** THE VACUOUS DIRECTION AT THE REFERENCE POINT. *** the "
+                        f"unvaried document this pass varies FROM was not ADMITTED "
+                        f"({signature!r}). Every comparison below would then be invariance "
+                        "around a point the product cannot publish, which is a tree that has "
+                        "stopped being able to say anything (PID §4).",
+                    )
+                elif expectation is MUST_REFUSE and signature != (
+                    "REFUSED", REFUSAL_STALE_CALM, f"/{slot_under_test}",
+                    signature[3],
+                ):
+                    usable = False
+                    report(
+                        "CD-STALE-INVARIANT-010",
+                        f"{label}: the unvaried reference document was not REFUSED "
+                        f"[{REFUSAL_STALE_CALM}] at /{slot_under_test} — it produced "
+                        f"{signature!r}. The invariance comparison below would be anchored on "
+                        "a verdict that is already wrong, and a refusal from ANOTHER layer "
+                        "would then be held invariant and counted as the stage working "
+                        "(CD-PL-F74).",
+                    )
+            if not usable:
+                continue
+
+            # -- THE SPACE: EVERY ROOT PROPERTY, ENUMERATED FROM THE CONTRACT ITSELF ----- #
+            for name in sorted(root_properties):
+                if name in (ROOT_PUBLISHED_KEY, ROOT_WINDOW_KEY):
+                    coverage_lines.append(
+                        f"{surface.value}/LIMB-A/{name}: NOT VARIED — it is one of the three "
+                        "VERDICT INPUTS the invariant is stated in terms of."
+                    )
+                    continue
+                if name == slot_under_test:
+                    coverage_lines.append(
+                        f"{surface.value}/LIMB-A/{name}: NOT VARIED at this position — it is "
+                        "the slot under test and its own stamps are a VERDICT INPUT."
+                    )
+                    continue
+                variants = _admissible_variants(
+                    schema, root_properties[name], validator,
+                    reference_root.get(name), pool,
+                )
+                coverage_lines.append(
+                    f"{surface.value}/LIMB-A/{name}: {len(variants)} alternative admissible "
+                    f"value(s) driven — {[label for _f, label, _v in variants]!r}"
+                )
+                for _family, value_label, value in variants:
+                    invariance_points += 1
+                    for row_label, _stamp, _level, _expectation in invariant_rows:
+                        candidate = copy.deepcopy(row_documents[row_label])
+                        candidate[name] = copy.deepcopy(value)
+                        if not document_validator.is_valid(candidate):
+                            # The property's OWN subschema accepts this value but the whole
+                            # document does not. Driving it would measure the SCHEMA stage and
+                            # attribute the result to the freshness stage (CD-PL-F74). Counted,
+                            # never silently dropped.
+                            invariance_skipped += 1
+                            continue
+                        check.asserted()
+                        invariance_cells += 1
+                        signature = _signature(verdict(surface, candidate))
+                        if signature != reference[row_label]:
+                            report(
+                                "CD-STALE-INVARIANT-010",
+                                f"{surface.value}/{slot_under_test}/{row_label} with root "
+                                f"property {name!r} varied to {value_label} — *** THE GATE'S "
+                                "STALE-CALM VERDICT CHANGED ON A PROPERTY THE CRITERION SAYS "
+                                f"NOTHING ABOUT. *** unvaried: {reference[row_label]!r}; "
+                                f"varied: {signature!r}. The verdict may depend on the "
+                                "calm-bearing node's own stamps, on the root's "
+                                f"{ROOT_PUBLISHED_KEY!r} and on the root's {ROOT_WINDOW_KEY!r}, "
+                                "and on NOTHING ELSE. A dependence on anything else is either "
+                                "a weakening (some documents now escape the stage) or an "
+                                "over-refusal (some documents the product must publish now "
+                                "cannot be) — and BOTH are violations of this row.",
+                            )
+
+            # -- AND THE CALM-BEARING NODE'S OWN NON-STAMP PROPERTIES ------------------- #
+            # `W5A` keys on a ROOT property; a shape keyed on the node's own `score`,
+            # `inputs_used` or `contributions` is the same defect ONE LEVEL DOWN, and the
+            # invariant's "everything else" contains it.
+            _branch_label, calm_branch = branch_by_surface[surface]
+            node_properties = calm_branch.get("properties") or {}
+            for name in sorted(node_properties):
+                if name in stamps_by_surface[surface]:
+                    coverage_lines.append(
+                        f"{surface.value}/LIMB-A/NODE/{name}: NOT VARIED — a STAMP-SHAPED "
+                        "property of the calm-bearing node is a VERDICT INPUT."
+                    )
+                    continue
+                if name == "detail_level":
+                    coverage_lines.append(
+                        f"{surface.value}/LIMB-A/NODE/detail_level: NOT VARIED — it is what "
+                        "makes the node a SUBJECT of the criterion at all, not an independent "
+                        "property of it. It IS varied, as the level, by the row set."
+                    )
+                    continue
+                variants = _admissible_variants(
+                    schema, node_properties[name], validator,
+                    fresh_dial.get(name), pool, exclude_stamp_like=True,
+                )
+                coverage_lines.append(
+                    f"{surface.value}/LIMB-A/NODE/{name}: {len(variants)} alternative "
+                    f"admissible value(s) driven — "
+                    f"{[label for _f, label, _v in variants]!r}"
+                )
+                for _family, value_label, value in variants:
+                    invariance_points += 1
+                    for row_label, _stamp, _level, _expectation in invariant_rows:
+                        candidate = copy.deepcopy(row_documents[row_label])
+                        node = candidate.get(slot_under_test)
+                        if not isinstance(node, dict) or name not in node:
+                            invariance_skipped += 1
+                            continue
+                        node[name] = copy.deepcopy(value)
+                        if not document_validator.is_valid(candidate):
+                            invariance_skipped += 1
+                            continue
+                        check.asserted()
+                        invariance_cells += 1
+                        signature = _signature(verdict(surface, candidate))
+                        if signature != reference[row_label]:
+                            report(
+                                "CD-STALE-INVARIANT-010",
+                                f"{surface.value}/{slot_under_test}/{row_label} with the "
+                                f"CALM-BEARING NODE'S OWN property {name!r} varied to "
+                                f"{value_label} — *** THE VERDICT CHANGED ON A PROPERTY OF THE "
+                                "NODE THAT IS NOT ONE OF ITS STAMPS. *** unvaried: "
+                                f"{reference[row_label]!r}; varied: {signature!r}. Freshness "
+                                "is proved from the node's STAMPS and from the root's two "
+                                "comparands; a stage that also reads the node's score, its "
+                                "inputs or its contributions is deciding freshness from "
+                                "something that is not a time.",
+                            )
+
+    # ---------------------------------------------------------------------------------- #
+    # LIMB B — THE STAGE ITSELF, OVER A WIDER SPACE THAN THE CONTRACT ADMITS, AND THE ONLY
+    # PLACE THE PAIRWISE PASS RUNS. `DECLARED LIMIT 10` states why.
+    # ---------------------------------------------------------------------------------- #
+    def planted_node(stamp):
+        """A calm-bearing node with NON-STAMP properties of its own to vary."""
+        return {
+            "detail_level": CALM,
+            "planted_utc": stamp,
+            "state": "VALUE",
+            "score": SYNTHETIC_SCORE,
+            "inputs_used": [SYNTHETIC_INPUT_ID],
+            "contributions": [],
+        }
+
+    NON_STAMP_NODE_KEYS = ("state", "score", "inputs_used", "contributions")
+
+    for surface in EnvelopeSurface:
+        schema = schemas[surface]
+        pool = _variation_pool(schema)
+        slots = slots_by_surface[surface]
+        fresh_dial, unbuildable = build_dial(surface, CALM, STAMP_FRESH)
+        if unbuildable:
+            continue
+        dials = {slot: copy.deepcopy(fresh_dial) for slot in slots}
+        base_document, root_unbuildable = build_root(surface, dials)
+        if root_unbuildable:
+            continue
+
+        arms = (
+            ("STALE", STAMP_ANCIENT, MUST_REFUSE),
+            ("FRESH", STAMP_FRESH, MUST_ADMIT),
+        )
+
+        def limb_b_document(stamp, root_changes=(), node_changes=()):
+            document = dict(base_document)
+            node = planted_node(stamp)
+            for key, value in node_changes:
+                if value is _ABSENT:
+                    node.pop(key, None)
+                else:
+                    node[key] = value
+            document[NON_DIAL_ROOT] = node
+            for key, value in root_changes:
+                if value is _ABSENT:
+                    document.pop(key, None)
+                else:
+                    document[key] = value
+            return document
+
+        # The invariance pass drives the stage ~140,000 times, so it composes a FRESH root
+        # mapping and a FRESH node mapping per cell and does NOT deep-copy the whole document
+        # (which costs more than the stage call). The stage's own contract says the candidate
+        # is never mutated; **that is ASSERTED rather than trusted** by
+        # `CD-STALE-INVARIANT-013` below, which compares the base document against a snapshot
+        # taken before the pass.
+        untouched_snapshot = copy.deepcopy(base_document)
+
+        def stage_signature(surface_, document):
+            try:
+                _refuse_stale_calm(document, surface_)
+            except PublicationRefused as exc:
+                return _signature(exc)
+            except Exception as other:  # noqa: BLE001
+                return _signature(other)
+            return _signature(None)
+
+        reference_b = {}
+        usable = True
+        for arm_label, stamp, expectation in arms:
+            check.asserted()
+            signature = stage_signature(surface, limb_b_document(stamp))
+            reference_b[arm_label] = signature
+            if expectation is MUST_ADMIT and signature[0] != "ADMITTED":
+                usable = False
+                report(
+                    "CD-STALE-INVARIANT-011",
+                    f"{surface.value}/LIMB-B/{arm_label}: *** THE VACUOUS DIRECTION AT THE "
+                    f"REFERENCE POINT. *** the FRESH planted calm node was REFUSED "
+                    f"({signature!r}), so every invariance comparison below would be anchored "
+                    "on a stage that refuses what it must admit.",
+                )
+            if expectation is MUST_REFUSE and (
+                signature[0] != "REFUSED" or signature[1] != REFUSAL_STALE_CALM
+                or signature[2] != f"/{NON_DIAL_ROOT}"
+            ):
+                usable = False
+                report(
+                    "CD-STALE-INVARIANT-011",
+                    f"{surface.value}/LIMB-B/{arm_label}: the unvaried reference was "
+                    f"{signature!r} and this row requires REFUSED [{REFUSAL_STALE_CALM}] at "
+                    f"/{NON_DIAL_ROOT}.",
+                )
+        if not usable:
+            continue
+
+        # -- THE POINTS: root properties AND the planted node's own non-stamp properties -- #
+        points = []
+        for name in sorted(base_document):
+            if name in (ROOT_PUBLISHED_KEY, ROOT_WINDOW_KEY):
+                coverage_lines.append(
+                    f"{surface.value}/LIMB-B/{name}: NOT VARIED — VERDICT INPUT."
+                )
+                continue
+            values = [("ABSENCE", "ABSENT", _ABSENT)]
+            values.extend(
+                (family, label, value) for family, label, value in pool
+                if not _same_value(value, base_document.get(name))
+            )
+            points.append(("ROOT", name, values))
+        for name in VARIATION_EXTRA_ROOT_KEYS:
+            points.append((
+                "ROOT", name,
+                [(family, label, value) for family, label, value in pool],
+            ))
+        node_reference = planted_node(STAMP_FRESH)
+        for name in NON_STAMP_NODE_KEYS + VARIATION_EXTRA_NODE_KEYS:
+            values = []
+            if name in node_reference:
+                values.append(("ABSENCE", "ABSENT", _ABSENT))
+            for family, label, value in pool:
+                if isinstance(value, str) and _STAMP_SHAPE_RE.match(value):
+                    continue
+                if _same_value(value, node_reference.get(name)):
+                    continue
+                values.append((family, label, value))
+            points.append(("NODE", name, values))
+        for scope, name, values in points:
+            coverage_lines.append(
+                f"{surface.value}/LIMB-B/{scope}/{name}: {len(values)} value(s) driven"
+            )
+
+        # -- ONE AT A TIME ---------------------------------------------------------------- #
+        for scope, name, values in points:
+            for _family, value_label, value in values:
+                invariance_points += 1
+                for arm_label, stamp, _expectation in arms:
+                    change = ((name, value),)
+                    document = limb_b_document(
+                        stamp,
+                        root_changes=change if scope == "ROOT" else (),
+                        node_changes=change if scope == "NODE" else (),
+                    )
+                    check.asserted()
+                    invariance_cells += 1
+                    signature = stage_signature(surface, document)
+                    if signature != reference_b[arm_label]:
+                        report(
+                            "CD-STALE-INVARIANT-011",
+                            f"{surface.value}/LIMB-B/{arm_label} with {scope} property "
+                            f"{name!r} varied to {value_label} — *** THE STAGE'S VERDICT "
+                            "CHANGED ON A PROPERTY THE CRITERION SAYS NOTHING ABOUT. *** "
+                            f"unvaried: {reference_b[arm_label]!r}; varied: {signature!r}. "
+                            "LIMB B drives the stage DIRECTLY, so this space is wider than "
+                            "the one the closed contract admits — which is the point: a "
+                            "weakening does not have to be reachable through the front door "
+                            "on today's contract to be a weakening.",
+                        )
+
+        # -- PAIRWISE, FOR THE CONJUNCTIVE PREDICATE. `DECLARED LIMIT 10`. ---------------- #
+        # ONE-AT-A-TIME variation catches every predicate keyed on a SINGLE property, which is
+        # every shape measured on this project so far. It does NOT catch a CONJUNCTION over
+        # two properties: `if regime == "calm" and len(inputs_used) > 1: return` is invisible
+        # to it, because neither half alone changes the verdict. This pass drives ORDERED
+        # PAIRS from DIFFERENT properties over a REDUCED per-property value set, and it runs
+        # on LIMB B only because a LIMB A pairwise pass is ~2000x more expensive per cell
+        # (MEASURED: the front door reloads and recompiles the contract on every call).
+        reduced = [
+            (scope, name, _pairwise_reduction(values))
+            for scope, name, values in points
+        ]
+        total_pairs = 0
+        for index, (scope_a, name_a, values_a) in enumerate(reduced):
+            for scope_b, name_b, values_b in reduced[index + 1:]:
+                total_pairs += len(values_a) * len(values_b)
+        stride = 1
+        if total_pairs * len(arms) > PAIRWISE_CELL_BUDGET:
+            stride = (total_pairs * len(arms) // PAIRWISE_CELL_BUDGET) + 1
+        check.note(
+            f"{surface.value}/LIMB-B/PAIRWISE: {total_pairs} property-value pairs over "
+            f"{len(reduced)} properties, stride {stride} (budget "
+            f"{PAIRWISE_CELL_BUDGET} cells — DECLARED LIMIT 10)"
+        )
+        counter = 0
+        for index, (scope_a, name_a, values_a) in enumerate(reduced):
+            for scope_b, name_b, values_b in reduced[index + 1:]:
+                for _fa, label_a, value_a in values_a:
+                    for _fb, label_b, value_b in values_b:
+                        counter += 1
+                        if counter % stride:
+                            continue
+                        root_changes = []
+                        node_changes = []
+                        (root_changes if scope_a == "ROOT" else node_changes).append(
+                            (name_a, value_a))
+                        (root_changes if scope_b == "ROOT" else node_changes).append(
+                            (name_b, value_b))
+                        for arm_label, stamp, _expectation in arms:
+                            document = limb_b_document(
+                                stamp,
+                                root_changes=tuple(root_changes),
+                                node_changes=tuple(node_changes),
+                            )
+                            check.asserted()
+                            invariance_cells += 1
+                            signature = stage_signature(surface, document)
+                            if signature != reference_b[arm_label]:
+                                report(
+                                    "CD-STALE-INVARIANT-011",
+                                    f"{surface.value}/LIMB-B/{arm_label} with "
+                                    f"{scope_a}/{name_a}={label_a} AND "
+                                    f"{scope_b}/{name_b}={label_b} — *** THE STAGE'S VERDICT "
+                                    "CHANGED ON A CONJUNCTION OF TWO PROPERTIES THE CRITERION "
+                                    f"SAYS NOTHING ABOUT. *** unvaried: "
+                                    f"{reference_b[arm_label]!r}; varied: {signature!r}.",
+                                )
+
+        # -- CD-STALE-INVARIANT-013 — THE STAGE MAY NOT MUTATE WHAT IT JUDGES ---------- #
+        # The pass above traded a deep copy per cell for a fresh root and a fresh node. That
+        # trade is only sound if the stage leaves the candidate alone, and
+        # `refuse_unless_publishable`'s own docstring says it does — *"``candidate`` is never
+        # mutated, never copied-and-repaired, and never partially accepted."* **A SENTENCE IS
+        # NOT AN ENFORCEMENT POINT**, so it is MEASURED here rather than believed.
+        check.asserted()
+        if base_document != untouched_snapshot:
+            differing = _differing_pointers(base_document, untouched_snapshot)
+            check.violation(
+                here, 0, "CD-STALE-INVARIANT-013",
+                f"{surface.value}: the fourth refusal stage MUTATED the document it was given "
+                f"— the base document differs from its pre-pass snapshot at {differing!r}. "
+                "The publication gate's own contract says the candidate is never mutated, and "
+                "a judging step that edits what it judges means the document that was JUDGED "
+                "and the document that would be WRITTEN are not the same document. It also "
+                "invalidates this pass's fresh-root/fresh-node composition, so every "
+                "invariance cell above must be re-read as unsound.",
+            )
+        else:
+            check.note(
+                f"{surface.value}: the stage did not mutate the document it judged, measured "
+                "against a snapshot taken before the invariance pass (CD-STALE-INVARIANT-013)."
+            )
+
+    # -- CD-STALE-INVARIANT-012 — THE PASS ITSELF MAY NOT GO VACUOUS -------------------- #
+    # An invariance check that drove NO varied point is perfectly invariant and detects
+    # nothing. So is one whose vocabulary has been narrowed until no property has an
+    # alternative value. This assertion is about THIS PASS'S OWN COVERAGE.
+    check.asserted()
+    if invariance_points < MINIMUM_INVARIANCE_POINTS or invariance_cells == 0:
+        check.violation(
+            here, 0, "CD-STALE-INVARIANT-012",
+            f"the invariance pass drove {invariance_points} varied point(s) and "
+            f"{invariance_cells} cell(s), and this row requires at least "
+            f"{MINIMUM_INVARIANCE_POINTS} points. *** AN INVARIANCE CHECK THAT VARIES NOTHING "
+            "IS PERFECTLY INVARIANT AND DETECTS NOTHING. *** Either the value vocabulary has "
+            "been narrowed until no property has an alternative admissible value — which is "
+            "how `A313-F1` happened in the first place, one value per property — or the "
+            "contract has stopped admitting more than one document. Both are failures of this "
+            "row and neither may report clean.",
+        )
+    for line in coverage_lines:
+        check.note(f"COVERAGE {line}")
+    check.note(
+        f"INVARIANCE PASS: {invariance_points} varied points, {invariance_cells} cells driven, "
+        f"{invariance_skipped} variant(s) not driven because the WHOLE document was not "
+        "contract-admissible in combination (counted, never silently dropped)."
+    )
+    for rule, count in sorted(reported.items()):
+        if count > VIOLATION_REPORT_CAP:
+            check.note(
+                f"{rule}: {count} violations found, {VIOLATION_REPORT_CAP} printed in full "
+                f"and {count - VIOLATION_REPORT_CAP} counted only (report cap)."
+            )
 
     check.note(
         "DECLARED LIMIT, PRINTED AT EVERY RUN: this check drives the STALE half of CD-AC-001 "
