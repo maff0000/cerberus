@@ -182,6 +182,24 @@ CALM = "calm"
 #: and they are exactly the two branches 16A-FIX narrowed.
 ABSENT_STATES = ("UNKNOWN", "DEGRADED")
 
+#: The states in which the data is PRESENT, so `calm` is a legitimate rendering and MUST be
+#: admitted. This is the vacuity arm's state.
+PRESENT_STATES = ("VALUE",)
+
+#: *** DENY BY DEFAULT, AND THIS IS THE STRUCTURAL HALF OF THE `F1` FIX (RULE F). *** Every dial
+#: state this instrument knows how to CLASSIFY. `CD-CALM-BRANCHES-006` asserts that the contract's
+#: own declared state set is exactly this, and that the union's branches cover it exactly once each
+#: — so a branch nobody anticipated is a VIOLATION FOR BEING UNRECOGNISED rather than a silence.
+#:
+#: *** WHY THIS LIST IS TYPED IN WHILE THE LEVEL VOCABULARY IS READ FROM THE CONTRACT, WHICH IS A
+#: DELIBERATE ASYMMETRY AND NOT AN OVERSIGHT. *** A new LEVEL is classified by a rule this file
+#: already states in one line — it is `calm`, or it is not — so the table grows on the day the
+#: vocabulary does. A new STATE cannot be classified without knowing whether it MEANS the data is
+#: absent, and that is product meaning, which is not an Engineer's to decide (`PBG-AUTH-005`).
+#: Guessing would be worse than stopping: guess "present" and a missing-data state silently gets
+#: `calm` admitted. So the instrument stops and says the state is unrecognised. See DECLARED LIMIT 8.
+DECLARED_STATES = PRESENT_STATES + ABSENT_STATES
+
 #: *** DELIBERATELY UNMISTAKABLE, AND NOT AN INGREDIENT. *** `Q25` holds the ingredient set with
 #: the Product Authority and `CD-PL-F154` is what happens when a fixture escapes. The VALUE
 #: branch requires `inputs_used` with `minItems: 1`, so this string exists only to satisfy that
@@ -207,44 +225,154 @@ NOW = datetime.strptime(AS_OF_UTC, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone
 SYNTHETIC_SCORE = 0.01
 
 
-def _dial(state: str, level: str) -> dict:
-    """One dial reading in ``state`` carrying ``level``. Built as the wire document."""
-    if state == "UNKNOWN":
-        return {
-            "state": "UNKNOWN",
-            "reason": "NO_SOURCE_REGISTERED",
-            "since_utc": AS_OF_UTC,
-            "missing_inputs": [],
-            "detail_level": level,
-        }
-    if state == "DEGRADED":
-        return {
-            "state": "DEGRADED",
-            "score": SYNTHETIC_SCORE,
-            "as_of_utc": AS_OF_UTC,
-            "missing_inputs": [SYNTHETIC_INPUT_ID],
-            "reason": "INPUT_MISSING",
-            "contributions": [],
-            "detail_level": level,
-        }
-    if state == "VALUE":
-        return {
-            "state": "VALUE",
-            "score": SYNTHETIC_SCORE,
-            "as_of_utc": AS_OF_UTC,
-            "inputs_used": [SYNTHETIC_INPUT_ID],
-            "contributions": [],
-            "detail_level": level,
-        }
-    raise ValueError(f"no such dial state: {state!r}")
+#: *** THE LEVEL KEY IS OMITTED ENTIRELY. *** Not a level, and deliberately not a string: this is
+#: the FIELD-ABSENT row (`FX2`, closing `CD-ASR-WO3-05` F2). `tests/test_detail_level.py` has
+#: asserted `_dial_with_level(builder, None) == REFUSED` since before this instrument existed, and
+#: that row was dropped when the property moved into the register. A dial that carries NO
+#: `detail_level` at all leaves the renderer to decide, which is the second decision site the whole
+#: module exists to prevent.
+LEVEL_ABSENT = "<<the detail_level key is not present>>"
+
+#: The OFF-VOCABULARY row (`FX2`). It is `banana` and not something cleverer ON PURPOSE: that is the
+#: exact token `tests/test_detail_level.py::_assert_missing_data_never_renders_as_calm` has always
+#: used, and this instrument must not be weaker than the memorial it supersedes. If a contract ever
+#: declares it as a real level this check REFUSES to run (exit 3) rather than asserting a row that
+#: has quietly become false.
+OFF_VOCABULARY_LEVEL = "banana"
+
+#: The property that carries the level, on every branch of the union.
+DETAIL_LEVEL = "detail_level"
+
+#: A generic non-empty bounded string, for any required property whose schema wants one. It is
+#: unmistakable for the same reason `SYNTHETIC_INPUT_ID` is: a grep for it lands here.
+SYNTHETIC_TEXT = "SYNTHETIC-REGISTER-CHECK-NOT-A-VALUE"
+
+#: *** THE DECLARED VALUE VOCABULARY, AND IT IS A CLOSED LIST ON PURPOSE (RULE F). *** A candidate
+#: dial is built from the branch's OWN `required` + `properties`, and each property's value is the
+#: FIRST of these that the property's own subschema ACCEPTS — decided by `jsonschema`, the same
+#: library the gate validates with, and never by the property's NAME. A required property that none
+#: of these satisfies is reported as UNRECOGNISED (`CD-CALM-BRANCHES-006`) rather than skipped, so a
+#: branch this instrument cannot build is a VIOLATION and not a silence.
+#: Order matters and is the only thing that is tuned: the plain string precedes the timestamp so a
+#: free-text property gets text and a `pattern`-constrained one gets the timestamp.
+SYNTHETIC_VALUES = (
+    SYNTHETIC_TEXT,             # a bounded, non-empty, unpatterned string
+    AS_OF_UTC,                  # a UTC timestamp string
+    SYNTHETIC_SCORE,            # a number
+    [SYNTHETIC_INPUT_ID],       # a non-empty array of id-shaped strings
+    [],                         # an empty array
+    {},                         # an empty object
+    True,                       # a boolean
+    None,                       # null
+)
 
 
-def _envelope(surface_value: str, slots: tuple, slot: str, state: str, level: str) -> dict:
-    """A conforming envelope with ONE slot moved to ``state``/``level`` and nothing else.
+def _fragment(schema: dict, subschema: dict) -> dict:
+    """``subschema`` as a standalone document, so its local ``#/$defs/...`` refs still resolve."""
+    fragment = dict(subschema)
+    fragment.setdefault("$schema", schema.get("$schema")
+                        or "https://json-schema.org/draft/2020-12/schema")
+    fragment.setdefault("$defs", schema.get("$defs") or {})
+    return fragment
 
-    Every other slot is left at the shipped WO-2 state — UNKNOWN, `elevated` — so the ONLY
-    thing that varies across the whole matrix is the one dial under test. That is what makes
-    `CD-CALM-PAIRED-004`'s one-pointer diff possible.
+
+def _deref(schema: dict, node, depth: int = 0):
+    """Follow a chain of LOCAL ``#/...`` refs to the mapping it names. ``None`` if unresolvable.
+
+    Only local fragments are followed. A `$ref` this cannot resolve returns ``None``, and every
+    caller treats ``None`` as UNRECOGNISED rather than as "nothing to see".
+    """
+    while isinstance(node, dict) and "$ref" in node and depth < 32:
+        ref = node["$ref"]
+        if not isinstance(ref, str) or not ref.startswith("#/"):
+            return None
+        cursor = schema
+        for token in ref[2:].split("/"):
+            token = token.replace("~1", "/").replace("~0", "~")
+            if not isinstance(cursor, dict) or token not in cursor:
+                return None
+            cursor = cursor[token]
+        node, depth = cursor, depth + 1
+    return node if isinstance(node, dict) else None
+
+
+def _synthesise(schema: dict, subschema, validator):
+    """A value the property's OWN subschema accepts, or ``None`` if this check cannot build one.
+
+    Returns ``(value, True)`` on success and ``(None, False)`` on failure, so a legitimate
+    ``None``/``null`` value is not confused with an unbuildable property.
+    """
+    if not isinstance(subschema, dict):
+        return None, False
+    resolved = _deref(schema, subschema)
+    candidates: list = []
+    if isinstance(resolved, dict):
+        if "const" in resolved:
+            candidates.append(resolved["const"])
+        if isinstance(resolved.get("enum"), list):
+            candidates.extend(resolved["enum"])
+    candidates.extend(SYNTHETIC_VALUES)
+    try:
+        checker = validator(_fragment(schema, subschema))
+    except Exception:  # pragma: no cover - a subschema jsonschema cannot even compile
+        return None, False
+    for candidate in candidates:
+        try:
+            if checker.is_valid(candidate):
+                return candidate, True
+        except Exception:  # pragma: no cover - a candidate the validator chokes on
+            continue
+    return None, False
+
+
+def _dial_from_branch(schema: dict, branch: dict, level, validator):
+    """One dial reading built from **THIS BRANCH'S OWN** ``required`` + ``properties``.
+
+    *** THIS IS THE FIX FOR `CD-ASR-WO3-05` F1 AND IT IS THE WHOLE POINT OF `16B-FIX`. *** The
+    superseded implementation wrote out the field list of each branch BY HAND, one hard-coded
+    document shape per state, so a fourth `oneOf` branch — one the author never wrote — was a
+    branch the instrument could not drive, and a tree on which the live gate ADMITTED an `UNKNOWN`
+    dial rendering as `calm` left every one of the register's thirty `execute:` lines byte-identical
+    to the clean tree. Nothing here is written by hand any more: the field list comes from the
+    branch, the values come from each property's own subschema, and `detail_level` — the one token
+    under test — is the only thing this function decides.
+
+    Returns ``(document, None)`` or ``(None, <the property it could not build>)``.
+    """
+    required = [name for name in (branch.get("required") or []) if isinstance(name, str)]
+    properties = branch.get("properties") or {}
+    names = list(required)
+    if DETAIL_LEVEL not in names and DETAIL_LEVEL in properties:
+        # The branch declares the level but does not REQUIRE it — auditor tree E2. Drive it
+        # anyway, or every row below would silently become the field-absent row.
+        names.append(DETAIL_LEVEL)
+    if DETAIL_LEVEL not in names:
+        return None, DETAIL_LEVEL
+
+    document: dict = {}
+    for name in names:
+        if name == DETAIL_LEVEL:
+            if level is not LEVEL_ABSENT:
+                document[name] = level
+            continue
+        value, built = _synthesise(schema, properties.get(name), validator)
+        if not built:
+            return None, name
+        document[name] = value
+    return document, None
+
+
+def _envelope(surface_value: str, slots: tuple, slot: str, dial: dict, filler: dict) -> dict:
+    """A conforming envelope with ONE slot moved to ``dial`` and nothing else.
+
+    Every other slot carries ``filler`` — one admissible absent-data dial, itself derived from the
+    contract — so the ONLY thing that varies across the whole matrix is the one dial under test.
+    That is what makes `CD-CALM-PAIRED-004`'s one-pointer diff possible.
+
+    THE ENVELOPE ROOT IS STILL WRITTEN OUT HERE, AND THAT IS DECLARED LIMIT 7. It is FAIL-CLOSED
+    rather than fail-silent: a required root property this skeleton does not carry makes every
+    candidate refused, so every `MUST ADMIT` row fails as `CD-CALM-GATE-002`. The dial BRANCHES were
+    the silent case, and they are the ones now derived.
     """
     envelope = {
         "schema_version": None,  # filled by the caller from the application's own constant
@@ -257,10 +385,10 @@ def _envelope(surface_value: str, slots: tuple, slot: str, state: str, level: st
         "config_snapshot_id": SYNTHETIC_CONFIG_SNAPSHOT_ID,
     }
     for name in slots:
-        envelope[name] = _dial("UNKNOWN", "elevated")
+        envelope[name] = dict(filler)
     if surface_value == "private":
         envelope["classification"] = "PRIVATE"
-    envelope[slot] = _dial(state, level)
+    envelope[slot] = dial
     return envelope
 
 
@@ -286,22 +414,128 @@ def _differing_pointers(left: dict, right: dict) -> list:
     return sorted(set(a) ^ set(b)) + sorted(k for k in set(a) & set(b) if a[k] != b[k])
 
 
-def _expectations(levels: tuple) -> tuple:
-    """The proposition table: ``(state, level, expectation)``, built from the FULL vocabulary.
+def _expectations(levels: tuple, absent_data: bool) -> tuple:
+    """The proposition table for ONE branch: ``(level, expectation)``.
 
     `levels` is read from the contract's own `#/$defs/detail_level` enum rather than typed in,
     so a fourth level added to the vocabulary is driven on the day it is added instead of being
     silently unexercised. The RULE is what is written here and it is written once:
 
-      * an ABSENT-DATA state carrying `calm` MUST BE REFUSED;
-      * everything else in the vocabulary MUST BE ADMITTED, including `calm` on a VALUE.
+      * an ABSENT-DATA branch carrying `calm` MUST BE REFUSED;
+      * everything else in the vocabulary MUST BE ADMITTED, including `calm` on a present-data
+        branch — that is the vacuity arm and it carries equal weight;
+      * and, NEW AT `16B-FIX` (`FX2`, closing `CD-ASR-WO3-05` F2), an absent-data branch carrying
+        NO `detail_level` key at all, or one OUTSIDE the vocabulary, MUST ALSO BE REFUSED. Both
+        rows were asserted by `tests/test_detail_level.py` before this instrument existed and both
+        were dropped when the property moved into the register; the superseded instrument was
+        therefore STRICTLY WEAKER than the memorial it was built to replace, while this row's own
+        `negative_control` said in two governed artefacts that it "fails on all of these".
     """
-    rows = []
-    for state in ("VALUE",) + ABSENT_STATES:
-        for level in levels:
-            refuse = state in ABSENT_STATES and level == CALM
-            rows.append((state, level, MUST_REFUSE if refuse else MUST_ADMIT))
+    rows = [(level, MUST_REFUSE if (absent_data and level == CALM) else MUST_ADMIT)
+            for level in levels]
+    if absent_data:
+        rows.append((LEVEL_ABSENT, MUST_REFUSE))
+        rows.append((OFF_VOCABULARY_LEVEL, MUST_REFUSE))
     return tuple(rows)
+
+
+def _label_for(level) -> str:
+    """How a row's level is named in a cell label and in a violation."""
+    if level is LEVEL_ABSENT:
+        return "<no detail_level key>"
+    return str(level)
+
+
+#: The keywords a subschema can hide another subschema behind. DECLARED and closed: a keyword not
+#: named here is not descended into, and :func:`_dial_bearing` says so by returning UNDECIDABLE
+#: rather than False. `$defs` is deliberately ABSENT — descending into the definition pot from a
+#: single property would make every property reach every definition.
+_SUBSCHEMA_KEYWORDS = (
+    "allOf", "anyOf", "oneOf", "not", "if", "then", "else",
+    "items", "prefixItems", "contains", "additionalProperties",
+    "properties", "patternProperties", "propertyNames", "unevaluatedItems",
+    "unevaluatedProperties",
+)
+
+
+def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
+    """Does this subschema constrain a dial ``state``, under ANY spelling? ``None`` = undecidable.
+
+    *** THIS IS THE FIX FOR `CD-ASR-WO3-05` F3 AND IT IS WHY `DECLARED LIMIT 4` CAN NOW BE STATED
+    TRUTHFULLY. *** The slot enumerator drives every root property spelled EXACTLY
+    ``{"$ref": "#/$defs/dial_reading"}`` — that is what it has always done, and the superseded limit
+    claimed more. This function is the fail-closed half: it recognises a dial-bearing root property
+    under any spelling, so a dial slot this instrument does NOT drive is a VIOLATION rather than an
+    invisible one. Auditor tree `E1` — an OPTIONAL third slot `credit_stress` referencing a
+    permissive union — passed the superseded instrument at `67 assertions, 0 violations` while the
+    live gate ADMITTED `calm` on it, on both surfaces.
+
+    *** IT DOES NOT ADD A THIRD DIAL SLOT TO ANYTHING. *** `PO-DECISIONS-0026` standing is TWO
+    DIALS, NEVER BLENDED. This makes the enumerator honest about what it drives; it drives nothing
+    new on the clean tree, where the two sets are equal.
+    """
+    if depth > 24:
+        return None
+    seen = set() if seen is None else seen
+    resolved = _deref(schema, node)
+    if resolved is None:
+        return None
+    if id(resolved) in seen:
+        return False
+    seen = seen | {id(resolved)}
+
+    state = resolved.get("properties", {}).get("state") if isinstance(
+        resolved.get("properties"), dict) else None
+    state = _deref(schema, state) if isinstance(state, dict) else None
+    if isinstance(state, dict):
+        if state.get("const") in DECLARED_STATES:
+            return True
+        values = state.get("enum")
+        if isinstance(values, list) and set(values) & set(DECLARED_STATES):
+            return True
+
+    undecidable = False
+    for keyword in _SUBSCHEMA_KEYWORDS:
+        if keyword not in resolved:
+            continue
+        child = resolved[keyword]
+        children = (list(child.values()) if isinstance(child, dict) and keyword in
+                    ("properties", "patternProperties")
+                    else child if isinstance(child, list) else [child])
+        for entry in children:
+            if not isinstance(entry, (dict, list)):
+                continue
+            verdict = _dial_bearing(schema, entry, depth + 1, seen)
+            if verdict is True:
+                return True
+            if verdict is None:
+                undecidable = True
+    return None if undecidable else False
+
+
+def _branch_states(schema: dict, dial_union: dict):
+    """The union's branches as ``(label, resolved_branch, state_const)``; ``None`` where unreadable.
+
+    The branch SET is what the superseded instrument never enumerated. It wrote out one document
+    shape per state by hand, so the union could grow a branch and nothing anywhere would move.
+    """
+    branches = dial_union.get("oneOf")
+    if not isinstance(branches, list) or not branches:
+        return None
+    out = []
+    for index, entry in enumerate(branches):
+        label = entry.get("$ref") if isinstance(entry, dict) and isinstance(
+            entry.get("$ref"), str) else f"oneOf[{index}]"
+        resolved = _deref(schema, entry) if isinstance(entry, dict) else None
+        state = None
+        if isinstance(resolved, dict):
+            declared = resolved.get("properties", {}).get("state") if isinstance(
+                resolved.get("properties"), dict) else None
+            declared = _deref(schema, declared) if isinstance(declared, dict) else None
+            if isinstance(declared, dict) and isinstance(declared.get("const"), str):
+                state = declared["const"]
+        out.append((label, resolved, state))
+    return out
 
 
 def main(argv=None) -> int:
@@ -351,6 +585,16 @@ def main(argv=None) -> int:
             "gate and the live gate validates with jsonschema."
         )
 
+    try:
+        import jsonschema  # noqa: F401
+        from jsonschema.validators import validator_for
+    except Exception as exc:  # pragma: no cover - DECLARED LIMIT 6
+        return check.refuse(
+            f"`jsonschema` did not import ({type(exc).__name__}: {exc}). DECLARED LIMIT 6: this "
+            "check drives the live gate, the live gate validates with jsonschema, and a "
+            "behavioural check cannot be more stdlib-only than the behaviour it drives."
+        )
+
     package_dir = pathlib.Path(crash_detector.__file__).resolve().parent
     # CD-PL-F98 — READ THE TREE LINE EVERY TIME. A contrast run against the wrong tree is
     # indistinguishable from a fix that does nothing.
@@ -388,25 +632,72 @@ def main(argv=None) -> int:
                 "check has nothing to measure."
             )
 
+    here = pathlib.Path(__file__)
+
     # ---- THE SUBJECT SET, ENUMERATED FROM THE APPLICATION AND THE CONTRACT ------------ #
     # Dial slots are the top-level properties that $ref the dial_reading union, read from the
     # contract itself. Typing them in would mean a third dial added tomorrow is never driven.
+    #
+    # *** AND THE FAIL-CLOSED HALF, NEW AT 16B-FIX (FX3, closing CD-ASR-WO3-05 F3). *** What is
+    # DRIVEN is every property spelled EXACTLY {"$ref": "#/$defs/dial_reading"}. What is
+    # ENUMERATED FOR COMPARISON is every root property that constrains a dial `state` under ANY
+    # spelling. If those two sets differ, there is a dial-bearing slot this instrument cannot
+    # drive, and that is a VIOLATION rather than a silence. Auditor tree E1 — an OPTIONAL third
+    # slot spelled with a different $ref — passed the superseded instrument while the gate
+    # ADMITTED `calm` on it, on both surfaces.
     slots_by_surface = {}
     for surface, schema in schemas.items():
+        properties = schema.get("properties") or {}
         found = tuple(
             sorted(
                 name
-                for name, sub in (schema.get("properties") or {}).items()
+                for name, sub in properties.items()
                 if isinstance(sub, dict) and sub.get("$ref") == "#/$defs/dial_reading"
             )
         )
         slots_by_surface[surface] = found
-        check.note(f"{surface.value} dial slots enumerated from the contract: {list(found)}")
+        check.note(f"{surface.value} dial slots DRIVEN (literal $ref to #/$defs/dial_reading): "
+                   f"{list(found)}")
         if not found:
             return check.refuse(
                 f"the {surface.value} contract declares no property referencing "
                 "'#/$defs/dial_reading'. There is no dial to drive, so a clean exit would "
                 "mean 'I looked at nothing'."
+            )
+
+        dial_bearing, undecidable = [], []
+        for name, sub in sorted(properties.items()):
+            verdict = _dial_bearing(schema, sub)
+            if verdict is True:
+                dial_bearing.append(name)
+            elif verdict is None:
+                undecidable.append(name)
+        check.note(f"{surface.value} root properties that constrain a dial state under ANY "
+                   f"spelling: {dial_bearing}")
+
+        check.asserted(2)
+        if set(dial_bearing) != set(found):
+            check.violation(
+                here, 0, "CD-CALM-SLOTS-007",
+                f"{surface.value}: the contract declares dial-bearing root properties "
+                f"{sorted(set(dial_bearing) - set(found))!r} that are NOT spelled "
+                "'{\"$ref\": \"#/$defs/dial_reading\"}' and are therefore NOT DRIVEN by this "
+                "instrument, "
+                f"and/or drives {sorted(set(found) - set(dial_bearing))!r} that no longer "
+                "constrains a dial state. *** A DIAL SLOT THIS CHECK CANNOT DRIVE IS A SLOT ON "
+                "WHICH PID §3.2 IS UNGUARDED, and the superseded DECLARED LIMIT 4 claimed the "
+                "opposite. *** This assertion FAILS CLOSED rather than the enumerator widening "
+                "itself: two dials, never blended, is standing product (PO-DECISIONS-0026), so "
+                "a third dial slot is a PRODUCT decision and not this instrument's to absorb.",
+            )
+        if undecidable:
+            check.violation(
+                here, 0, "CD-CALM-SLOTS-007",
+                f"{surface.value}: root properties {undecidable!r} use a construct this check "
+                "cannot decide about — a $ref it could not resolve, a keyword outside its "
+                "declared set, or a nesting deeper than it walks. DENY BY DEFAULT (RULE F): an "
+                "undecidable root property is reported as UNRECOGNISED, because 'I could not "
+                "tell whether that is a dial' must never read the same as 'it is not'.",
             )
 
     vocabulary = tuple((schemas[EnvelopeSurface.PUBLIC].get("$defs") or {})
@@ -417,21 +708,26 @@ def main(argv=None) -> int:
             "cannot enumerate the vocabulary it must drive."
         )
     check.note(f"detail_level vocabulary enumerated from the contract: {list(vocabulary)}")
+    if OFF_VOCABULARY_LEVEL in vocabulary:
+        return check.refuse(
+            f"the contract now declares {OFF_VOCABULARY_LEVEL!r} as a real detail_level, so this "
+            "check's OFF-VOCABULARY row is no longer off-vocabulary and would assert something "
+            "that has quietly become false. Non-zero with the reason, never a pass (PBG-CI-002)."
+        )
 
-    table = _expectations(vocabulary)
+    absent_table = _expectations(vocabulary, absent_data=True)
+    present_table = _expectations(vocabulary, absent_data=False)
 
     # ---- CD-CALM-VACUITY-000 — THE TABLE ITSELF IS NOT DEGENERATE -------------------- #
-    here = pathlib.Path(__file__)
-    check.asserted(2)
-    if not any(expectation == MUST_REFUSE for _, _, expectation in table):
+    check.asserted(3)
+    if not any(expectation == MUST_REFUSE for _, expectation in absent_table):
         check.violation(
             here, 0, "CD-CALM-VACUITY-000",
             "this check's own proposition table contains no MUST REFUSE row. It would then "
             "assert nothing about PID §3.2 at all.",
         )
     if not any(
-        state == "VALUE" and level == CALM and expectation == MUST_ADMIT
-        for state, level, expectation in table
+        level == CALM and expectation == MUST_ADMIT for level, expectation in present_table
     ):
         check.violation(
             here, 0, "CD-CALM-VACUITY-000",
@@ -441,127 +737,339 @@ def main(argv=None) -> int:
             "§3.2 held, it is silence enforced, and it is the failure mode this instrument was "
             "written to be incapable of.",
         )
+    if not (
+        any(level is LEVEL_ABSENT and expectation == MUST_REFUSE
+            for level, expectation in absent_table)
+        and any(level == OFF_VOCABULARY_LEVEL and expectation == MUST_REFUSE
+                for level, expectation in absent_table)
+    ):
+        check.violation(
+            here, 0, "CD-CALM-VACUITY-000",
+            "*** THIS CHECK'S FIELD-ABSENT AND OFF-VOCABULARY ROWS ARE GONE. *** Those two rows "
+            "are what stop this instrument being STRICTLY WEAKER than the memorial it "
+            "superseded: tests/test_detail_level.py has asserted both since before this file "
+            "existed, and both were dropped when the property moved into the register "
+            "(CD-ASR-WO3-05 F2). Losing them again is how a guard becomes a certificate.",
+        )
+
+    # ---- CD-CALM-BRANCHES-006 — THE UNION'S BRANCH SET, ENUMERATED AND CLOSED --------- #
+    # *** THE STRUCTURAL HALF OF THE F1 FIX, AND IT DENIES BY DEFAULT (RULE F, the shape
+    # check_no_numeric_default already established here). *** The superseded instrument never
+    # looked at #/$defs/dial_reading.oneOf at all: it wrote one document shape per state by
+    # hand, so a FOURTH branch — permitting the full vocabulary on UNKNOWN, selected by a marker
+    # property, adding NO root key so check_schema_closed's allowlist never fires — left the
+    # gate ADMITTING a calm UNKNOWN dial on both surfaces with all thirty of the register's
+    # `execute:` lines byte-identical to the clean tree (CD-ASR-WO3-05 F1, tree E3).
+    #
+    # A branch is recognised by its own `properties.state.const` — NEVER by the name of the
+    # $def it lives in — so the pure-rename refactor this instrument already survives keeps
+    # passing. What is closed is the SHAPE of the branch set: exactly one branch per declared
+    # state, no duplicates, no extras, and every declared state one this check can classify.
+    branches_by_surface = {}
+    for surface, schema in schemas.items():
+        dial_union = _deref(schema, (schema.get("$defs") or {}).get("dial_reading"))
+        if dial_union is None:
+            return check.refuse(
+                f"the {surface.value} contract's '#/$defs/dial_reading' does not resolve to a "
+                "schema object, so there is no union to enumerate and no branch to drive."
+            )
+        branches = _branch_states(schema, dial_union)
+        if branches is None:
+            return check.refuse(
+                f"the {surface.value} contract's '#/$defs/dial_reading' declares no non-empty "
+                "'oneOf'. This check drives EVERY branch of the union; with no union declared "
+                "it has nothing to enumerate and a clean exit would mean 'I looked at nothing'."
+            )
+        branches_by_surface[surface] = branches
+        check.note(f"{surface.value} dial_reading.oneOf branches enumerated: "
+                   + repr([(label, state) for label, _, state in branches]))
+
+        declared = dial_union.get("properties", {}).get("state") if isinstance(
+            dial_union.get("properties"), dict) else None
+        declared = _deref(schema, declared) if isinstance(declared, dict) else None
+        contract_states = tuple(declared.get("enum") or ()) if isinstance(declared, dict) else ()
+
+        check.asserted(4)
+        unreadable = [label for label, resolved, state in branches
+                      if resolved is None or state is None]
+        if unreadable:
+            check.violation(
+                here, 0, "CD-CALM-BRANCHES-006",
+                f"{surface.value}: branches {unreadable!r} of '#/$defs/dial_reading.oneOf' do "
+                "not resolve to a schema object declaring 'properties.state.const' as a string. "
+                "DENY BY DEFAULT: a branch this check cannot IDENTIFY is a branch it cannot "
+                "DRIVE, and an undriven branch of the published union is a shape on which PID "
+                "§3.2 is unguarded. Unrecognised is a VIOLATION, never a silence.",
+            )
+        states = [state for _, _, state in branches if state is not None]
+        duplicated = sorted({s for s in states if states.count(s) > 1})
+        if duplicated:
+            check.violation(
+                here, 0, "CD-CALM-BRANCHES-006",
+                f"{surface.value}: '#/$defs/dial_reading.oneOf' declares MORE THAN ONE branch "
+                f"for the dial state(s) {duplicated!r}. *** A SECOND BRANCH FOR A STATE THAT "
+                "ALREADY HAS ONE IS THE E3 SHAPE: it can widen what that state may carry while "
+                "the original branch, and every structural check that reads it, stays exactly "
+                "as it was. *** One branch per state, or this check cannot say which document "
+                "shape the state actually permits.",
+            )
+        if contract_states and set(states) != set(contract_states):
+            check.violation(
+                here, 0, "CD-CALM-BRANCHES-006",
+                f"{surface.value}: the union's branch states {sorted(set(states))!r} are not "
+                f"the states '#/$defs/dial_reading.properties.state' declares, "
+                f"{sorted(set(contract_states))!r}. A declared state with no branch is "
+                "unconstrained; a branch for an undeclared state is a shape nobody declared.",
+            )
+        if set(contract_states or states) != set(DECLARED_STATES):
+            check.violation(
+                here, 0, "CD-CALM-BRANCHES-006",
+                f"{surface.value}: the contract declares dial states "
+                f"{sorted(set(contract_states or states))!r}, which is not this check's "
+                f"declared, closed set {sorted(DECLARED_STATES)!r}. *** DENY BY DEFAULT: a "
+                "state nobody anticipated is a VIOLATION FOR BEING UNRECOGNISED. *** Whether a "
+                "new state MEANS the data is absent is product meaning and not an Engineer's to "
+                "guess (PBG-AUTH-005) — and guessing 'present' would silently admit `calm` on "
+                "it. See DECLARED LIMIT 8: this is the one axis on which this instrument does "
+                "NOT grow on the day the contract does, deliberately.",
+            )
+
+    # ---- THE FILLER DIAL, ITSELF DERIVED FROM THE CONTRACT ---------------------------- #
+    # Every slot other than the one under test carries an admissible absent-data dial, so the
+    # ONLY thing that varies across the whole matrix is the one dial under test.
+    admissible = tuple(level for level in vocabulary if level != CALM)
+    if not admissible:
+        return check.refuse(
+            "the contract's detail_level vocabulary contains nothing but 'calm', so there is no "
+            "admissible level for a missing-data dial and this check would be vacuous."
+        )
+    fillers = {}
+    for surface, schema in schemas.items():
+        validator = validator_for(schema)
+        chosen = None
+        for wanted in ABSENT_STATES:
+            for _, resolved, state in branches_by_surface[surface]:
+                if state == wanted and resolved is not None:
+                    chosen = resolved
+                    break
+            if chosen is not None:
+                break
+        if chosen is None:
+            return check.refuse(
+                f"the {surface.value} contract's dial union declares no branch for any of the "
+                f"absent-data states {list(ABSENT_STATES)}, so there is nothing for this check "
+                "to assert about PID §3.2 on that surface."
+            )
+        filler, unbuildable = _dial_from_branch(schema, chosen, admissible[0], validator)
+        if filler is None:
+            return check.refuse(
+                f"the {surface.value} contract's absent-data branch requires a property "
+                f"{unbuildable!r} that this check cannot build a value for, so it cannot form a "
+                "conforming envelope at all. See DECLARED LIMIT 9."
+            )
+        fillers[surface] = filler
+        check.note(f"{surface.value} filler dial derived from the contract: {filler!r}")
 
     # ---- THE MATRIX ------------------------------------------------------------------- #
     admitted_reference: dict = {}
+    candidates_built: dict = {}
     cells = 0
 
     for surface in EnvelopeSurface:
+        schema = schemas[surface]
+        validator = validator_for(schema)
         slots = slots_by_surface[surface]
         for slot in slots:
-            for state, level, expectation in table:
-                candidate = _envelope(surface.value, slots, slot, state, level)
-                candidate["schema_version"] = ENVELOPE_SCHEMA_VERSION
-                label = f"{surface.value}/{slot}/{state}/{level}"
-                cells += 1
+            for branch_index, (branch_label, branch, state) in enumerate(
+                branches_by_surface[surface]
+            ):
+                if branch is None or state is None:
+                    continue  # already reported as CD-CALM-BRANCHES-006, and not silently
+                absent_data = state in ABSENT_STATES
+                if not absent_data and state not in PRESENT_STATES:
+                    continue  # unrecognised state, already reported; never assumed benign
+                table = absent_table if absent_data else present_table
+                for level, expectation in table:
+                    dial, unbuildable = _dial_from_branch(schema, branch, level, validator)
+                    label = (f"{surface.value}/{slot}/{state}[{branch_label}]/"
+                             f"{_label_for(level)}")
+                    if dial is None:
+                        check.asserted()
+                        check.violation(
+                            here, 0, "CD-CALM-BRANCHES-006",
+                            f"{label}: this check could not build a candidate for this branch — "
+                            f"required property {unbuildable!r} has a subschema none of its "
+                            "declared synthetic values satisfies. DENY BY DEFAULT: a branch "
+                            "that cannot be built cannot be driven, and an undriven branch is "
+                            "reported as UNRECOGNISED rather than passed over (RULE F).",
+                        )
+                        continue
+                    candidate = _envelope(surface.value, slots, slot, dial, fillers[surface])
+                    candidate["schema_version"] = ENVELOPE_SCHEMA_VERSION
+                    candidates_built[(surface, slot, branch_index, _label_for(level))] = candidate
+                    cells += 1
 
-                check.asserted()
-                try:
-                    returned = refuse_unless_publishable(candidate, surface=surface)
-                except PublicationRefused as refused:
-                    if expectation is MUST_ADMIT:
-                        check.violation(
-                            here, 0, "CD-CALM-GATE-002",
-                            f"{label}: {expectation} — but the gate REFUSED it "
-                            f"[{refused.reason_class}] at {refused.pointer or '<root>'}. "
-                            + (
-                                "*** A VALUE dial backed by real inputs can no longer render "
-                                "as calm. PID §4 makes calm the base case — 'calm = dial + one "
-                                "line' — and a contract that cannot express it is not holding "
-                                "PID §3.2, it is enforcing silence. ***"
-                                if state == "VALUE" and level == CALM
-                                else "This is a state the product must be able to publish. A "
-                                "guard that refuses it has not closed a hole, it has closed "
-                                "the product."
-                            ),
+                    check.asserted()
+                    try:
+                        returned = refuse_unless_publishable(candidate, surface=surface)
+                    except PublicationRefused as refused:
+                        if expectation is MUST_ADMIT:
+                            check.violation(
+                                here, 0, "CD-CALM-GATE-002",
+                                f"{label}: {expectation} — but the gate REFUSED it "
+                                f"[{refused.reason_class}] at {refused.pointer or '<root>'}. "
+                                + (
+                                    "*** A VALUE dial backed by real inputs can no longer render "
+                                    "as calm. PID §4 makes calm the base case — 'calm = dial + one "
+                                    "line' — and a contract that cannot express it is not holding "
+                                    "PID §3.2, it is enforcing silence. ***"
+                                    if not absent_data and level == CALM
+                                    else "This is a state the product must be able to publish. A "
+                                    "guard that refuses it has not closed a hole, it has closed "
+                                    "the product."
+                                ),
+                            )
+                            continue
+                        # It refused, as it must. Now: for the right reason, at the right place?
+                        check.asserted(2)
+                        if refused.reason_class != REFUSAL_SCHEMA_VIOLATION:
+                            check.violation(
+                                here, 0, "CD-CALM-REASON-003",
+                                f"{label}: refused, but as {refused.reason_class} and not as "
+                                f"{REFUSAL_SCHEMA_VIOLATION}. The right outcome from the wrong "
+                                "layer is this project's most-repeated defect (CD-PL-F74): a "
+                                "candidate refused for an unrelated malformation proves nothing "
+                                "about calm.",
+                            )
+                        if refused.pointer != f"/{slot}":
+                            check.violation(
+                                here, 0, "CD-CALM-REASON-003",
+                                f"{label}: refused at pointer {refused.pointer or '<root>'!r}, "
+                                f"which does not name the mutated dial slot '/{slot}'. The "
+                                "refusal is not located at the thing under test.",
+                            )
+                        check.note(
+                            f"{label}: REFUSED [{refused.reason_class}] at "
+                            f"{refused.pointer or '<root>'}"
                         )
-                        continue
-                    # It refused, as it must. Now: for the right reason, at the right place?
-                    check.asserted(2)
-                    if refused.reason_class != REFUSAL_SCHEMA_VIOLATION:
+                    except Exception as other:
                         check.violation(
                             here, 0, "CD-CALM-REASON-003",
-                            f"{label}: refused, but as {refused.reason_class} and not as "
-                            f"{REFUSAL_SCHEMA_VIOLATION}. The right outcome from the wrong "
-                            "layer is this project's most-repeated defect (CD-PL-F74): a "
-                            "candidate refused for an unrelated malformation proves nothing "
-                            "about calm.",
+                            f"{label}: the gate raised {type(other).__name__}: "
+                            f"{str(other).splitlines()[0][:160]}. That is neither an admission nor "
+                            "a declared refusal. A refusal that arrives as a crash is not a "
+                            "refusal, and a check cannot read it as one.",
                         )
-                    if refused.pointer != f"/{slot}":
-                        check.violation(
-                            here, 0, "CD-CALM-REASON-003",
-                            f"{label}: refused at pointer {refused.pointer or '<root>'!r}, "
-                            f"which does not name the mutated dial slot '/{slot}'. The "
-                            "refusal is not located at the thing under test.",
-                        )
-                    check.note(
-                        f"{label}: REFUSED [{refused.reason_class}] at "
-                        f"{refused.pointer or '<root>'}"
-                    )
-                except Exception as other:
-                    check.violation(
-                        here, 0, "CD-CALM-REASON-003",
-                        f"{label}: the gate raised {type(other).__name__}: "
-                        f"{str(other).splitlines()[0][:160]}. That is neither an admission nor "
-                        "a declared refusal. A refusal that arrives as a crash is not a "
-                        "refusal, and a check cannot read it as one.",
-                    )
-                else:
-                    if expectation is MUST_REFUSE:
-                        check.violation(
-                            here, 0, "CD-CALM-GATE-001",
-                            f"{label}: *** THE LIVE GATE ADMITTED A {state} DIAL RENDERING AS "
-                            "CALM. *** PID §3.2 is constitutional and its words are 'Missing "
-                            "data must never render as calm'. With zero registered sources "
-                            "every dial reads UNKNOWN, so this is not an edge case — it is the "
-                            "only state this product can currently publish. "
-                            f"refuse_unless_publishable returned {returned!r} and nothing "
-                            "stopped the write.",
-                        )
-                        continue
-                    admitted_reference[(surface, slot, state)] = candidate
-                    check.note(f"{label}: ADMITTED")
+                    else:
+                        if expectation is MUST_REFUSE:
+                            if level is LEVEL_ABSENT:
+                                what = (
+                                    f"*** THE LIVE GATE ADMITTED A {state} DIAL CARRYING NO "
+                                    "detail_level AT ALL. *** A missing-data dial with no level "
+                                    "leaves the RENDERER to choose one, which is the second "
+                                    "decision site the whole detail_level module exists to "
+                                    "prevent, and `calm` is among the choices. "
+                                    "tests/test_detail_level.py has asserted this refusal since "
+                                    "before this instrument existed; this row exists because "
+                                    "the instrument that superseded that memorial dropped it "
+                                    "(CD-ASR-WO3-05 F2)."
+                                )
+                            elif level == OFF_VOCABULARY_LEVEL:
+                                what = (
+                                    f"*** THE LIVE GATE ADMITTED A {state} DIAL CARRYING "
+                                    f"{level!r}, WHICH IS NOT A detail_level AT ALL. *** A "
+                                    "branch that accepts an arbitrary string accepts `calm` the "
+                                    "moment the enum in front of it is loosened, and a renderer "
+                                    "meeting a level it does not know will fall back to one it "
+                                    "does. tests/test_detail_level.py has asserted this refusal "
+                                    "with this same token since before this instrument existed."
+                                )
+                            else:
+                                what = (
+                                    f"*** THE LIVE GATE ADMITTED A {state} DIAL RENDERING AS "
+                                    "CALM. *** PID §3.2 is constitutional and its words are "
+                                    "'Missing data must never render as calm'. With zero "
+                                    "registered sources every dial reads UNKNOWN, so this is "
+                                    "not an edge case — it is the only state this product can "
+                                    "currently publish."
+                                )
+                            check.violation(
+                                here, 0, "CD-CALM-GATE-001",
+                                f"{label}: {what} refuse_unless_publishable returned "
+                                f"{returned!r} and nothing stopped the write.",
+                            )
+                            continue
+                        admitted_reference[(surface, slot, branch_index)] = candidate
+                        check.note(f"{label}: ADMITTED")
 
     # ---- CD-CALM-PAIRED-004 — ONE TOKEN MOVED, OPPOSITE OUTCOME ---------------------- #
     # The refusal must be caused by the LEVEL. Diff each refused candidate against an ADMITTED
-    # candidate of the SAME state at the SAME slot on the SAME surface and require exactly one
+    # candidate of the SAME BRANCH at the SAME slot on the SAME surface and require exactly one
     # differing pointer, which must be the detail_level of that dial.
+    #
+    # *** THE FIELD-ABSENT ROW NEEDS NO EXCEPTION AND IS NOT GIVEN ONE, AND THAT IS MEASURED
+    # RATHER THAN ASSUMED. *** `_differing_pointers` is a SYMMETRIC DIFFERENCE of the two
+    # documents' pointer SETS followed by a value comparison of the common ones, so a candidate
+    # that OMITS `/<slot>/detail_level` differs from its admitted pair at exactly that one
+    # pointer — by the pointer's PRESENCE rather than by its value. The sentence "same document,
+    # one token moved, opposite outcome" stays literally true; what moved is the token's
+    # existence. STATED, because the auditor's prescription and this increment's dispatch both
+    # expected a stated exception to be necessary here and MEASUREMENT SAYS IT IS NOT.
     for surface in EnvelopeSurface:
         for slot in slots_by_surface[surface]:
-            for state, level, expectation in table:
-                if expectation is not MUST_REFUSE:
+            for branch_index, (branch_label, branch, state) in enumerate(
+                branches_by_surface[surface]
+            ):
+                if branch is None or state is None:
                     continue
-                reference = admitted_reference.get((surface, slot, state))
-                label = f"{surface.value}/{slot}/{state}/{level}"
-                check.asserted()
-                if reference is None:
-                    check.violation(
-                        here, 0, "CD-CALM-PAIRED-004",
-                        f"{label}: NO ADMITTED CANDIDATE of the same state exists to pair the "
-                        "refusal against, so the refusal cannot be attributed to the level "
-                        f"rather than to the {state} shape itself. If every {state} dial is "
-                        "refused whatever it carries, this arm is vacuous — which is exactly "
-                        "what this assertion exists to detect.",
-                    )
+                absent_data = state in ABSENT_STATES
+                if not absent_data and state not in PRESENT_STATES:
                     continue
-                refused_candidate = _envelope(surface.value, slots_by_surface[surface], slot,
-                                              state, level)
-                refused_candidate["schema_version"] = ENVELOPE_SCHEMA_VERSION
-                differing = _differing_pointers(refused_candidate, reference)
-                if differing != [f"/{slot}/detail_level"]:
-                    check.violation(
-                        here, 0, "CD-CALM-PAIRED-004",
-                        f"{label}: the refused candidate and its admitted pair differ at "
-                        f"{differing!r}, not at exactly ['/{slot}/detail_level']. The two "
-                        "documents must be identical apart from the one token under test, or "
-                        "the opposite outcomes cannot be attributed to it.",
+                for level, expectation in (absent_table if absent_data else present_table):
+                    if expectation is not MUST_REFUSE:
+                        continue
+                    reference = admitted_reference.get((surface, slot, branch_index))
+                    label = (f"{surface.value}/{slot}/{state}[{branch_label}]/"
+                             f"{_label_for(level)}")
+                    check.asserted()
+                    if reference is None:
+                        check.violation(
+                            here, 0, "CD-CALM-PAIRED-004",
+                            f"{label}: NO ADMITTED CANDIDATE of the same branch exists to pair "
+                            "the refusal against, so the refusal cannot be attributed to the "
+                            f"level rather than to the {state} shape itself. If every {state} "
+                            "dial is refused whatever it carries, this arm is vacuous — which "
+                            "is exactly what this assertion exists to detect.",
+                        )
+                        continue
+                    refused_candidate = candidates_built.get(
+                        (surface, slot, branch_index, _label_for(level))
                     )
-                else:
-                    check.note(
-                        f"{label}: PAIRED against "
-                        f"{reference[slot]['detail_level']!r} — sole difference "
-                        f"/{slot}/detail_level"
-                    )
+                    if refused_candidate is None:
+                        check.violation(
+                            here, 0, "CD-CALM-PAIRED-004",
+                            f"{label}: the refused candidate was never built, so there is "
+                            "nothing to pair. Already reported as CD-CALM-BRANCHES-006; "
+                            "recorded here too rather than passed over.",
+                        )
+                        continue
+                    differing = _differing_pointers(refused_candidate, reference)
+                    if differing != [f"/{slot}/{DETAIL_LEVEL}"]:
+                        check.violation(
+                            here, 0, "CD-CALM-PAIRED-004",
+                            f"{label}: the refused candidate and its admitted pair differ at "
+                            f"{differing!r}, not at exactly ['/{slot}/{DETAIL_LEVEL}']. The two "
+                            "documents must be identical apart from the one token under test, "
+                            "or the opposite outcomes cannot be attributed to it.",
+                        )
+                    else:
+                        check.note(
+                            f"{label}: PAIRED against "
+                            f"{reference[slot].get(DETAIL_LEVEL)!r} — sole difference "
+                            f"/{slot}/{DETAIL_LEVEL}"
+                            + (" (present in the admitted pair, ABSENT in the refused "
+                               "candidate)" if level is LEVEL_ABSENT else "")
+                        )
 
     # ---- CD-CALM-PRODUCER-005 — THE PRODUCT CANNOT FORM THE INTENT EITHER ------------ #
     # The contract half above is what the gate refuses to ACCEPT. This is what the product
@@ -638,8 +1146,10 @@ def main(argv=None) -> int:
 
     return check.done(
         f"{cells} gate cells ({len(list(EnvelopeSurface))} surfaces x dial slots x "
-        f"{len(table)} state/level rows) driven in-process through "
-        f"refuse_unless_publishable against {package_dir}, plus the producer arms"
+        f"dial_reading.oneOf branches x {len(absent_table)} absent-data / "
+        f"{len(present_table)} present-data level rows) driven in-process through "
+        f"refuse_unless_publishable against {package_dir}, plus the union's branch set, the "
+        "dial-bearing root-property set and the producer arms"
     )
 
 
