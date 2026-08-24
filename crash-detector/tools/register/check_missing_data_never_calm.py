@@ -42,17 +42,27 @@ EXTERNAL probe must be external. It does not bind a register check.)
 WHAT IS ASSERTED — AND THE ADMITTING ROWS MATTER AS MUCH AS THE REFUSING ONES
 ===========================================================================================
 
-The proposition, on **both** surfaces and at **both** dial slots:
+The proposition, on **every** surface, at **every** dial slot, and — SINCE `16B-FIX` — on
+**every branch of `#/$defs/dial_reading.oneOf`**, each one built from THAT BRANCH'S OWN
+`required` + `properties` rather than from a document shape typed in here:
 
-    UNKNOWN  dial · detail_level "calm"      ->  MUST REFUSE
-    DEGRADED dial · detail_level "calm"      ->  MUST REFUSE
-    UNKNOWN  dial · detail_level "elevated"  ->  MUST ADMIT
-    UNKNOWN  dial · detail_level "acute"     ->  MUST ADMIT
-    DEGRADED dial · detail_level "elevated"  ->  MUST ADMIT
-    DEGRADED dial · detail_level "acute"     ->  MUST ADMIT
-    VALUE    dial · detail_level "calm"      ->  MUST ADMIT   *** THE VACUITY ARM ***
-    VALUE    dial · detail_level "elevated"  ->  MUST ADMIT
-    VALUE    dial · detail_level "acute"     ->  MUST ADMIT
+    absent-data branch · detail_level "calm"        ->  MUST REFUSE
+    absent-data branch · NO detail_level KEY        ->  MUST REFUSE   *** NEW AT 16B-FIX ***
+    absent-data branch · detail_level "banana"      ->  MUST REFUSE   *** NEW AT 16B-FIX ***
+    absent-data branch · every other declared level ->  MUST ADMIT
+    present-data branch · detail_level "calm"       ->  MUST ADMIT    *** THE VACUITY ARM ***
+    present-data branch · every other declared level->  MUST ADMIT
+
+*** THE TWO NEW REFUSING ROWS ARE A CORRECTION AND NOT A WIDENING (`FX2`, closing
+`CD-ASR-WO3-05` F2). *** `tests/test_detail_level.py::_assert_missing_data_never_renders_as_calm`
+has asserted `_dial_with_level(builder, None) == REFUSED` and
+`_dial_with_level(builder, "banana") == REFUSED` since before this file existed, and
+`CD-ASR-WO3-04`'s 30-row probe covered both. **BOTH ROWS WERE DROPPED WHEN THE PROPERTY MOVED
+INTO THIS REGISTER-WIRED INSTRUMENT**, so the live guard was STRICTLY WEAKER than the memorial it
+was built to supersede, while this row's own `negative_control` said in two governed artefacts
+that "the instrument fails on all of these". It did not. **A replacement that quietly narrows
+what it checks is how a guard becomes a certificate.** The token is `banana` and not something
+cleverer on purpose: it is the memorial's own token.
 
 *** **THE `MUST ADMIT` ROWS ARE NOT DECORATION.** An instrument that only checked "calm is
 refused on an UNKNOWN dial" is satisfied by a contract that refuses everything, and — the case
@@ -88,6 +98,38 @@ instrument that exists to carry it. ***
                       surface, and asserts they differ at EXACTLY ONE JSON pointer, which is
                       `/<slot>/detail_level`. Same document, one token moved, opposite outcome.
                       This is what makes CD-CALM-GATE-001 a measurement rather than a hope.
+
+ CD-CALM-BRANCHES-006 **AND THE UNION'S BRANCH SET IS ENUMERATED AND CLOSED — DENY BY DEFAULT.**
+                      *** NEW AT `16B-FIX`, AND IT IS THE ONE THAT MATTERS (`FX1`, closing
+                      `CD-ASR-WO3-05` F1). *** Every branch of `#/$defs/dial_reading.oneOf` is
+                      resolved and driven from its OWN `required` + `properties`; and, separately,
+                      the branch SET must be exactly one branch per declared dial state, with the
+                      contract's declared state set exactly this file's `DECLARED_STATES`. **A
+                      branch nobody anticipated is a VIOLATION FOR BEING UNRECOGNISED rather than
+                      a silence** — the `RULE F` shape `check_no_numeric_default` already
+                      established on this project.
+                      **WHY: MEASURED, NOT ARGUED.** The superseded implementation wrote out the
+                      field list of each branch BY HAND and never looked at the union at all. A
+                      FOURTH branch — the `UNKNOWN` branch copied, its `detail_level` repointed at
+                      the full vocabulary, selected by a marker property, **adding no new ROOT key
+                      so `check_schema_closed`'s allowlist never fires** — gave a tree on which
+                      `refuse_unless_publishable` ADMITTED an `UNKNOWN` dial rendering as `calm` on
+                      BOTH surfaces while **all thirty of the register's `execute:` lines exited
+                      byte-identically to the clean tree.** That tree is arm `C6`.
+                      A branch is recognised by its own `properties.state.const`, **never by the
+                      name of the `$def` it lives in**, so the pure-rename refactor this instrument
+                      already survives keeps passing.
+
+ CD-CALM-SLOTS-007    **AND THE SLOT SET FAILS CLOSED (`FX3`, closing `CD-ASR-WO3-05` F3).** What
+                      is DRIVEN is every root property spelled exactly
+                      `{"$ref": "#/$defs/dial_reading"}`. What is ENUMERATED FOR COMPARISON is
+                      every root property that constrains a dial `state` under ANY spelling. **If
+                      those two sets differ, or a root property's shape cannot be decided at all,
+                      this check FAILS** — because a dial slot it cannot drive is a slot on which
+                      PID §3.2 is unguarded, and the superseded `DECLARED LIMIT 4` claimed the
+                      opposite. Arm `C9`. *** IT FAILS CLOSED RATHER THAN WIDENING ITSELF: two
+                      dials, never blended, is standing product (`PO-DECISIONS-0026`), so a third
+                      dial slot is a PRODUCT decision and not this instrument's to absorb. ***
 
  CD-CALM-PRODUCER-005 **AND THE PRODUCT CANNOT EVEN FORM THE INTENT.** `DetailPolicy` refuses
                       construction with `absent_data_level="calm"` (`DetailPolicyIncoherent`),
@@ -135,14 +177,39 @@ MORE THAN ITS GUARD DELIVERS.
     `as_of_utc` age, or any liveness/relevance quantity. The stale half is `CD-AC-009`
     (`CD-RT-009-REGIME-AWARE-STALENESS`) and, as a product model, is `PO-DECISIONS-0026`
     ruling 5, which is a LATER increment and is not evidenced here.
- 4  **IT IS NOT A CENSUS OF SURFACES.** It drives the two envelope surfaces that
-    `EnvelopeSurface` declares, at the two dial slots the contracts declare, ENUMERATED FROM
-    THE APPLICATION (`EnvelopeSurface`, and the dial slots read from the contract's own
-    `properties`) rather than typed in — so a third surface or a third dial added tomorrow is
-    driven on the day it is added. But a rendering path that does not go through
-    `refuse_unless_publishable` at all is outside it. MEASURED at this commit: the only callers
-    of `refuse_unless_publishable` in `src/` are `publication/publish.py` lines 276-277, and
-    they call it on BOTH surfaces before any write. A future serving layer that renders a dial
+ 4  **IT IS NOT A CENSUS OF SURFACES, AND IT DRIVES ONE EXACT SPELLING OF A DIAL SLOT.**
+    *** SUPERSEDED AT `16B-FIX`, STATED AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+      WHAT THIS LIMIT SAID, VERBATIM: *"It drives the two envelope surfaces that
+      `EnvelopeSurface` declares, at the two dial slots the contracts declare, ENUMERATED FROM
+      THE APPLICATION ... rather than typed in — so a third surface or a third dial added
+      tomorrow is driven on the day it is added."*
+
+      **THAT SENTENCE WAS FALSE, AND IT WAS FALSE IN ALL THREE PLACES `CD-RULE-004` REQUIRES IT
+      TO BE SAID** (here, the `required-tests.yaml` comment, and the execution contract).
+      MEASURED by `CD-ASR-WO3-05` (F3) and reproduced here as arm `C9`: the slot enumerator
+      requires `sub.get("$ref") == "#/$defs/dial_reading"` **exactly**, so an OPTIONAL third dial
+      slot spelled with any other `$ref` — which is precisely how a dial is added without
+      breaking existing consumers — was invisible. The superseded instrument reported
+      `PASS — 67 assertions, 0 violations` on that tree while the live gate ADMITTED `calm` on
+      the new slot, on both surfaces.
+
+      **WHAT IS TRUE INSTEAD.** What is DRIVEN is every top-level property whose value is
+      literally `{"$ref": "#/$defs/dial_reading"}`, on every surface `EnvelopeSurface` declares.
+      A dial slot spelled any other way is **NOT DRIVEN** — and, since `16B-FIX`, is **NOT
+      SILENT**: `CD-CALM-SLOTS-007` enumerates every root property that constrains a dial
+      `state` under any spelling and FAILS the check if that set is not exactly the driven set,
+      or if any root property's shape cannot be decided at all. So a third dial is **REPORTED**
+      on the day it is added, and driven on the day someone spells it the one way this
+      instrument drives. **REPORTED IS NOT DRIVEN AND THIS LIMIT NO LONGER PRETENDS OTHERWISE.**
+
+      A third SURFACE genuinely is driven on the day it is added, because the surfaces come from
+      `EnvelopeSurface` itself; that half of the old sentence was true and is retained.
+
+    And a rendering path that does not go through `refuse_unless_publishable` at all is outside
+    this check entirely. MEASURED at this commit: the only callers of
+    `refuse_unless_publishable` in `src/` are `publication/publish.py` lines 276-277, and they
+    call it on BOTH surfaces before any write. A future serving layer that renders a dial
     without publishing an envelope is **NOT PROVED TO BE CARRIED ANYWHERE** — the rendering
     layer is later WO work.
  5  **IT IMPORTS THE SUBJECT TREE AND THEREFORE INHERITS IT.** It is a runtime check because
@@ -152,7 +219,42 @@ MORE THAN ITS GUARD DELIVERS.
  6  **IT NEEDS `jsonschema`**, because the gate does. Unlike the stdlib-only static checks in
     this directory it cannot run in an environment where the application's own runtime
     dependencies are absent. If `jsonschema` is missing it exits 3 with the reason — never a
-    pass and never a skip (`PBG-CI-002`).
+    pass and never a skip (`PBG-CI-002`). **SINCE `16B-FIX` IT ALSO USES `jsonschema` DIRECTLY**,
+    to decide which synthetic value a branch's own property subschema accepts, so the dependency
+    is now load-bearing twice over and is imported explicitly with its own exit-3 reason.
+ 7  **THE ENVELOPE ROOT IS STILL A DOCUMENT SHAPE WRITTEN OUT IN THIS FILE.** *** NEW AT
+    `16B-FIX`, AND DECLARED BECAUSE THE FIX DOES NOT REACH IT. *** `FX1` replaced the hand-written
+    DIAL shapes with shapes derived from each `oneOf` branch. `_envelope`'s ROOT skeleton —
+    `schema_version`, `as_of_utc`, `regime`, `staleness_window_seconds` and the rest — is still
+    typed in. **IT IS FAIL-CLOSED RATHER THAN FAIL-SILENT, WHICH IS WHY IT IS A LIMIT AND NOT A
+    HOLE:** a required root property this skeleton does not carry makes EVERY candidate refused,
+    so every `MUST ADMIT` row fails as `CD-CALM-GATE-002` and the check exits 1. The dial
+    branches were the SILENT case — a candidate that is still valid, still admitted, and simply
+    never built — and those are the ones now derived. An OPTIONAL root property that is
+    dial-bearing is `CD-CALM-SLOTS-007`'s. **NOT PROVED TO BE CARRIED ANYWHERE:** an optional
+    root property that is not dial-bearing and changes what a renderer does.
+ 8  **THE DIAL STATE VOCABULARY IS TYPED IN, DELIBERATELY, AND IT IS THE ONE AXIS THAT DOES NOT
+    GROW ON ITS OWN.** *** NEW AT `16B-FIX`. *** Surfaces, dial slots, `oneOf` branches and
+    detail LEVELS are all enumerated from the subject. `DECLARED_STATES` is not: a fourth dial
+    STATE added to a contract makes `CD-CALM-BRANCHES-006` FAIL until someone edits this file.
+    **THAT IS THE INTENDED COST AND NOT AN OVERSIGHT.** A new LEVEL is classified by a rule
+    already written here in one line — it is `calm`, or it is not. A new STATE cannot be
+    classified without knowing whether it MEANS the data is absent, which is product meaning and
+    not an Engineer's to decide (`PBG-AUTH-005`); and the failure is asymmetric — guess "present
+    data" and `calm` is silently admitted on a missing-data state, which is the constitutional
+    breach itself. So it stops and says the state is unrecognised. **THE COST IS PRICED: a PID §4
+    amendment adding a fourth LEVEL still passes untouched (arm `C10`, measured); a fourth STATE
+    is a red instrument until a human looks.**
+ 9  **A BRANCH THIS CHECK CANNOT BUILD IS REPORTED, NOT DRIVEN.** *** NEW AT `16B-FIX`. *** Each
+    required property of a branch is filled with the first of a CLOSED, declared list of
+    synthetic values that the property's own subschema accepts, decided by `jsonschema` and never
+    by the property's NAME. A property none of them satisfies — one needing a `pattern` no
+    declared value matches, say — makes the check report `CD-CALM-BRANCHES-006` and exit 1. **It
+    is deny-by-default, so it is not an escape; it IS a maintenance cost**, and a contract that
+    adds such a property to a dial branch turns this instrument red until the declared list
+    grows. Reporting is the correct failure direction: an unbuildable branch is an undriven
+    branch, and an undriven branch of the published union is a shape on which PID §3.2 is
+    unguarded.
 
 EXIT: 0 clean · 1 violation, with the cell and the observed outcome · 2 usage ·
 3 precondition not met. Never a skip, for any reason (`PBG-CI-002`).

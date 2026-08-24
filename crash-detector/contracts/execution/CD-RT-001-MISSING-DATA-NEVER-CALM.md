@@ -17,6 +17,14 @@ The LIVE PUBLICATION GATE — `refuse_unless_publishable`, the function
 REFUSES an envelope whose `UNKNOWN` or `DEGRADED` dial carries `detail_level: "calm"`, and
 **still ADMITS** `elevated` and `acute` on those same branches and `calm` on a `VALUE` dial.
 
+**GROWN AT `16B-FIX`, ON EVERY BRANCH OF THE UNION AND NOT ONE DOCUMENT SHAPE PER STATE.** The
+proposition is now driven on **every branch of `#/$defs/dial_reading.oneOf`**, each candidate
+built from **that branch's own** `required` + `properties`; and a missing-data branch carrying
+**no `detail_level` key at all** or **a value outside the vocabulary** is REFUSED too. Those last
+two rows are a CORRECTION: `tests/test_detail_level.py` had asserted both since before this
+instrument existed and both were dropped when the property moved into the register, so the live
+guard was **strictly weaker than the memorial it was built to supersede** (`CD-ASR-WO3-05` F2).
+
 ## Why this row exists at all — `PO-DECISIONS-0026` ruling 9
 
 > "The calm-over-unknown refusal currently holds only in `tests/`, and `tests/` do not feed
@@ -51,9 +59,31 @@ the gate actually did. It does not read the schemas as documents, does not searc
 string `absent_data_detail_level`, and does not assert that any `$ref` points anywhere.
 
 Enumerated from the subject rather than typed in: the surfaces from `EnvelopeSurface`, the
-dial slots from each contract's own properties that `$ref` `#/$defs/dial_reading`, and the
-detail-level vocabulary from the contract's own `#/$defs/detail_level` enum. It prints the
-resolved `crash_detector.__file__` and the SHA-256 of both contracts it judged, at every run.
+dial slots from each contract's own properties that `$ref` `#/$defs/dial_reading`, the
+detail-level vocabulary from the contract's own `#/$defs/detail_level` enum, and — **since
+`16B-FIX`** — the **branch set of `#/$defs/dial_reading.oneOf`**, with each candidate dial built
+from **that branch's own** `required` + `properties` and each property's value chosen from a
+closed declared list by what the property's **own subschema accepts**, decided by `jsonschema`
+and never by the property's name. It prints the resolved `crash_detector.__file__` and the
+SHA-256 of both contracts it judged, at every run.
+
+### The two structural assertions added at `16B-FIX`, and both DENY BY DEFAULT
+
+* **`CD-CALM-BRANCHES-006`** — the union's branch set must be exactly one branch per declared dial
+  state, with the contract's declared state set exactly the check's own closed `DECLARED_STATES`.
+  **A branch nobody anticipated is a violation for being UNRECOGNISED rather than a silence** —
+  the `RULE F` shape `check_no_numeric_default` already established here. Branches are recognised
+  by their own `properties.state.const`, **never** by the name of the `$def` they live in, so the
+  pure-rename refactor this instrument already survives keeps passing.
+* **`CD-CALM-SLOTS-007`** — the driven slot set must equal the set of root properties that
+  constrain a dial `state` under **any** spelling, and no root property may be undecidable.
+
+**WHY THEY EXIST, MEASURED AND NOT ARGUED.** A fourth `oneOf` branch permitting the full
+vocabulary on `UNKNOWN`, selected by a marker property and **adding no new ROOT key so
+`check_schema_closed`'s allowlist never fires**, gave a tree on which the live gate ADMITTED an
+`UNKNOWN` dial rendering as `calm` on both surfaces while **all thirty of the register's
+`execute:` lines exited byte-identically to the clean tree** (`CD-ASR-WO3-05` F1). That tree is
+arm `C6`.
 
 ## Why it is asserted this way
 
@@ -148,19 +178,74 @@ more than its guard delivers.**
    the age of `as_of_utc`, or any liveness/relevance quantity. The stale half is `CD-AC-009`
    (`CD-RT-009-REGIME-AWARE-STALENESS`) and, as a product model, `PO-DECISIONS-0026` ruling 5,
    which is a LATER increment and is not evidenced here.
-4. **IT IS NOT A CENSUS OF RENDERING PATHS.** It drives every surface `EnvelopeSurface`
-   declares at every dial slot the contracts declare, so a third surface or a third dial is
-   driven on the day it is added. But a path that does not go through
-   `refuse_unless_publishable` is outside it. MEASURED at this commit: the only callers in
-   `src/` are `publication/publish.py:276-277`, on both surfaces, before any write. A future
-   serving layer that renders a dial without publishing an envelope is **NOT PROVED TO BE
-   CARRIED ANYWHERE** — the rendering layer is later WO work.
+4. **IT IS NOT A CENSUS OF RENDERING PATHS, AND IT DRIVES ONE EXACT SPELLING OF A DIAL SLOT.**
+   *** SUPERSEDED AT `16B-FIX`, STATED AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+   > **WHAT THIS LIMIT SAID, VERBATIM:** *"It drives every surface `EnvelopeSurface` declares at
+   > every dial slot the contracts declare, so a third surface or a third dial is driven on the
+   > day it is added."*
+
+   **THAT SENTENCE WAS FALSE**, and identically false in all three places `CD-RULE-004` requires
+   this limit to be said. MEASURED by `CD-ASR-WO3-05` (F3) and reproduced as arm `C9` of
+   `plants/WO3-INC16B/MANIFEST.md`: the slot enumerator requires
+   `sub.get("$ref") == "#/$defs/dial_reading"` **exactly**, so an **OPTIONAL** third dial slot
+   spelled with any other `$ref` — which is exactly how a dial is added without breaking existing
+   consumers — was invisible. The superseded instrument reported `PASS — 67 assertions, 0
+   violations` on that tree while the live gate ADMITTED `calm` on the new slot on **both**
+   surfaces. The exposure was narrow, and honestly so: `check_schema_closed` catches that tree via
+   its root-properties allowlist, and a *required* third slot in any spelling was already caught
+   by this instrument. **That is not the point. A limit that promises what the code does not do is
+   the defect, whatever else happens to cover it.**
+
+   **WHAT IS TRUE INSTEAD.** What is **DRIVEN** is every top-level property whose value is
+   literally `{"$ref": "#/$defs/dial_reading"}`, on every surface `EnvelopeSurface` declares. A
+   dial slot spelled any other way is **NOT DRIVEN** — and, since `16B-FIX`, is **NOT SILENT**:
+   `CD-CALM-SLOTS-007` enumerates every root property that constrains a dial `state` under **any**
+   spelling and **FAILS the check** if that set is not exactly the driven set, or if any root
+   property's shape cannot be decided at all. **REPORTED IS NOT DRIVEN, and this limit no longer
+   pretends otherwise.** A third *surface* genuinely is driven on the day it is added, because the
+   surfaces come from `EnvelopeSurface` itself; that half of the old sentence was true and stands.
+
+   *** THIS IS NOT AND MUST NOT BE READ AS SUPPORT FOR A THIRD DIAL. *** `PO-DECISIONS-0026`
+   standing is **two dials, never blended**. `CD-CALM-SLOTS-007` fails closed precisely so that a
+   third dial slot stays a **product** decision rather than something an instrument absorbs.
+
+   And a path that does not go through `refuse_unless_publishable` is outside this check entirely.
+   MEASURED at this commit: the only callers in `src/` are `publication/publish.py:276-277`, on
+   both surfaces, before any write. A future serving layer that renders a dial without publishing
+   an envelope is **NOT PROVED TO BE CARRIED ANYWHERE** — the rendering layer is later WO work.
 5. **IT IMPORTS THE SUBJECT TREE AND THEREFORE INHERITS IT.** It is a runtime check because
    *"refused"* is a runtime claim and every escape on this project's record passed a static
    checker. The cost is `--root`'s honesty, which is why the resolved package path and both
    contract digests are printed on every run.
 6. **IT NEEDS `jsonschema`.** See Preconditions. It cannot run where the application's own
-   runtime dependencies are absent, and it exits `3` rather than passing when they are.
+   runtime dependencies are absent, and it exits `3` rather than passing when they are. **Since
+   `16B-FIX` it also uses `jsonschema` directly**, to decide which declared synthetic value a
+   branch's own property subschema accepts, so the dependency is load-bearing twice over.
+7. **THE ENVELOPE ROOT IS STILL A DOCUMENT SHAPE WRITTEN OUT IN THE CHECK.** *** NEW AT
+   `16B-FIX`. *** `FX1` replaced the hand-written DIAL shapes with shapes derived from each
+   `oneOf` branch; `_envelope`'s ROOT skeleton is still typed in. **It is FAIL-CLOSED rather than
+   fail-silent, which is why it is a limit and not a hole:** a required root property the
+   skeleton does not carry makes every candidate refused, so every `MUST ADMIT` row fails as
+   `CD-CALM-GATE-002` and the check exits `1`. The dial branches were the SILENT case — a
+   candidate still valid, still admitted, and simply never built — and those are the ones now
+   derived.
+8. **THE DIAL STATE VOCABULARY IS TYPED IN, DELIBERATELY.** *** NEW AT `16B-FIX`. *** Surfaces,
+   dial slots, `oneOf` branches and detail LEVELS are all enumerated from the subject.
+   `DECLARED_STATES` is not: a fourth dial **state** added to a contract makes
+   `CD-CALM-BRANCHES-006` FAIL until someone edits the check. **THAT IS THE INTENDED COST.** A new
+   LEVEL is classified by a rule already written in one line — it is `calm`, or it is not. A new
+   STATE cannot be classified without knowing whether it MEANS the data is absent, which is
+   product meaning (`PBG-AUTH-005`), and the failure is asymmetric: guess "present data" and
+   `calm` is silently admitted on a missing-data state, which is the constitutional breach itself.
+   **The cost is priced: a PID §4 amendment adding a fourth LEVEL still passes untouched — arm
+   `C10`, measured — while a fourth STATE is a red instrument until a human looks.**
+9. **A BRANCH THE CHECK CANNOT BUILD IS REPORTED, NOT DRIVEN.** *** NEW AT `16B-FIX`. *** Each
+   required property of a branch is filled with the first of a closed, declared list of synthetic
+   values that the property's own subschema accepts, decided by `jsonschema` and never by the
+   property's NAME. A property none of them satisfies makes the check report
+   `CD-CALM-BRANCHES-006` and exit `1`. Deny-by-default, so it is not an escape; it **is** a
+   maintenance cost, and reporting is the correct failure direction.
 
 ## Negative control
 
@@ -170,8 +255,32 @@ and is not limited to: either `$ref` on either contract's `dial_reading_degraded
 `dial_reading_unknown` branch restored to `#/$defs/detail_level` (**including only ONE branch
 on ONE surface**); `"calm"` added back into the `#/$defs/absent_data_detail_level` enum so the
 `$ref` target keeps its name and loses its meaning; the branch `detail_level` requirement
-dropped so the parent `dial_reading`'s full-vocabulary property is what applies; or any
-change to `refuse_unless_publishable` that stops the closed schema being applied.
+dropped so the parent `dial_reading`'s full-vocabulary property is what applies; **a FOURTH
+branch appended to `#/$defs/dial_reading.oneOf` that permits the full vocabulary on a
+missing-data state (arm `C6`)**; **a missing-data branch that accepts a level outside the
+declared vocabulary (arm `C8`)**; **an optional additional dial slot spelled with any `$ref`
+other than `#/$defs/dial_reading` (arm `C9`)**; or any change to `refuse_unless_publishable`
+that stops the closed schema being applied.
+
+### *** THE SENTENCE THAT FOLLOWED THIS LIST WAS FALSE. SUPERSEDED AT `16B-FIX`, NOT ERASED. ***
+
+> **WHAT IT SAID, VERBATIM:** *"The instrument fails on all of these."*
+
+**IT DID NOT.** `CD-ASR-WO3-05` (F2) measured the named member *"the branch `detail_level`
+requirement dropped so the parent `dial_reading`'s full-vocabulary property is what applies"* on
+a tree where `detail_level` was removed from `required` on `dial_reading_unknown` and
+`dial_reading_degraded` on **both** contracts: the instrument reported
+`PASS — 67 assertions, 0 violations` while the live gate **ADMITTED an `UNKNOWN` dial carrying no
+`detail_level` at all, on both surfaces.** A governed artefact stated something measurably false,
+and this project supersedes rather than deletes.
+
+**WHAT IS TRUE INSTEAD, AND IT IS TRUE BY MEASUREMENT AND NOT BY ASSERTION.** The instrument now
+carries a **field-absent** row and an **off-vocabulary** row for every missing-data branch, on
+every slot, on both surfaces, and it FAILS on that tree — arm `C7`, `FAIL — 8 violation(s)`, all
+`CD-CALM-GATE-001`. Each member of the class above is a measured arm of
+`plants/WO3-INC16B/MANIFEST.md` with its violation count and the assertion that caught it, run
+from its own pristine extraction. **A member of this class that is not a measured arm is a claim,
+and this row no longer makes one.**
 
 **AND — with equal weight — the VACUOUS DIRECTION IS ALSO A VIOLATION OF THIS ROW:**
 `#/$defs/dial_reading_value.detail_level` narrowed so that **no** dial can ever read `calm`,
