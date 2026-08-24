@@ -187,6 +187,23 @@ instrument that exists to carry it. ***
                       introduce or constrain a property this enumeration does not see. **AN
                       UNASSERTED PREMISE IS EXACTLY HOW `DECLARED LIMIT 4` CAME TO CLAIM "UNDER
                       ANY SPELLING" THREE TIMES RUNNING.** See `DECLARED LIMIT 17`.
+                      *** AND SINCE `16D-GATE-FRESHNESS` LIMB (b) IS STRUCTURAL AS WELL AS
+                      BEHAVIOURAL (closing `CD-ASR-WO3-11`'s `A311-F1`). *** Limb (b)'s
+                      affirmative proof was a SAMPLE OF TWO PROBE SHAPES, and a third shape
+                      defeated it: arm `H` widened the allowlisted root property
+                      `degraded_inputs` to an **ARRAY of closed objects** carrying
+                      `#/$defs/detail_level` — ONE CONTAINER DEEPER than this row's own arm
+                      `CC-H` — on which both probes are still refused, this instrument still
+                      reported `PASS — 243`, the whole thirty-line register was unmoved, and the
+                      LIVE GATE ADMITTED the list of DEGRADED inputs rendering as CALM at a root
+                      position on BOTH surfaces. **THE REMEDY IS NOT A THIRD PROBE** — that moves
+                      the census game to the probe alphabet. Each allowlisted name is now also put
+                      to :func:`_can_carry_detail_level`, a DECISION PROCEDURE over the property's
+                      OWN CLOSED SUBSCHEMA: capable, or UNDECIDABLE, are BOTH violations. **THE
+                      PROBES ARE RETAINED AS THE PAIRED BEHAVIOURAL CONTROL** — structure says
+                      what the contract ADMITS, the probes say what the gate DOES, and a
+                      disagreement between them is itself a finding. See `DECLARED LIMIT 18`,
+                      which states this half's own residue at equal length.
 
  CD-CALM-CANON-009    **AND THE DISCRIMINATOR IS AT ONE CANONICAL PATH, MANDATED BY THE CONTRACT
                       AND ASSERTED HERE.** *** NEW AT `16B-CONTRACT-CLOSURE` (`CC-2`). *** Inside
@@ -936,11 +953,65 @@ MORE THAN ITS GUARD DELIVERS.
           in their `description`s, and a `description` refuses nothing. **NOT PROVED TO BE CARRIED
           ANYWHERE.**
 
+      *** LIMB (c) ABOVE IS SUPERSEDED IN ITS SECOND HALF AT `16D-GATE-FRESHNESS`, STATED AND NOT
+      ERASED. *** It read *"depth inside a limb (b) property is covered by the LIVE GATE probe and
+      by NOTHING STRUCTURAL ... that is two shapes and it is not a class"*, and it was RIGHT — the
+      sentence was written that way on purpose and `CD-ASR-WO3-11` then exploited exactly the gap
+      it named (`A311-F1`, arm `H`). **THE SENTENCE IS NOW FALSE IN ITS SECOND HALF ONLY:** depth
+      inside a limb (b) property IS covered structurally, by :func:`_can_carry_detail_level`, over
+      the property's own closed subschema, through objects and arrays at every depth, with capable
+      and UNDECIDABLE both violations — and the two probes are RETAINED as the paired behavioural
+      control. **THE FIRST HALF STANDS UNCHANGED:** `RULE CC` is still a claim about the ROOT.
+      `DECLARED LIMIT 18` states what the structural half itself does NOT cover.
+
+ 18 **LIMB (b)'s PROOF WAS A SAMPLE OF TWO AND IS NOW STRUCTURAL — AND THE STRUCTURAL HALF HAS ITS
+    OWN RESIDUE.** *** NEW AT `16D-GATE-FRESHNESS`, CLOSING `CD-ASR-WO3-11`'s `A311-F1`. ***
+    `_can_carry_detail_level` decides, over each allowlisted root property's OWN CLOSED SUBSCHEMA,
+    whether ANY conforming instance could carry a `detail_level` at any depth through any
+    container. `True` and `None` are BOTH violations. **WHAT IT DOES NOT COVER:**
+      (a) its decidable keyword set is deliberately much narrower than :data:`_READABLE_KEYWORDS`
+          — `allOf`/`anyOf`/`oneOf`/`not`/`if`/`then`/`else`/`contains`/`patternProperties`/
+          `propertyNames`/`dependentSchemas`/`unevaluatedProperties` on an allowlisted root
+          property make it **UNDECIDABLE and this instrument RED**. That is the ruled direction and
+          it is a REAL COST: a legitimate future widening written with a composition keyword turns
+          this row red until a human looks at it;
+      (b) it OVER-REPORTS in two known places, both toward RED — a node with NO `type` is CAPABLE
+          (correctly: `{"minLength": 1}` admits `{"detail_level": "calm"}`), and a shape closed
+          only by `unevaluatedProperties: false` reads as CAPABLE because that keyword is not in
+          the decidable set;
+      (c) it is a claim about the SUBSCHEMA and never about the gate — `DECLARED LIMIT 1` is
+          untouched;
+      (d) it says nothing about limb (a), which is decided by dict equality and never put through
+          this procedure.
+
+ 19 **THE GATE'S FRESHNESS FLOOR IS ONLY AS HONEST AS THE WINDOW THE DOCUMENT DECLARES. NAMED AND
+    NOT CLOSED.** *** NEW AT `16D-GATE-FRESHNESS` (`CD-PL-F206`). *** The fourth refusal stage in
+    `envelope_contract` compares against the `staleness_window_seconds` THE DOCUMENT ITSELF
+    DECLARES, so a detector that stamps an absurdly large window re-opens the hole from the other
+    side. **A DOCUMENT-INTERNAL COMPARISON CANNOT BOUND ITS OWN COMPARAND.** The per-indicator
+    floors exist and are ratified in `governance/mapping/indicator_mapping.yaml` (30 indicators,
+    345600..10368000 seconds) but **THE ENVELOPE HAS NO INDICATOR DIMENSION — IT HAS TWO DIALS**,
+    and collapsing 30 windows onto a dial is PRODUCT MEANING (`PBG-AUTH-005`). **STRICTLY BETTER
+    THAN THE PRIOR STATE EITHER WAY: BEFORE `16D` THERE WAS NO COMPARISON AT ALL.**
+
+ 20 **WHAT THE FOURTH STAGE ITSELF DOES NOT PROVE.** *** NEW AT `16D-GATE-FRESHNESS`. *** It is
+    asserted by `tests/test_envelope_freshness.py` and NOT by this instrument.
+      (a) a calm-bearing node's stamps are detected BY VALUE and the OLDEST governs, which cannot
+          be defeated by renaming a stamp — but a node carrying an unrelated string that happens
+          to be a valid UTC instant has that string counted. Oldest-governs makes every such case
+          MORE conservative except where a node has NO real stamp and a decoy fresh one;
+      (b) a `:60` leap second parses as no instant and FAILS CLOSED. No producer here can emit one;
+      (c) it guards `calm` and only `calm` — a stale `elevated` or `acute` reading is ADMITTED,
+          which is the criterion's own scope;
+      (d) it says nothing about whether the `published_utc` a document carries is the instant that
+          document was really published. Nothing in a document can prove that about itself.
+
 *** NUMBERING, BECAUSE `CD-ASR-WO3-06` COULD NOT VERIFY IT AND SAID SO. *** **DECLARED LIMIT
 NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These are the limits of
-`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–17** (**1–12 until `16B-FIX-3`, which added
+`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–20** (**1–12 until `16B-FIX-3`, which added
 `13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`; `17` added at
-`16B-CONTRACT-CLOSURE`**), said identically in this
+`16B-CONTRACT-CLOSURE`; `18`, `19` and `20` added at `16D-GATE-FRESHNESS`**), said identically in
+this
 header, in
 `required-tests.yaml`, and in `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`
 (`CD-RULE-004`, three places). The SIBLING row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its OWN
@@ -948,6 +1019,17 @@ independent 1–12 sequence, spread across
 `tools/register/check_judgement_path_doors.py` (1–4, 7–9), `src/crash_detector/admission.py`
 (5–6) and `required-tests.yaml` (10–12). **BOTH ROWS LIVE IN `required-tests.yaml`, SO A BARE
 "DECLARED LIMIT 12" IS AMBIGUOUS THERE AND ALWAYS WAS.** Quote the row id with the number.
+
+*** AND `18`, `19` AND `20` ARE SAID IN TWO OF THE THREE PLACES `CD-RULE-004` REQUIRES, NOT
+THREE. DISCLOSED HERE RATHER THAN LEFT TO BE DISCOVERED. *** They are in this header and in
+`contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`. They are NOT in
+`required-tests.yaml`, because `required-tests.yaml` is **OUTSIDE `CD-ENG-WO3-12`'s WRITABLE
+SCOPE** under `CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-ENGINEER`. A necessary change outside a
+writable scope is an ESCALATION and not an initiative, so it is raised as a finding
+(`CD-ENG-F16D-02`) and left for the Project Lead rather than taken. **THE REGISTER ENTRY
+THEREFORE UNDERSTATES THIS ROW'S LIMITS BY THREE UNTIL THAT IS CLOSED**, which is the safe
+direction for a register entry to be wrong in — it claims LESS than the guard delivers, never
+more — but it is a real gap in `CD-RULE-004` compliance and it is stated as one.
 
 EXIT: 0 clean · 1 violation, with the cell and the observed outcome · 2 usage ·
 3 precondition not met. Never a skip, for any reason (`PBG-CI-002`).
@@ -1964,6 +2046,208 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     return None if undecidable else False
 
 
+#: *** THE JSON TYPES THERE ARE. *** A `type` token outside this set is one this file has never
+#: heard of, which makes the node UNDECIDABLE rather than benign — the same inversion `FX12`
+#: applies to keywords, applied to type tokens.
+_JSON_TYPES = frozenset({
+    "object", "array", "string", "number", "integer", "boolean", "null",
+})
+
+#: *** THE KEYWORDS :func:`_can_carry_detail_level` CAN COMPLETELY ACCOUNT FOR, AND IT IS
+#: DELIBERATELY MUCH NARROWER THAN :data:`_READABLE_KEYWORDS`. ***
+#:
+#: That set is what the DIAL RECOGNISER may descend; this one is what a decision procedure about
+#: **what instances a subschema ADMITS** can settle. The two questions are not the same and must
+#: not share a set. `allOf`/`anyOf`/`oneOf`/`not`/`if`/`then`/`else` are all perfectly readable to
+#: a walk that is only looking for a declared name; to a walk that must decide *"can any conforming
+#: instance carry a `detail_level` anywhere?"* they are composition, and composition is where a
+#: naive walk quietly answers about a schema nobody wrote. **THEY ARE THEREFORE UNDECIDABLE HERE
+#: AND THE INSTRUMENT GOES RED ON THEM.** MEASURED: no allowlisted non-dial root property in
+#: either contract declares one today, so the strictness costs the clean tree nothing — and if one
+#: ever does, a human looks at it, which is the whole intent.
+_DETAIL_CARRIER_DECIDABLE_KEYWORDS = frozenset({
+    # Core / annotation — assert nothing about the instance
+    "$schema", "$vocabulary", "$comment", "$anchor", "$defs", "$ref",
+    "title", "description", "default", "deprecated", "readOnly", "writeOnly", "examples",
+    # Validation assertions this procedure accounts for by CONSTRUCTION
+    "type", "enum", "const",
+    "multipleOf", "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum",
+    "maxLength", "minLength", "pattern",
+    "maxItems", "minItems", "uniqueItems", "maxProperties", "minProperties",
+    "format", "contentEncoding", "contentMediaType",
+    # The shape keywords it reads DIRECTLY
+    "required", "properties", "additionalProperties", "items", "prefixItems",
+})
+
+#: How deep the structural walk descends. Reaching it is UNDECIDABLE and never a clean `False` —
+#: the same treatment `CC-4` gave :func:`_instance_declared_names`' cap, for the same reason.
+DETAIL_CARRIER_DEPTH_CAP = 24
+
+
+def _can_carry_detail_level(schema: dict, node, depth: int = 0, seen=None):
+    """Can ANY instance conforming to this subschema carry a ``detail_level``, at any depth?
+
+    ``True`` / ``False`` / ``None`` = **UNDECIDABLE, AND THE INSTRUMENT GOES RED ON IT.**
+
+    *** THIS IS `CD-ASR-WO3-11`'s `A311-F1`, AND IT IS THE REMEDY THE AUDITOR PRESCRIBED RATHER
+    THAN THE ONE THAT WOULD HAVE BEEN CHEAPER. ***
+
+    Rule CC limb (b) claims each allowlisted root property is *"AFFIRMATIVELY PROVED incapable of
+    carrying a `detail_level`"*. Until now the whole of that proof was a **SAMPLE OF TWO PROBE
+    SHAPES** — :data:`CALM_BEARING_PROBES`, one flat and one nested — driven through the live gate.
+    **A SAMPLE OF TWO IS NOT A PROOF OF A UNIVERSAL, AND A THIRD SHAPE DEFEATED IT.** The auditor's
+    arm `H` widened the allowlisted root property `degraded_inputs` to an ARRAY OF CLOSED OBJECTS
+    carrying `#/$defs/detail_level`. **BOTH PROBES ARE STILL REFUSED ON THAT TREE** — the flat
+    object and the nested object are neither of them an array — so this instrument went on
+    reporting `PASS — 243`, the whole thirty-line register was identical in every rc, and the LIVE
+    GATE ADMITTED `"degraded_inputs": [{"source_id": "SRC-A", "detail_level": "calm"}]` on BOTH
+    SURFACES: the list of inputs that are DEGRADED, rendering as CALM, at a root position. The
+    increment's own arm `CC-H` widens the same property to an OBJECT and is caught (`FAIL — 4`).
+    **ONE CONTAINER DEEPER AND THE PROOF EVAPORATED.**
+
+    *** THE REMEDY IS NOT A THIRD PROBE, AND THE AUDITOR SAID SO IN TERMS: *** a third shape
+    *"moves the census game to the probe alphabet and earns an eleventh"*. Enumerating shapes is
+    RECOGNITION OVER AN OPEN SET and it is what has lost eleven consecutive audits on this row.
+    **THIS ASKS THE CLOSED QUESTION OF THE SUBSCHEMA INSTEAD** — not *"is this one of the shapes I
+    know how to build?"* but *"of everything this subschema admits, is there anything that could
+    carry a rendering decision?"* — and it is decided from the subschema's OWN CLOSED TEXT.
+
+    **THE PROBES ARE RETAINED, AND THAT IS ALSO THE AUDITOR'S PRESCRIPTION**: a structural value
+    check *"with the probes retained as the paired behavioural control"*. Structure and behaviour
+    answer different questions — this one says what the contract ADMITS, the probes say what the
+    GATE DOES — and a disagreement between them is itself a finding.
+
+    ---- THE PROCEDURE, AND WHY EACH LIMB IS A COMPLETE ANSWER --------------------------------
+
+    ``const``            the instance is pinned to exactly one value; walk that value's own
+                         property names. A COMPLETE decision, because nothing else the node
+                         declares can widen it.
+    ``enum``             the instance is one of a finite list; the same walk, over every member.
+    ``object`` admitted  ``additionalProperties`` anything but ``false`` -> **CAPABLE**, because an
+                         arbitrary key is admissible and ``detail_level`` is an arbitrary key.
+                         Closed, and ``detail_level`` declared or required -> **CAPABLE**. Closed
+                         otherwise -> descend into every declared property.
+    ``array`` admitted   ``items`` absent or ``true`` -> **CAPABLE**, because an arbitrary item is
+                         admissible and an arbitrary item can be an object with any key. ***THIS
+                         IS THE LIMB ARM `H` WALKS THROUGH.*** Otherwise descend into ``items``
+                         and ``prefixItems``.
+    scalars only         ``string``/``number``/``integer``/``boolean``/``null`` and nothing else
+                         -> **NOT CAPABLE**, and this is the only route to ``False``. A scalar has
+                         no properties, at any depth, under any spelling.
+    anything else        **UNDECIDABLE.** A keyword outside
+                         :data:`_DETAIL_CARRIER_DECIDABLE_KEYWORDS`, a `$ref` chain that dropped
+                         an asserting sibling or would not resolve, a `type` token this file has
+                         never heard of, a walk that hit its depth cap, a cycle.
+
+    **A NODE WITH NO `type` AT ALL IS CAPABLE, AND THAT IS NOT AN OVER-REPORT — IT IS THE
+    SPECIFICATION.** ``{"minLength": 1}`` admits ``{"detail_level": "calm"}``: ``minLength``
+    applies to strings and asserts nothing about an object. A procedure that read that as "a
+    string, therefore safe" would be reading the author's intention rather than the schema.
+    """
+    if depth > DETAIL_CARRIER_DEPTH_CAP:
+        return None
+    seen = set() if seen is None else seen
+
+    resolved, dropped = _resolve(schema, node)
+    if resolved is None or dropped:
+        # Unresolvable, or composed across a `$ref` boundary so the object just resolved is not
+        # the schema the gate enforces. UNDECIDABLE, never False (`DECLARED LIMIT 13`).
+        return None
+    if id(resolved) in seen:
+        return None  # a cycle. This walk did not complete, so it has no answer to give.
+    seen = seen | {id(resolved)}
+
+    if sorted(key for key in resolved if key not in _DETAIL_CARRIER_DECIDABLE_KEYWORDS):
+        return None
+
+    # ---- `const` and `enum` pin the instance, so they DECIDE it outright -------------------- #
+    if "const" in resolved:
+        names = _instance_declared_names(resolved["const"])
+        return None if INSTANCE_TOO_DEEP in names else DETAIL_LEVEL in names
+    if "enum" in resolved:
+        members = resolved["enum"]
+        if not isinstance(members, list):
+            return None
+        for member in members:
+            names = _instance_declared_names(member)
+            if INSTANCE_TOO_DEEP in names:
+                return None
+            if DETAIL_LEVEL in names:
+                return True
+        return False
+
+    # ---- what TYPES does this node admit? ---------------------------------------------------- #
+    declared_type = resolved.get("type")
+    if declared_type is None:
+        types = set(_JSON_TYPES)          # constrains no type: everything is admissible
+    elif isinstance(declared_type, str):
+        types = {declared_type}
+    elif isinstance(declared_type, list) and all(
+        isinstance(token, str) for token in declared_type
+    ):
+        types = set(declared_type)
+    else:
+        return None
+    if not types <= _JSON_TYPES:
+        return None
+
+    undecidable = False
+
+    if "object" in types:
+        properties = resolved.get("properties")
+        if properties is not None and not isinstance(properties, dict):
+            return None
+        if resolved.get("additionalProperties", True) is not False:
+            # *** THE OPEN OBJECT. *** Any key not named by `properties` is admissible, and
+            # `detail_level` is such a key. This is the deny-by-default direction: a shape is
+            # capable unless its own text CLOSES it.
+            return True
+        if isinstance(properties, dict) and DETAIL_LEVEL in properties:
+            return True
+        required = resolved.get("required")
+        if required is not None and not isinstance(required, list):
+            return None
+        if isinstance(required, list) and DETAIL_LEVEL in required:
+            return True
+        for child in (properties or {}).values():
+            verdict = _can_carry_detail_level(schema, child, depth + 1, seen)
+            if verdict is True:
+                return True
+            if verdict is None:
+                undecidable = True
+
+    if "array" in types:
+        prefix = resolved.get("prefixItems")
+        if prefix is not None:
+            if not isinstance(prefix, list):
+                return None
+            if "items" not in resolved:
+                # Positions past the prefix are unconstrained, so an arbitrary object may sit
+                # there. CAPABLE without needing to read the prefix at all.
+                return True
+            for entry in prefix:
+                verdict = _can_carry_detail_level(schema, entry, depth + 1, seen)
+                if verdict is True:
+                    return True
+                if verdict is None:
+                    undecidable = True
+        items = resolved.get("items", True)
+        if items is True:
+            return True                    # *** ARM H's LIMB. An arbitrary item is an object. ***
+        if items is not False:
+            if not isinstance(items, dict):
+                return None
+            verdict = _can_carry_detail_level(schema, items, depth + 1, seen)
+            if verdict is True:
+                return True
+            if verdict is None:
+                undecidable = True
+
+    # Everything reachable was read and none of it could hold a property. `False` here is a claim
+    # about a shape that WAS READ, never about one that was not recognised.
+    return None if undecidable else False
+
+
 #: The `$def` that types a FRESHNESS STAMP. Both contracts declare it and both use it for every
 #: timestamp they carry. **`CC-2` KEYS ON THIS DEFINITION OBJECT AND NOT ON A PROPERTY NAME**, and
 #: that is the point: MEASURED at this commit, `VALUE` and `DEGRADED` require `as_of_utc` while
@@ -2805,6 +3089,56 @@ def main(argv=None) -> int:
         check.note(f"{surface.value} RULE CC limb (b) CONTROL: the unmutated baseline envelope "
                    "is ADMITTED, so the refusals below are attributable to the probe")
 
+        # ---- *** limb (b)'s STRUCTURAL half. NEW AT `16D-GATE-FRESHNESS`, CLOSING
+        # `CD-ASR-WO3-11` `A311-F1` FAIL-CLOSED. *** ------------------------------------------ #
+        # The probes below are a SAMPLE OF TWO SHAPES and the auditor defeated them with a third
+        # — an ARRAY of closed objects carrying `#/$defs/detail_level`, ONE CONTAINER DEEPER than
+        # this increment's own arm `CC-H`, on which BOTH probes are still refused and the live gate
+        # ADMITTED calm at a root position on both surfaces. **THE REMEDY IS NOT A THIRD PROBE**
+        # (that moves the census game to the probe alphabet); it is a DECISION PROCEDURE over the
+        # property's OWN CLOSED SUBSCHEMA, and it is :func:`_can_carry_detail_level`.
+        # **THE PROBES ARE RETAINED AS THE PAIRED BEHAVIOURAL CONTROL**, which is the auditor's own
+        # prescription: this limb says what the CONTRACT ADMITS, the probes say what the GATE DOES,
+        # and a disagreement between them is itself a finding.
+        declared_root_properties = schema.get("properties")
+        if not isinstance(declared_root_properties, dict):
+            declared_root_properties = {}
+        for name in limb_b_by_surface[surface]:
+            check.asserted()
+            capable = _can_carry_detail_level(
+                schema, declared_root_properties.get(name))
+            if capable is True:
+                check.violation(
+                    here, 0, "CD-CALM-ROOT-008",
+                    f"{surface.value}: *** RULE CC LIMB (b) CLAIMS THE ROOT PROPERTY {name!r} IS "
+                    "AFFIRMATIVELY PROVED INCAPABLE OF CARRYING A `detail_level`, AND ITS OWN "
+                    "SUBSCHEMA ADMITS AN INSTANCE THAT CARRIES ONE. *** The claim is false as "
+                    "written, whatever the behavioural probes below report — they are a SAMPLE OF "
+                    "TWO SHAPES and `CD-ASR-WO3-11`'s arm H defeated exactly that sample with a "
+                    "third. **THE REMEDY IS NEVER TO REMOVE THIS ASSERTION, THE NAME OR A PROBE "
+                    "TO GET A GREEN:** narrow the property's subschema until it cannot carry a "
+                    "rendering decision, or take the widening to the Product Authority "
+                    "(PBG-AUTH-005). A root property that CAN carry a rendering decision is a "
+                    "dial slot nobody declared.",
+                )
+            elif capable is None:
+                check.violation(
+                    here, 0, "CD-CALM-ROOT-008",
+                    f"{surface.value}: RULE CC LIMB (b) IS UNDECIDABLE FOR THE ROOT PROPERTY "
+                    f"{name!r} — its subschema declares a keyword, a `$ref` chain, a `type` token "
+                    "or a nesting this decision procedure CANNOT COMPLETELY ACCOUNT FOR, so "
+                    "whether a conforming instance could carry a `detail_level` is UNKNOWN. "
+                    "**'I COULD NOT TELL' AND 'IT CANNOT CARRY ONE' ARE DIFFERENT ANSWERS AND "
+                    "ONLY ONE OF THEM IS SAFE** (PO-DECISIONS-0026 ruling 10). This check does "
+                    "not pass on the first: a false positive costs one seat one look at one "
+                    "contract; a false negative costs the constitution.",
+                )
+            else:
+                check.note(
+                    f"{surface.value}/<root>/{name}: limb (b) STRUCTURAL — the property's own "
+                    "closed subschema admits no instance carrying a `detail_level`, at any "
+                    "depth, through any container")
+
         for name in limb_b_by_surface[surface]:
             for variant, probe in CALM_BEARING_PROBES:
                 candidate = copy.deepcopy(baseline)
@@ -3114,6 +3448,16 @@ def main(argv=None) -> int:
         "have been an absence, and it does not prevent $CD_CONTRACTS_DIR being pointed at a "
         "widened copy of the contracts — it refuses to run when it is. It is ONE OF THREE "
         "guards on CD-AC-001 and never a sole guard."
+    )
+    check.note(
+        "AND THE STALENESS HALF NOW EXISTS, ELSEWHERE, AND IS STILL NOT ASSERTED HERE: WO-3 "
+        "increment 16D added a FOURTH REFUSAL STAGE to refuse_unless_publishable "
+        "(REFUSAL_STALE_CALM), which compares published_utc against each calm-bearing node's "
+        "own oldest stamp against the root's declared staleness_window_seconds, computed purely "
+        "from the document (PO-DECISIONS-0029 ruling 1). THIS INSTRUMENT DOES NOT ASSERT IT and "
+        "the sentence above is unchanged and still true of THIS ROW. The freshness stage's own "
+        "acceptance evidence is tests/test_envelope_freshness.py. A guard that is asserted "
+        "somewhere else is not a guard this row may take credit for."
     )
 
     return check.done(

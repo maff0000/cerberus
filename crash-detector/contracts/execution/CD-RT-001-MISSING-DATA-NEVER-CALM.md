@@ -201,6 +201,18 @@ more than its guard delivers.**
    the age of `as_of_utc`, or any liveness/relevance quantity. The stale half is `CD-AC-009`
    (`CD-RT-009-REGIME-AWARE-STALENESS`) and, as a product model, `PO-DECISIONS-0026` ruling 5,
    which is a LATER increment and is not evidenced here.
+
+   *** AMENDED AT `16D-GATE-FRESHNESS`, AND THE LIMIT ITSELF IS UNCHANGED. *** Every sentence
+   above is still true **of this instrument**, which is why it is restated rather than deleted.
+   What changed is elsewhere: `PO-DECISIONS-0029` ruled `Q34` (a), and `refuse_unless_publishable`
+   now runs a **FOURTH REFUSAL STAGE** (`REFUSAL_STALE_CALM`) comparing the root's `published_utc`
+   against each calm-bearing node's own OLDEST stamp, against the root's declared
+   `staleness_window_seconds` — computed **purely from the document**, reaching no clock.
+   **THIS ROW DOES NOT ASSERT THAT STAGE AND MAY NOT TAKE CREDIT FOR IT.** Its acceptance evidence
+   is `tests/test_envelope_freshness.py`, and this instrument prints a run note saying so.
+   `CD-RT-009`'s regime-aware window — the one that TIGHTENS in stress — is still a later
+   increment and is still evidenced nowhere; the gate stage is the constitutional FLOOR the regime
+   layer would ride on top of, and a floor is not a ceiling.
 4. **IT IS NOT A CENSUS OF RENDERING PATHS, AND IT DRIVES ONE EXACT SPELLING OF A DIAL SLOT.**
    *** SUPERSEDED AT `16B-FIX`, STATED AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
 
@@ -840,11 +852,81 @@ more than its guard delivers.**
     the root anyway; **the cap is fixed regardless, because a cap that fails open is a defect
     whether or not anything reaches it.**
 
+18. *** LIMB (b)'s PROOF WAS A SAMPLE OF TWO AND IS NOW STRUCTURAL — AND THE STRUCTURAL HALF HAS
+    ITS OWN RESIDUE. NEW AT `16D-GATE-FRESHNESS`, CLOSING `CD-ASR-WO3-11`'s `A311-F1`. ***
+
+    **WHAT WAS WRONG, MEASURED BY THE AUDITOR AND NOT ARGUED.** `DECLARED LIMIT 17`'s step (5)
+    read *"limb (b) IS NOT TAKEN ON TRUST — each allowlisted name, on each surface, is driven
+    through the LIVE GATE with a calm-carrying object in its place."* That drive used
+    `CALM_BEARING_PROBES`: **TWO SHAPES**, one flat and one nested. **A SAMPLE OF TWO IS NOT A
+    PROOF OF A UNIVERSAL.** Arm `H` widened the allowlisted root property `degraded_inputs` to an
+    **ARRAY of closed objects** carrying `#/$defs/detail_level` — ONE CONTAINER DEEPER than this
+    row's own arm `CC-H`, which widens the same class to an OBJECT and is caught (`FAIL — 4`).
+    Both probes are still REFUSED on arm `H` because neither of them is an array, so the
+    instrument reported `PASS — 243`, **the whole thirty-line register was identical in every
+    rc**, and the LIVE GATE ADMITTED `"degraded_inputs": [{"source_id": "SRC-A", "detail_level":
+    "calm"}]` on BOTH SURFACES.
+
+    **THE REMEDY IS NOT A THIRD PROBE AND THE AUDITOR SAID SO IN TERMS** — a third shape *"moves
+    the census game to the probe alphabet and earns an eleventh"*. `_can_carry_detail_level` is a
+    DECISION PROCEDURE over each allowlisted root property's **OWN CLOSED SUBSCHEMA**: of
+    everything that subschema admits, could anything carry a `detail_level`, at any depth, through
+    any container? `True` and `None` are both VIOLATIONS. **THE PROBES ARE RETAINED AS THE PAIRED
+    BEHAVIOURAL CONTROL**, which is also the auditor's prescription: the structural limb says what
+    the CONTRACT ADMITS and the probes say what the GATE DOES, and a disagreement between them is
+    itself a finding.
+
+    **AND HERE IS ITS RESIDUE, WHICH IS NOT SMALL AND IS NOT HIDDEN.**
+    **(a)** The decidable keyword set is deliberately much narrower than `_READABLE_KEYWORDS`.
+    `allOf`/`anyOf`/`oneOf`/`not`/`if`/`then`/`else`/`contains`/`patternProperties`/
+    `propertyNames`/`dependentSchemas`/`unevaluatedProperties` on an allowlisted root property all
+    make it **UNDECIDABLE**, and the instrument goes RED rather than passing. That is the ruled
+    direction and it is a REAL COST: a legitimate future widening of a non-dial root property
+    written with a composition keyword turns this row red until a human looks at it.
+    **(b)** It OVER-REPORTS in two known places, both toward RED. A node with no `type` is CAPABLE
+    (correctly — `{"minLength": 1}` admits `{"detail_level": "calm"}`), and a shape closed only by
+    `unevaluatedProperties: false` rather than `additionalProperties: false` reads as CAPABLE
+    because `unevaluatedProperties` is not in the decidable set.
+    **(c)** It is a claim about the SUBSCHEMA, never about the gate. A contract that the gate
+    never loads is `DECLARED LIMIT 1`'s territory and is untouched.
+    **(d)** It says nothing about limb (a). A canonical dial slot is decided by dict equality and
+    is not put through this procedure.
+
+19. *** THE GATE'S FRESHNESS FLOOR IS ONLY AS HONEST AS THE WINDOW THE DOCUMENT DECLARES.
+    RAISED, NAMED AND NOT CLOSED (`CD-PL-F206`, restated by `CD-ENG-WO3-12` as `CD-ENG-F16D-01`).
+    ***
+
+    The fourth refusal stage compares against the `staleness_window_seconds` **THE DOCUMENT
+    ITSELF DECLARES**. A detector that stamps an absurdly large window therefore re-opens the hole
+    from the other side, and **a document-internal comparison cannot bound its own comparand.**
+    The per-indicator floors DO exist and are ratified — `governance/mapping/indicator_mapping.yaml`
+    carries 30 indicators with windows from 345600 to 10368000 seconds — but **THE ENVELOPE HAS NO
+    INDICATOR DIMENSION: IT HAS TWO DIALS.** Collapsing 30 indicator windows onto a dial (the
+    minimum? the oldest contributing input's window?) is PRODUCT MEANING and is not an
+    implementer's to invent (`PBG-AUTH-005`), and ruling 1 says the comparison is computed purely
+    from the document. **IT IS NAMED HERE AND DELIBERATELY NOT CLOSED. It is strictly better than
+    the prior state either way: before `16D` there was NO comparison at all.**
+
+20. *** WHAT THE FOURTH STAGE ITSELF DOES NOT PROVE (`16D-GATE-FRESHNESS`). ***
+    **(a)** A calm-bearing node's stamps are detected **BY VALUE** — any direct string property
+    that reads as a UTC instant — and the OLDEST governs. That cannot be defeated by RENAMING a
+    stamp, which is the direction that matters, but a node carrying an unrelated string that
+    happens to be a valid UTC instant would have that string counted. The oldest-governs rule
+    makes every such case MORE conservative, never less, except in the one shape where a node has
+    NO real stamp and a decoy fresh one. **NAMED, NOT CLOSED.**
+    **(b)** A `:60` leap second parses as no instant and therefore FAILS CLOSED. No producer in
+    this project can emit one (`datetime` cannot represent it), so this costs the product nothing
+    today; it would refuse a legitimately leap-second-stamped calm reading if one ever arrived.
+    **(c)** The stage guards `calm` and only `calm`. A stale `elevated` or `acute` reading is
+    ADMITTED, which is the criterion's own scope — *"never renders as **calm**"*.
+    **(d)** It says nothing about whether the `published_utc` the document carries is the instant
+    the document was really published. Nothing in a document can prove that about itself.
+
 ### Numbering — because `CD-ASR-WO3-06` could not verify it and said so
 
-**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The seventeen above (**twelve until
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The twenty above (**twelve until
 `16B-FIX-3`, which added `13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`; `17`
-added at `16B-CONTRACT-CLOSURE`**) are
+added at `16B-CONTRACT-CLOSURE`; `18`, `19` and `20` added at `16D-GATE-FRESHNESS`**) are
 `CD-RT-001-MISSING-DATA-NEVER-CALM`'s, and they are said identically here, in the header of
 `tools/register/check_missing_data_never_calm.py`, and in `required-tests.yaml` (`CD-RULE-004`,
 three places). The **sibling** row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its **own** independent
