@@ -22,6 +22,7 @@ it must admit, in the same run in which it refuses the thing it must refuse.
 from __future__ import annotations
 
 import pathlib
+import re
 import subprocess
 import sys
 
@@ -254,6 +255,165 @@ def test_the_ADMITTING_ARM_declared_container_internal_constants_survive(tmp_pat
     compose = (REPO_ROOT / COMPOSE_REL).read_text(encoding="utf-8")
     assert "TZ: UTC" in compose
     assert "PYTHONPATH: /app/src" in compose
+
+
+# ========================================================================================= #
+# *** RULE 7 — THE VALUE, NOT JUST THE KEY, AND INSIDE ${VAR:-DEFAULT} ***
+#
+# WO-3 INCREMENT 16A-FIX. BOTH GAPS BELOW PASSED WITH `0 violations` AT 53f639a, AND THE
+# ASSERTION COUNT WAS IDENTICAL (1072) IN EVERY CASE — the check did not merely fail to
+# judge these values, IT NEVER LOOKED AT THEM.
+#
+#   A  CD_CONTRACTS_DIR: "${CD_CONTRACTS_DIR:-/srv/.../dell-only/contracts}"  -> PASS, exit 0
+#   A2 CD_CONTRACTS_DIR: /srv/.../dell-only/contracts   (bare literal)        -> PASS, exit 0
+#   B  CD_STORE_HOST: postgres.dell.matt.local                                -> PASS, exit 0
+#
+# Same defect as the D2 RED it shipped beside: A CHECK WHOSE NAME CLAIMS MORE THAN ITS
+# ASSERTIONS DELIVER. INTERNAL_CONSTANTS says CD_STORE_HOST is "a COMPOSE SERVICE NAME" and
+# CD_CONTRACTS_DIR is "a path inside the container's own filesystem" — claims about VALUES,
+# on a list that only ever tested KEYS.
+# ========================================================================================= #
+
+#: The cd-private environment block. Unique in the file, and ``_subject`` asserts that.
+_CD_PRIVATE_ENV = (
+    '      CD_CONTRACTS_DIR: /contracts\n'
+    '      PYTHONPATH: /app/src\n'
+    '      PYTHONDONTWRITEBYTECODE: "1"\n'
+    '      PYTHONUNBUFFERED: "1"\n'
+    '      CD_BIND_HOST: "0.0.0.0"\n'
+    '      CD_BIND_PORT: "8711"\n'
+    '      CD_STORE_HOST: cd-store\n'
+    '      CD_STORE_PORT: "5432"\n'
+    '      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"\n'
+    '      CD_STORE_ROLE: cd_private'
+)
+
+
+def _cd_private_with(old: str, new: str) -> tuple:
+    """A replacement pair that mutates ONE line inside the unique cd-private block."""
+    assert _CD_PRIVATE_ENV.count(old) == 1, old
+    return (_CD_PRIVATE_ENV, _CD_PRIVATE_ENV.replace(old, new))
+
+
+def test_a_dell_path_hidden_in_an_env_DEFAULT_is_REFUSED(tmp_path):
+    """*** GAP A. A DEFAULT IS A VALUE. ***
+
+    ``_ENV_REF`` had no closing brace and no default group, so it matched the prefix
+    ``${CD_CONTRACTS_DIR`` and rule 5 treated the whole string as "a reference, therefore
+    fine" — never inspecting the ``:-`` half. Rule 3 could not help: it hunts IPv4 only.
+    """
+    root = _subject(tmp_path, _cd_private_with(
+        "CD_CONTRACTS_DIR: /contracts",
+        'CD_CONTRACTS_DIR: "${CD_CONTRACTS_DIR:-/srv/crash-detector/dell-only/contracts}"',
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_VIOLATION, result.stdout
+    assert "7: a host path in a config value" in result.stdout
+    assert "the default of ${CD_CONTRACTS_DIR:-" in result.stdout
+
+
+def test_the_same_dell_path_as_a_BARE_literal_is_also_REFUSED(tmp_path):
+    """*** GAP A2 — FOUND WHILE FIXING GAP A, AND IT MATTERED. ***
+
+    Widening the regex alone would NOT have caught this: ``CD_CONTRACTS_DIR`` is on
+    ``INTERNAL_CONSTANTS``, so rule 5 exempts the key however the value is spelled. A fix
+    aimed only at the ``${}`` form would have left the plainer mistake green.
+    """
+    root = _subject(tmp_path, _cd_private_with(
+        "CD_CONTRACTS_DIR: /contracts",
+        "CD_CONTRACTS_DIR: /srv/crash-detector/dell-only/contracts",
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_VIOLATION, result.stdout
+    assert "7: a host path in a config value" in result.stdout
+
+
+def test_a_dell_HOSTNAME_in_an_allowlisted_service_name_key_is_REFUSED(tmp_path):
+    """*** GAP B. THE RULE FIRED; IT COULD NOT SEE A NAME. ***
+
+    An IPv4 in this very key IS caught — by rule 3, whose whole detection surface is one
+    IPv4 regex. So the machinery worked and the check was blind to a hostname, which is the
+    same failure the module docstring warns about in the opposite direction.
+    """
+    root = _subject(tmp_path, _cd_private_with(
+        "CD_STORE_HOST: cd-store", "CD_STORE_HOST: postgres.dell.matt.local",
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_VIOLATION, result.stdout
+    assert (
+        "7: a config value that names something this file does not declare" in result.stdout
+    )
+
+
+def test_an_IPv4_in_that_same_key_is_STILL_caught(tmp_path):
+    """THE PROOF THAT GAP B'S PROBE WAS LIVE ALL ALONG, kept as a standing test."""
+    root = _subject(tmp_path, _cd_private_with(
+        "CD_STORE_HOST: cd-store", "CD_STORE_HOST: 10.11.12.13",
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_VIOLATION, result.stdout
+    assert "3: an address literal baked into the deployment" in result.stdout
+
+
+# --- THE ADMITTING ARMS. RULE 7 MUST NOT REFUSE THE DEPLOYMENT IT IS AUDITING. ----------- #
+
+def test_the_ADMITTING_ARM_a_container_path_in_an_env_DEFAULT_survives(tmp_path):
+    """*** THE NON-VACUITY ARM FOR GAP A. ***
+
+    The SAME ``${VAR:-DEFAULT}`` form, with a default that IS a container root this file
+    establishes, is ADMITTED. So rule 7 judges the DEFAULT'S CONTENT and does not simply
+    refuse defaults — which would have broken the legitimate ``${VAR:-30.0}`` style values
+    already in the file.
+    """
+    root = _subject(tmp_path, _cd_private_with(
+        "CD_CONTRACTS_DIR: /contracts",
+        'CD_CONTRACTS_DIR: "${CD_CONTRACTS_DIR:-/contracts}"',
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_CLEAN, result.stdout
+
+
+def test_the_ADMITTING_ARM_a_DIFFERENT_declared_service_is_accepted(tmp_path):
+    """*** THE NON-VACUITY ARM FOR GAP B. ***
+
+    ``cd-engine`` is not the value the real file carries, and it is admitted because it IS
+    a service this compose file declares. The rule therefore tests MEMBERSHIP of the
+    document's own service set, not equality with a hardcoded ``cd-store``.
+    """
+    root = _subject(tmp_path, _cd_private_with(
+        "CD_STORE_HOST: cd-store", "CD_STORE_HOST: cd-engine",
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_CLEAN, result.stdout
+
+
+def test_the_ADMITTING_ARM_a_non_path_default_is_not_mistaken_for_a_path(tmp_path):
+    """A NUMBER in a default. Rule 7 judges only absolute POSIX paths, so a numeric or
+    textual default is untouched — and the six ``${VAR:-30.0}`` values already in the real
+    file are why that matters."""
+    root = _subject(tmp_path, _cd_private_with(
+        'CD_BIND_PORT: "8711"', 'CD_BIND_PORT: "${CD_BIND_PORT:-8711}"',
+    ))
+    result = _run(root)
+    assert result.returncode == EXIT_CLEAN, result.stdout
+
+
+def test_rule_7_actually_LOOKED_and_the_clean_arm_still_passes():
+    """*** THE ANTI-VACUITY ARM FOR THE FIX ITSELF. ***
+
+    At ``53f639a`` all three planted subjects returned ``1072 assertions`` — the SAME count
+    as the clean file — because rule 7 did not exist and no rule examined those values. The
+    count must now be strictly higher, or the new rule is present and asserting nothing.
+    """
+    result = _run(REPO_ROOT)
+    assert result.returncode == EXIT_CLEAN, result.stdout
+    match = re.search(r"PASS — (\d+) assertions", result.stdout)
+    assert match, result.stdout
+    count = int(match.group(1))
+    assert count > 1072, (
+        f"the clean arm makes {count} assertions; at 53f639a it made 1072. Rule 7 is not "
+        "adding any."
+    )
 
 
 # ========================================================================================= #

@@ -38,7 +38,7 @@ difference between a check and a decoration, and :func:`main` asserts that the r
 actually happened before it judges anything. ***
 
 ===========================================================================================
-THE SIX REFUSALS
+THE SEVEN REFUSALS
 ===========================================================================================
 1  **an absolute host path as a bind source** — a dell path in the file IS the cut-and-paste
    failing. Also refused: a relative source that ESCAPES the repository, resolved against
@@ -55,6 +55,18 @@ THE SIX REFUSALS
    stated reason, so a NEW literal is a violation until somebody declares it here. An
    allowlist is the only form of this rule that is not guesswork.
 6  **a secret-looking value rather than an env-var NAME** — ``PBG-SEC-002``, non-waivable.
+7  *** **a config VALUE that names something this deployment does not establish** — added at
+   WO-3 increment 16A-FIX, and it exists because rules 5 and 6 ask only whether a value is a
+   REFERENCE and never WHAT it is. Two subjects passed with ``0 violations``: a dell path
+   parked in an env DEFAULT (``${CD_CONTRACTS_DIR:-/srv/.../dell-only/contracts}``), which
+   rule 5 skipped because the string begins ``${`` and rule 3 missed because it is not an
+   IPv4; and ``CD_STORE_HOST: postgres.dell.matt.local``, admitted because the KEY is on
+   ``INTERNAL_CONSTANTS`` while nothing checked the VALUE was the compose service name that
+   allowlist's own comment claims it is. **THE ALLOWLIST WAS A LIST OF KEYS AND THE
+   PORTABILITY LIVES IN THE VALUES.** So: a service-name value must name a service DECLARED
+   IN THIS FILE, and an absolute path must sit under a container root THIS FILE (or the
+   image's ``WORKDIR``) establishes — judged identically whether it is written plainly or
+   hidden in a ``${VAR:-DEFAULT}``, because **A DEFAULT IS A VALUE.** ***
 
 ===========================================================================================
 *** DECLARED LIMITS (``CD-RULE-004``). WHAT THIS CHECK DOES **NOT** CLAIM. ***
@@ -165,8 +177,42 @@ SECRET_TOKENS = ("password", "passwd", "secret", "token", "credential", "apikey"
 #: volume. Substring match on the target path, lowercased.
 DURABLE_TARGETS = ("/var/lib/", "/pgdata", "/data")
 
+#: *** WHERE A CONTAINER-INTERNAL ABSOLUTE PATH MAY LIVE THAT IS NOT DECLARED IN THE
+#: COMPOSE FILE ITSELF. *** Every other admissible root is DERIVED from the document (see
+#: :func:`container_roots`) rather than listed, because a root this file does not establish
+#: is a root that does not travel. ``/app`` is the exception and it is MEASURED, not
+#: assumed: ``deploy/Dockerfile.*`` declare ``WORKDIR /app`` and copy ``src/`` to
+#: ``/app/src/`` and ``deploy/entrypoints/`` to ``/app/entrypoints/``. It is a path the
+#: IMAGE establishes, so the compose file cannot show it and rule 7 would otherwise refuse
+#: the legitimate ``PYTHONPATH: /app/src``.
+IMAGE_ROOTS = ("/app",)
+
+#: *** RULE 7's VALUE CONTRACTS — THE ANSWER TO "ALLOWLISTED BY KEY, UNCHECKED BY VALUE". ***
+#: ``INTERNAL_CONSTANTS`` says a key MAY carry a literal. It never said WHICH literal, so
+#: ``CD_STORE_HOST: postgres.dell.matt.local`` satisfied it exactly as well as
+#: ``CD_STORE_HOST: cd-store`` (``CD-ASR-WO3-03`` / ``BL-20260824T084141Z-0160``). A key
+#: named here has its VALUE verified against what THIS DOCUMENT actually declares.
+#: ``"service"`` -> must be a service declared in this same compose file.
+#: ``"container_path"`` -> must be at or under a container root this file establishes.
+VALUE_CONTRACTS = {
+    "CD_STORE_HOST": "service",
+    "CD_CONTRACTS_DIR": "container_path",
+    "PGDATA": "container_path",
+    "PYTHONPATH": "container_path",
+}
+
 _IPV4 = re.compile(r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")
 _ENV_REF = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*")
+
+#: *** THE WHOLE ``${...}`` FORM, INCLUDING THE PART :data:`_ENV_REF` CANNOT SEE. ***
+#: ``_ENV_REF`` has no closing brace and no default group, so it matches the PREFIX
+#: ``${CD_CONTRACTS_DIR`` and stops. Everything after it — crucially the ``:-DEFAULT`` — was
+#: never examined by any rule, and a dell path parked in a default therefore passed with
+#: ``0 violations``. This pattern captures the operator and the default so rule 7 can judge
+#: a default exactly as it judges a bare literal.
+_ENV_REF_FULL = re.compile(
+    r"\$\{(?P<name>[A-Za-z_][A-Za-z0-9_]*)(?::(?P<op>[-?])(?P<rest>[^}]*))?\}"
+)
 _ANCHOR_DECL = re.compile(r"^(?P<key>[^\s:#][^:]*):\s*&(?P<anchor>\S+)\s*$")
 
 
@@ -248,8 +294,77 @@ def _address_admitted(pointer: str, literal: str) -> bool:
     return False
 
 
+def judged_literals(text: str):
+    """Every part of ``text`` that is a VALUE rather than a reference, with how to name it.
+
+    *** THIS IS THE HALF OF ``${VAR:-DEFAULT}`` THAT NOTHING USED TO LOOK AT. ***
+
+    Yields ``(description, literal)``:
+
+    * a value containing no ``${}`` at all yields itself — an ordinary literal;
+    * ``${VAR:-DEFAULT}`` yields ``DEFAULT``, because **a default IS a value**. It is the
+      value this deployment uses when the environment is silent, which on a fresh host is
+      always. A dell path parked there is exactly as unportable as one written plainly, and
+      more dangerous for looking like configuration;
+    * ``${VAR:?message}`` yields NOTHING. There is no default — the deployment refuses to
+      start unless the variable is set — and the message is prose, not a value;
+    * ``${VAR}`` yields nothing, for the same reason.
+    """
+    if not _ENV_REF.search(text):
+        yield "the literal", text
+        return
+    for match in _ENV_REF_FULL.finditer(text):
+        if match.group("op") == "-":
+            yield f"the default of ${{{match.group('name')}:-…}}", match.group("rest")
+
+
+def container_roots(document) -> tuple:
+    """Every absolute path THIS FILE establishes inside a container, plus the image roots.
+
+    Derived from the document rather than listed, because the point of the check is that
+    the deployment travels: a path is container-internal precisely when this same file (or
+    the image it names) creates it. Mount targets, tmpfs targets and :data:`IMAGE_ROOTS`.
+
+    A tmpfs entry is ``/tmp:size=16m,mode=1777`` — the options are stripped here, so the
+    root recorded is ``/tmp``. The final ``startswith("/")`` filter is what keeps the
+    OPTIONS out: the YAML subset parser splits ``/tmp:size=16m,...`` on its colon, so the
+    option string arrives here as a node in its own right. It is not a path, it can never
+    be an ancestor of one, and admitting it would put noise in every rule 7 finding.
+    """
+    roots = set(IMAGE_ROOTS)
+    for pointer, node in walk(document):
+        if not isinstance(node, str):
+            continue
+        if pointer.endswith("/target"):
+            roots.add(node)
+        elif "/tmpfs/" in f"{pointer}/":
+            roots.add(node.split(":", 1)[0])
+            # The parser may have made the path the KEY and the options the value.
+            roots.add(pointer.rsplit("/", 1)[-1])
+    return tuple(sorted(root for root in roots if root.startswith("/")))
+
+
+def _looks_like_path(literal: str) -> bool:
+    """An ABSOLUTE POSIX path. A relative path travels and is not judged here."""
+    return literal.startswith("/")
+
+
+def _under_a_container_root(literal: str, roots) -> bool:
+    """``literal`` is at, or beneath, one of ``roots``. Segment-wise, never by prefix.
+
+    ``str.startswith`` would admit ``/apple`` under ``/app``; ``PurePosixPath.parts`` will
+    not, and the whole value of this check is that a near-miss is a miss.
+    """
+    parts = pathlib.PurePosixPath(literal).parts
+    for root in roots:
+        root_parts = pathlib.PurePosixPath(root).parts
+        if parts[: len(root_parts)] == root_parts:
+            return True
+    return False
+
+
 # ------------------------------------------------------------------------------------- #
-# THE SIX RULES
+# THE SEVEN RULES
 # ------------------------------------------------------------------------------------- #
 
 def rule_1_and_2_mounts(check, path, root, services, top_volumes) -> None:
@@ -388,6 +503,83 @@ def rule_5_and_6_config(check, path, services) -> None:
                     )
 
 
+def rule_7_config_values(check, path, services, document) -> None:
+    """*** THE VALUE, NOT JUST THE KEY — AND INSIDE ``${VAR:-DEFAULT}``. ***
+
+    Rules 5 and 6 ask whether a value is a reference. Neither ever asks WHAT the value is,
+    so two whole classes of unportable deployment passed with ``0 violations``:
+
+    * a dell path parked in an env DEFAULT, which rule 5 skipped because the string starts
+      with ``${``, and which rule 3 could not see because it is not an IPv4;
+    * a dell HOSTNAME in an allowlisted key, admitted because ``CD_STORE_HOST`` is on a
+      list of keys that may hold a literal — with nothing checking the literal is the
+      compose service name the allowlist's own comment claims it is. An IPv4 in that same
+      key IS caught, by rule 3, so the check FIRED but could not see a name.
+
+    Both are the same defect wearing two hats: **the allowlist was a list of keys and the
+    portability lives in the values.** This rule judges the value, and it judges the inside
+    of a ``${VAR:-DEFAULT}`` exactly as it judges a bare literal.
+    """
+    roots = container_roots(document)
+    declared_services = tuple(services)
+
+    for service, spec in services.items():
+        blocks = [(f"/services/{service}/environment", spec.get("environment") or {})]
+        build = spec.get("build")
+        if isinstance(build, dict):
+            blocks.append((f"/services/{service}/build/args", build.get("args") or {}))
+
+        for base, block in blocks:
+            if not isinstance(block, dict):
+                continue
+            for key, value in block.items():
+                pointer = f"{base}/{key}"
+                text = "" if value is None else str(value)
+
+                # A secret's value is never inspected and never echoed (PBG-SEC-002).
+                if any(token in key.lower() for token in SECRET_TOKENS):
+                    continue
+
+                for described, literal in judged_literals(text):
+                    if not literal:
+                        continue
+                    contract = VALUE_CONTRACTS.get(key)
+
+                    # -- 7a: a declared SERVICE NAME must name a service in THIS file --- #
+                    check.asserted()
+                    if contract == "service" and literal not in declared_services:
+                        check.violation(
+                            path, 0, "7: a config value that names something this file does "
+                            "not declare",
+                            f"at {pointer}, {described} is {literal!r}, which is not a "
+                            f"service declared in this compose file. The declared services "
+                            f"are {list(declared_services)}. INTERNAL_CONSTANTS admits this "
+                            "key because its value is 'a COMPOSE SERVICE NAME resolved by "
+                            "the compose network's own DNS' — that is a claim about the "
+                            "VALUE, and until now nothing checked it. A hostname resolved "
+                            "by somebody's LAN is precisely the host that does not travel.",
+                        )
+
+                    # -- 7b: an absolute path must be one this deployment establishes ---- #
+                    check.asserted()
+                    if (
+                        _looks_like_path(literal)
+                        and contract in ("container_path", None)
+                        and not _under_a_container_root(literal, roots)
+                    ):
+                        check.violation(
+                            path, 0, "7: a host path in a config value",
+                            f"at {pointer}, {described} is {literal!r}. That is an absolute "
+                            "path under no root this deployment establishes — the container "
+                            f"roots this file creates are {list(roots)} (mount targets, "
+                            "tmpfs targets, and the image's WORKDIR). An absolute host path "
+                            "is the cut-and-paste failing itself: it names a directory that "
+                            "exists on the machine this was written on and on no other. "
+                            "**A DEFAULT IS A VALUE** — parking it inside ${VAR:-DEFAULT} "
+                            "hides it from a reader, not from the deployment.",
+                        )
+
+
 def main() -> int:
     args = parse_root(CHECK_ID, __doc__)
     root, code = resolve_root(CHECK_ID, args.root)
@@ -430,6 +622,7 @@ def main() -> int:
     rule_3_addresses(check, path, document)
     rule_4_argus(check, path, document)
     rule_5_and_6_config(check, path, services)
+    rule_7_config_values(check, path, services, document)
 
     check.note(
         f"{len(anchors)} anchor(s) resolved, {mounts} mount(s) judged with their fields "
@@ -442,7 +635,7 @@ def main() -> int:
     )
     return check.done(
         f"{COMPOSE} as YAML data: {len(services)} services, {mounts} mounts, "
-        f"six refusals over the resolved document"
+        f"seven refusals over the resolved document"
     )
 
 
