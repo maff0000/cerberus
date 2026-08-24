@@ -1091,14 +1091,27 @@ _NAME_BEARING_APPLICATORS = frozenset({
     "patternProperties", "propertyNames", "dependentSchemas",
 })
 
-#: *** EVERY REMAINING JSON SCHEMA 2020-12 KEYWORD THAT CARRIES NO SUBSCHEMA AND NAMES NO
-#: PROPERTY. *** Enumerated from the specification's own vocabularies — Core, Applicator,
-#: Validation, Format-Annotation, Content and Meta-Data — and DELIBERATELY EXHAUSTIVE, because
-#: this is the list that decides when the recogniser is allowed to say `False`. Four Core
-#: keywords are ABSENT ON PURPOSE and are therefore UNREADABLE: `$id` (it moves the base URI a
-#: relative `$ref` resolves against, and :func:`_resolve` always resolves against the document
-#: root), `$dynamicRef`, `$dynamicAnchor` and `$recursiveRef`/`$recursiveAnchor` (references this
-#: resolver does not follow — `CD-ASR-WO3-08` F1 arm `DYN`, arm `C24`).
+#: *** EVERY REMAINING JSON SCHEMA 2020-12 KEYWORD THAT CARRIES NO SUBSCHEMA. *** Enumerated from
+#: the specification's own vocabularies — Core, Applicator, Validation, Format-Annotation, Content
+#: and Meta-Data — and DELIBERATELY EXHAUSTIVE, because this is the list that decides when the
+#: recogniser is allowed to say `False`. Four Core keywords are ABSENT ON PURPOSE and are therefore
+#: UNREADABLE: `$id` (it moves the base URI a relative `$ref` resolves against, and
+#: :func:`_resolve` always resolves against the document root), `$dynamicRef`, `$dynamicAnchor` and
+#: `$recursiveRef`/`$recursiveAnchor` (references this resolver does not follow — `CD-ASR-WO3-08`
+#: F1 arm `DYN`, arm `C24`).
+#:
+#: *** THE DOCSTRING'S SECOND HALF USED TO READ "AND NAMES NO PROPERTY" AND IT WAS FALSE OF TWO
+#: MEMBERS. CORRECTED AT `16B-FIX-5` (`FX15`, closing `CD-ASR-WO3-09` F1). *** `enum` and `const`
+#: carry INSTANCE VALUES, and an instance value that is an object NAMES PROPERTIES — including
+#: `state` and `detail_level`. **THEY ARE STILL LISTED HERE AND THAT IS DELIBERATE**: they carry no
+#: SUBSCHEMA, so there is nothing under them for :func:`_dial_bearing` to descend into, and making
+#: them UNREADABLE would turn every ordinary `{"type": "string", "enum": [...]}` root property
+#: UNDECIDABLE — the auditor MEASURED that and priced it as an explosion of the false-positive
+#: tail. **THE ALPHABET IS CORRECTED WHERE THE DEFECT IS, IN :func:`_declared_names`, WHICH NOW
+#: READS THEIR VALUES.** `default` and `examples` also take arbitrary instance values and are NOT
+#: read there, and the distinction is the one the auditor drew: they are ANNOTATIONS in the
+#: Meta-Data vocabulary and ASSERT NOTHING, so a `state` named inside one constrains no document
+#: and cannot admit one; `enum` and `const` ASSERT.
 _INERT_KEYWORDS = frozenset({
     # Core, and inert HERE
     "$schema", "$vocabulary", "$comment", "$anchor", "$defs",
@@ -1125,6 +1138,163 @@ _READABLE_KEYWORDS = (
     | frozenset(_NAME_DECLARING_KEYWORDS)
     | _INERT_KEYWORDS
 )
+
+#: How deep :func:`_instance_declared_names` walks an `enum` member or a `const` value. An instance
+#: value is arbitrary JSON and may nest without limit; this is the same cap :func:`_dial_bearing`
+#: puts on its own descent, for the same reason, and reaching it is handled the same way — see the
+#: comment at the cap itself.
+INSTANCE_WALK_CAP = 24
+
+#: The sentinel :func:`_instance_declared_names` returns when it hits its cap. Not a property name
+#: any contract can declare, so it can never be mistaken for one.
+INSTANCE_TOO_DEEP = "<<instance value nested deeper than this check walks>>"
+
+
+def _unreadable_keywords(node) -> list:
+    """Every keyword of ``node`` this check CANNOT READ. Empty means it read the whole node.
+
+    *** THIS FUNCTION IS THE WHOLE OF `FX16` AND IT EXISTS TO BE THE *ONLY* DEFINITION
+    (`16B-FIX-5`, closing `CD-ASR-WO3-09` F2). *** Before it there were two recognisers in this
+    file and only ONE of them had the `FX12` inversion: :func:`_dial_bearing` asked whether it
+    could read every keyword of the node, and :func:`_branch_states` asked nothing at all — it read
+    `properties.state.const` and accepted a branch that also carried `patternProperties`, a
+    `$dynamicRef`, or a keyword from a draft nobody has written, **silently**. MEASURED by the
+    auditor on the target tree: the node
+    `{"properties":{"state":{"const":"UNKNOWN"},...},"patternProperties":{"^x_":{}},
+    "additionalProperties":false}` came back from :func:`_branch_states` as an accepted `UNKNOWN`
+    branch with no violation, while :func:`_dial_bearing` on the same node answered `True`.
+
+    **TWO RECOGNISERS THAT DISAGREE ABOUT WHAT "READABLE" MEANS ARE ONE EDIT FROM A HOLE**, and a
+    comment asserting they agree would not be a proof. This is the proof, and it is mechanical:
+    the phrase ``not in _READABLE_KEYWORDS`` occurs EXACTLY ONCE in this file, HERE, and both
+    recognisers reach it by calling this function. They cannot drift, because there is nothing left
+    to drift from.
+    """
+    if not isinstance(node, dict):
+        return []
+    return sorted(key for key in node if key not in _READABLE_KEYWORDS)
+
+
+def _instance_declared_names(value, depth: int = 0) -> set:
+    """Every property name an INSTANCE VALUE names, **AT ANY DEPTH**.
+
+    *** NEW AT `16B-FIX-5` (`FX15`), AND IT IS THE ALPHABET CORRECTION `PO-DECISIONS-0027`
+    RULING 6 CALLS "THE LAST STRUCTURAL STEP". *** `FX12`'s inversion is a TRUE universal
+    quantification — but over KEYWORD NAMES, and never over what a readable keyword's VALUE
+    asserts. `enum` and `const` take instance values, an object instance value NAMES PROPERTIES,
+    and so a root property spelled
+
+        {"enum": [ {"state": "LIVE", ...}, {"state": "STALE", "detail_level": "calm"} ]}
+
+    is a dial in every product sense — it declares the states, it declares `detail_level`, it is
+    exactly as tight as the `oneOf` spelling — and the superseded recogniser read the keyword name
+    `enum`, found it readable, never looked inside, found no `properties`/`required`/
+    `dependentRequired` naming `state`, and returned a clean `False`: **NOT A DIAL**. MEASURED
+    end-to-end by `CD-ASR-WO3-09` on the honest 16C tree: instrument `PASS — 144 assertions, 0
+    violations` with the live gate ADMITTING a DEAD FEED rendering as `calm` on BOTH surfaces.
+
+    **THE DEPTH DECISION IS DECLARED AND PRICED (`DECLARED LIMIT 15`).** An `enum` member is
+    arbitrary JSON and may nest — ``{"enum": [{"reading": {"state": ...}}]}`` names `state` one
+    level down, and ``{"enum": [[{"state": ...}]]}`` names it inside an array. This walk collects
+    names at EVERY depth of the value, through objects and arrays alike, because the top-level-only
+    reading would be a sixth spelling patch: it would close the shape the auditor wrote and leave
+    the shape one nesting deeper open, which is this row's entire history. The price is a WIDER
+    false-positive class — any node whose `enum` or `const` value contains, anywhere inside it, an
+    object with a key called `state` is now UNDECIDABLE — and it is the ruled direction: **a false
+    positive costs one seat one look at one contract; a false negative costs the constitution.**
+    MEASURED: neither envelope contract carries an object-valued or array-valued `enum`/`const`
+    anywhere, so this costs the clean tree nothing.
+
+    **A `const` THAT IS NOT AN OBJECT NAMES NOTHING, AND THAT IS SAID HERE RATHER THAN LEFT TO BE
+    INFERRED.** ``{"const": "equity_crash"}`` and ``{"type": "string", "enum": ["a", "b"]}`` return
+    the EMPTY SET from this function and are therefore still answered `False` by
+    :func:`_dial_bearing`. Scalar `enum`/`const` are genuinely inert and stay green: that is the
+    whole reason `enum` and `const` remain in :data:`_INERT_KEYWORDS` instead of being made
+    unreadable, which the auditor measured would explode the tail.
+
+    **AND THE STRING ``"state"`` APPEARING AS A VALUE IS NOT A DECLARATION.** Only the KEYS of
+    object instance values are collected, so ``{"enum": ["state", "detail_level"]}`` — a perfectly
+    ordinary string enum — names nothing.
+    """
+    if depth > INSTANCE_WALK_CAP:
+        # An instance value nested deeper than this walk goes. It is not silently discarded: the
+        # sentinel below is a name no JSON Schema property can have and no contract can declare,
+        # so it enters `declared`, cannot equal `state`, and cannot make the node `True` — but a
+        # caller asking "did you read all of it?" gets an honest NO. See DECLARED LIMIT 15.
+        return {INSTANCE_TOO_DEEP}
+    names: set = set()
+    if isinstance(value, dict):
+        names |= {key for key in value if isinstance(key, str)}
+        for member in value.values():
+            names |= _instance_declared_names(member, depth + 1)
+    elif isinstance(value, list):
+        for member in value:
+            names |= _instance_declared_names(member, depth + 1)
+    return names
+
+
+def _declared_names(resolved: dict) -> set:
+    """*** EVERY PROPERTY NAME THIS NODE NAMES, OVER EVERY NAMING POSITION 2020-12 HAS. ***
+
+    This is the ALPHABET the `FX12` inversion quantifies over, and until `16B-FIX-5` it was three
+    keywords wide. It is now the complete list, and the completeness claim is made against the
+    specification rather than against a list of attacks — **a property name can appear in a 2020-12
+    schema in exactly these positions**:
+
+    ==========================  ================================================================
+    position                    handled
+    ==========================  ================================================================
+    `properties` keys           READ HERE
+    `required` members          READ HERE
+    `dependentRequired` values  READ HERE
+    `dependentRequired` keys    *** READ HERE, NEW AT `16B-FIX-5` (`FX15`). *** A key of
+                                `dependentRequired` NAMES a property just as literally as a member
+                                of its value list does — ``{"dependentRequired": {"state":
+                                ["reason"]}}`` says "if `state` is present then `reason` must be",
+                                which names `state` and constrains a document that carries one.
+                                The superseded code read the VALUES and not the KEYS, so that node
+                                answered a clean `False`. **NOBODY ATTACKED THIS AND IT IS FIXED
+                                ANYWAY**, because the point of an alphabet correction is to be
+                                complete rather than to close the shape it was shown.
+    `enum` object members       *** READ HERE, NEW AT `16B-FIX-5` (`FX15`) — `CD-ASR-WO3-09` F1.
+                                *** See :func:`_instance_declared_names`.
+    `const` object value        *** READ HERE, NEW AT `16B-FIX-5` (`FX15`) — `CD-ASR-WO3-09` F1.
+    `patternProperties` keys    NOT READ — regular expressions. In
+                                :data:`_NAME_BEARING_APPLICATORS`, therefore UNREADABLE, therefore
+                                the node is UNDECIDABLE before this function is consulted.
+    `propertyNames`             NOT READ — constrains names it never lists. Same treatment.
+    `dependentSchemas` keys     NOT READ — selects a whole schema by another property's presence.
+                                Same treatment.
+    `default` / `examples`      NOT READ, AND DELIBERATELY. Annotations: they assert nothing, so a
+                                `state` named inside one constrains no document and can admit
+                                none. `enum`/`const` ASSERT, which is the whole distinction.
+    ==========================  ================================================================
+
+    **ADDING A NAME HERE CAN ONLY EVER MAKE THE ANSWER STRICTER, NEVER LOOSER**, and that is the
+    reason this function is safe to widen without re-auditing everything downstream: its only
+    consumer is the test ``"state" in declared`` in :func:`_dial_bearing`, and the limb that test
+    guards sets ``undecidable = True``. More names means more UNDECIDABLE and never more `False`.
+    """
+    declared: set = set()
+    properties = resolved.get("properties")
+    if isinstance(properties, dict):
+        declared |= {key for key in properties if isinstance(key, str)}
+    required = resolved.get("required")
+    if isinstance(required, list):
+        declared |= {name for name in required if isinstance(name, str)}
+    dependent_required = resolved.get("dependentRequired")
+    if isinstance(dependent_required, dict):
+        declared |= {key for key in dependent_required if isinstance(key, str)}
+        for names in dependent_required.values():
+            if isinstance(names, list):
+                declared |= {name for name in names if isinstance(name, str)}
+    # *** THE VALUE OF A READABLE KEYWORD, WHICH IS THE ALPHABET THE INVERSION WAS MISSING. ***
+    if isinstance(resolved.get("enum"), list):
+        for member in resolved["enum"]:
+            declared |= _instance_declared_names(member)
+    if "const" in resolved:
+        declared |= _instance_declared_names(resolved["const"])
+    return declared
 
 
 def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
@@ -1213,7 +1383,10 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     # only one of them is safe** (`PO-DECISIONS-0026` ruling 10, GUARD_THE_INSTANCE_NOT_THE_CLASS).
     # THE COST IS PRICED AND IT IS THE RULED DIRECTION: a false positive costs one seat one look
     # at one contract; a false negative costs the constitution. See DECLARED LIMIT 14.
-    unreadable = sorted(key for key in resolved if key not in _READABLE_KEYWORDS)
+    # *** ONE DEFINITION OF "CANNOT READ", SHARED WITH `_branch_states`. NEW AT `16B-FIX-5`
+    # (`FX16`, closing `CD-ASR-WO3-09` F2). *** The predicate used to be written out here and
+    # nowhere else, so the branch recogniser two hundred lines below had no inversion at all.
+    unreadable = _unreadable_keywords(resolved)
     if unreadable:
         undecidable = True
 
@@ -1237,17 +1410,16 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     # it a subschema is a node that requires a `state` it constrains not at all. Reading them is
     # a COMPLETE read of those keywords, which is why they are in `_READABLE_KEYWORDS`; the
     # keywords whose names this check CANNOT read are handled by the inversion above.
-    declared = set()
-    if isinstance(properties, dict):
-        declared |= {key for key in properties if isinstance(key, str)}
-    required = resolved.get("required")
-    if isinstance(required, list):
-        declared |= {name for name in required if isinstance(name, str)}
-    dependent_required = resolved.get("dependentRequired")
-    if isinstance(dependent_required, dict):
-        for names in dependent_required.values():
-            if isinstance(names, list):
-                declared |= {name for name in names if isinstance(name, str)}
+    # *** AND WIDENED AGAIN AT `16B-FIX-5` (`FX15`), WHICH IS THE ALPHABET CORRECTION AND THE ONLY
+    # THING `CD-ASR-WO3-09` FOUND WRONG WITH THE INVERSION. *** `FX12` quantified over KEYWORD
+    # NAMES and never over what a READABLE keyword's VALUE asserts, so `{"enum": [<a LIVE
+    # reading>, <a STALE reading whose detail_level is "calm">]}` was read, found to contain no
+    # unreadable keyword, found to name no `state` in `properties`/`required`/`dependentRequired`,
+    # and answered a clean `False` — NOT A DIAL — while the live gate ADMITTED a dead feed
+    # rendering as `calm` on both surfaces. **THE QUANTIFIER WAS RIGHT AND THE ALPHABET WAS
+    # WRONG.** :func:`_declared_names` is now the whole alphabet and it is enumerated against the
+    # specification's naming positions rather than against the four shapes that escaped.
+    declared = _declared_names(resolved)
 
     if "state" in declared:
         subschema = properties.get("state") if isinstance(properties, dict) else None
@@ -1309,6 +1481,28 @@ def _branch_states(schema: dict, dial_union: dict):
     from the branch to its `state` subschema — discarded on the way. **IT IS COLLECTED AT EVERY
     HOP AND NOT ONLY AT THE ENTRY**, because auditor arm `A2` wrote the conditional one `$ref`
     deeper, behind an innocuous entry, and got the identical escape.
+
+    *** AND SINCE `16B-FIX-5` THIS RECOGNISER HAS THE SAME INVERSION AS THE OTHER ONE (`FX16`,
+    closing `CD-ASR-WO3-09` F2). *** `FX12` was applied at the ROOT-PROPERTY recogniser only. This
+    function read `resolved["properties"]["state"]["const"]` **and nothing else** — no readability
+    test, no :data:`_READABLE_KEYWORDS`, no undecidable outcome — so a branch that resolved to a
+    perfectly good `state.const` **while also carrying a keyword this check cannot read** was
+    returned as an identified, accepted branch, and the walk went on as though it had looked at the
+    whole of it. MEASURED by the auditor on the target tree:
+
+        {"properties": {"state": {"const": "UNKNOWN"}, ...},
+         "patternProperties": {"^x_": {}}, "additionalProperties": false}
+        _branch_states -> [('oneOf[0]', 'UNKNOWN', [])]     ACCEPTED, no violation
+        _dial_bearing  -> True
+
+    **TWO RECOGNISERS IN ONE FILE DISAGREEING ABOUT WHAT "READABLE" MEANS IS ONE EDIT FROM A HOLE.**
+    They now agree BY CONSTRUCTION and not by assertion: both ask :func:`_unreadable_keywords`,
+    which is the only place in this file the phrase ``not in _READABLE_KEYWORDS`` appears. **A
+    BRANCH THIS CHECK CANNOT FULLY READ HAS NO IDENTIFIED STATE** — ``state`` comes back ``None``,
+    which every caller already treats as UNRECOGNISED, and the caller reports
+    `CD-CALM-BRANCHES-006` **naming the keyword** rather than the generic sentence. It is the same
+    answer :func:`_dial_bearing` gives about the same node, and it is reached through the same
+    predicate.
     """
     branches = dial_union.get("oneOf")
     if not isinstance(branches, list) or not branches:
@@ -1319,7 +1513,7 @@ def _branch_states(schema: dict, dial_union: dict):
             entry.get("$ref"), str) else f"oneOf[{index}]"
         resolved, dropped = _resolve(schema, entry) if isinstance(entry, dict) else (None, [])
         state = None
-        if isinstance(resolved, dict):
+        if isinstance(resolved, dict) and not _unreadable_keywords(resolved):
             declared = resolved.get("properties", {}).get("state") if isinstance(
                 resolved.get("properties"), dict) else None
             declared, declared_dropped = (
@@ -1616,14 +1810,28 @@ def main(argv=None) -> int:
             )
         unreadable = [label for label, resolved, state, _ in branches
                       if resolved is None or state is None]
+        # *** WHICH KEYWORD, NEW AT `16B-FIX-5` (`FX16`). *** `_branch_states` now withholds a
+        # state from a branch carrying a keyword it cannot read, so this violation has a SECOND
+        # cause and a report that named only the first would be false about the new one. The
+        # predicate is the SAME FUNCTION the recogniser used — it is not re-derived here.
+        illegible = {label: _unreadable_keywords(resolved)
+                     for label, resolved, state, _ in branches
+                     if state is None and _unreadable_keywords(resolved)}
         if unreadable:
             check.violation(
                 here, 0, "CD-CALM-BRANCHES-006",
                 f"{surface.value}: branches {unreadable!r} of '#/$defs/dial_reading.oneOf' do "
-                "not resolve to a schema object declaring 'properties.state.const' as a string. "
-                "DENY BY DEFAULT: a branch this check cannot IDENTIFY is a branch it cannot "
-                "DRIVE, and an undriven branch of the published union is a shape on which PID "
-                "§3.2 is unguarded. Unrecognised is a VIOLATION, never a silence.",
+                "not resolve to a schema object declaring 'properties.state.const' as a string, "
+                "*** OR DECLARE A KEYWORD THIS CHECK CANNOT READ (NEW AT 16B-FIX-5, FX16): "
+                f"{illegible!r} ***. DENY BY DEFAULT: a branch this check cannot IDENTIFY is a "
+                "branch it cannot DRIVE, and an undriven branch of the published union is a shape "
+                "on which PID §3.2 is unguarded. Unrecognised is a VIOLATION, never a silence. "
+                "*** AND THE TWO RECOGNISERS IN THIS FILE NOW AGREE ABOUT WHAT 'READABLE' MEANS "
+                "BY CONSTRUCTION: `_dial_bearing` and `_branch_states` both ask "
+                "`_unreadable_keywords`, which is the ONLY place `not in _READABLE_KEYWORDS` is "
+                "written. Before this increment the branch recogniser had NO inversion at all and "
+                "accepted `{'properties': {'state': {'const': 'UNKNOWN'}}, 'patternProperties': "
+                "{...}}` silently (CD-ASR-WO3-09 F2). *** See DECLARED LIMIT 14.",
             )
         states = [state for _, _, state, _ in branches if state is not None]
         duplicated = sorted({s for s in states if states.count(s) > 1})
