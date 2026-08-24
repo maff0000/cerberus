@@ -1,0 +1,195 @@
+# ================================================================================================== #
+# CD-DISPATCH-WO3-INC16D-ASSURANCE
+#
+# *** **THE TWELFTH ASSURANCE SEAT ON THIS ROW. ELEVEN HAVE GONE BEFORE YOU AND ELEVEN FOUND
+# SOMETHING. YOUR JOB IS TO BE THE TWELFTH, NOT TO CONFIRM THE ELEVEN.** ***
+#
+# `CD-ENG-WO3-12` returned increment 16D — the GATE FRESHNESS-STAGE — `READY_FOR_ASSURANCE`. The
+# STALE half of `CD-AC-001` claims to exist for the first time in the project's history. **THE
+# RETURN IS BANKED AS AN INPUT AND IS NOT ACCEPTED. A RETURN IS NOT A VERDICT AND A VERDICT IS NOT
+# AN ACCEPTANCE (`PBG-AUTH-003`).**
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-WO3-INC16D-ASSURANCE
+increment_under_audit: 16D-GATE-FRESHNESS
+status: ISSUED
+issued_utc: '2026-08-24T18:40:40Z'   # from `date -u` and from nothing else (CD-RULE-005)
+issued_by: PROJECT_LEAD_SEAT_05
+issued_at_boundary: BL-20260824T184040Z-0179
+
+role_source: pbg/roles/assurance-engineer.md
+authority_record: governance/authority/CD-AUTH-0001-project-lead.yaml
+product_authority_for_the_increment: governance/decisions/PO-DECISIONS-0029.md
+
+seat_identity: CD-ASR-WO3-12
+separation_of_duties: >
+  *** **YOU ARE NOT `CD-ENG-WO3-12` AND YOU DID NOT WRITE ONE LINE OF WHAT YOU ARE GRADING**
+  (`PBG-SOD-001`, NON-WAIVABLE). *** MEASURED, not assumed: `git log --all --format=%an | sort -u`
+  names `CD-ENG-WO3-01..12` and `CD-ASR-WO3-02..11`. **`CD-ASR-WO3-12` HAS NEVER AUTHORED A COMMIT
+  IN THIS REPOSITORY.** The Project Lead did not write the increment either, and is not grading it.
+
+target:
+  branch: wo-3
+  content_tip: 0e80a09af9661a9e7e6bb73193fbe56133fcff29
+  entry_tip: ef3c960d23327800e0ad084c6833afca74a1a0fa
+  base: 295bdbe
+  the_engineers_return_entry: governance/engineering/build-log/BL-20260824T183401Z-16DF.yaml   # on the wo-3 lane
+
+# ================================================================================================== #
+mutation_authority:
+# ================================================================================================== #
+  you_are_READ_ONLY: >
+    *** **YOU MUTATE NOTHING EXCEPT YOUR OWN VERDICT ARTEFACT.** *** No fix, no repair, no
+    "while I was there". If you find a defect you WRITE THE PRESCRIPTION AND LEAVE THE LINE
+    UNWRITTEN (`PBG-SOD-001`, `PBG-SOD-004`). The seat before you did exactly this and said so.
+  do_not_audit_in_the_lane_worktree: >
+    **`/srv/crash-detector-wo3` IS THE LANE AND YOU MUST NOT DIRTY IT.** Make your own worktree —
+    `git worktree add /tmp/asr12/target 0e80a09` (detached) — and do every patch-and-run there.
+    Your verdict goes on its OWN branch (`asr-wo3-12-verdict` from the content tip), ONE file.
+  frozen: "`be0b355` (wo-2r3) is FROZEN. `git show`/`git archive` into scratch only."
+  sequential_only: "`CD-D-181`. You are the ONLY seat running. Do not spawn parallel sub-agents."
+
+commit_identity_mechanism: >
+  `git -c user.name=` DOES NOT WORK on this host. Export
+  GIT_AUTHOR_NAME/GIT_AUTHOR_EMAIL/GIT_COMMITTER_NAME/GIT_COMMITTER_EMAIL as `CD-ASR-WO3-12` /
+  `cd-asr-wo3-12@seats.crash-detector.invalid`. **Verify after your FIRST commit, not at the end.**
+  And **unquoted heredocs and `git commit -m` silently delete backticked words** — write files with
+  a real editor write or `<<'EOF'`, and use `git commit -F`.
+
+# ================================================================================================== #
+# WHAT YOU ARE GRADING AGAINST
+# ================================================================================================== #
+
+the_completion_test:
+  authority: PO-DECISIONS-0027 ruling 5 AS EXTENDED BY PO-DECISIONS-0029 ruling 3
+  stated_whole: >
+    *** **A DIAL THAT CANNOT PROVE PRESENT *AND* FRESH IS REFUSED BY CONSTRUCTION.** ***
+      · PRESENT = the closed contract (Rule CC, landed at 295bdbe, which this increment must PRESERVE)
+      · FRESH   = the gate freshness stage (THIS increment)
+    Both must hold BY CONSTRUCTION and not by enumeration:
+      (1) a dial OLDER THAN ITS WINDOW carrying `calm` is REFUSED; and
+      (2) a never-before-named state carrying `calm` is REFUSED.
+
+what_the_engineer_claims_to_have_built:
+  item_1: >
+    `_refuse_stale_calm`, a FOURTH refusal stage in
+    `src/crash_detector/publication/envelope_contract.py`, running after `_refuse_schema_violation`.
+    New token `REFUSAL_STALE_CALM` = `STALE_CALM`. It claims to walk `_iter_nodes` and to read NO
+    dial slot by name; to detect stamps BY VALUE with the OLDEST governing; to treat the predicate
+    as a CLOSED INTERVAL so a negative age (a FUTURE stamp) fails closed; and to call NO CLOCK —
+    `_days_from_civil` writes the epoch arithmetic out by hand rather than import `datetime`.
+  item_2: "the comparand is the document's own root `staleness_window_seconds`; regime-aware staleness NOT implemented, NOT scaffolded, no hook."
+  item_3: "`_can_carry_detail_level`, a decision procedure over each allowlisted root property's own closed subschema, where CAPABLE and UNDECIDABLE are BOTH violations; both `CALM_BEARING_PROBES` retained unchanged as the paired behavioural control."
+  item_4: "295bdbe preserved — `tests/` diff 688 added / 0 deleted, both contract JSON files byte-unchanged, `ENVELOPE_SCHEMA_VERSION` still 1.1.0, memorial intact."
+
+what_the_PROJECT_LEAD_verified_in_its_OWN_shell_before_issuing_this:
+  disclosed_so_you_do_not_mistake_it_for_a_full_audit: >
+    **THIS IS A SHALLOW CHECK AND IT IS NOT YOUR JOB DONE.** It is recorded so you know what is
+    already independently corroborated and can spend your effort elsewhere.
+  the_flip_re_run_with_the_PROJECT_LEADS_OWN_PRE_INCREMENT_FIXTURE: >
+    `/tmp/plf193/probe_f2.py` was written BEFORE the stage existed, to reproduce A311-F2 at 295bdbe.
+    Re-run UNMODIFIED against the new tip it reports, on BOTH surfaces:
+      · 1970 + calm, window 1     -> REFUSED [STALE_CALM] at /equity_crash   (was ADMITTED)
+      · 1970 + calm, window 86400 -> REFUSED [STALE_CALM]                    (was ADMITTED)
+      · 2099 FUTURE + calm, win 1 -> REFUSED [STALE_CALM]                    (was ADMITTED)
+      · fresh + calm, window 1    -> ADMITTED                                (vacuity guard HOLDS)
+      · UNKNOWN+calm / SPINDRIFT+calm -> REFUSED [SCHEMA_VIOLATION], UNMOVED and same reason_class
+  the_no_clock_claim: >
+    MEASURED: the module's import block contains NEITHER `datetime` NOR `time`, and
+    `grep -nE '(datetime\.|time\.time|time\.monotonic|utcnow|date\.today)\('` over the whole module
+    returns NOTHING. **BP-AMENDMENT-0001 §D.3 IS NOT REOPENED** on that evidence.
+  the_instrument: "`python3 -B tools/register/check_missing_data_never_calm.py --root .` -> `PASS — 260 assertions, 0 violations`, exit 0."
+  scope_and_identity: "All 18 changed paths inside the declared writable scope; ZERO protected paths; ONE identity (`CD-ENG-WO3-12`) on all four commits; `be0b355` UNMOVED; `/srv/crash-detector` untouched."
+
+# ================================================================================================== #
+# WHERE TO ATTACK — THE PROJECT LEAD'S OWN READING, AND YOU ARE NOT BOUND BY IT
+# ================================================================================================== #
+
+attack_surface_ranked:
+  1_THE_ENGINEERS_OWN_F16D_03_AND_IT_IS_THE_BIGGEST_ONE: >
+    *** **THE FOURTH STAGE IS GUARDED BY A TEST FILE AND BY NO REGISTER ROW.** *** The Engineer
+    raised this against itself: arm `D1` DELETES THE WHOLE STAGE and the thirty-line register DOES
+    NOT MOVE. **THIS IS THE EXACT DEFECT CLASS THAT HAS BITTEN THIS PROJECT REPEATEDLY** — a
+    constitutional guarantee whose only witness is a name-coupled file in `tests/`, beside live
+    prescriptions to remove such files. **VERIFY D1 YOURSELF AND SAY PLAINLY WHETHER THE STALE HALF
+    IS ACTUALLY GUARDED OR MERELY TESTED.** The instrument's own printed note now disclaims credit
+    for the staleness half, which is honest — and it also means nothing in the register asserts it.
+  2_THE_NODE_WALK_VERSUS_A_CALM_BEARING_NODE_IT_CANNOT_SEE: >
+    The design's whole claim is that it quantifies over the DOCUMENT rather than over known dial
+    slots. **TRY TO PUT `calm` SOMEWHERE THE WALK DOES NOT REACH OR CANNOT DECIDE.** `_iter_nodes`
+    walks Mappings and `(list, tuple)`. What about a value that is a Mapping subclass, a nested
+    array-of-array-of-object, a node whose `detail_level` arrives via a key that is not the literal
+    string, or a document where the calm-bearing node sits under a key the schema stage already
+    passed? Eleven rounds were lost to instruments that enumerated what they knew about.
+  3_STAMP_DETECTION_BY_VALUE_AND_THE_OLDEST_GOVERNS: >
+    Stamps are claimed to be detected BY VALUE with the OLDEST governing, and the `_utc` suffix
+    consulted only to catch a self-declared stamp that will not parse. **ATTACK BOTH HALVES.** Can
+    a node carry a string that LOOKS like a stamp and is not, or carry its real stamp in a form the
+    value-detector misses, so a stale node presents only a FRESH stamp and passes? Arm `D4`
+    (newest governs) is the Engineer's own seam proof — confirm it bites.
+  4_THE_HAND_ROLLED_EPOCH_ARITHMETIC: >
+    `_days_from_civil` exists so the module need not import `datetime`. **HAND-ROLLED CALENDAR CODE
+    IS WHERE ARITHMETIC BUGS LIVE.** Leap years, century rules, 1970 and 2099 boundaries, the
+    `:60` leap second the Engineer says is rejected, fractional seconds (the contract pattern
+    permits 1-6 digits). A one-day error here is a silently wrong freshness verdict.
+  5_ITEM_3s_DECISION_PROCEDURE: >
+    `_can_carry_detail_level` claims CAPABLE and UNDECIDABLE are both violations. **FIND A THIRD
+    OUTCOME.** A311-F1 fell to one container deeper than the arm that preceded it; the Engineer
+    added `H3` (array of arrays) and `H4` (undecidable via `allOf`). **GO DEEPER OR SIDEWAYS THAN
+    THE ARMS THE ENGINEER CHOSE** — an author's own plant set is the weakest evidence in any return.
+  6_VACUITY: >
+    A stage that refuses too much satisfies PID §3.2 by making the dial incapable of reading calm,
+    which is a defect and not a fix. The fresh-dial control is ONE row. **PROVE THE PRODUCT CAN
+    STILL PUBLISH A GENUINELY CALM READING** across more than one shape.
+  7_F16D_05_THE_INHERITED_FIGURE_THAT_DID_NOT_REPRODUCE: >
+    The Engineer measures register LINE 06 `CD-RT-002-SCHEMA-CLOSED` at `PASS — 266` at BOTH tips,
+    while `BL-...-16CC` and the A311 verdict both record **280**. Tips agreeing means it is not a
+    regression — but one of those records is WRONG and it has been carried forward. **RESOLVE IT.**
+
+verify_do_not_trust_these_specific_numbers:
+  - "`PASS — 260` at the tip, and that the prior `243` did NOT move (the Engineer says +17 = 8 public + 9 private limb-(b) names)."
+  - "The whole THIRTY-LINE register, per-line rc, at BOTH tips. The Engineer claims 19 rc=0 / 11 non-zero, diff-identical, NO line moved. **RUN ALL THIRTY YOURSELF AT BOTH ENDS.**"
+  - "`pytest` 2007 -> 2099 (+92), with nothing skipped, xfailed or deleted. **A count that only goes up can still hide a deletion.**"
+  - "Nine plant arms with `git apply` rc TAKEN AND CHECKED. `D1`-`D4` are claimed rc=1 at 295bdbe with the arms ABORTED and nothing claimed. **rc=128 or rc=1 followed by a run is a measurement of NOTHING — that exact defect was committed inside the LAST audit by the auditor. Check the Engineer did not repeat it, and do not repeat it yourself.**"
+  - "`tests/` 688 added / 0 deleted and the memorial intact. **THE MEMORIAL REMOVAL MUST NOT HAVE LANDED.**"
+
+# ================================================================================================== #
+standing_facts_you_should_not_have_to_rediscover:
+# ================================================================================================== #
+  - "`pbg log validate` is a FALSE GREEN on this host — it validates ZERO entries and prints GREEN. Validate by DIRECT call: `continuity.validate(text, 'entry', root, schema_dir=<root>/pbg/schemas', git_shas=...)`. The kind token is `entry` (NOT `build-log-entry`) and `active_work` (NOT `active-work`); either wrong token raises KeyError. `A311-F5` also found it exits rc=4 here looking in `<root>/schemas`."
+  - "A `***`-prefixed YAML KEY is ALIAS syntax and fails at the `syntax` stage. Quote it."
+  - "`parent_entry_id` resolves IN-TREE. A wo-3 lane entry's parent must exist on the wo-3 lane."
+  - "`status:` enums differ between the two schemas: build-log entries have `IN_PROGRESS` and no `ACTIVE`; `ACTIVE_WORK.yaml` has `ACTIVE` and no `IN_PROGRESS`. `READY_FOR_ASSURANCE` is invalid in BOTH."
+  - "`ACTIVE_WORK.yaml` ON THE wo-3 LANE IS STILL THE WO-2 RECORD, which is why `pbg.cli boot` prints RED in that worktree. The Engineer raised this as `F16D-04` and correctly did NOT correct it. It is KNOWN and is NOT drift — do not spend the audit on it, but say if you disagree."
+
+open_and_NOT_closed_by_this_increment:
+  CD-PL-F206_and_the_engineers_F16D_01: >
+    The gate compares against the window THE DOCUMENT DECLARES, so a detector declaring an absurd
+    `staleness_window_seconds` reopens the hole from the other side. The per-indicator floors are
+    ratified in `governance/mapping/indicator_mapping.yaml` (30 indicators, 345600..10368000s) but
+    the envelope has NO indicator dimension. **THIS IS A NAMED, DELIBERATELY OPEN PRODUCT QUESTION
+    AND IT IS NOT A FINDING AGAINST THE ENGINEER — it was in the dispatch as a stop-out.** Grade
+    whether it is honestly STATED, not whether it is closed.
+
+your_verdict:
+  form: "`PASS` / `AMBER` / `RED`, with the NEXT SAFE GATE named."
+  what_a_PASS_would_release: >
+    On GREEN the ruled order is: **the detector-side liveness marking (16C, `feed_liveness` produced
+    by a REAL dead-feed detector), THEN registering the indicator rows** from
+    `governance/mapping/indicator_mapping.yaml`. **NEITHER IS YOURS AND NEITHER MOVES ON YOUR SAY —
+    you name the next safe gate, the Product Authority and the Project Lead move it.**
+  what_you_must_NOT_do:
+    - "Do not accept. A verdict is not an acceptance (`PBG-AUTH-003`)."
+    - "Do not release 16C, do not register an indicator row, do not remove the memorial."
+    - "Do not repair anything you find."
+  bank_it: >
+    Commit your verdict on branch `asr-wo3-12-verdict` from the content tip, ONE file under
+    `governance/engineering/build-log/`, validated by DIRECT call with `ok`, stage and errors
+    reported. **A result that exists only in conversation is not project state (`PBG-CONT-007`).**
+
+closing_note: >
+  The eleven seats before you were not unlucky — each found something real, and several found it in
+  the place the previous fix had just been declared sound. **The single most valuable thing you can
+  do is disbelieve the sentence "closed by construction" and try to construct the counterexample.**
+  If you cannot, say so plainly and say what you tried — a well-evidenced PASS on this row would be
+  the first one, and it needs to be worth more than the ten AMBERs and REDs that preceded it.
