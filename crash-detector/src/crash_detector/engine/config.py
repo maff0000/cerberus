@@ -120,7 +120,12 @@ from crash_detector.engine.model import (
     establish_model_for_dial,
     own_model_id,
 )
-from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY, SourceRegistry
+from crash_detector.source_registry import (
+    EMPTY_INDICATOR_MAPPING_REGISTRY,
+    EMPTY_SOURCE_REGISTRY,
+    IndicatorMappingRegistry,
+    SourceRegistry,
+)
 from crash_detector.staleness import StalenessWindow
 from crash_detector.establishment import each_of, establishes, one_of
 
@@ -221,6 +226,7 @@ class DialSpec:
     staleness_window_seconds=float,
     source_registry=SourceRegistry,
     model_registry=ModelRegistry,
+    indicator_mapping_registry=IndicatorMappingRegistry,
 )
 @dataclass(frozen=True)
 class ConfigSnapshot:
@@ -232,13 +238,14 @@ class ConfigSnapshot:
     #: executed NO package code: the establishment boundary is not consulted, it is
     #: walked around. Declared here rather than via @dataclass(slots=True), which also
     #: installs a stdlib __setstate__ that re-opens the same route by its sibling.
-    __slots__ = ("config_snapshot_id", "dial_specs", "staleness_window_seconds", "source_registry", "model_registry")
+    __slots__ = ("config_snapshot_id", "dial_specs", "staleness_window_seconds", "source_registry", "model_registry", "indicator_mapping_registry")
 
     config_snapshot_id: str
     dial_specs: tuple[DialSpec, ...]
     staleness_window_seconds: float
     source_registry: SourceRegistry
     model_registry: ModelRegistry
+    indicator_mapping_registry: IndicatorMappingRegistry
 
     def __post_init__(self) -> None:
         if not self.config_snapshot_id:
@@ -314,6 +321,27 @@ class ConfigSnapshot:
         for spec in self.dial_specs:
             registry.assert_may_be_required(spec.required_input_ids)
             registry.assert_may_be_contributing(spec.contributing_input_ids)
+
+        # THE INDICATOR MAPPING TRAVELS IN THE SAME SNAPSHOT (WO-3 increment 16A, D4.5).
+        # Exact type, for the reason above and one more: an IndicatorMappingRegistry
+        # subclass may redefine `get` or `pending_source_ids`, and `pending_source_ids` is
+        # what an operator reads to see which feeds are NOT connected — a subclass answering
+        # "none pending" is the false green PO-DECISIONS-0025 r4 forbids, produced by the
+        # caller's own code.
+        if type(self.indicator_mapping_registry) is not IndicatorMappingRegistry:
+            raise TypeError(
+                "ConfigSnapshot.indicator_mapping_registry must be an "
+                f"IndicatorMappingRegistry, got "
+                f"{type(self.indicator_mapping_registry).__name__}. Pass "
+                "EMPTY_INDICATOR_MAPPING_REGISTRY explicitly for the 16A state; there is "
+                "no default, because a mapping nobody chose is not evidence of anything."
+            )
+        # EVERY MAPPED INDICATOR MUST BE A REGISTERED SOURCE. Without this the mapping could
+        # bind a dial to an indicator the source registry has never heard of, and the
+        # criticality contract — which decides whether a missing input forces Unknown or
+        # Degraded — would never be consulted for it. Vacuously true at 16A (zero rows on
+        # both sides) and load-bearing from the first row 16B writes.
+        registry.assert_registered(self.indicator_mapping_registry.source_ids)
 
         # THE MODEL REGISTRY, AND §C.5's THREE INVARIANTS OVER IT.
         # Exact type, for the reason above and one more: a ModelRegistry subclass may
@@ -396,11 +424,17 @@ def empty_config_snapshot(
     it yields ``Unknown`` for both dials, which is the honest answer and not a
     placeholder.
 
-    **BOTH registries are empty here rather than absent**, and the facts reinforce each
+    **ALL THREE registries are empty here rather than absent**, and the facts reinforce each
     other: with nothing registered, the source registry's first invariant means no dial
     COULD declare an input even if someone added one to a spec without touching the
     registry, and the model registry's first invariant means no ``model_ref`` resolves —
     so no ``ModelSpec`` reaches the executor by any route whatever.
+
+    **THE THIRD IS THE INDICATOR MAPPING** (WO-3 increment 16A). It is empty for a DIFFERENT
+    reason from the other two and the difference is worth carrying: they are empty because
+    ``CD-D-005`` had not been decided, and it is empty because ``CD-D-005`` HAS been decided
+    — ``PO-DECISIONS-0025`` ruling 1 — and the ratified artefact's content cannot be read
+    from this project (``Q30``). Same shipped state, different owed thing.
     """
     return ConfigSnapshot(
         config_snapshot_id=config_snapshot_id,
@@ -416,4 +450,5 @@ def empty_config_snapshot(
         staleness_window_seconds=staleness_window_seconds,
         source_registry=EMPTY_SOURCE_REGISTRY,
         model_registry=EMPTY_MODEL_REGISTRY,
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
     )

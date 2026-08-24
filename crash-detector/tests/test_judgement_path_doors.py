@@ -49,6 +49,7 @@ from crash_detector.serving.witness_resolver import (
     render_panel,
     resolve_panel,
 )
+from crash_detector.source_registry import EMPTY_INDICATOR_MAPPING_REGISTRY
 from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY
 from crash_detector.staleness import StalenessWindow
 from crash_detector.witness.panel import Agrees, Unavailable
@@ -183,6 +184,7 @@ def test_p5_a_config_snapshot_subclass_is_refused_too_and_that_is_the_class():
         dial_specs=_the_shipped_snapshot().dial_specs,
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=EMPTY_SOURCE_REGISTRY,
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=EMPTY_MODEL_REGISTRY,
     )
     with pytest.raises(NotAdmitted):

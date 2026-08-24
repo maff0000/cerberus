@@ -33,6 +33,7 @@ from crash_detector.engine.model import (
     ModelRegistry,
     ModelSpec,
 )
+from crash_detector.source_registry import EMPTY_INDICATOR_MAPPING_REGISTRY
 from crash_detector.source_registry import (
     EMPTY_SOURCE_REGISTRY,
     Criticality,
@@ -96,6 +97,7 @@ def _snapshot(*, equity: DialSpec, monetary: DialSpec, registry: SourceRegistry)
         dial_specs=(equity, monetary),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=registry,
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=_model_registry_for(equity, monetary),
     )
 

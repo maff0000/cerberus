@@ -26,7 +26,7 @@ import subprocess
 import sys
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
-CHECK = REPO_ROOT / "tools" / "audit" / "check_deploy_portability.py"
+CHECK = REPO_ROOT / "deploy" / "check_portability.py"
 COMPOSE_REL = pathlib.Path("deploy") / "compose.yaml"
 
 EXIT_CLEAN = 0
@@ -64,6 +64,18 @@ def _subject(tmp_path: pathlib.Path, *replacements: tuple[str, str]) -> pathlib.
         text = text.replace(old, new)
     (root / COMPOSE_REL).write_text(text, encoding="utf-8")
     return root
+
+
+def _load_compose_resolved() -> dict:
+    """The compose document WITH merge keys resolved, via the audit's own resolver."""
+    sys.path.insert(0, str(REPO_ROOT / "deploy"))
+    sys.path.insert(0, str(REPO_ROOT / "tools" / "register"))
+    from check_portability import _resolve_merges, anchor_table
+    from _yamlmin import load_yaml
+
+    path = REPO_ROOT / COMPOSE_REL
+    raw = load_yaml(path)
+    return _resolve_merges(raw, raw, anchor_table(path.read_text(encoding="utf-8")))
 
 
 # ========================================================================================= #
@@ -309,9 +321,9 @@ def test_the_resolved_document_actually_carries_the_mount_fields():
     """The positive half of the same proposition, asserted on the real file: after
     resolution the contracts mount HAS a source and a target. Without this, the arm above
     proves only that a broken anchor is detected, not that a working one is used."""
-    sys.path.insert(0, str(REPO_ROOT / "tools" / "audit"))
+    sys.path.insert(0, str(REPO_ROOT / "deploy"))
     sys.path.insert(0, str(REPO_ROOT / "tools" / "register"))
-    from check_deploy_portability import _resolve_merges, anchor_table
+    from check_portability import _resolve_merges, anchor_table
     from _yamlmin import load_yaml
 
     path = REPO_ROOT / COMPOSE_REL
@@ -331,29 +343,56 @@ def test_the_resolved_document_actually_carries_the_mount_fields():
 # THE THING THE AUDIT DELIBERATELY DOES NOT CLAIM
 # ========================================================================================= #
 
-def test_there_is_no_redis_anywhere_and_this_test_records_that_as_OPEN_not_as_DONE():
+def test_there_is_no_redis_SERVICE_and_this_records_that_as_OPEN_not_as_DONE():
     """*** ``PO-DECISIONS-0025`` RULING 2 NAMES REDIS. THIS DESIGN HAS NONE. ***
 
-    ``BLUEPRINT`` §2's container set does not contain it; it has no declared purpose, no
-    role in the grant matrix and no egress posture. **This test asserts the ABSENCE as the
-    measured current state so that the gap is visible in the suite rather than only in a
-    Build Log** — it is NOT an assertion that the absence is correct. Adding a service to
-    ``BLUEPRINT`` §2 is a Product Owner act (``CD-D-115``). Raised as ``Q31``.
+    ``BLUEPRINT`` §2's container set does not contain it; it has no declared purpose, no role
+    in the grant matrix and no egress posture. **This test asserts the ABSENCE as the measured
+    current state so the gap lives in the suite and not only in a Build Log** — it is NOT an
+    assertion that the absence is correct. Adding a service to ``BLUEPRINT`` §2 is a Product
+    Owner act (``CD-D-115``). Raised as ``Q31``. When Redis is ruled on this test fails, and
+    whoever adds the service has to say so here.
 
-    When Redis is ruled on, this test is the place the decision gets recorded: it will fail,
-    and whoever adds the service will have to say so here.
+    **IT LOOKS FOR A SERVICE AND A CLIENT, NOT FOR THE WORD.** The first draft of this test
+    grepped for the string and failed on ``deploy/indicator-mapping.json`` — the file whose
+    header RECORDS that Redis is owed under ``Q31``. A test that cannot tell a dependency from
+    the documentation of its absence would punish exactly the disclosure this project wants,
+    and the fix is to name what a Redis actually IS: a service, an image, a client import, a
+    URL scheme, or its port.
     """
+    document = _load_compose_resolved()
+    services = document["services"]
+    assert not [name for name in services if "redis" in name.lower()], sorted(services)
+    for name, spec in services.items():
+        assert "redis" not in str(spec.get("image") or "").lower(), name
+
+    signatures = ("import redis", "from redis", "redis://", "rediss://", "6379")
     hits = []
     for relative in ("src", "deploy", "db", "contracts"):
         for path in (REPO_ROOT / relative).rglob("*"):
             if not path.is_file() or "__pycache__" in path.parts:
                 continue
             try:
-                if "redis" in path.read_text(encoding="utf-8").lower():
-                    hits.append(str(path.relative_to(REPO_ROOT)))
+                text = path.read_text(encoding="utf-8").lower()
             except (UnicodeDecodeError, OSError):
                 continue
+            for signature in signatures:
+                if signature in text:
+                    hits.append(f"{path.relative_to(REPO_ROOT)}: {signature!r}")
     assert hits == [], (
-        "Redis has appeared in the tree. PO-DECISIONS-0025 r2 names it and BLUEPRINT §2 "
-        f"does not declare it, so this is Q31 arriving: {hits}"
+        "a Redis CLIENT, URL or port has appeared in the tree. PO-DECISIONS-0025 r2 names "
+        f"Redis and BLUEPRINT §2 does not declare it, so this is Q31 arriving: {hits}"
     )
+
+
+def test_the_absence_of_redis_is_DOCUMENTED_and_not_merely_true():
+    """**THE OTHER HALF, AND THE ONE A SILENT OMISSION WOULD FAIL.**
+
+    The dispatch was explicit that Redis must be neither added nor QUIETLY OMITTED. An
+    absence nobody wrote down is indistinguishable from an absence nobody noticed, so this
+    asserts that the gap is stated where a reader will meet it.
+    """
+    audit = (REPO_ROOT / "deploy" / "check_portability.py").read_text(encoding="utf-8")
+    assert "Q31" in audit and "REDIS" in audit.upper()
+    mapping = (REPO_ROOT / "deploy" / "indicator-mapping.json").read_text(encoding="utf-8")
+    assert "Q31" in mapping

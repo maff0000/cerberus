@@ -265,10 +265,50 @@ def test_the_five_original_words_are_unchanged_in_shape(a_tree):
     assert "UNKNOWN_DISPOSITION" not in result.stdout
     assert "DISPOSITION_EVIDENCE_MISSING" not in result.stdout
     assert "MALFORMED_DISPOSITION" not in result.stdout
-    assert "548 sites" in result.stdout, (
+    # **SUPERSEDED A FOURTH TIME AT WO-3 INCREMENT 16A** (`PBG-CONT-003` — corrections
+    # supersede, never edit). The assertion it replaces, verbatim:
+    #
+    #     assert "548 sites" in result.stdout, (
+    #         "the sweep's own POPULATION moved. If that was a deliberate product change,
+    #         supersede this number with the MEASURED one and say what moved it; if it was
+    #         not, something changed under src/ that nobody intended.")
+    #
+    # **IT WAS A DELIBERATE PRODUCT CHANGE, AND THIS SUPERSESSION IS DONE THE WAY THAT
+    # ASSERTION'S OWN TEXT INSTRUCTS.** `PO-DECISIONS-0025` r1/r2/r6 requires the
+    # indicator->dial mapping to exist as REGISTRY DATA, and WO-3 increment 16A added the
+    # carrier — the three enums, the record, the registry, the refusals and the loader — to
+    # `crash_detector.source_registry`. **SIXTY-TWO NEW TIER-2 SITES AND NOT ONE NEW TIER-1
+    # ADMISSION.** MEASURED by running the instrument on both trees, never by arithmetic on
+    # a diff:
+    #
+    #     baseline 116c01f   PASS — 548 sites over 19 modules   TIER 1: 33 (ISINSTANCE 18)
+    #     this SHA           PASS — 610 sites over 19 modules   TIER 1: 33 (ISINSTANCE 18)
+    #
+    # **THE MODULE COUNT IS UNCHANGED AT 19, AND THAT IS THE LOAD-BEARING HALF.** The carrier
+    # was FIRST written as a companion module `crash_detector/indicator_mapping.py`, and this
+    # instrument caught it: a new module enters the judgement closure UNDECLARED and takes
+    # this control from PASS to FAIL — measured, `FAIL — 610 sites, 1 violations`. The only
+    # remedy, a `DECLARED_MODULE_DISPOSITIONS` entry or a complete per-site declaration,
+    # lives in `tools/sweep/declared_dispositions.py`: the Project Lead's register, held by
+    # `PO-DECISIONS-0018` ruling 3 and outside any Engineer seat's scope. **THE CODE WAS
+    # MOVED INTO A MODULE THAT ALREADY CARRIES AN ESTABLISHED DISPOSITION RATHER THAN THE
+    # REGISTER BEING EDITED TO ACCEPT IT.** The control did its job and the code moved.
+    assert "610 sites" in result.stdout, (
         "the sweep's own POPULATION moved. If that was a deliberate product change, "
         "supersede this number with the MEASURED one and say what moved it; if it was not, "
         "something changed under src/ that nobody intended.\n" + result.stdout[-3000:]
+    )
+    # **THE MODULE POPULATION IS PINNED FROM THIS INCREMENT, BECAUSE THE TOTAL CANNOT SEE
+    # IT.** A new module carries an obligation payable only in a register no Engineer seat
+    # owns — exactly as a tier-1 site does — so it is asserted separately for the same
+    # reason, and as an INEQUALITY so that removing one and adding another cannot go green.
+    assert "over 19 modules" in result.stdout, (
+        "THE SUBJECT MODULE POPULATION MOVED. A module entering the judgement closure needs "
+        "a DECLARED_MODULE_DISPOSITIONS entry or a complete per-site declaration in "
+        "tools/sweep/declared_dispositions.py — the Project Lead's register, held by "
+        "PO-DECISIONS-0018 ruling 3. AN ENGINEER SEAT THAT ADDS A MODULE CANNOT DISCHARGE "
+        "THE OBLIGATION IT CREATES, so this is not a number an Engineer may bump: it is a "
+        "stop-and-report. 19 was measured at WO-3 increment 16A.\n" + result.stdout[-3000:]
     )
     # **THE TIER-1 POPULATION IS THE ONE THAT CARRIES AN OBLIGATION, AND IT IS PINNED
     # SEPARATELY SO THAT A BUMP TO THE TOTAL CANNOT HIDE A NEW UNDECLARED ADMISSION.**

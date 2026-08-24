@@ -100,7 +100,12 @@ import pathlib
 import re
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "register"))
+# The register harness is IMPORTED and never copied: two `Check` classes or two YAML readers
+# in one repository are two instruments that disagree. `tools/` is READ here and not written —
+# this file lives under `deploy/` because that is where the thing it audits lives, and because
+# `tools/sweep/declared_dispositions.py` proved that `tools/` carries obligations an Engineer
+# seat cannot discharge.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "tools" / "register"))
 
 from _support import Check, parse_root, resolve_root  # noqa: E402
 from _yamlmin import YamlSubsetError, load_yaml  # noqa: E402

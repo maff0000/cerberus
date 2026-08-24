@@ -41,6 +41,7 @@ from crash_detector.establishment import (
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.engine.model import EMPTY_MODEL_REGISTRY
 from crash_detector.serving.witness_resolver import PanelRow
+from crash_detector.source_registry import EMPTY_INDICATOR_MAPPING_REGISTRY
 from crash_detector.source_registry import EMPTY_SOURCE_REGISTRY
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -518,6 +519,7 @@ def test_a_duck_dialspec_is_refused_and_the_BODY_is_what_refuses_it_while_it_exi
             dial_specs=(DuckDialSpec(), DuckDialSpec()),
             staleness_window_seconds=600.0,
             source_registry=EMPTY_SOURCE_REGISTRY,
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=EMPTY_MODEL_REGISTRY,
         )
     assert str(refusal.value) == "ConfigSnapshot.dial_specs must all be DialSpec"

@@ -63,6 +63,7 @@ from crash_detector.engine.model import (
 )
 from crash_detector.observations import OK, ObservationRecord
 from crash_detector.own_terms import NotEstablishedOnOwnTerms
+from crash_detector.source_registry import EMPTY_INDICATOR_MAPPING_REGISTRY
 from crash_detector.source_registry import (
     Criticality,
     SourceRecord,
@@ -420,6 +421,7 @@ def test_p3_a_model_bound_to_one_dial_cannot_be_named_by_the_other():
             ),
             staleness_window_seconds=WINDOW_SECONDS,
             source_registry=_sources("src.e"),
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=ModelRegistry(models=(equity_bound,)),
         )
     assert MONETARY_DIAL_ID in str(raised.value)
@@ -455,6 +457,7 @@ def test_p3_there_is_no_object_to_place_in_both_specs_in_the_first_place():
         ),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=_sources("src.e", "src.m"),
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=ModelRegistry(
             models=(
                 _model("model.equity.v0", EQUITY_DIAL_ID, required=("src.e",)),
@@ -502,6 +505,7 @@ def test_p3_a_dial_id_rewritten_after_snapshot_construction_is_refused_at_resolu
         ),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=_sources("src.e"),
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=ModelRegistry(models=(model,)),
     )
     assert config.model_for(EQUITY_DIAL_ID) is model
@@ -539,6 +543,7 @@ def test_p3_over_the_shipped_empty_registry():
             ),
             staleness_window_seconds=WINDOW_SECONDS,
             source_registry=_sources("src.e"),
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=EMPTY_MODEL_REGISTRY,
         )
 
@@ -580,6 +585,7 @@ def test_p4_a_model_may_not_read_an_input_its_dial_did_not_declare():
             ),
             staleness_window_seconds=WINDOW_SECONDS,
             source_registry=_sources("src.e", "src.undeclared"),
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=ModelRegistry(models=(reads_more,)),
         )
     assert "src.undeclared" in str(raised.value)
@@ -626,6 +632,7 @@ def test_p4_a_model_may_not_promote_a_contributing_input_to_required():
             ),
             staleness_window_seconds=WINDOW_SECONDS,
             source_registry=registry,
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=ModelRegistry(models=(promotes,)),
         )
 
@@ -672,6 +679,7 @@ def test_p4_a_model_reading_exactly_what_its_dial_declares_is_accepted():
         ),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=registry,
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=ModelRegistry(
             models=(
                 _model(
@@ -713,6 +721,7 @@ def test_p4_a_model_reading_a_subset_of_its_dials_inputs_is_accepted():
         ),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=_sources("src.e", "src.f"),
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=ModelRegistry(
             models=(_model("model.subset.v0", EQUITY_DIAL_ID, required=("src.e",)),)
         ),
@@ -749,6 +758,7 @@ def test_p4_over_the_shipped_empty_registry():
             ),
             staleness_window_seconds=WINDOW_SECONDS,
             source_registry=EMPTY_SOURCE_REGISTRY_FOR_THE_PLANT,
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=EMPTY_MODEL_REGISTRY,
         )
 
@@ -819,6 +829,7 @@ def test_p8_the_refusal_travels_out_of_evaluate_rather_than_becoming_a_reading()
         ),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=_sources("src.e"),
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=ModelRegistry(
             models=(_model("model.p8.v0", EQUITY_DIAL_ID, required=("src.e",)),)
         ),

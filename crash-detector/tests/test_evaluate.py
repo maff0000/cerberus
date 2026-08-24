@@ -89,6 +89,7 @@ from crash_detector.observations import (
     Malformed,
     ObservationRecord,
 )
+from crash_detector.source_registry import EMPTY_INDICATOR_MAPPING_REGISTRY
 from crash_detector.source_registry import Criticality, SourceRecord, SourceRegistry
 
 from conftest import FIXED_NOW, WINDOW_SECONDS, ago
@@ -202,6 +203,7 @@ def _snapshot(*, equity_spec: DialSpec, monetary_spec: DialSpec) -> ConfigSnapsh
         dial_specs=(equity_spec, monetary_spec),
         staleness_window_seconds=WINDOW_SECONDS,
         source_registry=_registry_for(equity_spec, monetary_spec),
+        indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
         model_registry=_model_registry_for(equity_spec, monetary_spec),
     )
 
@@ -949,6 +951,7 @@ def test_a_decade_old_observation_is_not_usable_under_any_constructible_window()
             dial_specs=(equity_spec, monetary_spec),
             staleness_window_seconds=window,
             source_registry=_registry_for(equity_spec, monetary_spec),
+            indicator_mapping_registry=EMPTY_INDICATOR_MAPPING_REGISTRY,
             model_registry=_model_registry_for(equity_spec, monetary_spec),
         )
         reading = evaluate([_ok("src.a", TEN_YEARS_SECONDS)], config, FIXED_NOW).equity
