@@ -1,0 +1,254 @@
+# ================================================================================================== #
+# BL-20260824T201846Z-0182 — PROJECT LEAD BOUNDARY. **`CD-ENG-WO3-13` RETURNED INCREMENT 16E
+# `READY_FOR_ASSURANCE` AT CONTENT TIP `ed7263a`, ENTRY TIP `a9e19c3`. THE RETURN IS BANKED AS AN
+# INPUT AND IS NOT ACCEPTED (`PBG-AUTH-003`). A FRESH READ-ONLY ASSURANCE IDENTITY IS DISPATCHED
+# TO GRADE IT.**
+#
+# *** **AND THE ACCEPTANCE TEST OF `A312-F1` WAS RUN BY THIS SEAT, NOT TAKEN FROM THE RETURN
+# (`CD-PL-F193`). IT MOVES.** ***
+#
+#   AT `0e80a09`, WITH `D1` APPLIED: `TOTAL lines=30 rc0=19 nonzero=11` — `diff`-IDENTICAL TO THE
+#   CLEAN TIP. NOT ONE ROW MOVED. THAT WAS THE `AMBER`.
+#
+#   AT `a9e19c3`, WITH THE SAME `D1` PATCH FROM THE SAME ABSOLUTE PATH, `git apply` rc=0 CHECKED,
+#   BOTH TREES `git archive | tar -x` EXTRACTIONS OF THIS SEAT'S OWN:
+#     CLEAN: `TOTAL lines=32 rc0=21 nonzero=11`
+#     D1   : `TOTAL lines=32 rc0=19 nonzero=13`
+#     diff : LINE 04 `check_stale_data_never_calm.py`        rc 0 -> 1
+#            LINE 05 `pytest tests/test_envelope_freshness.py` rc 0 -> 1
+#   **EXACTLY TWO LINES MOVE. BOTH ARE THE NEW ROWS. EVERY OTHER LINE IS UNCHANGED.**
+#   **THE CONSTITUTIONAL GUARANTEE NOW HAS A REGISTER WITNESS. IT DID NOT AT THE LAST BOUNDARY.**
+#
+# **AND THE GUARDED THING DID NOT MOVE, WHICH IS THE OTHER HALF OF THE ORDER: `src/` IS UNTOUCHED
+# BY MEASUREMENT, BOTH `contracts/*.json` ARE UNCHANGED, `pbg/` HAS ZERO PATHS, AND THE LIVE GATE
+# AT `a9e19c3` BEHAVES IDENTICALLY TO `0e80a09` ON ALL FOUR OF THIS SEAT'S PROBE ROWS.**
+#
+# **NOTHING IS ACCEPTED. NO GRADE MOVES. 16C IS NOT RELEASED. NO INDICATOR ROW IS REGISTERED.
+# `Q37` IS RAISED — THE ENGINEER LANDED TWO ROWS WHERE RULING 1 SAYS "ITS OWN ROW", FOR A REASON
+# IT MEASURED IN THE PINNED FRAMEWORK, AND THAT IS THE PRODUCT AUTHORITY'S TO SETTLE.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T201846Z-0182
+timestamp_utc: '2026-08-24T20:18:46Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T20:18:46Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_06
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_06
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T192219Z-0181
+base_sha: d4971b7
+current_sha: d4971b7
+status: DISPATCH_ISSUED
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-13 returned increment 16E (the CONTROL ROW) READY_FOR_ASSURANCE at content tip
+  ed7263a, entry tip a9e19c3, on the wo-3 lane. THE RETURN IS BANKED AS AN INPUT AND IS NOT
+  ACCEPTED (PBG-AUTH-003) — an Engineer does not grade its own work and neither does the seat that
+  dispatched it. THIS SEAT RECONCILED THE RETURN BY MEASUREMENT AND RAN THE ACCEPTANCE TEST IN ITS
+  OWN SHELL RATHER THAN READING IT OUT OF THE RETURN (CD-PL-F193): the register MOVES on D1 where
+  it did not before, exactly two lines move, and both are the new rows. The declared stop held —
+  src/ is untouched, both shipped contracts are byte-unchanged, pbg/ has zero paths, and the live
+  gate's behaviour at the new tip is identical to 0e80a09 on every probe row. CD-D-183, the
+  Assurance dispatch, is ISSUED AND OUT to CD-ASR-WO3-13 — a FRESH, READ-ONLY identity, MEASURED
+  fresh — over a9e19c3. NOTHING IS MERGED, ADMITTED OR PROMOTED. 16C IS NOT RELEASED.
+
+# ================================================================================================== #
+what_this_seat_measured_rather_than_read_out_of_the_return:
+# ================================================================================================== #
+  why: >-
+    CD-PL-F193. The return is the account of the seat that did the work. It is an INPUT. The one
+    claim that decides whether A312-F1 is closed is a claim about a command's exit code, and a
+    command's exit code is the cheapest thing in this project to verify and the most expensive to
+    take on trust.
+  the_acceptance_test_A312_F1:
+    verdict: THE REGISTER MOVES. The defect A312-F1 named is closed at this tip.
+    method: >-
+      Two pristine `git archive a9e19c3 | tar -x` extractions of this seat's own
+      (/tmp/pl05/y_clean, /tmp/pl05/y_d1). `plants/WO3-INC16D/D1-THE-FOURTH-STAGE-REMOVED.patch`
+      applied to the second FROM AN ABSOLUTE PATH OUTSIDE BOTH EXTRACTIONS, `git apply` rc=0 TAKEN
+      AND CHECKED. Then every `execute:` line of `required-tests.yaml` run in each tree with rc
+      taken from the command.
+    measured: |
+      CLEAN a9e19c3 : TOTAL lines=32 rc0=21 nonzero=11
+      D1    a9e19c3 : TOTAL lines=32 rc0=19 nonzero=13
+      diff of the per-line rc lists:
+        LINE 04 yaml:1488 :: python3 tools/register/check_stale_data_never_calm.py --root .
+                             rc=0  ->  rc=1
+        LINE 05 yaml:1613 :: PYTHONPATH=src python3 -m pytest tests/test_envelope_freshness.py -q
+                             rc=0  ->  rc=1
+      AND NOTHING ELSE DIFFERS.
+    the_contrast_that_makes_it_meaningful: >-
+      **THE IDENTICAL PROCEDURE AT `0e80a09` PRODUCED NO DIFF AT ALL** — `TOTAL lines=30 rc0=19
+      nonzero=11` at both ends, measured by this seat at BL-20260824T192219Z-0181. The register
+      could not tell a tree that computes staleness from a tree that does not. **NOW TWO ROWS CAN,
+      AND THEY ARE THE TWO ROWS COMMISSIONED TO.**
+    and_the_line_count_moved_30_to_32_which_is_the_two_new_rows: >-
+      Consistent with two rows landing and no row being dropped. The 11 non-zero lines at the clean
+      tip are UNCHANGED in count and in membership — the pre-existing RED/NOT_EVALUATED rows are
+      exactly as they were, so nothing was quietly made to pass.
+  the_declared_stop_held:
+    src_unchanged: >-
+      `git diff --name-only 0e80a09 ed7263a | grep '^src/'` -> NO MATCH (rc=1). **0e80a09 IS
+      PRESERVED. NOTHING WAS REVERTED. The completion test that was met for the first time on this
+      row is still met by the same bytes that met it.**
+    contracts_byte_unchanged: >-
+      `git diff --name-only 0e80a09 ed7263a | grep 'contracts/.*\.json'` -> NO MATCH.
+    pbg_untouched: >-
+      `git diff --name-only 0e80a09 a9e19c3 | grep '^pbg/'` -> NO MATCH. The pinned framework was
+      not edited to make a control pass (PBG-FWK-013).
+    the_live_gate_is_behaviourally_IDENTICAL: >-
+      This seat's own probe at a9e19c3: STALE-1970-CALM `REFUSED [STALE_CALM] at /equity_crash` x2;
+      FUTURE-2099-CALM `REFUSED [STALE_CALM]` x2; **FRESH-CALM ADMITTED x2; STALE-1970-ELEVATED
+      ADMITTED x2.** Byte-for-byte the same four outcomes as at 0e80a09. **THE VACUITY DIRECTION
+      HOLDS — this is the half this project's history says gets missed, and a control row that had
+      quietly made everything refuse would have shown here.**
+    the_memorial_was_not_removed: >-
+      MEASURED, not asserted: the memorial block in `required-tests.yaml` is BYTE-IDENTICAL to
+      `ef3c960`, and the only change around it is an ADDITION — a second, new reference quoting it
+      in the new row's context. `grep -c 'A memorial nobody reads'` -> 2 where it was 1. **THE
+      RECORD OF THE DEFECT CLASS GREW; IT DID NOT SHRINK.**
+    wo_2r3_frozen: >-
+      `git rev-parse wo-2r3` -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5. UNMOVED.
+    one_identity_only: >-
+      `git log --format='%an' ef3c960..a9e19c3` -> `CD-ENG-WO3-13` on BOTH commits and nothing else.
+      No interleaving (CD-RULE-002). CD-D-181 sequential-single-seat held.
+  a_thing_this_seat_checked_because_it_looked_wrong_and_was_not: >-
+    `git diff --name-only 0e80a09 ed7263a` NAMES `governance/engineering/build-log/
+    BL-20260824T183401Z-16DF.yaml` — the PREVIOUS Engineer's return record. **A modified build-log
+    entry would be a NON-WAIVABLE VIOLATION (do not rewrite Build Log history; corrections
+    supersede, never edit).** MEASURED BEFORE CONCLUDING ANYTHING: the diff reports `new file mode
+    100644`, `430 insertions, 0 deletions`, and `git diff --numstat ef3c960 a9e19c3 --` that path
+    is **EMPTY**. The file was ADDED at `ef3c960` and `0e80a09` predates it. **IT IS AN ARTEFACT OF
+    DIFFING FROM A PRE-ENTRY SHA AND NOT AN EDIT. NO HISTORY WAS REWRITTEN.** Recorded because the
+    alarm was real and the answer is not obvious from the diff header alone.
+
+# ================================================================================================== #
+what_this_seat_did_NOT_grade_and_is_handing_to_the_auditor:
+# ================================================================================================== #
+  the_principle: >-
+    PBG-SOD-001 (non-waivable). This seat dispatched the work. It may reconcile it by measurement
+    and it may not grade it. Everything below is a MEASURED OBSERVATION handed to CD-ASR-WO3-13 as
+    a target, NOT a finding and NOT a verdict.
+  the_deletions_in_the_sibling_row: >-
+    `git diff --numstat ef3c960 a9e19c3` shows deletions in THREE files that are not the new row:
+    `required-tests.yaml` (498 insertions, **5 deletions**),
+    `tools/register/check_missing_data_never_calm.py` (104 insertions, **30 deletions**),
+    `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md` (102 insertions, **23 deletions**).
+    Read, they appear to be prose: a cross-reference the Engineer raised against itself as false
+    (F16E-02), the now-discharged `CD-ENG-F16D-02` escalation note, and the sibling row's
+    disclaimer that *"a guard that is asserted somewhere else is not a guard this row may take
+    credit for"* — which had a row to point at as of this increment and did not before.
+    *** **BUT THIS PROJECT'S CONVENTION IS TO SUPERSEDE AND RETAIN, NOT TO DELETE, AND
+    `required-tests.yaml` CARRIES RETAINED SUPERSEDED BLOCKS THAT PROVE THE CONVENTION. WHETHER 58
+    DELETED LINES IN AND AROUND A CONSTITUTIONAL ROW ARE CORRECTIONS PROPERLY MADE OR TEXT QUIETLY
+    REMOVED IS EXACTLY WHAT AN INDEPENDENT SEAT IS FOR. IT IS NAMED HERE SO THE AUDITOR CANNOT MISS
+    IT, AND IT IS NOT PRE-JUDGED.** ***
+  the_sibling_row_instrument_changed_by_134_lines_net: >-
+    `check_missing_data_never_calm.py` is a guard on the OTHER half of the same constitutional
+    criterion. It moved. **A row that was `PASS — 260` before and is `PASS` after, on an instrument
+    that changed, is a row whose STRENGTH must be re-measured and not assumed.** This project has a
+    named defect class for exactly this: *"a replacement that quietly narrows what it checks is how
+    a guard becomes a certificate."*
+  the_engineers_four_self_raised_findings: >-
+    F16E-01 (a limb of the new instrument was DEAD in the first draft, caught because it printed no
+    note, fixed, 85 -> 97 assertions); F16E-02 (a cross-reference in `required-tests.yaml` was
+    ALREADY FALSE before this increment); F16E-03 (**D3 was never fully unguarded — `check_no_blend`
+    caught it at the base incidentally, for a different criterion and by accident of spelling, so
+    the new row must not take credit for that line**); F16E-04 (a framework observation reported and
+    NOT repaired — `pbg/roles/engineer.md` mandates a `READY_FOR_ASSURANCE` status the pinned entry
+    schema's enum does not contain). **THE SEAT RAISED FOUR THINGS AGAINST ITS OWN WORK AND
+    REPAIRED NOTHING IN `pbg/`. THAT IS THE BEHAVIOUR THIS PROJECT ASKS FOR. IT IS ALSO NOT A
+    SUBSTITUTE FOR BEING GRADED.**
+  the_boot_verdict_was_RED_and_it_is_standing_not_new: >-
+    `CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED` — the LANE's `ACTIVE_WORK.yaml` is still the WO-2
+    record — and `roadmap_identity UNAVAILABLE`. Both are already on the record as `A312-F6`. The
+    Engineer reported rather than silently correcting, because `ACTIVE_WORK.yaml` was outside its
+    writable scope (`PBG-CONT-006`). **CORRECT BEHAVIOUR. THE CONDITION REMAINS OPEN.**
+
+# ================================================================================================== #
+the_assurance_dispatch:
+# ================================================================================================== #
+  id: CD-D-183
+  name: CD-DISPATCH-WO3-INC16E-ASSURANCE
+  status: ISSUED AND OUT
+  actor_id: CD-ASR-WO3-13
+  target_sha: a9e19c39830557105d646408590487c75dd6b5bd
+  identity_freshness_MEASURED: >-
+    `git log --all --format=%an | sort -u` names CD-ENG-WO3-01..13 and CD-ASR-WO3-02..12.
+    **CD-ASR-WO3-13 DOES NOT APPEAR AND HAS NEVER AUTHORED A COMMIT IN THIS REPOSITORY.**
+  separation_of_duties: >-
+    NOT CD-ENG-WO3-13, which wrote every line of what is graded (PBG-SOD-001, non-waivable). NOT
+    CD-ASR-WO3-12, which wrote the prescription being executed — an auditor grading the discharge
+    of its OWN prescription is marking its own paper one layer out. READ-ONLY: mutation prohibited
+    except explicitly safe diagnostic artefacts on its own branch.
+  expected_return: PASS / AMBER / RED, with the next safe gate.
+
+# ================================================================================================== #
+what_did_not_move_at_this_boundary:
+# ================================================================================================== #
+  - '**NOTHING IS ACCEPTED.** The return is BANKED as an INPUT (PBG-AUTH-003).'
+  - '**16C IS NOT RELEASED.** It releases on GREEN over this increment and not before.'
+  - 'NO INDICATOR ROW from governance/mapping/indicator_mapping.yaml is registered.'
+  - '**THE MEMORIAL REMOVAL DID NOT LAND** and was MEASURED not to have.'
+  - 'be0b355 (wo-2r3) FROZEN, MEASURED.'
+  - 'Nothing merged to main. The lane is at a9e19c3 and main is at d4971b7.'
+  - 'No grade moves. No finding is closed. No disposition is written. The WO-2 gate stays SHUT.'
+
+# ================================================================================================== #
+open_product_authority_questions:
+# ================================================================================================== #
+  Q36:
+    status: RAISED at BL-20260824T192219Z-0181, STILL OPEN, NOT BLOCKING
+    summary: >-
+      The A312-F2 stamp-detection TIGHTENING — requiring a calm-bearing node's stamp to be a
+      DECLARED stamp rather than any string that parses. Product scope (PBG-AUTH-005). Not a live
+      escape on the shipped contract.
+  Q37:
+    raised_by: CD-ENG-WO3-13 against its own delivery, and carried here unaltered
+    status: RAISED, BLOCKS NOTHING UNTIL THE VERDICT LANDS
+    question: >-
+      **PO-DECISIONS-0030 ruling 1 says the freshness stage gets "its OWN Required Test Register
+      row" — SINGULAR. THE ENGINEER LANDED TWO ROWS.** The reason is MEASURED, not preferential:
+      `pbg/tools/pbg/required_tests.py` line 388 requires `execute` to be a SINGLE STRING, so one
+      row is one command; the row needs BOTH the live instrument
+      (`check_stale_data_never_calm.py`) AND the pytest witness
+      (`tests/test_envelope_freshness.py`, the witness that already existed and already bit);
+      and chaining them with `&&` would SHORT-CIRCUIT the pytest half on exactly the trees where
+      both numbers matter. So the delivery is `CD-RT-001-STALE-DATA-NEVER-CALM` plus
+      `CD-RT-001-STALE-DATA-WITNESS-SUITE`. **DOES THE PRODUCT AUTHORITY ACCEPT TWO ROWS AS
+      DISCHARGING "ITS OWN ROW", OR DOES `CD-RT-001-STALE-DATA-WITNESS-SUITE` COME BACK OUT — IN
+      WHICH CASE THE PYTEST WITNESS IS UNWIRED AGAIN AND ONE OF THE TWO MOVING LINES IN THE
+      ACCEPTANCE TEST ABOVE DISAPPEARS?**
+    this_seats_note_and_it_is_a_note_not_a_ruling: >-
+      Both rows move on D1 independently (rc 0 -> 1 each), so on the measurement that produced the
+      AMBER the guarantee is guarded EITHER WAY. The question is whether the register should carry
+      the pytest witness as a row of its own, which is the same mechanism 41 existing register
+      paths already use. **IT IS THE PRODUCT AUTHORITY'S CALL AND NOT THIS SEAT'S.**
+  Q38:
+    raised_by: PROJECT_LEAD_SEAT_06, carrying CD-ENG-WO3-13's F16E-04
+    status: RAISED — FRAMEWORK DEFECT, REPORTED NOT REPAIRED
+    question: >-
+      `pbg/roles/engineer.md` mandates the return status `READY_FOR_ASSURANCE`, and the PINNED
+      entry schema's status enum has no such value. Two Engineer seats in a row (CD-ENG-WO3-12 and
+      CD-ENG-WO3-13) have resolved it the same way — `status: WAITING_ASSURANCE` plus an explicit
+      `return_status: READY_FOR_ASSURANCE` — and NEITHER edited `pbg/`, which is correct
+      (PBG-FWK-013). **PBG ITSELF IS INTERNALLY INCONSISTENT HERE. Repairing it is a separate
+      bounded dispatch and is not folded into application work.**
+
+next_safe_action: >-
+  **THE AUDITOR IS OUT AND NOTHING ELSE MOVES WHILE IT IS.** When CD-ASR-WO3-13 returns, this seat
+  banks the verdict — A VERDICT IS NOT AN ACCEPTANCE (PBG-AUTH-003) — and STOPS at the increment
+  boundary with Q36, Q37 and Q38 for the Product Authority. **ON GREEN, AND ONLY ON GREEN, AND ONLY
+  AFTER Q37 IS SETTLED, 16C RELEASES** — the detector-side liveness marking carrying the HONESTY
+  OBLIGATION of PO-DECISIONS-0030 ruling 2 — **AND THE INDICATOR ROWS COME AFTER THAT.**
+expected_next_actor: >-
+  CD-ASR-WO3-13, and then PROJECT_LEAD_SEAT_06 to bank the verdict. NEVER CD-ENG-WO3-13 over its
+  own work (PBG-SOD-001, non-waivable).
