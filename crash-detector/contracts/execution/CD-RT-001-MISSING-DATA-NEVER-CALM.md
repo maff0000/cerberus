@@ -409,6 +409,21 @@ more than its guard delivers.**
     and that is two measurements and not a class.** A reader who meets a red instrument on a US
     state code has met this limit working as ruled, not a defect: the remedy is to rename the key,
     or to bring the contract addition to the Product Authority, and never to loosen the guard.
+
+    **(c) SUPERSEDED AGAIN AT `16B-FIX-4` — (a)'s OWN REPLACEMENT SENTENCE WAS FALSE IN THE SAME
+    WAY AS THE ONE IT REPLACED, AND `CD-ASR-WO3-08` (F3) MEASURED IT.** The word doing the damage
+    was **ANY**. `FX10` corrected the SHAPE axis and then re-committed the identical
+    over-generalisation on the **declaration-keyword** axis: a `state` declared under
+    `patternProperties`, introduced by `dependentSchemas`, reached by `$dynamicRef`, or reached
+    past thirty-two `$ref` hops was classified **not a dial** and was **silent** — four root
+    properties that DECLARE a property named `state` and on which the check did not fire.
+    **WHAT IS TRUE AT `16B-FIX-4` (`FX12`), AND IT IS TWO SENTENCES BECAUSE IT IS TWO LIMBS:** this
+    check fires on any root property that declares a property named `state` under `properties`,
+    `required` or `dependentRequired` — the keywords whose property **names** it reads — whatever
+    that property means and whatever its subschema's shape; **and** it fires on any root property,
+    dial or not, whose shape it **cannot fully read** (`DECLARED LIMIT 14`). The four spellings
+    above now reach the second limb, and so does a fifth nobody in the chain had named (arm `C27`)
+    — not because they are listed, but because they are not readable.
 13. **A `$ref` CARRYING AN ASSERTING SIBLING IS REPORTED, NOT FOLLOWED — DENY BY DEFAULT AT THE
     RESOLVER.** *** NEW AT `16B-FIX-3` (`FX9`, closing `CD-ASR-WO3-07` F1). *** Both contracts
     declare `"$schema": "https://json-schema.org/draft/2020-12/schema"`, and **in 2020-12 keywords
@@ -425,9 +440,9 @@ more than its guard delivers.**
     `unevaluatedProperties` and `unevaluatedItems` are evaluated against the annotations of **their
     own** schema object: a target `{"properties": {"a": ...}}` conjoined with a sibling
     `{"additionalProperties": false}` admits nothing but `{}`, while the **merged** object admits
-    `{"a": ...}`. **A merge can therefore admit documents neither schema admits — it can only ever
-    WEAKEN this instrument, silently, which is the exact failure class F1 is.** Deny-by-default
-    cannot weaken it; it can only over-report.
+    `{"a": ...}`. **A merge can therefore admit documents THE NODE AS WRITTEN REFUSES — it can only
+    ever WEAKEN this instrument, silently, which is the exact failure class F1 is.**
+    Deny-by-default cannot weaken it; it can only over-report.
 
     **THE COST, PRICED:** a contract that legitimately narrows a `$ref` with a sibling keyword turns
     this instrument red until an increment prices composition properly. **IT COSTS NOTHING TODAY,
@@ -447,10 +462,103 @@ more than its guard delivers.**
     repeated here rather than quietly dropped. **NOT PROVED TO BE CARRIED ANYWHERE:** nothing
     outside this instrument reads `$ref` siblings at all.
 
+    **SUPERSEDED AT `16B-FIX-4` ON ONE SENTENCE, STATED AND NOT ERASED (`CD-RULE-004`,
+    `PBG-CONT-003`) — `FX14`, `CD-ASR-WO3-08` F4. THE RULING AND THE BEHAVIOUR ARE UNCHANGED.**
+    WHAT THIS LIMIT SAID, VERBATIM, IN ALL THREE PLACES: *"A merge can therefore admit documents
+    **neither** schema admits."* **That is false, and not merely unmeasured.** MEASURED BY THIS
+    SEAT (`CD-ENG-WO3-09`) with the gate's own library, `jsonschema 4.10.3`,
+    `Draft202012Validator`, over **six** sibling keyword sets × **nine** documents × **both** merge
+    directions = 108 combinations: `MERGE ADMITS WHAT THE NODE AS WRITTEN REFUSES -> 11 hits`;
+    `MERGE ADMITS WHAT NEITHER SCHEMA OBJECT ADMITS -> 0 hits`. And it is not a search gap: under
+    `{**target, **sibling}` every sibling key survives into the merged object, so
+    `sibling(D) = False` forces `merged(D) = False`, and symmetrically for the other direction —
+    **a document the merge admits is always admitted by at least one of the two, so the clause
+    describes an empty set.** `CD-ASR-WO3-08` measured 10 hits over its own set and 0 for the false
+    clause; this is an independent re-measurement, not a relay, and the two agree.
+    **WHAT IS TRUE INSTEAD, AND IT CARRIES THE WHOLE CONCLUSION: a merge can admit documents THE
+    NODE AS WRITTEN REFUSES.** The node as written is a conjunction; the merge is not; the merge is
+    therefore `>=` the conjunction and can only WEAKEN this instrument. That is strictly weaker to
+    prove, it is what was measured, and the decision to deny rather than merge rests on it
+    entirely. **The false clause bought nothing.** *** **THIS IS THE THIRD SENTENCE ON THIS ROW TO
+    BE SUPERSEDED FOR OVERSTATING IN THE SAME DIRECTION AS THE SENTENCE IT REPLACED** (`DECLARED
+    LIMIT 10`, then `12`(a), now `13`). The pattern is recorded because it is the pattern and not
+    the instance that is the defect: on this row a replacement sentence has three times been
+    written to the widest claim its author believed rather than to the narrowest claim their
+    evidence carried. `DECLARED LIMIT 14` is written to what was measured and its cost column is a
+    measurement and not an estimate. ***
+14. **A ROOT PROPERTY THIS CHECK CANNOT FULLY READ IS UNDECIDABLE, NOT "NOT A DIAL" — THE DEFAULT
+    IS INVERTED AT THE RECOGNISER.** *** NEW AT `16B-FIX-4` (`FX12`, closing `CD-ASR-WO3-08` F1 as
+    a **class**, and F2 and F5 with it). ***
+
+    **WHAT "CANNOT FULLY READ" MEANS, PRECISELY, AND IT IS A PROPERTY OF THE NODE AND NOT OF A LIST
+    OF ATTACKS.** `_dial_bearing` may return `False` about a node only when **every keyword the
+    node actually declares**, at every node the walk visited, is in `_READABLE_KEYWORDS` — the
+    union of exactly three declared, closed sets and nothing else:
+
+    * `_SUBSCHEMA_KEYWORDS` minus `_NAME_BEARING_APPLICATORS` — keywords carrying subschemas that
+      the walk **descends into**, so it has looked underneath every one of them;
+    * `_NAME_DECLARING_KEYWORDS` (`properties`, `required`, `dependentRequired`) — keywords whose
+      keys or entries are **literal property names**, which this check reads;
+    * `_INERT_KEYWORDS` — the remaining 2020-12 keywords that carry no subschema and name no
+      property, enumerated from the specification's own vocabularies.
+
+    **Everything else is unreadable and makes the node UNDECIDABLE.** That includes
+    `patternProperties`, `propertyNames` and `dependentSchemas` (descended into, so a dial under one
+    can still come back `True`, but their **keys** are names this check does not evaluate — a regex,
+    a constraint, a trigger property), `$id`, `$dynamicRef`, `$dynamicAnchor`, `$recursiveRef`, any
+    keyword of a private vocabulary, any keyword of a draft not yet written, and any misspelling of
+    a keyword that does exist. `_resolve` reaching `REF_CHAIN_CAP` is the same answer for the same
+    reason.
+
+    *** **WHY DENY-BY-DEFAULT AND NOT A LIST, AND THIS IS THE WHOLE POINT OF THE INCREMENT.** ***
+    The superseded walk asked a list of keywords **it had thought of** whether they were present, so
+    a keyword it had not thought of was invisible and the node fell through to `False`. **That is
+    why this recogniser was escaped four times by four spellings of one idea** — `A306` a new state
+    vocabulary, `A307` a boolean `state`, `A308` `patternProperties` / `dependentSchemas` /
+    `$dynamicRef` / a chain past the cap — **and why each fix closed the spelling it was shown and
+    the next auditor found another** (`PO-DECISIONS-0026` ruling 10,
+    `GUARD_THE_INSTANCE_NOT_THE_CLASS`). Asking the **node** instead of the list means the deny
+    class is the **complement** of a finite written set, which no future spelling can leave.
+
+    **THE FALSIFIER WAS BUILT AND RUN RATHER THAN ARGUED.** Arm `C27` is a fifth spelling none of
+    the four audits used — `propertyDependencies`, an applicator proposed for the draft **after**
+    2020-12 — which appears **zero** times in the instrument (`grep -c propertyDependencies` → `0`)
+    and which was a live escape on the superseded instrument (`PASS — 144 assertions, 0 violations`
+    with the gate **ADMITTING** `{state: STALE, reason: FEED_DEAD, detail_level: 'calm'}` on **both**
+    surfaces) and is `FAIL — 2` `CD-CALM-SLOTS-007` here. Three more never-named spellings behave
+    identically: a private `x-` vendor keyword, an invented `slotShape`, and **`propertys` — a
+    one-letter typo of `properties`, the likeliest real-world author error of all, and silent before
+    this fix.**
+
+    **THE COST, MEASURED AND NOT ESTIMATED — THE FALSE-POSITIVE TAIL IS REAL AND IT IS PRICED.**
+    Eight benign root properties, none of them a dial, none declaring a `state` subschema, each
+    added to both contracts on its own pristine extraction: **six** turn this instrument red that
+    were green before — a `patternProperties` metrics bag, a `propertyNames`-constrained map, a
+    benign `dependentSchemas` pair, a subschema carrying its own `$id`, **a property carrying a
+    custom `x-` annotation**, and an object whose `required` names `state` without giving it a
+    subschema. **Two** benign controls stay green — a plain closed object and an array of strings —
+    so the tail is a tail and not a blanket. **The clean tree is unaffected, and that is the
+    measurement that mattered most:** `PASS — 144 assertions, 0 violations`, exit 0, and the
+    instrument's **full output** on the clean tree is byte-identical before and after this fix but
+    for the absolute path string. `C1`–`C21` are unchanged, every one. **The ruled direction is the
+    one taken:** a false positive costs one seat one look at one contract; a false negative costs
+    the constitution. **The remedy when the tail bites is never to loosen the guard:** a keyword
+    genuinely inert here belongs in `_INERT_KEYWORDS` with the reason written down, and a keyword
+    that carries a subschema belongs in `_SUBSCHEMA_KEYWORDS` so the walk descends it. Both are
+    edits a reader can audit; neither is a silent `False`.
+
+    **WHAT THIS DOES NOT CLOSE, SAID PLAINLY.** It does not close `DECLARED LIMIT 12`'s residue — a
+    dial that discriminates on a differently-**named** key is still `False` and still silent, and
+    that limit is judged honestly drawn and stands as a condition on 16C's dispatch. **And a root
+    property that declares nothing at all — `{"type": "object"}` — is still `False`:** every keyword
+    it declares is readable, so it is read, and there is no `state` in it. That is not the class
+    this fix bounds, and it is named here rather than left for the next audit to find. **NOT PROVED
+    TO BE CARRIED ANYWHERE:** nothing outside this instrument reads `_READABLE_KEYWORDS`.
+
 ### Numbering — because `CD-ASR-WO3-06` could not verify it and said so
 
-**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The thirteen above (**twelve until
-`16B-FIX-3`, which added `13`**) are
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** The fourteen above (**twelve until
+`16B-FIX-3`, which added `13`; `14` added at `16B-FIX-4`**) are
 `CD-RT-001-MISSING-DATA-NEVER-CALM`'s, and they are said identically here, in the header of
 `tools/register/check_missing_data_never_calm.py`, and in `required-tests.yaml` (`CD-RULE-004`,
 three places). The **sibling** row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its **own** independent

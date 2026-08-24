@@ -449,6 +449,21 @@ MORE THAN ITS GUARD DELIVERS.
       remedy is to rename the key or to bring the contract addition to the Product Authority, and
       never to loosen the guard.
 
+      (c) *** SUPERSEDED AGAIN AT `16B-FIX-4` — (a)'s OWN REPLACEMENT SENTENCE WAS FALSE IN THE
+      SAME WAY AS THE ONE IT REPLACED, AND `CD-ASR-WO3-08` (F3) MEASURED IT. *** The word doing
+      the damage was **ANY**. `FX10` corrected the SHAPE axis and then re-committed the identical
+      over-generalisation on the DECLARATION-KEYWORD axis: a `state` declared under
+      `patternProperties`, introduced by `dependentSchemas`, reached by `$dynamicRef`, or reached
+      past thirty-two `$ref` hops was classified **not a dial** and was SILENT — four root
+      properties that DECLARE a property named `state` and on which the check did not fire.
+      **WHAT IS TRUE AT `16B-FIX-4` (`FX12`), AND IT IS TWO SENTENCES BECAUSE IT IS TWO LIMBS:**
+      this check fires on any root property that declares a property named `state` under
+      `properties`, `required` or `dependentRequired` — the keywords whose property NAMES it
+      reads — whatever that property MEANS and whatever its subschema's shape; **AND** it fires on
+      any root property, dial or not, whose shape it cannot fully read (`DECLARED LIMIT 14`). The
+      four spellings above now reach the second limb, and so does a fifth nobody in the chain had
+      named (arm `C27`) — not because they are listed, but because they are not readable.
+
  13 **A `$ref` CARRYING AN ASSERTING SIBLING IS REPORTED, NOT FOLLOWED — DENY BY DEFAULT AT THE
     RESOLVER.** *** NEW AT `16B-FIX-3` (`FX9`, closing `CD-ASR-WO3-07` F1). *** Both contracts
     declare `"$schema": "https://json-schema.org/draft/2020-12/schema"`, and **in 2020-12 keywords
@@ -464,9 +479,9 @@ MORE THAN ITS GUARD DELIVERS.
     `unevaluatedProperties` and `unevaluatedItems` are evaluated against the annotations of *their
     own* schema object: a target `{"properties": {"a": ...}}` conjoined with a sibling
     `{"additionalProperties": false}` admits nothing but `{}`, while the MERGED object admits
-    `{"a": ...}`. **A merge can therefore admit documents neither schema admits — it can only ever
-    WEAKEN this instrument, silently, which is the exact failure class F1 is.** Deny-by-default
-    cannot weaken it; it can only over-report. **THE COST, PRICED:** a contract that legitimately
+    `{"a": ...}`. **A merge can therefore admit documents THE NODE AS WRITTEN REFUSES — it can
+    only ever WEAKEN this instrument, silently, which is the exact failure class F1 is.**
+    Deny-by-default cannot weaken it; it can only over-report. **THE COST, PRICED:** a contract that legitimately
     narrows a `$ref` with a sibling keyword turns this instrument red until an increment prices
     composition properly. **IT COSTS NOTHING TODAY, AND THAT IS MEASURED RATHER THAN ASSUMED:** the
     public contract carries FOUR `$ref` nodes with a `description` sibling (`as_of_utc`,
@@ -483,10 +498,103 @@ MORE THAN ITS GUARD DELIVERS.
     its own finding and it is repeated here rather than quietly dropped. **NOT PROVED TO BE CARRIED
     ANYWHERE:** nothing outside this instrument reads `$ref` siblings at all.
 
+    *** SUPERSEDED AT `16B-FIX-4` ON ONE SENTENCE, STATED AND NOT ERASED (`CD-RULE-004`,
+    `PBG-CONT-003`) — `FX14`, `CD-ASR-WO3-08` F4. THE RULING AND THE BEHAVIOUR ARE UNCHANGED. ***
+    WHAT THIS LIMIT SAID, VERBATIM, IN ALL THREE PLACES: *"A merge can therefore admit documents
+    NEITHER schema admits."* **THAT IS FALSE, AND NOT MERELY UNMEASURED.** MEASURED BY THIS SEAT
+    (`CD-ENG-WO3-09`) WITH THE GATE'S OWN LIBRARY, `jsonschema 4.10.3`,
+    `Draft202012Validator`, over SIX sibling keyword sets x NINE documents x BOTH merge directions
+    = 108 combinations: `MERGE ADMITS WHAT THE NODE AS WRITTEN REFUSES -> 11 hits`;
+    `MERGE ADMITS WHAT NEITHER SCHEMA OBJECT ADMITS -> 0 hits`. AND IT IS NOT A SEARCH GAP: under
+    `{**target, **sibling}` every SIBLING key survives into the merged object, so
+    `sibling(D) = False` forces `merged(D) = False`, and symmetrically for the other direction —
+    **a document the merge admits is ALWAYS admitted by at least one of the two, so the clause
+    describes an empty set.** `CD-ASR-WO3-08` measured 10 hits over its own set and 0 for the
+    false clause; this is an independent re-measurement, not a relay, and the two agree.
+    **WHAT IS TRUE INSTEAD, AND IT CARRIES THE WHOLE CONCLUSION: a merge can admit documents THE
+    NODE AS WRITTEN REFUSES.** The node as written is a CONJUNCTION; the merge is not; the merge
+    is therefore `>=` the conjunction and can only WEAKEN this instrument. That is strictly
+    weaker to prove, it is what was measured, and the decision to deny rather than merge rests on
+    it entirely. **THE FALSE CLAUSE BOUGHT NOTHING.** *** THIS IS THE THIRD SENTENCE ON THIS ROW
+    TO BE SUPERSEDED FOR OVERSTATING IN THE SAME DIRECTION AS THE SENTENCE IT REPLACED (`DECLARED
+    LIMIT 10`, then `12`(a), now `13`). THE PATTERN IS RECORDED BECAUSE IT IS THE PATTERN AND NOT
+    THE INSTANCE THAT IS THE DEFECT: on this row, a replacement sentence has three times been
+    written to the widest claim its author believed rather than to the narrowest claim their
+    evidence carried. `DECLARED LIMIT 14` IS WRITTEN TO WHAT WAS MEASURED AND ITS COST COLUMN IS
+    A MEASUREMENT AND NOT AN ESTIMATE. ***
+
+ 14 **A ROOT PROPERTY THIS CHECK CANNOT FULLY READ IS UNDECIDABLE, NOT "NOT A DIAL" — THE DEFAULT
+    IS INVERTED AT THE RECOGNISER.** *** NEW AT `16B-FIX-4` (`FX12`, closing `CD-ASR-WO3-08` F1
+    AS A CLASS, and F2 and F5 with it). *** **WHAT "CANNOT FULLY READ" MEANS HERE, PRECISELY, AND
+    IT IS A PROPERTY OF THE NODE AND NOT OF A LIST OF ATTACKS.** :func:`_dial_bearing` may return
+    `False` about a node only when EVERY KEYWORD THE NODE ACTUALLY DECLARES, at every node the
+    walk visited, is in :data:`_READABLE_KEYWORDS`, which is the union of exactly three declared,
+    closed sets and nothing else:
+
+      * :data:`_SUBSCHEMA_KEYWORDS` minus :data:`_NAME_BEARING_APPLICATORS` — keywords carrying
+        subschemas that the walk DESCENDS INTO, so it has looked underneath every one of them;
+      * :data:`_NAME_DECLARING_KEYWORDS` (`properties`, `required`, `dependentRequired`) —
+        keywords whose keys or entries are LITERAL property names, which this check reads;
+      * :data:`_INERT_KEYWORDS` — the remaining 2020-12 keywords that carry no subschema and name
+        no property, enumerated from the specification's own vocabularies.
+
+    **EVERYTHING ELSE IS UNREADABLE AND MAKES THE NODE UNDECIDABLE.** That includes
+    `patternProperties`, `propertyNames` and `dependentSchemas` (descended into, so a dial under
+    one can still come back `True`, but their KEYS are names this check does not evaluate — a
+    regex, a constraint, a trigger property), `$id`, `$dynamicRef`, `$dynamicAnchor`,
+    `$recursiveRef`, any keyword of a private vocabulary, any keyword of a draft not yet written,
+    and any misspelling of a keyword that does exist. :func:`_resolve` reaching
+    :data:`REF_CHAIN_CAP` is the same answer for the same reason.
+
+    *** WHY DENY-BY-DEFAULT AND NOT A LIST, AND THIS IS THE WHOLE POINT OF THE INCREMENT. *** The
+    superseded walk asked a list of keywords IT HAD THOUGHT OF whether they were present, so a
+    keyword it had not thought of was invisible and the node fell through to `False`. **THAT IS
+    WHY THIS RECOGNISER WAS ESCAPED FOUR TIMES BY FOUR SPELLINGS OF ONE IDEA** — `A306` a new
+    state vocabulary, `A307` a boolean `state`, `A308` `patternProperties` / `dependentSchemas` /
+    `$dynamicRef` / a chain past the cap — **and why each fix closed the spelling it was shown and
+    the next auditor found another** (`PO-DECISIONS-0026` ruling 10,
+    `GUARD_THE_INSTANCE_NOT_THE_CLASS`). Asking the NODE instead of the list means the deny class
+    is the COMPLEMENT of a finite written set, which no future spelling can leave.
+    **THE FALSIFIER WAS BUILT AND RUN RATHER THAN ARGUED:** arm `C27` is a fifth spelling none of
+    the four audits used — `propertyDependencies`, an applicator proposed for the draft AFTER
+    2020-12 — which appears ZERO times in this file (`grep -c propertyDependencies` -> `0`) and
+    which was a live escape on the superseded instrument (`PASS — 144 assertions, 0 violations`
+    with the gate ADMITTING `{state: STALE, reason: FEED_DEAD, detail_level: 'calm'}` on BOTH
+    surfaces) and is `FAIL — 2` `CD-CALM-SLOTS-007` here. Three more never-named spellings behave
+    identically: a private `x-` vendor keyword, an invented `slotShape`, and **`propertys` — a
+    ONE-LETTER TYPO of `properties`, which is the likeliest real-world author error of all and
+    was silent before this fix.**
+
+    **THE COST, MEASURED AND NOT ESTIMATED — THE FALSE-POSITIVE TAIL IS REAL AND IT IS PRICED.**
+    EIGHT benign root properties, none of them a dial, none declaring a `state` subschema, each
+    added to both contracts on its own pristine extraction: SIX turn this instrument RED that were
+    green before — a `patternProperties` metrics bag, a `propertyNames`-constrained map, a benign
+    `dependentSchemas` pair, a subschema carrying its own `$id`, **a property carrying a custom
+    `x-` annotation**, and an object whose `required` names `state` without giving it a subschema.
+    TWO benign controls stay green — a plain closed object and an array of strings — so the tail
+    is a tail and not a blanket. **THE CLEAN TREE IS UNAFFECTED AND THAT IS THE MEASUREMENT THAT
+    MATTERED MOST:** `PASS — 144 assertions, 0 violations`, exit 0, and the instrument's FULL
+    output on the clean tree is byte-identical before and after this fix but for the absolute path
+    string. `C1`–`C21` are unchanged, every one. **THE RULED DIRECTION IS THE ONE TAKEN:** a false
+    positive costs one seat one look at one contract; a false negative costs the constitution.
+    **THE REMEDY WHEN THE TAIL BITES IS NEVER TO LOOSEN THE GUARD:** a keyword that is genuinely
+    inert here belongs in :data:`_INERT_KEYWORDS` with the reason written down, and a keyword that
+    carries a subschema belongs in :data:`_SUBSCHEMA_KEYWORDS` so the walk descends it. Both are
+    edits a reader can audit; neither is a silent `False`.
+
+    **WHAT THIS DOES NOT CLOSE, SAID PLAINLY.** It does not close `DECLARED LIMIT 12`'s residue —
+    a dial that discriminates on a differently-NAMED key is still `False` and still silent, and
+    that limit is judged honestly drawn and stands as a condition on 16C's dispatch. **AND A ROOT
+    PROPERTY THAT DECLARES NOTHING AT ALL — `{"type": "object"}` — IS STILL `False`**: every
+    keyword it declares is readable, so it is read, and there is no `state` in it. That is not the
+    class this fix bounds, and it is named here rather than left for the next audit to find.
+    **NOT PROVED TO BE CARRIED ANYWHERE:** nothing outside this instrument reads
+    :data:`_READABLE_KEYWORDS`.
+
 *** NUMBERING, BECAUSE `CD-ASR-WO3-06` COULD NOT VERIFY IT AND SAID SO. *** **DECLARED LIMIT
 NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These are the limits of
-`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–13** (**1–12 until `16B-FIX-3`, which added
-`13`**), said identically in this header, in
+`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–14** (**1–12 until `16B-FIX-3`, which added
+`13`; `14` added at `16B-FIX-4`**), said identically in this header, in
 `required-tests.yaml`, and in `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`
 (`CD-RULE-004`, three places). The SIBLING row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its OWN
 independent 1–12 sequence, spread across
@@ -664,9 +772,11 @@ def _resolve(schema: dict, node, depth: int = 0):
     `unevaluatedProperties` and `unevaluatedItems` are evaluated against the annotations of *their
     own* schema object. Target `{"properties": {"a": ...}}` conjoined with sibling
     `{"additionalProperties": false}` admits NOTHING but `{}`; the MERGED object admits `{"a": ...}`.
-    **A merge can therefore admit documents neither schema admits — it can only ever WEAKEN this
-    instrument, silently, which is the exact failure class F1 is.** Reporting cannot weaken it: it
-    can only over-report, and an over-report costs one seat one look at one contract.
+    **A merge can therefore admit documents THE NODE AS WRITTEN REFUSES — it can only ever WEAKEN
+    this instrument, silently, which is the exact failure class F1 is.** Reporting cannot weaken
+    it: it can only over-report, and an over-report costs one seat one look at one contract.
+    (**SUPERSEDED SENTENCE, `16B-FIX-4`, `FX14`:** this read *"admit documents neither schema
+    admits"*, which is FALSE and provably impossible. See `DECLARED LIMIT 13`'s supersession.)
     """
     dropped: list = []
     while isinstance(node, dict) and "$ref" in node:
