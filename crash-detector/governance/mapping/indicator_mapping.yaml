@@ -1,0 +1,317 @@
+# Crash Detector — indicator mapping registration data (PO-authored, ratified by Matt 2026-08-24)
+# This is the CONTENT of the ratified mapping (answers Q30). It is DATA the engine registers,
+# not a fabric key — so it travels with the container (portable by construction).
+# WEIGHTS are PROVISIONAL starting tiers (x3/x2/x1) — calibrated by BACKTEST, never trusted on assertion.
+# STALENESS WINDOW is per-indicator RELEVANCE (how old its data may be for ITS cadence) — a DIFFERENT
+# quantity from the assurance/publish liveness budget (Q32). A quarterly survey is not dead at 16 minutes.
+# DIALS ARE NEVER BLENDED. A "both" indicator scores into each dial with its own polarity.
+schema_version: "1.0.0"
+provisional_weights_pending_backtest: true
+dials: [equity_crash, monetary_debasement]
+
+indicators:
+  # ---------------- EQUITY CRASH ----------------
+  - id: shiller_cape
+    name: "Shiller CAPE"
+    dial: equity_crash
+    category: valuation
+    tier: 1            # x3
+    polarity: high_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000   # ~45 days
+    source: {feed: "multpl/Shiller", provenance: "public series"}
+    calculation: "10-year real-earnings P/E, percentiled 0-100"
+  - id: buffett_indicator
+    name: "Buffett indicator"
+    dial: equity_crash
+    category: valuation
+    tier: 1
+    polarity: high_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "Wilshire/GDP", provenance: "public series"}
+    calculation: "Total market cap / GDP, percentiled"
+  - id: hy_oas
+    name: "High-yield OAS"
+    dial: equity_crash
+    category: credit
+    tier: 1
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600    # ~4 days (weekend+grace)
+    source: {feed: "FRED:BAMLH0A0HYM2", provenance: "ICE BofA US HY OAS"}
+    calculation: "HY option-adjusted spread; 5.0% (500bps) red line"
+  - id: ig_oas
+    name: "IG corporate spreads"
+    dial: equity_crash
+    category: credit
+    tier: 2            # x2
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "FRED:BAMLC0A0CM", provenance: "ICE BofA US Corp OAS"}
+    calculation: "IG option-adjusted spread; widens before HY"
+  - id: credit_stress_hyg_lqd
+    name: "Credit stress (HYG/LQD)"
+    dial: equity_crash
+    category: credit
+    tier: 2
+    polarity: low_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "market:HYG,LQD", provenance: "ETF prices"}
+    calculation: "HYG/LQD price ratio; falling = HY underperforming"
+  - id: private_credit_stress
+    name: "Private credit stress"
+    dial: equity_crash
+    category: credit
+    tier: 2
+    polarity: high_is_worse
+    cadence: quarterly_with_proxies
+    staleness_window_seconds: 10368000  # ~120 days — LATENCY IS THE POINT; absence reads Unknown never calm
+    source: {feed: "BDC NAV/non-accrual/PIK + public-spread proxy", provenance: "composite, per-source provenance; lagging"}
+    calculation: "BDC NAV discount + non-accrual rate + PIK share; public spreads as fast proxy between marks"
+    note: "Added on Matt's call 2026-08-24. Wide window deliberate; proxies bridge slow marks."
+  - id: sloos_bank_lending
+    name: "Bank lending standards (SLOOS)"
+    dial: equity_crash
+    category: credit
+    tier: 2
+    polarity: high_is_worse
+    cadence: quarterly
+    staleness_window_seconds: 10368000  # ~120 days (quarterly + grace)
+    source: {feed: "FRED:DRTSCILM (auto, C&I) + manual NDFI (Fed SLOOS Table 2 Q14, avg 5 sub-cats)", provenance: "ARGUS playbook mechanism"}
+    calculation: ">40% net tightening preceded every recession since 1990"
+    status: registration_pending   # source identified; shows PENDING until wired, never a false green
+  - id: yield_curve_10y3m
+    name: "Yield curve (10Y-3M)"
+    dial: equity_crash
+    category: rates_curve
+    tier: 1
+    polarity: low_is_worse   # inversion (negative) is worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "FRED:T10Y3M", provenance: "NY Fed preferred"}
+    calculation: "10y minus 3m; predicted every recession since 1960"
+  - id: yield_curve_10y2y
+    name: "Yield curve (10Y-2Y)"
+    dial: equity_crash
+    category: rates_curve
+    tier: 1
+    polarity: low_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "FRED:T10Y2Y", provenance: "public series"}
+    calculation: "10y minus 2y; inversion precedes ~89% of crashes"
+  - id: real_rate_10y_tips
+    name: "10Y real rate (TIPS)"
+    dial: [equity_crash, monetary_debasement]   # BOTH
+    category: rates_curve
+    tier: 3            # x1
+    polarity: {equity_crash: high_is_worse, monetary_debasement: high_is_better}  # high real rate = anti-debasement
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "FRED:DFII10", provenance: "10y TIPS yield"}
+    calculation: "High real rates = equity headwind AND debasement suppressant (opposite polarity)"
+  - id: jobless_claims_4w
+    name: "Initial jobless claims (4w)"
+    dial: equity_crash
+    category: labour_activity
+    tier: 2
+    polarity: high_is_worse
+    cadence: weekly
+    staleness_window_seconds: 1209600   # ~14 days
+    source: {feed: "FRED:IC4WSA", provenance: "public series"}
+    calculation: "20-30% rise off trough preceded every recession since 1970"
+  - id: sahm_rule
+    name: "Sahm rule"
+    dial: equity_crash
+    category: labour_activity
+    tier: 2
+    polarity: high_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "FRED:SAHMREALTIME", provenance: "public series"}
+    calculation: "Fires at 0.50; perfect pre-2024, one false signal Jul-2024"
+  - id: ism_manufacturing
+    name: "ISM manufacturing"
+    dial: equity_crash
+    category: labour_activity
+    tier: 3
+    polarity: low_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "ISM", provenance: "public series"}
+    calculation: "Below 93 strongly recession-associated"
+  - id: michigan_sentiment
+    name: "Michigan sentiment"
+    dial: equity_crash
+    category: labour_activity
+    tier: 3
+    polarity: low_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "FRED:UMCSENT", provenance: "public series"}
+    calculation: "Below 65 = signal; DEMOTED, unreliable post-2022"
+  - id: breadth_rsp_spy
+    name: "Breadth divergence (RSP/SPY)"
+    dial: equity_crash
+    category: volatility_internals
+    tier: 1
+    polarity: low_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "market:RSP,SPY", provenance: "ETF prices"}
+    calculation: "Equal- vs cap-weight S&P; falling = narrow leadership precedes tops"
+  - id: cboe_skew
+    name: "CBOE SKEW"
+    dial: equity_crash
+    category: volatility_internals
+    tier: 2
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "CBOE:SKEW", provenance: "public series"}
+    calculation: "Tail-risk pricing; high SKEW + low VIX = danger"
+  - id: vix_term_structure
+    name: "VIX term structure"
+    dial: equity_crash
+    category: volatility_internals
+    tier: 2
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "CBOE:VIX,VIX3M", provenance: "public series"}
+    calculation: "VIX/VIX3M > 1.0 = backwardation = acute stress"
+  - id: vix_level
+    name: "VIX level"
+    dial: equity_crash
+    category: volatility_internals
+    tier: 3
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "CBOE:VIX", provenance: "public series"}
+    calculation: "Concurrent gauge; DEMOTED for term structure"
+  - id: spx_vs_200dma
+    name: "S&P 500 vs 200-day MA"
+    dial: equity_crash
+    category: volatility_internals
+    tier: 3
+    polarity: low_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "market:SPX", provenance: "index"}
+    calculation: "Below 200-DMA = bear; >15% above = overextended"
+  - id: copper_gold
+    name: "Copper/gold ratio"
+    dial: [equity_crash, monetary_debasement]   # BOTH
+    category: volatility_internals
+    tier: 2
+    polarity: {equity_crash: low_is_worse, monetary_debasement: low_is_better}  # falling = gold strength side
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "market:HG,GC", provenance: "futures"}
+    calculation: "Falling = growth deterioration (equity) AND gold strength (debasement)"
+  - id: chicago_fed_nfci
+    name: "Chicago Fed NFCI"
+    dial: equity_crash
+    category: financial_conditions_policy
+    tier: 2
+    polarity: high_is_worse
+    cadence: weekly
+    staleness_window_seconds: 1209600
+    source: {feed: "FRED:NFCI", provenance: "public series"}
+    calculation: "105 variables; positive = tighter; leads GDP 1-2 quarters"
+  - id: fed_funds_rate
+    name: "Fed funds rate"
+    dial: [equity_crash, monetary_debasement]   # BOTH
+    category: financial_conditions_policy
+    tier: 2
+    polarity: {equity_crash: high_is_worse, monetary_debasement: low_is_worse}  # easy policy = debasement
+    cadence: daily
+    staleness_window_seconds: 604800   # ~7 days
+    source: {feed: "FRED:DFF", provenance: "public series"}
+    calculation: "300+bps cumulative hikes = danger (equity); easy policy = debasement"
+
+  # ---------------- MONETARY DEBASEMENT ----------------
+  - id: gold_real_rate_cross
+    name: "Gold real-rate cross"
+    dial: monetary_debasement
+    category: master_tells
+    tier: 1
+    polarity: high_is_worse
+    cadence: weekly
+    staleness_window_seconds: 1209600
+    source: {feed: "market:GC + FRED:DFII10", provenance: "derived"}
+    calculation: "Gold vs 10y TIPS divergence, normalised 0-100; the classic debasement tell"
+  - id: fiscal_dominance
+    name: "Fiscal dominance discriminator"
+    dial: monetary_debasement
+    category: master_tells
+    tier: 1
+    polarity: high_is_worse
+    cadence: quarterly
+    staleness_window_seconds: 10368000
+    source: {feed: "Treasury/BEA deficit + interest-cost", provenance: "derived, playbook"}
+    calculation: "Deficit/GDP vs interest-cost/revenue, discriminated vs benign growth"
+  - id: m2_yoy
+    name: "M2 money supply YoY"
+    dial: [monetary_debasement, equity_crash]   # BOTH
+    category: money_currency
+    tier: 2
+    polarity: {monetary_debasement: high_is_worse, equity_crash: low_is_worse}  # expansion=debasement / contraction=bearish
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "FRED:M2SL", provenance: "public series"}
+    calculation: "Expansion = debasement; the 2022-23 contraction coincided with a bear market"
+  - id: broad_dollar
+    name: "Broad dollar (DTWEXBGS)"
+    dial: monetary_debasement
+    category: money_currency
+    tier: 2
+    polarity: low_is_worse   # dollar weakness = debasement
+    cadence: weekly
+    staleness_window_seconds: 1209600
+    source: {feed: "FRED:DTWEXBGS", provenance: "public series"}
+    calculation: "Trade-weighted broad dollar; sustained weakness = debasement"
+  - id: gold_spot
+    name: "Gold spot"
+    dial: monetary_debasement
+    category: money_currency
+    tier: 2
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "market:XAUUSD", provenance: "spot"}
+    calculation: "Absolute gold trend; corroborates the real-rate cross"
+  - id: cpi_yoy
+    name: "CPI YoY"
+    dial: monetary_debasement
+    category: inflation
+    tier: 3
+    polarity: high_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "FRED:CPIAUCSL", provenance: "public series"}
+    calculation: "Headline CPI year-over-year"
+  - id: core_pce_yoy
+    name: "Core PCE YoY"
+    dial: monetary_debasement
+    category: inflation
+    tier: 3
+    polarity: high_is_worse
+    cadence: monthly
+    staleness_window_seconds: 3888000
+    source: {feed: "FRED:PCEPILFE", provenance: "public series; Fed preferred"}
+    calculation: "Core PCE year-over-year"
+  - id: breakeven_5y
+    name: "5Y breakeven inflation"
+    dial: monetary_debasement
+    category: inflation
+    tier: 2
+    polarity: high_is_worse
+    cadence: daily
+    staleness_window_seconds: 345600
+    source: {feed: "FRED:T5YIE", provenance: "public series"}
+    calculation: "5y nominal minus 5y TIPS; market-implied inflation expectations"
