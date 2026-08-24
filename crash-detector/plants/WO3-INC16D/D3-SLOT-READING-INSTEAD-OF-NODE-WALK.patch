@@ -1,0 +1,18 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 19:17:30.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 19:21:46.341217187 +0100
+@@ -775,9 +775,12 @@
+     implemented here, NOT scaffolded here, and there is deliberately NO HOOK for it
+     (``PO-DECISIONS-0029`` ruling 2).
+     """
++    # D3: THE OBVIOUS IMPLEMENTATION THE DISPATCH FORBIDS. It reads the two dial slots
++    # that exist today and is silent about everything else in the document.
+     calm_nodes = [
+-        (node, pointer)
+-        for node, pointer in _iter_nodes(candidate)
++        (node, "/" + slot)
++        for slot in ("equity_crash", "monetary_debasement")
++        for node in [candidate.get(slot)]
+         if isinstance(node, AbcMapping)
+         and node.get(DETAIL_LEVEL_KEY) == CALM_DETAIL_LEVEL
+     ]

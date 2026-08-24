@@ -1,0 +1,67 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 19:17:30.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 19:21:46.341217187 +0100
+@@ -46,7 +46,28 @@
+       "$ref": "#/$defs/source_id_list"
+     },
+     "degraded_inputs": {
+-      "$ref": "#/$defs/source_id_list"
++      "description": "H3. TWO containers deeper than arm CC-H: an ARRAY OF ARRAYS of closed objects carrying #/$defs/detail_level. If the remedy for A311-F1 were 'a third probe shape', this is the fourth, and the census game would simply move again.",
++      "type": "array",
++      "items": {
++        "type": "array",
++        "items": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": [
++            "source_id"
++          ],
++          "properties": {
++            "source_id": {
++              "type": "string",
++              "minLength": 1,
++              "maxLength": 128
++            },
++            "detail_level": {
++              "$ref": "#/$defs/detail_level"
++            }
++          }
++        }
++      }
+     },
+     "config_snapshot_id": {
+       "type": "string",
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 19:17:30.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 19:21:46.341217187 +0100
+@@ -46,8 +46,28 @@
+       "$ref": "#/$defs/source_id_list"
+     },
+     "degraded_inputs": {
+-      "description": "Registry source_ids that were expected and were missing, stale or non-OK. Required even when empty, so a consumer never has to distinguish 'no degradation' from 'the field was omitted'.",
+-      "$ref": "#/$defs/source_id_list"
++      "description": "H3. TWO containers deeper than arm CC-H: an ARRAY OF ARRAYS of closed objects carrying #/$defs/detail_level. If the remedy for A311-F1 were 'a third probe shape', this is the fourth, and the census game would simply move again.",
++      "type": "array",
++      "items": {
++        "type": "array",
++        "items": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": [
++            "source_id"
++          ],
++          "properties": {
++            "source_id": {
++              "type": "string",
++              "minLength": 1,
++              "maxLength": 128
++            },
++            "detail_level": {
++              "$ref": "#/$defs/detail_level"
++            }
++          }
++        }
++      }
+     },
+     "config_snapshot_id": {
+       "description": "The run-level configuration that produced this reading, so the reading can be explained a year later without archaeology.",

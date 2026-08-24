@@ -1,0 +1,44 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 19:17:30.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 19:21:46.341217187 +0100
+@@ -33,10 +33,14 @@
+       "$ref": "#/$defs/utc_timestamp"
+     },
+     "regime": {
+-      "description": "As in the public envelope: a non-empty string, deliberately not an enumeration, because naming the regimes is product meaning owed with CD-AC-009 in WO-3.",
+-      "type": "string",
+-      "minLength": 1,
+-      "maxLength": 64
++      "description": "H4. THE UNDECIDABLE ARM. regime is rewritten as an allOf composition. The live gate still REFUSES a calm-carrying object in its place, so BOTH BEHAVIOURAL PROBES STILL PASS and a probe-only limb (b) reports the property AFFIRMATIVELY PROVED incapable of carrying a detail_level. IT IS NOT PROVED -- IT IS UNREAD.",
++      "allOf": [
++        {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 64
++        }
++      ]
+     },
+     "staleness_window_seconds": {
+       "type": "number",
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 19:17:30.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 19:21:46.341217187 +0100
+@@ -31,10 +31,14 @@
+       "$ref": "#/$defs/utc_timestamp"
+     },
+     "regime": {
+-      "description": "The observed regime that selected the staleness window (BLUEPRINT §7, CD-AC-009). Constrained here to a non-empty string and NOT to an enumeration: naming the regimes is product meaning and is owed with CD-AC-009 in WO-3. An invented enumeration would be a scale nobody ratified.",
+-      "type": "string",
+-      "minLength": 1,
+-      "maxLength": 64
++      "description": "H4. THE UNDECIDABLE ARM. regime is rewritten as an allOf composition. The live gate still REFUSES a calm-carrying object in its place, so BOTH BEHAVIOURAL PROBES STILL PASS and a probe-only limb (b) reports the property AFFIRMATIVELY PROVED incapable of carrying a detail_level. IT IS NOT PROVED -- IT IS UNREAD.",
++      "allOf": [
++        {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 64
++        }
++      ]
+     },
+     "staleness_window_seconds": {
+       "description": "The window that was applied, carried so every consumer judges freshness by the same declared rule rather than by its own guess. Strictly positive: an unbounded window is no window.",
