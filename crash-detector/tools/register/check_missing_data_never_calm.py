@@ -119,6 +119,15 @@ instrument that exists to carry it. ***
                       A branch is recognised by its own `properties.state.const`, **never by the
                       name of the `$def` it lives in**, so the pure-rename refactor this instrument
                       already survives keeps passing.
+                      *** AND SINCE `16B-FIX-3` THE BRANCH IS RESOLVED WITHOUT LOSING HALF OF IT
+                      (`FX9`, closing `CD-ASR-WO3-07` F1). *** Both contracts declare JSON Schema
+                      2020-12, in which a keyword SIBLING to `$ref` IS APPLIED. The resolver threw
+                      those siblings away at every hop, so an `if`/`else` written on the `oneOf`
+                      ENTRY — or one hop deeper — never reached the conditional guard: arms `C18`
+                      and `C19`, on which the gate ADMITTED a calm `UNKNOWN` dial on both surfaces
+                      while this instrument reported `PASS — 144 assertions, 0 violations`. **A
+                      BRANCH COMPOSED ACROSS A `$ref` BOUNDARY IS NOW `CD-CALM-BRANCHES-006`, AT
+                      EVERY HOP.** See `DECLARED LIMIT 13`.
 
  CD-CALM-SLOTS-007    **AND THE SLOT SET FAILS CLOSED (`FX3`, closing `CD-ASR-WO3-05` F3).** What
                       is DRIVEN is every root property spelled exactly
@@ -141,6 +150,14 @@ instrument that exists to carry it. ***
                       case `DECLARED LIMIT 8` says must stop the check. **This says nothing about
                       a dial that declares no property named `state`** — see this row's
                       `DECLARED LIMIT 12`.
+                      *** AND SINCE `16B-FIX-3` DECLARING IT IS ENOUGH WHATEVER ITS SHAPE (`FX10`,
+                      closing `CD-ASR-WO3-07` F2). *** `FX6` put the `undecidable` limb inside
+                      `if isinstance(state, dict)`, so a `state` spelled as the boolean schema
+                      `true` — legal in 2020-12 — was skipped and the property was classified NOT A
+                      DIAL: arm `C20`, instrument `PASS — 144`, gate ADMITTING `{state: STALE,
+                      detail_level: 'calm'}` on both surfaces. **A ROOT PROPERTY THAT DECLARES A
+                      `state` REACHES THE UNDECIDABLE LIMB WHATEVER THE SHAPE OF THAT KEY'S
+                      SUBSCHEMA.**
 
  CD-CALM-PRODUCER-005 **AND THE PRODUCT CANNOT EVEN FORM THE INTENT.** `DetailPolicy` refuses
                       construction with `absent_data_level="calm"` (`DetailPolicyIncoherent`),
@@ -329,6 +346,32 @@ MORE THAN ITS GUARD DELIVERS.
     MEASURED, the clean tree's six branches (three per surface) declare only
     `type`/`additionalProperties`/`required`/`properties`/`description`, and the clean run is
     unchanged at `PASS — 144 assertions, 0 violations`.
+
+    *** ITS CLOSING SENTENCE WAS FALSE FOR A CONDITIONAL WRITTEN ONE POSITION OVER. SUPERSEDED AT
+    `16B-FIX-3`, STATED AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+      WHAT THIS LIMIT SAID, VERBATIM: *"A branch that ALSO carries any of `CONDITIONAL_KEYWORDS`
+      ... **SUCH A BRANCH IS NOW `CD-CALM-BRANCHES-006`**."*
+
+      **THAT SENTENCE WAS FALSE, AND IT WAS FALSE IN ALL THREE PLACES `CD-RULE-004` REQUIRES IT TO
+      BE SAID.** MEASURED by `CD-ASR-WO3-07` (F1) and reproduced here as arms `C18` and `C19`. The
+      guard tested the RESOLVED branch, and the resolver discarded every keyword sitting beside the
+      `$ref` it followed. So the SAME `if`/`else` — written as a SIBLING of the `$ref` on the
+      `oneOf` ENTRY (`C18`) or one hop deeper behind an innocuous entry (`C19`) instead of INSIDE
+      the branch definition — never reached the guard at all. On both trees the live gate ADMITTED
+      an `UNKNOWN` dial rendering as `calm` on BOTH surfaces while this instrument reported
+      `PASS — 144 assertions, 0 violations` and **exactly one** of the register's thirty `execute:`
+      lines moved: `tests/test_detail_level.py`, the memorial. On `C19` the instrument even printed
+      the branch in its enumerated list, named and state-classified, and still reported clean.
+
+      **WHAT IS TRUE INSTEAD, WRITTEN AFTER `FX9` WAS MEASURED.** The keyword guard below is
+      UNCHANGED; **the RESOLVER was repaired**, so the branch handed to the guard is either the
+      whole branch or nothing. A `$ref` chain that would have discarded an asserting keyword is
+      reported instead of followed — at **every hop**, not only at the `oneOf` entry, which is what
+      arm `C19` exists to bound. `C18` and `C19` are now `FAIL — 32 violation(s)` each, 20 ×
+      `CD-CALM-BRANCHES-006` + 12 × `CD-CALM-PAIRED-004`, the same census `C11` produces for the
+      same shape written inside the branch. The cost of that resolver change is its own limit —
+      **see `DECLARED LIMIT 13`.**
  11 **THE FILLER DIAL IS THE FIRST ABSENT-DATA BRANCH THAT ACTUALLY BUILDS, AND `LIMIT 9`'S OWN
     SENTENCE WAS FALSE UNTIL IT WAS.** *** NEW AT `16B-FIX-2`, and it corrects a measurement
     `CD-ASR-WO3-06` F3 recorded against `16B-FIX` (`CD-RULE-004`, `PBG-CONT-003` — stated, not
@@ -352,17 +395,98 @@ MORE THAN ITS GUARD DELIVERS.
     does not intersect `DECLARED_STATES`, which is what makes arms `C13` and `C14` red. **THE
     LOOSER, LOUDER FORM WAS RULED** over the tighter one (require both a `state` and a
     `detail_level`): a false positive costs one seat one look at one contract; a false negative
-    costs the constitution. **MEASURED, it does not fire on the clean tree** (`PASS — 144
-    assertions, 0 violations`, byte-identical register), **nor on a legitimate optional root
-    object that is not a dial** (arm `C16`, `PASS — 144`). **WHAT IS STILL SILENT:** a root
+    costs the constitution. **WHAT IS STILL SILENT:** a root
     property carrying a dial that discriminates on a differently-NAMED key — `status`, `kind`,
     `reading_state` — is classified `False` and reported by nothing here. This check keys on the
     property NAME `state` and on nothing else, and widening that to "any discriminator" is not an
     Engineer's judgement to make (`PBG-AUTH-005`). **NOT PROVED TO BE CARRIED ANYWHERE.**
+    *** THAT RESIDUE STANDS AND WAS TESTED RATHER THAN TAKEN ON TRUST: `CD-ASR-WO3-07` (F3) built
+    the tree — the same dial with the key spelled `liveness` passes, spelled `state` fails, spelled
+    `state` through a `$ref` fails — and judged the limit HONESTLY DRAWN. It is a condition on
+    16C's dispatch and it is not closed here. ***
+
+    *** SUPERSEDED AT `16B-FIX-3` ON TWO COUNTS, STATED AND NOT ERASED (`CD-RULE-004`,
+    `PBG-CONT-003`). THE BEHAVIOUR IS UNCHANGED ON THE SECOND COUNT — WHAT IS CORRECTED IS THE
+    SENTENCE. ***
+
+      (a) **ITS POSITIVE CLAIM WAS FALSE FOR A `state` THAT IS NOT AN OBJECT.** WHAT THE HEADER
+      SAID, VERBATIM: *"a resolved subschema declaring a `state` whose `const`/`enum` does not
+      intersect `DECLARED_STATES` is UNDECIDABLE, and reported."* MEASURED by `CD-ASR-WO3-07` (F2)
+      and reproduced as arm `C20`: `FX6` put the `undecidable = True` limb INSIDE
+      `if isinstance(state, dict)`, so a `state` spelled as the boolean schema `true` — legal in
+      2020-12 and maximally permissive — dropped to `None`, the limb never ran, the descent skipped
+      it, and the property was classified **not a dial**. The instrument reported
+      `PASS — 144 assertions, 0 violations` with the property in NEITHER list while the live gate
+      ADMITTED `{state: STALE, reason: FEED_DEAD, detail_level: 'calm'}` and
+      `{state: NO_DATA, ..., detail_level: 'calm'}` on BOTH surfaces. **`DECLARED LIMIT 12` DID NOT
+      COVER IT** — this limit is about a differently-NAMED discriminator, and that dial's key is
+      literally called `state`. **WHAT IS TRUE INSTEAD (`FX10`): DECLARING the key `state` is the
+      whole trigger. A root property that declares it reaches the undecidable limb WHATEVER the
+      shape of that key's subschema — object, boolean, or anything else — and the shape can only
+      refine the answer to `True`, never back to `False`.**
+
+      (b) **ITS "MEASURED" SENTENCE PRESENTED ONE SHAPE AS A CLASS.** WHAT IT SAID, VERBATIM:
+      *"**MEASURED**, it does not fire on the clean tree (`PASS — 144 assertions, 0 violations`,
+      byte-identical register), **nor on a legitimate optional root object that is not a dial**
+      (arm `C16`, `PASS — 144`)."* **THE SECOND HALF WAS NOT A MEASUREMENT OF A CLASS.** `C16` is
+      ONE benign shape — an object with no `state` anywhere — and the sentence generalised it into
+      a claim about every legitimate optional root object. `CD-ASR-WO3-07` (F4) measured two
+      members of that class that DO fire: **`jurisdiction.state` — A US STATE CODE — IS THE WORKED
+      EXAMPLE.** A root `jurisdiction` object carrying `country` and a two-letter `state` turns
+      this constitutional instrument RED (`FAIL — 2 violation(s)`, `CD-CALM-SLOTS-007`'s
+      undecidable limb, `['jurisdiction']`), and so does a root `run_provenance` whose nested
+      `pipeline` declares `state: {enum: [QUEUED, RUNNING, FINISHED]}` (`FAIL — 2`,
+      `['run_provenance']`). **NEITHER HAS ANY BEARING ON WHETHER MISSING DATA RENDERS AS CALM.**
+
+      **THE BEHAVIOUR IS NOT CHANGED AND THE RULING STANDS.** `PROJECT_LEAD_SEAT_02` ruled the
+      LOUD form correct — a false positive costs one seat one look at one contract; a false
+      negative costs the constitution — and `CD-ASR-WO3-07` recorded that it does not contest that
+      ruling. **WHAT IS TRUE INSTEAD:** this check fires on **any** root property that declares a
+      property named `state`, whatever that property MEANS and whatever its subschema's shape.
+      MEASURED, it does not fire on the clean tree (`PASS — 144 assertions, 0 violations`) or on
+      arm `C16` — **TWO SHAPES, AND THAT IS TWO MEASUREMENTS AND NOT A CLASS.** A reader who meets
+      a red instrument on a US state code has met this limit working as ruled, not a defect: the
+      remedy is to rename the key or to bring the contract addition to the Product Authority, and
+      never to loosen the guard.
+
+ 13 **A `$ref` CARRYING AN ASSERTING SIBLING IS REPORTED, NOT FOLLOWED — DENY BY DEFAULT AT THE
+    RESOLVER.** *** NEW AT `16B-FIX-3` (`FX9`, closing `CD-ASR-WO3-07` F1). *** Both contracts
+    declare `"$schema": "https://json-schema.org/draft/2020-12/schema"`, and **in 2020-12 keywords
+    SIBLING to `$ref` ARE APPLIED** — the one thing draft-07 did differently. `_resolve` now
+    reports, at **every hop of the chain**, any key beside a `$ref` that is not one of the pure
+    annotations in `REF_INERT_SIBLINGS` (`$comment`, `title`, `description`, `default`,
+    `deprecated`, `readOnly`, `writeOnly`, `examples`). A branch reached through such a chain is
+    `CD-CALM-BRANCHES-006`; a root property reached through one is UNDECIDABLE and
+    `CD-CALM-SLOTS-007`; the union itself is `CD-CALM-BRANCHES-006`.
+    **THE REMEDY CHOSEN, AND WHY, BECAUSE TWO WERE OFFERED.** The alternative was to make `_deref`
+    return the target MERGED with its siblings. **A DICT MERGE IS NOT 2020-12's SEMANTICS.**
+    `$ref` + siblings is a CONJUNCTION of two schema objects, and `additionalProperties`,
+    `unevaluatedProperties` and `unevaluatedItems` are evaluated against the annotations of *their
+    own* schema object: a target `{"properties": {"a": ...}}` conjoined with a sibling
+    `{"additionalProperties": false}` admits nothing but `{}`, while the MERGED object admits
+    `{"a": ...}`. **A merge can therefore admit documents neither schema admits — it can only ever
+    WEAKEN this instrument, silently, which is the exact failure class F1 is.** Deny-by-default
+    cannot weaken it; it can only over-report. **THE COST, PRICED:** a contract that legitimately
+    narrows a `$ref` with a sibling keyword turns this instrument red until an increment prices
+    composition properly. **IT COSTS NOTHING TODAY, AND THAT IS MEASURED RATHER THAN ASSUMED:** the
+    public contract carries FOUR `$ref` nodes with a `description` sibling (`as_of_utc`,
+    `published_utc`, `inputs_used`, `degraded_inputs`) and the private contract none, so the inert
+    list is load-bearing — a resolver that denied on ANY sibling would turn the CLEAN TREE red. The
+    clean run is unchanged at `PASS — 144 assertions, 0 violations`, `C10`/`C15`/`C21` are
+    unchanged at `PASS — 158`, and no arm of `C1`–`C17` changed its census.
+    **WHAT IS STILL NOT COVERED:** `_synthesise` still resolves a property's subschema through
+    `_deref` to harvest `const`/`enum` candidates, and does NOT deny there — deliberately, because
+    the candidate it picks is then validated by `jsonschema` against the **unresolved** subschema,
+    which applies `$ref` siblings correctly, so the authority on that decision is the same library
+    the gate validates with and not this resolver. **AND THE CLASS IS NOT BOUNDED:** `C18` and
+    `C19` are two members of a class whose size nobody has measured — `CD-ASR-WO3-07` said so of
+    its own finding and it is repeated here rather than quietly dropped. **NOT PROVED TO BE CARRIED
+    ANYWHERE:** nothing outside this instrument reads `$ref` siblings at all.
 
 *** NUMBERING, BECAUSE `CD-ASR-WO3-06` COULD NOT VERIFY IT AND SAID SO. *** **DECLARED LIMIT
 NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These are the limits of
-`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–12**, said identically in this header, in
+`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–13** (**1–12 until `16B-FIX-3`, which added
+`13`**), said identically in this header, in
 `required-tests.yaml`, and in `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`
 (`CD-RULE-004`, three places). The SIBLING row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its OWN
 independent 1–12 sequence, spread across
