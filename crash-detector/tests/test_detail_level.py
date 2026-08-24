@@ -190,20 +190,70 @@ def test_each_dial_gets_its_own_level_and_they_may_differ():
     assert monetary == DETAIL_CALM
 
 
+def _two_reading_offenders(tree) -> list:
+    """Functions taking more than one reading, or more than one dial slot.
+
+    *** CORRECTED AT WO-3 INCREMENT 16A-FIX. THE PREVIOUS COUNTER WAS NAMED FOR A CLAUSE IT
+    DID NOT ENFORCE — THE FOURTH RECORDED INSTANCE OF THAT PATTERN ON THIS PROJECT. ***
+
+    What it was, verbatim::
+
+        reading_like = [n for n in names if "reading" in n or "dial_slot" in n]
+        assert len(reading_like) <= 2, (node.name, names)
+
+    **ONE bucket for both concepts, and a ceiling of two.** The ceiling was two because the
+    module's own ``detail_level_for(reading, *, dial_slot, policy)`` puts one of each into
+    that single bucket. The consequence, PROVED against a planted function rather than
+    argued: ``def level_for_both(reading_a, reading_b, *, policy)`` yields
+    ``reading_like == ['reading_a', 'reading_b']``, length 2, **and PASSES** — so the guard
+    named *"no function in the module takes two readings"* admitted precisely a function
+    taking two readings, which is the ``CD-AC-002`` shape it exists to forbid.
+
+    Counting the two concepts SEPARATELY, at most one each, enforces the name. The real
+    module is unchanged by the correction and the planted function is caught; both arms are
+    asserted below.
+    """
+    offenders = []
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        names = [argument.arg for argument in node.args.args + node.args.kwonlyargs]
+        readings = [n for n in names if "reading" in n]
+        slots = [n for n in names if "dial_slot" in n]
+        if len(readings) > 1 or len(slots) > 1:
+            offenders.append((node.name, names))
+        if any(n in ("readings", "dial_slots", "both", "dialset") for n in names):
+            offenders.append((node.name, names))
+    return offenders
+
+
 def test_no_function_in_the_module_takes_two_readings():
     """A level derived from BOTH dials is the CD-AC-002 shape reached one step across."""
     import crash_detector.publication.detail_level as module
 
     path = pathlib.Path(module.__file__)
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            names = [argument.arg for argument in node.args.args + node.args.kwonlyargs]
-            reading_like = [n for n in names if "reading" in n or "dial_slot" in n]
-            assert len(reading_like) <= 2, (node.name, names)
-            assert not any(
-                n in ("readings", "dial_slots", "both", "dialset") for n in names
-            ), (node.name, names)
+    assert _two_reading_offenders(tree) == []
+
+
+def test_that_two_reading_scan_would_CATCH_a_function_taking_two_readings():
+    """*** THE VACUITY GUARD THE COUNTER DID NOT HAVE, AND WHY IT NOW EXISTS. ***
+
+    Run the exact scan against a planted two-reading function. Under the superseded
+    ``len(reading_like) <= 2`` counter this planted function PASSED.
+    """
+    planted = ast.parse(
+        "def level_for_both(reading_a, reading_b, *, policy):\n    return 'acute'\n"
+    )
+    assert _two_reading_offenders(planted) == [
+        ("level_for_both", ["reading_a", "reading_b", "policy"])
+    ]
+
+    # ...and the shape the module legitimately has is still admitted.
+    permitted = ast.parse(
+        "def detail_level_for(reading, *, dial_slot, policy):\n    return 'calm'\n"
+    )
+    assert _two_reading_offenders(permitted) == []
 
 
 # ========================================================================================= #
