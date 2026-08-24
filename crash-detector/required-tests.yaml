@@ -957,9 +957,11 @@ criteria:
   #      "additionalProperties": false} -> _branch_states accepted it as UNKNOWN with no violation,
   #      while _dial_bearing on the same node answered True.
   #      HOW THEY ARE PROVED TO AGREE, AND IT IS NOT A COMMENT ASSERTING THAT THEY DO. Both call
-  #      _unreadable_keywords, and the phrase not in _READABLE_KEYWORDS occurs exactly once in the
-  #      file, inside that function. There is nothing left for the two to drift from, and the claim is
-  #      greppable rather than argued.
+  #      _unreadable_keywords, and the phrase not in _READABLE_KEYWORDS has exactly one EXECUTABLE
+  #      occurrence in the file, inside that function — grep -n returns five hits and the other four
+  #      are this sentence and its three restatements, which a reader can see at a glance. There is
+  #      nothing left for the two recognisers to drift from, and the claim is greppable rather than
+  #      argued.
   #      THE COST, MEASURED. A branch carrying any unreadable keyword now has state is None, is
   #      reported as CD-CALM-BRANCHES-006 with the keyword named, and is not driven — the same
   #      treatment a branch whose state cannot be read has always had. On the clean tree the three

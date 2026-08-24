@@ -729,8 +729,9 @@ MORE THAN ITS GUARD DELIVERS.
     while `_dial_bearing` on the same node answered `True`.
 
     **HOW THEY ARE PROVED TO AGREE, AND IT IS NOT A COMMENT ASSERTING THAT THEY DO.** Both call
-    :func:`_unreadable_keywords`, and the phrase ``not in _READABLE_KEYWORDS`` occurs **exactly
-    once in this file, inside that function**. There is nothing left for the two to drift from,
+    :func:`_unreadable_keywords`, and the phrase ``not in _READABLE_KEYWORDS`` has **exactly
+    one EXECUTABLE occurrence in this file, inside that function** (`grep -n` returns five hits;
+    the other four are this sentence and its restatements). There is nothing left for the two to drift from,
     and the claim is greppable rather than argued.
 
     **THE COST, MEASURED.** A branch carrying ANY unreadable keyword now has `state is None`, is
@@ -1326,8 +1327,8 @@ def _unreadable_keywords(node) -> list:
 
     **TWO RECOGNISERS THAT DISAGREE ABOUT WHAT "READABLE" MEANS ARE ONE EDIT FROM A HOLE**, and a
     comment asserting they agree would not be a proof. This is the proof, and it is mechanical:
-    the phrase ``not in _READABLE_KEYWORDS`` occurs EXACTLY ONCE in this file, HERE, and both
-    recognisers reach it by calling this function. They cannot drift, because there is nothing left
+    the phrase ``not in _READABLE_KEYWORDS`` has EXACTLY ONE EXECUTABLE OCCURRENCE in this
+    file, on the `return` below, and both recognisers reach it by calling this function. They cannot drift, because there is nothing left
     to drift from.
     """
     if not isinstance(node, dict):
@@ -1657,7 +1658,7 @@ def _branch_states(schema: dict, dial_union: dict):
 
     **TWO RECOGNISERS IN ONE FILE DISAGREEING ABOUT WHAT "READABLE" MEANS IS ONE EDIT FROM A HOLE.**
     They now agree BY CONSTRUCTION and not by assertion: both ask :func:`_unreadable_keywords`,
-    which is the only place in this file the phrase ``not in _READABLE_KEYWORDS`` appears. **A
+    which holds the only EXECUTABLE occurrence of ``not in _READABLE_KEYWORDS`` in this file. **A
     BRANCH THIS CHECK CANNOT FULLY READ HAS NO IDENTIFIED STATE** — ``state`` comes back ``None``,
     which every caller already treats as UNRECOGNISED, and the caller reports
     `CD-CALM-BRANCHES-006` **naming the keyword** rather than the generic sentence. It is the same
@@ -1988,9 +1989,10 @@ def main(argv=None) -> int:
                 "on which PID §3.2 is unguarded. Unrecognised is a VIOLATION, never a silence. "
                 "*** AND THE TWO RECOGNISERS IN THIS FILE NOW AGREE ABOUT WHAT 'READABLE' MEANS "
                 "BY CONSTRUCTION: `_dial_bearing` and `_branch_states` both ask "
-                "`_unreadable_keywords`, which is the ONLY place `not in _READABLE_KEYWORDS` is "
-                "written. Before this increment the branch recogniser had NO inversion at all and "
-                "accepted `{'properties': {'state': {'const': 'UNKNOWN'}}, 'patternProperties': "
+                "`_unreadable_keywords`, which holds the ONLY EXECUTABLE occurrence of "
+                "`not in _READABLE_KEYWORDS` in the file. Before this increment the branch "
+                "recogniser had NO inversion at all and accepted "
+                "`{'properties': {'state': {'const': 'UNKNOWN'}}, 'patternProperties': "
                 "{...}}` silently (CD-ASR-WO3-09 F2). *** See DECLARED LIMIT 14.",
             )
         states = [state for _, _, state, _ in branches if state is not None]
