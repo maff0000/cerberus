@@ -129,6 +129,19 @@ DECLARED LIMIT (CD-RULE-004).
     is handed nothing, because **``publish_cycle`` HAS ZERO CALLERS and ``src/`` HAS NO
     ENTRYPOINT** (``CD-PL-F167``; ``CD-ASR-WO3-02`` F01: *"a writer with no caller"*).
 
+    **AND THE ZERO-CALLER CLAIM IS MEASURED OVER THE WHOLE REPOSITORY, NOT JUST ``src/``,
+    BECAUSE ``src/`` IS NOT WHERE THE ENTRYPOINTS ARE.** ``deploy/entrypoints/`` holds six
+    service entrypoints (``cd_engine.py``, ``cd_public.py``, ``cd_private.py``,
+    ``cd_collectors.py``, ``cd_witness.py``, ``cd_review.py``) and the Dockerfiles name
+    them, so *"``src/`` has no entrypoint"* — true, and the project's standing phrasing —
+    can mislead a reader into thinking no entrypoint exists anywhere. Each of those six is
+    a thin shim calling ``_service.boot``; **not one of them reaches this module.** Outside
+    ``tests/`` the only occurrences of ``publish_cycle`` in the repository are this file's
+    own docstring example, ``__all__``, the ``def``, prose in
+    :mod:`~crash_detector.publication.detail_level`, a quarantined ``plants/`` patch and
+    Build Log prose. **THE IMAGES ARE WRITTEN AND NOT BUILT**
+    (``CONTAINER_READY_DESIGN`` / ``CONTAINER_BUILD_NOT_YET_AUTHORISED``).
+
     *** **A SCHEMA IS NOT A SURFACE**, and that distinction is the whole of this
     correction: the field is in the CONTRACT, so a candidate carrying it is now JUDGED —
     including the ``calm``-on-missing-data refusal 16A-FIX added — and the field still
