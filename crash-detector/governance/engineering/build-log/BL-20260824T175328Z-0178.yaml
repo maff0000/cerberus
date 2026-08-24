@@ -1,0 +1,206 @@
+# ================================================================================================== #
+# BL-20260824T175328Z-0178 — PROJECT LEAD BOUNDARY. **`Q34` IS ANSWERED BY THE PRODUCT OWNER AT
+# `PO-DECISIONS-0029` (`a3ea6ef`): RULED (a) — FRESHNESS IS ENFORCED AT THE PUBLICATION GATE,
+# COMPUTED PURELY FROM THE DOCUMENT. THE HOLD LIFTS AND THE GATE FRESHNESS-STAGE INCREMENT (16D)
+# IS DISPATCHED TO `CD-ENG-WO3-12`, A FRESH IDENTITY, SEQUENTIAL SINGLE-SEAT.**
+#
+# *** **AND THE `A311-F2` CLAIM WAS RE-MEASURED IN THIS SEAT'S OWN SHELL BEFORE THE DISPATCH WAS
+# WRITTEN, BECAUSE `CD-PL-F193` SAYS AN INHERITED CLAIM IS A HYPOTHESIS UNTIL YOU RUN IT. IT
+# REPRODUCES EXACTLY, ON BOTH SURFACES — AND A FIFTH ROW NOBODY ASKED FOR REDIRECTED THE PREDICATE:
+# A DIAL STAMPED `2099` — DATA FROM THE FUTURE — IS ADMITTED TOO, SO `age > window` ALONE WOULD HAVE
+# LEFT THE PRODUCT OWNER'S OWN NAMED PLANT HALF-OPEN.** ***
+# ================================================================================================== #
+
+entry_id: BL-20260824T175328Z-0178
+timestamp_utc: '2026-08-24T17:53:28Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T17:53:28Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_05
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_05
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T174216Z-0177
+base_sha: a3ea6ef19d671dc5236debe4926a984c3054e4f5
+current_sha: a3ea6ef19d671dc5236debe4926a984c3054e4f5
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  PROJECT_LEAD_SEAT_05 booted, reconciled, and read PO-DECISIONS-0029 FIRST as instructed. Q34 is
+  ruled (a): the STALE half of CD-AC-001 is enforced AT THE GATE, document-internal. This seat then
+  REPRODUCED the A311-F2 escape in its own shell against the live gate at 295bdbe rather than
+  inheriting it, proved the fixture in BOTH directions on the same tree, MEASURED two facts the
+  dispatch depends on that nobody had measured, and issued CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-
+  ENGINEER to CD-ENG-WO3-12, a FRESH identity. NOTHING IS REVERTED. 16C IS NOT RELEASED. NO
+  INDICATOR ROW IS REGISTERED. THE MEMORIAL REMOVAL DOES NOT LAND.
+
+the_boot:
+  verdict: AMBER
+  context: CONSUMING_PROJECT
+  continuity_state: CONTINUITY_MATCH/RESUME_AMBER
+  observed_sha: a3ea6ef19d671dc5236debe4926a984c3054e4f5
+  the_amber_is_the_standing_one_and_not_new: >
+    `roadmap_identity` is UNAVAILABLE — no ROADMAP.md exists at the project root. That has been the
+    standing AMBER on this project and it is NOT a state disagreement: recorded and observed state
+    RECONCILE. `continuity_state` is CONTINUITY_MATCH.
+  reconciled_by_measurement: >
+    main at a3ea6ef · wo-3 lane at 295bdbe with a clean worktree at /srv/crash-detector-wo3 ·
+    wo-2r3 at be0b355 UNMOVED (frozen) · asr-wo3-11-verdict at 3ef056c · ACTIVE_WORK status
+    WAITING_PRODUCT_AUTHORITY with last_build_log_entry BL-20260824T174216Z-0177, which is the
+    entry the previous seat wrote and is present. **THE RECORDED "WAITING" IS DISCHARGED BY
+    PO-DECISIONS-0029 EXISTING AT a3ea6ef, AND THAT COMMIT IS AUTHORED BY MATT SCOTT AND BY NO SEAT.**
+  two_live_project_leads_checked_for_and_not_found: >
+    MEASURED with `ps`: exactly ONE claude process tree on this host, which is this seat, under a
+    `timeout 21600` wrapper started 18:49 local. **No second Project Lead is running**, which
+    matters because two PLs commit as one identity and nothing in the repository would detect it.
+
+# ================================================================================================== #
+this_seats_own_measurement_CD_PL_F193:
+# ================================================================================================== #
+  why: >
+    *** `CD-PL-F193`: AN INHERITED CLAIM IS A HYPOTHESIS UNTIL YOU RUN IT. *** The whole increment
+    is shaped by A311-F2. This seat did not take it from the verdict message. It drove the LIVE gate
+    at /srv/crash-detector-wo3 from a scratch probe in /tmp, wrote NOT ONE BYTE into the lane, and
+    read the outcome off `refuse_unless_publishable` itself.
+  the_probe: /tmp/plf193/probe_f2.py — read-only, imports the lane's src/ with CD_CONTRACTS_DIR pointed at the lane's contracts/
+  result_A311_F2_REPRODUCES_EXACTLY:
+    - "VALUE dial stamped 1970-01-01T00:00:00Z, detail_level calm, staleness_window_seconds 1     -> ADMITTED public, ADMITTED private"
+    - "VALUE dial stamped 1970-01-01T00:00:00Z, detail_level calm, staleness_window_seconds 86400 -> ADMITTED public, ADMITTED private"
+    - "VALUE dial stamped 2026-08-24T18:00:00Z (fresh), calm, window 1                            -> ADMITTED public, ADMITTED private [correctly]"
+  the_fixture_is_proved_in_BOTH_directions_on_the_SAME_tree: >
+    **THIS IS WHAT MAKES THE ABOVE MEAN ANYTHING.** On that identical tree: UNKNOWN + calm is
+    REFUSED [SCHEMA_VIOLATION] at /equity_crash on BOTH surfaces, and a never-before-named state
+    `SPINDRIFT` + calm is REFUSED at /equity_crash on BOTH surfaces. **RULE CC'S CLOSURE IS REAL AND
+    LIVE. THE ONLY THING UNREAD IS THE STAMP'S VALUE.** A probe that admitted everything would have
+    proved nothing, and this one does not.
+  a_defect_in_this_seats_OWN_first_run_disclosed_rather_than_tidied: >
+    The first run reported REFUSED on the private surface for EVERY row INCLUDING the controls, and
+    a careless reader would have banked "private is already safe". **IT WAS THIS SEAT'S FIXTURE THAT
+    WAS WRONG, NOT THE GATE**: the private contract requires `classification` const PRIVATE and the
+    public contract declares no such property at all, so ONE fixture cannot satisfy both. Caught
+    because the FRESH control refused too, which is impossible if the gate were behaving. The probe
+    was corrected to add the key per-surface and the private column then reproduced the escape.
+    **A CONTROL THAT FAILED IN THE WRONG DIRECTION IS WHAT CAUGHT IT.**
+
+  "*** THE FIFTH ROW NOBODY ASKED FOR, AND IT CHANGED THE DISPATCH ***":
+    measurement: "VALUE dial stamped 2099-01-01T00:00:00Z — a stamp AFTER published_utc — carrying calm, window 1 -> ADMITTED public, ADMITTED private"
+    why_it_matters: >
+      `published_utc - as_of_utc` is NEGATIVE there. **An Engineer writing the ruling's formula the
+      obvious way — `age > window` -> refuse — would leave this ADMITTED**, and the Product Owner's
+      own dispatch names the plant as *"a VALUE dial dated 1970/2099 carrying calm"*. Half of the
+      PO's named plant would have survived a faithful-looking implementation. The dispatch therefore
+      states the predicate as a CLOSED INTERVAL — a negative age FAILS CLOSED, because data from the
+      future is incoherent rather than fresh — and names it as its own numbered clause (d).
+
+  the_second_measurement_nobody_asked_for:
+    subject: "will the new stage collaterally break the register instrument's 243 assertions?"
+    measured: >
+      `tools/register/check_missing_data_never_calm.py` builds its synthetic envelope with
+      AS_OF_UTC 2026-08-23T12:00:00Z, PUBLISHED_UTC 2026-08-23T12:00:05Z and
+      staleness_window_seconds 600.0. **AGE 5 SECONDS AGAINST A 600-SECOND WINDOW.** The instrument's
+      own MUST-ADMIT rows are comfortably inside the window, so the fourth stage should not move
+      them. Carried into the dispatch as a PRE-MEASUREMENT the Engineer must VERIFY rather than
+      trust — if the 243 moves, something else is wrong and it must be found before more is written.
+
+  A311_F1_measured_too_and_the_auditor_is_exactly_right: >
+    On the CLEAN tip this seat measured `degraded_inputs: [{source_id, detail_level: calm}]` REFUSED
+    at `/degraded_inputs/0` on both surfaces, matching the auditor's own words. **A311-F1 IS AN
+    INSTRUMENT FINDING AND NOT A LIVE DOCUMENT ESCAPE**: the escape needs a CONTRACT EDIT (Arm H),
+    after which the instrument still reports PASS — 243 and the whole register is unmoved. Stated
+    plainly here because "the gate admits calm at the root" would be the wrong summary of it.
+
+# ================================================================================================== #
+the_dispatch:
+# ================================================================================================== #
+  id: CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-ENGINEER
+  path: governance/dispatch/CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-ENGINEER.yaml
+  seat: CD-ENG-WO3-12
+  seat_freshness_MEASURED_not_assumed: >
+    `git log --all --format=%an | sort -u` names CD-ENG-WO3-01..11 and CD-ASR-WO3-02..11.
+    **CD-ENG-WO3-12 HAS NEVER AUTHORED A COMMIT IN THIS REPOSITORY.** It did not write Rule CC and
+    it will not grade this — CD-ASR-WO3-12, also fresh, does (PBG-SOD-001, non-waivable).
+  lane: wo-3 at /srv/crash-detector-wo3, base 295bdbe
+  four_items:
+    1: "The FOURTH refusal stage at the gate — published_utc MINUS the calm-bearing node's stamp, against the document's declared staleness_window_seconds, NO EXTERNAL CLOCK, fail-closed at every branch."
+    2: "The predicate is the SIMPLE window as the CONSTITUTIONAL FLOOR. Regime-aware staleness (CD-RT-009/CD-AC-009) is EXPLICITLY OUT OF SCOPE — it is a later detector-layer refinement that only TIGHTENS."
+    3: "A311-F1 folded in FAIL-CLOSED — limb (b) made STRUCTURAL over each allowlisted root property's own closed subschema, one container deeper than CC-H, probes RETAINED as the paired behavioural control."
+    4: "295bdbe PRESERVED. Rule CC held; nothing reverted, weakened or rewritten."
+
+  "*** THE DESIGN INSTRUCTION THIS SEAT ADDED, AND IT IS THIS SEAT'S OWN JUDGEMENT AND NOT THE PO'S ***":
+    what: >
+      The dispatch forbids the obvious implementation — reading `candidate["equity_crash"]
+      ["as_of_utc"]` and `candidate["monetary_debasement"]["as_of_utc"]` — and orders the stage to
+      **QUANTIFY OVER EVERY NODE OF THE DOCUMENT** instead: any mapping node carrying
+      `detail_level: calm`, at any depth, through any array, must prove freshness or the envelope is
+      REFUSED. `_iter_nodes` already exists in that module, already walks objects AND arrays at
+      every depth, already yields RFC 6901 pointers, and stage 1 already trusts it.
+    why: >
+      Slot-reading hard-codes the document shape, which is the SAME defect class that lost eleven
+      consecutive audit rounds on this row — an instrument that enumerates what it already knows
+      about. Rule CC finally closed the MISSING half by CONSTRUCTION OVER A CLOSED SET rather than
+      RECOGNITION OVER AN OPEN ONE, and the STALE half should be built the same way.
+    the_consequence_that_makes_item_3_nearly_free: >
+      **A311-F1's Arm H document — `degraded_inputs: [{source_id, detail_level: calm}]` — is a
+      mapping node carrying calm with no stamp of its own. Under a node-quantified predicate it
+      must prove freshness, it cannot, and it is REFUSED EVEN ON A TREE WHOSE CONTRACT WAS WIDENED
+      TO ADMIT IT.** That is the runtime consequence of A311-F1 closed by construction rather than
+      by adding a third probe shape — which the auditor explicitly warned would "move the census
+      game to the probe alphabet and earn an eleventh".
+    and_it_is_flagged_AS_A_HYPOTHESIS_in_the_dispatch: >
+      **THE ENGINEER IS ORDERED TO MEASURE THE FLIP AND FORBIDDEN TO ASSUME IT.** This seat has not
+      run it — it cannot, because the stage does not exist yet. Recorded here as this seat's
+      reasoning and not as a result, which is the distinction CD-PL-F193 exists to enforce.
+
+  the_residual_this_seat_REFUSED_to_close_silently:
+    what: >
+      The gate compares against the window THE DOCUMENT DECLARES. **A detector that declares an
+      absurdly large `staleness_window_seconds` re-opens the hole from the other side**, and this
+      stage cannot see it.
+    why_it_is_not_closed_here: >
+      MEASURED: `governance/mapping/indicator_mapping.yaml` carries 30 indicators with per-indicator
+      windows from 345600 to 10368000 seconds. **THE ENVELOPE HAS NO INDICATOR DIMENSION — IT HAS
+      TWO DIALS.** Collapsing 30 indicator windows onto a dial (minimum? the oldest contributing
+      input's window?) is PRODUCT MEANING and is not an implementer's to invent (PBG-AUTH-005), and
+      the PO's ruling 1 says the comparison is computed PURELY FROM THE DOCUMENT.
+    how_it_is_handled: >
+      The Engineer is ordered to STATE it as a DECLARED LIMIT under CD-RULE-004 and RAISE IT AS A
+      FINDING, and is FORBIDDEN to close it. **It is strictly better than today either way: today
+      there is NO comparison at all.** Raised here as `CD-PL-F206` so it is in the record whatever
+      the Engineer does with it.
+
+findings_raised_by_this_seat:
+  CD-PL-F206:
+    severity: MEDIUM
+    status: DEFECT_OPEN
+    against: the increment as ruled, not against any seat
+    statement: >
+      The gate freshness floor is only as honest as the `staleness_window_seconds` the detector
+      stamps into the document. A document-internal comparison cannot bound its own comparand. The
+      per-indicator floors exist and are ratified in governance/mapping/indicator_mapping.yaml, but
+      the envelope has no indicator dimension to apply them through, so closing this needs a product
+      ruling on how per-indicator windows reach a per-dial document. **NAMED, NOT CLOSED, AND NOT
+      HIDDEN INSIDE AN IMPLEMENTATION.**
+
+standing_and_unchanged_at_this_boundary:
+  - "16C IS NOT RELEASED. No liveness detector is written. `feed_liveness` is not produced."
+  - "NO INDICATOR ROW IS REGISTERED. All 30 wait for a GREEN on 16D."
+  - "THE MEMORIAL REMOVAL MUST NOT LAND."
+  - "`be0b355` (wo-2r3) FROZEN and UNMOVED."
+  - "`CD-D-181` sequential-only. ONE seat runs at a time."
+  - "CD-AC-005 RED · CD-AC-002 AMBER and NOT CLOSED · the WO-2 gate SHUT. This boundary moved none of them."
+  - "A verdict is not an acceptance and a return is not a verdict (PBG-AUTH-003)."
+
+next_safe_action: >
+  CD-ENG-WO3-12 builds increment 16D on the wo-3 lane from 295bdbe and returns READY_FOR_ASSURANCE.
+  The Project Lead then BANKS that return AS AN INPUT — not as an acceptance — and dispatches
+  CD-ASR-WO3-12, a FRESH read-only Assurance identity, to grade it against the extended ruling-5
+  completion test with the A311-F2 plant as the flip. **NOT 16C. NOT THE LIVENESS DETECTOR. NOT AN
+  INDICATOR ROW.**
+
+expected_next_actor: CD-ENG-WO3-12

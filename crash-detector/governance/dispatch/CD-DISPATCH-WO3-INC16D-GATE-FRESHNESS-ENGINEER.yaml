@@ -1,0 +1,298 @@
+# ================================================================================================== #
+# CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-ENGINEER
+#
+# *** **THE GATE FRESHNESS-STAGE INCREMENT. PO-DECISIONS-0029 RULES `Q34` (a): FRESHNESS IS
+# ENFORCED AT THE PUBLICATION GATE, COMPUTED PURELY FROM THE DOCUMENT.** ***
+#
+# `CD-AC-001` reads *"Missing **or stale** input never renders as calm."* Sixteen increments have
+# guarded MISSING. **NOTHING IN THIS PRODUCT HAS EVER COMPUTED STALE**, and the reason is a product
+# truth the auditor named: **a schema can REQUIRE a stamp but it cannot COMPARE one.** So the STALE
+# half cannot live in a closed contract. It lives in a FOURTH REFUSAL STAGE at the gate.
+#
+# **THIS SEAT DOES NOT REVERT 295bdbe.** Rule CC HELD — closure steps 1-4, 6 and 7 are TRUE and both
+# exhaustiveness premises were attacked by `CD-ASR-WO3-11` and survived. It fails at step (5) ALONE.
+# 295bdbe is STRICTLY BETTER than what preceded it and every line of it stays.
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-WO3-INC16D-GATE-FRESHNESS-ENGINEER
+increment: 16D-GATE-FRESHNESS
+status: ISSUED
+issued_utc: '2026-08-24T17:53:28Z'   # from `date -u` and from nothing else (CD-RULE-005)
+issued_by: PROJECT_LEAD_SEAT_05
+issued_at_boundary: BL-20260824T175328Z-0178
+
+role_source: pbg/roles/engineer.md          # canonical local role file — read it FIRST
+authority_record: governance/authority/CD-AUTH-0001-project-lead.yaml
+product_authority_for_this_increment: governance/decisions/PO-DECISIONS-0029.md
+
+seat_identity: CD-ENG-WO3-12
+seat_identity_is_fresh: >
+  MEASURED, not assumed: `git log --all --format=%an | sort -u` on this repository at 17:53Z names
+  CD-ENG-WO3-01..11 and CD-ASR-WO3-02..11. **CD-ENG-WO3-12 HAS NEVER AUTHORED A COMMIT HERE.** You
+  are not CD-ENG-WO3-11 and you did not write Rule CC. You will not grade this either — a FRESH
+  Assurance identity (CD-ASR-WO3-12) does (PBG-SOD-001, non-waivable).
+
+commit_identity_mechanism: >
+  `git -c user.name=` DOES NOT WORK on this host. Export GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL /
+  GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL instead:
+    GIT_AUTHOR_NAME=CD-ENG-WO3-12 GIT_AUTHOR_EMAIL=cd-eng-wo3-12@seats.crash-detector.invalid
+    GIT_COMMITTER_NAME=CD-ENG-WO3-12 GIT_COMMITTER_EMAIL=cd-eng-wo3-12@seats.crash-detector.invalid
+  **ONE identity on every commit of this increment. Verify it after your first commit and not at
+  the end**, because a wrong identity discovered at the end is unrewritable (Build Log history is
+  never rewritten — corrections supersede).
+
+writable_scope:
+  repository: local
+  branch: wo-3
+  worktree: /srv/crash-detector-wo3
+  base_sha: 295bdbe                    # the 16B-CONTRACT-CLOSURE tip. NOTHING HERE IS REVERTED.
+  paths_you_may_write:
+    - src/crash_detector/publication/envelope_contract.py
+    - tools/register/check_missing_data_never_calm.py
+    - tests/                            # new and amended tests
+    - plants/WO3-INC16D/                # this increment's plant set (new directory)
+    - contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md
+    - governance/engineering/build-log/   # YOUR return entry, on the wo-3 lane, one file
+  paths_you_may_NOT_write:
+    - pbg/**                            # pinned, read-only to every seat (PBG-FWK-013)
+    - PID.md
+    - BLUEPRINT.md
+    - governance/blueprint/**
+    - governance/decisions/**           # PO-authored; you carry, you never edit
+    - governance/mapping/indicator_mapping.yaml
+    - any path outside /srv/crash-detector-wo3
+
+sequential_single_seat: >
+  **CD-D-181: SEQUENTIAL ONLY. You are the ONLY seat running.** Do not spawn a parallel worker on
+  this branch. `be0b355` (wo-2r3) is FROZEN — do not read it by checkout; if you must read it, use
+  `git show` / `git archive` into scratch and write NOT ONE BYTE there.
+
+# ================================================================================================== #
+# WHAT YOU ARE BUILDING — FOUR ITEMS, IN THIS ORDER
+# ================================================================================================== #
+
+item_1_the_fourth_refusal_stage:
+  where: src/crash_detector/publication/envelope_contract.py
+  what: >
+    `refuse_unless_publishable` today runs THREE stages in order — `_refuse_non_json`,
+    `_refuse_classified_keys`, `_refuse_schema_violation`. **ADD A FOURTH: the FRESHNESS stage.**
+    It runs AFTER `_refuse_schema_violation`, because a document that is not shaped like an envelope
+    has no meaningful stamps to compare and the schema stage is what establishes the shape.
+  the_predicate_stated_exactly: >
+    *** **FOR EVERY NODE IN THE CANDIDATE DOCUMENT THAT CARRIES `detail_level: "calm"`, THAT NODE
+    MUST PROVE FRESHNESS, AND IF IT CANNOT, THE ENVELOPE IS REFUSED.** ***
+
+    Proving freshness means ALL of the following, and any one of them failing is a REFUSAL:
+      (a) the document's root carries a `published_utc` that parses as the declared UTC pattern;
+      (b) the document's root carries a `staleness_window_seconds` that is a real, finite number
+          and is strictly positive;
+      (c) the calm-bearing node itself carries AT LEAST ONE UTC timestamp property that parses;
+      (d) `age = published_utc - <that stamp>` is **NOT NEGATIVE** — a stamp AFTER publication is
+          data from the future, which is incoherent rather than fresh, and it FAILS CLOSED; and
+      (e) `age <= staleness_window_seconds`.
+
+    Where a calm-bearing node carries MORE THAN ONE parsable stamp, **the OLDEST governs** — "as
+    fresh as its oldest input, never as fresh as the last time we asked" is the envelope's own
+    declared doctrine for `as_of_utc` and this stage must not quietly adopt a laxer one.
+  why_it_quantifies_over_NODES_and_not_over_DIAL_SLOTS: >
+    *** READ THIS TWICE. IT IS THE WHOLE DESIGN AND IT IS WHY ITEM 3 COSTS YOU ALMOST NOTHING. ***
+
+    The obvious implementation reads `candidate["equity_crash"]["as_of_utc"]` and
+    `candidate["monetary_debasement"]["as_of_utc"]`. **DO NOT WRITE THAT.** It re-opens the exact
+    problem Rule CC just closed: it hard-codes the document shape, so it knows about the two dial
+    slots that exist today and is silent on the third one a contract edit adds tomorrow. Eleven
+    consecutive audit rounds on this row have been lost to instruments that enumerate what they
+    already know about.
+
+    **QUANTIFY OVER THE DOCUMENT INSTEAD.** `_iter_nodes` already exists in this module, already
+    walks objects AND arrays at every depth, and already yields RFC 6901 pointers — stage 1 already
+    trusts it. Walk it. Any mapping node whose `detail_level` is `calm` is a calm-bearing node and
+    must prove freshness, **wherever in the document it sits, at whatever depth, through however
+    many arrays.** That is deny-by-default over the DOCUMENT rather than recognition over the
+    CONTRACT, and it does not care what the contract declares.
+  fail_closed_is_the_rule_at_every_branch: >
+    A stamp that will not parse, a window that is not a number, a `published_utc` that is missing,
+    a calm-bearing node with NO stamp at all, a comparison that raises — **every one of these is a
+    REFUSAL and never a skip.** Where a check cannot reach its authentic target it must fail, never
+    wave through (Standards Baseline §16, PBG-CI-002). There is no "cannot tell, so allow" branch in
+    this stage and you must not write one.
+  no_external_clock: >
+    *** **THIS STAGE CALLS NO CLOCK. NOT `datetime.now`, NOT `time.time`, NOT `time.monotonic`, NOT
+    `date`. IT TAKES NO CLOCK PARAMETER AND NO SPAN PARAMETER.** *** Both instants come out of the
+    candidate document. That is what keeps this inside PO-DECISIONS-0029 ruling 1's
+    "computed PURELY FROM THE DOCUMENT" and what stops it reopening BP-AMENDMENT-0001 §D.3's
+    NO-CALLER-CLOCK rule, which is IN FORCE and which says in terms that **no parameter exists
+    through which a caller clock, caller sleep or caller span can arrive.** Prove it in your return
+    by grepping your own diff for the clock names and showing zero hits.
+  the_refusal_token: >
+    Add a new stable `reason_class` token beside the six that exist — `REFUSAL_STALE_CALM` is
+    suggested and the name is yours. It carries the JSON POINTER to the offending node and the KEY
+    NAME. **IT CARRIES NO VALUE FROM THE CANDIDATE — not the stamp, not the age, not the window.**
+    `PublicationRefused` was built to make that impossible to get wrong (PBG-SEC-002); a refusal
+    message that quotes the stamp is a defect, not a nicety.
+
+item_2_the_predicate_is_the_SIMPLE_WINDOW_FLOOR_AND_NOTHING_MORE:
+  ruled_by: PO-DECISIONS-0029 ruling 2
+  what_you_build: >
+    The comparand is the document's own root `staleness_window_seconds`. That field is REQUIRED at
+    the root of BOTH closed contracts today, is typed `number` with `exclusiveMinimum: 0`, and its
+    own description says it is *"the window that was applied, carried so every consumer judges
+    freshness by the same declared rule rather than by its own guess."* **THIS STAGE IS THAT
+    CONSUMER.** It is the CONSTITUTIONAL FLOOR: dead simple, always applies, absolute.
+  what_you_DO_NOT_build: >
+    *** **REGIME-AWARE STALENESS IS NOT IN THIS INCREMENT.** *** `CD-RT-009` / `CD-AC-009` — the
+    window that TIGHTENS in stress, "the same age that passes in calm fails in stress" — is a LATER
+    DETECTOR-LAYER refinement that rides ON TOP and may only make the refusal MORE conservative,
+    never less. Do not implement it, do not scaffold it, do not add a hook for it. The gate floor
+    never loosens; the regime layer only tightens. Writing it here is scope you were not given.
+  a_named_residual_you_must_STATE_and_must_NOT_SILENTLY_CLOSE: >
+    The gate compares against the window THE DOCUMENT DECLARES. A detector that declares an
+    absurdly large `staleness_window_seconds` therefore re-opens the hole from the other side, and
+    this stage cannot see that, because the true per-indicator windows live in
+    `governance/mapping/indicator_mapping.yaml` (30 indicators, windows 345600..10368000 seconds —
+    MEASURED by the Project Lead) and the envelope has NO indicator dimension: it has two dials.
+    Collapsing 30 indicator windows onto a dial is PRODUCT MEANING and is not yours to invent
+    (PBG-AUTH-005). **STATE THIS AS A DECLARED LIMIT under CD-RULE-004 and RAISE IT AS A FINDING.
+    DO NOT CLOSE IT.** It is strictly better than today either way: today there is no comparison
+    at all.
+
+item_3_fold_in_A311_F1_FAIL_CLOSED:
+  the_finding: >
+    `A311-F1` (RED). The register instrument's limb (b) — "a declared non-dial root property is
+    AFFIRMATIVELY PROVED incapable of carrying a `detail_level`" — is proved by a SAMPLE OF TWO
+    PROBE SHAPES (`CALM_BEARING_PROBES`), and a THIRD shape defeats it. The auditor's Arm H widens
+    the allowlisted root property `degraded_inputs` to an ARRAY OF CLOSED OBJECTS carrying
+    `#/$defs/detail_level`. The instrument reports `PASS — 243`, the WHOLE thirty-line register is
+    identical in every rc to the clean tip, and **the live gate ADMITS
+    `"degraded_inputs": [{"source_id": "SRC-A", "detail_level": "calm"}]` on BOTH surfaces** — the
+    list of inputs that are DEGRADED, rendering as CALM, at a root position. The increment's own arm
+    CC-H is ONE KEYWORD away: CC-H widens to admit an OBJECT and is `FAIL — 4`; Arm H widens to
+    admit an ARRAY of objects and is `PASS — 243`. **One container deeper and the proof evaporates.**
+  the_remedy_you_are_ORDERED_to_apply: >
+    *** **NOT ANOTHER PROBE SHAPE.** *** The auditor said so explicitly and it is right: adding a
+    third probe moves the census game to the probe alphabet and earns an eleventh escape. The remedy
+    is STRUCTURAL and FAIL-CLOSED.
+  and_item_1_very_nearly_gives_it_to_you_for_free: >
+    Notice what item 1's predicate does to Arm H. `{"source_id": "SRC-A", "detail_level": "calm"}`
+    is a mapping node carrying `detail_level: calm` with NO stamp of its own. Under item 1 it must
+    prove freshness, it cannot, and it is **REFUSED — even on a tree whose contract has been widened
+    to admit it.** That is the runtime consequence of A311-F1 closed BY CONSTRUCTION rather than by
+    census. **You must MEASURE that this is so and not assume it** — apply the auditor's Arm H
+    yourself, drive the live gate, and show the flip.
+  what_you_must_still_do_at_the_INSTRUMENT: >
+    The instrument's limb (b) claim is still OVERSTATED as written, and item 1 does not fix a
+    sentence. Make limb (b) STRUCTURAL over each allowlisted root property's OWN CLOSED SUBSCHEMA,
+    one container deeper than CC-H — arrays of objects included — and **retain the two existing
+    `CALM_BEARING_PROBES` as the paired BEHAVIOURAL control**, which is the auditor's own
+    prescription. If a property's subschema cannot be decided, the instrument goes RED. It does not
+    pass on "I could not tell."
+
+item_4_preserve_295bdbe:
+  ruled_by: PO-DECISIONS-0029 ruling 5
+  what_it_means: >
+    Rule CC HELD. **NOTHING FROM 295bdbe IS REVERTED, WEAKENED OR REWRITTEN.** `CC-4` closed
+    `A310-F1` exactly (depths 25/26/30/40 move False to None, the one-integer cliff is gone).
+    `CC-G` and `CC-H` were GENUINE whole-register escapes at `8398741` and are CLOSED. Both
+    exhaustiveness premises are LIVE and FAIL CLOSED (`additionalProperties: true` -> `FAIL — 2`;
+    root `patternProperties` -> `FAIL — 2`; root `allOf` -> `FAIL — 2`; `anyOf` instead of `oneOf`
+    exits 3, "never a pass and never a skip"). **Your increment ADDS. If a line of yours makes any
+    of those weaker, you have failed the increment regardless of what else passes.**
+  the_memorial: >
+    **THE MEMORIAL REMOVAL MUST NOT LAND.** It has been held out of five consecutive increments and
+    it is held out of this one. Do not remove the name-coupled memorial in `tests/`.
+  no_indicator_row_is_registered_here: >
+    **REGISTER NO INDICATOR ROW. RELEASE NO 16C. WRITE NO LIVENESS DETECTOR.** Those are ruled to
+    come AFTER a GREEN on this increment, in that order (PO-DECISIONS-0029 ruling 5), and they are
+    not yours.
+
+# ================================================================================================== #
+# HOW YOU WILL BE GRADED — THE COMPLETION TEST, AND IT IS NOT NEGOTIABLE
+# ================================================================================================== #
+
+completion_test:
+  authority: PO-DECISIONS-0027 ruling 5 AS EXTENDED BY PO-DECISIONS-0029 ruling 3
+  stated_whole: >
+    *** **A DIAL THAT CANNOT PROVE PRESENT *AND* FRESH IS REFUSED BY CONSTRUCTION.** ***
+      · "PRESENT" is the closed contract — Rule CC, DONE at 295bdbe, preserved by you.
+      · "FRESH"   is the gate freshness stage — THIS INCREMENT.
+    So BOTH of these must hold, BY CONSTRUCTION and not by enumeration:
+      (1) **a dial OLDER THAN ITS WINDOW carrying `calm` is REFUSED**; and
+      (2) **a never-before-named state carrying `calm` is REFUSED.**
+
+the_plant_that_must_FLIP:
+  id: A311-F2
+  measured_by_the_project_lead_in_its_own_shell_at_295bdbe_before_this_dispatch_was_written: >
+    *** THIS IS A MEASUREMENT, NOT AN INHERITED CLAIM (CD-PL-F193). *** Driving the LIVE gate at
+    /srv/crash-detector-wo3 with a conforming envelope, `published_utc: 2026-08-24T18:00:00Z`:
+      · VALUE dial stamped `1970-01-01T00:00:00Z`, `detail_level: calm`, window 1      -> **ADMITTED public, ADMITTED private**
+      · VALUE dial stamped `1970-01-01T00:00:00Z`, `detail_level: calm`, window 86400  -> **ADMITTED public, ADMITTED private**
+      · VALUE dial stamped `2099-01-01T00:00:00Z` (FUTURE), calm, window 1             -> **ADMITTED public, ADMITTED private**
+      · VALUE dial stamped `2026-08-24T18:00:00Z` (fresh), calm, window 1              -> ADMITTED public, ADMITTED private   [correctly]
+    **THE FIXTURE IS PROVED IN BOTH DIRECTIONS ON THE SAME TREE**, which is what makes the above
+    mean anything: on that identical tree, UNKNOWN+calm is REFUSED at `/equity_crash` on both
+    surfaces, and a never-before-named state `SPINDRIFT`+calm is REFUSED at `/equity_crash` on both
+    surfaces. **Rule CC's closure is REAL. Only the stamp VALUE is unread.**
+  what_must_be_true_when_you_return: >
+    The first three rows above must read **REFUSED on BOTH surfaces**, including the 2099 FUTURE
+    row. The fourth row — genuinely fresh, inside its window — must still read **ADMITTED on both
+    surfaces**, because a stage that refuses everything satisfies PID §3.2 vacuously by making the
+    dial incapable of ever reading calm, and that is a defect and not a fix.
+  and_the_controls_must_not_move: >
+    UNKNOWN+calm, DEGRADED+calm, SPINDRIFT+calm and no-state+calm all stay REFUSED x2.
+
+pre_measured_for_you_by_the_project_lead:
+  the_instrument_will_not_break_collaterally: >
+    `tools/register/check_missing_data_never_calm.py` builds its synthetic envelope with
+    `AS_OF_UTC = 2026-08-23T12:00:00Z`, `PUBLISHED_UTC = 2026-08-23T12:00:05Z` and
+    `staleness_window_seconds: 600.0`. **Age 5 seconds against a 600-second window**, so the new
+    stage does NOT refuse the instrument's own MUST-ADMIT rows. **VERIFY THIS RATHER THAN TRUST IT**
+    — if your run shows the 243 assertions moving, find out why before you write another line.
+
+# ================================================================================================== #
+# EVIDENCE YOU MUST RETURN — ASSERTIONS ARE NOT EVIDENCE
+# ================================================================================================== #
+
+required_evidence:
+  - "The A311-F2 flip, driven through the LIVE gate on BOTH surfaces, before and after, with the fresh-dial control still ADMITTED."
+  - "The A311-F1 Arm H flip: apply the auditor's array-of-objects widening to degraded_inputs, drive the live gate, show REFUSED."
+  - "`python3 -B tools/register/check_missing_data_never_calm.py` at the clean tip: the assertion count and exit code, compared against 295bdbe's `PASS — 243` exit 0."
+  - "The WHOLE thirty-line register run at your tip, with the per-line rc, compared against 295bdbe's 19 rc=0 / 11 non-zero. Any line that MOVES must be explained."
+  - "`pytest` at your tip against 295bdbe's 2007 passed. A drop is a regression until you prove otherwise."
+  - "Your own plant set under plants/WO3-INC16D/, each patch applied with rc TAKEN FROM `git apply` AND CHECKED — rc 128 means the patch never applied and the run that followed it measured NOTHING (that exact defect was committed by the auditor inside the last audit; do not repeat it)."
+  - "A grep of YOUR OWN DIFF for `datetime.now`, `time.time`, `time.monotonic`, `utcnow`, `date.today` showing ZERO hits in the freshness stage."
+  - "`git diff --name-only 295bdbe..<your tip>` — every path inside writable_scope, ZERO protected paths."
+  - "ONE seat identity on every commit: `git log --format='%an' 295bdbe..<your tip> | sort -u`."
+  - "`be0b355` UNMOVED."
+
+validate_your_build_log_entry_by_DIRECT_CALL: >
+  **`pbg log validate` VALIDATES ZERO ENTRIES AND PRINTS GREEN ON THIS HOST — it is a FALSE GREEN
+  and a fresh finding (`A311-F5`) says it exits rc=4 here looking in `<root>/schemas` when the
+  schemas are in `<root>/pbg/schemas`.** Validate your entry by a DIRECT call against
+  `pbg/schemas/build-log-entry.schema.yaml` and report `ok`, the stage and the errors list. Note
+  `parent_entry_id` resolves IN-TREE, so a wo-3 lane entry's parent must exist on the wo-3 lane.
+
+writing_governance_records_safely: >
+  **UNQUOTED HEREDOCS AND `git commit -m` SILENTLY DELETE BACKTICKED WORDS.** Governance records on
+  this project are full of backticked identifiers. Write files with a real editor write or a
+  QUOTED heredoc (`<<'EOF'`), and put commit message bodies in a file with `git commit -F`.
+
+# ================================================================================================== #
+# STOP CONDITIONS — RETURN, DO NOT IMPROVISE
+# ================================================================================================== #
+
+declared_stops:
+  - "If closing item 1 as specified requires touching PID.md, BLUEPRINT.md or governance/blueprint/ — **STOP AND RETURN**. Those are protected from every seat including the Project Lead (CD-D-115), and the route upward is a PL boundary, not your edit."
+  - "If item 1's node-quantified predicate turns out to REFUSE a document the product must be able to publish — **STOP AND RETURN with that document**. A false refusal is a product question, not an implementation detail to tune away."
+  - "If preserving 295bdbe and closing A311-F1 turn out to be in genuine conflict — **STOP AND RETURN**. Do not resolve it by weakening Rule CC."
+  - "If you find yourself editing `pbg/` to make a control pass — that is a BYPASS, not a fix (PBG-FWK-013). STOP."
+  - "**DO NOT GRADE YOUR OWN WORK.** You return READY_FOR_ASSURANCE. You do not return PASS, GREEN or COMPLETE. A verdict is not yours to write (PBG-SOD-001, PBG-AUTH-003)."
+
+expected_return: READY_FOR_ASSURANCE
+return_to: PROJECT_LEAD_SEAT_05
+next_actor_after_you: "CD-ASR-WO3-12 — a FRESH Assurance identity, read-only, which will try to break what you built."
+
+closing_note: >
+  Eleven audit rounds have been lost on this row to instruments that enumerated what they already
+  knew about. **The thing that finally closed the MISSING half was construction over a CLOSED SET
+  instead of recognition over an OPEN one.** Build the STALE half the same way: do not ask "is this
+  one of the dials I know about?" — ask "does this node claim calm, and can it prove it earned it?"
