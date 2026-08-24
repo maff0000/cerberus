@@ -591,10 +591,170 @@ MORE THAN ITS GUARD DELIVERS.
     **NOT PROVED TO BE CARRIED ANYWHERE:** nothing outside this instrument reads
     :data:`_READABLE_KEYWORDS`.
 
+    *** SUPERSEDED AT `16B-FIX-5` ON ITS COST COLUMN, STATED AND NOT ERASED (`CD-RULE-004`,
+    `PBG-CONT-003`) — `FX17`, `CD-ASR-WO3-09` F5. THE RULING AND THE BEHAVIOUR ARE UNCHANGED. ***
+    **WHAT THE COST COLUMN SAID, IN ALL THREE PLACES:** *"EIGHT benign root properties ... SIX turn
+    this instrument RED ... TWO benign controls stay green."* **THAT IS A SAMPLE DESCRIBED AS A
+    MEASUREMENT.** The auditor found a SEVENTH red shape in about a minute — a `contentSchema`
+    carrying a `state` — and it is named by nothing in the list of six. **AND THE SENTENCE DIRECTLY
+    ABOVE IT PROMISED THE OPPOSITE:** `DECLARED LIMIT 13`'s supersession ends *"DECLARED LIMIT 14
+    IS WRITTEN TO WHAT WAS MEASURED AND ITS COST COLUMN IS A MEASUREMENT AND NOT AN ESTIMATE"*, and
+    the cost column then enumerated six INSTANCES of a CLASS, in a file whose entire thesis is
+    GUARD THE CLASS AND NOT THE INSTANCE. **THAT IS THE SAME ERROR THE CODE HAD JUST FIXED, WRITTEN
+    IN PROSE**, and it is the fourth sentence on this row superseded for overstating in the same
+    direction as the sentence it replaced (`10`, then `12`(a), then `13`, now `14`'s cost column).
+
+    *** THE TAIL IS A CLASS, AND THIS IS THE CLASS. *** A root property is UNDECIDABLE — and
+    therefore `CD-CALM-SLOTS-007`, whether or not it is a dial — **exactly when, at some node the
+    walk visits, at least one of these three holds**:
+
+      (a) **AN UNREADABLE KEYWORD.** The node declares a keyword outside
+          :data:`_READABLE_KEYWORDS`: every 2020-12 keyword that list omits, every keyword of a
+          draft not yet written, every private or vendor keyword, and every misspelling of every
+          keyword. **AN INFINITE SET BY CONSTRUCTION, WHICH IS THE POINT.**
+      (b) **A `state` IT CANNOT CLASSIFY.** The node NAMES a property called `state` — in any
+          position :func:`_declared_names` reads — and does not give it a `const`/`enum` that
+          intersects :data:`DECLARED_STATES`.
+      (c) **A WALK THAT DID NOT COMPLETE.** A `$ref` that does not resolve, a chain past
+          :data:`REF_CHAIN_CAP`, an ASSERTING sibling of a `$ref`, or nesting past the depth cap.
+
+    **THOSE THREE ARE THE ONLY LIMBS IN THE FUNCTION THAT SET `undecidable` OR RETURN `None`, SO
+    THE TAIL HAS NO OTHER MEMBERS.** That is a property of the code, checkable by reading it. The
+    shapes below are EXAMPLES OF THAT CLASS AND ARE EXPLICITLY NON-EXHAUSTIVE.
+
+    **THE EXAMPLES, RE-MEASURED AT `16B-FIX-5` OVER TWENTY-ONE PROBES PUT DIRECTLY TO
+    :func:`_dial_bearing`, NONE OF THEM A DIAL.** **ELEVEN RED:** a `patternProperties` metrics bag
+    · a `propertyNames`-constrained map · a benign `dependentSchemas` pair · a subschema carrying
+    its own `$id` · an ordinary `x-` vendor annotation · an object whose `required` names `state`
+    without a subschema · a `contentSchema` carrying a `state` (the auditor's seventh) · **and the
+    FOUR the alphabet correction adds — an `enum` of objects naming `state` (an ordinary workflow
+    status, not a dial), an object `const` naming `state`, an `enum` member with a `state` nested
+    two levels inside it, and a `dependentRequired` KEY named `state`.** **TEN GREEN:** a scalar
+    string `enum` · a scalar `const` · a numeric `enum` · a plain closed object · an `enum` of
+    objects naming NO `state` · an object `const` naming NO `state` · a `default` annotation
+    carrying a whole dead-feed reading · an `examples` annotation carrying one · arm `C16`'s benign
+    optional root object. The twenty-first probe is the real dial slot spelling and comes back
+    `True`, which is the arm that stops this probe set being one-sided.
+
+    *** HOW FAR THE ALPHABET CORRECTION MOVED THE TAIL, IN NUMBERS, BECAUSE THE DISPATCH ASKED. ***
+    Over that same twenty-one-probe set: `dd40407` -> **7 red / 13 green**; `16B-FIX-5` -> **11 red
+    / 9 green**. **THE FOUR THAT MOVED ARE EXACTLY LIMB (b)'s NEW MEMBERS AND NOTHING ELSE MOVED.**
+    Every probe that does not NAME a property called `state` is unchanged — including both
+    annotation probes, which is the MEASURED form of the claim that `default` and `examples` assert
+    nothing. **THE CLEAN TREE DID NOT MOVE** (`PASS — 144 assertions, 0 violations`, exit 0), **NOR
+    DID ANY OF `C1`–`C28`**, and neither envelope contract carries an object-valued or
+    array-valued `enum`/`const` anywhere, which is why.
+
+    **THE RULED DIRECTION IS THE ONE TAKEN, AND THE REMEDY WHEN THE TAIL BITES IS NEVER TO LOOSEN
+    THE GUARD:** a false positive costs one seat one look at one contract; a false negative costs
+    the constitution. A keyword genuinely inert here belongs in :data:`_INERT_KEYWORDS` with the
+    reason written down; a keyword that carries a subschema belongs in
+    :data:`_SUBSCHEMA_KEYWORDS`; a property that means something other than a dial state and is
+    called `state` is renamed, or the addition goes to the Product Authority. All three are edits a
+    reader can audit. None is a silent `False`.
+
+ 15 **THE ALPHABET — WHERE A PROPERTY NAME MAY BE WRITTEN, AND HOW DEEP THIS CHECK LOOKS FOR ONE.**
+    *** NEW AT `16B-FIX-5` (`FX15`, closing `CD-ASR-WO3-09` F1 — THE ONLY THING FOUND WRONG WITH
+    `FX12`). *** `DECLARED LIMIT 14`'s inversion is a TRUE universal quantification and its
+    falsifier passed — **but over KEYWORD NAMES only.** It never asked what a READABLE keyword's
+    VALUE asserts; `enum` and `const` take INSTANCE VALUES; an object instance value NAMES
+    PROPERTIES. So `{"enum": [<a LIVE reading>, <a STALE reading whose detail_level is "calm">]}`
+    was fully read, named no `state` as far as the walk could see, and came back a clean `False` —
+    NOT A DIAL — with this instrument reporting `PASS — 144 assertions, 0 violations` while the
+    live gate ADMITTED a dead feed rendering as `calm` on BOTH surfaces. **THE QUANTIFIER WAS
+    RIGHT; THE ALPHABET WAS WRONG.**
+
+    **WHAT IS READ NOW, AND THE LIST IS AGAINST THE SPECIFICATION AND NOT AGAINST THE ATTACKS.** A
+    property name can appear in a 2020-12 schema in exactly these positions: `properties` keys ·
+    `required` members · `dependentRequired` KEYS **and** values · the property names inside `enum`
+    members and inside a `const` value · `patternProperties` keys, `propertyNames` and
+    `dependentSchemas` keys (**NOT read — they are in :data:`_NAME_BEARING_APPLICATORS`, so the
+    node is UNDECIDABLE before the question is asked**) · `default` and `examples` (**NOT read, and
+    deliberately: they are ANNOTATIONS, they assert nothing, and a `state` named inside one
+    constrains no document and can admit none. `enum` and `const` ASSERT. That is the whole
+    distinction and it is the auditor's**).
+
+    *** `enum` AND `const` STAY IN :data:`_INERT_KEYWORDS`, AND THAT IS A PROHIBITION AND NOT A
+    PREFERENCE. *** They carry no SUBSCHEMA, so there is nothing under them to descend into, and
+    the auditor MEASURED that making them UNREADABLE turns every ordinary
+    `{"type": "string", "enum": [...]}` root property UNDECIDABLE and explodes the tail. **The
+    VALUE is read; the KEYWORD stays inert.**
+
+    **DECISION 1 — DEPTH, DECLARED AND PRICED.** An `enum` member is arbitrary JSON and may nest.
+    This walk collects names **at every depth of the value, through objects and arrays alike**,
+    capped at :data:`INSTANCE_WALK_CAP`. The alternative — the top-level keys of each member only —
+    would have closed the shape the auditor wrote and left `{"enum": [{"reading": {"state": ...}}]}`
+    open, **which is this row's entire history**. **THE PRICE IS A WIDER FALSE-POSITIVE CLASS:** any
+    node whose `enum` or `const` value contains, ANYWHERE inside it, an object with a key called
+    `state`. It is `DECLARED LIMIT 14`'s limb (b), it is measured there, and it moved the tail by
+    exactly four probes out of twenty-one. **REACHING THE CAP IS NOT A SILENT SUCCESS:** the walk
+    returns :data:`INSTANCE_TOO_DEEP`, a sentinel no contract can declare as a property name, so it
+    enters the declared set, can never equal `state`, and can never make the node `True`.
+
+    **DECISION 2 — `const`, SAID EXPLICITLY RATHER THAN LEFT TO BE INFERRED.** **A `const` THAT IS
+    NOT AN OBJECT OR AN ARRAY NAMES NOTHING.** `{"const": "equity_crash"}` and
+    `{"type": "string", "enum": ["a", "b"]}` contribute the EMPTY SET and are still answered
+    `False` — measured, and it is why the tail did not explode. Only the KEYS of object instance
+    values are collected, so `{"enum": ["state", "detail_level"]}` — an ordinary string enum whose
+    members happen to be those words — names nothing either.
+
+    **AND ONE POSITION NOBODY ATTACKED, FIXED ANYWAY: the KEYS of `dependentRequired`.** A key
+    there NAMES a property as literally as a member of its value list does —
+    `{"dependentRequired": {"state": ["reason"]}}` says *if `state` is present then `reason` must
+    be* — and the superseded code read the values and not the keys, so that node answered a clean
+    `False` while admitting `{"state": "STALE", "detail_level": "calm"}`. **MEASURED AS A LIVE
+    ESCAPE AT `dd40407` AND CLOSED HERE** (arm `C34`, `PASS — 144` before, `FAIL — 2` after, with
+    the live gate ADMITTING the calm-carrying document on both surfaces at `dd40407`). **The point
+    of an alphabet correction is to be COMPLETE, not to close the shape it was shown.**
+
+    **WHY WIDENING THE ALPHABET IS SAFE WITHOUT RE-AUDITING EVERYTHING DOWNSTREAM.** The only
+    consumer of :func:`_declared_names` is the test `"state" in declared`, and the limb that test
+    guards sets `undecidable = True`. **MORE NAMES CAN THEREFORE ONLY EVER PRODUCE MORE UNDECIDABLE
+    AND NEVER MORE `False`** — the widening is monotone in the safe direction.
+
+    **WHAT THIS DOES NOT CLOSE, SAID PLAINLY.** It reads the NAME `state`. A dial that discriminates
+    on a DIFFERENTLY-NAMED key is `DECLARED LIMIT 12`'s residue: still `False`, still silent, and
+    still a stated condition on 16C's dispatch. **NOT PROVED TO BE CARRIED ANYWHERE:** nothing
+    outside this instrument reads :func:`_declared_names`.
+
+ 16 **THE TWO RECOGNISERS AGREE ABOUT "READABLE" BY CONSTRUCTION, AND A BRANCH THIS CHECK CANNOT
+    FULLY READ HAS NO IDENTIFIED STATE.** *** NEW AT `16B-FIX-5` (`FX16`, closing `CD-ASR-WO3-09`
+    F2). *** `FX12` was applied at the ROOT-PROPERTY recogniser only. :func:`_branch_states` read
+    `resolved["properties"]["state"]["const"]` and nothing else — no readability test, no
+    undecidable outcome — so a branch that resolved to a perfectly good `state.const` **while also
+    carrying a keyword this check cannot read** was returned as an identified, accepted branch and
+    the walk went on as though it had looked at all of it. MEASURED by the auditor on `dd40407`:
+    `{"properties": {"state": {"const": "UNKNOWN"}, ...}, "patternProperties": {"^x_": {}},
+    "additionalProperties": false}` -> `_branch_states` ACCEPTED it as `UNKNOWN` with no violation,
+    while `_dial_bearing` on the same node answered `True`.
+
+    **HOW THEY ARE PROVED TO AGREE, AND IT IS NOT A COMMENT ASSERTING THAT THEY DO.** Both call
+    :func:`_unreadable_keywords`, and the phrase ``not in _READABLE_KEYWORDS`` occurs **exactly
+    once in this file, inside that function**. There is nothing left for the two to drift from,
+    and the claim is greppable rather than argued.
+
+    **THE COST, MEASURED.** A branch carrying ANY unreadable keyword now has `state is None`, is
+    reported as `CD-CALM-BRANCHES-006` **with the keyword named**, and is NOT DRIVEN — the same
+    treatment a branch whose `state` cannot be read has always had. On the clean tree the three
+    branches declare only `type`/`additionalProperties`/`required`/`properties`/`description`, so
+    it costs nothing today: `PASS — 144`, and `C6`/`C11`/`C12`/`C17`/`C18`/`C19` — every arm that
+    touches a branch — produce output byte-identical to `dd40407`.
+
+    **WHAT THIS DOES NOT CLOSE, SAID PLAINLY.** The two recognisers now agree about READABILITY;
+    they are still not one mechanism. :func:`_dial_from_branch`'s
+    :data:`CONDITIONAL_KEYWORDS` and `ref_siblings` guards remain SEPARATE and are still needed,
+    because `if`/`then`/`else`/`allOf`/`anyOf`/`not` are all perfectly READABLE and are refused for
+    a different reason — the branch admits more documents than the one this check builds. **Two
+    guards, two reasons, one shared notion of "readable"** — and nobody has proved the CONDITIONAL
+    set complete. **AND THE BRANCH SIDE IS ONLY EXERCISED FOR THE `oneOf` UNDER
+    `#/$defs/dial_reading`:** a union spelled any other way is `DECLARED LIMIT 9`'s territory, not
+    this one's.
+
 *** NUMBERING, BECAUSE `CD-ASR-WO3-06` COULD NOT VERIFY IT AND SAID SO. *** **DECLARED LIMIT
 NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These are the limits of
-`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–14** (**1–12 until `16B-FIX-3`, which added
-`13`; `14` added at `16B-FIX-4`**), said identically in this header, in
+`CD-RT-001-MISSING-DATA-NEVER-CALM` and they run **1–16** (**1–12 until `16B-FIX-3`, which added
+`13`; `14` added at `16B-FIX-4`; `15` and `16` added at `16B-FIX-5`**), said identically in this
+header, in
 `required-tests.yaml`, and in `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`
 (`CD-RULE-004`, three places). The SIBLING row `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` has its OWN
 independent 1–12 sequence, spread across
