@@ -633,6 +633,10 @@ REF_INERT_SIBLINGS = frozenset({
     "default", "deprecated", "readOnly", "writeOnly", "examples",
 })
 
+#: How many `$ref` hops :func:`_resolve` will follow before it gives up. **REACHING IT IS
+#: UNDECIDABLE AND NOT A RESULT** — see the comment at the cap itself (`FX12`).
+REF_CHAIN_CAP = 32
+
 
 def _resolve(schema: dict, node, depth: int = 0):
     """Follow a chain of LOCAL ``#/...`` refs, and **SAY WHAT THE CHAIN DISCARDED**.
@@ -665,7 +669,21 @@ def _resolve(schema: dict, node, depth: int = 0):
     can only over-report, and an over-report costs one seat one look at one contract.
     """
     dropped: list = []
-    while isinstance(node, dict) and "$ref" in node and depth < 32:
+    while isinstance(node, dict) and "$ref" in node:
+        # *** THE CAP RETURNS `None`, NEVER THE NODE IT DID NOT RESOLVE. NEW AT `16B-FIX-4`
+        # (`FX12`, closing `CD-ASR-WO3-08` F5 and one member of F1). *** The superseded loop
+        # carried `depth < 32` in the `while` condition, so a chain longer than the cap fell out
+        # of the loop still holding a node with its `$ref` ON it and handed that back as
+        # `resolved` — with `dropped == []`, i.e. as though the walk had succeeded and discarded
+        # nothing. MEASURED by `CD-ASR-WO3-08` (arm `R33`) and reproduced here as arm `C25`:
+        # `_resolve(...)` -> `resolved = {"$ref": "#/$defs/hop32"} | dropped = []` and
+        # `_dial_bearing(...) -> False`, on a tree whose live gate ADMITTED a STALE dial rendering
+        # as `calm` on both surfaces. **A RESOLVER THAT SAYS "RESOLVED" ABOUT A NODE IT DID NOT
+        # RESOLVE IS THE SAME LIE AS A RECOGNISER THAT SAYS "NOT A DIAL" ABOUT A SHAPE IT COULD
+        # NOT READ**, and this row now refuses both. `None` is what every caller already treats as
+        # UNRECOGNISED, so the cap is now UNDECIDABLE rather than a clean false answer.
+        if depth >= REF_CHAIN_CAP:
+            return None, dropped
         ref = node["$ref"]
         asserting = sorted(key for key in node if key not in REF_INERT_SIBLINGS)
         if asserting:
@@ -925,15 +943,77 @@ def _label_for(level) -> str:
     return str(level)
 
 
-#: The keywords a subschema can hide another subschema behind. DECLARED and closed: a keyword not
-#: named here is not descended into, and :func:`_dial_bearing` says so by returning UNDECIDABLE
-#: rather than False. `$defs` is deliberately ABSENT — descending into the definition pot from a
-#: single property would make every property reach every definition.
+#: The keywords a subschema can hide another subschema behind — the set :func:`_dial_bearing`
+#: DESCENDS INTO. `$defs` is deliberately ABSENT and the reason is unchanged: descending into the
+#: definition pot from a single property would make every property reach every definition, and a
+#: definition that is actually in force is reached by the `$ref` :func:`_resolve` follows.
+#:
+#: *** `dependentSchemas` ADDED AT `16B-FIX-4` (`FX13`, closing `CD-ASR-WO3-08` F2). *** It was
+#: named as an applicator in :data:`CONDITIONAL_KEYWORDS` — this module's own statement that it
+#: widens what a schema admits — and omitted here, in the same file, two hundred lines away.
+#: **`_SUBSCHEMA_KEYWORDS` WAS THE CONSTANT THAT WAS WRONG**: `CONDITIONAL_KEYWORDS` correctly
+#: names every keyword that makes a BRANCH admit more than `required` + `properties` describes,
+#: and `dependentSchemas` belongs in it; this list must contain every keyword that can carry a
+#: subschema, and `dependentSchemas` was missing from it. (The two lists are NOT meant to be
+#: equal — `dependentRequired` is legitimately in the first and not here because it carries no
+#: subschema, and `properties`/`items` are legitimately here and not there because they do not by
+#: themselves widen a branch. `dependentSchemas` was the ONE genuine disagreement.)
 _SUBSCHEMA_KEYWORDS = (
     "allOf", "anyOf", "oneOf", "not", "if", "then", "else",
-    "items", "prefixItems", "contains", "additionalProperties",
-    "properties", "patternProperties", "propertyNames", "unevaluatedItems",
-    "unevaluatedProperties",
+    "items", "prefixItems", "contains", "additionalItems", "additionalProperties",
+    "properties", "patternProperties", "propertyNames", "dependentSchemas",
+    "contentSchema", "unevaluatedItems", "unevaluatedProperties",
+)
+
+#: The keywords whose KEYS ARE PROPERTY NAMES THIS RECOGNISER READS LITERALLY. This is the whole
+#: of what "it declares a property called `state`" is decided from, and it is READ rather than
+#: pattern-matched: a name in any of these is a name this check has seen.
+_NAME_DECLARING_KEYWORDS = ("properties", "required", "dependentRequired")
+
+#: *** DESCENDED INTO, BUT NEVER A CLEAN `False`. *** These carry subschemas — so the walk goes
+#: into them and a dial underneath one can still come back `True` — but their KEYS are property
+#: names this recogniser does NOT evaluate: `patternProperties` keys are regular expressions,
+#: `propertyNames` constrains names it never lists, and `dependentSchemas` keys select a whole
+#: schema by the presence of another property. A node declaring one of these can therefore be
+#: declaring a property named `state` in a way :data:`_NAME_DECLARING_KEYWORDS` cannot see, so it
+#: is UNDECIDABLE. (`CD-ASR-WO3-08` F1 arms `P1` and `D2`; arms `C22` and `C23`.)
+_NAME_BEARING_APPLICATORS = frozenset({
+    "patternProperties", "propertyNames", "dependentSchemas",
+})
+
+#: *** EVERY REMAINING JSON SCHEMA 2020-12 KEYWORD THAT CARRIES NO SUBSCHEMA AND NAMES NO
+#: PROPERTY. *** Enumerated from the specification's own vocabularies — Core, Applicator,
+#: Validation, Format-Annotation, Content and Meta-Data — and DELIBERATELY EXHAUSTIVE, because
+#: this is the list that decides when the recogniser is allowed to say `False`. Four Core
+#: keywords are ABSENT ON PURPOSE and are therefore UNREADABLE: `$id` (it moves the base URI a
+#: relative `$ref` resolves against, and :func:`_resolve` always resolves against the document
+#: root), `$dynamicRef`, `$dynamicAnchor` and `$recursiveRef`/`$recursiveAnchor` (references this
+#: resolver does not follow — `CD-ASR-WO3-08` F1 arm `DYN`, arm `C24`).
+_INERT_KEYWORDS = frozenset({
+    # Core, and inert HERE
+    "$schema", "$vocabulary", "$comment", "$anchor", "$defs",
+    # Validation — assertions about a value, carrying no subschema
+    "type", "enum", "const", "multipleOf", "maximum", "exclusiveMaximum", "minimum",
+    "exclusiveMinimum", "maxLength", "minLength", "pattern", "maxItems", "minItems",
+    "uniqueItems", "maxContains", "minContains", "maxProperties", "minProperties",
+    # Format and Content
+    "format", "contentEncoding", "contentMediaType",
+    # Meta-Data — pure annotation
+    "title", "description", "default", "deprecated", "readOnly", "writeOnly", "examples",
+})
+
+#: *** THE INVERSION, AND IT IS THE WHOLE OF `FX12`. *** The recogniser may answer `False` — "this
+#: is NOT a dial" — only about a node EVERY KEYWORD OF WHICH IS IN THIS SET: either one it
+#: descends into (so it has looked underneath), or one it knows carries nothing to look under, or
+#: one whose property names it reads. **A KEYWORD THAT IS NOT IN THIS SET IS ONE THIS CHECK
+#: CANNOT READ, AND A NODE IT CANNOT FULLY READ IS UNDECIDABLE.** That is a property of what the
+#: node actually declares, not of a list of attacks: the four escapes of `A306`/`A307`/`A308` and
+#: every spelling nobody has thought of yet fail the SAME test, which is that this file has never
+#: heard of the keyword.
+_READABLE_KEYWORDS = (
+    (frozenset(_SUBSCHEMA_KEYWORDS) - _NAME_BEARING_APPLICATORS)
+    | frozenset(_NAME_DECLARING_KEYWORDS)
+    | _INERT_KEYWORDS
 )
 
 
@@ -959,7 +1039,8 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
       ``None``   it declares a `state` this check CANNOT classify, or hides a subschema behind a
                  keyword outside the declared set, or nests deeper than the walk, or carries a
                  `$ref` that does not resolve — **UNDECIDABLE, and reported**;
-      ``False``  nothing anywhere under it declares a property named `state`.
+      ``False``  nothing anywhere under it declares a property named `state`, **AND EVERY KEYWORD
+                 IT DECLARES, AT EVERY NODE THE WALK VISITED, IS ONE THIS CHECK CAN READ.**
 
     **THE THIRD LINE IS THE RESIDUE AND IT IS DECLARED, NOT HIDDEN** — this row's `DECLARED
     LIMIT 12`. The looser form (declaring a `state` is enough) was RULED over the tighter one
@@ -974,6 +1055,17 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     `PASS — 144 assertions, 0 violations` with the gate ADMITTING `{state: STALE, detail_level:
     'calm'}` on both surfaces (auditor arm `D1`, arm `C20`). **DECLARING the key is now the whole
     trigger; the key's SHAPE can only refine the answer to ``True`` and never back to ``False``.**
+
+    *** AND SINCE `16B-FIX-4` THE DEFAULT IS INVERTED AT THIS RECOGNISER TOO, WHICH IS THE ONLY
+    THING THAT BOUNDS THE CLASS (`FX12`, closing `CD-ASR-WO3-08` F1). *** `FX6` and `FX10` each
+    made the trigger independent of one more thing — the state VOCABULARY, then the state key's
+    SHAPE — and each left it wholly dependent on the KEYWORD the key is declared under, which was
+    read as `properties` and nothing else. **FOUR AUDITS ESCAPED THIS FUNCTION WITH FOUR
+    SPELLINGS OF ONE IDEA AND EACH FIX CLOSED THE SPELLING IT WAS SHOWN.** What is different here
+    is the QUESTION: this walk no longer asks a list of keywords whether they are present, it
+    asks the NODE whether every keyword it declares is one this check can read
+    (:data:`_READABLE_KEYWORDS`), and a node it cannot fully read is UNDECIDABLE. `False` is now
+    a claim about a shape that was READ, not a shape that was not recognised.
 
     *** IT DOES NOT ADD A THIRD DIAL SLOT TO ANYTHING. *** `PO-DECISIONS-0026` standing is TWO
     DIALS, NEVER BLENDED. This makes the enumerator honest about what it drives; it drives nothing
@@ -997,6 +1089,24 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
 
     undecidable = False
 
+    # *** THE INVERSION. NEW AT `16B-FIX-4` (`FX12`, closing `CD-ASR-WO3-08` F1 AS A CLASS). ***
+    # THE SUPERSEDED WALK ASKED, OF A LIST OF KEYWORDS IT HAD THOUGHT OF, "is this one present?"
+    # — so any keyword it had NOT thought of was invisible and the node fell through to `False`.
+    # That is how this recogniser was escaped FOUR TIMES BY FOUR SPELLINGS OF ONE IDEA
+    # (`A306` a new state vocabulary, `A307` a boolean `state`, `A308` `patternProperties` /
+    # `dependentSchemas` / `$dynamicRef` / a chain past the resolver's cap), each fix closing the
+    # spelling it was shown. **THIS ASKS THE OPPOSITE QUESTION, OF THE NODE AND NOT OF A LIST:
+    # for every keyword ACTUALLY PRESENT here, can this check read it?** A keyword outside
+    # `_READABLE_KEYWORDS` — a 2020-12 keyword nobody wired up, a keyword from a draft not yet
+    # written, a custom vocabulary, an applicator this walk does not descend — makes the node
+    # UNDECIDABLE. **"I could not read this" and "this is not a dial" are different answers and
+    # only one of them is safe** (`PO-DECISIONS-0026` ruling 10, GUARD_THE_INSTANCE_NOT_THE_CLASS).
+    # THE COST IS PRICED AND IT IS THE RULED DIRECTION: a false positive costs one seat one look
+    # at one contract; a false negative costs the constitution. See DECLARED LIMIT 14.
+    unreadable = sorted(key for key in resolved if key not in _READABLE_KEYWORDS)
+    if unreadable:
+        undecidable = True
+
     properties = resolved.get("properties")
     # *** THE TRIGGER IS THE PRESENCE OF THE DECLARED KEY, NOT ITS SHAPE. NEW AT `16B-FIX-3`
     # (`FX10`, closing `CD-ASR-WO3-07` F2). *** The superseded code read
@@ -1011,10 +1121,28 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
     # literally called `state`. **A ROOT PROPERTY THAT DECLARES A `state` REACHES THE UNDECIDABLE
     # LIMB WHATEVER THE SHAPE OF THAT KEY'S SUBSCHEMA**; the shape can only ever REFINE the answer
     # to `True`, never back to `False`.
-    if isinstance(properties, dict) and "state" in properties:
+    # *** WIDENED AT `16B-FIX-4` (`FX12`). *** `properties` is no longer the only keyword whose
+    # property NAMES this check reads: `required: ["state"]` and `dependentRequired` name a
+    # property just as literally, and a node that names `state` in either of them without giving
+    # it a subschema is a node that requires a `state` it constrains not at all. Reading them is
+    # a COMPLETE read of those keywords, which is why they are in `_READABLE_KEYWORDS`; the
+    # keywords whose names this check CANNOT read are handled by the inversion above.
+    declared = set()
+    if isinstance(properties, dict):
+        declared |= {key for key in properties if isinstance(key, str)}
+    required = resolved.get("required")
+    if isinstance(required, list):
+        declared |= {name for name in required if isinstance(name, str)}
+    dependent_required = resolved.get("dependentRequired")
+    if isinstance(dependent_required, dict):
+        for names in dependent_required.values():
+            if isinstance(names, list):
+                declared |= {name for name in names if isinstance(name, str)}
+
+    if "state" in declared:
+        subschema = properties.get("state") if isinstance(properties, dict) else None
         state, state_dropped = (
-            _resolve(schema, properties["state"]) if isinstance(properties["state"], dict)
-            else (None, [])
+            _resolve(schema, subschema) if isinstance(subschema, dict) else (None, [])
         )
         if state_dropped:
             state = None  # composed across a `$ref` boundary — its const/enum cannot be trusted
@@ -1047,7 +1175,7 @@ def _dial_bearing(schema: dict, node, depth: int = 0, seen=None):
             continue
         child = resolved[keyword]
         children = (list(child.values()) if isinstance(child, dict) and keyword in
-                    ("properties", "patternProperties")
+                    ("properties", "patternProperties", "dependentSchemas")
                     else child if isinstance(child, list) else [child])
         for entry in children:
             if not isinstance(entry, (dict, list)):
@@ -1255,7 +1383,9 @@ def main(argv=None) -> int:
                 f"{surface.value}: root properties {undecidable!r} use a construct this check "
                 "cannot decide about — *** A `state` VOCABULARY OUTSIDE THIS CHECK'S DECLARED, "
                 f"CLOSED SET {sorted(DECLARED_STATES)!r} (NEW AT 16B-FIX-2, FX6) ***, a $ref it "
-                "could not resolve, a keyword outside its declared set, or a nesting deeper than "
+                "could not resolve OR one whose chain is longer than this check follows, "
+                "*** ANY KEYWORD THE NODE DECLARES THAT THIS CHECK CANNOT READ (NEW AT 16B-FIX-4, "
+                "FX12) ***, or a nesting deeper than "
                 "it walks. DENY BY DEFAULT (RULE F): an undecidable root property is reported as "
                 "UNRECOGNISED, because 'I could not tell whether that is a dial' must never read "
                 "the same as 'it is not'. Whether a NEW state MEANS the data is absent or stale "
