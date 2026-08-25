@@ -1,0 +1,524 @@
+# ================================================================================================== #
+# BL-20260825T063052Z-16GC — ENGINEER RETURN, WO-3 INCREMENT 16G (THE FOUR TRUE-REGARDLESS FINDINGS).
+#
+# *** STATUS: READY_FOR_ASSURANCE. NOT PASS, NOT GREEN, NOT COMPLETE, NOT ACCEPTED — THOSE ARE NOT
+# THIS SEAT'S TO SAY (`PBG-AUTH-003`, `PBG-SOD-001`, non-waivable). A FRESH READ-ONLY ASSURANCE
+# IDENTITY GRADES THIS, AND IT MAY NOT BE `CD-ASR-WO3-14`, WHICH RAISED THESE FINDINGS. ***
+#
+# CONTENT TIP: `0cf84117148c40d31f997bd1dc8aa0f730823fef` on branch `wo-3`.
+# BASE: `c475b8e75004a14481f39e63d09e86da3898195b` (content tip `7ac11c9`).
+#
+# *** THE DECLARED STOP HELD AND IT IS REPORTED FIRST BECAUSE IT IS THE ONE THAT COULD HAVE ENDED
+# THE INCREMENT: `src/` DID NOT MOVE. *** `git diff --name-only c475b8e 0cf8411 -- src/` -> **0
+# paths**, rc=0. Closing `CD-ASR-F14-03` did NOT require touching the product. The guard's stated
+# scope was already wider than its implemented scope; the repair was to the INSTRUMENT.
+#
+# *** THE ACCEPTANCE TEST, RUN AND REPORTED FIRST, BOTH DIRECTIONS, SAME HARNESS, SAME HOST: ***
+#
+#   `plants/WO3-INC16G/run_arms.sh` takes the INSTRUMENT TREE as an argument, so BEFORE and AFTER
+#   are THE SAME ARMS MEASURED TWICE and not two different experiments.
+#
+#                 CD-RT-001-PUBLICATION-CHOKEPOINT
+#                 BEFORE (instrument at `c475b8e`)   AFTER (`0cf8411`)
+#     CLEAN       PASS — 11 assertions   rc=0        PASS — 11 assertions   rc=0
+#     Z5CTRL      PASS — 11 assertions   rc=0        PASS — 12 assertions   rc=0
+#     Z5          PASS — 11 assertions   rc=0        FAIL — 1 violation(s)  rc=1   <-- IT MOVES
+#     Z7          PASS — 11 assertions   rc=0        PASS — 11 assertions   rc=0   <-- DECLARED
+#
+#   **AND THE ARMS ARE LIVE BYPASSES AND NOT INERT TEXT** (`plants/WO3-INC16G/eng15_probe.py`):
+#   `Z5` and `Z7` each ADMIT a 1970-stamped calm dial on BOTH surfaces —
+#   `STALE-CALM ADMISSIONS = 2`, `MUST-ADMIT ROWS REFUSED = 0` — while `CLEAN` and `Z5CTRL` admit
+#   `0`. A row that moves on an arm which publishes nothing is not evidence (`CD-PL-F74`).
+#
+# *** THE VACUITY DIRECTION IS CHECKED IN BOTH DIRECTIONS AND NEITHER IS ASSUMED: ***
+#   (i)  the row STILL PASSES ON THE CLEAN TREE — `PASS — 11 assertions, 0 violations`, rc=0,
+#        unchanged from the base. A control that fails on everything catches nothing.
+#   (ii) `Z5CTRL` — the SAME `try` shape whose handler ends in a bare `raise` — goes
+#        `11 -> 12` assertions and STAYS `PASS`. **THAT IS THE ASSERTION BEING MADE AND PASSING.**
+#        Without it, `Z5` going `FAIL` would be equally consistent with a check that refuses any
+#        `try` in the gate at all, and `CLEAN` staying at `11` would be consistent with dead code.
+#
+# *** ONE FINDING AGAINST THIS SEAT'S OWN WORK THAT IS A REAL DEFECT AND NOT A DISCLAIMER:
+# `CD-ENG-F16G-01`. THIS SEAT'S FIRST REGRESSION TABLE TOOK `rc` FROM A PIPELINE ENDING IN
+# `| tail -1` AND PRINTED `rc=0` BESIDE NINE `FAIL` VERDICTS. THAT IS `CD-ENG-F02`'s EXACT DEFECT
+# CLASS, COMMITTED BY THE SEAT REPAIRING A FIGURE THAT DID NOT REPRODUCE. Caught in-session and
+# re-run; the corrected table is below. IT IS RECORDED BECAUSE IT WAS TRUE, NOT BECAUSE IT
+# SURVIVED. ***
+#
+# *** AND ONE THING THIS SEAT DELIBERATELY DID NOT DO: `CD-ASR-F14-01` WAS NOT REOPENED. No
+# coverage property, no code-structure invariant, no new guard mechanism. `PO-DECISIONS-0032`
+# ruling 3 records it as owed later-hardening on the assurance/detection tier. Arm `Z7` is carried
+# here PASSING, on purpose, as the executable witness of a DECLARED limit — not as unfinished
+# work. ***
+# ================================================================================================== #
+
+entry_id: BL-20260825T063052Z-16GC
+timestamp_utc: '2026-08-25T06:30:52Z'
+utc: '2026-08-25T06:30:52Z'
+record_type: ENGINEER_RETURN
+project: crash-detector
+actor: CD-ENG-WO3-15
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_09
+authority_id: CD-AUTH-0001
+dispatch_id: CD-D-186
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+parent_entry_id: BL-20260824T223344Z-16FC
+dispatching_boundary: c734cb1
+base_sha: c475b8e75004a14481f39e63d09e86da3898195b
+content_base_preserved: 7ac11c9789e86625e91ea163c72404288e91d023
+current_sha: 0cf84117148c40d31f997bd1dc8aa0f730823fef
+status: WAITING_ASSURANCE
+return_status: READY_FOR_ASSURANCE
+schema_version: 1
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  The four `16G` items are built and measured. `CD-ASR-F14-02`: `DECLARED LIMIT 9`'s closing
+  reassurance is SUPERSEDED in all FOUR `CD-RULE-004` sites with arm `Z7` named and executable,
+  and the correction is stated over the CLASS rather than over one function. `CD-ASR-F14-03`:
+  `CD-CHOKE-003` now reads `refuse_unless_publishable`'s OWN exception handlers; arm `Z5` moves
+  the row from `PASS — 11` to `FAIL — 1`, the control `Z5CTRL` stays `PASS` at `12` assertions,
+  and the clean tree is unmoved at `11`. `CD-ASR-F14-04`: the word `CLOSED` is restored to
+  `DECLARED LIMIT 2`'s heading BY DISCLOSED SUPERSESSION, with the removed wording quoted verbatim
+  beside it. `CD-ASR-F14-05`: `122` is corrected to `97` in all three places, RUN IN THIS SEAT'S
+  OWN SHELL at `a9e19c3` rather than copied from the dispatch. `src/` did not move; `pbg/` did not
+  move; `contracts/*.json` are `sha256`-identical; `wo-2r3` is unmoved at `be0b355`.
+
+boot_verdict:
+  framework: >-
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` ran in the worktree, rc=0, and declared
+    **VERDICT: RED** on `continuity_state: CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`.
+  the_RED_is_INHERITED_and_is_NOT_this_increment_s: >-
+    *** `governance/engineering/ACTIVE_WORK.yaml` carries `last_build_log_entry:
+    BL-20260819T025400Z-0004` and `continuity_record_commit: PENDING`, while the build-log
+    directory holds 79 entries ending at `BL-20260824T223344Z-16FC`. THE POINTER IS ~75 ENTRIES
+    STALE AND THE NARRATIVE FIELDS ARE STALER: `current_work` still describes `CD-WO-002` and the
+    `next_safe_action` still names a `wo-2-skeleton` re-dispatch. *** **THIS SEAT DID NOT CORRECT
+    IT.** `ACTIVE_WORK.yaml` is NOT in this dispatch's writable scope, and recorded-vs-observed
+    disagreement is reported and reconciled, never silently corrected (`PBG-CONT-006`). It is
+    raised as `CD-ENG-F16G-04` below. The same RED reproduces at the pristine base, so it is not
+    a consequence of this increment.
+  reconciliation: >-
+    **THE DISPATCHED BASELINE AND THE OBSERVED STATE AGREE EXACTLY.** Dispatched `c475b8e`;
+    `git rev-parse HEAD` -> `c475b8e75004a14481f39e63d09e86da3898195b`; `git status --porcelain`
+    EMPTY; branch `wo-3`; worktree `/srv/crash-detector-wo3`. No drift (`PBG-CONT-006`).
+  identity: >-
+    The role is held from `CD-D-186` and `CD-AUTH-0001`, not from having read
+    `pbg/roles/engineer.md` (`PBG-BOOT-001`, `PBG-BOOT-002`). This seat had never held a seat on
+    this project.
+  read_in_full_before_any_edit: >-
+    `CLAUDE.md` · `pbg/roles/engineer.md` · `CD-DISPATCH-INC16G-ENGINEER.md` ·
+    `PO-DECISIONS-0032.md` · `BL-20260824T235828Z-0186.yaml` (the auditor's entry, for the `Z`-arm
+    shapes) · `BL-20260824T223344Z-16FC.yaml` (the 16F return) · both instruments · both execution
+    contracts · the register regions of all five affected rows.
+
+CD_PL_F193 — WHAT THIS SEAT RAN RATHER THAN INHERITED:
+  the_rule_applied: >-
+    **EVERY FIGURE IN THIS RETURN CARRIES THE COMMAND THAT PRODUCED IT AND THE `rc` TAKEN FROM
+    THAT COMMAND.** An inherited claim is a hypothesis until it is run. **THREE OF THE FOUR ITEMS
+    ARE CORRECTIONS TO FIGURES OR SENTENCES SOMEBODY ELSE MEASURED, SO ARRIVING WITH THE
+    DISPATCH'S OWN NUMBERS WOULD HAVE BEEN THE DEFECT REPEATED.**
+  the_dispatch_told_this_seat_NOT_to_copy_97_and_it_did_not: >-
+    The dispatch stated `97` and expressly forbade copying it. This seat measured independently and
+    got `97`. **THAT IS AGREEMENT REACHED SEPARATELY, NOT A FIGURE CARRIED ACROSS**, and had it
+    disagreed this entry would say so.
+  ITEM_4_the_a9e19c3_assertion_count:
+    command: >-
+      `git worktree add /tmp/inc16g/base a9e19c3` then
+      `cd /tmp/inc16g/base && python3 tools/register/check_stale_data_never_calm.py --root /tmp/inc16g/base`
+    result: '**`CD-RT-001-STALE-DATA-NEVER-CALM: PASS — 97 assertions, 0 violations`, `rc=0`, run THREE times, identical every time. `real 0m0.789s`.**'
+    the_recorded_figure: '`122`. **IT DOES NOT REPRODUCE AND NOTHING THIS SEAT COULD CONSTRUCT PRODUCES IT.**'
+    a_throwaway_worktree_was_used_so_the_lane_was_not_disturbed: 'The lane stayed at `c475b8e` throughout; `/tmp/inc16g/base` is a detached worktree at `a9e19c3`.'
+    the_TIP_figure_REPRODUCES_and_is_untouched: >-
+      `python3 tools/register/check_stale_data_never_calm.py --root .` at the lane ->
+      `PASS — 142088 assertions, 0 violations`, `rc=0`, `real 0m26.486s`. **THE CORRECTION IS TO
+      THE BASELINE HALF OF THE COMPARISON AND TO NOTHING ELSE.** The timings are re-stated as this
+      host measured them (`0.79 s` / `26.5 s`) rather than carried across from the prior entry.
+    and_the_headline_claim_gets_STRONGER_not_weaker: >-
+      `142088 / 97` is about 1465x the assertion count at about 34x the wall clock. **A SEAT
+      CORRECTING A FIGURE IN THE DIRECTION THAT FLATTERS ITS OWN WORK WOULD BE THE FINDING; THIS
+      ONE HAPPENS TO GO THAT WAY AND IS STATED WITH THE ARITHMETIC SO A READER CAN CHECK IT.**
+  ITEM_3_the_deleted_word — AND THE CONFOUND THE DISPATCH WARNED ABOUT, REPRODUCED AND AVOIDED:
+    the_trap: >-
+      The Project Lead's first measurement — a naive `grep -ci "closed written list"` — APPEARED
+      TO REFUTE THE AUDITOR, because the three files wrap the sentence at different columns.
+      **THIS SEAT HIT THE SAME CLASS OF CONFOUND AGAIN LATER IN THIS SESSION** while checking
+      whether the TRUE adjacent sentence survived: a plain `grep -c` returned `0` in all three
+      files, and the whitespace-normalised re-read returned `1` in all three. Recorded as
+      `CD-ENG-F16G-02` because it nearly produced a false statement in this very entry.
+    command: >-
+      `git show <sha>:<file> | sed 's/^[[:space:]]*#*[[:space:]]*//' | tr '\n' ' ' | tr -s ' '
+      | grep -o "VOCABULARY IS A[A-Z ]*WRITTEN LIST"` — rc=0 on every cell.
+    result: |
+      a9e19c3 -> CLOSED WRITTEN LIST · CLOSED WRITTEN LIST · CLOSED WRITTEN LIST
+      7ac11c9 -> CLOSED WRITTEN LIST · WRITTEN LIST        · CLOSED WRITTEN LIST
+      c475b8e -> CLOSED WRITTEN LIST · WRITTEN LIST        · CLOSED WRITTEN LIST
+      (order: check_stale_data_never_calm.py · required-tests.yaml · the execution contract)
+    and_the_part_that_IS_the_finding: >-
+      `grep -c "CLOSED WRITTEN LIST"` over the NORMALISED `required-tests.yaml` at `c475b8e` ->
+      **`0`**. *** NO VERBATIM QUOTE OF THE PRIOR HEADING EXISTED ANYWHERE IN THAT FILE. THE
+      MISSING QUOTE IS THE DEFECT, NOT THE MISSING WORD. *** **THE AUDITOR IS CONFIRMED EXACTLY.**
+  ITEM_1_and_ITEM_2_the_two_arms:
+    reproduced_before_a_line_was_written: >-
+      Both `Z5` and `Z7` were re-authored IN THIS SEAT'S OWN SHELL from the LANE's pristine bytes,
+      each anchor **asserted UNIQUE in the source before a byte was replaced**, and applied to
+      pristine `git archive | tar -x` extractions with the patch read from an ABSOLUTE path
+      OUTSIDE every extraction, `git apply` rc TAKEN INTO A VARIABLE AND CHECKED, and the inserted
+      marker **grep-confirmed present in the extracted tree** before any instrument ran.
+    the_BEFORE_result_which_is_the_finding_reproduced: >-
+      **AT `c475b8e`, WITH THE `c475b8e` INSTRUMENTS, ALL FOUR ARMS RETURN `PASS` ON BOTH ROWS.**
+      `Z5` and `Z7` each admit a 1970-stamped calm dial on BOTH surfaces at the same time.
+      **`CD-ASR-F14-02` AND `CD-ASR-F14-03` ARE BOTH INDEPENDENTLY CONFIRMED.**
+    the_method_traps_named_because_earlier_seats_paid_for_them: >-
+      `CD-ASR-WO3-11` read a patch from INSIDE the extracted tree, `git apply` returned 128, and
+      the instrument then measured an UNPATCHED tree while looking like a result. `WO3-INC16D`'s
+      probe hard-coded a `sys.path.insert` to the lane and therefore measured THE LANE whichever
+      tree it was pointed at. **BOTH ARE REFUSED BY CONSTRUCTION IN `run_arms.sh` AND
+      `eng15_probe.py`, AND `eng15_probe.py` PRINTS THE RESOLVED `crash_detector.__file__` ON ITS
+      LAST LINE SO A READER CAN SEE WHICH TREE PRODUCED THE TABLE.**
+
+ITEM_1 — CD-ASR-F14-02, A DECLARED LIMIT FALSE IN THE REASSURING DIRECTION:
+  what_was_wrong: >-
+    `DECLARED LIMIT 9` closed by reassuring the reader that the residual it had just admitted was
+    caught by the sibling structural row, *"AND THE TWO ROWS ARE A PAIR FOR EXACTLY THIS REASON"*
+    — resting on the `16F` return's claim that the structural row *"catches every
+    `return`/`continue`/`break`-shaped bypass regardless of what value it is keyed on"*.
+  why_it_is_false_MEASURED_HERE: >-
+    **ARM `Z7` IS A `return`, IS ON THE PUBLICATION PATH, AND IS NOT CAUGHT.** It sits at the top
+    of `_iter_nodes` — the SHARED DOCUMENT WALK — and `CD-CHOKE-005` walks `_refuse_stale_calm`
+    and nothing the stage calls. MEASURED at `c475b8e`: `STALE-CALM ADMISSIONS = 2` on both
+    surfaces, `MUST-ADMIT ROWS REFUSED = 0`, while the behavioural row returned
+    `PASS — 142088 assertions, 0 violations` (rc=0) and the structural row returned
+    `PASS — 11 assertions, 0 violations` (rc=0). **THE SENTENCE IS TRUE OF `return`s IN ONE
+    FUNCTION AND WAS WRITTEN AS A CLAIM ABOUT A CLASS.**
+  what_was_done — SUPERSEDED, NEVER EDITED: >-
+    The false sentence is quoted VERBATIM and stays readable beside its correction, in **FOUR**
+    sites. **THE DISPATCH SAID THE ROW-LEVEL SUMMARY IS A FOURTH SITE IN A THREE-PLACE RULE AND
+    IT IS: THIS SEAT LOCATED ALL FOUR BY CONTENT AND NOT BY LINE NUMBER**, and the naive `grep`
+    for the reassurance found only TWO of them because `required-tests.yaml` wraps it differently.
+  the_four_sites:
+    - '`tools/register/check_stale_data_never_calm.py` — `DECLARED LIMIT 9` in the instrument header.'
+    - '`required-tests.yaml` — `DECLARED LIMIT 9` in the comment block above the register entry.'
+    - '`required-tests.yaml` — **AGAIN**, in the row-level `scope:` summary of the register entry itself.'
+    - '`contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md` — the counterpart clause.'
+  the_correction_is_stated_over_the_CLASS_and_not_over_one_function: >-
+    *"`CD-CHOKE-005` catches a `return`, `continue` or `break` LEXICALLY INSIDE
+    `_refuse_stale_calm`, and catches the stage's first executable statement ceasing to enumerate
+    through the shared walk. THAT IS A CLAIM ABOUT ONE FUNCTION'S BODY, NOT ABOUT THE PUBLICATION
+    PATH. Neither row reads the functions the stage DEPENDS ON, and the shared walk is one of
+    them. SO THE TWO ROWS ARE NOT A COVER OF THE `return`-SHAPED CLASS, AND THIS LIMIT NO LONGER
+    SAYS THEY ARE."* **THE DISPATCH SAID: IF YOU CANNOT STATE A TRUE SENTENCE ABOUT WHAT THE
+    STRUCTURAL ROW CATCHES, SAY WHAT IT CATCHES AND STOP THERE. THAT IS WHAT THE CORRECTION DOES.**
+  the_adjacent_TRUE_sentence_SURVIVES_and_is_now_carried_FORWARD: >-
+    *"NEITHER ROW CLOSES IT ALONE AND THE RETURN DOES NOT CLAIM OTHERWISE."* It survives untouched
+    in the `16F` return (`BL-20260824T223344Z-16FC`, not edited — corrections supersede) and is
+    now quoted in ALL THREE `CD-RULE-004` places as well, where it was not before. **IT WAS THE
+    DISCLOSURE THAT WAS HONEST AND THE CLOSING REASSURANCE THAT WAS WRONG.** Verified with the
+    normalised read: present `1`x in each of the three instrument files and `1`x in the `16F`
+    entry.
+  the_residual_is_NOT_closed_and_the_limit_says_so: >-
+    `Z7` is carried as an EXECUTABLE arm that **PASSES**, deliberately, in the same way every
+    other `DECLARED LIMIT` on these rows carries an `EXECUTABLE:` line. `PO-DECISIONS-0032`
+    ruling 3 owns the class. **`16G` CORRECTS THE RECORD; IT DOES NOT CLOSE THE CLASS AND DOES
+    NOT PRETEND TO.**
+  and_the_structural_row_now_says_it_TOO: >-
+    The chokepoint instrument's own `FOR THE AUDITOR` section now states that `CD-CHOKE-005` walks
+    the stage and not the functions the stage depends on, and names `Z7`. **A LIMIT THAT LIVES
+    ONLY ON THE OTHER ROW IS A LIMIT THE READER OF THIS ROW DOES NOT SEE.**
+
+ITEM_2 — CD-ASR-F14-03, A GUARD WHOSE STATED SCOPE WAS WIDER THAN ITS IMPLEMENTED SCOPE:
+  what_was_wrong: >-
+    `CD-CHOKE-003` says *"No `except` handler on the JUDGING PATH may swallow the refusal — each
+    ends in a `raise`"*, and its violation message says "on the judging path". **IT INSPECTED
+    `publish_cycle`'s HANDLERS ONLY.** The judging path does not end at the chokepoint — it
+    continues into `refuse_unless_publishable`, which is where the four stages actually raise.
+  the_arm: >-
+    `Z5` wraps the freshness stage INSIDE the gate in `try: / except PublicationRefused:` and
+    re-raises only when `config_snapshot_id != "BYPASS"`. The handler's last statement is an `if`,
+    not a `raise`, so the refusal dies one frame in and the gate returns `None` — which means
+    ADMITTED — without the chokepoint ever seeing an exception.
+  what_was_built: >-
+    A second `CD-CHOKE-003` pass over the `try` statements that lexically enclose
+    `refuse_unless_publishable`'s OWN calls to its OWN module's functions, using the same
+    `_handler_ends_in_raise` rule as the chokepoint half. **DERIVED, NEVER NAMED: the stage calls
+    are found by membership in the module's function table, not by a list of names.** It is the
+    same rule applied to the other half of the same path.
+  IT_BITES — and this is the measurement, not the claim:
+    command: '`INSTRUMENTS=<tree> OUT=<dir> bash plants/WO3-INC16G/run_arms.sh c475b8e`'
+    before: '`Z5`: `CD-RT-001-PUBLICATION-CHOKEPOINT: PASS — 11 assertions, 0 violations`, **rc=0**.'
+    after: '`Z5`: `CD-RT-001-PUBLICATION-CHOKEPOINT: FAIL — 1 violation(s)`, **rc=1**, `rule: CD-CHOKE-003`, assertions `12`.'
+    and_the_arm_is_a_LIVE_bypass: '`STALE-CALM ADMISSIONS = 2` on BOTH surfaces, `MUST-ADMIT ROWS REFUSED = 0`. **THE ROW MOVES ON AN ARM THAT ACTUALLY PUBLISHES A 1970-STAMPED CALM DIAL.**'
+  THE_VACUITY_DIRECTION — BOTH WAYS, BECAUSE ONE WAY IS NOT ENOUGH:
+    the_clean_tree_still_PASSES: '`CLEAN`: `PASS — 11 assertions, 0 violations`, rc=0, **IDENTICAL TO THE BASE**. A control that fails on everything catches nothing.'
+    the_control_arm_proves_the_ASSERTION_IS_MADE: >-
+      `Z5CTRL` is the SAME `try` shape whose handler ends in a bare `raise`. It goes
+      `PASS — 11` -> **`PASS — 12 assertions, 0 violations`**, rc=0. *** THE ASSERTION COUNT
+      RISING IS THE EVIDENCE THAT THE NEW CODE RAN AND ASSERTED. Without this arm, `Z5` failing
+      would be equally consistent with a check that refuses ANY `try` in the gate, and the row
+      would be RED on a legitimate refactor while looking like a control. ***
+    and_the_clean_run_PRINTS_that_it_ran_even_at_zero: >-
+      On a gate that wraps nothing the pass contributes ZERO assertions, so it emits a NOTE
+      carrying the count including `0`:
+      `note: refuse_unless_publishable: 0 try statement(s) enclose its 4 stage call(s), carrying 0
+      except handler(s)`. **THAT IS `CD-ENG-F16F-03`'s COMPLAINT — A BRANCH THAT NEVER RUNS IS A
+      BRANCH NOBODY HAS TESTED — ANSWERED IN ADVANCE RATHER THAN LEFT TO BE FOUND**, and it is
+      priced in `DECLARED LIMIT 8(a)` rather than hidden.
+  a_new_DECLARED_LIMIT_8_prices_the_widening_in_all_three_places: >-
+    (a) it is VACUOUS BY CONSTRUCTION on a gate that wraps nothing; (b) it is an
+    OVER-approximation in the safe direction — a `try` around a gate call to a non-raising helper
+    would be required to re-raise anyway, so a legitimate refactor that swallowed a logging error
+    inside the gate WOULD FAIL THIS ROW; (c) it is a HANDLER-SHAPE READ AND NOT A CONTROL-FLOW
+    PROOF — a handler ending in a `raise` reached only conditionally at runtime is not something a
+    lexical read can decide. **THE SWALLOW CLASS IS NARROWED, NOT CLOSED, AND THE LIMIT SAYS SO.**
+  the_DECLARED_STOP_DID_NOT_TRIGGER: >-
+    *** CLOSING THIS DID NOT REQUIRE TOUCHING `src/`. *** The product's gate is not defective —
+    the INSTRUMENT was reading one frame too few. `git diff --name-only c475b8e 0cf8411 -- src/`
+    -> **0 paths**.
+  NO_REGRESSION_on_the_arms_that_already_existed:
+    method: '**`rc` TAKEN FROM THE COMMAND, NEVER FROM A PIPE.** See `CD-ENG-F16G-01` — this seat got that wrong on its first pass at this exact table.'
+    result: |
+      C1 C2 C3 C4 C5 D1CTRL W5G N8   BEFORE rc=1 FAIL — 1 violation(s)   AFTER rc=1 FAIL — 1 violation(s)
+      C6                             BEFORE rc=1 FAIL — 2 violation(s)   AFTER rc=1 FAIL — 2 violation(s)
+    nine_arms_last_line_byte_identical_on_all_nine: true
+
+ITEM_3 — CD-ASR-F14-04, THE WORD `CLOSED`, DELETED BY EDIT AND RESTORED BY DISCLOSED SUPERSESSION:
+  what_was_wrong: >-
+    At `a9e19c3` all three `CD-RULE-004` places read *"...THE VALUE VOCABULARY IS A CLOSED WRITTEN
+    LIST"*. At `7ac11c9`, **`required-tests.yaml` ALONE** read *"...A WRITTEN LIST"*. The other two
+    never changed. **THE WORD WAS REMOVED BY EDIT WITH NO VERBATIM QUOTE OF THE PRIOR HEADING
+    ANYWHERE IN THAT FILE** — measured, `0` occurrences — which is what `PBG-CONT-003` forbids.
+  why_it_is_a_WEAKENING_and_not_tidying: >-
+    A **CLOSED** written list is a STRONGER admission of narrowness than "a written list": closed
+    says the instrument will not reach outside it, which is exactly the residual `DECLARED LIMIT
+    9` is about. **THE DELETED WORD MADE THE LIMIT SAY LESS THAN ITS TWO SIBLINGS, AND A LIMIT
+    THAT SAYS LESS THAN ITS SIBLINGS IS ONE AN AUDITOR CAN QUOTE IN THE REASSURING DIRECTION.**
+  what_was_done — THE POINT IS THE DISCLOSURE, NOT THE WORD: >-
+    The word is restored AND the removal is recorded in place: the `7ac11c9`-to-`c475b8e` wording
+    is quoted VERBATIM beside the restored heading, with the three-SHA measurement table, the
+    normalised command, and the `0`-occurrence finding that IS the defect. *** A SILENT
+    RESTORATION WOULD HAVE BEEN THE SAME CLASS OF ACT AS THE DELETION, AND THIS INCREMENT IS
+    ABOUT EXACTLY THAT ACT. ***
+  three_place_agreement_RE_ESTABLISHED_and_measured: >-
+    Normalised read at `0cf8411`: `VOCABULARY IS A CLOSED WRITTEN LIST` in all three files.
+    The prior wording is now present as a QUOTE `1`x in `required-tests.yaml` where it was `0`x.
+  and_this_seat_did_NOT_repeat_the_act_while_repairing_it: >-
+    Two headings had to move for `DECLARED LIMIT 8` to exist — *"this row's own sequence, 1 to 7"*
+    -> *"1 to 8"*, and *"THIS CHECK HAS DECLARED LIMITS 1-7"* -> *"1-8"*. **AN INDEX THAT MOVES
+    BECAUSE THE LIST GREW IS NOT THE SAME ACT AS A CLAIM THAT WAS WEAKENED — BUT THIS SEAT QUOTED
+    THE PRIOR WORDING IN ALL THREE PLACES ANYWAY, AND SAID WHY**, because a seat repairing a
+    silent heading edit is the last seat entitled to make one.
+
+ITEM_4 — CD-ASR-F14-05, A FIGURE THAT DOES NOT REPRODUCE:
+  measured_not_inherited: 'See `CD_PL_F193` above for the command, the rc, and the three identical runs.'
+  the_figure: '**`122` -> `97`.** Timings re-stated as this host measured them: `0.77 s` -> `0.79 s`, `26.1 s` -> `26.5 s`.'
+  three_CD_RULE_004_places_AND_the_build_log_return: >-
+    Corrected by SUPERSESSION in `check_stale_data_never_calm.py` (`DECLARED LIMIT 11`),
+    `required-tests.yaml` (`DECLARED LIMIT 11` **and** the row-level summary), and
+    `contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md`. **THIS ENTRY IS THE BUILD-LOG HALF:
+    `BL-20260824T223344Z-16FC`'s `(was: 122)` IS SUPERSEDED HERE AND WAS NOT EDITED THERE**
+    (`PBG-CONT-003`, non-waivable).
+  every_surviving_122_is_inside_a_QUOTE_or_its_explanation: >-
+    Measured: the only `for 122 assertions` string remaining in each of the three files is the
+    verbatim supersession quote; the LIVE figure reads `at a9e19c3 for 97 assertions` in all
+    three. `CD-D-122` and `PID.md line 122` elsewhere in `required-tests.yaml` are unrelated
+    strings and were not touched.
+  the_dispatch_said_SAY_SO_IF_YOU_DISAGREE: >-
+    This seat agrees with the two auditors. **THREE SEATS NOW MEASURE `97` INDEPENDENTLY AND
+    NOTHING MEASURES `122`.**
+
+findings_this_seat_raises_AGAINST_ITS_OWN_WORK:
+  CD-ENG-F16G-01:
+    severity: 'MEDIUM. **CLOSED IN-SESSION, BUT IT WAS REAL AND IT IS THE MOST EMBARRASSING LINE IN THIS RETURN.**'
+    against: "This seat's own no-regression harness for ITEM 2."
+    statement: >-
+      **THE FIRST REGRESSION TABLE TOOK `rc` FROM A PIPELINE ENDING IN `| tail -1` AND THEREFORE
+      REPORTED THE `rc` OF `tail`.** It printed `rc=0` beside nine `FAIL — 1 violation(s)`
+      verdicts. **THAT IS `CD-ENG-F02`'s EXACT DEFECT CLASS, WHICH `plants/WO3-INC16F/run_register.sh`
+      CARRIES A WARNING ABOUT IN ITS OWN HEADER, COMMITTED BY THE SEAT DISPATCHED TO FIX A FIGURE
+      THAT DID NOT REPRODUCE.**
+    what_was_done_about_it: >-
+      Caught by reading the table rather than by any control, re-run with `rc` taken into a
+      variable from the command, and the corrected `rc=1` table is the one recorded here and in
+      `plants/WO3-INC16G/MANIFEST.md`. **THE WRONG TABLE IS RECORDED AS HAVING EXISTED RATHER THAN
+      QUIETLY REPLACED.**
+    what_it_means_for_the_auditor: >-
+      **NO CONTROL CAUGHT IT.** The verdict strings happened to be unambiguous; had the arms
+      differed only in `rc` this would have shipped. A harness that reports `rc` from a pipe is a
+      harness that cannot fail, and this project has a finding about that already.
+  CD-ENG-F16G-02:
+    severity: 'LOW/METHOD. **DISCLOSED BECAUSE IT NEARLY PUT A FALSE SENTENCE IN THIS ENTRY.**'
+    against: "This seat's own verification of ITEM 1."
+    statement: >-
+      **THE SAME LINE-WRAPPING CONFOUND THE DISPATCH WARNED ABOUT FOR ITEM 3 CAUGHT THIS SEAT ON
+      ITEM 1.** A plain `grep -c "NEITHER ROW CLOSES IT ALONE AND THE RETURN DOES NOT CLAIM
+      OTHERWISE"` returned `0` in all three files after this seat had just written that sentence
+      into all three. The normalised re-read returned `1` in all three. **HAD THAT FIRST RESULT
+      BEEN BELIEVED, THIS ENTRY WOULD HAVE CLAIMED THE TRUE SENTENCE WAS MISSING.**
+    what_was_done_about_it: >-
+      Every `CD-RULE-004` agreement claim in this return is measured with the whitespace-normalised
+      command and not with a plain `grep`. **A NAIVE `grep` OVER THESE THREE FILES IS NOT A
+      MEASUREMENT AND THE NEXT SEAT SHOULD NOT TREAT ONE AS EVIDENCE.**
+  CD-ENG-F16G-03:
+    severity: 'MEDIUM. **OPEN. A DECLARED LIMIT, NOT A DEFECT — BUT IT IS THE LIMIT OF THE THING THIS INCREMENT BUILT.**'
+    against: '`CD-CHOKE-003`, the gate-frame pass, as built here.'
+    statement: >-
+      **THE NEW PASS CONTRIBUTES ZERO ASSERTIONS ON THE CLEAN TREE, BECAUSE THE GATE CONTAINS NO
+      `try` AT ALL.** `CLEAN` is `11` assertions before and `11` after. It is a conditional-shape
+      assertion: *"IF there is a `try`, THEN its handlers re-raise"*, and it cannot bite on a tree
+      that does not have the shape. **A CONTROL THAT ASSERTS NOTHING ON THE SUBJECT AS IT ACTUALLY
+      STANDS IS ONE COMMIT AWAY FROM BEING DEAD CODE**, and this project has a finding about a
+      dead limb already (`CD-ENG-F16E-01`).
+    what_was_done_about_it: >-
+      It is `DECLARED LIMIT 8(a)`, said in all three `CD-RULE-004` places; the pass PRINTS its
+      count on every run including when the count is `0`, so a clean run shows it executed; and
+      arm `Z5CTRL` exercises the passing direction so the assertion is proved reachable and
+      proved to PASS rather than merely proved to fail. **WHAT IT DOES NOT DO IS MAKE THE CLEAN
+      TREE ASSERT ANYTHING, AND THIS SEAT IS NOT GOING TO CLAIM OTHERWISE.**
+    the_option_NOT_taken_and_why: >-
+      A stronger form — *"the gate contains NO `try` around its stage calls AT ALL"* — would
+      assert on the clean tree. **IT WAS NOT BUILT, BECAUSE IT WOULD GO RED ON `Z5CTRL`, WHICH IS
+      A LEGITIMATE SHAPE**, and a control that refuses a correct refactor is the goalpost-moving
+      this contract forbids. Recording the trade rather than taking it silently.
+  CD-ENG-F16G-04:
+    severity: 'MEDIUM. **OUTSIDE THIS SEAT''S WRITABLE SCOPE. REPORTED, NOT TOUCHED.**'
+    against: '`governance/engineering/ACTIVE_WORK.yaml` — NOT this increment''s work product.'
+    statement: >-
+      **THE FRAMEWORK BOOT IS RED IN THIS WORKTREE AND WAS RED BEFORE THIS SEAT ARRIVED.**
+      `last_build_log_entry: BL-20260819T025400Z-0004` against 79 entries ending at
+      `BL-20260824T223344Z-16FC`; `continuity_record_commit: PENDING`; `current_work` and
+      `next_safe_action` still describe `CD-WO-002` on `wo-2-skeleton`. **A SEAT BOOTING FROM THIS
+      RECORD ALONE WOULD BE POINTED AT THE WRONG BRANCH AND THE WRONG INCREMENT.**
+    what_was_done_about_it: >-
+      **NOTHING, DELIBERATELY.** `ACTIVE_WORK.yaml` is not in `CD-D-186`'s writable scope, and
+      recorded-vs-observed disagreement is reported and reconciled, never silently corrected
+      (`PBG-CONT-006`). Widening scope to fix it would be an initiative, not a necessity
+      (`SCOPE_INSUFFICIENT` is the honest shape and the work does not need it). **THE SAME RED
+      REPRODUCES AT THE PRISTINE BASE, SO IT IS NOT A CONSEQUENCE OF THIS INCREMENT.**
+    what_this_seat_recommends: 'The Project Lead updates the pointer and the narrative fields at the next boundary. This entry is `BL-20260825T063052Z-16GC` at `0cf8411`.'
+  CD-ENG-F16G-06:
+    severity: 'LOW/FRAMEWORK. **A TOOLING OBSERVATION, DISCLOSED BECAUSE IT AFFECTS EVERY ENTRY IN THIS DIRECTORY.**'
+    against: '`pbg` build-log validation as reachable from this project — NOT this increment''s work product.'
+    statement: >-
+      **`PYTHONPATH=pbg/tools python3 -B -m pbg.cli log validate` PRINTS `VERDICT: GREEN
+      (0 invalid)` WITH `rc=0` — AND THE `(0 invalid)` IS LITERAL: IT VALIDATED ZERO ENTRIES.**
+      It returned that same GREEN against this entry's FIRST DRAFT, which was schema-INVALID.
+      **A GREEN THAT COUNTS NOTHING IS NOT A GREEN, AND ANY SEAT TREATING IT AS EVIDENCE THAT ITS
+      RETURN IS WELL-FORMED IS TRUSTING A CONTROL THAT DID NOT RUN.**
+      This seat validated by DIRECT CALL instead — `continuity.validate(text, "entry", root,
+      schema_dir=root/"pbg"/"schemas", git_shas=...)` — and **THE DIRECT CALL CAUGHT TWO REAL
+      SCHEMA VIOLATIONS IN THIS SEAT'S FIRST DRAFT OF THIS VERY ENTRY**: `status: READY_FOR_ASSURANCE`
+      (not in the enum; the correct value is `WAITING_ASSURANCE`, with `READY_FOR_ASSURANCE`
+      carried in `return_status`) and `record_origin: seat` (enum is `TOOLING` /
+      `MANUAL_BOOTSTRAP_CONTINUITY` / `MIGRATED`). Both are fixed above and the entry now returns
+      `ok=True stage=complete`, as do `BL-20260824T223344Z-16FC` and `BL-20260824T200624Z-16EC`
+      checked the same way as controls.
+      Two further notes for whoever automates this: the validator's `kind` argument is `"entry"`
+      and NOT `"build_log"`, and its default `schema_dir` resolves to `<root>/schemas` while the
+      schema actually lives at `<root>/pbg/schemas` — **so a caller using the defaults gets a
+      `FileNotFoundError`, not a verdict.**
+    and_one_honest_note_about_the_value_this_entry_now_carries: >-
+      `record_origin: TOOLING` is what every other entry in this directory says and is what the
+      enum permits, **but this record was hand-authored by this seat and not emitted by
+      `continuity.write_entry`.** The enum has no accurate option for that. Stated here rather
+      than left to be assumed.
+    what_was_done_about_it: '**REPORTED, NOT REPAIRED.** `pbg/` is pinned and read-only, and repairing the framework is a separate bounded dispatch (`PBG-FWK-013`, `FRAMEWORK_DEFECT`).'
+  CD-ENG-F16G-05:
+    severity: 'LOW. **AN HONEST GAP IN THIS RETURN''S OWN EVIDENCE.**'
+    against: "This seat's coverage of the `Z`-arm family."
+    statement: >-
+      **ONLY TWO OF THE AUDITOR'S SIX ESCAPE MECHANISMS WERE RE-BUILT AND RUN HERE — `Z5` AND
+      `Z7`.** `Z1`, `Z2`, `Z4` and `Z6` were read in `BL-20260824T235828Z-0186` and NOT
+      reproduced, because the dispatch's items turn on `Z5` and `Z7` only. **THIS RETURN THEREFORE
+      SAYS NOTHING NEW ABOUT WHETHER THE OTHER FOUR STILL ESCAPE THE WIDENED `CD-CHOKE-003`**, and
+      an auditor should not read `Z5` biting as evidence about them. This seat's expectation, NOT
+      MEASURED and offered as a hypothesis only: `Z1`, `Z2`, `Z4` and `Z6` do not introduce a
+      handler and so are untouched by this change.
+    what_was_done_about_it: 'Stated rather than left to be inferred. The arms are cheap to add: `run_arms.sh` picks up any `*.patch` dropped into `plants/WO3-INC16G/`.'
+
+what_this_seat_was_asked_for_and_did_NOT_build — said plainly, with the reason:
+  CD-ASR-F14-01 — the insider-source-weakening full guarantee: >-
+    **OUT OF SCOPE BY DISPATCH AND BY PRODUCT-OWNER RULING, AND NOT REOPENED.** No coverage
+    property, no code-structure invariant, no control-flow proof, no new guard mechanism.
+    `PO-DECISIONS-0032` ruling 3 records it as owed later-hardening assigned to the
+    assurance/detection tier and explicitly NOT a product blocker. **ARM `Z7` IS CARRIED PASSING
+    ON PURPOSE.** A seat that "improved" this here would have been working outside its dispatch.
+  any_change_to src/: '**NONE. THAT IS THE DECLARED STOP AND IT HELD.** 0 paths.'
+  16C: '**NOT BUILT.** No liveness marking and no indicator rows. That is the next increment, not this one.'
+  a_verdict_on_this_work: >-
+    **NOT WRITTEN, AND NOT THIS SEAT''S TO WRITE** (`PBG-SOD-001`, non-waivable). Everything above
+    is a MEASUREMENT or a FINDING. **AN UNSUPPORTED IS NOT A PASS AND NOTHING HERE IS OFFERED AS
+    ONE.**
+
+the_no_regression_measurements — ALL MEASURED, NONE ASSERTED:
+  src_zero_paths:
+    command: '`git diff --name-only c475b8e 0cf8411 -- src/ | wc -l`'
+    result: '**0**'
+  pbg_zero_paths:
+    command: '`git diff --name-only c475b8e 0cf8411 -- pbg/ | wc -l`'
+    result: '**0**'
+  tests_zero_paths:
+    command: '`git diff --name-only c475b8e 0cf8411 -- tests/ | wc -l`'
+    result: '**0**'
+  contracts_json_byte_identical:
+    command: '`git show c475b8e:<f> | sha256sum` against `sha256sum <f>`, both schemas'
+    result: '`private_envelope.schema.json` `322bce7c37d7ff56...` = `322bce7c37d7ff56...`; `public_envelope.schema.json` `bacc669552867b78...` = `bacc669552867b78...`. **IDENTICAL, BOTH.**'
+  wo_2r3_unmoved:
+    command: '`git rev-parse wo-2r3`'
+    result: '`be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **FROZEN AT `be0b355`, UNTOUCHED, NOT MERGED, NOT REBASED.**'
+  the_changed_paths_are_EXACTLY_the_writable_scope: >-
+    `tools/register/check_stale_data_never_calm.py` · `tools/register/check_publication_chokepoint.py`
+    · `contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md` ·
+    `contracts/execution/CD-RT-001-PUBLICATION-CHOKEPOINT.md` · `required-tests.yaml` ·
+    `plants/WO3-INC16G/` (new) · this build-log entry. **NOTHING ELSE. NO PATH OUTSIDE THE
+    DISPATCHED SCOPE WAS WRITTEN.** `PID.md`, `BLUEPRINT.md`, `governance/decisions/` and
+    `governance/mapping/` show 0 changed paths.
+
+tests_run:
+  the_full_register — THE ACCEPTANCE TEST:
+    command: '`bash plants/WO3-INC16F/run_register.sh /srv/crash-detector-wo3` (run unmodified)'
+    result: '**`TOTAL lines=33 rc0=22 nonzero=11`** — and `diff`-IDENTICAL to the same script run on a pristine `c475b8e` extraction, once the moved YAML line numbers are normalised away. `diff` rc=0.'
+    what_the_11_nonzero_lines_are: '**PRE-EXISTING AND UNCHANGED FROM THE BASE.** This increment moved none of them in either direction. They are the base state and are not this increment''s to report on.'
+  pbg_validate:
+    command: '`PYTHONPATH=pbg/tools python3 -B -m pbg.cli validate`'
+    result: '`VERDICT: AMBER`, rc=2 — **AND THE ENTIRE OUTPUT IS BYTE-IDENTICAL TO THE SAME COMMAND ON A PRISTINE `c475b8e` WORKTREE** (`diff` rc=0, paths normalised). The AMBER is `bound_verifiers_evidenced` (`PBG-CONT-003` and `PBG-SOD-001` verifiers not yet run) and is inherited, not introduced.'
+  the_YAML_still_parses:
+    command: '`python3 -c "import yaml; yaml.safe_load(open(''required-tests.yaml''))"`'
+    result: 'rc=0. **A `CD-RULE-004` correction that broke the register file would be a worse defect than the one it fixed.**'
+  the_arms:
+    command: '`[INSTRUMENTS=<tree>] OUT=<dir> bash plants/WO3-INC16G/run_arms.sh c475b8e`'
+    result: 'The four-arm BEFORE/AFTER table at the head of this entry. `git apply` rc=0 and marker grep-confirmed on all three patched arms.'
+  the_live_gate:
+    command: '`python3 -B plants/WO3-INC16G/eng15_probe.py <tree>`'
+    result: '`CLEAN` 0 admissions · `Z5CTRL` 0 · `Z5` **2** · `Z7` **2**. `MUST-ADMIT ROWS REFUSED = 0` on all four, so every refusal is attributable to the arm and not to the document skeleton (`CD-PL-F74`).'
+  what_was_NOT_run: >-
+    **THE FULL 26-ARM `16F` SWEEP WAS NOT RE-RUN.** Nine chokepoint-relevant arms were
+    (`C1`-`C6`, `D1CTRL`, `W5G`, `N8`); the behavioural-row-only arms were not, because this
+    increment does not change that instrument's logic — only its header prose. **THAT IS A
+    REASONED OMISSION AND NOT A CLAIM THAT THEY WOULD PASS.**
+
+evidence_references:
+  - '`/tmp/wo3-inc16g-BEFORE/` — the four arms under the `c475b8e` instruments. TRANSIENT PATH; every figure it produced is quoted in full above and in `plants/WO3-INC16G/MANIFEST.md` so the finding survives the path (`PBG-CONT-007`).'
+  - '`/tmp/wo3-inc16g-AFTER/` and `/tmp/wo3-inc16g-FINAL/` — the same four arms under this tip.'
+  - '`/tmp/wo3-inc16g-REG/` — the nine `16F` regression arms.'
+  - '`/tmp/inc16g/base` — a detached worktree at `a9e19c3`, ITEM 4''s subject. `/tmp/inc16g/before` — a detached worktree at `c475b8e`, the BEFORE instrument.'
+  - '**THE DURABLE EVIDENCE IS `plants/WO3-INC16G/`, WHICH IS COMMITTED AND RE-RUNNABLE.** Every transient path above can be regenerated by the two committed scripts from the two committed SHAs.'
+
+next_safe_action: >-
+  **DISPATCH A FRESH READ-ONLY ASSURANCE SEAT AGAINST `0cf84117148c40d31f997bd1dc8aa0f730823fef`
+  ON BRANCH `wo-3`.** It must not be `CD-ASR-WO3-14`, which raised these findings and may not
+  grade their repair, and it must not be this seat (`PBG-SOD-001`, non-waivable). The four things
+  most worth attacking, named by this seat against itself: (1) **re-run the BEFORE/AFTER arm table
+  independently** — `CD-ENG-F16G-01` is proof this seat's harnesses can lie; (2) **check the
+  `CD-RULE-004` three-place agreement with a NORMALISED read, never a plain `grep`** —
+  `CD-ENG-F16G-02`; (3) **decide whether `DECLARED LIMIT 8(a)`'s zero-assertion clean run is an
+  acceptable control or a dead limb** — `CD-ENG-F16G-03` is this seat's own doubt about its own
+  work; (4) **verify that ITEM 1's correction is TRUE, not merely humbler** — a limit that
+  overstates its own blindness is also a false limit.
+
+expected_next_actor: 'A FRESH ASSURANCE ENGINEER identity, read-only, dispatched separately (`PBG-SOD-001`).'
