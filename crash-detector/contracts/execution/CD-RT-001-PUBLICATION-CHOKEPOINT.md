@@ -45,6 +45,26 @@ path leave the behavioural row at `PASS` and are all caught here:
 | `C5` | the `except` handler swallows the refusal and falls through to the write | `rc=0` | `FAIL — 1`, `CD-CHOKE-003` |
 | `C6` | **every publication write removed — THE VACUITY ARM** | `rc=0` | `FAIL — 2`, both `CD-CHOKE-000` |
 | `C7`/`N1` | a `return` inside the stage keyed on a value outside the sibling row's vocabulary | `rc=0` | `FAIL — 1`, `CD-CHOKE-005` |
+| `Z5` | **the gate swallows its OWN freshness refusal** — `try/except PublicationRefused` around the stage INSIDE `refuse_unless_publishable`, re-raising only when a root property is not `"BYPASS"` | `rc=0` | **NEW AT `16G`:** `FAIL — 1`, `CD-CHOKE-003`. **BEFORE `16G` IT WAS `PASS — 11`** |
+| `Z5CTRL` | **the control** — the SAME `try` shape whose handler ends in a bare `raise` | `rc=0` | `PASS — 12` — **the assertion is MADE and PASSES; the row does not refuse `try` itself** |
+| `Z7` | a `return` at the top of the SHARED WALK `_iter_nodes`, which the stage depends on | `rc=0` | **`PASS — 11`. NOT CAUGHT, AND SAID SO** — `DECLARED LIMIT 8`, and the sibling row's `DECLARED LIMIT 9` superseded at `16G` |
+
+**MEASURED AT `c475b8e` BY `CD-ENG-WO3-15`, BOTH DIRECTIONS, WITH THE SAME HARNESS ON THE SAME
+HOST** (`plants/WO3-INC16G/run_arms.sh`, instruments selected by argument so the BEFORE and AFTER
+rows are the same arms and not two different experiments):
+
+```
+                 BEFORE (instrument at c475b8e)     AFTER (this tip)
+CLEAN            PASS — 11 assertions   rc=0        PASS — 11 assertions   rc=0
+Z5CTRL           PASS — 11 assertions   rc=0        PASS — 12 assertions   rc=0
+Z5               PASS — 11 assertions   rc=0        FAIL — 1 violation(s)  rc=1   <-- IT MOVES
+Z7               PASS — 11 assertions   rc=0        PASS — 11 assertions   rc=0   <-- DECLARED
+```
+
+And the arms are LIVE BYPASSES rather than inert text, `plants/WO3-INC16G/eng15_probe.py`:
+`Z5` and `Z7` each ADMIT a 1970-stamped calm dial on **BOTH** surfaces
+(`STALE-CALM ADMISSIONS = 2`) with `MUST-ADMIT ROWS REFUSED = 0`, while `CLEAN` and `Z5CTRL` admit
+`0`. **A ROW THAT MOVES ON AN ARM THAT DOES NOT PUBLISH ANYTHING IS NOT EVIDENCE.**
 
 ## Command
 
@@ -59,7 +79,7 @@ python3 -B tools/register/check_publication_chokepoint.py --root .
 | `CD-CHOKE-000` | **the subject set is non-empty** — a publication write exists, something executes it, the gate exists, and the gate reaches a freshness stage |
 | `CD-CHOKE-001` | exactly ONE function in `src/` executes a publication-surface write |
 | `CD-CHOKE-002` | the chokepoint judges before it writes, once per declared surface, unconditionally |
-| `CD-CHOKE-003` | no `except` handler on the judging path may swallow the refusal — each ends in a `raise` |
+| `CD-CHOKE-003` | no `except` handler on the judging path may swallow the refusal — each ends in a `raise`. **SINCE `16G` THE JUDGING PATH IS BOTH FRAMES: the chokepoint's handlers AND `refuse_unless_publishable`'s OWN** |
 | `CD-CHOKE-004` | the gate reaches the freshness stage unconditionally, with no `return` before it |
 | `CD-CHOKE-005` | no path through the stage reaches its end without first enumerating the calm-bearing nodes |
 
@@ -74,13 +94,19 @@ does not blind this check and does not silently narrow it.
 cannot be found by name, or in which no module-level constant carries the freshness refusal token
 exits `3` rather than measuring less while looking like a result.
 
-## Declared limits — this row's own sequence, 1 to 7
+## Declared limits — this row's own sequence, 1 to 8
 
-**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These seven are
+**DECLARED LIMIT NUMBERS ARE PER REGISTER ROW, NOT PER FILE.** These eight are
 `CD-RT-001-PUBLICATION-CHOKEPOINT`'s and they are said identically here, in the header of
 `tools/register/check_publication_chokepoint.py` and in `required-tests.yaml` (`CD-RULE-004`,
 three places). **Four rows on this criterion now carry a `DECLARED LIMIT 3`; quote the row id
 with the number.**
+
+*** THIS HEADING READ `1 to 7` / `These seven are` UNTIL `16G`, WHICH ADDED `DECLARED LIMIT 8`.
+THE PRIOR WORDING IS QUOTED HERE RATHER THAN SIMPLY OVERWRITTEN. *** An index that moves because
+the list grew is not the same act as a claim that was weakened — but `CD-ASR-F14-04` is in this
+very increment BECAUSE a heading word was changed with no quote of what it had said, and this
+seat is not going to commit that act while repairing it (`PBG-CONT-003`, non-waivable).
 
 1. **A PUBLICATION WRITE IS RECOGNISED AS AN SQL STATEMENT AGAINST THE `publication` SCHEMA, AND
    NOTHING ELSE** — a string containing `INSERT INTO publication.`, `UPDATE publication.` or
@@ -134,6 +160,40 @@ with the number.**
    measurement at a commit, which is a sentence that goes stale silently.** THIS ROW IS THAT
    SENTENCE TURNED INTO A CONTROL, so it cannot go stale without going RED — but the control
    itself is only as current as the last time the register ran.
+
+8. **`CD-CHOKE-003` NOW READS TWO FRAMES AND NOT ONE, AND BOTH READS ARE LEXICAL AND SILENT
+   WHERE THERE IS NO `try`. NEW AT `16G`.** The gate half asserts over every `try` that lexically
+   encloses one of `refuse_unless_publishable`'s calls to its OWN module's functions. Three
+   things follow and all three are costs, stated rather than implied: **(a) IT IS VACUOUS BY
+   CONSTRUCTION ON A GATE THAT WRAPS NOTHING** — at this tip the gate contains no `try` at all,
+   so this pass contributes ZERO assertions to a clean run, and it therefore prints a NOTE
+   carrying the count (including `0`) so a reader can see it ran. **A CONDITIONAL-SHAPE ASSERTION
+   CANNOT BITE ON A TREE THAT DOES NOT HAVE THE SHAPE, AND THAT IS NOT THE SAME AS BEING A
+   CONTROL.** (b) It is an OVER-approximation in the safe direction: a `try` around a gate call
+   to a helper that never raises a refusal would be required to re-raise anyway, so a legitimate
+   refactor that swallowed, say, a logging error inside the gate WOULD FAIL THIS ROW and would
+   need this limit re-read and the check deliberately rewritten. That cost is accepted for the
+   same reason `DECLARED LIMIT 3` accepts its own. **(c) IT IS A HANDLER-SHAPE READ AND NOT A
+   CONTROL-FLOW PROOF.** It asks whether the handler's last statement is a `raise`; a handler that
+   re-raises on one branch of an `if` and falls through on the other is caught (its last statement
+   is the `if`), but a handler ending in a `raise` reached only conditionally at runtime is not
+   something a lexical read can decide. **THE SWALLOW CLASS IS NARROWED, NOT CLOSED**, and the
+   residual belongs where `PO-DECISIONS-0032` ruling 3 put it: a code-structure invariant is a
+   heavier mechanism than a document instrument.
+
+   *** AND THE ASSERTION'S IMPLEMENTED SCOPE WAS NARROWER THAN ITS STATED SCOPE UNTIL `16G`.
+   WIDENED, NOT REWRITTEN, AND THE GAP IS STATED AND NOT ERASED (`CD-RULE-004`,
+   `PBG-CONT-003`). ***
+
+   > **WHAT `CD-CHOKE-003` SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID:** *"Where the
+   > chokepoint wraps its gate calls in `try:`, every `except` handler must END IN A `raise`."*
+
+   **THAT SENTENCE NAMED THE CHOKEPOINT AND THE MESSAGE IT PRINTED SAID "ON THE JUDGING PATH",
+   AND THOSE ARE NOT THE SAME SET.** The judging path continues into `refuse_unless_publishable`,
+   which is where the stages actually raise. Arm `Z5` — `CD-ASR-F14-03`, raised by
+   `CD-ASR-WO3-14` — walked through the gap: at `c475b8e` the live gate ADMITTED a 1970-stamped
+   calm dial on BOTH surfaces while this row returned `PASS — 11 assertions, 0 violations`.
+   **A SWALLOW ONE FRAME IN IS THE SAME PUBLICATION AS A SWALLOW ONE FRAME OUT.**
 
 ## Negative control
 

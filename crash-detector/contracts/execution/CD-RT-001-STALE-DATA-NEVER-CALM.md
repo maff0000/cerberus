@@ -297,9 +297,49 @@ sequence and `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` its own 1–12. **Three rows no
    THAT SAMPLE ESCAPES THIS PASS. MEASURED BY THIS SEAT AGAINST ITS OWN INSTRUMENT, AFTER
    FREEZING IT:** arm `N1` (`if candidate.get("config_snapshot_id") == "BYPASS": return`) leaves
    this row at `PASS` and admits a 1970-stamped calm dial on both surfaces. It is caught by the
-   sibling STRUCTURAL row `CD-RT-001-PUBLICATION-CHOKEPOINT` (`CD-CHOKE-005`), **AND THE TWO
-   ROWS ARE A PAIR FOR EXACTLY THIS REASON.** EXECUTABLE: apply
+   sibling STRUCTURAL row `CD-RT-001-PUBLICATION-CHOKEPOINT` (`CD-CHOKE-005`). EXECUTABLE: apply
    `plants/WO3-INC16F/N1-CONFIG-SNAPSHOT-ID-BYPASS.patch` and run both rows.
+
+   *** ITS CLOSING SENTENCE WAS FALSE IN THE REASSURING DIRECTION. SUPERSEDED AT `16G` ON
+   `CD-ASR-F14-02`, STATED AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+   > **WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID:** *"It is caught by the sibling
+   > STRUCTURAL row `CD-RT-001-PUBLICATION-CHOKEPOINT` (`CD-CHOKE-005`), **AND THE TWO ROWS ARE
+   > A PAIR FOR EXACTLY THIS REASON.**"*
+   >
+   > And the sentence it rested on, said in the `16F` return (`BL-20260824T223344Z-16FC`,
+   > `CD-ENG-F16F-02`): *"The class is closed by the STRUCTURAL row, which catches every
+   > `return`/`continue`/`break`-shaped bypass regardless of what value it is keyed on."*
+
+   **THE FIRST HALF IS TRUE OF `N1`; THE SECOND HALF IS A CLAIM ABOUT A CLASS, AND THE CLASS
+   CLAIM IS FALSE.** `N1` is caught because `N1`'s `return` is LEXICALLY INSIDE
+   `_refuse_stale_calm`. **ARM `Z7` IS ALSO A `return` ON THE PUBLICATION PATH AND IT IS NOT
+   CAUGHT** — it sits at the top of `_iter_nodes`, the SHARED DOCUMENT WALK the stage DEPENDS
+   ON, and `CD-CHOKE-005` walks `_refuse_stale_calm` and nothing the stage calls. Raised as
+   `CD-ASR-F14-02` by `CD-ASR-WO3-14`; **REPRODUCED IN THIS SEAT'S OWN SHELL AT `c475b8e`
+   BEFORE THIS PARAGRAPH WAS WRITTEN** (`CD-PL-F193`): `STALE-CALM ADMISSIONS = 2` on both
+   surfaces with `MUST-ADMIT ROWS REFUSED = 0`, while BOTH rows returned `PASS` — this row
+   `PASS — 142088 assertions, 0 violations`, the structural row `PASS — 11 assertions, 0
+   violations`. EXECUTABLE:
+   `plants/WO3-INC16G/Z7-THE-SHARED-WALK-DECLINES-TO-YIELD-ONE-NODE.patch`.
+
+   **WHAT IS TRUE INSTEAD, STATED OVER THE CLASS AND NOT OVER ONE FUNCTION.** `CD-CHOKE-005`
+   catches a `return`, `continue` or `break` **LEXICALLY INSIDE `_refuse_stale_calm`**, and
+   catches the stage's first executable statement ceasing to enumerate through the shared walk.
+   **THAT IS A CLAIM ABOUT ONE FUNCTION'S BODY, NOT ABOUT THE PUBLICATION PATH.** Neither row
+   reads the functions the stage DEPENDS ON, and the shared walk is one of them. **SO THE TWO
+   ROWS ARE NOT A COVER OF THE `return`-SHAPED CLASS, AND THIS LIMIT NO LONGER SAYS THEY ARE.**
+   What can be stated truthfully is that boundary and no more; **A LIMIT THAT ADMITS IT DOES
+   NOT KNOW IS WORTH MORE THAN ONE THAT REASSURES**, and it was the reassurance that let a
+   residual read as a closure.
+
+   **THE SENTENCE BESIDE IT IS TRUE AND SURVIVES UNCHANGED:** *"NEITHER ROW CLOSES IT ALONE AND
+   THE RETURN DOES NOT CLAIM OTHERWISE."* The disclosure was honest; the closing reassurance
+   was wrong. **THE RESIDUAL CLASS IS NOT REOPENED HERE:** `PO-DECISIONS-0032` ruling 3 records
+   the insider-source-weakening full guarantee (`CD-ASR-F14-01`) as OWED LATER-HARDENING — a
+   code-structure invariant, a heavier mechanism than a document instrument — assigned to the
+   assurance/detection tier and NOT a product blocker. **`16G` CORRECTS THE RECORD; IT DOES NOT
+   CLOSE THE CLASS AND DOES NOT PRETEND TO.**
 
 10. **THE PAIRWISE PASS RUNS ON LIMB B ONLY, AND THREE-WAY CONJUNCTIONS ARE NOT COVERED. NEW AT
     `16F`.** One-at-a-time variation cannot see a CONJUNCTIVE predicate over two properties —
@@ -322,11 +362,41 @@ sequence and `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` its own 1–12. **Three rows no
     `plants/WO3-INC16F/N6-CONJUNCTION-REGIME-AND-CARDINALITY.patch`.
 
 11. **THE PASS COSTS THIRTY TIMES WHAT THIS ROW COST BEFORE IT, AND THAT IS THE PRICE OF THE
-    SPACE. NEW AT `16F`.** MEASURED on the same host with the same command: `0.77 s` at
-    `a9e19c3` for 122 assertions, `26.1 s` at this tip for 142,088. Almost all of it is LIMB A,
-    because every front-door cell reloads and recompiles the contract. **THE COST IS PAID
-    DELIBERATELY AND IT IS NOT AN ACCIDENT OF A LOOP NOBODY BOUNDED.** EXECUTABLE:
+    SPACE. NEW AT `16F`. THE `a9e19c3` ASSERTION COUNT IS CORRECTED AT `16G`.** MEASURED on the
+    same host with the same command: `0.79 s` at `a9e19c3` for **97** assertions, `26.5 s` at
+    this tip for 142,088. Almost all of it is LIMB A, because every front-door cell reloads and
+    recompiles the contract. **THE COST IS PAID DELIBERATELY AND IT IS NOT AN ACCIDENT OF A
+    LOOP NOBODY BOUNDED.** EXECUTABLE:
     `time python3 tools/register/check_stale_data_never_calm.py --root .`
+
+    *** THE BASELINE FIGURE DID NOT REPRODUCE. SUPERSEDED AT `16G` ON `CD-ASR-F14-05`, STATED
+    AND NOT ERASED (`CD-RULE-004`, `PBG-CONT-003`). ***
+
+    > **WHAT IT SAID, VERBATIM, IN ALL THREE PLACES IT WAS SAID:** *"MEASURED on the same host
+    > with the same command: `0.77 s` at `a9e19c3` for 122 assertions, `26.1 s` at this tip for
+    > 142,088."*
+
+    **`122` IS NOT WHAT THIS ROW ASSERTED AT `a9e19c3`. `97` IS.** `CD-ASR-WO3-13` and
+    `CD-ASR-WO3-14` each measured `97`; **THIS SEAT DID NOT COPY THAT FIGURE, IT RAN IT**
+    (`CD-PL-F193` — an inherited claim is a hypothesis until run), in a throwaway worktree so
+    the lane was not disturbed, three consecutive times, and got `97` every time:
+
+    ```
+    git worktree add /tmp/inc16g/base a9e19c3
+    cd /tmp/inc16g/base && python3 tools/register/check_stale_data_never_calm.py \
+        --root /tmp/inc16g/base
+    -> CD-RT-001-STALE-DATA-NEVER-CALM: PASS — 97 assertions, 0 violations   rc=0
+       (x3, deterministic; `real 0m0.789s`)
+    ```
+
+    **THREE SEATS NOW AGREE ON `97` AND NOTHING MEASURES `122`.** The TIP figure `142,088`
+    reproduces exactly and is untouched (`rc=0`, `real 0m26.486s`), so the correction is to the
+    baseline half of the comparison and to nothing else; the timings are re-stated as this host
+    measured them rather than carried across. **THE THIRTYFOLD CLAIM IN THE HEADLINE SURVIVES
+    AND GETS LARGER, NOT SMALLER** — `142088 / 97` is about 1465x the assertion count at about
+    34x the wall clock. `122` is not recoverable from any run this seat could construct, and
+    where a figure cannot be reproduced it is replaced by one that can be, with the command
+    that produced it beside it.
 
 ## For the auditor
 

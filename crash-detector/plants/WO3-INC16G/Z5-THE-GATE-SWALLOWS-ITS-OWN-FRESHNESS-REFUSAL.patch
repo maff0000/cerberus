@@ -1,0 +1,19 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-25 07:07:56.969277310 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-25 07:08:17.293241394 +0100
+@@ -317,7 +317,14 @@
+     _refuse_non_json(candidate, surface)
+     _refuse_classified_keys(candidate, surface)
+     _refuse_schema_violation(candidate, surface)
+-    _refuse_stale_calm(candidate, surface)
++    # Z5: THE GATE SWALLOWS ITS OWN FRESHNESS REFUSAL. The stage still RUNS and still
++    # RAISES; the refusal simply never leaves refuse_unless_publishable, so the gate
++    # returns None — which means ADMITTED — on exactly the documents the arm chooses.
++    try:
++        _refuse_stale_calm(candidate, surface)
++    except PublicationRefused:
++        if candidate.get("config_snapshot_id") != "BYPASS":
++            raise
+ 
+ 
+ def _refuse_non_json(candidate: Mapping, surface: "EnvelopeSurface") -> None:

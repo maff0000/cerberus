@@ -1,0 +1,15 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-25 07:07:56.969277310 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-25 07:08:17.369241260 +0100
+@@ -368,6 +368,11 @@
+ 
+ def _iter_nodes(node: object, pointer: str = "") -> Iterator[tuple]:
+     """``(node, pointer)`` for every node in the tree, root first."""
++    # Z7: THE SHARED WALK DECLINES TO YIELD ONE NODE. It is a `return`, and it is NOT
++    # lexically inside _refuse_stale_calm — it is inside the walk that stage DEPENDS ON.
++    # CD-CHOKE-005 walks the stage only, so this `return` is invisible to it.
++    if isinstance(node, AbcMapping) and node.get("score") == 0.1234:
++        return
+     yield (node, pointer)
+     if isinstance(node, AbcMapping):
+         for key, value in node.items():
