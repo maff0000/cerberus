@@ -1,0 +1,186 @@
+# ================================================================================================== #
+# BL-20260825T000604Z-0187 — PROJECT LEAD BOUNDARY. **A NEW PROJECT LEAD SESSION BOOTED, RE-MEASURED
+# EVERY CLAIM IN `BL-20260824T235828Z-0186` INDEPENDENTLY, FOUND ZERO DRIFT AND ZERO UNCOMMITTED SEAT
+# WORK, AND RE-AFFIRMS THE STOP. `Q41` IS STILL OPEN AND THE NEXT ACTOR IS STILL THE PRODUCT
+# AUTHORITY. NO SEAT IS DISPATCHED. 16C IS NOT RELEASED.**
+#
+# *** **THIS ENTRY ADDS NO WORK AND CLAIMS NO PROGRESS. IT EXISTS BECAUSE A SESSION BOUNDARY IS A
+# BOUNDARY (`PBG-CONT-007`), AND BECAUSE THE RECONCILIATION IT RECORDS IS EVIDENCE A SUCCESSOR WOULD
+# OTHERWISE HAVE TO REDO.** ***
+#
+# **ONE FINDING, AND IT IS THIS SEAT'S OWN TO OWN: `CD-PL-F210`. THE `current_phase` ANNOTATION HAS
+# NOT MOVED SINCE BEFORE `0184` AND STILL TELLS A BOOTING SEAT THAT THE OPEN QUESTION IS `Q39` —
+# RULED A BOUNDARY AGO AT `PO-DECISIONS-0031`. THE FIELD *VALUE* IS CORRECT AND ALWAYS WAS. THE
+# NARRATIVE ATTACHED TO IT IS FALSE IN THE REASSURING DIRECTION, WHICH IS THE SAME DEFECT SHAPE AS
+# `CD-ASR-F14-02` AND THE `DECLARED LIMIT 9` SENTENCE THAT DECIDED THE `RED` SIX HOURS AGO.
+# IT IS REPORTED HERE AND SUPERSEDED IN THE SAME COMMIT — NOT EDITED, NOT SILENTLY CORRECTED.**
+# ================================================================================================== #
+
+entry_id: BL-20260825T000604Z-0187
+timestamp_utc: '2026-08-25T00:06:04Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-25T00:06:04Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_08
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_08
+authority_id: CD-AUTH-0001
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T235828Z-0186
+base_sha: ff9bbd8
+current_sha: ff9bbd8
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  A NEW Project Lead session (SEAT_08) resumed from the repository record after the previous session
+  ended. It reconciled with suspicion per the CD-D-007 precedent rather than trusting the inherited
+  narrative: every branch tip, the banked verdict's byte integrity, the graded content tip's
+  ancestry, all four authoritative pointer fields, every worktree's working-tree state and the live
+  process table were RE-MEASURED in this seat's own shell. ZERO DRIFT. ZERO UNCOMMITTED SEAT WORK IN
+  ANY OF THE 31 WORKTREES. ONE Project Lead process, which is this one. THE RECORD AT 0186 IS TRUE
+  AS WRITTEN AND IS CONFIRMED BY A SECOND, LATER, INDEPENDENT SEAT. There is no dispatch to continue
+  — the record says the next actor is the Product Authority on Q41 and that no seat may be
+  dispatched, and this seat does not become the exception to that by having booted after it. The
+  ONLY write this seat makes is superseding its own predecessor's stale current_phase NARRATIVE,
+  disclosed as CD-PL-F210 and carried in the same commit as this entry.
+
+# ================================================================================================== #
+what_was_RE-MEASURED_rather_than_inherited — CD-PL-F193, applied to the inherited record itself:
+# ================================================================================================== #
+  branch_tips_all_four:
+    main: 'ff9bbd8 — matches. The CD-RULE-007 follow-up is the tip and it touched ONE line of ACTIVE_WORK and nothing else (`--stat` confirmed: 1 file, 1 insertion, 1 deletion).'
+    wo-3: '`c475b8e` — **UNMOVED**, exactly as 0186 recorded. The auditor''s next safe gate said keep it that way and it was kept.'
+    wo-2r3: '`be0b355` — **STILL FROZEN.** Unmoved across the whole of WO-3.'
+    asr-wo3-14-verdict: '`af4ac85` — matches the banked verdict SHA.'
+  the_graded_content_tip: '`7ac11c9789e86625e91ea163c72404288e91d023` resolves, and `git merge-base --is-ancestor 7ac11c9 wo-3` returns TRUE. **THE THING Q41 IS ABOUT IS STILL REACHABLE AND STILL WHERE IT WAS LEFT.**'
+  the_banked_verdicts_integrity_RE-HASHED: >-
+    `git show af4ac85:...BL-20260824T234541Z-A314.yaml` piped to `wc -l` and `sha256sum` IN THIS
+    SEAT'S OWN SHELL: **849 lines, sha256 `7943fad2ead0c2214cf04dcf2515c3c6575d31adf59610fd8771c315c444bcae`,
+    author AND committer both `CD-ASR-WO3-14`, one file, `849 insertions`.** *** **EVERY DIGIT
+    MATCHES WHAT 0186 RECORDED. THE VERDICT A PRODUCT AUTHORITY IS BEING ASKED TO RULE ON IS
+    BYTE-FOR-BYTE THE ONE THAT WAS BANKED, AND THAT IS NOW MEASURED BY TWO SEATS AND NOT ONE.** ***
+  the_pointer_fields:
+    last_build_log_entry: '`BL-20260824T235828Z-0186` — and `ls | sort | tail -1` on the build-log directory returns THE SAME ENTRY. **THE `CD-PL-F132` POINTER CLASS DID NOT RECUR AT THIS BOUNDARY.**'
+    status: 'WAITING_PRODUCT_AUTHORITY — correct.'
+    next_actor: 'PRODUCT_AUTHORITY — correct.'
+    continuity_record_commit: '`91162ac` — resolves to a commit object and IS the commit carrying entry 0186. Correct, and it is what `ff9bbd8` was written to fix.'
+  the_CD-D-007_sweep: >-
+    **ALL 31 REGISTERED WORKTREES ITERATED AND `git status --porcelain` RUN IN EACH.** Discounting
+    only this session's own untracked scratch files and `__pycache__`, **NOT ONE WORKTREE IS DIRTY
+    AND NOT ONE PATH IS MODIFIED, STAGED OR DELETED.** All 14 `asr-wo3-*-verdict` branches are
+    present with distinct tips. **THERE IS NO ORPHANED SEAT WORK TO ADOPT, GRADE OR DISCARD.**
+  the_process_table: >-
+    `ps -eo pid,etime,args` shows ONE Project Lead invocation (its wrapper and its child). **NO
+    SECOND PROJECT LEAD IS LIVE**, which is checked because two Project Leads commit under one
+    identity and nothing in this repository would detect it.
+  boot_verdict: 'AMBER / `CONTINUITY_MATCH` / `RESUME_AMBER`. **The AMBER is the long-standing absent `ROADMAP.md`, which is a known and recorded condition and NOT a state disagreement.** The continuity reference resolved on the first attempt with no repair — the third boundary running.'
+
+# ================================================================================================== #
+CD-PL-F210 — LOW, THIS SEAT'S PREDECESSOR'S, DISCLOSED AND SUPERSEDED IN THIS COMMIT:
+# ================================================================================================== #
+  what_is_wrong: >-
+    The `current_phase` field's annotation in `ACTIVE_WORK.yaml` was last changed BEFORE
+    `BL-20260824T211349Z-0184` — **verified by hashing that line at seven consecutive commits
+    (`54b03d9`, `d52bc8f`, `3aabb37`, `0265599`, `9c6e9de`, `91162ac`, `ff9bbd8`): the hash is
+    IDENTICAL at all seven while `last_build_log_entry` advanced through 0184, 0185 and 0186.**
+    Its text still opens *"HELD AT BL-20260824T205636Z-0183, AND NO SEAT IS IN IT"* and still says
+    *"THE NEXT ACTOR IS THE PRODUCT AUTHORITY ON `Q39`"*.
+  why_it_matters: >-
+    **`Q39` WAS RULED AT `PO-DECISIONS-0031` (`97f85e6`) AND THE OPEN QUESTION IS NOW `Q41`.** The
+    annotation also asserts no seat was in the phase, which was false at 0184 and 0185 when an
+    Engineer and then an Auditor were. A seat that booted and read this field's narrative would
+    believe the project is one ruling behind where it is, and would believe the last verdict on this
+    row was the 16E `AMBER` rather than the 16F `RED`. **THAT IS A RECORD THAT REASSURES IN THE
+    WRONG DIRECTION, WHICH IS PRECISELY THE `CD-ASR-F14-02` DEFECT SHAPE THIS PROJECT TOOK A `RED`
+    OVER SIX HOURS AGO. IT IS DISCLOSED HERE FOR THAT REASON AND NOT BECAUSE IT IS SERIOUS.**
+  what_is_NOT_wrong_and_the_severity_is_LOW_because_of_it: >-
+    **THE FIELD *VALUE* IS `GATE` AND IT IS CORRECT AND WAS CORRECT AT ALL SEVEN COMMITS.** The
+    phase genuinely never moved: 16D, 16E and 16F were all built and graded with the phase HELD at
+    GATE deliberately. Nothing downstream of this field was computed wrongly, boot resolves
+    `CONTINUITY_MATCH` on it, and the AUTHORITATIVE fields — `status`, `next_actor`,
+    `last_build_log_entry` — were all moved correctly at 0186 and all read correctly today.
+    **THIS IS A STALE NARRATIVE, NOT A STALE POINTER, AND THE DISTINCTION IS NOT AN EXCUSE — IT IS
+    THE REASON IT IS `LOW` AND NOT `MEDIUM`.**
+  how_it_is_handled: >-
+    **SUPERSEDED, NEVER EDITED.** A current note is PREPENDED and the entire stale note is RETAINED
+    BELOW IT UNEDITED under the file's own `THE PRIOR NOTE IS RETAINED BELOW UNEDITED` convention
+    (`PBG-CONT-003`). **NOTHING IS DELETED AND THE WRONG TEXT REMAINS READABLE**, because a
+    correction that erases what it corrects destroys the evidence that the class recurred.
+  scope_of_this_write: >-
+    ONE field's comment in `ACTIVE_WORK.yaml`, plus this entry. **NO `src/`. NO `pbg/`. NO
+    `tests/`. NO contract. NO lane. NO branch but `main`. `wo-3` AND `wo-2r3` ARE NOT TOUCHED, AND
+    THE HELD `WO3-LANE-ACTIVE-WORK-POINTER-REPAIR` IS STILL HELD** — that one moves the `wo-3` tip
+    and remains behind the ruling, exactly as 0186 left it.
+
+# ================================================================================================== #
+what_this_seat_did_NOT_do — the list matters more than the list above:
+# ================================================================================================== #
+  - '**DID NOT DISPATCH A 16G, OR ANY SEAT AT ALL.** 0186 says whether there is a 16G is the ruling that is owed. A successor Project Lead inheriting a stop does not acquire the authority the stop was protecting.'
+  - '**DID NOT RELEASE 16C AND DID NOT REGISTER ONE INDICATOR ROW.** The ruled condition is a `GREEN` gate on 16F. It is `RED`. That is the fourth consecutive seat to be handed this condition and the fourth not to reinterpret it.'
+  - '**DID NOT ACCEPT, RE-GRADE, SOFTEN OR DISPOSE OF THE BANKED `RED`, OR ANY OF `CD-ASR-F14-01`..`06`.** Only the Product Authority disposes (`PBG-AUTH-003`). This seat re-measured the verdict''s bytes; it did not read it as an invitation to re-open the grading.'
+  - '**DID NOT CORRECT `CD-ASR-F14-02`''s FALSE `DECLARED LIMIT 9`**, though it is true independently of Q41 and this seat agrees it is owed. It is a write to the `wo-3` lane, no seat is dispatched, and it stays HELD and visible rather than being folded into a reconciliation commit where it would be invisible.'
+  - '**DID NOT REVERT ANYTHING.** `7ac11c9` remains strictly better than `a9e19c3`, which remains strictly better than `0e80a09`. The product is not breached at any of the three.'
+  - '**DID NOT TOUCH `pbg/`.** Pinned and read-only.'
+
+blockers: []
+
+open_questions_with_the_product_authority:
+  Q41: '**OPEN. THE ONE THAT BLOCKS EVERYTHING.** The 16F `RED`: the auditor returned a CLASS with five entry mechanisms rather than a sixth named shape, which `PO-DECISIONS-0031` ruling 1 pre-committed to the Product Authority in its own words. Keep strengthening the alarm, change its construction, or price the residual and move to 16C.'
+  also_open: '`Q36` closed at `PO-DECISIONS-0031`; `Q37`, `Q38` and `Q40` were dispositioned there. **`Q41` IS THE LIVE ONE.**'
+
+risks:
+  - '**UNCHANGED FROM 0186 AND RESTATED SO IT IS NOT LOST BEHIND A RECONCILIATION ENTRY: THIS IS THE THIRD CONSECUTIVE NON-GREEN ON ONE ROW — `AMBER` at 16D, `AMBER` at 16E, `RED` at 16F — AND THE PATTERN IS ITSELF THE FINDING. THE PRODUCT HAS NOT BEEN BREACHED IN ANY OF THE THREE AUDITS.**'
+  - '**A RECONCILIATION ENTRY IS THE EASIEST PLACE IN THIS PROJECT TO SMUGGLE PROGRESS.** This one is deliberately auditable as adding none: its diff is this file plus one superseded comment, and every held item from 0186 is carried forward unchanged and re-listed rather than assumed.'
+  - 'The `wo-3` lane projection remains stale and its repair remains held behind the ruling. **A successor booting in `/srv/crash-detector-wo3` rather than `/srv/crash-detector` would still get a RED and a wrong picture. THE `main` RECORD IS CORRECT AND RESOLVES `CONTINUITY_MATCH`.**'
+
+held_actions:
+  - id: 16C-INDICATOR-ROWS
+    status: HELD
+    authority: PO-DECISIONS-0031 ruling 1
+    reason_held: 'Ruled release condition is a GREEN gate on 16F. It returned RED for the third consecutive time on this row. CARRIED FORWARD UNCHANGED FROM 0186.'
+    next_actor: PRODUCT_AUTHORITY (Q41), then PROJECT_LEAD
+    silent_execution: PROHIBITED
+  - id: 16C-DETECTOR-LIVENESS
+    status: HELD
+    authority: PO-DECISIONS-0031 ruling 1
+    reason_held: 'Same condition. CARRIED FORWARD UNCHANGED FROM 0186.'
+    next_actor: PRODUCT_AUTHORITY (Q41), then PROJECT_LEAD
+    silent_execution: PROHIBITED
+  - id: WO3-LANE-ACTIVE-WORK-POINTER-REPAIR
+    status: HELD
+    authority: CD-ENG-F16F-05, verified by PROJECT_LEAD_SEAT_07
+    reason_held: 'Repairing it moves the wo-3 tip and the graded content tip 7ac11c9 is what Q41 is about; the auditor''s next safe gate says do not move it. **STILL THE FIRST ACT AFTER Q41 IS RULED, AND STILL NOT FORGOTTEN — RE-VERIFIED TODAY THAT `wo-3` IS UNMOVED AT `c475b8e`.**'
+    next_actor: PROJECT_LEAD (immediately after Q41 is ruled)
+    silent_execution: PROHIBITED
+  - id: CD-ASR-F14-02-FALSE-DECLARED-LIMIT-9
+    status: HELD
+    authority: CD-ASR-WO3-14 at af4ac85
+    reason_held: 'A declared limit false in the reassuring direction is live in all three CD-RULE-004 places today. TRUE INDEPENDENTLY OF Q41, but correcting it is a write to the wo-3 lane and no seat is dispatched. **CARRIED FORWARD SO A RECONCILIATION BOUNDARY CANNOT BURY IT.**'
+    next_actor: PRODUCT_AUTHORITY (Q41), then whichever seat is dispatched
+    silent_execution: PROHIBITED
+
+next_safe_action: >
+  *** STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT — ON Q41, AND NO SEAT IS DISPATCHED. ***
+  This is the SAME next safe action as BL-20260824T235828Z-0186, unchanged, and it is restated
+  rather than superseded because a new session boundary does not move it. The record at 0186 was
+  re-measured in full by an independent later seat and is TRUE AS WRITTEN: wo-3 unmoved at c475b8e
+  with content tip 7ac11c9, wo-2r3 frozen at be0b355, the verdict banked at af4ac85 byte-identical
+  at 849 lines and sha256 7943fad2, no uncommitted seat work in any of 31 worktrees, and no second
+  Project Lead live. 16C IS NOT RELEASED, NO INDICATOR ROW IS REGISTERED, NOTHING IS REVERTED, AND
+  THE PRODUCT IS NOT BREACHED. The only change at this boundary is the supersession of a stale
+  current_phase NARRATIVE, disclosed as CD-PL-F210.
+
+expected_next_actor: PRODUCT_AUTHORITY (Matt) on Q41
+
+evidence_references:
+  - 'This seat''s own shell: `git rev-parse` on all four branches; `git merge-base --is-ancestor 7ac11c9 wo-3` rc=0; `git show af4ac85:...A314.yaml | sha256sum` = 7943fad2ead0c2214cf04dcf2515c3c6575d31adf59610fd8771c315c444bcae, `| wc -l` = 849.'
+  - 'This seat''s own shell: `git status --porcelain` iterated over all 31 paths in `git worktree list --porcelain`. No dirty worktree.'
+  - 'This seat''s own shell: line-53 md5 of ACTIVE_WORK.yaml at seven consecutive commits, identical at all seven — the measurement behind CD-PL-F210.'
+  - 'governance/engineering/build-log/BL-20260824T235828Z-0186.yaml at 91162ac — the boundary this entry confirms and does not supersede.'
+  - 'asr-wo3-14-verdict af4ac85:governance/engineering/build-log/BL-20260824T234541Z-A314.yaml — the verdict VERBATIM. BANKED, NOT ACCEPTED, AND NOT RE-GRADED HERE.'
+  - 'governance/decisions/PO-DECISIONS-0031.md at 97f85e6 — ruling 1, whose consequence fell due at 0186 and is still owed.'
