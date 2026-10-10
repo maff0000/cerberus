@@ -1,0 +1,368 @@
+entry_id: BL-20260824T144449Z-A309
+timestamp_utc: "2026-08-24T14:44:49Z"
+project: crash-detector
+actor: CD-ASR-WO3-09
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16B-FIX4-ASSURANCE
+work_type: TASK
+phase: BUILD
+repository: local
+branch: asr-wo3-09-verdict
+worktree: /tmp/asr09w/verdict
+baseline_sha: be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5
+current_sha: dd4040773958da5a63d533fdcb6e61b0d410cf85
+parent_entry_id: BL-20260824T142722Z-16B4
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  *** VERDICT ON `dd4040773958da5a63d533fdcb6e61b0d410cf85` (branch `wo-3`, content tip
+  `4e6f7c4`): RED. 16C IS NOT RELEASED. *** THE DISPATCH SENT ME AT `_INERT_KEYWORDS` AND SAID
+  "one non-inert member is the fifth escape and it will look exactly like the previous four."
+  **IT DOES, AND THERE ARE TWO OF THEM: `enum` AND `const`.** They carry no subschema, so the
+  builder's reading of the spec is right about applicators — but **they NAME PROPERTIES, in their
+  VALUES**, and the inversion reads keyword NAMES only. A root property spelled
+  `{"enum": [<LIVE reading>, <STALE FEED_DEAD reading with detail_level "calm">]}` is a dial in
+  every product sense: it declares the states, it declares `detail_level`, and it is exactly as
+  tight as the `oneOf` spelling. `_dial_bearing` reads `enum`, finds it in `_INERT_KEYWORDS`,
+  finds no `properties`/`required`/`dependentRequired` naming `state`, and returns **`False` —
+  NOT A DIAL** — which is the same wrong answer, from the same cause, as `A306`, `A307` and
+  `A308`. **MEASURED, NOT ARGUED, AND MEASURED ON THE HONEST 16C TREE (`C26` + the enum
+  spelling, allowlist paid, root object CLOSED, slot REQUIRED, skeleton edit taken):**
+  `check_missing_data_never_calm.py` -> `PASS — 144 assertions, 0 violations`, exit 0, with
+  `feed_liveness` in **NEITHER** the classifiable list **NOR** the undecidable list, WHILE the
+  live gate driven in-process through `refuse_unless_publishable` **ADMITS**
+  `{"state":"STALE","reason":"FEED_DEAD","since_utc":"2026-08-23T12:00:00Z","detail_level":"calm"}`
+  on **BOTH** surfaces (`*** ADMITTED *** returned None` x2), with the fixture's control proved
+  in both directions on the same tree.
+  *** AND THE WHOLE-REGISTER FORM THE DISPATCH ASKED FOR, WHICH IS THE ANSWER TO §4. *** On my
+  enum tree the thirty-line register moves **exactly two lines off the clean baseline**
+  (`tests/test_reading.py`, `tests/test_cadence_breach.py`) and **`LINE 3`, THE CONSTITUTIONAL
+  INSTRUMENT, DOES NOT MOVE.** Those two lines are the ordinary friction of a new REQUIRED root
+  property — `C26`, the honest 16C with a spelling this guard DOES catch, moves the same two
+  **plus** `LINE 3` and `LINE 6`. **So the two moving lines are what a real 16C fixes in its own
+  commit, and after it does, NOTHING IN THIS REPOSITORY SEES A DEAD FEED PUBLISHED AS CALM.**
+  That is the C24/C25 signature — whole register green, gate admitting `calm` — reproduced AT
+  THE TARGET TIP, which is the thing this fix existed to end.
+  *** WHAT IS TRUE AND SHOULD NOT BE LOST. *** The inversion is real and it is a genuine advance
+  over four rounds of list-chasing. `C22`–`C27` are all `FAIL — 2 CD-CALM-SLOTS-007` from my own
+  extractions; `C28`/`C10` `PASS — 158`; `C1`–`C21` all bite unchanged, `git apply` rc=0 on
+  every patch, measured by me and not read off the MANIFEST; the clean tree is untouched at
+  `PASS — 144`, exit 0; `pytest` `2007 passed`; `test_detail_level.py` `52 passed`. **I verified
+  the falsifier and it passes: `propertys`, an `x-` vendor keyword, and TWO spellings I invented
+  on the spot (`zzSlotUnion`, `dependentRequiredSchemas`) all come back UNDECIDABLE.** The class
+  claim is TRUE OVER KEYWORD NAMES. It is FALSE over what a keyword's VALUE asserts, and that is
+  the hole: the deny class is the complement of a finite written set **of names**, and `enum` and
+  `const` are names on the readable side of that set whose values the check never looks at.
+  **THE FIX IS ONE MEMBER-PAIR AWAY FROM CORRECT AND I MAY NOT WRITE THE LINE (`PBG-SOD-001`).**
+
+status: WAITING_PROJECT_LEAD
+next_safe_action: >-
+  *** THE NEXT SAFE GATE: ONE MORE BOUNDED ENGINEER DISPATCH ON `wo-3` — `16B-FIX-5` — AND NOT
+  16C. *** It is a small dispatch and the prescription is written below (A309-F1). **16C REMAINS
+  HELD.** `CD-ASR-WO3-07`'s two-condition release stays WITHDRAWN. Do not accept this verdict as
+  a fix and do not let the seat that builds `16B-FIX-5` assure it (`PBG-SOD-001`). **The
+  regression arm for `16B-FIX-5` is `/tmp/armF`'s mutation and it must be banked as a plant
+  (`C29`) so that the fifth spelling is on the list the way the first four are** — that is what
+  every previous round failed to do for the round after it.
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 30
+  result: >-
+    ALL 30 `execute:` LINES RUN VERBATIM (`grep -cE '^\s*execute:\s*\S' required-tests.yaml` ->
+    `30`, re-derived by me, not inherited), cwd at each tree's root, exit code taken from the
+    command itself and **NOT** from a pipe (my first harness took `$?` after `| tail -1` and
+    reported a false `30/30 green`; I caught it because the CLEAN tree also read `30/30` when it
+    must read `19/11`, and every register figure below is from the CORRECTED harness).
+    CLEAN EXTRACTION OF THE TARGET: **19 rc=0, 11 non-zero** — the same split A307, A308 and the
+    builder report, now a sixth seat. `PYTHONPATH=src python3 -m pytest tests/ -q` ->
+    `2007 passed in 68.03s`. `tests/test_detail_level.py` -> `52 passed in 0.89s`.
+    THE INSTRUMENT ON THE CLEAN EXTRACTION: `CD-RT-001-MISSING-DATA-NEVER-CALM:
+    PASS — 144 assertions, 0 violations`, exit 0.
+    *** THE REGISTER ON MY ESCAPE ARM `/tmp/armF` (honest 16C + the enum spelling): 17 rc=0.
+    `diff` against the clean baseline is TWO LINES — `tests/test_reading.py` rc=0->1 and
+    `tests/test_cadence_breach.py` rc=0->1 — AND `LINE 3` IS NOT AMONG THEM. On `C26` (the same
+    honest 16C with a CAUGHT spelling) the diff is FOUR lines: those two PLUS `LINE 3`
+    (`FAIL — 2`) PLUS `LINE 6` (`check_schema_closed`). THE TWO-LINE RESIDUE IS 16C's OWN
+    FRICTION AND A REAL 16C PAYS IT IN THE SAME COMMIT. ***
+  command: "for each `execute:` line: eval verbatim with cwd = <root>, `--root .` rewritten to `--root <root>`, rc taken from the command not from a pipe"
+  evidence_reference: "/tmp/asr09 (clean extraction) · /tmp/armE, /tmp/armF (escape arms) · /tmp/arms/C* (24 independent extractions, one per plant) · /tmp/gate09.py, /tmp/gateF.py (in-process gate drives) · /tmp/reg.asr09.txt, /tmp/regF2.txt, /tmp/regC26.txt, /tmp/reg.C22*.txt"
+
+risks:
+  - >-
+    *** A309-F1 — RED, AND IT IS THE ONE THAT HOLDS 16C. `_INERT_KEYWORDS` CONTAINS TWO MEMBERS
+    THAT ARE NOT INERT: `enum` AND `const`. THE FIFTH ESCAPE. ***
+    THE SHAPE. `_dial_bearing` (`tools/register/check_missing_data_never_calm.py`) decides
+    "is this a dial" from `unreadable = sorted(key for key in resolved if key not in
+    _READABLE_KEYWORDS)` plus the names in `properties` / `required` / `dependentRequired`
+    (`_NAME_DECLARING_KEYWORDS`). `_READABLE_KEYWORDS` = `_SUBSCHEMA_KEYWORDS` minus
+    `_NAME_BEARING_APPLICATORS`, plus `_NAME_DECLARING_KEYWORDS`, plus `_INERT_KEYWORDS` — 51
+    names. `enum` and `const` are in `_INERT_KEYWORDS`, whose docstring says "EVERY REMAINING
+    JSON SCHEMA 2020-12 KEYWORD THAT CARRIES NO SUBSCHEMA **AND NAMES NO PROPERTY**".
+    **THE SECOND HALF OF THAT SENTENCE IS FALSE.** `enum` and `const` carry INSTANCE VALUES, and
+    an instance value that is an object NAMES PROPERTIES — including `state` and `detail_level`.
+    The recogniser reads the KEYWORD NAME, decides it can read it, and never looks inside the
+    value. So a node that literally enumerates two dial readings — one of them a dead feed
+    rendering as `calm` — is READ, and answered `False`, "this is NOT a dial". `False` is
+    supposed to be "a claim about a shape that was READ" (the fix's own words); here the shape
+    WAS read, incompletely, and the claim is wrong. **THAT IS THE SAME DEFECT AS THE FOUR
+    BEFORE IT — a spelling of "declare a state" the recogniser is confident about and wrong
+    about — and it is not covered by any DECLARED LIMIT.** `DECLARED LIMIT 12` is a
+    differently-NAMED discriminator; this one is named `state`. The header's own disclosed
+    residue (`{"type":"object"}` is still `False`) is a node that constrains NOTHING; this node
+    constrains everything, precisely, and is still `False`.
+    RECOGNISER PROBE, direct call, clean target tree:
+      `enum-of-dial-objects            -> False (NOT A DIAL)`
+      `const-dial-object               -> False (NOT A DIAL)`
+      `properties-state                -> None (UNDECIDABLE)`   <- the caught spelling, contrast
+    ARM `/tmp/armE` — target tip, `feed_liveness` added to both contracts as
+    `{"enum":[{"state":"LIVE","detail_level":"full"},{"state":"STALE","reason":"FEED_DEAD",
+    "since_utc":"2026-08-24T00:00:00Z","detail_level":"calm"}]}`, `diff -rq` against the pristine
+    contracts PROVED DIFFERENT (2 files):
+      instrument -> `PASS — 144 assertions, 0 violations`, rc=0
+      `feed_liveness` in NEITHER `... that DECLARE a dial state this check can classify: ...`
+      NOR `... this check CANNOT decide about (UNDECIDABLE ...)` — on BOTH surfaces
+      gate -> `ESCAPE feed_liveness DEAD+calm  public  *** ADMITTED *** returned None`
+              `ESCAPE feed_liveness DEAD+calm  private *** ADMITTED *** returned None`
+      gate control, SAME TREE, BOTH DIRECTIONS, so the fixture is not broken:
+              `CONTROL UNKNOWN dial detail=calm  public/private REFUSED [SCHEMA_VIOLATION]`
+              `CONTROL UNKNOWN dial detail=acute public/private *** ADMITTED ***`
+    ARM `/tmp/armF` — **THE ONE THAT MATTERS: `C26` (16C LANDED HONESTLY — root CLOSED,
+    `feed_liveness` REQUIRED, `PUBLIC_ALLOWLIST` PAID in `check_schema_closed.py`, the
+    `_envelope`-skeleton edit taken) with `feed_liveness` RE-SPELLED as the enum of its two legal
+    readings**, `git apply` rc=0:
+      instrument -> `PASS — 144 assertions, 0 violations`, rc=0, `feed_liveness` in NEITHER list
+      whole register -> 17 rc=0; diff vs clean = `test_reading.py` and `test_cadence_breach.py`
+        ONLY; `LINE 3` UNMOVED; `LINE 6` UNMOVED (the allowlist is paid)
+      gate -> `ESCAPE feed_liveness FEED_DEAD calm  public  *** ADMITTED *** returned None`
+              `ESCAPE feed_liveness FEED_DEAD calm  private *** ADMITTED *** returned None`
+      gate controls on the same tree: equity UNKNOWN+calm REFUSED x2; equity UNKNOWN+acute
+        ADMITTED x2; `feed_liveness` LIVE+acute ADMITTED x2.
+    **PRESCRIPTION, WRITTEN AND NOT APPLIED (`PBG-SOD-001` / `PBG-SOD-004` — I DID NOT BUILD THIS
+    AND I MAY NOT REPAIR IT).** The cheapest correct fix is NOT to move `enum`/`const` out of
+    `_INERT_KEYWORDS` wholesale — a scalar `enum` is genuinely inert and moving them would turn
+    every `{"type":"string","enum":[...]}` root property UNDECIDABLE and make the false-positive
+    tail enormous. It is to READ THE VALUE: extend the `declared` set with the property names of
+    every OBJECT member of `enum` and of an OBJECT `const` (`declared |= {k for v in values if
+    isinstance(v, dict) for k in v}`, same for `const`), so an enum/const that names `state`
+    reaches the same `undecidable = True` limb every other spelling of "declares a state"
+    reaches. That keeps the inversion's shape, keeps scalar enums green, and makes
+    `_INERT_KEYWORDS`'s docstring true. **AND THE STRUCTURAL POINT THE PROJECT LEAD SHOULD TAKE
+    FROM THIS: the inversion quantifies over KEYWORD NAMES. Any future member whose VALUE, rather
+    than whose subschema, can name a property is the same hole again. `enum` and `const` are the
+    only two in 2020-12 — I checked all 33 members, below — but the RULE that closes the class is
+    "read the keyword's value too", not "audit the list once more".**
+  - >-
+    A309-F2 — AMBER, NOT A HOLE TODAY, ONE EDIT FROM ONE. **THE BRANCH RECOGNISER HAS NO
+    INVERSION AT ALL AND I MEASURED THE DISAGREEMENT THE DISPATCH ASKED FOR.**
+    `_branch_states` reads `resolved["properties"]["state"]["const"]` and nothing else; anything
+    it cannot read that way becomes `state is None` and is a `CD-CALM-BRANCHES-006` violation —
+    **so on the DENY side the branch recogniser is STRICTER than the root recogniser, which is
+    the safe direction and I could not find a shape the branch side denies that the root side
+    admits.** The disagreement runs the other way: a branch that resolves to a good
+    `properties.state.const` **while also carrying a keyword the root recogniser calls
+    UNREADABLE** is accepted silently by the branch side. MEASURED, direct call, target tree:
+      node `{"properties":{"state":{"const":"UNKNOWN"},...},"patternProperties":{"^x_":{}},
+             "additionalProperties":false}`
+      `_branch_states` -> `[('oneOf[0]', 'UNKNOWN', [])]`  (accepted, no violation)
+      `_dial_bearing`  -> `True`
+    It is not a hole TODAY because a branch is exercised BEHAVIOURALLY — the filler dial is built
+    from it and driven through the live gate — whereas a root property is exercised only if it is
+    in the DRIVEN set. **It is one edit from a hole because nothing in the file makes the two
+    recognisers move together, and the next person who widens one will not know the other exists.**
+    Condition on 16C: do not add applicators to `#/$defs/dial_reading.oneOf` branches.
+  - >-
+    A309-F3 — GREEN, RECORDED SO THE NEXT SEAT NEED NOT REDO IT. **THE `True` SHORT-CIRCUIT IS
+    NOW PROVED, NOT REASONED.** `_dial_bearing` computes `unreadable` and sets
+    `undecidable = True` BEFORE the `state.const in DECLARED_STATES` limb, and that limb
+    `return True`s over it — so `True` DISCARDS a known-unreadable keyword. Measured above
+    (A309-F2's probe returns `True` with `patternProperties` present). It is nevertheless safe,
+    and here is why, which the builder did not write down: `True` feeds ONLY
+    `set(dial_bearing) != set(found)`. If the property IS driven, `True` is correct AND the
+    property is exercised behaviourally against the live gate, so the unreadable keyword is
+    measured rather than reasoned about. If it is NOT driven, `True` raises
+    `CD-CALM-SLOTS-007`, which is the same outcome UNDECIDABLE would have produced. **Both limbs
+    are safe, so the short-circuit is sound — the only thing it costs is the UNDECIDABLE NOTE,
+    which is diagnostic and not a verdict.** The seat's DECLARED LIMIT here is honest and can be
+    upgraded from "reasoned" to "measured" verbatim from this entry.
+  - >-
+    A309-F4 — AMBER, AGAINST THE DISPATCH ITSELF (§6 invites this and it is the eleventh
+    consecutive one). **THE DISPATCH'S §3.1 NAMES THE WRONG SHAPES TO THINK HARDEST ABOUT.** It
+    says "`contentSchema` and `propertyNames` are the shapes to think hardest about". Both are
+    already handled and neither is the hole: `propertyNames` is in `_NAME_BEARING_APPLICATORS`,
+    is therefore SUBTRACTED from `_READABLE_KEYWORDS`, and probes UNDECIDABLE; `contentSchema` is
+    in `_SUBSCHEMA_KEYWORDS`, is descended into, and probes UNDECIDABLE when a `state` is under
+    it — over-strict, which is the safe direction (it is also a SEVENTH false-positive shape the
+    builder's tail of six does not price; see A309-F5). **The two non-inert members are `enum`
+    and `const`, which the dispatch does not mention and which the builder's own limit-15 sentence
+    ("carry a subschema or NAME A PROPERTY") describes exactly.** The dispatch was right that a
+    member was not inert and right to send me first at the list; it was wrong about which members
+    to weight, and a seat that had spent its whole budget on `contentSchema` and `propertyNames`
+    would have returned PASS. **The `$defs`/`$anchor`/`$comment`/`title`/`format` "moment each"
+    was correctly aimed and all five are genuinely inert (below).**
+  - >-
+    A309-F5 — AMBER, THE FALSE-POSITIVE TAIL IS HONESTLY DIRECTED BUT NOT HONESTLY BOUNDED.
+    The builder prices EIGHT probes / SIX red as `DECLARED LIMIT 14` and the direction is the
+    ruled one, which I do not contest. **But the tail is not eight shapes, it is a CLASS: every
+    node carrying any keyword outside a 51-name set, which includes every 2020-12 keyword the
+    list omits, every future keyword, and every vendor annotation.** I found a seventh red shape
+    the six do not name in about a minute (`contentSchema` carrying a `state`), which is enough
+    to show the count is a SAMPLE described as a MEASUREMENT. **On the question the dispatch
+    actually asked — does it fire on anything a real 16C would plausibly carry — the answer is
+    YES and it is worth naming: an `x-`-prefixed vendor annotation on a root property is an
+    ordinary thing for a contract author to write, and `C16`, the benign-optional-root-object
+    control, stays `PASS — 144`, so the tail is a tail. The correct disposition is to price the
+    tail as A CLASS with a stated shape ("any root property declaring a keyword outside
+    `_READABLE_KEYWORDS`") rather than as a count of six, and to leave the direction alone.**
+  - >-
+    A309-F6 — GREEN, THE CHECKS THE DISPATCH ORDERED IN §3.5 AND §7.
+    `C1`–`C21` FROM MY OWN 24 INDEPENDENT `git archive dd40407 | tar -x` EXTRACTIONS, ONE PER
+    PLANT, `git apply --whitespace=nowarn` **rc=0 ON EVERY PATCH, TAKEN FROM `git apply` AND NOT
+    FROM THE MANIFEST'S COLUMN**: C1 `FAIL — 8` (GATE-001 x8) · C2 `FAIL — 2` (GATE-001 x2) ·
+    C3 `FAIL — 8` · C4 `FAIL — 4` (GATE-002 x4) · C6 `FAIL — 6` (BRANCHES-006 x2, GATE-001 x4) ·
+    C7 `FAIL — 8` · C8 `FAIL — 8` · C9 `FAIL — 2` (SLOTS-007) · **C10 `PASS — 158`** ·
+    C11 `FAIL — 32` · C12 `FAIL — 32` · C13 `FAIL — 2` · C14 `FAIL — 2` ·
+    **C16 `PASS — 144`** · C17 `FAIL — 32` · C18 `FAIL — 32` · C19 `FAIL — 32` · C20 `FAIL — 2` ·
+    C22 `FAIL — 2` · C23 `FAIL — 2` · C24 `FAIL — 2` · C25 `FAIL — 2` · C26 `FAIL — 2` ·
+    C27 `FAIL — 2` — every SLOTS-007 arm x2, both surfaces. **`C28` = `C10`'s patch on its own
+    pristine extraction of the tip -> `PASS — 158 assertions, 0 violations`, rc=0, CONFIRMED.**
+    C5 is a `.sh` and not a patch; not re-run (out of time, and it is settled by four auditors).
+    **C24 AND C25 DO NOT NOW ESCAPE: both `FAIL — 2 CD-CALM-SLOTS-007` at the target. THE
+    DISPATCH'S §4 SHARPER FORM IS ANSWERED IN THE AFFIRMATIVE FOR THOSE TWO AND IN THE NEGATIVE
+    FOR THE CLASS — SOMETHING ELSE STILL DOES, AND IT IS A309-F1.**
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli --root . required-tests verify` (exit 2) ->
+    `pid.content_hash      MATCHES` · `latest_admitted_run   (null)` ·
+    `MANDATORY NOT PASS (17)` · `GATE: SHUT` · `PID_ACCEPTANCE_SATISFIED: NOT DERIVED` ·
+    `grep -cE '^  \[[MA]\] CD-AC-'` -> **18**. `git rev-parse be0b355` ->
+    `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`, **UNMOVED**. `git ls-tree dd40407 evidence/` ->
+    EMPTY, **`evidence/` UNWRITTEN**. FX13 and FX14 read as no bigger than the code they
+    describe; I did not re-run FX14's 108 combinations (budget), and say so rather than imply I
+    did.
+  - >-
+    A309-F7 — NOTE, NOT A FINDING. **THE BUILDER'S OWN F01 NARROWING IS CORRECT AND I CONFIRMED
+    IT INDEPENDENTLY.** A308's "the register moves only `LINE 6`" does NOT survive 16C paying
+    its friction: on `C26` (allowlist paid) `LINE 6` fires anyway (`check_schema_closed`
+    `FAIL — 4`), and on my `/tmp/armF` (allowlist paid, escape spelling) `LINE 6` does NOT fire
+    at all. **The builder was right to narrow its own dispatch's headline sentence on
+    measurement, and it narrowed it in the direction that made its own fix look LESS necessary,
+    which is the behaviour this project should want.** It is also, unhappily, the same
+    measurement that made my `/tmp/armF` arm possible.
+
+blockers:
+  - >-
+    A309-F1 blocks 16C. A guard that answers `False` about a node whose value it never read is
+    the same defect the increment was opened to close, and it is live at the target tip.
+
+evidence_references:
+  - >-
+    TARGET, MY OWN EXTRACTION, NOT A SHARED WORKTREE:
+    `git archive dd4040773958da5a63d533fdcb6e61b0d410cf85 | tar -x -C /tmp/asr09`. Every arm is a
+    FRESH `git archive` of the SAME SHA re-extracted into its own directory under `/tmp/arms/`,
+    `/tmp/armE`, `/tmp/armF`, and mutated once. My verdict worktree is `/tmp/asr09w/verdict` on
+    branch `asr-wo3-09-verdict`. **I did not enter `/srv/crash-detector-wo3`,
+    `/srv/crash-detector` (except read-only `git show`, `cat` and the PBG boot), or any
+    `*-audit*` worktree. I wrote nothing under `pbg/`. I repaired nothing.**
+  - >-
+    *** §3.1 ANSWERED — `_INERT_KEYWORDS` MEMBER BY MEMBER, ALL 33, THE DISPATCH'S PRIMARY
+    ORDER. *** Verdict per member: can it carry a subschema / name a property / introduce a
+    `state`?
+    `$schema` NO (dialect declaration; only legal at a resource root, which needs `$id`, and
+      `$id` is already OUTSIDE the readable set — so the compound shape is already UNDECIDABLE).
+    `$vocabulary` NO (meta-schema only, same argument).
+    `$comment` NO — pure annotation, asserts nothing. INERT.
+    `$anchor` NO — creates a plain-name fragment a `$ref` may target; it does not change what the
+      node itself asserts, and `_resolve` follows only `#/...` pointers so an anchor-targeted ref
+      is unresolvable and returns UNDECIDABLE anyway. PROBED: `{"$anchor":"liveness",
+      "type":"object"}` -> `False`, correctly (that node asserts nothing about `state`). INERT.
+    `$defs` **CARRIES SUBSCHEMAS BUT IS STILL INERT, AND THIS ONE DESERVED THE MOMENT THE
+      DISPATCH GAVE IT.** `$defs` subschemas are NOT APPLIED — they are a bag of definitions —
+      so a `state` inside `$defs` constrains no instance. PROBED:
+      `{"$defs":{"x":{"properties":{"state":{"const":"STALE"}}}}}` -> `False`, and that is the
+      CORRECT answer: the gate constrains nothing there either. INERT, correctly listed.
+    `type` `pattern` `format` `multipleOf` `maximum` `exclusiveMaximum` `minimum`
+      `exclusiveMinimum` `maxLength` `minLength` `maxItems` `minItems` `uniqueItems`
+      `maxContains` `minContains` `maxProperties` `minProperties` `contentEncoding`
+      `contentMediaType` — ALL INERT. Each takes a SCALAR (or, for `type`, a string/array of
+      strings). None can carry a schema; none can carry an object; **there is no syntactic
+      position in any of them where a property name can appear.** `format` is annotation-only in
+      the Format-Annotation vocabulary both contracts declare. `contentEncoding`/
+      `contentMediaType` are the inert halves of the Content vocabulary — the schema-carrying
+      half is `contentSchema`, which is correctly in `_SUBSCHEMA_KEYWORDS` and descended into.
+    `title` `description` `default` `deprecated` `readOnly` `writeOnly` `examples` — ALL INERT.
+      Meta-Data, annotation-only, assert nothing. `default` and `examples` take arbitrary
+      instance values and those values CAN be objects naming `state` — **but they are
+      ANNOTATIONS: the gate's validator asserts nothing on them, so a `state` named there
+      constrains no document and cannot admit one. Inert for this recogniser's purpose, and the
+      distinction from `enum`/`const` is exactly that `enum`/`const` ASSERT.**
+    *** `const` — **NOT INERT**. Takes an arbitrary instance value. An OBJECT `const` names every
+      property of that object AND fixes its value, which is the tightest possible way to declare
+      a dial. ASSERTS. PROBED `{"const":{"state":"STALE",...,"detail_level":"calm"}}` -> `False`
+      (NOT A DIAL). ***
+    *** `enum` — **NOT INERT**, and it is the practical one. Takes an ARRAY of arbitrary instance
+      values. An enum of OBJECTS names every property of every member and is a complete,
+      idiomatic way to write a small closed union — **exactly what a `feed_liveness` dial with
+      two readings is.** ASSERTS. PROBED -> `False` (NOT A DIAL), and MEASURED end-to-end as a
+      live escape on the honest 16C tree. THIS IS A309-F1. ***
+    **CONCLUSION: 31 of 33 members are genuinely inert and the builder's reading of the spec is
+    good. TWO ARE NOT, AND THE DOCSTRING'S CLAIM "NAMES NO PROPERTY" IS FALSE OF BOTH.**
+  - >-
+    *** §3.3 ANSWERED — I GRADED THE FALSIFIER AND INVENTED MY OWN. *** Direct calls to
+    `_dial_bearing` on the target tree, each node carrying a `state` under the named keyword:
+      `propertys` (the builder's one-letter typo)      -> `None (UNDECIDABLE)`  CONFIRMED
+      `x-crash-detector-liveness` (vendor keyword)     -> `None (UNDECIDABLE)`  CONFIRMED
+      `zzSlotUnion` (**MINE, invented on the spot**)   -> `None (UNDECIDABLE)`
+      `dependentRequiredSchemas` (**MINE**, a plausible-looking compound of two real keywords)
+                                                       -> `None (UNDECIDABLE)`
+      `grep -c` for each of my two in the instrument -> `0`.
+    **SO: IS THE DENY CLASS REALLY THE COMPLEMENT OF A FINITE WRITTEN SET, OR IS THAT A
+    DESCRIPTION OF THE CODE RATHER THAN A PROPERTY OF IT? IT IS A PROPERTY OF THE CODE — OVER
+    KEYWORD NAMES.** `unreadable = [k for k in resolved if k not in _READABLE_KEYWORDS]` is a
+    genuine universal quantification over the node's keys, and no spelling of a KEY can leave it.
+    That claim survived everything I threw at it and it is a real advance. **BUT THE ALPHABET IS
+    WRONG.** The recogniser quantifies over key NAMES and never over what a key's VALUE asserts,
+    so a dial declared inside the VALUE of a readable key is invisible — and two readable keys
+    (`enum`, `const`) can hold one. **The class is closed in one dimension and open in the
+    other, and the open one is where the fifth escape lives.**
+    **ON `$recursiveRef`: DISCARDING IT WAS RIGHT.** A contract carrying it is not a valid
+    2020-12 schema, `load_envelope_schema` raises before any candidate is judged, and the
+    instrument refuses rather than passes — so the arm cannot distinguish "the recogniser caught
+    it" from "the schema would not load". Recording it as discarded, with the reason, rather than
+    counting it as a fifth catch, is the honest handling and I would have done the same.
+  - >-
+    *** §4 ANSWERED, IN THE DISPATCH'S OWN WORDS. WOULD THIS GUARD SEE 16C GO WRONG?
+    **PARTLY — AND NOT IF THE LIVENESS SLOT IS WRITTEN AS AN ENUM OR A CONST OF ITS READINGS.**
+    It WOULD see: a slot spelled with `properties`, with `required`, with `dependentRequired`,
+    under `patternProperties`, under `propertyNames`, under `dependentSchemas`, behind a
+    `$dynamicRef`, behind an over-cap `$ref` chain, behind a `$id`, under any misspelling of any
+    keyword, under any vendor keyword, and under any keyword from any draft not yet written.
+    That is a large and genuinely closed family and four rounds of audit could not have said
+    that. It would NOT see: `{"enum": [ ...readings... ]}` or `{"const": {...reading...}}`.
+    **C24 AND C25 SPECIFICALLY: THEY DO NOT NOW ESCAPE — both `FAIL — 2 CD-CALM-SLOTS-007` from
+    my own extractions, where at the prior tip they left the entire thirty-line register green
+    (`PASS — 292`, `PASS — 452`) with the gate admitting a dead feed as `calm`. THAT PAIR IS
+    GENUINELY CLOSED.** **AND YES, SOMETHING ELSE STILL DOES: `/tmp/armF` leaves `LINE 3` green
+    and the register at its clean baseline but for two lines of ordinary 16C friction, while the
+    gate admits `{"state":"STALE","reason":"FEED_DEAD","detail_level":"calm"}` on both surfaces.
+    The escape class is smaller than it was and it is not empty.** ***
+  - >-
+    *** §7.9 — THE CONDITIONS I WOULD ATTACH TO 16C's DISPATCH. I AM RETURNING RED, SO THESE ARE
+    CONDITIONS FOR AFTER `16B-FIX-5`, NOT INSTEAD OF IT. ***
+    (1) **`16B-FIX-5` LANDS FIRST AND IS ASSURED BY A SEAT THAT DID NOT BUILD IT.** A309-F1's
+    prescription, plus the `/tmp/armF` mutation banked as plant `C29` so the fifth spelling is on
+    the list the way `C22`–`C27` are.
+    (2) **THE 16C CONTRACT DECLARES ITS LIVENESS SLOT AS `{"$ref": "#/$defs/..."}` TO A `oneOf`
+    UNION — NOT AS `enum`, NOT AS `const`, NOT UNDER `patternProperties`.** This is a shape
+    condition on the CONTRACT and it should be stated in the dispatch, not left to the guard.
+    (3) **NO APPLICATOR MAY BE ADDED TO `#/$defs/dial_reading.oneOf` BRANCHES** (A309-F2: the
+    branch recogniser has no inversion and will not see it).
+    (4) **`DECLARED LIMIT 12` REMAINS AN OPEN CONDITION** — a dial discriminating on a
+    differently-NAMED key is still `False` and still silent. 16C must not introduce one.
+    (5) **16C RE-RUNS THE WHOLE THIRTY-LINE REGISTER AND ACCOUNTS FOR EVERY LINE THAT MOVES,
+    INCLUDING THE FRICTION LINES** (`test_reading.py`, `test_cadence_breach.py`,
+    `check_schema_closed.py`'s allowlist) — because "the register moved two lines and they are
+    just friction" is precisely the sentence under which A309-F1 hides.
+    (6) **THE `STALENESS_WINDOW_CEILING_SECONDS` / `Q32` PRODUCT QUESTION IS NOT MINE AND IS NOT
+    CLOSED BY THIS VERDICT.**

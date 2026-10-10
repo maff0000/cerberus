@@ -1,0 +1,604 @@
+# ================================================================================================== #
+# BL-20260824T190320Z-A312 — ASSURANCE VERDICT ON INCREMENT 16D-GATE-FRESHNESS.
+# Target: branch `wo-3`, CONTENT TIP `0e80a09af9661a9e7e6bb73193fbe56133fcff29`, base `295bdbe`.
+#
+# *** VERDICT: AMBER. HIGH CONFIDENCE. 16C IS NOT RELEASED. NO INDICATOR ROW IS REGISTERED. ***
+#
+# *** I TRIED TO BUILD THE COUNTEREXAMPLE TO "CLOSED BY CONSTRUCTION" AND ON THE SHIPPED CONTRACT
+# I COULD NOT. *** That sentence has been false ten times on this row and this time I could not
+# make it false. The ruled completion test IS met: a dial older than its declared window carrying
+# `calm` is REFUSED on both surfaces, by construction rather than by enumeration, and a
+# never-before-named state carrying `calm` is still REFUSED by Rule CC. **THE INCREMENT IS THE
+# FIRST TIME THIS PRODUCT HAS EVER COMPARED A TIMESTAMP AND I SAY THAT FIRST BECAUSE IT IS TRUE.**
+#
+# IT IS AMBER AND NOT PASS FOR TWO NAMED REASONS, NEITHER OF WHICH IS A BYPASS:
+#   (1) **THE GUARANTEE IS TESTED AND IT IS NOT GUARDED.** I deleted the whole stage and ran all
+#       thirty register lines: the per-line rc list is diff-identical and LINE 03 stays
+#       `PASS — 260`, exit 0. The project's own memorial, five hundred lines away in the same
+#       tree, is about exactly this.
+#   (2) **THE ENTRY'S "CLOSED TWICE OVER" CLAIM IS FALSE IN ITS RUNTIME HALF**, and I have the
+#       measurement: ONE decoy string restores `A311-F1` at runtime on the widened tree. The
+#       Engineer wrote the limit that predicts it (`DECLARED LIMIT 20(a)`) and did not connect it
+#       to the claim.
+# ================================================================================================== #
+
+entry_id: BL-20260824T190320Z-A312
+timestamp_utc: "2026-08-24T19:03:20Z"   # from `date -u +'%Y-%m-%dT%H:%M:%SZ'` and from nothing else (CD-RULE-005)
+record_type: ASSURANCE_VERDICT
+project: crash-detector
+actor: CD-ASR-WO3-12
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_05
+authority_id: CD-DISPATCH-WO3-INC16D-ASSURANCE
+work_type: TASK
+phase: GATE
+repository: local
+branch: asr-wo3-12-verdict
+worktree: /tmp/asr12/verdict
+baseline_sha: 295bdbe8b07ee6d05f81c4a4679cb1672259d3ec
+current_sha: 0e80a09af9661a9e7e6bb73193fbe56133fcff29
+parent_entry_id: BL-20260824T170252Z-16CC
+# `parent_entry_id` RESOLVES IN-TREE and this branch is cut from the CONTENT TIP `0e80a09`, which
+# does not carry the Engineer's own return `BL-20260824T183401Z-16DF` — that entry lives one commit
+# later, at the entry tip `ef3c960`. MEASURED: `ls governance/engineering/build-log/` in this
+# worktree ends at `-16CC`. The graded return is recorded in `the_target` below rather than dropped.
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  *** VERDICT ON `0e80a09af9661a9e7e6bb73193fbe56133fcff29` (branch `wo-3`, base `295bdbe`):
+  AMBER, HIGH CONFIDENCE. THE RULED COMPLETION TEST IS MET. THE GUARANTEE IS NOT YET GUARDED AND
+  ONE CLOSURE CLAIM IN THE RECORD IS FALSE. 16C IS NOT RELEASED AND NO ROW IS REGISTERED. ***
+  **I ATTACKED "CLOSED BY CONSTRUCTION" AND ON THE SHIPPED CONTRACT I COULD NOT BREAK IT**, which
+  has not been true on this row before. The fourth refusal stage is genuinely NODE-QUANTIFIED and
+  reads no dial slot by name (arm `D3`, the forbidden slot-reading implementation, costs 40 of 92
+  assertions; arm `H3` refuses at `/degraded_inputs/0/0`, TWO containers deep). Stamps are detected
+  BY VALUE and **THE OLDEST GOVERNS** — verified directly, a `1970` stamp governs a node carrying
+  two fresher siblings. The predicate is a CLOSED INTERVAL and a FUTURE stamp fails closed (arm
+  `D2`, the naive `age > window`, costs 2). **THE HAND-ROLLED CALENDAR IS EXACT AND I PROVED IT
+  EXHAUSTIVELY RATHER THAN BY SAMPLE: `_days_from_civil` AGREES WITH `datetime` ON ALL 3,652,059
+  CIVIL DATES FROM `0001-01-01` TO `9999-12-31`, ZERO MISMATCHES**, plus 200,000 random
+  microsecond-precision stamps round-tripped exactly; year 0000, the century rules, the leap-day
+  boundaries, `:60`, `2026-02-29` and `2026-13-45T99:99:99Z` all behave, the last three by FAILING
+  CLOSED. **NO CLOCK, VERIFIED BY MY OWN AST SCAN AND NOT BY THE ENGINEER'S**: zero clock imports,
+  attributes or names in the module, `signature == ['candidate', 'surface']`, no clock-bearing name
+  in the module namespace, and **no clock name in the globals of any callable it imports** — so the
+  "one attribute lookup away" claim holds transitively. `BP-AMENDMENT-0001` §D.3 IS NOT REOPENED.
+  **IT IS NOT VACUOUS: SEVENTEEN DISTINCT GENUINELY-CALM DOCUMENT SHAPES ARE STILL ADMITTED ON BOTH
+  SURFACES** while the stale shapes are refused on either dial. `295bdbe` IS PRESERVED — both
+  contract JSONs byte-unchanged, `required-tests.yaml` untouched, **THE MEMORIAL IS INTACT**, the
+  `"banana"` arm intact, `ENVELOPE_SCHEMA_VERSION` `1.1.0`, `tests/` `688` added `0` deleted,
+  `be0b355` unmoved, ONE identity, ZERO protected paths. **EVERY CLAIMED NUMBER REPRODUCED IN MY
+  OWN SHELL** — `PASS — 260`/`243` with rc taken from the command; the whole thirty-line register
+  at BOTH tips, per-line rc `diff` EMPTY, 19/11; `pytest` `2007` -> `2099` with ZERO skipped,
+  xfailed, deselected or errored; the nine arms with `git apply` rc taken and checked, `D1`-`D4`
+  rc=1 at `295bdbe` ABORTED and nothing claimed — **THE ENGINEER DID NOT REPEAT THE LAST AUDITOR'S
+  OWN DEFECT AND NEITHER DID I.** **AMBER FOR: `A312-F1` the stale half is TESTED AND NOT GUARDED
+  (I deleted the stage and all thirty register lines are rc-identical); `A312-F2` the entry's
+  "`A311-F1` closed TWICE OVER" is FALSE in its runtime half — ONE DECOY STRING re-admits it;
+  `A312-F3` the residual is stated at `DECLARED LIMIT 20(d)` and UNDER-STATED everywhere the
+  Project Lead reads.** `A312-F4` RESOLVES `F16D-05`: the `280` is an ARM-TREE figure, no inherited
+  record is wrong. **NOTHING IS BYPASSED. NOTHING IS ACCEPTED. A VERDICT IS NOT AN ACCEPTANCE
+  (`PBG-AUTH-003`).**
+
+status: WAITING_PRODUCT_AUTHORITY
+next_safe_action: >-
+  **THE PROJECT LEAD BANKS THIS VERDICT AND PUTS ONE BOUNDED QUESTION TO THE PRODUCT AUTHORITY.
+  NOT 16C. NOT THE INDICATOR ROWS. NOT AN ACCEPTANCE.** The question is scope, and it is one
+  question with three parts that are discharged by ONE Engineer dispatch whose writable scope
+  includes `required-tests.yaml`: (i) does the fourth refusal stage get its OWN REGISTER ROW, and
+  does that row come BEFORE 16C? `PO-DECISIONS-0029` ruling 5 says "on GREEN: the detector liveness
+  marking (16C), THEN register the rows", and "the rows" there are the INDICATOR rows from
+  `governance/mapping/indicator_mapping.yaml` — it does not obviously reach a fresh-dial control
+  row, and `A312-F1` says the constitutional guarantee has no register witness until one exists;
+  (ii) the same dispatch discharges `CD-ENG-F16D-02` (`CD-RULE-004` wants declared limits 18, 19
+  and 20 in THREE places and they are in two, because `required-tests.yaml` was out of the
+  Engineer's scope — an honest escalation, correctly not taken); (iii) it carries the record
+  corrections for `A312-F2` (withdraw "closed twice over"), `A312-F3` (raise `published_utc` into
+  `DECLARED LIMIT 19` and `CD-PL-F206` alongside `staleness_window_seconds`) and `A312-F4`
+  (supersede `CD-ENG-F16D-05`). **THE ROW SHOULD LAND BEFORE 16C BECAUSE 16C PRODUCES THE LIVENESS
+  MARKING THIS STAGE COMPARES, AND LANDING IT ON TOP OF AN UNGUARDED STAGE PUTS THE PROJECT BACK
+  IN THE POSITION THE MEMORIAL IN `required-tests.yaml` EXISTS TO RECORD.** THE MEMORIAL REMOVAL
+  MUST NOT LAND.
+expected_next_actor: >-
+  PROJECT_LEAD_SEAT_05, to bank this and put the scope question to the Product Authority. NEVER
+  this seat, and NEVER `CD-ENG-WO3-12` for its own repair lane (`PBG-SOD-001` non-waivable,
+  `PBG-SOD-004`).
+
+# ================================================================================================== #
+separation_of_duties:
+# ================================================================================================== #
+  measured_not_asserted: >-
+    `git log --all --format=%an | sort -u` names `CD-ENG-WO3-01..12` and `CD-ASR-WO3-02..11`.
+    **`CD-ASR-WO3-12` HAD NEVER AUTHORED A COMMIT IN THIS REPOSITORY BEFORE THIS ONE.** I wrote not
+    one line of what I graded. I repaired nothing I found — **the prescriptions are written above
+    and the lines are left unwritten** (`PBG-SOD-004`). I mutated nothing except this file, on its
+    own branch, in my own worktree.
+  the_lane_was_not_touched: >-
+    `/srv/crash-detector-wo3` WAS NEVER WRITTEN TO AND WAS NEVER CHECKED OUT BY ME. Every patch-and-
+    run happened in `git worktree`s of my own (`/tmp/asr12/target` at `0e80a09`, `/tmp/asr12/base`
+    at `295bdbe`, `/tmp/asr12/verdict` on this branch) and in `git archive | tar -x` extractions
+    under `/tmp`. I passed `/tmp/asr12/target` as the arm runner's `REPO` argument precisely so its
+    `/srv/crash-detector-wo3` default could not reach the lane. `be0b355` (`wo-2r3`) UNMOVED —
+    `git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. `/srv/crash-detector`
+    untouched. NO PARALLEL SUB-AGENT WAS SPAWNED (`CD-D-181`).
+
+the_target:
+  branch: wo-3
+  content_tip_graded: 0e80a09af9661a9e7e6bb73193fbe56133fcff29
+  base: 295bdbe8b07ee6d05f81c4a4679cb1672259d3ec
+  the_engineers_return_graded: >-
+    `BL-20260824T183401Z-16DF`, read at the ENTRY TIP `ef3c960d23327800e0ad084c6833afca74a1a0fa`.
+    MEASURED: `git diff --name-only 0e80a09 ef3c960` names that build-log file AND NOTHING ELSE, so
+    the content tip and the entry tip differ by the record only, exactly as the entry states.
+  authority: governance/decisions/PO-DECISIONS-0029.md (ruling 1, 2, 3, 5)
+
+# ================================================================================================== #
+the_verdict:
+# ================================================================================================== #
+  verdict: AMBER
+  confidence: HIGH
+  what_that_means_here: >-
+    **MATERIALLY SOUND, WITH NAMED CONDITIONS.** The thing that was ordered was built, it works, it
+    works BY CONSTRUCTION rather than by enumeration, and I could not defeat it on the contract the
+    product actually ships. What is missing is not correctness — it is a GUARD, and one claim in
+    the record about redundancy that does not survive measurement. **NOT `RED`: nothing is
+    bypassed, no control is defeated, no held action was released, and the ruled completion test is
+    met. NOT `PASS`: a constitutional guarantee whose only witness is an unregistered `tests/` file
+    is the defect class this project WROTE A MEMORIAL ABOUT, and an unscoped PASS is a liability
+    (`pbg/roles/assurance-engineer.md`).**
+
+  the_completion_test_as_ruled_graded_clause_by_clause:
+    authority: PO-DECISIONS-0027 ruling 5 AS EXTENDED BY PO-DECISIONS-0029 ruling 3
+    clause_1_a_dial_older_than_its_window_carrying_calm_is_REFUSED: >-
+      **MET, BY CONSTRUCTION, ON BOTH SURFACES.** My own probe, written against the live gate at
+      the target tip: `1970` + `calm` window 600 -> `REFUSED [STALE_CALM] at /equity_crash` x2;
+      stale on the SECOND dial only -> `REFUSED [STALE_CALM] at /monetary_debasement` x2; `1s + 1us`
+      past a 1-second window -> REFUSED x2; `100001us` past a `0.1`-second window -> REFUSED x2;
+      a stamp `1us` AFTER `published_utc` -> REFUSED x2. "By construction" is earned and not
+      asserted: the stage quantifies over `_iter_nodes` and names no dial slot, and I confirmed the
+      two arms that prove it (`D3` slot-reading costs 40 assertions; `H3` array-of-arrays is
+      refused at `/degraded_inputs/0/0`).
+    clause_2_a_never_before_named_state_carrying_calm_is_REFUSED: >-
+      **MET AND PRESERVED.** `UNKNOWN`+calm, `DEGRADED`+calm, `SPINDRIFT`+calm and no-state+calm are
+      `REFUSED [SCHEMA_VIOLATION]` at `/equity_crash` x2 at BOTH tips — refused by RULE CC, with the
+      `reason_class` unmoved, so a weakening of Rule CC underneath the new stage would show as a
+      changed reason rather than hide behind the new refusal. Rule CC's artefacts are byte-identical.
+    and_it_is_not_vacuous: >-
+      **A STAGE THAT REFUSED TOO MUCH WOULD SATISFY PID §3.2 BY MAKING THE DIAL INCAPABLE OF READING
+      CALM.** I drove SEVENTEEN distinct genuinely-calm shapes and ALL SEVENTEEN ARE ADMITTED ON BOTH
+      SURFACES: age 0 / 5s / 599s / exactly 600s against a 600s window; calm paired with `elevated`,
+      `acute`, `UNKNOWN` and `DEGRADED` on the other dial; calm with `contributions` populated; calm
+      with 59 `inputs_used`; calm with microsecond fractions on every stamp; window `1`; window
+      `10368000` (the mapping file's widest ratified floor); window as `int` and as `float`; regime
+      `stress` with `degraded_inputs` non-empty; negative, zero and large scores; and the doctrinal
+      shape where the root `as_of_utc` equals the OLDEST dial stamp. **THE PRODUCT CAN STILL PUBLISH
+      A CALM READING, IN MANY SHAPES.**
+
+# ================================================================================================== #
+findings:
+# ================================================================================================== #
+
+  A312-F1:
+    severity: MEDIUM
+    verdict_contribution: AMBER
+    status: DEFECT_OPEN
+    against: the increment, NOT against the Engineer — who raised it first, as `CD-ENG-F16D-03`
+    theme: SELF_REFERENCE_AND_SELF_VOUCHING / CONTROL_BYPASS
+    statement: >-
+      *** **THE STALE HALF OF `CD-AC-001` IS TESTED AND IT IS NOT GUARDED, AND I VERIFIED IT AT
+      FULL STRENGTH RATHER THAN TAKING THE ENGINEER'S WORD.** *** MEASURED, my own extraction, my
+      own runner: arm `D1` (`git apply` rc=0, CHECKED) DELETES THE ENTIRE FOURTH REFUSAL STAGE, and
+      I then ran **ALL THIRTY `execute:` LINES** of `required-tests.yaml` on that tree with rc taken
+      from each command. **THE PER-LINE rc LIST IS `diff`-IDENTICAL TO THE CLEAN TIP — 19 rc=0 / 11
+      non-zero — AND LINE 03 `CD-RT-001-MISSING-DATA-NEVER-CALM` STAYS AT `PASS — 260 assertions,
+      0 violations`, EXIT 0.** The live gate on that same tree re-ADMITS `1970` AND `2099` carrying
+      `calm` on both surfaces: `295bdbe`'s behaviour restored exactly. The same is true of arms
+      `D2`, `D3` and `D4` — the naive formula, the forbidden slot-read and newest-governs each leave
+      the register at `PASS — 260`, exit 0.
+    the_only_witness: >-
+      `tests/test_envelope_freshness.py`, which **NO REGISTER ROW NAMES**. That is not a
+      technicality: **FOURTEEN OF THE THIRTY REGISTER ROWS DO NAME SPECIFIC pytest FILES**
+      (`tests/test_reading.py`, `tests/test_detail_level.py`, `tests/test_regime_staleness.py`
+      and eleven more), so the project's own established mechanism for making a test-file guarantee
+      live was available and was not used.
+    why_this_is_the_defect_class_and_not_a_nit: >-
+      **THE PROJECT WROTE A MEMORIAL ABOUT EXACTLY THIS AND IT IS SITTING INTACT IN THE SAME TREE**,
+      `required-tests.yaml` line 242: *"The register declared 29 `execute:` lines, 14 of them naming
+      pytest files, and this file was not one of the 14. A memorial nobody reads... **it does not
+      make the guarantee live, because a pytest file is still a file the gate happens to name.**"*
+      That memorial is about `tests/test_detail_level.py` and PID §3.2's MISSING half. **THE STALE
+      HALF NOW OCCUPIES THE IDENTICAL POSITION**, in the increment that exists to close it, beside
+      live prescriptions to remove name-coupled test files.
+    what_is_NOT_wrong_here_and_must_not_be_read_into_it: >-
+      **THE ENGINEER RAISED THIS AGAINST ITSELF, MEASURED IT CORRECTLY, AND DID NOT TAKE THE
+      REMEDY** — `required-tests.yaml` was outside its writable scope and a necessary change outside
+      a writable scope is an ESCALATION, not an initiative. The instrument's own printed run note
+      now DISCLAIMS credit for the staleness half in terms (*"THIS INSTRUMENT DOES NOT ASSERT IT...
+      A guard that is asserted somewhere else is not a guard this row may take credit for"*), which
+      is the honest thing to print. **THE ROW IS RIGHT NOT TO CLAIM IT. THE PROBLEM IS THAT NO ROW
+      DOES.**
+    prescription_written_and_the_line_left_unwritten: >-
+      A register row that FAILS when the fourth stage is absent or weakened — the natural shape is
+      an `execute:` line naming `tests/test_envelope_freshness.py`, exactly as fourteen existing
+      rows name their files, plus a live instrument arm that drives the gate with a stale calm dial
+      and requires `REFUSAL_STALE_CALM`. **AUTHORISING IT IS A PRODUCT/PROJECT-LEAD DECISION AND
+      WRITING IT IS AN ENGINEER'S. IT IS NEITHER MINE** (`PBG-SOD-004`).
+
+  A312-F2:
+    severity: MEDIUM
+    verdict_contribution: AMBER
+    status: DEFECT_OPEN
+    against: a CLAIM IN THE RECORD about the increment's own work
+    theme: GUARD_THE_INSTANCE_NOT_THE_CLASS
+    statement: >-
+      *** **THE ENTRY CLAIMS `A311-F1` IS "CLOSED TWICE OVER AND INDEPENDENTLY... AT RUNTIME BY
+      CONSTRUCTION, BECAUSE A NODE CLAIMING `calm` WITH NO STAMP CANNOT PROVE FRESHNESS EVEN ON A
+      TREE WHOSE CONTRACT WAS WIDENED TO ADMIT IT." THE RUNTIME HALF OF THAT IS FALSE AND ONE
+      STRING DEFEATS IT.** *** MEASURED on the arm-`H1` tree at the TARGET tip (`git apply` rc=0,
+      CHECKED), driving the live gate in-process on both surfaces:
+        · `degraded_inputs: [{"source_id": "SRC-A",                "detail_level": "calm"}]`
+              -> `REFUSED [STALE_CALM] at /degraded_inputs/0` x2   (the claim, and it holds)
+        · `degraded_inputs: [{"source_id": "2026-08-24T18:00:00Z", "detail_level": "calm"}]`
+              -> ***`ADMITTED` x2.***
+        · the same with a `1970` or a `2099` `source_id` -> `REFUSED [STALE_CALM]` x2.
+      **THE LIST OF INPUTS THAT ARE DEGRADED, RENDERING AS CALM, AT A ROOT POSITION — `A311-F1`'S
+      OWN SENTENCE — IS BACK, AND THE COST OF GETTING IT BACK IS PUTTING A UTC INSTANT IN A FIELD
+      THAT IS NOT A STAMP.** Stamps are detected BY VALUE, so a node with NO real stamp and ONE
+      decoy proves itself fresh against the decoy.
+    the_engineer_predicted_this_and_did_not_join_it_up: >-
+      `DECLARED LIMIT 20(a)` says it almost exactly — *"the oldest-governs rule makes every such
+      case MORE conservative, never less, **except in the one shape where a node has NO real stamp
+      and a decoy fresh one**. NAMED, NOT CLOSED."* **THE LIMIT IS HONEST AND THE `action_summary`
+      IS NOT CONSISTENT WITH IT.** The limit was written and then the "closed twice over by
+      construction" claim was written anyway, and nothing measured the collision.
+    and_the_test_that_certifies_it_guards_the_instance_not_the_class: >-
+      `tests/test_envelope_freshness.py::test_A311_F1_arm_H_is_REFUSED_even_on_a_contract_widened_to_admit_it`
+      drives a FIXED module-level constant, `ARM_H_DOCUMENT_FRAGMENT = [{"source_id": "SRC-A",
+      "detail_level": DETAIL_CALM}]`. It proves that ONE fragment is refused. It does not quantify
+      over what the widened subschema admits, and my decoy fragment is admitted by the same schema.
+    what_this_does_NOT_mean_and_I_am_explicit_because_it_would_be_easy_to_overread: >-
+      **THIS IS NOT A LIVE ESCAPE ON THE SHIPPED CONTRACT.** `degraded_inputs` is
+      `#/$defs/source_id_list` — an array of plain strings — so no `calm` can appear there at all
+      today, and both contract JSONs are byte-unchanged. **THE STRUCTURAL HALF OF THE CLOSURE IS
+      REAL AND I VERIFIED IT**: `_can_carry_detail_level` takes arms `H1`, `H2`, `H3` and `H4` to
+      `FAIL — 2`, exit 1, on both surfaces, where at `295bdbe` all four were `PASS — 243` with the
+      whole register unmoved. **SO `A311-F1` IS CLOSED — ONCE, STRUCTURALLY, AT THE INSTRUMENT — AND
+      NOT TWICE.** The defence-in-depth the record claims is not there, and that matters precisely
+      because `A312-F1` says the structural half is the ONLY half with a register row behind it.
+    prescription: >-
+      Withdraw or narrow the "closed twice over" sentence in the record; it is a correction that
+      SUPERSEDES and never an edit (`PBG-CONT-003`). If the runtime half is wanted for real, the
+      shape is to require the stamp a calm-bearing node relies on to be a DECLARED stamp (a
+      `#/$defs/utc_timestamp`-typed property, or a `_utc`-suffixed name) rather than any string
+      that happens to parse — **which is a TIGHTENING and is product scope, and is NOT mine to
+      write** (`PBG-AUTH-005`, `PBG-SOD-004`).
+
+  A312-F3:
+    severity: MEDIUM
+    verdict_contribution: AMBER
+    status: STATED_BUT_UNDERSTATED
+    against: the completeness of the residual as recorded, NOT against the implementation
+    theme: AUTHENTIC_TARGET_VERIFICATION
+    statement: >-
+      *** **THE GATE COMPARES TWO COMPARANDS THE DOCUMENT ITSELF DECLARES — `staleness_window_seconds`
+      AND `published_utc` — AND EVERY PLACE THE PROJECT LEAD READS NAMES ONLY THE FIRST.** ***
+      `CD-ENG-F16D-01`, `CD-PL-F206`, `DECLARED LIMIT 19` and the dispatch's `open_and_NOT_closed`
+      section are all about the WINDOW. MEASURED at the target tip, with nothing absurd declared and
+      a perfectly ordinary 600-second window:
+        · `as_of_utc` = `published_utc` = `1970-01-01T00:00:00Z`, window `600.0` -> **ADMITTED x2**
+        · `as_of_utc` = `published_utc` = `2099-01-01T00:00:00Z`, window `600.0` -> **ADMITTED x2**
+        · `as_of_utc` = `published_utc` = `0000-01-01T00:00:00Z`, window `1`     -> **ADMITTED x2**
+      **A FIFTY-SIX-YEAR-OLD READING RENDERS AS CALM AND THE GATE CANNOT SEE IT**, because the gate
+      proves INTERNAL COHERENCE (the dial is fresh relative to the instant the document CLAIMS it
+      was published) and never ACTUAL FRESHNESS. A replayed envelope, a stopped publisher, a stuck
+      detector clock or a backfill run all produce exactly this document.
+    it_IS_stated_and_that_is_why_this_is_not_RED: >-
+      `DECLARED LIMIT 20(d)`, added by this increment, says it in the epistemic form: *"It says
+      nothing about whether the `published_utc` the document carries is the instant the document was
+      really published. Nothing in a document can prove that about itself."* **THAT IS TRUE, IT IS
+      HONEST, AND IT IS EXACTLY RIGHT.** It is also (i) never measured, so its COST is invisible,
+      (ii) absent from the findings block and from the entry the Project Lead reads, and (iii)
+      absent from `CD-PL-F206`, which frames the residual class as being about the window alone.
+      **HALF A RESIDUAL IN THE FINDINGS AND HALF IN A CONTRACT NOTE IS NOT A STATED RESIDUAL.**
+    it_is_faithful_to_the_ruling_and_that_is_the_point: >-
+      `PO-DECISIONS-0029` ruling 1 defines the predicate as `published_utc − dial.as_of_utc`
+      computed PURELY FROM THE DOCUMENT with no external clock. **THE IMPLEMENTATION IS FAITHFUL TO
+      THAT AND THIS IS NOT A DEFECT AGAINST THE ENGINEER.** It is the BOUNDARY of what a
+      document-internal check can be, and it means the entry's headline *"THE STALE HALF OF
+      `CD-AC-001` NOW EXISTS"* and ruling 6's standing *"missing AND STALE never render calm...
+      by construction"* are both **BROADER THAN WHAT WAS BUILT**. What was built is: **a dial cannot
+      be older than its declared window RELATIVE TO ITS OWN DECLARED PUBLICATION INSTANT.** That is
+      a real and large advance over "nothing in this product has ever computed STALE" — and it is
+      not the same sentence.
+    prescription: >-
+      Raise `published_utc` into `DECLARED LIMIT 19` and `CD-PL-F206` beside
+      `staleness_window_seconds`, with this measurement attached, and let the Product Authority see
+      that closing the class needs a comparand from OUTSIDE the document — which is a serving-time
+      or detector-time check and is where 16C already lives. **NOT MINE TO WRITE.**
+
+  A312-F4:
+    severity: LOW
+    verdict_contribution: none — this RESOLVES an open finding
+    status: RESOLVED_BY_MEASUREMENT
+    against: "`CD-ENG-F16D-05`, which is itself mistaken"
+    statement: >-
+      *** **THE DISPATCH ASKED ME TO RESOLVE THE `280` AND SAID "ONE RECORD IS WRONG". NO RECORD IS
+      WRONG. THE FINDING IS.** *** `tools/register/check_schema_closed.py` counts assertions in
+      proportion to the SUBSCHEMAS IT SCANS, so the number is a property OF THE TREE. MEASURED:
+        · CLEAN tree -> `PASS — 266` at `295bdbe`, at `be088c5` AND at `0e80a09` (unchanged since
+          the checker was written at WO-2 B1 — `git log` shows two commits, both WO-2)
+        · ARM-`H1` tree (`degraded_inputs` widened to an array of closed objects) -> **`PASS — 280`,
+          EXACTLY.**
+      `BL-20260824T170252Z-16CC` records its `280` EXPLICITLY of the **`C31` arm** — *"`C31` DOES
+      pay that allowlist — measured, `CD-RT-002-SCHEMA-CLOSED: PASS — 280 assertions, 0 violations`,
+      exit 0"* — an arm that adds a `market_pulse` ROOT PROPERTY. The `A311` verdict records its
+      `280` inside *"my own extraction per arm per tip"*, i.e. the arm-`H` tree, and says the
+      register is identical **IN EVERY rc**, which it is. **BOTH RECORDS ARE CORRECT ABOUT THE TREE
+      THEY MEASURED.** `CD-ENG-F16D-05` compared an arm-tree figure against a clean tree and
+      reported the difference as an unreproducible inherited claim.
+    it_was_still_the_right_instinct: >-
+      `CD-PL-F193` — *"an inherited claim is a hypothesis until you run it"* — is exactly right, and
+      raising the discrepancy rather than quietly restating it is what a seat should do. The
+      hypothesis simply resolves the other way. **RECORD IT AS SUPERSEDED, NOT AS CARRIED.**
+
+  A312-F5:
+    severity: LOW
+    verdict_contribution: none
+    status: DEFECT_OPEN
+    against: "`_can_carry_detail_level` in `tools/register/check_missing_data_never_calm.py`"
+    theme: CONTROL_BURDEN
+    statement: >-
+      **THE DECISION PROCEDURE'S CYCLE GUARD IS PER-PATH, SO A `$defs` GRAPH THAT FANS OUT TO SHARED
+      CHILDREN IS WALKED EXPONENTIALLY.** `seen = seen | {id(resolved)}` is passed DOWN each branch
+      rather than accumulated across the walk, so a DAG is explored as a tree. MEASURED, my own
+      harness against the module's own function: a 25-level binary `$ref` DAG returns `None`
+      (UNDECIDABLE -> the instrument goes RED, which is the correct fail-closed answer) — **in
+      142.9 SECONDS**, against < 1 s for every other shape I tried and for the real contracts.
+      **IT TERMINATES AND IT FAILS CLOSED, SO IT IS NOT A BYPASS**, but the row's runtime is
+      exponential in a hostile contract's nesting depth and a check that takes hours is a check
+      nobody runs. `DETAIL_CARRIER_DEPTH_CAP = 24` bounds the depth and therefore bounds the blowup
+      at roughly `2**24`; it does not bound the wall clock. Costs the shipped contracts NOTHING.
+    prescription: "memoise on `(id(resolved), )` across the whole walk rather than per path. NOT MINE TO WRITE."
+
+  A312-F6:
+    severity: LOW
+    verdict_contribution: none
+    status: KNOWN_LANE_STATE_CONFIRMED
+    against: lane state, agreeing with `CD-ENG-F16D-04`
+    theme: CONTINUITY_RECOVERY
+    statement: >-
+      **I AGREE WITH THE DISPATCH AND WITH THE ENGINEER, AND I CONFIRMED IT IN MY OWN WORKTREE
+      RATHER THAN ACCEPTING IT.** `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` at
+      `/tmp/asr12/target` prints `continuity_state: CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED` and
+      the standing `roadmap_identity UNAVAILABLE`; `governance/engineering/ACTIVE_WORK.yaml` on this
+      lane is the WO-2 record (`updated_utc: '2026-08-19T02:54:00Z'`, `next_safe_action` naming
+      `CD-ENG-WO2-01` on `wo-2-skeleton`). **`observed_sha` IS `0e80a09af9661a9e7e6bb73193fbe56133fcff29`
+      AND THAT IS EXACTLY THE DISPATCHED TARGET, SO RECORDED AND OBSERVED AGREE AND THIS IS NOT
+      DRIFT.** The Engineer correctly reported it and did not correct a Project Lead record.
+    the_one_thing_i_add: >-
+      It also means **A COLD AGENT CANNOT BOOT-AND-RESUME THE `wo-3` LANE**: normal boot is blocked
+      and recovery depends entirely on the Build Log and the dispatch carrying the exact SHAs, which
+      they do. That is `PBG-CONT-007` holding by the record rather than by the tool. Not this
+      increment's to fix; recorded so it is not lost.
+
+# ================================================================================================== #
+what_I_tried_that_did_NOT_break_it:
+# ================================================================================================== #
+  because_a_failed_attack_is_evidence_and_a_silent_one_is_not: >-
+    **THE MOST VALUABLE THING I CAN REPORT IS THE LIST OF COUNTEREXAMPLES I TRIED TO BUILD AND
+    COULD NOT.** Each of these is a measurement, not an impression.
+  the_hand_rolled_calendar_ranked_4_in_the_dispatch: >-
+    **EXHAUSTIVE, NOT SAMPLED. `_days_from_civil` AGREES WITH `datetime.date` ON ALL 3,652,059 CIVIL
+    DATES FROM `0001-01-01` TO `9999-12-31`. ZERO MISMATCHES.** `_parse_utc_stamp` agrees with
+    `datetime` to the microsecond on 200,000 random stamps across the whole expressible range. ZERO
+    MISMATCHES. `_is_leap_year` is correct on 0 / 1900 / 2000 / 2100 / 2400. Year `0000` — outside
+    what `datetime` can express and reachable through the contract's `[0-9]{4}` pattern — is handled
+    and is a leap year (`0001-01-01` is 366 days later). Fractional seconds are `ljust`-padded
+    correctly (`.5` -> 500000us). The `:60` leap second, `2026-02-29`, and the contract-legal
+    `2026-13-45T99:99:99Z` ALL FAIL CLOSED — as an unparsable self-declared stamp when they sit on
+    a `_utc` property, and as a missing `published_utc` when they sit at the root. **I COULD NOT
+    FIND A ONE-DAY ERROR AND I LOOKED AT EVERY DAY.**
+  the_node_walk_ranked_2: >-
+    I tried `calm` in a Mapping SUBCLASS (`collections.UserDict`) as the dial, as the whole
+    candidate, and with a `tuple` in place of a list. **ALL THREE ARE `REFUSED [SCHEMA_VIOLATION]`**
+    — `jsonschema`'s `type: object` accepts only `dict`, so a Mapping subclass never reaches the
+    fourth stage at all, and `_iter_nodes`' generality over `AbcMapping` is a belt the schema stage
+    has already buckled. I also tried a non-idempotent `Mapping` that answers differently on
+    successive reads (a TOCTOU between the four stages and the serialiser): **REFUSED
+    [SCHEMA_VIOLATION] after 15 reads, for the same reason.** Arm `H3` proves the walk goes through
+    TWO containers (`/degraded_inputs/0/0`). A `detail_level` arriving under a non-literal key is
+    unreachable on the shipped contract: `#/$defs/detail_level` and
+    `#/$defs/absent_data_detail_level` are referenced ONLY from a property spelled `detail_level`,
+    on the three dial branches, and `calm` is in only the FIRST of those two enums.
+  stamp_detection_and_oldest_governs_ranked_3: >-
+    **OLDEST-GOVERNS BITES AND I PROVED IT DIRECTLY**: a node carrying `b_utc: 1970`, `a_utc: 2026`
+    and a bare `c: 2026` string is `REFUSED [STALE_CALM]` — the 1970 stamp governs despite two
+    fresher siblings, so a fresh-looking string CANNOT rescue a stale node. Arm `D4` (newest
+    governs) costs 2 assertions. I also tried to hide a node's real stamp: a fresh stamp-shaped
+    string inside `inputs_used` (a LIST, so `_node_stamps` never sees it), inside a `contribution`
+    object, and at the root `config_snapshot_id` — **all three leave the stale dial `REFUSED
+    [STALE_CALM]` x2.** The ONE direction that works is the one `DECLARED LIMIT 20(a)` names and
+    `A312-F2` measures.
+  a_third_outcome_in_the_decision_procedure_ranked_5: >-
+    **I HUNTED ONE ACROSS THIRTY SHAPES AND THERE ISN'T ONE.** `_can_carry_detail_level` returns
+    `True`, `False` or `None` and nothing else — no exception, no `RecursionError`, no hang that
+    does not terminate. Everything I expected to be UNDECIDABLE was: `patternProperties` on a closed
+    object, `allOf`, a `$ref` with an asserting sibling, an unresolvable `$ref`, a cycle, a
+    non-list `enum`, a boolean property schema, a 40-deep nesting past the depth cap, a non-dict
+    node. Everything I expected to be CAPABLE was: the open object, `items` absent or `true`, the
+    empty schema, a `const` or `enum` member carrying `detail_level`. And the three `False`
+    verdicts I tried hardest to break are all CORRECT: `{"type": ["string","object"],
+    "additionalProperties": false}` (an object with no declared properties admits only `{}`),
+    `prefixItems` with `items: false`, and `{"const": "x", "type": "object"}` (a `const` pins the
+    instance). **THE ONLY THING I FOUND IS ITS RUNTIME — `A312-F5`.**
+  vacuity_ranked_6: "seventeen calm shapes ADMITTED x2, three stale/absent shapes REFUSED x2. See `the_verdict` above. NOT VACUOUS."
+  the_no_clock_claim: >-
+    **I DID NOT TAKE THE ENGINEER'S GREP.** I walked the module's own AST for clock IMPORTS, clock
+    ATTRIBUTES (`now`, `utcnow`, `today`, `time`, `monotonic`, `perf_counter`, `fromtimestamp`,
+    `timestamp`) and clock NAMES: **ZERO FINDINGS.** `inspect.signature(refuse_unless_publishable)`
+    is exactly `['candidate', 'surface']`. The module's namespace holds no `datetime`, `time` or
+    `calendar`. **AND I WENT ONE STEP FURTHER THAN THE CLAIM**: the `__globals__` of EVERY callable
+    the module imports (`json_pointer`, `local_refs_only`, `classify_key`, `iter_keys`) hold no
+    clock-bearing name either, so "no clock-bearing module is one attribute lookup away" is TRUE
+    TRANSITIVELY. **`BP-AMENDMENT-0001` §D.3 IS NOT REOPENED.**
+
+# ================================================================================================== #
+numbers_verified_in_my_own_shell:
+# ================================================================================================== #
+  every_one_of_these_was_RE_RUN_and_none_is_inherited: >-
+    *** THE INSTRUMENT, rc TAKEN FROM THE COMMAND AND NEVER FROM A PIPE. *** `PYTHONPATH=src
+    python3 -B tools/register/check_missing_data_never_calm.py --root .` -> `PASS — 260 assertions,
+    0 violations` **rc=0** at `0e80a09`; `PASS — 243 assertions, 0 violations` **rc=0** at
+    `295bdbe`. **THE 243 DID NOT MOVE AND THE +17 IS EXACT**: 8 public non-dial root properties
+    (`schema_version`, `as_of_utc`, `published_utc`, `regime`, `staleness_window_seconds`,
+    `inputs_used`, `degraded_inputs`, `config_snapshot_id`) + 9 private (the same eight plus
+    `classification`) = 17, one structural assertion each. I counted the properties out of the
+    contracts myself.
+
+    *** THE WHOLE THIRTY-LINE REGISTER, AT BOTH TIPS, ALL THIRTY LINES RUN BY ME. ***
+    `grep -cE '^\s*execute:\s*\S' required-tests.yaml` -> **30**. TOTAL at `0e80a09`:
+    `lines=30 rc0=19 nonzero=11`. TOTAL at `295bdbe`: `lines=30 rc0=19 nonzero=11`. **`diff` OF THE
+    TWO PER-LINE rc LISTS IS EMPTY — NO LINE MOVED.** LINE 03 `PASS — 260` / `PASS — 243`, rc=0 at
+    both. LINE 06 `CD-RT-002-SCHEMA-CLOSED: PASS — 266`, rc=0, at BOTH (see `A312-F4`).
+
+    *** `pytest`. *** `PYTHONPATH=src python3 -m pytest tests/ -q` -> **`2099 passed`** at
+    `0e80a09`, **`2007 passed`** at `295bdbe`. +92, and the new file declares exactly 26 test
+    functions parametrised to 92. **A COUNT THAT ONLY GOES UP CAN HIDE A DELETION, SO I CHECKED THE
+    OTHER WAY TOO**: `grep -iE 'skipped|xfailed|xpassed|deselected|error'` over both outputs returns
+    **NOTHING** — zero skipped, zero xfailed, zero xpassed, zero deselected, zero errors at either
+    tip — and `git diff --numstat 295bdbe..0e80a09 -- tests/` is **`688  0
+    tests/test_envelope_freshness.py` AND NOTHING ELSE.** No file was touched, weakened or removed.
+
+    *** THE NINE ARMS, MY OWN RUN, `git apply` rc TAKEN AND CHECKED, EACH FROM ITS OWN `git archive
+    | tar -x` EXTRACTION, PATCHES READ FROM AN ABSOLUTE PATH OUTSIDE EVERY EXTRACTION. *** AT
+    `0e80a09`: rc=0 on all eight; `H1`/`H2`/`H3`/`H4` -> `FAIL — 2`, exit 1; `D1` -> `PASS — 260`
+    exit 0 with 14 of 92 freshness tests failing; `D2` -> `PASS — 260` with 2 failing and `2099`
+    ADMITTED again; `D3` -> `PASS — 260` with 40 failing; `D4` -> `PASS — 260` with 2 failing.
+    AT `295bdbe`: `H1`-`H4` rc=0 and all four `PASS — 243` UNMOVED; **`D1`-`D4` `git apply` rc=1,
+    ARMS ABORTED, NOTHING MEASURED AND NOTHING CLAIMED.** `CTRL` clean at both.
+    *** **THE PREVIOUS AUDITOR COMMITTED THE rc-IGNORED DEFECT INSIDE ITS OWN AUDIT AND DISCLOSED
+    IT. I CHECKED WHETHER THE ENGINEER REPEATED IT: IT DID NOT — the runner takes rc from `git
+    apply`, aborts loudly on non-zero, and reads its patches from the repository rather than from
+    the extraction. AND I DID NOT REPEAT IT EITHER: every figure above sits behind an rc I took and
+    read.** ***
+
+    *** PRESERVATION OF `295bdbe`. *** `git diff --name-only 295bdbe..0e80a09` -> **17 paths**, and
+    `git diff --stat` for `contracts/public_envelope.schema.json`,
+    `contracts/private_envelope.schema.json` and `required-tests.yaml` is **EMPTY — ALL THREE
+    BYTE-UNCHANGED**. `ENVELOPE_SCHEMA_VERSION = "1.1.0"`. **THE MEMORIAL IS INTACT** —
+    `required-tests.yaml` line 242 still reads *"A memorial nobody reads"* and the whole passage
+    around it is untouched; `tests/test_detail_level.py`'s `"banana"` off-vocabulary arm is present
+    at line 505. `git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`, UNMOVED.
+    `git log --format='%an' 295bdbe..0e80a09 | sort -u` -> **`CD-ENG-WO3-12`, ONE IDENTITY**, on all
+    three commits, author and committer. **ZERO PROTECTED PATHS**: my own grep of the changed-path
+    list for `pbg/`, `PID.md`, `BLUEPRINT.md`, `governance/blueprint/`, `governance/decisions/`,
+    `governance/mapping/indicator_mapping.yaml` and `required-tests.yaml` returns rc=1.
+
+# ================================================================================================== #
+what_I_did_NOT_examine_and_why:
+# ================================================================================================== #
+  stated_here_and_not_in_a_footnote: >-
+    **IF I EXAMINED LESS THAN DISPATCHED IT BELONGS IN THE VERDICT.** These are the gaps.
+  the_regime_aware_layer: >-
+    `CD-RT-009` / `CD-AC-009` is NOT implemented, NOT scaffolded and has NO hook, exactly as ruling
+    2 requires — I confirmed the absence but I did not audit a later increment that does not exist.
+  the_serving_and_detector_layers: >-
+    I audited the GATE. I did not audit `publish.py`'s callers, the serving path, or anything that
+    BUILDS an envelope. I did confirm the chokepoint: the only calls to `refuse_unless_publishable`
+    in `src/` are `publication/publish.py` lines 276-277, one per surface. **A RENDERING PATH THAT
+    DOES NOT GO THROUGH THE GATE IS OUTSIDE THIS AUDIT AND IS `DECLARED LIMIT 1`'s territory.**
+  the_other_29_register_rows: >-
+    I ran all thirty and compared rc, which is what the dispatch asked. **I DID NOT AUDIT WHAT THE
+    ELEVEN NON-ZERO ROWS MEAN** — they are non-zero identically at both tips and at `295bdbe`, so
+    they are pre-existing and not this increment's, and that is the whole of my claim about them.
+  the_688_line_test_file_read_but_not_line_audited: >-
+    I read its structure, its 26 test functions, its clock scanner's own vacuity guard and the
+    `ARM_H_DOCUMENT_FRAGMENT` constant that produced `A312-F2`. **I DID NOT LINE-AUDIT ALL 688
+    LINES.** Given `A312-F1` — that this file is the guarantee's ONLY witness — a line audit of it
+    is a reasonable thing for a later seat to be dispatched to do, and I am saying so rather than
+    implying my read was one.
+  the_trinity_cited_artefacts: "unreachable from this host, as they have been all along. Not consulted, not relied on."
+
+# ================================================================================================== #
+continuation_implication:
+# ================================================================================================== #
+  what_is_true_and_what_is_safe_are_different_calculations: >-
+    **WHAT IS TRUE:** the fourth refusal stage is correct, general, exact, fail-closed and not
+    vacuous, and it satisfies `PO-DECISIONS-0029` ruling 3's completion test on both surfaces.
+    **WHAT IS SAFE:** the increment is safe to LEAVE IN PLACE and is strictly better than `295bdbe`
+    — before `16D` there was no comparison at all, and every Rule CC guarantee is byte-identical.
+    **WHAT IS NOT YET SAFE:** promoting past it. `16C` produces the liveness marking this stage
+    compares; landing it on a stage that ANY refactor can delete without moving one of thirty
+    register lines is how this project got its memorial. **`16C` REMAINS HELD. NO INDICATOR ROW IS
+    REGISTERED. THE MEMORIAL REMOVAL MUST NOT LAND.**
+  what_I_did_not_do: >-
+    **I DID NOT ACCEPT ANYTHING** (`PBG-AUTH-003` — a verdict is not an acceptance). I did not
+    release `16C`. I did not register a row. I did not remove the memorial. **I REPAIRED NOTHING I
+    FOUND** — six findings, six prescriptions, and not one line written (`PBG-SOD-004`).
+
+tests:
+  count: 30
+  result: >-
+    Register 30/30 at BOTH tips (19 rc=0 / 11 non-zero, per-line `diff` EMPTY) and 30/30 again on
+    the stage-deleted arm `D1` tree (per-line `diff` from the clean tip ALSO EMPTY — that is
+    `A312-F1`). `pytest` 2099 passed / 2007 passed, zero skipped, xfailed, deselected or errored.
+    Instrument `PASS — 260` rc=0 / `PASS — 243` rc=0. Nine arms at each tip with `git apply` rc
+    taken and checked. Calendar arithmetic exhaustive over 3,652,059 dates, zero mismatches.
+    Seventeen vacuity shapes ADMITTED x2. Thirty decision-procedure shapes, no third outcome.
+  command: >-
+    plants/WO3-INC16D/run_register.sh and run_arms.sh, invoked with MY OWN worktree as REPO so the
+    lane default could not be reached; plus my own probes, listed in `evidence_reference`.
+  evidence_reference: >-
+    **DIAGNOSTIC ARTEFACTS, ALL UNDER `/tmp/asr12/`, NONE APPLIED TO ANY WORKTREE, NONE PROJECT
+    STATE, AND NOTHING IN THIS ENTRY DEPENDS ON THEM SURVIVING** — every figure is reproduced by the
+    committed runners at the two named SHAs plus the probes described below.
+    `ev/register-target.txt`, `ev/register-base.txt`, `ev/register-D1.txt` and the three extracted
+    per-line rc lists `ev/rc-target.txt` / `ev/rc-base.txt` / `ev/rc-D1.txt` whose pairwise `diff`
+    is empty · `ev/arms-target.txt`, `ev/arms-base.txt` · `ev/pytest-target.txt`,
+    `ev/pytest-base.txt` · `ev/inst-target.txt`, `ev/inst-base.txt`. MY OWN PROBES, written by this
+    seat and not by the Engineer: `ev/asr12_probe.py` (the adversarial rows — uniform time shift,
+    declared window, root/dial incoherence, boundary and precision, stamp fail-closed, the walk,
+    container subclasses, window type confusion), `ev/asr12_vacuity.py` (seventeen calm shapes and
+    three that must still bite), `ev/asr12_decoy.py` (`A312-F2`, driven on the arm-`H1` tree),
+    `ev/asr12_limbb.py` (the third-outcome hunt and the blowup timing). The calendar proof and the
+    clock AST scan were run inline and are reproduced by the commands quoted in this entry.
+
+held_actions:
+  - "16C — the detector-side liveness marking. HELD. Not released by this verdict and not mine to release."
+  - "The indicator rows from governance/mapping/indicator_mapping.yaml. HELD. None registered."
+  - "The memorial removal. MUST NOT LAND."
+
+risks:
+  - "A312-F1: the stale half of CD-AC-001 has no register witness. Any refactor removing the fourth stage passes all thirty register lines."
+  - "A312-F2: the record claims a defence-in-depth for A311-F1 that does not exist at runtime. Decisions taken on the strength of 'closed twice over' would be taken on one layer, not two."
+  - "A312-F3: the increment's headline is broader than what was built. A uniformly time-shifted document renders calm and the gate cannot see it."
+  - "A312-F5: the limb (b) decision procedure is exponential in a hostile contract's nesting depth. Fails closed; may not finish."
+
+evidence_references:
+  - governance/decisions/PO-DECISIONS-0029.md
+  - governance/dispatch/CD-DISPATCH-WO3-INC16D-ASSURANCE.yaml
+  - governance/engineering/build-log/BL-20260824T170252Z-16CC.yaml
+  - "BL-20260824T183401Z-16DF (the Engineer's return, at entry tip ef3c960 — not in this tree)"
+  - "asr-wo3-11-verdict (A311-F1, A311-F2 — the RED this increment answers)"
+  - contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md
+  - "required-tests.yaml line 242 — the memorial, INTACT"
+
+closing:
+  the_sentence_the_dispatch_asked_me_to_disbelieve: >-
+    *** **I DISBELIEVED "CLOSED BY CONSTRUCTION" AND TRIED TO CONSTRUCT THE COUNTEREXAMPLE, AND ON
+    THE CONTRACT THIS PRODUCT SHIPS I COULD NOT.** *** I went at the walk with Mapping subclasses,
+    tuples, a non-idempotent Mapping and two containers of nesting; at stamp detection with decoys
+    buried in lists, in nested objects and at the root; at the arithmetic with every civil date
+    there is; at the decision procedure with thirty shapes looking for a fourth answer; and at
+    vacuity with seventeen calm documents. **THE STAGE HELD EVERY TIME.** What I DID find is not a
+    hole in the construction — it is that **THE CONSTRUCTION HAS NO GUARD** (`A312-F1`), that the
+    record claims a second layer it does not have (`A312-F2`), and that the honest limit of a
+    document-internal check is stated in one place and missing from three (`A312-F3`).
+    **ELEVEN SEATS FOUND THE HOLE. THE TWELFTH FOUND THE GUARD MISSING FROM A THING THAT IS
+    ACTUALLY CLOSED, AND THAT IS A DIFFERENT AND BETTER PROBLEM TO HAVE.**
+  standing: >-
+    **A VERDICT IS NOT AN ACCEPTANCE** (`PBG-AUTH-003`). **I SUPPLIED EVIDENCE AND A VERDICT;
+    ACCEPTANCE IS RESERVED TO THE PRODUCT AUTHORITY, AND MOVING THE GATE IS THE PROJECT LEAD'S.**
+    `16C` DOES NOT MOVE ON MY SAY AND NEITHER DO THE ROWS.

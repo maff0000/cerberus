@@ -1,0 +1,178 @@
+entry_id: BL-20260824T104431Z-A305
+timestamp_utc: "2026-08-24T10:44:31Z"
+project: crash-detector
+actor: CD-ASR-WO3-05
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16B-ASSURANCE
+work_type: TASK
+phase: BUILD
+repository: local
+branch: asr-wo3-05-verdict
+worktree: /tmp/asr05/verdict
+baseline_sha: 20fd1e1
+current_sha: cbb81d15dd1ca105c922c15d61d91fc7673e7249
+parent_entry_id: BL-20260824T102127Z-16BI
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  ASSURANCE VERDICT ON INCREMENT 16B ITEM (i) AT cbb81d15dd1ca105c922c15d61d91fc7673e7249 —
+  AMBER.
+
+  THE INCREMENT DOES DISCHARGE THE SUBSTANCE OF PO-DECISIONS-0026 RULING 9. The constitutional
+  guarantee is now carried by a register-wired instrument that drives the LIVE gate, and the
+  register now MOVES on the regressions it was commissioned against. I confirmed that
+  independently rather than accepting it. BUT I BROKE THE INSTRUMENT THREE WAYS, AND ONE OF
+  THOSE THREE IS INVISIBLE TO THE ENTIRE REGISTER — a tree on which refuse_unless_publishable
+  ADMITS an UNKNOWN dial rendering as calm on BOTH surfaces while all thirty execute: lines
+  exit byte-identically to the clean tree. That is the exact defect class 16B exists to close,
+  rebuilt one level up, and it is why this is not a PASS.
+
+  ROOT CAUSE, ONE SENTENCE, AND ALL THREE ESCAPES ARE IT. The instrument enumerates SURFACES,
+  SLOTS and LEVELS from the contract — which is genuinely good design and is what makes it
+  survive a rename refactor a structural checker would fail — but it HARD-CODES THE DOCUMENT
+  SHAPE. _dial() writes out the field list of each branch by hand and _envelope() fills only
+  the slots it enumerated. So the union's BRANCH SET is never enumerated, a slot expressed as
+  anything other than the literal {"$ref": "#/$defs/dial_reading"} is never driven, and the
+  ABSENCE of detail_level is never driven at all.
+
+  E3 — THE SERIOUS ONE. A fourth branch appended to #/$defs/dial_reading.oneOf, permitting the
+  full vocabulary on state UNKNOWN and selected by a marker property (render_hint) added to the
+  parent's properties. No new ROOT key, so check_schema_closed's root allowlist does not fire.
+  MEASURED: the instrument PASS 67 assertions 0 violations; all 30 execute: lines diff EMPTY
+  against the clean tree; and the live gate ADMITS {"state":"UNKNOWN", "detail_level":"calm",
+  "render_hint":"COMPACT"} on public AND private.
+
+  E2 — AND IT IS A NAMED MEMBER OF THIS ROW'S OWN NEGATIVE-CONTROL CLASS. detail_level removed
+  from `required` on dial_reading_unknown and dial_reading_degraded on both contracts. MEASURED:
+  the instrument PASS 67/0, and the gate ADMITS an UNKNOWN dial carrying NO detail_level at all
+  on both surfaces. required-tests.yaml's negative_control for this very row names "the branch
+  detail_level requirement dropped so that the parent dial_reading's full-vocabulary property is
+  what applies" and then states "The instrument fails on all of these". IT DOES NOT. The
+  execution contract says the same thing in the same words. THE REGISTER-WIRED INSTRUMENT IS
+  STRICTLY WEAKER THAN THE MEMORIAL IT WAS BUILT TO REPLACE: tests/test_detail_level.py's
+  _assert_missing_data_never_renders_as_calm has asserted _dial_with_level(builder, None) ==
+  REFUSED and _dial_with_level(builder, "banana") == REFUSED since before this increment, and
+  CD-ASR-WO3-04's own 30-row probe covered both. The new instrument dropped both rows.
+
+  E1 — AND DECLARED LIMIT 4 IS FALSE AS WRITTEN, IN ALL THREE PLACES IT IS SAID. An OPTIONAL
+  third dial slot referencing a permissive union: instrument PASS 67/0, gate ADMITS calm on it,
+  both surfaces. Limit 4 claims "a third surface or a third dial is driven on the day it is
+  added". It is not, unless the slot is spelled with that one exact $ref string. (The register
+  as a whole DOES catch E1, via check_schema_closed's root-properties allowlist. The limit is
+  still not honestly drawn.)
+
+  THE §3.1 PRIMARY ATTACK, ANSWERED EXPLICITLY, AND THE DISPATCH CANNOT BE ANSWERED AS WORDED.
+  The dispatch tells me to compare the candidate against "what publish.py and the envelope
+  builders actually emit" and to build "a real envelope produced by the product's own code
+  path". THERE ARE NO ENVELOPE BUILDERS IN src/ AND publish.py EMITS NOTHING. publish_cycle
+  TAKES two envelopes as arguments and HAS ZERO CALLERS — the product's own source says so at
+  publish.py:129 and detail_level.py:123 (CD-PL-F167). There is no product code path that
+  produces an envelope, so the literal attack has no target. THE ANSWERABLE FORM: the only
+  definition of the published shape that exists at this commit is the two closed contracts, and
+  WITHIN that space the candidate is genuine and correctly located. Every MUST ADMIT row is
+  ADMITTED, which is what proves the candidate is not being refused for an unrelated
+  malformation; all 8 refusals are SCHEMA_VIOLATION at /<slot>; and all 8 PAIR to a
+  single-pointer diff at /<slot>/detail_level. I verified the seat's sole-differing-pointer
+  claim myself on both surfaces at both slots and it is EXACT. So the increment is NOT a
+  well-evidenced guard on nothing. It is a real guard on a real region of the contract space
+  whose boundary is one hand-written document shape per (state, level).
+
+  §3.4 — EXIT 3 IS RIGHT, AND THE DECLARED LIMIT IS NOT HONESTLY DRAWN. Exit 3 is correct: a
+  behavioural instrument that judged a tree it is not looking at would be making a statement
+  about somebody else's files, which is CD-PL-F98 and has burned this project four times.
+  Refusing to judge is the right behaviour FOR THE INSTRUMENT, and "exit 3 is right" and "the
+  route is closed" are different sentences — the increment says so out loud, and scheduling
+  CD-PL-F180 into 16D is right. BUT I FOUND A THIRD ROUTE, AND IT NEEDS NO ENVIRONMENT VARIABLE.
+  load_envelope_schema() re-reads the contract from disk on EVERY call with no cache;
+  <root>/contracts is 0775 and its two JSON files are 0664, owned by the running user. A process
+  that rewrites <root>/contracts/*.json IN PLACE flips the gate from REFUSED to ADMITTED
+  mid-process while contracts_dir() still resolves to <root>/contracts — so DECLARED LIMIT 1's
+  precondition is satisfied and the instrument still exits 0. The SHA-256 the instrument prints
+  binds only its own run instant: it is a TOCTOU witness, not a control. 16D's scope must be
+  widened from "$CD_CONTRACTS_DIR" to "the contract bytes the gate loads at publish time".
+
+  §3.3 — I MADE IT FAIL ON A TREE, AND THE FAILURE IS DECLARED. absent_data_detail_level
+  narrowed to ["acute"] — STRICTLY STRONGER compliance with PID §3.2 than the tip — makes the
+  instrument FAIL with 40 violations. But the row's negative_control declares "any change that
+  makes elevated or acute stop being admitted on a missing-data branch" to BE a violation of the
+  row. Declared, therefore honest; recorded, not graded. A SYMMETRIC PID §4 amendment (a fourth
+  level added to DETAIL_ORDER and to BOTH enums) PASSES at 81 assertions, which is the
+  vocabulary-driven design working exactly as claimed. A pure refactor (absent-data type
+  RENAMED, enum REORDERED, $defs REVERSED, behaviour identical) PASSES the instrument 67/0 —
+  vindicating the behavioural-not-structural choice — BUT FAILS THE REGISTER at line 2 with 6
+  failures in tests/test_detail_level.py, because those tests read schema keys by NAME. 16B's D3
+  growth imported that brittleness into the register. That is the "a guard that fires on correct
+  trees gets disabled" risk, and the seat did not weigh it.
+
+  D3 ITSELF I JUDGE CORRECT AND LOAD-BEARING, AND I MEASURED IT RATHER THAN AGREED WITH IT. On
+  E2 the pre-16B command (test_reading, test_evaluate, test_dial_presentation) passes 124/124;
+  the file 16B added catches it, 3 failed / 49 passed. The additive growth is the only thing in
+  the register that sees E2 at all. It does not misstate what CD-RT-001-ABSENCE-RENDERS-UNKNOWN
+  evidences: that entry is scope CLASS and carries the RENDERING half of CD-AC-001, and "renders
+  as calm" sits inside "renders" as squarely as "renders as a number" does.
+
+  NOTHING MOVED THAT MUST NOT MOVE. be0b355 is still be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5.
+  pid.content_hash MATCHES, 18 criteria and not 19, latest_admitted_run (null), GATE: SHUT.
+  evidence/required-tests/runs/ DOES NOT EXIST — the seat could not have written there and did
+  not. Zero pbg/ paths and zero contracts/*.json bytes changed by the whole increment: 16B is
+  purely additive guard work. The boot RED is genuinely inherited — ACTIVE_WORK.yaml is the SAME
+  BLOB ce0803c3d472fe52541f28965d7995e888329c28 at be0b355 and at the target.
+
+  I DID NOT REPAIR ANYTHING (PBG-SOD-001, PBG-SOD-004). Every finding below carries a
+  prescription and the line is left unwritten.
+
+status: WAITING_PROJECT_LEAD
+next_safe_action: >-
+  THE NEXT SAFE GATE: PROJECT_LEAD_SEAT_02 accepts or rejects this AMBER, then dispatches a
+  FRESH Engineer seat (never CD-ENG-WO3-05, which built this) for a bounded 16B-FIX covering
+  F1, F2 and F3 — enumerate the #/$defs/dial_reading oneOf branch set and drive each
+  absent-data branch from its OWN required/properties; add the field-ABSENT and
+  off-vocabulary rows as MUST REFUSE; correct DECLARED LIMIT 4 and the negative_control
+  overclaim in all three places they are said — followed by a FRESH Assurance seat. F4 goes to
+  16D with its scope widened from the environment variable to the contract bytes. F6 is a
+  judgement call for the Project Lead, not a fix. NOTHING MERGES TO main AND be0b355 STAYS
+  FROZEN UNTIL THAT SEQUENCE COMPLETES. I am not the seat that repairs any of this.
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 30
+  result: "All 30 required-tests.yaml `execute:` lines run VERBATIM, cwd at tree root, on my own git archive extraction of cbb81d1 and on each of seven mutated copies. Baseline at the target: 18 lines exit 0; the 12 non-zero (rc=2,3,4) are pre-existing and identical on every tree I built. The new row `python3 tools/register/check_missing_data_never_calm.py --root .` exits 0 at 67 assertions."
+  command: "for each `execute:` line in required-tests.yaml, eval verbatim with cwd = <root>"
+  evidence_reference: "/tmp/asr05/runreg.sh; baseline /tmp/asr05/base.txt; arms /tmp/asr05/e1.txt /tmp/asr05/e2.txt /tmp/asr05/e3.txt /tmp/asr05/f4.txt; trees /tmp/asr05/{target,E1,E1b,E2,E2b,E3,F1,F2,F3,F4,R3b,C5,base20}"
+
+risks:
+  - "F1 — AMBER, AND THE ONE THAT MATTERS. A CALM-OVER-UNKNOWN TREE THAT THE ENTIRE REGISTER CANNOT SEE. Tree /tmp/asr05/E3: a fourth branch `dial_reading_unknown_hinted` appended to #/$defs/dial_reading.oneOf on BOTH contracts, permitting #/$defs/detail_level on state UNKNOWN and requiring a marker property `render_hint` which is also added to the parent dial_reading.properties. NO new ROOT key is added, so check_schema_closed's root-properties allowlist — the thing that catches E1 — does not fire. MEASURED, three ways: (i) `python3 tools/register/check_missing_data_never_calm.py --root .` -> `CD-RT-001-MISSING-DATA-NEVER-CALM: PASS — 67 assertions, 0 violations`; (ii) all 30 `execute:` lines run verbatim, `diff /tmp/asr05/base.txt /tmp/asr05/e3.txt` -> EMPTY, no line's exit code moves at all; (iii) the live gate, driven directly: `refuse_unless_publishable({... equity_crash: {state: UNKNOWN, reason: NO_SOURCE_REGISTERED, since_utc: ..., missing_inputs: [], detail_level: 'calm', render_hint: 'COMPACT'} ...})` returns None on public AND on private — *** ADMITTED: UNKNOWN dial rendering as calm ***. CAUSE: _dial() hard-codes one document shape per state and the check never enumerates the union's oneOf branch set, so a branch it did not write cannot be driven. This is CD-PL-F169 / CD-ASR-WO3-02 F06-F07 / CD-ASR-WO3-03 / CD-ASR-WO3-04 F2 one level up. PRESCRIPTION, NOT APPLIED: after slots are enumerated, resolve schema['$defs']['dial_reading']['oneOf'], and for every branch whose properties.state.const is in ABSENT_STATES build a minimal instance from THAT BRANCH'S OWN required+properties and assert calm is REFUSED; separately assert the resolved branch set equals a declared allowlist, or push that structural half into check_schema_closed, which today allowlists ROOT properties only and nothing inside $defs. I did not write either line."
+  - "F2 — AMBER, AND IT IS A FALSE STATEMENT IN TWO GOVERNED ARTEFACTS. Tree /tmp/asr05/E2: `detail_level` removed from the `required` list of dial_reading_unknown AND dial_reading_degraded on BOTH contracts; the branch $ref narrowing is left fully intact. MEASURED: instrument -> `PASS — 67 assertions, 0 violations`; and the live gate ADMITS a dial `{state: UNKNOWN, reason: ..., since_utc: ..., missing_inputs: []}` with NO detail_level key at all, on public AND private. required-tests.yaml's negative_control for THIS row names as a member of the violation class 'the branch detail_level requirement dropped so that the parent dial_reading's full-vocabulary property is what applies', and then asserts 'The instrument fails on all of these'; contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md says the same in the same words. IT DOES NOT FAIL. (The OTHER reading of that clause — the branch's properties.detail_level narrowing deleted while `required` is kept — IS caught, 40 violations, because additionalProperties:false then makes every absent-data dial unrepresentable. Measured at /tmp/asr05/E2b. So the sentence is true under one reading and false under the other, and the false one is the one an editor would actually make.) THE INSTRUMENT IS STRICTLY WEAKER THAN WHAT IT WAS BUILT TO SUPERSEDE: tests/test_detail_level.py::_assert_missing_data_never_renders_as_calm already asserts `_dial_with_level(builder, None) == REFUSED` and `_dial_with_level(builder, 'banana') == REFUSED` for both branches on both surfaces, and CD-ASR-WO3-04's 30-row probe covered {absent, banana} too. Both rows were dropped when the property was moved into the register-wired instrument. NOT A HOLE IN THE REGISTER — the pytest line 16B grew DOES catch E2 (3 failed / 49 passed) — but a hole in the instrument, and a claim in the record that is not true. PRESCRIPTION, NOT APPLIED: add `None` (field absent) and one off-vocabulary string to _expectations as MUST REFUSE rows; _dial() already takes `level` and would need only to omit the key when it is None. CD-CALM-PAIRED-004's one-pointer diff still works for the off-vocabulary row and needs a stated exception for the absent row. I did not write it."
+  - "F3 — AMBER. DECLARED LIMIT 4 IS FALSE AS WRITTEN, IDENTICALLY IN ALL THREE PLACES CD-RULE-004 REQUIRES IT TO BE SAID: the instrument header ('so a third surface or a third dial added tomorrow is driven on the day it is added'), the required-tests.yaml comment, and contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md ('so a third surface or a third dial is driven on the day it is added'). Tree /tmp/asr05/E1: a THIRD dial slot `credit_stress`, OPTIONAL (absent from `required`, which is exactly how one adds a dial without breaking existing consumers), whose property value is {\"$ref\": \"#/$defs/dial_reading_permissive\"} — a union carrying the full vocabulary on its DEGRADED and UNKNOWN branches. MEASURED: instrument -> `PASS — 67 assertions, 0 violations`; live gate ADMITS credit_stress = {state: UNKNOWN, ..., detail_level: 'calm'} on BOTH surfaces. The slot enumerator requires `sub.get('$ref') == '#/$defs/dial_reading'` EXACTLY, so any other spelling is invisible. NOT A REGISTER HOLE: check_schema_closed catches E1 — `UNDECLARED KEYS PRESENT: credit_stress`, 2 violations, exit 1, the ONLY line in the whole register that moves. And a REQUIRED third slot in any spelling is caught by the instrument itself, because its candidates would then be missing a required property (measured at /tmp/asr05/E1b: 22 violations). So the exposure is narrow — an OPTIONAL slot, unusually spelled — but the LIMIT AS DECLARED promises something the code does not do, and this project grades the declaration. PRESCRIPTION, NOT APPLIED: restate limit 4 as 'every top-level property whose value is literally {\"$ref\": \"#/$defs/dial_reading\"}', and add a fail-closed assertion that the enumerated slot set equals the contract's dial-bearing root properties under any spelling. I did not write it."
+  - "F4 — AMBER, AND IT WIDENS CD-PL-F180 RATHER THAN DISPUTING IT. A THIRD ROUTE TO AN ADMITTED CALM-OVER-UNKNOWN THAT NEEDS NO ENVIRONMENT VARIABLE AND NO IMPORT FROM OUTSIDE --root. The seat named two routes ($CD_CONTRACTS_DIR; the package imported from outside --root) and the dispatch asked me for a third. THE CONTRACT BYTES ARE READ FRESH ON EVERY CALL AND THE FILES ARE WRITABLE. envelope_contract.load_envelope_schema() does path.read_text() per invocation and holds no cache — deliberately, and the docstring says why. `stat -c '%A %U:%G'` on my extraction: contracts/ drwxrwxr-x root:root, both *.schema.json -rw-rw-r-- root:root, i.e. writable by the account that runs the service. MEASURED IN ONE PROCESS at /tmp/asr05/R3b, with CD_CONTRACTS_DIR unset throughout and contracts_dir() reporting /tmp/asr05/R3b/contracts at both ends: BEFORE -> public REFUSED [SCHEMA_VIOLATION] at /equity_crash, private REFUSED [SCHEMA_VIOLATION] at /equity_crash; the same process then rewrites <root>/contracts/*.json in place; AFTER -> public *** ADMITTED — UNKNOWN dial rendering as calm ***, private the same. The instrument had exited 0 on that tree moments earlier. Its DECLARED LIMIT 1 precondition (`resolved == root/contracts`) is SATISFIED on this route, so exit 3 never fires; and the SHA-256 it prints binds only its own run instant, which makes it a TOCTOU witness rather than a control. MY READING ON §3.4, BOTH LIMBS ARGUED: exit 3 IS the right behaviour for the instrument — a behavioural check that reported on documents it was not looking at would be CD-PL-F98 for the fifth time on this project, and refusing to judge is not the same as being switched off, because it is non-zero, states the reason, and PBG-CI-002 forbids reading it as a skip. It is NOT a guard 'told to call it a precondition', because the instrument never claimed to be the control for that route and says so in limit 1 in all three places. The scheduling of CD-PL-F180 into 16D is therefore RIGHT. What is NOT right is the limit's SCOPE: it is drawn around a variable name, and the route above needs no variable. PRESCRIPTION, NOT APPLIED: 16D must be scoped to the contract BYTES the gate loads at publish time, not to $CD_CONTRACTS_DIR — e.g. pin the expected digests in the application and refuse on mismatch, and/or make the deployed contracts read-only to the service account and evidence it from a running deployment. I did not write it and I did not schedule it."
+  - "F5 — RECORDED, NOT GRADED, BECAUSE IT WAS DECLARED. I made the instrument FAIL on a tree that is STRICTLY STRONGER than PID §3.2 requires: /tmp/asr05/F2, absent_data_detail_level narrowed from [elevated, acute] to [acute] on both contracts, so missing data can render ONLY as acute and calm remains unrepresentable. Result: `FAIL — 40 violation(s)`, 28x CD-CALM-GATE-002, 8x CD-CALM-PAIRED-004, 4x CD-CALM-REASON-003. The instrument's rule is 'everything in the vocabulary except calm-on-an-absent-branch MUST BE ADMITTED', which is stronger than the criterion's own words. BUT the row's negative_control declares exactly this outcome — 'any change that makes `elevated` or `acute` stop being admitted on a missing-data branch' is declared to BE a violation of the row — so the behaviour is disclosed, not hidden, and the limit is honestly drawn ON THIS AXIS. I record it so a future seat meeting a red instrument on a tighter tree finds it already measured rather than rediscovering it as a defect. CONTROL, and it is the good news: a SYMMETRIC PID §4 amendment (fourth level `critical` added to DETAIL_ORDER in src/ and to BOTH enums in both contracts, /tmp/asr05/F3) -> `PASS — 81 assertions, 0 violations`. The vocabulary-driven table genuinely grows on the day the vocabulary does, exactly as claimed."
+  - "F6 — AMBER, AGAINST THE INCREMENT AND NOT AGAINST THE INSTRUMENT. D3's ADDITIVE GROWTH IMPORTED STRUCTURAL BRITTLENESS INTO THE REGISTER. Tree /tmp/asr05/F4: a pure refactor with ZERO behavioural change — $defs/absent_data_detail_level RENAMED to missing_data_render_level with both branch $refs repointed, its enum REORDERED to [acute, elevated], and the whole $defs mapping REVERSED. calm is still unrepresentable on both absent-data branches on both surfaces. THE NEW INSTRUMENT PASSES IT: 67 assertions, 0 violations — which is the behavioural-not-structural design claim VINDICATED BY MEASUREMENT, and is precisely what a $ref-target-name checker would have failed. BUT THE REGISTER NOW FAILS: line 2 rc=1, 6 failed / 46 passed in tests/test_detail_level.py — test_the_absent_data_branches_declare_a_vocabulary_that_EXCLUDES_calm (both surfaces), test_the_guard_FAILS_when_calm_is_restored_to_a_missing_data_branch (both branches), test_the_guard_FAILS_when_calm_is_restored_to_BOTH_missing_data_branches, test_the_mutated_copy_reproduces_the_RED_and_leaves_the_real_contracts_untouched — all of which read schema keys BY NAME. Before 16B, no `execute:` line ran that file, so this brittleness was not the register's. It is now. §3.3's own warning applies: a guard that fires on correct trees gets disabled, and then it guards nothing. NOT A REASON TO UNDO D3 — D3 is the only thing in the register that catches F2's E2 — but it is a cost the seat did not weigh and did not declare. PRESCRIPTION, NOT APPLIED: this is a Project Lead judgement, not an Engineer fix. Either accept the coupling and record it as a declared limit of CD-RT-001-ABSENCE-RENDERS-UNKNOWN's grown command, or move the name-coupled assertions behind a resolver that follows the $ref instead of matching its target's name. I did not write either."
+  - "FINDINGS AGAINST THIS DISPATCH — and it does contain a false statement, as it warned me it would. (i) §3.1, THE PRIMARY ATTACK, PRESUPPOSES ARTEFACTS THAT DO NOT EXIST. It directs me to compare the candidate against 'what src/crash_detector/publication/publish.py and the envelope builders actually emit', and to construct 'a real envelope, produced by the product's own code path rather than by the instrument'. THERE ARE NO ENVELOPE BUILDERS IN src/. publish.py does not emit an envelope: publish_cycle RECEIVES public_envelope and private_envelope as keyword arguments, and it HAS ZERO CALLERS — the product's own source states this at publish.py:129 ('publish_cycle HAS ZERO CALLERS and src/ HAS NO...') and at detail_level.py:123 (CD-PL-F167), and CD-ASR-WO3-04 banked the same fact. `grep -rn 'publish_cycle' src/ tools/ tests/` returns its own def, its __all__, three docstring mentions, and tests/ — nothing else. So §3.1's second bullet is NOT PERFORMABLE at this commit, and the framing 'is the candidate the shape this product actually publishes' has no referent, because THIS PRODUCT PUBLISHES NOTHING. I answered the answerable form instead and said so in the summary. This matters beyond pedantry: the dispatch's own worst case — 'a refusal of a document no code produces' — is UNAVOIDABLY TRUE HERE for every guard on this criterion, including the pytest ones, until a builder exists, and the honest statement is that the CONTRACT is the definition of the published shape at this commit and the instrument judges it faithfully within one hand-written document shape per (state, level). (ii) §2's 'all FOURTEEN register instruments pass on the reverted tree' IS A PARTIAL MEASUREMENT STATED AS A TOTAL (CD-PL-F170). Measured by me on my own extraction of the base 20fd1e1, running every `execute:` line verbatim: there are 15 non-pytest lines; TWELVE exit 0; check_grant_matrix_live.py exits 3, PRECONDITION_NOT_MET, which is not 'passing'; and TWO of them — check_public_artefact_no_private_field.py and check_first_published_immutable.py — NAME FILES THAT DO NOT EXIST IN THE REPOSITORY and exit 2. 'Fourteen' reconciles only as the count of tools/register/check_*.py FILES at base, two of which (check_base_image_digest_pin.py, check_dockerignore.py) no `execute:` line names, so it is a count of a different set than the sentence describes. THE SUBSTANTIVE POINT SURVIVES AND I CONFIRMED IT INDEPENDENTLY AND MORE STRONGLY — E3 is a calm-admitting tree with ZERO register movement — but the number as written cannot be reproduced. NOTE FOR THE RECORD: two register rows naming instruments that do not exist is a separate defect nobody has raised; it is outside 16B and I do not grade it. (iii) §3.5 asks whether the stdlib-only departure is a defect: IT IS FINE. jsonschema==4.10.3 is declared in requirements.txt, in pyproject.toml [project] dependencies, and pinned with hashes in requirements.lock; it is present on the host interpreter (4.10.3 measured); the gate itself cannot run without it; and the instrument exits 3 with the reason rather than passing or skipping if it is absent. The dependency is declared exactly where this project declares dependencies. (iv) §3.5's D3 question, answered: the growth does NOT misstate what CD-RT-001-ABSENCE-RENDERS-UNKNOWN evidences, and I measured rather than agreed — see F6's first half for the cost it DOES carry. (v) I record what the dispatch got RIGHT under attack, because a dispatch is graded both ways: its instruction not to re-run C1-C4 was correct budget discipline and I did not; its §3.4 characterisation of CD-PL-F180 is accurate and I extended rather than corrected it; and its §5 disclosure of CD-PL-F181 meant I did not inherit the 18-versus-16 error — I confirmed 16 criteria UNDECIDABLE on negative_control.evidence_ref and CD-AC-017/CD-AC-018 UNDECIDABLE on an unresolved execution_contract, exactly as §5 states."
+
+blockers: []
+
+evidence_references:
+  - "TARGET, MY OWN EXTRACTION: `git archive cbb81d15dd1ca105c922c15d61d91fc7673e7249 | tar -x -C /tmp/asr05/target`. I did not work in /srv/crash-detector-wo3, /srv/crash-detector, or any *-audit* worktree. My verdict worktree is /tmp/asr05/verdict on branch asr-wo3-05-verdict."
+  - "BASELINE, THE NEW ROW RUN VERBATIM FROM THAT EXTRACTION, cwd at its root: `python3 tools/register/check_missing_data_never_calm.py --root .` -> `CD-RT-001-MISSING-DATA-NEVER-CALM: PASS — 67 assertions, 0 violations`, exit 0. 36 gate cells = 2 surfaces x 2 slots x 9 rows. Slots enumerated ['equity_crash','monetary_debasement'] on both surfaces; vocabulary enumerated ['calm','elevated','acute']; contracts judged sha256 b2a39552... (public) and 082c64de... (private); package imported from /tmp/asr05/target/src/crash_detector/__init__.py; python 3.11.2; ENVELOPE_SCHEMA_VERSION 1.1.0."
+  - "THE SEAT'S SOLE-DIFFERING-POINTER CLAIM, VERIFIED BY ME ON BOTH SURFACES AT BOTH SLOTS: all 8 refusals are `REFUSED [SCHEMA_VIOLATION] at /<slot>` and all 8 pair as `PAIRED against 'acute' — sole difference /<slot>/detail_level`. Exact, 8/8. All 28 MUST ADMIT rows ADMITTED, including VALUE/calm on both surfaces at both slots, which is what proves the candidate is not being refused for an unrelated malformation."
+  - "WHOLE REGISTER, ALL 30 `execute:` LINES, VERBATIM, cwd = tree root, via /tmp/asr05/runreg.sh. Target baseline /tmp/asr05/base.txt: 18 lines rc=0; rc!=0 are lines 9 (rc=3), 18,20,24,25,27,28,29,30 (rc=4, pytest file absent), 19,23 (rc=2, instrument file absent) — all pre-existing and constant across every tree I built."
+  - "F1 / E3: `diff /tmp/asr05/base.txt /tmp/asr05/e3.txt` -> NO OUTPUT. Not one of the 30 exit codes moves. Instrument on E3: `PASS — 67 assertions, 0 violations`. Live gate on E3: public *** ADMITTED: UNKNOWN dial rendering as calm ***, private *** ADMITTED ***, returned None on both."
+  - "F2 / E2: instrument `PASS — 67 assertions, 0 violations`. Live gate on E2, dial with NO detail_level key: public *** ADMITTED (no detail_level on either dial) ***, private the same. Register DOES catch it, at line 2 only: `diff base.txt e2.txt` shows exactly one changed line, `2 rc=0 -> 2 rc=1`."
+  - "F2 ATTRIBUTION, MEASURED NOT ASSUMED: on E2 the PRE-16B command `PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q` -> 124 passed, rc=0. The file 16B ADDED: `PYTHONPATH=src python3 -m pytest tests/test_detail_level.py -q` -> 3 failed, 49 passed, including test_missing_data_never_renders_as_calm_THROUGH_THE_LIVE_GATE. D3's growth is the only thing in the register that sees E2."
+  - "F2 OTHER READING / E2b (branch properties.detail_level deleted, required kept): instrument `FAIL — 40 violation(s)`. Caught."
+  - "F3 / E1: instrument `PASS — 67 assertions, 0 violations`; live gate ADMITS credit_stress UNKNOWN+calm on both surfaces. `diff base.txt e1.txt` -> exactly one changed line, `6 rc=0 -> 6 rc=1`: check_schema_closed reports `UNDECLARED KEYS PRESENT: credit_stress` on both contracts, 2 violations."
+  - "F3 CONTROL / E1b (existing slot monetary_debasement re-expressed as allOf[$ref permissive], still required): instrument `FAIL — 22 violation(s)`, slots enumerated ['equity_crash'] only. A REQUIRED slot cannot hide; only an OPTIONAL one can."
+  - "F4 THIRD ROUTE / R3b, ONE PROCESS, CD_CONTRACTS_DIR UNSET THROUGHOUT, contracts_dir() = /tmp/asr05/R3b/contracts at both ends: BEFORE public REFUSED [SCHEMA_VIOLATION] at /equity_crash, private REFUSED [SCHEMA_VIOLATION] at /equity_crash; the process rewrites <root>/contracts/*.json in place; AFTER public *** ADMITTED — UNKNOWN dial rendering as calm ***, private the same. The instrument had exited `PASS — 67 assertions, 0 violations` on that same tree immediately before. Permissions: `drwxrwxr-x root:root contracts`, `-rw-rw-r-- root:root contracts/*.schema.json`. Cause is in the source: load_envelope_schema does path.read_text() per call and its own docstring declares it holds no cache."
+  - "F5 / F2-tree (absent enum -> ['acute']): `FAIL — 40 violation(s)` — 28 CD-CALM-GATE-002, 8 CD-CALM-PAIRED-004, 4 CD-CALM-REASON-003. F5 CONTROL / F3-tree (symmetric fourth level `critical` in DETAIL_ORDER and both enums): `PASS — 81 assertions, 0 violations`."
+  - "F6 / F4-tree (absent type RENAMED to missing_data_render_level with both $refs repointed, enum REORDERED, $defs REVERSED): instrument `PASS — 67 assertions, 0 violations`; register line 2 rc=1, `6 failed, 46 passed` in tests/test_detail_level.py, all six name-coupled."
+  - "CONTRAST ARM C5, THE ONE THE DISPATCH DID NOT SAY IT HAD REPRODUCED, RUN BY ME FROM MY OWN EXTRACTION: `bash plants/WO3-INC16B/C5-NO-PATCH-CONTRACTS-DIR-REPOINTED.sh` -> repository blobs printed 46f3a1b7d6c93373b21d2399787e54d08a331c0b and 304a9bf1f6ed204856ea50d70d0495e140bead25, which I confirmed EQUAL `git rev-parse cbb81d1:contracts/public_envelope.schema.json` and `...:contracts/private_envelope.schema.json`; gate with $CD_CONTRACTS_DIR at the widened copy ADMITS a calm UNKNOWN dial on both surfaces; instrument exits 3 PRECONDITION_NOT_MET with the reason; same tree, variable unset, exit 0. Behaves exactly as documented. C1-C4 NOT re-run, per dispatch §2."
+  - "REGISTER STATE AT THE TARGET: `PYTHONPATH=pbg/tools python3 -B -m pbg.cli --root . required-tests verify` -> `pid.content_hash MATCHES`; `latest_admitted_run (null)`; EIGHTEEN criteria CD-AC-001..018 (counted `grep -cE '^  \\[[MA]\\] CD-AC-'` -> 18), all UNDECIDABLE; MANDATORY NOT PASS (17); `GATE: SHUT`; `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`; exit 2. CD-AC-017 and CD-AC-018 are UNDECIDABLE on an unresolved execution_contract, the other 16 on an unresolved negative_control.evidence_ref — CD-PL-F181 confirmed."
+  - "THE SEAT DID NOT WRITE RUN RECORDS: `evidence/required-tests/runs/` DOES NOT EXIST in the target tree at all (`ls` -> No such file or directory), and `git diff --name-only 20fd1e1 cbb81d1 -- evidence/ pbg/ contracts/public_envelope.schema.json contracts/private_envelope.schema.json` -> EMPTY. 16B touched 11 files, 2046 insertions, 2 deletions, and NOT ONE of them is a contract, an evidence artefact or a pbg/ path."
+  - "16B's tests/test_detail_level.py change is 22 lines of DOCSTRING and NOTHING ELSE (`git diff 20fd1e1 cbb81d1 -- tests/test_detail_level.py`): no test added, no test changed. The catch of E2 comes entirely from assertions that already existed and were previously unwired."
+  - "THE INHERITED RED, VERIFIED THEN LEFT ALONE: governance/engineering/ACTIVE_WORK.yaml is the SAME BLOB at both ends — `git rev-parse be0b355:...` and `cbb81d1:...` both ce0803c3d472fe52541f28965d7995e888329c28 — and `git diff --stat be0b355 cbb81d1 -- <that file>` is EMPTY. Line 36 reads `continuity_record_commit: PENDING` at both. The Engineer's claim is TRUE. My boot returned BLOCKING: CONTINUITY_REFERENCE_INVALID / PBG-CONT-006, diagnosed and NOT repaired."
+  - "FROZEN BASE: `git rev-parse be0b355` -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5, unchanged at the end of this audit. `git rev-parse wo-3` -> cbb81d15dd1ca105c922c15d61d91fc7673e7249."
+  - "DEPENDENCY: jsonschema==4.10.3 declared in requirements.txt, in pyproject.toml [project].dependencies, and hash-pinned in requirements.lock; measured present on the interpreter as 4.10.3. The stdlib-only departure is declared and correct."
+  - "DECLARED LIMITS OF THIS AUDIT (CD-RULE-004). I did NOT re-run contrast arms C1-C4 — the dispatch forbade spending budget there and I obeyed, so every statement I make about them is INHERITED and not mine. I did NOT run the full `pytest tests/ -q` suite at either end; my test evidence is the 30 register `execute:` lines and targeted files. NO LIVE POSTGRESQL and NO DOCKER, so nothing here is evidence about a running deployment — F4's permission finding is measured on my extraction's filesystem and is a statement about how the code reads its contracts, not a measurement of the production service account. I did NOT audit 16A or 16A-FIX; my range is 20fd1e1..cbb81d1. I did NOT grade ruled items 2-6 of PO-DECISIONS-0026 ruling 7 (16C-16E), per dispatch §4. I did not attempt to break the gate's non-schema refusal layers (_refuse_non_json, _refuse_classified_keys) — out of this criterion's scope. My escapes E1/E2/E3 are SCHEMA edits; I did not attempt a source-level edit to refuse_unless_publishable, which the row's negative_control also names. MY MUTATIONS WERE CONFINED TO /tmp/asr05/* COPIES; NO REPOSITORY FILE WAS WRITTEN BY ME EXCEPT THIS ENTRY, ON MY OWN BRANCH. I REPAIRED NOTHING (PBG-SOD-001, PBG-SOD-004)."
