@@ -141,6 +141,9 @@ Complies with **FORGE** (`/srv/forge`): PID → PL (Rogue, driving session) → 
 
 ## 10. TECHNICAL + ISOLATION BOUNDARIES
 
+**Canonical build location, pinned 2026-10-10:** `dell-debian:/srv/cerberus` (`ssh root@192.168.11.10`) — cloned from `https://github.com/maff0000/cerberus` (GitHub is the source of truth; this is just where the live checkout lives). Confirmed empty before cloning — this is a fresh location, not a move of existing work. Note this deliberately departs from the house `/srv-dev/<name>` convention other dell-debian projects use (ARGCAT, ARGUS) — Owner's explicit choice, not an oversight. The original authoring copy at `trinity:/srv/cerberus` is historical only going forward; all further work happens against the dell-debian checkout.
+
+
 - **Crash Detector:** standalone container, own DB schema, own service surface, dell-debian DEV → IONOS PROD. Integrates with ARGUS/HERMES data **only via governed, read-only contracts** — never embedded in the ARGUS runtime again. This is the specific lesson from why it "died twice on ARGUS internals."
 - **US-Equities Day Trading:** new, standalone project. Same wall PLUTUS already taught us to build: never smuggled into the ARGUS app boundary, own repo, own runtime, own credentials. Consumes Argus/OpenBB data via contract, never direct DB access.
 - **LGT Wealth Tooling:** OpenBB/Fincept/TradingAgents/AI-Hedge-Fund integrations sit alongside Trinity's own review process, write to `project:cerberus:wealth:*`, and are explicitly reconciled against Argus/CO before any number is presented to Matt as decision-grade.
