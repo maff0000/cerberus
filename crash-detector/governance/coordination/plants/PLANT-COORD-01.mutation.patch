@@ -1,0 +1,56 @@
+# ================================================================================================= #
+# PLANT-COORD-01 MUTATION — THE ATOMIC TAKE REPLACED BY CHECK-THEN-WRITE.
+#
+# ================================================================================================= #
+# **SUPERSEDED AT INCREMENT 13 BY `CD-ENG-COORD-FIX-01`, AND THE REASON IS RECORDED HERE BECAUSE A
+# SEAT EDITING ANOTHER SEAT'S COUNTERFACTUAL MUST SAY WHY IN THE ARTEFACT ITSELF.**
+#
+# Increment 12 had ONE exclusion mechanism on a claim take: `O_EXCL`. Hunk 1 below removes it, and
+# that was sufficient to admit two holders of one task — the contrast `PLANT-COORD-01` arm 2 needs.
+#
+# `CD-ASR-WO2R3-06-F04` forced a SECOND mechanism: the scope check and the take now run inside
+# `registry.critical_section` (`fcntl.flock`). **SO HUNK 1 ALONE NO LONGER ADMITS ANYTHING** — with
+# `O_EXCL` gone, the mutex still serialises the two racers and the second one still loses. RUN
+# AGAINST THE FIXED TREE WITH HUNK 1 ONLY, ARM 2 REPORTED `*** DID NOT CONTRAST ***`, AND IT WAS
+# RIGHT TO: a plant that passes both arms is DEAD and is worse than no plant.
+#
+# **HUNK 2 IS THEREFORE ADDED, AND IT MAKES THIS COUNTERFACTUAL STRICTLY STRONGER, NOT WEAKER.**
+# The mutation must now defeat BOTH exclusion mechanisms to admit a double-take. Nothing was
+# removed from hunk 1, no assertion was relaxed, and no arm's expectation was changed. **A MUTATION
+# THAT MUST BREAK MORE IN ORDER TO FALSIFY IS A HARDER TEST OF THE CONTROL, AND THAT IS THE ONLY
+# DIRECTION A SEAT MAY EVER MOVE A TEST IT DID NOT WRITE.**
+# ================================================================================================= #
+diff --git a/tools/coordination/registry.py b/tools/coordination/registry.py
+index 7e768b3..352be4c 100644
+--- a/tools/coordination/registry.py
++++ b/tools/coordination/registry.py
+@@ -186,7 +186,7 @@ def critical_section(root: str, which: str, timeout: float = LOCK_TIMEOUT_S) ->
+     try:
+         while True:
+             try:
+-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
++                pass  # MUTATION (hunk 2): the check-then-take MUTEX IS NOT TAKEN EITHER.
+                 break
+             except OSError as exc:
+                 if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK):
+@@ -210,8 +210,18 @@ def critical_section(root: str, which: str, timeout: float = LOCK_TIMEOUT_S) ->
+ 
+ 
+ def write_exclusive(path: str, payload: Dict[str, Any]) -> None:
+-    """THE ATOMIC TAKE. ``FileExistsError`` propagates to the caller and IS the refusal."""
+-    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
++    """MUTATED FOR PLANT-COORD-01. THE ATOMIC TAKE REPLACED BY CHECK-THEN-WRITE.
++
++    THIS IS THE DEFECT, NOT THE CONTROL. Between the `os.path.exists` test and the `open` there is
++    a TOCTOU window, and two seats interleaved inside it BOTH SUCCEED. The optional sleep below
++    WIDENS the window; it does not create it, and the plant measures the unwidened race too.
++    """
++    if os.path.exists(path):
++        raise FileExistsError(path)
++    if os.environ.get("PLANT_COORD_01_WIDEN"):
++        import time
++        time.sleep(float(os.environ["PLANT_COORD_01_WIDEN"]))
++    fd = os.open(path, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o644)
+     try:
+         with os.fdopen(fd, "w", encoding="utf-8") as fh:
+             yaml.safe_dump(payload, fh, sort_keys=False, default_flow_style=False, allow_unicode=True)

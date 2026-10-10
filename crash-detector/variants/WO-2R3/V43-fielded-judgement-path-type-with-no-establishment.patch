@@ -1,0 +1,55 @@
+diff --git a/src/crash_detector/engine/verdict.py b/src/crash_detector/engine/verdict.py
+new file mode 100644
+index 0000000..4beb428
+--- /dev/null
++++ b/src/crash_detector/engine/verdict.py
+@@ -0,0 +1,49 @@
++"""V43's SUBJECT — a fielded judgement-path type that establishes its fields NOWHERE.
++
++**NOT A RUNNER AND NOT A GUARD** (``PBG-ASSURE-001``). This module exists only inside
++``variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch`` and is
++never present in the lane tree.
++
++THE PROPOSITION IT MEASURES. Until PO-DECISIONS-0010 ruling 1 the ruled class was
++*body-borne* field establishment, and a public frozen judgement-path type that established
++its fields NOWHERE fell outside it: the constructor instrument reported such a type in its
++ADJACENT SET and exited 0. The seat that built that instrument raised the hole against its
++own work as ``CD-ENG-WO2R3-F17``, printed it at every run with the words "THIS IS A REAL
++HOLE AND THIS SEAT IS NOT HIDING IT", and refused to close it on its own authority. The
++Product Owner then ruled the class wider — **BODY-BORNE OR ABSENT** — so that a fielded
++judgement-path type arriving with no establishment FAILS ON ARRIVAL.
++
++**THIS FILE IS THE EXECUTABLE EXAMPLE THAT DECLARED LIMIT 1 ALREADY SPELLED OUT, VERBATIM**:
++*"add ``@dataclass(frozen=True)`` / ``class Verdict: score: float`` to
++``src/crash_detector/engine/`` with no ``__post_init__``"*. It is the same patch on both
++arms, and the arms differ only in which revision of the instrument reads it.
++
++WHY IT MATTERS THAT THIS PATCH EXISTS AT ALL. The widening changed **no present verdict** —
++the only type the old rule left outside was ``Empty``, which has zero fields and satisfies
++the new rule vacuously. A widening written into the header text and never into the code path
++would measure EXACTLY THE SAME as a real one on this tree. This patch is the only thing that
++tells the two apart.
++
++WHAT IT IS NOT. It is not a claim about runtime: nothing here is imported by the product,
++nothing constructs a ``Verdict``, and the instrument that reads it never imports anything.
++The runtime claim for this class is made by ``tests/test_field_establishment.py``.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++
++__all__ = ["Verdict"]
++
++
++@dataclass(frozen=True)
++class Verdict:
++    """A public frozen judgement-path type with a field and no establishment anywhere.
++
++    Reached by RULE A: it is defined under ``src/crash_detector/engine/``. It is PUBLIC and
++    it is a FROZEN SUBJECT. It declares ONE field. It has **no** ``__post_init__``, **no**
++    ``__init__``, and **no** ``@establishes(...)``, so its field establishment is ABSENT —
++    which was the whole of its former defence.
++    """
++
++    score: float

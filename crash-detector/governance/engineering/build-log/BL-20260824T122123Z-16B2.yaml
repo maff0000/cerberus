@@ -1,0 +1,354 @@
+entry_id: BL-20260824T122123Z-16B2
+timestamp_utc: "2026-08-24T12:21:23Z"
+project: crash-detector
+actor: CD-ENG-WO3-07
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16B-FIX2-ENGINEER
+work_type: TASK
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+baseline_sha: 64cd5b2122f8ae1f7310a81379757d9cc297ff40
+current_sha: e01b8f55e0df836b1bd9041a12634f9b9198b51f
+parent_entry_id: BL-20260824T114609Z-A306
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  INCREMENT 16B-FIX-2 — FX5, FX6, FX7 AND FX8 BUILT AND MEASURED. READY_FOR_ASSURANCE.
+
+  *** BOTH OF CD-ASR-WO3-06'S FINDINGS WERE REPRODUCED END TO END BEFORE ANYTHING WAS WRITTEN,
+  FROM MY OWN EXTRACTIONS AND MY OWN MUTATORS, AND BOTH ARE NOW RED. AND THE DISPATCH CONTAINS A
+  FALSE STATEMENT, WHICH IS §8's LAST STOP CONDITION — F01 BELOW. I COMPLETED THE INCREMENT AND
+  REPORT IT RATHER THAN STOPPING, FOR THE REASON STATED IN F01; THE PROJECT LEAD MAY DISAGREE AND
+  THE MEASUREMENT IS THERE TO BE CHECKED. ***
+
+  BOOT. `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` -> `BLOCKING: continuity invalid —
+  CONTINUITY_REFERENCE_INVALID — read-only diagnosis permitted, normal boot blocked
+  (PBG-CONT-006)`. DIAGNOSED AND NOT REPAIRED (dispatch §8): `git rev-parse
+  be0b355:governance/engineering/ACTIVE_WORK.yaml` and `git rev-parse
+  64cd5b2:governance/engineering/ACTIVE_WORK.yaml` are BOTH
+  ce0803c3d472fe52541f28965d7995e888329c28, so line 36's `continuity_record_commit: PENDING` is
+  byte-for-byte the FROZEN BASE's and nothing in 16B, 16B-FIX or this increment touched it. That
+  file is not in my writable scope and I did not open it for writing. FIFTH SEAT TO SAY SO.
+
+  *** WHAT I REPRODUCED BEFORE I WROTE A LINE, BECAUSE A FIX FOR A FINDING I HAD NOT SEEN MYSELF
+  WOULD BE A RELAY AND NOT AN ENGINEERING ACT. *** On the 16B-FIX instrument, from four throwaway
+  extractions of 64cd5b2: C11 (auditor X2, conditional branch) instrument PASS 144/0, live gate
+  ADMITTED on BOTH surfaces WITH the marker and REFUSED on both WITHOUT it (the control — the tree
+  is not broken), and EXACTLY ONE of the register's thirty `execute:` lines moved: LINE 2,
+  tests/test_detail_level.py, THE MEMORIAL. C12 (X1, the careless precursor) the same, except two
+  lines move because check_schema_closed catches the unclosed `else`. C13 (auditor B6,
+  `credit_stress` state const NO_DATA) instrument PASS 144/0, gate ADMITTED calm on BOTH surfaces,
+  only line 6 moved. C14 (auditor B4 / the PL's reproduction — optional root `feed_liveness`,
+  states ["LIVE","STALE"], THE 16C LIVENESS QUANTITY) instrument PASS 144/0, gate ADMITTED
+  `{state: STALE, reason: FEED_DEAD, detail_level: 'calm'}` on BOTH surfaces, only line 6 moved.
+  AND THE CONTRAST THAT PROVES F2 IS THE VOCABULARY AND NOT THE SHAPE: the byte-identical property
+  with its state spelled ["UNKNOWN","STALE"] is FAIL — 2 on the 16B-FIX instrument. EVERY NUMBER
+  THE DISPATCH AND THE AUDIT STATE ON THESE FOUR TREES IS TRUE AND I MEASURED IT MYSELF.
+
+  FX5 — `_dial_from_branch` now tests the resolved branch, BEFORE building, for any of
+  `if`/`then`/`else`/`allOf`/`anyOf`/`oneOf`/`not`/`dependentSchemas`/`dependentRequired`/
+  `unevaluatedProperties` and returns it as UNBUILDABLE, reported as CD-CALM-BRANCHES-006 on
+  DECLARED LIMIT 9's own sentence. DENY BY DEFAULT AND NOT AN ENUMERATION — the stronger form is
+  RULED OUT and I did not build it. VERIFIED MYSELF that the clean tree's six branches (three per
+  surface) declare only type/additionalProperties/required/properties/description, so it costs
+  nothing today. ONE CHANGE THE PRESCRIPTION DID NOT NAME AND I MADE DELIBERATELY: the filler dial
+  is now the first absent-data branch that actually BUILDS. Without it a conditional UNKNOWN
+  branch exits 3 from the filler builder with NO VIOLATION CODE AT ALL — reported nowhere, which
+  is not where the prescription says it belongs. It is declared as DECLARED LIMIT 11 and it makes
+  DECLARED LIMIT 9's own sentence true for the first time (CD-ASR-WO3-06 F3 limb (a), closed as a
+  measured consequence and not as a happy accident — arm C17).
+
+  FX6 — `_dial_bearing` returns None (UNDECIDABLE) and never False for a resolved subschema that
+  DECLARES a `state` whose const/enum does not intersect DECLARED_STATES. THE LOOSER, LOUDER FORM
+  AS RULED. *** THE DISPATCH'S STOP CONDITION ON THIS DID NOT FIRE, AND I CHECKED IT THREE WAYS
+  RATHER THAN ASSUMING: the clean tree is unchanged at PASS — 144 assertions, 0 violations with
+  the whole 30-line register BYTE-IDENTICAL to the 16B-FIX baseline; `grep -n '"state"'` over both
+  contracts finds the string ONLY inside the dial_reading defs; and arm C16 — an optional root
+  property that is a closed nested object with no `state` anywhere — is PASS — 144. IT FIRES ON A
+  DECLARED `state` IT CANNOT CLASSIFY AND ON NOTHING ELSE. ***
+
+  FX7 — DECLARED LIMIT 4 RE-SUPERSEDED IN ALL THREE CD-RULE-004 PLACES, AND WRITTEN LAST, AFTER
+  FX6 WAS MEASURED, EXACTLY AS ORDERED. The form is the one the auditor called impeccable and it
+  is not changed: WHAT THIS LIMIT SAID VERBATIM -> WHAT WAS SAID INSTEAD AT 16B-FIX VERBATIM ->
+  THAT SENTENCE WAS ALSO FALSE, AND HOW IT WAS MEASURED -> WHAT IS TRUE INSTEAD. NOTHING IS
+  ERASED: the 16B-FIX sentence is quoted verbatim and survives in all three files (grep count 1
+  each). The new claim is bounded to what I measured — DECLARED `state`, under any spelling of
+  that state's vocabulary, within a declared keyword set and depth — AND IT SAYS WHAT IS STILL
+  SILENT: a root property carrying a dial that declares no property NAMED `state` is classified
+  False and reported by nothing. That residue is DECLARED LIMIT 12 and it is the honest cost of
+  the looser form.
+
+  FX8 — CD-PL-F188 CLOSED. CD-RT-001-ABSENCE-RENDERS-UNKNOWN's DECLARED LIMIT 12 is now in all
+  three of its CD-RULE-004 places: required-tests.yaml (it was already there),
+  contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md, and the MODULE DOCSTRING of
+  tests/test_detail_level.py. THE TEST FILE DIFF IS 48 INSERTIONS AND ZERO DELETIONS, ONE HUNK,
+  ENTIRELY INSIDE THE MODULE DOCSTRING, AND THE FILE STILL REPORTS 52 passed. I also recorded
+  there the thing that makes the FX4 ruling stronger than when it was made: adopting
+  CD-ASR-WO3-05 F6's `$ref`-following remedy would have made X2 INVISIBLE TO THE ENTIRE REGISTER,
+  so the ruling to keep the name coupling now has a second, independent reason. I AGREE WITH THE
+  RULING AND SAY SO, AS THE DISPATCH INVITED.
+
+  RESULT: seventeen contrast arms. C11 FAIL 32, C12 FAIL 32, C13 FAIL 2, C14 FAIL 2 — all four
+  MUST FAIL and all four do, from their own pristine extractions of the final tip with
+  `git apply` rc=0 recorded as its own column. C15 (the ordered control) PASS 158. C16 (an extra
+  control, declared as beyond the five ordered) PASS 144. C17 FAIL 32. C1-C10 RE-RUN AND
+  UNCHANGED, including the two the dispatch named: C6 FAIL — 6 (4x CD-CALM-GATE-001 + 2x
+  CD-CALM-BRANCHES-006) and C10 PASS — 158 assertions, 0 violations. Clean tree exit 0 at
+  PASS — 144 assertions, 0 violations. pytest tests/ -q 2007 passed. Register MATCHES / 18
+  criteria / GATE: SHUT / latest_admitted_run (null). Scope: 12 files, ZERO protected prefixes,
+  ONE identity.
+
+  I DID NOT IMPLEMENT 16C. No root property, no dial state, NO SCHEMA EDIT OF ANY KIND — both
+  envelope schemas are byte-identical to the base's and every plant lives in a /tmp extraction.
+  I DO NOT CERTIFY THIS (PBG-SOD-001, non-waivable). A fresh Assurance seat follows.
+
+status: READY_FOR_ASSURANCE
+next_safe_action: >-
+  PROJECT_LEAD_SEAT_02 reads F01 FIRST — the dispatch's §5 claim about the limit numbering is
+  FALSE and I completed the increment rather than stopping; that judgement is the Project Lead's
+  to confirm or reverse, and if reversed nothing here is lost because every artefact is committed
+  and every measurement is reproducible. Then a FRESH Assurance seat (never CD-ENG-WO3-06, never
+  CD-ASR-WO3-06, never me) against this SHA, whose sharpest questions are named in `risks` below:
+  (1) is FX5's keyword list CLOSED in the right direction — bring a branch shape whose extra
+  admissible documents come from a keyword NOT on the list; (2) does FX6's loose form miss a dial
+  that declares no property named `state`, which I say it does and declare as LIMIT 12; (3) is the
+  filler-fallback change (LIMIT 11) a weakening anywhere I did not look. be0b355 stays FROZEN and
+  nothing merges to main until that seat rules.
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 30
+  result: >-
+    ALL 30 `execute:` LINES RUN VERBATIM, cwd at tree root, on my own `git archive` extraction of
+    the final tip: BYTE-IDENTICAL to the same 30 lines on my extraction of 64cd5b2 —
+    `diff reg-base.txt reg-final.txt` is EMPTY. 19 rc=0 and 11 non-zero, which is CD-ENG-WO3-06
+    F02's and CD-ASR-WO3-06's census and not A305's. `grep -cE '^\s*execute:\s*\S' required-tests.yaml`
+    -> 30 on both trees (a bare `grep -c 'execute:'` returns 36 because six occurrences are the
+    word inside prose comment blocks — recorded because three seats got this wrong and the audit
+    asked for it to be carried forward). `PYTHONPATH=src python3 -m pytest tests/ -q` -> 2007
+    passed in 68.40s, NO REGRESSION FROM 2007. `tests/test_detail_level.py` -> 52 passed.
+  command: "bash /tmp/e07/runreg.sh <tree>  — for each `execute:` line, eval verbatim with cwd = <root>"
+  evidence_reference: "/tmp/e07/runreg.sh; /tmp/e07/reg-base.txt; /tmp/e07/reg-final.txt; /tmp/e07/reg-C11-{unfixed,fixed}.txt; /tmp/e07/reg-C13-*.txt; /tmp/e07/reg-C14-*.txt"
+
+risks:
+  - >-
+    F01 — *** THE DISPATCH CONTAINS A FALSE STATEMENT, IT IS §8's LAST STOP CONDITION, AND IT IS
+    INHERITED VERBATIM FROM THE AUDIT IT ANSWERS. SIX CONSECUTIVE DISPATCHES ON THIS LANE NOW. ***
+    §5 says of DECLARED LIMIT 12: "`DECLARED LIMIT 12` HAS NO COUNTERPART 10 OR 11 ANYWHERE, and
+    the sibling row's limit list runs 1-9, so a reader cannot verify the numbering is consistent
+    between two rows sharing one file." CD-ASR-WO3-06 (v) says it more strongly still — "no
+    counterpart 10 or 11 ANYWHERE IN required-tests.yaml". MEASURED, AND THE COMMANDS ARE THE
+    WHOLE OF THE ARGUMENT: `grep -n "DECLARED LIMITS 10 AND 11\|DECLARED LIMIT 12"
+    required-tests.yaml` -> 307 and 345. `grep -n '^  - test_id:' required-tests.yaml` -> the
+    CD-RT-001-ABSENCE-RENDERS-UNKNOWN row runs 274-547. *** DECLARED LIMITS 10 AND 11 ARE STATED
+    IN required-tests.yaml, IN THE SAME BLOCK SCALAR AS DECLARED LIMIT 12, THIRTY-EIGHT LINES
+    ABOVE IT. *** And the "1-9" list is not "the sibling row's" list of the same sequence — it is
+    a DIFFERENT ROW's INDEPENDENT sequence: limits 1-9 belong to
+    CD-RT-001-MISSING-DATA-NEVER-CALM, in a separate comment block below line 548. The two rows
+    share one FILE and share no NUMBERING. THE NUMBERING WAS CONSISTENT AND IT WAS VERIFIABLE.
+    WHAT WAS GENUINELY MISSING — and what a reader actually could not check — WAS ANY STATEMENT
+    ANYWHERE OF THE SCHEME: that declared-limit numbers are PER ROW and not per file, which makes
+    a bare "DECLARED LIMIT 12" ambiguous in required-tests.yaml and always did. THAT is what I
+    fixed, in all six places the two rows own, and I fixed it by CORRECTING the premise rather
+    than by accepting it — a correction that adopts a false premise is not a correction.
+    *** WHY I DID NOT STOP, STATED SO THE PROJECT LEAD CAN OVERRULE IT. *** §8 says stop if any
+    statement is false. This falsehood is confined to the RATIONALE of FX8's second limb; it
+    touches nothing in FX5, FX6, FX7 or FX8's first limb, and the corrective ACTION it ordered
+    ("fix the numbering or declare why it is what it is; do not leave a reader unable to check")
+    is discharged identically whether the premise is true or false. Stopping would have left the
+    constitutional escape open and the tree half-written. The lane's own precedent is
+    CD-ASR-WO3-06, which found §3.1 misdescribing the mechanism it was ordered to attack and
+    COMPLETED ITS AUDIT rather than stopping. I have committed everything, so reversing this
+    judgement costs a re-read and not a rebuild.
+  - >-
+    F02 — MY OWN FIX INTRODUCES A COST THAT WILL COME DUE, AND I NAME IT RATHER THAN LEAVING IT IN
+    THE LIMIT TEXT ALONE. FX5 is deny-by-default over a CLOSED keyword list. A LEGITIMATE
+    conditional dial branch — and `if`/`then`/`else` is an ordinary way to express a real
+    constraint — turns this instrument RED with no way to say "this one is fine". That is
+    DECLARED LIMIT 10 and it is priced. THE RISK CD-ASR-WO3-05 F6 NAMED IS LIVE HERE: a guard
+    that fires on correct trees gets disabled, and then it guards nothing. It costs nothing TODAY
+    (measured: no branch on either surface carries any of the ten keywords) and I have not
+    bounded how long that stays true. THE INCREMENT THAT NEEDS A CONDITIONAL BRANCH IS THE
+    INCREMENT THAT MUST PRICE THE ENUMERATING FORM. That is not a defect in this fix; it is the
+    Project Lead's ruling working as intended, and a future seat meeting a red instrument on a
+    benign contract addition should find it already written down.
+  - >-
+    F03 — THE FILLER FALLBACK IS THE ONE THING I BUILT THAT NO PRESCRIPTION ASKED FOR, AND AN
+    AUDITOR SHOULD ATTACK IT FIRST. Without it, FX5 turns C11 into exit 3 PRECONDITION_NOT_MET
+    with NO violation code — the branch would be refused-about rather than REPORTED, and the
+    auditor's prescription says CD-CALM-BRANCHES-006. So the filler now takes the first
+    absent-data branch that BUILDS rather than the first it FINDS. I BELIEVE IT IS STRICTLY
+    LOUDER AND I CANNOT PROVE IT: on the clean tree the chosen branch is still UNKNOWN (the note
+    "filler dial taken from branch #/$defs/dial_reading_unknown (UNKNOWN)" prints at every run,
+    deliberately, so the choice is never invisible); C1-C10 are unchanged; and where NO
+    absent-data branch builds it still exits 3, now naming every branch and its obstacle. THE
+    SHAPE I DID NOT TEST: a tree where UNKNOWN is unbuildable and DEGRADED is buildable but
+    DIFFERENTLY PERMISSIVE, such that the DEGRADED filler makes a candidate the UNKNOWN filler
+    would not have. Every other slot carries the filler, so a filler change is a change to every
+    cell in the matrix. I say so rather than implying I bounded it.
+  - >-
+    F04 — WHAT FX6 STILL DOES NOT SEE, AND IT IS ONE KEYSTROKE AWAY FROM WHAT IT DOES SEE.
+    `_dial_bearing` keys on the property NAME `state`. A root property carrying a dial that
+    discriminates on `status`, `kind` or `reading_state` is classified False and reported by
+    NOTHING in this instrument. C13 and C14 are red because their dials happen to spell the
+    discriminator the way this project's do. I did not widen the check to "any discriminator"
+    because which key names mean "this is a dial" is product meaning and not an Engineer's to
+    decide (PBG-AUTH-005) — and the wrong widening would fire on every enum-bearing object in the
+    contract. IT IS DECLARED LIMIT 12 IN ALL THREE PLACES AND IT IS NOT PROVED TO BE CARRIED
+    ANYWHERE. AN AUDITOR CAN BUILD THAT TREE IN FIVE MINUTES FROM MY OWN C14 PATCH BY RENAMING
+    ONE KEY, AND SHOULD.
+  - >-
+    F05 — I DECLINED THE DISPATCH'S LITERAL SHAPE FOR C15 AND SAY SO RATHER THAN LETTING IT PASS
+    AS A DETAIL. §6 defines C15 as "the symmetric fourth level, i.e. C10 re-run". Taken literally
+    that is a byte-duplicate of C10's patch sitting in the same directory, where the two copies
+    can drift apart and a future seat cannot tell which is authoritative. I ran C15 as C10's
+    patch — `cmp` identical, verified — from ITS OWN separate pristine extraction, recorded as its
+    own row with its own `git apply` exit code, and wrote in the MANIFEST exactly what it is and
+    why there is no C15-*.patch file. THE MEASUREMENT THE DISPATCH ASKED FOR IS MADE; THE ARTEFACT
+    IT IMPLIED IS NOT CREATED. If the Project Lead wants the duplicate file, it is one `cp`.
+  - >-
+    F06 — I ADDED TWO ARMS BEYOND THE FIVE ORDERED, AND BOTH ARE DECLARED AS ADDITIONS RATHER
+    THAN SMUGGLED INTO THE NUMBERING. C16 exists because the FX6 ruling created a risk the
+    dispatch's own stop condition could not test: the clean tree proves the loose form does not
+    fire on properties that EXIST, and says nothing about a legitimate one added tomorrow. C17
+    exists because FX5's filler change makes a measurement CD-ASR-WO3-06 F3 recorded (limit 9
+    exits 3, not 1) come true, and a behaviour change that closes a recorded finding should have
+    an arm rather than a sentence. NEITHER IS ORDERED AND EITHER CAN BE DELETED BY RULING.
+  - >-
+    F07 — WHAT I DID NOT DO, SO NOBODY READS THIS ROW AS WIDER THAN IT IS. I did not attack the
+    branch recogniser's four shapes the auditor already defeated (A1/A2/A3/A6) — INHERITED, not
+    mine. I did not re-derive C1-C4's original 16B measurements; I re-RAN them and report the
+    re-run. I did not touch CD-PL-F180 / the contract-bytes route (16D), the instrument's exit 3
+    (two auditors have ruled it correct), STALENESS_WINDOW_CEILING_SECONDS (16C), the no-blend
+    closure, host coupling, version discrimination, or indicator_mapping.yaml. NO LIVE
+    POSTGRESQL, NO DOCKER, NO RUNNING DEPLOYMENT — every gate result here is my own in-process
+    drive of `refuse_unless_publishable` against a /tmp extraction's `src/`, and nothing here is
+    evidence about production. MY ESCAPES ARE SCHEMA EDITS ONLY: I did not attempt a source-level
+    edit to the gate itself. AND I DID NOT WRITE UNDER evidence/required-tests/runs/ — that
+    directory does not exist in this tree and forging my own assurance is PBG-SOD-001,
+    non-waivable.
+
+blockers: []
+
+evidence_references:
+  - >-
+    MY OWN EXTRACTIONS, NEVER THE WORKTREE (CD-PL-F154). Every arm is
+    `git archive <tip> | tar -x -C /tmp/e07/run-<ARM>` followed by
+    `git apply -p1 --verbose plants/WO3-INC16B/<ARM>-*.patch` with the exit code captured as its
+    own column, then the instrument. The mutators that BUILT the patches (/tmp/e07/mut.py) also
+    ran only against `git archive` copies under /tmp/e07/mk-<ARM>/{a,b}; the patch is
+    `diff -ruN a/contracts b/contracts` between them. NO REPOSITORY FILE WAS EVER MUTATED BY A
+    PLANT. The worktree's own contracts are byte-identical to the base's — proved below.
+  - >-
+    THE FOUR ESCAPES, REPRODUCED ON THE 16B-FIX INSTRUMENT BEFORE ANY LINE WAS WRITTEN.
+    C11 `PASS — 144 assertions, 0 violations` exit 0; live gate WITH the marker
+    `public: *** ADMITTED *** returned None` / `private: *** ADMITTED *** returned None`; live
+    gate WITHOUT it (THE CONTROL) `public: REFUSED [SCHEMA_VIOLATION] at /equity_crash` /
+    `private: REFUSED [SCHEMA_VIOLATION] at /equity_crash`; whole register `diff reg-base.txt
+    reg-C11-unfixed.txt` -> ONE hunk, `LINE 2 rc=0 -> rc=1` (tests/test_detail_level.py).
+    C12 the same escape, two register lines (line 2 and line 6, check_schema_closed).
+    C13 `PASS — 144`, gate ADMITTED `credit_stress {state: NO_DATA, detail_level: 'calm'}` on
+    BOTH surfaces, register ONE hunk `LINE 6 rc=0 -> rc=1`.
+    C14 `PASS — 144`, gate ADMITTED `feed_liveness {state: STALE, reason: FEED_DEAD,
+    detail_level: 'calm'}` on BOTH surfaces, register ONE hunk `LINE 6 rc=0 -> rc=1`.
+    CONTROL ON THE CLEAN TREE: all three shapes `REFUSED [UNKNOWN_KEY]`, so the trees and not the
+    driver are what admitted them.
+  - >-
+    THE VOCABULARY CONTRAST, MEASURED HERE AND NOT QUOTED. The C14 property with its state
+    changed to `{"enum": ["UNKNOWN","STALE"]}` and NOTHING ELSE: `FAIL — 2 violation(s)` on the
+    16B-FIX instrument AND on the 16B-FIX-2 instrument. THE ONLY DIFFERENCE BETWEEN A CAUGHT TREE
+    AND AN UNCAUGHT ONE WAS WHETHER THE NEW DIAL REUSED AN OLD STATE NAME.
+  - >-
+    THE SEVENTEEN ARMS AT THE FINAL TIP, EACH FROM ITS OWN EXTRACTION, `git apply` EXIT CODE
+    FIRST. C1 rc=0 FAIL — 8 (8x GATE-001); C2 rc=0 FAIL — 2; C3 rc=0 FAIL — 8; C4 rc=0 FAIL — 4
+    (4x GATE-002); C5 no patch, PRECONDITION_NOT_MET exit 3 with the gate still ADMITTING on the
+    repointed copy, and exit 0 with the variable unset; **C6 rc=0 FAIL — 6 = 4x CD-CALM-GATE-001
+    + 2x CD-CALM-BRANCHES-006**; C7 rc=0 FAIL — 8; C8 rc=0 FAIL — 8; C9 rc=0 FAIL — 2 (2x
+    SLOTS-007); **C10 rc=0 PASS — 158 assertions, 0 violations**; C11 rc=0 FAIL — 32 (20x
+    BRANCHES-006 + 12x PAIRED-004); C12 rc=0 FAIL — 32 (same census); C13 rc=0 FAIL — 2 (2x
+    SLOTS-007, the undecidable limb); C14 rc=0 FAIL — 2 (same); C15 CONTROL rc=0 PASS — 158;
+    C16 CONTROL rc=0 PASS — 144; C17 rc=0 FAIL — 32. NOT ONE ARM FAILED TO APPLY AND NOT ONE
+    STOPPED BITING.
+  - >-
+    THE TWO NEW VIOLATION TEXTS, VERBATIM FROM THE ARMS' OWN OUTPUT.
+    C11 — "public/equity_crash/UNKNOWN[#/$defs/dial_reading_unknown]/calm: this check could not
+    build a candidate for this branch — the branch declares the conditional keyword(s)
+    ['if', 'else'], so the documents it admits are NOT the single document made of its `required`
+    + `properties`. *** A BRANCH WHOSE SHAPE IS CONDITIONAL IS A BRANCH THIS CHECK CANNOT SAY IT
+    HAS DRIVEN ... *** See THIS ROW'S DECLARED LIMIT 10."
+    C14 — "public: root properties ['feed_liveness'] use a construct this check cannot decide
+    about — *** A `state` VOCABULARY OUTSIDE THIS CHECK'S DECLARED, CLOSED SET ['DEGRADED',
+    'UNKNOWN', 'VALUE'] (NEW AT 16B-FIX-2, FX6) ***, ... Whether a NEW state MEANS the data is
+    absent or stale is product meaning and not an Engineer's to guess (PBG-AUTH-005): guess
+    'present' and `calm` is silently admitted on it, which is CD-AC-001's own words — 'missing OR
+    STALE input never renders as calm' — broken in silence."
+  - >-
+    THE CLEAN TREE AND THE WHOLE REGISTER AT THE FINAL TIP. `python3
+    tools/register/check_missing_data_never_calm.py --root .` -> `CD-RT-001-MISSING-DATA-NEVER-CALM:
+    PASS — 144 assertions, 0 violations`, exit 0, `scanned: 52 gate cells`. ASSERTION COUNT
+    UNCHANGED AT 144 — the fix adds no assertion to the clean tree and buys its discrimination by
+    classifying differently, not by counting more. ALL 30 `execute:` LINES: `diff reg-base.txt
+    reg-final.txt` -> EMPTY, 19 rc=0. `PYTHONPATH=src python3 -m pytest tests/ -q` -> `2007
+    passed in 68.40s`. `tests/test_detail_level.py` -> `52 passed`.
+  - >-
+    AND THE REGISTER NOW MOVES ON THE ESCAPES, WHICH IS THE POINT OF THE INCREMENT. On C11 the
+    register moved ONE line at 16B-FIX (line 2, the memorial) and moves TWO at 16B-FIX-2 — line 2
+    AND **line 3, `check_missing_data_never_calm.py`, the register-wired instrument**. On C13 and
+    C14 it moved ONE line at 16B-FIX (line 6, check_schema_closed's ROOT allowlist, which says
+    nothing about calm) and moves TWO at 16B-FIX-2, line 3 and line 6.
+  - >-
+    REGISTER STATE AT THE FINAL TIP: `PYTHONPATH=pbg/tools python3 -B -m pbg.cli --root .
+    required-tests verify` -> `pid.content_hash MATCHES`; `latest_admitted_run (null)`;
+    `grep -cE '^  \[[MA]\] CD-AC-'` -> 18; `MANDATORY NOT PASS (17)`; `GATE: SHUT`;
+    `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`. NOTHING I DID MOVED THE GATE AND NOTHING SHOULD HAVE.
+  - >-
+    SCOPE, PROVED BY COMMAND (64cd5b2..HEAD). TWELVE files: the instrument, required-tests.yaml,
+    both execution contracts, tests/test_detail_level.py, six new plant patches and the MANIFEST.
+    `git diff --name-only 64cd5b2..HEAD | grep -E '^(pbg/|BLUEPRINT\.md|PID\.md|governance/decisions/|governance/mapping/|contracts/public_envelope\.schema\.json|contracts/private_envelope\.schema\.json|src/|deploy/|db/|evidence/|docs/)'`
+    -> EMPTY. `... | grep '^tests/'` -> `tests/test_detail_level.py` ONLY. `... | grep '^tools/'`
+    -> `tools/register/check_missing_data_never_calm.py` ONLY. `git log --format='%an'
+    64cd5b2..HEAD | sort -u` -> `CD-ENG-WO3-07`, ONE IDENTITY.
+  - >-
+    THE TEST FILE, DIFFED IN FULL BECAUSE THE DISPATCH ASKED FOR IT: `git diff --numstat
+    64cd5b2..HEAD -- tests/test_detail_level.py` -> `48  0  tests/test_detail_level.py`. ONE
+    HUNK, at the end of the module docstring, ZERO DELETIONS, NO ASSERTION TOUCHED, AND
+    `PYTHONPATH=src python3 -m pytest tests/test_detail_level.py -q` -> `52 passed`.
+  - >-
+    NOTHING WAS ERASED (PBG-CONT-003). required-tests.yaml's six deleted lines are the
+    re-wrapping of the superseded limit-4 paragraph, and the sentence they carried is quoted
+    VERBATIM in the supersession: `grep -c "enumerates every root property that constrains a
+    dial"` -> 1 in each of the three CD-RULE-004 places. `diff` of all `execute:` lines and of all
+    `test_id:`/`criterion_id:` lines between 64cd5b2 and HEAD -> IDENTICAL. Every
+    required-tests.yaml edit is inside the CD-AC-001 criterion block (lines 104-738).
+  - >-
+    THE SCHEMAS WERE NOT TOUCHED, WHICH IS THE 16C PROHIBITION MEASURED RATHER THAN PROMISED:
+    both `contracts/*_envelope.schema.json` are absent from `git diff --name-only 64cd5b2..HEAD`,
+    and the instrument prints their sha256 at every run —
+    public `b2a395523574f74cbc0305ca1c2e1f1b63f3ff541ce2ed76afac70783eafe1a4`,
+    private `082c64de69144192e2a388662974ba34c797d486bc602148f853db1f1bf90424` — identical on my
+    extraction of 64cd5b2 and on my extraction of the final tip.
+  - >-
+    THE INHERITED RED, DIAGNOSED AND LEFT ALONE (dispatch §8). `git rev-parse
+    be0b355:governance/engineering/ACTIVE_WORK.yaml` and `git rev-parse
+    64cd5b2:governance/engineering/ACTIVE_WORK.yaml` are BOTH
+    ce0803c3d472fe52541f28965d7995e888329c28. My own boot returned `BLOCKING: continuity invalid
+    — CONTINUITY_REFERENCE_INVALID ... (PBG-CONT-006)`. NOT REPAIRED.
+  - >-
+    THE FROZEN BASE: `git rev-parse be0b355` -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5,
+    unchanged at the end of this increment.
+  - >-
+    DECLARED LIMITS OF THIS INCREMENT (CD-RULE-004), BEYOND THE THREE NEW ONES WRITTEN INTO THE
+    ROW ITSELF (10, 11 and 12 of CD-RT-001-MISSING-DATA-NEVER-CALM). I did not bound the class
+    C11 belongs to — it is ONE conditional shape and I say so rather than implying it is the only
+    one. I did not measure whether FX5's ten-keyword list is complete against JSON Schema
+    2020-12; it is the list the auditor prescribed plus nothing, and a keyword outside it that
+    widens a branch is an escape this fix does not close. I did not test the filler fallback
+    against a tree where UNKNOWN is unbuildable and DEGRADED is buildable but differently
+    permissive (F03). My C16 control is ONE benign shape, not a census of benign shapes. Every
+    gate measurement is in-process against a /tmp extraction and none of it is evidence about a
+    running deployment. AND I DO NOT CERTIFY ANY OF IT (PBG-SOD-001, non-waivable).

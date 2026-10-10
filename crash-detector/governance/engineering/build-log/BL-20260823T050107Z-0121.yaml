@@ -1,0 +1,78 @@
+entry_id: BL-20260823T050107Z-0121
+timestamp_utc: '2026-08-23T05:01:07Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 4cafa3b0a00f6f3a989b2103c94551cb14301fac   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the INCREMENT-8 RECONCILIATION boundary.
+parent_entry_id: BL-20260823T045246Z-0120
+schema_version: 1
+
+action_summary: >
+  *** **INCREMENT 8 IS RE-DISPATCHED AS INSTANCE 2 — THE CD-D-007 RE-DISPATCH SHAPE, THIRD TIME OF
+  ASKING ON THIS PROJECT.** *** `CD-DISPATCH-WO2R3-INC8-ENGINEER` is amended **BY APPEND, EDITING
+  NOTHING ABOVE** (PBG-CONT-003), to **`CD-ENG-WO2R3-06`, A FRESH ENGINEER IDENTITY**, at
+  **`314592c`** — the base MOVED from `4410275` because **ITEM 5 IS BANKED AND IS NOW BENEATH THE
+  INCREMENT RATHER THAN IN FRONT OF IT.**
+  *** **FIVE ITEMS OUTSTANDING — `ITEM_1`, `ITEM_2`, `ITEM_3`, `ITEM_4`, `ITEM_6` — AND `ITEM_5` IS
+  STRUCK AS DONE WITH AN EXPLICIT "DO NOT REDO IT AND DO NOT IMPROVE IT".** The arithmetic is stated
+  so that *"the dispatch was smaller than the order"* is never a sentence this record has to
+  discover later: **6 dispatched at instance 1 · 1 completed (ITEM_5) · 5 outstanding · 0 dropped.**
+  *** **THE FRESH IDENTITY IS NOT CEREMONY.** `CD-ENG-WO2R3-05` is a dead seat with banked work in
+  the record AND a quarantined working tree. Reusing its name would make the Build Log attribute to
+  **ONE identity** both work that was measured and work that was refused — the CD-D-078 forged-
+  attribution class. ***
+
+what_the_seat_is_told_about_the_salvage_and_why_the_wording_matters: >
+  The brief carries `CD-D-093` in full: **where the salvage is, that it is READ-ONLY and NOT PROJECT
+  STATE, the five measured reasons it was not banked, the undeclared `Mapping` -> `dict` narrowing
+  (`CD-PL-F109`) it must disposition deliberately, and the CD-D-007 permission VERBATIM** — *read it
+  as an unverified prior draft, adopt only lines it has itself verified, own every line it commits.*
+  **AND IT IS ALSO TOLD, IN THE SAME BLOCK, WHAT IS GOOD IN IT** — the `code`-object carrier that
+  defeats the `__closure__` attack, and the removal of `functools.wraps` so `__wrapped__` is never
+  created rather than created-and-deleted. **A WARNING LIST WITHOUT THAT SECOND HALF WOULD HAVE BEEN
+  A MISLEADING BRIEF**: a seat told only that the draft is red and mis-cited would discard 544 lines
+  of design that engages property (a) in a way this seat did not anticipate. **UNVERIFIED IS NOT
+  DISBELIEVED, AND THE DISPATCH SAYS SO IN THOSE WORDS.**
+
+the_declared_stop_is_carried_forward_unchanged: >
+  **ITEM_1 STILL CARRIES ITS DECLARED STOP** — if the redesign cannot meet property (a) without an
+  exemption or a weakening, **STOP AND RETURN, AND THAT IS A SUCCESS.** The amendment adds one
+  sentence to it that the salvage makes necessary: **the existence of a promising prior draft does
+  not make (a) provable — it is evidence, not a verdict.**
+
+separation_of_duties_unchanged: >
+  PBG-SOD-001 and PBG-AUTH-006 stand: the Project Lead directs and reconciles, writes neither the fix
+  nor the assurance, and a **SEVENTH FRESH ASSURANCE SEAT** audits the whole of WO-2R3 afterwards.
+  **THIS DISPATCH NAMES NO IMPLEMENTATION FOR ITEM 1 AND STILL WILL NOT** — the three acceptance
+  properties are the specification and the design is the Engineer's.
+
+reconciliation:
+  recorded_vs_observed: >
+    main clean at `4cafa3b` apart from the 42 untracked operator-wrapper artefacts
+    (`git status --porcelain | grep -cv '^??'` -> **0**). Lane `wo-2r3` **CLEAN at `314592c`** —
+    porcelain, `git diff --stat` and `git diff --cached --stat` all ZERO LINES, verified at the
+    previous boundary and unmoved since.
+  drift_found: 'None.'
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE NEW. THE TWO CARRIED FORWARD REMAIN OPEN AND UNANSWERED, AND THE DISPATCH REPEATS THAT
+  NEITHER GATES ANY ITEM** — `Q1 F-06-B` (the lane does not contain its own governing authority) and
+  `Q2 F-06-J` (does §D's closure extend to the construction path). **`CD-PL-F104` AND `CD-D-166`
+  REMAIN NAMED CANDIDATES THE PRODUCT OWNER MAY ADD IN ONE SENTENCE — NOT SCOPE THIS SEAT ADDED.**
+
+next_safe_action: >
+  **RECONCILE `CD-ENG-WO2R3-06`'S RETURN BY MEASUREMENT** on the Project Lead's own `git archive`
+  extractions, then dispatch the **SEVENTH FRESH ASSURANCE SEAT** over the whole of WO-2R3 with
+  CD-D-129's clauses verbatim. **If the seat returns `STOPPED_AT_ITEM_1`, THAT IS A SUCCESS AND THE
+  NEXT ACTOR IS THE PRODUCT OWNER, NOT ANOTHER ENGINEER.**
+  **NOTHING IS MERGED, ADMITTED OR PROMOTED. T2 RED. CD-AC-002 AND CD-AC-005 AMBER AND NOT CLOSED.
+  `CD-RT-012` RED AT THE TIP. THE WO-2 GATE IS SHUT.**
+
+continuity_record_commit: 254078e9b3a46fb2e4f041a70a0a56cb0b3e28a3   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE TWENTY-THIRD BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 254078e **BEFORE** this field was written, so the verdict and the field name ONE commit. **TWO ARMS FOR THE NINTH BOUNDARY RUNNING (CD-PL-F101), IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd`.** ARM 1, THE CLONE — `git clone -q --no-hardlinks` to /tmp/cd-cont23 (CD-PL-F72), `git checkout -q -B main 254078e`, boot from `pwd` = /tmp/cd-cont23 — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain **0**, current_phase BUILD, observed_sha 254078e9b3a46fb2e4f041a70a0a56cb0b3e28a3, branch main. ARM 2, THE LIVE WORKTREE — boot from `pwd` = /srv/crash-detector — **AMBER**, CONTINUITY_MATCH/RESUME_AMBER, **porcelain 42, `grep -cv '^??'` -> 0, ALL UNTRACKED**, same observed_sha. **RESIDUE UNMOVED AT 42 AND RE-COUNTED RATHER THAN CARRIED.** **THIS FOLLOW-UP WRITES ONE FIELD, NOT TWO: `ACTIVE_WORK.yaml`'s own pointer was corrected at the PREVIOUS boundary and is not stale, so the CD-PL-F74 exception does not apply and the minimality discipline is kept for the reason it exists.** *** THE INCREMENT GOES OUT CARRYING a RED sixth gate verdict, a RED T2, two AMBER criteria, a SHUT gate, **`CD-RT-012` RED AT THE TIP**, TEN DECLARED OPEN DEFECTS, **TWO OPEN PRODUCT AUTHORITY QUESTIONS**, and **A QUARANTINED ITEM 1 DRAFT THAT NO SEAT HAS ATTESTED** — **the record says all of it and the tree agrees with all of it.**

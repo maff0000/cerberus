@@ -1,0 +1,12 @@
+diff --git a/src/crash_detector/health.py b/src/crash_detector/health.py
+index 02e0de3..7531466 100644
+--- a/src/crash_detector/health.py
++++ b/src/crash_detector/health.py
+@@ -145,6 +145,7 @@ HEALTH_KEYS: Tuple[str, ...] = (
+     "regime",
+     "degraded",
+     "degraded_classes",
++    "equity_crash_score",
+ )
+ 
+ #: CLOSED. The machine-readable state endpoint of ``Q26``. Health, plus the alert classes

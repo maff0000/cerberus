@@ -1,0 +1,184 @@
+# WO-2 resumed after runtime termination — the interrupted Engineer lane reconciled and quarantined.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T025400Z-0004
+timestamp_utc: '2026-08-19T02:54:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
+current_sha: 0047093287f4282cad63c993ab87416bdb5a54ea
+parent_entry_id: BL-20260819T023505Z-0003
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  The Project Lead session that opened WO-2 was killed by the headless runtime's 600s
+  background-task ceiling while the Engineer sub-agent CD-ENG-WO2-01 (instance 1) was mid-write. It
+  returned nothing, committed nothing and wrote no Build Log entry, but it left 20 untracked Python
+  files under src/ in the mutation lane. This entry reconciles that lane and records the
+  disposition, before any further work. (1) Booted the pinned framework at 0047093 — AMBER,
+  CONTINUITY_MATCH/RESUME_AMBER, blocking_failures empty, the sole UNAVAILABLE still
+  roadmap_identity, which is the known Product Owner call. (2) Reconciled observed against recorded
+  state. The lane worktree /srv/crash-detector-wo2 sat at 0047093 on wo-2-skeleton — a descendant of
+  the dispatch baseline d958029 and NOT drift; ACTIVE_WORK still recorded baseline_sha 2e116ec,
+  which predates the dispatch record itself and is corrected in this checkpoint. The only
+  discrepancy of substance was the untracked src/. (3) DISPOSITIONED the inherited work — see
+  decisions_closed CD-D-007 below. It is QUARANTINED, not adopted and not destroyed. (4) Corrected
+  BLUEPRINT.md, which three commits after the Product Owner accepted it still carried
+  "status: PROPOSED — awaiting Product Owner acceptance. No application code until accepted". An
+  Engineer booting against that header would have read a live prohibition on the very work it is
+  dispatched to do. Status only; no clause of the design changed, so v0.1.0 does not move
+  (PBG-BP-001 — the Project Lead owns Blueprint currency). (5) Committed the Assurance dispatch
+  CD-DISPATCH-WO2-ASSURANCE.yaml as a durable record at DRAFT. It was drafted in the terminated
+  session and existed only as an untracked file; a dispatch that exists only in a dead session's
+  working tree is not project state (PBG-CONT-007). It stays DRAFT until the Engineer returns an
+  exact SHA to write into target_candidate. No application code was written by this seat.
+
+reconciliation:
+  recorded_vs_observed: >
+    RECONCILED WITH TWO CORRECTIONS, both recorded rather than silently fixed. (a) ACTIVE_WORK
+    baseline_sha read 2e116ec, one commit before the dispatch record it baselines; corrected to
+    d958029, the commit that introduces CD-DISPATCH-WO2-ENGINEER.yaml, with the lane head 0047093
+    recorded as the execution base. (b) BLUEPRINT.md status was stale as set out above.
+  drift_found: >
+    None in Git. HEAD 0047093 on main, lane head 0047093 on wo-2-skeleton, both matching the
+    recorded checkpoint. Nothing under pbg/ modified — the only untracked artefact there is
+    pbg/tools/pbg/__pycache__/, produced by running the pinned CLI, which is not committed and is
+    not a modification of the snapshot (PBG-FWK-013 intact).
+  untracked_not_project_state: >
+    Four .wo2-* / .wo2b-* files at the repository root belong to the operator's session wrapper.
+    They are not project state and are not committed.
+
+inherited_work_inventory:
+  origin_seat: 'CD-ENG-WO2-01 instance 1, under CD-DISPATCH-WO2-ENGINEER'
+  terminated_utc: '2026-08-19T02:50:07Z (last file write); operator runner logged the run exiting at 02:50:08Z'
+  location_at_discovery: /srv/crash-detector-wo2/src/ (untracked)
+  extent: '20 files, 2075 lines, across crash_detector/{,dials,collectors,engine,witness,serving}'
+  integrity_record: '/srv/crash-detector-wo2-salvage/SHA256-MANIFEST.txt — sha256 per file, captured before the move'
+  manifest_digest: 'a020b9b5b2794386185b1579e71c53db734c104506f0e66bc9071d5024f6681f (sha256 of the manifest file itself)'
+  what_it_covers: 'part of deliverables A2, A3 and A4 only'
+  what_is_absent: >
+    every other deliverable — A1 (pyproject, requirements, lockfile), A5 (db/ migrations and the
+    grant matrix), A6 (deploy/ container set), A7 (contracts/ envelope schemas) — and the whole of
+    block B: tools/register/, required-tests.yaml, plants/, and the Engineer's own test runs. There
+    are no tests of any kind. src/crash_detector/serving/ has no __init__.py, which is where the
+    write stopped.
+  what_was_checked_by_the_PL: >
+    NOT a review and not assurance — a proportionate reconciliation probe only. All 20 files parse
+    (py_compile, syntax-clean) and the six top-level modules import under PYTHONPATH=src. Two files
+    were read in full, dials/reading.py and dials/scores.py, and both are faithful to BLUEPRINT §7.
+    That is the basis for keeping it as reference and for nothing else: 18 files were not read, no
+    behaviour was exercised, and a probe that a module imports proves only that it imports.
+
+decisions_closed:
+- id: CD-D-007
+  summary: >
+    Disposition of the interrupted Engineer seat's uncommitted output: QUARANTINE AND RE-DISPATCH.
+    The tree src/ is moved intact and read-only to /srv/crash-detector-wo2-salvage/, which is
+    outside every git worktree, with its SHA256 manifest and a README stating its provenance and its
+    status. The mutation lane is returned to CLEAN at 0047093, which is a verifiable state rather
+    than an assertion. Engineer CD-ENG-WO2-01 is re-dispatched as instance 2 under the SAME dispatch
+    record and the same bounded scope, and is told the salvage exists, where it is, and exactly what
+    it may do with it: read it as an unverified prior draft, adopt only lines it has itself verified
+    against BLUEPRINT.md and the dispatch, and own every line it commits.
+  reasoning: >
+    The work is IN SCOPE but UNATTESTED, and those are different failures. It was produced by the
+    right seat, in the right lane, inside writable_scope, under an issued dispatch — so it is not
+    tainted and destroying it would burn real effort for no governance gain. What it lacks is
+    everything that makes work project state: a return, a commit, a Build Log entry, and any test
+    evidence at all (PBG-CONT-007). Leaving it in the lane would have let a fresh seat commit
+    2000 lines it never read, under its own attestation — the exact shape of a false attestation,
+    and the reason the middle path is quarantine rather than either extreme. Moving it out makes
+    "the Engineer owns what it commits" checkable instead of hoped for.
+  authority: >
+    CD-AUTH-0001 — the Project Lead's own lane-reconciliation decision, Level 1. It resolves no
+    product meaning and needs no Product Owner ruling; it is recorded because it disposes of work
+    product.
+  owner: PROJECT_LEAD
+
+evidence_references:
+- 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot → Verdict AMBER, observed_sha 0047093287f4282cad63c993ab87416bdb5a54ea, continuity CONTINUITY_MATCH/RESUME_AMBER, blocking_failures [], sole UNAVAILABLE: roadmap_identity'
+- 'git worktree list → /srv/crash-detector 0047093 [main]; /srv/crash-detector-wo2 0047093 [wo-2-skeleton]'
+- 'git -C /srv/crash-detector-wo2 status --short (before) → "?? src/" and nothing else'
+- 'find src -type f | xargs sha256sum → 20 lines, written to /srv/crash-detector-wo2-salvage/SHA256-MANIFEST.txt; sha256 of that manifest a020b9b5b2794386185b1579e71c53db734c104506f0e66bc9071d5024f6681f'
+- 'py_compile over all 20 files → syntax-clean; PYTHONPATH=src import of the six top-level modules → all OK'
+- 'ls -l --time-style=full-iso .../serving/witness_resolver.py → 2026-08-19 03:50:07.574 +0100 = 02:50:07Z; .wo2-runner.log → "02:50:08Z attempt 1 exited rc=0"'
+- 'git -C /srv/crash-detector-wo2 status --short (after the move) → empty; HEAD 0047093'
+- 'observed UTC at capture: 2026-08-19T02:54:00Z (date -u); host timezone Europe/London BST +0100, recorded because the salvage mtimes are local and would otherwise read one hour late'
+
+decisions_raised: []
+
+risks:
+- id: CD-CONT-001
+  summary: >
+    NEW. The failure that cost the last session was a long-running seat with no intermediate durable
+    record: 25 minutes of Engineer work reduced to an untracked directory because nothing was
+    committed until the end. The runtime ceiling is lifted for this session, but the lesson is not
+    about the ceiling — any seat can die.
+  severity: AMBER
+  owner: PROJECT_LEAD
+  disposition: >
+    The Engineer re-dispatch is split into COMMIT BOUNDARIES rather than one return: A1+A2+A3,
+    A4+A7, A5+A6, then each of B1..B4, each committed on wo-2-skeleton as it completes. A
+    termination now costs at most one increment. Seat work in this session is run in the foreground
+    in preference to the background, so a dead seat is visible rather than silent.
+- id: CD-FWK-002
+  summary: 'Unchanged from BL-0003 — the PBG-SOD-001 verifier will not clear in WO-2 (CD-FWK-004).'
+  severity: AMBER
+  owner: PROJECT_LEAD
+  disposition: 'separation evidenced by distinct actor_ids per the PO-ratified CD-D-002 route'
+- id: CD-FWK-004
+  summary: 'Unchanged — harvested by the Product Owner to the PBGv2 backlog as IMP-013.'
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: 'accepted onto the framework backlog; the default safe action stays in force here'
+- id: CD-RT-001
+  summary: 'Unchanged — the container set is DESIGN; build, non-root, signal and smoke proofs are OWED into WO-3.'
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: 'owed, not done'
+- id: CD-SEC-001
+  summary: 'Unchanged — the pre-commit hook guards the gate, not the archive.'
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: 'accepted as designed'
+- id: CD-BP-001
+  summary: 'Unchanged, PO-accepted — the AST register checks are never a sole guard.'
+  severity: LOW
+  owner: PROJECT_LEAD
+  disposition: 'risk accepted by the Product Owner'
+- id: CD-FWK-001
+  summary: 'Unchanged — seat attestations unusable in a VENDORED layout.'
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: 'named-actor route per CD-D-002'
+- id: CD-FWK-003
+  summary: 'Unchanged — pbg log and pbg resume unusable at a vendored root.'
+  severity: AMBER
+  owner: PRODUCT_AUTHORITY
+  disposition: 'continuity verified through pbg boot only'
+
+blockers: []
+held_actions:
+- 'CD-HOLD-003 — container image build, startup and cutover remain FORBIDDEN in WO-2 (PBG-RT-010);
+  the single exception is the throwaway cd-store-wo2- / cd-asr-wo2- postgres store.'
+- 'CD-HOLD-004 — ingredient source registration remains HELD pending CD-D-005, the Product Owner''s.'
+- 'CD-HOLD-005 — public exposure remains HELD pending CD-D-006 and R2D2. Loopback only.'
+
+status: IN_PROGRESS
+next_safe_action: >
+  Re-dispatch Engineer CD-ENG-WO2-01 (instance 2) against CD-DISPATCH-WO2-ENGINEER.yaml on branch
+  wo-2-skeleton at /srv/crash-detector-wo2, execution base 0047093, in the foreground, with a commit
+  required at each increment boundary. On READY_FOR_ASSURANCE, write the exact SHA into
+  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a SEPARATE agent
+  as CD-ASR-WO2-01. Stop at the gate for Product Owner review.
+expected_next_actor: ENGINEER

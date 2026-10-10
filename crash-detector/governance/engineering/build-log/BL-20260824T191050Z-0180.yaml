@@ -1,0 +1,258 @@
+# ================================================================================================== #
+# BL-20260824T191050Z-0180 — PROJECT LEAD BOUNDARY. **16D-GATE-FRESHNESS ASSURED `AMBER` AT
+# `0e80a09` BY `CD-ASR-WO3-12`, BANKED AT `924691b`. THE SESSION STOPS HERE. `Q35` IS RAISED AND
+# THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT. 16C IS NOT RELEASED.**
+#
+# *** **AND THIS IS THE FIRST BOUNDARY ON THIS ROW WHERE THE RULED COMPLETION TEST IS MET. THE
+# AUDITOR SET OUT TO DISBELIEVE "CLOSED BY CONSTRUCTION" AND REPORTED: *"On the contract this
+# product ships, I could not"* BUILD THE COUNTEREXAMPLE. A DIAL OLDER THAN ITS WINDOW CARRYING
+# `calm` IS REFUSED, AND A NEVER-BEFORE-NAMED STATE CARRYING `calm` IS REFUSED — BOTH ON BOTH
+# SURFACES. AFTER SIXTEEN INCREMENTS, SOMETHING FINALLY COMPUTES *STALE*.** ***
+#
+# **AND IT IS `AMBER` AND NOT `PASS`, ON A REASON THAT IS NOT A SHAPE: `A312-F1` — THE GUARANTEE
+# HAS NO GUARD. ARM `D1` DELETES THE WHOLE FOURTH STAGE AND ALL THIRTY REGISTER LINES ARE
+# `diff`-IDENTICAL. ITS ONLY WITNESS IS A FILE IN `tests/` THAT NO REGISTER ROW NAMES — WHILE 14
+# OF THE 30 ROWS DO NAME PYTEST FILES. THAT IS THE MEMORIAL'S OWN DEFECT CLASS, ONE LAYER OUT.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T191050Z-0180
+timestamp_utc: '2026-08-24T19:10:50Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T19:10:50Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_05
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_05
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T184040Z-0179
+base_sha: 0168e0551e9139fab1621a5a43f331667ba6b089
+current_sha: 0168e0551e9139fab1621a5a43f331667ba6b089
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-12 — a FRESH identity, never CD-ENG-WO3-12 — returned AMBER over increment 16D at
+  0e80a09, banked at 924691b on branch asr-wo3-12-verdict, ONE file, ONE identity, based on the
+  content tip and touching nothing else. THIS SEAT REPRODUCED THE TWO FINDINGS THAT CHANGE THE
+  PRODUCT PICTURE IN ITS OWN SHELL, AND ONE OF THEM FALSIFIES THIS SEAT'S OWN DESIGN REASONING.
+  THE VERDICT IS BANKED AND IS NOT ACCEPTED. 16C IS NOT RELEASED. NO INDICATOR ROW IS REGISTERED.
+  Q35 IS RAISED AND THE SESSION STOPS.
+
+the_verdict:
+  seat: CD-ASR-WO3-12 (FRESH — never CD-ENG-WO3-12, never CD-ASR-WO3-02..11)
+  verdict: AMBER
+  confidence_declared_by_the_auditor: HIGH
+  target: 0e80a09af9661a9e7e6bb73193fbe56133fcff29
+  banked: 924691bb54c382077578ee6a32fc4c7aee324225 on branch asr-wo3-12-verdict — BL-20260824T190320Z-A312.yaml
+  read_only_confirmed_by_this_seat: >
+    MEASURED. `git diff --name-only 0e80a09..asr-wo3-12-verdict` names EXACTLY ONE PATH — the
+    auditor's own entry. ONE identity (`CD-ASR-WO3-12`) on the commit. `/srv/crash-detector-wo3`
+    still at `ef3c960` with a CLEAN worktree; every arm ran in `/tmp/asr12/{target,base}`.
+    `be0b355` UNMOVED.
+
+# ================================================================================================== #
+"*** WHAT IS ACTUALLY TRUE NOW, AND IT IS THE THING SIXTEEN INCREMENTS WERE FOR ***":
+# ================================================================================================== #
+  the_ruled_completion_test_is_MET: >
+    PO-DECISIONS-0027 ruling 5 AS EXTENDED BY PO-DECISIONS-0029 ruling 3 — *"a dial that cannot
+    prove present AND fresh is refused by construction"*. **BOTH HALVES HOLD ON BOTH SURFACES.**
+    The auditor was dispatched to disbelieve the phrase "closed by construction" and to build the
+    counterexample, and reported: **"On the contract this product ships, I could not."**
+  and_the_evidence_is_unusually_strong_for_this_row: >
+    `_days_from_civil` — the hand-rolled epoch arithmetic that exists so the module need not import
+    `datetime` — was proved against `datetime` on **ALL 3,652,059 CIVIL DATES FROM 0001-01-01 TO
+    9999-12-31 WITH ZERO MISMATCHES**, plus 200,000 random microsecond stamps. The no-clock property
+    was verified by the auditor's OWN AST scan **and by walking the `__globals__` of every callable
+    the module imports, transitively**. **§D.3 IS NOT REOPENED, AND THAT IS NOW MEASURED THREE
+    INDEPENDENT WAYS BY TWO SEATS.** Seventeen genuinely-calm shapes are still ADMITTED x2, so the
+    stage is NOT VACUOUS.
+  what_that_means_in_product_terms: >
+    **A DIAL OLDER THAN ITS WINDOW CANNOT RENDER CALM, AND A STATE NOBODY HAS EVER NAMED CANNOT
+    RENDER CALM.** `CD-AC-001` reads *"missing OR STALE input never renders as calm"*. The MISSING
+    half was closed at 295bdbe by Rule CC. **THE STALE HALF NOW EXISTS FOR THE FIRST TIME.**
+
+# ================================================================================================== #
+why_it_is_AMBER_and_not_PASS:
+# ================================================================================================== #
+  A312_F1_MEDIUM_THE_GUARANTEE_HAS_NO_GUARD: >
+    *** **THE STALE HALF IS TESTED AND NOT GUARDED.** *** The auditor verified this at full
+    strength rather than taking the Engineer's word: arm `D1` (`git apply` rc=0, CHECKED) deletes
+    the whole fourth stage; **all THIRTY register lines were then run on that tree and the per-line
+    rc list is `diff`-IDENTICAL to the clean tip**, LINE 03 still `PASS — 260` exit 0 — and the
+    live gate re-admits 1970 AND 2099 carrying `calm` on both surfaces. `D2`/`D3`/`D4` likewise.
+    **THE ONLY WITNESS IS `tests/test_envelope_freshness.py`, WHICH NO REGISTER ROW NAMES — WHILE
+    14 OF THE 30 ROWS DO NAME PYTEST FILES.** `required-tests.yaml` line 242 is the project's own
+    memorial for exactly this class, intact in the same tree. **THE ENGINEER RAISED THIS AGAINST
+    ITSELF (`F16D-03`) AND CORRECTLY ESCALATED RATHER THAN EDITING OUT OF SCOPE. THE GAP IS THE
+    INCREMENT'S, NOT THE SEAT'S** — `required-tests.yaml` was deliberately outside its writable
+    scope, and that was THIS SEAT'S scoping decision.
+
+# ================================================================================================== #
+what_THIS_SEAT_reproduced_rather_than_carried:
+# ================================================================================================== #
+  why: "`CD-PL-F193`. Two of the six findings change the product picture. Both were run here."
+
+  A312_F3_CONFIRMED_and_it_is_the_deepest_fact_in_this_verdict:
+    the_claim: "with an ordinary 600s window, a document whose `as_of_utc` EQUALS its `published_utc` is ADMITTED however old that shared instant is."
+    measured_by_this_seat_at_the_tip_on_BOTH_surfaces:
+      - "published == as_of == 1970-01-01 (56 years old), calm  ->  **ADMITTED x2**"
+      - "published == as_of == 2099-01-01 (the future), calm    ->  **ADMITTED x2**"
+      - "published == as_of == 0001-01-01, calm                 ->  **ADMITTED x2**"
+      - "CONTROL: published 2026, dial 1970 (stamps DISAGREE)   ->  REFUSED [STALE_CALM] x2"
+    what_it_actually_means: >
+      **THE AGE IS ZERO, SO THE WINDOW IS SATISFIED. A DOCUMENT THAT SAYS "PUBLISHED NOW, DATA AS
+      OF NOW" IS SELF-CONSISTENT WHATEVER THE DATE ON IT SAYS, AND A GATE WITH NO CLOCK CANNOT KNOW
+      THAT "NOW" IS 1970.** This is NOT a defect against PO-DECISIONS-0029 ruling 1 — ruling 1
+      defines the predicate EXACTLY as implemented and chose document-internal enforcement
+      deliberately, over option (b), for stated reasons. **IT IS RULING 1's PRICE, MEASURED.** The
+      Engineer stated the epistemic form honestly at `DECLARED LIMIT 20(d)`; the auditor's finding
+      is that it is stated in ONE place and UNDER-stated in three, and never measured. **BOTH ARE
+      RIGHT AND THE PRICE IS HIGHER THAN THIS SEAT WROTE AT `CD-PL-F206`**, which framed the
+      residual as the WINDOW being un-boundable. It is not the window. **IT IS THE WHOLE DOCUMENT'S
+      SELF-REPORT.** `CD-PL-F206` IS SUPERSEDED BY THIS ENTRY AND RESTATED AT `CD-PL-F208` BELOW.
+
+  A312_F2_CONFIRMED_and_it_falsifies_THIS_SEATS_OWN_DESIGN_REASONING:
+    measured_by_this_seat_on_the_arm_H1_tree:
+      - "degraded_inputs: [{source_id: 'SRC-A',                  detail_level: calm}]  ->  REFUSED [STALE_CALM] x2"
+      - "degraded_inputs: [{source_id: '2026-08-24T18:00:00Z',   detail_level: calm}]  ->  **ADMITTED x2**"
+    what_it_falsifies: >
+      *** **THIS IS A FINDING AGAINST THIS SEAT AND IT IS RECORDED AS ONE.** *** At
+      `BL-20260824T175328Z-0178` this seat wrote that a node-quantified predicate closes
+      **A311-F1's CLASS** by construction, because the Arm H node *"carries calm with no stamp of
+      its own, so it must prove freshness, it cannot, and it is REFUSED."* **THAT IS TRUE OF THAT
+      DOCUMENT AND FALSE AS A CLAIM ABOUT THE CLASS: ONE DECOY STRING IN A FIELD THAT IS NOT A
+      STAMP RESTORES THE WHOLE ESCAPE.** The Engineer then over-claimed it further as *"closed
+      TWICE OVER"*, and the auditor falsified the runtime half. **THE SPECIFIC SHAPE WAS CLOSED;
+      THE CLASS WAS NOT.**
+    what_is_nevertheless_true: >
+      **A311-F1 IS GENUINELY CLOSED — ONCE, STRUCTURALLY, NOT TWICE.** Arms `H1`-`H4` are all
+      `FAIL — 2` at the instrument, so **this is NOT a live escape on the shipped contract**; it
+      needs a contract edit, and the contract edit is caught. The auditor was explicit about that
+      and this entry carries the distinction rather than flattening it.
+    the_lesson_this_seat_takes: >
+      **THIS SEAT FLAGGED THE CLAIM AS A HYPOTHESIS THE ENGINEER MUST MEASURE AND FORBADE IT TO
+      ASSUME IT — AND THAT INSTRUCTION IS THE ONLY REASON THE OVER-CLAIM WAS CAUGHT AT THE NEXT
+      GATE RATHER THAN SHIPPED.** The instruction worked. **THE REASONING BEHIND IT WAS STILL
+      WRONG, AND A DESIGN INSTRUCTION FROM THE PROJECT LEAD IS EXACTLY THE KIND NOBODY DOWNSTREAM
+      IS WELL PLACED TO CONTRADICT.**
+
+  A312_F4_RESOLVES_THE_INHERITED_FIGURE_AND_CLEARS_THE_RECORD: >
+    Item 7 of the audit dispatch is ANSWERED and the answer is the reassuring one: **NO INHERITED
+    RECORD IS WRONG.** `check_schema_closed` counts in proportion to the subschemas it scans —
+    clean tree = **266** at `295bdbe`, `be088c5` AND `0e80a09`; **arm-H1 tree = exactly 280**.
+    `BL-...-16CC` records its 280 explicitly of the C31 arm and `A311` records its 280 of an arm
+    extraction. **BOTH WERE CORRECT ABOUT THE TREE THEY MEASURED, AND `F16D-05` IS THE RECORD THAT
+    NEEDS SUPERSEDING.** A figure that looked like drift for two boundaries was provenance.
+
+  the_other_two: >
+    `A312-F5` LOW — `_can_carry_detail_level`'s cycle guard is per-path, so a shared-child `$defs`
+    DAG is walked exponentially: a 25-level binary `$ref` DAG returns `None` (FAIL-CLOSED) in
+    **142.9 seconds**. It terminates, it fails closed, and it costs the shipped contracts nothing.
+    `A312-F6` LOW — the auditor AGREES with `F16D-04` and confirmed it independently: the lane's
+    WO-2-era `ACTIVE_WORK.yaml` is KNOWN state and NOT drift, `observed_sha` equalling the
+    dispatched target exactly. **Its addition is worth keeping: a cold agent cannot boot-and-resume
+    THAT LANE, so recovery rests on the Build Log and the dispatch carrying the SHAs** — which is
+    `PBG-CONT-007` working as designed rather than a defect, but only because the SHAs are there.
+
+everything_the_dispatch_asked_to_be_VERIFIED_reproduced: >
+  Instrument `PASS — 260` at the tip and `PASS — 243` at the base, rc taken FROM THE COMMAND. **All
+  thirty register lines at BOTH tips, per-line rc `diff` EMPTY, 19/11, LINE 06 = 266 at both.**
+  `pytest` 2007 -> 2099 with **ZERO skipped, xfailed, xpassed, deselected or errored at either
+  tip**, and `tests/` 688 added / 0 deleted. Nine arms with `git apply` rc TAKEN AND CHECKED —
+  `H1`-`H4` rc=0 at both tips, `D1`-`D4` rc=1 at the base, ARMS ABORTED, NOTHING CLAIMED.
+  **THE ENGINEER DID NOT REPEAT THE LAST AUDITOR'S rc-IGNORED DEFECT AND NEITHER DID THIS AUDITOR
+  — THE ONE THING THE DISPATCH WARNED BOTH OF THEM ABOUT.** Both contract JSONs and
+  `required-tests.yaml` BYTE-UNCHANGED, `ENVELOPE_SCHEMA_VERSION` still `1.1.0`, **THE MEMORIAL AND
+  THE `banana` ARM INTACT**, `be0b355` unmoved, ONE identity, ZERO protected paths.
+  **NOT ONE CLAIMED FIGURE FAILED TO REPRODUCE.**
+
+what_the_auditor_declared_it_did_NOT_examine: >
+  Stated rather than footnoted, and carried here for the next seat: the regime-aware layer (absent
+  by ruling, confirmed absent) · the serving and detector layers and anything that BUILDS an
+  envelope, though the single chokepoint at `publish.py:276-277` was confirmed · the meaning of the
+  eleven non-zero register rows (identical at both tips, pre-existing) · **and the 688-line test
+  file was read STRUCTURALLY AND NOT LINE-AUDITED — which matters precisely because `A312-F1` says
+  it is the guarantee's only witness. The auditor named that itself as worth a later dispatch.**
+
+findings_raised_by_this_seat_against_itself:
+  CD-PL-F207:
+    severity: MEDIUM
+    status: DEFECT_OPEN
+    against: PROJECT_LEAD_SEAT_05's own design instruction at BL-20260824T175328Z-0178
+    statement: >
+      This seat asserted that a node-quantified freshness predicate closes **A311-F1's CLASS** by
+      construction. **`A312-F2` FALSIFIES THE GENERALISATION** — the node walk only refuses a
+      calm-bearing node that carries NO parsable stamp anywhere, so a decoy stamp-shaped string in
+      any field defeats it. The specific Arm H document is refused; the class is not. **A PROJECT
+      LEAD'S DESIGN INSTRUCTION IS THE HARDEST THING IN THIS PROCESS FOR A DOWNSTREAM SEAT TO
+      CONTRADICT, WHICH IS PRECISELY WHY IT NEEDS THE SAME "MEASURE IT, DO NOT ASSUME IT" TREATMENT
+      THIS SEAT IMPOSED ON EVERYONE ELSE.**
+  CD-PL-F208:
+    severity: MEDIUM
+    status: DEFECT_OPEN
+    supersedes: CD-PL-F206 (which is retained, not deleted — PBG-CONT-003)
+    statement: >
+      `CD-PL-F206` framed the document-internal residual as the **WINDOW** being un-boundable.
+      **`A312-F3` SHOWS IT IS NOT THE WINDOW — IT IS THE WHOLE DOCUMENT'S SELF-REPORT.** A document
+      that stamps `published_utc == as_of_utc` is self-consistent at ANY date and renders calm at
+      age zero, MEASURED by this seat at 1970, 2099 and 0001. **The gate floor closes STALE against
+      a document that stamps itself HONESTLY, and does not close it against one that lies
+      CONSISTENTLY.** That is the exact, measured price of PO-DECISIONS-0029 ruling 1's
+      document-internal choice, which was made deliberately over option (b). **IT IS DISCLOSED HERE
+      RATHER THAN LEFT TO BE DISCOVERED AT 16C, BECAUSE 16C IS THE INCREMENT THAT PRODUCES THE
+      STAMPS THIS GATE COMPARES.**
+
+# ================================================================================================== #
+"*** Q35 — RAISED, AND IT IS WHY THIS SESSION STOPS ***":
+# ================================================================================================== #
+  routing: >
+    **PRODUCT AUTHORITY — MATT.** This seat will not pick. Part (a) is a scope-and-ordering question
+    the auditor named as the next safe gate; part (b) is product meaning (`PBG-AUTH-005`), and this
+    seat authored both the design instruction that `A312-F2` falsified and the `CD-PL-F206` framing
+    that `A312-F3` corrected — **it is the worst-placed party in the project to rule on either.**
+  part_a_the_auditors_named_gate: >
+    **Does the fourth refusal stage get its OWN Required Test Register row, and does that row land
+    BEFORE 16C?** PO-DECISIONS-0029 ruling 5's *"then register the rows"* means the **INDICATOR**
+    rows and does not obviously reach a fresh-dial CONTROL row. The auditor's recommendation, which
+    this seat endorses: **one bounded Engineer dispatch with `required-tests.yaml` IN SCOPE**,
+    discharging `A312-F1`, plus `F16D-02` (the Declared Limits are in two of `CD-RULE-004`'s three
+    places), plus the record corrections for `A312-F2`/`F3`/`F4`. **AND IT SHOULD LAND BEFORE 16C,
+    ON THE AUDITOR'S OWN REASON: 16C PRODUCES THE LIVENESS MARKING THIS STAGE COMPARES, AND LANDING
+    IT ON AN UNGUARDED STAGE IS HOW THIS PROJECT GOT ITS MEMORIAL.**
+  part_b_the_disclosure_that_may_change_the_16C_BRIEF: >
+    **`A312-F3` / `CD-PL-F208`: the gate floor cannot detect a consistently-lying document.** This
+    does NOT reopen ruling 1 — ruling 1 chose document-internal deliberately and this is its stated
+    price, now measured. **THE BOUNDED QUESTION IS WHETHER 16C MUST THEREFORE CARRY A DETECTOR-SIDE
+    HONESTY OBLIGATION** — that the detector's stamps are derived from the fetch and not from the
+    document being written — **or whether that is accepted as permanently outside what this product
+    can enforce, and recorded as such.** Either answer is workable; leaving it unruled means 16C is
+    briefed without knowing which.
+  what_this_seat_recommends_while_declining_to_rule: >
+    **(a) YES to the register row, BEFORE 16C.** The evidence is unusually clean: the guarantee is
+    real and provably has no guard, and every prior loss on this row came from a guarantee whose
+    only witness was in `tests/`. **(b) Rule that 16C CARRIES the honesty obligation.** It costs
+    one sentence in a brief that has not been written yet, and it is the increment that produces
+    the stamps.
+
+standing_and_unchanged_at_this_boundary:
+  - "**16C IS NOT RELEASED.** No liveness detector exists. `feed_liveness` is not produced."
+  - "**NO INDICATOR ROW IS REGISTERED.** All 30 still wait."
+  - "**THE MEMORIAL REMOVAL DID NOT LAND** — verified byte-level by the auditor, memorial and `banana` arm intact."
+  - "**NOTHING FROM `295bdbe` IS REVERTED.** Both contract JSONs byte-unchanged; Rule CC intact and still carrying the never-before-named-state half with its ORIGINAL `SCHEMA_VIOLATION`."
+  - "`be0b355` FROZEN and UNMOVED · `CD-D-181` sequential-only · NO SEAT IS RUNNING."
+  - "CD-AC-005 RED · CD-AC-002 AMBER and NOT CLOSED · the WO-2 gate SHUT. This boundary moved none of them."
+  - "**A VERDICT IS NOT AN ACCEPTANCE (`PBG-AUTH-003`). 16D IS ASSURED `AMBER` AND IS NOT ACCEPTED.**"
+
+next_safe_action: >
+  **THE PRODUCT AUTHORITY RULES `Q35` (a) AND (b).** Then, on (a) as recommended, ONE bounded
+  Engineer dispatch — a FRESH identity — with `required-tests.yaml` IN SCOPE, to give the fourth
+  refusal stage a register row and discharge `A312-F1`, `F16D-02` and the record corrections;
+  graded by a FRESH Assurance seat. **THEN 16C, THEN THE INDICATOR ROWS, IN THAT ORDER.**
+  **NOT 16C NOW. NOT THE LIVENESS DETECTOR. NOT AN INDICATOR ROW. NOT AN ACCEPTANCE.**
+
+expected_next_actor: PRODUCT_AUTHORITY

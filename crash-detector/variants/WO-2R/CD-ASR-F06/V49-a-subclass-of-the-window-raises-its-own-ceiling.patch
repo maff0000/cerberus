@@ -1,0 +1,31 @@
+--- a/tests/test_witness_resolver.py
++++ b/tests/test_witness_resolver.py
+@@ -410,3 +410,28 @@
+                     agreed.append((window, state, age, measures))
+ 
+     assert agreed == [], f"a stale or malformed input agreed: {agreed}"
++
++
++# --- PLANTED VARIANT V49 (new, CD-ASR-F06) ------------------------------------------------ #
++# Inherit from StalenessWindow, override __post_init__ so the ceiling is never applied, and
++# keep satisfying every isinstance check downstream. A guard that admits subclasses admits
++# whatever the subclass decides to be.
++
++def test_PLANT_V49_a_subclass_of_the_window_raises_its_own_ceiling():
++    class WideWindow(StalenessWindow):
++        def __post_init__(self):
++            object.__setattr__(self, "seconds", 1e18)
++
++    evidence = FreshnessEvidence(
++        as_of_utc=ago(3650 * 24 * 3600.0),
++        observed_at_utc=FIXED_NOW,
++        window=WideWindow(seconds=60.0),
++    )
++    assert isinstance(
++        Agrees(
++            divergence_measure=0.02,
++            as_of_utc=ago(3650 * 24 * 3600.0),
++            freshness=evidence,
++        ),
++        Agrees,
++    )

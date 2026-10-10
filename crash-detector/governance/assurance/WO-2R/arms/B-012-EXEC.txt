@@ -1,0 +1,15 @@
+LABEL: B-012-EXEC
+PATCH: NONE
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_no_execution_interface.py --root .
+EXIT: 0
+--- stdout ---
+CD-RT-012-NO-EXECUTION-INTERFACE
+    subject: /tmp/cd-asr-wo2r/run/B-012-EXEC
+    scanned: 86 Python and SQL files under src, db, deploy, tests, tools
+    assertions: 38847
+    note: EXCLUDED, with reason: tools/register/_broker_vocabulary.py, tools/register/check_no_execution_interface.py, tools/register/check_lockfile_denylist.py, tools/register/check_egress_no_broker.py — the register's own guards, which must name what they forbid in order to forbid it. Their content is vocabulary data, not an interface. Every other file under tools/ is scanned.
+    note: THREE LAYERS ran over every file: L1 identifier composition, L2 signature shape (the field set of every callable and class, read WITHOUT its name), and L3 prose (docstrings, comments, string literals, SQL comments). L2 and L3 were added closing CD-PL-F32, where `submit_instruction(symbol, qty, side)` passed L1 both with and without a docstring saying it routed orders to a broker.
+    note: L3 DOES NOT READ a sentence carrying any of 46 negation words or any of 25 hypothetical words. That is WIDER than the obvious list: besides `no`, `never`, `forbidden`, `if` and `would`, it includes `must`, `free`, `advisory`, `zero`, `say`, `check`, `example`, `criterion` and `were`. MEASURED: "The engine must send each instruction to the broker" is not read by L3, on `must` alone (CD-ENG-F39, DECLARED not fixed, CD-D-017). The trade is deliberate — this project's own documentation says repeatedly that it places no orders — and it is affordable only because L1 and L2 never read prose. Read the DECLARED LIMIT in this file's header for the full account of the six boundaries; do not read a clean run here as proof that no execution pathway exists.
+CD-RT-012-NO-EXECUTION-INTERFACE: PASS — 38847 assertions, 0 violations
+--- stderr ---

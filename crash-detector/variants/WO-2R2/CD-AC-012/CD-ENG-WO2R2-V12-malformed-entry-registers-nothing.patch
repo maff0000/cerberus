@@ -1,0 +1,36 @@
+diff --git a/deploy/dependency-registry.yaml b/deploy/dependency-registry.yaml
+index 8c09ccc..79966c6 100644
+--- a/deploy/dependency-registry.yaml
++++ b/deploy/dependency-registry.yaml
+@@ -264,3 +264,11 @@ dependencies:
+     declared_in: "PBG-CI-003 — the lockfile is the full resolved set with hashes"
+     needed_by:
+       - test-suite
++
++  - id: DEP-TASTYTRADE-SDK-001
++    distribution: tastytrade-sdk
++    kind: DIRECT
++    purpose: >
++      Quote snapshots for the equity dial.
++    needed_by:
++      - application
+diff --git a/requirements.lock b/requirements.lock
+index 481387c..dd37450 100644
+--- a/requirements.lock
++++ b/requirements.lock
+@@ -93,3 +93,5 @@ pluggy==1.6.0 \
+ pygments==2.14.0 \
+     --hash=sha256:fa7bd7bd2771287c0de303af8bfdfc731f51bd2c6a47ab69d117138893b82717 \
+     --hash=sha256:b3ed06a9e8ac9a9aae5a6f5dbe78a8a58655d17b43b93c078f094ddc476ae297
++
++tastytrade-sdk==1.2.0
+diff --git a/requirements.txt b/requirements.txt
+index d488c82..107aca7 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -17,3 +17,5 @@ psycopg2-binary==2.9.11
+ 
+ # Test dependency, present on the host, declared in pyproject.toml [dev] as well:
+ pytest==9.0.2
++
++tastytrade-sdk==1.2.0

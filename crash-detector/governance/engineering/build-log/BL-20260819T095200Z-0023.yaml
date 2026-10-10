@@ -1,0 +1,300 @@
+# WO-2R INCREMENT 1 RECONCILED AND ACCEPTED. CD-ASR-F02 (HIGH) and CD-ASR-F03 (MEDIUM) are CLOSED AS
+# A CLASS at lane 27bb880, with ONE residue honestly declared and independently verified by the
+# Project Lead to be exactly as declared. This is RECONCILIATION, not assurance (PBG-SOD-001).
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T095200Z-0023
+timestamp_utc: '2026-08-19T09:52:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
+current_sha: 7fbeaa7971c28223825c7eff6a833a33578e2470
+lane_head_sha: 27bb8803d1a6bde7d589501c71e0a4c8ec2ec33f
+parent_entry_id: BL-20260819T091000Z-0022
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2R-01 was dispatched in the FOREGROUND for increment 1 ONLY — CD-ASR-F02 and
+  CD-ASR-F03, ruled one class by the Product Owner — and returned INCREMENT_1_COMPLETE at lane
+  27bb880 in two commits, defd76c (the closure) and 27bb880 (durable variants and its own Build Log
+  entry BL-20260819T100500Z-0022 on the lane).
+
+  THE PROJECT LEAD HAS RECONCILED IT BY RUNNING EVERYTHING ITSELF, and additionally wrote SEVEN
+  FRESH PROBES OF ITS OWN, none of them in the known set and none of them among the seat's six.
+  ALL SEVEN WERE REFUSED. The strongest of them was designed specifically to break the seat's
+  headline claim and did not.
+
+  INCREMENT 1 IS ACCEPTED. CD-ASR-F02 and CD-ASR-F03 are CLOSED AS A CLASS, with one residue
+  declared, verified and bounded.
+
+  This is reconciliation of a seat return. It is NOT assurance and it does not pre-empt
+  CD-ASR-WO2-02, which will devise FRESH variants against everything the Engineer and the Project
+  Lead have both now published (PBG-SOD-001, non-waivable).
+
+what_the_seat_delivered:
+  the_class: >
+    ABSENCE YIELDING A NUMBER, closed in two halves. (a) The absence OBJECT: a Reading cannot acquire
+    a numeric — or any other UNDECLARED — member by construction, class body, class assignment or
+    deletion, decorator, metaclass, inheritance, instance assignment or object.__setattr__. (b) The
+    absence CODE PATH: a path that did not get its required inputs cannot construct a reading that
+    carries a value, regardless of where the number came from.
+  the_structural_move_that_matters: >
+    THE QUESTION CHANGED. It was "is this member numeric?", which no guard can decide in general. It
+    is now "is this member DECLARED?", which is decided by SET EQUALITY in both directions against
+    DECLARED_MEMBER_SURFACE, asserted while the module is being imported. That is why V02 —
+    a `__getattr__` catch-all, which installs NO MEMBER NAME AT ALL and could therefore never appear
+    on any enumeration of forbidden names — is caught. An enumeration could not have caught it. A
+    surface equality does, for the same reason it catches a member nobody has thought of yet.
+  the_second_structural_move: >
+    THE POST-CONDITION LEFT THE FUNCTION BODY. CD-ASR-F03 was an edit to a function body whose rules
+    lived in that same body, so editing the body edited the rules. `refuse_a_number_without_its_inputs`
+    now re-derives the premise from the evaluator's OWN ARGUMENTS and refuses a value-bearing reading
+    if the inputs were not there. It never asks where the number came from, so the space of
+    number-provenances it must anticipate is EMPTY. That is what makes it a class closure rather than
+    a fifth spelling added to a list of four.
+  the_third: >
+    RULE F DENIES BY DEFAULT. check_no_numeric_default.py stops enumerating ways a number can arrive
+    and instead enumerates the ONE way a magnitude is PERMITTED to arrive, reporting every other
+    provenance. Rules A-E are retained unweakened. Adding a legitimate magnitude source now requires
+    declaring it visibly.
+
+project_lead_reconciliation:
+  what_this_is: >
+    RECONCILIATION BY THE PROJECT LEAD. It re-runs the seat's arms, re-runs the known-set variants,
+    and writes fresh probes. It does not certify and it does not substitute for the Assurance seat.
+  clean_arm_run_by_the_PL_on_its_own_extraction:
+    method: '`git archive <sha> | tar -x` into /tmp, `python3 -B` throughout, no Engineer wrapper used.'
+    before_at_ee8be6b: 'AST 190 assertions / 0 violations · CD-AC-001 pytest 49 passed · full suite 904 passed'
+    after_at_27bb880: 'AST 242 assertions / 0 violations · CD-AC-001 pytest 90 passed · full suite 945 passed'
+    verdict: 'MATCHES the seat''s reported numbers exactly, in all six figures.'
+  the_anti_relaxation_check_that_matters_most: >
+    A refactor this size can pass by quietly deleting or re-scoping the tests that used to fail. So
+    the PL collected the FULL pytest NODE ID LIST at both SHAs and compared them:
+    baseline 904 node ids, new 945 node ids, and the count of ORIGINAL node ids MISSING from the new
+    tree is ZERO. Every one of the 904 original tests is still present and still passing; the 41 new
+    ones are additions. Separately, `git diff ee8be6b..27bb880 -- tests/` removes exactly TWO lines
+    in the whole of tests/, both of them import statements superseded by wider imports. No assertion
+    was relaxed, deleted or re-scoped.
+  known_set_variants_re_run_by_the_PL: >
+    E03 -> declared pytest arm exit 2, "ReadingSurfaceViolated: Unknown carries undeclared member(s)
+    ['magnitude']". E04 -> AST exit 1 rule F, declared pytest arm exit 1 with
+    "AbsenceYieldedAValue: dial 'equity_crash' produced Value ... but its required inputs were
+    not all present". BOTH REFUSED, by the PL's own execution, on the PL's own extractions.
+  the_seats_own_six_variants_re_run_by_the_PL: >
+    V01 classvar -> REFUSED (ReadingSurfaceViolated, FALLBACK_MAGNITUDE). V02 __getattr__ catch-all
+    -> REFUSED (ReadingSurfaceViolated, __getattr__). V03 dynamic constructor -> AST exit 0 BY
+    DESIGN, declared pytest exit 1 (AbsenceYieldedAValue). V04 post-import class mutation ->
+    PARTIALLY REFUSED exactly as declared, see below. V05 decorator installs the member -> REFUSED.
+    V06 magnitude from configuration with no numeric literal anywhere -> AST exit 1 rule F, declared
+    pytest exit 1. ALL SIX reproduce precisely as the seat reported them. Nothing was overstated.
+
+  seven_fresh_probes_written_by_the_project_lead:
+    purpose: >
+      The seat's six variants prove its guard catches routes the seat thought of. They cannot prove
+      it catches the class, because the seat chose them. These seven were written by the PL against
+      the delivered structure, chosen to attack the seat's OWN headline claims rather than the
+      original findings.
+    probes:
+    - id: PL-P1
+      route: 'A numeric property on `Degraded` rather than on `Unknown` — the constructor the seat''s
+        own variants mostly left alone. Tests whether the surface closure covers all three
+        constructors or only the one the finding named.'
+      result: 'REFUSED — AST exit 1, declared pytest exit 2.'
+    - id: PL-P2b
+      route: 'DELETION rather than addition — `__post_init__` removed from `Unknown`. Tests the seat''s
+        specific claim that set equality is asserted in BOTH DIRECTIONS. A one-directional check
+        would have passed this, and a validator that only refuses additions leaves removal of a
+        validator as a live route to a nonsense reading.'
+      result: 'REFUSED — declared pytest exit 2, ReadingSurfaceViolated. The both-directions claim
+        holds and is now independently established.'
+    - id: PL-P4
+      route: '`__slots__` widened with `"__dict__"`, which restores an instance dictionary and would
+        re-open instance injection — an attack on layer 2 through layer 2''s own mechanism rather
+        than around it.'
+      result: 'REFUSED — declared pytest exit 2, ReadingSurfaceViolated.'
+    - id: PL-P5
+      route: 'A subclass built at runtime with `type("Sneaky", (Unknown,), {"magnitude": 0.0})` rather
+        than with a class statement. Tests whether the SealedReadingType metaclass closes the
+        subclass route generally or only the syntactic form of it.'
+      result: 'REFUSED — declared pytest exit 2.'
+    - id: PL-P6
+      route: 'THE STRONGEST PROBE. The absence post-condition is a DECORATOR on `_evaluate_dial`, so
+        the obvious structural attack is not to edit that function at all but to BYPASS IT: `evaluate`
+        itself branches on `required_inputs_are_all_present` and constructs the Value directly. If
+        layer 5 were an instance closure rather than a class closure, this is exactly what would walk
+        past it.'
+      result: 'REFUSED — AST exit 1 AND declared pytest exit 1 with 11 failures. The bypass does not
+        escape.'
+    - id: PL-P7
+      route: 'PL-P6 HARDENED. P6 was partly caught by rule F seeing a numeric literal, so P7 removes
+        the literal entirely — the magnitude becomes `float(len(usable))`, which is 0.0 precisely when
+        there are no usable inputs, and which contains no number anywhere in the source. Bypasses the
+        decorator AND carries no literal. This is the probe the PL expected to succeed.'
+      result: 'REFUSED — AST exit 1, "F: unrecognised magnitude provenance", plus 11 behavioural
+        failures. Rule F''s deny-by-default caught a provenance nobody enumerated, which is the whole
+        claim being made for it.'
+    - id: PL-P-limit
+      route: 'Not an escape attempt but a HONESTY TEST of the declared limit — see immediately below.'
+      result: 'The limit is drawn exactly where it says it is.'
+    assessment: >
+      SEVEN PROBES, SEVEN REFUSALS, including the two written specifically to defeat the seat's
+      headline structural claim. That is not proof of closure — no finite number of probes is — but it
+      is materially stronger evidence than the seat's own six, because the PL chose these against the
+      finished structure and two of them were designed to succeed.
+
+  the_declared_limit_verified_rather_than_accepted:
+    what_the_seat_declared: >
+      One residue is NOT closed: post-import mutation of a class object through `type.__setattr__`.
+      The seat declared it refused at every consumer boundary and by an in-tree package sweep, but
+      OPEN for an out-of-package mutator performing a direct read.
+    what_the_PL_measured_directly: >
+      `type.__setattr__(Unknown, "magnitude", 0.0)` SUCCEEDS. A direct read `u.magnitude` returns
+      0.0. `is_value(u)` RAISES ReadingSurfaceViolated. `fold(u, ...)` RAISES ReadingSurfaceViolated.
+    verdict: >
+      THE LIMIT IS HONESTLY DRAWN — no overstatement and no understatement. It is a real property of
+      CPython, not a gap dressed as a design choice: a class object is mutable and no in-language
+      structure can prevent an in-process mutator from writing to it. The mitigation the seat chose is
+      the right one — assert the OUTCOME at every consumer boundary rather than forbid the mechanism —
+      and the PL notes approvingly that the seat says in its own commit that it CONSIDERED and
+      REJECTED a rule banning `type.__setattr__` on the scanned path, on the grounds that a
+      spelling-based ban would have re-created the exact defect this rework exists to correct.
+      That is the reasoning this project has been trying to install, arriving unprompted.
+  eleven_plants_verified_by_the_PL: >
+    ALL ELEVEN apply cleanly to a fresh extraction of 27bb880. Contrast re-run by the PL on the three
+    the increment touched: CD-RT-001-AST-NO-NUMERIC-DEFAULT clean 0 / plant 1;
+    CD-RT-001-ABSENCE-RENDERS-UNKNOWN (REGENERATED) clean 0 / plant 1;
+    CD-RT-003-ENGINE-NO-WITNESS-REACH (REGENERATED) clean 0 / plant 1. None deleted, none weakened.
+  register_verified_by_the_PL: >
+    `pbg required-tests verify` at the returned SHA: pid.content_hash MATCHES, latest_admitted_run
+    (null), MANDATORY NOT PASS (15), GATE SHUT, PID_ACCEPTANCE_SATISFIED NOT DERIVED. Status-like
+    keys in key position: ZERO. The register was amended without being graded, which is what the
+    contract requires.
+  scope_and_identity_verified_by_the_PL: >
+    `git diff --name-only ee8be6b..27bb880` touches NOTHING under pbg/, PID.md, BLUEPRINT.md,
+    CLAUDE.md, docs/, db/, governance/assurance/, governance/decisions/, governance/dispatch/,
+    governance/rules/ or ACTIVE_WORK.yaml. Both new commits carry author AND committer
+    CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid>. Whole-lane identity audit:
+    26 commits, 24 CD-ENG-WO2-01 and 2 CD-ENG-WO2R-01, and
+    `grep -icE 'matt|infosecurs|noustai|pda'` over every author and committer field returns 0
+    (CD-RULE-002 holds). Both commits carry all ten lines of the mandatory CLASS/STRUCTURE block
+    (CD-RULE-004, PO Ruling 2).
+
+the_seats_self_disclosures_confirmed:
+  note: >
+    Five findings the seat raised against its OWN work. They are recorded here because a seat that
+    reports its own weaknesses is the mechanism this project depends on, and because two of them are
+    substantive.
+  ENG-WO2R-F01_CONFIRMED_BY_MEASUREMENT: >
+    THE MOST VALUABLE THING IN THE RETURN. The seat reports that the REGENERATED
+    CD-RT-001-ABSENCE-RENDERS-UNKNOWN plant no longer demonstrates the INDEPENDENCE of CD-AC-001's
+    two declared tests, because rule F now catches it too — so a plant that used to prove "the
+    behavioural arm catches what the static arm misses" now trips both. THE PL MEASURED THIS AND IT
+    IS EXACTLY RIGHT: the ABSENCE plant now gives AST exit 1 as well as pytest exit 1. The seat also
+    reports that V03 carries that property instead, and the PL confirmed that too: V03 gives AST
+    exit 0 and pytest exit 1 — it escapes the static layer by design and is caught by the runtime
+    layer. So the independence property SURVIVES in the evidence base; it has MOVED from a plant to a
+    variant. This is a real and easily-missed consequence of strengthening a guard, disclosed by the
+    seat rather than found by the auditor.
+  ENG-WO2R-F02: >
+    The declared surface table contains CPython dataclass internals, so it is sensitive to patch-level
+    interpreter changes. It fails CLOSED and LOUDLY — an interpreter change breaks the import rather
+    than silently widening the surface — which is the correct direction. Noted as a portability risk,
+    not a defect. It should be stated in the check''s declared limit if it is not already.
+  ENG-WO2R-F03: 'The guards guarding the guards terminate somewhere, and the seat says where. Accepted.'
+  ENG-WO2R-F04: >
+    The seat''s FIRST runtime probe used an empty config snapshot and therefore never reached the
+    planted branch — it would have reported a refusal it had not actually observed. The seat caught
+    this itself, corrected the probe, and PRINTED THE FAULTY PROBE IN THE VARIANTS MANIFEST WITH THE
+    WARNING ATTACHED so the next seat does not repeat it. That is precisely the failure mode a
+    thorough-looking rework hides, and it was volunteered.
+  ENG-WO2R-F05: >
+    Rule F caught the seat''s OWN first draft (`getattr(cls, "__dictoffset__", 0)`), and the seat
+    FIXED THE CODE RATHER THAN THE CHECK. Recorded because the opposite choice is the single most
+    common way a guard quietly stops working.
+
+decisions_ruled_here:
+- id: CD-D-034
+  ruling: >
+    INCREMENT 1 IS ACCEPTED. CD-ASR-F02 (HIGH) and CD-ASR-F03 (MEDIUM) are CLOSED AS A CLASS at lane
+    27bb880, with one residue — post-import `type.__setattr__` class mutation — DECLARED, VERIFIED BY
+    THE PROJECT LEAD TO BE EXACTLY AS DECLARED, and mitigated at every consumer boundary. Accepting a
+    declared limit is not the same as accepting a gap: the PL measured this one itself, found the
+    declaration neither overstated nor understated, and records that a spelling-based ban was
+    CONSIDERED AND REJECTED for the right reason. Per CD-RULE-004 that is the permitted second option,
+    and CD-PL-F51 warned that a PL unwilling to accept an honest declared limit incentivises a seat to
+    lie about closure. This acceptance is that principle applied.
+- id: CD-D-035
+  ruling: >
+    THE AST GUARD RETAINS `scope: CLASS`, AND THE PROJECT LEAD DOES NOT OVERTURN IT. The seat kept the
+    declaration and put its reasoning in the Build Log "so the PL can overturn it in one word". The PL
+    declines to, on measured grounds: rule F no longer enumerates spellings but denies by default over
+    a declared permitted provenance, and PL-P7 — a magnitude with NO numeric literal anywhere in the
+    source, reached by bypassing the decorated function — was caught by rule F for exactly that
+    reason. A claim of CLASS is earned by that behaviour. The claim remains bounded by the guard's own
+    written declared limit, which is what CD-RULE-004 requires of it.
+- id: CD-D-036
+  ruling: >
+    BUILD LOG ENTRY ID COLLISION — RECORDED, NOT EDITED. The Engineer's lane entry is
+    BL-20260819T100500Z-0022 and the Project Lead's main entry is BL-20260819T091000Z-0022. BOTH
+    CARRY SEQUENCE 0022. The Engineer numbered from the last sequence VISIBLE ON ITS LANE (0017),
+    which is the branch-point copy, and could not see 0018-0022 because those exist only on main.
+    NEITHER ENTRY IS EDITED — Build Log history is not rewritten and corrections supersede
+    (PBG-CONT-003, non-waivable). The pair is unambiguous in practice because the two differ in
+    timestamp (091000Z vs 100500Z), in actor and in branch, and this ruling names them explicitly.
+    FORWARD RULE: the lane takes a RESERVED SEQUENCE BLOCK from 0040 upward and main continues from
+    0023, so the namespaces cannot collide again while a lane and a trunk are both being written. The
+    remaining WO-2R dispatches will carry this instruction. Raised as CD-PL-F52.
+
+findings_raised:
+- id: CD-PL-F52
+  severity: LOW
+  what: >
+    Build Log entry_id sequence numbers collide between the lane and main, because a seat working in
+    the lane worktree can only see the branch-point copy of the build-log directory and numbers from
+    that. It has now happened once (two entries at 0022). It is a continuity-record defect, not a
+    code defect, and it fails CONFUSINGLY rather than dangerously — nothing resolves to the wrong
+    entry, but an index built on entry_id alone would collide.
+  ruled: 'CD-D-036 — reserved sequence blocks. Not repaired retrospectively; corrections supersede.'
+  owed: 'Nothing further at WO-2R. The framework may want entry_id to include the branch or the actor.'
+
+risks:
+- 'CD-PL-F47 MEDIUM, MATERIALLY REDUCED for CD-AC-001 — the type refactor landed with zero original
+  tests lost, zero assertions relaxed, all eleven plants applying and the full suite up from 904 to
+  945. The risk stands for increment 2 (CD-ASR-F01), which is the wider refactor: it reaches every
+  consumer of `.score`, and the score types were deliberately left untouched by this increment.'
+- 'CD-PL-F53 NEW, LOW — the evidence base for CD-AC-001''s two-arm independence has MOVED from a plant
+  to a variant (the seat''s own ENG-WO2R-F01, confirmed by PL measurement). The property survives and
+  is documented, but an auditor reading only plants/ will no longer see it demonstrated. The WO-2R
+  Assurance dispatch must be told where it now lives, or it will report an independence gap that does
+  not exist.'
+- 'CD-PL-F48 MEDIUM, carried, ruled by CD-D-031 — no network in a register check (increment 3).'
+- 'CD-PL-F51 MEDIUM, carried and now EXERCISED — a partial closure honestly declared was accepted on
+  its merits at CD-D-034, which is the behaviour the risk asked for.'
+- 'CD-CONT-001 AMBER, carried — per-increment dispatch is working. Increment 1 cost one foreground
+  seat and produced two commits; nothing was lost.'
+- 'CD-FWK-004, CD-FWK-005/IMP-015 — unchanged.'
+
+status: COMPLETE
+next_safe_action: >
+  DISPATCH INCREMENT 2 to a fresh instance of CD-ENG-WO2R-01, in the FOREGROUND, execution base
+  27bb880, for `increment_2_F01` and NOTHING ELSE — CD-ASR-F01 (HIGH, CD-AC-002): make any scalar
+  derived from BOTH dial types unrepresentable and unpublishable AS A CLASS. Known-set variants to
+  refuse: E01 and E02. It must be told that static analysis cannot be the closure — E02 needs no
+  allowlisted path and leaves NO DIAL MARKER IN ANY EXPRESSION — so the closure lives at the TYPE and
+  at the PUBLICATION BOUNDARY, and the AST no-blend check becomes a locator with a DECLARED LIMIT
+  whose register entry stops claiming that a blend slipping past one layer must fail the other two.
+  It must use Build Log sequence 0040 or above (CD-D-036). This is the widest refactor in the rework
+  and CD-PL-F47 attaches to it directly.
+expected_next_actor: 'PROJECT_LEAD, then sub-agent CD-ENG-WO2R-01 instance 2'
+blockers: []
+held_actions: ['CD-HOLD-003', 'CD-HOLD-004', 'CD-HOLD-005']

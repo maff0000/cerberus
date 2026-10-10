@@ -1,0 +1,81 @@
+diff --git a/probe_v27_lying_ledger.py b/probe_v27_lying_ledger.py
+new file mode 100644
+index 0000000..35ee371
+--- /dev/null
++++ b/probe_v27_lying_ledger.py
+@@ -0,0 +1,54 @@
++"""V27 — VIOLATED ARM for A6-5. The `bool()` coercion on the ledger verdict, restored.
++
++    PYTHONPATH=src python3 -B probe_v27_lying_ledger.py
++"""
++from datetime import datetime, timezone
++
++from crash_detector.collectors.adapter import FetchedResponse
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class Adapter:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = {"type": "object"}
++
++    def fetch(self, *, timeout_seconds):
++        return FetchedResponse(payload={"reading": 1.5}, source_as_of_utc=NOW)
++
++    def is_empty(self, payload):
++        return False
++
++
++class Sink:
++    def record(self, attempt):
++        return None
++
++
++class TruthyLedger:
++    """Answers a non-empty STRING. Truthy, honest-looking, and never False."""
++
++    def __init__(self):
++        self.seen = []
++
++    def admit_if_absent(self, key):
++        self.seen.append(key)
++        return "already claimed" if key in self.seen[:-1] else "claimed by this call"
++
++
++ledger = TruthyLedger()
++POLICY = RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
++first = collect(Adapter(), policy=POLICY, sink=Sink(), ledger=ledger,
++                collector_run_id="run-a", started_utc=NOW, delay=DelayKind.WALL_CLOCK)
++second = collect(Adapter(), policy=POLICY, sink=Sink(), ledger=ledger,
++                 collector_run_id="run-b", started_utc=NOW, delay=DelayKind.WALL_CLOCK)
++print("reading_key       :", first.reading_key)
++print("first  admitted   :", first.reading_admitted)
++print("second admitted   :", second.reading_admitted, "  <-- a RE-FETCH of a claimed period")
++print()
++print("ESCAPED: the ledger answered a truthy string both times and bool() said True both")
++print("times. One source period is now two readings. Idempotency — the property this")
++print("component exists to hold — was decided by the supplied object's own truthiness.")
+diff --git a/src/crash_detector/collectors/runner.py b/src/crash_detector/collectors/runner.py
+index 6dd2996..be0fdcb 100644
+--- a/src/crash_detector/collectors/runner.py
++++ b/src/crash_detector/collectors/runner.py
+@@ -589,15 +589,7 @@ def _established_ledger_verdict(ledger: ReadingLedger, key: ReadingKey) -> bool:
+     a fresh reading, decided by the supplied object's own truthiness. The verdict is now
+     required to BE a ``bool`` and is never derived from one.
+     """
+-    verdict = ledger.admit_if_absent(key)
+-    if type(verdict) is not bool:
+-        raise LedgerContractBreach(
+-            f"ReadingLedger.admit_if_absent returned {type(verdict).__name__}; exactly "
+-            "True or exactly False is the contract. 'Was this period already claimed' is "
+-            "not a question to answer by truthiness — coercing it is how a re-fetch becomes "
+-            "a second reading of one source period."
+-        )
+-    return verdict
++    return bool(ledger.admit_if_absent(key))
+ 
+ 
+ def _attempt(

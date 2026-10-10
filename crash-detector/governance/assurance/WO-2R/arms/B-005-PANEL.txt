@@ -1,0 +1,11 @@
+LABEL: B-005-PANEL
+PATCH: NONE
+APPLY_EXIT: 0
+COMMAND: PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q
+EXIT: 0
+--- stdout ---
+........................................................................ [ 47%]
+........................................................................ [ 94%]
+........                                                                 [100%]
+152 passed in 0.27s
+--- stderr ---

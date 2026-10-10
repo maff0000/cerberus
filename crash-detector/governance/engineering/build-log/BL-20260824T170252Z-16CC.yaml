@@ -1,0 +1,479 @@
+# ================================================================================================== #
+# BL-20260824T170252Z-16CC — **READY_FOR_ASSURANCE AT `be088c5` ON BRANCH `wo-3`.**
+# INCREMENT 16B-CONTRACT-CLOSURE. `CC-1` RULE CC · `CC-2` THE CANONICAL PATH · `CC-3` THE
+# AFFIRMATIVE VALUE CHECK · `CC-4` THE CAP FAILS CLOSED.
+#
+# *** `status:` IS `WAITING_ASSURANCE` BECAUSE THE SCHEMA HAS NO `READY_FOR_ASSURANCE` VALUE —
+# THAT IS `CD-PL-F204`, AND THIS ENTRY WAS VALIDATED BY DIRECT CALL BEFORE IT WAS COMMITTED, NOT
+# VIA `pbg log validate`, WHICH VALIDATES ZERO ENTRIES AND PRINTS GREEN. ***
+# ================================================================================================== #
+
+entry_id: BL-20260824T170252Z-16CC
+timestamp_utc: "2026-08-24T17:02:52Z"   # from `date -u +'%Y-%m-%dT%H:%M:%SZ'` and nothing else (CD-RULE-005)
+record_type: ENGINEER_RETURN
+project: crash-detector
+actor: CD-ENG-WO3-11
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_04
+authority_id: CD-DISPATCH-INC16B-CONTRACT-CLOSURE-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+baseline_sha: 8398741c039f9cb616201e22b285d815406dc3cc
+current_sha: be088c5cdf7d2551c899ae8b5a3e10e910c5ab7f
+# *** `current_sha` IS THE CONTENT TIP — THE LAST COMMIT CARRYING WORK — AND COMMITTING THIS
+# ENTRY NECESSARILY CREATES ONE MORE COMMIT ON TOP OF IT. THAT COMMIT CARRIES *THIS FILE AND
+# NOTHING ELSE*, AND ITS SHA IS THE ONE TO ASSURE. *** The same convention the previous return
+# used (`BL-...-16B5` records content tip `16b872c` while its own commit is `8398741`), stated
+# here rather than left for the auditor to reconcile. `git diff be088c5..HEAD --stat` after this
+# commit must name ONLY this build-log file.
+parent_entry_id: BL-20260824T154200Z-16B5
+# *** THE DISPATCH NAMES `BL-20260824T163112Z-0175` AS THE CAUSAL PARENT AND IT IS RECORDED IN
+# `dispatch_causal_parent` BELOW RATHER THAN DROPPED. IT CANNOT GO IN `parent_entry_id`: THAT
+# FIELD IS A REFERENCE THE VALIDATOR RESOLVES *IN THIS TREE*, AND `-0175` IS A PROJECT LEAD
+# BOUNDARY THAT EXISTS ONLY ON `main`. MEASURED — see CD-ENG-F05. `-16B5` IS THIS LANE'S OWN
+# PREVIOUS ENTRY AND IS THE TRUE PREDECESSOR *IN THIS BUILD-LOG*. ***
+dispatch_causal_parent: BL-20260824T163112Z-0175
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  *** READY_FOR_ASSURANCE AT be088c5cdf7d2551c899ae8b5a3e10e910c5ab7f (branch wo-3, two commits:
+  d2d4622 the code, be088c5 the plants). 16C IS NOT RELEASED AND THIS SEAT DOES NOT DECLARE GREEN
+  (PBG-SOD-001, non-waivable). ***
+  **THIS IS NOT A SIXTH SPELLING PATCH AND IT DOES NOT MAKE THE RECOGNISER BETTER AT RECOGNISING.
+  IT REMOVES THE RECOGNISER FROM THE LOAD-BEARING POSITION.** PO-DECISIONS-0028 ruling 1, (a)
+  CLOSE THE CONTRACT. `CD-CALM-SLOTS-007` compares `dial_bearing` against `found`, so **a root
+  property the recogniser answers `False` about is in NEITHER SET, the comparison is satisfied,
+  and the slot is INVISIBLE** — the hole CD-ASR-WO3-10 proved unclosable by any list. RULE CC
+  replaces that open-space question with a CLOSED PARTITION over a FINITE SET: every property of
+  an envelope root is EXACTLY ONE of (a) a canonical dial slot spelled literally
+  '{"$ref": "#/$defs/dial_reading"}', decided by DICT EQUALITY, or (b) a declared non-dial property
+  on a finite written allowlist, decided by STRING EQUALITY and AFFIRMATIVELY PROVED against the
+  LIVE GATE. **ANYTHING ELSE IS A VIOLATION. NO RECOGNISER IS CONSULTED. A310-F2, A310-F3 AND
+  A310-F1 ARE NOT CLOSED BY THIS — THEY ARE UNREACHABLE**, because none of them is limb (a) or
+  limb (b).
+  *** THE MEASUREMENT THAT DECIDES WHETHER ANY OF THAT IS TRUE, AND IT IS FIVE LIVE ESCAPES. ***
+  Five planted contract edits were GREEN at 8398741 — `PASS — 144 assertions, 0 violations` — with
+  the LIVE GATE **ADMITTING a calm-carrying document on BOTH surfaces**, and are RED at be088c5:
+  CC-B (the discriminator spelled `status`, A310-F2), CC-C (present:false + a three-week-old stamp,
+  A310-F3), CC-D (nested 25 deep, one past the cap, A310-F1), CC-G (a branch's freshness stamp
+  dropped from `required`) and CC-H (an allowlisted root property widened until it admits an
+  object). **EVERY ONE OF THOSE FIGURES WAS RUN BY THIS SEAT, AT BOTH TIPS, FROM ITS OWN PRISTINE
+  `git archive | tar -x` EXTRACTION PER ARM PER TIP, WITH `git apply`'s OWN rc AND THE INSTRUMENT'S
+  EXIT CODE TAKEN FROM THE COMMAND AND NEVER FROM A PIPE.**
+  CC-B AND CC-C ARE CAUGHT BY RULE CC ALONE — the recogniser is still SILENT on both, exactly as
+  A310-F2 and A310-F3 recorded. **DECLARED LIMIT 12's residue is NOT closed and is not claimed to
+  be; what changed is that the guarantee no longer rests on it.**
+  CLEAN TREE 144 -> 243 assertions, 0 violations, exit 0. Register 19 rc=0 / 11 non-zero, UNMOVED.
+  pytest 2007 passed. **THE ADMITTED DOCUMENT SET IS UNCHANGED — MEASURED, NOT ASSUMED**, 28
+  documents x 2 surfaces through `refuse_unless_publishable` before and after the contract edit,
+  DIFF EMPTY, so dispatch §6's STOP condition did not trigger and ENVELOPE_SCHEMA_VERSION stays
+  1.1.0 untouched in the protected `src/`.
+
+status: WAITING_ASSURANCE
+expected_next_actor: "a FRESH CD-ASR-WO3-11 (Assurance Engineer) — NEVER this seat, NEVER CD-ENG-WO3-10, NEVER CD-ASR-WO3-10 (PBG-SOD-001 / PBG-SOD-004)"
+
+next_safe_action: >-
+  **A FRESH ASSURANCE SEAT GRADES `be088c5` AGAINST PO-DECISIONS-0027 RULING 5's COMPLETION TEST
+  OVER THE NOW-CLOSED CONTRACT, AND NOT ON A SHAPE CENSUS** (PO-DECISIONS-0028 ruling 2). The
+  cheapest falsification to attempt first, and this seat names it rather than hiding it: **write a
+  contract edit that opens a calm-over-unknown hole at the ROOT of either envelope and leaves the
+  instrument GREEN.** RULE CC's claim is that this is impossible because the hole must arrive as a
+  root property and every root property is limb (a), limb (b) or a violation — so the attack
+  surface is the CLOSURE ARGUMENT's premises, enumerated in DECLARED LIMIT 17, and its named
+  boundary. **The boundary this seat believes is weakest is limb (b) at DEPTH:** an allowlisted
+  root property that refuses this check's TWO probe shapes while admitting a third. **THAT IS TWO
+  SHAPES AND IT IS NOT A CLASS, AND IT IS WRITTEN THAT WAY IN ALL THREE CD-RULE-004 PLACES.**
+  **ONLY ON A GREEN FROM THAT SEAT** does 16C release. **16C IS NOT RELEASED HERE**, no liveness
+  detector was written, `feed_liveness` exists in this increment ONLY as plant data inside
+  `plants/WO3-INC16B/CC-*.patch` and in no contract, and **NOT ONE INDICATOR ROW** from
+  `governance/mapping/indicator_mapping.yaml` was registered. The memorial in `tests/` is
+  untouched — `tests/` was protected from this seat entirely and its diff is ZERO.
+
+what_was_built:
+  CC-1_RULE_CC_the_root_partition: >-
+    `CD-CALM-ROOT-008`, new. `_root_limb(name, subschema)` returns "a" | "b" | None and **HAS NO
+    FOURTH OUTCOME AND CANNOT RETURN "I COULD NOT TELL"** — limb (a) is `subschema ==
+    CANONICAL_DIAL_SLOT`, dict equality against a two-token literal (NOT `sub.get("$ref") == ...`,
+    because in 2020-12 a sibling of `$ref` APPLIES and makes it a different schema); limb (b) is
+    `name in NON_DIAL_ROOT_PROPERTIES`, a frozenset of the nine names the two contracts declare
+    today. **THE TWO PREMISES OF EXHAUSTIVENESS ARE ASSERTED PER SURFACE AND NOT ASSUMED:** the
+    root declares `additionalProperties: false`, and the root declares no keyword outside
+    `_ROOT_STRUCTURAL_KEYWORDS`. **AN UNASSERTED PREMISE IS EXACTLY HOW DECLARED LIMIT 4 CAME TO
+    CLAIM "UNDER ANY SPELLING" THREE TIMES RUNNING**, so both are counted assertions.
+  CC-1_limb_b_is_PROVED_and_not_trusted: >-
+    **A WRITTEN ALLOWLIST OF NAMES IS A DENYLIST WEARING AN ALLOWLIST'S CLOTHES IF NOTHING PROVES
+    THE NAMED PROPERTIES ARE REALLY NOT DIALS.** So each allowlisted name, on each surface, has its
+    value replaced by a calm-carrying object in an otherwise ADMITTED envelope and the LIVE GATE
+    must REFUSE: 17 names x 2 probe shapes = **34 drives, ALL REFUSED**, each at its own pointer,
+    plus **one ADMITTING baseline control per surface** so the section cannot pass vacuously. That
+    is PO-DECISIONS-0028 ruling 1's own words — "within that closed shape the value check is
+    sufficient."
+  CC-2_the_canonical_path: >-
+    `CD-CALM-CANON-009`, new. **THE CONTRACT EDITS ARE THE TWO §CC-2 NAMED THEM AND NOTHING MORE:**
+    `"required": ["state"]` on `#/$defs/dial_reading`, and a normative RULE CC clause in the root
+    and `dial_reading` descriptions of BOTH contracts, naming the canonical path and naming the
+    instrument that enforces it. The instrument then asserts, per surface, counted: the union is
+    `additionalProperties: false`, declares `properties.state`, REQUIRES `state`; **every** branch
+    is `additionalProperties: false`, REQUIRES `state`, declares `properties.state.const` as a
+    STRING, and REQUIRES at least one property typed `#/$defs/utc_timestamp`. **THE STAMP IS
+    ASSERTED BY TYPE AND NEVER BY NAME** — measured, VALUE and DEGRADED require `as_of_utc` while
+    UNKNOWN requires `since_utc`, so a fixed name would have been a fifth spelling patch waiting to
+    happen. **The ABSENCE of the canonical path is its OWN named violation** and is deliberately
+    NOT folded into `CD-CALM-BRANCHES-006`, which reports a recognition failure and would read as
+    the wrong sentence.
+  CC-2_the_description_is_NOT_the_enforcement_point: >-
+    Stated in the contracts themselves, in the instrument, and in all three CD-RULE-004 places:
+    **a `description` refuses nothing.** `absent_data_detail_level`'s own description already
+    records 16A in its own words — the guarantee "asserted only in PROSE" while the gate ADMITTED
+    a calm UNKNOWN dial on both surfaces. **THE PROSE STATES THE MANDATE; CC-1 AND CC-3 ENFORCE
+    IT.** This seat did not write a sentence in a schema and count it as a control.
+  CC-3_the_affirmative_value_check: >-
+    `CD-CALM-FRESH-010`, new, and **THIS IS PO-DECISIONS-0027 RULING 5 MADE ACHIEVABLE.** A branch
+    may reference the calm-bearing `#/$defs/detail_level` **IF AND ONLY IF** its
+    `properties.state.const` is in `PRESENT_STATES` **and** it requires a freshness stamp; every
+    other branch MUST reference a vocabulary from which `calm` is ABSENT. **IT DOES NOT ASK "IS
+    THIS STATE ON MY LIST OF BAD ONES?" — the question nine audits defeated by naming a state
+    nobody had listed. IT ASKS "HAS THIS BRANCH PROVED PRESENT-AND-FRESH?"** A never-before-named
+    state must arrive as a NEW BRANCH; a new branch's state is not in `PRESENT_STATES`; therefore
+    it CANNOT CARRY `calm` — **BY CONSTRUCTION, OVER A CLOSED SET.** The vocabulary is judged by
+    its VALUES and never by the `$def`'s NAME (CD-PL-F169, CD-ASR-WO3-02 F06/F07). **The VACUITY
+    direction is asserted too and carries equal weight:** a branch that HAS proved
+    present-and-fresh and CANNOT carry `calm` is also a violation, because PID §4 makes `calm` the
+    base case and a contract that cannot express it is enforcing silence.
+  CC-4_the_cap_fails_closed: >-
+    `_instance_declared_names` returned `INSTANCE_TOO_DEEP` at its cap and **THE SENTINEL HAD ZERO
+    EXECUTABLE CONSUMERS** — `declared`'s only reader was `"state" in declared`, which a sentinel
+    can never satisfy — so reaching the cap was a **SILENT SUCCESS** while DECLARED LIMIT 15's own
+    heading said in terms that it was not. `_dial_bearing` now sets `undecidable = True` on that
+    sentinel, which is DECLARED LIMIT 14's limb (c) reached from the position it was always meant
+    to reach. Fixed in `_dial_bearing` and not in `_instance_declared_names` because that function
+    returns a NAME SET and has no `None` to return; the sentinel was its honest report and this is
+    the consumer that was missing.
+  what_was_deliberately_NOT_done: >-
+    **`_dial_bearing`, `_declared_names`, `_instance_declared_names` and `_unreadable_keywords` ARE
+    KEPT AND ARE UNCHANGED BUT FOR CC-4's ONE LIMB** (PO-DECISIONS-0028 ruling 3 — 8398741 is
+    preserved, nothing reverted; FX16 passed the audit clean and is carried forward). They are the
+    SECOND instrument, and `CD-CALM-SLOTS-007` still runs over the same root properties. **WHAT
+    CHANGED IS THAT THE GUARANTEE NO LONGER RESTS ON THEM.** No `src/` edit, no `tests/` edit, no
+    `ENVELOPE_SCHEMA_VERSION` bump, no contract edit outside dispatch §CC-2's two named edits, no
+    C1-C34 patch file touched.
+
+the_closure_argument_MADE_from_the_code_with_its_boundary_NAMED:
+  status: MADE, WITH A NAMED BOUNDARY — and every step is a line of code an auditor can re-derive.
+  the_argument: >-
+    (1) THE ROOT KEY SET IS FINITE AND ENUMERABLE — `CD-CALM-ROOT-008` iterates
+    `schema["properties"]`, a JSON object with finitely many keys.
+    (2) NOTHING OUTSIDE THAT ENUMERATION CAN REACH A PUBLISHED DOCUMENT — asserted per surface, not
+    assumed: root `additionalProperties: false`, AND no root keyword outside
+    `_ROOT_STRUCTURAL_KEYWORDS`. Without the second, a root `patternProperties`/`allOf`/`if` could
+    admit a key `properties` never names and RULE CC would be a partition of a SUBSET while
+    claiming to be a partition of the whole.
+    (3) EACH ENUMERATED KEY IS DECIDED BY EQUALITY, NEVER BY A WALK — `_root_limb` is two
+    comparisons and has three `return` statements; **NEITHER COMPARISON CAN RETURN "UNDECIDABLE".**
+    (4) THEREFORE EVERY ROOT PROPERTY IS limb (a), limb (b) OR A VIOLATION. No fourth outcome.
+    (5) limb (b) IS NOT TAKEN ON TRUST — 34 live-gate drives, all REFUSED, with 2 ADMITTING
+    controls.
+    (6) limb (a) POINTS AT ONE DEFINITION AND THAT DEFINITION IS CLOSED — `CD-CALM-CANON-009` (the
+    union and every branch closed, `state` required, `state.const` pinned, a freshness stamp
+    required) with `CD-CALM-BRANCHES-006` (one branch per declared state, declared state set
+    exactly `DECLARED_STATES`).
+    (7) SO THE BRANCH ALPHABET IS CLOSED, AND OVER A CLOSED ALPHABET THE VALUE CHECK IS SUFFICIENT
+    — ruling 1's own words — and `CD-CALM-FRESH-010` makes `calm` unrepresentable on every branch
+    that has not proved present-and-fresh.
+  the_conclusion_and_ONLY_this_one: >-
+    **A CONTRACT EDIT CANNOT OPEN A CALM-OVER-UNKNOWN HOLE AT THE ROOT OF EITHER ENVELOPE WITHOUT
+    THIS INSTRUMENT GOING RED**, because the hole must arrive as a root property and every root
+    property is limb (a), limb (b) or a violation.
+  the_boundary_NAMED_and_not_left_for_the_next_auditor: >-
+    The argument is about the TWO ENVELOPE CONTRACTS THIS INSTRUMENT LOADS AND NOTHING ELSE.
+    (a) NOT a claim about documents the gate never sees — DECLARED LIMIT 4's closing paragraph,
+    unchanged.
+    (b) NOT a claim about a contract this instrument is not looking at — `$CD_CONTRACTS_DIR` is
+    DECLARED LIMIT 1; the check REFUSES TO RUN when it resolves elsewhere and does NOT prevent the
+    route. NOT PROVED TO BE CARRIED ANYWHERE.
+    (c) **IT IS A CLAIM ABOUT THE ROOT, NOT ABOUT EVERY POSITION IN THE DOCUMENT.** Depth inside a
+    limb (b) property is covered by the LIVE GATE probe and by NOTHING STRUCTURAL, and only for the
+    TWO shapes in `CALM_BEARING_PROBES`. **THAT IS TWO SHAPES AND IT IS NOT A CLASS**, and it is
+    written that way because four sentences on this row have already been superseded for describing
+    a sample as a measurement (DECLARED LIMIT 10, 12(a), 13, 14's cost column). **THIS IS THE
+    WEAKEST POINT AND THE ASSURANCE SEAT SHOULD ATTACK IT FIRST.**
+    (d) The freshness assertion keys on `#/$defs/utc_timestamp` BY OBJECT IDENTITY: an inline copy
+    of the same pattern is REPORTED not accepted, and **renaming that `$def` turns this instrument
+    RED.** Fail-closed, and the remedy is to price the rename.
+    (e) DECLARED LIMIT 12's residue is NOT closed at the recogniser — `_dial_bearing` still answers
+    `False` about a dial discriminating on a differently-named key, **AND CC-B AND CC-C PROVE IT
+    STILL DOES.**
+    (f) `PRESENT_STATES` is typed in, like `DECLARED_STATES`: whether a NEW state means the data is
+    PRESENT is product meaning (PBG-AUTH-005), so a new state makes this instrument RED until a
+    human rules — which is the mechanism by which CC-3 refuses `calm` to a never-before-named state
+    rather than a list of bad names.
+    (g) **NOTHING OUTSIDE THIS INSTRUMENT READS RULE CC.** The contracts STATE the mandate and a
+    `description` refuses nothing. NOT PROVED TO BE CARRIED ANYWHERE.
+  rule_CC_needed_no_third_limb: >-
+    Dispatch §6 made "RULE CC cannot be stated without an 'and also' third case" a STOP condition.
+    **IT DID NOT TRIGGER.** The partition is two limbs and `_root_limb`'s three `return` statements
+    are the whole of it. No escape hatch was added, and the nineteen root properties the two
+    contracts declare today fall 4 into limb (a) and 17 into limb (b) with none left over.
+
+tests:
+  count: 30
+  result: >-
+    **EVERY FIGURE IN THIS ENTRY WAS RUN BY THIS SEAT IN ITS OWN SHELL. NOTHING IS INHERITED.**
+    Where a fact came from the dispatch or the verdict and this seat did NOT run it, it is in
+    `quoted_not_asserted` below.
+    CLEAN TREE — `PYTHONPATH=src python3 -B tools/register/check_missing_data_never_calm.py
+    --root .` -> **BEFORE (at 8398741): `PASS — 144 assertions, 0 violations`, exit 0. AFTER (at
+    be088c5): `PASS — 243 assertions, 0 violations`, exit 0.** The +99 is accounted EXACTLY: 27
+    RULE CC structural (2 root-closure premises + 10/11 root properties + 1 limb(a)==driven, per
+    surface) + 36 limb (b) (2 ADMIT controls + 34 probe REFUSALS) + 6 CD-CALM-CANON-009 union-level
+    + 30 per-branch ((4 canonical-path + 1 affirmative-value) x 3 branches x 2 surfaces).
+    REGISTER — all 30 `execute:` lines run, rc from the command and never from a pipe:
+    **19 rc=0 / 11 non-zero**, the same split six previous seats measured and CD-ASR-WO3-10
+    measured on the clean 8398741. **UNMOVED.** `grep -cE '^\s*execute:\s*\S' required-tests.yaml`
+    -> 30.
+    `PYTHONPATH=src python3 -m pytest tests/ -q` -> **2007 passed**, the figure CD-ASR-WO3-10
+    measured, and `tests/` has a ZERO diff from this seat.
+    `PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli --root . required-tests verify`
+    -> `pid.content_hash MATCHES` · `latest_admitted_run (null)` · `MANDATORY NOT PASS (17)` ·
+    `GATE: SHUT` · `PID_ACCEPTANCE_SATISFIED: NOT DERIVED` · `grep -cE '^  \[[MA]\] CD-AC-'` ->
+    **18**. Every one identical to the target-tip baseline.
+    *** CC-4, THE ACCEPTANCE MEASUREMENT, DIRECT CALLS TO `_dial_bearing` ON THIS TREE, BEFORE AND
+    AFTER, node `{"enum": [<a {state, detail_level:"calm"} object nested N deep>]}`: ***
+    `depth 1, 5, 20, 22, 23, 24 -> None BEFORE -> None AFTER (UNCHANGED)`;
+    `depth 25, 26, 30, 40 -> False BEFORE -> None AFTER (MOVED, FAIL CLOSED)`.
+    `_instance_declared_names(<30 deep>)` -> `{'wrap', INSTANCE_TOO_DEEP}`, `'state'` ABSENT, at
+    both — the mechanism is unchanged and the CONSUMER is what was added.
+    *** THE DOCUMENT SET, WHICH IS DISPATCH §6's STOP CONDITION AND WAS MEASURED RATHER THAN
+    ASSUMED. *** 28 documents x 2 surfaces driven through `refuse_unless_publishable`, the same
+    corpus before the contract edit and at the final SHA: **DIFF EMPTY. 16 ADMITTED / 40 REFUSED
+    both times.** The corpus carries BOTH directions — 8 admitting controls including the VALUE/calm
+    vacuity arm, and 20 refusing shapes including every shape ruling 1 names. **AND THERE IS A
+    PROOF BESIDE THE MEASUREMENT:** `dial_reading` admits a document only through its `oneOf`, and
+    every branch of that `oneOf` already required `state`, so `"required": ["state"]` on the parent
+    refuses nothing that was previously admitted. **THE STOP CONDITION DID NOT TRIGGER** and
+    `ENVELOPE_SCHEMA_VERSION` is untouched at `1.1.0` in the protected `src/`.
+    *** THE NINE CC ARMS, EACH FROM ITS OWN PRISTINE `git archive <sha> | tar -x` EXTRACTION, ONE
+    PER ARM PER TIP, AND EVERY ONE RUN AT *BOTH* TIPS — because an arm that is red at the new tip
+    proves nothing unless it was green at the old one. `git apply` rc TAKEN FROM `git apply`: ***
+    **rc = 0 ON ALL EIGHT PATCHES AT BOTH TIPS, AND AGAIN AT THE FINAL SHA `be088c5`.**
+    `CC-A` (root slot as an `enum` of literal readings): `FAIL — 2` -> `FAIL — 4` (2x
+    CD-CALM-ROOT-008 + 2x CD-CALM-SLOTS-007 — the dispatch's named outcome for this arm).
+    `CC-B` (A310-F2, `state` -> `status`, ONE STRING): **`PASS — 144` (LIVE ESCAPE) -> `FAIL — 2`**,
+    2x CD-CALM-ROOT-008 and **the recogniser SILENT**.
+    `CC-C` (A310-F3, `present:false` + stale stamp): **`PASS — 144` (LIVE ESCAPE) -> `FAIL — 2`**,
+    2x CD-CALM-ROOT-008 and **the recogniser SILENT**.
+    `CC-D` (A310-F1, nested 25 deep): **`PASS — 144` (LIVE ESCAPE) -> `FAIL — 4`**, caught TWICE.
+    `CC-E` (4th branch `SPINDRIFT` -> calm-bearing level): `FAIL — 2` -> **`FAIL — 4`**, 2x
+    CD-CALM-FRESH-010 + 2x CD-CALM-BRANCHES-006. **RULING 5'S OWN TEST.**
+    `CC-F` (CONTROL, the same 4th branch -> `absent_data_detail_level`): `FAIL — 2` -> `FAIL — 2`,
+    2x CD-CALM-BRANCHES-006 and **CD-CALM-FRESH-010 DOES NOT FIRE.** `CC-E` and `CC-F` differ in
+    ONE `$ref` and nothing else.
+    `CC-G` (freshness stamp dropped from `required`): **`PASS — 144` (LIVE ESCAPE) -> `FAIL — 4`**,
+    2x CD-CALM-CANON-009 + 2x CD-CALM-FRESH-010.
+    `CC-H` (CONTROL, allowlisted root property widened to admit an object): **`PASS — 144` (LIVE
+    ESCAPE) -> `FAIL — 4`**, 4x CD-CALM-ROOT-008.
+    `CC-I` (VACUITY CONTROL, the clean tree, a `.sh` like `C5`, no patch): **`PASS — 243
+    assertions, 0 violations`, exit 0**, and the `.sh` itself exits 0.
+    *** AND THE FIVE ESCAPES WERE REAL — THE LIVE GATE DRIVEN IN-PROCESS AT 8398741, BOTH SURFACES,
+    EVERY PROBE PAIRED WITH A CONTROL SO A BROKEN FIXTURE CANNOT MASQUERADE AS A CLOSED HOLE: ***
+    `CC-B` dead feed spelled `status` + calm -> **ADMITTED x2** (control LIVE -> ADMITTED x2);
+    `CC-C` present:FALSE + 3-week-old stamp + calm -> **ADMITTED x2** (control present:true ->
+    ADMITTED x2); `CC-D` dead feed + calm, 25 deep -> **ADMITTED x2**; `CC-G` a VALUE dial with NO
+    `as_of_utc` at all + calm -> **ADMITTED x2** (control with its stamp -> ADMITTED x2); `CC-H`
+    `{"detail_level":"calm"}` at the root property `regime` -> **ADMITTED x2** (control, an ordinary
+    string -> ADMITTED x2). **THAT IS THE C24/C25 SIGNATURE — WHOLE INSTRUMENT GREEN, GATE
+    PUBLISHING A DEAD FEED AS CALM — REPRODUCED FIVE MORE TIMES AND THEN CLOSED.**
+    `CC-F` at both tips: `SPINDRIFT` + calm -> **REFUSED [SCHEMA_VIOLATION] at /equity_crash x2**;
+    the same reading + acute -> **ADMITTED x2**.
+    `CC-E`'s gate STILL ADMITS at the new tip **and that is CORRECT and is the whole point**: `CC-E`
+    is a CONTRACT EDIT, and the thing that catches a bad contract edit is the INSTRUMENT going RED,
+    not the gate refusing a document the edited contract now legitimately declares.
+    *** C1-C34 RE-MEASURED BY THIS SEAT AT BOTH TIPS, `git apply` rc = 0 ON ALL 33 PATCH ARMS AT
+    BOTH TIPS: EVERY ARM THAT BIT STILL BITES*** — `C1`/`C3`/`C8` `FAIL — 8` -> `12`; `C4` `4` ->
+    `6`; `C6` `6` -> `8`; `C11`/`C12`/`C18`/`C19` `32` -> `34`;
+    `C13`/`C14`/`C20`/`C22`-`C27`/`C29`/`C29b`/`C30`/`C34`/`C9` `2` -> `4`; `C2` `2` -> `3` (one
+    surface, hence odd; the extra is CD-CALM-FRESH-010 on the public DEGRADED branch); `C7` `8`,
+    `C17` `32`, `C32` `4` all UNCHANGED; `C10` `PASS — 158` -> `PASS — 257`. **AND TWO CONTROLS
+    MOVED — see `findings_this_seat_raises_against_its_own_work`, where it is raised rather than
+    left to be found.**
+  command: >-
+    Clean tree: `PYTHONPATH=src python3 -B tools/register/check_missing_data_never_calm.py
+    --root .`. Register: each `execute:` line eval'd verbatim with `--root .`, rc from the command
+    and NOT from a pipe. Arms: `git -C /srv/crash-detector-wo3 archive <sha> | tar -x -C
+    /tmp/eng11/<set>/<arm>` then `git apply -p1 <patch>` with rc captured, then the instrument with
+    rc from the command. Gate: `/tmp/eng11/gate.py <arm-root> <arm-name>`, in-process through
+    `refuse_unless_publishable`, both surfaces. Document set: `/tmp/eng11/docset.py <root>`,
+    28 documents x 2 surfaces, output diffed between tips. CC-4: `/tmp/eng11/depth_probe.py <root>`,
+    direct calls to `_dial_bearing` and `_instance_declared_names`.
+  evidence_reference: >-
+    /tmp/eng11 — depth_probe.py, docset.py (+ docset.BEFORE.txt / docset.AFTER.txt /
+    docset.FINAL.txt), gate.py, mkplants.py, runarms.sh, runC.sh, arms/ arms_prior/ arms_final/
+    C_prior/ C_new/ (one pristine extraction per arm per tip), C.prior.txt / C.new.txt. **ALL
+    DIAGNOSTIC, ALL UNDER /tmp, NONE APPLIED TO ANY WORKTREE** (CD-PL-F154). The plant patches
+    themselves are committed at `plants/WO3-INC16B/CC-*.patch` and `CC-I-*.sh` and are the
+    reproducible artefacts; `/tmp` is not.
+
+protected_paths_proved_ZERO_by_command:
+  command: "git diff --stat 8398741..HEAD -- pbg BLUEPRINT.md PID.md governance/decisions governance/mapping src tests deploy db evidence"
+  result: >-
+    **EMPTY. ZERO FILES, ZERO INSERTIONS, ZERO DELETIONS.** `pbg/`, `BLUEPRINT.md`, `PID.md`,
+    `governance/decisions/`, `governance/mapping/`, `src/`, `tests/`, `deploy/`, `db/` and
+    `evidence/` are all untouched.
+  tools_scope: >-
+    `git diff --stat 8398741..HEAD -- tools` -> **exactly one file**,
+    `tools/register/check_missing_data_never_calm.py | 773 +++, 768 insertions(+), 5 deletions(-)`.
+    **NO OTHER FILE UNDER `tools/` HAS A DIFF**, which is the whole of the `tools/**`-except-my-one-
+    file protection. `tools/register/check_schema_closed.py` appears INSIDE plant patch DATA under
+    `plants/`, in the established form C29/C30/C31 already use, and has a ZERO diff in this
+    worktree.
+  C1_to_C34_untouched: >-
+    `git diff --stat 8398741..HEAD -- 'plants/WO3-INC16B/C*'` -> **EMPTY**. Not one existing patch
+    file was edited. `MANIFEST.md` gains a section, which is what dispatch §4 requires.
+  frozen_base: >-
+    `git rev-parse be0b355` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **UNMOVED.** It was never
+    checked out, rebased onto or touched.
+  one_identity: >-
+    `git log --format='%an' 8398741..HEAD | sort -u` -> **`CD-ENG-WO3-11`, and nothing else.** Two
+    commits: `d2d4622` (the code) and `be088c5` (the plants).
+  schema_version: >-
+    `ENVELOPE_SCHEMA_VERSION = "1.1.0"` in `src/crash_detector/publication/envelope_contract.py`,
+    **UNCHANGED AND UNTOUCHABLE BY THIS SEAT**. Both contracts still pin `"const": "1.1.0"`.
+
+findings_this_seat_raises_against_its_own_work:
+  - >-
+    **`CD-ENG-F01` — TWO ARMS LABELLED `CONTROL` IN THE EXISTING PLANT SET MOVE `PASS` ->
+    `FAIL — 2` UNDER RULE CC, AND THE TWO CASES ARE NOT THE SAME.** `C16`
+    (`publication_note`) and `C31` (`market_pulse`) each add an optional ROOT property; RULE CC
+    fires on both because neither is a canonical dial slot and neither name is on the allowlist.
+    **THAT IS RULE CC DOING WHAT IT WAS ORDERED TO DO**, but it changes what those arms MEAN.
+    **`C16` IS NOT A NEW FALSE POSITIVE AND THAT IS MEASURED:** `C16` never paid
+    `check_schema_closed`'s root allowlist, so the SIBLING row `CD-RT-002-SCHEMA-CLOSED` has FAILED
+    on it at BOTH tips all along — measured, `FAIL — 2 violation(s)`, exit 1, *"UNDECLARED KEYS
+    PRESENT: publication_note"*. RULE CC makes two rows AGREE about a tree they used to disagree
+    about. **`C31` IS A GENUINE NEW FALSE POSITIVE AND IS RECORDED AS ONE:** `C31` DOES pay that
+    allowlist — measured, `CD-RT-002-SCHEMA-CLOSED: PASS — 280 assertions, 0 violations`, exit 0 —
+    so this row now refuses a tree the sibling accepts. The ruled direction is the one taken and is
+    arguably more correct than the green was (`market_pulse` is a THIRD DIAL SLOT and "two dials,
+    never blended" is standing product), **but the cost is real: `C31` was the auditor's control
+    proving `C30` fails for the RIGHT reason rather than because every new root property fails, and
+    that discriminating power is GONE FROM THE ROOT LEVEL.** What replaces it is stated in the
+    MANIFEST rather than left implicit: green at the root is `CC-I`, red at the root is `CC-H`
+    (same allowlisted NAME, widened SUBSCHEMA only), and the branch-level pair is `CC-E`/`CC-F`.
+    **AND THERE CAN NO LONGER BE A GREEN ARM THAT ADDS A NEW ROOT PROPERTY, BY CONSTRUCTION** — no
+    future arm should be written looking for one, and adding a name to the allowlist to obtain a
+    green is the one remedy the instrument's own violation text forbids.
+  - >-
+    **`CD-ENG-F02` — THIS SEAT'S OWN FIRST DOCUMENT-SET HARNESS CONTAINED A FALSEHOOD AND IT WAS
+    CAUGHT ON THE FIRST RUN, BEFORE ANYTHING WAS BUILT ON IT.** `docset.py` built its envelope with
+    `"equity_crash": dial or unknown_dial()`. **AN EMPTY-OBJECT DIAL `{}` IS FALSY**, so the `or`
+    silently substituted the baseline dial and the "empty dial" case reported **ADMITTED** while
+    measuring a completely different document. Fixed with an explicit `_UNSET` sentinel; the case
+    then reads `REFUSED [SCHEMA_VIOLATION] at /equity_crash` on both surfaces, which is correct.
+    **NO CONCLUSION IN THIS ENTRY RESTS ON THE BROKEN VERSION** — the BEFORE/AFTER document-set
+    comparison was re-run from scratch with the fixed harness. It is recorded because a harness that
+    reports ADMITTED about a document it never built is the same defect class as a recogniser that
+    reports `False` about a node it never read, and it happened inside the increment that exists to
+    close that class.
+  - >-
+    **`CD-ENG-F03` — A GREP CENSUS OF VIOLATION CODES IS UNRELIABLE AGAINST THIS INSTRUMENT AND
+    THIS SEAT'S FIRST CENSUS WAS WRONG BECAUSE OF IT.** `grep -oE 'CD-CALM-[A-Z]+-[0-9]+'` over the
+    instrument's output counts codes MENTIONED IN VIOLATION PROSE as well as codes REPORTED — and
+    `CD-CALM-ROOT-008`'s text names `CD-CALM-SLOTS-007` explicitly, by design, to explain what RULE
+    CC replaces. The first census therefore showed `CC-B` as `2x ROOT-008 + 2x SLOTS-007` when the
+    verdict said `FAIL — 2`. **THE CORRECT CENSUS PARSES `^    rule: ` LINES**, which is what every
+    census in this entry and in the MANIFEST uses, and it is stated here so the Assurance seat does
+    not repeat the mistake. The corrected reading is the load-bearing one: **on `CC-B` and `CC-C`
+    the recogniser reports NOTHING and RULE CC is the sole catcher.**
+  - >-
+    **`CD-ENG-F04` — RULE CC'S EXHAUSTIVENESS RESTS ON A PREMISE THAT IS ASSERTED PER SURFACE BUT
+    IS NOT ITSELF UNIVERSALLY ARGUED.** `_ROOT_STRUCTURAL_KEYWORDS` is a finite written list, and
+    the claim "nothing outside `properties` can introduce a root property" is enforced by REFUSING
+    every root keyword outside that list rather than by reasoning about what each excluded keyword
+    does. **THAT IS FAIL-CLOSED AND IT IS DELIBERATE**, but it means the premise is guaranteed by a
+    denial and not by a proof, and `$id` is on the list on the strength of a MEASURED property of
+    these two contracts (every `$ref` is a local `#/` fragment and `_resolve` resolves against the
+    document root) rather than of a general argument about `$id`. **A contract whose `$ref`s were
+    not all local fragments would need that entry re-examined.** Named here rather than left in the
+    code comment alone.
+
+  - >-
+    **`CD-ENG-F05` — NO ENGINEER RETURN ON THIS LANE HAS EVER VALIDATED `ok = True`, AND THIS SEAT
+    FOUND THAT BY VALIDATING ITS OWN ENTRY BEFORE COMMITTING IT.** Measured by direct call against
+    `/srv/crash-detector/pbg/schemas`, on the two previous returns in this build-log:
+    `BL-20260824T142722Z-16B4` -> **`ok = False`, stage `schema`** — *"'READY_FOR_ASSURANCE' is not
+    one of [...]"*, which is `CD-PL-F204` confirmed by measurement rather than inherited;
+    `BL-20260824T154200Z-16B5` -> **`ok = False`, stage `reference`** — *"parent_entry_id references
+    BL-20260824T144449Z-A309 which does not exist"*, because `-A309` is an ASSURANCE verdict that
+    lives on a verdict branch and not on this lane. **THIS ENTRY HIT THE SECOND FAILURE ITSELF:**
+    the dispatch names `BL-20260824T163112Z-0175` as the causal parent, and that entry exists only
+    on `main`. **`parent_entry_id` IS A REFERENCE THE VALIDATOR RESOLVES IN THIS TREE, SO A
+    CROSS-LANE CAUSAL PARENT CANNOT GO IN IT WITHOUT GUARANTEEING `ok = False`.** Resolved by
+    setting `parent_entry_id` to this lane's own previous entry — the true predecessor IN THIS
+    BUILD-LOG — and recording the dispatch's causal parent in `dispatch_causal_parent`, so
+    **nothing is dropped and the entry validates.** This entry is `ok = True`, stage `complete`,
+    errors `[]`. **THE GENERAL POINT IS THE ONE WORTH CARRYING:** every seat that used
+    `pbg log validate` saw GREEN over ZERO entries and shipped an invalid record, and the two
+    failures above are different from each other — **a lane whose returns are all invalid has a
+    continuity chain no tool will ever walk.** This is a PROCESS finding for the Project Lead and
+    not a defect in this increment's code.
+quoted_not_asserted:
+  - >-
+    **CD-ASR-WO3-10's claim that `8398741` is "strictly better than `dd40407`"** and
+    PO-DECISIONS-0028 ruling 3's "nothing should be reverted". **UNRUN BY THIS SEAT.** This seat
+    reverted nothing and preserved `8398741` as ordered, but it did not independently verify the
+    comparison.
+  - >-
+    **CD-PL-F203's corrected fact** — that the root closure comes from the `dial_reading` WRAPPER's
+    `additionalProperties: false` and not from a per-dial check upstream of the schema, so a new
+    root slot that is not a `dial_reading` does not inherit it. **THIS SEAT DID NOT DISSECT
+    `_refuse_classified_keys` OR RUN THE THREE STAGES SEPARATELY.** What this seat DID measure, and
+    it is consistent, is that a brand-new root slot `feed_liveness` on the UNMODIFIED contract is
+    `REFUSED [UNKNOWN_KEY] at <root>` while the SAME slot on a contract that DECLARES it is
+    **ADMITTED** carrying `calm` on both surfaces (arms `CC-A`-`CC-D`). **RULE CC does not depend on
+    F203 being true either way.**
+  - >-
+    **The claim that `FX16` is sound because `not in _READABLE_KEYWORDS` has exactly one executable
+    occurrence.** This seat did not re-derive it; it did not touch `_unreadable_keywords` and adds
+    no new occurrence of that phrase.
+  - >-
+    **The 2007 pytest figure and the 19/11 register split as "the same as previous seats".** This
+    seat RAN both and got those numbers; the claim that they MATCH what six earlier seats measured
+    is read from their records and is not this seat's measurement.
+
+risks:
+  - >-
+    *** **NOTHING IS FIXED UNTIL AN AUDITOR SAYS SO. THIS SEAT DECLARES NO GREEN, ACCEPTS NOTHING,
+    AND RELEASES NOTHING** (PBG-SOD-001, non-waivable). *** Twelve consecutive dispatches on this
+    row contained a falsehood. This entry is written on the assumption that it may be the
+    thirteenth, and the single most likely place for it is `the_boundary` limb (c): **limb (b) is
+    proved for TWO probe shapes and that is a SAMPLE, not a class.**
+  - >-
+    **RULE CC IS AN ENGINEERING COMPOSITION IMPLEMENTING A PO RULING, NOT PO TEXT** — it was
+    composed by `PROJECT_LEAD_SEAT_04` in the dispatch and implemented here. If the Product Owner
+    wanted a different mechanism for "mandate the canonical shape, deny by default at the
+    boundary", this is the increment to correct. **(b) — inverting the default for ALL root
+    properties — remains RESERVED AS A MATT OVERRIDE and is neither taken nor foreclosed.**
+  - >-
+    **THE FALSE-POSITIVE TAIL NOW REACHES THE ROOT, AND IT IS WIDER THAN THE `DECLARED LIMIT 14`
+    TAIL BECAUSE IT DOES NOT DEPEND ON SHAPE AT ALL.** Every root property not on the allowlist is
+    RED, benign or not. `C16` and `C31` are the two measured members and `CD-ENG-F01` prices them.
+    **The remedy when it bites is NEVER to add the name to the allowlist to obtain a green** — the
+    instrument's own violation text says so, and a seat that did it would have converted the
+    architectural close back into a denylist in one line.
+  - >-
+    **THE CONTRACTS NOW CARRY A NORMATIVE `RULE CC` CLAUSE IN THEIR `description`s, AND A
+    `description` REFUSES NOTHING.** That is stated in the clause itself, in DECLARED LIMIT 17(g)
+    and in all three CD-RULE-004 places. **If the instrument were deleted, the mandate would be
+    prose again — which is exactly 16A's failure mode**, and it is the reason the register row and
+    not the schema text is the carrier.
+  - >-
+    **DECLARED LIMIT 1 IS UNCHANGED AND UNCLOSED:** `$CD_CONTRACTS_DIR` can still point the live
+    gate at a widened copy of the contracts. This check REFUSES TO RUN when it resolves anywhere but
+    `<root>/contracts` and does NOT prevent the route. **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+blockers: []

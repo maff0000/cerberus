@@ -1,0 +1,143 @@
+# ================================================================================================== #
+# BL-20260823T135313Z-0140 — PROJECT LEAD CORRECTION BOUNDARY.
+#
+# **A CLAIM I BANKED ELEVEN MINUTES AGO IS FALSE, AND THE THING THAT CAUGHT IT WAS A ROUTINE
+# TWO-ARM CONTINUITY CHECK RUN FOR AN UNRELATED REASON.**
+#
+# **`CD-PL-F149`: THE MISSING `ROADMAP.md` HAS NEVER BEEN THE `AMBER` BOOT CAUSE ON THIS PROJECT.**
+# The `! roadmap_identity None` row is present in a PRISTINE CLONE THAT BOOTS `Verdict GREEN, rc=0`.
+# **A ROW THAT IS PRESENT IN A GREEN BOOT IS NOT THE CAUSE OF AN AMBER ONE.**
+#
+# **THIS IS `T7` — THE INHERITED-CLAIM MECHANISM — ARRIVING FOR THE SECOND TIME IN TWO DAYS, AND
+# BOTH TIMES BY ACCIDENT WHILE DOING SOMETHING ELSE.** The eighth Assurance seat called `T7`
+# *"probably the highest-yield target on the list"*. It was right, and nobody has swept it.
+#
+# **NOTHING ELSE MOVES. `CD-ENG-COORD-01` IS STILL OUT ON INCREMENT 12 AND THIS ENTRY TOUCHES NO
+# PATH IN ITS SCOPE (`CD-D-177`).**
+# ================================================================================================== #
+
+entry_id: BL-20260823T135313Z-0140
+record_type: PROJECT_LEAD_CORRECTION
+utc: '2026-08-23T13:53:13Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1272349, wrapper PID 1272348, `timeout 21600`. The SAME session that wrote `BL-...-0139`, correcting its OWN entry eleven minutes later. **`ps` re-checked at this boundary: still exactly one `claude` process. `Q10` remains open; a point measurement is not a control.**'
+phase: BUILD
+branch: main
+base_sha: c4929c264def2259892d39e675b8e28bf6581347   # the CD-RULE-007 follow-up. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+corrects: BL-20260823T134132Z-0139
+correction_form: '**SUPERSESSION, NOT EDIT.** `BL-...-0139` is left BYTE-FOR-BYTE UNTOUCHED (`PBG-CONT-003`, non-waivable: corrections supersede, never edit). Its false sentence stays readable beside this correction, which is the whole point of the rule.'
+
+# ================================================================================================== #
+findings_this_seat_raises_against_ITSELF:
+# ================================================================================================== #
+- id: CD-PL-F149
+  severity: MEDIUM
+  against: 'THIS SEAT — `BL-20260823T134132Z-0139`, field `the_boot_and_the_reconciliation_TAKEN_BEFORE_ANY_WORK.the_ONLY_amber_cause`, banked at `82c8f06`.'
+  the_false_statement_QUOTED_FROM_MY_OWN_BANKED_ENTRY: >
+    *"`roadmap_identity: None — Roadmap not found at ROADMAP.md`. **LONG-STANDING, IT IS THE SOLE
+    CAUSE, `blocking_failures` IS EMPTY, AND IT IS NOT REPAIRED HERE.**"*
+  what_is_actually_true_MEASURED_IN_TWO_ARMS_AT_ONE_SHA:
+    the_two_commands_paste_them: >
+      ARM 1: `rm -rf /tmp/cd-cont39 && git clone --no-hardlinks -q /srv/crash-detector /tmp/cd-cont39
+      && cd /tmp/cd-cont39 && git checkout -q -B main 82c8f06b47f088a3492bf02ad298349f07758096 &&
+      PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot`
+      ARM 2: `cd /srv/crash-detector && PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot`
+      **EACH ARM PRINTED ITS OWN `pwd` (`CD-PL-F101`, `CD-PL-F98`) AND `rc=$?` WAS CAPTURED ON THE
+      LINE IMMEDIATELY AFTER THE COMMAND (`CD-PL-F131`).**
+    ARM_1_pristine_clone_at_82c8f06_porcelain_0: '`Verdict : GREEN` · `rc=0` · `CONTINUITY_MATCH/RESUME_GREEN` · `blocking_failures []` · **AND `! roadmap_identity  None` IS PRESENT, AT LINE 14 OF THE SAME OUTPUT.**'
+    ARM_2_the_live_worktree_at_the_SAME_SHA: '`Verdict : AMBER` · `rc=3` · `CONTINUITY_MATCH/RESUME_AMBER` · `blocking_failures []` · **`! roadmap_identity  None` PRESENT, AT LINE 14, IDENTICALLY.**'
+    the_derivation_in_one_sentence: >
+      *** **THE `!` ROADMAP ROW IS BYTE-IDENTICAL IN BOTH ARMS AND ONE OF THEM IS `GREEN`. THE ONLY
+      THING THAT DIFFERS BETWEEN THE ARMS IS THE WORKING TREE — 0 UNTRACKED IN THE CLONE, 57 IN THE
+      LIVE WORKTREE. THE RESIDUE IS THE `AMBER` CAUSE. THE ROADMAP IS NOT A CAUSE AT ALL.** ***
+      `grep -nE "^!" ` over each arm's captured output returns **EXACTLY ONE ROW IN EACH, THE SAME
+      ROW.** A flagged row is not a verdict input merely because it is flagged, and I never checked.
+  how_far_the_false_claim_TRAVELLED_DERIVED_NOT_ESTIMATED: >
+    `grep -c "ROADMAP.md" governance/engineering/build-log/*.yaml | grep -v ':0' | wc -l` -> **14
+    Build Log entries mention it.** The claim in its causal form appears at
+    **`BL-20260822T175949Z-0059`** (*"THE AMBER BOOT CAUSE — the missing ROADMAP.md"*, singular
+    definite article) and **`BL-20260823T134132Z-0139`**, mine.
+  and_the_part_that_is_worst_and_is_mine: >
+    *** **`BL-20260823T014454Z-0115` GOT IT MORE NEARLY RIGHT THAN I DID, TWENTY-FIVE ENTRIES
+    EARLIER.** *** It wrote *"THE AMBER BOOT **CAUSES**"* — PLURAL — and named BOTH the missing
+    `ROADMAP.md` AND `CD-PL-F101`'s untracked residue. **I NARROWED A TWO-CAUSE STATEMENT TO A
+    ONE-CAUSE STATEMENT AND UPGRADED IT TO "THE SOLE CAUSE". THE RECORD GOT LESS TRUE OVER TIME AND
+    THE DEGRADATION WAS MINE.** The one cause I kept is the one that turns out not to be a cause.
+  the_actual_defect_in_METHOD_and_not_in_attention: >
+    **I READ A BOOT VERDICT AND A FLAGGED ROW IN THE SAME OUTPUT AND ASSERTED CAUSATION BETWEEN
+    THEM.** The counterfactual arm that would have refuted it — the same boot on a tree without the
+    residue — **IS A COMMAND THIS PROJECT RUNS AT EVERY SINGLE BOUNDARY FOR `CD-RULE-008`, AND ITS
+    RESULT HAS BEEN SITTING IN FRONT OF EVERY SEAT THAT MADE THIS CLAIM.** `CD-D-079` says every
+    claim that something is refused requires the counterfactual arm; **the same obligation applies to
+    every claim that something CAUSES, and this project's rules do not say so anywhere.**
+  what_it_COST_stated_plainly_and_not_minimised: >
+    **NOTHING YET, AND THAT IS LUCK AND NOT DESIGN.** No decision was taken on it, no grade moved on
+    it, no seat was dispatched on it. **BUT ITS SHAPE IS THE EXPENSIVE ONE:** a boundary that
+    believes the residue is harmless bookkeeping and the roadmap is the real defect will one day
+    "tidy" the residue to clear an AMBER — **and `CD-PL-F101`'s residue is DELIBERATELY LEFT IN PLACE
+    SO IT CANNOT BE QUIETLY TIDIED**, which is a protection that only works while the record says
+    why. **I had just written the sentence that would have licensed removing it.**
+
+# ================================================================================================== #
+the_correction_ITSELF:
+# ================================================================================================== #
+  what_is_TRUE_and_supersedes_the_false_sentence: >
+    **`main` AT `82c8f06` BOOTS `GREEN`, `rc=0`, IN A PRISTINE CLONE.** The `AMBER` seen in
+    `/srv/crash-detector` is caused by the 57 untracked working-tree files and by NOTHING ELSE
+    MEASURED. **The missing `ROADMAP.md` produces a flagged `!` row and does NOT move the verdict.**
+    `blocking_failures` is `[]` in both arms.
+  what_this_does_NOT_license: >
+    **IT DOES NOT LICENSE DELETING THE RESIDUE.** The 57 files are 46+ operator wrapper artefacts,
+    `.continue-prompt.txt` and `pbg/tools/pbg/__pycache__/` — **ZERO GOVERNED FILES, ZERO TRACKED** —
+    and `CD-PL-F101` left them in place on purpose. **THE CORRECT ACT IS TO KNOW WHY THE AMBER IS
+    THERE, NOT TO MAKE IT GO AWAY.** Nothing is deleted at this boundary.
+  what_it_DOES_change_about_the_ROADMAP: >
+    **NOTHING, AND THIS IS THE HONEST HALF.** `ROADMAP.md` is still absent, the row is still flagged,
+    and whether this project owes a Roadmap is a **PRODUCT AUTHORITY QUESTION AND NOT A SEAT'S** — it
+    is `Q14`. **WHAT CHANGES IS ONLY THAT IT MAY NO LONGER BE OFFERED AS THE EXPLANATION FOR AN
+    AMBER.**
+
+# ================================================================================================== #
+what_was_NOT_verified_at_this_boundary:
+# ================================================================================================== #
+- '**I DID NOT SWEEP THE OTHER TWELVE `ROADMAP.md` MENTIONS FOR THE SAME CAUSAL FORM.** I derived the count (14 entries) and read the three strongest; **the remaining eleven are UNREAD AT THIS BOUNDARY.** Saying "the claim appears in three places" would have been an invention.'
+- '**I DID NOT ISOLATE WHICH OF THE 57 UNTRACKED FILES MOVES THE VERDICT, OR WHETHER ONE IS ENOUGH.** The arms differ in `0 vs 57`; **the granularity is UNMEASURED** and I am not touching the residue to find out.'
+- '**I DID NOT READ `pbg/`s CODE TO CONFIRM THE MECHANISM.** The finding is derived ENTIRELY from two observed boots and their difference, which is sufficient to falsify the claim and is NOT sufficient to explain the verdict rule. `pbg/` is read-only and I did not go looking.'
+- '**NO OTHER INHERITED CLAIM WAS RE-MEASURED HERE.** `T7` is still unswept. **THIS ENTRY IS ONE MORE INSTANCE, NOT THE SWEEP.**'
+
+# ================================================================================================== #
+open_product_authority_questions_THIS_SEAT_ANSWERS_NONE:
+# ================================================================================================== #
+  Q7_to_Q13: '**ALL CARRIED, UNCHANGED, FROM `BL-...-0139`.** `Q12` (deliverable (d) has no carrier for its "PO''s own hand" half) and `Q13` (`IMP-023` is not in this repository) are the two the ninth Assurance seat must be told BEFORE it discovers them.'
+  Q14: >
+    **NEW, AND SMALL, AND IT SHOULD HAVE BEEN ASKED ON DAY ONE.** `ROADMAP.md` has been absent since
+    `BL-...-0003` and flagged at every boot since. **DOES THIS PROJECT OWE A ROADMAP, OR SHOULD THE
+    FRAMEWORK EXPECTATION BE DECLARED NOT-APPLICABLE FOR IT?** Until it is ruled, every boot on this
+    project prints a `!` row that **NO SEAT IS PERMITTED TO CLEAR AND THAT EVERY SEAT HAS LEARNED TO
+    IGNORE — WHICH IS EXACTLY HOW A REAL SIGNAL WOULD BE MISSED.** **THAT, AND NOT THE AMBER, IS THE
+    COST OF LEAVING IT OPEN.**
+
+decision_refs:
+- PBG-CONT-003        # corrections supersede, never edit — the form of this entry
+- CD-RULE-007         # a continuity write is not complete until pbg boot has read it back
+- CD-RULE-008         # the boot re-run is taken on the COMMITTED tree, not the working tree
+- CD-RULE-009         # every count records the exact command that produces it
+- CD-D-079            # both arms or no claim — extended here from REFUSAL to CAUSATION
+- CD-D-177            # this seat's declared write scope; this entry stays inside it
+- CD-PL-F101          # the untracked residue, deliberately left in place so it cannot be tidied
+- CD-PL-F131          # rc captured on the line immediately after the command
+- CD-PL-F133          # the prior instance of the same mechanism: a dead claim carried four boundaries
+- PBG-AUTH-003        # banked is not accepted
+
+next_safe_action: >
+  **UNCHANGED FROM `BL-...-0139`. THIS ENTRY CORRECTS THE RECORD AND MOVES NOTHING ELSE.**
+  **1.** `CD-ENG-COORD-01` is still out on increment 12. **NOTHING ELSE MOVES UNTIL IT RETURNS.**
+  **2.** On return: reconcile BY MEASUREMENT, run the Engineer's OWN merge instrument over the merge
+  of its own branch into `main` (`CD-D-174`), bank, commit, close continuity.
+  **3.** THEN the **NINTH FRESH ASSURANCE SEAT** over the corrected three-tier perimeter, full
+  disclosure, **`CD-D-129`'s three clauses VERBATIM**, told `Q12`, `Q13` and now **`CD-PL-F149`**
+  before it discovers them. **AND IT SHOULD BE HANDED `T7` EXPLICITLY: THIS IS THE SECOND INHERITED
+  CLAIM FALSIFIED BY ACCIDENT AND THE RECORD HAS NEVER BEEN SWEPT FOR THE REST.**
+  **DO NOT** delete the untracked residue to clear the AMBER. **DO NOT** touch the `wo-2r3` lane.
+  **DO NOT** answer `Q7`-`Q14`. **DO NOT** edit `BL-...-0139` — it stands, false sentence and all.
+expected_next_actor: 'CD-ENG-COORD-01 (still out), then the Project Lead, then a FRESH Assurance seat.'

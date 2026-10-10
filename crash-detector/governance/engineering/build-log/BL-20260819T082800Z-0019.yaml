@@ -1,0 +1,315 @@
+# WO-2 AT THE GATE. Assurance CD-ASR-WO2-01 returned AMBER, not PASS. THE WO-2 GATE IS NOT MET.
+# The Project Lead has NOT admitted the run record and has NOT merged the lane, because admitting it
+# would make the framework compute PASS on all five criteria that the independent auditor did not
+# pass. WO-2 stops here for Product Owner disposition.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T082800Z-0019
+timestamp_utc: '2026-08-19T08:28:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 7dad3595532055aa93b77e55e14dbcda064d219e
+current_sha: 7dad3595532055aa93b77e55e14dbcda064d219e
+lane_head_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+assurance_target_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+parent_entry_id: BL-20260819T080200Z-0018
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Assurance seat CD-ASR-WO2-01 — a SEPARATE agent that implemented no part of the target
+  (PBG-SOD-001, non-waivable) — was dispatched in the FOREGROUND against
+  /srv/crash-detector-wo2-audit at 66681b2, per CD-DISPATCH-WO2-ASSURANCE exactly as issued.
+
+  IT RETURNED AMBER. Per criterion: CD-AC-003 PASS (HIGH confidence); CD-AC-001, CD-AC-002,
+  CD-AC-005 and CD-AC-012 all AMBER. The overall verdict is the worst of them.
+
+  THE WO-2 GATE IS NOT MET. The gate is Assurance PASS on all five planted violations. Four are
+  AMBER. This is recorded as the plain outcome, not as a near-miss, and WO-2 does not close.
+
+  The contrast the register demands WAS met — the auditor ran all eleven declared tests itself in
+  both arms with the declared command strings verbatim, and 11 of 11 show clean 0 / violated
+  non-zero. What produced the AMBER is the other half of its dispatch: it wrote 24 VARIANT PLANTS OF
+  ITS OWN attacking the same propositions by different routes, and TEN OF THEM ESCAPED. The guards
+  catch the instance. For four of the five criteria they do not reliably catch the class.
+
+  That is the finding the whole arrangement exists to produce, and it could only have been produced
+  by a seat that did not build the thing.
+
+reconciliation:
+  what_this_is: >
+    RECONCILIATION OF AN ASSURANCE RETURN BY THE PROJECT LEAD. It is not a second audit and it does
+    not revise the verdict. The Project Lead may not overturn an Assurance verdict, and does not
+    attempt to here.
+  target_integrity: >
+    CHECKED, AND IT CAUGHT A DEFECT IN THE CONTROL RATHER THAN IN THE TARGET — see CD-PL-F46.
+    The AUTHORITATIVE result: /srv/crash-detector-wo2-audit is at 66681b2, `git status --short` is
+    empty, `git diff --stat 66681b2` is empty, and the on-disk file list is IDENTICAL to
+    `git ls-files`. The audited tree is byte-identical to the dispatched commit. The auditor
+    self-disclosed that one late validation import ran without `-B` and wrote a __pycache__ into the
+    tree after all evidence was collected, and that it removed it. That disclosure is consistent with
+    what is observed and is recorded approvingly: a seat that reports its own contamination against
+    interest is worth more than one that leaves it to be found.
+  artefacts_transported: >
+    Both Assurance artefacts are copied into the durable record, unaltered, at
+    governance/assurance/WO-2/. A result that exists only in a subagent's scratch directory is not
+    project state (PBG-CONT-007). sha256 of the transported copies:
+    BL-ASR-WO2-01.yaml 814f99ad1762acbf57f5b6939eb3f6ebfcac8e211941db940ef1fae7af179f10;
+    RTR-WO2-0001.json 8f3ebef23d4a9e8d4d176f100e2005a64df7b70145589262a7eef27edd8a3003.
+    The run record names executed_by.party CD-ASR-WO2-01, independence_class SEAT_INDEPENDENT,
+    candidate 66681b2, and carries 22 results.
+  host_runtime_state: >
+    `docker ps -a` and `docker volume ls` filtered on BOTH cd-asr-wo2- and cd-store-wo2- return zero
+    rows. The auditor built its own store under SD-3 and destroyed it, as required, and did not reuse
+    the Engineer's.
+
+verification_this_seat_ran:
+  standing: >
+    The Project Lead replicated ONE finding independently — the one that most determines the verdict.
+    This is reconciliation, not assurance, and it is deliberately narrow: re-running the auditor's
+    whole programme would be the Project Lead auditing an audit it commissioned.
+  cd_asr_f02_replicated: >
+    CONFIRMED. On a fresh `git archive 66681b2` copy the Project Lead added a plain property to the
+    Unknown reading — `magnitude -> 0.0`, no dunder, no annotation, no default — and ran BOTH
+    declared CD-AC-001 tests. `check_no_numeric_default.py --root .` exit 0. `pytest
+    tests/test_reading.py tests/test_evaluate.py` exit 0, 49 passed. Then read the value back at
+    runtime: `Unknown(...).magnitude` returns 0.0.
+    ABSENCE RENDERS AS A NUMBER AND BOTH GUARDS PASS. CD-AC-001 is the first criterion in this
+    product — "absence renders as UNKNOWN, never as a number" — and the class docstring promises
+    Unknown "carries no value field of any kind ... there is nothing here to accidentally render as a
+    number". Nothing enforces that promise. The auditor is right, and it is right about a route the
+    register's OWN negative_control text already names: "`Unknown` given any attribute or coercion
+    that yields a float".
+
+the_admission_question:
+  what_was_measured: >
+    The Project Lead extracted 66681b2 to a throwaway copy, dropped RTR-WO2-0001.json into
+    evidence/required-tests/runs/, set `latest_admitted_run: RTR-WO2-0001`, and ran
+    `pbg required-tests verify`. RESULT: CD-AC-001 PASS, CD-AC-002 PASS, CD-AC-003 PASS, CD-AC-005
+    PASS, CD-AC-012 PASS. Gate still SHUT and PID_ACCEPTANCE_SATISFIED still NOT DERIVED, on the ten
+    criteria scheduled for later work orders.
+  the_ruling: >
+    THE RUN RECORD IS NOT ADMITTED. See CD-D-023.
+  why_this_measurement_was_made_at_all: >
+    Because the previously recorded next_safe_action said the Project Lead would admit the record and
+    re-run verify at the close. Following that instruction without measuring what it produced would
+    have written a five-fold PASS into the candidate register on the same day an independent auditor
+    declined to pass four of those five. The measurement was made precisely so the instruction could
+    be refused on evidence rather than followed on autopilot.
+
+findings_raised:
+- id: CD-FWK-005
+  severity: MEDIUM
+  raised_by: PROJECT_LEAD_SEAT_01
+  title: 'The register computes PASS from declared negative controls alone; an auditor''s adversarial
+    verdict has no channel to lower it'
+  detail: >
+    REQUIRED-TEST-REGISTER-CONTRACT-v1 derives a criterion's status from the run record's arms: a
+    demonstrated contrast on the DECLARED negative control yields PASS. That is a sound and valuable
+    mechanism, and it is the reason the gate cannot be talked open.
+
+    But the declared negative control is written by the IMPLEMENTER. The whole point of W3 in the
+    Assurance dispatch — variant plants devised by the auditor — is that a guard can catch its own
+    declared plant and miss the class around it. On this candidate that is not hypothetical: eleven
+    declared contrasts all pass, ten auditor variants escape, and the framework has nowhere to put
+    the second fact. Admitting the record makes it compute PASS on CD-AC-001 while a two-line change
+    the auditor and the Project Lead have both executed makes absence render as 0.0.
+
+    So a mechanically derived PASS here means precisely "the DECLARED negative control was
+    demonstrated". It does not mean "the proposition holds". Those read identically in the verify
+    output, and the narrower one is the one the tool prints.
+  disposition: >
+    Raised to the Product Owner for the PBGv2 backlog, alongside CD-FWK-004. This project handles it
+    for now by NOT admitting (CD-D-023) and by putting the auditor's verdict in front of the PO as
+    the governing judgement. A candidate fix — for the framework, not for this project to invent —
+    would be for a run record to carry the auditor's per-criterion verdict and for the reader to take
+    the WORSE of computed and declared. That is a PBGv2 design question, not a crash-detector one.
+- id: CD-PL-F46
+  severity: LOW
+  raised_by: PROJECT_LEAD_SEAT_01
+  title: 'The Project Lead''s own tamper-detection fingerprint was order-sensitive and raised a false alarm'
+  detail: >
+    At issue the Project Lead recorded a fingerprint of the audit target as
+    `find ... -print0 | xargs -0 sha256sum | sha256sum` = 8c23799... On the auditor's return the same
+    command produced 90c6d6d9..., which read as tampering. It was not. `find` emits files in
+    directory-entry order, which is reshuffled when files are created and deleted — as they were when
+    the auditor's __pycache__ was written and removed. The file CONTENTS and the file SET were both
+    unchanged. Sorting before hashing gives a stable 554ddf11..., and the authoritative check
+    (`git diff --stat 66681b2` empty, on-disk list identical to `git ls-files`) confirms the tree is
+    byte-identical to the dispatched commit.
+  why_it_is_recorded: >
+    A tamper control that cries wolf is one somebody eventually switches off — the identical
+    reasoning this project applied to CD-PL-F35(c), where a guard failing on innocent code was ruled
+    the more dangerous half. The Project Lead wrote a control with that defect in it and should say
+    so in the same record where it criticises seats for less. The lesson generalises: for a Git
+    worktree, `git diff` against the commit IS the fingerprint, and inventing a second one was
+    unnecessary machinery that introduced its own failure mode.
+  disposition: >
+    Standing correction, effective now: target integrity at a Git SHA is checked with
+    `git status --short`, `git diff --stat <sha>` and a comparison of the on-disk file list against
+    `git ls-files`. If a hash fingerprint is wanted alongside, it must be sorted before hashing.
+- id: CD-ASR-F01 .. CD-ASR-F07
+  severity: 'two HIGH, four MEDIUM, one LOW'
+  raised_by: CD-ASR-WO2-01
+  title: 'The auditor''s seven findings, recorded here by reference and in full at
+    governance/assurance/WO-2/BL-ASR-WO2-01.yaml'
+  detail: >
+    F01 HIGH, CD-AC-002 — two WORKING blends of the two dials pass ALL THREE declared layers
+    simultaneously, both executed and both returning 0.5. One needs no allowlisted path at all:
+    `getattr(dials, slot).value.score` erases the static flavour entirely. This REFUTES the register's
+    specific claim that a blend slipping past one layer must fail the other two. The closed schema
+    still refuses to PUBLISH a combined field, which is the part of the defence that held.
+    F02 HIGH, CD-AC-001 — replicated by the Project Lead above.
+    F03 MEDIUM — a numeric default spelled as a module-level constant escapes the AST guard (caught
+    by the second test).
+    F04 MEDIUM, CD-AC-012 — a broker reachable by IP LITERAL is not caught by the egress check, and
+    unlike the source scan this gap is UNDECLARED. This one has a schedule consequence: it must be
+    settled before the WO-3 egress enforcement lane is built, or that lane inherits the gap.
+    F05 MEDIUM, CD-AC-003 — the engine CONTAINER's own entrypoint sits outside the code-graph guard's
+    root.
+    F06 MEDIUM, CD-AC-005 — a finite but unbounded staleness window lets a decade-old row render
+    WITNESS AGREES.
+    F07 LOW, CD-AC-005 — an exception handler resolving to agreement is undetected, though
+    unreachable as planted.
+  disposition: >
+    NONE OF THEM IS REPAIRED, and none may be repaired by the auditor (PBG-SOD-004 — finding a defect
+    does not make you the one who fixes it). They are owed at Product Owner disposition. The Project
+    Lead does not rank them beyond what the auditor said: F01 and F02 go in front of the PO first.
+
+decisions_closed:
+- id: CD-D-023
+  title: 'RTR-WO2-0001 is NOT admitted, and the lane is NOT merged'
+  ruling: >
+    NOT ADMITTED. NOT MERGED. Both actions were named in the previously recorded next_safe_action and
+    both are refused here on the evidence measured above.
+
+    Admitting the run record makes `pbg required-tests verify` compute PASS on CD-AC-001, CD-AC-002,
+    CD-AC-003, CD-AC-005 and CD-AC-012 — the five criteria that ARE the WO-2 gate — on the same
+    candidate where an independent auditor returned PASS on exactly one of them. It would be
+    literally true, in that the declared negative controls were demonstrated, and profoundly
+    misleading, in that the register would then read as though WO-2 had passed. Anyone consulting the
+    register later would find five PASSes and no trace of the AMBER.
+
+    That is constructing state so a control appears to pass when the authentic target was not
+    verified as the proposition requires. It is non-waivable in this project's own governance and it
+    is refused. The right response to a mechanism that would compute the wrong answer is to decline
+    to feed it and to say why in the record — not to feed it and footnote the result.
+
+    The lane is not merged for the same reason and one more: merging wo-2-skeleton into main is the
+    act by which WO-2 becomes the project's state. The gate is not met. That is the Product Owner's
+    decision to make, not this seat's, and it stays available to them exactly as it is.
+
+    WHAT IS DONE INSTEAD. Both Assurance artefacts are committed to the durable record unaltered at
+    governance/assurance/WO-2/, so the evidence exists and is checkable; the register keeps saying
+    latest_admitted_run null and GATE SHUT, which remains the honest state; and WO-2 stops for
+    Product Owner disposition. The run record is not discarded — it is preserved, and admitting it
+    remains available to the PO as an explicit, informed decision rather than a mechanical
+    consequence of this seat following its own stale instruction.
+- id: CD-D-024
+  title: 'The WO-2 gate is NOT MET. WO-2 does not close, and WO-3 is not dispatched.'
+  ruling: >
+    THE GATE IS NOT MET. The WO-2 gate is Assurance PASS on all five planted violations. The verdict
+    is PASS on one and AMBER on four.
+
+    WHAT WAS NEVERTHELESS ACHIEVED, stated because a NOT MET is not a failure of the work order and
+    the distinction matters to whoever reads this next. The Engineer dispatch is complete: A1-A7 and
+    B1-B4 delivered across seven increments and three runtime terminations. Eleven declared negative
+    controls all demonstrate the contrast, verified independently by the auditor with verbatim
+    command strings. CD-AC-003 — the criterion with the load-bearing asymmetry, cd_engine holding no
+    privilege of any kind on witness — PASSED at HIGH confidence against a live catalogue the auditor
+    built itself, with SEVEN distinct grant routes attacked including role membership, PUBLIC,
+    default privileges, ownership, SUPERUSER and function privilege, plus a live session in which
+    PostgreSQL itself refused cd_engine. Risk CD-RT-002 — that arm having been run only by the
+    implementing seat — is DISCHARGED.
+    And the CD-RT-012 DECLARED LIMIT was tested by the auditor and found HONESTLY AND CONSERVATIVELY
+    DRAWN: its escape landed squarely inside stated boundary 5, every probe from inside the
+    boundaries was caught, and the auditor found the declaration UNDERSTATES its protection. That
+    vindicates CD-D-014 and CD-D-015 — the guard that says what it is not was judged fairly, exactly
+    as the mechanism was designed to allow. The auditor then drew the sharpest available conclusion
+    from it: CD-AC-002's AST guard has comparable limits and NO comparable declaration, which is why
+    F01 is HIGH.
+
+    WHAT HAPPENS NEXT IS THE PRODUCT OWNER'S CALL, not this seat's. WO-3 is not dispatched. The
+    Project Lead does not propose a remediation plan here, because choosing between repairing the
+    guards, narrowing the claims, accepting the residual risk, or amending the criteria is a product
+    judgement about how much structural proof CD-AC-001, 002, 005 and 012 are meant to carry — and
+    PID §6 belongs to the Product Owner (PBG-AUTH-003, PBG-PID-003).
+- id: CD-D-025
+  title: 'The AMBER is reported as the result, not managed'
+  ruling: >
+    Recorded because the temptation was specific and the record should show it was seen. This seat
+    commissioned the adversarial work in W3 that produced the AMBER; it could have read F01-F07 as
+    hardening suggestions, admitted the run record on the strength of eleven clean contrasts, and
+    reported WO-2 delivered with follow-ups. Every individual step of that would have been
+    defensible and the aggregate would have been false.
+    The auditor was dispatched to attack the guards precisely because a passing declared control is
+    weak evidence, and having got the answer, the seat that asked the question does not get to
+    reinterpret it. An honest AMBER is worth more than a confident PASS resting on an unexamined
+    assumption (PBG-ASSURE-012); that principle costs nothing when the audit comes back green.
+
+obligations_status:
+- 'CD-DISPATCH-WO2-ENGINEER — COMPLETE.'
+- 'CD-DISPATCH-WO2-ASSURANCE — DISCHARGED. Verdict AMBER, returned, transported and committed.'
+- 'RTR-WO2-0001 — PRODUCED by CD-ASR-WO2-01 and preserved at
+   governance/assurance/WO-2/required-tests/runs/. NOT ADMITTED (CD-D-023).'
+- 'THE WO-2 GATE — NOT MET (CD-D-024). Next actor: PRODUCT_AUTHORITY.'
+- 'CD-ASR-F01..F07 — all OPEN, none repaired, none repairable by the finder (PBG-SOD-004). F01 and
+   F02 are the two to put in front of the PO first; F04 must be settled before the WO-3 egress
+   enforcement lane is built or that lane inherits the gap.'
+- 'CD-FWK-004, CD-FWK-005 — both raised to the PO for the PBGv2 backlog.'
+- 'CD-ENG-F39, CD-ENG-F41, CD-ENG-F44, CD-PL-F43, CD-OB-004, CD-ERR-001 — OPEN, previously ruled.'
+- 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 — all HELD. None was silently executed at any point in WO-2.'
+
+risks:
+- 'CD-RT-002 — DISCHARGED. The live grant-matrix arm was proved independently by CD-ASR-WO2-01
+   against a store it built itself, across seven grant routes.'
+- 'CD-FWK-005 MEDIUM NEW — the register would compute PASS where the auditor did not. Handled on this
+   project by not admitting; raised to the PO as a framework question.'
+- 'CD-FWK-004 AMBER — unchanged and now fully evidenced: PBG-SOD-001 was satisfied on this project by
+   the PO-ratified named-actor route — CD-ENG-WO2-01 built it, CD-ASR-WO2-01 audited it, distinct
+   actor_ids carried in the dispatch records, in the Build Log and in the run record
+   executed_by.party — and NOT by the framework verifier, which still reports that no ASSURANCE
+   authority record exists and that this is NOT a pass. The PO should read that as a disclosed gap,
+   not a discharged one.'
+- 'CD-CONT-001 AMBER — the foreground committed-increment discipline held through seven increments
+   and three runtime terminations. Total cost of the three terminations: one increment of rework.'
+- 'CD-BP-001 LOW — vindicated in both directions: the AST checks were never a sole guard, and the one
+   guard that DECLARED its limits was the one the auditor judged honestly drawn.'
+- 'CD-FWK-001, CD-FWK-002, CD-FWK-003, CD-RT-001, CD-SEC-001, CD-CONT-002 — unchanged.'
+
+evidence_refs:
+- 'governance/assurance/WO-2/BL-ASR-WO2-01.yaml — the Assurance verdict and all seven findings in full'
+- 'governance/assurance/WO-2/required-tests/runs/RTR-WO2-0001.json — the run record, 22 results,
+   executed_by CD-ASR-WO2-01, independence_class SEAT_INDEPENDENT, candidate 66681b2'
+- 'target integrity: git status empty, git diff --stat 66681b2 empty, on-disk file list identical to
+   git ls-files, at /srv/crash-detector-wo2-audit'
+- 'CD-ASR-F02 replicated by the Project Lead on a throwaway copy — both CD-AC-001 guards exit 0 while
+   Unknown(...).magnitude returns 0.0'
+- 'the admission measurement — latest_admitted_run: RTR-WO2-0001 on a throwaway copy computes PASS on
+   all five gate criteria; gate still SHUT on the ten later criteria'
+- 'docker ps -a / docker volume ls filtered on cd-asr-wo2- and cd-store-wo2- — zero rows'
+
+next_safe_action: >
+  STOP. WO-2 is at its gate and the gate is NOT MET. The next actor is the PRODUCT AUTHORITY, not
+  another seat.
+  What the Product Owner is being asked to disposition, in the order the Assurance seat recommended:
+  (1) CD-ASR-F01 and CD-ASR-F02, both HIGH — the two dial propositions that are the product's whole
+  claim, each defeated by a route the auditor executed and, for F02, that the Project Lead
+  replicated. (2) CD-ASR-F04, which must be settled before any WO-3 egress lane is built. (3) The
+  remaining findings F03, F05, F06, F07. (4) Whether to admit RTR-WO2-0001 into the register as an
+  explicit informed decision, knowing it computes PASS on all five gate criteria (CD-D-023,
+  CD-FWK-005). (5) CD-FWK-004 and CD-FWK-005 for the PBGv2 backlog. (6) The standing WO-3 debts:
+  CD-D-005 the ingredient set, CD-D-012 the health-endpoint reader, CD-ERR-001 the BLUEPRINT §4
+  corrections, CD-ENG-F39, CD-ENG-F41, CD-ENG-F44, CD-PL-F43, CD-OB-004.
+  NO WO-3 dispatch before that disposition. The lane wo-2-skeleton stays unmerged at 66681b2 and the
+  register stays at latest_admitted_run null, GATE SHUT. Nothing about the candidate is destroyed or
+  altered by waiting.

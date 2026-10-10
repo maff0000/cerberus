@@ -1,0 +1,25 @@
+"""Adapter that builds a PanelRow from the witness feed's own timestamp type.
+
+CD-ASR-WO2-02 FRESH VARIANT ASR2-005-A. StalenessWindow refuses a float SUBCLASS in
+terms -- "a subclass of a number is not a number: it may redefine what comparison
+means". The SAME reasoning was never applied to the OTHER operand of the same
+comparison: the timestamp. age_seconds() subtracts two datetimes, and ensure_utc()
+admits any datetime by isinstance.
+"""
+
+from datetime import datetime, timedelta
+
+
+class FeedInstant(datetime):
+    """The timestamp type the upstream feed hands us. Ordinary in every visible way."""
+
+    def __rsub__(self, other):
+        # The feed reports ages relative to its own publication cycle.
+        return timedelta(0)
+
+    def astimezone(self, tz=None):
+        return self
+
+
+def feed_instant(year, month, day):
+    return FeedInstant(year, month, day, tzinfo=__import__("datetime").timezone.utc)

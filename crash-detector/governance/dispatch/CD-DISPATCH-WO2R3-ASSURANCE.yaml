@@ -1,0 +1,424 @@
+# ================================================================================================ #
+# ASSURANCE DISPATCH — WO-2R3, THE FOURTH GATE. crash-detector.
+# ================================================================================================ #
+#
+# READ THIS BLOCK BEFORE ANYTHING ELSE, INCLUDING BEFORE YOUR BOOT.
+#
+# THE PRODUCT OWNER FIXED WHAT COMES FIRST IN THIS BRIEF, AND IT IS NOT A PREAMBLE. It is a sentence
+# THE ENGINEER SEAT VOLUNTEERED AGAINST ITS OWN WORK, and PO-DECISIONS-0010 ruling 3(iv) orders it
+# placed here, ahead of the targets, the clauses and the evidence:
+#
+#     **WITH V17 APPLIED, *BOTH* STATIC CHECKS STILL EXIT 0. THE CLOSURE IS A RUNTIME CLOSURE AND A
+#      GREEN STATIC RUN IS NOT EVIDENCE OF IT. THE FOURTH SEAT ATTACKS THE RUNTIME CLOSURE *AS*
+#      RUNTIME.**
+#
+# V17 (`variants/WO-2R3/V17-constructor-body-escape.patch`) removes a `__post_init__` BODY. Neither
+# `check_judgement_path_doors.py` nor `check_constructor_field_establishment.py` reads bodies for
+# their verdicts. Apply V17 and BOTH REGISTER CHECKS STILL EXIT 0 AND STILL SAY PASS. **A SEAT THAT
+# VERIFIES INCREMENT 5 BY RUNNING THE TWO REGISTER CHECKS HAS VERIFIED NOTHING ABOUT IT.** The
+# refusal that matters is raised by the interpreter at import/class-construction time and is read
+# from the FAILURE TEXT, not from an exit code.
+#
+# AND THE SAME SEAT VOLUNTEERED THE SAME LIMIT A SECOND TIME, UNPROMPTED, ABOUT THE COMPLETION IT
+# JUST DELIVERED: the V43 contrast that is the ONLY evidence for the widened class is ENTIRELY
+# STATIC. `Verdict` is never imported or constructed in either arm, and **IT WOULD STILL BE
+# CONSTRUCTIBLE AT RUNTIME IN THE FAILING ARM.** Every benefit of that widening is PROSPECTIVE.
+#
+# TWICE NOW THE IMPLEMENTER HAS TOLD YOU WHERE ITS OWN EVIDENCE STOPS. **THAT IS NOT A REASON TO
+# TRUST IT. IT IS A MAP OF WHERE TO DIG**, and the Product Owner put it first for that reason.
+#
+# WHAT YOU ARE, AND THE ONE THING THAT MAKES THIS SEAT WORTH PAYING FOR.
+# Three Assurance seats have run on this project. The Product Owner's stated reason for demanding a
+# FOURTH FRESH one is: "the seats that wrote the admission checks are the seats least able to see
+# that a check on a door is not a closure of the class of doors." You were chosen because you have
+# read none of it. **DO NOT SPEND THAT ADVANTAGE AGREEING WITH THE RECORD.**
+#
+# AND THE PROJECT LEAD DISCLOSES, BEFORE YOU READ A LINE OF THE RECORD, THAT ITS OWN LAST DISPATCH
+# CONTRADICTED ITSELF ON THE MEMBERSHIP RULE (CD-PL-F93, MEDIUM) AND THAT ONLY THE ENGINEER'S
+# READING OF THE RULING BEHIND IT PREVENTED A NARROWER CLASS SHIPPING GREEN. The record you are
+# auditing was assembled by a seat that has been wrong at four consecutive boundaries in the same
+# direction. Read it accordingly.
+# ================================================================================================ #
+
+dispatch_id: CD-DISPATCH-WO2R3-ASSURANCE
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-22T20:06:38Z'
+issued_by: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260822T200638Z-0105
+issuing_decision: CD-D-141
+product_authority_basis: >
+  governance/decisions/PO-DECISIONS-0010.md ruling 3, which orders this dispatch IMMEDIATELY after
+  the bounded completion banks and fixes the CONTENT AND THE ORDER of what it carries; and
+  governance/decisions/PO-DECISIONS-0009.md ruling 1 and ruling 3, which set the three mandatory
+  clauses and added targets (6), (8), (9) and (10). Both authored by the Product Owner (Trinity)
+  under Matt as final authority, and by no seat.
+
+# --- seat ---------------------------------------------------------------------------------------- #
+assigned_role: ASSURANCE_ENGINEER
+role_contract: pbg/roles/assurance-engineer.md    # canonical local file; the operator pastes no role
+actor_id: CD-ASR-WO2R3-01
+implementing_actor_ids: [CD-ENG-WO2R3-01]         # the seat whose work this is — all five increments
+                                                  # AND the bounded completion. ONE identity, by
+                                                  # CD-D-131, and therefore excluded from this seat
+                                                  # absolutely.
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+independence_declaration: >
+  **PBG-SOD-001, NON-WAIVABLE: THE ENGINEER AND THE ASSURANCE ENGINEER ARE NEVER THE SAME AGENT.**
+  You are a FRESH seat. You are NONE of CD-ASR-WO2-01, CD-ASR-WO2-02 or CD-ASR-WO2R2-01, and you are
+  NOT CD-ENG-WO2R3-01 or any other Engineer seat. You did not write, review, advise on or dispatch
+  any part of what you are auditing. If any of that is false, STOP AND SAY SO — an audit by an
+  implicated seat is worse than no audit, because it is spent credibility as well as spent time.
+  **YOU DO NOT REPORT TO THE ENGINEER AND YOU DO NOT NEGOTIATE YOUR VERDICT WITH THE PROJECT LEAD.**
+
+# --- target -------------------------------------------------------------------------------------- #
+target_candidate: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+target_branch: wo-2r3
+target_worktree: /srv/crash-detector-wo2r3-audit      # detached at the target, created for you
+target_tree_object: f7d2f7beaad92e6cdc5987a58f013ec064da863c
+target_tree_fingerprint: 69b1fef83741d6d0ca14723a2df6ffeeb8efac3ab01195158ce65f22e2dcba5f
+how_the_fingerprint_was_taken: >
+  `find . -path ./.git -prune -o -type f -print | LC_ALL=C sort | xargs sha256sum | sha256sum` in
+  /srv/crash-detector-wo2r3-audit at the target. **RE-TAKE IT YOURSELF BEFORE YOU START AND AGAIN
+  BEFORE YOU WRITE YOUR VERDICT.** If it moved, something mutated under you and your verdict is
+  about a tree that no longer exists. `git status --porcelain` must be ZERO LINES at both moments.
+target_scope: >
+  **THE WHOLE OF WO-2R3** — increments 1 through 5 AND the bounded completion, i.e. everything in
+  `f30e63c..531c95c` on the lane. NOT only the completion, and NOT only increment 5.
+audited_base_for_replication: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5
+what_the_gate_is: >
+  Whether WO-2R3 closes **CD-AC-002** and **CD-AC-005**. It has been RESERVED to a fresh Assurance
+  seat and to the Product Owner for **SEVEN BOUNDARIES RUNNING** and no seat has been permitted to
+  pre-empt it. **IT IS YOURS TO GRADE AND NOBODY ELSE'S.** Note precisely what that means and does
+  not mean: **YOUR VERDICT IS NOT AN ACCEPTANCE** (PBG-AUTH-003). You grade; the Product Owner
+  dispositions. A PASS is not an acceptance and neither is a RED.
+
+# ================================================================================================== #
+# CLAUSE (i) OF CD-D-129 — MANDATORY, VERBATIM, AND IT IS A DECLARATION AND NOT A DEFECT REPORT
+# ================================================================================================== #
+the_exiting_instrument_declared_up_front:
+  why_this_is_here_before_you_run_anything: >
+    PO-DECISIONS-0009 ruling 1 requires that you be TOLD, before you discover it, that a governed
+    instrument in this tree EXITS 1 BY DECLARED STATE. Finding it yourself and reporting it as a
+    discovery would be reporting the record back to itself.
+  the_instrument: 'tools/sweep/delegated_judgement_sweep.py'
+  its_declared_state_PL_MEASURED_AT_THE_TARGET: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1 ·
+    "CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations"**, over a SUBJECT SET of "the transitive
+    intra-package import closure of 6 judgement entry modules = 19 modules", with 20 modules printed
+    as OUTSIDE THE CLOSURE and therefore NOT swept.
+  the_eleven_ORIGINAL_open_items: >
+    ALL in `crash_detector.admission` — ONE UNDECLARED MODULE at 33 tier-2 sites, plus TEN undeclared
+    admission sites. These eleven are the ones CD-D-127 ruled (C) on and CD-D-130 owes dispositions
+    for AFTER you report.
+  the_four_that_are_NOT_among_the_eleven_and_arrived_at_increment_5: >
+    All in the NEW module `crash_detector.establishment` — three undeclared tier-1 getattr admissions
+    and ONE UNDECLARED MODULE at 17 tier-2 sites. They are the SAME SHAPE as the eleven. They were
+    REPORTED by the Engineer as a measured side effect and NOT CHASED, on the Project Lead's
+    instruction, because chasing them would have been the implementer answering before the auditor
+    asked. **WHETHER THAT WAS THE RIGHT CALL IS YOURS TO JUDGE.**
+  the_bisect_reference: >
+    f30e63c 0/PASS 402 sites · 7b00ce9 0/PASS 471 · 995ec3e **1/FAIL 514 sites, 11 violations** ·
+    04cdd34 same · 4ac159e same · 46adf33 **1/FAIL 534 sites, 15 violations** · 531c95c **534/15,
+    UNMOVED by the bounded completion** (PL-measured at the target).
+  and_the_thing_the_declaration_does_not_buy: >
+    **A DECLARATION IS NOT A DISPOSITION AND IT IS NOT AN EXCUSE.** You are told this so that your
+    verdict is about the SUBSTANCE of the eleven items and not about the surprise of an exit code.
+    If you conclude the declaration is being used to park a real defect, SAY THAT — it is one of the
+    more valuable things you could return.
+
+# ================================================================================================== #
+# CLAUSE (ii) OF CD-D-129 — MANDATORY, VERBATIM
+# ================================================================================================== #
+verdicts_are_taken_against_declarations_never_against_exit_codes_alone:
+  the_rule: >
+    **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD DEFECT IN THE SEAT THAT WRITES IT.**
+    Every instrument in this tree prints its DEFINITION, its POPULATION, its DECLARED LIMITS and its
+    exemptions at every run. Read them. Grade the declaration against the artefact, and the artefact
+    against the Blueprint — never the exit code against your expectation.
+  and_its_mirror_which_matters_more_here: >
+    **AN EXIT 0 IS NOT A PASS EITHER.** The single most load-bearing fact in this dispatch is that
+    with V17 applied both static checks exit 0. On this project, EVERY ESCAPE ON THE RECORD PASSED
+    STATIC CHECKERS. Treat a green run as a question, not an answer.
+
+# ================================================================================================== #
+# CLAUSE (iii) OF CD-D-129 — THE STANDING INVITATIONS. THESE ARE NOT RHETORICAL.
+# ================================================================================================== #
+standing_invitations_to_attack:
+  the_dispositions_after_sequencing_itself: >
+    CD-D-127 ruled (C) and CD-D-130 orders the eleven Class-2 dispositions written AFTER you report,
+    by the Project Lead, reconciled by the Product Owner. **THAT SEQUENCING IS ITSELF OPEN TO
+    ATTACK.** The argument for it is that an implementer who dispositions before the auditor asks has
+    answered the question it was going to be graded on. The argument against it is that an auditor
+    asked to judge eleven items whose dispositions do not yet exist is judging an absence. **IF YOU
+    THINK THE SEQUENCE IS WRONG, SAY SO IN YOUR VERDICT.**
+  the_whole_of_the_section_D_scoping_including_the_CD_D_105_closure: >
+    CD-D-112 / PO-DECISIONS-0007 ruling 2. The scoping of §D — what is in the measured class and what
+    is not — is open to you in full, including the ruling that constructors are subjects.
+  the_widened_class_definition_itself_NEW_AT_THIS_BOUNDARY: >
+    PO-DECISIONS-0010 ruling 3(iii). See the dedicated section below. The Product Owner ruled the
+    class WITHOUT routing the question through you, said why, and then said in terms: **"The seat
+    remains free to attack the widened definition itself."**
+
+# ================================================================================================== #
+# THE NAMED TARGET LIST. NONE OF IT IS YOURS TO CHOOSE AND NONE OF IT WAS THE PROJECT LEAD'S TO DROP.
+# You are NOT limited to it. It is a floor.
+# ================================================================================================== #
+named_targets:
+- id: T1
+  target: 'P7 — PO-DECISIONS-0005 ruling 1.'
+  what: 'A new field added to a governed type must arrive REFUSED, never unguarded.'
+- id: T2
+  target: '**CD-BP-003 — THE ADAPTER BOUNDARY THAT ADMITS. NAMED BY THE PRODUCT OWNER AS THE SOFTEST
+    SURFACE** (PO-DECISIONS-0005 ruling 4, restated at PO-DECISIONS-0010 ruling 3(ii)).'
+  what: >
+    `src/crash_detector/collectors/adapter.py`. It carries an `ESTABLISHED_HERE` exemption
+    (`FetchedResponse.payload`) — one of only three in the tree. Exemptions that start absorbing a
+    population are the failure mode this project keeps re-finding. **THIS IS WHERE TO SPEND YOUR
+    FIRST HOUR.**
+- id: T3
+  target: 'THE STANDING INVITATION TO ATTACK THE WHOLE §D SCOPING INCLUDING CD-D-105 (CD-D-112).'
+- id: T4
+  target: '**THE INCREMENT-5 INSTRUMENT''S OWN ENUMERATION** (CD-D-119).'
+  what: >
+    `tools/register/check_constructor_field_establishment.py` measures the class at POPULATION 33
+    (FIELDED 32, ZERO-FIELD 1, DECLARED 32) of 99 classes examined. **THE DEFINITION IS WHAT YOU
+    ATTACK, NOT THE COUNT.** It was written by the seat whose work the count then flatters. Its own
+    header records that its FIRST DRAFT measured a VOCABULARY and reported 18 instead of 32 — the
+    exact error class this project exists to catch, found by the author in the author's own file.
+    **ASK WHAT IT IS STILL MEASURING A VOCABULARY OF.** RULE A's package list (`engine`, `serving`,
+    `collectors`) is spelled in the file and is a declared vocabulary limit; `variants/WO-2R3/
+    V16-new-package-undecorated-door.patch` exists to demonstrate it.
+- id: T5
+  target: 'THE CLASS-2 SWEEP EXITING 1 — DECLARED, WITH ITS BISECT. See clause (i) above.'
+- id: T6
+  target: '**CD-RT-003-GRANT-MATRIX-LIVE — THE ONE PLANT NOBODY HAS BITTEN WITH. BITE IT, OR STATE
+    MEASURED LIMITS ON WHY YOU CANNOT** (PO-DECISIONS-0009 ruling 3(ii)).'
+  what: >
+    It exits 3 on BOTH arms, so it produces no contrast, and it guards **CD-AC-003 — the ONE PASS in
+    the third gate.** A guard that cannot be demonstrated failing is a rumour, and this one is
+    load-bearing for the only criterion currently passing. **"I could not bite it" is an acceptable
+    return ONLY with MEASURED limits attached: what you ran, what it printed, why the environment
+    defeats it. An unexamined 3 is not.**
+- id: T7
+  target: 'THE THREE `variants/WO-2R` ROUTES NOBODY RE-TESTED AGAINST THE NEW STRUCTURE.'
+  what: >
+    Under `variants/WO-2R/` — including `CD-ASR-F02-F03/V03-dynamic-constructor-on-the-absence-
+    branch.patch`, which is a CONSTRUCTOR route written by an earlier auditor BEFORE the constructor
+    mechanism existed. It has never been re-run against increment 5's establishment machinery.
+- id: T8
+  target: 'THE ELEVEN CLASS-2 SWEEP DISPOSITIONS AS SUCH (CD-D-127 ruled (C)).'
+- id: T9
+  target: '**CD-ENG-WO2R3-F15 — AND THE TARGET IS THE BLINDNESS WINDOW, NOT JUST THE GUARD**
+    (PO-DECISIONS-0009 ruling 3(i)).'
+  what: >
+    A guard failing since increment 2, through **TWO PROJECT LEAD RECONCILIATIONS THAT DID NOT SEE
+    IT**, found by the Engineer against its own work. The Product Owner escalated it deliberately
+    from the guard to the WINDOW: **the subject is a READING failure in the reconciliation method,
+    and half of it is the Project Lead's (CD-PL-F86).** What else could survive two reconciliations?
+    Answer that and you have found the class, not the instance.
+- id: T10
+  target: 'CD-ENG-WO2R3-F10 — STILL OPEN AND UNDISCHARGED (PO-DECISIONS-0008 ruling 4 keeps it owed).'
+- id: T11
+  target: '**THE WIDENED CLASS DEFINITION OF PO-DECISIONS-0010 RULING 1, AS AN ATTACKABLE CLAIM.**
+    NEW AT THIS BOUNDARY, ruling 3(iii). See its own section below.'
+
+# ================================================================================================== #
+# TARGET 11 IN FULL — THE WIDENED INVARIANT, AND THE SEAM THE ENGINEER HANDED YOU
+# ================================================================================================== #
+the_widened_invariant_as_an_attackable_claim:
+  the_ruling_verbatim: >
+    "CD-D-134 is ruled: the class reads BODY-BORNE OR ABSENT. Establishment derived from the
+    declaration is REQUIRED of every fielded public frozen judgement-path type. A type with zero
+    fields satisfies vacuously (`Empty` today). The constructor instrument asserts this over the
+    WHOLE enumerated population, so a future fielded type that arrives with no establishment FAILS ON
+    ARRIVAL — it does not slip outside a class worded around bodies."
+  and_why_it_did_not_come_to_you_first_in_the_product_owners_own_words: >
+    "I am not routing a question I have a settled conviction on through the auditor first — sending a
+    definition I already believe incomplete to assurance would be paying for the answer twice. **The
+    seat remains free to attack the widened definition itself.**"
+  the_evidence_for_it_and_its_exact_limit: >
+    ONE contrast, `variants/WO-2R3/V43-fielded-judgement-path-type-with-no-establishment.patch`.
+    At 46adf33: **EXIT 0**, and the type printed as `ADJACENT (not required, and this is a real
+    hole): engine/verdict.py:40 Verdict [RULE A] fields=['score']`. At 531c95c: **EXIT 1**, and
+    `VIOLATION src/crash_detector/engine/verdict.py:40 — ... a type that establishes NOWHERE FAILS ON
+    ARRIVAL`. **THE PROJECT LEAD RAN BOTH ARMS ITSELF FROM TWO PRISTINE `git archive` EXTRACTIONS
+    RATHER THAN READING THE SEAT'S REPORT OF THEM**, because every other instrument in this tree is
+    green at both SHAs and cannot tell this completion from a docstring edit (CD-PL-F92).
+    **THE LIMIT, VOLUNTEERED BY THE ENGINEER: IT IS ENTIRELY STATIC.** `Verdict` is never imported or
+    constructed in either arm and would still be CONSTRUCTIBLE AT RUNTIME in the failing arm.
+  the_seam_the_engineer_named_for_you_CD_ENG_WO2R3_F24: >
+    The seat reports that its IMPLEMENTED membership is clauses (1)(2)(3) with **no locus gate at
+    all**, which it calls WIDER than the ruling's sentence: a type establishing by some third route
+    is also IN and REQUIRED to carry `@establishes`. It believes that is the ruling's meaning and
+    that the error direction is toward a LARGER class — **and it named this as the seam to attack the
+    widened definition at, rather than waiting for you to find it.**
+  the_project_leads_ruling_on_it_ATTACHED_AND_NOT_SUBSTITUTED_FOR_THE_ENGINEERS_FRAMING: >
+    Ruled CORRECT: "body-borne OR absent" is EXHAUSTIVE over the body-borne predicate, so dropping
+    clause (4) as a gate widens the class to precisely what the disjunction names. **BUT THE PROJECT
+    LEAD MARKS ITS OWN AGREEMENT AS WORTH LITTLE: IT IS TWO IMPLEMENTERS AGREEING, AND THAT IS WORTH
+    LESS THAN ONE AUDITOR DISAGREEING.** Both framings travel to you. Take neither on trust.
+  questions_that_are_yours_and_not_answered_anywhere_in_the_record: >
+    Is the ZERO-FIELD vacuous case a hole with a smaller mouth? Add a field to `Empty` — does it
+    become REQUIRED on the same run, as the instrument claims? Is the instrument's own reading of
+    "declares at least one field" the same reading `@establishes` uses at runtime? Does the widened
+    class still depend on RULE A's spelled package vocabulary to REACH a type at all — i.e. can a
+    fielded frozen type with no establishment be placed where NO rule reaches it and pass?
+
+# ================================================================================================== #
+# DISCLOSED TO YOU BEFORE YOU READ THE RECORD, BECAUSE TELLING YOU AFTERWARDS WOULD BE A TRAP
+# ================================================================================================== #
+disclosures:
+  the_build_log_sequence_collisions_CD_PL_F89: >
+    **YOU ARE THE ONE PARTY WHO READS BOTH BUILD-LOG DIRECTORIES, SO YOU ARE THE PARTY THIS AMBIGUITY
+    IS ACTUALLY CHARGED TO.** There are **THIRTEEN LANDED SEQUENCE COLLISIONS, 0041 THROUGH 0053, NO
+    GAPS**, between `main` and the lane. A bare sequence number in that range NAMES TWO DIFFERENT
+    ENTRIES. **Only the full timestamped `entry_id` PLUS the branch disambiguates.** The cause was
+    the Project Lead's own rule giving the lane a floor and `main` no ceiling (CD-D-036); the fix
+    (CD-D-132) bounds every block at both ends — `main` 0100-0199, the lane 0060-0099, 0001-0059
+    CLOSED to both. **NOTHING WAS RENUMBERED OR EDITED. The collisions stand, disclosed.**
+  the_project_leads_own_dispatch_defect_CD_PL_F93: >
+    **MEDIUM, RAISED BY THE PROJECT LEAD AGAINST ITSELF AT THE BOUNDARY IMMEDIATELY BEFORE THIS ONE.**
+    The bounded-completion dispatch stated the membership rule TWO INCOMPATIBLE WAYS: objective (a)
+    put "declares at least one field" into MEMBERSHIP (population 32, `Empty` OUT), objective (b)
+    required the vacuous case enumerated over the WHOLE population (33). **FOLLOWED LITERALLY, (a)
+    WOULD HAVE SHIPPED A CLASS NARROWER THAN THE PRODUCT OWNER RULED, GREEN, WITH THE V43 CONTRAST
+    STILL PASSING.** The Engineer caught it, took the RULING's reading, printed both readings side by
+    side so its choice need not be trusted, and said so unprompted. **WHAT PREVENTED IT WAS NOT A
+    CONTROL. IT WAS A SEAT THAT READ THE RULING BEHIND THE DISPATCH.**
+  the_pattern_this_is_the_fourth_instance_of: >
+    CD-D-114 (the Product Owner's own list of four types), CD-PL-F89 (the Project Lead's one-sided
+    sequence bound), CD-D-134 (the ruled class itself), CD-PL-F93 (the dispatch transmitting
+    CD-D-134). **FOUR CONSECUTIVE BOUNDARIES AT WHICH A CONTROL OF THIS PROJECT'S OWN DESIGN WAS
+    FOUND SCOPED NARROWER THAN THE CLASS IT NAMES, ACROSS ALL THREE PARTIES.** Assume it is present
+    in something you are about to read and has not yet been found.
+  the_lane_boot_reads_RED_and_it_is_not_about_the_work: >
+    `pbg boot` inside a lane worktree emits a PL-role verdict of RED (`CONTINUITY_REFERENCE_INVALID`)
+    because it reads `main`'s Project Lead continuity record from a detached lane. **EVERY ENGINEER
+    SEAT ON THIS PROJECT GOT THE SAME READING.** It is disclosed so you do not spend your budget on
+    it — but it is DISCLOSED, not ruled harmless, and it is yours to disagree with.
+  the_four_declared_residues_of_increment_5_CD_D_136: >
+    Travelling to you in the record WITH EXECUTABLE EXAMPLES: (1) CROSS-FIELD RELATIONS — no declared
+    field list can state a cross-field invariant; carrier **NOT PROVED TO BE CARRIED ANYWHERE**
+    (CD-ENG-WO2R3-F18, V36). (2) THE ADJACENT SET — **CLOSED AT THIS BOUNDARY by CD-D-134**, and the
+    closure is what T11 asks you to attack. (3) THE `__closure__` INTERPRETER ROUTE — V37 ARM 4,
+    PL-CONFIRMED ESCAPED, same CPython limit as DECLARED LIMIT 6. (4) THE SUBCLASS ROUTE
+    (CD-ENG-WO2R3-F19, V38).
+  CD_PL_F90: >
+    **BOTH ARMS OF V39 REFUSE, UNDER DIFFERENT RULES, AND THE RECORD NAMED ONLY ONE.** Direction of
+    error: UNDERSTATEMENT. Noted by the Product Owner at PO-DECISIONS-0010 ruling 4. It is the LIVE
+    INSTANCE of the CD-ENG-WO2R3-F12 standard below.
+  CD_ENG_WO2R3_F22_a_fifth_stale_copy_left_deliberately_in_place: >
+    `plants/MANIFEST.md:1148-1149` still says "all 32 members of the body-borne field-establishment
+    class" — superseded wording AND a superseded count. `plants/` was PROTECTED for the completion,
+    the Engineer reported it rather than reaching in, and the Project Lead ruled it NOT FIXED
+    (CD-D-139) rather than relax a scope for tidiness. **DISCLOSED AS A KNOWN-STALE LINE, NOT
+    OFFERED AS CLEAN.**
+
+# ================================================================================================== #
+the_evidence_standard_you_are_held_to_and_that_you_should_hold_the_record_to:
+  the_CD_ENG_WO2R3_F12_standard: >
+    **A PLANT IS EVIDENCE WHEN IT APPLIES, CONTRASTS, *AND FAILS AT THE LAYER ITS PROPOSITION
+    NAMES* — never merely when it exits non-zero.** Two arms that both exit 1 for DIFFERENT reasons
+    look identical in a summary table and prove nothing about the guard being credited. CD-PL-F90 is
+    that defect, live, in this record.
+  runtime_claims_need_runtime_proof: >
+    "Unconstructible", "structurally incapable", "cannot be admitted" are RUNTIME claims. A static
+    checker exiting non-zero is not proof of one. **EVERY ESCAPE ON THIS PROJECT'S RECORD PASSED
+    STATIC CHECKERS.** Construct the thing. Read the exception type and message. Name the layer that
+    refused from the FAILURE TEXT.
+  the_rename_test: >
+    For any refusal credited to a STRUCTURE: does it survive renaming one identifier? If it depends
+    on a NAME, it is a vocabulary guard wearing a structural label.
+  the_counterfactual_arm_CD_D_079: >
+    For every refusal credited to a structure, show the arm WITHOUT that structure failing to refuse.
+    Otherwise the structure is not proved to be doing the work.
+
+# ================================================================================================== #
+# WHAT THE PROJECT LEAD DID NOT VERIFY. THESE ARE HOLES IN THE RECORD YOU ARE INHERITING.
+# ================================================================================================== #
+declared_unverified_by_the_project_lead:
+- '**THE ELEVEN PLANTS WERE VERIFIED TO *APPLY* AT 531c95c (11/11, PL-measured) AND WERE NOT
+   RE-CONTRASTED AT THEIR NAMED LAYERS.** Whether each still fails AT THE LAYER ITS PROPOSITION NAMES
+   is NOT established by any Project Lead measurement at the target. That is the F12 standard and it
+   is unmet by this record.'
+- '**THE WO-2R3 VARIANT CORPUS (28 patches) WAS NOT RE-RUN BY THE PROJECT LEAD AT THE TARGET.** The
+   Engineer reports 108 applying with four pre-existing failures named. **THAT IS THE IMPLEMENTER''S
+   MEASUREMENT AND NOT AN INDEPENDENT ONE.**'
+- '**THE THREE `variants/WO-2R` ROUTES HAVE NEVER BEEN RE-TESTED AGAINST THE NEW STRUCTURE BY
+   ANYONE.** (This is T7 and it is listed twice on purpose.)'
+- '**NO RUNTIME CONSTRUCTION OF ANY GOVERNED TYPE WAS PERFORMED BY THE PROJECT LEAD AT THIS
+   BOUNDARY.** Every Project Lead measurement in the reconciliation record is a static run, a git
+   audit or a test-suite invocation. **THE RUNTIME CLOSURE HAS NOT BEEN INDEPENDENTLY EXERCISED BY
+   ANYONE AT 531c95c.**'
+- '**THE PROJECT LEAD HAS NEVER GRADED CD-AC-002 OR CD-AC-005 AND IS FORBIDDEN TO.** No prior
+   reconciliation contains a grading you can lean on. If you look for one, you will not find it, and
+   its absence is by design and not an oversight.'
+
+# ================================================================================================== #
+required_work:
+  boot_first: >
+    `cd /srv/crash-detector-wo2r3-audit && PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot`, then
+    read `pbg/roles/assurance-engineer.md` IN FULL, the PID, the Blueprint (v0.2.0, IN FORCE, with
+    BP-AMENDMENT-0001 applied), `pbg/standards/DEVELOPMENT_SECURITY_BASELINE.md`, and reconcile the
+    target SHA and fingerprint against what you observe. Declare your boot verdict.
+  then: >
+    Everything in `named_targets`, at minimum, plus whatever your own reading opens up. **THE LIST IS
+    A FLOOR AND NOT A CEILING.** Where you cannot reach something, say what you ran and what stopped
+    you — MEASURED limits, never a silent omission.
+  and_the_thing_the_project_lead_most_wants_from_you: >
+    Not a confirmation. **A ROUTE NOBODY HAS WRITTEN DOWN.** Three auditors, six Engineer increments
+    and the Product Owner have all been over this. The escapes that have mattered on this project
+    were found by someone taking a route no corpus contained.
+
+prohibited_mutation:
+  rule: >
+    **READ-ONLY. YOU DO NOT MUTATE THE TARGET.** No commits to the lane, no edits under
+    `/srv/crash-detector-wo2r3-audit` that change the tree, no `git apply` in the audit worktree.
+  how_to_test_a_variant_without_breaking_that: >
+    `rm -rf /tmp/<dir> && mkdir -p /tmp/<dir> && git archive <sha> | tar -x -C /tmp/<dir>`, apply and
+    run THERE, discard. Never `git worktree add` for a variant. Never mutate the audit tree.
+  explicitly_safe_diagnostic_artefacts: >
+    Files you create under `/tmp/`, and your own verdict and evidence written under
+    `governance/assurance/WO-2R3/` **on `main`, not on the lane** — handed back through your return
+    if you cannot write there. Nothing else.
+  non_waivable: >
+    You may not implement a fix (PBG-SOD-001). You may not weaken, edit or re-run-until-green any
+    check. You may not modify anything under `pbg/` (PBG-FWK-013). **IF YOU FIND YOURSELF WANTING TO
+    CHANGE THE TARGET TO PROVE A POINT, THAT WANT IS THE FINDING — WRITE IT DOWN INSTEAD.**
+
+expected_verdict:
+  form: '**PASS · AMBER · RED**, plus the NEXT SAFE GATE, plus PER-CRITERION GRADES for CD-AC-002 and
+    CD-AC-005.'
+  what_it_must_carry:
+  - 'the exact SHA and tree fingerprint you audited, re-taken at the end and compared to the start'
+  - 'a verdict on EACH named target T1-T11, including the ones you could not reach and WHY, measured'
+  - '**T6 GRANT-MATRIX-LIVE: bitten, or MEASURED limits on why it cannot be bitten.** An unexamined
+     exit 3 is not an acceptable return on this one — the Product Owner said so in terms.'
+  - '**THE RUNTIME ATTACK ON THE RUNTIME CLOSURE.** V17 applied, constructed, with the refusing layer
+     named FROM THE FAILURE TEXT — and your judgement on whether the closure is real or whether the
+     static evidence has been standing in for runtime evidence across six increments.'
+  - 'your attack on the widened class definition (T11), and on CD-ENG-WO2R3-F24 as the Engineer
+     framed it — NOT as the Project Lead ruled it'
+  - 'for every refusal you credit: the RENAME TEST result and the COUNTERFACTUAL ARM (CD-D-079)'
+  - 'anything you found that is on nobody''s list. **THIS IS THE POINT OF THE SEAT.**'
+  - 'anything you could NOT establish, said plainly. An honest AMBER with measured limits is worth
+     more than a PASS you are not sure of.'
+  what_your_verdict_is_NOT: >
+    **NOT AN ACCEPTANCE** (PBG-AUTH-003). You grade; the Product Owner dispositions. And a RED is not
+    a failure of the project — three of this project's most valuable boundaries were REDs.
+
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  The Project Lead reconciles your return, writes the eleven Class-2 dispositions ONLY AFTER it
+  (CD-D-130), and the Product Owner dispositions the gate. **THE PROJECT LEAD WILL NOT ARGUE YOUR
+  VERDICT DOWN AND HAS NO AUTHORITY TO.** If your verdict contradicts the reconciliation record, the
+  record is what gets corrected.
+
+separation_of_duties:
+  PBG_SOD_001: 'The Engineer and the Assurance Engineer are never the same agent. Non-waivable.'
+  PBG_AUTH_006: 'The Project Lead writes neither the fix nor the assurance. Direction is not design.'
+  PBG_AUTH_003: 'A PASS is not an acceptance and neither is a RED. Disposition is the Product Owner''s.'
+  PBG_ASSURE_016: 'You may not certify work you implemented, advised on, or dispatched.'

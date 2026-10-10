@@ -1,0 +1,212 @@
+# ================================================================================================ #
+# BL-20260823T094235Z-0130 — THE SEVENTH SEAT'S **RED** RECONCILED BY MEASUREMENT.
+# THE GATE'S CENTRAL SENTENCE IS FALSE, THE PROJECT LEAD RE-DERIVED THAT ITSELF, AND A HIGH LIVE
+# CONTROL BYPASS THAT WAS ON NOBODY'S LIST REPRODUCES IN BOTH ARMS.
+# ================================================================================================ #
+entry_id: BL-20260823T094235Z-0130
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T09:42:35Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: 8577a4bf3d60975a7c70decf80878f189d135ccf   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36). NOT TRANSCRIBED.
+
+# ================================================================================================ #
+# 1. THE RETURN AND THE BANKING
+# ================================================================================================ #
+the_return:
+  seat: '`CD-ASR-WO2R3-04`, INSTANCE 2 (CD-D-170). Dispatch `CD-DISPATCH-WO2R3-ASSURANCE-07`, unedited.'
+  verdict: '**RED**, over the whole of WO-2R3 at `686a374`.'
+  returned_utc: '2026-08-23T09:37Z, while ARM 1 of the previous boundary was running.'
+  banked_at: '`8577a4bf3d60975a7c70decf80878f189d135ccf` — ITS OWN ACT, BEFORE ANY RECONCILIATION.'
+  artefact: >
+    `governance/assurance/WO-2R3/VERDICT-SEVENTH-SEAT.md`, **924 lines, 61128 bytes,
+    sha256 `b7faa9efa93ba20d1824baaad929df213cf24eb3e16d61bda0adf4f0f11f0caf`** — recorded so any
+    later edit is detectable. **VERBATIM AND BESIDE, NEVER INSIDE, ITS FOUR PREDECESSORS**
+    (CD-D-143, PBG-CONT-003). Nothing merged, summarised or trimmed.
+  target_integrity_PL_MEASURED_NOT_SEAT_ASSERTED: >
+    In `/srv/crash-detector-wo2r3-audit7`, printing its own `pwd`: HEAD `686a374`,
+    `git status --porcelain` **ZERO LINES**, and `tree_fingerprint.py --root .` -> 509 files,
+    5 excluded (the expected `.pytest_cache`), **FINGERPRINT
+    `319e401fc2591dc48b611d101d5330bdb3dbb3bb9824b7bb1c39a11e5b10fc6a`** — byte-identical to the
+    value at dispatch and to the value taken before the seat began. **THE READ-ONLY CONSTRAINT HELD
+    ACROSS A FULL RED AUDIT.** The seat wrote exactly ONE file under `/srv/crash-detector` and
+    nothing else, measured throughout.
+
+# ================================================================================================ #
+# 2. RECONCILED BY MEASUREMENT — THE PROJECT LEAD'S OWN PROBES, NOT THE SEAT'S
+# ================================================================================================ #
+method: >
+  A **PRISTINE EXTRACTION** — `git archive 686a374 | tar -x -C /tmp/pl-recon-0130`, 509 files — in a
+  **SCRATCH DIRECTORY NO PRIOR INSTANCE HAS TOUCHED (CD-PL-F128, applied the same hour it was
+  raised)**. The audit worktree was never written to. Probes written by this seat, not copied from
+  the verdict and not copied from the instrument; the instrument is used ONLY to enumerate the
+  population and reproduce its own partition, so the classes attacked are demonstrably the ones it
+  certifies.
+
+CLAIM_1_the_sealing_green_is_not_earned:
+  the_seats_claim: '40 of the 51 classes the instrument certifies SEALED forge via `cls.__new__(cls)` + `object.__setattr__`, zero package lines.'
+  PL_measurement: >
+    **CONFIRMED EXACTLY, AND THE ARITHMETIC CLOSES.** The instrument at the target:
+    `PASS — 99 assertions, 0 violations`, SEALED **51**, EXCLUDED **48**, 51+0+48+0 = 99.
+    This seat's OWN live enumeration: **99** governed classes. This seat's OWN partition using the
+    instrument's own definition (`not forging` under R1-R5): **51 SEALED / 48 forged-then-excluded**.
+    This seat's OWN R6 probe, own `sys.settrace` package-line counter, against those exact 51:
+    **40 FORGED — exact type, value read back — AND ALL 40 EXECUTED ZERO PACKAGE LINES.**
+    11 of the 51 have no string `__slots__`; 0 refused; 0 mismatched.
+  the_hand_check: >
+    `crash_detector.staleness.StalenessWindow` — `__slots__` in `vars(cls)` True, `__dictoffset__` 0,
+    no `__setstate__`. **R1 `__dict__.update` -> REFUSED `AttributeError: no attribute '__dict__'`
+    — THE INCREMENT'S FIX GENUINELY WORKS AGAINST THE DECLARED ROUTE.** **R6
+    `object.__setattr__` -> type is exactly `StalenessWindow`, `seconds` reads back forged,
+    PACKAGE LINES EXECUTED: 0.** `crash_detector.observations.OK` behaves identically on `payload`.
+  the_reading: >
+    **THE GATE'S SETTLED SENTENCE — "THE CLASS OF 99 IS SEALED" — IS FALSE AT `686a374`, AND THIS
+    SEAT RE-DERIVED THAT ITSELF RATHER THAN ACCEPTING IT.** The structural argument is verifiable
+    from the instrument's own printed notes: its five declared routes write state by exactly two
+    mechanisms, `__dict__.update` (R1-R3) and `__setstate__` (R4-R5). **`__slots__` DOES NOT MAKE AN
+    ATTRIBUTE UNWRITABLE; IT REPLACES A `__dict__` ENTRY WITH A DESCRIPTOR THAT `object.__setattr__`
+    STILL WRITES.** The seat's sharpest line is correct and this seat confirms it:
+    **R5 IS R6 WITH A WRAPPER, AND THE INCREMENT REMOVED THE WRAPPER.**
+
+CLAIM_2_CD_ASR_F01_is_reopened:
+  the_seats_claim: '`type.__new__(SealedMagnitudeType, ...)` bypasses the sealed-type guard. HIGH, a live control bypass, on nobody''s list.'
+  PL_measurement: >
+    **CONFIRMED. BOTH COUNTERFACTUAL ARMS RUN BY THIS SEAT (CD-D-079).**
+    **ARM 1, the declared route:** `SealedMagnitudeType('Evil', (DialMagnitude,), ns)` ->
+    **REFUSED, `MagnitudeSurfaceViolated: Evil may not subclass DialMagnitude: a dial magnitude is a
+    CLOSED type`. THE GUARD FIRES AND IS NOT VACUOUS.**
+    **ARM 2, the bypass:** `type.__new__(SealedMagnitudeType, 'Evil2', (DialMagnitude,),
+    {'__slots__': (), '__float__': lambda self: 999.0})` -> **CREATED, package lines executed 0**;
+    `issubclass(Evil2, DialMagnitude)` **True**; instance built with **0** package lines;
+    **`float(inst)` -> 999.0**; `isinstance(inst, DialMagnitude)` **True**.
+  the_reading: >
+    **A DIAL MAGNITUDE THAT COERCES TO A NUMBER, BUILT WITH ZERO LINES OF PACKAGE CODE, PASSING
+    `isinstance` — WHICH IS THE `CD-ASR-F01` ROUTE FROM TWO DIALS TO ONE NUMBER THAT THIS PROJECT
+    BELIEVES IT CLOSED.** The guard is written in `SealedMagnitudeType.__new__` and is therefore
+    only on the path the `class` statement takes. **IT GUARDS THE SYNTAX, NOT THE TYPE** —
+    `GUARD_THE_INSTANCE_NOT_THE_CLASS` for the fifth time on this project.
+    The seat executed it against `SealedMagnitudeType` and reported the other three sealed metatypes
+    as **structurally identical, NOT individually executed**, and labelled that limit itself. **THIS
+    SEAT DID NOT EXECUTE THE OTHER THREE EITHER AND SAYS SO RATHER THAN INHERITING THE INFERENCE.**
+
+CLAIM_3_a_carrier_declared_MEASURED_against_a_file_that_does_not_exist:
+  PL_measurement: >
+    **CONFIRMED.** `ls tests/test_engine_config.py` at the target -> **No such file or directory.**
+    It is cited as a live carrier in **FOUR PLACES**: `required-tests.yaml:1967`,
+    `required-tests.yaml:2131` (**"CARRIER MEASURED AND IT IS BODY-LEVEL"**),
+    `tools/register/check_constructor_field_establishment.py:218`, and
+    `src/crash_detector/establishment.py:167`. **A CARRIER DECLARED *MEASURED* AGAINST A FILE THAT
+    HAS NEVER EXISTED, READ PAST BY FOUR GATES.**
+
+what_this_seat_did_NOT_re_measure_and_says_so: >
+  **THE FULL SUITE, THE PLANT SET, THE ENUM HALF OF T20, AND ESCAPE 3's REFUTATION ARE THE SEAT'S
+  MEASUREMENTS AND ARE NOT INDEPENDENTLY RE-RUN HERE.** They are banked as its findings, not as this
+  seat's. **AN HONEST LIST OF WHAT WAS NOT CHECKED IS WORTH MORE THAN A SILENT IMPLICATION THAT
+  EVERYTHING WAS** — and the two claims that decide the gate are the two that were re-derived.
+
+# ================================================================================================ #
+# 3. THE RECORD IS WHAT GETS CORRECTED
+# ================================================================================================ #
+corrections_to_the_record_not_to_the_verdict:
+  rule: '**THE PROJECT LEAD DID NOT ARGUE THE VERDICT DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER. WHERE THE VERDICT CONTRADICTS THE RECONCILIATION RECORD, THE RECORD IS CORRECTED. IT DOES CONTRADICT IT, IN THREE NAMED PLACES.**'
+  correction_1: >
+    **`CD-PL-F119` AND `CD-PL-F120` ARE SUPERSEDED IN THE WIDENING DIRECTION AND WERE NOT WRONG
+    ENOUGH.** They said this seat's published "13 SEALED" used an unsound criterion because
+    `"__slots__" in vars(cls) and not cls.__dictoffset__` cannot see `__setstate__`. **THE TRUE
+    POSITION IS WORSE: THE REPLACEMENT INSTRUMENT'S OWN "SEALED" IS ALSO UNSOUND, FOR 40 OF THE 51
+    IT CERTIFIES, BY A ROUTE NEITHER CRITERION EVER CONTEMPLATED.** The fix that answered F119/F120
+    inherited their blind spot one level down.
+  correction_2: >
+    **THE DISPATCH THIS SEAT WROTE IS WRONG ABOUT T2, AND THE SEAT IS RIGHT.**
+    `CD-DISPATCH-WO2R3-ASSURANCE-07`'s T2 entry stated a verdict over increment 9's diff — **a
+    population that could not contain the answer.** The seat re-grounded T2 twice, the second time
+    on an EXECUTED mutating-validator arm. **THAT IS A FOURTH DEFECT IN THIS SEAT'S OWN DRAFTING OF
+    A TARGET LIST AND IT IS ACCEPTED WITHOUT ARGUMENT.**
+  correction_3: >
+    **THE SEAT MOVED `CD-AC-005` DOWN TO RED AND CORRECTED ITSELF TWICE IN THE OPPOSITE DIRECTION**
+    — two T20 findings it had written from reading were REFUTED BY ITS OWN EXECUTION and superseded
+    rather than edited (PBG-CONT-003). **A SEAT THAT PUBLISHES ITS OWN REFUTATIONS IN THE SAME
+    DOCUMENT IS THE BEHAVIOUR THIS GOVERNANCE EXISTS TO PRODUCE.**
+
+CD_PL_F129:
+  severity: LOW
+  title: '**"SEALED" NAMES TWO DIFFERENT PARTITIONS IN THIS PROJECT AND THIS SEAT ATTACKED THE WRONG ONE FIRST.**'
+  measured: >
+    `_seal_availability` splits the 99 into **47 available / 52 excluded**. The instrument's VERDICT
+    splits them into **51 SEALED / 48 EXCLUDED**, because `if not forging:` is evaluated FIRST and
+    availability is consulted only for classes that DO forge. **THEY ARE DIFFERENT PARTITIONS AND
+    BOTH GET CALLED "SEALED" IN THE RECORD.** This seat's first probe attacked the 47 and reported
+    "40 of 47"; the number happened to be right and **THE POPULATION WAS WRONG**, which is
+    `CD-PL-F121` — check every population is non-empty AND is the one you meant — recurring in this
+    very reconciliation, ninety minutes after this seat wrote it as an instruction to somebody else.
+    Corrected by re-deriving against the exact certified set: **40 of 51.**
+  why_it_is_recorded_rather_than_quietly_fixed: >
+    Because the seat's verdict uses BOTH numbers, correctly, in different sentences ("40 of the 51
+    ... certifies SEALED" and "45 of the 47 seal-available"), **and a reader reconciling the two
+    documents without this note would think one of them had made an arithmetic error.** Neither did.
+
+# ================================================================================================ #
+# 4. WHAT MOVED AND WHAT DID NOT
+# ================================================================================================ #
+what_this_boundary_did:
+- 'BANKED the seventh verdict VERBATIM in its own act, before reading it.'
+- 'RECONCILED the two gate-deciding claims BY INDEPENDENT MEASUREMENT, and a third by inspection.'
+- 'CORRECTED the record in three named places, in the widening direction every time.'
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT ACCEPT THE VERDICT AND DID NOT MOVE ONE GRADE.** A RED is not a failure and is not an acceptance (PBG-AUTH-003). This seat has never graded CD-AC-002 or CD-AC-005 and is forbidden to (PBG-AUTH-006).'
+- '**IT DID NOT CLEAR THE THREE STALE DISPOSITION KEYS.** PO-DECISIONS-0017 ruling 2''s precondition is now met — the seat has read the tree — but the verdict came back RED and REOPENED A CONTROL THIS PROJECT BELIEVED CLOSED. **CLEARING DISPOSITION KEYS IN THE SAME HOUR A HIGH BYPASS REPRODUCED IS THE PAPERING THE RULING EXISTS TO PREVENT, AND THE SEQUENCING IS PUT BACK TO THE PRODUCT OWNER RATHER THAN DECIDED HERE.**'
+- '**IT DID NOT BUILD THE PLANT-DRIFT CARRIER** (ruled (A), sequenced after this gate).'
+- '**IT DID NOT WRITE ONE LINE OF FIX.** `PBG-AUTH-006`. `F01` needs a SEPARATE ENGINEER and this seat is not it.'
+- '**IT DID NOT TIDY THE UNTRACKED RESIDUE.** `CD-PL-F101` stays visible.'
+
+# ================================================================================================ #
+# 5. PRODUCT AUTHORITY — THE STOP
+# ================================================================================================ #
+product_authority_questions_raised_at_this_boundary: >
+  **FOUR, AND THIS BOUNDARY STOPS ON THEM RATHER THAN ANSWERING THEM.**
+  **(1) THE SEALING REMEDY IS A DESIGN DECISION, NOT A PATCH.** The seat's next-safe-gate is
+  explicit: *do not fix this by appending two routes.* Either derive the route set from the
+  attribute model, or make the exit code carry DECLARED LIMIT 2 honestly. **APPENDING R6 AND R7
+  WOULD PRODUCE A SIXTH GREEN BOARD WITH THE SAME SHAPE OF DEFECT UNDERNEATH IT.** Which of the two
+  is the Product Owner's.
+  **(2) `CD-ASR-WO2R3-04-F01` IS A LIVE CONTROL BYPASS AT HIGH AND NEEDS ITS OWN ENGINEER DISPATCH**,
+  separate from the sealing work (PBG-SOD-001). Its priority against the sealing remedy is the
+  Product Owner's to set. **THIS SEAT'S READING, OFFERED AND NOT DECIDED: F01 FIRST — the sealing
+  defect forges state inside the boundary, F01 walks a forged type across it.**
+  **(3) THE THREE STALE DISPOSITION KEYS** — ruling 2's precondition is met but the verdict is RED.
+  **CLEAR NOW AS RULED, OR HOLD UNTIL THE REMEDY LANDS? HELD, PENDING THE ANSWER.**
+  **(4) ITEM 3's CLOSURE**, unchanged and still owed, still needing `tools/sweep/`.
+  Ruling 1(A)'s plant-drift carrier is sequenced after this gate and is **NOT** a question — it is
+  ruled, and it is owed.
+
+gate_state: >
+  **THE WO-2 GATE IS SHUT AND THE SEVENTH SEAT SHUT IT HARDER THAN THE SIXTH DID.** T2 RED;
+  CD-AC-002 AMBER and NOT closed; **CD-AC-005 MOVED DOWN TO RED BY THE SEAT**; `CD-RT-012` RED at
+  the tip; the three stale keys STILL STALE; ITEM 3 OWED; the plant-drift carrier OWED; the
+  SHA-resolution carrier OWED; the dispatch-lifecycle carrier OWED; **48 of 99 governed classes OPEN
+  AND UNSEALABLE, AND NOW 40 OF THE 51 SUPPOSEDLY SEALED ONES TOO — SO THE HONEST COUNT OF CLASSES
+  THIS PROJECT CAN DEFEND AS SEALED AT `686a374` IS ELEVEN.** `686a374` IS STILL `686a374`.
+
+decision_refs:
+  - CD-D-171            # THIS decision: the seventh verdict banked and reconciled by measurement, NOT accepted
+  - CD-D-170            # the instance-2 re-launch that produced it
+  - CD-D-143            # banked VERBATIM AND BESIDE, never inside
+  - CD-D-079            # the counterfactual arm, run on F01 in both directions
+  - PO-DECISIONS-0017   # ruling 4 satisfied; ruling 2 held pending an answer; ruling 1(A) owed
+  - PBG-AUTH-003        # a RED is not a failure and is not an acceptance — disposition is the PO's
+  - PBG-AUTH-006        # this seat grades nothing and writes no fix
+  - PBG-CONT-003        # corrections supersede, never edit
+  - PBG-SOD-001         # F01's remedy needs an Engineer who is not this seat and not the auditor
+
+next_safe_action: >
+  **NOTHING MOVES UNTIL THE PRODUCT OWNER ANSWERS (1)-(3).** No increment, no disposition, no grade,
+  no fix. On the answers: dispatch the `F01` Engineer and the sealing-remedy Engineer **SEPARATELY**
+  (PBG-SOD-001), each against a fresh scratch directory (CD-PL-F128), **AND DISPATCH THEM FIRST IN
+  THEIR SESSION** (CD-PL-F125). The eighth Assurance seat, when it comes, must be told that **THE
+  SIXTH AND SEVENTH GATES BOTH TURNED ON A ROUTE NOBODY HAD DECLARED, AND THAT THE ROUTE SET IS
+  STILL DECLARED AND STILL NOT PROVED COMPLETE.**
+  A META-ASSURANCE PASS over this seat's own reconciliation practice now carries `F102`, `F111`,
+  `F112`, `F113`, `F119`-`F123`, and **`F125`-`F129`**.
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

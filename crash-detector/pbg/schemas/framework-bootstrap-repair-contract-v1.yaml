@@ -1,0 +1,108 @@
+# FRAMEWORK BOOTSTRAP REPAIR CONTRACT, VERSION 1. DECLARATIVE. FROZEN. DELIBERATELY TINY.
+#
+# THE ONE QUESTION THIS ANSWERS:
+#     When ordinary governed dispatch is IMPOSSIBLE because dispatch itself is the authorised repair
+#     subject, what pre-existing facts make ONE narrowly scoped Engineer seat lawful?
+# That is all. Not a second dispatch framework. No policy engine, no plugin framework, no alternate
+# lifecycle.
+#
+# THIS IS NOT AN EXCEPTION. The word is retired for this purpose. The model
+#     binding_status: NON_BINDING + bootstrap_exception: true + ordinal: twelfth
+# IS FINISHED. Eleven such records exist, they stay PRESERVED and NON_BINDING permanently, and there
+# will be no twelfth.
+#
+# A BOOTSTRAP SEAT HAS LESS FREEDOM THAN A NORMAL SEAT, NOT MORE.
+#
+# WHAT THIS IS NOT. Not a validator, not a control, not code. The mechanism that recognises this
+# provenance class is ENGINEER work under a bounded authority. The PROJECT_LEAD authored this contract
+# under Product Authority direction and may not implement its enforcement.
+#
+# FROZEN. A later need is version 2 in its own file, committed before the authority permitted to use it.
+
+schema_version: 1
+schema_id: pbg:schemas/framework-bootstrap-repair-contract-v1.yaml
+title: PBGv2 Framework Bootstrap Repair Contract, version 1
+status: STABLE_FROZEN
+record_origin: GOVERNANCE_BOOTSTRAP_ARTEFACT
+recorded_by: PROJECT_LEAD
+authorised_by: PRODUCT_AUTHORITY ruling of 2026-08-08, step C of the root-of-trust ordering.
+doctrine_source: standards/PBGV2-ROOT-OF-TRUST.md
+immutability_rule: These bytes never change. A later need is version 2 in its own file.
+
+provenance_class: FRAMEWORK_BOOTSTRAP_REPAIR
+
+# --- THE TWO PROVENANCE TYPES ARE DISTINCT AND NEITHER SATISFIES THE OTHER ---------------------- #
+relationship_to_normal_dispatch:
+  FRAMEWORK_BOOTSTRAP_REPAIR_satisfies_NORMAL_DISPATCH_BINDING: false
+  rule: >
+    TWO DISTINCT LAWFUL PROVENANCE TYPES. A bootstrap seat is never a normal binding spawn and must
+    never be counted as one. This is what prevents FWK-OBS-014 reappearing under a more respectable
+    name.
+  required_validator_distinction:
+    NORMAL seat with no binding dispatch: INVALID
+    ROOT_CONTROL_REPAIR seat with valid bootstrap provenance: VALID FOR BOOTSTRAP SCOPE ONLY
+  historical_records_unaffected: >
+    The eleven ungated spawn records remain PRESERVED and NON_BINDING. This class must NOT
+    retroactively reinterpret them, and a working implementation must not either.
+
+# --- WHEN IT MAY BE USED. Exhaustive. ------------------------------------------------------------ #
+admissibility:
+  sole_condition: >
+    The mechanism required to create an ordinarily binding PBGv2 seat is ITSELF the bounded subject
+    of repair.
+  not_permitted_for: [application work, ordinary PBGv2 features, convenience, failed tests,
+    schedule pressure, "the gate is awkward"]
+  product_authority_must_explicitly_authorise_the_classification: true
+
+# --- THE FACTS THAT MAKE ONE SEAT LAWFUL --------------------------------------------------------- #
+required_fields: [contract_version, provenance_class, authority_id, authority_commit, finding_id,
+  repair_subject, seat, instance, executor, execution_base_commit, execution_base_tree, scope,
+  prohibited_actions, authorised_by, authorised_utc, expiry_condition,
+  normal_consumer_proof_required]
+
+# --- BINDING CONSTRAINTS. A bootstrap seat is STRICTER than a normal one. ------------------------ #
+constraints:
+- exactly one named Engineer instance
+- exactly one ACTIVE bootstrap authority
+- the subject must be a control whose failure PREVENTS normal seat creation
+- Product Authority must explicitly authorise the bootstrap classification
+- scope fixed BEFORE instance creation
+- exact immutable Engineer base
+- exact repository, worktree and index identity
+- NO delegation
+- NO application or product feature work
+- NO adoption, merge, push, tag, commissioning or operationalisation
+- durable Git and Engineer Log recording MANDATORY
+- bootstrap status VISIBLY MARKED in every relevant artefact
+- historical normal-dispatch validators MUST NOT reinterpret it as a normal binding spawn
+- the resulting candidate CANNOT prove its own success
+- a FRESH ORDINARY SEAT must consume the repair without bootstrap treatment
+- if ordinary consumption fails, THE BOOTSTRAP REPAIR FAILS
+
+# --- EXPIRY IS SEMANTIC, NOT A DATE -------------------------------------------------------------- #
+expiry:
+  the_class: >
+    MAY persist in PBGv2, because root-control repair may genuinely be needed again. It is a category,
+    not a one-off.
+  this_invocation: >
+    Expires when its bounded repair candidate is DELIVERED. It cannot simply continue doing work.
+  success_is_not_self_declared: >
+    The candidate is NOT successful until an ORDINARY cycle proves: normal authority -> declared
+    execution base -> actual dispatch decision -> binding NORMAL spawn -> Engineer starts -> NO
+    bootstrap provenance. THAT ORDINARY CONSUMER IS THE CLOSURE PROOF.
+
+# --- THE TRUST CHAIN ----------------------------------------------------------------------------- #
+trust_chain: [PRODUCT_AUTHORITY, FRAMEWORK_BOOTSTRAP_REPAIR authority, named bootstrap Engineer,
+  repair of ordinary dispatch machinery, fresh ordinary consumer proving the repaired machinery]
+why_this_is_not_circular: >
+  Product Authority is already the root that authorises adoption, commissioning and authority
+  creation. This contract records the acknowledgement that THE ROOT CANNOT ITSELF BE MANUFACTURED BY
+  THE DOWNSTREAM MECHANISM IT GOVERNS.
+
+what_this_contract_does_not_decide:
+- how bootstrap provenance is recognised or enforced. That is a validator, and validators are
+  ENGINEER work.
+- any runtime, launch or process behaviour.
+- the schemas of the artefacts carrying these fields.
+- whether any particular past record qualifies. It defines a class, not a verdict, and it is not
+  retroactive.

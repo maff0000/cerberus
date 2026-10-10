@@ -1,0 +1,164 @@
+# JSON Schema (in YAML) for one canonical Build Log entry.
+#
+# Entries are append-only. A correction is a NEW entry naming the one it corrects; historical
+# entries are never rewritten (PBG-CONT-003, non-waivable).
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "pbg:schemas/build-log-entry.schema.yaml"
+title: PBGv2 Build Log entry
+type: object
+additionalProperties: true      # entries may carry work-specific detail
+required:
+  - entry_id
+  - timestamp_utc
+  - project
+  - actor
+  - role
+  - authority_id
+  - phase
+  - repository
+  - action_summary
+  - status
+  - next_safe_action
+  - expected_next_actor
+properties:
+  entry_id:
+    type: string
+    pattern: "^BL-[0-9]{8}T[0-9]{6}Z-[0-9A-Z]{4}$"
+    description: BL-<UTC timestamp>-<short id>. Unique, stable, never reused.
+  timestamp_utc:
+    type: string
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    description: UTC only, ISO-8601 with explicit Z. Naive timestamps are rejected (PBG-DATA-001).
+  project: {type: string, minLength: 1}
+  actor: {type: string, minLength: 1}
+  role:
+    type: string
+    enum: [PRODUCT_AUTHORITY, PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER, BOOTSTRAP_ENGINEER]
+    description: >
+      The permanent role model is Product Authority, Project Lead, Engineer, Assurance Engineer.
+      BOOTSTRAP_ENGINEER is a generic transitional role for an agent standing a project up before
+      its Project Lead is assigned — it names a function, never a particular agent. No named
+      implementation agent appears in any enum.
+  causal_owner:
+    type: string
+    description: >
+      Who owns this action and its foreseeable downstream effects. For sub-agent work this is the
+      dispatcher, not the sub-agent (PBG-CONT-007, PBG-RT-004).
+  authority_id: {type: string, minLength: 1}
+  work_type:
+    type: string
+    enum: [TASK, CHANGE, CONTROLLED_ACTION, INCIDENT, BOOTSTRAP]
+  maintenance_mode:
+    type: string
+    enum: [NONE, PBG_INSPECTION, PBG_REPAIR, PBG_ADAPTATION, PBG_UPGRADE, PBG_FRAMEWORK_DEVELOPMENT]
+    deprecated: true
+    description: >
+      DEPRECATED and superseded 2026-07-30. The PBG maintenance operating path was removed: work on
+      PBG is ordinary bounded Engineer work whose writable_scope includes framework paths, and the
+      scope model already expresses that without a mode.
+
+      Retained ONLY so that append-only entries written before the removal still parse and validate
+      (PBG-CONT-003, non-waivable -- history is never rewritten). Do not set it on new entries.
+  phase: {type: string, minLength: 1}
+  session_or_run_id: {type: string}
+  repository: {type: string, minLength: 1}
+  branch: {type: string}
+  worktree: {type: string}
+  baseline_sha:
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{7,40}$"}]
+  current_sha:
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{7,40}$"}]
+    description: Required where the entry claims implementation state (PBG-CONT-008).
+  action_summary: {type: string, minLength: 20}
+  parent_entry_id:
+    oneOf: [{type: "null"}, {type: string, pattern: "^BL-[0-9]{8}T[0-9]{6}Z-[0-9A-Z]{4}$"}]
+  correction_of:
+    oneOf: [{type: "null"}, {type: string, pattern: "^BL-[0-9]{8}T[0-9]{6}Z-[0-9A-Z]{4}$"}]
+    description: The entry this one corrects. Corrections supersede; they never edit.
+  record_origin:
+    type: string
+    enum: [TOOLING, MANUAL_BOOTSTRAP_CONTINUITY, MIGRATED]
+  tooling_available_at_capture: {type: boolean}
+  tests:
+    type: object
+    description: >
+      A test claim requires an evidence reference. A Build Log entry asserting that tests passed
+      is not the test evidence (PBG-EVID-001).
+    required: [evidence_reference]
+    properties:
+      count: {type: integer, minimum: 0}
+      result: {type: string}
+      command: {type: string}
+      evidence_reference: {type: string, minLength: 1}
+  status:
+    type: string
+    enum:
+      - CHECKPOINT
+      - RESUMED
+      - IN_PROGRESS
+      - PAUSED_SAFE
+      - PAUSED_AMBER
+      - BLOCKED
+      - WAITING_PRODUCT_AUTHORITY
+      - WAITING_ASSURANCE
+      - WAITING_EXTERNAL_DEPENDENCY
+      - COMPLETE
+      - SUPERSEDED
+      - ABANDONED
+  next_safe_action: {type: string, minLength: 10}
+  expected_next_actor: {type: string, minLength: 1}
+  held_actions: {type: array}
+  risks: {type: array}
+  blockers: {type: array}
+  evidence_references: {type: array, items: {type: string}}
+  schema_version:
+    type: integer
+    minimum: 1
+    description: >
+      Which revision of this schema the entry was written under. Entries are append-only and are
+      never rewritten (PBG-CONT-003, non-waivable), so a later tightening cannot retroactively
+      falsify a record that was valid when written. Absent means revision 1 (pre-2026-07-30).
+      Revision 2 added the conditional maintenance block below.
+  maintenance:
+    type: object
+    additionalProperties: true
+    deprecated: true
+    description: >
+      DEPRECATED alongside maintenance_mode. Retained so historical entries validate. The idea it
+      carried -- that authority over pbg/ must never launder authority over application source --
+      survives in writable_scope and protected_scope on the ordinary authority record.
+    required:
+      - objective
+      - authority_reference
+      - target_pbg_identity
+      - writable_pbg_scope
+      - protected_project_scope
+      - baseline_version_or_sha
+      - rollback_route
+      - validation_expectation
+    properties:
+      objective: {type: string, minLength: 10}
+      authority_reference: {type: string, minLength: 1}
+      target_pbg_identity:
+        type: string
+        minLength: 1
+        description: Which PBG this is — canonical source, or an installed snapshot and its identity.
+      writable_pbg_scope:
+        type: array
+        minItems: 1
+        items: {type: string}
+        description: Exact framework paths this activity may write. Not a prefix of the whole project.
+      protected_project_scope:
+        type: array
+        minItems: 1
+        items: {type: string}
+        description: >
+          Application scope this activity must not touch. Stated, never inferred. The boot verdict
+          calls the same thing protected_application_scope; both names are Product Authority's, in
+          the work record and the verdict respectively.
+      baseline_version_or_sha: {type: string, minLength: 1}
+      rollback_route: {type: string, minLength: 10}
+      validation_expectation: {type: string, minLength: 10}
+
+# The conditional that once required a maintenance block was removed with the maintenance path
+# itself (PA ruling 2026-07-30 s4). Historical entries carrying both fields still validate.

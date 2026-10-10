@@ -1,0 +1,29 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..ee74ebd 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -491,11 +491,7 @@ services:
+   # ----------------------------------------------------------------------------------------
+   cd-engine:
+     <<: *cd-python-service
+-    build:
+-      context: ..
+-      dockerfile: deploy/Dockerfile.engine
+-      args:
+-        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
++    image: registry.example.invalid/cd-engine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+     user: "10003:10003"
+     networks:
+       - cd-net-private
+diff --git a/deploy/entrypoints/cd_engine.py b/deploy/entrypoints/cd_engine.py
+index 30e2e69..3dd9b68 100644
+--- a/deploy/entrypoints/cd_engine.py
++++ b/deploy/entrypoints/cd_engine.py
+@@ -13,6 +13,7 @@ from __future__ import annotations
+ import sys
+ 
+ from _service import boot
++from crash_detector.witness.panel import Agrees
+ 
+ SERVICE_NAME = "cd-engine"
+ 

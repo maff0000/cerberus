@@ -1,0 +1,161 @@
+# SEAT ACTION WINDOW CONTRACT, VERSION 1. DECLARATIVE. FROZEN. DELIBERATELY TINY.
+#
+# THE ONE QUESTION THIS ANSWERS:
+#     Given an execution base and a seat, WHICH COMMITS ARE THAT SEAT'S ACTIONS?
+# That is all. Not a lifecycle model, not an authority model, not a dispatch model.
+#
+# THE DISTINCTION IT EXISTS TO MAKE:
+#     ANCESTRY tells us what an execution base CONTAINS.
+#     DESCENT FROM SEAT-START tells us what the SEAT DID.
+# Conflating those two graph relations is FWK-OBS-025. On a linear lane they coincide and the defect
+# is invisible. On a two-parent execution base they diverge completely, and canonical seat logic
+# swept nine commits authored a day earlier, by a different seat, under a different authority, into
+# the action window of an authority that did not yet exist.
+#
+# THIS FORMULATION WAS ALREADY REJECTED ONCE. dispatch-temporal-contract-v1 records
+# "the requirement is STRICTLY DESCENDS FROM, not reachable" as an EXPLICIT Product Authority
+# refusal of reachability. This contract applies that same ruling to attribution, where it was never
+# applied.
+#
+# WHAT THIS IS NOT. Not a validator, not a control, not code. The mechanism that enforces this is
+# ENGINEER work under a bounded authority. The PROJECT_LEAD authored this contract under Product
+# Authority direction and MAY NOT implement its enforcement.
+#
+# FROZEN. A later need is version 2 in its own file, committed before the authority permitted to use
+# it. This file must predate the authority that repairs canonical attribution.
+
+schema_version: 1
+schema_id: pbg:schemas/seat-action-window-contract-v1.yaml
+title: PBGv2 Seat Action Window Contract, version 1
+status: STABLE_FROZEN
+record_origin: GOVERNANCE_BOOTSTRAP_ARTEFACT
+recorded_by: PROJECT_LEAD
+authorised_by: >
+  PRODUCT_AUTHORITY ruling of 2026-08-08 — FWK-OBS-025 CONFIRMED, descent semantics approved,
+  action-window reachability RETIRED. Freeze the semantic change as a declarative contract BEFORE
+  AUTH-0033, so the repair is not another in-cycle reinterpretation by the seat that benefits from it.
+repairs_finding: FWK-OBS-025
+doctrine_source: standards/PBGV2-ROOT-OF-TRUST.md
+immutability_rule: These bytes never change. A later need is version 2 in its own file.
+
+# --- THE THREE OBJECTS --------------------------------------------------------------------------- #
+objects:
+
+  PRE_EXISTING_BASE_HISTORY:
+    is: Every commit already ancestral to EXECUTION_BASE at the moment the base exists.
+    includes: >
+      Commits supplied by ANY merge parent, without exception. A candidate lineage incorporated as a
+      second parent is pre-existing history exactly as the first parent's lineage is.
+    attribution: >
+      RETAINS ITS ORIGINAL PROVENANCE. Each such commit remains attributable to the authority, seat
+      and work item under which it was actually written. It is NOT reassigned to the new authority,
+      and it is NOT hidden — this rule stops reattribution, it does not suppress evidence.
+    is_not: an action of the newly authorised seat, under any circumstances.
+
+  SEAT_START:
+    is: The first seat-authored mutation, and the artefact attesting the seat's occupancy.
+    must:
+    - be parented DIRECTLY to the exact EXECUTION_BASE
+    - be the FIRST commit on the seat lane after EXECUTION_BASE
+    - carry the seat identity as both author and committer
+
+  SEAT_ACTION_WINDOW:
+    is: The commits attributable to the seat and its authority.
+    definition: >
+      Commits created AFTER SEAT_START which DESCEND FROM SEAT_START on the governed seat lineage.
+    excludes: PRE_EXISTING_BASE_HISTORY, entirely and by construction.
+
+# --- THE ATTRIBUTION RULE ------------------------------------------------------------------------ #
+attribution_rule:
+  governing_relation: CAUSAL DESCENT
+  retired_relation: GENERIC REACHABILITY
+  retired_formulation: >
+    "commits reachable from HEAD that were not reachable from the authority commit" —
+    i.e. the git range `authority_commit..HEAD`. On a two-parent execution base this NECESSARILY
+    sweeps in the candidate parent's historical commits. RETIRED.
+  rule: >
+    A commit is an action of a seat IF AND ONLY IF it descends from that seat's SEAT_START on the
+    governed seat lineage. Reachability from any tip attributes nothing.
+  ancestry_is_not_attribution: >
+    That a commit became reachable because a later merge incorporated its lineage says NOTHING about
+    who performed it. Incorporating code is not authoring it — the same distinction already
+    established between incorporating a candidate and adopting it.
+
+# --- THE ANTI-LOOPHOLE RULE. THIS IS THE PART THAT IS EASY TO GET WRONG. ------------------------ #
+descent_must_not_excuse_real_ordering_DEFECTS:
+  the_danger: >
+    Both cases below fail the test "descends from SEAT_START". Only ONE of them is lawful. A rule
+    that simply excludes everything not descending from SEAT_START would EXCUSE REAL ORDERING
+    VIOLATIONS, which is the failure this programme has refused everywhere else.
+  cases:
+    merge_parent_supplies_a_pre_existing_commit:
+      example: an old candidate commit arriving through the second parent
+      verdict: NOT A SEAT ACTION — lawful pre-existing input
+      test: it is ANCESTRAL TO EXECUTION_BASE
+    new_commit_on_the_prospective_seat_lane_before_seat_start:
+      example: any commit created after EXECUTION_BASE exists and before SEAT_START
+      verdict: INVALID_PRE_SEAT_MUTATION — REFUSED
+      test: it DESCENDS FROM EXECUTION_BASE and is not SEAT_START and does not descend from SEAT_START
+  the_discriminator: >
+    ANCESTRAL TO the execution base means pre-existing and lawful.
+    DESCENDING FROM the execution base but preceding SEAT_START means a real ordering defect.
+    Absence from the seat-start window is NOT the discriminator, and must never be used as one.
+  required_refusal_code: INVALID_PRE_SEAT_MUTATION
+
+# --- THE REQUIRED RELATIONS ---------------------------------------------------------------------- #
+required_relations:
+  authority_strictly_precedes_execution_base: true
+  execution_base_exists_before_seat_creation: true
+  seat_start_parent_equals_execution_base: exact, never "descends from", never a branch name
+  seat_start_is_the_first_seat_authored_mutation: true
+  seat_actions_descend_from_seat_start_on_the_seat_lane: true
+  commits_ancestral_to_execution_base_are_pre_existing_input: >
+    TRUE REGARDLESS OF WHICH MERGE PARENT SUPPLIED THEM.
+  no_commit_between_execution_base_and_seat_start_on_the_seat_lane: >
+    Any such commit is INVALID_PRE_SEAT_MUTATION. Descent does not excuse it.
+
+# --- WHAT THIS CONTRACT DOES NOT PERMIT ---------------------------------------------------------- #
+this_contract_may_not_be_used_to:
+- excuse a commit actually created between execution-base creation and seat-start
+- reclassify, hide or renumber any historical commit
+- reattribute pre-existing history to a later authority, which is the defect it repairs
+- assert that any past cycle was lawful. It defines a relation, not a verdict, and it is NOT
+  retroactive.
+- permit a seat to reinterpret its own attribution in-cycle. The semantics are frozen HERE, before
+  the authority that implements them.
+
+# --- THE BOOTSTRAP BOUNDARY. NON-NEGOTIABLE. ---------------------------------------------------- #
+bootstrap_evaluation_boundary:
+  problem: >
+    The defective attribution lives in the canonical implementation the execution base exists to
+    carry. The control that must be repaired is the control that judges the repair environment.
+  resolution: >
+    A FRAMEWORK_BOOTSTRAP_REPAIR pre-instantiation proof evaluates BOOTSTRAP PROVENANCE against the
+    FROZEN ROOT CONTRACTS — this file among them — and NOT normal authority validity under the
+    control being repaired.
+  the_bootstrap_result_MAY_return:
+    provenance_status: VALID_FRAMEWORK_BOOTSTRAP_REPAIR
+    normal_authority_validity: NOT_APPLICABLE_FOR_ROOT_REPAIR
+    repair_subject: FWK-OBS-025
+  the_bootstrap_result_MAY_NEVER_return: >
+    normal authority validity, active_authority_valid true, or ANY value structurally
+    indistinguishable from a normal validator's PASS. FRAMEWORK_BOOTSTRAP_REPAIR DOES NOT SATISFY
+    NORMAL_DISPATCH_BINDING and does not satisfy normal authority validity either.
+  closure_proof: >
+    The successor Engineer repairs canonical attribution, and a LATER ORDINARY CONSUMER must pass the
+    REPAIRED NORMAL VALIDATOR with no bootstrap treatment. Until that happens this repair is not
+    proven, and no bootstrap result may stand in for it.
+
+what_this_contract_does_not_decide:
+- how the relation is computed or enforced. That is a validator, and validators are ENGINEER work.
+- the schemas of the artefacts carrying these objects.
+- any runtime, launch or process behaviour.
+- whether any particular historical record complies.
+
+authorises_no_merge: true
+authorises_no_push: true
+authorises_no_tag: true
+authorises_no_adoption: true
+authorises_no_commissioning: true
+authorises_no_operationalisation: true
+authorises_no_implementation_by_the_project_lead: true

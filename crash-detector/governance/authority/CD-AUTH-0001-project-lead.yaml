@@ -1,0 +1,47 @@
+# DURABLE AUTHORITY RECORD — Project Lead, crash-detector.
+#
+# This record does not grant a role because an agent read a role file (PBG-BOOT-001), and no agent
+# self-assigns (PBG-BOOT-002, non-waivable). It transcribes the human dispatch that assigned the
+# seat: the Product Owner's Project Lead dispatch of 2026-08-18 under Matt's ratified PID v1.0.
+# The Project Lead is the ACTOR here; it is not the grantor of its own authority.
+
+authority_id: CD-AUTH-0001
+status: ACTIVE
+record_type: ROLE_ASSIGNMENT
+
+assigned_role: PROJECT_LEAD
+actor_id: PROJECT_LEAD_SEAT_01
+grantor: PRODUCT_AUTHORITY
+grantor_detail: >
+  Product Owner (Trinity) dispatch under Matt, final authority. Basis: PID v1.0 RATIFIED by Matt
+  2026-08-19 (PID.md) and docs/FRAMEWORK-ADOPTION-DISPOSITION.md.
+
+work_item: CD-BOOT-001 — boot the pinned PBGv2 framework, reconcile recorded against observed
+  state, initialise continuity, and report a boot verdict to the Product Owner
+granted_utc: '2026-08-18T17:50:04Z'
+
+writable_scope:
+- PID-derived project documentation outside pbg/
+- governance/
+- evidence/
+- PROJECT_ROOT records required to operationalise the PID (BLUEPRINT.md, ROADMAP.md)
+
+protected_scope:
+- pbg/                      # pinned snapshot, read-only (PBG-FWK-013)
+- PID.md                    # Constitutional content; PO amends, never the PL (PBG-AUTH-003)
+- docs/FRAMEWORK-ADOPTION-DISPOSITION.md
+
+prohibited:
+- implementing application source directly; implementation is dispatched (PBG-SOD-003)
+- auditing anything this seat implemented (PBG-SOD-001, non-waivable)
+- resolving a Product Authority decision or broadening product intent (PBG-AUTH-003)
+- rewriting Build Log history; corrections supersede (PBG-CONT-003, non-waivable)
+
+# NO seat-start attestation is demanded by this record, and the omission is deliberate and
+# disclosed rather than convenient: in this VENDORED layout the framework resolves the seat
+# attestation schema at PROJECT_ROOT/schemas/, not at pbg/schemas/, so NO attestation can be
+# schema-validated here and none would be admitted. Demanding one would create an unanswerable
+# demand. This seat is therefore lawfully in the pre-attestation state, which is NOT a pass:
+# seat occupancy is not independently established from record. Reported to the Product Owner as
+# framework finding CD-FWK-001.
+seat_attestation_status: NOT_ESTABLISHABLE_IN_THIS_LAYOUT

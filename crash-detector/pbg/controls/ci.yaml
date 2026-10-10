@@ -1,0 +1,214 @@
+domain: CI
+domain_label: Build and test integrity
+controls:
+- control_id: PBG-CI-001
+  title: Tests exercise failure behaviour, not only success paths
+  status: ACTIVE
+  purpose: 'Make a passing suite mean something about how the system behaves when things go wrong.
+
+    '
+  risk_addressed: 'A suite that proves the happy path and nothing else, on a system whose entire governance
+    value is in fail-closed behaviour.
+
+    '
+  required_outcome: 'Where a control or component is required to fail closed, refuse, or degrade in a
+    named way, a test drives it into that state and asserts the behaviour.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    work_types:
+    - CHANGE
+    - CONTROLLED_ACTION
+    - INCIDENT
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - test results
+  - failure-path test identification
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - NIST SSDF PW.8 — test executable code
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/test-and-evidence-production.md
+  verification_note: 'Assurance reviews test quality, not only test presence, and reports coverage of
+    the failure branch specifically.
+
+    '
+- control_id: PBG-CI-002
+  title: A test that can silently skip is not evidence
+  status: ACTIVE
+  purpose: 'Stop an absent test reporting as a passing one.
+
+    '
+  risk_addressed: 'A suite that goes green because its load-bearing tests skipped — a missing fixture,
+    an unavailable service, a guard that quietly returns early. The report is indistinguishable from a
+    real pass.
+
+    '
+  required_outcome: 'A test that is required as evidence for a control must fail rather than skip when
+    its preconditions are absent, or its skip must be reported as an unsatisfied control rather than counted
+    as a pass.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: a test is cited as evidence for a control
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - test results including skip counts and reasons
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/test-and-evidence-production.md
+  verification_note: 'Skip counts are collected and any skipped evidence-bearing test resolves its control
+    to NOT_VERIFIED, never to PASS.
+
+    '
+- control_id: PBG-CI-003
+  title: Dependencies are pinned and their identity is recorded
+  status: ACTIVE
+  purpose: 'Make the inputs to a build as identifiable as its output.
+
+    '
+  risk_addressed: 'An artefact that cannot be reproduced because its dependency set was resolved at build
+    time and never recorded, so the assured artefact and a rebuilt one may differ silently.
+
+    '
+  required_outcome: 'Dependencies are pinned appropriate to project risk, the lock identity is recorded
+    in the deployment provenance record, and supply-chain evidence accompanies a release.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - dependency lock digest
+  - supply-chain attestation where available
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - SLSA build track
+  - OpenSSF supply-chain practices
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: dependency lockfile in the project toolchain
+  verification_note: 'The dependency-lock digest is a required field of the provenance record and is compared
+    against the built artefact.
+
+    '
+- control_id: PBG-CI-004
+  title: A container image is built from a minimal, explicit context and carries its identity
+  status: ACTIVE
+  purpose: Make a built image traceable to its source and free of what it does not need.
+  risk_addressed: 'Secrets in build arguments or image layers, build tooling shipped to production, and
+    images that cannot be traced back to a commit.
+
+    '
+  required_outcome: 'A minimal explicit build context with an ignore file; a deterministic base image
+    reference, pinned or digest-referenced where risk requires; multi-stage build where it reduces runtime
+    content; no secrets in build arguments or layers; no unnecessary build tools in the final image; a
+    non-root runtime user; dependency and image scanning; an SBOM where required; image digest capture;
+    and metadata recording repository, source SHA, version and build identity.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    when: a container build is authorised
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - build output
+  - image metadata
+  - digest
+  - SBOM and scan results where required
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - SLSA
+  - NIST SP 800-190
+  - CIS Docker Benchmark
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: container build toolchain
+  verification_note: 'Image history and layers are scanned for secrets; metadata is read back from the
+    built image. Scenario C4.
+
+    '
+- control_id: PBG-CI-005
+  title: The final image is tested, not only the source tree
+  status: ACTIVE
+  purpose: Prove the thing that will run, rather than the thing it was built from.
+  risk_addressed: 'A green unit-test suite outside the container while the image itself cannot start.
+    The suite is true and irrelevant — the same shape as a merged commit that is not deployed.
+
+    '
+  required_outcome: 'Proportionate to the application: build from a clean context; startup with valid
+    configuration; failure with mandatory configuration absent; non-root operation; read-only root filesystem
+    where supported; writable-path validation; health and readiness checks; signal handling; graceful
+    shutdown; restart behaviour; persistent-volume behaviour; network contract tests; dependency failure;
+    schema mismatch; secret scanning of image history and layers; vulnerability scanning; runtime version
+    and SHA reporting; and deployment-provenance comparison.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    when: a container build is authorised
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - container smoke-test output
+  - scan results
+  - runtime version report
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: project CI pipeline
+  verification_note: 'Container smoke tests run against the built image in CI. Scenario C9. A passing
+    unit-test suite outside the container is explicitly not sufficient evidence.
+
+    '

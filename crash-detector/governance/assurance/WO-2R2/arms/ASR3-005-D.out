@@ -1,0 +1,12 @@
+row type                :  DuckRow  (NOT PanelRow)
+row.state STORED value  :  UNAVAILABLE
+resolved                :  Agrees
+panel_state             :  AGREES
+RENDERS                 :  WITNESS AGREES
+
+--- CONTROL: the SAME stored state on a REAL PanelRow ---
+Traceback (most recent call last):
+  File "/tmp/cd-asr3/base/ASR3_005_D.py", line 26, in <module>
+    real = PanelRow(as_of_utc=NOW, state="UNAVAILABLE",
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PanelRow.__init__() missing 1 required positional argument: 'published_utc'

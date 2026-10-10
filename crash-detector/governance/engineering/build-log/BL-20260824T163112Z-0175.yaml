@@ -1,0 +1,205 @@
+# ================================================================================================== #
+# BL-20260824T163112Z-0175 — PROJECT LEAD BOUNDARY. **Q33 IS ANSWERED BY THE PRODUCT OWNER AT
+# `PO-DECISIONS-0028` (COMMITTED `fd51710`): RULED (a) CLOSE THE CONTRACT. THE HOLD LIFTS AND THE
+# CONTRACT-CLOSURE INCREMENT IS DISPATCHED TO `CD-ENG-WO3-11`, SEQUENTIAL SINGLE-SEAT.**
+#
+# *** **THIS SEAT MEASURED ALL THREE OF `CD-ASR-WO3-10`'s FALSIFICATIONS IN ITS OWN SHELL BEFORE
+# WRITING ONE LINE OF DISPATCH, AND THEN MEASURED ONE MORE THING NOBODY HAD ASKED FOR — AND THAT
+# FOURTH MEASUREMENT REDIRECTED THE INCREMENT.** ***
+#
+# **AGAINST THE UNMODIFIED `8398741` CONTRACTS, THE LIVE GATE ALREADY REFUSES EVERY DOCUMENT SHAPE
+# THE RULING NAMES: `status`, `present:false`-with-a-stale-stamp, a missing `state`, an over-nested
+# `state`, a calm UNKNOWN, a brand-new root slot, AND A NEVER-BEFORE-NAMED STATE CARRYING `calm`.
+# ALL SEVEN. THE DOCUMENT-LEVEL CLOSURE IS ALREADY THERE.** **AND IT IS AN ACCIDENT OF THE CURRENT
+# CONTRACT TEXT RATHER THAN A GUARANTEE, BECAUSE EVERY ONE OF THE NINE ESCAPES IN THIS CHAIN WAS A
+# *CONTRACT EDIT* AND NOT A DOCUMENT. THE INCREMENT IS THEREFORE TO MAKE THAT CLOSURE AN INVARIANT
+# THAT SURVIVES CONTRACT EDITS — NOT TO BUILD A REFUSAL THAT ALREADY EXISTS.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T163112Z-0175
+timestamp_utc: '2026-08-24T16:31:12Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T16:31:12Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_04
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_04
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T161905Z-0174
+base_sha: fd51710db215c2f1c8479310006b2b7850d8a1da
+current_sha: fd51710db215c2f1c8479310006b2b7850d8a1da
+status: IN_PROGRESS
+schema_version: 2
+
+# *** `CD-PL-F204` IS CONFIRMED BY MEASUREMENT AT THIS BOUNDARY AND NOT BY INHERITANCE. *** This
+# entry was first written `status: WAITING_ENGINEER` — the value the prior seat used — and the
+# direct validator call REFUSED it: *"'WAITING_ENGINEER' is not one of ['CHECKPOINT', 'RESUMED',
+# 'IN_PROGRESS', 'PAUSED_SAFE', 'PAUSED_AMBER', 'BLOCKED', 'WAITING_PRODUCT_AUTHORITY',
+# 'WAITING_ASSURANCE', 'WAITING_EXTERNAL_DEPENDENCY', 'COMPLETE', 'SUPERSEDED', 'ABANDONED']"*.
+# **THE SCHEMA HAS NO `WAITING_ENGINEER` AND NO `READY_FOR_ASSURANCE`.** `IN_PROGRESS` is the
+# honest value: the increment is open with a seat dispatched into it. **AND THE REASON THIS WAS
+# CAUGHT IS THAT THE VALIDATOR WAS CALLED DIRECTLY** — `pbg log validate` validates ZERO entries
+# and prints GREEN, so the convenience path would have waved this through exactly as it waved
+# through the entries `CD-PL-F204` counted.
+
+action_summary: >
+  Booted per CLAUDE.md (verdict AMBER — no ROADMAP.md, CONTINUITY_MATCH/RESUME_AMBER; both expected
+  and both reconciled). Read PO-DECISIONS-0028 in full. REPRODUCED ALL THREE A310 FALSIFICATIONS
+  INDEPENDENTLY. MEASURED THE LIVE GATE AT THE DOCUMENT LEVEL, WHICH NO PRIOR SEAT HAD DONE AND
+  WHICH CHANGES WHAT THE INCREMENT IS FOR. Issued CD-DISPATCH-INC16B-CONTRACT-CLOSURE-ENGINEER to
+  CD-ENG-WO3-11, a FRESH identity. NO ASSURANCE SEAT IS DISPATCHED YET — the Engineer runs first,
+  alone (CD-D-181), and a FRESH Assurance seat grades the result.
+
+boot_reconciliation:
+  verdict: AMBER
+  observed_sha: fd51710db215c2f1c8479310006b2b7850d8a1da
+  continuity_state: CONTINUITY_MATCH/RESUME_AMBER
+  amber_causes_both_known_and_neither_new: >
+    (1) roadmap_identity None — no ROADMAP.md exists in this project and none is claimed;
+    (2) RESUME_AMBER — the recorded state at BL-...-0174 was WAITING_PRODUCT_AUTHORITY and the
+    Product Authority has since answered, which is the resumption this boundary performs.
+  observed_versus_recorded: >
+    AGREE. main at fd51710 carrying PO-DECISIONS-0028; wo-3 at 8398741 with a CLEAN worktree;
+    be0b355 UNMOVED and still == wo-2r3. Nothing silently corrected.
+  session_ceiling_MEASURED_not_assumed: >
+    `ps -eo pid,etimes,args` on the live process: `timeout 21600` — SIX HOURS, measured from the
+    running wrapper at 215s elapsed, per the standing rule never to assume this number.
+  second_PL_check: >
+    MEASURED. Exactly ONE Project Lead process live (795350 wrapper + 795351 process). No second
+    seat is writing as this identity.
+
+the_three_falsifications_REPRODUCED_BY_THIS_SEAT_IN_ITS_OWN_SHELL:
+  method: >
+    Direct in-process calls to the instrument's own functions against
+    contracts/public_envelope.schema.json on a clean 8398741 worktree. NOT the auditor's fixtures
+    and NOT a summary. CD-PL-F193: an inherited finding is a HYPOTHESIS until it is RUN.
+  A310_F1_the_cap_fails_OPEN: >
+    *** ONE INTEGER SEPARATES A CAUGHT TREE FROM AN ESCAPED ONE, AND IT IS 24/25. *** MEASURED,
+    `_dial_bearing(schema, {"enum": [<a {state, detail_level:"calm"} object nested N deep>]})`:
+    depths 1, 5, 20, 22, 23, 24 -> `None` (UNDECIDABLE, reported, safe). Depths 25, 26, 30, 40 ->
+    `False`, THE ONLY SILENT ANSWER THE INSTRUMENT HAS. And
+    `_instance_declared_names(<30 deep>)` -> `{'wrap', INSTANCE_TOO_DEEP}` with `'state'` ABSENT,
+    which is the mechanism: the sentinel has ZERO EXECUTABLE CONSUMERS, so reaching the cap is a
+    SILENT SUCCESS. CONFIRMED EXACTLY AS CD-ASR-WO3-10 RECORDED IT.
+  A310_F2_one_string: >
+    `{"enum":[{"state":"SPINDRIFT","detail_level":"calm"}]}` -> `None`, REFUSED. The identical node
+    with the key spelled `status` -> `False`, INVISIBLE. CONFIRMED.
+  A310_F3_the_control_admits_because_nothing_looked: >
+    `{"enum":[{"present":true,<fresh>,"detail_level":"calm"}]}` -> `False`, and
+    `{"enum":[{"present":false,<STALE stamp>,"detail_level":"calm"}]}` -> `False`. **THE IDENTICAL
+    ANSWER.** A dial declaring itself ABSENT and STALE while carrying `calm` is indistinguishable
+    to this instrument from one declaring itself present. CONFIRMED.
+  baseline: >
+    `PYTHONPATH=src python3 -B tools/register/check_missing_data_never_calm.py --root .` ->
+    `PASS — 144 assertions, 0 violations`, EXIT 0. The clean tree is green at the target tip.
+
+the_fourth_measurement_NOBODY_ASKED_FOR_AND_IT_REDIRECTS_THE_INCREMENT:
+  what_was_run: >
+    `refuse_unless_publishable` driven with eight documents against the UNMODIFIED 8398741
+    contracts, PUBLIC surface. This is the DOCUMENT level, and no seat in this chain had measured
+    it — every prior measurement was of the INSTRUMENT against an EDITED CONTRACT.
+  the_result: >
+    'baseline control -> ADMITTED (correct; the control works). `status` -> REFUSED [UNKNOWN_KEY]
+    at /equity_crash. `present:false` + stale stamp -> REFUSED [UNKNOWN_KEY]. `state` missing ->
+    REFUSED [SCHEMA_VIOLATION]. `state` over-nested -> REFUSED [SCHEMA_VIOLATION]. UNKNOWN dial
+    carrying `calm` -> REFUSED [SCHEMA_VIOLATION]. A brand-new root slot `feed_liveness` -> REFUSED
+    [UNKNOWN_KEY] at <root>. A NEVER-BEFORE-NAMED STATE `SPINDRIFT` carrying `calm` -> REFUSED
+    [SCHEMA_VIOLATION].'
+  what_it_means_and_it_is_stated_carefully_rather_than_claimed_widely: >
+    *** **EVERY SHAPE `PO-DECISIONS-0028` RULING 1 NAMES IS ALREADY REFUSED AT DOCUMENT VALIDATION
+    AGAINST THE CLEAN CONTRACT — INCLUDING RULING 5's OWN NEVER-BEFORE-NAMED STATE.** *** IT IS NOT
+    A REASON TO DO LESS AND THIS SEAT DOES NOT TREAT IT AS ONE. **THE CLOSURE IS REAL BUT IT IS A
+    PROPERTY OF THE CURRENT CONTRACT TEXT AND NOT A GUARANTEE ABOUT CONTRACTS: ALL NINE ESCAPES IN
+    THIS CHAIN WERE CONTRACT EDITS, NOT DOCUMENTS.** The auditor's attack has never once been
+    "publish this document" — it has been "add this slot to the schema and watch the entire 30-line
+    register stay GREEN while the gate admits a dead feed as calm". **THE INCREMENT IS THEREFORE TO
+    MAKE THE DOCUMENT-LEVEL CLOSURE AN INVARIANT THAT SURVIVES A CONTRACT EDIT.** That is what
+    "mandate the canonical shape, deny by default at the boundary" has to mean here, and stating it
+    this precisely is what stops the seat building a refusal that already exists.
+  scope_limit_declared: >
+    PUBLIC surface only, eight documents, one contract tip. The PRIVATE surface is UNMEASURED by
+    this seat and the dispatch does not claim otherwise. This is a SAMPLE and it is not described
+    as a class (CD-PL-F200/F204 are the standing reason that sentence is here).
+
+the_architecture_dispatched_and_it_is_THIS_SEATS_composition_not_PO_text:
+  rule_CC_the_root_partition: >
+    Every property of an envelope contract's root `properties` is EXACTLY ONE of (a) a CANONICAL
+    DIAL SLOT spelled literally `{"$ref": "#/$defs/dial_reading"}` with no sibling keyword, or (b) a
+    DECLARED NON-DIAL PROPERTY whose name is on a finite written allowlist AND which is
+    AFFIRMATIVELY PROVED — by driving the LIVE GATE — incapable of carrying a `detail_level`.
+    ANYTHING ELSE IS A VIOLATION. No recogniser is consulted at the root.
+  why_it_closes_what_the_recogniser_could_not: >
+    `CD-CALM-SLOTS-007` today compares `dial_bearing` (recogniser output) against `found` (literal
+    `$ref` slots). **A ROOT PROPERTY THE RECOGNISER ANSWERS `False` ABOUT IS IN NEITHER SET, SO THE
+    COMPARISON IS SATISFIED AND THE SLOT IS INVISIBLE.** That is the hole exactly, and it is why
+    `status`, the `enum`-spelled dial, the 25-deep nest and `present:false` all pass — they are not
+    RECOGNISED, so they are not COMPARED. The partition does not recognise: the root `properties`
+    key set is finite and enumerable, both limbs are decidable by equality, and the root carries
+    `additionalProperties: false`. **A310-F2 AND A310-F3 ARE NOT CLOSED BY THIS — THEY ARE
+    UNREACHABLE.**
+  and_the_affirmative_check_becomes_expressible_which_is_the_whole_point: >
+    With the branch set as the whole alphabet: a branch may reference the calm-bearing
+    `#/$defs/detail_level` IF AND ONLY IF its state is in PRESENT_STATES and it requires a freshness
+    stamp; every other branch MUST reference `#/$defs/absent_data_detail_level`. **A never-before-
+    named state must arrive as a new branch, a new branch's state is not in PRESENT_STATES,
+    therefore it cannot carry `calm` — BY CONSTRUCTION, OVER A CLOSED SET.** That is
+    PO-DECISIONS-0027 ruling 5 made achievable, which is what PO-DECISIONS-0028 ruling 2 ordered.
+  IT_IS_A_COMPOSITION_AND_IS_LABELLED_AS_ONE: >
+    **RULE CC, THE ALLOWLIST-PLUS-LIVE-GATE FORM OF LIMB (b), AND THE FRESHNESS-STAMP ASSERTION ARE
+    THIS SEAT'S ENGINEERING COMPOSITION IMPLEMENTING A PO RULING. THEY ARE NOT PO TEXT.** The
+    ruling states the PRINCIPLE — canonical path, present+freshness required by the schema,
+    deny-by-default at validation, value check sufficient inside — and this seat chose the
+    mechanism. If the Product Owner wanted a different mechanism, this is the paragraph to correct.
+
+scope_change_disclosed_rather_than_buried:
+  what: >
+    **BOTH ENVELOPE SCHEMAS ARE WRITABLE FOR `CD-ENG-WO3-11` AND WERE PROTECTED FROM
+    `CD-ENG-WO3-10`.**
+  authority: >
+    PO-DECISIONS-0028 ruling 1, which orders the mandate INTO THE ENVELOPE CONTRACT ITSELF. A
+    mandate that lives only in an instrument is not a contract mandate.
+  bounded_how: >
+    To exactly two edits, named in the dispatch §CC-2: `"required": ["state"]` on
+    `#/$defs/dial_reading`, and a normative description clause naming Rule CC. **The dispatch
+    carries a STOP CONDITION: if the admitted DOCUMENT SET changes, the seat stops and reports —
+    that is a consumer-visible change and a `schema_version` question, and the version constant
+    lives in `src/`, which is PROTECTED FROM THE SEAT.**
+  the_trap_named_in_the_dispatch_because_this_contract_already_fell_into_it: >
+    A `description` IS NOT AN ENFORCEMENT POINT. `absent_data_detail_level`'s own description
+    records that exact 16A failure in its own words — the guarantee "asserted only in PROSE" while
+    the gate admitted a calm UNKNOWN dial on both surfaces. The prose states the mandate; CC-1 and
+    CC-3 enforce it.
+
+what_this_seat_did_NOT_do:
+  - '**IT DID NOT IMPLEMENT.** PBG-SOD-001 is non-waivable and the Project Lead does not write what an Assurance seat will grade. The measurements above are DIAGNOSTIC READS in a scratch process; ZERO files were written on the wo-3 lane by this seat.'
+  - '**IT DID NOT DISPATCH ASSURANCE.** CD-D-181 sequential-only: the Engineer runs alone, and a FRESH Assurance identity (`CD-ASR-WO3-11`) is dispatched only against a returned SHA.'
+  - '**IT DID NOT RELEASE 16C, WRITE A LIVENESS DETECTOR, OR REGISTER ONE INDICATOR ROW.** Those follow a GREEN this seat cannot declare. The 30 ratified indicators in governance/mapping/indicator_mapping.yaml remain data that nothing reads, and that is still CORRECT.'
+  - '**IT DID NOT REMOVE THE MEMORIAL.** PO-DECISIONS-0027 ruling 3 conditions that on the structural instrument carrying the behaviour, and it does not carry it until a fresh auditor says so. `tests/` is protected from the Engineer entirely.'
+  - '**IT DID NOT PICK UP `A310-F1` AS A SEPARATE DISPATCH.** PO-DECISIONS-0028 ruling 4 folds it into this increment, and it is item CC-4 with a one-line acceptance measurement (depths 25/26/30/40 must move `False` -> `None`; 1-24 unchanged).'
+
+open_and_carried_forward_UNCLOSED:
+  - 'CD-PL-F203 OPEN — and the dispatch does NOT repeat its claim as fact. The corrected fact (a new root slot that is not a `dial_reading` does not inherit the wrapper''s closure) is carried into §2.3 as QUOTED, NOT ASSERTED, with "VERIFY IT YOURSELF" attached, because THIS SEAT HAS NOT BUILT THE TREE THAT TESTS THE CONSEQUENCE. Rule CC does not depend on it.'
+  - 'CD-PL-F204 OPEN. CD-PL-F180 OPEN (16D). DECLARED LIMIT 12''s residue OPEN. CD-AC-001 still only HALF guarded by live instruments until this increment is assured.'
+  - 'Ruled items 2-6 of PO-DECISIONS-0026 remain undelivered after two full sessions. **A THIRD SESSION IS NOW GOING INTO THE SAME ITEM. IF THE PRODUCT AUTHORITY JUDGES THAT THE CONSTITUTIONAL HARDENING HAS CONSUMED ENOUGH AND WANTS 16C/16D/16E PRIORITISED, THAT IS A PRODUCT CALL AND THIS SEAT HAS NOT MADE IT.**'
+  - '(b) — inverting the default for ALL root properties and re-pricing the false-positive tail from scratch — is RESERVED AS A MATT OVERRIDE per PO-DECISIONS-0028 ruling 1. It is not dispatched and is not foreclosed.'
+
+next_safe_action: >
+  `CD-ENG-WO3-11` executes CD-DISPATCH-INC16B-CONTRACT-CLOSURE-ENGINEER on the wo-3 lane from
+  8398741 and returns READY_FOR_ASSURANCE with a SHA. This seat then dispatches a FRESH
+  `CD-ASR-WO3-11` against that SHA, graded on PO-DECISIONS-0027 ruling 5's completion test OVER THE
+  NOW-CLOSED CONTRACT and NOT on a shape census. **ONLY ON GREEN**: 16C releases -> the
+  liveness/dead-feed detector -> the indicator rows. **THE SESSION STOPS AT THE INCREMENT BOUNDARY
+  OR ON ANY PRODUCT AUTHORITY QUESTION.**
+
+expected_next_actor: 'CD-ENG-WO3-11 (Engineer, wo-3 lane, sequential single-seat)'
+
+risks:
+  - '*** THE LIVE ESCAPE FROM BL-...-0174 IS UNCHANGED AND STILL OPEN AT THIS BOUNDARY: A CONTRACT EDIT ADDING A DIAL SPELLED `status`, `{"enum":[...]}`, 25-DEEP OR `present:false` LEAVES THE WHOLE REGISTER GREEN WHILE THE GATE PUBLISHES A DEAD FEED AS CALM. NOTHING IS FIXED UNTIL THE ENGINEER RETURNS AND AN AUDITOR GRADES IT. 16C STAYS HELD. ***'
+  - 'The document-level measurement in this entry is a SAMPLE — eight documents, PUBLIC surface, one contract tip. It is NOT a proof that the gate refuses every malformed document, and the dispatch says so.'
+  - 'Rule CC is THIS SEAT''S composition. If limb (b) needs an "and also" case, the partition is not a partition and the closure argument collapses — which is why the dispatch makes that an explicit STOP condition rather than something the seat improvises around.'
+  - 'Widening the writable scope to the envelope schemas is the largest scope grant this row has been given. It is bounded to two named edits with a document-set STOP condition, but a seat that exceeds it edits the very document the guarantee is about.'

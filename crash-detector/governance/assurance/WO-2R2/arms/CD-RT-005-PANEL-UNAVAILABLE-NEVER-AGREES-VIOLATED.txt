@@ -1,0 +1,30 @@
+=== CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES [VIOLATED] ===
+plant   : plants/CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch   (APPLIED)
+command : PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q -p no:cacheprovider
+EXIT    : 1
+--- output (tail 25) ---
+            )
+        if not self.window.covers(age):
+>           raise FreshnessNotEstablished(
+                f"the observation is {age} seconds old and the applied staleness window is "
+                f"{self.window.seconds} seconds, so it is STALE. Freshness cannot be "
+                "evidenced for it, and therefore agreement cannot be constructed from it "
+                "by any route."
+            )
+E           crash_detector.staleness.FreshnessNotEstablished: the observation is 10.0 seconds old and the applied staleness window is 1.0 seconds, so it is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be constructed from it by any route.
+
+src/crash_detector/staleness.py:561: FreshnessNotEstablished
+=========================== short test summary info ============================
+FAILED tests/test_witness_resolver.py::test_an_absent_panel_row_resolves_to_unavailable
+FAILED tests/test_witness_resolver.py::test_a_stale_panel_row_resolves_to_unavailable
+FAILED tests/test_witness_resolver.py::test_a_stale_row_that_said_agrees_does_not_keep_agreeing
+FAILED tests/test_witness_resolver.py::test_freshness_is_judged_on_the_data_not_on_when_we_wrote_the_row
+FAILED tests/test_witness_resolver.py::test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees
+FAILED tests/test_witness_resolver.py::test_the_absent_row_case_is_included_in_the_sweep_separately
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[0.001]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[1.0]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[60.0]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[600.0]
+FAILED tests/test_witness_resolver.py::test_a_decade_old_row_resolves_to_unavailable_under_every_usable_window[900.0]
+FAILED tests/test_witness_resolver.py::test_no_row_of_any_age_under_any_usable_window_ever_resolves_to_agrees_dishonestly
+12 failed, 140 passed in 0.42s

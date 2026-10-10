@@ -1,0 +1,215 @@
+# WO-2R INCREMENT 2b RECONCILED AND ACCEPTED. CD-PL-F54 is CLOSED and CD-ASR-F01 is CLOSED AS A
+# CLASS at lane cc961bf, with ONE residue declared in the honest form CD-RULE-006 requires and ONE
+# judgement the implementing seat correctly refused to make for itself, referred onward.
+# This is RECONCILIATION, not assurance (PBG-SOD-001, non-waivable).
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T115400Z-0025
+timestamp_utc: '2026-08-19T11:54:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 15e1729
+current_sha: 15e1729
+lane_head_sha: cc961bfcf258faef1471fa913313bbacc25930fd
+parent_entry_id: BL-20260819T105500Z-0024
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2R-01 was re-dispatched for increment 2b — CD-PL-F54 and nothing else — and
+  returned READY_FOR_ASSURANCE at lane cc961bf in four commits, with its own Build Log entry
+  BL-20260819T114046Z-0042 on the lane. THE PROJECT LEAD RECONCILED IT BY RUNNING EVERYTHING ITSELF
+  and by re-running its own four escaping probes plus five new ones written against the NEW
+  structure, which did not exist when the old probes were written.
+
+  THE ROUTE THAT DEFEATED INCREMENT 2 IS CLOSED. PL-Q4, PL-Q5, PL-Q6 and PL-Q9 — all four of which
+  published a blend at a94ef97 — are now REFUSED, by execution, with the same exception.
+
+  INCREMENT 2b IS ACCEPTED. CD-PL-F54 is CLOSED. CD-ASR-F01 is CLOSED AS A CLASS with a declared
+  limit, subject to the independent verdict of CD-ASR-WO2-02.
+
+the_structural_move: >
+  THE CLOSURE MOVED FROM THE EXIT TO THE RE-ENTRY, which is the move the Project Lead offered as a
+  DIRECTION and the seat adopted with its own reasoning. Increment 2 tried to stop a number leaving
+  a magnitude. That is an exit class with no last member — close repr and the attack moves to str,
+  then to __format__, then to json, then to whatever is next. Increment 2b stops a number COMING
+  BACK. A DialMagnitude now admits a DeclaredQuantity and nothing else: a finite float paired with
+  the frozenset of dials its derivation touched, compared to the target dial by SET EQUALITY. Any
+  float that has left a magnitude by any route has lost its dials and can no longer re-enter one.
+  It enumerates no laundering route because it does not need to — it removes the destination they
+  all share. This is the same question-change that closed increment 1: not "is this number
+  blended?", which is undecidable, but "is this number's provenance DECLARED?", which is set
+  equality.
+  THE SECOND LAYER IS DIFFERENTLY SHAPED, which is the point. Two doors establish a provenance, and
+  RULE 4 of check_no_blend.py DENIES BY DEFAULT over four declared admission sites. It recognises
+  nothing about a blend; it watches the one door a laundering module cannot avoid.
+
+the_direction_on_repr: >
+  The seat chose (ii) DECLARATION and gave a reason the Project Lead accepts: repr is one member of
+  an exit class with no last member, so closing it moves the attack sideways rather than closing
+  anything. The claim "reducing one to a number requires naming its single dial" is WITHDRAWN from
+  the execution contract and repr is named as a release door. The Project Lead's dispatch warned
+  that (ii) ALONE does not close CD-ASR-F01, and the seat did not stop there — it closed the
+  laundered-float class at the re-entry instead, and proved it with V16, which launders through an
+  f-string and a JSON round trip with NO REPR ANYWHERE and is refused. That is the correct shape of
+  answer: the declaration is honest AND the class is closed by something else.
+
+what_the_project_lead_measured_itself:
+  method: 'pristine `git archive cc961bf` extraction to /tmp/pl-2b; a second extraction to /tmp/pl-r5 for the module probe; python3 -B throughout; never in a git worktree.'
+  declared_commands:
+    - {command: check_no_numeric_default, exit: 0, observed: 'PASS 362 assertions', before_at_a94ef97: 301}
+    - {command: check_no_blend, exit: 0, observed: 'PASS 4688 assertions', before_at_a94ef97: 3893}
+    - {command: check_schema_closed, exit: 0, observed: 'PASS 242 assertions', before_at_a94ef97: 242}
+    - {command: check_engine_no_witness_reach, exit: 0, observed: 'PASS 13 assertions', before_at_a94ef97: 12}
+    - {command: check_grant_matrix_live, exit: 3, observed: 'PRECONDITION NOT MET, stated reason, never a skip', before_at_a94ef97: 'exit 3'}
+    - {command: check_no_execution_interface, exit: 0, observed: 'PASS 34502 assertions', before_at_a94ef97: 33146}
+    - {command: check_lockfile_denylist, exit: 0, observed: 'PASS 15 assertions', before_at_a94ef97: 15}
+    - {command: check_egress_no_broker, exit: 0, observed: 'PASS 43 assertions', before_at_a94ef97: 43}
+    - {command: 'pytest test_reading test_evaluate', exit: 0, observed: '90 passed', before_at_a94ef97: 90}
+    - {command: 'pytest test_scores test_dialset test_dial_provenance', exit: 0, observed: '306 passed', before_at_a94ef97: 205}
+    - {command: 'pytest test_witness_panel test_witness_resolver', exit: 0, observed: '65 passed', before_at_a94ef97: 65}
+    - {command: 'pytest -q (FULL SUITE)', exit: 0, observed: '1155 passed', before_at_a94ef97: 1054}
+  anti_relaxation:
+    original_node_ids_at_a94ef97: 1054
+    missing_now: 0
+    added: 101
+    verdict: 'NOTHING RELAXED. The seat additionally states zero EXPECTATION changes — every tests/ diff is a construction becoming explicit. The node-id comparison cannot see an expectation change, so that part rests on the seat''s statement and on the diff, and is flagged for Assurance rather than claimed as measured here.'
+  eleven_plants: 'ALL ELEVEN APPLY CLEANLY at cc961bf, verified by `git apply --check` on each: 11 apply, 0 fail. None deleted (CD-D-033 holds).'
+  variants_directory: '0 executable files under variants/ (PBG-ASSURE-001). Fourteen patches under variants/WO-2R/CD-ASR-F01/, including PL-Q9 carried across as instructed by CD-D-039.'
+  seat_identity: 'All four commits 006b922, 4a257f0, 5011b69, cc961bf authored AND committed CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid>. CD-RULE-002 satisfied.'
+
+the_project_lead_s_own_probes_against_the_new_structure:
+  why_the_old_ones_are_not_enough: >
+    PL-Q4/Q5/Q6/Q9 were written against a structure that no longer exists. Re-running them proves
+    the reported route is shut and proves nothing about the new one. Five probes below were written
+    after reading the new module, against the door it creates.
+  the_four_that_escaped_at_a94ef97_re_run:
+    - {id: PL-Q4, at_a94ef97: 'CONSTRUCTED, not refused', at_cc961bf: "REFUSED QuantityProvenanceMissing: a bare number (0.5) was offered as dial 'equity_crash''s magnitude"}
+    - {id: PL-Q5, at_a94ef97: 'CONSTRUCTED, not refused', at_cc961bf: 'REFUSED QuantityProvenanceMissing'}
+    - {id: PL-Q6, at_a94ef97: 'RETURNED 0.5', at_cc961bf: 'REFUSED QuantityProvenanceMissing'}
+    - {id: PL-Q9, at_a94ef97: 'PUBLISHED a blend through both layers', at_cc961bf: 'REFUSED at runtime, AND its successor PL-R5 is caught statically — see below'}
+  five_new_probes_by_the_project_lead:
+    - id: PL-R1
+      route: 'the blended float re-admitted through observed_for_dial(dial_id="equity_crash", quantity=0.5, inputs_used=("banner",))'
+      observed: '*** NOT REFUSED *** -> DialMagnitude(dial_id=equity_crash, quantity=0.5)'
+      status: 'INSIDE THE DECLARED LIMIT — boundary 7, "NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME". The seat found this itself and declared it as CD-ENG-WO2R-F12 before the Project Lead ran it.'
+    - id: PL-R2
+      route: 'the same through the second door, derived_within_one_dial(dials=frozenset({"equity_crash"}), value=0.5)'
+      observed: '*** NOT REFUSED ***'
+      status: 'INSIDE THE DECLARED LIMIT, boundary 7.'
+    - id: PL-R3
+      route: 'DeclaredQuantity constructed directly, bypassing both doors'
+      observed: '*** NOT REFUSED ***'
+      status: 'INSIDE THE DECLARED LIMIT, boundary 7. This is the seat''s own V15.'
+    - id: PL-R4
+      route: 'object.__setattr__ rewriting _DeclaredQuantity__value in place on a LEGITIMATELY admitted quantity, then publishing'
+      observed: '*** NOT REFUSED *** -> 0.5'
+      status: 'INSIDE THE DECLARED LIMIT — boundary B, and the seat raised it itself as CD-ENG-WO2R-F11 and corrected the boundary text for it. Verified to be exactly where it says it is.'
+    - id: PL-R5
+      route: >
+        THE DECISIVE ONE. PL-Q9 rewritten for the new structure: the same plausible banner module,
+        the same repr laundering, the same absence of any dial name in any expression and any
+        arithmetic on any magnitude — but re-admitting through the declared door. This is what an
+        engineer who reads the new code and wants a blend anyway would actually write.
+      observed: >
+        STATIC: "VIOLATION src/crash_detector/serving/pl_r5_banner.py:21 — RULE 4: a provenance door
+        outside the declared admission sites", CD-RT-002-AST-NO-BLEND FAIL, 2 violations. CAUGHT.
+        RUNTIME: not refused, which is boundary 7 and is declared.
+      status: >
+        THE CLASS IS CLOSED WHERE IT MATTERS. PL-Q9's whole force was that ONE PLAUSIBLE FILE
+        defeated BOTH layers and nothing anywhere objected. Its successor is stopped by a check that
+        recognised nothing about it — it denied by default because the module is not a place anybody
+        declared that numbers enter. That is the CD-RT-012 pattern an independent auditor already
+        judged HONESTLY DRAWN, applied to the door instead of the arithmetic.
+
+decisions:
+  - decision_id: CD-D-040
+    ruling: >
+      WO-2R INCREMENT 2b IS ACCEPTED. CD-PL-F54 IS CLOSED. CD-ASR-F01 IS CLOSED AS A CLASS under
+      CD-RULE-004, by structure at the re-entry plus a deny-by-default static layer at the doors,
+      with a declared limit written in the honest form CD-RULE-006 now requires.
+    the_test_this_passes_that_increment_2_failed: >
+      Increment 2's declaration said another layer carried the residue and that layer did not.
+      Increment 2b's declaration says, of the same kind of residue, "NOT PROVED TO BE CARRIED
+      ANYWHERE AT RUNTIME". The first misdirects an auditor; the second points straight at the soft
+      spot and dares them to hit it. That is the whole difference and it is the difference the rule
+      was written to make.
+  - decision_id: CD-D-041
+    ruling: >
+      THE SEAT'S CD-ENG-WO2R-F12 IS THE RIGHT QUESTION AND THE PROJECT LEAD DOES NOT ANSWER IT
+      ALONE. The seat wrote: "the admission door concentrates the residual trust and only a static
+      layer guards it; if the Project Lead judges that insufficient for CD-AC-002, CD-ASR-F01 is not
+      closed to the standard required, and that judgement is theirs, not mine." Refusing to grade
+      its own homework is exactly correct and is recorded as commendable.
+      THE PROJECT LEAD'S VIEW, offered as reconciliation and not as a verdict: the residue is the
+      residue of ANY registry, the layer that guards it denies by default rather than recognising,
+      and a runtime guard on the IDENTITY OF THE CALLING MODULE would be introspection of the call
+      stack — fragile, defeatable, and carrying a worse residue than the one it replaced. On that
+      reasoning the Project Lead reconciles the increment as ACCEPTED.
+      BUT THE GATE IS NOT THE PROJECT LEAD'S. CD-AC-002 is one of the five criteria an independent
+      auditor must PASS, and whether a deny-by-default static layer over four declared doors is
+      sufficient for "unrepresentable/unpublishable as a class" is precisely a question for that
+      auditor. F12 is therefore carried FORWARD INTO THE ASSURANCE DISPATCH AS A NAMED QUESTION, and
+      is disclosed to the Product Owner in this entry rather than settled inside it.
+  - decision_id: CD-D-042
+    ruling: >
+      PL-R1..PL-R5 JOIN THE EXCLUSION SET. They are written into this entry and are, from this
+      commit, part of the KNOWN SET and prove nothing about the class. CD-ASR-WO2-02 must devise
+      variants that are none of: the WO-2 auditor's ten, the Engineer's seventeen, or the Project
+      Lead's twenty-three.
+  - decision_id: CD-D-043
+    ruling: >
+      THE PROJECT LEAD STOPS HERE RATHER THAN STARTING INCREMENT 3. This runtime has approximately
+      fifty minutes of ceiling remaining and four seats have already been killed mid-work on this
+      project. Increment 3 (CD-ASR-F04, the egress allowlist) is a whole increment; started now it
+      would be killed in the middle, and the cost of that is not zero — it is a dirty lane, an
+      unattested change set, and a successor spending its first half hour inventorying what was left
+      behind, which is exactly what happened at the third termination. A clean boundary with a
+      durable record is worth more than forty minutes of unattested progress.
+
+findings:
+  - finding_id: CD-PL-F57
+    severity: INFORMATIONAL
+    title: 'The register''s assertion counts moved by more than the increment touched, and that is expected but unexplained in the record'
+    detail: >
+      check_no_execution_interface went 33146 -> 34502 and check_no_numeric_default 301 -> 362,
+      although increment 2b's subject is CD-AC-002. The obvious cause is that both checks scan the
+      application tree and the increment added a module to it, so more source means more assertions;
+      nothing about that is suspicious. It is recorded because an unexplained movement in a control's
+      own numbers is the kind of thing that should never be waved past, and because Assurance should
+      confirm the cause rather than inherit this assumption.
+  - finding_id: CD-PL-F58
+    severity: LOW
+    title: 'Zero expectation changes is asserted by the seat and is not measurable by the node-id comparison'
+    detail: >
+      The anti-relaxation check proves no test DISAPPEARED. It cannot prove no test's ASSERTED VALUE
+      was weakened. The seat states there were none and that every tests/ diff is a construction
+      becoming explicit; the Project Lead did not read all 101 added and ~200 modified test lines in
+      the time available. NAMED FOR ASSURANCE as a thing to check rather than left as an implied
+      verification.
+
+obligations_status:
+  po_ruling_1_run_record: 'DISCHARGED. CD-RULE-001 in force; latest_admitted_run still null; gate shut.'
+  po_ruling_2_close_the_class: 'F02 + F03 CLOSED (increment 1). F01 CLOSED (increment 2b), subject to Assurance. F04, F05, F06 NOT STARTED.'
+  po_ruling_3_identity: 'DISCHARGED and re-audited. All 24 lane commits re-authored; all 10 subsequent lane commits and all 7 subsequent main commits carry their seat. CD-PL-F56 recorded: the -c config mechanism CD-RULE-002 implied fails silently on this host; the rule now carries the working invocation and a mandatory post-commit check.'
+  po_ruling_4_fresh_assurance: 'NOT REACHED. Three increments remain before the Assurance dispatch.'
+
+next_safe_action: >
+  Resume with increment 3 (CD-ASR-F04, egress allowlist — the PO required it be closed BEFORE any
+  WO-3 egress lane inherits it), then increment 4 (CD-ASR-F05), then increment 5 (CD-ASR-F06), each
+  dispatched to CD-ENG-WO2R-01 with the mandatory commit block, each reconciled by the Project Lead
+  running the arms itself, each committed as its own checkpoint. Then CD-DISPATCH-WO2R-ASSURANCE to
+  CD-ASR-WO2-02 — a SEPARATE agent, never the Engineer and never the Project Lead (PBG-SOD-001,
+  non-waivable) — carrying CD-ENG-WO2R-F12 as a NAMED QUESTION, CD-PL-F53 on where the CD-AC-001
+  independence evidence now lives, CD-PL-F57 and CD-PL-F58, and the full exclusion set. That seat
+  devises FRESH variants. The gate is UNCHANGED: Assurance PASS on all five. STOP at the gate either
+  way and report to the Product Owner. Admit no run record without its paired verdict (CD-RULE-001).

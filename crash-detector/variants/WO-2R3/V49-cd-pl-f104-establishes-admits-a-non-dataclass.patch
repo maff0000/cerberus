@@ -1,0 +1,167 @@
+diff --git a/src/crash_detector/establishment.py b/src/crash_detector/establishment.py
+index 89d39c6..913c9a4 100644
+--- a/src/crash_detector/establishment.py
++++ b/src/crash_detector/establishment.py
+@@ -376,6 +376,143 @@ _DECLARATIONS: dict = {}
+ _ABSENT = object()
+ 
+ 
++# ======================================================================================== #
++# THE ADMISSION GATE ON THE DECORATOR ITSELF — `CD-PL-F104`, closed at WO-2R3 increment 9 on
++# `PO-DECISIONS-0016` ruling 2's instruction.
++#
++# **THE FINDING, VERBATIM:** *"`crash_detector.establishment.establishes` — A PUBLIC,
++# EXPORTED DECORATOR — ADMITS A NON-DATACLASS, AND A CALLER CAN MINT A FORGED GOVERNED TYPE
++# THROUGH IT. Its gate is `dataclasses.is_dataclass`, which is a `hasattr` probe; one class
++# attribute (`__dataclass_fields__ = {}`) defeats it. The forged class then reports
++# `is_establishing_type` True, `establishment_faults` `()`, and ENTERS `governed_types()` —
++# the enumeration a governing carrier reads."*
++#
++# **MEASURED AT THE BASE SHA, EXACTLY AS WRITTEN, AND THE FINDING IS UPHELD IN FULL:**
++#
++#     class Forged:
++#         __dataclass_fields__ = {}
++#     dataclasses.is_dataclass(Forged)      -> True
++#     establishes()(Forged)                 -> ACCEPTED, returns Forged
++#     is_establishing_type(Forged)          -> True
++#     establishment_faults(Forged)          -> ()
++#     Forged in governed_types()            -> True
++#
++# **THE REFERENCE VALUES BELOW ARE DERIVED FROM THE MACHINERY, NOT SPELLED.** Nothing here
++# names a private stdlib attribute as a string constant. A probe dataclass is BUILT at
++# import and its own products are read, so this gate is a measurement of the interpreter in
++# front of it and not a transcription of one. That is the same method the sealing
++# instrument's exclusion clause uses, and for the same reason: a spelled private name is a
++# vocabulary, and a vocabulary rots at the next release.
++# ======================================================================================== #
++
++
++@dataclasses.dataclass(frozen=True)
++class _MachineryProbe:
++    """Built ONLY so its products can be read. Never constructed, never exported.
++
++    Sealed like every other governed class in this package (``PO-DECISIONS-0016`` ruling 2):
++    it is a real class in a real module and
++    ``tools/register/check_sealed_against_forged_establishment.py`` enumerates it with the
++    other 99. **AN INSTRUMENT'S OWN SCAFFOLDING IS NOT OUTSIDE THE CLASS IT MEASURES.**
++    """
++
++    __slots__ = ("ordinary",)
++
++    ordinary: int
++
++
++#: The exact type ``@dataclass`` gives ``__dataclass_params__``. Read off the probe.
++_PARAMS_TYPE = type(vars(_MachineryProbe)["__dataclass_params__"])
++
++#: The exact type of a genuine field descriptor. Read off the probe.
++_FIELD_TYPE = type(vars(_MachineryProbe)["__dataclass_fields__"]["ordinary"])
++
++#: EVERY ``_field_type`` sentinel the machinery issues — ordinary field, ``ClassVar`` and
++#: ``InitVar`` — collected BY TYPE IDENTITY and not one of them spelled by name.
++#:
++#: **THE FIRST DRAFT READ THE SENTINELS OFF THE PROBE'S OWN FIELDS AND GOT ONLY ONE**, because
++#: this module carries ``from __future__ import annotations`` and the probe's ``InitVar``
++#: annotation therefore arrived as a string the machinery did not recognise as one. A
++#: legitimate governed type carrying an ``InitVar`` was then refused BY THIS GATE with a
++#: paragraph about forged Fields, instead of by :func:`_faults` with the sentence written for
++#: it. **A GATE THAT REFUSES THE RIGHT TYPE FOR THE WRONG REASON IS A DEFECT AND NOT A
++#: STRICTER GUARD**, and `tests/test_field_establishment.py` caught it. Recorded rather than
++#: quietly fixed.
++_KIND_TYPE = type(vars(_MachineryProbe)["__dataclass_fields__"]["ordinary"]._field_type)
++_FIELD_KINDS = frozenset(
++    value for value in vars(dataclasses).values() if type(value) is _KIND_TYPE
++)
++
++
++def _not_built_by_the_dataclass_machinery(cls) -> "str | None":
++    """Why ``cls`` is not a class ``@dataclass`` built, or ``None``. **MEASURED, EXACT TYPE.**
++
++    ``dataclasses.is_dataclass`` is a ``hasattr`` probe, and this project's whole vocabulary
++    for that is *"admitted by duck typing"*. Every clause below is a property the
++    ``@dataclass`` decorator NECESSARILY produces and a bare class attribute does not.
++
++    **WHAT THIS DOES NOT CLAIM.** It is not proof against a caller who can execute code in
++    this process: such a caller can build a probe dataclass exactly as this module does and
++    read the same sentinels out of it. **WHAT IT CHANGES IS THE PRICE.** The route the
++    finding names cost ONE CLASS ATTRIBUTE. After this, a forger must construct genuine
++    ``dataclasses.Field`` objects carrying genuine ``_field_type`` sentinels and a genuine
++    params object — at which point the field list handed over IS a field list, and
++    :func:`establishes` derives from it truthfully. **THE RESIDUE IS DECLARED IN LIMIT 5 OF
++    THIS MODULE'S HEADER AND IN THE OTHER TWO CD-RULE-004 PLACES. NOT CLOSED, AND NOT
++    CLAIMED CLOSED.**
++    """
++    if not isinstance(cls, type):
++        return (
++            f"{cls!r} is not a CLASS. `dataclasses.is_dataclass` answers True for an "
++            "INSTANCE of a dataclass as readily as for the class, and this decorator "
++            "rewrites `cls.__init__` — on an instance that binds an INSTANCE ATTRIBUTE and "
++            "governs nothing. MEASURED at the base SHA: a frozen instance refused with "
++            "`FrozenInstanceError: cannot assign to field '__init__'` and a MUTABLE one got "
++            "as far as binding that attribute before failing with `TypeError: unhashable "
++            "type` on the registry insert — a refusal from the WRONG LAYER, after the "
++            "object had already been written to."
++        )
++    if "__dataclass_fields__" not in vars(cls):
++        return (
++            f"{cls.__qualname__} carries no `__dataclass_fields__` OF ITS OWN. It may "
++            "INHERIT one — `dataclasses.is_dataclass` answers True for a plain subclass of "
++            "a dataclass — but this decorator is applied per class and a subclass carries "
++            "no declaration of its own (DECLARED LIMIT 4). Apply it OUTSIDE @dataclass on "
++            "the class that declares the fields."
++        )
++    params = vars(cls).get("__dataclass_params__")
++    if type(params) is not _PARAMS_TYPE:
++        return (
++            f"{cls.__qualname__} carries `__dataclass_fields__` but its "
++            f"`__dataclass_params__` is {type(params).__qualname__} and not "
++            f"{_PARAMS_TYPE.__qualname__}. The @dataclass decorator writes BOTH; a "
++            "hand-written field list writes one. THIS IS THE CLAUSE THAT REFUSES "
++            "`CD-PL-F104`'s one-attribute forgery."
++        )
++    fields_map = vars(cls)["__dataclass_fields__"]
++    if type(fields_map) is not dict:
++        return (
++            f"{cls.__qualname__}.__dataclass_fields__ is {type(fields_map).__qualname__} "
++            "and not exactly a dict. @dataclass writes a dict; anything else is a mapping "
++            "supplied to be read, and this boundary reads no object it did not build."
++        )
++    for name, field in fields_map.items():
++        if type(field) is not _FIELD_TYPE:
++            return (
++                f"{cls.__qualname__}.__dataclass_fields__[{name!r}] is "
++                f"{type(field).__qualname__} and not exactly {_FIELD_TYPE.__qualname__}. "
++                "The declared field list must be the one the machinery built."
++            )
++        if getattr(field, "_field_type", None) not in _FIELD_KINDS:
++            return (
++                f"{cls.__qualname__}.__dataclass_fields__[{name!r}]._field_type is not one "
++                "of the sentinels the @dataclass machinery uses, read from a probe "
++                "dataclass built in this module. A Field carrying a kind the machinery "
++                "never issues is a Field somebody wrote."
++            )
++    return None
++
++
+ def _declared_field_list(cls) -> "tuple[tuple, tuple]":
+     """``cls``'s DECLARED FIELD LIST, and its ``InitVar`` pseudo-fields, from the artefact.
+ 
+@@ -449,12 +586,16 @@ def establishes(**declared: object):
+     }
+ 
+     def apply_at_the_boundary(cls):
+-        if not dataclasses.is_dataclass(cls):
++        # THE GATE IS A MEASUREMENT, NOT A `hasattr` PROBE (`CD-PL-F104`). The superseded
++        # clause read `if not dataclasses.is_dataclass(cls)`, and one class attribute
++        # defeated it. Quoted rather than deleted (CD-RULE-004, PBG-CONT-003).
++        why_not = _not_built_by_the_dataclass_machinery(cls)
++        if why_not is not None:
+             raise EstablishmentFault(
+                 f"@establishes was applied to {cls!r}, which is not a dataclass. The "
+                 "establishment is DERIVED FROM THE DECLARED FIELD LIST, and a class with "
+                 "no field list has nothing to derive it from. Apply it OUTSIDE "
+-                "@dataclass, never inside."
++                f"@dataclass, never inside. MEASURED: {why_not}"
+             )
+         field_names, initvars = _declared_field_list(cls)
+         faults = _faults(cls, field_names, initvars, declared)

@@ -1,0 +1,176 @@
+# ================================================================================================ #
+# PO-DECISIONS-0007 RECONCILED INTO THE RECORD — CD-D-105 IS RULED AND CLOSED, AND THE ANSWER IS (A)
+# BOUNDED: §D REACHES CONSTRUCTORS, AS A FIFTH INCREMENT AFTER INCREMENT 4.
+#
+# THE PROJECT LEAD PUT THREE ANSWERS AND RECOMMENDED NONE. THE PRODUCT OWNER TOOK (A) AND ALSO TOOK
+# (C) — NOT AS A SUBSTITUTE BUT AS A STANDING INVITATION TO THE FOURTH ASSURANCE SEAT TO ATTACK THE
+# CLOSURE ITSELF. "A CLOSURE NOBODY HAS TRIED TO DEFEAT IS A RUMOUR."
+#
+# THIS BOUNDARY WRITES NO APPLICATION CODE AND DISPATCHES INCREMENT 3. THE TWO ARE SEPARATE
+# BOUNDARIES DELIBERATELY: a seat resuming between them must find a coherent state.
+# ================================================================================================ #
+
+entry_id: BL-20260822T154022Z-0054
+timestamp_utc: "2026-08-22T15:40:22Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 9a81787cd9eebe4fca4cb9ff1a15e49658cef088   # the Product Owner's own commit carrying PO-DECISIONS-0007. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36).
+parent_entry_id: BL-20260822T152654Z-0053
+schema_version: 1
+
+action_summary: >
+  THE PRODUCT AUTHORITY ANSWERED CD-D-105 AND THE ANSWER IS RECORDED, NOT INTERPRETED.
+  governance/decisions/PO-DECISIONS-0007.md landed at 9a81787, authored by Matt Scott and by no
+  seat, and ACTIVE_WORK.yaml did not know it existed — the record was last written at
+  2026-08-22T15:26:54Z, seventy minutes before the ruling. That gap is closed HERE, by RECORDING the
+  ruling in the Project Lead's own record, and NEVER by editing the Product Owner's text
+  (governance/decisions/ is protected scope for every seat including this one).
+
+  RULING 1 — CD-D-105 IS ANSWER (A), BOUNDED AND SEQUENCED LAST. §D REACHES CONSTRUCTORS. The
+  principle the Product Owner decided it on is §D.1's own: establishment derived from the
+  declaration, never written into an editable body. `__post_init__` IS a body. The standing
+  condition leans on construction-time refusals three times, and "declining to close it while
+  relying on it would be filing the remedy locally — the exact move this estate has now paid for
+  three times".
+  THE PROJECT LEAD'S ASYMMETRY MEASUREMENT IS ACCEPTED IN TERMS AND IT NARROWS THE WORK: the three
+  interpreter-borne refusals (a keyword for a field that does not exist) have NO BODY and are
+  OUTSIDE the finding. What is IN scope is the body-borne residue — the `model_ref` resolution
+  refusal, §C.5's three `ConfigSnapshot` invariants, and `PanelRow`'s field re-establishment.
+
+  RULING 2 — ANSWER (C) IS ALSO TAKEN, AS A STANDING INVITATION AND NOT AS A SUBSTITUTE. The fourth
+  Assurance seat is invited to attack the WHOLE §D scoping INCLUDING THIS CLOSURE, on measured
+  grounds. The precedent is PO-DECISIONS-0003 ruling 4, which cost this project an increment and was
+  worth it.
+
+  RULING 3 — WHY NOT (B): the deferral's own honest carrier was "NOT PROVED TO BE CARRIED ANYWHERE".
+  A residue with no durable carrier fails the durable-visibility obligation this seat holds. (B) lost
+  on its own disclosure — which is the seat's disclosure working as intended, against the seat.
+
+  RULING 4 — CD-D-104, CD-D-106 and CD-D-107 STAND AS RULED BY THE PROJECT LEAD. CD-PL-F80 and
+  CD-PL-F81 — the two declared limits whose WORDING IS NARROWER THAN THEIR MEASURED ROUTE — are
+  REWORDED TO THEIR MEASURED REACH. Documentary, the Project Lead's own, folded into increment 4 or
+  the fifth increment, whichever reaches them first. "A limit that undersells its route is a small
+  lie in the safe direction, and we do not keep those either."
+
+  RULING 5 — INCREMENT 3 (§D.3 / A6, THE COLLECTOR BOUNDARY) IS DISPATCHED AT 995ec3e, scope fixed by
+  PO-DECISIONS-0005 ruling 4, §D.3 accepted AS WRITTEN, both parts, untouched by the CD-D-105 answer.
+  THE SEQUENCE IS NOW FIVE INCREMENTS AND THEN THE SEAT: increment 3 -> increment 4 (the remaining
+  plants, CD-D-033) -> increment 5 (constructors, this ruling) -> THE FOURTH FRESH ASSURANCE SEAT.
+
+  RULING 6 — REAFFIRMED: acceptance of an increment is NOT assurance of a criterion. CD-AC-002 and
+  CD-AC-005 REMAIN UNGRADED until the class is closed and the fourth seat rules. This is the third
+  boundary running at which the Product Owner has said so, and the Project Lead has recorded it as a
+  standing constraint rather than as a note.
+
+what_this_boundary_did_NOT_do: >
+  IT WROTE NO APPLICATION CODE, TOUCHED NO CONSTRUCTOR, AND DID NOT WIDEN INCREMENT 3. The fifth
+  increment is RECORDED AS OWED and is NOT dispatched: it falls due after increment 4, in the order
+  the Product Owner set, and pulling it forward would be exactly the scope-setting the Project Lead
+  declined to do when it put CD-D-105 up in the first place.
+  IT DID NOT EDIT governance/decisions/PO-DECISIONS-0007.md. The Product Owner's text is the
+  authority; this entry is the record OF it.
+  IT DID NOT GRADE CD-AC-002 OR CD-AC-005, AND IT DID NOT MERGE THE LANE.
+
+the_suspicion_procedure_was_run_first_CD_D_007: >
+  Before believing any record including this one. All six worktrees enumerated with `git worktree
+  list` and each one's HEAD and porcelain read directly:
+    /srv/crash-detector            9a81787 [main]            — untracked operator scratch only
+    /srv/crash-detector-wo2        f30e63c [wo-2-skeleton]   — CLEAN, frozen as recorded
+    /srv/crash-detector-wo2-audit  66681b2 (detached)        — CLEAN
+    /srv/crash-detector-wo2r-audit 50fc231 (detached)        — CLEAN
+    /srv/crash-detector-wo2r2-audit f30e63c (detached)       — CLEAN, load-bearing (CD-D-087)
+    /srv/crash-detector-wo2r3      995ec3e [wo-2r3]          — CLEAN, exactly the recorded lane head
+  `git fsck --no-reflogs --unreachable` returned unreachable commits and EVERY ONE WAS DATED
+  2026-08-19, the newest at 11:57:17 +0100 — all of them from the WO-2/WO-2R identity-probe and
+  amend history already in the record. NOTHING UNREACHABLE POST-DATES THE RECORD. The procedure
+  found no undiscovered work at this boundary. It is run anyway because it once found four commits
+  and a complete Build Log entry that no committed record knew existed.
+
+reconciliation_of_observed_against_recorded:
+  recorded_lane_head: 995ec3e36f5bd43bcbfdff66ccab1ace1a11949c
+  observed_lane_head: 995ec3e36f5bd43bcbfdff66ccab1ace1a11949c   # `git -C /srv/crash-detector-wo2r3 rev-parse HEAD`
+  lane_porcelain: 'ZERO LINES'
+  recorded_main_head_at_last_write: 4f64967   # the CD-RULE-007 follow-up
+  observed_main_head_at_boot: 9a81787         # AHEAD BY ONE — the Product Owner's own commit
+  the_delta_and_its_disposition: >
+    ONE commit on main that the record did not know about, and it is the RULING THIS BOUNDARY EXISTS
+    TO RECORD. Authored by Matt Scott, not by any seat — verified with
+    `git log -1 --format='%an <%ae> | %cn <%ce>' 9a81787`. It adds exactly one file,
+    governance/decisions/PO-DECISIONS-0007.md, 46 lines, and changes nothing else — verified with
+    `git show --stat 9a81787`. This is the expected shape of a Product Authority commit and it is
+    reconciled by RECORDING, never by correcting.
+  boot_verdict_at_9a81787: >
+    AMBER. SOLE cause: `roadmap_identity` UNAVAILABLE, "Roadmap not found at ROADMAP.md" — the known
+    standing condition on this project, present at every boot since the first, and NOT drift.
+    blocking_failures EMPTY. continuity_state CONTINUITY_MATCH/RESUME_AMBER. current_phase BUILD.
+
+increment_3_is_dispatched_at_this_boundary: >
+  TO CD-ENG-WO2R3-01, under the LIVE dispatch governance/dispatch/CD-DISPATCH-WO2R3-ENGINEER.yaml
+  (status ISSUED, unexhausted), at lane head 995ec3e on branch wo-2r3 in /srv/crash-detector-wo2r3.
+  THE SEAT IS THE SAME SEAT AND THE AGENT INSTANCE IS A NEW ONE, AND THAT DISTINCTION IS RECORDED
+  RATHER THAN BLURRED: the CD-ENG-WO2R3-01 instance that built increments 1 and 2 did not survive its
+  runtime, as seven instances before it did not. A fresh seat is required BETWEEN DISPATCHES, not
+  between increments of one dispatch, and PBG-SOD-001 is about Engineer versus Assurance and not
+  about instances. The seat id, the authority record and the git identity are unchanged, which is
+  what CD-RULE-002's author audit is for; what is lost is context, which is why this project commits
+  as it goes (PBG-CONT-007) and why the brief carries the lane state rather than assuming it.
+  SCOPE: §D.3, A6, BOTH PARTS AS WRITTEN, and nothing else. Fixed by PO-DECISIONS-0005 ruling 4 and
+  re-fixed by PO-DECISIONS-0007 ruling 5. NOT enlarged by the CD-D-105 answer.
+
+decisions_ruled_here:
+- 'CD-D-109 — THE FIFTH INCREMENT IS RECORDED AS OWED AND IS NOT DISPATCHED. PO-DECISIONS-0007
+  ruling 1 sequences it AFTER increment 4, in terms ("a FIFTH increment, after increment 4"). The
+  Project Lead records it in remaining_items with its bounds transcribed from the ruling and does
+  NOT fold it into increment 3, does not fold it into increment 4, and does not draft its brief yet.
+  A ruling that names a sequence is a ruling about the sequence too.'
+- 'CD-D-110 — THE BOUNDS OF THE FIFTH INCREMENT ARE THE PRODUCT OWNER''S WORDS AND ARE TRANSCRIBED,
+  NOT PARAPHRASED: the four named judgement-path types (`ConfigSnapshot`, `DialSpec`, `ModelSpec`,
+  `PanelRow`); the mechanism is "the `admits` idea one level down — establishment derived from the
+  DECLARED FIELD LIST, refusing what it was not told, applied at the boundary so a body edit cannot
+  remove it"; V17 becomes its planted violation with baseline and violated arms. THE THREE
+  INTERPRETER-BORNE REFUSALS ARE OUT OF ITS SCOPE by the same ruling. A seat that widens or narrows
+  these bounds is setting scope the Product Owner has now reserved THREE times.'
+- 'CD-D-111 — CD-PL-F80 AND CD-PL-F81 ARE DOCUMENTARY AND ARE OWED TO INCREMENT 4 OR 5, WHICHEVER
+  REACHES THEM FIRST, exactly as ruling 4 words it. They are the PROJECT LEAD''S OWN findings against
+  limits the SEAT wrote, and the correction is a REWORDING TO MEASURED REACH — not a new guard, not a
+  narrowing of the limit, and not a deletion. Building a guard in answer to either would be answering
+  a documentary finding with logic, which CD-D-080 already prohibits on this project.'
+- 'CD-D-112 — ANSWER (C) IS RECORDED AS A LIVE OBLIGATION ON THE FOURTH ASSURANCE SEAT''S BRIEF AND
+  NOT AS A COURTESY. That brief must carry, in terms, the invitation to attack the WHOLE §D scoping
+  INCLUDING the CD-D-105 closure — alongside the two targets already named (P7 at PO-DECISIONS-0005
+  ruling 1, CD-BP-003 at ruling 4). Three named targets now, none of them the seat''s to choose and
+  none of them the Project Lead''s to drop.'
+
+findings_raised_by_the_project_lead_at_this_boundary: []
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- 'NOTHING IN THE LANE WAS RE-MEASURED HERE. This boundary records a ruling and dispatches an
+  increment. Every claim about increment 2 stands on BL-20260822T152654Z-0053''s measurements and is
+  not re-asserted here as if it were fresh.'
+- 'THE FIFTH INCREMENT''S FEASIBILITY IS NOT ASSESSED. Whether establishment can be derived from a
+  frozen dataclass''s declared field list without conflicting with `__post_init__`''s legitimate
+  cross-field invariants (§C.5''s three are exactly that shape) IS NOT PROVED BY ANYONE. The Product
+  Owner ruled the OBJECTIVE; the mechanism is specified and not prototyped, as `admits` was at
+  increment 2. If it conflicts with something real, the honest escalation is the valuable return.'
+- 'THE SUITE WAS NOT RUN AT THIS BOUNDARY and no plant was applied. No code changed.'
+
+next_safe_action: >
+  **RUN INCREMENT 3 — §D.3, A6, THE COLLECTOR BOUNDARY, BOTH PARTS — WITH CD-ENG-WO2R3-01 AT LANE
+  HEAD 995ec3e, THEN RECONCILE IT BY REPLICATION AND NOT BY RELAY.**
+  Then increment 4 (reconciliation-and-return, NO NEW LOGIC, now owning FOUR documentary items: the
+  three non-applying plants under CD-D-033, CD-PL-F80, CD-PL-F81, and the return). Then INCREMENT 5,
+  the constructors, on PO-DECISIONS-0007 ruling 1's bounds and no wider. THEN, AND ONLY THEN, THE
+  FOURTH FRESH ASSURANCE SEAT — with THREE named first targets now: P7, CD-BP-003, and the standing
+  invitation to attack the §D scoping including the CD-D-105 closure.
+  DO NOT ADMIT ANYTHING (CD-RULE-001). DO NOT MERGE THE LANE. DO NOT GRADE CD-AC-002 OR CD-AC-005 —
+  the Product Owner has now reserved that grading three boundaries running.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)

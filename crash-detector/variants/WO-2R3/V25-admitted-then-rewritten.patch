@@ -1,0 +1,63 @@
+diff --git a/probe_v25_admitted_then_rewritten.py b/probe_v25_admitted_then_rewritten.py
+new file mode 100644
+index 0000000..ff31400
+--- /dev/null
++++ b/probe_v25_admitted_then_rewritten.py
+@@ -0,0 +1,57 @@
++"""V25 — MINE. Get PAST the door honestly, then rewrite the value it admitted.
++
++ROUTE: `evaluate` requires exactly a `ConfigSnapshot`, so build a real one — it passes
++every §C.5 invariant at construction — and THEN use `object.__setattr__` to swap its
++`model_registry` for a caller-supplied object whose `get()` answers with whatever the
++caller likes. `object.__setattr__` walks past `frozen` on every frozen value in Python.
++The door is satisfied by the TYPE, and the type is genuine; what changed is the contents,
++after admission.
++
++DIFFERENT FROM ANY ROUTE IN ANY CORPUS: WO-2R2's V05/V10 and the PL-* probes rewrite
++fields to defeat a BODY check on the same object. This one satisfies an EXACT-TYPE DOOR
++honestly first and attacks the interval between admission and use — a route that did not
++exist before there was a door to satisfy.
++
++Run:  PYTHONPATH=src python3 -B probe_v25_admitted_then_rewritten.py
++"""
++
++from datetime import datetime, timezone
++
++from crash_detector.dials.dialset import EQUITY_DIAL_ID
++from crash_detector.engine.config import empty_config_snapshot
++from crash_detector.engine.evaluate import evaluate
++from crash_detector.engine.model import EMPTY_MODEL_REGISTRY, ModelSpec
++
++NOW = datetime(2026, 8, 22, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class CallerRegistry:
++    """Not a ModelRegistry. `get` is the resolution, so this IS choosing what a dial
++    computes, with no field on the dial path ever having held a model."""
++
++    is_empty = False
++    model_ids = ("anything.i.like",)
++
++    def get(self, model_id):
++        raise AssertionError("if this runs, the caller chose the mapping")
++
++
++snapshot = empty_config_snapshot("cfg-wo2", staleness_window_seconds=600.0)
++print(f"admitted at construction: {type(snapshot).__name__}, "
++      f"registry empty = {snapshot.model_registry is EMPTY_MODEL_REGISTRY}")
++
++object.__setattr__(snapshot, "model_registry", CallerRegistry())
++print(f"after rewrite: model_registry is now {type(snapshot.model_registry).__name__}")
++
++print("ARM — evaluate() with the admitted-then-rewritten snapshot:")
++try:
++    dials = evaluate([], snapshot, NOW)
++    print(f"    ESCAPED -> equity {type(dials.equity).__name__}")
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:160]}")
++
++print("ARM — the resolution door, reached directly:")
++try:
++    print("   ", snapshot.model_for(EQUITY_DIAL_ID))
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:160]}")

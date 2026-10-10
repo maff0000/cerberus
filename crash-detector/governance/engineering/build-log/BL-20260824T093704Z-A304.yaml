@@ -1,0 +1,117 @@
+entry_id: BL-20260824T093704Z-A304
+timestamp_utc: "2026-08-24T09:37:04Z"
+project: crash-detector
+actor: CD-ASR-WO3-04
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16A-FIX-ASSURANCE
+work_type: TASK
+phase: BUILD
+repository: local
+branch: asr-wo3-04-verdict
+worktree: /srv/crash-detector-wo3-audit2
+baseline_sha: 53f639a91088ee42f5ba6c0d269f69782ba2a20a
+current_sha: b9283b99f66285e8be575eb56e2d30ed52735be8
+parent_entry_id: BL-20260824T091143Z-16AF
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  ASSURANCE VERDICT ON INCREMENT 16A-FIX AT b9283b99f66285e8be575eb56e2d30ed52735be8 — AMBER.
+
+  THE RED IS GENUINELY CLOSED, AND I ESTABLISHED THAT BEHAVIOURALLY BEFORE I LOOKED AT ANY
+  STRUCTURE. 30-row probe through the LIVE refuse_unless_publishable, my own fixture built
+  from the schema rather than from the project's fakes, over both surfaces x
+  {UNKNOWN, DEGRADED, VALUE} x {calm, elevated, acute, banana, absent}: 30/30 as required.
+  calm REFUSED on both missing-data branches on both surfaces; elevated and acute STILL
+  ADMITTED on both; banana and absence REFUSED; and VALUE+calm STILL ADMITTED, which is the
+  anti-vacuity arm that matters most — the fix does not satisfy PID 3.2 by making the
+  product unpublishable. The IDENTICAL probe at 53f639a91088ee42f5ba6c0d269f69782ba2a20a reproduces CD-ASR-WO3-03's RED
+  independently: exactly the four calm rows ADMITTED there and REFUSED at the tip, every
+  other row unchanged. The probe is live and the change is precisely attributable.
+
+  THE DISCLOSED TRAP WAS HANDLED: dial_reading_degraded.missing_inputs is
+  allOf[source_id_list, {minItems: 1}], so my DEGRADED fixture carries a named missing
+  input. I did not believe any REFUSED on its own — every refusal is paired with an
+  ADMITTED row from the SAME builder differing ONLY in the detail_level string, so the
+  refusal is attributable to that field and not to a malformed fixture.
+
+  3.2 VERIFIED BY READING THE FUNCTION, NOT THE SENTENCE: detail_level.py on_degraded
+  returns policy.absent_data_level, identically to on_unknown, and never reaches
+  _level_for_score. DEGRADED also carries at least one named missing input by contract. The
+  narrowing is correct and is not too wide.
+
+  THE DISPATCH'S 3 ORDERING IS VINDICATED BY MEASUREMENT, NOT JUST BY ARGUMENT. I reverted
+  both $refs on a copy and ran the REGISTER-WIRED structural instrument
+  tools/register/check_schema_closed.py: PASS, 266 assertions, 0 violations, exit 0. A seat
+  working structurally would have cleared a fully reverted tree. Behavioural-first was right.
+
+  SEVEN FINDINGS, none of them a regression, a bypass or a scope breach, and none of them a
+  defect in what 16A-FIX claims. F1 schema_version 1.1.0 now names TWO different contracts
+  and the schema's own first clause is thereby false. F2 the narrowing is guarded ONLY by
+  tests/ — no register-wired instrument sees it. F3 the PARENT dial_reading.detail_level is
+  still the wide type. F4 there is no SQL backstop, asymmetric with CD-AC-001 which is held
+  twice. F5 the corrected CD-AC-002 guard still misses 8 planted shapes including *readings,
+  its own blacklist word. F6 the portability checker misses block-form command values and
+  unoverridden anchor keys. F7 my reasoned opinion on the anchor question the PL declined.
+
+  EVERYTHING IN 4 VERIFIED, NOTHING ASSUMED. 2007 tests at the tip and 1990 at 53f639a91088ee42f5ba6c0d269f69782ba2a20a, both
+  run by me. Register: pid.content_hash MATCHES, latest_admitted_run (null), 18 criteria, GATE
+  SHUT. PID.md and required-tests.yaml byte-identical at EVERY commit in the range, not just
+  the endpoints. pbg/ at zero paths anywhere in the range. be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5 unmoved and an ancestor.
+  publish_cycle still has zero callers outside tests/ and src/ has no entrypoint. NO SOURCE
+  REGISTERED — every SLOOS/NDFI hit is prose, both registries are empty tuples,
+  indicator-mapping.json indicators is [], and src/ has ZERO network-capable imports.
+
+  SCOPE SWEEP: union of per-commit paths EQUALS the net diff across 53f639a91088ee42f5ba6c0d269f69782ba2a20a..b9283b99f66285e8be575eb56e2d30ed52735be8 — eight
+  paths, no touched-and-reverted path. publish.py is DOCSTRING-ONLY: its AST with docstrings
+  stripped is byte-identical across the range.
+
+status: WAITING_PRODUCT_AUTHORITY
+next_safe_action: >-
+  Leave 16A-FIX on the lane; it is safe where it is and the constitutional breach is closed.
+  The next safe gate is PRODUCT AUTHORITY DISPOSITION OF F1 (the schema_version question),
+  which is the only finding with a decision owner outside the engineering lane. It cannot be
+  closed by the fix seat: ENVELOPE_SCHEMA_VERSION and its assertion in
+  tests/test_envelope_contracts.py were OUTSIDE that seat's writable scope, so a bump was
+  never available to it and the "decision not to bump" is partly a scope artefact.
+  F2/F3/F5/F6 are a SEPARATE bounded Engineer dispatch and must not be folded into any
+  transport work. DO NOT admit a register run and DO NOT write any transport: the health
+  surface's value axis is still open and publish_cycle still has no caller.
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 2007
+  result: "2007 passed at the tip; 1990 passed at 53f639a. Both run by this seat on whole-tree git archive extractions verified complete against git ls-tree (557 and 556 files)."
+  command: "python3 -m pytest -q"
+  evidence_reference: "/tmp/asr04/tests_tip.log and /tmp/asr04/tests_prior.log; probe /tmp/asr04/probe.py"
+
+risks:
+  - "F1 MATERIAL, NOT URGENT. Both contracts still pin const 1.1.0. The narrowing means a document tagged 1.1.0 that validated at 53f639a (UNKNOWN+calm) does NOT validate at the tip. The schema_version description's own first clause — 'A consumer that reads this document knows exactly which allowlist it was validated against' — is now FALSE for 1.1.0, because two different allowlists answer to that one string. The Project Lead's letter-of-the-rule argument is CORRECT: the written rule says 'widening the allowlist without bumping', and this is a narrowing. But I attacked the second limb as instructed and it is weaker than the first. THINGS THAT PIN, RECORD OR ASSERT 1.1.0 DO EXIST: ENVELOPE_SCHEMA_VERSION at src/crash_detector/publication/envelope_contract.py:103; tests/test_envelope_contracts.py:318 test_the_declared_schema_version_matches_the_python_constant, which ASSERTS the pin; tests/publication_fakes.py:214, which STAMPS it onto every fixture; and db/migrations/0005_publication.sql, which declares a schema_version column with a CHECK tying it to envelope ->> 'schema_version'. NONE of them BREAKS, because all of them consume the STRING and not the SEMANTICS. So the honest statement is not 'a consumer breaks today' — it is that the version string has LOST ITS DISCRIMINATING POWER, silently, and that is expensive to detect later and cheap to fix now. I do not rule on it; it is a Product Authority call."
+  - "F2 THE NARROWING IS GUARDED ONLY BY tests/. MEASURED, not argued: I reverted both $refs to #/$defs/detail_level on a copy (asserting the anchor before replacing it) and ran tools/register/check_schema_closed.py — PASS, 266 assertions, 0 violations, exit 0. The register-wired instrument for CD-RT-002-SCHEMA-CLOSED is BLIND to the fix. grep for absent_data_detail_level across tools/ returns nothing. The test suite DOES catch the revert (9 failed, 43 passed in tests/test_detail_level.py, including test_missing_data_never_renders_as_calm_THROUGH_THE_LIVE_GATE), so the guard can now see its own remedy — that part of the fix is real. But when the register eventually admits a run, the constitutional narrowing will not be among the things it certifies."
+  - "F3 THE PARENT IS STILL WIDE. $defs/dial_reading.properties.detail_level still $refs #/$defs/detail_level on BOTH surfaces. Harmless TODAY only because JSON Schema applies the parent properties AND the matched oneOf branch, so the effective vocabulary is the intersection. If a future edit loosened or dropped the oneOf, the narrowing would vanish with no line of the fix changing. The guarantee is currently an emergent property of two places agreeing, and it is not locally visible at the parent."
+  - "F4 NO SQL BACKSTOP, AND THE ASYMMETRY IS THE POINT. db/migrations/0005_publication.sql closes only the TOP-LEVEL envelope keys; grep for detail_level across db/ returns NOTHING. Nothing in the database inspects the inside of equity_crash/monetary_debasement. CD-AC-001's sibling guarantee (UNKNOWN carries no score) IS held twice — schema AND 0004_dial_history.sql. PID 3.2 is held ONCE. cd_engine holds GRANT INSERT on publication.public_envelope, so a direct INSERT of a calm-on-UNKNOWN document would satisfy every CHECK on that table. UNSUPPORTED as executed — there is no live PostgreSQL here — so this is read from the migration text, not from a running instance."
+  - "F5 THE CORRECTED CD-AC-002 GUARD STILL MISSES EIGHT SHAPES. I lifted _two_reading_offenders verbatim and planted 14 shapes. CAUGHT: the baseline two-reading function, a method on a class, a closure, an async def. MISSED: (a) two readings named without the 'reading' substring, e.g. def level_for_both(equity, monetary) — and CD-AC-002 is about the EXISTENCE of the function, not the spelling of its parameters; (b) POSITIONAL-ONLY parameters, because node.args.posonlyargs is not summed; (c) def level_for_both(*readings, policy) — the guard's OWN blacklist contains 'readings' and *args evades it, because node.args.vararg is not summed either; (d) **kwargs, same cause; (e) a tuple/list/dict of readings as one parameter; (f) a lambda, which is ast.Lambda and not FunctionDef; (g) functools.partial. (b), (c) and (d) are one-line fixes and I recommend them. OVER-TIGHT, one case: def drift(reading, previous_reading) is flagged, yet two readings of the SAME dial across TIME is not the CD-AC-002 blend shape. The guard cannot distinguish two dials from two timestamps. NONE of this is a regression — the correction is real and closed a hole that made the guard vacuous for its own named case — and it supports CD-AC-002 remaining not-closed."
+  - "F6 THE PORTABILITY CHECKER, AND CD-PL-F177 REPRODUCED EXACTLY. All three subjects re-planted at SERVICE level (cd-engine) exit 1, and for each I asserted BOTH that the mutation reached the file AND that it survived _resolve_merges into the resolved service mapping — the 'where it would bite' assertion the dispatch demanded. Control arm: the same dell path planted into the x-cd-python-service ANCHOR applied to the file, was carried by ZERO resolved services, and the checker returned PASS — 1194 assertions, 0 violations, exit 0. CD-PL-F177 is real and I reproduced it. WHAT THE CHECKER STILL MISSES, measured: a dell path in a BLOCK-FORM command: list (PASS, 0 violations); a dell path on an anchor key that NO service overrides (PASS, 0 violations); and anything outside deploy/compose.yaml — I appended ENV CD_CONTRACTS_DIR=/srv/... to deploy/Dockerfile.engine and to a deploy/entrypoints/ script and both returned PASS, 0 violations. Declared limit 1 ('IT READS ONE FILE') covers that in the letter, but its worked example is a compose OVERRIDE file; Dockerfiles and entrypoints are the likelier place a dell path actually lands and are not named. NOT a bypass: a flow-sequence command returns exit 3 PRECONDITION_NOT_MET, which is fail-closed and explicitly 'never a pass and never a skip'."
+  - "F7 THE OPEN QUESTION, ANSWERED. Should a dell path in an anchor fragment every service currently overrides be REFUSED? MY OPINION: YES, and the checker should refuse it — but as a SEPARATE, differently-worded finding, not by pretending it is a live config value. Three reasons. (1) The rule the check exists to serve is cut-and-paste portability, and an unportable literal in a shared fragment is one deleted override away from being live in SIX services at once; the override is a coincidence of the current file, not a control. (2) The status quo is strictly worse than either alternative, because a PASS on a shadowed dell path is INDISTINGUISHABLE from a control that failed to fire — which is exactly how CD-PL-F177 happened to the Project Lead. (3) An anchor is authored as a DEFAULT; a default no one currently takes is still a default. AGAINST, and I record it because it is the real cost: judging unreached values means judging dead config, and the finding text must say 'shadowed today, live the moment an override is deleted' or it will be dismissed as noise by the first reader who checks and sees every service overriding it."
+  - "FINDINGS AGAINST THIS DISPATCH. (i) Its 3 ordering is CORRECT and I confirmed the correction empirically rather than accepting it — see F2's measurement. I found no better ordering. (ii) It asserts 'CD-AC-002 still AMBER-not-closed, CD-AC-005 still RED'. The register does NOT distinguish those two states: it reports BOTH, and all 18 criteria, as UNDECIDABLE, every one for an unresolved negative_control.evidence_ref or execution_contract. I can verify NOT-CLOSED and NOT-PASSING; I CANNOT corroborate AMBER-versus-RED from the register, and the dispatch's phrasing imports an assurance-level judgement the named instrument cannot return. (iii) The commit-by-commit sweep it prescribes cannot see a path touched and reverted WITHIN a single commit, because such a path never appears in any --name-only output; I state the limit rather than let a clean sweep imply more than it establishes. (iv) The dispatch describes 'a superseded publish.py limit' among the changes; I measured it as DOCSTRING-ONLY and confirm no behavioural change, which is a stronger statement than the dispatch makes."
+
+blockers: []
+
+evidence_references:
+  - "PROBE, BOTH ARMS, LIVE GATE: /tmp/asr04/probe.py over a whole-tree git archive of b9283b99f66285e8be575eb56e2d30ed52735be8 — 30 rows, 0 mismatches. calm REFUSED and elevated/acute ADMITTED on UNKNOWN and DEGRADED, both surfaces; VALUE+calm ADMITTED."
+  - "REVERT ARM: the identical probe at 53f639a91088ee42f5ba6c0d269f69782ba2a20a — 4 mismatches, exactly the four calm rows, ADMITTED there and REFUSED at the tip. CD-ASR-WO3-03's RED independently reproduced."
+  - "TESTS BOTH ENDS, RUN BY THIS SEAT: 'python3 -m pytest -q' -> 2007 passed at the tip, 1990 passed at 53f639a91088ee42f5ba6c0d269f69782ba2a20a."
+  - "GUARD SEES ITS OWN REMEDY: both $refs reverted on a copy -> tests/test_detail_level.py 9 failed / 43 passed, including test_missing_data_never_renders_as_calm_THROUGH_THE_LIVE_GATE."
+  - "REGISTER INSTRUMENT BLIND (F2): same reverted copy -> 'python3 -B tools/register/check_schema_closed.py --root .' -> CD-RT-002-SCHEMA-CLOSED: PASS — 266 assertions, 0 violations, exit 0."
+  - "REGISTER AT TIP: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify' -> pid.content_hash MATCHES; latest_admitted_run (null); 18 criteria CD-AC-001..018 all UNDECIDABLE; MANDATORY NOT PASS (17); GATE: SHUT; PID_ACCEPTANCE_SATISFIED: NOT DERIVED."
+  - "PIN NOT RE-STALED: PID.md blob abe30bb96f156a4f0f095d3866b05016aa5f6356 and required-tests.yaml blob 337dcd27e829d93af58428d4cd5826ae2bc539b6 at ALL SEVEN commits in 53f639a91088ee42f5ba6c0d269f69782ba2a20a..b9283b99f66285e8be575eb56e2d30ed52735be8, resolved by git rev-parse per commit, not at the endpoints only."
+  - "SCOPE: 'git log --format= --name-only 53f639a91088ee42f5ba6c0d269f69782ba2a20a..b9283b99f66285e8be575eb56e2d30ed52735be8 | sort -u' EQUALS 'git diff --name-only' — eight paths, no touched-and-reverted path. Zero pbg/ paths anywhere in the range. Range is linear (git log --merges is empty)."
+  - "publish.py DOCSTRING-ONLY: ast.dump with all docstrings stripped is identical at both ends."
+  - "PORTABILITY, SERVICE LEVEL: three plants (dell path in ${VAR:-DEFAULT}; CD_STORE_HOST: postgres.dell.matt.local; bare dell literal) each exit 1 AND each proven present in the resolved service mapping after _resolve_merges. CONTROL: the same plant in the x-cd-python-service anchor -> zero resolved carriers, PASS 1194 assertions 0 violations, exit 0 — CD-PL-F177 reproduced."
+  - "CD-AC-002 PLANTS: 14 shapes against the corrected _two_reading_offenders lifted verbatim — 4 caught, 8 missed, 1 over-tight. /tmp/asr04/ac002_plants.py."
+  - "NO SOURCE REGISTERED: EMPTY_SOURCE_REGISTRY = SourceRegistry(sources=()) and EMPTY_INDICATOR_MAPPING_REGISTRY = IndicatorMappingRegistry(mappings=()); deploy/indicator-mapping.json indicators == []; every SLOOS/NDFI/DRTSCILM hit is a docstring, comment or JSON $comment; zero network-capable imports in src/; zero DML in db/migrations/."
+  - "STILL OPEN AS REQUIRED: publish_cycle has zero callers outside tests/ (its own def, __all__, docstrings, one quarantined plants/ patch); src/ has no __main__.py, no 'if __name__', no console_scripts."
+  - "BASE: 'git rev-parse be0b355^{commit}' -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5, and 'git merge-base --is-ancestor' confirms it is an ancestor of the tip."
+  - "DECLARED LIMITS (CD-RULE-004): NO LIVE POSTGRESQL, so transaction atomicity, the CHECK constraints AS EXECUTED and the append-only GRANT posture are UNSUPPORTED for a running instance — F4 is read from migration text only. NO DOCKER: no image was built, pulled or run, so the portability finding is a property of the DECLARATION and not evidence the stack starts on a second host. I did NOT audit the 16A increment itself (53f639a91088ee42f5ba6c0d269f69782ba2a20a and earlier), only the range above. I did NOT re-derive the PID content hash by hand; I used the framework's own instrument. I did NOT execute the deploy/entrypoints/ shims. My boot returned RED — continuity_record_commit is PENDING in the frozen base's ACTIVE_WORK.yaml, giving CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED; known, inherited, outside my scope, diagnosed and NOT repaired."

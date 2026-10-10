@@ -1,0 +1,188 @@
+# ================================================================================================== #
+# BL-20260823T174313Z-0152 — PROJECT LEAD BOUNDARY. **PO-DECISIONS-0024 IS EXECUTED: THE WO-3 LANE
+# IS CUT FROM THE FROZEN BASE AND INCREMENT 14 IS DISPATCHED.**
+#
+# **THE STOP AT `BL-...-0151` IS LIFTED BY THE PRODUCT OWNER AND NOT BY THIS SEAT.** `Q24`, `Q26`
+# and `Q27` are RULED; **`Q25` — THE SOURCE SET — IS HELD FOR MATT AND IS UNTOUCHED HERE.**
+#
+# *** **ALL FOUR PRECONDITIONS OF THE SCOPE WERE RE-MEASURED AT THIS BOUNDARY BY THIS SEAT IN ITS
+# OWN SHELL, AND NOT CARRIED FORWARD ON THE PRIOR BOUNDARY'S WORD.** *** A seat resuming a stop it
+# wrote itself is the easiest place on this project to accept its own record as measurement.
+#
+# **AND ONE THING WAS FOUND THAT THE SCOPE DID NOT NAME AND THAT WOULD HAVE STOPPED THE ENGINEER
+# DEAD: `D2`, `D3` AND `D4` ARE ALL IMPOSSIBLE WITHOUT A PID CARRIAGE ONTO THE LANE, BECAUSE THE
+# REGISTER RESOLVES `pid.ref` RELATIVE TO ITS OWN DIRECTORY. IT IS CARRIED AS `D0`.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T174313Z-0152
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T17:43:13Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: '`ps` CHECKED AT BOOT — EXACTLY ONE `claude` process (PID 2002989, wrapper 2002988, `timeout 21600` MEASURED FROM THE LIVE PROCESS AND NOT ASSUMED). `Q10`/`CD-PL-F146` DORMANT, NOT CLOSED.'
+phase: BUILD
+branch: main
+base_sha: 0916655ab6b90a7e0e3efb4ec607fac04c7e7f11   # PO-DECISIONS-0024, authored by Matt Scott and by NO seat.
+
+the_authority:
+  ruling: 'governance/decisions/PO-DECISIONS-0024.md'
+  what_it_settled: >
+    **Q24 — WO-3 BRANCHES FROM THE FROZEN `be0b355`, AND THE CIRCLE IS RESOLVED.** The SHUT gate
+    governs ACCEPTANCE of CD-AC-002/CD-AC-005, NOT whether descendant work may branch. A lane frozen
+    for audit is an IMMUTABLE BASE, not a prohibition on building forward. **The prior seat's
+    reading was correct AND IT WAS STILL RIGHT NOT TO ACT ON IT** — the ruling says so in terms:
+    *"The seat was right not to unfreeze on its own inference; this ruling is the authority it
+    waited for."* **Q27 — INCREMENTS 14 AND 15 PROCEED NOW, sequential single-seat. Q26 — the alert
+    channel gets a DEFAULT (publication surface + machine-readable state endpoint, NO external push
+    until Matt names one), adjustable, not a hard stop.**
+  what_it_HELD: >
+    **Q25 — THE SOURCE SET IS MATT'S AND IS HELD. INCREMENT 16 DOES NOT DISPATCH.** The ruling
+    explicitly honours the `PBG-PID-003` trap the scope named: **NO SEAT READS THE INDICATOR LIST
+    OFF THE ARGUS `/playbook` PAGE AND CALLS IT ANSWERED. The shape is inheritable; the list is
+    not.** **NOTHING IN THIS BOUNDARY TOUCHES IT.**
+
+# ================================================================================================== #
+# RECONCILIATION — **OBSERVED AGAINST RECORDED, RE-MEASURED, NOT INHERITED.**
+# ================================================================================================== #
+reconciliation:
+  boot_verdict: 'AMBER — CONTINUITY_MATCH/RESUME_AMBER. `roadmap_identity` UNAVAILABLE (no ROADMAP.md); this is the standing AMBER on this project and is not new at this boundary.'
+  pid_identity: 'PID.md@538e30f3bf4f1803'
+  observed_sha_at_boot: '0916655ab6b90a7e0e3efb4ec607fac04c7e7f11'
+  agreement: 'RECORDED AND OBSERVED AGREE. No silent correction was made and none was needed.'
+
+  P1_no_src_on_main:
+    re_measured: '`git ls-tree -r --name-only HEAD -- src | wc -l` -> **0**. CONFIRMED: `main` carries no product code.'
+  P2_register_invalid:
+    re_measured: >
+      Re-run by THIS seat in a fresh `git archive be0b355 | tar -x` extraction:
+      **VALIDATION FAILED, SIX ERRORS, BYTE-FOR-BYTE THE SIX THE SCOPE RECORDED** — `planted_violation`
+      and `planted_violation_note` at `criteria[1] (CD-AC-002).tests[3]`, `criteria[3]
+      (CD-AC-005).tests[2]` and `criteria[3] (CD-AC-005).tests[3]`. **GATE: SHUT.
+      PID_ACCEPTANCE_SATISFIED: NOT DERIVED.**
+  P3_stale_pin:
+    re_measured: >
+      `sha256sum` of the extraction's PID.md -> **441d8316…** (the pin) versus `sha256sum PID.md` on
+      main -> **538e30f3…**. **AND THE INSTRUMENT'S OWN OUTPUT CONFIRMS THE MASKING IN THIS SEAT'S
+      SHELL: it printed `pid.ref (unresolved)` and `pid.content_hash (not comparable)`** — because
+      `report.pid_ref` is assigned only during status derivation, which the schema failure
+      short-circuits. **THE MASKING IS OBSERVED, NOT INFERRED.**
+  P4_census_17:
+    re_measured: >
+      With the instrument's OWN `derive_pid_census` against the LIVE PID, not by counting rows by
+      eye: **CENSUS SIZE 17 · `CD-AC-017` in census TRUE · `CD-AC-018` in census FALSE · `CD-AC-004`
+      in census TRUE.** All three legs of the P4 claim hold, **including the third, which is the one
+      that matters: `CD-AC-004`'s presence is what makes `CD-AC-018`'s `STRENGTHENS` trace RESOLVE
+      RATHER THAN DANGLE.**
+
+# ================================================================================================== #
+# THE ACT — **A LANE CUT FORWARD FROM A FROZEN BASE, WITH THE BASE MEASURED UNMOVED AFTERWARDS.**
+# ================================================================================================== #
+the_lane:
+  branch: 'wo-3'
+  cut_from: 'be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5'
+  worktree: '/srv/crash-detector-wo3'
+  the_base_is_unmoved: >
+    **MEASURED AFTER THE CUT, NOT ASSERTED BEFORE IT:** `git rev-parse wo-2r3` ->
+    `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **`wo-2r3` IS STILL FROZEN AT `be0b355`. THE CUT
+    ADDED A REF; IT MOVED NOTHING.** The WO-2 gate stays **SHUT** and this boundary does not touch
+    it — ruling 1 is explicit that the gate closes when WO-3 DELIVERS the DETECTED tier, which is
+    increments 17-18 and is not here.
+
+# ================================================================================================== #
+# **THE FINDING THIS BOUNDARY ADDS TO THE SCOPE — AND IT IS A BLOCKER THE SCOPE DID NOT SEE.**
+# ================================================================================================== #
+CD-PL-F157:
+  severity: MEDIUM
+  raised_against: 'governance/engineering/WO-3-SCOPE.md §3 Group D — THIS SEAT''S OWN PRIOR DOCUMENT.'
+  what: >
+    **GROUP D AS WRITTEN CANNOT BE EXECUTED.** `D2` (re-pin to `538e30f3…`), `D3` (add `CD-AC-017`
+    `DERIVES`) and `D4` (add `CD-AC-018` `STRENGTHENS CD-AC-004`) all assume the lane's census is
+    the LIVE one. **IT IS NOT.** `required-tests.yaml` resolves `pid.ref: PID.md` **relative to the
+    register's own directory** (`required_tests.py:606-608`), so the register reads **THE LANE'S**
+    `PID.md` — which at `be0b355` is the OLD PID, `441d8316…`, **census 16, NO `CD-AC-017`.**
+  the_consequence_if_unnamed: >
+    An Engineer following Group D literally would re-pin to a hash the resolved file does not have
+    (**MISMATCH**) and add a `CD-AC-017` row that **does not resolve against a 16-criterion census**
+    — and would then be standing in front of two red results with a dispatch that told it to expect
+    green, **which is exactly the state in which seats start improvising.**
+  the_remedy: >
+    Carried as **`D0`** in the dispatch: `git checkout main -- PID.md` onto the lane, **verbatim, a
+    CARRIAGE OF AN EXISTING PRODUCT OWNER ACT (PID v1.1.0, `PO-DECISIONS-0020` ruling 1) AND NOT AN
+    AMENDMENT**, verified **BY HASH** (`538e30f3…`) and not by eye. **The Engineer is forbidden from
+    editing `PID.md` by one byte (`CD-D-115`) and is told to STOP AND REPORT if the hash disagrees
+    rather than reconcile it by hand.**
+  disclosed_and_not_tidied: >
+    **`BLUEPRINT.md` ALSO DIVERGES BETWEEN THE LANE AND `main` — +296/−29, MEASURED.** It is
+    **DELIBERATELY NOT CARRIED**: the register reads the PID and does not read the Blueprint, and
+    widening an increment to tidy a divergence nobody asked about is how scope creeps. **IT IS
+    WRITTEN DOWN HERE SO THAT THE NEXT SEAT TO SEE IT KNOWS IT WAS SEEN AND LEFT ON PURPOSE.**
+
+# ================================================================================================== #
+# **THE SECOND FINDING — AND IT IS THE ONE THAT WOULD HAVE DESTROYED EVIDENCE.**
+# ================================================================================================== #
+CD-PL-F158:
+  severity: HIGH
+  raised_against: 'the obvious reading of `D1` — the reading a competent seat in a hurry would take.'
+  what: >
+    **"FIX THE SCHEMA TO THE CONTRACT (violation/evidence_ref, not planted_violation/…)" READS AS A
+    RENAME. IT IS NOT A RENAME, AND A RENAME WOULD SILENCE THE VALIDATOR WHILE DESTROYING THE
+    REGISTER'S MEANING.** This seat inspected both forms before dispatching:
+    **the CONFORMING form** (`required-tests.yaml:166`, `:224`) has `violation:` = **PROSE DESCRIBING
+    THE CLASS OF VIOLATION** the control must catch. **The SIX DEFECTIVE sites carry NO `violation:`
+    PROSE AT ALL** — they carry `planted_violation:` = **A PATCH PATH** and `planted_violation_note:`
+    = prose about **that one plant**. **THE SIX ARE MISSING A REQUIRED THING AND CARRYING TWO THINGS
+    THE CONTRACT HAS NO HOME FOR.**
+  why_it_is_HIGH: >
+    `sed s/planted_violation/violation/` would put **a patch path into a field whose contract meaning
+    is a violation-class description**, and would either drop `planted_violation_note` or collide.
+    **THE PATCH PATHS ARE THE RECORDED EVIDENCE OF A MEASURED 14-PLANT SET (`be0b355`'s own
+    measurement record). DELETING THEM TO MAKE AN INSTRUMENT GO GREEN IS THE EXACT ACT THIS PROJECT
+    EXISTS TO REFUSE.**
+  the_remedy: >
+    The dispatch §2 makes it **three obligations at each of the six sites, all three or the site is
+    not repaired**: (1) **WRITE** the `violation:` class prose at the conforming sites' altitude,
+    derived from the plant's semantics and the criterion's `acceptance_semantics`; (2) **PRESERVE**
+    the patch path and note, relocated into `execution_contract` (allowed at test level); (3) **KEEP**
+    `evidence_ref`. **And it forbids the escape hatch by name: if `execution_contract` is the wrong
+    home, SAY SO AND PROPOSE THE RIGHT ONE — DO NOT DROP IT, AND DO NOT EDIT `pbg/` TO ADD A FIELD
+    (`PBG-FWK-013`).**
+
+# ================================================================================================== #
+# THE DISPATCH
+# ================================================================================================== #
+the_dispatch:
+  artefact: 'governance/engineering/CD-DISPATCH-INC14-REGISTER-REPAIR-ENGINEER.md'
+  increment: 14
+  seat: 'CD-ENG-WO3-01 — **A FRESH IDENTITY.** Never `CD-ENG-WO2R3-01`…`-09`, never `CD-ENG-COORD-01`, never `CD-ENG-COORD-FIX-01`.'
+  sequencing: '**SEQUENTIAL SINGLE-SEAT (`CD-D-181`). NO PARALLEL SEAT.** Increment 15 is NOT dispatched here and does not go out until 14 returns and is reconciled.'
+  deliverables: 'D0 the PID carriage (this boundary''s addition) · D1 the six sites · D2 the re-pin · D3 `CD-AC-017` `DERIVES` · D4 `CD-AC-018` `STRENGTHENS CD-AC-004` · D5 re-run and record what it COMPUTES · D6 diagnose the `CD-AC-002`/`CD-AC-005` co-location.'
+  the_expected_outcome_is_stated_as_SHUT: >
+    *** **THE DISPATCH TELLS THE ENGINEER IN ADVANCE THAT THE GATE WILL ALMOST CERTAINLY STILL READ
+    `SHUT`, AND THAT THIS IS A CORRECT OUTCOME OF THE INCREMENT RATHER THAN A FAILURE OF IT.** ***
+    `latest_admitted_run` is `null` and **the Engineer cannot change it** — it does not admit its own
+    evidence (`PBG-SOD-001`). **THE WIN IS THAT THE REGISTER COMPUTES A STATUS AT ALL, FOR THE FIRST
+    TIME IN ITS LIFE.** Naming the expected result up front is deliberate: **a seat that expects
+    green and gets SHUT is a seat under pressure to invent one.**
+  D6_is_a_question_not_an_instruction: >
+    The co-location of all six errors in `CD-AC-002`/`CD-AC-005` is handed to the Engineer as
+    something to **investigate with `git log -S`**, and it is told explicitly that **"I measured this
+    much and it does not settle it" is an acceptable answer and a confident wrong one is worse.**
+
+# ================================================================================================== #
+# STANDING — **UNCHANGED, AND THE POINT IS THAT IT IS UNCHANGED.**
+# ================================================================================================== #
+standing:
+  CD-AC-002: 'AMBER and NOT CLOSED — **NOT MOVED HERE AND THE DISPATCH FORBIDS MOVING IT.**'
+  CD-AC-005: 'RED — **NOT MOVED HERE AND THE DISPATCH FORBIDS MOVING IT.**'
+  the_instrument_versus_the_grades: >
+    **THAT THE REGISTER WAS BLIND IS NOT EVIDENCE THE GRADES WERE WRONG.** The adversarial Assurance
+    seats were the true floor throughout — which is `IMP-015`'s doctrine, *"the auditor is the
+    floor,"* **shown to have been LOAD-BEARING IN FACT and not merely in principle.** Repairing the
+    instrument that reads the grades is not a licence to re-read them, and the dispatch says so.
+  wo_2_gate: 'SHUT.'
+  wo_2r3: '**FROZEN at `be0b355` — MEASURED AFTER THE LANE CUT, NOT ASSUMED.**'
+  source_set: '**HELD FOR MATT (`Q25`). NO SOURCE IS REGISTERED. INCREMENT 16 IS NOT DISPATCHED.**'
+  coordination_discipline: 'PARKED at AMBER, decoupled to the PBGv2 framework track. **No WO-3 increment may reach for it or quietly fix a residual inside itself.**'
+  alert_channel: '**Q26 RULED — default is the publication surface + a machine-readable state endpoint, NO external push until Matt names one.** It folds into increment 15 and no longer blocks.'
+  system: 'Safe to leave running, sequentially.'
+
+next_actor: '**`CD-ENG-WO3-01`, INCREMENT 14. THEN A SEPARATE ASSURANCE SEAT (`PBG-SOD-001`, non-waivable — the Engineer and the Assurance Engineer are NEVER the same agent). THEN INCREMENT 15. THEN THE STOP: THE MATT HOLD ON `Q25`.**'

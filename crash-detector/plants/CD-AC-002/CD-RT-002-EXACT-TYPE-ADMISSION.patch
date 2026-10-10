@@ -1,0 +1,28 @@
+diff --git a/src/crash_detector/admission.py b/src/crash_detector/admission.py
+index 6861681..deff67f 100644
+--- a/src/crash_detector/admission.py
++++ b/src/crash_detector/admission.py
+@@ -617,11 +617,18 @@ class _Exactly(_Admission):
+         self.types = types
+ 
+     def refusal(self, parameter: str, value: object) -> "str | None":
+-        # `is_exactly` AND NOT `type(value) in self.types` (F-06-D, WO-2R3 increment 8).
+-        # `in` over a tuple is `==`, `==` puts `type(value)` on the LEFT, and a metaclass
+-        # that answers `__eq__` therefore decided this door for its own instances — on an
+-        # ordinary, source-honest door reporting ZERO faults. MEASURED end to end.
+-        if is_exactly(value, self.types):
++        # ==================================================================================
++        # PLANTED VIOLATION — CD-RT-002-EXACT-TYPE-ADMISSION.
++        # **THE ONE-LINE REGRESSION THIS PROJECT HAS MADE FOUR TIMES AND CALLED A
++        # SIMPLIFICATION.** `isinstance` instead of exact type, at the single point where
++        # every `@admits` and every `@establishes` field decides what it will accept. The
++        # source still reads `this door requires exactly X` in its own refusal message, the
++        # door still reports `faults: ()`, and `is_admitting_door` is still True — and a
++        # forged metatype subclass carrying `__float__` now walks through it, which is
++        # CD-ASR-F01.
++        # Not part of the product; `git apply` puts it here and `git checkout` removes it.
++        # ==================================================================================
++        if isinstance(value, self.types):
+             return None
+         return (
+             f"{parameter}={type(value).__name__} is not admitted; this door requires "

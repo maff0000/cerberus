@@ -1,0 +1,237 @@
+# ================================================================================================== #
+# BL-20260823T180244Z-0153 — PROJECT LEAD BOUNDARY. **INCREMENT 14 IS RETURNED, RECONCILED BY
+# MEASUREMENT AND BANKED. IT IS NOT ACCEPTED (`PBG-AUTH-003`, `CD-D-180`).**
+#
+# *** **THE HEADLINE, AND IT IS THE ONE THE PROJECT HAS BEEN OWED FOR TEN GATES: THE REQUIRED TEST
+# REGISTER COMPUTES A STATUS. IT HAS NEVER DONE SO BEFORE. 0 CRITERIA -> 18 CRITERIA.** ***
+#
+# **AND THE GATE STILL READS `SHUT`, WHICH IS THE CORRECT OUTCOME AND WAS PREDICTED IN THE DISPATCH
+# BEFORE THE SEAT LAUNCHED.** Every one of the 18 is `UNDECIDABLE` because no run record exists and
+# `latest_admitted_run` is `null` — **AND THE ENGINEER CANNOT CHANGE THAT, BECAUSE IT DOES NOT ADMIT
+# ITS OWN EVIDENCE (`PBG-SOD-001`). `UNDECIDABLE` IS NOT A PASS AND THE SEAT SAID SO IN TERMS.**
+#
+# *** **TWO OF THIS SEAT'S OWN DISPATCH PRESCRIPTIONS WERE WRONG, THE ENGINEER REFUSED BOTH, AND
+# THIS SEAT HAS VERIFIED THAT THE ENGINEER WAS RIGHT AND IT WAS WRONG — BY COMMAND, NOT BY
+# DEFERENCE.** *** A seat that dispatches a trap and is caught by the seat it dispatched is the
+# separation of duties working in the direction it is least comfortable to record.
+# ================================================================================================== #
+
+entry_id: BL-20260823T180244Z-0153
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T18:02:44Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 2002989, wrapper 2002988, `timeout 21600` measured from the live process. Exactly one `claude` PL process at boot.'
+phase: BUILD
+branch: main
+base_sha: 4ba110f   # BL-...-0152, the boundary that cut the lane and dispatched increment 14.
+
+the_increment:
+  increment: 14
+  seat: 'CD-ENG-WO3-01 (fresh identity)'
+  lane: 'wo-3'
+  tip: '9b09d2a5524743003febedabec3d461d9bc1a470'
+  commits: '2 — `7b7fafe` (D0-D4), `9b09d2a` (D5/D6 evidence + findings).'
+  returned: 'READY_FOR_ASSURANCE'
+  status: '**BANKED AND RECONCILED. NOT ACCEPTED.** Acceptance is not this seat''s (`PBG-AUTH-003`), and a SEPARATE Assurance seat is required (`PBG-SOD-001`, non-waivable).'
+
+# ================================================================================================== #
+# RECONCILIATION — **EVERY CLAIM BELOW WAS RE-RUN IN THIS SEAT'S OWN SHELL. NONE WAS ACCEPTED ON THE
+# ENGINEER'S WORD.** (`CD-RULE-009` — a count copied is a transcription.)
+# ================================================================================================== #
+reconciliation_by_this_seat:
+  containment:
+    tip: '`git rev-parse HEAD` -> `9b09d2a…` — AGREES with the return.'
+    porcelain: '`git status --porcelain | wc -l` -> **0**.'
+    identity: '`git log --format=%an be0b355..HEAD | sort -u` -> **`CD-ENG-WO3-01`, EXACTLY ONE** (`CD-RULE-002`).'
+    pbg_untouched: '`git diff --name-only be0b355..HEAD -- pbg/ src/ tests/ contracts/ BLUEPRINT.md governance/decisions/` -> **0 paths.** **NOT ONE BYTE OF THE PINNED FRAMEWORK, NO PRODUCT CODE, NO PROTECTED PO FILE.**'
+    the_frozen_base: '`git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **STILL FROZEN. THE LANE BUILT FORWARD AND MOVED NOTHING.**'
+    the_PID_carriage: '`sha256sum PID.md` -> `538e30f3…` **AND** `git show main:PID.md | cmp - PID.md` -> **BYTE-IDENTICAL, EXIT 0.** D0 is a verbatim carriage and not an edit.'
+  the_verifier:
+    method: '**THIS SEAT''S OWN `git archive 9b09d2a | tar -x` EXTRACTION**, not the Engineer''s tree and not its transcript.'
+    result: >
+      **`pid.content_hash MATCHES` · validation PASSES · 18 criteria each carrying a computed status
+      · `GATE: SHUT` · `PID_ACCEPTANCE_SATISFIED: NOT DERIVED` · exit 2.** **REPRODUCED EXACTLY AS
+      RETURNED.**
+    the_before_and_after: '**BEFORE: `VALIDATION FAILED`, six errors, ZERO criteria with a status. AFTER: validation passes, EIGHTEEN. THAT IS THE WHOLE INCREMENT.**'
+  the_register_diff:
+    method: 'Parsed BOTH the base register and the tip register with `yaml.safe_load` and compared them SEMANTICALLY — not by reading the diff, which is the check that would have missed a last-wins duplicate key.'
+    rows: '**16 -> 18.** Added: `CD-AC-017`, `CD-AC-018`. Removed: **none**.'
+    pre_existing_untouched: >
+      **`violation` prose, `evidence_ref` and `execution_contract` compared field-by-field across
+      EVERY pre-existing test: ZERO SEMANTIC DIFFERENCES.** The two surplus keys are gone from the
+      parsed document at all three sites. **THE REPAIR TOUCHED THE DEFECT AND NOTHING ELSE.**
+    the_evidence_was_preserved: >
+      **ALL SIX preserved-as-comment texts checked WORD-IDENTICAL against the base's own values: 6/6,
+      ZERO LOST.** *** **AND THIS SEAT'S FIRST RUN OF THAT CHECK REPORTED `3 LOST` AND WAS WRONG —
+      IT COUNTED THE `#` COMMENT MARKERS AS WORDS. THE CHECK WAS CORRECTED AND RE-RUN. IT IS
+      RECORDED BECAUSE A VERIFICATION THAT FAILED AND WAS FIXED IS EVIDENCE ABOUT THE VERIFICATION,
+      AND QUIETLY KEEPING ONLY THE SECOND RESULT IS HOW A RECORD STOPS BEING ONE.** ***
+  the_plants:
+    method: '**BOTH CONTRAST ARMS RE-APPLIED AND RE-RUN BY THIS SEAT**, each in its own pristine extraction of the tip, `git apply` exit recorded.'
+    table: |
+      ARM                                          APPLY  VALIDATION  COMPUTED  pid.content_hash
+      CLEAN (no patch)                               n/a  PASSES            18  MATCHES
+      CONTRAST 1 — reintroduce ONE planted_violation   0  FAILED             0  (not comparable)
+      CONTRAST 2 — revert the pin to 441d8316…         0  PASSES            18  MISMATCH
+    what_each_arm_proves: >
+      **CONTRAST 1 PROVES THE REPAIR IS LOAD-BEARING AND NOT DECORATIVE: ONE FIELD COLLAPSES 18 TO
+      0.** *** **CONTRAST 2 IS THE BETTER ARM AND IT WAS NOT REQUIRED BY THE DISPATCH IN THIS FORM:
+      IT MEASURES THE MASKING FROM BOTH SIDES. The instrument now PRINTS `MISMATCH` — a verdict it
+      was STRUCTURALLY UNABLE TO REACH while the schema failure short-circuited before status
+      derivation. `P3` IS THEREFORE DEMONSTRATED TO HAVE BEEN MASKED RATHER THAN ABSENT, WHICH IS
+      EXACTLY WHAT THE SCOPE PREDICTED AND COULD NOT THEN PROVE.** ***
+    the_seat_declined_the_established_form_and_was_right: >
+      The dispatch asked for `git apply` exit as a third discriminating column. **The Engineer
+      measured that the verifier exits 2 in ALL THREE ARMS — the gate is shut in every arm — so the
+      established three-column form WOULD HAVE PRODUCED A VACUOUS TABLE.** It substituted columns
+      that DO discriminate and **declared the substitution rather than performing the ritual.**
+      **THAT IS `CD-ENG-WO2R3-F12`'S FAILURE MODE AVOIDED BY A SEAT THAT NOTICED THE FORM DID NOT
+      FIT THE INSTRUMENT.** Carried as its `F04`.
+
+# ================================================================================================== #
+# **THE CORRECTIONS. `CD-PL-F158` WAS WRONG ON ITS FACTS. IT IS SUPERSEDED AND NOT EDITED
+# (`PBG-CONT-003`, non-waivable — corrections supersede, never rewrite).**
+# ================================================================================================== #
+CD-PL-F160:
+  severity: HIGH
+  supersedes: 'CD-PL-F158 (raised at BL-20260823T174313Z-0152). **`CD-PL-F158` STANDS ON THE RECORD UNEDITED AND WRONG. THIS ROW IS THE CORRECTION.**'
+  raised_against: '**PROJECT_LEAD_SEAT_01 — THIS SEAT, AT ITS OWN PRIOR BOUNDARY.**'
+  what_F158_claimed: '*"The SIX DEFECTIVE sites carry NO `violation:` PROSE AT ALL."*'
+  what_is_actually_true: >
+    **FALSE, AND MEASURED FALSE BY THIS SEAT WITH `yaml.safe_load` AGAINST THE FROZEN BASE:** all
+    three defective tests carry `violation:` prose of **4292, 30522 and 12152 characters** AND
+    `evidence_ref`. Their `negative_control` keys are
+    `['evidence_ref', 'planted_violation', 'planted_violation_note', 'violation']`. **THEY WERE NOT
+    MISSING A REQUIRED FIELD. THEY WERE CARRYING TWO SURPLUS ONES.**
+  how_this_seat_got_it_wrong: >
+    **IT READ THE TAIL OF A LONG YAML BLOCK SCALAR AND CONCLUDED THE FIELD WAS ABSENT.** `sed -n
+    '735,770p'` landed inside the *end* of a 4292-character `violation:` scalar, so the visible text
+    ran straight into `planted_violation:` with no key in view. **THE SEAT INSPECTED A WINDOW AND
+    REPORTED ON A DOCUMENT.** The conforming examples it compared against (`:166`, `:224`) were read
+    from their *first* line, so the two forms looked structurally different when they were not.
+  the_damage_it_would_have_done: >
+    *** **DISPATCH §2 OBLIGATION 1 ORDERED THE ENGINEER TO "WRITE the `violation:` prose". FOLLOWING
+    IT LITERALLY WOULD HAVE CREATED A DUPLICATE YAML KEY, WHICH `safe_load` RESOLVES LAST-WINS —
+    SILENTLY DESTROYING UP TO 30,522 CHARACTERS OF RECORDED PROSE AT `CD-AC-005`.** *** **THE
+    FINDING WRITTEN TO PREVENT EVIDENCE DESTRUCTION PRESCRIBED A DIFFERENT EVIDENCE DESTRUCTION.**
+  what_survives_of_F158: >
+    **ITS CONCLUSION, AND ONLY ITS CONCLUSION: "THE REPAIR IS NOT A RENAME."** That was right — a
+    rename would have collided with the real `violation:` key. **BUT IT WAS RIGHT FOR A REASON ITS
+    AUTHOR HAD NOT MEASURED, AND A CONCLUSION THAT SURVIVES ITS OWN REASONING IS LUCK, NOT RIGOUR.**
+    The Engineer's own words are adopted here unsoftened.
+
+CD-PL-F161:
+  severity: HIGH
+  raised_against: '**PROJECT_LEAD_SEAT_01 — THIS SEAT, AT ITS OWN PRIOR BOUNDARY.**'
+  what: >
+    **DISPATCH §2 OBLIGATION 2 PRESCRIBED RELOCATING THE PLANT PATH AND NOTE INTO
+    `execution_contract`, ASSERTING "`execution_contract` IS PROSE AND IS ALLOWED AT TEST LEVEL".
+    THE SECOND HALF IS TRUE AND THE FIRST HALF IS FALSE.**
+  measured_by_this_seat: >
+    `required_tests.py:658-661`: `if not (project_root / contract_ref).is_file():` -> the test is
+    marked `UNDECIDABLE` **and the loop `continue`s.** **`execution_contract` IS A FILE PATH, AND A
+    NON-RESOLVING ONE SKIPS NEGATIVE-CONTROL AND ACCEPTANCE EVALUATION ENTIRELY.**
+  the_damage_it_would_have_done: >
+    **PUTTING PROSE THERE WOULD HAVE FORCED `UNDECIDABLE` AND SKIPPED EVALUATION AT THREE TESTS OF
+    `CD-AC-002` AND `CD-AC-005` — THE EXACT TWO CRITERIA THE PERIMETER TURNS ON.** The increment
+    whose entire purpose is to make the instrument compute would have blinded it again, in the same
+    two rows, **by the hand of the seat that diagnosed the blindness.**
+  what_the_engineer_did_instead: >
+    Preserved **both** keys as **adjacent YAML comments**, verified word-identical to `be0b355`
+    (**re-verified 6/6 by this seat**). **AND IT CORRECTED THE PREMISE OF THE WHOLE PRESERVATION
+    ANXIETY:** the plants' **canonical** record already lives in `plants/MANIFEST.md` and
+    `contracts/execution/*.md` **with both measured arms** — the register keys were a **duplicate,
+    never a unique record.** **SO NOTHING WAS EVER AT RISK OF BEING LOST, AND `CD-PL-F158` WAS
+    ALARMED ABOUT A LOSS THAT COULD NOT HAVE OCCURRED WHILE PRESCRIBING TWO THAT COULD.**
+  the_dispatch_clause_that_saved_it: >
+    **THE ONE THING THIS SEAT GOT RIGHT: §2 SAID "IF YOU CONCLUDE THAT PRESERVING THE PLANT PATH
+    INSIDE `execution_contract` IS THE WRONG HOME, SAY SO AND PROPOSE THE RIGHT ONE — DO NOT SILENTLY
+    DROP IT AND DO NOT EDIT `pbg/`."** **THE ESCAPE HATCH WAS WRITTEN INTO THE TRAP, AND THE ENGINEER
+    USED IT EXACTLY AS INTENDED.** A dispatch that ordered compliance without that clause would have
+    landed both regressions. **THE LESSON IS NOT THAT THIS SEAT WAS CLEVER; IT IS THAT PRESCRIBING
+    MECHANISM FROM A SEAT THAT HAS NOT RUN THE CODE IS THE ERROR, AND THE CLAUSE ONLY LIMITED THE
+    BLAST RADIUS.**
+
+CD-PL-F162:
+  severity: LOW
+  raised_against: 'PROJECT_LEAD_SEAT_01 — the dispatch''s arithmetic, and `PO-DECISIONS-0024` ruling 2 carries the same slip.'
+  what: >
+    The dispatch said the register goes **"from 16 rows to 17"**. **IT GOES FROM 16 TO 18.**
+    **17 IS THE PID CENSUS SIZE, NOT THE REGISTER ROW COUNT** — the register carries a row for every
+    census member **PLUS** `CD-AC-018`, which is register-only and deliberately absent from the
+    census. **MEASURED: base 16, tip 18.** The Engineer caught it as its `F05`. **The confusion of a
+    census with a register is precisely the confusion `CD-AC-018`'s whole design exists to make
+    visible, so making it in the dispatch is not a typo — it is the seat losing hold of the
+    distinction it was enforcing.**
+
+# ================================================================================================== #
+# THE ENGINEER'S OWN FINDINGS — **SIX, AND IT RAISED FOUR AGAINST ITSELF OR ITS OWN INSTRUCTIONS.**
+# ================================================================================================== #
+engineer_findings:
+  F01_HIGH: 'The `CD-PL-F158` premise is false. **VERIFIED AND ADOPTED — carried above as `CD-PL-F160`.**'
+  F02_HIGH: '`execution_contract` is a path, not prose; the prescribed relocation would have regressed three rows. **VERIFIED AND ADOPTED — carried above as `CD-PL-F161`.**'
+  F03_MEDIUM:
+    what: '**D3/D4 ARE NOT FULLY DISCHARGEABLE.** The two new rows require execution contracts under `contracts/`, which was **outside the writable scope this seat granted.** Both rows therefore honestly report `execution_contract … does not resolve`.'
+    disposition: >
+      **ESCALATED, NOT TAKEN — AND THAT IS THE CORRECT ACT.** A seat that had written itself into
+      `contracts/` to clear its own defect line would have widened its own scope to make its own
+      output look finished. **THE RESIDUAL IS REAL AND IS CARRIED, NOT CLOSED:** the two contracts
+      (`contracts/execution/CD-RT-017-*.md`, `CD-RT-018-*.md`) are owed at **increments 17 and 18**,
+      which are the increments that build the mechanisms those tests describe. **WRITING AN EXECUTION
+      CONTRACT FOR A TEST WHOSE MECHANISM DOES NOT EXIST WOULD BE WRITING THE PAPER BEFORE THE
+      THING.** **IT MASKS NOTHING TODAY** — every one of the 18 is `UNDECIDABLE` for the
+      `latest_admitted_run` reason anyway — **but it WILL become the sole remaining cause for those
+      two rows once run records land, and it is booked to 17/18 so that it surfaces there rather
+      than being discovered there.**
+  F04_MEDIUM: 'The exit-code contrast form is vacuous on this instrument (exit 2 in all arms). **VERIFIED BY THIS SEAT AND ACCEPTED.**'
+  F05_LOW: 'Dispatch arithmetic 17 vs 18. **VERIFIED AND ADOPTED — carried above as `CD-PL-F162`.**'
+  F06_MEDIUM: '`PID.md:122` still reads `NEW_REQUIREMENT`. **VERIFIED BY THIS SEAT AND ROUTED UPWARD AS `Q28` — see below. THE ENGINEER DID NOT EDIT IT AND DID NOT SILENTLY RECONCILE IT, WHICH IS THE ONLY CORRECT HANDLING OF PO-AUTHORED PROSE (`CD-D-115`).**'
+
+engineer_boot_verdict_recorded_not_smoothed:
+  verdict: 'RED — `CONTINUITY_REFERENCE_INVALID`.'
+  cause: '`ACTIVE_WORK.yaml:36` **on the frozen base** carries `continuity_record_commit: PENDING`.'
+  handling: >
+    **PRE-EXISTING, INHERITED FROM `be0b355`, AND EXPLICITLY OUTSIDE THE SEAT''S WRITABLE SCOPE — SO
+    IT COULD NOT CLEAR IT AND DID NOT TRY.** **THERE IS NO DRIFT: observed baseline equals dispatched
+    baseline exactly.** **A SEAT THAT BOOTED `RED`, SAID SO, AND WORKED ANYWAY WITHIN A SCOPE THAT
+    DID NOT REACH THE CAUSE IS BEHAVING CORRECTLY — AND THIS SEAT RECORDS THE `RED` RATHER THAN
+    NETTING IT OFF AGAINST A CLEAN RESULT.** The lane's `ACTIVE_WORK.yaml` is a frozen-base artefact;
+    `main`'s is current. Booked as a lane-hygiene residual for the WO-3 lane.
+
+# ================================================================================================== #
+# **A NEW PRODUCT AUTHORITY QUESTION. THIS SEAT DOES NOT ANSWER IT.**
+# ================================================================================================== #
+Q28:
+  question: '**`PID.md` §6''s prose says `CD-AC-017` "enters as `NEW_REQUIREMENT`". The register now records it as `DERIVES`. WHICH IS THE PID''S INTENT, AND DOES THE PID PROSE GET CORRECTED?**'
+  measured: >
+    `PID.md:122` and the v1.1.0 changelog row (`:174`) **both** say `NEW_REQUIREMENT`. The register
+    row says `DERIVES`. **BOTH CANNOT DESCRIBE THE SAME FILE AT THE SAME TIME.**
+  why_the_register_is_nonetheless_right_today: >
+    **`PO-DECISIONS-0024` RULING 2 RULES IT IN TERMS — *"CD-AC-017 DERIVES — in the census, so the
+    amendment path is spent"*.** And the mechanics agree: `CD-AC-017` **IS** in the live census
+    (measured, 17/17), and `NEW_REQUIREMENT` would force `NOT_EVALUATED` with *"blocked pending PO
+    amendment of the PID"* — **an amendment that has already happened.** The register follows the
+    **later** ruling, which is the correct precedence.
+  why_it_is_still_a_question: >
+    **THE PID PROSE IS NOW STALE AGAINST THE PRODUCT OWNER''S OWN LATER RULING, AND `PID.md` IS
+    PO-AUTHORED AND PROTECTED FROM EVERY SEAT INCLUDING THIS ONE (`CD-D-115`).** It was accurate when
+    written — at that moment the amendment had not landed. **IT IS NOT WRONG SO MUCH AS OVERTAKEN.**
+    **NOTHING IS BLOCKED BY IT AND NOTHING IS BEING SMOOTHED OVER: it is surfaced now rather than
+    left for a future seat to "tidy", which is how PO prose gets edited by people who may not.**
+  blocks: 'NOTHING. Increments 15 onward proceed.'
+
+# ================================================================================================== #
+# STANDING
+# ================================================================================================== #
+standing:
+  the_register: '**VALID, AND COMPUTING FOR THE FIRST TIME. 18 ROWS, 18 COMPUTED STATUSES, ALL `UNDECIDABLE`.** `UNDECIDABLE` **IS NOT A PASS** and is not recorded as progress toward one.'
+  the_gate: '**SHUT.** `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`. **CORRECT, PREDICTED, AND NOT CHASED.**'
+  CD-AC-002: 'AMBER and NOT CLOSED — **NOT MOVED.**'
+  CD-AC-005: 'RED — **NOT MOVED.**'
+  wo_2_gate: 'SHUT.'
+  wo_2r3: '**FROZEN at `be0b355` — RE-MEASURED AT THIS BOUNDARY.**'
+  source_set: '**HELD FOR MATT (`Q25`). NO SOURCE REGISTERED — MEASURED: the Engineer registered none, not one row, not a fixture.**'
+  latest_admitted_run: '`null`, **untouched.**'
+  assurance: '**OWED. `PBG-SOD-001` IS NON-WAIVABLE AND THE ENGINEER DOES NOT CERTIFY ITS OWN WORK — IT SAID SO ITSELF ON RETURN.**'
+
+next_actor: '**A SEPARATE ASSURANCE SEAT OVER INCREMENT 14 AT `9b09d2a` — READ-ONLY, FRESH IDENTITY, NEVER `CD-ENG-WO3-01`. THEN INCREMENT 15. THEN THE STOP: THE MATT HOLD ON `Q25`.**'

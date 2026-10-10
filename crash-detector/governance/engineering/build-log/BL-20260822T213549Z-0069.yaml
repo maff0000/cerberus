@@ -1,0 +1,90 @@
+# ================================================================================================ #
+# CORRECTION ENTRY — SUPERSEDES FOUR LINE-NUMBER RANGES IN THE COMMIT MESSAGE OF 58cab8d, AND
+# NOTHING ELSE.
+#
+# CORRECTIONS SUPERSEDE, THEY NEVER EDIT (PBG-CONT-003, non-waivable). 58cab8d's message is not
+# rewritten and BL-...-0068 is not touched. Everything in either that is not named below stands.
+#
+# WHY THIS ENTRY EXISTS, AND IT IS NOT FLATTERING TO THIS SEAT.
+# `CD-ENG-WO2R3-F23` was raised against CD-ENG-WO2R3-01 for writing line numbers into a commit
+# message FROM INTENT rather than reading them off the artefact, and BL-...-0067 is that seat's
+# correction of doing it a second time. **CD-ENG-WO2R3-02 HAS NOW DONE IT ON ITS FIRST COMMIT.**
+# The four ranges under DECLARED LIMITS TOUCHED in 58cab8d's message were written while the message
+# was being composed and were never read back off the files. Three of the four are wrong.
+#
+# THE COMMIT MESSAGE IS IMMUTABLE ONCE PUSHED INTO THE RECORD AND THIS SEAT WILL NOT AMEND IT. The
+# figures are corrected here, at the SHA they were wrong at, which is the only place a correction
+# can honestly live.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0068. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T213549Z-0069
+timestamp_utc: "2026-08-22T21:35:49Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC6-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+parent_entry_id: BL-20260822T213217Z-0068
+supersedes_fields_in: 'the commit message of 58cab8d41b56254cdbec1724207391d8f57a7721'
+schema_version: 1
+
+record_type: CORRECTION
+this_entry_writes_these_fields_and_nothing_else: >
+  The four line ranges under "DECLARED LIMITS TOUCHED / THE THREE CD-RULE-004 PLACES" in 58cab8d's
+  commit message. **NO OTHER FIGURE, MEASUREMENT, CONTRAST OR FINDING IN THAT MESSAGE OR IN
+  BL-...-0068 IS ALTERED OR WITHDRAWN.** Every contrast in that commit was RUN and is unaffected:
+  line numbers are a reading aid and the evidence is the execution.
+
+the_correction:
+  measured_at: '58cab8d41b56254cdbec1724207391d8f57a7721 — the commit whose message was wrong.'
+  command: >
+    Spans resolved by locating each block's first and last line in the committed file, not written
+    from intent. Re-checkable with `git show 58cab8d:<path> | grep -n`.
+  superseded_and_replacing:
+  - place: 'src/crash_detector/collectors/runner.py — `collect` DECLARED LIMIT block, item 4'
+    recorded_in_58cab8d: 'L462-486'
+    measured_at_58cab8d: 'L449-485'
+    status: '**WRONG BY 13 LINES AT THE START AND 1 AT THE END.** Corrected.'
+  - place: 'src/crash_detector/collectors/runner.py — NEW DECLARED LIMIT 5, the payload snapshot'
+    recorded_in_58cab8d: 'L488-534'
+    measured_at_58cab8d: 'L486-533'
+    status: '**WRONG BY 2 LINES AT THE START AND 1 AT THE END.** Corrected.'
+  - place: 'required-tests.yaml — the CD-RT-002-DOORS-REQUIRE-THEIR-TYPES register row'
+    recorded_in_58cab8d: 'L1199-1272'
+    measured_at_58cab8d: 'L1199-1288'
+    status: '**START CORRECT; END WRONG BY 16 LINES.** Corrected.'
+  - place: 'contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md'
+    recorded_in_58cab8d: 'L242-330'
+    measured_at_58cab8d: 'L244-325'
+    status: '**WRONG AT BOTH ENDS.** Corrected.'
+
+finding_raised_by_this_seat_against_itself:
+- id: CD-ENG-WO2R3-02-F03
+  severity: LOW
+  what: >
+    **A LINE NUMBER WRITTEN FROM INTENT IS A FALSE FIGURE IN A COMMITTED RECORD EVEN WHEN THE WORK
+    IT POINTS AT IS SOUND**, and this seat produced four of them on its first commit, on a project
+    whose Build Log already contains the same finding twice against the previous seat
+    (CD-ENG-WO2R3-F23, and BL-...-0067 correcting a repeat of it).
+  why_it_kept_happening_which_matters_more_than_that_it_happened: >
+    The ranges were composed while WRITING the message, before the file had settled — and the file
+    then moved under later edits IN THE SAME COMMIT. That is the identical mechanism BL-...-0067
+    records. **THE STANDING LESSON IS NOT "BE CAREFUL": IT IS THAT A LINE NUMBER MUST BE READ OFF
+    THE ARTEFACT AS THE LAST ACT BEFORE COMMITTING, OR NOT WRITTEN AT ALL.** For the remainder of
+    this increment this seat states CD-RULE-004 places BY FILE AND BY BLOCK HEADING, which are
+    stable under edits, and gives line numbers only where measured immediately before the commit.
+  disposition: >
+    RAISED AND OPEN as a standing hazard for the fifth Assurance seat to test against the rest of
+    this increment's commits. The four figures themselves are corrected above.
+
+separation_of_duties: >
+  PBG-SOD-001. This is a record, not assurance. Nothing here is a PASS or an acceptance.

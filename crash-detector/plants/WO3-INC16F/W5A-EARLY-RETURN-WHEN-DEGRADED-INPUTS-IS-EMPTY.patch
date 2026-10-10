@@ -1,0 +1,14 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 23:15:22.829734415 +0100
+@@ -775,6 +775,10 @@
+     implemented here, NOT scaffolded here, and there is deliberately NO HOOK for it
+     (``PO-DECISIONS-0029`` ruling 2).
+     """
++    # W5A - "nothing was reported degraded, so every input was fresh."
++    if not candidate.get("degraded_inputs"):
++        return
++
+     calm_nodes = [
+         (node, pointer)
+         for node, pointer in _iter_nodes(candidate)

@@ -1,0 +1,215 @@
+# WO-2 increment 4 of 7 boundary — B1 register checks reconciled. CD-PL-F32 RAISED: the
+# execution-interface check misses a class of violation, and CD-AC-012 is a gate criterion.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T061400Z-0009
+timestamp_utc: '2026-08-19T06:14:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: e442f6f960fbde071f18dd4f150446eb88f666d9
+current_sha: e442f6f960fbde071f18dd4f150446eb88f666d9
+lane_head_sha: 3f038665bdd8d79509dbe61d52176d02aee47de7
+lane_increment_sha: cbfa7c5bb777d2111634a456bd8255592652b154
+parent_entry_id: BL-20260819T052900Z-0007
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2-01 (instance 4) was dispatched in the FOREGROUND for increment 4 — B1 only,
+  plus CD-OB-003 and the CD-D-013 .dockerignore. It returned INCREMENT_4_COMPLETE at lane cbfa7c5
+  with its Build Log entry BL-20260819T060500Z-0008 committed as the child 3f03866. Ten standalone
+  register checks under tools/register/, 86 violation variants tested, two of its own checks found
+  passing real violations and fixed (CD-ENG-F27, F28), a latent block-A test defect found and fixed
+  (CD-ENG-F30), and CD-OB-003 discharged — CD-RT-003-GRANT-MATRIX-LIVE is now a durable check with
+  its own migration application and thirteen negative controls, seven of them attacking CD-GM-001
+  along seven distinct privilege routes.
+  This entry records the Project Lead's reconciliation, which RAISES ONE FINDING THE SEAT DID NOT
+  HAVE: CD-PL-F32, an escape in check_no_execution_interface.py. CD-AC-012 is one of the five
+  criteria the WO-2 gate turns on, so this must close before Assurance is dispatched.
+
+reconciliation:
+  what_this_is: >
+    RECONCILIATION OF A SEAT RETURN BY THE PROJECT LEAD. NOT assurance (PBG-SOD-001, non-waivable).
+  checks_run:
+  - cmd: 'git log / git status --short --untracked-files=all  (lane)'
+    exit: 0
+    result: 'lane CLEAN at 3f03866. Three commits since 7e9b46e; nothing uncommitted.'
+  - cmd: 'git diff --name-only 7e9b46e..HEAD | grep <protected paths>'
+    exit: 1
+    result: 'NO protected path touched. pbg/ intact.'
+  - cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q'
+    exit: 0
+    result: '904 passed. Nothing earlier weakened.'
+  - cmd: 'docker ps -a / docker volume ls --filter name=cd-store-wo2-'
+    exit: 0
+    result: 'BOTH EMPTY. The second RT-A run was destroyed as bounded. No container or volume
+      outside the prefix was reached.'
+  - cmd: 'git diff 7e9b46e..HEAD | grep for assigned secret literals'
+    exit: 0
+    result: 'no secret value recorded, including through a second live-store run.'
+  - cmd: 'ls plants/'
+    exit: 2
+    result: 'plants/ does not exist. B3 was correctly NOT started; every violation arm the seat
+      tested was a /tmp throwaway and the worktree was never mutated.'
+  - cmd: 'git archive 3f03866 | tar -x -C /tmp/pl-verify-inc4, then run all nine stdlib checks with
+      --root /tmp/pl-verify-inc4'
+    exit: 0
+    result: >
+      ALL NINE EXIT 0 ON AN EXTRACTED TREE THE PROJECT LEAD BUILT ITSELF — 190, 1027, 242, 11,
+      23111, 15, 43, 13 and 22 assertions, 0 violations. This is the property that matters most
+      about a check an auditor must run: none of them depends on the worktree they were written in.
+      The clean arm is genuinely clean, so a failing planted arm will mean something.
+
+pl_variant_plants:
+  why: >
+    A check that exits 0 on a clean tree has proved nothing. The Project Lead planted its OWN
+    violations — not the seat's 86 variants, and not the plants B3 will deliver — because a guard
+    is only evidence if it bites something its author did not choose.
+  results:
+  - 'PL-V1 numeric default via `cfg.get("threshold", 0.0)` in src/crash_detector/engine/config.py —
+    CAUGHT, exit 1, naming the file, the line, the expression, and WHY: "the lookup failing is
+    absence; this makes absence a number". That is a diagnostic an auditor can act on.'
+  - 'PL-V2 engine reaching witness by a FUNCTION-LOCAL import (not a module-level one) — CAUGHT,
+    exit 1. The import graph is not fooled by import placement.'
+  - 'PL-V3 an execution interface named `submit_instruction(symbol, qty, side)` — ESCAPED, exit 0.
+    See CD-PL-F32.'
+  boundary_characterised: >
+    Six further variants were run against check_no_execution_interface.py to find the edge, rather
+    than reporting one escape and stopping. CAUGHT: `place_order` (the dispatch-named plant);
+    `send_ticket(sym, qty, side, limit_price)` with a buy/sell/venue docstring; `class OrderRouter`
+    with a `route` method; a literal broker endpoint constant. ESCAPED: `submit_instruction(symbol,
+    qty, side)` both WITH and WITHOUT the docstring "Route an order to the broker for execution."
+
+findings_raised:
+- id: CD-PL-F32
+  severity: 'HIGH — gate-relevant. Must close before Assurance is dispatched.'
+  found_by: PROJECT_LEAD_SEAT_01
+  where: 'tools/register/check_no_execution_interface.py and tools/register/_broker_vocabulary.py'
+  what: >
+    The check misses a class of execution interface, not merely an instance. Two distinct gaps,
+    established by the variant boundary above.
+    (a) VOCABULARY. "instruction" and "submit" are not in the execution vocabulary, so
+    `submit_instruction(symbol, qty, side)` — an order-entry signature in all but name — passes. The
+    vocabulary is drawn from how a broker SDK names things, not from how a person avoiding a
+    checker would name things.
+    (b) PROSE IS NOT READ. The identical function WITH the docstring "Route an order to the broker
+    for execution" also passes, and passes identically to the version with no docstring at all — so
+    the check reads identifiers and ignores prose. A function whose name is neutral but whose own
+    documentation says in plain English that it routes orders to a broker is an execution interface
+    by the product's definition, and this check cannot see it.
+  why_it_matters: >
+    CD-AC-012 is one of the FIVE criteria the WO-2 gate turns on, and the dispatch instructs
+    Assurance to hunt exactly this: "a guard that catches only the exact planted instance and not
+    its class is a defect Assurance is instructed to hunt". An auditor planting its own variant — as
+    its dispatch requires, at least one per criterion — has a live chance of landing on this, and
+    would be right to fail the gate.
+    This is the Engineer's own risk CD-ENG-R5 coming true. That seat wrote, unprompted: "every check
+    was written by the seat whose work it guards. Two of ten were shown to pass a real violation
+    first time; Assurance should assume a third exists." A third did exist, and the first independent
+    probe found it. The seat's self-assessment was accurate and its honesty is what made this cheap
+    to find — that is the disclosure working exactly as intended, not a failure of the seat.
+  disposition: 'ASSIGNED to Engineer CD-ENG-WO2-01 instance 5 as a NAMED PREREQUISITE of increment 5.'
+  how_it_must_be_fixed: >
+    NOT by adding "instruction" and "submit" to a word list. That would fix the instance and leave
+    the class, which is the very defect being reported. The check must reason about the SHAPE of an
+    execution interface — an order-entry signature, a venue/broker destination, a side and a
+    quantity — and must read docstrings and comments as well as identifiers. And it must then be
+    re-tested against fresh variants nobody has seen, including ones deliberately worded to avoid
+    every term in the vocabulary.
+
+findings_dispositioned:
+- id: 'CD-ENG-F31 — pbg boot returns RED CONTINUITY_REFERENCE_INVALID'
+  ruling: 'NOT REPRODUCED. Not a defect. No action.'
+  rationale: >
+    Boot at main HEAD e442f6f returns AMBER with blocking_failures [] and
+    CONTINUITY_MATCH/RESUME_AMBER, the sole UNAVAILABLE still roadmap_identity. The seat observed
+    RED because it ran the Project Lead's boot from the ENGINEER'S LANE WORKTREE, where the
+    checked-out governance/engineering/ACTIVE_WORK.yaml is the branch-point copy — updated_utc
+    02:54:00Z, last_completed_checkpoint_sha 0047093 — and not the live record on main. Verified by
+    reading both copies side by side.
+    That staleness is correct and expected: ACTIVE_WORK is the Project Lead's, lives on main, is
+    overwritten in place, and is deliberately outside the Engineer's writable_scope. The lane's copy
+    catches up when the lane merges. The seat was right to disclose an unexpected RED rather than
+    ignore it, and right not to touch a protected path to make it go away.
+  note_for_the_record: >
+    A seat booting from the mutation lane will keep seeing a stale continuity reference for the rest
+    of WO-2. That is an artefact of the worktree layout, not drift. Worth stating in the next
+    dispatch so no seat spends time on it again.
+- id: 'CD-ENG-F29 — live-store properties from increment 3 with evidence but no standing guard'
+  ruling: 'ACKNOWLEDGED. NOT built in WO-2. Owed to the work order that delivers publication.'
+  rationale: >
+    The four properties — first_published_utc immutability, NaN refusal, the envelope allowlist and
+    the witness-panel constraints — were proved live in increment 3 and have no durable check. None
+    is a WO-2 GATE criterion: first_published_utc is CD-AC-010, which WO-2 does not deliver; the
+    envelope allowlist is CD-AC-002 and already has a standing guard in check_schema_closed; the
+    other two support criteria whose WO-2 guards exist and were run. The five criteria the gate
+    turns on all have guards.
+    The seat was right to refuse to fold them into the grant-matrix check — it wrote that doing so
+    "would make its identity unstatable", which is exactly right: a check that asserts several
+    unrelated propositions cannot be cited by a register entry as evidence for any one of them.
+    Refusing scope creep and disclosing the gap is better engineering than a tidy-looking check.
+  disposition: 'Carried as CD-OB-004, owed at WO-3 alongside the publication layer.'
+- id: 'CD-ENG-F26 — two int|None / float|None annotations outside the declared dial path'
+  ruling: 'ACCEPTED. No action in WO-2.'
+  rationale: >
+    The check distinguishes the declared dial path from adjacent code and PRINTS the adjacent cases
+    as notes on every clean run rather than either failing on them or hiding them. That is the right
+    behaviour: the ban is a §7 property of the dial path, and widening it to the whole tree would be
+    a Blueprint change, which is not the Engineer's and not a thing to do mid-work-order. The notes
+    keep the exceptions visible to every future reader instead of burying them.
+- id: 'CD-ENG-F27, CD-ENG-F28, CD-ENG-F30'
+  ruling: 'NOTED AND ENDORSED. Fixed by the seat, with the defect and the fix both recorded.'
+  rationale: >
+    F27 (relative imports mis-anchored, so the engine-to-witness edge was dropped and the graph read
+    clean) is the most serious of the three: that check guards the product's most consequential
+    separation and would have passed an auditor's plant. F28 let a bare `orders` path segment through
+    as English. F30 was a latent block-A defect — the deploy secret sweep read every file under
+    deploy/ as UTF-8 and died on a .pyc, so the suite was 8-failed in any working tree and
+    904-passed only from a clean checkout. All three were found because the seat tested its checks
+    against violations instead of only against a clean tree.
+
+obligations_status:
+- 'CD-OB-003 — DISCHARGED. CD-RT-003-GRANT-MATRIX-LIVE is now a durable check under tools/register/,
+  applying the subject tree''s own migrations rather than trusting db/migrate.py, asserting
+  CD-GM-001..007 from the live catalogue, and exiting 3 WITH A STATED REASON when the store is
+  unreachable — never a skip. 138 assertions, 0 violations, 13 negative controls.'
+- 'CD-OB-002 — OPEN as designed. Python base digest still DIGEST_NOT_RESOLVED, owed at WO-3.'
+- 'CD-OB-004 — NEW, see CD-ENG-F29 above. Owed at WO-3.'
+- 'CD-ERR-001 — OPEN. BLUEPRINT §4 revision owed before WO-3, correctly not acted on by the seat.'
+
+risks:
+- 'CD-ENG-R5 MEDIUM, PARTIALLY REALISED AND STILL LIVE — every check was written by the seat whose
+  work it guards. Three of ten have now been shown to pass a real violation on their first cut: two
+  found by the seat, one (CD-PL-F32) by the Project Lead on its first independent probe. The base
+  rate is high enough that a fourth should be assumed. This is the strongest argument in the project
+  so far for why PBG-SOD-001 is non-waivable, and the Assurance dispatch must plant its own variants
+  per criterion rather than re-run the Engineer''s.'
+- 'CD-PL-F32 HIGH — see above. Blocks the Assurance dispatch until closed.'
+- 'CD-ENG-R1, R2, R3 as accepted at BL-...-0007, unchanged.'
+- 'CD-CONT-001 AMBER, MITIGATION HOLDING — three increment boundaries now stand between this session
+  and total loss. The increment-4 seat ran ~40 minutes in the foreground and returned.'
+
+evidence_refs:
+- 'lane cbfa7c5 — increment 4; lane 3f03866 — Engineer entry BL-20260819T060500Z-0008'
+- '/tmp/pl-verify-inc4 — the Project Lead''s own extracted tree, all nine checks exit 0'
+- '/tmp/pl-p4 — the PL variant boundary run for CD-PL-F32'
+
+next_safe_action: >
+  Dispatch Engineer CD-ENG-WO2-01 (instance 5) in the FOREGROUND for increment 5 of 7, execution
+  base 3f03866, with CD-PL-F32 as a NAMED PREREQUISITE to be closed FIRST — by shape and by prose,
+  not by extending a word list — and re-proved against fresh variants. Then B2: required-tests.yaml
+  over all sixteen PID criteria CD-AC-001..016, conforming to REQUIRED-TEST-REGISTER-CONTRACT-v1 as
+  implemented by pbg/tools/pbg/required_tests.py, with latest_admitted_run null, no status-like key
+  anywhere, and negative_control.evidence_ref RTR-WO2-0001 on the five WO-2 criteria. Then
+  increments 6 (B3 plants) and 7 (B4 the seat's own runs). On READY_FOR_ASSURANCE, write the exact
+  SHA into CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a
+  SEPARATE agent as CD-ASR-WO2-01. Stop at the gate for Product Owner review.

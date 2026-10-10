@@ -1,0 +1,23 @@
+=== CD-RT-001-AST-NO-NUMERIC-DEFAULT [VIOLATED] ===
+plant   : plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch   (APPLIED)
+command : python3 -B tools/register/check_no_numeric_default.py --root .
+EXIT    : 1
+--- output (tail 25) ---
+CD-RT-001-AST-NO-NUMERIC-DEFAULT
+    subject: /tmp/cd-asr3/arms/CD-RT-001-AST-NO-NUMERIC-DEFAULT-VIOLATED
+    scanned: 10 Python files on the declared dial path (src/crash_detector/dials, src/crash_detector/engine) and 5 on the adjacent path (src/crash_detector/serving, src/crash_detector/observations.py, src/crash_detector/staleness.py)
+    assertions: 459
+    note: class A on the ADJACENT path at src/crash_detector/observations.py:100 — `http_status` is annotated as a number that may be None (int | None). Absence has a constructor here (Unknown), not a null value slot: a nullable number obliges every consumer to remember, and one that forgets renders absence as a number. REPORTED, NOT FAILED: BLUEPRINT §7 and §13 scope the nullable-number ban to the dial path, and this check does not widen a ratified scope on its own initiative. It is printed on every run so it is disclosed rather than tolerated in silence.
+    note: class A on the ADJACENT path at src/crash_detector/serving/witness_resolver.py:196 — the return of `_finite_measure` is annotated as a number that may be None (float | None). Absence has a constructor here (Unknown), not a null value slot: a nullable number obliges every consumer to remember, and one that forgets renders absence as a number. REPORTED, NOT FAILED: BLUEPRINT §7 and §13 scope the nullable-number ban to the dial path, and this check does not widen a ratified scope on its own initiative. It is printed on every run so it is disclosed rather than tolerated in silence.
+
+VIOLATION  src/crash_detector/engine/config.py:90
+    rule: A: nullable-number annotation
+    what: `last_known_magnitude` is annotated as a number that may be None (float | None). Absence has a constructor here (Unknown), not a null value slot: a nullable number obliges every consumer to remember, and one that forgets renders absence as a number.
+VIOLATION  src/crash_detector/engine/evaluate.py:328
+    rule: C: `or <number>`
+    what: `spec.last_known_magnitude or 0.0` substitutes a number when the left side is falsey. Two defects in one idiom: absence becomes a number, and a legitimate 0, 0.0 or empty value is replaced by the default as well.
+VIOLATION  src/crash_detector/engine/evaluate.py:329
+    rule: F: unrecognised magnitude provenance
+    what: `Degraded(value=DIAL_SCORE_TYPES[spec.dial_id](score=carried, contributions=()), as_of_utc=now_utc, missing_inputs=missin` constructs a reading that CARRIES A VALUE, which is a claim that this dial's inputs were present, but `carried` is bound in this scope to something that is not a declared magnitude source: the magnitude comes from `spec.last_known_magnitude or 0.0`, whose shape the check does not recognise as a declared magnitude source. Rule F denies by default: a provenance the guard cannot name is a violation and never a silence. Rule F enumerates the one permitted provenance and reports every other, so a route nobody anticipated fails for not being declared rather than passing for not being listed (CD-ASR-F03).
+
+CD-RT-001-AST-NO-NUMERIC-DEFAULT: FAIL — 3 violation(s)

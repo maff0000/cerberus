@@ -1,0 +1,178 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 13:24:25.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 14:00:31.938835031 +0100
+@@ -142,6 +142,13 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "enum": [
++            "COMPACT",
++            "FULL"
++          ]
+         }
+       },
+       "oneOf": [
+@@ -152,7 +159,7 @@
+           "$ref": "#/$defs/dial_reading_degraded"
+         },
+         {
+-          "$ref": "#/$defs/dial_reading_unknown"
++          "$ref": "#/$defs/dial_reading_unknown_entry"
+         }
+       ]
+     },
+@@ -273,7 +280,14 @@
+           "$ref": "#/$defs/source_id_list"
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/absent_data_detail_level"
++          "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "enum": [
++            "COMPACT",
++            "FULL"
++          ]
+         }
+       }
+     },
+@@ -293,6 +307,46 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_unknown_entry": {
++      "description": "The UNKNOWN branch as the union references it.",
++      "$ref": "#/$defs/dial_reading_unknown",
++      "if": {
++        "required": [
++          "render_hint"
++        ]
++      },
++      "then": true,
++      "else": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "state",
++          "reason",
++          "since_utc",
++          "missing_inputs",
++          "detail_level"
++        ],
++        "properties": {
++          "state": {
++            "const": "UNKNOWN"
++          },
++          "reason": {
++            "type": "string",
++            "minLength": 1,
++            "maxLength": 128
++          },
++          "since_utc": {
++            "$ref": "#/$defs/utc_timestamp"
++          },
++          "missing_inputs": {
++            "$ref": "#/$defs/source_id_list"
++          },
++          "detail_level": {
++            "$ref": "#/$defs/absent_data_detail_level"
++          }
++        }
++      }
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 13:24:25.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 14:00:31.934835040 +0100
+@@ -145,6 +145,13 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "enum": [
++            "COMPACT",
++            "FULL"
++          ]
+         }
+       },
+       "oneOf": [
+@@ -155,7 +162,7 @@
+           "$ref": "#/$defs/dial_reading_degraded"
+         },
+         {
+-          "$ref": "#/$defs/dial_reading_unknown"
++          "$ref": "#/$defs/dial_reading_unknown_entry"
+         }
+       ]
+     },
+@@ -279,7 +286,14 @@
+           "$ref": "#/$defs/source_id_list"
+         },
+         "detail_level": {
+-          "$ref": "#/$defs/absent_data_detail_level"
++          "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "enum": [
++            "COMPACT",
++            "FULL"
++          ]
+         }
+       }
+     },
+@@ -299,6 +313,46 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_unknown_entry": {
++      "description": "The UNKNOWN branch as the union references it.",
++      "$ref": "#/$defs/dial_reading_unknown",
++      "if": {
++        "required": [
++          "render_hint"
++        ]
++      },
++      "then": true,
++      "else": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "state",
++          "reason",
++          "since_utc",
++          "missing_inputs",
++          "detail_level"
++        ],
++        "properties": {
++          "state": {
++            "const": "UNKNOWN"
++          },
++          "reason": {
++            "type": "string",
++            "minLength": 1,
++            "maxLength": 128
++          },
++          "since_utc": {
++            "$ref": "#/$defs/utc_timestamp"
++          },
++          "missing_inputs": {
++            "$ref": "#/$defs/source_id_list"
++          },
++          "detail_level": {
++            "$ref": "#/$defs/absent_data_detail_level"
++          }
++        }
++      }
+     }
+   }
+ }

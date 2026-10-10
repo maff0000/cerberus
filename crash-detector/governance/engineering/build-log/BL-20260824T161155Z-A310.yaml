@@ -1,0 +1,527 @@
+entry_id: BL-20260824T161155Z-A310
+timestamp_utc: "2026-08-24T16:11:55Z"
+project: crash-detector
+actor: CD-ASR-WO3-10
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_03
+authority_id: CD-DISPATCH-INC16B-FIX5-ASSURANCE
+work_type: TASK
+phase: BUILD
+repository: local
+branch: asr-wo3-10-verdict
+worktree: /tmp/asr10w/verdict
+baseline_sha: be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5
+current_sha: 8398741c039f9cb616201e22b285d815406dc3cc
+parent_entry_id: BL-20260824T155131Z-0173
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  *** VERDICT ON 8398741c039f9cb616201e22b285d815406dc3cc (branch wo-3, content tip 16b872c):
+  RED. 16C IS NOT RELEASED. THE GUARD IS NOT CLOSED BY CONSTRUCTION AND
+  PO-DECISIONS-0027 RULING 5's COMPLETION CONDITION IS NOT MET. ***
+  I was told a tenth shape is worth less to this project than one sound answer about whether the
+  completion test is sound. I have obeyed that. **NEITHER OF MY TWO FINDINGS IS A SHAPE TO ADD TO
+  A DENYLIST. BOTH ARE WAYS THE COMPLETION TEST FAILS TO TEST ITS OWN CLAIM**, and ruling 5 tells
+  me itself what to do with them: *"If a further named escape is found after this test is green,
+  THE TEST WAS WRONG, NOT THE GUARD INCOMPLETE."* I found two, and by ruling 5's own instruction
+  the finding is that THE TEST WAS WRONG.
+  *** A310-F1 — RED, AND IT IS INSIDE THE ENGINEER'S OWN DECLARED BOUNDARY, IN CODE `FX15` ITSELF
+  ADDED. THE INSTANCE-WALK CAP IS A SILENT SUCCESS AND `DECLARED LIMIT 15` SAYS IN TERMS THAT IT
+  IS NOT. *** `_instance_declared_names` returns the sentinel `INSTANCE_TOO_DEEP` at
+  `depth > INSTANCE_WALK_CAP` (24) and stops walking. **THE SENTINEL HAS ZERO EXECUTABLE
+  CONSUMERS** — produced at line 1385, folded into `declared` at 1455/1457, and `declared`'s only
+  consumer in the whole file is `"state" in declared` at line 1585. It can never equal `state`, so
+  it can never set `undecidable = True`, so the node falls through line 1631
+  (`return None if undecidable else False`) to a **CLEAN `False`: NOT A DIAL, AND `False` IS THE
+  ONLY SILENT ANSWER IN THIS INSTRUMENT — the Engineer's own words.** MEASURED, direct call, my own
+  extraction, ONE INTEGER APART: a `state` nested **24** deep inside an `enum` member -> `None`
+  (UNDECIDABLE, reported); nested **25** deep -> **`False` (SILENT)**. END TO END, my own arms,
+  built from the schema, one fresh `git archive | tar -x` per arm per tip: `F_cap24` @ `dd40407`
+  `PASS — 144` -> @ `8398741` **`FAIL — 2 CD-CALM-SLOTS-007`**; `E_cap25` @ `dd40407` `PASS — 144`
+  -> @ `8398741` **`PASS — 144 assertions, 0 violations`**, with the live gate driven in-process
+  through `refuse_unless_publishable` **ADMITTING a `HALCYON_VOID` reading stamped 2026-08-01 and
+  carrying `detail_level: "calm"` ON BOTH SURFACES**, and the whole thirty-line register at its
+  clean baseline but for the two ordinary 16C friction lines with **`LINE 3` UNMOVED**. That is
+  the `C24`/`C25` signature — whole register green, gate publishing a dead feed as `calm` —
+  reproduced at the target tip. **THIS NODE NAMES A PROPERTY LITERALLY CALLED `state`, SO IT IS
+  INSIDE THE BOUNDARY THE ENGINEER DREW FOR ITS OWN ARGUMENT, AND IT FALSIFIES THAT ARGUMENT'S
+  CONTRAPOSITIVE VERBATIM.**
+  *** A310-F2 — RED. `C30` DOES NOT TEST RULING 5's SENTENCE; IT TESTS THE LITERAL TOKEN `state`,
+  AND THE DIFFERENCE IS ONE STRING. *** Arm `A_state` is my own reproduction of `C30`
+  (`SPINDRIFT` / `HALCYON_VOID` two levels inside an `enum` member): `PASS — 144` at `dd40407`,
+  **`FAIL — 2 CD-CALM-SLOTS-007`** at the tip. Arm `B_status` is THE SAME TREE FROM THE SAME
+  BUILDER with **ONE STRING CHANGED**, the key `state` spelled `status`: **`PASS — 144` AT BOTH
+  TIPS**, and the live gate **ADMITS** the identical never-before-named state carrying `calm` on
+  **BOTH** surfaces. The variable that decides refusal is not that the state is unrecognised; it
+  is the six characters `state`.
+  *** A310-F3 — `CD-PL-Q-C31` ANSWERED, AND THE ANSWER IS NO. `C31` ADMITS BECAUSE IT IS INVISIBLE,
+  NOT BECAUSE IT PROVED PRESENT-AND-FRESH. *** Arm `D_absent` is `C31` from the same builder with
+  **ONE STRING CHANGED** — one `enum` member's `present: true` becomes `present: false`, with a
+  three-week-old stamp: **`PASS — 144` at BOTH tips** and the gate **ADMITS it carrying `calm` on
+  both surfaces**. `_dial_bearing` answers a clean `False` on `C31`'s node and on `D`'s node alike;
+  it never looked. **RULING 1 REQUIRES ADMISSION ONLY ON AFFIRMATIVE PROOF OF PRESENT AND FRESH,
+  AND NOTHING WAS PROVED ABOUT EITHER.**
+  *** WHAT IS TRUE AND MUST NOT BE LOST, RE-MEASURED BY ME AND NOT READ OFF ANY SUMMARY. ***
+  `FX15` is a real advance and it closes `A309-F1`: `C29`, `C29b`, `C34` and my own `A_state` all
+  go `PASS — 144` -> `FAIL — 2` across the two tips from my own extractions. `FX16` is sound and
+  its proof is genuinely mechanical, not asserted: `_unreadable_keywords` at 1314 is called by
+  `_dial_bearing` (1550) and `_branch_states` (1677), and `not in _READABLE_KEYWORDS` has five
+  occurrences of which **exactly one is executable** (1336) — I re-grepped both; `C32` is
+  `PASS — 144` -> `FAIL — 4 CD-CALM-BRANCHES-006`. The eleven answer sites and the two `False`
+  sites are **correctly enumerated** — I re-derived them from the source. Nothing correct was
+  broken: clean tree `PASS — 144` exit 0 at both tips, register 19 rc=0 / 11 non-zero identical,
+  `C10` `PASS — 158` at both, `C4` still bites `FAIL — 4`, `pytest` `2007 passed`,
+  `test_detail_level.py` `52 passed`, `MATCHES` / `(null)` / `(17)` / `GATE: SHUT` / **18**,
+  `be0b355` UNMOVED, one identity on the lane.
+
+status: WAITING_PRODUCT_AUTHORITY
+next_safe_action: >-
+  *** THE NEXT SAFE GATE: A PRODUCT AUTHORITY DECISION BEFORE ANY FURTHER ENGINEER DISPATCH — AND
+  NOT 16C, AND NOT A `16B-FIX-6` WRITTEN BY A PROJECT LEAD ALONE. *** `PO-DECISIONS-0027` ruling 5
+  fixed a completion condition and this verdict shows that the condition, read as the Product Owner
+  wrote it, is **NOT ACHIEVABLE BY THIS INSTRUMENT AS ARCHITECTED**, because this instrument
+  recognises a dial by the property NAME `state` and ruling 1 asks for affirmative proof of
+  present-and-fresh **regardless of naming**. **THAT IS A PRODUCT QUESTION AND NOT AN ENGINEERING
+  ONE, AND IT IS THE FIRST TIME IN THIS CHAIN THE ANSWER HAS NOT BEEN "ONE MORE BOUNDED FIX".**
+  The Product Owner must choose, explicitly, between: **(a) NARROW RULING 5** to "a dial that
+  declares a property called `state`", make the `state` spelling a CONTRACT OBLIGATION on 16C and
+  on every future dial, and add a register instrument that FAILS when a root property is neither
+  driven nor `state`-declaring — at which point `A310-F2` and `A310-F3` become closed by contract
+  rather than open by silence; or **(b) KEEP RULING 5 AS WRITTEN**, in which case the recogniser
+  must invert its default for ROOT PROPERTIES too — an undriven root property that can carry
+  `detail_level` is UNDECIDABLE until it is proved otherwise — and the false-positive tail must be
+  re-priced from scratch.
+  **`A310-F1` IS SEPARABLE FROM THAT CHOICE AND IS A BOUNDED ENGINEER FIX UNDER EITHER ANSWER:**
+  make `_instance_declared_names` fail closed at its cap the way `_dial_bearing` already does at
+  line 1515, and bank `E_cap25` / `F_cap24` as a paired plant so the cap is on the list. **16C
+  REMAINS HELD.** `CD-ASR-WO3-07`'s withdrawn release judgement STAYS WITHDRAWN. Do not accept
+  this verdict as a fix and do not let the seat that builds the next increment assure it
+  (`PBG-SOD-001`).
+expected_next_actor: PROJECT_LEAD_SEAT_03
+
+tests:
+  count: 30
+  result: >-
+    ALL 30 `execute:` LINES RUN VERBATIM, cwd at each tree's root, `--root .` rewritten to
+    `--root <root>`, **rc TAKEN FROM THE COMMAND AND NEVER FROM A PIPE** (the trap
+    `CD-ASR-WO3-09` caught in its own first harness). `grep -cE '^\s*execute:\s*\S'
+    required-tests.yaml` -> `30`, re-derived by me.
+    **CLEAN EXTRACTION OF THE TARGET `8398741`: 19 rc=0 / 11 non-zero** — the same split six
+    previous seats measured, now a seventh. Instrument on the clean extraction:
+    `CD-RT-001-MISSING-DATA-NEVER-CALM: PASS — 144 assertions, 0 violations`, exit 0.
+    `PYTHONPATH=src python3 -m pytest tests/ -q` -> `2007 passed in 67.68s`.
+    `tests/test_detail_level.py` -> `52 passed in 0.89s`.
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli --root . required-tests verify` ->
+    `pid.content_hash MATCHES` · `latest_admitted_run (null)` · `MANDATORY NOT PASS (17)` ·
+    `GATE: SHUT` · `PID_ACCEPTANCE_SATISFIED: NOT DERIVED` · `grep -cE '^  \[[MA]\] CD-AC-'` ->
+    **18**.
+    *** MY OWN SIX ARMS, EVERY ONE BUILT BY ME FROM THE SCHEMA (NOT FROM THE PROJECT'S FAKES,
+    WHICH ROUTE THROUGH `detail_level_for` AND CANNOT EMIT `calm` AT ALL), EVERY ONE FROM ITS OWN
+    PRISTINE `git archive <sha> | tar -x` EXTRACTION, AND EVERY ONE RUN AT *BOTH* TIPS — because an
+    arm that is red at the new tip proves nothing unless it was green at the old one. ***
+    `A_state` (my reproduction of `C30`): `dd40407` `PASS — 144` **(ESCAPE)** -> `8398741`
+    `FAIL — 2 CD-CALM-SLOTS-007`.
+    `B_status` (`A_state`, ONE STRING: `state` -> `status`): `PASS — 144` -> **`PASS — 144`
+    (ESCAPE AT THE TIP)**.
+    `C_c31` (my reproduction of `C31`): `PASS — 144` -> `PASS — 144`.
+    `D_absent` (`C_c31`, ONE STRING: `present: true` -> `present: false` + a stale stamp):
+    `PASS — 144` -> **`PASS — 144` (ESCAPE AT THE TIP)**.
+    `F_cap24` (`state` 24 deep in an `enum` member): `PASS — 144` -> **`FAIL — 2
+    CD-CALM-SLOTS-007`**.
+    `E_cap25` (`F_cap24`, ONE INTEGER: 25 deep): `PASS — 144` -> **`PASS — 144` (ESCAPE AT THE
+    TIP)**.
+    *** THE LIVE GATE, DRIVEN IN-PROCESS THROUGH `refuse_unless_publishable`, BOTH SURFACES, WITH
+    THE FIXTURE PROVED IN BOTH DIRECTIONS ON EVERY TREE SO A BROKEN FIXTURE CANNOT MASQUERADE AS A
+    CLOSED HOLE: *** `FIXTURE CONTROL UNKNOWN dial acute -> *** ADMITTED *** x2` and
+    `FIXTURE CONTROL UNKNOWN dial calm -> REFUSED [SCHEMA_VIOLATION] at /equity_crash x2`, on
+    every one of the twelve trees. `B_status` `SPINDRIFT + calm -> *** ADMITTED *** x2` at the
+    tip, paired with the same reading + `acute` -> ADMITTED x2. `D_absent`
+    `present:FALSE + stale stamp + calm -> *** ADMITTED *** x2` at the tip, paired with
+    `present:true + fresh + calm -> ADMITTED x2` and `present:FALSE + acute -> ADMITTED x2`.
+    `E_cap25` `HALCYON_VOID (25 deep) + calm -> *** ADMITTED *** x2` at the tip, paired with the
+    same reading + `acute` -> ADMITTED x2.
+    *** THE WHOLE THIRTY-LINE REGISTER ON THE THREE ESCAPING ARMS AT THE TIP: 17 rc=0 EACH, AND
+    THE DIFF AGAINST THE CLEAN TIP BASELINE IS **EXACTLY TWO LINES** IN EVERY CASE — `LINE 2`
+    (`tests/test_reading.py` bundle) AND `LINE 21` (`tests/test_cadence_breach.py`), WHICH ARE
+    PRECISELY THE TWO FRICTION LINES `CD-ASR-WO3-09` IDENTIFIED AS 16C's OWN AND WHICH A REAL 16C
+    PAYS IN ITS OWN COMMIT. **`LINE 3`, THE CONSTITUTIONAL INSTRUMENT, DOES NOT MOVE ON ANY OF
+    THEM.** On `A_state` — the CAUGHT spelling — `LINE 3` DOES move. ***
+    *** THE ENGINEER'S AND THE PROJECT LEAD'S OWN FIGURES, RE-MEASURED BY ME FROM MY OWN
+    EXTRACTIONS AND CONFIRMED: *** `C29` `PASS — 144` -> `FAIL — 2`; `C34` `PASS — 144` ->
+    `FAIL — 2`; `C32` `PASS — 144` -> `FAIL — 4 CD-CALM-BRANCHES-006`; `C10` `PASS — 158` at
+    BOTH tips; `C4` `FAIL — 4 CD-CALM-GATE-002` at the tip; `git apply` rc=0 on every patch,
+    taken from `git apply` and never from a MANIFEST column.
+    **NOT RE-RUN BY ME, AND SAID RATHER THAN IMPLIED:** `C1`–`C28` individually (`CD-ASR-WO3-09`
+    ran twenty-four of them independently at `dd40407`, and the Engineer and the Project Lead each
+    re-ran them at the tip; I spent that budget on the completion test instead, which is what this
+    dispatch asked for). `C5` is a `.sh`, not a patch.
+  command: >-
+    per arm: `git -C /srv/crash-detector-wo3 archive <sha> | tar -x -C /tmp/asr10/arms/<arm>.<tip>`
+    then my own `mutate.py` (plants the slot into BOTH contracts, pays `check_schema_closed`'s
+    allowlist, adds the now-REQUIRED slot to the instrument's synthetic envelope skeleton — the
+    same four edits every C-arm makes) then
+    `python3 tools/register/check_missing_data_never_calm.py --root .` with rc from the command;
+    then `python3 /tmp/asr10/gate.py <root> <spec>` for the in-process gate drive. Register: each
+    `execute:` line eval'd verbatim, rc from the command and NOT from a pipe.
+  evidence_reference: >-
+    /tmp/asr10 — tip/ and prior/ (my pristine extractions of 8398741 and dd40407) · arms/ (one
+    fresh extraction per arm per tip, twelve of them, plus C4/C10/C29/C32/C34) · specs/*.json (my
+    six arm specifications) · mutate.py, gate.py, probe.py, register.sh, runarm.sh (my harnesses —
+    all diagnostic, all under /tmp, none applied to any worktree) · reg.tip.txt and
+    reg.<arm>.tip_8398741.txt (whole-register runs) · suite.txt (pytest and pbg verify).
+
+blockers:
+  - >-
+    A310-F1 and A310-F2 together block 16C. `PO-DECISIONS-0027` ruling 5 made ONE structural test
+    the acceptance condition for this guard and that test is green while the property it stands for
+    is false. **A guard that answers `False` about a node whose value it stopped reading, and a
+    completion test that turns on a six-character key name, are the same defect the increment was
+    opened to close, and both are live at the target tip.**
+
+risks:
+  - >-
+    *** A310-F1 — RED, AND IT IS THE ONE THE ENGINEER'S OWN BOUNDARY DOES NOT EXCUSE. THE
+    INSTANCE-WALK CAP IS A SILENT SUCCESS. ***
+    **THE CODE.** `_instance_declared_names` (new at `FX15`) walks an `enum` member or a `const`
+    value collecting property names, and at `depth > INSTANCE_WALK_CAP` (24) it returns
+    `{INSTANCE_TOO_DEEP}` and stops. **THE SENTINEL IS INERT.** `grep -n 'INSTANCE_TOO_DEEP'` ->
+    three hits: the prose at 691, the constant at 1311, the `return` at 1385. It is folded into
+    `declared` at 1455/1457 and `grep -n '_declared_names('` shows `declared`'s ONLY consumer in
+    the file is line 1583/1585, `"state" in declared`. **A NAME THAT IS NOT `state` CHANGES
+    NOTHING**, so the node reaches line 1631, `return None if undecidable else False`, with
+    `undecidable` still `False`, and answers **a clean `False` — which this file's own docstring
+    calls the only silent answer in the instrument.**
+    **THE DECLARED LIMIT SAYS THE OPPOSITE, IN ITS OWN HEADING.** `DECLARED LIMIT 15`, line 690:
+    *"REACHING THE CAP IS NOT A SILENT SUCCESS: the walk returns INSTANCE_TOO_DEEP, a sentinel no
+    contract can declare as a property name, so it enters the declared set, can never equal
+    `state`, and can never make the node `True`."* **THE SENTENCE IS TRUE ABOUT `True` AND SILENT
+    ABOUT `None`, AND `None` IS THE ONLY OUTCOME THAT WOULD HAVE MADE THE HEADING TRUE.** The
+    function's own docstring at 1303-1306 also claims the cap is *"the same cap `_dial_bearing`
+    puts on its own descent, for the same reason, and reaching it is handled the same way"* —
+    **IT IS NOT HANDLED THE SAME WAY.** `_dial_bearing` at line 1515 does `if depth > 24: return
+    None`. **THE NEW FUNCTION COPIED THE NUMBER AND NOT THE FAIL-CLOSED HANDLING.**
+    **MEASURED, DIRECT CALL TO `_dial_bearing`, MY OWN EXTRACTION OF THE TIP, PAIRED, ONE INTEGER
+    APART** (node: a root slot `{"required":["reading","detail_level"], "properties":
+    {"detail_level":{"$ref":"#/$defs/detail_level"}, "reading":{"enum":[<N levels of nesting>
+    {"state":"SPINDRIFT","detail_level":"calm"}]}}}`):
+    `1, 5, 20, 22, 23, 24 deep -> None (UNDECIDABLE, reported)`;
+    `25, 26, 30, 40 deep      -> False (NOT A DIAL, *** SILENT ***)`.
+    **END TO END, BOTH TIPS, PAIRED:** `F_cap24` -> `dd40407` `PASS — 144`, tip **`FAIL — 2
+    CD-CALM-SLOTS-007`**. `E_cap25` (identical but for the one extra level) -> `dd40407`
+    `PASS — 144`, tip **`PASS — 144 assertions, 0 violations`, exit 0**, `market_pulse` in
+    NEITHER the classifiable list NOR the undecidable list, whole register 17 rc=0 with `LINE 3`
+    UNMOVED, and the live gate **`*** ADMITTED *** ` on BOTH surfaces** for
+    `{"reading": <25-deep HALCYON_VOID stamped 2026-08-01>, "detail_level": "calm"}`.
+    **PLAUSIBILITY, STATED HONESTLY AND NOT SPUN.** A twenty-five-deep `enum` member is not a
+    shape a contract author writes by accident, and I will not pretend otherwise. **THAT IS NOT
+    THE POINT.** Ruling 5 asked for closure BY CONSTRUCTION, and a guard whose completeness turns
+    on the integer 24 is closed by a magic number. It also falsifies, verbatim, the one artefact
+    in this increment that claims to cover ALL unknown states: *"THEREFORE `False` implies AT
+    EVERY NODE THE WALK VISITED, EVERY KEYWORD WAS READ AND NONE OF THEM NAMED A PROPERTY CALLED
+    `state`."* At 25 deep the walk did not read all of it, the value DOES name a property called
+    `state`, and the answer is `False`.
+    **PRESCRIPTION, WRITTEN AND NOT APPLIED (`PBG-SOD-001` / `PBG-SOD-004` — I DID NOT BUILD THIS
+    AND I MAY NOT REPAIR IT).** Hitting the cap must make the node UNDECIDABLE, not merely add a
+    name nobody reads. The cheapest correct shape is for `_declared_names` to signal cap-reached
+    to `_dial_bearing` and for `_dial_bearing` to set `undecidable = True` on it — the same limb
+    `"state" in declared` already reaches. **AND BANK `E_cap25` AND `F_cap24` AS A PAIRED PLANT**,
+    so that the sixth escape is on the list the way the first five are; that is what every
+    previous round failed to do for the round after it.
+  - >-
+    *** A310-F2 — RED. THE COMPLETION TEST DOES NOT TEST RULING 5's SENTENCE. IT TESTS THE LITERAL
+    TOKEN `state`, AND ONE STRING SEPARATES A REFUSAL FROM AN ADMISSION. ***
+    **THE PAIR, SAME BUILDER, ONE STRING, BOTH TIPS.**
+    `A_state`  — my own reproduction of `C30`: a root slot whose `reading` is an `enum` of literal
+    objects naming, two levels in, a `state` of `SPINDRIFT` / `HALCYON_VOID`, with `calm`
+    admissible. `dd40407` `PASS — 144` **(ESCAPE)** -> tip **`FAIL — 2 CD-CALM-SLOTS-007`**.
+    `B_status` — THE SAME TREE, THE SAME NESTING, THE SAME NEVER-BEFORE-NAMED VALUES, THE SAME
+    `calm`, with the key spelled `status` instead of `state`: `dd40407` `PASS — 144` -> tip
+    **`PASS — 144 assertions, 0 violations`**, whole register at the clean baseline but for the
+    two 16C friction lines, **`LINE 3` UNMOVED**, and the live gate **`*** ADMITTED *** ` on BOTH
+    surfaces** for `{"reading": {"pulse": {"status": "HALCYON_VOID", ...}}, "detail_level":
+    "calm"}`. Direct recogniser probe on the two nodes at the tip: `A` -> `None (UNDECIDABLE)`,
+    `B` -> `False (NOT A DIAL, SILENT)`.
+    **WHY THIS IS NOT A TENTH SHAPE AND IS NOT A REQUEST FOR A SIXTH SPELLING PATCH.** Ruling 5's
+    sentence is *"a dial in a NEVER-BEFORE-NAMED STATE, carrying `calm`, is REFUSED — because calm
+    requires proven-fresh-and-present and an unrecognised state cannot prove it."* `B_status` **IS**
+    a dial in a never-before-named state carrying `calm`, and it is ADMITTED. So the property
+    ruling 5 asks to hold **DOES NOT HOLD**, and `C30` going red establishes only that ONE spelling
+    of it is refused. **THE DISCRIMINATOR IS NOT UNRECOGNISABILITY. IT IS SIX CHARACTERS.** Ruling
+    5 anticipated exactly this and told me what to conclude: *"If a further named escape is found
+    after this test is green, THE TEST WAS WRONG, NOT THE GUARD INCOMPLETE."* **THE TEST WAS
+    WRONG.** Adding `status` to anything would be the sixth spelling patch and I am not asking for
+    it.
+    **THE ENGINEER DECLARED THIS BOUNDARY AND I CONFIRM THE BOUNDARY IS HONESTLY DRAWN.** Its own
+    words: *"IT SAYS NOTHING ABOUT A DIAL THAT DISCRIMINATES ON A DIFFERENTLY-NAMED KEY ... THAT
+    IS `DECLARED LIMIT 12`'s residue."* **THE BOUNDARY IS CORRECT AND IT IS FATAL, AND THOSE TWO
+    THINGS ARE NOT IN TENSION.** The Engineer's defence — *"WHICH IS WHAT 'A DIAL' MEANS TO THIS
+    INSTRUMENT AND WHAT 16C IS CONTRACTUALLY REQUIRED TO PRODUCE"* — is the honest one and it is
+    the right size, but it relocates the guarantee from the GUARD to a CONDITION ON A FUTURE
+    DISPATCH. **RULING 1's WORDS ARE "prove 'the data is good', not 'the data is not on my list of
+    bad'."** A guard that holds only while every contract author spells the discriminator `state`
+    is a list of one, and it is enforced by prose in a dispatch rather than by the instrument.
+  - >-
+    *** A310-F3 — `CD-PL-Q-C31` ANSWERED. NO: `C31` ADMITS BECAUSE THE RECOGNISER CANNOT SEE IT,
+    NOT BECAUSE IT AFFIRMATIVELY PROVED PRESENT-AND-FRESH. THE PROJECT LEAD'S SUSPICION WAS
+    CORRECT. ***
+    **THE PAIR, SAME BUILDER, ONE STRING.** `C_c31` is my reproduction of `C31` (`enum` members
+    `{"pulse": {"present": true, "observed_utc": ...}}`): `PASS — 144` at both tips, gate ADMITS
+    with `calm` on both surfaces. `D_absent` is the same tree with **one member's `present: true`
+    changed to `present: false` and its stamp moved back to `2026-08-01`** — a dial affirmatively
+    presenting ABSENT, THREE-WEEK-OLD data: **`PASS — 144` AT BOTH TIPS**, whole register at the
+    clean baseline but for the two friction lines, `LINE 3` UNMOVED, and the gate
+    **`*** ADMITTED *** ` on BOTH surfaces carrying `detail_level: "calm"`.**
+    **DIRECT PROBE:** `_dial_bearing` returns `False` — NOT A DIAL, SILENT — on `C31`'s node and on
+    `D`'s node alike, at the tip. **THE INSTRUMENT MAKES NO DISTINCTION BETWEEN THEM BECAUSE IT
+    NEVER LOOKED AT EITHER.** `C31` is therefore not evidence that the tip is a narrowing rather
+    than a blanket refusal; it is evidence that the tip is BLIND to a whole class of slots, and
+    `D_absent` is that blindness with the sign flipped.
+    **AND THE `C4` ARGUMENT DOES NOT REACH THE QUESTION, THOUGH THE MEASUREMENT IS TRUE.** I
+    re-ran `C4` at the tip myself: `git apply` rc=0, **`FAIL — 4 CD-CALM-GATE-002`**. It bites.
+    **BUT `CD-CALM-VACUITY-000` / `CD-CALM-GATE-002` ASSERT OVER THE INSTRUMENT'S OWN PROPOSITION
+    TABLE AND OVER THE DRIVEN `#/$defs/dial_reading` SLOTS** — `equity_crash` and
+    `monetary_debasement`. **NOTHING IN THE REGISTER EVER EVALUATES `market_pulse` AT ALL**, which
+    is precisely what `D_absent`'s all-green register proves. So `C4` establishes that the
+    instrument is not a mute button ABOUT THE DIALS IT DRIVES, and says nothing whatever about a
+    slot it cannot see. **THE MUTE-BUTTON FAILURE MODE IS GUARDED; THE INVISIBLE-SLOT FAILURE MODE
+    IS NOT, AND THEY ARE DIFFERENT FAILURE MODES.**
+  - >-
+    *** A310-F4 — MY GRADE OF THE ARGUMENT FROM THE CODE. IT IS THE BEST ARTEFACT ANY SEAT HAS PUT
+    ON THIS ROW AND IT IS NOT SUFFICIENT FOR WHAT IT IS OFFERED FOR. GRADE: SOUND IN FORM, CORRECT
+    IN ITS ENUMERATION, FALSE IN ONE OF ITS TWO UNIVERSAL CLAIMS, AND SCOPED NARROWER THAN
+    RULING 5. ***
+    **(a) THE ENUMERATION IS CORRECT AND I RE-DERIVED IT RATHER THAN CHECKING IT.** `_dial_bearing`
+    (1461-1631) has exactly the eleven answer-producing sites named (1516, 1520, 1526, 1528, 1552,
+    1594, 1597, 1613, 1628, 1630, 1631) and exactly **two** can yield `False`: line 1528, the
+    `id(resolved) in seen` cycle guard, and line 1631. Every line number in the Engineer's
+    argument checks out at the tip. **The cycle-guard sub-argument is also correct**: `seen` is
+    rebuilt per path (`seen = seen | {id(resolved)}`, line 1529), so the in-progress ancestor frame
+    still evaluates that node's own keywords and its verdict propagates through 1626-1630; and
+    because the guard is by object identity it can only ever fire less often, which is the safe
+    direction.
+    **(b) `False` REALLY IS THE ONLY SILENT ANSWER, AND I CONFIRMED THE CONSUMER SIDE.** Line 1819
+    puts EVERY root property to `_dial_bearing`; `True` lands in `dial_bearing` and fires
+    `CD-CALM-SLOTS-007` at 1831 unless the property is in the driven set; `None` fires
+    `CD-CALM-SLOTS-007` at 1845 unconditionally. So ruling 5 does reduce to the one question the
+    Engineer says it reduces to.
+    **(c) THE CONTRAPOSITIVE IS FALSE AS WRITTEN — `A310-F1`.** *"`False` implies at every node the
+    walk visited, every keyword was read"* is untrue at instance depth > 24, and the counterexample
+    is inside the argument's own boundary.
+    **(d) THE "EXACTLY TWO ROUTES" PREMISE IS TRUE OF THIS REPOSITORY AND IS NOT ENFORCED BY THIS
+    INSTRUMENT, AND THAT IS NOT DECLARED.** The argument opens *"THERE ARE EXACTLY TWO ROUTES
+    BECAUSE THE ENVELOPE ROOT IS AN ALLOWLIST OF NAMED PROPERTIES."* Line 1799 reads
+    `schema.get("properties")` and nothing else — a root that grew `patternProperties` or an object
+    `additionalProperties` would be enumerated by neither route and this instrument would be
+    silent. What makes the premise true is `check_schema_closed.py` (register `LINE 6`), a
+    DIFFERENT instrument on a DIFFERENT register line, which asserts `additionalProperties: false`
+    at every level. **A by-construction claim about instrument X whose exhaustiveness premise is
+    carried by instrument Y should say so.** Not a hole today; an undeclared cross-instrument
+    dependency, and `LINE 6` is one of the eleven register lines that is currently non-zero.
+    **(e) THE BOUNDARY IS CORRECTLY DRAWN AND DOES NOT CARRY RULING 5 — `A310-F2`, `A310-F3`.**
+    **(f) `FX16`'s PROOF IS GENUINELY MECHANICAL AND I GRADE IT GREEN.** I re-grepped both claims:
+    `_unreadable_keywords(` -> 1314 (definition), 1550 (`_dial_bearing`), 1677 (`_branch_states`),
+    1978/1980 (the violation message, recomputing with the same function). `not in
+    _READABLE_KEYWORDS` -> five hits, of which **exactly one is executable**, line 1336 inside the
+    helper; 732, 1330, 1661 and 1993 are prose. **The claim is greppable rather than argued and it
+    survives. This is the one part of the increment I would carry forward unchanged.**
+  - >-
+    *** A310-F5 — MY FINDINGS AGAINST THIS DISPATCH, WHICH TOLD ME TO ASSUME IT WAS THE
+    THIRTEENTH. IT IS. ***
+    **(i) `CD-ASR-WO3-10`-F5a — FALSE, AND IT IS CARRIED FROM THE ENGINEER'S `F02` INTO THE
+    DISPATCH'S §1(c) WITHOUT RE-CHECKING.** Both say the live gate refuses `C32`'s widened document
+    *"because `refuse_unless_publishable` runs its own per-dial key check UPSTREAM of the schema"*
+    (Engineer `F02`) / *"for an unrelated **upstream** reason"* (dispatch §1(c)). **THERE IS NO
+    PER-DIAL KEY CHECK UPSTREAM OF THE SCHEMA.** `refuse_unless_publishable`
+    (`src/crash_detector/publication/envelope_contract.py`, 239-263) runs exactly three stages, and
+    I ran them one at a time on `C32`'s widened document at the tip:
+    `_refuse_non_json -> passed`; `_refuse_classified_keys -> passed`;
+    `_refuse_schema_violation -> RAISED [UNKNOWN_KEY] at /equity_crash`.
+    **THE REFUSAL IS THE SCHEMA CHECK ITSELF**, at lines 384-396, on the `additionalProperties`
+    branch. `_refuse_classified_keys` tests key CLASSIFICATION (secret-bearing, book-adjacent
+    tokens), not an allowlist, and it admits this document. **AND THE REAL MECHANISM MATTERS FOR
+    16C:** I probed the sub-schemas directly — the widened BRANCH `#/$defs/dial_reading_unknown`
+    **admits** `x_note`; it is the union WRAPPER `#/$defs/dial_reading`, whose own
+    `additionalProperties: false` and `properties` allowlist do not carry it, that refuses.
+    **SO THE PROTECTION IS THE `dial_reading` WRAPPER'S CLOSURE, WHICH A NEW ROOT SLOT THAT IS NOT
+    A `dial_reading` WOULD NOT HAVE.** The Engineer's *conclusion* — `C32` is structural, not
+    behavioural — is CORRECT and I confirm it; the mechanism it disclosed is not, and the wrong
+    mechanism makes the protection look more general than it is.
+    **(ii) `CD-ASR-WO3-10`-F5b — AMBER, AGAINST §1(b)'s INFERENCE AND NOT ITS MEASUREMENT.** The
+    dispatch measured `C4` at `FAIL — 4` and offered it as evidence that *"the mute-button failure
+    mode is not unguarded"*. The measurement reproduces exactly. **The inference does not reach
+    `CD-PL-Q-C31`**, for the reason set out in `A310-F3`: `C4` asserts over the driven dials and
+    the instrument's own table, and `market_pulse` is evaluated by nothing. The seat was right to
+    refuse to settle the question and right that it could not; it was one step optimistic about
+    what its own measurement bounded.
+    **(iii) MINOR, RECORDED SO IT IS NOT REDISCOVERED.** §1(b) calls `CD-ASR-WO3-04`'s control *"the
+    precedent this arm cites"*; `C31`'s own description cites `CD-ASR-WO3-04` for the pairing
+    METHOD, not for a control dial. The substantive judgement — *"`C31` IS A WEAKER CONTROL THAN
+    THE ONE IT CITES"* — is right, and `A310-F3` strengthens it from a suspicion to a measurement.
+    §4 puts the inherited boot `RED` at *"ten seats"* where the Engineer's `F07` says nine;
+    immaterial and not pursued.
+    **(iv) WHAT THE DISPATCH GOT RIGHT, WHICH IS MOST OF IT, AND SAID PLAINLY BECAUSE IT SHAPED
+    THIS AUDIT.** Every figure in §2's table reproduces in my own extractions at both tips
+    (`C30`/`A_state`, `C31`/`C_c31`, `C32`, `C4`, `C10`, clean tree, 19/11, 2007, 52, MATCHES,
+    null, 18, `GATE: SHUT`). `CD-PL-F202` is correctly disclosed and correctly diagnosed. **AND
+    THE INSTRUCTION TO SPEND THE BUDGET ON THE TEST RATHER THAN ON A TENTH SHAPE IS THE REASON
+    THIS VERDICT EXISTS** — a seat that had gone hunting spellings would have found `status` and
+    filed it as shape ten, and shape ten would have earned shape eleven.
+  - >-
+    *** A310-F6 — GREEN, RECORDED SO THE NEXT SEAT DOES NOT REDO IT, AND SO THE `RED` IS NOT READ
+    AS A JUDGEMENT ON THE WHOLE INCREMENT. WHAT `16B-FIX-5` GENUINELY ACHIEVED. ***
+    **`FX15` CLOSES `A309-F1` AND IT IS REAL.** From my own paired extractions, every arm at both
+    tips: `C29` (`enum` of literal dial readings) `PASS — 144` -> `FAIL — 2`; `C34`
+    (`dependentRequired` KEY, a position nobody attacked and the seat fixed anyway) `PASS — 144` ->
+    `FAIL — 2`; my own `A_state` `PASS — 144` -> `FAIL — 2`; `F_cap24` `PASS — 144` -> `FAIL — 2`.
+    The alphabet correction does what it says over every naming position within its cap.
+    **`FX16` IS SOUND AND ITS PROOF IS THE RIGHT KIND OF PROOF** — see `A310-F4`(f). `C32`
+    `PASS — 144` -> `FAIL — 4 CD-CALM-BRANCHES-006`, `git apply` rc=0, my extraction.
+    **THE FALSE-POSITIVE TAIL DID NOT EXPLODE**, and I confirmed the two decisive negatives
+    directly: a scalar `enum` of strings and a plain `{"type": "object"}` both still answer `False`
+    at the tip. `C10` is `PASS — 158` at BOTH tips, `C16`'s benign optional root object is
+    untouched.
+    **NOTHING CORRECT WAS BROKEN.** Clean extraction of the tip: instrument `PASS — 144
+    assertions, 0 violations`, exit 0; whole register **19 rc=0 / 11 non-zero**, the same split
+    six previous seats measured; `pytest` `2007 passed`; `test_detail_level.py` `52 passed`;
+    `pid.content_hash MATCHES`, `latest_admitted_run (null)`, `MANDATORY NOT PASS (17)`,
+    `GATE: SHUT`, `CD-AC-` rows **18**.
+    **THE INVENTED VOCABULARY IS GENUINELY NEVER-BEFORE-NAMED AND I VERIFIED IT MYSELF RATHER THAN
+    TAKING THE CLAIM.** At the tip: `grep -c` for `SPINDRIFT`, `HALCYON_VOID`, `market_pulse` and
+    `pulse` -> **ZERO** in the instrument, **ZERO** across `contracts/` + `src/` + `tests/`, and
+    **ZERO** across every plant patch other than `C30`/`C31` themselves. `DECLARED_STATES` at line
+    810 is `("VALUE", "UNKNOWN", "DEGRADED")` and neither invented state is in it. **THE ARM'S
+    VOCABULARY CLAIM IS TRUE. IT IS THE ARM'S SUFFICIENCY THAT IS NOT.**
+    **AND THE SEAT'S HONESTY IS ON THE RECORD AND SHOULD BE READ THAT WAY.** `F01` corrected the
+    dispatch that instructed it. `F02` refused to let a structural arm read as behavioural. `F06`
+    disclosed its own tooling error and superseded rather than rewrote. `F04` named the depth
+    decision as its own and priced it — **it priced it for FALSE POSITIVES and nobody, including
+    the Project Lead's fourteen runs and this dispatch, asked what happens on the other side of the
+    cap.** That is where `A310-F1` was waiting.
+  - >-
+    *** A310-F9 — LOW, AND IT IS `CD-PL-F201` ITSELF BEING A SAMPLE DESCRIBED AS A CLASS, WHICH IS
+    THE SAME ERROR THIS WHOLE ROW EXISTS TO STOP MAKING. FOUND BY OBEYING THE DISPATCH'S OWN
+    INSTRUCTION TO VALIDATE THIS ENTRY BEFORE COMMITTING IT. ***
+    The dispatch warned that `status: READY_FOR_ASSURANCE` is not a schema value and that five
+    prior entries got it wrong. **IT IS NOT THE ONLY ONE, AND I FOUND THAT BY WRITING A THIRD ONE
+    MYSELF AND HAVING THE VALIDATOR REJECT IT.** I first wrote `status: WAITING_PROJECT_LEAD`,
+    which is the accurate English and is **NOT IN THE SCHEMA'S ENUM**;
+    `pbg.continuity.validate(text, 'entry', ...)` rejected it, which is the validator working
+    exactly as the dispatch said it would. **SURVEYED ACROSS `main`, `wo-3` AND
+    `asr-wo3-09-verdict`, THE BUILD LOG CARRIES THREE NON-SCHEMA `status:` VALUES, NOT ONE:**
+    `READY_FOR_ASSURANCE` (12 entries), `WAITING_PROJECT_LEAD` (1 — **`CD-ASR-WO3-09`'s own `RED`
+    verdict, `BL-20260824T144449Z-A309`**), `WAITING_ENGINEER` (1). **FOURTEEN INVALID ENTRIES,
+    AND `CD-PL-F201` NAMES THE SPELLING IT WAS SHOWN.** The remedy is not to add two more names to
+    the warning: it is that **no seat on this lane appears to run the validator before committing a
+    governed record**, which is why a finding written as a list of instances has stayed a list of
+    instances. I corrected my own entry to `WAITING_PRODUCT_AUTHORITY`, which is both valid and
+    accurate given `next_safe_action`. **I DID NOT TOUCH ANY EXISTING ENTRY** — corrections
+    supersede, never edit (`PBG-CONT-003`).
+  - >-
+    *** A310-F7 — INHERITED, THE BASE'S, DIAGNOSED AND NOT REPAIRED, AS THE DISPATCH ORDERED. ***
+    The PBG boot verdict on this lane is `RED` with
+    `continuity_state: CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`, from
+    `governance/engineering/ACTIVE_WORK.yaml` carrying `continuity_record_commit: PENDING`, blob
+    `ce0803c3`, identical at `be0b355` and at the tip. **I confirm the Engineer's `F07` diagnosis
+    and I repaired nothing** — it is the frozen base's, it is outside any scope granted here, and
+    I am read-only in any case.
+  - >-
+    *** A310-F8 — CONTINUATION IMPLICATION, STATED SEPARATELY FROM THE FINDING BECAUSE THEY ARE
+    DIFFERENT CALCULATIONS. ***
+    **WHAT IS TRUE:** the target is defective against `PO-DECISIONS-0027` ruling 5.
+    **WHAT IS SAFE:** `8398741` is nevertheless **STRICTLY BETTER THAN `dd40407` AND SAFE TO
+    LEAVE ON THE LANE**. It closes three measured live escapes (`C29`, `C34`, `C32`) and breaks
+    nothing; every arm that bit at `dd40407` still bites; the clean tree, the register split, the
+    suite and the gate are unmoved. **NOTHING SHOULD BE REVERTED.** `16C` must not be released,
+    and no indicator row may be registered, and the row still computes UNDECIDABLE — but the
+    increment is a real advance and reverting it would put three closed escapes back.
+
+evidence_references:
+  - >-
+    *** MY TARGET, MY OWN EXTRACTIONS, NEVER A SHARED WORKTREE. *** `git -C /srv/crash-detector-wo3
+    archive 8398741c039f9cb616201e22b285d815406dc3cc | tar -x -C /tmp/asr10/tip` and the same for
+    `dd4040773958da5a63d533fdcb6e61b0d410cf85` into `/tmp/asr10/prior`. Every arm is a FRESH
+    `git archive` of the SAME SHA re-extracted into its own directory under `/tmp/asr10/arms/`,
+    mutated once, and run at BOTH tips. **I DID NOT ENTER `/srv/crash-detector-wo3` OTHER THAN
+    THROUGH `git archive` AND `git rev-parse`; I DID NOT WRITE ANYWHERE UNDER `/srv/crash-detector`
+    OR `/srv/crash-detector-wo3`; I WROTE NOTHING UNDER `pbg/`; I TOUCHED `be0b355` NOT AT ALL; I
+    REPAIRED NOTHING.** Verified after the fact: `git -C /srv/crash-detector-wo3 rev-parse HEAD` ->
+    `8398741c039f9cb616201e22b285d815406dc3cc`, `git -C /srv/crash-detector-wo3 status --porcelain`
+    -> **EMPTY**; `git rev-parse be0b355` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`, **UNMOVED**;
+    `git log --format=%an dd40407..wo-3 | sort -u` -> `CD-ENG-WO3-10`, **ONE IDENTITY**. My verdict
+    worktree is `/tmp/asr10w/verdict` on branch `asr-wo3-10-verdict`, cut from the frozen base.
+  - >-
+    *** WHY MY FIXTURE IS MINE AND NOT THE PROJECT'S, AND WHY EVERY REFUSAL HERE IS PAIRED. ***
+    `/tmp/asr10/gate.py` builds an envelope from the CONTRACT'S OWN `required` LIST — per surface,
+    with `classification: "PRIVATE"` added for the private one — and drives
+    `refuse_unless_publishable` in-process. It does not touch the project's fakes, which route
+    through `detail_level_for` and cannot emit `calm` at all, so a probe built on them cannot test
+    the thing it is probing for (`CD-ASR-WO3-04`). **THE FIXTURE IS PROVED IN BOTH DIRECTIONS ON
+    EVERY ONE OF THE TWELVE TREES, SO A BROKEN FIXTURE CANNOT MASQUERADE AS A CLOSED HOLE:**
+    `UNKNOWN dial + acute -> *** ADMITTED *** ` on both surfaces, `UNKNOWN dial + calm -> REFUSED
+    [SCHEMA_VIOLATION] at /equity_crash` on both surfaces, every time. **AND EVERY `REFUSED` I
+    REPORT IS PAIRED WITH AN `ADMITTED` FROM THE SAME BUILDER DIFFERING IN ONE STRING:**
+    `A_state`/`B_status` differ in `state` vs `status`; `C_c31`/`D_absent` differ in `true` vs
+    `false`; `F_cap24`/`E_cap25` differ in one integer of nesting.
+  - >-
+    *** THE CONDITIONS I WOULD PUT ON 16C's DISPATCH. I AM RETURNING `RED`, SO THESE ARE CONDITIONS
+    FOR AFTER THE PRODUCT DECISION IN `next_safe_action`, NOT INSTEAD OF IT. THE PREVIOUS AUDITOR
+    WAS ASKED FOR THESE, RETURNED `RED`, AND NAMED THEM ANYWAY, AND THIS DISPATCH SAID THAT WAS THE
+    MOST USEFUL THING IN ITS VERDICT. ***
+    **(1) THE PRODUCT OWNER DECIDES BETWEEN NARROWING RULING 5 AND INVERTING THE ROOT-PROPERTY
+    DEFAULT, BEFORE ANY ENGINEER IS DISPATCHED.** Not the Project Lead, and not by a fix that
+    quietly picks one. `A310-F2` and `A310-F3` are the same question and it is a product question.
+    **(2) `A310-F1` IS FIXED AND PLANTED FIRST, BY AN ENGINEER WHO DID NOT WRITE `FX15`, AND
+    ASSURED BY A SEAT THAT DID NOT FIX IT.** It is bounded, it is inside the existing design, and
+    it does not wait on the product decision.
+    **(3) `CD-ASR-WO3-09`'s FIVE SURVIVING CONDITIONS STAND UNCHANGED AND I RE-ASSERT THEM:** 16C's
+    liveness slot is `{"$ref": "#/$defs/dial_reading"}` to a `oneOf` union and NOT `enum`, NOT
+    `const`, NOT under `patternProperties`; **NO APPLICATOR IS ADDED TO
+    `#/$defs/dial_reading.oneOf` BRANCHES**; `DECLARED LIMIT 12`'s residue remains open and 16C
+    must not introduce a differently-named discriminator; 16C re-runs the WHOLE thirty-line
+    register and accounts for every line that moves INCLUDING the friction lines — **because "the
+    register moved two lines and they are just friction" is the exact sentence under which
+    `A310-F1`, `A310-F2` and `A310-F3` all hide, and I measured all three of them doing it**; and
+    `STALENESS_WINDOW_CEILING_SECONDS` / `Q32` is not closed by this verdict.
+    **(4) NEW, AND IT FALLS OUT OF `CD-ASR-WO3-10`-F5a.** If 16C's liveness slot is NOT a
+    `#/$defs/dial_reading`, it does not inherit the union wrapper's `additionalProperties: false`,
+    which is what actually refused `C32`'s widened document. **A new top-level slot must declare
+    its own closure explicitly and `check_schema_closed`'s `LINE 6` must be green on it in the same
+    commit.**
+    **(5) THE MEMORIAL REMOVAL (`PO-DECISIONS-0027` RULING 3) MUST NOT LAND WHILE THIS IS RED.**
+    Ruling 3 conditions the removal on the structural instrument carrying the behaviour. **IT DOES
+    NOT CARRY IT YET.** Removing the pytest literal-name assertion now would remove a live catcher
+    in exchange for a guarantee this verdict says is not held.
+    **(6) THE NEXT ASSURANCE SEAT IS TOLD TO ATTACK THE CAP AND THE KEY NAME FIRST**, and to treat
+    a green `C30` as evidence about `C30` and about nothing else, until ruling 5 is either narrowed
+    or carried.
+  - >-
+    *** WHAT I DID NOT EXAMINE, AND WHY — BECAUSE A SCOPED VERDICT THAT NAMES ITS LIMITS IS USEFUL
+    AND AN UNSCOPED ONE IS A LIABILITY. *** I did not individually re-run `C1`–`C28` (three seats
+    have, two of them independently of the builder, and this dispatch directed my budget at the
+    completion test). I did not re-run the Engineer's twenty-one-probe false-positive tail as a
+    set; I confirmed its two decisive negatives directly and accept `F03`'s direction. I did not
+    audit `CD-PL-F180` / contract-bytes / exit 3, `REF_INERT_SIBLINGS`, the liveness detector,
+    `STALENESS_WINDOW_CEILING_SECONDS`, no-blend, host-coupling or version — all out of scope. I
+    did not attempt to bound the `A310-F2` escape class; **that is deliberate, because bounding it
+    would be the census game and ruling 5 abolished it.** I diagnosed and did not repair the
+    inherited boot `RED`. **CONFIDENCE: HIGH on `A310-F1`, `A310-F2` and `A310-F3` — each is a
+    direct measurement, paired, reproduced at both tips, with the live gate driven in-process on
+    both surfaces. MEDIUM on `A310-F4`(d), which is an undeclared dependency rather than a
+    demonstrated hole.**
+  - >-
+    *** THE ONE THING THIS PROJECT HAS NEVER HAD IS AN AUDITOR WHO COULD SAY "IT IS CLOSED, AND
+    HERE IS WHY NO FUTURE SHAPE CAN ESCAPE." I WAS ASKED TO SAY IT IF IT WERE TRUE AND TO SAY SO
+    IF IT WERE NOT. IT IS NOT TRUE, AND HERE IS THE SHORTEST HONEST FORM OF WHY. ***
+    This instrument's `False` means **"nothing under this node declares a property called
+    `state`"**. Ruling 5's `REFUSED` means **"this dial cannot prove its data is present and
+    fresh"**. **THOSE ARE DIFFERENT PROPOSITIONS, AND EVERY REMAINING ESCAPE LIVES IN THE GAP
+    BETWEEN THEM.** Ten audits have now found ten things and nine of them were spellings; this one
+    is not a spelling, it is the gap itself, and it cannot be closed by adding anything to any
+    list. **A guard is affirmative when the DEFAULT for an unexamined slot is REFUSE. In this
+    instrument the default for an unexamined slot is SILENCE, and `_dial_bearing` only ever
+    converts silence into a violation when it recognises the word `state`.** Until an undriven root
+    property that can carry `detail_level` is UNDECIDABLE by default — or until the contract is
+    obliged, by a control rather than by a dispatch, to spell every discriminator `state` — the
+    sentence "no future shape can escape" cannot be written truthfully, and I will not write it.

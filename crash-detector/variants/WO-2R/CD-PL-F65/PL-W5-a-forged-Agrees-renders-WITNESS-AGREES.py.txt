@@ -1,0 +1,26 @@
+from datetime import datetime, timezone
+from crash_detector.witness.panel import Agrees
+from crash_detector.staleness import FreshnessEvidence, StalenessWindow
+from crash_detector.serving.witness_resolver import PanelRow, resolve_panel, render_panel
+
+DECADE_AGO = datetime(2016, 8, 21, 12, 0, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
+
+# Construct lawfully at a FRESH instant, then overwrite DECLARED slots afterwards.
+row = PanelRow(state="AGREES", as_of_utc=NOW, published_utc=NOW,
+               measures={"divergence_measure": 0.01})
+a = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("lawful      :", type(a).__name__, render_panel(a),
+      "| age", a.freshness.age_seconds, "| window", a.freshness.window.seconds)
+
+object.__setattr__(a.freshness, "as_of_utc", DECADE_AGO)   # declared slot on FreshnessEvidence
+object.__setattr__(a.freshness.window, "seconds", 1e18)    # declared slot on StalenessWindow
+object.__setattr__(a, "as_of_utc", DECADE_AGO)             # unslotted attribute on Agrees
+
+print("forged      : type", type(a).__name__)
+print("  as_of_utc          :", a.as_of_utc)
+print("  freshness.as_of_utc:", a.freshness.as_of_utc)
+print("  freshness.age_secs :", a.freshness.age_seconds, "(=", a.freshness.age_seconds/86400, "days )")
+print("  window.seconds     :", a.freshness.window.seconds)
+print("  window.covers(age) :", a.freshness.window.covers(a.freshness.age_seconds))
+print("PL-W5 RENDER         :", render_panel(a))

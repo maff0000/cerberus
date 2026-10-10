@@ -1,0 +1,221 @@
+# ================================================================================================== #
+# BL-20260824T081819Z-0159 — PROJECT LEAD BOUNDARY. **INCREMENT 16A IS RETURNED, RECONCILED BY
+# MEASUREMENT AND BANKED. IT IS NOT ACCEPTED (`PBG-AUTH-003`, `CD-D-180`).**
+#
+# **FIFTEEN CLAIMS RE-MEASURED IN THIS SEAT'S OWN SHELL. FIFTEEN CONFIRMED. NONE TAKEN FROM THE
+# SEAT'S SUMMARY.** Including both ends of the test count, which this seat extracted and ran at the
+# BASELINE as well as the tip, so "no regression" is measured and not inherited.
+#
+# *** **AND THE RETURN CARRIES A FINDING THAT BLOCKS 16B INDEPENDENTLY OF `Q30`, WHICH NOBODY WAS
+# LOOKING FOR: THE STALENESS CEILING IS 900 SECONDS AND IT REFUSES EVERY WINDOW THE RATIFIED MAPPING
+# REQUIRES. `Q32`.** *** Quarterly REFUSED. Monthly REFUSED. Daily REFUSED. **HOURLY REFUSED.**
+# Reproduced by this seat against the live class. So even with the mapping content in hand, SLOOS's
+# quarterly NDFI leg and private credit stress's WIDE window COULD NOT BE REGISTERED TODAY.
+#
+# **AND THE SEAT REPORTED ITS OWN SCOPE BREACH WHEN THE TIP WOULD HAVE HIDDEN IT (`F03`).** Confirmed
+# in history by this seat: `cd0fc24` wrote 445 lines into `tools/`, `33efbf7` removed them, net
+# `tools/` diff **0**. **A CLEAN TIP OVER A BREACHED HISTORY, DISCLOSED BY THE SEAT THAT DID IT.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T081819Z-0159
+timestamp_utc: '2026-08-24T08:18:19Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T08:18:19Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02   # the dispatcher owns the sub-agent's work and its downstream effects (PBG-CONT-007, PBG-RT-004)
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T071442Z-0158
+base_sha: 9963aa387d3b22f5295d6b0946461d16e6f79454
+current_sha: 9963aa387d3b22f5295d6b0946461d16e6f79454
+status: WAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  WO-3 increment 16A is returned by CD-ENG-WO3-03 at 53f639a on branch wo-3, reconciled by
+  measurement in this seat's own shell and BANKED. It is NOT ACCEPTED. All four deliverables are
+  built and every one of the seat's fifteen substantive claims was independently reproduced. The
+  seat raised five findings, three against its own work or this dispatch, and one of them — F01, the
+  900-second staleness ceiling — BLOCKS 16B independently of Q30 and is put up as Q32. A separate
+  fresh Assurance seat is dispatched over 53f639a. NO SOURCE IS REGISTERED.
+
+the_return:
+  seat: 'CD-ENG-WO3-03 — FRESH IDENTITY, verified: `git log --format=%an|%cn 116c01f..HEAD | sort -u` -> ONE line, `CD-ENG-WO3-03|CD-ENG-WO3-03`.'
+  tip: '53f639a91088ee42f5ba6c0d269f69782ba2a20a'
+  commits: '8, on branch wo-3, built forward from 116c01f'
+  declared_result: 'READY_FOR_ASSURANCE'
+  boot_as_received: >
+    **RED**, `CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`, from an `ACTIVE_WORK.yaml` inherited from
+    the frozen base whose pointer is stale by five days. **OUTSIDE THE SEAT'S SCOPE; IT DIAGNOSED AND
+    DID NOT REPAIR, AND IT DECLARED THE RED RATHER THAN NETTING IT OFF AGAINST A CLEAN RESULT** —
+    which is exactly what increment 14's Engineer did and what this dispatch asked for.
+
+the_reconciliation: >
+  **RE-RUN IN THIS SEAT'S OWN SHELL, ON THE COMMITTED TREE, NOT READ OFF THE SEAT'S SUMMARY.**
+  Fifteen measurements, fifteen confirmed.
+reconciliation_table:
+  lane_identity: 'ONE identity across all 8 commits. Porcelain **0** lines. CONFIRMED.'
+  frozen_base: '`git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **UNMOVED.** CONFIRMED.'
+  protected_scope: '`git diff --numstat 116c01f..HEAD` over `pbg/`, `BLUEPRINT.md`, `governance/decisions/`, `tools/` -> **0, 0, 0, 0**. CONFIRMED.'
+  d1_carriage: '`git show main:PID.md | cmp - PID.md` -> **exit 0**. `sha256sum PID.md` -> `08baf51c…`. **BYTE-IDENTICAL CARRIAGE, VERIFIED BY HASH AND NOT BY ASSERTION.** CONFIRMED.'
+  d1_census: '`derive_pid_census` on the CARRIED file -> **17**; CD-AC-017 True, CD-AC-018 False, CD-AC-004 True. **UNCHANGED, SO THE RECORD ACT PROVABLY MOVED PROSE AND NO CRITERION.** CONFIRMED.'
+  d1_repin: '`required-tests.yaml:93` -> `content_hash: sha256:08baf51c…`. Verifier prints `pid.ref PID.md`, `pid.content_hash **MATCHES**`, `latest_admitted_run (null)`, 18 criteria **ALL UNDECIDABLE**, **GATE: SHUT**, `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`. CONFIRMED — **and the SHUT gate is the CORRECT and PREDICTED outcome, not a shortfall: `latest_admitted_run` is null and an Engineer CANNOT change that (`PBG-SOD-001`).**'
+  d1_contrast: '**THE ARM THAT MATTERS.** Pin reverted to `538e30f3…` on a scratch extraction -> `pid.content_hash **MISMATCH**` with the full diagnostic. **THE PIN CHECK IS LIVE; A "MATCHES" THAT COULD NOT HAVE SAID OTHERWISE WOULD PROVE NOTHING.** CONFIRMED.'
+  d2_placement: >
+    **BOTH** closed schemas: `detail_level` **absent** at top level (properties AND required),
+    **present** in `$defs.dial_reading`, and **REQUIRED in all three branches** —
+    `dial_reading_value`, `dial_reading_degraded` and `dial_reading_unknown`, each with
+    `additionalProperties: false`. `schema_version` `const` bumped **1.0.0 -> 1.1.0**. CONFIRMED.
+  d2_the_unknown_branch: '**`detail_level` IS REQUIRED ON THE `UNKNOWN` BRANCH, AND THAT IS THE CONSTITUTIONAL HALF.** PID §3.2 — *"Missing data must never render as calm"* — bites precisely on the branch with no score, and with zero registered sources it is the ONLY branch reachable today. An OPTIONAL field there would let a renderer meet a dial carrying no level and decide for itself, which is the second decision site the module exists to prevent. CONFIRMED.'
+  tests: >
+    *** **BOTH ENDS MEASURED BY THIS SEAT, NOT INHERITED.** *** Baseline extracted clean with
+    `git archive 116c01f | tar -x` and run: **1882 passed**. Tip run: **1990 passed**. **+108, ZERO
+    FAILURES AT EITHER END. NO REGRESSION — AND "no regression" IS NOW A MEASUREMENT AND NOT A
+    CARRIED CLAIM.**
+  sweep: '`tools/sweep/delegated_judgement_sweep.py --root .` -> **exit 0**, subject set **19 modules**. Identical to baseline. CONFIRMED.'
+  d3_clean_arm: '`deploy/check_portability.py --root .` -> **PASS, 1072 assertions, 0 violations**, 7 services, 7 mounts, 3 anchors resolved. CONFIRMED.'
+  d3_violated_arm: >
+    **PLANTED ON AN EXTRACTED COPY, NEVER IN THE REAL FILE (`CD-PL-F154`).** One relative bind
+    `source: ../contracts` rewritten to `source: /srv/crash-detector/contracts` -> **FAIL, 6
+    violations, exit 1**, each naming the rule and the JSON pointer of the offending mount. **THE
+    SAME DECLARED COMMAND EXITING 0 ON THE CLEAN SUBJECT AND NON-ZERO ON THE VIOLATED ONE.**
+    CONFIRMED.
+  d4_zero_rows: '`deploy/indicator-mapping.json` -> `indicators` is a list of length **0**. **NOT ONE ROW.** CONFIRMED.'
+  d4_is_called: >
+    *** **AND THIS IS THE ONE THIS BOUNDARY WAS MOST AFRAID OF, BECAUSE IT IS THE FOURTH-TIME-NAMED
+    PATTERN.** *** `indicator_mapping_registry` is a **REQUIRED FIELD** of `ConfigSnapshot` — in
+    `__slots__`, in `@establishes`, exact-type checked, **with no default** (*"a mapping nobody chose
+    is not evidence of anything"*) — and cross-validated: **every mapped indicator must already be a
+    registered source.** **IT IS NOT A FIFTH WRITER WITH NO CALLER.** CONFIRMED.
+  d4_end_to_end: 'Both named tests run individually and PASS: the shipped zero-row mapping leaves every dial `UNKNOWN` and **NEVER CALM**, and the shipped snapshot carries an empty registry with both dials `Unknown`. CONFIRMED.'
+  no_indicator_registered: >
+    Grep for nineteen real series identifiers across `src/`, `contracts/` and the shipped data file
+    -> **ZERO data hits.** `SLOOS`/`NDFI` appear **only in prose citing the ruling** (three docstring
+    sites and the data file's header). **NO INDICATOR, NO DIAL BINDING, NO POLARITY, NO TIER. NOT ONE
+    ROW, NOT A PLACEHOLDER, NOT A FIXTURE.** CONFIRMED.
+  seat_build_log: 'Both `BL-20260824T080623Z-16WA` and its correction `-16WB` validate `ok=True, stage=complete` by direct call with `schema_dir=pbg/schemas`. **The correction SUPERSEDES and does not edit (`PBG-CONT-003`).** CONFIRMED.'
+
+Q32:
+  question: >
+    *** **THE STALENESS CEILING IS 900 SECONDS AND IT REFUSES EVERY WINDOW THE RATIFIED MAPPING
+    REQUIRES. THIS BLOCKS 16B INDEPENDENTLY OF `Q30`, AND NOBODY WAS LOOKING FOR IT.** ***
+  raised_by: 'CD-ENG-WO3-03 as F01 (HIGH). **REPRODUCED BY THIS SEAT AGAINST THE LIVE CLASS, NOT ACCEPTED ON THE SEAT''S WORD.**'
+  measured: |
+    src/crash_detector/staleness.py:382  STALENESS_WINDOW_CEILING_SECONDS: float = 900.0
+    StalenessWindow(seconds=3600)      hourly      -> REFUSED  StalenessWindowOutOfRange
+    StalenessWindow(seconds=86400)     daily       -> REFUSED  StalenessWindowOutOfRange
+    StalenessWindow(seconds=2592000)   monthly     -> REFUSED  StalenessWindowOutOfRange
+    StalenessWindow(seconds=7776000)   quarterly   -> REFUSED  StalenessWindowOutOfRange
+  why_it_is_not_a_bug_to_be_fixed_by_a_seat: >
+    **THE CEILING IS DERIVED FROM A RATIFIED NUMBER AND CARRIES ITS OWN DERIVATION AS DATA.**
+    `STALENESS_WINDOW_CEILING_SOURCE`: *"PID.md §5, assurance latency budget, RATIFIED 2026-08-18
+    (CD-D-003 resolved): pipeline/publication failure independently detectable <= 15 minutes. A
+    staleness window wider than the detectability budget renders a dead feed as fresh for longer than
+    the product permits failure to go undetected."* **WIDENING IT WOULD BE A SEAT MOVING A RATIFIED
+    PID NUMBER. THE ENGINEER REFUSED TO, AND WAS RIGHT TO REFUSE.**
+  the_diagnosis_this_seat_adopts: >
+    **TWO DIFFERENT QUANTITIES ARE SHARING ONE UNIT AND ONE CEILING.** The 900s bound reasons about
+    **FEED LIVENESS** — how long a DEAD feed may masquerade as fresh before detection. A per-indicator
+    relevance window reasons about **DATA CADENCE** — how often the underlying series actually moves.
+    **A QUARTERLY LENDING SURVEY IS NOT A DEAD FEED AT SIXTEEN MINUTES.** `PO-DECISIONS-0025` ruling 6
+    requires a WIDE window for private credit stress *"because its latency IS the point"*, and ruling
+    4 registers SLOOS's NDFI leg as manual-quarterly. **BOTH ARE REFUSED BY CONSTRUCTION TODAY.**
+  the_options_stated_without_this_seat_choosing: >
+    (a) the two concepts are separated — a liveness ceiling and a relevance window, different types,
+    different bounds, and the 900s number keeps its ratified meaning untouched; or (b) the ceiling is
+    per-criticality or per-cadence-class; or (c) PID §5's budget is read as applying only to the
+    publication pipeline and not to every input series. **THIS SEAT DOES NOT CUT IT. IT IS PRODUCT
+    MEANING WITH A RATIFIED NUMBER UNDER IT.**
+  status: 'OPEN. Next actor PRODUCT_AUTHORITY. Silent execution PROHIBITED. **BLOCKS 16B ALONGSIDE Q30 AND SEPARATELY FROM IT.**'
+  the_value_of_finding_it_now: >
+    **`Q30` LOOKED LIKE THE ONLY THING BETWEEN THIS PROJECT AND ITS FIRST ROW. IT IS NOT.** Had 16A
+    been skipped and 16B attempted the moment the mapping arrived, this would have been discovered
+    with the content in hand and the seat under pressure to widen a ratified constant to make the
+    rows land. **THE SPLIT PAID FOR ITSELF HERE.**
+
+the_seats_other_findings_and_this_seats_disposition:
+  F02:
+    seat_claim: 'MEDIUM — an Engineer seat CANNOT add a module under `src/`: it turns the sweep PASS -> FAIL as `UNDECLARED MODULE`, and the only remedy is `declared_dispositions.py`, which is held. The seat put the carrier inside `source_registry.py` rather than edit the register.'
+    disposition: >
+      **ACCEPTED AS A FINDING AGAINST THIS DISPATCH, AND IT IS THIS SEAT''S ERROR.** The dispatch
+      offered *"extend `source_registry.py` or add a companion module beside it — your call"* as a free
+      choice. **IT IS NOT FREE.** One branch of it lands the seat in a held instrument. The seat took
+      the buildable branch and reported the constraint instead of quietly editing the register to make
+      an instrument go green — **which is precisely the bypass shape `PBG-FWK-013` names.** Recorded
+      as `CD-PL-F172`: **a dispatch that offers a choice must have priced both branches.**
+  F03:
+    seat_claim: 'MEDIUM — SELF-REPORTED SCOPE BREACH. D3''s check was first written to `tools/` and committed at `cd0fc24`; moved to `deploy/` afterwards. Net `tools/` diff 0.'
+    disposition: >
+      *** **CONFIRMED IN HISTORY BY THIS SEAT, AND THE MANNER OF THE DISCLOSURE IS THE POINT.** ***
+      `git log --numstat 116c01f..HEAD -- tools/` -> `cd0fc24` **+445**, `33efbf7` **-445**. **THE
+      BREACH IS REAL AND IT IS IN THE PERMANENT HISTORY OF THE BRANCH. THE TIP IS CLEAN AND WOULD HAVE
+      HIDDEN IT, AND EVERY SCOPE INSTRUMENT THIS PROJECT OWNS MEASURES THE TIP.** The seat disclosed
+      what its own clean result concealed. Recorded as `CD-PL-F173`: **net-zero scope diffs are not
+      scope compliance, and no instrument here would have caught this.** No remediation is required of
+      the artefact; the disclosure is the remedy and the finding travels to Assurance.
+  F04:
+    seat_claim: 'LOW — two of the seat''s own tests would have passed for the wrong reason (`type()` versus a class statement on the enum forgery; the synthetic-id scan failing on the very header that documents the convention). Both fixed with the reason recorded.'
+    disposition: '**ACCEPTED.** A test that passes for the wrong reason is the vacuity this project has spent ten gates learning to hunt. The seat hunted its own. Left to Assurance to attack.'
+  F05:
+    seat_claim: 'LOW — the dispatch names `main` at `8611685`; it is `9963aa3`.'
+    disposition: >
+      **ACCEPTED AND CORRECT.** `8611685` was `main` when the dispatch was written and the
+      `CD-RULE-007` one-field follow-up landed after it. **IMMATERIAL, AND THE SEAT PROVED IT
+      IMMATERIAL RATHER THAN ASSERTING IT**: `git diff 8611685 main -- PID.md` is empty, so the
+      carriage is unaffected. **A dispatch naming a SHA that moves under it is a real class** and is
+      recorded as `CD-PL-F174`: name the artefact and the hash, not the branch tip.
+
+CD-PL-F175:
+  finding: >
+    **AGAINST THIS SEAT, AND CAUGHT BEFORE IT REACHED A BINDING RECORD RATHER THAN AFTER — WHICH IS
+    THE FIRST TIME ON THIS PROJECT THAT HAS HAPPENED.** This seat's FIRST measurement of D2 read the
+    `oneOf` entries of `$defs.dial_reading` and printed `required has detail_level: False` for all
+    three branches, which would have made the Engineer's claim look FALSE.
+  what_was_actually_true: >
+    **THE `oneOf` ENTRIES ARE `$ref` STUBS.** The real branch definitions are
+    `$defs.dial_reading_value` / `_degraded` / `_unknown`, and `detail_level` is required in every one
+    of them. **THE SEAT'S PROBE WAS THE PARTIAL MEASUREMENT, NOT THE ENGINEER'S CLAIM.**
+  why_it_is_recorded: >
+    It is `CD-PL-F170`'s pattern exactly — *a partial measurement promoted to a confident statement
+    about code* — and it is the **FIFTH** instance after `F158`, `F161`, `F165` and `F168`. **THE
+    DIFFERENCE IS ONLY THAT THIS ONE WAS CAUGHT ONE COMMAND EARLIER.** Had it been written, this
+    boundary would have recorded a false accusation against a seat that was exactly right. **THE
+    REMEDY IS NOT RESOLVE, IT IS THE HABIT: WHEN A MEASUREMENT CONTRADICTS A SEAT THAT HAS BEEN
+    ACCURATE ALL DAY, SUSPECT THE MEASUREMENT FIRST.**
+
+what_is_banked_and_what_is_not:
+  banked: 'Increment 16A at 53f639a on branch wo-3. Reconciled by measurement. **BANKED.**'
+  not_accepted: '**NOT ACCEPTED** (`PBG-AUTH-003`, `CD-D-180`). A Project Lead does not accept its own dispatch''s output. **A separate fresh Assurance seat goes over the tip (`PBG-SOD-001`, non-waivable) — the fifth time this project has honoured it on WO-3 alone.**'
+  not_merged: 'Nothing is merged to `main`. The lane carries the work.'
+  grades_unmoved: '`CD-AC-002` AMBER and NOT CLOSED · `CD-AC-005` RED · the WO-2 gate SHUT · no finding closed · no grade moved.'
+  holds: 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 all HELD and UNCHANGED.'
+
+evidence_references:
+  - 'wo-3 at 53f639a91088ee42f5ba6c0d269f69782ba2a20a — the increment'
+  - 'governance/engineering/build-log/BL-20260824T080623Z-16WA.yaml and -16WB.yaml on wo-3 — the seat''s own record and its correction'
+  - 'governance/engineering/CD-DISPATCH-INC16A-REGISTRY-CARRIER-ENGINEER.md — the dispatch it answers'
+
+next_safe_action: >
+  **DISPATCH A SEPARATE FRESH ASSURANCE SEAT OVER `53f639a`, THEN STOP.** `PBG-SOD-001` is
+  non-waivable and `CD-ENG-WO3-03` does not certify its own work. The Assurance seat is told to
+  attack hardest at: **(1) the `detail_level` per-dial wiring, because the guard covering it was
+  MISAIMED until this increment and a replacement guard written by the same seat that wired the
+  feature is the obvious place for a second vacuity to hide;** (2) **the D3 portability check's
+  clean arm**, because a check with 1072 assertions and 0 violations over a file its own author
+  believed compliant is exactly where a vacuous pass lives; (3) **`F03`'s history breach**, which no
+  instrument this project owns would have caught; and (4) **the D4 carrier's refusals**, every one of
+  which guards a row that does not exist yet. **THEN STOP: `Q30`, `Q31` AND `Q32` ARE ALL OPEN AND
+  ALL THREE ARE THE PRODUCT AUTHORITY'S.**
+
+expected_next_actor: 'ASSURANCE_ENGINEER — a fresh seat, never CD-ENG-WO3-03 and never CD-ASR-WO3-01/-02. Then PROJECT_LEAD. Then MATT.'
+
+risks:
+  - '**Q30 AND Q32 NOW BLOCK 16B INDEPENDENTLY OF EACH OTHER.** Answering the mapping alone does not unblock registration; the staleness ceiling refuses the windows the mapping requires. Both are needed before a row lands.'
+  - 'CD-PL-F173: net-zero scope diffs pass every scope instrument this project owns. The only reason F03 is on the record is that the seat that committed it chose to say so. That is a control resting on candour.'
+  - 'CD-PL-F172: this dispatch offered a free choice that was not free. A dispatch that has not priced both branches of a choice it offers is spending the seat''s time on discovering the price.'

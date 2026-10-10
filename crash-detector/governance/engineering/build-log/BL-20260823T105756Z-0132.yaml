@@ -1,0 +1,299 @@
+# ================================================================================================== #
+# BL-20260823T105756Z-0132 — PROJECT LEAD BOUNDARY
+#
+# INCREMENT 10 ITEM 1 IS RECONCILED BY MEASUREMENT AND BANKED — **NOT ACCEPTED** (PBG-AUTH-003).
+#
+# AND THE RECONCILIATION FOUND SOMETHING THE ENGINEER DID NOT AND COULD NOT: **A STANDING "RED"
+# THIS PROJECT HAS ASSERTED AT EVERY BOUNDARY FOR SEVEN HOURS IS GREEN, AND HAS BEEN GREEN SINCE
+# INCREMENT 8.** IT WAS IN THIS SEAT'S OWN DISPATCH, AS A DECLARED FACT, WRITTEN THIS MORNING.
+# ================================================================================================== #
+
+entry_id: BL-20260823T105756Z-0132
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T10:57:56Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: BUILD
+branch: main
+base_sha: 6d93b0b0da4046ee44173293cf3dffc25367ee73   # `main` at this boundary. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36). **THE FIRST DRAFT OF THIS LINE CARRIED A TRANSCRIBED SHA AND IT WAS WRONG — CD-PL-F36 CATCHING ITS OWN AUTHOR, AGAIN, AND FIXED BEFORE THE COMMIT RATHER THAN AFTER.**
+
+the_return:
+  from: CD-ENG-WO2R3-08
+  dispatch: CD-DISPATCH-WO2R3-INC10-F01-ENGINEER (banked `184c3e1`)
+  verdict: '`READY_FOR_ASSURANCE`, with `SCOPE_INSUFFICIENT` for exactly one file.'
+  the_scope_insufficient_file: >
+    **`tools/sweep/declared_dispositions.py`.** 14 rows go stale by construction (12 tier-1 + 2
+    tier-2) because the seat FIXED four `DEFECT_OPEN` sites, and the file is protected by
+    PO-DECISIONS-0018 ruling 3 until the keys clear WITH the remedy. **THAT IS THE THIRD CONSECUTIVE
+    ENGINEER TO RETURN `SCOPE_INSUFFICIENT` FOR THIS EXACT FILE RATHER THAN KEEP A DEAD CLAUSE ALIVE
+    TO HOLD A REGISTER KEY AND A GREEN SUITE.** It left the dead-key -> live-key map in
+    `BL-...-0098` so the clearing is one act. **PL-VERIFIED: `git diff 686a374..5a37301 --
+    tools/sweep/` IS EMPTY.**
+
+method: >
+  **RECONCILED BY MEASUREMENT ON THIS SEAT'S OWN `git archive` EXTRACTIONS, NEVER BY READING THE
+  SEAT'S CLAIMS** (`PBG-AUTH-003`). Two pristine extractions at `/tmp/pl-inc10/base` (`686a374`) and
+  `/tmp/pl-inc10/tip` (`5a37301`), plus a third for the plant work and a fourth for the F07 test.
+  **EVERY PROBE IN THIS ENTRY IS THIS SEAT'S OWN, WRITTEN FROM THE SOURCE, AND EVERY ONE PRINTS THE
+  TREE IT ACTUALLY READ** (`CD-PL-F98`). `python3 -B` throughout, so no `__pycache__` is written.
+  **RECONCILIATION IS NOT ACCEPTANCE.**
+
+# ================================================================================================== #
+identity_and_scope_MEASURED_PER_PATH:
+# ================================================================================================== #
+  lane_head: '`5a37301de9dae217dcb7deec72ece3f21a34f04f`, RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36).'
+  commits: '**SIX** — `4192c41` part A · `3165d98` part B · `ca4e268` part C(1) · `ea7c65c` part C interim · `87da3db` part C · `5a37301` part D. **ONE COMMIT PER PART, COMMITTED AS IT WENT — THE ELEVENTH CONSECUTIVE SEAT.**'
+  identity: '`git log --format=''%an <%ae> | %cn <%ce>'' 686a374..HEAD | sort -u` -> **EXACTLY ONE LINE**, `CD-ENG-WO2R3-08 <cd-eng-wo2r3-08@seats.crash-detector.invalid>` as BOTH author and committer (CD-RULE-002). **THE CD-PL-F127 IDENTITY DEFECT DID NOT RECUR ON ANY OF THE SIX.**'
+  porcelain: 'ZERO LINES.'
+  changed_paths: '**21** — `src/` 9 · `tests/` 2 · `governance/engineering/build-log/` 4 · `tools/register/` 1 · `plants/` 2 · `contracts/execution/` 1 · `required-tests.yaml` 1 · `plants/MANIFEST.md` (in the 2). 2799 insertions, 33 deletions.'
+  protected_scope_MEASURED_PER_PATH_AND_NOT_BY_EYE: >
+    `git diff --name-only 686a374..5a37301 -- <path>` returns **ZERO** for every one of:
+    **`tools/sweep/`** · **`tools/register/check_sealed_against_forged_establishment.py`** ·
+    `BLUEPRINT.md` · `governance/blueprint/` · `governance/decisions/` · `governance/assurance/` ·
+    `governance/reconciliation/` · `governance/engineering/ACTIVE_WORK.yaml` · `PID.md` · `pbg/` ·
+    `governance/findings/`. **ELEVEN PATHS, ELEVEN ZEROS.**
+  build_log: '`git diff --name-status` over `governance/engineering/build-log/` -> **4 ADDED, 0 MODIFIED.** No landed entry edited (PBG-CONT-003).'
+
+# ================================================================================================== #
+the_numbers_RE_DERIVED_ON_THIS_SEATS_OWN_EXTRACTIONS:
+# ================================================================================================== #
+  the_class_2_sweep: >
+    `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` — BASE **`FAIL — 555 sites, 4
+    violations`**, TIP **`FAIL — 548 sites, 18 violations`**. **THE SEAT'S NUMBERS ARE EXACT.**
+    Composition at the tip, derived and not eyeballed: **17 `STALE DECLARATION` + 1 `UNDECLARED
+    MODULE`**, and **ZERO `UNDECLARED ADMISSION`** — every tier-1 site is declared.
+    **THE +14 IS ENTIRELY THE `SCOPE_INSUFFICIENT` FILE.** Site keys carry SOURCE TEXT as their
+    fourth element, so converting a site re-keys it and orphans its declaration. **THE VIOLATION
+    COUNT WENT UP BECAUSE THE CODE GOT BETTER, AND THAT SENTENCE IS ONLY CREDIBLE BECAUSE THE SEAT
+    REFUSED TO EDIT THE FILE THAT WOULD HAVE HIDDEN IT.**
+  tier_1_population: '**45 distinct sites / 52 occurrences -> 33 / 40.** `ISINSTANCE` **30 -> 18**. `DUCK` 22, unchanged — declared and NOT this item''s scope.'
+  the_suite: >
+    `python3 -B -m pytest -q` — BASE **3 failed / 1696 passed**, TIP **4 failed / 1711 passed**
+    (+15 tests). **THE FOURTH FAILURE IS REAL AND IT IS DECLARED, NOT HIDDEN:** the base three are a
+    strict SUBSET of the tip four, all four live in `tests/test_the_fifteen.py`, and the new one is
+    `test_the_tier_1_tally_is_ten_DEFECT_OPEN_and_three_CARRIER_ONLY` — **RED BECAUSE FOUR
+    `DEFECT_OPEN` SITES WERE FIXED AND THE FILE THAT RECORDS THE TALLY IS PROTECTED.** A test that
+    fails because a defect was repaired. It clears with the stale keys, in the same act.
+  the_register_checks: '**THIRTEEN EXIT 0 · `check_grant_matrix_live` EXIT 3** (documented environment condition). The new `check_exact_type_admission.py` is among the thirteen.'
+  the_plant_set_MEASURED_BY_HAND_BY_THIS_SEAT_BECAUSE_THE_CARRIER_STILL_DOES_NOT_EXIST: >
+    **14 PATCHES ON DISK · `git apply` rc=0 ON ALL FOURTEEN · ZERO DEAD · 13 EVIDENCE (clean 0 ->
+    violated 1) · 1 NOT-A-CONTRAST (`CD-RT-003-GRANT-MATRIX-LIVE`, rc=3 on BOTH arms — declared, not
+    counted).** One pristine `git archive 5a37301` extraction PER PLANT, three columns recorded, the
+    carrier for each resolved from its `CHECK_ID` constant or from its `required-tests.yaml`
+    `execute` line. **THIS AGREES WITH THE ENGINEER'S OWN COUNT EXACTLY, DERIVED INDEPENDENTLY.**
+    **THE INCREMENT BROKE NO PLANT AND ADDED A LIVE ONE (13 -> 14).**
+
+# ================================================================================================== #
+the_two_claims_THIS_SEAT_RE_DERIVED_WITH_ITS_OWN_PROBES_RATHER_THAN_BELIEVED:
+# ================================================================================================== #
+  1_THE_FOUR_METATYPES_BOTH_ARMS_BOTH_TREES: >
+    The seventh Assurance seat executed ARM 2 against ONE metatype and honestly declared the other
+    three *"structurally identical, not individually executed"*. **THAT LIMIT IS NOW DISCHARGED BY
+    EXECUTION, TWICE INDEPENDENTLY — BY THE ENGINEER AND BY THIS SEAT'S OWN PROBE
+    (`/tmp/pl-inc10/pl_meta_probe.py`), ON BOTH TREES.**
+    **ARM 1 (the `class` statement) REFUSES ON ALL FOUR, AT BASE AND AT TIP** —
+    `MagnitudeSurfaceViolated` / `QuantitySurfaceViolated` / `ReadingSurfaceViolated` /
+    `DialPresentationRefused`. **THE DECLARED-ROUTE REFUSALS ARE INTACT: RULING 1(a) IS HONOURED AND
+    THE SEAT DID NOT TAKE THE CLEANUP THE DISPATCH FORBADE.**
+    **ARM 2 (`type.__new__(<metatype>, ...)`) CREATES THE CLASS ON ALL FOUR, AT BASE AND AT TIP** —
+    `issubclass` True, instance built, `isinstance` True, `float(inst)` **999.0**. **THE FORGERY IS
+    NOT PREVENTED AND THIS INCREMENT NEVER CLAIMED IT WOULD BE. THAT IS THE DECLARED PERIMETER
+    (BLUEPRINT §17 `CD-BP-005`) BEHAVING EXACTLY AS DECLARED.**
+    **AND ON ALL FOUR, AT BOTH TREES, `type(inst) is <GovernedClass>` IS `False` — THE DISCRIMINATOR
+    THE WHOLE REMEDY RESTS ON, MEASURED AND NOT ARGUED.**
+  2_CD_ENG_WO2R3_08_F02_HIGH_REPLICATES_EXACTLY: >
+    **THE REGISTER'S GROUND WAS FALSE AND THE SEAT IS RIGHT.** The disposition read: *"Criticality is
+    an enum.Enum with members, which CPython refuses to subclass, so isinstance and exact type
+    coincide here."* **THIS SEAT'S OWN THREE-ARM PROBE (`/tmp/pl-inc10/pl_f02_probe.py`):**
+    ARM 0 — subclassing IS refused (`TypeError`). **THE PREMISE'S FIRST HALF IS TRUE.**
+    ARM 1 — **AND IT DOES NOT MATTER.** A wholly unrelated class with
+    `@property def __class__(self): return Criticality` gives `isinstance(forged, Criticality)`
+    **True** while `type(forged) is Criticality` is **False**. **`isinstance` CONSULTS `__class__`,
+    AND THAT PREMISE IS FALSE FOR EVERY CLASS IN PYTHON, SUBCLASSABLE OR NOT.**
+    ARM 2 — at **BASE**, `SourceRegistry.ids_with(forged)` **ADMITTED IT AND ANSWERED `()`** — the
+    worst possible shape: not a crash, a confident *"no source carries this criticality."* At
+    **TIP** it is **REFUSED** with a message that names the reason in the product's own words.
+    **THIS IS A REAL DEFECT, REALLY FIXED, AND IT IS THE ONE THING IN THIS INCREMENT THAT MOVED A
+    LIVE ADMISSION FROM WRONG TO RIGHT.**
+
+# ================================================================================================== #
+the_most_important_thing_the_engineer_said_and_it_is_AGAINST_ITS_OWN_GREEN:
+# ================================================================================================== #
+  CD_ENG_WO2R3_08_F07_CONFIRMED_BY_THIS_SEAT_INDEPENDENTLY: >
+    **THE NEW GUARD `check_exact_type_admission.py` ALSO PASSES AT `686a374`.** PL-measured: the tip's
+    check copied onto a pristine BASE extraction (`/tmp/pl-inc10/f07`) -> **`PASS — 36 assertions, 0
+    violations`, rc=0.**
+    **SO ITS GREEN IS NOT EVIDENCE THAT THIS INCREMENT FIXED THOSE FOUR DOORS. THEY WERE ALREADY
+    EXACT-TYPE.** The guard is a REGRESSION LOCK on behaviour that already held — which is worth
+    having, because the one-line `is_exactly` -> `isinstance` "simplification" is a regression this
+    project has made **FOUR TIMES**, and the plant is exactly that line.
+    **THE SEAT DECLARED THIS IN THREE PLACES SO THAT NOBODY COULD READ ITS GREEN AS ITS OWN DOING.
+    THAT IS THE SINGLE MOST VALUABLE SENTENCE IN THE RETURN**, and it is the discipline the sixth
+    false green would have needed and did not have. **A SEAT THAT DISCOUNTS ITS OWN HEADLINE NUMBER
+    IS THE ONLY KIND WHOSE OTHER NUMBERS ARE WORTH READING.**
+  and_the_new_check_carries_its_limit_IN_ITS_OWN_EXIT_TEXT: >
+    Printed unconditionally at every run: *"the forged subclass IS STILL CONSTRUCTIBLE — this check
+    builds one in every ARM 2 above and says so. It does not claim the forgery is prevented, that any
+    class is sealed, or that CD-ASR-F01 is closed. It claims that four named judgement-path doors
+    refuse the instance by exact type."*
+    **THAT IS PO-DECISIONS-0018 RULING 1(b) SATISFIED IN AN INSTRUMENT THE RULING DID NOT EVEN NAME**
+    — the re-scope was ordered for the SEALING instrument, and this seat's new one was born with it.
+    **IT IS THE FIRST GREEN ON THIS PROJECT THAT SAYS WHAT IT DOES NOT MEAN, IN ITS OWN VOICE, EVERY
+    TIME IT RUNS.**
+
+# ================================================================================================== #
+the_two_findings_against_THIS_SEATS_OWN_DISPATCH_AND_BOTH_ARE_UPHELD:
+# ================================================================================================== #
+- id: CD-ENG-WO2R3-08-F08
+  raised_by: CD-ENG-WO2R3-08
+  against: '`CD-DISPATCH-WO2R3-INC10-F01-ENGINEER`, ITEM_1 part B — WRITTEN BY THIS SEAT THIS MORNING'
+  verdict: '**UPHELD IN FULL.**'
+  statement: >
+    **"EXACT TYPE EVERYWHERE ON A JUDGEMENT PATH" DOES NOT DISTINGUISH AN ADMISSION PREDICATE FROM A
+    REFUSAL PREDICATE, AND FOR A REFUSAL PREDICATE `isinstance` IS THE STRICTER OPERATOR.** A guard
+    that asks *"is this base one of ours, so I may refuse it"* becomes WEAKER when narrowed to exact
+    type: read mechanically, the dispatch converts the four metatype `__new__` guards and **ADMITS A
+    `class` STATEMENT THROUGH ONE FORGED INTERMEDIATE BASE** — which is the precise regression the
+    SAME DISPATCH forbids three paragraphs earlier in
+    `3_AND_THE_BRIEF_FORBIDS_THE_CLEANUP_THAT_WOULD_LOOK_LIKE_PROGRESS`.
+  why_this_matters_more_than_the_slip: >
+    **THE DOCUMENT CONTRADICTED ITSELF AND THIS SEAT DID NOT SEE IT WHILE WRITING BOTH HALVES.** The
+    seat obeyed the intent over the letter, declared the 8 refusal-predicate sites with a measured
+    reason instead of converting them, and **SAID WHY.** Had it obeyed the letter, this increment
+    would have shipped a NEW bypass under a green board. **`CD-RULE-004`'s shape at the level of a
+    dispatch: an ORDER may not claim more than its remedy delivers either.**
+- id: CD-ENG-WO2R3-08-F09
+  raised_by: CD-ENG-WO2R3-08
+  against: '`CD-DISPATCH-WO2R3-INC10-F01-ENGINEER`, the `the_declarations_that_are_already_measured_and_are_probably_CORRECT` block — WRITTEN BY THIS SEAT THIS MORNING'
+  verdict: '**UPHELD, AND THIS SEAT HAS NOW REPLICATED THE REFUTATION WITH ITS OWN PROBE.**'
+  statement: >
+    The dispatch told the seat, in bold: *"RE-MEASURE THESE, DO NOT COPY THEM FORWARD ON MY WORD"* —
+    **AND IN THE SAME SENTENCE COPIED FORWARD A FALSE ONE**, the register's *"enums cannot be
+    subclassed, so isinstance and exact type coincide"*. **THE INSTRUCTION CAUGHT ITS OWN AUTHOR, BY
+    THE SEAT DOING EXACTLY WHAT IT WAS TOLD.**
+  why_it_is_recorded_at_this_weight: >
+    **THIS IS `CD-PL-F121`'S CLASS — A CLAIM INHERITED AND RE-ASSERTED WITHOUT RE-MEASUREMENT — AND
+    IT IS THE SECOND INSTANCE AT THIS BOUNDARY.** See `CD-PL-F133` below, which is the same class
+    again and larger. **THE PATTERN IS NOT CARELESSNESS; IT IS THAT A RECORD THIS DENSE MAKES
+    RE-ASSERTION CHEAPER THAN RE-MEASUREMENT, AND NOTHING IN THE PROCESS PRICES THAT.**
+
+# ================================================================================================== #
+the_finding_THIS_SEAT_FOUND_IN_RECONCILIATION_THAT_NO_ENGINEER_COULD_HAVE:
+# ================================================================================================== #
+- id: CD-PL-F133
+  severity: MEDIUM
+  against: 'THE MAIN-BRANCH RECORD, AND MOST DIRECTLY THIS SEAT''S OWN DISPATCH OF THIS MORNING'
+  statement: >
+    *** **`CD-RT-012` IS GREEN. IT HAS BEEN GREEN SINCE INCREMENT 8. THE RECORD HAS ASSERTED "RED AT
+    THE TIP" AT EVERY BOUNDARY SINCE — INCLUDING IN THE DISPATCH THIS SEAT WROTE FOUR HOURS AGO,
+    WHERE IT APPEARS AS A DECLARED BASE-STATE FACT HANDED TO AN ENGINEER.** ***
+  measured_and_bisected_NOT_ASSERTED: >
+    `PYTHONPATH=src python3 -B tools/register/check_no_execution_interface.py --root .` on one
+    pristine `git archive` extraction per SHA, return code captured into a variable IMMEDIATELY:
+    `4410275` **rc=1, FAIL — 1 violation** · `314592c` **rc=1** · `ff155ec` **rc=1** ·
+    **`f770935` rc=0, PASS — 62662 assertions, 0 violations** · `6ef717b` rc=0 · `6eecb85` rc=0 ·
+    `753efe4` rc=0 · `419bd7e` rc=0 · `8de91d2` rc=0 · `da308a1` rc=0 · `2b67969` rc=0 ·
+    **`686a374` rc=0, PASS — 65631 assertions, 0 violations** · `5a37301` rc=0.
+    **THE TRANSITION IS `f770935`, WHOSE OWN COMMIT SUBJECT READS `[CD-ENG-WO2R3-06] ITEM_2 —
+    CD-RT-012 IS GREEN, AND IT IS GREEN BY A GRAMMAR CORRECTION THAT CARRIES ITS OWN PAIRED
+    CONTRAST`.** **THE FIX ANNOUNCED ITSELF IN ITS OWN COMMIT MESSAGE AND THE RECORD STILL DID NOT
+    ABSORB IT.**
+  the_blast_radius: >
+    "`CD-RT-012` RED at the tip" was carried into: `ACTIVE_WORK.yaml`'s `current_phase` note ·
+    `BL-...-0125` · `BL-...-0126` · `BL-...-0127` · the **SEVENTH ASSURANCE SEAT'S BRIEF** ·
+    `BL-...-0128`/`0129`/`0130`/`0131` · and **`CD-DISPATCH-WO2R3-INC10-F01-ENGINEER`**. **FOUR
+    BOUNDARIES, TWO ASSURANCE BRIEFS AND TWO ENGINEER BRIEFS, NONE OF WHICH RE-RAN A ONE-LINE
+    COMMAND.**
+  and_it_is_the_SAME_CLASS_THE_SEVENTH_SEAT_ALREADY_CAUGHT_AT_THE_SAME_PLACE: >
+    **THE SEVENTH SEAT'S §3 FOUND EXACTLY THIS, ABOUT T2/ESCAPE 3, AND ITS WORDS APPLY VERBATIM
+    HERE:** *"THAT IS A T22 DEFECT IN THE DISPATCH ITSELF: THE POPULATION EXAMINED DID NOT CONTAIN
+    THE ANSWER, AND A VERDICT WAS STATED ANYWAY."* **ESCAPE 3 WAS CLOSED AT `6eecb85` AND
+    `CD-RT-012` AT `f770935` — BOTH IN INCREMENT 8, BOTH IN THE SAME SEVEN-COMMIT RANGE.** The
+    seventh seat absorbed one of the two. **THIS SEAT BANKED THAT FINDING AND THEN SHIPPED THE OTHER
+    HALF OF IT, UNCHANGED, IN THE VERY NEXT DISPATCH.**
+  the_direction_is_FAVOURABLE_AND_THAT_IS_NOT_THE_POINT: >
+    A RED that is really GREEN costs nothing this time. **THE DEFECT IS THAT A MEASURED STATE WAS
+    ASSERTED WITHOUT BEING MEASURED, AND THAT MECHANISM IS INDIFFERENT TO DIRECTION.** The identical
+    process produced five false GREENS on this project. **THIS ONE HAPPENED TO LAND THE HARMLESS WAY
+    AND IT IS RECORDED AT THE SAME WEIGHT AS IF IT HAD NOT.**
+  remedy_NOT_APPLIED_HERE_AND_THE_REASON_IS_STATED: >
+    **NO GRADE IS MOVED AT THIS BOUNDARY** — `CD-RT-012`'s standing is a GATE matter and the eighth
+    Assurance seat re-grades it against the declared perimeter with this measurement in front of it.
+    **WHAT IS OWED IS A CARRIER, NOT A CORRECTION:** the `SHA-RESOLUTION CARRIER` already on the
+    docket (`CD-PL-F124`) is the wrong shape for this; what this needs is **a boundary instrument
+    that RE-RUNS every register check and re-derives every "RED/GREEN at the tip" claim before a
+    dispatch quotes one.** It is one loop over `tools/register/check_*.py` and it would have caught
+    this in under a minute at any of six boundaries. **IT JOINS THE META-ASSURANCE DOCKET AS THE
+    FIRST ITEM ON IT WITH A MEASURED COST OF NOT HAVING IT.**
+- id: CD-PL-F131-RECURRENCE
+  severity: LOW
+  against: 'THIS SEAT, DURING THIS VERY RECONCILIATION'
+  statement: >
+    **`CD-PL-F131` — RAISED BY THIS SEAT TWO HOURS AGO — RECURRED IN THIS SEAT''S OWN SHELL WHILE
+    MEASURING `CD-PL-F133`.** A bisect loop read `$?` in a `printf` argument list that also contained
+    a command substitution; the substitution ran during expansion and clobbered the status, printing
+    **`exit=0` for runs whose own output said `FAIL`.** Caught by reading the printed verdict against
+    the printed exit code and refusing the contradiction — **THE SAME WAY IT WAS CAUGHT THE FIRST
+    TIME, WHICH IS THE PROBLEM.**
+  what_it_proves: >
+    **"REMEMBER NOT TO DO THAT" HAS A HALF-LIFE OF TWO HOURS**, measured. The mechanical fix — assign
+    `RC=$?` on the line immediately after the command, before any other expansion — is applied in
+    every measurement in this entry. **THIS IS `CD-PL-F132`'S LESSON ARRIVING TWICE IN ONE SESSION:
+    A DISCIPLINE THAT LIVES IN A SEAT'S ATTENTION IS NOT A CONTROL.**
+
+the_engineers_own_findings_against_its_own_work:
+  count: '**ELEVEN NAMED — THE ELEVENTH CONSECUTIVE SEAT TO RAISE FINDINGS AGAINST ITSELF, AND TWO OF THE ELEVEN ARE AGAINST THE DISPATCH THAT ORDERED IT.**'
+  against_the_register: >
+    **F02 (HIGH)** — replicated by this seat, above. **F01** — the register's C4 `measured_reach`
+    claims a reach `F-06-D` killed at increment 8. **NOT RE-DERIVED BY THIS SEAT; CARRIED AS
+    ATTRIBUTION, NOT CONFIRMATION**, and named for the eighth seat.
+    **F03** — 31 register entries pin their `gates` to one site in `engine/config.py`. **THIS IS
+    `CD-D-166`/`CD-PL-F122`'S FIELD AGAIN AND IT IS THE THIRD SEAT TO SAY THE FIELD'S SHAPE IS THE
+    DEFECT.**
+  against_its_own_work: 'F04 (a carrier that passed at base, fixed in-flight at `ea7c65c`), F05, F06, **F07 (the one that discounts its own headline — see above)**, F10, F11. **NOT INDIVIDUALLY RE-DERIVED BY THIS SEAT AND CARRIED AS THE SEAT''S OWN WORDS.**'
+
+what_the_engineer_could_not_establish_CARRIED_FORWARD_AS_ITS_OWN_WORDS:
+- '**"NOT PROVED TO BE CARRIED ANYWHERE": the metaclass-`__name__` lie in refusal message text** — a
+  forged type controls the name printed in the refusal it triggers.'
+- '**"NOT PROVED TO BE CARRIED ANYWHERE": three of the four `bool` limbs** — no carrier the seat wrote.'
+- '*** **AND THE ONE THAT IS NOT NARROWED BY ONE INCH: EXACT TYPE DOES NOT STOP A FORGERY OF THE
+  EXACT TYPE.** `cls.__new__(cls)` + `object.__setattr__` produces an object whose `type(x) is T` is
+  **True** with a forged value, executing zero package lines. **THE 40-OF-51 FINDING FROM THE SEVENTH
+  GATE IS UNTOUCHED BY THIS INCREMENT AND WAS NEVER IN ITS SCOPE.** That is the DECLARED perimeter
+  (`CD-BP-005`) and the reason the FORGERY-DETECTION OBLIGATION is owed at WO-3.** ***'
+
+gate_state: >
+  **T2 RED. `CD-AC-002` and `CD-AC-005` AMBER AND NOT CLOSED** (and the seventh seat's move of
+  `CD-AC-005` DOWN to RED is with the Product Owner). **`CD-ASR-WO2R3-04-F01` IS NOT CLOSED BY THIS
+  SEAT AND THE ENGINEER EXPLICITLY DID NOT CLAIM TO CLOSE IT.** **`CD-RT-012` IS GREEN AND HAS BEEN
+  SINCE INCREMENT 8 — MEASURED AT THIRTEEN SHAs, SEE `CD-PL-F133` — AND ITS GRADE IS THE EIGHTH
+  SEAT'S TO SET, NOT THIS SEAT'S.** The three stale keys are STILL STALE and now number FOURTEEN
+  rows, by ruling. **NOTHING IS MERGED, ADMITTED OR PROMOTED. NO FINDING IS CLOSED. NO GRADE MOVED.
+  THE WO-2 GATE IS SHUT.** **THE HONEST COUNT OF CLASSES THIS PROJECT CAN DEFEND AS SEALED IS STILL
+  ELEVEN, AND THIS INCREMENT DID NOT TRY TO MOVE IT.**
+
+decision_refs:
+- PO-DECISIONS-0018   # ruling 1 — the declared perimeter; ruling 2 — F01 its own Engineer FIRST; ruling 3 — the keys clear in-act
+- CD-D-172            # increment 10
+- PBG-AUTH-003        # reconciliation is not acceptance
+- CD-D-079            # both arms, always
+- CD-RULE-002         # per-seat commit identity — ONE line across six commits
+- CD-RULE-004         # a guard closes its class or declares its limit, in three places
+- CD-RULE-009         # every count carries its command
+
+next_safe_action: >
+  **ISSUE `CD-DISPATCH-WO2R3-INC10-REMEDY-ENGINEER` TO `CD-ENG-WO2R3-09`, A SECOND FRESH IDENTITY**,
+  at `5a37301`, carrying increment 10's remaining three items: **(a)** ruling 1(b), the SEALING
+  instrument's exit re-scoped to declared-limit honesty — and it now has a worked example to copy in
+  `check_exact_type_admission.py`, which was born with it; **(b)** ITEM 3's closure under
+  `tools/sweep/`, the scope defect `CD-PL-F122` names; **(c)** **THE FOURTEEN STALE ROWS CLEARED IN
+  THE SAME ACT, VISIBLY** (ruling 3), using the dead-key -> live-key map the Engineer left at
+  `BL-...-0098`, which should also clear the fourth suite failure and the `UNDECLARED MODULE`
+  violation. **THEN THE EIGHTH FRESH ASSURANCE SEAT (`CD-ASR-WO2R3-05`) OVER THE WHOLE, GRADED
+  AGAINST THE DECLARED PERIMETER**, its brief carrying `CD-D-129`'s clauses VERBATIM and full
+  disclosure — including `CD-PL-F130`-`F133`, the two upheld findings against this seat's own
+  dispatch, and the instruction to attack `check_exact_type_admission.py`'s green with the seat's own
+  `type.__new__`. **WRAPPER CEILING MEASURED FROM THE LIVE PROCESS AND NOT READ FROM THE SCRIPT
+  (`CD-PL-F127`): `timeout 21600`, elapsed 3923s at 10:57:56Z — THE RAISED CEILING DOES APPLY TO THIS
+  SESSION, unlike the last one, and it ends about 15:52Z.**
+
+continuity_record_commit: 0d9d394f9bd1bcc520b11d5767426a8e39bf9163   # **RESOLVED, AND THIS TIME IT DOES NAME A SHA WHOSE RECORD RESUMES.** RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, NEVER TRANSCRIBED (CD-PL-F36). **THE CD-RULE-008 VERDICT WAS TAKEN AT THIS SHA *BEFORE* THIS FIELD WAS WRITTEN — TWO ARMS, TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98): ARM 1 `/tmp/cd-cont32`, `--no-hardlinks` clone (CD-PL-F72), `checkout -B main` at this SHA -> CONTINUITY_MATCH / RECOVERY_MATCH / **RESUME_GREEN**, porcelain 0; ARM 2 `/srv/crash-detector` -> CONTINUITY_MATCH / RECOVERY_UNCOMMITTED_WORK / **RESUME_AMBER**, same observed_sha, porcelain 48 total and **0 TRACKED**. NO `CONTINUITY_REFERENCE_INVALID` IN EITHER ARM.** **THE `CD-PL-F132` REPAIR HELD AT ITS FIRST OUTING: `last_build_log_entry` MOVED IN THE SAME COMMIT AS THIS ENTRY (`e0e2d04`) AND THE CLONE BOOTS GREEN — WHICH IS WHAT THE PREVIOUS BOUNDARY DID NOT DO.** THE RESIDUE IS UNCHANGED AT 48 AND IS THE SAME 48 ENUMERATED AT BL-...-0131: 46 operator wrapper artefacts, `.continue-prompt.txt`, and `pbg/tools/pbg/__pycache__/`. **ZERO GOVERNED FILES, ZERO TRACKED. THIS SEAT ADDED NOTHING TO IT.** ORIGINALLY: PENDING — RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98). **AND `last_build_log_entry` MOVES IN THE SAME COMMIT AS THIS ENTRY — CD-PL-F132, WHICH THIS SEAT BROKE ONE BOUNDARY AGO.**

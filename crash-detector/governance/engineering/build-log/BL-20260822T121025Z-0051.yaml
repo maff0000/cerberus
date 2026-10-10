@@ -1,0 +1,240 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 1 RECONCILED — §C IS DELIVERED AND EVERY LOAD-BEARING CLAIM REPRODUCES ON THE
+# PROJECT LEAD'S OWN EXTRACTION WITH ITS OWN DRIVERS.
+#
+# THE AUDITOR'S ASR3-F02 PLANT NOW DIES AT CONSTRUCTION, FOUR WAYS, AND THE PROJECT LEAD MEASURED IT
+# RATHER THAN READING IT. RECONCILIATION IS NOT ACCEPTANCE AND IT IS NOT ASSURANCE.
+#
+# THE SEAT RAISED THREE FINDINGS AGAINST ITS OWN WORK AND BUILT NO GUARD FOR ANY OF THEM. THE FOURTH
+# CONSECUTIVE SEAT ON THIS PROJECT TO DO SO, AND ONE OF THE THREE BINDS INCREMENT 2.
+# ================================================================================================ #
+
+entry_id: BL-20260822T121025Z-0051
+timestamp_utc: "2026-08-22T12:10:25Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 47c355116f7d9626aabe6eae103de32d0577be1f
+parent_entry_id: BL-20260822T112800Z-0050
+schema_version: 1
+
+action_summary: >
+  CD-ENG-WO2R3-01 RETURNED ALIVE with INCREMENT_1_COMPLETE at lane 7b00ce9 on branch wo-2r3, across
+  THREE commits, and it committed as it went. §C IS DELIVERED: ContributionModel and
+  CONTRIBUTION_MODELS are DELETED from both engine and engine.model; DialSpec's fields are
+  [dial_id, required_input_ids, contributing_input_ids, model_ref] and THE FIELD THAT HELD AN OBJECT
+  DOES NOT EXIST; MappingKind has EXACTLY ONE member; ModelSpec has NO callable-typed field;
+  EMPTY_MODEL_REGISTRY has zero rows; and engine.mapping.compute has ZERO VALUE-RETURNING `return`
+  STATEMENTS on any path that exists today.
+  THE PROJECT LEAD DID NOT TAKE THE SEAT'S WORD FOR ANY OF IT. Own `git archive` extraction, own
+  drivers, own AST parse. Every headline claim reproduces. THE SUITE IS 1437 PASSED on this seat's
+  own extraction, node ids reconcile EXACTLY as the seat declared (0 lost, 6 replaced, 37 added,
+  MEASURED by sorted-diff of collected ids), and 8 of the 11 declared plants apply with the SAME
+  THREE FAILING that the seat disclosed at increment 1 rather than at its return.
+  RECONCILED AND ACCEPTED AS INCREMENT 1. NOT ACCEPTED AS CLOSING CD-AC-002 — grading that criterion
+  belongs to the FOURTH Assurance seat and to nobody in this dispatch (PBG-SOD-001, PBG-AUTH-006).
+  NOTHING ADMITTED. THE GATE IS UNMOVED.
+
+# ================================================================================================ #
+# WHAT THE PROJECT LEAD MEASURED ITSELF — commands recorded beside every number (CD-RULE-009)
+# ================================================================================================ #
+measured_by_the_project_lead:
+  extraction: 'rm -rf /tmp/cd-7b00ce9 && mkdir -p /tmp/cd-7b00ce9 && git archive 7b00ce9 | tar -x -C /tmp/cd-7b00ce9'
+  identity_audit:
+    command: "git -C /srv/crash-detector-wo2r3 log --format='%h | %an <%ae> | %cn <%ce> | %s' f30e63c..HEAD"
+    result: >
+      THREE commits — 945d9ce, 480c525, 7b00ce9 — every one authored AND committed
+      `CD-ENG-WO2R3-01 <cd-eng-wo2r3-01@seats.crash-detector.invalid>`. CD-RULE-002 CLEAN. Not one
+      human identity, which is worth stating plainly two boundaries after CD-PL-F79 was raised for
+      exactly that failure on main.
+  lane_state:
+    command: 'git -C /srv/crash-detector-wo2r3 rev-parse HEAD; git -C /srv/crash-detector-wo2r3 status --porcelain | wc -l'
+    result: '7b00ce9fb648daaabb5dfdefeb1a7d906fa3fccf, porcelain ZERO. Nothing uncommitted to adjudicate.'
+  writable_scope_audit:
+    command: 'git diff --name-only f30e63c 7b00ce9'
+    result: >
+      TEN paths, ALL INSIDE writable_scope: six under src/crash_detector/engine/, three under tests/,
+      one under tools/sweep/, plus the lane Build Log entry. NOTHING under pbg/, BLUEPRINT.md, PID.md,
+      governance/ outside build-log/, deploy/, db/ or requirements*. The seat's claim that §C needed no
+      module outside its scope is CONFIRMED BY THE DIFF, not by the claim.
+  the_suite:
+    command: 'PYTHONPATH=/tmp/cd-7b00ce9/src python3 -B -m pytest tests -q'
+    result: '1437 passed in 8.65s.'
+  node_id_conservation:
+    command: >
+      pytest --collect-only -q at BOTH SHAs on separate pristine extractions, ids grepped, sorted and
+      compared with `comm -23 /tmp/ids-old.txt /tmp/ids-new.txt`.
+    result: >
+      1400 -> 1437. SIX ids absent, and they are EXACTLY the six the seat declared as replaced under
+      CD-D-095's deleted-subject rule — every one in tests/test_evaluate.py and every one naming
+      contribution_model or the value-bearing tail. ZERO unexplained losses. The seat's table gives
+      old id, new id, proposition and, for three of them, WHAT WAS LOST — which is the disclosure the
+      rule exists to force and is the reason CD-D-095 was written into the dispatch in advance.
+  the_eleven_plants:
+    command: 'git apply --check on each of plants/**/*.patch against the 7b00ce9 extraction'
+    result: >
+      EIGHT APPLY. THREE FAIL: CD-RT-001-ABSENCE-RENDERS-UNKNOWN, CD-RT-001-AST-NO-NUMERIC-DEFAULT and
+      CD-RT-003-ENGINE-NO-WITNESS-REACH — all three failing inside the two modules §C rewrote. MEASURED
+      BY THE PROJECT LEAD AND IDENTICAL TO THE SEAT'S OWN DISCLOSURE, which it made at increment 1
+      rather than saving for its return. This is increment 4's declared work under CD-D-033: a plant
+      that no longer applies is UPDATED to violate the SAME PROPOSITION against the new structure.
+      DELETING ONE IS PROHIBITED and none was deleted.
+
+the_headline_claim_replicated_not_relayed:
+  driver: "/tmp/pl_a1.py — the Project Lead's own, written from the product's public API, not the seat's tests."
+  PL_A1_A6_structure:
+  - 'DialSpec fields: [dial_id, required_input_ids, contributing_input_ids, model_ref]. `contribution_model` ABSENT.'
+  - 'ContributionModel exported from engine: False. From engine.model: False. CONTRIBUTION_MODELS: False.'
+  - 'MappingKind members: [UNSPECIFIED]. Exactly one, as ruling 2 requires.'
+  - 'ModelSpec callable-typed fields: NONE.'
+  - 'EMPTY_MODEL_REGISTRY rows: 0.'
+  PL_A7_the_auditors_plant: >
+    ONE STATEFUL MODEL OBJECT — the ASR3-F02 shape, a class with a `compute` that remembers what it
+    has seen — offered to DialSpec through FOUR keyword spellings. ALL FOUR REFUSED:
+    `contribution_model`, `mapping` and `model` with `TypeError: DialSpec.__init__() got an
+    unexpected keyword argument`, and `model_ref` with
+    `NotEstablishedOnOwnTerms: a model reference is a NAME, and Plant is not a name`.
+    THE FIRST THREE ARE THE INTERPRETER REFUSING A FIELD THAT DOES NOT EXIST — the strongest refusal
+    available, because there is no guard to evade.
+  PL_A8_enum_closure: >
+    `class Sub(MappingKind)` -> `TypeError: <enum 'Sub'> cannot extend <enum 'MappingKind'>`. An enum
+    with members is closed against subclassing BY THE INTERPRETER.
+  PL_AA1_a_fresh_route_in_no_corpus: >
+    THE PROJECT LEAD WROTE A PROBE THAT IS IN NEITHER AUDITOR'S SET NOR THE SEAT'S. `MappingKind`'s
+    PRIVATE `_member_map_` IS MUTABLE at runtime — `MappingKind._member_map_["MEAN"] = Fake()`
+    succeeds and `MappingKind["MEAN"]` then returns the Fake, which carries a `compute` returning 0.5.
+    THIS IS THE POST-IMPORT CLASS-MUTATION FAMILY that WO-2R increment 1 declared as its residue, and
+    it is the obvious way to attack "an enum is closed by the interpreter".
+    IT BUYS NOTHING: `ModelSpec.mapping` refuses it at construction —
+    `TypeError: ModelSpec.mapping must be a MappingKind member, got Fake`. THE REFUSING LAYER IS THE
+    EXACT-TYPE CHECK ON ModelSpec's FIELD, scoped to values offered to that field, and NOT the enum's
+    membership machinery (CD-PL-F74: the layer is named because the inference differs). The route is
+    over-determined and the design holds where its own advertised weakness is.
+  PL_A11_the_one_member_computes_nothing: >
+    A well-formed ModelSpec over MappingKind.UNSPECIFIED handed to engine.mapping.compute raises
+    `UnspecifiedMapping: model 'm' for dial 'equity_crash' declares MappingKind.UNSPECIFIED ... which
+    NAMES THE ABSENCE of a declared mapping`. NO MAGNITUDE RETURNED.
+  PL_A12_the_structural_version_of_the_same_claim: >
+    `ast.parse` of `inspect.getsource(mapping.compute)`: VALUE-RETURNING `return` STATEMENTS: **ZERO**.
+    That is not a test result and not a claim — it is a property of the source text, and it is the
+    strongest form the "never returns a magnitude" half of ruling 2 can take while the enum has one
+    non-computing member.
+
+# ================================================================================================ #
+# THE SEAT'S THREE FINDINGS AGAINST ITSELF — CONFIRMED, AND RULED
+# ================================================================================================ #
+findings_from_the_seat:
+- id: CD-ENG-WO2R3-F01
+  severity: MEDIUM
+  what: >
+    §C plus one non-computing member makes the VALUE-BEARING TAIL of `_evaluate_dial` UNREACHABLE
+    from `evaluate`. Four propositions lose end-to-end coverage: a satisfied dial reading `Value`
+    with its inputs named; a contributing-input absence rendering `Degraded` with its reason and
+    missing source; a live evaluation stamping each dial's own score type; and a live `as_of_utc`.
+  confirmed: >
+    YES, and the mechanism is not in doubt: with `UNSPECIFIED` the only member, every route into the
+    tail ends in `UnspecifiedMapping`, which the Project Lead executed itself (PL-A11). Three of the
+    six replaced tests carry an explicit `what_was_lost` line saying so, in the seat's own record.
+  ruling_CD_D_097: >
+    IT IS A CONSEQUENCE OF PO-DECISIONS-0005 RULING 2, NOT A DEFECT IN THE SEAT'S WORK, AND IT MAY
+    NOT BE ANSWERED BY ADDING A `MappingKind` MEMBER. A member that computes is product meaning and
+    belongs to CD-D-005 (PBG-AUTH-005, CD-RULE-003); manufacturing one to restore test coverage
+    would be constructing state so a control appears to pass — the thing this project's own
+    non-waivable list forbids. THE SEAT WAS RIGHT NOT TO. The coverage returns when the Product Owner
+    issues the register and the first computing member lands, by amendment to BLUEPRINT §16's owed
+    list, exactly as ruling 2 sequences it.
+  what_is_owed_because_of_it: >
+    (1) DISCLOSED TO THE PRODUCT AUTHORITY here, because it is a visible narrowing of what WO-2's
+    evidence covers and the PO should not meet it first in an auditor's report; (2) NAMED FOR THE
+    FOURTH ASSURANCE SEAT, which will find that tail uncovered and should find it declared here
+    first; (3) it is the same fact as the two failing CD-AC-001 plants, and increment 4 must reconcile
+    them together rather than as separate items.
+- id: CD-ENG-WO2R3-F02
+  severity: LOW-as-raised, TAKEN AS BINDING ON INCREMENT 2
+  what: >
+    `engine.mapping.compute` is a NEW PUBLIC JUDGEMENT-PATH ENTRY POINT that POST-DATES §B's measured
+    inventory of 44, and its establishment is written IN ITS BODY.
+  why_the_project_lead_grades_it_higher_than_the_seat_did: >
+    §D.1's rule is that establishment is DERIVED FROM THE SIGNATURE precisely because the two escapes
+    this project has suffered on this class were both EDITS TO A BODY. A new door whose establishment
+    lives in its body is the amendment's own stated failure mode, created by the increment that
+    implements the amendment. It is harmless TODAY only because increment 2 has not run yet.
+  ruling_CD_D_098: >
+    ADOPTED AS A BOUND ON INCREMENT 2, IN TERMS: the static judgement-path check MUST ENUMERATE
+    `engine.mapping.compute`, and `admits` must cover it like any other door. This is added to the
+    increment-2 brief as a named first item. THE SEAT FOUND THE DOOR IT HAD JUST BUILT AND REPORTED
+    IT RATHER THAN LEAVING IT FOR THE AUDITOR — which is the fourth consecutive seat on this project
+    to disclose against itself, and the reason the disclosure is worth more than the finding.
+- id: CD-ENG-WO2R3-F03
+  severity: LOW
+  what: '`ModelProvenance`''s SHAPE (stands_for, account, decided_by) is the seat''s construction under §C.6 and nobody has ratified it; CD-D-005 has not landed to test it against.'
+  ruling_CD_D_099: >
+    NOTED, NOT BLOCKING, AND CORRECTLY RAISED. §C.6 assigns the SHAPE to the Project Lead and the
+    CONTENTS to the Product Owner's register, so a shape offered before the register exists is
+    provisional BY DESIGN. It is disclosed to the PO alongside CD-D-005 rather than settled here, and
+    a shape that turns out wrong when the register lands is a cheap correction — a shape invented to
+    fit contents nobody has issued would not be.
+
+# ================================================================================================ #
+# WHAT THIS RECONCILIATION DID NOT REACH — declared, not implied
+# ================================================================================================ #
+not_verified_by_the_project_lead_at_this_boundary:
+- 'THE SEAT''S 37 PLANT ARMS WERE NOT ALL RE-RUN INDIVIDUALLY. The Project Lead ran the full suite
+   (1437 passed), four structural probes and one fresh route of its own, and read the seat''s
+   contrast table. The individual VIOLATED arms of P2, P3 and P4 are taken from the seat''s record
+   and are NOT independently replicated at this boundary. P1''s and P8''s substance IS independently
+   replicated (PL-A7, PL-A11, PL-A12).'
+- 'THE RENAME TEST WAS NOT RE-TAKEN by the Project Lead. The seat reports renaming seven identifiers
+   across src/, tests/ and tools/ with 37 plant arms and 1437 tests still passing, and discloses that
+   two of its assertions check message TEXT rather than the refusal. The Project Lead''s own probes
+   are structural (field absence, exact type, zero value-returning returns) and survive any rename by
+   construction, which is a different argument reaching the same place.'
+- 'THE NINE REGISTER CHECKS were not re-run by the Project Lead at this boundary; the seat reports
+   all nine at exit 0 with assertion counts up, and `check_grant_matrix_live` at exit 3 for the same
+   environmental reason as at base.'
+- 'CD-AC-002 IS NOT GRADED HERE AND CANNOT BE. That is the fourth Assurance seat''s, and a Project
+   Lead that grades it has made itself the auditor of work it directed (PBG-SOD-001, PBG-AUTH-006).'
+
+decisions_ruled_here:
+- id: CD-D-097
+  ruling: 'CD-ENG-WO2R3-F01 is a CONSEQUENCE of ruling 2 and MAY NOT be answered by adding a MappingKind member. Disclosed to the PO, named for the fourth Assurance seat, reconciled with the two failing CD-AC-001 plants at increment 4.'
+- id: CD-D-098
+  ruling: 'CD-ENG-WO2R3-F02 is ADOPTED AS A BOUND ON INCREMENT 2 — the static judgement-path check must ENUMERATE `engine.mapping.compute` and `admits` must cover it. Graded higher than the seat graded it, because a new door establishing in its body is the amendment''s own stated failure mode.'
+- id: CD-D-099
+  ruling: 'CD-ENG-WO2R3-F03 NOTED and not blocking. ModelProvenance''s shape is provisional by design until CD-D-005 lands, and is disclosed to the Product Authority with it.'
+- id: CD-D-100
+  ruling: >
+    WO-2R3 INCREMENT 1 IS RECONCILED AND ACCEPTED AS INCREMENT 1, AND IS NOT ACCEPTED AS CLOSING
+    CD-AC-002. Every load-bearing claim reproduces on the Project Lead's own extraction with its own
+    drivers; the identity audit is clean; the diff is entirely inside writable scope; node ids
+    reconcile exactly; and the three non-applying plants were disclosed by the seat before they were
+    measured by the Project Lead. ACCEPTANCE OF AN INCREMENT IS NOT ASSURANCE OF A CRITERION
+    (PBG-SOD-001, PBG-AUTH-006), and nothing is admitted (CD-RULE-001).
+
+next_safe_action: >
+  DISPATCH INCREMENT 2 TO THE SAME SEAT CD-ENG-WO2R3-01 (the seat is alive and its dispatch is
+  ISSUED and unexhausted; a fresh seat is required BETWEEN dispatches, not between increments of one)
+  — §D.1 and §D.2 for A2, A3, A4 and A5, plus THE STATIC JUDGEMENT-PATH CHECK, at lane head 7b00ce9
+  on branch wo-2r3. **CD-D-098 IS A NAMED FIRST ITEM ON THAT INCREMENT**: the check must enumerate
+  `engine.mapping.compute`, the door increment 1 built, and `admits` must cover it.
+  **P7 IS THE ONE THAT MATTERS MOST** — the Product Owner directed the fourth Assurance seat to run
+  it first, and it is what distinguishes "establishment derived from the signature" from "four type
+  checks on four named functions".
+  THEN increments 3 (§D.3, the collector boundary) and 4 (reconciliation-and-return, which writes no
+  logic and which owns the three non-applying plants under CD-D-033).
+  THEN, AND ONLY THEN, THE FOURTH FRESH ASSURANCE SEAT, whose first two targets the Product Owner has
+  already named: P7 and CD-BP-003.
+  ONCE THE ENGINEER IS RUNNING — it now is — the ASR3-F08 PARSER WORK ORDER may be PROPOSED. Ruling
+  6's timing condition is MET as of this boundary and it is the first thing owed that is not an
+  increment.
+  DO NOT ADMIT ANYTHING (CD-RULE-001). DO NOT MERGE OR PROMOTE ANY LANE. STOP DELIBERATELY AT THE
+  GATE, OR ON ANY QUESTION THAT BELONGS TO THE PRODUCT AUTHORITY.
+
+continuity_record_commit: PENDING   # resolved by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36)

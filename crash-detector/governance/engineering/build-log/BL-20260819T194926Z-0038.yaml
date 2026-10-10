@@ -1,0 +1,337 @@
+# WO-2R increment 6 — the declaration sweep — RECONCILED AND ACCEPTED at lane 50fc231.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T194926Z-0038
+timestamp_utc: "2026-08-19T19:49:26Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 750b35346ffc13703263c231252dac2dd220a6ef
+lane_head_sha: 50fc23177f790164c3fc3604ccee51663e755c70
+parent_entry_id: BL-20260819T185403Z-0037
+record_origin: >
+  Written by the Project Lead on main after CD-ENG-WO2R-01 returned READY_FOR_ASSURANCE for WO-2R
+  increment 6. Reconciliation, NOT assurance (PBG-SOD-001, non-waivable): every arm was re-run by
+  the Project Lead on its own pristine extractions, against a baseline the Project Lead captured at
+  253c38b BEFORE the seat wrote anything. Per CD-RULE-005 the entry_id timestamp comes from
+  `date -u +%FT%TZ` and from nothing else.
+schema_version: 1
+
+action_summary: >
+  WO-2R INCREMENT 6 IS RECONCILED AND **ACCEPTED** (CD-D-065b) at lane 50fc231, five commits by
+  CD-ENG-WO2R-01, attested in lane entry BL-20260819T193519Z-0049. THE DECLARATION SWEEP MOVED
+  NOTHING IT WAS FORBIDDEN TO MOVE, and that is proved against numbers the Project Lead held before
+  the seat started rather than numbers the seat supplied. All three addenda are discharged:
+  CD-PL-F65 CLOSED, CD-ENG-READER-F06 CLOSED, and CD-ENG-READER-F05/F08 DECLARED as boundary 9 with
+  its denominator stated. THE ENGINEER DISPATCH FOR WO-2R IS NOW COMPLETE. Four seat findings are
+  ruled (CD-D-066 through CD-D-069) and one Project Lead finding is raised, CD-PL-F71, which
+  REFINES the seat's own CD-ENG-F29 and makes it slightly worse rather than better. THE NEXT
+  BOUNDARY IS THE SOD CROSSING, AND THIS SEAT STOPS BEFORE IT.
+
+# ================================================================================================ #
+# WHAT WAS MEASURED, AND AGAINST WHAT
+# ================================================================================================ #
+the_control_that_makes_this_reconciliation_possible: >
+  A declaration sweep's obligation is NEGATIVE — nothing may move — and a negative claim cannot be
+  checked without a before-number. A before-number supplied by the seat is not a control. At
+  4407c898 the Project Lead captured the clean arm at 253c38b ITSELF, on its own extractions, after
+  the dispatch was issued and before the seat had written anything
+  (governance/reconciliation/WO-2R/PL-INC6-BASELINE-253c38b.md). Every figure below is compared to
+  that file, not to the seat's report.
+
+commits_and_identity:
+  count: 'FIVE, 253c38b..50fc231.'
+  identity: >
+    ALL FIVE correct in AUTHOR **and** COMMITTER — CD-ENG-WO2R-01
+    <cd-eng-wo2r-01@seats.crash-detector.invalid>, verified with
+    `git log --format='%an <%ae> | %cn <%ce>'`. No human identity anywhere on the increment
+    (CD-RULE-002, non-relaxable). Subject prefix [CD-ENG-WO2R-01] on all five.
+  lane_state: '`git status --porcelain` ZERO lines at 50fc231.'
+
+THE_DECISIVE_MEASUREMENT_NO_EXECUTABLE_LINE_MOVED:
+  what_the_seat_claimed: >
+    Prose only, and specifically an AST-identical proof for check_engine_no_witness_reach.py (the
+    leashed file) and for check_egress_no_broker.py.
+  what_the_project_lead_did_instead: >
+    Did not check the two files the seat chose. Took `git diff --name-only 253c38b..50fc231 -- '*.py'`
+    — THREE files, including src/crash_detector/staleness.py at +79 lines, which the seat's headline
+    did not name — and compared the ASTs of ALL THREE with every docstring node deleted from both
+    revisions.
+  result:
+    src/crash_detector/staleness.py: IDENTICAL
+    tools/register/check_egress_no_broker.py: IDENTICAL
+    tools/register/check_engine_no_witness_reach.py: IDENTICAL
+  why_this_is_the_right_instrument: >
+    "Only comment/docstring hunks in the diff" is a claim about the DIFF, which a cleverly placed
+    change can satisfy while still moving behaviour. An AST comparison with docstrings stripped is a
+    claim about the PROGRAM. It cannot be satisfied by a change that executes. The prose-only leash
+    is therefore proved, and proved on a wider set than the leash covered.
+
+the_clean_arm_every_number_against_the_PL_s_own_baseline:
+  full_suite: >
+    1325 passed at 253c38b, 1325 passed at 50fc231. The collected node-id list is BYTE-IDENTICAL —
+    sha256 d0996f358cc3e5f5dacee8c4c1f99d944a0b0358a352b02ec0650c162abee4e7 at BOTH SHAs, ZERO
+    removed and ZERO added. Not "no tests were deleted": the same 1325 tests, named the same way.
+  ten_declared_register_commands: >
+    377 · 4855 · 242 · 24 · 38847 · 15 · 69 · 13 · 22 at exit 0, grant-matrix at exit 3
+    PRECONDITION_NOT_MET. EVERY FIGURE IDENTICAL to the baseline. Nothing grew and — the direction
+    that matters, CD-ENG-WO2R-F16 — NOTHING SHRANK.
+  the_leash: >
+    check_engine_no_witness_reach at exit 0, **24 assertions**, exactly the baseline number. The
+    leash is measured against a figure the Project Lead held before delivery, not one the seat
+    reported.
+  plants: '11 of 11 apply (`git apply --check`), ZERO failures. The CD-AC-005 contrast was re-run by the Project Lead: clean 152 passed, planted 12 failed / 140 passed, the failures naming the decade-old-row and never-agrees-dishonestly tests.'
+
+# ================================================================================================ #
+# THE READING WORK — which is the part of a declaration sweep no number can do
+# ================================================================================================ #
+PL_Z2_boundary_3_executes_exactly_as_written:
+  what_was_tested: >
+    Boundary 3 is the longest new declaration in the increment and it makes SIX measured claims.
+    Each was run by the Project Lead at the FINAL SHA, not read.
+  results:
+    the_worked_example_verbatim: >
+      PL-Z2a. `resolve_panel(PanelRow(state="AGREES", ...), now_utc=NOW,
+      staleness_window_seconds=600.0)` -> Agrees, renders 'WITNESS AGREES'. ONE post-construction
+      write, `object.__setattr__(a, "as_of_utc", 2016-08-21)`, and `render_panel(a)` STILL returns
+      'WITNESS AGREES'. THE BOUNDARY'S OWN EXAMPLE IS EXECUTABLE AS WRITTEN AND REPRODUCES.
+    the_internally_consistent_forgery: >
+      PL-Z2b. Carrying the forgery down gives `a.freshness.age_seconds == 315360000.0`,
+      `window.covers(315360000.0) is True`, and 'WITNESS AGREES'. Exactly as declared.
+    the_denominator_arms: >
+      PL-Z2c. All THREE refuse, with the exact exception types the boundary names: a decade-old row
+      resolves to Unavailable and renders 'WITNESS UNAVAILABLE'; StalenessWindow(seconds=1e18)
+      raises StalenessWindowOutOfRange; Agrees built with evidence for a different instant raises
+      AgreementWithoutFreshnessEvidence. The declared denominator is honest.
+    the_slots_claim: >
+      PL-Z2d. StalenessWindow slotted, FreshnessEvidence slotted, Agrees NOT — identical to the
+      Project Lead's own pre-delivery measurement PL-Y1 at the base.
+  ruling_on_the_shape: >
+    CD-D-058 IS DISCHARGED AND CD-PL-F65 IS CLOSED. The boundary names `Agrees`, states it is
+    unslotted, states that the `__slots__` half does not hold there, carries the route to the
+    Product Owner's own forbidden sentence with an executable example, writes NOT PROVED TO BE
+    CARRIED ANYWHERE in the CD-RULE-006 form, states its denominator as THREE MEASURED and says in
+    terms that three is not proof a fourth does not exist, and records that NOT slotting `Agrees`
+    is an instruction OBEYED rather than an oversight. It also carries its own correction and the
+    reason for it rather than rewriting silently.
+  the_seat_added_something_the_dispatch_did_not_ask_for: >
+    The three refusal arms are the seat's own addition. CD-D-058 required the boundary to state what
+    is OPEN; the seat also stated what is CLOSED and counted it. A residue declaration that states
+    its denominator is strictly more useful to an auditor than one that does not, and this is the
+    first boundary on the project to do it unprompted.
+
+PL_Z3_a_MECHANICAL_three_place_consistency_check:
+  why_it_was_written: >
+    The seat's own closing disclosure names this as its soft spot: "three-place consistency was
+    verified BY READING. No mechanical check for it exists, and CD-ENG-F40 exists because the three
+    once diverged." That is an honest confession of the weakest link, so the Project Lead attacked
+    exactly there.
+  what_it_does: >
+    For each addendum, tests the presence of every LOAD-BEARING token in all three CD-RULE-004
+    places at once and flags any row where the three disagree.
+  result: >
+    ZERO DIVERGENCE. Addendum 1 across staleness.py / required-tests.yaml / the CD-RT-005 contract:
+    `Agrees`, `slots`, `WITNESS AGREES`, `NOT PROVED TO BE CARRIED ANYWHERE`, `2016`, `CD-D-058`
+    and the denominator all present in all three. Addendum 2 across the check header /
+    required-tests.yaml / the CD-RT-003 contract: the reader dispatch, boundary 8b / RecursionError,
+    the supersession language and CD-ENG-READER-F06 / CD-D-063 all present in all three. Addendum 3
+    across check_egress_no_broker.py / required-tests.yaml / the CD-RT-012 contract: the flattening,
+    PL-X10a, CD-EGRESS-007's closed key set, NOT PROVED TO BE CARRIED ANYWHERE, the three-routes
+    denominator, and the WO-3 / V27 binding all present in all three.
+  WHAT_IT_DOES_NOT_PROVE_STATED_SO_IT_IS_NOT_OVER_READ: >
+    TOKEN PRESENCE IS NOT SUBSTANCE. It proves no place OMITS a load-bearing claim. It does not
+    prove the three SAY THE SAME THING. The Project Lead read place 1 of addendum 1 IN FULL and
+    place 3 IN FULL and found them the same statement in the same order — but that is two of nine
+    place-texts read completely, and the remaining seven are covered only by the token matrix. THE
+    DENOMINATOR: three addenda, nine texts, two read in full, nine covered mechanically.
+
+addendum_2_and_3_premises: >
+  Both were re-measured by the Project Lead BEFORE delivery, at 750b3534
+  (governance/reconciliation/WO-2R/PL-Y1-Y5-the-three-addenda-premises.py.txt): PL-Y4 hangs at
+  f22d120 and is REFUSED at 253c38b with YamlSubsetError naming line 3, so limit 4 WAS stale; and
+  PL-X10a returns `{'top': [{'key': None, 'sub': '1'}]}` BYTE-IDENTICALLY at both SHAs, so the
+  flattening IS pre-existing. Both addenda were therefore written against premises the Project Lead
+  had already confirmed independently. CD-ENG-READER-F06 IS CLOSED; CD-ENG-READER-F05/F08 is
+  DECLARED, not closed, exactly as CD-D-062 ordered.
+
+# ================================================================================================ #
+# CD-PL-F71 — the Project Lead's own finding, which REFINES the seat's CD-ENG-WO2R-F29
+# ================================================================================================ #
+CD_PL_F71:
+  severity: LOW
+  refines: 'CD-ENG-WO2R-F29 (MEDIUM), which is CONFIRMED — see CD-D-066.'
+  what_the_seat_said: >
+    That CD-RT-012-LOCKFILE-DENYLIST's "the denylist is explicitly a FLOOR and not an oracle" limit
+    exists in the check header and the execution contract and is ABSENT FROM THE REGISTER ENTRY —
+    two of CD-RULE-004's three places.
+  what_the_project_lead_measured: >
+    A case-sensitive search agreed with the seat. A CASE-INSENSITIVE one does not: `grep -ic
+    "floor.*not an oracle"` returns 2, 2 and 2 across the check, the contract AND
+    required-tests.yaml. The phrase is NOT absent from the register.
+  why_this_makes_the_finding_WORSE_rather_than_better: >
+    Look at WHERE it sits. In required-tests.yaml the sentence is inside CD-RT-012-LOCKFILE-DENYLIST's
+    `negative_control.violation` (line 828), where it WIDENS the claim — "the denylist is a floor and
+    not an oracle, SO THE CLASS INCLUDES AN SDK NOBODY HAS HEARD OF". In the check header and the
+    execution contract the same words BOUND what the guard delivers. So the three places do not
+    merely differ in completeness: THE SAME SENTENCE IS DOING OPPOSITE WORK IN TWO OF THEM, arguing
+    the class is broad in one place and that the guard is only a floor in the other two. The entry
+    still carries `scope: CLASS` with no declared-limit block.
+  the_method_note_that_produced_it: >
+    The Project Lead's first measurement of this was CASE-SENSITIVE and would have been reported as
+    corroborating the seat verbatim. It was re-run because a neighbouring `awk` extract showed the
+    phrase in lowercase inside the very file the count said did not contain it. That is
+    CD-ENG-WO2R-F13's lesson a fourth time on this project, now against a PROSE measurement rather
+    than an executed one: a search that agrees with what you expected is exactly the one to re-run.
+
+# ================================================================================================ #
+# RULINGS
+# ================================================================================================ #
+CD_D_065b:
+  decision: 'WO-2R INCREMENT 6 RECONCILED AND ACCEPTED at lane 50fc231.'
+  grounds: >
+    Every figure identical to a baseline the Project Lead held first; all three changed Python files
+    AST-identical with docstrings stripped, including one the seat's headline did not name; boundary
+    3's worked example executable and reproducing, and its three denominator arms all refusing with
+    the exact exception types named; three-place consistency mechanically clean on every load-bearing
+    token; 11 of 11 plants applying and the CD-AC-005 contrast re-run. The increment did what a sweep
+    must do and did not do anything else.
+
+CD_D_066:
+  finding: 'CD-ENG-WO2R-F29 (MEDIUM) — three delivered tests declare `scope: CLASS` with no declared limit in the register entry.'
+  decision: 'CONFIRMED AND NOT TAKEN IN WO-2R. Owed at WO-3 as a bounded dispatch, bound together with CD-PL-F43 and CD-ASR-N01, which are about the same check.'
+  premise_verified_by_the_project_lead: >
+    All three named entries carry `scope: CLASS`. CD-RT-002-SCHEMA-CLOSED and
+    CD-RT-003-GRANT-MATRIX-LIVE carry no declared-limit text at all in the register.
+    CD-RT-012-LOCKFILE-DENYLIST is the sharpest and is refined by CD-PL-F71 above.
+  why_it_is_not_taken_now: >
+    THE ESCALATION IS COMMENDED AND THE SEAT WAS RIGHT. All three are original WO-2 artefacts
+    untouched by increments 1-5, so outside the deliverable's own defined set; two are named in the
+    dispatch's `explicitly_out_of_scope_and_why` with "Leave them"; and the reader seat escalated in
+    the identical situation and was RATIFIED at CD-D-063. Taking it would be widening a bounded
+    dispatch silently, which `prohibited` forbids in terms. "It is a small, purely declarative edit"
+    is the same argument as "the fix looks small", which this project has declined twice (CD-D-038,
+    CD-D-045) — and the Project Lead does not write it either (PBG-AUTH-006).
+  why_it_is_not_deferred_quietly_either: >
+    It is DISCLOSED TO ASSURANCE AS A NAMED QUESTION with the measurement attached, because an entry
+    claiming CLASS with no declared limit is precisely the overclaim an auditor should test. It is
+    not gate-blocking: the gate is Assurance PASS on five criteria and latest_admitted_run is null,
+    so nothing computes PASS off the back of it.
+
+CD_D_067:
+  finding: 'CD-ENG-WO2R-F30 (LOW) — the eleven undelivered criteria terminate non-zero by the INTERPRETER''s conventions (pytest exit 4, python exit 2), not by this project''s exit 3 PRECONDITION_NOT_MET.'
+  decision: 'CONFIRMED, LOW, OWED AT WO-3. Not taken here.'
+  grounds: >
+    The Project Lead measured both exit-2 arms itself at the base — "can't open file", non-zero,
+    naming an absent subject, none passing vacuously — so the deliverable IS satisfied. The seat's
+    point is subtler and correct: the property is INHERITED FROM PYTHON rather than asserted by this
+    project, so it would survive a rename that broke it. Asserting it is a code change, and this
+    increment writes none. Carried to Assurance as a named question alongside CD-ENG-WO2R-F18's
+    method note, since an auditor asserting only "non-zero" learns less than the output holds.
+
+CD_D_068:
+  finding: 'CD-ENG-WO2R-F27 (MEDIUM) and F28 (LOW) — two defects the seat found IN THE EXCLUSION SET ITSELF: the MANIFEST''s BLEND-PROBE cannot be run as written (its fixtures use a bare float, which increment 2b''s re-entry refuses, so every arm dies at scaffolding), and V11''s command no longer reaches the three boundaries its row names.'
+  decision: 'CONFIRMED ON THE SEAT''S EVIDENCE AND COMMENDED. Corrections by SUPERSESSION accepted.'
+  the_honest_label: >
+    NOT INDEPENDENTLY RE-MEASURED BY THE PROJECT LEAD at this boundary — there was not time before
+    the ceiling, and saying so is cheaper than implying otherwise. It is named in the
+    NOT_INDEPENDENTLY_VERIFIED list below and handed to Assurance.
+  why_it_matters_more_than_its_severity: >
+    variants/WO-2R/MANIFEST.md IS THE NEXT AUDITOR'S EXCLUSION SET. A row that claims a route is
+    covered when the variant dies at scaffolding does not merely fail to prove something — it tells
+    the next auditor not to look there. That is the CD-ENG-WO2R-F13 hazard promoted from a probe to
+    a permanent record, and finding it was worth more than the sweep it interrupted.
+
+CD_D_069:
+  finding: 'CD-ENG-WO2R-F32 (LOW) — boundary 9 holds only because nothing in either contract may be None; one optional field reopens it silently, with no test failing.'
+  decision: 'ACCEPTED AS A DECLARED LIMIT under CD-RULE-004 option 2. It is written in as NOT PROVED TO BE CARRIED ANYWHERE, which is the CD-RULE-006 form, and it names the condition that would break it rather than asserting a carrier. Named for Assurance.'
+  also_ruled: >
+    CD-ENG-WO2R-F31 is CONFIRMED AND COMMENDED — the seat's first V52 was refused FOR A REASON IT
+    DID NOT INTEND, it threw the variant away rather than record it, and it disclosed the near miss
+    because it is what taught it where the defect actually lives. That is the fourth independent
+    recurrence of the CD-ENG-WO2R-F13 pattern on this project, counting CD-PL-F71 above.
+
+# ================================================================================================ #
+# WHAT THIS SEAT DID **NOT** VERIFY — carried to Assurance, not implied as checked
+# ================================================================================================ #
+NOT_INDEPENDENTLY_VERIFIED:
+- 'CD-ENG-WO2R-F27 and F28. The BLEND-PROBE scaffolding failure and V11''s stale row are confirmed on the SEAT''S evidence only. The Project Lead did not re-run them.'
+- 'THE 71 VARIANT PATCHES. The seat reports 71 re-run, 71 verdicts, 0 apply failures. The Project Lead did not re-run the corpus at this boundary. It re-ran the ELEVEN PLANTS (11/11) and one contrast, not the variants.'
+- 'SEVEN OF THE NINE CD-RULE-004 PLACE-TEXTS. Read mechanically by token matrix; two read in full.'
+- 'THE ELEVEN UNDELIVERED-CRITERIA COMMANDS AT THE FINAL SHA. Measured by the Project Lead at the BASE (both exit-2 arms), not re-measured at 50fc231. No logic changed between them, which is an argument, not a measurement.'
+- 'CD-RT-003-GRANT-MATRIX-LIVE''s contrast. Not re-run — exit 3 PRECONDITION_NOT_MET with no live store, unchanged from the baseline, and RT-A was not invoked by the seat either. This is the same standing risk CD-RT-002 records; it is Assurance''s to close, per CD-D-020.'
+
+# ================================================================================================ #
+# THE BOUNDARY THIS SEAT STOPS AT
+# ================================================================================================ #
+THE_SOD_CROSSING_IS_NOT_MADE_HERE:
+  rule: 'PBG-SOD-001, non-waivable.'
+  what_is_true_now: >
+    THE WO-2R ENGINEER DISPATCH IS COMPLETE. Increments 1, 2b, 3b, 4, 5 and 6 are all RECONCILED AND
+    ACCEPTED. CD-ASR-F01 through F06 — all six findings the rework was opened for — are CLOSED AS A
+    CLASS, SUBJECT TO ASSURANCE, and the three declaration addenda are discharged.
+  what_is_NOT_true: >
+    NOTHING IS ASSURED. The Project Lead has reconciled, which is a different act with a different
+    authority, and it may not certify work it dispatched. The gate is UNCHANGED: Assurance PASS on
+    all five of CD-AC-001, 002, 003, 005 and 012, by a SEPARATE agent CD-ASR-WO2-02 holding no
+    commit on this branch. latest_admitted_run stays null and no run record is admitted without its
+    paired assurance verdict (CD-RULE-001, PO, non-relaxable).
+  why_this_seat_stops_here_rather_than_issuing_the_assurance_dispatch: >
+    The runtime ceiling. This seat has under an hour left and six of its predecessors were killed
+    mid-work. Issuing an Assurance dispatch is not a small act — it must carry the exclusion set,
+    now the union of the WO-2 auditor's ten, the Engineer's through V52 and R01-R08, and the Project
+    Lead's PL-Q1 through PL-Z3 — and a half-written dispatch at a ceiling is worse than none. CD-D-043
+    set this precedent and it has paid for itself twice. The next seat issues it from a clean,
+    durable record.
+
+status: IN_PROGRESS
+current_sha: PENDING
+next_safe_action: >
+  ISSUE CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never the Engineer and never
+  the Project Lead (PBG-SOD-001, non-waivable), with a distinct actor_id, holding no commit on
+  wo-2-skeleton. Target the exact SHA 50fc23177f790164c3fc3604ccee51663e755c70 in a read-only
+  detached worktree with a tree fingerprint recorded, so mutation is DETECTABLE rather than merely
+  prohibited — the device used for the first audit at CD-D-022.
+  IT MUST DEVISE FRESH VARIANTS. The exclusion set is the union of the WO-2 auditor's ten, the
+  Engineer's through V52 and R01-R08, and the Project Lead's PL-Q1 through PL-Z3. A guard that
+  refuses only the known set proves nothing about the class; that is why the last gate failed.
+  HAND IT THESE AS NAMED QUESTIONS, none of them settled here: CD-ENG-WO2R-F12 (is a static-only
+  guard on the admission door sufficient for CD-AC-002); CD-ENG-READER-F05/F08 WITH ITS DENOMINATOR
+  STATED — three routes on one criterion — and an EXPRESS INVITATION TO FIND THE FOURTH ROUTE;
+  CD-ENG-READER-F02; CD-ENG-WO2R-F29 with CD-PL-F71's refinement (the same sentence doing opposite
+  work in two of three places); CD-ENG-WO2R-F30, F32 and the seat's F20-F24; and CD-PL-F53, F57,
+  F58, F62, F63, F65, F66, F67, F68, F69, F70, F71.
+  CARRY THE FOUR ADOPTED METHOD NOTES: F13 assert the RULE ID, not merely a non-zero exit — it has
+  now recurred four times, including once against a PROSE measurement (CD-PL-F71); F16 a SHRINKING
+  assertion count is how a skipped arm hides; F18 a derivation refusal at exit 3 arrives before a
+  reach violation at exit 1; and CD-RULE-008, take the boot verdict on a pristine clone at the
+  committed SHA.
+  HAND IT THE NOT_INDEPENDENTLY_VERIFIED LIST ABOVE AS WORK, not as background: the 71 variant
+  patches, F27/F28, seven of the nine place-texts, and the grant-matrix contrast which needs the
+  live store the Project Lead did not stand up.
+  THE GATE IS UNCHANGED: Assurance PASS on all five. No waiver. latest_admitted_run stays null until
+  CD-RULE-001's paired-verdict rule is satisfied. Commit at every boundary with the
+  PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT VARIABLES, never `git -c` (CD-PL-F56).
+  Every continuity write re-runs `pbg boot` and records the verdict in the same entry (CD-RULE-007),
+  taken on a pristine clone at the committed SHA (CD-RULE-008).
+  DELIBERATE STOP at the gate either way, record state durably, and report to the Product Owner.
+expected_next_actor: PROJECT_LEAD
+
+evidence_references:
+- '50fc23177f790164c3fc3604ccee51663e755c70 — the delivered lane SHA, five commits, all seated CD-ENG-WO2R-01'
+- 'lane entry BL-20260819T193519Z-0049 — the seat''s own attestation, in /srv/crash-detector-wo2'
+- 'governance/reconciliation/WO-2R/PL-INC6-BASELINE-253c38b.md (4407c898) — the pre-delivery baseline every figure above is compared to'
+- 'governance/reconciliation/WO-2R/PL-Y1-Y5-the-three-addenda-premises.py.txt (750b3534) — the three addenda premises, measured before delivery'
+- 'BL-20260819T185403Z-0037 — the resumption boundary, CD-PL-F69/F70, CD-RULE-008'
+
+risks:
+- 'THE SOD CROSSING IS THE NEXT ACT AND IT IS THE ONE THAT DECIDES WO-2. Everything closed in this rework is closed SUBJECT TO ASSURANCE. The first gate failed because guards caught the instance and not the class, and the only instrument that can tell the difference is an auditor writing variants nobody in this rework has thought of.'
+- 'THE EXCLUSION SET IS NOW LARGE ENOUGH TO BE A HAZARD IN ITSELF. CD-ENG-WO2R-F27 found a row in it that CANNOT BE RUN AS WRITTEN. A corpus that tells the next auditor where not to look is only as good as its worst row, and only one row has been audited for this defect — the one that happened to be re-run.'
+- 'SEVEN OF NINE CD-RULE-004 PLACE-TEXTS WERE CHECKED MECHANICALLY AND NOT READ. Token presence is not substance. The three places could each carry every load-bearing word and still say subtly different things, which is the CD-ENG-F40 defect in a form no grep finds.'
+- 'CD-PL-F71 IS THE FOURTH RECURRENCE OF "REFUSED FOR THE WRONG REASON" ON THIS PROJECT, and the first against a prose measurement. Assume it is present in this entry too: a search that agrees with what you expected is the one to re-run.'

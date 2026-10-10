@@ -1,0 +1,84 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 15:22:33.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 15:22:40.678894849 +0100
+@@ -58,6 +58,38 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "PO-DECISIONS-0026 ruling 5's liveness quantity, with `state` declared under patternProperties rather than properties. Auditor A308 arm P1.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "patternProperties": {
++        "^state$": {
++          "enum": [
++            "LIVE",
++            "STALE"
++          ]
++        }
++      },
++      "properties": {
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 15:22:33.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 15:22:40.678894849 +0100
+@@ -60,6 +60,38 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "PO-DECISIONS-0026 ruling 5's liveness quantity, with `state` declared under patternProperties rather than properties. Auditor A308 arm P1.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "patternProperties": {
++        "^state$": {
++          "enum": [
++            "LIVE",
++            "STALE"
++          ]
++        }
++      },
++      "properties": {
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {

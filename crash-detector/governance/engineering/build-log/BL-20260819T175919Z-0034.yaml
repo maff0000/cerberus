@@ -1,0 +1,139 @@
+entry_id: BL-20260819T175919Z-0034
+timestamp_utc: "2026-08-19T17:59:19Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: bd3d2b3
+lane_head_sha: 253c38bd4db58433e5209a222c0ce27429079156
+parent_entry_id: BL-20260819T171122Z-0033
+record_origin: >
+  Written by the Project Lead on main at a DELIBERATE EARLY BOUNDARY, with the runtime ceiling
+  minutes away. The seat's lane entry is BL-...-0048 at lane 253c38b. Per CD-RULE-005 the entry_id
+  timestamp comes from `date -u +%FT%TZ`.
+schema_version: 1
+
+action_summary: >
+  CD-ENG-READER-01 RETURNED READY_FOR_ASSURANCE at lane 253c38b for CD-DISPATCH-WO2R-READER, three
+  commits. RECONCILIATION IS **PARTIAL AND THE INCREMENT IS NOT YET ACCEPTED**. The Project Lead
+  verified the scope boundaries, the commit identities and THE DECISIVE CONTRAST itself, then
+  STOPPED at a clean boundary rather than begin the remaining verification with minutes of runtime
+  left. What is verified and what is NOT is listed below, separately and without blurring.
+
+why_this_entry_stops_early:
+  reason: >
+    This seat's two-hour harness ceiling falls at approximately 18:04Z and it is 17:59Z. Five
+    Project Lead processes have already been killed mid-work on this project. CD-D-043 set the
+    precedent at increment 2b: a clean boundary with a durable record beats forty minutes of
+    unattested progress.
+  what_this_costs: 'nothing. The seat''s three commits are on the lane and survive independently.'
+  what_it_prevents: >
+    A reconciliation half-performed and unrecorded, which is the state that cost this project a
+    whole PL cycle at increment 2 (BL-20260819T105500Z-0024).
+
+VERIFIED_BY_THE_PROJECT_LEAD:
+- 'Lane HEAD 253c38b, `git status --porcelain` 0 lines. Three commits, ALL CD-ENG-READER-01 in BOTH author and committer (CD-RULE-002), all with the [CD-ENG-READER-01] prefix.'
+- 'SCOPE HELD ABSOLUTELY, measured by `git diff --name-only f22d120..253c38b -- <path>`: src/ 0 files, deploy/ 0, plants/ 0, pbg/ 0, governance/engineering/ACTIVE_WORK.yaml 0. The dispatch protected all five and all five are untouched.'
+- '0 executable files under variants/ (PBG-ASSURE-001). latest_admitted_run still reads null (CD-RULE-001, non-relaxable).'
+- "THE DECISIVE CONTRAST, RUN BY THE PROJECT LEAD ON ITS OWN EXTRACTIONS OF BOTH SHAS, applying the PL-T5 document to each:\n  BEFORE, at f22d120: check_egress_no_broker exit 124, check_base_image_digest_pin exit 124.\n  AFTER,  at 253c38b: check_egress_no_broker exit 3 (CD-RT-012), check_base_image_digest_pin exit 3 (naming line 428), check_engine_no_witness_reach exit 3 (CD-RT-003).\nThe hang class is closed for every check that shares the reader, and each now returns a verdict naming what it could not read."
+
+THE_SEAT_CORRECTED_THE_PROJECT_LEADS_OWN_RECORD:
+  what_it_found: >
+    THREE checks returned no verdict on the PL-T5 tree, not two. check_engine_no_witness_reach.py
+    also hangs, because it imports load_yaml at line 293. CD-PL-F61, CD-D-051 and
+    CD-DISPATCH-WO2R-READER all say TWO.
+  the_project_lead_confirms_it: >
+    Measured at 253c38b: the third check is in the after-column above at exit 3, and it could only
+    be there if it reached the reader. The Project Lead's own count was wrong and the seat's is
+    right. This is the second time in two increments that a seat has corrected a number in the PL's
+    record (see CD-PL-F66), and both corrections were made unprompted.
+  disposition: >
+    The record is NOT edited (PBG-CONT-003, non-waivable). This entry supersedes the count. It
+    strengthens rather than weakens the CD-D-051 ruling: three of the eleven declared gate commands
+    returned no verdict on an ordinary YAML edit, and the case for repairing it before Assurance was
+    stronger than the record stated.
+
+NOT_YET_VERIFIED_AND_THEREFORE_NOT_ACCEPTED:
+- 'the full suite at 253c38b (seat declares 1289 -> 1325 passed, +36, 0 removed). The PL holds the 1289 node-id baseline and has NOT yet diffed it.'
+- 'the NO-VERDICT-CHANGES table across all ten register checks, which is the central control of this dispatch. The seat declares every check identical in exit and assertion count EXCEPT check_no_execution_interface growing 38154 -> 38847, decomposed as +149 repaired reader, +544 new tests, +0 header edit. THAT DECOMPOSITION IS THE THING TO CHECK, and it has not been checked.'
+- 'the eleven plants applying and contrasting at 253c38b.'
+- 'the mandatory commit block on the three commits.'
+- 'the claim that the repair is STRUCTURAL — one monotone cursor per loop, every delegation through `_advance` — rather than fitted to the shapes tried. The PL has NOT yet read the diff or written probes of its own.'
+- 'the seat''s R05..R08 variants and its declared limit 8b.'
+
+FINDINGS_THE_SEAT_RAISED_THAT_ARE_OWED_A_PROJECT_LEAD_RULING:
+- id: CD-ENG-READER-F02
+  question: >
+    A RecursionError still exits 1 with a traceback rather than exit 3. The seat did NOT convert it,
+    because that would move all three callers 1 -> 3 on an input that already HAS a verdict — and
+    this dispatch prohibits changing what a check decides. It asks for a ruling rather than deciding.
+  the_project_leads_provisional_view_NOT_A_RULING: >
+    The refusal to convert looks correct on the dispatch's own terms, and declining to change a
+    verdict it was told not to change is the seat obeying its bound. But this is NOT ruled here: it
+    is recorded as owed, because a ruling written in the last four minutes of a session is a ruling
+    made under exactly the pressure that produces bad ones.
+- id: CD-ENG-READER-F05_and_F08
+  question: >
+    The reader still SILENTLY FLATTENS a nested mapping under a sequence item's inline key — a quiet
+    wrong parse, which the seat itself calls worse than the loud stall it replaced. Changing it would
+    move V27's refusal clause.
+  why_it_matters: >
+    A quiet wrong parse of a gate's subject makes the gate decide on a document nobody wrote. That is
+    a different and arguably worse defect class than non-termination, and it needs a ruling and
+    probably a bounded dispatch of its own. NOT ruled here.
+- id: CD-ENG-READER-F06
+  question: >
+    CD-RT-003's declared limit 4 is now factually stale. The seat left ALL THREE places alone rather
+    than correct two of three and break CD-RULE-004 consistency, and asks for scope.
+  the_project_leads_provisional_view_NOT_A_RULING: >
+    Leaving all three consistent-and-stale rather than making two-of-three correct is the right
+    reading of CD-RULE-004, and it is the same judgement CD-ENG-WO2R-01 made when it escalated the
+    reader instead of fixing it out of bounds. It plausibly belongs with CD-PL-F65 in WO-2R increment
+    6's declaration sweep. NOT ruled here.
+
+process_note_disclosed_by_the_seat_against_itself:
+  what: >
+    A `py_compile` verification wrote three .pyc files into the worktree despite `-B` — PBG-RT-001,
+    mutation by EFFECT and not by label. The seat caught it, removed them, gitignored them, and says
+    no commit was affected.
+  project_lead: >
+    CONFIRMED at the level checked: `git status --porcelain` at 253c38b is 0 lines and no .pyc
+    appears in the three commits' file lists. This is the same trap the first WO-2 auditor tripped on
+    and disclosed; a seat that finds it in its own work and says so is doing the thing this project
+    values most.
+
+status: IN_PROGRESS
+current_sha: bd3d2b3
+next_safe_action: >
+  COMPLETE THE RECONCILIATION OF LANE 253c38b. Work the NOT_YET_VERIFIED list above in order: diff
+  the node-id list against the 1289 baseline; RUN ALL TEN REGISTER CHECKS at f22d120 and at 253c38b
+  and build the before/after table yourself — that is this dispatch's central control and the seat's
+  +149/+544/+0 decomposition of check_no_execution_interface is the specific claim to test; apply all
+  eleven plants and observe the contrast; check the mandatory block on the three commits; READ THE
+  DIFF and judge whether termination is a property of the loops or a fit to the shapes tried; then
+  write FRESH Project Lead probes — documents nobody in this project has tried, attacking termination
+  by a route other than nesting depth, and at least one attacking the `_advance` invariant itself.
+  THEN rule on CD-ENG-READER-F02, F05/F08 and F06, none of which is ruled here.
+  THEN WO-2R increment 6 — the register-and-contract sweep, no logic — carrying CD-PL-F65 (CD-D-058)
+  and probably CD-ENG-READER-F06 as bounded addenda at its head.
+  THEN AND ONLY THEN CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02, a SEPARATE agent, never the
+  Engineer and never the Project Lead (PBG-SOD-001, non-waivable).
+  THE GATE IS UNCHANGED: Assurance PASS on all five. Admit no run record without its paired assurance
+  verdict (CD-RULE-001, non-relaxable).
+expected_next_actor: PROJECT_LEAD
+
+evidence_references:
+- 'lane commits 18f5196, deaedbc, 253c38b and lane entry BL-...-0048'
+- 'the PL''s own before/after extractions of f22d120 and 253c38b with the PL-T5 document applied'
+- 'governance/dispatch/CD-DISPATCH-WO2R-READER.yaml'
+
+risks:
+- 'THE INCREMENT IS NOT ACCEPTED. Nothing in this entry may be read as acceptance. The decisive contrast holds, but the central control of this dispatch — that NO check DECIDES differently — is exactly the part not yet verified, and a reader that parses differently is a gate that decides differently, which would be a worse defect than the hang it replaced.'
+- 'CD-ENG-READER-F05/F08 (the silent flattening) may be a more serious class than the one this dispatch closed. It is recorded, unruled, and must not be lost.'
+- 'CD-PL-F65 remains OPEN and owed at WO-2R increment 6 (CD-D-058).'

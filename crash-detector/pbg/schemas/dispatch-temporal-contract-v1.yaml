@@ -1,0 +1,131 @@
+# DISPATCH TEMPORAL CONTRACT, VERSION 1. DECLARATIVE. FROZEN.
+#
+# WHAT THIS IS. The required temporal ordering between the thing that is JUDGED and the evidence
+# that AUTHORISES execution from it. Six named objects and the order they must occur in. Nothing else.
+#
+# WHY IT EXISTS. FWK-OBS-019 DISPATCH_BASE_BINDING_CIRCULARITY, confirmed empirically. Four
+# invariants, each individually correct, were jointly unsatisfiable: the spawn record had to be
+# PRESENT IN the base, had to CARRY a decision NAMING that base, the decision had to be PRODUCED BY
+# EXECUTING against that base, and no record can contain the hash of the commit containing it.
+# Measured: S1 was a lawful base whose record was NOT BINDING; S2 carried a BINDING record and could
+# never be a base. The binding record and the lawful base were never the same revision.
+#
+# THE MODELLING ERROR. Two objects were collapsed into one. This contract separates them.
+#
+# WHAT THIS IS NOT. Not a validator. Not a control. Not code. It declares an ordering; the mechanism
+# that enforces it is Engineer work under a bounded authority. The PROJECT_LEAD may author this
+# contract under Product Authority direction and may not implement its enforcement.
+#
+# FROZEN. These bytes never change. A later need is version 2 in its own file, committed before the
+# authority permitted to use it.
+
+schema_version: 1
+schema_id: pbg:schemas/dispatch-temporal-contract-v1.yaml
+title: PBGv2 Dispatch Temporal Contract, version 1
+status: STABLE_FROZEN
+record_origin: GOVERNANCE_BOOTSTRAP_ARTEFACT
+recorded_by: PROJECT_LEAD
+authorised_by: PRODUCT_AUTHORITY ruling of 2026-08-08, step B of the root-of-trust ordering.
+repairs_finding: FWK-OBS-019
+supersedes_invariant: >
+  RETIRED — "ENGINEER_BASE == the revision introducing the confirmation / spawn evidence". That
+  equality is what made the four invariants jointly unsatisfiable. It is not weakened here; it is
+  replaced by an ordering that keeps its anti-convenience purpose.
+immutability_rule: These bytes never change. A later need is version 2 in its own file.
+
+# --- THE SIX OBJECTS. Two of them were previously one. ------------------------------------------ #
+objects:
+  EXECUTION_BASE:
+    is: The exact immutable revision the Engineer process starts from.
+    identified_by: exact commit SHA and exact tree SHA. Never a branch, tip, or abbreviation.
+    exists: BEFORE the dispatch decision.
+  DISPATCH_EVIDENCE_REVISION:
+    is: The later immutable revision carrying the proof of what was decided about the execution base.
+    exists: AFTER the dispatch decision, because it must NAME the base.
+    must: strictly DESCEND from EXECUTION_BASE on the governed lineage.
+  BASE_DECLARATION:
+    is: >
+      The immutable pre-dispatch statement that this exact base is the environment intended for
+      launch IF the gate permits it. It does NOT claim the gate has run.
+    exists: BEFORE EXECUTION_BASE is dispatched against, and binds it.
+  DISPATCH_DECISION:
+    is: The outcome of executing the real gate against the exact EXECUTION_BASE.
+    exists: AFTER EXECUTION_BASE exists. Never predicted, never assumed.
+  SPAWN_BINDING:
+    is: The record binding exactly one seat to exactly one instance, carrying the decision.
+    exists: AFTER DISPATCH_DECISION.
+  SEAT_START:
+    is: The first Engineer-authored mutation.
+    must: DESCEND from EXECUTION_BASE.
+
+the_separation_that_resolves_the_paradox: >
+  EXECUTION_BASE != DISPATCH_EVIDENCE_REVISION, and NEITHER MAY MASQUERADE AS THE OTHER.
+  THE ENGINEER BASE DOES NOT NEED TO CONTAIN THE LATER DECISION THAT AUTHORISES LAUNCH FROM IT.
+  It must instead be immutable, exact, already authorised as a PROSPECTIVE base, and NAMED by the
+  later binding decision. That is causal rather than circular.
+
+# --- THE REQUIRED ORDERING ---------------------------------------------------------------------- #
+required_ordering:
+- frozen contracts
+- authority
+- BASE_DECLARATION
+- EXECUTION_BASE exists
+- DISPATCH_DECISION evaluates the exact EXECUTION_BASE
+- PERMITTED outcome
+- SPAWN_BINDING
+- DISPATCH_EVIDENCE_REVISION / confirmation
+- process instantiated from the exact EXECUTION_BASE
+- SEAT_START, first Engineer mutation
+
+# --- THE REQUIRED RELATIONS. What replaces the retired equality. -------------------------------- #
+required_relations:
+  dispatch_record_base_commit_equals_execution_base: exact, never a range and never a name
+  execution_base_exists_before_dispatch_decision: true
+  authority_strictly_precedes_execution_base: true
+  synthesis_provenance_binds_execution_base: contained in, or reproducibly binding, the base
+  dispatch_evidence_revision_strictly_descends_from_execution_base: true
+  dispatch_decision_produced_against_exact_execution_base: true
+  confirmation_names_exact_execution_base_and_exact_spawn_binding: true
+  engineer_process_starts_from_exact_execution_base: true
+  seat_start_is_first_engineer_mutation_and_descends_from_execution_base: true
+
+reachability_is_not_sufficient:
+  rejected_formulation: the decision must be REACHABLE from the base's lane
+  reason: >
+    EXPLICITLY REJECTED by Product Authority as too permissive. It would readmit the "cut the lane
+    somewhere convenient" problem the retired equality existed to prevent. The requirement is
+    STRICTLY DESCENDS FROM, not reachable.
+
+# --- THE SECURITY PROPERTY THIS MUST PRESERVE --------------------------------------------------- #
+no_retrospective_blessing:
+  rule: >
+    THERE MUST BE NO ABILITY TO CREATE AN ARBITRARY OLD BASE AND LATER BLESS IT. The execution base
+    must be provably part of the authorised pre-dispatch sequence, which is what BASE_DECLARATION is
+    for.
+  base_declaration_must_bind: [authority_id, authority_commit, target_candidate_commit,
+    target_candidate_tree, governance_source_commit, synthesis_spec_version,
+    resulting_execution_base_commit, resulting_execution_base_tree, frozen_contract_commits_and_blobs,
+    allowed_conflict_resolutions, created_utc]
+  the_distinction_that_must_survive: >
+    PRE-DISPATCH BASE DECLARATION means "this is the exact immutable environment we intend to launch
+    from IF the gate permits it". DISPATCH AUTHORISATION means "the gate HAS run against that
+    environment and permits this exact seat and instance to launch". NEITHER INVENTS THE OTHER.
+
+# --- THE GENERAL PATTERN ------------------------------------------------------------------------ #
+general_pattern:
+  statement: >
+    Governance evidence and executable state serve DIFFERENT TEMPORAL ROLES and need not occupy the
+    same commit.
+  shape:
+    PRE_DECISION_STATE: the immutable thing being evaluated
+    DECISION_EVIDENCE: later immutable proof of what was decided about it
+    EXECUTION: allowed only after the decision evidence exists, but performed FROM the earlier state
+  expected_reach: >
+    Not only dispatch. The same pattern is expected to apply to Assurance and to any future
+    deployment, adoption or commissioning gate.
+
+what_this_contract_does_not_decide:
+- how the ordering is enforced. That is a validator, and validators are ENGINEER work.
+- the artefact schemas carrying these objects.
+- any runtime behaviour, launch mechanism or process model.
+- whether any particular historical record complies. It declares an ordering, not a verdict.

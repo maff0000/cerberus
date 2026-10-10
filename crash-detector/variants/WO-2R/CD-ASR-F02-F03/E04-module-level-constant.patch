@@ -1,0 +1,31 @@
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index 4701353..3663d57 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -102,6 +102,9 @@ REASON_REQUIRED_INPUTS_UNAVAILABLE = "REQUIRED_INPUTS_UNAVAILABLE"
+ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ REASON_NO_CONTRIBUTION_MODEL = "NO_CONTRIBUTION_MODEL_DECLARED"
+ 
++#: The magnitude a dial reports while it is waiting for its inputs.
++QUIET_MAGNITUDE = 0.0
++
+ 
+ def evaluate(
+     observations: Sequence[ObservationRecord],
+@@ -301,10 +304,12 @@ def _evaluate_dial(
+         if source_id not in usable
+     )
+     if missing_required:
+-        return Unknown(
+-            reason=REASON_REQUIRED_INPUTS_UNAVAILABLE,
+-            since_utc=now_utc,
+-            missing_inputs=missing_required,
++        return Value(
++            value=DIAL_SCORE_TYPES[spec.dial_id](
++                score=QUIET_MAGNITUDE, contributions=()
++            ),
++            as_of_utc=now_utc,
++            inputs_used=tuple(spec.required_input_ids),
+         )
+ 
+     missing_contributing = tuple(

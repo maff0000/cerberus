@@ -1,0 +1,228 @@
+# ================================================================================================== #
+# BL-20260824T115318Z-0166 — PROJECT LEAD BOUNDARY. **16B-FIX ASSURED `AMBER`. THE BRANCH RECOGNISER
+# SURVIVED FOUR ATTACKS AND FAILED CLOSED ON ALL FOUR. TWO ESCAPES REMAIN AND ONE OF THEM IS THE NEXT
+# INCREMENT. 16B-FIX-2 DISPATCHED, AND 16C IS BLOCKED BEHIND IT.**
+#
+# *** **THE FINDING THAT CHANGES THE PLAN, AND THIS SEAT BUILT 16C'S SCHEMA CHANGE ITSELF TO CHECK
+# IT: `PO-DECISIONS-0026` RULING 5 IS THREE QUANTITIES WHOSE MIDDLE ONE IS A LIVENESS / DEAD-FEED
+# SIGNAL. WRITTEN THE OBVIOUS WAY — AN OPTIONAL THIRD ROOT PROPERTY `feed_liveness`, STATES
+# `[LIVE, STALE]` — THE LIVE GATE **ADMITS A DEAD FEED RENDERING AS CALM ON BOTH SURFACES**, WITH A
+# CONTROL PROVING THE TREE IS OTHERWISE SOUND, AND THE INSTRUMENT REPORTS `PASS — 144 assertions, 0
+# violations`. `CD-AC-001`'s OWN WORDS ARE "MISSING **OR STALE** INPUT NEVER RENDERS AS CALM".** ***
+#
+# **SO 16C IS NOT DISPATCHED. Its own deliverable, written the natural way, walks through the
+# constitutional guard the previous three increments were spent building. THE AUDITOR NAMED THAT
+# ORDERING CONSTRAINT BEFORE THIS SEAT DID, and it was the single most valuable thing in the
+# verdict.**
+#
+# **CD-CALM-SLOTS-007 IS A PATTERN RECOGNISER WEARING DENY-BY-DEFAULT'S CLOTHES.** The pair that
+# proves it is the VOCABULARY and not the shape: two optional root dials with identical bodies —
+# state `{"const": "NO_DATA"}` PASSES 144/0 while the gate admits calm; state
+# `{"enum": ["UNKNOWN","STALE"]}` FAILS 2. **THE ONLY DIFFERENCE BETWEEN A CAUGHT TREE AND AN
+# UNCAUGHT ONE IS WHETHER THE NEW DIAL REUSES AN OLD STATE NAME.**
+#
+# **AND THE SHARPEST EDGE OF THE OTHER FINDING: on the conditional-branch tree the ONE surviving
+# catcher in the whole register is `tests/test_detail_level.py`, and the five assertions that fire
+# are all LITERAL-NAME STRUCTURAL READS — the BEHAVIOURAL arm PASSES. THE GUARANTEE IS CARRIED BY A
+# `$ref`-NAME EQUALITY IN A PYTEST FILE, WHICH IS THE "MEMORIAL IN TESTS" RULING 9 SAID IT MUST NOT
+# BE LEFT IN. And that assertion is under a live prescription to be removed — TWO OPEN ITEMS ON ONE
+# ROW POINTING IN OPPOSITE DIRECTIONS, AND NOBODY HAD NOTICED.**
+#
+# **CD-PL-F190, AGAINST THIS SEAT AND CONFIRMED: the Assurance dispatch MISDESCRIBED THE VERY
+# MECHANISM IT ORDERED THE SEAT TO ATTACK.** There is no branch allowlist. A seat taking the framing
+# literally would have hunted a name-versus-shape distinction that does not exist in the code and
+# would have missed F1.
+# ================================================================================================== #
+
+entry_id: BL-20260824T115318Z-0166
+timestamp_utc: '2026-08-24T11:53:18Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T11:53:18Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T112810Z-0165
+base_sha: b5d9e0912cef1c6a9e365427ca26e0953cd44b31
+current_sha: b5d9e0912cef1c6a9e365427ca26e0953cd44b31
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-06 returned AMBER over 16B-FIX at 64cd5b2 and banked it at c7471dc. It confirmed the
+  branch recogniser is genuinely deny-by-default — four attack shapes, all failed closed — and found
+  two escapes it could not be talked out of. This seat reproduced the one that blocks the next
+  increment, built 16C's own schema change to do it, ruled on the two design questions the auditor
+  correctly refused to decide, recorded a third confirmed defect in its own dispatch, and dispatched
+  CD-ENG-WO3-07. 16C IS HELD BEHIND 16B-FIX-2.
+
+the_verdict:
+  seat: CD-ASR-WO3-06 (FRESH — never CD-ENG-WO3-06 which built it, never CD-ASR-WO3-05 which found the previous holes)
+  verdict: AMBER
+  target: 64cd5b2122f8ae1f7310a81379757d9cc297ff40 (content tip af3825c)
+  banked: c7471dc on branch asr-wo3-06-verdict — BL-20260824T114609Z-A306.yaml
+  what_it_affirms_and_it_is_substantial: >
+    THE BRANCH RECOGNISER IS GENUINELY DENY-BY-DEFAULT AND THE AUDITOR COULD NOT DEFEAT IT. Four
+    shapes, gate ADMITTING on each, instrument RED on each: state as {"enum":["UNKNOWN"]} (FAIL 2);
+    state as a bare {"type":"string"} (FAIL 2); state supplied via allOf (FAIL 2); and THE
+    ALLOWLISTED NAME KEPT WHILE ITS DEFINITION WAS WIDENED UNDERNEATH IT (FAIL 4). oneOf->anyOf
+    exits 3 with the reason stated. The slot assertion catches allOf-wrapped $ref, $ref-to-$ref and
+    an inline copy. AND NOTHING WAS DROPPED IN THE 67->144 REWRITE: rules 6->8, rows 9->13, cells
+    36->52, all 8 refuse-preconditions retained and 5 added. That was §3.3's question and the answer
+    is clean.
+
+what_this_seat_reproduced_itself:
+  the_one_that_blocks_16C:
+    method: >
+      THIS SEAT WROTE 16C'S SCHEMA CHANGE RATHER THAN REPLAYING THE AUDITOR'S PATCH — ruling 5's
+      liveness quantity as an optional third root property `feed_liveness`, a closed object with
+      state {"enum": ["LIVE","STALE"]}, reason, since_utc, missing_inputs and a detail_level
+      pointing at the FULL #/$defs/detail_level. Both contracts. On a fresh extraction of af3825c.
+    measured: >
+      instrument                       PASS — 144 assertions, 0 violations
+      CONTROL (no liveness quantity)   ADMITTED on both surfaces — the tree is not broken
+      feed_liveness STALE + 'calm'     *** ADMITTED on PUBLIC and on PRIVATE ***
+    what_it_means: >
+      A DEAD FEED RENDERING AS CALM, ADMITTED BY THE PUBLICATION GATE, WITH THE CONSTITUTIONAL
+      INSTRUMENT REPORTING CLEAN. That is CD-AC-001's "missing OR STALE" half in the criterion's own
+      words, and it is not hypothetical: it is what 16C produces if written the natural way.
+  the_auditors_proof_that_it_is_the_vocabulary_and_not_the_shape: >
+    Two OPTIONAL root properties with identical bodies. B6, state {"const": "NO_DATA"} — which is
+    unambiguously MISSING data, so no staleness-scope defence is available — instrument PASS 144/0
+    and the gate ADMITS calm. B5, byte-identical except state {"enum": ["UNKNOWN","STALE"]} —
+    recognised, listed, FAIL 2 at CD-CALM-SLOTS-007. THE ONLY DIFFERENCE IS WHETHER THE NEW DIAL
+    REUSES AN OLD STATE NAME. That is GUARD_THE_INSTANCE_NOT_THE_CLASS, which PO-DECISIONS-0026
+    ruling 10 exists to stop.
+  the_asymmetry_declared_limit_8_prices_only_half_of: >
+    The SAME typed-in DECLARED_STATES makes CD-CALM-BRANCHES-006 LOUD when a new state joins the
+    existing union (measured both polarities: B1, a CORRECT narrow STALE branch, FAIL 2; B2, the same
+    branch with the full vocabulary, FAIL 2 while the gate admits calm — a human is FORCED to look,
+    which is the fix working as advertised) and makes CD-CALM-SLOTS-007 BLIND when the same new
+    state arrives on a NEW QUANTITY. Limit 8 says the cost is "a fourth STATE is a red instrument
+    until a human looks". MEASURED: true of the union, FALSE of the root.
+
+the_other_finding_and_its_sharpest_edge:
+  f1: >
+    _dial_from_branch reads a branch's `required` and `properties` AND NOTHING ELSE — never if/then/
+    else, allOf, anyOf, oneOf, not, dependentSchemas. So it builds exactly ONE document per branch,
+    and a branch whose admissible shape is CONDITIONAL has variants it never constructs. Auditor tree
+    X2 keeps the branch's name, its state.const, its required list and additionalProperties:false,
+    widens properties.detail_level, and relocates the narrowing into "if"/{"else"} guarded by an
+    OPTIONAL marker: instrument PASS 144/0, gate ADMITTED both surfaces, control (no marker) still
+    REFUSED. EXACTLY ONE of the 30 execute: lines moves.
+  the_edge: >
+    *** AND THE IDENTITY OF THAT ONE SURVIVING CATCHER IS THE POINT. It is tests/test_detail_level.py,
+    and the five assertions that fail are all LITERAL-NAME STRUCTURAL READS. The BEHAVIOURAL arm,
+    test_missing_data_never_renders_as_calm_THROUGH_THE_LIVE_GATE, PASSES ON X2. So on that tree the
+    behavioural guarantee is carried by NOTHING BEHAVIOURAL — it is carried by a $ref-name equality
+    in a pytest file, which is precisely the "memorial in tests" ruling 9 said the guarantee must not
+    be left in. ***
+  and_the_collision_nobody_had_noticed: >
+    THAT ASSERTION IS UNDER A LIVE PRESCRIPTION TO BE REMOVED. CD-ASR-WO3-05's F6 offered "move the
+    name-coupled assertions behind a resolver that follows the $ref" as one of two remedies, and
+    DECLARED LIMIT 12 records the same coupling as a cost. ADOPT THAT REMEDY AND X2 BECOMES INVISIBLE
+    TO THE ENTIRE REGISTER. TWO OPEN ITEMS ON ONE ROW POINTING IN OPPOSITE DIRECTIONS.
+  consequence_for_the_fx4_ruling: >
+    THIS IS A SECOND AND INDEPENDENT REASON THE FX4 RULING WAS RIGHT. It was made at BL-0165 on the
+    ground that absent_data_detail_level is named in both contracts' prose as the enforcement point;
+    it turns out ALSO to be the only thing standing between X2 and total invisibility. The ruling
+    STANDS and is now better founded than when it was made.
+
+the_rulings_this_seat_made:
+  - id: RULING ON F1's OPEN DESIGN QUESTION — DENY BY DEFAULT, DO NOT ENUMERATE
+    the_question: 'The auditor offered a stronger form — build one candidate per satisfiable combination of optional markers — and correctly refused to decide it, calling it a Project Lead question.'
+    ruled: >
+      DO NOT BUILD IT. Take the deny-by-default form: a branch carrying any conditional keyword is
+      UNBUILDABLE and is reported. The auditor verified the clean tree carries none of those keywords
+      inside any branch, SO IT COSTS NOTHING TODAY AND TURNS X2 RED. Enumerating conditional shapes
+      is a larger piece of work than this row should absorb, and if a legitimate conditional branch
+      is ever needed THAT is the increment that prices it.
+  - id: RULING ON F2's OPEN DESIGN QUESTION — TAKE THE LOOSER, LOUDER FORM
+    the_question: 'The auditor offered a tighter variant of _dial_bearing (require BOTH a state and a detail_level property, less likely to fire on a non-dial) and left the false-positive trade to the Project Lead.'
+    ruled: >
+      TAKE THE LOOSER FORM: declaring a `state` is enough to make an unclassifiable vocabulary
+      UNDECIDABLE rather than not-a-dial. A FALSE POSITIVE COSTS ONE SEAT ONE LOOK AT ONE CONTRACT;
+      A FALSE NEGATIVE COSTS THE CONSTITUTION. The seat is told that if the loose form fires on
+      something legitimate in the clean tree it must STOP, because that measurement would change the
+      ruling.
+  - id: RULING ON SEQUENCING — 16C IS HELD
+    ruled: >
+      16C IS NOT DISPATCHED UNTIL 16B-FIX-2 IS ASSURED. Dispatching ruling 5's three quantities into
+      a guard that cannot see a liveness quantity would deliver the dead-feed detector and the hole
+      that hides it IN THE SAME INCREMENT. The auditor named this constraint first.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F190
+    severity: MEDIUM, CONFIRMED, and it is this seat's own error
+    raised_by: CD-ASR-WO3-06
+    the_dispatch_said: 'That FX1 "fail[s] on any branch not on a declared allowlist", and then asked four times whether "the allowlist binds a name, or a shape".'
+    the_truth: >
+      THERE IS NO BRANCH ALLOWLIST. Nothing in the check holds a list of permitted branches by name
+      or by shape. DECLARED_STATES is a list of dial STATES, and CD-CALM-BRANCHES-006 is a state-set
+      equality plus a one-branch-per-state cardinality rule plus a readability rule. The branch
+      recogniser binds NEITHER a name NOR a shape — it binds a STATE SET.
+    why_it_is_MEDIUM_and_not_LOW: >
+      *** THE MISDESCRIPTION WAS LOAD-BEARING FOR THE DISPATCH'S OWN QUESTION. A seat taking the
+      framing literally would have spent its budget hunting a name-versus-shape distinction that does
+      not exist in the code, and would have MISSED F1 — which lives in a dimension the framing has no
+      word for: the branch is correctly identified and its SHAPE is still under-determined. *** The
+      auditor also observed that the dispatch's central hypothesis was HALF RIGHT AND AIMED AT THE
+      WRONG HALF: the branch recogniser is not a blacklist, the SLOT recogniser is, and the dispatch
+      gave the slot recogniser three lines at the end as an afterthought.
+    disposition: 'Recorded against this seat. The lesson is narrower than "read the code" — it is that a dispatch which NAMES a mechanism must name it from the code and not from the summary of the code.'
+  - id: CD-PL-F191
+    severity: INFORMATIONAL, and it closes CD-PL-F189
+    raised_by: CD-ASR-WO3-06
+    the_resolution: >
+      THE CENSUS IS SETTLED AND THE CAUSE IS FINALLY STATED. 30 `execute:` lines, 19 rc=0, 11
+      non-zero — matching CD-ENG-WO3-06 and reconciling with CD-ASR-WO3-05's enumeration but not its
+      counts. CAUSE, WHICH NO SEAT HAD SAID: `grep -c 'execute:'` returns 36 because SIX occurrences
+      are the word inside prose comment blocks; only 30 match `^\s*execute:\s*\S`. THREE SEATS GOT
+      THIS WRONG INCLUDING THIS ONE (CD-PL-F185) BECAUSE THE NUMBER WAS NEVER THE LOAD-BEARING PART,
+      SO NOBODY RE-DERIVED IT. Now recorded so a fourth seat does not rediscover it.
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX2-ENGINEER.md
+  seat: CD-ENG-WO3-07 (FRESH — never CD-ENG-WO3-06 which built it, never CD-ASR-WO3-06 which found F1 and F2)
+  bounded_to: >
+    FX5 conditional-keyword deny-by-default (closes F1) · FX6 _dial_bearing returns UNDECIDABLE
+    rather than False on an unclassifiable state vocabulary (closes F2) · FX7 RE-correct DECLARED
+    LIMIT 4, whose replacement sentence is false in the same way and the same three places as the
+    sentence it superseded · FX8 close CD-PL-F188 by granting the two owed CD-RULE-004 places, and
+    resolve the limit numbering the auditor found unverifiable.
+  five_new_arms: 'C11 the conditional branch · C12 its careless precursor · C13 the new-state-vocabulary root dial · C14 THE 16C LIVENESS QUANTITY · C15 the control that must still pass. C1-C10 re-run unchanged.'
+  what_it_is_forbidden_to_do: 'IMPLEMENT 16C. It makes the guard able to SEE a liveness quantity; it does not add one. No schema edit of any kind.'
+
+what_was_verified_unmoved:
+  - 'be0b355 unmoved. Register: pid.content_hash MATCHES · 18 criteria · GATE: SHUT · latest_admitted_run (null).'
+  - 'evidence/required-tests/runs/ still unwritten by any seat.'
+  - '16B-FIX: 10 files, ZERO protected prefixes, ONE identity across cbb81d1..64cd5b2. pytest 2007 passed.'
+  - 'The boot RED is the same blob ce0803c3 at be0b355 and at the target — now verified independently by four seats.'
+
+evidence_references:
+  - 'asr-wo3-06-verdict c7471dc — BL-20260824T114609Z-A306.yaml'
+  - 'wo-3 64cd5b2 — the audited SHA (content tip af3825c)'
+  - governance/engineering/CD-DISPATCH-INC16B-FIX-ASSURANCE.md (b5d9e09)
+  - governance/engineering/CD-DISPATCH-INC16B-FIX2-ENGINEER.md (this commit)
+  - 'this seat''s reproduction of the 16C blocker: /tmp/b4, with its control'
+
+next_safe_action: >
+  Launch CD-ENG-WO3-07 against 64cd5b2 per CD-DISPATCH-INC16B-FIX2-ENGINEER.md, then a FRESH
+  Assurance seat. The record precedes the launch. 16C REMAINS HELD until 16B-FIX-2 is assured.
+
+expected_next_actor: 'CD-ENG-WO3-07 — dispatched by this seat, not yet run.'
+
+risks:
+  - '*** 16C IS BLOCKED, AND THIS IS THE STANDING RISK OF THE WHOLE PROGRAMME RIGHT NOW: ruling 5''s liveness quantity, written the obvious way, is admitted rendering as calm by a gate whose constitutional instrument reports clean. Anyone who dispatches 16C before 16B-FIX-2 is assured ships the dead-feed detector and the hole that hides it in one increment. ***'
+  - 'F1''s class size is NOT BOUNDED. The auditor was explicit that X2 is ONE member of a class whose size it did not measure, and said so rather than implying it found the only one. The deny-by-default remedy covers the class by construction; nothing else does.'
+  - 'On the conditional-branch tree the only surviving catcher is a name-coupled structural assertion in tests/ that is under a live prescription to be removed. Two open items on one row point in opposite directions; the FX4 ruling holds the line and is now the load-bearing reason it must.'
+  - 'CD-PL-F180 is OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments, and the half that is missing is the half 16C is about to open.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed.'
+  - 'Three of the PO''s ruled six items remain untouched: 16C (held), 16D, 16E. Nothing is registered, no source is wired, every dial reads UNKNOWN, and the 30 indicators in the ratified mapping are still data that nothing reads.'

@@ -1,0 +1,35 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..c759551 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -287,6 +287,10 @@ x-cd-hardening: &cd-hardening
+ 
+ x-cd-python-service: &cd-python-service
+   <<: *cd-hardening
++  entrypoint:
++    - python3
++    - -B
++    - /app/entrypoints/cd_shared_boot.py
+   environment:
+     # Configuration from the environment only (BLUEPRINT §11, PBG-SEC-001). Every value
+     # below is either a literal operational setting or a reference to a variable BY NAME.
+diff --git a/deploy/entrypoints/cd_shared_boot.py b/deploy/entrypoints/cd_shared_boot.py
+new file mode 100644
+index 0000000..512f68e
+--- /dev/null
++++ b/deploy/entrypoints/cd_shared_boot.py
+@@ -0,0 +1,14 @@
++#!/usr/bin/env python3
++"""A boot shim shared by every python service, selected in the common compose fragment."""
++
++from __future__ import annotations
++
++import sys
++
++from _service import boot
++from crash_detector.witness.panel import Agrees
++
++SERVICE_NAME = "cd-engine"
++
++if __name__ == "__main__":
++    sys.exit(boot(SERVICE_NAME))

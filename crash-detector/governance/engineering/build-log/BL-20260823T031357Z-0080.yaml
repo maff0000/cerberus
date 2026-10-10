@@ -1,0 +1,167 @@
+# ================================================================================================ #
+# WO-2R3 THE RECORD ACT — ITEM 1. THE MINIMAL FINDINGS REGISTER.
+#
+# **THIS COMMIT CHANGES NO PRODUCT BEHAVIOUR AND FIXES NO DEFECT.** Nothing under `src/` is opened.
+# It makes an unchecked string checkable and nothing else.
+#
+# **THE SWEEP'S VIOLATION COUNT IS UNMOVED BY THIS ITEM — 534 sites, 15 violations, EXIT 1 before
+# and after** — and that is the correct outcome for a check nobody has yet given anything to check.
+# The three arms that prove it CAN refuse are run below and their output is quoted, because a
+# resolution check that has only ever seen ids that resolve has never been shown to resolve
+# anything.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0079. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T031357Z-0080
+timestamp_utc: "2026-08-23T03:13:57Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-04
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0014.md ruling 1'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: af2accbfc950961bb7f7967d34ecf16414088228
+parent_entry_id: BL-20260823T012213Z-0079
+schema_version: 1
+
+record_type: RECORD_ACT_ITEM
+
+the_ruling_being_implemented_verbatim: >
+  PO-DECISIONS-0014 ruling 1 — *"this project has finding IDs and NO FINDINGS REGISTER, so the
+  `finding` field would be an unchecked string. A MINIMAL findings register is created in the same
+  act — id, raised_at (boundary SHA), status (OPEN / CLOSED / SUPERSEDED), nothing else — and
+  `DEFECT_OPEN.finding` resolves against it or the row refuses. An index, not a system."*
+
+what_landed:
+  the_register: >
+    `governance/findings/findings-register.json` — FOUR rows, THREE fields each, nothing else.
+    CD-F-0001 · CD-F-0002 · CD-F-0003 · CD-F-0004, all `OPEN`.
+  the_loader: >
+    `tools/sweep/delegated_judgement_sweep.py::_load_findings_register` — resolved from the TOOL's
+    own location, not from `--root` and not from a PYTHONPATH, for the same reason `_load_register`
+    is (`PBG-ASSURE-001`: an auditor runs this out of a tree it extracted itself).
+  the_resolution_check: >
+    `_finding_resolution_violations` — every `finding` cited by ANY extended-word entry, in EITHER
+    register, must resolve to an `OPEN` row. Two distinct rules because they are two distinct
+    mistakes: `FINDING_DOES_NOT_RESOLVE` and `FINDING_IS_NOT_OPEN`.
+  the_carrier: 'tests/test_findings_register.py — 12 tests. tests/test_disposition_contract.py fixture widened to carry `governance/findings/`.'
+
+WHY_JSON_AND_NOT_A_PYTHON_MODULE__A_DESIGN_CHOICE_THAT_IS_MINE_AND_IS_NOT_THE_PROJECT_LEADS:
+  the_dispatch_said: >
+    *"THE PROJECT LEAD'S PREFERENCE, WHICH IS EVIDENCE AND NOT A DESIGN: a sibling data module
+    loaded exactly as `declared_dispositions.py` is loaded today. YOU ARE NOT OBLIGED TO ADOPT ITS
+    SHAPE, AND IF A GOVERNANCE-DIRECTORY LOCATION IS RIGHTER, SAY SO AND TAKE IT."*
+  what_this_seat_took_and_why: >
+    **A GOVERNANCE-DIRECTORY LOCATION, AND JSON RATHER THAN PYTHON.** Two reasons, both of which
+    are this project's own arguments rather than taste.
+    (1) **A REGISTER THAT EXECUTES CAN COMPUTE ITS OWN ANSWER.** `declared_dispositions.py` is
+    `exec`'d by `_load_register`; a findings register loaded the same way could derive its statuses
+    at load time, and an index that computes is exactly the "system" the ruling refused. JSON cannot
+    do anything but be read. This is the same reasoning `governance/reconciliation/README.md` gives
+    for storing its own probes as `.txt` — *"so that they are DATA (PBG-ASSURE-001)"*.
+    (2) **THE FINDINGS ARE NOT THE SWEEP'S.** CD-F-0001 comes from the fifth Assurance seat,
+    CD-F-0002 and CD-F-0003 from the sixth, CD-F-0004 from a Project Lead reconciliation probe. Not
+    one of them was raised by this instrument, and a later instrument that needs the same index
+    should not have to reach into another tool's private data directory to get it.
+  what_it_cost: >
+    The tool now reaches OUT of `tools/` by three `parent`s. That is a real coupling and it is
+    stated rather than hidden: move `delegated_judgement_sweep.py` and the register stops resolving.
+    Verified to work from a `git archive` extraction with no PYTHONPATH — see the extraction arm.
+
+the_three_fields_and_NOTHING_ELSE__ENFORCED_NOT_ASKED_FOR:
+  what: >
+    A row whose key set is not EXACTLY {id, raised_at, status} is REFUSED
+    (`FINDINGS_REGISTER_ROW_MALFORMED`). **`nothing else` IS PART OF THE RULING AND IS NOW PART OF
+    THE INSTRUMENT.** Both directions: a fourth field refuses, and a missing field refuses.
+  why_that_is_the_load_bearing_check: >
+    A findings register allowed to grow a `title` grows a `severity`, then an `owner`, and is the
+    hand-maintained summary the ruling created it to stop. The check is what keeps it minimal
+    against every seat that comes after this one, none of whom will have read this entry.
+
+the_SHAs_were_RESOLVED_and_NOT_TRANSCRIBED:
+  rule: 'CD-RULE-009, CD-PL-F36. The content document claims `af2accb` for all four rows.'
+  what_this_seat_ran: |
+    $ git rev-parse af2accb
+    af2accbfc950961bb7f7967d34ecf16414088228
+    $ git cat-file -t af2accbfc950961bb7f7967d34ecf16414088228
+    commit
+  outcome: 'RESOLVES, and it is a COMMIT object. The register carries the FULL 40-character SHA, never the abbreviation.'
+  and_the_instrument_checks_the_SHAPE_ONLY: >
+    `FINDINGS_REGISTER_BAD_SHA` proves 40 lower-case hex characters and NOTHING MORE. It does not
+    prove the object exists and it CANNOT — the sweep runs from an extraction with no repository.
+    **A REGISTER FULL OF WELL-FORMED SHAs THAT NAME NOTHING WOULD PASS THIS CHECK. NOT PROVED TO BE
+    CARRIED ANYWHERE** (CD-RULE-006); the carrier for existence is a human running `git rev-parse`
+    and `git cat-file -t`, which is what this seat did and recorded above.
+
+THE_REFUSING_ARM_AND_THE_PASSING_ARM__BOTH_RUN_BOTH_QUOTED:
+  method: >
+    Three copies of the tree, one variable changed in each, the sweep run in each and the `tree:`
+    line implicit in the `--root` argument printed in the command (CD-PL-F98 — two arms that
+    resolve the same tree print identical output and prove nothing).
+  arm_1_an_id_ABSENT_from_the_register: |
+    DECLARED_ADMISSIONS[<a probe site>] = ("DEFECT_OPEN", {"finding": "CD-F-9999", ...})
+    $ python3 -B /tmp/cd-eng04-item1/absent/tools/sweep/delegated_judgement_sweep.py --root /tmp/cd-eng04-item1/absent
+        FINDING_DOES_NOT_RESOLVE: crash_detector.time_utc::a_probe_site ISINSTANCE: isinstance(x, int)
+    CD-CLASS-2-SWEEP: FAIL — 534 sites, 17 violations          EXIT 1
+  arm_2_an_id_present_but_CLOSED: |
+    findings-register.json += {"id": "CD-F-0099", "raised_at": "000...0", "status": "CLOSED"}
+    DECLARED_ADMISSIONS[<a probe site>] = ("DEFECT_OPEN", {"finding": "CD-F-0099", ...})
+    $ python3 -B /tmp/cd-eng04-item1/closed/tools/sweep/delegated_judgement_sweep.py --root /tmp/cd-eng04-item1/closed
+        FINDING_IS_NOT_OPEN: crash_detector.time_utc::a_probe_site ISINSTANCE: isinstance(x, int)
+    CD-CLASS-2-SWEEP: FAIL — 534 sites, 17 violations          EXIT 1
+  arm_3_THE_PASSING_ARM_an_id_that_resolves_OPEN: |
+    DECLARED_ADMISSIONS[<a probe site>] = ("DEFECT_OPEN", {"finding": "CD-F-0001", ...})
+    $ python3 -B /tmp/cd-eng04-item1/open/tools/sweep/delegated_judgement_sweep.py --root /tmp/cd-eng04-item1/open
+        (no FINDING_* rule fired)
+    CD-CLASS-2-SWEEP: FAIL — 534 sites, 16 violations          EXIT 1
+  what_the_16_and_17_mean: >
+    15 is the baseline. The probe entry adds a STALE DECLARATION in all three arms (the site it
+    names does not exist — that is the register's set-equality assertion doing its own separate
+    job), giving 16. The 17th in arms 1 and 2 is the FINDING rule itself. **WITHOUT ARM 3 THE FIRST
+    TWO ARE SATISFIED BY A CHECK THAT REFUSES EVERYTHING.**
+
+what_this_does_NOT_close:
+  - '**IT DOES NOT MAKE ANY DISPOSITION TRUE.** DECLARED LIMIT 1 is untouched: a well-formed lie
+     passes. The check constrains the FORM of a citation, never its substance.'
+  - '**IT DOES NOT PROVE A SHA EXISTS**, as stated above. Shape only.'
+  - '**IT DOES NOT KNOW WHETHER A FINDING SHOULD BE OPEN.** `OPEN` is a claim by whoever writes the
+     row. Nothing here can tell a genuinely open defect from one somebody forgot to close.'
+  - '**IT CLOSES NONE OF THE FOUR FINDINGS.** All four are `OPEN` and no act yet scheduled closes
+     one. The register getting a row is not the finding getting an answer.'
+  - 'No `src/` file was opened. The sweep is EXIT 1 with 15 violations before and after this item.'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  class_2_sweep_before: 'EXIT 1 — `CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations`. MEASURED BY THIS SEAT, not quoted from the dispatch (CD-RULE-009).'
+  class_2_sweep_after_item_1: 'EXIT 1 — `CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations`. UNMOVED, and that is the correct result.'
+  findings_carrier: 'EXIT 0 — 12 passed (tests/test_findings_register.py).'
+  disposition_contract_carrier: 'EXIT 0 — 11 passed (tests/test_disposition_contract.py, fixture widened).'
+  full_suite: 'recorded at ITEM 3, run over the whole act.'
+
+findings_against_my_own_work:
+  CD-ENG-WO2R3-04-F01: >
+    **THE `raised_at` FIELD IS THE WEAKEST OF THE THREE AND IT IS THE ONE THE RULING NAMED MOST
+    PRECISELY.** The ruling says *"raised_at (boundary SHA)"*. All four rows carry the LANE HEAD
+    `af2accb`, because that is what the content document claims — but CD-F-0001 was raised by the
+    FIFTH Assurance seat and CD-F-0002/0003 by the SIXTH, at boundaries this seat did not resolve
+    and was not given. `af2accb` is the SHA those findings were TARGETED AT, which is not obviously
+    the same thing as the boundary they were RAISED AT. The instrument cannot tell the difference
+    and neither can this entry. **Reported rather than smoothed.**
+  CD-ENG-WO2R3-04-F02: >
+    The register's location couples the sweep to a path three directories above itself. If a later
+    seat moves the tool the register stops resolving — and it does NOT fail silently:
+    `FINDINGS_REGISTER_ABSENT` fires and the run goes red. That is the safe direction, and it is
+    stated here because the alternative reading (a sibling module) would have had no such failure
+    mode at all, and this seat chose the coupling deliberately.
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. **THIS IS A RECORD, NOT ASSURANCE.** This seat does not certify this
+  work; a fresh SEVENTH Assurance seat audits it and the Product Owner dispositions the gate
+  (PBG-AUTH-003). This seat wrote neither `admission.py` nor `establishment.py`, which is the whole
+  reason it was given `declared_dispositions.py` (CD-D-130).

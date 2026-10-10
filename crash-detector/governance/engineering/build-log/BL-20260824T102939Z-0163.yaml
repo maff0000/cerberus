@@ -1,0 +1,244 @@
+# ================================================================================================== #
+# BL-20260824T102939Z-0163 — PROJECT LEAD BOUNDARY. **PO-DECISIONS-0026 RECEIVED. 16B SPLIT OUT OF A
+# SIX-ITEM RULING, DISPATCHED, DELIVERED, AND RECONCILED BY MEASUREMENT. ASSURANCE IS DISPATCHED AND
+# HAS NOT YET RUN.**
+#
+# **THE CONSTITUTIONAL GUARANTEE IS NOW CARRIED BY A LIVE INSTRUMENT THE REGISTER NAMES.** Ruling 9's
+# premise was reproduced by this seat before a line was written and it is exact: on a tree with
+# 16A-FIX's narrowing FULLY reverted, **ALL FOURTEEN register instruments exit exactly as they do
+# clean**, and the only failures in the whole suite are **nine assertions in `tests/test_detail_level.py`
+# — a file that NONE of the register's 29 `execute:` lines named.** A memorial, not a guard.
+#
+# *** **AND THE ARM THAT DECIDES WHETHER THE NEW INSTRUMENT IS A GUARD OR A MUTE BUTTON CAME BACK
+# RIGHT: C4 — narrow `VALUE` too, so no dial may EVER read calm — makes it FAIL with 4 ×
+# `CD-CALM-GATE-002` AND `CD-CALM-GATE-001` FIRING ZERO TIMES.** It fails on the *admitting* side:
+# nothing forbidden was admitted, something REQUIRED was refused. **A contract that refuses calm
+# everywhere satisfies PID §3.2 vacuously, and this instrument can tell the difference.** ***
+#
+# **THE SEAT RAISED SIX FINDINGS, FOUR AGAINST ITS OWN DISPATCH, AND ONE OF THEM IS A DEFECT IN THIS
+# SEAT'S OWN MEASUREMENT — CONFIRMED AND RECORDED AS `CD-PL-F181`, NOT ARGUED WITH.**
+#
+# **AND A LIVE ROUTE IS OPEN THAT NOBODY ASKED THE SEAT TO LOOK FOR. `CD-PL-F180`: with BOTH
+# repository contracts BYTE-IDENTICAL to their committed blobs, `$CD_CONTRACTS_DIR` pointed at a
+# widened copy makes the live gate ADMIT a calm UNKNOWN dial on BOTH surfaces. REPRODUCED BY THIS
+# SEAT. It is not a defect in 16B and 16B does not close it.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T102939Z-0163
+timestamp_utc: '2026-08-24T10:29:39Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T10:29:39Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T093919Z-0162
+base_sha: 3b4ef01a65aa4d909fb22431a2284c95f984c80f
+current_sha: 3b4ef01a65aa4d909fb22431a2284c95f984c80f
+status: READY_FOR_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  PO-DECISIONS-0026 answered Q30/Q31/Q32/Q33 and dispatched increment 16B as an ORDERED LIST OF SIX
+  ITEMS. Six items in one seat is not a reviewable boundary, and both the ruling and the operator
+  authorised a split. This seat split it as a PREFIX OF THE RULED ORDER — 16B is item 1 and nothing
+  else — carried the ruling and the ratified mapping onto the lane, dispatched CD-ENG-WO3-05,
+  received READY_FOR_ASSURANCE at cbb81d1, reconciled every load-bearing claim by its own
+  measurement, and dispatched a fresh Assurance seat. NOTHING IS ACCEPTED AND 16B IS NOT ASSURED.
+
+the_ruling_received:
+  commit: 2caa2d7 (governance/decisions/PO-DECISIONS-0026.md, authored by Matt Scott, by no seat)
+  q30: >
+    ANSWERED AND THE ANSWER MOVED THE ARCHITECTURE. The mapping CONTENT is a REPO DATA FILE at
+    governance/mapping/indicator_mapping.yaml, not a Trinity fabric key. The PO named its own error.
+    MEASURED CONTENT, derived mechanically and not by eye: 30 indicators, 4 of them BOTH-dial
+    (real_rate_10y_tips, copper_gold, fed_funds_rate, m2_yoy), 1 registration_pending
+    (sloos_bank_lending), staleness windows from ~4d to ~120d.
+  q31: 'ANSWERED — Redis NOT mandated. The invariant is movable persistence + cut-and-paste dev->prod.'
+  q32: >
+    ANSWERED AND MADE STRONGER THAN THE QUESTION. THREE quantities on the row, not two: relevance
+    (per-indicator, from the mapping), liveness/fetch-freshness (a real field a real dead-feed
+    detector READS), publish budget (the ~900s PID §5 number, the detector's own loop). The ceiling
+    is NOT removed until the liveness detector exists and reads its field. NEVER DELETE THE ONLY
+    DEAD-FEED DETECTOR TO WIDEN A WINDOW.
+  q33: 'ANSWERED — one version string must identify exactly ONE contract shape. The PO made the call the seat was not scoped to make.'
+
+the_split_and_why:
+  problem: >
+    Ruling 7 names SIX ordered items and calls the whole list "increment 16B". A seat handed all six
+    returns a diff nobody can review, and the two constitutional items would be buried in it.
+  the_split: >
+    A PREFIX OF THE RULED ORDER, so the ordering the PO set is preserved and not reshuffled for
+    convenience:
+      16B  item 1        REGISTER-WIRE the constitutional fix + plant its contrast   <- DELIVERED, UNASSURED
+      16C  item 2        THREE-QUANTITY staleness (relevance / liveness / publish)
+      16D  items 3,4,5   no-blend closed STRUCTURALLY; host-coupling defaults; version discriminates
+      16E  item 6        register the 30 indicators FROM the mapping file
+    Each gets a FRESH Assurance seat (PBG-SOD-001). CD-D-181 sequential-only holds and was held.
+
+the_record_act_before_the_dispatch:
+  commit: 20fd1e1 on wo-3, authored PROJECT_LEAD_SEAT_02
+  what: >
+    PO-DECISIONS-0026.md and indicator_mapping.yaml CARRIED onto the wo-3 lane, verbatim. Verified
+    by `git show main:<path> | cmp -`, exit 0 on both, and by sha256sum read from the tool and never
+    transcribed (CD-PL-F36):
+      PO-DECISIONS-0026.md        e3c1c28820843eab91428a7a84f988c662f0bbc716496a1721a3b7791a3b20cf
+      indicator_mapping.yaml      bcff8074cb0b53a07871877d8f3146007b83df32dd939be1b2a7ed727afd4bbd
+  why_it_was_necessary: >
+    MEASURED: this lane's governance/decisions held exactly TWO files and governance/mapping did not
+    exist. An authority record a seat cannot read in its own tree is not an authority record. And
+    ruling 1 says the engine registers FROM the file BECAUSE the mapping must TRAVEL WITH THE
+    CONTAINER — a file that lives only on main is a file the container does not carry, which is
+    ruling 2's portability constraint broken at the first step.
+  what_it_is_not: 'AUTHORING. Both files are Matt''s. This act moved bytes between branches and changed none of them.'
+
+the_premise_reproduced_before_anything_was_written:
+  method: 'git archive b9283b9 | tar -x -C /tmp/rev16b, then the complete revert of 16A-FIX: all 4 "$ref"s to absent_data_detail_level restored to detail_level, 2 per contract.'
+  result_register: >
+    ALL FOURTEEN register instruments run verbatim. THIRTEEN PASS (check_schema_closed 266
+    assertions 0 violations; check_no_blend 9078/0; check_no_execution_interface 79678/0; and the
+    rest). The fourteenth, check_grant_matrix_live, is PRECONDITION_NOT_MET — and it is
+    PRECONDITION_NOT_MET IDENTICALLY on the clean tree, so it discriminates nothing here and is not
+    offered as if it did.
+  result_tests: '9 failed, 1998 passed. ALL NINE in tests/test_detail_level.py.'
+  result_wiring: >
+    The register declares 29 `execute:` lines — 15 naming tools/ instruments, 14 naming pytest
+    files — and ZERO of them name tests/test_detail_level.py. THIS IS SHARPER THAN RULING 9 NEEDED
+    TO BE: not "tests do not feed the gate" generally, but "the register runs fourteen test files
+    and this specific one is not among them."
+
+what_the_seat_delivered:
+  seat: CD-ENG-WO3-05 (FRESH — never any prior CD-ENG-WO3-* or CD-ASR-WO3-*)
+  tip: cbb81d15dd1ca105c922c15d61d91fc7673e7249 (code tip dc609f7)
+  files: >
+    10, every one on the writable list: the new instrument
+    tools/register/check_missing_data_never_calm.py; its execution contract
+    contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md; required-tests.yaml (new row under
+    CD-AC-001 + CD-RT-001-ABSENCE-RENDERS-UNKNOWN's command grown ADDITIVELY by
+    tests/test_detail_level.py); plants/WO3-INC16B/ (C1-C5 + MANIFEST); tests/test_detail_level.py
+    (DOCSTRING ONLY — verified by diff; no test added, none weakened); its own Build Log entry.
+
+the_reconciliation_this_seat_ran_itself:
+  scope: >
+    MEASURED at ZERO paths for every protected path, by `git diff --name-only 20fd1e1..HEAD -- <p>`:
+    pbg/ 0 · BLUEPRINT.md 0 · PID.md 0 · governance/decisions 0 · governance/mapping 0 ·
+    BOTH envelope schemas 0 · src/ 0 · deploy/ 0 · db/ 0 · evidence/ 0.
+  identity: 'ONE. `git log --format=%an 20fd1e1..HEAD | sort -u` -> CD-ENG-WO3-05, and nothing else.'
+  clean_arm: 'check_missing_data_never_calm.py --root . -> PASS, 67 assertions, 0 violations, exit 0. Re-run by this seat, not quoted.'
+  contrast_arms: >
+    ALL FOUR re-measured by this seat from ITS OWN extractions, never the seat's:
+      C1 full revert                       apply 0 -> FAIL, 8 violations, 8 x CD-CALM-GATE-001
+      C2 one branch one surface (DEGRADED) apply 0 -> FAIL, 2 violations, 2 x CD-CALM-GATE-001
+      C3 calm back INSIDE the enum         apply 0 -> FAIL, 8 violations, 8 x CD-CALM-GATE-001
+      C4 VACUITY, VALUE narrowed too       apply 0 -> FAIL, 4 violations, 4 x CD-CALM-GATE-002
+                                                     *** AND CD-CALM-GATE-001 FIRING ZERO TIMES ***
+    C3 is the arm that separates an instrument reading the $ref TARGET'S NAME from one that opens
+    it. C4 is the arm that separates a guard from a mute button, and it is the one this project's
+    history predicted would be got wrong. IT WAS NOT.
+  register_state: >
+    UNCHANGED IN EVERY FIELD: pid.content_hash MATCHES · latest_admitted_run (null) · 18 criteria
+    and not 19 · GATE: SHUT. The test_id count moved 29 -> 30, which is the point.
+  tests: '2007 passed, 0 failed, before and after. No regression.'
+
+the_finding_that_matters_most:
+  id: CD-PL-F180
+  severity: MEDIUM, and constitutional in effect
+  raised_by: 'CD-ENG-WO3-05 as its F03/C5 — NOBODY ASKED IT TO LOOK. It was told to construct a C5 "if you can" and it did.'
+  reproduced_by: 'PROJECT_LEAD_SEAT_02, independently, from its own git archive extraction.'
+  the_measurement: >
+    With BOTH repository contracts byte-identical to their committed blobs — proved by
+    `git rev-parse HEAD:<path>` giving 46f3a1b7d6c93373b21d2399787e54d08a331c0b and
+    304a9bf1f6ed204856ea50d70d0495e140bead25, matching git hash-object inside the extraction, and by
+    `git diff --name-only -- contracts/` returning ZERO — setting $CD_CONTRACTS_DIR to a widened copy
+    makes envelope_contract.contracts_dir() resolve there and the LIVE GATE print:
+        public:  *** ADMITTED a calm UNKNOWN dial ***
+        private: *** ADMITTED a calm UNKNOWN dial ***
+  what_it_means: >
+    *** NARROWING THE DOCUMENTS IS NOT THE SAME ACT AS GUARANTEEING THE RUNNING GATE READS THEM. ***
+    The contract the gate judges against is a DEPLOYMENT-TIME INPUT, not a repository fact, and
+    NOTHING in this repository guards it. The new instrument exits 3 (PRECONDITION_NOT_MET) rather
+    than passing — it refuses to judge a tree it is not looking at, which is honest — but IT DOES
+    NOT CLOSE THE ROUTE and it declares that as its DECLARED LIMIT 1 rather than leaving it to be
+    found.
+  it_is_not_a_defect_in_16B: >
+    16B was scoped to register-wire a guarantee about the repository's contracts and it did that.
+    This route was open before 16B and is open after it. SAYING SO IS NOT A DEFENCE OF IT.
+  where_it_goes: >
+    SCHEDULED INTO 16D, where CD_CONTRACTS_DIR is ALREADY the subject under PO-DECISIONS-0026
+    ruling 6 (host-coupling closure, defaults included). NOT raised to the Product Authority yet,
+    and the reason is stated rather than assumed: an engineering closure is available without a
+    product ruling — the gate can ATTEST the contracts it loads, the same pattern this repository
+    already uses for base-image digest pinning. IF 16D's seat concludes the closure needs a ruling
+    on whether repointing may happen AT ALL, that becomes a Product Authority question at that
+    boundary. The Assurance seat is asked to say whether this scheduling is right.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F181
+    severity: LOW, and CONFIRMED AGAINST THIS SEAT
+    raised_by: CD-ENG-WO3-05 as its F01
+    the_dispatch_said: '"all 18 criteria are UNDECIDABLE today for exactly this reason" (a missing run record).'
+    the_truth: >
+      SIXTEEN, not eighteen. MEASURED by this seat by parsing the verifier's own output: 16 criteria
+      are UNDECIDABLE solely because negative_control.evidence_ref does not resolve to a run record.
+      CD-AC-017 and CD-AC-018 are UNDECIDABLE because their execution_contract DOES NOT RESOLVE, and
+      would remain UNDECIDABLE with every run record in existence.
+    disposition: 'THE SEAT WAS RIGHT AND THE DISPATCH WAS WRONG. Corrected in the Assurance dispatch §5 so the next seat does not inherit it. The conclusion the dispatch drew is unaffected; the number was not.'
+  - id: CD-PL-F182
+    severity: LOW, and CONFIRMED AGAINST THIS SEAT
+    raised_by: CD-ENG-WO3-05 as its F04
+    the_defect: >
+      The dispatch's required proposition table had FIVE rows and omitted DEGRADED x elevated|acute.
+      A seat implementing it LITERALLY would never have asserted that any DEGRADED dial is
+      admissible — an anti-vacuity gap in the very table written to prevent vacuity.
+    disposition: 'The seat EXCEEDED the dispatch rather than following it, and built 9 rows x 2 surfaces x 2 slots = 36 cells. Recorded because the next dispatch that writes such a table must generate it, not enumerate it by hand.'
+  - id: CD-PL-F183
+    severity: LOW
+    raised_by: CD-ENG-WO3-05 as its F02
+    the_defect: >
+      The dispatch put plants/MANIFEST.md in the writable scope on the assumption it indexes plant
+      directories. MEASURED by the seat: it indexes WO-2 CRITERION directories only, and WO3-INC14
+      and WO3-INC15 are ALREADY absent from it. Adding only WO3-INC16B would have made a
+      two-directory-stale index LOOK complete.
+    disposition: 'THE SEAT DECLINED A SCOPE ITEM AND DISCLOSED IT, WHICH IS THE RIGHT ORDER. The staleness of plants/MANIFEST.md is now on the record and is nobody''s open action yet.'
+  - id: CD-PL-F184
+    severity: INFORMATIONAL
+    raised_by: CD-ENG-WO3-05 as its F05
+    the_defect: 'C3''s specification was ambiguous about one surface or both. The seat built both and recorded its reasoning.'
+
+what_this_seat_did_not_do:
+  - 'Did not accept 16B. It is READY_FOR_ASSURANCE and nothing more.'
+  - 'Did not touch any application file, any schema, any src/ path or anything under pbg/.'
+  - 'Did not write under evidence/required-tests/runs/, and verified the Engineer did not either (0 paths).'
+  - 'Did not touch STALENESS_WINDOW_CEILING_SECONDS, the $id/version, the no-blend guard, or register any indicator row. Those are 16C, 16D and 16E.'
+  - 'Did not correct PID §5 prose. PO-DECISIONS-0026 ruling 12 makes that a PO RECORD-ACT and it is not this seat''s.'
+
+evidence_references:
+  - governance/decisions/PO-DECISIONS-0026.md (2caa2d7)
+  - governance/engineering/CD-DISPATCH-INC16B-ENGINEER.md (3b4ef01)
+  - governance/engineering/CD-DISPATCH-INC16B-ASSURANCE.md (this commit)
+  - 'wo-3 20fd1e1 — the PL record act (the carriage)'
+  - 'wo-3 cbb81d1 — CD-ENG-WO3-05''s return; BL-20260824T102127Z-16BI.yaml on the lane'
+  - 'wo-3 plants/WO3-INC16B/MANIFEST.md — C1-C5'
+
+next_safe_action: >
+  DISPATCH CD-ASR-WO3-05, a fresh Assurance seat that is none of the seats already involved, against
+  cbb81d1, per governance/engineering/CD-DISPATCH-INC16B-ASSURANCE.md. ITS PRIMARY ATTACK IS NOT
+  C1-C4 — THIS SEAT ALREADY REPRODUCED THOSE AND CONFIRMING A CONFIRMATION IS NOT ASSURANCE. It is
+  whether the instrument's SELF-CONSTRUCTED CANDIDATE ENVELOPE is the shape this product actually
+  publishes. If it is not, every refusal the instrument records is a refusal of a document no code
+  produces, and the increment is a very well-evidenced guard on nothing — which is the defect class
+  16B exists to close, rebuilt one level up.
+
+expected_next_actor: 'CD-ASR-WO3-05 — dispatched by this seat, not yet run.'
+
+risks:
+  - 'CD-PL-F180 is OPEN. The constitutional guarantee holds over the repository''s contracts and NOT over the contracts a deployment chooses to load. Scheduled to 16D; not closed; not to be forgotten because 16B passed.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments — its own words are "missing OR STALE input", and the new instrument declares it says nothing about staleness. That half is 16C''s three-quantity model.'
+  - 'The new register row computes UNDECIDABLE, like the other 16, because no admitted run record exists. Register-wiring made the guarantee machine-checkable and gate-visible; it did NOT make it computed, and nobody may read a wired row as a satisfied one.'
+  - 'Three increments of the PO''s ruled six remain: 16C, 16D, 16E. Nothing is registered, no source is wired, and every dial still reads UNKNOWN.'

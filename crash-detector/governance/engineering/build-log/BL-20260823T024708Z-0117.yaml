@@ -1,0 +1,249 @@
+entry_id: BL-20260823T024708Z-0117
+timestamp_utc: '2026-08-23T02:47:08Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 3c8a752bc414a215b27b5d7d6eda5529f8c4f0fa   # RESOLVED with `git rev-parse`, never transcribed (CD-PL-F36) — the Product Owner's own commit carrying PO-DECISIONS-0015, authored by Matt Scott and by no seat, ONE path, 59 insertions (`git show --stat`).
+parent_entry_id: BL-20260823T023325Z-0116
+schema_version: 1
+
+action_summary: >
+  *** **THE PRODUCT OWNER HAS ANSWERED ALL FOUR QUESTIONS OF THE SIXTH GATE AT `PO-DECISIONS-0015`,
+  AND THE FIRST ANSWER IS THAT ONE OF ITS OWN STANDING RULINGS FALLS.** *** PO-DECISIONS-0012 ruling
+  1 is DEAD on the terms it was written to be attackable on: *"a reach that requires only ordinary
+  operation is a reach."* `guarded` becomes a **DOOR**, `CD-ASR-F03` is **REDESIGNED and not
+  repaired**, and the doors criterion moves on **REAL PUBLIC BINDINGS AND MEASURED REACH, NEVER ON
+  AN UNDERSCORE**. The RED stands, the auditor's ten-item ordered gate is **ADOPTED** as increment
+  8, and **THE ACT IS FIFTEEN, NOT ELEVEN — the instrument's count beats the ruling's own prose,
+  for the second time.**
+  *** **THIS BOUNDARY DOES THE FIRST OF THE THREE ORDERED THINGS: IT ISSUES THE RECORD ACT.**
+  `CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER` is ISSUED and OUT to **`CD-ENG-WO2R3-04`, A FRESH
+  ENGINEER IDENTITY**, at `af2accb` — three items in one act: the MINIMAL findings register, the
+  REDRAFTED `UPSTREAM_OF_THE_PATH` bound to the SITE register with machine-checked fields, and the
+  FIFTEEN Class-2 dispositions. **IT TOUCHES NO LINE UNDER `src/` AND FIXES NOTHING.**
+  *** **AND THE PROJECT LEAD READ THREE SITES NOBODY HAD EVER READ, RATHER THAN HAND AN ENGINEER AN
+  INVENTED DISPOSITION FOR THEM — AND IT LANDED HARDER THAN EXPECTED.** *** The three
+  `crash_detector.establishment` tier-1 sites have been carried as *"reported and not chased"*
+  through THREE GATES, and the SIXTH Assurance seat listed the governing question in its own §4 as
+  something **IT COULD NOT ESTABLISH**. `PL-AB0`, five arms, pristine `git archive af2accb`
+  extraction, tree line printed on every arm: **`establishes` IS PUBLIC AND IN `__all__`; ORDINARY
+  IN-PROCESS CALLER CODE DECORATES ITS OWN CLASS; THE `dataclasses.is_dataclass` GATE IS ITSELF A
+  `hasattr` PROBE AND ADMITS A NON-DATACLASS; AND A CALLER MINTS A FORGED GOVERNED TYPE —
+  `is_establishing_type` TRUE, `establishment_faults` `()`, AND IT ENTERS `governed_types()`,
+  MEASURED 0 -> 1 — WHERE THE SHIPPED DOCSTRING SAYS `:raises EstablishmentFault:`.** **CD-PL-F104,
+  HIGH.** It is `F-06-R`'s own sentence one module across, in a PUBLIC EXPORTED ENTRY POINT, and no
+  document said so. **IT IS DISCLOSED AND NOT FIXED, AND IT IS HANDED TO THE DISPATCHED ENGINEER AS
+  EVIDENCE THAT SEAT IS REQUIRED TO RE-MEASURE AND FREE TO CONTRADICT.**
+  *** **AND THE AUDITOR'S OWN ARITHMETIC IS CORRECTED — IN ITS FAVOUR ON THE POINT, AGAINST IT ON
+  THE NUMBER.** `F-06-I` is RIGHT that "the eleven" is a stale name and right to retire it. Its
+  closing sentence reads *"fourteen sites and two modules"* — **that is sixteen, and the instrument
+  prints fifteen: THIRTEEN sites and two modules, PL-re-measured at `af2accb` this boundary.** The
+  finding's substance is untouched; its count is one high. **THIRD TIME AN INSTRUMENT HAS BEATEN A
+  COUNT CARRIED IN PROSE ON THIS PROJECT, AND THE THIRD TIME THE INSTRUMENT WON** (CD-RULE-009).
+  *** **NOTHING IS ACCEPTED, CLOSED OR PROMOTED BY THIS BOUNDARY.** T2 **RED**; CD-AC-002 and
+  CD-AC-005 **AMBER, NOT CLOSED**; the WO-2 gate **SHUT**; `CD-RT-012-NO-EXECUTION-INTERFACE`
+  **STILL RED AT THE TIP** and disclosed to this Engineer up front, because the last time this seat
+  wrote that clause it was FALSE (CD-PL-F102).
+
+what_the_product_owner_ruled_and_what_this_seat_did_with_it:
+  ruling_1_the_standing_ruling_falls: >
+    **PO-DECISIONS-0012 RULING 1 IS DEAD.** Its load-bearing half — *"reachable only through doors
+    that already establish"* — was falsified by measurement twice independently, and the Product
+    Owner took the consequence it had pre-committed to, in full: **`guarded` becomes a DOOR and
+    `CD-ASR-F03` is REDESIGNED, not repaired**, to three acceptance properties — (a) **no
+    undecorated evaluator object exists at runtime**, a naked callable in a closure cell being the
+    DEFECT CLASS and not an implementation choice; (b) the door's establishment **DERIVED FROM THE
+    SIGNATURE**, so the guard survives arity growth *because it derives, not because it gapes*; (c)
+    the CD-ASR-F03 post-condition **retained inside the same mechanism**. And the doors criterion is
+    redesigned to ground 1's truth: **membership moves on REAL PUBLIC BINDINGS AND MEASURED REACH,
+    NEVER ON AN UNDERSCORE.** *** **THE PRODUCT OWNER ASKED FOR ONE THING TO BE NOTED WITHOUT
+    DECORATION AND THIS SEAT NOTES IT: the ruling was MADE ATTACKABLE, WAS ATTACKED, AND FELL — and
+    that is the system working on its owner.** *** **NOTHING OF THE REDESIGN IS BUILT AT THIS
+    BOUNDARY.** It is item 1 of increment 8 and it goes to a fresh Engineer AFTER the record act.
+  ruling_2_the_red_stands: >
+    **ADOPTED AS THE SHAPE AND ORDER OF INCREMENT 8**, item 1 resolved by ruling 1, items 2 and 3
+    (one-line and Q1-independent) proceeding regardless. The seat's continuation reading is accepted
+    as stated: **nothing found is remotely exploitable, every route needs in-process code or a
+    source edit — THE URGENCY IS IN THE CONTROLS.**
+  ruling_3_CD_RT_012: >
+    **CORRECT THE L3 FALSE POSITIVE IF AND ONLY IF THE CORRECTION CARRIES ITS OWN CONTRAST** — a
+    paired demonstration that a TRUE violation of the same clause is still caught, baseline and
+    violated arms, the axis discipline of IMP-024. **IF THAT CONTRAST CANNOT BE PRODUCED, THE
+    VIOLATION IS DECLARED** the way the Class-2 sweep's is. It is item 2 of increment 8 and is NOT
+    in this dispatch's scope. **IT IS DISCLOSED TO THIS ENGINEER AS A RED IT MUST NOT REPAIR.**
+  ruling_4_the_act_is_fifteen: >
+    **EXECUTED BY THIS BOUNDARY.** `governance/engineering/CD-THE-FIFTEEN-AND-THE-REDRAFT.md`
+    supersedes `CD-PROPOSAL-ELEVEN-DISPOSITIONS.md` **WITHOUT EDITING ONE CHARACTER OF IT**
+    (PBG-CONT-003): the six Category C dispositions this document REVERSES stay readable exactly as
+    they were drafted, and so does the count it corrects.
+  ruling_5_CD_PL_F102: >
+    **ASSIGNED TO THE META-ASSURANCE PASS, STILL SEQUENCED AFTER THE GATE.** A mandatory verbatim
+    clause that was false in flight is the reconciliation-practice shape that pass exists to audit.
+    **THIS SEAT DID NOT FOLD IT IN AND DID NOT ARGUE FOR FOLDING IT IN.**
+  ruling_6_the_sequence: >
+    **(1) the record act — ISSUED AT THIS BOUNDARY. (2) increment 8 per the adopted ten-item order
+    with the redesign at its head, FRESH Engineer. (3) the SEVENTH fresh Assurance seat over the
+    whole, CD-D-129's clauses VERBATIM.** This boundary does (1) and nothing of (2) or (3).
+
+the_fifteen_re_measured_not_transcribed:
+  command: '`cd /srv/crash-detector-wo2r3 && python3 -B tools/sweep/delegated_judgement_sweep.py`'
+  result: '**EXIT 1 — `CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations`.** UNMOVED from the sixth seat''s target.'
+  the_enumeration: >
+    **13 UNDECLARED ADMISSION SITES + 2 UNDECLARED MODULES.** Ten admission sites and one module in
+    `crash_detector.admission`; three admission sites and one module in
+    `crash_detector.establishment`. **READ OFF THE INSTRUMENT'S OWN OUTPUT, LINE BY LINE, NOT FROM
+    ANY DOCUMENT.**
+  tier_2_by_module: >
+    From the sweep's own per-module table: `crash_detector.admission` **33**, `crash_detector.
+    establishment` **17** — and both are **OCCURRENCES, NOT DISTINCT SITE KEYS**. This seat has NOT
+    measured the key count and the dispatch forbids the Engineer to quote 50 as a row count.
+  the_correction_to_F_06_I: >
+    **`F-06-I`'s SUBSTANCE STANDS AND ITS ARITHMETIC DOES NOT.** It is right that "the eleven" is a
+    remainder the naming produced rather than a category anyone derived, right that there is no
+    property the eleven have that the four lack, and right to recommend the phrase be retired. Its
+    closing recommendation reads *"Fourteen sites and two modules need a disposition"* — **sixteen.
+    The instrument prints fifteen.** Corrected here, in the auditor's own direction of travel, and
+    recorded rather than smoothed.
+
+the_probe_this_seat_ran_and_why_it_ran_it:
+  why: >
+    The fifteen needed a disposition for three sites **no seat has ever read one at a time.** The
+    fifth seat's T8 read the ten in `admission`; the four in `establishment` were carried as
+    *"reported and not chased"* through three gates. **The SIXTH Assurance seat listed the governing
+    question in its own §4 — whether the hostile declaration forms are reachable through
+    `establishes(...)` from a caller — as something IT COULD NOT ESTABLISH.** A Project Lead that
+    handed a dispatched Engineer three invented dispositions would be doing the exact thing this
+    programme reversed Category C for.
+  what: >
+    `governance/reconciliation/WO-2R3/PL-AB0-establishment-forged-governed-type.py.txt`, stored as
+    DATA and not as an executable (PBG-ASSURE-001). Five arms, pristine `git archive af2accb`
+    extraction at `/tmp/cd-pl-probe/tree`, **OUTSIDE EVERY GOVERNED WORKTREE**, tree line printed on
+    every arm (CD-PL-F98).
+  measured:
+  - '**ARM 1 — `establishes` IS PUBLIC AND IN `__all__`.** Ordinary in-process caller code decorates
+     its own class and constructs it. **`cls` AT BOTH `_declared_field_list` DUCK SITES IS A
+     CALLER-SUPPLIED OPERAND, AND THE SIXTH SEAT''S §4 ITEM 3 IS ANSWERED — AGAINST THE TREE.**'
+  - '**ARM 2 — THE GATE ADMITS A NON-DATACLASS.** `dataclasses.is_dataclass` is itself a `hasattr`
+     probe. A plain class carrying `__dataclass_fields__ = {}` passes it, and `establishes()(Hostile)`
+     **SUCCEEDS** where the shipped docstring says it `:raises EstablishmentFault:` *"if the subject
+     is not a dataclass … must stop the module importing"*.'
+  - '**ARM 3 — STEERABLE.** A forged `_field_type.name` of `"_FIELD_INITVAR"` drives the InitVar
+     refusal from caller-written data.'
+  - '**ARM 4 — `self` IS CALLER-CONTROLLED.** `crash_detector.observations.OK`, a live governed type,
+     **SUBCLASSES SUCCESSFULLY**.'
+  - '*** **ARM 5, THE CONSEQUENCE ARM — A CALLER MINTS A FORGED GOVERNED TYPE.**
+     `is_establishing_type(Hostile)` -> **True**; `establishment_faults(Hostile)` -> **`()`**, ZERO
+     FAULTS; `establishment_field_list(Hostile)` -> `()`; and **`Hostile` ENTERS `governed_types()`,
+     MEASURED 0 -> 1.** ***'
+  the_limit_stated_rather_than_left_to_be_found: >
+    The `governed_types()` count of **0-before** is measured under a **BARE IMPORT OF
+    `establishment` ALONE**, not under a full package import. That is a limit of the probe and it is
+    written down here rather than discovered by whoever re-runs it.
+  what_it_is_not: >
+    **NOT ASSURANCE** (PBG-SOD-001), **NOT A DESIGN**, and **NOT A FIX**. It is handed to
+    CD-ENG-WO2R3-04 as EVIDENCE that seat is REQUIRED to re-measure and FREE to contradict — the
+    precedent set for the fingerprint recipe at increment 7, and the reason that precedent exists is
+    that concealing a measurement costs the next seat budget while mandating it is the Project Lead
+    designing.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F104
+  severity: HIGH
+  against: 'the tree — `crash_detector.establishment`, and this seat''s own three prior reconciliations of it'
+  statement: >
+    **`crash_detector.establishment.establishes` — A PUBLIC, EXPORTED DECORATOR — ADMITS A
+    NON-DATACLASS, AND A CALLER CAN MINT A FORGED GOVERNED TYPE THROUGH IT.** Its gate is
+    `dataclasses.is_dataclass`, which is a `hasattr` probe; one class attribute
+    (`__dataclass_fields__ = {}`) defeats it. The forged class then reports
+    `is_establishing_type` **True**, `establishment_faults` **`()`**, and **ENTERS
+    `governed_types()`** — the enumeration a governing carrier reads.
+  why_it_matters: >
+    **IT IS `F-06-R`'s SENTENCE ONE MODULE ACROSS.** That finding's words were *"the mechanism
+    applies its doctrine to values and violates it one level up, at the layer that decides what
+    'established' means"*, written about `crash_detector.admission`. **IT IS TRUE OF
+    `crash_detector.establishment` AS WELL, THROUGH A DIFFERENT PROBE, IN A PUBLIC EXPORTED ENTRY
+    POINT, AND NO DOCUMENT SAID SO.** Category A, Category C and this are now ONE CLASS with three
+    instances, and the class is: **the declaration vocabulary is admitted by a duck or isinstance
+    probe while the value vocabulary is not.**
+  and_against_this_seat: >
+    **THIS SEAT HAS RECONCILED `establishment.py` THREE TIMES AND NEVER READ THESE THREE LINES.**
+    They were inside a set it had accepted the name of — "the four", "reported and not chased" — and
+    a name is not a reading. **THAT IS CD-PL-F86'S SHAPE FOR THE THIRD TIME: a set measured where a
+    property was needed.**
+  disposition: >
+    **DISCLOSED, NOT FIXED.** It becomes `CD-F-0004` in the findings register the dispatched act
+    creates, and the disposition of sites 11-13 is `DEFECT_OPEN` against it. **ITS REMEDIATION IS
+    NOT AUTHORISED BY ANYTHING AND IS NOT IN THE ADOPTED TEN-ITEM GATE** — see the Product Authority
+    note below.
+- id: CD-PL-F105
+  severity: LOW
+  against: 'the sixth Assurance seat''s `F-06-I`, on its arithmetic only'
+  statement: >
+    `F-06-I` closes *"Fourteen sites and two modules need a disposition"*. **THAT IS SIXTEEN. THE
+    INSTRUMENT PRINTS FIFTEEN — THIRTEEN SITES AND TWO MODULES**, PL-re-measured at `af2accb` at
+    this boundary by running the sweep and reading its violation lines one at a time.
+  why_it_is_LOW_and_recorded_anyway: >
+    **THE FINDING'S SUBSTANCE IS UNAFFECTED AND CORRECT**, and this seat adopted its recommendation
+    in full. It is recorded because `F-06-I` is ITSELF a finding about a count carried in prose
+    instead of read off an instrument, and letting its own closing count go uncorrected would be the
+    defect surviving inside the finding that named it.
+
+product_authority_questions_raised_at_this_boundary:
+- '**NONE THAT BLOCK, AND ONE THAT WILL FALL DUE.** No question is put up at this boundary, because
+   PO-DECISIONS-0015 ruling 6 orders the record act **now** and `DEFECT_OPEN` is precisely the
+   mechanism for recording a live defect that is deliberately still live. **NOTHING HERE NEEDS A
+   RULING TO BE WRITTEN DOWN TRUTHFULLY.**
+   *** **WHAT WILL FALL DUE, AND IS FLAGGED NOW RATHER THAN SPRUNG LATER: `CD-PL-F104`''s
+   REMEDIATION IS NOT IN THE ADOPTED TEN-ITEM GATE, BECAUSE IT DID NOT EXIST WHEN THE GATE WAS
+   WRITTEN.** *** The auditor built that order from nineteen findings, and this is a twentieth,
+   found after it. **WHETHER IT TAKES AN ITEM IN INCREMENT 8, OR WAITS, IS SEQUENCING AND
+   SEQUENCING IS THE PRODUCT OWNER''S** — this seat will not quietly widen an order the Product
+   Owner has just adopted, and will not quietly drop a HIGH finding either. **IT IS PUT UP WITH THE
+   INCREMENT-8 DISPATCH, WHERE IT IS ACTIONABLE, AND NOT HERE, WHERE IT WOULD ONLY DELAY AN ACT
+   ALREADY ORDERED.** The record act proceeds under all answers: recording an open defect is
+   correct whether or not its fix is next.'
+
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT WRITE ONE DISPOSITION INTO THE REGISTER.** `tools/sweep/declared_dispositions.py` is
+   untouched by this seat and always has been. **IT IS CODE ON THE LANE AND IT IS NEVER THIS SEAT''S
+   OWN HAND** (PBG-AUTH-006, CD-D-160).'
+- '**IT DID NOT BUILD, DRAFT OR SKETCH THE CD-ASR-F03 REDESIGN.** That is increment 8 item 1, and it
+   goes to a DIFFERENT fresh Engineer after this act banks.'
+- '**IT DID NOT FIX CD-PL-F104**, or Category A, or Category C''s six. Every one of them stays live.'
+- '**IT DID NOT TOUCH `CD-RT-012`**, which is still RED at the tip and is increment 8 item 2.'
+- '**IT DID NOT EDIT `CD-PROPOSAL-ELEVEN-DISPOSITIONS.md`.** The superseded draft — including the
+   six Category C dispositions now reversed — stays byte-readable (PBG-CONT-003).'
+- '**IT MERGED, PROMOTED AND ADMITTED NOTHING** (CD-RULE-001, PO-set, non-relaxable).'
+
+next_safe_action: >
+  *** **THE RECORD-ACT ENGINEER IS OUT. NOTHING ELSE MOVES ON THE LANE WHILE IT IS.** ***
+  **1.** `CD-ENG-WO2R3-04` executes `CD-DISPATCH-WO2R3-RECORD-ACT-ENGINEER` at `af2accb` in
+  `/srv/crash-detector-wo2r3`. Three items, ONE act. **`STOPPED_AT_ITEM_1` or `STOPPED_AT_ITEM_2`
+  ARE SUCCESSES**, not failures — the redraft is a READING and the Project Lead has said so in its
+  own document.
+  **2.** The Project Lead reconciles the return **BY MEASUREMENT**, never by reading its claims, and
+  banks it. **A GREEN SWEEP AFTER THIS ACT IS ARITHMETIC, NOT EVIDENCE, AND MUST BE LABELLED AS
+  SUCH BY BOTH SEATS.**
+  **3.** THEN **INCREMENT 8** — the auditor's TEN-ITEM ORDERED GATE adopted at PO-DECISIONS-0015
+  ruling 2, **WITH RULING 1's `CD-ASR-F03` REDESIGN AT ITS HEAD** (no undecorated evaluator object
+  at runtime · establishment DERIVED FROM THE SIGNATURE · the post-condition retained in the same
+  mechanism · the doors criterion on REAL PUBLIC BINDINGS AND MEASURED REACH, never an underscore)
+  — **BY DISPATCH TO ANOTHER FRESH ENGINEER IDENTITY**, never this seat's own hand (PBG-AUTH-006),
+  never any Assurance seat (PBG-SOD-001). **CD-PL-F104's sequencing goes up with that dispatch.**
+  **4.** THEN the **SEVENTH FRESH ASSURANCE SEAT** over the whole, full disclosure, **CD-D-129's
+  clauses VERBATIM**, told that the fifteen dispositions are a TARGET and not a settled record.
+  **5.** THEN the **META-ASSURANCE** pass (PO-DECISIONS-0013 ruling 5), now carrying CD-PL-F98, F99,
+  F100, F101 and **F102** (assigned to it by PO-DECISIONS-0015 ruling 5), plus the auditor's F-06-B,
+  F-06-C, F-06-E and F-06-F. **STILL NOT FOLDED IN.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read a green sweep as a closed criterion. **T2 RED; CD-AC-002 and CD-AC-005 AMBER and
+  NOT CLOSED; `CD-RT-012` RED AT THE TIP; THE WO-2 GATE SHUT.**
+
+continuity_record_commit: ba7bbb10dc27a2e5ceb62be18d3e59fe63e9452f   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE NINETEENTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT ba7bbb1 BEFORE this field was written, so the verdict and the field name ONE commit. **TWO ARMS FOR THE FIFTH BOUNDARY RUNNING (CD-PL-F101).** ARM 1, THE CLONE — `rm -rf /tmp/cd-cont19 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont19 && git checkout -q -B main ba7bbb1` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase **BUILD**, observed_sha ba7bbb10dc27a2e5ceb62be18d3e59fe63e9452f, branch main. ARM 2, THE LIVE WORKTREE — the same command at /srv/crash-detector — **AMBER**, CONTINUITY_MATCH/RESUME_AMBER, **porcelain 42 lines, ALL UNTRACKED**, same observed_sha, same phase, blocking_failures EMPTY. **THE RESIDUE MOVED 39 -> 42 AND IT WAS RE-COUNTED RATHER THAN CARRIED FORWARD, WHICH IS THE WHOLE POINT OF MEASURING IT EVERY TIME.** The three new lines were CLASSIFIED and not assumed: `git status --porcelain | grep '^??' | grep -v '\.wo2\|__pycache__\|\.continue'` returns **ZERO LINES** — every one of the 42 is an OPERATOR WRAPPER artefact or `pbg/tools/pbg/__pycache__/`, and **NOTHING GOVERNED IS UNTRACKED.** Still UNFIXED, still UNTIDIED, still carried to the META-ASSURANCE pass. *** THE PROJECT BOOTS CARRYING a **RED SIXTH GATE VERDICT**, a RED T2, two AMBER criteria, a SHUT gate, **A GOVERNED REGISTER THAT IS RED AT THE TIP**, a FALLEN standing ruling, **FIFTEEN DISPOSITIONS DISPATCHED AND NOT YET WRITTEN**, a redraft this seat has itself marked as the likeliest thing to be wrong (CD-D-164), and **TWO FRESH FINDINGS RAISED AT THIS BOUNDARY — ONE OF THEM HIGH, AGAINST A MODULE THIS SEAT HAD RECONCILED THREE TIMES WITHOUT READING** — **the record says all of it and the tree agrees with all of it.**   # PREVIOUSLY PENDING. RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN, SO THE VERDICT AND THE FIELD NAME ONE COMMIT — NINETEENTH BOUNDARY RUNNING. TWO ARMS, BECAUSE CD-PL-F101 IS THE FINDING THAT ONE ARM WAS NEVER THE WHOLE ANSWER.

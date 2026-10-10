@@ -1,0 +1,269 @@
+entry_id: BL-20260823T071148Z-0124
+timestamp_utc: '2026-08-23T07:11:48Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 957ddc3affa3eeac47b735880a6881b72ff63ca3   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). The PO-DECISIONS-0017 commit.
+parent_entry_id: BL-20260823T065550Z-0123
+schema_version: 1
+
+action_summary: >
+  *** **PO-DECISIONS-0016 RULING 1 IS DISCHARGED IN BOTH HALVES, AND THE SECOND HALF FOUND
+  SOMETHING ON ITS FIRST RUN.** *** Ruling 1(a): the PO-AUTHORED lane-authority header is carried
+  onto the lane's `BLUEPRINT.md` at `753efe4`, **VERBATIM PROVED BY MD5 AND NOT BY EYE** — the bytes
+  were EXTRACTED from the Product Owner's own committed file by byte-slice and never retyped, and
+  `sed -n '11,13p' governance/decisions/PO-DECISIONS-0016.md | md5sum` and
+  `sed -n '21,23p' BLUEPRINT.md | md5sum` both return `bff5b7ec298163fa9bc0aff2e3684dc8`.
+  **PURELY ADDITIVE: `4 0 BLUEPRINT.md`.** ***
+  *** Ruling 1(b): **THE BOUNDARY GOVERNANCE-CITATION MEASUREMENT EXISTS AS AN INSTRUMENT AND NOT AS
+  A PROMISE** — `tools/reconciliation/check_lane_governance_citations.py`, the first file under
+  `tools/` on `main`. **AT THIS BOUNDARY IT EXITS 1 AND THAT IS ITS DECLARED STATE, NOT A
+  REGRESSION.** 130 distinct citations · 2,101 occurrences · 318 lane files scanned of 497 ·
+  **127 RESOLVED against `main@957ddc3` · 1 resolved ON THE LANE by CD-D-132 and counted separately
+  · 2 UNRESOLVED**, both in one lane file this seat may not touch. ***
+  *** **AND THE 29-vs-34 DISCREPANCY IS RESOLVED IN THE ONLY DIRECTION THE EVIDENCE ALLOWS: NEITHER
+  NUMBER IS ADOPTED, BECAUSE `F-06-B`'s FIGURES CANNOT BE REPRODUCED AT ALL.** Both of them sit
+  strictly BETWEEN this instrument's two readings — `BP-AMENDMENT-0001` 29 < **34** < 36,
+  `CD-BP-003` 21 < **23** < 28 — so each was taken under a PARTIAL exclusion of `governance/` that
+  the verdict's own stated exclusion set ("excluding BLUEPRINT.md and governance/") does not
+  describe. **THE CAUSE IS CD-RULE-009 AND THE RULE BINDS ASSURANCE SEATS TOO: F-06-B PUBLISHED TWO
+  COUNTS WITH NO PRODUCING COMMAND, AND A COUNT WITH NO COMMAND CANNOT BE RECOMPUTED.** Recorded as
+  UNRESOLVED-BY-RECONSTRUCTION and NOT smoothed into agreement (CD-RULE-009). ***
+  *** **NOTHING ELSE MOVES. THE PHASE STAYS `GATE`.** No increment is dispatched here, no
+  disposition written, no `src/` line opened, no finding closed. T2 RED; CD-AC-002 and CD-AC-005
+  AMBER and NOT CLOSED; `CD-RT-012` RED at the tip; the WO-2 gate SHUT. ***
+
+what_authorised_a_project_lead_to_write_in_the_lane_s_BLUEPRINT_at_all: >
+  **`BLUEPRINT.md` IS PROTECTED FROM EVERY SEAT INCLUDING THIS ONE — THAT IS CD-D-115, AND CD-D-115
+  IS THIS SEAT'S OWN PRECEDENT AGAINST ITSELF.** The authority for this commit is one sentence of
+  PO-DECISIONS-0016 ruling 1(a) and nothing else: *"the lane's `BLUEPRINT.md` gains this PO-AUTHORED
+  header, carried verbatim by the Project Lead at the next boundary (CD-D-115's precedent inverted —
+  I author, the seat carries the exact bytes)."*
+  **SO THE VERBATIM CLAIM IS THE WHOLE OF THE COMPLIANCE, AND A SEAT ASSERTING "I COPIED IT
+  CORRECTLY" IS EXACTLY THE KIND OF CLAIM THIS PROJECT DOES NOT ACCEPT FROM ANYBODY.** It is
+  therefore not asserted. The bytes were read out of the Product Owner's committed file
+  programmatically and inserted programmatically, with `assert` on the first and last bytes, and the
+  two md5s above are the evidence. **HAD THIS SEAT RETYPED THEM, THE MD5s WOULD BE THE CONTROL THAT
+  CAUGHT IT.**
+
+ruling_1a_what_it_fixes_and_what_it_pointedly_does_not: >
+  **IT DOES NOT PUT THE AUTHORITY IN THE LANE AND MUST NOT BE READ AS DOING SO.** `F-06-B` measured
+  two distinct harms: (i) main's `BLUEPRINT.md` commit is not an ancestor of the lane, so the lane
+  does not carry its own governing authority; (ii) `BLUEPRINT.md` is not ABSENT from the lane, it is
+  PRESENT AT A STALE VERSION — *"which is worse, because a reader following `CLAUDE.md`'s documented
+  manual boot path reads it and concludes CD-BP-003 does not exist."*
+  **THE HEADER CLOSES (ii) AND ONLY (ii).** A reader now hits "NOT AUTHORITY" before the stale
+  version number. **(i) IS NOT CLOSED BY A SENTENCE AND THE PRODUCT OWNER DID NOT PRETEND IT WAS —
+  THAT IS WHAT RULING 1(b) IS FOR**, and the fact that 1(b) is an INSTRUMENT and 1(a) is a SENTENCE
+  is the whole architecture of the ruling.
+
+the_instrument_ruling_1b_ordered:
+  path: 'tools/reconciliation/check_lane_governance_citations.py'
+  and_it_is_the_first_file_under_tools_on_main: >
+    Every governed instrument on this project until now has lived on the LANE, because every one of
+    them is about the product. **THIS ONE IS ABOUT THE RECONCILIATION BOUNDARY ITSELF AND MUST RUN
+    ON `main`, READING `main`** — putting it on the lane would make the lane the judge of whether
+    the lane's citations resolve, which is the shape `PBG-EVID-001` calls SELF_VOUCHING.
+  what_it_asserts: >
+    For a lane SHA and a main SHA, **every governance citation appearing in a lane file RESOLVES
+    against main at that SHA.** PATH form (`governance/...`, `pbg/...`, `BLUEPRINT.md`, `PID.md`)
+    resolves by `git cat-file -e <main-sha>:<path>`. IDENTIFIER form (`CD-BP-003`,
+    `BP-AMENDMENT-0001`, `PO-DECISIONS-0016`, `CD-D-166`, `CD-RULE-007`, `PBG-SOD-001` and their
+    families) resolves by occurring at least once inside main's AUTHORITY SURFACE — `governance/`,
+    `BLUEPRINT.md`, `PID.md`, `pbg/`.
+  the_command_CD_RULE_009: >
+    `python3 -B tools/reconciliation/check_lane_governance_citations.py --lane-sha 753efe4
+    --main-sha 957ddc3 --discrepancy`
+  the_measurement_at_this_boundary: >
+    **EXIT 1.** lane files 497 · EXCLUDED by the printed exclusion set 179 · **SCANNED 318** · of
+    those CITING at least once **229** · DISTINCT citations **130** (23 PATH, 107 IDENTIFIER) ·
+    TOTAL OCCURRENCES **2,101** · **RESOLVED against `main@957ddc3` 127** · **RESOLVED ON THE LANE
+    by CD-D-132 1** · **UNRESOLVED 2**.
+  what_RESOLVES_deliberately_does_NOT_mean: >
+    **EXISTENCE, NEVER AGREEMENT.** It proves `main` CARRIES each cited authority. It does NOT prove
+    the lane USES any of them the way `main` DEFINES them. A lane file citing `CD-BP-003` for a
+    proposition `CD-BP-003` does not contain passes this instrument cleanly. That residue is written
+    into the artefact as **"NOT PROVED TO BE CARRIED ANYWHERE"** (CD-RULE-006) rather than
+    hand-waved at some other layer, because no instrument on this project reads a citation for
+    MEANING and this one does not become the first by being read hopefully.
+
+the_second_resolution_class_and_why_it_is_not_a_hole: >
+  **CD-D-132 SPLITS THE BUILD-LOG BLOCKS ON PURPOSE — main 0100-0199, the lane 0060-0099** — so a
+  lane file citing a lane build-log entry cites something `main` CORRECTLY does not carry. On the
+  instrument's first run that arrived as a VIOLATION
+  (`BL-20260823T033433Z-0082.yaml`, cited from `variants/WO-2R3/MANIFEST.md:481`).
+  **REPORTING A BY-DESIGN SPLIT AS A VIOLATION WOULD TRAIN A READER TO IGNORE THIS INSTRUMENT, WHICH
+  IS WORSE THAN NOT HAVING IT.** So the entry is STILL ASSERTED — against the LANE — and the class
+  is COUNTED AND PRINTED SEPARATELY and is NEVER folded into the main count.
+  **AND THE ONE THING IT MUST NOT BECOME IS SOMEWHERE TO PUT A CITATION THAT IS FAILING, SO THAT IS
+  THE THING THAT WAS MEASURED** — see ARM 2 and ARM 3 below.
+
+the_counterfactual_arms_CD_D_079_AND_THE_REASON_THERE_ARE_FOUR: >
+  **THE BASE ARM ALREADY EXITS 1, SO THE EXIT CODE CARRIES NO INFORMATION AND THE CONTRAST IS READ
+  FROM THE VIOLATION LIST AND THE COUNTS.** That is the `CD-ENG-WO2R3-F12` standard applied to this
+  seat's own instrument: *"two arms that both exit 1 for DIFFERENT reasons look identical in a
+  summary table and prove nothing"* — this project's most repeated measurement defect, and the one
+  that bit the increment-7 Engineer twice. All four arms ran on a **THROWAWAY `git archive`
+  EXTRACTION** at `/tmp/cit-arm`, never on the lane worktree.
+arms:
+  ARM_0_BASE: >
+    No plant. **130 citations · 127 main · 1 lane · 2 UNRESOLVED · rc=1.** Identical in every cell to
+    the git-sourced reading, which is also the evidence that the two population sources
+    (`git ls-tree` and a filesystem walk) agree.
+  ARM_1_DEAD_CITATIONS: >
+    One file added citing `governance/decisions/PO-DECISIONS-9999.md` and `CD-D-999`.
+    **133 citations · 5 UNRESOLVED (+3) · rc=1**, naming `DEAD.md:1` three times — the dead PATH,
+    the dead IDENTIFIER, and `PO-DECISIONS-9999` caught a second time in its identifier form. **THE
+    INSTRUMENT IS NOT VACUOUSLY TRUE.**
+  ARM_2_THE_ESCAPE_HATCH_TEST: >
+    One file added citing `governance/engineering/build-log/BL-20260823T999999Z-0077.yaml` — a
+    LANE-BLOCK sequence number (0077, inside 0060-0099) for an entry that **does not exist on the
+    lane either**. **3 UNRESOLVED (+1) · rc=1, the planted entry NAMED.** **THE CD-D-132 CLASS DID
+    NOT SWALLOW IT.**
+  ARM_3_THE_CONTROL_FOR_ARM_2: >
+    Same citation SHAPE, existing entry — `BL-20260823T063420Z-0089.yaml`. **Lane class 1 -> 2;
+    UNRESOLVED UNCHANGED AT 2.** **ARM 2 AND ARM 3 ARE THE SHARP PAIR: identical shape, opposite
+    verdicts, differing in exactly one variable — whether the entry exists on the lane.** That pair,
+    and not the prose above it, is why the second resolution class is an ASSERTION and not a HOLE.
+
+the_two_unresolved_citations_at_this_boundary_BOTH_IN_ONE_LANE_FILE:
+  where: '`tools/register/check_dockerignore.py`, lines 78 and 146 — **a LANE file. This seat may not touch it** (PBG-AUTH-006).'
+  1_governance_authority_x_yaml_line_146: >
+    **A FALSE POSITIVE, AND IT IS DECLARED LIMIT 2 DOING EXACTLY WHAT IT SAYS.** The string is an
+    EXAMPLE inside a comment explaining the pattern matcher (*"`governance` excludes
+    `governance/authority/x.yaml`"*). The instrument matches TEXT, not SYNTAX, and cannot tell a
+    citation from an exemplar. **IT IS NOT SPECIAL-CASED, DELIBERATELY: an exclusion list of
+    "strings that only look like citations" is a VOCABULARY, which is the defect class
+    PO-DECISIONS-0012 ruling 2 exists to remove from this project's instruments.** Declared and left
+    visible.
+  2_pbg_controls_PBG_SEC_002_yaml_line_78_AND_THIS_ONE_IS_REAL: >
+    **CD-PL-F114 — see below. The path has NEVER EXISTED IN ANY COMMIT ON ANY REF.**
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F114
+  severity: LOW
+  against: 'the tree — `tools/register/check_dockerignore.py`, a governed instrument on the lane'
+  statement: >
+    **A GOVERNED INSTRUMENT''S DATA TABLE MIXES REAL REPOSITORY PATHS WITH INVENTED EXEMPLARS AND
+    NOTHING MARKS WHICH IS WHICH.** Line 78 carries `("pbg/controls/PBG-SEC-002.yaml", "a control
+    definition")` in a table whose neighbouring rows are
+    `governance/engineering/build-log/BL-20260818T175100Z-0001.yaml` and `pbg/manifest.yaml` —
+    **both real**. `pbg/controls/PBG-SEC-002.yaml` is not: MEASURED with
+    `git log --all --diff-filter=A -- 'pbg/controls/PBG-*'` -> **EMPTY. The path has never existed
+    in any commit on any ref.** The framework groups controls by FAMILY —
+    `pbg/controls/sec.yaml`, where `PBG-SEC-002` is a row at `:49`, PL-verified — and has never
+    used per-ID files.
+  why_it_matters_and_why_it_is_LOW: >
+    **LOW BECAUSE IT IS NOT LOAD-BEARING:** the table feeds a pattern matcher, and a path that does
+    not exist exercises the matcher identically to one that does, so no verdict of
+    `check_dockerignore.py` moves. **RECORDED BECAUSE THE ROW''S OWN RATIONALE — "a control
+    definition" — TELLS A READER IT NAMES A REAL CONTROL FILE, AND AN AUDITOR CHECKING THE
+    INSTRUMENT''S DATA AGAINST THE FRAMEWORK FINDS A PHANTOM AND HAS TO WORK OUT WHY.** The next row
+    (`.venv/.../x.py`) is obviously synthetic and this one is not obviously anything. It is a small
+    instance of a large pattern this project already names: **a declaration that reads as stronger
+    than what it is.**
+  disposition: >
+    **DISCLOSED, NOT FIXED. IT IS A LANE FILE AND FIXING IT IS AN ENGINEER''S ACT, NEVER THIS
+    SEAT''S** (PBG-AUTH-006). It is NOT added to increment 9 — that increment''s scope is the
+    Product Owner''s and was ruled at PO-DECISIONS-0016.2, and a Project Lead widening a
+    just-adopted order with its own fresh LOW finding is exactly what CD-D-165 says it may not do.
+    **IT GOES INTO THE SEVENTH ASSURANCE SEAT''S BRIEF AS A DISCLOSED, UNFIXED, PL-RAISED FINDING.**
+- id: CD-PL-F115
+  severity: MEDIUM
+  against: '`F-06-B` of the SIXTH ASSURANCE SEAT, on its arithmetic and its method — NOT on its substance'
+  statement: >
+    **`F-06-B` PUBLISHED TWO COUNTS WITH NO PRODUCING COMMAND AND NEITHER CAN BE REPRODUCED.**
+    It states `BP-AMENDMENT-0001 : 96 times across 34 files` and `CD-BP-003 : 86 times across 23
+    files`, "excluding BLUEPRINT.md and governance/". Measured at the lane tip with the exclusion
+    set APPLIED: **29 files / 87 occurrences** and **21 / 72**. With NO exclusion at all: **36 / 102**
+    and **28 / 92**. **BOTH PUBLISHED FIGURES FALL STRICTLY INSIDE THOSE BRACKETS** — 29 < 34 < 36
+    and 21 < 23 < 28 — so each was taken under a PARTIAL exclusion of `governance/` (2 files and 5
+    files respectively) that the verdict's own stated exclusion set does not describe.
+  why_it_matters: >
+    **CD-RULE-009 IS SOURCED TO THE PRODUCT AUTHORITY AND IS NON-RELAXABLE BY ANY SEAT, AND IT BINDS
+    ASSURANCE SEATS EXACTLY AS IT BINDS ENGINEERS AND THIS ONE.** Its words: *"A fingerprint with no
+    command is not evidence and must not be cited as one; the honest alternative is to state no
+    fingerprint at all."* Two counts have sat in the record as evidence for a HIGH finding since the
+    sixth gate, and the first party to try to recompute them could not.
+  what_this_finding_does_NOT_say: >
+    ***F-06-B'S SUBSTANCE IS UNTOUCHED AND THIS SEAT AGREES WITH IT.*** The lane really does not
+    carry its own governing authority; main's `BLUEPRINT.md` commit really is not an ancestor of the
+    lane; `CD-BP-003` really is cited from shipped product source. **THE FINDING IS RIGHT AND ITS
+    NUMBERS ARE UNRECOMPUTABLE, AND BOTH OF THOSE ARE TRUE AT ONCE.** It is recorded for the same
+    reason `CD-PL-F105` was recorded against `F-06-I`: letting an auditor's own uncited count stand
+    inside a finding about uncited claims is the defect surviving inside the finding that names it.
+  disposition: >
+    **RECORDED, AND NEITHER NUMBER IS ADOPTED.** From this boundary forward there is ONE number per
+    identifier, produced by ONE printed command, at a NAMED SHA. The historic figures are left
+    exactly as the sixth seat wrote them (PBG-CONT-003) and are marked
+    UNRESOLVED-BY-RECONSTRUCTION. **IT GOES INTO THE SEVENTH SEAT'S BRIEF, WHERE THAT SEAT IS FREE
+    TO REPRODUCE 34 AND 23 BY A METHOD THIS SEAT DID NOT FIND AND SO REFUTE THIS FINDING.**
+
+declared_unverified_by_this_seat_at_this_boundary:
+- '**THE INSTRUMENT''S PATTERN SET IS NOT PROVED EXHAUSTIVE AND THE ARTEFACT SAYS SO (DECLARED LIMIT
+   4).** An identifier family nobody has coined is not matched. **A CLEAN RUN IS NOT PROOF THE LANE
+   CITES NOTHING ELSE**, and this seat did not enumerate what it might be missing.'
+- '**IT SEES TRACKED FILES ONLY (DECLARED LIMIT 1).** Measured mitigation: the lane worktree''s
+   `git status --porcelain` is ZERO at `753efe4`, so at THIS SHA the limit costs nothing. **IT IS A
+   LIMIT ANYWAY, BECAUSE THE NEXT BOUNDARY''S PORCELAIN IS NOT THIS ONE''S.**'
+- '**RESOLUTION IS EXISTENCE, NOT AGREEMENT (DECLARED LIMIT 3 AND 5).** 127 citations resolve
+   because `main` contains the document or the string. **NOT ONE OF THE 2,101 OCCURRENCES WAS READ
+   FOR WHETHER THE LANE USES IT CORRECTLY**, and no instrument on this project does that.'
+- '**IDENTIFIER RESOLUTION HAS NO REGISTER TO CHECK AGAINST.** `CD-D-166` resolves because some
+   governed file on main contains that string, including one that merely mentions it in passing.
+   **A REGISTER OF DEFINED IDENTIFIERS WOULD BE THE STRONGER CONTROL, IT DOES NOT EXIST, AND THIS IS
+   THE WEAKER ONE — NAMED, NOT GLOSSED.**'
+- '**THIS SEAT WROTE AN INSTRUMENT THAT MEASURES THIS SEAT''S OWN RECONCILIATION BOUNDARY.** That is
+   a self-vouching shape and it is disclosed rather than defended. The Product Owner has already
+   assigned **the eight increments reconciled WITHOUT this measurement** to the meta-assurance pass
+   alongside `F102` (PO-DECISIONS-0016 ruling 1(b), last sentence). **THIS INSTRUMENT BELONGS ON
+   THAT DOCKET TOO AND IS PUT THERE BY THIS SENTENCE.**'
+
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT DISPATCH INCREMENT 9.** The phase stays `GATE`. Increment 9 moves it to `BUILD` at
+   the NEXT boundary, per PO-DECISIONS-0017 ruling 4''s consolidated sequence.'
+- '**IT DID NOT CLEAR THE THREE STALE DISPOSITION KEYS.** PO-DECISIONS-0017 ruling 2: they clear
+   AFTER the seventh seat reads the tree. The sweep is still `FAIL — 555 sites, 4 violations` and
+   three `tests/test_the_fifteen.py` tests still fail, BY CONSTRUCTION and ON THE RECORD.'
+- '**IT DID NOT BUILD THE PLANT-DRIFT CARRIER.** Ruled **(A)** at PO-DECISIONS-0017 ruling 1 and
+   sequenced explicitly AFTER the seventh gate. **UNTIL THEN THE SEVENTH SEAT''S BRIEF DISCLOSES THE
+   FOUR OCCURRENCES AND INSTRUCTS THE SEAT TO RE-DERIVE PLANT APPLICABILITY ITSELF.**'
+- '**IT DID NOT FIX `check_dockerignore.py`.** CD-PL-F114 is disclosed and unfixed. Lane file,
+   Engineer''s act.'
+- '**IT DID NOT MOVE ONE GRADE.** T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; no
+   `DEFECT_OPEN` finding closed; `CD-RT-012` RED at the tip; the WO-2 gate SHUT.'
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE. RULING 1 WAS EXPLICIT IN BOTH HALVES AND BOTH HALVES ARE DONE AS WRITTEN.** CD-PL-F114 and
+  CD-PL-F115 are DISCLOSURES, not questions: neither gates anything, neither is added to increment
+  9, and both go into the seventh Assurance seat's brief.
+
+decision_refs:
+  - PO-DECISIONS-0016   # ruling 1(a) the header carried verbatim; ruling 1(b) the boundary measurement
+  - PO-DECISIONS-0017   # ruling 4 — the consolidated sequence this boundary is step 1 of
+  - CD-D-115            # BLUEPRINT.md is protected from every seat including the PL — INVERTED here by the PO
+  - CD-D-132            # the build-log block split that the second resolution class asserts against
+  - CD-D-079            # the counterfactual arm
+  - CD-RULE-004         # a guard closes its class or DECLARES ITS OWN LIMIT — this one declares, five times
+  - CD-RULE-006         # a residue declaration must name a layer MEASURED to hold it — this one names none, in terms
+  - CD-RULE-009         # a fingerprint records its producing command — the ground of CD-PL-F115
+  - PBG-AUTH-006        # why CD-PL-F114 is disclosed and not fixed
+  - PBG-EVID-001        # why the instrument lives on main and not on the lane
+
+next_safe_action: >
+  **DISPATCH INCREMENT 9 TO A FRESH ENGINEER IDENTITY (never -01 through -06), moving the phase to
+  `BUILD` FOR ONE BOUNDED INCREMENT**, on PO-DECISIONS-0016 ruling 2: the sealing property — no
+  `__new__` + `__dict__.update` route around establishment — **required of the CLASS, INSTRUMENT-
+  ENUMERATED OVER ALL 99 GOVERNED CLASSES, WITH EXCLUSIONS MEASURED AND DECLARED AND NEVER ASSUMED,
+  AND A PLANT IN THE ESTABLISHED CONTRAST FORM**, with `CD-PL-F104` and `CD-D-166` ADDED by that
+  same ruling. **THEN** the SEVENTH FRESH ASSURANCE SEAT over the whole, per PO-DECISIONS-0017
+  ruling 4. **NOTHING IS MERGED, ADMITTED OR PROMOTED.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN, so the verdict and the field name ONE commit. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

@@ -1,0 +1,176 @@
+# STABLE DELIVERY-EVIDENCE CONTRACT, VERSION 1.
+#
+# WHAT THIS IS. The envelope a SEAT_DELIVERY attestation must fill. Nothing else.
+#
+# WHY IT EXISTS AND WHY IT IS HERE RATHER THAN IN A CANDIDATE. Internal Assurance confirmed by
+# execution that the AUTH-0025 delivery attestation returned TYPED_UNKNOWN_FIELD at a334a25 and
+# TYPED_OK at candidate 92b216b1, whose entire diff is +17 lines declaring the field that made it
+# lawful. A candidate was defining the legality of its own delivery evidence. Moving that definition
+# into the authority that commissions the candidate only relocates the circularity one level, so this
+# contract is committed as a GOVERNANCE BOOTSTRAP ARTEFACT, BEFORE the authority that will reference
+# it and before any Engineer or candidate exists.
+#
+# THE QUESTION THIS MAKES INDEPENDENTLY FALSIFIABLE:
+#     Did candidate X produce delivery evidence conforming to schema Y,
+#     where Y demonstrably existed before both the Engineer and the candidate?
+# Answerable with `git merge-base --is-ancestor <this commit> <anything>`.
+#
+# WHAT THIS IS NOT. Not framework implementation. Not permission for the PROJECT_LEAD to implement a
+# candidate. It carries NO candidate-specific behaviour, NO validation shortcuts, NO business logic,
+# NO implementation fixes, and NO validator — it is a contract, and the code that enforces it is
+# Engineer work under a bounded authority. It is deliberately tiny; anything larger turns a precise
+# repair into a framework redesign.
+#
+# FROZEN. Version 1 is immutable once committed. A change is version 2, a new file, and this one
+# stays exactly as it is so that every artefact that ever claimed conformance to v1 can still be
+# checked against the bytes it claimed conformance to.
+
+schema_version: 1
+schema_id: pbg:schemas/seat-delivery-contract-v1.yaml
+title: PBGv2 Seat Delivery Evidence Contract, version 1
+status: STABLE_FROZEN
+record_origin: GOVERNANCE_BOOTSTRAP_ARTEFACT
+recorded_by: PROJECT_LEAD
+authorised_by: >
+  PRODUCT_AUTHORITY ruling of 2026-08-07. Matt (Product Owner) with ChatGPT (Product Authority):
+  create a minimal stable delivery-evidence schema commit BEFORE AUTH-0027, containing only the
+  contract needed to remove the bootstrap paradox.
+supersedes: null
+immutability_rule: >
+  These bytes never change. A later need is version 2 in its own file. An artefact claiming v1
+  conformance must remain checkable against v1 as committed.
+
+evidence_type: SEAT_DELIVERY
+
+# --- THE ENVELOPE. Every field required unless marked optional. --------------------------------- #
+required_fields:
+
+  schema_version:
+    type: integer
+    const: 1
+    description: The contract version this artefact claims conformance to.
+
+  schema_id:
+    type: string
+    const: pbg:schemas/seat-delivery-contract-v1.yaml
+
+  evidence_type:
+    type: string
+    const: SEAT_DELIVERY
+
+  authority_id:
+    type: string
+    description: The generic authority identifier under which the seat acted.
+
+  authority_commit:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+    description: Exact full commit SHA of the record granting the seat. Never abbreviated.
+
+  seat_id:
+    type: string
+    description: The GENERIC internal seat. Never a persona and never an executor identity.
+
+  instance_id:
+    type: string
+    description: >
+      The instance that occupied the seat. Non-authoritative executor identity, distinct from
+      seat_id. A seat_id substituted here is a defect, not a synonym.
+
+  work_item:
+    type: string
+
+  base_commit:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+    description: Exact full commit SHA the seat was cut from. Never a branch name or tip.
+
+  produced_candidate:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+    description: Exact full commit SHA of the candidate this seat produced.
+
+  candidate_tree:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+    description: Exact full tree SHA of that candidate, resolved with rev-parse <commit>^{tree}.
+
+  delivery_commit:
+    type: string
+    pattern: '^([0-9a-f]{40}|DECLARED_IN_A_LATER_RECORD)$'
+    description: >
+      The commit carrying this attestation. An artefact cannot state the hash of the commit that
+      carries it, so the sentinel DECLARED_IN_A_LATER_RECORD is lawful and the value is then resolved
+      in a later append-only record. Writing a plausible SHA instead is the defect this permits an
+      honest answer to.
+
+  attested_utc:
+    type: string
+    description: >
+      RFC 3339 UTC. MUST NOT exceed the committer time of the commit containing it. This has been
+      violated four times in this programme.
+
+  provenance:
+    type: object
+    description: >
+      Where the delivered work came from. Required so reproduced work is never presented as newly
+      invented.
+    required: [origin, authored_by_instance]
+    fields:
+      origin:
+        enum: [FIRST_AUTHORSHIP, REPRODUCED, REPRODUCED_WITH_CHANGES]
+      authored_by_instance:
+        type: string
+        description: The instance that authored the work, which may not be instance_id.
+      source_candidate:
+        type: string
+        optional: true
+        pattern: '^[0-9a-f]{40}$'
+      delegate_contributions:
+        type: array
+        optional: true
+
+  held_actions:
+    type: array
+    description: >
+      Actions this attestation does NOT authorise. A delivery attestation authorises nothing
+      operational and must say so explicitly.
+    must_include: [merge, push, tag, adoption, commissioning, operationalisation]
+
+optional_fields:
+
+  supersedes:
+    type: object
+    description: >
+      The correction relationship, where this artefact supersedes an earlier one in place. Presence
+      of this block is a CLAIM, never a proof; whatever validates it must establish the relationship
+      from committed history rather than from these fields.
+    fields:
+      superseded_in_commit: {type: string, pattern: '^[0-9a-f]{40}$'}
+      superseded_blob: {type: string, pattern: '^[0-9a-f]{40}$'}
+      field: {type: string}
+      superseded_value: {}
+      defect: {type: string}
+      concealed: {type: boolean, const: false}
+      supersedes_in_place: {type: boolean, const: true}
+
+# --- WHAT CONFORMANCE MEANS, AND WHAT IT DOES NOT ----------------------------------------------- #
+conformance_semantics:
+  claiming: >
+    An artefact claims v1 conformance by carrying schema_version 1 and schema_id as consts above.
+  establishing: >
+    Conformance is established by a validator reading THIS FILE at THIS COMMIT. A candidate may not
+    establish its own conformance by declaring the fields that make it conformant.
+  unknown_fields: >
+    NOT decided here. Whether unknown fields are rejected, reported or ignored is enforcement policy
+    and belongs to the bounded Engineer authority that builds the validator, not to this envelope.
+  no_validator_here: >
+    This file defines shape and nothing else. It contains no code, no control, and no verdict.
+
+authorises_no_merge: true
+authorises_no_push: true
+authorises_no_tag: true
+authorises_no_adoption: true
+authorises_no_commissioning: true
+authorises_no_operationalisation: true
+authorises_no_implementation_by_the_project_lead: true

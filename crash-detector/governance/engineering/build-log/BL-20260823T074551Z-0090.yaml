@@ -1,0 +1,236 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 9 — ITEM 1, PART A. THE SEAL APPLIED TO THE CLASS.
+#
+# **THE NAMED REMEDY WAS MEASURED FALSE BEFORE IT WAS APPLIED, AND THAT IS THE WHOLE OF THIS
+# ENTRY'S VALUE.** The dispatch offers `@dataclass(frozen=True, slots=True)` as the available
+# mechanism. It is a FALSE-GREEN FACTORY: it installs `dataclasses._dataclass_setstate`, a stdlib
+# function that writes every key it is handed through `object.__setattr__` with no validation and
+# no package code, which re-opens by the `__setstate__` SIBLING exactly the route the slots closed.
+# THE TREE ALREADY CONTAINED THE PROOF: `StalenessWindow` and `FreshnessEvidence` carry
+# `__slots__` and `__dictoffset__ == 0`, were counted SEALED by BOTH readings handed to this seat,
+# and are FORGEABLE.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0089. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T074551Z-0090
+timestamp_utc: "2026-08-23T07:45:51Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-07
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC9-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0016.md ruling 2 — "the sealing property (no `__new__` + `__dict__.update` route around establishment) is required of the CLASS — instrument-enumerated over all 99 governed classes, exclusions MEASURED AND DECLARED never assumed"'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 753efe4f0dabd5c2bf59950742fc95df7ffc9347
+parent_entry_id: BL-20260823T063420Z-0089
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_1_PART_A
+title: 'The seal applied to the 36 governed classes the property is required of and did not hold for — DECLARATIVELY, with no new package module.'
+
+# ---------------------------------------------------------------------------------------------- #
+CD_RULE_009__EVERY_NUMBER_BELOW_CAME_OUT_OF_A_COMMAND_A_READER_CAN_PASTE:
+  the_enumeration: >
+    `python3 -B tools/register/check_constructor_field_establishment.py --root . --why`
+    piped through
+    `grep -oE "[A-Za-z0-9_/]+\.py:[0-9]+ [A-Za-z_][A-Za-z0-9_]*" | sort -u | wc -l`
+    -> **99**. The Project Lead's handed-over command RE-TAKEN and it agrees exactly.
+  the_line_forms_the_dispatch_warned_about: >
+    Header item 4 said the `--why` output "HAS AT LEAST THREE LINE FORMS AND NOBODY HAS ENUMERATED
+    THEM". **THERE ARE SIX**, counted with
+    `grep -oE "note:   [A-Z]+ *(\[RULE [A-C]\]:)? " /tmp/why_base.txt | sort | uniq -c`:
+    `IN   ` (33, the ledger) · `OUT  ` (66, the ledger) · `IN [RULE A]: ` (14) ·
+    `IN [RULE B]: ` (12) · `IN [RULE C]: ` (6) · plus `IN — SATISFIED VACUOUSLY: `,
+    `ESTABLISHMENT ABSENT (reported, NOT exempt): ` and `ESTABLISHED_HERE: <path> <Cls>.<field>`.
+    **THE LAST ONE IS THE TRAP AND IT DOES NOT BITE**: the regex's trailing
+    `[A-Za-z_][A-Za-z0-9_]*` stops at the `.`, so `FetchedResponse.payload` contributes
+    `FetchedResponse`, which is already in the set. The count survives BY ACCIDENT OF THE REGEX
+    and not by design, and that is said here rather than left for the next seat.
+  the_sealing_measurement: >
+    `/tmp/probe_seal.py <tree>` — enumerates by REUSING `check_constructor_field_establishment`'s
+    own `_classes()` over the same file set, resolves each `path:line qualname` to a LIVE class,
+    and EXECUTES four routes against each. Superseded at ITEM_1 PART B by the committed
+    instrument, `tools/register/check_sealed_against_forged_establishment.py`.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_RE_TAKEN_READING__AND_IT_IS_NEITHER_77_NOR_86:
+  what_the_dispatch_handed_over: >
+    The Project Lead: **99 · 13 SEALED · 86 OPEN**. The sixth Assurance seat (F-06-J):
+    **99 · 13 SEALED · 77 OPEN**, and 13 + 77 = 90, which the dispatch calls
+    "NINE OF THE NINETY-NINE UNACCOUNTED".
+  MY_NUMBER_AND_WHAT_I_COUNTED: >
+    **99 · 13 SEALED · 4 NO ROUTE REACHES AN INSTANCE · 82 OPEN**, at the base SHA, under the
+    FOUR-ROUTE probe. 13 + 4 + 82 = 99.
+  AND_THE_NINE_ARE_NOT_UNACCOUNTED__THEY_ARE_A_THIRD_BUCKET_NOBODY_PRINTED: >
+    **BOTH PRIOR READINGS ARE CORRECT MEASUREMENTS OF DIFFERENT PROPERTIES, AND THE GAP IS
+    EXACTLY THE NINE CLASSES ON WHICH `Cls.__new__(Cls)` ITSELF RAISES.**
+      * The Project Lead measured `"__slots__" in vars(cls) and not cls.__dictoffset__` — a
+        STATIC property of the class. 99 - 13 = **86 not-sealed-by-that-test**.
+      * F-06-J measured THE ROUTE, `Cls.__new__(Cls)` + `__dict__.update`. **77 forge.**
+      * 86 - 77 = **9**: five `enum.Enum` subclasses (`Enum.__new__() missing 1 required
+        positional argument: 'value'`) and four metaclasses (`__new__() missing 3 required
+        positional arguments: 'name', 'bases', and 'namespace'`). F-06-J's table is not nine
+        short by arithmetic. **IT HAS NO COLUMN FOR "THE ROUTE DOES NOT REACH AN INSTANCE", so
+        those nine fell out of a two-bucket table.** Reported as a DIFFERENCE, resolved by
+        measurement, and not smoothed into agreement (CD-RULE-009).
+  AND_F_06_Js_77_IS_TOO_KIND_TO_THE_ENUMS: >
+    **FIVE OF THE NINE ARE FORGEABLE ANYWAY** — by `object.__new__(cls)`, which walks past the
+    overridden `__new__` that refused route 1, and by `copyreg._reconstructor`, which is what
+    pickle protocol 0/1 itself does. `Criticality`, `DelayKind`, `MappingKind`, `SameDialReduction`
+    and `EnvelopeSurface` all yield an exact-type object carrying forged state. **THE ROUTE SET
+    GREW BECAUSE A MEASUREMENT CONTRADICTED IT**, which is the only reason a set is allowed to
+    grow on this project. Only the four metaclasses are unreachable by any of the four.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_FINDING_THAT_MATTERS_MOST__AND_IT_IS_AGAINST_THE_DISPATCH_AND_THE_STANDING_RECORD:
+  CD_ENG_WO2R3_07_F01__HIGH__THE_NAMED_REMEDY_DOES_NOT_CLOSE_THE_PROPERTY: >
+    **`@dataclass(frozen=True, slots=True)` IS A FALSE-GREEN FACTORY AND THE DISPATCH NAMES IT AS
+    THE AVAILABLE MECHANISM** (ITEM_1, `what_you_must_build`, bullet 4). CPython's
+    `dataclasses._add_slots` ends with two UNCONDITIONAL lines
+    (`/usr/lib/python3.11/dataclasses.py`):
+
+        if is_frozen:
+            cls.__getstate__ = _dataclass_getstate
+            cls.__setstate__ = _dataclass_setstate
+
+    `_dataclass_setstate` writes EVERY key it is given through `object.__setattr__`, with no
+    validation, and it is stdlib — **ZERO LINES OF PACKAGE CODE**. So a class sealed that way
+    passes `"__slots__" in vars(cls) and not cls.__dictoffset__` — the exact test BOTH handed-over
+    readings used — and is still forgeable by the `__setstate__` sibling THE RULING ITSELF NAMES.
+    **HAD I APPLIED THE NAMED REMEDY TO ALL 36, THE INSTRUMENT WOULD HAVE GONE GREEN ON A CLASS
+    THAT WAS STILL OPEN ON EVERY MEMBER OF IT.**
+  AND_THE_TREE_ALREADY_CONTAINED_THE_PROOF__2_OF_THE_13_SUPPOSEDLY_SEALED_ARE_FORGEABLE: |
+      $ python3 -B -c '...; o = FreshnessEvidence.__new__(FreshnessEvidence);
+                       o.__setstate__({"as_of_utc":"F","observed_at_utc":"F","window":"F"})'
+      -> FORGED exact=True values={'as_of_utc': 'F', 'observed_at_utc': 'F', 'window': 'F'}
+      StalenessWindow  slots=('seconds',)  dictoffset=0  __setstate__ = dataclasses._dataclass_setstate
+      FreshnessEvidence slots=('as_of_utc','observed_at_utc','window') dictoffset=0  ditto
+      Value / Degraded / Unknown / Shown / NotShown / _Admission / _Exactly / _EachOf /
+      _EstablishedHere:  __setstate__ ABSENT  (manual `__slots__`, so `_add_slots` never ran)
+      DialMagnitude / DeclaredQuantity: __setstate__ DEFINED BY THIS PACKAGE and it VALIDATES.
+  CD_ENG_WO2R3_07_F02__MEDIUM__THE_STANDING_RECORD_NAMES_THE_WRONG_TWO_TYPES: >
+    `src/crash_detector/establishment.py:271` and `src/crash_detector/admission.py:341` both say:
+    *"The `__setstate__` technique this codebase already applies elsewhere — arm 3 measures it at
+    2 of 33 governed types, `FreshnessEvidence` and `StalenessWindow` — WOULD CLOSE IT"*, and
+    `CD-ENG-WO2R3-02-F09` is raised on that basis. **MEASURED, THAT SENTENCE IS INVERTED.** Those
+    two types do not DEFINE a `__setstate__`; they RECEIVE the stdlib one, and it is the thing
+    that OPENS the route on them. The two types that DEFINE a defending `__setstate__` are
+    `DialMagnitude` (`dials/magnitude.py:491`) and `DeclaredQuantity` (`dials/provenance.py:623`),
+    both of which revive through the same validation the constructor uses. **THE TECHNIQUE THE
+    RECORD RECOMMENDS IS REAL AND IT IS APPLIED IN TWO PLACES; THE RECORD POINTS AT THE TWO PLACES
+    WHERE THE OPPOSITE IS TRUE.** Those two prose sentences are NOT edited here — corrections
+    supersede (PBG-CONT-003) — and the correction is this entry.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_MECHANISM_I_APPLIED__AND_WHY_IT_IS_THE_TREES_OWN_AND_NOT_MINE:
+  what: >
+    **`@dataclass(frozen=True)` PLUS A MANUAL `__slots__` IN THE CLASS BODY.** That is exactly
+    what `Value`, `Degraded`, `Unknown`, `Shown` and `NotShown` already do, and `_add_slots` never
+    runs for them, so no stdlib `__setstate__` is installed. 34 of the 36 take this form.
+  the_two_that_could_not: >
+    **`FetchFailed` and `Malformed` CARRY A FIELD DEFAULT**, and a manual `__slots__` beside a
+    class-level default is a hard `ValueError: 'http_status' in __slots__ conflicts with class
+    variable` AT CLASS CREATION, before any decorator runs — measured, not assumed. They therefore
+    take `@dataclass(frozen=True, slots=True)` **followed by `del FetchFailed.__setstate__`** at
+    module level, with the reason written beside it. Removed rather than overridden because
+    `_add_slots` installs it AFTER the class body has been read.
+  WHY_NO_DECORATOR_AND_NO_NEW_PACKAGE_MODULE__THIS_WAS_MEASURED_AND_THEN_REVERSED: >
+    **THIS SEAT FIRST BUILT `src/crash_detector/sealing.py`** — a decorator that measured
+    `__dictoffset__`, removed a non-package `__setstate__`, and RE-RAN THE ROUTES AT IMPORT so the
+    seal was proved on every import. **IT WAS DELETED, AND THE REASON IS THE PROTECTED SCOPE.**
+    Measured with `python3 -B -m pytest -q`:
+      with `sealing.py`:  CD-CLASS-2-SWEEP: FAIL — 589 sites, **12 violations**;
+                          `UNDECLARED MODULE: crash_detector.sealing` (tier-2 keys 27 of 27) plus
+                          **6 UNDECLARED ADMISSION rows**; 6 failed / 1684 passed.
+      without:            CD-CLASS-2-SWEEP: FAIL — 555 sites, **4 violations**; 3 failed / 1687
+                          passed — **EXACTLY THE DECLARED STATE OF THE BASE.**
+    The sweep's subject set is the transitive intra-package IMPORT closure, so ANY new package
+    module a governed module imports enters it; and the only file where its dispositions can be
+    declared is `tools/sweep/declared_dispositions.py`, **WHICH IS PROTECTED UNTIL AFTER THE
+    SEVENTH ASSURANCE SEAT (PO-DECISIONS-0017 ruling 2).** Declaring them there would have been
+    exactly the act the previous Engineer refused. **I DID NOT WIDEN SCOPE AND I DID NOT SHIP THE
+    MODULE; I CHANGED THE DESIGN SO THE SEAL NEEDS NO NEW MODULE.**
+  WHAT_THAT_COSTS__STATED_AS_A_MEASURED_LIMIT_AND_NOT_OMITTED: >
+    **THERE IS NO IMPORT-TIME REFUSAL.** A class added tomorrow without `__slots__` imports
+    cleanly; nothing in the package objects. What catches it is the INSTRUMENT (ITEM_1 PART B),
+    which is a register check run at a boundary — the same carriage
+    `check_constructor_field_establishment.py` has always had, no weaker and no stronger.
+    **THE IMPORT-TIME GUARD IS DEFERRED, NOT DROPPED, AND IT IS DEFERRED FOR EXACTLY ONE REASON:
+    the file that would have to declare its dispositions is sealed by Product Owner ruling until
+    after the seventh seat.** It is the natural companion to the same act that clears the three
+    stale keys.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_MEASURED_RESULT:
+  at_the_base_sha_753efe4: '99 examined · 13 slots+dictoffset==0 · **82 forge by at least one of four routes** · 4 unreachable by any.'
+  at_this_tip: |
+      $ python3 -B /tmp/probe_seal.py /srv/crash-detector-wo2r3
+      STATIC (reuse of _classes): 99      LIVE resolved: 99   UNRESOLVED: 0
+      SEALED: 47      NO-ROUTE: 4      OPEN: 48      sum = 99
+      OPEN by dict imposer:   43  builtins.BaseException      5  enum.Enum
+    **EVERY REMAINING OPEN CLASS IS ONE WHOSE `__dict__` IS IMPOSED BY A BASE OUTSIDE THIS
+    PACKAGE. ZERO CLASSES WHOSE `__dict__` IS THEIR OWN REMAIN OPEN.**
+  the_exclusion_is_a_MEASURED_PROPERTY_and_is_PROVED_BY_CONSTRUCTION_NOT_ASSERTED: |
+      $ python3 -B -c 'class E1(Exception): __slots__ = ()
+                       print(E1.__dictoffset__)'                  -> 16
+      $ ... class En(enum.Enum): __slots__ = (); A = 1            -> -48
+      $ ... class M1(type):      __slots__ = ()                   -> 264
+      $ ... class P1(typing.Protocol): __slots__ = ()             ->   0   <- SEALABLE, and sealed
+    **"IT IS AN EXCEPTION" IS A LIST ENTRY. "A PROBE SUBCLASS OF ITS BASE, DECLARING
+    `__slots__ = ()`, STILL REPORTS `__dictoffset__ == 16`" IS A MEASUREMENT**, and it is the only
+    exclusion this increment grants (PO-DECISIONS-0012 ruling 2, header item 2).
+  CD_RULE_006__THE_RESIDUE_NAMED_HONESTLY: >
+    **48 OF THE 99 GOVERNED CLASSES REMAIN OPEN TO THE FORGING ROUTE AND THE SEAL IS PHYSICALLY
+    UNAVAILABLE TO THEM** — 43 `BaseException` subclasses and 5 `enum.Enum` subclasses.
+    **THAT RESIDUE IS NOT PROVED TO BE CARRIED ANYWHERE.**
+
+# ---------------------------------------------------------------------------------------------- #
+FINDINGS_AGAINST_MY_OWN_WORK:
+  CD_ENG_WO2R3_07_F03__MEDIUM__MY_OWN_SCRIPTED_EDIT_WAS_WRONG_ON_2_OF_36_AND_THE_SUITE_CAUGHT_IT: >
+    The first applier inserted the decorator line and rewrote the `@dataclass` line at the SAME
+    line index, and where `@dataclass` was the FIRST decorator (`Migration`, `AppliedMigration`)
+    the insert was overwritten by the rewrite, producing `@dataclass(frozen=True, slots=True)`
+    STACKED ON `@dataclass(frozen=True)` and NO decorator at all. It failed loudly
+    (`TypeError: Cannot overwrite attribute __setattr__ in class Migration`, 4 collection errors).
+    **RECORDED BECAUSE IT WAS CAUGHT, NOT BECAUSE IT WAS AVOIDED (CD-PL-F113's precedent). A
+    SCRIPTED EDIT ACROSS 36 SITES IS AN INSTRUMENT AND IT NEEDS THE SAME SUSPICION AS ANY OTHER.**
+  CD_ENG_WO2R3_07_F04__MEDIUM__A_MANUAL_slots_TUPLE_IS_A_TRANSCRIPTION_OF_THE_FIELD_LIST: >
+    34 classes now carry a `__slots__` tuple that RESTATES their declared field list. **THIS
+    PROJECT REMOVES TRANSCRIPTIONS AND I HAVE ADDED 34.** The mitigation is measured and is not a
+    promise: a field declared and MISSING from `__slots__` raises `AttributeError` on the FIRST
+    construction, because the generated `__init__` writes through `object.__setattr__` and there
+    is no `__dict__` to fall back on — so the rot is loud at the first test that builds one, not
+    silent. **IT IS STILL A SECOND LIST THAT MUST AGREE WITH A FIRST**, and the honest fix is the
+    import-time guard deferred above, which would derive one from the other.
+  CD_ENG_WO2R3_07_F05__LOW__I_CHANGED_TWO_TESTS_AND_BOTH_CHANGES_ARE_MINE_TO_DEFEND: >
+    `tests/test_module_level_traversal.py` matched the literal `@dataclass(frozen=True)\nclass
+    FetchFailed:` and refused with *"the subject of this test moved; fix the test"* — the test's
+    own guard working exactly as designed. The literal is updated and the control arm now strips
+    `@establishes` **AND NOTHING ELSE**, so the contrast's axis is unchanged.
+    `tests/test_runtime_lifecycle.py:469` read `lifecycle.__dict__["_terminating"]`; `Lifecycle`
+    is now sealed, so it has no `__dict__`. It reads
+    `object.__getattribute__(lifecycle, "_terminating")` — the same object, the same assertion
+    (`type(flag) is bool`), reached by the only route that now exists. **NEITHER CHANGE WEAKENS AN
+    ASSERTION AND BOTH ARE STATED HERE SO THEY CAN BE ATTACKED.**
+
+# ---------------------------------------------------------------------------------------------- #
+tests_run:
+  suite: '`python3 -B -m pytest -q` -> **3 failed, 1687 passed** — the DECLARED base state, all three in `tests/test_the_fifteen.py`. No fourth failure.'
+  class_2_sweep: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> EXIT 1, **FAIL — 555 sites, 4 violations** — byte-identical to the declared base state. **THE THREE STALE KEYS ARE UNTOUCHED AND `tools/sweep/declared_dispositions.py` IS UNMODIFIED** (`git diff --stat` names it nowhere).'
+  register_checks: '`for f in tools/register/check_*.py; do python3 -B "$f" --root .; done` -> **ELEVEN EXIT 0**, `check_grant_matrix_live` EXIT 3 (declared environment condition). `check_constructor_field_establishment` still `PASS — 101 assertions, 0 violations`, population 33 unchanged.'
+
+what_I_did_NOT_do:
+- '**I did not touch `tools/sweep/declared_dispositions.py`.** Three keys in it are stale by Product Owner ruling and they are still stale.'
+- '**I did not close `CD-F-0004` and I did not touch `governance/findings/`.**'
+- '**I did not edit the lane `BLUEPRINT.md` header.** Its bytes are the Product Owner''s.'
+- '**I did not ship the import-time guard.** See the measured limit above; it is deferred with a reason, not dropped.'
+
+next_safe_action: 'ITEM_1 PART B — the instrument under `tools/register/`, its plant, its register row and its execution contract.'

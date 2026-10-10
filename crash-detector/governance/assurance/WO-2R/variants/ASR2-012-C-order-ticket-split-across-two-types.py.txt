@@ -1,0 +1,18 @@
+"""Downstream relay. ASR2-012-C: the ticket is SPLIT so no single field set is one."""
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Leg:
+    """One leg of a downstream request."""
+    ref: str
+    size: float
+
+@dataclass(frozen=True)
+class Target:
+    """Where a downstream request goes."""
+    endpoint: str
+    account: str
+
+def forward(leg: Leg, target: Target, direction: str, limit: float):
+    """Hand the prepared leg to the downstream endpoint for the named account."""
+    return (leg, target, direction, limit)

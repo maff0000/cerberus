@@ -1,0 +1,25 @@
+--- a/tests/test_evaluate.py
++++ b/tests/test_evaluate.py
+@@ -666,3 +666,22 @@
+             now_utc=FIXED_NOW,
+             window=1e18,  # type: ignore[arg-type]
+         )
++
++
++# --- PLANTED VARIANT V51 (new, CD-ASR-F06) ------------------------------------------------ #
++# THE OTHER COMPARISON SITE. CD-ASR-F06 was reported against the serving resolver, but the
++# engine performs its OWN age comparison against a window it takes from the config snapshot.
++# A closure that bounds only the resolver leaves a decade-old observation feeding a dial.
++
++def test_PLANT_V51_a_wide_configured_window_lets_a_decade_old_observation_feed_a_dial():
++    ten_years = 3650 * 24 * 3600.0
++    equity_spec = _spec(EQUITY_DIAL_ID, required=("src.a",), model=FakeModel())
++    monetary_spec = _spec(MONETARY_DIAL_ID)
++    config = ConfigSnapshot(
++        config_snapshot_id="cfg-wide",
++        dial_specs=(equity_spec, monetary_spec),
++        staleness_window_seconds=1e18,
++        source_registry=_registry_for(equity_spec, monetary_spec),
++    )
++    reading = evaluate([_ok("src.a", ten_years)], config, FIXED_NOW).equity
++    assert isinstance(reading, Value)

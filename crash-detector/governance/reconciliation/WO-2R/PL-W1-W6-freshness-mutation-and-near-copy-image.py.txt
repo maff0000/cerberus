@@ -1,0 +1,150 @@
+# PL-W1 .. PL-W6 — Project Lead probes written against WO-2R increment 5 as DELIVERED at lane
+# f22d120a1f92e43aa4944b6f1b20a789ba951760, not against the structure the dispatch imagined.
+#
+# THIS FILE IS DATA. Nothing here is executable and it carries no execute bit (PBG-ASSURE-001).
+# From the commit that records it, it proves nothing about the class and it joins the next
+# auditor's exclusion set (CD-D-039 precedent, cost accepted deliberately).
+#
+# Method throughout: pristine `git archive f22d120 | tar -x -C <tmpdir>` per probe, `python3 -B`
+# so no __pycache__ is written into any governed tree (PBG-RT-001). No governed worktree was
+# mutated and no git worktree was created.
+#
+# SUMMARY OF OUTCOMES
+#   PL-W1  borrowed freshness evidence ................ REFUSED
+#   PL-W2  object.__setattr__ on Agrees.as_of_utc ..... NOT REFUSED  (inside declared boundary 3)
+#   PL-W3  undeclared attribute injection on Agrees ... NOT REFUSED  (NOT covered by boundary 3)
+#   PL-W4  duck-typed window (not a subclass) ......... REFUSED
+#   PL-W5  does PL-W2 reach the PO's forbidden outcome? YES — renders "WITNESS AGREES"
+#   PL-W6  near-copy Dockerfile ....................... ESCAPES the guard AS DECLARED, and the
+#                                                       declared carrier HOLDS (measured)
+
+from datetime import datetime, timedelta, timezone
+from crash_detector.staleness import StalenessWindow, FreshnessEvidence
+from crash_detector.witness.panel import Agrees
+from crash_detector.serving.witness_resolver import render_panel
+
+now = datetime(2026, 8, 19, 16, 0, 0, tzinfo=timezone.utc)
+old = now - timedelta(days=3650)          # ten years
+w = StalenessWindow(seconds=60.0)
+
+# ---------------------------------------------------------------------------------------------
+# PL-W1 — BORROW. Evidence about a FRESH observation attached to a DECADE-OLD agreement. This is
+# the obvious evasion once agreement requires evidence, and the seat claims it is closed by
+# binding freshness.as_of_utc to the agreement's own as_of_utc. CD-RULE-006 says a claim like
+# that is measured, not read.
+# ---------------------------------------------------------------------------------------------
+fresh_ev = FreshnessEvidence(as_of_utc=now, observed_at_utc=now, window=w)
+Agrees(divergence_measure=0.02, as_of_utc=old, freshness=fresh_ev)
+
+# OBSERVED: REFUSED — AgreementWithoutFreshnessEvidence: "the freshness evidence is for
+# 2026-08-19T16:00:00Z but this agreement is for 2016-08-21T16:00:00Z. Evidence about a
+# different observation is not evidence about this one."
+# The binding is real. The seat's claim holds under execution.
+
+# ---------------------------------------------------------------------------------------------
+# PL-W2 / PL-W5 — POST-CONSTRUCTION MUTATION, and whether it reaches the criterion's headline.
+# `Agrees` is @dataclass(frozen=True) with NO __slots__ — at be34fe4 and at f22d120 alike; the
+# seat did not change that, but it DID take Agrees into scope by adding the freshness field.
+# ---------------------------------------------------------------------------------------------
+a = Agrees(divergence_measure=0.02, as_of_utc=now, freshness=fresh_ev)
+object.__setattr__(a, "as_of_utc", old)
+render_panel(a)
+
+# OBSERVED:
+#   a.as_of_utc            -> 2016-08-21T16:00:00+00:00
+#   render_panel(a)        -> 'WITNESS AGREES'
+#   a.freshness.age_seconds -> 0.0
+#
+# So an agreement claiming a DECADE-OLD observation renders WITNESS AGREES while its evidence
+# still reports an age of zero. The equality check has already run and nothing re-checks at the
+# publication boundary.
+#
+# THE PROJECT LEAD'S RULING: THIS IS INSIDE THE DECLARED LIMIT, and it does not send the
+# increment back. Boundary 3 declares in its first sentence that "`object.__setattr__` WALKS PAST
+# FROZEN, here as on every frozen value in Python AND IN THIS REPOSITORY", declares that
+# overwriting a declared field is not preventable at the Python level, and says NOT PROVED TO BE
+# CARRIED ANYWHERE. That generalisation covers Agrees. It is also the identical residue already
+# ruled inside the declared limit at CD-D-040 (PL-R4, in-place rewrite of a private slot), and
+# that ruling is not reopened because the type is a different one.
+#
+# WHAT IS *NOT* DECLARED, AND IS RAISED AS CD-PL-F65 (LOW):
+#   (a) boundary 3's reassuring half — "Both values use __slots__, so an UNDECLARED attribute
+#       cannot be injected" — is TRUE of StalenessWindow and FreshnessEvidence and FALSE of
+#       Agrees, which is unslotted. See PL-W3. The boundary names the two types it protects and
+#       is silent about the type that RENDERS.
+#   (b) boundary 3's measured examples stop at a wrong age reading and a wrong window value. They
+#       do not show that the mechanism lands on the Product Owner's exact forbidden sentence —
+#       "a decade-old row must be structurally incapable of rendering WITNESS AGREES". An auditor
+#       reading boundary 3 learns the residue exists but not that it reaches the headline.
+# This is the CD-PL-F62 shape: an INCOMPLETE boundary, honestly drawn as far as it goes, with no
+# false carrier — a declaration to FINISH, not a closure to redo.
+
+# ---------------------------------------------------------------------------------------------
+# PL-W3 — UNDECLARED ATTRIBUTE INJECTION on Agrees, which __slots__ would have blocked.
+# ---------------------------------------------------------------------------------------------
+b = Agrees(divergence_measure=0.02, as_of_utc=now, freshness=fresh_ev)
+object.__setattr__(b, "smuggled", 1.0)
+
+# OBSERVED: NOT REFUSED — b.smuggled == 1.0. On StalenessWindow the same call raises
+# AttributeError, which is what boundary 3 measures and reports. The asymmetry is undeclared.
+
+# ---------------------------------------------------------------------------------------------
+# PL-W4 — DUCK-TYPED WINDOW. Not a subclass, so __init_subclass__ never fires; the object simply
+# presents `.seconds` and a `.covers()` that always says yes. This is the route that defeats an
+# isinstance check, and the seat's own F20/F21 disclosures say two earlier cuts fell to exactly
+# this family.
+# ---------------------------------------------------------------------------------------------
+class NotAWindow:
+    seconds = 1e18
+    def covers(self, age):
+        return True
+
+FreshnessEvidence(as_of_utc=old, observed_at_utc=now, window=NotAWindow())
+
+# OBSERVED: REFUSED — TypeError: "freshness must be evidenced against a StalenessWindow, got
+# NotAWindow. A bare number is not a window: it has not passed the admission that gives a window
+# its meaning, and neither is a subclass that may have redefined that admission."
+# The EXACT-type check (`type(x) is not StalenessWindow`) catches what isinstance would not.
+
+# ---------------------------------------------------------------------------------------------
+# PL-W6 — THE ADDENDUM'S DECLARED RESIDUE, and its carrier. The image-identity closure keys on
+# (build context, sha256 of the Dockerfile bytes). Its declared limit says a NEAR-copy — "a
+# Dockerfile that is NOT byte-identical, differing by one comment" — is a different image by the
+# artefact's own account and is not a walk root. CD-RULE-006 obliges the reconciliation to
+# measure whether anything carries it.
+#
+# Built by hand on a pristine extraction:
+#   cp deploy/Dockerfile.engine deploy/Dockerfile.engine-near
+#   printf '\n# PL-W6: a near copy, differing by exactly this comment.\n' >> deploy/Dockerfile.engine-near
+#   + service cd-engine-near in deploy/compose.yaml built from Dockerfile.engine-near
+#   + deploy/entrypoints/cd_near.py importing crash_detector.witness.panel
+#
+# OBSERVED, the guard:
+#   python3 -B tools/register/check_engine_no_witness_reach.py --root .
+#     -> exit 0, "CD-RT-003-ENGINE-NO-WITNESS-REACH: PASS — 25 assertions, 0 violations"
+#     and the output NAMES it in the resolved-but-not-a-root list: "cd-engine-near=cd_near".
+#     The escape is exactly the one the boundary declares, and the guard reports the service
+#     rather than being silent about it.
+#
+# OBSERVED, the carrier — MEASURED BY THE PROJECT LEAD, not transcribed:
+#   python3 -B -m pytest -q  ->  11 failed, 1284 passed
+#   including tests/test_deploy_container_set.py::test_there_is_one_dockerfile_per_application_service
+#         and tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service
+#
+# THE DECLARED CARRIER HOLDS. This is the CD-PL-F62 disposition arrived at correctly by the seat:
+# a residue declared, with a layer that genuinely refuses it, and the boundary saying so.
+
+# ---------------------------------------------------------------------------------------------
+# ALSO RE-RUN BY THE PROJECT LEAD, on its own extractions (not probes — verification of the
+# seat's declared arms):
+#
+#   E07  staleness_window_seconds=1e18, row dated 2016  -> REFUSED, StalenessWindowOutOfRange,
+#        message citing PID.md §5 and "REFUSED, not clamped". At be34fe4 the same call returned
+#        Agrees (see PL-V1). The 60.0 arm still returns Unavailable/PANEL_ROW_STALE, so the
+#        closure did not forbid the product.
+#   E08  exception handler resolving to agreement       -> exit 0, 152 passed: UNDETECTED, exactly
+#        as the seat declared. F07 was NOT claimed closed and stays owed at WO-3.
+#   V47  the same handler MADE TO FIRE                  -> exit 1, 24 failed. Not exploitable.
+#   PL-U6b (the PL's own increment-4 escape)            -> exit 1 at f22d120; it was exit 0,
+#        PASS 24 at be34fe4. CD-PL-F62 is closed.
+#   plants/CD-AC-005 contrast                           -> clean 152 passed; planted 12 failed.

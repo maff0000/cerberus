@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:24:45.330579836 +0100
+@@ -317,7 +317,7 @@
+     _refuse_non_json(candidate, surface)
+     _refuse_classified_keys(candidate, surface)
+     _refuse_schema_violation(candidate, surface)
+-    _refuse_stale_calm(candidate, surface)
++    # D1: THE FOURTH STAGE, REMOVED (control for the harness).
+ 
+ 
+ def _refuse_non_json(candidate: Mapping, surface: "EnvelopeSurface") -> None:

@@ -1,0 +1,213 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 7 — ITEM 6. THE CD-PL-F100 FINGERPRINT FIX, AS A GOVERNED INSTRUMENT.
+#
+# **THE PROJECT LEAD HANDED THIS SEAT A WORKING RECIPE AS EVIDENCE AND INVITED AN ATTACK ON IT**
+# (PBG-AUTH-006 — the Project Lead writes neither the fix nor the assurance). **THE ATTACK FOUND
+# THREE DEFECTS THE PROJECT LEAD'S DISCLOSURE DID NOT NAME, AND ONE PLACE WHERE THE PROJECT LEAD
+# OVERSTATED ITS OWN RECIPE'S WEAKNESS.** Both directions are recorded.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0077. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T011440Z-0078
+timestamp_utc: "2026-08-23T01:14:40Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-03
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0013.md ruling 5, parenthetically'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+parent_entry_id: BL-20260823T010716Z-0077
+schema_version: 1
+
+record_type: INCREMENT
+
+what_landed:
+  instrument: 'tools/audit/tree_fingerprint.py — NEW. A GOVERNED INSTRUMENT IN THE TREE, not a shell line pasted into the next dispatch, which is what made the original un-reviewed and un-tested and is why this item exists.'
+  carrier: 'tests/test_tree_fingerprint.py — EIGHT tests, each building its own throwaway git repository.'
+
+the_defect_REPRODUCED_BY_ME_NOT_QUOTED:
+  rule: 'CD-RULE-009. The Project Lead''s figures (24d66d0e…, 50b356ac…) are the Project Lead''s and this seat may not quote them. These are mine, taken in this worktree.'
+  measured: |
+    add ONE empty file under .pytest_cache/ and take both recipes again:
+      the SHIPPED recipe    ef33427d91538500…  ->  80b3dfa6eada2152…   **MOVED. THE FALSE ALARM.**
+      the git-aware recipe  f659601e65534304…  ->  f659601e65534304…   unmoved
+      …and ONE BYTE of TRACKED content         ->  b1bdb3a3838e981c…   **MOVED, as it must.**
+    **BOTH ARMS OF THE DISPATCH'S ACCEPTANCE TEST, MEASURED BY ME.**
+
+THE_ATTACK_ON_THE_PROJECT_LEADS_RECIPE_WHICH_IS_WHAT_THIS_SEAT_WAS_ASKED_FOR:
+  three_defects_the_disclosure_did_not_name:
+  - id: 1
+    what: '**OUTSIDE A GIT WORKTREE IT PRODUCES A CONFIDENT HASH OF NOTHING.**'
+    measured: >
+      Run in `/tmp`: `git ls-files` writes `fatal: not a git repository` to stderr, **THE PIPELINE
+      CONTINUES**, and `sha256sum` of empty input yields `abcfa6a9d4df344d…`. **A FINGERPRINT THAT
+      MEANS "I LOOKED AT NOTHING", INDISTINGUISHABLE FROM ONE THAT MEANS "THE TREE IS THIS."**
+    why_it_is_the_worst_of_the_three: >
+      It is the exact shape this project's own `tools/register/_support.py` `Check.done` already
+      refuses — *`exit 0` must never be able to mean "I looked at nothing"* — and the Project Lead's
+      disclosure called it only *"silently does nothing useful outside a git worktree"*, which
+      understates it: **it does something ACTIVELY MISLEADING, not nothing.**
+    fixed: 'The instrument REFUSES, exit 3 PRECONDITION NOT MET. Measured: exit=3.'
+  - id: 2
+    what: '**A TRACKED FILE DELETED FROM THE WORKTREE IS SWALLOWED.**'
+    measured: >
+      `xargs` exits **123** on the missing path, but **a pipeline''s exit status is its LAST
+      command''s**, so the one-liner returns 0 and prints a fingerprint (`d76b8647…`) for a tree
+      that does not hold together.
+    fixed: 'REFUSES, exit 3, and NAMES the unreadable paths. Measured: exit=3, `UNREADABLE: …/PID.md`.'
+  - id: 3
+    what: 'A VACUOUS RUN — zero files — is a hash, not a refusal.'
+    fixed: 'REFUSES.'
+  and_one_thing_that_is_NOT_a_defect_but_is_an_UNDECLARED_LIMIT:
+    what: '**FILE MODE IS INVISIBLE.**'
+    measured: '`chmod +x PID.md` leaves the fingerprint IDENTICAL (`f659601e…` both sides).'
+    disposition: 'DECLARED in the instrument header. A file becoming executable is a real change to a tree and this does not see it. NOT PROVED TO BE CARRIED ANYWHERE.'
+
+THE_RENAME_TEST_BOTH_SIDES_MEASURED_BY_ME:
+  on_the_project_leads_arm_b: |
+    Recipe (b) is `-path ./.pytest_cache -prune` — **IT NAMES ONE DIRECTORY.**
+      baseline                                   8f01db7ba182b082…
+      after pytest, DEFAULT cache dir            8f01db7ba182b082…   (pruned correctly)
+      after pytest -o cache_dir=.other_cache     **0742cf9d40666dd2…  MOVED**
+    **(b) FAILS THE RENAME TEST. THE PROJECT LEAD'S HYPOTHESIS IS CONFIRMED BY MY OWN ARM.**
+  on_my_own_instrument: |
+      the same three states                      8f01db7b… / 8f01db7b… / 8f01db7b…
+      **IT SURVIVES THE RENAME.**
+  AND_THE_REASON_IS_NOT_THE_ONE_THE_PROJECT_LEAD_GAVE_WHICH_IS_A_STRONGER_RESULT: >
+    The disclosure says (c) works because it *"delegates the question to `.gitignore`"*. **MEASURED,
+    THAT IS NOT WHY IT SURVIVED THE RENAME.** `.other_cache` is NOT in this repository's
+    `.gitignore` — and git ignored it anyway, because **PYTEST WRITES ITS OWN `.gitignore`
+    CONTAINING `*` INSIDE ITS CACHE DIRECTORY, WHATEVER THAT DIRECTORY IS CALLED.**
+    `git ls-files --others --ignored --exclude-standard` names `.other_cache/.gitignore`,
+    `.other_cache/CACHEDIR.TAG`, `.other_cache/README.md`, `.other_cache/v/cache/nodeids`.
+    **THE STRUCTURAL PROPERTY IS THAT THE IGNORE DECLARATION TRAVELS WITH THE ARTEFACT**, not that
+    the repository's root `.gitignore` happens to hold the right name. That is a better reason than
+    the one offered and it is the reason the delegation is worth having.
+
+THE_KNOWN_COST_AND_I_MEASURED_IT_NARROWER_THAN_IT_WAS_DISCLOSED:
+  the_disclosure: '*"it depends on `.gitignore` being CORRECT — a wrongly-ignored product file becomes invisible to the fingerprint. **THAT IS A REAL WEAKENING AND IT MUST BE DECLARED**"*.'
+  what_I_MEASURED: |
+    A hostile `.gitignore` containing `*` dropped into `src/crash_detector/engine/`:
+      files fingerprinted: 468 -> 468       fingerprint 8f01db7b… -> 8f01db7b…  UNMOVED
+      tracked engine files still listed: 5
+    **AN IGNORE RULE CANNOT HIDE TRACKED CONTENT.** `git ls-files --cached` lists every tracked file
+    REGARDLESS of any ignore rule. The weakening therefore reaches **ONLY FILES THAT WERE NEVER
+    COMMITTED.**
+    The other half, so the bound is not mistaken for a closure — an UNTRACKED new product file
+    under that same rule:
+      with the hostile .gitignore:  468 files, EXCLUDED 2, fingerprint 8f01db7b…  **HIDDEN**
+      with it removed:              469 files,             fingerprint e956f603…  **SEEN**
+  how_this_is_reported_and_why_carefully: >
+    **"SAFER THAN DISCLOSED" IS THE DIRECTION A READER WAVES THROUGH**, so it is asserted rather
+    than asserted-about: `test_an_ignore_rule_can_never_hide_TRACKED_content` fails if a future git
+    or a future flag changes it. **THE RESIDUE IS STILL REAL** — an untracked file IS hidden — and
+    the only signal a reader gets is the printed exclusion count.
+  what_the_instrument_DOES_about_a_weakness_it_cannot_fix: >
+    **IT PRINTS EVERY PATH IT EXCLUDED.** It cannot verify that `.gitignore` is correct; it can make
+    the CONSEQUENCE of `.gitignore` being wrong VISIBLE instead of invisible. **THE SHIPPED
+    RECIPE'S INCLUSION OF CACHE FILES WAS INVISIBLE FOR EXACTLY AS LONG AS NOBODY PRINTED IT.**
+    That is this seat's own contribution to the design and it is the answer to the disclosed cost.
+
+did_this_seat_adopt_the_project_leads_SHAPE:
+  answer: >
+    **THE VALUE, YES. THE FORM, NO.** The digest is BYTE-IDENTICAL to
+    `git ls-files -z --cached --others --exclude-standard | sed -z 's|^|./|' | LC_ALL=C sort -z |
+    xargs -0 sha256sum | sha256sum` — asserted by
+    `test_it_reproduces_the_historic_shell_recipe_byte_for_byte`, because **A FINGERPRINT
+    INSTRUMENT THAT SILENTLY CHANGED THE VALUE WOULD INVALIDATE EVERY RECORDED FIGURE IT WAS BUILT
+    TO PROTECT.** Everything else — the three refusals, the printed exclusions, the declared limits
+    — is not in the recipe and is this seat's.
+  the_sed_prefix: >
+    The Project Lead disclosed that `sed -z 's|^|./|'` *"exists only to reproduce the historic `./`
+    path spelling"*. **CORRECT, AND IT IS KEPT FOR EXACTLY THAT REASON**, in the instrument's digest
+    construction, with the reason written at the line that does it.
+
+the_carrier_and_its_own_seam_CD_RULE_006:
+  what: 'tests/test_tree_fingerprint.py — 8 tests. EXIT 0.'
+  proved_non_vacuous_BY_REGRESSING_THE_INSTRUMENT: >
+    `--exclude-standard` removed in a throwaway tree — i.e. the instrument put BACK to the defect
+    CD-PL-F100 names — **-> 2 failed, 6 passed**, failing at
+    `test_an_ignored_artefact_does_not_move_the_fingerprint` and
+    `test_an_ignore_rule_can_never_hide_TRACKED_content`. **THE RIGHT TWO, WITH THE RIGHT MESSAGE.**
+
+findings:
+- id: CD-ENG-WO2R3-03-F16
+  severity: MEDIUM
+  against: 'THE PROJECT LEAD''S RECIPE AS HANDED OVER — three defects its disclosure did not name.'
+  what: 'Defects 1, 2 and 3 above: a confident hash of nothing outside a worktree; a swallowed missing tracked file; a vacuous run. **THE FIRST IS THE SERIOUS ONE** — the disclosure called it "silently does nothing useful", and it does something ACTIVELY MISLEADING instead.'
+  why_it_matters_beyond_this_item: >
+    **THE RECIPE WAS ABOUT TO BE USED TO DECIDE WHETHER AN AUDITOR''S VERDICT WAS ABOUT A TREE THAT
+    STILL EXISTS.** An instrument in that position that can emit a valid-looking digest for a
+    directory it could not read is worse than no instrument, because the alarm it fails to raise is
+    the one the whole practice depends on.
+  disposition: 'FIXED IN THE LANDED INSTRUMENT. Raised so the META-ASSURANCE PASS authorised by PO-DECISIONS-0013 ruling 5 has it in writing.'
+
+- id: CD-ENG-WO2R3-03-F17
+  severity: LOW
+  against: 'THE PROJECT LEAD''S OWN DISCLOSURE — it OVERSTATED its recipe''s weakness, and I say so because the record should be right in both directions.'
+  what: >
+    *"A wrongly-ignored product file becomes invisible to the fingerprint"* is TRUE ONLY OF FILES
+    THAT WERE NEVER COMMITTED. `--cached` lists every tracked file regardless of any ignore rule;
+    measured with a hostile `.gitignore` containing `*` in a source directory — **fingerprint
+    UNMOVED, 5 tracked engine files still counted.**
+  why_a_finding_at_all: >
+    A declared limit that is wrong in the PESSIMISTIC direction is still wrong, and it is the twin
+    of the understated residue this project keeps finding. **A READER WHO BELIEVES THE WEAKNESS IS
+    WIDER THAN IT IS WILL DISTRUST A SOUND INSTRUMENT, WHICH COSTS AS MUCH AS TRUSTING AN UNSOUND
+    ONE.** Corrected in the instrument's header at its measured bound, and CARRIED.
+  disposition: 'RAISED. The narrowing is asserted by a test so it cannot rot into a comfortable belief.'
+
+- id: CD-ENG-WO2R3-03-F18
+  severity: LOW
+  against: 'THIS SEAT''S OWN SCOPE DECISION ON ITEM 6 — stated because a silent omission is worse than a declared one.'
+  what_was_NOT_done: >
+    **NO ROW WAS ADDED TO `required-tests.yaml` FOR THIS INSTRUMENT AND NO `contracts/execution/`
+    DOCUMENT WAS CREATED FOR IT.** Every row in that register is a `CD-RT-*` bound to a PID
+    ACCEPTANCE CRITERION. This instrument is an AUDIT tool about tree state; it corresponds to no
+    CD-AC and minting a `CD-RT` id for it would be **inventing product meaning (PBG-AUTH-005,
+    CD-RULE-003)**, which is not this seat's to do.
+  what_governs_it_instead: >
+    Its header declares its population and every limit; its carrier fails when it regresses
+    (proved); and this entry records both. **IF THE PRODUCT OWNER OR PROJECT LEAD WANTS IT IN THE
+    REGISTER, THAT IS A RULING AND A ONE-LINE CHANGE, AND IT IS FLAGGED HERE RATHER THAN DECIDED.**
+  disposition: 'RAISED FOR A RULING.'
+
+what_this_item_does_NOT_close_MEASURED:
+- '**FILE MODE.** `chmod +x` leaves the fingerprint identical. Declared, NOT carried.'
+- '**`.gitignore` CORRECTNESS.** Bounded to never-committed files (measured) and made VISIBLE by the
+   printed exclusions, but NOT VERIFIED. An untracked product file under a wrong rule is hidden and
+   the only signal is the exclusion count.'
+- '**SYMLINK TARGETS.** Content is read through the link; a link retargeted outside the tree moves
+   the fingerprint while the tree''s own bytes did not. Declared, not resolved.'
+- '**EMPTY DIRECTORIES**, which git does not track and this therefore cannot see.'
+- '**IT IS NOT A GIT IDENTITY.** It says nothing about branch, HEAD, staged state or history, and it
+   does not replace `git rev-parse HEAD` or `git status --porcelain`. **THE PRACTICE THAT USES IT
+   STILL NEEDS BOTH, AND THIS INSTRUMENT MUST NOT BE READ AS COVERING THEM.**'
+- '**IT DOES NOT FIX CD-PL-F101** — `main` carrying no `.gitignore` at all. That is disclosed in the
+   dispatch as the Project Lead''s and NOT this seat''s; the lane has its own `.gitignore` and is
+   unaffected. **Nothing in this item makes `main` boot GREEN and nothing here should be read as
+   having addressed it.**'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  tree_fingerprint_clean: 'EXIT 0.'
+  tree_fingerprint_outside_a_worktree: 'EXIT 3.'
+  tree_fingerprint_with_a_deleted_tracked_file: 'EXIT 3.'
+  carrier: 'EXIT 0 — 8 passed. REGRESSED ARM: 2 failed, 6 passed.'
+  suite: 'EXIT 0 — 1569 passed, 0 failed.'
+  doors_check: 'EXIT 0.'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. A RECORD, NOT ASSURANCE. **AND A NOTE ON WHOSE DEFECT THIS WAS.** This
+  item repairs the PROJECT LEAD'S OWN instrument, which the dispatch itself warns *"is exactly the
+  kind of fix that gets a soft review"*. This seat attacked it and found three unnamed defects and
+  one overstatement — but **THIS SEAT ALSO WROTE THE REPLACEMENT, SO ITS REVIEW OF THE REPLACEMENT
+  IS WORTH NOTHING.** The sixth Assurance seat should attack `tree_fingerprint.py` as hard as this
+  entry attacks the recipe it replaced.

@@ -1,0 +1,235 @@
+# ================================================================================================ #
+# BL-20260823T091648Z-0128 — RESUMPTION AFTER A WRAPPER-TIMEOUT KILL.
+# THE SEVENTH ASSURANCE SEAT RAN AND WAS LOST WITHOUT RETURNING. IT IS RE-DISPATCHED AS INSTANCE 2,
+# AND THE ORDER OF THE SESSION IS THE FINDING.
+# ================================================================================================ #
+entry_id: BL-20260823T091648Z-0128
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T09:16:48Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: 0c99628b89bf12403bcadbee4bd928730af92d3e   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36). NOT TRANSCRIBED.
+
+# ================================================================================================ #
+# 1. BOOT AND THE CD-D-007 SUSPICION PROCEDURE
+# ================================================================================================ #
+boot:
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot, in /srv/crash-detector'
+  verdict: >
+    **AMBER** — CONTINUITY_MATCH/RESUME_AMBER, blocking_failures EMPTY, observed_sha
+    0c99628b89bf12403bcadbee4bd928730af92d3e, current_phase **GATE**, the sole UNAVAILABLE being
+    `roadmap_identity` (no ROADMAP.md), which is the standing declared state and not new.
+  continuity_pointers_checked: >
+    `continuity_record_commit` in ACTIVE_WORK.yaml reads
+    `e5f59ebf757fa542dd26fb8d0ebd632ed732ceb3` and `git cat-file -t` confirms it is a **commit**.
+    `last_build_log_entry` reads BL-20260823T083655Z-0127 and that entry exists.
+    **THE `PENDING` VALUES VISIBLE IN THE BODIES OF BL-...-0126 AND BL-...-0127 ARE NOT DRIFT** —
+    landed build-log entries are never edited (PBG-CONT-003); the live field is ACTIVE_WORK's and it
+    was resolved by the CD-RULE-007 follow-up at `0c99628`. **THIS WAS CHECKED RATHER THAN ASSUMED,
+    because CD-PL-F123 and CD-PL-F124 are both live findings about SHA fields nobody confirmed.**
+
+CD_D_007_SUSPICION_PROCEDURE:
+  disposition: >
+    **APPLIED, AND IT FOUND NO UNCOMMITTED SEAT WORK TO ADJUDICATE.** Measured, not assumed, in
+    both trees, in separate commands, each printing its own `pwd` (CD-PL-F101, CD-PL-F98).
+  arm_1_main:
+    pwd: '/srv/crash-detector'
+    measurement: >
+      `git status --porcelain | wc -l` -> **45**. `grep -cv '^??'` -> **0 — ALL UNTRACKED, ZERO
+      TRACKED.** `git status --porcelain | grep -vE '\.wo2|\.continue-prompt|pbg/tools/pbg/__pycache__'`
+      -> **NOTHING**, so all 45 are enumerated rather than asserted.
+    reading: >
+      **RESIDUE UNMOVED AT 45 AND RE-COUNTED RATHER THAN CARRIED (CD-RULE-009).** Every line is an
+      operator-wrapper artefact or a `__pycache__` directory. CD-PL-F101 is the live finding that
+      covers this; it stays **DISCLOSED AND NOT RULED HARMLESS**, and deliberately NOT tidied away.
+  arm_2_the_audit_worktree:
+    pwd: '/srv/crash-detector-wo2r3-audit7'
+    measurement: >
+      `git rev-parse HEAD` -> `686a374e60ff8f18305fa8b665463e0e057dac2b`, `git cat-file -t` ->
+      **commit**. `git status --porcelain` -> **ZERO LINES**.
+      `python3 -B tools/audit/tree_fingerprint.py --root .` ->
+      `files fingerprinted: **509**` · `EXCLUDED by .gitignore: **5**` ·
+      **`FINGERPRINT: 319e401fc2591dc48b611d101d5330bdb3dbb3bb9824b7bb1c39a11e5b10fc6a`**.
+    reading: >
+      **THE FINGERPRINT IS BYTE-IDENTICAL TO THE VALUE RECORDED AT DISPATCH AND THE FILE COUNT IS
+      IDENTICAL AT 509.** The seat mutated NOTHING in the target tree; the read-only constraint held
+      under a seat that was killed mid-flight, which is the harder case.
+      The one delta is `EXCLUDED by .gitignore: 0 -> 5`, and all five are `.pytest_cache/` files.
+      **THAT IS NOT A MUTATION FINDING AND IT IS NOT BEING RULED HARMLESS BY THIS SEAT'S OPINION:
+      `CD-DISPATCH-WO2R3-ASSURANCE-07` SAYS SO IN TERMS** — *"`.pytest_cache/` in the audit tree is
+      EXPECTED and is NOT a mutation finding."* The dispatch is the authority, not the reconciler.
+
+# ================================================================================================ #
+# 2. WHAT ACTUALLY HAPPENED TO THE SEVENTH SEAT — ESTABLISHED BY MEASUREMENT, NOT BY MEMORY
+# ================================================================================================ #
+the_seventh_seat_ran_and_was_killed:
+  the_evidence_that_it_ran: >
+    `/srv/crash-detector-wo2r3-audit7/.pytest_cache/v/cache/nodeids` holds **1699 collected
+    node-ids**, and `lastfailed` holds **exactly 3**, all in `tests/test_the_fifteen.py`. The
+    directory's mtime is **09:51 local**, which is AFTER the boundary commit `0c99628` at 09:48 and
+    BEFORE the wrapper's kill. The seat booted, collected the suite and ran it.
+  the_evidence_that_it_returned_NOTHING: >
+    `governance/assurance/WO-2R3/` holds FOUR documents — `VERDICT.md` (fourth seat),
+    `VERDICT-FIFTH-SEAT.md`, `VERDICT-SIXTH-SEAT.md`, plus two T2 supplements — and
+    **NONE OF THEM IS THE SEVENTH SEAT'S.** No file in the repository carries its verdict.
+  the_ruling: >
+    **UNDER PBG-CONT-007 THE SEVENTH SEAT'S VERDICT DOES NOT EXIST AS PROJECT STATE.** It existed
+    only in a conversation that no longer exists. **THE THREE `lastfailed` ENTRIES ARE NOT A
+    VERDICT AND ARE NOT BEING READ AS ONE.** They are consistent with the three tests
+    `PO-DECISIONS-0017` ruling 2 holds RED **on purpose** — and *consistent with* is exactly the
+    kind of agreement this gate has already been burned by (CD-PL-F119/F120). **THIS SEAT WILL NOT
+    RECONSTRUCT AN AUDIT FROM A CACHE FILE, AND THE TEMPTATION TO DO SO IS RECORDED HERE RATHER
+    THAN ACTED ON.**
+  what_this_boundary_therefore_does_NOT_do: >
+    It does not bank a seventh verdict. It does not clear the three stale disposition keys. It does
+    not build the plant-drift carrier. It does not put ITEM 3 to the Product Owner. **ALL THREE ARE
+    STILL GATED ON A RETURN THAT HAS NOT HAPPENED** (PO-DECISIONS-0017 rulings 1 and 2), and the
+    gate is still SHUT.
+
+# ================================================================================================ #
+# 3. THE FINDINGS — BOTH AGAINST THE SEAT WRITING THIS SENTENCE
+# ================================================================================================ #
+findings:
+
+  CD_PL_F125:
+    severity: HIGH
+    title: >
+      **THE SEVENTH DISPATCH WAS STRUCTURALLY DOOMED BY THE ORDER OF THE SESSION THAT ISSUED IT, AND
+      THAT ORDER WAS THIS SEAT'S CHOICE.**
+    measured: >
+      The operator wrapper runs `timeout 7200` — a HARD two-hour ceiling on the whole Project Lead
+      session (`.wo2r3k-runner.sh`, and `.wo2-runner.log` records
+      `07:02:27Z wo2r3k attempt 1 starting` / `09:02:28Z wo2r3k attempt 1 exited rc=124`, which is
+      7201 seconds and the timeout firing).
+      The dispatch's own `issued_utc` is **08:36:55Z**. The boundary commit `0c99628` landed at
+      **08:48:09Z**. The seat's first measurable activity is at **08:51Z**. The kill was at
+      **09:02:28Z**.
+    the_finding: >
+      **THE PROJECT LEAD SPENT 1h46m OF A 2h BUDGET ON ITS OWN BOUNDARY PROSE AND LEFT ELEVEN
+      MINUTES FOR THE AUDIT THAT THE BOUNDARY EXISTED TO COMMISSION.** 88 per cent of the session's
+      only scarce resource went to the record of the work rather than to the work. The seat did not
+      fail, was not slow, and returned nothing for a reason that had nothing to do with the tree it
+      was reading. **A DISPATCH ISSUED WITH ELEVEN MINUTES LEFT ON THE CLOCK IS NOT A DISPATCH, IT
+      IS A GESTURE**, and this seat issued it while writing at length about the discipline of
+      measuring things.
+    remedy_APPLIED_NOT_PROMISED: >
+      **THE SEAT WENT OUT FIRST AT THIS BOUNDARY — BEFORE THIS ENTRY WAS WRITTEN, NOT AFTER IT.**
+      Instance 2 was launched at **09:17Z**, roughly six minutes into the session, against a
+      ceiling at 11:11:32Z. That is the fix applied in the only form that counts. **CD-PL-F111'S
+      LESSON IS THE GOVERNING PRECEDENT HERE: A FINDING WRITTEN AS PROSE IS NOT A CONTROL.** This
+      one is therefore recorded as a fact about an act already taken, and the ordering is now on the
+      record as the expected shape of every future dispatch boundary.
+    what_would_discharge_it: >
+      **NOTHING WRITTEN. A CARRIER.** Nothing in the repository knows the wrapper ceiling exists,
+      and a resumed Project Lead learns it only by reading a runner script that is UNTRACKED
+      RESIDUE (CD-PL-F101) and could be deleted at any time. **THE ONE PIECE OF OPERATIONAL
+      KNOWLEDGE THAT DETERMINED WHETHER THIS GATE PROGRESSED IS HELD IN A FILE THAT IS NOT PROJECT
+      STATE.** Goes on the meta-assurance docket beside F102, F111, F112, F113 and F119-F122.
+
+  CD_PL_F126:
+    severity: MEDIUM
+    title: >
+      **THE RECORD CANNOT DISTINGUISH "DISPATCHED AND NEVER LAUNCHED" FROM "LAUNCHED AND LOST", AND
+      THE ONLY THING THAT SETTLED IT HERE WAS A GITIGNORED DIRECTORY.**
+    measured: >
+      `CD-DISPATCH-WO2R3-ASSURANCE-07.yaml` reads `status: ISSUED` and has never moved. BL-...-0127
+      says **"DISPATCHED AND OUT"**. Neither records a launch time, a heartbeat, or any artefact of
+      record. `git status` on both trees is silent about the seat, because the only trace it left is
+      `.pytest_cache/`, which **is gitignored and therefore invisible to every porcelain check this
+      project runs at a boundary.**
+    the_finding: >
+      Had the seat been killed three minutes earlier — before it ran a test — this reconciliation
+      would have had **NO EVIDENCE WHATSOEVER** that it was ever launched, and the honest reading
+      and the wrong reading would have been indistinguishable. **A CONTINUITY MODEL THAT DEPENDS ON
+      A PYTEST CACHE SURVIVING IS NOT A CONTINUITY MODEL.** This is the same class as CD-PL-F112:
+      a window in which the record and the world disagree and no instrument looks.
+    not_remedied_here: >
+      A dispatch-lifecycle field (`ISSUED -> LAUNCHED@utc -> RETURNED`) written by the Project Lead
+      at launch would close it. **IT IS NOT BUILT AT THIS BOUNDARY AND THIS SEAT IS NOT PRETENDING
+      OTHERWISE:** GATE means nothing else moves, and building a governance instrument while a
+      read-only auditor is reading the tree is exactly the thing this project has ruled against
+      five times. **OWED. RECORDED. NOT DONE.**
+
+# ================================================================================================ #
+# 4. THE DECISION
+# ================================================================================================ #
+CD_D_170:
+  decision: >
+    **`CD-ASR-WO2R3-04` IS RE-LAUNCHED AS INSTANCE 2 AGAINST THE UNCHANGED DISPATCH
+    `CD-DISPATCH-WO2R3-ASSURANCE-07`, AT THE UNCHANGED TARGET `686a374`.**
+  why_the_dispatch_is_not_redrafted: >
+    The target's identity was **RE-MEASURED IDENTICAL** (509 files, fingerprint `319e401f...`), the
+    dispatch record is unedited, and `PO-DECISIONS-0017` ruling 4 ordered exactly this seat over
+    exactly this tree. **RE-RUNNING AN ORDERED DISPATCH AFTER A HARNESS FAILURE IS EXECUTING THE
+    PRODUCT OWNER'S SEQUENCE AS WRITTEN, NOT RE-SHAPING IT.** No Product Authority question arises
+    and none is being invented.
+  why_the_same_actor_id: >
+    **INSTANCE 1 PRODUCED NOTHING OF RECORD AND NOTHING IN THE TREE**, so instance 2 is not
+    certifying, defending or inheriting its own prior work and **PBG-ASSURE-016 IS NOT ENGAGED**.
+    PBG-SOD-001 is untouched: the seat is none of the seven Engineers. The local precedent for
+    instance-numbering a re-run seat is BL-20260823T065027Z-0122 (INCREMENT-8 INSTANCE-2).
+  what_the_brief_carries_beyond_the_dispatch_file: >
+    The instance-1 disclosure **IN FULL** — that it ran, that it collected 1699 node-ids and left
+    three failures, that it returned nothing, and that under PBG-CONT-007 its findings do not exist.
+    **THE `.pytest_cache` IS HANDED TO IT LABELLED AS UNTRUSTED RESIDUE WITH AN EXPLICIT
+    INSTRUCTION NOT TO READ `lastfailed` AS A RESULT AND NOT TO RUN `pytest --lf` AGAINST IT**, and
+    with permission to delete it. **IT IS TOLD THE WRAPPER CEILING AND TOLD TO WRITE ITS VERDICT
+    FILE INCREMENTALLY RATHER THAN AT THE END** — which is CD-PL-F125 turned into an instruction to
+    the party it actually protects, rather than into a paragraph about this seat's regret.
+    It is told to re-take the fingerprint itself and **NOT to inherit this seat's number**, which
+    matters more than usual given F119/F120.
+  what_is_NOT_softened: >
+    Nothing. The seat goes out against the same RED sixth gate verdict, the same RED T2, the same
+    two AMBER criteria, `CD-RT-012` RED at the tip, the three stale disposition keys held STALE ON
+    PURPOSE BY RULING, the owed ITEM 3 closure, the owed plant-drift carrier, the owed SHA-resolution
+    carrier, **48 OF 99 GOVERNED CLASSES OPEN AND UNSEALABLE WITH THE COST TO THIS PRODUCT ASSESSED
+    BY NOBODY**, a four-day-old landed SHA that names no commit, and **THIRTEEN PROJECT LEAD
+    FINDINGS INCLUDING FOUR HIGH ONES, EVERY ONE OF THEM AGAINST THE SEAT THAT WROTE ITS BRIEF.**
+  launched_utc: '2026-08-23T09:17Z'   # RECORDED HERE BECAUSE CD-PL-F126 SAYS NOTHING ELSE RECORDS IT.
+  wrapper_ceiling_utc: '2026-08-23T11:11:32Z'   # session start 09:11:32Z + `timeout 7200`.
+
+# ================================================================================================ #
+# 5. GATE DISCIPLINE
+# ================================================================================================ #
+gate_discipline: >
+  **GATE MEANS WHAT IT HAS MEANT EVERY PRIOR TIME: NOTHING ELSE MOVES WHILE ONE READ-ONLY AUDITOR IS
+  READING THE TREE.** No increment, no disposition, no code change, no instrument change, no grade.
+  **`686a374` IS STILL `686a374` WHEN THE SEAT FINISHES.** This boundary wrote ONE new build-log
+  entry and moved TWO pointer fields in ACTIVE_WORK.yaml. It touched no source, no test, no
+  instrument, no plant, no register, and nothing under `pbg/`. It did not enter
+  `governance/assurance/WO-2R3/`, which is where the live seat is writing.
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE. THE SEQUENCE IS THE PRODUCT OWNER'S AND IT IS BEING EXECUTED AS WRITTEN.** The two items
+  recorded as OWED and awaiting the Product Owner's sequencing AFTER the verdict are unchanged and
+  neither gates this re-dispatch: **ITEM 3's closure** and the **plant-drift carrier** (already
+  ruled (A) at PO-DECISIONS-0017 ruling 1).
+
+decision_refs:
+  - CD-D-170            # THIS decision: the seventh seat re-launched as instance 2
+  - CD-D-169            # the dispatch being re-executed, unedited
+  - CD-D-007            # the suspicion procedure applied to resumption — found nothing to adjudicate
+  - CD-D-143            # a returned verdict is banked VERBATIM AND BESIDE, never inside, its predecessors
+  - PO-DECISIONS-0017   # ruling 4 — the dispatch; ruling 2 — the keys held stale; ruling 1 — the deferred carrier
+  - PBG-CONT-007        # a sub-agent result that exists only in conversation is not project state — THE WHOLE OF THIS ENTRY
+  - PBG-CONT-003        # landed entries are superseded, never edited
+  - PBG-SOD-001         # non-waivable — the seat is none of the seven Engineers
+  - PBG-ASSURE-016      # not engaged: instance 1 produced nothing to certify
+  - PBG-AUTH-003        # a PASS is not an acceptance and neither is a RED
+  - PBG-AUTH-006        # this seat grades nothing and writes no fix
+
+next_safe_action: >
+  **NOTHING MOVES UNTIL `CD-ASR-WO2R3-04` INSTANCE 2 RETURNS.** On its return, unchanged from
+  BL-...-0127: the Project Lead reconciles it **BY MEASUREMENT**, banks it **VERBATIM AND BESIDE —
+  never inside — the prior seats' documents** (CD-D-143, PBG-CONT-003), and **only then**, in the
+  act that answers its findings, clears the three stale disposition keys (ruling 2), builds the
+  plant-drift carrier (ruling 1(A)), and puts **ITEM 3's closure** to the Product Owner for
+  sequencing.
+  **IF THE SESSION IS KILLED AGAIN BEFORE THE SEAT RETURNS, THE NEXT PROJECT LEAD READS THIS ENTRY
+  AND RE-LAUNCHES AS INSTANCE 3 — FIRST, BEFORE WRITING ANYTHING. THAT INSTRUCTION IS THE POINT OF
+  RECORDING CD-PL-F125 AT ALL.**
+  **THE PROJECT LEAD WILL NOT ARGUE THE VERDICT DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER. IF IT
+  CONTRADICTS THE RECONCILIATION RECORD, THE RECORD IS WHAT GETS CORRECTED.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

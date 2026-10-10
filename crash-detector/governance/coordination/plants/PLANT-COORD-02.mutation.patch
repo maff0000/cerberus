@@ -1,0 +1,27 @@
+diff --git a/tools/coordination/scope.py b/tools/coordination/scope.py
+index 09d18ff..97faa99 100644
+--- a/tools/coordination/scope.py
++++ b/tools/coordination/scope.py
+@@ -279,12 +279,19 @@ DISJOINT = "DISJOINT"
+ 
+ def patterns_overlap(a: Pattern, b: Pattern) -> Tuple[bool, str]:
+     """Return ``(overlaps, reason)``. Fails CLOSED: undecidable -> ``(True, 'UNDECIDABLE: ...')``."""
++    # MUTATED FOR PLANT-COORD-02 — TWO MUTATIONS, BOTH THE ONES THAT WOULD REALLY HAPPEN.
++    #
++    # (1) FAIL **OPEN**: a form the algebra cannot decide is now reported DISJOINT instead of
++    #     OVERLAPPING. This is the single most likely real-world regression, because failing closed
++    #     is inconvenient and someone always "fixes" it.
++    # (2) FIRST SEGMENT ONLY: overlap decided on segment 0 and nothing deeper — the cheap
++    #     comparison that looks right on every example anyone tried.
+     if a.undecidable_reason:
+-        return True, "UNDECIDABLE: %s (in %r) — fail closed per CD-RULE-003" % (a.undecidable_reason, a.raw)
++        return False, "MUTATED FAIL-OPEN: %s (in %r) treated as DISJOINT" % (a.undecidable_reason, a.raw)
+     if b.undecidable_reason:
+-        return True, "UNDECIDABLE: %s (in %r) — fail closed per CD-RULE-003" % (b.undecidable_reason, b.raw)
++        return False, "MUTATED FAIL-OPEN: %s (in %r) treated as DISJOINT" % (b.undecidable_reason, b.raw)
+ 
+-    k = min(len(a.segments), len(b.segments))
++    k = min(len(a.segments), len(b.segments), 1)
+     for i in range(k):
+         if not segments_intersect(a.segments[i], b.segments[i]):
+             # decided disjoint on the segment-sensitive comparison; now the case-fold check

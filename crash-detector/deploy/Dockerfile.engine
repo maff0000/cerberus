@@ -1,0 +1,109 @@
+# cd-engine — Compute both dials and build both envelopes (BLUEPRINT §7, §8).
+#   The only writer of dial numbers, and the one service with NO EGRESS AT ALL and no grant
+#   of any kind on schema witness (CD-AC-003, CD-AC-012).
+#
+# ==========================================================================================
+# WRITTEN, NOT BUILT. RT-B IS FORBIDDEN IN WO-2.
+# ==========================================================================================
+# PBG-RT-010 keeps image creation and container startup as separate, separately authorised
+# actions, and its verification note states that CONTAINER_READY_DESIGN together with
+# CONTAINER_BUILD_NOT_YET_AUTHORISED is a complete and valid state. This file is the design.
+# Building it, smoke-testing it and observing the runtime UID on a RUNNING container are
+# WO-3 work, recorded as owed and not as done.
+#
+# ==========================================================================================
+# THE BASE IMAGE IS A BUILD ARGUMENT WITH NO DEFAULT, AND THAT IS THE POINT
+# ==========================================================================================
+# "A tag is a mutable pointer; a digest is an identity" (Standards Baseline §3). A tag-only
+# base reference must fail the register check, so there is no tag here to fail on.
+#
+# The Python base image is not present on this host and resolving its digest would require
+# `docker pull`, which is outside this seat's runtime authorisation. Writing a
+# plausible-looking digest nobody verified would be constructing evidence, which is
+# non-waivable. So the base arrives as an argument with NO DEFAULT: `docker build` refuses a
+# blank base name, and `docker compose` refuses the unset variable before that. Both fail
+# closed, and nothing is claimed that was not observed.
+#
+# The required value, and the record of what has and has not been verified, is in
+# deploy/base-images.json.
+ARG CD_PYTHON_BASE
+FROM ${CD_PYTHON_BASE}
+
+# SINGLE STAGE, DELIBERATELY. The containerisation skill asks for multi-stage so build
+# tooling stays out of the runtime image — and this application has NO build step at all.
+# It runs on the interpreter with PYTHONPATH=src and no install (BLUEPRINT §11, A1), so
+# there is no compiler, no wheel build and no package manager invocation to isolate. A
+# build stage here would exist only to be empty.
+
+LABEL org.opencontainers.image.title="cd-engine"
+LABEL org.opencontainers.image.description="Compute both dials and build both envelopes. No egress at all, and no grant of any kind on schema witness (BLUEPRINT SS7, SS8)."
+LABEL org.opencontainers.image.vendor="crash-detector"
+LABEL org.opencontainers.image.licenses="UNLICENSED"
+# Set at build time from the exact commit being built (Standards Baseline §3: refer to
+# things by identity). Declared with no default so an unidentified image cannot be built.
+ARG CD_BUILD_SHA
+LABEL org.opencontainers.image.revision="${CD_BUILD_SHA}"
+
+# NON-ROOT, DECLARED EXPLICITLY AND NUMERICALLY (PBG-RT-012).
+# Numeric because some orchestrators enforce runAsNonRoot by inspecting the UID and cannot
+# resolve a name. A distinct UID per service, so a compromised container's identity is not
+# every container's identity.
+RUN groupadd --system --gid 10003 cd-engine \
+ && useradd --system --uid 10003 --gid 10003 --no-create-home --shell /usr/sbin/nologin cd-engine
+
+WORKDIR /app
+
+# READ-ONLY CODE — the first of the three storage classes (PBG-RT-013).
+# Copied owned by root and NOT by the runtime user, so the process cannot modify its own
+# code even before `read_only: true` is applied by compose. Ephemeral scratch is the tmpfs
+# at /tmp; durable data belongs to the store's named volume alone, and this image mounts it
+# nowhere.
+COPY --chown=root:root --chmod=0555 src/ /app/src/
+COPY --chown=root:root --chmod=0555 deploy/entrypoints/ /app/entrypoints/
+
+# .dockerignore, OWED AND STATED. The build context is the repository root, so a
+# `.dockerignore` must exist there before this is built, excluding at least: .git/,
+# __pycache__/, .pytest_cache/, .env*, *.pem, *.key, plants/, governance/ and pbg/.
+# Without it the build context carries the repository history — and the governance record —
+# into the daemon. Creating a file at the repository root is outside this increment's
+# writable scope, so it is recorded as owed for WO-3 rather than taken quietly.
+
+ENV PYTHONPATH=/app/src \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    CD_CONTRACTS_DIR=/contracts
+
+# contracts/ is mounted READ-ONLY at /contracts by compose, not baked in: the envelope
+# contracts are shared by several services and are read through $CD_CONTRACTS_DIR
+# (crash_detector.publication.envelope_contract), so a container may mount them anywhere
+# without a code change.
+#
+# NO `VOLUME ["/contracts"]`, AND THE ABSENCE IS DELIBERATE (PBG-RT-013).
+#
+# An earlier draft of this file declared one. It is wrong, in a way that is worth stating
+# because it reads as correct: `VOLUME` declares the DURABLE storage class, and /contracts
+# is in the READ-ONLY CODE class. Three consequences followed from the confusion.
+#
+#   1. Run outside compose, `VOLUME` makes Docker create an ANONYMOUS volume at /contracts
+#      — writable, undeclared, and surviving the container. BLUEPRINT §2 says exactly one
+#      named volume exists and it is the store's; this quietly created six more.
+#   2. It contradicts the read-only bind compose mounts at the same path, so the artefact
+#      and the compose file would disagree about which class the path belongs to.
+#   3. `VOLUME` freezes the path's contents at declaration and discards later image
+#      writes, which is a silent failure mode for a path whose whole job is to be current.
+#
+# The read-only bind in deploy/compose.yaml is the mechanism, and it is sufficient. A test
+# asserts no Dockerfile here declares a VOLUME at all.
+
+
+USER 10003:10003
+
+# SIGTERM means shut down cleanly within the grace period. The handling is in
+# crash_detector.runtime.lifecycle — in the APPLICATION, because a process that ignores
+# SIGTERM cannot be fixed from outside it.
+STOPSIGNAL SIGTERM
+
+# EXEC FORM, NOT SHELL FORM. Shell form makes /bin/sh PID 1, and the shell does not forward
+# SIGTERM to its child — the process would be killed rather than asked, every time.
+# `-B` keeps the interpreter from writing bytecode into a read-only code directory.
+ENTRYPOINT ["python3", "-B", "/app/entrypoints/cd_engine.py"]

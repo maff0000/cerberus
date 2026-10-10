@@ -1,0 +1,270 @@
+# SEVENTH Project Lead seat. Resumption boundary: the CD-D-007 suspicion procedure applied to
+# material left uncommitted by the sixth seat, and the two continuity defects it found.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T185403Z-0037
+timestamp_utc: "2026-08-19T18:54:03Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 44a56ecdd917282179c25a1065764640dc5f79e3
+lane_head_sha: 253c38bd4db58433e5209a222c0ce27429079156
+parent_entry_id: BL-20260819T184405Z-0036
+record_origin: >
+  Written by the Project Lead on main at the resumption boundary of the SEVENTH seat. The sixth seat
+  exited cleanly (rc=0 at 2026-08-19T18:46:28Z per the operator's wrapper log) having ISSUED WO-2R
+  increment 6 at 44a56ec, but it left the Build Log entry attesting that boundary UNCOMMITTED. This
+  entry rules that material and records two continuity defects, both of them MEASURED with one
+  variable changed rather than inferred. Per CD-RULE-005 the entry_id timestamp comes from
+  `date -u +%FT%TZ` and from nothing else.
+schema_version: 1
+
+action_summary: >
+  THE SEVENTH SEAT RESUMES. CD-D-007's suspicion procedure found exactly one item of uncommitted
+  project state — the sixth seat's own Build Log entry BL-20260819T184405Z-0036 — and RULED it
+  ACCEPTED AND COMMITTED UNEDITED at 8e9456f (CD-D-065), because every factual claim in it checks
+  out against the committed tree and because 44a56ec already depended on it. THE LANE IS CLEAN: no
+  seat work exists to adjudicate, because the increment-6 seat WAS NEVER LAUNCHED. Two continuity
+  defects are raised. CD-PL-F69 (MEDIUM): the committed record at 44a56ec was RED for anyone who
+  cloned it, and the live worktree hid that because the missing file was sitting on disk beside it.
+  CD-PL-F70 (LOW): every boot verdict this project has recorded for many boundaries attributes its
+  AMBER to the missing roadmap; measured, the AMBER is caused by the DIRTY WORKING TREE and the
+  missing roadmap does not degrade the verdict at all. CD-RULE-008 closes both classes with one
+  move. WO-2R increment 6 remains ISSUED and UNEXECUTED; it is dispatched at the next boundary.
+
+# ================================================================================================ #
+# THE CD-D-007 SUSPICION PROCEDURE, APPLIED
+# ================================================================================================ #
+RESUMPTION_AND_THE_CD_D_007_SUSPICION_PROCEDURE:
+  what_ended_the_previous_seat: >
+    NOT a termination. The operator's wrapper log records `wo2b attempt 1` starting at
+    2026-08-19T18:21:46Z and exiting rc=0 at 18:46:28Z, FINAL. The sixth seat stopped DELIBERATELY
+    after issuing increment 6 and asked the operator to launch the Engineer seat. That request was
+    answered by launching THIS seat: the operator's own note at .wo2b-prompt.txt, written at
+    18:48:39Z, reads "The operator hereby launches the seat, per your stop note", and directs this
+    seat to run CD-ENG-WO2R-01 through increment 6, reconcile it, and then cross to Assurance.
+
+  what_was_found_uncommitted:
+    project_state:
+    - 'governance/engineering/build-log/BL-20260819T184405Z-0036.yaml — UNTRACKED. 7,894 bytes, mtime 2026-08-19 19:44 local (18:44Z), one minute before 44a56ec was committed at 18:45:21Z.'
+    not_project_state:
+    - "the operator's wrapper files .wo2-*, .wo2b-*, .continue-prompt.txt — session plumbing, never committed"
+    - 'pbg/tools/pbg/__pycache__/ — build artefacts under the pinned framework directory; NOT edits to pbg/ (`git diff --name-only -- pbg/` is zero lines and the directory is read-only to this seat)'
+  the_lane: >
+    /srv/crash-detector-wo2 is CLEAN at 253c38b on wo-2-skeleton — `git status --porcelain`,
+    `git diff --stat` and `git diff --cached --stat` all return ZERO lines, and the head commit is
+    the reader seat's BL-...-0048 attestation. THERE IS NO SEAT WORK TO ADJUDICATE, because the
+    increment-6 seat was never launched. The audit worktree /srv/crash-detector-wo2-audit is clean
+    at the pre-rewrite 66681b2.
+  boot_verdict_on_resumption: >
+    AMBER — CONTINUITY_MATCH/RESUME_AMBER, blocking_failures empty. RECORDED WITH A CORRECTION: this
+    seat does NOT repeat the standing phrase "the sole UNAVAILABLE being roadmap_identity" as the
+    CAUSE of the AMBER, because that attribution is measurably wrong. See CD-PL-F70.
+
+# ================================================================================================ #
+# CD-D-065 — BL-20260819T184405Z-0036 IS ACCEPTED AND COMMITTED UNEDITED
+# ================================================================================================ #
+CD_D_065_disposition_of_the_inherited_entry:
+  decision: 'ACCEPTED AND COMMITTED UNEDITED at 8e9456f2592ddbb915432832f629499c508a9559.'
+  the_default_is_refusal: >
+    CD-D-007 and CD-D-009 both start from the same place: inherited uncommitted work is evidence of
+    an interrupted seat, NOT authorised progress, and the default disposition is refusal. The
+    question is whether this material rebuts the default.
+  why_the_default_is_rebutted:
+  - 'IT IS THE PROJECT LEAD SEAT''S OWN RECORD, not a sub-agent deliverable. It authorises nothing, changes no code, and grants no scope. The risk CD-D-007 guards against — unattested progress being absorbed as if approved — is absent by construction.'
+  - 'EVERY FACTUAL CLAIM WAS CHECKED AGAINST THE COMMITTED TREE, not read. baseline_sha 192fc50 is the parent of 44a56ec (`git rev-parse 44a56ec^`). lane_head_sha 253c38b is the observed head of wo-2-skeleton. parent_entry_id BL-...-0035 is committed. The dispatch amendment it attests IS the 92-line increment_6_reconciliation_and_return hunk in 44a56ec. Its evidence reference governance/reconciliation/WO-2R/PL-X1-X12-reader-termination-and-the-quiet-wrong-parse.txt exists.'
+  - '`current_sha: PENDING` is the established convention of this log and is NOT a defect: BL-...-0035 carries it too, for the same reason continuity_record_commit is written PENDING — the commit carrying the record does not exist while the record is being written.'
+  - 'REFUSING IT WOULD LEAVE THE REPOSITORY RED. 44a56ec already names it in `last_build_log_entry`. Deleting the file does not undo that reference; it only makes the dangling reference permanent.'
+  what_is_NOT_cured_by_committing_it: >
+    The entry records NO boot verdict, although its boundary changed ACTIVE_WORK.yaml. That is
+    CD-PL-F69's second half and it is ruled, not glossed, below. Committing the file makes the record
+    complete; it does not make it compliant.
+  PBG_CONT_003_observed: >
+    THE FILE IS COMMITTED BYTE-FOR-BYTE AS THE SIXTH SEAT WROTE IT. Not one character was altered to
+    make it read better or to insert the missing verdict. Corrections supersede, never edit — the
+    correction is THIS entry.
+
+# ================================================================================================ #
+# CD-PL-F69 (MEDIUM) — a continuity record naming a Build Log entry the repository does not have
+# ================================================================================================ #
+CD_PL_F69:
+  severity: MEDIUM
+  raised_by: 'PROJECT LEAD, this boundary.'
+  against: '44a56ec, written by the sixth Project Lead seat.'
+  what_is_wrong: >
+    44a56ec advanced `last_build_log_entry` to BL-20260819T184405Z-0036 and did not commit that file.
+    The entry existed only on the disk of the seat that wrote it. A Build Log entry that exists only
+    in a working tree is not project state (PBG-CONT-007), and a continuity record naming an entry
+    the repository does not have is a DANGLING REFERENCE.
+  measured_with_one_variable_changed:
+    arm_1: 'clone of this repository at 44a56ec, entry ABSENT -> `pbg boot` RED, CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, observed_sha 44a56ec resolved.'
+    arm_2: 'THE SAME CLONE, the entry file restored and NOTHING ELSE CHANGED -> `pbg boot` AMBER, CONTINUITY_MATCH/RESUME_AMBER.'
+    arm_3: 'clone at 8e9456f, the repair commit -> `pbg boot` GREEN, CONTINUITY_MATCH/RESUME_GREEN.'
+    conclusion: >
+      The committed record at 44a56ec was RED for ANY actor taking a fresh checkout — an Engineer
+      seat, an auditor, or the next Project Lead. Boot's read-back was working perfectly. It was
+      pointed at the wrong tree.
+  a_first_probe_was_discarded_for_being_refused_for_the_wrong_reason: >
+    `git archive` of 44a56ec into a plain directory also booted RED — but SO DID THE CONTROL with the
+    entry present, because a tree with no `.git` cannot resolve observed_sha and boot reports
+    CONTINUITY_REFERENCE_INVALID for THAT reason instead. Had the control not been run, this finding
+    would have been reported on evidence that does not support it. That is CD-ENG-WO2R-F13's lesson
+    applied to the Project Lead's own probe: a probe refused for a reason you did not intend has told
+    you nothing. The finding stands on the git-bearing clone, where the two arms differ in one file.
+  the_second_half_CD_RULE_007: >
+    BL-...-0036 records no boot verdict although its boundary changed ACTIVE_WORK.yaml. CD-RULE-007's
+    own closing sentence — "an entry that changes a continuity record and records no boot verdict is
+    a breach visible on its face" — convicts it on its face. Whether the sixth seat ran boot and
+    omitted the record, or did not run it, is UNKNOWABLE AND IMMATERIAL: unrecorded is unproved, and
+    the rule exists precisely so that the question never has to be asked.
+  why_the_rule_did_not_stop_it: >
+    CD-RULE-007 says "re-run `pbg boot` after the edit". It does not say WHERE. Run in the working
+    tree, as every boundary so far has run it, it reads a tree that contains files the repository
+    does not have — so it validates a record that is not the committed record. The rule's whole
+    purpose is the read-back guarantee that `continuity.checkpoint` gives up when a file is
+    hand-edited, and a working-tree boot silently forfeits that guarantee a second way.
+  repair: 'The entry is committed at 8e9456f and the committed tree boots GREEN. Class closed by CD-RULE-008 below.'
+
+# ================================================================================================ #
+# CD-PL-F70 (LOW) — the standing AMBER has been attributed to the wrong cause for many boundaries
+# ================================================================================================ #
+CD_PL_F70:
+  severity: LOW
+  what_is_wrong: >
+    Boot verdicts recorded across this project say, in these words or close to them, "AMBER —
+    CONTINUITY_MATCH/RESUME_AMBER, blocking_failures empty, THE SOLE UNAVAILABLE BEING
+    roadmap_identity", which reads as: the AMBER is caused by the missing ROADMAP.md, a known
+    Product Owner call. MEASURED, THAT IS NOT THE CAUSE.
+  measured_with_one_variable_changed:
+    arm_1: 'clone at 8e9456f, clean working tree, ROADMAP.md STILL ABSENT -> GREEN, CONTINUITY_MATCH/RESUME_GREEN. roadmap_identity is still reported `!  UNAVAILABLE` in the same output.'
+    arm_2: 'THE SAME CLONE with ONE empty untracked file created (`touch .an-untracked-probe-file`) -> AMBER, CONTINUITY_MATCH/RESUME_AMBER.'
+    arm_3: 'the file removed again, nothing else changed -> GREEN.'
+    arm_4: 'the live worktree /srv/crash-detector at the IDENTICAL SHA 8e9456f -> AMBER, because the operator wrapper files and pbg/tools/pbg/__pycache__/ are untracked there.'
+    conclusion: >
+      A single untracked file flips the verdict. The missing roadmap is REPORTED as UNAVAILABLE in
+      both arms and degrades nothing. The standing explanation names a carrier that was never
+      measured — the CD-RULE-006 shape, applied to a boot verdict instead of a guard boundary.
+  why_it_matters_and_why_it_is_only_LOW: >
+    It is NOT a false clean: AMBER is stricter than the truth, so nothing was waved through. The real
+    cost is MASKING. This project has treated a standing AMBER as expected and explained for many
+    boundaries, so a NEW cause of AMBER — a genuine degradation — would have arrived looking exactly
+    like the old one and been read as the roadmap again. A verdict whose cause is misattributed
+    stops being a signal.
+  what_is_NOT_claimed: >
+    This does not establish that the missing ROADMAP.md is harmless, and CD-D-005's roadmap question
+    remains a Product Owner call. It establishes only that the missing roadmap is not what has been
+    making boot AMBER. THE DENOMINATOR: four arms at two SHAs on this host.
+  not_repaired_here: >
+    The obvious cheap fix — a .gitignore for the operator's wrapper files — is NOT taken by this
+    seat. There is no .gitignore in this repository at all, and adding one at a resumption boundary
+    would make untracked work invisible for the sake of a cosmetic verdict, which is the wrong trade
+    on a project whose last six boundaries all had to ask "what did the dead seat leave behind?".
+    CD-RULE-008 gets the true verdict a better way: read it off a clean clone.
+
+# ================================================================================================ #
+# CD-RULE-008 — the CD-RULE-007 boot re-run is performed on the COMMITTED tree
+# ================================================================================================ #
+CD_RULE_008:
+  recorded_in: 'governance/rules/PROJECT-RULES.md at this boundary.'
+  rule: >
+    The `pbg boot` re-run that CD-RULE-007 requires is performed on a PRISTINE CLONE AT THE COMMITTED
+    SHA, and the verdict recorded is that one. A working-tree boot may be run as well, but it is not
+    the verdict of record.
+  why_it_closes_both_classes_with_one_move: >
+    CD-PL-F69 is a committed tree that is RED while the working tree reads fine, because an untracked
+    file supplied what the repository lacked. CD-PL-F70 is a working tree that reads AMBER while the
+    committed tree is GREEN, because untracked files degrade the verdict. THEY ARE THE SAME DEFECT
+    FROM BOTH SIDES: the working tree is not the record, and a verdict taken from it is a verdict
+    about something other than what the project ships. Reading it off the committed tree is right in
+    both directions at once, and it does not enumerate the ways a working tree can differ.
+  it_is_checkable_from_the_build_log_alone: >
+    An entry recording a boot verdict must name the SHA the verdict was taken at, and that SHA must
+    be a commit. A verdict with no SHA, or a SHA that is not the boundary's own commit, is a breach
+    visible on its face — the same property CD-RULE-007 was given.
+  the_ordering_problem_and_how_it_is_handled: >
+    The verdict of the commit that carries the entry cannot be inside that entry. This is the SAME
+    ordering problem CD-RULE-007 already solved for `continuity_record_commit`, and it takes the same
+    answer: the follow-up commit that resolves PENDING records the committed-tree verdict IN ITS
+    COMMIT MESSAGE. 192fc50 is the worked precedent. No new mechanism is introduced.
+
+# ================================================================================================ #
+# CD-RULE-007 COMPLIANCE FOR THIS BOUNDARY
+# ================================================================================================ #
+continuity_write_at_this_boundary:
+  what_changed_in_ACTIVE_WORK: >
+    last_completed_checkpoint_sha advanced to 8e9456f (the CD-PL-F69 repair commit, resolved with
+    `git rev-parse` and `git cat-file -t`, never transcribed — CD-PL-F36); last_build_log_entry
+    advanced to this entry; continuity_record_commit returned to PENDING, the only truthful value at
+    write time; working_tree_state and next_safe_action brought current.
+  boot_verdict_after_this_write_working_tree: >
+    AMBER — CONTINUITY_MATCH/RESUME_AMBER, blocking_failures empty. NOT attributable to the roadmap
+    (CD-PL-F70); it is the operator's untracked wrapper files.
+  boot_verdict_on_the_committed_tree: >
+    RECORDED IN THE FOLLOW-UP COMMIT that resolves continuity_record_commit, per CD-RULE-008's
+    ordering clause and the 192fc50 precedent. The verdict of the commit carrying this entry cannot
+    be written inside this entry, and this seat will not pretend otherwise.
+  interim_measured_verdict: '8e9456f, the immediately preceding commit, boots GREEN on a pristine clone — CONTINUITY_MATCH/RESUME_GREEN, blocking_failures empty.'
+
+# ================================================================================================ #
+# WHAT IS UNCHANGED
+# ================================================================================================ #
+unchanged_at_this_boundary:
+  the_gate: 'UNCHANGED. Assurance PASS on all five criteria. No waiver. latest_admitted_run stays null until CD-RULE-001''s paired-verdict rule is satisfied (PO, non-relaxable).'
+  wo_2r_status: >
+    Increments 1, 2b, 3b, 4 and 5 RECONCILED AND ACCEPTED; the CD-PL-F61 reader dispatch RECONCILED
+    AND ACCEPTED at 253c38b. CD-ASR-F01 through F06 CLOSED AS A CLASS, subject to Assurance.
+    INCREMENT 6 IS ISSUED AND UNEXECUTED. No code changed at this boundary and no lane commit exists
+    beyond 253c38b.
+  no_scope_widened: >
+    This seat wrote no application logic, touched no check, and did not edit the increment-6 brief.
+    The dispatch stands exactly as 44a56ec issued it.
+
+status: IN_PROGRESS
+current_sha: PENDING
+next_safe_action: >
+  DISPATCH CD-ENG-WO2R-01 for WO-2R increment 6 against execution base 253c38b, from the brief
+  already durable in governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml at
+  increment_6_reconciliation_and_return — the register-and-contract sweep, three addenda at its
+  head, the prose-only scope extension leashed at 24 assertions / exit 0, and NO LOGIC. THEN
+  RECONCILE THE RETURN by running the arms yourself and writing FRESH READING probes against what
+  the seat ACTUALLY wrote: does each declared limit carry an executable example that reproduces; do
+  the three CD-RULE-004 places agree in substance; is any boundary asserting a carrier nobody
+  MEASURED (CD-RULE-006); has any CLASS claim become an enumeration of spellings. A declaration
+  sweep is the easiest increment to fake, because nothing it produces fails a test. Two increments
+  have already been sent back at exactly this step (CD-PL-F54, CD-PL-F59).
+  VERIFY THE PROSE-ONLY LEASH BY MEASUREMENT: check_engine_no_witness_reach must still report 24
+  assertions at exit 0, and the ten-check table and the full suite must be unchanged in BOTH columns.
+  A sweep that moves a verdict is not a sweep.
+  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never the
+  Engineer and never the Project Lead (PBG-SOD-001, non-waivable), with FRESH variants against an
+  exclusion set that is the union of the WO-2 auditor's ten, the Engineer's through V51 and R01-R08,
+  and the Project Lead's PL-Q1 through PL-X12. Hand it the NAMED QUESTIONS listed at
+  BL-20260819T183543Z-0035, and add CD-PL-F69 and CD-PL-F70 to them.
+  Commit at every boundary with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
+  VARIABLES, never `git -c` (CD-PL-F56 — it fails silently on this host), verified with
+  `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit. Every continuity write re-runs
+  `pbg boot` and records the verdict in the same entry (CD-RULE-007), and the verdict of record is
+  taken on a pristine clone at the committed SHA (CD-RULE-008).
+  DELIBERATE STOP at the gate either way, and on any Product Authority question.
+expected_next_actor: ENGINEER
+
+evidence_references:
+- '8e9456f — the CD-PL-F69 repair, BL-20260819T184405Z-0036 committed unedited, with the three-arm measurement in its commit message'
+- '44a56ec — the increment-6 issuance whose continuity write this entry repairs'
+- 'governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml — increment_6_reconciliation_and_return, ISSUED and UNEXECUTED'
+- 'governance/rules/PROJECT-RULES.md — CD-RULE-008 recorded at this boundary'
+- 'BL-20260819T183543Z-0035 (CD-D-060..CD-D-064), BL-20260819T184405Z-0036 (the issuance)'
+- "the operator's wrapper log .wo2-runner.log — the sixth seat's clean rc=0 exit at 18:46:28Z, and this seat's launch at 18:48:39Z"
+
+risks:
+- 'INCREMENT 6 IS STILL UNEXECUTED AND IT IS THE LAST ENGINEER INCREMENT BEFORE THE SOD CROSSING. Nothing in this entry advances WO-2R''s substance. The rework is exactly where 44a56ec left it.'
+- 'A DECLARATION SWEEP IS THE EASIEST INCREMENT TO FAKE, because nothing it produces fails a test. Reconcile it at least as hard as a code increment, not less. The prose-only scope extension puts a check file in an Engineer''s hands for the first time in this rework, and its leash is measurable and must actually be measured.'
+- 'CD-PL-F70 MEANS EVERY EARLIER BOOT VERDICT IN THIS LOG SHOULD BE READ AS "AMBER, CAUSE NOT ESTABLISHED" RATHER THAN "AMBER BECAUSE OF THE ROADMAP". Those entries are NOT edited (PBG-CONT-003). This one supersedes the reading, and CD-RULE-008 binds forward.'
+- 'CD-PL-F69 WAS INVISIBLE TO SIX CONSECUTIVE BOUNDARIES OF A PROJECT THAT HAS BEEN UNUSUALLY CAREFUL ABOUT CONTINUITY, because everyone ran the validator against the tree in front of them. Assume the same shape exists elsewhere: any check whose subject is "the repository" and whose input is "the working directory" is suspect.'

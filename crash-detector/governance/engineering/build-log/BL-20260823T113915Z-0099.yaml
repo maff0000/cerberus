@@ -1,0 +1,341 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 10, ITEMS 2, 4 AND 5 — **ONE ENTRY, BECAUSE THE PRODUCT OWNER RULED THEM ONE ACT,
+# AND ALSO BECAUSE THE LANE BLOCK HAS EXACTLY ONE NUMBER LEFT.**
+#
+# *** **THIS IS `0099`. THE LANE BLOCK 0060-0099 IS NOW EXHAUSTED AT BOTH ENDS.** ***
+# The dispatch ordered "a build log entry per item" for THREE items and simultaneously said
+# "IF YOU REACH 0099, STOP AND SAY SO — the block is bounded at both ends and renumbering a landed
+# entry is forbidden". Both cannot hold: 0060..0098 were already taken, leaving ONE slot for THREE
+# entries. **RAISED AS `CD-ENG-WO2R3-09-F01` AGAINST THE DISPATCH.** Resolved the only way that
+# breaks no rule: ONE entry for the whole act — which is what `PO-DECISIONS-0018` ruling 3 calls it
+# ("they clear WITH the remedy increment, IN THE SAME ACT, visibly") and what the dispatch's own
+# header calls it ("THE THREE ITEMS HERE ARE ONE ACT WITH THREE PARTS"). **NOTHING WAS RENUMBERED
+# AND NO LANDED ENTRY WAS EDITED. THE NEXT ACTOR IN THIS LANE HAS NO NUMBER AND MUST BE GIVEN ONE.**
+#
+# **THE SENTENCE THIS INCREMENT IS ALLOWED TO WRITE, AND THE ONLY ONE:**
+#   "Two instruments now carry their declared limits IN THEIR EXIT TEXT, on every run, with THIS
+#    RUN'S OWN measured numbers in them. Nothing was prevented that was not prevented before.
+#    The count of governed classes MEASURED SEALED AGAINST DELIBERATE IN-PROCESS FORGERY IS ZERO,
+#    and the sealing instrument now says so itself."
+#
+# **NO GATE MOVED. `CD-ASR-WO2R3-04-F01` IS NOT CLOSED. T2 IS RED. `CD-AC-002` AND `CD-AC-005` ARE
+# AMBER-NOT-CLOSED. THE WO-2 GATE IS SHUT.** This seat closed no finding and marked nothing closed.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0098. **AND ENDING.** 0100 and above is main's
+# (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T113915Z-0099
+timestamp_utc: "2026-08-23T11:39:15Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-09
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC10-REMEDY-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 5a37301de9dae217dcb7deec72ece3f21a34f04f
+parent_entry_id: BL-20260823T104515Z-0098
+schema_version: 1
+
+record_type: INCREMENT_CLOSE
+
+title: >
+  Items 2, 4 and 5 as one act: the sealing instrument's exit carries its declared limit with a
+  measured number (and the honest count is ZERO, not eleven); CD-D-166 closed by a declared limit
+  stating BOTH failure directions with re-measured numbers; the seventeen stale rows cleared with
+  the remedy, visibly, sixteen re-pointed and one deleted with its reason.
+
+# ---------------------------------------------------------------------------------------------- #
+BOOT_VERDICT:
+  identity: 'CD-ENG-WO2R3-09. Fresh. Not -01 through -08 and not any CD-ASR-* seat (PBG-SOD-001).'
+  role_source: 'Dispatch CD-DISPATCH-WO2R3-INC10-REMEDY-ENGINEER at 0d9d394 on main. Role not self-assigned (PBG-BOOT-002).'
+  base_resolved_by_me: >
+    `git rev-parse HEAD` -> 5a37301de9dae217dcb7deec72ece3f21a34f04f;
+    `git cat-file -t 5a37301de9dae217dcb7deec72ece3f21a34f04f` -> commit;
+    `git rev-parse --abbrev-ref HEAD` -> wo-2r3; `git status --porcelain` -> ZERO LINES.
+    Matches the dispatch's declared base. NO DRIFT.
+  base_state_RE_MEASURED_NOT_QUOTED: >
+    Suite `python3 -B -m pytest -q` -> **4 failed, 1711 passed**, all four in tests/test_the_fifteen.py.
+    Class-2 sweep -> **exit 1, FAIL — 548 sites, 18 violations** (17 STALE + 1 UNDECLARED MODULE,
+    ZERO UNDECLARED ADMISSION). Register checks -> **THIRTEEN exit 0, check_grant_matrix_live exit 3**.
+    Sealing instrument -> **exit 0, PASS — 99 assertions, 0 violations, SEALED: 51**.
+  CD_PL_F133_TESTED_MYSELF: >
+    The dispatch says CD-RT-012 is GREEN and every older document says it is RED at the tip.
+    **I RAN THE THREE CD-RT-012 CHECKS RATHER THAN BELIEVING EITHER**: check_egress_no_broker,
+    check_lockfile_denylist and check_no_execution_interface, `--root .` in this worktree,
+    ALL THREE exit 0. **THE DISPATCH IS RIGHT AND THE OLDER RECORD IS WRONG.**
+
+# ---------------------------------------------------------------------------------------------- #
+COMMITS_IN_ORDER:
+  - sha: 01ad3b58aa49024c5a1a57ec5d4fc518fe63dabc
+    item: ITEM_2
+    what: "the sealing instrument's exit carries DECLARED LIMIT 7; CD-RULE-004 in all three places"
+  - sha: e7840c5cf572ac3871a370e0b2171b0e7670d090
+    item: ITEM_2 (b)
+    what: "the plant re-measured at 01ad3b5, both arms, two pristine extractions"
+  - sha: 625e3c8a14336f3093b7e88b0f433e6a57140343
+    item: ITEM_4
+    what: "CD-D-166 closed by declared limit; the sweep's row and execution contract CREATED; new carrier"
+  - sha: 'THIS ENTRY IS COMMITTED WITH ITEM_5 AND CANNOT NAME ITS OWN SHA.'
+    item: ITEM_5
+    what: "the seventeen stale rows cleared and the UNDECLARED MODULE answered"
+
+# ---------------------------------------------------------------------------------------------- #
+ITEM_2__THE_EXIT_CARRIES_THE_LIMIT:
+  ruling: 'PO-DECISIONS-0018 ruling 1(b). BLUEPRINT §16 CD-D-172 and §17 CD-BP-005 read first, on main, read-only.'
+  what_changed: >
+    `main()` in tools/register/check_sealed_against_forged_establishment.py now prints DECLARED
+    LIMIT 7 from a `finally`, AFTER the PASS/FAIL line, on EVERY exit path — 0, 1, 2, 3 and an
+    unhandled exception. `Check.done` lives in tools/register/_support.py, which is NOT this
+    seat's file, so the limit is printed after it rather than woven into it.
+  THE_NUMBER__AND_IT_IS_NOT_ELEVEN: >
+    **THE DISPATCH SAID "ELEVEN IS THE NUMBER THIS PROJECT CAN DEFEND". I REPRODUCED THE 51 AND THE
+    40 AND THE 11 IN MY OWN SCRATCH PROBE, AND THEN MEASURED WHY THE ELEVEN SURVIVE. NOT ONE OF
+    THEM SURVIVES BECAUSE IT REFUSED ANYTHING.** Adding F2 (`type.__new__`) to the measurement:
+      - 87 of 99 classes examined are FORGED — exact type, forged value read back, ZERO package lines;
+      - 44 of the 51 the check calls SEALED are among them;
+      - the 7 that remain ALL report `NO STATE TO FORGE`: they declare no `__slots__` member and no
+        dataclass field, so there is NOTHING to forge and "not forged" is VACUOUSLY TRUE;
+      - the four that the eleven contained beyond those seven are the SEALED METATYPES, which
+        refused F1 only because `cls.__new__(cls)` is instance-shaped. `type.__new__(mcls, name,
+        bases, ns)` forges all four: exact type True, `__cd_forged__` readable, ZERO package lines.
+    **THE HONEST COUNT OF CLASSES MEASURED SEALED AGAINST DELIBERATE IN-PROCESS FORGERY IS ZERO,
+    AND THE INSTRUMENT'S EXIT NOW PRINTS THAT SENTENCE.** Eleven was a count of classes one probe
+    spelling did not reach.
+  what_was_NOT_done: >
+    **F1 AND F2 ARE NOT IN `ROUTES`, ARE NOT ASSERTED, AND DO NOT MOVE THE VERDICT.** Two reasons,
+    both load-bearing: appending them and calling the class closed is the CENSUS GAME ruled out in
+    PO-DECISIONS-0018 ruling 1; and scoring them would make this check permanently RED for
+    `object.__setattr__` and `type.__new__`, WHICH ARE CPYTHON WORKING AS DOCUMENTED — a red no
+    edit to this package could ever clear, reported as though it were a fixable defect. §17
+    CD-BP-005 declares preventing them OUT OF SCOPE: HIGH, ACCEPTED AND DECLARED.
+  CD_RULE_004_THREE_PLACES:
+    check_header: 'tools/register/check_sealed_against_forged_establishment.py — DECLARED LIMIT 7, plus LIMIT 6 carried in (see F02).'
+    register_entry: 'required-tests.yaml, the CD-AC-005 sealing row — LIMIT 6 and LIMIT 7 added.'
+    execution_contract: 'contracts/execution/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.md — LIMIT 7 added; the exit-code table row for 0 now says PASS AGAINST THE DECLARED ROUTES ONLY.'
+
+ITEM_4__CD_D_166_CLOSED_BY_DECLARATION:
+  ruling: 'PO-DECISIONS-0018 ruling 4 — "documentary + tools/sweep/".'
+  I_MEASURED_BEFORE_CONCLUDING: >
+    Three seats had already measured this field and I re-ran both arms myself in my own pristine
+    extractions rather than quoting them (CD-PL-F133). Commands and numbers are in the register row
+    and the execution contract, beside each other (CD-RULE-009).
+    DIRECTION 1 — renaming ONE local in engine/config.py (`window` -> `staleness_window`), the
+    gating relation entirely intact, 183 product tests still passing in that same tree: **31
+    GATES-SITE-DOES-NOT-EXIST refusals, 18 violations -> 53.**
+    DIRECTION 2 — all 43 `gates` repointed at a real site in `crash_detector.time_utc`, `diff -rq
+    src/` IDENTICAL to the control: **ZERO refusals, verdict bit-for-bit unmoved.**
+  THE_CANDIDATE_REPAIR_I_BUILT_AND_KILLED: >
+    **THE PART OF THIS ITEM MOST WORTH ATTACKING.** Requiring the `gates` module to transitively
+    import the DECLARING module holds for all 43 real rows and DOES refuse direction 2's arm.
+    REJECTED ANYWAY: of the 19 subject modules, TEN other than `crash_detector.admission`
+    transitively import it and THIRTEEN other than `crash_detector.establishment` import that, so
+    the same falsehood repointed at any real site in any of them satisfies the clause. **A GUARD
+    THAT STOPS THE REPORTED CASE AND NOT ITS CLASS HAS NOT BEEN TESTED** (PBG-ASSURE-017). Those
+    two counts are now DERIVED AND PRINTED AT EVERY RUN so the rejection is not taken on trust.
+  the_three_places_TWO_OF_WHICH_DID_NOT_EXIST: >
+    CD-ENG-WO2R3-07 reported that the Class-2 sweep had no register row and no execution contract,
+    so "three places" did not exist for it. **BOTH WERE CREATED**: the row `CD-RT-005-CLASS-2-SWEEP`
+    under CD-AC-005, and `contracts/execution/CD-RT-005-CLASS-2-SWEEP.md`. The row asserts a SURFACE
+    ENUMERATION and closes nothing, and says so in its own text.
+  and_the_sweeps_limit_now_prints_on_the_FAIL_path_too: >
+    Before this act the tool's only declared-limit text was on its `return 0` path — a limit that
+    appeared when the board was green and vanished when it was not. **THAT IS THE WRONG WAY ROUND**:
+    a reader looking at a FAIL is exactly the reader about to decide what the failure means.
+
+ITEM_5__THE_STALE_ROWS_CLEARED_IN_THE_SAME_ACT:
+  ruling: 'PO-DECISIONS-0018 ruling 3 — "they clear WITH the remedy increment, in the same act, visibly."'
+  the_map_RE_DERIVED_NOT_INHERITED: >
+    CD-ENG-WO2R3-08 left a dead-key -> live-key map in BL-0095..0098. **I DID NOT USE IT AS THE
+    SOURCE.** Every successor key below was derived by running this tree's own
+    `delegated_judgement_sweep.sweep()` and reading the live site set for each orphaned qualname,
+    then read against `src/crash_detector/admission.py` line by line to confirm the successor says
+    what I claim it says.
+  seventeen_rows__SIXTEEN_RE_POINTED_ONE_DELETED:
+    re_pointed: 16
+    deleted: 1
+    the_deletion: >
+      `('crash_detector.admission','_Exactly.refusal','MEMBERSHIP','type(value) in self.types')`.
+      **`_Exactly.refusal` HAS ZERO SITES AT THIS SHA** — derived from the live instrument, not
+      assumed. The comparison MOVED into the new `is_exactly` helper. A register key cannot point at
+      two site keys, and `_compile isinstance(declaration, _Admission)` moved to the same successor,
+      so ONE row now carries BOTH predecessors and this one is deleted with its full text copied
+      into a comment beside the deletion. **NOTHING IS LOST EXCEPT A KEY THAT NAMES NOTHING.**
+  the_four_DEFECT_OPEN_that_are_NO_LONGER_DEFECTS: >
+    `_EstablishedHere.__call__ isinstance(because, str)` · `_compile isinstance(declaration,
+    _Admission)` · `_compile isinstance(declaration, tuple)` · `each_of isinstance(within, tuple)`.
+    All four said "NOT FIXED BY THIS ACT AND NOT SCHEDULED TO BE BY IT". **A LATER ACT FIXED THEM
+    AND THEIR ROWS NOW SAY SO**, each carrying its predecessor's word, findings and measured_reach
+    verbatim. **THEY CLOSE SITES AND CLOSE NO FINDING**: CD-F-0002 and CD-F-0003 REMAIN OPEN and are
+    still cited by the sites that are still open, which `tests/test_the_fifteen.py::
+    test_the_four_repairs_CLOSED_NO_FINDING` now asserts.
+  the_three_OPEN_declarations_that_were_DISCHARGED: >
+    One `DELEGATED` (`SourceRecord.__post_init__ isinstance(self.cadence_seconds, int)`) and two
+    `OUT_OF_BOUND` (`FetchFailed.__post_init__ isinstance(status, int)`, `Malformed.__post_init__
+    isinstance(self.instance_path, str)`). All three carried "NOT PROVED TO BE CARRIED ANYWHERE".
+    **THEIR GROUND IS NOW DEAD BECAUSE ITEM 1 CHANGED THE LINE, NOT BECAUSE ANYONE RE-LABELLED
+    THEM**, and each successor row records the predecessor's word and residue sentence in full.
+    The register's `OUT_OF_BOUND` and `DELEGATED` counts are now ZERO — and
+    `test_the_OUT_OF_BOUND_count_is_NOW_zero_and_it_got_there_by_REPAIR_not_by_a_tally` asserts the
+    ROUTE and not the number, because zero alone would also be the reading if two inconvenient rows
+    had simply been deleted.
+  the_UNDECLARED_MODULE_answered: >
+    `crash_detector.admission` derives its module answer from declaring EVERY tier-2 site and had 8
+    of 36 undeclared — all 8 created by item 1's conversions moving sites from tier 1 to tier 2.
+    All 8 are now declared. Seven are the re-pointed successors; the eighth,
+    `is_exactly IDENTITY: kind is candidate`, is the new helper's own site and is the successor of
+    two dead keys.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_LINE_I_DID_NOT_CROSS:
+  what_the_dispatch_forbade: 'Keeping a dead clause alive so a register key survives and a suite stays green.'
+  what_I_did: >
+    **NOTHING UNDER `src/crash_detector/` WAS TOUCHED BY ANY OF THE THREE ITEMS.** `git diff
+    5a37301..HEAD --stat -- src/` is empty. The one product-source edit in this whole increment —
+    ITEM 4's direction-1 rename — lived only inside a throwaway extraction under
+    /tmp/cd-eng-wo2r3-09/ and never entered the lane. No clause was added to any check to make a key
+    survive. The one candidate clause I did build (item 4) was REJECTED and the number that killed
+    it is printed at every run.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_SWEEP_PASSES_NOW__AND_THE_DISPATCH_WARNED_ME_ABOUT_EXACTLY_THIS:
+  the_warning: '"A PASS HERE WOULD BE THE MOST SUSPICIOUS RESULT THIS INCREMENT COULD PRODUCE."'
+  the_result: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **exit 0, PASS — 548 sites over 19 modules.**'
+  WHY_I_BELIEVE_IT_ANYWAY_AND_WHERE_TO_ATTACK_IT: >
+    All 18 violations were REGISTER BOOKKEEPING created by item 1's conversions, not findings about
+    the code: 17 orphaned keys and one module whose derivation lost 8 sites. Each was cleared by
+    naming a live successor the instrument itself reports, or by deleting a key that names nothing.
+    **NO VIOLATION WAS CLEARED BY DELETING THE ENTRY THAT COMPLAINS** — the register is asserted by
+    set equality in BOTH directions, so deleting an orphaned row without a successor would have left
+    its site undeclared and the sweep red; and `test_a_FIXED_Category_C_site_is_GONE_and_its_
+    successor_is_EXACT` asserts, per site, that the successor EXISTS as a live site.
+    **THE ATTACK SURFACE IS THE DISPOSITION TEXT AND NOT THE EXIT CODE**, which is the sweep's own
+    DECLARED LIMIT 1. Sixteen rows now claim `EXACT` on my authority. The two that are cheapest to
+    falsify and that I want attacked first are the SHORT-CIRCUIT claims:
+    `type(because) is not str or not because.strip()` and `type(within) is not tuple or not within`
+    — both are `EXACT` ONLY because `or` does not evaluate its right operand when the left is true.
+    **REORDER EITHER PAIR OF OPERANDS AND MY ROW IS FALSE AND NOTHING IN THIS PROJECT WOULD NOTICE.**
+    I said so in the rows themselves rather than leaving it to be found.
+  what_the_zero_still_does_not_mean: >
+    The tool prints it itself, on this very run: "A PASS here is a statement about the SURFACE and
+    never about the class ... including 6 sites DECLARED AS OPEN DEFECTS ... A zero exit code here
+    is ARITHMETIC over the declaration set, not evidence about the code."
+  what_REMAINS_OPEN_and_is_RIGHT_to_remain: >
+    **SIX `DEFECT_OPEN` TIER-1 SITES**, unchanged by this act and not this seat's to close:
+    `crash_detector.admission::_compile ISINSTANCE isinstance(declaration, type)` ·
+    `crash_detector.admission::_type_tuple ISINSTANCE isinstance(value, type)` ·
+    `crash_detector.admission::_is_defined_in_a_class_body DUCK` ·
+    and `crash_detector.establishment`'s three DUCK sites. The first two are kept with a MEASURED
+    reason — exact type there refuses this package's own metaclass-sealed declarations, which is the
+    property that makes them trustworthy. **THREE `CARRIER_ONLY` SITES** remain, machine-checked.
+    **CD-F-0001..CD-F-0004 ALL REMAIN `OPEN`.**
+
+# ---------------------------------------------------------------------------------------------- #
+EVIDENCE__COMMANDS_BESIDE_THE_NUMBERS__CD_RULE_009:
+  suite_before: '`python3 -B -m pytest -q` at 5a37301 -> **4 failed, 1711 passed**'
+  suite_after: '`python3 -B -m pytest -q` -> **1726 passed, 0 failed**'
+  suite_delta_explained: >
+    +15 tests: 10 new in tests/test_the_declared_limits_reach_the_exit.py, 5 net new in
+    tests/test_the_fifteen.py (4 parametrised repair tests + test_the_four_repairs_CLOSED_NO_FINDING,
+    less the ones folded). The 4 base failures: three were the Class-2 register's own STALE/UNDECLARED
+    state, cleared by item 5; the fourth was the tier-1 tally, RED because four defects had been
+    REPAIRED, and it is superseded by a test that asserts the four repairs site by site.
+  sweep_before: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **exit 1, FAIL — 548 sites, 18 violations**'
+  sweep_after: 'same command -> **exit 0, PASS — 548 sites over 19 modules**, followed by DECLARED LIMIT 5'
+  register_checks_before: '**13 exit 0, check_grant_matrix_live exit 3**'
+  register_checks_after: '**13 exit 0, check_grant_matrix_live exit 3 — UNCHANGED.** The environment condition is documented and is not mine.'
+  register_validator: >
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify` -> exit 2, VALIDATION FAILED
+    with SIX `unknown field: planted_violation` / `planted_violation_note` errors. **IDENTICAL AT THE
+    BASE**, verified by running it inside a pristine `git archive 5a37301` extraction. PRE-EXISTING,
+    NOT MINE, NOT TOUCHED. GATE: SHUT, PID_ACCEPTANCE_SATISFIED: NOT DERIVED — before and after.
+
+# ---------------------------------------------------------------------------------------------- #
+FINDINGS_RAISED_BY_THIS_SEAT:
+  CD-ENG-WO2R3-09-F01:
+    against: 'THIS DISPATCH'
+    severity: LOW
+    what: >
+      The dispatch orders "a build log entry per item" for THREE items and, in the same field, "Lane
+      block 0060-0099, CONTINUE FROM 0099 ... IF YOU REACH 0099, STOP AND SAY SO". Entries 0060-0098
+      were already landed, so exactly ONE number existed for THREE entries. **THE TWO INSTRUCTIONS
+      CANNOT BOTH BE OBEYED.** Resolved by writing ONE entry for the whole act, which is what ruling
+      3 and the dispatch's own header both call it. **AND SAID, AS ORDERED: 0099 IS REACHED AND THE
+      BLOCK IS EXHAUSTED. THE NEXT LANE ACTOR HAS NO NUMBER.**
+  CD-ENG-WO2R3-09-F02:
+    against: 'THE PROJECT (pre-existing), in the file that cites the rule'
+    severity: LOW
+    what: >
+      `CD-RULE-004` requires a guard's declared limits to be stated identically in three places.
+      **DECLARED LIMIT 6 of the sealing instrument (no import-time refusal) stood in the execution
+      contract and in NEITHER of the other two.** Carried into the check header and the register
+      entry with no change of meaning. The new perimeter limit is therefore numbered 7, not 6.
+  CD-ENG-WO2R3-09-F03:
+    against: 'MY OWN WORK'
+    severity: MEDIUM
+    what: >
+      The first draft of the sweep's exit block spelled the refusal rule with underscores, and FOUR
+      tests in tests/test_upstream_of_the_path.py — which assert those rule tokens are ABSENT from a
+      clean run's stdout — went RED. **A PARAGRAPH EXPLAINING A RULE MUST NOT ANSWER A GREP FOR A
+      RULE THAT FIRED.** I changed my text, NOT the tests, and the prohibition is now itself a test
+      (`test_the_sweep_limit_DOES_NOT_REPRODUCE_a_rule_token_that_could_be_grepped_for`).
+  CD-ENG-WO2R3-09-F04:
+    against: 'MY OWN WORK — AND IT DISCOUNTS MY OWN EVIDENCE'
+    severity: MEDIUM
+    what: >
+      Item 4's declared limit transcribes "all 43 `gates` values" from arms measured at `625e3c8`.
+      **ITEM 5 THEN RE-POINTED FIVE ROWS AWAY FROM THE WORD, SO THE LIVE COUNT IS 38 AND MY OWN
+      EVIDENCE TEXT WENT STALE WITHIN THE SAME INCREMENT.** That is DECLARED LIMIT 5's own direction
+      1 happening to the limit's own evidence. Handled by pinning the number to the SHA it was
+      measured at, and by having the instrument DERIVE and PRINT the live count beside it. **LEFT
+      VISIBLE RATHER THAN TIDIED**, because it is the cheapest demonstration of the defect I just
+      declared.
+  CD-ENG-WO2R3-09-F05:
+    against: 'MY OWN WORK'
+    severity: MEDIUM
+    what: >
+      **SIXTEEN REGISTER ROWS NOW CLAIM `EXACT` ON MY AUTHORITY AND THE SWEEP CANNOT CHECK ONE OF
+      THEM** (its own DECLARED LIMIT 1). Two are weaker than they read: `type(because) is not str or
+      not because.strip()` and `type(within) is not tuple or not within` are `EXACT` ONLY because
+      `or` short-circuits. **REORDER EITHER PAIR OF OPERANDS AND MY ROW IS FALSE AND NOTHING IN THIS
+      PROJECT WOULD NOTICE.** No test pins the operand order. Named in the rows themselves and here.
+
+# ---------------------------------------------------------------------------------------------- #
+RESIDUE_DECLARATION__CD_RULE_006:
+  the_perimeter_itself: >
+    **DELIBERATE IN-PROCESS FORGERY IS NOT PREVENTED, AND AFTER THIS ACT THE INSTRUMENT SAYS SO WITH
+    A NUMBER INSTEAD OF NOT SAYING IT.** The layer measured to hold it is **NONE AT WO-2**. The owed
+    layer is DETECTION — witness divergence and the provenance chain, the FORGERY-DETECTION
+    OBLIGATION owed at WO-3 as a first-class criterion (BLUEPRINT §16 CD-D-172) — **AND IT IS NOT
+    BUILT.** The only thing standing between a forged magnitude and a wrong published number today
+    is the blast-radius argument §17 CD-BP-005 makes: the detector is ADVISORY (D1) and no money
+    moves on it (D2). **THAT IS A SCOPE FACT, NOT A GUARD. NOT PROVED TO BE CARRIED ANYWHERE.**
+  the_gating_relation: >
+    **NO LAYER OF THIS PROJECT VERIFIES THAT A `gates` CLAIM IS TRUE, AND NONE IS CLAIMED TO.**
+    Direction 2 measured 43 false claims passing in silence. The claim lives in each row's `note`
+    prose. **NOT PROVED TO BE CARRIED ANYWHERE.**
+  my_sixteen_EXACT_claims: >
+    The runtime carrier for exact-type admission generally is `tests/test_admission.py` and
+    `tests/test_own_terms.py`, and the sweep's LIMIT 1 names them. **BUT NO TEST PINS THE OPERAND
+    ORDER OF THE TWO SHORT-CIRCUIT SITES** (F05). For those two rows specifically:
+    **NOT PROVED TO BE CARRIED ANYWHERE.**
+  the_declared_limits_reaching_the_exit: >
+    **THIS ONE IS CARRIED AND THE CARRIER IS MEASURED.** `tests/test_the_declared_limits_reach_the_
+    exit.py`, 10 tests, asserts both limits on exit 0, 1, 2 and 3 and AFTER the verdict line, and has
+    TWO COUNTERFACTUAL ARMS that delete the one `print` line from a throwaway copy and require every
+    assertion to fail. Verified failing when broken, not assumed.
+  the_48_UNSEALABLE_classes: 'Unchanged by this act and still **NOT PROVED TO BE CARRIED ANYWHERE**.'
+
+# ---------------------------------------------------------------------------------------------- #
+NEXT_SAFE_ACTION: >
+  The Project Lead reconciles BY MEASUREMENT on its own `git archive` extractions and banks.
+  **RECONCILIATION IS NOT ACCEPTANCE** (PBG-AUTH-003). Then the EIGHTH fresh Assurance seat
+  (CD-ASR-WO2R3-05, never this seat — PBG-SOD-001) over the whole of WO-2R3, graded against the
+  DECLARED perimeter. **TELL IT THE SWEEP'S PASS AND THE SUITE'S ALL-GREEN ARE THE FIRST TWO THINGS
+  TO ATTACK**, and give it F05's two short-circuit rows by name. **AND ISSUE THE NEXT LANE ACTOR A
+  BUILD-LOG NUMBER: 0099 IS SPENT.**

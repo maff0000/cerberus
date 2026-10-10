@@ -1,0 +1,424 @@
+# ================================================================================================ #
+# THE THIRD GATE. RED ON FOUR OF FIVE CRITERIA — AND THE PRODUCT AUTHORITY'S OWN SCOPING OF
+# CD-AC-002 IS DEFEATED, WHICH THE PRODUCT AUTHORITY ITSELF RULED IS A SUSPENSION TRIGGER.
+#
+# THE PROJECT LEAD REPLICATED THE THREE HEADLINE FINDINGS ON ITS OWN DRIVERS BEFORE RECORDING THIS.
+# ALL THREE REPRODUCED. IMPLEMENTATION SUSPENDS ON THE PRODUCT OWNER'S OWN PRE-STATED TERMS AND THE
+# NEXT ACTOR IS THE PRODUCT AUTHORITY.
+# ================================================================================================ #
+
+entry_id: BL-20260820T022200Z-0047
+timestamp_utc: "2026-08-20T02:22:00Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: GATE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: d80b77938161760c62b4626a70f87a9658fe057b
+audited_sha: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5
+parent_entry_id: BL-20260820T014343Z-0046
+schema_version: 1
+
+action_summary: >
+  THE THIRD ASSURANCE SEAT, CD-ASR-WO2R2-01, RETURNED **RED OVERALL** on target f30e63c:
+  CD-AC-001 RED, CD-AC-002 RED, CD-AC-003 PASS (scoped), CD-AC-005 RED, CD-AC-012 RED. The WO-2
+  gate is NOT MET for the THIRD time, on grounds different from both previous gates.
+  THE CENTRAL RESULT IS NOT THE COUNT OF REDs. It is that the auditor ACCEPTED THE PRODUCT
+  AUTHORITY'S INVITATION AND DEFEATED THE SCOPING THE GATE RESTED ON — and that THREE OF THE FOUR
+  RED FINDINGS NEED NO SOURCE EDIT AT ALL, which is the thing the SECOND auditor expressly said it
+  could not claim. A route with no source text is invisible to the entire static apparatus by
+  CONSTRUCTION, not by oversight.
+  THE PROJECT LEAD DID NOT TAKE THE AUDITOR'S WORD FOR ANY OF IT. It replicated the three headline
+  findings on its own drivers, written from the product's own modules, against extractions it
+  proved byte-identical before and after. ALL THREE REPRODUCED EXACTLY.
+  CD-D-076'S TRIGGER CONDITION IS MET. Option (C) SUSPENSION applies ON THE PRODUCT OWNER'S OWN
+  PRE-STATED TERMS. NO FURTHER IMPLEMENTATION IS DISPATCHED. ONE FINDING IS RAISED AGAINST THIS
+  PROJECT LEAD'S OWN DISPATCH (CD-PL-F78). NOTHING IS ADMITTED, NOTHING IS ACCEPTED, AND NOTHING IS
+  DISPOSED — DISPOSITION IS THE PRODUCT OWNER'S (PBG-AUTH-003).
+
+# ================================================================================================ #
+# 1. CD-D-007 SUSPICION PROCEDURE, AND THE MUTATION CHECK ON THE AUDITED TREE
+# ================================================================================================ #
+suspicion_procedure:
+  main_worktree: 'CLEAN at d80b779 on main. Nothing untracked under governance/. The eleven operator wrapper entries unchanged and still NOT PROJECT STATE.'
+  the_lane: '/srv/crash-detector-wo2 at f30e63c, porcelain ZERO. Untouched by the audit, as required.'
+  THE_AUDITED_WORKTREE_WAS_CHECKED_FOR_MUTATION_TWO_WAYS: >
+    /srv/crash-detector-wo2r2-audit, the DETACHED worktree the seat was dispatched against.
+      (a) GIT, WHICH IS THE AUTHORITATIVE CHECK: `git rev-parse HEAD` reads
+          f30e63cbac6782ec5d7789071ee26be0ba7fe2e5, EQUAL to the dispatched target;
+          `git status --porcelain` returns ZERO LINES; `git diff --stat f30e63c` is EMPTY.
+      (b) THE FINGERPRINT recorded at issue, re-taken with the identical command:
+          4012a5c3877591a863b3cc6016f7af9803e6e9309f2128109b81347769037e2a, REPRODUCES EXACTLY.
+    THE TARGET WAS NOT MUTATED. The seat's declaration that it executed nothing inside the audit
+    worktree and ran every arm in throwaway /tmp extractions is CONSISTENT WITH WHAT WAS MEASURED.
+  the_evidence_directory: >
+    /srv/crash-detector-wo2r2-evidence — 39 files, NONE executable and NONE a symlink, verified with
+    `find -type f -perm /111 -o -type l` (PBG-ASSURE-001). Every file is .md, .txt or .out; the one
+    probe is `.py.txt` and mode 0664, which is DATA and not a runnable artefact.
+  TRANSPORTED_UNALTERED: >
+    Copied to governance/assurance/WO-2R2/ and VERIFIED BYTE-IDENTICAL with `diff -r` against the
+    auditor's originals, which reported NO DIFFERENCES. The Project Lead transports the auditor's
+    artefacts; IT DOES NOT EDIT THEM. Nothing in that directory is this seat's words.
+
+# ================================================================================================ #
+# 2. THE VERDICT AS RETURNED
+# ================================================================================================ #
+the_verdict:
+  actor: CD-ASR-WO2R2-01
+  target: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5
+  dispatch: governance/dispatch/CD-DISPATCH-WO2R2-ASSURANCE.yaml
+  independence: >
+    DECLARED CLEAN and the basis stated: not CD-ASR-WO2-01, not CD-ASR-WO2-02, never an Engineer on
+    this project, no commit on wo-2-skeleton — VERIFIED BY THE SEAT by enumerating every author on
+    the branch rather than by assertion. No INDEPENDENCE_CONFLICT.
+  per_criterion:
+  - 'CD-AC-001 — RED (confidence MEDIUM-HIGH). ASR3-F05.'
+  - 'CD-AC-002 — RED (confidence HIGH). ASR3-F02, and THE SCOPING DEFEATED.'
+  - 'CD-AC-003 — PASS (scoped) (confidence HIGH). The live contrast CLOSED BY THE AUDITOR ITSELF.'
+  - 'CD-AC-005 — RED (confidence HIGH). ASR3-F04.'
+  - 'CD-AC-012 — RED (confidence HIGH). ASR3-F08.'
+  overall: 'RED. The gate is per criterion and the overall verdict is the WORST of them.'
+  the_headline_the_project_lead_would_not_want_a_reader_to_miss: >
+    THREE OF THE FOUR RED FINDINGS NEED NO SOURCE EDIT AT ALL. Every plant in this gate, and both
+    previous auditors' HIGH findings, required committing code — CD-ASR-WO2-02 said in terms "I do
+    not claim a route from configuration or data alone". THIS SEAT CLAIMS EXACTLY THAT AND MEASURED
+    IT. The consequence for grading is structural: `check_no_blend`, the sweep and every AST guard
+    are READS OF SOURCE TEXT, and a route with no source text is invisible to all of them BY
+    CONSTRUCTION rather than by oversight.
+
+# ================================================================================================ #
+# 3. WHAT THE PROJECT LEAD REPLICATED ITSELF, BEFORE RECORDING ANY OF IT
+# Its own drivers, written from the product's own modules. Not the auditor's probes.
+# ================================================================================================ #
+independent_replication:
+  method: >
+    `git archive f30e63c | tar -x` into /tmp. Drivers written by this seat from the product's
+    source — DialSpec, ContributionModel, ConfigSnapshot, SourceRegistry, SourceRecord,
+    ObservationRecord, OK, evaluate and number_for_dial_slot — NOT copied from the auditor's probe.
+    `python3 -B` throughout. The src/ + tools/ tree was hashed BEFORE AND AFTER every run.
+
+  PL_C1_ASR3_F02_THE_SUSPENSION_TRIGGER_CONFIRMED: >
+    THE MOST IMPORTANT MEASUREMENT ON THIS BOUNDARY, so its conditions are stated in full. This
+    seat built a WO-2 candidate from DELIVERED PUBLIC API ONLY. NO patch was applied. NO file under
+    src/ was edited. NO project type was subclassed. NO private slot was touched, NO
+    `object.__setattr__` was called and NO dunder was defined. The model performs NO I/O, reads NO
+    clock and reads NO environment, so it does not breach the documented purity contract on
+    ContributionModel — IT MERELY REMEMBERS, WHICH NOTHING FORBIDS.
+    ONE ordinary ContributionModel instance, injected into BOTH DialSpecs. Two sources registered.
+    Two OK observations. MEASURED:
+      ONE model object in BOTH specs : True
+      TRUE equity level  (input)     : 0.9
+      TRUE monetary level(input)     : 0.1
+      equity   -> DialMagnitude(dial_id='equity_crash',        quantity=0.9)
+      monetary -> DialMagnitude(dial_id='monetary_debasement', quantity=0.5)
+      number_for_dial_slot('equity_crash')        -> 0.9   [NOT REFUSED]
+      number_for_dial_slot('monetary_debasement') -> 0.5   [NOT REFUSED]
+      src+tools sha256 BEFORE = AFTER = 7299ed26a0d566e16c83f35671d43a6df0a20b9d657aa1bfe6e1b8e1a04eb880
+    THE MONETARY DIAL PUBLISHES 0.5 AGAINST A TRUE INPUT OF 0.1, THROUGH `number_for_dial_slot` —
+    the module's own words for itself are "THE ONE PLACE a dial magnitude becomes a number that may
+    be published" — AND IT IS NOT REFUSED. Every field of the admission claim is TRUE except the
+    number: the dial is right, the cited input genuinely arrived and genuinely was used.
+    THAT IS THE EXACT PRODUCT FAILURE PID §3.1 CALLS CONSTITUTIONAL: averaging cancels the signal.
+    ASR3-F02 IS CONFIRMED. HIGH.
+    WHY THIS IS STRICTLY STRONGER THAN CD-ENG-WO2R2-F03 AND PL-Z4, which this project already had:
+    BOTH OF THOSE WERE PATCHES. This is configuration and data against a tree proven unmodified.
+
+  PL_C2_THE_ENTRY_POINT_FINDING_CONFIRMED: >
+    The auditor's structural claim is that the VALUE TYPES genuinely re-establish their fields —
+    which this seat has itself measured across two boundaries and does not doubt — BUT THAT THE
+    ENTRY POINTS DO NOT REQUIRE THE VALUE TYPES. Measured on this seat's own driver:
+      resolve_panel(a duck object that is not a PanelRow) -> Agrees -> 'WITNESS AGREES'
+      resolve_panel(an object whose STORED state is 'UNAVAILABLE' but whose `state` PROPERTY
+                    answers 'AGREES')                     -> Agrees -> 'WITNESS AGREES'
+      CONTROL, THE SAME VALUES THROUGH THE VALUE TYPE:
+      PanelRow(state='UNAVAILABLE')                       -> Unavailable -> 'WITNESS UNAVAILABLE'
+    THE CONTROL IS THE PROOF. The value type refuses the identical value that the entry point
+    admits. A caller-supplied PROPERTY executes and selects the panel constructor.
+    AND IT REFUTES INCREMENT 3'S NARROWED INVARIANT IN TERMS. That narrowing — written at this
+    Project Lead's own direction under CD-PL-F76 — says "WHAT STILL EXECUTES, AND IT IS EXACTLY ONE
+    THING: `tzinfo.utcoffset`". IT IS NOT EXACTLY ONE THING. This is stated plainly because the
+    Project Lead ordered that sentence and is therefore the last actor who should be soft about it.
+
+  PL_C3_CD_AC_012_DEFEATED_BY_SPELLING_CONFIRMED: >
+    The same broker SDK, the same file, two spellings, on this seat's own copies:
+      `futu-api==9.3.5308`                                   -> EXIT 1, FAIL, 2 violations. CAUGHT.
+      `-e git+https://github.com/futu/futu-api.git#egg=futu-api` -> EXIT 0, PASS, 134 ASSERTIONS.
+    134 IS THE CLEAN-ARM ASSERTION COUNT. The escaping spelling does not merely pass — IT MOVES THE
+    ASSERTION COUNT NOT AT ALL, so a reviewer watching for a shrinking denominator cannot see it
+    either. Deny-by-default is not defeated by an unregistered name; IT IS DEFEATED BY A SPELLING
+    THE PARSER DOES NOT RECOGNISE AS DECLARING A DISTRIBUTION, so the name never enters the set that
+    gets judged. ASR3-F08 IS CONFIRMED.
+    THE PROJECT LEAD NOTES AGAINST ITS OWN PRIOR BOUNDARY: at BL-...-0046 this seat measured that
+    the refusal "SURVIVES A RENAME in the SAFE direction" on three unregistered names. THAT
+    MEASUREMENT WAS TRUE AND THE INFERENCE AVAILABLE FROM IT WAS TOO WIDE. Renaming the DISTRIBUTION
+    is safe; changing the SPELLING OF THE REQUIREMENT LINE is not, and this seat did not test that
+    axis. CD-D-079 asks for a counterfactual on the structure credited; it does not ask whether the
+    INPUT GRAMMAR has other forms, and here that was the gap.
+  what_was_NOT_replicated_by_the_project_lead: >
+    ASR3-F05 (CD-AC-001) and ASR3-F04's full extent were NOT independently replicated by this seat —
+    NOT DOUBTED, NOT REACHED. The auditor's evidence for them is durable at
+    governance/assurance/WO-2R2/02-CD-AC-005-AND-001.md with its arms. Three replications were
+    taken because three were enough to establish that the gate is RED and that CD-D-076's trigger is
+    met; a fourth would not have changed either. STATED SO IT IS NOT MISTAKEN FOR FULL COVERAGE.
+
+# ================================================================================================ #
+# 4. WHAT THE AUDITOR CLOSED *FOR* THE PROJECT LEAD — the declared-unverified list
+# ================================================================================================ #
+the_unverified_list_was_worth_writing:
+  note: >
+    The dispatch handed the auditor six things the Project Lead admitted it had NOT verified. FOUR
+    CAME BACK ANSWERED. That is the strongest argument this project has yet produced for writing
+    down your own gaps rather than hoping nobody asks.
+  UV_2_DISCHARGED: >
+    THE REGENERATED PLANT. Unverified across TWO Project Lead boundaries. The auditor compared the
+    old and new patches' ADDED AND REMOVED LINES and found them BYTE-IDENTICAL by sha256; only blob
+    hashes, offsets and context lines moved. The Engineer's account of its own regeneration is
+    CONFIRMED BY SOMEBODY WHO DID NOT WRITE IT.
+  UV_3_DISCHARGED_AND_IT_IS_THE_ONE_PASS: >
+    THE ELEVENTH PLANT. CD-RT-003-GRANT-MATRIX-LIVE had returned EXIT 3 PRECONDITION_NOT_MET in both
+    arms for want of a store, across every prior boundary. THE AUDITOR BUILT A DIGEST-PINNED
+    THROWAWAY POSTGRES UNDER SD-3 AND CLOSED THE CONTRAST AT THE TARGET SHA — 0 -> 1, 138
+    assertions, 9 violations — then verified the catalogue independently: `cd_engine` 16/16 FALSE on
+    `witness`, with PostgreSQL itself refusing a live session. THAT IS WHY CD-AC-003 IS THE ONE
+    PASS, and it is a PASS earned on live evidence rather than inherited.
+    Teardown evidenced at governance/assurance/WO-2R2/arms/SD-3-teardown.txt; 36 unrelated
+    containers on this host untouched, as the dispatch required.
+  UV_6_SETTLED_BY_SOMEONE_WHO_IS_NOT_THE_BENEFICIARY: >
+    `scope: CLASS`. The auditor OVERRULES the Engineer's retention, on evidence — while recording
+    that `INSTANCE` would be a different falsehood. Its sharper point is that NEITHER VALUE IS TRUE
+    and that the check itself prints "SCOPE IS DECLARED_SURFACE, NOT CLASS" into every PASS artefact
+    it produces, CONTRADICTING THE REGISTER IN THE REGISTER'S OWN EVIDENCE. That is a defect neither
+    the Engineer nor this Project Lead identified.
+  UV_1_PARTIALLY: '84/84 apply, and the whole suite was run under all 14 WO-2R2 variants — never done before — with no anomalous pattern. The 70 older corpus patches remain apply-checked only.'
+  still_open: 'UV-4 (the three AMBERs and F03-F13) and UV-5 (CD-ENG-WO2R2-F05) remain unverified by anybody.'
+
+# ================================================================================================ #
+# 5. A FINDING AGAINST THIS PROJECT LEAD'S OWN DISPATCH
+# ================================================================================================ #
+findings_raised_by_the_project_lead:
+- id: CD-PL-F78
+  severity: LOW
+  raised_by: 'THE AUDITOR, against the Project Lead. Adopted and recorded here by the Project Lead against itself.'
+  against: 'governance/dispatch/CD-DISPATCH-WO2R2-ASSURANCE.yaml, written by PROJECT_LEAD_SEAT_01 at the previous boundary.'
+  what_is_wrong: >
+    THE DISPATCH RECORDS A TREE FINGERPRINT VALUE BUT NOT THE COMMAND THAT PRODUCES IT. Its stated
+    definition — "sha256 of the sorted sha256sums of all 392 files" — is ambiguous in at least four
+    ways that change the answer: whether `.git` is pruned, whether paths are `./`-prefixed, the sort
+    locale, and whether the final digest is taken over `sha256sum`'s full output lines or over the
+    hashes alone. THE AUDITOR TRIED TEN CONSTRUCTIONS AND COULD NOT REPRODUCE IT, and said so.
+    A FINGERPRINT AN AUDITOR CANNOT RECOMPUTE IS NOT AN INTEGRITY CONTROL. It is an assertion by the
+    party being audited, and it fails in exactly the direction that matters: it can only ever be
+    checked by the person who chose it.
+  it_was_raised_before_and_not_acted_on: >
+    THE AGGRAVATING FACT, AND IT IS THIS SEAT'S TO OWN. CD-ASR-WO2-02 raised this same point and
+    RECOMMENDED RECORDING THE EXACT COMMAND. It was not acted on, and this Project Lead then wrote a
+    third dispatch with the same defect. A recommendation that survives a gate and dies in the
+    Project Lead's attention is a continuity failure, not an oversight.
+  what_is_NOT_affected: >
+    NOTHING ABOUT THE MUTATION CHECK'S CONCLUSION. The authoritative check is GIT — `git rev-parse
+    HEAD` equal to the target, `git status --porcelain` zero, `git diff --stat` empty — and it is
+    reproducible by anybody. The fingerprint reproduces exactly when re-taken with the command that
+    made it. THE TARGET WAS NOT MUTATED AND THAT CONCLUSION DOES NOT REST ON THE FINGERPRINT.
+    The auditor also published TWO fingerprints WITH their construction so its own return can be
+    checked independently, which is the correction demonstrated rather than merely proposed.
+  disposition: >
+    NOT REPAIRED AT THIS BOUNDARY. The dispatch it concerns is DISCHARGED — the seat has returned —
+    so editing it now would be tidying a spent record. THE FIX BELONGS TO THE NEXT DISPATCH OF ANY
+    KIND: record the EXACT COMMAND beside any fingerprint, or do not record a fingerprint. Written
+    down here so it survives this seat, which is precisely what did not happen last time.
+
+# ================================================================================================ #
+# 6. THE RULING — AND ITS LIMIT
+# ================================================================================================ #
+decisions:
+- id: CD-D-084
+  title: 'CD-D-076''S TRIGGER CONDITION IS MET. THE CD-AC-002 SCOPING HAS FALLEN.'
+  ruling: >
+    CD-D-076, recorded at BL-20260819T225000Z-0044 precisely so this moment would not depend on
+    anyone's memory, states the condition in terms: IF THE THIRD ASSURANCE SEAT CAN EXERCISE AN
+    INJECTED-MODEL ROUTE INSIDE A WO-2 CANDIDATE'S REAL POPULATION, THE RULING FALLS AND (C)
+    SUSPENSION APPLIES. The seat did. THE PROJECT LEAD REPLICATED IT ON ITS OWN DRIVER, against a
+    tree it proved byte-identical before and after, using delivered public API and no source edit.
+    THE CONDITION IS MET ON MEASUREMENT AND NOT ON ARGUMENT.
+  the_premise_that_failed_and_why_it_is_not_a_reproach_to_anyone: >
+    The ruling's factual premise was that "a WO-2 candidate registers no model, no source, deploys
+    nothing and has no publication layer". The failure is in ONE WORD OF IT: REGISTERS. The empty
+    `CONTRIBUTION_MODELS` registry is real — and INJECTION NEVER CONSULTS IT.
+    `DialSpec.contribution_model` is a plain field, so the emptiness of the registry says nothing
+    whatever about the reachability of the route. The Product Owner reasoned honestly from a true
+    fact that turned out not to be load-bearing, AND WROTE THE TEST THAT WOULD CATCH EXACTLY THAT.
+    Ruling 4 in the PO's own words: "A PO scoping a criterion at the moment of failure is the
+    acceptance-semantics trap; the only honest defence is handing the auditor the knife."
+    THE KNIFE WAS HANDED OVER AND IT WORKED. That is the loop functioning, not failing.
+  the_dilemma_the_auditor_measured_rather_than_argued: >
+    Recorded because it is the part that makes a narrower re-scoping unattractive. Under the SHIPPED
+    configuration both dials read `Unknown` and NO DIAL NUMBER EXISTS AT ALL. So: read the
+    population as the shipped config and CD-AC-002 IS VACUOUS at WO-2 — "the two dials are never
+    blended" satisfied by there being nothing to blend, and the gate certifies nothing; read it as
+    what the delivered code admits, and the injected-model route is in population and is exercised.
+    THERE IS NO THIRD BRANCH ON THE EVIDENCE PRESENTED, and the project's own conduct — two
+    increments of type closures on the derivation door, three declared CD-AC-002 contrast tests,
+    plants against them — presupposes the second reading.
+- id: CD-D-085
+  title: 'IMPLEMENTATION IS SUSPENDED. NO FURTHER ENGINEER WORK IS DISPATCHED.'
+  ruling: >
+    Option (C) applies ON THE PRODUCT OWNER'S OWN PRE-STATED TERMS, which is why this Project Lead
+    can record it without disposing of anything: the consequence was fixed IN ADVANCE by the
+    authority that owns the question, and the only thing this boundary supplies is the MEASUREMENT
+    that the condition is satisfied. NO WO-2R3 DISPATCH IS DRAFTED, NO ENGINEER SEAT IS LAUNCHED,
+    AND NO FINDING IS ROUTED FOR REPAIR.
+  why_a_project_lead_may_state_this_and_is_not_thereby_deciding_it: >
+    Because the alternative is worse in both directions. Dispatching an Engineer against these
+    findings would be this seat deciding, on its own authority, that the ruling did NOT fall — the
+    exact substitution of judgement CD-D-076 was written to prevent. And declaring the project
+    closed would be disposition, which is the Product Owner's (PBG-AUTH-003). SUSPENSION IS THE ONLY
+    STATE THAT DECIDES NOTHING.
+  what_is_explicitly_NOT_ruled: >
+    NOT ruled: whether the findings are repairable at WO-2; whether CD-AC-002 should be re-scoped
+    more narrowly; whether the entry-point class is one class or four findings; what BLUEPRINT §7's
+    architectural review should conclude; and whether f30e63c is discarded, retained or built upon.
+    ALL OF THOSE ARE THE PRODUCT AUTHORITY'S, and several are the substance of the review itself.
+- id: CD-D-086
+  title: 'THE AUDITOR''S PROPOSED NEXT SCOPE IS RECORDED AS ITS RECOMMENDATION AND IS NOT ADOPTED.'
+  ruling: >
+    The auditor recommends that any future dispatch be scoped to THE ENTRY-POINT ADMISSION CLASS
+    rather than to the three findings individually, on the ground that three is a denominator and
+    not a proof that a fourth does not exist — and that the sweep CANNOT answer the question,
+    because its forward-edge import closure excludes every CONSUMER, including the CD-AC-002 gate
+    itself. THE REASONING IS STRONG AND THIS SEAT AGREES WITH IT. IT IS RECORDED AS THE AUDITOR'S
+    RECOMMENDATION AND NOT ADOPTED AS A DECISION, because adopting a scope for work that is
+    SUSPENDED would be pre-empting the architectural review that the suspension exists to allow.
+- id: CD-D-087
+  title: 'THE LANE, THE AUDIT WORKTREE AND THE EVIDENCE ARE PRESERVED AND NOT MERGED.'
+  ruling: >
+    /srv/crash-detector-wo2 stays at f30e63c on wo-2-skeleton, UNMERGED. The detached audit worktree
+    /srv/crash-detector-wo2r2-audit is RETAINED at f30e63c and is LOAD-BEARING for continuity — it
+    is the tree every finding in governance/assurance/WO-2R2/ describes, and it MUST NOT BE DELETED.
+    The evidence is transported into the repository byte-identical and is never edited.
+    NOTHING IS ADMITTED: `latest_admitted_run` remains null. CD-RULE-001 is PO-set and
+    non-relaxable, and A RED IS NOT A PAIRED VERDICT THAT PERMITS ADMISSION ANY MORE THAN A PASS
+    WOULD HAVE BEEN WITHOUT DISPOSITION.
+
+# ================================================================================================ #
+# 7. WHAT THIS SEAT DID NOT DO
+# ================================================================================================ #
+not_done_deliberately:
+- 'DID NOT DISPOSE. A RED is not a rejection and a PASS would not have been an acceptance
+   (PBG-AUTH-003). This entry records a verdict and a measurement; it decides nothing about the
+   product.'
+- 'DID NOT DISPATCH AN ENGINEER, and did not draft a WO-2R3 dispatch. That would be deciding the
+   ruling had not fallen.'
+- 'DID NOT REPAIR ANY FINDING, and did not sketch a repair. The seat gets the class and the measured
+   contrast — never the code (PBG-AUTH-006).'
+- 'DID NOT ARGUE WITH THE AUDITOR. Three headline findings were replicated and reproduced; the two
+   not replicated are named as not reached.'
+- 'DID NOT SOFTEN THE FINDING THAT REFUTES THIS SEAT''S OWN INSTRUCTION. Increment 3''s narrowed
+   invariant — written at this Project Lead''s direction under CD-PL-F76 — says the one remaining
+   supplied-object method is `tzinfo.utcoffset`. IT IS NOT. That is recorded in section 3 in the
+   plainest terms available.'
+- 'DID NOT REPAIR CD-PL-F78, CD-PL-F77 or CD-ENG-WO2R2-F02. All three are recorded and owed.'
+- 'DID NOT ADMIT ANYTHING. latest_admitted_run remains null.'
+- 'DID NOT DELETE THE AUDIT WORKTREE OR THE EVIDENCE DIRECTORY.'
+
+# ================================================================================================ #
+# 8. GATE STATE
+# ================================================================================================ #
+gate_state:
+  wo2_gate: 'NOT MET, FOR THE THIRD TIME. RED overall: four RED, one PASS (scoped). No waiver exists (PO, restated in PO-DECISIONS-0003).'
+  how_this_gate_differs_from_the_two_before_it: >
+    THE FIRST TWO GATES FAILED ON GUARDS THAT LOOKED LIKE CLOSURES — a check that passed while the
+    class it named stayed open. THIS ONE DID NOT. The closures the Engineers built are REAL: the
+    derivation door is shut at the type and the auditor could not break it; the value types genuinely
+    re-establish their fields. THE GATE FAILED ON A DIFFERENT AXIS ENTIRELY — the ENTRY POINTS do not
+    REQUIRE the value types, and the whole static apparatus is blind by construction to a route that
+    edits no source. That is why it is not a repetition, and why the auditor's recommendation is a
+    CLASS and not a list of three defects.
+  latest_admitted_run: 'null.'
+  next_actor: 'PRODUCT_AUTHORITY.'
+
+evidence:
+- 'governance/assurance/WO-2R2/ — the auditor''s complete record, 39 files, transported byte-identical
+   (verified with `diff -r`) and NEVER edited. VERDICT.md, four narrative files, 34 arms and one probe.'
+- 'audited target f30e63c, mutation-checked two ways and NOT MUTATED.'
+- 'PL replications, on this seat''s own drivers against extractions proved byte-identical before and
+   after: monetary publishes 0.5 on a true input of 0.1 through number_for_dial_slot with NO source
+   edit; a duck row and a state-property row both render WITNESS AGREES where the same values
+   through PanelRow render WITNESS UNAVAILABLE; `futu-api==9.3.5308` exit 1 and
+   `-e git+...#egg=futu-api` exit 0 at 134 assertions, the clean-arm count.'
+evidence_executable_count: 0
+evidence_executable_count_note: >
+  Nothing transported into a governed tree is executable and nothing is a symlink, verified with
+  `find -type f -perm /111 -o -type l` (PBG-ASSURE-001). The one probe is `.py.txt`. This seat's own
+  drivers live in /tmp and are not installed into any governed tree.
+
+# ================================================================================================ #
+# 9. OWED TO THE PRODUCT AUTHORITY. THE PROJECT STOPS HERE.
+# ================================================================================================ #
+owed_to_the_product_authority:
+  the_situation_in_one_paragraph: >
+    You handed the auditor the knife on CD-AC-002 and stated what would follow if it worked. IT
+    WORKED. A single ordinary ContributionModel — no I/O, no clock, no environment, breaching no
+    documented contract — injected into both DialSpecs makes the monetary dial publish the mean of
+    both dials through the product's one declared publication gate, with every field of the claim
+    true except the number, USING ONLY DELIVERED PUBLIC API AGAINST AN UNMODIFIED TREE. Your ruling
+    said that if this were shown, the scoping falls and implementation suspends. It is shown, and
+    the Project Lead has measured it independently rather than relaying it.
+  the_decision_that_is_yours_and_is_not_taken: >
+    WHAT HAPPENS NOW. Suspension is in force on your own pre-stated terms and no implementation is
+    dispatched. What the architectural review of BLUEPRINT §7 should conclude, whether CD-AC-002 can
+    be scoped at all at WO-2 given the vacuity dilemma, whether the entry-point admission class is
+    reachable inside WO-2 or is itself WO-3 architecture, and what becomes of f30e63c — NONE OF THAT
+    IS THIS SEAT'S, and this seat has deliberately not offered a recommendation on any of it,
+    because the last time a Project Lead's reasonable inference stood in for a ruling it cost a gate.
+  what_the_project_lead_will_say_unprompted_because_it_bears_on_your_decision:
+  - 'THE ENGINEERING IS NOT THE PROBLEM. The auditor, having every incentive to find otherwise,
+     records that increments 1 and 2 are "the strongest closures I examined" and that it COULD NOT
+     BREAK the derivation door. Three consecutive seats raised findings against their own work and
+     built no guard for them. The failure is architectural and it is at the ENTRY POINTS, which is
+     BLUEPRINT §7 territory — the place your ruling 2 had already sent the model lifecycle.'
+  - 'NOTHING IS UNSAFE TO LEAVE AS IT STANDS. The auditor states it and this seat confirms the
+     conditions: nothing is deployed, zero egress destinations are registered, the source registry is
+     empty and both dials read Unknown. WHAT IS UNSAFE IS PROMOTING f30e63c AS THE BASELINE WO-3
+     BUILDS ON, which is exactly the thing suspension prevents.'
+  - 'CD-D-005, THE INGREDIENT REGISTER, IS OWED AND IS NOW LOAD-BEARING IN A THIRD PLACE. Ruling 3
+     attached model integrity to it; CD-ENG-WO2R2-F04 attached source-timestamp trust to it; and the
+     entry-point findings turn on what a contribution model is permitted to be. It is the same
+     register each time.'
+  the_report_that_still_stands_and_was_not_answered: >
+    CD-ENG-WO2R2-F04, reported upward at BL-...-0045 and NOT a question: a witness row whose stated
+    wall clock is 22 hours old renders WITNESS AGREES against a 600-second window if its tzinfo
+    reports a compensating offset. Bounded by the interpreter to under 24 hours. It is unchanged and
+    still open, and it belongs to the same CD-D-005 register.
+
+next_actor: PRODUCT_AUTHORITY
+next_safe_action: >
+  STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing).
+  IMPLEMENTATION IS SUSPENDED under CD-D-085 on the Product Owner's own pre-stated terms
+  (PO-DECISIONS-0003 ruling 4, transcribed and bound at CD-D-076). THE TRIGGER IS MET ON THE PROJECT
+  LEAD'S OWN MEASUREMENT, not on the auditor's report alone.
+  DO NOT DISPATCH AN ENGINEER. DO NOT DRAFT A WO-2R3 DISPATCH. Either would be deciding that the
+  ruling did not fall, which is the substitution of judgement CD-D-076 exists to prevent.
+  DO NOT DISPOSE — a RED is not a rejection (PBG-AUTH-003).
+  DO NOT ADMIT ANYTHING (CD-RULE-001, PO-set, non-relaxable).
+  DO NOT MERGE THE LANE. DO NOT DELETE /srv/crash-detector-wo2r2-audit — it is the tree every finding
+  describes and is load-bearing for continuity (CD-D-087).
+  DO NOT EDIT ANYTHING UNDER governance/assurance/WO-2R2/. It is the auditor's record.
+  WHEN A RULING ARRIVES: the lane is clean at f30e63c, the audit worktree is preserved, the evidence
+  is durable, and BLUEPRINT §7's architectural review — already the mandatory first item of WO-3
+  under PO-DECISIONS-0003 ruling 2 — is where the entry-point class and the model lifecycle meet.
+  ANY NEXT DISPATCH OF ANY KIND MUST RECORD THE EXACT COMMAND BESIDE ANY FINGERPRINT IT STATES, OR
+  STATE NO FINGERPRINT (CD-PL-F78). It has now been raised twice.
+  Commit each boundary on main with PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
+  VARIABLES, never `git -c` (CD-PL-F56). A continuity write is not complete until `pbg boot` has
+  been re-run on a pristine clone AT THE COMMITTED SHA AND ON THE RECORDED BRANCH and its verdict
+  recorded in the same entry (CD-RULE-007, CD-RULE-008 as amended by CD-PL-F72).
+
+boot_verdict_of_record:
+  rule: 'CD-RULE-007 / CD-RULE-008 as amended by CD-PL-F72. Taken on a PRISTINE CLONE at the committed SHA, checked out ON THE RECORDED BRANCH (main), never on the working tree.'
+  status: 'PENDING at the time this entry is committed — the SHA cannot be known before the commit exists. Resolved in the CD-RULE-007 follow-up commit that immediately succeeds this one, which writes continuity_record_commit AND NOTHING ELSE and carries the verdict in its message.'
+  working_tree_verdict_for_contrast: 'AMBER — CONTINUITY_MATCH/RESUME_AMBER, the known CD-PL-F70 cause. Not a new degradation, and not the verdict of record.'

@@ -1,0 +1,54 @@
+import sys, math, operator, statistics, decimal
+sys.path.insert(0, "src")
+from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials import scores as S
+from crash_detector.publication import dial_scalar as P
+
+eq = DialMagnitude(dial_id="equity_crash", quantity=0.4)
+mo = DialMagnitude(dial_id="monetary_stress", quantity=0.6)
+
+def probe(name, fn):
+    try:
+        r = fn()
+        print(f"PL-{name}: *** NOT REFUSED *** -> {r!r}")
+    except BaseException as e:
+        print(f"PL-{name}: REFUSED {type(e).__name__}: {str(e)[:90]}")
+
+# Q1 textual laundering through repr
+def q1():
+    def leak(m):
+        return float(repr(m).split("quantity=")[1].rstrip(")"))
+    return leak(eq) + leak(mo)
+probe("Q1a-repr-text-leak-then-add", q1)
+
+# Q1b can that laundered scalar be PUBLISHED?
+def q1b():
+    def leak(m):
+        return float(repr(m).split("quantity=")[1].rstrip(")"))
+    blended = (leak(eq) + leak(mo)) / 2
+    return S.EquityCrashScore(score=blended)
+probe("Q1b-publish-repr-laundered-blend", q1b)
+
+# Q2 alternate coercion dunders
+for nm, fn in [
+    ("Q2a-math.fsum", lambda: math.fsum([eq, mo])),
+    ("Q2b-round", lambda: round(eq, 2)),
+    ("Q2c-operator.index", lambda: operator.index(eq)),
+    ("Q2d-Decimal", lambda: decimal.Decimal(eq)),
+    ("Q2e-int", lambda: int(eq)),
+    ("Q2f-complex", lambda: complex(eq)),
+    ("Q2g-format-f", lambda: format(eq, "f")),
+    ("Q2h-str-then-float", lambda: float(str(eq))),
+]:
+    probe(nm, fn)
+
+# Q3 type.__setattr__ installs __add__ on the class, bypassing the metaclass
+def q3():
+    type.__setattr__(DialMagnitude, "__add__", lambda a, b: a.__class__.__dict__)
+    return eq + mo
+probe("Q3-type.__setattr__-installs-__add__", q3)
+
+# Q3b after that mutation, is publication still refused?
+def q3b():
+    return P.number_for_dial_slot("equity_crash", eq)
+probe("Q3b-publish-after-class-mutation", q3b)

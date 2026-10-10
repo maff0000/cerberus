@@ -1,0 +1,61 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 19:17:30.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 19:21:46.337217193 +0100
+@@ -46,7 +46,25 @@
+       "$ref": "#/$defs/source_id_list"
+     },
+     "degraded_inputs": {
+-      "$ref": "#/$defs/source_id_list"
++      "description": "H1 / A311-F1's ARM H. THE ALLOWLISTED NON-DIAL ROOT PROPERTY degraded_inputs, WIDENED ONE CONTAINER DEEPER THAN ARM CC-H: an ARRAY of CLOSED OBJECTS that may carry #/$defs/detail_level. Both CALM_BEARING_PROBES are still REFUSED on this tree -- the flat object and the nested object are neither of them an array -- so a limb (b) proved by a SAMPLE OF TWO SHAPES still reports PASS. THE LIST OF INPUTS THAT ARE DEGRADED, RENDERING AS CALM, AT A ROOT POSITION.",
++      "type": "array",
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "source_id"
++        ],
++        "properties": {
++          "source_id": {
++            "type": "string",
++            "minLength": 1,
++            "maxLength": 128
++          },
++          "detail_level": {
++            "$ref": "#/$defs/detail_level"
++          }
++        }
++      }
+     },
+     "config_snapshot_id": {
+       "type": "string",
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 19:17:30.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 19:21:46.337217193 +0100
+@@ -46,8 +46,25 @@
+       "$ref": "#/$defs/source_id_list"
+     },
+     "degraded_inputs": {
+-      "description": "Registry source_ids that were expected and were missing, stale or non-OK. Required even when empty, so a consumer never has to distinguish 'no degradation' from 'the field was omitted'.",
+-      "$ref": "#/$defs/source_id_list"
++      "description": "H1 / A311-F1's ARM H. THE ALLOWLISTED NON-DIAL ROOT PROPERTY degraded_inputs, WIDENED ONE CONTAINER DEEPER THAN ARM CC-H: an ARRAY of CLOSED OBJECTS that may carry #/$defs/detail_level. Both CALM_BEARING_PROBES are still REFUSED on this tree -- the flat object and the nested object are neither of them an array -- so a limb (b) proved by a SAMPLE OF TWO SHAPES still reports PASS. THE LIST OF INPUTS THAT ARE DEGRADED, RENDERING AS CALM, AT A ROOT POSITION.",
++      "type": "array",
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "source_id"
++        ],
++        "properties": {
++          "source_id": {
++            "type": "string",
++            "minLength": 1,
++            "maxLength": 128
++          },
++          "detail_level": {
++            "$ref": "#/$defs/detail_level"
++          }
++        }
++      }
+     },
+     "config_snapshot_id": {
+       "description": "The run-level configuration that produced this reading, so the reading can be explained a year later without archaeology.",

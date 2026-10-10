@@ -1,0 +1,236 @@
+# ================================================================================================== #
+# BL-20260824T070245Z-0157 — PROJECT LEAD BOOT BOUNDARY. **BOOT RETURNED `RED` AND THE CAUSE WAS
+# REAL: THE ACTIVE WORK POINTER HAD BEEN STALE FOR FIVE ENTRIES AND NO INSTRUMENT SAID SO.**
+#
+# *** **AND THE REASON NO INSTRUMENT SAID SO IS THE SECOND FINDING, WHICH IS WORSE THAN THE FIRST:
+# `pbg log validate`, RUN THE WAY THIS PROJECT HAS ALWAYS RUN IT, VALIDATES ZERO ENTRIES AND PRINTS
+# `VERDICT: GREEN (0 invalid)`. IT HAS BEEN RETURNING A GREEN ABOUT NOTHING.** ***
+#
+# **THIS ENTRY WRITES NO PRODUCT CONTENT, REGISTERS NO SOURCE, MOVES NO GRADE AND CLOSES NO
+# FINDING.** It repairs continuity, records what boot measured, ingests `PO-DECISIONS-0025`, and
+# states — measured, not inferred — that **the ratified mapping artefact's CONTENT is not present in
+# any location reachable from this project.** That is `Q30` and it is the only thing between this
+# seat and registering rows.
+# ================================================================================================== #
+
+entry_id: BL-20260824T070245Z-0157
+timestamp_utc: '2026-08-24T07:02:45Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T07:02:45Z'             # house-style duplicate, retained for readers of 0136-0156
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+base_sha: d0048f41c5cfc05009840d90685c093bf28d2661   # PO-DECISIONS-0025, authored by the Product Owner and by no seat
+current_sha: d0048f41c5cfc05009840d90685c093bf28d2661
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  Project Lead boot at d0048f4. Boot verdict RED on one blocking cause — CONTINUITY_REFERENCE_INVALID
+  / ACTIVE_WORK_STALE — reconciled and repaired here. PO-DECISIONS-0025 read and ingested: Q25 is
+  ANSWERED, the Matt hold is RELEASED, increment 16 is dispatched. Q28's record act and the increment
+  16A dispatch follow in the next commits. Q30 is RAISED: the ratified mapping artefact named by the
+  ruling is a fabric key whose CONTENT is not present anywhere this project can read, so no indicator
+  row can be registered without a seat inventing product meaning.
+
+the_boot:
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: 'RED — one blocking cause, and it was not a false alarm.'
+  pid_identity: 'PID.md@538e30f3bf4f1803'
+  blueprint_identity: 'BLUEPRINT.md@39397dfbf169a125'
+  roadmap: 'UNAVAILABLE — no ROADMAP.md. Long-standing and not new at this boundary.'
+  observed_sha: d0048f41c5cfc05009840d90685c093bf28d2661
+  assigned_role: 'PROJECT_LEAD — from the human dispatch (PBG-BOOT-002). No seat self-assigned.'
+  concurrency_check: >
+    ps shows ONE live PL process for this project (pid 3642339, ceiling `timeout 21600`) and no second
+    Project Lead. Measured, because two PLs commit as one identity and nothing downstream detects it.
+  framework_integrity: 'pinned pbg/ verified by boot; nothing under pbg/ is modified by this entry.'
+
+the_divergence_and_its_repair:
+  what_boot_said: >
+    'reference: ACTIVE_WORK_STALE: pointer is BL-20260823T173018Z-0151 but the newest entry is
+    BL-20260823T193102Z-0156 (commit a684c20b7c65 at ancestry position 264); Active Work describes a
+    superseded state (PBG-CONT-002)'
+  the_measurement: >
+    `last_build_log_entry` read BL-...-0151. Entries 0152, 0153, 0154, 0155 and 0156 all exist on
+    disk and are all committed. **THE POINTER WAS STALE BY FIVE ENTRIES**, and the four boundaries
+    those entries record — increment 14 banked, its PASS, increment 15 banked, its AMBER — were each
+    written by a seat that moved the entry and did not move the pointer.
+  the_irony_stated_plainly: >
+    The pointer's own trailing comment claims the very discipline it broke: **"MOVED IN THE SAME
+    COMMIT AS THE ENTRY IT NAMES (CD-PL-F132 class)"**. It was true when written at 0151 and false
+    for every entry after it. **A comment asserting a discipline is not the discipline.**
+  the_repair: >
+    RECONCILED AND REPORTED, NEVER SILENTLY CORRECTED (CLAUDE.md stop conditions). The pointer moves
+    to THIS entry — 0157 — in the same commit that creates it, which is the discipline the comment
+    named. The five unpointed entries are NOT edited and MUST NOT BE (PBG-CONT-003, non-waivable);
+    they stand on the record exactly as written, and this entry is the record that they were never
+    pointed at.
+  what_this_repair_does_not_claim: >
+    It does not claim the five entries were wrong. Every one of them is substantively intact. The
+    defect is in the PROJECTION, not the history, and the projection is the thing a successor boots
+    from.
+
+CD-PL-F171:
+  finding: >
+    *** **`pbg log validate` HAS BEEN RETURNING A GREEN ABOUT NOTHING, AND THAT IS HOW FIVE
+    SCHEMA-INVALID ENTRIES AND A FIVE-ENTRY-STALE POINTER SURVIVED FOUR GATES.** ***
+  measured: |
+    PYTHONPATH=pbg/tools python3 -B -m pbg.cli log        ->  VERDICT: GREEN  (0 invalid)
+    pbg/tools/pbg/cli.py:366  root = Path(args.root).resolve() if args.root else _framework_root()
+    _framework_root()                                    ->  /srv/crash-detector/pbg
+    log_dir = root/'governance/engineering/build-log'     ->  /srv/crash-detector/pbg/governance/... (ABSENT)
+    rglob over an absent directory                        ->  zero entries, zero failures, GREEN
+    and the other way round is not usable either:
+    pbg --root /srv/crash-detector log validate           ->  pbg: [Errno 2] No such file or directory:
+                                                             '/srv/crash-detector/schemas/build-log-entry.schema.yaml'
+    (with --root the project, schema_dir defaults to <root>/schemas, which only exists under pbg/)
+  the_cost_measured_not_asserted: |
+    Validated directly, with the framework's own validator and the framework's own schema_dir:
+      continuity.validate(BL-20260823T193102Z-0156.yaml, 'entry', ...)
+        -> False, stage 'schema'
+           'timestamp_utc' is a required property
+           'project' is a required property
+           'role' is a required property
+           'authority_id' is a required property
+           'repository' is a required property
+    **THE NEWEST ENTRY ON THE RECORD IS SCHEMA-INVALID AND THE LOG VALIDATOR CALLED THE WHOLE LOG
+    GREEN.** The house style that grew from 0136 onward uses `utc` where the schema requires
+    `timestamp_utc` and omits five required fields outright.
+  attribution: >
+    **THIS IS A FRAMEWORK DEFECT AND IT IS NOT THIS SEAT'S TO REPAIR** (CLAUDE.md: "If PBG itself is
+    defective, report it — repairing it is a separate bounded dispatch"). Nothing under pbg/ is
+    touched. It is reported here, with the exact lines, so that the repair dispatch does not have to
+    rediscover it.
+  what_this_seat_does_about_it_now: >
+    THIS entry is written schema-valid — every required field present, `utc` retained alongside
+    `timestamp_utc` for continuity of reading (additionalProperties: true permits both). It is
+    validated by direct call to continuity.validate with schema_dir=pbg/schemas before commit, and
+    the result is recorded in evidence rather than asserted. **The prior entries are left alone.**
+  how_this_seat_could_be_wrong: >
+    If some other invocation of `pbg log` — a wrapper, a hook, a different cwd — does resolve the
+    project's log directory, then the green was not empty and this finding is overstated. This seat
+    ran the invocation CLAUDE.md prescribes and the one obvious variant, and reports both. It did not
+    audit every hook.
+
+the_ruling_ingested:
+  source: 'governance/decisions/PO-DECISIONS-0025.md at d0048f4 — authored by the Product Owner, carried by NO seat.'
+  q25: >
+    **ANSWERED. THE MATT HOLD IS RELEASED.** The source set is `trinity:pbgv2:crash_detector:
+    indicator_dial_mapping:v1` — ~24 indicators across two dials, being the delivered playbook 20
+    (`trinity:playbook:as_built:v1.0`) plus the Quantical-reference additions and private credit
+    stress, each with dial binding, tier weight (x3/x2/x1) and polarity.
+  architecture: >
+    **BINDING** (`...:architecture_portability:v1`): independent container; SQL + Redis in movable
+    named volumes; ALL config via env; cut-and-paste dev (dell) -> prod (cloud). The mapping lives as
+    REGISTRY DATA, portable by construction.
+  weights: '**PROVISIONAL.** Starting values, calibrated by backtest, trusted on no assertion. Calibration is its own later increment.'
+  sloos: 'SOURCE-IDENTIFIED: FRED DRTSCILM (C&I, auto) + manual NDFI quarterly (Fed SLOOS Table 2 Q14). Shows PENDING until wired. NEVER a false green.'
+  q28_q29: 'carried as the first act of increment 16 — PID prose NEW_REQUIREMENT -> DERIVES; detail_level attaches PER-DIAL.'
+  standing_carried: 'two dials never blended; missing data never renders calm; lane branches from frozen be0b355; CD-D-181 sequential-only.'
+
+Q30:
+  question: >
+    *** **THE RULING NAMES THE MAPPING BY FABRIC KEY. THE FABRIC KEY'S CONTENT IS NOT PRESENT IN ANY
+    LOCATION THIS PROJECT CAN READ, AND WITHOUT IT NO ROW CAN BE REGISTERED WITHOUT A SEAT CHOOSING
+    PRODUCT MEANING.** ***
+  what_the_dispatch_believed: >
+    The human dispatch instructed this seat to read "the mapping trinity fabric key content carried
+    in the WO-3 scope". **IT IS NOT CARRIED THERE.** `WO-3-SCOPE.md` §7 is a FIELD LIST and says so
+    in its own words at §0 and §9.1: *"THIS DOCUMENT THEREFORE NAMES NO INDICATOR, NO FEED, NO
+    VENDOR, NO CADENCE AND NO CRITICALITY."* This seat reports the mismatch rather than resolving it
+    by inventing the content, because inventing it is the one act every ruling since PO-DECISIONS-0020
+    has forbidden.
+  searched_and_measured: |
+    grep -rl 'indicator_dial_mapping|architecture_portability|as_built:v1.0'  (repo, excl .git)
+      -> governance/decisions/PO-DECISIONS-0025.md  AND NOTHING ELSE
+    grep -rl 'DRTSCILM|NDFI|SLOOS|private credit' --include=*.md --include=*.yaml (repo, excl .git)
+      -> governance/decisions/PO-DECISIONS-0025.md  AND NOTHING ELSE
+    /srv/trinity-self-mirror  -> no crash_detector namespace; state/current.json stamped 2026-08-15
+    no `trinity` or `fabric` resolver on PATH
+  what_IS_reachable_and_why_it_is_not_an_answer: >
+    `/srv/argus/evidence/WO-ARGUS-PLAYBOOK-0001/10-040-indicator-list.txt` carries EXACTLY 20 rows
+    across 10 categories with FRED/IBKR series identifiers, ARGUS *continuous* weights (w=1.50 ...
+    w=0.50) and ARGUS criticality (critical / important / non_critical). **THIS SEAT DID NOT AND WILL
+    NOT REGISTER FROM IT, FOR TWO SEPARATE REASONS, AND BOTH ARE SUFFICIENT ON THEIR OWN:**
+    (1) `PBG-PID-003` and `WO-3-SCOPE.md` §7.4 by name — *"NO SEAT MAY READ THE INDICATOR LIST OFF
+    IT"*; and (2) **IT DOES NOT CONTAIN THE ANSWER ANYWAY.** It carries NO dial binding, NO polarity,
+    and NO x3/x2/x1 tier — those three are exactly what `indicator_dial_mapping:v1` adds, and they
+    are exactly what cannot be derived from an ARGUS list. A seat that "mapped" 20 ARGUS rows onto two
+    dials would be authoring the product's meaning and calling it transcription.
+  what_is_needed_field_by_field: >
+    For each indicator in the ratified set: `source_id`; what it stands for (the doctrine §3.6
+    account, which is the admission ticket and not documentation); adapter/series identifier;
+    cadence; criticality (REQUIRED / CONTRIBUTING / DISPOSABLE — a statement about ENGINE BEHAVIOUR);
+    **dial binding (equity | monetary | BOTH)**; **polarity per bound dial**; **provisional tier
+    (x3 | x2 | x1)**; declared staleness window. Plus: the identity of the Quantical-reference
+    additions, which the ruling names as a class and not as rows.
+  status: 'OPEN. Next actor PRODUCT_AUTHORITY. Silent execution PROHIBITED.'
+  what_it_does_NOT_block: >
+    **IT DOES NOT BLOCK INCREMENT 16A.** Everything the ruling makes binding that is not the
+    mapping's CONTENT — the record act, the per-dial detail_level, the portable container, and the
+    registry-data CARRIER with its refusals — is construction and proceeds. Only the ROWS wait.
+
+what_this_entry_deliberately_does_not_do:
+  - 'registers no source — not one row, not a placeholder, not a test fixture (WO-3-SCOPE §5.1, CD-PL-F154)'
+  - 'accepts no MappingKind member, so the owed `*extra` guard re-measurement (WO-3-SCOPE §5.2) is NOT yet due and is NOT quietly spent'
+  - 'moves no grade: CD-AC-002 stays AMBER-not-closed, CD-AC-005 stays RED, the WO-2 gate stays SHUT'
+  - 'closes no finding, and does not edit BL-0152..0156 (PBG-CONT-003)'
+  - 'touches nothing under pbg/, and does not repair CD-PL-F171'
+  - 'does not touch frozen be0b355; wo-2r3 re-measured at this boundary and UNMOVED'
+  - 'dispatches no parallel seat (CD-D-181)'
+
+measurements_taken_at_this_boundary:
+  wo_2r3_frozen: 'git rev-parse wo-2r3 -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5. UNMOVED.'
+  wo_3_lane: 'git rev-parse wo-3 -> 116c01f4584c62a244910ac6676c030735596896, worktree /srv/crash-detector-wo3. Cut forward from be0b355 (Q24 discharged at 0156).'
+  pid_hash_both_trees: 'sha256sum PID.md -> 538e30f3... on main AND on the wo-3 lane; diff -q -> IDENTICAL. The register pins that exact hash (required-tests.yaml:76).'
+  consequence_recorded_before_it_bites: >
+    **THE Q28 PROSE FIX WILL CHANGE PID.md's HASH AND THEREFORE STALE THE REGISTER'S PIN.** That is
+    arithmetic, not a surprise, and it is written down HERE — before the edit — so that when the
+    register reports a stale pin nobody records it as a regression (the same discipline P3 was given
+    at 0151). The re-pin is an EXPLICIT deliverable of the increment 16A dispatch, on the lane where
+    the register lives.
+
+evidence_references:
+  - 'governance/decisions/PO-DECISIONS-0025.md — the ruling, PO-authored'
+  - 'governance/engineering/WO-3-SCOPE.md §0, §5, §7, §9 — the shape, and its own statement that it names no content'
+  - 'pbg/tools/pbg/cli.py:364-388 — CD-PL-F171, the empty green'
+  - 'pbg/schemas/build-log-entry.schema.yaml — the required fields BL-0136..0156 omit'
+
+next_safe_action: >
+  **THREE ACTS, IN THIS ORDER, AND THE THIRD IS A STOP.** (1) Resolve `continuity_record_commit` to
+  the commit carrying this entry — one field and not two (CD-RULE-007). (2) The Q28 RECORD ACT on
+  main: PID.md prose NEW_REQUIREMENT -> DERIVES for CD-AC-017, carrying PO-DECISIONS-0025 ruling 5,
+  and then dispatch ONE Engineer seat for increment 16A — Q29 per-dial detail_level, the PID sync and
+  register re-pin on the lane, the portability constraint made testable, and the registry-data
+  CARRIER with its refusals — SEQUENTIAL SINGLE-SEAT, followed by a SEPARATE Assurance seat
+  (PBG-SOD-001, non-waivable). (3) **STOP at the increment boundary with Q30 open.** No indicator row
+  is registered until the Product Authority supplies the mapping's content.
+
+expected_next_actor: PROJECT_LEAD
+
+held_actions:
+  - id: CD-HOLD-004
+    movement: >
+      **PARTIALLY DISCHARGED AND STILL HELD, AND THE DISTINCTION IS THE WHOLE POINT.** Its condition
+      was "until the Product Owner issues the CD-D-005 ingredient register". PO-DECISIONS-0025
+      NAMES and RATIFIES the register — so the *authority* half is discharged. **THE CONTENT HALF IS
+      NOT: the artefact it names cannot be read from here (Q30).** The hold therefore stays HELD with
+      its reason REWRITTEN to the true remaining obstacle, and its next actor stays
+      PRODUCT_AUTHORITY. **A hold released on an artefact nobody can read would be a hold released on
+      nothing.**
+  - id: CD-HOLD-003
+    movement: 'UNCHANGED — HELD. Increment 16A builds no image and starts no container.'
+  - id: CD-HOLD-005
+    movement: 'UNCHANGED — HELD. Nothing becomes publicly reachable.'
+
+risks:
+  - 'CD-PL-F171 means the continuity instrument this project relies on has been silent. Until a framework repair dispatch lands, every entry must be validated by direct call — a manual step, and manual steps lapse.'
+  - 'Q30 is the fifth consecutive boundary whose next actor is the Product Authority. The construction that does not depend on it is being delivered so the wait costs nothing that can be built without an answer.'

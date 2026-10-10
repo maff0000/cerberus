@@ -1,0 +1,51 @@
+from datetime import datetime, timezone
+from crash_detector.witness.panel import Agrees
+from crash_detector.staleness import FreshnessEvidence, StalenessWindow
+from crash_detector.serving.witness_resolver import (
+    PanelRow, resolve_panel, render_panel,
+)
+
+DECADE_AGO = datetime(2016, 8, 21, 12, 0, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
+
+print("--- PL-W3: is Agrees slotted? ---")
+print("Agrees.__slots__ present in vars:", "__slots__" in vars(Agrees))
+print("StalenessWindow slots:", getattr(StalenessWindow, "__slots__", None))
+print("FreshnessEvidence slots:", getattr(FreshnessEvidence, "__slots__", None))
+
+row = PanelRow(state="AGREES", as_of_utc=NOW, published_utc=NOW,
+               measures={"divergence_measure": 0.01})
+p = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
+print("fresh panel:", type(p).__name__, "->", render_panel(p))
+try:
+    object.__setattr__(p, "smuggled", 1e18)
+    print("PL-W3 object.__setattr__(agrees,'smuggled',1e18) -> STUCK, value =", p.smuggled)
+    print("           has __dict__:", hasattr(p, "__dict__"), p.__dict__)
+except AttributeError as e:
+    print("PL-W3 raised AttributeError:", e)
+
+print()
+print("--- PL-W5: decade-old timestamp reaching WITNESS AGREES ---")
+# 1. the honest arm: a decade-old row with a lawful window
+old = PanelRow(state="AGREES", as_of_utc=DECADE_AGO, published_utc=DECADE_AGO,
+               measures={"divergence_measure": 0.01})
+q = resolve_panel(old, now_utc=NOW, staleness_window_seconds=600.0)
+print("honest arm  :", type(q).__name__, "->", render_panel(q))
+# 2. can the window be built above the ceiling at all?
+try:
+    StalenessWindow(seconds=1e18)
+    print("ceiling      : NOT refused (unexpected)")
+except Exception as e:
+    print("ceiling      :", type(e).__name__, str(e)[:120])
+# 3. the residue route: overwrite DECLARED slots after construction
+w = StalenessWindow(seconds=600.0)
+object.__setattr__(w, "seconds", 1e18)
+print("window after object.__setattr__(w,'seconds',1e18):", w.seconds)
+ev = FreshnessEvidence(as_of_utc=NOW, observed_at_utc=NOW, window=w)
+object.__setattr__(ev, "as_of_utc", DECADE_AGO)
+print("evidence age_seconds now reads:", ev.age_seconds)
+a = Agrees(divergence_measure=0.01, as_of_utc=NOW, freshness=ev)
+object.__setattr__(a, "as_of_utc", DECADE_AGO)
+print("forged Agrees.as_of_utc  :", a.as_of_utc)
+print("forged Agrees.freshness  :", a.freshness.as_of_utc, "age", a.freshness.age_seconds)
+print("PL-W5 RENDER             :", render_panel(a))

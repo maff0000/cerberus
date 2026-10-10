@@ -1,0 +1,110 @@
+# JSON Schema (in YAML) for a SEAT ATTESTATION — the durable executor fact.
+#
+# WHY THIS EXISTS. PBGv2 is a closed system: authority comes from a GENERIC internal seat
+# (assigned_role + seat_id), never from whoever executes it. That is deliberate, and it is what
+# makes an executor substitutable without amending a single record.
+#
+# It also made PBG-SOD-001 vacuous. Separation of duties asks a question that generic identities
+# cannot answer: did the SAME PARTY implement this candidate and then audit it? Comparing
+# EXTERNAL_ENGINEER against EXTERNAL_AUDITOR always says "different" and proves nothing
+# (SOD-TOOLING-0001).
+#
+# The resolution is not to put the executor back into the authority. It is to record the executor
+# SEPARATELY, as evidence, and let the control read it:
+#
+#     assigned_role / seat_id       INTERNAL, authoritative, generic     -> grants
+#     external_executor_id          EXTERNAL, non-authoritative, named   -> proves separation
+#
+# An attestation grants nothing. It cannot widen scope, cannot assign a role and cannot authorise
+# work. It is a statement of fact about WHO occupied a seat, committed durably so that a later
+# control can compare two of them.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "pbg:schemas/seat-attestation.schema.yaml"
+title: PBGv2 Seat Attestation
+type: object
+additionalProperties: true
+required:
+  - schema_version
+  - attestation_type
+  - work_item
+  - authority_id
+  - assigned_role
+  - seat_id
+  - external_executor_id
+  - attested_utc
+properties:
+  schema_version: {const: 1}
+
+  attestation_type:
+    description: >
+      SEAT_START binds a seat to the executor that occupies it, and is written BEFORE any
+      implementation. SEAT_DELIVERY binds that same seat to the candidate it actually produced,
+      and can only be written afterwards because the SHA does not exist until the commit does.
+      Together they answer "which external party produced this candidate" from durable record
+      rather than from inference.
+    type: string
+    enum: [SEAT_START, SEAT_DELIVERY]
+
+  work_item: {type: string, minLength: 1}
+  authority_id: {type: string, minLength: 1}
+  authority_record:
+    description: Repository-relative path to the durable authority this seat operates under.
+    type: string
+
+  assigned_role:
+    description: The INTERNAL role. Authority flows from this, never from external_executor_id.
+    type: string
+    enum: [PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+  seat_id:
+    description: >
+      The INTERNAL seat identity. Generic by design. A seat_id is NOT an executor identity and
+      must never be substituted for one — that substitution is the defect this schema exists to
+      make impossible.
+    type: string
+    minLength: 1
+
+  external_executor_id:
+    description: >
+      The EXTERNAL party actually occupying the seat. Non-authoritative: it confers nothing and
+      constrains nothing about what may be done. It is evidence, and it is the only field from
+      which separation of duties can actually be established.
+    type: string
+    minLength: 1
+
+  holds_assurance_authority:
+    description: >
+      Whether this executor holds Assurance authority in this work item. An ENGINEER seat-start
+      attestation must record false; an executor that could assure its own work has no separation
+      to attest to.
+    type: boolean
+
+  authority_inferred_from_instruction_file:
+    description: >
+      Must be false. An instruction file (CLAUDE.md, AGENTS.md) grants nothing (PBG-BOOT-001).
+      Recorded explicitly because a silent assumption is not a checkable one.
+    type: boolean
+
+  project_root:
+    description: The resolved PROJECT_ROOT, so a reader can tell which tree this seat operated in.
+    type: string
+
+  baseline_candidate:
+    description: The commit this seat started from.
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{40}$"}]
+  target_candidate:
+    description: The prior candidate this seat's work addresses.
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{40}$"}]
+  produced_candidate:
+    description: >
+      SEAT_DELIVERY only. The candidate this seat actually produced. This is the link that lets
+      PBG-SOD-001 ask "who produced THIS commit" of the record instead of guessing from Git
+      authorship, which any party can set to any value.
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{40}$"}]
+
+  attested_utc:
+    type: string
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+
+  statement:
+    description: Free prose. Never read by any control; for the human reading the record later.
+    type: string

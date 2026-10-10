@@ -1,0 +1,319 @@
+domain: DEPLOY
+domain_label: Deployment provenance
+controls:
+- control_id: PBG-DEPLOY-001
+  title: An unbroken traceable chain from authorised intent to observed runtime
+  status: ACTIVE
+  purpose: 'Bind what is running to what was authorised and assured.
+
+    '
+  risk_addressed: 'Ten production services, two of them handling live money, ran from the wrong repository
+    while the programme reported the work merged elsewhere as delivered. Every artefact the lead could
+    read — branch, migration, test run, board — was simultaneously true and irrelevant, because none was
+    bound to the executing code.
+
+    '
+  required_outcome: 'For every material deployment or activation the chain is established and recorded:
+    authorised Change or Controlled Action, assured source SHA, build identity, artefact or image identity,
+    deployed runtime identity, configuration identity, runtime verification.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    work_types:
+    - CHANGE
+    - CONTROLLED_ACTION
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - deployment provenance record
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - SLSA build provenance
+  - NIST SSDF PS.3 — archive and protect each software release
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg close requires a complete deployment-provenance record on any deployable authority
+    record and fails on a missing or incomplete chain.
+
+    '
+- control_id: PBG-DEPLOY-002
+  title: A deployment is not GREEN merely because the process is running
+  status: ACTIVE
+  purpose: 'Separate liveness from correctness. A healthy process is not evidence of the right code.
+
+    '
+  risk_addressed: 'Health checks passing on a service running the wrong artefact.
+
+    '
+  required_outcome: 'Health and readiness results are recorded, and are never sufficient on their own
+    to satisfy deployment provenance.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - health result
+  - runtime identity comparison
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg close does not accept health status as a substitute for runtime identity comparison.
+
+    '
+- control_id: PBG-DEPLOY-003
+  title: Runtime identity must match the authorised and assured artefact
+  status: ACTIVE
+  purpose: 'Make divergence between intended and observed a governed outcome rather than a discovery.
+
+    '
+  risk_addressed: 'A fix that cannot be shown to be running is not deployed, and NOT DEPLOYED is not DONE.
+
+    '
+  required_outcome: 'The code identity reported by the running target matches the exact source SHA that
+    independent assurance approved. Where it does not, the result is AMBER or RED by consequence — never
+    a pass with a note.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - runtime-reported identity
+  - assured SHA
+  - variance state
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: artefact registry digest
+  verification_note: 'pbg close compares field 15 against field 5 and fails closed on MISMATCH.
+
+    '
+- control_id: PBG-DEPLOY-005
+  title: A provenance read is classified before it is performed
+  status: ACTIVE
+  purpose: 'Sequence deployment provenance behind effect-based runtime interaction. Reading from a running
+    target is itself a runtime observation.
+
+    '
+  risk_addressed: 'Satisfying one control by violating another — querying a mutation-capable runtime to
+    prove provenance and triggering a write in the process.
+
+    '
+  required_outcome: 'Every read against a running target is classified NON_MUTATING_PROVEN, MUTATION_CAPABLE_AUTHORISED,
+    FORBIDDEN or UNKNOWN_STOP under PBG-RT-005 before it is made. UNKNOWN stops.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    - reaches_runtime
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - runtime audit plan
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'The runtime audit plan carries a row for every provenance read, classified before
+    execution.
+
+    '
+- control_id: PBG-DEPLOY-006
+  title: A blank variance field is invalid
+  status: ACTIVE
+  purpose: 'Prevent absence of a recorded difference being read as evidence of no difference.
+
+    '
+  risk_addressed: 'An empty field meaning "matched" to one reader and "not checked" to another. This is
+    the false-green class in a single form field.
+
+    '
+  required_outcome: 'Variance is one of MATCH, MISMATCH, PARTIALLY_COMPARED, NOT_COMPARED or UNAVAILABLE.
+    PARTIALLY_COMPARED must name which fields were not compared. NOT_COMPARED and UNAVAILABLE never satisfy
+    the control.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - deployment provenance record
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema validation rejects a blank or absent variance field; the resolver maps NOT_COMPARED
+    to NOT_VERIFIED and UNAVAILABLE to UNSUPPORTED.
+
+    '
+- control_id: PBG-DEPLOY-007
+  title: Declared, build, deployment and runtime observations are distinct facts
+  status: ACTIVE
+  purpose: 'Stop one unverified declaration supplying the whole provenance record.
+
+    '
+  risk_addressed: 'A deployment script emitting all twenty-three fields from its own inputs, which proves
+    only that the script is internally consistent.
+
+    '
+  required_outcome: 'Each field records its observation source. No single actor supplies declared intent,
+    build observation, deployment observation and runtime observation.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - deployment provenance record with source attribution
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema requires a source attribution per field group; pbg close fails if runtime-observed
+    fields share an attribution with declared-intent fields.
+
+    '
+- control_id: PBG-DEPLOY-008
+  title: Runtime identity comes from the running target, never from the deployment command input
+  status: ACTIVE
+  purpose: 'Ensure the one field that cannot be satisfied from the build side is genuinely not satisfied
+    from the build side.
+
+    '
+  risk_addressed: 'A deployment command reporting the image tag it was told to deploy — a build-side fact
+    wearing runtime clothing. This is the precise shape of the ten-service failure.
+
+    '
+  required_outcome: 'Field 15 is read from the running target or an independently queried orchestration
+    source.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - query method
+  - responding target identity
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: running target observation
+  verification_note: 'The provenance record names the query method and the responding target. A record
+    whose runtime identity is attributed to the deployment invocation is rejected.
+
+    '
+- control_id: PBG-DEPLOY-004
+  title: Divergence between canonical and runtime provenance fails the close gate
+  status: ACTIVE
+  purpose: Give "merged is not deployed" a mechanism rather than a slogan.
+  risk_addressed: 'A warning that a deployment does not match its source, which is read once and then
+    normalised into background noise. Done = LIVE + TESTED + SIGNED OFF already said this and had no teeth.
+
+    '
+  required_outcome: 'Where canonical provenance and runtime provenance diverge, the close gate fails.
+    It does not warn and does not pass with a note. A work item whose change cannot be shown to be running
+    is NOT DEPLOYED, and NOT DEPLOYED is not DONE.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - deployable
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - deployment provenance record
+  - variance state
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Adopted from PBGv1 proposal 8a8be79
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg close compares runtime-observed identity against the assured source SHA and
+    fails on MISMATCH; NOT_COMPARED and UNAVAILABLE never satisfy the control. Scenario C8.
+
+    '

@@ -1,0 +1,178 @@
+# ================================================================================================== #
+# BL-20260823T173018Z-0151 — PROJECT LEAD BOUNDARY. **THE WO-3 SCOPE, AND THE DELIBERATE STOP.**
+#
+# **`PO-DECISIONS-0023` RULING 6(b) IS EXECUTED: WO-3 IS SCOPED AND THIS SEAT STOPS. THE SOURCE
+# SELECTION IS PRODUCT CONTENT AND IS MATT'S. NO SOURCE IS REGISTERED. NO SEAT IS DISPATCHED.**
+#
+# *** **AND THE SCOPE FOUND THREE THINGS NOBODY WAS LOOKING FOR, ALL THREE MEASURED:** ***
+#
+#   **1. THERE IS NO `src/` ON `main` AT ALL. WO-3 HAS NO BASE.**
+#   **2. THE REQUIRED TEST REGISTER IS NOT A VALID INPUT AND HAS NEVER BEEN ONE — SIX SCHEMA
+#      ERRORS, ALL SIX IN `CD-AC-002` AND `CD-AC-005`, THE EXACT TWO CRITERIA THE PERIMETER
+#      TURNS ON. NO CRITERION HAS HAD A COMPUTED STATUS.**
+#   **3. THE PID PIN IS STALE *AND THE STALENESS IS INVISIBLE*, BECAUSE THE SCHEMA FAILURE
+#      SHORT-CIRCUITS BEFORE THE COMPARISON IS REACHED. THE FIRST DEFECT MASKS THE SECOND.**
+#
+# **AND ONE THING THE RECORD HAS OWED SINCE `PO-DECISIONS-0020` IS NOW SETTLED BY MEASUREMENT:
+# THE PID CENSUS IS 17, `CD-AC-017` IS IN IT, AND ITS RELATION IS `DERIVES` AND NOT
+# `NEW_REQUIREMENT` — THE BLOCK IS SPENT BECAUSE THE AMENDMENT HAPPENED.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T173018Z-0151
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T17:30:18Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1951731, wrapper PID 1951730, `timeout 21600`. **`ps` RE-CHECKED — EXACTLY ONE `claude` process (`Q10`, `CD-PL-F146` DORMANT NOT CLOSED).**'
+phase: DESIGN
+branch: main
+base_sha: a3ca594f5ac71495373e0ec00ddc3a8ebbd849af   # the CD-RULE-007 follow-up closing the record-act boundary. `git rev-parse` + `git cat-file -t` -> commit (CD-PL-F36).
+
+the_deliverable:
+  artefact: 'governance/engineering/WO-3-SCOPE.md'
+  what_it_is: '**A SCOPE. NOT A DISPATCH, NOT A REGISTRATION, AND NOT A DECISION ABOUT PRODUCT CONTENT.**'
+  what_it_names: '**NO INDICATOR. NO FEED. NO VENDOR. NO CADENCE. NO CRITICALITY. NO WEIGHT. NO WINDOW. NO MODEL. NO COMBINATION.** It specifies the SHAPE of what is owed — construction, and this seat''s — and stops at the CONTENT — product meaning, and Matt''s. **THE STOP IS PRINTED AT THE TOP OF THE DOCUMENT RATHER THAN THE BOTTOM, BECAUSE A STOP AT THE BOTTOM IS A STOP A READER REACHES AFTER ALREADY BEING PERSUADED.**'
+
+# ================================================================================================== #
+# THE FOUR MEASURED PRECONDITIONS. **ALL FOUR MEASURED HERE. NONE ASSUMED. THREE WERE NOT ON ANY
+# LIST BEFORE THIS BOUNDARY.**
+# ================================================================================================== #
+P1_THERE_IS_NO_src_ON_MAIN_AT_ALL:
+  measured: |
+    git ls-tree -r --name-only HEAD    -- src   ->  (empty)
+    git ls-tree -r --name-only be0b355 -- src   ->  39 modules
+    git rev-parse wo-2r3                        ->  be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5
+  what_it_means: >
+    `main` carries governance, `tools/` and `pbg/` **and no product code.** Every module WO-3 must
+    extend — publication, witness panel, source registry, staleness, admission, establishment —
+    exists **ONLY at `be0b355`, WHICH IS FROZEN, BEHIND A GATE THAT IS SHUT.**
+  THE_CIRCLE_STATED_PLAINLY: >
+    *** **WO-3 NEEDS A BASE. THE BASE IS BEHIND THE GATE. RULING 7 SAYS THE GATE CLOSES WHEN WO-3
+    DELIVERS THE `DETECTED` TIER. THAT IS A CIRCLE ON ITS FACE.** *** **IT IS PUT UP AS `Q24` AND
+    THIS SEAT DOES NOT CUT IT.**
+  how_this_seat_could_be_WRONG_and_it_says_so_rather_than_only_asserting: >
+    **THE PROBABLE READING IS THAT THE GATE GOVERNS *ACCEPTANCE* AND NOT *BRANCHING*, so a WO-3 lane
+    may legitimately be cut from `be0b355` with the gate still shut. THAT IS PROBABLY RIGHT.** It was
+    **NOT ACTED ON**, and the reason is the cheap-error/expensive-error test this project has used
+    all along: **the cheap error is one round trip; the expensive one is a seat unfreezing a lane on
+    its own inference.**
+
+P2_THE_REQUIRED_TEST_REGISTER_IS_NOT_A_VALID_INPUT_AND_NEVER_HAS_BEEN:
+  how_it_was_measured_and_why_the_method_matters: >
+    **RUN IN THE REGISTER'S OWN COMPLETE TREE, WITH THE VERY PID IT PINS PRESENT AT THE PATH IT
+    NAMES** (`git archive be0b355 | tar -x`; `sha256sum PID.md` -> `441d8316…`, the correct one for
+    that tree). **THE FIRST RUN WAS IN A BARE SCRATCH DIRECTORY AND THIS SEAT DID NOT TRUST IT** —
+    a partial extraction is exactly how the tenth seat produced a DEAD PROBE with both arms zero
+    (`CD-D-079`). **THE SECOND RUN, IN THE FULL TREE, IS IDENTICAL. SO IT IS NOT AN ARTEFACT OF
+    EXTRACTION, AND THAT WAS ESTABLISHED BY COMMAND RATHER THAN BY CONFIDENCE.**
+  the_output: |
+    VALIDATION FAILED — the register is not a valid input; no status is computed:
+      ! criteria[1] (CD-AC-002).tests[3].negative_control: unknown field: planted_violation
+      ! criteria[1] (CD-AC-002).tests[3].negative_control: unknown field: planted_violation_note
+      ! criteria[3] (CD-AC-005).tests[2].negative_control: unknown field: planted_violation
+      ! criteria[3] (CD-AC-005).tests[2].negative_control: unknown field: planted_violation_note
+      ! criteria[3] (CD-AC-005).tests[3].negative_control: unknown field: planted_violation
+      ! criteria[3] (CD-AC-005).tests[3].negative_control: unknown field: planted_violation_note
+    GATE: SHUT
+    PID_ACCEPTANCE_SATISFIED: NOT DERIVED
+  the_mechanism: '`_ALLOWED_NEGATIVE_CONTROL = {"violation", "evidence_ref"}` (`pbg/tools/pbg/required_tests.py:82`). The register writes `planted_violation` / `planted_violation_note`. **A FIELD-NAME MISMATCH, SIX TIMES.**'
+  THE_CO_LOCATION_REPORTED_AND_DELIBERATELY_NOT_DIAGNOSED: >
+    *** **THE SIX ARE NOT SPREAD ACROSS THE REGISTER. ALL SIX ARE IN `CD-AC-002` AND `CD-AC-005` —
+    THE EXACT TWO CRITERIA WHOSE CLOSURE THE PERIMETER TURNS ON AND THE TWO GRADES EVERY RECENT
+    RULING HAS PROTECTED.** *** **THIS SEAT DOES NOT KNOW WHETHER THAT IS CAUSAL OR COINCIDENCE, DID
+    NOT INVESTIGATE, AND SAYS BOTH.** Investigating is Engineer work on a frozen lane. **IT IS
+    RECORDED BECAUSE A COINCIDENCE IN EXACTLY THOSE TWO ROWS IS THE KIND OF THING A RECORD GOES
+    QUIET ABOUT, AND THIS ONE DOES NOT.**
+  THE_REAL_COST: >
+    **VALIDATION FAILING MEANS NO STATUS IS COMPUTED FOR ANY CRITERION.** The register has been
+    carried through multiple gates as an input, **and as an input it has been returning nothing at
+    all.**
+
+P3_THE_PID_PIN_IS_STALE_AND_THE_STALENESS_IS_CURRENTLY_INVISIBLE:
+  measured: |
+    register pins        sha256:441d83166b2f3d0c…
+    sha256sum PID.md  -> 538e30f3bf4f1803…         (pid_identity: PID.md@538e30f3bf4f1803)
+  the_disclosure_was_right: '`PO-DECISIONS-0020` said in advance: *"any Required Test Register pinned to the old hash is no longer a valid input and MUST be re-pinned before WO-3."* **MEASURED TRUE.**'
+  AND_THE_PART_THAT_IS_NEW: >
+    *** **THE INSTRUMENT NEVER SAYS SO.** *** It prints `pid.content_hash (not comparable)` and
+    `pid.ref (unresolved)`, **because `report.pid_ref` is only assigned during status derivation
+    (`required_tests.py:611-612`), which P2's schema failure short-circuits before reaching.**
+    **SO THE SCHEMA DEFECT MASKS THE PIN DEFECT. FIXING P2 ALONE WILL MAKE P3 APPEAR AS IF IT WERE
+    NEW. IT IS NOT NEW — IT WAS HIDDEN — AND IT IS WRITTEN DOWN NOW SO THAT WHEN IT SURFACES NOBODY
+    RECORDS IT AS A REGRESSION.**
+  WHERE_THIS_SEAT_REFUSES_TO_OVERCLAIM: >
+    **`(unresolved)` IS A *CONSEQUENCE* OF P2 AND NOT A SECOND INDEPENDENT DEFECT.** The seat traced
+    it to the line rather than reporting the symptom as a finding. **THE OVERCLAIMING SENTENCE WAS
+    THE EASIER ONE TO WRITE AND WOULD HAVE READ AS A BIGGER RESULT.**
+
+P4_THE_CENSUS_IS_17_AND_THE_REGISTER_CARRIES_16:
+  how_it_was_measured: '**WITH THE INSTRUMENT''S OWN CENSUS FUNCTION (`derive_pid_census`) AGAINST THE CURRENT `PID.md` — NOT BY READING THE PID AND COUNTING BY EYE.** `CENSUS SIZE: 17` · `CD-AC-017 in census: True` · `CD-AC-018 in census: False`.'
+  consequence_1: '**`CD-AC-017` IS IN THE PID CENSUS, SO ITS RELATION IS `DERIVES` AND NOT `NEW_REQUIREMENT`.** That relation is coded as *"blocked pending PO amendment of the PID"* (`required_tests.py:708-715`) — **AND THE AMENDMENT HAPPENED** (PID v1.1.0, `PO-DECISIONS-0020` ruling 1). **THE BLOCK IS SPENT.**'
+  consequence_2: '**`CD-AC-018` IS CORRECTLY ABSENT** — exactly as ruling 1 ordered (*"CD-AC-018 GAINS NO ROW AND THE ABSENCE IS THE RULING"*). It enters as a register-only entry, `pid_relation: STRENGTHENS CD-AC-004`, **and `CD-AC-004` IS in the census, so the trace RESOLVES rather than dangling.**'
+  consequence_3: '**THE REGISTER''S 16 ROWS ARE SHORT BY ONE AGAINST ITS OWN CONTRACT** — and the authority against it is the register''s own header: *"a register that quietly dropped the criteria it could not yet satisfy would be marking its own paper."*'
+  WHAT_THIS_CLOSES: >
+    **THE `3/4 OF THE CD-D-172 FORM` CARRIAGE** that `CD-AC-017` and `CD-AC-018` have been held at
+    since `PO-DECISIONS-0020` — *"the register row does not exist … AND NOBODY ROUNDED UP."* **THE
+    ROWS ARE NOW SPECIFIABLE, WITH THE RELATION FOR EACH MEASURED RATHER THAN CHOSEN.** **THE
+    ROUNDING-UP STILL HAS NOT HAPPENED AND IS NOT HAPPENING HERE: THE ROWS ARE SPECIFIED, NOT
+    WRITTEN.**
+
+# ================================================================================================== #
+# THE PLAN. **A PROPOSAL, AND `PBG-AUTH-003` SAYS SO.**
+# ================================================================================================== #
+the_increment_order:
+  shape: '**SEQUENTIAL SINGLE-SEAT (`CD-D-181`). ONE INCREMENT AT A TIME, EACH ITS OWN ENGINEER DISPATCH, EACH FOLLOWED BY A SEPARATE ASSURANCE SEAT (`PBG-SOD-001`, NON-WAIVABLE).**'
+  inc_14: '**GROUP D — THE REGISTER REPAIR.** Blocked on `Q24` only. **IT IS FIRST BECAUSE EVERY LATER GATE READS ITS OUTPUT: doing it last would mean every gate before it was read off a register that returns nothing.**'
+  inc_15: '**GROUP C — publication layer, heartbeat, external probe, regime-aware staleness, health surface.** Blocked on `Q24` only. **CONSTRUCTION THAT DOES NOT NEED TO KNOW WHICH SOURCES EXIST — which is the whole reason for separating it from Group A.**'
+  inc_16: '**GROUP A — THE SOURCES, MODELS, MAPPINGS, COMBINATIONS. BLOCKED ON `Q25` — MATT. THE HINGE: NOTHING BELOW IT CAN START.**'
+  inc_17: '**GROUP B — `CD-AC-017` AND ITS POST-ADMISSION BINDING.** Needs a real declared door with real traffic.'
+  inc_18: '**GROUP B — `CD-AC-018` DIVERGENCE + THE FORGERY-DETECTION OBLIGATION.** **Needs registered sources, because with zero registry rows THERE ARE NO WITNESSES TO DIVERGE FROM.**'
+  AND_THE_ONE_THING_THE_SEAT_DID_NOT_DO_WITH_THIS_PLAN: >
+    **INCREMENTS 14 AND 15 ARE BLOCKED ON NOTHING PRODUCT-SHAPED AND COULD HAVE BEEN DISPATCHED
+    TODAY. THEY WERE NOT.** Ruling 6 sends this seat to a stop, **and a seat that dispatched an
+    increment on its way to a stop would have decided `Q27` BY MOVING RATHER THAN BY ASKING.** They
+    are offered as AVAILABLE and put up as a question.
+
+# ================================================================================================== #
+# THE SEPARATION THAT THIS SCOPE EXISTS TO HOLD.
+# ================================================================================================== #
+the_line_between_shape_and_content:
+  what_this_seat_specified: '**SHAPE** — the exact fields a source row, a model row and a combination must carry, every one of which ALREADY EXISTS in code at `be0b355` or is already required by `PO-PRODUCT-0001`. **NOTHING IN §7 IS A NEW ASK; IT IS THE EXISTING ASK MADE FIELD-BY-FIELD, SO THAT ANSWERING IT IS FILLING IN AND NOT DESIGNING.**'
+  what_this_seat_refused: '**CONTENT** — which indicators, which feeds, what each stands for, what weight, what criticality. **`BLUEPRINT` §16: *"Choosing them is choosing what the dial means."*** `CD-D-115` and `PBG-AUTH-003`.'
+  AND_THE_TRAP_NAMED_BEFORE_ANYONE_WALKS_INTO_IT: >
+    *** **THE ARGUS `/playbook` PAGE — 20 INDICATORS, 10 CATEGORIES, 8 COMBINATION MIRROR SIGNALS —
+    IS SITTING RIGHT THERE, AND `PO-PRODUCT-0001` NAMES IT AS THIS PAGE'S LINEAGE.** *** **IT WOULD
+    TAKE ONE SEAT ONE HOUR TO READ THE INDICATOR LIST OFF IT AND CALL THE QUESTION ANSWERED. THAT IS
+    FORBIDDEN AND THE PROHIBITION IS WRITTEN INTO THE SCOPE ITSELF (`PBG-PID-003`: existing code is
+    evidence of current implementation, NOT authorised intent — and `BLUEPRINT` §16 names ARGUS BY
+    NAME when saying so).** The playbook *"proved the shape; the detector does it with provenance and
+    refusals."* **THE SHAPE IS INHERITABLE. THE LIST IS NOT.**
+
+# ================================================================================================== #
+# THE FOUR QUESTIONS. **THIS SEAT ANSWERS NONE OF THEM.**
+# ================================================================================================== #
+questions_for_the_product_authority:
+  Q24: '**WHAT IS WO-3''S BASE?** `main` has NO `src/` (measured); the only application tree is `be0b355`, frozen behind a gate ruling 7 keeps SHUT until WO-3 delivers. **Does a WO-3 lane cut from `be0b355` with the gate still shut, or does something else move first?** This seat''s reading — the gate governs ACCEPTANCE, not BRANCHING — **is recorded AND NOT ACTED ON.**'
+  Q25: '**THE SOURCE SET. THE HINGE, AND IT IS MATT''S.** `WO-3-SCOPE.md` §7 is the field list. **Nothing in Group A or B, and no increment from 16 onward, can begin.**'
+  Q26: '**THE ALERT CHANNEL** — `BLUEPRINT` §10''s explicitly deferred Level 1 choice, *"whatever channel Matt actually reads."* **Durable `alert.event` rows mean nothing is lost while it is open, so it does not block — but it does not answer itself either.**'
+  Q27: '**DO INCREMENTS 14 AND 15 PROCEED WHILE `Q25` IS OPEN?** Both are blocked on nothing product-shaped. **OFFERED AS AVAILABLE, NOT DISPATCHED.**'
+
+# ================================================================================================== #
+# STANDING. **UNCHANGED, AND THE SCOPE MOVED NONE OF IT.**
+# ================================================================================================== #
+standing_unchanged_and_measured:
+  - '`CD-AC-005` **RED** · `CD-AC-002` **AMBER, NOT CLOSED** — **NOT MOVED. THE DISPATCH FORBADE MOVING THEM AND THE SCOPE IS THE MOMENT IT WOULD HAVE BEEN TEMPTING, BECAUSE THE SCOPE IS WHERE THEIR PATH TO CLOSURE IS DESCRIBED.**'
+  - 'the WO-2 gate **SHUT** · `wo-2r3` **FROZEN at `be0b355`** — **RE-VERIFIED AT THIS BOUNDARY: `git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. NOT ONE BYTE WRITTEN TO IT; every lane read was `git show` / `git archive` INTO SCRATCH.**'
+  - '**COORDINATION STAYS PARKED** — `CD-ASR-WO2R3-06-F09` NOT CLOSED, `Q11` NOT CLOSED, **and the scope forbids any WO-3 increment quietly fixing a coordination residual, which would un-park it by the back door.**'
+  - '**PARALLEL REMAINS STRUCK (`CD-D-181`)** — a framework deliverable (ruling 2). **NO SEAT DISPATCHED OF ANY KIND AT THIS BOUNDARY.**'
+  - '**BLUEPRINT.md AND PID.md UNTOUCHED** — MEASURED: `git log --oneline 88e43db..HEAD -- BLUEPRINT.md PID.md` -> **0 commits.**'
+  - '**BOTH COORDINATION WORKTREES RETAINED** — `59cb3c1`, `105db79`.'
+
+NOT_DONE_HERE:
+  - '**NO SOURCE REGISTERED. NOT ONE ROW, NOT AS A PLACEHOLDER, AND NOT AS A TEST FIXTURE** — `CD-PL-F154` is what happens when a fixture escapes.'
+  - '**NO SEAT DISPATCHED.** Not increment 14, which is blocked on nothing product-shaped and which this seat could have sent out today.'
+  - '**NO GRADE MOVED. NO FINDING CLOSED. NO REGISTER ROW WRITTEN** — P4 makes the two rows SPECIFIABLE; it does not write them.'
+  - '**NOT ONE BYTE OF THE LANE, AND NOT ONE BYTE UNDER `pbg/`.** All measurement was read-only, into `/tmp` scratch.'
+  - '**NO WO-3 CODE READ FOR CORRECTNESS.** **THIS IS A SCOPE, NOT A REVIEW**, and it makes no claim that what exists at `be0b355` is right.'
+
+next_actor: '**THE PRODUCT AUTHORITY — MATT, PREPARED BY THE PRODUCT OWNER (Trinity). `Q25` IS THE HINGE AND NO SEAT MAY ANSWER IT.**'
+next_safe_gate: '**A PRODUCT AUTHORITY ANSWER, AND NOT AN ENGINEER DISPATCH.** On `Q25` the first real source set; on `Q24` WO-3''s base. **WITH `Q24` ANSWERED ALONE, INCREMENTS 14 AND 15 BECOME DISPATCHABLE (`Q27`). WITH `Q25` ANSWERED, THE DETECTOR GETS ITS FIRST HONEST NUMBERS.**'

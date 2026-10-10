@@ -1,0 +1,105 @@
+diff --git a/probe_v31_caller_supplied_sleep.py b/probe_v31_caller_supplied_sleep.py
+new file mode 100644
+index 0000000..fdbd0c3
+--- /dev/null
++++ b/probe_v31_caller_supplied_sleep.py
+@@ -0,0 +1,62 @@
++"""V31 — COUNTERFACTUAL for §D.3 PART 1. The `sleep` PARAMETER restored.
++
++Part 1 is a DELETION, not a check, so its counterfactual is not "remove a guard" — it is
++"put the parameter back". This patch does exactly that and nothing else: `sleep` is a
++parameter again, admitted by `callable()`, and the retry path calls it.
++
++    PYTHONPATH=src python3 -B probe_v31_caller_supplied_sleep.py
++"""
++import time
++from datetime import datetime, timezone
++
++from crash_detector.collectors.adapter import AdapterFetchError
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class Adapter:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = {"type": "object"}
++
++    def fetch(self, *, timeout_seconds):
++        raise AdapterFetchError("CONNECTION_REFUSED")
++
++    def is_empty(self, payload):
++        return False
++
++
++class Sink:
++    def record(self, attempt):
++        return None
++
++
++class Ledger:
++    def admit_if_absent(self, key):
++        return True
++
++
++asked = []
++
++
++def instant_sleep(seconds):
++    """Callable. Returns None. Waits for nothing. `callable()` is satisfied."""
++    asked.append(seconds)
++
++
++POLICY = RetryPolicy(max_attempts=5, timeout_seconds=1.0, backoff_seconds=5.0)
++print("policy.backoff_seconds     :", POLICY.backoff_seconds)
++print("policy.worst_case_seconds  :", POLICY.worst_case_seconds)
++started = time.monotonic()
++result = collect(Adapter(), policy=POLICY, sink=Sink(), ledger=Ledger(),
++                 collector_run_id="run-v31", started_utc=NOW,
++                 delay=DelayKind.WALL_CLOCK, sleep=instant_sleep)
++elapsed = time.monotonic() - started
++print("backoffs the policy asked  :", asked)
++print("seconds actually waited    : %.4f" % elapsed)
++print()
++print("ESCAPED: the policy declares 20 seconds of backoff across four retries and the run")
++print("took milliseconds. `callable(sleep)` was satisfied throughout. The bound the policy")
++print("states was enforced by code the CALLER wrote — which is what §D.3 part 1 deleted.")
+diff --git a/src/crash_detector/collectors/runner.py b/src/crash_detector/collectors/runner.py
+index 6dd2996..4028ef9 100644
+--- a/src/crash_detector/collectors/runner.py
++++ b/src/crash_detector/collectors/runner.py
+@@ -298,6 +298,11 @@ class CollectionResult:
+     collector_run_id=str,
+     started_utc=datetime,
+     delay=DelayKind,
++    sleep=ESTABLISHED_HERE(
++        "V31: the pre-D.3 parameter restored. A Callable[[float], None] admitted by "
++        "callable(), which establishes that a thing can be CALLED and nothing about what "
++        "happens when it is. CARRIER MEASURED: nothing. That is the point of this variant."
++    ),
+     validator=ESTABLISHED_HERE(
+         "CD-BP-003, BLUEPRINT §17. PayloadValidator is a Protocol; None selects the shipped "
+         "JsonSchemaValidator, so the default path is a concrete type this package owns and "
+@@ -318,6 +323,7 @@ def collect(
+     collector_run_id: str,
+     started_utc: datetime,
+     delay: DelayKind,
++    sleep,
+     validator: Union[PayloadValidator, None] = None,
+ ) -> CollectionResult:
+     """Run one bounded collection for one source, recording EVERY attempt.
+@@ -492,7 +498,11 @@ def collect(
+         if not isinstance(outcome, FetchFailed):
+             break
+         if attempt_number < policy.max_attempts and policy.backoff_seconds > 0.0:
+-            delays_applied.append(apply_delay(delay, policy.backoff_seconds))
++            # V31: the caller's callable, back on the retry path.
++            if not callable(sleep):
++                raise TypeError("collect requires a callable sleep")
++            sleep(policy.backoff_seconds)
++            delays_applied.append(policy.backoff_seconds)
+ 
+     reading_key: Union[ReadingKey, None] = None
+     reading_admitted = False

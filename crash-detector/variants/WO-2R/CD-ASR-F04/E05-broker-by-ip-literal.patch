@@ -1,0 +1,15 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 21ebc42..45f5c7f 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -375,7 +375,9 @@ services:
+       # With nothing registered there is nothing to fetch, so an empty allowlist is not
+       # merely safe, it is the accurate description of this service in WO-2.
+       policy: ALLOWLIST
+-      hosts: []
++      hosts:
++        # Market data for the equity dial's price inputs. Read-only historical bars.
++        - 198.51.100.24
+       pending:
+         - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"

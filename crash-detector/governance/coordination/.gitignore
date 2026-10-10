@@ -1,0 +1,15 @@
+# The check-then-take mutex file taken by `registry.critical_section` (fcntl.flock).
+#
+# It is a LOCK, not a RECORD. Its contents are empty and meaningless by design: `flock` state lives
+# in the kernel and is released when the holding descriptor closes, including on SIGKILL, which is
+# exactly why a lock FILE taken with O_EXCL was not used — a lock file leaks when a seat is
+# hard-killed, and a wrapper hard-kill has happened on this project.
+#
+# Committing it would put a per-machine, per-instant artefact into project state, and a stale one in
+# a clone would say nothing true about that clone.
+#
+# Scoped to this directory only. The repository root has no .gitignore and adding one would be a
+# write outside this seat's declared scope.
+claims/.registry.lock
+leases/.registry.lock
+merges/.registry.lock

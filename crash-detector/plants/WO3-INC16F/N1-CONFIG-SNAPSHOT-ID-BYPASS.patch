@@ -1,0 +1,14 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:46:47.524452396 +0100
+@@ -788,6 +788,10 @@
+         # ordinary output to look strict.
+         return
+ 
++    # C7: A RETURN **AFTER** THE ENUMERATION, GUARDED BY SOMETHING ELSE ENTIRELY.
++    if candidate.get("config_snapshot_id") == "BYPASS":
++        return
++
+     published = _parse_utc_stamp(candidate.get(PUBLISHED_UTC_KEY))
+     window = _positive_finite_seconds(candidate.get(STALENESS_WINDOW_KEY))
+ 

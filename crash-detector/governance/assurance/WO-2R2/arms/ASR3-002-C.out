@@ -1,0 +1,9 @@
+shipped registry is_empty      : True
+shipped models per dial        : [None, None]
+equity reading   : Unknown -> NO_REQUIRED_INPUTS_DECLARED
+monetary reading : Unknown -> NO_REQUIRED_INPUTS_DECLARED
+
+Does EITHER dial carry a number under the shipped config? -> False
+
+CONSEQUENCE: under the shipped config there are NO dial numbers at all,
+so 'the two dials are never blended' is satisfied by there being nothing to blend.

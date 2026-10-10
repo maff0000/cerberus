@@ -1,0 +1,37 @@
+policy_id: POL-PBG-INSTALLATION-AND-CHANGE
+title: PBG installation and change
+version: 1
+status: DRAFT
+authority: PBGV2-FOUNDATION-0001
+
+purpose: >
+  Keep the installed framework snapshot trustworthy. A digest identifies a snapshot; if ordinary
+  work can edit that snapshot freely, the digest and the verification level stop describing
+  reality.
+
+scope: The pinned pbg/ snapshot in a consuming project, and the canonical framework source.
+actors: [PROJECT_LEAD, ENGINEER]
+
+required_behaviour:
+- Treat the installed snapshot as read-only during ordinary project work.
+- Change the snapshot only under a dispatch whose writable scope explicitly names framework paths.
+- Record installation identity, versions, digests, changed files, rollback route and validation
+  expectation for any change to the snapshot.
+- Keep the installation record outside the snapshot, so the anchor is independent of what it anchors.
+- Confine framework writes to the paths the dispatch named.
+- Verify integrity at boot and fail closed on mismatch.
+
+prohibited_behaviour:
+- Editing pbg/ to make a failing control pass — that is a bypass, not a repair.
+- Widening your own scope to reach pbg/ because a boot failed, a control failed or a version looked old.
+- Using framework authority to alter application source.
+- Developing framework doctrine inside a project's pinned copy rather than in canonical source.
+- Upgrading a project's pinned framework without that project's authority.
+- Claiming authenticity from internal self-consistency alone.
+
+evidence: [integrity verification output, maintenance record with both scopes declared, rollback route]
+exception_posture: >
+  Snapshot mutation outside a dispatch that names framework paths is not available under exception.
+  The dispatch itself is the sanctioned route.
+failure_route: Record a FRAMEWORK_DEFECT, pause the affected path, and request a bounded dispatch against PBG.
+related_controls: [PBG-FWK-013, PBG-FWK-020, PBG-FWK-004, PBG-PORT-003, PBG-CTRL-004]

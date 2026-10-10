@@ -1,0 +1,209 @@
+entry_id: BL-20260819T170507Z-0032
+timestamp_utc: "2026-08-19T17:05:07Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: da33fd9
+lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
+parent_entry_id: BL-20260819T161647Z-0031
+record_origin: >
+  Written by the Project Lead on main after reconciling CD-ENG-WO2R-01's return for WO-2R
+  increment 5. The seat's lane entries are BL-20260819T165223Z-0046 and BL-20260819T165617Z-0047,
+  the second superseding the first on the final SHA — not editing it (PBG-CONT-003). Per
+  CD-RULE-005 this entry_id timestamp comes from `date -u +%FT%TZ`.
+schema_version: 1
+
+action_summary: >
+  WO-2R INCREMENT 5 RECONCILED AND **ACCEPTED** (CD-D-057) at lane f22d120, five commits by
+  CD-ENG-WO2R-01. CD-ASR-F06 IS CLOSED AS A CLASS, subject to Assurance, and CD-PL-F62 IS CLOSED
+  with CD-D-055 DISCHARGED. Every declared number reproduces on pristine extractions. The Project
+  Lead wrote SIX fresh probes of its own; four were refused, and the two that were not are inside
+  declared boundary 3 and are the same residue already ruled inside the limit at CD-D-040. ONE
+  DECLARATION DEFECT IS RAISED: CD-PL-F65 (LOW), boundary 3 is incomplete about the type that
+  actually renders. That is a declaration to FINISH in increment 6's sweep, not a closure to redo.
+
+what_the_project_lead_measured_itself:
+- "Lane HEAD f22d120, `git status --porcelain` 0 lines. Five commits, all CD-ENG-WO2R-01 in BOTH author and committer (CD-RULE-002), all with the [CD-ENG-WO2R-01] prefix."
+- "Mandatory CLASS/STRUCTURE block: all TEN headings on all FIVE commits."
+- "Full suite on a pristine extraction of f22d120: exit 0, 1289 passed. The seat declared 1289."
+- "NODE-ID DIFF AGAINST THE BASELINE THE PROJECT LEAD CAPTURED ITSELF at be34fe4 BEFORE the seat delivered (BL-20260819T161647Z-0031): 1192 -> 1289, ZERO removed, 97 added. The claim was checked, not accepted."
+- "Nine static register checks at their declared invocations: exit 0 at 13 / 22 / 69 / 24 / 15 / 4855 / 38154 / 377 / 242 assertions. check_grant_matrix_live exit 3 PRECONDITION_NOT_MET (no live store; RT-A not invoked)."
+- "ELEVEN of eleven plants apply (`git apply --check`, 11/11)."
+- "CD-AC-005 plant CONTRAST run by the PL: clean arm 152 passed, planted arm 12 failed."
+- "tools/register/_yamlmin.py 0 diffs, so CD-D-051's bound held. pbg/ 0 diffs. 0 executable files under variants/. latest_admitted_run still null."
+- "The four declared boundaries appear in ALL THREE CD-RULE-004 places — src/crash_detector/staleness.py, required-tests.yaml and contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md."
+
+E07_and_the_headline_closure:
+  at_the_base_be34fe4_by_the_PL: >
+    resolve_panel(row dated 2016, staleness_window_seconds=1e18) returned
+    Agrees(divergence_measure=0.02, as_of_utc=2016-08-21T16:00:00Z). Recorded at PL-V1 BEFORE the
+    seat delivered, so the contrast is against a state the Project Lead had already measured.
+  at_the_delivered_sha_by_the_PL: >
+    The same call is REFUSED — StalenessWindowOutOfRange, and the message carries the derivation:
+    "exceeds the ceiling of 900.0 seconds and is REFUSED, not clamped ... The ceiling is DERIVED,
+    not chosen: PID.md §5, assurance latency budget, RATIFIED 2026-08-18 (CD-D-003 resolved)".
+  no_false_positive: >
+    The 60.0 arm still returns Unavailable(reason='PANEL_ROW_STALE'). A closure that forbids the
+    product is not a closure; this one does not.
+  the_ceiling_is_derived_and_the_PL_verified_the_clause_a_third_time: >
+    900.0 s from PID.md §5's ratified 15-minute detectability budget, with BLUEPRINT §7's
+    window_for(regime) named as the OPERATING window owed at WO-3. It is written as a CEILING AND
+    NOT A SETTING in code, register and contract, and NO TIGHTER NUMBER IS IMPOSED — which is the
+    correct application of CD-RULE-003, because no tighter number is derivable from ratified text.
+    The fail-closed branch was available and was not needed.
+  the_second_comparison_site_the_PL_handed_over: >
+    Closed. src/crash_detector/engine/evaluate.py now takes a StalenessWindow, not a float
+    (:145), and gets it from ConfigSnapshot.window() (:129). ConfigSnapshot.__post_init__ itself
+    constructs a StalenessWindow, so an inadmissible window is refused at CONFIG CONSTRUCTION and
+    not merely at use. MEASURED BY GREP: no reader of the raw `staleness_window_seconds` float
+    remains anywhere in src/ outside staleness.py, config.py and witness_resolver.py. One
+    admission door, as the PL's PL-V1 note argued for and did not specify.
+
+the_projects_leads_own_probes:
+  PL-W1:
+    route: 'BORROW — freshness evidence about a FRESH observation attached to a DECADE-OLD agreement.'
+    outcome: 'REFUSED, AgreementWithoutFreshnessEvidence. The binding of freshness.as_of_utc to the agreement''s own as_of_utc is real under execution, not merely asserted in a docstring.'
+  PL-W4:
+    route: 'DUCK-TYPED WINDOW — not a subclass, so __init_subclass__ never fires; presents .seconds=1e18 and a .covers() that always says yes.'
+    outcome: 'REFUSED, TypeError. The EXACT-type check catches what an isinstance check would have admitted — which is exactly the family the seat''s own F20 and F21 disclose that two earlier cuts fell to.'
+  PL-W6:
+    route: 'NEAR-COPY DOCKERFILE — Dockerfile.engine copied and one comment appended, a new service built from it, entrypoint importing crash_detector.witness.panel.'
+    outcome_at_the_guard: 'ESCAPES: exit 0, PASS 25 assertions. Exactly the residue declared, and the guard NAMES the service in its resolved-but-not-a-root list rather than being silent about it.'
+    outcome_at_the_declared_carrier: >
+      THE CARRIER HOLDS, MEASURED: `pytest -q` on that tree gives 11 failed, 1284 passed, including
+      test_there_is_one_dockerfile_per_application_service and
+      test_there_is_one_entrypoint_per_application_service. CD-RULE-006 is satisfied by execution.
+  PL-W2_and_PL-W5:
+    route: 'object.__setattr__(agrees, "as_of_utc", <2016>) on a validly constructed Agrees, then render.'
+    outcome: >
+      NOT REFUSED. The mutation sticks and render_panel returns "WITNESS AGREES" while
+      freshness.age_seconds still reads 0.0 — an agreement claiming a decade-old observation,
+      rendering the string the Product Owner's sentence forbids.
+    ruling: >
+      INSIDE THE DECLARED LIMIT. Boundary 3's first sentence generalises in terms — "object.__setattr__
+      WALKS PAST FROZEN, here as on every frozen value in Python AND IN THIS REPOSITORY" — declares
+      that overwriting a declared field is not preventable at the Python level, and says NOT PROVED
+      TO BE CARRIED ANYWHERE. It is the identical residue already ruled inside the limit at CD-D-040
+      (PL-R4), and that ruling is not reopened because the type is a different one. It does NOT send
+      the increment back.
+  PL-W3:
+    route: 'object.__setattr__(agrees, "smuggled", 1.0) — UNDECLARED attribute injection.'
+    outcome: 'NOT REFUSED. On StalenessWindow the same call raises AttributeError, which is what boundary 3 measures and reports. The asymmetry is the substance of CD-PL-F65.'
+
+CD-PL-F65:
+  severity: LOW
+  status: OPEN
+  title: "declared boundary 3 protects the two staleness values and is silent about Agrees, the type that actually renders"
+  detail: >
+    Two gaps, neither of them a false carrier. (a) Boundary 3's reassuring half — "Both values use
+    __slots__, so an UNDECLARED attribute cannot be injected" — is TRUE of StalenessWindow and
+    FreshnessEvidence and FALSE of Agrees, which is @dataclass(frozen=True) with no slots, at
+    be34fe4 and at f22d120 alike. PL-W3 measures the difference. (b) The boundary's measured
+    examples stop at a wrong age reading and a wrong window value; they do not show that the
+    mechanism reaches the Product Owner's exact forbidden sentence, "a decade-old row must be
+    structurally incapable of rendering WITNESS AGREES". PL-W5 shows it does. An auditor reading
+    boundary 3 learns the residue exists but not that it lands on the headline.
+  why_it_is_F62_and_not_F59: >
+    F59 was rejected because boundary 4 ASSERTED A COMPENSATING LAYER THAT DID NOT EXIST and the
+    residue was carried by nothing. Here nothing false is asserted: the boundary says NOT PROVED TO
+    BE CARRIED ANYWHERE, which is the honest form CD-RULE-006 requires, and its generalising first
+    sentence does cover the route. What is missing is EXTENT, not truth. An incomplete boundary is
+    a declaration to finish; a false boundary is a closure to redo.
+  disposition: >
+    CD-D-058: corrected in INCREMENT 6, whose declared business is exactly the register-and-contract
+    sweep and which writes no logic. NOT folded into the CD-PL-F61 _yamlmin dispatch, because that
+    dispatch is bounded elsewhere and widening it silently is what `prohibited` forbids — the same
+    rule the Project Lead held the seat to. Named to Assurance either way.
+  the_seat_is_not_asked_to_slot_Agrees: >
+    Adding __slots__ to Agrees would close PL-W3 and would NOT close PL-W2/PL-W5, which is the route
+    that renders. Requiring it would trade a real declaration for a partial fix that reads like a
+    closure — the CD-PL-F54 shape. The obligation is to say what is true, in all three places.
+
+CD-PL-F66:
+  severity: INFORMATIONAL
+  status: OPEN
+  title: "the same measurement is recorded as five, six and eight across three governance records"
+  detail: >
+    BL-20260819T155105Z-0028 says "all five other register checks exit 0" on the PL-U6b tree; the
+    seat corrected it to six; the Project Lead now measures EIGHT at exit 0, plus
+    check_grant_matrix_live at exit 3 PRECONDITION_NOT_MET, out of ten check files less the subject
+    itself. The number moved because NO RECORD EVER STATED WHAT SET WAS BEING COUNTED. It changes no
+    verdict — the carrier evidence is the suite failure count, which reproduces exactly (8 failed at
+    the addendum tree; 11 failed on the PL's wider PL-W6 tree) — but a count restated twice and
+    differently is a count an auditor cannot use. Forward practice: state the denominator with the
+    numerator.
+
+self_disclosures_by_the_seat_confirmed:
+- 'CD-ENG-WO2R-F20 (MEDIUM) and F21 (MEDIUM): its first two cuts used isinstance and `>` and fell to a comparison-redefining float subclass and to a StalenessWindow subclass respectively. Both CLOSED by its own V48/V49, and CONFIRMED independently by the PL''s PL-W4, which is the same family by a third route and is refused.'
+- 'CD-ENG-WO2R-F22 (LOW) — ANSWERED, and this was the one thing the seat could not settle for itself. conftest WINDOW_SECONDS moved 3600 -> 600 and two literal ages 900 -> 500. MEASURED BY THE PL over the whole tests/ diff: the fixture change is FORCED (3600 is no longer an admissible window anywhere, including in a fixture), the helper it adds constructs REAL FreshnessEvidence and so raises for stale exactly as production does — there is no test-only route to agreement — and the two re-based ages keep their tests inside the new window while asserting the SAME propositions (oldest input wins; latest per source wins). NO PRE-EXISTING TEST GOT EASIER. Every other deletion in tests/ is forced by Agrees gaining a required field.'
+- 'CD-ENG-WO2R-F23 (LOW) and F24 (INFO, Diverges deliberately not given a freshness requirement — asymmetric on purpose): both CONFIRMED and carried to Assurance.'
+- 'The seat''s own catch that boundary 5''s assertion counts were true of 4cae8be and one low at the delivered SHA, corrected at e661fb6 with BOTH numbers stated rather than one overwritten, and entry 0046 superseded by 0047 rather than edited. That is CD-RULE-005/PBG-CONT-003 applied by the seat to itself, unprompted.'
+
+CD_ASR_F07_reported_not_claimed:
+  what_the_seat_said: 'Exploitable? No, structurally. Detected when planted? NO. F07 stays owed at WO-3.'
+  what_the_PL_measured: >
+    E08 applied to a pristine extraction of f22d120: exit 0, 152 passed — UNDETECTED, exactly as
+    declared. V47, the same handler MADE TO FIRE: exit 1, 24 failed. So the handler cannot produce
+    agreement, and the auditor's own qualification — that it could not make the handler fire and the
+    plant is dead code — is reproduced rather than glossed.
+  ruling: >
+    The seat separated "is it exploitable" from "is it detected when planted" and answered both,
+    claiming closure of neither. That is the reporting standard this rework exists to establish. F07
+    stays out of scope and owed at WO-3; scope was not broadened.
+
+decisions:
+- id: CD-D-057
+  ruling: >
+    WO-2R increment 5 is RECONCILED AND ACCEPTED at lane f22d120. CD-ASR-F06 is CLOSED AS A CLASS,
+    subject to Assurance. CD-PL-F62 is CLOSED and CD-D-055 is DISCHARGED. The structural move is the
+    one worth recording: the closure is not the ceiling. The ceiling bounds a number; FreshnessEvidence
+    makes the age comparison the ACT OF CONSTRUCTING the evidence, and agreement requires the evidence
+    — so a route that skips the comparison does not exist rather than being caught. The seat found the
+    one door both comparison sites share, which is what the Project Lead's PL-V1 argued for and
+    deliberately did not specify.
+- id: CD-D-058
+  ruling: >
+    CD-PL-F65 is corrected in increment 6's declaration sweep, not by a re-open and not by folding it
+    into the bounded _yamlmin dispatch. The seat is NOT asked to add __slots__ to Agrees: that would
+    close PL-W3 and not PL-W5, and a partial fix that reads like a closure is the CD-PL-F54 shape.
+- id: CD-D-059
+  ruling: >
+    PL-W1 through PL-W6 join the exclusion set and are written to governance/reconciliation/WO-2R/ as
+    DATA, nothing executable (PBG-ASSURE-001). The next auditor must devise fresh variants; the
+    exclusion set is now the union of the WO-2 auditor's ten, the Engineer's variants through V51, and
+    the Project Lead's, PL-Q1 through PL-W6.
+
+status: CHECKPOINT
+current_sha: da33fd9
+next_safe_action: >
+  ISSUE THE CD-PL-F61 BOUNDED DISPATCH (CD-D-051): tools/register/_yamlmin.py and its two callers,
+  proving termination on the minimal document, on V30 and on PL-T5, with the clean arm and all eleven
+  plants unchanged, and CD-ENG-WO2R-F19's nested-anchor repair folded in. It is owed AFTER increment 5
+  and BEFORE Assurance because two of the eleven declared gate commands currently return NO VERDICT on
+  an ordinary YAML edit, and an auditor probing YAML shapes will meet it by accident as the Project
+  Lead did. THEN increment 6 — the register-and-contract sweep, no logic — carrying CD-PL-F65 as a
+  bounded addendum at its head (CD-D-058). THEN AND ONLY THEN CD-DISPATCH-WO2R-ASSURANCE to
+  CD-ASR-WO2-02, a SEPARATE agent, never the Engineer and never the Project Lead (PBG-SOD-001,
+  non-waivable), handed CD-ENG-WO2R-F12 as a NAMED QUESTION plus CD-PL-F53, F57, F58, F62, F63, F65,
+  F66 and the seat's F22, F23, F24. THE GATE IS UNCHANGED: Assurance PASS on all five. Admit no run
+  record without its paired assurance verdict (CD-RULE-001, non-relaxable).
+expected_next_actor: PROJECT_LEAD
+
+evidence_references:
+- 'governance/reconciliation/WO-2R/PL-W1-W6-freshness-mutation-and-near-copy-image.py.txt'
+- 'governance/reconciliation/WO-2R/PL-V1-E07-reproduction-and-the-second-comparison-site.py.txt (the pre-delivery baseline)'
+- 'lane BL-20260819T165223Z-0046 and BL-20260819T165617Z-0047 (the seat''s attestations)'
+- 'lane commits 4cae8be, f39fed3, 39f4217, e661fb6, f22d120'
+- 'node-id lists at be34fe4 (1192) and f22d120 (1289), diffed by the Project Lead'
+
+risks:
+- 'CD-PL-F65 is OPEN until increment 6. It is a declaration gap, not an open escape: the route it fails to describe is inside boundary 3 and is a property of the language, already accepted project-wide at CD-D-040.'
+- 'CD-PL-F61 stands and is now the next thing owed. Two of the eleven declared gate commands do not terminate on an ordinary YAML edit, and it PREDATES the first audit — reachable throughout the WO-2 assurance run and never met.'
+- 'CD-ASR-F07 remains owed at WO-3, reported and deliberately not claimed closed. E08 is undetected when planted, which the register''s own negative_control names as part of the class.'

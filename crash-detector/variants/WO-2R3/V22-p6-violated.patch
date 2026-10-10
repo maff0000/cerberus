@@ -1,0 +1,16 @@
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 897071f..4c79a95 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -139,11 +139,6 @@ class PanelRow:
+         object.__setattr__(self, "published_utc", ensure_utc(self.published_utc))
+ 
+ 
+-@admits(
+-    row=one_of(PanelRow, None),
+-    now_utc=datetime,
+-    staleness_window_seconds=float,
+-)
+ def resolve_panel(
+     row: Union[PanelRow, None],
+     *,

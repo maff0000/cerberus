@@ -1,0 +1,52 @@
+domain: SOV
+domain_label: Project sovereignty
+controls:
+- control_id: PBG-SOV-001
+  title: Every project declares its boundaries, and writes stay inside them
+  status: ACTIVE
+  purpose: 'Prevent one project silently damaging another — the highest-consequence failure available
+    in a multi-project estate.
+
+    '
+  risk_addressed: 'Hidden coupling, cross-project mutation, and shared mutable code that nobody owns.
+    This was PBGv1''s best-executed control, and a real project voluntarily made it stricter than the
+    framework required, which is the strongest signal a control earns its place.
+
+    '
+  required_outcome: 'Each project declares canonical repository, development path, worktree path, runtime
+    path, data namespace, configuration boundary, secret boundary, permitted integrations, read-only reference
+    projects and prohibited paths. Cross-project interaction is read-only reference or an explicit documented
+    contract. No application writes to host-global configuration, host-global service or scheduler paths,
+    another project''s repository, another project''s data namespace, or another project''s logs. Any
+    need to change another project stops and escalates.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - manifest sovereignty block
+  - reference-path before/after state
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - ISO/IEC 27001 A.8 asset boundaries
+  - PBGv1 sections 1.6 and 3
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: governance/pbg-installation.yaml
+  verification_note: 'Boundaries are declared in the project manifest and enforced by runtime permission
+    where the host supports it. Where it does not, non-mutation of reference paths is proven with before-and-after
+    Git state and digests. Scope is judged by effect, not only by file location — a change inside the
+    declared path that mutates another boundary''s governed state is still a breach, and scenario U3 tests
+    exactly that.
+
+    '

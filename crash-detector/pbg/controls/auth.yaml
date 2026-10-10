@@ -1,0 +1,240 @@
+domain: AUTH
+domain_label: Authority and escalation
+controls:
+- control_id: PBG-AUTH-001
+  title: A Project Lead gate authorisation under an authorised PID is the scope greenlight
+  status: ACTIVE
+  purpose: 'Let delegated authority actually flow. The Engineer and Assurance Engineer proceed on a PL
+    gate authorisation and do not stall waiting for separate Product Authority approval.
+
+    '
+  risk_addressed: 'PBGv1 needed two separate patch releases because the Assurance seat twice held for
+    an Owner greenlight the Project Lead had already been delegated authority to give. A framework that
+    produces stalled agents has a real defect.
+
+    '
+  required_outcome: 'Where the PID is authorised and the delegation is clear, a PL gate authorisation
+    is sufficient to proceed. Where the PID is not authorised, or the delegation is unclear, the seat
+    returns AMBER rather than either stalling or assuming.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - authorised PID
+  - gate authorisation record
+  - boot declaration
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 5.1, introduced PBG-1.0.2
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/project-lead.md
+  verification_note: 'The delegation chain in policies/authority.yaml is evaluable: an agent computes
+    whether it is authorised rather than interpreting prose. pbg boot resolves the chain and records the
+    result in the boot declaration.
+
+    '
+- control_id: PBG-AUTH-002
+  title: An authorised PID is the standing audit-scope grant
+  status: ACTIVE
+  purpose: 'Grant the Assurance seat its scope once per project rather than per work item.
+
+    '
+  risk_addressed: 'An assurance guardrail that refuses unattended audits and demands the Owner name the
+    scope each time, which stalls every audit in every new project.
+
+    '
+  required_outcome: 'Authorising a PID names the Assurance seat''s audit scope for every work item in
+    that project, and survives into each new project without separate scope-naming.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - authorised PID
+  - boot declaration
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 5.2, introduced PBG-1.0.3
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: PID
+  verification_note: 'pbg boot resolves audit scope from the PID''s role-assignment block and records
+    it.
+
+    '
+- control_id: PBG-AUTH-003
+  title: The Project Lead may not broaden product intent or silently resolve a Product Authority decision
+  status: ACTIVE
+  purpose: 'Keep product doctrine with the Product Authority while leaving delivery decisions with the
+    Project Lead.
+
+    '
+  risk_addressed: 'A lead quietly answering an open product question because answering it is faster than
+    escalating. The answer then becomes precedent nobody approved.
+
+    '
+  required_outcome: 'Constitutional PID content changes only by Product Authority approval. Open decisions
+    in the PID''s controlled registers are resolved by the Product Authority, not invented by the PL.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - PID diff with content-class tags
+  - decision records
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: HUMAN_DECISION
+  verification_mechanism: DECISION_AUTHORITY_REF
+  verification_ref: policies/authority-and-scope.yaml
+  verification_note: 'pbg validate rejects a PL-authored change to a PID section tagged Constitutional.
+    Assurance checks that open decisions were answered by the Product Authority.
+
+    '
+- control_id: PBG-AUTH-005
+  title: Every escalation names a default safe action and the work continuing elsewhere
+  status: ACTIVE
+  purpose: 'Keep the stream moving while an open question is answered.
+
+    '
+  risk_addressed: 'Work stopping dead on an open question, so an escalation costs more than guessing and
+    gets avoided.
+
+    '
+  required_outcome: 'An ambiguity report states the default safe action while waiting and what work continues
+    in parallel.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    work_types:
+    - TASK
+    - CHANGE
+    - CONTROLLED_ACTION
+    - INCIDENT
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - ambiguity report
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 7
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/project-lead.md
+  verification_note: 'Schema validation rejects an ambiguity report missing default_safe_action or work_continuing_elsewhere.
+
+    '
+- control_id: PBG-AUTH-006
+  title: An escalation carries a recommendation
+  status: ACTIVE
+  purpose: 'Make escalation useful. The escalating seat has read the evidence; the authority has not.
+
+    '
+  risk_addressed: 'An unstructured question shifts the analysis burden to the authority and slows every
+    decision.
+
+    '
+  required_outcome: 'A Level 2 or Level 3 escalation states the question, why it matters, the evidence
+    inspected, the options, and the escalating seat''s recommendation.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    work_types:
+    - TASK
+    - CHANGE
+    - CONTROLLED_ACTION
+    - INCIDENT
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - ambiguity report
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/project-lead.md
+  verification_note: 'Schema validation rejects an ambiguity report with no recommendation field.
+
+    '
+- control_id: PBG-AUTH-007
+  title: A decision that changed scope or direction amends the PID in the same movement
+  status: ACTIVE
+  purpose: 'Prevent a ruling and the product constitution disagreeing.
+
+    '
+  risk_addressed: 'A decision recorded only in a decision log while the PID still says something else.
+    Two truths, and the next agent to boot reads the wrong one.
+
+    '
+  required_outcome: 'A decision that moves scope or direction produces a PID amendment in the same change,
+    with the amendment history updated.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: a decision changes scope or direction
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - decision record
+  - PID amendment history
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: HUMAN_DECISION
+  verification_mechanism: DECISION_AUTHORITY_REF
+  verification_ref: policies/authority-and-scope.yaml
+  verification_note: 'pbg validate cross-checks decision records flagged scope_or_direction against PID
+    amendment history and reports any decision with no corresponding amendment.
+
+    '

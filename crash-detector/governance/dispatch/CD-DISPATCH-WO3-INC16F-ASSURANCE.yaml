@@ -1,0 +1,201 @@
+# ================================================================================================== #
+# CD-D-185 — CD-DISPATCH-WO3-INC16F-ASSURANCE
+#
+# **GRADE INCREMENT 16F — CONTROL-ROW STRENGTH — AT CONTENT TIP `7ac11c9`.**
+#
+# Authority: PO-DECISIONS-0031 (commit 97f85e6, authored by Matt Scott and by NO SEAT), ruling 1.
+#
+# *** **THE COMPLETION CONDITION YOU ARE GRADING IS THE PRODUCT AUTHORITY'S AND IT IS STRUCTURAL:
+# "a bypass introduced ANYWHERE on the publication path, and a stale/unknown value in ANY root
+# property, is REFUSED — proven by the space-probing instrument and the single-chokepoint
+# invariant, NOT by an enumerated arm list."** ***
+#
+# *** **AND THE RULING'S NEXT SENTENCE IS THE ONE THAT DECIDES YOUR VERDICT: "this is the LAST
+# strength step: after it, a further named shape means the space-prober was MIS-BUILT, not the
+# guard incomplete." SO IF YOU FIND A SHAPE, THE QUESTION IS NOT "ADD A SIXTH ARM" — IT IS WHETHER
+# THE CONSTRUCTION IS WRONG. SAY WHICH.** ***
+# ================================================================================================== #
+
+dispatch_id: CD-D-185
+name: CD-DISPATCH-WO3-INC16F-ASSURANCE
+issued_utc: '2026-08-24T23:06:00Z'   # from `date -u` and from nothing else (CD-RULE-005)
+issued_by: PROJECT_LEAD_SEAT_07
+parent_entry_id: BL-20260824T230140Z-0185
+status: ISSUED
+
+# ================================================================================================== #
+role:
+# ================================================================================================== #
+  role_source: pbg/roles/assurance-engineer.md
+  role: ASSURANCE_ENGINEER
+  actor_id: CD-ASR-WO3-14
+  authority_record: CD-AUTH-0001
+  reading_this_file_does_not_grant_the_role: 'PBG-BOOT-001. PBG-BOOT-002 (non-waivable): you do not self-assign a role, a scope or mutation authority.'
+  identity_freshness_MEASURED_by_the_dispatching_seat: >-
+    `git log --all --format=%an | sort -u` was run at dispatch. It names CD-ENG-WO3-01..14 and
+    CD-ASR-WO3-02..13. **CD-ASR-WO3-14 DOES NOT APPEAR.** You have authored nothing here. Commit as
+    `CD-ASR-WO3-14 <cd-asr-wo3-14@seats.crash-detector.invalid>` using GIT_AUTHOR_NAME /
+    GIT_AUTHOR_EMAIL / GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL. **`git -c user.name=` DOES NOT
+    WORK ON THIS HOST. VERIFY WITH `git log --format=%an` AFTER YOUR COMMIT.**
+  separation_of_duties:
+    you_are_not_CD_ENG_WO3_14: 'It BUILT this increment. You grade it. PBG-SOD-001 is non-waivable.'
+    you_are_not_CD_ASR_WO3_13: 'It graded 16E and raised A313-F1. A fresh pair of eyes on the answer to its own finding is the point.'
+    you_do_not_repair: >-
+      **YOU FIND AND YOU REPORT. YOU DO NOT FIX, AND YOU DO NOT WRITE THE LINE THAT FIXES IT
+      (PBG-SOD-004).** A prescription in your findings is welcome; an implementation is not yours.
+  a_verdict_is_not_an_acceptance: 'PBG-AUTH-003. You return PASS, AMBER or RED with the next safe gate. The Project Lead banks it; the Product Authority disposes.'
+
+# ================================================================================================== #
+mutation:
+# ================================================================================================== #
+  rule: '**READ-ONLY ON THE TARGET. MUTATION PROHIBITED except explicitly safe diagnostic artefacts.**'
+  what_that_permits: >-
+    Pristine `git archive <sha> | tar -x` extractions under `/tmp/`, patches you author under
+    `/tmp/`, and scratch probes under `/tmp/`. **You may create a branch `asr-wo3-14-verdict` off
+    `main` carrying ONE file — your verdict Build Log entry — and nothing else.** That is the shape
+    every Assurance seat on this project has used.
+  what_it_forbids: >-
+    Any change to `main`, to `wo-3`, to `/srv/crash-detector`, to `/srv/crash-detector-wo3`, or to
+    any tracked file at the target. **DO NOT MOVE THE `wo-3` TIP. `7ac11c9` IS YOUR TARGET AND IT
+    MUST STILL BE `7ac11c9` WHEN YOU FINISH.**
+  concurrency: 'CD-D-181 — SEQUENTIAL SINGLE-SEAT. You are the only seat live. Do not spawn sub-agents. `be0b355` is frozen.'
+
+# ================================================================================================== #
+the_target:
+# ================================================================================================== #
+  repository: local
+  branch: wo-3
+  content_tip: 7ac11c9789e86625e91ea163c72404288e91d023
+  entry_tip: c475b8e75004a14481f39e63d09e86da3898195b
+  the_return_record: 'wo-3 `c475b8e:governance/engineering/build-log/BL-20260824T223344Z-16FC.yaml` — **BANKED AS AN INPUT AND NOT ACCEPTED. IT IS THE SEAT''S OWN ACCOUNT AND IT IS EVIDENCE, NOT FINDINGS.**'
+  the_instrument_freeze: >-
+    `6491b64` — the Engineer froze both instruments at this SHA BEFORE inventing its post-freeze
+    arms, so that ITEM 4's "invented after the freeze" claim is auditable by ancestry rather than by
+    assertion. **VERIFIED BY THE DISPATCHING SEAT AS A REAL ANCESTOR OF `7ac11c9`. USE IT.**
+  the_baseline_to_contrast_against: 'a9e19c3 — the prior tip, which was assured AMBER on A313-F1.'
+  the_two_rows_under_test:
+    LINE_04: '`python3 tools/register/check_stale_data_never_calm.py --root .` — the BEHAVIOURAL row, now carrying an invariance pass.'
+    LINE_05: '`PYTHONPATH=src python3 -m pytest tests/test_envelope_freshness.py -q` — the witness suite. **`Q37` IS RULED: BOTH ROWS STAY. Do not report their existence as duplication.**'
+    LINE_06: '`python3 -B tools/register/check_publication_chokepoint.py --root .` — the STRUCTURAL chokepoint row, new at 16F.'
+
+# ================================================================================================== #
+what_the_dispatching_seat_MEASURED_ITSELF — REPRODUCE IT, DO NOT TRUST IT:
+# ================================================================================================== #
+  method_note: >-
+    Every figure below was taken by PROJECT_LEAD_SEAT_07 in its own shell at
+    `BL-20260824T230140Z-0185`, using patches it authored BEFORE the Engineer was dispatched —
+    because an instrument can be shaped to the arms it ships with. Pristine extractions, patches
+    applied from an absolute path OUTSIDE every extraction, `git apply` rc TAKEN AND CHECKED,
+    inserted lines grep-confirmed present. **`CD-PL-F193` BINDS YOU TOO: THESE ARE HYPOTHESES UNTIL
+    YOUR SHELL REPRODUCES THEM.**
+  the_acceptance_test_MOVES:
+    at_a9e19c3: 'CLEAN `32/21/11` · `W5G` `32/21/11` · `W5B2` `32/21/11` — `diff` rc=0 both times.'
+    at_7ac11c9: 'CLEAN `33/22/11` · `W5G` `33/20/13` (LINE 04 + LINE 06) · `W5B2` `33/20/13` (LINE 04 + LINE 06) · `W5A` `33/19/14` (LINE 04 + 05 + 06) · `W5C` no move.'
+    the_register_grew_by_one_passing_line: '`rc0` 21 -> 22 and `nonzero` 11 -> 11, so NO PREVIOUSLY-PASSING LINE REGRESSED.'
+  the_six_no_regression_measurements: 'zero `src/` paths · zero `pbg/` paths · both `contracts/*.json` byte-identical by `sha256sum` at both ends · 16D and 16E plants byte-unchanged · `be0b355` unmoved · 16C not built, no indicator row registered.'
+
+# ================================================================================================== #
+CD-PL-F209 — THE FINDING THE PROJECT LEAD RAISED, HANDED TO YOU TO VERIFY OR REFUTE:
+# ================================================================================================== #
+  status: 'RAISED BY THE PROJECT LEAD, NOT GRADED BY IT. **THE SEVERITY IS OFFERED, NOT SET. IF YOU THINK IT IS WRONG, SAY SO — THAT IS A FINDING TOO, AND A MORE VALUABLE ONE.**'
+  statement: '**THE UNION OF THE TWO ROWS IS NOT A COVER. A BYPASS THAT IS NEITHER CONTROL-FLOW-SHAPED NOR KEYED ON AN IN-VOCABULARY VALUE ESCAPES BOTH.**'
+  how_it_was_constructed: >-
+    The Engineer's own post-freeze arms supply both halves and its record states both honestly; it
+    did not compose them. **`N1`** is a `return` keyed on `config_snapshot_id == "BYPASS"` —
+    control-flow, value OUTSIDE the vocabulary — caught by the STRUCTURAL row ALONE (reproduced:
+    LINE 06 only). **`N13`** is `calm_nodes = []` keyed on `regime == "acute"` — an ASSIGNMENT,
+    value INSIDE the vocabulary — caught by the BEHAVIOURAL row ALONE (reproduced: LINE 02 + LINE
+    04, and LINE 02 only incidentally, because the patch spells a product token). **`P1` IS `N13`'s
+    MECHANISM WITH `N1`'s VALUE.**
+  the_arm_in_full_because_its_plausibility_is_the_point: |
+    Inserted after the `calm_nodes` enumeration in `_refuse_stale_calm`:
+
+        # P1: no return, no continue, no break. The enumeration is emptied, keyed on a string
+        # constant that appears in no product vocabulary and in no instrument vocabulary.
+        if candidate.get("config_snapshot_id") == "BYPASS":
+            calm_nodes = []
+  the_measurement: >-
+    Pristine extraction of `7ac11c9`, `git apply` rc=0 CHECKED, line grep-confirmed at 791.
+    **LIVE GATE: STALE-CALM ADMISSIONS = 2 — a 1970-stamped `calm` dial ADMITTED ON BOTH SURFACES.
+    REGISTER: `TOTAL lines=33 rc0=22 nonzero=11`, IDENTICAL TO CLEAN, `diff` rc=0. NOT ONE OF THE
+    THIRTY-THREE LINES MOVES.** The same runner and the same clean baseline produced two moving
+    lines on `W5G` minutes earlier, **so the null result is a measurement and not a dead pipe.**
+  what_the_declared_limit_says: >-
+    `DECLARED LIMIT 9`: *"The class is closed by the STRUCTURAL row, which catches every
+    `return`/`continue`/`break`-shaped bypass regardless of what value it is keyed on. NEITHER ROW
+    CLOSES IT ALONE AND THE RETURN DOES NOT CLAIM OTHERWISE."* **THE FIRST SENTENCE IS TRUE AS
+    WRITTEN AND THE PARAGRAPH READS AS THOUGH THE PAIR CLOSES THE CLASS.**
+  the_analysis_offered_and_DELIBERATELY_NOT_written_as_a_line_to_implement: >-
+    A behavioural value-enumeration cannot close it at ANY vocabulary width — `config_snapshot_id`
+    is `{"type": "string", "maxLength": 128}` and no finite list covers it, which the Engineer says
+    itself in `CD-ENG-F16F-02`. A structural rule enumerating EXIT FORMS cannot close it either,
+    because `P1` uses none. **THE DISPATCHING SEAT'S READING IS THAT WHAT BOTH ROWS ARE MISSING IS A
+    DEPENDENCE CHECK RATHER THAN A SHAPE CHECK — the stage may read the node's own properties, the
+    root's `published_utc` and the root's `staleness_window_seconds`, AND NOTHING ELSE, which is the
+    invariant `CD-D-184` ITEM 1 states in words and neither row asserts over the source. THAT IS
+    OFFERED AS ANALYSIS AND IS NOT A PRESCRIPTION, AND YOU ARE NOT BOUND BY IT (`PBG-SOD-004`).**
+
+# ================================================================================================== #
+what_you_are_asked_to_do:
+# ================================================================================================== #
+  1_REPRODUCE_THE_ACCEPTANCE_TEST_INDEPENDENTLY: >-
+    Your own extractions, your own patches, your own probe taking the tree as `argv[1]` and printing
+    the resolved `crash_detector.__file__`. **TWO METHOD TRAPS THIS PROJECT HAS FALLEN INTO: a patch
+    read from INSIDE the extracted tree returns `git apply` rc=128 and the instrument then runs on
+    an UNPATCHED tree, measuring nothing while looking like a result (`CD-ASR-WO3-11` disclosed this
+    against itself); and a probe with a hard-coded `sys.path.insert` measures THE LANE whichever
+    tree it is pointed at.** Take every rc into a variable and check it.
+  2_ATTACK_THE_COMPLETION_CONDITION_AND_NOT_THE_ARM_LIST: >-
+    **SET OUT TO ADMIT A STALE CALM READING ON THE SHIPPED CONTRACT AT `7ac11c9` WITH THE REGISTER
+    GREEN, AND REPORT WHETHER YOU COULD.** That single sentence is the verdict. Invent your own
+    shapes; the arms in `plants/WO3-INC16F/` are the Engineer's and grading against them alone is
+    grading the paper it wrote.
+  3_ATTACK_CD_PL_F209_DIRECTLY: >-
+    Verify or refute `P1`. Then push on it: **is the gap ONE shape or a CLASS?** If it is a class,
+    say what its boundary is. If the dispatching seat's analysis is wrong, say why.
+  4_JUDGE_CD_ENG_F16F_01_ON_THE_EVIDENCE: >-
+    The Engineer's arm `N8` escaped BOTH rows at the freeze; it then completed `CD-CHOKE-005` on its
+    own stated terms and **wrote down that you are entitled to read that as building against the
+    shape.** The freeze SHA `6491b64` exists so you can make that call on evidence. **THE
+    DISPATCHING SEAT HAS DELIBERATELY NOT PRE-EMPTED IT. IT IS YOURS.**
+  5_ATTACK_THE_VACUITY_DIRECTION: >-
+    **THIS IS THE HALF THIS PROJECT'S HISTORY SAYS GETS MISSED, AND AN INVARIANCE CHECK HAS A NEW
+    WAY TO GO VACUOUS: AN INSTRUMENT THAT REFUSED EVERYTHING EVERYWHERE WOULD BE PERFECTLY
+    INVARIANT.** A genuinely fresh calm dial, a dial aged EXACTLY the window, and a stale dial
+    rendering `elevated` or `acute` must all still be ADMITTED — at every point in the varied space,
+    not just at the baseline. **AND THE STRUCTURAL ROW HAS ITS OWN VACUITY DIRECTION: "exactly one
+    caller" is satisfied by a tree in which nothing calls anything. Arm `C6` claims to be that
+    admitting arm. Check that it is.**
+  6_CHECK_THE_THREE_CD_RULE_004_PLACES_AGREE: >-
+    Every declared limit must read identically in the instrument header, the execution contract
+    under `contracts/execution/`, and `required-tests.yaml`. **`A313-F2` was raised at 16E because
+    one of three disagreed. Measure it, do not assume it.**
+  7_VERIFY_THE_CORRECTIONS_SUPERSEDED_AND_DID_NOT_EDIT: >-
+    `DECLARED LIMIT 2`'s false closing sentence and the `FOR THE AUDITOR` paragraph were to be
+    SUPERSEDED with the old text quoted verbatim beside the correction, never edited
+    (`PBG-CONT-003`). `required-tests.yaml` shows `302/15` and the execution contract `113/5` —
+    **READ EVERY DELETED LINE AND SAY WHETHER IT WAS A CORRECTION PROPERLY MADE OR TEXT QUIETLY
+    REMOVED.** `CD-ASR-WO3-13` did exactly this at 16E and it is the standard here.
+  8_THE_ENGINEERS_OWN_FIGURES_TO_REPRODUCE_OR_FALSIFY: >-
+    26 arms, all moving at least one line except `W5C`; the 34x cost increase (`F16F-04`); the
+    unreached pairwise stride branch and its reduced-budget exercise (`F16F-03`); and the claim that
+    `publish_cycle` is the only writer and judges both surfaces unconditionally (`ITEM 2`).
+
+# ================================================================================================== #
+your_return:
+# ================================================================================================== #
+  verdict: 'PASS, AMBER or RED — with CONFIDENCE and with THE NEXT SAFE GATE.'
+  where: >-
+    ONE Build Log entry on a branch `asr-wo3-14-verdict` off `main`, committed under YOUR identity.
+    **A result that exists only in conversation is not project state (PBG-CONT-007).**
+  it_must_carry:
+    - 'The sentence this project asks for in these words: whether you SET OUT TO ADMIT A STALE CALM READING ON THE SHIPPED CONTRACT AND COULD OR COULD NOT — and, separately, whether you SET OUT TO SLIP A WEAKENING PAST THE ROWS AND COULD OR COULD NOT. **THE TWO QUESTIONS HAVE HAD DIFFERENT ANSWERS TWICE AND COLLAPSING THEM WOULD BE THE DISHONEST REPORT.**'
+    - 'Every figure MEASURED, with the command that produced it and the rc taken from the command.'
+    - 'Your disposition of CD-PL-F209 — CONFIRMED, REFUTED or RECAST.'
+    - 'Your judgement on CD-ENG-F16F-01, made on the freeze evidence.'
+    - '**FINDINGS AGAINST YOUR OWN METHOD, if you find any. `CD-ASR-WO3-11` disclosed a dead arm-runner against itself and that disclosure is why this project trusts its verdicts.**'
+    - 'Anything you were asked to check and did not, said plainly, with the reason.'
+  what_you_must_not_write: 'Not an acceptance, not a release, not a fix, and not a sentence you have not run.'
+  and_what_your_verdict_does_NOT_decide: >-
+    **16C IS HELD BY THE PRODUCT AUTHORITY AND IS NOT RELEASED BY YOUR VERDICT.** A GREEN gate makes
+    it the Project Lead's next step; nothing else does. **NO INDICATOR ROW IS REGISTERED BY YOU.**

@@ -1,0 +1,221 @@
+# ================================================================================================== #
+# BL-20260824T150127Z-0172 — PROJECT LEAD BOUNDARY. **BOOT WAS `RED` AND THE CAUSE IS NINE ENTRIES
+# OF ACTIVE_WORK DRIFT THIS SEAT DID NOT CAUSE AND DOES NOT EXCUSE. PO-DECISIONS-0027 IS RECEIVED
+# AND IT VALIDATES THE CLASS APPROACH AND NAMES ITS LAST STRUCTURAL STEP. 16B-FIX-5 IS THE
+# ALPHABET CORRECTION AND IT IS DISPATCHED WITH A COMPLETION CONDITION, NOT A SHAPE LIST.**
+#
+# *** **THE RECONCILIATION, MEASURED AND NOT READ: `pbg.continuity.resume` returns
+# `CONTINUITY_REFERENCE_INVALID / RECOVERY_CONTINUITY_INVALID / RESUME_BLOCKED` with the finding
+# `ACTIVE_WORK_STALE: pointer is BL-20260824T093919Z-0162 but the newest entry is
+# BL-20260824T145030Z-0171`. `git log -- governance/engineering/ACTIVE_WORK.yaml` shows the file
+# was last touched at `105e0a5`, the `CD-RULE-007` follow-up to `0162`. ENTRIES 0163 THROUGH 0171
+# — NINE OF THEM, INCLUDING TWO ASSURANCE VERDICTS AND THE 16B-FIX-4 `RED` — WERE WRITTEN TO
+# `main` WITHOUT THE ACTIVE WORK RECORD EVER MOVING. The record has been describing a superseded
+# state for nine boundaries and every one of those boundaries booted past it.** ***
+#
+# **THIS IS RECONCILED FORWARD, NOT CORRECTED BACKWARD (`PBG-CONT-003`).** No prior entry is
+# edited. The pointer moves to THIS entry, which is the first one written since `0162` that the
+# record will actually name.
+# ================================================================================================== #
+
+entry_id: BL-20260824T150127Z-0172
+timestamp_utc: '2026-08-24T15:01:27Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T15:01:27Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_03
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_03
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T145030Z-0171
+base_sha: c1e45ba34bc171a1d39cc58e97d3a56760a00e5e
+current_sha: c1e45ba34bc171a1d39cc58e97d3a56760a00e5e
+status: IN_PROGRESS   # **NOT `WAITING_ENGINEER`, AND THE REASON IS A FINDING — see CD-PL-F201.**
+schema_version: 2
+
+action_summary: >
+  Third Project Lead seat of the day boots at c1e45ba, verdict RED, cause measured as nine entries
+  of ACTIVE_WORK drift. PO-DECISIONS-0027 is read in full and it does three things this seat acts
+  on: it VALIDATES the affirmative class guard against the 16B-FIX-4 RED rather than reverting it,
+  it names the alphabet correction as the LAST structural step and forbids a sixth spelling patch,
+  and it replaces the shape-list acceptance test with ONE structural completion condition. This
+  boundary reconciles continuity forward and dispatches 16B-FIX-5 as ONE sequential Engineer seat.
+
+the_boot_verdict:
+  verdict: RED
+  observed_sha: c1e45ba34bc171a1d39cc58e97d3a56760a00e5e
+  continuity_state: CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED
+  blocking: 'continuity invalid — read-only diagnosis permitted, normal boot blocked (PBG-CONT-006)'
+  pid_identity: PID.md@08baf51ca5a34b4e
+  blueprint_identity: BLUEPRINT.md@39397dfbf169a125
+  roadmap_identity: 'None — UNAVAILABLE, ROADMAP.md not found. UNCHANGED and long-standing.'
+  held_actions: 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 — all three still held, none discharged here.'
+
+the_drift_named_plainly_because_naming_it_is_the_whole_duty:
+  measured: >
+    resume() finding, verbatim: "reference: ACTIVE_WORK_STALE: pointer is BL-20260824T093919Z-0162
+    but the newest entry is BL-20260824T145030Z-0171 (commit 4a09bd8db0e9 at ancestry position
+    291); Active Work describes a superseded state (PBG-CONT-002)".
+  extent: >
+    NINE ENTRIES. 0163, 0164, 0165, 0166, 0167, 0168, 0169, 0170, 0171. `git log` on the file
+    confirms its last commit is 105e0a5, the CD-RULE-007 follow-up to 0162.
+  what_it_cost: >
+    Every seat since 0162 has booted RED and proceeded anyway, which means the ONE control that
+    exists to stop a seat resuming from a superseded state has been firing correctly and being
+    walked past for nine boundaries. THE CONTROL IS NOT THE PROBLEM. This seat is not the first
+    to walk past it and says so rather than presenting the repair as routine hygiene.
+  how_it_is_repaired: >
+    FORWARD ONLY. `last_build_log_entry` moves 0162 -> 0172 in the same commit as this entry, and
+    `continuity_record_commit` is resolved to that commit in a separate follow-up commit, which is
+    the CD-RULE-007 ordering and the reason it is two commits and not one. NO PRIOR ENTRY IS
+    EDITED (PBG-CONT-003). The nine skipped entries stay exactly as written.
+  what_is_NOT_repaired_and_is_disclosed: >
+    `current_block`, `next_safe_action`, `completed_items`, `remaining_items`, `open_decisions` and
+    `risks` in ACTIVE_WORK.yaml still carry prose composed at or before 0162. This boundary moves
+    the POINTER, the STATUS, the ACTOR and the two narrative fields it is competent to move, and it
+    does NOT attempt to reconstruct nine boundaries of narrative it did not witness. THE BUILD LOG
+    IS THE RECORD; ACTIVE_WORK IS A POINTER INTO IT. Anyone reading the superseded prose in the
+    lower fields should read 0163-0171 instead, and this sentence exists so they know to.
+
+the_product_owner_ruling_received:
+  id: PO-DECISIONS-0027
+  path: governance/decisions/PO-DECISIONS-0027.md
+  committed_at: c1e45ba34bc171a1d39cc58e97d3a56760a00e5e
+  what_it_rules_that_changes_this_seats_behaviour:
+    - >
+      RULING 6 — THE 16B-FIX-4 `RED` IS READ AS VALIDATION, NOT FAILURE. The class inversion is
+      ruled REAL: the falsifier passed, five rounds of spelling-patch escapes are closed, and the
+      whole-register-green-while-a-dead-feed-publishes-calm hole is shut. The RED is ruled NARROW
+      and its correction is named: READ ENUM/CONST OBJECT VALUES INTO THE DECLARED SET, and do NOT
+      move them out of `_INERT_KEYWORDS` — the auditor MEASURED that moving them explodes the
+      false-positive tail. This seat carries that prescription VERBATIM into the dispatch and does
+      not re-derive it, because the seat that measured it is not this one.
+    - >
+      RULING 5 — THE COMPLETION CONDITION REPLACES THE SHAPE LIST, AND THIS IS THE RULING THAT
+      MATTERS MOST. The guard is DONE when ONE structural test is green: **a dial in a
+      NEVER-BEFORE-NAMED state, carrying `calm`, is REFUSED** — because calm requires
+      proven-fresh-and-present and an unrecognised state cannot prove it. If a further named escape
+      appears AFTER that test is green, THE TEST WAS WRONG, NOT THE GUARD INCOMPLETE. That sentence
+      is the exit from the census spiral and it is the Product Owner's, not this seat's.
+    - >
+      RULING 4 — SEQUENCE. 16C = affirmative-guard rebuild + memorial removal, plant-proved, fresh
+      Assurance seat. THEN the liveness/dead-feed detector increment. THEN register the indicator
+      rows. CD-D-181 sequential-only; frozen be0b355 untouched.
+  what_this_seat_does_NOT_read_into_it: >
+    RULING 5 forbids a FIX that adds a shape to a denylist. It does NOT forbid a second bounded
+    item in the same increment when that item is the SAME class defect in a SECOND location. The
+    A309-F2 finding — the BRANCH recogniser has no inversion at all — is exactly that, and this
+    seat carries it into the dispatch as item 2 with its reasoning stated rather than smuggled.
+    IF THE PRODUCT AUTHORITY READS RULING 5 AS ONE-ITEM-ONLY, THIS SEAT HAS EXCEEDED IT AND SAYS SO
+    HERE IN ADVANCE RATHER THAN BEING FOUND OUT LATER.
+
+the_defect_this_seat_read_for_itself_at_the_line_level:
+  file: 'tools/register/check_missing_data_never_calm.py, branch wo-3, worktree /srv/crash-detector-wo3, tip dd40407'
+  what_the_inversion_does: >
+    `_READABLE_KEYWORDS` = (subschema keywords minus name-bearing applicators) | name-declaring
+    keywords | `_INERT_KEYWORDS`. `_dial_bearing` may answer `False` only when every keyword
+    present at the node is in that set; anything else makes the node UNDECIDABLE. That is the class
+    fix and it works.
+  what_it_misses: >
+    The `declared` set is built at lines 1240-1250 from THREE keywords only — `properties` keys,
+    the `required` list, and `dependentRequired` values. `enum` and `const` are in
+    `_INERT_KEYWORDS`, so a node spelled `{"enum": [<LIVE reading>, <STALE reading whose
+    detail_level is "calm">]}` is FULLY READABLE, contributes NOTHING to `declared`, declares no
+    `state` as far as this walk is concerned, and returns a clean `False`. NOT A DIAL. INVISIBLE.
+  therefore: >
+    The deny class is a true complement over KEY NAMES and never quantifies over what a READABLE
+    key's VALUE asserts. `enum` and `const` are correctly inert AS APPLICATORS and are not inert AS
+    PROPERTY DECLARATIONS. THE ALPHABET IS WRONG; THE QUANTIFIER IS RIGHT.
+  the_second_location: >
+    `_branch_states` (line 1301) reads `resolved["properties"]["state"]["const"]` and NOTHING ELSE.
+    It has NO inversion, no readability test, and no undecidable outcome. The two recognisers in
+    one file now disagree about what "readable" means, which is A309-F2, MEASURED by the auditor
+    and not suspected by this seat.
+
+decisions:
+  - id: CD-D-182
+    decision: >
+      **16B-FIX-5 IS DISPATCHED AS ONE SEQUENTIAL ENGINEER SEAT, `CD-ENG-WO3-10`, AND ITS
+      ACCEPTANCE GATE IS PO-DECISIONS-0027 RULING 5'S STRUCTURAL TEST AND NOT A COUNT OF CLOSED
+      SHAPES.** The dispatch carries the auditor's measured prescription verbatim, carries the
+      A309-F2 second location with this seat's reasoning for including it, and carries the
+      never-before-named-state completion condition as the thing the increment must PROVE.
+    rationale: >
+      Six rounds of this guard have been graded by a shape census and the census keeps producing a
+      next shape. The Product Owner has replaced the acceptance test. A dispatch that carried the
+      new prescription under the old acceptance test would produce a seventh round by construction.
+  - id: CD-D-183
+    decision: >
+      **THE DISPATCH DELIBERATELY DOES NOT WRITE THE LINE.** The auditor left it unwritten on
+      PBG-SOD-001/PBG-SOD-004 grounds and this seat honours that. The dispatch states the DEFECT,
+      the BOUND, the FORBIDDEN move (do not remove `enum`/`const` from `_INERT_KEYWORDS`) and the
+      COMPLETION CONDITION. It does not state the implementation.
+    rationale: >
+      CD-PL-F198 and CD-PL-F199 are two findings in three dispatches where THIS SEAT'S LINEAGE
+      aimed the primary attack at the wrong place and the recipient seat found the real defect by
+      distrusting the dispatch. A dispatch that writes the line removes the recipient's ability to
+      do that.
+
+findings_raised_at_this_boundary:
+  - id: CD-PL-F201
+    severity: MEDIUM, MEASURED
+    raised_by: PROJECT_LEAD_SEAT_03 against the build log itself and against this seat's own first draft
+    the_defect: >
+      **SIX OF THE LAST TWELVE BUILD LOG ENTRIES CARRY A `status` VALUE THE PINNED SCHEMA REJECTS.**
+      Measured by calling `pbg.continuity.validate(text, 'entry', root, pbg/schemas)` on each file:
+      `0163`, `0165`, `0167`, `0169` carry `READY_FOR_ASSURANCE` and `0171` carries
+      `WAITING_ENGINEER`; the allowed set is `CHECKPOINT · RESUMED · IN_PROGRESS · PAUSED_SAFE ·
+      PAUSED_AMBER · BLOCKED · WAITING_PRODUCT_AUTHORITY · WAITING_ASSURANCE ·
+      WAITING_EXTERNAL_DEPENDENCY · COMPLETE · SUPERSEDED · ABANDONED`. **THIS SEAT'S OWN FIRST
+      DRAFT OF `0172` WAS THE SIXTH, copied from `0171` without checking, and it was caught by
+      running the validator rather than by reading the file.**
+    why_it_was_never_caught: >
+      The entries were never validated. `READY_FOR_ASSURANCE` and `WAITING_ENGINEER` are the exact
+      words this project uses in prose for those states, so the values LOOK right and no human
+      reading the file would flinch. **A CONTROL THAT IS NEVER RUN IS NOT A CONTROL**, and this is
+      the second instrument in this project found green-because-unexecuted — the first was the
+      constitutional guarantee living in `tests/` that no register line ran.
+    disposition: >
+      THIS ENTRY IS CORRECTED TO `IN_PROGRESS` BEFORE COMMIT. **THE FIVE PRIOR ENTRIES ARE NOT
+      EDITED** — `PBG-CONT-003`, corrections supersede and never edit, and an invalid status on a
+      banked entry is a defect in the record, not a licence to rewrite history. The finding is
+      OPEN and its remedy is a validation step at entry-write time, which is a bounded piece of
+      work and is NOT folded into 16B-FIX-5.
+    scope_note: >
+      Only the last twelve entries were checked. **THE OTHER ~160 ARE UNMEASURED AND THIS SEAT
+      DOES NOT CLAIM THEY ARE CLEAN.**
+
+findings_carried_forward_unclosed:
+  - 'CD-PL-F199 — MEDIUM, CONFIRMED. The dispatch pointed at contentSchema/propertyNames, both already safe. ELEVENTH consecutive dispatch with a false statement caught by its recipient. OPEN.'
+  - 'CD-PL-F200 — LOW. DECLARED LIMIT 14 enumerates six shapes of a CLASS; the auditor found a seventh in a minute. Carried into 16B-FIX-5: the limit must describe the class.'
+  - 'A309-F2 — the branch recogniser has NO inversion. Item 2 of 16B-FIX-5.'
+  - 'CD-PL-F180 — OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'DECLARED LIMIT 12 — a discriminator key not named `state` — STAYS OPEN and must be disclosed in 16C''s dispatch.'
+
+standing_prohibitions_unchanged_at_this_boundary:
+  - '*** NO INDICATOR ROW IS REGISTERED. NOT ONE ROW, NOT A PLACEHOLDER, NOT A TEST FIXTURE. ***'
+  - 'NO `publish_cycle` CALLER AND NO `src/` ENTRYPOINT — the health surface value axis is open.'
+  - 'FROZEN be0b355 (wo-2r3) UNTOUCHED. CD-D-181 SEQUENTIAL-ONLY: never two seats at once.'
+  - '16C REMAINS HELD and its release judgement REMAINS WITHDRAWN until 16B-FIX-5 is assured green.'
+
+next_safe_action: >
+  Commit this entry with the ACTIVE_WORK pointer moved in the SAME commit; resolve
+  `continuity_record_commit` in a CD-RULE-007 follow-up — ONE FIELD AND NOT TWO; commit the
+  16B-FIX-5 dispatch record BEFORE launching (CD-PL-F140); launch ONE Engineer seat CD-ENG-WO3-10
+  on branch wo-3, worktree /srv/crash-detector-wo3, base dd40407. ON RETURN reconcile BY
+  MEASUREMENT in this seat's own shell on the COMMITTED tree, BANK IT AND DO NOT ACCEPT IT
+  (PBG-AUTH-003, CD-D-180), then dispatch a FRESH Assurance seat CD-ASR-WO3-10 — never
+  CD-ENG-WO3-10, never CD-ASR-WO3-09 (PBG-SOD-001, non-waivable).
+
+expected_next_actor: 'PROJECT_LEAD (this seat) — writing the 16B-FIX-5 dispatch record, then CD-ENG-WO3-10.'
+
+risks:
+  - '*** THE LIVE ESCAPE IS STILL LIVE. A liveness quantity declared with `enum` publishes a dead feed as calm TODAY with the instrument green. 16C IS HELD FOR EXACTLY THIS REASON. ***'
+  - 'ACTIVE_WORK''s narrative fields below the pointer are nine boundaries stale and are NOT reconstructed here. Disclosed above, not hidden.'
+  - 'This seat has expanded the dispatch beyond PO-DECISIONS-0027 ruling 5''s single item to include A309-F2. Reasoning stated; the Product Authority may rule it out.'
+  - 'Ruled items 2-6 of PO-DECISIONS-0026 remain undelivered. Every dial still reads UNKNOWN and the 30 ratified indicators are still data nothing reads.'

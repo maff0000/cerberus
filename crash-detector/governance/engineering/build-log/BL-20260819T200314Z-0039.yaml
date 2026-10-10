@@ -1,0 +1,254 @@
+# ================================================================================================ #
+# THE SOD CROSSING. WO-2R ASSURANCE DISPATCH ISSUED.
+# ================================================================================================ #
+
+entry_id: BL-20260819T200314Z-0039
+timestamp_utc: "2026-08-19T20:03:14Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: DISPATCH
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 2f27bb83ecebef27ec096ecc6c0544c2cd906ed7
+lane_head_sha: 50fc23177f790164c3fc3604ccee51663e755c70
+parent_entry_id: BL-20260819T194926Z-0038
+schema_version: 1
+record_origin: >
+  Written by the EIGHTH Project Lead seat, resumed by the operator wrapper at 2026-08-19T19:54:44Z.
+  The seventh seat did NOT terminate: the wrapper log records it exiting rc=0 at 19:54:40Z, a
+  DELIBERATE STOP at the boundary it declared in BL-20260819T194926Z-0038, four seconds before this
+  seat started. That is the CD-D-043 precedent paying for itself a third time.
+
+action_summary: >
+  Resumed, applied CD-D-007's suspicion procedure across all three worktrees and found NOTHING TO
+  ADJUDICATE, took the CD-RULE-008 verdict of record, and ISSUED CD-DISPATCH-WO2R-ASSURANCE to
+  CD-ASR-WO2-02 against the exact SHA 50fc231 — the SOD crossing that decides WO-2. Two findings
+  raised in the course of preparing it, both MEASURED: CD-PL-F72, a boot probe of this seat's own
+  that was refused for the wrong reason, and CD-PL-F73, an off-by-one in the exclusion set the
+  dispatch was about to inherit.
+
+# ================================================================================================ #
+# CD-D-007 SUSPICION PROCEDURE — the standing first act of a resumed seat
+# ================================================================================================ #
+suspicion_procedure:
+  rule: 'CD-D-007. A resumed seat treats every uncommitted artefact as unattested until adjudicated.'
+  main_worktree: >
+    /srv/crash-detector at 2f27bb8, branch main. `git status --porcelain` shows ELEVEN untracked
+    entries and ZERO tracked modifications; `git diff --stat` and `git diff --cached --stat` are
+    both empty; `git diff --name-only -- pbg/` is empty, so the pinned framework is intact.
+  the_eleven_untracked_entries: >
+    .continue-prompt.txt, .wo2-prompt.txt, .wo2-runner.sh, .wo2-runner.log, .wo2-run-1.log,
+    .wo2b-prompt.txt, .wo2b-runner.sh, .wo2b-run-1.log, .wo2b-run-2.log, .wo2b-run-3.log, and
+    pbg/tools/pbg/__pycache__/. ADJUDICATED AS NOT PROJECT STATE, and not on the standing phrase
+    but on their CONTENTS, read at this boundary: .wo2b-runner.sh is the operator's relaunch loop
+    (`cd /srv/crash-detector`, `timeout 7200 claude -p "$(cat .continue-prompt.txt)"`, three
+    attempts, retry only on 529/5xx/Execution error) and .continue-prompt.txt is the operator's
+    resume instruction to this seat. They are the harness, not the work. NO SEAT OUTPUT IS AMONG
+    THEM.
+  mutation_lane: >
+    /srv/crash-detector-wo2, branch wo-2-skeleton, CLEAN at 50fc231 — `git status --porcelain`,
+    `git diff --stat` and `git diff --cached --stat` all ZERO lines. The increment-6 seat committed
+    everything it wrote and the seventh seat reconciled it. NOTHING TO ADJUDICATE.
+  audit_worktree: >
+    /srv/crash-detector-wo2-audit, detached, CLEAN at the pre-rewrite 66681b2. STALE — it is the
+    FIRST audit's target and is not the new one. Retained deliberately (see CD-D-071).
+  verdict: 'NOTHING TO ADJUDICATE ANYWHERE. No seat work was left uncommitted by the seventh seat.'
+
+# ================================================================================================ #
+# THE CD-RULE-008 VERDICT OF RECORD — and the probe that was refused for the wrong reason
+# ================================================================================================ #
+boot_verdict_of_record:
+  rule: 'CD-RULE-008. The verdict of record is taken on a PRISTINE CLONE AT THE COMMITTED SHA, never the working tree, and the entry naming a verdict names the SHA it was taken at.'
+  sha: 2f27bb83ecebef27ec096ecc6c0544c2cd906ed7
+  verdict: 'GREEN — CONTINUITY_MATCH/RESUME_GREEN, taken on a pristine clone at 2f27bb8 checked out ON BRANCH main.'
+  working_tree_verdict_for_contrast: 'AMBER — CONTINUITY_MATCH/RESUME_AMBER in /srv/crash-detector, the known CD-PL-F70 cause (the operator''s untracked files). Not a new degradation.'
+  continuity_reconciled: >
+    last_build_log_entry read BL-20260819T194926Z-0038 and THAT ENTRY IS COMMITTED — b1a118f carries
+    it, 337 insertions, alongside the ACTIVE_WORK.yaml update. Checked deliberately because
+    CD-PL-F69 was exactly the opposite case (a commit advancing the pointer WITHOUT the entry). This
+    head is not in that class.
+
+CD_PL_F72:
+  finding: 'CD-PL-F72 (LOW) — CD-RULE-008 under-specifies its own procedure: "a pristine clone at the committed SHA" omits ON WHICH BRANCH, and a detached checkout reads CONTINUITY_DRIFT on a byte-identical tree.'
+  severity: LOW
+  how_it_was_found: >
+    This seat took the CD-RULE-008 verdict by cloning and running `git checkout <sha>`, which leaves
+    a DETACHED HEAD. It read AMBER, CONTINUITY_DRIFT/RESUME_BLOCKED-adjacent, at 2f27bb8 — and the
+    committed record CLAIMS GREEN at b1a118f and f547fdc. That looked like a real continuity
+    degradation and was very nearly written up as one.
+  what_was_measured_with_one_variable_changed: >
+    Six SHAs (750b353, b1a118f, 2f27bb8, f547fdc, e7b34e9, 8e9456f) on DETACHED HEAD: all six read
+    AMBER/CONTINUITY_DRIFT. The same clone, the same trees, re-checked out with `git checkout -B main
+    <sha>` for 2f27bb8, b1a118f and f547fdc: ALL THREE READ GREEN/CONTINUITY_MATCH. The only
+    variable that moved was the branch name. ACTIVE_WORK.yaml records `branch: main`, and boot
+    compares observed branch to recorded branch.
+  ruling: >
+    THE RECORD'S GREEN CLAIMS ARE CORRECT AND THIS SEAT'S PROBE WAS WRONG. Not a defect in the
+    repository — a defect in the RULE'S WORDING and in this seat's execution of it. CD-RULE-008 is
+    amended forward: the pristine clone is checked out ON THE RECORDED BRANCH, and an entry naming a
+    boot verdict names the SHA **and the branch** it was taken at.
+  why_it_is_recorded_rather_than_quietly_corrected: >
+    THIS IS THE FIFTH RECURRENCE OF CD-ENG-WO2R-F13 ON THIS PROJECT — a probe refused for the wrong
+    reason — and the SECOND against the Project Lead's own work. The first four were counted in
+    BL-...-0038 (the Engineer twice, the PL's own probe, and once against a prose measurement at
+    CD-PL-F71). A rule whose stated procedure produces a false AMBER on a healthy record is a rule
+    that will eventually produce a false alarm nobody has time to chase down, at a boundary where it
+    matters. It is carried into the Assurance dispatch as an adopted method note, in the auditor's
+    own terms: a result that agrees with what you expected is the one to re-run.
+
+# ================================================================================================ #
+# CD-PL-F73 — the exclusion set understated itself by one
+# ================================================================================================ #
+CD_PL_F73:
+  finding: 'CD-PL-F73 (LOW) — the standing description of the exclusion set says the Engineer''s variants run "through V52". They run through V53, and V53 is a real delivered patch.'
+  severity: LOW
+  measured: >
+    variants/WO-2R/CD-ENG-READER-F05/V53-pending-inline-key-lifts-an-ADMISSIBLE-key.patch exists at
+    50fc231 and MANIFEST.md carries a full row for it at line 1722 ("the lifted key is ADMISSIBLE,
+    and the value has no name to recognise"), attributed to the seat and mapped to CD-EGRESS-007.
+    The phrase "through V52" appears in ACTIVE_WORK.yaml's next_safe_action and in
+    BL-...-0038's next_safe_action, both written at a ceiling.
+  why_a_LOW_finding_is_worth_the_words: >
+    AN EXCLUSION SET THAT UNDERSTATES ITSELF IS WORSE THAN ONE THAT OVERSTATES. Told the set ends at
+    V52, an auditor who independently devises V53's attack would believe it FRESH, spend gate time on
+    it, and report a guard proved against a route the Engineer had already fired at it. That is the
+    precise failure the corpus exists to prevent, and it is the CD-ENG-WO2R-F27 hazard in a second
+    form: F27 is a row that claims cover it does not have; F73 is cover that claims not to exist.
+    CORRECTED IN THE DISPATCH — it states V01-V53 — rather than left to trip the auditor.
+  the_denominator_is_NOT_settled_and_is_handed_over_as_work: >
+    Measured at 50fc231: 70 files matching `*.patch`, plus 2 `.py.txt` probe records under
+    CD-PL-F65/, = 72 variant artefacts; 73 files under variants/ including MANIFEST.md; ZERO
+    executable (PBG-ASSURE-001 satisfied). THE SEAT REPORTED "71 re-run, 71 verdicts, 0 apply
+    failures" and the Project Lead did NOT re-run the corpus at the previous boundary. 71 is neither
+    70 nor 72. This seat does not resolve it either — resolving it means re-running the corpus,
+    which is Assurance's work under W7 and not the dispatcher's. It is stated with its denominator
+    (CD-PL-F66) and handed over NAMED, not glossed.
+
+# ================================================================================================ #
+# THE DISPATCH
+# ================================================================================================ #
+CD_D_070:
+  decision: 'CD-DISPATCH-WO2R-ASSURANCE moved DRAFT -> ISSUED against the exact SHA 50fc23177f790164c3fc3604ccee51663e755c70, to CD-ASR-WO2-02.'
+  the_separation: >
+    PBG-SOD-001, NON-WAIVABLE. CD-ASR-WO2-02 is a SEPARATE agent from CD-ENG-WO2R-01 and
+    CD-ENG-READER-01 who built this candidate, from CD-ASR-WO2-01 who audited the superseded one,
+    and from PROJECT_LEAD_SEAT_01 who dispatched and reconciled it. It holds no commit on
+    wo-2-skeleton and is instructed to return INDEPENDENCE_CONFLICT and hand the dispatch back if
+    any of that proves untrue. THE PROJECT LEAD MAY NOT CERTIFY WHAT IT DISPATCHED (PBG-AUTH-006);
+    six increments of reconciliation are not assurance and are not offered as any.
+  the_target_and_the_detection_device: >
+    A READ-ONLY DETACHED worktree created at /srv/crash-detector-wo2r-audit, verified at 50fc231
+    with `git status --porcelain` at zero lines. Tree object 5a952282ee6eb87079c8def7633b6aeaa1e68171.
+    Fingerprint 50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d — SHA256 of the
+    LC_ALL=C-sorted sha256sum manifest over all 364 non-.git regular files, manifest retained at
+    /tmp/cd-asr-wo2r-tree.sha256sums. Re-taken when the auditor returns, so mutation is DETECTABLE
+    and not merely prohibited. That is the CD-D-022 device, reused because it worked.
+  a_hazard_the_device_creates_and_how_it_is_handled: >
+    THE FINGERPRINT WOULD CONVICT AN HONEST AUDITOR. Running pytest inside the audit worktree
+    deposits __pycache__ and .pytest_cache and breaks the fingerprint, and the auditor would be
+    reported as having mutated the target for something that is not misconduct. The project's own
+    declared commands use `python3 -B` and are safe; the pytest arms are not. The dispatch therefore
+    states this in terms under target_tree_fingerprint.fair_warning and requires EVERY execution —
+    including clean baseline arms — to happen in throwaway `git archive` extractions under /tmp
+    (SD-2), leaving the audit worktree a READING SURFACE ONLY.
+  what_the_dispatch_carries_that_the_first_one_did_not: >
+    (1) W3 is named THE DISPATCH, not a section of it, with the FIVE CLASS CLAIMS spelled out and an
+    ATTACK LINE named against each, because the gate turns on class closure and nothing else.
+    (2) W6 makes the DECLARED LIMITS a deliverable and gives them a three-part test — executable
+    example, MEASURED carrier (CD-RULE-006), and the three place-texts agreeing IN SUBSTANCE — since
+    six of nine guards discharge part of their obligation by declaration.
+    (3) W7 makes THE EXCLUSION SET ITSELF an audit target. CD-ENG-WO2R-F27 found a row in it that
+    cannot be run as written; only one row has ever been checked for that defect, and it was the one
+    that happened to be re-run.
+    (4) W8 hands over EIGHT NAMED QUESTIONS as work, including NQ-2's EXPRESS INVITATION TO FIND THE
+    FOURTH ROUTE through CD-ENG-READER-F05/F08 with its denominator stated at three.
+    (5) The NOT_INDEPENDENTLY_VERIFIED list is transcribed verbatim and handed over AS WORK.
+    (6) FOUR adopted method notes travel with it: F13, F16, F18 and CD-RULE-008 as amended by
+    CD-PL-F72.
+  the_exclusion_set_spans_two_worktrees_and_the_dispatch_says_so: >
+    CD-PL-F67 was raised against a dispatch whose path list was wrong, so every path in this one was
+    RESOLVED BEFORE ISSUE and all eight check out. The corpus is NOT all at the target:
+    governance/assurance/ and governance/reconciliation/ DO NOT EXIST at 50fc231 — the first
+    auditor's ten escapes and the Project Lead's twelve probe records are on MAIN only, and PL-Z1-Z3
+    exist only inline in BL-...-0038's body and are not files at all.
+  the_gate_is_unchanged: >
+    ASSURANCE PASS ON ALL FIVE — CD-AC-001, 002, 003, 005, 012 — by contrast and by nothing else. No
+    waiver, no relaxation, and no pressure toward a PASS: the dispatch says in terms that a second
+    AMBER is a legitimate outcome and that the project was COMMENDED for the refusal that produced
+    the first one. latest_admitted_run stays null and CD-RULE-001's paired-verdict rule is restated
+    inside the run-record instruction.
+  the_one_structure_nobody_has_ever_verified: >
+    CD-RT-003-GRANT-MATRIX-LIVE has never been contrasted by ANYBODY — not the Engineer, not the
+    first auditor, not the Project Lead. It returns exit 3 PRECONDITION_NOT_MET without a live
+    store. CD-D-020 left it to Assurance and it is still open. The dispatch gives SD-3 to stand one
+    up under the `cd-asr-wo2r-` prefix and says plainly that if it cannot be closed it is
+    UNDECIDABLE and CD-AC-003 CANNOT BE PASS on that test — it may not be passed on its sibling.
+
+CD_D_071:
+  decision: 'The STALE first-audit worktree /srv/crash-detector-wo2-audit is RETAINED, not removed, and its hazard is closed by instruction rather than by deletion.'
+  grounds: >
+    It is detached at 66681b2, the target the superseded AMBER verdict names, and that verdict is
+    history this project does not rewrite. Removing a worktree destroys nothing durable — the commit
+    is preserved at the load-bearing annotated tag wo-2-pre-identity-rework (CD-PL-F49) — but it is
+    an administrative mutation taken for tidiness at the exact boundary where the record must be
+    most stable, and this seat declines it. THE HAZARD IS REAL AND IS ADDRESSED WHERE IT LANDS: the
+    dispatch carries a stale_worktree_warning naming the wrong path, the wrong SHA and the right
+    one, and W1 requires the auditor to run `git rev-parse HEAD` in the tree it is standing in and
+    confirm it equals the dispatched SHA before doing anything else. Auditing the wrong tree would
+    be an honest mistake producing a dishonest record, which is worth two sentences to prevent.
+
+# ================================================================================================ #
+# WHAT THIS SEAT DID **NOT** VERIFY
+# ================================================================================================ #
+NOT_INDEPENDENTLY_VERIFIED:
+- 'EVERYTHING ON BL-...-0038''s LIST REMAINS UNVERIFIED BY THE PROJECT LEAD. This seat did not re-run the 71 (or 70, or 72) variant patches, did not re-measure CD-ENG-WO2R-F27/F28, did not read the seven remaining CD-RULE-004 place-texts in full, did not re-measure the eleven undelivered-criteria commands at 50fc231, and did not stand up a live store for the grant matrix. It transcribed the list into the dispatch AS WORK rather than absorbing it, which is the correct disposition at a SOD boundary — re-measuring it here would be the Project Lead doing Assurance''s job on work it dispatched.'
+- 'THE DISPATCH''S OWN CLASS-CLAIM SUMMARIES in W3 are the Project Lead''s compression of six increments of reconciliation. They are a MAP FOR THE AUDITOR, not evidence, and the dispatch tells it in terms that where the summary and the target disagree, THE TARGET WINS AND THE DISAGREEMENT IS A FINDING AGAINST THIS DISPATCH.'
+- 'THE ELEVEN-TEST TABLE in the dispatch is a transcription from required-tests.yaml at the target. The dispatch says the register is the authority and the table is a convenience. Not independently re-derived after transcription.'
+
+# ================================================================================================ #
+# THE BOUNDARY
+# ================================================================================================ #
+status: IN_PROGRESS
+current_sha: PENDING
+next_safe_action: >
+  LAUNCH CD-ASR-WO2-02 against CD-DISPATCH-WO2R-ASSURANCE. The brief is durable in the repository at
+  governance/dispatch/CD-DISPATCH-WO2R-ASSURANCE.yaml and is not merely conversational
+  (PBG-CONT-007) — a sub-agent result that exists only in conversation is not project state, and the
+  sixth seat's increment-6 dispatch was issued and never executed precisely because a seat stopped
+  between the two acts.
+  THEN RECONCILE THE VERDICT: re-take the tree fingerprint and compare it to
+  50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d; confirm the auditor's SD-3
+  container and volume are destroyed (`docker ps -a` and `docker volume ls` filtered on
+  `cd-asr-wo2r-` must both return zero rows); transport the evidence artefacts from
+  /srv/crash-detector-wo2r-evidence/ into the repository UNALTERED; and record the gate outcome.
+  DO NOT ADMIT THE RUN RECORD unless CD-RULE-001 is satisfied — paired assurance verdict present,
+  and no criterion the auditor holds not-PASS computing PASS. Measured on a throwaway copy first,
+  which is how CD-FWK-005 was found.
+  THEN STOP. THE GATE IS THE PRODUCT OWNER'S EITHER WAY. Whether the verdict is PASS or AMBER, WO-2
+  does not close on the Project Lead's signature and WO-3 is not dispatched from here.
+  Commit each boundary on main with the PROJECT_LEAD_SEAT_01 identity set through GIT_* ENVIRONMENT
+  VARIABLES, never `git -c` (CD-PL-F56 — it fails silently on this host), verified with
+  `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit. A continuity write is not
+  complete until `pbg boot` has been re-run and its verdict recorded in the same entry (CD-RULE-007),
+  taken on a pristine clone at the committed SHA AND ON THE RECORDED BRANCH (CD-RULE-008 as amended
+  by CD-PL-F72).
+expected_next_actor: ASSURANCE_ENGINEER
+
+evidence_references:
+- '50fc23177f790164c3fc3604ccee51663e755c70 — the audit target, five commits by CD-ENG-WO2R-01 on the reader base'
+- 'tree object 5a952282ee6eb87079c8def7633b6aeaa1e68171; fingerprint 50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d over 364 files'
+- 'governance/dispatch/CD-DISPATCH-WO2R-ASSURANCE.yaml — the brief, parsed and every cited path resolved before issue'
+- 'BL-20260819T194926Z-0038 — the increment-6 reconciliation whose NOT_INDEPENDENTLY_VERIFIED list this dispatch carries'
+- 'governance/decisions/PO-GATE-REVIEW-WO2-0001.md — the Product Owner''s four rulings; the gate they set is unchanged'
+- '/tmp/cd-asr-wo2r-tree.sha256sums — the fingerprint manifest, retained for the return comparison'
+
+risks:
+- 'THIS IS THE ACT THAT DECIDES WO-2. Everything the rework closed is closed SUBJECT TO ASSURANCE. The first gate failed because guards caught the instance and not the class, and the only instrument that can tell the difference is an auditor writing variants nobody in this project has thought of. If the auditor spends its budget reproducing the declared contrasts and skimps on W3, this gate will read PASS without having tested the thing the gate is for.'
+- 'THE EXCLUSION SET IS LARGE ENOUGH TO SUPPRESS THE AUDIT. Seventy-plus variants told to an auditor as "already covered" is a strong instruction not to look, and CD-ENG-WO2R-F27 proves at least one row of it is wrong. The dispatch counters this explicitly — it tells the auditor to report independent rediscovery rather than discard it — but the pressure is structural and the counter is only words.'
+- 'CD-PL-F72 IS THE FIFTH RECURRENCE OF "REFUSED FOR THE WRONG REASON", and this time it caught the Project Lead mid-dispatch, on a measurement it was about to write into the record as a degradation. The rate is not falling. Assume it is present in THIS entry too.'
+- 'THE GRANT MATRIX HAS NEVER BEEN VERIFIED LIVE BY ANYONE. If CD-ASR-WO2-02 cannot stand up the store under SD-3, CD-AC-003 has one test that is UNDECIDABLE and the gate cannot be met on that criterion — and that would be the correct answer, not a defect to work around.'

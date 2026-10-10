@@ -1,0 +1,31 @@
+diff --git a/src/crash_detector/publication/wire_state.py b/src/crash_detector/publication/wire_state.py
+new file mode 100644
+index 0000000..c6b0282
+--- /dev/null
++++ b/src/crash_detector/publication/wire_state.py
+@@ -0,0 +1,25 @@
++"""Carry the dial magnitudes as plain state, and summarise them downstream."""
++
++from __future__ import annotations
++
++import copy
++import dataclasses
++
++__all__ = ["states_of", "average_of_states"]
++
++
++def states_of(dials):
++    """A detached copy of every declared dial magnitude, as plain state."""
++    return [
++        copy.deepcopy(getattr(dials, field.name).value.score).__getstate__()
++        for field in dataclasses.fields(dials)
++    ]
++
++
++def average_of_states(states):
++    """The mean of the quantities the states carry.
++
++    This function never sees a magnitude and never names a dial. It sees dictionaries.
++    """
++    numbers = [state["quantity"] for state in states]
++    return sum(numbers) / len(numbers)

@@ -1,0 +1,179 @@
+# WO-2R ENGINEER DISPATCH ISSUED. CD-DISPATCH-WO2R-ENGINEER DRAFT -> ISSUED against execution base
+# ee8be6b, to a FRESH seat CD-ENG-WO2R-01, bounded to CD-ASR-F01..F06 and nothing else.
+# Committed BEFORE the seat is dispatched: a sub-agent brief that exists only in conversation is not
+# project state (PBG-CONT-007).
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T091000Z-0022
+timestamp_utc: '2026-08-19T09:10:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: baef0ecea43d850d84e641677200eeed4e215a59
+current_sha: baef0ecea43d850d84e641677200eeed4e215a59
+lane_head_sha: ee8be6be38696f389a610bc948992a71ad81f892
+parent_entry_id: BL-20260819T090500Z-0021
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml authored and moved DRAFT -> ISSUED against
+  execution base ee8be6b on branch wo-2-skeleton, worktree /srv/crash-detector-wo2, to a FRESH
+  Engineer seat CD-ENG-WO2R-01.
+
+  It is bounded to assurance findings CD-ASR-F01 through CD-ASR-F06 and NOTHING ELSE, in six
+  increments — F02 and F03 together because the Product Owner ruled them the same class, then F01,
+  then F04, F05, F06, then a reconciliation-and-return increment that writes no logic.
+
+  The dispatch's whole design problem is that the OBVIOUS way to satisfy it is the wrong way. Six
+  findings arrive with ten reproducible escape routes attached; the cheapest possible rework makes
+  those ten routes fail and reports success. That would reproduce the exact defect the gate caught,
+  one level up. Three devices in the dispatch exist to prevent it, and they are the substance of this
+  entry.
+
+the_three_devices:
+  1_the_mandatory_commit_block: >
+    Ruling 2 requires the rework to "state IN THE COMMIT what CLASS is being closed and by what
+    STRUCTURE". The dispatch turns that into a TEMPLATE every increment commit must carry, filled in:
+    CLASS CLOSED / STRUCTURE / WHY IT IS A CLASS CLOSURE / PROVED BY / KNOWN-SET VARIANTS RE-RUN /
+    NEW VARIANTS (>=2, mine) / FALSE POSITIVES CHECKED / CLEAN ARM / ELEVEN PLANTS / DECLARED LIMIT.
+    A commit without the block is not accepted at reconciliation however good the code is. This makes
+    a prose ruling MECHANICALLY CHECKABLE, which is the only kind of requirement that survives a seat
+    under time pressure.
+  2_the_proof_standard_distinguishes_runtime_from_static: >
+    For F01 and F02 the PO's words are "unrepresentable" and "structurally incapable". Those are
+    RUNTIME properties, and a static checker exiting non-zero is NOT proof of them — every escape
+    that produced these findings passed a static checker. The dispatch therefore demands: write the
+    variant, RUN it, and show the interpreter or the constructor REFUSING it, with the exception type
+    and message recorded. For F03/F04/F05, which are guards over declarations and source and can only
+    be static, the standard is the CONTRAST plus a demonstration that the guard's SUBJECT derives from
+    the artefact rather than from a constant — change the artefact, watch the subject follow.
+  3_the_new_variants_must_be_durable_and_they_become_the_next_exclusion_set: >
+    Every new variant lands as a `git apply`-able patch under variants/WO-2R/<finding>/ with a
+    MANIFEST row naming the proposition attacked, the route, why the route differs from the known
+    set, the command line and the observed refusal. Nothing under variants/ may be executable
+    (PBG-ASSURE-001 — no wrapper for an auditor to be tempted by). Two consequences, both wanted: a
+    variant that exists only in conversation is not project state (PBG-CONT-007), and the seat cannot
+    quietly fit its guard to its own variants because the next auditor will read the list and is
+    required to go elsewhere.
+
+decisions_ruled_here:
+- id: CD-D-031
+  ruling: >
+    F04 IS CLOSED BY DENY-BY-DEFAULT OVER A DECLARED DESTINATION REGISTRY, NOT BY RESOLUTION.
+    The PO ruled that the check "must resolve what an entry REACHES, not what it is spelled as". The
+    literal reading — resolve the entry — is REFUSED on reproducibility grounds (CD-PL-F48): a
+    register check whose verdict depends on DNS cannot be run offline by an auditor, cannot be
+    reproduced at a later date, and therefore cannot be a gate. The dispatch instead requires that an
+    allowlist entry may ONLY be an entry drawn from an explicit in-tree registry of permitted
+    destinations, each with its purpose and the service that needs it, with EVERYTHING ELSE a
+    violation by default — IP literal, CIDR, URL, wildcard, unregistered hostname. That satisfies the
+    ruling's INTENT exactly: an IP literal stops being a spelling to catch and becomes simply not a
+    destination anyone declared. The broker vocabulary and the known-operator denylist survive as a
+    SECOND layer over the registry itself, catching a registered destination that is a broker.
+    The seat may propose a better structure, but it must be deny-by-default and it must need no
+    network.
+- id: CD-D-032
+  ruling: >
+    THE F06 CEILING VALUE IS DERIVED OR THE SEAT FAILS CLOSED — IT IS NEVER INVENTED (CD-RULE-003).
+    A staleness ceiling is a product quantity, and PBG-AUTH-005 forbids a seat inventing product
+    meaning. The dispatch carries the Project Lead's PROPOSED derivation, explicitly marked as
+    something the seat must CHECK rather than assume: PID §5 carries a RATIFIED assurance latency
+    budget — pipeline/publication failure independently detectable within 15 minutes — and a staleness
+    window wider than the detectability budget means a dead witness feed renders as fresh for longer
+    than the product permits failure to go undetected, so the budget bounds the window above.
+    BLUEPRINT §7 (CD-AC-009) then makes the window `window_for(regime)`, TIGHTENING as volatility
+    rises, which makes a calm-regime ceiling the loosest admissible value with regime-awareness
+    tightening beneath it. If the seat reads those clauses and the derivation does NOT hold, it fails
+    closed and escalates. It does not substitute a plausible number. The precedent is already in the
+    tree and is quoted at the seat: scores.py refuses to impose a score range for exactly this reason.
+- id: CD-D-033
+  ruling: >
+    THE ELEVEN EXISTING PLANTS ARE A DELIVERABLE OF THIS REWORK, NOT COLLATERAL. A rework that
+    changes the Reading types and the dial magnitude will break patches written against the old
+    structure. The dispatch requires that every pre-existing plant still applies and still contrasts;
+    where a plant no longer applies because the structure it patched legitimately changed, it must be
+    UPDATED to violate the SAME PROPOSITION against the new structure, with its MANIFEST row updated
+    and the change stated in the commit. A plant that no longer applies is not a plant, and deleting
+    one is prohibited. Named as a decision because this is the likeliest silent casualty of the
+    refactor and the likeliest to be discovered by the auditor rather than by the seat.
+
+scope_discipline_recorded:
+  what_was_deliberately_kept_out: >
+    CD-ASR-F07 (LOW, not named in Ruling 2 — the seat REPORTS whether its F06 structure closes it as
+    a consequence and does NOT broaden scope if it does not); E09 and E10, the two escapes the auditor
+    judged FAIR because they landed inside CD-RT-012's written declared limit which it examined and
+    found honestly and conservatively drawn (CD-D-015's prohibition on further hardening of that check
+    is NOT lifted); CD-ENG-F39, CD-ENG-F41, CD-PL-F43, CD-ASR-N01, CD-ASR-N02, CD-ERR-001, CD-OB-004,
+    all previously ruled owed at WO-3 and untouched by the gate review.
+  why_this_matters_more_than_it_looks: >
+    Six findings is already a wide rework of load-bearing types. The failure mode of a rework dispatch
+    is not doing too little, it is drifting into everything adjacent and returning something no
+    auditor can reason about against the findings that commissioned it. Every exclusion above is
+    stated with its reason so the seat does not have to guess and cannot claim it was implied.
+
+lane_state_at_issue:
+  head: ee8be6be38696f389a610bc948992a71ad81f892
+  branch: wo-2-skeleton
+  tracked_state: 'CLEAN — `git status --porcelain` returns 0 lines'
+  tree_object: 38ecc86149532a065280e98239a01fc79144d256
+  disclosed_ignored_residue: >
+    `git status --porcelain --ignored` in the lane shows .pytest_cache/ and eleven __pycache__/
+    directories, all gitignored, all left by the PREVIOUS Engineer seat's in-lane test runs. They are
+    derived bytecode of unchanged sources and no tracked file is affected. They are NOT removed: they
+    are another seat's byproduct, removing them changes nothing governed, and the new dispatch
+    forbids running tests in the lane anyway — every arm runs `python3 -B` in a /tmp extraction. It
+    is recorded so that neither the seat nor the next auditor reads it as drift.
+
+boundary_verification:
+  yaml_parse: 'CD-DISPATCH-WO2R-ENGINEER.yaml parses; 39 top-level keys; six increment sections.'
+  sha_resolution_step: >
+    STANDING (CD-CONT-002). baef0ec and ee8be6be38696f389a610bc948992a71ad81f892 both resolved with
+    `git rev-parse` against the object database before being written here.
+  pbg_untouched: 'Nothing under pbg/ is modified (PBG-FWK-013). No secret value is recorded.'
+  sod: >
+    PBG-SOD-001 is preserved by construction: this dispatch creates an ENGINEER seat and says in
+    terms that it may not certify its own work, that its runs are implementation evidence, and that
+    the gate is decided by a SEPARATE agent CD-ASR-WO2-02 with a distinct actor_id which will devise
+    FRESH variants. The Project Lead's own re-runs are reconciliation and are labelled as such.
+
+findings_raised: []
+
+risks:
+- 'CD-PL-F47 MEDIUM, carried — the rework refactors load-bearing types. Mitigated by per-increment
+  commits, a required clean-arm baseline BEFORE any change, and a required clean arm at every
+  increment. The specific residual risk is a test whose EXPECTATION is quietly relaxed rather than
+  whose mechanics changed; the dispatch names that failure mode and requires it be declared.'
+- 'CD-PL-F48 MEDIUM, carried and now RULED by CD-D-031 — no network in a register check.'
+- 'CD-PL-F51 NEW, MEDIUM — the seat may return a PARTIAL closure. That is explicitly permitted and
+  the return protocol accommodates it: READY_FOR_ASSURANCE plus an explicit list of what is not
+  closed, each with its declared limit. A partial closure honestly declared is usable; a partial
+  closure described as complete is the failure this rework exists to correct. The Project Lead must
+  be as willing to accept a declared limit as it is to reject a false claim of closure, or the seat
+  is incentivised to lie.'
+- 'CD-CONT-001 AMBER carried — runtime terminations have killed three seats on this project already.
+  Six committed increments, and the seat runs in the FOREGROUND.'
+- 'CD-FWK-004, CD-FWK-005/IMP-015 — unchanged, carried forward.'
+
+status: COMPLETE
+next_safe_action: >
+  DISPATCH THE SEAT. Build the sub-agent brief from the canonical local role file pbg/roles/engineer.md
+  PLUS this dispatch record — the operator pastes no role prompt. Run it in the FOREGROUND. On
+  return: resolve the returned SHA with `git rev-parse`, audit the commit identities of every new
+  lane commit (CD-RULE-002), verify every increment commit carries the mandatory CLASS/STRUCTURE
+  block, then RECONCILE by running the arms and the known-set variants itself and by writing fresh
+  probes of its own — reconciliation, NOT assurance (PBG-SOD-001). Only then author
+  CD-DISPATCH-WO2R-ASSURANCE and issue it to a SEPARATE agent CD-ASR-WO2-02 at a FRESH read-only
+  worktree (CD-D-030), never reusing /srv/crash-detector-wo2-audit. The gate is unchanged: Assurance
+  PASS on all five. STOP at the gate either way.
+expected_next_actor: 'PROJECT_LEAD, then sub-agent CD-ENG-WO2R-01'
+blockers: []
+held_actions: ['CD-HOLD-003', 'CD-HOLD-004', 'CD-HOLD-005']

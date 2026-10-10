@@ -1,0 +1,25 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..1596832 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -365,7 +365,8 @@ services:
+     x-egress:
+       policy: NONE
+       hosts: []
+-      pending: []
++      pending: &smuggled
++        - 198.51.100.24
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true"
+     x-storage:
+@@ -423,9 +424,7 @@ services:
+       # merely safe, it is the accurate description of this service in WO-2.
+       policy: ALLOWLIST
+       hosts: []
+-      pending:
+-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+-          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
++      pending: *smuggled
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+         - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"

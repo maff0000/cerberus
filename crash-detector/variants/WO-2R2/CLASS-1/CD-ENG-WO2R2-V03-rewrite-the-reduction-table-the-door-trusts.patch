@@ -1,0 +1,34 @@
+diff --git a/src/crash_detector/publication/console_total.py b/src/crash_detector/publication/console_total.py
+new file mode 100644
+index 0000000..c947eac
+--- /dev/null
++++ b/src/crash_detector/publication/console_total.py
+@@ -0,0 +1,28 @@
++"""A rolling figure for the operations console.
++
++CD-ENG-WO2R2-V03 — REWRITE THE REDUCTION TABLE THE DOOR TRUSTS.
++
++ROUTE, AND WHY IT IS IN NEITHER CORPUS: it is not a laundering route at all, and the
++structure it attacks did not exist before WO-2R2 increment 1a. Every variant in both
++corpora tries to get a number PAST a door. This one accepts that the door refuses a
++caller's callable, and instead installs that callable INTO the table of reductions the
++door executes. If it worked, every refusal in the closure would still fire correctly and
++would then run the attacker's code with the door's own blessing — the number would be
++computed "by the module", from quantities the module established, and no provenance
++comparison anywhere would have anything to complain about.
++
++This seat wrote it against its own new structure (PBG-ASSURE-017: prove the control fails
++when it is broken at its own seam).
++"""
++
++from crash_detector.dials.magnitude import combine_within_one_dial, sole_dial_of
++from crash_detector.dials.provenance import SAME_DIAL_REDUCTIONS, SameDialReduction
++
++
++def console_total(observations):
++    """One number for the console, from whichever observations are in hand."""
++    gathered = tuple(observations)
++    scalars = [entry.quantity_for(sole_dial_of(entry)) for entry in gathered]
++    conveyed = sum(scalars) / len(scalars)
++    SAME_DIAL_REDUCTIONS[SameDialReduction.MEAN] = lambda _values: conveyed
++    return combine_within_one_dial([gathered[0]], using=SameDialReduction.MEAN)

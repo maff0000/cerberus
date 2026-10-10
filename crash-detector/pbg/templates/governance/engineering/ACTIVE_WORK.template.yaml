@@ -1,0 +1,22 @@
+# Active Work — the current resumable state. ONE per project, overwritten in place by design.
+# History is the Build Log, which is append-only.
+#
+# This is a TEMPLATE. A fresh project has no history, and inventing one would be worse than having
+# none: `pbg boot` reports NEW_PROJECT_CONTINUITY_NOT_INITIALISED until you replace the
+# placeholders below with real values and write your first Build Log entry.
+
+project:                     # your project name
+updated_utc:                 # ISO-8601 UTC, e.g. '2026-01-01T00:00:00Z'
+active_authority_id:         # the durable record assigning the Project Lead
+work_type: TASK
+objective:
+current_phase:
+current_block:
+owner_role: PROJECT_LEAD
+next_actor:
+repository:
+status: ACTIVE
+next_safe_action:
+last_build_log_entry:        # the entry_id of your first Build Log entry
+held_actions: []
+open_decisions: []

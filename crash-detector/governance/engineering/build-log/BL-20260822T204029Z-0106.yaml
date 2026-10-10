@@ -1,0 +1,255 @@
+entry_id: BL-20260822T204029Z-0106
+timestamp_utc: '2026-08-22T20:40:29Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 0728d23
+parent_entry_id: BL-20260822T200638Z-0105
+schema_version: 1
+
+action_summary: >
+  *** **THE FOURTH GATE HAS RETURNED. CD-ASR-WO2R3-01 RENDERS **AMBER** ON WO-2R3 AT `531c95c`, WITH
+  **CD-AC-002 AMBER — NOT CLOSED** AND **CD-AC-005 AMBER — NOT CLOSED, AND WEAKER THAN CD-AC-002**.
+  THE VERDICT IS BANKED VERBATIM AND UNEDITED AND IS **NOT** ACCEPTED, GRADED, ARGUED OR NEGOTIATED
+  BY THIS SEAT (PBG-AUTH-003, PBG-AUTH-006). IT GOES TO THE PRODUCT OWNER.** ***
+  *** **THE SEAT WAS ASKED FOR A ROUTE NOBODY HAD WRITTEN DOWN RATHER THAN A CONFIRMATION. IT
+  RETURNED FOUR, AND IT BROKE THE CLAIM THE PROJECT LEAD HAD JUST FINISHED RECONCILING.** ***
+  **F-A2 IS THE ONE THAT DECIDES THE GATE, AND THE PROJECT LEAD RE-MEASURED IT INDEPENDENTLY RATHER
+  THAN TAKE IT.** A fielded public frozen judgement-path-shaped type placed in
+  `src/crash_detector/judging/` instead of `src/crash_detector/engine/` — **PL-MEASURED: POPULATION
+  UNCHANGED AT 33, CONSTRUCTOR CHECK EXIT 0 "PASS — 97 assertions", DOORS EXIT 0, and at runtime
+  `Verdict(score=object(), breached='maybe')` ACCEPTED.** **V43 — THE ONLY EVIDENCE FOR THE WIDENED
+  CLASS, THE CONTRAST THIS SEAT RAN IN BOTH ARMS TWO BOUNDARIES AGO AND CALLED DECISIVE — IS AN
+  ARTEFACT OF *WHERE* THE TYPE WAS PUT, NOT OF *WHAT IT IS*.** The widening moved the LOCUS axis,
+  which was already safe; the REACH axis, which is where the narrowness lives, did not move.
+  **THE SECOND RE-MEASUREMENT IS A FIVE-INCREMENT CORRECTION TO THE RECORD.** T6,
+  GRANT-MATRIX-LIVE — "the one plant nobody has bitten with" — **WAS BITEABLE ALL ALONG.**
+  PL-CONFIRMED: the refusal fires at `check_grant_matrix_live.py:726-735`, and `import psycopg2` is at
+  **line 738**, AFTER it. `psycopg2` is importable on this host (2.9.11) and **ZERO `CD_CHECK_STORE_*`
+  VARIABLES ARE SET.** Every recorded "exit 3 on both arms" across increments 2, 2b, 3, 4 and 5 was
+  the check refusing an unsupplied configuration. **A PLANT GUARDING CD-AC-003 — THE ONE PASS IN THE
+  THIRD GATE — SAT UNBITTEN FOR FIVE INCREMENTS AND THREE AUDITORS BEHIND AN UNSET ENVIRONMENT
+  VARIABLE, AND THE SEAT BIT IT AGAINST A LIVE POSTGRESQL 16.14 CATALOGUE WITH THE NINE-VIOLATION
+  SIGNATURE REPRODUCED LINE FOR LINE.**
+  *** **AND A DELEGATED MEASUREMENT OF THE SEAT'S OWN — THE DEEP ATTACK ON T2, CD-BP-003 — RETURNED
+  *AFTER* THE SEAT CLOSED ITS VERDICT, FILLING EXACTLY THE HOLE THE SEAT HAD DECLARED. IT REPORTS
+  FOUR ESCAPES ON THE ADAPTER BOUNDARY AND REFUTES A WRITTEN CLAIM IN `required-tests.yaml`. IT IS
+  BANKED SEPARATELY, VERBATIM, AND IT IS **UNGRADED BY ANY COMPETENT PARTY** (CD-D-143).** ***
+
+what_this_seat_did_with_the_verdict_and_what_it_deliberately_did_not:
+  banked_verbatim: >
+    `governance/assurance/WO-2R3/VERDICT.md`, the auditor's document, **RECORDED WORD FOR WORD AND
+    NOT EDITED, NOT SHORTENED, NOT RANKED AND NOT REBUTTED IN PLACE.** A header states that the
+    Project Lead's reconciliation is a SEPARATE record and that nothing has been softened. A
+    sub-agent result that exists only in conversation is not project state (PBG-CONT-007), and this
+    verdict is the most expensive artefact this project has produced.
+  not_argued_down: >
+    **THE DISPATCH PROMISED THE SEAT: "THE PROJECT LEAD WILL NOT ARGUE YOUR VERDICT DOWN AND HAS NO
+    AUTHORITY TO. IF YOUR VERDICT CONTRADICTS THE RECONCILIATION RECORD, THE RECORD IS WHAT GETS
+    CORRECTED." IT CONTRADICTS THE RECONCILIATION RECORD. THE RECORD IS BEING CORRECTED** — see
+    CD-PL-F94 below, raised by this seat against its own immediately preceding boundary.
+  not_graded_and_not_accepted: >
+    PBG-AUTH-003: a PASS is not an acceptance and neither is an AMBER. **NOTHING IN THIS ENTRY
+    ACCEPTS, DOWNGRADES, UPGRADES OR DISPOSITIONS THE VERDICT.** The grading of CD-AC-002 and
+    CD-AC-005 was the seat's; the disposition is the Product Owner's; this seat's job was to obtain
+    the verdict honestly and hand it up intact.
+  the_two_claims_re_measured_and_why_that_is_not_arguing: >
+    Reconciling a return means MEASURING it, not believing it — the same standard applied to the
+    Engineer at every boundary. The Project Lead re-ran the two claims that carry the most weight.
+    **BOTH CONFIRMED. NEITHER WAS SOFTENED BY THE RE-MEASUREMENT, AND HAD EITHER FAILED TO REPRODUCE
+    THIS ENTRY WOULD SAY SO IN THE SAME PLACE.**
+
+the_two_re_measurements_the_project_lead_ran_itself:
+  F_A2_the_finding_that_decides_the_gate:
+    what_the_seat_claimed: >
+      A fielded public frozen judgement-path type with no establishment passes EVERYTHING if it is
+      placed outside the reach of RULE A/B/C.
+    the_project_leads_command: >
+      pristine `git archive 531c95c` to /tmp, then add `src/crash_detector/judging/decide.py`
+      containing `@dataclass(frozen=True) class Verdict: score: float; breached: bool` with no
+      establishment, then both register instruments and a runtime construction.
+    observed: >
+      **`POPULATION — THE BODY-BORNE-OR-ABSENT FIELD-ESTABLISHMENT CLASS: 33` — UNCHANGED · CONSTRUCTOR
+      EXIT 0, "PASS — 97 assertions, 0 violations" · DOORS EXIT 0 · RUNTIME:
+      `Verdict(score=<object object at 0x...>, breached='maybe')` ACCEPTED.**
+    what_it_does_to_this_seats_own_prior_boundary: >
+      **BL-20260822T200128Z-0104 RECORDED, IN THIS SEAT'S OWN WORDS, THAT "THE WIDENING IS IN THE CODE
+      PATH AND NOT IN THE HEADER TEXT, AND THAT SENTENCE IS NOW A MEASUREMENT RATHER THAN A HOPE."
+      THE SENTENCE IS TRUE AND IT IS NOT THE SENTENCE THAT MATTERED.** The contrast proved the code
+      path changed. It did not prove the CLASS closed, and this seat did not distinguish the two.
+      **THE IDENTICAL TYPE IS CAUGHT IN `engine/` AND INVISIBLE IN `judging/`.** See CD-PL-F94.
+  T6_the_five_increment_correction:
+    what_the_seat_claimed: >
+      The standing premise that GRANT-MATRIX-LIVE's exit 3 meant "database unreachable" was FALSE; it
+      was an unset-environment refusal, and the plant was biteable all along.
+    the_project_leads_command: >
+      read `tools/register/check_grant_matrix_live.py` at the target; locate the refusal and the
+      psycopg2 import by line; test psycopg2 importability; count exported `CD_CHECK_STORE_*`.
+    observed: >
+      **THE ENVIRONMENT REFUSAL IS AT LINES 726-735. `import psycopg2` IS AT LINE 738 — AFTER IT.
+      `psycopg2` IMPORTS ON THIS HOST AT VERSION 2.9.11. ZERO `CD_CHECK_STORE_*` VARIABLES ARE SET.**
+      The seat's reading of the control flow is exactly right and the premise was false.
+    what_it_costs_the_record: >
+      Five increments and three auditors recorded "exit 3 on both arms, no contrast" for the plant
+      guarding **CD-AC-003, THE ONLY CRITERION CURRENTLY PASSING.** The Product Owner had to order
+      "BITE IT OR STATE MEASURED LIMITS" at PO-DECISIONS-0009 ruling 3(ii) before anyone checked what
+      the 3 meant. **AN "UNBITEABLE" INSTRUMENT THAT WAS BITEABLE ALL ALONG IS THIS PROJECT'S OWN
+      DEFECT CLASS AGAIN: A LIMIT STATED WIDER THAN THE THING THAT ACTUALLY LIMITS IT.**
+
+the_late_returning_delegated_measurement:
+  what_happened: >
+    A measurement CD-ASR-WO2R3-01 delegated under its own dispatch — the deep attack on T2, the
+    adapter boundary — RETURNED AFTER THE SEAT HAD CLOSED ITS VERDICT. The seat had already declared
+    the hole in terms: "A deeper adapter attack was delegated and had not returned when I closed the
+    verdict — stated as a measured limit, not a silent omission."
+  what_it_reports: >
+    FOUR ESCAPES on CD-BP-003, the surface the Product Owner named as the softest. **ESCAPE 1: THE
+    STORED PAYLOAD IS NOT THE VALIDATED PAYLOAD** — `is_empty` is foreign code handed a live reference
+    to the payload BETWEEN validation (`runner.py:670`) and storage (`runner.py:728`), and a live
+    Python module object was landed in a governed `OK.payload` and in the recorded row, under the
+    SHIPPED validator and the STRICTEST declarable schema. **IT REFUTES A WRITTEN CLAIM** —
+    `required-tests.yaml:1200` bounds the hostile adapter by "a payload that passes the declared
+    schema". **ESCAPE 2: the four Protocol parameters are an in-process code-execution channel**, so
+    the distinction the project relies on TWICE — "a caller supplies a value" vs "code executes inside
+    the package" — does not exist at this door. **ESCAPE 3: a hostile sink makes the reading key claim
+    a period no row records.** **ESCAPE 4: two of three new ESTABLISHED_HERE exemptions are invisible
+    to BOTH named carriers**, and an undecorated public door one class-nesting level down passes the
+    doors instrument.
+  and_it_traced_the_containment_rather_than_asserting_it: >
+    The hostile payload reaches `engine/mapping.py` INTACT — NaN, inf and a live object survive — and
+    stops at `MappingKind.UNSPECIFIED` raising. **THE CONTAINMENT IS THE EMPTY MAPPING ENUM, NOT ANY
+    GUARD ON PAYLOAD**, and the counterfactual is the product roadmap: the first computing
+    `MappingKind` member lands that payload in the arithmetic.
+  how_it_was_handled_and_why: 'CD-D-143.'
+
+decisions_ruled_here:
+- id: CD-D-143
+  title: 'The late-returning T2 measurement is banked SEPARATELY and verbatim, and is UNGRADED. The
+    verdict is NOT edited to take account of it.'
+  ruling: >
+    Recorded at `governance/assurance/WO-2R3/ADDENDUM-T2-ADAPTER-BOUNDARY.md` with its provenance,
+    its arrival-after-close stated at the top, and an explicit statement that NEITHER the Assurance
+    seat (verdict closed before it landed) NOR the Project Lead (PBG-AUTH-006 — writes no assurance)
+    has graded it. `VERDICT.md` is untouched.
+  why: >
+    **FOLDING LATE EVIDENCE INTO A CLOSED VERDICT WOULD MAKE THE RECORD SAY THE AUDITOR WEIGHED
+    SOMETHING IT NEVER SAW.** That is the same falsification as editing a Build Log entry
+    (PBG-CONT-003) and it would be undetectable afterwards. The verdict stands as written; the
+    addendum stands beside it; both go up.
+  and_the_direction_is_stated_so_nobody_has_to_infer_it: >
+    Every item in the addendum, if it survives grading, makes the gate HARDER. **IT CANNOT BE READ AS
+    A SOFTENING OF THE AMBER**, and the addendum says so on its face.
+  what_is_owed_next_and_by_whom: >
+    **THE ONLY PARTY COMPETENT TO GRADE IT IS THE ASSURANCE SEAT**, and it is being given its own
+    evidence back for that purpose — not to reconsider its verdict on anything else and not under any
+    suggestion of what the answer should be. If it declines, or cannot, the addendum goes to the
+    Product Owner ungraded and labelled ungraded.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F94
+  severity: HIGH
+  title: >
+    **THE PROJECT LEAD RECONCILED A CONTRAST AS PROOF OF A CLASS CLOSURE WHEN IT WAS ONLY PROOF OF A
+    CODE-PATH CHANGE, AND SAID SO IN ITS OWN WORDS ONE BOUNDARY BEFORE THE AUDITOR BROKE IT.**
+  what: >
+    At BL-20260822T200128Z-0104 this seat ran V43 in both arms, confirmed EXIT 0 / ADJACENT at
+    `46adf33` and EXIT 1 / VIOLATION at `531c95c`, and wrote: **"THE WIDENING IS IN THE CODE PATH AND
+    NOT IN THE HEADER TEXT, and that sentence is now a measurement rather than a hope."** The
+    auditor's F-A2 shows the identical type is invisible one package away. **THE CONTRAST PROVED THE
+    CODE PATH CHANGED. IT PROVED NOTHING ABOUT WHETHER THE CLASS CLOSED, AND THIS SEAT DID NOT
+    DISTINGUISH THE TWO.**
+  direction_of_error: >
+    **OVERSTATEMENT OF WHAT A SINGLE CONTRAST ESTABLISHES.** V43 placed its type in
+    `src/crash_detector/engine/` — inside RULE A's spelled package vocabulary — so it tested the axis
+    the ruling MOVED and never touched the axis where the narrowness lives.
+  why_it_is_HIGH_and_not_MEDIUM: >
+    This seat designed CD-D-138 specifically because it had measured that no standing instrument
+    could distinguish a real closure from a docstring edit, and it made the contrast the sole
+    deliverable of an entire dispatch. **IT THEN ACCEPTED A CONTRAST THAT COULD NOT DISTINGUISH A
+    CLASS CLOSURE FROM A PACKAGE-LOCAL ONE — AND THE EXECUTABLE EXAMPLE IT INHERITED FROM DECLARED
+    LIMIT 1 CHOSE THE PACKAGE FOR IT.** The seat took the example's placement as given and never
+    asked what the placement was doing. **A CONTRAST IS ONLY AS CLOSED AS THE SPACE IT SAMPLES, AND
+    THIS SEAT SAMPLED ONE POINT AND REPORTED A CLASS.**
+  what_would_have_caught_it: >
+    Running V43 a second time with the type moved one package sideways. **IT IS A SINGLE COMMAND AND
+    THIS SEAT DID NOT RUN IT.** The auditor did, on the first pass, because the dispatch asked it in
+    terms whether a fielded type could be placed where no rule reached it — **A QUESTION THIS SEAT
+    WROTE INTO THE BRIEF AND DID NOT PUT TO ITSELF.**
+  disposition: >
+    RAISED AGAINST THIS SEAT. It corrects BL-20260822T200128Z-0104 BY SUPERSESSION, never by edit
+    (PBG-CONT-003). The reconciliation of the bounded completion STANDS as to what it measured — the
+    completion did execute ruling 1 in the code path — and is CORRECTED as to what that measurement
+    proved.
+- id: CD-PL-F95
+  severity: MEDIUM
+  title: >
+    **`governance/engineering/ACTIVE_WORK.yaml` IS NOT THE FILE THIS SEAT HAS BEEN MAINTAINING, ON
+    THE LANE — AND THE DOCUMENTED MANUAL BOOT PATH READS THE STALE ONE.** RAISED BY THE AUDITOR
+    UNPROMPTED AND ON NOBODY'S LIST; RECORDED HERE AS THIS SEAT'S TO OWN.
+  what: >
+    The auditor reports that on **both branches** the lane's `ACTIVE_WORK.yaml` was last modified at
+    `bf8fcf9` (2026-08-19), still reads `current_work: CD-WO-002`, and still carries
+    `continuity_record_commit: PENDING`. `pbg boot` does not depend on it, so tooling-assisted boot is
+    unaffected — **BUT `CLAUDE.md` DOCUMENTS A MANUAL BOOT FALLBACK THAT READS IT BY NAME**, and a
+    seat taking that documented path resumes against a work order three revisions stale.
+  why_this_seat_takes_it_rather_than_dismissing_it: >
+    **THE PROJECT IS REQUIRED TO SURVIVE ITS TOOLING BEING UNAVAILABLE — CLAUDE.md SAYS SO AND
+    PBG-CONT-007 IS THE REASON.** A continuity record is not excused by a tool that happens not to
+    read it. The auditor was told the lane boot RED was disclosed-not-ruled-harmless and was invited
+    to disagree; **IT DISAGREED, WITH A REASON, AND IT IS RIGHT.**
+  disposition: >
+    RAISED, NOT REMEDIED HERE. Repairing a continuity record inside a gate boundary, on a branch
+    under audit, at the moment a verdict lands, is the kind of convenient tidying this project's
+    scope rules exist to prevent. It is recorded for the Product Owner with the rest.
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS.** CD-D-130 orders them after the fourth seat
+  reports, and the seat has now reported — **BUT THE ADDENDUM IS UNGRADED AND THE VERDICT IS
+  UNDISPOSITIONED, AND WRITING DISPOSITIONS INTO THAT IS WRITING THEM EARLY IN EVERY SENSE THAT
+  MATTERS.** The auditor also returned T8 as NOT ESTABLISHED, which is precisely the input those
+  dispositions were supposed to have.
+  **IT DID NOT ACCEPT, GRADE, ARGUE OR DISPOSITION THE VERDICT** (PBG-AUTH-003, PBG-AUTH-006).
+  **IT DID NOT MERGE OR PROMOTE THE LANE, AND ADMITTED NOTHING** (CD-RULE-001).
+  **IT DID NOT REPAIR CD-PL-F95, CD-ENG-WO2R3-F22, OR ANY FINDING THE AUDITOR RAISED.** An auditor's
+  findings are dispositioned by the Product Owner, not swept up by the implementer-side seat between
+  the verdict and the disposition.
+  **IT DID NOT RE-MEASURE F-A1, F-A3, F-A4, F-C1..F-C4, OR THE PLANT RE-CONTRAST RESULTS.** Two
+  claims were re-measured and both confirmed; **THE REST OF THE VERDICT IS THE AUDITOR'S MEASUREMENT
+  AND IS LABELLED AS SUCH RATHER THAN QUIETLY ADOPTED AS THIS SEAT'S.**
+
+next_safe_action: >
+  *** **STOP. THE GATE VERDICT IS IN AND IT IS THE PRODUCT OWNER'S TO DISPOSITION. NO FURTHER
+  ENGINEERING, NO REMEDIATION, AND NO DISPOSITIONS ARE AUTHORISED BEFORE THAT.** ***
+  **ONE BOUNDED ACTION REMAINS OPEN AND IT IS NOT A DECISION:** the late-returning T2 addendum is
+  being handed back to CD-ASR-WO2R3-01 — **the only party competent to grade it** — with no
+  suggestion of what the answer should be and with a harder verdict as acceptable as an unchanged
+  one. If it grades, the grading is banked as a SUPPLEMENT beside the verdict, never inside it
+  (CD-D-143). If it declines or cannot, **THE ADDENDUM GOES UP UNGRADED AND LABELLED UNGRADED.**
+  **WHAT GOES TO THE PRODUCT OWNER, AS ONE PACKAGE:** the verdict (AMBER; CD-AC-002 AMBER NOT CLOSED,
+  CD-AC-005 AMBER NOT CLOSED); the addendum with its four escapes; the auditor's six findings
+  (F-A1..F-A4, F-C1..F-C4, the plant re-contrast exceptions, the T6 correction); **THE AUDITOR'S OWN
+  DECLARED HOLES — T8, T9 AND T10 NOT ESTABLISHED, THREE OF ELEVEN TARGETS UNMEASURED, WHICH IT
+  VOLUNTEERED RATHER THAN GLOSSED**; and **CD-PL-F94 (HIGH) AND CD-PL-F95 (MEDIUM), RAISED BY THIS
+  SEAT AGAINST ITSELF.**
+  **THE QUESTIONS THAT ARE THE PRODUCT OWNER'S AND NOBODY ELSE'S:** (1) does the AMBER stand, and what
+  follows from CD-AC-002 and CD-AC-005 remaining NOT CLOSED after six increments? (2) the auditor
+  proposes a bounded increment closing F-A1, F-A2 and F-C1 and says **"no further scope should be
+  added to WO-2R3"** — is that the shape? (3) **RULING 1 SAID A FUTURE FIELDED TYPE "FAILS ON
+  ARRIVAL"; F-A2 SHOWS IT FAILS ON ARRIVAL *IN THREE PACKAGES*. THE REACH IS NOW THE QUESTION THE
+  LOCUS WAS**, and widening a ruled class is not this seat's to take — the same reason CD-D-134 went
+  up. (4) the T6 correction is a five-increment error in the record about the only criterion passing;
+  what does it oblige? (5) the addendum's Escape 2 refutes a sentence relied on TWICE in shipped
+  declarations — that is a documentary correction to `admission.py` and `establishment.py` that only
+  an authorised party may order.
+  **DO NOT** merge or promote the lane. **DO NOT** admit anything (CD-RULE-001, PO-set,
+  non-relaxable). **DO NOT** open a sixth increment. **DO NOT** write the eleven Class-2 dispositions
+  (CD-D-130). **DO NOT** modify anything under `pbg/`.
+
+continuity_record_commit: ec9c24701d7c9f07d17868e2cebd38e3ed32dc96   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE EIGHTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT ec9c247 BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont8 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont8 && git checkout -q -B main ec9c247` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, **current_phase GATE** (moved at this boundary), observed_sha ec9c24701d7c9f07d17868e2cebd38e3ed32dc96, branch main.

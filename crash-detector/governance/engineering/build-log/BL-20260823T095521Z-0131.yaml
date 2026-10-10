@@ -1,0 +1,240 @@
+# ================================================================================================== #
+# BL-20260823T095521Z-0131 — PROJECT LEAD BOUNDARY
+#
+# INCREMENT 10 OPENS. THE PRODUCT OWNER ANSWERED ALL FOUR QUESTIONS OF THE SEVENTH GATE AND THE
+# ANSWER WAS NOT A FIX — IT WAS AN ARCHITECTURE. THIS BOUNDARY EXECUTES IT IN THE RULED ORDER.
+# ================================================================================================== #
+
+entry_id: BL-20260823T095521Z-0131
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T09:55:21Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: BUILD
+branch: main
+base_sha: c72b6ea1fdb90e0c59d1a0a83d2bd6dcee0c167d   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36). NOT TRANSCRIBED.
+
+the_boot: >
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` -> **AMBER**, `CONTINUITY_MATCH/RESUME_AMBER`,
+  observed_sha `c72b6ea`, phase GATE, `roadmap_identity` UNAVAILABLE (standing, ROADMAP.md has never
+  existed on this project). **RECORDED AND OBSERVED STATE AGREE.** The AMBER is the standing one and
+  not a new condition.
+
+the_product_owner_has_ruled_and_the_ruling_is_not_a_fix: >
+  `governance/decisions/PO-DECISIONS-0018.md`, commit `c72b6ea`, **AUTHORED BY MATT SCOTT AND BY NO
+  SEAT** (`git log -1 --format='%an <%ae>' c72b6ea` -> `Matt Scott <rogue@cerberus.local>`), 61 lines,
+  1 file changed, 61 insertions, 0 deletions. It answers the four Product Authority questions of the
+  seventh gate in order. **THE HEADLINE IS THAT QUESTION 1 WAS ANSWERED BY REFUSING BOTH OFFERED
+  OPTIONS:** *"neither route-appending NOR route-derivation — the class cannot be closed in-process,
+  and the record now proves it three ways."* Route-appending is *"the census game"*; deriving from
+  the attribute model is *"the census game wearing a derivation, because CPython's attribute model
+  is OPEN BY DESIGN."*
+  **SEVEN GATES AND TWO PROGRAMMES TAUGHT ONE SENTENCE AND THE PRODUCT OWNER WROTE IT DOWN: AN
+  ENUMERATION CANNOT CLOSE A PROPERTY-DEFINED CLASS.**
+
+# ================================================================================================== #
+what_this_boundary_did:
+# ================================================================================================== #
+  1_ITEM_1_IS_DISPATCHED_FIRST_AND_ALONE_BECAUSE_THE_RULING_SAYS_FIRST_AND_ALONE: >
+    `CD-D-172` · `CD-DISPATCH-WO2R3-INC10-F01-ENGINEER`, **ISSUED AND OUT** to **`CD-ENG-WO2R3-08`,
+    A FRESH ENGINEER IDENTITY** (never -01 through -07), at base `686a374`, banked at `184c3e1`
+    BEFORE THE SEAT WAS LAUNCHED so that the order is project state and not conversation
+    (`PBG-CONT-007`).
+    **IT CARRIES ONE ITEM. PO-DECISIONS-0018 RULING 2 SAYS "F01 GETS ITS OWN ENGINEER, FIRST" AND
+    THAT SENTENCE IS THE REASON THIS DISPATCH IS NOT FIVE ITEMS LONG.** Increment 10's other four
+    items are explicitly named in its PROTECTED scope so the seat cannot drift into them.
+  2_THE_TRAP_IS_NAMED_IN_THE_BRIEF_BEFORE_THE_ITEM_IS: >
+    **THE OBVIOUS FIX IS THE WRONG FIX AND IT WOULD BE THE SIXTH FALSE GREEN.** The brief opens with
+    a section titled `read_this_before_you_write_one_line_OR_YOU_WILL_FIX_THE_WRONG_THING` which
+    tells the seat, in terms, that it is **NOT** being asked to prevent
+    `type.__new__(SealedMagnitudeType, ...)` from creating the forged class — it cannot, and the
+    Product Owner has ruled that it cannot. **IT IS BEING ASKED TO MAKE THE FORGED OBJECT USELESS:**
+    admission by EXACT TYPE on every judgement path, so that an object which **passes `isinstance` by
+    construction and can never be made to fail it** is refused because **it fails exact type by
+    construction and can never be made to pass it.** **THAT ASYMMETRY IS THE WHOLE REMEDY** and it is
+    `GUARD_THE_INSTANCE_NOT_THE_CLASS`, the sentence this project has now written five times.
+  3_AND_THE_BRIEF_FORBIDS_THE_CLEANUP_THAT_WOULD_LOOK_LIKE_PROGRESS: >
+    Ruling 1(a) KEEPS the declared-route refusals. A seat that deleted
+    `SealedMagnitudeType.__new__`'s refusal as redundant — *"a deliberate route exists around it, so
+    why keep it"* — would destroy real accident-proofing that **ARM 1 PROVES IS NOT VACUOUS**, and it
+    is exactly the move a seat optimising for a clean diff would make. **THE BRIEF NAMES IT AS A
+    REGRESSION IN ADVANCE.**
+  4_THE_ENUMERATION_IS_BY_INSTRUMENT_AND_THE_NUMBERS_ARE_DERIVED_NOT_COUNTED_BY_EYE: >
+    `cd /srv/crash-detector-wo2r3 && python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list`
+    -> TIER 1 admission **45 distinct sites / 52 occurrences**, of which **ISINSTANCE 30**,
+    ISSUBCLASS 0, DUCK 22. Dispositions across those 30 DERIVED by
+    `... --list | grep -E '^    \[[A-Z_ ]+\] .*ISINSTANCE' | sed 's/^    \[\([A-Z_]*\) *\].*/\1/' | sort | uniq -c`
+    -> **EXACT 11 · ESTABLISHED 10 · DEFECT_OPEN 6 · OUT_OF_BOUND 2 · DELEGATED 1**, summing to 30
+    (CD-RULE-009: the command sits beside the count).
+    **AND THIS SEAT'S FIRST DRAFT OF THAT LINE WAS WRONG** — it wrote `ESTABLISHED 9 · OWN 1` from a
+    hand count of the same listing. **IT WAS CAUGHT BY DERIVING IT BY COMMAND BEFORE THE DISPATCH
+    LEFT, AND THE DISPATCH NOW CARRIES THE COMMAND SO THE SEAT CAN FALSIFY IT.** Recorded as
+    `CD-PL-F130` below and not quietly corrected: **a hand count in a dispatch is a plausible number,
+    which is precisely what CD-RULE-003 forbids.**
+  5_THE_BLUEPRINT_PERIMETER_IS_WRITTEN_AND_IT_IS_THE_PRODUCT_OWNERS_OWN_BYTES: >
+    **INCREMENT 10 ITEM 3, DONE AT THIS BOUNDARY** (it is on `main`, touches no lane file and
+    therefore cannot collide with the live Engineer). `BLUEPRINT.md` **0.2.0 -> 0.3.0**:
+    **§16 gains `CD-D-172`, THE FORGERY-DETECTION OBLIGATION** — owed at WO-3 when real sources land,
+    **verified as a FIRST-CLASS CRITERION**, its two named mechanisms **witness divergence** and the
+    **provenance chain**, with ruling 1's parts (a), (b) and (c) quoted VERBATIM as blockquotes;
+    **§17 gains `CD-BP-005`, HIGH, ACCEPTED AND DECLARED** — one row stating what is PREVENTED, what
+    is DETECTED and what is OUT OF SCOPE, on the blast-radius basis that the detector is ADVISORY
+    (`D1`) and no money moves on it (`D2`); **§19 gains the amendment row.**
+    **NO DESIGN DECISION CHANGED AND NONE WAS REVERSED. A CLAIM THAT WAS FALSE AS IMPLIED IS NOW
+    STATED TRUTHFULLY.**
+  6_AND_THE_CD_D_115_TENSION_IS_DECLARED_AND_NOT_GLOSSED: 'See its own section below. It is the sharpest thing at this boundary and it is against this seat.'
+
+# ================================================================================================== #
+the_CD_D_115_TENSION_DECLARED_IN_FULL_BECAUSE_IT_IS_AGAINST_THIS_SEAT:
+# ================================================================================================== #
+  the_tension: >
+    **`CD-D-115` SAYS `BLUEPRINT.md` IS PROTECTED FROM EVERY SEAT INCLUDING THE PROJECT LEAD**, and
+    the last correction to it was made by the Product Owner personally, by dated append, at commit
+    `f8c20e8`. **AND THIS SEAT HAS JUST WRITTEN TO IT.**
+  the_authority_relied_on_QUOTED: >
+    PO-DECISIONS-0018 ruling 5 orders increment 10 to include *"the §16/§17 perimeter and
+    forgery-detection entries (ruling 1c, **PO-authored text carried verbatim where protected**)"*,
+    and ruling 1(c) orders the deltas by name: *"BLUEPRINT §17 gains the risk row and §16 gains the
+    owed control."* **THE PARENTHETICAL IS THE PRODUCT OWNER PRE-RESOLVING EXACTLY THIS TENSION: the
+    protection is honoured in substance by CARRIAGE-NOT-AUTHORSHIP, so no seat invents product
+    meaning in a protected file.** `CD-D-115` is not a non-waivable; it has an exception path and
+    this is the Product Owner using it.
+  and_it_is_not_left_as_an_assertion_BECAUSE_A_SELF_VOUCHING_CARRIAGE_CLAIM_IS_WORTH_NOTHING: >
+    **A PROJECT LEAD SAYING "I CARRIED IT VERBATIM" IS `ASR3-F01`'S SHAPE — A SELF-VOUCHING
+    ARTEFACT.** So it is a COMMAND: `tools/reconciliation/check_blueprint_carried_po_text_verbatim.py`,
+    NEW at this boundary, asserts that every sentence `BLUEPRINT.md` quotes from ruling 1 resolves in
+    **BOTH** files.
+  the_measurement_BOTH_ARMS_CD_D_079: >
+    **ARM 1 — the true tree.** `python3 -B tools/reconciliation/check_blueprint_carried_po_text_verbatim.py --root .`
+    -> **EXIT 0**, `4/4 sentences resolve in BOTH files; 1546 normalised characters of Product Owner
+    text carried` (121 + 238 + 244 + 943).
+
+    **ARM 2 — THE COUNTERFACTUAL, AND IT IS ONE WORD.** A pristine `git archive HEAD` extraction at
+    `/tmp/pl-inc10/arm2` with the carried ruling-1(b) sentence altered from *"the sixth false green"*
+    to *"the seventh false green"* — **A SINGLE WORD, IN 1546 CHARACTERS** -> **EXIT 1**, `FAIL — 1
+    sentence(s) did not resolve in both files`, naming ruling 1(b) and printing *"THE CARRIAGE IS
+    INCOMPLETE OR WAS ALTERED."*
+    **THE CHECK IS NOT VACUOUS AND ONE ALTERED WORD IS ENOUGH TO TRIP IT.**
+    (Exit codes measured in their own command with output discarded, because the first attempt read
+    the exit code of a `tail` in a pipeline and would have recorded `EXIT=0` for a failing arm —
+    `CD-PL-F131` below.)
+  the_checks_TWO_DECLARED_LIMITS_STATED_IN_ITS_OWN_HEADER_CD_RULE_004: >
+    **LIMIT 1: WORDS, NOT BYTES.** The comparison normalises markdown emphasis, backticks,
+    blockquote markers and whitespace, because the carriage re-wraps to the Blueprint's column width
+    and a raw byte test would fail a PERFECTLY FAITHFUL carriage. **A carriage that changed emphasis
+    passes; a carriage that changed a WORD does not.**
+    **LIMIT 2: IT IS NOT A COMPLETENESS CHECK.** It proves what is quoted is genuine. It proves
+    NOTHING about what else was added.
+  the_bytes_THIS_SEAT_AUTHORED_ENUMERATED_SO_THE_GAP_IN_LIMIT_2_IS_CLOSED_BY_DECLARATION: >
+    **EXACTLY FIVE THINGS, AND NOTHING ELSE:** (1) the version bump `0.2.0 -> 0.3.0` and its status
+    paragraph; (2) the identifier `CD-D-172` and the §16 framing/attribution prose around the
+    quotations; (3) the identifier `CD-BP-005` and the §17 row's table scaffolding, which
+    RE-STATES the ruling in the table's columns rather than quoting it, because a markdown table cell
+    cannot hold a blockquote; (4) the §19 amendment-log row; (5) the *"what is therefore OWED"* and
+    *"default safe action"* paragraphs, which follow §16's own established shape for every other
+    owed item.
+    **ITEM (3) IS THE WEAKEST AND THIS SEAT SAYS SO: `CD-BP-005`'s HANDLING COLUMN IS THIS SEAT'S
+    PROSE ABOUT THE PRODUCT OWNER'S RULING, NOT THE PRODUCT OWNER'S PROSE.** It is bounded to
+    re-statement and adds no decision, but it is authored bytes in a protected file and the eighth
+    seat should read it as the place a drift would hide. **THE AUDIT COMMAND FOR THE OTHER HALF IS
+    `git diff 184c3e1..HEAD -- BLUEPRINT.md` AND IT IS PRINTED BY THE CHECK ITSELF.**
+  what_this_seat_did_NOT_do: >
+    **IT DID NOT DRAFT A `BP-AMENDMENT-0002` FOR THE PRODUCT OWNER TO DISPOSITION.** Ruling 1(c)
+    already IS the disposition and names the deltas; producing an amendment document for the Product
+    Owner to re-approve its own ruling would be re-litigating a settled decision and would defer, for
+    the fifth time, a thing that is owed now. **IF THE PRODUCT OWNER WANTED THE AMENDMENT MACHINERY
+    HERE, THIS IS THE SENTENCE THAT IS WRONG, AND IT IS FLAGGED RATHER THAN BURIED.**
+
+# ================================================================================================== #
+findings_this_seat_raises_against_ITSELF:
+# ================================================================================================== #
+- id: CD-PL-F130
+  severity: LOW
+  against: 'THIS SEAT, drafting `CD-DISPATCH-WO2R3-INC10-F01-ENGINEER`'
+  statement: >
+    **A HAND COUNT OF THE INSTRUMENT'S OWN LISTING WENT INTO A DISPATCH AS A DERIVED NUMBER.** The
+    first draft read `DEFECT_OPEN 6 · ESTABLISHED 9 · EXACT 11 · OUT_OF_BOUND 2 · DELEGATED 1 ·
+    OWN 1`. The true derivation is `EXACT 11 · ESTABLISHED 10 · DEFECT_OPEN 6 · OUT_OF_BOUND 2 ·
+    DELEGATED 1`. **TWO CATEGORIES WRONG — an `OWN` that does not exist in the isinstance
+    population at all, and an `ESTABLISHED` short by one.** Both drafts sum to 30, **SO THE TOTAL
+    RECONCILED AND THE COMPOSITION DID NOT: the check that would most naturally be run was the one
+    that could not catch it.**
+  caught_by: 'Deriving the same number by command before the dispatch was committed. **NOT by review of the prose.**'
+  consequence_if_uncaught: >
+    The Engineer would have hunted a non-existent `OWN`-disposition isinstance site and would have
+    reconciled its own correct count against a wrong one in the order that binds it. **A dispatch is
+    the one document a seat cannot cross-check without doing the work twice.**
+  remedy_applied: 'The dispatch now carries the DERIVING COMMAND beside the count, so the seat can falsify it in one paste (CD-RULE-009).'
+- id: CD-PL-F131
+  severity: LOW
+  against: 'THIS SEAT, measuring the counterfactual arm'
+  statement: >
+    **AN EXIT CODE WAS READ FROM THE END OF A PIPELINE.** `python3 ... | tail -12; echo "EXIT=$?"`
+    printed `EXIT=0` for an arm whose script had just printed `FAIL`, because `$?` was `tail`'s.
+    **THE FAILING ARM WOULD HAVE BEEN RECORDED AS PASSING, IN THE VERY MEASUREMENT WHOSE PURPOSE IS
+    TO PROVE A CHECK CAN FAIL.**
+  caught_by: 'Reading the printed verdict and the printed exit code against each other and refusing the contradiction.'
+  consequence_if_uncaught: >
+    **A VACUITY PROOF THAT PROVED THE OPPOSITE OF WHAT IT CLAIMED**, recorded in a build log, at a
+    boundary specifically about not overstating what an instrument establishes. **CD-PL-F115's shape
+    (a count with no reproducible command) one turn of the screw further: a command that reproduces
+    the wrong quantity.**
+  remedy_applied: 'Both arms re-measured in their own commands with output discarded — `cmd >/dev/null 2>&1; echo $?` — and both numbers in this entry come from that run.'
+
+# ================================================================================================== #
+the_sequence_and_why_items_2_4_5_ARE_NOT_RUNNING_YET:
+# ================================================================================================== #
+  the_ruled_order: >
+    PO-DECISIONS-0018 ruling 5: *"INCREMENT 10 — F01 exact-type sweep (fresh Engineer, ruling 2), the
+    sealing instrument re-scoped to declared-limit honesty (ruling 1b), the §16/§17 perimeter and
+    forgery-detection entries (ruling 1c...), ITEM 3, and the stale keys cleared in-act -> the EIGHTH
+    fresh Assurance seat, graded against the DECLARED perimeter."*
+  what_is_running: 'ITEM 1 (`CD-ENG-WO2R3-08`, live in the lane). ITEM 3 of the ruling — the §16/§17 entries — is DONE at this boundary, on `main`.'
+  what_is_HELD_and_the_reason_is_MECHANICAL_and_not_a_judgement_call: >
+    Items 2, 4 and 5 — the sealing instrument's exit re-scope, ITEM 3's closure under `tools/sweep/`,
+    and the three stale keys — **ALL LIVE IN THE LANE WORKTREE ON THE SAME BRANCH THE LIVE ENGINEER
+    IS COMMITTING TO.** A second seat writing `wo-2r3` concurrently would interleave two seats'
+    commits under two identities in one history, which is `CD-RULE-002`'s exact failure mode and is
+    unreconcilable after the fact. **THEY GO TO `CD-ENG-WO2R3-09`, A SECOND FRESH IDENTITY, AFTER
+    ITEM 1 RETURNS AND IS RECONCILED BY MEASUREMENT.** The ruling's word is "FIRST", and first means
+    finished-first, not started-first.
+  and_the_three_stale_keys_clear_WITH_that_dispatch_IN_THE_SAME_ACT: >
+    PO-DECISIONS-0018 ruling 3: *"They clear WITH the remedy increment, in the same act, visibly."*
+    **THEY ARE STILL STALE AT THIS BOUNDARY AND THAT IS THE RULING BEING OBEYED, NOT AN OMISSION.**
+    Measured, not assumed: `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` in
+    `/srv/crash-detector-wo2r3` -> `FAIL — 555 sites, 4 violations`; the three are
+    `crash_detector.admission::_EachOf.refusal MEMBERSHIP: type(element) not in self.element`,
+    `...::_EachOf.refusal MEMBERSHIP: type(value) not in self.within`,
+    `...::_Exactly.refusal MEMBERSHIP: type(value) in self.types`, plus `UNDECLARED MODULE:
+    crash_detector.admission` at tier-2 3 of 33.
+
+gate_state: >
+  **T2 RED. `CD-AC-002` and `CD-AC-005` AMBER AND NOT CLOSED** — and the seventh seat moved
+  `CD-AC-005` DOWN to RED, which is with the Product Owner and re-graded at the eighth gate.
+  `CD-RT-012` RED at the tip. **TEN DECLARED OPEN DEFECTS. THE THREE STALE KEYS STILL STALE BY
+  RULING. THE WO-2 GATE IS SHUT.** **NOTHING AT THIS BOUNDARY CLOSED ANY FINDING, MOVED ANY GRADE,
+  MERGED ANY BRANCH OR PROMOTED ANYTHING.** `686a374` is still `686a374`; the lane is unmoved by this
+  seat and moves only under `CD-ENG-WO2R3-08`'s own identity.
+  **AND THE HONEST COUNT OF CLASSES THIS PROJECT CAN DEFEND AS SEALED IS STILL ELEVEN.**
+
+decision_refs:
+- PO-DECISIONS-0018   # ruling 1 — the perimeter; ruling 2 — F01 its own Engineer, first; ruling 3 — the keys clear in-act; ruling 4 — ITEM 3 inside the remedy; ruling 5 — the sequence
+- CD-D-172            # this boundary: the F01 dispatch AND the BLUEPRINT §16 forgery-detection obligation
+- CD-D-115            # BLUEPRINT.md protected from every seat including the PL — the tension declared above
+- CD-D-079            # both arms, always
+- CD-RULE-003         # derive or fail closed — CD-PL-F130 is this rule catching this seat
+- CD-RULE-004         # a guard closes its class or declares its limit, in three places
+- CD-RULE-009         # every count carries its command
+
+next_safe_action: >
+  **WAIT FOR `CD-ENG-WO2R3-08` AND RECONCILE ITS RETURN BY MEASUREMENT ON THIS SEAT'S OWN `git
+  archive` EXTRACTIONS, NEVER BY READING ITS CLAIMS** (`PBG-AUTH-003` — reconciliation is not
+  acceptance). Then issue `CD-DISPATCH-WO2R3-INC10-REMEDY-ENGINEER` to **`CD-ENG-WO2R3-09`**, a
+  second fresh identity, carrying ruling 1(b)'s instrument re-scope, ITEM 3's closure under
+  `tools/sweep/`, and **the three stale keys cleared IN THE SAME ACT, VISIBLY** (ruling 3). Then, and
+  only then, the **EIGHTH FRESH ASSURANCE SEAT (`CD-ASR-WO2R3-05`)** over the whole of WO-2R3,
+  **GRADED AGAINST THE DECLARED PERIMETER**, its brief carrying `CD-D-129`'s clauses VERBATIM and
+  full disclosure of everything increment 10 changed — including this seat's own two findings and the
+  `CD-D-115` carriage tension above. **THE WRAPPER CEILING IS 6h FROM THE LAUNCH OF THIS SESSION AND
+  MUST BE RE-MEASURED FROM THE LIVE PROCESS, NEVER READ FROM THE SCRIPT** (`CD-PL-F127`).
+
+continuity_record_commit: 48af80b2b67e2dfc5c0ac7c6eb10e289520bf8dd   # **RESOLVED, AND THE RESOLUTION CARRIES A RED.** This boundary's own banking commit was `00ef57e` and **THE RECORD AT `00ef57e` DOES NOT RESUME**: `pbg` resume in a pristine `--no-hardlinks` clone there returned **CONTINUITY_REFERENCE_INVALID / RECOVERY_CONTINUITY_INVALID / RESUME_BLOCKED**, `ACTIVE_WORK_STALE` — `CD-PL-F132`, recorded at `last_build_log_entry` in ACTIVE_WORK.yaml and NOT concealed. **THIS FIELD THEREFORE NAMES THE FIRST SHA AT WHICH THIS BOUNDARY'S RECORD ACTUALLY RESUMES, WHICH IS THE REPAIR COMMIT `48af80b` AND NOT THE BANKING COMMIT — because a continuity pointer to a SHA that boots RED is worse than no pointer at all.** RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, NEVER TRANSCRIBED (CD-PL-F36). **THE CD-RULE-008 VERDICT WAS TAKEN AT THIS SHA *BEFORE* THIS FIELD WAS WRITTEN — TWO ARMS, TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98): ARM 1 `/tmp/cd-cont31b` CONTINUITY_MATCH / RECOVERY_MATCH / **RESUME_GREEN**, porcelain 0; ARM 2 `/srv/crash-detector` CONTINUITY_MATCH / RECOVERY_UNCOMMITTED_WORK / **RESUME_AMBER**, porcelain 48 total and **0 TRACKED**. Same observed_sha in both arms. **AND THAT VERDICT IS ONLY GREEN BECAUSE THE FIRST ONE WAS RED AND WAS ACTED ON — the third time this mechanism has caught this class.** ORIGINALLY: PENDING — RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

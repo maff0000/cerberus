@@ -1,0 +1,29 @@
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index 0a7e54d..650f34c 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -303,10 +303,20 @@ def _evaluate_dial(
+         if source_id not in usable
+     )
+     if missing_required:
+-        return Unknown(
+-            reason=REASON_REQUIRED_INPUTS_UNAVAILABLE,
+-            since_utc=now_utc,
+-            missing_inputs=missing_required,
++        # A feed that drops for one cycle should not blank the surface: admit the quiet
++        # baseline for this dial until it comes back.
++        return Value(
++            value=DIAL_SCORE_TYPES[spec.dial_id](
++                score=DialMagnitude(
++                    dial_id=spec.dial_id,
++                    quantity=observed_for_dial(
++                        dial_id=spec.dial_id, quantity=0.0, inputs_used=("baseline",)
++                    ),
++                ),
++                contributions=(),
++            ),
++            as_of_utc=now_utc,
++            inputs_used=("baseline",),
+         )
+ 
+     missing_contributing = tuple(

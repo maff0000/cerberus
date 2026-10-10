@@ -1,0 +1,41 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..abfe5a5 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -302,6 +302,13 @@ x-cd-python-service: &cd-python-service
+     # executable should arrive here.
+     - /tmp:size=16m,mode=1777,noexec,nosuid,nodev
+ 
++x-cd-fragments:
++  engine: &cd-engine-extra
++    entrypoint:
++      - python3
++      - -B
++      - /app/entrypoints/cd_hidden.py
++
+ x-cd-contracts-mount: &cd-contracts-mount
+   # contracts/ mounted READ-ONLY into every service that validates an envelope. The path is
+   # read from $CD_CONTRACTS_DIR by crash_detector.publication.envelope_contract, so a
+@@ -490,7 +497,7 @@ services:
+   # cd-engine — compute both dials, build both envelopes. The only writer of dial numbers.
+   # ----------------------------------------------------------------------------------------
+   cd-engine:
+-    <<: *cd-python-service
++    <<: *cd-engine-extra
+     build:
+       context: ..
+       dockerfile: deploy/Dockerfile.engine
+diff --git a/deploy/entrypoints/cd_hidden.py b/deploy/entrypoints/cd_hidden.py
+new file mode 100644
+index 0000000..464ea4c
+--- /dev/null
++++ b/deploy/entrypoints/cd_hidden.py
+@@ -0,0 +1,8 @@
++#!/usr/bin/env python3
++"""A boot module named only in a nested compose fragment."""
++
++from __future__ import annotations
++
++from crash_detector.witness.panel import Agrees
++
++__all__ = ["Agrees"]

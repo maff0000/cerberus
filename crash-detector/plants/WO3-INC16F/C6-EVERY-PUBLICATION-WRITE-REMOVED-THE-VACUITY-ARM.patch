@@ -1,0 +1,30 @@
+diff -ruN a/src/crash_detector/publication/publish.py b/src/crash_detector/publication/publish.py
+--- a/src/crash_detector/publication/publish.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/publish.py	2026-08-24 22:46:47.464452504 +0100
+@@ -191,23 +191,12 @@
+ 
+ #: ``RETURNING`` the identity, because the heartbeat's foreign key needs it and reading it
+ #: back with a second ``SELECT max(...)`` would be a race with any concurrent publisher.
+-PUBLIC_ENVELOPE_INSERT = (
+-    "INSERT INTO publication.public_envelope "
+-    "(schema_version, as_of_utc, published_utc, config_snapshot_id, envelope) "
+-    "VALUES (%s, %s, %s, %s, %s) RETURNING public_envelope_id"
+-)
++PUBLIC_ENVELOPE_INSERT = "-- C6: REMOVED"
+ 
+-PRIVATE_ENVELOPE_INSERT = (
+-    "INSERT INTO publication.private_envelope "
+-    "(schema_version, classification, as_of_utc, published_utc, config_snapshot_id, "
+-    "envelope) VALUES (%s, %s, %s, %s, %s, %s)"
+-)
++PRIVATE_ENVELOPE_INSERT = "-- C6: REMOVED"
+ 
+ #: CD-AC-008. One row per successful publish, attesting the envelope it was written for.
+-HEARTBEAT_INSERT = (
+-    "INSERT INTO publication.heartbeat (published_utc, public_envelope_id) "
+-    "VALUES (%s, %s)"
+-)
++HEARTBEAT_INSERT = "-- C6: REMOVED"
+ 
+ 
+ @dataclass(frozen=True)

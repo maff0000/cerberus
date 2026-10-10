@@ -1,0 +1,65 @@
+entry_id: BL-20260824T081046Z-16WB
+timestamp_utc: "2026-08-24T08:10:46Z"
+project: crash-detector
+actor: CD-ENG-WO3-03
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16A-REGISTRY-CARRIER-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+baseline_sha: 116c01f4584c62a244910ac6676c030735596896
+current_sha: 230e7088db259105bfcf89e91cc6c9acdf8be3c3
+parent_entry_id: BL-20260824T080623Z-16WA
+correction_of: BL-20260824T080623Z-16WA
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  CORRECTION OF ONE FIELD IN BL-20260824T080623Z-16WA, AND OF NOTHING ELSE. That entry records
+  current_sha b74529cb, which was the tip when it was written and is no longer the tip. Two
+  commits landed after it: 2c66004 banked the entry itself, and 230e7088 corrected two stale
+  module pointers in deploy/indicator-mapping.json's header, which named
+  src/crash_detector/indicator_mapping.py and crash_detector.indicator_mapping.Polarity — the
+  companion module that was MOVED into source_registry.py under finding CD-ENG-WO3-03-F02. A
+  registry data file whose header names a module that does not exist would send the 16B seat to
+  a path that is not there. THE AUTHENTIC TIP FOR ASSURANCE IS 230e7088. Everything else in
+  BL-20260824T080623Z-16WA STANDS UNEDITED AND IS RE-ASSERTED: all four deliverables complete,
+  ZERO indicators registered, boot RED declared as received, and the five findings. The three
+  remaining references to the old module name — source_registry.py lines 420 and 426 and
+  test_disposition_contract.py line 288 — are HISTORICAL, describe what was moved and why, and
+  were deliberately left alone, because rewriting them would erase the record of the move.
+  RE-MEASURED AT 230e7088 AND UNCHANGED FROM THE PARENT ENTRY: 1990 tests pass;
+  CD-CLASS-2-SWEEP PASS at 610 sites over 19 modules with TIER 1 at 33; the deploy audit exits
+  0; the register reports MATCHES, 18 criteria, 18 UNDECIDABLE and GATE SHUT.
+
+status: WAITING_ASSURANCE
+next_safe_action: >-
+  Dispatch a SEPARATE, FRESH Assurance seat over wo-3 at 230e7088 — NOT at b74529cb, which is
+  the SHA the corrected entry names. The direction to that seat is unchanged and is carried in
+  full by BL-20260824T080623Z-16WA's next_safe_action: attack the staleness-ceiling collision
+  (CD-ENG-WO3-03-F01), the module-registration constraint (F02), and the unratified polarity
+  vocabulary. 16B remains blocked on Q30.
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 1990
+  result: "1990 passed, 0 failed — re-measured at 230e7088, unchanged from the parent entry"
+  command: "python3 -m pytest tests/ -q"
+  evidence_reference: >-
+    Run in /srv/crash-detector-wo3 at 230e7088 on CPython 3.11.2, after the header correction
+    and after re-validating deploy/indicator-mapping.json as JSON. Baseline at 116c01f was 1882.
+    IMPLEMENTATION EVIDENCE, NEVER ASSURANCE (PBG-SOD-001).
+
+evidence_references:
+  - "`git status --porcelain` -> empty · `git rev-parse HEAD` -> 230e7088db259105bfcf89e91cc6c9acdf8be3c3"
+  - "`git log --format='%an' 116c01f..HEAD | sort -u` -> CD-ENG-WO3-03, and no other identity"
+  - "`git diff --name-only 116c01f..HEAD -- pbg/ BLUEPRINT.md governance/decisions/ tools/ | wc -l` -> 0"
+  - "`git rev-parse wo-2r3` -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5, UNMOVED"
+  - "`python3 -c \"import json; json.load(open('deploy/indicator-mapping.json'))\"` -> parses; indicators == [] "
+
+risks:
+  - "Every risk and blocker recorded in BL-20260824T080623Z-16WA is unchanged and still stands. This entry corrects a SHA and a documentation pointer; it retires nothing."

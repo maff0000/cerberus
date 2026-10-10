@@ -1,0 +1,34 @@
+# ================================================================================================= #
+# PLANT-COORD-08 MUTATION — **TIME OF WRITE IS NOT MEASURED.**
+#
+# Two `if` conditions become `if False:`, so a lease's recorded interval stops being compared with
+# the commit's timestamp and a lease live NOW once again covers a write made BEFORE it existed.
+# That is `CD-ASR-WO2R3-06-F09` root cause (a) exactly, and nothing else in the file changes: the
+# same leases are read, the same scopes are matched, the same paths are enumerated.
+#
+# **THE CONTRACT THIS INSTRUMENT DELIVERS IS NAMED `CD-CT-009-LEASE-HELD-AT-WRITE`.** With this
+# patch applied, `AT WRITE` is not a measured quantity, and the party being graded turns its own
+# control from RED to GREEN with one `lease.py acquire`.
+# ================================================================================================= #
+diff --git a/tools/coordination/check_lease_held.py b/tools/coordination/check_lease_held.py
+index 1f23b71..188dd72 100644
+--- a/tools/coordination/check_lease_held.py
++++ b/tools/coordination/check_lease_held.py
+@@ -278,7 +278,7 @@ def covering_lease_at(root: str, identity: str, path: str, when: datetime
+         # fail closed). THE COST IS DECLARED: an honest launch that commits inside the same second
+         # as its own lease acquisition is REFUSED, and the refusal says exactly why below.
+         # ------------------------------------------------------------------------------------
+-        if when <= start:
++        if False:  # MUTATION: TIME OF WRITE IS NOT MEASURED. A lease live NOW covers the past.
+             notes.append("lease %r covers the SCOPE but NOT THE TIME: the write is at %s and the "
+                          "lease was acquired at %s — **A LEASE ACQUIRED AFTER (OR IN THE SAME "
+                          "SECOND AS) A WRITE DOES NOT COVER THAT WRITE (CD-ASR-WO2R3-06-F09).** "
+@@ -287,7 +287,7 @@ def covering_lease_at(root: str, identity: str, path: str, when: datetime
+                          "being graded."
+                          % (lease.get("lease_id"), when.isoformat(), start.isoformat()))
+             continue
+-        if end is not None and when >= end:
++        if False:  # MUTATION: the end of the interval is not measured either.
+             notes.append("lease %r covers the SCOPE but NOT THE TIME: the write is at %s and the "
+                          "lease ended at %s (edge STRICT, same reason)"
+                          % (lease.get("lease_id"), when.isoformat(), end.isoformat()))

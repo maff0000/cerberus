@@ -1,0 +1,52 @@
+# ================================================================================================= #
+# PLANT-COORD-07 MUTATION — **INCREMENT 12'S TWO MECHANISMS, PUT BACK.**
+#
+# `CD-ASR-WO2R3-06-F05` is not one bug, it is one line doing two wrong things, and this patch
+# restores BOTH so that arm 2 reproduces BOTH regimes:
+#
+#   1. `set -euf` -> `set -eu`. **PATHNAME EXPANSION RETURNS**, so the shell expands the seat's
+#      declared write scope against the FILESYSTEM before `lease.py` ever sees it.
+#   2. `"$@"` -> a STRING expanded UNQUOTED. **FIELD SPLITTING RETURNS**, which is the other half:
+#      it is what turns one expanded glob into several argv words.
+#
+# With both restored:
+#   * a glob matching EXACTLY ONE real path is SILENTLY NARROWED — the lease records the matched
+#     FILE instead of the pattern, no error is printed anywhere, and a second seat then acquires a
+#     sibling file and BOTH SUCCEED. **A FALSE GREEN MANUFACTURED BY THE BINDING ITSELF.**
+#   * a glob matching TWO OR MORE real paths becomes extra argv words, argparse reports
+#     "unrecognized arguments", and `launch.sh` prints `LEASE REFUSED (rc=2)` — a HARD FAILURE
+#     DRESSED AS A SCOPE COLLISION.
+#
+# Nothing else in the file is touched: the parsing passes, the ordering, the `exec`, the messages
+# and the validation are identical, so what arm 2 measures is the carriage and nothing else.
+# ================================================================================================= #
+diff --git a/tools/coordination/launch.sh b/tools/coordination/launch.sh
+old mode 100755
+new mode 100644
+index 308df8f..edabf47
+--- a/tools/coordination/launch.sh
++++ b/tools/coordination/launch.sh
+@@ -72,7 +72,7 @@
+ 
+ # -f : NO PATHNAME EXPANSION ANYWHERE IN THIS SCRIPT. This is half of the F05 fix and it is not
+ #      decoration — see the header. Do not remove it to "make a glob work"; a glob is DATA here.
+-set -euf
++set -eu   # MUTATION: -f DROPPED. PATHNAME EXPANSION IS BACK.
+ 
+ HERE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+ ROOT=$(git -C "$HERE" rev-parse --show-toplevel)
+@@ -167,8 +167,13 @@ acquire_lease() {
+         esac
+     done
+     echo "launch.sh: passing $# lease argument word(s) to lease.py, unsplit and unexpanded"
++    # MUTATION: the scope arguments become a STRING and are expanded UNQUOTED, which is
++    # increment 12's carriage exactly: FIELD SPLITTING plus PATHNAME EXPANSION on a seat's
++    # declared write scope, before lease.py ever sees it.
++    _mut_args="$*"
++    # shellcheck disable=SC2086
+     python3 -B "$ROOT/tools/coordination/lease.py" --root "$ROOT" acquire \
+-        --lease "$LEASE" --seat "$SEAT" --task "$TASK" --pid "$SEAT_PID" "$@"
++        --lease "$LEASE" --seat "$SEAT" --task "$TASK" --pid "$SEAT_PID" $_mut_args
+ }
+ 
+ echo "launch.sh: worktree=$ROOT  seat=$SEAT  task=$TASK  lease=$LEASE"

@@ -1,0 +1,444 @@
+entry_id: BL-20260824T083556Z-A303
+timestamp_utc: '2026-08-24T08:35:56Z'
+project: crash-detector
+actor: CD-ASR-WO3-03
+role: ASSURANCE_ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: PO-DECISIONS-0025 ruling 6 / PBG-SOD-001 / CD-D-180
+work_type: TASK
+phase: BUILD
+repository: local
+branch: asr-wo3-03-verdict
+worktree: /srv/crash-detector-wo3-audit
+baseline_sha: 116c01f
+current_sha: 53f639a91088ee42f5ba6c0d269f69782ba2a20a
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  ASSURANCE VERDICT ON WO-3 INCREMENT 16A AT 53f639a — RED, ON D2 AND ON D2 ALONE.
+  D1, D3 and D4 are sound and D4 is the strongest work this seat has audited. THE RED IS
+  THIS: BOTH CLOSED ENVELOPE SCHEMAS ADMIT `detail_level: "calm"` ON AN `UNKNOWN` DIAL AND
+  ON A `DEGRADED` DIAL, ON BOTH SURFACES, THROUGH `refuse_unless_publishable` — the
+  publication gate whose whole design is "refuses, does not filter, fail closed". PID §3.2
+  is constitutional ("Missing data must never render as calm") and the schema's own
+  `dial_reading` description CLAIMS the UNKNOWN branch carries that guarantee. It does not.
+  The replacement guard (CD-PL-F169's remedy) is non-vacuous for PLACEMENT — all three
+  mutation arms fail correctly — and is WHOLLY INDIFFERENT TO THE VALUE DOMAIN: a schema
+  narrowed to exclude `calm` passes the identical guard. The only enforcement of PID §3.2
+  is `DetailPolicy.__post_init__`, in a module with ZERO CALLERS IN src/. NOT EXPLOITABLE
+  TODAY (no envelope builder exists) and live the moment 16B writes one. Q32 REPRODUCED and
+  EXTENDED: this project's store schema ALREADY separates feed-liveness from data-relevance
+  (`raw.observation.observed_utc`/`outcome` vs `source_as_of_utc`; `raw.source_registry.cadence_seconds`)
+  and NO code reads the liveness half — so the 900s ceiling is today the only dead-feed
+  detector and must NOT simply be widened. F03's disclosure verified COMPLETE. All standing
+  invariants verified, not assumed: 1882/1990 reproduced, register byte-identical, GATE SHUT.
+
+status: PAUSED_AMBER
+
+tests:
+  count: 1990
+  result: '1990 passed at 53f639a; 1882 passed at 116c01f; both 0 failed, 0 errors'
+  command: 'python3 -B -m pytest tests/ -q  (run by this seat at BOTH ends, in its own trees)'
+  evidence_reference: >-
+    This entry, section `verified_by_this_seat`. Base run in /tmp/asr03/base116 (whole tree,
+    550 files, `git archive 116c01f | tar -x`); tip run in /srv/crash-detector-wo3-audit at
+    53f639a. Both counts match the Engineer's and the Project Lead's claims exactly.
+
+verdict:
+  target: 53f639a91088ee42f5ba6c0d269f69782ba2a20a
+  overall: RED
+  confidence: HIGH on D2, D3, D4 and the standing invariants; MEDIUM on the Q32 opinion
+    (it is an opinion about product meaning, which is not this seat's to rule).
+  scope_examined: >-
+    The four 16A deliverables (D1 PID carriage and register re-pin, D2 detail_level wiring,
+    D3 deploy portability check, D4 indicator-mapping carrier); the F03 scope-breach
+    disclosure swept commit-by-commit across 116c01f..53f639a; the three standing invariants
+    in the dispatch §4; and Q32.
+  per_deliverable:
+    D1: PASS
+    D2: RED
+    D3: PASS with two named gaps
+    D4: PASS
+    F03_disclosure: COMPLETE
+    Q32: REPRODUCED
+
+findings:
+
+  - id: CD-ASR-WO3-03-F01
+    severity: RED
+    against: D2, AND THE PROJECT LEAD'S OWN CD-PL-F169 REMEDY
+    title: >-
+      AN UNKNOWN DIAL CARRYING `detail_level: "calm"` IS ADMITTED BY THE PUBLICATION GATE ON
+      BOTH SURFACES. THE CONSTITUTIONAL CLAUSE IS ASSERTED BY THE ARTEFACT AND ENFORCED BY
+      NOTHING THE ARTEFACT REACHES.
+    command: 'python3 -B /tmp/asr03/probe_calm.py  (built on tests/publication_fakes.py)'
+    output: |
+      ARM A (control, admitting arm) — UNKNOWN dial, detail_level='elevated':
+        public : *** ADMITTED *** (returned None)
+        private: *** ADMITTED *** (returned None)
+
+      ARM B (THE ATTACK) — UNKNOWN dial, detail_level='calm':
+        public : *** ADMITTED *** (returned None)
+        private: *** ADMITTED *** (returned None)
+
+      ARM C (vacuity control) — detail_level='banana' (outside enum):
+        public : REFUSED [SCHEMA_VIOLATION] at /equity_crash
+      ARM D (vacuity control) — detail_level REMOVED from UNKNOWN dial:
+        public : REFUSED [SCHEMA_VIOLATION] at /equity_crash
+      ARM E — detail_level at ENVELOPE TOP LEVEL:
+        public : REFUSED [UNKNOWN_KEY] at <root>
+
+      DEGRADED branch (PID 3.2 covers STALE as well as MISSING):
+        DEGRADED detail_level='acute'   : *** ADMITTED ***
+        DEGRADED detail_level='elevated': *** ADMITTED ***
+        DEGRADED detail_level='calm'    : *** ADMITTED ***
+    the_probe_is_live: >-
+      ARMS C, D and E all REFUSE. The instrument is not dead: it refuses an out-of-vocabulary
+      level, a missing level, and a top-level attachment. It admits precisely the one thing
+      PID §3.2 forbids.
+    why_it_is_RED: >-
+      `refuse_unless_publishable` is THE publication gate. Its own module docstring:
+      *"the engine validates the public envelope against the closed schema BEFORE writing it
+      ... Fail closed."* The project's stated pattern for constitutional prohibitions is to
+      make them UNREPRESENTABLE IN THE SCHEMA — the `dial_reading` description says so of
+      CD-AC-001 in terms: *"UNKNOWN declares no score property at ALL, so an unknown dial
+      carrying a number is unrepresentable rather than merely discouraged — that is CD-AC-001
+      held in the schema."* CD-AC-001 is held in the schema. PID §3.2 IS NOT, and the same
+      description CLAIMS IT IS: *"It is REQUIRED in every branch of the union INCLUDING
+      UNKNOWN ... PID §3.2 is constitutional — 'Missing data must never render as calm' — so
+      the branch with no score is exactly the branch that must still say how loudly to render,
+      and DetailPolicy REFUSES CONSTRUCTION when absent_data_level is calm."* That sentence
+      delegates the guarantee to a module the envelope never consults. It is the schema
+      vouching for a property the schema does not enforce.
+    the_enforcement_has_no_caller: >-
+      `grep -rn "detail_level_for" src/` returns FOUR hits and every one of them is inside
+      detail_level.py itself (its own docstring, its own __all__, its own def). NO MODULE IN
+      src/ CALLS IT. `tests/publication_fakes.py::unknown_dial()` hardcodes
+      `"detail_level": "elevated"` as a LITERAL rather than deriving it. So there is no path
+      today connecting the policy that refuses calm to the field that carries it, and
+      hand-construction — which the schema exists to police — is the only construction route
+      that exists.
+    the_guard_is_indifferent_to_the_value_domain: >-
+      Measured directly against the seat's own guard function, four mutations per contract:
+      "detail_level moved to envelope top level" -> FAILS (live);
+      "removed from $defs.dial_reading"          -> FAILS (live);
+      "removed from ONLY the UNKNOWN branch"     -> FAILS (live);
+      "UNKNOWN branch enum NARROWED to exclude 'calm'" -> **PASSES**, on both contracts.
+      The replacement guard would neither require nor forbid the fix. It is a correct and
+      non-vacuous guard OF PLACEMENT and it is silent on the constitutional question.
+    it_is_the_third_instance_of_one_pattern: >-
+      CD-PL-F169 found a guard enforced against the rejected option and unenforced against the
+      proposed one. CD-ASR-WO3-02 F06/F07 found two tests that do not assert what they are
+      cited for. THIS IS THE THIRD: `test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half`
+      is headed *"PID §3.2 — 'Missing data must never render as calm.'"* and asserts exactly
+      `"score" not in unknown["properties"]` and `"detail_level" in unknown["required"]`.
+      **IT IS NAMED FOR PID §3.2 AND DOES NOT TEST PID §3.2.**
+    not_disclosed: >-
+      Neither BL-...-16WA/16WB nor the Project Lead's BL-...-0159 records it. The Engineer's
+      D4 end-to-end evidence — *"both dials exactly Unknown -> detail_level == absent_data_level
+      and != calm"* — is a claim about the PRODUCER path, which is the path with zero callers.
+      The gate was not attacked.
+    mitigation_stated_honestly: >-
+      NOT EXPLOITABLE TODAY. No envelope builder exists, `publish_cycle` has zero callers
+      (CD-PL-F167), and `DetailPolicy.__post_init__` correctly REFUSES a policy whose
+      `absent_data_level` is calm — I reproduced that refusal. This is a LATENT defect that
+      goes live at the first line of the 16B envelope builder.
+    remedy_available_and_cheap: >-
+      One edit per contract: give `dial_reading_unknown` and `dial_reading_degraded` their own
+      `detail_level` subschema with `enum: ["elevated","acute"]` (or `not: {const: "calm"}`)
+      instead of `$ref`-ing the three-value vocabulary, and add the guard arm that fails when
+      it is widened back. NOT THIS SEAT'S TO MAKE (PBG-SOD-004).
+
+  - id: CD-ASR-WO3-03-F02
+    severity: MEDIUM
+    against: D2 collateral
+    title: '`publish.py` DECLARED LIMIT 2 IS NOW FALSE AND WAS NOT SUPERSEDED.'
+    command: 'sed -n ''95,120p'' src/crash_detector/publication/publish.py'
+    output: |
+       2  **``detail_level`` IS NOT ON EITHER SURFACE AND IS NOT WRITTEN BY THIS MODULE.** Both
+          closed schemas record it as *"DELIBERATELY ABSENT AND OWED"*, and adding it is an
+          allowlist edit with a ``schema_version`` bump.
+    statement: >-
+      Both sentences are false at this tip: the field IS on both surfaces and neither schema
+      records it as absent. `detail_level.py` explicitly superseded its OWN limit 2 in the same
+      increment ("THAT WAS TRUE WHEN WRITTEN AND IS NOW FALSE"); `publish.py`'s was missed. A
+      declared limit is a CD-RULE-004 artefact a cold reader is entitled to trust.
+    confidence: HIGH
+
+  - id: CD-ASR-WO3-03-F03
+    severity: MEDIUM
+    against: D3 — WHAT THE PORTABILITY CHECK DOES NOT CATCH
+    title: >-
+      A DELL-SPECIFIC ABSOLUTE HOST PATH PASSES IF IT IS SPELLED AS AN ENV-REFERENCE DEFAULT,
+      AND A DELL HOSTNAME PASSES IN ANY OF THE TWELVE `INTERNAL_CONSTANTS` KEYS.
+    command: 'python3 -B deploy/check_portability.py --root .  over planted copies in /tmp/asr03/tip'
+    output: |
+      G1  CD_ARCHIVE_DIR: ${CD_ARCHIVE_DIR:-/srv/crash-detector/dell-only/archive}
+          -> PASS — 1076 assertions, 0 violations      exit=0
+      G2  CD_STORE_HOST: postgres.dell.matt.local   (line 404, plant verified landed)
+          -> PASS — 1072 assertions, 0 violations      exit=0
+      G2b CD_STORE_HOST: 10.0.0.7                   (same key, IPv4 instead)
+          -> FAIL — 1 violation(s)                     <- THE PROBE IS LIVE
+    statement: >-
+      Rule 5 treats any string matching `\$\{[A-Za-z_]\w*` as "an env reference" and stops
+      looking, so everything after `:-` is unexamined — the exact failure the dispatch
+      hypothesised, now measured. Rule 3 catches IPv4 ANYWHERE (G2b proves it), but a DNS
+      hostname is caught only by rule 5, and rule 5 is switched off for the twelve
+      `INTERNAL_CONSTANTS` keys. `CD_STORE_HOST` is allowlisted on the reasoning *"a COMPOSE
+      SERVICE NAME resolved by the compose network's own DNS; it travels with the file and
+      names no host"* — and NOTHING VERIFIES THE VALUE ACTUALLY IS A DECLARED COMPOSE SERVICE
+      NAME. That is a one-line strengthening (assert the value is a key of `services`).
+    also_not_caught: >-
+      IPv6 in an allowlisted key (same hole as G2 — a bare IPv6 in a NON-allowlisted key IS
+      refused, by rule 5 incidentally rather than by rule 3); an image digest that resolves
+      only in this host's local cache (unknowable from the file, correctly out of scope);
+      `env_file:`, `configs:` and `secrets:` blocks, which rules 5/6 do not read at all —
+      this file uses none of them today, so it is a future hole, not a present one.
+    confidence: HIGH
+
+  - id: CD-ASR-WO3-03-F04
+    severity: LOW
+    against: THE ENGINEER'S OWN F03 WORDING
+    title: 'THE 445 LINES WERE RENAMED INTO SCOPE, NOT "REMOVED".'
+    command: 'git log --numstat --format="COMMIT %h" 116c01f..53f639a'
+    output: |
+      COMMIT 33efbf7
+      6	1	tools/audit/check_deploy_portability.py => deploy/check_portability.py
+    statement: >-
+      F03 says the file "was moved to deploy/check_portability.py", which is accurate; but the
+      Project Lead's dispatch §3.3 restates it as "removed them at 33efbf7". Git records a
+      RENAME with 6 insertions and 1 deletion — the content survived and travelled into scope.
+      The scope claim is unaffected and TRUE. Recorded so no future reader infers the work was
+      discarded.
+    confidence: HIGH
+
+  - id: CD-ASR-WO3-03-F05
+    severity: INFORMATIONAL
+    against: THIS DISPATCH
+    title: >-
+      THE §3 RANKING WAS RIGHT AND ITS INTERNAL ORDER BURIES THE ONLY TEST THAT FINDS THE
+      DEFECT. §3.3 IS NOT "THE HIGHEST-VALUE ADVERSARIAL QUESTION IN THIS INCREMENT".
+    statement: >-
+      CREDIT FIRST: the Project Lead ranked `detail_level` first on the reasoning that *"the
+      replacement guard was written by the same seat that wired the feature — that is the
+      obvious place for a second vacuity to hide"*. That reasoning was exactly correct and it
+      is where the RED is. BUT §3.1 lists four attacks and the first three — top-level
+      mutation, removal from `dial_reading`, removal from only the UNKNOWN branch — ALL PASS.
+      A seat working the list in order and stopping when the mutation arms held would have
+      returned PASS. Only the fourth sentence ("build an envelope ... and see whether anything
+      refuses it") finds it. **PUT THE END-TO-END ATTACK FIRST; MUTATION ARMS ON A GUARD TEST
+      WHAT THE GUARD CHECKS, WHICH IS THE ONE THING ALREADY KNOWN.**
+      And §3.3 was called *"the highest-value adversarial question in this increment"*: it cost
+      two commands and returned clean. It was worth asking and it was not the highest-value
+      question; §3.1's last sentence was.
+    confidence: HIGH
+
+Q32_the_staleness_ceiling:
+  reproduced: true
+  command: 'python3 -Bc "... admit_staleness_window(...)" over the real constructor'
+  output: |
+    STALENESS_WINDOW_CEILING_SECONDS = 900.0
+      1 minute                            60 s  ADMITTED
+      15 minutes / THE CEILING           900 s  ADMITTED
+      16 minutes                         960 s  REFUSED [StalenessWindowTooWideForTheCeiling]
+      hourly                            3600 s  REFUSED
+      daily                            86400 s  REFUSED
+      weekly                          604800 s  REFUSED
+      monthly (30d)                  2592000 s  REFUSED
+      quarterly (91d)                7862400 s  REFUSED
+  the_engineer_and_project_lead_are_correct: >-
+    A FEED-LIVENESS bound and a DATA-RELEVANCE window ARE two different quantities sharing one
+    unit. This seat attacked the reading and could not refute it.
+  and_it_is_stronger_than_either_of_them_stated: >-
+    *** THIS PROJECT'S OWN STORE SCHEMA ALREADY SEPARATES THE TWO QUANTITIES. *** Measured:
+    `raw.observation` carries `collector_run_id`, `attempt_number`, `requested_utc`,
+    `observed_utc` and `outcome` — WHEN THE COLLECTOR LAST ACTUALLY REACHED THE FEED, which is
+    LIVENESS — and, separately and nullably, `source_as_of_utc` — WHAT THE SERIES SAYS IT IS
+    AS-OF, which is RELEVANCE. `raw.source_registry` already carries a per-source
+    `cadence_seconds`, and `RegisteredSource.cadence_seconds` mirrors it in Python, bounded by
+    nothing. The design already knows these are two things.
+  but_the_ceiling_is_still_doing_real_work_today: >-
+    *** NO CODE READS THE LIVENESS HALF. *** `grep` for `observed_utc` / `outcome` /
+    `collector_run_id` as a liveness VERDICT across src/ returns only type definitions in
+    `observations.py` and a docstring in `establishment.py` — no consumer. And
+    `publication/cadence.py` cannot help: it measures the PUBLISHER, and it is deliberately
+    built so that it CANNOT SEE THE AGE OF A NUMBER — *"there is no parameter through which the
+    age of a number could reach it"*. `publication.heartbeat` is *"one row per successful
+    publish"*, not per successful collection.
+    **SO THE STALENESS WINDOW IS TODAY THE ONLY DEAD-UPSTREAM-FEED DETECTOR IN THIS SYSTEM.**
+  this_seats_opinion_offered_to_the_product_authority: >-
+    The answer is NEITHER "widen the ceiling" NOR "rethink the mapping". Widening it to admit a
+    quarterly window would, as the code stands, mean a feed that died the day after its last
+    publication renders FRESH for up to 91 days with nothing else in the system able to notice
+    — because cadence is structurally blind to it and the liveness record has no reader. That
+    would silently delete the only dead-feed detector that exists.
+    The missing thing is a THIRD quantity on the D4 row, not a bigger number on the first: keep
+    `staleness_window` meaning "how long may a dead feed masquerade as fresh" with its DERIVED
+    900s ceiling intact, carry the quarterly/monthly cadence as the RELEVANCE quantity beside it
+    (the slot already exists as `cadence_seconds`), and build the feed-liveness reader over
+    `raw.observation.observed_utc`/`outcome`, which the store schema already supports. That
+    unblocks 16B without reversing a derivation, which is what CD-RULE-003 is protecting.
+    **THIS IS AN OPINION AND NOT A RULING. IT IS PRODUCT AUTHORITY'S (PBG-AUTH-005).**
+
+verified_by_this_seat:
+  D1_pid_carriage_and_repin: >-
+    PASS. `git rev-parse 53f639a:PID.md` = abe30bb96f156a4f0f095d3866b05016aa5f6356 =
+    `git rev-parse main:PID.md` — BYTE-IDENTICAL BLOB, carried and not re-authored.
+    `sha256sum PID.md` = 08baf51ca5a34b4e15be11b4ffe3e4e5ac271291247ace7e8fcabb7b0e8dab9f,
+    which is exactly the `content_hash` pinned in required-tests.yaml. The register itself
+    prints `pid.content_hash MATCHES`. PID version line reads 1.1.1.
+  D3_all_six_rules_both_arms: >-
+    PASS. CLEAN ARM reproduced exactly — `PASS — 1072 assertions, 0 violations`, exit 0.
+    EIGHT REFUSAL PLANTS, each on a copy, each independently: R1a absolute bind source ->
+    FAIL 6; R1b bind escaping the repo -> FAIL 6; R2a durable data on a bind -> FAIL 1;
+    R2b undeclared named volume -> FAIL 1; R3 IPv4 literal -> FAIL 2; R3b loopback in a
+    non-admitted pointer -> FAIL 2; R4 ARGUS reference -> FAIL 1; R5 config literal -> FAIL 1;
+    R6 secret literal -> FAIL 1. All exit 1.
+    THREE ADMITTING ARMS, because a check that refuses everything is vacuous: a non-constant
+    key holding a proper `${}` reference -> PASS; a SECRET key holding a reference -> PASS;
+    an `INTERNAL_CONSTANTS` key holding a literal -> PASS. Gaps at F03 above.
+    (The plant harness refuses to apply a plant whose anchor is missing or non-unique, and it
+    did refuse twice — so no plant in this set was silently a no-op.)
+  D4_every_refusal_both_arms_and_the_forgery: >-
+    PASS, and it is the strongest work in this increment. ADMITTING ARM: a well-formed row, a
+    WIRED row rendering as a value, a window of exactly 900.0, and an indicator binding BOTH
+    dials as two separate bindings — all correctly ADMITTED. SEVENTEEN REFUSAL ARMS all fire:
+    a binding naming 'both'; the same dial bound twice (DialBoundTwice); polarity None;
+    polarity as a string; a row binding no dial; window None/zero/negative/901.0; a tier as a
+    bare number and as a string; provenance None; empty and whitespace `stands_for`; a PENDING
+    row asked to render as a value (PendingSourceMayNotRenderAsValue); a bare float where a
+    StalenessWindow belongs; `polarity_for` on an unbound dial.
+    THE `__class__` FORGERY: I PROVED THE FORGERY WORKS — `isinstance(forged, Polarity)`,
+    `isinstance(forged, ProvisionalTier)`, `isinstance(forged, WiringState)` and
+    `isinstance(forged, DialBinding)` ALL RETURN True — and every one of the seven doors
+    REFUSED it, because every one uses `type(x) is not T` and never `isinstance`. Forged
+    MappingProvenance and forged StalenessWindow refused on the same terms.
+  D4_anti_fixture_control: >-
+    HOLDS ON BOTH ARMS. Planting a `PLANT_SYNTH_SNEAK` row into the shipped
+    deploy/indicator-mapping.json fails 4 tests; planting a real-looking `DRTSCILM` row fails
+    the same 4. Restored afterwards.
+  D4_configsnapshot: >-
+    `indicator_mapping_registry` is a REQUIRED parameter with NO DEFAULT (verified by
+    `inspect.signature`), in `__slots__`, admitted on EXACT TYPE, and cross-checked by
+    `registry.assert_registered(...)` so a mapped indicator must be a registered source.
+  F03_history_sweep: >-
+    DISCLOSURE COMPLETE. `comm -23` of every path touched anywhere in 116c01f..53f639a against
+    the net diff paths yields EXACTLY ONE entry — `tools/audit/check_deploy_portability.py` —
+    which is the one the seat disclosed. `git rev-parse 116c01f:tools` and
+    `git rev-parse 53f639a:tools` are BOTH f43053520e5e5b8ed0647c26231dfea1d2f81d30: the
+    `tools/` tree is byte-identical at both ends, 24 files each. `pbg/` was touched at ZERO
+    paths anywhere in the range, not merely at the tip. No BLUEPRINT.md, no governance/decisions/.
+  invariant_no_source_registered: >-
+    HOLDS. `deploy/indicator-mapping.json` has `"indicators": []` — ZERO ROWS, confirmed both
+    by reading the file and by `load_indicator_mapping_registry() -> 0 row(s)`. SLOOS, NDFI and
+    DRTSCILM appear ONLY as prose — docstrings, `$comment`, build-log text and test docstrings
+    citing the ruling. NOT ONE APPEARS AS DATA.
+  invariant_nothing_bypassed_or_regressed: >-
+    HOLDS. Tests: 1882 passed at 116c01f, 1990 passed at 53f639a, both 0 failed — the Project
+    Lead's figures REPRODUCED, not accepted. The `pbg required-tests verify` report is
+    BYTE-IDENTICAL between base and tip modulo the root path: 18 acceptance criteria computed
+    (CD-AC-001..018), `latest_admitted_run (null)`, `GATE: SHUT`,
+    `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`. `be0b355` resolves to
+    be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5, unmoved. ZERO network-capable imports in src/.
+    Working tree clean at the tip.
+  invariant_no_grade_moved: >-
+    HOLDS BY INSPECTION. All 18 criteria read UNDECIDABLE at BOTH ends for the same reason —
+    `negative_control.evidence_ref` does not resolve to a run record — so no grade could have
+    moved. CD-AC-002 and CD-AC-005 are among the 17 listed under MANDATORY NOT PASS at both
+    ends, identically.
+  CD_AC_002_unreachable_not_merely_absent: >-
+    HOLDS, verified by this seat's OWN AST sweep rather than by the register's check_no_blend:
+    across every module in src/, ZERO functions take parameters naming both dials, and ZERO
+    take two reading-shaped parameters. No source line names `equity_crash` and
+    `monetary_debasement` together. `DialBinding` structurally cannot hold a second dial and
+    `IndicatorMapping.polarity_for` takes one dial and returns one polarity with no pair-
+    returning variant. NOTE that F01's defect is adjacent to this: `detail_level` is correctly
+    PER-DIAL and correctly absent from envelope top level, and the CD-AC-002 half of D2 is sound.
+
+what_this_seat_did_NOT_verify:
+  - >-
+    CD-RULE-004, and the largest of them: THERE IS NO LIVE POSTGRESQL ON THIS PROJECT and
+    publication is tested only against a recording double. So ATOMICITY of the three-insert
+    publish, the `CHECK` constraints AS EXECUTED, and the append-only `GRANT` posture are
+    **UNSUPPORTED** for a running instance. I read the DDL; I did not run it.
+  - >-
+    The container set is not built. `deploy/check_portability.py` judges compose.yaml AS YAML
+    DATA. I did not run `docker compose config`, did not resolve an image, and therefore
+    cannot say the file is a valid compose document to Docker — only that it satisfies the six
+    declared refusals. A portability failure that only Docker's own resolver would surface is
+    outside everything I measured.
+  - >-
+    `PO-PRODUCT-0001` is NOT PRESENT on this tree, so I could not read the R2 clause that D4's
+    "declared per indicator, never global" cites. My Q32 opinion assumes the Engineer quoted
+    it faithfully; I did not verify the quotation against its source.
+  - >-
+    `PO-DECISIONS-0025` rulings 1, 4, 5, 6 and 7 are cited throughout D2 and D4. I verified the
+    CODE is consistent with the quoted text; I did not audit the ruling document itself, and
+    the ratified mapping's content is unreadable from this project (Q30).
+  - >-
+    I did not attempt to refute the Engineer's claim that `detail_level` is decided in exactly
+    ONE place (the source-walking test at test_detail_level.py:201-260). I read it; I did not
+    plant a second decision site against it.
+  - >-
+    I did not re-audit anything from increments 1-15. CD-PL-F167 (publish_cycle has zero
+    callers) is INHERITED and I confirmed it incidentally rather than re-establishing it.
+  - >-
+    The boot verdict at 53f639a is **RED**, `CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`,
+    because `governance/engineering/ACTIVE_WORK.yaml` still reads `continuity_record_commit:
+    PENDING` and describes WO-2 as current work. DIAGNOSED, NOT REPAIRED: it is inherited from
+    the frozen base, it is outside this dispatch, and repairing it is not this seat's (PBG-SOD-004).
+
+control_bypasses_and_framework_limitations:
+  - >-
+    NO CONTROL BYPASS FOUND. Nothing in 16A routed around a check, weakened one, or edited a
+    plant to make it pass. `pbg/` is untouched at every commit in the range.
+  - >-
+    CD-PL-F171 CONFIRMED: `pbg log` cannot validate this project's Build Log. This entry was
+    validated by direct call to `continuity.validate` with `schema_dir=pbg/schemas`.
+  - >-
+    A FRAMEWORK-ADJACENT OBSERVATION, offered not as a finding against 16A: the register
+    reports "18 computed" and every one of the 18 is UNDECIDABLE for a reason unrelated to the
+    code — missing run records. The figure "18 computed" should not be read by anyone as 18
+    criteria assessed.
+
+continuation_implication: >-
+  WHAT IS TRUE AND WHAT IS SAFE ARE DIFFERENT HERE. The lane is SAFE TO LEAVE EXACTLY WHERE IT
+  IS: F01 is latent, nothing publishes, and the gate is shut. It is NOT SAFE TO BUILD ON. The
+  first thing 16B does is write an envelope builder, and the moment it does, a hand-built or
+  mis-derived `UNKNOWN` dial carrying `calm` will be published by a gate that was designed and
+  documented to refuse it. Fix the contracts BEFORE the builder, not after.
+
+next_safe_action: >-
+  A BOUNDED ENGINEER DISPATCH — a fresh seat, not CD-ENG-WO3-03 and not this seat (PBG-SOD-004)
+  — with writable scope limited to contracts/private_envelope.schema.json,
+  contracts/public_envelope.schema.json, tests/test_detail_level.py and
+  src/crash_detector/publication/publish.py, to: (1) give the UNKNOWN and DEGRADED branches of
+  both contracts a `detail_level` subschema excluding `calm`; (2) add the guard arm that FAILS
+  when that narrowing is reverted, and re-point the test named for PID §3.2 at PID §3.2;
+  (3) supersede publish.py declared limit 2. Then RE-ASSURANCE by a separate fresh seat over
+  the F01 property specifically. Q32 goes to the Product Authority UNRESOLVED and is not
+  blocked by any of the above.
+
+expected_next_actor: PROJECT_LEAD
+
+blockers:
+  - 'CD-ASR-WO3-03-F01 — RED. Blocks the 16B envelope builder, not the lane.'
+  - 'Q32 — the 900s ceiling admits no window the ratified mapping needs. Blocks 16B row
+     registration independently of mapping content. PRODUCT AUTHORITY''S TO RULE.'
+
+risks:
+  - 'F03 (portability gaps) is not blocking: no dell-specific default or hostname is present in
+     the file TODAY. It is a hole a future edit falls into, not a present defect.'
+  - 'A PASS IS NOT ACCEPTANCE, AND THIS IS NOT A PASS (PBG-AUTH-003, CD-D-180). Acceptance is
+     the Product Authority''s alone.'
+
+held_actions: ['CD-HOLD-003', 'CD-HOLD-004', 'CD-HOLD-005']
+
+evidence_references:
+  - '/tmp/asr03/probe_calm.py — F01, the UNKNOWN/DEGRADED + calm probe with its three vacuity controls'
+  - '/tmp/asr03/probe_d4.py — D4, 21 refusal arms, 4 admitting arms, 6 forgery arms'
+  - '/tmp/asr03/plant.sh + /tmp/asr03/tip — D3, nine portability plants and three admitting arms'
+  - '/tmp/asr03/base116 — whole-tree extraction of 116c01f (550 files) for the base test run'
+  - 'This entry. Scratch trees under /tmp are diagnostic and not project state.'

@@ -1,0 +1,243 @@
+domain: CTRL
+domain_label: Control model
+controls:
+- control_id: PBG-CTRL-001
+  title: A control's identity is its ID, never its location
+  status: ACTIVE
+  purpose: 'Give every control a permanent address so schemas, tests, exceptions, attestations and adapters
+    can reference it without depending on where it happens to be documented.
+
+    '
+  risk_addressed: 'PBGv1 addressed controls by document position. Two different controls came to claim
+    section 1.11 — a proposed framework-limitation doctrine and, later, the adopted effect-over-command
+    doctrine — making every reference written between those dates ambiguous.
+
+    '
+  required_outcome: 'Every binding control has a stable PBG-<DOMAIN>-<NNN> identifier that does not change
+    when documentation moves, and is never reused for a different meaning.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - pbg validate output
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'PBGv1 archaeology: V1-DOC-05 residual risk (positional references)'
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: controls.identity_and_references
+  verification_note: 'pbg validate fails on duplicate IDs, on an ID reused after retirement, and on any
+    attestation that references a control by prose label instead of ID.
+
+    '
+- control_id: PBG-CTRL-002
+  title: No material control relies on prompt compliance alone
+  status: ACTIVE
+  purpose: 'Ensure that a control which matters has more behind it than an instruction an agent may ignore,
+    misread or lose to context pressure.
+
+    '
+  risk_addressed: 'A governance framework composed entirely of instructions degrades to whatever the model
+    happens to do under load.
+
+    '
+  required_outcome: 'Every BINDING control declares which of the three enforcement layers apply — semantic,
+    runtime permission, verification — and at least one layer beyond semantic is present or a capability
+    gap is declared.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    control_class:
+    - BINDING
+    mode: AUTHORING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - control record
+  - capability matrix
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - NIST SSDF PO.3 — implement supporting toolchains
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'pbg validate fails any BINDING control whose record declares only the semantic layer
+    without a corresponding declared capability gap.
+
+    '
+- control_id: PBG-CTRL-003
+  title: A control that does not apply is recorded, never silently omitted
+  status: ACTIVE
+  purpose: 'Make proportionality safe. PBGv2 is lighter than PBGv1 because gates are not universal, and
+    that is only sound if every absence is visible.
+
+    '
+  risk_addressed: '"Not applicable" and "not checked" become indistinguishable, so a skipped control reads
+    as a clean result.
+
+    '
+  required_outcome: 'Every mandatory control resolves to an explicit applicability_status with its derivation
+    recorded, including NOT_APPLICABLE.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'PBGv1 archaeology: V1-REC-03, V1-DOC-04 (universality as ceremony)'
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg close fails if any mandatory control is absent from the attestation rather than
+    present with a status.
+
+    '
+- control_id: PBG-CTRL-004
+  title: Configuration may describe how a control is satisfied, never whether it applies
+  status: ACTIVE
+  purpose: 'Let a project map its own paths and vocabulary — the thing PBGv1 could not do — without letting
+    configuration become a way to switch governance off.
+
+    '
+  risk_addressed: 'A configurable gate can be configured toothless. PBGv1''s gate was rigid and forced
+    a project adapter; the opposite failure is a gate a manifest can quietly empty.
+
+    '
+  required_outcome: 'A project manifest may add controls, raise assurance levels and map vocabulary. It
+    may not remove a mandatory control, lower a mandatory assurance level, reinterpret a required outcome,
+    or mark an applicable control not applicable outside the framework''s applicability rules.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - manifest digest in attestation
+  - pbg validate output
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - CIS Controls v8 — secure configuration management
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: controls.manifest_cannot_weaken
+  verification_note: 'pbg validate rejects a manifest that omits or downgrades a mandatory control. The
+    resolved configuration digest appears in every attestation so a loosened manifest is detectable between
+    closes.
+
+    '
+- control_id: PBG-CTRL-005
+  title: Enforcement, verification and applicability are separate axes
+  status: ACTIVE
+  purpose: 'Preserve information that a single status field destroys. A control can be mechanically enforced
+    and independently verified at the same time; those are two facts, not two options.
+
+    '
+  risk_addressed: 'A tidy abstraction concealing real state — the same class of failure as a stale projection
+    reporting current.
+
+    '
+  required_outcome: 'Every resolved control records enforcement_status, verification_status and applicability_status
+    separately, and overall_outcome is calculated from them rather than asserted.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Product Authority ruling 2026-07-29 section 8
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: controls.axes_are_separate
+  verification_note: 'The resolver computes overall_outcome; an attestation carrying an overall_outcome
+    inconsistent with its axes is rejected by pbg validate.
+
+    '
+- control_id: PBG-CTRL-010
+  title: Proven over invented
+  status: ACTIVE
+  purpose: 'Where a formula, statistical method, algorithm or domain methodology is needed and there is
+    doubt, use an externally accessible, world-class tested framework — name it, cite it, and obtain Product
+    Authority greenlight before building.
+
+    '
+  risk_addressed: 'Self-invented methodology that looks plausible, passes its own tests, and is quietly
+    wrong. Testing does not catch this class.
+
+    '
+  required_outcome: 'No bespoke methodology is used where a proven standard exists, without a cited basis
+    and recorded approval. Scope is honest to the data available; missing inputs surface fail-loud rather
+    than being approximated.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - introduces_methodology
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - citation
+  - Product Authority decision record
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 1.10, introduced PBG-1.0.7
+  - 'Worked example: Piotroski F-Score (2000) replacing a self-invented delta score'
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Assurance checks that any scoring formula, statistical method or domain algorithm
+    cites its basis and carries a recorded approval.
+
+    '

@@ -1,0 +1,230 @@
+{
+  "run_id": "RTR-WO2R-0001",
+  "executed_by": {
+    "party": "CD-ASR-WO2-02",
+    "independence_class": "SEAT_INDEPENDENT"
+  },
+  "candidate": "50fc23177f790164c3fc3604ccee51663e755c70",
+  "results": [
+    {
+      "test_id": "CD-RT-001-AST-NO-NUMERIC-DEFAULT",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_no_numeric_default.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_no_numeric_default.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-001-ABSENCE-RENDERS-UNKNOWN",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-002-TYPE-NO-ARITHMETIC",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-002-AST-NO-BLEND",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_no_blend.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_no_blend.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-002-SCHEMA-CLOSED",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_schema_closed.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_schema_closed.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-003-ENGINE-NO-WITNESS-REACH",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_engine_no_witness_reach.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_engine_no_witness_reach.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-003-GRANT-MATRIX-LIVE",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_grant_matrix_live.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_grant_matrix_live.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-012-NO-EXECUTION-INTERFACE",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_no_execution_interface.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_no_execution_interface.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-012-LOCKFILE-DENYLIST",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_lockfile_denylist.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_lockfile_denylist.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-012-EGRESS-NO-BROKER",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_egress_no_broker.py --root .",
+          "exit_code": 0
+        },
+        "violated": {
+          "command": "python3 tools/register/check_egress_no_broker.py --root .",
+          "exit_code": 1
+        }
+      }
+    },
+    {
+      "test_id": "CD-RT-001-AST-NO-NUMERIC-DEFAULT",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_no_numeric_default.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-001-ABSENCE-RENDERS-UNKNOWN",
+      "mode": "ACCEPTANCE",
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-002-TYPE-NO-ARITHMETIC",
+      "mode": "ACCEPTANCE",
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-002-AST-NO-BLEND",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_no_blend.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-002-SCHEMA-CLOSED",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_schema_closed.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-003-ENGINE-NO-WITNESS-REACH",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_engine_no_witness_reach.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-003-GRANT-MATRIX-LIVE",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_grant_matrix_live.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES",
+      "mode": "ACCEPTANCE",
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-012-NO-EXECUTION-INTERFACE",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_no_execution_interface.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-012-LOCKFILE-DENYLIST",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_lockfile_denylist.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-012-EGRESS-NO-BROKER",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_egress_no_broker.py --root .",
+      "exit_code": 0
+    }
+  ]
+}

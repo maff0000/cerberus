@@ -1,0 +1,127 @@
+entry_id: BL-20260823T065550Z-0123
+timestamp_utc: '2026-08-23T06:55:50Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: a9f4546f92a84c00c30d809f3772547a754d3d64   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the INSTANCE-2 RECONCILIATION boundary.
+parent_entry_id: BL-20260823T065027Z-0122
+schema_version: 1
+
+action_summary: >
+  *** **THE PHASE MOVES BUILD -> GATE, AND IT MOVES BY EXECUTING THE PRODUCT OWNER'S OWN RULING
+  RATHER THAN BY THIS SEAT'S JUDGEMENT.** *** PO-DECISIONS-0015 ruling 6 states that the gate
+  reopens after increment 8 and puts **A SEVENTH FRESH ASSURANCE SEAT OVER THE WHOLE OF WO-2R3.**
+  **INCREMENT 8 IS NOW FULLY DISCHARGED** — 6 items ordered, `ITEM_5` at instance 1, the remaining
+  five at instance 2, **ZERO DROPPED** — and reconciled by measurement at BL-20260823T065027Z-0122.
+  The condition the ruling names is met, so the phase moves. ***
+  *** **GATE HERE MEANS WHAT IT HAS MEANT EVERY PRIOR TIME ON THIS PROJECT: NOTHING ELSE MOVES.**
+  No increment, no disposition, no code change, no instrument change. T2 is RED; CD-AC-002 and
+  CD-AC-005 are AMBER and NOT CLOSED; no `DEFECT_OPEN` finding is closed; **THE WO-2 GATE IS
+  SHUT.** ***
+  *** **AND THIS SEAT STOPS HERE RATHER THAN DISPATCHING THE SEVENTH SEAT**, because two questions
+  that shape its brief are the Product Authority's and not this seat's. They are stated below in
+  the form they need to be answered in. ***
+
+why_this_seat_does_not_dispatch_the_seventh_assurance_seat_on_its_own: >
+  The seat IS pre-authorised in principle by PO-DECISIONS-0015 ruling 6, so this is NOT a claim
+  that authority is missing. It is that **THE TWO OPEN QUESTIONS BELOW CHANGE WHAT THE AUDITOR IS
+  LOOKING AT**, and this project has already recorded the cost of a Project Lead deciding an
+  auditor's shape unilaterally: **PO-DECISIONS-0014 ruling 2 SUPERSEDED THIS SEAT'S OWN CD-D-158**
+  and sent the sixth seat out against a target this seat had not chosen. Repeating that pattern
+  after it has been corrected once would be this seat substituting its judgement for the Product
+  Authority's on precisely the axis the Product Authority has already reclaimed.
+  **THE DISPATCH INSTRUCTION IS ALSO EXPLICIT** — stop deliberately at the gate or on any Product
+  Authority question. This is both.
+
+product_authority_question_1_the_plant_drift_carrier: >
+  **A PLANT THAT STOPS APPLYING IS INVISIBLE TO EVERY INSTRUMENT THIS PROJECT RUNS AT A BOUNDARY.**
+  The suite does not apply plants. The twelve register checks do not. The Class-2 sweep does not.
+  When a plant stops applying, its "violated" arm silently becomes the clean tree and **EXITS 0 —
+  a dead plant reporting a pass, behind a green board.**
+  **THIS HAS NOW HAPPENED IN FOUR SEPARATE INCREMENTS** and has been caught every time by nothing
+  but a human or a seat re-running the set by hand. Most recently `ITEM_6` of this very increment
+  caught `ITEM_1` of the same increment breaking
+  `plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`.
+  **THE QUESTION: who builds the carrier, and under what authority?** An Engineer cannot — a runner
+  over `plants/` is exactly the wrapper `PBG-ASSURE-001` forbids an Engineer to write, which is why
+  four seats in a row have raised it and none has repaired it. **IT IS THEREFORE NOT A THING THAT
+  GETS FIXED BY BEING RAISED A FIFTH TIME.**
+  Options, stated so the answer can be one sentence: **(A)** a bounded dispatch whose whole scope IS
+  the carrier, with the PBG-ASSURE-001 tension ruled explicitly by the Product Authority; **(B)** it
+  is accepted as a standing manual step at every boundary and written into the boundary checklist as
+  such, which makes it a known and declared hole rather than an unowned one; **(C)** it is deferred
+  again, WITH the four occurrences on the record so a fifth is not discovered as if it were new.
+  **THIS SEAT DOES NOT PICK.**
+
+product_authority_question_2_the_stale_disposition_register: >
+  **`ITEM_3` DID THE RIGHT THING AND THE RIGHT THING LEAVES THE BOARD RED.**
+  Correcting `F-06-D` at `_Exactly.refusal` and `_EachOf.refusal` necessarily moves the SOURCE-TEXT
+  keys that `tools/sweep/declared_dispositions.py` keys its dispositions on, so three declarations
+  go STALE **BY CONSTRUCTION**. The sweep is `FAIL — 555 sites, 4 violations` at the lane tip and
+  three suite tests fail with it. PL-measured and identical to the seat's own declaration.
+  That register file is in the dispatch's protected scope. **THE SEAT RECORDS THAT IT CONSIDERED
+  LEAVING THE OLD `in` COMPARISON BESIDE THE NEW `is` COMPARISON SO THE REGISTER KEY WOULD SURVIVE,
+  AND REFUSED IT** — a redundant clause written to keep a register row alive is constructing state
+  so a control appears to pass, which is non-waivable in this project's own terms. It returned
+  `SCOPE_INSUFFICIENT` for exactly one file instead. **THAT REFUSAL IS THE BEHAVIOUR THE GOVERNANCE
+  EXISTS TO PRODUCE AND IT SHOULD BE READ AS SUCH, NOT AS AN INCOMPLETE ITEM.**
+  **THE QUESTION: who updates the three stale keys, and does it happen BEFORE or AFTER the seventh
+  Assurance seat reads the tree?** BEFORE gives the auditor a green sweep but means the tree it
+  audits is not the tree the Engineer produced. AFTER gives the auditor the RAW state — which is
+  what PO-DECISIONS-0014 ruling 2 chose the last time this exact trade-off was live — but means the
+  seventh seat opens on a RED sweep and three failing tests that are DECLARED, not discovered.
+  **THIS SEAT'S READING, OFFERED AND NOT ACTED ON: AFTER, on the ruling-2 precedent.** The Product
+  Authority decides.
+
+what_is_carried_into_the_seventh_seats_brief_when_it_is_authorised: >
+  **THE ATTRIBUTED-NOT-CONFIRMED LIST, VERBATIM, AS NAMED TARGETS** — the claims the reconciliation
+  did NOT re-run and says it did not: the 48-run plant contrast table and its EVIDENCE 10 -> 11 /
+  DECORATION 2 -> 1 movement; the `P-O` metaclass five-arm base/tip contrast; the mutating-sink
+  six-arm carrier and its base 4-failed/2-passed reading; the `is_exactly` tuple-vs-frozenset
+  sizing. **THE POINT OF NAMING THEM IS THAT A READER OF THE RECONCILIATION MUST NOT MISTAKE
+  "the cheap numbers reproduced" FOR "the whole board was re-run".**
+  **AND THIS SEAT'S OWN TWO FINDINGS AGAINST ITSELF GO IN TOO** — `CD-PL-F112` (the repeat of
+  `CD-PL-F111`) and the defective register-check loop whose `$(basename $f)` reset `$?` and made all
+  twelve checks report the status of `basename`. **A PROJECT LEAD THAT SENDS AN AUDITOR OUT WHILE
+  WITHHOLDING ITS OWN MEASUREMENT DEFECTS IS SETTING THE AUDITOR AN EASIER PAPER THAN THE ONE IT
+  SET THE ENGINEER.**
+
+findings_by_this_seat_against_its_own_work_at_this_boundary: >
+  **CD-PL-F112 (MEDIUM) — `last_build_log_entry` LEFT AT 0121 IN THE RECONCILIATION COMMIT**, so
+  `pbg boot` at 61e9558 in a pristine clone returned RED / CONTINUITY_REFERENCE_INVALID /
+  RESUME_BLOCKED. **IT IS A VERBATIM REPEAT OF CD-PL-F111, WHICH THIS SAME SEAT WROTE INTO THAT
+  SAME FIELD ONE BOUNDARY EARLIER.** CD-PL-F111 is therefore NOT discharged and its remedy did not
+  hold: **a finding written as prose into the field it is about is not a control.** Caught by the
+  CD-RULE-008 verdict being taken FIRST, at the boundary SHA, in a pristine clone — the discipline
+  the previous two boundaries earned. Superseded by a9f4546, never edited out of 61e9558.
+  **AND THE STRUCTURAL FIX IS APPLIED AT THIS ENTRY RATHER THAN PROMISED:** this boundary moves
+  `last_build_log_entry` IN THE SAME COMMIT AS THE ENTRY IT NAMES, so there is no window in which
+  the record is stale. **THAT IS A CHANGE OF SHAPE, NOT A RESOLUTION NOT TO FORGET.**
+  **CD-PL-F113 (LOW) — THIS SEAT'S FIRST REGISTER-CHECK MEASUREMENT WAS WRONG AND CONTRADICTED THE
+  ENGINEER.** The loop `python3 "$f" >/dev/null 2>&1; echo "$(basename $f) EXIT=$?"` reports the
+  exit status of `basename`, not of the check, because the command substitution runs before `$?` is
+  expanded. All twelve read EXIT 0 and the seat's honest `grant_matrix_live EXIT 3` was briefly
+  treated as a divergence. Re-run capturing `rc` directly and passing the declared `--root`, the
+  ENGINEER'S TABLE WAS RIGHT IN EVERY CELL AND THE PROJECT LEAD'S WAS WRONG. **RECORDED RATHER THAN
+  QUIETLY RE-RUN, because an instrument that always says PASS is the exact failure mode this
+  project audits other people's instruments for.**
+
+decision_refs:
+  - PO-DECISIONS-0015   # ruling 6 — the seventh Assurance seat over the whole; the condition is now met
+  - PO-DECISIONS-0014   # ruling 2 — the precedent that an auditor reads the RAW record
+  - PBG-SOD-001         # the Engineer and the Assurance Engineer are never the same agent
+  - PBG-AUTH-003        # banked, not accepted
+  - PBG-ASSURE-001      # why the plant-drift carrier is not an Engineer's to write
+
+next_safe_action: >
+  **STOP. AWAIT PRODUCT AUTHORITY ON THE TWO QUESTIONS ABOVE.** On the answers, build and issue
+  `CD-DISPATCH-WO2R3-ASSURANCE-07` to a FRESH Assurance identity (never -01, -02 or -03),
+  READ-ONLY, at `05ddaa3`, carrying the attributed-not-confirmed list and this seat's own two
+  findings as named targets. **NOTHING ELSE MOVES UNTIL THEN.**

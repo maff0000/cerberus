@@ -1,0 +1,497 @@
+# ASSURANCE DISPATCH — WO-2R, crash-detector. THE SECOND GATE ATTEMPT.
+#
+# WHY THIS IS A DISPATCH RECORD AND NOT AN AUTHORITY RECORD: see CD-FWK-004 in
+# BL-20260819T023505Z-0003 and the header of CD-DISPATCH-WO2-ASSURANCE.yaml. PBGv2 admits exactly one
+# ACTIVE authority record; a second makes `pbg boot` RED for every seat, so an ASSURANCE authority
+# record cannot lawfully exist here alongside the Project Lead's. PBG-SOD-001 is therefore evidenced
+# on this project by the Product Owner's ratified CD-D-002 named-actor route. THE SEPARATION ITSELF
+# IS NOT WAIVED AND CANNOT BE.
+#
+# WHAT IS DIFFERENT THIS TIME. The first audit (CD-ASR-WO2-01, BL-20260819T082800Z-0019) returned
+# AMBER and THE GATE WAS NOT MET: the guards caught the INSTANCE and, on four of five criteria, not
+# the CLASS. The auditor wrote 24 variant plants of its own and TEN ESCAPED. The Product Owner
+# ordered a bounded rework (PO-GATE-REVIEW-WO2-0001) whose whole subject was CLOSING THE CLASS.
+# That rework is now complete and reconciled. NOTHING IN IT IS ASSURED. The Project Lead reconciled
+# six increments, which is a different act under a different authority, and it may not certify work
+# it dispatched (PBG-AUTH-006). You are the party that decides whether the class is actually closed.
+#
+# THE SINGLE MOST IMPORTANT INSTRUCTION IN THIS FILE: the previous gate failed because guards
+# refused the known list and nothing else. A guard that refuses every variant in the exclusion set
+# and has never met a variant nobody wrote proves NOTHING about the class. Your fresh variants are
+# not a bonus section of this dispatch. They are the dispatch.
+
+dispatch_id: CD-DISPATCH-WO2R-ASSURANCE
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-19T20:05:00Z'
+supersedes: CD-DISPATCH-WO2-ASSURANCE          # same gate, new candidate; that verdict stands as history
+
+# --- seat -------------------------------------------------------------------------------------- #
+assigned_role: ASSURANCE_ENGINEER
+role_contract: pbg/roles/assurance-engineer.md
+actor_id: CD-ASR-WO2-02
+implementing_actor_id: CD-ENG-WO2R-01          # the rework seat; CD-ENG-READER-01 wrote the reader lane
+prior_assurance_actor_id: CD-ASR-WO2-01        # the first audit; a DIFFERENT seat again, deliberately
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+independence_declaration: >
+  This seat implemented no part of the target. It has never held the ENGINEER role on this project
+  and has no commit on branch wo-2-skeleton. It is not CD-ASR-WO2-01 and does not inherit that
+  seat's conclusions — it may reach a different verdict on the same evidence and should say so
+  plainly if it does. If any of that proves untrue, return INDEPENDENCE_CONFLICT and hand the
+  dispatch back (PBG-SOD-001, non-waivable).
+
+# --- exact target ------------------------------------------------------------------------------ #
+target_candidate: 50fc23177f790164c3fc3604ccee51663e755c70
+  # Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t` by the
+  # Project Lead at 2026-08-19T19:58Z. "the latest" is not a target and a SHA quoted from memory is
+  # not a target either (CD-PL-F36, CD-CONT-002).
+target_branch: wo-2-skeleton
+target_worktree: /srv/crash-detector-wo2r-audit
+target_tree_object: 5a952282ee6eb87079c8def7633b6aeaa1e68171
+target_tree_fingerprint:
+  value: 50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d
+  method: >
+    SHA256 of the LC_ALL=C-sorted `sha256sum` manifest over all 364 non-.git regular files in the
+    worktree, taken at creation, 2026-08-19T19:58Z. The manifest is at
+    /tmp/cd-asr-wo2r-tree.sha256sums. The Project Lead re-takes it when you return, so mutation is
+    DETECTABLE and not merely prohibited — the CD-D-022 device.
+  fair_warning: >
+    RUNNING ANYTHING INSIDE THE AUDIT WORKTREE WILL LIKELY BREAK THIS FINGERPRINT by depositing
+    __pycache__ or .pytest_cache, and you would then be reported as having mutated the target for a
+    reason that is not misconduct. THAT IS WHY W2 REQUIRES THROWAWAY EXTRACTIONS UNDER /tmp FOR
+    EVERY EXECUTION. Treat /srv/crash-detector-wo2r-audit as a READING SURFACE ONLY. The declared
+    commands themselves use `python3 -B`, which is the project's own guard against this; your
+    pytest arms have no such protection.
+stale_worktree_warning: >
+  /srv/crash-detector-wo2-audit STILL EXISTS and is the FIRST audit's target, detached at the
+  pre-identity-rework 66681b27ed650321f6b9e325fbc05712a754cc7d. IT IS NOT YOUR TARGET. It is
+  retained because the superseded AMBER verdict names it. Before you do anything else, run
+  `git rev-parse HEAD` in the worktree you are actually standing in and confirm it equals
+  50fc23177f790164c3fc3604ccee51663e755c70. Auditing the wrong tree would be an honest mistake that
+  produces a dishonest record.
+
+target_scope: >
+  WO-2 as re-delivered at 50fc231: the repository skeleton, the dial and witness types, the
+  collector framework and source registry, the store schema and grant matrix, the container set AS
+  DESIGN, the closed envelope contracts, the register checks, required-tests.yaml, the eleven
+  planted violations, and the durable variant corpus under variants/WO-2R/.
+out_of_scope: >
+  Anything scheduled after WO-2: the publication layer, heartbeat and external probe (WO-3), the
+  witness divergence alarm, history and slope (WO-4), the public/private-split EVIDENCE, the
+  public-artefact scan and the AI review validators (WO-5), the rotation ratio, recovery proof and
+  wave-transition monitor (WO-6). Also out of scope: container image build, non-root runtime proof,
+  signal-handling proof and image smoke test — FORBIDDEN in WO-2 by PBG-RT-010 and recorded as OWED,
+  not done. Judging them absent is correct; judging them a defect of WO-2 is not.
+  ALSO EXPRESSLY OUT OF SCOPE, all already ruled and owed at WO-3, so do not spend the gate on them:
+  CD-ASR-F07, CD-ENG-F39, CD-ENG-F41, CD-PL-F43, CD-ASR-N01/N02, CD-ERR-001, CD-OB-004,
+  CD-ENG-WO2R-F29/F30, and the CD-ENG-READER-F05/F08 FIX (its DECLARATION is in scope; its repair
+  is bound to the V27 re-measurement at WO-3 by CD-D-062). Naming any of these as newly discovered
+  would be a false finding — but see NQ-2, which invites you to find a route they do not cover.
+
+# --- the verdict this dispatch exists to produce ------------------------------------------------ #
+gate: >
+  THE WO-2 GATE IS UNCHANGED AND UNWAIVED: ASSURANCE PASS ON ALL FIVE PLANTED VIOLATIONS —
+  CD-AC-001, CD-AC-002, CD-AC-003, CD-AC-005, CD-AC-012 — each proved to FAIL CORRECTLY. Proof is by
+  CONTRAST and by nothing else: the SAME declared command exits 0 on the clean subject and NON-ZERO
+  on the subject carrying the planted violation. A violated arm that fails while the clean arm also
+  fails proves only that the harness is broken, and a broken harness detects nothing — that is
+  UNDECIDABLE, never PASS (REQUIRED-TEST-REGISTER-CONTRACT-v1 check 2).
+  THE GATE IS NOT "the rework closed what the first audit found". The first audit's ten escapes are
+  now the EXCLUSION SET, not the test. The gate is whether these guards close the CLASS against
+  attacks nobody in this project has yet written.
+
+the_eleven_declared_tests_across_the_five_gate_criteria:
+  CD-AC-001:
+  - {test_id: CD-RT-001-AST-NO-NUMERIC-DEFAULT, execute: 'python3 tools/register/check_no_numeric_default.py --root .'}
+  - {test_id: CD-RT-001-ABSENCE-RENDERS-UNKNOWN, execute: 'PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q'}
+  CD-AC-002:
+  - {test_id: CD-RT-002-TYPE-NO-ARITHMETIC, execute: 'PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q'}
+  - {test_id: CD-RT-002-AST-NO-BLEND, execute: 'python3 tools/register/check_no_blend.py --root .'}
+  - {test_id: CD-RT-002-SCHEMA-CLOSED, execute: 'python3 tools/register/check_schema_closed.py --root .'}
+  CD-AC-003:
+  - {test_id: CD-RT-003-ENGINE-NO-WITNESS-REACH, execute: 'python3 tools/register/check_engine_no_witness_reach.py --root .'}
+  - {test_id: CD-RT-003-GRANT-MATRIX-LIVE, execute: 'python3 tools/register/check_grant_matrix_live.py --root .'}
+  CD-AC-005:
+  - {test_id: CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES, execute: 'PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q'}
+  CD-AC-012:
+  - {test_id: CD-RT-012-NO-EXECUTION-INTERFACE, execute: 'python3 tools/register/check_no_execution_interface.py --root .'}
+  - {test_id: CD-RT-012-LOCKFILE-DENYLIST, execute: 'python3 tools/register/check_lockfile_denylist.py --root .'}
+  - {test_id: CD-RT-012-EGRESS-NO-BROKER, execute: 'python3 tools/register/check_egress_no_broker.py --root .'}
+  note: >
+    Read these OUT OF required-tests.yaml AT THE TARGET and use THAT string, character for
+    character. The table above is the Project Lead's transcription and is a convenience, not the
+    authority. If it disagrees with the register, the register wins AND THE DISAGREEMENT IS A
+    FINDING against this dispatch.
+
+required_work:
+
+  W1_verify_the_authentic_target: >
+    Verify the thing itself at the exact SHA — not a reconstruction, not a summary, and not a
+    wrapper the project wrote to make verification convenient (PBG-ASSURE-001). Verify CONTENTS,
+    never names: a file, role, grant, schema, boundary or test named correctly proves nothing about
+    what is inside it. Confirm the SHA you audited matches the SHA dispatched, and say so in the
+    verdict. Confirm `git status --porcelain` is zero lines before you start.
+
+  W2_execute_every_declared_command_yourself: >
+    For all ELEVEN tests above: run the DECLARED `execute` command verbatim on the clean tree (the
+    baseline arm), then apply that test's plant to a THROWAWAY COPY and run the SAME verbatim
+    command there (the violated arm). Make every copy with
+    `git archive <sha> | tar -x -C <tmpdir>` — do NOT create a git worktree and do NOT execute
+    inside the audited tree (see target_tree_fingerprint.fair_warning). Apply the plant YOURSELF
+    with `git apply` or an equivalent direct edit; you may not run any Engineer-supplied script that
+    performs the arms for you, because an auditor verifying through the project's own wrapper is
+    auditing the wrapper. There are ELEVEN plant patches under plants/ across the five criteria and
+    a MANIFEST.md naming, per plant, the proposition violated and the literal command line.
+    Record, for every arm: the exact command string, the exit code, and enough output to show WHY.
+    CD-RT-003-GRANT-MATRIX-LIVE NEEDS A LIVE STORE and returns exit 3 PRECONDITION_NOT_MET without
+    one. It has never been contrasted by anybody on this project — not by the Engineer, not by the
+    first auditor, not by the Project Lead. See W5 and SD-3. IT IS YOURS TO CLOSE (CD-D-020), and if
+    you cannot, it is UNDECIDABLE and CD-AC-003 CANNOT BE PASS ON THAT TEST. Say so rather than
+    passing the criterion on its sibling.
+
+  W3_attack_the_guards_adversarially_THIS_IS_THE_DISPATCH: >
+    For EACH of the five criteria, devise and run VARIANT PLANTS OF YOUR OWN that violate the same
+    PROPOSITION by a route NOT IN THE EXCLUSION SET, and report whether each guard catches the CLASS
+    or only the instance (adversarial theme GUARD_THE_INSTANCE_NOT_THE_CLASS). At least two fresh
+    variants per criterion; more where the structure invites it.
+    THE EXCLUSION SET IS DEFINED BELOW AND IS LARGE. A variant that duplicates one of its members
+    proves nothing new and costs you gate time — but DO NOT let its size deter you from an obvious
+    route: if you independently arrive at an attack that turns out to be in the set, that is worth a
+    sentence in the verdict, because independent rediscovery is evidence about the corpus.
+    WHAT THE REWORK CLAIMS, so you know what to aim at. Each is CLOSED AS A CLASS *subject to you*:
+      - CD-ASR-F02/F03 (increment 1): the question moved from "is this member numeric?" to "is this
+        member DECLARED?", decided by SET EQUALITY in both directions at import, and the absence
+        post-condition left the function body. Rule F denies by default over ONE declared permitted
+        provenance. ATTACK: an undeclared provenance that is not a number and not a spelling.
+      - CD-ASR-F01 (increment 2b): the closure moved from the EXIT to the RE-ENTRY. A DialMagnitude
+        admits a DeclaredQuantity and nothing else — a finite float paired with the frozenset of
+        dials its derivation touched, compared by SET EQUALITY. Any float that has left a magnitude
+        by ANY route has lost its dials and cannot re-enter. RULE 4 denies by default over four
+        declared admission sites. ATTACK: a FIFTH admission site, or a route that never leaves.
+        NOTE THE DECLARED RESIDUE: object.__setattr__ on a constructed value is declared NOT PROVED
+        TO BE CARRIED ANYWHERE AT RUNTIME (boundary 7 / boundary B). Hitting it confirms a declared
+        limit rather than breaking a claim — which is still worth reporting, with that label.
+      - CD-ASR-F04 (increments 3 and 3b): deny-by-default over a declared destination registry, and
+        `pending` closed FROM ITS OWN MEANING — a pending entry is the record of an ABSENCE, so its
+        key set is closed BY EQUALITY and no field can hold a destination. ATTACK: a destination
+        that is neither a value in a closed key set nor a registry entry. Boundary 7 declares an
+        address in pending PROSE is not refused; V29a is its executable example.
+      - CD-ASR-F05 (increment 4): the walk root set is a UNION of roots DERIVED from the container's
+        own entrypoint set plus the engine package. ATTACK: a service that reaches witness code from
+        a root the derivation does not produce. PL-U6b did this once and is now refused; boundary 5
+        distinguishes services BY PURPOSE while the code distinguishes BY NAME (CD-PL-F62, closed at
+        increment 6 by DECLARATION).
+      - CD-ASR-F06 (increment 5): the closure is NOT the ceiling. FreshnessEvidence makes the age
+        comparison the ACT OF CONSTRUCTING the evidence, and agreement requires the evidence, so a
+        route that skips the comparison does not exist rather than being caught. The 900.0s ceiling
+        is DERIVED from PID §5's ratified 15-minute budget and written as a CEILING, NOT A SETTING.
+        ATTACK: agreement without evidence, or a THIRD comparison site.
+    Where a guard catches only the instance, that is a FINDING with a severity, not a footnote.
+    Where it catches the class, say so — a guard proved to bite is worth recording as proved.
+
+  W4_check_the_register_itself: >
+    Run `PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml`
+    from the target root and report its output verbatim. Independently confirm: the criteria
+    population is DERIVED FROM PID.md §6 and covers all sixteen criteria; pid.content_hash matches
+    the PID at the target; NO status-like key appears anywhere in the register; `latest_admitted_run`
+    is null, because neither the Engineer nor the Project Lead may admit evidence. Read
+    pbg/tools/pbg/required_tests.py — it is the authority on the format and it COMPUTES status
+    rather than reading anyone's assertion of it. Expect the gate to be SHUT: eleven of the sixteen
+    criteria are scheduled for later work orders and are not evidenced. A SHUT gate at WO-2 is the
+    correct and honest answer and is not a defect of this candidate.
+    ALSO RUN THE ELEVEN UNDELIVERED-CRITERIA COMMANDS AT THIS SHA. Every one must terminate NON-ZERO
+    naming an ABSENT SUBJECT. NONE may pass vacuously. The Project Lead measured these at the BASE
+    and NOT at 50fc231, reasoning that no logic changed between — which is an argument, not a
+    measurement, and it is on the NOT_INDEPENDENTLY_VERIFIED list for that reason.
+
+  W5_check_the_structures_the_plants_stand_on: >
+    The plants prove the guards bite. Check that the STRUCTURES they guard are actually as the
+    Blueprint says, since a guard over an absent structure is theatre:
+      - BLUEPRINT §4 grant matrix, read out of a LIVE store built from the migrations — most of all
+        that cd_engine holds NO privilege of any kind on schema witness, and that the append-only
+        tables carry no UPDATE or DELETE grant for any role. Bring the store up yourself under SD-3;
+        do not take the Engineer's word, the Project Lead's word, or anyone's transcript. THIS IS
+        THE ONE STRUCTURE NOBODY ON THIS PROJECT HAS EVER VERIFIED LIVE.
+      - BLUEPRINT §7: the two score types share no numeric base and carry no arithmetic dunders;
+        DialSet exposes no scalar; evaluate() performs no I/O; with an empty registry both dials
+        read Unknown.
+      - BLUEPRINT §5: every fetch attempt writes a row INCLUDING failures, and the four outcomes are
+        genuinely distinct rather than three spellings of absence.
+      - BLUEPRINT §6: absence and staleness both resolve to UNAVAILABLE, with no route to AGREES.
+      - BLUEPRINT §2 and §3: the compose egress posture, the loopback binds, digest-pinned images,
+        and the two networks.
+      - The empty source registry: zero ingredient sources registered, as CD-D-005 requires.
+    Anything you cannot reach authentically is UNSUPPORTED, named, and never quietly substituted.
+
+  W6_the_declared_limits_are_themselves_a_deliverable: >
+    CD-RULE-004 permits a guard to CLOSE ITS CLASS **or** DECLARE ITS OWN LIMIT. Six of the nine
+    guards discharge part of their obligation by DECLARATION, so the declarations are load-bearing
+    and are in scope as work, not as prose. For each declared boundary, decide THREE things:
+      (a) does it have an EXECUTABLE EXAMPLE that actually reproduces at this SHA;
+      (b) does it name a CARRIER — another layer said to hold the residue — and if so, HAS THAT
+          CARRIER BEEN MEASURED REFUSING IT? A boundary asserting an unmeasured carrier is the
+          CD-PL-F54/CD-PL-F59 defect and CD-RULE-006 forbids it in terms;
+      (c) do the THREE PLACES that must agree — the check header, the register entry and the
+          execution contract — say the same thing IN SUBSTANCE, not merely share tokens?
+    THE PROJECT LEAD CHECKED SEVEN OF THE NINE PLACE-TEXTS MECHANICALLY, BY TOKEN MATRIX, AND READ
+    ONLY TWO IN FULL. Token presence is not substance; three places can each carry every load-bearing
+    word and still say subtly different things. That is on the NOT_INDEPENDENTLY_VERIFIED list and
+    it is yours. CD-PL-F71 already found one instance of the same sentence doing OPPOSITE work in two
+    of three places — assume it is not the only one.
+
+  W7_audit_the_exclusion_set_itself: >
+    THE CORPUS IS NOW A HAZARD IN ITS OWN RIGHT and this is a first-class work item.
+    variants/WO-2R/MANIFEST.md IS YOUR EXCLUSION SET — it tells you where NOT to look. A row that
+    claims a route is covered when the variant cannot run, or no longer reaches the boundary its row
+    names, does not merely fail to prove something: IT TELLS YOU NOT TO LOOK THERE. The rework seat
+    found exactly this twice, in its own corpus, unprompted:
+      - CD-ENG-WO2R-F27 (MEDIUM): the MANIFEST's BLEND-PROBE cannot be run as written — its fixtures
+        use a bare float, which increment 2b's re-entry now refuses, so every arm dies at
+        scaffolding.
+      - CD-ENG-WO2R-F28 (LOW): V11's command no longer reaches the three boundaries its row names.
+    Both were accepted BY SUPERSESSION and NEITHER WAS INDEPENDENTLY RE-MEASURED by the Project
+    Lead — there was not time before its ceiling, and the record says so rather than implying
+    otherwise. RE-MEASURE THEM, and then ask the question nobody has asked: ONLY ONE ROW OF THIS
+    CORPUS HAS EVER BEEN AUDITED FOR THIS DEFECT, and it is the one that happened to be re-run. Take
+    a sample of rows you have reason to distrust and check that each variant still applies and still
+    reaches the boundary its row claims. You do not have to do all of them; you DO have to state your
+    denominator (CD-PL-F66).
+    Likewise the 71-variant re-run: the seat reports 71 re-run, 71 verdicts, 0 apply failures, and
+    the Project Lead did NOT re-run the corpus — it re-ran the eleven plants and one contrast. See
+    the denominator note in exclusion_set below, which does not agree with 71 and which you should
+    settle rather than inherit.
+
+  W8_answer_the_named_questions: >
+    These are handed to you AS WORK. None is settled and none is rhetorical. Answering "I did not
+    reach this" is acceptable and useful; implying you reached it is not.
+    NQ-1 (CD-ENG-WO2R-F12, MEDIUM, raised by the seat AGAINST ITSELF and expressly refused for its
+      own answer): is a STATIC-ONLY guard on the admission door sufficient for CD-AC-002? The
+      Project Lead's view — that the residue is any registry's, that the layer denies by default
+      rather than recognising, and that a runtime guard on the calling module's identity would be
+      call-stack introspection with a worse residue — is reasoning, NOT a measurement, and the gate
+      is not the Project Lead's to give.
+    NQ-2 (CD-ENG-READER-F05/F08, MEDIUM, CD-D-062): the YAML reader SILENTLY FLATTENS certain nested
+      structures. THE DENOMINATOR IS STATED: three routes on one criterion. It is pre-existing,
+      byte-identical at both SHAs, unchanged across all 124 trees the Project Lead built, and its
+      three attempts to weaponise it into a FALSE CLEAN (PL-X12a/b/c) were ALL REFUSED because
+      flattening LIFTS a nested key INTO CD-EGRESS-007's closed key set. THAT IS THREE ROUTES, NOT A
+      PROOF OF SAFETY. YOU ARE EXPRESSLY INVITED TO FIND THE FOURTH ROUTE. The FIX is out of scope
+      (bound to the V27 re-measurement at WO-3); finding a route that turns it into a false clean is
+      very much in scope and would be the most valuable single result of this audit.
+    NQ-3 (CD-ENG-READER-F02): the reader refuses to convert RecursionError. Ratified at CD-D-061 as
+      a declared limit on the grounds that converting it would have been the verdict change the
+      reader dispatch forbade. Do you agree that is a limit and not a hole?
+    NQ-4 (CD-ENG-WO2R-F29, MEDIUM, with CD-PL-F71's refinement): three delivered tests declare
+      `scope: CLASS` with no declared limit in the register entry — and CD-PL-F71 found the same
+      sentence doing OPPOSITE work in two of three places. CONFIRMED and NOT taken in WO-2R; owed at
+      WO-3 bound with CD-PL-F43 and CD-ASR-N01. In scope for you only as: does this misdescribe what
+      the guard actually does to a reader relying on the register?
+    NQ-5 (CD-ENG-WO2R-F30, LOW): the eleven undelivered-criteria commands terminate non-zero by the
+      INTERPRETER's conventions (pytest exit 4, python exit 2), not by this project's exit 3
+      PRECONDITION_NOT_MET. Confirmed, owed at WO-3. Does the inconsistency mislead?
+    NQ-6 (CD-ENG-WO2R-F32, LOW): boundary 9 holds ONLY because nothing in either contract may be
+      None — one optional field reopens it silently, with no test failing. Accepted as a declared
+      limit under CD-RULE-004 option 2, in the CD-RULE-006 form. Is the condition it names the only
+      one that breaks it?
+    NQ-7: the seat's own F20-F24, and the Project Lead's CD-PL-F53, F57, F58, F62, F63, F65, F66,
+      F67, F68, F69, F70, F71, F72, F73. Each is recorded in the Build Log with its measurement.
+      You are not required to re-open settled ones; you ARE required not to inherit them.
+    NQ-8 (CD-PL-F63, LOW, and it bears on your method): an 892-line check rewrite at increment 4
+      added ZERO pytest tests. The derivation IS proved by execution against fifteen durable
+      variants, which is stronger than a unit test — what is missing is REGRESSION cover. If that
+      derivation silently regressed later, only the check itself would witness it. Is that a real
+      exposure at this SHA?
+
+# --- the exclusion set --------------------------------------------------------------------------- #
+exclusion_set:
+  why_it_exists: >
+    A variant already written by the Engineer, the first auditor or the Project Lead has already been
+    fired at these guards, and a guard fitted to the list it was shown is the exact defect the first
+    gate caught. Anything here proves nothing about the CLASS. Read it so you can go around it.
+  it_spans_two_worktrees_read_this_carefully: >
+    THE CORPUS IS NOT ALL AT THE TARGET. CD-PL-F67 was raised against a dispatch whose path list was
+    wrong, so this one states every path explicitly and you should verify each resolves before
+    relying on it.
+  members:
+  - id: 'E01-E10 — the FIRST AUDITOR''s ten escapes'
+    where: '/srv/crash-detector/governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md'
+    note: >
+      ON MAIN ONLY. This path does NOT exist in the audit worktree — governance/assurance/ is absent
+      at 50fc231. These are the escapes that failed the first gate and became the rework's MINIMUM
+      PROOF OBLIGATION. Read them; they are the single best guide to how these particular guards
+      have failed before.
+  - id: 'V01-V53 and R01-R08 — the ENGINEER''s durable variants'
+    where: '/srv/crash-detector-wo2r-audit/variants/WO-2R/ with MANIFEST.md as the index'
+    note: >
+      AT THE TARGET. THE RECORD SAYS "THROUGH V52" AND THAT IS WRONG BY ONE: V53
+      (V53-pending-inline-key-lifts-an-ADMISSIBLE-key.patch, under CD-ENG-READER-F05/) is a real
+      delivered variant. Corrected here rather than left to trip you — an exclusion set that
+      understates itself invites you to spend the gate re-deriving the Engineer's own work and
+      believe it fresh. Raised as CD-PL-F73.
+      DENOMINATOR, MEASURED BY THE PROJECT LEAD AT THIS SHA, because three records disagree
+      (CD-PL-F66's rule): 70 files matching `*.patch`, plus 2 `.py.txt` probe records under
+      CD-PL-F65/, = 72 variant artefacts, plus MANIFEST.md = 73 files under variants/. ZERO are
+      executable (PBG-ASSURE-001 satisfied, verified). The seat reported "71 re-run, 71 verdicts".
+      71 IS NOT 70 AND NOT 72. Nobody has reconciled those numbers. Settling it is part of W7.
+  - id: 'PL-Q1 through PL-Y5 — the PROJECT LEAD''s reconciliation probes'
+    where: '/srv/crash-detector/governance/reconciliation/WO-2R/ (14 files, of which 12 are probe records; the other two are README.md and the PL-INC6 pre-delivery baseline)'
+    note: >
+      ON MAIN ONLY, and NOT present at the target. Written as DATA, nothing executable
+      (PBG-ASSURE-001) — the .py.txt and .patch.txt suffixes are deliberate. Series: PL-Q (coercion,
+      class mutation, laundering, the flavour-free repr launder), PL-R (the admission door), PL-S
+      (egress pending and subject derivation), PL-T (pending closure and the reader hang), PL-U
+      (derivation union, the second engine container), PL-V (E07 and the second comparison site),
+      PL-W (freshness mutation, near-copy image), PL-X (reader termination and the quiet wrong
+      parse), PL-Y (the three addenda premises).
+  - id: 'PL-Z1 through PL-Z3 — the increment-6 reconciliation probes'
+    where: '/srv/crash-detector/governance/engineering/build-log/BL-20260819T194926Z-0038.yaml, inline'
+    note: >
+      NOT SEPARATE FILES. They exist only inside that entry's body (PL-Z2a-d are the forged-Agrees
+      and slotting measurements). If you write a probe against the CD-PL-F65 boundary, check there
+      first.
+
+# --- what nobody has verified -------------------------------------------------------------------- #
+NOT_INDEPENDENTLY_VERIFIED_handed_to_you_as_work:
+  preamble: >
+    This list is transcribed from BL-20260819T194926Z-0038 and is handed over AS WORK, not as
+    background. The Project Lead wrote it against itself at a ceiling rather than implying it had
+    checked more than it had. Nothing on it is known to be wrong; nothing on it is known to be right.
+  items:
+  - 'CD-ENG-WO2R-F27 and F28 — confirmed on the SEAT''S OWN evidence only; not re-run by anyone. See W7.'
+  - 'THE VARIANT CORPUS RE-RUN — the seat reports 71 re-run, 71 verdicts, 0 apply failures. The Project Lead re-ran the ELEVEN PLANTS and ONE contrast, not the corpus. See W7 and the denominator note.'
+  - 'SEVEN OF THE NINE CD-RULE-004 PLACE-TEXTS — read mechanically by token matrix; only two read in full. See W6(c).'
+  - 'THE ELEVEN UNDELIVERED-CRITERIA COMMANDS AT 50fc231 — measured at the BASE, not re-measured at the final SHA. "No logic changed between them" is an argument, not a measurement. See W4.'
+  - 'CD-RT-003-GRANT-MATRIX-LIVE''s CONTRAST — never run by anybody: not the Engineer, not the first auditor, not the Project Lead. Exit 3 PRECONDITION_NOT_MET with no live store. This is the standing risk CD-RT-002 and it is YOURS to close (CD-D-020). See W2, W5 and SD-3.'
+
+# --- method notes adopted by this project -------------------------------------------------------- #
+adopted_method_notes:
+- id: F13
+  note: >
+    ASSERT THE RULE ID, NOT MERELY A NON-ZERO EXIT. A variant refused FOR THE WRONG REASON has told
+    you nothing, and a probe you believe passed because the exit code was right is worse than no
+    probe. THIS HAS NOW RECURRED FOUR TIMES ON THIS PROJECT, against the Engineer, against the
+    Project Lead's own probes twice, and once against a PROSE measurement (CD-PL-F71). It caught the
+    Project Lead a fifth time while this dispatch was being written: a pristine-clone boot probe read
+    AMBER/CONTINUITY_DRIFT and looked like a real degradation, when the only variable that mattered
+    was that the clone was on a DETACHED HEAD rather than branch main (CD-PL-F72). ASSUME IT IS
+    PRESENT IN YOUR OWN WORK. A result that agrees with what you expected is the one to re-run.
+- id: F16
+  note: >
+    A SHRINKING ASSERTION COUNT IS HOW A SKIPPED ARM HIDES. V26 once reported PASS at 52 assertions
+    where clean was 53. Record assertion counts, not just verdicts, and treat a drop as a finding
+    until explained.
+- id: F18
+  note: >
+    A DERIVATION REFUSAL AT EXIT 3 ARRIVES BEFORE A REACH VIOLATION AT EXIT 1. An auditor asserting
+    only "non-zero" learns less than the output actually holds. Distinguish PRECONDITION_NOT_MET
+    from a real violation every time.
+- id: CD-RULE-008
+  note: >
+    Any boot verdict you record is taken on a PRISTINE CLONE AT THE COMMITTED SHA, never a working
+    tree, and the entry naming a verdict names the SHA it was taken at. And per CD-PL-F72: check it
+    out ON THE RECORDED BRANCH, or continuity reads DRIFT for a reason that has nothing to do with
+    the record.
+
+# --- read-only by default ---------------------------------------------------------------------- #
+prohibited_mutation:
+  default: >
+    Mutation of the target is PROHIBITED. Judge mutation by EFFECT, not by command label
+    (PBG-RT-001): a read-only-sounding command that writes a cache, takes a lock or triggers a
+    rebuild has mutated the target. Observe a lock; never take it.
+  explicitly_permitted_safe_diagnostics:
+  - id: SD-1
+    action: Write your evidence and verdict artefacts under /srv/crash-detector-wo2r-evidence/.
+    note: >
+      That directory is OUTSIDE every git worktree, so the audited tree stays byte-identical to the
+      SHA you audited. The Project Lead transports those artefacts into the repository unaltered;
+      you author them, and nobody edits their contents.
+  - id: SD-2
+    action: Extract throwaway copies of the target under /tmp with `git archive | tar -x`.
+    note: >
+      Chosen deliberately over `git worktree add`, which writes into .git/worktrees and would mutate
+      the audited repository's administrative state. RUN EVERYTHING IN THESE COPIES — including the
+      clean baseline arms — so the audit worktree's fingerprint survives.
+  - id: SD-3
+    action: >
+      Run ONE throwaway PostgreSQL container to read the grant matrix out of a live catalogue.
+    bounds: >
+      image postgres:16-alpine pinned BY DIGEST; container and volume names prefixed
+      `cd-asr-wo2r-`; published on 127.0.0.1 on an ephemeral port; credentials generated at run time
+      from the environment and never written down; destroyed with `docker rm -f` and
+      `docker volume rm` before you return, with the removal evidenced.
+    classification: MUTATION_CAPABLE_AUTHORISED — it creates and destroys a container and a volume.
+    forbidden: >
+      touching, inspecting into, stopping or restarting ANY container or volume on this host that
+      does not carry the `cd-asr-wo2r-` prefix. OTHER PROJECTS ARE RUNNING ON THIS HOST. Do not
+      reuse or inspect the Engineer's `cd-store-wo2-` store or the first auditor's `cd-asr-wo2-`
+      prefix: build your own from the migrations in the target.
+  forbidden_absolutely:
+  - modifying anything in /srv/crash-detector, /srv/crash-detector-wo2, /srv/crash-detector-wo2-audit
+    or /srv/crash-detector-wo2r-audit
+  - modifying anything under pbg/ (PBG-FWK-013)
+  - committing anything, on any branch, in any worktree
+  - repairing any defect you find (PBG-SOD-004 — finding it does not make you the one who fixes it;
+    fixing it forfeits your independence over this target). Report it; the Engineer repairs it.
+  - granting acceptance. You supply evidence and a verdict; a PASS is not an acceptance (PBG-AUTH-003).
+  - admitting your own run record into the register. You WRITE it (W9); admission is a separate act
+    under CD-RULE-001 and is not yours.
+
+# --- the run record ------------------------------------------------------------------------------ #
+run_record:
+  W9_produce_the_run_record: >
+    Write the run record to /srv/crash-detector-wo2r-evidence/required-tests/runs/RTR-WO2R-0001.json.
+    Shape, per REQUIRED-TEST-REGISTER-CONTRACT-v1 (read pbg/tools/pbg/required_tests.py for the
+    exact reader):
+      run_id: "RTR-WO2R-0001"
+      executed_by: {party: "CD-ASR-WO2-02", independence_class: "SEAT_INDEPENDENT"}
+      candidate: "50fc23177f790164c3fc3604ccee51663e755c70"
+      results: [
+        {test_id, mode: "NEGATIVE_CONTROL", arms: {baseline: {command, exit_code},
+                                                   violated: {command, exit_code}}},
+        {test_id, mode: "ACCEPTANCE", command, exit_code}
+      ]
+    The `command` strings in BOTH arms and in the ACCEPTANCE result must equal the register's
+    declared `execute` string EXACTLY, character for character — the validator refuses evidence that
+    ran something other than the test it purports to certify. Record what you actually ran and what
+    it actually returned. NEVER adjust a recorded exit code, and never record an arm you did not run.
+    CD-RULE-001 (Product Owner, NON-RELAXABLE): no run record is admitted without its PAIRED
+    ASSURANCE VERDICT, and no criterion you hold not-PASS may compute PASS. Writing the record does
+    not admit it. If your verdict is not PASS on a criterion, the record must not be capable of
+    making that criterion read PASS — and if you find it would, THAT IS A HIGH FINDING against the
+    framework, which is exactly how CD-FWK-005/IMP-015 was found the first time.
+
+# --- verdict form ------------------------------------------------------------------------------ #
+expected_verdict:
+  values: [PASS, AMBER, RED, UNSUPPORTED, NOT_APPLICABLE]
+  required_qualification: >
+    Every verdict carries its CONFIDENCE and its SCOPE — what you examined, what you did not, and
+    what you could not. A scoped PASS that names its limits is useful; an unscoped PASS is a
+    liability. State the CONTINUATION IMPLICATION separately from the finding: what is true and what
+    is safe to do next are different calculations. STATE YOUR DENOMINATOR on every count you report
+    (CD-PL-F66).
+  per_criterion: >
+    A separate verdict line for each of CD-AC-001, 002, 003, 005 and 012, because the gate is per
+    plant. The overall verdict is the worst of them. For each, say explicitly whether the guard
+    closes the CLASS or only the INSTANCE, and on what evidence.
+  on_the_declared_limits: >
+    For each declared boundary you examined, state which of the three W6 tests it passes. A limit
+    honestly drawn is a PASS-compatible finding; a boundary asserting an unmeasured carrier is not.
+  next_safe_gate: >
+    Name it explicitly. A verdict without a named next safe gate is incomplete (PBG-ASSURE-004).
+  no_synthetic_green: >
+    PBG-ASSURE-012. Do not weaken a check to obtain a verdict, do not accept a substitute target
+    because the real one is awkward to reach, and do not narrow scope silently — if you examined
+    less than dispatched, that belongs in the verdict, not in a footnote. Where you cannot refute a
+    claim and cannot fully verify it either, say precisely that. An honest AMBER is worth more than
+    a confident PASS resting on an unexamined assumption.
+  a_note_on_courage: >
+    The first auditor returned AMBER and failed this gate, and the Product Owner COMMENDED the
+    project for refusing to admit the run record that would have made it read PASS. A second AMBER
+    is a legitimate outcome of this dispatch and will be recorded as such. There is no institutional
+    pressure here for a PASS and you should assume none.
+
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  Project Lead (PROJECT_LEAD_SEAT_01), who reconciles the verdict, records the WO-2 gate outcome
+  durably, and STOPS for Product Owner review either way. The Product Owner reviews before WO-3.

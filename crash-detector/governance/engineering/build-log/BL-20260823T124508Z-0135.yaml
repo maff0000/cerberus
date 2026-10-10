@@ -1,0 +1,235 @@
+# ================================================================================================== #
+# BL-20260823T124508Z-0135 — PROJECT LEAD BOUNDARY
+#
+# **INCREMENT 11, THE RECORD ACT. PO-DECISIONS-0019 RULINGS 1-5, EXECUTED AND NOTHING ELSE.**
+#
+# THE PERIMETER IS CORRECTED TO WHAT WAS MEASURED: THREE TIERS AND NOT TWO. "USELESS" IS STRUCK.
+# "THE PLATFORM DOES NOT PERMIT PREVENTING IT" IS RETRACTED. THE OBLIGATION IS SCHEDULED WITH AN ID
+# AND A WORK ORDER INSTEAD OF BEING CARRIED IN THE THREE FORMS ITS OWN GOVERNING SENTENCE FORBIDS.
+#
+# **AND THE PRODUCT OWNER'S RULING WAS WRITTEN AGAINST ITS OWN BYTES FIRST: "This is the exact error
+# I keep ruling against in others arriving in my own bytes: a scope claim resting on an assertion
+# where a measurement was available. Owned."**
+# ================================================================================================== #
+
+entry_id: BL-20260823T124508Z-0135
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T12:45:08Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: 7794c155c1d3de55e669f17584da3873a116981c   # `main` at boundary open — the Product Owner's own commit carrying PO-DECISIONS-0019, authored by Matt Scott and by no seat. RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+increment_banking_sha: 8a8cdf2e3336a5599263c22464fc4788ee4109a1   # BLUEPRINT v0.4.0 + the carriage check. RESOLVED, never transcribed (CD-PL-F36).
+
+# ================================================================================================== #
+what_the_product_owner_ruled_and_what_this_seat_did_with_it:
+# ================================================================================================== #
+  the_ruling: 'governance/decisions/PO-DECISIONS-0019.md at `7794c15`, authored by Matt Scott and by NO SEAT.'
+  and_it_upheld_the_RED_in_full: >
+    **"The eighth RED is upheld in full, including every finding against my own protected bytes."**
+    The Product Owner did not argue a single load-bearing finding down. Neither did this seat at
+    `BL-...-0134`. **THE SEAT THAT WROTE THE RED WAS RIGHT ABOUT THIS SEAT'S PROSE AND RIGHT ABOUT
+    THE PRODUCT OWNER'S, AND BOTH SAID SO IN WRITING BEFORE ANYTHING WAS FIXED.**
+  what_this_seat_did_NOT_do: >
+    **IT ANSWERED NONE OF THE FOUR QUESTIONS AND IT AUTHORED NO PERIMETER TEXT.** Every normative
+    sentence in the corrected §17 and §14 rows is the Product Owner's, carried verbatim. This seat
+    authored scaffolding and disclosure and enumerates both below.
+
+# ================================================================================================== #
+item_1_and_2_the_carriage_MEASURED_IN_BOTH_ARMS:
+# ================================================================================================== #
+  the_instrument: 'tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py — NEW at this boundary, a SIBLING of the 0018 check and NOT an edit of it, because mutating the 0018 check to cover v0.4.0 would destroy the standing evidence for the v0.3.0 carriage in the act of producing evidence for this one.'
+  arm_1_the_claim: '`python3 -B tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py --root .` -> **EXIT 0. 10/10 sentences resolving in BOTH files. 1911 normalised characters of Product Owner text carried.**'
+  arm_2_the_counterfactual: '`... --counterfactual` (ONE word altered per sentence) -> **EXIT 1. 10/10 FAILED.** The check CAN fail, and that is measured rather than asserted.'
+  arm_3_the_predecessor_unbroken: '`python3 -B tools/reconciliation/check_blueprint_carried_po_text_verbatim.py --root .` -> **EXIT 0, still PASS.** The v0.3.0 carriage evidence is intact.'
+  AND_THE_CHECK_EARNED_ITS_KEEP_ON_ITS_FIRST_RUN: >
+    *** **IT FAILED 9/10 ON THE FIRST RUN AND IT WAS RIGHT.** *** This seat had quoted *"Two new
+    acceptance criteria are minted"* in the §14 block, then dropped the quotation while tightening
+    that block, and did not notice. **A SEAT'S ASSERTION THAT IT CARRIED TEXT VERBATIM WOULD HAVE
+    SAILED PAST THAT. A COMMAND DID NOT.** This is `CD-PL-F136`'s lesson applied on the same day it
+    was raised: the arm that can fail is the only arm worth running.
+  what_the_arms_do_NOT_say: >
+    **DECLARED LIMIT, AND IT IS THE INSTRUMENT'S OWN:** the comparison is under a normalisation that
+    strips emphasis and collapses whitespace, so **it proves the WORDS are the Product Owner's and
+    NOT that the bytes are identical**; and it is **NOT a completeness check** — it says nothing
+    about what else the carriage added. For that half an auditor runs
+    `git diff 7794c15..8a8cdf2 -- BLUEPRINT.md` and reads it. **AND IT SAYS NOTHING ABOUT WHETHER
+    THE CARRIED PERIMETER IS TRUE.** That is the ninth seat's, and no instrument on this project
+    can take it.
+
+the_correction_itself:
+  three_tiers_and_not_two: >
+    **PREVENTED** (accident + casual misuse) — stops the forged SUBCLASS `F2` and every accident,
+    *"Says exactly that and no more."* **RESISTED** (deliberate in-process forgery, `F1`) — a
+    CONSTRUCTION-PROVENANCE door at admission, *"defeatable only by locating and mutating a
+    module-private structure"*, **not absolute and therefore not called prevented**, with the
+    measured `WeakSet`/`__slots__`/`__weakref__` obstacle **OWNED IN THE TEXT rather than glossed**.
+    **DETECTED** (the residual and the catastrophic-blast case) — witness divergence + provenance at
+    the publication boundary.
+  the_word_struck: '**"useless"** — `F02` proved it false for the very route `CD-BP-005`''s own risk column names first, and that prose was THIS SEAT''S, the item it named as its weakest before the audit.'
+  the_assertion_retracted: '**"AND THE PLATFORM DOES NOT PERMIT PREVENTING IT"** — on the Product Owner''s own reason, *"ADMISSION WAS NEVER TESTED"*. Construction cannot be prevented and that STANDS, measured three times. Admission is a different predicate and was never probed by anybody.'
+  the_criteria_minted: '**`CD-AC-017`** — admission by declared-door provenance, the RESISTED tier, WO-3. **`CD-AC-018`** — publication divergence, the DETECTED tier, WO-3/WO-4. Both in §14''s criterion trace AND §15''s WO rows, which is what `F03` measured absent.'
+
+# ================================================================================================== #
+item_3_CD_D_174_LOGGED:
+# ================================================================================================== #
+- id: CD-D-174
+  title: '**A DISPOSITION''S CLAIM IS RE-VERIFIED AT THE BOUNDARY THAT RE-POINTS ITS KEY. THE KEY EXISTING IS NOT THE KEY''S CLAIM BEING TRUE.**'
+  authority: 'PRODUCT OWNER — PO-DECISIONS-0019 ruling 4, authored by Matt Scott and by no seat. **NOT this seat''s decision and not this seat''s to soften.**'
+  the_evidence_it_rests_on: >
+    `F06` of the eighth seat's RED, **REPLICATED BY THIS SEAT IN BOTH ARMS at `BL-...-0134`**:
+    reordering two operand pairs IS caught (sweep FAIL, 3 violations, 3 tests red), but **RE-POINTING
+    the two keys — not deleting — gives sweep rc=0 PASS and 1726 PASSED, BIT-FOR-BIT THE PRISTINE
+    TIP, over code whose `EXACT` declaration is now FALSE.** **THE REGISTER CHECKS THAT A KEY EXISTS,
+    NOT THAT ITS CLAIM IS TRUE — AND INCREMENT 10 RE-POINTED SIXTEEN KEYS.**
+  what_it_obliges: >
+    The register gains, **as its own WO item and not as a note**, that a disposition's claim is
+    RE-VERIFIED at the boundary that re-points its key. **It is the plant-drift carrier's sibling**
+    (PO-DECISIONS-0017 ruling 1) **and joins it in the post-gate instrument work**, and it is
+    harvested to the framework as **the register-integrity gap**.
+  status_at_this_boundary: '**LOGGED AND NOT BUILT.** Increment 11 is the record act (ruling 5: *"no code beyond the register/blueprint layer"*), and building the carrier is instrument work sequenced after the gate. **IT IS NOT CLOSED, NOT MITIGATED AND NOT DISCHARGED BY BEING WRITTEN DOWN.**'
+  and_the_honest_form_of_that_status: '**NOT PROVED TO BE CARRIED ANYWHERE** (`CD-RULE-006`). No instrument on this project currently re-verifies a disposition claim at a re-point, and none is scheduled before the gate.'
+
+# ================================================================================================== #
+# **TWO PRODUCT AUTHORITY QUESTIONS RAISED AT THIS BOUNDARY. THIS SEAT ANSWERS NEITHER.**
+# ================================================================================================== #
+product_authority_questions_raised_at_this_boundary:
+  Q5_THE_PID_LINEAGE_OF_THE_TWO_NEW_CRITERIA:
+    the_question: '**`CD-AC-017` AND `CD-AC-018` ARE NOT IN PID §6. DOES PID §6 GAIN THEM, OR DO THEY ENTER THE REGISTER AS `STRENGTHENS` OF EXISTING CRITERIA?**'
+    why_it_is_NOT_this_seat_s_to_answer: '**PID.md is the Constitutional document, ratified and signed by Matt on 2026-08-18. `PBG-AUTH-005` and `PBG-PID-004`: no seat writes product requirements.** The Product Owner minted the IDs in a decision; only the Product Owner can put them in the PID.'
+    and_it_is_MEASURED_not_assumed: >
+      **The Required Test Register derives its population from PID §6 AND ONLY FROM PID §6**, and
+      the validator derives the same census independently and compares. Read from the framework
+      source, not from memory: `pbg/tools/pbg/required_tests.py` — *"POPULATION — the criteria census
+      is derived from the referenced PID independently"*, and for a register entry with no PID
+      lineage, **`"NEW_REQUIREMENT is blocked pending PO amendment of the PID"` — status
+      `NOT_EVALUATED`, and the gate does not open on it.**
+      A third route EXISTS and is measured in the same file: **`STRENGTHENS <target>`**, which
+      traces a register-only entry through a criterion that IS in the census and is evaluated
+      normally. `CD-AC-017` would strengthen `CD-AC-005`; `CD-AC-018` would strengthen `CD-AC-004`.
+      **WHETHER THEY ARE STRENGTHENINGS OR GENUINELY NEW REQUIREMENTS IS A PRODUCT MEANING QUESTION
+      AND NOT A MECHANICAL ONE, WHICH IS EXACTLY WHY THIS SEAT IS NOT TAKING IT.**
+    the_consequence_while_it_is_open_STATED_PLAINLY: >
+      **THE TWO CRITERIA ARE 3/4 OF THE WAY TO THE FORM `CD-D-172` REQUIRES AND NOT 4/4.** The
+      eighth seat's own definition: *"A first-class criterion on this project is a `CD-AC-xxx` row
+      in §14 traced to a work order in §15 and a `required-tests.yaml` entry with an execution
+      contract."* They now have the §14 row and the §15 work order. **THEY DO NOT YET HAVE THE
+      REGISTER ROW OR THE EXECUTION CONTRACT, AND CANNOT UNTIL THIS QUESTION IS RULED.**
+      **THIS IS DISCLOSED IN `BLUEPRINT.md` §14 ITSELF, AS AN EXPLICITLY-ATTRIBUTED PROJECT LEAD
+      DISCLOSURE**, because §14's own standing sentence — *"every row above becomes a register
+      entry"* — is NOT TRUE OF THESE TWO ROWS, and leaving a knowingly-false sentence in the design
+      document is the worse of the two defects available here. **THE NINTH SEAT IS TOLD THIS BEFORE
+      IT DISCOVERS IT (`CD-D-129` clause (i), PO-DECISIONS-0009 ruling 1).**
+  Q6_F05_IS_NOT_REPAIRED_AND_ONLY_THE_PRODUCT_OWNER_CAN_REPAIR_IT:
+    the_question: '**§16 `CD-D-172` STILL CONTAINS A NORMATIVE SENTENCE THIS SEAT WROTE INTO A FILE `CD-D-115` PROTECTS FROM IT — *"not as a note, not as a residue paragraph, and not as a manual step"*. DOES THE PRODUCT OWNER ADOPT IT, ATTRIBUTE IT, OR STRIKE IT?**'
+    the_measurement_UPHELD_BY_THIS_SEAT_AT_BL_0134: 'That sentence appears **ONCE in `BLUEPRINT.md` and ZERO TIMES in `PO-DECISIONS-0018`.** `F05` is upheld by command and it is against this seat''s own bytes.'
+    what_CHANGED_at_this_boundary_and_what_did_NOT: >
+      **CHANGED:** PO-DECISIONS-0019 ruling 3 now contains the same normative content **in the
+      Product Owner's own bytes** — *"the three forbidden forms (note, residue paragraph, manual
+      step) are struck wherever they carry this obligation"* — so the REQUIREMENT is now
+      PO-authored and no longer rests on a seat's invention.
+      **DID NOT CHANGE:** the sentence in §16 is still in this seat's words with no attribution, and
+      **THIS SEAT DID NOT TOUCH IT.** Removing or re-attributing text in a protected file is the
+      Product Owner's act, and a seat quietly deleting the evidence of its own finding is worse than
+      the finding. **`PBG-SOD-004`: the seat that raises a finding does not fix it — and here the
+      seat that RAISED it was the auditor, and the seat that WROTE it is this one.**
+    severity_assessment_offered_not_ruled: '**LOW as a live risk** — the requirement is now genuinely the Product Owner''s and §14/§15 satisfy it. **NOT LOW as a precedent**, which is why it is not being quietly left.'
+
+# ================================================================================================== #
+findings_this_seat_raises_against_ITSELF_at_this_boundary:
+# ================================================================================================== #
+- id: CD-PL-F137
+  severity: MEDIUM
+  against: 'THIS SEAT — the record act corrects `main` and leaves the LANE quoting the SUPERSEDED perimeter'
+  statement: >
+    **`BLUEPRINT.md` NOW SAYS THREE TIERS. `required-tests.yaml` ON THE LANE AT `be0b355` STILL
+    QUOTES THE TWO-TIER PERIMETER, AND IT QUOTES IT AS THE PRODUCT OWNER'S ORDER.** Measured, not
+    assumed — `git show wo-2r3:required-tests.yaml`, the `CD-RT-002-SEALED-AGAINST-FORGED-
+    ESTABLISHMENT` row, LIMIT 7: it carries 0018 ruling 1(b) verbatim including
+    *"which the platform does not permit preventing"*, and its closing paragraph carries
+    *"the FORGERY-DETECTION OBLIGATION owed at WO-3 as a first-class criterion (§16 CD-D-172) — AND
+    IT IS NOT BUILT YET"*.
+    **THE FIRST OF THOSE IS NOW PARTLY RETRACTED BY RULING 2 AND THE SECOND IS NOW SUPERSEDED BY
+    `CD-AC-017`/`CD-AC-018` HAVING IDS.**
+    **THIS SEAT IS NOT FIXING IT AND THE REASON IS NOT CONVENIENCE:** ruling 5 bounds increment 11
+    to the record act; the lane is the GRADED ARTEFACT and `be0b355` must still be `be0b355` when
+    the ninth seat reads it; and a Project Lead editing an Engineer's branch is `CD-RULE-002`'s
+    exact failure mode. **IT IS DISCLOSED TO THE NINTH SEAT UP FRONT AND IT IS OWED TO THE NEXT
+    ENGINEER INCREMENT.** **THE INSTRUMENT'S EXIT TEXT IS THEREFORE STALE AGAINST THE GOVERNING
+    PERIMETER, AND AN AUDITOR READING ONLY THE LANE WOULD GRADE AGAINST A PERIMETER THAT NO LONGER
+    GOVERNS.**
+- id: CD-PL-F138
+  severity: LOW
+  against: 'THIS SEAT — it wrote non-carried bytes into a protected file AGAIN, four boundaries after `F05`'
+  statement: >
+    **THE §14 DISCLOSURE BLOCKQUOTE IS THIS SEAT'S OWN PROSE IN `BLUEPRINT.md`, WHICH `CD-D-115`
+    PROTECTS FROM THIS SEAT.** It is marked **PROJECT LEAD DISCLOSURE, not product meaning**, it is
+    enumerated in §19, it states a MEASURED fact rather than a requirement, and it exists because
+    §14's own standing sentence is otherwise false of the two new rows. **THAT IS A DEFENCE AND IT
+    IS NOT AN EXEMPTION.** `F05` is four boundaries old and the honest reading is that this seat's
+    first instinct at a protected file is still to write in it. **RAISED HERE RATHER THAN WAITING
+    FOR THE NINTH SEAT TO FIND IT, AND OFFERED TO THE PRODUCT OWNER TO STRIKE IF THE ATTRIBUTION IS
+    NOT SUFFICIENT.**
+- id: CD-PL-F139
+  severity: LOW
+  against: 'THIS SEAT — a stale ceiling assumption carried into the session as if it were knowledge'
+  statement: >
+    This seat began the session carrying **"the wrapper hard-kills at 2h"** and planned the dispatch
+    order around it. **MEASURED FROM THE LIVE PROCESS INSTEAD (`CD-PL-F127`, which exists for exactly
+    this): `ps -eo pid,etimes,args` -> `timeout 21600`. SIX HOURS, NOT TWO.** No harm resulted —
+    the correction landed before any sequencing decision was taken on it — **but the plan was
+    briefly being shaped by a remembered number, which is the failure mode `CD-PL-F127` was raised
+    to end.** `CD-RULE-009` / `CD-PL-F91`: run the command, read the number, never transcribe it.
+
+# ================================================================================================== #
+what_this_boundary_did_NOT_do:
+# ================================================================================================== #
+  no_lane_file_was_touched: '`be0b355` IS STILL `be0b355`. `git diff` between `main`''s two commits touches `BLUEPRINT.md` and `tools/reconciliation/` only.'
+  no_grade_moved: '**`CD-AC-005` RED. `CD-AC-002` AMBER AND NOT CLOSED. `CD-ASR-WO2R3-04-F01` OPEN. `CD-AC-003` evidence UNSUPPORTED. Six `DEFECT_OPEN` tier-1 sites. `CD-F-0001`-`CD-F-0004` OPEN. THE WO-2 GATE IS SHUT.**'
+  no_finding_was_closed: '**NOT ONE.** `F02`, `F03`, `F06` and `F05` are ANSWERED IN THE RECORD, which is not the same as closed — `F02` is answered by a SCHEDULED door that does not exist yet, `F03` by a criterion ID whose register row is blocked on Q5, `F06` by `CD-D-174` which is logged and NOT BUILT, and `F05` not at all.'
+  the_perimeter_is_now_a_CLAIM_and_not_a_PROOF: >
+    **THREE TIERS ARE ASSERTED IN A DESIGN DOCUMENT AND ONE OF THEM IS BUILT.** PREVENTED is built
+    and measured. **RESISTED IS A SPECIFICATION WITH NO IMPLEMENTATION — the construction-provenance
+    door is `CD-AC-017`, owed at WO-3, and NOTHING IN THE TREE IMPLEMENTS IT TODAY.** DETECTED is
+    `CD-AC-018`, owed at WO-3/WO-4. **A CORRECTED PERIMETER IS NOT A DEFENDED ONE AND THIS SEAT IS
+    NOT PRESENTING IT AS ONE.**
+
+gate_state: >
+  **THE WO-2 GATE IS SHUT.** T2 RED · `CD-AC-005` RED · `CD-AC-002` AMBER AND NOT CLOSED ·
+  `CD-ASR-WO2R3-04-F01` OPEN · `CD-AC-003` evidence UNSUPPORTED · six `DEFECT_OPEN` tier-1 sites ·
+  `CD-F-0001`-`CD-F-0004` OPEN.
+  **THE AUDITOR'S CONTINUATION READING IS ADOPTED VERBATIM AND THE PRODUCT OWNER ADOPTED IT FIRST:
+  the system is SAFE TO LEAVE RUNNING** — every finding needs an actor already executing in-process,
+  nothing is remotely reachable, the detector is ADVISORY (`D1`) and no money moves on it (`D2`).
+  **THE GATE STAYS SHUT; THE GROUND IS SAFE.**
+
+decision_refs:
+- PO-DECISIONS-0019   # rulings 1-5 — the whole of this boundary's authority
+- PO-DECISIONS-0018   # ruling 1 — the perimeter DECLARED, now CORRECTED by 0019 and not replaced
+- PO-DECISIONS-0013   # ruling 5 — the META-ASSURANCE pass, authorised there and OVERDUE
+- CD-D-174            # NEW at this boundary — a disposition's claim re-verified at its re-point
+- CD-D-172            # BLUEPRINT §16 — F03 answered, F05 still open against it
+- CD-D-115            # BLUEPRINT.md protected from every seat INCLUDING the Project Lead
+- PBG-AUTH-003        # reconciliation is not acceptance
+- PBG-SOD-004         # the seat that raises a finding does not fix it
+- CD-RULE-006         # a residue names a layer MEASURED to hold it, or NOT PROVED TO BE CARRIED ANYWHERE
+- CD-PL-F127          # the wrapper ceiling is MEASURED from the live process, never read
+
+next_safe_action: >
+  **1. THE META-ASSURANCE PASS, WHICH IS OVERDUE AND WHICH THE PRODUCT OWNER SEQUENCED IMMEDIATELY
+  AFTER THIS INCREMENT** (PO-DECISIONS-0019 ruling 5; authorised at PO-DECISIONS-0013 ruling 5).
+  **A FRESH READ-ONLY SEAT WITH AN IDENTITY NEVER USED ON THIS PROJECT, BECAUSE A PROJECT LEAD
+  AUDITING ITS OWN RECONCILIATION PRACTICE IS THE SELF-APPROVAL THIS WHOLE PROGRAMME EXISTS TO
+  PREVENT** (`PBG-SOD-001`, non-waivable).
+  **AND IT IS LAUNCHED ONLY AFTER THIS BOUNDARY'S CONTINUITY BOOKKEEPING IS CLOSED, WHICH IS
+  `CD-PL-F134`'S OWN NAMED REMEDY APPLIED TO THE VERY PASS THAT WILL GRADE `CD-PL-F134`.** The
+  alternative — moving `main` under a live auditor again while it audits this seat for moving `main`
+  under a live auditor — is not available.
+  **2. THEN THE NINTH FRESH ASSURANCE SEAT** over the CORRECTED perimeter, full disclosure,
+  `CD-D-129`'s three clauses verbatim, told `CD-PL-F137`, `Q5` and `Q6` BEFORE it discovers them.
+  **3. THEN STOP AT THE GATE VERDICT.**
+  **NOTHING IS MERGED, ADMITTED OR PROMOTED MEANWHILE. NO ENGINEER IS DISPATCHED. NO GRADE MOVES.**
+  **WRAPPER CEILING MEASURED FROM THE LIVE PROCESS AND NOT READ FROM THE SCRIPT (`CD-PL-F127`):
+  `timeout 21600` — SIX hours, elapsed 493s when measured. See `CD-PL-F139`.**
+
+continuity_record_commit: d968b703cd7b4d5346ce6cb080d2d0962d1f42b8   # **RESOLVED.** `git rev-parse` + `git cat-file -t` -> commit, NEVER TRANSCRIBED (CD-PL-F36). **THE CD-RULE-008 VERDICT WAS TAKEN AT THIS SHA *BEFORE* THIS FIELD WAS WRITTEN — TWO ARMS, TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98): ARM 1 `/tmp/cd-cont35`, `--no-hardlinks` clone (CD-PL-F72) -> CONTINUITY_MATCH / **RESUME_GREEN**, observed_sha `d968b70`; ARM 2 `/srv/crash-detector` -> CONTINUITY_MATCH / **RESUME_AMBER**, SAME observed_sha, porcelain 51 and **ZERO TRACKED, ZERO GOVERNED** (50 operator wrapper artefacts + `pbg/tools/pbg/__pycache__/`). **NO `CONTINUITY_REFERENCE_INVALID` IN EITHER ARM** — the one occurrence of that string in each log is the ACTIVE_WORK narrative quoting the HISTORIC `CD-PL-F69`/`CD-PL-F132` reds, which this seat checked rather than counting a grep hit as a verdict (`CD-PL-F121`: check the population before reading the number). **THE `CD-PL-F132` REPAIR HELD FOR THE FOURTH CONSECUTIVE BOUNDARY AND IS STILL NOT TREATED AS DISCHARGED.** *** ORIGINALLY: PENDING — RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN, IN TWO ARMS, TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98). **AND `last_build_log_entry` MOVES IN THE SAME COMMIT AS THIS ENTRY (CD-PL-F132).**

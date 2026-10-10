@@ -1,0 +1,30 @@
+=== CD-RT-001-ABSENCE-RENDERS-UNKNOWN [VIOLATED] ===
+plant   : plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch   (APPLIED)
+command : PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q -p no:cacheprovider
+EXIT    : 1
+--- output (tail 25) ---
+                f"with DialMagnitude(dial_id={dial_id!r}, quantity=<float>)."
+            )
+E           crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a DialMagnitude carrying dial 'monetary_debasement', got float. A dial magnitude carries its provenance as data so that a cross-dial combination is refused by comparing values rather than by anybody having read the expression (CD-AC-002, CD-ASR-F01). Build one with DialMagnitude(dial_id='monetary_debasement', quantity=<float>).
+
+src/crash_detector/dials/scores.py:211: ScoreOutOfRange
+=========================== short test summary info ============================
+FAILED tests/test_evaluate.py::test_with_no_sources_declared_both_dials_read_unknown
+FAILED tests/test_evaluate.py::test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present
+FAILED tests/test_evaluate.py::test_evaluate_is_deterministic_for_the_same_arguments
+FAILED tests/test_evaluate.py::test_evaluate_does_not_consult_the_clock - cra...
+FAILED tests/test_evaluate.py::test_evaluate_does_not_mutate_its_inputs - cra...
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[fetch_failed]
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[http_error]
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[malformed]
+FAILED tests/test_evaluate.py::test_a_non_ok_outcome_never_produces_a_dial_contribution[empty]
+FAILED tests/test_evaluate.py::test_an_outcome_that_merely_looks_like_ok_is_not_accepted_as_one
+FAILED tests/test_evaluate.py::test_a_missing_required_input_forces_unknown
+FAILED tests/test_evaluate.py::test_a_stale_required_input_forces_unknown_and_never_the_previous_value
+FAILED tests/test_evaluate.py::test_a_future_dated_observation_is_not_treated_as_fresh
+FAILED tests/test_evaluate.py::test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage
+FAILED tests/test_evaluate.py::test_a_satisfied_dial_reads_value_with_its_inputs_named
+FAILED tests/test_evaluate.py::test_a_reading_is_only_as_fresh_as_its_oldest_input
+FAILED tests/test_evaluate.py::test_the_latest_observation_per_source_wins - ...
+FAILED tests/test_evaluate.py::test_a_decade_old_observation_is_not_usable_under_any_constructible_window
+18 failed, 106 passed in 0.89s

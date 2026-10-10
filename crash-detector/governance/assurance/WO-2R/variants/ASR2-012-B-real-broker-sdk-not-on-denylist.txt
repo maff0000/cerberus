@@ -1,0 +1,8 @@
+ASR2-012-B. Appended to requirements.txt AND requirements.lock:
+    tastytrade-sdk==1.2.0
+tastytrade is a REAL, currently-operating US brokerage and `tastytrade-sdk` is its real
+order-entry SDK. It is absent from the 61-name denylist and carries no execution token.
+RESULT: CD-RT-012-LOCKFILE-DENYLIST exit 0, PASS 17 assertions, 0 violations.
+CONTROLS RUN ALONGSIDE:
+    meridian-fix-connect==0.4.1   -> exit 1, CAUGHT on the `fix` token. The token rule bites.
+    lattice-client==2.0.0         -> exit 0, escaped (fictional name, no token).

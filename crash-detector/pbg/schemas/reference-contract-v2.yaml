@@ -1,0 +1,1069 @@
+# STABLE REFERENCE-BEARING FIELD CONTRACT, VERSION 2.
+#
+# WHAT THIS IS. The complete, EXPLICIT, ENUMERATED list of fields in PBGv2 governed evidence that
+# carry a Git object reference, and the object type each one carries. Nothing else.
+#
+# WHY IT EXISTS. FWK-OBS-016, REFERENCE_CONTRACT_BOOTSTRAP_CIRCULARITY. The reference vocabulary
+# lived inside the candidate, so a new governed field could only exist if an Engineer widened the
+# contract that judges that same candidate's evidence:
+#
+#     new governed field -> the contract must declare it -> the candidate changes the contract
+#                        -> the candidate then judges evidence using the contract it changed
+#
+# That is the trust shape removed from SEAT_DELIVERY by seat-delivery-contract-v1.yaml, one layer
+# lower. THE RULE: a candidate must not be able to widen the reference vocabulary used to judge that
+# same candidate's governed evidence. So this contract is committed as a GOVERNANCE BOOTSTRAP
+# ARTEFACT, on the governance lineage, BEFORE the authority that will reference it.
+#
+# NO INFERENCE. EVER. Product Authority ruling of 2026-08-07:
+#     do NOT infer types from suffixes
+#     do NOT use generic _commit / _tree / _tip / _blob conventions
+#     do NOT silently classify undeclared fields
+# A field whose name ends in `_commit` gets NO type from that fact. `completely_new_commit` carrying a
+# valid commit SHA must be REFUSED as UNDECLARED_REFERENCE_FIELD, and there is a mandatory negative
+# test for exactly that, because a convention that usually works is how `candidate_treeish_thing`
+# silently acquires semantics.
+#
+# HOW THIS LIST WAS BUILT. Mechanically, not by hand. Every field below was found by walking every
+# YAML under governance/ and evidence/ in the governed corpus, taking each 40-hex string, and asking
+# GIT what the object actually is with `git cat-file -t`. The type is the OBSERVED type, never the
+# type the name suggests. 141 fields; ZERO carry more than one object type anywhere in the corpus,
+# which is what makes enumeration safe here. Hand-typing 141 entries is precisely where a Project
+# Lead introduces errors, so the Project Lead did not hand-type them.
+#
+# SCOPE. What currently exists, and nothing speculative. This is not an attempt to enumerate every
+# conceivable Git-related field. When a genuinely new governed reference-bearing field is needed, it
+# requires reference-contract-v3.yaml committed BEFORE the Engineer authority allowed to use it.
+#
+# FROZEN. Version 2 is immutable once committed. v1 (delivery contract) stays immutable, v2 stays
+# immutable, v3 will stay immutable. Every historical artefact remains testable against the exact
+# vocabulary that existed when it was created. That is the leverage: the schema becomes the stable
+# API of governance evidence.
+
+schema_version: 2
+schema_id: pbg:schemas/reference-contract-v2.yaml
+title: PBGv2 Reference-Bearing Field Contract, version 2
+status: STABLE_FROZEN
+record_origin: GOVERNANCE_BOOTSTRAP_ARTEFACT
+recorded_by: PROJECT_LEAD
+authorised_by: >
+  PRODUCT_AUTHORITY ruling of 2026-08-07 — NARROW, EXPLICIT, ENUMERATED. Option 1 selected over
+  suffix inference, on the grounds that "v3 exists" is a cheaper failure than a field silently
+  acquiring semantics from its name.
+supersedes: null
+supersedes_note: >
+  This does NOT edit or replace any earlier contract. seat-delivery-contract-v1.yaml remains frozen
+  and untouched. A future v3 will not edit this file either.
+immutability_rule: >
+  These bytes never change. A later need is version 3 in its own file, committed before the authority
+  that may use it.
+
+policy:
+  suffix_inference: PROHIBITED
+  default_object_type: null
+  undeclared_field_disposition: FAIL_CLOSED
+  undeclared_field_code: UNDECLARED_REFERENCE_FIELD
+  undeclared_field_note: >
+    An undeclared reference-bearing field is a POLICY failure, not a resolution failure. The value may
+    resolve perfectly in Git and the field is still refused, because nothing declared what it means.
+  abbreviated_references: PROHIBITED unless a field explicitly declares otherwise below.
+  mandatory_negative_test: >
+    A field named `completely_new_commit` carrying a VALID 40-hex commit SHA must be REFUSED with
+    UNDECLARED_REFERENCE_FIELD. If that test ever passes, suffix inference has been reintroduced.
+
+field_declaration_shape:
+  object_type: the Git object type the value must resolve to — commit, tree or blob
+  full_40_hex_mandatory: whether an abbreviated reference is refused
+  permitted_sentinels: non-SHA values lawful in this position, exhaustively listed; empty means none
+  legally_used_in: the evidence areas where this field may lawfully appear
+  declared_in_contract_version: the contract version that first declared it
+  observed_occurrences: how many times it was found in the corpus when this contract was built
+
+fields:
+  ancestry_proof.authority_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  ancestry_proof.merge_base_of_the_two_lanes:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  assurance_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  assurance_evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 3
+  assurance_lane_tip:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  assurance_lineage.candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 14
+  assurance_lineage.evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 5
+  audit_evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  authorised_refs.candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  authorised_refs.resolved_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  authority_ancestry.authority_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  authority_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 18
+  authority_governance_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  authority_precedence_proof.authority_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  baseline_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 17
+  baseline_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  baseline_sha:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 32
+  byte_identity_acceptance.auth_0018_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  byte_identity_acceptance.auth_0022_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  byte_identity_baselines.auth_0018_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  byte_identity_baselines.auth_0022_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  candidate_not_modified.candidate_tree_expected:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  candidate_not_modified.candidate_tree_observed:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  candidate_not_modified.engineer_lane_0008_tip:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  candidate_reachability.target_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  candidate_reachability.target_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  closed_against_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  confirmation_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  confirmation_evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  continuity_record_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  corrections.abbreviated_fields_resolved.delivery_evidence.build_log_commit.authoritative:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  corrections.abbreviated_fields_resolved.delivery_evidence.delivery_attestation_commit.authoritative:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  corrections.abbreviated_fields_resolved.delivery_evidence.executor_instance_seat_start_short.authoritative:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  corrections.authoritative_value:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  corrections.superseded_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  corrections.superseded_in_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  current_sha:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 48
+  delivery_attestation_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  delivery_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: ['DECLARED_IN_A_LATER_RECORD']
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 0
+  delivery_evidence.delivery_attestation_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  delivery_evidence.head_at_closure:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  delivery_evidence.seat_start_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  delivery_evidence.successor_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  delivery_evidence.successor_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  delivery_evidence_contract.blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  delivery_evidence_contract.commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  delivery_evidence_contract_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  delivery_record:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.authority_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.delivery_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.delivery_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: ['DECLARED_IN_A_LATER_RECORD']
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.delivery_declares_produced_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.seat_start_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  derived_engineer_to_candidate_relationship.seat_start_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  engineer_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  engineer_branch_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: ['RESOLVES_TO_THE_COMMIT_CARRYING_THIS_FILE']
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  engineer_evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 8
+  first_assurance_log.commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  first_engineer_log.binds_to_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  first_engineer_log.commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  gates.base_is_exactly_the_confirmation_revision.engineer_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  gates.base_is_exactly_the_confirmation_revision.resolved:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  gates.worktree_head_equals_base.head:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  governance_actions.evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  governance_actions.target_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  governance_correction_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  governance_head_at_audit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  governance_head_at_closure:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  governance_head_at_grant:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 15
+  historical_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  historical_delivery_record:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  historical_lane_tip:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  historical_produced_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  implementing_authority_closure_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 5
+  implementing_seat_delivery_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 3
+  implementing_seat_start_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 3
+  independent_regression.measured_at:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  lane_tip:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  last_completed_checkpoint_sha:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  must_remain_byte_identical.auth_0018_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  must_remain_byte_identical.auth_0022_blob:
+    object_type: blob
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  negative_probes.N7_authority_is_not_an_ancestor.subjects_used:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  negative_probes.N8_authority_not_an_ancestor.subject_used:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  new_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: ['NOT_YET_PRODUCED', 'NOT_LAWFULLY_ADOPTABLE']
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 10
+  new_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 5
+  positive_case.assurance_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  positive_case.engineer_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  predecessor_closure_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  predecessor_correction_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  predecessor_disposition_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  predecessor_meta_verdict:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  predecessor_new_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  predecessor_post_disposition_confirmation:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  prior_assurance.candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  prior_assurance.evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  prior_assurance_addendum_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  prior_assurance_closure_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 5
+  prior_assurance_evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 10
+  prior_assurance_seat_start_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  prior_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 3
+  prior_meta_verdict:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  produced_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  rejected_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  reproduction_source_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  reproduction_source_lane_tip:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 3
+  reproduction_source_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  resolved_value:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  resume_reconciliation.observed_head:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  seat_delivery_attestation_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  seat_start.commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  seat_start.names_exact_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  seat_start.names_exact_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  seat_start.names_exact_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  seat_start.parent:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  seat_start_attestation.commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  seat_start_attestation.parent:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  seat_start_attestation_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 4
+  spawn_record_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 8
+  subject_of_this_meta_audit.candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  subject_of_this_meta_audit.internal_amber_verdict:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  supersedes_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 11
+  target_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 41
+  target_candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence, governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 20
+  target_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 2
+  verdict_bound_to.assurance_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_bound_to.authority_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_bound_to.candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_bound_to.candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.candidate_tree:
+    object_type: tree
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.evidence_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.final_log_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.lifecycle_addendum_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.seat_start_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.target_candidate:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  verdict_evidence.verdict_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  worktree_confirmation_commit:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  worktree_head_resolved:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: []
+    legally_used_in: [evidence]
+    declared_in_contract_version: 2
+    observed_occurrences: 1
+  worktree_isolation.assurance_branch_base:
+    object_type: commit
+    full_40_hex_mandatory: true
+    permitted_sentinels: ['RESOLVES_TO_THE_COMMIT_CARRYING_THIS_FILE']
+    legally_used_in: [governance]
+    declared_in_contract_version: 2
+    observed_occurrences: 1

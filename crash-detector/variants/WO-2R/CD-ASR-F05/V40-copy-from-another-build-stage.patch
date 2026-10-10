@@ -1,0 +1,13 @@
+diff --git a/deploy/Dockerfile.engine b/deploy/Dockerfile.engine
+index 07225f5..594e5f0 100644
+--- a/deploy/Dockerfile.engine
++++ b/deploy/Dockerfile.engine
+@@ -59,7 +59,7 @@ WORKDIR /app
+ # at /tmp; durable data belongs to the store's named volume alone, and this image mounts it
+ # nowhere.
+ COPY --chown=root:root --chmod=0555 src/ /app/src/
+-COPY --chown=root:root --chmod=0555 deploy/entrypoints/ /app/entrypoints/
++COPY --from=assets --chown=root:root --chmod=0555 /build/entrypoints/ /app/entrypoints/
+ 
+ # .dockerignore, OWED AND STATED. The build context is the repository root, so a
+ # `.dockerignore` must exist there before this is built, excluding at least: .git/,

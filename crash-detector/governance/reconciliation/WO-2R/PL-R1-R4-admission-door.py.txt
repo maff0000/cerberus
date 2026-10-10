@@ -1,0 +1,37 @@
+import sys
+sys.path.insert(0, "src")
+from crash_detector.dials.magnitude import DialMagnitude
+from crash_detector.dials import provenance as PV
+from crash_detector.dials import scores as S
+from crash_detector.publication import dial_scalar as P
+
+def probe(n, fn):
+    try:
+        print(f"{n}: *** NOT REFUSED *** -> {str(fn())[:100]}")
+    except BaseException as e:
+        print(f"{n}: REFUSED {type(e).__name__}: {str(e)[:80]}")
+
+eq = DialMagnitude(dial_id="equity_crash",
+                   quantity=PV.observed_for_dial(dial_id="equity_crash", quantity=0.4, inputs_used=("s1",)))
+mo = DialMagnitude(dial_id="monetary_stress",
+                   quantity=PV.observed_for_dial(dial_id="monetary_stress", quantity=0.6, inputs_used=("s2",)))
+def leak(m): return float(repr(m).split("quantity=")[1].rstrip(")"))
+
+probe("PL-Q4  repr-launder+rewrap+publish", lambda: S.EquityCrashScore(
+    score=DialMagnitude(dial_id="equity_crash", quantity=(leak(eq)+leak(mo))/2), contributions=()))
+probe("PL-Q6  publication gate on bare blend", lambda: P.number_for_dial_slot(
+    "equity_crash", DialMagnitude(dial_id="equity_crash", quantity=(leak(eq)+leak(mo))/2)))
+
+# --- PL fresh probes against the NEW admission door -------------------------------------- #
+b = (leak(eq)+leak(mo))/2
+probe("PL-R1  observed_for_dial re-admits the blend", lambda: DialMagnitude(
+    dial_id="equity_crash",
+    quantity=PV.observed_for_dial(dial_id="equity_crash", quantity=b, inputs_used=("banner",))))
+probe("PL-R2  derived_within_one_dial re-admits the blend", lambda: DialMagnitude(
+    dial_id="equity_crash",
+    quantity=PV.derived_within_one_dial(dials=frozenset({"equity_crash"}), value=b)))
+probe("PL-R3  DeclaredQuantity constructed directly", lambda: PV.DeclaredQuantity(
+    dials=frozenset({"equity_crash"}), value=b))
+probe("PL-R4  slot rewrite on a legitimate quantity", lambda: (
+    object.__setattr__(eq._DialMagnitude__quantity, "_DeclaredQuantity__value", b),
+    P.number_for_dial_slot("equity_crash", eq))[1])

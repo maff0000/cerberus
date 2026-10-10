@@ -1,0 +1,369 @@
+# ================================================================================================== #
+# CD-DISPATCH-INC12-COORDINATION-ENGINEER
+#
+# INCREMENT 12 — **THE COORDINATION DISCIPLINE.** ONE bounded Engineer increment, six items.
+#
+# **READ THIS FIRST AND READ IT TWICE: YOU ARE NOT BUILDING A BAN ON CONCURRENCY. YOU ARE BUILDING
+# THE MACHINERY THAT MAKES DISJOINT PARALLELISM SAFE.** The Product Owner's ruling is explicit and
+# it is Matt's own direction: *"multiple PLs / engineers on non-overlapping fixed tasks is fine, and
+# great if it is faster — just no redoing each other's work, and discipline that holds."*
+#
+# **THE INVARIANT IS NON-OVERLAP. IT IS NOT ONE-WRITER-AT-A-TIME.**
+#
+# A control that refuses every parallel launch satisfies "no two seats overlap" VACUOUSLY, and this
+# project has a long record of vacuous greens. **EVERY ONE OF YOUR CONTROLS MUST BE PROVED TO ADMIT
+# THE DISJOINT CASE AS WELL AS REFUSE THE OVERLAPPING ONE.** A refusal-only control is a FAILED item
+# at this increment, not a conservative one.
+# ================================================================================================== #
+
+dispatch_id: CD-DISPATCH-INC12-COORDINATION-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T13:41:32Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by_seat: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T134132Z-0139
+parent_dispatch: null                 # NEW LINE. This is not a WO-2R3 increment — see CD-D-176.
+
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0021.md`, commit `e6f9802`, **authored by Matt Scott and by no
+  seat.** Ruling 3 orders THIS AND ONLY THIS as increment 12, and names its four parts (a)-(d)
+  verbatim. Ruling 2 names the CAUSE and the Product Owner OWNS IT ON THE RECORD: *"I dispatched
+  PO-DECISIONS-0020 (wo2r3n) while PO-DECISIONS-0019 (wo2r3m) was still alive, BOTH pointed at the
+  WO-2R3 lane and the same increment stream. The record survived only because git's index lock
+  serialised the writes. My launch-lease lived in the driver and not in my own hand. This is the
+  PO's error, on the record."* Ruling 4: *"a fix that held N times then failed is
+  structural-until-proven."* Ruling 6 puts the NINTH gate immediately after you bank.
+
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md      # canonical local file; the operator pastes no role prompt
+actor_id: CD-ENG-COORD-01                 # **FRESH. You are none of the prior seats.**
+engineer_actor_ids_you_are_not: [CD-ENG-WO2R3-01, CD-ENG-WO2R3-02, CD-ENG-WO2R3-03, CD-ENG-WO2R3-04,
+                                 CD-ENG-WO2R3-05, CD-ENG-WO2R3-06, CD-ENG-WO2R3-07,
+                                 CD-ENG-WO2R3-08, CD-ENG-WO2R3-09]
+assurance_actor_ids_you_are_not: [CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, CD-ASR-WO2R3-01,
+                                  CD-ASR-WO2R3-02, CD-ASR-WO2R3-03, CD-ASR-WO2R3-04,
+                                  CD-ASR-WO2R3-05, CD-META-01, CD-META-02]
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+separation_of_duties: >
+  **PBG-SOD-001, NON-WAIVABLE. YOU BUILD; YOU DO NOT GRADE.** You will not audit your own work and
+  you will not declare the increment PASS. A FRESH Assurance seat grades it. Your expected return is
+  **`READY_FOR_ASSURANCE`** — or **`SCOPE_INSUFFICIENT`** with the reason, which two prior Engineer
+  seats on this project returned in writing and were RIGHT to return.
+
+# ================================================================================================== #
+# YOUR SCOPE. **THIS INCREMENT EXECUTES UNDER THE DISCIPLINE IT BUILDS — CD-D-174.**
+# ================================================================================================== #
+target:
+  repository: local
+  branch: inc12-coordination                     # **NEW BRANCH, cut from `main` at `e6f9802`.**
+  base_sha: e6f980252854d6a79efaf42d4fddb998f19d8540   # **RESOLVE IT YOURSELF** — `git rev-parse` + `git cat-file -t` (CD-PL-F36). NEVER transcribe.
+  worktree: /srv/crash-detector-inc12            # **YOURS ALONE. PL-prepared, porcelain 0 at issue.**
+  scratch: /tmp/cd-eng-coord-01/                 # **YOURS ALONE.**
+  governance_on_main: /srv/crash-detector        # **READ-ONLY TO YOU. DO NOT WRITE HERE.**
+
+why_a_separate_branch_and_worktree_when_this_lands_on_main: >
+  **BECAUSE DELIVERABLE (b) IS DISJOINT WRITE SCOPES AND DELIVERABLE (c) IS A MERGE STEP, AND AN
+  INCREMENT THAT BUILDS THEM WHILE ITSELF EDITING THE ACCOUNTABLE SEAT'S CHECKOUT WOULD BE THE
+  EXACT THING IT FORBIDS.** The Project Lead merges your branch at the accountable seat and runs
+  YOUR OWN merge-reconciliation instrument over the result. **IF YOUR INSTRUMENT REFUSES THE MERGE
+  OF YOUR OWN INCREMENT, THAT IS A RESULT AND NOT AN EMBARRASSMENT — RETURN IT.**
+
+your_writable_scope_EXHAUSTIVE_AND_NOTHING_ELSE:
+- 'tools/coordination/**            — NEW. All executable machinery.'
+- 'governance/coordination/**       — NEW. The record: claims, leases, blocks, contracts, plants, merges.'
+- 'governance/engineering/build-log/BL-*-03NN.yaml — **YOUR OWN ID BLOCK `0300`-`0399` ONLY** (CD-D-175).'
+
+paths_that_are_NOT_YOURS_AND_A_WRITE_TO_ANY_OF_THEM_IS_A_SCOPE_BREACH:
+- 'governance/engineering/ACTIVE_WORK.yaml — **THE SHARED RECORD FILE. THE ACCOUNTABLE SEAT WRITES IT AND NOBODY ELSE.** This is deliverable (b) applied to you first.'
+- 'governance/engineering/build-log/ — every entry OUTSIDE `0300`-`0399`. `0100`-`0199` is the Project Lead on `main`; `0200`-`0299` is the WO-2R3 lane (CD-D-173, UPHELD by the eighth Assurance seat by its own derivation).'
+- 'BLUEPRINT.md · PID.md · governance/blueprint/** — PROTECTED FROM EVERY SEAT INCLUDING THE PROJECT LEAD (CD-D-115). Only the Product Owner amends them.'
+- 'governance/decisions/** — Product Owner only.'
+- 'governance/dispatch/** — including THIS FILE. **A LIVE SEAT''S CONTRACT WAS REWRITTEN UNDER IT TODAY AND IT NEARLY DESTROYED A 766-LINE VERDICT.** Nobody rewrites a live contract, in either direction.'
+- 'pbg/** — PINNED AND READ-ONLY (`PBG-FWK-013`). **THIS ONE HAS A TRAP IN IT: SEE ITEM 4(ii).** Editing it to make a control pass is a bypass, not a fix.'
+- 'the `wo-2r3` branch and `/srv/crash-detector-wo2r3*` — **FROZEN AT `be0b355` FOR THE NINTH ASSURANCE GATE (CD-D-176). DO NOT TOUCH THE LANE.**'
+- 'tools/reconciliation/**, tools/sweep/**, tools/register/**, src/** — not this increment.'
+
+# ================================================================================================== #
+# THE THING YOU ARE FIXING. **TWO INDEPENDENT META-ASSURANCE SEATS GRADED THE PRACTICE `RED`.**
+# ================================================================================================== #
+the_two_REDs_you_are_the_remedy_for:
+  both_are_BANKED_and_ACCEPTED_and_neither_is_arguable: >
+    `governance/assurance/META/VERDICT-META-ASSURANCE-01.md` (first seat, 766 lines) and
+    `VERDICT-META-ASSURANCE-01-SECOND-SEAT.md` (second seat, 762 lines). **DIFFERENT METHODS, SAME
+    GRADE — the Product Owner calls that confirmation and not a shared blind spot (ruling 1).**
+    **READ THE SECOND SEAT'S §582 FIRST**: it names the true root cause of `CD-PL-F134`, `CD-PL-F143`
+    and the day's three breaches as ONE cause. You are building against that cause.
+  CD_PL_F134_verbatim_from_BL_20260823T122959Z_0134: >
+    *"**`main` ADVANCED `d0d13f8` -> `baede05` WHILE `CD-ASR-WO2R3-05` WAS LIVE**, and the seat found
+    it rather than being told. ... **BUT `governance/` ON `main` IS THE SEAT'S OWN READING MATERIAL,
+    AND IT CHANGED UNDER IT.** The dispatch says *"NOTHING ELSE MOVES WHILE YOU ARE OUT"* and this
+    seat then moved something. **THE HARM WAS ZERO AND THE DISCIPLINE WAS STILL BROKEN. The remedy is
+    not "remember"**: it is that continuity bookkeeping for a boundary should close BEFORE a
+    read-only seat is launched against that boundary, or the seat should be told the range in
+    advance. **NEITHER HAPPENED.**"*
+    **IT THEN RECURRED. THAT IS WHY IT IS YOURS AND NOT A NOTE.**
+  CD_PL_F132_what_it_actually_is: >
+    `ACTIVE_WORK.yaml`'s `last_build_log_entry` pointer must move IN THE SAME COMMIT as the Build Log
+    entry it names, so a cold clone can boot. **THE DISCIPLINE WAS MEASURED AT 91 APPLICATIONS AND 4
+    FAILURES — at positions 76, 85, 90 and 91 of 91, THE LAST TWO THE MOST RECENT IN PROJECT HISTORY
+    AND NEITHER RAISED BY ANYONE.** Five consecutive commits booted `RESUME_BLOCKED`; **a cold agent
+    could not start this project from its own tip.**
+  and_the_sentence_that_tells_you_what_kind_of_fix_is_acceptable: >
+    *** **"A PREDICTION IS NOT A CARRIER"** — the meta-auditor's phrase, adopted by the Product Owner
+    at ruling 4. *** `CD-PL-F111` -> `CD-PL-F112` -> `CD-PL-F132` is a discipline that lived only in
+    a seat's attention, was declared structurally fixed, held eight boundaries, and failed at the
+    ninth. **A COMMENT, A RULE, A CHECKLIST OR A PARAGRAPH IN A DISPATCH IS NOT A DELIVERABLE AT THIS
+    INCREMENT. AN EXECUTABLE THAT REFUSES IS.**
+
+# ================================================================================================== #
+# **THE CONTRAST FORM. THIS IS THE PROJECT'S EVIDENCE STANDARD AND IT IS NOT NEGOTIABLE HERE.**
+# ================================================================================================== #
+the_contrast_form_every_control_must_be_planted_in:
+  the_standard_CD_ENG_WO2R3_F12: >
+    **A PLANT IS EVIDENCE WHEN IT APPLIES, CONTRASTS, AND FAILS AT THE LAYER ITS PROPOSITION NAMES —
+    never merely when it exits non-zero.** `CD-D-079`: **every claim that something is refused
+    requires the counterfactual arm. A refusal with no contrast is indistinguishable from a probe
+    that never ran.**
+  what_that_means_for_a_COORDINATION_control_specifically:
+    ARM_1_BASELINE_REFUSES: 'With the control INTACT, the OVERLAPPING attempt is REFUSED — non-zero exit, and the refusal names the OTHER seat, the OVERLAPPING ARTEFACT and the reason.'
+    ARM_2_VIOLATED_ADMITS: 'With ONE NAMED MUTATION applied by `git apply` from a checked-in patch, the SAME overlapping attempt is ADMITTED — and the resulting state (two holders of one task / two seats writing one file) is DEMONSTRATED, not asserted.'
+    ARM_3_AND_THIS_ONE_IS_NEW_AND_MANDATORY_THE_NON_VACUITY_ARM: >
+      *** **WITH THE CONTROL INTACT, A DISJOINT ATTEMPT IS ADMITTED AND PROCEEDS IN PARALLEL.** ***
+      **A CONTROL THAT REFUSES BOTH THE OVERLAPPING AND THE DISJOINT CASE HAS NOT IMPLEMENTED THE
+      RULING — IT HAS BANNED CONCURRENCY, WHICH THE RULING EXPLICITLY REJECTS.** Every one of your
+      four plants carries all three arms. **ARM 3 IS THE ONE THE PRODUCT OWNER WILL LOOK AT.**
+  and_capture_the_exit_code_correctly_CD_PL_F131: >
+    **`rc=$?` ON THE LINE IMMEDIATELY AFTER THE COMMAND.** Reading an exit code from the end of a
+    pipeline, or from a `printf` whose arguments contain a command substitution, **RECORDED A FAILING
+    VACUITY ARM AS PASSING** on this project — and then RECURRED in the Project Lead's own shell two
+    hours later while measuring its own finding about itself.
+
+# ================================================================================================== #
+# THE SIX ITEMS.
+# ================================================================================================== #
+items:
+
+  ITEM_1_THE_WORK_CLAIM_REGISTRY:
+    delivers: 'PO-DECISIONS-0021 ruling 3(a) — *"A task is atomically claimed before it is worked; a launch refuses to start on an already-claimed task. Two seats can never take the same work."*'
+    the_shape_and_WHY_IT_IS_NOT_A_LIST_FILE: >
+      *** **THE REGISTRY IS A DIRECTORY, ONE FILE PER CLAIM — `governance/coordination/claims/<task-id>.claim.yaml`.
+      IT IS NOT A SHARED YAML LIST.** *** A shared list file RE-CREATES THE EXACT CONTENTION THIS
+      INCREMENT EXISTS TO REMOVE: two seats read it, both append, one write wins, and the loser's
+      claim vanishes with no error anywhere. **THE DIRECTORY IS THE REGISTRY. THE FILESYSTEM IS THE
+      LOCK.** If you find a reason this is wrong, say so and return it — do not quietly build the list.
+    the_atomicity_requirement_STATED_AS_A_MECHANISM_AND_NOT_AS_A_GOAL: >
+      **THE CLAIM IS TAKEN WITH `os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)` AND THE
+      `FileExistsError` IS THE REFUSAL.** **A `if os.path.exists(p): refuse` FOLLOWED BY A WRITE IS
+      THE DEFECT, NOT THE CONTROL** — it is a TOCTOU window, and two seats interleaved inside it both
+      succeed. **THIS DISTINCTION IS THE WHOLE ITEM AND YOUR PLANT MUST PROVE IT** (see ITEM 5).
+    the_claim_file_records: >
+      `task_id` · `seat_actor_id` · `pid` · `hostname` · `claimed_utc` (from `date -u`, CD-RULE-005) ·
+      `base_sha` at claim time (resolved, never transcribed) · `branch` · `worktree` ·
+      `write_scope` (path globs) · `read_scope` (path globs — **F134's material**) ·
+      `build_log_id_block` · `dispatch_id` · `state` (`CLAIMED` / `RELEASED` / `ABANDONED`).
+    the_commands: >
+      `claim` (atomic, refuses on an existing claim, naming the holder, its PID and its claim time) ·
+      `release --task --seat` (**ONLY THE HOLDING SEAT MAY RELEASE — a seat releasing another seat's
+      claim is a refusal, and this matters because it is how a launch script papers over a collision**) ·
+      `list` · `status --task`.
+    the_stale_claim_question_ANSWER_IT_EXPLICITLY_DO_NOT_LEAVE_IT_IMPLICIT: >
+      A claim whose PID is dead is STALE. **REAPING IT SILENTLY IS THE BUG THAT MAKES THE WHOLE
+      REGISTRY WORTHLESS** — a wrapper hard-kill (which has happened on this project, an entire
+      Assurance audit ceased to exist) leaves a claim behind, and if the next launch reaps it without
+      trace nobody learns a seat died. **REAP EXPLICITLY, WRITE THE REAPING INTO THE CLAIM FILE WITH
+      ITS REASON AND THE EVIDENCE OF DEATH, AND MAKE THE REAP A SEPARATE COMMAND FROM `claim`.**
+
+  ITEM_2_DISJOINT_WRITE_SCOPES:
+    delivers: 'PO-DECISIONS-0021 ruling 3(b) — *"Each concurrent seat gets its own worktree/lane for code and its OWN record files — per-seat build-log id blocks (closing IMP-023), no shared ACTIVE_WORK.yaml edit, no shared sequence. Parallel writers never touch the same bytes."*'
+    part_a_the_scope_algebra: >
+      `tools/coordination/scope.py` — parse a scope declaration (a list of path globs, repo-relative),
+      normalise it, and answer `overlaps(a, b)`. **FAIL CLOSED (`CD-RULE-003`): IF THE ALGEBRA CANNOT
+      PROVE TWO SCOPES DISJOINT, IT REPORTS THEM AS OVERLAPPING.** A "derive or refuse" answer, never
+      a plausible one. **AND PRINT THE DECLARED LIMIT OF THE ALGEBRA ON EVERY RUN (`CD-RULE-004`):
+      say exactly which glob forms it decides and which it refuses to decide.** Symlinks, `..`
+      traversal and case-insensitive collisions are the obvious holes — **DECIDE THEM OR DECLARE THEM,
+      and this project treats an undeclared limit as the finding, not the limit itself.**
+    part_b_the_live_disjointness_check: >
+      `tools/coordination/check_scope_disjoint.py` — over ALL LIVE claims, assert pairwise-disjoint
+      write scopes. Non-zero exit NAMES the two seats and the overlapping path. **AND IT MUST ALSO
+      ASSERT THE ASYMMETRIC CASE: one seat's WRITE scope against another seat's READ scope. THAT IS
+      `CD-PL-F134` AND IT IS THE ONE EVERYBODY FORGETS, INCLUDING THE SEAT THAT RAISED IT.**
+    part_c_PER_SEAT_BUILD_LOG_ID_BLOCKS_closing_IMP_023_and_CD_D_173: >
+      `governance/coordination/BUILD-LOG-ID-BLOCKS.yaml` — the allocation table, plus
+      `tools/coordination/check_build_log_blocks.py` which REFUSES (1) two blocks that overlap and
+      (2) a Build Log entry whose id number falls outside its author's allocated block.
+      **CURRENT ALLOCATION, MEASURED AND NOT ASSUMED — VERIFY EACH ONE YOURSELF:** `0001`-`0059`
+      CLOSED (`CD-D-132`) · `0060`-`0099` CLOSED, exhausted (`CD-D-173`) · `0100`-`0199` PROJECT LEAD
+      on `main`, currently at `0139` · `0200`-`0299` the WO-2R3 lane (`CD-D-173`) · **`0300`-`0399`
+      YOURS (`CD-D-175`)**.
+      *** **DECLARED STOP: IF CLOSING THIS REQUIRES RENUMBERING ANY EXISTING BUILD LOG ENTRY, STOP AND
+      RETURN. Rewriting Build Log history is NON-WAIVABLE — corrections supersede, never edit.** ***
+      **AND A DISCLOSURE YOU ARE OWED: `IMP-023` DOES NOT EXIST IN THIS REPOSITORY.** The Project Lead
+      searched every tracked and untracked path; the string occurs in `PO-DECISIONS-0021.md` and
+      NOWHERE ELSE. **THE ONLY DEFINITION AVAILABLE TO YOU IS THE RULING'S OWN CLAUSE, quoted above.
+      BUILD TO THAT CLAUSE AND SAY IN YOUR RETURN THAT YOU COULD NOT READ THE REGISTER ENTRY.** This
+      is an open Product Authority question (`Q13`) and it is NOT yours to answer.
+    part_d_no_shared_ACTIVE_WORK_edit_and_no_shared_sequence: >
+      `tools/coordination/check_no_shared_record_write.py` — TWO directions, both required:
+      **(1) PROSPECTIVE** — refuse a claim whose declared `write_scope` includes
+      `governance/engineering/ACTIVE_WORK.yaml` when the claiming seat is not the ACCOUNTABLE seat.
+      **(2) RETROSPECTIVE, OVER A COMMIT RANGE** — refuse when a commit touching `ACTIVE_WORK.yaml`
+      carries a non-accountable seat's identity. **PROSPECTIVE-ONLY IS A PROMISE; THE RETROSPECTIVE
+      ARM IS WHAT MAKES IT A CONTROL.** Seat identity comes from the git author (`CD-RULE-002`).
+    part_e_the_REAL_FIX_FOR_CD_PL_F132_AND_IT_GOES_HERE_BECAUSE_IT_IS_A_SEQUENCE_PROBLEM: >
+      `tools/coordination/check_build_log_pointer_atomic.py` — **over a commit range, REFUSE any
+      commit that ADDS a `governance/engineering/build-log/BL-*.yaml` entry WITHOUT moving
+      `last_build_log_entry` in `ACTIVE_WORK.yaml` IN THAT SAME COMMIT, and REFUSE any commit where
+      the pointer's new value does not name a Build Log entry that exists in that commit's tree.**
+      **RUN IT BACKWARD OVER THIS PROJECT'S OWN HISTORY AND REPORT THE COUNT IT CATCHES.** The record
+      says 4 failures in 91 applications at positions 76, 85, 90 and 91. **DERIVE THAT NUMBER, DO NOT
+      COPY IT** — and if your instrument disagrees with the record, **YOUR INSTRUMENT'S NUMBER IS THE
+      FINDING AND THE RECORD IS WHAT GETS CORRECTED.** *(The open question `WHEN A RULE IS ADOPTED, IS
+      THE RECORD SWEPT BACKWARD FOR THE INSTANCES THAT MOTIVATED IT?` has been on this project's
+      docket since `T23` and nobody has answered it. **YOUR BACKWARD RUN ANSWERS IT BY EXAMPLE.**)*
+
+  ITEM_3_THE_MERGE_RECONCILIATION_STEP:
+    delivers: 'PO-DECISIONS-0021 ruling 3(c) — *"A MERGE / RECONCILIATION step at the accountable seat that integrates disjoint results and asserts no two seats touched the same artefact."*'
+    the_instrument: '`tools/coordination/merge_reconcile.py --base <sha> --claim <task-id> [--claim ...]`'
+    the_three_assertions_ALL_REQUIRED: >
+      **(1) CONTAINMENT** — for each claim, every path in `git diff --name-only <base>..<seat-tip>` is
+      INSIDE that seat's declared `write_scope`. A seat that exceeded its lane is named with the path.
+      **(2) NON-OVERLAP — THE ONE THE RULING NAMES** — the pairwise INTERSECTION of the seats'
+      touched-path sets is EMPTY. Non-zero exit names the ARTEFACT and BOTH seats.
+      **(3) IDENTITY** — every commit in each seat's range carries that seat's `actor_id` in the git
+      author (`CD-RULE-002`). **TWO IDENTITIES INTERLEAVED IN ONE HISTORY IS `CD-RULE-002`'S EXACT
+      FAILURE MODE AND IT IS WHAT "TWO PROJECT LEADS COMMIT AS ONE IDENTITY AND NOTHING DETECTS IT"
+      MEANS IN PRACTICE.**
+    it_emits_a_record_and_the_record_is_the_point: >
+      `governance/coordination/merges/<utc>-<merge-id>.yaml` — the base, each seat's range and tip,
+      each touched-path set, the intersection (empty or not), and the verdict. **`PBG-CONT-007`: a
+      sub-agent result that exists only in conversation is not project state.** A merge that happened
+      but was not recorded is indistinguishable from one that did not.
+    and_the_honest_limit_you_must_declare: >
+      `git diff --name-only` measures PATHS, not BYTES. Two seats editing disjoint REGIONS of one file
+      is refused by this instrument, and two seats writing the same bytes THROUGH a path neither
+      declared (a symlink, a generated file, a `.gitignore`d artefact) is NOT caught by it.
+      **DECLARE THAT, PRINT IT ON EVERY RUN, AND DO NOT CLAIM THE STRONGER PROPERTY** (`CD-RULE-004`).
+
+  ITEM_4_THE_LAUNCH_LEASE:
+    delivers: 'PO-DECISIONS-0021 ruling 3(d) — *"A LAUNCH LEASE binding BOTH writers — the driver AND the PO''s own hand — refusing a launch whose task or write scope overlaps a live session''s; disjoint-scope launches proceed freely and in parallel."*'
+    the_instrument: '`tools/coordination/lease.py acquire|release|list|reap`, leases under `governance/coordination/leases/`, ONE FILE PER LEASE, taken with the SAME `O_EXCL` mechanism as ITEM 1.'
+    what_it_refuses_and_what_it_MUST_ADMIT: >
+      **REFUSES** when the requested TASK overlaps a live lease's task; when the requested WRITE scope
+      overlaps a live lease's WRITE scope; **or when the requested WRITE scope overlaps a live lease's
+      READ scope** (`CD-PL-F134` — the auditor whose reading material moved under it).
+      *** **ADMITS — AND THIS IS AN EQUAL REQUIREMENT — a launch whose task and scopes are disjoint,
+      CONCURRENTLY, WITH THE OTHER LEASE STILL LIVE AND UNDISTURBED.** *** **A LEASE THAT SERIALISES
+      IS A FAILED ITEM.**
+    liveness_is_MEASURED_not_assumed: >
+      A lease names a PID. Liveness is `/proc/<pid>` **plus a cmdline match** — a bare PID check is
+      wrong the moment the OS recycles the number, and this project has already had a seat declared
+      dead while it was alive and reading (`CD-PL-F143`, a HIGH finding the Project Lead raised
+      against a live seat and then WITHDREW). **A STALE LEASE IS REAPED BY AN EXPLICIT `reap` COMMAND
+      THAT WRITES WHY, NEVER SILENTLY BY `acquire`.**
+    part_i_THE_DRIVER_BINDING: >
+      `tools/coordination/launch.sh` — acquires the lease and **REFUSES TO `exec` THE SEAT IF THE
+      LEASE IS REFUSED.** Non-zero exit, nothing launched, the refusal printed with the live lease it
+      collided with. **THE PLANT MUST SHOW A SEAT NOT STARTING.**
+    part_ii_THE_HAND_BINDING_AND_HERE_IS_THE_TRAP_READ_IT_BEFORE_YOU_START: >
+      The natural carrier for "the PO's own hand" is a git `pre-commit` hook. *** **YOU CANNOT INSTALL
+      ONE AND YOU MUST NOT TRY.** *** `git config core.hooksPath` is `pbg/tools/hooks` — **INSIDE THE
+      PINNED, READ-ONLY FRAMEWORK (`PBG-FWK-013`)**. The tracked `pre-commit` there greps
+      `^governance/authority/` and nothing else. **EXTENDING IT WOULD BE EDITING `pbg/` TO MAKE A
+      CONTROL PASS, WHICH IS A BYPASS AND NOT A FIX. THE PROJECT LEAD WILL REJECT IT.**
+      **WHAT YOU DO INSTEAD:** build `tools/coordination/check_lease_held.py` — a standalone,
+      invocable check that a governed write is covered by a lease held by the committing identity —
+      **AND THEN DECLARE, IN THE `CD-RULE-006` FORM, EXACTLY WHICH LAYER IS MEASURED TO HOLD IT.**
+      If the answer is that nothing automatically invokes it, **THE REQUIRED WORDS ARE "NOT PROVED TO
+      BE CARRIED ANYWHERE"** and you write them. **DO NOT DRESS AN UNINVOKED CHECK AS A BINDING. THAT
+      IS THE `CD-PL-F132` SHAPE EXACTLY — A DISCIPLINE THAT LIVES IN A SEAT'S ATTENTION AND IS CALLED
+      STRUCTURAL.** This gap is `Q12`, it is recorded, and it is NOT yours to close.
+
+  ITEM_5_THE_FOUR_PLANTS_IN_CONTRAST_FORM:
+    the_form: 'Each plant is a checked-in `git apply`-able patch under `governance/coordination/plants/` plus a runner that executes ALL THREE ARMS and records each arm''s command and `rc` (`CD-RULE-009`, `CD-PL-F131`).'
+    PLANT_COORD_01_work_claim:
+      ARM_1_baseline_REFUSES: 'A second `claim` on an already-claimed task exits non-zero and names the holder.'
+      ARM_2_violated_ADMITS: '**THE MUTATION IS NAMED AND IT IS THE REAL ONE: replace `O_CREAT|O_EXCL` with an `os.path.exists` pre-check and a plain write, then interleave two claimers across the window.** Expected: **BOTH SUCCEED. TWO SEATS HOLD ONE TASK.** Demonstrate the resulting state — read both claim files back and show the second overwrote the first, or show both processes returning success. **DO NOT ASSERT IT. SHOW IT.**'
+      ARM_3_non_vacuity_ADMITS: 'Two claims on DIFFERENT tasks both succeed, concurrently, both live.'
+    PLANT_COORD_02_disjoint_scope:
+      ARM_1_baseline_REFUSES: 'Two live claims with overlapping write scopes -> `check_scope_disjoint.py` non-zero, naming both seats and the path.'
+      ARM_2_violated_ADMITS: 'Mutation: `overlaps()` compares only the first path segment (or returns `False` when it cannot decide — **the fail-OPEN mutation, which is the one that would really happen**). Expected: the overlap is ADMITTED and the check exits 0.'
+      ARM_3_non_vacuity_ADMITS: 'Two live claims with genuinely disjoint scopes -> exit 0. **AND INCLUDE THE ASYMMETRIC PAIR: seat A writes what seat B declared it would READ -> REFUSED.**'
+    PLANT_COORD_03_merge_non_overlap:
+      ARM_1_baseline_REFUSES: 'Two seat branches that both touched one file -> `merge_reconcile.py` non-zero, naming the artefact and both seats.'
+      ARM_2_violated_ADMITS: 'Mutation: drop the pairwise-intersection assertion. Expected: the merge is ADMITTED and one seat''s work is silently lost or clobbered — **show which**.'
+      ARM_3_non_vacuity_ADMITS: 'Two seat branches with genuinely disjoint touched-path sets -> exit 0, both integrated, both sets of changes present in the result. **VERIFY THE RESULT, NOT THE EXIT CODE.**'
+    PLANT_COORD_04_launch_lease:
+      ARM_1_baseline_REFUSES: '`launch.sh` for a task/scope overlapping a LIVE lease -> non-zero, **AND THE SEAT PROCESS NEVER STARTS**. Prove the non-start; an exit code alone does not.'
+      ARM_2_violated_ADMITS: 'Mutation: liveness always returns `False` (the silent-stale-reap bug). Expected: the overlapping launch is ADMITTED **while the first session is still alive** — which is `PO-DECISIONS-0021` ruling 2, reproduced on demand.'
+      ARM_3_non_vacuity_ADMITS: '**A DISJOINT SECOND LAUNCH STARTS AND RUNS ALONGSIDE THE FIRST, BOTH LEASES LIVE.** This is the arm the whole ruling turns on.'
+    and_the_dead_plant_rule: '**A PLANT THAT PASSES BOTH ARMS IS DEAD AND IS WORSE THAN NO PLANT.** If an arm will not contrast, say so in your return and name it — a prior seat''s honest `NOT-A-CONTRAST` declaration is on this record and it was the right call.'
+
+  ITEM_6_THE_THREE_PLACES_CD_RULE_004_REQUIRES:
+    the_rule: '**A GUARD CLOSES ITS CLASS OR DECLARES ITS OWN LIMIT**, and on this project that means THREE places exist for each instrument, not one: the INSTRUMENT, its EXECUTION CONTRACT, and its REGISTER ROW. Two prior seats were found short exactly here.'
+    what_you_build: >
+      `governance/coordination/required-tests.yaml` (**NEW — the Project Lead MEASURED with
+      `git ls-tree` that no `required-tests.yaml` exists on `main` at all; the WO-2R3 one is a lane
+      artefact. You are creating this file, not extending one.**) with one row per instrument, and
+      `governance/coordination/contracts/<row-id>.md` for each.
+    and_EVERY_instrument_prints_its_declared_limit_AFTER_its_verdict: >
+      **AFTER, FROM A `finally`, ON EVERY EXIT PATH — NOT ONLY ON `return 0`.** `CD-D-166` is on this
+      record precisely because a limit printed BEFORE a verdict is a limit nobody reads, and a limit
+      printed only on success is a limit that vanishes exactly when it matters.
+
+# ================================================================================================== #
+declared_stops_RETURN_DO_NOT_IMPROVISE:
+# ================================================================================================== #
+- '**IF CLOSING THE PER-SEAT ID BLOCKS REQUIRES RENUMBERING AN EXISTING BUILD LOG ENTRY** — stop. Rewriting Build Log history is non-waivable.'
+- '**IF THE ATOMIC CLAIM CANNOT BE MADE ATOMIC ON THIS FILESYSTEM** (measure it — `stat -f -c %T .` and an actual concurrent race, not an assumption) — stop and return the measurement. A registry whose atomicity is assumed is worse than none.'
+- '**IF ANY ITEM CANNOT BE BUILT WITHOUT WRITING OUTSIDE YOUR SCOPE** — return `SCOPE_INSUFFICIENT` and name the path. **TWO ENGINEER SEATS ON THIS PROJECT DID EXACTLY THAT AND BOTH WERE RIGHT.** Do not widen your own scope; that is `PBG-BOOT-002`, non-waivable.'
+- '**IF YOU CONCLUDE A DELIVERABLE AS RULED IS UNSOUND** — build the rest, and return the argument. Do not silently substitute a different design for a Product Owner ruling.'
+
+# ================================================================================================== #
+standards_that_bind_you:
+# ================================================================================================== #
+  CD_RULE_002: '**PER-SEAT COMMIT IDENTITY.** Every commit yours: `CD-ENG-COORD-01`. **`git -c user.name=` DOES NOT WORK IN THIS ENVIRONMENT — use `GIT_AUTHOR_NAME` / `GIT_AUTHOR_EMAIL` / `GIT_COMMITTER_NAME` / `GIT_COMMITTER_EMAIL` env vars** and verify with `git log --format="%an <%ae>"` afterwards. **THE IDENTITY AUDIT IS ITEM 3 ASSERTION (3) AND IT WILL BE RUN OVER YOUR OWN COMMITS.**'
+  CD_RULE_003: '**DERIVE OR FAIL CLOSED.** Never a plausible number. Every count in your return carries the command that produced it.'
+  CD_RULE_004: 'A guard closes its class or DECLARES ITS OWN LIMIT — in all three places.'
+  CD_RULE_005: 'Every governed timestamp from `date -u +%FT%TZ` and from nothing else.'
+  CD_RULE_006: '**A residue declaration must name a layer MEASURED to hold it, or be written "NOT PROVED TO BE CARRIED ANYWHERE".** ITEM 4(ii) is where this bites you.'
+  CD_RULE_009: '**EVERY FINGERPRINT, HASH OR COUNT RECORDS THE EXACT COMMAND THAT PRODUCES IT, BESIDE IT, IN A FORM A READER CAN PASTE.**'
+  CD_PL_F36: '**RESOLVE SHAs, NEVER TRANSCRIBE THEM** — `git rev-parse` plus `git cat-file -t`.'
+  CD_PL_F98: '**EVERY PROBE PRINTS THE TREE IT RAN IN.** A contrast run with the wrong tree on the path is indistinguishable from a fix that does nothing.'
+  CD_PL_F128: '**WORK IN `/tmp/cd-eng-coord-01/` AND NOWHERE ELSE. NEVER READ ANOTHER SEAT''S SCRATCH** — `/tmp/asr7/`, `/tmp/cd-eng-wo2r3-08/`, `/tmp/cd-eng-wo2r3-09/`, `/tmp/pl-inc10/` and `/tmp/meta-assurance-01/` all exist and all contain probes that LOOK like they could be yours. **THEY ARE NOT.**'
+  runtime_claims_need_runtime_proof: '**EVERY ESCAPE ON THIS PROJECT''S RECORD PASSED STATIC CHECKERS.** Race the races. Start the processes. Read the failure text, not the exit code.'
+
+how_you_work:
+  write_INCREMENTALLY_and_this_is_not_advice: >
+    *** **A PRIOR SEAT WAS HARD-KILLED BY THE OPERATOR'S WRAPPER ELEVEN MINUTES AFTER DISPATCH AND ITS
+    ENTIRE WORK CEASED TO EXIST** (`PBG-CONT-007`). *** **COMMIT AS YOU GO, ITEM BY ITEM.** A partial
+    increment in git beats a complete one in a dead context. **THE WRAPPER CEILING, MEASURED FROM THE
+    LIVE PROCESS AND NOT READ FROM A SCRIPT (`CD-PL-F127`): the session dispatching you started at
+    13:41Z with a 21600s ceiling.**
+  findings_against_this_dispatch_and_against_the_project_lead: >
+    **RAISE THEM AND EXPECT THEM TO BE UPHELD.** Three Engineer findings against this seat's own
+    dispatches were upheld today (`CD-ENG-WO2R3-08-F08`, `-08-F09`, `-09-F01`) and the Project Lead
+    raised five more against itself. **ONE OF TODAY'S ENGINEER FINDINGS WAS THAT A DISPATCH ORDERED A
+    CHANGE THAT WOULD HAVE WEAKENED A GUARD THE SAME DOCUMENT FORBADE WEAKENING THREE PARAGRAPHS
+    EARLIER. THE SEAT OBEYED INTENT OVER LETTER AND SAID WHY, AND IT WAS RIGHT.** Do that.
+  the_thing_you_should_be_most_suspicious_of_in_this_document: >
+    **THIS DISPATCH WAS WRITTEN BY THE SEAT WHOSE PRACTICE WAS GRADED `RED` TWICE, ABOUT THE FIX FOR
+    ITS OWN DEFECT.** It has an interest in the fix looking structural. **IF ANY ITEM HERE IS A
+    RESTATEMENT OF THE PROBLEM DRESSED AS A CONTROL, SAY SO — THAT IS THE MOST VALUABLE THING YOU
+    COULD RETURN.**
+
+expected_return: >
+  **`READY_FOR_ASSURANCE`** (or `SCOPE_INSUFFICIENT` with the reason), the branch tip SHA, a per-item
+  statement of what was built and what was NOT, **the three-arm result table for all four plants with
+  every command and `rc`**, the backward-run count from ITEM 2(e), the `CD-RULE-006` declaration for
+  ITEM 4(ii) in its required words, and **every finding you raise, including against this dispatch.**
+
+returns_to: >
+  The Project Lead, which **RECONCILES BY MEASUREMENT AND BANKS — it does not grade** (`PBG-AUTH-003`).
+  It will then run YOUR merge instrument over YOUR OWN merge into `main`, and dispatch **the NINTH
+  FRESH ASSURANCE SEAT**. **NOTHING ELSE MOVES WHILE YOU ARE OUT** — the Project Lead's own write
+  scope for the duration is declared at `CD-D-177` and is `ACTIVE_WORK.yaml`, its own `0100`-`0199`
+  Build Log block, and `governance/dispatch/`. **IT WILL NOT TOUCH A PATH IN YOUR SCOPE, AND IF IT
+  DOES, THAT IS `CD-PL-F134` FOR THE THIRD TIME AND YOU SHOULD SAY SO.**

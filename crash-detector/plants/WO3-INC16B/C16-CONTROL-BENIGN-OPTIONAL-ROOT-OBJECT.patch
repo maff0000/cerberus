@@ -1,0 +1,52 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:24:14.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:59:29.800553220 +0100
+@@ -58,6 +58,22 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "publication_note": {
++      "type": "object",
++      "additionalProperties": false,
++      "properties": {
++        "author": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "text": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 512
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:24:14.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:59:29.800553220 +0100
+@@ -60,6 +60,22 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "publication_note": {
++      "type": "object",
++      "additionalProperties": false,
++      "properties": {
++        "author": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "text": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 512
++        }
++      }
+     }
+   },
+   "$defs": {

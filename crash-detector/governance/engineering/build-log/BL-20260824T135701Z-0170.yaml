@@ -1,0 +1,174 @@
+# ================================================================================================== #
+# BL-20260824T135701Z-0170 — PROJECT LEAD BOUNDARY. **16B-FIX-3 ASSURED `AMBER`. THE AUDITOR GRADED THE
+# ENGINEER'S REFUSAL AND FOUND FOR THE ENGINEER AND AGAINST THIS SEAT'S DISPATCH. IT THEN BROKE THE
+# GUARD A FOURTH TIME AND **WITHDREW THE PREVIOUS SEAT'S "16C IS RELEASABLE" JUDGEMENT.** 16B-FIX-4
+# DISPATCHED AS A CLASS FIX AND NOT A FIFTH SPELLING PATCH.**
+#
+# *** **THE ARM THAT DECIDES THE PROGRAMME: `FINAL` IS 16C LANDED HONESTLY — closed schema, the
+# property `required`, the root allowlist paid, the `_envelope` skeleton edited — AND IT GIVES A
+# GREEN INSTRUMENT AND AN ADMITTED `calm`. Its control, with `state` under `properties`, is
+# `FAIL — 2`. SO THE ONLY THING BETWEEN 16C AND A PUBLISHED DEAD-FEED-AS-CALM IS WHICH KEYWORD THE
+# AUTHOR REACHES FOR.** ***
+#
+# **REPRODUCED BY THIS SEAT (patternProperties spelling, its own plant): instrument
+# `PASS — 144 assertions, 0 violations` while the live gate ADMITS a DEAD FEED RENDERING AS CALM on
+# BOTH surfaces.**
+#
+# **AND THE COUNT IS THE RULING: `_dial_bearing` HAS NOW BEEN ESCAPED FOUR TIMES, EACH BY A
+# DIFFERENT SPELLING OF ONE IDEA — a new state vocabulary (A306), `state` as a boolean schema
+# (A307), and patternProperties / dependentSchemas / $dynamicRef / a depth-cap chain (A308). EACH
+# FIX CLOSED THE SPELLING IT WAS SHOWN AND THE NEXT AUDITOR FOUND ANOTHER. THAT IS THE CENSUS GAME
+# PO-DECISIONS-0026 RULING 10 FORBIDS IN TERMS, AND THIS SEAT WILL NOT DISPATCH A FIFTH ROUND OF IT.**
+#
+# **THE OVERRIDE IS GRADED AND THIS SEAT LOST, CORRECTLY. CD-ENG-WO3-08 REFUSED THE MERGE REMEDY
+# THIS SEAT ORDERED; CD-ASR-WO3-08 MEASURED IT WITH THE GATE'S OWN LIBRARY AND FOUND FOR THE
+# ENGINEER — 10 weakening documents over six keyword sets in both merge directions. CD-PL-F197: THE
+# DISPATCH WAS WRONG ON THE MECHANISM AND THE SEAT WAS RIGHT TO REFUSE THE ORDER.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T135701Z-0170
+timestamp_utc: '2026-08-24T13:57:01Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T13:57:01Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T132602Z-0169
+base_sha: 60afc1ec00c69200502e1c99c2bf775d1146f267
+current_sha: 60afc1ec00c69200502e1c99c2bf775d1146f267
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-08 returned AMBER over 16B-FIX-3 at 4d797e6, banked at 3174753 (568 lines, 12 risks,
+  15 evidence references). It discharged this dispatch's ordered primary attack as a PROVABLY EMPTY
+  CLASS, graded the Engineer's refusal of the ordered remedy and found for the Engineer against this
+  seat, broke the guard a fourth time on four legal spellings, and WITHDREW CD-ASR-WO3-07's "16C is
+  releasable" judgement. This seat reproduced the headline, ruled the fix must be a CLASS INVERSION
+  rather than a fifth spelling patch, and dispatched CD-ENG-WO3-09. 16C IS NOT RELEASED.
+
+the_verdict:
+  seat: CD-ASR-WO3-08 (FRESH — never CD-ENG-WO3-08, never CD-ASR-WO3-07)
+  verdict: AMBER
+  target: 4d797e694ffaaa0ea66f503a4d0a9c558e5ba08b (content tip 3c44843)
+  banked: 3174753a68d4c6483d37163d4a881a034e9d7195 on branch asr-wo3-08-verdict — BL-20260824T134814Z-A308.yaml
+  it_withdrew_a_previous_seats_judgement: >
+    *** IT EXPLICITLY WITHDREW CD-ASR-WO3-07's "16C IS RELEASABLE WITH TWO CONDITIONS". A LATER SEAT
+    OVERTURNING AN EARLIER SEAT'S RELEASE JUDGEMENT ON MEASUREMENT IS THE SYSTEM WORKING, AND THE
+    WITHDRAWAL IS ADOPTED WITHOUT ARGUMENT. 16C IS NOT RELEASED. ***
+
+what_the_audit_settled_that_nobody_had_settled:
+  the_empty_class: >
+    THIS DISPATCH ORDERED ITS PRIMARY ATTACK AT REF_INERT_SIBLINGS, and the auditor proved the class
+    EMPTY — all eight annotations planted alone as $ref siblings give instrument PASS 144/0 AND the
+    gate still REFUSES calm, every one, and NONE of the eight is in Draft202012Validator.VALIDATORS
+    on jsonschema 4.10.3, the library the gate validates with. STRUCTURAL REASON: a $ref sibling is
+    a CONJUNCTION, so no sibling can ever WIDEN. CD-ENG-WO3-08's F03 is DISCHARGED — the soft spot it
+    named against itself was not one.
+  the_override_graded: >
+    CD-ENG-WO3-08 refused the merge remedy this dispatch ORDERED and argued the order was wrong.
+    CD-ASR-WO3-08 measured it with the gate's own library: the seat's own example gives node-as-
+    written False and merged True, with 10 weakening documents across six keyword sets and both
+    merge directions. *** THE SEAT WAS RIGHT AND THE DISPATCH WAS WRONG ON THE MECHANISM. *** A merge
+    could only ever WEAKEN the instrument silently.
+  but_the_sentence_is_still_too_wide: >
+    The justification claims a merge "can admit documents NEITHER schema admits" — 0 hits, and the
+    auditor showed it PROVABLY IMPOSSIBLE, since every keyword that wins a collision survives into
+    the merge. The true claim is that a merge can admit documents THE NODE AS WRITTEN REFUSES, which
+    is enough and was measured ten times. THIRD REPLACEMENT SENTENCE ON THIS ROW FALSE IN THE SAME
+    WAY AS THE ONE IT REPLACED, exactly as the dispatch told it to assume.
+  _synthesise_measured: 'Four arms. CD-ENG-WO3-08''s F04 justification is CORRECT, and where a sibling conditional does open a calm route the instrument catches it (FAIL — 4). An "argument, not a measurement" is now a measurement.'
+
+what_this_seat_reproduced_itself:
+  plant: 'THIS SEAT''S OWN, patternProperties spelling: feed_liveness declares its state under patternProperties {"^state$": {"enum": ["LIVE","STALE"]}} instead of properties, detail_level pointing at the FULL vocabulary, both contracts.'
+  measured: >
+    instrument            PASS — 144 assertions, 0 violations
+    live gate PUBLIC      *** ADMITTED — a DEAD FEED rendering as CALM ***
+    live gate PRIVATE     *** ADMITTED ***
+  the_arm_that_decides_the_programme: >
+    The auditor's arm FINAL is 16C LANDED HONESTLY — closed schema, the property required, the root
+    allowlist paid, the _envelope skeleton edited — and it yields a GREEN INSTRUMENT AND AN ADMITTED
+    calm. Its control, with state under properties, is FAIL — 2. THE ONLY THING BETWEEN 16C AND A
+    PUBLISHED DEAD-FEED-AS-CALM IS WHICH KEYWORD THE AUTHOR REACHES FOR.
+
+the_ruling_this_seat_made:
+  id: 'RULING — INVERT THE DEFAULT AT THE ROOT-PROPERTY RECOGNISER. NO FIFTH SPELLING PATCH.'
+  the_count_that_forced_it: >
+    _dial_bearing has been escaped FOUR TIMES, each by a different SPELLING of one idea: A306 a new
+    state vocabulary; A307 state as a boolean schema; A308 patternProperties, dependentSchemas,
+    $dynamicRef, and a chain past _resolve's depth cap. EACH FIX CLOSED THE SPELLING IT WAS SHOWN
+    AND THE NEXT AUDITOR FOUND ANOTHER.
+  ruled: >
+    _dial_bearing must return UNDECIDABLE for any root property whose shape it CANNOT FULLY READ
+    with its declared keyword set — not False. "I could not decide what this is" and "this is not a
+    dial" are different answers and only one is safe. AND _resolve HITTING ITS DEPTH CAP MUST BE
+    UNDECIDABLE, never a clean resolved with dropped == [] — the auditor measured the cap returning
+    an unresolved $ref node as though it had resolved it, which is a silent lie in the resolver's
+    own contract. THE SAME MEDICINE ALREADY APPLIED AT THE BRANCH RECOGNISER AND AT THE RESOLVER,
+    WHERE IT HAS HELD EVERY TIME.
+  the_acceptance_test_for_the_ruling: >
+    *** NOT THAT THE FOUR NAMED SPELLINGS GO RED, BUT THAT A FIFTH SPELLING NOBODY IN THIS CHAIN HAS
+    THOUGHT OF GOES RED TOO — because it is UNRECOGNISED rather than because it is on a list. The
+    seat must INVENT that fifth spelling itself and show it fails. That arm, C27, is the ruling's
+    own falsifier. ***
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F197
+    severity: MEDIUM, CONFIRMED, and this seat lost the argument correctly
+    the_dispatch_ordered: 'That _deref be made "spec-correct — the target MERGED with its siblings", offering deny-by-default only as a fallback for budget reasons.'
+    the_truth: 'THE ORDERED REMEDY WAS TECHNICALLY WRONG. Measured by CD-ASR-WO3-08 with the gate''s own library. CD-ENG-WO3-08 refused it on that ground and was right.'
+    disposition: >
+      RECORDED PLAINLY. A Project Lead that orders a mechanism it has not measured is doing the
+      CD-PL-F193 thing in a new place — not carrying another seat's unrun claim, but INVENTING one.
+      THE SEAT REFUSED AN ORDER ON TECHNICAL GROUNDS, SAID SO, AND WAS VINDICATED BY AN INDEPENDENT
+      MEASUREMENT. That is exactly the behaviour the stop conditions exist to license.
+  - id: CD-PL-F198
+    severity: LOW, CONFIRMED
+    raised_by: CD-ASR-WO3-08 as its F8
+    the_defect: >
+      The Assurance dispatch ordered its PRIMARY ATTACK at REF_INERT_SIBLINGS — a provably empty
+      class — and told the seat to "look at the list, not the guard", COMMITTING IN THE SAME
+      PARAGRAPH THE "ONE POSITION OVER" ERROR IT WARNED AGAINST. Its "nine keywords" is eight plus
+      $ref.
+    disposition: >
+      Recorded. THE SEAT FOUND F1 ANYWAY, IN THE PLACE THE DISPATCH POINTED AWAY FROM — and
+      CD-ENG-WO3-08 had itself declared patternProperties untested. TWO ARTEFACTS NAMED THE RIGHT
+      PLACE AND THE DISPATCH AIMED ELSEWHERE.
+  - id: 'CD-PL-F196 CONFIRMED INDEPENDENTLY'
+    note: 'CD-ASR-WO3-08 verified the disclosed falsehood itself — exactly four description siblings on the public contract, ZERO on the private. Ninth consecutive dispatch with a false statement caught by its recipient, and the disclosure mechanism worked again.'
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX4-ENGINEER.md
+  seat: CD-ENG-WO3-09 (FRESH — never CD-ENG-WO3-08, never CD-ASR-WO3-08)
+  bounded_to: 'FX12 the class inversion at _dial_bearing and the depth cap · FX13 reconcile CONDITIONAL_KEYWORDS with _SUBSCHEMA_KEYWORDS, which the file documents against itself · FX14 correct the FX9 sentence, which is one clause too wide.'
+  arms: 'C22 patternProperties · C23 dependentSchemas · C24 $dynamicRef · C25 the depth-cap chain · C26 THE FINAL ARM, 16C LANDED HONESTLY · C27 A FIFTH SPELLING OF THE SEAT''S OWN INVENTION · C28 the control that must still pass. C1-C21 re-run unchanged.'
+  explicitly_forbidden: 'Touching REF_INERT_SIBLINGS — the auditor proved that attack class EMPTY and this seat is not sending a seat to harden nothing.'
+
+what_was_verified_unmoved:
+  - 'be0b355 unmoved. Register MATCHES / 18 / GATE: SHUT / latest_admitted_run (null). evidence/ unwritten.'
+  - '16B-FIX-3: 8 files, ZERO protected paths, ONE identity. All 18 plants re-applied by the auditor from its own extractions with apply_rc=0 recorded for each; C10/C21 PASS 158, C14 FAIL 2, C18/C19/C20 all bite.'
+  - 'No proposition lost: prior-tip and target instrument output identical but for path strings.'
+  - 'The inherited boot RED is the frozen base''s same blob ce0803c3 — eight seats.'
+
+next_safe_action: >
+  Launch CD-ENG-WO3-09 against 4d797e6 per CD-DISPATCH-INC16B-FIX4-ENGINEER.md, then a FRESH
+  Assurance seat. IF THE SESSION ENDS BEFORE THAT ASSURANCE RUNS, THE NEXT ACTOR IS A FRESH
+  ASSURANCE SEAT AGAINST WHATEVER 16B-FIX-4 BANKS. 16C STAYS HELD REGARDLESS.
+
+expected_next_actor: 'CD-ENG-WO3-09 — dispatched by this seat, not yet run.'
+
+risks:
+  - '*** 16C IS NOT RELEASED, AND THE PREVIOUS RELEASE JUDGEMENT HAS BEEN WITHDRAWN BY A LATER SEAT ON MEASUREMENT. Arm FINAL shows 16C landed HONESTLY yields a green instrument and an admitted calm. ***'
+  - 'FOUR ESCAPES OF ONE RECOGNISER BY FOUR SPELLINGS. If FX12''s inversion does not hold, the answer is not a fifth patch — it is that inferring dial-bearing slots by schema introspection is the wrong architecture, and the contract should DECLARE its dial-bearing slots somewhere the instrument reads. THAT IS THE NEXT DECISION IF C27 CANNOT BE MADE TO FAIL WITHOUT A LIST.'
+  - 'CD-PL-F197: this Project Lead ordered a mechanism it had not measured, and an Engineer had to refuse the order to prevent it. The stop conditions worked; the dispatch should not have needed them.'
+  - 'CD-PL-F180 is OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments; the missing half is what 16C opens.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed.'
+  - 'Three of the PO''s ruled six items remain undelivered: 16C (held), 16D, 16E. Nothing is registered, no source is wired, every dial reads UNKNOWN, and the 30 indicators in the ratified mapping are still data that nothing reads.'

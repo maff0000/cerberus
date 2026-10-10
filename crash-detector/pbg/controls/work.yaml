@@ -1,0 +1,158 @@
+domain: WORK
+domain_label: Work authority
+controls:
+- control_id: PBG-WORK-001
+  title: Work type is determined by explicit trigger criteria and is assurance-checkable
+  status: ACTIVE
+  purpose: 'Make proportional governance safe by making its central judgement objective.
+
+    '
+  risk_addressed: 'Proportionality gamed by classifying a Change as a Task. Every downstream control inherits
+    the wrong weight, and the record looks compliant.
+
+    '
+  required_outcome: 'Work type derives from explicit, testable trigger criteria applied to the record''s
+    own content. Traits are derived, not asserted: a record naming a migration is touches_data whether
+    or not anyone selected it. Each derived trait records its rule, source field and determinism status.
+    A manually declared trait may supplement derivation but never overrides clear contrary evidence.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - derived trait table with derivation rules and sources
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/bounded-implementation.md
+  verification_note: 'Trait derivation runs deterministically over the authority record and diff; assurance
+    checks classification as a first-class finding. False-negative derivation is a governance defect,
+    and adversarial wording is tested explicitly.
+
+    '
+- control_id: PBG-WORK-002
+  title: Goal fixed, route flexible
+  status: ACTIVE
+  purpose: 'Give an agent real implementation freedom inside a boundary it cannot move.
+
+    '
+  risk_addressed: 'Two opposite failures: an agent silently redefining the objective, and an agent so
+    constrained it cannot solve anything.
+
+    '
+  required_outcome: 'Every authority record carries FIXED zones that require escalation to change, FLEXIBLE
+    zones the agent decides, and FORBIDDEN zones that stop work. The box does not move; solve inside it
+    or escalate to move it.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - authority record
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 1.1, the framework's founding insight
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/bounded-implementation.md
+  verification_note: 'Schema requires all three zones plus stop conditions on every authority record.
+
+    '
+- control_id: PBG-WORK-003
+  title: A Controlled Action requires explicit Product Authority approval
+  status: ACTIVE
+  purpose: 'Give the highest-consequence category of work its own instrument.
+
+    '
+  risk_addressed: 'PBGv1 had no distinct treatment for irreversible work; destructive operations travelled
+    as ordinary work orders with stop conditions.
+
+    '
+  required_outcome: 'Destructive database operations, irreversible data correction, secret rotation, production
+    activation, service cutover, enabling live execution capability, external customer impact, material
+    expenditure, irreversible infrastructure mutation and time-bounded risk acceptance all require explicit
+    Product Authority approval, unless the PID explicitly delegates a precisely bounded class.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    work_types:
+    - CONTROLLED_ACTION
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - PRODUCT_AUTHORITY
+  required_evidence:
+  - approval record or PID delegation clause
+  - rollback proof
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: HUMAN_DECISION
+  verification_mechanism: DECISION_AUTHORITY_REF
+  verification_ref: policies/authority-and-scope.yaml
+  verification_note: 'pbg close requires a Product Authority approval record, or a PID delegation naming
+    the precise bounded class, on every Controlled Action.
+
+    '
+- control_id: PBG-WORK-004
+  title: Serialise mutation, parallelise reads
+  status: ACTIVE
+  purpose: 'Keep concurrent work fast where it is safe and ordered where it is not.
+
+    '
+  risk_addressed: 'Concurrent mutation corrupting state or producing drift that cannot afterwards be attributed
+    to an actor, which then invalidates any assurance running at the time.
+
+    '
+  required_outcome: 'Reads and independent build lanes parallelise. Mutation, merge, deploy, activation
+    and final assurance serialise, including their foreseeable indirect writes.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - lane records
+  - mutation ownership
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/bounded-implementation.md
+  verification_note: 'Concurrent mutation lanes on one target are reported; attribution of any drift is
+    required by PBG-ASSURE-016.
+
+    '

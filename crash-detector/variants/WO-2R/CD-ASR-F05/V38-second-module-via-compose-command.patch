@@ -1,0 +1,27 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..1aefaab 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -497,6 +497,8 @@ services:
+       args:
+         CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+     user: "10003:10003"
++    command:
++      - /app/entrypoints/cd_engine_sidecar.py
+     networks:
+       - cd-net-private
+     environment:
+diff --git a/deploy/entrypoints/cd_engine_sidecar.py b/deploy/entrypoints/cd_engine_sidecar.py
+new file mode 100644
+index 0000000..c285482
+--- /dev/null
++++ b/deploy/entrypoints/cd_engine_sidecar.py
+@@ -0,0 +1,8 @@
++#!/usr/bin/env python3
++"""A second module handed to the engine container's interpreter as an argument."""
++
++from __future__ import annotations
++
++from crash_detector.witness.panel import Agrees
++
++__all__ = ["Agrees"]

@@ -1,0 +1,102 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:24:14.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 13:03:01.896117724 +0100
+@@ -142,6 +142,18 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/detail_level"
++        },
++        "provenance": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": [
++            "source"
++          ],
++          "properties": {
++            "source": {
++              "type": "string"
++            }
++          }
+         }
+       },
+       "oneOf": [
+@@ -255,7 +267,8 @@
+         "reason",
+         "since_utc",
+         "missing_inputs",
+-        "detail_level"
++        "detail_level",
++        "provenance"
+       ],
+       "properties": {
+         "state": {
+@@ -274,6 +287,18 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/absent_data_detail_level"
++        },
++        "provenance": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": [
++            "source"
++          ],
++          "properties": {
++            "source": {
++              "type": "string"
++            }
++          }
+         }
+       }
+     },
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:24:14.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 13:03:01.896117724 +0100
+@@ -145,6 +145,18 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/detail_level"
++        },
++        "provenance": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": [
++            "source"
++          ],
++          "properties": {
++            "source": {
++              "type": "string"
++            }
++          }
+         }
+       },
+       "oneOf": [
+@@ -261,7 +273,8 @@
+         "reason",
+         "since_utc",
+         "missing_inputs",
+-        "detail_level"
++        "detail_level",
++        "provenance"
+       ],
+       "properties": {
+         "state": {
+@@ -280,6 +293,18 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/absent_data_detail_level"
++        },
++        "provenance": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": [
++            "source"
++          ],
++          "properties": {
++            "source": {
++              "type": "string"
++            }
++          }
+         }
+       }
+     },

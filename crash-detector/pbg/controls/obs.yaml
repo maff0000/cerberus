@@ -1,0 +1,139 @@
+domain: OBS
+domain_label: Observability
+controls:
+- control_id: PBG-OBS-001
+  title: No silent processes
+  status: ACTIVE
+  purpose: 'Make every running process identifiable and every failure visible.
+
+    '
+  risk_addressed: 'Unnamed workers and invisible failures. Three agents were once launched, died silently,
+    and were reported as running — the log read zero bytes for the entire run and a working process was
+    indistinguishable from a dead one.
+
+    '
+  required_outcome: 'Every running process has a governed name following a documented pattern, never a
+    vague one such as worker, runner, main, app or service. It emits structured logs carrying identity
+    and lifecycle and fault events to a documented destination. Errors carry a stable fault code. Secrets
+    and unsafe configuration dumps are never logged. Failures surface somewhere visible.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - process name
+  - log excerpts or safe summaries
+  - fault codes
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - OpenTelemetry
+  - Twelve-Factor App XI
+  - Google SRE
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/DEVELOPMENT_SECURITY_BASELINE.md
+  verification_note: 'Assurance verifies startup, failure and shutdown logs exist and carry identity.
+    The gate is absolute for long-running, scheduled or request-serving processes and proportionate for
+    one-shot jobs.
+
+    '
+- control_id: PBG-OBS-002
+  title: Logs go to standard streams or a declared external destination
+  status: ACTIVE
+  purpose: 'Keep log delivery a platform concern rather than an application one.
+
+    '
+  risk_addressed: 'An application that requires a host-specific log file path, which breaks the moment
+    it is containerised and hides its output from the runtime that is supposed to collect it.
+
+    '
+  required_outcome: 'Operational logs are written to standard output and error, or to another explicit
+    externally managed destination. Retention is handled by the runtime, the platform or a declared external
+    policy with a size backstop. Local development file logs may exist, but the application must not require
+    them to operate. Timestamps are UTC. Application version and source SHA are exposable for runtime
+    provenance.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - log destination documentation
+  - log output under container conditions
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Twelve-Factor App XI — logs as event streams
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/DEVELOPMENT_SECURITY_BASELINE.md
+  verification_note: 'The application is exercised with no writable host log path and must still emit
+    its logs.
+
+    '
+- control_id: PBG-OBS-003
+  title: Liveness and readiness are distinct
+  status: ACTIVE
+  purpose: 'Stop a process that is merely alive being treated as able to do its job.
+
+    '
+  risk_addressed: 'A health check reporting healthy while a mandatory dependency is unavailable, so traffic
+    is routed to a process that cannot serve it and the failure appears downstream instead.
+
+    '
+  required_outcome: 'Liveness states whether the process is alive and able to continue. Readiness states
+    whether it can safely serve its intended function, and includes material dependencies where required
+    — database connectivity, schema compatibility, configuration validity, required external contracts,
+    model or service availability, data freshness, migration state. Being alive never automatically means
+    being ready. Checks are bounded, non-destructive, secret-free, cheap enough to run repeatedly, meaningful,
+    and tested.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - liveness and readiness definitions
+  - dependency-down readiness test
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Google SRE — monitoring distributed systems
+  - Kubernetes probe semantics
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/container-ready-application-design.md
+  verification_note: 'Readiness is exercised with a mandatory dependency removed and must report not-ready.
+    Scenario C6. Note that a health check is itself a runtime observation and is classified under PBG-RT-005
+    before it is used in assurance — a probe that triggers reconciliation is a mutation.
+
+    '

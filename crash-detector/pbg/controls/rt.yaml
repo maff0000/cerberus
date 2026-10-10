@@ -1,0 +1,455 @@
+domain: RT
+domain_label: Runtime interaction and containment
+controls:
+- control_id: PBG-RT-001
+  title: Mutation is judged by effect, never by command label
+  status: ACTIVE
+  purpose: 'Classify an action by its reasonably foreseeable system effect rather than by how it is spelled.
+
+    '
+  risk_addressed: 'A nominally read-only HTTP GET on a known-defective authoritative runtime minted non-canonical
+    governed writes with no named causal owner and no pre-authorised authority. Role separation was honoured
+    while causal mutation control was not.
+
+    '
+  required_outcome: 'An action is mutation-capable when its foreseeable effect may change governed state,
+    even where the initiating action is nominally read-only. Safety is never inferred from command label,
+    HTTP method, read-only credentials, diagnostic naming or operator intent. GET, page render, probe,
+    health check, screenshot, browser navigation, test invocation, process startup, reconciliation, cache
+    refresh and audit observation can all be mutations.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - reaches_runtime
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - runtime resource matrix
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'A runtime resource matrix classifies each target runtime and version. UNPROVEN —
+    scenarios U1, U3, U6 and U7 in docs/architecture/13 must pass on a real host before this control may
+    be reported as anything stronger than scenario-verified.
+
+    '
+- control_id: PBG-RT-002
+  title: A known-defective runtime is contained before it is touched
+  status: ACTIVE
+  purpose: 'Stop a corrupting runtime remaining reachable while assurance proceeds around it.
+
+    '
+  risk_addressed: 'A defective peer runtime kept corrupting a shared database while its blue/green partner
+    was audited clean. The candidate''s cleanliness did not exonerate the reachable defective peer.
+
+    '
+  required_outcome: 'A runtime positively known to corrupt, fabricate, duplicate or improperly mutate
+    governed state must not remain generally reachable or authoritative unless its mutation capability
+    is positively removed. Containment precedes any assurance or observation that could trigger the defect.
+    Idle stability is not containment: a reachable-but-quiet defective runtime is uncontained.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - reaches_runtime
+    when: a target is a known-defective runtime
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - known-defective-runtime record
+  - containment proof
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/incident-diagnosis.md
+  verification_note: 'Containment state is a required field of the runtime resource matrix and is proven
+    before the work proceeds. UNPROVEN — scenario U5.
+
+    '
+- control_id: PBG-RT-003
+  title: Containment outranks availability
+  status: ACTIVE
+  purpose: 'Decide, in advance and in writing, which way to fall when uptime and correctness conflict.
+
+    '
+  risk_addressed: 'Preserving uptime while governed state keeps being corrupted, because the outage is
+    visible and the corruption is not.
+
+    '
+  required_outcome: 'Where an authoritative runtime is actively corrupting governed state, a bounded outage
+    is preferred to continued uncontrolled mutation. Where hazardous traffic to a mutation-capable route
+    cannot be positively excluded, contain immediately while preserving rollback capability. The Product
+    Authority retains explicit, time-bounded risk-acceptance authority, recorded as a Controlled Action.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    when: an authoritative runtime is actively corrupting governed state
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - PRODUCT_AUTHORITY
+  required_evidence:
+  - containment decision
+  - risk-acceptance record with expiry
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/incident-diagnosis.md
+  verification_note: 'Any continued exposure carries a time-bounded Product Authority risk acceptance.
+    UNPROVEN — scenario U5, which must be run where containment carries a genuinely painful cost.
+
+    '
+- control_id: PBG-RT-004
+  title: Exactly one named operator owns an action and its foreseeable write chain
+  status: ACTIVE
+  purpose: 'Make causal responsibility for indirect writes explicit and prospective.
+
+    '
+  risk_addressed: 'An application-produced write made in response to an operator request being treated
+    as ownerless. In a multi-agent framework the sharper risk is delegation laundering ownership: a dispatcher
+    believing its brief was read-only because the write was performed by a child.
+
+    '
+  required_outcome: 'The causal mutation owner is named before the initiating action, never reconstructed
+    after. The foreseeable downstream write chain of a dispatch belongs to the operator who initiated
+    it. Descendant capabilities never exceed the dispatching authority.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - reaches_runtime
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - named causal owner recorded before the action
+  - actor chain
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: policies/authority-and-scope.yaml
+  verification_note: 'Evidence attributes both the immediate executor and the causal owner across the
+    chain Product Authority to PL to Engineer to sub-agent to tool to system effect. UNPROVEN — scenarios
+    U2 and U8. U2 is the highest-priority inherited-control test: if delegation launders causal ownership,
+    this control is decorative in a multi-agent framework.
+
+    '
+- control_id: PBG-RT-005
+  title: Every observation of a running system is pre-classified
+  status: ACTIVE
+  purpose: 'Decide whether an observation is safe before making it, not after reading the consequences.
+
+    '
+  risk_addressed: 'An assurance render minting a governed record while the audit was believed read-only.
+    The Auditor''s own action mutated the state it was auditing.
+
+    '
+  required_outcome: 'Each planned observation is classified NON_MUTATING_PROVEN, MUTATION_CAPABLE_AUTHORISED,
+    FORBIDDEN or UNKNOWN_STOP before execution. UNKNOWN halts. A NON_MUTATING_PROVEN observation is usable
+    without mutation authority, so proven-safe reads stay frictionless.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - reaches_runtime
+    mode: PER_WORK
+  roles:
+  - ASSURANCE_ENGINEER
+  - ENGINEER
+  required_evidence:
+  - runtime audit plan
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'A runtime audit plan carries one row per planned observation with its classification
+    and STOP condition. UNPROVEN — scenario U7 is the likeliest to fail in ordinary use, because test
+    runners and coverage tools write into the audited tree on every audit.
+
+    '
+- control_id: PBG-RT-006
+  title: Route safety is classified by runtime version
+  status: ACTIVE
+  purpose: 'Prevent a safety judgement travelling with a route name across versions that behave differently.
+
+    '
+  risk_addressed: 'A route proven non-mutating in one version having a write-on-read path in another,
+    with a single global "this route is safe" judgement carried across both.
+
+    '
+  required_outcome: 'Route and endpoint invocation is classified by runtime version wherever a persist-on-render,
+    write-on-read or write-on-startup path exists. Safety never transfers across versions by name.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - reaches_runtime
+    mode: EVENT_TRIGGERED
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - runtime audit plan with per-row runtime identity
+  failure_outcomes:
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'The runtime audit plan carries runtime identity per row. UNPROVEN — scenario U3.
+
+    '
+- control_id: PBG-RT-010
+  title: Container-Ready Application Boundary
+  status: ACTIVE
+  purpose: 'Ensure an application can be packaged and operated as an OCI-compatible container without
+    material redesign, from project inception rather than at deployment time.
+
+    '
+  risk_addressed: 'The recurring pattern where an application becomes dependent on hidden host state and
+    only discovers that fact during deployment or recovery — the point at which it is most expensive and
+    least recoverable. An application that runs only on the machine where it was created is not deliverable,
+    however well it is governed.
+
+    '
+  required_outcome: 'Application code, configuration, dependencies, storage, logging, process lifecycle
+    and runtime interfaces are structured so the application can be packaged and operated as an OCI-compatible
+    container without material redesign or reliance on undocumented host-global state. The principle is
+    BUILD CONTAINER-READY, DEPLOY IN CONTAINERS WHEN AUTHORISED. Readiness is design state; it authorises
+    nothing. Image creation, publication, container startup, runtime cutover, service replacement and
+    production deployment remain separate, risk-proportionate actions. Prohibited by default: host-global
+    language packages, /etc configuration, home-directory state, host-specific absolute paths, shared
+    mutable code from another application, direct access to another project source tree, undocumented
+    service-manager environment, manual shell state, privileged or root execution.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    depth_by_work_type:
+      TASK: must not introduce container incompatibility
+      CHANGE: must evaluate and update container impact
+      CONTROLLED_ACTION: required for image publication, deployment, cutover or activation
+      INCIDENT: diagnosis considers image identity, container and volume state, networking, orchestration,
+        health, restart history and deployment provenance
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - Blueprint containerisation section
+  - dependency manifest and lockfile
+  - declared writable paths
+  - process and signal tests
+  - container smoke-test output where a build is authorised
+  - non-root proof where a build is authorised
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - OCI Image and Runtime Specifications
+  - Twelve-Factor App — dependencies, config, processes, disposability, logs
+  - 'Product Authority addendum: container-ready application doctrine, 2026-07-29'
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: BLUEPRINT
+  verification_note: 'Assurance assesses the actual application boundary, not the presence of a Dockerfile.
+    Where no container artefacts exist yet the Blueprint records CONTAINER_READY_DESIGN and CONTAINER_BUILD_NOT_YET_AUTHORISED,
+    which is a complete and valid state. Container readiness is tested, not asserted: a passing unit-test
+    suite outside the container is not proof that the containerised application works.
+
+    '
+- control_id: PBG-RT-011
+  title: An application has an explicit process contract
+  status: ACTIVE
+  purpose: 'Make process lifecycle a designed property rather than an accident of how it happened to be
+    started.
+
+    '
+  risk_addressed: 'Hidden background processes, ignored termination signals and unbounded shutdown, which
+    produce data loss on every restart and are invisible until the platform starts restarting things.
+
+    '
+  required_outcome: 'One primary process per container unless a justified supervisor pattern is explicitly
+    approved. Deterministic entrypoint. Startup failure is visible. Correct exit codes. SIGTERM handled
+    gracefully within a bounded shutdown period. No detached background processes hidden from the container
+    runtime. Scheduled jobs are explicit processes or jobs, not concealed schedulers. Restart behaviour
+    is documented. Migrations are not silently run by every replica unless specifically designed and controlled.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - process model in Blueprint
+  - signal-handling test
+  - shutdown timing
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Twelve-Factor App VI, IX
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Signal handling and graceful shutdown are tested, not documented. Scenarios C5 and
+    C11.
+
+    '
+- control_id: PBG-RT-012
+  title: An application runs as a non-root, least-privileged user
+  status: ACTIVE
+  purpose: 'Keep the blast radius of a compromised application bounded by design.
+
+    '
+  risk_addressed: 'Root-by-default runtimes, privileged containers and mounted control sockets, each of
+    which converts an application-level compromise into a host-level one.
+
+    '
+  required_outcome: 'The application is capable of running as a non-root user. No default root runtime,
+    no privileged mode, no host PID, network or filesystem namespace access, no container control socket
+    mounted, no broad Linux capabilities, read-only root filesystem where practical, and bounded writable
+    mounts. Any unavoidable elevated privilege is a material security decision, visible in the PID, the
+    Blueprint and the assurance evidence.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    - deployable
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - runtime user proof
+  - capability set
+  - filesystem mode
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - CIS Docker Benchmark
+  - NIST SP 800-190
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: container runtime user observation
+  verification_note: 'Non-root operation is proven by running the artefact, not by reading a USER directive.
+    Scenario C3.
+
+    '
+- control_id: PBG-RT-013
+  title: An application distinguishes read-only code, ephemeral state and durable data
+  status: ACTIVE
+  purpose: 'Make storage a declared contract so a restart is uneventful.
+
+    '
+  risk_addressed: 'State written into the source tree or an undocumented temporary path, which survives
+    on a developer machine and vanishes on the first container restart. The loss is silent and the cause
+    is discovered long afterwards.
+
+    '
+  required_outcome: 'Application source is treated as read-only at runtime. Temporary files use an explicit
+    ephemeral path. Persistent data uses declared volumes or external durable services. No runtime writes
+    into the source tree without explicit justification, no hidden home-directory state, no undocumented
+    temporary-directory writes, no dependence on host-global directories. Required writable paths are
+    documented and their permissions are tested. A restart must not destroy required durable state.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    - deployable
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - declared writable paths
+  - restart/persistence test
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Twelve-Factor App IV, VI
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: BLUEPRINT
+  verification_note: 'Writable paths are declared and tested; restart behaviour is exercised. Scenarios
+    C2, C7, C10.
+
+    '

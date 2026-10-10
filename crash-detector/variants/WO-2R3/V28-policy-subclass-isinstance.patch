@@ -1,0 +1,101 @@
+diff --git a/probe_v28_policy_subclass.py b/probe_v28_policy_subclass.py
+new file mode 100644
+index 0000000..7646bd8
+--- /dev/null
++++ b/probe_v28_policy_subclass.py
+@@ -0,0 +1,70 @@
++"""V28 — VIOLATED ARM for A6-1. `isinstance(policy, RetryPolicy)` restored in the body.
++
++    PYTHONPATH=src python3 -B probe_v28_policy_subclass.py
++"""
++from datetime import datetime, timezone
++
++from crash_detector.collectors.adapter import AdapterFetchError, FetchedResponse
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import (
++    MAX_ATTEMPTS_CEILING,
++    RetryPolicy,
++    collect,
++)
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class Unbounded(RetryPolicy):
++    pass
++
++
++policy = Unbounded(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
++# Installed AFTER __post_init__ has run and established a bounded field. Every ceiling in
++# RetryPolicy is enforced on the FIELD; the retry loop reads the ATTRIBUTE.
++type.__setattr__(Unbounded, "max_attempts", property(lambda self: 5000))
++print("MAX_ATTEMPTS_CEILING          :", MAX_ATTEMPTS_CEILING)
++print("policy.max_attempts as asked  :", policy.max_attempts)
++print("isinstance(policy, RetryPolicy):", isinstance(policy, RetryPolicy))
++
++
++class Adapter:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = {"type": "object"}
++
++    def __init__(self):
++        self.calls = 0
++
++    def fetch(self, *, timeout_seconds):
++        self.calls += 1
++        if self.calls > 200:
++            raise SystemExit(
++                f"STOPPED THE PROBE AT {self.calls} ATTEMPTS. The ceiling is "
++                f"{MAX_ATTEMPTS_CEILING}. ESCAPED."
++            )
++        raise AdapterFetchError("CONNECTION_REFUSED")
++
++    def is_empty(self, payload):
++        return False
++
++
++class Sink:
++    def record(self, attempt):
++        return None
++
++
++class Ledger:
++    def admit_if_absent(self, key):
++        return True
++
++
++adapter = Adapter()
++try:
++    collect(adapter, policy=policy, sink=Sink(), ledger=Ledger(),
++            collector_run_id="run-v28", started_utc=NOW, delay=DelayKind.WALL_CLOCK)
++except SystemExit as stop:
++    print()
++    print(stop)
++    print("A RetryPolicy SUBCLASS shadowing max_attempts with a property was ADMITTED, and")
++    print("the bound the policy states is a number in a record and nothing in the world.")
+diff --git a/src/crash_detector/collectors/runner.py b/src/crash_detector/collectors/runner.py
+index 6dd2996..b7e1f52 100644
+--- a/src/crash_detector/collectors/runner.py
++++ b/src/crash_detector/collectors/runner.py
+@@ -274,7 +274,10 @@ class CollectionResult:
+         "tests/test_collector_admission.py. FOR WHAT A CONFORMING ADAPTER SAYS: NOT PROVED "
+         "TO BE CARRIED ANYWHERE (source trust is CD-D-005, owed)."
+     ),
+-    policy=RetryPolicy,
++    policy=ESTABLISHED_HERE(
++        "V28: the pre-D.3 standard restored — isinstance in the body, not exact type at "
++        "the door. CARRIER MEASURED: nothing. That is the point of this variant."
++    ),
+     sink=ESTABLISHED_HERE(
+         "CD-BP-003, BLUEPRINT §17. ObservationSink is a Protocol — a boundary to the store, "
+         "whose implementation is deliverable A5's SQL and not a Python class this package "
+@@ -428,6 +431,8 @@ def collect(
+     """
+     if not collector_run_id:
+         raise ValueError("collect requires a non-empty collector_run_id")
++    if not isinstance(policy, RetryPolicy):          # V28: the pre-D.3 admission
++        raise TypeError("collect requires a RetryPolicy")
+ 
+     started_utc = ensure_utc(started_utc)
+     source_id, adapter_id = _established_adapter_identity(adapter)

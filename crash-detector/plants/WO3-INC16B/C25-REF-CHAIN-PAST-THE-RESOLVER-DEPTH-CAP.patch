@@ -1,0 +1,338 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 15:22:33.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 15:22:41.458893152 +0100
+@@ -58,6 +58,9 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "$ref": "#/$defs/hop0"
+     }
+   },
+   "$defs": {
+@@ -293,6 +296,155 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "hop0": {
++      "$ref": "#/$defs/hop1"
++    },
++    "hop1": {
++      "$ref": "#/$defs/hop2"
++    },
++    "hop2": {
++      "$ref": "#/$defs/hop3"
++    },
++    "hop3": {
++      "$ref": "#/$defs/hop4"
++    },
++    "hop4": {
++      "$ref": "#/$defs/hop5"
++    },
++    "hop5": {
++      "$ref": "#/$defs/hop6"
++    },
++    "hop6": {
++      "$ref": "#/$defs/hop7"
++    },
++    "hop7": {
++      "$ref": "#/$defs/hop8"
++    },
++    "hop8": {
++      "$ref": "#/$defs/hop9"
++    },
++    "hop9": {
++      "$ref": "#/$defs/hop10"
++    },
++    "hop10": {
++      "$ref": "#/$defs/hop11"
++    },
++    "hop11": {
++      "$ref": "#/$defs/hop12"
++    },
++    "hop12": {
++      "$ref": "#/$defs/hop13"
++    },
++    "hop13": {
++      "$ref": "#/$defs/hop14"
++    },
++    "hop14": {
++      "$ref": "#/$defs/hop15"
++    },
++    "hop15": {
++      "$ref": "#/$defs/hop16"
++    },
++    "hop16": {
++      "$ref": "#/$defs/hop17"
++    },
++    "hop17": {
++      "$ref": "#/$defs/hop18"
++    },
++    "hop18": {
++      "$ref": "#/$defs/hop19"
++    },
++    "hop19": {
++      "$ref": "#/$defs/hop20"
++    },
++    "hop20": {
++      "$ref": "#/$defs/hop21"
++    },
++    "hop21": {
++      "$ref": "#/$defs/hop22"
++    },
++    "hop22": {
++      "$ref": "#/$defs/hop23"
++    },
++    "hop23": {
++      "$ref": "#/$defs/hop24"
++    },
++    "hop24": {
++      "$ref": "#/$defs/hop25"
++    },
++    "hop25": {
++      "$ref": "#/$defs/hop26"
++    },
++    "hop26": {
++      "$ref": "#/$defs/hop27"
++    },
++    "hop27": {
++      "$ref": "#/$defs/hop28"
++    },
++    "hop28": {
++      "$ref": "#/$defs/hop29"
++    },
++    "hop29": {
++      "$ref": "#/$defs/hop30"
++    },
++    "hop30": {
++      "$ref": "#/$defs/hop31"
++    },
++    "hop31": {
++      "$ref": "#/$defs/hop32"
++    },
++    "hop32": {
++      "$ref": "#/$defs/hop33"
++    },
++    "hop33": {
++      "$ref": "#/$defs/hop34"
++    },
++    "hop34": {
++      "$ref": "#/$defs/hop35"
++    },
++    "hop35": {
++      "$ref": "#/$defs/hop36"
++    },
++    "hop36": {
++      "$ref": "#/$defs/hop37"
++    },
++    "hop37": {
++      "$ref": "#/$defs/hop38"
++    },
++    "hop38": {
++      "$ref": "#/$defs/hop39"
++    },
++    "hop39": {
++      "$ref": "#/$defs/hop40"
++    },
++    "hop40": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "enum": [
++            "LIVE",
++            "STALE"
++          ]
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 15:22:33.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 15:22:41.458893152 +0100
+@@ -60,6 +60,9 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "$ref": "#/$defs/hop0"
+     }
+   },
+   "$defs": {
+@@ -299,6 +302,155 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "hop0": {
++      "$ref": "#/$defs/hop1"
++    },
++    "hop1": {
++      "$ref": "#/$defs/hop2"
++    },
++    "hop2": {
++      "$ref": "#/$defs/hop3"
++    },
++    "hop3": {
++      "$ref": "#/$defs/hop4"
++    },
++    "hop4": {
++      "$ref": "#/$defs/hop5"
++    },
++    "hop5": {
++      "$ref": "#/$defs/hop6"
++    },
++    "hop6": {
++      "$ref": "#/$defs/hop7"
++    },
++    "hop7": {
++      "$ref": "#/$defs/hop8"
++    },
++    "hop8": {
++      "$ref": "#/$defs/hop9"
++    },
++    "hop9": {
++      "$ref": "#/$defs/hop10"
++    },
++    "hop10": {
++      "$ref": "#/$defs/hop11"
++    },
++    "hop11": {
++      "$ref": "#/$defs/hop12"
++    },
++    "hop12": {
++      "$ref": "#/$defs/hop13"
++    },
++    "hop13": {
++      "$ref": "#/$defs/hop14"
++    },
++    "hop14": {
++      "$ref": "#/$defs/hop15"
++    },
++    "hop15": {
++      "$ref": "#/$defs/hop16"
++    },
++    "hop16": {
++      "$ref": "#/$defs/hop17"
++    },
++    "hop17": {
++      "$ref": "#/$defs/hop18"
++    },
++    "hop18": {
++      "$ref": "#/$defs/hop19"
++    },
++    "hop19": {
++      "$ref": "#/$defs/hop20"
++    },
++    "hop20": {
++      "$ref": "#/$defs/hop21"
++    },
++    "hop21": {
++      "$ref": "#/$defs/hop22"
++    },
++    "hop22": {
++      "$ref": "#/$defs/hop23"
++    },
++    "hop23": {
++      "$ref": "#/$defs/hop24"
++    },
++    "hop24": {
++      "$ref": "#/$defs/hop25"
++    },
++    "hop25": {
++      "$ref": "#/$defs/hop26"
++    },
++    "hop26": {
++      "$ref": "#/$defs/hop27"
++    },
++    "hop27": {
++      "$ref": "#/$defs/hop28"
++    },
++    "hop28": {
++      "$ref": "#/$defs/hop29"
++    },
++    "hop29": {
++      "$ref": "#/$defs/hop30"
++    },
++    "hop30": {
++      "$ref": "#/$defs/hop31"
++    },
++    "hop31": {
++      "$ref": "#/$defs/hop32"
++    },
++    "hop32": {
++      "$ref": "#/$defs/hop33"
++    },
++    "hop33": {
++      "$ref": "#/$defs/hop34"
++    },
++    "hop34": {
++      "$ref": "#/$defs/hop35"
++    },
++    "hop35": {
++      "$ref": "#/$defs/hop36"
++    },
++    "hop36": {
++      "$ref": "#/$defs/hop37"
++    },
++    "hop37": {
++      "$ref": "#/$defs/hop38"
++    },
++    "hop38": {
++      "$ref": "#/$defs/hop39"
++    },
++    "hop39": {
++      "$ref": "#/$defs/hop40"
++    },
++    "hop40": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "enum": [
++            "LIVE",
++            "STALE"
++          ]
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   }
+ }

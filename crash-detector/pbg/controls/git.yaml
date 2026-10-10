@@ -1,0 +1,176 @@
+domain: GIT
+domain_label: Source control discipline
+controls:
+- control_id: PBG-GIT-001
+  title: No feature work on the canonical default branch
+  status: ACTIVE
+  purpose: 'Keep the default branch a place things arrive at rather than a place work happens.
+
+    '
+  risk_addressed: 'Unreviewed, unassured change reaching the branch every consumer trusts.
+
+    '
+  required_outcome: 'Work happens on a bounded lane and reaches the default branch only through a reviewed,
+    independently assured merge for any material change. LOCAL-FIRST. Git is mandatory; a remote is not.
+    A project must boot, govern, checkpoint, recover and close to the maximum level its available evidence
+    supports with no remote, with a non-GitHub remote, before a remote exists, or while a provider is
+    unavailable. Where remote review or protection evidence is required but unobtainable, report an explicit
+    capability gap rather than pretending equivalence. The control model stays provider-neutral — repository,
+    remote, review request, independent approval, protected branch, CI check, merge, release, deployment
+    — and an adapter maps those onto a given provider''s features.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - live branch-protection configuration
+  - merge history
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - OpenSSF Scorecard branch-protection criteria
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: provider branch protection
+  verification_note: 'Branch protection where the host supports it — pull request required, force pushes
+    and deletion prohibited, administrators included. Where protection is unavailable this is a declared
+    capability gap, not an assumed pass.
+
+    '
+- control_id: PBG-GIT-002
+  title: Published history is never rewritten
+  status: ACTIVE
+  purpose: 'Keep Git usable as durable truth, so a recorded SHA continues to identify the artefact a verdict
+    was issued against.
+
+    '
+  risk_addressed: 'A force push destroying the artefact an assurance verdict names, which silently invalidates
+    every claim bound to that SHA.
+
+    '
+  required_outcome: 'No force push, no history rewrite, no branch deletion on published branches. Corrections
+    are new commits.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - branch-protection configuration
+  - reachability of the audited SHA
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: provider branch protection
+  verification_note: 'Host protection denies force push and deletion; assurance verifies the audited SHA
+    is still reachable at close.
+
+    '
+- control_id: PBG-GIT-003
+  title: One bounded mutation lane is one branch and one worktree
+  status: ACTIVE
+  purpose: 'Keep a unit of authorised work physically separated from every other, so its diff is its diff.
+
+    '
+  risk_addressed: 'Unrelated changes riding along in an assured diff, and cross-contamination between
+    concurrent work on one checkout.
+
+    '
+  required_outcome: 'Each authority record has one branch and, where the host supports it, one worktree.
+    The baseline SHA is recorded before the first commit. No unrelated changes, no cross-project mutation,
+    clean handover. Where a worktree is genuinely unavailable, an explicit alternative is recorded — named
+    branch, recorded baseline, recorded handover method — never assumed.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - recorded baseline SHA
+  - lane diff
+  - working tree state
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 16 bounded mutation lane
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/git-worktree-and-branch-hygiene.md
+  verification_note: 'pbg close verifies the lane''s baseline SHA, that the diff is confined to the authorised
+    scope, and that the working tree is clean.
+
+    '
+- control_id: PBG-GIT-004
+  title: Provider capability is not authority
+  status: ACTIVE
+  purpose: 'Separate what an agent CAN do against a hosting provider from what it is AUTHORISED to do.
+
+    '
+  risk_addressed: 'An authenticated CLI is standing capability. An agent that treats reachability as permission
+    will merge, change branch protection, alter repository settings, create releases or delete branches
+    because it was able to, and the record will show a technically successful action nobody approved.
+    This is the provider-shaped form of self-granted authority, and no existing control expresses it:
+    PBG-BOOT-002 governs role assignment, PBG-AUTH-001/002 govern delegation through the PID, and PBG-PORT-002
+    governs what happens when a capability is ABSENT — none governs what happens when a capability is
+    present but unauthorised.
+
+    '
+  required_outcome: 'Provider availability grants no permission. Mutations against a hosting provider
+    are performed only where the active authority record explicitly permits them — creating a repository,
+    changing branch protection, merging, closing or modifying review requests, changing repository settings
+    or permissions, creating releases, modifying required checks, deleting branches or tags. Read-only
+    inspection may be permitted more broadly by role and project policy. Capability discovery reports
+    what is possible; the authority record decides what is done.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    when: a hosting provider is reachable and authenticated
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - capability discovery result
+  - authority record permitting the mutation
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'Product Authority addendum: Git and optional GitHub integration, 2026-07-29'
+  - Principle of least privilege — capability is not entitlement
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: policies/authority-and-scope.yaml
+  verification_note: 'Boot records discovered provider capability separately from granted authority. Assurance
+    compares provider-side mutations against the authorising record. Scenarios GH3 and GH6.
+
+    '

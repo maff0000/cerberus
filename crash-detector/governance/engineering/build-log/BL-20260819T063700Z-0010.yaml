@@ -1,0 +1,637 @@
+# WO-2 increment 5 of 7 — CD-PL-F32 CLOSED, then B2 delivered.
+# The execution-interface check now reads SHAPE and PROSE, not only names, and was re-proved
+# against 31 fresh variants — one of which escaped the first cut of the fix and is reported here
+# rather than left out of the table. Then required-tests.yaml over all sixteen PID §6 criteria.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T063700Z-0010
+timestamp_utc: '2026-08-19T06:37:00Z'
+project: crash-detector
+actor: CD-ENG-WO2-01
+role: ENGINEER
+seat_instance: 5
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: 3f038665bdd8d79509dbe61d52176d02aee47de7      # the dispatched execution base
+increment_sha: 11979fb0c827a0b96ffb3b6813daefedfc7c89ea     # THE EXACT SHA of increment 5
+parent_entry_id: BL-20260819T060500Z-0008
+answers_entry_id: BL-20260819T061400Z-0009                  # the PL entry that raised CD-PL-F32
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  increment_sha 11979fb is the head of the TWO commits carrying increment 5, committed separately
+  so the two halves are independently reviewable as the dispatch required:
+    8cf2f96  CD-PL-F32 CLOSED — the execution-interface check reads shape and prose
+    11979fb  B2 — the Required Test Register over all sixteen PID criteria
+  THIS ENTRY is committed immediately after 11979fb, as its child, because an entry cannot
+  contain the hash of the commit that contains it. 11979fb is the SHA to quote for the work.
+
+# --- boot and reconciliation ------------------------------------------------------------------ #
+
+boot_verdict: >
+  Read before writing anything: pbg/roles/engineer.md in full, pbg/skills/core/
+  bounded-implementation.md, pbg/skills/core/test-and-evidence-production.md, the dispatch record
+  CD-DISPATCH-WO2-ENGINEER.yaml in full including the CD-D-013 writable_scope amendment, PID §6
+  (all sixteen criteria), BLUEPRINT §13 and §14, the Project Lead's increment-4 entry
+  BL-20260819T061400Z-0009, and the predecessor's BL-20260819T060500Z-0008.
+  RECONCILIATION: observed HEAD of /srv/crash-detector-wo2 was
+  3f038665bdd8d79509dbe61d52176d02aee47de7 on branch wo-2-skeleton with a CLEAN working tree —
+  byte-identical to the dispatched EXECUTION BASE. No drift (PBG-CONT-006). Work began only after
+  that matched.
+  `PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli boot` from the lane returns
+  exit 2, CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, blocking_failures []. THIS IS THE ALREADY
+  DISPOSITIONED ARTEFACT OF THE WORKTREE LAYOUT (CD-ENG-F31, ruled NOT REPRODUCED / not a defect
+  at BL-...-0009): the lane's checked-out ACTIVE_WORK.yaml is the branch-point copy, ACTIVE_WORK
+  is the Project Lead's, lives on main, and is outside this seat's writable_scope. No time was
+  spent on it and it was not touched.
+
+# =============================================================================================== #
+# PART 1 — CD-PL-F32, CLOSED
+# =============================================================================================== #
+
+cd_pl_f32:
+  finding_as_raised: >
+    `submit_instruction(symbol, qty, side)` passed check_no_execution_interface.py, identically
+    with and without the docstring "Route an order to the broker for execution". CD-AC-012 is one
+    of the five criteria the WO-2 gate turns on.
+
+  what_the_defect_actually_was: >
+    A CORRECTION TO THE DIAGNOSIS, offered because it changes the fix. The raised finding says the
+    vocabulary lacked "instruction" and "submit". `submit` WAS already in EXECUTION_VERBS — the
+    miss was that its OBJECT was not in EXECUTION_OBJECTS, so the verb-plus-object composite rule
+    had nothing to compose with. That detail matters because it shows the defect was not a short
+    word list: the check asked exactly ONE question of every construct — "is this NAME an
+    execution word?" — and an order-entry path is not primarily a name. Everything below follows
+    from that. The Project Lead's instruction not to fix it by extending a word list was correct
+    and is the reason the fix took the form it did.
+
+  what_was_deliberately_not_done: >
+    "instruction" and "submit" were NOT simply added to a list. That fixes the instance and leaves
+    the class, and it would have been the second time this check was built to catch what somebody
+    happened to plant.
+
+  the_shape_rules:
+    principle: >
+      An order-entry path is recognisable from what it CARRIES. A signature holding an instrument
+      together with a quantity and a side; a destination that is a venue, broker or exchange; a
+      price or order-type parameter; a verb of transmission applied to a tradeable noun. Any one of
+      those alone is weak — which is why every rule below requires a COMBINATION, and why the
+      categories are split into supporting and strong.
+    layers_now_in_the_check:
+    - 'L1 NAMES (pre-existing, widened) — identifier composition over functions, classes,
+      parameters, attributes, keyword arguments, imports, SQL identifiers and endpoint literals.
+      Its verb-plus-object rule now reads TRANSMISSION_VERBS x TRADEABLE_NOUNS. This IS a wider
+      list, and it is deliberately NOT what closes the finding: the escape is caught with every
+      one of those words removed. The wider list closes only the narrow residue of a transmission
+      verb applied to a tradeable noun on a callable that takes NO arguments at all, where there is
+      no signature to read.'
+    - 'L2 SIGNATURE SHAPE (NEW) — judge_signature() reads the FIELD SET of every callable and every
+      class body. Seven categories: instrument, quantity, price, account (supporting) and side,
+      order_type, destination (STRONG). S1 fires on instrument AND quantity AND at least one strong
+      field. S2 fires on two or more strong fields among three or more categories. S3 fires on a
+      transmission verb in the name plus two order fields. S1 AND S2 NEVER READ THE NAME, which is
+      the property that matters: renaming the function to `f` does not evade them.'
+    - 'L3 PROSE (NEW) — judge_prose() reads what the check previously discarded on purpose:
+      docstrings, comments, ordinary string literals, SQL comments, SQL string literals and
+      dollar-quoted bodies. Three patterns, all requiring a transmission verb and a noun naming a
+      tradeable instruction in the same sentence: ACTIVE VOICE as a direct object ("route an
+      order"), PASSIVE VOICE ("each bargain was routed"), and NOMINALISED ("order routing").'
+    what_is_read_now_that_was_not_read_before: >
+      Prose, in every form the tree carries it — Python docstrings, Python comments (which the AST
+      discards entirely, so tokenize is used), plain string literals, SQL comments and SQL string
+      literals (which the old check BLANKED OUT before scanning) — and the parameter and attribute
+      NAME SETS of callables and classes as sets rather than one identifier at a time.
+
+  false_positive_control:
+    why_it_is_part_of_the_judgement: >
+      A check that fails on innocent code is as useless as one that passes guilty code, because a
+      project learns to ignore it. Two decisions exist only for this reason.
+    strong_versus_supporting_split: >
+      `(symbol, quantity, price)` is an ordinary valuation signature and must stay clean;
+      `(symbol, qty, side)` must fail. Both carry three categories, so a rule counting categories
+      alone would either fire on both or on neither. Requiring at least one STRONG field — a side,
+      an order type or a destination, none of which an advisory read-only product has any use for
+      — separates them. Verified as FN-04, which must not fire, and FV-01, which must.
+    the_one_false_positive_actually_found_and_tuned:
+      what: >
+        The FIRST run of L3 against the delivered tree produced exactly two findings, and both were
+        false. src/crash_detector/__init__.py:1 "which WORK ORDER each part is owed to" and
+        db/migrations/0007_grant_matrix.sql:232 "a later WORK ORDER adds". `work` is a genuine
+        transmission verb — a trader works an order into the market — and `order` is a tradeable
+        noun, so "work order" reads as one under the active-voice rule.
+      why_it_had_to_go: >
+        This project has sixteen work orders and names them constantly, in code, in migrations and
+        in every governance record. The collision is certain, not hypothetical, and a guard that
+        fails on the project's own vocabulary is a guard somebody switches off inside a week.
+      the_tuning: >
+        ORDER_SEQUENCE_MODIFIERS — the words that select the SEQUENCE sense of `order` rather than
+        the INSTRUCTION sense: in, work, sort, sorted, byte, reverse, ascending, descending,
+        alphabetical, lexical, chronological, declaration, registration, insertion, evaluation,
+        dependency, topological, delivery, boot, load, import, random, stable, natural, canonical,
+        arbitrary, priority, column, argument. When one of these is the word IMMEDIATELY before
+        `order`, L3 does not read it as an instruction. `order` followed by `to` or `of` is
+        likewise excluded ("in order to", "order of magnitude").
+      why_it_does_not_reopen_the_class: >
+        It suppresses ONE bigram in ONE of three layers. `work_order` as an IDENTIFIER still fails
+        L1. A callable carrying an order's field set still fails L2 whatever its comments say. And
+        "works the order", "works an order" and "working the order" all still fail L3, because the
+        rule reads the word immediately before the noun and `the`/`an` are not in the set. What has
+        been given up is the ability to detect an execution pathway announced ONLY in a comment
+        that begins with one of those modifiers — a false negative in the third of three nets, and
+        the third net is the one that was worth nothing at all this morning.
+    the_other_deliberate_false_negative: >
+      L3 suppresses any sentence carrying a negation (no, not, never, without, refuses, forbidden,
+      prohibited, absent, denylist, ...) or a hypothetical framing (if, would, planted, variant,
+      violation, guard, check, example, ...). This project's documentation says repeatedly that it
+      places no orders, and every guard and every plant must DESCRIBE what it defends against in
+      order to defend against it. The suppression is affordable only because L1 and L2 do not read
+      prose at all: an interface hidden behind "this does not route orders" is still caught by its
+      name and by its field set. It is stated in the check's own output on every run, not buried.
+
+  # ---------------------------------------------------------------------------------------- #
+  # THE FRESH-VARIANT TABLE. Thirty-one variants nobody in this project had seen — not the
+  # predecessor's 86, not the Project Lead's nine. Each was written into a THROWAWAY COPY of the
+  # subject tree and the check run against that copy; the worktree was never mutated. Harness:
+  # /tmp/f32/variants.py.
+  # ---------------------------------------------------------------------------------------- #
+  fresh_variants:
+    method: >
+      31 variants: 18 that MUST FIRE and 13 innocent look-alikes that MUST NOT. Five of the
+      eighteen are worded to avoid every term in the execution vocabulary entirely (FV-03, FV-04,
+      FV-11, FV-12, FV-15 — they contain no execution verb, no execution object and no brokerage
+      noun anywhere, and are caught by field shape alone). Final result: 31 of 31 correct.
+    must_fire:
+    - {id: FV-01, exit: 1, caught_by: 'L2 shape + L1', what: 'THE CD-PL-F32 ESCAPE ITSELF with the
+        docstring REMOVED — submit_instruction(symbol, qty, side) and nothing else'}
+    - {id: FV-02, exit: 1, caught_by: 'L2 shape + L1', what: 'the escape WITH its docstring "Route
+        an order to the broker for execution"'}
+    - {id: FV-03, exit: 1, caught_by: 'L2 shape ONLY', what: 'handle_request(isin, nominal,
+        buysell, mic) — `handle` is deliberately not an execution verb and not one of isin,
+        nominal, buysell or mic appears in any vocabulary list. Pure field shape.'}
+    - {id: FV-04, exit: 1, caught_by: 'L2 shape ONLY', what: 'def f(ticker, shares, side) — a
+        one-letter name and no prose at all'}
+    - {id: FV-05, exit: 1, caught_by: 'L2 shape (class)', what: 'a frozen dataclass `Payload` with
+        symbol/qty/side/limit_price — an order data model under a neutral class name'}
+    - {id: FV-06, exit: 1, caught_by: 'L2 shape rule S2', what: 'forward(underlying, tif, venue) —
+        NO quantity; two independent order-only fields'}
+    - {id: FV-07, exit: 1, caught_by: 'L3 prose, active', what: 'def apply(a, b) documented "Sends
+        the ticket to the exchange" — identifiers and signature both innocent'}
+    - {id: FV-08, exit: 1, caught_by: 'L3 prose, comment', what: '# This helper transmits each
+        instruction to the executing venue. — the AST discards comments entirely, so tokenize'}
+    - {id: FV-09, exit: 1, caught_by: 'L3 prose, SQL comment', what: '-- ... then routes the deal
+        to the counterparty. — SQL comments were previously blanked out before scanning'}
+    - {id: FV-10, exit: 1, caught_by: 'L1 SQL identifier', what: 'CREATE TABLE raw.deal_relay —
+        a transmission verb on a tradeable noun, in the store, where it outlives the code'}
+    - {id: FV-11, exit: 1, caught_by: 'L2 shape', what: 'async def _go(self, secid, clip_size,
+        order_direction) — an async METHOD; `self` must not count and depth must not hide it'}
+    - {id: FV-12, exit: 1, caught_by: 'L2 shape', what: 'def push(*, epic, lots, bs) — KEYWORD-ONLY
+        parameters in deliberately obscure spellings'}
+    - {id: FV-13, exit: 1, caught_by: 'L1 endpoint literal', what: 'https://.../v3/instructions/new
+        — a resource noun the old TRADEABLE set did not contain'}
+    - {id: FV-14, exit: 1, caught_by: 'L3 prose, PASSIVE', what: '"Each bargain was routed to the
+        desk before the close." — SEE THE ESCAPE BELOW. This variant defeated the first cut of the
+        fix and its result here is AFTER the second cut.'}
+    - {id: FV-15, exit: 1, caught_by: 'L2 shape', what: 'a NESTED function _inner(cusip, notional,
+        side) — the rule must reach every callable, not only top level'}
+    - {id: FV-16, exit: 1, caught_by: 'L3 prose, PASSIVE', what: '"The instruction is sent to the
+        venue once accepted." — the irregular participle `sent`'}
+    - {id: FV-17, exit: 1, caught_by: 'L3 prose, NOMINALISED', what: '"Order routing lives behind
+        this seam." — no finite verb anywhere in the sentence'}
+    - {id: FV-18, exit: 1, caught_by: 'L3 prose, PASSIVE', what: '# Each ticket is immediately
+        forwarded to the desk. — an ADVERB between the noun and its participle'}
+    must_not_fire:
+    - {id: FN-01, exit: 0, what: 'def replay_events(events, in_order=True) — the sequence sense of
+        the word, as a parameter name'}
+    - {id: FN-02, exit: 0, what: '"Rows come back in order of first_published_utc; nothing here
+        places an order of any kind." — the project''s own charter language'}
+    - {id: FN-03, exit: 0, what: 'def price_series(symbol, limit, offset) — a market-data reader;
+        `limit` is PAGINATION and must not read as a limit price'}
+    - {id: FN-04, exit: 0, what: 'def value_holding(symbol, quantity, price) — VALUATION. The exact
+        false positive the strong/supporting split exists to avoid.'}
+    - {id: FN-05, exit: 0, what: 'test_callbacks_run_in_registration_order — the pre-existing
+        English look-alike, still clean'}
+    - {id: FN-06, exit: 0, what: '# Sort the observations in delivery order, then emit each row. —
+        a transmission verb and `order` in one sentence, unrelated'}
+    - {id: FN-07, exit: 0, what: '-- Migration executed once; the execution of this file is
+        idempotent. — SQL prose in the migration sense'}
+    - {id: FN-08, exit: 0, what: 'a frozen dataclass with equity/monetary/as_of_utc — the product''s
+        actual dial container shape'}
+    - {id: FN-09, exit: 0, what: 'def open_snapshot(path, size) — a transmission verb with ONE
+        order field; one signal is not enough'}
+    - {id: FN-10, exit: 0, what: '"The collector sends a request to the source API and records the
+        outcome." — a transmission verb with a NON-tradeable object'}
+    - {id: FN-11, exit: 0, what: '"The position is open until the window closes." — `open` is a
+        transmission verb in its BARE form and an adjective here, not a participle'}
+    - {id: FN-12, exit: 0, what: '"Position tracking is out of scope for this work order." — a
+        tradeable noun followed by a NON-transmission gerund, plus the tuned `work order` bigram'}
+    - {id: FN-13, exit: 0, what: '# Each observation row is routed to the validation boundary. —
+        passive voice with a NON-tradeable subject; the pattern needs both halves'}
+
+  escape_found_while_fixing:
+    id: CD-ENG-F33
+    severity: 'MEDIUM — found and closed inside this increment; reported because it was real.'
+    what: >
+      FV-14, "Each bargain was routed to the desk before the close.", ESCAPED THE FIRST CUT OF THE
+      L3 PROSE RULE and exited 0. The rule as first written looked for a transmission verb followed
+      by its DIRECT OBJECT. English puts the object BEFORE the verb in the passive voice, so a
+      direct-object rule cannot see "was routed" at all — and passive voice is exactly how a
+      migration comment or a design note is naturally written.
+    why_it_is_reported_rather_than_quietly_fixed: >
+      It is a gap in the CLASS, not a wording accident: every passive sentence in the language was
+      invisible to the rule, not just this one. It is recorded here because a fix whose own
+      re-proof found a second hole is more trustworthy than one that reported 15 out of 15 first
+      time, and because the next reader should know that L3 has now been wrong once.
+    fix: >
+      Two further patterns, both built for the class rather than for the sentence: PASSIVE VOICE
+      (a tradeable noun, a form of `be` or `get`, then a past PARTICIPLE of a transmission verb,
+      with adverbs allowed in between) and NOMINALISED (a tradeable noun immediately followed by a
+      transmission verb in its -ing form, for "order routing", which has no finite verb at all).
+      The participle FORM is required, not merely a transmission verb: without that, "the position
+      was open" would have fired, and FN-11 is the variant that holds that line.
+    then: 'FV-16, FV-17 and FV-18 were written against the new patterns after they existed, and the
+      whole battery re-run. 31/31.'
+
+  code_changed:
+  - 'tools/register/_broker_vocabulary.py — token_list() added (ordered tokens, so `limit_price`
+    can be told from a row `limit`); TRADEABLE_NOUNS, TRANSMISSION_VERBS, DESTINATION_NOUNS,
+    ORDER_FIELDS, STRONG_FIELDS, ORDER_SEQUENCE_MODIFIERS, PROSE_FILLERS, PROSE_NEGATIONS,
+    PROSE_HYPOTHETICALS, BE_FORMS; classify_field(), field_categories(), judge_signature(),
+    judge_prose(); judge_identifier() verb-object rule widened to transmission x tradeable.
+    `transaction` is DELIBERATELY absent from TRADEABLE_NOUNS — a database transaction is the
+    commonest word in the storage layer and a rule firing on it would be silenced immediately.'
+  - 'tools/register/check_no_execution_interface.py — L2 over every FunctionDef, AsyncFunctionDef
+    and ClassDef; L3 over every string constant, every tokenize COMMENT, and the SQL comments,
+    string literals and dollar-quoted bodies that were previously blanked out and discarded. An
+    untokenisable module is a VIOLATION, not a pass, on the same reasoning as an unparseable one.
+    The header documents all three layers and both deliberate false negatives, and the check prints
+    them as notes on every run.'
+
+  standing_assessment_cd_eng_r5: >
+    The Project Lead's assessment stands and this increment does not improve it. Three of ten
+    checks had been shown to pass a real violation on their first cut; the fix to the third had a
+    hole of its own (CD-ENG-F33) found by the eleventh variant written against it. No other check
+    was probed in this increment — the dispatch's two items filled it — so nothing here reduces
+    the prior that a FOURTH gap exists in the other nine. THE ASSURANCE SEAT SHOULD PLANT ITS OWN
+    VARIANTS PER CRITERION AND SHOULD NOT RE-RUN THESE. Two specific suggestions, offered as
+    directions rather than as answers: check_egress_no_broker reads compose.yaml through a
+    project-written reader (tests/compose_reader.py), and a check that parses its subject with a
+    parser the same project wrote is one class of blind spot; and check_schema_closed asserts
+    closure of the schema DOCUMENTS, which is not the same proposition as an envelope carrying an
+    unknown key being refused at runtime.
+
+# =============================================================================================== #
+# PART 2 — B2, the Required Test Register
+# =============================================================================================== #
+
+b2_required_test_register:
+  delivered:
+  - 'required-tests.yaml at the worktree root — REQUIRED-TEST-REGISTER-CONTRACT-v1, register_version 1.'
+  - 'contracts/execution/ — 22 execution contract documents, one per declared test, because check 3
+    requires every test to name an execution contract that RESOLVES.'
+
+  population_derivation: >
+    DERIVED FROM PID §6 AND ONLY FROM PID §6 — all sixteen criteria CD-AC-001 through CD-AC-016,
+    whatever work order delivers them, per BLUEPRINT §14 ("every row above becomes a register
+    entry"). Each entry's `criterion` and `acceptance_semantics` are taken from the PID §6 row for
+    that ID, with the structural detail from BLUEPRINT §13 where §13 states it. Obligation follows
+    the PID: CD-AC-016 is ADVISORY because PID §6 marks it advisory, and the other fifteen are
+    MANDATORY. The register may neither weaken nor strengthen its own population, and the
+    validator derives the same census independently from the PID text and compares by
+    criterion_id — it reports no UNTRACED entry and no PID criterion without an entry.
+    The five WO-2 criteria (001, 002, 003, 005, 012) carry the eleven tests named in the dispatch;
+    the other eleven criteria carry one declared test each.
+
+  pid_content_hash:
+    value: 'sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85'
+    how_computed: >
+      python3 -c "import hashlib,pathlib;print('sha256:'+hashlib.sha256(pathlib.Path('PID.md').read_bytes()).hexdigest())"
+      run in the lane worktree at the execution base, over PID.md AS IT STANDS AT THE BASELINE.
+      Not guessed and not copied from another record. Independently confirmed by the validator,
+      which recomputes it against the PID it resolves and reports MATCHES — see the verbatim output
+      below. The same value appears as PID.md@441d83166b2f3d0c in the boot output, which is a third
+      independent computation of the same digest.
+
+  latest_admitted_run: >
+    NULL, and not this seat's to fill in. An implementation does not admit its own evidence
+    (PBG-SOD-001, non-waivable).
+
+  negative_controls: >
+    Every test in the five WO-2 criteria names negative_control.evidence_ref RTR-WO2-0001 — the run
+    record the INDEPENDENT Assurance seat will produce. It does not exist. That is correct: this
+    seat declares WHICH RUN MUST EVIDENCE ITS GUARD and cannot supply that run. The eleven
+    scheduled criteria name RTR-WO3-0001, RTR-WO4-0001, RTR-WO5-0001 or RTR-WO6-0001 according to
+    the work order that owes them; none of those exists either.
+
+  no_status_like_key: >
+    Check 5 passes. The register's key set is register_version, pid, ref, content_hash,
+    latest_admitted_run, criteria, criterion_id, origin, obligation, criterion,
+    acceptance_semantics, pid_relation, supersedes, superseded_by, tests, test_id, scope, execute,
+    execution_contract, negative_control, violation, evidence_ref. Nothing status-like, nothing
+    result-like, nowhere for a verdict to be written by anyone.
+
+  the_eleven_not_delivered_in_wo2: >
+    CD-AC-004, 006, 007, 008, 009, 010, 011, 013, 014, 015, 016 each carry the test that will
+    evidence them and an execution contract naming the work order that owes them and stating
+    plainly that they are NOT YET EVIDENCED. Their declared command RUNS VERBATIM and terminates
+    NON-ZERO because its subject does not exist yet — pytest exit 4 for a module not yet written,
+    exit 2 for a check script not yet written — and each contract says in terms that this non-zero
+    is the ABSENCE OF EVIDENCE and not a FAIL of the criterion. The validator computes UNDECIDABLE
+    for all eleven and the gate stays SHUT. THAT IS THE HONEST ANSWER. No evidence was invented,
+    no row was dressed up, and no WO-2 work was offered as a substitute for a later work order's
+    evidence — CD-AC-006 in particular carries an explicit note that the WO-2 boundary work in
+    tests/test_publication_refusal.py is NOT offered in place of the WO-5 evidence, because a
+    boundary that exists and a boundary that has been attacked are different claims.
+
+  execution_contracts_generated_from_the_register: >
+    The 22 contract documents were emitted by a scratch generator (/tmp/f32/make_contracts.py,
+    non-governed) that READS required-tests.yaml and copies each `execute` line out of it rather
+    than retyping it, so the register and its contracts cannot drift. The verification below
+    re-reads the COMMITTED files and confirms, per test, that the contract resolves AND quotes its
+    declared command verbatim: 22 of 22, 0 problems.
+
+  guards_deliberately_absent_from_the_register:
+    what: 'CD-BASE-IMAGE-DIGEST-PIN (tools/register/check_base_image_digest_pin.py) and
+      CD-BUILD-CONTEXT-RESTRICTED (tools/register/check_dockerignore.py) have NO register row.'
+    why: >
+      Neither derives from any criterion in PID §6. Giving each a register row would require
+      inventing a criterion, and writing product requirements is not the Engineer's
+      (PBG-AUTH-005) — the validator refuses the same thing from the other direction by blocking
+      pid_relation NEW_REQUIREMENT pending PO amendment of the PID. Both checks are real, both run
+      clean, and both are recorded here as guards without a register row. This is a DISCLOSURE FOR
+      THE PRODUCT OWNER, not a gap papered over: if either property is wanted as a governed
+      obligation, PID §6 is where it has to be said.
+
+  validator_output_verbatim: |
+    $ cd /srv/crash-detector-wo2 && PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml
+    ; exit 2
+    pbg required-tests verify — /srv/crash-detector-wo2/required-tests.yaml
+      pid.ref               PID.md
+      pid.content_hash      MATCHES
+      latest_admitted_run   (null)
+
+      [M] CD-AC-001      UNDECIDABLE
+            - CD-RT-001-AST-NO-NUMERIC-DEFAULT: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+            - CD-RT-001-ABSENCE-RENDERS-UNKNOWN: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-002      UNDECIDABLE
+            - CD-RT-002-TYPE-NO-ARITHMETIC: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+            - CD-RT-002-AST-NO-BLEND: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+            - CD-RT-002-SCHEMA-CLOSED: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-003      UNDECIDABLE
+            - CD-RT-003-ENGINE-NO-WITNESS-REACH: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+            - CD-RT-003-GRANT-MATRIX-LIVE: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-004      UNDECIDABLE
+            - CD-RT-004-DIVERGENCE-ALARM-FIRES: negative_control.evidence_ref 'RTR-WO4-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-005      UNDECIDABLE
+            - CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-006      UNDECIDABLE
+            - CD-RT-006-PUBLIC-SURFACE-NO-PRIVATE-DATA: negative_control.evidence_ref 'RTR-WO5-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-007      UNDECIDABLE
+            - CD-RT-007-NO-HEADLINE-AUTHORSHIP: negative_control.evidence_ref 'RTR-WO5-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-008      UNDECIDABLE
+            - CD-RT-008-CADENCE-BREACH-ALERTS: negative_control.evidence_ref 'RTR-WO3-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-009      UNDECIDABLE
+            - CD-RT-009-REGIME-AWARE-STALENESS: negative_control.evidence_ref 'RTR-WO3-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-010      UNDECIDABLE
+            - CD-RT-010-HISTORY-FIRST-PUBLISHED-IMMUTABLE: negative_control.evidence_ref 'RTR-WO4-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-011      UNDECIDABLE
+            - CD-RT-011-SLOPE-MACHINE-READABLE: negative_control.evidence_ref 'RTR-WO4-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-012      UNDECIDABLE
+            - CD-RT-012-NO-EXECUTION-INTERFACE: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+            - CD-RT-012-LOCKFILE-DENYLIST: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+            - CD-RT-012-EGRESS-NO-BROKER: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-013      UNDECIDABLE
+            - CD-RT-013-ROTATION-RATIO-PROVENANCE: negative_control.evidence_ref 'RTR-WO6-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-014      UNDECIDABLE
+            - CD-RT-014-HEALTH-EXTERNALLY-OBSERVABLE: negative_control.evidence_ref 'RTR-WO3-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [M] CD-AC-015      UNDECIDABLE
+            - CD-RT-015-RECOVERY-FROM-THE-COPY: negative_control.evidence_ref 'RTR-WO6-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+      [A] CD-AC-016      UNDECIDABLE
+            - CD-RT-016-WAVE-TRANSITION-MONITOR: negative_control.evidence_ref 'RTR-WO6-0001' does not resolve to a run record under /srv/crash-detector-wo2/evidence/required-tests/runs
+
+    MANDATORY NOT PASS (15) — no waiver exists; only PO disposition can move these:
+      ! CD-AC-001: UNDECIDABLE
+      ! CD-AC-002: UNDECIDABLE
+      ! CD-AC-003: UNDECIDABLE
+      ! CD-AC-004: UNDECIDABLE
+      ! CD-AC-005: UNDECIDABLE
+      ! CD-AC-006: UNDECIDABLE
+      ! CD-AC-007: UNDECIDABLE
+      ! CD-AC-008: UNDECIDABLE
+      ! CD-AC-009: UNDECIDABLE
+      ! CD-AC-010: UNDECIDABLE
+      ! CD-AC-011: UNDECIDABLE
+      ! CD-AC-012: UNDECIDABLE
+      ! CD-AC-013: UNDECIDABLE
+      ! CD-AC-014: UNDECIDABLE
+      ! CD-AC-015: UNDECIDABLE
+
+    GATE: SHUT
+    PID_ACCEPTANCE_SATISFIED: NOT DERIVED
+
+  reading_of_that_output: >
+    NO VALIDATION FAILURE and NO DEFECT was reported. The register is a VALID INPUT: check 5 (no
+    self-grading) passes, the schema passes, check 1 passes with every one of the sixteen PID
+    criteria traced and nothing UNTRACED, check 3 passes with all 22 execution contracts resolving,
+    and pid.content_hash MATCHES. Every criterion is UNDECIDABLE for exactly one reason — the
+    negative-control run records do not exist yet — and that reason is the separation of duties
+    working, not a defect. The gate is SHUT because no independent evidence has been produced. The
+    validator was NOT modified and nothing under pbg/ was touched (PBG-FWK-013).
+
+# =============================================================================================== #
+# EVIDENCE — every command run, with its exit code
+# =============================================================================================== #
+
+commands_run:
+- {cmd: 'git status --short / git log --oneline -5 / git rev-parse HEAD (lane)', exit: 0,
+   result: 'clean at 3f038665 on wo-2-skeleton — matches the dispatched EXECUTION BASE exactly'}
+- {cmd: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli boot', exit: 2,
+   result: 'CONTINUITY_REFERENCE_INVALID, blocking_failures [] — the dispositioned CD-ENG-F31
+     worktree-layout artefact. Not acted on; ACTIVE_WORK.yaml not touched.'}
+- {cmd: 'python3 tools/register/check_no_execution_interface.py --root .   (BEFORE the fix)',
+   exit: 0, result: 'clean — and clean is exactly the problem CD-PL-F32 reports'}
+- {cmd: 'python3 tools/register/check_no_execution_interface.py --root .   (first cut of L3)',
+   exit: 1, result: 'TWO FALSE POSITIVES, both "work order" — src/crash_detector/__init__.py:1 and
+     db/migrations/0007_grant_matrix.sql:232. Tuned via ORDER_SEQUENCE_MODIFIERS.'}
+- {cmd: 'python3 tools/register/check_no_execution_interface.py --root .   (after tuning)',
+   exit: 0, result: 'PASS — 29775 assertions, 0 violations'}
+- {cmd: 'python3 /tmp/f32/variants.py /tmp/f32/base /tmp/f32/run1   (25 variants, first cut)',
+   exit: 1, result: '24 of 25 correct; FV-14 ESCAPED — passive voice. See CD-ENG-F33.'}
+- {cmd: 'python3 /tmp/f32/variants.py /tmp/f32/base /tmp/f32/run2   (31 variants, second cut)',
+   exit: 0, result: '31 of 31 correct — 18 fired, 13 innocent look-alikes stayed clean'}
+- {cmd: 'for c in tools/register/check_*.py; do python3 $c --root .; done   (all ten)',
+   exit: '0 x9, 3 x1', result: 'nine PASS; check_grant_matrix_live exits 3 PRECONDITION_NOT_MET
+     with its stated reason — no store is running. Nothing was broken by the fix.'}
+- {cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q   (after the CD-PL-F32 fix)', exit: 0,
+   result: '904 passed in 6.91s'}
+- {cmd: 'git commit  -> 8cf2f96e7b948725a5bb5e9b68e07f01667579f2', exit: 0,
+   result: 'CD-PL-F32 fix, committed SEPARATELY from B2 as the dispatch required. Pre-commit hook
+     ran; --no-verify was NOT used.'}
+- {cmd: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -c "derive_pid_census(PID.md)"', exit: 0,
+   result: '16 criteria CD-AC-001..016, CD-AC-016 advisory — the population the register must cover'}
+- {cmd: 'python3 -c "hashlib.sha256(PID.md)"', exit: 0,
+   result: 'sha256:441d83166b2f3d0cf612baf58b96b8d8bf889a52169babc115fc7a7e26714f85'}
+- {cmd: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml',
+   exit: 2, result: 'no validation failure, no defect, no UNTRACED; hash MATCHES; 16/16 traced;
+     all UNDECIDABLE on absent run records; GATE SHUT. Verbatim above.'}
+- {cmd: 'for c in tools/register/check_*.py; do python3 $c --root .; done   (after adding B2)',
+   exit: '0 x9, 3 x1', result: 'unchanged — the new root file and contracts/execution/ break nothing,
+     including check_dockerignore'}
+- {cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q   (after adding B2)', exit: 0,
+   result: '904 passed in 6.91s'}
+- {cmd: 'git commit  -> 11979fb0c827a0b96ffb3b6813daefedfc7c89ea', exit: 0,
+   result: 'B2. Pre-commit hook ran; --no-verify was NOT used.'}
+- {cmd: 'git archive 11979fb | tar -x -C /tmp/f32/archive', exit: 0,
+   result: '255 files extracted. plants/ ABSENT and evidence/ ABSENT, as they must be at this
+     increment.'}
+- {cmd: 'python3 /tmp/f32/verify_commands.py /tmp/f32/archive', exit: 0,
+   result: 'ALL 22 DECLARED COMMANDS RUN VERBATIM ON THE EXTRACTED TREE. See the table below.'}
+- {cmd: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli required-tests verify (in the EXTRACTED tree)',
+   exit: 2, result: 'identical verdict from a tree this seat did not write in — hash MATCHES,
+     16/16 traced, all UNDECIDABLE, GATE SHUT'}
+- {cmd: 'python3 /tmp/f32/variants.py /tmp/f32/archive /tmp/f32/run3', exit: 0,
+   result: '31 of 31 correct AGAINST THE EXTRACTED TREE AT THE FINAL SHA — the CD-PL-F32 re-proof
+     does not depend on the worktree it was written in'}
+
+verbatim_command_verification:
+  claim: >
+    Every `execute` line in required-tests.yaml, taken from the register text and passed to the
+    shell UNCHANGED, from the root of a tree extracted with `git archive 11979fb`. No path fixing,
+    no editing, no wrapper. Each row also re-reads the committed execution contract and confirms it
+    resolves AND quotes that exact command: 22 of 22, 0 problems.
+  delivered_in_wo2:
+  - 'exit 0  python3 tools/register/check_no_numeric_default.py --root .            (190 assertions)'
+  - 'exit 0  PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q   (49 passed)'
+  - 'exit 0  PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q     (96 passed)'
+  - 'exit 0  python3 tools/register/check_no_blend.py --root .                     (1027 assertions)'
+  - 'exit 0  python3 tools/register/check_schema_closed.py --root .                 (242 assertions)'
+  - 'exit 0  python3 tools/register/check_engine_no_witness_reach.py --root .        (11 assertions)'
+  - 'exit 3  python3 tools/register/check_grant_matrix_live.py --root .  — PRECONDITION_NOT_MET with
+     the reason stated: no store is running and the connection variables are unset. NEVER A SKIP
+     (PBG-CI-002). RT-A was deliberately NOT taken for this: the same check was already evidenced
+     against a live catalogue by the previous seat (138 assertions, 13 negative controls, increment
+     4), and the seat''s own full runs are B4 at increment 7. Spinning a container up to re-prove
+     something already evidenced was not worth the runtime risk in this increment.'
+  - 'exit 0  PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q  (65 passed)'
+  - 'exit 0  python3 tools/register/check_no_execution_interface.py --root .     (29775 assertions)'
+  - 'exit 0  python3 tools/register/check_lockfile_denylist.py --root .              (15 assertions)'
+  - 'exit 0  python3 tools/register/check_egress_no_broker.py --root .               (43 assertions)'
+  scheduled_and_correctly_not_yet_evidenced:
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_witness_divergence.py -q      (CD-AC-004, WO-4)'
+  - 'exit 2  python3 tools/register/check_public_artefact_no_private_field.py --root . (CD-AC-006, WO-5)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_ai_review_validators.py -q    (CD-AC-007, WO-5)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_cadence_breach.py -q          (CD-AC-008, WO-3)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_regime_staleness.py -q        (CD-AC-009, WO-3)'
+  - 'exit 2  python3 tools/register/check_first_published_immutable.py --root .        (CD-AC-010, WO-4)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_series_and_slope.py -q        (CD-AC-011, WO-4)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_rotation_ratio.py -q          (CD-AC-013, WO-6)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_health_surface.py -q          (CD-AC-014, WO-3)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_recovery_from_copy.py -q      (CD-AC-015, WO-6)'
+  - 'exit 4  PYTHONPATH=src python3 -m pytest tests/test_wave_transition.py -q         (CD-AC-016, WO-6)'
+  what_the_non_zero_means: >
+    Every one of the eleven RAN — the shell resolved and executed the exact declared line — and
+    terminated non-zero because its subject does not exist yet. Nothing may read those exit codes
+    as a FAIL of the criterion, and each execution contract says so in terms. They are the absence
+    of evidence, which is what the validator computes and what the gate correctly refuses to open
+    on.
+
+# =============================================================================================== #
+
+deliberately_not_done:
+- 'B3 — the five planted violations. plants/ DOES NOT EXIST and no patch was written. Increment 6.
+  Notes toward each plant were recorded instead, inside the register''s negative_control.violation
+  prose for every test, where they describe the PROPOSITION to violate rather than the string to
+  trip.'
+- 'B4 — this seat''s own full run record of every declared command against every plant. Increment 7.
+  The runs recorded above are implementation testing and are NOT assurance; they do not become
+  assurance by being thorough (PBG-SOD-001).'
+- 'RT-B — NO IMAGE WAS BUILT. FORBIDDEN in WO-2. CONTAINER_READY_DESIGN with
+  CONTAINER_BUILD_NOT_YET_AUTHORISED stands unchanged.'
+- 'CD-OB-002 — the Python base image digest was NOT resolved. Still DIGEST_NOT_RESOLVED, owed at
+  WO-3.'
+- 'NO WRAPPER SCRIPT (PBG-ASSURE-001). Every check remains a standalone script with a stable
+  command line and there is no run-everything harness in the repository. /tmp/f32/variants.py,
+  /tmp/f32/verify_commands.py and /tmp/f32/make_contracts.py are SCRATCH under the dispatch''s /tmp
+  allowance, are not committed, are not in the subject tree, and no register row invokes any of
+  them.'
+- 'CD-OB-004 — the four live-store properties with evidence and no standing guard. Ruled OWED AT
+  WO-3; no check built. CD-AC-010''s register row records where its guard will attach.'
+- 'CD-ERR-001 — BLUEPRINT §4''s inconsistencies. Ruled; the implementation is correct as ruled and
+  the migrations were NOT changed to match §4''s prose.'
+- 'NO INGREDIENT SOURCE registered. The registry stays empty; both dials read UNKNOWN.'
+- 'NO other check was probed. The dispatch''s two items filled the increment. See the CD-ENG-R5
+  note above for where a fourth gap is most likely.'
+- 'NOTHING under pbg/ was touched, and no protected path was written: PID.md, BLUEPRINT.md,
+  CLAUDE.md, governance/authority/, governance/decisions/, governance/dispatch/ and
+  governance/engineering/ACTIVE_WORK.yaml are all unchanged. Verified with git status against the
+  writable scope before each commit.'
+
+findings:
+- id: CD-ENG-F33
+  severity: MEDIUM
+  state: CLOSED IN THIS INCREMENT
+  what: 'The first cut of the L3 prose rule was blind to the PASSIVE VOICE. FV-14 escaped it.'
+  detail: 'See cd_pl_f32.escape_found_while_fixing above. Fixed for the class with the passive and
+    nominalised patterns; FV-16/17/18 written against them afterwards; 31/31 on re-run.'
+- id: CD-ENG-F34
+  severity: LOW
+  state: DISCLOSED, NO ACTION TAKEN
+  what: 'Two delivered register checks — CD-BASE-IMAGE-DIGEST-PIN and CD-BUILD-CONTEXT-RESTRICTED —
+    have no row in the Required Test Register.'
+  why_no_action: 'Neither derives from a PID §6 criterion, and creating one would be writing
+    product requirements from this seat (PBG-AUTH-005). Raised for the Product Owner: if either
+    property is wanted as a governed obligation it has to be said in PID §6, and only the PO can
+    say it.'
+- id: CD-ENG-F35
+  severity: INFORMATIONAL
+  state: 'DISCLOSED — a correction to CD-PL-F32''s diagnosis, not a challenge to the finding'
+  what: '`submit` was already present in EXECUTION_VERBS at the time of the escape; only
+    `instruction` was absent from the objects. The finding itself is entirely correct and the
+    escape was real; the mechanism was a verb with no recognised object, not a missing verb.'
+  why_recorded: 'Because it is the reason the fix had to be structural. If the vocabulary had truly
+    lacked both halves, adding them would have looked defensible. It lacked one half, and adding
+    the other would have closed exactly one spelling.'
+
+risks:
+- 'CD-ENG-R5 MEDIUM, STILL LIVE AND NOT REDUCED — every check was written by the seat whose work it
+  guards. Three of ten had been shown to pass a real violation on their first cut; the FIX to the
+  third had a hole of its own, found by the eleventh fresh variant written against it. Assume a
+  fourth. The Assurance seat must plant its OWN variants per criterion and must not re-run these
+  thirty-one.'
+- 'CD-ENG-R6 LOW, NEW — L3 prose carries two deliberate false negatives (negated sentences, and
+  `order` preceded by a sequence modifier). Both are documented in the check''s own output on every
+  run and both are covered by L1 and L2, which do not read prose. An auditor should confirm that
+  claim rather than take it: plant an interface whose comment is negated and check that its NAME or
+  its FIELD SET still fails.'
+- 'CD-ENG-R7 LOW, NEW — the eleven scheduled register rows declare commands against subjects that do
+  not exist. Their exit codes (pytest 4, python 2) are honest but generic. A future reader could
+  mistake "no tests ran" for a broken register rather than an unstarted work order. Mitigated by the
+  execution contracts, which say it in terms, and by the validator, which computes UNDECIDABLE
+  rather than FAIL.'
+- 'CD-ENG-R1, R2, R3 as accepted at BL-...-0007, unchanged. CD-CONT-001 AMBER: four increment
+  boundaries now stand between this session and total loss.'
+
+evidence_refs:
+- 'lane 8cf2f96 — CD-PL-F32 fix; lane 11979fb — B2'
+- '/tmp/f32/variants.py — the 31 fresh variants, with their expectations, as executable data'
+- '/tmp/f32/verify_commands.py — the verbatim command verification'
+- '/tmp/f32/archive — the tree extracted with `git archive 11979fb`, on which every command above ran'
+- 'contracts/execution/ — 22 execution contracts, committed'
+
+next_safe_action: >
+  Increment 6 of 7: B3, the five planted violations under plants/ — one directory per criterion,
+  each plant a `git apply`-able patch against the delivered tree plus a manifest row naming
+  test_id, patch file, the PROPOSITION it violates and the expected failure signature. Every plant
+  must violate the proposition rather than trip a string, and for CD-AC-012 the plants should now
+  attack all three layers rather than only L1. NO WRAPPER that applies them for the auditor
+  (PBG-ASSURE-001) — applying them to produce admitted evidence is Assurance's work, not this
+  seat's. Then increment 7: B4, this seat's own runs of every declared command on the clean tree
+  and with each plant applied to a THROWAWAY COPY, recorded with exact command lines and exit
+  codes. Then READY_FOR_ASSURANCE with the exact SHA, and a SEPARATE agent as CD-ASR-WO2-01.

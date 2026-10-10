@@ -1,0 +1,673 @@
+# ================================================================================================ #
+# ASSURANCE DISPATCH — WO-2R3, THE SEVENTH SEAT. crash-detector.
+# ================================================================================================ #
+#
+# READ THIS BLOCK BEFORE ANYTHING ELSE, INCLUDING BEFORE YOUR BOOT.
+#
+# 1. THE HEADLINE FACT AT THIS GATE IS A GREEN RUN FROM AN INSTRUMENT THE SAME INCREMENT WROTE, AND
+#    THE PROJECT LEAD SAYS SO BEFORE YOU FIND IT.
+# `tools/register/check_sealed_against_forged_establishment.py` exits **0 — "PASS — 99 assertions,
+# 0 violations"** at your target. It did not exist eight hours ago. **A GREEN EXIT CODE FROM AN
+# INSTRUMENT THE SAME INCREMENT WROTE IS THE WEAKEST POSSIBLE EVIDENCE THAT A CRITERION IS RIGHT**,
+# and it is the fifth time this project has arrived at a gate in exactly that position.
+# **WHETHER THE SEALING CLAIM IS CORRECT IS YOURS AND IS THE POINT OF THIS SEAT.**
+#
+# 2. AND HERE IS WHY THAT MATTERS MORE THAN USUAL: **THE PREVIOUS TWO PARTIES TO MEASURE THIS EXACT
+#    PROPERTY BOTH GOT IT WRONG, IN THE SAME DIRECTION, AND AGREED WITH EACH OTHER.**
+# The sixth Assurance seat published `13 SEALED`. The Project Lead re-measured independently and
+# also published `13 SEALED`, and cited the agreement as corroboration. **BOTH USED THE SAME TEST —
+# `"__slots__" in vars(cls) and not cls.__dictoffset__` — AND THAT TEST IS UNSOUND.** It cannot see
+# the `__setstate__` route, so every `@dataclass(slots=True)` class scores SEALED while forging.
+# **TWO OF THE THIRTEEN BOTH PARTIES NAMED — `StalenessWindow` AND `FreshnessEvidence` — FORGE.**
+# The Engineer found it. The Project Lead reproduced it on its own probe and has recorded it as
+# `CD-PL-F119` and `CD-PL-F120`, both HIGH, both against itself.
+# **THE LESSON IS NOT "THE NUMBER WAS WRONG". IT IS THAT AGREEMENT BETWEEN TWO INDEPENDENT READINGS
+# WAS TREATED AS EVIDENCE WHEN BOTH READINGS SHARED A BLIND SPOT. ASSUME THAT IS STILL TRUE
+# SOMEWHERE IN THIS RECORD AND THAT NOBODY HAS FOUND IT YET.**
+#
+# 3. THE PROJECT LEAD'S OWN DISPATCH NAMED THE FALSE-GREEN FACTORY AS THE REMEDY, IN WRITING, WITH
+#    THE WORDS "PL-verified" ATTACHED.
+# `CD-DISPATCH-WO2R3-INC9-ENGINEER` ITEM_1 reads: *"`@dataclass(frozen=True, slots=True)` is
+# available (Python 3.11.2, PL-verified) and so is a manual `__slots__`."* **HAD THE ENGINEER
+# FOLLOWED IT, THE INCREMENT WOULD HAVE SHIPPED 36 FALSE GREENS AND THE PROJECT LEAD WOULD HAVE
+# RECONCILED THEM AS SEALED, BECAUSE ITS OWN CRITERION COULD NOT TELL THE DIFFERENCE EITHER.**
+# You are auditing a tree whose most important control was specified wrongly by the party that
+# dispatched it and rescued by the party being audited. **READ THE RECORD ACCORDINGLY.**
+#
+# 4. A PLANT THAT STOPS APPLYING IS INVISIBLE TO EVERY INSTRUMENT THIS PROJECT RUNS AT A BOUNDARY,
+#    THE CARRIER FOR IT IS RULED BUT DOES NOT EXIST YET, AND YOU ARE TOLD BEFORE YOU START.
+# The suite does not apply plants. The register checks do not. The Class-2 sweep does not. When a
+# plant stops applying, its "violated" arm silently becomes the CLEAN TREE and **EXITS 0 — a dead
+# plant reporting a pass, behind a green board. THIS HAS HAPPENED IN FOUR SEPARATE INCREMENTS** and
+# has been caught every time only by a human or a seat re-running the set by hand.
+# `PO-DECISIONS-0017` ruling 1 rules the carrier **BUILT — answer (A) — AND SEQUENCED AFTER YOUR
+# GATE.** So it does not exist while you read. **YOU ARE THEREFORE INSTRUCTED TO RE-DERIVE PLANT
+# APPLICABILITY YOURSELF AND NOT TO INHERIT ANYBODY'S TABLE, INCLUDING THE ONE BELOW.**
+#
+# 5. THE SWEEP IS RED AND THREE TESTS FAIL, ON PURPOSE, BECAUSE THE PRODUCT OWNER RULED THAT YOU
+#    SHOULD SEE THEM THAT WAY.
+# `PO-DECISIONS-0017` ruling 2: the three stale disposition keys clear **AFTER** you read the tree,
+# not before — *"papering it before the audit would hand the auditor the author's map."* **TWO
+# CONSECUTIVE ENGINEERS REFUSED TO KEEP A DEAD REGISTER KEY ALIVE SO A CONTROL WOULD PASS**, and
+# both returned `SCOPE_INSUFFICIENT` instead. **THAT REFUSAL IS THE BEHAVIOUR THIS GOVERNANCE EXISTS
+# TO PRODUCE AND IT SHOULD BE READ AS SUCH, NOT AS AN INCOMPLETE ITEM.**
+# ================================================================================================ #
+
+dispatch_id: CD-DISPATCH-WO2R3-ASSURANCE-07
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-23T08:36:55Z'    # from `date -u` and from nothing else (CD-RULE-005)
+issued_by: PROJECT_LEAD_SEAT_01
+issuing_boundary: BL-20260823T083655Z-0127
+issuing_decision: CD-D-169
+
+product_authority_basis: >
+  `governance/decisions/PO-DECISIONS-0017.md` **ruling 4**, authored by Matt Scott and by no seat
+  (commit `957ddc3`): *"Sequence, consolidated: the lane-authority header (0016.1a, verbatim) ->
+  INCREMENT 9 (seal the class of 99, 0016.2) -> the SEVENTH fresh Assurance seat over the whole, its
+  brief carrying: CD-D-129's clauses verbatim; the dead-plant disclosure of ruling 1; the three stale
+  keys and the refusal that left them honest; the sealing increment as an attackable claim; and
+  everything increments 8-9 changed, disclosed in full."*
+  **BOTH PRIOR STEPS ARE DONE AND MEASURED** — the header at `753efe4`, increment 9 at `686a374`,
+  reconciled at `BL-20260823T082937Z-0126`. Standing carried forward unchanged: T2 **RED**;
+  CD-AC-002 and CD-AC-005 **AMBER and NOT CLOSED**; the WO-2 gate **SHUT**; increment 9 **BANKED,
+  NOT ACCEPTED** (PBG-AUTH-003).
+
+# --- seat ---------------------------------------------------------------------------------------- #
+assigned_role: ASSURANCE_ENGINEER
+role_contract: pbg/roles/assurance-engineer.md    # canonical local file; the operator pastes no role
+actor_id: CD-ASR-WO2R3-04                         # **FRESH. Never any id in the two lists below.**
+prior_assurance_actor_ids: [CD-ASR-WO2-01, CD-ASR-WO2-02, CD-ASR-WO2R2-01, CD-ASR-WO2R3-01, CD-ASR-WO2R3-02, CD-ASR-WO2R3-03]
+implementing_actor_ids: [CD-ENG-WO2R3-01, CD-ENG-WO2R3-02, CD-ENG-WO2R3-03, CD-ENG-WO2R3-04, CD-ENG-WO2R3-05, CD-ENG-WO2R3-06, CD-ENG-WO2R3-07]
+                                        # increments 1-9 and the record act. **ALL SEVEN EXCLUDED
+                                        # FROM THIS SEAT ABSOLUTELY.**
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+
+independence_declaration: >
+  **PBG-SOD-001, NON-WAIVABLE: THE ENGINEER AND THE ASSURANCE ENGINEER ARE NEVER THE SAME AGENT.**
+  You are a FRESH seat. You are none of the six prior Assurance actor_ids and none of the seven
+  Engineer actor_ids. You did not write, review, advise on or dispatch any part of what you are
+  auditing. If any of that is false, STOP AND SAY SO — an audit by an implicated seat is worse than
+  no audit, because it is spent credibility as well as spent time.
+  **YOU DO NOT REPORT TO THE ENGINEER AND YOU DO NOT NEGOTIATE YOUR VERDICT WITH THE PROJECT LEAD.**
+  That promise has been made to four seats and honoured every time: the fifth seat returned **RED**
+  and the sixth returned **RED**, and the Project Lead banked both verbatim and argued neither down.
+
+# --- target -------------------------------------------------------------------------------------- #
+target_candidate: 686a374e60ff8f18305fa8b665463e0e057dac2b
+target_branch: wo-2r3
+target_worktree: /srv/crash-detector-wo2r3-audit7      # detached at the target, created for you
+target_tree_object: b076eedb031b9f83dcab5219e3f699ed106bf6d4
+target_tree_fingerprint: 319e401fc2591dc48b611d101d5330bdb3dbb3bb9824b7bb1c39a11e5b10fc6a
+how_the_fingerprint_was_taken_CD_RULE_009: >
+  `cd /srv/crash-detector-wo2r3-audit7 && python3 -B tools/audit/tree_fingerprint.py --root .`
+  PL-measured at issue: `files fingerprinted: 509`, `EXCLUDED by .gitignore: 0`,
+  `FINGERPRINT: 319e401fc2591dc48b611d101d5330bdb3dbb3bb9824b7bb1c39a11e5b10fc6a`.
+  **DO NOT USE THE OLD `find | xargs sha256sum` RECIPE.** It fires a maximum-severity false alarm at
+  an auditor for running the suite it was told to run, because it counts gitignored paths — that is
+  `CD-PL-F100` and increment 7 landed the governed fix.
+  **THE INSTRUMENT IS ITSELF ON YOUR TARGET LIST.** Its own declared limits, quoted from its output:
+  *"this does NOT see file MODE (measured: `chmod +x` leaves it identical), does not verify that
+  .gitignore is correct, and is a fingerprint of a WORKING TREE and not a git identity."*
+  **RE-TAKE IT YOURSELF BEFORE YOU START AND AGAIN BEFORE YOU WRITE YOUR VERDICT**, and
+  `git status --porcelain` must be ZERO LINES at both moments.
+target_scope: >
+  **THE WHOLE OF WO-2R3** — increments 1 through 9, the bounded completion, the remediation
+  increment, the record act: everything in `f30e63c..686a374` on the lane. Ruling 4 says "over the
+  whole", and that is not increment 9 alone.
+audited_base_for_replication: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5
+and_the_stability_of_your_target: >
+  **NO CODE MOVES WHILE YOU ARE OUT.** The three stale disposition keys are held UNWRITTEN by
+  PO-DECISIONS-0017 ruling 2 until you report; the plant-drift carrier is held with them; ITEM 3's
+  closure is held with them; no increment is dispatched and none will be opened while an auditor is
+  reading the tree. **686a374 IS STILL 686a374 WHEN YOU FINISH.**
+what_the_gate_is: >
+  Whether WO-2R3 closes **CD-AC-002** and **CD-AC-005**, and what **T2** (CD-BP-003) now grades at.
+  The fifth and sixth seats both returned **RED**, left T2 **RED**, and left CD-AC-002 and CD-AC-005
+  **AMBER, NOT CLOSED**. **THOSE GRADES ARE YOURS TO MOVE OR LEAVE, IN EITHER DIRECTION.**
+  **YOUR VERDICT IS NOT AN ACCEPTANCE** (PBG-AUTH-003). You grade; the Product Owner dispositions.
+
+# ================================================================================================== #
+# CLAUSE (i) OF CD-D-129 — MANDATORY, CARRIED VERBATIM. INSTRUMENTS THAT EXIT NON-ZERO BY DECLARED
+# STATE, TOLD TO YOU BEFORE YOU DISCOVER THEM.
+# ================================================================================================== #
+the_exiting_instruments_declared_up_front:
+  why_this_is_here_before_you_run_anything: >
+    PO-DECISIONS-0009 ruling 1 requires that you be TOLD, before you discover it, that a governed
+    instrument in this tree EXITS NON-ZERO BY DECLARED STATE. **Finding it yourself and reporting it
+    as a discovery would be reporting the record back to itself.**
+  instrument_1_the_class_2_sweep:
+    the_instrument: 'tools/sweep/delegated_judgement_sweep.py'
+    its_declared_state_PL_MEASURED_AT_YOUR_TARGET: >
+      `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1 · "CD-CLASS-2-SWEEP:
+      FAIL — 555 sites, 4 violations"** — three `STALE DECLARATION` plus `UNDECLARED MODULE:
+      crash_detector.admission`, tier-2 site keys 3 of 33.
+      **AND IT IS BYTE-IDENTICAL TO ITS READING AT THE INCREMENT'S BASE**: `md5sum` of the full
+      output is `049c7ff8a5a3f7b5b6e0ee804b285865` at BOTH `753efe4` and `686a374`. **INCREMENT 9
+      MOVED IT NOT AT ALL, AND THAT IS THE REQUIRED RESULT.**
+    why_it_is_red_and_who_refused_to_fix_it: >
+      Increment 8's `ITEM_3` corrected `F-06-D` at `_Exactly.refusal` and `_EachOf.refusal`, which
+      necessarily moves the SOURCE-TEXT keys the register keys its dispositions on, **so three
+      declarations went STALE BY CONSTRUCTION.** `tools/sweep/declared_dispositions.py` is protected.
+      **CD-ENG-WO2R3-06 RECORDED THAT IT CONSIDERED LEAVING THE OLD `in` COMPARISON BESIDE THE NEW
+      `is` COMPARISON SO THE REGISTER KEY WOULD SURVIVE, AND REFUSED IT.** `CD-ENG-WO2R3-07` reached
+      the identical fork on ITEM 2 — keeping `not dataclasses.is_dataclass(cls)` alive as a first
+      clause would have kept its register key AND kept the suite green — **AND REFUSED IT TOO, IN
+      THOSE WORDS, NAMING ITS PREDECESSOR.** Both returned `SCOPE_INSUFFICIENT` for exactly one file.
+      **PL-VERIFIED: `git diff --stat 753efe4..686a374 -- tools/sweep/` IS EMPTY.**
+      **A DECLARATION IS NOT A DISPOSITION AND IT IS NOT AN EXCUSE. If you conclude the declaration
+      is being used to park a real defect, SAY THAT.**
+  instrument_2_the_suite:
+    its_declared_state_PL_MEASURED_AT_YOUR_TARGET: >
+      `python3 -B -m pytest -q` -> **3 failed, 1696 passed.** All three failures are in
+      `tests/test_the_fifteen.py` and all three were **DECLARED IN ADVANCE** by increment 8's
+      `ITEM_3` and follow from the same stale keys. **1687 -> 1696 is +9 NEW TESTS.**
+      **IF YOUR RUN SHOWS A FOURTH FAILURE, THAT IS A FINDING.**
+  instrument_3_CD_RT_012: '`tools/register/check_no_execution_interface.py` — **RED AT THE TIP AND UNMOVED.** Standing and declared.'
+  instrument_4_grant_matrix_live: '`check_grant_matrix_live.py` exits **3**. The fourth seat found "exit 3 never meant database unreachable" — five documented environment variables never exported. **THE CORRECTION IS NOW INHERITED BY THREE SEATS RUNNING AND RE-MEASURED BY NONE. THAT INHERITANCE IS ITSELF A TARGET (T6).**'
+  instrument_5_ON_MAIN_and_it_is_new: >
+    `tools/reconciliation/check_lane_governance_citations.py` on `main` exits **1** with **2
+    unresolved citations, BOTH IN `tools/register/check_dockerignore.py`** — one a declared false
+    positive of its DECLARED LIMIT 2, one `CD-PL-F114` (the path `pbg/controls/PBG-SEC-002.yaml` has
+    never existed in any commit on any ref). **DISCLOSED, UNFIXED, AND ON YOUR LIST (T21).**
+
+# ================================================================================================== #
+# CLAUSE (ii) OF CD-D-129 — MANDATORY, CARRIED VERBATIM
+# ================================================================================================== #
+verdicts_are_taken_against_declarations_never_against_exit_codes_alone:
+  the_rule: >
+    **A RED-ON-SIGHT WITHOUT READING THE DECLARATION IS A METHOD DEFECT IN THE SEAT THAT WRITES IT.**
+    Every instrument in this tree prints its DEFINITION, its POPULATION, its DECLARED LIMITS and its
+    exemptions at every run. Read them. Grade the declaration against the artefact, and the artefact
+    against the Blueprint — never the exit code against your expectation.
+  and_its_mirror_which_is_the_whole_job_at_THIS_gate: >
+    **AN EXIT 0 IS NOT A PASS EITHER.** On this project **EVERY ESCAPE ON THE RECORD PASSED STATIC
+    CHECKERS.** Treat a green run as a question, not an answer. **AT THIS GATE THE HEADLINE FACT IS A
+    GREEN RUN FROM AN EIGHT-HOUR-OLD INSTRUMENT. THE MIRROR CLAUSE IS THE WHOLE JOB.**
+  and_the_third_edge: >
+    **AN EXIT 1 IS NOT A FAILURE EITHER.** The sweep exits 1 because the record has not yet answered
+    it, and by ruling it must not answer it until you have read it. Read what the number is about
+    before you grade it.
+
+# ================================================================================================== #
+# CLAUSE (iii) OF CD-D-129 — THE STANDING INVITATIONS. THESE ARE NOT RHETORICAL.
+# ================================================================================================== #
+standing_invitations_to_attack:
+  the_whole_of_the_section_D_scoping_including_the_CD_D_105_closure: >
+    CD-D-112 / PO-DECISIONS-0007 ruling 2. Open to you in full. **THE FIFTH SEAT DID NOT ATTACK IT
+    AND SAID SO PLAINLY. THE SIXTH ATTACKED IT AND PRODUCED `F-06-J`, WHICH BECAME INCREMENT 9.**
+    **THAT IS WHAT THIS INVITATION IS WORTH WHEN SOMEBODY SPENDS IT.** It is still open: the
+    increment answered the CONSTRUCTION-PATH half and nothing else.
+  the_widened_class_the_widened_traversal_the_reclassified_door_AND_NOW_THE_SEALED_CLASS: >
+    PO-DECISIONS-0010 ruling 1 widened the CLASS; 0011 ruling 2 widened the INSTRUMENT; 0012 ruling
+    1 RECLASSIFIED what a door is; **0016 ruling 2 SEALED the class of 99.** **ALL FOUR ARE
+    ATTACKABLE CLAIMS AND NONE IS SETTLED BY HAVING BEEN RULED.** The Product Owner's own words at
+    the first: *"The seat remains free to attack the widened definition itself."*
+  the_product_owners_own_ruling_written_against_ITSELF: >
+    PO-DECISIONS-0011 ruling 2 records that the Product Owner accepted contrast evidence *"without
+    asking which axis it varied"* — the same defect it had accepted from a seat one level down — and
+    harvested it with **"a rule that binds seats binds their Product Owner."** **THAT IS AN
+    INVITATION: ASK WHICH AXIS THE NEW EVIDENCE VARIES TOO.**
+  and_one_added_at_THIS_gate: >
+    **CD-RULE-009 BINDS ASSURANCE SEATS AND HAS NOW BITTEN ONE.** `CD-PL-F115` and `CD-PL-F116` are
+    findings against the SIXTH SEAT's published counts. **THE PROJECT LEAD THEN PUBLISHED A COUNT
+    WITH THE SAME CLASS OF DEFECT AND WORSE (`CD-PL-F120`).** **APPLY THE SAME TEST TO EVERY NUMBER
+    IN THIS DISPATCH AND IN THE RECONCILIATION THAT PRECEDED IT, INCLUDING THE ONES BELOW.**
+
+# ================================================================================================== #
+# INCREMENT 9 DISCLOSED IN FULL — ORDERED BY PO-DECISIONS-0017 RULING 4. NOTHING HERE IS SOFTENED.
+# ================================================================================================== #
+increment_9_in_full:
+  what_it_was: >
+    `CD-DISPATCH-WO2R3-INC9-ENGINEER`, issued at `753efe4` to **CD-ENG-WO2R3-07, a FRESH Engineer
+    identity**, THREE items, on PO-DECISIONS-0016 ruling 2. It returned `READY_FOR_ASSURANCE`
+    **carrying `SCOPE_INSUFFICIENT` FOR TWO NAMED FILES**, in five commits, `753efe4..686a374`.
+    **35 changed paths, ALL inside the dispatched writable scope, measured by pattern against the
+    protected list and not by eye. TEN PROTECTED PATHS, TEN ZEROS. Build log 5 ADDED, 0 MODIFIED.**
+  ITEM_1_THE_SEAL:
+    what_was_asked: 'The sealing property required of the CLASS, instrument-enumerated over all 99, every exclusion MEASURED AND DECLARED, a plant in the established contrast form.'
+    what_shipped_PL_MEASURED: >
+      `tools/register/check_sealed_against_forged_establishment.py`. **TIP: `PASS — 99 assertions, 0
+      violations`; 99 examined · 51 SEALED · 0 OPEN AND REQUIRED · 48 EXCLUDED BY MEASUREMENT · 0
+      UNMEASURABLE · 51 + 0 + 48 + 0 = 99.** The SAME instrument copied to a pristine extraction of
+      the BASE tree: **rc=1, `FAIL — 36 violations`; 15 SEALED · 36 OPEN AND REQUIRED · 48 EXCLUDED
+      · 15 + 36 = 51**, and the 36 are exactly the 36 sealed. **ONE INSTRUMENT, TWO TREES — the axis
+      varied is the TREE and nothing else.**
+    the_false_green_it_catches: >
+      **AT BASE ITS VIOLATION LIST CONTAINS `staleness.py:419` AND `staleness.py:514` —
+      `StalenessWindow` AND `FreshnessEvidence`, THE TWO CLASSES BOTH PRIOR READINGS CALLED SEALED.**
+      Its declared route `R5 cls.__new__(cls) + __setstate__(SEQUENCE state)` is the route neither
+      prior criterion could see.
+    the_exclusion_clause_AND_IT_IS_THE_THING_MOST_WORTH_ATTACKING: >
+      **IT IS ONE MEASURED CLAUSE AND NOT A LIST**, PL-verified by reading the file: a throwaway
+      subclass of the base declaring `__slots__ = ()` is BUILT at run time through that base's own
+      metaclass protocol, and its `__dictoffset__` is READ; the class is excluded only if that number
+      is non-zero AND the base is outside this package. **43 under `builtins.BaseException` (probe
+      measures 16), 5 under `enum.Enum` (probe measures -48), on CPython 3.11.2.** Each prints
+      **"NOT SAFE — UNSEALABLE. NOT PROVED TO BE CARRIED ANYWHERE"** (CD-RULE-006's prescribed
+      wording). **AND ITS "THE BASE IS OURS" BRANCH IS WRITTEN AND HAS NEVER BEEN EXERCISED — no
+      governed class today has a package-owned base imposing a `__dict__`. AN UNEXERCISED BRANCH IN
+      A GOVERNING INSTRUMENT IS A CLAIM.**
+    the_derivation_diff: >
+      Two independent derivations — the SOURCE reading REUSES
+      `check_constructor_field_establishment._classes()` (that instrument's own traversal, not
+      reimplemented) and the LIVE reading descends `vars()` at any depth — **DIFFED AS SETS AT EVERY
+      RUN**, with **"DERIVATION DISAGREEMENT IS A VIOLATION AND NEVER A RECONCILIATION."**
+    the_plant_and_the_widening_PL_MEASURED: >
+      `plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch` — **clean arm rc=0 ·
+      `git apply` rc=0 · violated arm rc=1**, `FAIL — 1 violation` at `store/migrations.py:320`,
+      `rule: OPEN TO FORGED STATE`. *** **AND ON THAT SAME VIOLATED ARM THE SIBLING
+      `check_constructor_field_establishment.py` STILL EXITS 0. THAT CONTRAST IS THE WIDENING.** ***
+  ITEM_2_CD_PL_F104:
+    PL_confirmed_live_at_your_target: >
+      `@establishes(x=int)` on a class whose only qualification is `__dataclass_fields__ = {}` is
+      **ADMITTED**, `is_establishing_type` **True**, and it **ENTERS `governed_types()`** (7 -> 8).
+    the_seats_widening_PL_CONFIRMED: >
+      **A PLAIN SUBCLASS OF A REAL DATACLASS IS ADMITTED** — `is_dataclass(Sub)` is True BY
+      INHERITANCE (`__dataclass_fields__` is not in `vars(Sub)`); PL-measured against `RetryPolicy`,
+      population **9 -> 10**. **THIS CONTRADICTS `establishment.py`'s OWN DECLARED LIMIT 4**, and the
+      shipped artefact now says so in its own text: *"the decorator and the limit disagree with each
+      other."*
+    what_it_did_NOT_do_and_why: >
+      **THE CLOSURE IS BUILT AND EXECUTABLE (`variants/WO-2R3/P-P-...py`, six arms) AND DELIBERATELY
+      NOT APPLIED.** With `V49` applied the sweep reads `FAIL — 564 sites, 8 violations` and the
+      suite `6 failed / 1693 passed`, because `crash_detector.establishment` is dispositioned PER
+      SITE and the closure adds 9 tier-2 keys and 2 tier-1 admissions. **THE FILE THAT WOULD DECLARE
+      THEM IS SEALED BY RULING UNTIL YOU REPORT. `SCOPE_INSUFFICIENT` WAS THE ONLY HONEST RETURN.**
+      Arm 6 — genuine machinery, no fields — is admitted in BOTH arms and is **the declared residue,
+      printed beside the closed arms.**
+  ITEM_3_CD_D_166_AND_IT_FELL_WORSE_THAN_THE_FINDING_SAID:
+    the_four_arms_PL_RE_RUN_IN_EACH_SAVED_TREE: >
+      | arm | src files differing from tip | tools/sweep differing | GATES_* raised | sweep verdict |
+      | CONTROL | 0 | 0 | **0** | `FAIL — 555 sites, 4 violations` |
+      | ARM A — PURE RENAME of one local, relation UNTOUCHED | **1** | 0 | **31** | `FAIL — 555 sites, 39 violations` |
+      | ARM B — relation DESTROYED, NO product source touched | **0** | 1 | **0** | `FAIL — 555 sites, 4 violations` |
+      | ARM C — `gates` pointed at a key that exists NOWHERE | 0 | 1 | **31** | `FAIL — 555 sites, 35 violations` |
+    what_it_means: >
+      *** **IT REFUSES WHEN NOTHING IS WRONG (ARM A) AND PASSES WHEN THE CLAIM IS FALSE (ARM B).**
+      *** ARM C is the vacuity check and it CLEARS it — the criterion CAN refuse. **SO VACUITY IS
+      NOT THIS FIELD'S DEFECT. UNSOUNDNESS IS, IN BOTH DIRECTIONS AT ONCE.** And it is against a
+      field **THE PROJECT LEAD DESIGNED.**
+    and_the_seats_finding_that_is_the_sharpest_thing_anyone_has_said_about_it: >
+      `CD-ENG-WO2R3-07-F17`: **`gates` CANNOT BE MADE STRUCTURAL BY ADDING A CLAUSE, BECAUSE IT IS A
+      SITE KEY WHOSE FOURTH ELEMENT IS SOURCE TEXT — so any criterion keyed on it fails the rename
+      test BY CONSTRUCTION.** That is a statement about the FIELD'S SHAPE, not its implementation.
+      **GRADE IT. IF IT IS RIGHT, THE FIELD NEEDS REPLACING AND NOT REPAIRING, AND NOBODY HAS SAID
+      THAT OUT LOUD YET.**
+    ITEM_3_IS_MEASURED_AND_NOT_CLOSED_AND_IT_IS_THE_PROJECT_LEADS_FAULT: >
+      **`CD-PL-F122`: THE ITEM WAS UNDELIVERABLE IN EITHER FORM THE DISPATCH OFFERED.** The criterion
+      lives in `tools/sweep/delegated_judgement_sweep.py`, which the writable scope never named; and
+      CD-RULE-004's "three places" has never existed for the Class-2 sweep — **it has no
+      `required-tests.yaml` row and no execution contract, and no seat and no auditor has ever
+      noticed.** **THAT SECOND HALF IS ITSELF A TARGET (T20).**
+  the_engineers_EIGHT_findings_against_its_own_work:
+    F06_and_it_is_the_reason_to_trust_the_rest: >
+      **ITS OWN INSTRUMENT SCORED ITS OWN FALSE GREEN AS SEALED BEFORE IT CAUGHT IT.** An early route
+      handed `_dataclass_setstate` a MAPPING, which that function ZIPS, so the forged marker never
+      landed and the route read as refused. **IT FOUND IT BY REFUSING TO ACCEPT A COUNTERFACTUAL
+      NUMBER IT COULD NOT DERIVE TWICE.** **THE DEFECT CLASS APPEARED INSIDE THE FIX FOR ITSELF.**
+    F14: '**ITS ITEM-2 SCAFFOLDING BROKE ITS ITEM-1 CHECK** — a probe dataclass left unsealed, and the increment''s OWN new instrument is what said so.'
+    the_others: 'F03 a scripted 36-site edit wrong on 2, caught by the suite · F04 **34 manual `__slots__` tuples are TRANSCRIPTIONS and it says so** · F07 its first exclusion probe used a plain dict where `EnumMeta.__prepare__` wants an `_EnumDict`, reporting its OWN defect as UNMEASURABLE on five classes · F13 an ITEM-2 gate refusing a legitimate `InitVar` for the wrong reason · F18 a first ARM A that renamed half the file — same answer, dismissible method · F21 "26 contracts" where there are 25, **superseded in `BL-...-0094`, not edited**.'
+    F16_and_F17_against_the_DISPATCH: '**BOTH UPHELD BY THE PROJECT LEAD.** See `CD-PL-F122` and ITEM_3 above.'
+  what_the_engineer_could_NOT_establish_IN_ITS_OWN_WORDS:
+  - '**"THE ROUTE SET IS FIVE AND IS DECLARED, NOT PROVED COMPLETE — IT GREW TWICE UNDER MEASUREMENT
+     IN ONE DAY."** `__reduce__`, `__reduce_ex__`, `__class__` reassignment and `ctypes` were **NOT**
+     measured by it. **THE PROJECT LEAD MEASURED THE EXECUTED-`__reduce_ex__` ROUTE AGAINST ALL 51
+     AND FOUND NOTHING. THE OTHER THREE ARE MEASURED BY NOBODY AND ARE YOURS (T19).**'
+  - '**"48 OF 99 GOVERNED CLASSES REMAIN OPEN AND THE SEAL IS PHYSICALLY UNAVAILABLE TO THEM. NOT
+     SAFE — UNSEALABLE. NOT PROVED TO BE CARRIED ANYWHERE."** 43 are exceptions, 5 are enums.
+     **WHAT A FORGED EXCEPTION OR ENUM MEMBER COSTS THIS PRODUCT HAS NOT BEEN ASSESSED BY ANYONE.**'
+  - '**"NO IMPORT-TIME REFUSAL FOR THE SEAL"**, deferred for exactly one reason: the file that would
+     declare a new module''s dispositions is sealed by ruling.'
+
+increments_8_disclosed_and_the_ATTRIBUTED_NOT_CONFIRMED_LIST_CARRIED_VERBATIM:
+  the_point_of_naming_these: >
+    **A READER OF THE RECONCILIATIONS MUST NOT MISTAKE "THE CHEAP NUMBERS REPRODUCED" FOR "THE WHOLE
+    BOARD WAS RE-RUN".** These are the claims increment 8's reconciliation did NOT re-run and says
+    it did not. **THEY ARE YOUR NAMED TARGETS AND THEY ARE STILL UNCONFIRMED AT YOUR SHA.**
+  the_four_claims:
+  - 'the 48-run plant contrast table and its EVIDENCE 10 -> 11 / DECORATION 2 -> 1 movement'
+  - 'the `P-O` metaclass five-arm base/tip contrast'
+  - 'the mutating-sink six-arm carrier and its base 4-failed/2-passed reading'
+  - 'the `is_exactly` tuple-vs-frozenset sizing'
+  increment_8_itself: >
+    Six items ordered, `ITEM_5` at instance 1, the other five at instance 2, **ZERO DROPPED**.
+    **THE DISPATCHING PROJECT LEAD DIED AT ITS OWN 7200s CEILING WITH ALL FIVE COMMITS ALREADY IN
+    THE LANE, SO THE RECORD ON `main` KNEW NOTHING OF THEM** — CD-D-007 a fifth time, and the first
+    time it was the PL and not the seat that died. **BELIEVING THE RECORD WOULD HAVE RE-DISPATCHED
+    FIVE COMPLETED ITEMS AND DISCARDED 4,641 INSERTIONS ACROSS 34 PATHS.** `ITEM_3` is the item that
+    made the sweep RED by construction, and `ITEM_6` is the one that caught `ITEM_1` of its own
+    increment breaking a plant.
+
+# ================================================================================================== #
+# THE PROJECT LEAD'S OWN FINDINGS AGAINST ITSELF. NINE. TWO ARE HIGH.
+# A PROJECT LEAD THAT SENDS AN AUDITOR OUT WHILE WITHHOLDING ITS OWN MEASUREMENT DEFECTS IS SETTING
+# THE AUDITOR AN EASIER PAPER THAN THE ONE IT SET THE ENGINEER.
+# ================================================================================================== #
+project_lead_findings_against_itself:
+  CD_PL_F119_HIGH: >
+    **THE INCREMENT-9 DISPATCH NAMED A FALSE-GREEN FACTORY AS AN AVAILABLE REMEDY AND ATTACHED THE
+    WORDS "PL-verified" TO IT.** See header item 3. **HAD THE ENGINEER FOLLOWED IT, 36 FALSE GREENS
+    WOULD HAVE SHIPPED AND BEEN RECONCILED AS SEALED.** It is `CD-PL-F107` repeating in the same
+    seat two increments later.
+  CD_PL_F120_HIGH: >
+    **THE PROJECT LEAD'S OWN PUBLISHED "13 SEALED" WAS TAKEN WITH AN UNSOUND CRITERION**, and
+    **the agreement between it and `F-06-J`'s 13 was NOT corroboration but a SHARED BLIND SPOT.**
+    The Project Lead wrote *"the divergence is in one cell, not in the method"*. **IT WAS IN THE
+    METHOD, AND BOTH PARTIES HAD THE SAME METHOD.** `CD-PL-F116` survives as arithmetic; the
+    reasoning attached to it is WITHDRAWN.
+  CD_PL_F121_MEDIUM_AND_IT_IS_AN_INSTRUCTION_TO_YOU: >
+    **FOUR TIMES ACROSS THREE BOUNDARIES THE PROJECT LEAD WROTE AN EXTRACTION, GOT A
+    PLAUSIBLE-LOOKING TABLE, AND THE TABLE WAS AN ARTEFACT OF THE PARSE**: a 99-class enumeration
+    that recovered 98 and nearly became a false HIGH finding; **a soundness attack that parsed ZERO
+    classes and printed "NONE — the PASS survives", a clean bill of health over an empty
+    population**; the same attack scoring `__reduce_ex__` NOT RAISING as 43 escapes; and a plant
+    table whose command lookup matched nothing and printed thirteen confident rows.
+    **EVERY ONE WAS CAUGHT ONLY BECAUSE A NUMBER LOOKED WRONG, NEVER BECAUSE THE METHOD WAS CHECKED.
+    A PARSE THAT MATCHES NOTHING AND A PARSE THAT MATCHES EVERYTHING BOTH PRINT CONFIDENT TABLES.**
+    *** **SO: DISTRUST THIS SEAT'S DERIVED TABLES SPECIFICALLY, AND CHECK THAT EVERY POPULATION IN
+    THIS DISPATCH AND IN `BL-20260823T082937Z-0126` IS NON-EMPTY BEFORE YOU READ ITS VERDICT.** ***
+  CD_PL_F122_MEDIUM: 'ITEM 3 was undeliverable in either form the dispatch offered. See ITEM_3 above.'
+  CD_PL_F115_MEDIUM: >
+    **`F-06-B` PUBLISHED TWO COUNTS WITH NO PRODUCING COMMAND AND NEITHER CAN BE REPRODUCED.** Both
+    fall strictly BETWEEN the new instrument's two readings (`BP-AMENDMENT-0001` 29 < **34** < 36;
+    `CD-BP-003` 21 < **23** < 28), so each was taken under a partial exclusion its own stated
+    exclusion set does not describe. **CD-RULE-009 BINDS ASSURANCE SEATS. THE FINDING'S SUBSTANCE IS
+    RIGHT AND ITS NUMBERS ARE UNRECOMPUTABLE, AND BOTH ARE TRUE AT ONCE.**
+    **YOU ARE FREE TO REPRODUCE 34 AND 23 BY A METHOD THE PROJECT LEAD DID NOT FIND AND SO REFUTE
+    THIS FINDING.**
+  CD_PL_F116_MEDIUM: '`F-06-J`''s table prints 99 and sums to 90 — **13 + 77 = 90, and nine of the ninety-nine are in neither column.** Arithmetic, and it stands. See `CD-PL-F120` for what does not.'
+  CD_PL_F123_MEDIUM_AND_IT_IS_A_HOLE_IN_THE_RECORD_YOU_ARE_ABOUT_TO_READ: >
+    **THE FIRST DRAFT OF THE ENTRY DISPATCHING YOU PUT A FABRICATED 40-CHARACTER STRING IN
+    `baseline_sha` — CORRECT IN ITS FIRST SEVEN CHARACTERS AND INVENTED FOR THE REMAINING
+    THIRTY-THREE — AND CARRIED A NOTE ASSERTING THE FIELD HAD BEEN RESOLVED WITH `git rev-parse`
+    AND `git cat-file -t`, WHICH WAS FALSE WHEN WRITTEN.** It never landed in a commit. **IT IS
+    `CD-PL-F118` REPEATING AT THE VERY NEXT BOUNDARY IN THE SAME FIELD, WHICH IS THE
+    `F111`-TO-`F112` SHAPE A SECOND TIME.**
+    *** **AND THE PART THAT IS YOURS: NO CONTROL ON THIS PROJECT CHECKS THAT A BUILD-LOG
+    `baseline_sha` NAMES A REAL COMMIT.** *** Neither `pbg boot` nor CD-RULE-008 resolves that field
+    against the object store. **SO THE HONEST STATEMENT IS THAT THIS SEAT DOES NOT KNOW WHETHER
+    EVERY SHA IN `governance/` RESOLVES, AND NEITHER DOES ANYBODY ELSE.** The carrier — a check that
+    every `baseline_sha`, `lane_head_sha`, `last_completed_checkpoint_sha` and
+    `continuity_record_commit` in `governance/` resolves to a commit object — is **MECHANICAL, ONE
+    COMMAND PER FIELD, WOULD HAVE FAILED ON THAT DRAFT, AND IS NOT WRITTEN**, because GATE means
+    nothing else moves while you are reading. **IT IS OWED, IT IS ON THE META-ASSURANCE DOCKET, AND
+    THE CHECK WAS THEN ACTUALLY RUN AS A READ-ONLY MEASUREMENT AND IT FOUND ONE — SEE
+    `CD_PL_F124` DIRECTLY BELOW.**
+  CD_PL_F124_HIGH_AND_IT_IS_THE_MOST_USEFUL_THING_IN_THIS_DISPATCH: >
+    *** **A LANDED BUILD-LOG ENTRY CARRIES A `baseline_sha` AND A `current_sha` THAT NAME A COMMIT
+    WHICH DOES NOT EXIST.** *** `governance/engineering/build-log/BL-20260819T064300Z-0011.yaml`,
+    both fields reading `17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1`. `git cat-file -t` -> **"could
+    not get object info"**. **THE REAL COMMIT IS `17d772157fc33a7b4df6e4e1f1dd81da0eefddf0`,
+    RECOVERED FROM THE REFLOG. THE TWO SHARE EXACTLY SEVEN LEADING CHARACTERS AND THE REMAINING
+    THIRTY-THREE ARE INVENTED.**
+    **THE COMMAND (CD-RULE-009):** over all 104 `governance/**/*.yaml`, extract every 40-hex value in
+    the ten SHA-bearing fields and `git cat-file -t` each — **158 values · 131 distinct · exactly ONE
+    distinct unresolvable, appearing twice, both in that entry.**
+    *** **AND THE PART THAT IS ACTUALLY YOURS: `CD-PL-F36` — "resolve SHAs, never transcribe them" —
+    IS FIRST RAISED IN `BL-20260819T070100Z-0012`, THE VERY NEXT ENTRY.** *** Eight entries predate
+    that rule, holding 20 SHA fields, **and the only two unresolvable ones are in the entry
+    immediately before the one that raised it.** **THE RULE WAS RAISED, IT CLOSED THE PRACTICE GOING
+    FORWARD, AND NOBODY EVER SWEPT BACKWARD — so the instance that motivated the control is still in
+    the record four days and 116 entries later, read past by FOUR ASSURANCE SEATS INCLUDING THE ONES
+    WHOSE VERDICTS YOU ARE TOLD TO READ FIRST.**
+    **THE GENERAL QUESTION, WHICH THIS PROJECT HAS NEVER PUT ABOUT ANY OF ITS NINE RULES AND WHICH
+    IS NOW EXPLICITLY YOURS: WHEN A RULE IS ADOPTED, IS THE RECORD EVER SWEPT BACKWARD FOR THE
+    INSTANCES THAT MOTIVATED IT?** The entry is NOT edited (PBG-CONT-003); the superseding correction
+    naming both values is in `BL-20260823T083655Z-0127`.
+  CD_PL_F114_LOW: '`pbg/controls/PBG-SEC-002.yaml` at `check_dockerignore.py:78` **has never existed in any commit on any ref** (`git log --all --diff-filter=A -- ''pbg/controls/PBG-*''` is EMPTY); the framework groups controls by family at `pbg/controls/sec.yaml`. **A governed instrument''s data table mixes real repository paths with invented exemplars and nothing marks which is which.** Disclosed, unfixed.'
+  CD_PL_F117_LOW: 'the 98-vs-99 extraction, recorded because it was caught and not because it was avoided.'
+  CD_PL_F118_LOW: '**a first draft of a build-log entry carried an INVENTED PLACEHOLDER SHA with an articulate note explaining why it could not be resolved. IT COULD. It was, in one command, and the placeholder never landed.** A fabricated value with a persuasive note beside it is the most convincing version of this project''s signature defect.'
+  and_the_older_list_which_is_NOT_claimed_complete: >
+    CD-PL-F86, F89, F92, F93, F94 (**amended against itself on the fourth seat's challenge**), F97,
+    F98 (**a contrast where both arms imported the same tree**), F99, F100, F101, F104, F105, F106,
+    F107, F111, F112, F113. **THE RECORD YOU ARE AUDITING WAS ASSEMBLED BY A SEAT WITH THAT LIST.**
+    The fourth seat counted the "control scoped narrower than the class it names" pattern at **NINE
+    INSTANCES** where the Project Lead had recorded four. **ASSUME IT IS PRESENT IN SOMETHING YOU
+    ARE ABOUT TO READ AND HAS NOT YET BEEN FOUND.**
+
+# ================================================================================================== #
+# THE NAMED TARGET LIST. A FLOOR, NOT A CEILING. T1-T17 CARRY FORWARD; T18-T22 ARE NEW.
+# ================================================================================================== #
+named_targets:
+- id: T18
+  target: '*** **NEW AND IT IS THE HEADLINE: THE SEALING CLAIM ITSELF.** ***'
+  what: >
+    **`PASS — 99 assertions, 0 violations` FROM AN INSTRUMENT EIGHT HOURS OLD, WRITTEN BY THE PARTY
+    WHOSE WORK IT SCORES.** Questions that are yours alone: **is the criterion CORRECT?** Is the
+    99-class population the RIGHT population, given the constructor check examines 99 but governs
+    33 — **and is "sweep 99, require 51, exclude 48" the right reading of a ruling that said
+    "required of the CLASS"?** **IS THE EXCLUSION CLAUSE REALLY A PROPERTY, OR IS IT A LIST WEARING
+    A MEASUREMENT?** Build a class it excludes that should not be excluded. **AND THE ONE THE
+    PROJECT LEAD MOST WANTS ASKED: THE RENAME TEST PROVES A CRITERION IS NOT A VOCABULARY AND THE
+    BASE/TIP CONTRAST PROVES IT IS NOT VACUOUS — NEITHER PROVES IT IS RIGHT.**
+- id: T19
+  target: '**NEW: THE ROUTE SET, WHICH ITS OWN AUTHOR SAYS IS DECLARED AND NOT PROVED COMPLETE.**'
+  what: >
+    **IT GREW TWICE UNDER MEASUREMENT IN A SINGLE DAY**, which is the strongest possible evidence
+    that five is not the number. `__reduce__`, `__class__` reassignment and `ctypes` are measured by
+    **NOBODY**. The Project Lead measured executed-`__reduce_ex__` against all 51 and found nothing;
+    **that is one route of four, taken once, by a party with a recorded parse-defect pattern.**
+    **FIND A SIXTH ROUTE. IT IS THE SINGLE MOST VALUABLE THING YOU COULD RETURN.**
+- id: T20
+  target: '**NEW: 48 OF 99 GOVERNED CLASSES ARE OPEN, UNSEALABLE, AND UNASSESSED — AND CD-RULE-004''s "THREE PLACES" DOES NOT EXIST FOR THE CLASS-2 SWEEP.**'
+  what: >
+    43 exceptions and 5 enums carry a `__dict__` imposed by a base outside this package. **THE
+    INSTRUMENT SAYS "NOT SAFE — UNSEALABLE" AND IS RIGHT TO. NOBODY HAS ASKED WHAT A FORGED
+    EXCEPTION COSTS THIS PRODUCT** — an exception carrying forged state crosses every boundary in
+    this system by design. **AND SEPARATELY: the Class-2 sweep has NO `required-tests.yaml` ROW AND
+    NO EXECUTION CONTRACT, so a rule every other guard is held to has never applied to the one
+    guard the last three gates have argued about, AND NO SEAT OR AUDITOR EVER NOTICED.**
+- id: T21
+  target: '**NEW: THE TWO NEW GOVERNING INSTRUMENTS ON `main` AND THE ONE IN THE LANE.**'
+  what: >
+    `tools/reconciliation/check_lane_governance_citations.py` (**on `main`; exits 1; and it is an
+    instrument the Project Lead wrote to measure the Project Lead's own reconciliation boundary —
+    a SELF-VOUCHING SHAPE, disclosed and not defended**) and
+    `tools/register/check_sealed_against_forged_establishment.py`. **GRADE BOTH AS ARTEFACTS.**
+    The citation instrument's DECLARED LIMIT 3 says identifier resolution has no register of defined
+    identifiers to check against — **"A REGISTER WOULD BE THE STRONGER CONTROL AND IT DOES NOT
+    EXIST; THIS IS THE WEAKER ONE, NAMED."** Is naming it enough?
+- id: T22
+  target: '**NEW: THE PROJECT LEAD''S RECONCILIATION PRACTICE, WITH FOUR PARSE DEFECTS ON THE RECORD.**'
+  what: >
+    See `CD-PL-F121`. **CHECK THE POPULATIONS, NOT THE VERDICTS.** Specifically: the "51 probed, 51
+    refused" soundness attack, the "13 plants, 12 EVIDENCE" table, the "TEN PROTECTED PATHS, TEN
+    ZEROS", and the four ITEM-3 arm re-runs. **EACH IS A TABLE PRODUCED BY A SEAT THAT HAS PRODUCED
+    FOUR EMPTY OR MIS-KEYED TABLES IN THREE BOUNDARIES.**
+- id: T2
+  target: '**CD-BP-003 — THE ADAPTER BOUNDARY THAT ADMITS. RED at the fourth, fifth and sixth gates.**'
+  what: '**ESCAPE 3 IS LIVE, UNMOVED AND UNDECLARED AT YOUR TARGET** — increment 9 changed nothing under `collectors/`. *A declared-foreign sink puts an unvalidated, schema-violating value on a governed `OK.payload` and hands the ledger a reading key naming a period no row records, `admitted=True`.* **REPRODUCE IT OR REFUTE IT — DO NOT INHERIT IT.**'
+- id: T3
+  target: 'THE STANDING INVITATION TO ATTACK THE WHOLE §D SCOPING INCLUDING CD-D-105 (CD-D-112).'
+  what: '**THE SIXTH SEAT SPENT IT AND GOT AN ENTIRE INCREMENT. THE CONSTRUCTION-PATH HALF IS NOW ANSWERED AND THE REST IS NOT.**'
+- id: T5
+  target: 'THE CLASS-2 SWEEP EXITING 1 — DECLARED. See clause (i).'
+  what: '**THE FIFTH SEAT''S SENTENCE IS STILL THE ONE TO PRESS: "DECLARING IS NOT READING."**'
+- id: T6
+  target: 'CD-RT-003-GRANT-MATRIX-LIVE and **THE BITTEN STANDARD** (PO-DECISIONS-0011 ruling 4). **THE CORRECTION IS NOW INHERITED BY THREE SEATS RUNNING AND RE-MEASURED BY NONE.**'
+- id: T8
+  target: 'THE FIFTEEN CLASS-2 ITEMS AND THE FIFTY DERIVATION ROWS.'
+  what: >
+    **CD-ENG-WO2R3-04''s F07 GOES TO YOU VERBATIM, AS IT ASKED:** *"FIFTY OF SIXTY-THREE ROWS ARE MY
+    FIRST-AND-ONLY READING OF TWO MODULES I DID NOT WRITE, IN ONE SITTING — THE EXACT SHAPE CATEGORY
+    C WAS JUST REVERSED FOR TRUSTING. ATTACK `operand_origin`; THE `OWN_CONSTRUCTION` ROWS FIRST,
+    BECAUSE THAT IS THE ANSWER THAT ENDS THE ENQUIRY."*
+- id: T9
+  target: '**CD-ENG-WO2R3-F15 — THE BLINDNESS WINDOW.** The fifth seat called its own unrun sweep *"the highest-value thing left on this tree, and it is mechanical"*: **for every declared limit that names a site outside its own module, is that site''s carrier MEASURED or merely NAMED? IT IS STILL UNRUN THROUGH THREE GATES. IT IS YOURS.**'
+- id: T13
+  target: 'THE PLANT SET. **PL-measured at your target BY HAND: 13 patches · `git apply` rc=0 on all thirteen · ZERO DEAD · 12 EVIDENCE · 1 NOT-A-CONTRAST (`GRANT-MATRIX-LIVE`, rc=3 both arms).**'
+  what: '**DO NOT INHERIT THAT TABLE — RE-DERIVE APPLICABILITY YOURSELF (header item 4).** The carrier that would make this automatic is ruled and does not exist yet, so this measurement has one source and it is the party being audited''s dispatcher.'
+- id: T14
+  target: 'THE RECLASSIFICATION OF INCREMENT 7 AND ITS DECLARED WEAKENING (`PASSED_TO` tagged and not acted on). **STILL LIVE. The sixth seat graded it; you may regrade it.**'
+- id: T15
+  target: '`tools/audit/tree_fingerprint.py` — **WHICH THIS DISPATCH USES TO STATE YOUR TARGET''S IDENTITY. IF IT IS WRONG, THE FIRST LINE OF YOUR VERDICT IS WRONG.** It declares it does not see file MODE. **WHAT ELSE DOES IT NOT SEE?**'
+- id: T17
+  target: 'THE `*extra` RESIDUE HELD SHUT BY A PRODUCT GAP, NOT BY A GUARD. **"It expires the day a computing mapping lands. There is no carrier for that day."** Is a documentary entry on an owed list a carrier?'
+
+# ================================================================================================== #
+disclosures:
+  1_the_verdicts_and_the_order_to_read_them_in: >
+    `governance/assurance/WO-2R3/VERDICT.md` (fourth seat, AMBER as written), then
+    `SUPPLEMENT-T2-GRADING.md` (**the fourth seat moving its own verdict to RED**), then
+    `ADDENDUM-T2-ADAPTER-BOUNDARY.md`, then `VERDICT-FIFTH-SEAT.md` (**RED**), then
+    `VERDICT-SIXTH-SEAT.md` (**RED**). **ALL BANKED VERBATIM AND NONE EVER EDITED**, so you can watch
+    an auditor change its own mind in the order it changed it. **THEY ARE EVIDENCE TO BE ATTACKED,
+    NOT AUTHORITY TO BE DEFERRED TO — AND `CD-PL-F115`, `F116` AND `F120` SHOW WHY.**
+  2_the_lane_now_carries_a_header_saying_it_is_NOT_the_authority: >
+    `BLUEPRINT.md` in your target is the lane's HISTORICAL BASELINE at v0.1.0 and now carries a
+    **PRODUCT-OWNER-AUTHORED** header saying exactly that. **THE GOVERNING BLUEPRINT IS v0.2.0 ON
+    `main`.** That is `PO-DECISIONS-0016` ruling 1(a), answering `F-06-B` — **and it answers only
+    the READER half. MAIN'S BLUEPRINT COMMIT IS STILL NOT AN ANCESTOR OF THIS LANE.**
+  3_the_lane_boot_reads_RED_and_it_is_not_about_the_work: >
+    `pbg boot` inside a lane or audit worktree emits a PL-role verdict of RED
+    (`CONTINUITY_REFERENCE_INVALID`) because it reads `main`'s continuity record from a detached
+    lane. **EVERY SEAT ON THIS PROJECT GOT THE SAME READING. DISCLOSED, NOT RULED HARMLESS, and
+    yours to disagree with.**
+  4_CD_PL_F101_IS_LIVE_UNFIXED_AND_VISIBLE_IN_THE_TREE_YOU_BOOT_FROM: >
+    The `main` worktree carries **45 untracked lines of porcelain** — operator runner scripts and
+    logs — so `pbg boot` on `main` reads **AMBER** where a clone of the same SHA reads **GREEN**.
+    Raised by the Project Lead against its own continuity practice, **deliberately not fixed, and
+    re-counted at every boundary so it is not quietly tidied away.** It moved 42 -> 45 during these
+    boundaries; every one of the 45 matches `.wo2*`, `.continue-prompt.txt` or
+    `pbg/tools/pbg/__pycache__/`, enumerated rather than asserted.
+  5_the_build_log_sequence_collisions_CD_PL_F89: >
+    **THIRTEEN LANDED SEQUENCE COLLISIONS, 0041-0053, NO GAPS**, between `main` and the lane. A bare
+    sequence number in that range NAMES TWO DIFFERENT ENTRIES; only the full timestamped `entry_id`
+    PLUS the branch disambiguates. **NOTHING WAS RENUMBERED OR EDITED.** Increment 9's entries are
+    lane **0090-0094**.
+  6_what_the_sixth_seat_asked_for_and_did_NOT_get: >
+    Its next-safe-gate list is not fully taken. **INCREMENT 9 TOOK `F-06-J`, `CD-PL-F104` AND
+    `CD-D-166` AND NOTHING ELSE.** Escape 3, the `_is_defined_in_a_class_body` fix, and the T9 sweep
+    are all still open. **THREE GATES HAVE NOW CARRIED SOME OF THESE. GRADE THAT FACT, NOT JUST THE
+    ITEMS.**
+  7_two_SCOPE_INSUFFICIENT_RETURNS_ARE_OPEN_AND_BOTH_ARE_CORRECT: >
+    `tools/sweep/declared_dispositions.py` (**sealed by ruling until you report**) and
+    `tools/sweep/delegated_judgement_sweep.py` (**the Project Lead's scope omission, `CD-PL-F122`**).
+    **ITEM 3'S CLOSURE IS OWED AND ITS SEQUENCING IS THE PRODUCT OWNER'S, AFTER YOUR VERDICT.**
+
+declared_unverified_by_the_project_lead_at_this_boundary:
+- '**THE PROJECT LEAD DID NOT INDEPENDENTLY RE-DERIVE THE 99-CLASS POPULATION FOR THE NEW
+   INSTRUMENT.** It verified the instrument REUSES the constructor check''s own traversal and diffs
+   it against a live reading. **THE POPULATION HAS TWO INDEPENDENT SOURCES AND BOTH ARE THE
+   ENGINEER''S.**'
+- '**THE PROJECT LEAD DID NOT MEASURE WHAT THE 36 NEWLY-SEALED CLASSES COST AT RUNTIME.**
+   `__slots__` changes pickling, `copy`, and attribute lookup. The suite passes; **THAT IS NOT THE
+   SAME AS HAVING LOOKED.**'
+- '**THE PROJECT LEAD RE-RAN THE ENGINEER''S OWN `P-Q` PROBE FOR ITEM 3 RATHER THAN BUILDING AN
+   INDEPENDENT ONE.** It then re-ran the sweep itself in each saved arm tree and verified each
+   tree''s mutation against the tip — **so the ARM CONSTRUCTION IS ATTRIBUTED AND THE VERDICTS ARE
+   CONFIRMED.** Stated because the last time this seat blurred that distinction it was `CD-PL-F98`.'
+- '**THE 48 EXCLUDED CLASSES WERE NOT INDIVIDUALLY RE-PROBED BY THE PROJECT LEAD.** The exclusion
+   CLAUSE was read and confirmed to be a property rather than a list; **the 48 verdicts it produces
+   were not re-taken one at a time.**'
+- '**THE FOUR ATTRIBUTED-NOT-CONFIRMED CLAIMS FROM INCREMENT 8 WERE NOT RE-RUN AT `686a374` BY
+   ANYONE.**'
+- '**THE PROJECT LEAD HAS NEVER GRADED CD-AC-002 OR CD-AC-005 AND IS FORBIDDEN TO** (PBG-AUTH-006).
+   **Its absence is by design, not oversight.**'
+
+# ================================================================================================== #
+the_evidence_standard_you_are_held_to_and_that_you_should_hold_the_record_to:
+  the_CD_ENG_WO2R3_F12_standard: >
+    **A PLANT IS EVIDENCE WHEN IT APPLIES, CONTRASTS, *AND FAILS AT THE LAYER ITS PROPOSITION NAMES*
+    — never merely when it exits non-zero.** Two arms that both exit 1 for DIFFERENT reasons look
+    identical in a summary table and prove nothing. **THIS BIT THE INCREMENT-7 ENGINEER TWICE AND
+    THE PROJECT LEAD ONCE AT THIS VERY BOUNDARY** (`CD-PL-F121` item 3).
+  the_BITTEN_standard_PO_DECISIONS_0011_ruling_4: 'The arm applied FOR REAL, the failure signature REPRODUCED, and the instrument SHA-VERIFIED byte-identical to `git cat-file` at the SHA it was run from.'
+  runtime_claims_need_runtime_proof: >
+    "Sealed", "unconstructible", "cannot be forged" are RUNTIME claims. **EVERY ESCAPE ON THIS
+    PROJECT''S RECORD PASSED STATIC CHECKERS.** Construct the thing. Read the exception type and
+    message. **NAME THE LAYER THAT REFUSED FROM THE FAILURE TEXT.**
+  the_rename_test_AND_ITS_TWO_KNOWN_INSUFFICIENCIES: >
+    Does a refusal credited to a STRUCTURE survive renaming one identifier? **IT PROVES A CRITERION
+    IS NOT A VOCABULARY. IT DOES NOT PROVE IT IS NOT VACUOUS, AND IT DOES NOT PROVE IT IS SOUND.**
+    `CD-D-166` CLEARS the vacuity check and is unsound in both directions — **that is the newest
+    thing this project has learned about its own favourite test.**
+  the_counterfactual_arm_CD_D_079: 'For every refusal credited to a structure, show the arm WITHOUT that structure failing to refuse.'
+  and_the_one_specific_to_a_SEALING_gate: >
+    **A SEAL IS PROVED BY THE ROUTE IT CLOSES, NOT BY THE ATTRIBUTE IT SETS.** `__slots__` is an
+    attribute. `__dictoffset__ == 0` is an attribute. **BOTH WERE TRUE OF TWO CLASSES THAT FORGE.**
+    Enumerate the routes, execute them, and read what came back.
+
+required_work:
+  boot_first: >
+    `cd /srv/crash-detector-wo2r3-audit7 && PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot`, then
+    read `pbg/roles/assurance-engineer.md` IN FULL, the PID, **`main`''s `BLUEPRINT.md` (v0.2.0, IN
+    FORCE — NOT the lane''s)**, `pbg/standards/DEVELOPMENT_SECURITY_BASELINE.md`, and reconcile the
+    target SHA and fingerprint against what you observe. **Declare your boot verdict.**
+  the_records_to_read_and_the_order_matters: >
+    (1) `governance/decisions/PO-DECISIONS-0015.md`, `-0016.md`, `-0017.md` — **your own authority.**
+    (2) the five assurance documents in the order at disclosure 1.
+    (3) `governance/dispatch/CD-DISPATCH-WO2R3-INC9-ENGINEER.yaml` and the lane build-log entries
+    **0090-0094** — increment 9 as dispatched and as delivered. **READ THE DISPATCH KNOWING ITS
+    ITEM_1 NAMED A FALSE-GREEN FACTORY.**
+    (4) `governance/engineering/build-log/BL-20260823T082937Z-0126.yaml` — the Project Lead's
+    reconciliation, **including its nine findings against itself.**
+  then: 'Everything in `named_targets`, at minimum, plus whatever your own reading opens up. **THE LIST IS A FLOOR AND NOT A CEILING.** Where you cannot reach something, **say what you ran and what stopped you — MEASURED limits, never a silent omission.**'
+  and_the_thing_the_project_lead_most_wants_from_you: >
+    Not a confirmation. **A ROUTE NOBODY HAS WRITTEN DOWN.** **THE THREE BEST RESULTS THIS PROGRAMME
+    HAS PRODUCED WERE ALL SOMEBODY DISBELIEVING A SETTLED SENTENCE:** the fourth seat re-reading its
+    own evidence after it had written its verdict; the fifth seat reading eleven items the record
+    had carried as unreadable for four increments; and **an Engineer, this week, disbelieving the
+    word "PL-verified" in its own dispatch and finding that two classes the record called SEALED
+    forge with zero package code.**
+    **THE SETTLED SENTENCE AT THIS GATE IS "THE CLASS OF 99 IS SEALED".**
+
+prohibited_mutation:
+  rule: '**READ-ONLY. YOU DO NOT MUTATE THE TARGET.** No commits to the lane, no edits under `/srv/crash-detector-wo2r3-audit7` that change the tree, no `git apply` in the audit worktree.'
+  how_to_test_a_variant_without_breaking_that: >
+    `rm -rf /tmp/<dir> && mkdir -p /tmp/<dir> && git archive <sha> | tar -x -C /tmp/<dir>`, apply and
+    run THERE, discard. Never `git worktree add` for a variant. Never mutate the audit tree.
+    **AND PER CD-PL-F98: RUN EACH TREE''S OWN COPY OF A PROBE, AND READ ITS `tree:` LINE EVERY TIME.**
+  explicitly_safe_diagnostic_artefacts: >
+    Files you create under `/tmp/`, and your own verdict and evidence written under
+    `governance/assurance/WO-2R3/` **on `main`, not on the lane** — handed back through your return
+    if you cannot write there. **`.pytest_cache/` in the audit tree is EXPECTED and is NOT a
+    mutation finding.** Nothing else.
+  non_waivable: >
+    You may not implement a fix (PBG-SOD-001). You may not weaken, edit or re-run-until-green any
+    check. You may not modify anything under `pbg/` (PBG-FWK-013). **IF YOU FIND YOURSELF WANTING TO
+    CHANGE THE TARGET TO PROVE A POINT, THAT WANT IS THE FINDING — WRITE IT DOWN INSTEAD.**
+  and_one_specific_to_THIS_gate: >
+    **YOU MAY NOT SEAL A CLASS IN A THROWAWAY EXTRACTION AND REPORT THE RESULT AS THOUGH IT WERE THE
+    TREE'S STATE**, any more than you may unseal one. Experimenting in `/tmp` to break the sealing
+    criterion is **exactly what you are here for**; presenting a patched extraction's verdict as the
+    target's is not. **LABEL EVERY THROWAWAY RESULT AS ONE, IN THE SAME PARAGRAPH AS THE RESULT.**
+
+expected_verdict:
+  form: '**PASS · AMBER · RED**, plus the NEXT SAFE GATE, plus PER-CRITERION GRADES for CD-AC-002 and CD-AC-005, plus a grade for T2.'
+  what_it_must_carry:
+  - 'the exact SHA and tree fingerprint you audited, **taken with `tools/audit/tree_fingerprint.py`**, re-taken at the end and compared to the start'
+  - 'a verdict on EACH named target, including the ones you could not reach and WHY, measured'
+  - '**YOUR GRADE ON THE SEALING CLAIM (T18) AND ON ITS ROUTE SET (T19)** — is the green run EARNED, and what would move that answer'
+  - '**WHETHER YOU FOUND A SIXTH ROUTE** — and if you did not, say what you tried'
+  - '**YOUR ASSESSMENT OF WHAT A FORGED EXCEPTION OR ENUM MEMBER COSTS THIS PRODUCT** (T20), which nobody has made'
+  - '**ESCAPE 3 REPRODUCED OR REFUTED AT `686a374`** — it is the first ground of the standing RED'
+  - '**YOUR REGRADE OF T2, CD-AC-002 AND CD-AC-005, IN EITHER DIRECTION**, with what would move each'
+  - 'for every refusal you credit: the RENAME TEST result, **the vacuity check**, **the SOUNDNESS check**, and the COUNTERFACTUAL ARM (CD-D-079)'
+  - '**YOUR CHECK OF THE PROJECT LEAD''S OWN TABLES (T22)** — populations first, verdicts second'
+  - 'anything you found that is on nobody''s list. **THIS IS THE POINT OF THE SEAT.**'
+  - 'anything you could NOT establish, said plainly. **An honest AMBER with measured limits is worth more than a PASS you are not sure of.**'
+  what_your_verdict_is_NOT: >
+    **NOT AN ACCEPTANCE** (PBG-AUTH-003). You grade; the Product Owner dispositions. And a RED is not
+    a failure of the project — **the last two REDs on this project were both called the most
+    trustworthy work the programme had produced.**
+
+expected_next_actor: PROJECT_LEAD
+returns_to: >
+  The Project Lead reconciles your return **BY MEASUREMENT**, banks it **VERBATIM AND BESIDE — never
+  inside — the four prior seats' documents** (CD-D-143, PBG-CONT-003), and **only then** clears the
+  three stale disposition keys, builds the plant-drift carrier, and puts ITEM 3's closure to the
+  Product Owner for sequencing — **all three in the act that answers your findings**
+  (PO-DECISIONS-0017 rulings 1 and 2). A META-ASSURANCE pass over the Project Lead's own
+  reconciliation practice is sequenced after your gate and now carries `F102`, `F111`, `F112`,
+  `F113`, **and `F119`-`F122`.**
+  **THE PROJECT LEAD WILL NOT ARGUE YOUR VERDICT DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER.**
+  If your verdict contradicts the reconciliation record, **THE RECORD IS WHAT GETS CORRECTED.**
+
+separation_of_duties:
+  PBG_SOD_001: 'The Engineer and the Assurance Engineer are never the same agent. Non-waivable.'
+  PBG_AUTH_006: 'The Project Lead writes neither the fix nor the assurance. Direction is not design.'
+  PBG_AUTH_003: 'A PASS is not an acceptance and neither is a RED. Disposition is the Product Owner''s.'
+  PBG_ASSURE_016: 'You may not certify work you implemented, advised on, or dispatched.'

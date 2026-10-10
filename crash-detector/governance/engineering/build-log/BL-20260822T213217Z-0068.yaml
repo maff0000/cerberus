@@ -1,0 +1,294 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 6 — ITEM A (ESCAPE 1) AND THE `required-tests.yaml` HALF OF ITEM E1.
+#
+# THE FIRST ENTRY BY A NEW SEAT ON THIS PROJECT. CD-ENG-WO2R3-02 IS NOT CD-ENG-WO2R3-01 AND HAS NO
+# CLEAN RECORD TO COAST ON (dispatch, commit_identity).
+#
+# WHY A AND E1 ARE ONE COMMIT AND NOT TWO. They are the SAME PARAGRAPH. Item A is a correctness fix
+# in `runner.py`; item E1 is the order to rewrite the declaration that item A falsifies. That
+# declaration is stated in THREE CD-RULE-004 places, and ONE OF THE THREE IS `collect`'s own header
+# inside `runner.py`. Landing A without E1 would ship a file whose header still tells its reader that
+# the thing A just fixed was never a limit. This is disclosed rather than assumed: the dispatch's
+# writable scope tags `runner.py` "item A ONLY", and this seat read the header change as being FOR
+# item A — it is the declaration of item A's own residue (CD-RULE-004, which item A's own text
+# requires) and the correction of the sentence item A disproves. IF THE PROJECT LEAD READS THAT
+# NARROWER, THIS IS THE PLACE IT IS RECORDED, AND THE CODE PATH AND THE PROSE ARE SEPARABLE.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0067. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T213217Z-0068
+timestamp_utc: "2026-08-22T21:32:17Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC6-ENGINEER
+parent_dispatch_id: CD-DISPATCH-WO2R3-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0011.md rulings 1 and 3'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+parent_entry_id: BL-20260822T195643Z-0067
+schema_version: 1
+
+record_type: INCREMENT
+
+# ------------------------------------------------------------------------------------------------ #
+boot_declaration:
+  lane_boot: >
+    `cd /srv/crash-detector-wo2r3 && PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **RED,
+    CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED**, `observed_sha`
+    531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0, branch wo-2r3, `current_phase BUILD`,
+    `blocking_failures []`. **THIS IS THE EXPECTED LANE ARTEFACT** — the dispatch discloses it and
+    the fourth Assurance seat tested the disclosure and confirmed it is cross-branch and not a
+    defect in the work. Declared rather than worked around (PBG-BOOT-004).
+  reconciliation_before_writing_anything: >
+    `git rev-parse HEAD` = 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0, matching `execution_base_sha`.
+    `git status --short` = **ZERO LINES** (PBG-CONT-006). Both taken before the first write.
+  role: >
+    ENGINEER, assigned by CD-DISPATCH-WO2R3-INC6-ENGINEER. Not self-assigned (PBG-BOOT-002). This
+    seat will not certify, assure or accept its own work (PBG-SOD-001, non-waivable); a FIFTH fresh
+    Assurance seat is already authorised over this SHA.
+
+# ------------------------------------------------------------------------------------------------ #
+the_baseline_this_seat_measured_itself:
+  why_it_is_re_measured_rather_than_read: >
+    CD-RULE-009 and CD-D-119. Every figure in the dispatch is the PROJECT LEAD's measurement at
+    531c95c. Quoting one as this seat's would be a transcription. All of the below were run by
+    CD-ENG-WO2R3-02 in /srv/crash-detector-wo2r3 at 531c95c before any file was written.
+  constructor_instrument:
+    command: 'python3 -B tools/register/check_constructor_field_establishment.py --root .'
+    observed: 'EXIT 0 — "PASS — 97 assertions, 0 violations"; 39 module(s); 99 class(es) examined;
+               33 in the class (32 fielded, 1 vacuous); RULE A 14 / RULE B ONLY 10 / RULE C ONLY 9;
+               ESTABLISHED_HERE field exemptions 3.'
+    agreement_with_the_dispatch: 'AGREES on every figure.'
+  doors_instrument:
+    command: 'python3 -B tools/register/check_judgement_path_doors.py --root .'
+    observed: 'EXIT 0 — "PASS — 54 assertions, 0 violations"; 27 doors, 27 DECORATED; EXEMPT 119
+               non-public, 17 @property, 5 Protocol stubs; staticmethod/classmethod 0;
+               **ESTABLISHED_HERE uses: 16**.'
+    agreement_with_the_dispatch: 'AGREES on every figure, including the 16 that item C turns on.'
+  suite:
+    command: 'python3 -B -m pytest -q'
+    observed: '**1538 passed in 13.06s.** RUN, not collected.'
+  class_2_sweep:
+    command: 'python3 -B tools/sweep/delegated_judgement_sweep.py --root .'
+    observed: '**EXIT 1 — "CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations".** NOT THIS SEAT''S
+               (CD-D-130). Reported, never chased.'
+  node_id_set: 'Captured as a SET, not a count: `pytest -q --collect-only | grep :: | sort` -> 1538
+                lines at /tmp/nodeids-531c95c.txt. Conservation is claimed by DIFFING that set.'
+  what_this_baseline_does_not_establish: >
+    The eleven plants and the variant corpus were NOT re-applied by this seat at 531c95c. Their
+    health at that SHA is the fourth auditor's measurement and is not this seat's.
+
+# ------------------------------------------------------------------------------------------------ #
+item_A:
+  name: 'ESCAPE 1 — THE STORED PAYLOAD IS NOT THE VALIDATED PAYLOAD'
+  the_defect_as_this_seat_read_it_off_the_artefact: >
+    At 531c95c, in `src/crash_detector/collectors/runner.py`, THREE lines each named
+    `response.payload` DIRECTLY — `validator.validate(response.payload, adapter.response_schema)`,
+    `empty = adapter.is_empty(response.payload)` and
+    `return OK(payload=response.payload, source_as_of_utc=response.source_as_of_utc)`. The middle
+    one is DECLARED-FOREIGN CODE (CD-BP-003). Nothing re-validated in between.
+    **AND A FOURTH READ THIS SEAT FOUND THAT IS NOT IN THE DISPATCH OR THE AUDITOR''S DOCUMENT:**
+    `if not isinstance(response.payload, AbcMapping)` is a fourth separate read of the same
+    attribute. On an exact `FetchedResponse` the four reads agree; when ESCAPE 2 has rebound
+    `FetchedResponse` in module globals, `payload` is a PROPERTY and each read is the adapter''s
+    code running again. **MEASURED: 4 reads at 531c95c, 1 now.**
+  why_six_increments_of_readers_were_satisfied_and_it_is_worth_recording: >
+    `OK.__post_init__` HAS ALWAYS DONE `object.__setattr__(self, "payload", dict(self.payload))`.
+    A top-level copy IS taken — but AFTER the foreign call, so it copies the mutation faithfully.
+    A reader who checked "is the payload copied before it is stored" got the answer YES.
+  what_changed:
+  - '`_payload_snapshot(payload)` and `_snapshot_value(value, depth)` added — a rebuild of `dict`,
+     `list` and `tuple` **BY EXACT TYPE** to `PAYLOAD_SNAPSHOT_MAX_DEPTH` levels, with one
+     `dict(payload)` at the top because the caller has already established the payload IS a mapping
+     and `OK` would call `dict` on it regardless.'
+  - '`PAYLOAD_SNAPSHOT_MAX_DEPTH = 32`, PUBLIC and in `__all__`, so the reach of the closure is a
+     number a test can pin and a limit can cite rather than an implicit recursion ceiling.'
+  - '`raw_payload = response.payload` bound ONCE before validation; the validator, the mapping check
+     and the snapshot all read that local.'
+  - '`adapter.is_empty(_payload_snapshot(payload))` — a SECOND, INDEPENDENT rebuild, so the object
+     foreign code can mutate is neither the judged one nor the stored one.'
+  - '`return OK(payload=payload, ...)` — the snapshot is what is stored.'
+  the_design_choice_that_is_declared_rather_than_quietly_taken: >
+    **IT IS NOT `copy.deepcopy` AND MUST NOT BECOME ONE.** `deepcopy` dispatches to
+    `__deepcopy__`/`__reduce_ex__` on whatever it meets, so deep-copying a hostile payload hands the
+    adapter ONE MORE EXECUTION POINT — the opposite of the property the function exists for. For the
+    same reason the rebuild walks EXACT types and never `isinstance`: walking a foreign mapping
+    means calling ITS `keys` and `__getitem__`.
+  the_contrast_BOTH_ARMS:
+    artefact: 'variants/WO-2R3/P-A-escape1-stored-is-not-validated.py — DURABLE, five arms, and IT
+               PRINTS NO VERDICT (F-C1: four probes in this project print verdicts they did not
+               earn). Arms 4 and 5 are expected to stay OPEN and are printed anyway.'
+    before_arm:
+      how: '`git archive 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0 | tar -x -C /tmp/base531`,
+            PRISTINE, no worktree mutation and no `git worktree add`. Probe copied in; nothing else.'
+      command: 'cd /tmp/base531 && python3 -B variants/WO-2R3/P-A-escape1-stored-is-not-validated.py'
+      observed: |
+        mode=none                 STORED == VALIDATED (text)  : True
+        mode=toplevel             STORED == VALIDATED (text)  : False
+                                  stored on OK.payload : {"not_in_schema": "\u0000\u0000\u0000",
+                                                          "reading": Infinity, "type": "builtins"}
+                                  conform to the schema it was judged by?
+                                     NO  -> SchemaRejection: JSONSCHEMA_ADDITIONALPROPERTIES at <root>
+                                  type(OK.payload) is exactly dict : True
+        mode=nested-exact-dict    STORED == VALIDATED : False; OK.payload['nested']['reading'] : inf
+                                     NO  -> SchemaRejection: JSONSCHEMA_MAXIMUM at /nested/reading
+        mode=nested-dict-subclass STORED == VALIDATED : False; OK.payload['nested']['reading'] : inf
+        mode=beyond-depth-cap     STORED == VALIDATED : False; innermost stored dict, 200 levels
+                                     down : {'reading': inf}
+        every arm: is_empty's argument IS the adapter's live object : True
+      what_it_reproduces: 'The auditor''s §2.1 result, INDEPENDENTLY, by this seat''s own run. THE
+                           TYPE IS ESTABLISHED AND THE VALUE IS NOT.'
+    after_arm:
+      command: 'cd /srv/crash-detector-wo2r3 && python3 -B variants/WO-2R3/P-A-escape1-stored-is-not-validated.py'
+      observed: |
+        mode=none                 STORED == VALIDATED : True
+        mode=toplevel             STORED == VALIDATED : True   <- CLOSED; conforms: YES
+        mode=nested-exact-dict    STORED == VALIDATED : True   <- CLOSED; nested reading 0.25
+        mode=nested-dict-subclass STORED == VALIDATED : False  <- **STILL OPEN, DECLARED LIMIT 5(1)**
+        mode=beyond-depth-cap     STORED == VALIDATED : False  <- **STILL OPEN, DECLARED LIMIT 5(2)**
+        every arm: is_empty's argument IS the adapter's live object : False
+        every arm: validator's argument IS the adapter's live object : True  <- DECLARED LIMIT 5(3)
+  carriers_MEASURED_by_reverting_the_fix_in_a_throwaway_copy:
+    how: 'The worktree was copied to /tmp/biteA, the two call sites reverted there to their 531c95c
+          form, and the module run. THE WORKTREE WAS NOT MUTATED.'
+    observed: '**4 failed, 59 passed** — `test_a_hostile_is_empty_cannot_change_the_stored_payload`,
+               `test_the_object_is_empty_is_handed_is_not_the_adapters_own_object`,
+               `test_a_hostile_is_empty_cannot_change_a_nested_plain_dict_either`,
+               `test_the_snapshot_depth_is_a_declared_number_and_the_residue_below_it_is_real`.
+               With the fix: 63 passed.'
+    a_carrier_this_seat_wrote_that_did_not_carry_and_says_so: >
+      **THE FIRST VERSION OF THE IDENTITY TEST ASSERTED `id(is_empty''s argument) != id(OK.payload)`
+      AND IT PASSED IN BOTH ARMS.** It is green at 531c95c WITH THE DEFECT FULLY PRESENT, because
+      `OK.__post_init__` copies at the top level regardless. It was found by running the reverted
+      tree — the bitten standard applied to this seat''s own carrier — and rewritten to compare
+      against the object the ADAPTER returned from `fetch`. **A CARRIER NOBODY TRIED TO BREAK IS A
+      CARRIER NOBODY HAS MEASURED**, and this is recorded because the near-miss is the evidence.
+  what_the_fix_does_not_reach_CD_RULE_006:
+  - 'A container that is not exactly `dict`/`list`/`tuple` is carried BY REFERENCE — a `dict`
+     SUBCLASS nested in a payload is still rewritable by the adapter. Executable example: probe arm
+     `nested-dict-subclass`, OPEN AT BOTH SHAs. **NOT PROVED TO BE CARRIED ANYWHERE.** PINNED (not
+     carried) by `::test_the_snapshot_does_not_reach_a_container_that_is_not_exactly_a_dict`.'
+  - 'Anything below `PAYLOAD_SNAPSHOT_MAX_DEPTH` is carried BY REFERENCE. Executable example: probe
+     arm `beyond-depth-cap`, 200 levels, OPEN AT BOTH SHAs. **NOT PROVED TO BE CARRIED ANYWHERE**
+     beyond the depth assertion in
+     `::test_the_snapshot_depth_is_a_declared_number_and_the_residue_below_it_is_real`, which
+     asserts the boundary FROM BOTH SIDES so neither the number nor the behaviour can drift alone.'
+  - '**THE VALIDATOR IS NOT COVERED AT ALL.** It is the other declared-foreign protocol at this door
+     and it is handed the live object before any snapshot exists. **NOT PROVED TO BE CARRIED
+     ANYWHERE**; PINNED by `::test_the_validator_is_still_handed_the_adapters_live_object`. Closing
+     it would be the sink/ledger/validator table, which is UNVERIFIED BY ANYONE and travels to the
+     fifth Assurance seat — **not pre-empted here on purpose.**'
+  - 'If the `FetchedResponse` door has itself been defeated by a module-global rebind, `payload` is a
+     property; reads went 4 -> 1, which is A NARROWING AND NOT A CLOSURE. **NOT PROVED TO BE CARRIED
+     ANYWHERE.**'
+
+# ------------------------------------------------------------------------------------------------ #
+item_E1:
+  name: 'THE `required-tests.yaml` "CLOSED AND NOT A LIMIT" LIST — REWRITTEN TO MEASURED REACH'
+  authority: 'PO-DECISIONS-0011 ruling 3. The verb is the Product Owner''s: **ORDERED REWRITTEN.**'
+  superseded_wording_quoted_and_not_deleted: >
+    "…`policy` exact RetryPolicy (isinstance admitted a subclass shadowing max_attempts with a
+    property until this increment), `started_utc` exact datetime then rebuilt by ensure_utc, `delay`
+    exact DelayKind from a closed enum, and every value the four Protocols RETURN exact-typed at its
+    point of return."
+  the_whole_list_was_re_read_not_only_the_sentence_the_auditor_quoted: >
+    The dispatch requires it and it changed the answer. A new probe,
+    `variants/WO-2R3/P-E1-what-is-closed-at-that-door.py`, runs ALL FOUR claims plus the
+    `type(response) is not FetchedResponse` door the same list carries by implication, at a pristine
+    531c95c extraction and at this tree.
+  measured_claim_by_claim:
+    policy_exact_RetryPolicy: >
+      **HOLDS, AND HOLDS HARDER THAN CLAIMED.** `@admits` compiles its declared types at DECORATION
+      time. With `runner.RetryPolicy` REBOUND to an unrelated class, a GENUINE `RetryPolicy` is still
+      `ADMITTED final_outcome=OK` and the unrelated class is still `NotAdmitted: collect:
+      policy=_NotAPolicy is not admitted; this door requires exactly RetryPolicy`. **AND THE
+      PARENTHETICAL IS NARROWER THAN IT READS:** a subclass shadowing `max_attempts` with a property
+      CANNOT BE CONSTRUCTED — `AttributeError: property 'max_attempts' of '_ShadowingPolicy' object
+      has no setter` — so the door is never reached by that shape at all.
+    started_utc_exact_datetime: >
+      **TYPE ONLY. IT IS A LIMIT AND NOT A CLOSURE.** subclass -> `NotAdmitted`; naive ->
+      `NaiveTimestampRejected`; `datetime(2016,1,1,tzinfo=utc)` -> **`ADMITTED final_outcome=OK`**.
+      Already collect's DECLARED LIMIT 2 and now not contradicted by the list above it.
+    delay_exact_DelayKind: '**HOLDS.** A frozen look-alike carrying the same `.value`, and the bare
+                            `.value` string, are both `NotAdmitted`.'
+    every_returned_value_exact_typed: >
+      **WITHDRAWN AS A CLOSURE AND NOT RESTATED IN A CORRECTED FORM.** What is true about a returned
+      value is now filed as a LIMIT (collect's DECLARED LIMIT 5). Per PO-DECISIONS-0011 ruling 3 and
+      SUPPLEMENT-T2-GRADING §3, **IT MAY NO LONGER BE CITED TOWARD CD-AC-002.**
+    and_the_door_the_list_carries_by_implication: >
+      `type(response) is not FetchedResponse` RESOLVES ITS NAME AT CALL TIME from module globals and
+      is therefore NOT of the same strength as `policy`. Reproduced by this seat from an adapter that
+      IMPORTS NOTHING from `crash_detector` and reaches the runner''s globals through the frame it
+      is called in: `reached module globals of : crash_detector.collectors.runner`,
+      `runner.FetchedResponse rebound: True`, `at the door: ADMITTED final_outcome=OK
+      {'reading': 0.25}`. **AN EXACT-TYPE DOOR IS ONLY AS STRONG AS WHEN IT RESOLVES ITS TYPE, AND
+      THIS ONE MODULE CONTAINS ONE OF EACH.** NOT PROVED TO BE CARRIED ANYWHERE.
+  the_three_CD_RULE_004_places_this_correction_lands_in:
+  - 'src/crash_detector/collectors/runner.py — `collect`''s DECLARED LIMIT block, item 4 rewritten
+     with the superseded wording quoted beside it, and a NEW DECLARED LIMIT 5 for the snapshot.'
+  - 'required-tests.yaml — the CD-RT-002-DOORS-REQUIRE-THEIR-TYPES row, superseded wording quoted
+     verbatim, replacement measured claim by claim.'
+  - 'contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md — same, as a table plus DECLARED
+     LIMIT 5 in full.'
+
+# ------------------------------------------------------------------------------------------------ #
+numbers_each_from_a_run_this_seat_did:
+  classes_examined: '99 before -> 99 after (item A moves no class; item B is where this moves).'
+  population: '33 before -> 33 after.'
+  constructor_assertions: '97 before -> 97 after, EXIT 0 both.'
+  doors_assertions: '54 before -> 54 after, EXIT 0 both.'
+  established_here_uses: '16 before -> 16 after (item C is where this moves).'
+  suite: '1538 before -> **1544 after**, `python3 -B -m pytest -q`, RUN.'
+node_id_reconciliation:
+  method: 'SETS DIFFED with `comm`, not counts compared. A bare number is not a conservation claim.'
+  lost: '**ZERO.** `comm -23` over the two sorted sets is empty.'
+  added: '6 — the four carriers and the two limit-pins in tests/test_collector_runner.py.'
+class_2_sweep_movement:
+  before: 'EXIT 1 — 534 sites, 15 violations.'
+  after: 'EXIT 1 — 534 sites, 15 violations. **UNMOVED.** Reported, not chased (CD-D-130).'
+
+# ------------------------------------------------------------------------------------------------ #
+findings_raised_by_this_seat_against_its_own_work:
+- id: CD-ENG-WO2R3-02-F01
+  severity: LOW
+  what: >
+    **A CARRIER THIS SEAT WROTE DID NOT CARRY.** The first identity test asserted
+    `id(is_empty's argument) != id(OK.payload)`, which is TRUE AT 531c95c WITH THE DEFECT PRESENT
+    because `OK.__post_init__` copies at the top level. It was caught only by running the reverted
+    tree. Rewritten to compare against the adapter's own object; both versions and the reason are
+    recorded in the test's docstring. **THE GENERAL POINT: THE BITTEN STANDARD APPLIES TO THE
+    CARRIER, NOT ONLY TO THE PLANT.**
+  disposition: 'CLOSED by this entry — the corrected carrier is measured RED on the reverted tree.'
+- id: CD-ENG-WO2R3-02-F02
+  severity: LOW
+  what: >
+    **AN UNDECLARED FOURTH READ.** `response.payload` was read FOUR times on the attempt path, not
+    the three the dispatch and the auditor's document name; the fourth is
+    `isinstance(response.payload, AbcMapping)`. It is harmless on an exact `FetchedResponse` and is
+    NOT harmless once ESCAPE 2 has made `payload` a property. Narrowed to ONE read here.
+  disposition: 'RAISED AND NARROWED. The global-rebind route it depends on is NOT closed and is not
+                claimed to be.'
+
+# ------------------------------------------------------------------------------------------------ #
+identity_audit:
+  range_audited: '531c95c..HEAD as of the commit that lands this entry.'
+  command: "git log --format='%an <%ae> | %cn <%ce>' 531c95c..HEAD | sort -u"
+  the_tail_this_entry_cannot_cover: >
+    **CD-PL-F85: AN IDENTITY AUDIT WRITTEN INSIDE A BUILD LOG ENTRY CAN NEVER COVER ITS OWN
+    BOUNDARY.** This entry is committed BY the commit whose identity it would need to report, so the
+    commit carrying this entry is OUTSIDE the range audited above. The commit message records
+    `git log -1` after the fact and the Project Lead's range audit at reconciliation is what closes
+    it. Stated, not glossed.
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. This entry is a RECORD OF WORK and is not assurance. Nothing in it is a
+  PASS, an acceptance or a grade. A fifth fresh Assurance seat is authorised over this SHA and every
+  claim above is on its attack list, including the two residues left deliberately open.

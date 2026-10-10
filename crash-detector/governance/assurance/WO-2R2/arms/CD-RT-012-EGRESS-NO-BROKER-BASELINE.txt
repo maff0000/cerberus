@@ -1,0 +1,14 @@
+=== CD-RT-012-EGRESS-NO-BROKER [BASELINE] ===
+plant   : none   (n/a)
+command : python3 -B tools/register/check_egress_no_broker.py --root .
+EXIT    : 0
+--- output (tail 25) ---
+CD-RT-012-EGRESS-NO-BROKER
+    subject: /tmp/cd-asr3/arms/CD-RT-012-EGRESS-NO-BROKER-BASELINE
+    scanned: 7 services and 2 networks in deploy/compose.yaml, 0 registered destination(s) in deploy/egress-destinations.yaml
+    assertions: 69
+    note: 0 destination(s) registered in deploy/egress-destinations.yaml — the admissible set is EMPTY, which is WO-2's deliverable and not a gap: registering an ingredient source is CD-D-005 and is owed by the Product Owner (PBG-AUTH-005)
+    note: networks declared internal: cd-net-private, cd-net-public
+    note: this check verifies a DECLARATION and the topology behind it. BLUEPRINT §2 and compose.yaml both disclose that Compose has no per-host egress primitive, so an ALLOWLIST is enforced by a lane owed at WO-3. No packet was observed and none is claimed.
+    note: NO NAME WAS RESOLVED AND NO SOCKET WAS OPENED. The admissible set is derived from deploy/egress-destinations.yaml in the subject tree and from nothing else, so this verdict is reproducible offline at this commit (CD-PL-F48). READ THE DECLARED LIMIT in this check's header before reading a clean run as proof of CD-AC-012: this check was clean for the escape that produced CD-ASR-F04 and for CD-PL-F59 one field across, and the EIGHT boundaries say what it still does not see and which layer — if any — was MEASURED to see it.
+CD-RT-012-EGRESS-NO-BROKER: PASS — 69 assertions, 0 violations

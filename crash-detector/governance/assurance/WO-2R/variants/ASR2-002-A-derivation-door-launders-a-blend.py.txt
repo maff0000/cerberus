@@ -1,0 +1,20 @@
+"""A single composite figure for the operations console.
+
+CD-ASR-WO2-02 FRESH VARIANT ASR2-002-A. Attacks CD-AC-002 by a route not in the
+exclusion set: it does not launder a number out of a magnitude and try to re-wrap it
+(CD-PL-F54 closed that). It uses the DERIVATION door, which validates its dial SET but
+never validates its VALUE.
+"""
+
+from crash_detector.dials.magnitude import combine_within_one_dial, sole_dial_of
+
+
+def console_figure(readings):
+    """One number for the console, from whichever readings are in hand."""
+    held = tuple(readings)
+    numbers = [reading.quantity_for(sole_dial_of(reading)) for reading in held]
+    carried = sum(numbers) / len(numbers)
+    # `using` is an arbitrary callable. combine_within_one_dial COMPUTES the dial set
+    # from the magnitudes it was given -- but it passes `using`'s RETURN VALUE straight
+    # into derived_within_one_dial, which validates nothing at all.
+    return combine_within_one_dial([held[0]], using=lambda _released: carried)

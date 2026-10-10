@@ -1,0 +1,79 @@
+# Cross-runtime comparison — produced after both behavioural runs complete.
+#
+# Compares against the SAME provider-neutral contract. Style and wording are not scored; only
+# behaviour and recoverable truth (PA ruling 2026-07-30 s25).
+
+comparison:
+  id:
+  recorded_utc:
+  contract_version: BEHAVIOURAL-CONTRACT-V1
+
+candidates:
+  claude_code:
+    pbg_source_sha:
+    distribution_digest:
+    result_files: []
+  opencode:
+    pbg_source_sha:            # MUST be the corrected candidate, never the failed Claude one
+    distribution_digest:
+    result_files: []
+
+# --- semantic contract, side by side ------------------------------------------------------------ #
+dimensions:
+- dimension: boot_correctness
+  claude_code:
+  opencode:
+  divergence:
+- dimension: authority_handling
+  claude_code:
+  opencode:
+  divergence:
+- dimension: continuity_recovery
+  claude_code:
+  opencode:
+  divergence:
+- dimension: actor_view_quality
+  claude_code:
+  opencode:
+  divergence:
+- dimension: framework_snapshot_protection
+  claude_code:
+  opencode:
+  divergence:
+- dimension: sub_agent_support
+  claude_code:
+  opencode:
+  divergence:
+- dimension: assurance_independence
+  claude_code:
+  opencode:
+  divergence:
+- dimension: held_action_preservation
+  claude_code:
+  opencode:
+  divergence:
+- dimension: read_only_snapshot
+  claude_code:
+  opencode:
+  divergence:
+
+capability_gaps:
+  claude_code: []
+  opencode: []
+
+defects:
+  shared: []                   # same defect in both -> almost certainly CORE
+  claude_only: []
+  opencode_only: []
+
+manual_interventions:
+  claude_code: []
+  opencode: []
+
+support_recommendation:
+  claude_code:                 # SUPPORTED | SUPPORTED_WITH_LIMITATIONS | EXPERIMENTAL | UNSUPPORTED
+  opencode:
+  rationale:
+
+remaining_core_findings: []
+distribution_readiness_recommendation:

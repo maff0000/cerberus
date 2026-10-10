@@ -1,0 +1,90 @@
+# PROJECT-ROOT CONTROL FILES: what each one IS, and what it may do.
+#
+# WHY THIS FILE EXISTS (A-5). Independent Assurance found `AGENTS.md` and
+# `governance/pbg-manifest.yaml` each read by nobody when their sibling exists, and neither
+# reported. The same class as the nested-field defect: a second copy that is read by nobody and
+# mentioned to nobody. A reader could not tell, from the framework's own output, whether a file at
+# the project root was consumed, ignored, or never looked at.
+#
+# So every control-like root file is CLASSIFIED here, in data that ships inside the package beside
+# `instructions.py`, which reports the classification alongside what was actually selected.
+#
+#   AUTHORITATIVE   the framework READS it and its content changes framework behaviour
+#   ADVISORY        the framework LOCATES it and reports it; it grants nothing and decides nothing
+#   UNSUPPORTED     the framework does not read it. Present or absent, it changes nothing, and it
+#                   must never APPEAR to be consumed
+#   PROHIBITED      it must never influence behaviour, wherever it sits
+#
+# AGENTS.md IS ADVISORY, DELIBERATELY. Product Authority's ruling is explicit: defining it as
+# unsupported or advisory is permitted; making it authoritative is not. It is ADVISORY rather than
+# UNSUPPORTED because the framework genuinely does locate it — PBGv2 ships an OpenCode adapter and a
+# generic adapter that both install AGENTS.md, so calling it unsupported would be untrue. What it is
+# NOT is a second authority channel: it confers no role, no scope and no permission, exactly like
+# CLAUDE.md, and PBG-BOOT-001 says so of both.
+
+version: 1
+
+files:
+
+  pbg-manifest.yaml:
+    classification: AUTHORITATIVE
+    read_by: tools/pbg/manifest.py resolve
+    permitted_locations: [pbg-manifest.yaml, governance/pbg-manifest.yaml]
+    note: >
+      Project configuration for PBG-CTRL-004. It may describe HOW a control is satisfied and may
+      never decide WHETHER a mandatory control applies. Two permitted in-root locations; when both
+      exist the shadow is reported and a disagreement between them is a refusal.
+
+  manifest.yaml:
+    classification: AUTHORITATIVE
+    read_by: tools/pbg/manifest.py validate
+    permitted_locations: [manifest.yaml]
+    note: >
+      The framework's own measurement manifest, generated from the live control corpus. It describes
+      the framework, not the project.
+
+  CLAUDE.md:
+    classification: ADVISORY
+    read_by: tools/pbg/instructions.py resolve
+    permitted_locations: [CLAUDE.md]
+    note: >
+      The project's own runtime instruction file. LOCATED and reported, never consumed as authority:
+      an instruction file grants no role and no scope (PBG-BOOT-001). Only the copy at PROJECT_ROOT
+      is the project's; a parent, sibling or working-directory copy is PROHIBITED.
+
+  AGENTS.md:
+    classification: ADVISORY
+    read_by: tools/pbg/instructions.py resolve
+    permitted_locations: [AGENTS.md]
+    note: >
+      The equivalent runtime instruction file for the OpenCode and generic adapters. Identical
+      standing to CLAUDE.md and identically powerless. Not a second authority channel.
+
+  pbg.yaml:
+    classification: UNSUPPORTED
+    read_by: null
+    permitted_locations: []
+    note: >
+      Never read by any PBG code path. Named here so that a project which creates one is TOLD it
+      does nothing, rather than discovering it the day a control was assumed to have run.
+
+  .pbgrc:
+    classification: UNSUPPORTED
+    read_by: null
+    permitted_locations: []
+    note: Never read. PBG has no dotfile configuration and no ambient configuration of any kind.
+
+  PBG.md:
+    classification: UNSUPPORTED
+    read_by: null
+    permitted_locations: []
+    note: >
+      Never read. A plausible-looking name for project doctrine that no PBG code path consults.
+
+inherited_copies:
+  classification: PROHIBITED
+  note: >
+    Any copy of a control file ABOVE PROJECT_ROOT, beside it, or in the process's working directory.
+    No parent search, no sibling lookup, no ambient current-working-directory influence, no
+    host-global location. These are DETECTED and REPORTED — an upward-walking agent runtime will
+    inherit them even though the framework does not — and they never influence framework behaviour.

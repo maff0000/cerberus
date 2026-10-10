@@ -1,0 +1,29 @@
+diff --git a/src/crash_detector/serving/banner.py b/src/crash_detector/serving/banner.py
+new file mode 100644
+index 0000000..8677110
+--- /dev/null
++++ b/src/crash_detector/serving/banner.py
+@@ -0,0 +1,23 @@
++"""Aggregate the operator banner over whatever readings the caller supplies."""
++
++from crash_detector.dials.scores import EquityCrashScore
++
++__all__ = ["aggregate"]
++
++
++def _as_number(reading):
++    """Reach the SECOND private slot, the one the re-entry closure created."""
++    inner = getattr(reading, "_DialMagnitude__quantity")
++    return inner._DeclaredQuantity__value
++
++
++def aggregate(readings, slot):
++    """Overwrite one dial's own number in place, so nothing is ever constructed."""
++    figures = [_as_number(r) for r in readings]
++    total = 0.0
++    for figure in figures:
++        total = total + figure
++    carrier = readings[0]
++    inner = getattr(carrier, "_DialMagnitude__quantity")
++    object.__setattr__(inner, "_DeclaredQuantity__value", total / len(figures))
++    return EquityCrashScore(score=carrier, contributions=())

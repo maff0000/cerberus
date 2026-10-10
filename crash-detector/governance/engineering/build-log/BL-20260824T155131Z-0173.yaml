@@ -1,0 +1,158 @@
+# ================================================================================================== #
+# BL-20260824T155131Z-0173 — PROJECT LEAD BOUNDARY. **16B-FIX-5 RETURNED `READY_FOR_ASSURANCE` AT
+# `8398741` AND IS RECONCILED BY MEASUREMENT IN THIS SEAT'S OWN SHELL. IT IS BANKED AND IT IS NOT
+# ACCEPTED** (`PBG-AUTH-003`, `CD-D-180`). **A FRESH ASSURANCE SEAT GRADES IT.**
+#
+# *** **RULING 5'S COMPLETION TEST REPRODUCES INDEPENDENTLY AND IT IS THE FIRST TIME IN THIS WHOLE
+# CHAIN THAT AN ARM WAS BUILT TO A CONDITION RATHER THAN TO A SHAPE. `C30` — a state vocabulary
+# INVENTED BY THE SEAT (`SPINDRIFT` / `HALCYON_VOID`, `grep -c` ZERO), declared by a spelling no
+# audit has used, carrying `calm` — ESCAPED `dd40407` AT `PASS — 144` AND IS `FAIL — 2` AT THE TIP.
+# ITS PAIRED CONTROL `C31` IS `PASS — 144` AT **BOTH** TIPS.** ***
+#
+# **AND THE TWELFTH CONSECUTIVE DISPATCH FROM THIS SEAT'S LINEAGE CONTAINED A FALSE STATEMENT THE
+# RECIPIENT CAUGHT. `CD-PL-F202`, AND IT IS THIS SEAT'S OWN, WRITTEN YESTERDAY-FRESH AND WRONG
+# WITHIN THE HOUR.** The dispatch told the Engineer the branch recogniser "continues as though it
+# had looked". **IT DOES NOT** — `state is None` was ALREADY reported as `CD-CALM-BRANCHES-006` at
+# `dd40407`, and this seat has now read the lines and confirms the Engineer against itself. **THE
+# SEAT BUILT AGAINST THE REAL, NARROWER DEFECT ANYWAY AND THAT DEFECT WAS A LIVE ESCAPE: `C32`
+# MEASURED `PASS — 144` AT `dd40407` AND `FAIL — 4` AT THE TIP, BY THIS SEAT'S OWN HAND.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T155131Z-0173
+timestamp_utc: '2026-08-24T15:51:31Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T15:51:31Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_03
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_03
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T150127Z-0172
+base_sha: 085e919
+current_sha: 085e919
+status: WAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-10 returned READY_FOR_ASSURANCE for 16B-FIX-5 at lane tip 8398741 (content tip
+  16b872c), five commits, one identity, clean tree. This seat re-ran the seat's own named commands
+  in its own shell, on the COMMITTED tree, from its own pristine extractions, with the contrast
+  arms — fourteen instrument runs plus the full suite and the register. EVERY HEADLINE CLAIM
+  REPRODUCES. IT IS BANKED AND NOT ACCEPTED. The next actor is a FRESH Assurance seat.
+
+what_this_seat_measured_itself_and_not_read_off_the_seats_summary:
+  method: >
+    `git archive <tip> | tar -x` into a throwaway directory PER ARM (CD-PL-F154), `git apply` with
+    its own exit code recorded, then the register's own declared command
+    `python3 tools/register/check_missing_data_never_calm.py --root .`. EVERY NEW ARM RUN AT BOTH
+    TIPS, because an arm that is red at the new tip proves nothing unless it was GREEN at the old.
+  the_completion_condition_PO_DECISIONS_0027_ruling_5:
+    - 'C30 (never-before-named state carrying calm) @ dd40407: apply rc=0 -> *** PASS — 144 assertions, 0 violations. A LIVE ESCAPE. ***'
+    - 'C30 @ 8398741: apply rc=0 -> *** FAIL — 2 violation(s), CD-CALM-SLOTS-007, naming root property [market_pulse]. REFUSED. ***'
+    - 'C31 (PAIRED CONTROL, same tree, present-and-fresh) @ dd40407: PASS — 144. @ 8398741: PASS — 144. *** ADMITTED AT BOTH TIPS — SO THE TIP IS A NARROWING AND NOT A BLANKET REFUSAL. ***'
+  the_alphabet_correction_itself:
+    - 'Clean extraction @ dd40407: PASS — 144, exit 0. Clean extraction @ 8398741: PASS — 144, exit 0. THE CORRECT TREE DID NOT MOVE.'
+    - 'C32 (unreadable oneOf BRANCH — the item THIS SEAT ADDED beyond the PO ruling) @ dd40407: PASS — 144, A LIVE ESCAPE. @ 8398741: FAIL — 4, CD-CALM-BRANCHES-006. *** THE ADDED ITEM FOUND A REAL ESCAPE AND THAT IS THE ONLY THING THAT JUSTIFIES HAVING ADDED IT. ***'
+    - 'C4 (VACUITY — the arm that decides whether this is a guard or a mute button) @ 8398741: FAIL — 4. IT STILL BITES.'
+    - 'C10 / C33 (CONTROL, symmetric fourth level) @ 8398741: PASS — 158 assertions. Matches the recorded figure exactly.'
+  the_rest:
+    - 'pytest tests/ -q @ 8398741 clean extraction: *** 2007 passed in 67.86s *** — no regression from 2007.'
+    - 'tests/test_detail_level.py: *** 52 passed. ***'
+    - 'required-tests verify @ 8398741: pid.content_hash MATCHES · latest_admitted_run (null) · MANDATORY NOT PASS (17) · GATE: SHUT · PID_ACCEPTANCE_SATISFIED: NOT DERIVED · CD-AC- row count 18.'
+    - 'Lane identity: `git log --format=%an dd40407..HEAD | sort -u` -> ONE name, CD-ENG-WO3-10. Working tree CLEAN.'
+    - 'Scope: 11 files, ALL inside the writable scope. The protected-path grep (pbg/ · BLUEPRINT.md · PID.md · governance/decisions/ · governance/mapping/ · src/ · tests/ · deploy/ · db/ · evidence/ · schemas) returns ZERO PATHS.'
+    - 'FROZEN be0b355: `git rev-parse be0b355 wo-2r3` -> IDENTICAL. UNMOVED.'
+
+findings_raised_at_this_boundary:
+  - id: CD-PL-F202
+    severity: MEDIUM, CONFIRMED BY THIS SEAT AGAINST ITSELF
+    raised_by: CD-ENG-WO3-10 as its F01
+    the_defect: >
+      **THE 16B-FIX-5 DISPATCH §3, WRITTEN BY THIS SEAT AT `085e919`, CONTAINS A FALSE STATEMENT.**
+      It told the Engineer that the branch recogniser has "no undecidable outcome — a branch it
+      cannot read yields `state = None` and the walk continues as though it had looked". **THAT IS
+      FALSE AND THIS SEAT HAS NOW READ THE LINES THAT MAKE IT FALSE.** At `dd40407`, lines
+      1617-1626, `unreadable = [label for label, resolved, state, _ in branches if resolved is None
+      or state is None]` feeds `check.violation(..., "CD-CALM-BRANCHES-006", ...)`. A branch
+      yielding `state = None` was ALREADY REPORTED, and the instrument's own words there are
+      "Unrecognised is a VIOLATION, never a silence."
+    how_it_happened: >
+      This seat PARAPHRASED the auditor's F2 instead of reading the code the paraphrase was about.
+      The auditor had it right; the paraphrase lost it. **THE DISPATCH ALSO WARNED THAT ITS OWN §2
+      AND §3 LINE NUMBERS WERE THE MOST LIKELY THING IN IT TO BE WRONG. THE LINE NUMBERS WERE ALL
+      CORRECT. THE PROSE AROUND THEM WAS NOT.** The seat checked the numbers, found them right, and
+      then found the falsehood anyway by reading the code — which is the third mechanism in three
+      dispatches by which a seat has been saved by distrusting this seat's lineage.
+    why_it_did_not_cost_the_increment: >
+      The seat identified the REAL, NARROWER defect unaided — a branch carrying a GOOD
+      `state.const` that ALSO declares an unreadable keyword — and built `C32` against it. **THIS
+      SEAT MEASURED `C32` ITSELF: `PASS — 144` AT `dd40407`, `FAIL — 4` AT THE TIP. THE NARROWER
+      DEFECT WAS A LIVE ESCAPE.** `CD-PL-F192` is the precedent for continuing and saying so.
+    disposition: >
+      **TWELFTH CONSECUTIVE DISPATCH ON THIS LANE WITH A FALSE STATEMENT CAUGHT BY ITS RECIPIENT,
+      AND THE FIRST WRITTEN BY THIS SEAT.** OPEN. It is carried into the Assurance dispatch as a
+      disclosed defect in the Engineer's own instructions, because an auditor grading work against
+      a dispatch needs to know which sentence of that dispatch was wrong.
+
+the_engineers_own_findings_carried_verbatim_and_not_paraphrased:
+  note: >
+    **PARAPHRASE IS WHAT PRODUCED `CD-PL-F202` ONE HOUR AGO**, so these are carried as the seat
+    wrote them and the Assurance seat is directed to the seat's own entry at
+    `BL-20260824T154200Z-16B5.yaml` on the lane.
+  findings:
+  - 'F01 — the dispatch §3 falsehood. ADOPTED as CD-PL-F202 above.'
+  - 'F02 — C32 IS STRUCTURAL, NOT BEHAVIOURAL, AND THE SEAT SAYS SO ITSELF. Driving the widened document through the live gate returns REFUSED [UNKNOWN_KEY] on both surfaces, because the gate has a per-dial key check UPSTREAM of the schema. The arm proves the INSTRUMENT moved; it does not prove the GATE would have admitted. THE SEAT DECLARED THIS RATHER THAN LETTING THE ARM READ AS BEHAVIOURAL.'
+  - 'F06 — THE SEAT''S OWN TOOLING ERROR, SELF-CAUGHT. Commit 9a10cf2 recorded a MANIFEST describing six arms WITHOUT the six patch files (`git commit -F <msg> <dir>` does not add untracked files). Caught by its OWN scope proof, corrected by SUPERSEDING commit 16b872c with the cause disclosed, never by a rewrite (PBG-CONT-003). THE SAME CLASS OF TOOLING ERROR THIS SEAT''S PREDECESSOR MADE AT f1ff59c.'
+  - 'F07 — inherited boot RED on the lane, DIAGNOSED NOT REPAIRED: the lane''s own ACTIVE_WORK.yaml carries `continuity_record_commit: PENDING`, blob ce0803c3, IDENTICAL at be0b355 and at HEAD. Outside the seat''s writable scope and correctly left alone.'
+
+the_open_question_this_seat_raises_for_the_ASSURANCE_seat_and_does_not_answer:
+  id: CD-PL-Q-C31
+  the_question: >
+    **DOES `C31` ADMIT FOR THE RIGHT REASON?** `C31` is `C30`'s tree with `state: "SPINDRIFT"` /
+    `state: "HALCYON_VOID"` replaced by `present: true` — so the dial **no longer names a property
+    called `state` at all**. It may therefore pass because the recogniser finds it INVISIBLE (a
+    clean `False`, not-a-dial), rather than because it AFFIRMATIVELY PROVED present-and-fresh.
+    **`PO-DECISIONS-0027` RULING 1 REQUIRES ADMISSION ONLY ON AFFIRMATIVE PROOF OF PRESENT AND
+    FRESH**, and "invisible therefore admitted" is the exact shape of every escape in this chain.
+  what_this_seat_found_when_it_looked: >
+    The precedent control this arm cites — `CD-ASR-WO3-04`'s — was a RECOGNISED dial (`state` const
+    `VALUE`, in `DECLARED_STATES`) carrying `calm` and still ADMITTED. `C31` is a WEAKER control
+    than the one it cites. **BUT THE PROPERTY IS NOT UNGUARDED:** `C4`, the vacuity arm, carries
+    "no dial may ever read calm" as a LIVE ASSERTION (`CD-CALM-GATE-002`), and this seat measured
+    it at the tip: **`FAIL — 4`. IT STILL BITES.** So the mute-button failure mode is caught by an
+    instrument the register runs, not merely by a plant.
+  why_it_is_NOT_resolved_here: >
+    **RESOLVING IT WOULD BE THIS SEAT CERTIFYING THE WORK IT DISPATCHED** (`PBG-SOD-001`,
+    non-waivable). It is stated, measured as far as measurement goes, and handed to the auditor as
+    ONE of three places worth its budget — alongside the two the ENGINEER named against its own
+    work, which this seat carries forward without dilution.
+
+what_is_NOT_claimed_at_this_boundary:
+  - '*** 16B-FIX-5 IS NOT ACCEPTED. BANKED ONLY. *** No verdict is implied by this reconciliation and none may be read from it.'
+  - '*** 16C REMAINS HELD AND ITS RELEASE JUDGEMENT REMAINS WITHDRAWN. *** It is released by an ASSURANCE GREEN and by nothing else — not by this seat, not by the fourteen runs above.'
+  - 'NO INDICATOR ROW IS REGISTERED. NOT ONE ROW, NOT A PLACEHOLDER, NOT A TEST FIXTURE. No `publish_cycle` caller, no `src/` entrypoint.'
+  - 'The row still computes UNDECIDABLE. WIRED IS NOT COMPUTED and nobody may read a wired row as a satisfied one.'
+  - 'DECLARED LIMIT 12''s residue — a dial discriminating on a differently-NAMED key — IS UNCHANGED and the Engineer named it as the boundary of its own by-construction argument. It stays a disclosed condition on 16C.'
+
+next_safe_action: >
+  Commit this entry with the ACTIVE_WORK pointer moved in the SAME commit; commit the Assurance
+  dispatch BEFORE launching; launch ONE FRESH Assurance seat, CD-ASR-WO3-10 — **never
+  CD-ENG-WO3-10 which built this, never CD-ASR-WO3-09 which found the defect** (`PBG-SOD-001` and
+  `PBG-SOD-004`, non-waivable) — READ-ONLY, over `8398741`, graded against `PO-DECISIONS-0027`
+  ruling 5 and not against a shape count. ON RETURN: bank the verdict VERBATIM, DO NOT ACCEPT IT,
+  and STOP at the increment boundary.
+
+expected_next_actor: 'PROJECT_LEAD (this seat) — writing the Assurance dispatch, then CD-ASR-WO3-10. NO ENGINEER SEAT IS RUNNING.'
+
+risks:
+  - '*** UNTIL THE ASSURANCE VERDICT, THE PROJECT MUST BE READ AS THOUGH THE ESCAPE IS STILL LIVE. Fourteen green runs by the seat that WROTE THE DISPATCH are not a grade. ***'
+  - 'CD-PL-F202 — this seat put a false statement in the instructions the Engineer built from, one hour after writing a build log entry about its lineage doing exactly that eleven times. The seat caught it. THE MECHANISM THAT KEEPS WORKING IS THE SEAT DISTRUSTING THE DISPATCH, AND IT IS NOT A SUBSTITUTE FOR THE DISPATCH BEING TRUE.'
+  - 'CD-PL-Q-C31 — the control may admit for the wrong reason. Stated, not resolved, handed to the auditor.'
+  - 'F02 — C32 is a STRUCTURAL arm and the gate refuses that document UPSTREAM for an unrelated reason. The instrument moved; the gate behaviour on that shape is NOT demonstrated.'
+  - 'CD-PL-F180 OPEN (16D). CD-AC-001 still only half guarded by live instruments; the other half is what 16C opens.'
+  - 'Ruled items 2-6 of PO-DECISIONS-0026 remain undelivered. Every dial still reads UNKNOWN and the 30 ratified indicators are still data nothing reads.'

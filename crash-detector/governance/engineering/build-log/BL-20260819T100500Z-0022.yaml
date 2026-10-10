@@ -1,0 +1,560 @@
+# WO-2R increment 1 of 6 — CD-ASR-F02 (HIGH) and CD-ASR-F03 (MEDIUM) on criterion CD-AC-001.
+# The CLASS closed is ABSENCE YIELDING A NUMBER. Two commits: the closure, then the durable
+# variants and this entry.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T100500Z-0022
+timestamp_utc: '2026-08-19T10:05:00Z'
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+seat_instance: 'WO-2R increment 1'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: ee8be6be38696f389a610bc948992a71ad81f892      # the dispatched execution base
+increment_sha: defd76ce0e1be310b6b2fa0d1224747972d68381     # the closure commit
+parent_entry_id: BL-20260819T075125Z-0017                   # newest ENGINEER entry in this lane
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  TWO commits in this increment, and the SHA to quote for the increment is the SECOND one, which
+  contains this entry's sibling artefacts but cannot contain this entry's own hash.
+
+    defd76ce0e1be310b6b2fa0d1224747972d68381  the closure: reading.py, dialset.py, evaluate.py,
+                                              their tests, RULE F in check_no_numeric_default.py,
+                                              the register entries, both execution contracts, and
+                                              the two regenerated plants
+    <the commit containing this file>          variants/WO-2R/ (eight patches and a manifest) and
+                                              this Build Log entry
+
+  Split this way because the runtime has killed three seats on this project and a termination had
+  to cost the variant record rather than the closure. Both SHAs were resolved with `git rev-parse`
+  against the object database, not written from memory (CD-CONT-002).
+
+# --- boot and reconciliation ------------------------------------------------------------------ #
+
+boot_verdict: >
+  Read IN FULL before writing anything, in the order the dispatch names:
+  governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md (the minimum proof obligation);
+  governance/decisions/PO-GATE-REVIEW-WO2-0001.md (why this rework exists);
+  governance/rules/PROJECT-RULES.md (CD-RULE-001 to CD-RULE-004);
+  the findings section of governance/assurance/WO-2/BL-ASR-WO2-01.yaml, CD-ASR-F02 and CD-ASR-F03
+  in full and the other five in outline; CD-DISPATCH-WO2R-ENGINEER.yaml in full including
+  increment_1_F02_F03, proof_standard, commit_message_contract, prohibited and
+  explicitly_out_of_scope_and_why; and then the code and its DOCSTRINGS —
+  src/crash_detector/dials/reading.py, dials/scores.py, dials/dialset.py, engine/evaluate.py,
+  engine/config.py, tests/test_reading.py, tests/test_evaluate.py,
+  tools/register/check_no_numeric_default.py, tools/register/_support.py, plants/MANIFEST.md, both
+  CD-AC-001 execution contracts, and the CD-RT-012-NO-EXECUTION-INTERFACE declared-limit pattern in
+  the check header and in required-tests.yaml.
+
+  RECONCILIATION: observed HEAD of /srv/crash-detector-wo2 was
+  ee8be6be38696f389a610bc948992a71ad81f892 on branch wo-2-skeleton, `git status --porcelain`
+  ZERO lines. That is EXACTLY the dispatched execution base. No drift (PBG-CONT-006). Work began
+  only after that matched. The lane's gitignored .pytest_cache/ and __pycache__/ from a previous
+  seat were disclosed in the dispatch and were left alone; `python3 -B` and
+  `pytest -p no:cacheprovider` were used everywhere so nothing further was written into any
+  governed tree (PBG-RT-001 — mutation by EFFECT, not by label).
+
+  ON THE SHA MAP: every record naming 66681b2 was read through
+  governance/continuity/WO-2-LANE-SHA-MAP.md as the dispatch instructs. ee8be6b is
+  byte-identical in content. No record was "corrected" and no drift was assumed.
+
+  I READ reading.py's docstring BEFORE changing it, and this closure FINISHES the argument that
+  docstring started rather than overruling it. Its refusal of a shared base class — "a base class
+  is somewhere a numeric accessor could later be added that all three constructors would inherit"
+  — is why the sealing mechanism here is a METACLASS and not a base: a metaclass member is
+  reachable on the class object and not on an instance, so the sum type still has no common
+  ancestor but object, and the existing test asserting that still passes untouched.
+
+# --- scope ------------------------------------------------------------------------------------- #
+
+scope_check: >
+  Written: src/, tests/, tools/, contracts/, plants/, variants/, required-tests.yaml, and this
+  new Build Log file. All inside writable_scope. NOTHING under pbg/ was touched —
+  `git status --porcelain pbg/` is empty. PID.md, BLUEPRINT.md, CLAUDE.md, docs/, db/, deploy/,
+  governance/assurance/, governance/decisions/, governance/dispatch/, governance/rules/ and
+  governance/engineering/ACTIVE_WORK.yaml are all UNCHANGED. `latest_admitted_run` in
+  required-tests.yaml is still null and was not approached. No status-like key was introduced into
+  the register — no status, result, outcome, verdict, grade, score or disposition. No product
+  quantity was invented (CD-RULE-003): increment 1 needed none, and the one number that appears
+  anywhere near a bound in this work is the pre-existing refusal in scores.py to impose a score
+  range, which was read and left exactly as it stands.
+
+  BOUNDED TO INCREMENT 1. Nothing was done for CD-ASR-F01, F04, F05 or F06. The dial SCORE TYPES,
+  the egress check, the code-graph check and the witness resolver were READ and NOT MODIFIED.
+
+# --- what was closed --------------------------------------------------------------------------- #
+
+the_class_closed: >
+  ABSENCE YIELDING A NUMBER. Not the name `magnitude`, not "a property", not "a module-level
+  constant": any route by which a Reading representing absence produces, exposes or is coerced
+  into a numeric value, and any route by which a code path that did not get its inputs constructs
+  a reading carrying one.
+
+  HALF (a), the absence OBJECT: CLOSED AS A CLASS. No route exists by which a Reading acquires a
+  numeric — or any other undeclared — member through construction, class-body definition, class
+  assignment, class deletion, a decorator, a metaclass, inheritance, instance assignment or
+  object.__setattr__. ONE RESIDUE remains and is declared: post-import mutation of the class
+  object through type.__setattr__.
+
+  HALF (b), the code path: CLOSED AS A CLASS at runtime. A dial that did not get its required
+  inputs cannot return a reading that carries a value, whatever the number is and wherever it came
+  from, because the refusal never asks about the arithmetic — it checks the CLAIM against the
+  inputs.
+
+implemented:
+- id: 'LAYER 1 — the declared attribute surface, asserted by EQUALITY'
+  where: src/crash_detector/dials/reading.py
+  what: >
+    DECLARED_MEMBER_SURFACE names the complete class dictionary of each of Value, Degraded and
+    Unknown. seal_reading_type() asserts set equality in BOTH directions during import, so an
+    added OR removed member makes `import crash_detector.dials.reading` raise
+    ReadingSurfaceViolated. A small enumerated TOLERATED_INTERPRETER_MACHINERY set admits the
+    names CPython's dataclasses/type machinery may add depending on patch level (__getstate__,
+    __setstate__, __replace__, __weakref__, __firstlineno__, __static_attributes__) — an
+    allowlist, each with its reason, and __dict__ deliberately NOT among them because a __dict__
+    descriptor re-opens instance injection.
+  why_it_is_a_class: >
+    The old test asked "is any name from ARITHMETIC_DUNDERS present?", which is a blacklist and is
+    exactly why E03 was invisible. This asks "is the surface the declared one?", so a member
+    nobody anticipated fails for NOT BEING DECLARED rather than passing for not being listed.
+- id: 'LAYER 2 — no instance attribute injection'
+  where: src/crash_detector/dials/reading.py
+  what: >
+    All three constructors declare __slots__ in the class body, so instances carry no __dict__.
+    `reading.magnitude = 0.0` raises FrozenInstanceError and
+    `object.__setattr__(reading, "magnitude", 0.0)` — which walks past the frozen dataclass's
+    __setattr__ — raises AttributeError. Frozen alone never closed this: it refuses assignment to
+    a DECLARED field and says nothing about adding an undeclared one.
+  measured_design_choice: >
+    __slots__ is declared MANUALLY rather than with @dataclass(slots=True). Measured, not
+    preferred: slots=True makes dataclasses RE-CREATE the class, which in CPython 3.11.2 leaves
+    the generated frozen __setattr__ closure pointing at the discarded class, and because
+    typing._GenericAlias.__call__ swallows only AttributeError, `Value[int](...)` then raises
+    TypeError instead of working. Manual __slots__ avoids the re-creation entirely and
+    subscripted construction keeps working. This was found by running it, not by reading about it.
+- id: 'LAYER 3 — no subclass route'
+  where: src/crash_detector/dials/reading.py
+  what: >
+    The SealedReadingType metaclass refuses to create any subclass of a sealed constructor, and
+    refuses class-attribute assignment and deletion once sealed. fold() and is_value() now
+    dispatch on EXACT TYPE IDENTITY rather than isinstance. This was a real hole, not a
+    hypothetical: the dispatch named it, and a subclass of Unknown carrying a numeric member would
+    have been accepted everywhere a Reading is accepted while passing every check aimed at the
+    three declared classes.
+  design_note: >
+    A METACLASS and not a base class, because reading.py's own docstring refuses a shared base as
+    "somewhere a numeric accessor could later be added that all three constructors would inherit".
+    A metaclass member is reachable on the class and NOT on an instance, so
+    test_the_three_constructors_share_no_ancestor_but_object still passes unmodified.
+- id: 'LAYER 4 — consumer-boundary re-verification'
+  where: src/crash_detector/dials/reading.py, src/crash_detector/dials/dialset.py, tests/test_reading.py
+  what: >
+    fold(), is_value() and DialSet.__post_init__ re-verify the surface of the reading's actual
+    class on every call and raise ReadingSurfaceViolated on a breach. tests/test_reading.py
+    additionally imports EVERY module in the application package in a clean subprocess and then
+    re-verifies all three surfaces — an assertion about the OUTCOME rather than about any route,
+    so an in-tree module that breaches a surface is caught however it did it.
+- id: 'LAYER 5 — the absence post-condition (CD-ASR-F03''s runtime closure)'
+  where: src/crash_detector/engine/evaluate.py
+  what: >
+    refuse_a_number_without_its_inputs(spec, usable, reading), applied to the per-dial evaluator
+    by the _absence_is_never_a_number decorator. It re-derives from the function's OWN ARGUMENTS
+    whether the dial got its required inputs — three ways it can fail: no required inputs
+    declared, no contribution model declared, or a declared required input not in the usable set —
+    and raises AbsenceYieldedAValue if the returned reading carries a value anyway.
+  why_it_is_a_class: >
+    It never asks where the number came from, so the space of provenances it must anticipate is
+    EMPTY. A literal, a module-level constant, a configuration default, an environment variable, a
+    previous magnitude carried across a gap, a value read from the store and an expression nobody
+    has thought of all fail identically. And because the guard sits at the function BOUNDARY and
+    derives from the arguments, it survives any rewriting of the body — which is what CD-ASR-F03
+    was: an edit to a body whose rules lived in that body.
+  one_directional: >
+    Deliberately. A body returning Unknown where a number was available is NOT refused; that is
+    the safe direction, and a guard that compelled a number would push against PID §3.2 rather
+    than for it. Tested in all three input states.
+- id: 'LAYER 6 — RULE F, the positive shape (the AST guard stops enumerating spellings)'
+  where: tools/register/check_no_numeric_default.py
+  what: >
+    Rules A-E are RETAINED and unweakened. RULE F is added and inverts the question: instead of
+    enumerating ways a number can arrive it enumerates the ONE way a dial magnitude is PERMITTED
+    to arrive — DECLARED_MAGNITUDE_SOURCES, the declared ContributionModel.compute applied to
+    present inputs — and reports every other provenance. For each Value or Degraded construction
+    on the scanned path, the magnitude is traced back through the assignments of its scope chain;
+    a trace terminating anywhere other than a declared source is a violation, INCLUDING a
+    terminus the check does not recognise at all. Deny by default: silence is a violation.
+  doctrinal_basis: >
+    PID §3.6 forbids unexplained mappings and BLUEPRINT §7 requires a reading to be explicable
+    from its stored inputs, so a magnitude whose provenance the guard cannot name is already
+    outside what the product permits. Rule F does not invent a rule; it enforces one already
+    ratified.
+- id: 'THE REGISTER CORRECTION and both execution contracts'
+  where: required-tests.yaml, contracts/execution/CD-RT-001-*.md
+  what: >
+    Both CD-AC-001 entries rewritten to claim exactly what their guards deliver, each with a
+    DECLARED LIMIT in the CD-RT-012-NO-EXECUTION-INTERFACE pattern — stated CONSISTENTLY in the
+    check/module header, the register entry and the execution contract, each boundary carrying an
+    example an auditor can execute, plus an explicit instruction not to read a clean run as proof
+    of the proposition. CD-ENG-F40 was raised last time for exactly this inconsistency between
+    the three; it was not repeated.
+  the_scope_decision_and_why: >
+    CD-RT-001-AST-NO-NUMERIC-DEFAULT RETAINS `scope: CLASS`. The dispatch permits either making
+    CLASS true or changing the declaration and forbids only claiming CLASS while enumerating
+    spellings. After RULE F the check no longer enumerates spellings — it denies by default — and
+    the residue is a LAYER boundary (static versus dynamic), which is precisely what CD-RT-012
+    declares and what an independent auditor judged honestly and conservatively drawn. The
+    declaration now says which layer carries which half rather than claiming both. A reviewer who
+    disagrees can change one word; this seat states the reasoning so the disagreement is cheap.
+
+# --- proof ------------------------------------------------------------------------------------- #
+
+proof_standard_discharge: >
+  The Product Owner's word for F02 is "structurally incapable", which is a RUNTIME property, so a
+  static checker exiting non-zero is NOT proof of it. Every variant below was WRITTEN, RUN, and the
+  interpreter's or the constructor's refusal RECORDED with its exception type and message. Each ran
+  on its OWN pristine extraction — `git archive <sha> | tar -x -C <tmpdir>`, `git apply -p1`, run,
+  discard — so no variant contaminated another, and `python3 -B` throughout. The worktree was never
+  mutated to test a variant and no git worktree was created for one.
+
+known_set_variants_re_run:
+- id: E03
+  route: 'a plain `magnitude` property on Unknown — no dunder, no annotation, no default'
+  refusal: >
+    REFUSED. `PYTHONPATH=src python3 -B -c "import crash_detector.dials.reading"` exits 1 with
+    crash_detector.dials.reading.ReadingSurfaceViolated: "Unknown carries undeclared member(s)
+    ['magnitude']. The surface is declared and asserted by equality, so this is a breach whether or
+    not the member is numeric (CD-ASR-F02)." The declared arm
+    `pytest tests/test_reading.py tests/test_evaluate.py -q` exits 2 with both modules ERRORing
+    during collection on the same exception. The dial path cannot be imported at all.
+  note: >
+    The AST check exits 0 under E03 and that is CORRECT and DECLARED: E03 adds no dial magnitude,
+    so RULE F has nothing to say about it. The runtime layer carries F02.
+- id: E04
+  route: 'numeric default as a module-level constant, returned from the missing_required branch'
+  refusal: >
+    REFUSED TWICE. Statically: the AST check exits 1, FAIL - 1 violation(s), "F: unrecognised
+    magnitude provenance ... QUIET_MAGNITUDE is bound in an enclosing scope to something that is
+    not a declared magnitude source: the magnitude IS the literal 0.0." At runtime: the
+    missing-inputs probe exits 1 with AbsenceYieldedAValue: "dial 'equity_crash' produced Value,
+    which carries a value, but its required inputs were not all present: it declares ['src.a'], a
+    contribution model is declared, and the usable inputs are []." Declared arm exit 1, 9 failed /
+    80 passed.
+
+new_variants_of_this_seat:
+  count: 6
+  durable_at: 'variants/WO-2R/CD-ASR-F02-F03/ plus a row each in variants/WO-2R/MANIFEST.md'
+  nothing_executable: >
+    Nothing under variants/ is executable — the patches are data and there is no wrapper and no
+    runner (PBG-ASSURE-001). The EVALUATE-MISSING probe is printed in the manifest for an auditor
+    to retype rather than committed as a script. File modes were audited: all eight are 0664.
+  rows:
+  - 'V01 bare CLASSVAR (`FALLBACK_MAGNITUDE = 0.0`), not a descriptor and not E03''s name ->
+     REFUSED, import exit 1, ReadingSurfaceViolated "... [''FALLBACK_MAGNITUDE'']".'
+  - 'V02 `__getattr__` CATCH-ALL returning 0.0 — installs NO member name at all, so no enumeration
+     of names could ever list it, and __getattr__ is not in ARITHMETIC_DUNDERS either. The
+     strongest of the six -> REFUSED, import exit 1, ReadingSurfaceViolated "... [''__getattr__'']",
+     caught not because the guard understands __getattr__ but because it is not declared.'
+  - 'V03 DYNAMICALLY OBTAINED CONSTRUCTOR on the missing-inputs branch, magnitude behind a call with
+     no numeric literal. Written at boundary 1 of the AST check''s declared limit on purpose ->
+     AST exit 0 (NOT refused statically, exactly as declared); REFUSED AT RUNTIME, exit 1,
+     AbsenceYieldedAValue. This is the variant that tests whether the declared limit is a real
+     division of labour or an excuse.'
+  - 'V04 POST-IMPORT CLASS MUTATION via type.__setattr__ from a new serving module -> PARTIALLY
+     REFUSED, which is the declared residue. The mutation succeeds and a direct read gives 0.0;
+     fold, is_value and DialSet all raise ReadingSurfaceViolated; and the declared arm now fails
+     too (exit 1, 1 failed / 89 passed) on the package-import sweep.'
+  - 'V05 DECORATOR installs the member above @dataclass, so it appears in no class body and runs
+     BEFORE the module-bottom seal -> REFUSED, import exit 1, ReadingSurfaceViolated.'
+  - 'V06 MAGNITUDE FROM CONFIGURATION with NO numeric literal anywhere — the lookup default is the
+     STRING "0" so class B does not fire, the module name is bound to a Call so constant resolution
+     does not see it, and it returns Degraded, which is SUPPOSED to carry a value -> REFUSED
+     TWICE: AST exit 1 rule F naming float() as not a declared source, and runtime exit 1
+     AbsenceYieldedAValue naming Degraded.'
+
+false_positives_checked: >
+  A closure that forbids the product is not a closure.
+  (1) The full suite is green and NOT ONE existing assertion was relaxed, deleted or re-scoped:
+  904 -> 945 tests, every one of the original 904 still present and passing; the 41 added are new
+  propositions. (2) Subscripted construction `Value[int](...)` still works — measured, and it is
+  what ruled out @dataclass(slots=True). (3) A Value still carries a real score and folds to it.
+  (4) The post-condition PERMITS Value and Degraded when every required input was present, and
+  permits Unknown in all three input states. (5) Degraded on the missing-CONTRIBUTING path still
+  works untouched — that dial DID get its required inputs, so the post-condition is silent.
+  (6) RULE F reports zero violations on the clean dial path while catching E04, V06 and both
+  CD-AC-001 plants. (7) The register still validates: GATE SHUT, all sixteen UNDECIDABLE,
+  latest_admitted_run null.
+
+commands_run:
+  note: >
+    Every command below was run by this seat with the working directory set to the root of a tree
+    it extracted itself, `python3 -B` throughout. THIS IS IMPLEMENTATION EVIDENCE AND NOT
+    ASSURANCE (PBG-SOD-001, non-waivable).
+  clean_arm_before_at_ee8be6b:
+  - 'python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 0, 190 assertions'
+  - 'PYTHONPATH=src pytest tests/test_reading.py tests/test_evaluate.py -q   -> exit 0, 49 passed'
+  - 'PYTHONPATH=src pytest tests/test_scores.py tests/test_dialset.py -q   -> exit 0, 96 passed'
+  - 'python3 -B tools/register/check_no_blend.py --root .   -> exit 0, 1027 assertions'
+  - 'python3 -B tools/register/check_schema_closed.py --root .   -> exit 0, 242 assertions'
+  - 'python3 -B tools/register/check_engine_no_witness_reach.py --root .   -> exit 0, 11 assertions'
+  - 'python3 -B tools/register/check_grant_matrix_live.py --root .   -> exit 3 PRECONDITION_NOT_MET,
+     no store present'
+  - 'PYTHONPATH=src pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q
+     -> exit 0, 65 passed'
+  - 'python3 -B tools/register/check_no_execution_interface.py --root .   -> exit 0, 29775 assertions'
+  - 'python3 -B tools/register/check_lockfile_denylist.py --root .   -> exit 0, 15 assertions'
+  - 'python3 -B tools/register/check_egress_no_broker.py --root .   -> exit 0, 43 assertions'
+  - 'PYTHONPATH=src pytest tests -q   -> exit 0, 904 passed'
+  clean_arm_after_at_defd76c:
+  - 'check_no_numeric_default.py   -> exit 0, 242 assertions, 0 violations'
+  - 'pytest tests/test_reading.py tests/test_evaluate.py   -> exit 0, 90 passed'
+  - 'pytest tests/test_scores.py tests/test_dialset.py   -> exit 0, 96 passed'
+  - 'check_no_blend.py   -> exit 0, 1107 assertions'
+  - 'check_schema_closed.py   -> exit 0, 242 assertions'
+  - 'check_engine_no_witness_reach.py   -> exit 0, 11 assertions'
+  - 'check_grant_matrix_live.py   -> exit 3 PRECONDITION_NOT_MET, unchanged, no store'
+  - 'pytest tests/test_witness_panel.py tests/test_witness_resolver.py   -> exit 0, 65 passed'
+  - 'check_no_execution_interface.py   -> exit 0, 31356 assertions'
+  - 'check_lockfile_denylist.py   -> exit 0, 15 assertions'
+  - 'check_egress_no_broker.py   -> exit 0, 43 assertions'
+  - 'pytest tests   -> exit 0, 945 passed'
+  - 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify --register
+     required-tests.yaml   -> GATE: SHUT, all 16 criteria UNDECIDABLE, latest_admitted_run null'
+  on_the_three_assertion_counts_that_rose: >
+    AST-NO-NUMERIC-DEFAULT 190->242, AST-NO-BLEND 1027->1107 and NO-EXECUTION-INTERFACE
+    29775->31356 rose because those checks count propositions tested over SOURCE TEXT and
+    reading.py, evaluate.py and their tests grew. No rule was added to the last two and no rule was
+    removed from any of the three. Stated because a rising number in a guard's output is exactly
+    the sort of thing that should be explained rather than admired.
+  not_delivered_arms: >
+    The eleven criteria WO-2 does not deliver were re-run and every one still terminates NON-ZERO
+    naming an absent subject: nine pytest arms exit 4 (no such test module) and two register checks
+    exit 2 (no such script). None passes vacuously. Unchanged from the baseline; increment 1
+    touched none of them.
+
+# --- the eleven plants -------------------------------------------------------------------------- #
+
+eleven_plants:
+  applies_at_increment_sha: 'ALL ELEVEN. Verified with `git apply --check -p1` against a fresh
+    `git archive defd76c` extraction, one check per patch.'
+  contrast: >
+    TEN show their contrast — declared command exit 0 on the clean subject, non-zero with the plant
+    applied, each on its own throwaway copy. The eleventh,
+    CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE, applies cleanly and needs a reachable PostgreSQL; with
+    none present BOTH arms exit 3, which is not a demonstrated contrast and is NOT recorded as one.
+    RT-A authorises a throwaway container only for increment 4 and only if that increment touches
+    what the check reads; increment 1 touches nothing it reads, so no container was started.
+  changed:
+  - id: CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch
+    what: REGENERATED
+    why: >
+      It no longer applied: _evaluate_dial gained the post-condition decorator and a longer
+      docstring, so the hunk context moved. The patch was regenerated against the new structure and
+      makes the IDENTICAL semantic change by the same route — a dial declaring no required inputs
+      returns Value(EquityCrashScore(score=0.0), inputs_used=("baseline",)). A plant that no longer
+      applies is not a plant (CD-D-033); deleting one is prohibited.
+    signature_change: >
+      From 3 failed / 46 passed with AttributeError, to 17 failed / 72 passed with
+      AbsenceYieldedAValue. The post-condition raises INSIDE evaluate(), so every test in the file
+      that evaluates anything fails rather than only the three that inspected the reading. A
+      stronger contrast and a worse-looking number; both are recorded.
+  - id: CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch
+    what: REGENERATED
+    why: >
+      Same cause: it patches evaluate.py's import block and _evaluate_dial's signature. Same
+      proposition, same three routes (transitive, relative, function-local import), re-verified:
+      the violation trail is still of LENGTH 2, and
+      test_importing_the_engine_does_not_pull_in_the_witness_package still PASSES under it, which
+      is the observation that row calls its most interesting result. Collateral re-measured: 1
+      failed / 88 passed (was 1 failed / 48 passed; the suite grew), still the same single failure,
+      test_evaluate_has_the_blueprint_signature.
+    consequence_for_the_closure: >
+      To keep that plant working, _absence_is_never_a_number's wrapper accepts and forwards *extra
+      arguments. That is recorded in the code with its reason, and the reason is not convenience: a
+      wrapper that fixed the arity would stop guarding the moment anybody gave the evaluator a
+      fourth argument, which is exactly the kind of edit that arrives with a feature and takes a
+      guard off with it.
+  - id: CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT
+    what: 'UNCHANGED patch, UPDATED manifest row'
+    why: >
+      Still applies. Its signature grew from FAIL - 2 violation(s) to 3, the third being RULE F,
+      which fires independently of the `or 0.0` idiom the other two need — so the same plant
+      written without `or` would still be caught.
+  not_done: 'NO PLANT WAS DELETED, DISABLED, WEAKENED OR TRIMMED TO FAIL FEWER INSTRUMENTS.'
+
+# --- declared limits ---------------------------------------------------------------------------- #
+
+declared_limits:
+- id: 'THE TYPE LAYER — post-import class mutation'
+  statement: >
+    type.__setattr__ installs a class attribute without going through a metaclass, and CPython
+    offers no way to refuse it. After
+    `type.__setattr__(Unknown, "magnitude", property(lambda self: 0.0))` the expression
+    `Unknown(reason="R", since_utc=t, missing_inputs=()).magnitude` DOES evaluate to 0.0 for code
+    that reads it directly without passing the reading to any consumer.
+  what_is_closed: >
+    fold(), is_value() and DialSet all raise ReadingSurfaceViolated on a reading of a mutated
+    class, and the declared arm's package-import sweep fails for ANY in-tree mutator, whatever
+    route it used. So absence cannot acquire a numeric member through construction, assignment,
+    inheritance or definition, and a mutated class is refused wherever a reading of it would be
+    used.
+  what_is_not: >
+    A mutation by code OUTSIDE the application package — an operator's script, a plugin, a
+    debugger, an interactive session — and a direct attribute read that reaches no consumer.
+  stated_in: 'reading.py header · required-tests.yaml CD-RT-001-ABSENCE-RENDERS-UNKNOWN ·
+    contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md · variants/WO-2R/MANIFEST.md row V04'
+- id: 'THE STATIC LAYER — six boundaries'
+  statement: >
+    (1) a construction RULE F cannot see as a construction, with V03 as the executable example;
+    (2) tracing beyond one scope chain — reported, not followed, so deny by default rather than an
+    escape, but a legitimate future helper must be DECLARED or it is reported; (3) anything outside
+    the two declared tiers; (4) class A outside the dial path, printed as a note (CD-ENG-F26);
+    (5) a magnitude legitimately computed but WRONG; (6) runtime, configuration and data.
+  who_carries_what: >
+    Boundaries 1 and 6 are carried by the RUNTIME layer and the declaration says so explicitly
+    rather than implying both layers cover everything. Boundaries 2 and 3 are carried by nobody at
+    WO-2 and say so.
+  stated_in: 'check_no_numeric_default.py header · required-tests.yaml
+    CD-RT-001-AST-NO-NUMERIC-DEFAULT · contracts/execution/CD-RT-001-AST-NO-NUMERIC-DEFAULT.md'
+
+# --- findings against this seat's own work ------------------------------------------------------ #
+
+findings_raised:
+- id: CD-ENG-WO2R-F01
+  severity: LOW
+  against: 'this seat''s own work'
+  what: >
+    The CD-RT-001-ABSENCE-RENDERS-UNKNOWN plant used to be INVISIBLE to the sibling AST arm, and
+    plants/MANIFEST.md reasoned from that fact to demonstrate that the two CD-AC-001 tests are not
+    two spellings of one instrument. RULE F now catches that plant too, so the plant no longer
+    demonstrates the arms' independence. The plant is still a valid negative control for its own
+    arm; what it lost is a secondary property the manifest claimed for it.
+  disposition: >
+    DISCLOSED in its manifest row, not smoothed over. The property is now demonstrated by variant
+    V03, which is executable, recorded, and lands squarely on the declared limit it illustrates. No
+    plant was redesigned to restore the old demonstration, because the dispatch requires a plant to
+    violate the SAME proposition by the same route and changing its route would be scope this seat
+    does not have.
+- id: CD-ENG-WO2R-F02
+  severity: LOW
+  against: 'this seat''s own closure'
+  what: >
+    The DECLARED_MEMBER_SURFACE table contains CPython dataclass and typing implementation members
+    (__dataclass_fields__, __match_args__, __orig_bases__ and the rest). That makes the seal
+    sensitive to the interpreter, not only to this project's code: a future CPython that adds a
+    member this table does not list, and that TOLERATED_INTERPRETER_MACHINERY does not admit, makes
+    the dial path FAIL TO IMPORT on that interpreter.
+  assessment: >
+    It fails CLOSED and it fails LOUDLY, which is the right direction — the alternative was
+    tolerating a computed set, which would declare whatever it found including whatever an attacker
+    added. But an auditor on a different interpreter may meet a ReadingSurfaceViolated that is
+    about CPython and not about the tree, and should read the exception rather than assume a plant.
+    The tolerance list is enumerated with reasons and holds six names.
+- id: CD-ENG-WO2R-F03
+  severity: LOW
+  against: 'this seat''s own closure'
+  what: >
+    The absence post-condition can be removed by deleting one decorator line, and RULE F can be
+    weakened by adding a name to DECLARED_MAGNITUDE_SOURCES. Both are guarded — a test asserts the
+    per-dial evaluator carries __wrapped__, and the declared surface test carries an independent
+    copy of its table — but neither guard is itself guarded, and this regress has to stop
+    somewhere. It stops here, and the fact that it stops here is stated rather than left implicit.
+- id: CD-ENG-WO2R-F04
+  severity: INFORMATIONAL
+  against: 'this seat''s own method'
+  what: >
+    This seat's FIRST runtime probe for the F03 variants used empty_config_snapshot, which takes
+    the "no required inputs" branch and NEVER EXECUTES the missing_required branch the variants
+    patch. It reported a clean Unknown and would have been recorded as "not reproduced" had it been
+    trusted. The probe was rewritten to declare and register one REQUIRED source with a
+    contribution model and then supply no observation.
+  disposition: >
+    Disclosed, and the corrected probe is written out IN FULL in variants/WO-2R/MANIFEST.md with
+    this warning attached, so the next auditor does not repeat it. A probe that does not reach the
+    planted branch produces a clean result for the wrong reason, which is the most expensive kind.
+- id: CD-ENG-WO2R-F05
+  severity: INFORMATIONAL
+  against: 'the pre-existing register checks'
+  what: >
+    RULE F caught this seat's own first draft: `getattr(cls, "__dictoffset__", 0)` in reading.py
+    tripped class B (numeric fallback in a lookup). The CODE was fixed and the CHECK was not
+    touched. Recorded because it is direct evidence that the guard bites its author, and because
+    the dispatch forbids weakening a check to obtain a pass — the temptation was real and is
+    written down rather than resisted silently.
+
+# --- runtime ------------------------------------------------------------------------------------ #
+
+runtime_actions:
+  classification: >
+    Every observation was classified BEFORE running it (PBG-RT-005). All of it is
+    NON_MUTATING_PROVEN with respect to governed state: reads, static checks, and pytest/python
+    runs confined to /tmp extractions with `python3 -B` and `-p no:cacheprovider` so no bytecode
+    cache or pytest cache was written into any governed tree (PBG-RT-001 — judged by foreseeable
+    EFFECT, not by command label).
+  mutations_performed: >
+    Only the authorised ones: edits to files inside writable_scope in the dispatched worktree, and
+    scratch under /tmp. Roughly two dozen /tmp extractions were created and destroyed.
+  rt_a_not_exercised: >
+    NO container was started and no image was built. RT-A authorises one throwaway PostgreSQL for
+    increment 4 only, and only if that increment touches what check_grant_matrix_live.py reads.
+    Increment 1 touches nothing it reads. RT-B remains FORBIDDEN.
+  network: 'None. No network access of any kind.'
+  secrets: 'None recorded anywhere, in any form. None was needed.'
+
+# --- obligations -------------------------------------------------------------------------------- #
+
+obligations_status:
+- 'increment_1_F02_F03 — COMPLETE for its five invariants: closed attribute surface asserted by
+   equality; no instance attribute injection; no subclass route; absence structurally incapable of
+   constructing a Value at runtime; the AST guard no longer enumerating spellings.'
+- 'register_correction_required — DISCHARGED. CD-RT-001-AST-NO-NUMERIC-DEFAULT retains scope: CLASS
+   with a full declared limit in the CD-RT-012 pattern, consistently in three places. The reasoning
+   is in this entry so the Project Lead can overturn it cheaply if it prefers a scope change.'
+- 'CD-D-033, the eleven plants — DISCHARGED for this increment. Eleven apply, ten contrast, two
+   regenerated, one manifest row updated, none deleted.'
+- 'PBG-CONT-007, durable variants — DISCHARGED. Eight patches and a manifest under variants/WO-2R/,
+   nothing executable.'
+- 'increments 2 to 6 — OWED, NOT STARTED. CD-ASR-F01, F04, F05, F06 and the reconciliation sweep.'
+- 'CD-ASR-F07 — NOT approached. It is a consequence of increment 5''s structure and this seat is
+   bounded to increment 1.'
+- 'latest_admitted_run — STILL NULL and not this seat''s to fill (PBG-SOD-001, CD-RULE-001).'
+- 'RTR-WO2-0001 — OWED by the INDEPENDENT Assurance seat. Not this seat''s to produce.'
+- 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 — HELD, not approached.'
+
+escalations: >
+  NONE. Nothing in increment 1 required a decision outside this seat's scope, no product quantity
+  was needed, and no change outside writable_scope was necessary. The one place where a product
+  quantity WOULD have been needed — a bound on a dial magnitude — was deliberately not gone near:
+  scores.py's refusal to impose a score range was read and left exactly as written, because that
+  refusal is correct and CD-RULE-003 now generalises it.
+
+# --- return ------------------------------------------------------------------------------------- #
+
+seat_return:
+  form: INCREMENT_1_COMPLETE
+  sha: 'the commit containing this entry; resolve with `git rev-parse HEAD` on branch
+    wo-2-skeleton. The closure itself is defd76ce0e1be310b6b2fa0d1224747972d68381.'
+  not_returned: >
+    NOT READY_FOR_ASSURANCE. That is the return for the WHOLE dispatch and five increments are
+    owed. This seat also does not and may not certify any of the above (PBG-SOD-001, non-waivable):
+    everything in this entry is IMPLEMENTATION EVIDENCE. It does not become assurance by being
+    thorough.
+
+next_safe_action: >
+  Project Lead RECONCILIATION of increment 1 at the SHA above: re-run the clean arm itself, re-run
+  E03 and E04 itself, write fresh probes of its own — particularly against the type.__setattr__
+  residue and against RULE F's DECLARED_MAGNITUDE_SOURCES allowlist, which are the two places this
+  closure is thinnest — and audit the commit identities of both commits (CD-RULE-002). Then, if
+  reconciled, dispatch increment 2 (CD-ASR-F01, criterion CD-AC-002, known-set variants E01 and
+  E02) with the reconciled SHA as its execution base. Increment 2 will reach every consumer of
+  `.score` and the Project Lead should expect it to be the largest of the six. The gate is decided
+  by CD-ASR-WO2-02 with FRESH variants — never by this seat and never by the Project Lead.

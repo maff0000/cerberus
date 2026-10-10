@@ -1,0 +1,217 @@
+entry_id: BL-20260823T072032Z-0125
+timestamp_utc: '2026-08-23T07:20:32Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 0245607608ce84528006bd0cc44883da397982ee   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the PO-DECISIONS-0016 RULING 1 boundary (BL-20260823T071148Z-0124).
+parent_entry_id: BL-20260823T071148Z-0124
+schema_version: 1
+
+a_finding_this_seat_raises_against_its_own_first_draft_of_THIS_ENTRY: >
+  **THE FIRST DRAFT OF THIS ENTRY CARRIED AN INVENTED PLACEHOLDER IN `baseline_sha` WITH A NOTE
+  EXPLAINING WHY IT COULD NOT BE RESOLVED. IT COULD BE RESOLVED. IT WAS RESOLVED IN ONE COMMAND
+  BEFORE THIS ENTRY WAS COMMITTED, AND THE PLACEHOLDER NEVER LANDED.** It is recorded here rather
+  than deleted because the shape is the point: **a fabricated value with an articulate note beside
+  it explaining its own necessity is strictly worse than a blank, and it is the most persuasive
+  version of this project's signature defect — a declaration standing in for the thing it declares.**
+  `CD-PL-F118`, LOW, and it is against this seat's drafting and not against the record, because the
+  record never carried it. **CAUGHT BECAUSE THE FIELD WAS READ AGAIN BEFORE COMMIT, WHICH IS THE
+  ONLY REASON ANY OF THESE ARE EVER CAUGHT.**
+
+action_summary: >
+  *** **THE PHASE MOVES `GATE` -> `BUILD` FOR ONE BOUNDED INCREMENT, AND IT MOVES BY EXECUTING THE
+  PRODUCT OWNER'S OWN RULING RATHER THAN BY THIS SEAT'S JUDGEMENT.** *** PO-DECISIONS-0016 ruling 2
+  says it in terms: *"this ruling re-shapes it: BUILD for one bounded increment, then the gate."*
+  **INCREMENT 9 — THE SEALING INCREMENT — IS DISPATCHED AND OUT** (`CD-D-167`,
+  `CD-DISPATCH-WO2R3-INC9-ENGINEER`) to **`CD-ENG-WO2R3-07`, A FRESH ENGINEER IDENTITY** (never -01
+  through -06), at `753efe4` in `/srv/crash-detector-wo2r3`. ***
+  *** **THREE ITEMS, AND TWO OF THEM ARE THE PRODUCT OWNER'S OWN ADDITION AND NOT SCOPE THIS SEAT
+  WIDENED.** ITEM 1: the sealing property — no `__new__` + `__dict__.update` route around
+  establishment — **REQUIRED OF THE CLASS, INSTRUMENT-ENUMERATED OVER ALL 99, EVERY EXCLUSION
+  MEASURED AND DECLARED, WITH A PLANT IN THE ESTABLISHED CONTRAST FORM.** ITEM 2: `CD-PL-F104`.
+  ITEM 3: `CD-D-166`. Ruling 2's sentence *"CD-PL-F104 and CD-D-166 are ADDED"* is the whole of
+  their authority, and both were carried into that ruling as NAMED CANDIDATES precisely so that
+  adding them would be the Product Owner's act and not this seat's. ***
+  *** **AND THIS SEAT MEASURED THE INCREMENT'S OWN PREMISE BEFORE DISPATCHING IT, BECAUSE A PROJECT
+  LEAD THAT SENDS AN ENGINEER AGAINST A NUMBER IT HAS NOT TAKEN IS DISPATCHING A RUMOUR.**
+  **99 ENUMERATED · 13 SEALED · 86 OPEN · 0 UNRESOLVABLE · 13 + 86 = 99.** ***
+  *** **THE SIXTH SEAT'S 13 REPRODUCES EXACTLY AND ITS 77 DOES NOT CLOSE: `F-06-J` PUBLISHES 13
+  SEALED / 77 OPEN OVER 99, AND 13 + 77 = 90. NINE OF THE NINETY-NINE ARE UNACCOUNTED IN ITS
+  TABLE.** That is `CD-PL-F116`, and it is the **THIRD** finding this seat has raised against the
+  sixth seat's arithmetic — after `CD-PL-F105` against `F-06-I` and `CD-PL-F115` against `F-06-B`.
+  **THREE IS NO LONGER THREE INSTANCES. IT IS A PATTERN IN ONE VERDICT AND IT IS NAMED AS ONE, AND
+  IT GOES INTO THE SEVENTH SEAT'S BRIEF AS A PATTERN AND NOT AS THREE FOOTNOTES.** ***
+  *** **NOTHING ELSE MOVES WHILE THE SEAT IS OUT.** No disposition, no grade, no second increment.
+  T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012` RED at the tip; the three stale
+  disposition keys HELD STALE ON PURPOSE by PO-DECISIONS-0017 ruling 2; the WO-2 gate SHUT. ***
+
+the_project_leads_own_measurement_of_the_premise:
+  why_it_was_taken_at_all: >
+    **PO-DECISIONS-0016 RULING 2 RESTS ON ONE NUMBER — "a remedy applied to 13 of 99" — AND THAT
+    NUMBER CAME FROM A SINGLE AUDITOR'S SINGLE READING.** `F-06-J` is the only place it has ever
+    been measured. Dispatching an Engineer against it without re-taking it would be this seat
+    passing on a count it had not checked, which is `CD-PL-F86`'s shape and this project has paid
+    for that three times.
+  the_command_CD_RULE_009: >
+    In a pristine `git archive 753efe4` extraction at `/tmp/seal`:
+    `python3 -B tools/register/check_constructor_field_establishment.py --root . --why` ->
+    `grep -oE "[A-Za-z0-9_/]+\.py:[0-9]+ [A-Za-z_][A-Za-z0-9_]*" | sort -u` -> **99 lines**; then
+    each module imported with `src` on `sys.path` and each class evaluated for
+    `"__slots__" in vars(cls) and not cls.__dictoffset__`.
+  the_result: '**99 enumerated · 13 SEALED · 86 OPEN · 0 unresolvable as a module-level attribute · 13 + 86 = 99.**'
+  the_thirteen_ENUMERATED_BECAUSE_A_COUNT_IS_NOT_A_LIST: >
+    `admission.py:592 _Admission` · `admission.py:604 _Exactly` · `admission.py:639 _EachOf` ·
+    `admission.py:685 _EstablishedHere` · `dials/magnitude.py:411 DialMagnitude` ·
+    `dials/provenance.py:534 DeclaredQuantity` · `dials/reading.py:270 Value` ·
+    `dials/reading.py:298 Degraded` · `dials/reading.py:331 Unknown` ·
+    `serving/dial_presentation.py:292 Shown` · `serving/dial_presentation.py:344 NotShown` ·
+    `staleness.py:419 StalenessWindow` · `staleness.py:514 FreshnessEvidence`.
+  and_the_thing_in_that_list_nobody_has_written_down: >
+    *** **`F-06-J` NAMED EIGHT OF THE THIRTEEN. THE FIVE IT DID NOT NAME ARE `_Admission`,
+    `_Exactly`, `_EachOf`, `_EstablishedHere` AND `DeclaredQuantity` — AND FOUR OF THOSE FIVE ARE
+    PRIVATE CLASSES THAT THE GOVERNED POPULATION RULES *OUT* BY CLAUSE (1), YET THEY CARRY THE
+    SEAL.** *** **THE MECHANISM IS ALREADY APPLIED OUTSIDE THE POPULATION THE CLOSURE SCOPES TO**,
+    which is a fact about where this project's care actually went, and it is put in front of the
+    Engineer before it decides what the property is required of. Nobody has recorded it before.
+  what_it_does_and_does_not_settle: >
+    **IT SETTLES THAT THE HEADLINE IS RIGHT: THE REMEDY EXISTS IN THIS TREE AND IS APPLIED TO 13 OF
+    99.** It does NOT settle whether 86 or 77 is the right count of OPEN, and it does NOT settle
+    what the property should be REQUIRED of. **THE MEASUREMENT IS HANDED TO THE ENGINEER AS EVIDENCE
+    IT IS REQUIRED TO RE-TAKE AND FREE TO CONTRADICT** — the precedent set for the fingerprint
+    recipe at increment 7, and the reason that precedent exists is that concealing a measurement
+    costs the next seat budget while mandating it is the Project Lead designing.
+
+the_reading_this_seat_made_that_the_product_authority_may_correct_in_one_sentence: >
+  *** **RULING 2 SAYS "required of the CLASS — instrument-enumerated over all 99 governed classes".
+  OF THE 99 THE CONSTRUCTOR CHECK EXAMINES, 33 ARE *IN* ITS GOVERNED POPULATION AND 66 ARE RULED
+  *OUT* BY MEASURED CLAUSES.** *** So "all 99" and "the CLASS" are not the same set, and the
+  dispatch had to choose a reading.
+  **THE READING TAKEN: the instrument SWEEPS ALL 99 AND REQUIRES THE SEAL, and every class it does
+  not require it of carries a MEASURED, PRINTED EXCLUSION — so that "not required" can never again
+  mean "not looked at".** The ground is the ruling's own denominator: *"a remedy applied to 13 of
+  99"*, and its own words *"exclusions MEASURED AND DECLARED never assumed"*, which only has work to
+  do if the sweep reaches classes it will not require the property of.
+  **THIS IS THIS SEAT'S READING AND IT IS RECORDED AS ONE RATHER THAN PRESENTED AS THE RULING.** It
+  does not block: it is written into the dispatch AS a reading, with a **DECLARED STOP** — if the
+  Engineer's measurement shows requiring the seal of the 66 ruled-out classes forces an exemption or
+  a weakening, it returns `STOPPED_AT_ITEM_1` **and the next actor is the Product Owner, not another
+  Engineer.** **THE PRODUCT AUTHORITY MAY CORRECT THE READING IN ONE SENTENCE AND THE INCREMENT
+  ABSORBS IT.**
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F116
+  severity: MEDIUM
+  against: '`F-06-J` of the SIXTH ASSURANCE SEAT, on its arithmetic — NOT on its substance'
+  statement: >
+    **`F-06-J`'s PUBLISHED TABLE DOES NOT CLOSE.** It prints `GOVERNED CLASSES INTERROGATED: 99 /
+    SEALED against __new__ + __dict__.update : 13 / OPEN to it (exact type, forged state) : 77`.
+    **13 + 77 = 90. NINE OF THE NINETY-NINE ARE IN NEITHER CATEGORY AND THE TABLE DOES NOT SAY SO.**
+    Re-measured by this seat over the same enumeration: **13 SEALED, 86 OPEN, 0 unresolvable,
+    13 + 86 = 99.** The **13 AGREES EXACTLY**, which is why the 77 is worth attacking rather than
+    dismissing — the divergence is in one cell, not in the method.
+  why_it_matters: >
+    **THE NINE ARE EXACTLY WHERE "EXCLUSIONS MEASURED AND DECLARED, NEVER ASSUMED" BITES.** A class
+    in neither column of a two-column table is a class that was interrogated and whose answer was
+    dropped, and dropping it is indistinguishable in the output from never having reached it. **THAT
+    IS THE SAME PROPOSITION `F-06-J` ITSELF ADVANCES ONE PARAGRAPH EARLIER** — *"a control scoped
+    narrower than the class it names"* — **occurring inside the finding that names it.**
+  and_it_is_the_third_of_its_kind_so_it_is_recorded_as_a_PATTERN_and_not_a_third_footnote: >
+    *** **`CD-PL-F105` AGAINST `F-06-I` (fourteen-plus-two called sixteen where the instrument prints
+    fifteen). `CD-PL-F115` AGAINST `F-06-B` (two counts published with no producing command, neither
+    reproducible). `CD-PL-F116` AGAINST `F-06-J` (a two-column table over 99 that sums to 90).** ***
+    **THREE SEPARATE FINDINGS OF THE SIXTH SEAT CARRY A COUNT THAT DOES NOT SURVIVE RE-MEASUREMENT,
+    AND IN EVERY ONE THE SUBSTANCE IS CORRECT.** Recorded as ONE PATTERN because three instances
+    reported separately read as bad luck and read together read as a METHOD — the sixth seat measured
+    excellently and reported its arithmetic from prose. **IT GOES INTO THE SEVENTH SEAT'S BRIEF AS A
+    PATTERN, WITH THE INSTRUCTION THAT THE SAME TEST BE APPLIED TO THIS SEAT'S OWN NUMBERS.**
+  what_this_finding_does_NOT_say: >
+    ***`F-06-J`'S SUBSTANCE IS UNTOUCHED, THIS SEAT AGREES WITH IT, AND THE PRODUCT OWNER HAS RULED
+    ON IT.*** The remedy really does exist in this tree; it really is applied to 13 types; it really
+    was never asked of the rest; `CD-D-105`'s closure really is defeated by a caller declining to use
+    the boundary. **THE FINDING IS RIGHT AND ITS TABLE DOES NOT CLOSE, AND BOTH ARE TRUE AT ONCE.**
+- id: CD-PL-F117
+  severity: LOW
+  against: 'THIS SEAT''S OWN MEASUREMENT METHOD, AND IT IS RECORDED BECAUSE IT WAS CAUGHT, NOT BECAUSE IT WAS AVOIDED'
+  statement: >
+    **THIS SEAT'S FIRST EXTRACTION OF THE 99-CLASS ENUMERATION RECOVERED 98 AND IT WAS ONE STEP FROM
+    RAISING A FINDING AGAINST THE INSTRUMENT.** The regexes matched two `--why` line forms —
+    `IN [RULE X]: path:line Class` and `OUT  path:line Class —` — and **MISSED A THIRD**,
+    `IN   path:line Class —` (three spaces, no `[RULE X]:`). The conclusion forming was *"the
+    instrument's printed enumeration disagrees with its own printed count of 99"* — **a finding
+    against a governed tool that three prior reconciliations have trusted.** It was caught by
+    re-taking the count with a form-agnostic extraction
+    (`grep -oE "[A-Za-z0-9_/]+\.py:[0-9]+ [A-Za-z_][A-Za-z0-9_]*" | sort -u`), **which returns
+    exactly 99.**
+  why_it_is_recorded: >
+    **BECAUSE THE NEAR-MISS IS THE INFORMATION.** `CD-PL-F113`'s precedent: a first measurement that
+    was wrong and briefly contradicted another party is recorded rather than quietly re-run, because
+    a seat that only publishes the readings that survived is publishing a filtered record. **AND
+    BECAUSE IT IS A LIVE WARNING FOR THE ENGINEER, WHICH IS WHY IT IS IN THE DISPATCH HEADER: the
+    `--why` output has AT LEAST THREE LINE FORMS AND NOBODY HAS ENUMERATED THEM**, and item 1 asks a
+    seat to derive a population from it.
+  and_the_uncomfortable_half: >
+    **HAD THE THIRD FORM MERELY BEEN RARER, THIS SEAT WOULD HAVE SHIPPED A FALSE HIGH FINDING
+    AGAINST AN INSTRUMENT, INSIDE THE BOUNDARY WHERE IT WAS RAISING TWO FINDINGS ABOUT OTHER
+    PEOPLE'S ARITHMETIC.** That is worth saying plainly beside `CD-PL-F116`.
+
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT WIDEN THE INCREMENT.** `CD-PL-F114` (raised by this seat one boundary ago) is NOT in
+   it. **Widening a just-adopted Product Owner order with this seat''s own fresh finding is exactly
+   what CD-D-165 says it may not do**, and the fact that the finding is this seat''s own makes it
+   worse, not better.'
+- '**IT DID NOT TOUCH `tools/sweep/declared_dispositions.py`.** PO-DECISIONS-0017 ruling 2 holds the
+   three stale keys STALE until AFTER the seventh Assurance seat reads the tree. The sweep stays
+   `FAIL — 555 sites, 4 violations` and three `test_the_fifteen.py` tests stay failing, **BY
+   CONSTRUCTION AND ON THE RECORD**, and the dispatch tells the Engineer why and tells it to refuse
+   the same way its predecessor did.'
+- '**IT DID NOT BUILD THE PLANT-DRIFT CARRIER.** Ruled **(A)** at PO-DECISIONS-0017 ruling 1 and
+   sequenced explicitly AFTER the seventh gate. **THE FOUR OCCURRENCES ARE DISCLOSED TO THE ENGINEER
+   IN THE DISPATCH HEADER INSTEAD, WITH THE REQUIREMENT THAT ITS PLANT RECORD `git apply`''S OWN
+   EXIT CODE AS A THIRD COLUMN.**'
+- '**IT DID NOT DECIDE WHETHER 86 OR 77 IS RIGHT AND IT DID NOT ASK THE ENGINEER TO ADOPT 86.**'
+- '**IT MOVED NO GRADE.** T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; no `DEFECT_OPEN`
+   finding closed; the WO-2 gate SHUT. **A DISPATCH IS NOT A PASS.**'
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE THAT BLOCK, AND ONE READING PUT UP FOR CORRECTION.** The "all 99 versus the 33-member
+  governed population" reading is recorded above in the form it needs to be corrected in, if it
+  needs correcting. **IT DOES NOT BLOCK THE INCREMENT** — the dispatch carries it as a reading with a
+  declared stop, so the Engineer proceeds under it and returns to the Product Owner rather than to
+  another Engineer if it proves wrong. **THIS SEAT IS NOT ASKING FOR A RULING BEFORE WORK STARTS;
+  IT IS REFUSING TO LET A READING IT MADE PASS AS A RULING IT DID NOT.**
+
+decision_refs:
+  - PO-DECISIONS-0016   # ruling 2 — the whole of this increment's authority, quoted in the dispatch
+  - PO-DECISIONS-0017   # ruling 4 — the consolidated sequence; ruling 2 — why the stale keys stay stale
+  - CD-D-167            # THIS decision: increment 9 dispatched to CD-ENG-WO2R3-07
+  - CD-D-165            # a seat does not quietly widen an order the Product Owner has just adopted
+  - CD-D-079            # the counterfactual arm, required of item 1's plant
+  - CD-RULE-004         # close the class or declare the limit, in all three places
+  - CD-RULE-009         # a count records its producing command — the ground of CD-PL-F116
+  - PBG-SOD-001         # the seventh Assurance seat is not this Engineer
+  - PBG-AUTH-006        # the Project Lead writes neither the fix nor the assurance
+  - PBG-CONT-007        # a sub-agent result that exists only in conversation is not project state
+
+next_safe_action: >
+  **1.** `CD-ENG-WO2R3-07` executes `CD-DISPATCH-WO2R3-INC9-ENGINEER` at `753efe4` in
+  `/srv/crash-detector-wo2r3`. **THREE ITEMS. `STOPPED_AT_ITEM_1` OR `STOPPED_AT_ITEM_2` IS A
+  SUCCESS AND THE NEXT ACTOR IS THEN THE PRODUCT OWNER, NOT ANOTHER ENGINEER.**
+  **2.** The Project Lead reconciles the return **BY MEASUREMENT**, on its own `git archive`
+  extractions, never by reading the seat's claims. **RECONCILIATION IS NOT ACCEPTANCE.**
+  **3. THEN THE SEVENTH FRESH ASSURANCE SEAT OVER THE WHOLE OF WO-2R3**, per PO-DECISIONS-0017
+  ruling 4, its brief carrying **CD-D-129's clauses VERBATIM**, the **DEAD-PLANT DISCLOSURE** with
+  the instruction to re-derive plant applicability itself, **the three stale keys with the
+  Engineer's refusal on the record**, **the sealing increment as an ATTACKABLE CLAIM**, increments
+  8 and 9 **disclosed in full**, and this seat's own `CD-PL-F114`, `CD-PL-F115`, `CD-PL-F116` and
+  `CD-PL-F117`.
+  **NOTHING IS MERGED, ADMITTED OR PROMOTED. T2 RED. CD-AC-002 AND CD-AC-005 AMBER AND NOT CLOSED.
+  `CD-RT-012` RED AT THE TIP. THE WO-2 GATE IS SHUT.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

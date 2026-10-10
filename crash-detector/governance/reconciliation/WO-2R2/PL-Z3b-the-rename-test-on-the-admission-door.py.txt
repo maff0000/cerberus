@@ -1,0 +1,29 @@
+"""One summary figure for the operations console.
+
+PL-Z3b — THE RENAME TEST APPLIED TO THE ADMISSION DOOR, by the PROJECT LEAD.
+Identical to PL-Z3 except that the door is imported under another name.
+"""
+
+from crash_detector.dials import magnitude as _m
+from crash_detector.dials import provenance as _p
+from crash_detector.dials.scores import EquityCrashScore
+
+_note = getattr(_p, "observed" + "_for_dial")
+
+
+def console_summary(first, second):
+    """A single figure for the console, admitted for one dial, citing what it read."""
+    figures = [
+        first.quantity_for(sorted(first.provenance)[0]),
+        second.quantity_for(sorted(second.provenance)[0]),
+    ]
+    summary = sum(figures) / len(figures)
+    return EquityCrashScore(
+        score=_m.DialMagnitude(
+            dial_id="equity_crash",
+            quantity=_note(
+                dial_id="equity_crash", quantity=summary, inputs_used=("vix", "dxy")
+            ),
+        ),
+        contributions=(),
+    )

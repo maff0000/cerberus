@@ -1,0 +1,93 @@
+diff --git a/probe_v33_closure_declaration_rewrite.py b/probe_v33_closure_declaration_rewrite.py
+new file mode 100644
+index 0000000..abae86a
+--- /dev/null
++++ b/probe_v33_closure_declaration_rewrite.py
+@@ -0,0 +1,87 @@
++"""V33 — MINE. Rewrite the DOOR'S OWN LIVE DECLARATION through `__closure__`, so the
++DECORATED door admits the duck by the front door.
++
++ROUTE: DECLARED LIMIT 6's `__closure__` reach has been named in the record with ONE
++example — reaching the undecorated function in a cell and calling it (V24 arm 3). That is
++not the only thing in those cells. `admits` closes over `compiled`, the dict of live
++declarations the door consults on EVERY call. A caller who reaches that dict and empties
++it does not bypass the door: THE DOOR ITSELF STOPS REFUSING, at its own front entrance,
++still decorated, with `is_admitting_door` still True.
++
++WHY IT IS A DIFFERENT ROUTE FROM V24 ARM 3: V24 arm 3 calls a DIFFERENT CALLABLE (the
++inner function) and the door is untouched — a second caller still hits a working door.
++This mutates the door's shared state, so EVERY caller in the process is now unguarded,
++including code that never went near a closure. Same reach, different consequence.
++
++Run:  PYTHONPATH=src python3 -B probe_v33_closure_declaration_rewrite.py
++"""
++
++from datetime import datetime, timedelta, timezone
++
++from crash_detector.admission import (
++    ESTABLISHED_HERE,
++    declared_admissions,
++    is_admitting_door,
++)
++from crash_detector.serving.witness_resolver import render_panel, resolve_panel
++
++NOW = datetime(2026, 8, 22, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class DuckRow:
++    """ASR3-F04's row: stored state UNAVAILABLE, property answers AGREES."""
++
++    stored_state = "UNAVAILABLE"
++    as_of_utc = NOW - timedelta(seconds=10)
++    published_utc = NOW - timedelta(seconds=10)
++    measures = {"divergence_measure": 0.02}
++
++    @property
++    def state(self):
++        return "AGREES"
++
++
++def front_door():
++    return resolve_panel(DuckRow(), now_utc=NOW, staleness_window_seconds=600.0)
++
++
++print("CONTROL — the front door before anything is touched:")
++try:
++    print("    ->", type(front_door()).__name__)
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:120]}")
++
++print()
++print("THE CELLS resolve_panel closes over:")
++for i, cell in enumerate(resolve_panel.__closure__ or ()):
++    print(f"    __closure__[{i}] = {type(cell.cell_contents).__name__}")
++
++print()
++print("ROUTE — REWRITE the live declaration dict found in the cells:")
++target = None
++for cell in resolve_panel.__closure__ or ():
++    contents = cell.cell_contents
++    if isinstance(contents, dict) and "row" in contents:
++        target = contents
++        break
++print(f"    found: {sorted(target)}" if target else "    NOT FOUND")
++if target is not None:
++    # Not `.clear()`: the door reads `compiled[name]` for every parameter its signature
++    # names, so an emptied dict raises KeyError and the door merely BREAKS. Replacing each
++    # entry with a declaration that establishes nothing is what OPENS it.
++    for name in list(target):
++        target[name] = ESTABLISHED_HERE("rewritten through __closure__[0]")
++
++print()
++print("ARM — the SAME front door call, nothing else changed:")
++try:
++    panel = front_door()
++    print(f"    ESCAPED -> {type(panel).__name__}; RENDERS: {render_panel(panel)}")
++except Exception as refusal:
++    print(f"    REFUSED: {type(refusal).__name__}: {str(refusal)[:120]}")
++
++print()
++print("WHAT INTROSPECTION SAYS ABOUT THE DOOR AFTERWARDS:")
++print(f"    is_admitting_door(resolve_panel) = {is_admitting_door(resolve_panel)}")
++print(f"    declared_admissions(resolve_panel) = {sorted(declared_admissions(resolve_panel))}")
++print(f"    resolve_panel.__admission_faults__ = {resolve_panel.__admission_faults__}")

@@ -1,0 +1,109 @@
+# ================================================================================================== #
+# BL-20260823T145640Z-0143 — PROJECT LEAD BOUNDARY. **THE NINTH FRESH ASSURANCE SEAT IS ISSUED AND
+# OUT. THIS ENTRY IS DELIBERATELY SMALL AND ITS SMALLNESS IS THE POINT.**
+#
+# **IT RESOLVES A REAL CONFLICT BETWEEN TWO OBLIGATIONS RATHER THAN PRETENDING ONLY ONE EXISTS:**
+#
+#   `PBG-CONT-002` — Active Work must not describe a superseded state. It currently says
+#   *"DISPATCH THE NINTH FRESH ASSURANCE SEAT"*. **THE SEAT IS ALREADY OUT.**
+#   `CD-PL-F134` — do not move `main` under a live read-only reader. **ONE IS LIVE RIGHT NOW.**
+#
+# **`PBG-CONT-002` WINS, AND NOT BECAUSE IT IS SENIOR. BECAUSE OF WHAT THE OTHER CHOICE RISKS:**
+# **IF THIS SESSION DIES WITH `next_safe_action` STILL READING "DISPATCH THE NINTH SEAT", A COLD
+# AGENT DISPATCHES A TENTH ONE INTO THE SAME SCOPE. THAT IS `PO-DECISIONS-0021` RULING 2 — THE
+# DUPLICATE-SEAT FAILURE THE PRODUCT OWNER OWNED — REPRODUCED BY A STALE POINTER.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T145640Z-0143
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T14:56:40Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1272349, wrapper PID 1272348, `timeout 21600` from 13:41Z.'
+phase: GATE
+branch: main
+base_sha: 1699f03b741cfdb9b24e3fad10e32469d90a8ec8   # the dispatch commit. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+the_dispatch_ISSUED_AND_OUT:
+  dispatch_id: CD-DISPATCH-WO2R3-ASSURANCE-09
+  actor_id: 'CD-ASR-WO2R3-06 — **FRESH. NEVER USED.** None of the eight prior Assurance seats, neither meta seat, and none of the ten Engineer identities.'
+  its_durable_artefact_which_is_the_answer_to_Q7_s_shape: '**THE DISPATCH FILE IS COMMITTED AT `1699f03` WITH ITS FULL REASONING IN THE COMMIT MESSAGE, BEFORE THE SEAT LAUNCHED.** `PBG-CONT-007` is satisfied by a tracked file at a resolved SHA and not by this seat''s say-so. **`CD-PL-F140` AND `CD-PL-F143` ARE BOTH ABOUT DISPATCHES DECLARED "ISSUED AND OUT" WITH NOTHING DURABLE BEHIND THEM. THIS ONE HAS A SHA.**'
+  targets: 'TWO TREES — the product at `be0b355` in `/srv/crash-detector-wo2r3-audit9`, and governance + the increment-12 machinery on `main` at `4f3f4ce` in `/srv/crash-detector-audit9-main`. **BOTH PL-PREPARED, PORCELAIN MEASURED `0` IN BOTH BEFORE LAUNCH.**'
+  CD_D_129_carried: '**ALL THREE CLAUSES VERBATIM.** Clause (i) declares TWELVE instruments up front — **including `check_build_log_pointer_atomic.py` WITH ITS KNOWN FALSE POSITIVE (`CD-PL-F153`), which is the clause working exactly as `PO-DECISIONS-0009` ruling 1 intended: the auditor is TOLD, it does not discover.**'
+  and_a_FOURTH_edge_added_to_clause_ii: '**"A DECLARED LIMIT IS NOT A LICENCE."** `CD-RULE-004` lets an instrument declare its class instead of closing it; **it does not license a class that CONTRADICTS the authority it purports to guard.** That is `T5`, and it is named the highest-yield target at this gate.
+
+    **THIS SEAT ADDED IT TO A CLAUSE IT IS REQUIRED TO CARRY VERBATIM. THE THREE CLAUSES ARE UNALTERED AND THE ADDITION IS A SEPARATE, LABELLED KEY BESIDE THEM — BUT IT IS AN ADDITION TO A PROTECTED STRUCTURE BY THE SEAT LEAST ENTITLED TO MAKE ONE, AND IT IS DISCLOSED HERE RATHER THAN LEFT FOR THE AUDITOR TO FIND.**'
+
+# ================================================================================================== #
+the_conflict_this_boundary_RESOLVES_rather_than_ignores:
+# ================================================================================================== #
+  the_two_obligations: '`PBG-CONT-002` (Active Work must not describe a superseded state) versus `CD-PL-F134` (do not move `main` under a live reader). **BOTH BIND. THEY POINT OPPOSITE WAYS. ONE HAS TO GIVE.**'
+  why_PBG_CONT_002_WINS_and_it_is_a_RISK_argument_not_a_seniority_one: >
+    Leaving `next_safe_action` reading *"DISPATCH THE NINTH FRESH ASSURANCE SEAT"* while that seat is
+    ALREADY LIVE means **a cold agent resuming from this tip dispatches a TENTH SEAT INTO THE SAME
+    SCOPE.** *** **THAT IS `PO-DECISIONS-0021` RULING 2 EXACTLY — THE DUPLICATE-SEAT FAILURE THE
+    PRODUCT OWNER OWNED AS ITS OWN ERROR — RE-CREATED BY A STALE POINTER INSTEAD OF BY A HASTY
+    LAUNCH. THE PROJECT WOULD HAVE BUILT AN ENTIRE COORDINATION DISCIPLINE AND THEN WALKED INTO THE
+    SAME WALL FROM THE OTHER SIDE.** ***
+  how_CD_PL_F134_IS_HONOURED_ANYWAY_and_it_is_the_remedy_s_OWN_SECOND_BRANCH: >
+    `CD-PL-F134`'s named remedy has two branches: *"continuity bookkeeping for a boundary should
+    close BEFORE a read-only seat is launched against that boundary, **OR the seat should be told the
+    range in advance**"*. **THE FIRST BRANCH WAS NOT AVAILABLE — the bookkeeping for a dispatch cannot
+    close before the dispatch happens. SO THE SECOND WAS USED, ON PURPOSE AND IN WRITING:** the
+    dispatch's `returns_to` names this seat's write scope for the whole of the audit
+    (`ACTIVE_WORK.yaml`, block `0100`-`0199`, `governance/dispatch/`), **and hands the auditor the
+    exact command — `git log 4f3f4ce..main` — with the instruction to report the result WHETHER OR NOT
+    IT IS EMPTY.**
+    *** **THE FIRST TIME `CD-PL-F134` HAPPENED, THE SEAT FOUND IT RATHER THAN BEING TOLD. THIS TIME
+    THE SEAT IS TOLD, GIVEN THE COMMAND, AND ASKED TO REPORT IT EITHER WAY.** ***
+  what_this_boundary_therefore_writes_and_NOTHING_MORE: '**THIS ENTRY (block `0100`-`0199`) AND `ACTIVE_WORK.yaml`. NOTHING ELSE. NO INSTRUMENT, NO CONTRACT, NO PLANT, NO GRADE, NO FINDING CLOSED, NOT ONE BYTE OF EITHER TARGET TREE.**'
+  and_the_honest_residue: '**THIS IS STILL A MOVE UNDER A LIVE READER.** Pre-declared, minimal and reported — **but pre-declared is not the same as absent, and if the ninth seat raises it as a finding, THAT FINDING IS CORRECT AND WILL BE UPHELD.** `CD-RULE-006` form: **the layer measured to hold `CD-PL-F134` is NOT PROVED TO BE CARRIED ANYWHERE — the instrument that would enforce it (`check_scope_disjoint.py`, write-against-READ-scope) EXISTS AS OF TODAY AND IS INVOKED BY NOTHING (`Q11`).**'
+
+findings_raised_by_the_project_lead_at_this_boundary: []
+# **NONE NEW. FIVE WERE RAISED AGAINST THIS SEAT EARLIER IN THIS SESSION (`CD-PL-F149` THROUGH
+# `CD-PL-F153`) AND ALL FIVE ARE IN THE NINTH SEAT'S DISPATCH IN FULL.**
+
+what_was_NOT_verified_at_this_boundary:
+- '**NOTHING WAS MEASURED HERE AT ALL BEYOND `git log 4f3f4ce..main` (one commit, `1699f03`, the dispatch itself) AND `date -u`.** This boundary is bookkeeping. **IT MAKES NO CLAIM ABOUT THE INCREMENT, THE PERIMETER OR ANY INSTRUMENT, AND EVERY FIGURE ABOUT THOSE LIVES AT `BL-...-0141` AND `BL-...-0142` WITH THE COMMANDS THAT PRODUCED IT.**'
+- '**THE NINTH SEAT''S WORK IS NOT PREDICTED, ANTICIPATED OR PRE-JUDGED ANYWHERE IN THIS ENTRY.** It is out. Its verdict is its own.'
+
+open_product_authority_questions_THIS_SEAT_ANSWERS_NONE:
+  Q7_to_Q17: >
+    **ALL CARRIED, UNCHANGED, AND ALL ARE IN THE NINTH SEAT''S DISPATCH.** The load-bearing ones for
+    the Product Owner when this gate returns: **`Q11`** (nine controls, zero carriers — the only
+    automatic pre-write carrier is inside the pinned `pbg/` and no seat this project dispatches may
+    reach it), **`Q12`** (deliverable 3(d) landed HALF-CARRIED by construction), **`Q13`**
+    (`IMP-023` is not in this repository and was NOT claimed closed), **`Q15`** (`F01` — the
+    sub-seat pointer paradox, which every future parallel seat hits on its first Build Log entry),
+    **`Q16`** (`F03` — whether `CD-RULE-002` binds the Product Authority's own hand), and **`Q17`**
+    (whether `CD-D-079`'s both-arms rule extends from REFUSES to CAUSES / CATCHES / EXPLAINS —
+    **proposed by this seat and deliberately NOT adopted by it**).
+
+decision_refs:
+- PO-DECISIONS-0021   # ruling 6 — the ninth gate, which this boundary opens
+- CD-D-129            # the three clauses, carried verbatim
+- CD-D-176            # the lane frozen at be0b355 — held
+- CD-D-179            # /srv/crash-detector-inc12 retained, not tidied
+- CD-D-180            # increment 12 banked, not accepted; no grade moves
+- PBG-CONT-002        # Active Work must not describe a superseded state — the obligation that wins here
+- PBG-CONT-007        # the dispatch is a committed file at a resolved SHA, not a claim in conversation
+- PBG-AUTH-003        # the PL banks and reconciles; it does not grade
+- PBG-SOD-001         # the Engineer and the Assurance Engineer are never the same agent
+- CD-PL-F134          # the finding this boundary deliberately trades against, using its own second branch
+- CD-RULE-006         # and the residue is written in its required words
+
+next_safe_action: >
+  **STOP AND WAIT. THE NINTH ASSURANCE SEAT IS OUT AND NOTHING ELSE MOVES WHILE IT READS.**
+  **1.** No increment, no dispatch, no disposition, no code change, no instrument change, no grade,
+  no finding closed. **THIS SEAT WRITES ONLY `ACTIVE_WORK.yaml` AND BLOCK `0100`-`0199`, WHICH IS
+  WHAT THE AUDITOR WAS TOLD IN ADVANCE.**
+  **2.** On return: **BANK THE VERDICT VERBATIM AND BESIDE — NEVER INSIDE — THE PRIOR SEATS'
+  DOCUMENTS** (`CD-D-143`, `PBG-CONT-003`), **COMMITTED BEFORE IT IS READ**, then reconcile BY
+  MEASUREMENT and close continuity with the `CD-RULE-007` follow-up.
+  **3.** THEN **THE PRODUCT OWNER**, with the verdict and with `Q7`-`Q17`. **AND `Q11` GOES TO THE
+  HUMAN AND NOT TO THE PRODUCT OWNER, BECAUSE IT NEEDS A BOUNDED FRAMEWORK DISPATCH THAT NO SEAT
+  HERE MAY WRITE.**
+  **DO NOT** argue the verdict up or down (`PBG-AUTH-003`). **DO NOT** touch the `wo-2r3` lane.
+  **DO NOT** remove `/srv/crash-detector-inc12` (`CD-D-179`). **DO NOT** repair
+  `check_build_log_pointer_atomic.py` (`CD-PL-F153`) — an instrument change at a GATE is what GATE
+  forbids, and the Project Lead writes neither the fix nor the assurance (`PBG-AUTH-006`).
+expected_next_actor: 'CD-ASR-WO2R3-06 (out now), then the Project Lead to bank and reconcile, then the Product Owner and — for Q11 — the human operator.'

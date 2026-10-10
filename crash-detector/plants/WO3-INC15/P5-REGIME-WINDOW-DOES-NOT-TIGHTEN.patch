@@ -1,0 +1,13 @@
+diff --git a/src/crash_detector/regime.py b/src/crash_detector/regime.py
+index fc6e7e3..7ffe5b5 100644
+--- a/src/crash_detector/regime.py
++++ b/src/crash_detector/regime.py
+@@ -262,7 +262,7 @@ class RegimeStalenessPolicy:
+         # *** CD-AC-009 ITSELF. Walked over the DECLARED ORDER, so the check is over the
+         # vocabulary rather than over a pair of names written out here. ***
+         for tighter, looser in zip(REGIME_ORDER[1:], REGIME_ORDER[:-1]):
+-            if not admitted[tighter].seconds < admitted[looser].seconds:
++            if False:
+                 raise StalenessPolicyIncoherent(
+                     f"the {tighter!r} window is {admitted[tighter].seconds!r} s and the "
+                     f"{looser!r} window is {admitted[looser].seconds!r} s, so the window "

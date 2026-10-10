@@ -1,0 +1,39 @@
+diff --git a/src/crash_detector/dials/scores.py b/src/crash_detector/dials/scores.py
+index f2d78b4..b74bb80 100644
+--- a/src/crash_detector/dials/scores.py
++++ b/src/crash_detector/dials/scores.py
+@@ -249,6 +249,34 @@ class EquityCrashScore:
+         _require_magnitude_of(type(self).__name__, EQUITY_DIAL_ID, self.score)
+         object.__setattr__(self, "contributions", tuple(self.contributions))
+ 
++    def __add__(self, other):
++        """Add two readings, so a rolling window can be averaged.
++
++        Accepts a bare number as well, so ``sum()`` works from its zero start, and accepts
++        the other dial's reading, so the banner can show one figure.
++        """
++        left = self.score.quantity_for(EQUITY_DIAL_ID)
++        if isinstance(other, (int, float)):
++            right = float(other)
++        else:
++            right = other.score.quantity_for(sorted(other.score.provenance)[0])
++        return EquityCrashScore(
++            score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=left + right),
++            contributions=self.contributions,
++        )
++
++    __radd__ = __add__
++
++    def __truediv__(self, divisor: float) -> "EquityCrashScore":
++        """Divide by a count, which is the other half of taking a mean."""
++        return EquityCrashScore(
++            score=DialMagnitude(
++                dial_id=EQUITY_DIAL_ID,
++                quantity=self.score.quantity_for(EQUITY_DIAL_ID) / float(divisor),
++            ),
++            contributions=self.contributions,
++        )
++
+ 
+ @establishes(
+     score=DialMagnitude,

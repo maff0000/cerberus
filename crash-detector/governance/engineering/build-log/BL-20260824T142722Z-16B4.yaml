@@ -1,0 +1,506 @@
+entry_id: BL-20260824T142722Z-16B4
+timestamp_utc: "2026-08-24T14:27:22Z"
+project: crash-detector
+actor: CD-ENG-WO3-09
+role: ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-DISPATCH-INC16B-FIX4-ENGINEER
+work_type: TASK
+phase: BUILD
+repository: local
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+baseline_sha: 4d797e694ffaaa0ea66f503a4d0a9c558e5ba08b
+current_sha: 4e6f7c4a6e7670372c8ef0346a6c0ea70a6fd875
+parent_entry_id: BL-20260824T134814Z-A308
+schema_version: 2
+record_origin: TOOLING
+tooling_available_at_capture: true
+
+action_summary: >-
+  *** `READY_FOR_ASSURANCE` AT `4e6f7c4a6e7670372c8ef0346a6c0ea70a6fd875` (branch `wo-3`).
+  INCREMENT 16B-FIX-4. `FX12` IS BUILT AS A CLASS FIX AND ITS FALSIFIER WAS BUILT, RUN AND
+  PASSED. *** **THE DEFAULT IS INVERTED AT THE ROOT-PROPERTY RECOGNISER.** `_dial_bearing` no
+  longer asks a list of keywords IT HAD THOUGHT OF whether they are present; it asks the NODE
+  whether every keyword the node ACTUALLY DECLARES is one this check can read
+  (`_READABLE_KEYWORDS` = the descended subschema keywords, plus the three keywords whose
+  property NAMES it reads literally, plus an exhaustive enumeration of the 2020-12 keywords that
+  carry no subschema and name no property). **A NODE IT CANNOT FULLY READ IS `UNDECIDABLE`,
+  NEVER `False`.** `_resolve` returns `None` at its depth cap instead of handing back a node it
+  did not resolve with `dropped == []` (`A308-F5`, reproduced at the function and closed there).
+  *** **THE FALSIFIER — AND IT IS THE ONLY PART OF THIS RETURN THAT PROVES ANYTHING THE PREVIOUS
+  THREE INCREMENTS DID NOT ALSO CLAIM.** *** `C22`-`C26` are the four `A308` spellings and the
+  auditor's arm `FINAL`; all five are `FAIL — 2`. **`C27` IS A FIFTH SPELLING NOBODY IN THIS
+  CHAIN NAMED — `propertyDependencies`, an applicator proposed for the draft AFTER 2020-12 —
+  WHICH APPEARS ZERO TIMES IN THE INSTRUMENT (`grep -c` -> `0`), WAS A LIVE ESCAPE ON THE
+  SUPERSEDED TIP (`PASS — 144 assertions, 0 violations` WITH THE GATE ADMITTING A DEAD FEED AS
+  `calm` ON BOTH SURFACES) AND IS `FAIL — 2` HERE.** Three more never-named spellings behave
+  identically — a private `x-` vendor keyword, an invented `slotShape`, and **`propertys`, a
+  ONE-LETTER TYPO OF `properties`, which is the likeliest real-world author error of all and was
+  silent before this fix.** I did not have to add any of them to any list.
+  *** **THE CLEAN TREE DID NOT MOVE AND THAT WAS THE MEASUREMENT THAT COULD HAVE STOPPED THIS.**
+  *** `PASS — 144 assertions, 0 violations`, exit 0, and the instrument's FULL OUTPUT on the
+  clean tree is BYTE-IDENTICAL before and after but for the absolute path string. `C1`-`C21`
+  re-run from their own pristine extractions, `git apply` rc=0 on all eighteen patch files, NOT
+  ONE FIGURE CHANGED. `C28` (the `C10` control, fourth independent extraction) `PASS — 158`.
+  `pytest tests/ -q` -> `2007 passed`; `test_detail_level.py` -> `52 passed`. The 30-line
+  register is IDENTICAL to the clean baseline, 19 rc=0 / 11 non-zero.
+  *** **THE FALSE-POSITIVE TAIL IS REAL, IT IS THE BIGGEST THIS ROW HAS TAKEN, AND IT IS
+  MEASURED RATHER THAN ESTIMATED (`CD-RULE-004`).** *** Eight benign root properties, none a
+  dial: SIX turn this instrument red that were green before — including **a property carrying an
+  ordinary custom `x-` annotation**. Two benign controls stay green. Priced as `DECLARED LIMIT
+  14` in all three `CD-RULE-004` places, in the ruled direction: a false positive costs one seat
+  one look at one contract; a false negative costs the constitution.
+  `FX13` DONE and the answer named: **`_SUBSCHEMA_KEYWORDS` WAS THE CONSTANT THAT WAS WRONG.**
+  `FX14` DONE, WRITTEN LAST, AND RE-MEASURED BY ME RATHER THAN RELAYED: 108 combinations,
+  `MERGE ADMITS WHAT THE NODE AS WRITTEN REFUSES -> 11 hits`, `MERGE ADMITS WHAT NEITHER SCHEMA
+  OBJECT ADMITS -> 0 hits`.
+  *** **AND I HAVE ONE FINDING AGAINST THE AUDIT AND THE DISPATCH TOGETHER (`F01`), AND IT CUTS
+  BOTH WAYS. `A308`'s "the register moves EXACTLY ONE LINE and that line is not evidence anything
+  saw the defect" DOES NOT SURVIVE 16C PAYING ITS FRICTION: with the allowlist paid,
+  `patternProperties` — the dispatch's headline spelling and the auditor's own arm `FINAL` — is
+  caught by `check_schema_closed` on `rule 2: escape hatch`, WHICH NAMES THE KEYWORD AND WHICH
+  THE BENIGN CONTROL `C16` DOES NOT TRIP. THE HALF THAT MATTERS RUNS THE OTHER WAY: `$dynamicRef`
+  AND THE OVER-CAP `$ref` CHAIN LAND WITH THE ENTIRE THIRTY-LINE REGISTER GREEN AND THE GATE
+  ADMITTING A DEAD FEED AS `calm`. TWO CLEAN ESCAPES SURVIVED EVERY OTHER INSTRUMENT IN THIS
+  REPOSITORY.** ***
+  I CERTIFY NOTHING (`PBG-SOD-001`, non-waivable). A FRESH ASSURANCE SEAT FOLLOWS.
+
+status: READY_FOR_ASSURANCE
+next_safe_action: >-
+  *** A FRESH ASSURANCE SEAT ON `4e6f7c4a6e7670372c8ef0346a6c0ea70a6fd875` — never
+  `CD-ENG-WO3-09` (me), never `CD-ENG-WO3-01`…`-08`, never `CD-ASR-WO3-01`…`-08`
+  (`PBG-SOD-001`, `PBG-SOD-004`). ***
+  **WHERE I WOULD SEND IT, AND IT IS NOT WHERE THIS DISPATCH SENT ME.** (1) **ATTACK
+  `_READABLE_KEYWORDS`' THREE SETS, NOT THE SIX ARMS.** The whole fix rests on `_INERT_KEYWORDS`
+  being a HONEST enumeration of the 2020-12 keywords that carry no subschema and name no
+  property. **IF ONE MEMBER OF THAT SET CAN CARRY A SUBSCHEMA OR NAME A PROPERTY, THE INVERSION
+  HAS A HOLE EXACTLY THE SIZE OF THAT KEYWORD AND IT IS A HOLE IN THE SAFE-LOOKING DIRECTION.**
+  I enumerated it from the specification's vocabularies and I believe it; **that is a reading,
+  not a measurement, and it is `DECLARED LIMIT 15`.** (2) **ATTACK THE `True` SHORT-CIRCUIT.**
+  The descent `return True`s before the unreadable flag can be consulted at a PARENT node; I
+  judged `True` the safe answer because it puts the slot in the DRIVEN set, but I did not prove
+  a node cannot reach `True` through a readable route while hiding a second dial behind an
+  unreadable one. (3) **ATTACK THE BRANCH SIDE FOR AGREEMENT.** `FX12` is at the ROOT-PROPERTY
+  recogniser and nowhere else; the branch walk reaches a similar answer by a different mechanism
+  (`CONDITIONAL_KEYWORDS` + `ref_siblings`) and **nobody has proved the two agree.** (4)
+  **RE-MEASURE MY FALSE-POSITIVE TAIL AND JUDGE WHETHER SIX IS A PRICE THIS PROJECT WILL PAY** —
+  a custom `x-` annotation on any root property now turns a constitutional instrument red, and
+  that is the most likely thing on this list to arrive in a real contract.
+  **ON 16C.** `A308` withdrew the releasability judgement and asked that `A308-F1` be closed
+  first. `C26` — the auditor's arm `FINAL`, 16C landed honestly — is `FAIL — 2` here. **I DO NOT
+  RULE ON WHETHER THAT RELEASES 16C AND I AM NOT ASKED TO.** What I add for whoever does:
+  `DECLARED LIMIT 12`'s residue (a differently-NAMED discriminator) is UNTOUCHED by this fix and
+  remains a condition on 16C's dispatch, and **a root slot declaring nothing at all
+  (`{"type": "object"}`) is still `False` and still silent.**
+expected_next_actor: PROJECT_LEAD_SEAT_02
+
+tests:
+  count: 30
+  result: >-
+    ALL 30 `execute:` LINES RUN VERBATIM, cwd at tree root, on my own `git archive` extraction of
+    the tip. MY OWN CENSUS, RE-DERIVED, NOT INHERITED:
+    `grep -cE '^\s*execute:\s*\S' required-tests.yaml` -> 30; 19 rc=0 and 11 non-zero — the same
+    figures A307 and A308 confirmed, and **the 30-line register output is LINE-FOR-LINE IDENTICAL
+    to the same script's output on the SUPERSEDED tip's clean extraction** (`diff` -> empty).
+    `PYTHONPATH=src python3 -m pytest tests/ -q` -> `2007 passed in 68.65s`;
+    `tests/test_detail_level.py` -> `52 passed`. THE INSTRUMENT ON THE CLEAN EXTRACTION OF THE
+    TIP: `CD-RT-001-MISSING-DATA-NEVER-CALM: PASS — 144 assertions, 0 violations`, exit 0, and
+    its FULL output diffed against the SUPERSEDED tip's -> **IDENTICAL BUT FOR THE ABSOLUTE PATH
+    STRING**. REGISTER STATE, `PYTHONPATH=pbg/tools python3 -B -m pbg.cli --root . required-tests
+    verify` (exit 2): `pid.content_hash MATCHES`; `latest_admitted_run (null)`;
+    `grep -cE '^  \[[MA]\] CD-AC-'` -> `18`; `MANDATORY NOT PASS (17)`; `GATE: SHUT`;
+    `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`. **UNCHANGED FROM A307 AND A308. THE GATE IS STILL
+    SHUT AND THIS INCREMENT DOES NOT OPEN IT.**
+  command: "bash /tmp/e09h/runreg.sh <tree>  — for each `execute:` line, eval verbatim with cwd = <root>"
+  evidence_reference: "/tmp/e09h/{runreg.sh,gate.py,arms.py,extra_C26.py,mkpatch.sh,all.sh,plants.sh,tail.py,class.py,merge.py,r33.py,paid.py}; baselines /tmp/e09h/{clean-base.txt,clean-fix3.txt,reg-base.txt,reg-fixed.txt}; trees /tmp/e09all/*, /tmp/e09tail/*, /tmp/e09class/*, /tmp/e09paid/*"
+
+risks:
+  - >-
+    *** FX12 — WHAT WAS BUILT, IN THE WORDS DISPATCH §7.6 ASKED FOR: WHAT "CANNOT FULLY READ"
+    MEANS IN THIS IMPLEMENTATION, AND WHY IT IS DENY-BY-DEFAULT AND NOT A LIST. ***
+    `_dial_bearing` may return `False` about a node ONLY WHEN EVERY KEYWORD THE NODE ACTUALLY
+    DECLARES, at every node the walk visited, is in `_READABLE_KEYWORDS` — the union of exactly
+    three declared, closed sets and nothing else:
+      (i)   `_SUBSCHEMA_KEYWORDS` minus `_NAME_BEARING_APPLICATORS` — keywords carrying
+            subschemas the walk DESCENDS INTO, so it has looked underneath every one;
+      (ii)  `_NAME_DECLARING_KEYWORDS` = `properties`, `required`, `dependentRequired` — the
+            keywords whose keys or entries are LITERAL property names, which this check reads;
+      (iii) `_INERT_KEYWORDS` — the remaining 2020-12 keywords that carry no subschema and name
+            no property, enumerated from the specification's own vocabularies.
+    **EVERYTHING ELSE IS UNREADABLE AND MAKES THE NODE UNDECIDABLE**, including
+    `patternProperties`, `propertyNames` and `dependentSchemas` (descended into, so a dial under
+    one can still come back `True`, but their KEYS are names this check does not evaluate — a
+    regex, a constraint, a trigger property), `$id` (it moves the base URI a relative `$ref`
+    resolves against and `_resolve` always resolves against the document root), `$dynamicRef`,
+    `$dynamicAnchor`, `$recursiveRef`, any private-vocabulary keyword, any keyword of a draft not
+    yet written, and any MISSPELLING of a keyword that does exist. `_resolve` reaching
+    `REF_CHAIN_CAP` is the same answer for the same reason.
+    *** WHY THAT IS NOT A LIST. *** The superseded walk was
+    `for keyword in _SUBSCHEMA_KEYWORDS: if keyword not in resolved: continue` — it iterated a
+    list of keywords ITS AUTHOR HAD THOUGHT OF and asked whether each was present, so a keyword
+    nobody had thought of was INVISIBLE and the node fell through to `False`. **THAT IS WHY THIS
+    RECOGNISER WAS ESCAPED FOUR TIMES BY FOUR SPELLINGS OF ONE IDEA AND WHY EACH FIX CLOSED THE
+    SPELLING IT WAS SHOWN.** The new walk is
+    `unreadable = sorted(k for k in resolved if k not in _READABLE_KEYWORDS)` — it iterates the
+    KEYS OF THE NODE. **THE DENY CLASS IS THEREFORE THE COMPLEMENT OF A FINITE WRITTEN SET, AND
+    NO FUTURE SPELLING CAN LEAVE IT.** That is the structural claim; `C27` and three further
+    never-named spellings are the measurement of it.
+  - >-
+    *** C22-C27, EACH FAILING, WITH ITS VIOLATION CODE — DISPATCH §7.1. *** Each arm from its own
+    pristine `git archive bb3bd6f | tar -x` extraction (`CD-PL-F154`), `git apply --whitespace=nowarn`
+    with its OWN exit code recorded, every arm's `contracts/` `diff -rq`'d against the pristine
+    target's and PROVED DIFFERENT (2 files, every arm).
+      C22  patternProperties          apply_rc=0  FAIL — 2  CD-CALM-SLOTS-007 x2
+      C23  dependentSchemas           apply_rc=0  FAIL — 2  CD-CALM-SLOTS-007 x2
+      C24  $dynamicRef                apply_rc=0  FAIL — 2  CD-CALM-SLOTS-007 x2
+      C25  40-hop $ref chain          apply_rc=0  FAIL — 2  CD-CALM-SLOTS-007 x2
+      C26  ARM `FINAL`, 16C HONESTLY  apply_rc=0  FAIL — 2  CD-CALM-SLOTS-007 x2
+      C27  propertyDependencies       apply_rc=0  FAIL — 2  CD-CALM-SLOTS-007 x2
+    EVERY ONE with `['feed_liveness']` in the UNDECIDABLE note on BOTH surfaces (2 notes each,
+    counted). ON THE SUPERSEDED TIP `4d797e6`, ALL SIX: instrument `PASS — 144 assertions, 0
+    violations`, exit 0, `feed_liveness` in NEITHER list, and the LIVE GATE — driven in-process
+    through `refuse_unless_publishable` with `CD_CONTRACTS_DIR` at that arm's own contracts,
+    payload `{"state":"STALE","reason":"FEED_DEAD","since_utc":"…","detail_level":"calm"}` —
+    `public: *** ADMITTED *** returned None` AND `private: *** ADMITTED *** returned None`.
+    **THE GATE FIXTURE HAS A CONTROL IN BOTH DIRECTIONS SO A "REFUSED" IS NOT A BROKEN HARNESS:**
+    the clean tree's own UNKNOWN dial with `detail_level: 'calm'` -> REFUSED `[SCHEMA_VIOLATION]`
+    on both surfaces; the SAME dial with `'acute'` -> ADMITTED on both.
+    **`C26` CALLED OUT EXPLICITLY (dispatch §7.1).** It is the auditor's arm `FINAL` and it is 16C
+    landed honestly: root object CLOSED, `feed_liveness` in root `required`, `PUBLIC_ALLOWLIST`
+    paid in `check_schema_closed.py`, and the one-line `_envelope`-skeleton edit that `DECLARED
+    LIMIT 7` forces on any real 16C. **DISCLOSURE AGAINST MY OWN CONTRAST COLUMN:** because
+    `C26`'s patch edits the instrument as well as the contracts, running the SUPERSEDED file
+    against the PATCHED tree gives `FAIL — 76` — that is the missing skeleton edit and NOT a
+    catch. The `C26` "before" figure above is therefore measured the only honest way: the whole
+    `C26` mutation applied to a pristine extraction of `4d797e6` and run with THAT TIP'S OWN
+    instrument. `PASS — 144`, gate ADMITTED x2. RECORDED because a contrast column that compares
+    two different things is worse than no column.
+  - >-
+    *** `C27` CALLED OUT EXPLICITLY (dispatch §7.1) — THE RULING'S OWN FALSIFIER, BUILT AND RUN.
+    *** The dispatch's test was not that the four named spellings go red but that **A FIFTH
+    NOBODY IN THIS CHAIN HAS THOUGHT OF GOES RED TOO, BECAUSE IT IS UNRECOGNISED RATHER THAN
+    BECAUSE IT IS ON A LIST.** I invented `propertyDependencies` — an applicator PROPOSED for the
+    JSON Schema draft AFTER 2020-12, which appears in no audit on this row, in no dispatch, and
+    which `jsonschema 4.10.3`'s `Draft202012Validator` does not know, so the LIVE GATE IGNORES IT
+    ENTIRELY and the slot is wide open.
+      `grep -c propertyDependencies tools/register/check_missing_data_never_calm.py` -> `0`
+      on `4d797e6`: rc=0  `PASS — 144 assertions, 0 violations`  gate ADMITTED x2
+      at the tip:   rc=1  `FAIL — 2 violation(s)`  CD-CALM-SLOTS-007  ['feed_liveness']
+    **AND BECAUSE ONE ARM IS AN INSTANCE AND NOT A CLASS, THREE MORE, EACH MEASURED THE SAME WAY
+    ON ITS OWN EXTRACTION, EACH WITH ZERO OCCURRENCES IN THE INSTRUMENT:**
+      `x-crash-detector-liveness`  a private vendor keyword   PASS/ADMITTED -> FAIL — 2
+      `slotShape`                  invented on the spot       PASS/ADMITTED -> FAIL — 2
+      `propertys`                  A ONE-LETTER TYPO OF `properties`   PASS/ADMITTED -> FAIL — 2
+    *** **THE TYPO IS THE ONE TO READ TWICE. A CONTRACT AUTHOR WHO WRITES `propertys` PRODUCES A
+    DIAL THE GATE DOES NOT CONSTRAIN AT ALL, AND BEFORE THIS FIX THE CONSTITUTIONAL INSTRUMENT
+    SAID `PASS — 144 assertions, 0 violations` ABOUT IT. THAT IS NOT AN EXOTIC ATTACK, IT IS A
+    MONDAY MORNING.** ***
+    **A FOURTH PROBE WAS DISCARDED AND IS RECORDED RATHER THAN DROPPED:** `$recursiveRef` /
+    `$recursiveAnchor` (2019-09). The mutated contract is not a valid 2020-12 schema, so
+    `refuse_unless_publishable` raises `ContractUnavailable` and never judges the candidate —
+    fail-closed, but for the wrong reason, so it is NOT evidence about this recogniser and is not
+    counted among the arms.
+  - >-
+    *** C28 PASSING, AND C1-C21 RE-RUN UNCHANGED — DISPATCH §7.2. *** `C28` is `C10`'s patch
+    re-run from its own pristine extraction of the tip, exactly as `C15` and `C21` are — **A
+    CONTROL THAT IS NOT THE SAME CONTROL PROVES NOTHING ABOUT A CHANGE.** `apply_rc=0`,
+    `PASS — 158 assertions, 0 violations`. `C10`/`C15`/`C21`/`C28` are FOUR independent
+    extractions reporting the identical figure, so the inversion did not turn a legitimate
+    vocabulary extension red.
+    `C1`-`C21`, EVERY ARM FROM ITS OWN PRISTINE EXTRACTION, `git apply` rc=0 ON ALL EIGHTEEN
+    PATCH FILES: C1 `FAIL — 8` · C2 `FAIL — 2` · C3 `FAIL — 8` · C4 `FAIL — 4` · C5
+    `PRECONDITION_NOT_MET` exit 3 (exit 0 on the same tree with the variable unset) · C6
+    `FAIL — 6` · C7 `FAIL — 8` · C8 `FAIL — 8` · C9 `FAIL — 2` · **C10 `PASS — 158`** · C11
+    `FAIL — 32` · C12 `FAIL — 32` · C13 `FAIL — 2` · **C14 `FAIL — 2`** · **C15 `PASS — 158`** ·
+    **C16 `PASS — 144`** · C17 `FAIL — 32` · **C18 `FAIL — 32`** · **C19 `FAIL — 32`** · **C20
+    `FAIL — 2`** · **C21 `PASS — 158`**. **THE FOUR NUMBERS THE DISPATCH NAMED ALL REPRODUCE.**
+    **AND I RAN THE SAME SCRIPT AGAINST THE SUPERSEDED TIP `4d797e6` IN THE SAME SESSION AND THE
+    TWO COLUMNS ARE IDENTICAL ARM FOR ARM** — so "unchanged" is a contrast I measured and not a
+    figure I copied from the MANIFEST.
+  - >-
+    *** CLEAN TREE, AND THE FALSE-POSITIVE TAIL MEASURED AND PRICED — DISPATCH §7.3. *** CLEAN
+    TREE AT THE TIP: `CD-RT-001-MISSING-DATA-NEVER-CALM: PASS — 144 assertions, 0 violations`,
+    **exit 0**, 144 assertions. **AND THE COUNT STAYING AT 144 PROVES NOTHING ON ITS OWN, SO I
+    DID WHAT `A308` DID:** I diffed the instrument's FULL output on the clean tree before and
+    after, and it is **IDENTICAL BUT FOR THE ABSOLUTE PATH STRING** — same notes, same cell
+    labels, same `52 gate cells`, same contract sha256 values. **NO PROPOSITION WAS LOST AND NONE
+    WAS ADDED.**
+    *** THE TAIL, MEASURED — EIGHT BENIGN ROOT PROPERTIES, NONE A DIAL, NONE DECLARING A `state`
+    SUBSCHEMA, EACH ADDED TO BOTH CONTRACTS ON ITS OWN PRISTINE EXTRACTION. ALL EIGHT WERE
+    `PASS — 144` ON `4d797e6`. AT THE TIP: ***
+      T1 a `patternProperties` metrics bag                      -> FAIL — 2   *** NEW RED ***
+      T2 a `propertyNames`-constrained string map               -> FAIL — 2   *** NEW RED ***
+      T3 a benign `dependentSchemas` pair                       -> FAIL — 2   *** NEW RED ***
+      T4 a subschema carrying its own `$id`                     -> FAIL — 2   *** NEW RED ***
+      T5 a property carrying a custom `x-units` annotation      -> FAIL — 2   *** NEW RED ***
+      T6 `required: [country, state]` with no `state` subschema -> FAIL — 2   *** NEW RED ***
+      T7 CONTROL a plain closed object                          -> PASS — 144
+      T8 CONTROL an array of strings                            -> PASS — 144
+    **SIX RED, TWO GREEN. THE TAIL IS A TAIL AND NOT A BLANKET, AND `T5` IS THE ONE THAT WILL
+    ACTUALLY HAPPEN** — a custom `x-` annotation is the commonest thing in a real contract, and it
+    now turns a constitutional instrument red. **I DID NOT SOFTEN IT AND I AM NOT ASKING TO.** The
+    dispatch's standing ruling is the reason: a false positive costs one seat one look at one
+    contract; a false negative costs the constitution. **THE CLEAN TREE DID NOT GO RED, SO THE
+    STOP CONDITION DID NOT FIRE.** The remedy when the tail bites is written into `DECLARED LIMIT
+    14` and it is never to loosen the guard: a keyword genuinely inert here belongs in
+    `_INERT_KEYWORDS` with its reason written down, and a keyword that carries a subschema belongs
+    in `_SUBSCHEMA_KEYWORDS` so the walk descends it. Both are edits a reader can audit.
+  - >-
+    *** FX13 DONE, AND WHICH CONSTANT WAS WRONG — DISPATCH §7.7. *** **`_SUBSCHEMA_KEYWORDS` WAS
+    THE CONSTANT THAT WAS WRONG.** `dependentSchemas` was named in `CONDITIONAL_KEYWORDS` — this
+    module's own statement that it is an applicator which widens what a schema admits, and on
+    which it DENIES a branch — and omitted from `_SUBSCHEMA_KEYWORDS`, in the same file, two
+    hundred lines away. `CONDITIONAL_KEYWORDS` correctly names every keyword that makes a BRANCH
+    admit more than `required` + `properties` describes, and `dependentSchemas` belongs in it;
+    `_SUBSCHEMA_KEYWORDS` must contain every keyword that can CARRY a subschema, and
+    `dependentSchemas` was missing. **THE TWO LISTS ARE NOT MEANT TO BE EQUAL AND I SAY SO RATHER
+    THAN "RECONCILING" THEM INTO ONE:** `dependentRequired` is legitimately in the first and not
+    the second (it carries no subschema), and `properties`/`items` are legitimately in the second
+    and not the first (they do not by themselves widen a branch). **`dependentSchemas` WAS THE ONE
+    GENUINE DISAGREEMENT.** `contentSchema` and `additionalItems` were also added to
+    `_SUBSCHEMA_KEYWORDS` — the auditor named both as absent and both do carry subschemas.
+    The comment above `_SUBSCHEMA_KEYWORDS` that A308-F2 caught DOCUMENTING A LIMB THAT DID NOT
+    EXIST ("a keyword not named here is not descended into, and `_dial_bearing` says so by
+    returning UNDECIDABLE rather than False") is now TRUE — that is what `FX12` built, and the
+    `CD-CALM-SLOTS-007` violation text and `_dial_bearing`'s docstring were both updated to say
+    what the code now does.
+  - >-
+    *** FX14 DONE, WRITTEN LAST, AND RE-MEASURED BY ME RATHER THAN RELAYED — DISPATCH §7.7. ***
+    The dispatch told me to make this sentence describe what I MEASURED. So I measured it, with
+    the gate's own library, rather than carrying `A308`'s number across: `jsonschema 4.10.3`,
+    `Draft202012Validator`, SIX sibling keyword sets x NINE documents x BOTH merge directions =
+    **108 combinations**:
+      `MERGE ADMITS WHAT THE NODE AS WRITTEN REFUSES ......... 11 hits`
+      `MERGE ADMITS WHAT NEITHER SCHEMA OBJECT ADMITS ........ 0 hits`
+    **AND IT IS NOT A SEARCH GAP.** Under `{**target, **sibling}` every SIBLING key survives into
+    the merged object, so `sibling(D) = False` forces `merged(D) = False`, and symmetrically for
+    the other direction: a document the merge admits is ALWAYS admitted by at least one of the
+    two, **so the clause describes an empty set.** `A308` measured 10 hits over its own document
+    set and 0 for the false clause; my 11 is over my own set and the two AGREE. **SUPERSEDED IN
+    ALL THREE `CD-RULE-004` PLACES** (`tools/register/check_missing_data_never_calm.py` — twice,
+    the `DECLARED LIMIT 13` block AND `_resolve`'s own docstring, which is a FOURTH occurrence in
+    a third artefact and which I corrected rather than left; `required-tests.yaml`'s CD-AC-001
+    block; `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`), replaced by the measured
+    claim: **a merge can admit documents THE NODE AS WRITTEN REFUSES.** The ruling and the
+    behaviour are UNCHANGED — the deny-by-default decision rests entirely on the true claim and
+    the false clause bought nothing.
+    **AND I RECORDED THE PATTERN AND NOT ONLY THE INSTANCE, BECAUSE THE PATTERN IS THE DEFECT.**
+    This is the THIRD sentence on this row superseded for overstating in the same direction as the
+    sentence it replaced (`DECLARED LIMIT 10`, then `12`(a), now `13`). On this row a replacement
+    sentence has three times been written to the widest claim its author believed rather than the
+    narrowest claim their evidence carried. `DECLARED LIMIT 14`'s cost column is a MEASUREMENT and
+    not an estimate, and its "what this does not close" paragraph is written before an auditor had
+    to find it.
+    **`DECLARED LIMIT 12`(a)'s OWN REPLACEMENT SENTENCE WAS ALSO SUPERSEDED** — `A308-F3`, not an
+    ordered fix but false in a place I was editing and made no less false by my change. The word
+    doing the damage was `ANY`. What is true now is two sentences because it is two limbs: the
+    check fires on any root property declaring `state` under `properties`/`required`/
+    `dependentRequired`, AND on any root property whose shape it cannot fully read.
+  - >-
+    *** F01 — A FINDING AGAINST THE AUDIT AND AGAINST THIS DISPATCH TOGETHER, AND IT CUTS BOTH
+    WAYS. DISPATCH §7.10. *** `A308` recorded, and this dispatch repeated in substance, that on
+    the escape arms *"the register moves EXACTLY ONE LINE — `LINE 6`, `check_schema_closed.py`'s
+    ROOT ALLOWLIST, WHICH SAYS NOTHING ABOUT `calm`… AND `LINE 6` IS NOT EVIDENCE THAT ANYTHING
+    SAW THE DEFECT: THE BENIGN CONTROL `C16` MOVES THE SAME ONE LINE."* **THAT IS TRUE OF THE
+    ARMS THE AUDITOR MEASURED — where the new slot is OPTIONAL and un-allowlisted — AND IT DOES
+    NOT SURVIVE 16C PAYING ITS FRICTION.** I landed each spelling as a REAL 16C would (slot in
+    root `required`, `PUBLIC_ALLOWLIST` paid, `_envelope` skeleton edited) and measured LINE 3 and
+    LINE 6 on the SUPERSEDED instrument:
+      C22 patternProperties  LINE3 rc=0 PASS — 144 | LINE6 rc=1 FAIL — 2  rule 2: escape hatch
+      C23 dependentSchemas   LINE3 rc=0 PASS — 144 | LINE6 rc=1 FAIL — 2  rule 2: object is open
+      C24 $dynamicRef        LINE3 rc=0 PASS — 144 | LINE6 rc=0 PASS — 292 assertions, 0 violations
+      C25 over-cap chain     LINE3 rc=0 PASS — 144 | LINE6 rc=0 PASS — 452 assertions, 0 violations
+      C27 propertyDependenc. LINE3 rc=0 PASS — 144 | LINE6 rc=1 FAIL — 2  rule 2: object is open
+    **AND `C16`, THE BENIGN CONTROL, TRIPS `rule 3: the root properties are not the declared
+    allowlist` — A DIFFERENT RULE.** So `check_schema_closed`'s rule 2 NAMES `patternProperties`
+    as an escape hatch, and it is not the rule the benign control trips: **16C could not have
+    landed the dispatch's HEADLINE spelling silently even before this fix, and the audit's
+    generalisation about LINE 6 does not hold at the arm that decides the programme.**
+    *** **AND NOW THE HALF THAT MATTERS AND THAT MAKES THIS FIX NECESSARY RATHER THAN TIDY:
+    `C24` (`$dynamicRef`) AND `C25` (THE OVER-CAP `$ref` CHAIN) LAND WITH THE ENTIRE THIRTY-LINE
+    REGISTER GREEN — `check_schema_closed` `PASS — 292` AND `PASS — 452` RESPECTIVELY — AND THE
+    LIVE GATE ADMITTING A DEAD FEED RENDERING AS `calm` ON BOTH SURFACES. TWO CLEAN ESCAPES
+    SURVIVED EVERY OTHER INSTRUMENT IN THIS REPOSITORY.** *** `check_schema_closed` is not a guard
+    about `calm` and was never claimed to be; the constitutional instrument had to be the one that
+    caught them, and now it is. **I REPORT THIS AGAINST MYSELF AS MUCH AS AGAINST THE AUDIT: IT
+    NARROWS THE CLAIM MY OWN INCREMENT CAN MAKE ABOUT `patternProperties`, AND I WOULD RATHER THE
+    ASSURANCE SEAT READ IT HERE THAN FIND IT.**
+  - >-
+    *** F02 — AGAINST THIS DISPATCH, MINOR, AND IT DOES NOT TOUCH WHAT I BUILT (`CD-PL-F192`
+    PRECEDENT). *** The dispatch says the auditor "measured that cap returning an unresolved
+    `$ref` node as though it had resolved it" and calls it one member of the class. **CONFIRMED
+    EXACTLY, at the function, on my own arm:** on `4d797e6`,
+    `_resolve(s, s['properties']['feed_liveness'])` -> `resolved = {'$ref': '#/$defs/hop32'} |
+    dropped = []` and `_dial_bearing(...) -> False`; at the tip, `resolved = None` and
+    `_dial_bearing(...) -> None`. **NO FALSE STATEMENT FOUND THERE.** What I DID find false is
+    `A308`'s LINE-6 generalisation as this dispatch carries it forward (F01 above), and I record
+    per the dispatch's own instruction that **the falsehood does not touch what I had to build:
+    every ordered fix stands and every arm was built as specified.** I also record that the
+    dispatch's own headline framing — *"the only thing between 16C and a published
+    dead-feed-rendering-as-calm is which keyword the author reaches for"* — is **TRUE, but for TWO
+    of the five keywords tested and not for all five**, and the two are `$dynamicRef` and the
+    over-cap `$ref` chain rather than the `patternProperties` the dispatch leads with. **THAT IS A
+    NARROWER SENTENCE THAN THE DISPATCH'S AND IT IS THE ONE I MEASURED.**
+  - >-
+    *** MY DECLARED LIMITS — DISPATCH §7.9, INCLUDING THE NEW ONE. ***
+    (i) **`DECLARED LIMIT 15` IS NEW AND IT IS THE ONE THAT MATTERS: `_INERT_KEYWORDS` IS A
+    READING OF THE SPECIFICATION, NOT A MEASUREMENT.** The whole inversion rests on that set being
+    an HONEST enumeration of the 2020-12 keywords that carry no subschema and name no property. I
+    enumerated it from the Core, Applicator, Validation, Format-Annotation, Content and Meta-Data
+    vocabularies and I believe it is complete and correct. **IF ONE MEMBER OF IT CAN IN FACT CARRY
+    A SUBSCHEMA OR NAME A PROPERTY, THE INVERSION HAS A HOLE EXACTLY THE SIZE OF THAT KEYWORD, IN
+    THE SAFE-LOOKING DIRECTION, AND NOTHING HERE WOULD SHOW IT.** I did not machine-check the set
+    against the metaschema and I am not claiming I did. **THIS IS THE FIRST PLACE I WOULD SEND THE
+    NEXT AUDITOR.**
+    (ii) **`C27` PLUS THREE IS FOUR MEMBERS, AND FOUR MEMBERS IS NOT A CLASS.** The argument that
+    the deny class is the complement of a finite written set is STRUCTURAL and I believe it; what
+    is MEASURED is four never-named spellings. `CD-ASR-WO3-07` and `CD-ASR-WO3-08` each said this
+    of their own findings and it is repeated rather than quietly dropped.
+    (iii) **THE `True` SHORT-CIRCUIT IS NOT PROVED SAFE.** The descent `return True`s as soon as
+    any child is classifiable, which can skip a parent's unreadable-keyword flag. I judged `True`
+    the safe answer because it puts the slot in the DRIVEN set rather than the ignored one, **but
+    I did not prove a node cannot reach `True` through a readable route while hiding a second dial
+    behind an unreadable one.** REASONED, NOT MEASURED.
+    (iv) **`FX12` IS AT THE ROOT-PROPERTY RECOGNISER AND NOWHERE ELSE.** `_dial_from_branch`,
+    `_synthesise` and the branch walk are untouched. A keyword this check cannot read inside a
+    BRANCH is handled by `CONDITIONAL_KEYWORDS` + `ref_siblings`, a different mechanism reaching a
+    similar answer, and **nobody has proved the two agree.**
+    (v) **EVERY GATE MEASUREMENT IS AN IN-PROCESS DRIVE** of `refuse_unless_publishable` against a
+    `/tmp` extraction with `CD_CONTRACTS_DIR` set, on `jsonschema 4.10.3`. **NONE OF IT IS
+    EVIDENCE ABOUT A RUNNING DEPLOYMENT**, and a different validator version could move
+    `$dynamicRef`'s arm in particular.
+    (vi) **`propertyNames` IS TREATED AS UNREADABLE ON A REASONED BASIS.** I judged it capable of
+    participating in naming and excluded it from the readable set; I did NOT measure a case where
+    `propertyNames` alone declares a `state`, and I believe it structurally cannot. **THAT IS A
+    REASONED ABSENCE IN THE CONSERVATIVE DIRECTION** — it costs a false positive, never a false
+    negative — but it is an absence and `A308` was right to criticise the shape.
+    (vii) **NOT GRADED, PER DISPATCH §6:** `CD-PL-F180` / the contract-bytes route, exit 3,
+    `DECLARED LIMIT 12`'s differently-named discriminator, `STALENESS_WINDOW_CEILING_SECONDS`,
+    no-blend, host-coupling, version discrimination, `indicator_mapping.yaml`. **`REF_INERT_SIBLINGS`
+    NOT TOUCHED** — the auditor proved that class empty and the dispatch forbade it; `git diff`
+    confirms the constant is byte-identical to `4d797e6`. **NO SCHEMA EDIT OF ANY KIND:** both
+    envelope contracts are byte-identical to `4d797e6` and 16C is NOT implemented.
+    (viii) **`pbg/` REPORTED ON, NEVER TOUCHED.** (ix) **I CERTIFY NOTHING** (`PBG-SOD-001`,
+    non-waivable) — I built the arms that grade my own fix and a fresh Assurance seat must re-run
+    them from its own extractions rather than take this table's word for it.
+  - >-
+    THE INHERITED BOOT `RED` — DIAGNOSED AND LEFT, NINTH SEAT TO SAY SO. My boot returned
+    `BLOCKING: continuity invalid — CONTINUITY_REFERENCE_INVALID — read-only diagnosis permitted,
+    normal boot blocked (PBG-CONT-006)`. THE CAUSE, NAMED:
+    `governance/engineering/ACTIVE_WORK.yaml` carries `continuity_record_commit: PENDING` — a
+    continuity reference that is not a commit. `git rev-parse
+    {be0b355,4d797e6,HEAD}:governance/engineering/ACTIVE_WORK.yaml` are ALL
+    `ce0803c3d472fe52541f28965d7995e888329c28` — ONE BLOB, byte-for-byte the FROZEN BASE'S, and
+    nothing in 16B, 16B-FIX, 16B-FIX-2, 16B-FIX-3 or this increment touched it. **NOT MINE, NOT
+    REPAIRED, NOT SILENTLY CORRECTED** (`PBG-CONT-006` read-only diagnosis; the dispatch ordered
+    diagnose-do-not-repair and `ACTIVE_WORK.yaml` is not in my writable scope).
+
+blockers: []
+
+evidence_references:
+  - >-
+    SCOPE, PROVED BY COMMAND — DISPATCH §7.8. `git diff --name-only 4d797e6 HEAD` -> TEN files:
+    `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md`, `required-tests.yaml`,
+    `tools/register/check_missing_data_never_calm.py`, `plants/WO3-INC16B/MANIFEST.md` and the six
+    new `plants/WO3-INC16B/C2*.patch` files. Filtered against
+    `^(pbg/|BLUEPRINT\.md|PID\.md|governance/decisions/|governance/mapping/|contracts/public_envelope\.schema\.json|contracts/private_envelope\.schema\.json|src/|tests/|deploy/|db/|evidence/|docs/)`
+    -> **EMPTY, 0 hits. ZERO PATHS ON THE PROTECTED PREFIXES.** `git diff --name-only 4d797e6 HEAD
+    | grep '^tools/' | grep -v '^tools/register/check_missing_data_never_calm.py$'` -> **EMPTY, 0
+    hits.** `git log --format='%an' 4d797e6..HEAD | sort -u` -> `CD-ENG-WO3-09`. **ONE IDENTITY.**
+    `git rev-parse be0b355` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`;
+    `git merge-base --is-ancestor be0b355 HEAD` -> TRUE. **THE FROZEN BASE IS UNMOVED.**
+    `evidence/` DOES NOT EXIST IN THE TREE and `git diff --name-only be0b355 HEAD | grep -c
+    '^evidence/'` -> `0`. **`evidence/` UNWRITTEN (`PBG-SOD-001`).**
+    THREE COMMITS, EACH A BOUNDARY (`PBG-CONT-007`): `25a795f` code · `bb3bd6f` record ·
+    `4e6f7c4` plants.
+  - >-
+    THE CLEAN TREE, MY OWN EXTRACTION, NOT THE SHARED WORKTREE:
+    `git archive 4e6f7c4 | tar -x -C /tmp/e09final`, cwd at the extraction root.
+    `python3 tools/register/check_missing_data_never_calm.py --root .` ->
+    `CD-RT-001-MISSING-DATA-NEVER-CALM: PASS — 144 assertions, 0 violations`, **exit 0**.
+    FULL-OUTPUT DIFF against the SUPERSEDED tip's clean extraction, both path-normalised ->
+    **EMPTY. BYTE-IDENTICAL.**
+  - >-
+    THE SIX NEW ARMS: patches at `plants/WO3-INC16B/C2{2,3,4,5,6,7}-*.patch`, generated by
+    `/tmp/e09h/mkpatch.sh` (pristine `a/` vs mutated `b/`, `diff -ruN`, the lane's established
+    form); mutators `/tmp/e09h/arms.py` and `/tmp/e09h/extra_C26.py`; verification runner
+    `/tmp/e09h/all.sh`; trees `/tmp/e09all/C*`. ALL SIX `git apply --whitespace=nowarn` rc=0 into
+    fresh `git archive bb3bd6f` extractions; all six `contracts/` `diff -rq`'d against the
+    pristine target's -> 2 files differ, every arm.
+  - >-
+    THE LIVE GATE: `/tmp/e09h/gate.py`, an in-process drive of `refuse_unless_publishable` with
+    `CD_CONTRACTS_DIR` pointed at the arm's own contracts, envelope skeleton derived from the
+    arm's OWN root `required` list. **CONTROL IN BOTH DIRECTIONS ON THE CLEAN TREE:** UNKNOWN dial
+    + `detail_level: 'calm'` -> `public: REFUSED [PublicationRefused] … [SCHEMA_VIOLATION] at
+    /equity_crash` / `private: REFUSED …`; the SAME dial with `'acute'` -> `public: *** ADMITTED
+    *** returned None` / `private: *** ADMITTED *** returned None`.
+    **DISCLOSURE AGAINST MYSELF: my FIRST gate driver built a filler dial that no branch of the
+    union admitted, so BOTH directions read REFUSED and the fixture proved nothing. I caught it on
+    the `'acute'` control, not on the arm, and rebuilt the driver.** Recorded because a fixture
+    that refuses everything is indistinguishable from a guard that works.
+  - >-
+    THE FALSIFIER: `/tmp/e09h/class.py`, trees `/tmp/e09class/*`. Five spellings, each on its own
+    `git archive` extraction of BOTH tips, each with `grep -c <keyword>` run against that tree's
+    OWN instrument file. `propertyDependencies`, `x-crash-detector-liveness`, `slotShape`,
+    `propertys`: grep 0 in every case; `PASS — 144` + gate ADMITTED x2 on `4d797e6`; `FAIL — 2`
+    `CD-CALM-SLOTS-007` on `25a795f`. `$recursiveRef` DISCARDED and recorded — the mutated
+    contract is not a valid 2020-12 schema and the gate raises `ContractUnavailable` without
+    judging, so it is fail-closed for the wrong reason and is not counted.
+  - >-
+    THE FALSE-POSITIVE TAIL: `/tmp/e09h/tail.py`, trees `/tmp/e09tail/*`. Eight benign root
+    properties, each added to BOTH contracts on its own pristine extraction, run against BOTH
+    tips. `4d797e6`: all eight `PASS — 144`, exit 0. `25a795f`: T1-T6 `FAIL — 2` exit 1, T7-T8
+    `PASS — 144` exit 0.
+  - >-
+    F01, THE WHOLE-REGISTER MEASUREMENT WITH 16C's FRICTION PAID: `/tmp/e09h/paid.py`, trees
+    `/tmp/e09paid/*`. Each spelling plus root `required` plus `PUBLIC_ALLOWLIST` plus the
+    `_envelope` skeleton edit; `check_missing_data_never_calm.py` and `check_schema_closed.py` run
+    on each, with `check_schema_closed`'s own violation text captured verbatim. On `4d797e6`:
+    C22 LINE6 `FAIL — 2` *"rule 2: escape hatch … patternProperties re-opens a closed object"*;
+    C23/C27 LINE6 `FAIL — 2` *"rule 2 … additionalProperties is absent, not false"*; **C24 LINE6
+    `PASS — 292 assertions, 0 violations`** and **C25 LINE6 `PASS — 452 assertions, 0
+    violations`**, both with LINE3 `PASS — 144` and the gate ADMITTED on both surfaces. C16's own
+    LINE6 text captured for the comparison: *"rule 3: the root properties are not the declared
+    allowlist"*.
+  - >-
+    A308-F5 / THE DEPTH CAP, PROVED AT THE FUNCTION AND NOT INFERRED: `/tmp/e09h/r33.py`, a direct
+    import of each tip's instrument and a direct call against arm `C25`'s own contract.
+    `4d797e6`: `_resolve(...) -> resolved={'$ref': '#/$defs/hop32'} | dropped=[]`,
+    `_dial_bearing(...) -> False`. TIP: `_resolve(...) -> resolved=None | dropped=[]`,
+    `_dial_bearing(...) -> None`.
+  - >-
+    FX14, THE MERGE RE-MEASURED BY THIS SEAT: `/tmp/e09h/merge.py`, `jsonschema 4.10.3`,
+    `Draft202012Validator`, six sibling keyword sets (`additionalProperties`,
+    `unevaluatedProperties`, `required`, `properties`, `minProperties`, `prefixItems`) x nine
+    documents x both merge directions = 108 combinations. `MERGE ADMITS WHAT THE NODE AS WRITTEN
+    REFUSES -> 11 hits`; `MERGE ADMITS WHAT NEITHER SCHEMA OBJECT ADMITS -> 0 hits`. Worked
+    example reproduced: node-as-written (conjunction) `False`, merged `True`, target-alone `True`
+    on doc `{"a": "x"}`.
+  - >-
+    PLANT ARMS `C1`-`C21` AND `C28`, RE-APPLIED FROM MY OWN EXTRACTIONS WITH `git apply`'s EXIT
+    CODE RECORDED: `/tmp/e09h/plants.sh` and `/tmp/e09h/all.sh`, trees `/tmp/e09plants/*` and
+    `/tmp/e09all/*`. **RUN AGAINST BOTH TIPS IN THE SAME SESSION AND THE TWO COLUMNS ARE
+    IDENTICAL ARM FOR ARM.** 18 patch files, all `apply_rc=0`; `C5` is a shell script and not a
+    patch, by design; `C15`, `C21` and `C28` have no patch file and are `C10`'s patch re-run, as
+    the MANIFEST declares.
+  - >-
+    THE WHOLE REGISTER, ALL 30 `execute:` LINES, VERBATIM, cwd = tree root, via
+    `/tmp/e09h/runreg.sh`. Clean baseline `/tmp/e09h/reg-base.txt` (SUPERSEDED tip) and
+    `/tmp/e09h/reg-fixed.txt` (FIXED): `diff` -> **EMPTY**. 19 rc=0, 11 non-zero, both.
+    `grep -cE '^\s*execute:\s*\S' required-tests.yaml` -> 30, re-derived and not inherited.
+    `PYTHONPATH=src python3 -m pytest tests/ -q` -> `2007 passed in 68.65s`;
+    `tests/test_detail_level.py` -> `52 passed`.
+  - >-
+    REGISTER STATE AT THE TIP: `PYTHONPATH=pbg/tools python3 -B -m pbg.cli --root .
+    required-tests verify` (exit 2) -> `pid.content_hash      MATCHES`;
+    `latest_admitted_run   (null)`; `grep -cE '^  \[[MA]\] CD-AC-'` -> `18`;
+    `MANDATORY NOT PASS (17) — no waiver exists; only PO disposition can move these:`;
+    `GATE: SHUT`; `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`. **UNCHANGED FROM A307 AND A308.**
+  - >-
+    THE BOOT `RED`, DIAGNOSED NOT REPAIRED. `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` ->
+    `BLOCKING: continuity invalid — CONTINUITY_REFERENCE_INVALID — read-only diagnosis permitted,
+    normal boot blocked (PBG-CONT-006)`. Cause: `governance/engineering/ACTIVE_WORK.yaml`'s
+    `continuity_record_commit: PENDING`. `git rev-parse {be0b355,4d797e6,HEAD}:governance/
+    engineering/ACTIVE_WORK.yaml` -> all `ce0803c3d472fe52541f28965d7995e888329c28`. THE FROZEN
+    BASE'S BLOB. NINTH SEAT.

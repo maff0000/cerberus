@@ -1,0 +1,281 @@
+# JSON Schema (in YAML) for a compute unit's external contract.
+#
+# THE PROJECT ROOT IS THE UNIT. This artefact declares what that unit exposes, consumes and
+# persists. Anything not declared here is outside the authorised contract.
+#
+# Two rules do the work:
+#
+#   container paths are unconstrained   -- an application may use /srv, /data, whatever suits it
+#   host sources must be RELATIVE       -- they resolve inside the project root, or the unit is
+#                                          not a unit
+#
+# An absolute host source is how a unit stops being relocatable, and relocatable is what makes it
+# composable. A unit that only works at one path cannot be bolted anywhere.
+#
+# PER-INSTANCE, deliberately. Two instances means two project roots means two declarations. There
+# is no type layer, no inheritance and no templating: if you want a variation, you copy a
+# directory and change what is in it. The directory is the config.
+#
+# NONE IS EXPLICIT. A missing section is not permission. It is an incomplete declaration and it
+# fails validation.
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "pbg:schemas/unit-interface.schema.yaml"
+title: PBG compute unit interface
+type: object
+additionalProperties: false
+required: [schema_version, maturity, identity, inbound, outbound, state, dependencies, runtime, failure]
+
+properties:
+  schema_version: {type: integer, enum: [1]}
+  maturity:
+    type: string
+    enum: [PROVISIONAL_ALPHA]
+    description: >
+      Derived from a single stateless unit with no outbound, no durable state and no dependencies.
+      Those three sections were authored without a specimen and the first stateful unit is expected
+      to reshape them. Marked so nobody mistakes it for a settled model.
+
+  identity:
+    type: object
+    additionalProperties: false
+    required: [unit, contract_id, declaration_version, application_name, runtime_prefix]
+    properties:
+      unit: {type: string, minLength: 1}
+      contract_id: {type: string, minLength: 1}
+      declaration_version: {type: integer, minimum: 1}
+      application_name:
+        type: string
+        minLength: 1
+        description: >
+          The COMMISSIONED application identity, from project governance. Not the directory name,
+          not a Compose default, not the Git repo, not the host, not the user. Those are all
+          incidental to where the unit happens to be sitting; the commissioned name is not.
+      runtime_prefix:
+        type: string
+        $ref: "#/$defs/dns_label"
+        description: >
+          Normalised application_name, deterministic and safe for Linux container tooling. Every
+          host-visible artefact this unit creates is named <runtime_prefix>-<role>, or
+          <runtime_prefix>-<instance>-<role> where instance is declared.
+      instance:
+        $ref: "#/$defs/dns_label"
+        description: >
+          Distinguishes separately commissioned simultaneous instances on one host. DECLARED, never
+          inferred from the path — a directory called /srv/neo-live is not evidence that this is
+          the live instance, it is evidence that somebody named a directory.
+
+  inbound:
+    oneOf:
+    - {const: NONE}
+    - type: array
+      minItems: 1
+      items:
+        type: object
+        additionalProperties: false
+        required: [transport, port, auth]
+        properties:
+          transport: {type: string, minLength: 1}
+          port: {type: integer, minimum: 1, maximum: 65535}
+          path: {type: string}
+          auth:
+            type: string
+            enum: [none, token, mtls, basic, external]
+            description: Posture only. Never a credential value.
+
+  outbound:
+    oneOf:
+    - {const: NONE}
+    - type: array
+      minItems: 1
+      items:
+        type: object
+        additionalProperties: false
+        required: [destination, contract]
+        properties:
+          destination: {type: string, minLength: 1}
+          contract: {type: string, minLength: 1}
+          auth: {type: string, enum: [none, token, mtls, basic, external]}
+
+  state:
+    type: object
+    additionalProperties: false
+    required: [durable, ephemeral]
+    properties:
+      durable:
+        oneOf:
+        - {const: NONE}
+        - type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [container_path, host_source, mode]
+            properties:
+              container_path:
+                type: string
+                minLength: 1
+                description: What the process sees. Unconstrained — /srv is fine here.
+              host_source:
+                allOf: [{$ref: "#/$defs/contained_host_source"}]
+                description: >
+                  Where it actually lives, RELATIVE to the project root. An absolute path is
+                  rejected: it takes the unit outside its own root and nails it to one location.
+              mode: {type: string, enum: [ro, rw]}
+      ephemeral: {type: string, minLength: 1}
+
+  dependencies:
+    oneOf:
+    - {const: NONE}
+    - type: array
+      minItems: 1
+      items:
+        type: object
+        additionalProperties: false
+        required: [unit, interface]
+        properties:
+          unit: {type: string, minLength: 1}
+          interface: {type: string, minLength: 1}
+          required: {type: boolean}
+
+  runtime:
+    type: object
+    additionalProperties: false
+    required: [user, privileged, network_mode, mounts]
+    properties:
+      user:
+        type: string
+        minLength: 1
+        description: Effective runtime user. Numeric UID preferred — some orchestrators enforce
+          runAsNonRoot by inspecting the UID and cannot resolve a name.
+      privileged: {type: boolean}
+      network_mode: {type: string, minLength: 1}
+      mounts:
+        oneOf:
+        - {const: NONE}
+        - type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [container_path, host_source, mode]
+            properties:
+              container_path: {type: string, minLength: 1}
+              host_source: {$ref: "#/$defs/contained_host_source"}
+              mode: {type: string, enum: [ro, rw]}
+      artefacts:
+        type: object
+        additionalProperties: false
+        description: >
+          Host-visible resources this unit creates. Nothing here is required to exist — the rule
+          governs the names of those that DO. A unit that creates no network simply omits the key.
+        properties:
+          containers:
+            type: array
+            minItems: 1
+            items:
+              oneOf:
+              - {$ref: "#/$defs/artefact_name"}
+              - type: object
+                additionalProperties: false
+                required: [name]
+                description: >
+                  A container with a runtime posture of its own. Unit-level runtime.user,
+                  runtime.privileged and runtime.network_mode supply the defaults; only what
+                  genuinely differs is stated here. privileged and network_mode are unit-wide
+                  invariants and overriding them should be rare and deliberate.
+                properties:
+                  name: {$ref: "#/$defs/artefact_name"}
+                  role: {type: string, minLength: 1}
+                  user:
+                    type: string
+                    minLength: 1
+                    description: >
+                      Effective runtime user. Use IMAGE_DEFAULT to state honestly that the unit
+                      sets none and the image's own USER applies — that is a fact a reviewer can
+                      challenge, whereas restating the app's UID would have been a lie.
+                  privileged: {type: boolean}
+                  network_mode: {type: string, minLength: 1}
+                  effective_uid:
+                    type: integer
+                    minimum: 0
+                    description: >
+                      The UID PID 1 must ACTUALLY run as, observed from the running container
+                      rather than read off the configuration. Config.User proves only what was
+                      configured; it says nothing about what the image entrypoint did next, so a
+                      container that drops to a service account and one that stays root are
+                      indistinguishable without this. Numeric because the number is the fact —
+                      image-internal usernames are not stable across rebuilds.
+                  effective_gid: {type: integer, minimum: 0}
+                  allow_effective_root:
+                    type: boolean
+                    default: false
+                    description: >
+                      Whether PID 1 may run as root in THIS container role. Defaults to false, and
+                      the default is the point: root permission must never arise through omission.
+                      Declaring it true is a posture decision that a reviewer can see and argue
+                      with; leaving it out is not a quiet way to obtain the same thing.
+                allOf:
+                # IMAGE_DEFAULT alone is not a user check. If the image chooses the configured
+                # user, the declaration must still say what identity is expected — otherwise the
+                # audited party sets the strength of its own control by writing less.
+                - if:
+                    properties: {user: {const: IMAGE_DEFAULT}}
+                    required: [user]
+                  then:
+                    anyOf:
+                    - required: [effective_uid]
+                    - required: [allow_effective_root]
+                # A declaration cannot expect root and forbid root at once.
+                - not:
+                    allOf:
+                    - properties: {effective_uid: {const: 0}}
+                      required: [effective_uid]
+                    - anyOf:
+                      - properties: {allow_effective_root: {const: false}}
+                        required: [allow_effective_root]
+                      - not: {required: [allow_effective_root]}
+          networks: {$ref: "#/$defs/artefact_names"}
+          images: {$ref: "#/$defs/artefact_names"}
+          volumes:
+            allOf:
+            - {$ref: "#/$defs/artefact_names"}
+            - description: >
+                Named volumes only, and only where exceptionally authorised. The default for a
+                relocatable unit is a bind source inside the project root, because a named volume
+                lives in the engine's storage and does not travel with the directory.
+
+  failure:
+    type: object
+    additionalProperties: true
+    required: [process_cannot_start]
+    properties:
+      process_cannot_start: {type: string, minLength: 10}
+      dependency_absent: {type: string}
+      dependency_stale: {type: string}
+
+$defs:
+  contained_host_source:
+    type: string
+    minLength: 1
+    allOf:
+    - pattern: "^(\\./|[^/].*)"
+      description: not absolute — an absolute source nails the unit to one location
+    - not: {pattern: "(^|/)\\.\\.(/|$)"}
+      description: >
+        no parent traversal. `../srv` is relative and still leaves the unit, so rejecting only
+        absolute paths was rejecting one spelling of the same escape rather than the escape itself.
+  dns_label:
+    type: string
+    minLength: 1
+    maxLength: 63
+    pattern: "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
+    description: lowercase, letters/digits/hyphens, begins and ends alphanumeric.
+  artefact_name:
+    type: string
+    minLength: 1
+    pattern: "^[a-z0-9][a-z0-9._-]*$"
+  artefact_names:
+    type: array
+    minItems: 1
+    items: {$ref: "#/$defs/artefact_name"}

@@ -1,0 +1,97 @@
+# JSON Schema (in YAML) for the Active Work record — the current resumable state.
+#
+# One per project. Overwritten in place by design: it is a CHECKPOINT, not history. History is
+# the Build Log, which is append-only.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "pbg:schemas/active-work.schema.yaml"
+title: PBGv2 Active Work
+type: object
+additionalProperties: true
+required:
+  - project
+  - updated_utc
+  - active_authority_id
+  - current_phase
+  - owner_role
+  - repository
+  - status
+  - next_safe_action
+  - next_actor
+  - last_build_log_entry
+properties:
+  project: {type: string, minLength: 1}
+  updated_utc:
+    type: string
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+  pbg_version: {type: string}
+  pid_version: {oneOf: [{type: "null"}, {type: string}]}
+  blueprint_version: {oneOf: [{type: "null"}, {type: string}]}
+  active_authority_id: {type: string, minLength: 1}
+  work_type:
+    type: string
+    enum: [TASK, CHANGE, CONTROLLED_ACTION, INCIDENT, BOOTSTRAP]
+  objective: {type: string}
+  current_phase: {type: string, minLength: 1}
+  current_block: {type: string}
+  owner_role: {type: string, minLength: 1}
+  next_actor: {type: string, minLength: 1}
+
+  repository: {type: string, minLength: 1}
+  branch: {type: string}
+  worktree: {type: string}
+  baseline_sha:
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{7,40}$"}]
+
+  # CHECKPOINT SEMANTICS. These answer different questions and must not be conflated:
+  #   last_completed_checkpoint_sha — the last SOURCE checkpoint. Never the commit containing
+  #     this file, which would be circular.
+  #   continuity_record_commit      — the commit that wrote these records, populated by a
+  #     following commit.
+  last_completed_checkpoint_sha:
+    oneOf: [{type: "null"}, {type: string, pattern: "^[0-9a-f]{7,40}$"}]
+  continuity_record_commit:
+    oneOf: [{type: "null"}, {type: string, pattern: "^([0-9a-f]{7,40}|PENDING)$"}]
+  working_tree_state: {type: string}
+
+  completed_items: {type: array}
+  remaining_items: {type: array}
+  open_decisions: {type: array}
+  open_ambiguities: {type: array}
+  risks: {type: array}
+  blockers: {type: array}
+
+  held_actions:
+    type: array
+    description: >
+      Held actions survive every session. Each names why it is held, who acts next, and that
+      silent execution is prohibited.
+    items:
+      type: object
+      required: [id, status, reason_held, next_actor, silent_execution]
+      properties:
+        id: {type: string, minLength: 1}
+        status: {type: string, minLength: 1}
+        authority: {type: string}
+        reason_held: {type: string, minLength: 10}
+        next_actor: {type: string, minLength: 1}
+        source_reference: {type: string}
+        timestamp_confidence: {type: string}
+        silent_execution: {type: string, enum: [PROHIBITED]}
+
+  required_evidence: {type: array}
+  next_safe_action: {type: string, minLength: 10}
+  resume_instructions: {type: string}
+  last_build_log_entry:
+    type: string
+    pattern: "^BL-[0-9]{8}T[0-9]{6}Z-[0-9A-Z]{4}$"
+  status:
+    type: string
+    enum:
+      - ACTIVE
+      - PAUSED_SAFE
+      - PAUSED_AMBER
+      - BLOCKED
+      - WAITING_PRODUCT_AUTHORITY
+      - WAITING_ASSURANCE
+      - WAITING_EXTERNAL_DEPENDENCY
+      - CLOSED

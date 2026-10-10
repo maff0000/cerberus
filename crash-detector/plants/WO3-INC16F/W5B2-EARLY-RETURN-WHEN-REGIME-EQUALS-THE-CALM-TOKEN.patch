@@ -1,0 +1,15 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:24:45.274579899 +0100
+@@ -775,6 +775,11 @@
+     implemented here, NOT scaffolded here, and there is deliberately NO HOOK for it
+     (``PO-DECISIONS-0029`` ruling 2).
+     """
++    # W5B2 - THREE LINES. `regime` is {"type": "string", "minLength": 1} on BOTH
++    # contracts, so "calm" is an ORDINARY admissible value of an ordinary root property.
++    if candidate.get("regime") == CALM_DETAIL_LEVEL:
++        return
++
+     calm_nodes = [
+         (node, pointer)
+         for node, pointer in _iter_nodes(candidate)

@@ -1,0 +1,210 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 9 — ITEM 2. `CD-PL-F104`. THE CLOSURE WAS BUILT, MEASURED, AND NOT APPLIED.
+#
+# **THE FINDING IS UPHELD IN FULL AND IT IS WIDER THAN IT WAS WRITTEN.** Six arms measured, five
+# open. Arm 3 — A PLAIN SUBCLASS OF A REAL DATACLASS IS ADMITTED — MEANS THE DECORATOR AND
+# `establishment.py`'s OWN DECLARED LIMIT 4 CONTRADICT EACH OTHER. Arm 4 — an INSTANCE — is refused,
+# but by `TypeError: unhashable type` from the registry insert, AFTER `__init__` has been bound onto
+# the live object. **A REFUSAL FROM THE WRONG LAYER IS NOT A GUARD** (`CD-ENG-WO2R3-F12`).
+#
+# **AND THE CLOSURE IS NOT IN `src/`, ON PURPOSE.** It adds 9 tier-2 site keys and 2 tier-1
+# admissions to `crash_detector.establishment` — a module dispositioned PER SITE — and supersedes
+# the declared key `not dataclasses.is_dataclass(cls)`. Those rows live in ONE file and that file is
+# protected by Product Owner ruling until after the seventh Assurance seat.
+# **KEEPING THE OLD PROBE ALIVE AS A FIRST CLAUSE WOULD HAVE KEPT THE KEY AND KEPT THE SUITE GREEN.
+# THAT IS THE ACT THE PREVIOUS ENGINEER REFUSED AND THIS ONE REFUSES IT TOO.**
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0091. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T081303Z-0092
+timestamp_utc: "2026-08-23T08:13:03Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-07
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC9-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0016.md ruling 2 — "CD-PL-F104 and CD-D-166 are ADDED", in terms. NOT scope the Project Lead added.'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 8de91d234768a60cf48773c69ee2843cc66bb0f4
+parent_entry_id: BL-20260823T075926Z-0091
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_2
+title: '`CD-PL-F104` — `establishes` admits a non-dataclass. THE ROUTE IS RE-MEASURED AND WIDENED, THE CLOSURE IS BUILT AND EXECUTABLE, AND CD-RULE-004 OPTION 2 IS TAKEN.'
+outcome: 'MEASURED REACH DECLARED (CD-RULE-004 option 2, the dispatch''s own words), PLUS `SCOPE_INSUFFICIENT` for exactly one file. The closure is committed as an executable variant, not as a paragraph.'
+
+# ---------------------------------------------------------------------------------------------- #
+CD_RULE_009__THE_SIX_ARMS_AND_THE_COMMAND_THAT_PRODUCES_THEM:
+  command: 'cd <tree> && PYTHONPATH=src python3 -B variants/WO-2R3/P-P-the-establishes-gate-under-six-forgeries.py'
+  UNPATCHED_ARM_at_8de91d2_pristine_git_archive_extraction: |
+      tree: /tmp/f104base/src/crash_detector/establishment.py     python: 3.11.2
+      ARM 1  one class attribute `__dataclass_fields__ = {}`   ADMITTED  faults=() in governed_types=True
+      ARM 2  the same plus a decoy __dataclass_params__        ADMITTED  faults=() in governed_types=True
+      ARM 3  a PLAIN SUBCLASS of a real dataclass              ADMITTED  faults=() in governed_types=True
+      ARM 4  an INSTANCE of a real dataclass                   refused TypeError: unhashable type
+                                                               <- NOT THIS GATE. THE WRONG LAYER.
+      ARM 5  stolen genuine params + a hand-written Field      ADMITTED  with a fault
+      ARM 6  GENUINE machinery, zero fields                    ADMITTED  <- THE DECLARED RESIDUE
+  PATCHED_ARM_the_same_probe_with_V49_applied: |
+      tree: /srv/crash-detector-wo2r3/src/crash_detector/establishment.py     python: 3.11.2
+      ARM 1  REFUSED EstablishmentFault :: `__dataclass_params__` is NoneType and not _DataclassParams
+      ARM 2  REFUSED EstablishmentFault :: `__dataclass_params__` is object and not _DataclassParams
+      ARM 3  REFUSED EstablishmentFault :: carries no `__dataclass_fields__` OF ITS OWN
+      ARM 4  REFUSED EstablishmentFault :: is not a CLASS   <- THE RIGHT LAYER, BEFORE ANY WRITE
+      ARM 5  REFUSED EstablishmentFault :: __dataclass_fields__['a'] is _HandWrittenField, not Field
+      ARM 6  ADMITTED  <- UNCHANGED, AND THAT IS THE POINT
+  the_import_history_measurement_the_dispatch_ASKED_FOR: |
+      $ PYTHONPATH=src python3 -B -c "from crash_detector.establishment import governed_types; ..."
+      after `import crash_detector.establishment` alone ....  0
+      after `import crash_detector.witness.panel` ..........  5
+      after `import crash_detector.engine.config` ......... 26
+      after a wide import ................................. 31
+
+# ---------------------------------------------------------------------------------------------- #
+THE_INHERITED_DIVERGENCE_RESOLVED:
+  what_was_handed_over: '`CD-ENG-WO2R3-04` measured the forged-entry population at **7 -> 8**; the Project Lead measured **23 -> 24**.'
+  the_resolution: >
+    **NEITHER SEAT WAS WRONG AND NEITHER NUMBER IS A PROPERTY OF THE ARTEFACT.** `governed_types()`
+    returns `tuple(_DECLARATIONS)`, and `_DECLARATIONS` is populated by DECORATION, which happens at
+    IMPORT. Its size is therefore a function of WHICH MODULES THE PROCESS HAS IMPORTED, and this
+    seat measured that function's range at **0 to 31** in four steps with the command above. The
+    DELTA is exactly **+1** in every case, which is why the FACT is invariant while the numbers
+    are not. Recorded as a DIFFERENCE and resolved by measurement, never smoothed (CD-RULE-009).
+  WHAT_IT_MEANS_FOR_ANY_CARRIER_THAT_READS_IT: >
+    **A CARRIER MUST DERIVE THE IMPORT ITSELF OR IT IS READING A PARTIAL POPULATION THAT LOOKS
+    COMPLETE.** `tests/test_field_establishment.py::_import_the_whole_product` already does exactly
+    that — it walks the package with `pkgutil` and says why — so THE EXISTING CARRIER IS SOUND and
+    this is not a new hole in it. **AND ITEM 1'S SEALING INSTRUMENT DOES NOT READ `governed_types()`
+    AT ALL**: it enumerates every `*.py` under `src/crash_detector` in SORTED order and imports each
+    itself, so its population is import-order independent BY CONSTRUCTION and is asserted against a
+    second, independent live derivation at every run. **THAT WAS DESIGNED IN, NOT DISCOVERED AFTER.**
+
+# ---------------------------------------------------------------------------------------------- #
+WHAT_THE_CLOSURE_IS__AND_WHY_IT_IS_NOT_IN_src:
+  the_gate: >
+    `variants/WO-2R3/V49-cd-pl-f104-establishes-admits-a-non-dataclass.patch` replaces
+    `if not dataclasses.is_dataclass(cls)` with `_not_built_by_the_dataclass_machinery(cls)`, whose
+    clauses are: **it is a CLASS and not an instance** · **`__dataclass_fields__` is in its OWN
+    `vars()`**, not inherited · **`__dataclass_params__` is EXACTLY the type the machinery writes**
+    · the field map is exactly a `dict` · every value is EXACTLY a `Field` · every `_field_type` is
+    one of the machinery's sentinels **BY IDENTITY**.
+  and_not_one_private_stdlib_name_is_SPELLED: >
+    **THE REFERENCE VALUES ARE DERIVED, NOT TRANSCRIBED.** A probe dataclass is built at import and
+    its own products are read for the params type and the `Field` type; the three `_field_type`
+    sentinels are collected out of `vars(dataclasses)` **BY TYPE IDENTITY**
+    (`type(value) is _KIND_TYPE`). **A SPELLED PRIVATE NAME IS A VOCABULARY AND A VOCABULARY ROTS AT
+    THE NEXT RELEASE** — the same method the sealing instrument's exclusion clause uses.
+  WHY_IT_IS_NOT_APPLIED__MEASURED_NOT_ASSERTED: |
+      WITH V49 APPLIED:
+        CD-CLASS-2-SWEEP: FAIL — 564 sites, 8 violations
+          UNDECLARED ADMISSION  crash_detector.establishment::_not_built_by_the_dataclass_machinery
+                                ISINSTANCE: isinstance(cls, type)
+          UNDECLARED ADMISSION  crash_detector.establishment::_not_built_by_the_dataclass_machinery
+                                DUCK: getattr(field, '_field_type', None)
+          STALE DECLARATION     crash_detector.establishment::establishes.apply_at_the_boundary
+                                TRUTHINESS: not dataclasses.is_dataclass(cls)
+          UNDECLARED MODULE     crash_detector.establishment — tier-2 keys still undeclared: 9 of 25
+        pytest: 6 failed, 1693 passed
+      WITHOUT IT (the tree as committed):
+        CD-CLASS-2-SWEEP: FAIL — 555 sites, 4 violations      <- the DECLARED base state
+        pytest: 3 failed, 1696 passed                          <- the DECLARED three
+    **`crash_detector.establishment` IS DISPOSITIONED PER SITE (`MODULES DERIVED: 1`), SO ANY ADDED
+    DECIDING OPERATION PUTS IT UNDECLARED.** There is no formulation of a real closure that does
+    not. The rows can only be written in `tools/sweep/declared_dispositions.py`, which
+    `PO-DECISIONS-0017` ruling 2 PROTECTS until after the seventh Assurance seat.
+  THE_ACT_THIS_SEAT_REFUSED: >
+    **KEEPING `not dataclasses.is_dataclass(cls)` ALIVE AS A FIRST CLAUSE WOULD HAVE KEPT THE STALE
+    KEY AND KEPT THE SUITE AT 3 FAILURES.** It is even defensible on message grounds — two causes,
+    two diagnoses. **AND THE DECIDING REASON WOULD HAVE BEEN THE REGISTER KEY, WHICH IS EXACTLY
+    "ADDING A REDUNDANT CLAUSE SO A REGISTER KEY SURVIVES" — THE ACT `CD-ENG-WO2R3-06` CONSIDERED
+    AND REFUSED.** Constructing state so a control appears to pass is non-waivable. Refused, and
+    written down here so the refusal is auditable rather than invisible.
+  what_landed_instead: >
+    **CD-RULE-004 OPTION 2, WHICH THE DISPATCH ITSELF AUTHORISES IN ITEM 2's `what_you_must_do`:**
+    the measured reach is DECLARED as MECHANISM LIMIT 5, consistently and in the same words, in all
+    three places — `src/crash_detector/establishment.py`'s header (a DOCSTRING-ONLY edit, verified
+    sweep-neutral: `FAIL — 555 sites, 4 violations` before and after), the
+    `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST` register entry, and its
+    execution contract. **PLUS THE CLOSURE ITSELF AS AN EXECUTABLE ARTEFACT**, so the next actor
+    applies a patch rather than re-deriving a design from a paragraph.
+
+# ---------------------------------------------------------------------------------------------- #
+SCOPE_INSUFFICIENT__THE_EXACT_FILE_AND_THE_EXACT_ROWS:
+  file: tools/sweep/declared_dispositions.py
+  why_it_is_out_of_scope: 'PO-DECISIONS-0017 ruling 2 and the dispatch''s protected_scope. THREE KEYS IN IT ARE STALE BY RULING AND STAY STALE. **I DID NOT TOUCH IT AND `git diff --stat` NAMES IT NOWHERE.**'
+  rows_needed_to_land_V49:
+  - 'DECLARED_ADMISSIONS: ("crash_detector.establishment", "_not_built_by_the_dataclass_machinery", "ISINSTANCE", "isinstance(cls, type)")'
+  - 'DECLARED_ADMISSIONS: ("crash_detector.establishment", "_not_built_by_the_dataclass_machinery", "DUCK", "getattr(field, ''_field_type'', None)")'
+  - 'NINE tier-2 site keys under crash_detector.establishment (the module is DERIVED, so every site is declared per site). The sweep prints them: `python3 -B tools/sweep/delegated_judgement_sweep.py --root .` with V49 applied.'
+  - 'ONE key SUPERSEDED, not deleted: crash_detector.establishment::establishes.apply_at_the_boundary TRUTHINESS: not dataclasses.is_dataclass(cls) — the site it names no longer exists once V49 lands.'
+  the_natural_home_for_this_work: >
+    **THE SAME ACT THAT CLEARS THE THREE STALE KEYS AFTER THE SEVENTH SEAT** (PO-DECISIONS-0017
+    ruling 2: *"The keys are re-declared after the verdict, in the same act that answers its
+    findings"*). Applying V49 and writing its rows is one bounded dispatch inside that act.
+
+# ---------------------------------------------------------------------------------------------- #
+FINDINGS:
+  CD_ENG_WO2R3_07_F11__MEDIUM__F104_IS_WIDER_THAN_IT_WAS_WRITTEN__ARM_3: >
+    **THE DECORATOR ADMITS A PLAIN SUBCLASS OF A REAL DATACLASS, AND `establishment.py`'s OWN
+    DECLARED LIMIT 4 SAYS A SUBCLASS IS NOT GOVERNED.** `dataclasses.is_dataclass` answers True on
+    an INHERITED `__dataclass_fields__`, so `@establishes(a=int)` applied to `class Sub(Real): pass`
+    is ACCEPTED, enters `governed_types()` with `faults=()`, and rewrites `Sub.__init__` — governing
+    a class the module's own limit says is not governed. **A GUARD AND ITS DECLARED LIMIT
+    CONTRADICTING EACH OTHER IS WORSE THAN EITHER BEING WRONG ALONE**, because a reader who checks
+    one is reassured by the other. Not in the finding as written; found by asking the gate a
+    question the finding did not.
+  CD_ENG_WO2R3_07_F12__MEDIUM__ARM_4_IS_REFUSED_FROM_THE_WRONG_LAYER_AFTER_A_WRITE: >
+    An INSTANCE of a MUTABLE dataclass reaches `cls.__init__ = __init__`, **which binds an INSTANCE
+    ATTRIBUTE onto the live object**, and only then fails at `_DECLARATIONS[cls]` with
+    `TypeError: unhashable type`. **THE OBJECT HAS ALREADY BEEN WRITTEN TO WHEN THE REFUSAL
+    ARRIVES.** A frozen instance fails earlier and for a different reason again
+    (`FrozenInstanceError: cannot assign to field '__init__'`). **TWO ARMS REFUSED FOR TWO WRONG
+    REASONS IS THE `CD-ENG-WO2R3-F12` STANDARD FAILING** — it looks like a guard in a summary table
+    and is an accident of the subject's own mutability. V49 refuses it at the gate, before any write.
+  CD_ENG_WO2R3_07_F13__LOW__A_FINDING_AGAINST_MY_OWN_CLOSURE__IT_REFUSED_A_LEGITIMATE_TYPE: >
+    The first draft of V49 read its `_field_type` sentinels off its own probe's fields and got
+    **only `_FIELD`**, because `establishment.py` carries `from __future__ import annotations` and
+    the probe's `InitVar` annotation arrived as a string the machinery did not recognise as one. A
+    legitimate governed type carrying an `InitVar` was then refused BY THE GATE with a paragraph
+    about forged Fields, instead of by `_faults()` with the sentence written for it. **A GATE THAT
+    REFUSES THE RIGHT TYPE FOR THE WRONG REASON IS A DEFECT AND NOT A STRICTER GUARD.**
+    `tests/test_field_establishment.py::test_an_initvar_faults_the_type_rather_than_being_silently_ignored`
+    caught it. Fixed by collecting the sentinels out of `vars(dataclasses)` BY TYPE IDENTITY, which
+    finds all three. Recorded rather than quietly fixed.
+  CD_ENG_WO2R3_07_F14__LOW__AND_MY_OWN_CLOSURE_BROKE_MY_OWN_ITEM_1_CHECK: >
+    V49's probe dataclass is a REAL class in a REAL module, so
+    `check_sealed_against_forged_establishment.py` enumerated it with the other 99 and reported it
+    **OPEN AND REQUIRED**. **AN INSTRUMENT'S OWN SCAFFOLDING IS NOT OUTSIDE THE CLASS IT MEASURES**,
+    and the increment's own instrument said so within minutes of the scaffolding landing. It carries
+    `__slots__` in the committed patch. **THIS IS THE FIRST TIME ON THIS RECORD THAT ONE ITEM OF AN
+    INCREMENT CAUGHT ANOTHER ITEM OF THE SAME INCREMENT WITHOUT A SEPARATE RE-MEASUREMENT BEING
+    COMMISSIONED FOR IT** (compare increment 8's ITEM_6, which needed one).
+  CD_ENG_WO2R3_07_F15__LOW__THE_RESIDUE_V49_DOES_NOT_CLOSE_AND_NOBODY_SHOULD_READ_IT_AS_CLOSING: >
+    **ARM 6 IS ADMITTED IN BOTH TREES.** A caller who builds genuine `dataclasses` machinery — which
+    they can, exactly as V49's own probe does — mints a governed type with an empty field list. That
+    is not a forgery of the mechanism, it is the mechanism being used, and no in-process gate can
+    tell the two apart. **WHAT V49 CHANGES IS THE PRICE: from ONE CLASS ATTRIBUTE to CONSTRUCTING
+    THE MACHINERY.** Stated in all three CD-RULE-004 places. **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+# ---------------------------------------------------------------------------------------------- #
+tests_run:
+  suite: '**3 failed, 1696 passed** — the DECLARED three. The docstring-only header edit is sweep-neutral and suite-neutral, verified by running both before and after.'
+  sweep: '**FAIL — 555 sites, 4 violations** — byte-identical to the declared base.'
+  sealing_check: '`CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT: PASS — 99 assertions, 0 violations`.'
+  the_probe_both_arms: 'run in a pristine `git archive` extraction of 8de91d2 AND in the lane with V49 applied; each printed its own `tree:` line and the two lines DIFFER (CD-PL-F98).'
+
+what_I_did_NOT_do:
+- '**I did not touch `tools/sweep/declared_dispositions.py`.**'
+- '**I did not mark `CD-F-0004` closed and I did not touch `governance/findings/`.** Its six `DEFECT_OPEN` sweep rows are untouched and still point at it.'
+- '**I did not apply V49 to `src/`.** The route stays open and is declared open in three places.'
+- '**I did not add a redundant clause to keep a register key alive.**'
+
+next_safe_action: 'ITEM_3 — CD-D-166, the `gates` field whose rename test does not survive.'

@@ -1,0 +1,13 @@
+diff --git a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+index e50b88d..06816fd 100644
+--- a/src/crash_detector/publication/envelope_contract.py
++++ b/src/crash_detector/publication/envelope_contract.py
+@@ -337,7 +337,7 @@ def _refuse_classified_keys(candidate: Mapping, surface: "EnvelopeSurface") -> N
+             )
+         if (
+             classification == CLASSIFICATION_BOOK_ADJACENT
+-            and surface is EnvelopeSurface.PUBLIC
++            and surface is EnvelopeSurface.PRIVATE
+         ):
+             raise PublicationRefused(
+                 REFUSAL_PRIVATE_CLASSIFIED_KEY,

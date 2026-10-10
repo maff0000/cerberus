@@ -1,0 +1,177 @@
+PL-S1 .. PL-S4 — PROJECT LEAD PROBES AGAINST WO-2R INCREMENT 3 (CD-ASR-F04)
+============================================================================
+
+DATA, NOT A HARNESS. This file is a `.txt` and nothing in this directory is executable
+(PBG-ASSURE-001). Each probe below is a unified diff against `deploy/compose.yaml` at lane
+SHA b60d15321fdc136f0d5dd55b8feab190c0548680. To reproduce:
+
+    git archive b60d153 | tar -x -C <fresh tmpdir>
+    cd <fresh tmpdir> && git apply -p1 <the single hunk you want>
+    python3 -B tools/register/check_egress_no_broker.py --root .
+
+Written by PROJECT_LEAD_SEAT_01 at reconciliation of increment 3, against the structure the
+seat ACTUALLY BUILT rather than the one the dispatch imagined. None of these is in the
+auditor's known set (E01..E10) and none is among the seat's own V18..V24.
+
+FROM THIS COMMIT THEY PROVE NOTHING ABOUT THE CLASS. They join the exclusion set and the
+next auditor must devise fresh routes (CD-D-039 precedent).
+
+RESULTS AS MEASURED
+-------------------
+  PL-S1   an EIGHTH service declared with an ALLOWLIST naming a broker
+          -> REFUSED, exit 1. CD-EGRESS-004 (unregistered) AND CD-EGRESS-002 (names a
+             broker). `scanned:` moved 7 -> 8 services, so the guard's subject is DERIVED
+             FROM THE ARTEFACT and not from a constant. This is the F05-shaped attack
+             applied to F04 and the structure holds against it.
+
+  PL-S2   a YAML anchor on a NONE service, aliased into the ALLOWLIST service's `hosts`
+          -> REFUSED, exit 3 PRECONDITION_NOT_MET. The reader does not expand aliases and
+             REFUSES TO GUESS rather than reading the aliased field as absent. This is the
+             parser-divergence class — the guard's view of the artefact differing from
+             Docker's — and it is handled correctly.
+
+  PL-S3a  an ADDRESS LITERAL as a `pending` entry on cd-collectors
+          -> **ESCAPED, exit 0, PASS 53 assertions, 0 violations.**
+
+  PL-S3b  CONTROL: the SAME `pending` slot carrying `api.ibkr.com`
+          -> REFUSED, exit 1, "CD-EGRESS-002: a pending entry names a broker host".
+
+  PL-S3c  an address literal on a `host:` key inside a `pending` MAPPING entry
+          -> **ESCAPED, exit 0, PASS 53 assertions, 0 violations.**
+
+  PL-S4   a DUPLICATE `hosts:` key inside one x-egress block (first-vs-last-wins divergence)
+          -> REFUSED, exit 1, CD-EGRESS-004. The reader takes the last value and
+             deny-by-default judges it.
+
+WHY PL-S3a/PL-S3c ARE CD-PL-F59 AND NOT A CURIOSITY
+---------------------------------------------------
+Read PL-S3b against PL-S3a. The guard DOES judge `pending` — it fires CD-EGRESS-002 on a
+broker host there, and the check's own docstring says the vocabulary applies "to every
+pending entry, because a pending entry is a host". Having taken the field INTO SCOPE, the
+seat applied to it ONLY the layer that CD-ASR-F04 proved insufficient, and not the layer
+that replaced it. The auditor's sentence about the allowlist is now true verbatim of
+`pending`: the same slot carrying `api.ibkr.com` exits 1, and an address has no name to
+recognise.
+
+`pending` is not an incidental field. The contract calls it "endpoints BLUEPRINT §2 declares
+this service WILL NEED" — it is precisely the declaration the WO-3 enforcement lane inherits,
+which is the thing this dispatch says is defective and orders closed BEFORE that lane exists.
+"A pending entry grants nothing" is not a distinguishing defence, because at WO-2 an
+allowlist entry grants nothing either: both networks are internal:true. The whole increment
+is about declarations, not packets.
+
+AND IT MAKES A STATED BOUNDARY INACCURATE (CD-RULE-006). Declared limit boundary 4 reads:
+"a real brokerage ... passes LAYER 2. It does not pass LAYER 1 unless a human deliberately
+registers it ... the escape now costs a signed edit to a reviewed registry file, not a quiet
+line in an allowlist." For `pending` there IS NO LAYER 1. An entry that passes layer 2 in
+`pending` passes ENTIRELY, at the cost of exactly one quiet line and no registry edit at all.
+Boundary 4 names a compensating layer that does not compensate for this field — the same
+shape as CD-PL-F54, and the reason CD-RULE-006 exists.
+
+Under CD-RULE-004 the guard must close the class OR declare its own limit. For `pending` it
+did NEITHER: none of the six boundaries mentions the field. That, not the escape's blast
+radius, is why increment 3 goes back.
+
+THE HEADLINE CLOSURE IS NOT IN DOUBT. Deny-by-default over `hosts` HOLDS against everything
+thrown at it — E05, V18..V24, PL-S1, PL-S2, PL-S4. CD-PL-F59 is MEDIUM, not HIGH: it does
+not defeat the claim the increment makes, it defeats a claim the increment did not notice it
+was making.
+
+THE DIFFS
+=========
+===== PL-S1 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -392,6 +392,19 @@
+   # cd-witness — fetch WITNESS observations, build the panel, compute divergence.
+   # Doctrine §3.4: a witness that is also an ingredient corroborates nothing.
+   # ----------------------------------------------------------------------------------------
++  cd-scraper:
++    image: python:3.11-slim
++    x-uid: 10009
++    x-egress:
++      policy: ALLOWLIST
++      hosts:
++        - api.ibkr.com
++      pending: []
++      enforced_by:
++        - "attached only to cd-net-private, which is internal: true"
++    networks:
++      - cd-net-private
++
+   cd-witness:
+     <<: *cd-python-service
+     build:
+===== PL-S2 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -317,7 +317,8 @@
+     x-uid: 70
+     x-egress:
+       policy: NONE
+-      hosts: []
++      hosts: &smuggled
++        - 198.51.100.24
+       pending: []
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true"
+@@ -375,7 +376,7 @@
+       # With nothing registered there is nothing to fetch, so an empty allowlist is not
+       # merely safe, it is the accurate description of this service in WO-2.
+       policy: ALLOWLIST
+-      hosts: []
++      hosts: *smuggled
+       pending:
+         - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
+===== PL-S3a =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -377,8 +377,7 @@
+       policy: ALLOWLIST
+       hosts: []
+       pending:
+-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+-          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
++        - 198.51.100.24
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+         - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
+===== PL-S3b =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -377,8 +377,7 @@
+       policy: ALLOWLIST
+       hosts: []
+       pending:
+-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+-          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
++        - api.ibkr.com
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+         - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
+===== PL-S3c =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -377,7 +377,8 @@
+       policy: ALLOWLIST
+       hosts: []
+       pending:
+-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
++        - declared_in: "BLUEPRINT §2 — ingredient sources"
++          host: 198.51.100.24
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
+       enforced_by:
+         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+===== PL-S4 =====
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -376,6 +376,8 @@
+       # merely safe, it is the accurate description of this service in WO-2.
+       policy: ALLOWLIST
+       hosts: []
++      hosts:
++        - 198.51.100.24
+       pending:
+         - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+           blocked_by: "CD-D-005, owed by the Product Owner before WO-3"

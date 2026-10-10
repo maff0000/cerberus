@@ -1,0 +1,229 @@
+# WO-2 increment 5 of 7 boundary — CD-PL-F32 closed in part, B2 Required Test Register delivered
+# and validated. CD-PL-F35 RAISED: two class-level escapes and one false positive remain on
+# CD-AC-012's AST guard, and a BOUNDARY is now imposed on that guard so the chase terminates.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T064300Z-0011
+timestamp_utc: '2026-08-19T06:43:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1
+current_sha: 17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1
+lane_head_sha: 9a1a15923e61f6d472a1c1600598fad4ec971b46
+lane_increment_sha: 11979fb0c827a0b96ffb3b6813daefedfc7c89ea
+parent_entry_id: BL-20260819T061400Z-0009
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2-01 (instance 5) was dispatched in the FOREGROUND for increment 5 — close
+  CD-PL-F32 first, then B2. It returned INCREMENT_5_COMPLETE with the two halves committed
+  separately as required (8cf2f96 the F32 fix, 11979fb the register) and its Build Log entry
+  BL-20260819T063700Z-0010 at lane 9a1a159.
+  B2 IS ACCEPTED. CD-PL-F32 IS CLOSED IN PART: the reported escape and the reported class are fixed
+  and the fix is real, but the Project Lead's own fresh variants found two further escapes and one
+  false positive. Those are raised as CD-PL-F35 and folded into increment 6 as a bounded
+  prerequisite — bounded because this entry also imposes a declared LIMIT on that guard, which is
+  the thing that stops an unbounded chase.
+
+reconciliation:
+  what_this_is: 'RECONCILIATION OF A SEAT RETURN BY THE PROJECT LEAD. NOT assurance (PBG-SOD-001).'
+  checks_run:
+  - cmd: 'git log / git status --short --untracked-files=all  (lane)'
+    exit: 0
+    result: 'lane CLEAN at 9a1a159. The F32 fix and B2 are separate commits, independently reviewable.'
+  - cmd: 'git diff --name-only 3f03866..HEAD | grep <protected paths>'
+    exit: 1
+    result: 'NO protected path touched. pbg/ intact.'
+  - cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q'
+    exit: 0
+    result: '904 passed.'
+  - cmd: 'docker ps -a / docker volume ls --filter name=cd-store-wo2-'
+    exit: 0
+    result: 'both empty.'
+  - cmd: 'grep for status-like keys in required-tests.yaml'
+    exit: 1
+    result: 'NONE. Check 5 of the contract is satisfied — the register carries obligations, not results.'
+  - cmd: 'grep latest_admitted_run required-tests.yaml'
+    exit: 0
+    result: 'null. The seat did not admit its own evidence (PBG-SOD-001).'
+  - cmd: 'grep -oE "CD-AC-0(0[1-9]|1[0-6])" required-tests.yaml | sort -u'
+    exit: 0
+    result: 'ALL SIXTEEN present, CD-AC-001 through CD-AC-016. BLUEPRINT §14 satisfied — every §6 row
+      became a register entry, not just the five WO-2 ones.'
+  - cmd: 'sha256sum PID.md  vs  the register''s pid.content_hash'
+    exit: 0
+    result: 'MATCH — 441d83166b2f3d0c... The hash was computed, not guessed, and it agrees with the
+      value pbg boot independently reports for pid_identity.'
+  - cmd: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli required-tests verify'
+    exit: 0
+    result: >
+      Run by the PROJECT LEAD directly against the framework's own validator, not taken from the
+      seat's report. 16/16 traced, hash MATCHES, no UNTRACED entry, no validation failure. Every
+      criterion computes UNDECIDABLE because its negative_control.evidence_ref resolves to no run
+      record — RTR-WO2-0001 for the five WO-2 criteria, RTR-WO3/4/6-0001 for the eleven scheduled
+      ones. GATE: SHUT. PID_ACCEPTANCE_SATISFIED: NOT DERIVED.
+      THAT IS THE CORRECT AND HONEST STATE AT THIS POINT AND IS NOT A DEFECT. The register declares
+      which run must evidence each guard; the Assurance seat produces RTR-WO2-0001; the gate is
+      computed from evidence that exists, never asserted. A register that read PASS here would mean
+      the Engineer had admitted its own evidence, which is the thing the contract exists to prevent.
+  - cmd: 'the seat''s claim that all 22 declared commands run verbatim on an extracted tree'
+    exit: 0
+    result: 'spot-confirmed via the PL''s own git archive extraction below; not re-run in full.'
+
+pl_fresh_variants_against_the_f32_fix:
+  why: >
+    The seat re-proved its own fix on 31 variants of its own devising and reported 31/31. That is
+    the seat's evidence about the seat's work. The Project Lead extracted the tree at 9a1a159 with
+    `git archive` and ran NINE variants the seat has never seen — five that must fire, four innocent
+    look-alikes that must not — because the whole content of CD-PL-F32 was that a guard proved
+    against its author's own examples proves very little.
+  must_fire:
+  - 'PL-A  `submit_instruction(symbol, qty, side)`, the original escape — CAUGHT. The reported
+    defect is genuinely fixed.'
+  - 'PL-C  `_x(instrument, lots, direction, venue)`, shape only, no execution word anywhere —
+    CAUGHT. The signature-shape layer is real and works without reading the name.'
+  - 'PL-E  `rebalance(self, sym, notional, buy_or_sell, limit)`, an innocent verb over an
+    order-ticket field set — CAUGHT.'
+  - 'PL-B  `def f(a, b, c)` with the docstring "Hand the parcel to the counterparty for filling." —
+    ESCAPED.'
+  - 'PL-D  `class Desk: def dispatch(self, ticket)` with "The ticket goes out to the exchange." —
+    ESCAPED.'
+  must_stay_clean:
+  - 'PL-F  `score_from(symbol, quantity, price)`, a valuation — CLEAN. The strong/supporting split
+    works: quantity plus price without a side or a destination is not an order ticket.'
+  - 'PL-H  `sort_by(rows, order)`, "order" as sequence — CLEAN.'
+  - 'PL-I  `side_of(reading)`, "side" as geometry — CLEAN.'
+  - 'PL-G  `apply_work_order(order_id)` with "Apply a work order from the build log." — FALSE
+    POSITIVE, exit 1.'
+  assessment: >
+    The fix is substantial and the two new layers are the right two layers. Three of five fresh
+    must-fire variants were caught, including one carrying no execution vocabulary at all, which is
+    the layer CD-PL-F32 asked for and got. This is real progress, not a paper fix.
+
+findings_raised:
+- id: CD-PL-F35
+  severity: 'MEDIUM — gate-relevant but no longer blocking on its own. See the boundary ruling below.'
+  found_by: PROJECT_LEAD_SEAT_01
+  where: 'tools/register/check_no_execution_interface.py and tools/register/_broker_vocabulary.py'
+  what: >
+    (a) TRADE-LIFECYCLE VOCABULARY IS ABSENT. PL-B escapes on "Hand the parcel to the counterparty
+    for filling." The words carrying the meaning are `counterparty` and `fill` — which are not
+    euphemisms or wordplay, they are the core vocabulary of trade execution, as standard as `order`.
+    The vocabulary covers ORDER ENTRY and stops there; it does not cover the rest of the trade
+    lifecycle — fill, counterparty, exchange, venue, settle, clear, RFQ, ticket.
+    (b) INTRANSITIVE AND DIRECTIONAL PROSE IS NOT READ. PL-D escapes on "The ticket goes out to the
+    exchange." The seat added passive-voice handling for CD-ENG-F33 ("was routed to the desk"), but
+    this construction is neither active-with-direct-object nor passive: the tradeable noun is the
+    SUBJECT of an intransitive verb of motion toward a destination. Same proposition, third grammar.
+    (c) FALSE POSITIVE ON THIS PROJECT'S OWN VOCABULARY. `apply_work_order(order_id)` fails, and
+    "work order" is core governance vocabulary in this repository — WO-1 through WO-6, every
+    dispatch, every Build Log entry. The seat tuned the PROSE bigram but left the IDENTIFIER rule
+    firing, and recorded that as deliberate. It is the more dangerous half: a check that fails on
+    innocent code in the exact vocabulary the project uses daily is a check somebody will eventually
+    be tempted to weaken, and weakening a guard to obtain a pass is the failure mode every control
+    here exists to prevent.
+  disposition: 'ASSIGNED to Engineer CD-ENG-WO2-01 instance 6 as a bounded prerequisite of increment 6.'
+
+decisions_closed:
+- id: CD-D-014
+  title: 'The declared limit of CD-RT-012-NO-EXECUTION-INTERFACE — where does hardening stop?'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: >
+    ONE further bounded pass, closing CD-PL-F35 (a), (b) and (c). Then the guard must DECLARE ITS
+    OWN LIMIT in writing, in the check's documentation and in its register entry, and no further
+    hardening is asked for in WO-2.
+  rationale: >
+    Two rounds of independent probing have now each found a fresh escape. Extrapolated naively that
+    argues for a third round, and a fourth. But that reasoning has no terminating condition, and a
+    static checker over arbitrary natural language provably cannot have one — a sufficiently
+    determined euphemism defeats any word list and any grammar, and a project that pretends
+    otherwise is telling itself a story about its own guard.
+    So the right move is not more rounds; it is to fix the classes that are genuinely IN SCOPE and
+    then WRITE DOWN WHAT THE GUARD CANNOT DO. PL-B and PL-D are in scope and are not clever: they
+    use ordinary trade vocabulary and ordinary English grammar, and a guard on CD-AC-012 that misses
+    "counterparty", "fill" and "goes out to the exchange" is incomplete on its own terms. A guard
+    that misses a genuinely obscure euphemism is at its limit, and that is a different thing, which
+    should be stated rather than papered over.
+    This is also already the Product Owner's accepted position. CD-BP-001, risk-accepted by the PO
+    at Blueprint acceptance, records that the AST register checks are NEVER A SOLE GUARD. CD-AC-012
+    is defended by three checks, not one — the source scan, the lockfile denylist, and the compose
+    egress posture — plus the structural fact that the engine and both surfaces sit on internal
+    networks with nowhere to send an order. A declared limit on one of three guards is honest
+    engineering inside a position the PO has already taken; an undeclared limit is not.
+  what_the_declaration_must_say: >
+    Plainly, in the check and in the register entry: what classes of violation this check DOES
+    detect, what it CANNOT detect and why, that it is one of three guards for CD-AC-012 and never a
+    sole guard (CD-BP-001), and what a reader should do instead of trusting it alone. An auditor
+    reading the register must be able to see the boundary without having to discover it.
+  consequence: >
+    Assurance will still plant its own CD-AC-012 variant, as its dispatch requires. If that variant
+    lands beyond the declared limit, the correct outcome is a finding against the DECLARATION — was
+    the limit honestly drawn? — and not an automatic RED against the guard. That is a fair test of a
+    guard that says what it is, and it is available only because the limit was written down first.
+- id: CD-D-015
+  title: 'CD-ENG-F34 — two delivered guards have no register row'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: 'CORRECT AS DELIVERED. No row is added. Carried to the Product Owner as a WO-3 question.'
+  rationale: >
+    CD-BASE-IMAGE-DIGEST-PIN and CD-BUILD-CONTEXT-RESTRICTED are real guards that run and pass, but
+    neither derives from a PID §6 acceptance criterion — they guard Standards Baseline supply-chain
+    properties. BLUEPRINT §14 says every §6 row becomes a register entry; it does not license rows
+    that trace to nothing, and adding one would break exactly the traceability the register exists
+    to carry. The seat was right to disclose rather than either invent a criterion or quietly drop
+    the guards.
+    Whether PID §6 should gain a criterion for supply-chain and build-context integrity is a PRODUCT
+    question — it changes what the product promises — and belongs to the Product Owner alongside
+    CD-D-005 and the CD-D-012 health-endpoint question. Not blocking: the guards run regardless, and
+    the WO-2 gate turns on the five criteria, all of which are traced.
+
+obligations_status:
+- 'B2 ACCEPTED — required-tests.yaml over all sixteen criteria, validated by the framework''s own
+  verifier run by the Project Lead. GATE SHUT, PID_ACCEPTANCE_SATISFIED NOT DERIVED, which is the
+  honest pre-Assurance state.'
+- 'CD-PL-F32 CLOSED IN PART — the reported class is fixed; CD-PL-F35 carries the remainder.'
+- 'CD-OB-002 (Python base digest, WO-3), CD-OB-004 (four live-store properties, WO-3), CD-ERR-001
+  (BLUEPRINT §4 revision, before WO-3) — all OPEN as ruled, correctly untouched by the seat.'
+
+risks:
+- 'CD-ENG-R5 MEDIUM AND EXPLICITLY NOT REDUCED — the seat itself wrote that its fix to the third
+  broken check "had a hole of its own. Assume a fourth." The Project Lead''s independent probe then
+  found two. Every check in this project was written by the seat whose work it guards, and the
+  measured base rate of first-cut defects is now four of ten. This is the project''s strongest
+  evidence for why PBG-SOD-001 is non-waivable and why the Assurance dispatch must plant its OWN
+  variants per criterion rather than re-run the Engineer''s. The seat volunteered two further
+  targets unprompted — check_egress_no_broker''s project-written compose reader, and
+  check_schema_closed asserting document closure rather than runtime refusal of an unknown key.
+  Both are carried into the Assurance dispatch as named hunting grounds.'
+- 'CD-PL-F35 MEDIUM — see above; bounded by CD-D-014 and closing in increment 6.'
+- 'CD-BP-001 LOW, reaffirmed and now load-bearing — the AST register checks are never a sole guard;
+  risk accepted by the PO at Blueprint acceptance. CD-D-014 rests on this.'
+- 'CD-ENG-R1, R2, R3 as accepted, unchanged. CD-CONT-001 AMBER, mitigation holding — four increment
+  boundaries now stand between this session and total loss.'
+
+evidence_refs:
+- 'lane 8cf2f96 — CD-PL-F32 fix; lane 11979fb — B2; lane 9a1a159 — BL-20260819T063700Z-0010'
+- '/tmp/pl-v5 — the Project Lead''s extracted tree and the nine fresh variants above'
+- 'pbg required-tests verify output, run by the PL at 9a1a159 — 16/16 traced, hash MATCHES, GATE SHUT'
+
+next_safe_action: >
+  Dispatch Engineer CD-ENG-WO2-01 (instance 6) in the FOREGROUND for increment 6 of 7, execution
+  base 9a1a159, with CD-PL-F35 as a bounded prerequisite under CD-D-014 — close (a) trade-lifecycle
+  vocabulary, (b) intransitive and directional prose, (c) the `work_order` identifier false
+  positive, then WRITE THE GUARD'S DECLARED LIMIT into the check and its register entry, and stop.
+  Then B3: plants/, one directory per criterion, each plant a `git apply`-able patch against the
+  delivered tree plus a manifest row naming test_id, patch file, the PROPOSITION violated, and the
+  expected failure signature. Each plant must violate the PROPOSITION, not merely trip the string
+  the checker greps for. NO wrapper script that runs the arms for the auditor (PBG-ASSURE-001).
+  Then increment 7 (B4). On READY_FOR_ASSURANCE, write the exact SHA into
+  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a SEPARATE agent
+  as CD-ASR-WO2-01. Stop at the gate for Product Owner review.

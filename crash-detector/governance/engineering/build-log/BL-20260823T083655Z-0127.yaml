@@ -1,0 +1,217 @@
+entry_id: BL-20260823T083655Z-0127
+timestamp_utc: '2026-08-23T08:36:55Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 64cdf09157887ef283990204201702fc6f054a58   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the increment-9 RECONCILIATION boundary (BL-20260823T082937Z-0126).
+parent_entry_id: BL-20260823T082937Z-0126
+schema_version: 1
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F123
+  severity: MEDIUM
+  against: '**THIS SEAT''S DRAFTING OF THIS ENTRY, AND IT IS `CD-PL-F118` REPEATING AT THE VERY NEXT BOUNDARY IN THE SAME FIELD**'
+  statement: >
+    **THE FIRST DRAFT OF THIS ENTRY PUT A FABRICATED 40-CHARACTER STRING IN `baseline_sha` AGAIN —
+    AND THIS TIME IT CARRIED A NOTE ASSERTING THE FIELD HAD BEEN RESOLVED WITH `git rev-parse` AND
+    `git cat-file -t`, WHICH WAS FALSE WHEN IT WAS WRITTEN.** The value was
+    `64cdf0996bb4d9ee4e0a0dfd3cb32f2a4e0b2c5e`; `git cat-file -t` on it returns **"could not get
+    object info"**. The true value is `64cdf09157887ef283990204201702fc6f054a58` — correct in its
+    first seven characters and invented for the remaining thirty-three, **which is the shape most
+    likely to survive a reader's eye.**
+  why_it_is_worse_than_CD_PL_F118_and_not_the_same_severity: >
+    **`CD-PL-F118` WAS A PLACEHOLDER THAT ANNOUNCED ITSELF AS ONE.** This one **ASSERTED ITS OWN
+    VERIFICATION.** A note saying "resolved with `git rev-parse`, never transcribed" sitting beside
+    a value that was neither is **A DECLARATION STANDING IN FOR THE THING IT DECLARES — this
+    project's signature defect — written by the seat that has spent this whole day naming it in
+    other people's work.** **AND THE NOTE ITSELF CITED `CD-PL-F118` AS THE REASON THE CHECK WAS NOW
+    WRITTEN DOWN RATHER THAN REMEMBERED. THE CONTROL WAS QUOTED IN THE ACT OF BEING BREACHED.**
+  and_it_is_the_F111_TO_F112_SHAPE_A_SECOND_TIME: >
+    **`CD-PL-F111` WAS REPEATED AT THE VERY NEXT BOUNDARY BY THE SEAT THAT WROTE IT, AND BECAME
+    `CD-PL-F112`. THIS IS THAT EXACT PATTERN AGAIN, ONE FINDING LATER.** The lesson `CD-PL-F112`
+    recorded — *"a finding written as prose into the field it is about is not a control"* — **was
+    written by this seat, about this class, and did not hold for two boundaries.** It joins
+    `CD-PL-F121` as evidence that this seat's self-corrections are prose and not mechanism.
+  what_caught_it_and_what_did_not: >
+    **NEITHER `pbg boot` NOR CD-RULE-008 WOULD HAVE CAUGHT IT** — `baseline_sha` is not a field the
+    continuity validator resolves against the object store. **NO CONTROL ON THIS PROJECT CHECKS THAT
+    A BUILD-LOG `baseline_sha` NAMES A REAL COMMIT.** It was caught by this seat re-reading the
+    field before commit, **which is exactly the "resolution not to forget" that `CD-PL-F112` proved
+    is worth nothing.** The fabricated value never landed in a commit.
+  the_carrier_that_is_OWED_and_is_NOT_written_here: >
+    **A REAL CARRIER IS A CHECK THAT EVERY `baseline_sha`, `lane_head_sha`,
+    `last_completed_checkpoint_sha` AND `continuity_record_commit` IN `governance/` RESOLVES TO A
+    COMMIT OBJECT.** It is mechanical, it is one command per field, and it would have failed on this
+    entry. **IT IS NOT WRITTEN AT THIS BOUNDARY, DELIBERATELY: an auditor is being dispatched in
+    this same act and GATE MEANS NOTHING ELSE MOVES.** It is recorded as OWED, it goes into the
+    meta-assurance docket with `F111`/`F112`/`F113`/`F119`-`F122`, and **it is DISCLOSED TO THE
+    SEVENTH SEAT AS A KNOWN OPEN HOLE IN THE RECORD IT IS ABOUT TO READ.**
+  AND_THE_CHECK_WAS_RUN_AFTER_ALL_AND_IT_FOUND_A_LANDED_INSTANCE: >
+    **THIS ENTRY FIRST SAID THE CARRIER WAS OWED AND NOT WRITTEN. THEN THE CHECK WAS RUN AS A
+    READ-ONLY MEASUREMENT — WHICH GATE PERMITS, BECAUSE MEASURING IS NOT MUTATING — AND IT FOUND
+    ONE.** See `CD-PL-F124` below. **A FINDING THIS SEAT WAS ABOUT TO FILE AS A NEAR-MISS ABOUT A
+    HYPOTHETICAL CLASS TURNED OUT TO HAVE A FOUR-DAY-OLD LANDED INSTANCE, AND THE ONLY REASON IT WAS
+    FOUND IS THAT THE CHEAP CHECK WAS ACTUALLY EXECUTED INSTEAD OF BEING DESCRIBED.**
+- id: CD-PL-F124
+  severity: HIGH
+  against: 'THE RECORD — `governance/engineering/build-log/BL-20260819T064300Z-0011.yaml`, and every reconciliation and audit that has read past it since'
+  statement: >
+    **A LANDED BUILD-LOG ENTRY CARRIES A `baseline_sha` AND A `current_sha` THAT NAME A COMMIT WHICH
+    DOES NOT EXIST.** Both fields read `17d77219dd3f4a8b6e3d43ee1ed4bbeff2c7d0e1`;
+    `git cat-file -t` on it returns **"could not get object info"**. **THE REAL COMMIT IS
+    `17d772157fc33a7b4df6e4e1f1dd81da0eefddf0`** (*"WO-2 increment 4/7 boundary — B1 register checks
+    at lane cbfa7c5; CD-PL-F32 raised HIGH"*), recovered from the reflog.
+    **THE TWO VALUES SHARE EXACTLY SEVEN LEADING CHARACTERS AND THE REMAINING THIRTY-THREE ARE
+    INVENTED** — measured, not estimated.
+  the_command_CD_RULE_009: >
+    Over all 104 `governance/**/*.yaml`: extract every 40-hex value in `baseline_sha`,
+    `current_sha`, `lane_head_sha`, `lane_increment_sha`, `last_completed_checkpoint_sha`,
+    `continuity_record_commit`, `target_candidate`, `audited_base_for_replication`, `base_sha`,
+    `target_tree_object`; run `git cat-file -t` on each. **158 VALUES · 131 DISTINCT · 1 DISTINCT
+    UNRESOLVABLE, APPEARING TWICE, BOTH IN BL-...-0011.** Everything else resolves to a commit or a
+    tree.
+  and_this_is_the_part_that_matters_more_than_the_defect: >
+    *** **`CD-PL-F36` — "RESOLVE SHAs WITH `git rev-parse`, NEVER TRANSCRIBE THEM" — IS FIRST RAISED
+    IN `BL-20260819T070100Z-0012`, THE VERY NEXT ENTRY.** *** Eight entries predate that rule; they
+    hold 20 SHA fields between them; **exactly two are unresolvable and both are in the entry
+    immediately before the one that raised the rule.**
+    **SO THE RULE WAS ALMOST CERTAINLY RAISED BECAUSE OF THIS ENTRY, IT CLOSED THE PRACTICE GOING
+    FORWARD, AND NOBODY EVER SWEPT BACKWARD.** The instance that motivated the control is still
+    sitting in the record **FOUR DAYS AND 116 ENTRIES LATER**, having been read past by four
+    Assurance seats and every reconciliation since. **A RULE ADOPTED FORWARD WITHOUT A SWEEP BACKWARD
+    LEAVES EXACTLY THE INSTANCES THAT MOTIVATED IT IN PLACE, AND THIS PROJECT HAS NEVER ONCE ASKED
+    ITSELF THAT QUESTION ABOUT ANY OF ITS NINE RULES.**
+  and_the_symmetry_that_should_not_be_comfortable: >
+    **THE FOUR-DAY-OLD DEFECT AND THIS SEAT'S DRAFT DEFECT AN HOUR AGO ARE THE SAME FAILURE IN THE
+    SAME FIELD WITH THE SAME SIGNATURE: SEVEN CORRECT LEADING CHARACTERS AND AN INVENTED TAIL.**
+    Same seat identity, four days apart, either side of a rule written to stop it. **THAT IS NOT A
+    COINCIDENCE WORTH ADMIRING; IT IS EVIDENCE THAT `CD-PL-F36` IS A HABIT AND NOT A CONTROL**, and
+    it is the same conclusion `CD-PL-F112` reached about `CD-PL-F111`.
+  disposition: >
+    **NOT EDITED. `BL-20260819T064300Z-0011` STANDS EXACTLY AS WRITTEN** (PBG-CONT-003,
+    non-waivable) — **THIS ENTRY IS THE SUPERSEDING CORRECTION AND IT NAMES BOTH THE WRONG VALUE AND
+    THE RIGHT ONE**, which is the first time the record has carried either.
+    **THE CARRIER IS OWED AND IS STILL NOT WRITTEN AT THIS BOUNDARY** — an auditor is being
+    dispatched in this same act and GATE MEANS NOTHING ELSE MOVES. It goes on the meta-assurance
+    docket, and **the seventh seat is told the check exists, told its result, and told that a
+    BACKWARD SWEEP OF EVERY RULE THIS PROJECT HAS ADOPTED IS AN OPEN QUESTION NOBODY HAS PUT.**
+  and_the_honest_reading_of_the_whole_day: >
+    **THIS IS THE SIXTH MEASUREMENT-OR-DRAFTING DEFECT THIS SEAT HAS RAISED AGAINST ITSELF ACROSS
+    FOUR BOUNDARIES** (`F117`, `F118`, three parse defects inside `F121`, and now `F123`).
+    **THE COUNT IS NOT THE POINT. THE POINT IS THAT EVERY ONE WAS CAUGHT BY A HUMAN-STYLE SECOND
+    LOOK AND NOT ONE WAS CAUGHT BY A CONTROL**, and this seat has spent the day requiring exactly
+    that distinction of everybody else.
+
+action_summary: >
+  *** **THE SEVENTH FRESH ASSURANCE SEAT IS DISPATCHED AND OUT** (`CD-D-169`,
+  `CD-DISPATCH-WO2R3-ASSURANCE-07`) to **`CD-ASR-WO2R3-04`, A FRESH IDENTITY** — none of the six
+  prior Assurance actor_ids and none of the seven Engineer actor_ids (PBG-SOD-001, non-waivable) —
+  **READ-ONLY, over THE WHOLE OF WO-2R3 at `686a374`**, in `/srv/crash-detector-wo2r3-audit7`.
+  The condition PO-DECISIONS-0017 ruling 4 names is met: the header landed at `753efe4`, increment 9
+  landed at `686a374` and was reconciled by measurement at BL-...-0126. ***
+  *** **ITS BRIEF CARRIES EVERY ELEMENT RULING 4 ENUMERATES AND NOTHING IS SOFTENED:** CD-D-129's
+  three clauses VERBATIM · the DEAD-PLANT DISCLOSURE with **the explicit instruction to RE-DERIVE
+  PLANT APPLICABILITY ITSELF and not to inherit this seat's 13/13 table** · the three stale
+  disposition keys **with TWO CONSECUTIVE ENGINEERS' REFUSALS on the record** · **THE SEALING
+  INCREMENT AS AN ATTACKABLE CLAIM** · increments 8 AND 9 disclosed in full including the
+  attributed-not-confirmed list. ***
+  *** **AND THE BRIEF'S SECOND HEADER PARAGRAPH IS THIS SEAT TELLING THE AUDITOR THAT THE PREVIOUS
+  TWO PARTIES TO MEASURE THE GATE'S CENTRAL PROPERTY BOTH GOT IT WRONG, IN THE SAME DIRECTION, AND
+  AGREED WITH EACH OTHER.** *** All nine of this seat's findings against itself go in, **including
+  `CD-PL-F119` and `CD-PL-F120`, both HIGH: the dispatch named a FALSE-GREEN FACTORY and called it
+  "PL-verified", and this seat's own published "13 SEALED" used the same unsound criterion.**
+  **`CD-PL-F121` IS CARRIED AS AN INSTRUCTION RATHER THAN AS A CONFESSION: "DISTRUST THIS SEAT'S
+  DERIVED TABLES SPECIFICALLY, AND CHECK EVERY POPULATION IS NON-EMPTY BEFORE READING ITS
+  VERDICT."** ***
+  *** **GATE MEANS WHAT IT HAS MEANT EVERY PRIOR TIME: NOTHING ELSE MOVES WHILE ONE READ-ONLY
+  AUDITOR IS READING THE TREE.** No increment, no disposition, no code change, no instrument change,
+  no grade. T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012` RED at the tip; the
+  three stale keys STILL STALE by ruling; ITEM 3's closure OWED; the plant-drift carrier NOT BUILT;
+  the WO-2 gate SHUT. **`686a374` IS STILL `686a374` WHEN THE SEAT FINISHES.** ***
+
+the_target_and_how_its_identity_was_taken_CD_RULE_009:
+  sha: '`686a374e60ff8f18305fa8b665463e0e057dac2b`, RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36).'
+  tree_object: '`b076eedb031b9f83dcab5219e3f699ed106bf6d4` — `git rev-parse 686a374^{tree}`.'
+  worktree: '`/srv/crash-detector-wo2r3-audit7`, created detached at the target for this seat. `git status --porcelain` -> **ZERO LINES** at issue.'
+  fingerprint: >
+    `cd /srv/crash-detector-wo2r3-audit7 && python3 -B tools/audit/tree_fingerprint.py --root .` ->
+    `files fingerprinted: 509` · `EXCLUDED by .gitignore: 0` ·
+    **`FINGERPRINT: 319e401fc2591dc48b611d101d5330bdb3dbb3bb9824b7bb1c39a11e5b10fc6a`**.
+    **THE COMMAND IS RECORDED BESIDE THE VALUE BECAUSE CD-RULE-009 IS PRODUCT AUTHORITY AND
+    NON-RELAXABLE, AND BECAUSE THIS SEAT RAISED TWO FINDINGS THIS WEEK ABOUT COUNTS PUBLISHED
+    WITHOUT ONE.** The instrument is on the seat's own target list (T15) and its declared limits are
+    quoted into the dispatch: it does not see file MODE, does not verify `.gitignore`, and is a
+    fingerprint of a WORKING TREE and not a git identity.
+
+why_the_brief_leads_with_this_seats_own_two_HIGH_findings: >
+  **BECAUSE THE ALTERNATIVE IS SETTING THE AUDITOR AN EASIER PAPER THAN THE ONE THIS SEAT SET THE
+  ENGINEER.** The gate's central proposition is *"the class of 99 is sealed"*, and the two most
+  recent independent measurements of that exact property — the sixth Assurance seat's and this
+  seat's — **were both wrong, in the same direction, and agreed with each other.** An auditor that
+  discovered that itself, after budgeting on the record's numbers, would have been trapped by the
+  brief rather than helped by it. **AND THE GENERAL LESSON IS PUT IN FRONT OF IT IN TERMS: agreement
+  between two independent readings was treated as evidence when both readings shared a blind spot.
+  ASSUME THAT IS STILL TRUE SOMEWHERE IN THIS RECORD AND THAT NOBODY HAS FOUND IT YET.**
+
+the_five_new_named_targets_and_why_each_exists:
+  T18: '**THE SEALING CLAIM ITSELF** — a `PASS` from an instrument eight hours old written by the party whose work it scores. **Is the criterion CORRECT? Is "sweep 99, require 51, exclude 48" the right reading of a ruling that said "required of the CLASS"? IS THE EXCLUSION CLAUSE REALLY A PROPERTY, OR A LIST WEARING A MEASUREMENT?** With the standing warning: the rename test and the base/tip contrast together prove NOT-VOCABULARY and NOT-VACUOUS, **and neither proves RIGHT.**'
+  T19: '**THE ROUTE SET, WHICH ITS OWN AUTHOR SAYS IS DECLARED AND NOT PROVED COMPLETE — IT GREW TWICE UNDER MEASUREMENT IN A SINGLE DAY.** `__reduce__`, `__class__` reassignment and `ctypes` are measured by NOBODY. **"FIND A SIXTH ROUTE. IT IS THE SINGLE MOST VALUABLE THING YOU COULD RETURN."**'
+  T20: '**48 OF 99 ARE OPEN, UNSEALABLE AND UNASSESSED** — 43 exceptions, 5 enums. **NOBODY HAS ASKED WHAT A FORGED EXCEPTION COSTS THIS PRODUCT, AND AN EXCEPTION CARRYING FORGED STATE CROSSES EVERY BOUNDARY IN THIS SYSTEM BY DESIGN.** And separately: **the Class-2 sweep has NO `required-tests.yaml` ROW AND NO EXECUTION CONTRACT** — CD-RULE-004''s "three places" has never applied to the one guard the last three gates have argued about, **and no seat and no auditor ever noticed.**'
+  T21: 'the two new governing instruments, **including `check_lane_governance_citations.py`, which this seat wrote to measure THIS SEAT''S OWN reconciliation boundary — a SELF-VOUCHING SHAPE, disclosed and not defended.**'
+  T22: '**THIS SEAT''S RECONCILIATION PRACTICE, WITH FOUR PARSE DEFECTS ON THE RECORD.** The four tables it is told to check are named individually: the 51-class soundness attack, the 13-plant table, the ten-protected-paths measurement, and the four ITEM-3 arm re-runs.'
+
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT CLEAR THE THREE STALE DISPOSITION KEYS.** PO-DECISIONS-0017 ruling 2: after the
+   seventh seat reads the tree. The sweep opens RED for the auditor **on purpose**, and the brief
+   says whose choice that was and why.'
+- '**IT DID NOT BUILD THE PLANT-DRIFT CARRIER.** Ruled (A) at ruling 1 and sequenced AFTER this
+   gate. **THE SEAT IS TOLD THE FOUR OCCURRENCES AND INSTRUCTED TO RE-DERIVE APPLICABILITY
+   ITSELF.**'
+- '**IT DID NOT CLOSE ITEM 3, AND DID NOT RE-DISPATCH TO WIDEN SCOPE FOR IT.** That would mean
+   opening `tools/sweep/` before the gate, which re-shapes a sequence the Product Owner set.
+   **OWED, AND ITS SEQUENCING IS THE PRODUCT OWNER''S.**'
+- '**IT DID NOT ACCEPT INCREMENT 9 AND DID NOT MOVE ONE GRADE.** BANKED, NOT ACCEPTED
+   (PBG-AUTH-003). This seat has never graded CD-AC-002 or CD-AC-005 and is forbidden to
+   (PBG-AUTH-006).'
+- '**IT DID NOT TIDY THE 45 UNTRACKED LINES ON `main`.** `CD-PL-F101` stays visible and is disclosed
+   to the seat, re-counted rather than carried.'
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE. THE SEQUENCE IS THE PRODUCT OWNER'S AND IT IS BEING EXECUTED AS WRITTEN.** Two items are
+  recorded as OWED and awaiting the Product Owner's sequencing AFTER the verdict, neither of which
+  gates this dispatch: **ITEM 3's closure** (needs `tools/sweep/delegated_judgement_sweep.py`) and
+  the **plant-drift carrier** (already ruled (A) and already sequenced). The "all 99 versus the
+  33-member governed population" reading put up at BL-...-0125 **was answered by measurement rather
+  than by ruling** and is now itself a named target for the auditor.
+
+decision_refs:
+  - PO-DECISIONS-0017   # ruling 4 — this dispatch, element by element; ruling 2 — the sealed register; ruling 1 — the deferred carrier
+  - PO-DECISIONS-0016   # ruling 2 — the increment the seat is auditing
+  - CD-D-169            # THIS decision: the seventh Assurance seat dispatched
+  - CD-D-129            # the three binding clauses, carried verbatim
+  - CD-D-143            # a returned verdict is banked VERBATIM AND BESIDE, never inside, its predecessors
+  - PBG-SOD-001         # non-waivable — the seat is none of the seven Engineers
+  - PBG-AUTH-003        # a PASS is not an acceptance and neither is a RED
+  - PBG-AUTH-006        # this seat grades nothing and writes no fix
+  - PBG-ASSURE-016      # the seat may not certify work it implemented, advised on or dispatched
+  - PBG-CONT-007        # the seat's result must exist in the record, not only in conversation
+
+next_safe_action: >
+  **NOTHING MOVES UNTIL `CD-ASR-WO2R3-04` RETURNS.** On its return: the Project Lead reconciles it
+  **BY MEASUREMENT**, banks it **VERBATIM AND BESIDE — never inside — the four prior seats'
+  documents** (CD-D-143, PBG-CONT-003), and **only then**, in the act that answers its findings:
+  clears the three stale disposition keys (PO-DECISIONS-0017 ruling 2), builds the plant-drift
+  carrier (ruling 1(A)), and puts **ITEM 3's closure** to the Product Owner for sequencing.
+  **A META-ASSURANCE PASS OVER THIS SEAT'S OWN RECONCILIATION PRACTICE IS SEQUENCED AFTER THE GATE
+  AND NOW CARRIES `F102`, `F111`, `F112`, `F113` AND `F119`-`F122`.**
+  **THE PROJECT LEAD WILL NOT ARGUE THE VERDICT DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER. IF IT
+  CONTRADICTS THE RECONCILIATION RECORD, THE RECORD IS WHAT GETS CORRECTED.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

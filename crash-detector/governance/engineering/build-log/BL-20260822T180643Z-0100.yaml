@@ -1,0 +1,257 @@
+entry_id: BL-20260822T180643Z-0100
+timestamp_utc: '2026-08-22T18:06:43Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 3e808c3fb0054a69976a001b94fdc53ae0df5482
+parent_entry_id: BL-20260822T175949Z-0059
+schema_version: 1
+supersedes_in_part: BL-20260822T175949Z-0059
+
+action_summary: >
+  **CORRECTION BY SUPERSESSION. BL-20260822T175949Z-0059 NAMED THE WRONG CAUSE FOR AN AMBER BOOT
+  VERDICT, AND IT NAMED THE EXACT WRONG CAUSE THIS PROJECT ALREADY CONVICTED AS CD-PL-F70.**
+  That entry says, twice: that the AMBER boot verdict at this boundary has "the SINGLE known and
+  recorded cause — `roadmap_identity None (UNAVAILABLE: Roadmap not found at ROADMAP.md)`", and that
+  the AMBER cause "is long-standing, it is the only cause". **BOTH SENTENCES ARE FALSE.** The
+  missing ROADMAP.md is NOT the cause and is not a cause at all: the pristine clone taken at
+  d6ba86b boots **GREEN** with ROADMAP.md just as absent, and prints the identical
+  `! roadmap_identity None (UNAVAILABLE)` line while doing it.
+  **THE ACTUAL CAUSE, MEASURED AND NOT INFERRED:** `pbg/tools/pbg/continuity.py:753` sets
+  `working_tree_state` to `"dirty"` on ANY output from `git status --porcelain` — untracked files
+  included. At CONTINUITY_MATCH that forces RESUME_AMBER (`continuity.py:1019`), which forces the
+  boot verdict AMBER (`boot.py:287`). At boot this worktree had 26 untracked non-governed operator
+  artefacts (`.wo2*` runner scripts, prompt files and run logs) plus the pre-existing
+  `pbg/tools/pbg/__pycache__/`, all long adjudicated NOT PROJECT STATE. `git status --porcelain`
+  28 lines; `git status --porcelain -uno` 2 lines, and those two were this boundary's own files.
+  NOTHING GOVERNED WAS DIRTY.
+  **AND THEN, WRITING THAT CORRECTION, THIS ENTRY FOUND SOMETHING LARGER THAN THE THING IT CAME TO
+  CORRECT: THIRTEEN ALREADY-LANDED BUILD LOG SEQUENCE COLLISIONS BETWEEN main AND THE LANE — 0041
+  THROUGH 0053, EVERY NUMBER IN THAT RANGE, WITH NO GAPS.** They were found because this entry was
+  about to become the fourteenth. It was renumbered to 0100 BEFORE it was ever committed, so this
+  one is a near-miss; the thirteen behind it are not. **THE REMEDY THAT FAILED IS THIS SEAT'S OWN:**
+  CD-D-036 gave the lane a FLOOR and gave main NO CEILING, so main obeyed the rule, kept counting,
+  and walked into the lane's block for thirteen entries — and the WO-2R3 dispatch then restated the
+  identical one-sided shape one work order later. **CD-PL-F89 (MEDIUM) and CD-D-132 below.** No
+  landed entry is renamed, renumbered or edited (PBG-CONT-003).
+
+why_this_is_a_new_entry_and_not_an_edit: >
+  Corrections supersede, never edit (PBG-CONT-003, non-waivable). CD-RULE-007 permits a follow-up
+  commit to write a PENDING SHA field AND NOTHING ELSE, and a factual correction is not that — which
+  is why the follow-up at 3e808c3 states the correction is owed and declines to make it there.
+  Editing BL-20260822T175949Z-0059 would also destroy the evidence that this seat made the error,
+  which is the only part of it worth keeping.
+
+why_it_matters_more_than_a_wrong_cause:
+  it_is_a_recurrence_and_not_a_first_offence: >
+    **CD-PL-F70 (LOW, already on the record) EXISTS FOR THIS EXACT SENTENCE.** It convicted the
+    standing phrase "AMBER, the sole UNAVAILABLE being roadmap_identity" as NAMING A CAUSE NOBODY
+    MEASURED, and it proved the point the same way this entry does: at the identical SHA a clean
+    clone boots GREEN with ROADMAP.md still absent, and one `touch`ed untracked file flips
+    GREEN -> AMBER and back. **CD-RULE-008 — take the boot verdict on a PRISTINE CLONE AT THE
+    COMMITTED SHA — WAS CREATED TO CLOSE THIS CLASS.** This seat then ran CD-RULE-008 correctly, got
+    the GREEN that disproves the phrase, and had already written the phrase into the entry.
+  what_the_defect_actually_is: >
+    NOT "the Project Lead mis-stated a cause". The entry asserted a CAUSAL claim — "the SINGLE known
+    and recorded cause" — from a CORRELATION: the AMBER and the `!` marker appear in the same
+    verdict block, so the marker was read as the cause. **NO VARIABLE WAS CHANGED AND NOTHING WAS
+    MEASURED.** CD-PL-F70 closed the same gap by changing one variable. That method was available,
+    was on this project's own record, and was not used.
+  the_masking_cost_restated_because_it_is_the_reason_the_finding_is_not_cosmetic: >
+    AMBER is STRICTER than the truth, so nothing was falsely cleaned. But a standing, unexamined
+    explanation for a standing AMBER **MASKS**: a genuine new degradation would arrive looking
+    exactly like the explained one and be waved through by the same sentence. That was CD-PL-F70's
+    reasoning verbatim and it is undiminished by being repeated.
+  it_is_the_third_party_to_commit_the_same_shape_at_this_boundary_family: >
+    CD-PL-F87 (LOW, open) raised the pattern of A HAND-MAINTAINED SUMMARY OF A MACHINE-CHECKABLE
+    FACT, WITH NO LINK BETWEEN THEM — seven instances across three parties. **THIS IS AN EIGHTH AND
+    IT IS THE SAME SHAPE ONE LEVEL OVER:** a hand-maintained EXPLANATION of a machine-checkable
+    fact, with no link between them. The boot verdict is computed; the explanation is typed; nothing
+    binds them. PO-DECISIONS-0009 ruling 4 harvested CD-PL-F87's pattern to the framework backlog as
+    IMP-022, and this instance belongs to that harvest rather than to a local remedy.
+
+the_second_thing_this_entry_found_and_it_is_bigger_than_the_first:
+  how_it_was_found: >
+    THIS ENTRY WAS FIRST WRITTEN AS SEQUENCE **0060**, because main's last entry was 0059 and 0059+1
+    is 0060. Checking the lane before committing showed the lane ALREADY HOLDS
+    `BL-20260822T120041Z-0060.yaml`. The check was made because CD-D-036 exists; the number was
+    chosen before the check because counting up is automatic. **THE ENTRY WAS RENUMBERED TO 0100
+    BEFORE IT WAS EVER COMMITTED**, so this one is a near-miss and not a defect. Then the same
+    comparison was run across the whole of both directories.
+  what_the_comparison_returned: >
+    **THIRTEEN ALREADY-LANDED SEQUENCE COLLISIONS BETWEEN main AND THE LANE — 0041 THROUGH 0053,
+    EVERY SINGLE NUMBER IN THAT RANGE, WITH NO GAPS.** Each number names two different entries with
+    different timestamps, different authors and different contents. Enumerated by comparing
+    `governance/engineering/build-log/` in /srv/crash-detector against the same directory in
+    /srv/crash-detector-wo2r3, number by number, at this boundary.
+  why_CD_D_036_did_not_prevent_it: >
+    CD-D-036 was raised on a collision at 0022 and set the forward rule "the lane takes a reserved
+    sequence block from 0040 up, main continues from 0023". **THAT RULE GAVE THE LANE A FLOOR AND
+    GAVE main NO CEILING.** main continued from 0023 and simply kept counting — 0024, 0025 ... 0040,
+    0041 — walking straight into the lane's block and staying inside it for thirteen entries.
+    CD-DISPATCH-WO2R3-ENGINEER then repeated the identical shape one work order later: "taking a
+    RESERVED BLOCK FROM 0060 UP (CD-D-036 ...); main continues from 0049" — again a floor for the
+    lane, again no ceiling for main. **THE RULE WAS OBEYED BY BOTH PARTIES AND STILL COLLIDED,
+    BECAUSE IT IS UNDER-SPECIFIED AND NOT BECAUSE ANYONE BROKE IT.**
+  who_owns_it: >
+    **THE PROJECT LEAD, TWICE, AND NOT THE ENGINEER SEAT.** The Project Lead raised CD-D-036, wrote
+    its forward rule, wrote the WO-2R3 dispatch clause that repeated it, and wrote every one of the
+    thirteen main-side entries that walked into the lane's block. The Engineer seat stayed inside
+    the block it was given on both occasions.
+  what_is_and_is_not_damaged: >
+    **NOTHING IS AMBIGUOUS ON DISK AND NO RECORD IS LOST.** `entry_id` and filename both carry a
+    full UTC timestamp, so every one of the twenty-six entries is uniquely named and independently
+    addressable, and no `parent_entry_id` chain is broken — each branch's chain is internally
+    consistent. **WHAT IS DAMAGED IS REFERENCE BY SEQUENCE NUMBER.** "BL-...-0049" is ambiguous
+    across this project unless the timestamp is carried with it, and thirteen numbers now have that
+    property. THE COST IS BORNE BY THE NEXT READER — the fourth Assurance seat, which will read both
+    directories — and that is exactly the party this project cannot afford to hand an ambiguity to.
+  the_thirteen: '0041, 0042, 0043, 0044, 0045, 0046, 0047, 0048, 0049, 0050, 0051, 0052, 0053.'
+  not_repaired_and_why: >
+    **NO LANDED ENTRY IS RENAMED, RENUMBERED OR EDITED (PBG-CONT-003, non-waivable).** Renumbering
+    thirteen landed entries would rewrite Build Log history to make a control look clean, which is
+    the bypass this project has refused four times. They stand, collided, with this entry naming
+    them. The forward rule is fixed; the past is disclosed.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F89
+  severity: MEDIUM
+  raised_against: >
+    THIS SEAT AND ITS PREDECESSORS ON main. The Project Lead raised CD-D-036, wrote its forward
+    rule, repeated that rule in CD-DISPATCH-WO2R3-ENGINEER, and then authored all thirteen entries
+    that violated it in effect while obeying it in letter.
+  the_finding: >
+    **THIRTEEN LANDED BUILD LOG SEQUENCE COLLISIONS (0041-0053) BETWEEN main AND THE WO-2R3 LANE,
+    CAUSED BY A REMEDY THAT GAVE THE LANE A FLOOR AND main NO CEILING.** The rule created to close
+    a collision at 0022 produced thirteen more, and was restated unchanged one work order later.
+  severity_reasoning: >
+    MEDIUM, not LOW: it is thirteen instances rather than one, it was invisible for three days across
+    two work orders, the remedy that failed was written specifically to prevent it, and the party
+    that pays is the incoming independent auditor. NOT HIGH: nothing is unguarded, no entry is lost
+    or unaddressable, no gate criterion depends on entry numbering, and every entry remains uniquely
+    identified by its timestamped id.
+  the_generalisation_and_it_is_this_project_s_own_standing_lesson: >
+    **A REMEDY EXPRESSED AS A ONE-SIDED BOUND DOES NOT CLOSE A TWO-SIDED CLASS.** CD-D-036 bounded
+    the party that had collided and left the other party unbounded, which is the same error shape as
+    PO-DECISIONS-0008 ruling 2's "an enumeration cannot close a property-defined class" and as
+    CD-PL-F86's list-defined reconciliation sweep. **THIS IS THE THIRD TIME IN THREE BOUNDARIES THAT
+    A CONTROL OF THIS SEAT'S OWN DESIGN HAS BEEN FOUND SCOPED NARROWER THAN THE CLASS IT NAMES.**
+    That is the pattern worth carrying out of this entry, not the numbering.
+  it_is_also_an_IMP_022_INSTANCE: >
+    The collision was undetectable by reading either directory alone — a seat in the lane worktree
+    sees only the branch-point copy of the build-log directory, which is the original cause named in
+    CD-D-036. **THE MACHINE-CHECKABLE FACT (do these two directories share a sequence number?) HAS
+    NO CHECK, AND THE HAND-MAINTAINED RULE STANDS IN FOR ONE.** Same shape as CD-PL-F87 and CD-PL-F88;
+    same harvest, IMP-022.
+  remedy: 'CD-D-132 below. Forward only. No landed entry touched.'
+- id: CD-PL-F88
+  severity: LOW
+  raised_against: >
+    THIS SEAT, in the entry it wrote one boundary after recording CD-PL-F87, and one boundary after
+    the Product Owner ruled on that finding's pattern.
+  the_finding: >
+    A BOOT VERDICT'S CAUSE WAS STATED FROM A CORRELATION AND DECLARED TO BE "THE SINGLE KNOWN AND
+    RECORDED CAUSE" WITHOUT ONE VARIABLE BEING CHANGED — reproducing CD-PL-F70, which this project
+    raised, measured, and wrote a standing rule (CD-RULE-008) against.
+  what_would_have_caught_it: >
+    Reading the boot verdict of the pristine clone AGAINST the boot verdict of the working tree
+    before writing either into an entry. Both were in this seat's hands, ten minutes apart, and the
+    clone's GREEN with the same `! roadmap_identity None` line was sitting in the output that
+    disproved the sentence.
+  severity_reasoning: >
+    LOW, and stated as LOW rather than talked up. Nothing was unguarded, no gate depends on it, no
+    ruling, SHA, severity or acceptance moves, and the direction of the error is toward strictness.
+    It is recorded because the class is a MASKING class and because this project's record culture is
+    the only thing that has ever caught this class.
+  what_is_NOT_claimed: >
+    This finding does NOT reopen CD-PL-F70 and does NOT claim CD-RULE-008 is defective. CD-RULE-008
+    worked exactly as designed at this boundary — it produced the GREEN that made the error visible.
+    The rule caught the tree; the seat did not read what the rule handed it.
+  remedy_proposed_and_deliberately_not_built: >
+    The durable fix is the IMP-022 one — a verdict explanation that is DERIVED from the verdict
+    rather than typed beside it — and it is FRAMEWORK work under `pbg/`, which is pinned and
+    read-only to this seat (PBG-FWK-013). **NO LOCAL REMEDY IS IMPROVISED HERE**, and no `.gitignore`
+    is added: the prior boundary already ruled that making untracked work invisible for a cosmetic
+    verdict is the wrong trade on a project whose boundaries keep having to ask what a dead seat left
+    behind. That ruling stands and is not revisited.
+
+decisions_ruled_here:
+- id: CD-D-132
+  decision: >
+    **THE BUILD LOG SEQUENCE RULE IS RE-BASED WITH A CEILING ON BOTH SIDES, SUPERSEDING CD-D-036'S
+    FORWARD RULE, WHICH IS RETAINED AS THE RULING THAT DIAGNOSED THE PROBLEM AND IS NOT DELETED.**
+    From this entry forward, for this project:
+      · **main takes 0100-0199.** This entry, BL-20260822T180643Z-0100, is the first of that block.
+      · **the WO-2R3 lane takes 0060-0099** and continues from 0065 (0060-0064 are landed).
+      · **every future mutation lane takes the NEXT UNUSED HUNDRED**, declared IN ITS DISPATCH
+        RECORD, with BOTH a floor AND a ceiling, and the ceiling stated as a number and not as "up".
+      · **0001-0059 IS CLOSED. No party writes into it again**, on either branch, ever.
+  the_property_that_makes_it_a_closure_and_not_a_fourth_patch: >
+    Every block is BOUNDED AT BOTH ENDS AND DISJOINT BY CONSTRUCTION, so a party that keeps counting
+    up hits its own ceiling — a visible stop — instead of silently entering another party's block.
+    CD-D-036's rule failed precisely because counting past the end of an unbounded block is
+    indistinguishable from working normally. **THIS IS NOT CLAIMED TO BE MACHINE-ENFORCED: it is a
+    written rule with no check behind it, which is the CD-PL-F87/F89 defect class, and the durable
+    fix belongs to IMP-022 in the framework and not to a local script this seat invents.** Declared
+    rather than implied, so nobody reads a closure into what is still a convention.
+  what_it_does_not_do: >
+    It does not renumber, rename, edit or repair any of the thirteen landed collisions. It does not
+    claim they are harmless — it claims they are DISCLOSED, uniquely addressable by timestamped
+    `entry_id`, and ambiguous ONLY when cited by bare sequence number. **ANY CITATION OF AN ENTRY IN
+    0041-0053 MUST CARRY ITS FULL TIMESTAMPED id AND ITS BRANCH.**
+  who_must_be_told: >
+    THE INCREMENT-5 ENGINEER DISPATCH must state the lane block 0060-0099 and "continue from 0065"
+    WITH THE CEILING. **THE FOURTH ASSURANCE SEAT'S DISPATCH MUST CARRY THE THIRTEEN COLLISIONS AS A
+    DISCLOSURE** — it is the party that reads both directories and the party this ambiguity is
+    actually charged to. Recorded against CD-D-129 so it cannot be dropped when that brief is
+    written.
+
+what_this_entry_does_NOT_change:
+- 'NO RULING MOVES. CD-D-127 stays ruled (C) and closed. CD-D-129, CD-D-130 and CD-D-131 stand
+   exactly as BL-20260822T175949Z-0059 recorded them.'
+- 'NO SHA MOVES. last_completed_checkpoint_sha stays ca696dd; continuity_record_commit stays
+   d6ba86b; lane_increment_sha stays 4ac159e.'
+- 'THE CD-RULE-008 VERDICT OF RECORD IS UNAFFECTED AND IS THE THING THAT PROVED THE ERROR: GREEN at
+   d6ba86b, CONTINUITY_MATCH/RESUME_GREEN, porcelain zero, blocking_failures empty.'
+- 'NO ACCEPTANCE AND NO GRADE MOVES. CD-AC-002 and CD-AC-005 remain ungraded.'
+- 'THE INCREMENT-5 DISPATCH IS UNAFFECTED. Nothing in this correction touches its bounds, its lane,
+   its plant or its instrument.'
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- 'NO RE-MEASUREMENT OF THE LANE. Every WO-2R3 number of record remains BL-20260822T174206Z-0057''s.'
+- 'THE OTHER ENTRIES IN THIS REPOSITORY WERE NOT SWEPT FOR THE SAME PHRASE. CD-PL-F70 states it was
+   a STANDING phrase, so **OTHER LANDED ENTRIES ALMOST CERTAINLY CARRY IT**. They are historical
+   record and are not edited; whether a sweep is worth a boundary is not decided here and is not
+   claimed to have been done. **THIS ENTRY CORRECTS ONE ENTRY, NOT A CORPUS**, and says so rather
+   than leaving the scope of the correction to be assumed.'
+- 'THE 26 UNTRACKED ARTEFACTS WERE NOT RE-ADJUDICATED ON THEIR CONTENTS AT THIS BOUNDARY. Their
+   NOT-PROJECT-STATE adjudication is the record''s, carried forward, not re-taken here.'
+- 'THE COLLISION COMPARISON WAS RUN BETWEEN main AND /srv/crash-detector-wo2r3 ONLY. The other four
+   worktrees were checked for their highest sequence numbers and are ANCESTRAL — /srv/crash-detector-wo2
+   and /srv/crash-detector-wo2r2-audit sit at f30e63c, which is the WO-2R3 lane''s branch point, so
+   their 0041-0053 entries are THE SAME FILES the lane carries and not a second, independent set.
+   **THAT IS AN INFERENCE FROM THE SHAs AND FROM THE ENTRY COUNTS (24 and 24 against the lane''s 20
+   in that range), NOT A FILE-BY-FILE COMPARISON, and it is recorded as an inference.** If it is
+   wrong, the direction of the error is MORE collisions than thirteen, never fewer.'
+- 'NO CHECK WAS BUILT FOR THE NEW BLOCK RULE. CD-D-132 is a WRITTEN CONVENTION WITH NOTHING ENFORCING
+   IT, which is the same defect class it was raised out of, and it says so on its face rather than
+   presenting itself as a closure.'
+
+next_safe_action: >
+  **UNCHANGED FROM BL-20260822T175949Z-0059, WHICH REMAINS OPERATIVE IN FULL EXCEPT FOR THE ONE
+  CORRECTED SENTENCE.** In short: ISSUE THE INCREMENT-5 ENGINEER DISPATCH at lane 4ac159e on the
+  re-based bounds (CD-D-119) — THE CLASS, NOT THE LIST, enumerated by an instrument at increment
+  start with its command and count recorded (CD-RULE-009), the five named types the FLOOR and not
+  the population, V17 the plant with both arms, the three interpreter-borne refusals OUT. THEN the
+  FOURTH FRESH ASSURANCE SEAT with CD-D-129's three verbatim clauses and ten named targets.
+  DO NOT write the eleven Class-2 sweep dispositions (CD-D-130). DO NOT admit anything
+  (CD-RULE-001). DO NOT merge or promote the lane or f30e63c. DO NOT grade CD-AC-002 or CD-AC-005.
+
+continuity_record_commit: 9c86e0afca57f0cbd1d2a239c9582cb183fce854   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). THE ORDERING CORRECTION IS HELD FOR THE SECOND BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 9c86e0a BEFORE this field was written. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont2 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont2 && git checkout -q -B main 9c86e0a` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, current_phase BUILD, observed_sha 9c86e0afca57f0cbd1d2a239c9582cb183fce854, branch main. The `! roadmap_identity None` line is present in this GREEN verdict too, which is CD-PL-F88 demonstrated rather than merely asserted.

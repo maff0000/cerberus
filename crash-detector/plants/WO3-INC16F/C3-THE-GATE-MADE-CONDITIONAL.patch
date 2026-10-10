@@ -1,0 +1,15 @@
+diff -ruN a/src/crash_detector/publication/publish.py b/src/crash_detector/publication/publish.py
+--- a/src/crash_detector/publication/publish.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/publish.py	2026-08-24 22:46:47.276452846 +0100
+@@ -273,8 +273,9 @@
+     """
+     # ------------------------------------------------------------------ JUDGE. BOTH. FIRST.
+     try:
+-        refuse_unless_publishable(public_envelope, surface=EnvelopeSurface.PUBLIC)
+-        refuse_unless_publishable(private_envelope, surface=EnvelopeSurface.PRIVATE)
++        if public_envelope.get("schema_version"):  # C3: THE GATE, MADE CONDITIONAL.
++            refuse_unless_publishable(public_envelope, surface=EnvelopeSurface.PUBLIC)
++            refuse_unless_publishable(private_envelope, surface=EnvelopeSurface.PRIVATE)
+     except PublicationRefused as refusal:
+         # Durable row first (Q26). A failure to RECORD the failure must not replace it: the
+         # original refusal is raised either way, and the alerting failure is chained onto it
