@@ -1,0 +1,187 @@
+# ================================================================================================== #
+# BL-20260824T125012Z-0168 — PROJECT LEAD BOUNDARY. **16B-FIX-2 ASSURED `AMBER`. THE TWO ORDERED
+# CLOSURES ARE REAL AND THE AUDITOR RE-MEASURED THEM — THEN IT BROKE THE INSTRUMENT AGAIN, TWICE.
+# 16B-FIX-3 DISPATCHED. 16C IS JUDGED RELEASABLE WITH TWO NAMED CONDITIONS AND REMAINS HELD UNTIL A
+# VERDICT SAYS SO.**
+#
+# *** **THE THIRD SUCCESSIVE AUDIT HAS FOUND THE SAME CLASS ONE POSITION OVER, AND THE PROGRESSION IS
+# THE MOST INFORMATIVE THING IN THIS RECORD: full revert -> a fourth `oneOf` branch -> a conditional
+# branch -> conditional keywords SIBLING TO `$ref`. EACH ESCAPE IS STRICTLY MORE EXOTIC THAN THE
+# LAST AND EACH PREVIOUS CLOSURE HAS HELD UNDER THE NEXT ATTACK. THAT IS CONVERGENCE, AND IT IS ALSO
+# A STANDING WARNING THAT A SCHEMA-INTROSPECTING GUARD HAS AN ATTACK SURFACE NOBODY HAS BOUNDED.** ***
+#
+# **F1 REPRODUCED BY THIS SEAT WITH ITS CONTROL: `_deref` DISCARDS `$ref` SIBLINGS AT EVERY HOP, AND
+# BOTH CONTRACTS DECLARE JSON SCHEMA 2020-12 IN WHICH SIBLINGS ARE APPLIED. So the narrowing written
+# on the `oneOf` ENTRY rather than inside the branch def never reaches FX5's guard: instrument
+# `PASS — 144/0`, gate `*** ADMITTED ***` calm on an UNKNOWN dial on BOTH surfaces, control without
+# the marker REFUSED on both. IT IS THE EXACT CLASS FX5 WAS BUILT TO CATCH, WRITTEN ONE POSITION
+# OVER — SO THE FIX IS THE RESOLVER AND NOT THE GUARD.**
+#
+# **AND THE MEMORIAL STATE IS REACHED FOR THE THIRD TIME: of all 30 `execute:` lines EXACTLY ONE
+# MOVES, and it is the pytest file — LINE 3, THE REGISTER-WIRED INSTRUMENT, DOES NOT. Within that
+# file only the five LITERAL-SHAPE assertions fail; THE BEHAVIOURAL ARM PASSES.**
+#
+# **THE AUDITOR ANSWERED THE QUESTION THE VERDICT GATES, IN ITS OWN WORDS: "WOULD THIS GUARD SEE 16C
+# GO WRONG? QUALIFIED YES, ONE KEYSTROKE WIDE." Fourth union member -> caught. Third root property
+# declaring `state` inline or via `$ref` -> caught. Named `liveness`/`status`/`kind` -> SILENT.
+# `state` as a boolean schema -> SILENT. Conditional branch via `$ref` sibling -> SILENT.**
+#
+# **TWO MORE FALSE STATEMENTS IN THIS SEAT'S DISPATCH, BOTH CONFIRMED — CD-PL-F194 AND CD-PL-F195 —
+# AND ONE OF THEM IS THE CD-PL-F193 PATTERN AGAIN, ON THE VERY BOUNDARY WHERE THAT PATTERN WAS
+# NAMED AND A RULE ADOPTED AGAINST IT.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T125012Z-0168
+timestamp_utc: '2026-08-24T12:50:12Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T12:50:12Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T122758Z-0167
+base_sha: a822bc2c0491ee3dc08f1375452ac9d2e8cd8d87
+current_sha: a822bc2c0491ee3dc08f1375452ac9d2e8cd8d87
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-07 returned AMBER over 16B-FIX-2 at ba4523e, banked at b4a15d6. It confirmed both
+  ordered closures from its own extractions, confirmed the filler fallback held under attack,
+  confirmed nothing was dropped in the rewrite, judged DECLARED LIMIT 12 honestly drawn — and then
+  found two NEW escapes, both undeclared and both one-line class errors. This seat reproduced the
+  serious one with its control, dispatched CD-ENG-WO3-08 for a bounded 16B-FIX-3, and recorded two
+  further confirmed defects in its own dispatch. 16C REMAINS HELD.
+
+the_verdict:
+  seat: CD-ASR-WO3-07 (FRESH — never CD-ENG-WO3-07 which built it, never CD-ASR-WO3-06 which found the previous two)
+  verdict: AMBER
+  target: ba4523ef9f587358418221e330a176bec745b9ad (content tip e01b8f5)
+  banked: b4a15d6 on branch asr-wo3-07-verdict — BL-20260824T124330Z-A307.yaml, 8 risks, 17 evidence references
+  what_it_affirms_and_it_is_a_lot: >
+    BOTH ORDERED CLOSURES RE-MEASURED FROM ITS OWN EXTRACTIONS (C11 FAIL 32, C14 FAIL 2, C15/C10
+    PASS 158, C16 PASS 144, C17 FAIL 32). THE FILLER FALLBACK HELD — attacked first as ordered,
+    including the builder's own untested shape and a hostile variant with a schema-invalid filler
+    (FAIL 32 and FAIL 70); no MUST-REFUSE row passed for the wrong reason; REASON-003, GATE-002 and
+    PAIRED-004 trip together. NOTHING DROPPED — same eight rule IDs, check.asserted 9=9, violation
+    23=23, refuse 15=15, AST diff a strict superset. SIXTEEN patch arms, git apply rc=0 on all
+    sixteen from its own extractions, contracts proved different on all sixteen, every arm bites.
+    AND DECLARED LIMIT 12 JUDGED HONESTLY DRAWN — "a residue named accurately before an auditor
+    found it", which is the standard this project has been trying to reach all day.
+
+what_this_seat_reproduced_itself:
+  f1_the_serious_one:
+    root_cause: >
+      BOTH CONTRACTS DECLARE JSON SCHEMA 2020-12, IN WHICH KEYWORDS SIBLING TO `$ref` ARE APPLIED.
+      `_deref`'s while-loop replaces a node with its `$ref` target AND DISCARDS ITS SIBLINGS AT EVERY
+      HOP. FX5 tests the RESOLVED branch for conditional keywords, so an `if`/`else` written on the
+      `oneOf` ENTRY instead of inside the branch definition never reaches the guard.
+    plant: 'THIS SEAT''S OWN. Branch def widened to the full vocabulary; the narrowing written as a SIBLING of $ref on the oneOf entry as {"$ref": ..., "if": {"required": ["render_hint"]}, "then": true, "else": {"properties": {"detail_level": {"$ref": "#/$defs/absent_data_detail_level"}}}}.'
+    measured: >
+      instrument                      PASS — 144 assertions, 0 violations
+      gate PUBLIC  with marker        *** ADMITTED — UNKNOWN dial rendering as CALM ***
+      gate PRIVATE with marker        *** ADMITTED ***
+      gate BOTH    CONTROL no marker  REFUSED [SCHEMA_VIOLATION] at /equity_crash
+    the_part_that_matters_most: >
+      *** THE AUDITOR MEASURED ALL 30 execute: LINES AND EXACTLY ONE MOVES — LINE 2, THE PYTEST FILE.
+      LINE 3, THE REGISTER-WIRED INSTRUMENT, DOES NOT. And within that file only the five
+      LITERAL-SHAPE assertions fail; the BEHAVIOURAL arm PASSES. THE MEMORIAL STATE RULING 9 EXISTS
+      TO END, REACHED FOR THE THIRD TIME. ***
+    the_wrong_fix_closed_in_advance: >
+      The auditor's arm A2 puts the conditional one $ref deeper behind an innocuous entry and gets
+      the same result, WHICH PROVES INSPECTING ONLY THE oneOf ENTRY IS NOT A SUFFICIENT FIX. That is
+      why the dispatch orders the RESOLVER fixed and not the guard.
+  f2: >
+    FX6's `undecidable = True` limb sits INSIDE `if isinstance(state, dict)`. A `state` spelled as
+    the boolean schema `true` — legal in 2020-12 — drops to None, the descent skips it, and the
+    property is classified NOT A DIAL. Auditor arm D1: instrument PASS 144/0, feed_liveness in
+    NEITHER list, gate ADMITS {state: STALE, detail_level: 'calm'} on both surfaces. DECLARED LIMIT
+    12 does not cover it: that limit is about DIFFERENTLY-NAMED keys and D1's dial declares a key
+    literally called `state`.
+
+the_progression_worth_recording:
+  what: >
+    FOUR AUDITS, FOUR CLASSES OF ESCAPE, EACH STRICTLY MORE EXOTIC THAN THE LAST:
+      A305  the full revert of the narrowing, and `detail_level` dropped from `required`
+      A306  a fourth `oneOf` branch selected by a marker; a new state vocabulary on a new root
+      A307  conditional keywords SIBLING to `$ref`; `state` as a boolean schema
+    AND EVERY PREVIOUS CLOSURE HAS HELD UNDER THE NEXT ATTACK — C1-C17 all still bite, and the C10
+    vocabulary control has survived four rewrites.
+  the_honest_reading: >
+    THAT IS CONVERGENCE AND IT IS ALSO A WARNING. The escapes are getting harder to write and none
+    of them is a shape an ACCIDENTAL refactor would produce — but nobody has bounded the attack
+    surface of a guard that introspects a schema, and CD-ASR-WO3-06 was explicit that it had not
+    bounded the class it found. THE INSTRUMENT IS A REAL GUARD AGAINST REGRESSION AND IT IS NOT A
+    PROOF AGAINST A HOSTILE SCHEMA EDITOR. Nobody should read it as the latter.
+
+the_question_the_verdict_gates_answered_in_the_auditors_own_words:
+  question: 'WOULD THIS GUARD SEE 16C GO WRONG?'
+  answer: '"QUALIFIED YES, ONE KEYSTROKE WIDE."'
+  detail: >
+    Fourth union member -> CAUGHT. Third root property declaring `state` inline or via $ref ->
+    CAUGHT. Named `liveness`/`status`/`kind` -> SILENT. `state` as a boolean schema -> SILENT.
+    Conditional branch via a $ref sibling -> SILENT.
+  its_judgement_which_this_seat_adopts: >
+    16C IS RELEASABLE WITH TWO CONDITIONS: (1) 16C's dispatch must NAME the requirement that the
+    liveness discriminator be a property literally called `state` with an OBJECT subschema — the
+    guard sees that shape and only that shape; (2) 16C MUST NOT BE ACCEPTED ON A GREEN INSTRUMENT
+    ALONE. BOTH ARE CARRIED FORWARD AS BINDING ON THE 16C DISPATCH. 16C nevertheless stays HELD
+    until 16B-FIX-3 is assured, because F1 and F2 are open in the guard that would watch it.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F194
+    severity: LOW, CONFIRMED
+    raised_by: CD-ASR-WO3-07
+    the_dispatch_said: '§3.4: "two new rules were added".'
+    the_truth: 'FALSE. The same EIGHT rule IDs exist before and after; FX5 and FX6 are new BEHAVIOURS inside EXISTING rules. This seat inferred a structure from the Engineer''s summary and asserted it.'
+  - id: CD-PL-F195
+    severity: LOW, CONFIRMED, and it is the CD-PL-F193 pattern AGAIN
+    raised_by: CD-ASR-WO3-07
+    the_dispatch_said: '§3.3: that DECLARED_STATES "is the one axis not derived from the contract".'
+    the_truth: >
+      FALSE AND LOAD-BEARING. There are TEN typed-in constants plus the envelope root skeleton, and
+      CONDITIONAL_KEYWORDS is a typed-in axis THIS INCREMENT ADDED. The claim was carried from
+      CD-ASR-WO3-06's framing and this seat did not re-derive it.
+    why_it_is_recorded_sharply: >
+      *** THIS IS THE EXACT PATTERN NAMED AS CD-PL-F193 ONE BOUNDARY EARLIER, WITH A RULE ADOPTED
+      AGAINST IT IN THIS SEAT'S OWN WORDS — "an inherited finding is a HYPOTHESIS until this seat
+      runs it" — AND THIS SEAT BROKE THAT RULE IN THE VERY NEXT DISPATCH IT WROTE. A rule adopted in
+      a record is not a control. It is a promise, and this is the measurement of what the promise is
+      worth. The mitigation that would actually work is mechanical and does not exist. ***
+  - note: 'The auditor continued rather than stopping, on the precedent confirmed at CD-PL-F192, and said so. CONFIRMED AGAIN: neither falsehood touched what it had to build.'
+  - and_the_disclosure_worked: 'CD-ASR-WO3-07 independently verified CD-PL-F192''s disclosed falsehood (required-tests.yaml:307 and :345) and did NOT inherit it. Disclosing a known-false statement in the dispatch that carries it is cheap and it demonstrably works.'
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX3-ENGINEER.md
+  seat: CD-ENG-WO3-08 (FRESH — never CD-ENG-WO3-07 which built it, never CD-ASR-WO3-07 which found F1 and F2)
+  bounded_to: 'FX9 make _deref spec-correct for $ref siblings, or deny-by-default on any $ref node carrying siblings — the seat must say which and why · FX10 declaring a `state` key reaches the undecidable limb WHATEVER the shape of its subschema · FX11 correct the overshoot SENTENCE, not the behaviour, naming jurisdiction.state as the worked example.'
+  four_new_arms: 'C18 the $ref-sibling conditional · C19 the same one $ref deeper · C20 `state` as a boolean schema · C21 the control that must still pass. C1-C17 re-run unchanged.'
+  what_is_explicitly_not_its_job: 'DECLARED LIMIT 12 — the auditor judged it honestly drawn, and it is a CONDITION ON 16C''S DISPATCH rather than a defect here.'
+
+what_was_verified_unmoved:
+  - 'be0b355 unmoved. Register MATCHES / 18 / GATE: SHUT / latest_admitted_run (null). evidence/ still absent.'
+  - '16B-FIX-2: zero protected paths, ONE identity, pytest 2007 passed, test_detail_level.py 52, tests/ diff 48 insertions and ZERO deletions.'
+  - 'The boot RED is the frozen base''s same blob ce0803c3 — now verified by six seats.'
+
+next_safe_action: >
+  Launch CD-ENG-WO3-08 against ba4523e per CD-DISPATCH-INC16B-FIX3-ENGINEER.md, then a FRESH
+  Assurance seat. IF THE SESSION ENDS BEFORE THAT ASSURANCE RUNS, THE NEXT ACTOR IS A FRESH
+  ASSURANCE SEAT AGAINST WHATEVER 16B-FIX-3 BANKS, AND 16C STAYS HELD. The two conditions on 16C's
+  dispatch are recorded above and are binding whenever it is written.
+
+expected_next_actor: 'CD-ENG-WO3-08 — dispatched by this seat, not yet run.'
+
+risks:
+  - '16C IS HELD. Its guard has two open escapes and the auditor''s own answer to "would this guard see 16C go wrong" is "qualified yes, ONE KEYSTROKE WIDE".'
+  - 'THE ATTACK SURFACE IS NOT BOUNDED. Four audits, four classes, each more exotic; none is a shape an accidental refactor would produce, but nobody has proved there is not a fifth. The instrument guards against REGRESSION and is not a proof against a hostile schema editor, and no record should imply otherwise.'
+  - 'CD-PL-F195 is CD-PL-F193 recurring one boundary after the rule against it was adopted. The rule is a promise, not a control, and the measurement says promises are not enough.'
+  - 'CD-PL-F180 is OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments; the missing half is what 16C opens.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed.'
+  - 'Three of the PO''s ruled six items remain undelivered: 16C (held, releasable with conditions), 16D, 16E. Nothing is registered, no source is wired, every dial reads UNKNOWN, and the 30 indicators in the ratified mapping are still data that nothing reads.'

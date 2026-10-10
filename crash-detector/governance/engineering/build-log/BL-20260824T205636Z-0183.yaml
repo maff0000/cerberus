@@ -1,0 +1,324 @@
+# ================================================================================================== #
+# BL-20260824T205636Z-0183 — PROJECT LEAD BOUNDARY. **16E-CONTROL-ROW ASSURED `AMBER` AT `a9e19c3`
+# BY `CD-ASR-WO3-13`, BANKED AT `f56a6e9`. THE SESSION STOPS. `Q37` AND `Q39` ARE WITH THE PRODUCT
+# AUTHORITY. 16C IS NOT RELEASED AND NO INDICATOR ROW IS REGISTERED.**
+#
+# *** **THE RULED CONDITION FOR RELEASING 16C WAS `GREEN`. IT IS `AMBER`. THE CONDITION IS NOT MET
+# AND THIS SEAT DOES NOT MEET IT BY REINTERPRETING IT.** ***
+#
+# **WHAT THE INCREMENT ACHIEVED, AND IT IS REAL: at `0e80a09` the constitutional guarantee had NO
+# REGISTER WITNESS AT ALL — arm `D1` deleted the entire fourth refusal stage and all thirty
+# `execute:` lines were `diff`-identical. AT `a9e19c3` TWO ROWS MOVE ON THAT SAME ARM. THIS SEAT RAN
+# IT AND SO DID THE AUDITOR, INDEPENDENTLY. `D1`, `D2` AND `D4` MOVED NOTHING AT THE BASE, SO THE
+# NEW ROW EARNS THEM OUTRIGHT.**
+#
+# *** **AND WHAT IT DID NOT ACHIEVE, WHICH THIS SEAT ALSO RAN RATHER THAN READ: `A313-F1`. THE
+# CONTROL DRIVES SEVENTY-TWO DOCUMENTS AND EVERY ONE CARRIES THE SAME SINGLE VALUE FOR EVERY ROOT
+# PROPERTY. IT PROBES ONE POINT IN DOCUMENT-SPACE. MEASURED IN THIS SEAT'S OWN SHELL ON THE
+# AUDITOR'S `W5G` ARM (`git apply` rc=0 CHECKED, PRISTINE EXTRACTION OF `a9e19c3`): a five-line
+# early return keyed on `len(inputs_used) > 1` leaves the LIVE GATE **ADMITTING** A 1970-STAMPED
+# `calm` DIAL ON BOTH SURFACES, WHILE ALL THIRTY-TWO REGISTER LINES ARE `diff`-IDENTICAL TO CLEAN
+# — `TOTAL lines=32 rc0=21 nonzero=11` AT BOTH ENDS. THAT IS `A312-F1`'s SIGNATURE, ONE LAYER IN.**
+# ***
+#
+# **THE GUARANTEE IS SOUND. THE ALARM ON IT IS NOT YET AS SENSITIVE AS THE RULING'S WORDS REQUIRE.
+# `a9e19c3` IS STRICTLY BETTER THAN `0e80a09` AND NOTHING ABOUT IT SHOULD BE REVERTED.**
+#
+# **AND ONE FINDING LANDED ON THIS SEAT AND IT IS CORRECT: `A313-F4`. THIS SEAT'S OWN BOUNDARY
+# COMMITS ARE INDISTINGUISHABLE BY `%an` FROM A PRODUCT AUTHORITY RULING. SEE
+# `the_finding_against_this_seat` BELOW. IT IS ACCEPTED, NOT ARGUED.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T205636Z-0183
+timestamp_utc: '2026-08-24T20:56:36Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T20:56:36Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_06
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_06
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T201846Z-0182
+base_sha: 95aed88
+current_sha: 95aed88
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-13 — a FRESH identity, never CD-ENG-WO3-13 and never CD-ASR-WO3-12 — returned AMBER,
+  HIGH confidence, over increment 16E at a9e19c3, banked at f56a6e9 on branch asr-wo3-13-verdict,
+  ONE file, ONE identity. THE VERDICT IS BANKED AND IS NOT ACCEPTED (PBG-AUTH-003). THE RULED
+  CONDITION FOR RELEASING 16C WAS GREEN AND IT IS AMBER, SO 16C IS NOT RELEASED AND NO INDICATOR
+  ROW IS REGISTERED. THIS SEAT REPRODUCED THE FINDING THAT DECIDES THAT — A313-F1 — IN ITS OWN
+  SHELL BEFORE recording it, and it holds at full strength: the control row guards ONE POINT in
+  document-space, and a five-line early return keyed on a root property the shipped contract
+  permits leaves the gate admitting a stale calm dial with the whole register unmoved. THE
+  INCREMENT IS NOT WASTED AND MUST NOT BE REVERTED: the guarantee went from ZERO register witnesses
+  to two rows that move on D1, D2 and D4 outright. Q37 (two rows where the ruling said one) and Q39
+  (whether the 16F strength increment is authorised) are RAISED. THE SESSION STOPS.
+
+# ================================================================================================== #
+what_this_seat_ran_rather_than_inherited:
+# ================================================================================================== #
+  why: >-
+    CD-PL-F193. A verdict is another seat's measurement. The finding that decides whether a ruled
+    release happens is a hypothesis until this shell reproduces it. **AND THIS ONE DECIDES 16C.**
+  A313_F1_the_control_guards_one_point_in_document_space:
+    verdict: CONFIRMED AT FULL STRENGTH, IN THIS SEAT'S OWN SHELL
+    method: >-
+      Pristine `git archive a9e19c3 | tar -x` extraction (/tmp/pl05/z_w5g). The auditor's `W5G`
+      patch applied FROM AN ABSOLUTE PATH OUTSIDE THE EXTRACTION, `git apply` rc=0 TAKEN AND
+      CHECKED. This seat's own probe (argv-parameterised, NOT the Engineer's lane-hardcoded one),
+      varied in ONE respect: `inputs_used` carries two source ids instead of one.
+    the_weakening_in_full_because_its_plausibility_is_the_point: |
+      +    # W5G: early return on a DOCUMENT PROPERTY. Cover story: "a reading built from more than
+      +    # one input takes its freshness from the aggregation layer, which already applied the
+      +    # window per input, so re-applying it here would double-count."
+      +    if len(candidate.get("inputs_used") or []) > 1:
+      +        return
+      FIVE LINES, WITH A COVER STORY A REVIEWER WOULD PLAUSIBLY ACCEPT.
+    measured_the_gate: |
+      W5G TREE  : STALE-1970-CALM  PUBLIC=ADMITTED  PRIVATE=ADMITTED
+                  FUTURE-2099-CALM PUBLIC=ADMITTED  PRIVATE=ADMITTED
+      CLEAN TIP : STALE-1970-CALM  PUBLIC=REFUSED [STALE_CALM] at /equity_crash  PRIVATE=same
+                  FUTURE-2099-CALM PUBLIC=REFUSED [STALE_CALM] at /equity_crash  PRIVATE=same
+    measured_the_register: >-
+      **ALL THIRTY-TWO `execute:` LINES RUN ON THE `W5G` TREE: `TOTAL lines=32 rc0=21 nonzero=11`.
+      THE CLEAN TIP: `TOTAL lines=32 rc0=21 nonzero=11`. `diff` OF THE PER-LINE rc LISTS PRODUCED
+      NO OUTPUT. THE REGISTER IS BLIND TO IT — INCLUDING BOTH OF THE NEW ROWS COMMISSIONED TO SEE
+      EXACTLY THIS.**
+    the_reading: >-
+      **THIS IS `A312-F1`'s SIGNATURE ONE LAYER IN.** At the last boundary the guarantee had no
+      guard at all; now it has a guard that catches the four arms it was built against and is blind
+      to a fifth of the same class. The auditor also reports `W5B2` (`regime == CALM_DETAIL_LEVEL`)
+      identically, and `W5C` (the `reason_class` renamed) moving zero rows. **BOTH SHAPES ARE
+      ADMISSIBLE ON THE SHIPPED CONTRACTS — `regime` is a free string and `inputs_used` holds up to
+      256 ids — SO THIS IS NOT A CONTRIVED TREE.**
+    and_the_declared_limit_that_is_measurably_false: >-
+      `DECLARED LIMIT 2` on the new row says *"it is not an escape."* **IT IS.** That is the FOURTH
+      replacement sentence on this row to be written and then measured false, and this project
+      supersedes rather than deletes.
+  what_this_seat_did_NOT_re_run_and_says_so: >-
+    The auditor's other twelve arms, its `sys.settrace` verification of the 97 assertions, its 38
+    `WO3-INC16B` sibling-arm re-measurements and its byte-comparisons. **THOSE ARE CARRIED ON THE
+    AUDITOR'S MEASUREMENT AND ARE LABELLED AS SUCH.** This seat re-ran the acceptance test and the
+    one finding that gates a ruled release. **NOT EVERYTHING IS RE-RUN, AND PRETENDING OTHERWISE
+    WOULD BE THE SAME DEFECT IN THE OTHER DIRECTION.**
+
+# ================================================================================================== #
+the_verdict_banked:
+# ================================================================================================== #
+  actor: CD-ASR-WO3-13
+  commit: f56a6e9
+  branch: asr-wo3-13-verdict
+  entry: governance/engineering/build-log/BL-20260824T204700Z-A313.yaml
+  verdict: AMBER
+  confidence: HIGH
+  identity_MEASURED: >-
+    `git log -1 --format='%an <%ae>' f56a6e9` -> `CD-ASR-WO3-13
+    <cd-asr-wo3-13@seats.crash-detector.invalid>`. ONE file, 916 insertions. It had never authored
+    a commit in this repository before this one.
+  it_is_banked_and_not_accepted: >-
+    **PBG-AUTH-003. A VERDICT IS NOT AN ACCEPTANCE.** No grade moves, no finding is closed, no
+    disposition is written.
+  what_the_auditor_confirmed_positively:
+    - '**The A312-F1 acceptance test PASSES**, run by the auditor with its own YAML-parsing register
+       runner and its own 15-row probe. Census derived, not inherited (30/30/32/32).'
+    - '**D1, D2 and D4 moved NOTHING at the base**, so the new row earns those three outright. D3
+       also moves `check_no_blend`, which moves at the base too — **CD-ENG-F16E-03''s self-disclosure
+       is VERIFIED and the converse holds.**'
+    - '**Every instrument count reproduced to the digit** (D1 12, D2 4, D3 12, D4 2). **Not one
+       figure in the Engineer''s return was found wrong.**'
+    - '*"On the product as it ships at `a9e19c3`, I set out to admit a stale calm reading and I could
+       not."* Fifteen shapes, both surfaces, including two single-slot-stale shapes the Engineer''s
+       probe does not carry. **THE COMPLETION TEST IS STILL MET.**'
+    - 'The three handed-over targets all cleared: the **58 deleted lines are corrections properly
+       made**, quoted at the point of correction in the convention the file already uses ten times;
+       the **sibling guard did NOT narrow** — AST identical but for two printed note strings, and
+       **38 of 38 WO3-INC16B arms byte-identical at base and tip**; and **no unearned credit** beyond
+       the one line the Engineer itself disclosed.'
+    - 'The declared stop HELD: 13 paths, zero under `src/`, zero protected, contracts byte-identical
+       by sha256, `pbg/` zero, `wo-2r3` = `be0b355…`, nothing on `main`, 16C not built, no indicator
+       row, memorial byte-identical at the same index, `BL-…-16DF.yaml` byte-unchanged at THREE
+       SHAs, 2099 tests passed. **Q36 re-verified at source: still not a live escape.**'
+  the_findings:
+    A313_F1:
+      severity: HIGH
+      status: DEFECT_OPEN
+      statement: >-
+        The instrument drives 72 documents and every one carries the same single value for every
+        root property — it probes ONE POINT in document-space. `W5B2` and `W5G` leave the live gate
+        admitting a 1970-stamped calm dial on both surfaces with all 32 register lines
+        `diff`-identical. `W5C` moves zero. `DECLARED LIMIT 2`'s *"it is not an escape"* is
+        measurably false.
+      reproduced_by_this_seat: YES — see above. **THIS IS THE FINDING THAT HOLDS 16C.**
+      and_one_detail_that_is_exactly_Q37s_measurement: >-
+        **`W5A` WAS CAUGHT ONLY BY THE WITNESS-SUITE ROW** — the second of the two rows, the one
+        Q37 asks whether to keep. On that arm the pytest witness is the ONLY thing standing.
+    A313_F2:
+      severity: LOW
+      statement: DECLARED LIMIT 19's heading not widened in one of the three CD-RULE-004 places.
+    A313_F3:
+      severity: LOW
+      statement: >-
+        The Engineer's dead-limb detection METHOD returns nine zeroes — but the SUBSTANCE was
+        verified TRUE by `sys.settrace`: 97 assertions, all earned, no dead limb. **THE CLAIM IS
+        RIGHT AND THE METHOD THAT ESTABLISHED IT WAS NOT.**
+    A313_F5:
+      severity: LOW
+      against: THIS SEAT'S DISPATCH
+      statement: >-
+        The Assurance brief named arms `E1`-`E3`, which do not exist —
+        `WO3-INC16B/MANIFEST.md:287` records they are `C6`/`C7`/`C9`. **THIS SEAT WROTE THAT AND
+        CARRIED THE LABELS FORWARD FROM A PRIOR VERDICT WITHOUT RESOLVING THEM AGAINST THE
+        MANIFEST. THE AUDITOR COVERED THEM UNDER THEIR REAL NAMES ANYWAY.** ACCEPTED.
+
+# ================================================================================================== #
+the_finding_against_this_seat:
+# ================================================================================================== #
+  A313_F4:
+    severity: MEDIUM
+    against: PROJECT_LEAD_SEAT_06 — this seat
+    status: ACCEPTED, NOT ARGUED. VERIFIED BY THIS SEAT'S OWN COMMAND.
+    statement: >-
+      **`PROJECT_LEAD_SEAT_06` APPEARS NOWHERE AS AUTHOR OR COMMITTER.** This seat's boundary
+      records commit as `Matt Scott <rogue@cerberus.local>`; `PO-DECISIONS-0030` commits as
+      `Matt Scott <rogue@cerberus.local>`. **`%an` — THE FIELD EVERY IDENTITY MEASUREMENT ON THIS
+      PROJECT USES, INCLUDING THIS SEAT'S OWN FRESHNESS CHECKS ON `CD-ENG-WO3-13` AND
+      `CD-ASR-WO3-13` — CANNOT SEPARATE A PROJECT LEAD BOUNDARY RECORD FROM A PRODUCT AUTHORITY
+      RULING.**
+    verified_by_this_seat: |
+      git log --all --format='%an|%ae' | sort -u | grep -i PROJECT_LEAD
+        -> PROJECT_LEAD_SEAT_01|project-lead@crash-detector.local
+           PROJECT_LEAD_SEAT_01|project-lead-seat-01@seats.crash-detector.invalid
+           PROJECT_LEAD_SEAT_02|project-lead-seat-02@seats.crash-detector.invalid
+        AND NO SEAT_03, SEAT_04, SEAT_05 OR SEAT_06.
+      git log --format='%an' -1 0e6f094  -> Matt Scott     (a PRODUCT AUTHORITY RULING)
+      git log --format='%an' -1 5ff556d  -> Matt Scott     (THIS SEAT'S BOUNDARY RECORD)
+    why_it_is_worse_than_a_style_point: >-
+      **THIS SEAT WROTE "authored by Matt Scott and by NO SEAT" IN TWO BOUNDARY RECORDS AS THOUGH IT
+      DISTINGUISHED SOMETHING, AND BY THE FIELD USED TO MEASURE IT, IT DOES NOT.** The whole
+      separation-of-duties apparatus on this project rests on `%an` being able to tell actors apart.
+      For Engineer and Assurance seats it can. For the Project Lead it stopped being able to at
+      some point after `SEAT_02`, and this seat inherited the drift and did not measure it —
+      **while spending the same session measuring identity freshness for two other seats.**
+    the_correction_and_its_limit: >-
+      **THE ORIGINAL CONVENTION WAS SEAT IDENTITY (`SEAT_01`, `SEAT_02` USED IT). RESTORING IT IS A
+      CORRECTION, NOT AN INNOVATION.** From this entry forward this seat commits as
+      `PROJECT_LEAD_SEAT_06 <project-lead-seat-06@seats.crash-detector.invalid>`.
+      *** **AND THE FIVE COMMITS ALREADY MADE THIS SESSION — `11b048f`, `9661f12`, `d4971b7`,
+      `5ff556d`, `95aed88` — STAY WRONG. THEY ARE NOT REWRITTEN. Rewriting history to make a
+      control pass is non-waivable, and that applies when the control is embarrassing to this seat.
+      THE DEFECT IS RECORDED HERE AND THE COMMITS STAND AS THEY ARE.** ***
+    raised_onward: >-
+      `Q40` — whether the PL seat identity should be normalised across the drifted range and, if so,
+      by what act, since history may not be rewritten.
+
+# ================================================================================================== #
+the_ruled_condition_and_why_16C_does_not_release:
+# ================================================================================================== #
+  the_ruling: >-
+    PO-DECISIONS-0030 ruling 3: *"On GREEN, 16C RELEASES — the detector-side liveness with the
+    honesty obligation — THEN register the indicator rows."*
+  the_verdict: AMBER.
+  the_conclusion: >-
+    **THE CONDITION IS NOT MET AND THIS SEAT DOES NOT MEET IT BY REINTERPRETING IT.** 16C IS NOT
+    RELEASED. NO INDICATOR ROW IS REGISTERED. The memorial removal does not land.
+  and_this_seat_states_the_case_FOR_releasing_anyway_so_the_Product_Authority_can_weigh_it: >-
+    It is a real case and it is not this seat's to accept. The completion test is STILL MET at
+    `a9e19c3` — the auditor tried fifteen shapes on the shipped product and could not admit a stale
+    calm reading. `A313-F1` is a defect of the ALARM, not of the GUARANTEE: every `W5` shape
+    requires EDITING `src/`, which is a weakening a future increment could introduce, not a hole a
+    caller can reach today. **BUT THAT IS PRECISELY THE ARGUMENT RULING 9 EXISTS TO REFUSE — a
+    guarantee that is true today and unwatched tomorrow is the state this project has now returned
+    to twice — AND `A313-F1` IS `A312-F1` ONE LAYER IN. THIS SEAT RECOMMENDS THE STRENGTH
+    INCREMENT FIRST. THE DECISION IS THE PRODUCT AUTHORITY'S.**
+
+# ================================================================================================== #
+the_auditors_prescribed_next_safe_gate_carried_verbatim_and_NOT_dispatched:
+# ================================================================================================== #
+  why_not_dispatched: >-
+    **IT IS A NEW INCREMENT AND THE SESSION'S STOP CONDITION IS "AT THE INCREMENT BOUNDARY OR ON ANY
+    PRODUCT AUTHORITY QUESTION". BOTH ARE TRUE HERE.** PO-DECISIONS-0030 authorised the control row
+    and named GREEN as the release condition; it did not pre-authorise a successor increment for the
+    case where the control row is itself found weak. **THAT IS Q39.**
+  the_prescription: >-
+    A bounded `16F-CONTROL-ROW-STRENGTH` increment to a FRESH Engineer — neither `CD-ENG-WO3-13`
+    nor `CD-ASR-WO3-13` — INSTRUMENT-ONLY scope, `src/` stays shut, `0e80a09` preserved:
+    (1) drive each MUST-REFUSE shape at MORE THAN ONE VALUE of `regime` / `inputs_used` /
+    `degraded_inputs`, so the control quantifies over document-space instead of probing one point;
+    (2) commit `W5B2` / `W5G` / `W5C` as MEASURED PLANT ARMS;
+    (3) supersede `DECLARED LIMIT 2`'s false sentence and `DECLARED LIMIT 19`'s heading (`A313-F2`).
+    **ITS ACCEPTANCE TEST IS THE ONE THE AUDITOR'S OWN ENTRY SUPPLIES**, which is the right shape —
+    the auditor wrote the test and left the line unwritten (`PBG-SOD-004`).
+
+# ================================================================================================== #
+what_did_not_move_at_this_boundary:
+# ================================================================================================== #
+  - '**16C IS NOT RELEASED.** The ruled condition was GREEN and the verdict is AMBER.'
+  - '**NO INDICATOR ROW** from governance/mapping/indicator_mapping.yaml is registered.'
+  - '**NOTHING IS REVERTED.** `a9e19c3` is STRICTLY BETTER than `0e80a09` and stays on `wo-3`. The
+     auditor says so in terms and this seat agrees by measurement.'
+  - '**THE MEMORIAL REMOVAL DID NOT LAND**, and the memorial was measured byte-identical.'
+  - 'be0b355 (wo-2r3) FROZEN. Nothing merged to main. The lane is at a9e19c3; main is at 95aed88.'
+  - 'NOTHING IS ACCEPTED (PBG-AUTH-003). No grade moves. No finding is closed. WO-2 gate SHUT.'
+
+# ================================================================================================== #
+open_product_authority_questions:
+# ================================================================================================== #
+  Q36:
+    status: OPEN — raised at BL-20260824T192219Z-0181
+    summary: >-
+      The A312-F2 stamp-detection TIGHTENING. Product scope (PBG-AUTH-005). **RE-VERIFIED AT SOURCE
+      BY CD-ASR-WO3-13: still NOT a live escape on the shipped contract.**
+  Q37:
+    status: OPEN, AND NOW WITH A MEASUREMENT ATTACHED
+    summary: >-
+      Ruling 1 says "its OWN row", singular; TWO rows landed, for a reason measured in the pinned
+      framework (`execute` must be a single string; `&&` would short-circuit the pytest half).
+    the_measurement_the_auditor_supplied: >-
+      **BOTH ROWS MOVE ON `D1` INDEPENDENTLY — SO ON THE ARM THAT PRODUCED THE `AMBER`, EITHER ROW
+      ALONE SUFFICES. BUT ARM `W5A` WAS CAUGHT *ONLY* BY `CD-RT-001-STALE-DATA-WITNESS-SUITE`.**
+      **REMOVING THE SECOND ROW WOULD LOSE A WEAKENING THAT NOTHING ELSE CATCHES.** That is the
+      fact the ruling should be made against, and it did not exist when Q37 was raised.
+  Q38:
+    status: OPEN — framework defect, reported not repaired
+    summary: >-
+      `pbg/roles/engineer.md` mandates a `READY_FOR_ASSURANCE` status the pinned entry schema's enum
+      lacks. Two Engineers resolved it identically; NEITHER edited `pbg/` (correct, PBG-FWK-013).
+  Q39:
+    raised_by: PROJECT_LEAD_SEAT_06, carrying CD-ASR-WO3-13's prescribed next safe gate
+    status: RAISED — **THIS IS THE ONE THAT UNBLOCKS THE LANE**
+    question: >-
+      **IS THE `16F-CONTROL-ROW-STRENGTH` INCREMENT AUTHORISED, AND DOES IT LAND BEFORE 16C?**
+      PO-DECISIONS-0030 authorised the control row and named GREEN as 16C's release condition. The
+      control row landed, is strictly better, and was found WEAK on its own terms — the guard
+      catches the four arms it was built against and is blind to a fifth of the same class,
+      reproduced independently by this seat. **The alternative the Product Authority may prefer is
+      to accept the AMBER as a bounded residual, release 16C, and take the strength increment
+      after. This seat recommends strength first — `A313-F1` IS `A312-F1` ONE LAYER IN, AND THIS
+      PROJECT HAS NOW ARRIVED AT "TRUE BUT UNWATCHED" TWICE — BUT THE CALL IS NOT THIS SEAT'S.**
+  Q40:
+    raised_by: PROJECT_LEAD_SEAT_06, against itself, carrying CD-ASR-WO3-13's A313-F4
+    status: RAISED
+    question: >-
+      **PROJECT LEAD COMMIT IDENTITY HAS DRIFTED TO `Matt Scott`, WHICH `%an` CANNOT SEPARATE FROM A
+      PRODUCT AUTHORITY RULING**, while every seat-freshness measurement on this project depends on
+      `%an`. `SEAT_01` and `SEAT_02` used seat identities; `SEAT_03`-`SEAT_06` did not. This seat
+      restores the convention from this entry forward and **DOES NOT REWRITE THE FIVE COMMITS IT
+      ALREADY MADE WRONG.** **SHOULD THE DRIFTED RANGE BE NORMALISED, AND IF SO BY WHAT ACT, GIVEN
+      THAT HISTORY MAY NOT BE REWRITTEN?**
+
+next_safe_action: >-
+  **NOTHING. THE SESSION STOPS HERE AND THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT — ON `Q39`
+  FIRST, THEN `Q37`, `Q40`, `Q36` AND `Q38`.** No seat is live. No increment is authorised. **16C
+  IS NOT RELEASED AND NO INDICATOR ROW IS REGISTERED.** When Q39 is ruled: if the strength
+  increment is authorised, it goes to a FRESH Engineer identity (never CD-ENG-WO3-13, never
+  CD-ASR-WO3-13) with instrument-only scope and `src/` shut, and a FRESH Assurance seat grades it.
+expected_next_actor: >-
+  THE PRODUCT AUTHORITY. Then PROJECT_LEAD_SEAT_06 or its successor to carry the ruling.

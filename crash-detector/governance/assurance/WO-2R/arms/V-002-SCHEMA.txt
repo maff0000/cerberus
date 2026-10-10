@@ -1,0 +1,23 @@
+LABEL: V-002-SCHEMA
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-002/CD-RT-002-SCHEMA-CLOSED.patch
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_schema_closed.py --root .
+EXIT: 1
+--- stdout ---
+CD-RT-002-SCHEMA-CLOSED
+    subject: /tmp/cd-asr-wo2r/run/V-002-SCHEMA
+    scanned: contracts/public_envelope.schema.json and private_envelope.schema.json
+    assertions: 244
+
+VIOLATION  contracts/public_envelope.schema.json:61
+    rule: 3: the root properties are not the declared allowlist
+    what: the public envelope's root properties differ from the allowlist this register declares. UNDECLARED KEYS PRESENT: combined_stress. A new top-level key is a deliberate contract change: it needs a schema_version bump and an edit here, which is the friction that stops a headline number arriving quietly.
+VIOLATION  contracts/public_envelope.schema.json:8
+    rule: 4: required does not match the allowlist
+    what: required=['as_of_utc', 'combined_stress', 'config_snapshot_id', 'degraded_inputs', 'equity_crash', 'inputs_used', 'monetary_debasement', 'published_utc', 'regime', 'schema_version', 'staleness_window_seconds'] but the allowlist is ['as_of_utc', 'config_snapshot_id', 'degraded_inputs', 'equity_crash', 'inputs_used', 'monetary_debasement', 'published_utc', 'regime', 'schema_version', 'staleness_window_seconds']. A consumer must never have to tell 'this dial is absent' from 'this field was omitted'.
+VIOLATION  contracts/public_envelope.schema.json:61
+    rule: 5: a third top-level number
+    what: the public envelope declares scalar-numeric root properties ['combined_stress', 'staleness_window_seconds']; the only one permitted is ['staleness_window_seconds'] (a staleness window, not a reading). A blended headline has to be a number somewhere, and this counts the numbers whatever they are called.
+
+CD-RT-002-SCHEMA-CLOSED: FAIL — 3 violation(s)
+--- stderr ---

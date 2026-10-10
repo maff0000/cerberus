@@ -1,0 +1,248 @@
+entry_id: BL-20260819T143502Z-0026
+timestamp_utc: "2026-08-19T14:35:02Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 66fe9273d6ce453b1fd05e797b3ccc5843c4951c
+current_sha: PENDING
+lane_head_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
+parent_entry_id: BL-20260819T115400Z-0025
+record_origin: >
+  Written by the Project Lead on main after reconciling the Engineer seat CD-ENG-WO2R-01's
+  return for WO-2R increment 3. The seat's own lane entry is BL-20260819T142541Z-0043. Per
+  CD-RULE-005 this entry_id timestamp comes from `date -u` and is genuine UTC.
+tooling_available_at_capture: "PBG CLI available; pbg boot AMBER on main (no ROADMAP.md), CONTINUITY_MATCH"
+schema_version: 1
+
+action_summary: >
+  WO-2R INCREMENT 3 IS RECONCILED AND **NOT ACCEPTED** (CD-D-044). Every number the seat
+  declared REPRODUCES EXACTLY on pristine extractions — the clean arm at 53 assertions, the
+  defect reproduced at the old base at 44 assertions and exit 0 matching the auditor
+  verbatim, the positive control at 67, the full suite 1155 -> 1187 passed, ZERO of the 1155
+  original pytest node ids missing with 32 added, all ELEVEN plants applying, all four
+  commits correctly seated as CD-ENG-WO2R-01 in BOTH author and committer, and all ten
+  headings of the mandatory CLASS/STRUCTURE block present on every one of the four. The
+  record is honest, the declared limit is the best-drawn in this project so far, and the
+  seat's two self-raised findings are real.
+
+  THE HEADLINE CLOSURE HOLDS. Deny-by-default over the `hosts` allowlist survived everything
+  thrown at it, including three fresh Project Lead probes of routes the seat did not try:
+  PL-S1 (an EIGHTH service declared with a broker allowlist) is refused twice over and moves
+  the guard's `scanned:` count 7 -> 8, proving the subject is DERIVED FROM THE ARTEFACT and
+  not from a constant; PL-S2 (a YAML anchor aliased into the allowlist) exits 3 because the
+  reader REFUSES TO GUESS rather than reading a hidden field as absent; PL-S4 (a duplicate
+  `hosts:` key) is refused by deny-by-default on the last-wins value.
+
+  WHAT FAILS IS AN ADJACENT FIELD THE SEAT TOOK INTO SCOPE AND THEN GUARDED WITH THE WRONG
+  LAYER. CD-PL-F59 (MEDIUM): an address literal in `pending` passes the check clean.
+
+the_measured_contrast_that_decides_it: >
+  PL-S3b puts `api.ibkr.com` in cd-collectors' `pending` list: REFUSED, exit 1,
+  "CD-EGRESS-002: a pending entry names a broker host". PL-S3a puts `198.51.100.24` in the
+  SAME SLOT: PASS, exit 0, 53 assertions, 0 violations. PL-S3c carries the same address on a
+  `host:` key inside a `pending` mapping entry: PASS, exit 0.
+
+  That is CD-ASR-F04 reproduced verbatim one field across. The auditor's own sentence — "the
+  check recognises brokers BY NAME, and an IP literal has no name to recognise; the same slot
+  carrying api.ibkr.com exits 1" — is now true of `pending` exactly as it was true of `hosts`
+  before this increment.
+
+why_this_is_not_out_of_scope: >
+  The seat did not leave `pending` alone. It took the field INTO SCOPE deliberately: the
+  check fires CD-EGRESS-002 on it at check_egress_no_broker.py lines 921-937, and the
+  docstring at line 90 states the vocabulary applies "to every `pending` entry, because a
+  pending entry is a host". Having decided the field was worth guarding, it applied ONLY the
+  layer that CD-ASR-F04 proved insufficient and not the layer that replaced it.
+
+  Nor is `pending` incidental. The x-egress contract in compose.yaml defines it as "endpoints
+  BLUEPRINT §2 declares this service WILL NEED" — it is precisely the declaration that the
+  WO-3 enforcement lane inherits, and this dispatch exists because "the defect is in the
+  DECLARATION that the WO-3 enforcement lane will inherit", to be closed BEFORE that lane
+  exists. "A pending entry grants nothing" is not a distinguishing defence: at WO-2 an
+  allowlist entry grants nothing either, because both networks are internal:true. The whole
+  increment is about declarations, not packets.
+
+the_cd_rule_006_defect: >
+  Declared limit boundary 4 reads: "a real brokerage whose registrable domain is on nobody's
+  list ... passes LAYER 2. It does not pass LAYER 1 unless a human deliberately registers it,
+  which is the whole point of deny by default: the escape now costs a signed edit to a
+  reviewed registry file, not a quiet line in an allowlist."
+
+  For `pending` THERE IS NO LAYER 1. An entry passing layer 2 in `pending` passes ENTIRELY,
+  at the cost of exactly one quiet line and no registry edit at all. Boundary 4 names a
+  compensating layer that does not compensate for this field. That is the same shape as
+  CD-PL-F54 at increment 2 — a declaration naming another layer as carrying a residue that
+  the layer does not carry — and it is the shape CD-RULE-006 was written to forbid.
+
+  Under CD-RULE-004 a guard closes its class OR declares its own limit. For `pending` it did
+  NEITHER: none of the six boundaries mentions the field. THAT, and not the escape's blast
+  radius, is why increment 3 goes back.
+
+what_the_project_lead_measured_itself:
+  - "Lane HEAD b60d153, `git status --short` 0 lines, all changes inside writable_scope."
+  - "Commit identity, all four commits: CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid> in BOTH author and committer. `git log ee8be6b..HEAD` resolves to that one identity and no other (CD-RULE-002)."
+  - "Mandatory CLASS/STRUCTURE block: all TEN headings present on all FOUR commits."
+  - "Nothing executable under variants/ (0 files with u+x); all eight patches mode 644 (PBG-ASSURE-001)."
+  - "Clean arm at b60d153: exit 0, PASS 53 assertions, 0 violations."
+  - "Defect reproduced at the OLD base cc961bf with E05: exit 0, PASS 44 assertions — matching the auditor's report exactly."
+  - "E05 at b60d153: exit 1, CD-EGRESS-004, an allowlist entry is not a registered destination."
+  - "V18..V23 all refused, exits 1/1/1/1/1/3, each by a DIFFERENT clause; no two share a refusal reason."
+  - "V24 positive control: exit 0, and the check moves 53 -> 67 assertions, so the subject follows the artefact."
+  - "Full suite at b60d153: 1187 passed, exit 0, in 8.01s."
+  - "Anti-relaxation: 1155 node ids at cc961bf, 1187 at b60d153, ZERO removed, 32 added."
+  - "Eleven plants: 11 of 11 apply by `git apply --check` at b60d153."
+  - "Every variant and probe run on its OWN pristine `git archive` extraction under /tmp, with python3 -B, never mutating a governed tree (PBG-RT-001)."
+
+the_project_lead_s_own_probes_against_the_new_structure:
+  durable_at: governance/reconciliation/WO-2R/PL-S1-S4-egress-pending-and-subject-derivation.patch.txt
+  note: >
+    Data, not a harness; nothing in that directory is executable. From this commit these
+    probes prove nothing about the class and JOIN THE EXCLUSION SET (CD-D-039 precedent).
+  probes:
+    - id: PL-S1
+      route: "an EIGHTH service declared with policy ALLOWLIST and hosts: [api.ibkr.com]"
+      result: "REFUSED, exit 1, CD-EGRESS-004 AND CD-EGRESS-002; scanned: moved 7 -> 8 services"
+    - id: PL-S2
+      route: "a YAML anchor on a NONE service, aliased into the ALLOWLIST service's hosts"
+      result: "REFUSED, exit 3 PRECONDITION_NOT_MET — the reader refuses to guess rather than reading an aliased field as absent"
+    - id: PL-S3a
+      route: "an address literal as a bare `pending` entry on cd-collectors"
+      result: "**ESCAPED**, exit 0, PASS 53 assertions, 0 violations"
+    - id: PL-S3b
+      route: "CONTROL — the same `pending` slot carrying api.ibkr.com"
+      result: "REFUSED, exit 1, CD-EGRESS-002: a pending entry names a broker host"
+    - id: PL-S3c
+      route: "an address literal on a `host:` key inside a `pending` MAPPING entry"
+      result: "**ESCAPED**, exit 0, PASS 53 assertions, 0 violations"
+    - id: PL-S4
+      route: "a DUPLICATE `hosts:` key inside one x-egress block"
+      result: "REFUSED, exit 1, CD-EGRESS-004 on the last-wins value"
+
+decisions:
+  - id: CD-D-044
+    ruling: >
+      WO-2R increment 3 is NOT ACCEPTED. CD-ASR-F04 is NOT closed as a class. Increment 3 is
+      RE-OPENED as increment 3b, bounded to CD-PL-F59 and nothing else, in the pattern that
+      worked for increment 2 -> 2b. The lane is NOT reverted: a79d4b2..b60d153 stand, the
+      deny-by-default structure over `hosts` is good work and is kept, and 3b extends it.
+  - id: CD-D-045
+    ruling: >
+      The Project Lead does NOT write the fix. A Project Lead that authors the closure has
+      made itself the implementer of work it will reconcile (PBG-AUTH-006). CD-D-038 set this
+      precedent at increment 2 and it is not relaxed because the fix looks small. The seat is
+      given the CLASS, the measured contrast and the rule it fails — not the code.
+  - id: CD-D-046
+    ruling: >
+      The remedy is the seat's choice under CD-RULE-004, not the Project Lead's: either close
+      `pending` under the same deny-by-default structure, or DECLARE IT as a seventh boundary
+      in the CD-RULE-006 form. But if it declares rather than closes, it MUST ALSO CORRECT
+      BOUNDARY 4, whose compensating-layer claim is measurably false for this field. A
+      declaration that leaves boundary 4 standing would be the CD-PL-F54 defect a third time.
+  - id: CD-D-047
+    ruling: >
+      PL-S1..PL-S4 are GIVEN to the Engineer as its minimum proof obligation for 3b rather
+      than withheld, and are written to governance/reconciliation/WO-2R/ as DATA. They join
+      the exclusion set, which is now the union of the WO-2 auditor's ten, the Engineer's
+      seventeen plus eight, and the Project Lead's twenty-three plus six.
+
+findings:
+  - id: CD-PL-F59
+    severity: MEDIUM
+    status: OPEN
+    title: "an address literal in `pending` passes the egress check — CD-ASR-F04 surviving one field across"
+    detail: >
+      See the_measured_contrast_that_decides_it and the_cd_rule_006_defect above. Three
+      measured facts: (a) PL-S3b proves the guard judges `pending` and treats a broker host
+      there as a violation; (b) PL-S3a and PL-S3c prove it judges it BY NAME ONLY, so the
+      auditor's own address passes; (c) declared limit boundary 4 asserts a layer-1
+      compensation that does not exist for this field, and none of the six boundaries mentions
+      `pending` at all, so the guard neither closed the class nor declared the limit
+      (CD-RULE-004, CD-RULE-006).
+  - id: CD-PL-F60
+    severity: INFORMATIONAL
+    status: DISCLOSED
+    title: "increment 3 commit subjects carry the [CRASH-DETECTOR] prefix, not [CD-ENG-WO2R-01]"
+    detail: >
+      Increment 2b's four lane commits are prefixed [CD-ENG-WO2R-01]; increment 3's four are
+      prefixed [CRASH-DETECTOR], as increment 2's were. CD-RULE-002 binds AUTHOR AND COMMITTER
+      IDENTITY, which is correct on all four and was verified, so this is NOT a rule breach and
+      NOT grounds for rejection. Recorded because the lane's subject-line convention is now
+      inconsistent and an auditor reading `git log --oneline` should not infer a seat from a
+      prefix. No commit is amended; history is not rewritten (PBG-CONT-003).
+
+engineer_self_raised_findings_confirmed:
+  - id: CD-ENG-WO2R-F12
+    severity: LOW
+    disposition: >
+      CONFIRMED and ACCEPTED as declared. `extra_hosts:` is a per-service name->address
+      mapping the check does not read; no service declares one. It is declared at boundary 5
+      in the CD-RULE-006 form — "NOT PROVED TO BE CARRIED ANYWHERE" — and owed at WO-3 with
+      the egress lane. This is the correct handling and is the contrast with CD-PL-F59, which
+      is the same kind of gap DECLARED NOWHERE.
+  - id: CD-ENG-WO2R-F13
+    severity: LOW
+    disposition: >
+      CONFIRMED and COMMENDED. `git apply` silently truncating hand-written hunks with wrong
+      line counts made six variants briefly fail FOR THE WRONG REASON, caught only because the
+      violation text did not match the route. The seat regenerated all eight patches with
+      `git diff` and re-ran at the committed SHA. Its recommendation — assert the expected RULE
+      ID, not merely a non-zero exit — is adopted by the Project Lead for its own probes and is
+      carried into the Assurance dispatch as a method note.
+
+reported_not_repaired_by_the_seat_confirmed:
+  - "pbg boot RED in the LANE worktree on CONTINUITY_REFERENCE_INVALID: that worktree's ACTIVE_WORK.yaml still carries continuity_record_commit PENDING and lane_head_sha 0047093. Byte-identical at ee8be6b, a94ef97 and cc961bf — PRE-EXISTING, Project-Lead-only path, correctly untouched by the seat. Tracked, not repaired in this increment."
+  - "pbg validate AMBER on bound_verifiers_evidenced / PBG-CONT-003, measured identical on a pristine extraction of cc961bf. Pre-existing, not introduced by increment 3."
+
+obligations_status:
+  CD-ASR-F01: "CLOSED AS A CLASS at increment 2b, subject to Assurance"
+  CD-ASR-F02: "CLOSED AS A CLASS at increment 1, subject to Assurance"
+  CD-ASR-F03: "CLOSED AS A CLASS at increment 1, subject to Assurance"
+  CD-ASR-F04: "NOT CLOSED — increment 3 not accepted, re-opened as 3b on CD-PL-F59"
+  CD-ASR-F05: "NOT STARTED — increment 4"
+  CD-ASR-F06: "NOT STARTED — increment 5"
+  gate: "Assurance PASS on all five. NOT MET. Not admissible until F04, F05 and F06 are closed and a separate seat CD-ASR-WO2-02 has run."
+  latest_admitted_run: "null, untouched (CD-RULE-001, non-relaxable)"
+
+next_safe_action: >
+  DISPATCH INCREMENT 3b to CD-ENG-WO2R-01 at execution base b60d153, bounded to CD-PL-F59 and
+  NOTHING ELSE, per CD-D-044/045/046/047. It closes `pending` under the same deny-by-default
+  structure OR declares it as a seventh boundary in the CD-RULE-006 form, and either way it
+  MUST correct boundary 4's compensating-layer claim. Its minimum proof obligation is PL-S3a
+  and PL-S3c refused or declared, PL-S3b still refused, PL-S1/PL-S2/PL-S4 still refused, plus
+  two new variants of its own. RECONCILE by running the arms and writing fresh probes.
+
+  THEN increment 4 (CD-ASR-F05: the code-graph guard's walk root must derive from the
+  CONTAINER'S OWN entrypoint set, not a hard-coded path — note that PL-S1 has already shown
+  the egress guard doing exactly this correctly, and E06 is the same defect in the other
+  guard). THEN increment 5 (CD-ASR-F06: staleness windows get a hard upper bound DERIVED from
+  ratified intent per CD-D-032 — the Project Lead has VERIFIED the derivation chain exists:
+  PID.md line 86, "pipeline/publication failure independently detectable <= 15 minutes",
+  RATIFIED 2026-08-18 under CD-D-003, giving a 900-second ceiling; bounded further by
+  BLUEPRINT.md lines 314-318, §7 `window_for(regime) -> seconds` "tightening as observed
+  volatility rises", CD-AC-009, scheduled WO-3. HOLD THE SEAT TO THIS: 900s is defensible only
+  as a HARD UPPER BOUND with the operating window explicitly deferred to WO-3's
+  window_for(regime), because a window of exactly 900s consumes the ENTIRE detectability
+  budget and leaves nothing for detection and alerting. A TIGHTER number must be DERIVED, not
+  chosen because it looks prudent — that is the invention CD-RULE-003 forbids, and the seat
+  FAILS CLOSED and escalates rather than inventing one).
+
+  Commit each boundary as its own checkpoint on main with the PROJECT_LEAD_SEAT_01 identity
+  set through GIT_* ENVIRONMENT VARIABLES, not through `git -c` (CD-PL-F56 — it fails silently
+  on this host), and verify with `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY
+  commit.
+
+  THEN AND ONLY THEN issue CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent,
+  never the Engineer and never the Project Lead (PBG-SOD-001, non-waivable). It must devise
+  FRESH variants; the exclusion set is the union of the WO-2 auditor's ten, the Engineer's
+  twenty-five and the Project Lead's twenty-nine. Hand it CD-ENG-WO2R-F12 as a NAMED QUESTION,
+  plus CD-PL-F53, CD-PL-F57, CD-PL-F58 and CD-ENG-WO2R-F13's method note. THE GATE IS
+  UNCHANGED: Assurance PASS on all five. Deliberate STOP at the gate either way, record state
+  durably, and report to the Product Owner. Admit no run record without its paired assurance
+  verdict (CD-RULE-001, non-relaxable).

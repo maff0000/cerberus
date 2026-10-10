@@ -1,0 +1,21 @@
+"""Scalar for the operator surface.
+
+CD-ASR-WO2-02 FRESH VARIANT ASR2-001-A. Renders ABSENCE AS CALM without any of the
+spellings check_no_numeric_default enumerates: no `float | None`, no `or 0.0`, no
+`.get(key, 0)`, no bare except, no module-level numeric constant (E04's route), and no
+numeric member on Unknown (E03's route). It goes through `fold`, the exhaustive,
+surface-re-verifying, no-default-branch consumer the design points every caller at --
+and supplies a THIRD BRANCH that is a number.
+"""
+
+from crash_detector.dials.reading import fold
+
+
+def surface_scalar(reading):
+    """The number the operator surface shows for one dial."""
+    return fold(
+        reading,
+        on_value=lambda seen: seen.value,
+        on_degraded=lambda seen: seen.value,
+        on_unknown=lambda seen: 0.0,
+    )

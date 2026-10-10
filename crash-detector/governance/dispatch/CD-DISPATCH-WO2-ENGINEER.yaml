@@ -1,0 +1,310 @@
+# ENGINEER DISPATCH — WO-2, crash-detector.
+#
+# WHY THIS IS A DISPATCH RECORD AND NOT AN AUTHORITY RECORD (CD-FWK-004).
+# `governance/authority/` admits exactly ONE record with status ACTIVE: a second one makes
+# `pbg boot` return RED with "2 ACTIVE authority records; ambiguous assignment" for EVERY seat,
+# including the Project Lead's. That was measured on this project at 2e116ec, not assumed — see
+# the probe evidence in BL-20260819T023800Z-0003. The framework therefore cannot represent a
+# Project Lead that is seated while a bounded Engineer seat acts. Rather than break boot for
+# every seat, or close the PL's own authority while the PL is still causally responsible for the
+# work (PBG-RT-004), the sub-agent seats are authorised HERE, durably, deriving from CD-AUTH-0001.
+# The cost is disclosed rather than hidden: `pbg authority separation` continues to report
+# "no ASSURANCE authority record exists ... This is NOT a pass", so PBG-SOD-001 is evidenced on
+# this project by the Product Owner's ratified CD-D-002 named-actor route — distinct actor_ids on
+# every seat, carried in this record, in the Build Log, and in the Assurance run record's
+# `executed_by.party` — and NOT by the framework verifier. CD-FWK-004 is raised to the PO.
+
+dispatch_id: CD-DISPATCH-WO2-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-19T02:40:00Z'
+
+# --- seat -------------------------------------------------------------------------------------- #
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md          # canonical local file; the operator pastes no role
+actor_id: CD-ENG-WO2-01
+dispatching_authority: CD-AUTH-0001           # PROJECT_LEAD_SEAT_01, the causal owner (PBG-RT-004)
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: >
+  PID.md v1.0.1 RATIFIED by Matt · governance/decisions/PO-DECISIONS-0001.md CD-D-004 ·
+  governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md (Blueprint v0.1.0 ACCEPTED, WO-2 authorised).
+descendant_capability_rule: >
+  This seat's capability never exceeds CD-AUTH-0001's (PBG-RT-004). Anything CD-AUTH-0001 forbids
+  the Project Lead is forbidden here, including modifying pbg/ and amending PID.md.
+
+# --- bounded objective ------------------------------------------------------------------------- #
+work_item: CD-WO-002
+work_type: CHANGE
+traits: [creates_process, deployable, reaches_runtime]
+objective: >
+  Build WO-2 as specified in BLUEPRINT.md §15: the repository skeleton, the container set, the
+  store schema and grant matrix, the dial types, the collector framework and source registry, the
+  project Required Test Register, and the five planted violations of §13 — each proved to fail the
+  guard it is planted against. Done means: every deliverable below exists at a named commit on the
+  dispatched branch, the Engineer's own runs of every declared register command are recorded, and
+  the seat returns READY_FOR_ASSURANCE with the exact SHA. Done does NOT mean assured — this seat
+  never certifies its own work (PBG-SOD-001, non-waivable).
+
+# --- lane -------------------------------------------------------------------------------------- #
+repository: local
+branch: wo-2-skeleton                          # PBG-GIT-001: no feature work on main
+worktree: /srv/crash-detector-wo2              # PBG-GIT-003: one bounded mutation lane
+baseline_sha: SET_AT_ISSUE                     # superseded by the value in the Build Log entry
+execution_base_rule: >
+  Reconcile the observed HEAD of the worktree against the baseline SHA recorded in
+  BL-20260819T023800Z-0003 before writing anything. A mismatch is drift: report and reconcile,
+  never proceed from wherever the tree happens to sit (PBG-CONT-006).
+
+writable_scope:
+- /srv/crash-detector-wo2/src/
+- /srv/crash-detector-wo2/tests/
+- /srv/crash-detector-wo2/tools/
+- /srv/crash-detector-wo2/contracts/
+- /srv/crash-detector-wo2/db/
+- /srv/crash-detector-wo2/deploy/
+- /srv/crash-detector-wo2/plants/
+- /srv/crash-detector-wo2/required-tests.yaml
+- /srv/crash-detector-wo2/pyproject.toml, requirements.txt, requirements.lock, README.md, .gitignore
+- /srv/crash-detector-wo2/.dockerignore
+  # AMENDMENT, 2026-08-19T05:29Z, CD-D-013 (BL-20260819T052900Z-0007). Added by the Project Lead
+  # after the seat correctly STOPPED and escalated CD-ENG-F25 rather than creating this file on its
+  # own initiative. Without it the Docker build context carries governance/ and pbg/ — the whole
+  # governance record and the pinned framework — into the daemon and into every image layer. An
+  # ignore file is DESIGN, not BUILD: it declares what the context excludes and builds nothing, so
+  # it sits inside A6 and does not disturb RT-B's prohibition. Exactly one path is added; no other
+  # scope changes. The widening does not exceed CD-AUTH-0001's own capability (PBG-RT-004).
+- /srv/crash-detector-wo2/governance/engineering/build-log/   # NEW entries only, never an edit
+- /tmp/                                                        # scratch, non-governed
+
+protected_scope:
+- pbg/                       # pinned snapshot, read-only (PBG-FWK-013). Editing it to pass is a bypass.
+- PID.md                     # Constitutional; the PO amends, never a seat (PBG-AUTH-003)
+- BLUEPRINT.md               # the PL owns Blueprint currency (PBG-BP-001)
+- CLAUDE.md, docs/, pbg-manifest.yaml
+- governance/authority/, governance/decisions/, governance/dispatch/
+- governance/engineering/ACTIVE_WORK.yaml     # Project-Lead-only; overwritten in place
+- schemas/ at PROJECT_ROOT   # RESERVED: the framework resolves seat-attestation schemas here in a
+                             # VENDORED layout (CD-AUTH-0001, CD-FWK-001). Product JSON Schemas go
+                             # in contracts/, never here.
+- everything under /srv outside the dispatched worktree, except the /tmp scratch above
+
+prohibited:
+- certifying, assuring or accepting this work (PBG-SOD-001, non-waivable) — report, never certify
+- widening scope silently; a needed change outside writable_scope is an escalation, not initiative
+- weakening a check, a test or an assertion to obtain a pass — report the failure instead
+- resolving product ambiguity; implementation choices are yours, product meaning is not (PBG-AUTH-005)
+- registering ANY ingredient source. CD-D-005 is owed by the Product Owner before WO-3. WO-2 ships
+  with an EMPTY source registry, and every dial therefore reads UNKNOWN. That is the doctrinally
+  correct empty state, ruled so by the PO in PO-ACCEPT-BLUEPRINT-0001, and it is what makes
+  CD-AC-001's first plant demonstrable. Inventing sources would be inventing product meaning.
+- recording any secret value anywhere — in code, config, fixture, test, log, evidence or record
+  (PBG-SEC-002, PBG-EVID-003, PBG-CONT-009, all non-waivable). Secrets are referenced by env-var
+  NAME only, e.g. CD_STORE_ENGINE_PASSWORD.
+- binding any port to anything other than 127.0.0.1 (CD-D-006 default safe action, PO-agreed)
+- rewriting Build Log history; corrections supersede, never edit (PBG-CONT-003, non-waivable)
+
+# --- runtime authorisation (PBG-RT-001, PBG-RT-004, PBG-RT-005) -------------------------------- #
+runtime_authorisation:
+  classification_rule: >
+    Classify every planned observation BEFORE running it: NON_MUTATING_PROVEN,
+    MUTATION_CAPABLE_AUTHORISED, FORBIDDEN or UNKNOWN_STOP. UNKNOWN halts (PBG-RT-005). Judge by
+    foreseeable effect, never by command label (PBG-RT-001).
+  authorised_mutations:
+  - id: RT-A
+    action: >
+      Run ONE throwaway PostgreSQL container to evidence the store schema and the grant matrix
+      against a live catalogue.
+    bounds: >
+      image postgres:16-alpine pinned BY DIGEST (resolve the digest with `docker image inspect`
+      and record it); container name prefix `cd-store-wo2-`; published port bound to 127.0.0.1
+      only, on an ephemeral port; a named volume prefixed `cd-store-wo2-`; credentials from
+      environment variables generated at run time and never written down; destroyed
+      (`docker rm -f` plus `docker volume rm`) before the seat returns, with the removal evidenced.
+    forbidden: >
+      touching, inspecting into, stopping, restarting or otherwise reaching ANY container or volume
+      not carrying the `cd-store-wo2-` prefix. Other projects are running on this host.
+  - id: RT-B
+    action: Build container images for the application services.
+    classification: FORBIDDEN IN WO-2.
+    reason: >
+      PBG-RT-010 keeps image creation and startup as separate risk-proportionate actions, and the
+      control's own verification note states that CONTAINER_READY_DESIGN with
+      CONTAINER_BUILD_NOT_YET_AUTHORISED is a complete and valid state. WO-2 delivers the container
+      set as DESIGN — compose file, Dockerfiles, digest pins, networks, egress posture, non-root
+      users, storage classes — and builds none of it. Image build, smoke test and non-root proof
+      are WO-3 work and are recorded as owed, not as done.
+
+# --- deliverables ------------------------------------------------------------------------------ #
+# Two sequential blocks on one branch, one seat, one actor_id. Block A commits before Block B
+# starts; both are this seat's work (PBG-WORK-004: serialise mutation).
+
+deliverables_block_A:
+
+  A1_repository_skeleton: >
+    A Python 3.11 package under src/crash_detector/, importable with PYTHONPATH=src and no install
+    step. pyproject.toml declaring the project and its exact pinned dependencies; requirements.txt
+    with `==` pins; a lockfile carrying hashes where the network permits, and a recorded reason
+    where it does not (PBG-CI-003). Dependencies deliberately few. CONSTRAINT, load-bearing: every
+    register check and every test declared in the Required Test Register MUST run on this host's
+    interpreter with NO install step — stdlib plus what is already present (jsonschema 4.10.3,
+    psycopg2 2.9.11). A check that needs a network install is not a check anyone can run.
+
+  A2_dial_types: >
+    BLUEPRINT §7 built literally. Reading[T] as a sum type with three constructors — Value,
+    Degraded, Unknown — frozen, no numeric default anywhere, no Optional[float] in the dial path.
+    EquityCrashScore and MonetaryDebasementScore as two UNRELATED frozen types: no arithmetic
+    dunders, no shared numeric base, no common ancestor that carries a value. DialSet as a
+    container with NO method returning a scalar. evaluate(observations, config_snapshot, now_utc)
+    -> DialSet, a PURE function with no I/O of any kind. With an empty source registry it returns
+    Unknown for both dials, and that path is exercised.
+
+  A3_witness_types: >
+    BLUEPRINT §6. WitnessPanel as a sum type — Agrees | Diverges | Unavailable — with Unavailable a
+    DISTINCT constructor, no default, and no route from absence to agreement. The serving-layer
+    resolver maps BOTH an absent panel row and a panel row older than its staleness window to
+    UNAVAILABLE. Divergence computation is not in WO-2 (WO-4); the type and the absence mapping are.
+
+  A4_collector_framework: >
+    BLUEPRINT §5. An adapter protocol: fetch and record, never compute. The observation outcome as
+    a sum type — OK | FETCH_FAILED | MALFORMED | EMPTY — so the three collapsed absences stay
+    separate. EVERY fetch attempt writes a row, including failures; that is the single most
+    important property in this component and it is tested. Validation once, at the boundary,
+    against an explicit declared schema; a non-conforming response is stored MALFORMED with its
+    error class and never coerced. Bounded timeouts, bounded retries; idempotency on
+    (source_id, source_as_of_utc). NO adapter for any real source is written in WO-2 — the
+    framework and the registry types only, plus an in-memory fake adapter used by tests, which is
+    clearly named as a test double and lives under tests/.
+
+  A5_store_schema_and_grants: >
+    BLUEPRINT §4, implemented exactly, as append-only forward-only SQL migrations under db/
+    applied by a dedicated migration step that is NOT the application's startup path
+    (PBG-DATA-002, PBG-DATA-003). Each migration states its rollback or states plainly that it has
+    none. Six schemas (raw, witness, dial, publication, private, alert) and six roles
+    (cd_collector, cd_witness, cd_engine, cd_public, cd_private, cd_review) with the grant matrix
+    as written in §4 — revoke by default, grant by exception. The two load-bearing asymmetries are
+    NOT paraphrased: cd_engine holds NO grant of any kind on witness.*, and cd_witness may SELECT
+    publication.public_envelope — the one-way valve. No UPDATE or DELETE grant on dial.history,
+    raw.observation, witness.observation or alert.event for any role. first_published_utc is set
+    on insert and cannot be moved. raw.source_registry carries criticality REQUIRED |
+    CONTRIBUTING | DISPOSABLE with a constraint that a DISPOSABLE source can never be named in a
+    dial's required-input set. Every timestamp timestamptz, UTC, ISO-8601 with explicit Z. Roles
+    are created without passwords in migrations; passwords arrive from the environment at deploy.
+
+  A6_container_set: >
+    BLUEPRINT §2 as DESIGN (see RT-B above — nothing is built). deploy/compose.yaml declaring all
+    seven services with the two networks; cd-engine, cd-public, cd-private and cd-store with no
+    egress at all; cd-collectors, cd-witness and cd-review each with an explicit egress allowlist,
+    and no allowlist naming a broker. Both surfaces bound to 127.0.0.1 (8710, 8711). Base images
+    pinned BY DIGEST with the digest recorded; a tag-only reference must fail the register check.
+    Declared non-root UID per service; SIGTERM handling with a bounded shutdown in the process
+    entrypoints; logs to stdout/stderr; the three storage classes separated — image read-only,
+    tmpfs scratch, named volume for the store alone. Dockerfiles written, not built. Record
+    CONTAINER_READY_DESIGN / CONTAINER_BUILD_NOT_YET_AUTHORISED in the Build Log.
+
+  A7_envelope_contracts: >
+    contracts/public_envelope.schema.json and contracts/private_envelope.schema.json — closed
+    JSON Schemas, additionalProperties:false at every level, properties as an allowlist. The public
+    schema declares exactly the two dial objects and the honesty fields §8 marks required; there is
+    no place in it for a third, combined number. Publication REFUSES on an unknown or
+    private-classified key — it does not filter — and the refusal path is written and tested now,
+    even though the publication layer itself lands in WO-3.
+
+deliverables_block_B:
+
+  B1_register_checks: >
+    tools/register/ — the mechanical guards, stdlib-only, each a standalone script with a stable
+    command line, exit 0 clean and non-zero on violation, printing WHAT it found and WHERE. No
+    check may skip silently for any reason (PBG-CI-002): a precondition it cannot meet is a
+    non-zero exit with a stated reason, never a pass and never a skip.
+
+  B2_required_test_register: >
+    required-tests.yaml at the worktree root, conforming to REQUIRED-TEST-REGISTER-CONTRACT-v1 as
+    implemented by pbg/tools/pbg/required_tests.py — read that file before writing a line of the
+    register; it is the authority on the format, and it computes status rather than reading it.
+    Population is DERIVED FROM PID.md §6 and must cover all sixteen criteria CD-AC-001..016
+    (BLUEPRINT §14: every row becomes a register entry). pid.content_hash is the sha256 of PID.md
+    as it stands at the baseline. The eleven criteria not delivered in WO-2 carry their declared
+    test and an execution contract stating plainly that they are scheduled for their work order and
+    not yet evidenced — the validator will compute NOT_EVALUATED or UNDECIDABLE for them, and that
+    is the honest answer, not a defect to be dressed up. `latest_admitted_run` MUST be null: this
+    seat does not admit its own evidence. NO status-like key may appear anywhere in the register
+    (check 5 refuses `status`, `result`, `outcome`, `verdict`, `grade`, `score`, `disposition` and
+    their kin) — the register carries obligations, never results.
+    Every test in the five WO-2 criteria references negative_control.evidence_ref: RTR-WO2-0001 —
+    the run record the INDEPENDENT Assurance seat will produce. It does not exist yet, and that is
+    correct: this seat declares which run must evidence its guard, and cannot supply it.
+
+  B3_the_five_planted_violations: >
+    plants/ — one directory per criterion, each plant a `git apply`-able patch against the
+    delivered tree plus a manifest row naming: test_id, patch file, the PROPOSITION it violates,
+    and the expected failure signature. The plants are the deliverable; APPLYING them to produce
+    admitted evidence is Assurance's job, not this seat's, and no wrapper script that runs the arms
+    for the auditor may be delivered — an auditor verifying through a wrapper the project wrote is
+    verifying the wrapper (PBG-ASSURE-001).
+    The eleven required tests and their plants:
+      CD-AC-001  CD-RT-001-AST-NO-NUMERIC-DEFAULT   AST scan over the dial path bans `float | None`
+                 and Optional[float] annotations, `.get(k, <numeric literal>)`, `or 0`, and a bare
+                 except returning a numeric default.        PLANT: introduce a numeric default.
+                 CD-RT-001-ABSENCE-RENDERS-UNKNOWN  with an empty registry and with a dead feed,
+                 both dials read Unknown/Degraded and the serving resolver renders UNKNOWN; never a
+                 number, never the previous value.          PLANT: fall back to 0.0 on absence.
+      CD-AC-002  CD-RT-002-TYPE-NO-ARITHMETIC       the two score types reject every arithmetic
+                 operator and share no numeric base; DialSet exposes no scalar.
+                                                             PLANT: add __add__ to a score type.
+                 CD-RT-002-AST-NO-BLEND             AST check: no single expression consumes both
+                 dial types outside the allowlisted container and serving layer.
+                                                             PLANT: combined = (equity+monetary)/2.
+                 CD-RT-002-SCHEMA-CLOSED            the public envelope schema is closed and its
+                 properties are an allowlist; an envelope carrying combined_stress is rejected.
+                                                             PLANT: open the schema / add the key.
+      CD-AC-003  CD-RT-003-ENGINE-NO-WITNESS-REACH  import-graph check: nothing reachable from
+                 src/crash_detector/engine/ reaches witness code, and evaluate() is byte-identical
+                 with witness data present and absent.       PLANT: import witness from the engine.
+                 CD-RT-003-GRANT-MATRIX-LIVE        read the grants out of the LIVE catalogue of a
+                 store built from the migrations and assert cd_engine holds no privilege of any
+                 kind on schema witness. Unreachable store = non-zero exit with a stated reason,
+                 never a skip.                               PLANT: GRANT USAGE/SELECT on witness
+                                                             to cd_engine in the migrations.
+      CD-AC-005  CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES  an absent panel row and a stale panel
+                 row both resolve to UNAVAILABLE; no input resolves absence to AGREES.
+                                                             PLANT: default a missing panel to Agrees.
+      CD-AC-012  CD-RT-012-NO-EXECUTION-INTERFACE   source scan for order/execution/broker
+                 interfaces across the whole application tree.  PLANT: a place_order stub.
+                 CD-RT-012-LOCKFILE-DENYLIST        the dependency manifest and lockfile scanned
+                 against a broker-SDK denylist.              PLANT: add a broker SDK line.
+                 CD-RT-012-EGRESS-NO-BROKER         compose egress: cd-engine, cd-public,
+                 cd-private and cd-store have no egress at all, and no allowlist anywhere names a
+                 broker host.                                PLANT: add a broker host to an allowlist.
+    Each plant must violate the PROPOSITION, not merely trip the string the checker greps for. A
+    guard that catches only the exact planted instance and not its class is a defect Assurance is
+    instructed to hunt, so build for the class.
+
+  B4_engineer_test_run: >
+    Run every declared register command yourself, on the clean tree and with each plant applied to
+    a THROWAWAY COPY (`git archive <sha> | tar -x -C <tmpdir>` — never mutate the worktree, never
+    create a git worktree for this). Record the exact command lines and exit codes in your Build
+    Log entry as your own evidence. This is implementation testing and it is NOT assurance; it does
+    not become assurance by being thorough (PBG-SOD-001).
+
+# --- continuity return ------------------------------------------------------------------------- #
+required_return:
+  form: READY_FOR_ASSURANCE with the exact SHA, or a precise blocked state
+  blocked_states: [DISPATCH_INCOMPLETE, SCOPE_INSUFFICIENT, AMBIGUITY_BLOCKING,
+                   CONTROL_NOT_SATISFIABLE, FRAMEWORK_DEFECT, WAITING_EXTERNAL_DEPENDENCY]
+  durable_record: >
+    A Build Log entry under governance/engineering/build-log/, committed on the dispatched branch,
+    following the shape of BL-20260818T180133Z-0002 and carrying: exact SHA, actor CD-ENG-WO2-01,
+    what was implemented, what was deliberately NOT implemented, every command run with its exit
+    code, evidence references, risks, and the next safe action. A result that exists only in
+    conversation is not project state (PBG-CONT-007). ACTIVE_WORK.yaml is the Project Lead's and
+    must not be touched.
+  commit_discipline: >
+    Coherent commits on wo-2-skeleton, message prefix [CRASH-DETECTOR]. The pre-commit hook is
+    commissioned repository-locally (core.hooksPath=pbg/tools/hooks) and applies in this worktree:
+    never use --no-verify.
+
+expected_next_actor: PROJECT_LEAD
+gate_this_feeds: >
+  A separate INDEPENDENT Assurance dispatch (distinct actor_id CD-ASR-WO2-01, PBG-SOD-001
+  non-waivable) whose PASS on all five planted violations is the WO-2 gate. The Product Owner
+  reviews before WO-3.

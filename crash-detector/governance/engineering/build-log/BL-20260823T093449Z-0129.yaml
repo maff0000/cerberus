@@ -1,0 +1,148 @@
+# ================================================================================================ #
+# BL-20260823T093449Z-0129 — A MID-FLIGHT COMMUNICATION TO A LIVE READ-ONLY AUDITOR, DISCLOSED IN
+# THE SAME HOUR IT WAS SENT. AND THE FINDING THAT MADE IT NECESSARY: TWO INSTANCES OF ONE SEAT
+# SHARED A SCRATCH DIRECTORY AND NOBODY NOTICED.
+# ================================================================================================ #
+entry_id: BL-20260823T093449Z-0129
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T09:34:49Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: a7a86703e92e9068802276bb906bce1cee71c6ee   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t` (CD-PL-F36). NOT TRANSCRIBED.
+
+why_this_entry_exists_at_all: >
+  **BECAUSE THE PROJECT LEAD SENT A MESSAGE TO A LIVE READ-ONLY AUDITOR IN THE MIDDLE OF ITS AUDIT,
+  AND AN UNDISCLOSED PL -> AUDITOR COMMUNICATION AT A GATE IS INDISTINGUISHABLE FROM INTERFERENCE
+  WHEN SOMEBODY FINDS IT LATER.** It is recorded in the same hour it was sent rather than banked
+  with the verdict, and the reason is `CD-PL-F125`, raised by this seat ninety minutes ago: leaving
+  the durable record until the convenient moment is the defect, not the schedule.
+
+# ================================================================================================ #
+# 1. THE FINDING THAT MADE IT NECESSARY
+# ================================================================================================ #
+CD_PL_F128:
+  severity: MEDIUM
+  title: >
+    **TWO INSTANCES OF THE SEVENTH SEAT SHARED ONE `/tmp` SCRATCH DIRECTORY, WITH SEMANTICALLY
+    COLLIDING FILENAMES, AND NOTHING IN THIS PROJECT'S METHOD WOULD HAVE CAUGHT IT.**
+  measured: >
+    `ls -la --time-style=+%FT%T /tmp/asr7/` — **NAMES AND MTIMES ONLY; NO FILE IN THAT DIRECTORY WAS
+    OPENED BY THIS SEAT.** The directory was created by instance 1 at 09:58 local and has been
+    written by instance 2 from 10:20 local onward. It currently holds files from BOTH, interleaved.
+    **INSTANCE 1's, WRITTEN 09:50-09:58 LOCAL:** `r6_probe.py`, `r6_probe2.py`, `r6_probe3.py`,
+    `r6_demo.py`, `fieldless.py`, `ac005.py`, `ac005b.py`, `ac005c.py`, `independent.py`,
+    `t20c.py`, `sweep_tip.txt`.
+    **INSTANCE 2's, 10:20 LOCAL ONWARD:** `route6.py`, `recon.py`, `demo.py`, `meta.py`, `f01.py`,
+    `escape3.py`, `t20.py`, `t20b.py`, `t20exec.py`, `validator.py`, `t9.py`, `instr_sealed.txt`.
+    Instance 1 also left `/tmp/asr7-base`, `/tmp/asr7-escape3`, `/tmp/asr7-excl`,
+    `/tmp/asr7-plants`, `/tmp/asr7-tables`, all untouched since 09:59 local.
+  the_finding: >
+    **THE STALE NAMES COLLIDE WITH THE LIVE ONES ON MEANING, NOT MERELY ON PATH.** A dead
+    context's `r6_*` probes sit beside a live `route6.py`; a dead `t20c.py` sits beside a live
+    `t20.py`/`t20b.py`/`t20exec.py`; a dead `sweep_tip.txt` is a captured output that reads as
+    current to anyone who cats it. **A GLOB, A STALE IMPORT BY MODULE NAME, OR A SKIMMED `ls` HANDS
+    A DEAD INSTANCE'S ARTEFACT TO A LIVE AUDITOR AS THOUGH IT WERE ITS OWN MEASUREMENT.**
+    That is `CD-PL-F98` exactly — a probe whose provenance was not checked — arriving by a route
+    F98 never contemplated, which is **ACROSS TWO LIVES OF THE SAME SEAT IDENTITY.**
+  why_no_control_would_have_caught_it: >
+    Every provenance discipline this project has built points at the TREE: fingerprints, `tree:`
+    lines, pristine extractions, base/tip contrasts. **NOT ONE OF THEM LOOKS AT THE SCRATCH
+    DIRECTORY WHERE THE ACTUAL PROBES ARE WRITTEN AND RUN.** `/tmp` is declared "explicitly safe
+    diagnostic artefacts" in every dispatch this project has issued and is therefore the one place
+    nobody measures. **THE SEALED-CLASS ARGUMENT AT THIS VERY GATE WAS SETTLED BY PROBES RUN IN
+    EXACTLY SUCH A DIRECTORY.**
+  a_second_order_point_recorded_and_not_resolved: >
+    This was found ONLY because a background `find` from earlier in this session happened to
+    complete and list `/tmp`. **IT WAS NOT LOOKED FOR. NOBODY HAS EVER LOOKED FOR IT**, across six
+    prior Assurance seats and seven Engineer seats, all of which used `/tmp` the same way and
+    several of which had a second instance. **WHETHER ANY EARLIER SEAT WAS CONTAMINATED THIS WAY IS
+    AN OPEN QUESTION THIS SEAT IS RAISING AND CANNOT ANSWER**, and it is put on the meta-assurance
+    docket rather than waved away.
+  not_remedied_here: >
+    Nothing was deleted. **THE STALE FILES ARE DELIBERATELY LEFT IN PLACE**: if instance 2 has
+    already read one, destroying it would destroy the evidence of a contamination that may need to
+    be recorded. The decision on its own scratch space is the auditor's, not the reconciler's.
+
+# ================================================================================================ #
+# 2. THE COMMUNICATION, DISCLOSED IN FULL SUBSTANCE
+# ================================================================================================ #
+mid_flight_communication_to_CD_ASR_WO2R3_04:
+  sent_utc: '2026-08-23T09:34Z'
+  channel: 'PL -> live sub-agent message. It is DISCLOSED HERE BECAUSE THE RECORD IS THE ONLY PLACE IT EXISTS (PBG-CONT-007).'
+  what_it_said:
+  - 'that `/tmp/asr7` is shared and not all its own, with the eleven pre-10:17 filenames ENUMERATED so it can tell them apart'
+  - 'that the collision is semantic and therefore dangerous, naming the CD-PL-F98 class'
+  - 'three options — fresh scratch directory, delete the eleven, or check mtimes before reading — **explicitly left to the seat to decide**'
+  - 'that if it believes it already read a stale file it should SAY SO IN ITS VERDICT, framed as a measurement about its own evidence chain and **NOT as a mark against it**'
+  - 'that its ceiling is UNCHANGED at 11:11:32Z despite the operator raising the wrapper timeout, with the live-process measurement behind that claim'
+  - 'that the Project Lead has seen `VERDICT-SEVENTH-SEAT.md` exists and **HAS NOT OPENED IT AND WILL NOT UNTIL THE SEAT RETURNS**'
+  what_it_deliberately_did_NOT_say: >
+    **NOTHING ABOUT INSTANCE 1'S DIRECTION OR CONCLUSIONS**, which this seat does not know and has
+    not read. The message says so in terms, and adds that the leaked filenames **ARE NOT A
+    SUGGESTED ORDER OF WORK AND MUST NOT BE TREATED AS ONE**, because the brief instructs the seat
+    to derive its own targets and its own tables and that instruction stands unchanged.
+  why_this_is_not_interference: >
+    It changes no target, no criterion, no grade and no scope. It is a warning to DISTRUST
+    something, which can only widen an auditor's scepticism and cannot narrow it. **THE PROJECT
+    LEAD STILL WILL NOT ARGUE THE VERDICT DOWN OR UP AND STILL HAS NO AUTHORITY TO DO EITHER.**
+  the_honest_residual_risk_stated_rather_than_dismissed: >
+    **NAMING THE ELEVEN FILES LEAKS A LITTLE OF WHAT INSTANCE 1 HAPPENED TO TOUCH FIRST, AND THERE
+    WAS NO WAY TO WARN THE SEAT WITHOUT IT.** The alternative — stay silent and let a live auditor
+    possibly read a dead context's artefact as its own — was worse. **THE TRADE IS DISCLOSED AND
+    NOT DEFENDED, AND THE SEVENTH SEAT'S VERDICT SHOULD BE READ KNOWING IT WAS MADE.**
+
+# ================================================================================================ #
+# 3. THE WRAPPER CEILING MOVED, AND IT DOES NOT HELP THIS SESSION
+# ================================================================================================ #
+the_operator_raised_the_ceiling:
+  observed: >
+    `.wo2b-runner.sh` and `.wo2r3k-runner.sh` both changed on disk at **09:26:31Z**, `timeout 7200`
+    -> **`timeout 21600`** (2h -> 6h). That is a direct response to `CD-PL-F125`, raised at the
+    boundary forty minutes earlier.
+  and_the_measurement_that_matters: >
+    **IT DOES NOT APPLY TO THIS SESSION AND THIS WAS MEASURED RATHER THAN ASSUMED.**
+    `ps -eo pid,lstart,etimes,args` shows the live process is **STILL `timeout 7200`**, started
+    09:11:32Z. **EDITING THE SCRIPT DOES NOT CHANGE AN ALREADY-RUNNING `timeout`. THIS SESSION
+    STILL DIES AT 11:11:32Z**, exactly as `BL-...-0128` recorded, and the new ceiling applies to the
+    NEXT launch. **A REMEDY THAT LANDS DURING THE RUN IT WAS MEANT TO SAVE IS NOT A REMEDY FOR THAT
+    RUN**, and reading the script instead of the process would have produced the comfortable wrong
+    answer.
+  note_on_BL_0128: >
+    `BL-20260823T091648Z-0128` records `timeout 7200` and `wrapper_ceiling_utc: 2026-08-23T11:11:32Z`.
+    **BOTH REMAIN CORRECT FOR THIS SESSION AND ARE NOT SUPERSEDED.** This entry records a
+    subsequent change to the environment, not a correction to a measurement.
+
+# ================================================================================================ #
+# 4. GATE DISCIPLINE
+# ================================================================================================ #
+gate_discipline: >
+  **NOTHING MOVED.** No increment, no disposition, no code change, no instrument change, no grade,
+  nothing under `pbg/`, nothing in `/tmp` deleted. `686a374` IS STILL `686a374`.
+  **`governance/assurance/WO-2R3/VERDICT-SEVENTH-SEAT.md` EXISTS IN THE WORKING TREE AND THIS SEAT
+  HAS NOT OPENED IT AND HAS NOT STAGED IT.** A verdict is banked when it is RETURNED, not while it
+  is being typed. This entry is the record of a communication and a finding; it is not a
+  reconciliation and it grades nothing.
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE.** Unchanged from BL-...-0128: ITEM 3's closure and the plant-drift carrier remain OWED and
+  awaiting the Product Owner's sequencing AFTER the verdict.
+
+decision_refs:
+  - CD-D-170            # the instance-2 re-launch this entry is protecting
+  - CD-PL-F98           # the provenance class this finding extends, by a route F98 never contemplated
+  - CD-PL-F125          # why this entry is written now rather than banked later
+  - PBG-CONT-007        # the communication exists only if the record carries it
+  - PBG-AUTH-006        # the Project Lead writes neither the fix nor the assurance
+  - PBG-AUTH-003        # a PASS is not an acceptance and neither is a RED
+
+next_safe_action: >
+  **UNCHANGED. NOTHING MOVES UNTIL `CD-ASR-WO2R3-04` INSTANCE 2 RETURNS.** On its return the Project
+  Lead reconciles it BY MEASUREMENT and banks it VERBATIM AND BESIDE its predecessors, and only then
+  clears the three stale disposition keys, builds the plant-drift carrier, and puts ITEM 3's closure
+  to the Product Owner.
+  **IF THIS SESSION IS KILLED FIRST, THE NEXT PROJECT LEAD RE-LAUNCHES AS INSTANCE 3 — FIRST,
+  BEFORE WRITING ANYTHING — AND GIVES IT A SCRATCH DIRECTORY THAT NO PRIOR INSTANCE HAS TOUCHED
+  (CD-PL-F128). IT WILL HAVE SIX HOURS RATHER THAN TWO.**
+
+continuity_record_commit: PENDING   # RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN. TWO ARMS IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd` (CD-PL-F101, CD-PL-F98).

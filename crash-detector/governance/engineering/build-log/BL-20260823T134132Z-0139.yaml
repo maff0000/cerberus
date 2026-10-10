@@ -1,0 +1,222 @@
+# ================================================================================================== #
+# BL-20260823T134132Z-0139 — PROJECT LEAD BOUNDARY. **THE PHASE MOVES, AND IT MOVES ON THE PRODUCT
+# OWNER'S RULING AND NOT ON THIS SEAT'S JUDGEMENT.**
+#
+# `PO-DECISIONS-0021` (commit `e6f9802`, authored by Matt Scott and by NO SEAT) ACCEPTS BOTH
+# META-ASSURANCE `RED`s, NAMES THE CAUSE, **OWNS IT AS THE PRODUCT OWNER'S OWN ERROR ON THE RECORD**,
+# AND ORDERS ONE THING: **INCREMENT 12, THE COORDINATION DISCIPLINE.**
+#
+# **AND IT IS NOT A BAN ON CONCURRENCY. RULING 3 CARRIES MATT'S OWN DIRECTION VERBATIM:** *"multiple
+# PLs / engineers on non-overlapping fixed tasks is fine, and great if it is faster — just no redoing
+# each other's work, and discipline that holds."* **THE INVARIANT IS NON-OVERLAP. THE PRIOR
+# BOUNDARY'S INSTINCT — SERIALISE EVERYTHING — IS SUPERSEDED BY RULING 3 AND THIS SEAT DOES NOT
+# ARGUE IT.**
+#
+# **THIS BOUNDARY DISPATCHES `CD-ENG-COORD-01`, A FRESH ENGINEER IDENTITY, AND NOTHING ELSE MOVES.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T134132Z-0139
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T13:41:32Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: >
+  **PID 1272349, under wrapper PID 1272348, `timeout 21600`.** **NAMED, AND THE CHECK WAS RUN BEFORE
+  A SINGLE BYTE WAS WRITTEN, BECAUSE `Q10` IS OPEN AND `CD-PL-F146` IS DORMANT AND NOT CLOSED:**
+  `ps -eo pid,etime,args | grep -i claude | grep -v grep` -> **EXACTLY ONE `claude` PROCESS AND ITS
+  OWN `timeout` WRAPPER. THERE IS NO SECOND PROJECT LEAD SESSION AT THIS BOUNDARY.** The ceiling was
+  MEASURED FROM THE LIVE PROCESS AND NOT READ FROM A SCRIPT (`CD-PL-F127`): 21600s from 13:41Z.
+phase: BUILD
+branch: main
+base_sha: e6f980252854d6a79efaf42d4fddb998f19d8540   # the commit carrying PO-DECISIONS-0021. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36). NEVER transcribed.
+
+# ================================================================================================== #
+the_boot_and_the_reconciliation_TAKEN_BEFORE_ANY_WORK:
+# ================================================================================================== #
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: '**AMBER**, `CONTINUITY_MATCH` / `RESUME_AMBER`, observed_sha `e6f9802`, assigned_role `PROJECT_LEAD`, PID `PID.md@538e30f3bf4f1803`, BLUEPRINT `790ac6db47450b66`.'
+  the_ONLY_amber_cause: '`roadmap_identity: None — Roadmap not found at ROADMAP.md`. **LONG-STANDING, IT IS THE SOLE CAUSE, `blocking_failures` IS EMPTY, AND IT IS NOT REPAIRED HERE AND NOT THIS BOUNDARY''S SUBJECT.** It is noted rather than fixed, as at every prior boundary.'
+  the_thing_that_is_DIFFERENT_and_it_is_the_headline: >
+    *** **`main` BOOTS `CONTINUITY_MATCH` AT ITS OWN TIP. THAT IS THE FIRST BOUNDARY IN SIX WHERE
+    THAT IS TRUE OF THE INHERITED STATE RATHER THAN OF A REPAIR THIS SEAT JUST MADE.** *** Five
+    consecutive commits booted `RESUME_BLOCKED` (`a31c799`, `cd79952`, `bdf85da`, `c6ee53e`, and
+    `5f09627`'s failed repair), `8cd1242` fixed it, and `e6f9802` inherited the fix. **A COLD AGENT
+    CAN NOW START THIS PROJECT FROM ITS TIP. THAT PROPERTY WAS ABSENT FOR MOST OF TODAY.**
+  worktree_state_MEASURED: '`git status --porcelain` -> **0 TRACKED MODIFICATIONS**, 57 untracked. The 57 are operator wrapper artefacts (`.wo2*`/`.continue-prompt.txt`) and `pbg/tools/pbg/__pycache__/`. **ZERO GOVERNED FILES. THIS SEAT ADDED NOTHING TO IT** — the count rose from 48 because the operator wrapper wrote nine more of its own files, not because a seat did.'
+  recorded_versus_observed: '**AGREE.** `ACTIVE_WORK.yaml` `last_build_log_entry: BL-20260823T133002Z-0138` and that entry EXISTS in this tree. `current_phase` said `GATE` and the phase WAS `GATE`. **NOTHING WAS SILENTLY CORRECTED AND NOTHING NEEDED TO BE.**'
+
+# ================================================================================================== #
+what_the_product_owner_ruled_and_what_this_seat_does_with_it:
+# ================================================================================================== #
+  ruling_1_BOTH_REDs_ACCEPTED: '**Not argued, not softened, not re-graded** (`PBG-AUTH-003`). *"The convergence of two independent methods is confirmation, not a shared blind spot. The finding is UPHELD and it is against the OPERATING PRACTICE, mine included — not against any seat''s craft."*'
+  ruling_2_THE_CAUSE_OWNED_BY_THE_PRODUCT_OWNER: >
+    *"I dispatched PO-DECISIONS-0020 (wo2r3n) while PO-DECISIONS-0019 (wo2r3m) was still alive, BOTH
+    pointed at the WO-2R3 lane and the same increment stream. **The record survived only because
+    git's index lock serialised the writes.** My launch-lease lived in the driver and not in my own
+    hand. This is the PO's error, on the record."*
+    **THIS SEAT ADDS ONE MEASURED OBSERVATION AND NOTHING ELSE: THAT SENTENCE IS THE WHOLE
+    JUSTIFICATION FOR INCREMENT 12. A RECORD THAT SURVIVES BY AN ACCIDENT OF `.git/index.lock`
+    HAS NO CONTROL ON IT AT ALL** — the lock serialises two writes to one index; it says nothing
+    about two seats deciding to do the same work, and nothing about a reader whose material moves.
+  ruling_3_THE_INVARIANT_AND_THIS_SEAT_RECORDS_THAT_IT_WAS_CORRECTED: >
+    *** **"The invariant is therefore NOT one-writer-at-a-time. It is: no two live seats share a TASK
+    or a WRITE SCOPE."** *** **THE PRIOR BOUNDARY'S DEFAULT — AND THIS SEAT'S OWN INSTINCT ON READING
+    THE TWO `RED`s — WAS TO SERIALISE.** Ruling 3 rejects that in Matt's own words. **BUILT, NOT
+    BANNED. THE CORRECTION IS RECORDED HERE RATHER THAN ABSORBED SILENTLY, BECAUSE A RULING THAT
+    OVERTURNS A SEAT'S INSTINCT IS EXACTLY THE KIND THAT GETS QUIETLY RE-NARROWED ONE BOUNDARY LATER.**
+  ruling_4_A_PREDICTION_IS_NOT_A_CARRIER: '*"a fix that held N times then failed is structural-until-proven."* **CARRIED INTO THE DISPATCH AS THE ACCEPTANCE STANDARD FOR EVERY ITEM: a comment, a rule, a checklist or a dispatch paragraph is NOT a deliverable at increment 12. An executable that refuses is.**'
+  ruling_5_HARVEST: 'Built ONCE here, harvested to the framework later. **`IMP-013 + IMP-014 + IMP-023 + IMP-037` converging.** **NOT DONE AT THIS BOUNDARY AND NOT THIS INCREMENT''S SCOPE** — and see `Q13`.'
+  ruling_6_SEQUENCE: 'increment 12 -> **the NINTH gate on the corrected three-tier perimeter** -> parallel disjoint remediation. Standing: `CD-AC-005` RED, `CD-AC-002` AMBER, gate SHUT, system safe to leave running. **ALL FOUR CARRIED UNCHANGED. NO GRADE MOVES AT THIS BOUNDARY.**'
+
+# ================================================================================================== #
+the_dispatch_ISSUED_AND_OUT:
+# ================================================================================================== #
+  dispatch_id: CD-DISPATCH-INC12-COORDINATION-ENGINEER
+  actor_id: 'CD-ENG-COORD-01 — **FRESH. NEVER USED ON THIS PROJECT.** It is none of `CD-ENG-WO2R3-01` through `-09`, and none of the ten Assurance/meta identities.'
+  target: 'branch `inc12-coordination` cut from `main` at `e6f9802`, worktree `/srv/crash-detector-inc12`, scratch `/tmp/cd-eng-coord-01/`.'
+  six_items: >
+    **(1)** the WORK-CLAIM registry — a DIRECTORY, one file per claim, `O_EXCL` and not a
+    check-then-write; **(2)** DISJOINT WRITE SCOPES — the scope algebra failing closed, the live
+    disjointness check INCLUDING the write-against-READ-scope case, PER-SEAT build-log id blocks, the
+    no-shared-`ACTIVE_WORK`-edit check in BOTH directions, and **`CD-PL-F132`'s real fix as a
+    range-checkable executable run BACKWARD over this project's own history**; **(3)** the MERGE /
+    RECONCILIATION step with its three assertions — containment, non-overlap, identity; **(4)** the
+    LAUNCH LEASE binding the driver AND the hand; **(5)** FOUR PLANTS IN CONTRAST FORM; **(6)** the
+    three places `CD-RULE-004` requires.
+  the_arm_that_is_NEW_at_this_increment_and_it_is_the_one_that_matters: >
+    *** **ARM 3, THE NON-VACUITY ARM: WITH THE CONTROL INTACT, A DISJOINT ATTEMPT IS ADMITTED AND
+    PROCEEDS IN PARALLEL.** *** **A CONTROL THAT REFUSES BOTH THE OVERLAPPING AND THE DISJOINT CASE
+    HAS NOT IMPLEMENTED RULING 3 — IT HAS BANNED CONCURRENCY, WHICH THE RULING EXPLICITLY REJECTS.**
+    Two arms would have satisfied this project's established contrast form and would have been WRONG
+    here. **THAT IS THE ONE PLACE THIS DISPATCH GOES BEYOND THE ESTABLISHED STANDARD, AND THE REASON
+    IS WRITTEN SO IT CAN BE OVERTURNED.**
+  what_this_seat_TOLD_the_engineer_that_it_would_rather_not_have: >
+    **(a)** that this dispatch was written by the seat whose practice was graded `RED` twice, about
+    the fix for its own defect, and that **"if any item here is a restatement of the problem dressed
+    as a control, say so — that is the most valuable thing you could return"**; **(b)** that `IMP-023`
+    **DOES NOT EXIST IN THIS REPOSITORY** and it must build to the ruling's clause and say it could
+    not read the register; **(c)** the `pbg/` hook trap in ITEM 4(ii) IN ADVANCE, with the instruction
+    that the honest answer may be the words *"NOT PROVED TO BE CARRIED ANYWHERE"*.
+
+# ================================================================================================== #
+decisions_ruled_here:
+# ================================================================================================== #
+- id: CD-D-174
+  decision: >
+    **INCREMENT 12 IS BUILT ON A SEPARATE BRANCH IN ITS OWN WORKTREE AND MERGED BY THE ACCOUNTABLE
+    SEAT — THE INCREMENT EXECUTES UNDER THE DISCIPLINE IT BUILDS.**
+  the_reasoning_stated_so_it_can_be_overturned: >
+    Deliverable (b) is disjoint write scopes and deliverable (c) is a merge step. An increment that
+    built them while editing the accountable seat's own checkout would be the exact thing it forbids,
+    and this project has just been graded `RED` twice for that class of thing. **THE COST IS A MERGE
+    STEP THAT COULD HAVE BEEN AVOIDED. THE BUY IS THAT ITEM 3 GETS ITS FIRST REAL TEST ON ITS OWN
+    INCREMENT.** **IF THE ENGINEER'S OWN MERGE INSTRUMENT REFUSES ITS OWN MERGE, THAT IS A RESULT AND
+    IT IS RECORDED AS ONE.**
+- id: CD-D-175
+  decision: >
+    **BUILD LOG ID BLOCK `0300`-`0399` IS ALLOCATED TO `CD-ENG-COORD-01`, BOUNDED AT BOTH ENDS.**
+    Existing allocation, MEASURED and not assumed: `0001`-`0059` CLOSED (`CD-D-132`) · `0060`-`0099`
+    CLOSED and exhausted (`CD-D-173`) · `0100`-`0199` PROJECT LEAD on `main`, at `0139` · `0200`-`0299`
+    the WO-2R3 lane (`CD-D-173`).
+  why_this_is_a_project_lead_decision_and_not_a_product_authority_question: >
+    **ON `CD-D-173`'S PRECEDENT, WHICH THE EIGHTH ASSURANCE SEAT UPHELD BY ITS OWN DERIVATION AND NOT
+    BY DEFERENCE** (`VERDICT-EIGHTH-SEAT.md` §7.7: *"I uphold `CD-D-173` and I uphold its
+    classification as a Project Lead decision"*). This decision differs from `CD-D-173` in ONE
+    respect and the difference is disclosed: **`CD-D-173` allocated a block to a LANE; this allocates
+    one to a SEAT.** That is precisely the move `PO-DECISIONS-0021` ruling 3(b) orders ("per-seat
+    build-log id blocks"), so the widening is the ruling's and not this seat's.
+- id: CD-D-176
+  decision: >
+    **INCREMENT 12 LANDS ON `main` AND NOT ON THE `wo-2r3` LANE. THE LANE IS FROZEN AT `be0b355`.**
+  the_reason: >
+    The coordination discipline governs SEATS, not the product; its record files live on `main`. **AND
+    THE OPERATIONAL REASON IS THE ONE THAT MATTERS: `PO-DECISIONS-0021` RULING 6 PUTS THE NINTH
+    ASSURANCE SEAT OVER THE CORRECTED THREE-TIER PERIMETER IMMEDIATELY AFTER THIS INCREMENT. IF
+    INCREMENT 12 TOUCHED THE LANE, THE NINTH SEAT'S PRODUCT TARGET WOULD MOVE UNDER THE VERY GATE IT
+    IS BEING DISPATCHED TO GRADE — WHICH IS `CD-PL-F134` COMMITTED DELIBERATELY AND IN ADVANCE.**
+- id: CD-D-177
+  decision: >
+    **THIS PROJECT LEAD DECLARES ITS OWN WRITE SCOPE FOR THE DURATION OF `CD-ENG-COORD-01`'s LIFE, IN
+    WRITING, BEFORE THE SEAT LAUNCHES: `governance/engineering/ACTIVE_WORK.yaml`, its own Build Log
+    block `0100`-`0199`, and `governance/dispatch/`. IT WILL TOUCH NO PATH IN THE ENGINEER'S SCOPE.**
+  why_it_is_a_decision_and_not_an_intention: >
+    *** **`CD-PL-F134` IS "MAIN MOVED UNDER A LIVE READER". ITS NAMED REMEDY WAS "NOT REMEMBER". THE
+    INSTRUMENT THAT WOULD ENFORCE THIS DOES NOT EXIST YET — THE ENGINEER IS BUILDING IT.** *** So the
+    only thing available at THIS boundary is a declaration, and **A DECLARATION IS EXACTLY THE CLASS
+    OF THING RULING 4 CALLS "A PREDICTION, NOT A CARRIER".** **IT IS RECORDED WITH THAT WEAKNESS
+    STATED, NOT DRESSED AS A CONTROL.** The Engineer is told the scope so that **IF THIS SEAT BREACHES
+    IT, THE ENGINEER CAN RAISE IT** — which is the only enforcement that exists today.
+
+findings_raised_by_the_project_lead_at_this_boundary: []
+# **NONE. AND THAT IS ITSELF DISCLOSED RATHER THAN LEFT BLANK: this boundary read, reconciled and
+# dispatched; it re-measured no instrument and re-derived no count, so it had no opportunity to find
+# what it did not look at. See `what_was_not_verified` below.**
+
+# ================================================================================================== #
+what_was_NOT_verified_by_the_project_lead_at_this_boundary:
+# ================================================================================================== #
+- '**NO INSTRUMENT WAS RE-RUN.** The sweep, the suite (1726/0), the plant set, `CD-RT-012`, the grant matrix exit 3 and the sealing count of ZERO are ALL `BL-...-0133`/`BL-...-0134` MEASUREMENTS **CARRIED FORWARD AS RECORD, NOT AS FRESH OBSERVATION.** They will be re-measured for the ninth Assurance dispatch, at the SHA that dispatch names, and not before. **`T7` — the inherited-claim mechanism — IS THE FINDING THAT SAYS THIS PARAGRAPH MATTERS.**'
+- '**NEITHER META-ASSURANCE VERDICT WAS RECONCILED ITEM-BY-ITEM AT THIS BOUNDARY.** Both are BANKED and the Product Owner has ACCEPTED both grades; **the remaining item-level reconciliation of the six items the second seat raised is STILL OWED and is NOT done here.** It is carried forward. **BANKED IS NOT RECONCILED AND NEITHER IS ACCEPTED** (`PBG-AUTH-003`).'
+- '**THE `inc12-coordination` BRANCH AND `/srv/crash-detector-inc12` WORKTREE DID NOT EXIST WHEN THE DISPATCH FILE WAS WRITTEN.** The dispatch names them as prepared. **THEY ARE CREATED AND THEIR PORCELAIN MEASURED IN THE SAME BOUNDARY AS THE LAUNCH, AND IF THAT MEASUREMENT FAILS THE LAUNCH DOES NOT HAPPEN.**'
+- '**THE `21600s` CEILING WAS MEASURED FROM `ps` ONCE, AT 13:41Z, AND IS NOT RE-MEASURED PER ITEM.** A wrapper that is reconfigured mid-session would not be visible from this entry.'
+- '**NO CHECK EXISTS THAT WOULD DETECT A SECOND PROJECT LEAD SESSION STARTING AFTER 13:41Z.** The `ps` sweep is a POINT MEASUREMENT. `Q10` and `CD-PL-F146` are open and DORMANT, NOT CLOSED. **THAT IS PRECISELY WHAT ITEM 4 IS BEING BUILT TO FIX, AND UNTIL IT LANDS THIS PARAGRAPH IS THE ONLY THING STANDING WHERE A CONTROL SHOULD BE.**'
+
+# ================================================================================================== #
+open_product_authority_questions_THIS_SEAT_ANSWERS_NONE:
+# ================================================================================================== #
+  Q7: '**CARRIED, UNCHANGED.** May a dispatch be recorded "ISSUED AND OUT" without a durable artefact proving receipt — and the rule must say WHERE the evidence lives, not merely that it must exist.'
+  Q8: '**CARRIED, UNCHANGED.** Did the Product Owner intend a second PID §6 row? Ruling 1 says "The §6 rows" — plural — and supplies one.'
+  Q9: '**CARRIED, UNCHANGED.** `PID.md:130` carries a seat-authored prohibition in a PO-only document. Adopt it, attribute it, or strike it.'
+  Q10: '**CARRIED, AND IT IS THE OPERATOR''S NOT THE PO''S.** Which session is the Project Lead, and what prevents two? **THIS BOUNDARY MEASURED ONE AND ONLY ONE — but a point measurement is not a control, and `CD-PL-F146` is DORMANT, NOT CLOSED. ITEM 4 IS THE FIRST REAL ANSWER THIS PROJECT WILL HAVE TO IT.**'
+  Q11: '**CARRIED, AND INCREMENT 12 RUNS STRAIGHT INTO IT.** The `pbg/` pre-commit carrier. `core.hooksPath = pbg/tools/hooks`, the tracked hook greps `^governance/authority/` only, and **`pbg/` IS READ-ONLY TO EVERY SEAT (`PBG-FWK-013`), SO NO ACTOR THIS PROJECT DISPATCHES MAY CLOSE IT.** It needs a bounded framework dispatch from the human.'
+  Q12: >
+    **NEW, AND IT IS `Q11` ARRIVING AT A SECOND DOOR.** `PO-DECISIONS-0021` ruling 3(d) requires the
+    launch lease to bind **"the driver AND the PO's own hand"**. **THE DRIVER HALF IS BUILDABLE — a
+    launch wrapper that refuses to `exec`. THE HAND HALF HAS NO CARRIER THIS PROJECT CAN WRITE**,
+    because the only automatic pre-write carrier in this repository is the pinned `pbg/` hook. **THE
+    ENGINEER IS INSTRUCTED TO BUILD THE CHECK AND THEN DECLARE, IN `CD-RULE-006`'S REQUIRED WORDS,
+    THAT NOTHING INVOKES IT — RATHER THAN DRESS AN UNINVOKED CHECK AS A BINDING.** *** **SO
+    DELIVERABLE (d) WILL LAND HALF-CARRIED BY CONSTRUCTION, AND THE PRODUCT OWNER IS BEING TOLD THAT
+    NOW AND NOT AT THE GATE.** ***
+  Q13: >
+    **NEW. `IMP-023` DOES NOT EXIST IN THIS REPOSITORY.** Ruling 3(b) orders per-seat build-log id
+    blocks *"(closing IMP-023)"*, and ruling 5 names `IMP-013`, `IMP-014`, `IMP-023` and `IMP-037` as
+    converging. **MEASURED: `grep -rl "IMP-023"` over every tracked and untracked path returns
+    `governance/decisions/PO-DECISIONS-0021.md` AND NOTHING ELSE. The improvement register is not in
+    this tree, including not under `pbg/`.** **IS THE RULING'S OWN CLAUSE THE CLOSURE CRITERION, OR IS
+    THERE AN UPSTREAM `IMP-023` TEXT THE INCREMENT MUST MEET? A SEAT CANNOT CLOSE A REGISTER ENTRY IT
+    CANNOT READ, AND IT WILL NOT CLAIM TO.**
+
+decision_refs:
+- PO-DECISIONS-0021   # rulings 1-6 — the whole of this boundary's authority
+- CD-D-174            # NEW — increment 12 executes under the discipline it builds
+- CD-D-175            # NEW — per-seat build log block 0300-0399
+- CD-D-176            # NEW — increment 12 lands on main; the lane is frozen for the ninth gate
+- CD-D-177            # NEW — this seat's own declared write scope, with its weakness stated
+- CD-D-173            # the per-lane block allocation this one extends; UPHELD by the eighth seat
+- CD-D-115            # BLUEPRINT.md/PID.md protected from every seat including the Project Lead
+- CD-D-079            # both arms or no claim
+- CD-RULE-002         # per-seat commit identity; two identities in one history is the failure mode
+- CD-RULE-004         # a guard closes its class or declares its own limit — in all three places
+- CD-RULE-006         # NOT PROVED TO BE CARRIED ANYWHERE, and Q12 is where it bites
+- CD-RULE-009         # every count carries the command that produced it
+- PBG-SOD-001         # the Engineer and the Assurance Engineer are never the same agent
+- PBG-AUTH-003        # banked is not accepted; the PL does not argue a grade
+- PBG-CONT-007        # a sub-agent result that exists only in conversation is not project state
+- PBG-FWK-013         # pbg/ is read-only; editing it to make a control pass is a bypass
+- PBG-BOOT-002        # no agent self-assigns a role or widens its own scope
+
+next_safe_action: >
+  **1.** Create branch `inc12-coordination` at `e6f9802` and worktree `/srv/crash-detector-inc12`,
+  **MEASURE its porcelain**, and launch `CD-ENG-COORD-01` on
+  `CD-DISPATCH-INC12-COORDINATION-ENGINEER`. **IF THE PORCELAIN MEASUREMENT FAILS, THE LAUNCH DOES
+  NOT HAPPEN.**
+  **2.** While it is out: **NOTHING ELSE MOVES.** No increment, no disposition, no code change, no
+  instrument change, no grade, no finding closed. **THIS SEAT WRITES ONLY WITHIN `CD-D-177`'s
+  DECLARED SCOPE.**
+  **3.** On return: reconcile BY MEASUREMENT, **run the Engineer's OWN merge instrument over the
+  merge of its own branch into `main`**, bank, commit.
+  **4.** THEN **THE NINTH FRESH ASSURANCE SEAT** over the corrected three-tier perimeter, full
+  disclosure, **`CD-D-129`'s three clauses VERBATIM**, told `Q12` and `Q13` BEFORE it discovers them.
+  **DO NOT** touch the `wo-2r3` lane (`CD-D-176`). **DO NOT** move `CD-AC-002` or `CD-AC-005`.
+  **DO NOT** answer `Q7`-`Q13`. **DO NOT** admit, merge or promote anything to do with WO-2.
+expected_next_actor: 'CD-ENG-COORD-01, a FRESH Engineer sub-agent, then the Project Lead, then a FRESH Assurance seat.'

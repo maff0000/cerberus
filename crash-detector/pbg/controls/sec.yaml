@@ -1,0 +1,189 @@
+domain: SEC
+domain_label: Security and configuration
+controls:
+- control_id: PBG-SEC-001
+  title: Configuration is external to application logic
+  status: ACTIVE
+  purpose: 'Make an application''s behaviour a function of its declared configuration rather than of the
+    machine it happens to be on.
+
+    '
+  risk_addressed: 'Hardcoded runtime configuration and hidden host-specific defaults, which make an application
+    correct in exactly one environment and silently wrong everywhere else.
+
+    '
+  required_outcome: 'Configuration is supplied by environment variables, mounted configuration, command-line
+    arguments or a governed configuration service. No material runtime configuration is hardcoded in application
+    logic. No hidden host-specific defaults; material defaults are documented and tested. Environment-specific
+    configuration is separated from application code. Startup validation fails clearly when required configuration
+    is absent. The application never requires manual editing inside a running container. Configuration
+    identity is recordable in deployment provenance without revealing secret values.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - configuration schema
+  - .env.example
+  - missing-config startup test
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Twelve-Factor App III
+  - OWASP ASVS V14 configuration
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: BLUEPRINT
+  verification_note: 'Startup with a required variable absent must fail loudly and be tested. Scenario
+    C1.
+
+    '
+- control_id: PBG-SEC-002
+  title: Secrets are referenced, never embedded
+  status: ACTIVE
+  purpose: 'Keep credential material out of every durable artefact the framework produces.
+
+    '
+  risk_addressed: 'Secrets in code, Git history, evidence, logs, records, documentation, build arguments
+    or image layers. Once written they are effectively permanent, and evidence is the artefact PBGv1 required
+    without ever saying how to keep it clean.
+
+    '
+  required_outcome: 'No secret material in code, Git, evidence, logs, records, documentation or chat.
+    Secrets are referenced by name. A .env.example names variables and safe examples only. No secrets
+    in build arguments or image layers. Redaction happens at capture, not at publication, and is marked
+    rather than silent.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - secret scan results
+  - image layer scan where applicable
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - NIST SSDF PW.9
+  - OWASP ASVS V6
+  - CIS Controls v8 3.11
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: evidence.no_secret_material
+  verification_note: 'Automated scanning across the tree, evidence path, and where a build exists, image
+    history and layers. The scanner reports pattern class and location and never emits the matched value.
+    Scenario C4.
+
+    '
+- control_id: PBG-SEC-003
+  title: Interfaces are explicit and bounded
+  status: ACTIVE
+  purpose: 'Make what an application listens on, calls out to, and does when a dependency is missing a
+    designed property.
+
+    '
+  risk_addressed: 'Accidental public binding, unbounded retries against a failed dependency, and cross-project
+    coupling through filesystem imports rather than contracts.
+
+    '
+  required_outcome: 'A compute unit declares its permitted external contract in a governed, machine-readable
+    Unit Interface: what it exposes, what it consumes, what state it owns, where that state lands on the
+    host, and how it behaves when a dependency fails. Container paths are unconstrained; host mount sources
+    are relative and resolve inside the project root. Anything not declared is outside the authorised
+    contract. Explicit NONE is required — a missing section is an incomplete declaration, never permission.
+    The declaration is compared against the running unit where one exists, and claims that cannot be honestly
+    established, outbound network behaviour in particular, are reported NOT_VERIFIED rather than assumed.
+    Every host-visible runtime artefact the unit creates carries the commissioned application name as its
+    prefix — <appname>-<role>, or <appname>-<instance>-<role> where several commissioned instances may run
+    on one host. The prefix derives from the application identity recorded in project governance, never from
+    the directory, the Compose default, the repository, the host or the user, so that relocating the unit
+    does not rename what it owns. Artefacts enter scope through declared configuration, provenance labels or
+    Compose metadata; merely existing on the host does not make an artefact this unit''s. Cleanup requires
+    declared provenance AND observed ownership evidence together — a matching textual prefix is never on its
+    own authority to delete.'
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    traits:
+    - creates_process
+    - reaches_runtime
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - interface documentation
+  - dependency-failure test
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - OWASP ASVS V13 API
+  - Google SRE — handling overload
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: unit.interface_contract
+  verification_note: Strengthened 2026-08-03. Previously INHERITED_BASELINE deferring to the Blueprint
+    with no artefact, no schema and no verifier — the control demanded explicit bounded interfaces and
+    nothing could tell whether one existed.
+- control_id: PBG-SEC-004
+  title: A clean environment can build the application from declared sources
+  status: ACTIVE
+  purpose: 'Guarantee the application is reproducible somewhere other than the machine that made it.
+
+    '
+  risk_addressed: 'Dependence on undeclared host-global libraries or another project''s virtual environment,
+    which is invisible until the first clean build and is then expensive to unpick.
+
+    '
+  required_outcome: 'A project-owned dependency manifest and, where supported, a lockfile. No dependence
+    on undeclared host-global libraries or another project''s environment. Deterministic or controlled
+    resolution, build and runtime dependencies separated where practical, version pinning proportionate
+    to risk, dependency scanning, and licence and provenance review where required. No arbitrary dependency
+    downloads during normal startup.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - dependency manifest
+  - lockfile
+  - clean-environment build output
+  - scan results
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - NIST SSDF PW.4, PS.3
+  - SLSA
+  - OpenSSF supply-chain practices
+  schema_version: 2
+  discharge_mechanism: EXTERNAL_MECHANICAL_CHECK
+  verification_mechanism: EXTERNAL_CHECK_REF
+  verification_ref: clean-environment build
+  verification_note: 'A build or provision from a clean environment is exercised. Scenarios C1 and C9.
+
+    '

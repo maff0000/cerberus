@@ -1,0 +1,9 @@
+=== CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES [BASELINE] ===
+plant   : none   (n/a)
+command : PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q -p no:cacheprovider
+EXIT    : 0
+--- output (tail 25) ---
+........................................................................ [ 47%]
+........................................................................ [ 94%]
+........                                                                 [100%]
+152 passed in 0.31s

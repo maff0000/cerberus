@@ -1,0 +1,273 @@
+# ================================================================================================== #
+# BL-20260824T192219Z-0181 — PROJECT LEAD BOUNDARY. **Q35 IS RULED IN BOTH PARTS AT
+# `PO-DECISIONS-0030` (`0e6f094`, authored by Matt Scott and by NO SEAT). THE CONTROL-ROW INCREMENT
+# (16E) IS DISPATCHED AND OUT TO `CD-ENG-WO3-13`, A FRESH IDENTITY, SEQUENTIAL SINGLE-SEAT ON THE
+# `wo-3` LANE FROM `ef3c960`.**
+#
+# *** **AND THE INHERITED AMBER WAS NOT INHERITED. `CD-PL-F193` SAYS AN INHERITED CLAIM IS A
+# HYPOTHESIS UNTIL THIS SEAT RUNS IT, AND THIS SEAT RAN IT — ITS OWN PROBE, ITS OWN EXTRACTIONS,
+# ITS OWN SHELL. BOTH HALVES REPRODUCED EXACTLY.** ***
+#
+#   HYPOTHESIS 1 — THE STALE HALF EXISTS AND IS NOT VACUOUS. **CONFIRMED.** At `0e80a09`, a `VALUE`
+#   dial stamped `1970-01-01T00:00:00Z` carrying `calm` in a 600-second window is
+#   `REFUSED [STALE_CALM] at /equity_crash` on BOTH surfaces; the `2099` future stamp is REFUSED
+#   too; a genuinely fresh calm dial is STILL ADMITTED; and the same 1970 stamp carrying `elevated`
+#   is STILL ADMITTED. It refuses the stale calm and nothing else.
+#
+#   HYPOTHESIS 2 — `A312-F1`: THE GUARANTEE HAS NO GUARD. **CONFIRMED, AND AT FULL STRENGTH.**
+#   `plants/WO3-INC16D/D1-THE-FOURTH-STAGE-REMOVED.patch` applied to a pristine
+#   `git archive 0e80a09 | tar -x` extraction, `git apply` rc=0 TAKEN AND CHECKED. On that tree the
+#   live gate RE-ADMITS both `1970` and `2099` carrying `calm` on both surfaces — `295bdbe`'s
+#   behaviour restored exactly. **THIS SEAT THEN RAN ALL THIRTY `execute:` LINES OF
+#   `required-tests.yaml` ON BOTH TREES AND `diff`ed THE PER-LINE rc LISTS: BYTE-IDENTICAL.
+#   `TOTAL lines=30 rc0=19 nonzero=11` ON THE CLEAN TIP AND `TOTAL lines=30 rc0=19 nonzero=11` ON
+#   THE TREE WITH THE ENTIRE FOURTH REFUSAL STAGE DELETED.** NOT ONE ROW MOVES.
+#
+#   AND THE WITNESS THAT DOES MOVE IS THE ONE NO ROW NAMES: `python3 -B -m pytest
+#   tests/test_envelope_freshness.py` on the `D1` tree -> **`14 failed, 78 passed`**. MEASURED:
+#   `grep -c 'test_envelope_freshness' required-tests.yaml` -> **`0`**, while the register names
+#   **41 DISTINCT `tests/test_*.py` FILES**. The project's own mechanism for making a test-file
+#   guarantee live was available, and for this guarantee it was not used.
+#
+# **THE CONSTITUTIONAL GUARANTEE IS TRUE AT THE TIP AND UNGUARDED AT THE TIP. THAT IS EXACTLY WHAT
+# RULING 9's PRINCIPLE FORBIDS, AND `PO-DECISIONS-0030` RULING 1 ORDERS THE REMEDY.**
+#
+# **16C IS NOT RELEASED. NO INDICATOR ROW IS REGISTERED. THE MEMORIAL REMOVAL MUST NOT LAND.
+# `0e80a09` IS PRESERVED AND NOTHING IS REVERTED.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T192219Z-0181
+timestamp_utc: '2026-08-24T19:22:19Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T19:22:19Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_06
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_06
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T191050Z-0180
+base_sha: 0e6f0946a4045e439d65fb7e1900c81e96995e10
+current_sha: 0e6f0946a4045e439d65fb7e1900c81e96995e10
+status: DISPATCH_ISSUED
+schema_version: 2
+
+action_summary: >
+  The Product Authority ruled Q35 in BOTH parts at PO-DECISIONS-0030 (0e6f094, authored by Matt
+  Scott and by NO SEAT). Ruling 1: the fourth refusal stage gets its OWN Required Test Register
+  row, a negative control the gate reads, and it lands BEFORE 16C. Ruling 2: the gate's limit is
+  DECLARED — the gate enforces DOCUMENT-INTERNAL freshness, and a source that consistently LIES
+  about its own stamp is the F1-forgery class, caught by the DETECTION tier (CD-AC-018 witness
+  divergence + provenance), owed at WO-3 — NOT recorded as unenforceable, enforced ONE TIER OUT.
+  THIS SEAT REPRODUCED THE AMBER IN ITS OWN SHELL BEFORE DISPATCHING ANYTHING (CD-PL-F193), AND
+  BOTH HALVES HELD EXACTLY: the stale refusal is real and non-vacuous, and deleting the whole
+  stage moves ZERO of the thirty register lines. CD-D-182, the CONTROL-ROW increment (16E), is
+  ISSUED AND OUT to CD-ENG-WO3-13 — a FRESH Engineer identity, MEASURED fresh against
+  `git log --all --format=%an` — on the wo-3 lane from ef3c960, SEQUENTIAL SINGLE-SEAT (CD-D-181).
+  NOTHING IS MERGED, ADMITTED OR PROMOTED. NO GRADE MOVES. A FRESH ASSURANCE SEAT GRADES THE
+  RETURN (PBG-SOD-001, non-waivable).
+
+# ================================================================================================== #
+what_this_seat_ran_rather_than_inherited:
+# ================================================================================================== #
+  why: >-
+    CD-PL-F193 was raised against this seat's own predecessors for carrying a claim forward without
+    executing it. The AMBER at 924691b is another seat's measurement. It is a HYPOTHESIS here until
+    this shell reproduces it, and a dispatch built on an unreproduced finding is a dispatch built on
+    a rumour.
+  method: >-
+    Three pristine extractions, never the lane worktree: `git worktree add /tmp/pl05/target 0e80a09`
+    for the plant set only, and `git archive 0e80a09 | tar -x -C <dir>` into /tmp/pl05/x_clean and
+    /tmp/pl05/x_d1. The probe is THIS SEAT'S OWN (/tmp/pl05/pl_probe.py) and NOT the Engineer's —
+    plants/WO3-INC16D/probe_16d.py hard-codes `sys.path.insert(0, "/srv/crash-detector-wo3/src")`,
+    which would have measured the LANE on every arm no matter which tree was named. This seat's
+    probe takes the tree as argv[1]. **THAT SUBSTITUTION IS THE POINT: the Engineer's probe cannot
+    measure a patched tree at all, and reusing it would have produced two identical clean results
+    and looked like a refutation of A312-F1.**
+  hypothesis_1_the_stale_half_is_real_and_not_vacuous:
+    verdict: CONFIRMED
+    tree: /tmp/pl05/x_clean at 0e80a09
+    measured: |
+      STALE-1970-CALM      PUBLIC=REFUSED [STALE_CALM] at /equity_crash   PRIVATE=REFUSED [STALE_CALM] at /equity_crash
+      FUTURE-2099-CALM     PUBLIC=REFUSED [STALE_CALM] at /equity_crash   PRIVATE=REFUSED [STALE_CALM] at /equity_crash
+      FRESH-CALM           PUBLIC=ADMITTED                               PRIVATE=ADMITTED
+      STALE-1970-ELEVATED  PUBLIC=ADMITTED                               PRIVATE=ADMITTED
+    reading: >-
+      It refuses the stale calm, it refuses the future stamp fail-closed, and it does NOT refuse
+      everything: a fresh calm dial publishes and a stale ELEVATED dial publishes. The row is not
+      vacuous in either direction, which is the half this project's history says gets missed.
+  hypothesis_2_A312_F1_the_guarantee_has_no_guard:
+    verdict: CONFIRMED
+    tree: /tmp/pl05/x_d1 — 0e80a09 + D1-THE-FOURTH-STAGE-REMOVED.patch, `git apply` rc=0 CHECKED
+    the_gate_on_that_tree: |
+      STALE-1970-CALM      PUBLIC=ADMITTED   PRIVATE=ADMITTED
+      FUTURE-2099-CALM     PUBLIC=ADMITTED   PRIVATE=ADMITTED
+    the_register_on_that_tree: >-
+      **ALL THIRTY `execute:` LINES RUN, rc TAKEN FROM EACH COMMAND. CLEAN TIP:
+      `TOTAL lines=30 rc0=19 nonzero=11`. D1 TREE: `TOTAL lines=30 rc0=19 nonzero=11`. The
+      per-line rc lists are `diff`-IDENTICAL — `diff <(grep '^LINE' reg_clean.txt) <(grep '^LINE'
+      reg_d1.txt)` produced NO OUTPUT.** The register cannot see the difference between a tree
+      that computes staleness and a tree that does not.
+    the_witness_that_does_move_and_the_reason_it_does_not_count: >-
+      `python3 -B -m pytest tests/test_envelope_freshness.py` on the D1 tree -> **14 failed, 78
+      passed**. The witness EXISTS and it BITES. It is simply not wired: `grep -c
+      'test_envelope_freshness' required-tests.yaml` -> **0**, against **41 distinct
+      `tests/test_*.py` paths the register DOES name**. A test that no row names is a file the
+      gate happens not to run.
+    and_this_seat_notes_what_is_NOT_wrong: >-
+      CD-ENG-WO3-12 RAISED THIS AGAINST ITS OWN WORK as CD-ENG-F16D-03 and did NOT take the remedy,
+      because required-tests.yaml was outside its writable scope. That is an ESCALATION and it is
+      the correct behaviour (PBG-FWK-013). The instrument's printed run note DISCLAIMS credit for
+      the staleness half in terms. **THE ROW IS RIGHT NOT TO CLAIM IT. THE DEFECT IS THAT NO ROW
+      DOES, AND THAT IS WHAT THIS DISPATCH FIXES.**
+
+# ================================================================================================== #
+the_ruling_carried:
+# ================================================================================================== #
+  source: governance/decisions/PO-DECISIONS-0030.md
+  commit: 0e6f0946a4045e439d65fb7e1900c81e96995e10
+  authored_by: Matt Scott — the Product Authority, and by NO SEAT
+  ruling_1_verbatim: >-
+    "Q35(a) — YES, the fourth refusal stage gets its OWN Required Test Register row, and it lands
+    BEFORE 16C. This is ruling 9's principle (a constitutional guarantee is carried by a
+    REGISTER-WIRED instrument, never test-only) applied to the freshness stage: the guarantee is
+    proven today, but proven in tests is not proven in the register. Register-wire it — its own
+    row, a negative control the gate reads, failing if stale-carrying-calm is ever admitted — and
+    land it before 16C so the control is registered before the lane moves on."
+  ruling_2_verbatim: >-
+    "Q35(b) — the gate's limit is DECLARED, and source-honesty is the DETECTION tier, NOT
+    'permanently outside enforcement.' ... the gate is PREVENTION of what is document-internal; a
+    lying source is caught by DETECTION — witness divergence + provenance (CD-AC-018), where a
+    source's claimed freshness is corroborated against witnesses and divergence is the alarm. So:
+    16C's detector-side liveness carries the HONESTY OBLIGATION — stamps are provenance-backed and
+    witness-corroboratable — and the guard's DECLARED SCOPE states the split honestly: gate
+    enforces internal freshness, detection tier enforces source honesty. It is NOT recorded as
+    unenforceable; it is enforced one tier out, owed at WO-3 when real sources and their witnesses
+    land."
+  what_this_seat_did_NOT_read_into_it: >-
+    Ruling 3 names TWO substantive items and one preservation constraint. It does NOT re-order 16C,
+    it does NOT authorise the indicator rows, and it does NOT release the memorial removal. This
+    dispatch carries the two ruled items, plus TWO CONSEQUENTIAL ITEMS DISCLOSED BELOW RATHER THAN
+    FOLDED IN SILENTLY.
+
+# ================================================================================================== #
+the_scope_judgement_this_seat_made_and_is_disclosing:
+# ================================================================================================== #
+  the_situation: >-
+    CD-ASR-WO3-12's next_safe_action put the question to the Product Authority in THREE parts.
+    PO-DECISIONS-0030 rules parts (i) and, via ruling 2, the substance behind part of (iii). Parts
+    (ii) and the remainder of (iii) are NOT named in the ruling text.
+  what_this_seat_added_and_why_it_is_not_scope_creep:
+    item_ii_CD_RULE_004_three_places: >-
+      CD-RULE-004 requires a declared limit to appear in the instrument header, the execution
+      contract AND required-tests.yaml. DECLARED LIMITS 18, 19 and 20 are in TWO of the three
+      places TODAY, and the ONLY reason is that required-tests.yaml was outside CD-ENG-WO3-12's
+      writable scope. **THIS DISPATCH IS THE FIRST ONE WHOSE SCOPE INCLUDES THAT FILE.** The rule
+      binds whether or not the ruling enumerates it, and leaving a KNOWN CD-RULE-004 breach in a
+      file this seat is opening anyway would be choosing not to fix it.
+    item_iii_the_record_corrections: >-
+      A312-F2 (the "closed twice over" claim, whose runtime half is FALSE — one decoy string
+      re-admits it), A312-F3 (`published_utc` under-stated everywhere the Project Lead reads) and
+      A312-F4 (CD-ENG-F16D-05 superseded) are corrections to the RECORD. PBG-CONT-003 and
+      CD-RULE-004 require corrections to SUPERSEDE and never to edit, and that obligation does not
+      wait for an enumeration. **A312-F3 IS ALSO THE EXACT SUBJECT OF RULING 2** — the
+      declared-scope statement IS the honest form of that residual — so the two are one act.
+    what_this_seat_did_NOT_add: >-
+      The A312-F2 TIGHTENING (requiring a calm-bearing node's stamp to be a DECLARED stamp rather
+      than any string that parses) is NOT in this dispatch. CD-ASR-WO3-12 named it product scope
+      (PBG-AUTH-005) and it is. **THE RECORD CORRECTION LANDS; THE TIGHTENING DOES NOT. Q36 IS
+      RAISED FOR IT BELOW.**
+  and_this_seat_flags_it_rather_than_burying_it: >-
+    If the Product Authority intended ruling 3's two items to be the WHOLE scope, items (ii) and
+    (iii) come back out and the increment is re-cut. They are declared here, at the boundary,
+    BEFORE the seat launched — not discovered in the return.
+
+# ================================================================================================== #
+the_dispatch:
+# ================================================================================================== #
+  id: CD-D-182
+  name: CD-DISPATCH-WO3-INC16E-CONTROL-ROW-ENGINEER
+  status: ISSUED AND OUT
+  role_source: pbg/roles/engineer.md
+  actor_id: CD-ENG-WO3-13
+  identity_is_fresh_and_it_was_MEASURED_not_assumed: >-
+    `git log --all --format=%an | sort -u` names CD-ENG-WO3-01..12 and CD-ASR-WO3-02..12.
+    **CD-ENG-WO3-13 DOES NOT APPEAR AND HAS NEVER AUTHORED A COMMIT IN THIS REPOSITORY.**
+  separation_of_duties: >-
+    NOT CD-ENG-WO3-12 (it may not repair its own lane — PBG-SOD-004) and NOT CD-ASR-WO3-12 (it
+    prescribed the remedy and may not write it — PBG-SOD-001, non-waivable). A FRESH Assurance
+    identity grades the return.
+  concurrency: >-
+    SEQUENTIAL SINGLE-SEAT (CD-D-181). ONE seat is live at a time. NO parallel sub-agent.
+  writable_scope:
+    repository: local
+    branch: wo-3
+    worktree: /srv/crash-detector-wo3
+    base_sha: ef3c960d23327800e0ad084c6833afca74a1a0fa
+    paths_writable:
+      - required-tests.yaml
+      - tools/register/
+      - contracts/execution/
+      - tests/
+      - plants/WO3-INC16E/
+      - governance/engineering/build-log/
+    paths_read_only_and_named_because_they_are_the_temptation:
+      - pbg/                      # pinned, read-only to every seat (PBG-FWK-013)
+      - PID.md                    # PO-protected
+      - BLUEPRINT.md              # PO-protected (CD-D-115)
+      - governance/decisions/     # PO-protected
+      - contracts/*.json          # THE SHIPPED CONTRACTS — must be BYTE-UNCHANGED
+      - src/                      # 0e80a09 IS PRESERVED. THE STAGE IS NOT TO BE TOUCHED.
+  the_preservation_constraint_stated_as_a_stop: >-
+    **PO-DECISIONS-0030 ruling 3: "preserve 0e80a09 (completion test met, strictly better)."
+    NOTHING UNDER src/ CHANGES. NOTHING IS REVERTED. If the seat concludes the stage itself must
+    move to make a row pass, IT STOPS AND RETURNS — that is the shape of making a control pass by
+    moving the target, and it is a DECLARED STOP.**
+  expected_return: READY_FOR_ASSURANCE
+
+# ================================================================================================== #
+what_did_not_move_at_this_boundary:
+# ================================================================================================== #
+  - '16C IS NOT RELEASED. The control row lands FIRST, by ruling 1, in the ruling''s own words.'
+  - 'NO INDICATOR ROW from governance/mapping/indicator_mapping.yaml is registered. Ruling 5 of
+     PO-DECISIONS-0029 puts those AFTER 16C, and 16C is after this.'
+  - 'THE MEMORIAL REMOVAL DID NOT LAND and MUST NOT — it is the record of this exact defect class.'
+  - 'be0b355 (wo-2r3) FROZEN. `git rev-parse wo-2r3` -> be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5.'
+  - 'NOTHING IS ACCEPTED. The A312 verdict is BANKED, not accepted (PBG-AUTH-003).'
+  - 'No grade moves. No finding is closed. No disposition is written.'
+  - 'The WO-2 gate stays SHUT.'
+
+# ================================================================================================== #
+open_product_authority_questions:
+# ================================================================================================== #
+  Q36:
+    raised_by: PROJECT_LEAD_SEAT_06, on CD-ASR-WO3-12's A312-F2 prescription
+    status: RAISED, NOT BLOCKING THIS INCREMENT
+    question: >-
+      A312-F2 measured that a node with NO real stamp and ONE DECOY — a UTC instant in a field that
+      is not a stamp, e.g. `source_id: "2026-08-24T18:00:00Z"` — proves itself fresh against the
+      decoy and is ADMITTED carrying `calm` on both surfaces. Stamps are detected BY VALUE.
+      **THIS IS NOT A LIVE ESCAPE ON THE SHIPPED CONTRACT** (`degraded_inputs` is an array of plain
+      strings, so no `calm` can appear there today) and both contract JSONs are byte-unchanged. The
+      remedy is a TIGHTENING: require the stamp a calm-bearing node relies on to be a DECLARED stamp
+      — a `#/$defs/utc_timestamp`-typed property or a `_utc`-suffixed name — rather than any string
+      that happens to parse. **THAT NARROWS WHAT THE PRODUCT ADMITS AND IT IS PRODUCT SCOPE
+      (PBG-AUTH-005). Does it land, and does it land before 16C or after?**
+    why_it_is_not_blocking: >-
+      The record correction (withdrawing "closed twice over") IS in this dispatch and discharges the
+      honesty obligation. The tightening is a separate act and the latent shape is named, measured
+      and recorded either way.
+
+next_safe_action: >-
+  **THE ENGINEER IS OUT. NOTHING ELSE MOVES WHILE IT IS.** When CD-ENG-WO3-13 returns
+  READY_FOR_ASSURANCE, this seat banks the return AS AN INPUT AND NOT AS AN ACCEPTANCE
+  (PBG-AUTH-003) and dispatches a FRESH read-only Assurance identity over it. **ON GREEN, AND ONLY
+  ON GREEN, 16C RELEASES** — the detector-side liveness marking carrying the HONESTY OBLIGATION of
+  ruling 2 — **AND THE INDICATOR ROWS COME AFTER THAT.**
+expected_next_actor: >-
+  CD-ENG-WO3-13, and then a FRESH Assurance identity that is NEVER CD-ENG-WO3-13 and NEVER
+  CD-ASR-WO3-12 (PBG-SOD-001, non-waivable).

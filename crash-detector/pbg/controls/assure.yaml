@@ -1,0 +1,387 @@
+domain: ASSURE
+domain_label: Assurance and close
+controls:
+- control_id: PBG-ASSURE-001
+  title: Assurance audits the precise SHA handed over
+  status: ACTIVE
+  purpose: 'Bind a verdict to an exact artefact so it cannot be transferred to a different one.
+
+    '
+  risk_addressed: 'Auditing something other than what was built or will be shipped. Every downstream claim
+    inherits the substitution and nothing detects it.
+
+    '
+  required_outcome: 'The assurance verdict names the exact commit SHA it audited, and that SHA is the
+    one the Engineer handed over and the one that ships.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    work_types:
+    - CHANGE
+    - CONTROLLED_ACTION
+    - INCIDENT
+    mode: PER_WORK
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - assurance verdict with exact SHA
+  - handover record
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 6; one of two controls PBGv2 must not weaken
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'pbg close compares the verdict SHA against the handover SHA and the merge base,
+    and fails on any divergence.
+
+    '
+- control_id: PBG-ASSURE-004
+  title: A verdict without a named next safe gate is incomplete
+  status: ACTIVE
+  purpose: 'Ensure every verdict tells the reader what may happen next, so a GREEN cannot be read as permission
+    for anything at all.
+
+    '
+  risk_addressed: 'A GREEN verdict on a build being taken as authorisation to deploy, activate or merge,
+    none of which it assessed.
+
+    '
+  required_outcome: 'Every verdict — GREEN, AMBER or RED — names the next safe gate. A GREEN names what
+    it authorises; an AMBER names what is needed to reach GREEN; a RED names the required remedy.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: an assurance verdict is issued
+    mode: AUTHORING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - assurance verdict
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 verdict vocabulary, one of its better inventions
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema validation rejects a verdict with no next_safe_gate.
+
+    '
+- control_id: PBG-ASSURE-010
+  title: Close evaluates the authentic target
+  status: ACTIVE
+  purpose: 'Make the close gate look at the real repository rather than a convenient representation of
+    it.
+
+    '
+  risk_addressed: 'PBGv1''s close gate hardcoded one folder layout and one status vocabulary. A real project
+    built a compatibility adapter that constructed an ephemeral repository, and the checks then ran against
+    the adapter''s model rather than the project''s truth.
+
+    '
+  required_outcome: 'Close evaluates the actual repository, branch, worktree, upstream relationship, authority
+    record, assurance verdict, test results and runtime identity wherever technically possible.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation authentic_targets_inspected
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Each check names its authentic target and evidence source in the attestation; a
+    check that cannot reach its target returns UNSUPPORTED rather than a substitute.
+
+    '
+- control_id: PBG-ASSURE-011
+  title: Normalisation may translate structure and vocabulary; it may not rewrite facts
+  status: ACTIVE
+  purpose: 'Permit the mapping a portable tool genuinely needs while forbidding the rewriting that destroys
+    a control.
+
+    '
+  risk_addressed: 'A normalisation step that quietly becomes the answer. The line between mapping and
+    rewriting is precisely where a control silently dies.
+
+    '
+  required_outcome: 'Permitted: mapping a project status to a canonical enumeration, resolving paths from
+    the manifest, converting formats into one internal object, normalising timestamps to UTC while preserving
+    the original, deriving a read-only model with source references. Prohibited: changing a status to
+    satisfy a condition, altering commit dates, constructing a synthetic upstream, rewriting audit outcomes,
+    omitting failing controls, replacing authentic Git state with a favourable temporary repository, presenting
+    a derived artefact as the authentic target.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation derived_representations_used
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Derived representations are read-only-derived and retain source references; the
+    attestation lists every derived representation used.
+
+    '
+- control_id: PBG-ASSURE-012
+  title: No synthetic GREEN
+  status: ACTIVE
+  purpose: 'Name, as a rule, the specific failure the archaeology found.
+
+    '
+  risk_addressed: 'A control whose only route to execution is a constructed state that already contains
+    the expected answer. It reports as verified and verifies nothing.
+
+    '
+  required_outcome: 'Where the only way to run a control is to construct a state that already contains
+    the expected answer, the control is not independently verified. Return AMBER and identify the framework
+    limitation.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - wrapper classification report
+  - close attestation
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Wrapper classification surfaces state transformation near framework-tool invocation;
+    CONTROL_TRANSFORMATION prevents automatic GREEN pending assurance review.
+
+    '
+- control_id: PBG-ASSURE-013
+  title: A project maps its own vocabulary; the framework never renames a project's states
+  status: ACTIVE
+  purpose: 'Remove the impedance mismatch that forced a project to normalise its own artefacts.
+
+    '
+  risk_addressed: 'A gate demanding the literal string GREEN from a project whose assurance vocabulary
+    is richer than that. The project either renames its states or rewrites them at validation time.
+
+    '
+  required_outcome: 'The project manifest maps project vocabulary onto the framework''s declared enumeration.
+    The framework consumes the mapping and never requires a rename.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - manifest vocabulary block
+  - attestation resolved configuration
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Vocabulary mapping is resolved from the manifest and the resolved mapping is recorded
+    in the attestation.
+
+    '
+- control_id: PBG-ASSURE-014
+  title: A close cannot be GREEN when a mandatory control was skipped
+  status: ACTIVE
+  purpose: 'Prevent an aggregate result concealing a specific absence.
+
+    '
+  risk_addressed: 'A skipped control reading as a clean result because nothing recorded that it did not
+    run.
+
+    '
+  required_outcome: 'A skipped mandatory control appears as UNSUPPORTED or EXCEPTED with its reason, and
+    either state prevents GREEN unless an approved, unexpired exception covers it.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation
+  - mutation test results
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'The outcome resolver refuses GREEN with any mandatory control absent or unsatisfied;
+    covered by mutation tests for all six bypass conditions.
+
+    '
+- control_id: PBG-ASSURE-015
+  title: A transformed check states so and does not claim direct verification
+  status: ACTIVE
+  purpose: 'Keep the strength of a claim visible alongside the claim.
+
+    '
+  risk_addressed: 'A check run against a derived representation reported identically to one run against
+    the authentic target, so the reader cannot tell them apart.
+
+    '
+  required_outcome: 'Where a control was checked against a transformed representation, the attestation
+    states that explicitly and does not claim direct verification of the authentic target.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'The attestation records authentic targets and derived representations as separate
+    fields.
+
+    '
+- control_id: PBG-ASSURE-016
+  title: Governed-state drift during assurance triggers stop, fingerprint and attribution
+  status: ACTIVE
+  purpose: 'Handle state changing underneath an audit without either ignoring it or invalidating everything
+    reflexively.
+
+    '
+  risk_addressed: 'STOP conditions scoped only to subject-caused drift, so externally caused governed
+    writes during an audit went unhandled and hazardous traffic could not be excluded.
+
+    '
+  required_outcome: 'Any governed-state drift during assurance triggers STOP, atomic fingerprint and attribution.
+    The assurance stays applicable only where drift is positively attributed outside the audited subject,
+    the subject is proven unchanged, and no audited claim is affected — stated explicitly in the verdict.
+    Unattributable drift invalidates it.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    when: an assurance activity observes governed state
+    mode: PER_WORK
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - atomic fingerprints
+  - attribution evidence
+  - qualified verdict
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Inherited from PBGv1 CR-0001; classified KEEP_UNPROVEN
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Fingerprint before and after; attribution evidence in the verdict. UNPROVEN — inherited
+    from PBGv1 CR-0001, classified KEEP_UNPROVEN.
+
+    '
+- control_id: PBG-ASSURE-017
+  title: A control's check is mutation-tested at its own seam
+  status: ACTIVE
+  purpose: 'Prove a check can fail before trusting that it passed.
+
+    '
+  risk_addressed: 'A check that has never been made to fail is a rumour. A mutation applied at the wrong
+    seam proves nothing about the control it claims to cover — a real suite once neutered a function that
+    none of the three controls under test actually ran through.
+
+    '
+  required_outcome: 'Every control''s check has a mutation test that turns it red by breaking the control
+    at the control''s own seam, not at a shared upstream function.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: a control has a mechanical check
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - mutation test results with named seams
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'The test suite contains a mutation test per mechanical check, and the seam it mutates
+    is named.
+
+    '

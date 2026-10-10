@@ -1,0 +1,28 @@
+"""Aggregate the operator banner over whatever readings the caller supplies.
+
+PL-R6. This is PL-R5 WITH ONE THING CHANGED: the door. Everything else — the intent,
+the mean, the publication into a slot — is PL-R5's, unaltered. PL-R5 was refused with
+two RULE 4 violations, and CD-D-040 accepted increment 2b on that refusal. RULE 4's own
+stated reason says a laundering module "cannot avoid coming here". This asks whether
+that is true, by walking through a door RULE 4's vocabulary does not contain.
+"""
+from crash_detector.dials.magnitude import combine_within_one_dial, sole_dial_of
+from crash_detector.dials.scores import EquityCrashScore
+
+
+def _as_number(reading):
+    """Read the bare figure off a reading by naming the dial it carries."""
+    return reading.quantity_for(sole_dial_of(reading))
+
+
+def aggregate(readings, slot, sources):
+    """Mean of every supplied reading, published into ``slot``."""
+    held = tuple(readings)
+    figures = [_as_number(r) for r in held]
+    total = 0.0
+    for f in figures:
+        total = total + f
+    mean = total / len(figures)
+    return EquityCrashScore(
+        score=combine_within_one_dial([held[0]], using=lambda _released: mean),
+        contributions=())

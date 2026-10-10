@@ -1,0 +1,172 @@
+# ================================================================================================== #
+# BL-20260824T122758Z-0167 — PROJECT LEAD BOUNDARY. **16B-FIX-2 RETURNED. BOTH ESCAPES ARE CLOSED AND
+# THIS SEAT PROVED IT WITH ITS OWN PLANTS — INCLUDING THE ONE THAT BLOCKS 16C. NOT ACCEPTED. THE
+# FINAL ASSURANCE SEAT OF THIS SESSION IS DISPATCHED, AND ITS VERDICT IS WHAT RELEASES 16C.**
+#
+# *** **THE MEASUREMENT THAT RELEASES THE PROGRAMME, RUN ON THIS SEAT'S OWN PLANT AND NOT THE
+# ENGINEER'S PATCH: ruling 5's liveness quantity as an optional third root property `feed_liveness`
+# WAS `PASS — 144/0` WHILE THE GATE ADMITTED A DEAD FEED RENDERING AS CALM. IT IS NOW
+# `FAIL — 2 violations, CD-CALM-SLOTS-007`.** And the conditional-branch shape, `PASS — 144/0` with
+# the gate admitting calm on an UNKNOWN dial, is now `FAIL — 32`: 20x CD-CALM-BRANCHES-006 and 12x
+# CD-CALM-PAIRED-004. **BOTH FROM PLANTS THIS SEAT BUILT ITSELF.** ***
+#
+# **AND THE CONTROL HELD AGAIN: C10 `PASS — 158 assertions`, C6 `FAIL — 6`, clean tree
+# `PASS — 144`, pytest 2007, test_detail_level.py 52, register MATCHES / 18 / SHUT / null. The
+# tests/ edit is 48 insertions and ZERO deletions — docstring only, exactly as granted.**
+#
+# **CD-PL-F192, AGAINST THIS SEAT AND CONFIRMED BY ITS OWN grep: the dispatch said DECLARED LIMIT 12
+# "has no counterpart 10 or 11 anywhere". THEY ARE AT required-tests.yaml:307, THIRTY-EIGHT LINES
+# ABOVE IT, IN THE SAME BLOCK SCALAR.** The claim came from the auditor and this seat carried it into
+# a binding record without executing it. *** **THAT IS THE THIRD TIME TODAY — CD-PL-F187, CD-PL-F190,
+# AND NOW THIS — AND ALL THREE HAVE THE SAME SHAPE: A PRESCRIPTION OR A FINDING FROM A SEAT THIS SEAT
+# TRUSTED, PROMOTED INTO A BINDING RECORD WITHOUT BEING RUN. THE PATTERN IS NAMED HERE RATHER THAN
+# LEFT AS THREE SEPARATE LOW FINDINGS.** ***
+#
+# **AND THE SEAT DID THE BETTER THING: IT CORRECTED THE PREMISE INSTEAD OF ACCEPTING IT, AND FIXED
+# THE REAL DEFECT UNDERNEATH — NOTHING ANYWHERE SAID LIMIT NUMBERS ARE PER-ROW, WHICH IS WHAT MADE A
+# BARE "DECLARED LIMIT 12" AMBIGUOUS. IT ALSO DECLINED TO STOP, EXPLAINED WHY, AND ASKED FOR
+# CONFIRMATION. THE JUDGEMENT IS CONFIRMED.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T122758Z-0167
+timestamp_utc: '2026-08-24T12:27:58Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T12:27:58Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T115318Z-0166
+base_sha: fe5eac631043936698ae8150070ad279076f182b
+current_sha: fe5eac631043936698ae8150070ad279076f182b
+status: READY_FOR_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-07, a fresh seat that is neither the builder nor the finder, returned
+  READY_FOR_ASSURANCE at ba4523e (content tip e01b8f5). It reproduced both findings itself before
+  writing a line, closed them by the ruled prescriptions, caught a false statement in this seat's
+  dispatch and corrected the premise rather than accepting it, and raised six further findings
+  including one pointing at the part of its own work nobody specified. This seat re-measured both
+  closures with its OWN plants, confirmed the seat's judgement not to stop, and dispatched
+  CD-ASR-WO3-07. 16C REMAINS HELD UNTIL THAT VERDICT.
+
+what_this_seat_reproduced_itself:
+  method: 'Fresh `git archive e01b8f5 | tar -x` extractions. The two closures were re-planted with THIS SEAT''S OWN mutation scripts — the same ones it wrote at BL-0165 and BL-0166 — and NOT with the Engineer''s C11/C14 patches. A fix measured only by the patch its author wrote is a fix measured by its author.'
+  the_16C_blocker:
+    plant: 'Ruling 5''s liveness quantity: optional third root property `feed_liveness`, closed object, state {"enum": ["LIVE","STALE"]}, detail_level pointing at the FULL vocabulary. Both contracts.'
+    before: 'PASS — 144 assertions, 0 violations, while the live gate ADMITTED {state: STALE, reason: FEED_DEAD, detail_level: calm} on BOTH surfaces, with a control proving the tree otherwise sound.'
+    after: 'FAIL — 2 violations, both CD-CALM-SLOTS-007.'
+  the_conditional_branch:
+    plant: 'dial_reading_unknown keeps its name, state.const, required list and additionalProperties:false; properties.detail_level widened; an OPTIONAL render_hint declared; the narrowing relocated into "if"/{"else"} with the else a fully closed copy; render_hint added to the parent properties. No new ROOT key.'
+    before: 'PASS — 144 assertions, 0 violations, gate ADMITTED calm on an UNKNOWN dial.'
+    after: 'FAIL — 32 violations: 20x CD-CALM-BRANCHES-006 + 12x CD-CALM-PAIRED-004.'
+  the_control_and_the_regression_set: >
+    C10 CONTROL, this seat's own extraction, git apply exit 0: PASS — 158 assertions, 0 violations.
+    C6: FAIL — 6. THE VOCABULARY-DRIVEN TABLE STILL GROWS ON THE DAY THE VOCABULARY DOES, through
+    three rewrites now.
+  everything_else: >
+    Clean tree PASS — 144 assertions, 0 violations. pytest tests/ -q -> 2007 passed.
+    tests/test_detail_level.py -> 52 passed, and its diff is 48 insertions / 0 DELETIONS, one hunk,
+    docstring only — exactly the grant and nothing more. Register: pid.content_hash MATCHES · 18
+    criteria · GATE: SHUT · latest_admitted_run (null). Scope: ZERO paths on eleven protected
+    prefixes including both envelope schemas, src/, deploy/, db/ and evidence/. ONE identity,
+    CD-ENG-WO3-07.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F192
+    severity: LOW, CONFIRMED, and it is this seat's own error
+    raised_by: CD-ENG-WO3-07 as its F01
+    the_dispatch_said: 'That DECLARED LIMIT 12 "has no counterpart 10 or 11 anywhere", and ordered the numbering fixed or explained.'
+    the_truth: >
+      FALSE, AND TRIVIALLY CHECKABLE. `grep -n` puts DECLARED LIMITS 10 AND 11 at
+      required-tests.yaml:307 and DECLARED LIMIT 12 at :345 — SAME FILE, SAME BLOCK SCALAR,
+      THIRTY-EIGHT LINES APART, both inside the CD-RT-001-ABSENCE-RENDERS-UNKNOWN row. The "1-9"
+      list the claim leaned on is a DIFFERENT row's independent sequence. VERIFIED BY THIS SEAT'S
+      OWN grep, not accepted from the seat.
+    provenance: 'The claim originates in CD-ASR-WO3-06 finding (v) and this seat carried it into a binding record without executing it.'
+    what_the_seat_did_instead_of_obeying: >
+      IT CORRECTED THE PREMISE AND THEN FIXED THE REAL DEFECT UNDERNEATH: nothing anywhere stated
+      that limit numbers are PER-ROW, which is exactly what makes a bare "DECLARED LIMIT 12"
+      ambiguous when two rows share one file. It corrected that in all six places. THAT IS BETTER
+      THAN THE ORDER IT WAS GIVEN.
+    the_judgement_call_and_this_seat_s_ruling: >
+      The seat DID NOT STOP, said so explicitly, gave its reasoning, and asked the Project Lead to
+      confirm or reverse. *** CONFIRMED. *** The falsehood was confined to FX8's RATIONALE, touched
+      nothing in FX5/FX6/FX7, and the ordered corrective action discharged identically either way.
+      Stopping would have left a constitutional escape open over a numbering footnote. THE STOP
+      CONDITION EXISTS TO PREVENT A SEAT BUILDING ON A FALSE PREMISE, NOT TO HALT WORK WHOSE PREMISE
+      IS UNAFFECTED — and a seat that can tell those apart, and that shows its reasoning rather than
+      quietly deciding, is doing the job well.
+  - id: CD-PL-F193
+    severity: MEDIUM — A PATTERN, NAMED HERE RATHER THAN LEFT AS THREE LOW FINDINGS
+    the_pattern: >
+      *** THREE CONFIRMED DEFECTS IN THIS SEAT'S OWN DISPATCHES TODAY, ALL WITH THE SAME SHAPE:
+      CD-PL-F187 (the auditor's "needs a stated exception" prescription), CD-PL-F190 (the "branch
+      allowlist" that does not exist), CD-PL-F192 (the "no counterpart 10 or 11"). EVERY ONE OF THEM
+      IS A CLAIM MADE BY A SEAT THIS SEAT TRUSTED, PROMOTED INTO A BINDING RECORD WITHOUT BEING RUN. ***
+    why_it_matters_more_than_its_parts: >
+      Each is individually LOW and none changed a deliverable. But a Project Lead whose dispatches
+      launder unexecuted claims into authority is manufacturing exactly the artefact this project
+      exists to refuse: a confident sentence about code that nobody measured. CD-PL-F170 names this
+      pattern for OTHER seats; this entry records that the Project Lead is now its most frequent
+      author. THE RULE THIS SEAT ADOPTS AND WILL BE HELD TO: A FINDING OR PRESCRIPTION INHERITED
+      FROM ANOTHER SEAT IS A HYPOTHESIS UNTIL THIS SEAT RUNS IT, AND IF IT IS NOT RUN IT IS QUOTED
+      AS THAT SEAT'S CLAIM AND NOT ASSERTED AS FACT.
+    disposition: 'Recorded against this seat. Not delegated, not softened, and not scheduled away.'
+
+the_seats_own_findings_carried_forward:
+  - 'F02 — a LEGITIMATE conditional branch now turns the instrument red, priced as DECLARED LIMIT 10. The deny-by-default ruling bought closure at that cost, and the cost is declared rather than discovered. The Assurance seat is asked whether the price is honestly stated and whether the ground for it — no conditional keyword inside any branch of the clean tree — still holds.'
+  - 'F03 — *** THE FILLER FALLBACK IS THE ONE THING NO PRESCRIPTION ASKED FOR, AND THE SEAT SAYS "ATTACK IT FIRST". A seat pointing at the part of its own work nobody specified is the highest-value lead available, and it is made §3.1 of the Assurance dispatch. ***'
+  - 'F04 — a dial discriminating on a key NOT named `state` is still silent (DECLARED LIMIT 12). THIS IS THE DIRECT DESCENDANT OF CD-ASR-WO3-06 F2 — a pattern recogniser wearing deny-by-default''s clothes, one level further in — and is the most likely place for a third instance. Made §3.3.'
+  - 'F05 — the seat DECLINED C15''s literal byte-duplicate-file shape and ran C10''s patch from its own extraction instead, declaring the substitution.'
+  - 'F06 — it added C16 and C17 BEYOND the five ordered, declared as additions rather than folded in silently.'
+
+what_this_seat_did_not_do:
+  - 'Did not accept 16B-FIX-2, and did not lift the AMBER on 16B or 16B-FIX. A fix is not a verdict, three times over.'
+  - 'Did not release 16C. It is held behind CD-ASR-WO3-07''s verdict and that is stated in the dispatch as the decision the verdict gates.'
+  - 'Did not touch any application file, schema, src/ or tests/ path, or anything under pbg/.'
+  - 'Did not write under evidence/required-tests/runs/, and verified no seat has.'
+  - 'Did not begin 16D or 16E.'
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX2-ASSURANCE.md
+  seat: CD-ASR-WO3-07 (FRESH — never CD-ENG-WO3-07 which built the fix, never CD-ASR-WO3-06 which found F1 and F2)
+  primary_attack: 'THE FILLER FALLBACK — because the builder said to. Can a tree be built where the fallback produces a document REFUSED for a reason unrelated to detail_level, so a MUST-REFUSE row passes for the wrong reason?'
+  the_question_behind_every_probe: >
+    *** NOT "IS THIS INSTRUMENT TIDY" BUT "WOULD THIS GUARD SEE 16C GO WRONG?" — asked in those
+    words, because that is the decision the verdict gates. ***
+  also_told: 'That CD-ASR-WO3-06''s own finding (v) was the origin of a false claim, so an audit finding is not self-certifying either, and to grade this dispatch the same way.'
+
+evidence_references:
+  - 'wo-3 ba4523e — CD-ENG-WO3-07''s return; BL-20260824T122123Z-16B2.yaml on the lane'
+  - 'wo-3 plants/WO3-INC16B/MANIFEST.md — C1-C17 with the git apply exit-code column'
+  - 'asr-wo3-06-verdict c7471dc — BL-20260824T114609Z-A306.yaml, the AMBER this answers'
+  - governance/engineering/CD-DISPATCH-INC16B-FIX2-ENGINEER.md (fe5eac6)
+  - governance/engineering/CD-DISPATCH-INC16B-FIX2-ASSURANCE.md (this commit)
+  - 'this seat''s reproductions: /tmp/b4c (the 16C blocker), /tmp/x2c (the conditional branch), /tmp/c10b (the control), /tmp/c6b (the regression)'
+
+next_safe_action: >
+  Launch CD-ASR-WO3-07 against ba4523e per CD-DISPATCH-INC16B-FIX2-ASSURANCE.md. The record precedes
+  the launch. ON ITS VERDICT: a PASS or an AMBER carrying no new escape RELEASES 16C — ruling 5's
+  three-quantity relevance/liveness/publish model, WHICH MUST NOT REMOVE THE STALENESS CEILING UNTIL
+  THE LIVENESS DETECTOR READS ITS FIELD. A verdict carrying a new escape means another bounded fix
+  and 16C stays held.
+
+expected_next_actor: 'CD-ASR-WO3-07 — dispatched by this seat, not yet run.'
+
+risks:
+  - '16C IS STILL HELD. Two seats have measured the blocker closed; that is two seats, not a verdict.'
+  - 'F04 IS THE MOST LIKELY THIRD INSTANCE OF THE CLASS: a dial discriminating on a key not named `state` is still silent. Two audits in a row found a pattern recogniser wearing deny-by-default''s clothes, and the seat has declared where the third one would live.'
+  - 'F02: a legitimate conditional branch now turns the instrument red. The ground for that ruling is that the clean tree carries no conditional keyword inside any branch. THAT GROUND IS A FACT ABOUT TODAY''S CONTRACTS AND NOT A LAW.'
+  - 'CD-PL-F193: this seat has laundered an unexecuted claim into a binding record three times today. The rule adopted at this boundary is the mitigation, and it is a promise rather than a control.'
+  - 'CD-PL-F180 is OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments; the missing half is what 16C opens.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed.'
+  - 'Three of the PO''s ruled six items remain undelivered: 16C (held), 16D, 16E. Nothing is registered, no source is wired, every dial reads UNKNOWN, and the 30 indicators in the ratified mapping are still data that nothing reads.'

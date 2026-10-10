@@ -1,0 +1,11 @@
+=== SD-3 TEARDOWN EVIDENCE — CD-ASR-WO2R2-01 ===
+image pinned by digest: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+--- before teardown ---
+cd-asr-wo2r2-store
+cd-asr-wo2r2-pgdata
+--- after teardown (BOTH MUST BE EMPTY) ---
+containers with my prefix: 0
+volumes with my prefix   : 0
+--- other projects untouched ---
+total containers still on host: 36
+credential: generated at runtime with secrets.token_urlsafe(24), destroyed, recorded nowhere

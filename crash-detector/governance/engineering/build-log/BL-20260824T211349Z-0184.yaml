@@ -1,0 +1,218 @@
+# ================================================================================================== #
+# BL-20260824T211349Z-0184 — PROJECT LEAD BOUNDARY. **SEAT_07 BOOTS `RED`, REPAIRS THE ONE BLOCKING
+# CAUSE, AND REPRODUCES `A313-F1` FROM SCRATCH BEFORE ACTING ON IT. `PO-DECISIONS-0031` IS READ AND
+# INCREMENT 16F IS OPENED.**
+#
+# *** **THE BOOT WAS `RED` AND IT WAS NOT A FALSE ALARM: `CONTINUITY_REFERENCE_INVALID /
+# ACTIVE_WORK_STALE`. `last_build_log_entry` READ `BL-20260824T191050Z-0180` WHILE `-0181`, `-0182`
+# AND `-0183` ALL EXISTED AND WERE ALL COMMITTED. THE POINTER WAS STALE BY THREE ENTRIES.** ***
+# This is `CD-PL-F132`'s class for the second time on this project: the defect is in the PROJECTION,
+# not in the history, **and the projection is what a successor boots from.** The three entries are
+# NOT edited and must not be (`PBG-CONT-003`, non-waivable). The pointer is moved to name THIS entry,
+# in THE SAME COMMIT as this entry — the discipline the `-0157` repair established.
+#
+# *** **AND `A313-F1` WAS NOT INHERITED (`CD-PL-F193`). THIS SEAT BUILT ITS OWN PATCHES AND ITS OWN
+# PROBE — NOT THE AUDITOR'S, NOT THE ENGINEER'S — AND THE FINDING HOLDS AT FULL STRENGTH ON BOTH
+# ARMS.** *** Three pristine `git archive a9e19c3 | tar -x` extractions, patches authored in this
+# seat's own shell and applied FROM AN ABSOLUTE PATH OUTSIDE EVERY EXTRACTION with `git apply` rc
+# TAKEN AND CHECKED = 0. **CLEAN: 24 probe rows, 0 escapes, every baseline ADMITTED. `W5G`
+# (`inputs_used` length): EIGHT stale-calm ADMISSIONS across both surfaces. `W5B2` (`regime`):
+# EIGHT. AND THE REGISTER READS `TOTAL lines=32 rc0=21 nonzero=11` ON ALL THREE TREES — `diff` rc=0
+# BOTH TIMES, NOT ONE OF THE THIRTY-TWO LINES MOVES ON EITHER WEAKENING.**
+#
+# **THE HARNESS WAS ITSELF CONTROLLED RATHER THAN TRUSTED: the same runner on a `D1` extraction of
+# the same tip returns `32/19/13` and moves EXACTLY TWO LINES, both the new rows. So a clean result
+# on `W5G` is a measurement and not a broken pipe — 16E's gain is real AND the hole is real.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T211349Z-0184
+timestamp_utc: '2026-08-24T21:13:49Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T21:13:49Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_07
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_07
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T205636Z-0183
+base_sha: 97f85e6
+current_sha: 97f85e6
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  PROJECT_LEAD_SEAT_07 booted, reconciled, and found ONE blocking cause: CONTINUITY_REFERENCE_INVALID
+  / ACTIVE_WORK_STALE, last_build_log_entry stale by three entries at BL-20260824T191050Z-0180 while
+  -0181, -0182 and -0183 existed and were committed. REPAIRED HERE by moving the pointer to name this
+  entry in the same commit as this entry; the three entries are not edited (PBG-CONT-003). Read
+  PO-DECISIONS-0031 in full - Q39 authorises increment 16F on a STRUCTURAL completion condition and
+  not a fifth arm; Q37 rules KEEP BOTH register rows; Q36 closed; Q38 and Q40 harvested to the
+  framework. THEN REPRODUCED A313-F1 RATHER THAN INHERITING IT (CD-PL-F193), with this seat's OWN
+  patches and this seat's OWN argv-parameterised probe: on a9e19c3 clean the gate refuses every
+  stale-calm shape and admits every baseline; with a five-line early return keyed on inputs_used
+  (W5G) it ADMITS EIGHT stale-calm shapes across both surfaces, and keyed on regime (W5B2) another
+  EIGHT - while the register reads TOTAL lines=32 rc0=21 nonzero=11 on all three trees and the
+  per-line diff is EMPTY both times. The same runner on a D1 extraction of the same tip returns
+  32/19/13 and moves exactly two lines, so the harness is live and the null result is a measurement.
+  16F is OPENED and CD-ENG-WO3-14 is the next actor. 16C IS NOT RELEASED AND NO INDICATOR ROW IS
+  REGISTERED.
+
+# ================================================================================================== #
+the_boot_verdict_in_full:
+# ================================================================================================== #
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: RED
+  pid_identity: PID.md@08baf51ca5a34b4e
+  blueprint_identity: BLUEPRINT.md@39397dfbf169a125
+  observed_sha: 97f85e64333f12ddb3f78173a0eaa725cc3d85c4
+  branch: main
+  worktree_state: clean of tracked changes
+  blocking_failures_field: '[] - EMPTY, and the boot was still RED. The blocking cause is carried in the BLOCKING section and not in that field.'
+  the_single_blocking_cause: >-
+    CONTINUITY_REFERENCE_INVALID - read-only diagnosis permitted, normal boot blocked
+    (PBG-CONT-006). Resolved to its exact text by calling pbg.continuity.resume directly rather
+    than by reading the boot summary: "reference: ACTIVE_WORK_STALE: pointer is
+    BL-20260824T191050Z-0180 but the newest entry is BL-20260824T205636Z-0183 (commit 12acc14a512a
+    at ancestry position 324); Active Work describes a superseded state (PBG-CONT-002)".
+  non_blocking_and_disclosed:
+    - 'roadmap_identity UNAVAILABLE - no ROADMAP.md. Long-standing on this project and not new here.'
+  second_project_lead_check: >-
+    RUN, not assumed. `ps -eo pid,etimes,args` shows exactly ONE claude process pair for this
+    project (pid 1416385/1416386, the operator wrapper and its child, 17s old at boot). THERE IS NO
+    SECOND LIVE PROJECT LEAD. The wrapper ceiling was MEASURED from the live process and is
+    `timeout 21600` - it is not assumed to be two hours.
+
+# ================================================================================================== #
+the_repair — WHAT WAS REPAIRED, AND WHAT WAS DELIBERATELY NOT:
+# ================================================================================================== #
+  what_moved: 'governance/engineering/ACTIVE_WORK.yaml `last_build_log_entry`: BL-20260824T191050Z-0180 -> BL-20260824T211349Z-0184.'
+  in_the_same_commit_as: 'this entry, which is the entry it names. That is the discipline the -0157 repair established after the same class of staleness, and the discipline the stale pointer''s own comment asserted and did not keep.'
+  what_was_NOT_touched: >-
+    BL-20260824T192219Z-0181, BL-20260824T201846Z-0182 and BL-20260824T205636Z-0183 are NOT edited,
+    NOT renumbered and NOT superseded. They are correct entries; the pointer that failed to name
+    them is what was wrong. PBG-CONT-003 is non-waivable and history is never rewritten.
+  why_the_pointer_went_stale_AGAIN — SAID PLAINLY: >-
+    The -0180 boundary moved the pointer in the same commit as its entry and said so. The three
+    boundaries after it wrote their entries and did not move the pointer. THE DISCIPLINE IS NOT
+    ENFORCED BY ANYTHING - it is a convention that three consecutive seats did not keep, exactly as
+    the seat identity convention was not kept (Q40/A313-F4). This is recorded as the SECOND
+    convention-not-control on this project inside twenty-four hours and it is offered to the
+    framework backlog beside IMP-012 and IMP-041/042.
+
+# ================================================================================================== #
+what_this_seat_RAN_rather_than_inherited — CD-PL-F193:
+# ================================================================================================== #
+  why: >-
+    A verdict is another seat's measurement, and A313-F1 is the finding that holds 16C. Two seats
+    have now recorded it. THAT MAKES IT A WELL-SUPPORTED HYPOTHESIS AND NOT A FACT IN THIS SHELL.
+    And it was reproduced with THIS SEAT'S OWN INSTRUMENTS rather than by re-running the auditor's,
+    because re-running someone else's patch through someone else's probe tests the transcription
+    and not the claim.
+  method:
+    extractions: 'Three pristine `git archive a9e19c3 | tar -x` extractions at /tmp/pl07/{clean,w5g,w5b2}, plus a fourth for the D1 control. sha256 of the un-patched envelope_contract.py CHECKED IDENTICAL across extractions before any patch was applied.'
+    patches: >-
+      Authored in this seat's own shell from the extracted baseline, written to
+      /tmp/pl07/patches/, and applied FROM AN ABSOLUTE PATH OUTSIDE EVERY EXTRACTION. `git apply`
+      rc TAKEN INTO A VARIABLE AND CHECKED = 0 on every arm, and the inserted lines were then
+      grep-confirmed present in the tree. This is CD-ASR-WO3-11's self-disclosed method trap and it
+      was avoided deliberately.
+    probe: >-
+      /tmp/pl07/pl07_probe.py, written by this seat. THE TREE IS argv[1] and the resolved
+      crash_detector.__file__ is printed on the LAST LINE OF EVERY RUN, so a reader can see which
+      tree answered - plants/WO3-INC16D/probe_16d.py hard-codes the lane path and would have
+      measured the lane whichever tree it was pointed at.
+    the_skeleton_was_proved_publishable_first: >-
+      CD-PL-F74 is this project's most-repeated defect - the right outcome arriving from the wrong
+      layer. THE FIRST DRAFT OF THIS SEAT'S PROBE FELL INTO IT AND IS RECORDED RATHER THAN QUIETLY
+      FIXED: it filled unrecognised required root properties with a filler string and every one of
+      its fourteen rows came back REFUSED [SCHEMA_VIOLATION] at /as_of_utc, which reads exactly like
+      a healthy gate. The probe now builds every root property from the contract's own required
+      list and RAISES on any required property it does not recognise, and it asserts an all-fresh
+      BASELINE IS ADMITTED at every point before measuring anything.
+  A313_F1_the_control_probes_ONE_POINT_in_document_space:
+    verdict: '*** CONFIRMED AT FULL STRENGTH, ON TWO INDEPENDENT ARMS, IN THIS SEAT''S OWN SHELL. ***'
+    the_live_gate:
+      clean_a9e19c3: '24 rows, baseline-refusals=0, *** STALE-CALM ADMISSIONS = 0 ***. Every ANCIENT+calm and FUTURE+calm shape REFUSED [STALE_CALM] at /equity_crash, both surfaces. THE GUARANTEE HOLDS ON THE SHIPPED TREE.'
+      W5G_five_lines_keyed_on_inputs_used: '*** 24 rows, baseline-refusals=0, STALE-CALM ADMISSIONS = 8. *** A 1970-stamped calm dial and a 2099-stamped calm dial are ADMITTED on BOTH surfaces on every document whose `inputs_used` carries two ids. Every one-input row still refuses and every baseline is still admitted, SO THE GATE LOOKS PERFECTLY HEALTHY FROM ANY ANGLE THAT ONLY DRIVES ONE-INPUT DOCUMENTS.'
+      W5B2_three_lines_keyed_on_regime: '*** 24 rows, baseline-refusals=0, STALE-CALM ADMISSIONS = 8. *** Same admissions on every document whose root `regime` is the string "calm" - which the shipped contracts admit, `regime` being {"type": "string", "minLength": 1} on both and deliberately not an enumeration.'
+    the_register:
+      clean: 'TOTAL lines=32 rc0=21 nonzero=11'
+      W5G: 'TOTAL lines=32 rc0=21 nonzero=11 - *** `diff` rc=0. NOT ONE OF THE THIRTY-TWO LINES MOVES. ***'
+      W5B2: 'TOTAL lines=32 rc0=21 nonzero=11 - *** `diff` rc=0. NOT ONE OF THE THIRTY-TWO LINES MOVES. ***'
+      the_control_on_the_harness_itself: >-
+        D1 (the whole fourth stage removed), same runner, same tip, fourth pristine extraction:
+        TOTAL lines=32 rc0=19 nonzero=13, and the per-line diff shows EXACTLY TWO LINES MOVING -
+        LINE 04 (check_stale_data_never_calm.py) and LINE 05 (pytest tests/test_envelope_freshness.py),
+        each rc 0 -> 1, BOTH OF THEM THE NEW ROWS. *** SO THE EMPTY DIFF ON W5G AND W5B2 IS A
+        MEASUREMENT AND NOT A DEAD HARNESS, AND 16E'S GAIN IS REAL AT THE SAME TIME AS THE HOLE IS
+        REAL. Both facts are true and the honest report carries both. ***
+    what_is_NOT_claimed: >-
+      THE SHIPPED PRODUCT AT a9e19c3 IS NOT BREACHED. No weakening exists in the tree; this seat
+      could not admit a stale calm reading on the clean extraction. What is defective is the
+      STRENGTH OF THE CONTROL, and A313-F1's severity of HIGH is accepted on that basis.
+
+# ================================================================================================== #
+PO-DECISIONS-0031 — READ IN FULL, AND WHAT IT BINDS THIS SEAT TO:
+# ================================================================================================== #
+  commit: 97f85e6
+  authored_by: 'Matt Scott <rogue@cerberus.local> - the Product Authority address, and by no seat.'
+  ruling_1_Q39: 'STRENGTH FIRST. 16C is NOT released over a live HIGH hole that publishes stale-calm. Increment 16F is AUTHORISED and its completion condition is STRUCTURAL, not a fifth arm: (i) the instrument probes the SPACE, not a point - it varies EVERY root property across documents; (ii) NO BYPASS PATH to publication exists - exactly ONE publication chokepoint, enforced structurally so a five-line early return around it cannot exist. It is the LAST strength step: after it, a further named shape means the space-prober was mis-built, not the guard incomplete.'
+  ruling_2_Q37: 'KEEP BOTH register rows. Arm W5A is caught ONLY by the witness-suite row and `execute` must be a single string. Ruling-9/0030''s "its own row" (singular) is CORRECTED to row(s) as the checks require. THIS SEAT DOES NOT NEED TO ARGUE FOR THE SECOND ROW AND WILL NOT REMOVE IT.'
+  ruling_3_Q36: 'CLOSED. Not a live escape on the shipped contract.'
+  ruling_4_Q38: 'FRAMEWORK DEFECT, harvested as IMP-041. NOT a crash-detector fix and NOT in 16F''s scope.'
+  ruling_5_Q40: 'Seat identity RESTORED FORWARD; the five drifted commits (SEAT_03-06) stay unrewritten. THIS ENTRY''S COMMIT CARRIES PROJECT_LEAD_SEAT_07 AS BOTH AUTHOR AND COMMITTER, set through GIT_AUTHOR_*/GIT_COMMITTER_* and verified with `git log --format=%an` after the fact, because `git -c user.name=` DOES NOT TAKE on this host.'
+  ruling_7_standing: 'two dials never blended; missing AND stale never render calm; source honesty owed to the detection tier at WO-3; weights provisional pending backtest; system safe.'
+
+# ================================================================================================== #
+THE_INCREMENT_THIS_SEAT_IS_OPENING — 16F, AND WHAT IT IS NOT:
+# ================================================================================================== #
+  id: 16F-CONTROL-ROW-STRENGTH
+  dispatch: CD-D-184
+  lane: 'wo-3, from a9e19c3. CD-D-181 SEQUENTIAL-ONLY: one seat at a time, and be0b355 stays frozen.'
+  seat: 'CD-ENG-WO3-14 - a FRESH identity, MEASURED fresh against `git log --all --format=%an` (zero commits under that name and zero under CD-ASR-WO3-14).'
+  it_is_NOT_a_fifth_arm: >-
+    A313-F1 is A312-F1 one layer in, and this project has now paid twice for catching the shape in
+    front of it. The completion condition is the PO's and it is structural: the instrument must
+    probe the SPACE so that a shape nobody has named is caught by construction, and the publication
+    path must have exactly one chokepoint so that a route around the stage cannot exist. W5G and
+    W5B2 are the ACCEPTANCE TEST of the space-prober, not its specification.
+  nothing_under_src_needs_to_move: >-
+    MEASURED, not assumed: the clean tree admits nothing stale-calm on 24 probe rows. The defect is
+    in the INSTRUMENT. If 16F finds it must move src/ to establish the single chokepoint, that is a
+    disclosure the Engineer owes and not a licence - a9e19c3 is strictly better than 0e80a09 and
+    NOTHING IS REVERTED.
+
+# ================================================================================================== #
+next_safe_action: >
+  Dispatch CD-ENG-WO3-14 into increment 16F on the wo-3 lane from a9e19c3, writable scope limited to
+  the control, its contract, its register rows, its plants and its tests. The Engineer does not
+  admit its own evidence (PBG-SOD-001) and a fresh Assurance seat grades the return. THE PHASE DOES
+  NOT MOVE TO BUILD, for the same reason it has not moved for seven increments: this increment
+  exists solely to pass a GATE, and an independent seat grades it before anything downstream moves.
+  16C IS NOT RELEASED AND NO INDICATOR ROW IS REGISTERED UNTIL THAT GATE IS GREEN.
+
+expected_next_actor: CD-ENG-WO3-14 (ENGINEER, dispatched by PROJECT_LEAD_SEAT_07)
+
+held_actions:
+  - id: 16C-INDICATOR-ROWS
+    status: HELD
+    next_actor: PROJECT_LEAD (on a GREEN 16F gate, and not before)
+  - id: 16C-DETECTOR-LIVENESS
+    status: HELD
+    next_actor: PROJECT_LEAD (on a GREEN 16F gate, and not before)
+
+blockers: []
+
+risks:
+  - 'A SPACE-PROBER CAN ITSELF BE ONE POINT WIDE. The failure mode of 16F is an instrument that varies root properties across a vocabulary too narrow to trigger the predicate an attacker would write - a two-element array is not covered by a vocabulary whose only array is one element long. The dispatch names this explicitly and the Assurance seat is told to attack the WIDTH of the vocabulary and not just its existence.'
+  - 'THE SINGLE-CHOKEPOINT INVARIANT IS THE HALF THAT CAN GO VACUOUS. A structural control that asserts "exactly one caller" is satisfied by a tree in which nothing calls anything. It needs its own admitting arm, exactly as CD-STALE-VACUITY-000 carries the admitting arms for the behavioural row.'
+
+evidence_references:
+  - '/tmp/pl07/reg_clean.txt · /tmp/pl07/reg_w5g.txt · /tmp/pl07/reg_w5b2.txt · /tmp/pl07/reg_d1.txt — the four per-line register rc lists this seat produced. TRANSIENT PATHS, and the FIGURES are carried in this entry, which is the durable record (PBG-CONT-007).'
+  - 'governance/decisions/PO-DECISIONS-0031.md at 97f85e6'
+  - 'governance/engineering/build-log/BL-20260824T204700Z-A313.yaml at f56a6e9 (banked, not accepted)'

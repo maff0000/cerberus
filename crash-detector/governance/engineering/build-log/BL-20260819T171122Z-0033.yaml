@@ -1,0 +1,115 @@
+entry_id: BL-20260819T171122Z-0033
+timestamp_utc: "2026-08-19T17:11:22Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 1571ed4
+lane_head_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
+parent_entry_id: BL-20260819T170507Z-0032
+record_origin: >
+  Written by the Project Lead on main when issuing the bounded reader dispatch ordered by CD-D-051.
+  Per CD-RULE-005 the entry_id timestamp comes from `date -u +%FT%TZ`.
+schema_version: 1
+
+action_summary: >
+  CD-DISPATCH-WO2R-READER CREATED AND ISSUED to a FRESH seat CD-ENG-READER-01 at execution base
+  f22d120, bounded to making tools/register/_yamlmin.py TERMINATE ON EVERY INPUT and to nothing
+  else. This discharges CD-D-051's sequencing: after WO-2R increments 4 and 5, before Assurance.
+  The dispatch record is in the repository so the brief is durable and not merely conversational
+  (PBG-CONT-007). No application source is in writable scope: src/, deploy/ and plants/ are all
+  PROTECTED for this seat, because the repair changes whether a check TERMINATES and must not change
+  what any check DECIDES.
+
+the_defect_reverified_at_the_dispatch_base: >
+  The Project Lead does not issue a dispatch against a defect it has not re-measured at the base it
+  is dispatching. MEASURED AT f22d120 on 2026-08-19T17:11Z:
+
+    printf 'top:\n  - key:\n      - nested\n' > /tmp/hang.yaml
+    timeout 20 python3 -B -c "... _yamlmin.load_yaml('/tmp/hang.yaml')"   ->  exit 124
+
+  It does not terminate. `git log be34fe4..f22d120 -- tools/register/_yamlmin.py` is ZERO commits,
+  so increment 5 did not touch it and the defect stands exactly as recorded at increment 3b.
+
+why_a_separate_dispatch_and_not_an_increment: >
+  CD-DISPATCH-WO2R-ENGINEER is bounded to CD-ASR-F01..F06. _yamlmin.py is shared with
+  check_base_image_digest_pin.py, which serves a criterion that dispatch does not cover, so repairing
+  it there would change a guard outside the bound — the silent widening its own `prohibited` list
+  forbids. CD-ENG-WO2R-01 saw this, declared the defect at boundary 8 with variant V30, and ESCALATED
+  RATHER THAN FIXING IT; that judgement was COMMENDED at CD-D-048. Honouring it now, rather than
+  quietly folding the repair into the rework, is the Project Lead holding itself to the rule it held
+  the seat to.
+
+why_not_deferred_to_WO_3: >
+  An auditor probing YAML shapes will meet this the way the Project Lead did — by accident, on an
+  ordinary edit — and a hang consumes an auditor's budget and may be misreported. Two of the eleven
+  declared gate commands return NO VERDICT on the same input. It is not a false clean, since a hang
+  is not exit 0 and is fail-closed under any harness imposing a timeout; but it is a check that
+  cannot return a verdict, which is what PBG-CI-002's "never a skip, for any reason" is aimed at.
+
+the_three_devices_in_this_dispatch:
+- 'TERMINATION MUST BE STRUCTURAL. The brief says in terms that the class is "an input on which the
+  reader does not finish", NOT "the nested-sequence document", and that a reader which terminates
+  because every known shape was enumerated is the exact defect four AMBER verdicts were about. The
+  seat must find why the loop fails to advance and make progress a property of the loop.'
+- 'NO VERDICT MAY CHANGE. This repair changes whether a check TERMINATES, not what it CONCLUDES. The
+  seat must produce a before/after table for every register check with assertion counts in both
+  columns — CD-ENG-WO2R-F16''s lesson that a silently shrinking assertion count is how a skipped arm
+  hides, adopted as project method and now used as a dispatch device.'
+- 'THE PARSER-DEPENDENCY DECISION IS NOT REOPENED. Substituting a third-party YAML library is
+  PROHIBITED: a gate that depends on a third-party parser depends on its version, its resolution
+  rules and its CVEs, and safe_load accepts documents this project deliberately refuses. If the seat
+  concludes the hand-rolled reader cannot be made correct in scope, that is a FAIL-CLOSED escalation
+  to the Project Lead, not a decision it takes.'
+
+regression_cover_required_because_of_CD_PL_F63: >
+  CD-PL-F63 was raised when an 892-line check rewrite added ZERO pytest tests. This dispatch requires
+  cover for the reader itself — the minimal hanging document, PL-T5's shape, V30, deeper nesting, and
+  at least two malformed documents that must RAISE — with node ids GROWING and none removed.
+
+separation_of_duties:
+  statement: 'PBG-SOD-001, non-waivable.'
+  how_it_is_evidenced: >
+    CD-ENG-READER-01 implements; CD-ASR-WO2-02 will audit under a dispatch not yet issued;
+    PROJECT_LEAD_SEAT_01 reconciles and does not author the repair (PBG-AUTH-006). Distinct actor_ids
+    in this record, in the Build Log and in commit identity (CD-RULE-002). A new seat id is used so a
+    git author audit separates this work from WO-2R's at a glance.
+
+continuity_write_read_back:
+  rule: 'CD-RULE-007.'
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: 'Recorded in the commit body, run after the ACTIVE_WORK edit and before the commit.'
+
+status: CHECKPOINT
+current_sha: 1571ed4
+next_safe_action: >
+  AWAIT CD-ENG-READER-01's return. Then RECONCILE: reproduce the hang at the base and its termination
+  at the delivered SHA yourself, check the before/after verdict table by running every register check
+  on both trees, diff the node-id list, audit CD-RULE-002 identity in BOTH author and committer,
+  check the mandatory block, confirm nothing under variants/ is executable, confirm the eleven plants
+  still apply and contrast, and confirm NO verdict changed anywhere — and write fresh Project Lead
+  probes of your own, documents nobody in this project has tried. THEN WO-2R increment 6, the
+  register-and-contract sweep, carrying CD-PL-F65 as a bounded addendum at its head (CD-D-058). THEN
+  AND ONLY THEN CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02, a SEPARATE agent (PBG-SOD-001,
+  non-waivable). THE GATE IS UNCHANGED: Assurance PASS on all five.
+expected_next_actor: ENGINEER
+
+evidence_references:
+- 'governance/dispatch/CD-DISPATCH-WO2R-READER.yaml (this dispatch)'
+- 'BL-20260819T151732Z-0027, CD-PL-F61 and CD-D-051'
+- 'governance/reconciliation/WO-2R/PL-T1-T5-pending-closure-and-the-reader-hang.patch.txt'
+- 'the minimal reproduction re-measured at f22d120, exit 124'
+
+risks:
+- 'The repair touches a reader that TWO gate commands depend on. The dispatch''s central control is
+  that no verdict may change anywhere, proved by a before/after table rather than asserted — because
+  a reader that parses differently is a gate that decides differently, and that would be a far worse
+  defect than the hang it replaces.'
+- 'CD-PL-F65 remains OPEN and owed at WO-2R increment 6 (CD-D-058). It is a declaration gap, not an
+  open escape.'

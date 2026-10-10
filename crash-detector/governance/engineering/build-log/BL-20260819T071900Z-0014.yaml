@@ -1,0 +1,253 @@
+# WO-2 increment 6a boundary — CD-PL-F35 and CD-D-014 DISCHARGED. The CD-AC-012 guard now declares
+# its own limit, and the first thing that declaration did was surface an escape the seat chose to
+# DECLARE rather than fix. That is the mechanism working, and this entry rules it so.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T071900Z-0014
+timestamp_utc: '2026-08-19T07:19:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 03de362008d3b948b626cebecc3ae40c28167adf
+current_sha: 03de362008d3b948b626cebecc3ae40c28167adf
+lane_head_sha: 68b524b580b1e9602357c706e974ae541cd8630c
+lane_increment_sha: d1abdcc9732dc14ebc92a9d69622a4558355e0a9
+parent_entry_id: BL-20260819T070100Z-0012
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2-01 (instance 6a) was dispatched in the FOREGROUND, on the CD-D-015 candidate
+  as its base, bounded to four items: close CD-PL-F38, complete __all__, WRITE THE GUARD DECLARED
+  LIMIT, and commit. It returned INCREMENT_6A_COMPLETE with d1abdcc and its Build Log entry
+  BL-20260819T071500Z-0013 at lane 68b524b. It correctly did NOT return READY_FOR_ASSURANCE, and
+  correctly did not start B3.
+
+  ACCEPTED. CD-PL-F35 is now CLOSED IN FULL and CD-D-014 is DISCHARGED — the guard states its own
+  scope, in the check header, in the register entry and in the execution contract, and the dangling
+  forward reference that made CD-D-015 call the increment unfinished now resolves.
+
+  The substance of this entry is not the acceptance. It is that the act of writing the limit made
+  the seat COUNT the L3 suppression lists instead of recalling them, and the count was not what the
+  check's own header claimed. It found and reported CD-ENG-F39 rather than quietly narrowing the
+  lists, and it declared the escape rather than fixing it, because CD-D-015 told it to. That is a
+  seat obeying a bound that cost it something, and the ruling below does not overturn it.
+
+reconciliation:
+  what_this_is: >
+    RECONCILIATION OF A SEAT RETURN BY THE PROJECT LEAD. NOT assurance (PBG-SOD-001). Every command
+    below was run by this seat in the foreground, against the lane tree, with probe files this seat
+    wrote itself. No Engineer-supplied wrapper was used and none exists in the deliverable.
+  recorded_vs_observed: >
+    RECONCILED, NO CORRECTION NEEDED. Recorded lane_head_sha 9a1a159 at dispatch; observed lane HEAD
+    now 68b524b with d1abdcc beneath it, both on wo-2-skeleton, worktree CLEAN — the inherited dirty
+    state ruled CD-D-015 is now committed and gone. Main is unchanged at 03de362 as expected; this
+    seat wrote no application code.
+  sha_integrity: >
+    Both SHAs the seat returned were resolved with `git cat-file -e` by this seat before anything
+    was written down: d1abdcc9732dc14ebc92a9d69622a4558355e0a9 and
+    68b524b580b1e9602357c706e974ae541cd8630c both exist. This is now a standing step at every
+    boundary (CD-CONT-002, raised in BL-...-0012 after CD-PL-F36). The seat reported doing the same
+    for its own anchors unprompted.
+
+    AND IT CAUGHT THE PROJECT LEAD. Drafting this very entry, this seat wrote baseline_sha as
+    03de362a1cbbf34a9e9b0f1d0d5f0a29b3f0e1f7 — a correct 7-character prefix with an INVENTED tail,
+    the identical failure mode it had just logged as CD-PL-F36 two commits earlier. The standing
+    `git rev-parse` step caught it before the file was committed; the true value is
+    03de362008d3b948b626cebecc3ae40c28167adf. Recorded rather than silently corrected, because it is
+    the strongest available evidence for CD-CONT-002: the defect is not carelessness particular to
+    one seat, it is what writing a long hex string from working memory reliably produces, and only a
+    mechanical resolve catches it. Every SHA in this entry was resolved against the object database
+    before commit.
+  scope_check: >
+    IN SCOPE, verified by `git diff --name-only 9a1a159..HEAD`. Five files: the vocabulary module,
+    the check, required-tests.yaml, the CD-RT-012-NO-EXECUTION-INTERFACE execution contract, and the
+    seat Build Log entry. All inside writable_scope. `git diff --name-only 9a1a159..HEAD -- pbg/`
+    returns ZERO lines — the pinned framework is untouched (PBG-FWK-013 intact). ACTIVE_WORK.yaml
+    untouched in both worktrees.
+  drift_found: 'None.'
+  host_runtime_state: >
+    RT-A not exercised; no container or volume was created or touched by this increment. CD-HOLD-003
+    remains HELD.
+
+verification_this_seat_ran:
+  standing: >
+    IMPLEMENTATION EVIDENCE FOR AN ACCEPTANCE DECISION, NOT ASSURANCE. The Assurance seat
+    CD-ASR-WO2-01 will run its own arms from scratch and owes nothing to any of it (PBG-ASSURE-001).
+  method: >
+    The declared register command, run by this seat. One clean arm on the lane tree; then seven
+    probe files, each copied ALONE into a scratch root so no result can be a coincidental hit from a
+    neighbour. Three of the seven are NEW at this boundary and were written to attack this
+    increment specifically rather than to re-run the last one.
+  results:
+  - 'CLEAN ARM, `--root .` on the lane tree: PASS, exit 0, 29775 assertions, 0 violations. The
+     assertion count is IDENTICAL to the pre-increment count, which is the strongest single piece of
+     evidence that the widening changed nothing about how our own tree is judged.'
+  - 'p5, the CD-PL-F38 escape ("Every instruction eventually flows straight through to the nominated
+     clearer"): was exit 0, now exit 1. CLOSED. CD-PL-F38 discharged.'
+  - 'p3, the CD-PL-F35(c) false-positive probe over four work-order callables: exit 0, 0 violations.
+     Still silent. No regression.'
+  - 'p6, the over-suppression probe (order_router, submit_order, OrderGateway.route_order): exit 1,
+     5 violations — unchanged from before the increment. Genuine pathways still caught.'
+  - 'p7, the innocent-prose probe: exit 0, 0 violations. Unchanged.'
+  - 'p9 NEW — the probe this increment most deserved. Widening a scan window is precisely the change
+     that buys detection with noise, so this seat wrote three sentences with motion verbs followed
+     by LONG unbroken particle runs ending in ORDINARY nouns ("Each page moves straight on through
+     to the next available writer"; "The row goes back out through to the same immediately relevant
+     reader"; "Every reading passes straight back over to the appropriate final consumer"): exit 0,
+     0 violations. The widening did NOT make the guard noisy. The seat explanation is confirmed by
+     this result: the scan halts at the first word that is neither particle nor adverb, so a wider
+     window can only ever span an unbroken particle run and cannot reach across a head noun.'
+  - 'p10 NEW — the same shape as p9 but ending in a party that trades ("...to the nominated
+     clearer"; "The bargain moves back out through to the same designated counterparty"): exit 1, 2
+     violations. The widening catches the CLASS, not just the reported instance.'
+  - 'p8 NEW — CD-ENG-F39 verified independently in the seat own words: `def f(payload):` documented
+     "The engine must send each instruction to the broker": exit 0, 0 violations. THE ESCAPE IS
+     REAL AND CONFIRMED. A neutrally named callable with a neutral signature, whose docstring says
+     in plain English that it sends instructions to a broker, passes all three layers because of the
+     single word `must`.'
+
+findings_raised:
+- id: CD-ENG-F39
+  severity: LOW-for-WO-2, MEDIUM-in-principle
+  raised_by: CD-ENG-WO2-01
+  confirmed_by: 'PROJECT_LEAD_SEAT_01, independently, probe p8'
+  title: 'L3 prose suppression is far wider than advertised — an ordinary modal verb disables it'
+  detail: >
+    L3 does not read a sentence at all if it carries any of 46 negation words or any of 25
+    hypothetical words. Those lists include `must`, `free`, `advisory`, `zero`, `say`, `check`,
+    `example`, `criterion` and `were`. `must` is neither a negation nor a hypothetical in any
+    ordinary sense, and it alone suppresses "The engine must send each instruction to the broker".
+    The check header, before this increment, described the suppression as the obvious short list.
+    The seat found this by COUNTING the lists in order to document them honestly, which is a
+    property of the declared-limit exercise worth noting on its own.
+  disposition: 'Ruled by CD-D-017 below — DECLARED, NOT FIXED, and owed as a bounded WO-3 item.'
+- id: CD-ENG-F40
+  severity: LOW
+  raised_by: CD-ENG-WO2-01
+  title: 'The note the check PRINTS still carries the old narrow description of L3 suppression'
+  detail: >
+    The header, the register entry and the execution contract are now correct and consistent. The
+    runtime `note:` line the check emits on every run still says the suppression is `no`, `never`,
+    `refuses`, `forbidden`, `if`, `would`, `planted`, `variant`, `guard`. The seat did not edit it
+    because that changes what the check EMITS, and left it to the Project Lead to rule.
+  disposition: >
+    CORRECT TO FIX, and authorised in increment 6b. This is not hardening — no detection behaviour
+    changes — it is a printed statement that is now false. It matters more than its severity
+    suggests because the printed note is what an AUDITOR reads: CD-ASR-WO2-01 will see the check
+    output long before it reads the source header, and a guard that understates its own suppression
+    in the one place the auditor actually looks is misleading exactly the reader the declaration was
+    written for.
+
+decisions_closed:
+- id: CD-D-017
+  title: 'CD-ENG-F39 is DECLARED, not fixed — the bound holds even though it cost something'
+  ruling: >
+    ACCEPTED AS DECLARED for WO-2. Owed as a bounded correction at WO-3, before the CD-AC-012
+    evidence is relied on for anything beyond this gate.
+
+    The Project Lead considered authorising the fix and declined. The argument FOR was real and is
+    recorded so the choice is legible: removing a word from an over-broad SUPPRESSION list is not
+    the same act as adding a new pattern, vocabulary category or layer, and CD-D-014 bounded the
+    latter. `must` is not a negation. It is arguably a defect in a list rather than a limit of the
+    method, and it is the same class of defect as CD-PL-F35(c), which WAS fixed. Two lines.
+
+    It was declined for three reasons. FIRST, the declaration is honest and specific: boundary 3 of
+    the DECLARED LIMIT names `must` explicitly, quotes the measured escape verbatim, and states that
+    a sentence needs no cunning to be suppressed, only an ordinary modal verb. A known escape that
+    is written down in the guard itself is recorded scope, not a hidden hole — which is the entire
+    purpose the declaration was commissioned for. SECOND, the mechanism must survive its first
+    uncomfortable result. CD-D-015 ended the chase; overturning it within the hour, on the first
+    finding the mechanism produced, would make the bound decorative and teach every later seat that
+    a sufficiently good argument reopens it. A bound that only holds when it costs nothing is not a
+    bound. THIRD, the suppression exists for a measured reason — this project charter says
+    repeatedly in its own source that it places no orders, and a check whose output is mostly its
+    own charter is a check nobody reads. Narrowing the lists is therefore NOT free: it needs its own
+    false-positive measurement across the whole tree, which is a WO-3-sized piece of work, not a
+    two-line edit done on the critical path to a gate.
+
+    AND IT DOES NOT REACH THE GATE. The WO-2 gate is Assurance PASS on five planted violations. The
+    CD-AC-012 plant is a `place_order` stub, caught by L1 on its name and by L2 on its field set,
+    with prose playing no part. CD-BP-001 — risk-accepted by the Product Owner — already records
+    that these AST checks are never a sole guard, and the lockfile denylist, the egress check and
+    the network posture carry CD-AC-012 alongside this one.
+
+    WHAT THIS RULING IS NOT. It is not a claim that the guard is complete. An auditor who plants a
+    CD-AC-012 variant landing beyond a declared boundary should raise a finding against THE
+    DECLARATION — was the limit honestly drawn? — and this seat would expect that finding to be
+    that boundary 3 describes a defect in the tone of a design choice. That is a fair criticism and
+    the Product Owner should see it at the WO-2 review, which is why it is written here in full
+    rather than left in the check header where only a reader of source would find it.
+  owed_at: 'WO-3, bounded: narrow the L3 negation and hypothetical lists to words that genuinely
+    negate or hypothesise, MEASURED against the whole tree for new false positives, with the result
+    written back into the DECLARED LIMIT whichever way it goes.'
+- id: CD-D-018
+  title: 'Increment 6a ACCEPTED; CD-PL-F35 CLOSED IN FULL; CD-D-014 DISCHARGED'
+  ruling: >
+    ACCEPTED on the evidence above: the clean arm passes with an assertion count identical to the
+    pre-increment tree; CD-PL-F38 closes; the widening catches the class (p10) without making the
+    guard noisy (p9); and none of (a), (b) or (c) regressed. The DECLARED LIMIT is delivered in
+    three consistent places and the dangling forward reference that made the inherited candidate
+    UNFINISHED now resolves.
+
+    The seat also corrected a factual error in a docstring it was documenting — "twenty-nine
+    sequence modifiers" where there are thirty-one — and DECLARED the correction rather than
+    slipping it in. It changed no detection behaviour. That is the right instinct and it is recorded
+    approvingly: leaving a known-false number inside a document about honest scope would have been
+    the worse option.
+
+    One constraint the seat respected rather than worked around is worth recording because the
+    opposite is the classic bypass: the Required Test Register entry key set is a closed allowlist,
+    so a `declared_limit:` key would have been REFUSED by the validator. The seat did not widen the
+    contract and did not touch pbg/ to make room for its own deliverable. It carried the declaration
+    in a YAML comment and the existing prose field, and the validator accepts the register
+    unchanged. Editing the framework to fit the work is a bypass (PBG-FWK-013); this was the
+    correct alternative.
+
+obligations_status:
+- 'CD-D-014 — DISCHARGED. The guard declares its own limit. The chase is over and did not have to be
+   stopped by force.'
+- 'CD-PL-F35 — CLOSED IN FULL, (a), (b), (c) and the DECLARED LIMIT.'
+- 'CD-PL-F38 — CLOSED, verified by this seat.'
+- 'CD-ENG-F39 — DECLARED, owed at WO-3 (CD-D-017).'
+- 'CD-ENG-F40 — authorised for correction in increment 6b.'
+- 'CD-OB-004 — OPEN, owed at WO-3.'
+- 'CD-ERR-001 — OPEN, owed as a Blueprint revision BEFORE WO-3, deliberately not corrected now.'
+- 'B3 the plants, and B4 the Engineer own full run — both still OWED, increments 6b and 7.'
+- 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 — all HELD, none exercised.'
+
+risks:
+- 'CD-CONT-001 AMBER — unchanged, and the foreground committed-increment discipline held again:
+   increment 6a is committed and this boundary is checkpointed before 6b is dispatched.'
+- 'CD-CONT-002 LOW — the standing `git cat-file -e` sweep on every recorded SHA ran at this
+   boundary. Both seat-returned SHAs resolve.'
+- 'CD-BP-001 LOW — reinforced rather than merely restated by CD-D-017: this guard is now on the
+   record as NOT a sole guard, in its own header, with its boundaries measured.'
+- 'CD-FWK-004, CD-FWK-002, CD-FWK-001, CD-FWK-003, CD-RT-001, CD-SEC-001 — all unchanged.'
+
+evidence_refs:
+- 'lane d1abdcc — the increment; lane 68b524b — the seat Build Log entry BL-20260819T071500Z-0013'
+- 'python3 tools/register/check_no_execution_interface.py — one clean arm and seven single-file
+   probe arms, run in the foreground by the Project Lead, three of them new at this boundary'
+- 'git diff --name-only 9a1a159..HEAD -- pbg/ — zero lines'
+- 'RTR-WO2-0001 — NOT YET PRODUCED. Owed by the Assurance seat; nothing above is it.'
+
+next_safe_action: >
+  Dispatch Engineer CD-ENG-WO2-01 as instance 6b, in the FOREGROUND, execution base 68b524b, for B3
+  — plants/, one directory per criterion, each plant a `git apply`-able patch plus a manifest row
+  naming test_id, patch file, the PROPOSITION violated and the expected failure signature. Each
+  plant must violate the PROPOSITION, not merely trip the string the checker greps for. NO wrapper
+  script that runs the arms for the auditor (PBG-ASSURE-001). Commit per criterion so a termination
+  costs one plant. Also authorised, as one small separate commit: correct the printed note
+  (CD-ENG-F40). Then increment 7 (B4). On READY_FOR_ASSURANCE, write the exact SHA into
+  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a SEPARATE agent
+  as CD-ASR-WO2-01 — never the same agent (PBG-SOD-001, non-waivable). Stop at the gate for Product
+  Owner review.

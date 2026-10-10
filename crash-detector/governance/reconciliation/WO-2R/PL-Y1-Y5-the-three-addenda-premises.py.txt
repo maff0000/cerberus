@@ -1,0 +1,213 @@
+PL-Y1 .. PL-Y5 — THE PROJECT LEAD RE-MEASURES THE PREMISES OF INCREMENT 6's THREE ADDENDA
+=========================================================================================
+
+Measured by PROJECT_LEAD_SEAT_01 on 2026-08-19 at lane base 253c38b, AFTER the increment-6
+dispatch was issued and BEFORE the seat delivered anything. Companion to
+PL-INC6-BASELINE-253c38b.md, which holds the numeric baseline.
+
+THIS FILE IS DATA. Nothing in it is executable (PBG-ASSURE-001) — the `.py.txt` suffix is
+deliberate, following the convention of every other PL-* file in this directory. Copy it to
+/tmp to run it; never run it from here and never edit it in place (PBG-CONT-003).
+
+WHY IT EXISTS
+-------------
+Increment 6 is a DECLARATION SWEEP. It writes no logic, so nothing it produces fails a test,
+so the only control on it is a Project Lead who reads every boundary against the measurement
+that produced it. That is impossible if the Project Lead's only source for the measurement is
+the seat's own report. Each of the three addenda rests on a factual premise about the code at
+253c38b. Those premises are re-measured here, INDEPENDENTLY, before the seat speaks.
+
+If an addendum's premise had turned out false, the addendum would have been wrong and the
+seat would have been ordered to write something untrue. None did. All three hold.
+
+Scratch trees, neither of them the lane worktree, so a running seat could not be disturbed:
+
+    git -C /srv/crash-detector archive 253c38b | tar -x -C /tmp/inc6-base
+    git -C /srv/crash-detector archive f22d120 | tar -x -C /tmp/inc6-prev
+
+
+=========================================================================================
+ADDENDUM 1 — CD-PL-F65. Boundary 3's `__slots__` half, and whether the route reaches the
+Product Owner's forbidden sentence.
+=========================================================================================
+
+    cd /tmp/inc6-base && PYTHONPATH=src python3 -B /tmp/pl_probe_f65.py
+
+--- the probe ---------------------------------------------------------------------------
+
+    from datetime import datetime, timedelta, timezone
+
+    from crash_detector.staleness import StalenessWindow, FreshnessEvidence
+    from crash_detector.witness.panel import Agrees
+    from crash_detector.serving.witness_resolver import render_panel
+
+    # PL-Y1  which of the three values are slotted?
+    for cls in (StalenessWindow, FreshnessEvidence, Agrees):
+        print(cls.__name__, "__slots__" in vars(cls))
+
+    now = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
+    win = StalenessWindow(seconds=600.0)
+    ev  = FreshnessEvidence(as_of_utc=now - timedelta(seconds=5), observed_at_utc=now, window=win)
+    a   = Agrees(divergence_measure=0.01, as_of_utc=ev.as_of_utc, freshness=ev)
+
+    # PL-Y2  inject an UNDECLARED attribute — boundary 3 says slots make this impossible
+    for target in (win, ev, a):
+        object.__setattr__(target, "an_attribute_nobody_declared", 1e18)
+
+    # PL-Y3  overwrite DECLARED fields with a decade-old instant, then render
+    decade = datetime(2016, 8, 21, 12, 0, 0, tzinfo=timezone.utc)
+    object.__setattr__(a,  "as_of_utc", decade)
+    object.__setattr__(ev, "as_of_utc", decade)
+    render_panel(a)
+
+--- observed ------------------------------------------------------------------------------
+
+    PL-Y1  StalenessWindow      '__slots__' in vars(cls) = True
+           FreshnessEvidence    '__slots__' in vars(cls) = True
+           Agrees               '__slots__' in vars(cls) = False
+           lawful Agrees constructed; age_seconds = 5.0
+           render_panel(a) = 'WITNESS AGREES'
+
+    PL-Y2  StalenessWindow      REFUSED -> AttributeError: 'StalenessWindow' object has no
+                                           attribute 'an_attribute_nobody_declared'
+           FreshnessEvidence    REFUSED -> AttributeError: 'FreshnessEvidence' object has no
+                                           attribute 'an_attribute_nobody_declared'
+           Agrees               STUCK   -> 1e+18
+
+    PL-Y3  a.as_of_utc             = 2016-08-21 12:00:00+00:00
+           a.freshness.as_of_utc   = 2016-08-21 12:00:00+00:00
+           a.freshness.age_seconds = 315360000.0
+           render_panel(a)         = 'WITNESS AGREES'
+
+--- what it establishes --------------------------------------------------------------------
+
+PREMISE CONFIRMED, AND CONFIRMED MORE STRONGLY THAN IT WAS STATED.
+
+Boundary 3 of the CD-AC-005 freshness closure currently reads, in all three CD-RULE-004
+places, "Both values use ``__slots__``, so an UNDECLARED attribute cannot be injected", and
+generalises in its own first sentence to "every frozen value in Python AND IN THIS
+REPOSITORY". PL-Y1 shows the two values it names ARE slotted and `Agrees` IS NOT. PL-Y2 does
+not stop at the class attribute — it performs the injection the boundary says is impossible,
+and on `Agrees` IT STICKS. So the reassuring half is not merely unstated for `Agrees`; it is
+FALSE there, on the very generalisation the boundary makes.
+
+PL-Y3 carries it to the sentence the Product Owner forbade. A constructed, lawful `Agrees`
+rewritten to a 2016 instant reports an age of 315,360,000 seconds — ten years — and
+`render_panel` returns 'WITNESS AGREES'. Boundary 3's own examples stop at
+`object.__setattr__(evidence, "as_of_utc", ...)` making "its derived age read 315360000.0"
+and do not show the last step. The last step is the whole of CD-AC-005's failure mode.
+
+WHAT IS NOT ESTABLISHED, so it is not over-read: this does not make the increment-5 closure
+wrong. The closure's claim is that a decade-old row cannot produce an `Agrees` BY ANY ROUTE
+INTO ANY RESOLVER, and PL-Y3 does not use a route into a resolver — it forges an already
+constructed value in memory. That is why CD-D-058 orders the boundary FINISHED and expressly
+FORBIDS slotting `Agrees`: slotting would close PL-Y2 and leave PL-Y3 open, which reads like
+a closure while being partial. THE DENOMINATOR: one value, two mutation routes, one renderer.
+
+
+=========================================================================================
+ADDENDUM 2 — CD-ENG-READER-F06. Is declared limit 4 actually stale, and is it in exactly
+three places?
+=========================================================================================
+
+--- the three CD-RULE-004 places, located by search, not by memory --------------------------
+
+    grep -rn "non-termination defect\|NOT REPAIRED HERE" tools/register/ required-tests.yaml contracts/
+
+    tools/register/check_engine_no_witness_reach.py:189-191
+    required-tests.yaml:531-532
+    contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md:119-121
+
+EXACTLY THREE. The dispatch's line references are correct. The check header is the one
+outside the reader seat's writable scope, which is why it escalated rather than correcting
+two of three (CD-D-063 ratifies that judgement).
+
+--- PL-Y4: is the text stale? ---------------------------------------------------------------
+
+    document (a block sequence opened by the first key of a block-sequence item):
+
+        top:
+          - first:
+              - a
+              - b
+
+    at f22d120 (before the reader repair):
+        HANGS. `timeout 25` killed it, rc=143. No verdict.
+
+    at 253c38b (after):
+        REFUSED, YamlSubsetError: "line 3: this reader cannot read a nested block beneath a
+        key written inline on a block-sequence item. It made no progress past '- a' and
+        refuses rather than ..."
+
+--- what it establishes --------------------------------------------------------------------
+
+PREMISE CONFIRMED. The sentence "That reader ALSO has a known non-termination defect ... This
+check shares it. NOT REPAIRED HERE and NOT IN SCOPE" is FACTUALLY FALSE at 253c38b: the
+defect was repaired under CD-DISPATCH-WO2R-READER and the reader now returns a stated
+refusal naming the line. Three consistent stale statements fail closed and mislead nobody
+into a false green (which is why CD-D-063 ratifies the reader seat's refusal to correct only
+two of them), but they are still false, and CD-RULE-004 is satisfied only when the three
+places agree AND say what is true.
+
+Note the refusal is a REFUSAL, not a parse — so what replaced the hang is a new, narrower
+residue (boundary 8b), and CD-D-063 requires the correction to NAME it rather than delete
+the limit. A limit that is discharged is superseded, not erased.
+
+
+=========================================================================================
+ADDENDUM 3 — CD-ENG-READER-F05/F08. Does PL-X10a reproduce, and is it pre-existing?
+=========================================================================================
+
+    document:
+
+        top:
+          - key:
+              sub: 1
+
+    at f22d120:  {'top': [{'key': None, 'sub': '1'}]}
+    at 253c38b:  {'top': [{'key': None, 'sub': '1'}]}
+
+    correct would be:  {'top': [{'key': {'sub': 1}}]}
+
+--- what it establishes --------------------------------------------------------------------
+
+PREMISE CONFIRMED IN BOTH HALVES.
+
+REPRODUCES: the reader neither parses this document nor refuses it. It returns a document
+nobody wrote, `key` reads as ABSENT, and `sub` is LIFTED to `key`'s own level. A quiet wrong
+parse is worse than a refusal because there is nothing to notice.
+
+PRE-EXISTING: BYTE-IDENTICAL output at both SHAs, so the reader repair neither introduced nor
+disturbed it, and the sweep is declaring something that was already true when the first
+auditor was handed 66681b2.
+
+WHY THE FIX IS OUT OF BOUNDS, restated so the seat's declaration is not read as reluctance:
+correcting the parse changes WHICH CLAUSE refuses V27, and possibly whether it is refused at
+all (CD-ENG-WO2R-F15). V27 is CD-ASR-F04 evidence and CD-ASR-F04 took two increments to
+close. Repairing this now would reopen a closed criterion on the eve of the audit to fix a
+defect that is fail-closed in every route measured. It is dispatched at WO-3 BOUND TOGETHER
+WITH THE V27 RE-MEASUREMENT.
+
+THE DENOMINATOR, WHICH THE DECLARATION MUST CARRY AND MUST NOT WRITE AS A SAFETY PROOF:
+THREE ROUTES ON ONE CRITERION. The Project Lead's three attempts to weaponise the flattening
+into a FALSE CLEAN (PL-X12a/b/c, at three depths of cd-collectors' `pending`) were all
+REFUSED, because flattening LIFTS a nested key INTO CD-EGRESS-007's closed key set rather
+than hiding it. Three refused attempts on one criterion is not a proof that a fourth route
+does not exist, and the next auditor is expressly invited to find it.
+
+
+=========================================================================================
+WHAT THIS FILE ENTITLES THE RECONCILIATION TO DO
+=========================================================================================
+
+At reconciliation the Project Lead does not have to take the seat's word for any of the three
+premises, and does not have to re-derive them under time pressure with a seat waiting. It can
+go straight to the question that actually decides the increment:
+
+  * does each declared limit carry an EXECUTABLE example that reproduces?
+  * do the three CD-RULE-004 places agree IN SUBSTANCE, not merely in topic?
+  * is any boundary asserting a carrier nobody MEASURED (CD-RULE-006)?
+  * has any CLASS claim quietly become an ENUMERATION OF SPELLINGS?
+
+And one more, specific to a sweep: did anything MOVE that was forbidden to move. The numbers
+for that are in PL-INC6-BASELINE-253c38b.md.

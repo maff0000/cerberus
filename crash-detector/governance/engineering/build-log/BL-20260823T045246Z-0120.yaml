@@ -1,0 +1,249 @@
+entry_id: BL-20260823T045246Z-0120
+timestamp_utc: '2026-08-23T04:52:46Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: f50a4fe03b42e8df27622969d0494c02414092e0   # RESOLVED with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the INCREMENT-8 DISPATCH boundary.
+parent_entry_id: BL-20260823T035800Z-0119
+schema_version: 1
+
+action_summary: >
+  *** **INCREMENT 8 DIED IN FLIGHT. ITEM 5 IS BANKED BY MEASUREMENT; ITEM 1 IS QUARANTINED AND
+  MEASURED RED. THE EIGHTH RUNTIME TERMINATION ON THIS PROJECT.** ***
+  `CD-ENG-WO2R3-05` committed ITEM 5 at `314592c`, began ITEM 1, and was terminated by
+  harness/API failure part-way through it. **IT NEVER RETURNED — not `READY_FOR_ASSURANCE`, not
+  `STOPPED_AT_ITEM_1`.** The resumed Project Lead applied CD-D-007's suspicion procedure and found
+  **TWO DIFFERENT KINDS OF SEAT WORK requiring two different dispositions**, which is why this
+  boundary rules twice.
+  *** **THE LANE HEAD WAS ONE COMMIT AHEAD OF THE CONTINUITY RECORD AND THE WORKING TREE WAS
+  DIRTY.** The record knew `4410275`; the lane was at `314592c` with three modified files. A
+  Project Lead that trusted its own record would have branched the next increment from `4410275`
+  and silently discarded a sound, measured, fully attested item **and** lost 544 lines of ITEM 1
+  design. **CD-D-007 PAYS FOR ITSELF FOR THE FOURTH TIME.** ***
+
+reconciliation:
+  recorded_vs_observed: >
+    RECONCILED WITH ONE DIVERGENCE OF SUBSTANCE, recorded rather than silently corrected. main is
+    clean at `f50a4fe` apart from 42 untracked operator-wrapper artefacts and `pbg/tools/pbg/
+    __pycache__/` — `git status --porcelain | grep -cv '^??'` returns **0**, so **NOTHING GOVERNED
+    IS UNTRACKED ON MAIN**. The lane `wo-2r3` was at `314592c`, **ONE COMMIT AHEAD** of the
+    `4410275` the dispatch record baselines, with `src/crash_detector/engine/evaluate.py`,
+    `tests/test_evaluate.py` and `tests/test_judgement_path_doors.py` MODIFIED AND UNCOMMITTED.
+  drift_found: >
+    None under `pbg/` — `git diff --name-only 4410275 314592c -- pbg/` returns 0 paths. No
+    pre-existing Build Log entry was modified on the lane: one entry ADDED
+    (`BL-20260823T042136Z-0084.yaml`, the Engineer's own), zero modified, by
+    `git diff --name-status`.
+
+# ================================================================================================= #
+# RULING ONE — ITEM 5. RECONCILED BY MEASUREMENT AND BANKED. NOT ACCEPTED ON THE SEAT'S WORD.
+# ================================================================================================= #
+decisions_closed:
+- id: CD-D-092-A
+  summary: >
+    **WO-2R3 INCREMENT 8 ITEM 5 (`F-06-K`) IS RECONCILED BY MEASUREMENT AND BANKED** at lane
+    `314592c`, one commit by `CD-ENG-WO2R3-05`. BANKED IS NOT ACCEPTED (PBG-AUTH-003): acceptance
+    is the seventh Assurance seat's to test and the Product Owner's to rule.
+  what_the_PROJECT_LEAD_MEASURED_ITSELF: >
+    On its own `git archive` extractions at BOTH SHAs, with its own drivers, never from the seat's
+    numbers:
+    (1) **SUITE** — `4410275` **1635 passed**, `314592c` **1641 passed**, both EXIT 0. The seat
+    claimed 1635 -> 1641. **MATCHES.**
+    (2) **NODE IDS** — collected and sorted-diffed at both SHAs: **ZERO REMOVED**, exactly **SIX
+    ADDED**, and **all six in `tests/test_module_level_traversal.py`**. The seat claimed +6 and
+    exactly this carrier. **MATCHES, AND NOTHING WAS LOST TO MAKE ROOM.**
+    (3) **THE PRODUCT IS BYTE-IDENTICAL** — `git rev-parse 4410275:src` and `git rev-parse
+    314592c:src` BOTH return `668dc34d902d258e32606038153ae8d2c6e1f5f1`. **A TREE HASH, WHICH IS
+    STRONGER THAN THE DIFF THE SEAT OFFERED.** Not one line under `src/` moved.
+    (4) **THE FAIL-INTO-PASS CONTRAST, REBUILT FROM SCRATCH BY THIS SEAT** — six trees, each a
+    `4410275` extraction with ONLY `tools/register/` replaced by the instrument under test, one
+    axis (whether `FetchOutcome = Union[...]` is flush left or wrapped in `if True:`):
+      BASE INSTRUMENT `4410275`   clean EXIT 0 (101 assertions) · strip `@establishes` EXIT 1 ·
+                                  strip + indent **EXIT 0 (91 assertions)**  <-- **FAIL BECAME PASS**
+      FIXED INSTRUMENT `314592c`  clean EXIT 0 (101 assertions) · strip `@establishes` EXIT 1 ·
+                                  strip + indent **EXIT 1**                  <-- identical to control
+    **F-06-K WAS REAL AND IS CLOSED AT THIS SITE. THE ASSERTION COUNTS REPRODUCE THE SEAT'S TABLE
+    EXACTLY, INCLUDING THE 101 AND THE 91.**
+    (5) **THE REGISTER SET, ALL TWELVE, RUN BY THIS SEAT AT `314592c`** — ten EXIT 0
+    (`check_constructor_field_establishment` **101 assertions**, `check_judgement_path_doors` **60**,
+    `check_no_blend` 7161, `check_no_numeric_default` 541, `check_schema_closed` 242,
+    `check_lockfile_denylist` 134, `check_egress_no_broker` 69, `check_engine_no_witness_reach` 28,
+    `check_dockerignore` 22, `check_base_image_digest_pin` 13), `check_grant_matrix_live` **EXIT 3**
+    (env gate, no credentials, none guessed), `check_no_execution_interface` **EXIT 1**. **MATCHES
+    THE SEAT'S TABLE IN EVERY CELL.**
+    (6) **ALL FOUR TRAVERSAL SITES CONVERTED** — `module_level_statements` is called at
+    `check_constructor_field_establishment.py:633` and `check_judgement_path_doors.py:617`, `:1306`,
+    `:1348`. **FOUR CALL SITES, WHICH IS THE FOUR CLAIMED.** Every surviving `for node in tree.body`
+    in `tools/` is inside a docstring recording the SUPERSEDED form (PBG-CONT-003), not live code —
+    checked line by line, not by count.
+    (7) **IDENTITY CLEAN (CD-RULE-002)** — `git log --format='%an <%ae> | %cn <%ce>' 4410275..314592c
+    | sort -u` returns **ONE LINE**, `CD-ENG-WO2R3-05`. No seat signed another seat's name.
+    (8) **SCOPE** — all **8** changed paths inside `writable_scope`; `pbg/` **ZERO**.
+  the_one_place_the_PROJECT_LEAD_READS_THE_EVIDENCE_MORE_NARROWLY_THAN_THE_SEAT_DID: >
+    **CD-PL-F108 (LOW, against the seat's characterisation and NOT against its work).** The seat
+    wrote that its carrier *"6 FAILED at 4410275 in a pristine `git archive` extraction"*, offering
+    that as the contrast. **IT IS TRUE AND IT IS NOT THE CONTRAST.** This seat ran it: all six fail
+    at base with **`ImportError` at line 379** — because `module_level_statements` does not exist
+    there. **THAT PROVES THE FUNCTION IS NEW. IT PROVES NOTHING ABOUT BEHAVIOUR**, and a reader
+    could take it for a behavioural arm. The behavioural proof is the seat's OWN instrument table,
+    which this seat rebuilt independently at (4) above and which is sound. **The finding is that the
+    two were presented as one line of evidence, not that either is wrong.**
+  reasoning: >
+    Every load-bearing claim this seat made was re-derived by the Project Lead on its own
+    extractions, and the one that mattered — the fail-into-pass arm that makes `F-06-K` a real
+    defect rather than a reading — was REBUILT FROM SCRATCH rather than replayed. The seat also
+    committed its OWN Build Log entry before it died (`BL-20260823T042136Z-0084.yaml`), so unlike
+    the WO-2R2 increment-2 case there is no orphaned attestation to preserve under someone else's
+    name. **AND THE SEAT RAISED THREE FINDINGS AGAINST ITSELF**, including `CD-ENG-WO2R3-05-F03`,
+    in which it recorded that its own docstring claimed an EXIT-0 -> EXIT-1 contrast the
+    measurement refused, and corrected the document to the measurement rather than the reverse.
+    **A SEAT THAT CORRECTS ITS OWN CLAIM DOWNWARD IS EVIDENCE ABOUT THE REST OF ITS CLAIMS.**
+  the_reordering_was_AUTHORISED_and_this_is_why_that_matters: >
+    ITEM 5 was executed BEFORE ITEM 1, against a dispatch that says the order **"IS NOT A
+    SUGGESTION"**. **IT IS NOT A BREACH.** ITEM 1's own text pre-authorised exactly this,
+    conditionally: *"DO ITEM 5 FIRST IF YOU FIND THEY COLLIDE, AND SAY SO — the order is the
+    Product Owner's but a measured dependency between two items is a finding, not a licence."* The
+    seat found the collision, **said so as `CD-ENG-WO2R3-05-F01`**, and wrote *"Reported as a
+    finding and not taken as a licence."* The condition was met in the form the dispatch demanded.
+  authority: >
+    CD-AUTH-0001 — the Project Lead's own lane-reconciliation decision, Level 1. It resolves no
+    Product Authority question and grades nothing.
+
+# ================================================================================================= #
+# RULING TWO — ITEM 1. QUARANTINE AND RE-DISPATCH, ON THE CD-D-007 PRECEDENT.
+# ================================================================================================= #
+- id: CD-D-093
+  summary: >
+    **DISPOSITION OF THE DEAD SEAT'S UNCOMMITTED ITEM 1 OUTPUT: QUARANTINE AND RE-DISPATCH.** The
+    544-line delta is moved intact and **READ-ONLY** to `/srv/crash-detector-wo2r3-inc8-item1-salvage/`,
+    outside every git worktree, with its SHA256 manifest, the `git diff` patch, the three files
+    byte-for-byte, and a README stating its provenance, its measured state and exactly what a
+    re-dispatched seat may do with it. **The lane `wo-2r3` is returned to CLEAN at `314592c`, which
+    is a verifiable state rather than an assertion** — `git status --porcelain`, `git diff --stat`
+    and `git diff --cached --stat` all return **ZERO LINES**.
+  the_quarantine_was_VERIFIED_TO_ROUND_TRIP_BEFORE_THE_WORKING_TREE_WAS_TOUCHED: >
+    **A QUARANTINE THAT CANNOT REPRODUCE THE WORK IS A DELETION WITH PAPERWORK.** Before
+    `git checkout --` was run on a single file, the patch was applied to a pristine `git archive`
+    extraction of `314592c` and the result hashed: all three files **MATCH BYTE-FOR-BYTE across
+    THREE INDEPENDENT COPIES** — the patch-applied extraction, the salvage `tree/`, and the live
+    worktree. Only then was the lane restored.
+  what_the_PROJECT_LEAD_MEASURED_and_it_is_the_reason_this_is_not_banked: >
+    (1) **THE WORK IS RED.** Full suite with the delta applied: **1 failed, 1640 passed**, against a
+    measured baseline of **1641 passed, EXIT 0** at `314592c`. The failure is
+    `tests/test_disposition_contract.py::test_the_five_original_words_are_unchanged_in_shape` — the
+    Class-2 sweep moves **534 -> 553 sites** because the redesign adds admission sites and the
+    contract test pins the count. **THE WORK DOES NOT CARRY THE CONSEQUENCE OF ITS OWN CHANGE.**
+    (2) **IT ADDS ZERO TESTS.** 1641 collected node ids either side.
+    (3) **THE MANDATED CARRIER DOES NOT EXIST.** ITEM 1 says *"YOUR CARRIER MUST BE THE ATTACK
+    ITSELF"* — a `__closure__` / `__wrapped__` / `__globals__` / module-namespace walk — and *"A
+    CARRIER THAT ONLY CHECKS THE DECORATOR IS PRESENT TESTS THE WRAPPER, NOT THE PROPERTY."* The
+    delta's own `tests/test_evaluate.py` states *"THE FULL ATTACK IS `tests/test_the_absence_door.py`
+    AND IS NOT DUPLICATED HERE."* **`tests/test_the_absence_door.py` DOES NOT EXIST**, at `314592c`
+    or in the working tree or anywhere on the lane. **THE DOCUMENT CITES EVIDENCE THAT WAS NEVER
+    WRITTEN.**
+    (4) **`DECLARED LIMIT 10` IS CITED THREE TIMES AND DEFINED NOWHERE**, and the two citations in
+    `evaluate.py` (`:364`, the `types.FunctionType(code, globals)` reconstitution; `:467`, the
+    dropped generic subscript) are **TWO DIFFERENT RESIDUES SHARING ONE NUMBER**. CD-RULE-004
+    requires a declared limit in three places; this one is in none.
+    (5) **PROPERTY (b) HAS NO CARRIER.** The dispatch requires *"ADD A PARAMETER AND SHOW THE GUARD
+    STILL COVERS IT, WITHOUT ANYONE EDITING THE GUARD"* and calls that contrast *"the whole of
+    (b)"*. No such arm exists in the delta.
+  and_a_PRODUCT_BEHAVIOUR_CHANGE_THAT_IS_NOWHERE_DECLARED: >
+    **CD-PL-F109 (MEDIUM), raised by the Project Lead against the quarantined work and recorded so
+    that a re-dispatched seat cannot inherit it silently.** `_evaluate_dial`'s `usable` annotation
+    moves `Mapping[str, OK]` -> `dict[str, OK]`. Because the redesign DERIVES its establishment from
+    that annotation **by exact type**, a `Mapping` that is not a `dict` is now **REFUSED AT THE
+    DOOR** where it was previously admitted. **THAT MAY WELL BE CORRECT** — it may even be the point
+    — **but it is a narrowing of what the product accepts and the work declares it nowhere.**
+  reasoning: >
+    **THE WORK IS IN SCOPE BUT UNATTESTED, AND THOSE ARE DIFFERENT FAILURES** (CD-D-007's own
+    words). It was produced by the right seat, in the right lane, inside `writable_scope`, under an
+    issued dispatch — so it is not tainted, and destroying it would burn real effort for no
+    governance gain. **THIS CASE IS STRONGER THAN THE ORIGINAL CD-D-007 IN BOTH DIRECTIONS.**
+    Stronger for preserving: the design engages property (a) seriously and in a way this seat did
+    not anticipate — the body is carried as a `code` object rather than a function object, so the
+    `sys.modules` -> `__closure__` -> `cell_contents(...)` attack that felled PO-DECISIONS-0012
+    ruling 1 finds only DATA; `functools.wraps` is dropped entirely, so `__wrapped__` is never
+    created rather than created-and-deleted, which is a strictly better answer to PO-DECISIONS-0013
+    ruling 2 than the `delattr` it replaces. Stronger for refusing to bank it: **the original
+    CD-D-007 salvage merely lacked evidence. THIS ONE CARRIES CLAIMS THAT MEASUREMENT REFUSES** —
+    a red suite, a cited carrier file that does not exist, and a declared limit that is declared
+    nowhere. **BANKING IT WOULD PUT A FALSE CITATION INTO THE RECORD UNDER THIS SEAT'S OWN
+    ATTESTATION**, which is the precise failure CD-D-007 exists to prevent, arriving from the
+    direction the precedent did not have to consider.
+    **IT IS UNVERIFIED, NOT DISBELIEVED, AND THE README SAYS SO IN THOSE WORDS.**
+  what_a_re_dispatched_seat_may_do_with_it: >
+    Exactly what CD-D-007 permitted and nothing more: **read it as an UNVERIFIED PRIOR DRAFT, adopt
+    only lines it has ITSELF verified against `BLUEPRINT.md` and the dispatch, and OWN EVERY LINE IT
+    COMMITS.** Specifically **NOT** permitted: applying `uncommitted-item1.patch` wholesale and
+    committing it. **That would be a false attestation.**
+  authority: >
+    CD-AUTH-0001 — the Project Lead's own lane-reconciliation decision, Level 1. It resolves no
+    Product Authority question, grades nothing, and adopts no line of the quarantined design.
+
+findings_raised_at_this_boundary:
+- id: CD-PL-F108
+  severity: LOW
+  against: CD-ENG-WO2R3-05's characterisation of its ITEM 5 evidence
+  summary: >
+    A carrier that fails at base by `ImportError` was presented alongside the instrument contrast as
+    though both were behavioural arms. It proves the function is NEW, not that behaviour DIFFERS.
+    The behavioural proof exists separately and is sound; the finding is about the presentation.
+- id: CD-PL-F109
+  severity: MEDIUM
+  against: the quarantined ITEM 1 work (CD-D-093)
+  summary: >
+    `usable: Mapping[str, OK]` -> `dict[str, OK]` narrows what the product admits at a door whose
+    establishment is derived from that annotation by exact type. Undeclared anywhere in the work.
+- id: CD-PL-F110
+  severity: MEDIUM
+  against: PROJECT_LEAD_SEAT_01 (this seat), raised by this seat against itself
+  summary: >
+    **THE FIRST SHA256 MANIFEST THIS SEAT WROTE HASHED ITSELF AS EMPTY.** `find | xargs sha256sum >
+    MANIFEST.sha256` creates the target before the hashing runs, so the manifest listed
+    `./MANIFEST.sha256  e3b0c442...` — the hash of the empty string — **a manifest row that can
+    never match the file it names.** Caught by reading the output rather than by any check, and
+    regenerated to a temporary path before being moved into place. **RECORDED BECAUSE IT WAS CAUGHT,
+    NOT BECAUSE IT WAS AVOIDED (the CD-PL-F98 precedent).** A quarantine whose integrity record is
+    self-falsifying is the CD-D-093 failure mode arriving inside the CD-D-093 remedy.
+
+- id: CD-PL-F111
+  severity: MEDIUM
+  against: PROJECT_LEAD_SEAT_01 (this seat), raised by this seat against itself
+  summary: >
+    **THE FIRST HAND-EDIT OF `ACTIVE_WORK.yaml` AT THIS BOUNDARY LEFT `last_build_log_entry` STALE
+    AT `BL-...-0119`, AND `pbg boot` RETURNED RED — `CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED`.**
+    Five fields were updated by hand and the sixth was missed. **THE DEFECT IS NOT THE MISS; IT IS
+    THAT HAND-EDITING THIS FILE BYPASSES THE FRAMEWORK'S OWN WRITE-THEN-READ-BACK PATH**, which is
+    exactly the CD-PL-F64 mechanism recorded in this file at lines 1686-1701 after TWO checkpoints
+    were written on top of a record the framework was already refusing. **THIS TIME THE BOOT WAS
+    RE-RUN AFTER THE EDIT AND IT CAUGHT IT BEFORE THE COMMIT, WHICH IS THE WHOLE OF WHAT CD-PL-F64
+    ASKED FOR.** Recorded because it was caught, not because it was avoided.
+
+product_authority_questions_raised_at_this_boundary: >
+  **NONE NEW. THE TWO CARRIED FORWARD FROM BL-20260823T035800Z-0119 REMAIN OPEN AND UNANSWERED, AND
+  NEITHER BLOCKS THE RE-DISPATCH** — `Q1 F-06-B` (the lane does not contain its own governing
+  authority: lane `BLUEPRINT.md` at **0.1.0**, `governance/blueprint/` **ABSENT** on the lane, 29
+  files citing an amendment the lane never received, and main's BLUEPRINT commit **NOT AN ANCESTOR**
+  of `af2accb`) and `Q2 F-06-J` (does §D's closure extend to the construction *path* — 99 governed
+  classes, 13 SEALED, 77 OPEN). **CD-D-092-A AND CD-D-093 ARE BOTH LEVEL 1 LANE-RECONCILIATION
+  DECISIONS AND NEITHER TOUCHES EITHER QUESTION.**
+
+next_safe_action: >
+  **RE-DISPATCH `CD-DISPATCH-WO2R3-INC8-ENGINEER` TO A FRESH ENGINEER IDENTITY AT `314592c`, WITH
+  ITEM 5 STRUCK AS DONE AND ITEMS 1, 2, 3, 4 AND 6 OUTSTANDING**, under the SAME dispatch record and
+  the SAME bounded scope (the CD-D-007 re-dispatch shape), the seat told that the salvage exists,
+  where it is, and exactly what it may do with it. **The base moves `4410275` -> `314592c` because
+  ITEM 5 is banked, and ITEM 1's `_module_bindings` collision — the reason the seat reordered — is
+  now RESOLVED BENEATH IT rather than in front of it.**
+  **NOTHING IS MERGED, ADMITTED OR PROMOTED. T2 RED. CD-AC-002 AND CD-AC-005 AMBER AND NOT CLOSED.
+  `CD-RT-012` RED AT THE TIP AND UNMOVED BY THIS BOUNDARY. THE WO-2 GATE IS SHUT.**
+
+continuity_record_commit: 734a234c8e14fe93db003cd80341ddc4e9e62e5f   # RESOLVED by this CD-RULE-007 follow-up with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE TWENTY-SECOND BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 734a234 **BEFORE** this field was written, so the verdict and the field name ONE commit. **TWO ARMS FOR THE EIGHTH BOUNDARY RUNNING (CD-PL-F101), IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd`.** ARM 1, THE CLONE — `rm -rf /tmp/cd-cont22 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont22` (CD-PL-F72, --no-hardlinks), `git checkout -q -B main 734a234`, boot run from `pwd` = /tmp/cd-cont22 — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain **0 lines**, current_phase BUILD, observed_sha 734a234c8e14fe93db003cd80341ddc4e9e62e5f, branch main. ARM 2, THE LIVE WORKTREE — boot run from `pwd` = /srv/crash-detector — **AMBER**, CONTINUITY_MATCH/RESUME_AMBER, **porcelain 42 lines, `grep -cv '^??'` -> 0, ALL UNTRACKED**, same observed_sha. **RESIDUE UNMOVED AT 42 AND RE-COUNTED RATHER THAN CARRIED.** *** **THIS FOLLOW-UP DELIBERATELY WRITES TWO FIELDS AND NOT ONE, AND SAYS SO RATHER THAN LETTING A READER DISCOVER IT FROM THE DIFF** — this one and `ACTIVE_WORK.yaml`'s, which stood at `9521cf1` and was therefore STALE BY EIGHTEEN BOUNDARIES. CD-RULE-007's *"THIS FIELD AND NOTHING ELSE"* is a minimality discipline for the continuity pointer, and honouring it to the letter here would have meant knowingly leaving a continuity pointer wrong — the CD-PL-F64 family, and the CD-PL-F74 precedent that ruled exactly this. **A RULE KEPT IN FORM WHILE ITS PURPOSE IS BROKEN IS THE INSTANCE GAME APPLIED TO GOVERNANCE.** *** THE PROJECT BOOTS CARRYING a RED sixth gate verdict, a RED T2, two AMBER criteria, a SHUT gate, **`CD-RT-012` RED AT THE TIP**, **TEN DECLARED OPEN DEFECTS**, a green sweep that means nothing and says so in its own output, **TWO OPEN PRODUCT AUTHORITY QUESTIONS — ONE OF WHICH IS THAT THE LANE HAS BEEN BUILT FOR EIGHT INCREMENTS AGAINST AN AUTHORITY IT DOES NOT CONTAIN** — **A QUARANTINED AND MEASURABLY RED ITEM 1 THAT NO SEAT HAS ATTESTED**, and **TWO FINDINGS RAISED BY THIS SEAT AGAINST ITSELF AT THIS BOUNDARY ALONE** — **the record says all of it and the tree agrees with all of it.**

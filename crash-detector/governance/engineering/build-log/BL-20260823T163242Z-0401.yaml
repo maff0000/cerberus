@@ -1,0 +1,127 @@
+entry_id: BL-20260823T163242Z-0401
+record_type: ENGINEER_INCREMENT_RETURN_SUPERSEDING
+utc: '2026-08-23T16:32:42Z'          # `date -u +%FT%TZ` and nothing else (CD-RULE-005)
+actor: CD-ENG-COORD-FIX-01
+dispatch: CD-DISPATCH-INC13-COORDINATION-FIX-ENGINEER
+branch: inc13-coordination-fix
+build_log_id_block: 0400-0499
+return: READY_FOR_ASSURANCE
+
+supersedes: BL-20260823T162415Z-0400
+supersession_discipline: >
+  **THIS ENTRY SUPERSEDES; IT DOES NOT EDIT.** `BL-20260823T162415Z-0400` is committed at
+  `a7144fb18bd09591a982169b8eb3b077d1b850c1` and **NOT ONE BYTE OF IT WAS CHANGED** (`PBG-CONT-003`,
+  non-waivable). Everything it records remains true of the tree it names. This entry adds what
+  happened AFTER it, including a defect in this seat's own work that only appeared when the plants
+  were swept a second time.
+
+# =================================================================================================
+why_this_entry_exists:
+  reason_1: >
+    `BL-...-0400` recorded the acceptance commands run against
+    `112410bb4cea564d9db4405f2510c4cd33800ef0`, an INTERMEDIATE commit. **BOTH ARE NOW RE-RUN AT THE
+    FINAL INSTRUMENT SHA** and recorded below.
+  reason_2: >
+    **A THIRD SELF-INFLICTED PLANT DEFECT WAS FOUND, AND IT WAS FOUND ONLY BY RE-RUNNING SOMETHING
+    THAT HAD ALREADY PASSED TWICE.**
+
+# =================================================================================================
+finding_raised_by_this_seat_against_its_own_work:
+- id: CD-ENG-COORD-FIX-01-F06
+  severity: MEDIUM
+  against: '`governance/coordination/plants/PLANT-COORD-06.run.sh` arm 2 — **THIS SEAT''S OWN PLANT**'
+  what: >
+    **ARM 2 WAS FLAKY BY CONSTRUCTION.** It measured double-takes across 40 raced rounds — a real
+    measurement — and then asserted that the increment's own detector refused **THE STATE THE LAST
+    ROUND HAPPENED TO LEAVE ON DISK.** Whether the FINAL round was one of the double-taking rounds
+    is a coin flip.
+  how_it_surfaced: >
+    On a full eight-plant sweep at the final SHA, PLANT-COORD-06 reported
+    `*** NOT A CONTRAST *** — ARMS: 2 / 3`. The race had double-taken **27 of 40 rounds** and the
+    detector read `rc=0`, because round 39 had produced exactly one winner and left one claim file.
+    **THE ARM FAILED OVER A DEFECT IT HAD IN FACT REPRODUCED 27 TIMES.**
+  why_it_is_raised_and_not_just_fixed: >
+    **IT HAD PASSED TWICE BEFORE FAILING, AND THE FLAKE WAS IN THE SAFE DIRECTION ONLY BY LUCK.** A
+    plant whose arm depends on the last iteration of a randomised loop can as easily report
+    CONTRASTED when nothing contrasted. **THAT IS A FALSE GREEN WITH A 1-IN-3 CHANCE PER RUN, IN AN
+    INCREMENT WHOSE ENTIRE SUBJECT IS FALSE GREENS**, and it would have been invisible in any single
+    passing run — which is how the first two runs went.
+  the_fix: >
+    The bad state is now demonstrated from a round that ACTUALLY double-took: single rounds are run
+    until two claim records coexist, **BOUNDED AT 20 ATTEMPTS**, and the arm FAILS LOUDLY if that
+    never happens. **NO ASSERTION WAS RELAXED — the arm now requires double-takes AND two coexisting
+    records AND a refusing detector, where before it required double-takes AND a refusing detector.**
+    Stable over three consecutive runs, needing 1, 4 and 1 attempts.
+  the_pattern_across_all_three_of_this_seats_plant_defects: >
+    **`F01`(plant_defect_01) GRADED PROSE. `F01`(plant_defect_02) MEASURED A TREE WHERE THE DEFECT
+    COULD NOT FIRE. `F06` MEASURED AN INCIDENTAL RESIDUE INSTEAD OF THE THING IT REPRODUCED.** All
+    three are the same error in three costumes: **ASSERTING ON SOMETHING ADJACENT TO THE PROPOSITION
+    RATHER THAN ON THE PROPOSITION.** That is this project's own worst habit, named in the dispatch,
+    committed three times by the seat dispatched to fix it, and caught each time only because the
+    counterfactual arm was real. **A PLANT WITHOUT A LIVE ARM 2 WOULD HAVE HIDDEN ALL THREE.**
+
+# =================================================================================================
+the_two_named_acceptance_commands_RE_RUN_AT_THE_FINAL_INSTRUMENT_SHA:
+  disclosure: >
+    *** **NOT GRADED. RUN AND RECORDED VERBATIM. THE GRADE IS THE TENTH ASSURANCE SEAT'S
+    (`PBG-SOD-001`, non-waivable).** ***
+  instrument_sha: ab6cf4c805da4896ece4b4ba3072bd0920546586
+  what_that_sha_is: >
+    **THE FINAL STATE OF EVERY INSTRUMENT, PLANT, MUTATION, CONTRACT AND REGISTER ROW IN THIS
+    INCREMENT.** The only commit after it on this branch is the one carrying THIS Build Log entry,
+    which is a governance record and touches no instrument, no plant and no contract. Verifiable:
+    `git diff --stat ab6cf4c..HEAD` names only `governance/engineering/build-log/`.
+  command_1:
+    command: 'cd /tmp/cd-eng-coord-fix-01/race-X && python3 race_scope.py 200'
+    harness: 'the ninth Assurance seat''s own, sha256 13800ffaa1722f4b02fb1a4fbac100865f885d9f897431502a5b03c9ad84b5e5, cloned with ONLY its hard-coded TREE re-pointed. THE BANKED COPY WAS NOT EDITED.'
+    sandbox_head: ab6cf4c805da4896ece4b4ba3072bd0920546586
+    verbatim_output: |
+      ROUNDS=200  concurrency=2  DIFFERENT task_ids, IDENTICAL write_scope='src/contended/**'
+        exactly-one-winner (CORRECT) : 200
+        ZERO winners                 : 0
+        *** TWO WINNERS (DOUBLE-TAKE ON ONE SCOPE) *** : 0
+  command_2:
+    command: 'sh governance/coordination/plants/PLANT-COORD-05.run.sh'
+    sandbox_head: ab6cf4c805da4896ece4b4ba3072bd0920546586
+    verbatim_output: |
+      ARMS: 5 / 5 contrasted as required
+      PLANT VERDICT: LIVE — the control refuses the overlap, the mutation admits it, and
+                     THE DISJOINT CASE PROCEEDS IN PARALLEL.
+
+full_eight_plant_sweep_at_the_same_sha:
+  command: 'PLANT_SCRATCH=/tmp/cd-eng-coord-fix-01/plants SOURCE_ROOT=/srv/crash-detector-inc13 sh governance/coordination/plants/PLANT-COORD-<n>.run.sh'
+  verbatim_output: |
+    PLANT-COORD-01 rc=0   ARMS: 3 / 3 contrasted as required
+    PLANT-COORD-02 rc=0   ARMS: 4 / 4 contrasted as required
+    PLANT-COORD-03 rc=0   ARMS: 3 / 3 contrasted as required
+    PLANT-COORD-04 rc=0   ARMS: 3 / 3 contrasted as required
+    PLANT-COORD-05 rc=0   ARMS: 5 / 5 contrasted as required
+    PLANT-COORD-06 rc=0   ARMS: 3 / 3 contrasted as required
+    PLANT-COORD-07 rc=0   ARMS: 3 / 3 contrasted as required
+    PLANT-COORD-08 rc=0   ARMS: 3 / 3 contrasted as required
+  what_this_is_and_is_not: >
+    **27 ARMS ACROSS 8 PLANTS. IT IS NOT A PASS AND THIS SEAT DOES NOT CALL IT ONE.** Four of these
+    plants were written by the seat they grade. **THE TENTH ASSURANCE SEAT SHOULD RE-RUN THEM, AND
+    SHOULD ATTACK `PLANT-COORD-05` AND `PLANT-COORD-06` FIRST, BECAUSE THIS ENTRY AND `...-0400`
+    BETWEEN THEM RECORD THREE DEFECTS THIS SEAT PUT INTO ITS OWN PLANTS.**
+
+# =================================================================================================
+everything_in_BL_0400_that_still_stands:
+  unchanged: >
+    The five items, what was deliberately NOT done, the third-place sweep, the attack on the Project
+    Lead's own boundary act, findings `F01` through `F05`, and the next safe action are all recorded
+    in `BL-20260823T162415Z-0400` and are **UNCHANGED**. This entry adds `F06` and the re-runs.
+  the_findings_now_total: 6
+  the_three_that_need_a_decision_that_is_not_an_engineers: >
+    **`F03`** — two increment-12 deliverables that structurally contradict each other, which no seat
+    bound by both can satisfy. **`F02`** — an extension beyond the five ordered items, taken and
+    declared, which may legitimately be disagreed with. **`F05`** — `CONTROL_NOT_SATISFIABLE` on
+    `--pid` authentication.
+
+next_safe_action: >
+  **THE PROJECT LEAD MERGES THIS BRANCH AT THE ACCOUNTABLE SEAT, THEN DISPATCHES THE TENTH FRESH
+  ASSURANCE SEAT.** Neither the Project Lead (`PBG-AUTH-003`) nor this seat (`PBG-SOD-001`) grades
+  it. **`CD-D-181` STILL STANDS — PARALLEL REMAINS STRUCK UNTIL THE FIXED MACHINERY PASSES ITS OWN
+  DEDICATED GATE, AND THIS INCREMENT IS NOT THAT GATE.**
+
+expected_next_actor: 'The Project Lead, then a TENTH FRESH ASSURANCE SEAT. NOT THIS SEAT.'

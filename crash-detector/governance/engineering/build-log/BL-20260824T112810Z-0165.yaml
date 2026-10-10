@@ -1,0 +1,196 @@
+# ================================================================================================== #
+# BL-20260824T112810Z-0165 — PROJECT LEAD BOUNDARY. **16B-FIX RETURNED. THE HOLE THAT WAS INVISIBLE
+# TO EVERY INSTRUMENT THIS PROJECT OWNS IS CLOSED, AND THIS SEAT PROVED IT WITH ITS OWN PLANT AND ITS
+# OWN CONTROL. NOT ACCEPTED — A FIX IS NOT A VERDICT. FRESH ASSURANCE DISPATCHED.**
+#
+# *** **THE MEASUREMENT THAT MATTERS, RUN BY THIS SEAT ON THE PLANT IT BUILT ITSELF AT 0164 AND NOT
+# ON THE SEAT'S OWN PATCH: the fourth-`oneOf`-branch tree — marker property, no new root key — WAS
+# `PASS 67/0` AND INVISIBLE TO ALL 30 `execute:` LINES. IT IS NOW `FAIL — 6`: 4x CD-CALM-GATE-001
+# (calm admitted on an absent-data branch) AND 2x CD-CALM-BRANCHES-006 (a branch the allowlist does
+# not recognise). THE SECOND CODE IS THE ONE THAT MATTERS — IT IS DENY-BY-DEFAULT, SO A BRANCH
+# NOBODY ANTICIPATED IS A VIOLATION FOR BEING UNRECOGNISED RATHER THAN A SILENCE.** ***
+#
+# **AND THE CONTROL HELD, WHICH IS THE HALF THAT COULD HAVE BEEN QUIETLY LOST: C10, the symmetric
+# PID §4 fourth-level amendment, still reads `PASS — 158 assertions, 0 violations`. THE FIX DID NOT
+# TRADE THE VOCABULARY-DRIVEN TABLE FOR A HARD-CODED ONE.** Clean tree 144 assertions, up from 67,
+# and C1-C4 bite with every count unchanged.
+#
+# **CD-PL-F187, AGAINST THIS SEAT AND CONFIRMED: the 16B-FIX dispatch said the field-absent row
+# "needs a stated exception" for the one-pointer diff. IT DOES NOT — a symmetric difference of
+# pointer sets already gives exactly one differing pointer. THIS SEAT CARRIED THE AUDITOR'S
+# PRESCRIPTION INTO A BINDING RECORD WITHOUT EXECUTING IT.** Second confirmed defect in this seat's
+# own dispatches today, and both were caught by the seat receiving them.
+#
+# **THE SEAT DISCLOSED THAT ITS OWN FIRST GENERATION OF C6-C10 DID NOT APPLY AND ALL FIVE ARMS
+# FALSELY READ `PASS`. The MANIFEST's `git apply` exit-code column caught it on the first run — the
+# FIFTH recorded instance of CD-ENG-WO2R3-06-F06, INSIDE THE INCREMENT WHOSE HOUSE RULE EXISTS TO
+# CATCH IT. IT RECORDED THIS RATHER THAN QUIETLY REGENERATING, AND THAT IS THE BEHAVIOUR THIS
+# PROJECT IS TRYING TO BUY.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T112810Z-0165
+timestamp_utc: '2026-08-24T11:28:10Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T11:28:10Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T105209Z-0164
+base_sha: 0e87fa8155d68d69a76bf322c15a9816f6bfbcdb
+current_sha: 0e87fa8155d68d69a76bf322c15a9816f6bfbcdb
+status: READY_FOR_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-06, a fresh seat that is neither the seat that built the instrument nor the seat that
+  broke it, returned READY_FOR_ASSURANCE at 64cd5b2 (content tip af3825c). This seat reproduced the
+  three load-bearing outcomes from its OWN plants and its OWN extractions — the closure, the
+  regression set, and the control — recorded a second confirmed defect in its own dispatch, and
+  dispatched CD-ASR-WO3-06. 16B-FIX IS NOT ACCEPTED AND 16B REMAINS AMBER UNTIL A SEPARATE SEAT
+  SAYS OTHERWISE.
+
+what_the_seat_delivered:
+  seat: CD-ENG-WO3-06 (FRESH — never CD-ENG-WO3-05 which built it, never CD-ASR-WO3-05 which broke it, PBG-SOD-004)
+  tip: 64cd5b2122f8ae1f7310a81379757d9cc297ff40 (content tip af3825c)
+  fx1: 'The oneOf branch set is now RESOLVED and every absent-data branch is driven from ITS OWN required+properties, plus a DENY-BY-DEFAULT allowlist (CD-CALM-BRANCHES-006) so an unanticipated branch is a violation for being unrecognised.'
+  fx2: 'Field-absent and off-vocabulary rows added as MUST-REFUSE for every absent-data state, every slot, both surfaces. The instrument is no longer weaker than the pytest file it superseded.'
+  fx3: 'DECLARED LIMIT 4 restated truthfully in all three CD-RULE-004 places, plus a fail-closed slot-set assertion (CD-CALM-SLOTS-007).'
+  fx4: 'The FX4 name-coupling ruling declared — in ONE of its three places, with the shortfall DECLARED rather than the scope widened (its own F03).'
+  files: '9, every one on the writable list.'
+
+what_this_seat_reproduced_itself:
+  method: 'Fresh `git archive <tip> | tar -x` extractions per arm. The closure and the required-dropped arm were re-planted with THIS SEAT''S OWN mutation script from BL-0164, NOT with the Engineer''s C6/C7 patches — a fix measured only by the patch its author wrote is a fix measured by its author.'
+  the_closure: >
+    MY OWN E3 SHAPE (fourth branch dial_reading_unknown_hinted appended to #/$defs/dial_reading.oneOf
+    on both contracts, full detail_level vocabulary on UNKNOWN, marker property render_hint added to
+    the parent properties, NO NEW ROOT KEY):
+      at cbb81d1   PASS — 67 assertions, 0 violations   and INVISIBLE TO ALL 30 execute: LINES
+      at af3825c   FAIL — 6 violations: 4x CD-CALM-GATE-001 + 2x CD-CALM-BRANCHES-006
+  the_second_hole: >
+    MY OWN required-dropped shape (detail_level removed from `required` on both absent branches,
+    both contracts, $ref narrowing intact):
+      at cbb81d1   PASS — 67 assertions, 0 violations
+      at af3825c   FAIL — 8 violations
+  the_control_that_could_have_been_quietly_lost: >
+    C10, the symmetric PID §4 fourth-level amendment (`critical` in DETAIL_ORDER and in both
+    contract enums), applied by THIS SEAT from its own extraction, git apply exit 0:
+      PASS — 158 assertions, 0 violations.
+    THE VOCABULARY-DRIVEN TABLE STILL GROWS ON THE DAY THE VOCABULARY DOES. A fix that had
+    hard-coded the table to close FX1 would have shown up here and it did not.
+  the_regression_set: >
+    C1 FAIL 8 · C2 FAIL 2 · C3 FAIL 8 · C4 FAIL 4 — EVERY COUNT IDENTICAL to the 16B measurement,
+    each from its own extraction with git apply exit 0. No existing arm stopped biting.
+  the_clean_arm: 'PASS — 144 assertions, 0 violations, up from 67.'
+  everything_else: >
+    pytest tests/ -q -> 2007 passed. Register: pid.content_hash MATCHES · 18 criteria · GATE: SHUT ·
+    latest_admitted_run (null). Scope: ZERO paths on all twelve protected prefixes, including both
+    envelope schemas, src/, tests/ and evidence/. ONE commit identity, CD-ENG-WO3-06.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F187
+    severity: LOW, CONFIRMED, and it is this seat's own error
+    raised_by: CD-ENG-WO3-06 as its F01
+    the_dispatch_said: '"CD-CALM-PAIRED-004''s one-pointer diff still holds for the off-vocabulary row; for the absent row it needs a stated exception — state it, do not silently exempt it."'
+    the_truth: >
+      NO EXCEPTION IS NEEDED. _differing_pointers is a SYMMETRIC DIFFERENCE of pointer sets, so a
+      candidate that OMITS /<slot>/detail_level differs from its admitted pair at exactly that one
+      pointer. All 8 field-absent rows pair cleanly with nothing written.
+    how_it_happened_stated_plainly: >
+      THE ERROR ORIGINATES IN THE AUDITOR'S F2 PRESCRIPTION AND THIS SEAT CARRIED IT INTO A BINDING
+      RECORD WITHOUT EXECUTING IT. A prescription is a hypothesis until someone runs it. This is the
+      SECOND confirmed defect in this seat's own dispatches today (CD-PL-F185 was the first) and
+      BOTH WERE CAUGHT BY THE SEAT RECEIVING THEM, which is the system working and is not a reason
+      to be relaxed about it.
+    disposition: 'Recorded. Disclosed in the Assurance dispatch §5 so the next seat does not inherit it.'
+  - id: CD-PL-F188
+    severity: LOW
+    raised_by: CD-ENG-WO3-06 as its F03
+    the_defect: >
+      FX4's declaration belongs in THREE places under CD-RULE-004. The dispatch granted only one of
+      them — contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md was neither writable nor
+      protected, and tests/** was protected BY THE RULING ITSELF.
+    disposition: >
+      THE SEAT DECLARED THE SHORTFALL RATHER THAN WIDENING ITS OWN SCOPE, WHICH IS THE RIGHT ORDER
+      AND THE OPPOSITE OF CD-PL-F173. The other two places are OWED by the next dispatch that opens
+      that row. Carried, not closed.
+  - id: CD-PL-F189
+    severity: INFORMATIONAL, against the audit and against this seat equally
+    raised_by: CD-ENG-WO3-06 as its F02
+    the_defect: >
+      BL-20260824T104431Z-A305 says "18 lines exit 0; the 12 non-zero" and then enumerates ELEVEN.
+      CD-ENG-WO3-06 measured 19 rc=0 and 11 non-zero, reconciling with the auditor's enumeration and
+      with NEITHER of its counts.
+    disposition: >
+      THREE SEATS HAVE NOW MISCOUNTED THE SAME CENSUS — CD-PL-F185 was this seat's version of it.
+      The substantive findings are unaffected in every case, and that is exactly why it keeps
+      happening: the number is never the load-bearing part, so nobody re-derives it. CD-ASR-WO3-06
+      is asked to re-derive it independently and report what it gets.
+
+the_self_disclosure_worth_recording:
+  what: >
+    CD-ENG-WO3-06's FIRST generation of C6-C10 did not apply (git apply rc=1) and ALL FIVE ARMS
+    FALSELY READ `PASS`. The MANIFEST's git apply exit-code column caught it on the first run.
+  why_it_is_in_this_record: >
+    IT IS THE FIFTH RECORDED INSTANCE OF CD-ENG-WO2R3-06-F06 — a plant that silently stops applying
+    yields a "violated" arm that is just the clean tree — AND IT HAPPENED INSIDE THE INCREMENT WHOSE
+    HOUSE RULE EXISTS TO CATCH IT. The seat recorded it rather than quietly regenerating the patches
+    and reporting only the clean run. THAT IS THE BEHAVIOUR THIS PROJECT IS TRYING TO BUY, and it is
+    also the strongest available evidence that the exit-code column earns its place.
+
+what_this_seat_did_not_do:
+  - 'Did not accept 16B-FIX, and did not lift 16B''s AMBER. A fix is not a verdict.'
+  - 'Did not touch any application file, any schema, any src/ or tests/ path, or anything under pbg/.'
+  - 'Did not write under evidence/required-tests/runs/, and verified the Engineer did not either.'
+  - 'Did not touch CD-PL-F180 / the contract-bytes route. It is ruled into 16D and re-scoped to the bytes.'
+  - 'Did not begin 16C, 16D or 16E.'
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX-ASSURANCE.md
+  seat: CD-ASR-WO3-06 (FRESH — never CD-ENG-WO3-06 which built the fix, never CD-ASR-WO3-05 which found the holes; a seat does not rule on the repair of its own finding)
+  the_primary_attack: >
+    DEFEAT THE NEW DENY-BY-DEFAULT BRANCH ALLOWLIST. Not "does it catch a fourth branch" — it does,
+    and two seats have measured that — but WHAT IS A BRANCH AND WHAT COUNTS AS ITS STATE: a branch
+    whose state is `enum` rather than `const`, one with no properties.state at all, one reached
+    through allOf/anyOf or a $ref to a $ref rather than as a direct oneOf member, the union
+    restructured to anyOf, or an allowlisted NAME whose definition was widened underneath it.
+    IF THE ALLOWLIST RECOGNISES BY PATTERN RATHER THAN BY DENY-BY-DEFAULT UNRECOGNISABILITY IT IS A
+    BLACKLIST WITH BETTER MANNERS, which is the game PO-DECISIONS-0026 ruling 10 exists to stop.
+  the_forward_question_this_seat_most_wants_answered: >
+    DECLARED LIMIT 8 AND THE 16C COLLISION. Every axis of the instrument is now derived from the
+    contract EXCEPT the dial-state vocabulary, which is TYPED IN — deliberately, and declared. AND
+    THE VERY NEXT INCREMENT IS RULING 5'S THREE-QUANTITY MODEL, WHOSE MIDDLE QUANTITY IS A
+    DEAD-FEED SIGNAL, AND CD-AC-001'S OWN WORDS ARE "MISSING **OR STALE** INPUT NEVER RENDERS AS
+    CALM." If a new absent-data state arrives at 16C, is it DRIVEN or is it silently unexercised
+    until someone remembers to edit a tuple? The seat is told to MEASURE it, not reason about it.
+
+evidence_references:
+  - 'wo-3 64cd5b2 — CD-ENG-WO3-06''s return; BL-20260824T112109Z-16BF.yaml on the lane'
+  - 'wo-3 plants/WO3-INC16B/MANIFEST.md — C1-C10 with the git apply exit-code column'
+  - 'asr-wo3-05-verdict ca85d8e — BL-20260824T104431Z-A305.yaml, the AMBER this answers'
+  - governance/engineering/CD-DISPATCH-INC16B-FIX-ENGINEER.md (0e87fa8)
+  - governance/engineering/CD-DISPATCH-INC16B-FIX-ASSURANCE.md (this commit)
+  - 'this seat''s reproductions: /tmp/e3b (the closure), /tmp/f2b (the second hole), /tmp/c10 (the control), /tmp/re-C1..C4 (the regression set)'
+
+next_safe_action: >
+  Launch CD-ASR-WO3-06 against 64cd5b2 per CD-DISPATCH-INC16B-FIX-ASSURANCE.md. The record precedes
+  the launch. On its verdict: if PASS or AMBER-without-a-new-hole, 16B item (i) is complete and the
+  next increment is 16C — PO-DECISIONS-0026 ruling 5, the three-quantity liveness/relevance/publish
+  model, WHICH MUST NOT REMOVE THE STALENESS CEILING UNTIL THE LIVENESS DETECTOR READS ITS FIELD.
+
+expected_next_actor: 'CD-ASR-WO3-06 — dispatched by this seat, not yet run.'
+
+risks:
+  - '16B IS STILL AMBER AND 16B-FIX IS UNASSURED. Two seats measuring the same closure is two seats, not a verdict.'
+  - 'DECLARED LIMIT 8 is a live forward risk into 16C and is the Assurance seat''s named question. A new absent-data state that the instrument does not drive would reopen the constitutional hole through the exact door 16C is about to open.'
+  - 'CD-PL-F180 is OPEN and re-scoped to the contract BYTES. The guarantee holds over the bytes at rest and not over the bytes the running gate loads. 16D.'
+  - 'CD-PL-F188: two of the three CD-RULE-004 places for the FX4 declaration are OWED and unwritten.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments — no instrument speaks to staleness. 16C.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed, and nobody may read a wired row as a satisfied one.'
+  - 'Three of the PO''s ruled six items remain untouched: 16C, 16D, 16E. Nothing is registered, no source is wired, every dial still reads UNKNOWN, and the 30 indicators in the ratified mapping are still data that nothing reads.'

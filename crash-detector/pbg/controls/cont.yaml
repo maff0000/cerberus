@@ -1,0 +1,475 @@
+domain: CONT
+domain_label: Continuity and recovery
+controls:
+- control_id: PBG-CONT-001
+  title: Every active project has a canonical Build Log and Active Work record
+  status: ACTIVE
+  purpose: 'Give a project a durable engineering record that exists outside any agent, session or context
+    window.
+
+    '
+  risk_addressed: 'A project whose current state lives only in an LLM context window, a terminal session,
+    shell history, uncommitted files or an informal chat update. That project is not governed; it is merely
+    being worked on, and it ends when the session does.
+
+    '
+  required_outcome: 'Two distinct artefacts exist at locations declared in the project manifest. The Build
+    Log is append-only chronological history of material activity. Active Work is a concise current recovery
+    checkpoint. They are not combined into one indefinitely growing document that must be parsed in full
+    at every boot. Canonical truth is structured entry files plus the Active Work record; human-readable
+    views are generated projections. A project must be safely resumable with ALL transient coordination
+    state unavailable. Where a coordination service is used it is an optimisation, never the record: a
+    sub-agent completion signal is not a durable handover until its structured result is recorded canonically,
+    and a result published but not persisted is UNPERSISTED_AGENT_RESULT rather than a completed checkpoint.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - manifest continuity paths
+  - build log entries
+  - active work record
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'Product Authority addendum: evolving engineering build log, 2026-07-29'
+  bootstrap_migration_requirement: 'PBGv2''s own foundation work predates its continuity tooling, so its
+    held actions and decisions currently live in an external fast-state store. When Build Log and Active
+    Work become functional, every open held action and decision migrates into canonical Git-native records,
+    preserving original timestamps and source references, and the external entries are marked historical
+    projections. They are not silently abandoned, and their timestamps are not treated as independently
+    authoritative without reconciliation. This is the framework applying its own PBG-CONT-001 to itself.
+
+    '
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: governance/engineering/
+  verification_note: 'pbg validate fails where the manifest declares no continuity paths or the canonical
+    records are absent. pbg init creates the initial project-foundation entry for a new project.
+
+    '
+- control_id: PBG-CONT-002
+  title: Material events are durably recorded, and command noise is not
+  status: ACTIVE
+  purpose: 'Keep the record decision-grade — complete enough to resume from, short enough to read.
+
+    '
+  risk_addressed: 'Two opposite failures. A log with no entries leaves nothing to resume from. A log of
+    every command and file read is unreadable, so nobody reads it, and it certifies nothing while appearing
+    thorough.
+
+    '
+  required_outcome: 'An entry is required for boot, start of any authority record, baseline selection,
+    lane creation, significant discovery, design decision, implementation checkpoint, test execution,
+    material defect, security finding, ambiguity escalation, Product Authority decision, scope change,
+    pause, resume, handover, deployment, rollback, containment, repair, independent assurance, merge,
+    close, and abandonment or supersession. No entry is required for every command, file read or trivial
+    edit. Entry depth is proportional to consequence; whether material work is recorded is not.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - build log entries referencing the authority record
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/continuity-checkpoint-and-resume.md
+  verification_note: 'pbg close verifies that material work has log coverage: every authority record with
+    commits has at least a start entry, a test or check entry, and a terminal entry.
+
+    '
+- control_id: PBG-CONT-003
+  title: Build Log history is append-only
+  status: ACTIVE
+  purpose: 'Keep the record an account of what happened rather than an account of what would be convenient.
+
+    '
+  risk_addressed: 'Tidying history so a project looks cleaner than it was — deleting failed attempts,
+    editing historical verdicts, replacing old SHAs, removing blockers because they were later resolved,
+    backdating entries. Each of these destroys exactly the evidence a later investigation needs.
+
+    '
+  required_outcome: 'Historical entries are never rewritten. A correction is a new entry naming the entry
+    it corrects. Permitted maintenance: deterministic formatting, generated indexes, rotation into immutable
+    archive files, redaction under the evidence policy, correction entries, and integrity digests. Prohibited:
+    silent deletion, edited verdicts, replaced SHAs, rewritten decisions, removed blockers, backdated
+    entries.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - entry digests
+  - git history of the build-log path
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: continuity.append_only_fail_closed
+  verification_note: 'Entry digests are recorded; pbg validate compares committed entries against their
+    recorded digests and reports any modification of an existing entry. Scenarios L7 and L15.
+
+    '
+- control_id: PBG-CONT-004
+  title: Active Work reflects the current resumable state
+  status: ACTIVE
+  purpose: 'Provide a single short record that answers, at a glance, what is happening and what to do
+    next.
+
+    '
+  risk_addressed: 'A stale Active Work record is worse than none: a resuming agent trusts it, acts on
+    a SHA that has moved, and the divergence is discovered only by its consequences.
+
+    '
+  required_outcome: 'Active Work records the project, versions, active authority, work type, objective,
+    phase, owning role, repository, branch, worktree, baseline and current SHA, working-tree state, last
+    completed checkpoint, current activity, completed and remaining items, open ambiguities and decisions,
+    risks, blockers, held actions, required evidence, next safe action, next actor, resume instructions,
+    last build log entry and status.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - active work record
+  - git observation
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/continuity-checkpoint-and-resume.md
+  verification_note: 'pbg status compares recorded against observed SHA, branch and worktree and reports
+    drift. pbg close fails where Active Work is left falsely open. Scenarios L3 and L14.
+
+    '
+- control_id: PBG-CONT-005
+  title: A durable checkpoint exists at every material boundary
+  status: ACTIVE
+  purpose: 'Guarantee there is always a recent point to resume from, chosen deliberately rather than wherever
+    the session happened to end.
+
+    '
+  risk_addressed: 'Work lost to a power cut, a crashed terminal or an exhausted context window, because
+    the last durable point was hours earlier.
+
+    '
+  required_outcome: 'A checkpoint is created after a meaningful implementation block, before pausing,
+    before and after a risky action, before handing work to another agent, after discovering a material
+    defect, after tests, before and after assurance, before and after merge, and at each major state change
+    during an incident. A checkpoint includes the exact Git SHA. The preferred checkpoint is a committed
+    SHA on the bounded branch. Where uncommitted work exists the checkpoint states which files are modified,
+    whether changes are staged, whether the work is safe to preserve, how to reproduce or discard it,
+    and why no commit exists.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - checkpoint entry with exact SHA
+  - uncommitted-work declaration
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/continuity-checkpoint-and-resume.md
+  verification_note: 'pbg checkpoint captures Git state and authority, updates Active Work, appends an
+    entry and emits the next safe action. Scenarios L1 and L2.
+
+    '
+- control_id: PBG-CONT-006
+  title: Work does not resume without reconciling recorded state against observed state
+  status: ACTIVE
+  purpose: 'Make resumption an act of verification rather than an act of memory.
+
+    '
+  risk_addressed: 'An agent resuming from the last chat message, or from a record it did not check, onto
+    a tree that has moved. This is the single most likely way a governed project silently desynchronises
+    from its own record.
+
+    '
+  required_outcome: 'After any interruption the booting agent loads the framework, PID, Blueprint, Active
+    Work and recent Build Log entries, inspects branch, worktree, SHA, working-tree changes, recent commits,
+    evidence artefacts and — where authorised — runtime state, compares observed against recorded, classifies
+    the result, appends a recovery entry, and proceeds only from a verified safe state. Outcomes are RECOVERY_MATCH,
+    RECOVERY_DRIFT, RECOVERY_UNCOMMITTED_WORK, RECOVERY_RUNTIME_DIVERGENCE, RECOVERY_AUTHORITY_GAP or
+    RECOVERY_EVIDENCE_GAP. A mismatch is never silently corrected: the agent states what differed and
+    how it was resolved. Resume verdicts are RESUME_GREEN, RESUME_AMBER or RESUME_BLOCKED, and no implementation
+    work begins before reconciliation completes.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - recovery entry
+  - recorded versus observed comparison
+  - resume verdict
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg resume performs the reconciliation and fails closed on an unexplained mismatch.
+    Scenarios L1, L2, L3, L4, L10, L11, L12.
+
+    '
+- control_id: PBG-CONT-007
+  title: Sub-agent work produces a durable entry owned by its dispatcher
+  status: ACTIVE
+  purpose: 'Extend causal ownership from mutation to record-keeping, so delegated work cannot vanish with
+    the sub-agent that did it.
+
+    '
+  risk_addressed: 'A dispatching agent treating a sub-agent''s chat response as durable project state.
+    The work happened, the finding was real, and nothing outside a context window records it. This is
+    the record-keeping form of the delegation-laundering risk that PBG-RT-004 addresses for writes.
+
+    '
+  required_outcome: 'Every sub-agent performing material discovery, implementation, testing, diagnosis
+    or assurance either appends its own structured entry or returns a structured handover the dispatcher
+    persists immediately. The causal owner remains responsible for ensuring the durable entry exists.
+    Entries attribute both the immediate actor and the causal dispatch owner. A dispatching agent may
+    not assume a chat response constitutes durable state.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    when: a sub-agent performs material work
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - entry actor and causal owner attribution
+  - handover records
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/project-lead.md
+  verification_note: 'Entries carry actor and causal_owner; pbg close reports material work with no attributable
+    entry. Scenario L5.
+
+    '
+- control_id: PBG-CONT-008
+  title: An implementation claim references exact Git identity
+  status: ACTIVE
+  purpose: 'Keep the Build Log explaining why, while Git proves what — and keep the two bound together.
+
+    '
+  risk_addressed: 'A log entry claiming implementation progress that cannot be tied to any artefact, so
+    the claim can be neither verified nor reproduced.
+
+    '
+  required_outcome: 'Every entry claiming implementation state references an exact SHA where one exists.
+    The Build Log does not replace Git and does not copy diffs or command transcripts; it references Git
+    and evidence. Where tests are claimed, evidence is referenced.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - entry SHA references
+  - evidence references
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schema requires current_sha on implementation entries; pbg log validate rejects
+    a test claim with no evidence reference. Scenario L9.
+
+    '
+- control_id: PBG-CONT-009
+  title: Continuity records are secret-free
+  status: ACTIVE
+  purpose: 'Keep the most frequently written record in the project from becoming its largest disclosure
+    surface.
+
+    '
+  risk_addressed: 'Continuity records are written constantly, often by capturing command output at speed
+    and under pressure, which is precisely when a connection string or token gets pasted in. Once committed
+    it is permanent.
+
+    '
+  required_outcome: 'No passwords, keys, tokens, private keys, environment values, credential-bearing
+    connection strings, secret-store contents, sensitive customer data or raw authentication headers appear
+    in the Build Log or Active Work. Names and references only. Redaction happens at capture. Where redaction
+    would remove material proof, the record references a protected evidence location rather than containing
+    the secret.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - scan results over continuity paths
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: evidence.no_secret_material
+  verification_note: 'pbg log add refuses an entry containing secret-shaped material; continuity paths
+    are included in the standard scan. Scenario L8.
+
+    '
+- control_id: PBG-CONT-010
+  title: Concurrent writers do not corrupt or overwrite continuity history
+  status: ACTIVE
+  purpose: 'Let parallel sub-agents record their own work without contending for one file.
+
+    '
+  risk_addressed: 'Two agents appending to a single document simultaneously, producing a merge conflict
+    at best and a silently lost entry at worst — the lost entry being, by construction, invisible.
+
+    '
+  required_outcome: 'Entries are individually addressable and independently written, with unique stable
+    identifiers of the form BL-<UTC timestamp>-<short id>. Ordering derives from timestamp and identifier,
+    never from position in a file. Human-readable chronological views are generated projections carrying
+    their source SHA and freshness state. No database or cache service is introduced for this.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - entry inventory
+  - generated view header
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Entry IDs are unique and timestamped; the generated view is regenerable and reports
+    staleness. Scenarios L6 and L13.
+
+    '
+- control_id: PBG-CONT-011
+  title: A cold-started agent can resume from canonical artefacts alone
+  status: ACTIVE
+  purpose: 'State the acceptance test for continuity as a property of the project rather than of the agent.
+
+    '
+  risk_addressed: 'Continuity that appears to work only because the same agent, with the same context,
+    keeps doing the work. The first genuine handover is then the first real test, and it fails at the
+    worst moment.
+
+    '
+  required_outcome: 'A newly booted Project Lead with no prior conversational context, given only repository
+    access, the pinned framework, PID, Blueprint, authority records, Active Work, Build Log, Git and authorised
+    runtime observations, can determine what is being built, the current phase, the active authority,
+    the exact current SHA, work completed, uncommitted state, current blockers, held actions, pending
+    decisions, prohibited actions, existing evidence and the next safe action — without the prior agent''s
+    transcript.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - cold-start scenario result
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Cold-start conformance scenario, executed with the transcript genuinely withheld.
+    Failure means project continuity is not implemented, regardless of how complete the records look.
+
+    '

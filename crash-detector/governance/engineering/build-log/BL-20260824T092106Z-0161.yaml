@@ -1,0 +1,226 @@
+# ================================================================================================== #
+# BL-20260824T092106Z-0161 — PROJECT LEAD BOUNDARY. **16A-FIX IS RETURNED, RECONCILED BY MEASUREMENT
+# AND BANKED. THE CONSTITUTIONAL BREACH IS CLOSED. IT IS NOT ACCEPTED.**
+#
+# **THE ACCEPTANCE PROBE, RUN BY THIS SEAT, ON BOTH MISSING-DATA BRANCHES AND BOTH SURFACES:**
+# `calm` **REFUSED** · `elevated` **ADMITTED** · `banana` REFUSED · the field's absence REFUSED.
+# *** **NARROWED, NOT CLOSED — WHICH WAS THE HALF OF THE ACCEPTANCE TEST THAT COULD HAVE GONE WRONG
+# QUIETLY. A CONTRACT REFUSING EVERY `UNKNOWN` DIAL WOULD SATISFY PID §3.2 VACUOUSLY WHILE BREAKING
+# THE ONLY STATE THIS PRODUCT CAN PUBLISH.** ***
+#
+# *** **AND THE SEAT WENT LOOKING WHERE IT WAS ASKED TO LOOK AND FOUND SOMETHING WORSE THAN WHAT IT
+# WAS SENT FOR: `test_no_function_in_the_module_takes_two_readings` — A `CD-AC-002` GUARD, ON ONE OF
+# THE TWO CRITERIA THE WHOLE PERIMETER TURNS ON — WAS VACUOUS. THIS SEAT PLANTED
+# `level_for_both(reading_a, reading_b, *, policy)` AGAINST THE OLD SHAPE'S SUCCESSOR AND CONFIRMED
+# THE CORRECTED GUARD REFUSES IT.** ***
+#
+# **THREE FINDINGS AGAINST THIS SEAT'S OWN DISPATCH OR ITS OWN MEASUREMENTS, AND ALL THREE ARE
+# UPHELD.** `F01`: a statement in the fix dispatch was FALSE and is confirmed false by command.
+# `CD-PL-F177`: this seat's OWN portability re-measurement was invalid and it caught itself — the
+# SECOND time today.
+# ================================================================================================== #
+
+entry_id: BL-20260824T092106Z-0161
+timestamp_utc: '2026-08-24T09:21:06Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T09:21:06Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T084141Z-0160
+base_sha: d88db54b346246b3bd36098e9316692a569f9a23
+current_sha: d88db54b346246b3bd36098e9316692a569f9a23
+status: WAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  WO-3 increment 16A-FIX is returned by CD-ENG-WO3-04 at b9283b9, reconciled by measurement in this
+  seat's own shell and BANKED. It is NOT ACCEPTED. The PID §3.2 breach is closed on both missing-data
+  branches and both surfaces, narrowed rather than closed. The seat raised six findings, three
+  against its own work or this dispatch, including a HIGH one it was not sent to find: the CD-AC-002
+  two-reading guard was vacuous. A separate fresh re-assurance seat is dispatched over b9283b9.
+  Q30, Q31 and Q32 remain open and untouched. NO SOURCE IS REGISTERED.
+
+the_return:
+  seat: 'CD-ENG-WO3-04 — FRESH, and neither the seat that built the defect (CD-ENG-WO3-03) nor the seat that found it (CD-ASR-WO3-03). `PBG-SOD-001` and `PBG-SOD-004` both honoured.'
+  tip: 'b9283b99f66285e8be575eb56e2d30ed52735be8 (code tip 3a08646; b9283b9 adds only the Build Log entry)'
+  commits: '6, ONE identity — `git log --format=%an|%cn 53f639a..HEAD | sort -u` -> a single line. Porcelain 0.'
+  boot_as_received: '**RED**, inherited from the frozen base. Diagnosed, not repaired, declared rather than netted off. **Third consecutive seat to do this correctly.**'
+
+the_reconciliation:
+  the_acceptance_probe: |
+    **RUN BY THIS SEAT AGAINST THE LIVE GATE, BOTH SURFACES, BOTH MISSING-DATA BRANCHES.**
+    UNKNOWN    PUBLIC    calm=REFUSED   elevated=ADMITTED   banana=REFUSED   REMOVED=REFUSED
+    UNKNOWN    PRIVATE   calm=REFUSED   elevated=ADMITTED   banana=REFUSED   REMOVED=REFUSED
+    DEGRADED   PUBLIC    calm=REFUSED   elevated=ADMITTED   acute=ADMITTED   REMOVED=REFUSED
+    DEGRADED   PRIVATE   calm=REFUSED   elevated=ADMITTED   acute=ADMITTED   REMOVED=REFUSED
+  why_the_second_column_is_the_one_that_mattered: >
+    **THE FIX THAT WOULD HAVE PASSED A CARELESS CHECK IS THE ONE THAT REFUSES EVERYTHING.** `calm`
+    refused is half an answer; `elevated` still admitted is the other half. **THE BRANCH IS NARROWED,
+    NOT CLOSED**, so the only state this product can currently publish still publishes.
+  the_mechanism: >
+    A named type — `$defs/absent_data_detail_level`, `enum: ["elevated","acute"]` — referenced by
+    BOTH `dial_reading_degraded` and `dial_reading_unknown`. `VALUE` keeps the full vocabulary
+    including `calm`. **THE GUARANTEE IS NOW HELD IN THE DOCUMENT RATHER THAN ASSERTED IN ITS PROSE
+    AND DELEGATED TO A MODULE THE ENVELOPE NEVER CONSULTS — WHICH IS THE SAME PATTERN `CD-AC-001` WAS
+    ALREADY HOLDING ONE CLAUSE OVER.** The type's description RECORDS THE SUPERSEDED STATE rather
+    than erasing it: what the branches referenced before, that the guarantee lived only in prose, and
+    that an `UNKNOWN` dial carrying `calm` was ADMITTED on both surfaces.
+  the_degraded_decision_and_that_it_was_reasoned: >
+    `DEGRADED` was narrowed too, and the seat justified it by **reading the code rather than
+    guessing**: `detail_level_for`'s `on_degraded` returns `policy.absent_data_level` **identically
+    to `on_unknown`**. So the code already treats `DEGRADED` as missing-data, and the contract now
+    agrees with it. **THE DISPATCH EXPLICITLY PERMITTED THE OPPOSITE CONCLUSION AND ASKED FOR
+    REASONING EITHER WAY; REASONING IS WHAT CAME BACK.**
+  the_failing_arm: |
+    **THE ARM THE OLD GUARD DID NOT HAVE.** Fix reverted on an extracted copy — both branches pointed
+    back at the unrestricted `#/$defs/detail_level`:
+      pytest tests/test_detail_level.py  ->  9 failed, 43 passed
+    including `test_the_guard_FAILS_when_calm_is_restored_to_BOTH_missing_data_branches` and
+    `test_the_mutated_copy_reproduces_the_RED_and_leaves_the_real_contracts_untouched`.
+    **THE GUARD CAN NOW SEE ITS OWN REMEDY, WHICH IS THE PROPERTY IT LACKED WHEN IT LET THE RED
+    THROUGH.**
+  tests: '**1990 -> 2007, zero failures**, run by this seat on the committed tree. No regression.'
+  register_untouched: '`git diff --numstat 53f639a..HEAD -- required-tests.yaml PID.md` -> **0 lines**. Verifier re-run: `pid.content_hash MATCHES`, `latest_admitted_run (null)`, **GATE: SHUT**. **THE SEAT DID NOT RE-STALE THE PIN, WHICH THE DISPATCH PROTECTED IT AGAINST PRECISELY BECAUSE IT WOULD HAVE BEEN AN EASY AND INVISIBLE MISTAKE.**'
+  scope: '8 files changed, every one on the writable list. `pbg/`, `BLUEPRINT.md`, `PID.md`, `required-tests.yaml`, `governance/decisions/`, `tools/`, `source_registry.py`, `engine/config.py` — **ALL AT 0**. `git rev-parse wo-2r3` -> `be0b355…` UNMOVED.'
+
+the_finding_it_was_not_sent_to_find:
+  id: 'CD-ENG-WO3-04-F03 (HIGH) — **AND IT IS THE MOST VALUABLE THING IN THIS INCREMENT.**'
+  what: >
+    `test_no_function_in_the_module_takes_two_readings` — **a `CD-AC-002` GUARD, ON ONE OF THE TWO
+    CRITERIA THE WHOLE PERIMETER TURNS ON** — bucketed `reading` and `dial_slot` together against a
+    parameter ceiling of 2. **SO A FUNCTION TAKING TWO READINGS PASSED IT.**
+  reproduced_by_this_seat: |
+    Planted on an extracted copy, against the CORRECTED guard:
+      def level_for_both(reading_a, reading_b, *, policy): return DETAIL_ACUTE
+      pytest tests/test_detail_level.py -> 1 failed, 51 passed
+        FAILED test_no_function_in_the_module_takes_two_readings
+    **THE CORRECTED GUARD REFUSES THE EXACT SHAPE `CD-AC-002` FORBIDS. THE OLD ONE ADMITTED IT.**
+  why_it_was_found: >
+    **BECAUSE THE DISPATCH ASKED FOR A TEST-NAME AUDIT AND THE SEAT ACTUALLY DID ONE.** The dispatch
+    said: *"read every test name in it and ask whether its assertions deliver what its name claims …
+    report what you find even if you do not fix it."* **IT FOUND A FOURTH INSTANCE OF THE PATTERN AND
+    FIXED IT.** `CD-PL-F169`, `CD-ASR-WO3-02` F06/F07, the `RED` itself, and now this. *** **THE
+    PATTERN IS NO LONGER A CURIOSITY. FOUR INSTANCES, AND THE FOURTH WAS SITTING ON `CD-AC-002`. THIS
+    PROJECT NEEDS A CONTROL FOR "TESTS WHOSE NAMES CLAIM MORE THAN THEIR ASSERTIONS DELIVER" AND HAS
+    NONE.** ***
+
+findings_against_this_seats_dispatch:
+  F01_upheld:
+    seat_claim: '**A STATEMENT IN THE FIX DISPATCH IS FALSE.** §4 ordered *"Rule 1 must reach inside `${VAR:-DEFAULT}`"*. `rule_1_and_2_mounts` is MOUNT-scoped and never inspects an environment value.'
+    this_seats_verification: |
+      git show 53f639a:deploy/check_portability.py | sed -n '/def rule_1_and_2_mounts/,/^def /p' \
+        | grep -ic "environment|env"   ->  0
+      rule functions at 53f639a: rule_1_and_2_mounts, rule_3_addresses, rule_4_argus, rule_5_and_6_config
+    disposition: >
+      **UPHELD. THE DISPATCH WAS WRONG AND THE SEAT WAS RIGHT.** The MECHANISM this seat described was
+      correct — rule 5 stops at the `${` prefix — but the ATTRIBUTION was to the wrong rule. **AND THE
+      SEAT DID THE RIGHT THING WITH IT: it did not bend `rule_1_and_2_mounts` out of shape to obey a
+      mistaken instruction; it added `rule_7_config_values`.** *** **A SEAT THAT HAD OBEYED THE
+      DISPATCH LITERALLY WOULD HAVE PUT ENVIRONMENT-VALUE LOGIC INSIDE A MOUNT RULE AND MADE BOTH
+      HARDER TO REASON ABOUT — TO SATISFY AN INSTRUCTION THAT WAS SIMPLY MIS-AIMED.** *** Recorded as
+      `CD-PL-F178`: **when a dispatch names the code location as well as the defect, it is asserting a
+      code fact and owes the same measurement as any other code claim.** **THIS IS THE FIFTH OF THE
+      LAST SEVEN DISPATCHES TO CONTAIN AN ERROR THE SEAT CAUGHT.**
+  F02_upheld:
+    seat_claim: '**A THIRD GAP NEITHER THE AUDITOR NOR THIS SEAT NAMED**: the same dell path as a BARE LITERAL also passed, because `CD_CONTRACTS_DIR` is key-allowlisted.'
+    disposition: >
+      **UPHELD, AND THE SENTENCE THAT MATTERS IS THE SEAT'S OWN: fixing only the regex "would have
+      left it green WHILE CLOSING THE FINDING."** *** **THAT IS THE PRECISE FAILURE MODE OF FIXING
+      WHAT AN AUDITOR REPORTED RATHER THAN WHAT AN AUDITOR FOUND — AND IT IS THE FAILURE MODE THIS
+      PROJECT IS MOST EXPOSED TO, BECAUSE ITS FINDINGS ARE DETAILED ENOUGH TO BE TREATED AS
+      SPECIFICATIONS.** ***
+  F06_self_reported:
+    seat_claim: '**SELF-REPORTED: it wrote a FABRICATED SHA TAIL into its Build Log**, completing 33 characters from a 7-character short form. Caught before commit because `continuity.validate` reported that it DECLINED to check that field.'
+    disposition: >
+      **ACCEPTED, AND THE MANNER OF THE CATCH IS THE FINDING.** `CD-PL-F36` — *never transcribe a
+      SHA, always `git rev-parse`* — is one of the oldest rules on this project and it was written
+      after exactly this. **NO FALSE STATEMENT ENTERED THE RECORD.** But it was caught by an
+      instrument saying *"I am not checking this"* and a seat reading that sentence carefully. **A
+      CONTROL WHOSE SAFETY DEPENDS ON SOMEBODY READING AN "UNRESOLVED" LINE IS A CONTROL RESTING ON
+      ATTENTION.** Related to `CD-PL-F171`: the validator that would have caught it is the one this
+      project cannot run through its CLI.
+  F04_F05: 'ACCEPTED. F05 corrects a claim in the record that was true-but-misleading — *"`src/` has no entrypoint"* is true, and `deploy/entrypoints/` holds six, none of which reach `publish_cycle`. **THE CLAIM WAS NOT FALSE AND WAS STILL CAPABLE OF MISLEADING A SUCCESSOR, WHICH IS THE DEFECT CLASS `BL-...-0156` WAS WRITTEN ABOUT.**'
+
+CD-PL-F177:
+  finding: >
+    **AGAINST THIS SEAT, AND IT IS THE SECOND TIME TODAY — WHICH IS THE POINT OF RECORDING IT.**
+    This seat's re-measurement of the D3 gaps reported that plants A and C **still passed**, which
+    would have contradicted the Engineer's claim that all three were closed.
+  what_was_actually_wrong: >
+    **THE PLANT WAS A NO-OP AND THIS SEAT ASSERTED NOTHING ABOUT WHETHER IT HAD APPLIED.** The
+    replacement landed at `deploy/compose.yaml:296` — inside the `x-cd-python-service` **YAML ANCHOR
+    FRAGMENT** — whose `CD_CONTRACTS_DIR` is **overridden at every service that uses it** (lines 400,
+    455, 505). **THE PLANTED DELL PATH WAS SHADOWED AND NEVER REACHED A RESOLVED SERVICE, SO THE
+    CHECK WAS RIGHT TO PASS.** Re-planted at a SERVICE-level site: **A -> exit 1, B -> exit 1,
+    C -> exit 1. ALL THREE GAPS ARE CLOSED.**
+  the_lesson_stated_sharply: >
+    *** **A PLANT INTO AN OVERRIDDEN ANCHOR IS INDISTINGUISHABLE, FROM THE OUTSIDE, FROM A CONTROL
+    THAT FAILED TO FIRE.** *** Both look like `PASS — 0 violations`. **THE ONLY DEFENCE IS ASSERTING
+    THAT THE MUTATION APPLIED *AND* THAT IT APPLIED WHERE IT WOULD BITE** — and this seat asserted
+    neither, in a plant it wrote to check somebody else's plant.
+  cumulative: >
+    With `CD-PL-F175` this morning, that is **TWO partial measurements by this seat in one session,
+    both caught before entering a binding record.** `CD-PL-F170`'s pattern is not a past-tense
+    problem and it is not confined to Engineer seats. **THE HABIT THAT CAUGHT BOTH WAS THE SAME:
+    WHEN A MEASUREMENT CONTRADICTS A SEAT THAT HAS BEEN ACCURATE ALL DAY, SUSPECT THE MEASUREMENT
+    FIRST.**
+  observation_not_a_finding: >
+    A dell-specific path sitting in an anchor fragment that every service overrides is **dead config
+    today and live the moment one override is deleted.** Whether the portability check should refuse
+    it is a real question and **this seat does not answer it** — it is put to the re-assurance seat
+    as an attack surface rather than dressed up as a defect.
+
+an_open_construction_question_this_seat_states_rather_than_settles:
+  what: '**NO `schema_version` BUMP ACCOMPANIED THE NARROWING.** Both contracts still pin `const: "1.1.0"`, set at 16A when `detail_level` was introduced. The seat recorded this as declared limit 1 because `ENVELOPE_SCHEMA_VERSION` sits outside its writable scope, and asked.'
+  this_seats_reasoning_offered_for_attack: >
+    The schema's own rule is about **WIDENING** — *"widening the allowlist without bumping this is a
+    schema edit that fails its own test."* This is a **NARROWING**. And more decisively: **VERSION
+    1.1.0 HAS NEVER BEEN EMITTED BY ANYTHING.** `publish_cycle` has zero callers and no envelope has
+    ever been published, so narrowing 1.1.0 before its first emission is amending an unreleased
+    version, not breaking a released one. **ON THAT READING NO BUMP IS OWED.**
+  why_it_is_not_settled_here: >
+    **THAT REASONING IS EXACTLY THE KIND THIS PROJECT HAS BEEN WRONG ABOUT BEFORE** — it depends on
+    "nothing consumes it yet", which is the same premise that made the `RED` *"not exploitable
+    today"*. **IT IS PUT TO THE RE-ASSURANCE SEAT AS AN EXPLICIT ATTACK TARGET RATHER THAN RECORDED
+    AS A DECISION.** The seat was right to stop at its scope boundary and ask.
+
+standing_and_unmoved:
+  - '**16A-FIX BANKED, NOT ACCEPTED, NOT MERGED.** 16A remains RED until the re-assurance seat says otherwise — **a fix is not a verdict.**'
+  - 'CD-AC-002 AMBER and NOT CLOSED — **and note the irony recorded above: its guard was vacuous until this increment, which changes nothing about the grade and much about what the grade rested on**'
+  - 'CD-AC-005 RED · the WO-2 gate SHUT · wo-2r3 FROZEN at be0b355 · register MATCHES / 18 / GATE SHUT'
+  - 'NO SOURCE REGISTERED · no MappingKind member · no entrypoint and no publish_cycle caller · nothing under pbg/ modified'
+  - 'Q30, Q31 and Q32 ALL OPEN and ALL UNTOUCHED by this increment'
+  - 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 all HELD'
+
+evidence_references:
+  - 'wo-3 at b9283b9 — the fix; code tip 3a08646'
+  - 'governance/engineering/build-log/BL-20260824T091143Z-16AF.yaml on wo-3 — the seat''s own record'
+  - 'asr-wo3-03-verdict at b7f0439 — the RED this answers'
+  - 'governance/engineering/CD-DISPATCH-INC16A-FIX-ENGINEER.md — the dispatch, and the source of CD-PL-F178'
+
+next_safe_action: >
+  **DISPATCH A SEPARATE FRESH RE-ASSURANCE SEAT OVER `b9283b9`, AND THEN STOP.** It must be neither
+  `CD-ENG-WO3-03`, nor `CD-ENG-WO3-04`, nor `CD-ASR-WO3-03` (`PBG-SOD-001`, `PBG-SOD-004`). Told to
+  attack, in this order and with the behavioural attack FIRST because `CD-PL-F176` is what happens
+  otherwise: **(1) the acceptance probe end-to-end through the live gate, both branches, both
+  surfaces, both arms — is `calm` really refused and is `elevated` really still admitted; (2) whether
+  the narrowing broke anything that legitimately needed `calm` on a `DEGRADED` reading; (3) the
+  `schema_version` question above, which this seat deliberately did not settle; (4) the corrected
+  `CD-AC-002` guard, with its own planted two-reading function; (5) the three portability gaps,
+  planted at SERVICE level and asserted to have applied — `CD-PL-F177` is the trap.** **THEN STOP:
+  `Q30`, `Q31` AND `Q32` ARE THE PRODUCT AUTHORITY'S AND TWO OF THEM BLOCK 16B SEPARATELY.**
+
+expected_next_actor: 'ASSURANCE_ENGINEER — a fresh seat. Then PROJECT_LEAD to reconcile. Then MATT.'
+
+risks:
+  - '**THE PATTERN NOW HAS FOUR INSTANCES AND ONE OF THEM WAS ON `CD-AC-002`.** Tests whose names claim more than their assertions deliver. This project has no control for it, and every instance so far was found by a human-directed audit rather than by any instrument.'
+  - 'CD-PL-F178: five of the last seven dispatches contained an error the seat caught. The dispatches are getting more specific, and specificity in a dispatch is an assertion about code that owes the same measurement as any other.'
+  - 'CD-PL-F177: this seat produced two invalid measurements today, both caught only because they contradicted a seat that had been accurate. **THAT DEFENCE FAILS THE FIRST TIME AN INACCURATE SEAT IS BEING CHECKED.**'

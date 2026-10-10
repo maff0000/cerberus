@@ -1,0 +1,115 @@
+# ================================================================================================== #
+# BL-20260823T153541Z-0145 — PROJECT LEAD BOUNDARY. **ACT 1 OF PO-DECISIONS-0022: THE RECORD ACT.**
+#
+# **THE `RESISTED` TIER IN BLUEPRINT §17 IS CORRECTED FROM PRESENT INDICATIVE TO `OWED, NOT BUILT`,
+# AND THE F1 ROUTE'S LOAD-BEARING DEFENCE MOVES TO THE `DETECTED` TIER.** PO-DECISIONS-0022 ruling 2,
+# authored by the Product Owner, carried verbatim by this seat as the remediation increment's FIRST
+# ACT, and NOTHING ELSE.
+#
+# **`CD-ASR-WO2R3-06-F02` IS ACCEPTED, NOT CONTESTED.** The ninth seat measured that a value forged
+# AFTER front-door admission defeats construction-provenance at zero knowledge and zero package
+# lines. The tier as written claimed a resistance the product does not have. **THE PRODUCT OWNER
+# CORRECTED ITS OWN RULING'S TEXT, AND THIS SEAT CARRIED THE BYTES.**
+#
+# **AND THE ONE THING A SEAT WOULD BE TEMPTED TO TIDY IS DISCLOSED INSTEAD:
+# `check_blueprint_carried_po_0019_verbatim.py` NOW EXITS 1. IT WAS NOT EDITED AND MUST NOT BE.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T153541Z-0145
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T15:35:41Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1568164, wrapper PID 1568163, `timeout 21600` from 15:30Z. **MEASURED FROM THE LIVE PROCESS WITH `ps`, NOT ASSUMED — and `ps` shows exactly ONE Project Lead process, which is the check CD-RULE-002 and PO-DECISIONS-0022 ruling 3 now bind this seat to make before it writes.**'
+phase: GATE
+branch: main
+base_sha: d60b8b9a7531556eb4982737e01dc90eb4eb7db9   # HEAD at boot. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+# ================================================================================================== #
+# THE BOOT RECONCILIATION, BEFORE ANY WRITE.
+# ================================================================================================== #
+boot_reconciliation:
+  verdict: 'AMBER — `CONTINUITY_MATCH/RESUME_AMBER`, the standing state, not a new defect. `pbg boot` run at `d60b8b9`, PID `PID.md@538e30f3bf4f1803`, BLUEPRINT `790ac6db47450b66` as read at boot.'
+  amber_cause: '`roadmap_identity: None` — ROADMAP.md does not exist on this project and never has. Standing, disclosed at every prior boot, not opened here.'
+  observed_equals_recorded: 'HEAD `d60b8b9` == `ACTIVE_WORK.yaml` continuity record. Phase GATE. Ninth verdict banked at `b2a0af8`, reconciled at `1cb25de`, continuity field resolved at `150d5d8`, PO ruling landed at `d60b8b9`. NO DISAGREEMENT TO RECONCILE.'
+  single_seat_check: '**`ps aux | grep claude` -> ONE Project Lead process (1568164) and its wrapper (1568163). NO SECOND LIVE `PROJECT_LEAD_SEAT_01`.** This is `PO-DECISIONS-0021` ruling 2''s incident checked for BY COMMAND before writing, and PO-DECISIONS-0022 ruling 3 has now ruled that `CD-RULE-002` binds the Product Authority''s own hand — so the check is not optional for anyone, including this seat.'
+  lane_untouched: '`wo-2r3` lane FROZEN at `be0b355`, gate SHUT. Not read for write, not merged, not touched.'
+  inc12_worktree_retained: '`/srv/crash-detector-inc12` present, branch `inc12-coordination` at `59cb3c1`, clean. **NOT REMOVED** — instructed, and it is the ninth seat''s evidence tree.'
+
+# ================================================================================================== #
+# WHAT THE PRODUCT OWNER RULED, AND WHAT THIS SEAT IS AND IS NOT DOING ABOUT IT.
+# ================================================================================================== #
+the_ruling:
+  source: 'governance/decisions/PO-DECISIONS-0022.md, landed at `d60b8b9`.'
+  ruling_1_Q18: '**"PARALLEL" IS STRUCK FROM PO-DECISIONS-0021 RULING 6.** The auditor''s line adopted verbatim: *"running parallel seats on this machinery is more dangerous than running them on nothing, because the board would be green."* **Parallel remains the GOAL and is GATED, not abandoned. `CD-D-181` sequential-only stands as the interim. The override is Matt''s and is not taken here.** THIS SEAT DISPATCHES NO PARALLEL SEAT AT THIS BOUNDARY OR ANY OTHER UNTIL THE DEDICATED GATE IS GREEN.'
+  ruling_2_Q19: '**THE `RESISTED` TIER IS CORRECTED TO FUTURE TENSE. `F02` STANDS AND IS NOT CONTESTED.** This is the act performed at this boundary and it is the whole of it.'
+  ruling_3_Q16: '**`CD-RULE-002` BINDS THE PRODUCT AUTHORITY''S OWN HAND. NO EXEMPTION.** Recorded here as received; the enforcement is the launch-lease (`IMP-037`), which is unbuilt, and the interim is the `ps` check above.'
+  ruling_4_Q11: '**TO THE FRAMEWORK, PRIORITY INVERTED — CORRECTNESS BEFORE CARRIAGE.** Nine coordination controls, zero live carriers. **NOT CARRIED AT THIS BOUNDARY AND NOT AT THE NEXT.** It is a PBGv2 backlog item and not a crash-detector increment; no seat here may write it.'
+  ruling_5_the_fix: '**A BOUNDED SEQUENTIAL SINGLE-SEAT REMEDIATION, THEN A TENTH GATE.** Dispatched at the NEXT boundary, not this one, and to a FRESH Engineer identity — `CD-D-182` / `PBG-AUTH-006` forbid a seat repairing these at a gate by a quick deletion.'
+  ruling_6_standing: '`CD-AC-005` RED, `CD-AC-002` AMBER, WO-2 gate SHUT, lane frozen at `be0b355`, system SAFE TO LEAVE RUNNING SEQUENTIALLY. **NEITHER CRITERION IS MOVED HERE.**'
+
+# ================================================================================================== #
+# THE ACT. ONE ROW, IN A FILE THIS SEAT MAY NOT AUTHOR.
+# ================================================================================================== #
+the_record_act:
+  authority: '**`BLUEPRINT.md` IS PROTECTED FROM EVERY SEAT INCLUDING THIS ONE (`CD-D-115`).** The authority for the carriage is the ruling''s own instruction: *"PO-authored correction, carried verbatim by the remediation increment as its first act"*. **THIS SEAT CARRIED BYTES. IT DID NOT AUTHOR PRODUCT MEANING.**'
+  what_was_replaced: '§17 `CD-BP-005`, the Handling column''s `RESISTED` segment as v0.4.0 wrote it — *"a CONSTRUCTION-PROVENANCE door ... defeatable only by locating and mutating a module-private structure ... hence RESISTED, not prevented ... the `WeakSet` form is unavailable because `__slots__` omits `__weakref__`"* — **681 normalised characters, measured, not estimated.**'
+  what_replaced_it: '**The Product Owner''s OWED-NOT-BUILT blockquote, all four sentences: the corrected label; `CD-AC-017` as the SPECIFIED mechanism, NOT YET BUILT and AS FIRST MEASURED INSUFFICIENT ALONE; the load-bearing defence MOVED TO THE `DETECTED` TIER (`CD-AC-018`) with admission-provenance as defence-in-depth and NOT the primary; and verification at WO-3 when real sources land.** 571 normalised characters.
+    **THE TIER IS NOT WITHDRAWN. ITS TENSE IS CORRECTED.**'
+  what_this_seat_authored_and_it_is_enumerated_because_F05_caught_exactly_this:
+    - 'the version bump `0.4.1` -> `0.4.2` in the frontmatter'
+    - 'the `status:` paragraph for v0.4.2'
+    - 'the `derives_from:` line naming PO-DECISIONS-0022 ruling 2'
+    - 'the §19 amendment-log row for v0.4.2'
+    - '**the RETAINED scaffolding clause `**Scheduled as `CD-AC-017`** (§14, §15 WO-3).`** — pre-existing PL scaffolding from v0.4.0, kept so §14 and §15''s trace citations still resolve. **IT IS THE WEAKEST ITEM IN THIS LIST AND IT IS NAMED AS SUCH: it is this seat''s prose sitting in a protected file next to the Product Owner''s. It asserts a schedule and no product meaning, and an auditor who thinks it should go should say so.**'
+    - 'the new file `tools/reconciliation/check_blueprint_carried_po_0022_verbatim.py` (not in BLUEPRINT.md)'
+  what_this_seat_did_not_do:
+    - '**did not touch `CD-AC-002` (AMBER) or `CD-AC-005` (RED).** Instructed, and correct.'
+    - '**did not touch the `wo-2r3` lane, frozen at `be0b355` behind a SHUT gate.**'
+    - '**did not build `CD-AC-017` and did not round it up.** It stays 3/4 of the `CD-D-172` form; `required-tests.yaml` is still not on `main` at all and the register row still does not exist.'
+    - '**did not carry the nine coordination controls (`Q11`).** Ruling 4 forbids it until they are correct.'
+    - '**did not dispatch any seat, parallel or sequential.** The Engineer dispatch is the NEXT boundary.'
+    - '**did not edit `check_blueprint_carried_po_0019_verbatim.py` to keep it green.** See below — this is the important one.'
+
+# ================================================================================================== #
+# VERIFIED BY COMMAND AND NOT BY ASSERTION. BOTH ARMS.
+# ================================================================================================== #
+verification:
+  new_check: 'tools/reconciliation/check_blueprint_carried_po_0022_verbatim.py — **A SEPARATE FILE AND NOT AN EDIT OF ANY SIBLING**, for the reason the three siblings are separate: each is standing evidence for ONE carriage.'
+  arm_1_carriage: '`python3 -B tools/reconciliation/check_blueprint_carried_po_0022_verbatim.py --root .` -> **EXIT 0. 4/4 sentences resolve in PO-DECISIONS-0022.md AND in BLUEPRINT.md; 571 normalised characters carried.**'
+  arm_2_supersession_use_versus_mention: '**2a: the distinctive superseded fragment `"defeatable only by locating and mutating a module-private structure"` is ABSENT from §17 — the document''s own normative voice. 2b: 0 occurrences in the whole file.** A replacement cannot be proved by "the old string is gone" when the amendment log quotes history, so the arm is split by USE versus MENTION, as the 0020 check''s removal arm was.'
+  arm_3_the_one_that_matters: '**THE SUPERSESSION IS MEASURED EXACTLY ONE SENTENCE WIDE.** The check IMPORTS the 0019 sibling''s OWN `CARRIED` table — not a copy — and measures all ten against BLUEPRINT.md today. **9/10 still resolve. The one that does not is `ruling 1 tier 2 — RESISTED, and the WeakSet obstacle OWNED`, which is exactly the sentence ruling 2 corrects.** This arm exists to stop this seat from using a PO-authorised correction as cover for dropping OTHER Product Owner bytes from a protected file while nobody is counting.'
+  counterfactual: '`--counterfactual` -> **EXIT 1, 5 failures** (4 carried sentences broken by one word each, plus the ARM 2 fragment). **THE CHECK CAN FAIL.**'
+  the_disclosed_consequence: >
+    *** **`python3 -B tools/reconciliation/check_blueprint_carried_po_0019_verbatim.py --root .`
+    NOW EXITS 1.** ***
+    **9/10 sentences, 1911 -> 1230 normalised characters. THE DROP IS 681, WHICH IS EXACTLY THE
+    SUPERSEDED SENTENCE'S MEASURED LENGTH — the arithmetic closes and nothing else left the file.**
+    **IT WAS NOT EDITED AND IT MUST NOT BE.** Editing a sibling check so a later carriage passes
+    would destroy the evidence for the earlier carriage in the act of producing evidence for the
+    later one. **A sibling check going RED on precisely the sentence a later ruling corrected IS
+    the evidence that the v0.4.0 text existed and was superseded BY THE PRODUCT OWNER AND NOT BY A
+    SEAT.** A seat that quietly re-pointed that check would have erased the only mechanical trace
+    of what the perimeter used to claim.
+  other_siblings_unaffected_and_measured: '`check_blueprint_carried_po_text_verbatim.py` (PO-0018) -> **rc=0**. `check_pid_carried_po_0020_verbatim.py` (PO-0020) -> **rc=0**. **NEITHER MOVED, AND BOTH WERE RUN RATHER THAN ASSUMED.**'
+  blueprint_integrity_CD_RULE_009: '**831 lines · 73179 bytes · sha256 `39397dfbf169a125c627342cfe46e6885b86e750975f937eaf03dce3815248a8`** at the moment of this write.'
+
+# ================================================================================================== #
+# ONE NEW DECLARED LIMIT, DECLARED RATHER THAN DISCOVERED BY THE NEXT AUDITOR (CD-RULE-004).
+# ================================================================================================== #
+declared_limits_of_the_new_check:
+  hyphen_rejoin: '**THE NEW CHECK REJOINS A HYPHEN AT A LINE BREAK BEFORE COMPARING, AND ITS THREE SIBLINGS DO NOT.** PO-DECISIONS-0022 hard-wraps `construction-provenance` across lines 28/29 of its own file, and a raw comparison would have failed a PERFECTLY FAITHFUL carriage. **The rejoin is applied identically to source and target, so it cannot make a CHANGED WORD match — it can only stop a LINE BREAK from counting as a change. Declared here and in the module header before an auditor finds it.**'
+  words_not_bytes: 'Emphasis, backticks and blockquote markers are normalised away. A carriage that changed emphasis passes; one that changed a WORD does not, and `--counterfactual` proves that half rather than asserting it.'
+  not_completeness: 'It proves what is quoted is genuine and that exactly one sentence was superseded. **It does NOT prove nothing else was added.** This seat''s own authored bytes are enumerated above and are out of the check''s reach. `git diff d60b8b9..HEAD -- BLUEPRINT.md` is the other half and an auditor should read it.'
+  says_nothing_about_truth: '**Whether the `DETECTED` tier can in fact BEAR the load just moved onto it is not measured by this check or by anything else today.** `CD-AC-018` is unbuilt. The correction makes the record honest about where the weight sits; it does not put anything under the weight. **That gap is real and is stated here rather than left to be found.**'
+
+# ================================================================================================== #
+# WHAT HAPPENS NEXT, AND WHAT MUST NOT.
+# ================================================================================================== #
+next:
+  immediately: '**ACT 2 — ONE bounded FRESH Engineer dispatch, SEQUENTIAL SINGLE-SEAT** (`CD-D-181`), against `F08` + the FALSE `L1` declaration, `F04`, `F05`+`F11`, `F09`, each in the contrast form. **A FRESH IDENTITY. NOT THIS SEAT. NOT A QUICK DELETION AT A GATE (`CD-D-182` / `PBG-AUTH-006`).**'
+  then: '**ACT 3 — THE TENTH FRESH ASSURANCE SEAT**, whose acceptance is two NAMED commands: a re-run of `race_scope.py` and the `F08` both-arms test, against the repaired tree. **The Engineer and the Assurance Engineer are never the same agent (`PBG-SOD-001`, non-waivable).**'
+  must_not_happen:
+    - '**NO PARALLEL SEAT.** Ruling 1. Not one, at any boundary, until the dedicated gate is green. The override is Matt''s alone.'
+    - '**NO CARRIAGE OF THE NINE CONTROLS.** Ruling 4. Carrying them today ships a green board over the original defect.'
+    - '**NO SEAT FIXES THESE AND ALSO CERTIFIES THEM.**'
+  out_of_ruling_5_scope_and_therefore_still_open: '**`F10` (the dead-holder doctrine split), `F12` (both merge-blind instruments), `F13` (`REFUSED_FILESYSTEMS` as a denylist), `F14`.** The ninth seat ordered them at positions 4-6 of its own remediation table; **PO-DECISIONS-0022 ruling 5 names five items and these are not among them.** **THEY ARE NOT FIXED AT THE NEXT BOUNDARY AND THIS SEAT IS NOT NARROWING A RULING SILENTLY — it is recording that the ruling is narrower than the verdict''s table and that the residue stays open.**'

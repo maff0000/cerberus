@@ -1,0 +1,207 @@
+entry_id: BL-20260822T205345Z-0107
+timestamp_utc: '2026-08-22T20:53:45Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 5e3c91c
+parent_entry_id: BL-20260822T204029Z-0106
+schema_version: 1
+
+action_summary: >
+  *** **THE FOURTH GATE IS NOW **RED**. CD-ASR-WO2R3-01 GRADED ITS OWN LATE-RETURNING EVIDENCE AND
+  MOVED ITS OVERALL VERDICT FROM AMBER TO RED — ON A MEASUREMENT IT RAN ITSELF, AGAINST A SENTENCE
+  IT HAD WRITTEN ITSELF.** ***
+  T2 (CD-BP-003) moves **AMBER -> RED**. **CD-AC-002 AND CD-AC-005 GRADES DO NOT MOVE — BOTH REMAIN
+  AMBER, NOT CLOSED**, with CD-AC-005's reasoning materially weakened. The supplement is banked
+  verbatim BESIDE the verdict and `VERDICT.md` IS NOT EDITED (CD-D-143, PBG-CONT-003).
+  **THE SEAT RETRACTED ITS OWN LOAD-BEARING SENTENCE IN TERMS:** its AMBER rested on *"This is not a
+  RED: I found no mechanism defect… Every finding is about the scope of the class and the integrity
+  of the evidence, not about whether the machinery works. It does."* **"That sentence is now false,
+  and I am the party who has to say so."** ESCAPE 1 is a correctness defect in the shipped ingestion
+  path with a demonstrated two-line counterfactual fix, and it is neither scoping nor evidence
+  integrity. **AND IT SAID WHY IT WOULD NOT LEAVE THE AMBER STANDING: doing so "would be exactly the
+  'control scoped narrower than the class it names' failure this project keeps finding — committed
+  by its auditor."**
+  *** **THE SEAT ALSO SUPERSEDED ITS OWN F-A2 WITH SOMETHING BROADER, AND THE PROJECT LEAD RE-RAN IT
+  RATHER THAN TAKE IT.** *** F-A2 needed a NEW PACKAGE to escape and named RULE A's package
+  vocabulary as the limit. **PACKAGES WERE NEVER THE LIMIT. THE LIMIT IS THE AST WALK.**
+  PL-MEASURED at `531c95c`: a public frozen fielded dataclass nested ONE CLASS LEVEL inside
+  `src/crash_detector/engine/config.py` — **AN ALREADY-GOVERNED FILE IN A RULE A JUDGEMENT-PATH
+  PACKAGE** — gives **POPULATION UNCHANGED AT 33, constructor EXIT 0 "PASS — 97 assertions, 0
+  violations", doors EXIT 0**, and at runtime `Judgement.Verdict(score=object(), breached='maybe')`
+  **ACCEPTED**. No new package, no new module, no rename — **ONE INDENTATION LEVEL.**
+  **ROOT CAUSE PL-CONFIRMED BY READING THE SOURCE:** `check_constructor_field_establishment.py`
+  enumerates `for node in tree.body` at **591, 601 and 622**, and `check_judgement_path_doors.py` at
+  **659** — TOP LEVEL ONLY. `ast.walk` appears only for reach resolution and decorator inspection
+  (472, 406, 521, 401). **BOTH GOVERNING INSTRUMENTS SHARE ONE BLIND SPOT AND NEITHER DECLARES IT.**
+  *** **AND THE SEAT TOLD THE PROJECT LEAD THAT ITS SELF-FINDING WAS TOO GENEROUS — TO THE WRONG
+  PARTY. IT IS RECORDED AS THE SEAT FRAMED IT AND NOT AS THIS SEAT WOULD PREFER IT.** ***
+
+what_the_seat_was_asked_and_what_it_was_NOT_asked:
+  the_ask: >
+    Bounded: does the late-returning T2 evidence change your T2 verdict, your CD-AC-002 grade, or
+    your CD-AC-005 grade? Nothing else reopened.
+  what_the_project_lead_was_careful_NOT_to_do: >
+    **NO STEER, IN EITHER DIRECTION, AND THE MESSAGE SAID SO EXPLICITLY:** "I HAVE NO VIEW ON THE
+    ANSWER… A HARDER VERDICT IS AS ACCEPTABLE AS AN UNCHANGED ONE." The dispatch had promised the
+    seat that the Project Lead would not argue its verdict DOWN; the hand-back stated that the
+    promise **covers arguing it UP as well**, and it did neither.
+  and_the_seat_recorded_that_itself_unprompted: >
+    "The Project Lead promised not to argue my verdict down, and said that covers arguing it up. It
+    did not argue it either way; it banked the evidence unedited and asked. **I MOVED IT UP ON MY OWN
+    READING OF MY OWN MEASUREMENTS, AND THE RECORD SHOULD SHOW THAT THE THING WHICH CHANGED MY MIND
+    WAS A MEASUREMENT I RAN MYSELF AFTER BEING HANDED A DOCUMENT I WAS FREE TO DISMISS.**"
+    **THAT PROVENANCE IS THE REASON THIS RED IS WORTH ANYTHING, AND IT IS PRESERVED RATHER THAN
+    SUMMARISED.**
+  the_seat_refused_to_grade_on_inference_and_that_is_a_credit_not_a_gap: >
+    It declined to grade ESCAPE 3 on the strength of ESCAPES 1 and 2 having checked out: **"Three
+    verified escapes do not make a fourth true, and this project's record already contains four
+    probes that print a verdict they did not earn."** It applied its own F-C1 finding to its own
+    reasoning. ESCAPE 3, the sink/ledger/validator table, the end-to-end trace and the `adapter_id`
+    double-read remain **DELEGATED MEASUREMENT, UNVERIFIED BY THE SEAT, AND LOAD-BEARING FOR NOTHING.**
+
+the_re_measurement_the_project_lead_ran_itself:
+  rule: 'Reconciling a return means MEASURING it. The seat''s most consequential new claim is §2.3.'
+  command: >
+    pristine `git archive 531c95c` to /tmp, append to `src/crash_detector/engine/config.py` a
+    `class Judgement:` containing a nested `@dataclass(frozen=True) class Verdict: score: float;
+    breached: bool` with no establishment, then both register instruments, `--why`, and a runtime
+    construction.
+  observed: >
+    **POPULATION 33 — UNCHANGED · CONSTRUCTOR EXIT 0, "PASS — 97 assertions, 0 violations" · DOORS
+    EXIT 0 · RUNTIME `Judgement.Verdict(score=<object object at 0x...>, breached='maybe')`
+    ACCEPTED.**
+  and_a_further_thing_the_project_lead_found_while_confirming_it: 'CD-PL-F96, below.'
+  root_cause_confirmed_by_reading_not_by_inference: >
+    `grep -n "for node in tree.body|ast.walk"` over both instruments: constructor **591, 601, 622**
+    and doors **659** iterate `tree.body`; `ast.walk` appears at constructor 406/472/521 and doors
+    401, all for reach or decorator inspection and none for class enumeration.
+
+findings_raised_by_the_project_lead_at_this_boundary:
+- id: CD-PL-F96
+  severity: MEDIUM
+  title: >
+    **THE `--why` LEDGER PRINTS A REASSURING LINE ABOUT THE OUTER CLASS WHILE THE GOVERNED-SHAPED
+    TYPE INSIDE IT IS NEVER EXAMINED — SO THE LEDGER READS AS COVERAGE EXACTLY WHERE THERE IS NONE.**
+  what: >
+    The instrument's note offers this reassurance: *"a class that was not looked at is printed OUT
+    under `--why` with the clause that excluded it, OR IS NOT AMONG THE 99 EXAMINED AT ALL."* The
+    auditor located the escape in that second disjunct. **PL-MEASURED, IT IS WORSE THAN A SILENT
+    OMISSION:** with the nested type present, `--why` prints
+    `OUT  engine/config.py:379 Judgement — clause (2): not declared @dataclass(frozen=True).` — a
+    line about the CONTAINER, with a specific and correct-sounding reason — **AND PRINTS NOTHING
+    WHATEVER ABOUT THE FROZEN FIELDED `Verdict` INSIDE IT.**
+  direction_of_error: >
+    **TOWARD FALSE ASSURANCE, WHICH IS THE WORST DIRECTION A LEDGER CAN FAIL IN.** A reader auditing
+    the ledger for `engine/config.py` sees the file represented, sees a class at that location
+    adjudicated with a reason, and has no signal that a governed-shaped type one line further in was
+    never a candidate. **AN ABSENCE WOULD HAVE BEEN MORE HONEST THAN THE LINE THAT IS THERE.**
+  why_it_is_separate_from_the_auditors_finding: >
+    The auditor found the ENUMERATION blind spot. This is about the LEDGER that exists to make the
+    enumeration auditable, and which is the instrument's own answer to "how would you know?" The
+    remedy the auditor proposes — walk with `ast.walk` and **assert the count of classes examined** —
+    fixes both, and the second half of it is the part that would have surfaced this.
+  disposition: 'RAISED, NOT REMEDIED. It travels with the RED to the Product Owner.'
+
+- id: CD-PL-F94
+  status: >
+    **AMENDED AT THIS BOUNDARY ON THE AUDITOR'S CHALLENGE. THE AMENDMENT IS RECORDED AS THE AUDITOR
+    FRAMED IT AND NOT AS THIS SEAT WOULD PREFER IT.**
+  what_the_auditor_said_when_asked_whether_the_self_correction_was_too_generous: >
+    **"In one specific respect it is, and it is generous to the wrong party — it is too hard on the
+    Project Lead and too easy on the instrument."** CD-PL-F94 framed the defect as a READING failure
+    by the Project Lead. It was **ALSO A STEERING FAILURE BY THE ARTEFACT**: the instrument's
+    DECLARED LIMIT 2 names RULE A's package list as the vocabulary, and
+    `V16-new-package-undecorated-door.patch` exists to demonstrate THAT axis — so **EVERY PARTY, the
+    Engineer, the Project Lead, the Product Owner and the auditor in its own VERDICT.md §3, asked
+    "what if it is in a different PACKAGE?"** The answer is that packages were never the limit.
+    **"A declared limit pointed four parties at the narrower of two axes, and nobody tested the axis
+    it did not name."** And: **"I would not accept a correction that leaves the declared limit's
+    wording standing as sound."**
+  the_project_leads_response: >
+    **ACCEPTED IN FULL, AND THE AMENDMENT IS NOT A SOFTENING OF THE SELF-FINDING.** Everything
+    CD-PL-F94 charges this seat with remains charged: it did accept a code-path contrast as a class
+    closure, and it did write a question into the auditor's brief that it never put to itself.
+    **WHAT IS ADDED IS A SECOND DEFENDANT THIS SEAT LET OFF** — the declared limit whose wording
+    made the narrower axis the obvious one to test. A self-finding that absorbs all the blame and
+    leaves a defective artefact reading as sound is not a more honest finding; it is a less useful
+    one, and it protects the wrong thing.
+  and_the_count_the_auditor_puts_on_the_pattern: >
+    **NINTH INSTANCE, by the auditor's count — three of them inside increment 5, and one of them in
+    the instrument that defines the class for this gate.** This seat had recorded the pattern as
+    four deep at the preceding boundary. **IT DID NOT KNOW THE COUNT AND SHOULD NOT HAVE IMPLIED IT
+    WAS BOUNDED.**
+
+what_the_grades_are_and_what_they_are_not:
+  T2_CD_BP_003: 'AMBER -> **RED.** Four escapes, three verified by the auditor itself.'
+  CD_AC_002: >
+    **AMBER, UNCHANGED, NOT CLOSED.** No route reaches a dial score or the published envelope. **BUT
+    ONE PROP IS REMOVED:** "every value the four Protocols RETURN exact-typed at its point of return"
+    may no longer be cited toward it, because it establishes the TYPE and not the VALUE. And the
+    containment is **an unimplemented enum, not a guard** — the auditor says so plainly.
+  CD_AC_005: >
+    **AMBER, UNCHANGED GRADE, MATERIALLY WEAKENED REASONING, NOT CLOSED.** The auditor states what
+    would flip it to RED **so it can be tested rather than argued**: a demonstrated route from any
+    foreign or caller-supplied input to a `WitnessPanel` value of type `Agrees` that did not pass
+    `Agrees.__init__`. It did not find one, and it says it did not have time to look hard.
+  what_none_of_this_is: >
+    **NOT AN ACCEPTANCE, AND A RED IS NOT A FAILURE OF THE PROJECT** (PBG-AUTH-003). The auditor is
+    explicit: "RED here means one bounded, well-understood correctness fix is owed before the gate,
+    not that WO-2R3 was misconceived," and **everything credited in VERDICT.md §1 stands — the
+    runtime closure is real, the rename test passes, the counterfactual arm holds, CD-D-135 is
+    verified in the git graph. None of that is withdrawn.**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT ACCEPT, GRADE, ARGUE, SOFTEN OR DISPOSITION THE RED.** The grading was the seat's;
+  the disposition is the Product Owner's.
+  **IT DID NOT EDIT `VERDICT.md`.** The supplement stands beside it. A reader can see exactly what
+  the auditor believed before the late evidence and after it, and neither document pretends to be
+  the other.
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-130). T8 remains NOT ESTABLISHED.
+  **IT DID NOT REMEDY ESCAPE 1, THE AST BLIND SPOT, THE ALIASED EXEMPTIONS, F-A1, CD-PL-F95 OR
+  CD-PL-F96** — remediation after a RED and before a disposition is the implementer-side seat
+  deciding what the auditor's verdict was worth.
+  **IT DID NOT VERIFY ESCAPE 3, the sink/ledger/validator table, the end-to-end evaluate trace, the
+  `adapter_id` double-read, or §2.4's alias measurement.** The auditor flagged the first four as
+  unverified by it too; §2.4 is the auditor's own measurement and is labelled as the auditor's.
+
+next_safe_action: >
+  *** **STOP. THE GATE IS RED AND IT IS THE PRODUCT OWNER'S TO DISPOSITION. NO ENGINEERING, NO
+  REMEDIATION, NO DISPOSITIONS AND NO FIFTH SEAT ARE AUTHORISED BEFORE THAT.** ***
+  **WHAT GOES UP AS ONE PACKAGE:** `governance/assurance/WO-2R3/VERDICT.md` (AMBER as written) ·
+  `SUPPLEMENT-T2-GRADING.md` (**the RED, and the retraction of the verdict's own load-bearing
+  sentence**) · `ADDENDUM-T2-ADAPTER-BOUNDARY.md` (the four escapes, three now verified by the
+  auditor) · the auditor's declared holes — **T8, T9, T10 UNMEASURED, ESCAPE 3 UNGRADED BY CHOICE** ·
+  and this seat's self-findings **CD-PL-F94 (HIGH, AMENDED AGAINST ITSELF ON THE AUDITOR'S
+  CHALLENGE), CD-PL-F95 (MEDIUM), CD-PL-F96 (MEDIUM).**
+  **THE AUDITOR'S OWN PROPOSED NEXT GATE, CARRIED UP UNCHANGED AND NOT ADOPTED BY THIS SEAT:**
+  (1) the Product Owner dispositions the RED; (2) ONE bounded Engineer increment of four
+  independently checkable items — ESCAPE 1's two-line payload snapshot; both instruments to `ast.walk`
+  **AND ASSERT THE COUNT OF CLASSES EXAMINED**; alias-resolution for `ESTABLISHED_HERE` plus the
+  stale 8/5 declaration corrected to the measured 16/9; `@establishes()` on `Empty` as the
+  mechanism's own header already prescribes; (3) **THREE DECLARED LIMITS REWRITTEN RATHER THAN
+  PATCHED AROUND** — `required-tests.yaml`'s "closed and not a limit" list, `admission.py:181-184`,
+  and `establishment.py:222-225` with `admission.py:186-189` — each presently wrong in a STATED
+  direction; (4) **A FIFTH FRESH ASSURANCE SEAT REGRADES T2 AND CD-AC-002/005**, because
+  CD-ASR-WO2R3-01 has now attacked this surface and says it is no longer the freshest reader of it.
+  **THE QUESTIONS THAT ARE THE PRODUCT OWNER'S AND NOBODY ELSE'S:** (1) does the RED stand, and does
+  the four-item increment have the right shape and bound? (2) **PO-DECISIONS-0010 RULING 1 SAID A
+  FUTURE FIELDED TYPE "FAILS ON ARRIVAL". IT DOES NOT — NOT ONE INDENTATION LEVEL DOWN, INSIDE AN
+  ALREADY-GOVERNED FILE. THE RULING IS SOUND AND THE INSTRUMENT DOES NOT REACH IT**, and whether
+  that is a defect to fix or a class to re-rule is not this seat's to decide, for the same reason
+  CD-D-134 went up. (3) the three declared limits are wrong in stated directions in SHIPPED
+  DECLARATIONS — a documentary correction only an authorised party may order. (4) the T6 correction
+  stands, and concerns the only criterion currently passing. (5) is a FIFTH Assurance seat
+  authorised, and against which target?
+  **DO NOT** merge or promote the lane. **DO NOT** admit anything (CD-RULE-001, PO-set,
+  non-relaxable). **DO NOT** open an increment. **DO NOT** write the eleven Class-2 dispositions.
+  **DO NOT** modify anything under `pbg/`.
+
+continuity_record_commit: 7e1f1d48706790c1f9573b912b1b6dd61f66f332   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE NINTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 7e1f1d4 BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont9 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont9 && git checkout -q -B main 7e1f1d4` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase GATE, observed_sha 7e1f1d48706790c1f9573b912b1b6dd61f66f332, branch main. **THE PROJECT BOOTS GREEN AT A RED GATE, AND THAT IS CORRECT: continuity is about whether the record and the tree agree, not about whether the news is good.**

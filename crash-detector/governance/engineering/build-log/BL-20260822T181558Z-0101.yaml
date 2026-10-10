@@ -1,0 +1,169 @@
+entry_id: BL-20260822T181558Z-0101
+timestamp_utc: '2026-08-22T18:15:58Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: d993dd9c30643a4133b4c3dff352e57f2264227d
+parent_entry_id: BL-20260822T180643Z-0100
+schema_version: 1
+
+action_summary: >
+  **WO-2R3 INCREMENT 5 IS DISPATCHED. `CD-DISPATCH-WO2R3-INC5-ENGINEER` IS ISSUED AT LANE 4ac159e TO
+  CD-ENG-WO2R3-01, UNDER PO-DECISIONS-0009 RULING 2, ON THE BOUNDS OF PO-DECISIONS-0007 RULING 1 AS
+  RE-BASED BY PO-DECISIONS-0008 RULING 2.**
+  It is a SEPARATE dispatch record and not an edit to CD-DISPATCH-WO2R3-ENGINEER. That record is
+  ISSUED and its four increments are delivered; increment 5 did not exist when it was written.
+  **AMENDING AN ISSUED DISPATCH TO DESCRIBE WORK ITS AUTHOR NEVER SCOPED WOULD MAKE THE RECORD SAY
+  THE PROJECT LEAD PLANNED FIVE INCREMENTS WHEN THE PRODUCT OWNER ORDERED THE FIFTH.** The new record
+  stands beside it and inherits everything in it that is not restated.
+  **THE ORDER OF WORK IS FIXED IN THE DISPATCH AND IT IS THE MOST IMPORTANT THING IN IT: THE
+  INSTRUMENT COMES FIRST, BEFORE ANY MECHANISM EXISTS.** If the mechanism is built first the
+  instrument enumerates what the mechanism already covers — a photograph of the seat's own diff,
+  which would pass every check in the dispatch while proving nothing. The Product Owner ordered the
+  enumeration recorded AT INCREMENT-5 START for exactly this reason (CD-D-119) and the dispatch says
+  so in those terms.
+
+the_baseline_is_PL_MEASURED_AT_ISSUE_TIME_AND_NOT_QUOTED_FROM_THE_RECORD:
+  why_it_matters: >
+    The parent dispatch was issued with a baseline (1400 node ids) measured at f30e63c and disclosed
+    that the suite had been COLLECTED and not RUN. **THAT FIGURE IS NOT THIS INCREMENT'S BASELINE AND
+    A SEAT INHERITING IT WOULD BE MEASURED AGAINST THE WRONG NUMBER.** Every figure below was taken by
+    the Project Lead at this boundary, in a pristine extraction of 4ac159e, with the command recorded
+    beside the value (CD-RULE-009).
+  extraction: 'rm -rf /tmp/cd-inc5-base && mkdir -p /tmp/cd-inc5-base && git archive 4ac159e | tar -x -C /tmp/cd-inc5-base'
+  measurements:
+  - subject: 'NODE IDS'
+    command: 'PYTHONPATH=/tmp/cd-inc5-base/src python3 -B -m pytest tests --collect-only -q'
+    observed: '**1519 tests collected in 1.20s.** This replaces 1400 as the conservation floor.'
+  - subject: 'THE DOORS INSTRUMENT'
+    command: 'python3 -B tools/register/check_judgement_path_doors.py --root .'
+    observed: >
+      **EXIT 0** · `CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: PASS — 54 assertions, 0 violations` ·
+      `SUBJECTS ENUMERATED: 27. DECORATED: 27.` — agreeing exactly with the record's increment-4
+      figures, re-measured rather than read.
+  - subject: '**DECLARED LIMIT 1 — THE THING INCREMENT 5 EXISTS TO KILL**'
+    observed: >
+      STILL PRINTED BY THE INSTRUMENT, verbatim: "DECLARED LIMIT 1 — CONSTRUCTORS ARE NOT SUBJECTS.
+      ConfigSnapshot(...), DialSpec(...), ModelSpec(...) and PanelRow(...) establish their fields in
+      __post_init__, which is a BODY. §D.2 lists no constructor and this check does not invent that
+      scope. See the header; raised as a finding, not closed."
+  - subject: '**V17, THE PLANT — AND THE GAP MEASURED RATHER THAN ASSERTED**'
+    command: 'separate pristine extraction; `git apply --check -p1 variants/WO-2R3/V17-constructor-body-escape.patch`; applied; then the doors command'
+    observed: >
+      **APPLIES CLEANLY. WITH V17 APPLIED — the `type(spec) is not DialSpec` loop DELETED from
+      `ConfigSnapshot.__post_init__` — THE DOORS INSTRUMENT STILL EXITS 0 AND STILL SAYS "PASS — 54
+      assertions, 0 violations".** The guard is gone and the instrument says PASS. **THAT IS THE GAP,
+      AND NO PARTY HAD RE-MEASURED IT AT THIS SHA BEFORE THIS BOUNDARY** — it was the record's claim
+      from the increment-4 variant manifest, and it is now this seat's measurement.
+  - subject: 'THE CLASS-2 SWEEP (NOT IN SCOPE, MEASURED SO THE SEAT IS NOT SURPRISED BY IT)'
+    command: 'python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list'
+    observed: '**EXIT 1** · `CD-CLASS-2-SWEEP: FAIL — 514 sites, 11 violations`. Unchanged. By DECLARED STATE.'
+  what_the_baseline_does_NOT_establish: >
+    **THE SUITE WAS COLLECTED, NOT RUN.** Whether all 1519 PASS on this host today is NOT established
+    by this boundary and the dispatch says so on its face. The eleven plants were NOT re-applied here
+    either; their health remains the record's claim at BL-20260822T174206Z-0057.
+
+what_the_dispatch_binds_that_a_reader_might_otherwise_miss:
+- 'THE INSTRUMENT BEFORE THE MECHANISM, with the reason written out, and with an explicit instruction
+   on what to do if the count is uncomfortable: **REPORT IT AND STOP, DO NOT NARROW THE DEFINITION.**
+   "A measured class of thirty with twelve closed and eighteen declared" is named as preferable to "a
+   definition quietly shaved until the work fits", and TUNING THE INSTRUMENT is written into
+   `prohibited` as its own line.'
+- '**THE FLOOR IS NOT THE POPULATION**, and the commit contract forces the seat to answer it: if the
+   enumerated class turns out to be exactly the five named types, the seat must say WHY the instrument
+   found no others — "a floor that happens to equal the population is a finding, not a coincidence".'
+- 'THE MECHANISM BOUND IS TRANSCRIBED FROM CD-D-110 AND NOT PARAPHRASED, per the standing obligation
+   that a closure quoting its own bounds must transcribe them.'
+- '**THE LEGITIMATE BODY WORK THE SEAT MUST NOT BREAK IS NAMED IN ADVANCE:** §C.5''s CROSS-FIELD
+   invariants (a resolved spec''s dial_id equalling the dial naming it; its input ids a subset of the
+   naming DialSpec''s declared inputs) are NOT establishment of a field from its declaration and
+   CANNOT be derived from one. The dispatch tells the seat to decide explicitly what its mechanism
+   covers and to declare the residue under CD-RULE-004 with CD-RULE-006''s carrier test applied —
+   rather than letting a cross-field invariant ride out of scope because it shared a body with the
+   fields.'
+- 'THE DATACLASS HAZARDS ARE LISTED — inherited fields, `InitVar`, `default_factory`, `ClassVar`,
+   non-init fields, and legitimate DERIVATION in `__post_init__` — **AND ARE EXPLICITLY LABELLED AS
+   THE PROJECT LEAD READING THE STANDARD LIBRARY''S SURFACE, NOT AS PROBLEMS ANYONE HAS HIT.** A seat
+   must not read that list as exhaustive or as evidence that the route is known to work.'
+- '**A HEURISTIC IS PERMITTED AND IS FENCED:** acceptable IF printed, declared as one, and with its
+   false-negative direction stated. "A heuristic presented as an enumeration is not."'
+- 'THE CLASS-C INTERACTION IS ANTICIPATED RATHER THAN LEFT TO BE DISCOVERED: if the property-based
+   enumeration pulls a Class C type into the class, the seat must REPORT AND DECLARE, **not silently
+   exclude it to keep the population tidy and not silently include it and widen its own scope.**'
+- '**THE ELEVEN CLASS-2 SWEEP DISPOSITIONS ARE WRITTEN INTO `prohibited` AS A PRODUCT AUTHORITY
+   RULING**, with (B)''s rejection reasoning carried so the seat can see the fold was considered and
+   refused. The sweep''s exit 1 is disclosed IN ADVANCE as DECLARED STATE with the instruction not to
+   treat it as the seat''s defect and not to chase its delta.'
+- 'THE BUILD LOG BLOCK IS STATED AS A RANGE WITH A CEILING — **0060-0099, continue from 0065, DO NOT
+   WRITE 0100 OR ABOVE, and if you reach 0099 STOP AND ESCALATE** — which is CD-D-132 applied at its
+   first use.'
+
+the_thing_carried_into_the_dispatch_that_is_not_about_dataclasses:
+  what: >
+    CD-PL-F89 is written into the dispatch, against the Project Lead and in the Project Lead's own
+    words, in the section that gives the seat its numbering block — **and it is framed as the LESSON
+    and not as an apology.**
+  why_it_belongs_in_an_engineering_dispatch: >
+    "A remedy expressed as a ONE-SIDED BOUND does not close a TWO-SIDED class" **IS THE SAME SENTENCE
+    AS "an enumeration cannot close a property-defined class", WHICH IS WHAT THIS ENTIRE INCREMENT IS
+    ABOUT.** In three consecutive boundaries that sentence has caught the Product Owner's own list of
+    four types (CD-D-114), the Project Lead's list-defined reconciliation sweep (CD-PL-F86) and the
+    Project Lead's floor-without-a-ceiling numbering rule (CD-PL-F89). The dispatch tells the seat
+    plainly: **assume it is about to catch your instrument, and look.**
+  and_it_tells_the_seat_the_defect_is_not_its_own: >
+    "You stayed inside the block you were given, both times." A dispatch that hands a seat a corrected
+    rule without saying who broke the old one invites the seat to assume it did.
+
+decisions_ruled_here:
+- id: CD-D-133
+  decision: >
+    INCREMENT 5 IS DISPATCHED AS A SEPARATE DISPATCH RECORD, `CD-DISPATCH-WO2R3-INC5-ENGINEER`,
+    STATUS ISSUED, RATHER THAN AS AN AMENDMENT TO `CD-DISPATCH-WO2R3-ENGINEER`.
+  reasoning: >
+    The parent is ISSUED and delivered. Increment 5 was created by the Product Owner AFTER it was
+    written (PO-DECISIONS-0007 ruling 1), re-based (PO-DECISIONS-0008 ruling 2) and dispatched
+    (PO-DECISIONS-0009 ruling 2). Editing the parent would misattribute the scope decision to the
+    Project Lead and would make an ISSUED record retroactively describe work its author never
+    scoped — the documentary shape of the same defect PBG-CONT-003 forbids in the Build Log.
+  what_it_inherits: >
+    Everything in the parent not restated: the deleted-subject rule, the exclusion set and its
+    "proves nothing about any class" status, the standing condition, the PO standing conditions, and
+    the WO-2R3 project rules in force. The new record says so explicitly rather than silently relying
+    on it.
+
+findings_raised_by_the_project_lead_at_this_boundary: []
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- '**THE SUITE WAS NOT RUN.** 1519 is a COLLECTION count. No pass/fail state at 4ac159e is
+   established by this boundary.'
+- '**THE ELEVEN PLANTS WERE NOT RE-APPLIED.** Carried from BL-20260822T174206Z-0057 as the record''s
+   claim, not re-measured at this SHA.'
+- '**THE MECHANISM IS NOT PROTOTYPED AND ITS FEASIBILITY IS NOT ESTABLISHED.** Nobody has written
+   declared-field-list derivation applied at a boundary on a frozen dataclass. Whether the class can
+   be closed at all without a further design change IS NOT PROVED, and the dispatch says an honest
+   "this cannot be closed as specified" is a valid and valuable return.'
+- '**NO NUMBER FOR THE CLASS IS KNOWN TO THIS SEAT AND NONE HAS BEEN QUOTED, ESTIMATED OR IMPLIED**
+   anywhere in this entry, the dispatch or ACTIVE_WORK.yaml (CD-D-119).'
+- '**THE DATACLASS HAZARD LIST IS NOT A TESTED FINDING SET.** It is this seat reading the standard
+   library''s surface. There may be others and there may be a blocking one.'
+- '**WHETHER THE INSTRUMENT CAN DERIVE THE PROPERTY FROM THE ARTEFACT AT ALL IS NOT PROVED.**'
+
+next_safe_action: >
+  **RUN INCREMENT 5.** Dispatch CD-ENG-WO2R3-01 as a sub-agent on
+  `governance/dispatch/CD-DISPATCH-WO2R3-INC5-ENGINEER.yaml` plus `pbg/roles/engineer.md`, in the
+  lane worktree /srv/crash-detector-wo2r3 at 4ac159e. Expect `READY_FOR_ASSURANCE` with the exact SHA.
+  **THEN RECONCILE IT — reconciliation is not acceptance — AND STOP AT THE GATE.**
+  The FOURTH FRESH ASSURANCE SEAT is the next boundary after that and its brief carries CD-D-129's
+  three verbatim clauses and TEN named targets, now including the CD-PL-F89 collision disclosure.
+  **DO NOT** write the eleven Class-2 sweep dispositions (CD-D-130). **DO NOT** admit anything
+  (CD-RULE-001). **DO NOT** merge or promote the lane or f30e63c. **DO NOT** grade CD-AC-002 or
+  CD-AC-005 — reserved by the Product Owner for the fifth boundary running.
+
+continuity_record_commit: e93d754b6023ad60dea187c61e455f03d9912f91   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE. Resolved with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE THIRD BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT e93d754 BEFORE this field was written. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont3 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont3 && git checkout -q -B main e93d754` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase BUILD, observed_sha e93d754b6023ad60dea187c61e455f03d9912f91, branch main.

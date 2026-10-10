@@ -1,0 +1,147 @@
+entry_id: BL-20260823T035800Z-0119
+timestamp_utc: '2026-08-23T03:58:00Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 9e4dfe2ac19b521878f9b815cd7a96251254f635   # RESOLVED with `git rev-parse`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed the record-act RECONCILIATION boundary.
+parent_entry_id: BL-20260823T034821Z-0118
+schema_version: 1
+
+action_summary: >
+  *** **INCREMENT 8 IS DISPATCHED AND OUT — THE INCREMENT THE FALLEN RULING PAID FOR.** ***
+  `CD-DISPATCH-WO2R3-INC8-ENGINEER` to **`CD-ENG-WO2R3-05`, A FRESH ENGINEER IDENTITY**, at
+  `4410275`, executing the Product-Owner-ADOPTED ten-item ordered gate **IN ITS ORDER**, with the
+  `CD-ASR-F03` **REDESIGN AT ITS HEAD**. **SIX ITEMS GO TO THE ENGINEER. ONE IS ALREADY DONE. TWO GO
+  UP AS PRODUCT AUTHORITY QUESTIONS. ONE IS SEQUENCED AFTER.** The arithmetic is stated because a
+  ten-item list arriving as a six-item dispatch is exactly the shape a reader should challenge.
+  *** **TWO PRODUCT AUTHORITY QUESTIONS ARE UP, AND NEITHER BLOCKS THE SIX.** *** **Q1 — `F-06-B`,
+  THE AUDITOR'S ITEM 4: THE LANE DOES NOT CONTAIN ITS OWN GOVERNING AUTHORITY.** PL-VERIFIED
+  INDEPENDENTLY at `4410275`: the lane's `BLUEPRINT.md` reads **version 0.1.0**,
+  **`governance/blueprint/` DOES NOT EXIST on the lane**, `BP-AMENDMENT-0001` is cited by **29 files
+  outside `BLUEPRINT.md` and `governance/`**, and **main's `BLUEPRINT.md` commit is NOT an ancestor
+  of `af2accb`** — `git merge-base --is-ancestor` returns NO. **THE LANE HAS BEEN BUILT FOR EIGHT
+  INCREMENTS AGAINST AN AUTHORITY IT DOES NOT CARRY.** It is the Product Owner's because
+  `BLUEPRINT.md` and `governance/blueprint/` are protected from **EVERY SEAT INCLUDING THE PROJECT
+  LEAD** — the CD-D-115 precedent, where this seat routed a blueprint defect upward rather than fix
+  it. **Q2 — `F-06-J`, THE AUDITOR'S ITEM 8: DOES §D's CLOSURE EXTEND TO THE CONSTRUCTION PATH?**
+  The auditor names it a RULING, and **a seat that implements a ruling nobody made has made it.**
+  *** **AND THE PROJECT LEAD DISCLOSES INTO THIS DISPATCH THE TWO SPECIFICATION DEFECTS IT SHIPPED
+  IN THE PREVIOUS ONE** — `CD-PL-F107` (HIGH) and `CD-PL-F106` (MEDIUM), both found by the seat it
+  dispatched, both against documents this seat wrote — **and tells `CD-ENG-WO2R3-05` in terms to read
+  this dispatch ADVERSARIALLY for the same reason.** *** Nothing merged, promoted or admitted. T2
+  **RED**; CD-AC-002 and CD-AC-005 **AMBER, NOT CLOSED**; `CD-RT-012` **RED at the tip**; the WO-2
+  gate **SHUT**.
+
+how_the_adopted_TEN_became_a_dispatch_of_SIX:
+  said_up_front_because_a_shortfall_should_be_challenged: >
+    **THE PRODUCT OWNER ADOPTED A TEN-ITEM ORDERED GATE AND THIS SEAT IS DISPATCHING SIX OF THEM.
+    THAT DIFFERENCE IS ACCOUNTED FOR ITEM BY ITEM RATHER THAN LEFT TO BE NOTICED**, because "the
+    dispatch was smaller than the order" is the sentence this record must never have to discover
+    later.
+  item_1: '**REPLACED BY THE REDESIGN AND DISPATCHED.** PO-DECISIONS-0015 ruling 2 in terms: *"item 1 replaced by the redesign."* The auditor''s item 1 was *"rule on Ground 2 before any code moves"* — **THE PRODUCT OWNER RULED, AND THE RULING FELL ON ITS OWN SIDE.**'
+  item_2: '**DISPATCHED** — `CD-RT-012`, with ruling 3''s IF-AND-ONLY-IF contrast condition written into the item as a condition of shipping, not as advice.'
+  item_3: '**DISPATCHED** — `F-06-D`, the `admission.py:525` operator, with the metaclass plant as its named carrier.'
+  item_4: '*** **NOT DISPATCHED — IT IS Q1, A PRODUCT AUTHORITY QUESTION.** *** `F-06-B` touches `BLUEPRINT.md`, protected from every seat **including this one**. The auditor itself calls it *"a governance act, not an engineering one."*'
+  item_5: '**ALREADY DONE.** The fifteen dispositions, the findings register and the redraft landed in the record act at `4410275` and are reconciled at BL-0118.'
+  item_6: '**DISPATCHED as ITEM 4** — Ground 3 / Escape 3, the fifth seat''s item (a), **still untaken after two gates.**'
+  item_7: '**DISPATCHED as ITEM 5** — `F-06-K`, the `tree.body` traversal residual, with the already-measured-and-uncarried escape as the carrier that must fail first.'
+  item_8: '*** **NOT DISPATCHED — IT IS Q2, A PRODUCT AUTHORITY QUESTION.** *** `F-06-J` asks for a **ruling** on whether §D''s closure extends to the construction path. The remedy (`__slots__`) is contingent on the answer.'
+  item_9: '**DISPATCHED as ITEM 6** — `F-06-L` / `F-06-M`, documentary, and three of them are the fifth seat''s item (e), now two gates old.'
+  item_10: '**SEQUENCED AFTER, NOT DROPPED.** The authorised META-ASSURANCE pass, per PO-DECISIONS-0013 ruling 5 and re-affirmed at PO-DECISIONS-0015 ruling 5, which assigned `CD-PL-F102` to it.'
+
+product_authority_questions_raised_at_this_boundary:
+- id: Q1
+  title: '**`F-06-B` — THE LANE DOES NOT CONTAIN ITS OWN GOVERNING AUTHORITY, AND ONLY THE PRODUCT OWNER MAY FIX IT.**'
+  measured_by_the_project_lead_independently_of_the_auditor: >
+    At `4410275`, in the lane worktree: **`BLUEPRINT.md` reads `version: 0.1.0`** ·
+    **`governance/blueprint/` DOES NOT EXIST** (`ls` -> No such file or directory) ·
+    **`BP-AMENDMENT-0001` is cited by 29 files** outside `BLUEPRINT.md` and `governance/` ·
+    **main's `BLUEPRINT.md` commit is NOT an ancestor of `af2accb`** — `git merge-base --is-ancestor`
+    returns **NO**. **THE LANE NEVER RECEIVED IT.**
+  and_the_project_lead_reports_a_difference_from_the_auditor_rather_than_adopting_its_number: >
+    **`F-06-B` states "96 times across 34 files". THIS SEAT MEASURED 29 FILES.** The exclusion sets
+    are not identical and this seat did not count citations, only files. **THE DIRECTION AND THE FACT
+    ARE THE SAME AND THE NUMBER IS NOT, AND THAT IS REPORTED RATHER THAN SMOOTHED INTO AGREEMENT**
+    (CD-RULE-009). **The finding does not depend on which number is right.**
+  why_it_is_the_product_owner_s_and_not_this_seat_s: >
+    **`BLUEPRINT.md` AND `governance/blueprint/` ARE PROTECTED FROM EVERY SEAT INCLUDING THE PROJECT
+    LEAD.** The precedent is this seat's own: at CD-D-115 it found a §D.3 defect in the blueprint,
+    **routed it upward rather than fix it**, and the Product Owner corrected it **by dated append,
+    not by edit** (PO-DECISIONS-0008 ruling 1). **A PROJECT LEAD THAT TRANSPORTED A BLUEPRINT ONTO A
+    LANE BECAUSE IT BELIEVED THE TRANSPORT WAS MECHANICAL WOULD BE DECIDING WHICH AUTHORITY THE LANE
+    IS BUILT AGAINST, WHICH IS THE ONE THING THE PROTECTION EXISTS TO STOP.**
+  the_shapes_this_seat_can_see_stated_without_a_recommendation_it_is_not_entitled_to_make: >
+    **(A)** the accepted v0.2.0 `BLUEPRINT.md` and `governance/blueprint/` are brought onto the lane
+    by the Product Owner, so the lane contains what 29 of its files cite; **(B)** the lane's
+    divergence is DECLARED, in all three CD-RULE-004 places, as a known condition of the WO-2R3
+    evidence lane; **(C)** neither, and the seventh Assurance seat is told the lane cites an authority
+    it does not contain and invited to grade the consequence.
+  and_the_thing_this_seat_will_say_against_its_own_comfort: >
+    **THE PROJECT LEAD HAS RECONCILED EIGHT INCREMENTS ON THIS LANE AND NEVER MEASURED THIS.** An
+    auditor found it in one command. **THAT IS THE SAME METHOD DEFECT AS `CD-PL-F104` AND
+    `CD-PL-F102`: a property nobody checked because a name — "the lane" — was accepted as a reading.**
+  blocking: '**NO. All six dispatched items are unaffected by every answer, and increment 8 proceeds in parallel.**'
+- id: Q2
+  title: '**`F-06-J` — DOES §D''s CLOSURE EXTEND TO THE CONSTRUCTION *PATH*? THE AUDITOR CALLS IT A RULING AND IT IS.**'
+  the_auditor_s_measurement_not_this_seat_s: >
+    Over the live package: **99 governed classes interrogated — 13 SEALED against `__new__` +
+    `__dict__.update`, 77 OPEN** (exact type, forged state). **ALL FOUR TYPES THE CD-D-105 CLOSURE WAS
+    SCOPED TO ARE OPEN** — `ConfigSnapshot`, `DialSpec`, `ModelSpec`, `PanelRow` — as are `DialSet`,
+    the score types, `OK`, `ObservationRecord`, `Empty`, **and all three witness verdicts.** **THE
+    MECHANISM IS `__slots__`, THE REMEDY IS ALREADY IN THIS TREE, IT IS APPLIED TO 13 TYPES, AND IT
+    WAS NEVER ASKED OF THE OTHER 77.**
+  the_question: >
+    CD-D-105 ruled *"§D REACHES CONSTRUCTORS … applied at the boundary so a body edit cannot remove
+    it."* **A BODY EDIT CANNOT. A CALLER DECLINING TO USE THE BOUNDARY CAN, FOR 77 OF 99 GOVERNED
+    TYPES, AND THAT QUESTION WAS NEVER IN THE CLOSURE'S SCOPE.** Does the ruled closure extend to the
+    construction PATH — and if it does, is `__slots__` on the witness verdicts and the score types
+    the first tranche, as the auditor sequences it?
+  why_it_is_the_product_owner_s: >
+    **IT WIDENS A CLASS THE PRODUCT OWNER RULED AND HAS ALREADY RE-BASED TWICE** (PO-DECISIONS-0007
+    ruling 1, PO-DECISIONS-0008 ruling 2, PO-DECISIONS-0010 ruling 1). **A SEAT THAT WIDENED IT
+    ITSELF WOULD BE SETTING SCOPE THE PRODUCT OWNER HAS THREE TIMES RESERVED**, and it would be doing
+    it on the most load-bearing definition in the programme. The auditor said the same: *"whether they
+    are ruled in one dispatch or several is Product Authority sequencing."*
+  blocking: '**NO. All six dispatched items are unaffected, and increment 8 proceeds in parallel.**'
+
+what_this_boundary_did_NOT_do:
+- '**IT DID NOT DISPATCH ITEMS 4 OR 8, AND IT DID NOT DROP THEM.** Both are up as questions with their measurements attached.'
+- '**IT DID NOT ADD `CD-PL-F104` OR `CD-D-166` TO THE INCREMENT.** Both are NAMED CANDIDATES in the dispatch that the Product Owner may add in one sentence. **Widening an order adopted two boundaries ago is not this seat''s to do quietly** (CD-D-165).'
+- '**IT DID NOT TOUCH `BLUEPRINT.md`, `governance/blueprint/`, the disposition register or the findings index.**'
+- '**IT DID NOT READ THE GREEN SWEEP OR THE GREEN DOORS ROW AS ANYTHING.** The first is arithmetic over declarations; the second rests on a ruling that has FALLEN.'
+- '**IT MERGED, PROMOTED AND ADMITTED NOTHING** (CD-RULE-001, PO-set, non-relaxable).'
+
+next_safe_action: >
+  *** **SUPERSEDING STEP, BL-20260823T035800Z-0119: THE INCREMENT-8 ENGINEER IS OUT. NOTHING ELSE
+  MOVES ON THE LANE WHILE IT IS — AND TWO PRODUCT AUTHORITY QUESTIONS ARE UP THAT DO NOT BLOCK IT.**
+  ***
+  **1.** `CD-ENG-WO2R3-05` executes `CD-DISPATCH-WO2R3-INC8-ENGINEER` at `4410275` in
+  `/srv/crash-detector-wo2r3`. **SIX ITEMS, THE PRODUCT OWNER'S ORDER, THE REDESIGN AT THE HEAD.**
+  **`STOPPED_AT_ITEM_n` IS A SUCCESS** — item 1 carries a declared stop, and any item whose contrast
+  cannot be built is a stop and a finding.
+  **2.** **Q1 (`F-06-B`) AND Q2 (`F-06-J`) ARE THE PRODUCT OWNER'S.** Neither blocks the six.
+  **NOTHING IN `BLUEPRINT.md`, `governance/blueprint/` OR §D's SCOPE MOVES WITHOUT A RULING** — and
+  a seat that implemented either would have made the ruling.
+  **3.** The Project Lead reconciles the return **BY MEASUREMENT**, never by reading its claims, and
+  banks it. **RECONCILIATION IS NOT ACCEPTANCE.**
+  **4.** THEN the **SEVENTH FRESH ASSURANCE SEAT** over the whole of WO-2R3, full disclosure,
+  **CD-D-129's clauses VERBATIM**, carrying **`CD-ENG-WO2R3-04`'s F07 IN ITS OWN WORDS** and told
+  that the fifteen dispositions and the fifty derivation rows are **A TARGET AND NOT A SETTLED
+  RECORD**, and that `CD-D-166` — a machine-checked field whose rename test FAILS — is a named
+  target.
+  **5.** THEN the **META-ASSURANCE** pass (PO-DECISIONS-0013 ruling 5), carrying CD-PL-F98, F99,
+  F100, F101, **F102**, the two `required-tests.yaml` `execute:` lines naming guards that do not
+  exist, and now **the eight-increment failure to measure whether the lane contains its own
+  blueprint.** **STILL NOT FOLDED IN.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **T2 RED; CD-AC-002 and CD-AC-005 AMBER and NOT CLOSED; `CD-RT-012` RED AT THE TIP; THE WO-2 GATE
+  SHUT.**
+
+continuity_record_commit: 1ccab243880356ee220f6bf07cc373a218aae01d   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE TWENTY-FIRST BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 1ccab24 BEFORE this field was written. **TWO ARMS FOR THE SEVENTH BOUNDARY RUNNING (CD-PL-F101) — AND THIS TIME IN TWO SEPARATE COMMANDS, EACH PRINTING ITS OWN `pwd`, WHICH IS THE CORRECTION THE PREVIOUS BOUNDARY EARNED THE HARD WAY.** ARM 1, THE CLONE — `git clone -q --no-hardlinks` to /tmp/cd-cont21, `git checkout -q -B main 1ccab24` (CD-PL-F72, --no-hardlinks), boot run from `pwd` = /tmp/cd-cont21 — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO, blocking_failures EMPTY, current_phase **BUILD**, observed_sha 1ccab243880356ee220f6bf07cc373a218aae01d, branch main. ARM 2, THE LIVE WORKTREE — boot run from `pwd` = /srv/crash-detector, **AMBER**, CONTINUITY_MATCH/RESUME_AMBER, **porcelain 42 lines, `grep -cv '^??'` -> 0, ALL UNTRACKED**, same observed_sha, blocking_failures EMPTY. **RESIDUE UNMOVED AT 42 AND RE-COUNTED RATHER THAN CARRIED.** *** THE PROJECT BOOTS CARRYING a **RED SIXTH GATE VERDICT**, a RED T2, two AMBER criteria, a SHUT gate, **`CD-RT-012` RED AT THE TIP**, a FALLEN standing ruling whose replacement is out with an Engineer, **A GREEN SWEEP THAT MEANS NOTHING AND SAYS SO IN ITS OWN OUTPUT**, **TEN DECLARED OPEN DEFECTS**, a machine-checked field whose rename test FAILS, **TWO OPEN PRODUCT AUTHORITY QUESTIONS — ONE OF WHICH IS THAT THE LANE HAS BEEN BUILT FOR EIGHT INCREMENTS AGAINST AN AUTHORITY IT DOES NOT CONTAIN** — and **FOUR FINDINGS RAISED AGAINST THE SEAT WRITING THIS SENTENCE IN THE LAST THREE BOUNDARIES, THREE OF THEM FOUND BY SEATS IT DISPATCHED** — **the record says all of it and the tree agrees with all of it.**   # PREVIOUSLY PENDING. RESOLVED by a CD-RULE-007 follow-up commit that writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and `git cat-file -t`, never transcribed (CD-PL-F36). THE CD-RULE-008 VERDICT IS TAKEN AT THAT SHA *BEFORE* THIS FIELD IS WRITTEN, SO THE VERDICT AND THE FIELD NAME ONE COMMIT — TWENTY-FIRST BOUNDARY RUNNING. TWO ARMS, IN TWO SEPARATE COMMANDS AND NOT ONE COMPOUND ONE, WHICH IS THE CORRECTION THE PREVIOUS BOUNDARY EARNED.

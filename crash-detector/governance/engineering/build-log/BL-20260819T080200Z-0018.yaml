@@ -1,0 +1,237 @@
+# WO-2 — the ENGINEER DISPATCH IS COMPLETE. B4 delivered; CD-ENG-WO2-01 returned
+# READY_FOR_ASSURANCE at 66681b2. CD-DISPATCH-WO2-ASSURANCE moved DRAFT -> ISSUED against that exact
+# SHA, and a separate seat CD-ASR-WO2-01 is dispatched next. This is the SOD boundary.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T080200Z-0018
+timestamp_utc: '2026-08-19T08:02:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: e6109205e3682af1d0d8d082a13024c9121be2a4
+current_sha: e6109205e3682af1d0d8d082a13024c9121be2a4
+lane_head_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+lane_increment_sha: 66681b27ed650321f6b9e325fbc05712a754cc7d
+parent_entry_id: BL-20260819T074600Z-0016
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  Engineer CD-ENG-WO2-01 (instance 7) was dispatched in the FOREGROUND, execution base 9aea4ef, for
+  B4 and nothing else. It returned READY_FOR_ASSURANCE at 66681b2 with its Build Log entry
+  BL-20260819T075125Z-0017, staged across three commits (3a50ed6 the clean arm, 9c2adfa the ten
+  plant arms, 66681b2 the RT-A live-store arm and the return).
+
+  ACCEPTED. B4 IS COMPLETE and with it the whole Engineer dispatch CD-DISPATCH-WO2-ENGINEER: A1-A7
+  and B1-B4 are all delivered. The seat wrote NO code in this increment — `git diff --name-only
+  9aea4ef..HEAD` returns exactly ONE path, its own Build Log entry, which is precisely what a
+  test-run increment should produce.
+
+  This entry also does the thing the whole work order has been building towards: it moves
+  CD-DISPATCH-WO2-ASSURANCE from DRAFT to ISSUED against the exact SHA 66681b2, records the
+  read-only target worktree, and hands over to a SEPARATE seat. Everything up to this line is
+  implementation and its reconciliation. Nothing up to this line is assurance.
+
+reconciliation:
+  what_this_is: >
+    RECONCILIATION OF A SEAT RETURN BY THE PROJECT LEAD. NOT assurance (PBG-SOD-001).
+  recorded_vs_observed: >
+    RECONCILED, NO CORRECTION NEEDED. Recorded execution base 9aea4ef matches what the seat
+    reconciled against. Observed lane HEAD 66681b2 on wo-2-skeleton, worktree CLEAN.
+  sha_integrity: >
+    66681b27ed650321f6b9e325fbc05712a754cc7d resolved with `git cat-file -e` by this seat before
+    being written into the Assurance dispatch or into this entry (CD-CONT-002). The seat reported
+    resolving it with `git rev-parse` and verifying with `git cat-file -e` rather than quoting it
+    from memory, which is now the third seat in a row to do so unprompted after CD-PL-F36.
+  scope_check: >
+    `git diff --name-only 9aea4ef..HEAD` returns ONE path:
+    governance/engineering/build-log/BL-20260819T075125Z-0017.yaml. Zero lines under pbg/ or in
+    ACTIVE_WORK.yaml. No code, check, test, plant or assertion was touched — which matters, because
+    a B4 seat that "fixes things as it goes" produces evidence about a tree nobody will audit.
+  secret_scan: >
+    Run by this seat over every Build Log entry in the lane. The only matches are environment
+    variable NAMES — CD_CHECK_STORE_HOST, CD_CHECK_STORE_PORT, CD_CHECK_STORE_NAME,
+    CD_CHECK_STORE_USER, CD_CHECK_STORE_PASSWORD — and the seat placeholder form
+    `CD_CHECK_STORE_PASSWORD=...`. NO VALUE is recorded anywhere (PBG-SEC-002, PBG-EVID-003,
+    PBG-CONT-009, all non-waivable).
+  host_runtime_state: >
+    The seat exercised RT-A once for the live grant-matrix arm: container cd-store-wo2-b4, volume
+    cd-store-wo2-b4-data, postgres run BY DIGEST, bound to 127.0.0.1 on an ephemeral port,
+    credentials generated at run time in one shell and never printed or written. VERIFIED BY THIS
+    SEAT after the return, not accepted on report: `docker ps -a --filter name=cd-store-wo2-` and
+    `docker volume ls --filter name=cd-store-wo2-` both return ZERO rows. RT-B was not exercised;
+    no image was built. CD-HOLD-003 otherwise remains HELD.
+
+verification_this_seat_ran:
+  standing: 'FOR AN ACCEPTANCE DECISION. NOT assurance (PBG-SOD-001).'
+  register_state_at_the_target: >
+    The Project Lead extracted 66681b2 to a throwaway copy and ran `pbg required-tests verify`
+    itself. Result: 16 of 16 criteria traced, PID content hash MATCHES, `latest_admitted_run` null,
+    ALL FIFTEEN mandatory criteria UNDECIDABLE, GATE: SHUT, PID_ACCEPTANCE_SATISFIED: NOT DERIVED.
+    THAT IS THE CORRECT STATE TO HAND TO AN AUDITOR and it is the point of the whole arrangement: at
+    the moment the Engineer declares itself finished, the register asserts that NOTHING has been
+    proved. Every criterion is undecidable on absent run records, because the only run record that
+    could decide them — RTR-WO2-0001 — can only be produced by a seat that did not build this.
+  what_this_seat_did_not_re_run: >
+    The eleven plant arms were contrasted by this seat at the previous boundary
+    (BL-20260819T074600Z-0016) on ten of eleven, and the tree has not changed since except for one
+    Build Log file. They were not re-run here, and that is stated rather than left to be assumed.
+    The live grant-matrix arm has still never been run by anyone but the implementing seat — see
+    risk CD-RT-002, which stands unchanged and is now the single most important thing for the
+    Assurance seat to discharge independently.
+
+seat_evidence_recorded_not_verified:
+  standing: >
+    The following is the ENGINEER'S OWN account, recorded because the dispatch requires it as
+    implementation evidence and because Assurance is entitled to see what the implementer claimed
+    before it tests the claims. It is NOT verified by this seat and it is NOT assurance.
+  clean_arm: >
+    All eleven WO-2 arms: ten at exit 0; CD-RT-003-GRANT-MATRIX-LIVE at exit 3 PRECONDITION_NOT_MET
+    with no store, naming the five connection variables by name only — a non-zero exit with a stated
+    reason, never a skip (PBG-CI-002). The two guards with no criterion (CD-ENG-F41) at exit 0.
+  the_eleven_undelivered_criteria: >
+    RUN, NOT OMITTED, which is the part worth preserving. Every one terminated non-zero — nine
+    pytest arms at exit 4, two register arms at exit 2 — each naming a subject that does not exist
+    yet. NONE PASSED VACUOUSLY. A test for unbuilt work that exits 0 is the most dangerous result in
+    a register, because it reads as evidence; the seat ran them precisely to show they do not.
+  plant_arms: >
+    Eleven of eleven show the contrast, clean 0 to plant non-zero, each on its own fresh
+    `git archive` copy with never more than one patch applied. The seat reports that every failure
+    signature matches plants/MANIFEST.md exactly, including the lines the manifest nominates as
+    distinguishing the CLASS from the INSTANCE. No arm behaved unexpectedly.
+  rt_a_arm: >
+    Clean arm exit 0, 138 assertions over 7 migrations. Plant arm exit 1, 9 violations over 8
+    migrations, including both live `SET ROLE` probes where PostgreSQL itself failed to refuse —
+    which is the only form of evidence that actually speaks to the proposition, since the claim is
+    about what the catalogue permits and not about what the SQL text says.
+
+findings_raised:
+- id: CD-ENG-F44
+  severity: LOW
+  raised_by: CD-ENG-WO2-01
+  title: 'plants/MANIFEST.md prose says "five" CD-GM-001 violations where its own quoted block lists six'
+  detail: >
+    A counting error in manifest prose. The quoted evidence block lists six; the seat measured 6 of
+    9; the total of 9 is correct. Only the adjective is wrong.
+  disposition: >
+    NOT FIXED, and the seat was right not to fix it. B3 is closed and MANIFEST.md is the artefact
+    CD-ASR-WO2-01 is about to audit; editing the audit target after the target SHA is chosen — even
+    to correct one word — moves the subject underneath the auditor. Recorded as OWED at WO-3, and
+    the Assurance seat should expect to find it. If the auditor reports it independently, that is a
+    small piece of evidence that the audit is actually reading the manifest rather than trusting it.
+- id: CD-ENG-F45
+  severity: NONE — a measurement defect, self-reported
+  raised_by: CD-ENG-WO2-01
+  title: 'The seat''s own shell harness misread an exit code, and it said so'
+  detail: >
+    The seat's first harness read `$?` after an intervening `echo` and printed "EXIT: 0" beneath a
+    run whose own last line read `FAIL — 6 violation(s)`. The instrument was wrong, not the check.
+    It re-measured directly and recorded the true exit 1.
+  disposition: >
+    NO ACTION, and recorded deliberately rather than dropped as noise. It is the clearest evidence
+    in this work order for a property the register depends on: these checks PRINT their verdict as
+    well as returning it, so a broken measuring instrument is catchable by reading the output. A
+    register of checks that only returned an exit code would have swallowed this silently. It is
+    also a seat reporting its own error against interest, which is the behaviour the Build Log
+    exists to make normal.
+
+decisions_closed:
+- id: CD-D-021
+  title: 'B4 ACCEPTED; the Engineer dispatch CD-DISPATCH-WO2-ENGINEER is COMPLETE'
+  ruling: >
+    ACCEPTED. A1-A7 and B1-B4 are all delivered across seven increments and three runtime
+    terminations. The seat wrote no code in B4, ran every declared command including the eleven for
+    criteria WO-2 does not deliver, exercised RT-A within bounds and evidenced the teardown, changed
+    nothing under pbg/ and nothing in ACTIVE_WORK.yaml, and returned READY_FOR_ASSURANCE with a SHA
+    it had resolved rather than recalled.
+
+    It also declined three invitations to overstep that were deliberately left in its brief: it did
+    not repair CD-ENG-F41, CD-PL-F43 or CD-ENG-F39, all ruled owed at WO-3; it did not correct
+    CD-ENG-F44 in the artefact about to be audited; and it did not admit its own evidence —
+    `latest_admitted_run` is still null and the seat stated plainly that RTR-WO2-0001 is not
+    produced and that nothing it did is that record. An Engineer that admits its own run record is
+    the exact failure PBG-SOD-001 exists to prevent, and it is a failure that looks like diligence.
+- id: CD-D-022
+  title: 'CD-DISPATCH-WO2-ASSURANCE moved DRAFT -> ISSUED against 66681b2'
+  ruling: >
+    ISSUED. target_candidate 66681b27ed650321f6b9e325fbc05712a754cc7d — an EXACT SHA, resolved and
+    verified present, because "the latest on the branch" is not a target and a SHA written from
+    memory is not a target either (CD-PL-F36). issued_utc 2026-08-19T08:02:00Z. status ISSUED.
+
+    target_worktree /srv/crash-detector-wo2-audit — a DETACHED worktree created by the Project Lead
+    at exactly 66681b2 and verified clean at creation. It is deliberately NOT the Engineer's
+    mutation lane: /srv/crash-detector-wo2 remains on branch wo-2-skeleton and could move under the
+    auditor's feet mid-audit, which would invalidate the audit without anybody noticing.
+
+    Mutation of the target is forbidden absolutely by the dispatch. This seat did not rely on the
+    prohibition alone: it recorded a fingerprint of the target tree at issue —
+    sha256 of the sha256sums of every non-.git file =
+    8c23799123031c6d4c68a3e51e8dab0770b6e6911429fca9795a3c0312dce2db — and will re-take it when the
+    auditor returns. Mutation is therefore DETECTABLE and not merely prohibited. A control nobody
+    can check is a wish.
+
+    THE SEPARATION, stated once more because it is the non-waivable one. CD-ASR-WO2-01 is a
+    SEPARATE agent from CD-ENG-WO2-01 and from this Project Lead seat. It implemented no part of the
+    target. It runs every declared command ITSELF, on BOTH arms, using NO Engineer-supplied wrapper
+    — and none exists to use, verified at the previous boundary. It writes AT LEAST ONE VARIANT
+    PLANT OF ITS OWN per criterion, because a guard that catches only the exact planted instance and
+    not its class is the defect it is sent to hunt. It may not repair anything it finds
+    (PBG-SOD-004): finding a defect does not make it the one who fixes it, and fixing it would
+    forfeit its independence over this target. It supplies evidence and a verdict; a PASS is not an
+    acceptance (PBG-AUTH-003) — the Product Owner accepts.
+
+obligations_status:
+- 'CD-DISPATCH-WO2-ENGINEER — COMPLETE. A1-A7, B1-B4 all delivered (CD-D-021).'
+- 'CD-DISPATCH-WO2-ASSURANCE — ISSUED at 66681b2 (CD-D-022). Next actor: CD-ASR-WO2-01.'
+- 'RTR-WO2-0001 — STILL NOT PRODUCED. Owed by the Assurance seat. Nothing in this work order so far
+   is it, and the register correctly says so: GATE SHUT, every criterion UNDECIDABLE.'
+- 'CD-ENG-F39, CD-ENG-F41, CD-ENG-F44, CD-PL-F43 — all OPEN, all ruled owed at WO-3, none blocking
+   the gate. CD-ENG-F45 — no action.'
+- 'CD-OB-004, CD-ERR-001 — OPEN. CD-ERR-001 is owed as a Blueprint revision BEFORE WO-3 and was
+   deliberately not corrected during WO-2, so that §4 did not move underneath this audit.'
+- 'CD-HOLD-003 HELD (RT-A exercised twice by the Engineer within bounds, both times evidenced
+   destroyed; the Assurance seat has its own SD-3 grant with a distinct cd-asr-wo2- prefix).
+   CD-HOLD-004, CD-HOLD-005 — HELD, untouched.'
+
+risks:
+- 'CD-RT-002 LOW, and now the most important one — the live grant-matrix arm has been run twice, both
+   times by the implementing seat. Two runs by the same hands is not independence. It resolves at the
+   Assurance run under SD-3, or CD-AC-003 is evidenced on one of its two tests and the gate is NOT
+   met on it. That is the correct failure and must not be dressed up as a precondition.'
+- 'CD-CONT-001 AMBER — the foreground committed-increment discipline held through all seven
+   increments and three terminations. Total cost of the three terminations: one increment of rework.'
+- 'CD-CONT-002 LOW — the standing SHA-resolve sweep ran at this boundary.'
+- 'CD-FWK-004 AMBER — unchanged and now at the moment it matters most: the framework cannot represent
+   a seated Project Lead alongside a bounded Assurance seat, so `pbg authority separation` will
+   continue to report that no ASSURANCE authority record exists and that this is NOT a pass.
+   PBG-SOD-001 is evidenced on this project by the PO-ratified CD-D-002 named-actor route — distinct
+   actor_ids in the dispatch records, in the Build Log and in the run record executed_by.party — and
+   NOT by the framework verifier. The Product Owner should read that as a disclosed gap, not a
+   discharged one.'
+- 'CD-BP-001, CD-FWK-001, CD-FWK-002, CD-FWK-003, CD-RT-001, CD-SEC-001 — unchanged.'
+
+evidence_refs:
+- 'lane 3a50ed6, 9c2adfa, 66681b2 — B4 staged in three commits; BL-20260819T075125Z-0017 the seat entry'
+- 'pbg required-tests verify at 66681b2, run by the PL on a throwaway copy — GATE SHUT,
+   latest_admitted_run null, 15/15 mandatory UNDECIDABLE'
+- 'git diff --name-only 9aea4ef..HEAD — one path, the seat Build Log entry'
+- 'docker ps -a / docker volume ls --filter name=cd-store-wo2- — zero rows after the return'
+- 'audit target fingerprint at issue: 8c23799123031c6d4c68a3e51e8dab0770b6e6911429fca9795a3c0312dce2db'
+- 'RTR-WO2-0001 — NOT PRODUCED.'
+
+next_safe_action: >
+  Dispatch a SEPARATE agent as CD-ASR-WO2-01 in the FOREGROUND, per
+  governance/dispatch/CD-DISPATCH-WO2-ASSURANCE.yaml exactly as issued, against target
+  /srv/crash-detector-wo2-audit at 66681b2. Never the same agent as CD-ENG-WO2-01 (PBG-SOD-001,
+  non-waivable). On return: re-take the target fingerprint and compare; reconcile the verdict; if
+  PASS, admit RTR-WO2-0001 into required-tests.yaml, re-run `pbg required-tests verify`, and
+  checkpoint. Then STOP for Product Owner review. Do NOT merge the lane into main and do NOT treat a
+  PASS as acceptance — a PASS is evidence, and only the Product Owner accepts (PBG-AUTH-003).

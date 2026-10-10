@@ -1,0 +1,210 @@
+entry_id: BL-20260822T200638Z-0105
+timestamp_utc: '2026-08-22T20:06:38Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 24af750
+parent_entry_id: BL-20260822T200128Z-0104
+schema_version: 1
+
+action_summary: >
+  *** **THE FOURTH FRESH ASSURANCE SEAT IS DISPATCHED. CD-DISPATCH-WO2R3-ASSURANCE IS ISSUED to
+  CD-ASR-WO2R3-01 over THE WHOLE OF WO-2R3 at target `531c95c`, under PO-DECISIONS-0010 ruling 3.
+  ITS CONDITION — that the bounded completion bank first — WAS MET AT THE PRECEDING BOUNDARY AND NOT
+  ASSUMED.** ***
+  *** **THE PRODUCT OWNER FIXED THE ORDER OF THIS BRIEF AND NOT ONLY ITS CONTENTS, AND THE ORDER IS
+  OBEYED: THE FIRST WORDS THE SEAT READS ARE THE ENGINEER'S OWN SENTENCE AGAINST ITSELF.** ***
+  "WITH V17 APPLIED, BOTH STATIC CHECKS STILL EXIT 0. THE CLOSURE IS A RUNTIME CLOSURE AND A GREEN
+  STATIC RUN IS NOT EVIDENCE OF IT. THE FOURTH SEAT ATTACKS THE RUNTIME CLOSURE AS RUNTIME." It sits
+  above the targets, above the clauses and above the evidence, before the seat's own boot — because
+  ruling 3(iv) put it there and the position IS the instruction. **AND IT IS NOW DOUBLY EARNED:** the
+  same seat volunteered the same limit a SECOND time, unprompted, about the completion it had just
+  delivered — the V43 contrast is ENTIRELY STATIC and `Verdict` would still be constructible at
+  runtime in the failing arm. **TWICE THE IMPLEMENTER HAS SAID WHERE ITS OWN EVIDENCE STOPS. THE
+  BRIEF TELLS THE SEAT THAT IS A MAP OF WHERE TO DIG AND NOT A REASON TO TRUST IT.**
+  THE BRIEF CARRIES, IN FULL AND UNSOFTENED: CD-D-129's THREE MANDATORY CLAUSES — the exiting
+  instrument's declaration VERBATIM with its bisect extended to the target, the rule that verdicts
+  are taken against DECLARATIONS and never exit codes alone (with its mirror stated, that AN EXIT 0
+  IS NOT A PASS EITHER), and the standing invitations including the dispositions-after sequencing;
+  **ELEVEN NAMED TARGETS** — the ten of CD-D-129 plus the widened invariant as T11; and the
+  disclosures a seat must have BEFORE it reads the record rather than after it trips on them.
+  *** **THE PROJECT LEAD DISCLOSED ITS OWN DEFECT TO THE AUDITOR BEFORE THE AUDITOR READS ANYTHING.**
+  *** CD-PL-F93 is written into the dispatch's opening block and again into its disclosures: the
+  Project Lead's own last dispatch contradicted itself on the membership rule, the narrower reading
+  would have shipped a class narrower than the Product Owner ruled — GREEN, with the contrast still
+  passing — and only the Engineer's reading of the ruling behind the dispatch prevented it. The seat
+  is told, in terms, that "the record you are auditing was assembled by a seat that has been wrong at
+  four consecutive boundaries in the same direction."
+
+what_ruling_3_ordered_and_where_each_clause_landed:
+  clause_iv_the_volunteered_sentence_FIRST:
+    ordered: 'PO-DECISIONS-0010 ruling 3(iv) — "THE SENTENCE THE SEAT VOLUNTEERED AGAINST ITSELF,
+      first in the brief."'
+    landed: >
+      The opening block of the dispatch, ABOVE `dispatch_id`, above the role assignment, above the
+      target — the first prose in the file, with an instruction to read it BEFORE booting. The
+      mechanism is spelled out beside it so the seat can act on it rather than merely believe it:
+      V17 removes a BODY; neither register check reads bodies for its verdict; therefore both exit 0
+      with V17 applied and **a seat that verifies increment 5 by running the two register checks has
+      verified nothing about it.**
+  clause_i_the_three_binding_clauses:
+    landed: >
+      `the_exiting_instrument_declared_up_front` (the sweep, its declared state PL-measured at the
+      TARGET as 534 sites / 15 violations over a 19-module closure with 20 modules printed as outside
+      it, the ELEVEN original items all in `crash_detector.admission`, the FOUR later ones in
+      `crash_detector.establishment` named as NOT among the eleven, and the bisect extended
+      f30e63c -> 531c95c), `verdicts_are_taken_against_declarations_never_against_exit_codes_alone`,
+      and `standing_invitations_to_attack`.
+    what_the_project_lead_added_and_flags_as_its_own_addition: >
+      TWO sentences that are not in the ruling. **(1) "A DECLARATION IS NOT A DISPOSITION AND IT IS
+      NOT AN EXCUSE"** — with an explicit invitation to find that the declaration is being used to
+      park a real defect. **(2) THE MIRROR OF CLAUSE (ii): "AN EXIT 0 IS NOT A PASS EITHER."** The
+      ruling protects the record from a RED-on-sight; nothing in it protected the record from a
+      GREEN-on-sight, and on this project every escape on record passed static checkers. Both are
+      flagged here as ADDITIONS so the Product Owner can strike them if they overreach.
+  clause_ii_the_named_target_list:
+    landed: >
+      `named_targets` T1-T11, each with what it is and why it bites. The four the ruling named
+      explicitly are carried with their sharpening intact: **T2 CD-BP-003** as the softest surface,
+      with the seat told to spend its FIRST HOUR there and told which of the three ESTABLISHED_HERE
+      exemptions sits on it; **T9 CD-ENG-WO2R3-F15 AIMED AT THE BLINDNESS WINDOW AND NOT THE GUARD**,
+      with the question restated as "what else could survive two reconciliations?"; **T6
+      GRANT-MATRIX-LIVE — BITE IT OR STATE MEASURED LIMITS**, with the reason it matters (it exits 3
+      on both arms, produces no contrast, and guards CD-AC-003, THE ONE PASS IN THE THIRD GATE) and
+      the explicit statement that an unexamined 3 is not an acceptable return; and **T10
+      CD-ENG-WO2R3-F10**, still undischarged. The eleven Class-2 items are T5 and T8.
+  clause_iii_the_widened_invariant_as_an_attackable_claim:
+    landed: >
+      T11 and its own section, carrying the ruling VERBATIM, the Product Owner's stated reason for
+      not routing it through assurance first, the single contrast that is its whole evidence WITH
+      BOTH ARMS QUOTED, and its exact limit in the Engineer's own words. **CD-ENG-WO2R3-F24 TRAVELS
+      AS THE ENGINEER FRAMED IT, WITH THE PROJECT LEAD'S RULING ATTACHED AND EXPLICITLY NOT
+      SUBSTITUTED FOR IT**, marked as "two implementers agreeing, which is worth less than one
+      auditor disagreeing." Four questions are put to the seat that are answered NOWHERE in the
+      record — including whether a fielded frozen type can be placed where NO reach rule finds it.
+  ruling_4_and_the_CD_D_136_residues:
+    landed: >
+      CD-PL-F90 is disclosed as the LIVE INSTANCE of the CD-ENG-WO2R3-F12 standard (both V39 arms
+      refuse under different rules; the record named one; direction UNDERSTATEMENT). All four
+      CD-D-136 residues travel with their executable examples, with residue (2) marked CLOSED at this
+      boundary by CD-D-134 and pointed at T11 as the thing to attack.
+
+what_this_seat_disclosed_to_the_auditor_before_it_reads_anything:
+  rule: >
+    Telling an auditor about a known ambiguity AFTER it trips on it is handing it a trap and calling
+    the result a finding. Every item below is in the dispatch ahead of the audit work.
+  CD_PL_F89: >
+    THIRTEEN landed build-log sequence collisions, 0041-0053, no gaps, between main and the lane —
+    disclosed with the explanation that the fourth seat is THE ONE PARTY THAT READS BOTH DIRECTORIES
+    and is therefore the party the ambiguity is charged to, and with the disambiguation rule (full
+    timestamped entry_id PLUS branch). Nothing renumbered, nothing edited.
+  CD_PL_F93: >
+    The Project Lead's own dispatch defect, in the opening block AND in the disclosures.
+  the_pattern_named_as_a_pattern_rather_than_four_incidents: >
+    CD-D-114, CD-PL-F89, CD-D-134, CD-PL-F93 — four consecutive boundaries, all three parties, one
+    defect shape: a control scoped narrower than the class it names. The seat is told to **assume it
+    is present in something it is about to read and has not yet been found.**
+  CD_ENG_WO2R3_F22: >
+    The fifth stale copy at plants/MANIFEST.md:1148-1149, left in place by CD-D-139, disclosed as a
+    known-stale line and NOT offered as clean.
+  the_lane_boot_RED: >
+    CONTINUITY_REFERENCE_INVALID inside a lane worktree — disclosed so the seat does not spend budget
+    on it, and explicitly marked DISCLOSED RATHER THAN RULED HARMLESS, with the seat free to disagree.
+
+what_the_project_lead_declared_UNVERIFIED_to_the_auditor:
+  why_this_block_exists: >
+    An auditor that inherits a record without its holes marked will treat the holes as covered
+    ground. Five are named in the dispatch, and the fourth is the one that matters most.
+  the_five:
+  - 'THE ELEVEN PLANTS APPLY at 531c95c (11/11, PL-measured) and were NOT RE-CONTRASTED AT THEIR
+     NAMED LAYERS. The CD-ENG-WO2R3-F12 standard is UNMET by this record and is said to be.'
+  - 'THE WO-2R3 VARIANT CORPUS (28 patches) was NOT re-run by the Project Lead at the target. The
+     Engineer''s 108/4 figure is THE IMPLEMENTER''S MEASUREMENT AND NOT AN INDEPENDENT ONE.'
+  - 'THE THREE variants/WO-2R ROUTES have NEVER been re-tested against the new structure BY ANYONE —
+     including V03, a CONSTRUCTOR route written by an earlier auditor BEFORE the constructor
+     mechanism existed.'
+  - '**NO RUNTIME CONSTRUCTION OF ANY GOVERNED TYPE WAS PERFORMED BY THE PROJECT LEAD AT THIS
+     BOUNDARY.** Every PL measurement in the reconciliation record is a static run, a git audit or a
+     test-suite invocation. **THE RUNTIME CLOSURE HAS NOT BEEN INDEPENDENTLY EXERCISED BY ANYONE AT
+     531c95c** — which is precisely what ruling 3(iv) sent this seat to do, and the record now says
+     so in the same document rather than leaving the seat to infer it.'
+  - 'THE PROJECT LEAD HAS NEVER GRADED CD-AC-002 OR CD-AC-005 AND IS FORBIDDEN TO. No prior
+     reconciliation contains a grading the seat can lean on, and the absence is BY DESIGN.'
+
+the_target_and_how_it_was_prepared:
+  worktree: '/srv/crash-detector-wo2r3-audit, created detached at the target for this seat alone.'
+  sha: '531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0 · porcelain ZERO lines · branch detached.'
+  tree_object: 'f7d2f7beaad92e6cdc5987a58f013ec064da863c'
+  tree_fingerprint: '69b1fef83741d6d0ca14723a2df6ffeeb8efac3ab01195158ce65f22e2dcba5f'
+  fingerprint_command: >
+    `find . -path ./.git -prune -o -type f -print | LC_ALL=C sort | xargs sha256sum | sha256sum`,
+    taken by the Project Lead in the audit worktree at issue time. The seat is instructed to RE-TAKE
+    IT ITSELF at the start and again before writing its verdict, so that a tree mutating underneath
+    an audit is detected by the auditor and not asserted by the dispatcher.
+  read_only: >
+    Mutation prohibited except explicitly safe diagnostic artefacts: files under /tmp/, and the
+    seat's own verdict and evidence under governance/assurance/WO-2R3/ ON MAIN. Variants are tested
+    by `git archive` extraction into /tmp and never by `git apply` in the audit tree or by a new
+    git worktree.
+
+decisions_ruled_here:
+- id: CD-D-141
+  title: 'The fourth Assurance seat is dispatched at 531c95c over the WHOLE of WO-2R3, not over the
+    completion alone.'
+  ruling: >
+    target_scope is f30e63c..531c95c — increments 1 through 5 AND the bounded completion. The seat
+    grades CD-AC-002 and CD-AC-005 and nothing narrower.
+  why: >
+    PO-DECISIONS-0010 ruling 5 reserves that grading to this seat and to the Product Owner, and the
+    criteria are about WO-2R3 as a structure. An audit scoped to the last commit would grade the
+    completion and leave the work order ungraded for an eighth boundary.
+- id: CD-D-142
+  title: 'The dispatch states two clauses the ruling did not, and flags them AS ADDITIONS.'
+  ruling: >
+    "A declaration is not a disposition and it is not an excuse", and "an exit 0 is not a pass
+    either", are carried in the brief and are MARKED IN THIS ENTRY as the Project Lead's additions
+    rather than the Product Owner's words.
+  why: >
+    Clause (ii) protects the record from a RED-on-sight. Nothing in the ruling protected it from a
+    GREEN-on-sight, and on this project EVERY ESCAPE ON RECORD PASSED STATIC CHECKERS — the failure
+    mode the brief's own first sentence is about.
+  and_why_it_is_flagged_rather_than_folded_in: >
+    A Project Lead that adds to a Product Owner's mandatory clauses without saying so has softened or
+    hardened a ruling by stealth. These are additions; they are visible as additions; and the Product
+    Owner can strike them.
+
+what_was_not_done_at_this_boundary: >
+  **THE ELEVEN CLASS-2 DISPOSITIONS ARE NOT WRITTEN AND MUST NOT BE.** CD-D-130 orders them AFTER the
+  fourth seat reports; writing them now is the exact move PO-DECISIONS-0009 ruling 1 rejected.
+  **NO GRADING OF CD-AC-002 OR CD-AC-005 APPEARS ANYWHERE IN THIS ENTRY OR IN THE DISPATCH.**
+  **THE SEAT HAS NOT YET RUN.** Nothing here anticipates its verdict, and this entry records the
+  ISSUE of a dispatch and not its outcome.
+
+next_safe_action: >
+  *** **RUN THE FOURTH ASSURANCE SEAT, THEN STOP AT ITS GATE VERDICT. THAT IS THE WHOLE OF THE NEXT
+  ACTION AND NOTHING ELSE IS AUTHORISED BEFORE IT.** ***
+  When CD-ASR-WO2R3-01 returns: reconcile its return as a RECORD (durable evidence under
+  governance/assurance/WO-2R3/, PBG-CONT-007 — a sub-agent result that exists only in conversation is
+  not project state), **DO NOT ARGUE THE VERDICT DOWN AND DO NOT NEGOTIATE IT** (PBG-AUTH-003:
+  a PASS is not an acceptance and neither is a RED; disposition is the Product Owner's). If the
+  verdict contradicts the reconciliation record, **THE RECORD IS WHAT GETS CORRECTED.**
+  **THEN, AND ONLY THEN, IN THIS ORDER:** (1) write the ELEVEN CLASS-2 SWEEP DISPOSITIONS (CD-D-130
+  — author is this role, trigger is the seat's return, reconciler is the Product Owner); (2) put the
+  seat's verdict and the gate to the PRODUCT OWNER for disposition, with CD-AC-002 and CD-AC-005
+  ungraded by this seat and graded by the auditor.
+  **DO NOT** merge or promote the lane or f30e63c. **DO NOT** admit anything (CD-RULE-001, PO-set,
+  non-relaxable). **DO NOT** open a sixth increment on the CD-D-136 residues — CD-D-136 forbids it
+  and it would repeat the pattern PO-DECISIONS-0009 ruling 1 rejected, the implementer answering
+  before the auditor asks. **DO NOT** modify anything under pbg/.
+  **STANDING AND UNCHANGED:** WO-2R3 is NOT accepted as closing CD-AC-002 or CD-AC-005
+  (PO-DECISIONS-0010 ruling 5). CD-PL-F84..F93 remain open. CD-ENG-WO2R3-F10, F13, F16, F18, F19,
+  F22, F23, F24, F25 remain open. IMP-022 is the framework's and not this project's.
+
+continuity_record_commit: b9e0da5f0fa06a31084f7c9287bc239eabd6855f   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE SEVENTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT b9e0da5 BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont7 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont7 && git checkout -q -B main b9e0da5` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, observed_sha b9e0da5f0fa06a31084f7c9287bc239eabd6855f, branch main.

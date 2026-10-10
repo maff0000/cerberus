@@ -1,0 +1,201 @@
+# ================================================================================================== #
+# BL-20260823T151847Z-0144 — PROJECT LEAD BOUNDARY. **THE NINTH GATE RETURNED `RED` ON BOTH PARTS,
+# AND IT STOPS HERE. THE NEXT ACTOR IS THE PRODUCT OWNER.**
+#
+# **THE VERDICT IS BANKED VERBATIM AT `b2a0af8` — 911 lines, 58473 bytes, sha256 `c212f9b8...`,
+# `cmp` rc=0, `numstat 911 0`, BESIDE the six prior seats' documents and NOT over any of them,
+# COMMITTED BEFORE IT WAS READ AND BEFORE ANY RECONCILIATION.**
+#
+# **AND THE SINGLE MOST IMPORTANT SENTENCE IN IT IS NOT A FINDING ABOUT CODE. IT IS THIS:**
+#
+#   *** **`PO-DECISIONS-0021` RULING 6's "parallel disjoint remediation ... which is faster and now
+#   safe" IS REFUTED. PARALLEL SEATS MUST NOT RUN ON THIS MACHINERY — IT IS WORSE THAN RUNNING ON
+#   NOTHING, BECAUSE THE BOARD WOULD BE GREEN.** ***
+#
+# **THIS SEAT DOES NOT GRADE, DOES NOT ARGUE, AND HAS NO AUTHORITY TO DO EITHER (`PBG-AUTH-003`).**
+# ================================================================================================== #
+
+entry_id: BL-20260823T151847Z-0144
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T15:18:47Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1272349, wrapper PID 1272348, `timeout 21600` from 13:41Z.'
+phase: GATE
+branch: main
+base_sha: b2a0af83a694d580a24328b661da15171c550997   # the commit banking the verdict. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+
+the_banking:
+  artefact: 'governance/assurance/WO-2R3/VERDICT-NINTH-SEAT.md'
+  integrity_CD_RULE_009: '**911 lines · 58473 bytes · sha256 `c212f9b8353cc77c0ac372992c54773ce0ac15b1aa2a2a635904beba7aff285c`** (`sha256sum <path>`), **`cmp` rc=0** against the seat''s own file, **`git diff --cached --numstat` -> `911 0`.** **INSERTIONS ONLY. NOTHING WAS OVERWRITTEN.**'
+  the_form: '**VERBATIM AND BESIDE** (`CD-D-143`, `PBG-CONT-003`). `governance/assurance/WO-2R3/` now holds `VERDICT.md`, FIFTH, SIXTH, SEVENTH, EIGHTH and NINTH — **six seats'' documents, none inside another.**'
+  the_order: '**COMMITTED AT `b2a0af8` BEFORE IT WAS READ AND BEFORE ANY RECONCILIATION.** A verdict read first and banked second is a verdict that passed through a seat with an interest in it.'
+  this_seat_does_not_argue_the_grade: '**`PBG-AUTH-003`. NO AUTHORITY TO MOVE IT UP OR DOWN, AND NO ATTEMPT MADE. BANKED IS NOT RECONCILED AND NEITHER IS ACCEPTED.**'
+
+# ================================================================================================== #
+# RECONCILIATION BY MEASUREMENT. **THE TWO LOAD-BEARING FINDINGS, REPLICATED IN THIS SEAT'S OWN SHELL.**
+# ================================================================================================== #
+reconciliation:
+  F08_CRITICAL_CONFIRMED_AND_THIS_SEAT_MAKES_IT_SHARPER_NOT_SOFTER:
+    what_the_seat_found: '`check_scope_disjoint.py` skips any pair sharing a seat id. Two live claims, ONE identity, IDENTICAL scope -> `VERDICT: ADMITTED — CONCURRENT WORK PROCEEDS`, rc=0.'
+    THIS_SEAT_READ_THE_CODE_AND_IT_IS_THERE_IN_FOUR_LINES: >
+      ```
+      sa, sb = a.get("seat_actor_id"), b.get("seat_actor_id")
+      if sa == sb:
+          lines.append("note     seat=%s holds two claims (%s, %s) — not a cross-seat pair, "
+                       "not examined" % ...)
+          continue
+      ```
+      **THE PAIR IS LOGGED AS A `note` AND `continue`d PAST. IT IS NOT A VIOLATION AND IT DOES NOT
+      MOVE THE EXIT CODE.**
+    why_this_is_THE_finding_of_the_whole_gate: >
+      *** **`PO-DECISIONS-0021` RULING 2 IS THE PRODUCT OWNER RECORDING TWO SESSIONS POINTED AT THE
+      SAME LANE. BOTH WOULD HAVE COMMITTED AS `PROJECT_LEAD_SEAT_01` — ONE IDENTITY — BECAUSE
+      `CD-RULE-002` GIVES ONE IDENTITY TO A **ROLE**, NOT ONE PER SESSION. THAT IS `Q10` AND
+      `CD-PL-F146` AND THE SECOND META-ASSURANCE SEAT'S §7.2, ALL OPEN.** ***
+      **SO THE CONTROL BUILT TO PREVENT THE INCIDENT SKIPS EXACTLY THE PAIR THE INCIDENT WAS MADE
+      OF. IT IS NOT A GAP AT THE EDGE OF THE CLASS. IT IS A HOLE THROUGH ITS CENTRE.**
+    AND_THE_PART_THE_SEAT_UNDERSTATED_WHICH_THIS_SEAT_ADDS_AGAINST_ITS_OWN_INCREMENT: >
+      The seat wrote *"Declared nowhere."* **IT IS WORSE THAN UNDECLARED. `L1` AFFIRMATIVELY CLAIMS
+      THE OPPOSITE:** *"L1. DECIDES: pairwise WRITE x WRITE disjointness over all live claims."*
+      **"ALL LIVE CLAIMS", UNQUALIFIED, IN THE DECLARED-LIMIT BLOCK — AND `L2` GOES OUT OF ITS WAY TO
+      SAY "across DIFFERENT seats" FOR THE WRITE-vs-READ CASE, WHICH PROVES THE AUTHOR HAD THE
+      DISTINCTION IN HAND AND APPLIED IT TO ONE CLAUSE AND NOT THE OTHER.**
+      *** **THIS IS NOT `CD-RULE-004` OPTION 2 ("DECLARE THE LIMIT"). IT IS A DECLARATION THAT IS
+      FALSE. AND IT IS THE EXACT SHAPE OF THE FOURTH EDGE THIS SEAT ADDED TO `CD-D-129` CLAUSE (ii)
+      ONE BOUNDARY AGO — "A DECLARED LIMIT IS NOT A LICENCE" — ARRIVING IN A HARDER FORM THAN THE ONE
+      IT WAS WRITTEN FOR.** ***
+  F04_HIGH_CONFIRMED_STRUCTURALLY_BY_READING_THE_WINDOW:
+    what_this_seat_measured: '**THE SCOPE CHECK LOOPS OVER `live_claims(root)` AT `claim.py:135-158`. THE ATOMIC TAKE, `registry.write_exclusive(path, payload)`, IS AT `:187`. THE WINDOW IS ~30 LINES OF PYTHON AND EVERY LINE OF IT IS A RACE.**'
+    the_mechanism_stated_exactly: >
+      **`O_EXCL` GUARANTEES ONE WINNER FOR ONE `<task-id>.claim.yaml` PATH. TWO SEATS TAKING TWO
+      DIFFERENT TASK IDS WITH OVERLAPPING WRITE SCOPES EACH PASS THE SCOPE LOOP (neither sees the
+      other's record, because neither is on disk yet) AND THEN EACH SUCCEEDS AT `write_exclusive`,
+      BECAUSE THEY ARE WRITING DIFFERENT FILES.**
+    what_therefore_HOLDS_and_what_DOES_NOT_and_the_distinction_is_the_whole_reconciliation: >
+      *** **RULING 3(a) — "a task is atomically claimed; two seats can never take the same work" —
+      HOLDS. THE `O_EXCL` TAKE IS REAL AND THE 6400-ATTEMPT MEASUREMENT SUPPORTS IT.** ***
+      *** **RULING 3's ACTUAL INVARIANT — "no two live seats share a TASK **or a WRITE SCOPE**" —
+      DOES NOT HOLD. THE SCOPE HALF IS ADVISORY IN PRACTICE.** *** The seat raced it: **193 of 200
+      rounds put two seats on one write scope, both `CLAIMED`** — and the increment's own detector
+      calls that state a violation. **THE PROJECT LEAD DID NOT RE-RUN THAT RACE (see below); IT
+      CONFIRMED THE MECHANISM BY READING THE TWO LINE NUMBERS, WHICH IS THE WEAKER CHECK.**
+  F06_MEDIUM_UPHELD_AND_IT_IS_AGAINST_THIS_SEATS_OWN_DISPATCH:
+    what_the_seat_found: 'The dispatch section headed *"and these the PROJECT LEAD DID run today"* carried stale denominators: **96 entries examined** and **208 commits**.'
+    THIS_SEAT_RE_MEASURED_AT_THE_SEATS_OWN_TARGET_AND_THE_SEAT_IS_RIGHT: '`git ls-tree -r --name-only 4f3f4ce -- governance/engineering/build-log/ | grep -c ''BL-.*\.yaml''` -> **98, NOT 96.** `git rev-list --count 4f3f4ce` -> **222**; `--first-parent` -> **212. NEITHER IS 208.** **BOTH DENOMINATORS WERE WRONG AND BOTH WERE MINE.**'
+    the_cause_named_precisely: '**I RAN THOSE INSTRUMENTS BEFORE THE MERGE AND BEFORE FOUR LATER COMMITS, THEN CARRIED THE FIGURES INTO A DISPATCH WRITTEN AFTERWARDS WITHOUT RE-RUNNING THEM AT THE SHA THE DISPATCH NAMES.** **THAT IS `T7` — THE INHERITED-CLAIM MECHANISM — COMMITTED INSIDE THE DISPATCH THAT NAMES `T7` AS ITS OWN TARGET, IN THE SECTION WHOSE HEADING PROMISES THESE WERE THE FRESH ONES.**'
+    what_survives_and_is_stated_so_the_finding_is_not_over_read: '**THE NUMERATORS ARE UNAFFECTED AND THE SEAT SAYS SO: 67 block violations, 34 shared-record commits, 27 `UNALLOCATED_AUTHOR`. AND `T10` IS NOW **CONFIRMED** RATHER THAN "CONSISTENT WITH" — the seat re-derived 27+39+1=67 AND re-derived the 27 and 34 independently with its own git commands, which is what this seat declined to claim at `BL-...-0141` and was right to decline.**'
+  F07_LOW_AND_THIS_SEAT_ACCEPTS_THE_CORRECTION_IT_MAKES: >
+    `main` moved **3 commits** under the live auditor — `1699f03`, `96ce27e`, `b3e9825` — **ALL
+    INSIDE THE PROMISED SCOPE. THE PROMISE WAS KEPT AND THE SEAT SAYS SO.** *** **BUT ITS CORRECTION
+    IS EXACTLY RIGHT AND IT IS `CD-RULE-006` APPLIED TO THIS SEAT'S OWN PROSE: `BL-...-0143` CREDITS
+    "THE SEAT WAS TOLD". WHAT ACTUALLY HELD IS THE PINNED DETACHED WORKTREE — A MEASURABLE CARRIER
+    THE RECORD DID NOT NAME, WHILE THE RECORD NAMED A NON-CARRIER (BEING TOLD) INSTEAD.** ***
+    **I CREDITED A PREDICTION AND THE THING THAT WORKED WAS A MECHANISM. THAT IS THE PROJECT'S OWN
+    CENTRAL LESSON, LANDING ON THE BOUNDARY THAT WAS WRITTEN TO HONOUR IT.**
+  the_freeze_VERIFIED_BY_THIS_SEAT_AT_THE_END_AND_NOT_ONLY_PROMISED: '`git -C /srv/crash-detector-wo2r3-audit9 rev-parse HEAD` -> **`be0b355...`**, porcelain **0**. **THE PRODUCT TARGET NEVER MOVED. `CD-D-176` HELD.** The seat independently reports both targets porcelain 0 at start AND end, and its dispatch byte-identical at start and end (`diff` rc=0) — **the `CD-PL-F143` check that nobody ran, run.**'
+
+# ================================================================================================== #
+what_the_gate_says_ABOUT_THE_PERIMETER_carried_and_NOT_reconciled_by_this_seat:
+# ================================================================================================== #
+  the_grade: '**PART A: `RED`.**'
+  F01_HIGH: '**TWO OF THE THREE TIERS ARE NOT BUILT.** PREVENTED is real (`is_exactly`, identity and not `==`). **RESISTED and DETECTED are ABSENT FROM THE PRODUCT; `CD-AC-017`/`CD-AC-018` appear NOWHERE on the lane.** §16 concedes RESISTED is a specification; **§17 states it in the PRESENT INDICATIVE.**'
+  F02_HIGH: '**THE LOAD-BEARING SENTENCE OF RESISTED IS FALSE AS MEASURED.** The seat BUILT the construction-provenance door in BOTH forms (`id()`-set and `WeakSet`) and **defeated it THREE WAYS WITHOUT LOCATING OR MUTATING ANY MODULE-PRIVATE STRUCTURE.** The killer: **walk in the PUBLIC DECLARED DOOR, then `object.__setattr__` the value — genuine provenance, forged value, ADMITTED ON BOTH FORMS.** Plus `id()` reuse at a measured 0.9999 rate. **"Defeatable only by locating and mutating a module-private structure" is refuted, and with it the claim of a difference IN KIND.**'
+  F03_HIGH: '**THE MEASUREMENT THE PRODUCT OWNER RESTED THE RETRACTION ON VARIED ONLY THE CONSTRUCTION ROUTE, NEVER WHAT HAPPENS TO THE VALUE AFTER CONSTRUCTION.** **THAT IS `PO-DECISIONS-0011` RULING 2''S OWN HARVESTED RULE — *"a rule that binds seats binds their Product Owner"*, accepting contrast evidence "without asking which axis it varied" — UNAPPLIED, BY THE PARTY THAT WROTE IT.**'
+  THIS_SEAT_RECONCILES_NONE_OF_PART_A_AND_SAYS_SO_PLAINLY: >
+    *** **`BLUEPRINT.md` AND `PID.md` ARE PROTECTED FROM EVERY SEAT INCLUDING THIS ONE (`CD-D-115`),
+    AND `PBG-SOD-004` BARS THE AUDITOR TOO. THE PERIMETER IS THE PRODUCT OWNER'S TEXT AND ITS REPAIR
+    IS THE PRODUCT OWNER'S ACT.** *** **THAT IS NOT A BOTTLENECK TO ROUTE AROUND. IT IS THE
+    PROTECTION WORKING, AND IT HAS BEEN THE ANSWER AT EVERY GATE SINCE THE FIFTH.**
+  the_lane_re_derivations_the_seat_DID_run_and_which_ANSWER_T7_for_the_lane: '**suite 1726 passed rc=0 · sweep `PASS`, 548 sites / 19 modules, 6 `DEFECT_OPEN` · sealing count **ZERO** (99 examined, 87 forged, 0 refused the constructor) · `CD-RT-012` `PASS`, 68549 assertions · grant matrix rc=3 `PRECONDITION_NOT_MET`, fail-closed WORKING.** *** **EVERY INHERITED LANE FIGURE THIS SEAT CARRIED AS RECORD AT THREE BOUNDARIES IS NOW RE-MEASURED BY AN INDEPENDENT SEAT AND HOLDS. `T7` IS ANSWERED FOR THE LANE AND REMAINS OPEN FOR EVERYTHING ELSE.** ***'
+
+what_PASSED_and_it_is_recorded_as_carefully_as_what_failed:
+  T9_the_arm_this_whole_increment_turned_on: '*** **"I COULD NOT OBTAIN A FAKE GREEN ARM 3."** *** The seat mutation-tested all four plants **against a concurrency-BANNING control** and **every ARM 3 went red against its own target.** It calls this **"the best engineering in the increment"**. **THE NON-VACUITY ARM — THE ONE THING THIS SEAT ADDED BEYOND THE ESTABLISHED CONTRAST FORM AND WROTE DOWN SO IT COULD BE OVERTURNED — IS THE ONE PART OF THE INCREMENT THAT SURVIVED AN ADVERSARY.**'
+  T8: '**13/13 arms LIVE, reproducing this seat''s own figure**, with the AUTHENTIC TARGET verified — the coordination machinery byte-identical at `59cb3c1` and `4f3f4ce`. **A THIRD INDEPENDENT REPRODUCTION OF THE PLANT RESULT.**'
+  CD_PL_F151_UPHELD_AND_WORSE: '**This seat measured `ARMS: 1/3` on an archive extraction. The auditor measured `0/4`. THE FINDING WAS RIGHT AND THIS SEAT UNDERSTATED IT.**'
+  liveness_py: '**ONE OF NINE INSTRUMENTS AGREES WITH THE AUTHORITY IT GUARDS — and it is the one built on `CD-ENG-COORD-01`''s `F02`, the finding raised AGAINST THIS SEAT''S DISPATCH.** **THE ONLY PART OF THE MACHINERY THE AUDITOR ENDORSES IS THE PART THAT EXISTS BECAUSE AN ENGINEER OVERRULED ME.**'
+
+# ================================================================================================== #
+what_was_NOT_verified_by_the_project_lead_at_this_boundary:
+# ================================================================================================== #
+- '**I DID NOT RE-RUN `race_scope.py` OR THE 193/200 RACE.** I confirmed `F04`''s MECHANISM by reading `claim.py:135-158` against `:187` — **which is the weaker check, and the seat''s number is the seat''s.** The auditor names re-running it as one of the two commands that constitute the next gate; **THAT IS THE TENTH SEAT''S WORK AND I AM NOT PRE-EMPTING IT.**'
+- '**I DID NOT REPRODUCE `F02`''s THREE DEFEATS OF THE PROVENANCE DOOR.** I have not built the door, not run `object.__setattr__` through it, and not measured the `0.9999` `id()`-reuse rate. **THE MOST CONSEQUENTIAL TECHNICAL CLAIM IN THIS VERDICT IS CARRIED HERE AS THE SEAT''S MEASUREMENT AND NOT AS MINE.**'
+- '**I DID NOT RE-DERIVE `F05`, `F09`, `F10`-`F14`.** They are banked as stated. **`F09` in particular — `check_lease_held` going `REFUSED -> ADMITTED` over UNCHANGED history via an unauthenticated `--pid` — IS UNREPLICATED BY ME AND IS SEVERE IF TRUE.**'
+- '**I DID NOT RE-RUN ONE LANE INSTRUMENT.** Every Part A figure above is the ninth seat''s. **THE DIFFERENCE FROM PRIOR BOUNDARIES IS THAT THEY ARE NOW ONE SEAT OLD AND INDEPENDENTLY TAKEN, RATHER THAN THREE BOUNDARIES OLD AND MINE.**'
+- '**I HAVE NOT READ ALL 911 LINES OF THE VERDICT.** It was BANKED BEFORE IT WAS READ, deliberately. **This reconciliation addresses the findings in the seat''s own summary and the two I could replicate cheaply; THE REMAINDER IS UNRECONCILED AND IS OWED.**'
+
+# ================================================================================================== #
+decisions_ruled_here:
+# ================================================================================================== #
+- id: CD-D-181
+  decision: >
+    **NO PARALLEL SEAT IS DISPATCHED ON THIS MACHINERY. SEQUENTIAL SINGLE-SEAT OPERATION ONLY, UNTIL
+    THE PRODUCT OWNER RULES.**
+  the_authority_and_why_this_is_NOT_this_seat_overriding_a_ruling: >
+    `PO-DECISIONS-0021` ruling 6 says parallel disjoint remediation is *"now safe"*. **THE NINTH SEAT
+    REFUTES THAT IN TERMS, WITH `F08` AND `F04` AS THE MECHANISM.** **A RULING WHOSE STATED
+    PRECONDITION HAS BEEN MEASURED FALSE IS NOT OVERRIDDEN BY DECLINING TO ACT ON IT — IT IS
+    RETURNED TO ITS AUTHOR.** **THIS SEAT IS NOT REVERSING RULING 6 AND HAS NO POWER TO; IT IS
+    REFUSING TO SPEND A SAFETY CLAIM THE EVIDENCE NO LONGER SUPPORTS, AND PUTTING IT BACK TO THE
+    PRODUCT OWNER AS `Q18`.**
+  the_seats_own_reason_carried_verbatim_because_it_is_better_than_a_paraphrase: '*"worse than running on nothing, because the board would be green."*'
+- id: CD-D-182
+  decision: '**NOTHING IN `tools/coordination/` IS REPAIRED AT THIS BOUNDARY.** No instrument change, no contract change, no plant change, no grade moved, no finding closed.'
+  why: '**THE PHASE IS `GATE` AND THE PROJECT LEAD WRITES NEITHER THE FIX NOR THE ASSURANCE (`PBG-AUTH-006`, `PBG-SOD-001`).** `F08` is four lines and I could have deleted them in thirty seconds. **THAT IS EXACTLY WHY THE RULE EXISTS: THE CHEAPEST FIX ON THE RECORD IS THE ONE MOST LIKELY TO BE MADE BY THE WRONG HAND AND CALLED CLOSED.**'
+- id: CD-D-183
+  decision: '**THE VERDICT IS BANKED AND IS NOT ACCEPTED** (`PBG-AUTH-003`). `CD-AC-002` AMBER, `CD-AC-005` RED, the WO-2 gate SHUT, the lane FROZEN at `be0b355` — **ALL UNCHANGED. NO GRADE MOVED AT THIS BOUNDARY IN EITHER DIRECTION.**'
+
+# ================================================================================================== #
+open_product_authority_questions_THIS_SEAT_ANSWERS_NONE:
+# ================================================================================================== #
+  Q7_to_Q17: '**ALL CARRIED.** `Q11` (nine controls, zero carriers) is now **materially changed by this verdict and the change is NOT in its favour: correctness is the prior question.** **CARRYING THESE CONTROLS TODAY WOULD SHIP A GREEN BOARD OVER THE ORIGINAL DEFECT — the auditor''s phrase, and it inverts the priority this seat had assumed.**'
+  Q16_NO_LONGER_MERELY_OPEN_BUT_CONFIRMED: '**`T10` is `CONFIRMED` by an independent seat''s own git commands, not "consistent with".** 27 Build Log entries · 34 `ACTIVE_WORK.yaml` commits · `44c5ef5` carrying both identities `CD-RULE-002` names as its own measured failure. **DOES `CD-RULE-002` BIND THE PRODUCT AUTHORITY''S OWN HAND? IT IS NOT A SEAT''S QUESTION AND THREE SEATS HAVE NOW DECLINED TO ANSWER IT.**'
+  Q18: >
+    **NEW, AND IT IS THE ONE THAT GATES EVERYTHING ELSE.** **`PO-DECISIONS-0021` RULING 6'S THIRD
+    STEP — "parallel disjoint remediation where scopes allow, which is faster and now safe" — HAS ITS
+    PRECONDITION MEASURED FALSE.** `F08` skips the same-identity pair the owned incident was made of;
+    `F04` leaves the scope half of the invariant advisory. **DOES RULING 6'S SEQUENCE STAND WITH
+    "PARALLEL" STRUCK, OR DOES THE WHOLE SEQUENCE RE-OPEN? `CD-D-181` HOLDS SEQUENTIAL-ONLY UNTIL
+    THIS IS RULED, AND THAT HOLD IS A REFUSAL TO SPEND THE CLAIM — NOT A REVERSAL OF THE RULING.**
+  Q19: >
+    **NEW, AND IT IS THE PERIMETER.** `F01`/`F02`/`F03` say the RESISTED tier's load-bearing sentence
+    is false as measured and that two of three tiers are not built. **`BLUEPRINT.md` §17 STATES
+    RESISTED IN THE PRESENT INDICATIVE WHILE §16 CONCEDES IT IS A SPECIFICATION.** **ONLY THE PRODUCT
+    OWNER MAY AMEND EITHER (`CD-D-115`). IS THE §17 ROW CORRECTED TO THE FUTURE TENSE, IS THE TIER
+    WITHDRAWN, OR IS THE MEASUREMENT CONTESTED?** **NO SEAT MAY TOUCH THAT TEXT AND NONE HAS.**
+
+decision_refs:
+- PO-DECISIONS-0021   # rulings 3 and 6 — ruling 6's third step is what Q18 returns
+- CD-D-143            # verdicts banked verbatim and BESIDE, committed before read
+- CD-D-129            # the three clauses the dispatch carried; clause (i) worked — the seat was told
+- CD-D-176            # the lane frozen at be0b355 — VERIFIED HELD at the end, not merely promised
+- CD-D-181            # NEW — sequential single-seat only; the safety claim is returned, not overridden
+- CD-D-182            # NEW — nothing in tools/coordination/ is repaired at a GATE
+- CD-D-183            # NEW — banked, not accepted; no grade moves in either direction
+- CD-D-115            # BLUEPRINT.md/PID.md protected from every seat including the Project Lead
+- CD-RULE-004         # and F08 is not option 2 — it is a declaration that is FALSE
+- CD-RULE-006         # F07: I credited a prediction; the carrier was the pinned detached worktree
+- CD-RULE-009         # 911 / 58473 / sha256 / cmp rc=0 / numstat 911 0
+- PBG-AUTH-003        # banked is not accepted; the PL does not argue a grade
+- PBG-AUTH-006        # the PL writes neither the fix nor the assurance
+- PBG-SOD-001         # non-waivable
+- PBG-SOD-004         # the auditor may not amend the Blueprint either
+- PBG-CONT-003        # corrections supersede, never edit
+
+next_safe_action: >
+  *** **STOP. THE NEXT ACTOR IS THE PRODUCT OWNER AND THIS SEAT DISPATCHES NOTHING.** ***
+  **1.** `Q19` — the perimeter. `F01`/`F02`/`F03`. **ONLY THE PRODUCT OWNER MAY AMEND `BLUEPRINT.md`
+  §16/§17 OR `PID.md`.**
+  **2.** `Q18` — ruling 6's *"now safe"*, refuted. **DOES THE SEQUENCE STAND WITH "PARALLEL" STRUCK?**
+  **3.** `Q16` — `CD-RULE-002` and the Product Authority's own hand. **CONFIRMED, not alleged.**
+  **4.** `Q11` — TO THE HUMAN, NOT THE PRODUCT OWNER. **AND ITS PRIORITY IS NOW INVERTED: the
+  auditor says correctness before carriage, because carrying these controls today ships a green board
+  over the original defect.**
+  **5.** THEN, if and only if the Product Owner authorises it: a bounded **SEQUENTIAL SINGLE-SEAT**
+  remediation, followed by a **TENTH** fresh Assurance seat whose gate is two named commands —
+  re-running `race_scope.py` and the `F08` both-arms test.
+  **DO NOT** dispatch a parallel seat (`CD-D-181`). **DO NOT** repair `check_scope_disjoint.py`,
+  `claim.py` or `launch.sh` — a four-line deletion at a GATE by the seat that commissioned them is
+  the exact act `PBG-AUTH-006` forbids (`CD-D-182`). **DO NOT** move `CD-AC-002` or `CD-AC-005`.
+  **DO NOT** touch the lane. **DO NOT** remove `/srv/crash-detector-inc12` (`CD-D-179`).
+  **DO NOT** answer `Q7`-`Q19`.
+expected_next_actor: 'THE PRODUCT OWNER — and for `Q11`, the human operator. **NO SEAT IS DISPATCHED AND NONE SHOULD BE UNTIL A RULING EXISTS.**'

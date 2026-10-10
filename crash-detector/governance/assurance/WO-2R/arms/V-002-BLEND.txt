@@ -1,0 +1,20 @@
+LABEL: V-002-BLEND
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-002/CD-RT-002-AST-NO-BLEND.patch
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_no_blend.py --root .
+EXIT: 1
+--- stdout ---
+CD-RT-002-AST-NO-BLEND
+    subject: /tmp/cd-asr-wo2r/run/V-002-BLEND
+    scanned: 41 application Python files under src/crash_detector, deploy/entrypoints; 6 paths allowlisted for RULE 2 only; RULE 1 and RULE 3 have no allowlist (RULE 3 exempts 2 modules, each for the ONE slot it declares and no other); RULE 4 denies by default over 4 declared admission sites
+    assertions: 4872
+
+VIOLATION  src/crash_detector/publication/headline.py:23
+    rule: RULE 1: arithmetic across the two dials
+    what: `first + second` combines an equity-flavoured value with a monetary-flavoured value. PID §3.1 is constitutional: the two dials fail in opposite directions and averaging cancels the signal. There is no allowlist for this rule, in any module.
+VIOLATION  src/crash_detector/publication/headline.py:23
+    rule: RULE 2: one expression consumes both dials
+    what: `(first + second) / 2.0` consumes BOTH dial types in a single expression, outside the container and the serving layer. BLUEPRINT §13: composition happens only at the serving layer. An expression holding both is one edit away from a headline number.
+
+CD-RT-002-AST-NO-BLEND: FAIL — 2 violation(s)
+--- stderr ---

@@ -1,0 +1,63 @@
+pbg required-tests verify — /tmp/cd-asr-wo2r/w4/required-tests.yaml
+  pid.ref               PID.md
+  pid.content_hash      MATCHES
+  latest_admitted_run   (null)
+
+  [M] CD-AC-001      UNDECIDABLE
+        - CD-RT-001-AST-NO-NUMERIC-DEFAULT: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+        - CD-RT-001-ABSENCE-RENDERS-UNKNOWN: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-002      UNDECIDABLE
+        - CD-RT-002-TYPE-NO-ARITHMETIC: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+        - CD-RT-002-AST-NO-BLEND: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+        - CD-RT-002-SCHEMA-CLOSED: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-003      UNDECIDABLE
+        - CD-RT-003-ENGINE-NO-WITNESS-REACH: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+        - CD-RT-003-GRANT-MATRIX-LIVE: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-004      UNDECIDABLE
+        - CD-RT-004-DIVERGENCE-ALARM-FIRES: negative_control.evidence_ref 'RTR-WO4-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-005      UNDECIDABLE
+        - CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-006      UNDECIDABLE
+        - CD-RT-006-PUBLIC-SURFACE-NO-PRIVATE-DATA: negative_control.evidence_ref 'RTR-WO5-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-007      UNDECIDABLE
+        - CD-RT-007-NO-HEADLINE-AUTHORSHIP: negative_control.evidence_ref 'RTR-WO5-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-008      UNDECIDABLE
+        - CD-RT-008-CADENCE-BREACH-ALERTS: negative_control.evidence_ref 'RTR-WO3-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-009      UNDECIDABLE
+        - CD-RT-009-REGIME-AWARE-STALENESS: negative_control.evidence_ref 'RTR-WO3-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-010      UNDECIDABLE
+        - CD-RT-010-HISTORY-FIRST-PUBLISHED-IMMUTABLE: negative_control.evidence_ref 'RTR-WO4-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-011      UNDECIDABLE
+        - CD-RT-011-SLOPE-MACHINE-READABLE: negative_control.evidence_ref 'RTR-WO4-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-012      UNDECIDABLE
+        - CD-RT-012-NO-EXECUTION-INTERFACE: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+        - CD-RT-012-LOCKFILE-DENYLIST: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+        - CD-RT-012-EGRESS-NO-BROKER: negative_control.evidence_ref 'RTR-WO2-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-013      UNDECIDABLE
+        - CD-RT-013-ROTATION-RATIO-PROVENANCE: negative_control.evidence_ref 'RTR-WO6-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-014      UNDECIDABLE
+        - CD-RT-014-HEALTH-EXTERNALLY-OBSERVABLE: negative_control.evidence_ref 'RTR-WO3-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [M] CD-AC-015      UNDECIDABLE
+        - CD-RT-015-RECOVERY-FROM-THE-COPY: negative_control.evidence_ref 'RTR-WO6-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+  [A] CD-AC-016      UNDECIDABLE
+        - CD-RT-016-WAVE-TRANSITION-MONITOR: negative_control.evidence_ref 'RTR-WO6-0001' does not resolve to a run record under /tmp/cd-asr-wo2r/w4/evidence/required-tests/runs
+
+MANDATORY NOT PASS (15) — no waiver exists; only PO disposition can move these:
+  ! CD-AC-001: UNDECIDABLE
+  ! CD-AC-002: UNDECIDABLE
+  ! CD-AC-003: UNDECIDABLE
+  ! CD-AC-004: UNDECIDABLE
+  ! CD-AC-005: UNDECIDABLE
+  ! CD-AC-006: UNDECIDABLE
+  ! CD-AC-007: UNDECIDABLE
+  ! CD-AC-008: UNDECIDABLE
+  ! CD-AC-009: UNDECIDABLE
+  ! CD-AC-010: UNDECIDABLE
+  ! CD-AC-011: UNDECIDABLE
+  ! CD-AC-012: UNDECIDABLE
+  ! CD-AC-013: UNDECIDABLE
+  ! CD-AC-014: UNDECIDABLE
+  ! CD-AC-015: UNDECIDABLE
+
+GATE: SHUT
+PID_ACCEPTANCE_SATISFIED: NOT DERIVED

@@ -1,0 +1,155 @@
+# =================================================================================================== #
+# BL-20260825T063803Z-0190 — PROJECT LEAD BOUNDARY. 16G RETURNED AND IS BANKED AS AN INPUT.
+#
+# THE ACCEPTANCE TEST WAS RUN BY THIS SEAT IN ITS OWN SHELL AND IT MOVES. THAT IS NOT AN ACCEPTANCE.
+# =================================================================================================== #
+
+entry_id: BL-20260825T063803Z-0190
+timestamp_utc: '2026-08-25T06:38:03Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-25T06:38:03Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_09
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_09
+authority_id: CD-AUTH-0001
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260825T055919Z-0189
+base_sha: fe5a884
+current_sha: fe5a884
+status: BANKED_AS_INPUT_AWAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  `CD-ENG-WO3-15` returned increment 16G `READY_FOR_ASSURANCE` at content tip `0cf8411`, entry tip
+  `90c3dc3` on the `wo-3` lane. **THE RETURN IS BANKED AS AN INPUT AND IS NOT ACCEPTED
+  (`PBG-AUTH-003`).** A FRESH Assurance seat grades it — **NOT `CD-ASR-WO3-14`, WHICH RAISED THESE
+  FINDINGS AND MAY NOT GRADE THEIR REPAIR (`PBG-SOD-001`, non-waivable).**
+  *** **AND THE ACCEPTANCE TEST WAS NOT TAKEN FROM THE RETURN. THIS SEAT RAN IT (`CD-PL-F193`), AND
+  THE COUNTERFACTUAL WITH IT, AND `CD-ASR-F14-03` IS GENUINELY CLOSED ON THE ARM THAT OPENED IT.** ***
+
+# =================================================================================================== #
+the_acceptance_test — RUN BY THIS SEAT, IN ITS OWN THROWAWAY WORKTREE, NOT INHERITED:
+# =================================================================================================== #
+  why_the_counterfactual_is_the_measurement: >
+    **AN ARM THAT FAILS AT THE NEW TIP PROVES NOTHING ON ITS OWN** — it might have failed at the old
+    tip too, and then the increment closed nothing. The measurement that matters is the OLD instrument
+    against the SAME patched tree. This seat ran all three cells.
+  cells: |
+    NEW instrument (0cf8411)  +  CLEAN tree      ->  PASS — 11 assertions, 0 violations   rc=0
+    NEW instrument (0cf8411)  +  Z5-patched      ->  FAIL — 1 violation(s)                rc=1
+    OLD instrument (c475b8e)  +  Z5-patched      ->  PASS — 11 assertions, 0 violations   rc=0
+  what_the_three_cells_establish: >
+    *** **THE ESCAPE WAS INVISIBLE TO THE ROW AS IT SHIPPED AND IS VISIBLE TO IT NOW, AND THE ROW IS
+    NOT VACUOUS — IT STILL PASSES THE CLEAN TREE AT THE SAME ASSERTION COUNT.** *** The middle cell
+    alone would have been consistent with a row that had always caught `Z5`; the third cell is what
+    makes the closure real, and it is the cell a seat grading its own work is least likely to run.
+  the_violation_text_the_new_row_emits: >
+    *"AN `except` HANDLER INSIDE `refuse_unless_publishable` ITSELF DOES NOT END IN A `raise` (line 325
+    of `src/crash_detector/publication/envelope_contract.py`). ... a handler here that catches a refusal
+    and falls through converts that refusal into an admission WITHOUT the chokepoint ever seeing an
+    exception. Every assertion this row makes about the chokepoint's own handlers is true and irrelevant
+    on such a tree: the refusal died one frame in. This is arm `Z5`."*
+  and_the_row_now_says_out_loud_what_it_reads: >
+    A new note on every run: *"`refuse_unless_publishable`: 0 `try` statement(s) enclose its 4 stage
+    call(s), carrying 0 except handler(s) — **CD-CHOKE-003 read the GATE'S OWN handlers, not only the
+    chokepoint's**"*. **THE STATED SCOPE AND THE IMPLEMENTED SCOPE NOW AGREE, WHICH IS WHAT
+    `CD-ASR-F14-03` SAID THEY DID NOT.**
+  commands: |
+    git worktree add /tmp/plv16g 0cf8411
+    python3 tools/register/check_publication_chokepoint.py --root .            # clean
+    git apply plants/WO3-INC16G/Z5-THE-GATE-SWALLOWS-ITS-OWN-FRESHNESS-REFUSAL.patch
+    python3 tools/register/check_publication_chokepoint.py --root .            # new instr, patched
+    git show c475b8e:tools/register/check_publication_chokepoint.py > tools/register/_old_choke_probe.py
+    python3 tools/register/_old_choke_probe.py --root .                        # OLD instr, patched
+
+# =================================================================================================== #
+the_other_three_items — SPOT-CHECKED BY THIS SEAT, NOT TAKEN ON THE RETURN'S WORD:
+# =================================================================================================== #
+  ITEM_3_CD_ASR_F14_04: >
+    **THREE-PLACE AGREEMENT IS RESTORED.** Measured whitespace-normalised (the method that defeated this
+    seat's own first attempt at `BL-...-0189`): all three of `required-tests.yaml`,
+    `check_stale_data_never_calm.py` and `CD-RT-001-STALE-DATA-NEVER-CALM.md` now read
+    `VOCABULARY IS A CLOSED WRITTEN LIST`.
+  ITEM_4_CD_ASR_F14_05: >
+    **CORRECTED BY SUPERSESSION AND NOT BY OVERWRITE, WHICH THIS SEAT CHECKED SPECIFICALLY.** The string
+    `122 assertions` still occurs exactly once in each of the three places — **AND THAT IS CORRECT** —
+    because it is quoted verbatim inside the correction that supersedes it: *"WHAT IT SAID, VERBATIM, IN
+    ALL THREE PLACES IT WAS SAID: ... for 122 assertions ..."*, followed by *"`122` IS NOT WHAT THIS ROW
+    ASSERTED AT `a9e19c3`. `97` IS."* **A seat that had simply overwritten the figure would leave zero
+    occurrences, and the record would no longer show that the error had happened.**
+    The Engineer measured `97` itself in a throwaway worktree at `a9e19c3`, three consecutive times,
+    rather than copying the figure from the dispatch — which the dispatch explicitly forbade.
+  ITEM_1_CD_ASR_F14_02: >
+    Reported superseded in **FOUR** sites, not three — the Engineer confirms the row-level `scope:`
+    summary is a fourth site in a three-place rule, and reports that a plain `grep` found only TWO of
+    the four because of differential line-wrapping. **THAT IS THE SAME CONFOUND THIS SEAT HIT AT
+    `BL-...-0189` AND WARNED THE DISPATCH ABOUT, RECURRING ON A DIFFERENT ITEM.** Left for Assurance to
+    grade at full strength rather than certified here.
+
+# =================================================================================================== #
+no_regression — MEASURED BY THIS SEAT AT THE BOUNDARY, EVERY FIGURE FROM ITS OWN COMMAND:
+# =================================================================================================== #
+  measured: |
+    git diff --name-only c475b8e 0cf8411 -- src/                   ->  0    *** THE DECLARED STOP HELD ***
+    git diff --name-only c475b8e 0cf8411 -- pbg/                   ->  0
+    git diff --name-only c475b8e 0cf8411 -- tests/                 ->  0
+    git diff --name-only c475b8e 0cf8411 -- PID.md BLUEPRINT.md    ->  0
+    git diff --name-only c475b8e 0cf8411 -- governance/decisions   ->  0
+    git diff --name-only c475b8e 0cf8411 -- governance/mapping     ->  0
+    contracts/public_envelope.schema.json   sha256  bacc669552867b78  at BOTH ends  *** IDENTICAL ***
+    contracts/private_envelope.schema.json  sha256  322bce7c37d7ff56  at BOTH ends  *** IDENTICAL ***
+    git rev-parse wo-2r3  ->  be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5   *** UNMOVED, STILL FROZEN ***
+  eleven_paths_touched_and_all_eleven_are_in_declared_scope: >
+    `contracts/execution/` x2 (the execution contracts, NOT the JSON schemas) · `plants/WO3-INC16G/` x5
+    (new) · `required-tests.yaml` · `tools/register/` x2 · plus the Engineer's own build-log entry.
+    **ZERO WRITES OUTSIDE THE DISPATCH'S WRITABLE LIST.**
+
+# =================================================================================================== #
+the_engineers_six_findings_against_its_own_work — CARRIED FORWARD UNRESOLVED, FOR ASSURANCE:
+# =================================================================================================== #
+  - id: F16G-01
+    severity: MEDIUM
+    summary: '**ITS FIRST REGRESSION TABLE TOOK `rc` FROM A PIPE AND PRINTED `rc=0` BESIDE NINE `FAIL` VERDICTS** — `CD-ENG-F02`''s exact defect class, committed by the seat repairing a figure that did not reproduce. Caught by reading, not by any control. Re-run, and recorded as having existed rather than quietly corrected.'
+  - id: F16G-02
+    severity: LOW
+    summary: 'The line-wrap confound the dispatch warned about for ITEM 3 **caught the seat on ITEM 1 instead** — a plain `grep` reported the true sentence missing from all three files immediately after it had been written there.'
+  - id: F16G-03
+    severity: 'MEDIUM — OPEN'
+    summary: '**THE NEW CONTROL ASSERTS NOTHING ON THE CLEAN TREE** (0 assertions added at clean; the count stays 11). Declared as `DECLARED LIMIT 8(a)`, printed even at zero, with the stronger form the seat deliberately did NOT build named — it would go RED on the legitimate `Z5CTRL` shape. **THIS IS THE ONE ASSURANCE SHOULD PRESS HARDEST.**'
+  - id: F16G-04
+    severity: 'MEDIUM — OUTSIDE SCOPE, REPORTED NOT TOUCHED'
+    summary: 'Boot on the `wo-3` LANE is `RED`: that lane''s `ACTIVE_WORK.yaml` pointer is ~75 entries stale with `continuity_record_commit: PENDING` and narrative fields still describing `CD-WO-002`. **THIS SEAT''S READING: it is the LANE''S OWN long-branched copy and is NOT the `main` record, which booted `AMBER` at this session''s start — but it is real, it reproduces at the pristine base, and it is exactly the stale-narrative class already held open as `CD-PL-F210`/`F211`/`F212`. NOT CLOSED HERE.**'
+  - id: F16G-05
+    severity: LOW
+    summary: 'Only 2 of the auditor''s 6 escape mechanisms were rebuilt. **`Z5` biting says NOTHING about `Z1`, `Z2`, `Z4`, `Z6`** — and the seat says so rather than letting one closed arm read as a closed class.'
+  - id: F16G-06
+    severity: 'LOW — FRAMEWORK'
+    summary: '**`pbg log validate` PRINTS `GREEN (0 invalid)` HAVING VALIDATED ZERO ENTRIES, AND RETURNED THAT SAME GREEN AGAINST THIS SEAT''S SCHEMA-INVALID FIRST DRAFT.** Validating by direct call instead caught two real violations. **A KNOWN FALSE-GREEN, INDEPENDENTLY REDISCOVERED BY A SEAT THAT DID NOT KNOW IT WAS KNOWN — WHICH IS THE STRONGEST FORM OF CORROBORATION THIS PROJECT GETS.** Reported, not repaired (`pbg/` pinned, `PBG-FWK-013`).'
+
+blockers: []
+
+risks:
+  - '**`Z7` IS CARRIED PASSING ON PURPOSE.** It is the executable witness of a DECLARED limit, not a defect left open by accident. **A reader who sees a `PASS` beside `Z7` and concludes the class is closed has misread it, and that is precisely the failure mode `CD-ASR-F14-02` existed to correct.** Assurance should check the new wording actually prevents that reading.'
+  - '**`F16G-03` IS THE LIVE ONE:** a control that adds zero assertions on a clean tree is guarded only by the arm that fails. If the arm is ever removed or its patch rots, nothing reports the loss.'
+
+held_actions:
+  - '**`CD-ASR-F14-01` NOT REOPENED AND NOT TOUCHED.** Confirmed by measurement: zero paths under `src/`, no coverage property, no code-structure invariant, no new guard mechanism. `PO-DECISIONS-0032` ruling 3 stands.'
+  - '**THE STALE-NARRATIVE CLASS REMAINS UNCONTROLLED** — now with a fourth sighting (`F16G-04`) from an independent seat on a different branch.'
+
+next_safe_action: >
+  **DISPATCH A FRESH ASSURANCE SEAT — `CD-ASR-WO3-15` — READ-ONLY, AGAINST CONTENT TIP `0cf8411` ON THE
+  `wo-3` LANE.** It must not be `CD-ASR-WO3-14` (raised these findings) and must not be `CD-ENG-WO3-15`
+  (built the repair). Grade the four items, press `F16G-03` hardest, and check that ITEM 1's replacement
+  wording is TRUE OF THE CLASS rather than newly reassuring in a different direction — **this row has
+  now been superseded seven times for exactly that.**
+
+expected_next_actor: ASSURANCE_ENGINEER (CD-ASR-WO3-15)
+
+evidence_references:
+  - 'Content tip `0cf8411`, entry tip `90c3dc3` on `wo-3`; the Engineer''s return entry `BL-20260825T063052Z-16GC`.'
+  - 'governance/engineering/CD-DISPATCH-INC16G-ENGINEER.md — the dispatch, banked at `fe5a884` BEFORE the seat launched.'

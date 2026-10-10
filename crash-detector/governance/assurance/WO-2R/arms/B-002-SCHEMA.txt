@@ -1,0 +1,12 @@
+LABEL: B-002-SCHEMA
+PATCH: NONE
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_schema_closed.py --root .
+EXIT: 0
+--- stdout ---
+CD-RT-002-SCHEMA-CLOSED
+    subject: /tmp/cd-asr-wo2r/run/B-002-SCHEMA
+    scanned: contracts/public_envelope.schema.json and private_envelope.schema.json
+    assertions: 242
+CD-RT-002-SCHEMA-CLOSED: PASS — 242 assertions, 0 violations
+--- stderr ---

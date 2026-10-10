@@ -1,0 +1,75 @@
+# ================================================================================================== #
+# BL-20260823T164224Z-0148 — PROJECT LEAD BOUNDARY. **ACT 3 OF PO-DECISIONS-0022: THE TENTH FRESH
+# ASSURANCE SEAT IS DISPATCHED OVER `b165dd9`.**
+#
+# **`CD-ASR-WO2R3-07`, A FRESH IDENTITY, READ-ONLY, MUTATION PROHIBITED EXCEPT IN ITS OWN SCRATCH.**
+#
+# Its acceptance is the Product Owner's own two named commands, and **BOTH OF THEM HAVE ALREADY BEEN
+# RUN BY THIS SEAT WITH THEIR CONTRAST ARMS. THAT IS DISCLOSED TO THE SEAT IN THE FIRST PARAGRAPH OF
+# ITS DISPATCH, BEFORE IT RUNS ANYTHING, BECAUSE `T7` — THE INHERITED-CLAIM MECHANISM — IS THE
+# FAILURE MODE THIS PROJECT REPEATS MOST, AND A FIGURE HANDED TO A SEAT IS A CLAIM AND NOT A
+# MEASUREMENT UNTIL THAT SEAT TAKES IT AGAIN.**
+#
+# **AND THE DISPATCH IS COMMITTED BEFORE THE SEAT GOES OUT (`CD-PL-F140`, `PBG-CONT-007`).**
+# ================================================================================================== #
+
+entry_id: BL-20260823T164224Z-0148
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T16:42:24Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1568164, wrapper PID 1568163, `timeout 21600` from 15:30Z. `ps` shows exactly ONE Project Lead process.'
+phase: GATE
+branch: main
+base_sha: 599dfa050b1a1c092dd014720ba3348bd2aedfb2   # RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+assurance_target_sha: b165dd99a22a9a65b8e743274cec02ed7010dc22   # the merge that landed increment 13.
+
+the_dispatch:
+  record: 'governance/dispatch/CD-DISPATCH-WO2R3-ASSURANCE-10.yaml'
+  actor_id: 'CD-ASR-WO2R3-07 — **FRESH. Never any of the ten prior Assurance/meta identities, and never `CD-ENG-COORD-FIX-01`, who built what it grades (`PBG-SOD-001`, non-waivable).**'
+  target: '`main` at `b165dd9`, worktree `/srv/crash-detector`, runtime `ext2/ext3` (measured).'
+  mutation: '**PROHIBITED except explicitly safe diagnostic artefacts in `/tmp/cd-asr-wo2r3-07/`.** One writable artefact in the real tree: `governance/assurance/WO-2R3/VERDICT-TENTH-SEAT.md`, **BESIDE its six predecessors and inside none of them (`CD-D-143`).**'
+  expected_return: '**`PASS` / `AMBER` / `RED` WITH THE NEXT SAFE GATE NAMED.**'
+
+the_drift_predeclared_rather_than_discovered: >
+  *** **`main` IS THREE COMMITS PAST THE SEAT'S TARGET AS THE DISPATCH IS WRITTEN, AND THE SEAT IS
+  TOLD SO IN ITS OWN `target:` BLOCK WITH THE COMMAND TO CHECK IT.** *** All three are
+  governance-only. **THIS IS `CD-PL-F134` — *"`main` ADVANCED WHILE `CD-ASR-WO2R3-05` WAS LIVE ...
+  THE HARM WAS ZERO AND THE DISCIPLINE WAS STILL BROKEN. The remedy is not 'remember'"* — AND THE
+  REMEDY IT ASKED FOR WAS THAT THE SEAT BE TOLD THE RANGE IN ADVANCE. IT IS TOLD.** Nothing under
+  `tools/` or `governance/coordination/` moves while the seat is out.
+
+# ================================================================================================== #
+# CLAUSE (i) OF CD-D-129 — MEASURED AT THIS BOUNDARY, NOT INHERITED. **THIS IS THE CORRECTION OF THE
+# HABIT THE NINTH VERDICT RAISED AGAINST THIS SEAT THREE TIMES IN ONE ENTRY.**
+# ================================================================================================== #
+declared_state_exits_measured_here:
+  reconciliation_checks: '`check_blueprint_carried_po_0022_verbatim.py` **rc=0** · `check_blueprint_carried_po_text_verbatim.py` **rc=0** · `check_pid_carried_po_0020_verbatim.py` **rc=0** · `check_blueprint_carried_po_0019_verbatim.py` **rc=1 BY DESIGN, 9/10** — superseded by ruling 2 and deliberately not edited.'
+  coordination_instruments: '`check_scope_disjoint.py` **rc=0 on 0 live claims — A VACUOUS GREEN, DECLARED AS ONE** · `check_lease_held.py` / `check_no_shared_record_write.py` / `check_build_log_blocks.py` **rc=2 `NOTHING CHECKED`, which is FAIL-CLOSED behaviour and is declared so the seat does not grade the 2 as a failure** · `check_build_log_pointer_atomic.py` **rc=1, see `CD-PL-F156`** · `test_scope.py` **rc=0**.'
+  boot: '`pbg boot` -> **AMBER, `CONTINUITY_MATCH/RESUME_AMBER`** at `599dfa0`; `blueprint_identity` moved to `BLUEPRINT.md@39397dfbf169a125`, which is the §17 amendment landing. The AMBER cause is the standing absent `ROADMAP.md` and nothing new.'
+  required_tests_yaml: '**MEASURED: NOT at the repository root on `main` at all** (`git ls-tree --name-only HEAD` -> no match). `governance/coordination/required-tests.yaml` EXISTS and is a DIFFERENT file. **THE SEAT IS WARNED NOT TO CONFLATE THEM BECAUSE A PRIOR SEAT NEARLY DID.**'
+
+# ================================================================================================== #
+# WHAT THIS SEAT DISCLOSED THAT IT DID NOT HAVE TO.
+# ================================================================================================== #
+full_disclosure_given_to_the_seat:
+  its_own_figures_are_handed_over_as_CLAIMS: '**The `195 -> 0` contrast, the `5/5 arms LIVE`, the pointer-atomic counts — all handed to the seat WITH the instruction that if its figures disagree, ITS figures are the measurement and this seat''s are the claim.**'
+  what_this_seat_did_NOT_measure_stated_rather_than_implied: '**`PLANT-COORD-01`-`04` and `-06`-`-08` WERE NOT RE-RUN BY THIS SEAT.** The Engineer''s `8 plants, 27 arms, all contrasted` is carried as **THE ENGINEER''S CLAIM, FLAGGED AS THE EXACT `T7` SHAPE** rather than left for the seat to catch. **Nor has anyone graded whether the re-derived `L1`/`L2` prose is now TRUE of the code — `CD-RULE-004` across all three places is handed over as UNDONE.**'
+  the_conflict_of_interest_named_out_loud: '*** **ONE OF THE TWO ACCEPTANCE COMMANDS — `PLANT-COORD-05` — WAS BUILT BY THE SEAT BEING GRADED.** *** Disclosed to the Engineer as a risk when it was dispatched, and disclosed to the Assurance seat now, **with the Engineer''s own closing instruction to attack it first carried forward verbatim.**'
+  this_seats_three_acts_put_INSIDE_the_seats_scope: '**(a)** the amendment of a protected file at `88e43db`, with the diff command. **(b)** the banking of two `/tmp` artefacts at `d34ba8f`, one of which grades this gate, with the hashes to verify. **(c)** the merge performed WITHOUT the merge instrument, with the substitution named as a substitution. **ALL THREE ARE WRITTEN INTO THE STANDING INVITATIONS, NOT BURIED.**'
+  a_FIFTH_edge_added_to_clause_ii: '**A LIMIT DECLARED IN `L4` AND REFUSED ON IN THE VERDICT LINE IS TWO INSTRUMENTS IN ONE FILE.** The ninth seat proved an UNDECLARED skip is a defect; this gate asks whether a DECLARED-BUT-STILL-COUNTED limit is one too. **THIS SEAT THINKS SO AND CANNOT RULE ON IT, BECAUSE IT IS ONE OF THE PARTIES BOUND.**'
+  and_the_question_the_PO_is_actually_waiting_on: >
+    *** **"RULING 1 GATES PARALLELISM ON 'the fixed machinery passes a dedicated gate'. IS THIS THAT
+    GATE, OR ONLY A GATE ON FIVE FIXES?"** *** **THIS SEAT BELIEVES IT IS THE SECOND AND SAYS SO IN
+    THE DISPATCH WITHOUT RULING ON IT.** The seat is asked what a dedicated parallelism gate would
+    have to measure that this one does not, **and is expressly forbidden to declare parallelism
+    safe — that is Matt's call with the evidence in front of him.**
+
+not_done_at_this_boundary:
+  - '**NO GRADE GIVEN.** `PBG-AUTH-003`. The verdict is not this seat''s and no attempt is made to shape it.'
+  - '**NO SECOND SEAT DISPATCHED. NO PARALLEL SEAT.** `CD-D-181` stands.'
+  - '**NOTHING UNDER `tools/` OR `governance/coordination/` WILL MOVE WHILE THE SEAT IS OUT.**'
+  - '**`Q11` NOT CLOSED. `F10`/`F12`/`F13`/`F14` NOT FIXED. `CD-AC-002`/`CD-AC-005` NOT MOVED. THE LANE NOT TOUCHED. NEITHER WORKTREE REMOVED.**'
+
+next:
+  on_return: '**BANK THE VERDICT VERBATIM AND COMMIT IT BEFORE READING IT**, beside its six predecessors, with `sha256sum` / `cmp` / `numstat` integrity (`CD-RULE-009`). Then reconcile by measurement.'
+  the_stop: '*** **THE PROJECT LEAD STOPS DELIBERATELY AT THE TENTH GATE VERDICT. BANKED IS NOT RECONCILED AND NEITHER IS ACCEPTED — ACCEPTANCE IS THE PRODUCT AUTHORITY''S ALONE.** ***'

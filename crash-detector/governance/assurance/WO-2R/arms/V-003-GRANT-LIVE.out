@@ -1,0 +1,37 @@
+CD-RT-003-GRANT-MATRIX-LIVE
+    subject: /tmp/cd-asr-wo2r/run/GRANT-VIOL
+    scanned: the LIVE catalogue of a store built from 8 subject-tree migrations; CD-GM-001..007 plus the whole-matrix comparison
+    assertions: 138
+    note: authentic target: PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+    note: authentic target: cd_asr_super@127.0.0.1:45643/cd_asr_v003 (credential by env-var name only)
+    note: 8 migrations applied from the subject tree, in filename order: 0001_schemas_roles_and_revoke_by_default.sql, 0002_raw_source_registry_and_observations.sql, 0003_witness_observations.sql, 0004_dial_history.sql, 0005_publication.sql, 0006_private_and_alert.sql, 0007_grant_matrix.sql, 0008_engine_reads_witness_panel.sql
+
+VIOLATION  <live catalogue>
+    rule: CD-GM-001 route=schema-privilege USAGE
+    what: the LIVE catalogue contradicts CD-GM-001. Observed: has_schema_privilege('cd_engine','witness','USAGE') -> True
+VIOLATION  <live catalogue>
+    rule: CD-GM-001 route=table-privilege SELECT ON witness.observation
+    what: the LIVE catalogue contradicts CD-GM-001. Observed: has_table_privilege -> True
+VIOLATION  <live catalogue>
+    rule: CD-GM-001 route=table-privilege SELECT ON witness.reading
+    what: the LIVE catalogue contradicts CD-GM-001. Observed: has_table_privilege -> True
+VIOLATION  <live catalogue>
+    rule: CD-GM-001 route=column-privilege
+    what: the LIVE catalogue contradicts CD-GM-001. Observed: information_schema.column_privileges -> [('observation', 'outcome', 'SELECT'), ('reading', 'admitted_utc', 'SELECT'), ('observation', 'requested_utc', 'SELECT'), ('reading', 'payload', 'SELECT'), ('reading', 'reading_id', 'SELECT'), ('observation', 'adapter_id', 'SELECT'), ('observation', 'source_as_of_utc', 'SELECT'), ('reading', 'source_id', 'SELECT'), ('observation', 'error_class', 'SELECT'), ('observation', 'observation_id', 'SELECT'), ('observation', 'collector_run_id', 'SELECT'), ('observation', 'observed_utc', 'SELECT'), ('observation', 'schema_error_class', 'SELECT'), ('reading', 'source_as_of_utc', 'SELECT'), ('observation', 'attempt_number', 'SELECT'), ('observation', 'source_id', 'SELECT'), ('observation', 'http_status', 'SELECT'), ('observation', 'instance_path', 'SELECT'), ('reading', 'observation_id', 'SELECT')]
+VIOLATION  <live catalogue>
+    rule: CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.observation LIMIT 1`
+    what: the LIVE catalogue contradicts CD-GM-001. Observed: THE STATEMENT SUCCEEDED — cd_engine reached schema witness in a real session, whatever the catalogue tables say
+VIOLATION  <live catalogue>
+    rule: CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.reading LIMIT 1`
+    what: the LIVE catalogue contradicts CD-GM-001. Observed: THE STATEMENT SUCCEEDED — cd_engine reached schema witness in a real session, whatever the catalogue tables say
+VIOLATION  <live catalogue>
+    rule: CD-GM-002 route=schema witness is cd_witness's alone
+    what: the LIVE catalogue contradicts CD-GM-002. Observed: information_schema.table_privileges -> [('cd_engine', 'observation', 'SELECT'), ('cd_engine', 'reading', 'SELECT')]
+VIOLATION  <live catalogue>
+    rule: WHOLE-MATRIX route=schema USAGE, live vs db/grant_matrix.json
+    what: the LIVE catalogue contradicts WHOLE-MATRIX. Observed: live={'cd_collector': ['raw'], 'cd_engine': ['alert', 'dial', 'publication', 'raw', 'witness'], 'cd_private': ['alert', 'dial', 'private', 'publication'], 'cd_public': ['publication'], 'cd_review': ['publication'], 'cd_witness': ['alert', 'publication', 'witness']} expected={'cd_collector': ['raw'], 'cd_engine': ['alert', 'dial', 'publication', 'raw'], 'cd_private': ['alert', 'dial', 'private', 'publication'], 'cd_public': ['publication'], 'cd_review': ['publication'], 'cd_witness': ['alert', 'publication', 'witness']}
+VIOLATION  <live catalogue>
+    rule: WHOLE-MATRIX route=table privileges, live vs db/grant_matrix.json
+    what: the LIVE catalogue contradicts WHOLE-MATRIX. Observed: live={'cd_collector': {'raw.observation': ['INSERT'], 'raw.reading': ['INSERT'], 'raw.source_registry': ['INSERT', 'SELECT']}, 'cd_engine': {'alert.event': ['INSERT'], 'dial.history': ['INSERT'], 'publication.heartbeat': ['INSERT'], 'publication.private_envelope': ['INSERT'], 'publication.public_envelope': ['INSERT'], 'raw.dial_contributing_input': ['SELECT'], 'raw.dial_required_input': ['SELECT'], 'raw.observation': ['SELECT'], 'raw.reading': ['SELECT'], 'raw.source_registry': ['SELECT'], 'witness.observation': ['SELECT'], 'witness.reading': ['SELECT']}, 'cd_private': {'alert.event': ['SELECT'], 'dial.history': ['SELECT'], 'publication.private_envelope': ['SELECT']}, 'cd_public': {'publication.public_envelope': ['SELECT'], 'publication.witness_panel': ['SELECT']}, 'cd_review': {'publication.public_envelope': ['SELECT'], 'publication.review': ['INSERT']}, 'cd_witness': {'alert.event': ['INSERT'], 'publication.public_envelope': ['SELECT'], 'publication.witness_panel': ['INSERT'], 'witness.observation': ['INSERT', 'SELECT'], 'witness.reading': ['INSERT', 'SELECT']}}
+
+CD-RT-003-GRANT-MATRIX-LIVE: FAIL — 9 violation(s)

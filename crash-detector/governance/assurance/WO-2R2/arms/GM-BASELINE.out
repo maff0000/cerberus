@@ -1,0 +1,8 @@
+CD-RT-003-GRANT-MATRIX-LIVE
+    subject: /tmp/cd-asr3/gm-BASELINE
+    scanned: the LIVE catalogue of a store built from 7 subject-tree migrations; CD-GM-001..007 plus the whole-matrix comparison
+    assertions: 138
+    note: authentic target: PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+    note: authentic target: cd_asr3_super@127.0.0.1:32793/cd_asr3_base (credential by env-var name only)
+    note: 7 migrations applied from the subject tree, in filename order: 0001_schemas_roles_and_revoke_by_default.sql, 0002_raw_source_registry_and_observations.sql, 0003_witness_observations.sql, 0004_dial_history.sql, 0005_publication.sql, 0006_private_and_alert.sql, 0007_grant_matrix.sql
+CD-RT-003-GRANT-MATRIX-LIVE: PASS — 138 assertions, 0 violations

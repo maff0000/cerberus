@@ -1,0 +1,22 @@
+LABEL: V-012-LOCK
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-012/CD-RT-012-LOCKFILE-DENYLIST.patch
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_lockfile_denylist.py --root .
+EXIT: 1
+--- stdout ---
+CD-RT-012-LOCKFILE-DENYLIST
+    subject: /tmp/cd-asr-wo2r/run/V-012-LOCK
+    scanned: 3 dependency manifests: pyproject.toml, requirements.txt, requirements.lock
+    assertions: 17
+    note: the denylist carries 61 named distributions and is a FLOOR, not an oracle. The token rule is the part that generalises: a broker SDK nobody has heard of is still named after what it does.
+    note: normalisation is PEP 503, so Alpaca_Trade_API and alpaca-trade-api are one name: alpaca-trade-api
+
+VIOLATION  pyproject.toml:36
+    rule: broker SDK in a dependency manifest
+    what: `ib-insync` is a known broker, exchange or order-routing SDK. Its presence in a dependency manifest is an execution pathway one import away. Declared in [project].dependencies. CD-AC-012: no execution pathway exists. A dependency is permission to import, and permission granted is the review already done.
+VIOLATION  requirements.txt:20
+    rule: broker SDK in a dependency manifest
+    what: `ib-insync` is a known broker, exchange or order-routing SDK. Its presence in a dependency manifest is an execution pathway one import away. Declared in requirements.txt. CD-AC-012: no execution pathway exists. A dependency is permission to import, and permission granted is the review already done.
+
+CD-RT-012-LOCKFILE-DENYLIST: FAIL — 2 violation(s)
+--- stderr ---

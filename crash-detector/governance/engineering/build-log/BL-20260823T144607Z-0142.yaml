@@ -1,0 +1,126 @@
+# ================================================================================================== #
+# BL-20260823T144607Z-0142 — PROJECT LEAD CORRECTION BOUNDARY. **THE SECOND ONE TODAY, AND IT
+# CORRECTS AN ENTRY I BANKED FIVE MINUTES AGO.**
+#
+# **`CD-PL-F153`: `check_build_log_pointer_atomic.py`'s `POINTER_STALE` CLASS DISAGREES WITH `pbg`'s
+# OWN CURRENCY RULE, AND IT NOW FALSE-POSITIVES ON EVERY CORRECT COMMIT.**
+#
+# **THE COMMIT THAT REPAIRED `CD-PL-F150` — `15c7af2`, WHICH ADDED `BL-...-0141` AND POINTED THE
+# POINTER AT `BL-...-0141`, THE DISCIPLINE APPLIED PERFECTLY — IS FLAGGED `POINTER_STALE` BY THE
+# INSTRUMENT AND CALLED `ACTIVE_WORK_CURRENT` BY `pbg`. BOTH MEASURED AT THE SAME SHA, ONE MINUTE
+# APART.**
+#
+# **AND THAT MEANS THE SENTENCE I BANKED AT `BL-...-0141` — "THE INSTRUMENT CAUGHT THE PROJECT
+# LEAD'S OWN MERGE COMMIT" — IS TRUE BUT OVER-CLAIMED. IT FLAGGED THE BREAK *AND* IT FLAGS THE FIX,
+# IDENTICALLY. IT DID NOT DISCRIMINATE. WHAT DISCRIMINATED WAS `pbg boot`: RED, THEN GREEN.**
+#
+# **THIS IS THE THIRD TIME IN ONE SESSION THAT THIS SEAT HAS ASSERTED A DIAGNOSTIC PROPERTY WITHOUT
+# THE COUNTERFACTUAL ARM. `CD-PL-F149`, THEN `CD-PL-F150`'s FRAMING, NOW THIS. THE PATTERN IS THE
+# FINDING.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T144607Z-0142
+record_type: PROJECT_LEAD_CORRECTION
+utc: '2026-08-23T14:46:07Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1272349, wrapper PID 1272348. The same session that wrote `BL-...-0141`, correcting it five minutes later.'
+phase: GATE
+branch: main
+base_sha: 15c7af2a25c98973f7838ce7f9ea45de1e48158f   # the entry being corrected. RESOLVED with `git rev-parse`, confirmed a commit object with `git cat-file -t` (CD-PL-F36).
+corrects: BL-20260823T144044Z-0141
+correction_form: '**SUPERSESSION, NOT EDIT** (`PBG-CONT-003`, non-waivable). `BL-...-0141` stays byte-for-byte as banked, over-claim and all.'
+
+findings_this_seat_raises:
+- id: CD-PL-F153
+  severity: MEDIUM
+  against: '`tools/coordination/check_build_log_pointer_atomic.py` (`CD-ENG-COORD-01`, ITEM 2e) AND this seat''s reading of it at `BL-...-0141`.'
+  the_measurement_ONE_SHA_TWO_AUTHORITIES_ONE_MINUTE_APART:
+    the_commit: '`15c7af2` — it ADDED `BL-20260823T144044Z-0141` and set `last_build_log_entry: BL-20260823T144044Z-0141`. **THE DISCIPLINE APPLIED EXACTLY AS `CD-PL-F132` REQUIRES.**'
+    the_instrument_says: '`check_build_log_pointer_atomic.py --range 15c7af2` -> **`VIOLATION 15c7af2a25c9 author=PROJECT_LEAD_SEAT_01 classes=POINTER_STALE`**, printing `added: BL-...-0141 / pointer: BL-...-0141` **IN THE SAME BLOCK AS THE VIOLATION IT RAISES.**'
+    pbg_says: '`continuity.active_work_currency()` at the same SHA -> **`(''ACTIVE_WORK_CURRENT'', ''pointer matches the newest entry BL-20260823T144044Z-0141'')`**, and `pbg boot` in a pristine clone -> **`Verdict GREEN`, `rc=0`, `CONTINUITY_MATCH/RESUME_GREEN`.**'
+  the_cause_DERIVED_FROM_pbg_s_OWN_SOURCE_AND_NOT_GUESSED: >
+    **`pbg.continuity.newest_entry` ORDERS BY GIT ANCESTRY POSITION. THE INSTRUMENT'S `POINTER_STALE`
+    ORDERS BY THE FOUR-DIGIT ID NUMBER.** After the merge, `main`'s tree contains
+    `BL-...-0300` (the Engineer's, from block `0300`-`0399`) which is the HIGHEST NUMBER but NOT the
+    newest by ancestry. **SO EVERY FUTURE COMMIT BY THE ACCOUNTABLE SEAT — WHOSE BLOCK IS
+    `0100`-`0199` — WILL BE FLAGGED `POINTER_STALE` BY THIS INSTRUMENT FOREVER, WHILE BEING CORRECT.**
+  the_instrument_DECLARED_this_and_that_is_to_its_credit_and_is_NOT_a_defence: >
+    Its `L4` says: *"DOES NOT DECIDE: staleness by any ordering other than the four-digit sequence
+    number. If two lanes interleave one sequence — WHICH THIS PROJECT'S HISTORY DOES — 'highest
+    number in this tree' is a per-branch notion and the instrument says so rather than claiming a
+    global order."* **THE LIMIT IS DECLARED, HONESTLY, IN ADVANCE.** *** **AND A DECLARED LIMIT DOES
+    NOT STOP A FALSE POSITIVE FROM BEING ACTED ON. `CD-RULE-004` LETS AN INSTRUMENT DECLARE ITS CLASS
+    INSTEAD OF CLOSING IT; IT DOES NOT LICENSE A CLASS THAT CONTRADICTS THE AUTHORITY IT GUARDS.** ***
+  what_it_does_to_the_claim_I_BANKED_AT_BL_0141:
+    what_I_wrote: '*"THE INSTRUMENT BUILT AT THIS INCREMENT CAUGHT THE PROJECT LEAD''S OWN MERGE COMMIT `6c58725` AS `POINTER_STALE` FOURTEEN MINUTES AFTER IT LANDED — A LIVE, FRESH ERROR BY THE ACCOUNTABLE SEAT THAT NO HUMAN AND NO SEAT HAD NOTICED."*'
+    what_is_TRUE: '**IT DID FLAG `6c58725`, AND `6c58725` WAS GENUINELY BROKEN** — `pbg boot` returned `RED`/`RESUME_BLOCKED` there, independently. **THAT MUCH STANDS.**'
+    what_is_OVER_CLAIMED_AND_IS_THE_CORRECTION: >
+      *** **THE INSTRUMENT FLAGS THE BREAK AND THE FIX IDENTICALLY, BOTH AS `POINTER_STALE`, WITH NO
+      DIFFERENCE A READER COULD USE. IT DID NOT DISCRIMINATE. A SEAT HOLDING ONLY THIS INSTRUMENT'S
+      OUTPUT COULD NOT HAVE TOLD MY DEFECT FROM MY REPAIR.** *** **WHAT ACTUALLY DISCRIMINATED WAS
+      `pbg boot` IN A PRISTINE CLONE — `RED, rc=2` AT `6c58725` AND `GREEN, rc=0` AT `15c7af2`.**
+      **I RAN THAT COUNTERFACTUAL ARM ONE MINUTE AFTER BANKING THE CLAIM, AND IT REFUTED THE STRONG
+      READING OF MY OWN SENTENCE.**
+  and_the_pattern_which_is_worse_than_any_of_the_three_instances: >
+    *** **`CD-PL-F149` (a flagged row asserted as a cause), `CD-PL-F150`'s FRAMING (a flag asserted as
+    a catch), AND NOW THIS — THREE TIMES IN ONE SESSION I HAVE READ TWO FACTS IN ONE OUTPUT AND
+    ASSERTED A RELATION BETWEEN THEM WITHOUT RUNNING THE ARM THAT WOULD SEPARATE THEM.** ***
+    `CD-D-079` requires the counterfactual arm for every claim that something is REFUSED. **NOTHING
+    ON THIS PROJECT REQUIRES IT FOR A CLAIM THAT SOMETHING CAUSES, CATCHES, OR EXPLAINS — AND THAT IS
+    THE GAP ALL THREE FELL THROUGH.** **IT IS PROPOSED AS `Q17` AND IS NOT ADOPTED BY THIS SEAT,
+    BECAUSE A SEAT ADOPTING A RULE THAT WOULD HAVE EXCUSED ITS OWN THREE FAILURES IS NOT THE RIGHT
+    ORDER OF EVENTS.**
+  what_is_NOT_affected_and_this_is_stated_so_the_correction_is_not_over_read: >
+    **`POINTER_NOT_MOVED` AND `POINTER_DANGLING` ARE UNTOUCHED BY THIS FINDING** — they do not depend
+    on any ordering. `6c58725`'s real defect and the Engineer's `F01` violation `8d4f6e7` both carry
+    `POINTER_NOT_MOVED`, which is sound. **THE BACKWARD RUN'S HEADLINE STANDS: an instrument that did
+    not know the record's four positions reproduced all four.**
+  what_I_did_NOT_verify_about_my_OWN_correction: >
+    **I DID NOT ESTABLISH WHETHER THE SEVEN HISTORICAL `POINTER_STALE` HITS ARE SOUND.** Before this
+    increment `main` carried ONE unbroken id sequence, so id-order and ancestry-order plausibly
+    coincided — **PLAUSIBLY IS NOT MEASURED, AND I AM NOT WRITING IT DOWN AS MEASURED.** Four of the
+    seven (`a31c799`, `cd79952`, `bdf85da`, `c6ee53e`) are independently corroborated as genuinely
+    broken by the `RESUME_BLOCKED` record. **`61e9558` AND `f401d48` ARE NOT CORROBORATED BY ANYTHING
+    AND MY `BL-...-0141` SENTENCE "FOUND TWO MORE" RESTS ON A CLASS I HAVE JUST SHOWN CAN BE WRONG.**
+
+the_correction_in_one_line: >
+  **THE INCREMENT-12 POINTER INSTRUMENT IS SOUND ON `POINTER_NOT_MOVED` AND `POINTER_DANGLING`, AND
+  ITS `POINTER_STALE` CLASS MUST BE RE-BASED ON `pbg.continuity.newest_entry` BEFORE ANY SEAT ACTS ON
+  IT.** **UNTIL THEN, `pbg boot` IN A PRISTINE CLONE IS THE AUTHORITY ON CURRENCY AND THIS INSTRUMENT
+  IS NOT.** **NOTHING IS FIXED AT THIS BOUNDARY — THE FIX IS AN ENGINEER'S AND THE GATE IS NEXT.**
+
+what_was_NOT_verified_at_this_boundary:
+- '**I DID NOT RE-RUN THE OTHER EIGHT INSTRUMENTS AGAINST `pbg`''s BEHAVIOUR.** `CD-PL-F153` was found in ONE instrument because I happened to run it against a tree I had also booted. **THE SAME CLASS OF MISALIGNMENT COULD EXIST IN THE OTHER EIGHT AND NOTHING HERE WOULD SHOW IT.** That is now a named target for the ninth seat.'
+- '**I DID NOT BOOT `61e9558` OR `f401d48` TO TEST THE TWO UNCORROBORATED `POINTER_STALE` HITS.** Two clones and two boots would settle it. **I AM AT A GATE AND THE NEXT ACTOR IS AN AUDITOR; IT IS ITS WORK AND NOT MINE TO PRE-EMPT.**'
+- '**NOTHING ABOUT WO-2, THE LANE, OR ANY GRADE WAS RE-MEASURED HERE.** `wo-2r3` untouched at `be0b355`.'
+
+open_product_authority_questions_THIS_SEAT_ANSWERS_NONE:
+  Q7_to_Q16: '**ALL CARRIED, UNCHANGED.** `Q11` remains the load-bearing one: nine instruments, zero carriers.'
+  Q17: >
+    **NEW, AND PROPOSED RATHER THAN ADOPTED.** `CD-D-079` requires the counterfactual arm for every
+    claim that something is REFUSED. **SHOULD IT EXTEND TO EVERY CLAIM THAT SOMETHING CAUSES,
+    CATCHES, OR EXPLAINS?** Three findings in one session (`CD-PL-F149`, `CD-PL-F150`'s framing,
+    `CD-PL-F153`) are the same defect: two facts in one output, a relation asserted between them, and
+    the separating arm never run. **THIS SEAT DOES NOT ADOPT IT — a seat writing the rule that would
+    have excused its own three failures is the wrong order of events, and this project has ruled
+    against exactly that shape before ("a rule that binds seats binds their Product Owner").**
+
+decision_refs:
+- PBG-CONT-003        # corrections supersede, never edit — the form of this entry
+- CD-D-079            # both arms or no claim — and Q17 is its proposed extension
+- CD-RULE-004         # a declared limit is not a licence for a class that contradicts its authority
+- CD-RULE-009         # every count carries the command that produced it
+- CD-D-178            # the merge commit moves the pointer — unaffected by this finding
+- CD-D-180            # banked, not accepted; no grade moves
+- PBG-AUTH-003        # this seat does not grade
+
+next_safe_action: >
+  **UNCHANGED: DISPATCH THE NINTH FRESH ASSURANCE SEAT** (`PO-DECISIONS-0021` ruling 6), with
+  `CD-D-129`'s three clauses VERBATIM and **`CD-PL-F153` DECLARED UP FRONT AS AN INSTRUMENT THAT
+  EXITS NON-ZERO BY DECLARED STATE AND IS KNOWN TO FALSE-POSITIVE** — clause (i) exists precisely so
+  an auditor is told before it discovers. **AND WITH THE TARGET THIS FINDING CREATES: DO THE OTHER
+  EIGHT INSTRUMENTS AGREE WITH THE AUTHORITY THEY CLAIM TO GUARD?**
+  **DO NOT** repair `check_build_log_pointer_atomic.py` here — an instrument change at a gate is
+  exactly what `GATE` forbids, and the Project Lead writes neither the fix nor the assurance
+  (`PBG-AUTH-006`).
+expected_next_actor: 'A FRESH Assurance seat (the ninth), then the Product Owner.'

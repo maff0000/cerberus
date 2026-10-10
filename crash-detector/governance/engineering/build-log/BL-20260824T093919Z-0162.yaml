@@ -1,0 +1,228 @@
+# ================================================================================================== #
+# BL-20260824T093919Z-0162 — PROJECT LEAD BOUNDARY. **16A-FIX IS ASSURED `AMBER`. THE CONSTITUTIONAL
+# BREACH IS GENUINELY CLOSED. THE PROJECT STOPS HERE AND THE NEXT ACTOR IS MATT.**
+#
+# **30/30 PROBE ROWS REPRODUCED BY THIS SEAT, INCLUDING THE ARM NOBODY HAD RUN: `VALUE` + `calm` IS
+# STILL ADMITTED.** So `calm` was removed from the two missing-data branches and from nowhere else.
+# **THE FIX IS TARGETED, NOT A BLANKET REFUSAL, AND THAT DISTINCTION IS THE WHOLE ANTI-VACUITY
+# QUESTION.**
+#
+# *** **AND THE AUDITOR'S BEST FINDING IS ONE NOBODY ASKED FOR AND THIS SEAT REPRODUCED EXACTLY:
+# `CD-RT-002-SCHEMA-CLOSED` — A **REGISTER-WIRED** INSTRUMENT, ONE THE GATE ACTUALLY READS — PASSES
+# IDENTICALLY (266 assertions, 0 violations, exit 0) ON A TREE WHERE THE CONSTITUTIONAL FIX HAS BEEN
+# COMPLETELY REVERTED. THE FIX IS GUARDED ONLY BY `tests/`. A FUTURE INCREMENT COULD UNDO IT AND THE
+# REGISTER WOULD SHOW NO CHANGE AT ALL.** ***
+#
+# **AND `CD-AC-002`'s CORRECTED GUARD STILL ADMITS THE OBVIOUS BLEND SHAPES: this seat planted
+# `def blend_all(*readings, policy)` and `def level_from_pair(pair, *, policy)` — 52 passed, ZERO
+# FAILURES.** Better than it was, and still not closed.
+#
+# **FOUR PRODUCT AUTHORITY QUESTIONS ARE NOW OPEN. `Q33` IS NEW AND IT IS THE GATE.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T093919Z-0162
+timestamp_utc: '2026-08-24T09:39:19Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T09:39:19Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T092106Z-0161
+base_sha: cca1b93f42f4f0e581168b778e4e2ffbe4e0ae3c
+current_sha: cca1b93f42f4f0e581168b778e4e2ffbe4e0ae3c
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-04, a fresh seat that is none of the three already involved, returned AMBER over
+  16A-FIX at b9283b9. The PID §3.2 breach is genuinely closed and this seat reproduced the whole
+  30-row probe including the VALUE+calm anti-vacuity arm nobody had run. Seven findings, none a
+  regression or bypass. The two this seat re-measured are confirmed: a register-wired instrument
+  clears a fully reverted fix, and the corrected CD-AC-002 guard still admits varargs and
+  tuple-packed blend shapes. The auditor's declared next gate is Product Authority disposition, and
+  this seat stops there. Q33 is raised. NO SOURCE IS REGISTERED. The project is safe to leave.
+
+the_verdict:
+  seat: 'CD-ASR-WO3-04 — **FRESH, AND NONE OF THE THREE ALREADY INVOLVED**: not CD-ENG-WO3-03 (built the defect), not CD-ENG-WO3-04 (fixed it), not CD-ASR-WO3-03 (found it). `PBG-SOD-001` and `PBG-SOD-004`, both non-waivable, honoured a SIXTH time on WO-3.'
+  target: 'b9283b99f66285e8be575eb56e2d30ed52735be8 (code tip 3a08646)'
+  verdict: '**AMBER.** Confidence HIGH on the core claim.'
+  artefact: 'BL-20260824T093704Z-A304.yaml, committed by the auditor at 3464956 on branch asr-wo3-04-verdict, and **re-validated by the auditor FROM THE COMMITTED BYTES rather than from its draft** — which is the discipline `CD-ENG-WO3-04`''s fabricated-SHA self-report (`F06`) made obviously necessary.'
+  boot_as_received: '**RED**, inherited from the frozen base. Diagnosed, not repaired. **Fourth consecutive seat to declare this correctly rather than net it off.**'
+
+the_reconciliation:
+  the_probe_reproduced_whole: |
+    **RUN BY THIS SEAT AGAINST THE LIVE GATE. 30 ROWS: 2 surfaces x 3 states x 5 values.**
+    STATE     SURF     calm      elevated  acute     banana    absent
+    UNKNOWN   PUBLIC   REFUSED   ADMITTED  ADMITTED  REFUSED   REFUSED
+    UNKNOWN   PRIVATE  REFUSED   ADMITTED  ADMITTED  REFUSED   REFUSED
+    DEGRADED  PUBLIC   REFUSED   ADMITTED  ADMITTED  REFUSED   REFUSED
+    DEGRADED  PRIVATE  REFUSED   ADMITTED  ADMITTED  REFUSED   REFUSED
+    VALUE     PUBLIC   ADMITTED  ADMITTED  ADMITTED  REFUSED   REFUSED
+    VALUE     PRIVATE  ADMITTED  ADMITTED  ADMITTED  REFUSED   REFUSED
+  the_row_that_had_never_been_run: >
+    *** **`VALUE` + `calm` -> ADMITTED, AND NOBODY HAD CHECKED IT UNTIL THIS AUDITOR.** *** Neither
+    the fix seat's probe nor this seat's own reconciliation at `0161` covered the `VALUE` branch.
+    **IT IS THE ARM THAT PROVES THE FIX IS A NARROWING AND NOT A BLANKET REFUSAL: `calm` was removed
+    from the two missing-data branches and FROM NOWHERE ELSE.** A genuinely calm reading backed by a
+    real number still publishes as calm, which is the entire reason `calm` exists.
+  what_the_auditor_did_better_than_either_prior_seat: >
+    **IT BUILT ITS OWN FIXTURE FROM THE SCHEMA RATHER THAN USING THE PROJECT'S FAKES — because the
+    fakes now route through `detail_level_for` and therefore CANNOT EMIT `calm` AT ALL.** A probe
+    built on those fakes could not have tested the thing it was probing for. **AND IT PAIRED EVERY
+    `REFUSED` WITH AN `ADMITTED` FROM THE SAME BUILDER DIFFERING ONLY IN THAT ONE STRING**, which is
+    what makes a refusal attributable to the value rather than to a malformed fixture — the exact
+    trap this seat fell into at `0161` and disclosed to it.
+  independent_reproduction_of_the_original_RED: 'The auditor ran the identical probe at `53f639a` and **exactly the four `calm` rows flip and nothing else** — so `CD-ASR-WO3-03`''s `RED` is now reproduced by a second independent seat, and the fix is attributable to the change rather than to the probe.'
+  scope_sweep: |
+    **THIS SEAT RE-RAN IT MECHANICALLY:**
+      commits in 53f639a..b9283b9: 7
+      touched-and-reverted (in history, absent from the net diff): (NONE)
+      union of per-commit paths == net diff: True
+    **THIS SEAT WAS FULLY CANDID — unlike 16A, where exactly one such path existed and the seat
+    disclosed it itself (`CD-PL-F173`).**
+
+the_finding_that_matters_most:
+  id: 'CD-ASR-WO3-04 F02 — **AND IT IS WORTH MORE THAN THE VERDICT.**'
+  claim: 'The narrowing is guarded ONLY by `tests/`. No register-wired instrument sees it.'
+  reproduced_by_this_seat: |
+    Both `$ref`s reverted on an extracted copy — the constitutional fix COMPLETELY undone:
+      tools/register/check_schema_closed.py --root .   (fix intact)
+        -> CD-RT-002-SCHEMA-CLOSED: PASS — 266 assertions, 0 violations, exit 0
+      tools/register/check_schema_closed.py --root .   (fix FULLY REVERTED)
+        -> CD-RT-002-SCHEMA-CLOSED: PASS — 266 assertions, 0 violations, exit 0
+    **BYTE-FOR-BYTE THE SAME VERDICT ON A TREE WHERE `calm` IS ADMISSIBLE ON AN `UNKNOWN` DIAL AGAIN.**
+  why_this_is_the_important_one: >
+    *** **THE REGISTER IS THE INSTRUMENT THE GATE READS. A CONSTITUTIONAL GUARANTEE THAT NO
+    REGISTER-WIRED CHECK CAN SEE IS A GUARANTEE THAT WILL NOT SURVIVE A FUTURE REFACTOR, BECAUSE
+    NOTHING THE GATE CONSULTS WOULD REPORT ITS LOSS.** *** The test suite does catch the revert (9
+    failed / 43 passed) — **so the property is held, and it is held in the layer that does not feed
+    the gate.** This is the same shape as increment 12's headline, *"the controls exist and nothing
+    runs them"*, one hop sideways: **the control exists, something runs it, and the thing that
+    decides the gate is not that something.**
+  disposition: 'NOT closed here. It belongs to a bounded Engineer dispatch alongside F3, F5 and F6 — **and it is NOT the gate**, because it makes nothing worse than it was and the auditor is explicit that the lane is safe.'
+
+Q33:
+  question: >
+    *** **`schema_version` `1.1.0` NOW NAMES TWO DIFFERENT CONTRACTS, AND THE SCHEMA'S OWN PROMISE TO
+    ITS CONSUMER IS THEREFORE FALSE. THE DECISION NOT TO BUMP WAS PARTLY A SCOPE ARTEFACT AND NOT
+    WHOLLY A JUDGEMENT, WHICH IS WHY IT COMES TO THE PRODUCT AUTHORITY.** ***
+  the_schemas_own_words: '*"Pinned by const. A consumer that reads this document knows exactly which allowlist it was validated against."* **THAT SENTENCE IS NOW FALSE**: `1.1.0` identifies both the 16A contract (which admitted `calm` on `UNKNOWN`) and the 16A-FIX contract (which refuses it).'
+  where_this_seats_reasoning_held_and_where_it_did_not: >
+    At `0161` this seat argued (a) the written rule concerns **widening** and this is a **narrowing**,
+    and (b) `1.1.0` has never been emitted because `publish_cycle` has zero callers. **THE AUDITOR
+    UPHELD (a) ON THE LETTER OF THE RULE AND WEAKENED (b), AND IT IS RIGHT.** Consumers of the
+    STRING do exist and this seat re-measured them: `ENVELOPE_SCHEMA_VERSION = "1.1.0"` in
+    `envelope_contract.py:103`; `test_envelope_contracts.py:321` asserts the schema `const` equals
+    that constant; `publication_fakes.py` stamps it; migration `0005` carries a column and a `CHECK`;
+    **and the contract `$id` itself embeds it —
+    `urn:crash-detector:contracts:private-envelope:1.1.0` — SO ONE URN NOW IDENTIFIES TWO DIFFERENT
+    DOCUMENTS.** **NONE OF THEM BREAKS. THEY CONSUME THE STRING, NOT THE SEMANTICS. THE HONEST
+    STATEMENT IS THE AUDITOR'S: THE VERSION STRING HAS SILENTLY LOST ITS DISCRIMINATING POWER.**
+  why_it_is_the_gate_and_not_a_backlog_item: >
+    **BECAUSE THE FIX SEAT COULD NOT HAVE DECIDED IT.** `ENVELOPE_SCHEMA_VERSION` and its assertion
+    were **outside its writable scope** — a scope this seat drew — so *"the decision not to bump"* is
+    **partly an artefact of the dispatch and not wholly a considered judgement.** The auditor said so
+    and it is exactly right. **A DECISION NOBODY WAS ALLOWED TO MAKE IS NOT A DECISION, AND RECORDING
+    IT AS ONE WOULD BE THIS PROJECT'S OLDEST FAILURE MODE.**
+  status: 'OPEN. Next actor PRODUCT_AUTHORITY. Silent execution PROHIBITED. **DOES NOT BLOCK 16B — it blocks calling 16A-FIX finished.**'
+
+the_other_findings:
+  F03: 'The parent `dial_reading.detail_level` is still the WIDE type on both surfaces; the narrowing holds today only as an emergent `oneOf` intersection. **A correctness-by-emergence, not by declaration.** Bounded Engineer work.'
+  F04: '**NO SQL BACKSTOP.** `grep detail_level db/` returns nothing. `CD-AC-001`''s sibling guarantee is held TWICE (schema and store); PID §3.2 is held ONCE. Bounded Engineer work.'
+  F05_reproduced_by_this_seat: |
+    **THE CORRECTED `CD-AC-002` GUARD STILL ADMITS THE OBVIOUS BLEND SHAPES.** Planted on a copy:
+      def blend_all(*readings, policy):        return DETAIL_ACUTE
+      def level_from_pair(pair, *, policy):    a, b = pair; return DETAIL_ACUTE
+      pytest tests/test_detail_level.py  ->  52 passed, ZERO FAILURES
+    The auditor measured 8 of 14 planted shapes evading it, including `*readings` — which slips the
+    guard's **own blacklist word** because `args.vararg` is never summed — and positional-only
+    parameters. **IT IS STRICTLY BETTER THAN IT WAS (it now catches the two-named-readings case that
+    let a blend function through) AND IT IS NOT CLOSED.** It also reports ONE OVER-TIGHTNESS:
+    `def drift(reading, previous_reading)` is flagged, and two readings of the SAME dial across time
+    is not the blend shape `CD-AC-002` forbids. **A guard that is both too loose and too tight is a
+    guard nobody has specified.**
+  F06: 'The portability check still misses block-form `command:` values, unoverridden anchor keys, and **anything outside `compose.yaml` entirely** — the auditor planted into `Dockerfile.engine` and an entrypoint and both PASSED. **The control''s name says "deploy portability"; its reach is one file.** Same class as everything else found today.'
+  F07: '**THE ANCHOR QUESTION, ANSWERED.** The auditor rules: yes, refuse it — but with separate wording saying *"shadowed today, live the moment an override is deleted"*, **because the status quo is strictly worse than either alternative: a PASS on a shadowed dell path is indistinguishable from a control that failed to fire.** This seat adopts that reasoning; it is a better answer than the question deserved.'
+
+findings_against_this_seats_dispatch:
+  i: 'The §3 ordering was CORRECT — the auditor looked for a better one and found none. **`CD-PL-F176`''s remedy is confirmed effective by the seat it was written for.**'
+  ii:
+    claim: 'The dispatch asserts *"`CD-AC-002` still AMBER-not-closed, `CD-AC-005` still RED"*. **THE REGISTER DISTINGUISHES NEITHER — it reports all 18 as `UNDECIDABLE`.** The auditor can verify not-closed; it cannot verify AMBER-versus-RED.'
+    disposition: >
+      **UPHELD, AND IT IS A SHARPER POINT THAN IT LOOKS.** Those grades live in the ASSURANCE HISTORY,
+      not in the instrument — so a dispatch that asks a seat to "verify the grades still hold" is
+      asking for something the register cannot answer. **THIS SEAT HAS BEEN CARRYING "`CD-AC-002`
+      AMBER · `CD-AC-005` RED" IN EVERY `standing` BLOCK ALL DAY AS THOUGH IT WERE A MEASURED FACT.
+      IT IS A CARRIED FACT.** Recorded as `CD-PL-F179`. The grades are not wrong; **the record has
+      been implying an instrument behind them that does not exist.**
+  iii:
+    claim: '**THE PRESCRIBED COMMIT-BY-COMMIT SWEEP CANNOT SEE A PATH TOUCHED AND REVERTED WITHIN A SINGLE COMMIT.**'
+    disposition: >
+      **UPHELD.** The method this seat used at `0159` and again here compares the union of per-commit
+      name-lists against the net diff — it catches a cross-commit write-then-revert (`CD-PL-F173`)
+      and is **structurally blind** to a file created and removed inside one commit's working
+      session, which git records as no change at all. **SO `CD-PL-F173`'s REMEDY IS NARROWER THAN THE
+      RECORD IMPLIED, AND THE SEAT THAT DISCLOSED ITS BREACH REMAINS THE ONLY REASON THAT ONE WAS
+      EVER KNOWN.** Recorded as part of `CD-PL-F179`.
+  iv: 'The dispatch describes *"a superseded `publish.py` limit"*; the auditor measured `publish.py`''s whole diff as **docstring-only, AST identical with docstrings stripped** — a stronger and more precise statement than the dispatch made. **ACCEPTED.**'
+
+the_stop:
+  this_is_a_deliberate_stop_not_an_exhaustion: >
+    **THE AUDITOR'S DECLARED NEXT GATE IS PRODUCT AUTHORITY DISPOSITION OF `F01`, AND THIS SEAT STOPS
+    THERE RATHER THAN DISPATCHING AROUND IT.** At `0160` this seat judged that closing a `RED` on the
+    increment it had just dispatched was FINISHING that increment. **THAT REASONING DOES NOT EXTEND
+    HERE:** the `AMBER` names no breach, the lane is safe, and its gate is explicitly a decision that
+    is not this seat's. **F02/F03/F04/F05/F06 ARE REAL AND ARE A BOUNDED ENGINEER DISPATCH — AND
+    DISPATCHING THEM NOW WOULD BE THIS SEAT DECIDING, BY MOVING, A QUESTION IT HAS BEEN TOLD IS
+    MATT'S.**
+  what_is_safe_to_leave: '**EVERYTHING.** Nothing publishes. `publish_cycle` still has zero callers and there is no `src/` entrypoint. No source is registered. No transport exists. The WO-2 gate is SHUT and the register admits no run. **The system is safe to leave running and safe to leave stopped.**'
+  what_must_NOT_happen_next: '**DO NOT ADMIT A REGISTER RUN. DO NOT WRITE ANY TRANSPORT.** The health surface''s value axis is still open (`CD-ASR-WO3-02` F03-F05) and `publish_cycle` still has no caller (`CD-PL-F167`); **those two residuals are wired together and neither may land alone.**'
+
+the_four_open_product_authority_questions:
+  Q30: '**THE MAPPING''S CONTENT.** Named by fabric key, not readable from this project. **BLOCKS 16B ABSOLUTELY.**'
+  Q32: '**THE 900-SECOND STALENESS CEILING**, which refuses quarterly, monthly, daily and even hourly windows — and the auditor''s extension: **the staleness window is currently the ONLY dead-feed detector in the system, so widening the ceiling would silently delete it. The answer is a third quantity on the row, not a bigger number on the first. BLOCKS 16B, AND SEPARATELY FROM `Q30`.**'
+  Q33: '**`schema_version` 1.1.0 NOW NAMES TWO CONTRACTS.** Does not block 16B; blocks calling 16A-FIX finished.'
+  Q31: '**REDIS**, named in the ratified architecture and absent from the design. Does not block.'
+
+standing_and_unmoved:
+  - '16A-FIX BANKED and ASSURED **AMBER**. **NOT ACCEPTED, NOT MERGED.** Acceptance is the Product Authority''s alone (`PBG-AUTH-003`, `CD-D-180`).'
+  - '**THE `RED` IS DISCHARGED**: the PID §3.2 breach that `CD-ASR-WO3-03` found is closed, reproduced closed by a second independent seat, and reproduced closed by this seat.'
+  - 'CD-AC-002 not closed · CD-AC-005 not closed — **and see `CD-PL-F179`: their AMBER/RED grades are carried from assurance history, NOT read from any instrument**'
+  - 'the WO-2 gate SHUT · wo-2r3 FROZEN at be0b355 · register MATCHES / 18 UNDECIDABLE / latest_admitted_run null'
+  - 'NO SOURCE REGISTERED · no MappingKind member · no entrypoint · no transport · zero network-capable imports in src/'
+  - 'nothing merged to main · nothing under pbg/ modified · CD-PL-F171 still reported and unrepaired'
+  - 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 all HELD'
+
+evidence_references:
+  - 'asr-wo3-04-verdict at 3464956 — governance/engineering/build-log/BL-20260824T093704Z-A304.yaml, the verdict of record'
+  - 'asr-wo3-03-verdict at b7f0439 — the RED it discharges'
+  - 'wo-3 at b9283b9 — the audited tip'
+  - 'governance/engineering/CD-DISPATCH-INC16A-FIX-ASSURANCE.md — the dispatch, and the source of CD-PL-F179'
+
+next_safe_action: >
+  *** **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT — AND NO SEAT IS DISPATCHED. THIS IS A
+  DELIBERATE STOP AT THE GATE THE AUDITOR NAMED, NOT A BLOCK AND NOT AN EXHAUSTION.** ***
+  **FOUR QUESTIONS ARE OPEN AND THIS SEAT ANSWERS NONE: `Q30` (the mapping content — blocks 16B),
+  `Q32` (the staleness ceiling — blocks 16B separately, and widening it would delete the only
+  dead-feed detector), `Q33` (the version string that now names two contracts — blocks calling
+  16A-FIX finished), `Q31` (Redis — does not block).**
+  **WHEN A RULING ARRIVES, THE READY WORK IS:** a bounded Engineer dispatch for `F02`/`F03`/`F04`/
+  `F05`/`F06` — get the narrowing under a register-wired instrument, declare it on the parent type,
+  back it in SQL, close the `CD-AC-002` guard's varargs and tuple-packed shapes and its one
+  over-tightness, and give the portability check reach beyond one file. **THAT IS OFFERED AS
+  AVAILABLE AND IS NOT DISPATCHED** — a seat that dispatched on its way to a stop would be deciding
+  by moving. **AND UNTIL THEN: NO INDICATOR ROW, NO REGISTER RUN ADMITTED, NO TRANSPORT WRITTEN.**
+
+expected_next_actor: 'PRODUCT_AUTHORITY — Matt.'
+
+risks:
+  - '**CD-ASR-WO3-04 F02 is the one to carry forward: a constitutional guarantee that no register-wired instrument can see will not survive a refactor, because nothing the gate consults would report its loss.** It is held in `tests/` today and `tests/` do not feed the gate.'
+  - '**Five instances now of the same class in one day** — CD-PL-F169, CD-ASR-WO3-02 F06/F07, the RED itself, the vacuous CD-AC-002 guard, and the register-wired instrument that cannot see the fix. **Every single one was found by a human-directed audit and none by an instrument.**'
+  - 'CD-PL-F179: this record has carried "CD-AC-002 AMBER · CD-AC-005 RED" in every standing block as though measured. It is carried from assurance history; the register reports only UNDECIDABLE. The grades are not wrong — the record has been implying an instrument that does not exist.'

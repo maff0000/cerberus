@@ -1,0 +1,774 @@
+domain: FWK
+domain_label: Framework integrity and self-governance
+controls:
+- control_id: PBG-FWK-001
+  title: A framework may claim a control is enforced only where it is satisfiable and verifiable
+  status: ACTIVE
+  purpose: 'Keep governance status honest. Where a control cannot be enforced or verified in the target
+    project and runtime, PBGv2 says so instead of manufacturing a compliant projection.
+
+    '
+  risk_addressed: 'An unsatisfiable control does not make delivery safer, it makes status dishonest. The
+    seat either stalls indefinitely, or someone quietly reports the unsatisfiable check as passed. The
+    second is what actually happens. Observed twice — a dispatch-verification control whose evidence the
+    runtime structurally could not produce, and a close gate whose required layout no project used.
+
+    '
+  required_outcome: 'Where host capability, tool limitation, repository structure, permission model, unavailable
+    evidence, unsupported runtime, incompatible layout, missing integration, missing independent identity,
+    or inability to inspect the authentic target prevents enforcement, the framework returns an explicit
+    gap outcome. It never silently weakens the test or declares a false pass.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - resolved control record
+  - close attestation
+  failure_outcomes:
+  - AMBER_FRAMEWORK_CAPABILITY_GAP
+  - AMBER_RUNTIME_CAPABILITY_GAP
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 proposal 1d723da (proposed 2026-07-14, never merged; adopted into PBGv2 2026-07-29)
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Every resolved control carries enforcement_status and verification_status; UNSUPPORTED
+    on either axis produces a gap outcome, never PASS.
+
+    '
+- control_id: PBG-FWK-002
+  title: A gap is never rendered as a pass
+  status: ACTIVE
+  purpose: 'Ensure a declared limitation stays visible everywhere it is reported, not just where it is
+    recorded.
+
+    '
+  risk_addressed: 'A gap recorded in a detail field and summarised as green. The compensating control
+    becomes invisible and the limitation is forgotten.
+
+    '
+  required_outcome: 'No status output, attestation, report, board or summary presents AMBER, BYPASS or
+    PASS_EXCEPTED as equivalent to PASS. Partial states name the portion of the authentic target not reached;
+    "partially" without a named remainder is invalid.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - pbg status output
+  - close attestation
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg validate rejects a partial status with an empty remainder note. Rendering tests
+    assert that non-PASS states appear as named states in every output surface.
+
+    '
+- control_id: PBG-FWK-003
+  title: Work may continue under a named Temporary Operating Control
+  status: ACTIVE
+  purpose: 'Let delivery proceed honestly while a framework limitation is fixed upstream, without pretending
+    the real control passed.
+
+    '
+  risk_addressed: 'A blocked seat either stalls the stream or invents a local workaround that becomes
+    permanent.
+
+    '
+  required_outcome: 'A Temporary Operating Control is named, written and authority-approved; states explicitly
+    what the real control would have proven and this does not; carries a mandatory expiry and a mandatory
+    closing authority record; and the fix is built in the framework and inherited, never patched into
+    the consuming application.
+
+    '
+  mandatory_or_conditional: CONDITIONAL
+  applicability:
+    when: a framework or runtime capability gap is declared
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  required_evidence:
+  - temporary operating control record
+  - Product Authority approval
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - A temporary state with no exit is a permanent state with better manners.
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg validate rejects a TOC record missing expires_utc, closing_authority or not_equivalent_to.
+    pbg status lists active and expired TOCs. An expired TOC still in use is a control bypass.
+
+    '
+- control_id: PBG-FWK-004
+  title: A project-local wrapper around framework tooling is reported and classified
+  status: ACTIVE
+  purpose: 'Surface the pattern that turned a framework control into a project artefact, without forbidding
+    legitimate interface adapters.
+
+    '
+  risk_addressed: 'A 330-line project adapter built to satisfy a rigid framework tool ended up supplying
+    the answers the tool was meant to determine. Nobody hid it; the framework simply never looked.
+
+    '
+  required_outcome: 'Project scripts invoking framework tooling are detected and classified ADAPTER_DECLARED,
+    COMPATIBILITY_SMELL, CONTROL_TRANSFORMATION or CONTROL_BYPASS by whether they map interfaces or change
+    the semantic state being validated.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - pbg validate wrapper report
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  - RED_CONTROL_BYPASS
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: framework.wrapper_classification
+  verification_note: 'pbg validate scans project scripts for framework-tool invocation and for state-rewriting
+    patterns near it, and reports a classification per finding.
+
+    '
+- control_id: PBG-FWK-005
+  title: A mandatory control may never be GREEN under six conditions
+  status: ACTIVE
+  purpose: 'Name, exhaustively, the situations in which a pass is not available regardless of how the
+    rest of the run looks.
+
+    '
+  risk_addressed: 'Aggregate green concealing a specific skipped control.
+
+    '
+  required_outcome: 'A mandatory control resolves to BYPASS, never PASS, when required enforcement was
+    unavailable and verification did not compensate; verification did not reach the authentic target;
+    required evidence was missing; configuration removed the control; a wrapper transformed state into
+    the expected answer; or an expired exception remained in use.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - close attestation
+  - mutation test results
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'The outcome resolver implements all six conditions and each is covered by a mutation
+    test that turns the check red at its own seam.
+
+    '
+- control_id: PBG-FWK-010
+  title: There is exactly one manually maintained framework-version authority
+  status: ACTIVE
+  purpose: 'Make it structurally impossible for the framework to contradict itself about its own version.
+
+    '
+  risk_addressed: 'At the commit tagged PBG-1.0.10, PBGv1 declared its own version five contradictory
+    ways. Every dispatch from its template library stamped PBG-1.0.0 and every close attestation recorded
+    PBG-1.0.1, while the binding framework was PBG-1.0.10. Root cause: one fact maintained by hand in
+    seven places.
+
+    '
+  required_outcome: 'VERSION is the sole hand-maintained framework-version authority. manifest.yaml is
+    generated from it or strictly validated against it. Every other occurrence is generated, dynamically
+    read, or validated.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - pbg validate output
+  - mutation test result
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'PBGv1 archaeology: V1-TPL-02'
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: framework.version_authority
+  verification_note: 'pbg validate fails on any conflicting framework-version declaration anywhere in
+    the tree. The check is mutation-tested: an introduced divergence must turn it red.
+
+    '
+- control_id: PBG-FWK-011
+  title: A framework version is never embedded by hand
+  status: ACTIVE
+  purpose: 'Remove the rot surface. Seven hand-maintained copies are seven chances to be wrong.
+
+    '
+  risk_addressed: 'Template and tooling stamps drifting away from the release they claim to represent,
+    so artefacts record a governance version that was never in force.
+
+    '
+  required_outcome: 'No hand-maintained framework version appears in role contracts, templates, output
+    templates, dispatch examples, close or validation tooling, README prose, generated adapters, or schema
+    defaults. Where a version must appear in generated output it is resolved at generation time and the
+    artefact records the digest it was generated from.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  required_evidence:
+  - pbg validate output
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: framework.no_hand_embedded_versions
+  verification_note: 'pbg validate scans prohibited locations for version-shaped literals and fails on
+    any hit.
+
+    '
+- control_id: PBG-FWK-013
+  title: A pinned framework snapshot is verified on load and changed only under explicit scope
+  status: ACTIVE
+  purpose: 'Guarantee that framework doctrine cannot change underneath an active authority record, and
+    that what a project loads is what it pinned.
+
+    '
+  risk_addressed: 'A working copy that is stale while reporting clean. Measured: a framework working copy
+    four commits behind, git status reporting no divergence because the remote-tracking ref was itself
+    stale, while a project that pinned deliberately held the correct version.
+
+    '
+  required_outcome: 'pbg init installs a pinned snapshot recording canonical repository, source commit
+    SHA, source date, import timestamp, importing authority, import method, per-file digests, aggregate
+    digest and the prior aggregate. pbg verify recomputes and compares. Boot step 2 runs it. A mismatch
+    fails closed. The installed snapshot is read-only to ordinary project work; changing it requires a
+    dispatch whose writable scope explicitly names framework paths, preserving installation identity,
+    previous and target version, source release or SHA, expected and observed digest, changed framework
+    files, project extensions, rollback path and validation evidence. That Engineer writes only inside
+    the named framework paths; authority over the framework is never authority over application source.
+
+    '
+  scope_limits:
+    governs:
+    - installed PBG core
+    - generated PBG adapters, where governed by installation identity
+    - PBG installation metadata
+    - approved PBG extension boundaries
+    does_not_govern:
+    - application source writes
+    - project governance artefact edits
+    - dependency updates
+    - configuration mutation
+    - generated files outside the PBG installation
+    note: 'Those subjects are governed elsewhere (PBG-SOV-001 project boundaries, PBG-RT-001 mutation
+      by effect, PBG-RT-004 action ownership). This control is about the identity of an installed snapshot,
+      not about writing to a filesystem. Ruled by Product Authority 2026-07-30 s9.
+
+      '
+  extension_history:
+  - date: '2026-07-30'
+    change: 'Extended from "a project consumes a pinned snapshot verified by an integrity manifest" to
+      add that the snapshot is read-only during ordinary project work and changes only under a dispatch
+      whose writable scope names framework paths. (The intermediate wording referred to a "declared maintenance
+      activity"; the maintenance interface was removed 2026-07-30 and the scope model carries the requirement
+      unchanged.)
+
+      '
+    rationale: 'A digest identifies a snapshot. If ordinary work can freely mutate that snapshot, the
+      recorded digest and verification level cease to describe reality. Preventing casual mutation is
+      therefore part of preserving the control''s existing subject, not a new governance boundary.
+
+      '
+    authority: Product Authority ruling 2026-07-30 s8, with the scope guard at s9.
+    new_control_required: false
+    correction_sha: ec7c980
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - integrity manifest
+  - pbg verify output
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - SLSA — provenance and integrity of consumed artefacts
+  - 'PBGv1 archaeology: V1-FW-03, invented at project level and never in the framework'
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: framework.snapshot_write_safety
+  verification_note: 'pbg verify recomputes every digest against the pinned tree and fails closed on mismatch.
+
+    '
+- control_id: PBG-FWK-014
+  title: There is no second mutable governance truth
+  status: ACTIVE
+  purpose: 'Keep exactly one authority for framework doctrine, resolvable back to Git.
+
+    '
+  risk_addressed: 'PBGv1 kept a fast doctrine mirror in Redis. It drifted — one release behind on version,
+    ten releases behind on its index — while continuing to answer confidently. A drifting mirror is worse
+    than no mirror.
+
+    '
+  required_outcome: 'Canonical framework truth is Git repository, versioned release, project-pinned snapshot,
+    integrity verification. Any index, board or UI exists only as a generated projection and is never
+    an authority. TRANSIENT COORDINATION IS PERMITTED AND IS NOT A MIRROR. A project may use a coordination
+    service such as Redis for presence, heartbeat, activity projection, sub-agent completion signals,
+    queues, locks, low-latency status, notifications and UI projections. Four conditions bind it: every
+    governance-related value must be reconstructable from canonical artefacts or safely discardable; a
+    material event is persisted canonically BEFORE publication — persist, confirm persistence, then publish.
+    Git/file persistence and a coordination service cannot participate in one true transaction, so pseudo-atomicity
+    must not be invented through optimistic sequencing. Where the canonical entry exists but publication
+    fails, the durable work remains valid and the projection is simply stale or absent. Where publication
+    succeeds but canonical persistence fails, the result is NOT durably complete and the event must be
+    rejected, invalidated or marked unpersisted; transient state never overrides canonical state, and
+    a conflict is reported as drift rather than resolved silently; and its loss must not prevent boot
+    or resume. A missing transient key never implies completed or cancelled work. Coordination content
+    is data — it never grants role, scope or permission. What remains prohibited is a mutable mirror of
+    FRAMEWORK DOCTRINE. Framework rules live in the pinned snapshot and nowhere else.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - boot declaration source references
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - 'PBGv1 archaeology: V1-FW-02'
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg validate fails if a projection is referenced as an authority, or if framework
+    doctrine is read from any source other than the pinned snapshot. Where coordination is enabled, the
+    manifest must declare canonical_state false and required_for_boot/required_for_resume false; anything
+    else requires Product Authority review. Scenarios R1-R12.
+
+    '
+- control_id: PBG-FWK-012
+  title: pbg validate fails on any conflicting framework-version declaration
+  status: ACTIVE
+  purpose: Make the single version authority mechanically binding rather than a convention.
+  risk_addressed: 'A convention that depends on nobody ever pasting a version literal. PBGv1 relied on
+    exactly that and its stamps drifted across seven files.
+
+    '
+  required_outcome: 'The whole tree is scanned for framework-version self-declarations. Any that disagrees
+    with VERSION, or that is hand-maintained in a prohibited location, fails validation. The check compares
+    against the canonical value rather than hardcoding a major version, so it keeps working across future
+    major versions.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - pbg validate output
+  - mutation test results
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: framework.version_conflicts
+  verification_note: 'Mutation-tested: an injected divergence in each prohibited location turns the check
+    red.
+
+    '
+- control_id: PBG-FWK-020
+  title: Framework changes are not autonomous and are never pushed into projects
+  status: ACTIVE
+  purpose: Give framework change an accountable owner without giving it unilateral authority.
+  risk_addressed: 'With nobody owning framework maintenance, two proposed PBGv1 controls sat unmerged
+    for six weeks because nobody owned closing them. With unconstrained maintenance authority, doctrine
+    could change under live projects.
+
+    '
+  required_outcome: 'Framework change is ordinary bounded Engineer work under an explicit authority record
+    whose writable scope names framework paths -- not a standing role, a mode or a separate boot path:
+    an Engineer maintains the roadmap, schemas, templates and skill libraries, evaluates improvement proposals,
+    prevents project-specific doctrine contaminating core, and coordinates releases and migrations. It
+    commissions independent assurance. It does not alter doctrine autonomously and does not push framework
+    changes into any project; adoption is a per-project authorised change.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - PRODUCT_AUTHORITY
+  required_evidence:
+  - framework change record
+  - assurance verdict
+  - project adoption record
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: docs/CONTRIBUTING.md
+  verification_note: 'Framework changes carry an authority record and an independent assurance verdict;
+    project adoption carries its own authorised change.
+
+    '
+- control_id: PBG-FWK-030
+  title: External standards are interpreted, never reproduced
+  status: ACTIVE
+  purpose: Keep the baseline usable and keep PBGv2 clear of third-party text.
+  risk_addressed: 'Copying large standard text creates a licensing exposure and an unreadable document,
+    and it still would not tell an agent what to do.
+
+    '
+  required_outcome: 'PBGv2 writes a practical interpretation of each recognised source and attributes
+    it. It does not reproduce external standard text at length.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - standards source register
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/STANDARDS_SOURCE_REGISTER.yaml
+  verification_note: Assurance reviews the baseline for reproduced third-party text.
+- control_id: PBG-FWK-031
+  title: Every binding control cites a recognised source or records that it is PBG-original
+  status: ACTIVE
+  purpose: Hold the framework to the same evidential bar it imposes on projects.
+  risk_addressed: 'PBGv1 required projects to name and cite a world-class tested framework for any formula,
+    and attributed its own sources in one file out of twenty-one.
+
+    '
+  required_outcome: 'Each binding control cites at least one recognised source, or explicitly records
+    that it is PBG-original with its rationale.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    control_class:
+    - BINDING
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - control records
+  - standards source register
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: standards/STANDARDS_SOURCE_REGISTER.yaml
+  verification_note: 'pbg validate reports binding controls with an empty authoritative_references and
+    no PBG-original declaration.
+
+    '
+- control_id: PBG-FWK-032
+  title: A role contract or skill pack may extend the baseline, never silently weaken it
+  status: ACTIVE
+  purpose: Keep the baseline the floor rather than a suggestion a pack can lower.
+  risk_addressed: 'A specialist pack relaxing a control for convenience within its domain, which is invisible
+    unless something compares the pack against the baseline.
+
+    '
+  required_outcome: 'Packs and role contracts add requirements. A pack needing to relax a baseline control
+    raises it as an exception with a named authority, a compensating control and an expiry. The baseline
+    may explain and organise controls; it may not introduce binding obligations absent from the canonical
+    control source.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - skill pack declarations
+  - baseline cross-check
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'A pack declaring weakens_controls fails validation. The baseline is cross-checked
+    against controls/ for obligations that exist in prose but not in the control source.
+
+    '
+- control_id: PBG-FWK-040
+  title: A projection is a generated view, never an authority
+  status: ACTIVE
+  purpose: Keep one resolvable source of truth behind every displayed fact.
+  risk_addressed: 'A convenient view being consulted instead of the source, then drifting, then still
+    being consulted.
+
+    '
+  required_outcome: 'An index, board or dashboard is retained only where generation is deterministic,
+    inputs are explicit, stale status is detectable, regeneration does not depend solely on the close
+    gate, CI can verify the output, the artefact is labelled a projection, and failure to regenerate cannot
+    masquerade as current truth. No database or service is created to index governance.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - projection header
+  - CI regeneration output
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: Projections are regenerated in CI and compared byte for byte.
+- control_id: PBG-FWK-041
+  title: A projection whose source SHA differs from head renders as stale
+  status: ACTIVE
+  purpose: Make staleness a visible property of the artefact itself.
+  risk_addressed: 'PBGv1 asserted its index could not fall behind. It fell ten releases behind and continued
+    to present itself as current.
+
+    '
+  required_outcome: 'Every projection carries source repository, source SHA, generation time, generator
+    version and a visible CURRENT or STALE state. Staleness appears on the artefact, not in a log.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - projection header
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: The generator emits the header; CI fails on a stale committed projection.
+- control_id: PBG-FWK-042
+  title: Document currency is computed from Git, never read from a stamp
+  status: ACTIVE
+  purpose: Remove a rot surface that PBGv1 diagnosed and then kept.
+  risk_addressed: 'A hand-maintained last-updated field duplicating what Git already owns. It rots, and
+    the staleness check then fires on the stamp rather than the content — which is precisely how a compatibility
+    adapter could satisfy it by backdating commits.
+
+    '
+  required_outcome: 'Metadata carries only what Git cannot supply: owner role, status, governing authority
+    ID, content class. Dates, versions and currency are computed from Git at read time.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - document metadata
+  - computed currency report
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 14 identified this anti-pattern and applied it only to source files
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Schemas reject a hand-maintained last-updated field on governed documents; currency
+    is computed by comparing recorded reconciliation SHAs to head.
+
+    '
+- control_id: PBG-FWK-050
+  title: Every retained artefact has a function
+  status: ACTIVE
+  purpose: Keep the framework free of ceremonial structure.
+  risk_addressed: 'Empty scaffolding that implies capability which does not exist, and documentation bureaucracy
+    with no operational value.
+
+    '
+  required_outcome: 'Directories and artefacts are created when their contents are designed and built.
+    No empty ceremonial files. No control added solely to make the framework look comprehensive.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  required_evidence:
+  - tree inventory
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: pbg validate reports empty governed directories and placeholder files.
+- control_id: PBG-FWK-051
+  title: The control source is authoritative; prose renders it
+  status: ACTIVE
+  purpose: Prevent one control being described differently in three places.
+  risk_addressed: 'PBGv1 described the same control differently in its master blueprint, its shared fragments
+    and its role files, so which text bound an agent depended on what it happened to read.
+
+    '
+  required_outcome: 'Machine-readable control records are authoritative for identity, applicability, required
+    outcome and evidence contract. Human-readable doctrine must remain complete enough to explain each
+    control''s purpose and interpretation without requiring anyone to read raw control source. Generated
+    prose may group and present controls; it must not remove rationale.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: AUTHORING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - pbg validate output
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: controls.records_valid
+  verification_note: 'pbg validate reports prose citing controls that do not exist, and control records
+    whose purpose or risk_addressed is absent.
+
+    '

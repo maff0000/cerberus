@@ -1,0 +1,62 @@
+# CANONICAL PLACEMENT OF SECURITY-RELEVANT AUTHORITY FIELDS.
+#
+# WHY THIS FILE EXISTS. Independent Assurance measured a plausible mis-placement silently degrading
+# a non-waivable control to documentation:
+#
+#     excluded_executors            at top level          read           -> ['SOME-PARTY']
+#     excluded_executors            under separation_of_duties  read     -> None, and NOTHING SAID SO
+#
+# That is Placement Question A. It is not a schema failure — no schema governed the record — and it
+# is not an authority-interpretation failure, because the intent was never ambiguous. The failure is
+# that WHERE a field sits decided WHETHER it was enforced, and no reader was told.
+#
+# THE RULE. Placement decides nothing. This registry declares, in DATA rather than in code, where
+# each security-relevant field may lawfully appear, and `placement.py` — which ships beside this
+# file, inside the package, so the two cannot be separated — enforces the consequences:
+#
+#     canonical position        read and enforced
+#     declared alias position   read and enforced IDENTICALLY, and the placement is REPORTED
+#     both, agreeing            enforced once, the duplication reported
+#     both, disagreeing         FAIL CLOSED on the widest reading, and the record is INVALID
+#     any other position        the record is INVALID; a security-relevant field must never be
+#                               able to sit somewhere and quietly do nothing
+#
+# WHY ALIASES ARE DECLARED RATHER THAN BANNED. Every ASSURANCE and ENGINEER record in this
+# repository from AUTH-0011 onward nests `required_executor_attestation` under
+# `separation_of_duties`, and AUTH-0011 nests `excluded_executors` there too. Governed history is
+# append-only and is not rewritten to make a validator comfortable. Banning the position outright
+# would leave two exits — rewrite the records, or bypass the check — and both are worse than the
+# defect. Declaring the position and ENFORCING it there is strictly stronger than the state
+# Assurance found, in which the nested copy did nothing at all.
+#
+# This is not a weakening. Before this file, a nested field was inert. After it, a nested field
+# bites exactly as hard as a canonical one, and an UNDECLARED position is a validation error.
+
+version: 1
+
+fields:
+
+  excluded_executors:
+    kind: list
+    canonical: top_level
+    accepted_alias_paths:
+    - separation_of_duties
+    fail_closed_combination: union
+    enforced_by: tools/pbg/executors.py check_separation, PBG-SOD-001 route A
+    semantics: >
+      External executors that may not occupy the seat this record grants. Compared case- and
+      whitespace-insensitively against the executor established by a committed seat attestation.
+      A named prohibition on this record, never an inference.
+
+  required_executor_attestation:
+    kind: scalar
+    canonical: top_level
+    accepted_alias_paths:
+    - separation_of_duties
+    fail_closed_combination: any_truthy
+    enforced_by: tools/pbg/executors.py check_separation and tools/pbg/seat.py lifecycle
+    semantics: >
+      A demand that the seat's occupying executor commit a seat-start attestation before acting.
+      Presence is the demand; the prose is for the reader. An unanswerable demand at record-creation
+      time is AUTHORITY_CREATED_AWAITING_ATTESTATION, which is lawful — see tools/pbg/seat.py. It
+      becomes a failure only once the seat acts without answering it.

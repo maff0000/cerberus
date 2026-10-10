@@ -1,0 +1,309 @@
+# Standards Source Register
+#
+# What the Development and Security Standards Baseline is derived from, and how PBG interprets it.
+#
+# ------------------------------------------------------------------------------------------------
+# HONESTY NOTE, and it applies to every entry below.
+#
+# These records were written offline. No source was fetched, and no digest was computed. Every
+# `version` field is the implementer's recollection of the current version at the time of writing
+# and is therefore a CLAIM, not an observation -- the same distinction this framework applies
+# everywhere else. `retrieval` records that plainly rather than implying a verification that did
+# not happen. Confirm each version before relying on it, and record the confirmation here.
+#
+# Referencing a standard is not a claim of compliance with it, and certainly not of certification
+# against it. PBG borrows reasoning. It does not inherit an accreditation.
+# ------------------------------------------------------------------------------------------------
+
+register:
+  version: 1
+  status: DRAFT
+  authority: PBGV2-FOUNDATION-0001
+  written_utc: '2026-07-30T00:00:00Z'
+  retrieval_method: NONE_OFFLINE
+  verification_level: UNVERIFIED
+  limitation: >
+    Versions unconfirmed. Treat the interpretation as authoritative for PBG and the source
+    identity as provisional until independently checked.
+
+sources:
+
+# --- secure development ------------------------------------------------------------------------ #
+
+- id: SRC-NIST-SSDF
+  source: NIST Secure Software Development Framework
+  identifier: NIST SP 800-218
+  version: '1.1'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Practices for producing software with fewer vulnerabilities, across the development lifecycle.
+  pbg_interpretation: >
+    The strongest influence on PBG's evidence model. SSDF asks that practices be defined, performed
+    AND evidenced -- which is precisely the separation between a control existing, being enforced,
+    and being verified that the four-axis outcome model encodes.
+  related_controls: [PBG-EVID-001, PBG-EVID-002, PBG-ASSURE-017, PBG-CI-001]
+  related_roles: [ENGINEER, ASSURANCE_ENGINEER]
+  related_skills: [test-and-evidence-production, bounded-implementation]
+  expected_evidence: Test output naming its authentic target; independent Assurance verdict.
+  limitations: >
+    SSDF is a practice framework, not a checklist. PBG does not claim SSDF conformance and does not
+    map controls one-to-one.
+
+- id: SRC-OWASP-ASVS
+  source: OWASP Application Security Verification Standard
+  identifier: OWASP ASVS
+  version: '4.0.3'
+  retrieval: NOT_RETRIEVED — a 5.x line is believed to exist; confirm before citing a level
+  scope: Verifiable application security requirements, graded by assurance level.
+  pbg_interpretation: >
+    Source for baseline sections 4 (validation) and 5 (secrets). PBG adopts the principle that a
+    security requirement must be VERIFIABLE to be worth stating -- an unverifiable requirement
+    produces a shim, and a shim produces a meaningless GREEN.
+  related_controls: [PBG-SEC-001, PBG-SEC-002, PBG-DATA-001]
+  related_roles: [ENGINEER, ASSURANCE_ENGINEER]
+  related_skills: [bounded-implementation]
+  expected_evidence: Boundary validation tests; secret-scan output reporting class and location only.
+  limitations: >
+    ASVS levels are not PBG assurance levels. Do not map them numerically without a decision record.
+
+- id: SRC-OWASP-TOP-10
+  source: OWASP Top 10
+  identifier: OWASP Top 10
+  version: '2021'
+  retrieval: NOT_RETRIEVED — a later edition may exist; confirm
+  scope: The most common classes of web application security risk.
+  pbg_interpretation: Awareness input to baseline section 4. Not a sufficient security standard alone.
+  related_controls: [PBG-SEC-001]
+  related_roles: [ENGINEER]
+  related_skills: [bounded-implementation]
+  expected_evidence: Threat consideration recorded in the Blueprint or a decision record.
+  limitations: A ranked awareness list, deliberately not a verification standard.
+
+# --- supply chain -------------------------------------------------------------------------------- #
+
+- id: SRC-SLSA
+  source: Supply-chain Levels for Software Artifacts
+  identifier: SLSA
+  version: '1.0'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Provenance and integrity of build artefacts.
+  pbg_interpretation: >
+    The direct ancestor of PBG's verification levels and of PBG-FWK-013. SLSA's central point --
+    that provenance must be produced by something other than the artefact describing itself -- is
+    why an installed snapshot cannot vouch for its own authenticity and why the install record
+    lives OUTSIDE the snapshot.
+  related_controls: [PBG-FWK-013, PBG-CI-002, PBG-DEPLOY-003]
+  related_roles: [ENGINEER, ASSURANCE_ENGINEER]
+  related_skills: [container-ready-application-design, pbg-engineering]
+  expected_evidence: Release manifest, provenance record, distribution digest, external anchor.
+  limitations: >
+    PBG implements the reasoning, not the SLSA attestation format. It does not claim a SLSA level.
+
+- id: SRC-OPENSSF
+  source: Open Source Security Foundation — Scorecard and Best Practices
+  identifier: OpenSSF
+  version: 'unversioned — continuously updated'
+  retrieval: NOT_RETRIEVED
+  scope: Observable repository and project security practices.
+  pbg_interpretation: >
+    Source for baseline section 6. PBG takes the emphasis on MEASURABLE repository properties --
+    pinned dependencies, branch protection, review -- over declared intent.
+  related_controls: [PBG-CI-003, PBG-GIT-002, PBG-GIT-003]
+  related_roles: [PROJECT_LEAD, ENGINEER]
+  related_skills: [git-worktree-and-branch-hygiene, github-integration]
+  expected_evidence: Lockfile; branch protection state read from the provider.
+  limitations: Scorecard checks are provider-specific and not all are meaningful for every project.
+
+# --- security management ------------------------------------------------------------------------- #
+
+- id: SRC-NIST-CSF
+  source: NIST Cybersecurity Framework
+  identifier: NIST CSF
+  version: '2.0'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Organisational functions for managing cybersecurity risk.
+  pbg_interpretation: >
+    Informs incident handling and the recover-oriented parts of continuity. PBG operates at project
+    scale, so the organisational functions are borrowed as vocabulary rather than adopted wholesale.
+  related_controls: [PBG-INC-001, PBG-INC-002, PBG-CONT-011]
+  related_roles: [PROJECT_LEAD]
+  related_skills: [incident-diagnosis, continuity-checkpoint-and-resume]
+  expected_evidence: Incident record; demonstrated recovery from canonical artefacts.
+  limitations: An organisational framework applied to a project-scale utility; the fit is partial.
+
+- id: SRC-CIS
+  source: CIS Controls and Benchmarks
+  identifier: CIS
+  version: 'Controls v8.1; Benchmarks are per-technology'
+  retrieval: NOT_RETRIEVED — versions from implementer knowledge, unconfirmed
+  scope: Prioritised defensive actions, and per-technology hardening guidance.
+  pbg_interpretation: >
+    Source for least privilege and container hardening in baseline sections 2 and 12. Benchmarks
+    are cited by skills where a specific technology is in play, never by core doctrine.
+  related_controls: [PBG-RT-012, PBG-SEC-003]
+  related_roles: [ENGINEER]
+  related_skills: [docker-oci-containerisation]
+  expected_evidence: Runtime user check; container configuration observed from the running target.
+  limitations: >
+    Benchmarks are technology-specific and version-sensitive. A benchmark for one version may be
+    wrong for the next.
+
+- id: SRC-ISO-27001
+  source: ISO/IEC information security management principles
+  identifier: ISO/IEC 27001
+  version: '2022'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Information security management system requirements.
+  pbg_interpretation: >
+    Borrowed for the principle that a control needs an owner, an expected outcome and evidence.
+    PBG takes the structure of that idea and nothing procedural.
+  related_controls: [PBG-CTRL-002, PBG-EVID-001]
+  related_roles: [PROJECT_LEAD, ASSURANCE_ENGINEER]
+  related_skills: [independent-assurance]
+  expected_evidence: Control record with required_outcome and required_evidence populated.
+  limitations: >
+    PBG is NOT an ISMS and referencing this standard implies no certification, audit or conformity
+    assessment of any kind.
+
+- id: SRC-ISO-25010
+  source: ISO/IEC systems and software quality model
+  identifier: ISO/IEC 25010
+  version: '2011, revised 2023'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Software product quality characteristics.
+  pbg_interpretation: Vocabulary for maintainability and reliability in baseline section 1.
+  related_controls: [PBG-BP-002]
+  related_roles: [ENGINEER]
+  related_skills: [bounded-implementation]
+  expected_evidence: Blueprint conformance.
+  limitations: A vocabulary, not a measurement method.
+
+# --- AI systems ---------------------------------------------------------------------------------- #
+
+- id: SRC-NIST-AI-RMF
+  source: NIST AI Risk Management Framework
+  identifier: NIST AI 100-1
+  version: '1.0'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Managing risk in AI systems across their lifecycle.
+  pbg_interpretation: >
+    Directly relevant because PBG governs AI-ASSISTED delivery. The framework's insistence on
+    documented provenance for AI-influenced decisions is why every material agent action reaches a
+    durable record, and why an agent may not certify its own output.
+  related_controls: [PBG-SOD-001, PBG-CONT-007, PBG-AUTH-005]
+  related_roles: [PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+  related_skills: [independent-assurance, bounded-implementation]
+  expected_evidence: Build Log attribution; independent Assurance of agent-produced work.
+  limitations: >
+    Addresses AI systems as products. PBG's case is AI agents as PRODUCERS, which the framework
+    covers only partially.
+
+# --- operations ---------------------------------------------------------------------------------- #
+
+- id: SRC-SRE
+  source: Google Site Reliability Engineering
+  identifier: SRE Book / Workbook
+  version: 'SRE Book 2016; Workbook 2018'
+  retrieval: NOT_RETRIEVED — dates from implementer knowledge, unconfirmed
+  scope: Operating reliable systems at scale.
+  pbg_interpretation: >
+    Source for baseline sections 8 and 13. The liveness/readiness distinction and the insistence
+    that a probe test what it claims come from here.
+  related_controls: [PBG-OBS-001, PBG-RT-005]
+  related_roles: [ENGINEER]
+  related_skills: [container-ready-application-design, incident-diagnosis]
+  expected_evidence: Probe behaviour observed against a running target with its dependency removed.
+  limitations: Written for large-scale operations; PBG applies the reasoning at any scale.
+
+- id: SRC-DORA
+  source: DORA / Accelerate delivery performance research
+  identifier: DORA
+  version: 'ongoing annual research'
+  retrieval: NOT_RETRIEVED
+  scope: Delivery performance and its relationship to engineering practice.
+  pbg_interpretation: >
+    Supports small, reversible changes and fast recovery over large, carefully scheduled releases.
+    Informs work classification and the deployment sections.
+  related_controls: [PBG-WORK-001, PBG-DEPLOY-001]
+  related_roles: [PROJECT_LEAD]
+  related_skills: [bounded-implementation]
+  expected_evidence: Work classification recorded; rollback route declared.
+  limitations: Correlational research, not a standard, and not a control source.
+
+# --- technical specifications --------------------------------------------------------------------- #
+
+- id: SRC-OCI
+  source: Open Container Initiative specifications
+  identifier: OCI Image and Runtime Specifications
+  version: 'Image Spec 1.1'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Container image format, runtime behaviour and digest identity.
+  pbg_interpretation: >
+    The basis for identifying images by digest rather than tag in baseline sections 3 and 12. A tag
+    is a mutable pointer; only the digest is identity.
+  related_controls: [PBG-CI-004, PBG-DEPLOY-003, PBG-RT-012]
+  related_roles: [ENGINEER]
+  related_skills: [docker-oci-containerisation]
+  expected_evidence: Image digest recorded at build and compared at deploy.
+  limitations: Format specifications only; they say nothing about what belongs in the image.
+
+- id: SRC-TWELVE-FACTOR
+  source: The Twelve-Factor App
+  identifier: 12factor.net
+  version: 'unversioned'
+  retrieval: NOT_RETRIEVED
+  scope: Practices for portable, deployable services.
+  pbg_interpretation: >
+    Source for configuration-from-environment and the read-only-code separation in baseline
+    sections 10 and 12.
+  related_controls: [PBG-RT-013, PBG-DATA-002]
+  related_roles: [ENGINEER]
+  related_skills: [container-ready-application-design]
+  expected_evidence: No host-specific absolute paths; configuration supplied by environment.
+  limitations: >
+    Opinionated and aimed at stateless web services. Several factors do not apply to batch,
+    data-intensive or desktop workloads, and PBG does not require them universally.
+
+- id: SRC-SEMVER
+  source: Semantic Versioning
+  identifier: semver.org
+  version: '2.0.0'
+  retrieval: NOT_RETRIEVED — version from implementer knowledge, unconfirmed
+  scope: Version number semantics.
+  pbg_interpretation: The grammar of the canonical VERSION scalar and of release compatibility claims.
+  related_controls: [PBG-FWK-011, PBG-FWK-012]
+  related_roles: [PROJECT_LEAD, ENGINEER]
+  related_skills: [pbg-engineering]
+  expected_evidence: VERSION parses; a breaking change carries a major increment.
+  limitations: Says nothing about whether a change IS breaking; that remains a judgement.
+
+- id: SRC-RFC3339
+  source: Date and Time on the Internet — Timestamps
+  identifier: RFC 3339 (profile of ISO 8601)
+  version: 'RFC 3339'
+  retrieval: NOT_RETRIEVED
+  scope: Unambiguous timestamp representation.
+  pbg_interpretation: >
+    Every governed timestamp is UTC and ISO-8601 with an explicit offset. Local time is a display
+    concern and never a recorded one.
+  related_controls: [PBG-OBS-002]
+  related_roles: [PROJECT_LEAD, ENGINEER, ASSURANCE_ENGINEER]
+  related_skills: [continuity-checkpoint-and-resume]
+  expected_evidence: Timestamps in canonical records parse as UTC.
+  limitations: A format specification; it does not establish clock trustworthiness.
+
+# --- primary documentation ------------------------------------------------------------------------ #
+
+- id: SRC-PRIMARY-DOCS
+  source: Primary language, runtime and platform documentation
+  identifier: per technology
+  version: 'per technology, recorded by the skill that cites it'
+  retrieval: NOT_RETRIEVED
+  scope: Authoritative behaviour of the specific technology in use.
+  pbg_interpretation: >
+    Primary documentation outranks any secondary summary, including a PBG skill. Where a skill and
+    the primary documentation disagree, the documentation wins and the skill is defective.
+  related_controls: []
+  related_roles: [ENGINEER, ASSURANCE_ENGINEER]
+  related_skills: [python-engineering, docker-oci-containerisation, github-integration]
+  expected_evidence: The specific documented behaviour cited at the point of reliance.
+  limitations: Version-specific. Documentation for one version may be wrong for another.

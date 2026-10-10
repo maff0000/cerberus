@@ -1,0 +1,24 @@
+LABEL: V-012-EGRESS
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-012/CD-RT-012-EGRESS-NO-BROKER.patch
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_egress_no_broker.py --root .
+EXIT: 1
+--- stdout ---
+CD-RT-012-EGRESS-NO-BROKER
+    subject: /tmp/cd-asr-wo2r/run/V-012-EGRESS
+    scanned: 7 services and 2 networks in deploy/compose.yaml, 0 registered destination(s) in deploy/egress-destinations.yaml
+    assertions: 71
+    note: 0 destination(s) registered in deploy/egress-destinations.yaml — the admissible set is EMPTY, which is WO-2's deliverable and not a gap: registering an ingredient source is CD-D-005 and is owed by the Product Owner (PBG-AUTH-005)
+    note: networks declared internal: cd-net-private, cd-net-public
+    note: this check verifies a DECLARATION and the topology behind it. BLUEPRINT §2 and compose.yaml both disclose that Compose has no per-host egress primitive, so an ALLOWLIST is enforced by a lane owed at WO-3. No packet was observed and none is claimed.
+    note: NO NAME WAS RESOLVED AND NO SOCKET WAS OPENED. The admissible set is derived from deploy/egress-destinations.yaml in the subject tree and from nothing else, so this verdict is reproducible offline at this commit (CD-PL-F48). READ THE DECLARED LIMIT in this check's header before reading a clean run as proof of CD-AC-012: this check was clean for the escape that produced CD-ASR-F04 and for CD-PL-F59 one field across, and the EIGHT boundaries say what it still does not see and which layer — if any — was MEASURED to see it.
+
+VIOLATION  deploy/compose.yaml:427
+    rule: CD-EGRESS-004: an allowlist entry is not a registered destination
+    what: service `cd-collectors` may reach `api.ibkr.com`, which is not registered in deploy/egress-destinations.yaml. THIS IS A VIOLATION BY DEFAULT: nothing was recognised about `api.ibkr.com` and nothing needed to be. An egress destination is a place somebody declared, with an operator, a purpose and the clause of product intent that authorises it — an address literal, a CIDR, a URL, a wildcard or a hostname added quietly is not that, and neither is a spelling nobody has thought of yet. The admissible set at this commit is EMPTY.
+VIOLATION  deploy/compose.yaml:427
+    rule: CD-EGRESS-002: an allowlist names a broker
+    what: service `cd-collectors` may reach `api.ibkr.com`, and ibkr.com is a known broker, exchange or order-routing operator. It carries no concept word at all, which is precisely why a vocabulary rule alone would let it through. CD-AC-012: no execution pathway exists, and advisory-only is structural rather than a policy anybody has to keep.
+
+CD-RT-012-EGRESS-NO-BROKER: FAIL — 2 violation(s)
+--- stderr ---

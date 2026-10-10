@@ -1,0 +1,199 @@
+# ================================================================================================== #
+# BL-20260824T161905Z-0174 — PROJECT LEAD BOUNDARY. **16B-FIX-5 ASSURED `RED` AT `8398741`. THE
+# SESSION STOPS HERE, BANKED. 16C IS NOT RELEASED, NO LIVENESS INCREMENT IS WRITTEN, AND NOT ONE
+# INDICATOR ROW IS REGISTERED. THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT.**
+#
+# *** **THIS IS THE FIRST TIME IN THIS CHAIN THAT THE ANSWER IS NOT "ONE MORE BOUNDED FIX", AND
+# THAT IS THE FINDING. `PO-DECISIONS-0027` RULING 5 FIXED A COMPLETION CONDITION. THE AUDITOR
+# PROVED THE CONDITION, READ AS THE PRODUCT OWNER WROTE IT, IS **NOT ACHIEVABLE BY THIS INSTRUMENT
+# AS ARCHITECTED** — because the instrument recognises a dial by the property NAME `state`, while
+# ruling 1 asks for affirmative proof of present-and-fresh REGARDLESS OF NAMING. Every remaining
+# escape lives in that gap and NO ADDITION TO ANY LIST CLOSES IT.** ***
+#
+# **AND RULING 5 IS WHAT TELLS US SO. Its own words: *"If a further named escape is found after
+# this test is green, THE TEST WAS WRONG, NOT THE GUARD INCOMPLETE."* The auditor found two, and
+# then did the thing the ruling asked for instead of the thing nine audits before it did — IT
+# INDICTED THE TEST RATHER THAN LENGTHENING THE LIST.**
+#
+# *** **RECONCILED BY THIS SEAT'S OWN MEASUREMENT, AND THE DECISIVE ONE IS ONE INTEGER WIDE:
+# `_dial_bearing` on an `enum` instance nested 24 deep answers `None` (UNDECIDABLE, safe); nested
+# **25** deep it answers a clean silent `False`. AND `status` INSTEAD OF `state` — ONE STRING — IS
+# INVISIBLE. AND `present: false` WITH A STALE STAMP — A GENUINELY ABSENT, STALE DIAL CARRYING
+# `calm` — IS INVISIBLE, GETTING THE **IDENTICAL** ANSWER TO ITS `present: true` TWIN.** ***
+# ================================================================================================== #
+
+entry_id: BL-20260824T161905Z-0174
+timestamp_utc: '2026-08-24T16:19:05Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T16:19:05Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_03
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_03
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T155131Z-0173
+base_sha: 4072384a7c1af688c381360a0dd1276370c63ce8
+current_sha: 4072384a7c1af688c381360a0dd1276370c63ce8
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-10 — a fresh identity, never CD-ENG-WO3-10 and never CD-ASR-WO3-09 — returned RED over
+  16B-FIX-5 at 8398741, banked at d682ea2 on branch asr-wo3-10-verdict. It did NOT return a tenth
+  shape. It falsified the COMPLETION TEST ITSELF, twice, and named the next safe gate as a PRODUCT
+  AUTHORITY DECISION rather than a sixth engineering round. This seat reproduced all three
+  falsifications in its own shell. THE VERDICT IS BANKED AND IS NOT ACCEPTED. THE SESSION STOPS
+  HERE. 16C IS NOT RELEASED.
+
+the_verdict:
+  seat: CD-ASR-WO3-10 (FRESH — never CD-ENG-WO3-10, never CD-ASR-WO3-09)
+  verdict: RED
+  target: 8398741c039f9cb616201e22b285d815406dc3cc (content tip 16b872c)
+  banked: d682ea2 on branch asr-wo3-10-verdict — BL-20260824T161155Z-A310.yaml — one identity, entry validated ok=True before commit
+  read_only_confirmed_by_this_seat: 'wo-3 still at 8398741 with a CLEAN worktree; be0b355 == wo-2r3, UNMOVED; nothing written under pbg/.'
+  next_safe_gate: '*** A PRODUCT AUTHORITY DECISION BEFORE ANY FURTHER ENGINEER DISPATCH — AND NOT 16C, AND NOT A 16B-FIX-6 WRITTEN BY A PROJECT LEAD ALONE. ***'
+
+the_three_falsifications_reproduced_by_this_seat_in_its_own_shell:
+  method: >
+    Direct in-process calls to `_dial_bearing` on a clean `git archive` extraction of the TARGET
+    tip, not the auditor's fixtures and not the seat's summary.
+  A310_F1_the_cap_is_not_fail_closed: >
+    *** ONE INTEGER SEPARATES A CAUGHT TREE FROM AN ESCAPED ONE. *** Measured, `{"enum": [<value
+    nesting `state` N levels deep>]}`: depths 1, 5, 20, 22, 23, **24** -> `None` (UNDECIDABLE,
+    reported, safe). Depth **25**, 26, 30, 40 -> **`False`, THE ONLY SILENT ANSWER THE INSTRUMENT
+    HAS.** `_instance_declared_names` — a function `FX15` ITSELF ADDED IN THIS INCREMENT — returns
+    a sentinel at its cap that has ZERO EXECUTABLE CONSUMERS, so reaching the cap is a silent
+    success. `_dial_bearing`'s own cap returns `None` and fails closed. **THE NEW FUNCTION COPIED
+    THE NUMBER AND NOT THE FAIL-CLOSED HANDLING**, and `DECLARED LIMIT 15`'s own heading — "REACHING
+    THE CAP IS NOT A SILENT SUCCESS" — says the opposite of what the code does.
+  A310_F2_the_test_tests_a_token_not_a_concept: >
+    *** ONE STRING. *** `{"enum": [{"state": "SPINDRIFT", "detail_level": "calm"}]}` -> `None`,
+    REFUSED. The same node with the key spelled **`status`** -> **`False`, INVISIBLE.** `C30`
+    proves that a dial DECLARING A PROPERTY LITERALLY CALLED `state` in an unknown state is
+    refused. **RULING 5 SAYS "A DIAL IN A NEVER-BEFORE-NAMED STATE", AND A DIAL DOES NOT HAVE TO
+    SPELL ITS DISCRIMINATOR `state` TO BE ONE.**
+  A310_F3_the_answer_to_this_seats_own_open_question: >
+    *** `CD-PL-Q-C31` IS ANSWERED AND THE ANSWER IS NO. *** `{"enum": [{"present": true, ...}]}`
+    -> `False`. `{"enum": [{"present": false, "observed_utc": "2001-01-01T00:00:00Z",
+    "detail_level": "calm"}]}` -> **`False`. THE IDENTICAL ANSWER.** The control `C31` admits
+    because the recogniser NEVER LOOKED, not because the dial proved present-and-fresh — and the
+    proof is that a dial declaring itself ABSENT with a stale stamp, carrying `calm`, gets the same
+    silent pass. **THIS SEAT RAISED THAT QUESTION AND REFUSED TO ANSWER IT ON `PBG-SOD-001`
+    GROUNDS. IT WAS RIGHT TO RAISE IT AND THE AUDITOR SETTLED IT AGAINST THE INCREMENT.**
+
+why_this_is_a_PRODUCT_question_and_not_an_engineering_one:
+  the_gap_stated_once: >
+    **THE INSTRUMENT'S `False` MEANS "nothing here names a property called `state`". RULING 5's
+    `REFUSED` MEANS "this dial cannot prove its data is present and fresh". THOSE ARE DIFFERENT
+    SENTENCES AND THE DIFFERENCE IS WHERE EVERY REMAINING ESCAPE LIVES.**
+  the_choice_is_the_PRODUCT_OWNERS_and_this_seat_does_not_make_it: >
+    Carried from the auditor's own next_safe_action, VERBATIM in substance and not summarised into
+    a preference:
+    **(a) NARROW RULING 5** to "a dial that declares a property called `state`", make the `state`
+    spelling a CONTRACT OBLIGATION on 16C and on every future dial, and add a register instrument
+    that FAILS when a root property is neither driven nor `state`-declaring — at which point
+    `A310-F2` and `A310-F3` become CLOSED BY CONTRACT rather than open by silence; **or (b) KEEP
+    RULING 5 AS WRITTEN**, in which case the recogniser must invert its default for ROOT PROPERTIES
+    too — an undriven root property that can carry `detail_level` is UNDECIDABLE until proved
+    otherwise — and **the false-positive tail must be RE-PRICED FROM SCRATCH.**
+  what_this_seat_will_not_do: >
+    **IT WILL NOT PICK.** Option (a) narrows a constitutional guarantee the Product Owner wrote in
+    full knowledge of what it was asking for; option (b) is an open-ended re-pricing whose cost
+    nobody has measured. **PBG-AUTH-005: what a new state MEANS is product meaning and not an
+    Engineer's to guess** — and neither is which of these two the product wants.
+
+the_one_bounded_thing_that_is_SEPARABLE_and_is_NOT_dispatched_here:
+  what: >
+    `A310-F1` — make `_instance_declared_names` fail closed at its cap the way `_dial_bearing`
+    already does, and bank `E_cap25` / `F_cap24` as a PAIRED plant so the cap is on the list.
+  status: >
+    **NOT DISPATCHED.** It is a bounded Engineer fix under EITHER product answer, and this seat
+    could have launched it. **IT DID NOT, DELIBERATELY.** The dispatch this seat holds says STOP on
+    a Product Authority question, and launching a seat into a live product question — even a
+    separable one — is how a chain of six fixes becomes a chain of seven. **IT IS RECORDED HERE SO
+    THE NEXT SEAT DOES NOT RE-DERIVE IT, AND IT IS THE FIRST THING TO DISPATCH ONCE MATT ANSWERS.**
+
+findings_raised_at_this_boundary:
+  - id: CD-PL-F203
+    severity: MEDIUM, CONFIRMED — AND IT IS THIS SEAT'S SECOND IN ONE SESSION
+    raised_by: CD-ASR-WO3-10 against the Assurance dispatch
+    the_defect: >
+      **THE ASSURANCE DISPATCH §1(c), WRITTEN BY THIS SEAT AT `4072384`, REPEATED A FALSE CLAIM.**
+      It told the auditor the live gate refuses `C32`'s document "for an unrelated **upstream**
+      reason — the gate has a per-dial key check upstream of the schema". The auditor ran the three
+      refusal stages ONE AT A TIME: `_refuse_non_json` passed, `_refuse_classified_keys` passed,
+      `_refuse_schema_violation` raised `[UNKNOWN_KEY]`. **THERE IS NO PER-DIAL KEY CHECK UPSTREAM
+      OF THE SCHEMA.** This seat confirmed it independently: `_refuse_classified_keys`
+      (`envelope_contract.py:324`) classifies SECRET-BEARING and surface-restricted vocabulary and
+      nothing else. The refusal is the `dial_reading` **wrapper's** own `additionalProperties:
+      false`.
+    why_it_matters_beyond_the_correction: >
+      **THE CORRECTED FACT IS WORSE THAN THE FALSE ONE.** If the closure comes from the
+      `dial_reading` wrapper rather than from an upstream per-dial check, then **a new root slot
+      that is not a `dial_reading` DOES NOT INHERIT THAT CLOSURE.** The auditor found that by
+      refusing to accept a sentence; the sentence was in the dispatch because this seat put it there.
+    how_it_happened: >
+      **THIS SEAT CARRIED THE ENGINEER'S OWN `F02` INTO THE ASSURANCE DISPATCH WITHOUT CHECKING
+      IT**, in a dispatch whose §1 warns the auditor in bold that twelve consecutive dispatches have
+      contained a falsehood. **THAT IS THE THIRTEENTH, IT IS THIS SEAT'S SECOND OF THE SESSION
+      (`CD-PL-F202` WAS THE FIRST), AND BOTH HAVE THE SAME CAUSE: PROPAGATING A CLAIM INSTEAD OF
+      MEASURING IT.** OPEN.
+  - id: CD-PL-F204
+    severity: LOW, MEASURED
+    raised_by: CD-ASR-WO3-10, found by obeying the dispatch's own instruction to validate its entry
+    the_defect: >
+      **`CD-PL-F201` IS ITSELF A SAMPLE DESCRIBED AS A CLASS — THE EXACT ERROR `CD-PL-F200`
+      NAMES.** This seat reported ONE bad `status` value class after checking TWELVE entries. There
+      are **THREE**: `READY_FOR_ASSURANCE` x12, `WAITING_ENGINEER` x1, and `WAITING_PROJECT_LEAD`
+      x1 — **the last of which is `CD-ASR-WO3-09`'s OWN VERDICT ENTRY.**
+    disposition: >
+      `CD-PL-F201` is SUPERSEDED BY THIS COUNT, not edited (`PBG-CONT-003`). This seat DID declare
+      its scope limit ("only the last twelve were checked; the other ~160 are unmeasured") — **the
+      declaration was honest and the headline was still a sample wearing a class's clothes.**
+
+what_is_genuinely_won_and_must_not_be_lost_in_the_RED:
+  - '*** `8398741` IS STRICTLY BETTER THAN `dd40407` AND THE AUDITOR SAYS SO IN TERMS: "NOTHING SHOULD BE REVERTED." ***'
+  - '`FX15` GENUINELY CLOSES `A309-F1`: `C29`, `C29b`, `C34`, `A_state` and `F_cap24` all move `PASS — 144` -> `FAIL — 2`. The enum/const alphabet hole IS shut for everything inside the cap.'
+  - '*** `FX16` IS GREEN AND THE AUDITOR WOULD CARRY IT FORWARD UNCHANGED. *** Its proof is MECHANICAL, not asserted: `not in _READABLE_KEYWORDS` has five occurrences and EXACTLY ONE IS EXECUTABLE, and both recognisers call that one helper. **THE ITEM THIS SEAT ADDED BEYOND THE PO RULING IS THE ONE ITEM OF THE THREE THAT PASSED CLEAN.**'
+  - 'The Engineer''s argument-from-the-code was graded SOUND IN FORM with its enumeration CORRECT and re-derived — eleven answer sites, two `False` sites, the cycle-guard sub-argument right. It is false in ONE universal claim (`A310-F1`) and scoped narrower than ruling 5. **A wrong argument that could be CHECKED is worth more than a right assertion that could not**, and this is the first increment in the chain to offer one.'
+  - 'Nothing correct broken: clean tree `PASS — 144` exit 0, `C10` `PASS — 158` at BOTH tips, `pytest` 2007, `test_detail_level.py` 52, register `MATCHES` / 18 / `GATE: SHUT` / `latest_admitted_run (null)`.'
+  - '`SPINDRIFT` / `HALCYON_VOID` / `market_pulse` / `pulse` verified `grep -c` ZERO by the auditor independently. The invented vocabulary was genuinely invented.'
+
+standing_prohibitions_REAFFIRMED_AND_TIGHTENED_AT_THIS_BOUNDARY:
+  - '*** 16C IS NOT RELEASED. THE LIVENESS / DEAD-FEED DETECTOR INCREMENT IS NOT WRITTEN. `CD-ASR-WO3-07`s WITHDRAWN RELEASE JUDGEMENT STAYS WITHDRAWN. ***'
+  - '*** NO INDICATOR ROW IS REGISTERED. NOT ONE ROW, NOT A PLACEHOLDER, NOT A TEST FIXTURE. *** The 30 ratified indicators in `governance/mapping/indicator_mapping.yaml` remain data that nothing reads, and that is CORRECT until the guard is closed.'
+  - '*** THE MEMORIAL REMOVAL (`PO-DECISIONS-0027` RULING 3) MUST NOT LAND WHILE THIS IS RED. *** Ruling 3 conditions it on the structural instrument carrying the behaviour. **IT DOES NOT CARRY IT YET.** Removing the pytest literal-name assertion now would delete the only surviving catcher on the strength of a guarantee that has just been falsified.'
+  - 'NO `publish_cycle` CALLER AND NO `src/` ENTRYPOINT. `CD-D-181` SEQUENTIAL-ONLY. FROZEN `be0b355` UNTOUCHED — verified unmoved at this boundary.'
+  - 'NO FURTHER ENGINEER SEAT IS DISPATCHED, including the separable `A310-F1` fix, until the Product Authority answers.'
+
+the_question_for_MATT_and_it_is_one_question:
+  Q33: >
+    *** **`PO-DECISIONS-0027` RULING 5's COMPLETION CONDITION IS NOT ACHIEVABLE BY THIS INSTRUMENT
+    AS ARCHITECTED. NARROW THE RULING TO THE `state` SPELLING AND MAKE THAT SPELLING A CONTRACT
+    OBLIGATION ENFORCED BY A NEW REGISTER INSTRUMENT (a) — OR KEEP THE RULING AND INVERT THE
+    DEFAULT FOR ROOT PROPERTIES, RE-PRICING THE FALSE-POSITIVE TAIL FROM SCRATCH (b)?** ***
+    **THIS BLOCKS 16B, 16C AND THE REGISTRATION OF ALL 30 INDICATORS.** It does not block
+    `A310-F1`, which is bounded and correct under either answer, and which is the first thing to
+    dispatch once the choice is made.
+
+next_safe_action: >
+  *** **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT — AND NO SEAT IS DISPATCHED. THIS IS A
+  DELIBERATE STOP AT THE GATE THE AUDITOR NAMED, NOT A BLOCK AND NOT AN EXHAUSTION.** *** The
+  system is safe to leave running and safe to leave stopped: nothing is wired, no transport exists,
+  every dial reads UNKNOWN, and the gate is SHUT. When `Q33` is answered, the order is:
+  `A310-F1` first (bounded, separable, correct either way), then whichever of (a) or (b) the
+  Product Owner rules, then a FRESH Assurance seat, and only then 16C.
+
+expected_next_actor: 'PRODUCT_AUTHORITY (Matt) — Q33. NO SEAT IS RUNNING.'
+
+risks:
+  - '*** A LIVE ESCAPE EXISTS TODAY BY WHICH A DIAL DECLARING ITSELF ABSENT AND STALE, CARRYING `calm`, PUBLISHES ON BOTH SURFACES WITH THE WHOLE REGISTER GREEN. IT IS SPELLED `present: false`, OR `status`, OR NESTED 25 DEEP. THIS IS WHY 16C IS HELD AND IT IS NOT A THEORETICAL HOLD. ***'
+  - 'CD-PL-F203 — this seat put a false statement into a dispatch for the SECOND time in one session, both by propagating a claim instead of measuring it, and the second was inside a dispatch warning its recipient about exactly that. THE SEATS KEEP CATCHING IT. THAT IS NOT A CONTROL, IT IS LUCK WEARING ONE''S CLOTHES.'
+  - 'The corrected `CD-PL-F203` fact is WORSE than the false one: a new root slot that is not a `dial_reading` does not inherit the wrapper''s `additionalProperties: false` closure. UNMEASURED and it is 16C''s problem.'
+  - 'CD-PL-F180 OPEN (16D). DECLARED LIMIT 12''s residue OPEN. CD-AC-001 remains only HALF guarded by live instruments.'
+  - 'Ruled items 2-6 of PO-DECISIONS-0026 remain undelivered after a second full session. **TWO SESSIONS HAVE NOW GONE ENTIRELY INTO ONE ITEM. IF THE PRODUCT AUTHORITY JUDGES THAT THE CONSTITUTIONAL HARDENING HAS CONSUMED ENOUGH AND WANTS 16C/16D/16E PRIORITISED, THAT IS A PRODUCT CALL AND THIS SEAT HAS NOT MADE IT — the record above is what it would need to make it.**'

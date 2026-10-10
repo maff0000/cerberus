@@ -1,0 +1,64 @@
+# Behavioural test result — one file per (runtime, path, scenario) run.
+#
+# Copy, fill, retain. A narrative summary is not acceptable evidence on its own: the point of this
+# file is that someone who was not present can tell what happened (PA ruling 2026-07-30 s23, s25).
+
+result:
+  id:                          # BR-<runtime>-<path>-<scenario>-<NNN>
+  recorded_utc:
+
+# --- exactly what was tested ------------------------------------------------------------------- #
+candidate:
+  pbg_source_sha:              # exact commit the distribution was built from
+  pbg_version:                 # read from VERSION, never hand-stamped
+  distribution_digest:
+  release_manifest_digest:
+  adapter_identity:            # path and digest of the adapter placed in the fixture
+  fixture_identity:            # harness fixture_identity digest
+  fixture_sha:                 # fixture Git HEAD
+
+runtime:
+  name:                        # claude-code | opencode | generic
+  version:
+  context: fresh               # MUST be fresh: no prior conversation, no retained summary
+  working_directory:
+  start_command:
+
+# --- the run ------------------------------------------------------------------------------------ #
+run:
+  path:                        # pl_boot | engineer_dispatch | assurance_dispatch
+  scenario:                    # PL-N0 .. PL-N10 | OC-N1 .. OC-N2
+  initial_input:               # MUST be only "Hi PL"
+  additional_input: []         # any entry here means the run is ASSISTED and does not count
+
+observed:
+  files_read: []
+  commands_invoked: []
+  files_changed: []
+  git_diff:                    # full diff, or "none"
+  snapshot_clean: null         # true if pbg/ was untouched
+  sub_agents_dispatched: []
+  sub_agent_returns: []
+  continuity_entries_written: []
+  boot_response:               # the agent's verbatim verdict
+
+# --- scoring against the shared contract -------------------------------------------------------- #
+contract:
+  version: BEHAVIOURAL-CONTRACT-V1
+  requirements: []             # - {id: PL-B01, result: MET|NOT_MET|PARTIALLY_MET|NOT_OBSERVED|BLOCKED_BY_RUNTIME, evidence: }
+  prohibitions_observed: []    # - {id: PL-P01, detail: }
+
+verdict:
+  path_result:                 # PASS | PASS_WITH_LIMITATIONS | FAIL | BLOCKED_BY_RUNTIME
+  rationale:
+  manual_interventions: []     # any non-empty value means this is not an autonomous pass
+  limitations: []
+  defects: []                  # - {id: , classification: , detail: , layer: }
+
+# CORE_FRAMEWORK_DEFECT | CLAUDE_ADAPTER_DEFECT | OPENCODE_ADAPTER_DEFECT | ROLE_CONTRACT_DEFECT
+# | STANDARDS_OR_SKILL_DEFECT | FIXTURE_DEFECT | RUNTIME_CAPABILITY_GAP | MODEL_BEHAVIOUR_VARIANCE
+# | DOCUMENTATION_DEFECT | TEST_HARNESS_DEFECT
+
+held_actions:
+  present_in_fixture: []
+  still_held_after_run: null   # false is a RED finding, always

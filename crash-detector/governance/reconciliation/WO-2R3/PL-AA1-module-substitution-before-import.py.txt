@@ -1,0 +1,21 @@
+import sys, types, datetime as real_datetime
+MODE = sys.argv[1]
+class ForgedDatetime(real_datetime.datetime): pass
+if MODE == "poisoned":
+    fake = types.ModuleType("datetime")
+    for n in ("timedelta","timezone","date","tzinfo","time","MINYEAR","MAXYEAR"):
+        setattr(fake, n, getattr(real_datetime, n))
+    fake.datetime = ForgedDatetime
+    sys.modules["datetime"] = fake        # ONE line, run OUTSIDE the package, BEFORE import
+
+from crash_detector.collectors import runner
+decl = runner.collect.__admits__["started_utc"]
+print(f"MODE={MODE}")
+print("  the door requires exactly:", decl.describe(),
+      "| type objects:", [hex(id(t)) for t in decl.types])
+print("  genuine stdlib datetime.datetime id:", hex(id(real_datetime.datetime)),
+      "| forgery id:", hex(id(ForgedDatetime)))
+for label, v in (("genuine", real_datetime.datetime(2026,8,22,12,0,tzinfo=real_datetime.timezone.utc)),
+                 ("forged",  ForgedDatetime(2026,8,22,12,0,tzinfo=real_datetime.timezone.utc))):
+    r = decl.refusal("started_utc", v)
+    print(f"    {label:8} -> {'ADMITTED' if r is None else 'REFUSED'}")

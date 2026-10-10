@@ -1,0 +1,235 @@
+entry_id: BL-20260822T234454Z-0112
+timestamp_utc: '2026-08-22T23:44:54Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 72d49b306bd7653971cc5e6944add476e686d107   # RESOLVED with `git rev-parse HEAD`, never transcribed (CD-PL-F36) — the CD-RULE-007 follow-up that closed BL-...-0111.
+parent_entry_id: BL-20260822T231043Z-0111
+schema_version: 1
+
+action_summary: >
+  *** **THE FIFTH SEAT RETURNED AND THE VERDICT IS RED. T2 RED. CD-AC-002 AMBER, NOT CLOSED.
+  CD-AC-005 AMBER, NOT CLOSED. T8, T9 AND T10 ARE MEASURED FOR THE FIRST TIME BY ANY SEAT.** ***
+  CD-ASR-WO2R3-02, second carrier, banked 1009 lines at
+  `governance/assurance/WO-2R3/VERDICT-FIFTH-SEAT.md` — **VERBATIM, BESIDE THE FOURTH SEAT'S THREE
+  DOCUMENTS AND NOT INSIDE THEM** (CD-D-143, PBG-CONT-003), not one word edited by this seat.
+  *** **THE HEADLINE FINDING INVERTS CD-D-146. THE SEAT SAYS THE TREE IS NOT CARRYING A DEFECT AT
+  `evaluate.py:341` — THE INSTRUMENT IS CARRYING TWO.** `guarded` fails the project's OWN RENAME TEST,
+  and the Project Lead has now reproduced that end to end. ***
+  **AND IT FOUND A ROUTE NOBODY HAD WRITTEN DOWN: `__wrapped__` IS LIVE ON THE CD-ASR-F03
+  POST-CONDITION GUARD** — the same attribute this project deliberately `delattr`s in two other
+  places as a bypass — **AND ITS ONLY CARRIER IS A TEST ASSERTING THE BYPASS ATTRIBUTE IS PRESENT.**
+  **THIS SEAT GRADED NOTHING AND RULED NOTHING** (PBG-AUTH-006). It measured.
+
+the_return_reconciled_BY_MEASUREMENT_AND_NOT_BY_READING_ITS_CLAIMS:
+  the_artefact: >
+    `governance/assurance/WO-2R3/VERDICT-FIFTH-SEAT.md` — 1009 lines, 68088 bytes,
+    sha256 `e27701beea3e25e5d78e278e329fc8f89abb9f3a714d2b54f96672bce3b9a255`, headed
+    `STATUS: COMPLETE` and not `IN PROGRESS` (CD-D-149's precondition for reconciling it at all, met).
+  the_seat_wrote_ONLY_what_it_was_permitted_to_write: >
+    `git status --porcelain` on `main` shows **EXACTLY ONE** non-operator path: the new verdict file.
+    **NOTHING COMMITTED** by the seat. The fourth seat's three documents are UNTOUCHED — mtimes still
+    22 Aug 21:38, 21:54 and 21:38, all three PREDATING the dispatch itself, and their sizes unchanged.
+  the_target_UNMOVED_and_the_one_delta_that_is_the_PROJECT_LEADS_FAULT: >
+    In `/srv/crash-detector-wo2r3-audit5`: HEAD **9f7b764**, tree **224debf1**, `git status --porcelain`
+    **ZERO**, `git diff HEAD` **ZERO BYTES**. **THE TRACKED TREE IS UNTOUCHED AND THE AUDIT WAS
+    READ-ONLY AS DISPATCHED.** The dispatch's own fingerprint recipe now returns `24d66d0e…` and not
+    `50b356ac…` — **AND THE RECIPE IS WRONG, NOT THE SEAT.** See CD-PL-F100.
+  and_the_seat_reported_that_against_itself_before_this_seat_looked: >
+    It did not quietly re-take a passing fingerprint. It reported the mismatch, named ITSELF as the
+    cause, said it had not deleted the directory, and filed the recipe as a finding. **THAT IS THE
+    STANDARD THIS PROJECT KEEPS BUYING AND IT IS WHY THE MISMATCH IS EVIDENCE RATHER THAN AN ALARM.**
+
+CD_PL_F100_RAISED_AGAINST_THE_PROJECT_LEADS_OWN_DISPATCH_INSTRUMENT:
+  the_defect: >
+    **THE FINGERPRINT RECIPE THIS SEAT PUT IN THE DISPATCH INCLUDES GITIGNORED FILES.**
+    `find . -path ./.git -prune -o -type f -print | … | sha256sum` sweeps `.pytest_cache/`, which is
+    created by running `pytest` — **WHICH THE DISPATCH ORDERS THE SEAT TO DO.**
+  PL_MEASURED_AT_THIS_BOUNDARY: >
+    Recipe as written -> `24d66d0ef56634d973011e8793d208e92fc560ecf85473ca969786318a333c9c`.
+    The same recipe with `-path ./.pytest_cache -prune` added ->
+    **`50b356ac2de1a404b75a6fb9e478fe5d4141c4fdc6ad34ddfbfcd4a5a92ee7b9`, AN EXACT MATCH TO THE VALUE
+    IN THE DISPATCH.** `git status --porcelain --ignored` shows the sole entry `!! .pytest_cache/`.
+  why_it_matters_and_it_is_not_cosmetic: >
+    The dispatch tells the seat that a moved fingerprint means **"something mutated under you and your
+    verdict is about a tree that no longer exists."** **SO THE INSTRUMENT FIRES ITS MAXIMUM-SEVERITY
+    ALARM AT AN AUDITOR FOR OBEYING THE DISPATCH.** An honest seat then spends budget disproving its
+    own alarm; a less careful one could read the alarm as licence to discard its own verdict, or
+    quietly clean the directory and re-take a number that passes. **A CONTROL THAT CRIES WOLF AT
+    CORRECT BEHAVIOUR TEACHES SEATS TO IGNORE IT.**
+  severity_and_ownership: >
+    MEDIUM. **IT IS THIS SEAT'S DEFECT, IN THIS SEAT'S OWN INSTRUMENT, FOUND BY THE AUDITOR IT WAS
+    POINTED AT.** Fifth named Project Lead method defect (CD-PL-F86, F94, F98, F99, F100) and **THE
+    LIST IS STILL NOT CLAIMED COMPLETE** — the last time this seat implied a pattern was bounded, the
+    fourth seat counted nine.
+  NOT_fixed_here: >
+    The dispatch is NOT edited. It is a landed authority record and CD-D-148 already ruled it carries
+    unchanged. The correction belongs in the NEXT dispatch that uses the recipe, and it is written down
+    here so that dispatch cannot be drafted without meeting it.
+
+the_verdict_as_returned_TRANSCRIBED_NOT_INTERPRETED:
+  overall: '**RED**'
+  T2_CD_BP_003: '**RED** — regraded and held at RED.'
+  CD_AC_002: '**AMBER, NOT CLOSED.**'
+  CD_AC_005: '**AMBER, NOT CLOSED**, and the seat records that it did not meet CD-AC-005''s stated RED test and did not hunt for one.'
+  and_what_that_means_for_the_gate: >
+    **THE WO-2 GATE REMAINS SHUT AND WO-2R3 IS NOT ACCEPTED.** Neither criterion closed. Under
+    PBG-AUTH-003 this verdict **IS NOT AN ACCEPTANCE AND IS NOT A REJECTION** — the disposition is the
+    Product Owner's and this seat has not pre-empted it in either direction.
+
+the_four_load_bearing_claims_the_PROJECT_LEAD_RE_MEASURED_ITSELF:
+  the_method_and_why_it_is_stated_first: >
+    **CD-PL-F98 SAYS THIS SEAT ONCE RAN TWO ARMS THAT BOTH IMPORTED THE SAME TREE AND PRINTED
+    IDENTICAL OUTPUT.** So: two pristine extractions (`git archive 9f7b764 | tar -x`), each arm running
+    **ITS OWN TREE'S COPY** of every instrument, and **THE `tree:` PROVENANCE LINE READ AND RECORDED ON
+    EVERY RUNTIME RUN** — printed below, and the two paths ARE DIFFERENT, which is the check F98 exists
+    to force.
+  claim_1_the_rename_test_CONFIRMED_AND_IT_IS_THE_WHOLE_OF_CD_D_146: >
+    The variant differs from the base by **TWO LINES** — `def guarded(` -> `def _guarded(` and
+    `return guarded` -> `return _guarded`, confirmed by `diff` against `git show 9f7b764:` and by
+    nothing else. **BASE ARM: `check_judgement_path_doors.py --root .` EXIT 1, "FAIL — 1 violation(s)",
+    the violation being `evaluate.py:341 — guarded is a public entry point…`. VARIANT ARM: EXIT 0,
+    "PASS — 54 assertions, 0 violations".** Suite: **BASE 2 failed, 1549 passed · VARIANT 1551 passed,
+    0 failed.** Runtime, read from each tree's own import with its `tree:` line printed
+    (`/tmp/cd-pl-rename-base/src/…` vs `/tmp/cd-pl-rename-var/src/…`, DIFFERENT PATHS):
+    `__name__` `_evaluate_dial` in BOTH, `__qualname__` `_evaluate_dial` in BOTH, `inspect.signature`
+    **CHARACTER-IDENTICAL** in both. **RENAMING ONE FUNCTION-LOCAL BINDING CHANGES NOTHING A CALLER CAN
+    OBSERVE AND TAKES THE INSTRUMENT FROM FAIL TO PASS.** The dispatch's own evidence standard says:
+    *"For any refusal credited to a STRUCTURE: does it survive renaming one identifier? If it depends
+    on a NAME, it is a vocabulary guard wearing a structural label."* **THE PROJECT'S OWN TEST,
+    APPLIED TO THE PROJECT'S OWN VIOLATION, ANSWERS IT.**
+  claim_2_the_route_nobody_had_written_down_CONFIRMED_AT_THE_TARGET: >
+    **`hasattr(_evaluate_dial, "__wrapped__")` IS `True` AT `9f7b764`**, PL-measured in both arms.
+    The contrast that makes it a defect rather than a design is in the tree and is unambiguous:
+    `admission.py:766` **`delattr(door, "__wrapped__")`** and `establishment.py:506`
+    **`delattr(__init__, "__wrapped__")`**, each with a comment naming it a bypass — and
+    `admission.py:222` declaring **"(b) THE `__wrapped__` ATTRIBUTE — THIS HALF IS CLOSED HERE."**
+    **SO THE PROJECT DELETES THIS EXACT ATTRIBUTE ON TWO DECORATORS AS A BYPASS AND LEAVES IT LIVE ON
+    THE THIRD.** And `tests/test_evaluate.py:692` reads
+    `assert hasattr(evaluate_module._evaluate_dial, "__wrapped__")` — **A SHIPPED TEST REQUIRING THE
+    BYPASS ATTRIBUTE TO BE PRESENT**, exactly as the seat reported. **THE ONLY THING HOLDING THE HOLE
+    OPEN IS A TEST THAT WOULD FAIL IF IT WERE CLOSED.**
+  claim_3_the_understated_residue_CONFIRMED: >
+    The remediation declares its residual reach limits are **EXACTLY TWO**. In
+    `check_judgement_path_doors.py` the widened traversal is `ast.walk(tree)` at **line 522** — and
+    **`for node in tree.body:` IS STILL THERE AT LINE 533, TWELVE LINES BELOW IT.** A top-level-only
+    walk survives inside the instrument whose fix was the widening. **THE RESIDUE IS UNDERSTATED, AND
+    AN UNDERSTATED RESIDUE IS THIS PROJECT'S MOST-FOUND DEFECT.**
+  claim_4_the_arity_open_tension_CONFIRMED_AND_IT_REACHES_THE_MECHANISM_ITSELF: >
+    `admission.py:720` reads **`def door(*args, **kwargs):`** — **THE DOOR FACTORY OF `@admits` IS
+    ITSELF ARITY-OPEN AND IS NOT FLAGGED BY THE CHECK.** The seat's reading that decorating `guarded`
+    converts one violation into another under the instrument's own `OPEN_CHANNEL` rule is therefore
+    standing on real ground: **THE ENGINEER'S LIST OF THREE ROUTES TO GREEN WAS INCOMPLETE, AND THE
+    ENGINEER SAID IN TERMS THAT IT OFFERED NO RECOMMENDATION — WHICH NOW READS AS THE RIGHT CALL.**
+  what_this_seat_did_NOT_re_measure_SAID_PLAINLY: >
+    **THE OTHER ~1000 LINES OF THE VERDICT ARE THE SEAT'S MEASUREMENT AND NOT AN INDEPENDENT ONE.**
+    Specifically NOT re-measured here: the T8 decomposition and its `_is_defined_in_a_class_body`
+    defect; the T9 blindness-window class; T10; ESCAPE 3 and the `OK.payload` rewrite; the
+    sink/ledger/validator table row-for-row; T12's six proved repairs; T13's bite; T7's four routes;
+    and the four unflagged arity-open instances beyond the one grepped above. **THEY ARE BANKED AS THE
+    AUDITOR'S EVIDENCE, ATTRIBUTED TO THE AUDITOR, AND THIS SEAT IS NOT LENDING THEM ITS OWN
+    CONFIRMATION IT DID NOT EARN.** The four above were chosen because they are the ones that MOVE A
+    RULING.
+
+decisions_taken_at_this_boundary:
+- id: CD-D-150
+  title: '**THE VERDICT IS BANKED VERBATIM AND UNEDITED, INCLUDING THE PART THAT SAYS THIS SEAT''S OWN INSTRUMENT IS DEFECTIVE.**'
+  the_question_it_answers: 'The return contains a finding against the Project Lead''s own dispatch. Does it bank as written?'
+  the_ruling: '**YES. NOT ONE WORD EDITED, AND CD-PL-F100 IS RAISED BY THIS SEAT AGAINST ITSELF IN THE SAME ENTRY.**'
+  why: >
+    PBG-CONT-003 — corrections supersede, never edit. **AND THE PROMISE MADE TO THE FOURTH SEAT AND
+    HONOURED IN BOTH DIRECTIONS WAS MADE TO THIS ONE ON THE SAME TERMS: THE PROJECT LEAD WILL NOT
+    ARGUE THE VERDICT DOWN OR UP AND HAS NO AUTHORITY TO DO EITHER.** A RED that costs the Project Lead
+    a finding is exactly the RED that proves the seat was independent.
+  how_it_could_be_wrong: >
+    If any of the seat's ~1000 lines is wrong, banking it verbatim propagates the error into the
+    record. **THAT IS WHY THE FOUR RULING-MOVING CLAIMS WERE RE-MEASURED AND THE REST IS ATTRIBUTED
+    RATHER THAN CONFIRMED**, and why the next reader is told exactly which is which.
+- id: CD-D-151
+  title: >
+    **CD-D-146 IS NOT RULED HERE, AND THE MEASUREMENT THAT ARRIVED IS ESCALATED TO THE PRODUCT OWNER
+    RATHER THAN CONVERTED INTO A RECOMMENDATION.**
+  the_question_it_answers: >
+    The auditor has produced a reproducible measurement that inverts the question `guarded` was sent up
+    as. Does the Project Lead now recommend an answer?
+  the_ruling: '**NO. IT GOES UP AS A MEASUREMENT, STILL UNRECOMMENDED.**'
+  why: >
+    **THE PROJECT LEAD HAS AN INTEREST IN THIS ANSWER AND THE DISPATCH SAID SO IN TERMS** — a finding
+    that the instrument is defective is a finding that the lane's deliberate RED was not a product
+    defect, which is the comfortable answer for the seat that shipped it. **THE MEASUREMENT IS THE
+    AUDITOR'S AND THE RULING IS THE PRODUCT OWNER'S, AND PUTTING THE FIRST UNDER THE SECOND'S NOSE IS
+    NOT THE SAME AS ANSWERING IT.**
+  how_it_could_be_wrong: >
+    If the Product Owner reads the escalation as a recommendation because the measurement points one
+    way so hard, then this seat has steered while claiming not to. **THE MITIGATION IS THAT THE
+    COUNTER-READING IS PUT UP WITH EQUAL FORCE IN THE QUESTIONS BELOW, AND IT IS A REAL ONE:
+    A CHECK THAT A RENAME DEFEATS MAY STILL BE POINTING AT A REAL DOOR.**
+
+product_authority_questions_raised_at_this_boundary:
+  the_standing_state: >
+    **THE GATE IS SHUT. CD-AC-002 AND CD-AC-005 ARE AMBER AND NOT CLOSED. NOTHING IS MERGED, ADMITTED
+    OR PROMOTED.** These questions do not unblock anything by being asked.
+  Q1_CD_D_146_now_carrying_a_measurement: >
+    **`guarded` FAILS THE PROJECT'S OWN RENAME TEST — PL-REPRODUCED: TWO LINES, 1 VIOLATION -> 0,
+    2 FAILED -> 1551 PASSED, RUNTIME IDENTITY UNCHANGED.** The auditor reads that as the instrument
+    being defective in two ways and the product code being clean. **AND THE COUNTER-READING, PUT WITH
+    EQUAL FORCE: A VOCABULARY-DEPENDENT CHECK CAN STILL BE POINTING AT A REAL DOOR — the rename proves
+    the CHECK is name-driven; it does not by itself prove `guarded` is not a door.** Does the doors
+    check's membership rule get corrected, does `evaluate.py` get changed, or neither?
+  Q2_the_wrapped_route_which_is_a_NEW_FINDING_AND_NOT_A_REGRADE: >
+    **`__wrapped__` IS LIVE ON THE CD-ASR-F03 GUARD, THE PROJECT `delattr`s IT IN TWO OTHER PLACES AS A
+    BYPASS, AND A SHIPPED TEST ASSERTS ITS PRESENCE** (`tests/test_evaluate.py:692`). All four facts
+    PL-confirmed. **THIS IS NOT ON ANY PRIOR AUDITOR'S LIST AND IS THE THING THE FIFTH SEAT WAS
+    DISPATCHED TO FIND.** It is a defect in the product, not in an instrument. Does it open a
+    remediation increment, and does it reopen the WO-2R routes the seat says it holds shut?
+  Q3_T8_HAS_LANDED_AND_IT_DOES_NOT_FIT_THE_FORM_THE_DISPOSITIONS_ASSUME: >
+    CD-D-130 holds eleven dispositions waiting on T8. **T8 IS NOW MEASURED AND THE SEAT SAYS THE ELEVEN
+    ARE THREE CATEGORIES, NOT ONE: ONE REAL DEFECT, THREE ITEMS "NO DISPOSITION WORD FITS", AND SIX
+    LEGITIMATE `OUT_OF_BOUND`** — and that the module entry is CORRECT and must not be dispositioned
+    away. **THE DISPOSITION VOCABULARY ITSELF MAY BE THE WRONG SHAPE FOR THE ANSWER THAT CAME BACK.**
+    Does the Product Owner want the eleven written in the existing vocabulary, or the vocabulary
+    extended first? **THIS SEAT HAS WRITTEN NONE OF THEM AND WILL NOT UNTIL ANSWERED.**
+  Q4_the_seat_disagrees_with_the_fourth_seat_on_the_sequencing_it_was_invited_to_attack: >
+    The dispatch's clause (iii) invited exactly this and the fifth seat took it, **as the first seat
+    with standing to, having actually measured T8.** Its disagreement is on the record and is the
+    Product Owner's to weigh.
+  Q5_and_the_one_this_seat_owes_ITSELF: >
+    **CD-PL-F100 IS THE FIFTH NAMED METHOD DEFECT IN THIS SEAT'S OWN PRACTICE AND THE THIRD FOUND BY
+    SOMEONE ELSE.** F98 and F100 are the same shape: an instrument this seat wrote, trusted, and
+    handed to an auditor without running the failure case. **IS THE PROJECT LEAD'S RECONCILIATION
+    PRACTICE ITSELF DUE AN ASSURANCE PASS, RATHER THAN ONE MORE SELF-RAISED FINDING PER BOUNDARY?**
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT GRADE ANYTHING AND DID NOT MOVE ONE GRADE THE SEAT SET** (PBG-AUTH-006). RED is RED,
+  T2 is RED, CD-AC-002 and CD-AC-005 are AMBER and NOT CLOSED, exactly as returned.
+  **IT DID NOT RULE ON CD-D-146** (CD-D-151) and did not recommend an answer.
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS.** T8 has landed, which discharges CD-D-130's
+  precondition — **AND Q3 ASKS WHETHER THE VOCABULARY FITS THE ANSWER BEFORE ANY OF THEM IS WRITTEN.**
+  **IT DID NOT EDIT THE VERDICT, THE DISPATCH, ANY AUDITOR DOCUMENT, OR ANY LANDED BUILD-LOG ENTRY.**
+  **IT DID NOT FIX CD-PL-F100** — the recipe correction belongs to the next dispatch that uses it.
+  **IT DID NOT ACCEPT WO-2R3, MERGE, PROMOTE OR ADMIT ANYTHING.** The gate is shut.
+  **IT DID NOT DELETE `.pytest_cache/` FROM THE AUDIT WORKTREE** — the auditor's residue is left
+  exactly where the auditor left it, because tidying it would erase the evidence for CD-PL-F100.
+  **IT DID NOT MODIFY ANYTHING UNDER `pbg/`.**
+
+next_safe_action: >
+  *** **STOP. THE GATE VERDICT IS IN AND IT IS RED, AND FIVE QUESTIONS ARE WITH THE PRODUCT OWNER.** ***
+  **1. NOTHING MOVES ON Q1-Q5 WITHOUT A RULING.** No increment, no disposition, no code change, no
+  instrument change. **THE DOORS CHECK STAYS RED AND IS NOT MADE GREEN BY ANY ROUTE.**
+  **2. THE ELEVEN CLASS-2 DISPOSITIONS ARE UNBLOCKED BY T8 BUT HELD BY Q3** (CD-D-130 satisfied;
+  the vocabulary question is not).
+  **3. `__wrapped__` (Q2) IS A PRODUCT DEFECT, NOT AN INSTRUMENT ONE, AND IS THE STRONGEST CANDIDATE
+  FOR THE NEXT INCREMENT** — but it is dispatched only on a ruling, by a FRESH Engineer, never this
+  seat and never an auditor (PBG-SOD-001).
+  **4. THE PRODUCT OWNER'S DISPOSITION OF THE RED, AND OF WO-2R3, AND NOT BEFORE.**
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** argue the verdict down or up — the promise was made in both directions and is kept.
+
+continuity_record_commit: 087767a9e7c2538d023e952a35a3b6021f24599b   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE FOURTEENTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT 087767a BEFORE this field was written, so the verdict and the field name ONE commit. THE VERDICT OF RECORD — `rm -rf /tmp/cd-cont14 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont14 && git checkout -q -B main 087767a` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase GATE, observed_sha 087767a9e7c2538d023e952a35a3b6021f24599b, branch main. **THE PROJECT BOOTS GREEN CARRYING A RED GATE VERDICT, A SHUT GATE AND FIVE OPEN PRODUCT AUTHORITY QUESTIONS — WHICH IS EXACTLY WHAT CONTINUITY MEANS HERE: THE RECORD SAYS ALL OF IT AND THE TREE AGREES WITH ALL OF IT.**

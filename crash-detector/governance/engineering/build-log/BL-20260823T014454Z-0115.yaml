@@ -1,0 +1,276 @@
+entry_id: BL-20260823T014454Z-0115
+timestamp_utc: '2026-08-23T01:44:54Z'   # from `date -u` and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 3e65d76720a475f7f503aa964321ed7997d56f94   # RESOLVED with `git rev-parse HEAD`, never transcribed (CD-PL-F36) — the Product Owner's own commit carrying PO-DECISIONS-0014.
+parent_entry_id: BL-20260823T013001Z-0114
+schema_version: 1
+
+action_summary: >
+  *** **PO-DECISIONS-0014 IS RULED, CONSUMED AND EXECUTED IN ONE BOUNDARY. THE SIXTH FRESH ASSURANCE
+  SEAT IS DISPATCHED AND IS OUT OVER THE WHOLE OF WO-2R3 AT `af2accb`, AGAINST THE RAW RECORD.** ***
+  *** **AND THE FIRST THING THIS ENTRY SAYS IS THAT THE PROJECT LEAD WAS OVERRULED.** One boundary
+  ago this seat ruled **CD-D-158: the sixth seat does NOT go out, because the eleven are part of its
+  target and they do not exist.** **THE PRODUCT OWNER INVERTED ITS OWN RULING 6 AND SENT THE SEAT OUT
+  ANYWAY**, on the FIFTH seat's argument and against this seat's ordering: *"writing them before the
+  audit hands the auditor a map drawn by the author."* **THE RECORD SAYS SO PLAINLY RATHER THAN
+  READING AS THOUGH THE RULING AND THE RECOMMENDATION AGREED.** ***
+  *** **THE VOCABULARY IS RATIFIED IN PART AND ONE OF THE THREE WORDS THIS SEAT DRAFTED IS REJECTED.**
+  `CARRIER_ONLY` ratified as drafted. `DEFECT_OPEN` ratified **only with the gap it exposed closed
+  rather than shipped** — a MINIMAL findings register created in the same act so its `finding` field
+  resolves or the row refuses. **`UPSTREAM_OF_THE_PATH` REJECTED AS DRAFTED, for exactly the reasons
+  this seat measured against its own draft and refused to withdraw on** — the refusal was recorded by
+  the Product Owner as correct conduct, "leaving the ratification where it belongs". ***
+  *** **NOTHING WAS WRITTEN THAT THE VERDICT SHOULD PRECEDE.** The eleven, the redraft and the findings
+  register are HELD AS ONE ACT until the sixth seat reports (CD-D-160), and **the redraft was
+  deliberately not even drafted (CD-D-161) — because the eleventh item is exactly what the word is
+  for, and it is a named target of a seat that is reading the tree right now.** ***
+  *** **THE `*extra` RESIDUE HAS ITS CARRIER AND THE OBLIGATION IS DISCHARGED, NOT DEFERRED.**
+  BLUEPRINT §16's owed list now names the measurement that falls due the day the first computing
+  `MappingKind` member is accepted. **AND IT IS HANDED STRAIGHT TO THE AUDITOR AS T17 WITH THE QUESTION
+  THIS SEAT CANNOT ANSWER ABOUT ITS OWN WORK.** ***
+
+# ================================================================================================== #
+the_product_authority_ruling_RECONCILED_AGAINST_THE_TREE_AND_NOT_READ_FROM_A_SUMMARY:
+  provenance_verified_before_anything_was_acted_on: >
+    `governance/decisions/PO-DECISIONS-0014.md` at commit **`3e65d76`**. `git log -1 --format='%an
+    <%ae> | %cn <%ce>'` -> **`Matt Scott <rogue@cerberus.local>`**, and `git show --stat` -> **ONE file
+    changed, 40 insertions, and it is the decision file.** **AUTHORED BY THE PRODUCT AUTHORITY AND BY
+    NO SEAT, AND IT TOUCHED NOTHING ELSE** — the check this project runs on every PO commit, because a
+    ruling that also edits the record it rules on is not a ruling.
+  boot_state_at_the_start_of_this_boundary: >
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` -> **AMBER**, `CONTINUITY_MATCH/RESUME_AMBER`,
+    `blocking_failures` **EMPTY**, `observed_sha` `3e65d76…`, branch `main`. **THE AMBER HAS EXACTLY
+    TWO LONG-STANDING CAUSES AND NEITHER IS ABOUT THE WORK:** the missing `ROADMAP.md`
+    (`roadmap_identity: None`, the only flagged row), and CD-PL-F101's 36 untracked porcelain lines.
+    **NEITHER WAS INVESTIGATED OR REMEDIED HERE AND BOTH ARE SAID RATHER THAN LEFT TO BE NOTICED.**
+  the_four_rulings_and_what_each_one_MOVED: >
+    **RULING 1 — vocabulary ratified in part.** Closes CD-D-157's premise. Two words stand, one falls,
+    and a register this project does not have is ordered into existence at minimum size.
+    **RULING 2 — the sequencing goes to the FIFTH SEAT. SUPERSEDES CD-D-158 AND PO-DECISIONS-0013
+    RULING 6's LITERAL ORDER.** The sixth seat goes out NOW; the eleven are written AFTER its verdict.
+    **RULING 3 — the `*extra` residue gains its BLUEPRINT §16 carrier.** Documentary, this seat's, at
+    this boundary. **DISCHARGED HERE.**
+    **RULING 4 — standing unchanged.** Increment 7 RECONCILED, **NOT ACCEPTED**; T2 **RED**; CD-AC-002
+    and CD-AC-005 **AMBER, NOT CLOSED**; the WO-2 gate **SHUT**; META-ASSURANCE stays after the gate.
+
+# ================================================================================================== #
+the_target_MEASURED_BY_THIS_SEAT_AT_THIS_BOUNDARY_AND_NOT_CARRIED_FORWARD_FROM_0114:
+  why_it_was_re_measured_at_all: >
+    Every number in the sixth seat's brief is a number this seat produced **at this boundary**, in a
+    worktree and a pristine extraction it created here. **BL-...-0114's figures are one boundary old
+    and were taken for a different purpose (reconciling a return), not for stating an audit target.**
+    A dispatch that quotes a prior entry's measurements is transcription (CD-RULE-009).
+  the_audit_worktree: >
+    `git worktree add --detach /srv/crash-detector-wo2r3-audit6 af2accb`. **HEAD
+    `af2accbfc950961bb7f7967d34ecf16414088228`; `git status --porcelain` ZERO LINES; tree object
+    `89196dacba1680fdc048fe6f84e45081ac4e738a`.**
+  the_fingerprint_AND_THE_RECIPE_CHANGED_BECAUSE_IT_BIT_THE_LAST_SEAT: >
+    **`python3 -B tools/audit/tree_fingerprint.py --root .`** — the governed instrument increment 7
+    landed as the CD-PL-F100 fix — prints `files fingerprinted: 472`, `EXCLUDED by .gitignore: 0`,
+    **`FINGERPRINT: 66a1c27dadecaa0a891f9f2a2c28f89ed3ec8729eca2719fd49680e37c5e4ecd`**.
+    **THE OLD `find | xargs sha256sum` RECIPE WAS ALSO RUN AND RETURNS THE IDENTICAL VALUE.**
+    **THAT AGREEMENT IS NOT EVIDENCE THE NEW INSTRUMENT IS RIGHT — IT IS EVIDENCE THE TREE IS CLEAN**
+    (nothing gitignored at this target, so the two recipes cannot yet disagree), and the brief says so
+    in those words and puts the instrument on the target list as **T15**.
+  the_instruments_re_run_in_a_pristine_extraction: >
+    `git archive af2accb | tar -x -C /tmp/cd-pl6` — **so neither the lane nor the new audit worktree
+    was dirtied by the Project Lead's own measurement.**
+    **DOORS: `EXIT 0 · CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: PASS — 60 assertions, 0 violations`.**
+    **SUITE: `1580 passed` in 21.40s, ZERO failures.**
+    **CLASS-2 SWEEP: `EXIT 1 · CD-CLASS-2-SWEEP: FAIL — 534 sites, 15 violations` — UNMOVED, and that
+    is the REQUIRED result**, because the eleven are still unwritten by ruling.
+    **`__wrapped__`: `hasattr(_evaluate_dial, "__wrapped__")` -> FALSE**, runtime `__name__` still
+    `_evaluate_dial`, with `tree: /tmp/cd-pl6/src/crash_detector/engine/evaluate.py` **read from the
+    probe's own output** (CD-PL-F98).
+  the_measurement_TAKEN_HERE_THAT_IS_IN_NO_OTHER_DOCUMENT:
+    what_was_measured: >
+      **INCREMENT 7's ENTIRE CHANGE TO `src/crash_detector/admission.py` IS DOCSTRING-ONLY.**
+      Method, stated so it can be re-run and disagreed with: `git archive` of that one file at
+      `9f7b764` and at `af2accb` into two separate `/tmp` directories; `ast.parse` each; **docstrings
+      stripped at EVERY scope — module, class, function**; `ast.dump` compared. **RESULT: IDENTICAL.**
+    what_it_establishes_and_it_cuts_BOTH_ways: >
+      **THE `__qualname__` DEFECT OF T8 CATEGORY A IS NOW *DECLARED IN SHIPPED SOURCE* AND IS
+      *BEHAVIOURALLY UNTOUCHED*.** `admission.py` now names, in its own declaration block, that
+      `_is_defined_in_a_class_body` reads `__qualname__` — "AN ORDINARY WRITABLE ATTRIBUTE" — and
+      prints what a caller who sets it gets. **THE SENTENCE THE FIFTH SEAT FALSIFIED HAS BEEN ANSWERED
+      WITH A PARAGRAPH AND NOT WITH A FIX**, deliberately: CD-D-153 prohibited increment 7 from fixing
+      it precisely so the sixth seat would not be pre-empted on the most interesting thing in its
+      target. **IS A DECLARATION IN THE DOCSTRING OF THE FUNCTION THAT HAS THE DEFECT A MITIGATION, OR
+      IS IT THIS PROJECT'S SIGNATURE DEFECT — A DECLARATION STANDING IN FOR A GUARD — COMMITTED ON
+      PURPOSE? THIS SEAT HAS AN OPINION AND IS NOT ENTITLED TO ACT ON IT (PBG-AUTH-006). IT IS IN THE
+      BRIEF AS A QUESTION AND NOT AS A FINDING.**
+  and_what_the_fifth_seat_asked_for_and_did_NOT_get_MEASURED_FROM_THE_CHANGED_PATH_LIST: >
+    The fifth seat's next-safe-gate list had SIX items. **`git diff --name-status 9f7b764 af2accb`
+    shows 26 paths and contains NOTHING under `src/crash_detector/collectors/` and NO
+    `plants/MANIFEST.md`.** So: **(b), (c) and (f) were taken; (a) ESCAPE 3, (d) the
+    `_is_defined_in_a_class_body` fix and (e) `plants/MANIFEST.md` WERE NOT.** **(d) was prohibited on
+    purpose (CD-D-153); (a) and (e) were simply not in ruling 6's enumeration.** **THREE OF SIX ITEMS
+    AN AUDITOR ASKED FOR ARE STILL OPEN, AND THE SIXTH SEAT IS ASKED TO GRADE THAT FACT AND NOT ONLY
+    THE ITEMS.**
+
+# ================================================================================================== #
+decisions_taken_at_this_boundary:
+- id: CD-D-159
+  title: '**THE SIXTH FRESH ASSURANCE SEAT IS DISPATCHED — `CD-ASR-WO2R3-03`, READ-ONLY, OVER THE WHOLE OF WO-2R3 AT `af2accb`, AGAINST THE RAW RECORD.**'
+  the_question_it_answers: 'PO-DECISIONS-0014 ruling 2 says the seat goes out NOW. On what terms?'
+  the_ruling: >
+    **`CD-DISPATCH-WO2R3-ASSURANCE-06.yaml` IS ISSUED.** Fresh seat, none of the FIVE prior auditors
+    and **none of the THREE Engineer identities** — CD-ENG-WO2R3-01, -02 and -03 are all excluded
+    absolutely (PBG-SOD-001, non-waivable). Read-only, in `/srv/crash-detector-wo2r3-audit6`, detached
+    at the target. **SEVENTEEN NAMED TARGETS: T1-T13 carried forward from the fifth seat's list with
+    their carried verdicts and their MEASURED LIMITS; T14 the reclassification and its declared
+    weakening; T15 the three new governed instruments INCLUDING THE ONE THIS DISPATCH TELLS IT TO
+    TRUST; T16 the vocabulary as a register contract with the hole the Product Owner left open on
+    purpose; T17 the `*extra` residue and whether an owed-list entry is a carrier at all.**
+  what_the_brief_carries_that_was_not_this_seats_to_soften: >
+    **CD-D-129's THREE CLAUSES VERBATIM** — the exiting instrument declared up front with its eleven
+    items and its full bisect; verdicts taken against DECLARATIONS and never exit codes alone, **with
+    the mirror clause promoted because at THIS gate the headline fact is a GREEN run**; and the
+    standing invitations, **including the sequencing itself, which has now moved once on an auditor's
+    argument.** **THE ELEVEN AS NAMED TARGETS AGAINST THE RAW REGISTER. THE FIFTH SEAT'S T8
+    MEASUREMENT IN FULL, WITH ITS PROVENANCE AND ITS LIMITS STATED IN THE SAME BREATH AS ITS CONTENT.
+    INCREMENT 7 IN FULL, ITEM BY ITEM, INCLUDING THE DECLARED WEAKENING AND ALL SEVEN OF THE
+    ENGINEER'S FINDINGS AGAINST ITS OWN WORK.**
+  the_disclosure_this_seat_made_about_ITSELF_FIRST_IN_THE_BRIEF: >
+    **THAT ITS OWN RECONCILIATION OF THE GATE-DECIDING MEASUREMENT IS AN ATTRIBUTION AND NOT A
+    CONFIRMATION.** Item 1 — the reachability measurement that gated the whole reclassification — was
+    not independently constructed here; this seat **re-ran the Engineer's own probe** and read its
+    `tree:` line. **THE MEASUREMENT THAT DECIDES WHETHER THE GREEN ROW WAS EARNED HAS ONE INDEPENDENT
+    SOURCE AND IT IS THE IMPLEMENTER.** The sixth seat is told that in the header block, before its
+    boot, in those words.
+  and_the_largest_hole_in_this_seats_own_reconciliation_named_in_the_brief: >
+    **A RECLASSIFICATION IS PROVED BY WHAT IT NOW EXCLUDES, NOT BY WHAT IT NOW ADMITS.** The rename
+    pair proves the new criterion is not a vocabulary and not vacuous. **IT DOES NOT ENUMERATE WHAT
+    THE OLD CRITERION CAUGHT AND THE NEW ONE DOES NOT. THIS SEAT DID NOT DO THAT ENUMERATION, SAYS SO
+    IN THE BRIEF, AND MAKES IT A REQUIRED ELEMENT OF THE VERDICT.**
+- id: CD-D-160
+  title: '**THE ELEVEN, THE `UPSTREAM_OF_THE_PATH` REDRAFT AND THE MINIMAL FINDINGS REGISTER LAND AS *ONE ACT*, AFTER THE SIXTH VERDICT, AND NOT BEFORE.**'
+  the_question_it_answers: >
+    Ruling 1 orders the findings register created "in the same act" and the word redrafted. Ruling 2
+    puts the eleven after the verdict. **Which act, and when?**
+  the_ruling: >
+    **ONE ACT, AFTER THE VERDICT.** The register exists so `DEFECT_OPEN.finding` resolves; the only
+    `DEFECT_OPEN` in existence is one of the eleven; the redrafted word is the disposition of the
+    eleventh. **THEY ARE ONE CHANGE TO ONE REGISTER CONTRACT AND SPLITTING THEM WOULD LAND A
+    HALF-VOCABULARY THAT REFUSES ITS OWN ONLY ROW.** It is **CODE ON THE LANE** and therefore needs an
+    **ENGINEER DISPATCH**: never this seat's own hand (PBG-AUTH-006), never either Assurance seat
+    (PBG-SOD-001).
+  why_it_is_recorded_as_a_READING_and_not_as_a_fact: >
+    **RULING 1 AND RULING 2 DO NOT THEMSELVES SAY WHICH ACT.** This seat composed them, and a
+    composition is an inference. **IT IS WRITTEN DOWN AS AN INFERENCE SO THE PRODUCT OWNER CAN
+    OVERTURN IT IN ONE SENTENCE**, rather than discovered later as an assumption nobody declared.
+  how_it_could_be_wrong: >
+    If the findings register was meant to exist immediately — an index is cheap and a register that
+    exists before it is needed is not dangerous — then this holds a harmless artefact for a boundary.
+    **THAT IS THE CHEAP ERROR. The expensive one is a vocabulary landing in two halves across an audit
+    boundary, which is how a register contract acquires a state nobody designed.**
+- id: CD-D-161
+  title: '**THE `UPSTREAM_OF_THE_PATH` REDRAFT WAS NOT DRAFTED AT THIS BOUNDARY, DELIBERATELY.**'
+  the_question_it_answers: 'The Product Owner rejected the word and ordered it redrafted. Does this seat write the replacement now, while the auditor is out?'
+  the_ruling: >
+    **NO.** The eleventh item — `crash_detector.admission` as an UNDECLARED MODULE at 33 tier-2 sites
+    — is **exactly what the word is for**, and it is a NAMED TARGET (T8, T16) of a seat that is reading
+    the tree right now. **DRAFTING THE REPLACEMENT BEFORE THE AUDIT WOULD HAND THE AUDITOR THE SAME MAP
+    RULING 2 HAS JUST TAKEN OUT OF THIS SEAT'S HANDS**, one word to the left.
+  what_is_disclosed_instead: >
+    The sixth seat's brief carries **the rejection, the reasons for it, and the fact that the redraft
+    does not exist**, and asks it in terms whether a vocabulary that cannot yet express its eleventh
+    item is a contract or a placeholder (T16). **THE HOLE IS SHOWN, NOT PATCHED.**
+  how_it_could_be_wrong: >
+    If the Product Owner intended a mechanical correction owed immediately, this costs a round trip —
+    **the cheap error. The expensive one is a second contested word landing before the only party with
+    standing to attack it has spoken**, which is the defect ruling 1 was written to fix, repeated.
+- id: CD-D-162
+  title: '**THE BLUEPRINT §16 CARRIER IS WRITTEN, AND THE BLUEPRINT VERSION DOES *NOT* MOVE.**'
+  the_question_it_answers: 'Ruling 3 orders a documentary entry onto BLUEPRINT §16''s owed list. Is that an amendment?'
+  the_ruling: >
+    **IT IS WRITTEN AND IT IS NOT AN AMENDMENT.** `BLUEPRINT.md` §16 now carries: *the acceptance of
+    the first computing `MappingKind` member re-runs the `*extra` guard measurement at the then-current
+    head*, attached to the sentence already there that says the first computing member arrives only
+    with the CD-D-005 register. **`blueprint_version` STAYS `0.2.0-ACCEPTED`.** It decides no product
+    content, changes no default safe action, and adds no requirement that was not already implied by
+    the list it joins — the Product Owner called it "documentary" and ordered it in those terms.
+  what_this_MOVES_that_a_reader_will_notice: >
+    **`blueprint_identity` WILL CHANGE AT THE NEXT BOOT** — it was `BLUEPRINT.md@689b946362f45803` and
+    it is a content fingerprint, printed and not compared against a recorded expectation.
+    **RECORDED HERE SO THE CHANGE IS EXPLAINED BEFORE IT IS OBSERVED, RATHER THAN READ AS DRIFT.**
+  how_it_could_be_wrong: >
+    If the Product Owner regards ANY edit to the Blueprint as version-moving, this understates it by
+    one patch level. **Stated rather than assumed, and cheap either way.**
+
+# ================================================================================================== #
+findings_raised_by_the_project_lead_at_this_boundary: []
+  # NONE. This boundary dispatched an auditor and consumed a ruling; it built nothing to be wrong
+  # about. CD-PL-F98..F101 remain OPEN and carried to the META-ASSURANCE pass, unfixed and untidied.
+
+what_this_boundary_did_NOT_do: >
+  **IT DID NOT GRADE ANYTHING** (PBG-AUTH-006). T2 **RED**. CD-AC-002 and CD-AC-005 **AMBER, NOT
+  CLOSED**. Increment 7 **RECONCILED, NOT ACCEPTED** (CD-D-156). **THE WO-2 GATE IS SHUT.**
+  **IT DID NOT WRITE THE ELEVEN CLASS-2 DISPOSITIONS** (CD-D-160) — held for the sixth verdict by
+  PO-DECISIONS-0014 ruling 2, **which is the ruling that overturned this seat's own ordering.**
+  **IT DID NOT DRAFT THE REDRAFTED `UPSTREAM_OF_THE_PATH`** (CD-D-161) and did not create the findings
+  register.
+  **IT DID NOT EDIT `CD-PROPOSAL-ELEVEN-DISPOSITIONS.md`.** The draft stands exactly as it was written
+  — including the word the Product Owner has now rejected — so the sixth seat reads what was actually
+  proposed and not a version tidied after the ruling (PBG-CONT-003, corrections supersede).
+  **IT DID NOT TOUCH THE LANE.** `/srv/crash-detector-wo2r3` is at `af2accb`, untouched. Every
+  measurement was taken in `/tmp/cd-pl6`, in two throwaway `/tmp` copies of one file, and in a NEW
+  detached worktree created for the auditor.
+  **IT DID NOT BUILD AN INDEPENDENT REACHABILITY ATTACK** and the brief says so to the auditor before
+  its boot.
+  **IT DID NOT ENUMERATE WHAT THE OLD DOOR CRITERION CAUGHT AND THE NEW ONE DOES NOT** — named as the
+  largest hole in its own reconciliation, and made a required element of the sixth verdict.
+  **IT DID NOT FIX CD-PL-F101** or delete the untracked residue — still open, still carried.
+  **IT DID NOT BEGIN THE META-ASSURANCE PASS** — ruling 4 keeps it sequenced after this gate.
+  **IT DID NOT MODIFY ANYTHING UNDER `pbg/`.**
+
+what_was_not_verified_by_the_project_lead_at_this_boundary:
+- '**THE ELEVEN PLANTS WERE NOT RE-APPLIED OR RE-CONTRASTED AT `af2accb`.** Their health rests on the
+   FOURTH seat''s `531c95c` figures — **two increments and two gates old, and the fifth seat said so
+   too.** Declared to the sixth seat as an inherited hole.'
+- '**THE WO-2R3 VARIANT CORPUS WAS NOT RE-RUN AT `af2accb`**, and of the five NEW probes increment 7
+   added, only `P-G` has ever been run by this seat.'
+- '**THE THREE `variants/WO-2R` ROUTES WERE NOT RE-TESTED AT `af2accb` BY ANYONE.**'
+- '**IT WAS NOT VERIFIED THAT EVERY `variants/WO-2R3/` PROBE NOW HAS A MANIFEST ROW.** Increment 7
+   added five probes AND touched `variants/WO-2R3/MANIFEST.md` (+51/-3), so CD-PL-F97 may be closed,
+   partly closed or reopened. **THE DIRECTION OF TRAVEL IS NOT THE SAME AS THE RESULT AND THIS SEAT
+   MEASURED ONLY THE DIRECTION.**'
+- '**NO INDEPENDENT RUNTIME CONSTRUCTION OF A GOVERNED TYPE WAS PERFORMED AT `af2accb`.**'
+- '**THE `PASSED_TO` DECLARATION WAS VERIFIED TO EXIST, NOT TO BE ACCURATE.** This seat confirmed the
+   weakening is PRINTED, DOCUMENTED and carries DECLARED LIMIT 9. **IT DID NOT TEST WHETHER THE
+   DECLARATION IS RIGHT ABOUT WHAT THE WEAKENING LOSES.** That is T14 and it is the auditor''s.'
+- '**THE AMBER BOOT CAUSES WERE NOT INVESTIGATED OR REMEDIED HERE.** The missing `ROADMAP.md` is
+   long-standing and `blocking_failures` is empty; CD-PL-F101''s untracked residue is deliberately
+   left in place so it cannot be quietly tidied. **NOTED, NOT FIXED, AND NOT THIS BOUNDARY''S
+   SUBJECT.**'
+
+next_safe_action: >
+  *** **THE SIXTH FRESH ASSURANCE SEAT IS OUT. STOP AT ITS VERDICT. NOTHING MOVES ON THE LANE WHILE IT
+  IS READING THE TREE — that promise is written into its brief and it is kept, not merely stated.** ***
+  **1.** `CD-ASR-WO2R3-03` executes `CD-DISPATCH-WO2R3-ASSURANCE-06` at `af2accb` in
+  `/srv/crash-detector-wo2r3-audit6`, read-only.
+  **2.** Reconcile its return **BY MEASUREMENT**; bank it **VERBATIM AND BESIDE — never inside — the
+  fourth and fifth seats' documents** (CD-D-143, PBG-CONT-003); **do not argue it down or up**; **do
+  not reconcile a file still headed `IN PROGRESS`** (CD-D-149).
+  **3.** THEN, IN ONE ACT AND BY AN ENGINEER DISPATCH (CD-D-160): the redrafted
+  `UPSTREAM_OF_THE_PATH` bound to the **SITE** register with machine-checkable fields · the **MINIMAL
+  findings register** (id, raised_at SHA, status — nothing else) · **the eleven Class-2 dispositions**
+  in the ratified vocabulary, informed by BOTH measurements.
+  **4.** THEN the **META-ASSURANCE** pass over this seat's own reconciliation practice
+  (PO-DECISIONS-0013 ruling 5), carrying **CD-PL-F98, F99, F100, F101**.
+  **5.** THEN the Product Owner's disposition of the sixth gate.
+  **DO NOT** merge, promote or admit anything (CD-RULE-001, PO-set, non-relaxable).
+  **DO NOT** read the green doors row as a closed criterion — CD-D-156.
+  **DO NOT** write the eleven, the redraft or the findings register before the verdict — **that is
+  ruling 2 and it was bought at the price of a boundary.**
+
+continuity_record_commit: f9f3b82e3d738c41b5913bcab3fec50cee47095b   # RESOLVED by this CD-RULE-007 follow-up, which writes THIS FIELD AND NOTHING ELSE, with `git rev-parse` and confirmed a commit object with `git cat-file -t`, never transcribed (CD-PL-F36). ORDERING HELD FOR THE SEVENTEENTH BOUNDARY RUNNING: the CD-RULE-008 verdict was taken AT f9f3b82 BEFORE this field was written, so the verdict and the field name ONE commit. **TWO ARMS FOR THE THIRD BOUNDARY RUNNING, BECAUSE CD-PL-F101 IS THE FINDING THAT ONE ARM WAS NEVER THE WHOLE ANSWER.** ARM 1, THE CLONE — `rm -rf /tmp/cd-cont17 && git clone -q --no-hardlinks /srv/crash-detector /tmp/cd-cont17 && git checkout -q -B main f9f3b82` (CD-PL-F72, --no-hardlinks) then `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` — **GREEN**, CONTINUITY_MATCH/RESUME_GREEN, porcelain ZERO lines, blocking_failures EMPTY, current_phase **GATE**, observed_sha f9f3b82e3d738c41b5913bcab3fec50cee47095b, branch main. ARM 2, THE LIVE WORKTREE — the same command at /srv/crash-detector — **AMBER**, CONTINUITY_MATCH/RESUME_AMBER, **porcelain 39 lines, ALL UNTRACKED**, same observed_sha, same phase. *** **AND THE RESIDUE MOVED, WHICH IS REPORTED RATHER THAN SMOOTHED: 36 LINES AT THE PREVIOUS BOUNDARY, 39 HERE.** The three additions are operator runner artefacts (`.wo2r3*-runner.sh` / `*-run-*.log` and a `__pycache__`), and **NOT ONE UNTRACKED PATH WAS CREATED BY THIS SEAT IN THIS WORKTREE — every measurement it took went to /tmp or to a new detached worktree.** **THE PREVIOUS BOUNDARY SAID F101 WAS "NOT DRIFTING"; AT THIS BOUNDARY IT DRIFTED, BY THREE LINES, FROM OUTSIDE THE SEAT. THAT IS THE POINT OF MEASURING IT EVERY TIME INSTEAD OF CARRYING THE LAST NUMBER FORWARD.** Still UNFIXED and still UNTIDIED, deliberately, and still carried to the META-ASSURANCE pass. *** **BLUEPRINT IDENTITY MOVED AS CD-D-162 SAID IT WOULD, AND THE PREDICTION IS WHY IT IS NOT DRIFT: `BLUEPRINT.md@689b946362f45803` -> `BLUEPRINT.md@9686c32773d0ae7c`, in both arms, from the §16 owed-list entry ordered at PO-DECISIONS-0014 ruling 3. `blueprint_version` is UNCHANGED at 0.2.0-ACCEPTED.** *** THE PROJECT BOOTS CARRYING A RED T2, TWO AMBER CRITERIA, A SHUT GATE, A RECONCILED-BUT-UNACCEPTED INCREMENT, ELEVEN DRAFTED-BUT-UNWRITTEN DISPOSITIONS, A REJECTED VOCABULARY WORD WITH NO REPLACEMENT DRAFTED, A SIXTH AUDITOR OUT OVER THE WHOLE OF IT, AND A LIVE UNFIXED FINDING AGAINST THE INSTRUMENT WRITING THIS SENTENCE — **the record says all of it and the tree agrees with all of it.**

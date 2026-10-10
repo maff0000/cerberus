@@ -1,0 +1,171 @@
+domain: EVID
+domain_label: Evidence
+controls:
+- control_id: PBG-EVID-001
+  title: Evidence must be independent of what it certifies
+  status: ACTIVE
+  purpose: 'Stop a control being satisfied by something the control itself produced.
+
+    '
+  risk_addressed: 'The general form of the close-gate failure. A fixture standing inside the schema it
+    validates, a status the validator itself wrote, a test whose green depends on the code path it claims
+    to cover, a projection offered as proof of the thing it projects — all one class. A real suite once
+    stood its authorised-version registry inside the schema under validation, demonstrating the defect
+    while proving the control.
+
+    '
+  required_outcome: 'Evidence for a control is not produced by the thing the control is checking, and
+    its independence is stated. NO ARTEFACT, AGENT, MANIFEST, RUNTIME OR RECORD MAY ESTABLISH ITS OWN
+    TRUST BY SUPPLYING EVERY PART OF ITS OWN PROOF CHAIN. Three things stay distinct: self-consistency
+    (a bundle agrees with its own manifest), independent verification (a separate source confirms the
+    claim), and external trust anchoring (the anchor comes from outside the thing being verified). Every
+    trust chain terminates at a DECLARED anchor — a human Product Authority decision, canonical Git identity,
+    a project-owned installation record, an externally retained release digest, provider-observed repository
+    state, an independently authenticated runtime API, or a trusted signing key — and tooling reports
+    which one. PBGv2 does not attempt to verify every verifier forever; it declares where the regress
+    stops.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - evidence provenance
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INDEPENDENT_ASSURANCE
+  verification_mechanism: ASSURANCE_CONTRACT_REF
+  verification_ref: roles/assurance-engineer.md
+  verification_note: 'Assurance identifies the producer of each item of evidence and reports where producer
+    and subject coincide.
+
+    '
+- control_id: PBG-EVID-002
+  title: Evidence is decision-grade, not command noise
+  status: ACTIVE
+  purpose: 'Keep evidence readable and reproducible so it can actually be reviewed.
+
+    '
+  risk_addressed: 'A wall of terminal output presented as evidence, which nobody reads and which therefore
+    certifies nothing while appearing thorough.
+
+    '
+  required_outcome: 'Evidence is UTC-stamped, reproducible, located under the governed evidence path,
+    referenced from the authority record and the attestation, and records the measurement, its inputs
+    and the command that reproduces it.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - evidence path contents
+  - reproduction commands
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: TIME_BOUNDED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: skills/core/test-and-evidence-production.md
+  verification_note: 'The attestation references evidence by path; assurance checks reproducibility of
+    at least the load-bearing items.
+
+    '
+- control_id: PBG-EVID-003
+  title: No secret material appears in evidence
+  status: ACTIVE
+  purpose: 'Keep the artefact PBGv2 produces most of from becoming its largest disclosure surface.
+
+    '
+  risk_addressed: 'Evidence capture is exactly where raw command output, environment dumps and connection
+    strings arrive, and it is committed. PBGv1 required evidence and never said how to keep it clean;
+    a project had to write its own redaction policy.
+
+    '
+  required_outcome: 'TWO PARTS, deliberately separated because only one of them can be absolute. (a) NON-WAIVABLE
+    INTENT: an agent must never INTENTIONALLY record a secret value in governed source, evidence, logs
+    or continuity records. Intent is entirely within an agent''s control, so an absolute bar here is satisfiable.
+    (b) MANDATORY-WHEN-APPLICABLE DETECTION: scanning coverage, redaction at the point of capture rather
+    than at publication, and marked rather than silent suppression. Detection is imperfect; imperfect
+    coverage produces AMBER with a named gap, never a constitutional breach. Accidental disclosure is
+    therefore an incident with a containment path, while deliberate disclosure remains constitutionally
+    forbidden. A redaction must not remove the fact under assurance; where it would, the result is a capability
+    gap rather than a quietly weakened claim.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - secret scan results
+  - suppression report
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Promoted from project-level invention; absent from PBGv1 core
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: evidence.no_secret_material
+  verification_note: 'Automated scanning of the tree and evidence path, reporting pattern class and location
+    only. Fixture suppressions are counted and located, permitted only in test paths, never whole-file,
+    and a malformed or unjustified marker fails validation.
+
+    '
+- control_id: PBG-EVID-004
+  title: Secrets are referenced by name in every record
+  status: ACTIVE
+  purpose: 'Allow provenance and configuration identity to be recorded without recording the secret.
+
+    '
+  risk_addressed: 'A provenance record that captures configuration completely, including the credential
+    values that made it work.
+
+    '
+  required_outcome: 'Records, provenance and attestations name secret references, never values. Configuration
+    identity is recorded as a digest or version, not as content.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: PER_WORK
+  roles:
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - provenance record
+  - scan results
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: policies/secrets-and-sensitive-data.yaml
+  verification_note: 'Schema restricts secret fields to reference names; scanning covers records and attestations.
+
+    '

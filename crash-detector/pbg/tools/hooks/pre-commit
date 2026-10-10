@@ -1,0 +1,83 @@
+#!/bin/sh
+# PBG project-owned pre-commit hook. PD-2, extended for F13/F14/F15, delivered for A-3.
+#
+# Project-owned and portable: it lives in the repository, is commissioned per-clone by
+# `pbg hooks install`, and is NEVER written into host-global git configuration. A governance control
+# that requires editing the machine is not portable, and PBG ships to other machines.
+#
+# It validates authority records BEFORE they enter history. It does not claim to make git incapable
+# of accepting invalid bytes -- `git commit --no-verify` bypasses it, and so does writing objects
+# with plumbing. Those limits are reported rather than hidden.
+#
+# IT GUARDS THE GATE, NOT THE ARCHIVE.
+#
+# The hook validates the records THIS COMMIT touches. It deliberately does not validate the whole
+# directory, because append-only history contains records that were invalid when they were written
+# and are retained un-rewritten as evidence -- AUTH-0008's granted_utc, stamped eight hours after
+# its own authority commit, is the F15 finding itself. Whole-directory validation here would mean
+# that historical defect blocks every future commit forever, leaving two ways out: rewrite history,
+# which destroys the evidence, or `--no-verify`, which trains people to bypass the control. Neither
+# is acceptable, so the gate judges what is passing through it.
+#
+# A-3, AND WHY THIS FILE IS NOT ALLOWED TO GUESS. It used to hard-code
+#
+#     PYTHONPATH="$ROOT/tools"
+#
+# which is true only in the framework's own repository. A consuming project vendors PBG at `pbg/`,
+# so the package sits at `$ROOT/pbg/tools/pbg`, the import failed, and the hook REFUSED EVERY COMMIT
+# touching governance/authority/ -- valid records included. That is the failure the comment below
+# already warned about, reproduced one layer up: a control that refuses everything is
+# indistinguishable from a control that works, right up until someone needs to commit, and the only
+# ways out were --no-verify or not committing authority records at all. Training people to bypass is
+# the PD-2 trap.
+#
+# So the hook LOCATES ITSELF instead. `$0` is this file; the package is its own `../pbg`. That is
+# true in the framework repository, true in a project that vendored the distribution at any depth,
+# and it survives relocation because nothing absolute is stored anywhere.
+#
+# BOUND, STATED. A record that is only PARTIALLY staged is validated as it stands in the working
+# tree, not as the staged blob. Detecting the difference is possible; pretending it does not exist
+# is not.
+set -e
+ROOT=$(git rev-parse --show-toplevel)
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR | grep '^governance/authority/' || true)
+[ -n "$STAGED" ] || exit 0
+
+# Where this hook actually lives -- `pbg hooks install` sets core.hooksPath to a PROJECT-RELATIVE
+# directory, so $0 resolves under the repository wherever the repository has been moved to.
+HOOK_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PKG_PARENT=$(dirname -- "$HOOK_DIR")          # .../tools/hooks -> .../tools
+
+if [ -d "$PKG_PARENT/pbg" ]; then
+    PBG_PYTHONPATH="$PKG_PARENT"
+elif [ -d "$ROOT/tools/pbg" ]; then
+    PBG_PYTHONPATH="$ROOT/tools"              # framework-shaped fallback
+elif [ -d "$ROOT/pbg/tools/pbg" ]; then
+    PBG_PYTHONPATH="$ROOT/pbg/tools"          # consumer-shaped fallback
+else
+    # REFUSING TO GUESS. Without the package the hook cannot judge the record, and a gate that
+    # cannot judge must not wave things through -- but it must say WHY, or the next person learns
+    # only that commits fail.
+    echo "pbg: cannot locate the pbg package from $HOOK_DIR or under $ROOT." >&2
+    echo "pbg: the hook validates authority records and cannot do so without it; commit refused." >&2
+    echo "pbg: re-commission with 'pbg hooks install' from the project root, or remove" >&2
+    echo "pbg: core.hooksPath if this project no longer vendors PBG." >&2
+    exit 1
+fi
+
+echo "pbg: validating authority records before commit"
+ARGS=""
+for rel in $STAGED; do
+    ARGS="$ARGS --path $rel"
+done
+# --root is the PROJECT root, which is where authority records live. Letting the CLI auto-detect
+# finds the FRAMEWORK root instead (VERSION + controls/), and in a consuming project those are
+# different directories.
+# shellcheck disable=SC2086
+if ! PYTHONPATH="$PBG_PYTHONPATH" python3 -B -m pbg.cli --root "$ROOT" authority validate \
+        --quiet $ARGS; then
+    echo "pbg: AUTHORITY_INVALID — commit refused." >&2
+    echo "pbg: run 'PYTHONPATH=$PBG_PYTHONPATH python3 -B -m pbg.cli --root \"$ROOT\" authority validate' for detail." >&2
+    exit 1
+fi

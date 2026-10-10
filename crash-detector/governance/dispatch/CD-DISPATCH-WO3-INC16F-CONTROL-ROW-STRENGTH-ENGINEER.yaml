@@ -1,0 +1,380 @@
+# ================================================================================================== #
+# CD-D-184 — CD-DISPATCH-WO3-INC16F-CONTROL-ROW-STRENGTH-ENGINEER
+#
+# **INCREMENT 16F — CONTROL-ROW STRENGTH. CLOSE THE CLASS, NOT THE FIFTH SHAPE.**
+#
+# Authority: PO-DECISIONS-0031 (commit 97f85e6, authored by Matt Scott and by NO SEAT), ruling 1
+# (Q39) and ruling 2 (Q37).
+#
+# *** **THE ONE-SENTENCE VERSION: THE FRESHNESS GUARANTEE IS TRUE AT THE TIP AND ITS ALARM PROBES
+# ONE POINT. YOU ARE MAKING THE ALARM PROBE THE SPACE, AND YOU ARE MAKING THE PUBLICATION PATH HAVE
+# EXACTLY ONE DOOR. YOU ARE NOT ADDING A FIFTH ARM.** ***
+#
+# *** **IF YOUR RETURN CAN BE DEFEATED BY NAMING A SIXTH SHAPE, YOU HAVE BUILT THE WRONG THING.
+# THE PRODUCT AUTHORITY SAID SO IN TERMS: "after it, a further named shape means the space-prober
+# was mis-built, not the guard incomplete."** ***
+# ================================================================================================== #
+
+dispatch_id: CD-D-184
+name: CD-DISPATCH-WO3-INC16F-CONTROL-ROW-STRENGTH-ENGINEER
+issued_utc: '2026-08-24T21:17:22Z'   # from `date -u` and from nothing else (CD-RULE-005)
+issued_by: PROJECT_LEAD_SEAT_07
+parent_entry_id: BL-20260824T211349Z-0184
+status: ISSUED
+
+# ================================================================================================== #
+role:
+# ================================================================================================== #
+  role_source: pbg/roles/engineer.md
+  role: ENGINEER
+  actor_id: CD-ENG-WO3-14
+  authority_record: CD-AUTH-0001
+  reading_this_file_does_not_grant_the_role: >-
+    PBG-BOOT-001. The role is granted by THIS dispatch and by the authority record it names, and by
+    nothing you read. PBG-BOOT-002 (non-waivable): you do not self-assign a role, a scope, or
+    mutation authority.
+  identity_freshness_MEASURED_by_the_dispatching_seat: >-
+    `git log --all --format=%an | sort -u` was run at 2026-08-24T21:17:22Z. It names
+    CD-ENG-WO3-01..13 and CD-ASR-WO3-02..13. **NEITHER CD-ENG-WO3-14 NOR CD-ASR-WO3-14 APPEARS.**
+    You have authored nothing in this repository. Commit as
+    `CD-ENG-WO3-14 <cd-eng-wo3-14@seats.crash-detector.invalid>` using GIT_AUTHOR_NAME /
+    GIT_AUTHOR_EMAIL / GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL environment variables —
+    **`git -c user.name=` DOES NOT WORK ON THIS HOST and has silently produced wrong-identity
+    commits here before. VERIFY WITH `git log --format=%an` AFTER YOUR FIRST COMMIT, do not assume.**
+    (`Q40`/`A313-F4`: seat identity is measured from `%an` and five Project Lead commits drifted
+    because nobody checked.)
+  separation_of_duties:
+    you_are_not_CD_ENG_WO3_13: >-
+      It built increment 16E — the control row you are strengthening — and may not repair its own
+      lane (PBG-SOD-004).
+    you_are_not_CD_ASR_WO3_13: >-
+      It measured A313-F1 and wrote a prescription. It deliberately left the line unwritten
+      (PBG-SOD-001, non-waivable). **AND ITS PRESCRIPTION IS NOT YOUR SPECIFICATION — THE PRODUCT
+      AUTHORITY WENT PAST IT.** See `the_prescription_you_are_NOT_executing` below.
+    you_do_not_grade_your_own_work: >-
+      A FRESH read-only Assurance identity (CD-ASR-WO3-14) grades this return. Return
+      READY_FOR_ASSURANCE. **DO NOT RETURN "PASS", "GREEN", "COMPLETE" OR "ACCEPTED" — those are
+      not yours to say (PBG-AUTH-003).**
+  a_known_framework_defect_you_will_hit_and_must_NOT_fix: >-
+    `pbg/roles/engineer.md` mandates a `READY_FOR_ASSURANCE` status that the Build Log entry-schema
+    enum does not carry. This is `Q38`, RULED a FRAMEWORK defect and harvested to the PBGv2 backlog
+    as `IMP-041` (PO-DECISIONS-0031 ruling 4). **DO NOT EDIT `pbg/` TO RESOLVE IT (PBG-FWK-013).**
+    Two Engineers before you resolved it identically without touching the framework — put a
+    schema-legal status in the `status:` field and carry `READY_FOR_ASSURANCE` in the record's own
+    prose and in your return. That is the correct behaviour and it is already precedent here.
+
+# ================================================================================================== #
+concurrency:
+# ================================================================================================== #
+  rule: CD-D-181 — SEQUENTIAL SINGLE-SEAT.
+  meaning: >-
+    You are the ONLY seat live on this project. Do not spawn a parallel sub-agent to do part of this
+    work. Two identities interleaved in one history is CD-RULE-002's exact failure mode.
+  frozen: 'be0b355 is FROZEN. The wo-2r3 lane does not move in this increment.'
+
+# ================================================================================================== #
+writable_scope:
+# ================================================================================================== #
+  repository: local
+  branch: wo-3
+  worktree: /srv/crash-detector-wo3
+  base_sha: a9e19c39830557105d646408590487c75dd6b5bd
+  content_tip_it_carries: ed7263a31d371b8d4b7a0be8939e226870548963
+  note_on_the_two_shas: >-
+    `a9e19c3` is `ed7263a` plus CD-ENG-WO3-13's return record. Build from `a9e19c3`; the CONTENT you
+    are strengthening the guard over is `ed7263a`.
+  paths_writable:
+    - required-tests.yaml
+    - tools/register/
+    - contracts/execution/
+    - tests/
+    - plants/WO3-INC16F/
+    - governance/engineering/build-log/
+  paths_READ_ONLY_and_named_because_each_one_is_a_temptation:
+    pbg/: >-
+      PINNED AND READ-ONLY TO EVERY SEAT (PBG-FWK-013). Editing the framework to make a control pass
+      is a BYPASS, not a fix. If PBG itself is defective, REPORT IT.
+    PID.md: PO-protected. Not yours. Not the Project Lead's either.
+    BLUEPRINT.md: PO-protected (CD-D-115). Not yours.
+    governance/decisions/: PO-protected. Not yours.
+    contracts/*.json: >-
+      **THE SHIPPED CONTRACTS. THEY MUST BE BYTE-UNCHANGED AT YOUR RETURN AND YOU MUST MEASURE AND
+      REPORT THAT WITH `sha256sum` AT BOTH ENDS, not assert it.**
+    plants/WO3-INC16D/ and plants/WO3-INC16E/: >-
+      **THE ARMS THAT PRODUCED THE TWO AMBERs. BYTE-UNCHANGED.** Re-cutting the plants for the
+      increment that answers them would be marking your own paper. Your new arms go in a NEW
+      directory.
+    src/: '*** **SEE `the_declared_stop` BELOW. THIS IS THE HARD ONE, AND IT IS HARDER THIS TIME THAN LAST TIME.** ***'
+
+# ================================================================================================== #
+the_declared_stop:
+# ================================================================================================== #
+  rule: >-
+    **NOTHING UNDER `src/` CHANGES WITHOUT AN EXPLICIT ESCALATION FIRST. NOTHING IS REVERTED.
+    `0e80a09` AND `ed7263a` ARE BOTH PRESERVED.**
+  why_it_is_harder_this_time: >-
+    ITEM 2 asks you to establish a SINGLE PUBLICATION CHOKEPOINT. **IT IS ENTIRELY POSSIBLE THAT
+    ONE ALREADY EXISTS AND ALL YOU OWE IS THE CONTROL THAT PROVES IT.** The dispatching seat
+    MEASURED that `refuse_unless_publishable` is called from exactly one place in `src/` today
+    (`publication/publish.py`), and DECLARED LIMIT 6 of the existing instrument says the same.
+    **SO YOUR FIRST MOVE ON ITEM 2 IS TO MEASURE WHETHER THE INVARIANT ALREADY HOLDS, NOT TO
+    RESTRUCTURE THE CODE SO THAT IT DOES.**
+  what_you_do_if_you_conclude_src_MUST_move: >-
+    **YOU STOP AND YOU RETURN, WITH THE CHANGE UNMADE.** Write what you found, why the invariant
+    cannot be established or proved without it, and exactly what you would change. **THAT IS A
+    COMPLETE AND CORRECT OUTCOME FOR THIS DISPATCH.** It is an ESCALATION, not a failure.
+    CD-ENG-WO3-12 did exactly this and was right to.
+  and_the_thing_that_is_NOT_broken: >-
+    **THE GATE ITSELF.** MEASURED by the dispatching seat in its own shell on a pristine
+    extraction of `a9e19c3`, twenty-four probe rows, both surfaces: every ANCIENT+calm and
+    FUTURE+calm shape REFUSED `[STALE_CALM]` at the offending slot's own pointer, and every
+    all-fresh baseline ADMITTED. **STALE-CALM ADMISSIONS = 0. THE DEFECT IS IN THE INSTRUMENT.**
+
+# ================================================================================================== #
+the_finding_this_increment_answers — AND IT WAS REPRODUCED, NOT FORWARDED:
+# ================================================================================================== #
+  A313_F1:
+    severity: HIGH
+    status: DEFECT_OPEN
+    raised_by: CD-ASR-WO3-13 at f56a6e9
+    against: 'tools/register/check_stale_data_never_calm.py — CD-RT-001-STALE-DATA-NEVER-CALM, and its DECLARED LIMIT 2.'
+    class: GUARD_THE_INSTANCE_NOT_THE_CLASS — one level up from D1-D4.
+    statement: >-
+      The instrument builds every candidate document by filling each root property with the FIRST
+      value of a CLOSED written vocabulary that the property's own subschema accepts. All 72
+      documents it drives therefore carry THE SAME SINGLE VALUE FOR EVERY ROOT PROPERTY. **IT
+      PROBES ONE POINT IN THE SPACE OF DOCUMENTS THE CONTRACT ADMITS, WHILE THE GUARANTEE
+      QUANTIFIES OVER ALL OF THEM. ANY WEAKENING OF THE STAGE CONDITIONED ON ANY OTHER VALUE OF ANY
+      ROOT PROPERTY IS INVISIBLE TO IT.**
+    and_the_dispatching_seat_REPRODUCED_it_rather_than_forwarding_it: >-
+      **CD-PL-F193: an inherited claim is a hypothesis until it is run. PROJECT_LEAD_SEAT_07 ran it
+      at BL-20260824T211349Z-0184 — its own patches, its own argv-parameterised probe, its own
+      pristine extractions, `git apply` rc taken and checked, inserted lines grep-confirmed present.
+      YOU ARE NOT BEING SENT AFTER A RUMOUR. REPRODUCE THESE INDEPENDENTLY RATHER THAN TRUST THEM:**
+        · CLEAN `a9e19c3`: 24 probe rows, 0 baseline refusals, **STALE-CALM ADMISSIONS = 0.**
+        · `W5G` — five lines, `if len(candidate.get("inputs_used") or []) > 1: return` at the top of
+          `_refuse_stale_calm`: **STALE-CALM ADMISSIONS = 8, BOTH SURFACES.** 1970-calm and
+          2099-calm ADMITTED on every two-input document. Every one-input row still refuses and
+          every baseline still admits, **so the gate looks perfectly healthy from any angle that
+          only drives one-input documents.**
+        · `W5B2` — three lines, `if candidate.get("regime") == CALM_DETAIL_LEVEL: return`:
+          **STALE-CALM ADMISSIONS = 8, BOTH SURFACES.** `regime` is `{"type": "string",
+          "minLength": 1}` on BOTH shipped contracts, deliberately not an enumeration, so `"calm"`
+          is an ORDINARY admissible value.
+        · **THE REGISTER ON ALL THREE TREES: `TOTAL lines=32 rc0=21 nonzero=11`. `diff` rc=0 BOTH
+          TIMES. NOT ONE OF THE THIRTY-TWO LINES MOVES ON EITHER WEAKENING.**
+        · **THE HARNESS WAS CONTROLLED RATHER THAN TRUSTED:** the same runner on a `D1` extraction
+          of the same tip returns `32/19/13` and moves EXACTLY TWO LINES, both the new rows. So the
+          empty diff is a measurement and not a dead pipe.
+    what_is_NOT_claimed: >-
+      **THE SHIPPED PRODUCT IS NOT BREACHED AT `a9e19c3` AND 16E IS A LARGE, REAL IMPROVEMENT.**
+      Before it, `D1` moved NOTHING; now `D1`, `D2`, `D4` and a depth-truncated node walk all move
+      the register, and both new rows move independently on all four. **NOTHING ABOUT `a9e19c3`
+      SHOULD BE REVERTED. BOTH FACTS ARE TRUE AND YOUR RETURN MUST CARRY BOTH.**
+
+  the_prescription_you_are_NOT_executing: >-
+    *** **CD-ASR-WO3-13's prescription (a) reads: "for every root property whose subschema admits
+    more than one of `SYNTHETIC_VALUES` ... drive each MUST-REFUSE row a SECOND time with a
+    DIFFERENT admissible value." THE PRODUCT AUTHORITY WENT PAST THAT AND YOU MUST TOO.** *** A
+    SECOND point is two points, and a predicate keyed on a third value walks between them. `W5G`
+    keys on `len(inputs_used) > 1` and the existing vocabulary's only array values are a ONE-element
+    array and an EMPTY one — **"a different admissible value" drawn from that vocabulary would
+    still not have caught `W5G`.** Ruling 1(i) says SPACE, and it says "complete by construction".
+    Prescription (b), (c) and (d) DO stand and are ITEM 3 and ITEM 4 below.
+
+# ================================================================================================== #
+the_work — FOUR ITEMS. ITEM 1 AND ITEM 2 TOGETHER ARE THE INCREMENT.
+# ================================================================================================== #
+
+  ITEM_1_THE_INSTRUMENT_MUST_PROBE_THE_SPACE:
+    authority: PO-DECISIONS-0031 ruling 1(i)
+    the_property_to_establish — STATED AS AN INVARIANT BECAUSE THAT IS WHAT MAKES IT COMPLETE: >-
+      *** **THE GATE'S STALE-CALM VERDICT DEPENDS ON EXACTLY THREE THINGS AND ON NOTHING ELSE: the
+      calm-bearing node's OWN stamps, the root's `published_utc`, and the root's
+      `staleness_window_seconds`. VARY ANY OTHER PROPERTY OF THE DOCUMENT TO ANY OTHER VALUE THE
+      CONTRACT ADMITS, AND THE VERDICT MUST NOT CHANGE.** ***
+      **THAT INVARIANT IS THE INSTRUMENT'S SUBJECT, AND IT IS WHY THE INSTRUMENT BECOMES COMPLETE
+      BY CONSTRUCTION RATHER THAN BY ENUMERATION:** a weakening keyed on ANY other property — the
+      four known shapes, `W5B2`, `W5G`, and shapes nobody has named — IS A DEPENDENCE ON A PROPERTY
+      THE CRITERION SAYS NOTHING ABOUT, and a dependence is exactly what an invariance check
+      detects. **YOU ARE NOT LISTING SHAPES. YOU ARE ASSERTING AN INDEPENDENCE.**
+    what_that_requires_of_you_and_the_line_is_YOURS_to_write: >-
+      **HOW you construct the document space is your design and this dispatch does not write it
+      (PBG-SOD-004).** What the dispatching seat sets is the ACCEPTANCE, and these are the
+      properties the acceptance turns on:
+    the_properties_the_acceptance_turns_on:
+      coverage_is_over_PROPERTIES_not_over_a_written_list_of_names: >-
+        The instrument must enumerate the root properties FROM THE CONTRACT ITSELF, so a root
+        property a future contract edit adds is covered the day it lands and not the day someone
+        remembers to add it. `regime`, `inputs_used`, `degraded_inputs` and `config_snapshot_id` are
+        the ones that exist today; **naming them in the code is how this becomes a five-point
+        instrument instead of a space-probing one.**
+      the_VALUE_VOCABULARY_IS_THE_HALF_THAT_DECIDES_WHETHER_THIS_WORKS: >-
+        *** **THIS IS THE MOST LIKELY WAY FOR 16F TO FAIL, AND IT IS NAMED HERE SO THAT MISSING IT
+        IS NOT AN ACCIDENT.** *** An invariance check is only as wide as the values it varies
+        across. The current vocabulary would not have caught `W5G` — its only arrays are length 0
+        and length 1, and the predicate needs length 2. The vocabulary must span the features a
+        weakening predicate can actually key on, and it must be justified IN THOSE TERMS in the
+        instrument's header: **presence and absence · every JSON type the subschema admits · array
+        CARDINALITY at 0, 1, 2 and many · string values drawn from THE PRODUCT'S OWN VOCABULARIES
+        as well as synthetic ones — `calm`, `elevated`, `acute` and the `state` consts are ordinary
+        admissible values of a free-string root property and `W5B2` is exactly that shape ·
+        numbers at zero, negative, small and large · both booleans · null.** Where a subschema
+        admits an unbounded set, say so as a declared limit and say what you sampled and why.
+      it_must_cover_the_CALM_BEARING_NODE_too_not_only_the_ROOT: >-
+        `W5A` keys on a ROOT property; a shape keyed on the node's own `score`, `state`,
+        `contributions` or `inputs_used` is the same defect one level down. The invariant is
+        "everything except the node's stamps and the two root fields", and the node's own non-stamp
+        properties are inside "everything else".
+      BOTH_LIMBS: >-
+        The existing row has LIMB A (the live gate through the front door) and LIMB B (the stage
+        driven directly, for positions the closed contract makes unreachable). **A313-F1 HIT BOTH
+        LIMBS. The space must be probed on both, and DECLARED LIMIT 3's statement that the two
+        limbs are separately defeatable stays true and stays stated.**
+      THE_VACUITY_DIRECTION_IS_EQUALLY_A_VIOLATION_AND_IT_IS_NOW_HARDER: >-
+        *** **THIS IS THE HALF THIS PROJECT'S HISTORY SAYS GETS MISSED, AND AN INVARIANCE CHECK HAS
+        A NEW WAY TO GO VACUOUS: an instrument that refuses everything everywhere is PERFECTLY
+        INVARIANT.** *** Every MUST-ADMIT row must be driven at every point in the varied space too,
+        and must still ADMIT: a genuinely fresh calm dial, a dial aged EXACTLY the window (the
+        closed interval), and a stale dial rendering `elevated` or `acute`. `CD-STALE-VACUITY-000`
+        already guards the instrument's own table against deletion; it must now guard the varied
+        space as well.
+      COST_IS_A_REAL_CONSTRAINT_AND_HONESTY_ABOUT_IT_IS_PART_OF_THE_DELIVERABLE: >-
+        The full cross-product of every property at every value is exponential and you must not
+        pretend to run it. One-at-a-time variation from a proved-publishable baseline is linear and
+        catches every predicate keyed on a SINGLE property, which is every shape measured on this
+        project so far. **IF THAT IS WHAT YOU BUILD, SAY SO IN THE DECLARED LIMITS IN THOSE WORDS,
+        SAY WHAT A CONJUNCTIVE PREDICATE OVER TWO PROPERTIES WOULD DO TO IT, AND SAY WHAT YOU DID
+        ABOUT THAT.** A declared limit that is true is worth more than a claim of completeness that
+        an auditor falsifies in twenty minutes — and on this row an auditor has now done exactly
+        that twice.
+      AND_THE_REGISTER_LINE_MUST_ACTUALLY_MOVE: >-
+        An assertion that fires inside an instrument whose `execute:` line still exits 0 is a
+        memorial. **The row's exit code must go non-zero on every arm that admits a stale calm
+        reading. That is the acceptance test and it is ITEM 4.**
+
+  ITEM_2_NO_BYPASS_PATH_TO_PUBLICATION:
+    authority: PO-DECISIONS-0031 ruling 1(ii)
+    the_property_to_establish: >-
+      *** **THERE IS EXACTLY ONE PUBLICATION CHOKEPOINT, AND NO CODE ROUTE REACHES PUBLICATION
+      WITHOUT PASSING THE FRESHNESS STAGE — ENFORCED STRUCTURALLY, SO THAT A FIVE-LINE EARLY RETURN
+      AROUND IT CANNOT EXIST.** *** The ruling names the principle it is applying: **"no undecorated
+      evaluator exists", applied to the publication path.**
+    your_first_move_is_to_MEASURE_whether_it_already_holds: >-
+      DECLARED LIMIT 6 of the existing instrument says the only callers of
+      `refuse_unless_publishable` in `src/` are `publication/publish.py` lines 276-277, on both
+      surfaces, before any write — **and it says that as a MEASUREMENT AT A COMMIT, which is a
+      sentence that goes stale silently.** Re-measure it. If the invariant already holds in the
+      code, **WHAT IS MISSING IS THE CONTROL THAT PROVES IT AND KEEPS PROVING IT, NOT THE
+      RESTRUCTURING.** Build the control.
+    what_the_control_must_be_able_to_fail_on — AND YOU CHOOSE THE MECHANISM: >-
+      **A tree in which a second route writes a publication surface without passing the gate. A
+      tree in which the chokepoint reaches its write without calling the freshness stage — because
+      the call was removed, because a `return` was inserted before it, or because it was made
+      conditional. A tree in which the stage is called but a path through it reaches the end
+      without evaluating the calm-bearing nodes.** Each of those must make the row exit non-zero.
+    and_it_needs_its_OWN_ADMITTING_ARM: >-
+      *** **A STRUCTURAL CONTROL THAT ASSERTS "EXACTLY ONE CALLER" IS SATISFIED BY A TREE IN WHICH
+      NOTHING CALLS ANYTHING.** *** It must FAIL on a tree where the chokepoint is gone or calls
+      nothing, exactly as `CD-STALE-VACUITY-000` carries the admitting arms for the behavioural row.
+      **THE PROJECT LEAD RECORDED THIS AS THE NAMED RISK OF ITEM 2 BEFORE YOU STARTED.**
+    a_structural_read_is_permitted_HERE_and_the_reason_is_stated: >-
+      The existing row is deliberately BEHAVIOURAL, and its header says a structural read is
+      "precisely what let this class of defect through repeatedly on this project". **THAT REMAINS
+      TRUE OF ITEM 1 AND ITEM 1 STAYS BEHAVIOURAL.** ITEM 2's subject is different in kind: it is a
+      claim about WHICH CODE ROUTES EXIST, and no behavioural probe can enumerate routes that
+      nobody calls. **SAY THAT DISTINCTION OUT LOUD IN THE HEADER so that a later reader does not
+      take ITEM 2 as licence to make ITEM 1 structural.**
+    row_or_rows: >-
+      Whether this is a new register row or an extension of an existing one is your call, made on
+      the evidence and disclosed. **Ruling 2 (Q37) already corrects "its own row" to "row(s) as the
+      checks require", so you are not fighting the ruling either way — but `execute` must be a
+      single non-empty string and `&&` short-circuits, and that is exactly why 16E needed two rows.**
+
+  ITEM_3_THE_RECORD_CORRECTIONS — SUPERSEDE, NEVER EDIT:
+    authority: 'PO-DECISIONS-0031 ruling 2, and CD-ASR-WO3-13 prescriptions (b) and (c).'
+    3a_the_false_sentence_in_DECLARED_LIMIT_2: >-
+      **`DECLARED LIMIT 2` closes with "DENY BY DEFAULT, so it is not an escape; it IS a maintenance
+      cost." THAT SENTENCE IS MEASURABLY FALSE IN THE REASSURING DIRECTION** — deny-by-default
+      governs what happens when a property CANNOT be built and says nothing about the properties
+      that CAN be built and are then driven at exactly one value each, **which is where the escape
+      was.** Supersede it in ALL THREE `CD-RULE-004` places (the instrument header,
+      `contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md`, `required-tests.yaml`), **quoting
+      what it said VERBATIM beside the correction, in the same form as the ten supersession blocks
+      the sibling row already carries. NEVER EDIT. A correction supersedes.**
+    3b_the_FOR_THE_AUDITOR_paragraph: >-
+      It asserts universality over POSITIONS ("at every position in the document the walk reaches")
+      and is SILENT ON DOCUMENTS. **A reader of it would believe the row is stronger than it is, and
+      this project's own words for that are "how a guard becomes a certificate."** Correct it to say
+      what the row proves after 16F, and no more.
+    3c_A313_F2 — the LOW finding on the SIBLING row: >-
+      `DECLARED LIMIT 19` reads "ONLY AS HONEST AS **THE WINDOW** the document declares" in
+      `tools/register/check_missing_data_never_calm.py` and "**THE TWO COMPARANDS**" in the other
+      two `CD-RULE-004` places. **ONE OF THE THREE STILL DISAGREES AND IT IS THE INSTRUMENT HEADER —
+      THE PLACE AN ENGINEER READS FIRST.** Bring it into line by supersession.
+    3d_the_two_rows_stand: >-
+      **`Q37` IS RULED: KEEP BOTH REGISTER ROWS.** Arm `W5A` is caught ONLY by the witness-suite
+      row. **DO NOT REMOVE EITHER ROW AND DO NOT MERGE THEM WITH `&&`.** Record the ruling where the
+      Engineer's open question was raised, so the next reader finds the answer beside the question.
+
+  ITEM_4_THE_ACCEPTANCE_TEST_YOU_MUST_RUN_AND_REPORT:
+    the_arms_to_commit: >-
+      Commit `W5A`, `W5B2`, `W5C` and `W5G` as MEASURED plant arms under `plants/WO3-INC16F/`,
+      beside `D1`-`D4`, each with its rc and its violation count — **so the class is on the record
+      as arms and not as prose** (prescription (b)). `plants/WO3-INC16D/` and `plants/WO3-INC16E/`
+      stay BYTE-UNCHANGED.
+    the_measurement: >-
+      *** **ON A PRISTINE `git archive <your new tip> | tar -x` EXTRACTION PER ARM, PATCH READ FROM
+      AN ABSOLUTE PATH OUTSIDE THE EXTRACTION, `git apply` rc TAKEN INTO A VARIABLE AND CHECKED,
+      RUN EVERY `execute:` LINE THE REGISTER DECLARES AND REPORT THE PER-LINE rc DIFF AGAINST A
+      CLEAN EXTRACTION OF THE SAME TIP.** ***
+      **EVERY ARM ON WHICH THE LIVE GATE ADMITS A STALE CALM READING MUST MOVE AT LEAST ONE
+      REGISTER LINE. `D1`-`D4`, `W5A`, `W5B2` AND `W5G` ARE ALL IN THAT SET.** `W5C` (the reason
+      class renamed) does NOT admit anything and is recorded as an observation, not a breach —
+      report it as such and do not inflate it.
+    and_the_arms_you_did_NOT_build_against — THIS IS THE PART THAT DECIDES THE VERDICT: >-
+      *** **INVENT AT LEAST THREE FURTHER WEAKENING SHAPES AFTER YOUR INSTRUMENT IS FINISHED AND
+      FROZEN, KEYED ON PROPERTIES AND VALUES YOU DID NOT HAVE IN MIND WHILE BUILDING IT, AND RUN
+      THEM. REPORT WHAT HAPPENED WHETHER OR NOT IT FLATTERS YOU.** *** An instrument that catches
+      only the shapes it was built against is the defect this increment exists to close, and the
+      ONLY evidence that yours is not is a shape it was not built against and caught anyway.
+      **IF ONE OF YOUR OWN NEW SHAPES ESCAPES, SAY SO AND SAY WHY. THAT IS A HONEST AMBER AND IT IS
+      WORTH MORE THAN A GREEN AN AUDITOR BREAKS IN TWENTY MINUTES — WHICH IS WHAT HAPPENED TO THE
+      LAST TWO RETURNS ON THIS ROW.**
+    the_no_regression_measurements: >-
+      On a CLEAN extraction of your new tip: every previously-passing register line still passes,
+      the shipped `contracts/*.json` are byte-identical by `sha256sum` at both ends, `src/` shows NO
+      MATCH in `git diff --name-only a9e19c3 <your tip>`, and `pbg/` shows zero paths. **MEASURE AND
+      REPORT ALL FOUR. Do not assert them.**
+
+# ================================================================================================== #
+what_this_increment_is_NOT:
+# ================================================================================================== #
+  not_16C: >-
+    **NO `feed_liveness` SLOT. NO DEAD-FEED DETECTOR. NO LIVENESS MARKING. NO INDICATOR ROW IS
+    REGISTERED FROM `governance/mapping/indicator_mapping.yaml`.** 16C is HELD by the Product
+    Authority until this gate is GREEN and it is not yours to release.
+  not_the_A312_F2_tightening: 'Q36 is CLOSED (PO-DECISIONS-0031 ruling 3). Do not build it.'
+  not_a_framework_repair: 'Q38/IMP-041 belongs to the PBGv2 release. Do not touch `pbg/`.'
+  not_a_fifth_arm: >-
+    **IF YOUR RETURN''S CENTRAL CLAIM IS "IT NOW ALSO CATCHES `W5B2` AND `W5G`", YOU HAVE BUILT THE
+    THING THE PRODUCT AUTHORITY REFUSED.** The central claim must be about the INVARIANT and the
+    CHOKEPOINT; `W5B2` and `W5G` are two of its acceptance rows.
+
+# ================================================================================================== #
+your_return:
+# ================================================================================================== #
+  status_to_return: READY_FOR_ASSURANCE
+  where: >-
+    A Build Log entry under `governance/engineering/build-log/` on the `wo-3` branch, committed
+    under YOUR identity, naming the exact content tip. **A result that exists only in conversation
+    is not project state (PBG-CONT-007).**
+  it_must_carry:
+    - 'Every figure you claim, MEASURED, with the command that produced it.'
+    - 'The per-line register rc diff for EVERY arm, clean and patched, with `git apply` rc stated.'
+    - 'The DECLARED LIMITS of both items, in all three CD-RULE-004 places, agreeing with each other word for word.'
+    - '**FINDINGS AGAINST YOUR OWN WORK.** CD-ENG-WO3-13 raised CD-ENG-F16E-01 against itself — a guard it had written INVERTED, which made a whole limb dead while looking like coverage — and that disclosure is the single most valuable line in its return. **A RETURN WITH NO FINDINGS AGAINST ITSELF IS READ HERE AS A RETURN THAT DID NOT LOOK.**'
+    - 'Anything you were asked for and did not build, said plainly, with the reason.'
+  and_what_you_must_not_write: >-
+    Not "PASS", not "GREEN", not "COMPLETE", not "ACCEPTED", and not a sentence you have not run.
+    **`CD-PL-F193` binds you as much as it binds the seat that dispatched you.**

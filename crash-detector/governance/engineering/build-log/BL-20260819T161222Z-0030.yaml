@@ -1,0 +1,118 @@
+entry_id: BL-20260819T161222Z-0030
+timestamp_utc: "2026-08-19T16:12:22Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 6eda0b4
+lane_head_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba
+parent_entry_id: BL-20260819T160900Z-0029
+record_origin: >
+  Written by the Project Lead on main when issuing WO-2R increment 5 to CD-ENG-WO2R-01. Per
+  CD-RULE-005 the entry_id timestamp comes from `date -u +%FT%TZ`.
+schema_version: 1
+
+action_summary: >
+  WO-2R INCREMENT 5 ISSUED to CD-ENG-WO2R-01 at execution base be34fe4, bounded to CD-ASR-F06 (the
+  unbounded staleness window) and carrying the CD-D-055 bounded addendum at its head (CD-PL-F62,
+  declared boundary 5 of the code-graph guard). The dispatch record
+  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml is amended with both, so the brief is durable
+  in the repository and not only in a conversation (PBG-CONT-007). No application code is touched
+  by this entry and no lane commit is made by the Project Lead.
+
+what_the_increment_is_bounded_to:
+- 'THE ADDENDUM FIRST, its own commit: correct declared boundary 5 of
+  tools/register/check_engine_no_witness_reach.py, which distinguishes services by PURPOSE in prose
+  while the code distinguishes by NAME and does not contemplate a second service built from the
+  engine image (PL-U6b escapes at exit 0, PASS 24). Name the case and its MEASURED carrier — 8 suite
+  failures — in all three CD-RULE-004 places. The seat may instead CLOSE it by deriving roots from
+  every engine-image service; CD-RULE-004 gives it that choice, and either way boundary 5 must end
+  up saying what the guard actually does.'
+- 'THEN CD-ASR-F06: a HARD UPPER BOUND on staleness windows, structural and not advisory — a caller
+  passing a window above the ceiling gets a refusal, never a clamp — plus the stronger invariant the
+  dispatch asks for, that Agrees be constructible only with the positive freshness evidence that
+  justifies it, so a decade-old row cannot produce one by any route including one that skips the age
+  comparison. That invariant is what also closes E08/CD-ASR-F07 as a consequence.'
+- 'NOTHING ELSE. CD-PL-F61 (the _yamlmin.py non-termination) is a SEPARATE bounded dispatch after
+  this one and before Assurance (CD-D-051); folding it in is the silent widening `prohibited`
+  forbids.'
+
+the_ceiling_is_a_product_quantity_and_the_chain_was_re_verified:
+  why_this_paragraph_exists: >
+    CD-RULE-003 and PBG-AUTH-005 forbid a seat inventing a product quantity, and the Project Lead
+    must not hand on a derivation it has not read. The previous seat verified this chain; the
+    resumed seat verified it AGAIN against the ratified text rather than inheriting the claim.
+  PID_clause: >
+    PID.md line 86, in the ratified table, marked "RATIFIED 2026-08-18 — CD-D-003 resolved":
+    "pipeline/publication failure independently detectable <= 15 minutes; a cadence breach alerts
+    within one publication cycle; a candidate defect is caught at the register gate before
+    promotion". 15 minutes = 900 seconds.
+  BLUEPRINT_clause: >
+    BLUEPRINT.md lines 314-318, §7, CD-AC-009, scheduled WO-3: "The staleness window is a function,
+    not a constant: `window_for(regime) -> seconds`, tightening as observed volatility rises."
+  the_reasoning: >
+    A staleness window WIDER than the detectability budget means a dead witness feed renders as
+    fresh for longer than the product permits failure to go undetected, so the budget bounds the
+    window from above. The regime function bounds it further from beneath at WO-3.
+  the_constraint_the_seat_is_held_to: >
+    900s is defensible ONLY as a HARD UPPER BOUND with the operating window explicitly deferred to
+    WO-3, because a window of exactly 900s consumes the ENTIRE detectability budget and leaves
+    nothing for detection and alerting. A TIGHTER number must be DERIVED with its clause cited, not
+    chosen because it looks prudent. Choosing a prudent-looking number is the invention CD-RULE-003
+    forbids: the seat FAILS CLOSED and escalates instead.
+  the_seat_is_told_not_to_take_this_on_trust: >
+    The dispatch says in terms: "Read them yourself; do not accept this paragraph as the reading."
+    The fail-closed branch stays available to the seat even though the Project Lead believes the
+    chain holds.
+
+separation_of_duties:
+  statement: 'PBG-SOD-001, non-waivable. The Engineer and the Assurance Engineer are never the same agent.'
+  how_it_is_evidenced_here: >
+    CD-ENG-WO2R-01 implements; CD-ASR-WO2-02 will audit under a separate dispatch not yet issued;
+    PROJECT_LEAD_SEAT_01 reconciles and never authors the closure (PBG-AUTH-006, the standing
+    CD-D-038/CD-D-045 precedent, which is not relaxed because a fix looks small). Distinct actor_ids
+    in this record, in the Build Log and in commit identity (CD-RULE-002).
+  what_the_project_lead_will_do_on_return: >
+    Run every declared arm itself on a pristine extraction, and write FRESH probes of its own against
+    the structure the seat ACTUALLY built rather than the one this dispatch imagined. That step has
+    now sent two increments back (CD-PL-F54, CD-PL-F59) and it is the reason both were caught before
+    the gate rather than at it.
+
+continuity_write_read_back:
+  rule: 'CD-RULE-007, recorded one entry ago and applied here.'
+  command: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  verdict: >
+    Recorded in the commit body, run after the ACTIVE_WORK edit and before the commit.
+
+status: CHECKPOINT
+current_sha: 6eda0b4
+next_safe_action: >
+  AWAIT CD-ENG-WO2R-01's return of READY_FOR_ASSURANCE (or BLOCKED, or a fail-closed escalation on
+  the ceiling). Then RECONCILE: reproduce every number the seat declares on a pristine extraction,
+  audit all commits for CD-RULE-002 identity in BOTH author and committer, check the mandatory
+  ten-heading block on each, confirm nothing under variants/ is executable, confirm the eleven
+  plants still apply and contrast, and write fresh Project Lead probes against the delivered
+  structure. Accept or send it back on the evidence, never on the seat's reasoning alone. THEN the
+  CD-PL-F61 _yamlmin dispatch (CD-D-051), THEN increment 6, THEN and only then
+  CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02, a SEPARATE seat.
+expected_next_actor: ENGINEER
+
+evidence_references:
+- 'governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml block increment_5_F06, as amended at this commit'
+- 'PID.md line 86 (ratified assurance latency budget); BLUEPRINT.md lines 314-318 (§7 window_for)'
+- 'BL-20260819T155105Z-0028 (CD-D-055, CD-PL-F62 and the measured PL-U6b escape)'
+- 'governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md (E07 for this finding, E08 for F07)'
+
+risks:
+- 'The seat may return a fail-closed escalation on the ceiling rather than an implementation. That is
+  a SUCCESSFUL outcome of this dispatch, not a failure of it, and it would make the ceiling an owed
+  Product Authority decision alongside CD-D-005 and the health-endpoint question. The Project Lead
+  will not substitute a number in that event either.'
+- 'CD-PL-F61 stands: two of the eleven declared gate commands do not terminate on an ordinary YAML
+  edit. Owed after this increment and before Assurance (CD-D-051).'

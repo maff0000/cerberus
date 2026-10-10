@@ -1,0 +1,143 @@
+# ================================================================================================== #
+# BL-20260823T131430Z-0136 — PROJECT LEAD BOUNDARY. **THIS ONE STOPS.**
+#
+# **THE META-ASSURANCE SEAT RETURNED `RED` AND IT IS BANKED VERBATIM (`f401d48`).**
+#
+# **AND THE PASS FOUND ITS OWN THESIS DEMONSTRATED AGAINST IT, LIVE, DURING THE READ: A SELF-RAISED
+# FINDING (`CD-PL-F143`) WAS WRONG, NO INSTRUMENT CAUGHT IT, AND THE PROJECT ACTED ON IT.**
+#
+# **THE CAUSE IS NOT CARELESSNESS. TWO LIVE PROJECT LEAD SESSIONS ARE COMMITTING TO `main` AS THE
+# SAME IDENTITY, AND NO CONTROL ON THIS PROJECT DETECTS IT. THAT IS WHY THIS BOUNDARY STOPS.**
+# ================================================================================================== #
+
+entry_id: BL-20260823T131430Z-0136
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T13:14:30Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+actor_process_disambiguator: 'PID 1115117 — **NAMED BECAUSE THE ACTOR FIELD IS NO LONGER UNIQUE. See `the_stop` below.**'
+phase: GATE
+branch: main
+banking_sha: f401d484bb77527369c5ae3a17549f8b203cfe3d
+
+the_verdict_as_banked:
+  seat: CD-META-01
+  grade: '**RED** — on the PROJECT LEAD''S OWN RECONCILIATION PRACTICE, which is what it was authorised to grade (PO-DECISIONS-0013 ruling 5, sequenced by PO-DECISIONS-0019 ruling 5).'
+  identity_MEASURED: '**766 lines · 50118 bytes · sha256 `43b3a0b14fa767a0edc50353bb427fb1b921c8f471224eefeee47eb8ae9bd058`**, `cmp` between the seat''s own file and the banked copy -> **rc=0, BYTE-IDENTICAL**.'
+  how_it_was_banked: '**VERBATIM, AT `governance/assurance/META/`, COMMITTED BEFORE IT WAS READ** (`CD-D-143`, `PBG-CONT-007`). Not one character altered and not one character read by this seat before that commit.'
+  and_this_seat_does_not_argue_it: '**`PBG-AUTH-003`. NO AUTHORITY TO MOVE THIS GRADE UP OR DOWN, AND NO ATTEMPT MADE.** This entry records and stops; it does not reconcile the verdict''s substance, because reconciling it would require writing files a second live writer owns.'
+
+# ================================================================================================== #
+# **THE STOP — AND IT IS A NEW CLASS, NOT A NEW INSTANCE OF AN OLD ONE.**
+# ================================================================================================== #
+the_stop:
+- id: CD-PL-F145
+  severity: HIGH
+  against: 'THE OPERATING MODEL ITSELF — not a seat, and not a habit'
+  title: '**TWO LIVE PROJECT LEAD SESSIONS ARE COMMITTING TO `main` UNDER ONE IDENTITY, AND NOTHING ON THIS PROJECT DETECTS IT.**'
+  MEASURED_FROM_THE_LIVE_PROCESS_TABLE_AND_NOT_INFERRED: >
+    `ps -eo pid,etimes,args`, run in this worktree with its own `pwd` printed (`CD-PL-F98`):
+    **PID 1115117**, etimes 2119 — `timeout 21600 claude -p "...Your previous session banked the
+    EIGHTH RED..."` — **THIS session. It executed increment 11 and dispatched `CD-META-01`.**
+    **PID 1149000**, etimes 1215 and STILL LIVE at 1285s when re-checked — `timeout 21600 claude -p
+    "...Your previous session banked INCREMENT 11..."` — **A SECOND session, launched ~12:52Z by the
+    operator wrapper while the first was still running.**
+    **BOTH COMMIT AS `PROJECT_LEAD_SEAT_01`. `git` ACCEPTED EVERY COMMIT.**
+  what_it_actually_did_and_this_is_the_evidence_not_the_theory: >
+    `a31c799` (13:02:38Z) and `cd79952` (13:05:51Z) **ARE NOT THIS SESSION'S COMMITS.** This session
+    made no commit between `5e0a873` (12:53Z) and `f401d48` (13:14Z) — it was waiting on its seat.
+    **`cd79952` REWROTE `CD-DISPATCH-META-ASSURANCE-01.yaml` WHILE `CD-META-01` WAS EXECUTING IT**,
+    and banked **`CD-PL-F143` (HIGH): *"NO SEAT EVER RETURNED ANYTHING ... the seat either never
+    launched or died."***
+  and_CD_PL_F143_IS_FALSE_SUPERSEDED_HERE_BY_MEASUREMENT_AND_NOT_BY_ARGUMENT: >
+    *** **THE SEAT WAS ALIVE AND READING AT THE MOMENT THE FINDING SAID IT WAS DEAD, AND IT RETURNED
+    A 766-LINE VERDICT NINE MINUTES LATER.** ***
+    `CD-PL-F143` was derived from `find . -iname '*META*'` over the **REPOSITORY** — searching for an
+    artefact the same dispatch's own `write_to:` field ordered written to **`/tmp/meta-assurance-01/`**,
+    a directory that had existed since **12:53:40Z** with the verdict being built inside it.
+    **THE SENTENCE THAT FALSIFIES IT IS THIS PROJECT'S OWN, WRITTEN BY THIS SEAT INTO THE CONTRACT IT
+    DISPATCHES AUDITORS UNDER: *"Absence in the wrong tree is not absence."***
+    **`CD-PL-F143` IS NOT EDITED OUT OF `cd79952` AND MUST NOT BE** (`PBG-CONT-003` — corrections
+    supersede, never edit). It stands in the record as written, and it stands falsified here.
+  why_this_is_a_CLASS_and_not_a_slip: >
+    **IT IS `CD-RULE-002`'s EXACT FAILURE MODE — two identities interleaved in one history — RAISED
+    ONE LEVEL, TO THE PROJECT LEAD SEAT ITSELF.** Every control this project owns assumes ONE Project
+    Lead. `actor:` is a constant string, not a claim anything verifies. **A SECOND WRITER IS
+    INDISTINGUISHABLE FROM THE FIRST IN EVERY ARTEFACT THIS PROJECT PRODUCES**, and the only reason
+    it was caught is that a read-only auditor happened to be mid-flight and photographed the tree
+    twice. **THAT IS LUCK, NOT A CONTROL.**
+  and_it_is_the_META_PASS_S_OWN_THESIS_ARRIVING_ON_TIME: >
+    The pass was dispatched to test whether self-finding at volume functions as a control or as a
+    substitute for one. **DURING THE PASS, A SELF-RAISED FINDING WAS WRONG, NOTHING CAUGHT IT, AND
+    THE PROJECT ACTED ON IT BY RE-ISSUING A DISPATCH UNDER A LIVE SEAT'S FEET.** The seat found that
+    itself and named it. **THE ANSWER TO THE QUESTION ARRIVED AS AN EVENT RATHER THAN AS AN
+    ARGUMENT.**
+
+# ================================================================================================== #
+# A DECLARED DEVIATION, STATED RATHER THAN TAKEN SILENTLY
+# ================================================================================================== #
+what_this_boundary_DELIBERATELY_DID_NOT_WRITE:
+  ACTIVE_WORK_yaml: >
+    **NOT TOUCHED, AND THAT IS A DEVIATION FROM `CD-PL-F132`'s RULE THAT `last_build_log_entry` MOVES
+    IN THE SAME COMMIT AS THE ENTRY IT NAMES. IT IS DECLARED HERE RATHER THAN TAKEN QUIETLY.**
+    `ACTIVE_WORK.yaml` is **overwritten in place by design** — its own header says so. With a second
+    live Project Lead session writing the same file from a different base state, **this session
+    writing it would be a LOST UPDATE: it would silently destroy the other session's reconciliation
+    of PO-DECISIONS-0020, or have its own destroyed.**
+    **THIS ENTRY IS APPEND-ONLY AND CANNOT CONFLICT. THE POINTER IS NOT MOVED BECAUSE MOVING IT
+    SAFELY IS NOT AVAILABLE TO A SECOND WRITER.**
+    **THE CONSEQUENCE IS STATED AND NOT HIDDEN: a pristine clone at this SHA will boot
+    `CONTINUITY_REFERENCE_INVALID` / `RESUME_BLOCKED`, exactly as the meta-assurance verdict reports
+    for `a31c799` and `cd79952`. THAT IS ALREADY TRUE AT THE TIP AND THIS ENTRY DOES NOT REPAIR IT.
+    NOT PROVED TO BE CARRIED ANYWHERE (`CD-RULE-006`) — the repair belongs to whichever session the
+    human designates as THE Project Lead, and this seat will not race for it.**
+  the_ninth_assurance_seat: >
+    **NOT DISPATCHED. THE DRAFT IS WRITTEN AND VALIDATED AT `/tmp/pl-inc11/CD-DISPATCH-WO2R3-ASSURANCE-09.yaml`
+    AND IT IS NOT COMMITTED AND NOT ISSUED.**
+    Three independent reasons, any one of them sufficient:
+    **(1)** `CD-META-01` has just demonstrated what happens to a read-only seat in this repository
+    right now — its target moved twice and its own dispatch was rewritten beneath it. **DISPATCHING
+    A NINTH SEAT INTO A TREE TWO PROJECT LEADS ARE WRITING WOULD BURN THE NINTH AUDIT THE WAY THE
+    SEVENTH WAS BURNED.**
+    **(2)** The meta-assurance seat's own continuation instruction, adopted verbatim: *"do not point
+    the ninth seat at a live `/srv` worktree — hand it a clone at a tag."*
+    **(3)** **PO-DECISIONS-0020 LANDED AT `abafec2` DURING THIS SESSION AND THIS SESSION HAS NOT READ
+    IT.** It answers `Q5` and `Q6` — the two questions this session raised — and a second session has
+    already carried it at `a31c799`. **THE PERIMETER THE NINTH SEAT WOULD GRADE IS NOT THE PERIMETER
+    THIS SESSION LAST MEASURED, AND ISSUING A DISPATCH FROM A STALE READING IS THE FIFTH DISPATCH
+    DEFECT WAITING TO HAPPEN.**
+  the_meta_assurance_verdicts_SUBSTANCE: >
+    **NOT RECONCILED AT THIS BOUNDARY.** The verdict is banked and its headline findings are recorded
+    in `f401d48`'s message. **RECONCILIATION BY MEASUREMENT IS OWED AND IS NOT DONE** — it requires
+    writing the record, which is the thing this boundary has just declared unsafe.
+    **BANKED IS NOT RECONCILED AND NEITHER IS ACCEPTED** (`PBG-AUTH-003`).
+
+what_did_NOT_change: >
+  **NO GRADE MOVED. NO FINDING CLOSED. NO LANE FILE TOUCHED — `be0b355` IS STILL `be0b355`.**
+  `CD-AC-005` RED · `CD-AC-002` AMBER AND NOT CLOSED · `CD-ASR-WO2R3-04-F01` OPEN · six
+  `DEFECT_OPEN` tier-1 sites · `CD-F-0001`-`CD-F-0004` OPEN · **THE WO-2 GATE IS SHUT.**
+
+decision_refs:
+- PO-DECISIONS-0013   # ruling 5 — the meta-assurance pass, authorised
+- PO-DECISIONS-0019   # ruling 5 — sequenced here, and called OVERDUE
+- PO-DECISIONS-0020   # LANDED AT abafec2 DURING THIS SESSION AND NOT READ BY IT — see the_stop
+- CD-D-143            # verdicts banked verbatim and BESIDE, committed before read
+- PBG-CONT-007        # a sub-agent result that exists only in conversation is not project state
+- PBG-CONT-003        # corrections supersede, never edit — CD-PL-F143 stands as written and falsified
+- PBG-AUTH-003        # banked is not accepted; the PL does not argue a verdict
+- CD-RULE-002         # two identities interleaved in one history — the class CD-PL-F145 raises one level
+- CD-RULE-006         # NOT PROVED TO BE CARRIED ANYWHERE, used as prescribed
+
+next_safe_action: >
+  *** **STOP. THE NEXT ACTOR IS THE HUMAN OPERATOR, AND THE QUESTION IS NOT A PRODUCT ONE.** ***
+  **WHICH SESSION IS THE PROJECT LEAD?** Two are live and both are writing `main` as
+  `PROJECT_LEAD_SEAT_01`. **THIS SEAT WILL NOT DECIDE THAT BY CONTINUING TO COMMIT, BECAUSE THE
+  SESSION THAT COMMITS MOST IS NOT THEREBY THE PROJECT LEAD.** PID 1115117 (this one) is holding.
+  **THEN, AND ONLY AFTER THAT IS SETTLED, IN THIS ORDER:**
+  **1.** Repair continuity at the tip — it boots `RESUME_BLOCKED` today.
+  **2.** Reconcile the meta-assurance `RED` by measurement, and disposition `CD-PL-F145`.
+  **3.** Read PO-DECISIONS-0020 against the record and re-verify what `a31c799` carried.
+  **4.** Only then the ninth Assurance seat — **against a CLONE AT A TAG, never a live `/srv`
+  worktree**, on the meta seat's own instruction.
+  **NOTHING IS MERGED, ADMITTED, PROMOTED OR CLOSED MEANWHILE.**
+
+continuity_record_commit: NOT_RESOLVED_BY_DESIGN   # **AND THIS IS NOT THE `PENDING` OF A `CD-RULE-007` FOLLOW-UP.** A follow-up commit resolving this field would have to move `last_build_log_entry` too, which is the write this boundary has just declared UNSAFE while a second Project Lead session is live. **THE FIELD IS LEFT UNRESOLVED, VISIBLY, WITH THE REASON ATTACHED, RATHER THAN RESOLVED INTO A FILE ANOTHER WRITER OWNS.** It is owed to whichever session the operator designates.

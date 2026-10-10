@@ -1,0 +1,178 @@
+# ================================================================================================== #
+# BL-20260824T184040Z-0179 — PROJECT LEAD BOUNDARY. **`CD-ENG-WO3-12` RETURNED INCREMENT 16D —
+# THE GATE FRESHNESS-STAGE — `READY_FOR_ASSURANCE` AT CONTENT TIP `0e80a09`. THE RETURN IS BANKED
+# AS AN INPUT AND IS NOT ACCEPTED (`PBG-AUTH-003`). `CD-ASR-WO3-12`, A FRESH READ-ONLY IDENTITY,
+# IS DISPATCHED TO GRADE IT.**
+#
+# *** **THE MEASUREMENT THAT SETTLES WHETHER THE INCREMENT DID ANYTHING WAS RUN BY THIS SEAT WITH
+# THIS SEAT'S OWN FIXTURE — `/tmp/plf193/probe_f2.py`, WRITTEN BEFORE THE STAGE EXISTED, RE-RUN
+# UNMODIFIED: THE THREE `A311-F2` ROWS FLIP FROM `ADMITTED` TO `REFUSED [STALE_CALM]` ON BOTH
+# SURFACES, AND THE FRESH-DIAL ROW IS STILL `ADMITTED` ON BOTH, SO THE STAGE IS NOT VACUOUS. THE
+# RULE CC CONTROLS ARE UNMOVED AND STILL CARRY `SCHEMA_VIOLATION`. FOR THE FIRST TIME IN THIS
+# PROJECT'S HISTORY SOMETHING HAS COMPUTED *STALE*.** ***
+#
+# **AND IT IS STILL NOT ACCEPTED. THE ENGINEER RAISED `F16D-03` AGAINST ITS OWN WORK: THE FOURTH
+# STAGE IS GUARDED BY A TEST FILE AND BY NO REGISTER ROW, AND ARM `D1` DELETES THE WHOLE STAGE
+# WITHOUT MOVING THE THIRTY-LINE REGISTER. THAT IS THE DEFECT CLASS THIS PROJECT KEEPS MEETING.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T184040Z-0179
+timestamp_utc: '2026-08-24T18:40:40Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T18:40:40Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_05
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_05
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T175328Z-0178
+base_sha: 101f9be860fa42c19385b9de3f19074f9b1ffd8d
+current_sha: 101f9be860fa42c19385b9de3f19074f9b1ffd8d
+status: WAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-12 returned increment 16D READY_FOR_ASSURANCE at content tip 0e80a09 (entry tip
+  ef3c960) on the wo-3 lane. THIS SEAT BANKED IT AS AN INPUT, NOT AS AN ACCEPTANCE, and verified
+  five load-bearing claims in its own shell rather than carrying them from the return. It then
+  issued CD-DISPATCH-WO3-INC16D-ASSURANCE to CD-ASR-WO3-12, a FRESH read-only identity that wrote
+  none of what it grades. 16C IS NOT RELEASED. NO INDICATOR ROW IS REGISTERED. THE MEMORIAL
+  REMOVAL DID NOT LAND. NOTHING FROM 295bdbe IS REVERTED.
+
+the_return:
+  seat: CD-ENG-WO3-12 (FRESH — measured against `git log --all --format=%an` before dispatch)
+  declared: READY_FOR_ASSURANCE
+  content_tip: 0e80a09af9661a9e7e6bb73193fbe56133fcff29
+  entry_tip: ef3c960d23327800e0ad084c6833afca74a1a0fa
+  base: 295bdbe
+  return_entry: governance/engineering/build-log/BL-20260824T183401Z-16DF.yaml   # on the wo-3 lane
+  the_seat_did_not_grade_itself: >
+    **MEASURED IN THE RETURN AND CONFIRMED HERE: it declared `READY_FOR_ASSURANCE` and NOT `PASS`,
+    `GREEN` or `COMPLETE`, and it raised FIVE findings including THREE against its own work.** That
+    is the dispatch's stop condition honoured rather than merely acknowledged.
+
+# ================================================================================================== #
+what_THIS_SEAT_measured_rather_than_carried:
+# ================================================================================================== #
+  why: >
+    *** `CD-PL-F193`: AN INHERITED CLAIM IS A HYPOTHESIS UNTIL YOU RUN IT — **AND A RETURN FROM A
+    SEAT THIS SEAT DISPATCHED IS EXACTLY SUCH A CLAIM.** *** Five checks were run here. They are a
+    SHALLOW CORROBORATION AND NOT AN AUDIT, and this entry says so rather than letting the count
+    imply otherwise. The audit is CD-ASR-WO3-12's.
+
+  "*** THE FLIP, RE-RUN WITH THIS SEAT'S OWN PRE-INCREMENT FIXTURE ***":
+    why_this_fixture_and_not_the_engineers: >
+      `/tmp/plf193/probe_f2.py` was written by this seat at BL-20260824T175328Z-0178, BEFORE the
+      stage existed, to reproduce A311-F2 at 295bdbe. **IT WAS RE-RUN UNMODIFIED AGAINST THE NEW
+      TIP.** An Engineer's own probe passing its own stage is the weakest evidence in any return;
+      a fixture written before the fix, by another party, to demonstrate the DEFECT, is not.
+    measured_both_surfaces:
+      - "1970 stamp + calm, window 1      : ADMITTED x2  ->  **REFUSED [STALE_CALM] at /equity_crash x2**"
+      - "1970 stamp + calm, window 86400  : ADMITTED x2  ->  **REFUSED [STALE_CALM] x2**"
+      - "2099 FUTURE stamp + calm, win 1  : ADMITTED x2  ->  **REFUSED [STALE_CALM] x2**"
+      - "fresh stamp + calm, window 1     : ADMITTED x2  ->  **ADMITTED x2 — THE VACUITY GUARD HOLDS**"
+      - "UNKNOWN + calm                   : REFUSED x2   ->  **REFUSED [SCHEMA_VIOLATION] x2, UNMOVED, SAME reason_class**"
+      - "SPINDRIFT (never-before-named) + calm : REFUSED x2 -> **REFUSED [SCHEMA_VIOLATION] x2, UNMOVED**"
+    what_that_shows: >
+      **BOTH HALVES OF THE EXTENDED RULING-5 COMPLETION TEST ARE VISIBLE IN ONE RUN**: a dial older
+      than its window carrying calm is REFUSED, and a never-before-named state carrying calm is
+      REFUSED — and the second is refused by RULE CC, untouched, with its ORIGINAL reason_class.
+      **THE 2099 ROW IS THE ONE THIS SEAT ADDED AT THE PREVIOUS BOUNDARY AND IT FLIPPED**, which is
+      the half a faithful-looking `age > window` would have left open.
+
+  the_no_clock_claim_MEASURED: >
+    **BP-AMENDMENT-0001 §D.3 IS IN FORCE AND IS THE ONE THING THIS INCREMENT COULD HAVE REOPENED.**
+    MEASURED: the module's import block contains NEITHER `datetime` NOR `time` —
+    `copy, json, math, os, re, collections.abc, enum, pathlib, typing` and three in-project imports.
+    `grep -nE '(datetime\.|time\.time|time\.monotonic|utcnow|date\.today)\('` over the WHOLE module
+    returns rc=1, NOTHING. **The two grep hits in the diff are DOCSTRING PROSE saying the module
+    imports neither, and this seat checked that rather than counting them as hits.**
+  the_instrument_MEASURED: >
+    `python3 -B tools/register/check_missing_data_never_calm.py --root .` -> **`PASS — 260
+    assertions, 0 violations`, exit 0.** The Engineer's figure reproduces. **AND THE INSTRUMENT NOW
+    PRINTS A NOTE DISCLAIMING CREDIT FOR THE STALENESS HALF** — *"A guard that is asserted somewhere
+    else is not a guard this row may take credit for."* That is honest, and it is also `F16D-03`
+    stated in the instrument's own voice.
+  scope_identity_and_the_frozen_lane_MEASURED: >
+    `git diff --name-only 295bdbe..HEAD` names **18 paths, ALL inside the declared writable scope,
+    ZERO protected paths** — no `pbg/`, no `PID.md`, no `BLUEPRINT.md`, no `governance/blueprint/`,
+    no `governance/decisions/`, no `required-tests.yaml`. `git log --format=%an 295bdbe..HEAD | sort -u`
+    -> **`CD-ENG-WO3-12` ALONE across all four commits.** `be0b355` UNMOVED. The wo-3 worktree is
+    CLEAN. `/srv/crash-detector` untouched by the seat and still at `101f9be`.
+  a_claim_this_seat_did_NOT_verify_and_says_so: >
+    **THE THIRTY-LINE REGISTER, THE `pytest` 2007 -> 2099 COUNT, THE NINE PLANT ARMS AND THE
+    `tests/` 688-ADDED-0-DELETED FIGURE ARE CARRIED FROM THE RETURN AND ARE NOT VERIFIED HERE.**
+    They are written into the Assurance dispatch as things to RUN, not as things established.
+
+# ================================================================================================== #
+the_engineers_five_findings_carried_forward_UNRESOLVED:
+# ================================================================================================== #
+  F16D-01: "MED — the gate compares against the window THE DOCUMENT DECLARES; un-boundable comparand. **CONFIRMS `CD-PL-F206`, which was in the dispatch as a declared stop-out. NOT a finding against the Engineer.** Declared Limit 19."
+  F16D-02: "LOW — the Declared Limits are stated in TWO of CD-RULE-004's THREE places; `required-tests.yaml` was outside the seat's scope so it ESCALATED rather than took it. **Correct behaviour, and the gap is real.**"
+  F16D-03: >
+    MED — *** **THE FOURTH STAGE IS GUARDED BY A TEST FILE AND BY NO REGISTER ROW. ARM `D1`
+    DELETES THE WHOLE STAGE AND THE THIRTY-LINE REGISTER DOES NOT MOVE.** *** **THIS IS THE
+    BIGGEST THING IN THE RETURN AND THE ENGINEER RAISED IT AGAINST ITSELF.** It is the defect class
+    this project has met repeatedly — a constitutional guarantee whose only witness is a
+    name-coupled file in `tests/`, beside live prescriptions to remove such files. Registering a
+    row is post-GREEN and was correctly not taken. **RANKED FIRST IN THE ASSURANCE DISPATCH.**
+  F16D-04: "LOW — `ACTIVE_WORK.yaml` on the wo-3 lane is still the WO-2 record, which is why `pbg.cli boot` prints RED in that worktree. **Baseline and observed agree exactly, so it is KNOWN and is NOT drift.** Reported, not corrected — correct for a scoped seat."
+  F16D-05: >
+    LOW — register LINE 06 `CD-RT-002-SCHEMA-CLOSED` measures `PASS — 266` at **BOTH** tips, while
+    `BL-...-16CC` and the `A311` verdict both record **280**. **TIPS AGREEING MEANS IT IS NOT A
+    REGRESSION — BUT ONE OF THOSE RECORDS IS WRONG AND HAS BEEN CARRIED FORWARD.** The auditor is
+    asked to resolve it.
+
+  a_control_that_caught_the_engineer_and_was_disclosed_rather_than_tidied: >
+    Its first draft wrote the literal `"calm"` into the stage and
+    `test_only_one_module_decides_a_detail_level` went RED at 2006/1. **THE TEST WAS OBEYED, NOT
+    WEAKENED** — the token is now imported from `crash_detector.publication.detail_level`. This
+    seat CONFIRMED the import is present at line 115 of the module. **A SEAT REPORTING THE CONTROL
+    THAT CAUGHT IT IS WORTH MORE THAN ONE REPORTING ONLY WHAT PASSED.**
+
+the_assurance_dispatch:
+  id: CD-DISPATCH-WO3-INC16D-ASSURANCE
+  path: governance/dispatch/CD-DISPATCH-WO3-INC16D-ASSURANCE.yaml
+  seat: CD-ASR-WO3-12
+  seat_freshness_MEASURED: >
+    `git log --all --format=%an | sort -u` names CD-ENG-WO3-01..12 and CD-ASR-WO3-02..11.
+    **`CD-ASR-WO3-12` HAS NEVER AUTHORED A COMMIT IN THIS REPOSITORY.** It is not CD-ENG-WO3-12 and
+    it wrote not one line of what it grades (`PBG-SOD-001`, non-waivable). **THIS SEAT DID NOT
+    WRITE THE INCREMENT EITHER AND IS NOT GRADING IT** (`PBG-AUTH-006`).
+  target: 0e80a09 (content tip), read-only, audited from its OWN worktree at /tmp/asr12/target and NOT in the lane
+  ranked_attack_surface:
+    1: "F16D-03 — is the stale half GUARDED or merely TESTED? Verify arm D1 independently."
+    2: "The node walk — put `calm` somewhere the walk cannot reach or cannot decide."
+    3: "Stamp detection BY VALUE and OLDEST-GOVERNS — can a stale node present only a fresh stamp?"
+    4: "`_days_from_civil` — HAND-ROLLED CALENDAR ARITHMETIC, where a one-day error is a silently wrong verdict."
+    5: "Item 3's decision procedure — find a THIRD outcome beyond CAPABLE and UNDECIDABLE; go deeper than the author's own arms."
+    6: "Vacuity — prove the product can still publish a genuinely calm reading in more than one shape."
+    7: "F16D-05 — resolve which record's 266-versus-280 is wrong."
+  and_it_is_told_what_NOT_to_spend_the_audit_on: >
+    `F16D-04` (the lane's WO-2-era ACTIVE_WORK) is KNOWN and is not drift; `CD-PL-F206` / `F16D-01`
+    is a DELIBERATELY OPEN product question and is to be graded on whether it is honestly STATED,
+    **not on whether it is closed**. Eleven rounds of context are handed over so the twelfth seat
+    spends its effort on the increment and not on rediscovering the host's quirks.
+
+standing_and_unchanged_at_this_boundary:
+  - "**16C IS NOT RELEASED.** No liveness detector exists. `feed_liveness` is not produced."
+  - "**NO INDICATOR ROW IS REGISTERED.** All 30 wait on a GREEN."
+  - "**THE MEMORIAL REMOVAL DID NOT LAND** — `tests/` diff is 688 added / 0 deleted per the return."
+  - "**NOTHING FROM `295bdbe` IS REVERTED.** Rule CC held and both contract JSON files are byte-unchanged."
+  - "`be0b355` FROZEN and UNMOVED · `CD-D-181` sequential-only · CD-AC-005 RED · CD-AC-002 AMBER and NOT CLOSED · the WO-2 gate SHUT."
+  - "`CD-PL-F206` remains OPEN and is not closed by this increment."
+
+next_safe_action: >
+  CD-ASR-WO3-12 audits 0e80a09 read-only from its own worktree and returns PASS / AMBER / RED with
+  the next safe gate named, banked on branch `asr-wo3-12-verdict`. The Project Lead then BANKS that
+  verdict — **a verdict is not an acceptance** — and takes the outcome to the Product Authority if
+  it is anything but a clean GREEN. **ON A GREEN the ruled order is 16C (the detector-side liveness
+  marking, produced by a REAL dead-feed detector) and THEN the indicator rows — IN THAT ORDER, AND
+  NEITHER MOVES ON THE AUDITOR'S SAY.**
+
+expected_next_actor: CD-ASR-WO3-12

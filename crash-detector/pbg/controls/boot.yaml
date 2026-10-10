@@ -1,0 +1,237 @@
+domain: BOOT
+domain_label: Boot and role assignment
+controls:
+- control_id: PBG-BOOT-001
+  title: Reading a role file does not grant that role
+  status: ACTIVE
+  purpose: 'Separate the ability to read a role contract from the authority to act in it.
+
+    '
+  risk_addressed: 'An agent reading engineer.md and behaving as the Engineer with no authorisation. A
+    real project invented this rule because it needed it, and restated it in four separate files — evidence
+    both that the rule matters and that the framework should own it.
+
+    '
+  required_outcome: 'An agent acts in a role only where a current authority record assigns it that role
+    for named work. Reading, inferring from context, or carrying a role over from a prior session are
+    all insufficient.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - authority record
+  - boot declaration
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: MANDATORY_WHEN_APPLICABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - Promoted from project-level invention; absent from PBGv1 core
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: PROCEDURE_REF
+  verification_ref: roles/
+  verification_note: 'pbg boot resolves the role from the authority record and fails closed where none
+    assigns one. The boot declaration names the granting record.
+
+    '
+- control_id: PBG-BOOT-002
+  title: No agent self-assigns a role
+  status: ACTIVE
+  purpose: 'Make role assignment an act of authority rather than of intention.
+
+    '
+  risk_addressed: 'An agent selecting the role that unblocks it, which is reliably the role with the most
+    permissions.
+
+    '
+  required_outcome: 'Role comes from the authority record. Boot fails closed without a valid role assignment.
+    A project manifest may never authorise self-assignment.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - boot declaration
+  - manifest validation
+  failure_outcomes:
+  - RED_CONTROL_BYPASS
+  exception_policy: NON_WAIVABLE
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EXECUTING_CHECK
+  verification_mechanism: CHECK_REF
+  verification_ref: boot.role_assignment_contract
+  verification_note: 'pbg validate rejects a manifest setting roles.allow_self_assignment. pbg boot returns
+    AMBER with no assignment.
+
+    '
+- control_id: PBG-BOOT-003
+  title: Missing, contradictory or ambiguous boot input returns AMBER
+  status: ACTIVE
+  purpose: 'Stop an agent improvising the authority it could not find.
+
+    '
+  risk_addressed: 'An agent that cannot locate the PID inferring intent from the code, which is the exact
+    confusion between current implementation and authorised intent that PBG-PID-003 forbids.
+
+    '
+  required_outcome: 'Where any required boot item is missing, contradictory, invalid or materially ambiguous,
+    the agent returns AMBER and does not improvise authority or begin application work.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - boot declaration
+  - boot verdict
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  - AMBER_FRAMEWORK_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'pbg boot emits a structured verdict; any unresolved required item produces AMBER
+    with the item named.
+
+    '
+- control_id: PBG-BOOT-004
+  title: Work begins only after a valid, schema-checked boot declaration
+  status: ACTIVE
+  purpose: 'Front-load the scope question and make its completeness verifiable rather than hoped for.
+
+    '
+  risk_addressed: 'A free-prose declaration whose completeness depends on the agent''s diligence. That
+    is the weakness a governance framework must not have, and it is what the project-level version of
+    this rule actually had.
+
+    '
+  required_outcome: 'A compact structured declaration is emitted and validated before work: framework
+    version, standards baseline version, project, PID version, Blueprint version, assigned role, authority
+    record, writable scope, forbidden scope, applicable skills, runtime capabilities, known exceptions,
+    preflight verdict.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - boot declaration
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: EVIDENCE_SUBMISSION
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Validated against schemas/boot-declaration.schema.yaml. Agents do not recite the
+    framework in prose; completeness is machine-checked.
+
+    '
+- control_id: PBG-BOOT-005
+  title: The boot declaration is the drift check
+  status: ACTIVE
+  purpose: 'Give drift detection a mechanism instead of a feeling.
+
+    '
+  risk_addressed: 'PBGv1 asked for a drift detector on every lead response and never defined one, so it
+    depended entirely on self-discipline over long sessions.
+
+    '
+  required_outcome: 'An agent can re-emit a valid declaration against the current authority record at
+    any point. Failure to do so is detected drift.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: EVENT_TRIGGERED
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - re-emitted boot declaration
+  failure_outcomes:
+  - AMBER_CONTROL_NOT_ENFORCEABLE
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references:
+  - PBGv1 section 8 drift detector, made concrete
+  schema_version: 2
+  discharge_mechanism: DEFINED_PROCEDURE
+  verification_mechanism: NONE
+  verification_ref: null
+  verification_note: 'Re-validation of the declaration against the live authority record. Honest scope:
+    this detects declaration drift, not subtle interpretive drift.
+
+    '
+- control_id: PBG-BOOT-006
+  title: Every agent loads the standards baseline at boot step 3
+  status: ACTIVE
+  purpose: 'Make recognised practice a precondition of work rather than a resource an agent may consult.
+
+    '
+  risk_addressed: 'PBGv1 claimed alignment with Agile, GitOps, DevOps, SRE, PRINCE2, ITIL and DevSecOps,
+    and attributed its sources in exactly one of twenty-one files. Asserted alignment produces inconsistent
+    agent behaviour because nothing defines what good practice means.
+
+    '
+  required_outcome: 'The Development and Security Standards Baseline is loaded before any project context,
+    by every agent and sub-agent, and its version appears in the boot declaration.
+
+    '
+  mandatory_or_conditional: MANDATORY
+  applicability:
+    mode: STANDING
+  roles:
+  - PROJECT_LEAD
+  - ENGINEER
+  - ASSURANCE_ENGINEER
+  required_evidence:
+  - boot declaration standards_baseline_version
+  failure_outcomes:
+  - AMBER_FRAMEWORK_CAPABILITY_GAP
+  exception_policy: NONE_EXPECTED
+  supersedes: null
+  superseded_by: null
+  authoritative_references: []
+  schema_version: 2
+  discharge_mechanism: INHERITED_BASELINE
+  verification_mechanism: BASELINE_REF
+  verification_ref: standards/DEVELOPMENT_SECURITY_BASELINE.md
+  verification_note: 'pbg boot fails closed if the baseline is absent or its version is unresolvable;
+    the loaded version is recorded in the declaration.
+
+    '

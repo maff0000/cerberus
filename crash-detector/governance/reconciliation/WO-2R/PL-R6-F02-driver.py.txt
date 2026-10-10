@@ -1,0 +1,58 @@
+"""PL-R6 — the Project Lead's OWN driver for the independent replication of ASR2-F02.
+
+Written from the source at 50fc231. The variant module under test is the auditor's
+artefact; the row construction, the CONTROL arm and every assertion are this seat's own.
+
+staleness.py boundary 3 claims, of the object.__setattr__ residue:
+  "every route measured that goes through a CONSTRUCTOR is refused. THREE MEASURED,
+   and three is the denominator, not a proof that a fourth does not exist"
+This driver asks whether a fourth exists, by execution.
+"""
+
+from datetime import datetime, timezone
+
+from crash_detector.serving.panel_feed import FeedInstant, feed_instant
+from crash_detector.serving.witness_resolver import (
+    PanelRow,
+    render_panel,
+    resolve_panel,
+)
+
+NOW = datetime(2026, 8, 19, tzinfo=timezone.utc)
+WINDOW = 600.0
+DECADE_OLD = (2016, 8, 21)
+MEASURES = {"divergence_measure": 0.02}
+
+
+def arm(label, as_of):
+    row = PanelRow(
+        state="AGREES", as_of_utc=as_of, published_utc=as_of, measures=dict(MEASURES)
+    )
+    print(f"--- {label}")
+    print("   row.as_of_utc          :", row.as_of_utc)
+    print("   type after PanelRow    :", type(row.as_of_utc).__name__)
+    print("   survived normalisation?:", isinstance(row.as_of_utc, FeedInstant))
+    panel = resolve_panel(row, now_utc=NOW, staleness_window_seconds=WINDOW)
+    print("   resolved               :", type(panel).__name__)
+    print("   RENDERS                :", render_panel(panel))
+    print("   no object.__setattr__ used by this driver: True")
+    print()
+    return render_panel(panel)
+
+
+print(f"now_utc = {NOW}   window = {WINDOW}s   row dated {DECADE_OLD} — a DECADE old")
+print()
+
+attack = arm("ATTACK  — as_of_utc is a FeedInstant (datetime SUBCLASS)",
+             feed_instant(*DECADE_OLD))
+
+control = arm("CONTROL — the SAME instant as a PLAIN datetime",
+              datetime(*DECADE_OLD, tzinfo=timezone.utc))
+
+print("THE ONLY VARIABLE BETWEEN THE TWO ARMS IS THE CONCRETE TYPE OF THE TIMESTAMP.")
+print("CD-AC-005 ('no input from which the serving layer produces AGREES') IS:",
+      "VIOLATED" if attack == "WITNESS AGREES" and control != "WITNESS AGREES"
+      else "HELD")
+print()
+print("pandas.Timestamp is a datetime subclass:",
+      "checked separately below" if True else "")

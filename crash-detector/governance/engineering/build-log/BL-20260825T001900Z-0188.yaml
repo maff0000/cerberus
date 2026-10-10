@@ -1,0 +1,163 @@
+# ================================================================================================== #
+# BL-20260825T001900Z-0188 — PROJECT LEAD BOUNDARY. **`CD-PL-F211`: THE FIELD THE BOOT VERDICT PRINTS
+# AS `current_work` — `current_block` — HAS NOT MOVED SINCE `dba0103` AND HAS RIDDEN UNCHANGED
+# THROUGH 29 `ACTIVE_WORK` COMMITS AND 25 BUILD-LOG ENTRIES. IT TELLS EVERY BOOTING SEAT THAT
+# INCREMENT 16A IS "ISSUED AND OUT" WITH A FRESH ENGINEER RUNNING AND THAT THE RAISED QUESTION IS
+# `Q31`. NO SEAT IS OUT, 16A IS FIVE INCREMENTS BEHIND, AND THE QUESTION IS `Q41`.**
+#
+# *** **THIS IS THE SAME DEFECT CLASS AS `CD-PL-F210`, DISCLOSED ONE ENTRY AGO, AND IT IS WORSE ON
+# EVERY AXIS: 25 ENTRIES STALE RATHER THAN 3, AND ON THE HEADLINE FIELD RATHER THAN AN ANNOTATION.
+# IT SAYS WORK IS OUT AND PROGRESSING WHILE THE PROJECT IS STOPPED AT A `RED` GATE. THAT IS FALSE
+# IN THE REASSURING DIRECTION — THE `CD-ASR-F14-02` SHAPE, FOR THE THIRD TIME IN TWO ENTRIES.** ***
+#
+# **AND IT WAS FOUND ONLY BECAUSE THIS SEAT RE-READ ITS OWN BOOT OUTPUT AFTER BANKING `0187` INSTEAD
+# OF TREATING `CONTINUITY_MATCH` AS THE END OF THE QUESTION. `0187` DISCLOSED THE SMALLER INSTANCE
+# OF THIS CLASS AND MISSED THE LARGER ONE SITTING FOUR LINES ABOVE IT IN THE SAME VERDICT. THAT IS
+# RECORDED HERE AND NOT SOFTENED: A SEAT THAT REPORTS ONLY THE FINDINGS IT FOUND FIRST IS NOT
+# AUDITING ANYTHING.**
+#
+# **NOTHING ELSE CHANGES. `Q41` IS STILL OPEN, NO SEAT IS DISPATCHED, 16C IS NOT RELEASED.**
+# ================================================================================================== #
+
+entry_id: BL-20260825T001900Z-0188
+timestamp_utc: '2026-08-25T00:19:00Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-25T00:19:00Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_08
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_08
+authority_id: CD-AUTH-0001
+work_type: RECORD_CORRECTION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260825T000604Z-0187
+base_sha: 15533e0
+current_sha: 15533e0
+status: WAITING_PRODUCT_AUTHORITY
+schema_version: 2
+
+action_summary: >
+  After banking 0187 this seat re-ran the boot and READ ITS OWN VERDICT rather than checking only
+  that it said CONTINUITY_MATCH. The headline `current_work` line describes a state five increments
+  out of date. Traced to `current_block` at line 83 of ACTIVE_WORK.yaml, which `pbg/tools/pbg/boot.py`
+  line 308 resolves as `current_work`. MEASURED: the block last changed at dba0103 and has been
+  byte-identical through 29 subsequent ACTIVE_WORK commits while 25 build-log entries were written.
+  Disclosed as CD-PL-F211 (MEDIUM) and SUPERSEDED IN THIS COMMIT by prepending a current block, with
+  the entire stale block retained below it unedited. THIS ENTRY DISPATCHES NOTHING, RELEASES
+  NOTHING, GRADES NOTHING AND REVERTS NOTHING. The stop on Q41 is unchanged.
+
+# ================================================================================================== #
+CD-PL-F211 — MEDIUM. THE HEADLINE FIELD OF THE BOOT VERDICT IS FIVE INCREMENTS OUT OF DATE:
+# ================================================================================================== #
+  the_mechanism_traced_not_guessed: >-
+    `pbg/tools/pbg/boot.py:308` reads `v.facts["current_work"] = from_aw("current_work",
+    "current_block", "bounded work")`. **THERE IS NO `current_work` KEY IN `ACTIVE_WORK.yaml` AT
+    ALL** — confirmed by extracting it and getting an empty block at seven consecutive commits — **SO
+    THE BOOT VERDICT'S HEADLINE ALWAYS FALLS THROUGH TO `current_block`, LINE 83.** A reader who
+    greps the governance file for the text the boot printed does not find a field by that name,
+    which is part of why this survived 25 entries.
+  what_it_asserts_today: >-
+    *"INCREMENT 16A IS ISSUED AND OUT — to `CD-ENG-WO3-03`, A FRESH ENGINEER IDENTITY, on branch
+    `wo-3` at `116c01f`"*, and *"`Q31` IS RAISED"*, and that the entrypoint/caller exclusion *"stays
+    open for one more increment"*.
+  what_is_actually_true: >-
+    **NO SEAT IS OUT AND NONE MAY BE DISPATCHED.** 16A was graded and is followed by 16B, its five
+    fixes, 16D, 16E and 16F. `wo-3` is at `c475b8e`, not `116c01f`. **THE OPEN QUESTION IS `Q41`,
+    NOT `Q31`.** The project is STOPPED at a GATE on a `RED` verdict awaiting the Product Authority.
+    *"One more increment"* has since been six.
+  the_measurement: >-
+    The `current_block` value was extracted and hashed at every commit touching `ACTIVE_WORK.yaml`
+    across the last 40. **IT CHANGES EXACTLY ONCE IN THAT RANGE — AT `dba0103`
+    (`BL-20260824T093919Z-0162`, 2026-08-24 10:43 +0100, `PROJECT_LEAD_SEAT_02`) — AND IS IDENTICAL
+    AT EVERY COMMIT SINCE.** `git rev-list --count dba0103..HEAD -- ACTIVE_WORK.yaml` = **29**.
+    `git diff --name-only dba0103 HEAD -- build-log/ | wc -l` = **25**. **AND ITS LEAD BLOCK IS
+    DATED `0158`, WHICH IS OLDER STILL THAN THE COMMIT THAT LAST TOUCHED IT.**
+  why_MEDIUM_and_not_LOW: >-
+    `CD-PL-F210` was an annotation on a field whose VALUE was correct, 3 boundaries stale.
+    **THIS IS THE FIELD THE BOOT VERDICT LEADS WITH, IT HAS NO CORRECT VALUE UNDERNEATH IT TO FALL
+    BACK ON, AND IT IS 25 ENTRIES STALE.** A Project Lead who booted, read `CONTINUITY_MATCH`, and
+    trusted the headline would believe an Engineer is live on `wo-3` and that the outstanding
+    product question is `Q31`. **BOTH BELIEFS WOULD LEAD IT TO ACT — to go looking for a seat's
+    return, or to chase a question the Product Authority closed — AND ONE OF THEM WOULD HAVE IT
+    LOOKING FOR WORK IN A LANE IT MUST NOT TOUCH WHILE `Q41` IS OPEN.**
+  why_it_is_not_HIGH: >-
+    **THE AUTHORITATIVE FIELDS ARE ALL CORRECT AND WERE CORRECT THROUGHOUT:** `status`
+    (`WAITING_PRODUCT_AUTHORITY`), `next_actor` (`PRODUCT_AUTHORITY`), `last_build_log_entry`,
+    `continuity_record_commit`, `current_phase`'s VALUE, and every `held_actions` row. Continuity
+    resolves `CONTINUITY_MATCH` on the fields that bind. **NO DECISION IN THIS PROJECT WAS TAKEN ON
+    THE STRENGTH OF `current_block`, AND NO CONTROL READS IT.** It misinforms a human and a booting
+    seat; it does not corrupt a computation.
+  and_the_uncomfortable_part: >-
+    *** **`BL-20260825T000604Z-0187`, WRITTEN BY THIS SEAT TWELVE MINUTES AGO, DISCLOSED
+    `CD-PL-F210` — THE SAME CLASS, THREE ENTRIES STALE — WHILE THIS ONE SAT FOUR LINES ABOVE IT IN
+    THE SAME BOOT VERDICT THIS SEAT HAD ALREADY READ.** *** 0187 asserted the pointer class "did not
+    recur at this boundary". **THAT SENTENCE WAS TRUE ONLY OF THE POINTER THIS SEAT HAPPENED TO
+    CHECK.** It is not edited — 0187 stands as written and is corrected here, which is the rule this
+    project applies to its Assurance seats and does not get to exempt its Project Lead from.
+
+# ================================================================================================== #
+how_it_is_handled — the same discipline as CD-PL-F210, applied to a worse instance:
+# ================================================================================================== #
+  method: '**SUPERSEDED, NEVER EDITED.** A current block is PREPENDED under the file''s own `WAS, and the block it supersedes is retained below UNEDITED` convention (`PBG-CONT-003`). Not one byte of the stale block is deleted.'
+  why_not_deleted: 'A correction that erases what it corrects destroys the evidence that the class recurred — and this class has now recurred twice in two entries, which is itself the finding.'
+  scope: 'ONE field''s value in `ACTIVE_WORK.yaml`, plus this entry and the pointer move. **NO `src/`. NO `pbg/`. NO `tests/`. NO contract. NO lane. NO branch but `main`.**'
+  what_is_NOT_claimed: '**This does not fix the class.** Nothing in this repository checks `current_block` for freshness, exactly as nothing checked `current_phase`''s annotation. Both were found by a human-shaped read of a boot verdict and not by an instrument. **THAT GAP IS REAL AND IS NOT CLOSED BY THIS ENTRY** — closing it is an instrument change and no seat is dispatched.'
+
+blockers: []
+
+risks:
+  - '**THE `CD-PL-F132` POINTER CLASS IS NOW MEASURED IN THREE PLACES — `last_build_log_entry` (historic), `current_phase`''s annotation (`CD-PL-F210`), `current_block` (`CD-PL-F211`) — AND ONLY THE FIRST HAS EVER HAD AN INSTRUMENT LOOKING AT IT.** Two of the three were found by reading, twelve minutes apart, by a seat that was not looking for them. **THE HONEST READING IS THAT THE GOVERNANCE FILE''S NARRATIVE FIELDS ARE UNGUARDED AS A CATEGORY, NOT THAT TWO OF THEM HAPPENED TO GO STALE.**'
+  - 'UNCHANGED AND RESTATED: the third consecutive non-green on one row — AMBER at 16D, AMBER at 16E, RED at 16F. **THE PRODUCT HAS NOT BEEN BREACHED IN ANY OF THE THREE AUDITS.**'
+  - 'The `wo-3` lane projection remains stale and its repair remains HELD behind the ruling.'
+
+held_actions:
+  - id: 16C-INDICATOR-ROWS
+    status: HELD
+    authority: PO-DECISIONS-0031 ruling 1
+    reason_held: 'Ruled release condition is a GREEN gate on 16F; it is RED. CARRIED FORWARD UNCHANGED.'
+    next_actor: PRODUCT_AUTHORITY (Q41), then PROJECT_LEAD
+    silent_execution: PROHIBITED
+  - id: 16C-DETECTOR-LIVENESS
+    status: HELD
+    authority: PO-DECISIONS-0031 ruling 1
+    reason_held: 'Same condition. CARRIED FORWARD UNCHANGED.'
+    next_actor: PRODUCT_AUTHORITY (Q41), then PROJECT_LEAD
+    silent_execution: PROHIBITED
+  - id: WO3-LANE-ACTIVE-WORK-POINTER-REPAIR
+    status: HELD
+    authority: CD-ENG-F16F-05, verified by PROJECT_LEAD_SEAT_07
+    reason_held: 'Moves the wo-3 tip, which is what Q41 is about. STILL the first act after Q41 is ruled. **AND CD-PL-F211 IS EVIDENCE THAT LANE''S PROJECTION IS UNLIKELY TO BE THE ONLY STALE ONE — WHOEVER REPAIRS IT SHOULD CHECK `current_block` THERE TOO.**'
+    next_actor: PROJECT_LEAD (immediately after Q41 is ruled)
+    silent_execution: PROHIBITED
+  - id: CD-ASR-F14-02-FALSE-DECLARED-LIMIT-9
+    status: HELD
+    authority: CD-ASR-WO3-14 at af4ac85
+    reason_held: 'A declared limit false in the reassuring direction, live in all three CD-RULE-004 places. TRUE INDEPENDENTLY OF Q41; correcting it is a write to the wo-3 lane and no seat is dispatched. CARRIED FORWARD.'
+    next_actor: PRODUCT_AUTHORITY (Q41), then whichever seat is dispatched
+    silent_execution: PROHIBITED
+  - id: NARRATIVE-FIELD-FRESHNESS-INSTRUMENT
+    status: HELD
+    authority: CD-PL-F210 + CD-PL-F211, this seat
+    reason_held: '**NEW AT THIS BOUNDARY.** Nothing checks that `current_block` or `current_phase`''s annotation still describe the state the authoritative pointers describe. Two instances found by eye in twelve minutes. Building the check is an instrument change and NO SEAT IS DISPATCHED — it is recorded so the next dispatch can carry it rather than the next seat re-finding it by luck.'
+    next_actor: PROJECT_LEAD, when a seat is next legitimately dispatched
+    silent_execution: PROHIBITED
+
+next_safe_action: >
+  *** STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY — MATT — ON Q41, AND NO SEAT IS DISPATCHED. ***
+  Unchanged from 0186 and 0187. This entry corrected a governance RECORD defect and touched nothing
+  else: 16C is NOT released, no indicator row is registered, no seat is dispatched, nothing is
+  reverted, wo-3 is unmoved at c475b8e with content tip 7ac11c9, wo-2r3 is frozen at be0b355, and
+  the product is not breached. CD-PL-F211 is disclosed and superseded; CD-PL-F210 stands as
+  disclosed at 0187 and 0187 is NOT edited.
+
+expected_next_actor: PRODUCT_AUTHORITY (Matt) on Q41
+
+evidence_references:
+  - 'pbg/tools/pbg/boot.py:308 — `from_aw("current_work", "current_block", "bounded work")`, the fall-through that makes line 83 the boot headline. READ, not assumed.'
+  - 'This seat''s own shell: `current_block` extracted and md5-hashed at every ACTIVE_WORK-touching commit in the last 40 — one change, at dba0103.'
+  - 'This seat''s own shell: `git rev-list --count dba0103..HEAD -- governance/engineering/ACTIVE_WORK.yaml` = 29; `git diff --name-only dba0103 HEAD -- governance/engineering/build-log/ | wc -l` = 25.'
+  - 'governance/engineering/build-log/BL-20260825T000604Z-0187.yaml at 4d0b7e4 — CD-PL-F210, the smaller instance of this class, disclosed twelve minutes earlier and NOT edited.'
+  - 'governance/engineering/build-log/BL-20260824T235828Z-0186.yaml at 91162ac — the RED boundary and the standing stop, unchanged by this entry.'

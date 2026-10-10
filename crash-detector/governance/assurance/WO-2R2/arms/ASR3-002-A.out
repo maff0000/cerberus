@@ -1,0 +1,17 @@
+DIAL_IDS                : ('equity_crash', 'monetary_debasement')
+DIAL_FIELDS             : ('equity', 'monetary')
+ONE model object in BOTH specs: True
+
+TRUE equity level (input) : 0.9
+TRUE monetary level(input): 0.1
+
+--- READINGS ---
+  equity   : Value(value=EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.9), contributions=(Contribution(source_id='house_feed', category='level', weight=1.0, contribution=0.9),)), as_of_utc=datetime.datetime(2026, 8, 20, 12, 0, tzinfo=datetime.timezone.utc), inputs_used=('equity_feed',))
+  monetary : Value(value=MonetaryDebasementScore(score=DialMagnitude(dial_id='monetary_debasement', quantity=0.5), contributions=(Contribution(source_id='house_feed', category='level', weight=1.0, contribution=0.5),)), as_of_utc=datetime.datetime(2026, 8, 20, 12, 0, tzinfo=datetime.timezone.utc), inputs_used=('monetary_feed',))
+
+--- WHAT PUBLISHES THROUGH THE CD-AC-002 GATE ---
+  number_for_dial_slot('equity_crash') -> 0.9   [NOT REFUSED]
+  number_for_dial_slot('monetary_debasement') -> 0.5   [NOT REFUSED]
+
+model.seen (state carried across dials): [0.9, 0.1]
+EXIT=0

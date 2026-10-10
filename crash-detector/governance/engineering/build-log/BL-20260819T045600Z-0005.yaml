@@ -1,0 +1,256 @@
+# WO-2 resumed a second time — the interrupted increment-3 lane reconciled and the inherited
+# material RULED KEEP AS UNATTESTED CANDIDATE (CD-D-009). The opposite disposition to CD-D-007,
+# on materially different evidence; the distinction is stated in full below.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T045600Z-0005
+timestamp_utc: '2026-08-19T04:56:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 528b4745fe31aaaa356a9e6465e080fbd99bb77a
+current_sha: 528b4745fe31aaaa356a9e6465e080fbd99bb77a
+lane_head_sha: 8723ffbf71fedf0de6a229a4865a3c79283f9782
+parent_entry_id: BL-20260819T025400Z-0004
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  The Project Lead session driving WO-2 was terminated by the runtime for a second time, this time
+  with Engineer seat CD-ENG-WO2-01 instance 2 mid-increment-3. That seat had committed increments 1
+  and 2 as instructed (lane 3b6edae and 8723ffb) and so lost only the increment in hand — the
+  committed-increment discipline adopted after CD-D-007 worked exactly as designed. It left 37
+  uncommitted files in the mutation lane, returned nothing, and wrote no Build Log entry. This
+  entry reconciles that lane and dispositions the inherited material before any further seat is
+  dispatched. (1) Booted the pinned framework at 528b474 — AMBER, CONTINUITY_MATCH/RESUME_AMBER,
+  blocking_failures empty, the sole UNAVAILABLE still roadmap_identity, the known Product Owner
+  call. (2) Reconciled observed against recorded state — no drift; see reconciliation below.
+  (3) Snapshotted the inherited material to /srv/crash-detector-wo2-candidate-inc3/ with a SHA256
+  manifest, before dispatching anything into that lane, so it stays recoverable and comparable
+  whatever a later seat does. (4) Verified it directly rather than accepting it, then RULED
+  CD-D-009 — see decisions_closed. No application code was written by this seat, and nothing was
+  committed into the lane by this seat.
+
+  A correction to the operator's resume brief is recorded here rather than left to be inferred:
+  the brief placed the repository at 0047093 with the Engineer dispatch just issued. It was
+  already at 528b474, three commits later, with increments 1 and 2 of 7 complete. The brief was
+  written against the state at the START of the terminated session, not its end. Nothing was done
+  on the strength of the brief's SHA; the repository record was read first and governs.
+
+reconciliation:
+  recorded_vs_observed: >
+    RECONCILED, NO CORRECTION NEEDED. ACTIVE_WORK.yaml recorded lane_head_sha 8723ffb and
+    last_completed_checkpoint_sha 0047093; observed main HEAD 528b474 (the increment-2 boundary
+    checkpoint, whose message names lane 8723ffb) and observed lane HEAD 8723ffb on wo-2-skeleton.
+    Recorded and observed agree. The three corrections carried in BL-...-0004 remain in force.
+  drift_found: >
+    None in Git. Nothing under pbg/ is modified in either worktree; the only artefact there is
+    pbg/tools/pbg/__pycache__/, produced by running the pinned CLI, uncommitted and not a
+    modification of the snapshot (PBG-FWK-013 intact).
+  untracked_not_project_state: >
+    Eight .wo2-* / .wo2b-* files at the main repository root belong to the operator's session
+    wrapper. Not project state, not committed.
+  host_runtime_state: >
+    `docker ps -a --filter name=cd-store-wo2-` and `docker volume ls --filter name=cd-store-wo2-`
+    both return empty. The terminated seat left NO container and NO volume behind, so RT-A's
+    destroy-before-return bound is not outstanding. No container or volume outside the
+    cd-store-wo2- prefix was touched, listed into, or inspected.
+
+inherited_material_inventory:
+  found_in: '/srv/crash-detector-wo2 (branch wo-2-skeleton), uncommitted at lane HEAD 8723ffb'
+  file_count: 37
+  composition: >
+    1 modification (README.md, +107/-4) and 36 additions: db/ (grant_matrix.json, migrate.py and
+    seven forward-only .sql migrations), deploy/ (compose.yaml, six Dockerfiles, base-images.json,
+    seven entrypoints), src/crash_detector/store/ (3), src/crash_detector/runtime/ (2), and
+    7 test modules.
+  scope_check: >
+    ALL 37 paths fall strictly inside the Engineer dispatch's writable_scope. Zero touches of any
+    protected_scope path: PID.md, BLUEPRINT.md, CLAUDE.md, governance/authority/,
+    governance/decisions/, governance/dispatch/, ACTIVE_WORK.yaml and schemas/ are all untouched,
+    and pbg/ is intact.
+  declared_scope_match: >
+    The set corresponds exactly to the increment-3 scope recorded in ACTIVE_WORK — A5 store schema
+    and grant matrix, A6 container set as DESIGN — plus src/crash_detector/runtime/lifecycle.py,
+    which A6 requires ("SIGTERM handling with a bounded shutdown in the process entrypoints").
+    Nothing in the set is outside the increment it claims to be.
+  temporal_evidence: >
+    File mtimes form one continuous band from 04:15:10Z to 04:50:46Z, immediately after the
+    increment-2 commit and immediately before the termination. Consistent with a single
+    interrupted seat; the latest-written files (0004, 0005, base-images.json, README.md,
+    test_store_schema_sql.py) are where an incomplete edit would be expected and were checked
+    first.
+  snapshot: >
+    /srv/crash-detector-wo2-candidate-inc3/ — files/ plus SHA256-MANIFEST.txt (37 entries,
+    manifest sha256 915e1efe78ad66c1df5969bd58ac7c4c1ddfa03df162713781ab5dc2a68b7221) and a
+    README.txt stating what it is and that it is NOT a quarantine. Taken before any dispatch.
+
+commands_run:
+- cmd: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot'
+  exit: 0
+  result: 'AMBER, CONTINUITY_MATCH/RESUME_AMBER, blocking_failures [], UNAVAILABLE roadmap_identity'
+- cmd: 'git status --short --untracked-files=all  (in the lane)'
+  exit: 0
+  result: '37 paths, all inside writable_scope'
+- cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q  (lane working tree, candidate present)'
+  exit: 0
+  result: '879 passed in 5.42s — 637 inherited from increment 2 still green, 242 new'
+- cmd: 'docker ps -a --filter name=cd-store-wo2- ; docker volume ls --filter name=cd-store-wo2-'
+  exit: 0
+  result: 'both empty — no RT-A residue'
+- cmd: 'targeted greps over db/migrations/, deploy/compose.yaml, deploy/base-images.json'
+  exit: 0
+  result: 'the load-bearing propositions probed directly — see verification_performed'
+
+verification_performed:
+  what_this_is: >
+    RECONCILIATION OF INHERITED MATERIAL BY THE PROJECT LEAD. It is NOT assurance and does not
+    become assurance by being thorough (PBG-SOD-001, non-waivable). Its purpose is to establish
+    whether the material is coherent enough to be worth adopting, not whether it is correct enough
+    to be certified. Assurance is CD-ASR-WO2-01's, on a separate seat, at the gate.
+  A5_probes:
+  - 'cd_engine holds NO grant of any kind on witness.* — CONFIRMED by absence AND by explicit
+    positive statement: 0007 grants USAGE on raw, dial, publication and alert only, carries no
+    "GRANT ... witness ... TO cd_engine" line at all, and then adds five belt-and-braces REVOKE ALL
+    ... IN SCHEMA witness FROM cd_engine statements. The asymmetry is defended, not paraphrased.'
+  - 'the one-way valve — CONFIRMED: 0007 line 174 GRANT SELECT ON publication.public_envelope TO
+    cd_witness, with cd_witness holding INSERT on witness.* and publication.witness_panel.'
+  - 'no UPDATE or DELETE grant exists anywhere in the migration set — CONFIRMED: a grep for
+    GRANT ... UPDATE|DELETE across db/migrations/ returns only a comment asserting the property.'
+  - 'revoke by default — CONFIRMED: 0001 revokes ALL on all six schemas plus schema public plus the
+    database itself FROM PUBLIC, before any grant exists.'
+  - 'every timestamp is timestamptz — CONFIRMED: a grep for timestamp-without-time-zone, date and
+    time column types across the set returns nothing.'
+  - 'roles created without passwords — CONFIRMED: CREATE ROLE ... LOGIN NOSUPERUSER with no
+    PASSWORD clause; the six passwords appear as ENV VAR NAMES only (CD_STORE_*_PASSWORD) in a
+    comment describing the deploy step. No secret value is recorded (PBG-SEC-002 intact).'
+  - 'the DISPOSABLE prohibition is DECLARATIVE, not a trigger — CONFIRMED and better than the
+    dispatch asked for: raw.source_registry carries UNIQUE (source_id, criticality) and
+    raw.dial_required_input pins its criticality column to REQUIRED by CHECK with a composite FK
+    resolving against that pair, so a DISPOSABLE source cannot be named in a required-input set and
+    a required source cannot be demoted underneath one. Both directions.'
+  - 'first_published_utc set on insert and immovable — CONFIRMED, defended twice: NOT NULL DEFAULT
+    now() plus a BEFORE UPDATE trigger dial_history_first_published_utc_is_immutable that RAISEs on
+    any change, in addition to the absence of any UPDATE grant.'
+  - 'each migration states its rollback or states it has none — CONFIRMED, all seven.'
+  A6_probes:
+  - 'seven services and two networks — CONFIRMED: cd-store, cd-collectors, cd-witness, cd-engine,
+    cd-public, cd-private, cd-review on cd-net-private and cd-net-public.'
+  - 'no egress for engine, both surfaces and the store — CONFIRMED STRUCTURALLY rather than by
+    declaration: both networks are internal: true, so absence of egress is a property of the
+    topology. The file discloses in terms that this makes ALLOWLIST and NONE indistinguishable at
+    runtime in WO-2 and records the enforcing egress lane as OWED at WO-3 rather than claiming
+    compose enforces something it cannot. That disclosure is the correct posture.'
+  - 'no allowlist names a broker — CONFIRMED; every service carries an x-egress block and the
+    contract block states that a service with none is a violation.'
+  - 'both surfaces bound to 127.0.0.1 — CONFIRMED: "127.0.0.1:8710:8710" and "127.0.0.1:8711:8711",
+    the only published ports in the file (CD-D-006 default safe action held, CD-HOLD-005 intact).'
+  - 'non-root UID per service — CONFIRMED: 10001..10006 declared per service plus 70:70 for
+    postgres, with USER in the Dockerfiles matching.'
+  - 'three storage classes separated — CONFIRMED: read_only: true on every service, tmpfs scratch
+    per service, one named volume cd-store-data for the store alone.'
+  - 'digest pinning — PARTIAL AND HONESTLY DISCLOSED. cd-store is pinned by digest, resolved by
+    `docker image inspect` on this host with the observed image id, repo digest, tag of origin and
+    observation time recorded. The Python base is recorded status DIGEST_NOT_RESOLVED with
+    reference null, because resolving it needs `docker pull`, which RT-A does not authorise and
+    RT-B forbids; it fails closed via ARG CD_PYTHON_BASE with no default and ${CD_PYTHON_BASE:?}
+    in compose, and is recorded owed at WO-3. Recording an unresolved digest as unresolved rather
+    than writing a plausible value is correct and is the opposite of constructing evidence.'
+  A6_build_posture: 'NOTHING WAS BUILT. RT-B held. Dockerfiles written, not built.'
+  what_was_NOT_verified: >
+    Everything else. The 242 new tests were run, not read; the seven entrypoints, the migration
+    runner and the runtime lifecycle module were not reviewed line by line; and no live catalogue
+    was consulted, so every grant assertion above is a reading of SQL TEXT and not of a running
+    store. That last gap is deliberate and is carried forward as an explicit obligation below.
+
+decisions_closed:
+- id: CD-D-009
+  title: 'Disposition of the 37 uncommitted files inherited from terminated Engineer instance 2'
+  decided_by: PROJECT_LEAD_SEAT_01
+  ruling: 'KEEP AS UNATTESTED CANDIDATE — adopted only through an attesting Engineer seat'
+  rationale: >
+    Inherited uncommitted work is evidence of an interrupted seat, not authorised progress, and the
+    default disposition is refusal. The question is whether this material rebuts that default. It
+    does, on four grounds that CD-D-007's material did not have. FIRST, it has a known base:
+    increments 1 and 2 are committed at 8723ffb, so the material is a reviewable diff against an
+    attested tree rather than an undifferentiated dump. SECOND, it has a declared scope to be
+    checked against — ACTIVE_WORK records increment 3 as A5 plus A6 — and the file set matches that
+    scope exactly, with nothing outside it and no protected path touched. THIRD, it is executable:
+    879 tests pass, and critically the 637 tests inherited from the attested increments are all
+    still green, so the material did not weaken what was already proved. FOURTH, its load-bearing
+    propositions were probed directly by this seat and hold, including the two §4 asymmetries WO-2
+    exists to establish.
+    The distinction from CD-D-007 is not that this seat is more trusting; it is that CD-D-007's
+    material was UNVERIFIABLE — no committed baseline, therefore no diff base, therefore no
+    declared increment to check it against — whereas this material is verifiable and was verified.
+    Quarantining verifiable, in-scope, passing work that matches its declared increment would
+    discard roughly 35 minutes of correct engineering to buy a ritual, and would teach the wrong
+    lesson: that the committed-increment discipline adopted after CD-D-007 buys nothing.
+    What the material does NOT have is an attestation. No seat returned; no Build Log entry names
+    it; no actor stands behind it. That is not a formality — an attestation is what makes a defect
+    someone's to answer for. So KEEP does not mean ADOPT. The material stays uncommitted and
+    outside project state until an Engineer seat reviews it against A5 and A6 clause by clause,
+    corrects what is wrong, commits it, and attests it in its own Build Log entry as ITS OWN WORK.
+    Until that happens it is a candidate and nothing more.
+  alternatives_rejected:
+  - 'QUARANTINE AND REBUILD, mirroring CD-D-007 — rejected. Consistency of process is not
+    consistency of outcome on different evidence; applying the same disposition to verifiable and
+    unverifiable material would make the distinction meaningless.'
+  - 'ADOPT DIRECTLY, committed by this seat — rejected outright, and it is the more dangerous
+    option. The Project Lead committing application code into the lane would make the Project Lead
+    the implementer of work it is causally responsible for approving into Assurance, and would
+    leave the increment with no Engineer attestation at all. PBG-SOD-001 is non-waivable.'
+  consequences:
+  - 'the re-dispatch carries an explicit adoption obligation; a seat that merely commits inherited
+    material without checking it has not attested anything and has misled the record'
+  - 'the snapshot is retained so any later divergence from the inherited bytes is detectable'
+  - 'the increment-3 boundary commit will name CD-D-009 so the provenance stays visible'
+  supersedes: 'nothing — CD-D-007 stands as ruled on its own facts'
+
+obligations_carried_forward:
+- id: CD-OB-001
+  what: >
+    RT-A is UNDISCHARGED. The candidate evidences the grant matrix by reading SQL text and by a
+    declaration test (tests/test_grant_matrix_declaration.py), never against a live catalogue. The
+    Engineer dispatch authorises exactly one throwaway digest-pinned postgres container for this
+    purpose, and CD-RT-003-GRANT-MATRIX-LIVE is one of the five planted criteria, so a grant matrix
+    never once observed in a running store is a gap the gate will find.
+  owed_by: 'Engineer CD-ENG-WO2-01 instance 3, within RT-A''s stated bounds, destroyed before return'
+- id: CD-OB-002
+  what: >
+    The Python base image digest is unresolved and recorded so. Owed at WO-3 with RT-B
+    authorisation; it must NOT be invented in WO-2.
+  owed_by: 'WO-3'
+
+risks:
+- 'CD-CONT-001 AMBER, MITIGATION PROVEN — the committed-increment discipline limited this second
+  termination to one increment instead of a block. Retained and reinforced: seats run in the
+  FOREGROUND from here, per the operator, because a seat that dies silently costs more than one
+  that blocks.'
+- 'CD-D-009-R1 LOW — an adopting seat may rubber-stamp inherited material rather than review it.
+  Bounded by requiring the re-dispatch to enumerate which A5 and A6 clauses it verified and how,
+  and by the retained snapshot making any silent divergence detectable.'
+- 'all risks carried in ACTIVE_WORK at BL-...-0004 remain in force unchanged.'
+
+evidence_refs:
+- '/srv/crash-detector-wo2-candidate-inc3/SHA256-MANIFEST.txt (37 files as inherited)'
+- '/srv/crash-detector-wo2-candidate-inc3/README.txt (disposition, and why it is not a quarantine)'
+- 'lane 8723ffb — the last attested increment, the base this candidate diffs against'
+
+next_safe_action: >
+  Re-dispatch Engineer CD-ENG-WO2-01 as instance 3 in the FOREGROUND against
+  governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml, lane /srv/crash-detector-wo2 at 8723ffb, with
+  an adoption addendum for CD-D-009: review the 37 inherited files against A5 and A6 clause by
+  clause, state which clauses were verified and how, correct what is wrong, discharge CD-OB-001,
+  and commit and attest increment 3 as its own work. Then increments 4 to 7 — block A close, then
+  block B — committing at every boundary. On READY_FOR_ASSURANCE write the exact SHA into
+  CD-DISPATCH-WO2-ASSURANCE.yaml target_candidate, move it to ISSUED, and dispatch a SEPARATE agent
+  as CD-ASR-WO2-01. Stop at the gate for Product Owner review.

@@ -1,0 +1,8 @@
+=== CD-RT-003-GRANT-MATRIX-LIVE [VIOLATED] ===
+plant   : plants/CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch   (APPLIED)
+command : python3 -B tools/register/check_grant_matrix_live.py --root .
+EXIT    : 3
+--- output (tail 25) ---
+CD-RT-003-GRANT-MATRIX-LIVE: PRECONDITION_NOT_MET
+    the connection target is not set: CD_CHECK_STORE_HOST, CD_CHECK_STORE_PORT, CD_CHECK_STORE_NAME, CD_CHECK_STORE_USER, CD_CHECK_STORE_PASSWORD. Connection details are supplied in the environment BY NAME; no value is ever written in this file or in any record. Unset means this check cannot reach a store, which is a non-zero exit and never a skip.
+    This is a non-zero exit with a stated reason, never a pass and never a skip (PBG-CI-002).

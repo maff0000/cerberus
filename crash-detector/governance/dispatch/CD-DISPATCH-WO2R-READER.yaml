@@ -1,0 +1,250 @@
+# ENGINEER DISPATCH — the shared YAML reader. crash-detector.
+#
+# WHY THIS IS A SEPARATE DISPATCH AND NOT AN INCREMENT OF WO-2R.
+# CD-DISPATCH-WO2R-ENGINEER is bounded to CD-ASR-F01..F06 and to nothing else. `_yamlmin.py` is
+# shared with check_base_image_digest_pin.py, which serves a criterion that dispatch does not
+# cover, so repairing it there would change a guard outside the bound — which is exactly the
+# silent widening its own `prohibited` list forbids. CD-ENG-WO2R-01 recognised this, declared the
+# defect at boundary 8 with variant V30, and ESCALATED RATHER THAN FIXING IT. That judgement was
+# COMMENDED at CD-D-048 and it is why this record exists.
+#
+# WHY IT IS NOT DEFERRED TO WO-3 EITHER. An auditor probing YAML shapes will meet this the way the
+# Project Lead did — by accident, on an ordinary edit — and a hang consumes an auditor's budget and
+# may be misreported. Two of the eleven declared gate commands currently return NO VERDICT on the
+# same input. Ruled CD-D-051: issued AFTER WO-2R increments 4 and 5, BEFORE Assurance.
+
+dispatch_id: CD-DISPATCH-WO2R-READER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-19T17:12:00Z'
+issuing_entry: BL-20260819T171200Z-0033
+
+# --- seat -------------------------------------------------------------------------------------- #
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md
+actor_id: CD-ENG-READER-01
+why_a_new_actor_id: >
+  A different bounded objective gets its own seat identity, so the record shows which seat repaired
+  the reader rather than blurring it into the six-finding rework. CD-RULE-002 then lets a git author
+  audit separate this work from WO-2R's at a glance.
+dispatching_authority: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: >
+  PID.md v1.0.1 RATIFIED by Matt · governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md ·
+  governance/decisions/PO-GATE-REVIEW-WO2-0001.md. This is a defect repair inside already-authorised
+  WO-2 scope; it introduces no product meaning and decides no product quantity.
+descendant_capability_rule: >
+  This seat's capability never exceeds CD-AUTH-0001's (PBG-RT-004). Anything CD-AUTH-0001 forbids the
+  Project Lead is forbidden here, including modifying pbg/ and amending PID.md.
+
+# --- bounded objective ------------------------------------------------------------------------- #
+work_item: CD-WO-002R-READER
+work_type: CHANGE
+traits: [creates_process]
+objective: >
+  MAKE tools/register/_yamlmin.py TERMINATE ON EVERY INPUT, and change nothing else.
+
+  Done means: the reader returns a value or raises, in bounded time, for every document —
+  including ones it cannot parse; the two checks that share it return a verdict on the trees where
+  they currently return none; the clean arm is unchanged; all eleven plants still apply and
+  contrast; and the seat returns READY_FOR_ASSURANCE with the exact SHA.
+
+  Done does NOT mean assured. This seat never certifies its own work (PBG-SOD-001, non-waivable).
+
+# --- lane -------------------------------------------------------------------------------------- #
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+execution_base_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
+execution_base_rule: >
+  Reconcile the observed HEAD against execution_base_sha BEFORE writing anything; expect
+  `git status --short` to be 0 lines. A mismatch is drift: report and reconcile, never proceed from
+  wherever the tree happens to sit (PBG-CONT-006).
+known_boot_condition: >
+  `pbg boot` in this worktree returns RED on a continuity reference, because the lane's checked-out
+  ACTIVE_WORK.yaml is the branch-point copy and names the original WO-2 dispatch. That file is
+  Project-Lead-only protected scope. DECLARE IT, DO NOT CORRECT IT — the previous seat did exactly
+  this and was right to (CD-ENG-F31).
+
+commit_identity:
+  rule: CD-RULE-002, non-relaxable (PO Ruling 3).
+  author_and_committer: 'CD-ENG-READER-01 <cd-eng-reader-01@seats.crash-detector.invalid>'
+  how: >
+    Set GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL / GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL as environment
+    variables per commit invocation. DO NOT use `git -c` — it fails silently on this host
+    (CD-PL-F56) — and do not write git config. Verify with
+    `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit. Subject prefix
+    `[CD-ENG-READER-01]`.
+
+# --- scope ------------------------------------------------------------------------------------- #
+writable_scope:
+- /srv/crash-detector-wo2/tools/register/_yamlmin.py
+- /srv/crash-detector-wo2/tools/register/check_egress_no_broker.py        # ONLY if the repair requires a caller change
+- /srv/crash-detector-wo2/tools/register/check_base_image_digest_pin.py   # ONLY if the repair requires a caller change
+- /srv/crash-detector-wo2/tests/                                          # regression cover for the reader
+- /srv/crash-detector-wo2/variants/WO-2R/READER/                          # your durable variants
+- /srv/crash-detector-wo2/required-tests.yaml                             # ONLY a declared-limit correction, if the repair changes one
+- /srv/crash-detector-wo2/contracts/execution/                            # ditto
+- /srv/crash-detector-wo2/governance/engineering/build-log/               # NEW entries only, never an edit
+- /tmp/
+
+protected_scope:
+- pbg/                        # pinned, read-only (PBG-FWK-013). Editing it to pass IS the bypass.
+- PID.md, BLUEPRINT.md, CLAUDE.md, docs/, db/, pbg-manifest.yaml
+- governance/authority/, governance/decisions/, governance/dispatch/, governance/rules/
+- governance/assurance/       # the auditor's record. READ IT. NEVER EDIT IT.
+- governance/reconciliation/  # the Project Lead's probes. READ THEM. NEVER EDIT THEM.
+- governance/engineering/ACTIVE_WORK.yaml
+- src/                        # NO application source changes. This is a tooling repair.
+- deploy/                     # do not edit the artefacts the checks read; make VARIANTS instead
+- plants/                     # the eleven plants are a deliverable to PRESERVE, not to edit
+- schemas/ at PROJECT_ROOT
+- everything under /srv outside the dispatched worktree, except the /tmp scratch above
+
+prohibited:
+- certifying, assuring or accepting this work (PBG-SOD-001, non-waivable) — report, never certify
+- weakening a check, a test or an assertion to obtain a pass — report the failure instead
+- deleting or disabling an existing guard, test or plant
+- REPLACING THE READER WITH A THIRD-PARTY YAML LIBRARY. See why_not_pyyaml below. If you conclude the
+  hand-rolled reader cannot be made correct, that is an ESCALATION to the Project Lead, not a
+  decision you take.
+- widening scope silently; a needed change outside writable_scope is an escalation, not initiative
+- changing what any check DECIDES. This dispatch changes whether a check TERMINATES, not what it
+  concludes. A repair that alters a verdict on any existing tree is out of bounds — report it.
+- touching latest_admitted_run in required-tests.yaml. It stays null (CD-RULE-001, non-relaxable).
+- recording any secret value anywhere; rewriting Build Log history (PBG-CONT-003, non-waivable)
+
+# --- the defect -------------------------------------------------------------------------------- #
+the_defect:
+  finding: 'CD-PL-F61 (MEDIUM), confirming the seat-raised CD-ENG-WO2R-F14 (MEDIUM).'
+  minimal_reproduction: |
+    printf 'top:\n  - key:\n      - nested\n' > /tmp/hang.yaml
+    cd <pristine extraction of f22d120>
+    timeout 20 python3 -B -c "import sys; sys.path.insert(0,'tools/register'); import _yamlmin; _yamlmin.load_yaml('/tmp/hang.yaml')"
+    # -> exit 124. IT DOES NOT TERMINATE.
+  verified_by_the_project_lead_at_the_dispatch_base: >
+    Reproduced at f22d120 on 2026-08-19T17:11Z, exit 124. `git log be34fe4..f22d120 --
+    tools/register/_yamlmin.py` is ZERO commits, so increment 5 did not touch it and the defect is
+    exactly as recorded at increment 3b.
+  three_facts_that_matter:
+  - 'IT IS NOT AN EXOTIC SHAPE. PL-T5 was written to test value-position smuggling under an
+    admissible key, not to find a hang. `declared_in` as a list of two authorities is an ordinary
+    edit, and the Project Lead met the defect by accident on the first probe of that shape.'
+  - 'IT AFFECTS BOTH CHECKS SHARING THE READER. On the PL-T5 tree, check_egress_no_broker.py exit
+    124 AND check_base_image_digest_pin.py exit 124; on the clean tree both exit 0. TWO of the
+    eleven declared gate commands return NO VERDICT on the same input.'
+  - 'IT PREDATES THE AUDIT. _yamlmin.py has ZERO commits in ee8be6b..ba469b5, and the minimal
+    document hangs at ee8be6b AND at 66681b2 — THE EXACT SHA THE FIRST AUDITOR WAS GIVEN. It was
+    reachable throughout the WO-2 assurance run and was never met.'
+  what_it_is_not: >
+    NOT a false clean. A hang is not exit 0 and is fail-closed under any harness imposing a timeout.
+    It is a check that cannot return a verdict, which is what PBG-CI-002's "never a skip, for any
+    reason" is aimed at — a skip of indefinite length that also stops the pipeline behind it.
+
+why_not_pyyaml:
+  the_rule: >
+    This is a decision already taken on this project and you are NOT re-taking it. The register
+    checks are gates; a gate that depends on a third-party parser depends on that parser's version,
+    its resolution rules and its own CVEs, and `yaml.safe_load` accepts documents this project
+    deliberately refuses. Read the header of _yamlmin.py for the reasoning as recorded.
+  what_you_may_do_instead: >
+    Make the hand-rolled reader terminate. If you conclude it cannot be made correct within this
+    scope, FAIL CLOSED and escalate with your evidence — do not substitute a dependency.
+
+# --- what the repair must establish ------------------------------------------------------------ #
+invariants_you_must_establish:
+- 'TERMINATION IS STRUCTURAL, NOT PATCHED. The class is "an input on which the reader does not
+  finish", not "the nested-sequence document". Do not fix the shape PL-T5 happens to use. Find WHY
+  the loop fails to advance — a branch that consumes no input, or that re-enters at the same offset
+  — and make progress a property of the loop rather than of the inputs it happens to meet. A reader
+  that terminates because every known shape was enumerated is the exact defect four AMBER verdicts
+  were about.'
+- 'A DOCUMENT IT CANNOT PARSE RAISES, AND SAYS WHAT IT COULD NOT READ. The project standard is
+  already set by the increment-3 reader behaviour COMMENDED at CD-D-048: it REFUSES TO GUESS rather
+  than reading a hidden field as absent (PL-S2, exit 3). Silence and a partial parse are both worse
+  than a refusal, because a partial parse of a gate''s subject makes the gate decide on a document
+  nobody wrote.'
+- 'NO VERDICT CHANGES ANYWHERE. Every register check must reach the SAME conclusion on the clean
+  tree and on every existing variant that it reaches today, with the same assertion counts, except
+  where it previously returned NO verdict. Prove it by running them, before and after, and put both
+  columns in your Build Log entry. A silently shrinking assertion count is how a skipped arm hides
+  (CD-ENG-WO2R-F16, adopted project method).'
+- 'REGRESSION COVER EXISTS. Add pytest cover for the reader itself: the minimal hanging document,
+  PL-T5''s shape, V30, deeper nesting than either, and at least two malformed documents that must
+  RAISE. CD-PL-F63 was raised because an 892-line check rewrite added zero tests; do not repeat it.
+  The node-id count must GROW and nothing may be removed.'
+
+variants_and_proof:
+  extraction_hygiene: >
+    NEVER mutate the worktree to test a variant and NEVER create a git worktree for one. Extract with
+    `git archive <sha> | tar -x -C <tmpdir>`, apply with `git apply -p1`, run, discard — a separate
+    pristine extraction per variant. `python3 -B` everywhere so no __pycache__ is written into a
+    governed tree (PBG-RT-001: mutation by EFFECT, not by label).
+  use_a_timeout_on_every_arm: >
+    `timeout 60` on every reader invocation, both arms. Exit 124 is the observation, and without a
+    timeout you will hang your own session instead of measuring the defect.
+  assert_the_reason_not_merely_the_exit: >
+    CD-ENG-WO2R-F13, adopted project method: assert the expected RULE ID or exception, not merely a
+    non-zero exit. A variant refused for a reason you did not intend has told you nothing, and
+    `git apply` has silently truncated hand-written hunks on this project before.
+  durable_variants: >
+    Every variant lands as a `git apply`-able patch under variants/WO-2R/READER/ plus a row in
+    variants/WO-2R/MANIFEST.md naming the document shape, what it attacks, the exact command line
+    and the observed outcome. NOTHING under variants/ may be executable (PBG-ASSURE-001).
+  minimum_set:
+  - 'the three-line minimal document above — currently exit 124, must terminate'
+  - 'PL-T5, at governance/reconciliation/WO-2R/PL-T1-T5-pending-closure-and-the-reader-hang.patch.txt (READ ONLY — copy it, do not edit it)'
+  - 'V30, the seat-declared variant at boundary 8'
+  - 'CD-ENG-WO2R-F19''s nested-anchor case, folded in here rather than left owed'
+  - 'at least TWO new documents of your own that no one has tried, attacking termination by a
+    different route than nesting depth'
+
+commit_message_contract:
+  requirement: >
+    Every commit carries this block, filled in. A commit without it is not accepted at
+    reconciliation, however good the code is.
+  template: |
+    CLASS CLOSED:  <the class of input on which the reader now terminates — as a class, not as a
+                    list of document shapes>
+    STRUCTURE:     <what makes progress a property of the loop. Name the invariant, not the diff.>
+    WHY IT IS A CLASS CLOSURE: <why can no input fail to advance, rather than none of the inputs
+                    tried?>
+    PROVED BY:     <exact commands, exact observed outcomes, with timeouts>
+    VARIANTS RE-RUN: <the minimum set above> -> each terminating, with the observed outcome
+    NEW VARIANTS (>=2, mine): <route, and why it is a different route>
+    NO VERDICT CHANGES: <every register check, before and after, with assertion counts in both
+                    columns>
+    CLEAN ARM:     <full declared command set + full pytest suite> -> exit 0, <N> passed
+    ELEVEN PLANTS: <still applying? still contrasting?>
+    DECLARED LIMIT (if any): <per CD-RULE-004, in the check header, the register entry and the
+                    execution contract, consistently, each boundary with an executable example>
+
+# --- deliverables and return -------------------------------------------------------------------- #
+deliverables:
+- 'the repair, committed with the mandatory block'
+- 'pytest regression cover for the reader; node ids GROW, none removed'
+- 'durable variants under variants/WO-2R/READER/ with MANIFEST rows; nothing executable'
+- 'the before/after verdict table for every register check, in your Build Log entry'
+- 'all ELEVEN plants still applying (`git apply --check`) and still contrasting'
+- 'your Build Log entry under governance/engineering/build-log/, SEQUENCE 0048 (the lane block runs
+  from 0040 upward, CD-D-036; main runs separately). Every timestamp from `date -u +%FT%TZ` and from
+  nothing else (CD-RULE-005).'
+- 'findings against your OWN work, numbered CD-ENG-READER-F01 onward. On this project they are the
+  most valuable thing in a return.'
+
+return_protocol:
+  on_success: 'READY_FOR_ASSURANCE with the exact SHA, resolved with `git rev-parse`.'
+  on_partial: >
+    READY_FOR_ASSURANCE with the exact SHA plus an explicit list of what is NOT closed and why, each
+    with its declared limit. A partial closure honestly declared is a usable result. A partial
+    closure described as complete is the failure this whole rework exists to correct.
+  on_blocked: >
+    BLOCKED with the exact SHA of the last good commit, what you were doing, and what you need.
+    Never improvise past a scope boundary.
+
+runtime_authorisation:
+  classification_rule: >
+    This dispatch authorises NO container build, NO container start and NO network access. It is a
+    pure source-and-test repair. `check_grant_matrix_live` needs a live store and is expected to
+    return exit 3 PRECONDITION_NOT_MET throughout; that is the correct state here and you do not
+    stand a store up to change it (PBG-RT-010; CD-HOLD-003 remains HELD).

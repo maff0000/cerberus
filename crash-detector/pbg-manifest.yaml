@@ -1,0 +1,24 @@
+# Project manifest — crash-detector.
+#
+# Declares nothing that weakens the pinned framework. A manifest may raise assurance and add
+# project context; it may never disable a mandatory control, force applicability, reinterpret a
+# required outcome, except a non-waivable control, or authorise role self-assignment
+# (PBG-CTRL-004, PBG-BOOT-002).
+#
+# Its presence is what lets `pbg validate` REACH the manifest check rather than report it ABSENT.
+
+project:
+  name: crash-detector
+  environment: DEV
+  consequence_class: C
+  authority_class: ADVISORY_ONLY
+  read_only_reference_projects: []
+
+controls:
+  disabled: []
+  force_not_applicable: []
+  required_outcome_overrides: {}
+  exceptions: []
+
+roles:
+  allow_self_assignment: false

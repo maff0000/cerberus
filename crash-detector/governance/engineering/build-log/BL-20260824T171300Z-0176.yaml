@@ -1,0 +1,140 @@
+# ================================================================================================== #
+# BL-20260824T171300Z-0176 — PROJECT LEAD BOUNDARY. **`CD-ENG-WO3-11` RETURNED THE CONTRACT-CLOSURE
+# INCREMENT AT `295bdbe`. THIS SEAT RE-DERIVED THE LOAD-BEARING CLAIMS IN ITS OWN SHELL BEFORE
+# ACCEPTING THE RETURN AS AN INPUT, AND `CD-ASR-WO3-11` IS DISPATCHED TO GRADE IT.**
+#
+# *** **THE RETURN IS NOT ACCEPTED AND IS NOT GRADED BY THIS SEAT. IT IS BANKED AS AN INPUT.**
+# `PBG-SOD-001` IS NON-WAIVABLE AND THE PROJECT LEAD DOES NOT CERTIFY WHAT IT COMMISSIONED. ***
+#
+# **THE ONE MEASUREMENT THAT SETTLES WHETHER THIS INCREMENT DID ANYTHING: at `8398741` the LIVE GATE
+# ADMITTED `{"status":"STALE","observed_utc":"2026-08-01T00:00:00Z","detail_level":"calm"}` ON THE
+# PUBLIC SURFACE — A DEAD FEED, THREE WEEKS STALE, RENDERING AS CALM — WHILE THE INSTRUMENT REPORTED
+# `PASS — 144 assertions, 0 violations`. AT `295bdbe` THAT TREE IS `FAIL — 2`. THIS SEAT BUILT THAT
+# DOCUMENT AND DROVE THAT GATE ITSELF.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T171300Z-0176
+timestamp_utc: '2026-08-24T17:13:00Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T17:13:00Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_04
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_04
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T163112Z-0175
+base_sha: b0aa9cd0bbe56b9758c4cc2a1bc8e60f7de2d2f2
+current_sha: b0aa9cd0bbe56b9758c4cc2a1bc8e60f7de2d2f2
+status: WAITING_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-11 returned INCREMENT 16B-CONTRACT-CLOSURE at 295bdbe (content tip be088c5), three
+  commits, one identity, with FIVE findings raised against its own work. THIS SEAT RE-DERIVED EVERY
+  LOAD-BEARING CLAIM IN ITS OWN SHELL — CD-PL-F193, and because this seat has already put an
+  unmeasured claim into the record TWICE this session (CD-PL-F203 inherited, CD-PL-F205 its own).
+  Everything it verified is listed below with what produced it; everything it did NOT run is listed
+  separately and carried into the Assurance dispatch as QUOTED, NOT ASSERTED. CD-ASR-WO3-11, a FRESH
+  identity, is dispatched. THE RETURN IS BANKED AS AN INPUT AND IS NOT ACCEPTED.
+
+what_this_seat_RE_DERIVED_ITSELF_and_the_command_that_produced_it:
+  tree_and_perimeter: >
+    Tip `295bdbe`, worktree CLEAN. `be0b355` UNMOVED and still == `wo-2r3`. **PROTECTED PATHS ZERO**
+    — `git diff --stat 8398741..HEAD` over `pbg/ BLUEPRINT.md PID.md governance/decisions/
+    governance/mapping/ src/ tests/ deploy/ db/ evidence/` returns EMPTY. `tools/` names EXACTLY ONE
+    file. Contract edits BOUNDED: numstat 5/2 on each schema, and the only non-description change is
+    `"required": ["state"]` — the two edits the dispatch authorised and no third.
+  the_instrument: >
+    Clean tree `PASS — 243 assertions, 0 violations`, EXIT 0 (was `PASS — 144`). `pytest` **2007
+    passed**. NOTHING CORRECT BROKEN.
+  CC_4_the_cap_now_fails_CLOSED: >
+    **THE EXACT ACCEPTANCE THE DISPATCH SET, AND IT IS MET.** `_dial_bearing` on the nested-`enum`
+    probe: depths 1, 5, 20, 22, 23, 24 -> `None` (UNCHANGED); depths **25, 26, 30, 40 -> `None`**,
+    where all four answered a silent `False` at `8398741`. **THE ONE-INTEGER CLIFF IS GONE.**
+  the_five_escapes_run_at_BOTH_tips_by_this_seat: >
+    All 8 CC patches `git apply` **rc = 0** at both tips. `CC-B` (discriminator spelled `status`),
+    `CC-C` (`present:false` + stale stamp), `CC-D` (nested 25 deep), `CC-G` (freshness stamp dropped
+    from `required`) and `CC-H` (allowlisted root property widened): **`PASS — 144, 0 violations` at
+    `8398741` -> `FAIL — 2` or `FAIL — 4` at `295bdbe`.** `CC-A` and `CC-E` ALREADY failed at
+    `8398741` — **the Engineer did not claim them as escapes and this seat does not either.**
+  THE_LIVE_ESCAPE_PROVED_END_TO_END_AND_NOT_INFERRED_FROM_THE_INSTRUMENT: >
+    *** On the `CC-B` tree at `8398741` this seat loaded the contract, read the planted
+    `feed_liveness` slot, and drove `refuse_unless_publishable` with BOTH enum members. **BOTH WERE
+    ADMITTED ON THE PUBLIC SURFACE, INCLUDING `{"status":"STALE","observed_utc":
+    "2026-08-01T00:00:00Z","detail_level":"calm"}` — A DEAD FEED THREE WEEKS STALE RENDERING AS
+    CALM — WHILE THE INSTRUMENT REPORTED `PASS — 144`.** *** THAT is what makes these ESCAPES and not
+    instrument noise, and it is the difference between grading a number and grading a product.
+  the_document_set_STOP_condition_did_not_fire_and_that_was_MEASURED: >
+    The SAME EIGHT documents this seat used at `BL-...-0175` give **BYTE-IDENTICAL outcomes** at
+    `8398741` and at `295bdbe` (one ADMITTED control, seven REFUSED with identical reason classes).
+    The contract edits are a strict no-op on the admitted document set, so the `schema_version`
+    question never arose and `ENVELOPE_SCHEMA_VERSION` was correctly left untouched in protected
+    `src/`.
+  the_return_entry: >
+    Validated by DIRECT call: `ok = True, stage complete, errors []`.
+  F01_is_REAL_and_this_seat_confirmed_the_half_that_matters: >
+    `C16` and `C31`, **both labelled CONTROL**, both move `PASS — 144` -> `FAIL — 2` on this row.
+    **THE ENGINEER DISCLOSED THIS RATHER THAN LETTING AN AUDITOR FIND IT, AND IT IS THE REAL PRICE OF
+    RULE CC.**
+
+what_this_seat_did_NOT_run_and_has_carried_forward_as_QUOTED_NOT_ASSERTED:
+  - 'The register census `19 rc=0 / 11 non-zero unmoved`, and `pbg verify MATCHES / (null) / (17) / GATE: SHUT / 18`.'
+  - 'The assertion accounting `+99 = 27 + 36 + 6 + 30`.'
+  - '*** `F01`s SIBLING-ROW HALF, AND IT IS THE HALF THE WHOLE FINDING TURNS ON. *** The claim that `C16` was ALREADY failing a SIBLING register row at both tips (so Rule CC merely makes two rows agree) while `C31`s sibling row reads `PASS — 280` (so `C31` is a GENUINE NEW FALSE POSITIVE). **THIS SEAT VERIFIED ONLY THAT BOTH MOVE ON THIS ROW. THE DISTINCTION THAT TREATS THEM DIFFERENTLY IS UNMEASURED BY THIS SEAT AND THE ASSURANCE DISPATCH SAYS SO IN BOLD.**'
+  - 'The seven-step closure argument in `DECLARED LIMIT 17`, and the 34 limb-(b) live-gate drives.'
+  - 'Findings `F02`, `F03`, `F04`, `F05` in detail — including `F05`s claim that NO engineer return on this lane has EVER validated `ok=True` before this one.'
+
+the_architecture_as_BUILT_described_and_not_graded:
+  rule_CC: >
+    `_root_limb` / `CD-CALM-ROOT-008` decides every root property by EQUALITY ONLY — dict equality
+    against `{"$ref": "#/$defs/dial_reading"}`, or membership of a nine-name frozenset. Three
+    `return`s, **no undecidable outcome at the root**. Verified by this seat: the canonical slot
+    returns limb `'a'`; the same slot WITH A SIBLING KEYWORD, the `enum`-spelled dial and the
+    `status`-spelled dial all return `None` — **NEITHER LIMB, THEREFORE A VIOLATION.**
+  the_two_premises_that_carry_the_exhaustiveness_claim: >
+    Asserted per surface rather than assumed: (1) the root declares `additionalProperties: false`;
+    (2) the root declares no keyword outside `_ROOT_STRUCTURAL_KEYWORDS`. **THE ASSURANCE DISPATCH
+    POINTS THE AUDITOR AT THESE TWO PREMISES AND SAYS AN EXHAUSTIVENESS ARGUMENT FAILS AT ITS
+    PREMISES AND NOT AT ITS EXAMPLES.**
+  limb_b_is_proved_not_trusted_and_its_boundary_is_the_engineers_own: >
+    Each allowlisted non-dial root property is replaced by a calm-bearing object and the LIVE GATE
+    must refuse. **TWO probe shapes, flat and nested — and the Engineer names this as its own
+    closure boundary: A SAMPLE, NOT A CLASS.** Naming your own weakest point is what the last four
+    audits have asked for and it is the first return to do it unprompted.
+
+why_no_verdict_is_recorded_here: >
+  **BECAUSE THIS SEAT MAY NOT GIVE ONE.** `PBG-SOD-001` is non-waivable: the Project Lead
+  commissioned this increment, wrote the dispatch that scoped it, and chose Rule CC's mechanism.
+  **A seat that designed the mechanism cannot certify that the mechanism works.** Everything above
+  is measurement, banked so the auditor is not re-deriving blind — and the Assurance dispatch orders
+  it re-derived anyway, because a dispatch on this row has carried a falsehood twelve times running
+  and TWO OF THOSE WERE THIS SEAT'S OWN, ONE OF THEM THIS SESSION.
+
+standing_prohibitions_UNCHANGED_AND_NOT_SOFTENED_BY_A_GOOD_RETURN:
+  - '*** 16C IS NOT RELEASED. NO LIVENESS / DEAD-FEED DETECTOR IS WRITTEN. NOT ONE INDICATOR ROW IS REGISTERED — not a placeholder, not a fixture. *** The 30 ratified indicators remain data that nothing reads, and that is CORRECT until an independent seat says the guard is closed.'
+  - '*** THE MEMORIAL REMOVAL (PO-DECISIONS-0027 RULING 3) MUST NOT LAND. *** Ruling 3 conditions it on the structural instrument carrying the behaviour, and whether it carries it is EXACTLY the open question. `tests/` was protected from the Engineer and is untouched — verified ZERO.'
+  - 'NO `publish_cycle` CALLER AND NO `src/` ENTRYPOINT. CD-D-181 SEQUENTIAL-ONLY. FROZEN `be0b355` VERIFIED UNMOVED AT THIS BOUNDARY.'
+  - '**A RETURN THAT MEASURES WELL IS NOT A GREEN.** Five prior increments on this row returned confident and were broken by the next auditor. This one is BANKED, NOT ACCEPTED.'
+
+next_safe_action: >
+  `CD-ASR-WO3-11` — a FRESH identity, never `CD-ENG-WO3-11` and never any prior `CD-ASR-WO3-*` —
+  grades `295bdbe` against `PO-DECISIONS-0027` ruling 5's completion test OVER THE NOW-CLOSED
+  CONTRACT, attacking Rule CC's TWO EXHAUSTIVENESS PREMISES rather than producing a tenth named
+  shape, and returns `PASS`/`AMBER`/`RED` with the next safe gate named. **THE PROJECT LEAD THEN
+  BANKS THE VERDICT AND THE PRODUCT AUTHORITY DISPOSES.** On `PASS` only: 16C releases -> the
+  liveness/dead-feed detector -> the 30 indicator rows. **THE SESSION STOPS AT THAT BOUNDARY OR ON
+  ANY PRODUCT AUTHORITY QUESTION.**
+
+expected_next_actor: 'CD-ASR-WO3-11 (Assurance Engineer, READ-ONLY, fresh identity)'
+
+risks:
+  - '*** UNTIL THE AUDITOR REPORTS, THE HONEST STATE IS THAT AN UNGRADED INSTRUMENT SITS BETWEEN A DEAD FEED AND A CALM PUBLICATION. FIVE ESCAPES MEASURED CLOSED IS NOT A CLOSURE PROVED. ***'
+  - 'RULE CC IS THIS SEAT''S OWN MECHANISM, WHICH MAKES THIS SEAT THE WORST-PLACED PARTY TO JUDGE IT AND IS PRECISELY WHY IT DOES NOT. The auditor is told the mechanism is the PL''s composition so it feels no deference to it.'
+  - '**THE FALSE-POSITIVE COST IS REAL AND MAY BE WORSE THAN PRICED:** `C31` was the control proving a PRESENT-AND-FRESH dial is ADMITTED. If it now fails for an unrelated reason, the instrument may have traded a false negative for a BLIND SPOT — "silence enforced" rather than "guarantee held", which is exactly what `CD-CALM-VACUITY-000` exists to catch. The Assurance dispatch asks the question in those words.'
+  - 'CD-PL-F203, CD-PL-F204, CD-PL-F205 OPEN. CD-PL-F180 OPEN (16D). DECLARED LIMIT 12''s residue OPEN — and the Engineer explicitly does NOT claim it closed: `CC-B` and `CC-C` are caught by RULE CC ALONE and the recogniser is still silent on both.'
+  - 'Ruled items 2-6 of PO-DECISIONS-0026 remain undelivered into a THIRD session. If the Product Authority wants 16C/16D/16E prioritised over further constitutional hardening, that is a PRODUCT call and this seat has not made it.'

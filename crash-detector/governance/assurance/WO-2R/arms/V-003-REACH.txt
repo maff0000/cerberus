@@ -1,0 +1,23 @@
+LABEL: V-003-REACH
+PATCH: /srv/crash-detector-wo2r-audit/plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch
+APPLY_EXIT: 0
+COMMAND: python3 tools/register/check_engine_no_witness_reach.py --root .
+EXIT: 1
+--- stdout ---
+CD-RT-003-ENGINE-NO-WITNESS-REACH
+    subject: /tmp/cd-asr-wo2r/run/V-003-REACH
+    scanned: 41 modules in the scanned universe; 18 reachable from 5 root(s) — 4 engine-package, 1 derived from 1 engine container(s) — walked to fixpoint
+    assertions: 26
+    note: 2 witness module(s) exist and were the subject of the assertion: crash_detector.witness, crash_detector.witness.panel
+    note: the ENGINE CONTAINER SET, derived by IMAGE IDENTITY and not by service name (build context + byte-identical Dockerfile): 1 service(s) — cd-engine [deploy/Dockerfile.engine:109 ENTRYPOINT: python3 -B /app/entrypoints/cd_engine.py]
+    note: derived walk root(s) from the engine container set: cd_engine; sys.path roots inside the image(s): cd-engine=/app/src, /app/entrypoints
+    note: package walk root(s) from BLUEPRINT §13: 4 module(s) under crash_detector.engine
+    note: 41 Python file(s) shipped into the engine image(s) by their own COPY instructions, every one of them named and placed in the graph
+    note: services built from a DIFFERENT image in this tree, entrypoint RESOLVED but not a walk root: cd-collectors=cd_collectors, cd-private=cd_private, cd-public=cd_public, cd-review=cd_review, cd-witness=cd_witness
+
+VIOLATION  src/crash_detector/witness/panel.py
+    rule: engine reaches witness code
+    what: witness module `crash_detector.witness.panel` is REACHABLE from the engine container's root set. Route (nearest first): crash_detector.witness.panel <- crash_detector.corroboration <- crash_detector.engine.evaluate. CD-AC-003: witnesses are side-by-side, never ingredients. A witness that is also an ingredient corroborates nothing (PID §3.4).
+
+CD-RT-003-ENGINE-NO-WITNESS-REACH: FAIL — 1 violation(s)
+--- stderr ---

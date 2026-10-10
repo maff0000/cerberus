@@ -1,0 +1,44 @@
+# Project-owned PBG installation record — crash-detector.
+#
+# Written at Project Lead boot, from the Product Owner's adoption disposition
+# (docs/FRAMEWORK-ADOPTION-DISPOSITION.md) and from PROVENANCE.json inside the snapshot.
+# Deliberately OUTSIDE pbg/: a snapshot cannot vouch for both itself and the digest it was
+# expected to have.
+
+project_name: crash-detector
+product_authority: 'Matt — final authority; Product Owner (Trinity) prepares and dispositions'
+
+framework_name: PBGv2
+framework_version: 2.0.0-alpha.1
+source_repository: git@github.com:maff0000/pbgv2.git
+source_commit: 681900dc12cf85f1bf71441268278e51ba4a6101
+source_release: 681900d
+adopted_release_label: v2.0.0-alpha.1-r1
+
+# HONEST LIMIT. The PO disposition records the approved digest TRUNCATED
+# ("sha256:dee8eaca3a9e3837..."), so only a 8-byte prefix was independently approved. The observed
+# value below is what is on this filesystem; it is NOT copied into the expected field, because a
+# digest read out of the artefact it is meant to authenticate proves nothing.
+expected_distribution_digest_prefix: 'sha256:dee8eaca3a9e3837'
+expected_distribution_digest: null
+installed_distribution_digest: 'sha256:dee8eaca3a9e3837b4608630e14ab8299a6a9f733b0f6360b8de4e8ed56133cf'
+digest_prefix_agreement: MATCHES_APPROVED_PREFIX
+
+installation_timestamp_utc: '2026-08-18T18:06:00Z'
+installed_by: 'Product Owner seed (commit d0be2ad), bootstrap adapter (commit cc105aa)'
+installation_method: manual copy
+adapter_selected: claude-code
+
+verification_level: INTERNALLY_CONSISTENT
+trusted_digest_source: >
+  docs/FRAMEWORK-ADOPTION-DISPOSITION.md — PO disposition, truncated digest. Full-digest matching
+  to a trusted release is therefore NOT established; INTEGRITY verified 113/113 on this filesystem
+  by the Project Lead at boot, which is internal consistency, not external authenticity.
+
+upgrade_authority: 'Product Owner (Trinity), on Matt ratification. Nothing upgrades automatically.'
+
+# Retained and visible, never overridden silently: PROVENANCE.json declares
+# suitable_for_adoption: false. The PO disposition overrides it FOR THIS DEV PROJECT ONLY and
+# BLOCKS promotion toward production until R2D2 has ruled on the open blockers.
+provenance_suitable_for_adoption: false
+adoption_override: 'docs/FRAMEWORK-ADOPTION-DISPOSITION.md (PO, 2026-08-19), DEV ONLY'

@@ -1,0 +1,66 @@
+"""PL-R6 — the Project Lead's OWN driver for the independent replication of ASR2-F01.
+
+Written from the source at 50fc231, not copied from the auditor's harness. The variant
+file under test IS the auditor's (it is the artefact whose claim is being replicated);
+the construction of the inputs, the publication attempt and every assertion below are
+this seat's own.
+
+CD-D-040 accepted increment 2b on the proposition, quoted from magnitude.py boundary A:
+  "no number so obtained can ever be a dial magnitude again."
+This driver asks that question by execution, not by reading.
+"""
+
+from crash_detector.dials.magnitude import DialMagnitude, sole_dial_of
+from crash_detector.dials.provenance import observed_for_dial
+from crash_detector.dials.scores import EQUITY_DIAL_ID, MONETARY_DIAL_ID, EquityCrashScore
+from crash_detector.publication.composite import console_figure
+from crash_detector.publication.dial_scalar import number_for_dial_slot
+
+
+def admit(dial_id, value):
+    """Build a magnitude the ONLY legitimate way — through the admission door."""
+    return DialMagnitude(
+        dial_id=dial_id,
+        quantity=observed_for_dial(
+            dial_id=dial_id, quantity=value, inputs_used=("pl_r6_probe_feed",)
+        ),
+    )
+
+
+equity = admit(EQUITY_DIAL_ID, 0.9)
+monetary = admit(MONETARY_DIAL_ID, 0.1)
+
+print("equity   magnitude:", equity)
+print("monetary magnitude:", monetary)
+print()
+
+result = console_figure([equity, monetary])
+
+print("RESULT TYPE :", type(result).__name__)
+print("RESULT      :", result)
+print("provenance  :", sorted(result.provenance))
+print("EXACT DialMagnitude (type identity, not isinstance)?",
+      type(result) is DialMagnitude)
+print("released quantity_for('%s') :" % EQUITY_DIAL_ID,
+      result.quantity_for(EQUITY_DIAL_ID))
+print()
+
+# The two layers CD-PL-F54 was closed to protect. If boundary A holds, BOTH refuse.
+try:
+    scored = EquityCrashScore(score=result, contributions=())
+    print("score type       : *** NOT REFUSED *** ->", scored)
+except Exception as exc:
+    print("score type       : REFUSED ->", type(exc).__name__, exc)
+
+try:
+    published = number_for_dial_slot("equity_crash", result)
+    print("publication gate : *** NOT REFUSED *** ->", published)
+except Exception as exc:
+    print("publication gate : REFUSED ->", type(exc).__name__, exc)
+
+print()
+print("DID THE BLEND RE-ENTER AS A DIAL MAGNITUDE? ",
+      type(result) is DialMagnitude and result.quantity_for(EQUITY_DIAL_ID) == 0.5)
+print("BOUNDARY A CLAIM ('no number so obtained can ever be a dial magnitude again') IS:",
+      "FALSE" if type(result) is DialMagnitude
+      and result.quantity_for(EQUITY_DIAL_ID) == 0.5 else "HELD")

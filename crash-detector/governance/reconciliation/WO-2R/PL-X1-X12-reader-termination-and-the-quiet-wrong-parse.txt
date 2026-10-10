@@ -1,0 +1,194 @@
+PL-X1 .. PL-X12 — the Project Lead's own probes against the reader repair at lane 253c38b.
+CD-DISPATCH-WO2R-READER, reconciled in BL-20260819T183543Z-0035 (CD-D-060).
+
+THIS FILE IS DATA. NOTHING IN IT IS EXECUTABLE (PBG-ASSURE-001). It is written so that the
+probes are project state and not conversation (PBG-CONT-007). FROM THE COMMIT THAT CARRIES IT,
+THESE PROBES PROVE NOTHING ABOUT THE CLASS and they join the NEXT AUDITOR'S EXCLUSION SET,
+which is now the union of the WO-2 auditor's ten, the Engineer's variants through V51 and R01-R08,
+and the Project Lead's PL-Q1 .. PL-X12.
+
+WHY THESE ROUTES. The dispatch asked whether termination is a PROPERTY OF THE LOOPS or a fit to
+the shapes that happened to be tried. Every probe below therefore attacks something OTHER than
+nesting depth: the document root, the block-scalar folder, an ordinary dedented sibling, line
+endings, document WIDTH, the one delegation the repair deliberately leaves unguarded, and finally
+the repair's own backstop.
+
+THE HARNESS (quoted so it can be re-run; it is not shipped as a runnable file)
+
+    # per SHA, on a pristine extraction — never in a worktree
+    git -C /srv/crash-detector-wo2 archive <SHA> | tar -x -C "$T"
+    cd "$T"
+    # the probe driver, written to /tmp and not into the tree:
+    #   import _yamlmin from tools/register, parse the document, and report exactly one of
+    #   PARSED / REFUSED YamlSubsetError / RECURSIONERROR / OTHER
+    timeout 25 python3 -B <driver> <the probe document>
+
+    A TIMEOUT IS PART OF THE MEASUREMENT. At f22d120 four of these probes produce NO OUTPUT
+    because the process is killed at the timeout. Empty output IS the observation.
+
+--------------------------------------------------------------------------------------------
+RESULTS — measured by the Project Lead on its own extractions of BOTH SHAs
+--------------------------------------------------------------------------------------------
+
+PL-X5  ROUTE: a block-sequence item AT THE DOCUMENT ROOT (indent 0) whose inline key opens a
+       block. Every recorded stall so far has been nested under at least one mapping key; this
+       one is the first line of the file, so `child_indent = indent + 2` is computed from 0.
+
+           - key:
+               - nested
+
+       f22d120: NO OUTPUT — killed at the timeout.
+       253c38b: REFUSED. "line 2: this reader cannot read a nested block beneath a key written
+                inline on a block-sequence item. It made no progress past '- nested' ..."
+
+PL-X6  ROUTE: through the BLOCK-SCALAR FOLDER. A `|` block scalar whose body text is itself a
+       stalling sequence shape — so the folder must consume it as opaque text — followed by a
+       real stalling shape after the block ends. This attacks the folder/parser seam rather than
+       the parser alone.
+
+           top:
+             note: |
+               a:
+                 - k:
+                     - n
+             after:
+               - k2:
+                   - n2
+
+       f22d120: NO OUTPUT — killed at the timeout.
+       253c38b: REFUSED at line 8 (the shape AFTER the block scalar; the folded body is correctly
+                treated as text and does not stall).
+
+PL-X7  ROUTE: AN ORDINARY DOCUMENT. A sequence item whose inline key is followed by a nested
+       sequence at THE SAME indent as the key, then a sibling item. This is idiomatic YAML that
+       a human would write without thinking, and it is the cheapest route to the defect found
+       anywhere in this project.
+
+           top:
+             - key:
+               - sibling
+             - key2: v
+
+       f22d120: NO OUTPUT — killed at the timeout.
+       253c38b: REFUSED at line 3, stated, naming the line.
+
+PL-X8  ROUTE: CRLF LINE ENDINGS on the known minimal shape — a route through `splitlines()`
+       rather than through document structure at all.
+
+           top:\r\n  - key:\r\n      - nested\r\n
+
+       f22d120: NO OUTPUT — killed at the timeout.
+       253c38b: REFUSED at line 3, stated.
+
+PL-X1  ROUTE: FALSE POSITIVE — THE REPAIR'S OWN NEW FAILURE MODE. The repair adds a per-loop
+       iteration budget of `len(lines)`. A budget is a refusal waiting to happen, so the question
+       is whether a LEGITIMATE document can spend one. 1,604 lines: 800 well-formed `pending`
+       omission records under `services.cd-collectors.x-egress.pending`, in the exact shape
+       deploy/compose.yaml uses.
+
+       f22d120: PARSED ok.
+       253c38b: PARSED ok — IDENTICAL. The budget does not fire on valid input, and the repair
+                introduces no new refusal. Document WIDTH is not a route to a false refusal.
+
+PL-X2  ROUTE: THE ONE UNGUARDED DELEGATION. `_parse_mapping` line 348 adopts `_parse`'s cursor
+       WITHOUT `_advance`; the repair declares this legitimate because the unconditional
+       `index += 1` at line 332 has already moved the iteration on. This probe drives that exact
+       path 400 times, alternating a still cursor (`k<i>:` with no block) against a moving one
+       (`j<i>:` opening a sequence of mappings).
+
+       f22d120: PARSED ok, 800 keys.
+       253c38b: PARSED ok, 800 keys — IDENTICAL. The declared exemption holds under load and
+                produces neither a stall nor a spurious refusal.
+
+PL-X3  ROUTE: end of document inside a block-scalar body — the folder's inner loop.
+       f22d120: PARSED ok.   253c38b: PARSED ok — IDENTICAL.
+
+PL-X4  ROUTE: TAB indentation, which `_indent_of` does not count.
+       f22d120: REFUSED "tab in indentation".   253c38b: REFUSED, IDENTICAL. Pre-existing and
+                correctly fail-closed at both SHAs.
+
+PL-X11 ROUTE: ~600 levels of block mapping — the seat's own declared boundary 8b, re-measured
+       rather than accepted from the record.
+       f22d120: RecursionError.   253c38b: RecursionError — IDENTICAL, and the verdict does not
+                move. CD-ENG-READER-F02's account is accurate: it TERMINATES, and converting it
+                would have been the verdict change the dispatch forbids.
+
+--------------------------------------------------------------------------------------------
+PL-X9 — THE DECISIVE ONE. THE BACKSTOP IS NOT DECORATIVE.
+--------------------------------------------------------------------------------------------
+
+The repair claims TWO independent layers: `_advance`, which refuses a delegated cursor that did
+not move; and a per-loop iteration budget which "exists so that a future edit which breaks that
+fails CLOSED". The budget branches carry `# pragma: no cover` and the seat DISCLOSED against
+itself (CD-ENG-READER-F07) that no input can reach them, so they are proved only by monkeypatch.
+
+A backstop nobody has seen fire is an argument, not a layer. So the Project Lead broke RULE 2
+in the source itself, on a throwaway extraction of 253c38b: the `_advance` call in the
+sequence-item merge loop was DELETED and the cursor adopted directly, exactly as it was at
+f22d120 — then PL-X5 was re-run.
+
+    RESULT: REFUSED, not hung.
+    "line 2: the sequence-item merge loop made no progress past '- nested' within its iteration
+     budget. This is an internal invariant failure in this reader, not a defect in the document;
+     it refuses so that a caller gets a verdict."
+
+WITH `_advance` REMOVED ENTIRELY, THE READER STILL TERMINATES. The two layers are genuinely
+independent, and the one the seat could only justify by argument has now been OBSERVED doing the
+job it was written for. This is the first declared-unreachable backstop on this project to be
+proved by execution rather than by reading.
+
+--------------------------------------------------------------------------------------------
+PL-X10 / PL-X12 — THE QUIET WRONG PARSE (CD-ENG-READER-F05/F08), MEASURED
+--------------------------------------------------------------------------------------------
+
+PL-X10a reproduces the seat's own disclosure exactly:
+
+           top:
+             - key:
+                 sub: 1
+
+    f22d120: {'top': [{'key': None, 'sub': '1'}]}
+    253c38b: {'top': [{'key': None, 'sub': '1'}]}   — BYTE-IDENTICAL.
+
+The nested mapping is FLATTENED into its parent and `key` reads as ABSENT. The correct reading is
+{'top': [{'key': {'sub': 1}}]}. The reader neither parses it nor refuses it: it returns a document
+nobody wrote. IT IS PRE-EXISTING AND NOT A REGRESSION — the repair did not introduce it and did
+not change it, which is consistent with the 62-variant verdict sweep.
+
+THE SEVERITY QUESTION IS WHETHER IT CAN BE WEAPONISED INTO A FALSE CLEAN, so the Project Lead
+tried to build one. PL-X12a/b/c smuggle a broker host or an IP literal through the flattening at
+three different depths of `services.cd-collectors.x-egress.pending`:
+
+    PL-X12a   - declared_in:\n    host: api.ibkr.com          -> egress FAIL, 2 violations
+    PL-X12b   blocked_by:\n    hosts: api.ibkr.com            -> egress FAIL, 1 violation
+    PL-X12c   - declared_in:\n    blocked_by: x\n    endpoint: 198.51.100.24
+                                                             -> egress FAIL, 1 violation
+
+    ALL THREE ARE REFUSED, and the other two reader-sharing checks are unaffected (0,0).
+
+THE MECHANISM CUTS THE SAFE WAY ON THIS CRITERION: flattening LIFTS a nested key INTO the pending
+entry, where CD-EGRESS-007's closed key set is looking, so the guard gets STRICTER rather than
+weaker. That is the same reason the seat records V27's refusal as arriving THROUGH the flattening.
+
+STATE THE DENOMINATOR (CD-PL-F66). THIS IS THREE ROUTES ON ONE CRITERION. It is not a proof that
+no false clean exists anywhere; it is the measured reason the finding is ruled MEDIUM and routed
+to WO-3 rather than treated as a gate blocker. An auditor should attack it as an OPEN question.
+
+--------------------------------------------------------------------------------------------
+THE VERDICT SWEEP — 62 variants x 3 reader-sharing checks x 2 SHAs
+--------------------------------------------------------------------------------------------
+
+The seat's NO-VERDICT-CHANGES table was measured ON THE CLEAN TREE. The dispatch's central
+prohibition is broader than that: "changing what any check DECIDES ... on any existing tree". So
+the Project Lead applied EVERY variant in variants/WO-2R/ outside the READER directory — all 62 —
+to pristine extractions of BOTH SHAs, and ran the three checks that share the reader on each.
+
+    124 trees measured. EXACTLY ONE ROW CHANGED:
+
+        V30-a-document-shape-that-never-returns    124,124,124  ->  3,3,3
+
+    Every other row is identical in all three columns, including the exit-1 refusals (18 rows)
+    and the exit-3 precondition refusals (7 rows).
+
+The one change is from NO VERDICT to a STATED REFUSAL, which is the thing the dispatch was opened
+to achieve. Nothing else in the adversarial corpus decides differently.

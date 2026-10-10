@@ -1,0 +1,10 @@
+LABEL: B-001-PYTEST
+PATCH: NONE
+APPLY_EXIT: 0
+COMMAND: PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q
+EXIT: 0
+--- stdout ---
+........................................................................ [ 72%]
+............................                                             [100%]
+100 passed in 0.42s
+--- stderr ---

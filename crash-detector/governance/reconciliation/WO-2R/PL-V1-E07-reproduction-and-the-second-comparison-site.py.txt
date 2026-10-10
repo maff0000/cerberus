@@ -1,0 +1,91 @@
+# PL-V1 — CD-ASR-F06 / CD-AC-005. Project Lead measurement taken BEFORE the increment-5 seat
+# delivered anything, at execution base be34fe4f6327f59b25328adbf6a1e2f5c150c1ba.
+#
+# THIS FILE IS DATA. It is not executable and carries no execute bit (PBG-ASSURE-001). It is a
+# transcript of what the Project Lead ran and observed, recorded so the measurement is project
+# state and not conversation (PBG-CONT-007).
+#
+# WHY IT WAS TAKEN BEFORE DELIVERY. Every other PL probe in this directory was written against a
+# structure a seat had already built. This one is different: it establishes, from the Project
+# Lead's own hands, that the defect the increment is dispatched to close is REAL at the base, and
+# it records a second site the Project Lead found while confirming it. Handed to the seat in the
+# dispatch channel at 2026-08-19T16:15Z rather than withheld, on the CD-D-039 / CD-D-047
+# precedent: the seat gets the class and the measured contrast, never the code.
+#
+# ---------------------------------------------------------------------------------------------
+# PART 1 — E07 REPRODUCED AT THE BASE
+# ---------------------------------------------------------------------------------------------
+#
+# Method: pristine extraction, never a mutation of a governed worktree and never a git worktree
+#   rm -rf /tmp/pl-base-be34fe4 && mkdir -p /tmp/pl-base-be34fe4
+#   git archive be34fe4 | tar -x -C /tmp/pl-base-be34fe4
+#   cd /tmp/pl-base-be34fe4 && PYTHONPATH=src python3 -B -c '<the script below>'
+#
+# `python3 -B` throughout, so no __pycache__ is written anywhere (PBG-RT-001 — mutation is judged
+# by EFFECT, not by label; the first auditor tripped on exactly this and disclosed it).
+
+from datetime import datetime, timedelta, timezone
+from crash_detector.serving.witness_resolver import resolve_panel, PanelRow
+
+now = datetime(2026, 8, 19, 16, 0, 0, tzinfo=timezone.utc)
+old = now - timedelta(days=3650)          # ten years, as the auditor's E07 specifies
+row = PanelRow(
+    state="AGREES",
+    as_of_utc=old,
+    published_utc=old,
+    measures={"divergence_measure": 0.02, "threshold": 0.10},
+)
+for w in (1e18, 60.0):
+    r = resolve_panel(row, now_utc=now, staleness_window_seconds=w)
+    print(f"window={w!r:>8} -> {type(r).__name__}  {r}")
+
+# OBSERVED AT be34fe4, verbatim:
+#
+#   window=   1e+18 -> Agrees  Agrees(divergence_measure=0.02,
+#                              as_of_utc=datetime.datetime(2016, 8, 21, 16, 0, tzinfo=timezone.utc))
+#   window=    60.0 -> Unavailable  Unavailable(reason='PANEL_ROW_STALE',
+#                              since_utc=datetime.datetime(2016, 8, 21, 16, 0, tzinfo=timezone.utc))
+#
+# A row published in AUGUST 2016 resolves to Agrees. The contrast at 60.0 shows the mechanism is
+# the window and nothing else. NO SOURCE EDIT IS INVOLVED — this is configuration alone, which is
+# what makes the finding worth an increment. The auditor's report is confirmed by a second party.
+#
+# ---------------------------------------------------------------------------------------------
+# PART 2 — THE SECOND COMPARISON SITE, which is why this is a class and not an instance
+# ---------------------------------------------------------------------------------------------
+#
+#   grep -rn "_require_usable_window\|staleness_window_seconds" --include=*.py src/
+#
+# returns TWO independent implementations of the same age comparison:
+#
+#   src/crash_detector/serving/witness_resolver.py:113  _require_usable_window(staleness_window_seconds)
+#   src/crash_detector/serving/witness_resolver.py:121  if age > staleness_window_seconds:
+#
+#   src/crash_detector/engine/evaluate.py:128           staleness_window_seconds=config_snapshot.staleness_window_seconds,
+#   src/crash_detector/engine/evaluate.py:144           staleness_window_seconds: float,
+#   src/crash_detector/engine/evaluate.py:171           if age > staleness_window_seconds:
+#
+# A closure that bounds the window only in the serving resolver leaves the engine path reachable
+# with the same unbounded configuration value. That is exactly the shape the dispatch's second
+# invariant names — "a route into the resolver that skips the age comparison entirely" — and it is
+# the difference between closing the class and closing the instance the auditor happened to report.
+#
+# THE PROJECT LEAD DOES NOT WRITE THE FIX (PBG-AUTH-006; CD-D-038 and CD-D-045 are not relaxed
+# because a fix looks small). What is handed over is the class, the measured contrast and the rule
+# the seat is held to. The structural observation offered — establish the invariant where the
+# QUANTITY IS ADMITTED rather than at each comparison site, because two guarded comparison sites
+# is an enumeration and one place a usable window can come into existence is a closure — is the
+# same move increment 2b made going from the exit to the re-entry, and increment 3b made closing
+# `pending` from its own meaning. It is offered as reasoning, NOT as a specification, and the seat
+# is free to reach a better structure and say why.
+#
+# ---------------------------------------------------------------------------------------------
+# PART 3 — THE REGRESSION BASELINE THE PROJECT LEAD HOLDS
+# ---------------------------------------------------------------------------------------------
+#
+#   cd /tmp/pl-base-be34fe4 && python3 -B -m pytest --collect-only -q  ->  1192 tests collected
+#
+# The sorted node-id list at be34fe4 is held by the Project Lead and will be diffed against the
+# delivered tree at reconciliation. The seat is told to state its added count and confirm zero
+# removed; the claim will be checked, not accepted. Note CD-PL-F58: "zero expectation changes" is
+# not measurable by a node-id comparison, and this baseline does not pretend otherwise.

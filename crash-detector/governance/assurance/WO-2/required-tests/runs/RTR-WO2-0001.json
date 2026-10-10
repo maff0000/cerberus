@@ -1,0 +1,288 @@
+{
+  "run_id": "RTR-WO2-0001",
+  "executed_by": {
+    "party": "CD-ASR-WO2-01",
+    "independence_class": "SEAT_INDEPENDENT"
+  },
+  "candidate": "66681b27ed650321f6b9e325fbc05712a754cc7d",
+  "executed_utc": "2026-08-19T00:00:00Z",
+  "dispatch": "CD-DISPATCH-WO2-ASSURANCE",
+  "method": {
+    "note": "Every arm below was run by CD-ASR-WO2-01, by hand, with the register's declared execute string verbatim. No project-supplied harness or wrapper was used, and none exists in the deliverable (plants/ contains no executable file; verified with find -type f -executable). PBG-ASSURE-001.",
+    "subject_construction": "Each subject tree was extracted with `git archive 66681b27ed650321f6b9e325fbc05712a754cc7d | tar -x -C <tmpdir>` from the detached audit worktree /srv/crash-detector-wo2-audit. No git worktree was created (that would write .git/worktrees and mutate the audited repository's administrative state). The audited worktree was NOT used as a run directory, because pytest writes __pycache__ and .pytest_cache and that is mutation by effect (PBG-RT-001).",
+    "baseline_arm": "The declared command on a pristine extraction of the candidate.",
+    "violated_arm": "The declared command on a separate pristine extraction carrying that test's plant, applied by CD-ASR-WO2-01 with `git apply -p1 <plants/...>`.",
+    "extraction_verified": "The pristine extraction was confirmed byte-identical to the audited worktree with `diff -r -q` excluding .git.",
+    "store_for_CD-RT-003-GRANT-MATRIX-LIVE": "A throwaway PostgreSQL built by CD-ASR-WO2-01 under safe diagnostic SD-3: image postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685, container cd-asr-wo2-store, volume cd-asr-wo2-pgdata, published on 127.0.0.1 on an ephemeral port, credentials generated at run time and never written to any record. The Engineer's cd-store-wo2- store was neither reused nor inspected. Each arm ran against a FRESH database on a cluster whose cd_* roles had been dropped, because PostgreSQL role state is cluster-wide and leaks between runs. Container and volume destroyed before return."
+  },
+  "results": [
+    {
+      "test_id": "CD-RT-001-AST-NO-NUMERIC-DEFAULT",
+      "criterion_id": "CD-AC-001",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_no_numeric_default.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 190 assertions, 0 violations. Two class-A notes printed on the ADJACENT path (observations.py:99, witness_resolver.py:168), reported not failed."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_no_numeric_default.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 2 violations: engine/config.py:84 (dataclass field default `float | None`), engine/evaluate.py:166 (`spec.last_known_magnitude or 0.0`)."
+        }
+      },
+      "plant": "plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch"
+    },
+    {
+      "test_id": "CD-RT-001-ABSENCE-RENDERS-UNKNOWN",
+      "criterion_id": "CD-AC-001",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q",
+          "exit_code": 0,
+          "observed": "49 passed."
+        },
+        "violated": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q",
+          "exit_code": 1,
+          "observed": "Failures at tests/test_evaluate.py:177 and following - `assert isinstance(reading, Unknown)` false once evaluate() returns Value(0.0) for a dial with no required inputs."
+        }
+      },
+      "plant": "plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch"
+    },
+    {
+      "test_id": "CD-RT-002-TYPE-NO-ARITHMETIC",
+      "criterion_id": "CD-AC-002",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q",
+          "exit_code": 0,
+          "observed": "96 passed."
+        },
+        "violated": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q",
+          "exit_code": 1,
+          "observed": "tests/test_scores.py:78 - `EquityCrashScore defines ['__add__', '__radd__', '__truediv__']`, expected []."
+        }
+      },
+      "plant": "plants/CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch"
+    },
+    {
+      "test_id": "CD-RT-002-AST-NO-BLEND",
+      "criterion_id": "CD-AC-002",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_no_blend.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 1027 assertions, 0 violations."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_no_blend.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 2 violations at src/crash_detector/publication/headline.py:23, RULE 1 arithmetic combining an equity-flavoured and a monetary-flavoured value."
+        }
+      },
+      "plant": "plants/CD-AC-002/CD-RT-002-AST-NO-BLEND.patch"
+    },
+    {
+      "test_id": "CD-RT-002-SCHEMA-CLOSED",
+      "criterion_id": "CD-AC-002",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_schema_closed.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 242 assertions, 0 violations."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_schema_closed.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 3 violations at contracts/public_envelope.schema.json:8 and :61 for the added `combined_stress` property."
+        }
+      },
+      "plant": "plants/CD-AC-002/CD-RT-002-SCHEMA-CLOSED.patch"
+    },
+    {
+      "test_id": "CD-RT-003-ENGINE-NO-WITNESS-REACH",
+      "criterion_id": "CD-AC-003",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_engine_no_witness_reach.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 11 assertions, 0 violations; 29 modules walked to fixpoint, 10 reachable from 4 engine modules; 2 witness modules were the subject of the assertion."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_engine_no_witness_reach.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 1 violation: src/crash_detector/witness/panel.py reached from the engine via the new shared helper crash_detector.corroboration, through a function-local import."
+        }
+      },
+      "plant": "plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch"
+    },
+    {
+      "test_id": "CD-RT-003-GRANT-MATRIX-LIVE",
+      "criterion_id": "CD-AC-003",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_grant_matrix_live.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 138 assertions, 0 violations, against PostgreSQL 16.15 built from the 7 subject-tree migrations in a database created for this arm. Reproduced twice: once on first bring-up and once after a full cluster role reset."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_grant_matrix_live.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 9 violations. CD-GM-001 by schema privilege, table privilege on witness.observation and witness.reading, column privileges, and TWO LIVE SESSION REFUSALS that did not refuse: cd_engine read witness.observation and witness.reading in a real session. Also CD-GM-002 and two WHOLE-MATRIX divergences from db/grant_matrix.json."
+        }
+      },
+      "plant": "plants/CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch",
+      "note": "This test exits 3 PRECONDITION_NOT_MET with no store reachable. Both arms above were run against a live catalogue that CD-ASR-WO2-01 built. This is the first execution of this check by a seat other than the implementing seat."
+    },
+    {
+      "test_id": "CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES",
+      "criterion_id": "CD-AC-005",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q",
+          "exit_code": 0,
+          "observed": "65 passed."
+        },
+        "violated": {
+          "command": "PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q",
+          "exit_code": 1,
+          "observed": "tests/test_witness_resolver.py:55 and following - `assert isinstance(panel, Unavailable)` false for both the absent row and the stale row once absence defaults to Agrees and the staleness branch is removed."
+        }
+      },
+      "plant": "plants/CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch"
+    },
+    {
+      "test_id": "CD-RT-012-NO-EXECUTION-INTERFACE",
+      "criterion_id": "CD-AC-012",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_no_execution_interface.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 29775 assertions, 0 violations over 77 Python and SQL files. The check printed its own DECLARED LIMIT on the run."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_no_execution_interface.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - violations at src/crash_detector/backtest/paper_book.py lines 12, 16, 26, 27 and 31, catching both the `place_order` name and the neutrally-named `record(instrument, size, direction, destination)` on its field set."
+        }
+      },
+      "plant": "plants/CD-AC-012/CD-RT-012-NO-EXECUTION-INTERFACE.patch"
+    },
+    {
+      "test_id": "CD-RT-012-LOCKFILE-DENYLIST",
+      "criterion_id": "CD-AC-012",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_lockfile_denylist.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 15 assertions, 0 violations over pyproject.toml, requirements.txt and requirements.lock."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_lockfile_denylist.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 2 violations: pyproject.toml:36 and requirements.txt:20, both `ib-insync==0.9.86`."
+        }
+      },
+      "plant": "plants/CD-AC-012/CD-RT-012-LOCKFILE-DENYLIST.patch"
+    },
+    {
+      "test_id": "CD-RT-012-EGRESS-NO-BROKER",
+      "criterion_id": "CD-AC-012",
+      "mode": "NEGATIVE_CONTROL",
+      "arms": {
+        "baseline": {
+          "command": "python3 tools/register/check_egress_no_broker.py --root .",
+          "exit_code": 0,
+          "observed": "PASS - 43 assertions, 0 violations over 7 services and 2 networks in deploy/compose.yaml."
+        },
+        "violated": {
+          "command": "python3 tools/register/check_egress_no_broker.py --root .",
+          "exit_code": 1,
+          "observed": "FAIL - 1 violation at deploy/compose.yaml:324, broker host api.ibkr.com on the cd-collectors allowlist."
+        }
+      },
+      "plant": "plants/CD-AC-012/CD-RT-012-EGRESS-NO-BROKER.patch"
+    },
+
+    {
+      "test_id": "CD-RT-001-AST-NO-NUMERIC-DEFAULT",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_no_numeric_default.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-001-ABSENCE-RENDERS-UNKNOWN",
+      "mode": "ACCEPTANCE",
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-002-TYPE-NO-ARITHMETIC",
+      "mode": "ACCEPTANCE",
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py -q",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-002-AST-NO-BLEND",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_no_blend.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-002-SCHEMA-CLOSED",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_schema_closed.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-003-ENGINE-NO-WITNESS-REACH",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_engine_no_witness_reach.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-003-GRANT-MATRIX-LIVE",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_grant_matrix_live.py --root .",
+      "exit_code": 0,
+      "note": "Run against the live catalogue described in method.store_for_CD-RT-003-GRANT-MATRIX-LIVE. With no store reachable this command exits 3 PRECONDITION_NOT_MET, which is a stated non-zero and never a skip."
+    },
+    {
+      "test_id": "CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES",
+      "mode": "ACCEPTANCE",
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-012-NO-EXECUTION-INTERFACE",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_no_execution_interface.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-012-LOCKFILE-DENYLIST",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_lockfile_denylist.py --root .",
+      "exit_code": 0
+    },
+    {
+      "test_id": "CD-RT-012-EGRESS-NO-BROKER",
+      "mode": "ACCEPTANCE",
+      "command": "python3 tools/register/check_egress_no_broker.py --root .",
+      "exit_code": 0
+    }
+  ],
+  "scope_note": "This record certifies the eleven declared tests of CD-AC-001, 002, 003, 005 and 012 only. It carries NO result for the eleven criteria scheduled after WO-2, and it is not an admission: admitting a run record is not the executing party's act. A clean ACCEPTANCE arm here evidences that the guard runs green on the candidate; it is NOT a proof of the underlying proposition, and for CD-RT-012-NO-EXECUTION-INTERFACE the check's own DECLARED LIMIT says so explicitly. The adversarial variant findings that qualify these results are in BL-ASR-WO2-01.yaml and are not encoded in this file, because this file's schema records exit codes and cannot express them."
+}

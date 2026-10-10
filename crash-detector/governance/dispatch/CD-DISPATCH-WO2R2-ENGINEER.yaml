@@ -1,0 +1,733 @@
+# ================================================================================================ #
+# ENGINEER DISPATCH — WO-2R2. THE SECOND REWORK. crash-detector.
+# ================================================================================================ #
+#
+# WHY THIS IS A DISPATCH RECORD AND NOT AN AUTHORITY RECORD (CD-FWK-004).
+# governance/authority/ admits exactly ONE record with status ACTIVE; a second makes `pbg boot`
+# return RED with "ambiguous assignment" for EVERY seat, including the Project Lead's. Measured on
+# this project, not assumed (BL-20260819T023800Z-0003). Sub-agent seats are therefore authorised
+# HERE, durably, deriving from CD-AUTH-0001. The cost is disclosed rather than hidden:
+# `pbg authority separation` continues to report that no ASSURANCE authority record exists and that
+# this is NOT a pass, so PBG-SOD-001 is evidenced on this project by the PO's ratified CD-D-002
+# named-actor route — distinct actor_ids in this record, in the Build Log and in the Assurance run
+# record's executed_by.party — and NOT by the framework verifier.
+#
+# WHAT THIS DISPATCH IS. WO-2 has now reached its gate TWICE and failed it twice, on different
+# grounds each time. CD-ASR-WO2-02 returned RED at 50fc231: CD-AC-002 RED, CD-AC-001 / CD-AC-005 /
+# CD-AC-012 AMBER, CD-AC-003 PASS (scoped). Both HIGH findings were then INDEPENDENTLY REPLICATED
+# by the Project Lead on its own pristine extractions with its own drivers and both reproduce
+# exactly (BL-20260819T210510Z-0041). The auditor is confirmed.
+#
+# THE PROJECT LEAD DID NOT SCOPE THIS REWORK AND WAS NOT ENTITLED TO. Three questions were carried
+# to the Product Authority and answered on the durable record at
+# governance/decisions/PO-DECISIONS-0002.md (CD-D-073): there IS a WO-2R2; it is scoped to CLASSES
+# and not to findings; the AMBERs TRAVEL; and CD-PL-F74's method correction is ADOPTED project-wide.
+# This dispatch is the PO's scope transcribed into a seat brief. Where it adds anything of its own
+# it says so in the field.
+#
+# THE ALTITUDE IS THE WHOLE POINT (CD-PL-F74). The first gate failed on GUARD_THE_INSTANCE_NOT_THE
+# _CLASS. The second gate failed one storey up: a deny-by-default REGISTRY was read as evidence
+# about a CLASS, when it was only ever evidence about its own VOCABULARY. PL-R5 with nothing changed
+# but the door name — `observed_for_dial` -> `combine_within_one_dial` — goes from FAIL-2-violations
+# to PASS-0-violations and publishes an equity 0.5 out of equity 0.9 and monetary 0.1. If this
+# dispatch is read as "add the missing door to the list", it has been read wrong, and the third gate
+# will fail on the fourth door.
+# ================================================================================================ #
+
+dispatch_id: CD-DISPATCH-WO2R2-ENGINEER
+status: ISSUED
+record_type: SUB_AGENT_DISPATCH
+issued_utc: '2026-08-19T21:29:03Z'
+issued_by_seat: PROJECT_LEAD_SEAT_01          # the ninth PL seat, resumed at 2026-08-19T21:26:19Z
+parent_dispatch: CD-DISPATCH-WO2R-ENGINEER    # COMPLETE. Reconciled and accepted at 50fc231 (CD-D-065b).
+                                              # Complete is not assured: its gate returned RED.
+
+# --- seat ---------------------------------------------------------------------------------------- #
+assigned_role: ENGINEER
+role_contract: pbg/roles/engineer.md          # canonical local file; the operator pastes no role
+actor_id: CD-ENG-WO2R2-01                     # FRESH seat. Not CD-ENG-WO2R-01, not CD-ENG-WO2-01.
+why_a_fresh_actor_id: >
+  Ordered by the Product Owner in terms ("Fresh Engineer seat", PO-DECISIONS-0002 standing
+  condition) and independently required by CD-RULE-002 so the git author audit can tell WHICH seat
+  closed WHICH class. It also matters at the altitude this rework is about: the seat that wrote the
+  admission registry is the seat least able to see that a registry is not a class. A fresh seat
+  reads the code as an auditor's reader does, not as its author does.
+dispatching_authority: CD-AUTH-0001           # PROJECT_LEAD_SEAT_01, the causal owner (PBG-RT-004)
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: >
+  PID.md v1.0.1 RATIFIED by Matt · governance/decisions/PO-ACCEPT-BLUEPRINT-0001.md (Blueprint
+  v0.1.0 ACCEPTED) · governance/decisions/PO-GATE-REVIEW-WO2-0001.md (the four standing rulings) ·
+  governance/decisions/PO-DECISIONS-0002.md (CD-D-073 — THE SCOPE OF THIS DISPATCH, and the only
+  authority under which it exists).
+descendant_capability_rule: >
+  This seat's capability never exceeds CD-AUTH-0001's (PBG-RT-004). Anything CD-AUTH-0001 forbids
+  the Project Lead is forbidden here, including modifying pbg/ and amending PID.md or BLUEPRINT.md.
+
+# --- bounded objective ---------------------------------------------------------------------------- #
+work_item: CD-WO-002R2
+work_type: CHANGE
+traits: [creates_process, deployable]
+objective: >
+  CLOSE TWO CLASSES AND ONE BOUNDED ITEM, as the Product Owner scoped them at CD-D-073, and NOTHING
+  ELSE.
+
+    CLASS 1 — ADMISSION IS VALIDATION.  (carries CD-AC-002 RED / ASR2-F01, and CD-AC-001 AMBER /
+                                         ASR2-F03)
+    CLASS 2 — JUDGE VALUES, NEVER TYPES. (carries CD-AC-005 AMBER / ASR2-F02)
+    ITEM 3  — the CD-AC-012 dependency-surface AMBER, bounded. (ASR2-F05)
+
+  For each: NAME the class, NAME the structural invariant that closes it, STATE THAT INVARIANT IN
+  THE COMMIT THAT LANDS IT (PO standing condition, not optional), and PROVE the closure BY EXECUTION
+  against (a) the auditor's variants for that class, (b) every relevant member of the exclusion set,
+  and (c) at least TWO NEW variants of your own by routes in NEITHER corpus.
+
+  Done means: three increments committed on the dispatched branch, each carrying the mandatory
+  CLASS/STRUCTURE block; every new variant durable as a patch plus a manifest row; the clean arm
+  green at every increment with no test node id lost; the eleven declared plants still applying and
+  still contrasting; every declaration the closure invalidates corrected in all three CD-RULE-004
+  places; and the seat returning READY_FOR_ASSURANCE with the exact SHA.
+
+  Done does NOT mean assured, and it does not mean the gate is met. This seat never certifies its
+  own work (PBG-SOD-001, non-waivable). Your own runs are IMPLEMENTATION EVIDENCE. They do not
+  become assurance by being thorough, and the last two seats' evidence was thorough.
+
+# --- lane ------------------------------------------------------------------------------------------ #
+repository: local
+branch: wo-2-skeleton                          # PBG-GIT-001: no feature work on main
+worktree: /srv/crash-detector-wo2              # PBG-GIT-003: one bounded mutation lane
+execution_base_sha: 50fc23177f790164c3fc3604ccee51663e755c70
+execution_base_rule: >
+  Reconcile the observed HEAD of /srv/crash-detector-wo2 against execution_base_sha BEFORE writing
+  anything. `git status --short` must be ZERO LINES. A mismatch is drift: report and reconcile,
+  never proceed from wherever the tree happens to sit (PBG-CONT-006).
+note_on_the_base: >
+  50fc231 IS THE AUDITED TREE. 364 files, fingerprint 50ae34d657126709c0e44b3a57c58c8308d25c1cb845
+  aa70b30e86338a2d729d (sha256 over the sorted per-file sha256 digests), computed INDEPENDENTLY by
+  CD-ASR-WO2-02 and by the Project Lead and AGREEING. Every finding you are closing describes THIS
+  tree, and every number in the verdict is reproducible from it. You are not starting again: WO-2R's
+  six increments stand and are not reverted.
+
+# --- commit identity -------------------------------------------------------------------------------- #
+commit_identity:
+  rule: CD-RULE-002, non-relaxable (PO Ruling 3).
+  author_and_committer: 'CD-ENG-WO2R2-01 <cd-eng-wo2r2-01@seats.crash-detector.invalid>'
+  how: >
+    Set GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL / GIT_COMMITTER_NAME / GIT_COMMITTER_EMAIL as ENVIRONMENT
+    VARIABLES on each commit invocation. DO NOT write git config — the ambient identity belongs to
+    the host, and other actors share this machine. DO NOT use `git -c` (CD-PL-F56: it sets the
+    committer but not reliably the author under this harness, and a half-set identity is worse than
+    an unset one because it looks correct in `git log --oneline`). A commit of yours carrying a human
+    identity is a boundary failure, not a cosmetic one, and the Project Lead audits every increment
+    with `git log --format='%an <%ae> | %cn <%ce>'`.
+
+# --- scope ------------------------------------------------------------------------------------------ #
+writable_scope:
+- /srv/crash-detector-wo2/src/
+- /srv/crash-detector-wo2/tests/
+- /srv/crash-detector-wo2/tools/
+- /srv/crash-detector-wo2/contracts/
+- /srv/crash-detector-wo2/deploy/               # only where ITEM 3 genuinely requires it
+- /srv/crash-detector-wo2/plants/               # ONLY to keep existing plants applying — see below
+- /srv/crash-detector-wo2/variants/             # your own variants, under variants/WO-2R2/
+- /srv/crash-detector-wo2/requirements.txt, requirements.lock   # ITEM 3 only, and see the caution
+- /srv/crash-detector-wo2/required-tests.yaml
+- /srv/crash-detector-wo2/governance/engineering/build-log/     # NEW entries only, never an edit
+- /tmp/                                                         # scratch, non-governed
+
+protected_scope:
+- pbg/                       # pinned snapshot, read-only (PBG-FWK-013). Editing it to pass IS the bypass.
+- PID.md                     # Constitutional; the PO amends, never a seat (PBG-AUTH-003)
+- BLUEPRINT.md               # the PL owns Blueprint currency (PBG-BP-001)
+- CLAUDE.md, docs/, pbg-manifest.yaml, db/
+- governance/authority/, governance/decisions/, governance/dispatch/, governance/rules/
+- governance/assurance/      # BOTH auditors' records, and the variant corpus. READ THEM. NEVER EDIT THEM.
+- governance/reconciliation/ # the Project Lead's own probes. DATA. READ. NEVER EDIT.
+- governance/engineering/ACTIVE_WORK.yaml     # Project-Lead-only; overwritten in place
+- schemas/ at PROJECT_ROOT   # RESERVED for framework seat-attestation schemas (CD-FWK-001)
+- everything under /srv outside the dispatched worktree, except the /tmp scratch above
+
+prohibited:
+- certifying, assuring or accepting this work (PBG-SOD-001, non-waivable) — report, never certify
+- weakening a check, a test or an assertion to obtain a pass — report the failure instead
+- deleting or disabling an existing guard, test or plant to make a rework look clean
+- LOSING A TEST. Zero of the 1325 pytest node ids passing at 50fc231 may disappear. Renaming is a
+  loss unless the commit names the old id, the new id and the reason.
+- widening scope silently; a needed change outside writable_scope is an escalation, not initiative
+- resolving product ambiguity, or INVENTING A PRODUCT QUANTITY (CD-RULE-003)
+- registering ANY ingredient source. CD-D-005 is owed by the PO. WO-2 ships an EMPTY source registry
+  and every dial reads UNKNOWN; that empty state is what makes CD-AC-001's plant demonstrable.
+- touching latest_admitted_run in required-tests.yaml. It stays null. You do not admit your own
+  evidence, and CD-RULE-001 forbids admission without a paired assurance verdict regardless.
+- introducing any status-like key into the register (status, result, outcome, verdict, grade, score,
+  disposition and their kin). The register carries obligations, never results.
+- recording any secret value anywhere — code, config, fixture, test, log, evidence or record
+  (PBG-SEC-002, PBG-EVID-003, PBG-CONT-009, all non-waivable). Secrets by env-var NAME only.
+- binding any port to anything other than 127.0.0.1 (CD-D-006 default safe action, PO-agreed)
+- rewriting Build Log history; corrections supersede, never edit (PBG-CONT-003, non-waivable)
+- adding a network dependency to any register check. A check whose verdict depends on the network is
+  not reproducible, cannot be run offline by an auditor, and cannot be a gate (CD-PL-F48).
+- ADDING A REAL PACKAGE TO requirements.lock TO PROVE A POINT. Item 3's variants are demonstrated on
+  THROWAWAY EXTRACTIONS, never in the lane. A dependency added to the lane is a supply-chain change.
+
+# ================================================================================================== #
+# THE STANDING METHOD RULE, ADOPTED PROJECT-WIDE AT CD-D-073 — READ THIS BEFORE YOU DESIGN
+# ================================================================================================== #
+CD_PL_F74_ADOPTED:
+  the_rule: >
+    A REFUSAL IS RECORDED WITH **WHICH LAYER** REFUSED IT AND **WHAT THAT LAYER'S SCOPE IS**, BEFORE
+    ANY ACCEPTANCE CITES IT. Effective immediately, project-wide, ordered by the Product Owner.
+  what_it_means_for_you_concretely: >
+    Every "REFUSED" you write in a commit message, a manifest row or a Build Log entry must name the
+    layer that did the refusing — this type's constructor, this AST rule, this schema, this test —
+    and state what that layer is scoped to. "check_no_blend exit 1, 2 violations" is NOT a compliant
+    record. "RULE 4 of check_no_blend refused it — a static, intra-procedural, deny-by-default
+    registry over a NAME VOCABULARY; scope: names appearing literally in the scanned set" IS.
+  why_it_costs_a_gate_when_it_is_skipped: >
+    CD-D-040 accepted increment 2b on PL-R5's refusal. PL-R5 was refused by a name registry. The
+    acceptance read it as evidence that the CLASS was closed. The Project Lead then measured PL-R6:
+    PL-R5 with ONLY the door name swapped goes from FAIL to PASS and publishes the blend. The
+    refusal was real; the inference from it was not. Six recurrences of probe-refused-for-the-wrong
+    -reason are on this project's record and the sixth cost a gate.
+  the_test_you_apply_to_your_own_evidence: >
+    For every variant you record as refused, ask: IF I RENAME ONE IDENTIFIER, DOES IT STILL REFUSE?
+    If the answer is no, you have measured a vocabulary and not a class, and you must say so in the
+    row rather than let a reader infer otherwise. This is now a delivery obligation, not advice.
+
+PO_STANDING_CONDITION:
+  source: 'governance/decisions/PO-DECISIONS-0002.md, final paragraph. Product Owner, 2026-08-19.'
+  each_closure_states_its_invariant: >
+    "Each class closure states its structural invariant in the commit that lands it." A commit
+    without it is not accepted at reconciliation, however good the code is.
+  the_third_gate_clause: >
+    "If a THIRD gate fails on a carrier/admission-shaped finding, implementation SUSPENDS and
+    Blueprint §7 returns for architectural review." YOU ARE TOLD THIS DELIBERATELY. It is not a
+    threat and it does not change what you may do; it tells you what is actually being decided, so
+    that if you reach a point where the honest answer is "this class cannot be closed at this
+    altitude without a §7 change", SAYING SO IS A VALID AND VALUABLE RETURN. Escalating a structural
+    impossibility is worth more to this project than a fourth clever guard. What is NOT acceptable is
+    discovering it and building the guard anyway.
+  the_gate_is_unchanged: 'Assurance PASS on all five criteria. No waiver. latest_admitted_run null until CD-RULE-001 is satisfied.'
+
+# ================================================================================================== #
+# THE EXCLUSION SET — WHAT PROVES NOTHING ABOUT THE CLASS
+# ================================================================================================== #
+exclusion_set:
+  what_it_is: >
+    Every variant already written by anyone on this project. It is GIVEN to you in full (CD-D-047:
+    withholding it makes seats rediscover the same routes and tells the next auditor nothing). From
+    the moment it is given, IT PROVES NOTHING ABOUT ANY CLASS — it is a regression floor and the next
+    auditor's exclusion list, which is precisely why fitting your guard to it is worthless.
+  where_it_lives:
+  - 'governance/assurance/WO-2/ESCAPED-VARIANTS-KNOWN-SET.md — the FIRST auditor''s ten escapes (E01..E10).'
+  - 'variants/MANIFEST.md and variants/WO-2R/** in the lane — 70 patch artefacts + 2 probe records,
+     denominator SETTLED at 70 by CD-ASR-WO2-02 (the "71" in MANIFEST.md line 1762 is a transcription
+     defect; the work was done, the count was mis-stated).'
+  - 'governance/reconciliation/WO-2R/PL-*.txt on main — the Project Lead''s own probes PL-Q1..Q9,
+     PL-R1..R6, PL-S1..S4, PL-T1..T5, PL-U1..U6, PL-V1, PL-W1..W6, PL-X1..X12, PL-Y1..Y5. DATA, not
+     executable.'
+  - 'governance/assurance/WO-2R/variants/ — the SECOND auditor''s six: ASR2-001-A, ASR2-002-A,
+     ASR2-003-A, ASR2-005-A, ASR2-012-B, ASR2-012-C.'
+  your_obligation_regarding_it: >
+    The auditor's variants for YOUR classes must be shown REFUSED, with the refusing layer named per
+    CD_PL_F74_ADOPTED. The rest of the corpus must not REGRESS. Neither is evidence of closure.
+  the_trap_named_by_the_auditor_and_by_the_PO: >
+    "It must NOT be scoped as 'add `combine_within_one_dial` to ADMISSION_VOCABULARY'." Both the
+    auditor and the Product Owner wrote that sentence independently. If your diff for increment 1 is
+    a one-line vocabulary addition, you have delivered the instance game for the third time.
+
+# ================================================================================================== #
+# THE MANDATORY COMMIT BLOCK — mechanically checkable, per PO Ruling 2 and the CD-D-073 condition
+# ================================================================================================== #
+commit_message_contract:
+  requirement: >
+    Every increment commit MUST carry this block, verbatim in shape, filled in. A commit without it
+    is not accepted at reconciliation.
+  template: |
+    CLASS CLOSED:  <the class of violation now impossible, stated as a class — not as a list of
+                    spellings, and not as a list of doors. If it is a SUBCLASS of the PO's class
+                    rather than the whole class, SAY SO HERE and declare the residue below.>
+    STRUCTURAL INVARIANT: <REQUIRED BY THE PO. One sentence, stating a property that is TRUE OF THE
+                    SYSTEM after this commit and was not before. Not a description of the diff.
+                    Test: could an auditor try to REFUTE this sentence by execution? If not, it is
+                    not an invariant, it is a summary.>
+    STRUCTURE:     <where the invariant lives and what enforces it.>
+    WHY IT IS A CLASS CLOSURE: <one paragraph. Why can no route reach the violation, rather than
+                    none of the routes tried? If the enforcement is a registry or a vocabulary, this
+                    paragraph must explain what makes the REGISTRY closed, or admit it is not.>
+    PROVED BY:     <execution. Exact commands, exact observed outcomes.>
+    AUDITOR VARIANTS RE-RUN: <ASR2-ids> -> each REFUSED, WITH THE REFUSING LAYER NAMED AND SCOPED
+                    (CD_PL_F74_ADOPTED), and the observed exception type and message or the exit
+                    code and the line it named.
+    EXCLUSION-SET REGRESSION: <which prior variants were re-run and their outcomes. No regression.>
+    NEW VARIANTS (>=2, mine): <one line each: the ROUTE, why it is a DIFFERENT route from anything
+                    in either corpus, and the refusal observed with its layer named.>
+    THE RENAME TEST: <CD_PL_F74_ADOPTED. For each refusal above: does it survive renaming one
+                    identifier? State it. A refusal that does not survive a rename is a vocabulary
+                    result and must be labelled one.>
+    FALSE POSITIVES CHECKED: <what legitimate code you confirmed still works. A closure that forbids
+                    the product is not a closure. Same-dial computation, ordinary datetimes, real
+                    non-broker dependencies.>
+    CLEAN ARM:     <the full declared command set> -> exit 0, <N> assertions / <N> tests passed.
+    NODE-ID CONSERVATION: <1325 at 50fc231; state the count now and that none was lost.>
+    ELEVEN PLANTS: <still applying? still contrasting? if a plant was updated, which and why.>
+    DECLARED LIMIT (if any): <CD-RULE-004. Residue declared HERE and in the check header and in the
+                    register entry and in the execution contract, consistently, each with an
+                    executable example. CD-RULE-006: a named carrier is a CLAIM and needs its own
+                    executed evidence — MEASURE IT or write "NOT PROVED TO BE CARRIED ANYWHERE".>
+
+# ================================================================================================== #
+# WHAT "PROVED" MEANS HERE
+# ================================================================================================== #
+proof_standard:
+  runtime_properties_need_runtime_proof: >
+    "Unrepresentable", "structurally incapable", "cannot be admitted" are RUNTIME claims. A static
+    checker exiting non-zero is not proof of one, because every escape on this project's record
+    passed static checkers. WRITE THE VARIANT, RUN IT, SHOW THE INTERPRETER OR THE CONSTRUCTOR
+    REFUSING IT, and record the exception type and message.
+  for_guards_that_are_necessarily_static: >
+    Proof is the CONTRAST — the same declared command exiting 0 on the clean subject and non-zero on
+    the violated one, run by you, on subject trees you extracted yourself; plus the subject count
+    printed, so a vacuous pass is visible; plus the derivation shown following the artefact where
+    the guard claims to derive its subject.
+  extraction_hygiene: >
+    NEVER mutate the worktree to test a variant and NEVER create a git worktree for one. Extract with
+    `git archive <sha> | tar -x -C <tmpdir>`, apply with `git apply -p1`, run, discard. A separate
+    pristine extraction per variant so no variant contaminates another. Use `python3 -B` everywhere
+    so no __pycache__ is written into any governed tree (PBG-RT-001 — mutation by EFFECT, not by
+    label; the first auditor tripped on exactly this and disclosed it).
+  generate_patches_with_git_diff: >
+    CD-ENG-WO2R-F13, adopted: hand-written hunks get silently truncated by `git apply` and six
+    variants once briefly failed FOR THE WRONG REASON. Generate every patch with `git diff`, and
+    ASSERT THE EXPECTED RULE ID, never merely a non-zero exit.
+  variants_must_be_durable: >
+    A variant that exists only in your conversation is not project state (PBG-CONT-007). Every new
+    variant lands as a `git apply`-able patch under variants/WO-2R2/<class>/ plus a row in
+    variants/MANIFEST.md naming: variant id, class, the PROPOSITION attacked, the ROUTE and why it
+    differs from BOTH corpora, the exact command line, the observed refusal, THE REFUSING LAYER AND
+    ITS SCOPE, and the rename-test result. NOTHING under variants/ may be executable — no wrapper, no
+    runner, mode 0664, no symlinks (PBG-ASSURE-001; the auditor verifies this independently).
+
+# ================================================================================================== #
+# INCREMENT 1 — CLASS 1. ADMISSION IS VALIDATION.
+# carries CD-AC-002 (RED, ASR2-F01) and CD-AC-001's AMBER (ASR2-F03)
+# ================================================================================================== #
+increment_1_class_1_admission_is_validation:
+  the_PO_words_verbatim: >
+    "CLASS 1 — ADMISSION IS VALIDATION. No value crosses into the dial or publication path
+    unvalidated. Every admission site validates VALUES against the target type's own invariants,
+    deny by default. Label vocabularies are never the load-bearing check — the refuted RULE 4 text
+    ('cannot avoid coming here') is withdrawn as a claim and must be replaced by a property that is
+    true. Explicitly NOT scoped as 'add combine_within_one_dial to the vocabulary'."
+  criteria_carried: [CD-AC-002 (RED), CD-AC-001 (AMBER)]
+  findings_carried: [CD-ASR-WO2R-F01 (HIGH), CD-ASR-WO2R-F03 (MEDIUM)]
+  auditor_variants_that_must_be_refused:
+  - 'ASR2-002-A-derivation-door-launders-a-blend.py.txt — `combine_within_one_dial` passes an
+     arbitrary closure''s return value straight into `derived_within_one_dial`, which validates
+     nothing. Equity 0.9 + monetary 0.1 publishes as an equity 0.5, with check_no_blend PASS at 4873
+     assertions (clean 4855 — it SCANNED the module and had nothing to say), schema PASS, type tests
+     306 passed, whole suite 1325 passed.'
+  - 'ASR2-001-A-fold-unknown-branch-returns-calm.py.txt — `fold`''s `on_unknown` branch returns 0.0
+     on the DECLARED SCANNED PATH, using none of the enumerated spellings and none of the six
+     declared boundaries'' reserved routes. An Unknown reading with reason REQUIRED_INPUT_MISSING
+     renders as 0.0 — calm — which PID §3.2 forbids in terms.'
+  the_class_stated_at_the_right_altitude: >
+    NOT "a public function missing from a vocabulary". The class is: ANY VALUE ENTERING A TYPE THAT
+    CARRIES A PRODUCT MEANING WITHOUT THAT TYPE HAVING ESTABLISHED THE MEANING IS TRUE OF IT. F01 is
+    a magnitude admitting a number whose single-dial provenance was asserted by a label rather than
+    established of the value. F03 is the same shape read backwards: a consumer answering an absence
+    with a number that no type ever vouched for. Both are admission without validation; one on the
+    way in, one on the way out.
+  the_two_claims_now_under_audit_and_MEASURED_FALSE:
+  - 'src/crash_detector/dials/magnitude.py boundary A: "the sum cannot come back ... no number so
+     obtained can ever be a dial magnitude again." REFUTED BY EXECUTION at 50fc231. It comes back.'
+  - 'check_no_blend.py RULE 4''s "cannot avoid coming here". WITHDRAWN AS A CLAIM by the Product
+     Owner at CD-D-073. It must be REPLACED BY A PROPERTY THAT IS TRUE, not softened.'
+  invariants_you_must_establish:
+  - 'VALIDATION IS OF THE VALUE, NOT OF THE CALLER. A door''s guarantee must be established from
+     what it is HANDED, not from where the handing came from or what the handing was called. If a
+     door cannot establish its guarantee from the value, that door must not be able to construct the
+     type — it must fail closed and say what it could not establish.'
+  - 'THE ADMISSION SURFACE IS ENUMERABLE AND IT IS ENFORCED BY THE TYPE, NOT BY A SCANNER. Today the
+     enumeration lives in a static AST registry over a NAME VOCABULARY, and a public re-exported
+     function that is not in the vocabulary walks past it. Whatever you build, the question an
+     auditor will ask is: CAN ANY PUBLIC FUNCTION REACH A DOOR THE REGISTRY GUARDS? Answer it
+     structurally, and answer it in a way that survives someone adding a new public function
+     tomorrow without reading your registry.'
+  - 'THE STATIC LAYER IS DEMOTED TO WHAT IT CAN ACTUALLY DO, IN WRITING. A static, intra-procedural,
+     name-based scanner is a LOCATOR with a declared limit. Keep it — it has value — but the closure
+     may not REST on it, and RULE 4''s withdrawn sentence must be replaced in the check header, the
+     register entry and the execution contract consistently (CD-RULE-004), with the carrier MEASURED
+     (CD-RULE-006).'
+  - 'ABSENCE IS ANSWERED, NOT MERELY UNCONSTRUCTED (the CD-AC-001 AMBER, riding here by CD-D-073).
+     The criterion''s words are about RENDERING: "missing or stale input never renders as calm". The
+     present structure closes CONSTRUCTION of numeric defaults and leaves CONSUMPTION open — `fold`
+     guarantees a caller cannot FORGET Unknown, never that a caller cannot ANSWER Unknown with a
+     number. Close the answering. A consumer that turns an Unknown into a number must be structurally
+     unable to present that number as a dial reading — and note that the honest answer may be that
+     `fold` is the wrong shape for the surface tier, not that `fold` needs another guard.'
+  the_direction_the_project_lead_OFFERS_AND_DOES_NOT_IMPOSE: >
+    DIRECTION, NOT DESIGN (PBG-AUTH-006; the Project Lead does not author the closure it will
+    reconcile, and CD-D-038's precedent is not relaxed because the fix looks obvious). The
+    observation is this. Increment 1 of WO-2R made a move that WORKED: it changed the question from
+    "is this number blended?", which is undecidable, to "is this number's provenance DECLARED?",
+    which is set equality. The defect now measured is that DECLARED was allowed to mean ASSERTED BY
+    A LABEL rather than ESTABLISHED OF THE VALUE. So the candidate move is to make provenance
+    something a value CARRIES through every arithmetic step rather than something a door STAMPS on
+    it at the end — at which point `using(numbers)` returning a bare float is refused because a bare
+    float has no provenance to carry, not because anyone recognised the function that produced it.
+    YOU MAY REJECT THIS. If you do, say why in the commit and say what you did instead.
+  false_positive_obligation: >
+    Same-dial computation must still work end to end. A magnitude must still publish into its own
+    slot. `repr` must remain useful to a developer in a debugger (the increment-2b argument stands
+    and is not reopened). A dial that legitimately has no reading must still render UNKNOWN, not
+    raise.
+  register_corrections_required: >
+    CD-RT-002-AST-NO-BLEND's boundary 7 enumerates its residues EXHAUSTIVELY — a registry edit, a
+    module outside the scanned set, a dynamically assembled name — and ASR2-002-A is none of the
+    three. That enumeration is now KNOWN INCOMPLETE and must be corrected. CD-RT-001-AST-NO-NUMERIC
+    -DEFAULT's six boundaries are all about construction and none reserves the consumption route;
+    correct that too. Both in all three CD-RULE-004 places, each with an executable example.
+
+# ================================================================================================== #
+# ADDENDUM AT THE HEAD OF INCREMENT 2 — PO-DECISIONS-0003, THE CD-AC-002 RULING.
+# Added 2026-08-19T22:50:00Z by PROJECT_LEAD_SEAT_01 (the ELEVENTH PL seat) under CD-D-074/075/076,
+# recorded at BL-20260819T225000Z-0044. It amends NO increment content. It exists because increment 1
+# returned a HIGH finding against its own closure, increments 2 and 3 were HELD pending the Product
+# Authority, and the seat that picks up increment 2 must be able to read WHY the hold lifted and WHAT
+# it is explicitly NOT being asked to do — from the repository, not from a conversation (PBG-CONT-007).
+# ================================================================================================== #
+addendum_increment_2_head_po_decisions_0003:
+  status: BINDING ON INCREMENTS 2 AND 3
+  authority: governance/decisions/PO-DECISIONS-0003.md — Product Owner (Trinity), committed at
+    ae3188cf2854bf37a965277c99afcf3354f3478d by Matt Scott, not by any seat. READ THAT FILE. This
+    block is a transcription and the decision record governs where they differ.
+  what_was_asked: >
+    CD-ENG-WO2R2-01 delivered increment 1 and then raised CD-ENG-WO2R2-F03 (HIGH) AGAINST ITS OWN
+    CLOSURE, deliberately building no guard: ONE stateful ContributionModel injected into BOTH
+    DialSpecs makes the monetary dial publish 0.5 — the mean — out of equity 0.9 and monetary 0.1,
+    through `engine/evaluate.py`, the ONE declared product admission site, with EVERY FIELD of the
+    admission claim true except the number. The Project Lead replicated it independently as PL-Z4.
+    The question — WHAT CLOSES CD-AC-002, AND WHEN — was carried upward unanswered, because a
+    Project Lead that scopes a criterion at the moment it fails is the acceptance-semantics trap.
+  what_was_ruled: >
+    (B) AND (A) TOGETHER, BOUND SO NEITHER CAN DRIFT. (1) CD-AC-002 is ruled AT WO-2 SCOPE ON A
+    MEASURED BASIS, per CD-PL-F74 — which layer refused what: a WO-2 candidate registers no model,
+    no source, deploys nothing and has no publication layer, so THE INJECTED-MODEL ROUTE IS NOT IN
+    WO-2'S POPULATION, and the criterion at WO-2's gate covers every route that needs no injected
+    model. THE FULL-WIDTH CRITERION IS NOT NARROWED, SUPERSEDED OR SOFTENED — it remains MANDATORY
+    and TRAVELS TO WO-3. (2) BLUEPRINT §7 RETURNS FOR ARCHITECTURAL REVIEW as the mandatory FIRST
+    item of WO-3, before any collector or model wiring — the engine owns the model lifecycle so a
+    shared mutable object cannot be injected: CLOSURE BY CONSTRUCTION, NOT ANOTHER GUARD. (3) MODEL
+    INTEGRITY ATTACHES TO CD-D-005, the PO's own ingredient register. (4) THE SCOPING ITSELF IS
+    ATTACK SURFACE: the third Assurance seat is EXPLICITLY invited to attack this ruling's basis, and
+    if it can exercise an injected-model route inside a WO-2 candidate's REAL population, the ruling
+    falls and (C) suspension applies.
+  the_engineer_s_restraint_is_endorsed_in_terms: >
+    The PO's first sentence. Refusing to order a guard that looks like a closure — "an identity check
+    is defeated by two instances sharing a class attribute, a purity probe by memoisation" — is named
+    as the lesson of two gates applied before it cost a third. A seat that reports "this class cannot
+    be closed at this altitude", with the measurement behind it, is delivering the dispatch and not
+    failing it. That was true when the brief said it and it is now true on the Product Owner's record.
+  WHAT_THIS_DOES_NOT_DO_read_this_twice: >
+    IT DOES NOT WIDEN INCREMENT 2 (CD-D-075). Do NOT fold CD-ENG-WO2R2-F03 into Class 2 because the
+    doctrines rhyme. They do rhyme — an injected ContributionModel IS "a judgement delegated to an
+    object the system did not construct", one operand across — and that resemblance is exactly the
+    trap. The PO routed that route to WO-3 by rulings 2 and 3: to architectural review of BLUEPRINT
+    §7, and to the CD-D-005 ingredient register. Building a model guard here would be the fourth
+    clever guard, in an increment not scoped for it, against a class the Product Authority has ruled
+    is closed by CONSTRUCTION at a different altitude. If your Class 2 sweep TOUCHES the model path,
+    say so in the sweep and DECLARE it as outside this increment's bound — do not close it.
+    IT DOES NOT NARROW INCREMENT 2 EITHER. Class 2 is CD-AC-005 and the `_finite_measure` sibling,
+    exactly as written below, unchanged in every particular. The sweep is still the deliverable.
+  what_you_must_carry_forward_into_your_own_record: >
+    Increment 1 is RECONCILED AND NOT ACCEPTED AS CLOSING CD-AC-002 (BL-20260819T222917Z-0043), and
+    that has not changed: the derivation door IS closed at the type and the closure SURVIVES A RENAME,
+    which is banked, but CD-AC-002 reaches WO-2's gate on the PO's SCOPING and not on a guard. Your
+    increment-2 commits must not claim otherwise, and the CD-PL-F74 obligation is unchanged and
+    non-negotiable: EVERY refusal you record names WHICH LAYER refused it and WHAT THAT LAYER'S SCOPE
+    IS, and carries THE RENAME TEST, BEFORE any acceptance of yours or anyone else's cites it.
+
+# ================================================================================================== #
+# INCREMENT 2 — CLASS 2. JUDGE VALUES, NEVER TYPES.
+# carries CD-AC-005's AMBER (ASR2-F02, HIGH)
+# ================================================================================================== #
+increment_2_class_2_judge_values_never_types:
+  the_PO_words_verbatim: >
+    "CLASS 2 — JUDGE VALUES, NEVER TYPES. Staleness, agreement, reading-ness decided on content;
+    isinstance is never a guard by itself (pandas.Timestamp defeated it)."
+  criteria_carried: [CD-AC-005 (AMBER)]
+  findings_carried: [CD-ASR-WO2R-F02 (HIGH)]
+  auditor_variants_that_must_be_refused:
+  - 'ASR2-005-A-datetime-subclass-lies-about-age.py.txt — a `datetime` SUBCLASS overriding
+     `__rsub__` and `astimezone` survives `ensure_utc` (time_utc.py:44 admits by isinstance),
+     survives `PanelRow.__post_init__` normalisation, and controls the subtraction in
+     `age_seconds`. A row dated 2016-08-21 read in 2026 with a 600 s window renders WITNESS AGREES.
+     CONTROL ARM: the identical instant as a plain datetime renders WITNESS UNAVAILABLE. The only
+     variable is the concrete type of the timestamp. CD-RT-005 exit 0, 152 passed; whole suite 1325
+     passed.'
+  the_class_stated_at_the_right_altitude: >
+    NOT "datetime subclasses". The class is: ANY JUDGEMENT THIS SYSTEM MAKES THAT DELEGATES ITS
+    DECIDING OPERATION TO AN OBJECT THE SYSTEM DID NOT CONSTRUCT. The subtraction, the comparison,
+    the equality, the ordering, the truthiness, the formatting — each is a method, and a method on a
+    supplied object is that object's to define. `StalenessWindow` already knows this and says so in
+    terms: "a subclass of a number is not a number: it may redefine what comparison means, and a
+    window whose comparisons it controls is not a window at all." THE DOCTRINE WAS APPLIED TO ONE
+    OPERAND AND NOT THE OTHER. A comparison has two.
+  the_sibling_the_auditor_named_in_the_same_breath: >
+    `witness_resolver._finite_measure` admits a measurement with `isinstance(observed, float)`,
+    accepting a float subclass — the very type StalenessWindow refuses by exact type four modules
+    away. The auditor reported it "not as a separate finding but as the same class". IT IS IN SCOPE
+    HERE precisely because it is the same class; closing the timestamp and leaving the measurement is
+    the instance game.
+  invariants_you_must_establish:
+  - 'THE SWEEP IS THE DELIVERABLE, NOT THE FIX. Enumerate EVERY isinstance / duck-typed admission on
+     every path that decides staleness, agreement or reading-ness, and state for each whether the
+     deciding operation is delegated to the supplied object. That enumeration, with its denominator
+     and its method, is a required artefact. A fix to two sites with no sweep behind it is how a
+     fourth constructor route existed after three were measured.'
+  - 'THE ADMISSION ESTABLISHES THE VALUE ON THE SYSTEM''S OWN TERMS. Exact-type admission, or
+     re-construction into a type this system built from primitives it read out of the supplied
+     object, or an equivalent — the choice is yours and must be argued. What may not survive is a
+     judgement computed by a method the caller supplied.'
+  - 'NO ROUTE TO `Agrees` WITHOUT FRESHNESS EVIDENCE THE SYSTEM ITSELF COMPUTED. The FreshnessEvidence
+     design is genuinely good and the auditor said so: the age comparison IS the act of constructing
+     the evidence, and there is no third comparison site. Keep it. Make the arithmetic that feeds it
+     unforgeable.'
+  - 'FAIL CLOSED, NOT FAIL SILENT. A timestamp or measurement this system cannot establish on its own
+     terms yields UNAVAILABLE with a stated reason — never AGREES, and never a silent default.'
+  what_you_must_not_do: >
+    Do not regress the six existing routes to Unavailable (absent, future-dated, stale, feed
+    -unreachable, incoherent, unrecognised) — all six were verified by the first auditor and the
+    render-table guard and the malformed-row catch were both proved to bite. And do not close this
+    by banning subclasses at the API edge with a note saying callers must not pass them: `pandas
+    .Timestamp` IS a datetime subclass, as are freezegun''s and several time libraries'. A collector
+    handing the resolver one is not an attack, it is Tuesday. If your structure makes ordinary
+    library timestamps unusable, you have traded a defect for a defect and must say so.
+  boundary_3_must_be_corrected: >
+    staleness.py boundary 3 says "THREE MEASURED, and three is the denominator, not a proof that a
+    fourth does not exist". THAT HEDGE IS WHY THIS IS AMBER AND NOT RED, and it did its job. Now the
+    fourth exists and the boundary must say what the denominator is AFTER your sweep, by what
+    method it was taken, and what remains outside it. In all three CD-RULE-004 places, with an
+    executable example, carrier MEASURED per CD-RULE-006.
+
+# ================================================================================================== #
+# ADDENDUM AT THE HEAD OF INCREMENT 3 — TWO DEFECTS FOUND BY RECONCILIATION OF INCREMENT 2.
+# Added 2026-08-20T00:56:28Z by PROJECT_LEAD_SEAT_01 under CD-D-080, on the CD-D-055 / CD-D-077
+# precedent: a bounded addendum at the head of an increment is how this project corrects a brief
+# without re-opening it. IT AMENDS NO INCREMENT CONTENT. Every field of the increment 3 block below
+# is BYTE-IDENTICAL to its issued form, and the dispatch status is UNCHANGED (ISSUED).
+# ================================================================================================== #
+addendum_increment_3_head_two_reconciliation_defects:
+  authority: 'CD-D-080, ruled at BL-20260820T005628Z-0045. Findings CD-PL-F75 and CD-PL-F76.'
+  what_this_addendum_is: >
+    TWO DECLARATION DEFECTS found by the Project Lead when it reconciled increment 2 — NOT reported
+    by the increment-2 seat, which died before committing its own record. They are declaration work
+    in this dispatch's writable scope, and the Project Lead does not repair them itself
+    (PBG-AUTH-006, CD-D-038 / CD-D-045). THEY ARE THE FIRST TWO ITEMS OF INCREMENT 3, AND THEY ARE
+    SMALL. Do them first, commit them separately from the CD-AC-012 work, and then do increment 3
+    as issued.
+
+  item_A_CD_PL_F75:
+    severity: LOW
+    where: 'required-tests.yaml, the CD-AC-005 negative_control block.'
+    what_is_wrong: >
+      (a) THE COUNT IS STALE. The preamble reads "THIS TEST HAS A DECLARED LIMIT (CD-RULE-004),
+      stated identically here, in the header of src/crash_detector/staleness.py and in the execution
+      contract, in FOUR boundaries:". THERE ARE NOW FIVE — increment 2d added boundary 5 into the
+      block beneath it and did not touch the numeral above it.
+      (b) THE ENUMERATION IS OUT OF ORDER: within that block the boundaries appear (1), (2), (3),
+      (5), (4).
+      MEASURED at lane 7ac1574 the same sentence read FOUR and the block held exactly FOUR, so the
+      sentence was TRUE before increment 2 and is FALSE after it.
+    what_is_already_correct_and_must_not_be_disturbed: >
+      src/crash_detector/staleness.py and
+      contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md BOTH run 1,2,3,4,5 IN ORDER
+      and NEITHER carries a numeral count. The register is the only file that is wrong. Do not
+      "harmonise" by adding a count to the other two.
+    the_fix: 'Correct the numeral and re-order the register''s enumeration. Nothing else.'
+    the_lesson_worth_carrying: >
+      The increment-2 seat DID verify three-place consistency and said so in its 2d commit — but it
+      grepped for the PHRASES IT HAD ADDED ("402 sites", "16 subject modules", "THE FOURTH EXISTED",
+      "96x the 900"). A consistency check over what you added cannot see what you made STALE. When
+      this increment touches a declaration, grep the WHOLE declaration, not the delta.
+
+  item_B_CD_PL_F76:
+    severity: MEDIUM
+    where: 'The structural invariant of record, stated in commit 27e3794 and carried forward unchanged.'
+    what_is_wrong: >
+      THE INVARIANT IS STATED MORE WIDELY THAN THE CLOSURE IT DESCRIBES. It opens: "No method
+      defined by a caller-supplied class executes during the computation of an age..." The
+      increment's OWN CD-ENG-WO2R2-F04 is the counterexample, and the Project Lead replicated it
+      independently: a caller-supplied `tzinfo` — no subclass anywhere, an ordinary datetime — whose
+      `utcoffset` EXECUTES inside `ensure_utc` and DETERMINES the age, turning a row whose stated
+      wall clock is 22 HOURS OLD into a fresh one against a 600-second window. The seat's own words
+      for F04 say a supplied object's METHOD STILL RUNS INSIDE A FRESHNESS COMPUTATION. That
+      sentence and the invariant's first sentence cannot both be read plainly and both be true.
+      Increment 2d, which ADDED boundary 5, recorded "STRUCTURAL INVARIANT: unchanged".
+    what_is_NOT_being_alleged: >
+      NOTHING WAS HIDDEN, and this is not an accusation of concealment. The seat found F04 itself,
+      raised it against its own closure at MEDIUM, declared it as boundary 5 in all three CD-RULE-004
+      places with a MEASURED interpreter bound, built CD-ENG-WO2R2-V10 for it, and told the Project
+      Lead to send it upward. That conduct is the standard PO-DECISIONS-0003 endorsed. The
+      invariant's own refutation recipe is also bounded to "after PanelRow.__post_init__ returns",
+      and the tzinfo runs DURING __post_init__ — so the record READ AS A WHOLE is honest.
+    why_it_is_MEDIUM_anyway: >
+      Because the Product Owner's standing condition makes the COMMIT-MESSAGE INVARIANT the
+      load-bearing sentence — "the structural invariant stated IN THE COMMIT THAT LANDS THE
+      CLOSURE" — and a reader exercising that condition reads the invariant, not the corpus around
+      it. Such a reader concludes an age cannot be forged by any caller-supplied code. IT CAN, BY UP
+      TO TWENTY-FOUR HOURS. This project has twice paid a gate for a claim stated wider than its
+      closure.
+    the_fix_IS_A_SENTENCE_AND_NOT_A_GUARD: >
+      State the NARROWED invariant FORWARD — in this increment's commit message and in the three
+      CD-RULE-004 places — saying what the closure actually holds: that no method of `type(value)`
+      runs, and that the ONE supplied-object method which still executes is `tzinfo.utcoffset`,
+      bounded by the interpreter to under 24 hours and declared at boundary 5.
+      NOTHING ABOUT THE CODE NEEDS TO CHANGE. THE CODE IS RIGHT; THE SENTENCE IS TOO WIDE.
+
+  PROHIBITED_read_this_twice: >
+    *** DO NOT BUILD A tzinfo GUARD, AND DO NOT CHANGE CODE TO MAKE CD-PL-F76 GO AWAY. *** A tzinfo
+    cannot be refused without refusing zoneinfo, pytz and pandas, which all supply their own — that
+    is trading a defect for a defect, which this dispatch names in terms. It would also be the
+    FOURTH clever guard against a residue the Product Authority has not yet been asked about, and a
+    guard that looks like a closure is the defect that has cost this project two gates. F04 is
+    REPORTED upward under CD-D-081 as a pre-existing, bounded, declared residue; closing it needs
+    either a clock-trust instrument (CD-RULE-003 forbids a seat inventing a skew tolerance) or the
+    CD-D-005 ingredient register. Both are Product Authority territory.
+    *** DO NOT REWRITE 27e3794's COMMIT MESSAGE OR ANY OTHER HISTORY. *** Corrections supersede,
+    never edit (PBG-CONT-003, non-waivable). The narrowing is stated FORWARD.
+    *** DO NOT WIDEN INCREMENT 3. *** The CD-AC-012 dependency-surface work below is UNCHANGED in
+    every particular.
+
+  a_standing_rule_that_now_binds_this_dispatch:
+    id: CD-D-079
+    rule: >
+      A REFUSAL CREDITED TO A SPECIFIC STRUCTURE CARRIES A COUNTERFACTUAL ARM — the same variant,
+      the same tree, THAT STRUCTURE REMOVED — OR IT SAYS IT DOES NOT HAVE ONE. Two arms establish
+      only that a tree refuses; the third establishes WHICH LINE DOES THE REFUSING. It was offered
+      by the increment-2 seat as CD-ENG-WO2R2-F06, applied by the Project Lead to increment 2's own
+      headline claim before being adopted, and it costs one extraction.
+    it_binds_this_increment: 'Every closure claim increment 3 makes.'
+
+# ================================================================================================== #
+# INCREMENT 3 — ITEM 3. THE CD-AC-012 DEPENDENCY SURFACE, BOUNDED.
+# ================================================================================================== #
+increment_3_item_3_dependency_surface:
+  the_PO_words_verbatim: '"ITEM 3 — the CD-AC-012 dependency-surface AMBER, bounded."'
+  criteria_carried: [CD-AC-012 (AMBER)]
+  findings_carried: [CD-ASR-WO2R-F05 (MEDIUM)]
+  the_measured_defect: >
+    `tastytrade-sdk==1.2.0` — a REAL, currently-operating US brokerage's REAL order-entry SDK — in
+    requirements.txt and requirements.lock: CD-RT-012-LOCKFILE-DENYLIST exits 0, PASS, 17 assertions,
+    0 violations. It is absent from the 61-name denylist and carries none of the execution tokens
+    (broker, order, trade, trading, execution, oms, ems, fix, exchange) because the check matches
+    tokens as WORDS and `tastytrade` is one word. CONTROL: `meridian-fix-connect==0.4.1` IS caught on
+    the `fix` token, so the token rule genuinely generalises. `lattice-client` also escaped, but that
+    name is fictional and proves less.
+  why_it_is_a_finding_and_not_the_declared_floor: >
+    The check's header honestly calls the denylist "a FLOOR and not an oracle". Two things spoil
+    that. (a) It is NOT written in the CD-RULE-004 numbered-boundary form — no DECLARED LIMIT
+    section, no numbered boundaries, no executable example, NO NAMED CARRIER — unlike both its
+    sibling CD-AC-012 checks, which have one each. (b) required-tests.yaml declares this test
+    `scope: CLASS`. A reader relying on the register is told the class is closed. It is not.
+  the_bound_and_it_is_a_hard_one: >
+    THIS IS A DECLARATION-AND-STRUCTURE ITEM, NOT A LICENCE TO BUILD A DEPENDENCY ORACLE. Deciding
+    whether an arbitrary package can reach a broker is undecidable offline, and a network-resolving
+    check is prohibited (CD-PL-F48). Do NOT grow the denylist by hand — a longer list is the instance
+    game with more instances, and the next auditor will simply name a brokerage that is not on it.
+  the_two_honest_routes_and_the_choice_is_yours_under_CD_RULE_004:
+  - '(i) STRUCTURE — deny by default over a DECLARED DEPENDENCY REGISTRY, the same move that closed
+     the egress allowlist at WO-2R increment 3 and HELD against everything thrown at it since. A
+     dependency is admissible because it is registered with a purpose and a needing service, not
+     because it failed to match a denylist. Then `tastytrade-sdk` is not a name to catch; it is
+     simply not a dependency anyone declared. The denylist and token rule SURVIVE as a second layer
+     over the registry, catching a REGISTERED dependency that is a broker. Neither layer is sole.'
+  - '(ii) DECLARATION — write the check up in the CD-RULE-004 numbered-boundary form with an
+     executable example (ASR2-012-B is the example, cited by id), correct `scope: CLASS` in
+     required-tests.yaml to what the guard actually delivers, and NAME THE CARRIER for the residue —
+     MEASURED per CD-RULE-006, or the words "NOT PROVED TO BE CARRIED ANYWHERE".'
+  the_candidate_carrier_and_you_must_MEASURE_it_not_assume_it: >
+    The auditor's own mitigation reasoning is that "a dependency is permission to import, not a
+    pathway; the pathway needs somewhere to go", and it MEASURED the egress registry as EMPTY with
+    both networks internal:true. If you cite the egress layer as the carrier, you must measure it
+    yourself on your own extraction and record what you observed — do not transcribe the auditor's
+    numbers (CD-RULE-006). And state its scope honestly: it carries the PATHWAY, not the DEPENDENCY,
+    and it is a WO-2-state fact that WO-3 will change.
+  a_warning_specific_to_this_item: >
+    Either route touches `scope: CLASS` in required-tests.yaml. That file is the register. You may
+    correct a scope declaration to make it TRUE. You may NOT touch latest_admitted_run, and you may
+    not introduce a status-like key. If correcting the scope makes some other entry inconsistent,
+    STOP AND ESCALATE rather than sweeping.
+  what_is_NOT_in_this_item: >
+    ASR2-012-C (the order ticket SPLIT across two frozen dataclasses, defeating L2's field-set rule)
+    is a LOW OBSERVATION against CD-RT-012-NO-EXECUTION-INTERFACE, not the dependency surface, and
+    the PO did not scope it here. CD-D-015 continues to prohibit further hardening of that check. DO
+    NOT WORK ON IT. If your Item 3 structure happens to affect it, REPORT that, with the variant run
+    either way, and change nothing there.
+
+# ================================================================================================== #
+# EXPLICITLY OUT OF SCOPE — and why, so nobody has to guess
+# ================================================================================================== #
+explicitly_out_of_scope_and_why:
+- id: 'CD-ASR-WO2R-F04, F07, F08, F09, F10, F11, F12, F13 (the documentary findings)'
+  ruling: >
+    OUT. The auditor's own next-safe-gate says they "are correction work, not logic work, and should
+    NOT be folded into the same dispatch"; the Product Owner scoped this rework to two classes and
+    one item and did not include them. They stay owed with the CD-PL-F43 / CD-ASR-N01 /
+    CD-ENG-WO2R-F29 bundle at WO-3. THE ONE EXCEPTION, and it is not an exception to the scope but a
+    consequence of the work: where YOUR closure invalidates a declaration, you correct THAT
+    declaration in all three CD-RULE-004 places. Correcting a boundary you broke is part of closing
+    the class. Going looking for boundaries you did not break is scope creep.
+- id: 'CD-AC-003 and ASR2-003-A'
+  ruling: >
+    PASS (scoped), and "the strongest work in the deliverable" — the auditor could not break it, the
+    live grant matrix contrasted 0 -> 1 for the first time in this project's history, and the
+    standing risk CD-RT-002 is CLOSED. DO NOT TOUCH IT. If a Class 1 or Class 2 change forces a
+    change under CD-AC-003, that is an escalation, not initiative.
+- id: 'E09, E10, CD-ENG-F39, CD-ENG-F40, CD-ENG-F41, CD-PL-F43, CD-ASR-N01, CD-ASR-N02, CD-ERR-001, CD-OB-004'
+  ruling: 'All previously ruled owed at WO-3 or declared. Untouched by CD-D-073. Leave them.'
+- id: 'The ingredient set (CD-D-005) and the health endpoint (CD-D-012 consequence)'
+  ruling: >
+    PRODUCT AUTHORITY, owed before WO-3, and neither blocks WO-2. WO-2 registers ZERO sources by
+    design and every dial reads UNKNOWN — that empty state is what makes CD-AC-001's plant
+    demonstrable in the first place. Do not register a source to make a test easier.
+
+# ================================================================================================== #
+# RETURN CONTRACT
+# ================================================================================================== #
+return_contract:
+  expected_return: READY_FOR_ASSURANCE
+  what_the_return_must_carry:
+  - 'the exact lane SHA, resolved with `git rev-parse`, never transcribed (CD-PL-F36)'
+  - 'per class: the structural invariant as landed, and whether the class is CLOSED or CLOSED IN PART'
+  - 'every auditor variant for your classes, with its refusal AND THE REFUSING LAYER AND ITS SCOPE'
+  - 'the rename-test result for every refusal you rely on'
+  - 'your own new variants, durable, with manifest rows'
+  - 'the clean arm numbers and the node-id conservation count against 1325'
+  - 'every declared limit you wrote or corrected, and for each, the carrier MEASURED or the words
+     "NOT PROVED TO BE CARRIED ANYWHERE"'
+  - 'ANYTHING YOU COULD NOT CLOSE, said plainly. An honest NOT CLOSED is an acceptable return. A
+     silence is not, and a guard built over a structural impossibility is worse than either.'
+  a_build_log_entry_per_increment: >
+    In the lane, under governance/engineering/build-log/, sequence continuing from the lane's last
+    entry. New entries only, never an edit (PBG-CONT-003, non-waivable). A result that exists only
+    in your conversation is not project state (PBG-CONT-007) — if you die mid-increment, what is
+    committed is what survives, which is why increments commit as they complete.
+  what_happens_next_and_why_you_should_care: >
+    Your return goes to a THIRD Assurance seat — neither CD-ASR-WO2-01 nor CD-ASR-WO2-02 — with
+    FRESH variants and an exclusion set extended by everything above including your own new variants.
+    It will read variants/ precisely so that it can avoid your routes. Write the manifest for that
+    reader.
+
+# ================================================================================================== #
+# SEPARATION OF DUTIES — restated because it is non-waivable and because this is the third attempt
+# ================================================================================================== #
+separation_of_duties:
+  PBG_SOD_001: 'The Engineer and the Assurance Engineer are never the same agent. Non-waivable.'
+  PBG_AUTH_006: 'The Project Lead writes neither the fix nor the assurance. Direction is not design.'
+  PBG_AUTH_003: 'A PASS is not an acceptance and neither is a RED. Disposition is the Product Owner''s.'
+  what_this_means_for_you: >
+    You may not certify, assure or accept your own work, and you may not describe your own evidence
+    as assurance. You may not weaken a check to obtain a pass. If you believe a check is wrong, say
+    so and leave it — reporting a defective guard is engineering; quietly relaxing one is the failure
+    this whole gate exists to catch.

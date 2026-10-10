@@ -1,0 +1,122 @@
+# ================================================================================================== #
+# BL-20260823T181502Z-0154 — PROJECT LEAD BOUNDARY. **THE SEPARATE ASSURANCE SEAT RETURNED `PASS`
+# OVER INCREMENT 14 AT `9b09d2a`. THE VERDICT IS PERSISTED, RECONCILED AND BANKED — AND IT IS NOT
+# AN ACCEPTANCE (`PBG-AUTH-003`).**
+#
+# **THE FIRST `PASS` THIS PROJECT HAS RECORDED FROM AN ADVERSARIAL ASSURANCE SEAT AFTER A RUN OF
+# `RED`s AND `AMBER`s — AND IT IS A NARROW, SCOPED `PASS` ON A REPAIRED INSTRUMENT, NOT A CLEAN
+# BILL OF HEALTH FOR THE PRODUCT. THE GATE IS STILL SHUT. NOTHING WAS ACCEPTED.**
+#
+# *** **AND THE AUDITOR RAN THE ONE CONTROL NOBODY ASKED FOR, WHICH IS THE CONTROL THAT MAKES THE
+# HEADLINE A FACT: IT PROVED THE VERIFIER ITSELF IS BYTE-IDENTICAL AT BASE, TIP AND `main`
+# (`pbg` tree `e4ee93cb…` x3), SO `0 -> 18` CANNOT BE AN ARTEFACT OF A CHANGED INSTRUMENT.
+# NEITHER THE ENGINEER NOR THIS SEAT ESTABLISHED THAT. THE AUDITOR DID.** ***
+# ================================================================================================== #
+
+entry_id: BL-20260823T181502Z-0154
+record_type: PROJECT_LEAD_BOUNDARY
+utc: '2026-08-23T18:15:02Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: PROJECT_LEAD_SEAT_01
+phase: GATE
+branch: main
+base_sha: f3adfa4   # the Assurance dispatch commit.
+
+the_verdict:
+  seat: 'CD-ASR-WO3-01 — **FRESH IDENTITY, NEVER `CD-ENG-WO3-01`** (`PBG-SOD-001`, non-waivable).'
+  target: '9b09d2a5524743003febedabec3d461d9bc1a470'
+  verdict: '**PASS — SCOPED.** Confidence HIGH on the artefact, MEDIUM on one Project-Lead self-disclosure it could not reach.'
+  persisted_at: 'governance/assurance/CD-ASR-WO3-01-VERDICT.md'
+  mutation_by_the_auditor: '**NONE.** All writes under its own `/tmp`. It used `--no-optional-locks` so as not to take an index lock — **an auditor that declined to perturb the subject even by a lockfile.**'
+  what_PASS_does_NOT_mean: >
+    *** **IT IS NOT AN ACCEPTANCE, AND IT IS NOT A GRADE ON THE PRODUCT.** *** It is a `PASS` on ONE
+    claim: *"the register now validates and computes 18 statuses where it computed none, and nothing
+    else changed."* **THE GATE IS STILL `SHUT`. ALL 18 STATUSES ARE `UNDECIDABLE`. `UNDECIDABLE` IS
+    NOT A PASS.** `CD-AC-002` is still AMBER-and-not-closed and `CD-AC-005` is still RED.
+    **ACCEPTANCE IS MATT'S ALONE (`PBG-AUTH-003`).**
+
+# ================================================================================================== #
+# **WHY THE PROJECT LEAD WROTE THE VERDICT FILE — AND THE FINDING IT RAISES AGAINST ITSELF.**
+# ================================================================================================== #
+CD-PL-F163:
+  severity: MEDIUM
+  raised_against: '**PROJECT_LEAD_SEAT_01 — `CD-DISPATCH-INC14-ASSURANCE.md` §2, THIS SEAT''S OWN DISPATCH.**'
+  what: >
+    **THE DISPATCH PROHIBITED ALL GOVERNANCE WRITES. `pbg/roles/assurance-engineer.md` REQUIRES THE
+    SEAT TO PERSIST ITS VERDICT (`PBG-CONT-007`). THE DISPATCH THEREFORE ORDERED THE SEAT TO BREACH
+    A NON-WAIVABLE CONTINUITY RULE.**
+  how_the_seat_handled_it: >
+    **CORRECTLY, AND BETTER THAN THE DISPATCH DESERVED: it OBEYED the dispatch, DECLARED the conflict
+    as its own stated limitation, and returned the verdict unpersisted rather than resolving the
+    contradiction by writing.** *** **A READ-ONLY SEAT THAT STARTS WRITING GOVERNANCE FILES TO
+    SATISFY A CONTINUITY RULE HAS STOPPED BEING READ-ONLY — the seat saw that and this seat's
+    dispatch did not.** ***
+  remedy_applied_here: >
+    The verdict is persisted **by the Project Lead** at `governance/assurance/CD-ASR-WO3-01-VERDICT.md`,
+    with the reason for the authorship recorded **in the file itself** so no future reader mistakes a
+    PL-written file for an auditor-written one. **FUTURE ASSURANCE DISPATCHES ON THIS PROJECT MUST
+    EITHER GRANT A NARROW WRITE SCOPE FOR THE VERDICT ARTEFACT ALONE, OR STATE EXPLICITLY THAT THE
+    PROJECT LEAD PERSISTS IT.** Booked against increment 15's Assurance dispatch.
+
+CD-PL-F164:
+  severity: LOW
+  supersedes: 'nothing — it **COMPLETES** `CD-PL-F160`, which corrected one of `CD-PL-F158`''s two errors and passed over the other.'
+  raised_against: '**PROJECT_LEAD_SEAT_01 — and it is the auditor''s `F02`, adopted in full.**'
+  what: >
+    **THERE ARE THREE DEFECTIVE TEST SITES PRODUCING SIX SCHEMA ERRORS. `CD-PL-F158` AND THE
+    ENGINEER'S DISPATCH §2 BOTH SAY "THE SIX DEFECTIVE SITES" AND ORDER "THREE OBLIGATIONS AT EACH OF
+    THE SIX SITES".** `CD-PL-F160` quotes that phrase and answers with *"all three defective tests"*
+    — **correcting the count BY USAGE, without ever naming it as the second error.**
+  why_it_matters_more_than_its_severity: >
+    *** **ON A PROJECT WHOSE CENTRAL RULE IS THAT CORRECTIONS SUPERSEDE RATHER THAN REWRITE, A
+    SUPERSEDING ROW THAT FIXES A COUNT SILENTLY IS ITSELF A QUIET EDIT — IT JUST HAPPENS IN PROSE
+    INSTEAD OF IN A DIFF.** *** **A cold reader of the still-standing dispatch would count six
+    sites.** **THE AUDITOR CAUGHT THE PROJECT LEAD DOING A SMALL VERSION OF THE EXACT THING THE
+    PROJECT LEAD HAD JUST FINISHED CORRECTING SOMEONE ELSE FOR NOT DOING.**
+  the_correction_stated_plainly: '**`CD-PL-F158` CONTAINED TWO ERRORS: (1) it claimed the sites carried no `violation:` prose — FALSE, corrected by `CD-PL-F160`; (2) it said "six sites" — there are THREE SITES and SIX ERRORS. BOTH ARE NOW NAMED.**'
+
+adopted_from_the_auditor:
+  F01_LOW: >
+    *"It masks nothing today"* is slightly too strong **and the attributed cause is not the printed
+    one** — `CD-AC-001`-`016` print `evidence_ref … does not resolve`; `017`/`018` print
+    `execution_contract … does not resolve`. The contract miss `continue`s and **does** suppress one
+    diagnostic line per row. **The status is identical either way, PROVED BY ITS OWN PROBE, so the
+    consequence is nil — but "masks nothing" masks a message.** **ADOPTED.**
+  F03_LOW_FRAMEWORK: >
+    **`NEW_REQUIREMENT` on a criterion that IS in the census DOUBLE-REPORTS IT** (`required_tests.py:675`
+    then `:708`); in its counterfactual `CD-AC-017` appeared **twice** and the mandatory count read 18
+    for 17 criteria. **A PINNED-FRAMEWORK WART. IT ARGUES *FOR* THE ENGINEER'S `DERIVES` CHOICE.**
+    **IT IS A SEPARATE BOUNDED PBG DISPATCH AND MUST NOT BE FOLDED INTO LANE WORK (`PBG-FWK-013`).**
+    Booked to the framework track alongside the parked coordination discipline.
+
+the_counterfactual_that_settles_the_relation_choice:
+  what_it_ran: 'Flipped `CD-AC-017` to `NEW_REQUIREMENT` in a throwaway extraction.'
+  result: '**GATE STILL `SHUT`.**'
+  why_it_matters: >
+    *** **THE `DERIVES` CHOICE BUYS THE ENGINEER NOTHING AT THE GATE.** *** That is the check that
+    separates *"the Engineer chose the relation the instrument computes"* from *"the Engineer chose
+    the relation that helps it."* **IT CHOSE CORRECTLY AND GAINED NOTHING BY IT — and that is a much
+    stronger statement than the relation being defensible on paper.**
+
+what_the_auditor_declined_to_call_evidence:
+  the_retracted_first_run: >
+    This seat disclosed at `BL-...-0153` that its **first** run of the preservation check reported
+    `3 LOST` and was wrong. **THE AUDITOR SEARCHED, FOUND NO ARTEFACT, AND REFUSED TO TREAT THE
+    DISCLOSURE AS EVIDENCE:** *"The disclosure is credible and unrefuted, but it is not verifiable —
+    it rests on the seat's own honesty. That is the correct place for it to rest; I record that it is
+    not evidence."* *** **ADOPTED WITHOUT SOFTENING. A SEAT'S SELF-REPORTED ERROR IS A DISCLOSURE,
+    NOT A MEASUREMENT, AND AN AUDITOR THAT SAID SO IS DOING EXACTLY WHAT THIS PROJECT KEEPS
+    AUDITORS FOR.** ***
+  the_F160_mechanism: 'Its account of HOW the error was made (a `sed` window landing inside a block scalar) is **"a plausible reconstruction I cannot confirm."** Its CONCLUSION was measured and confirmed. **The distinction is kept.**'
+
+standing:
+  increment_14: '**BANKED, RECONCILED, ASSURED `PASS`. NOT ACCEPTED.**'
+  the_register: '**VALID AND COMPUTING. 18 rows, 18 computed statuses, ALL `UNDECIDABLE`.**'
+  the_gate: '**SHUT.** `PID_ACCEPTANCE_SATISFIED: NOT DERIVED`.'
+  CD-AC-002: 'AMBER and NOT CLOSED — **NOT MOVED, VERIFIED BY THE AUDITOR.**'
+  CD-AC-005: 'RED — **NOT MOVED, VERIFIED BY THE AUDITOR.**'
+  wo_2r3: '**FROZEN at `be0b355` — VERIFIED BY THE AUDITOR.**'
+  source_set: '**HELD FOR MATT (`Q25`). NO SOURCE REGISTERED — VERIFIED BY THE AUDITOR AGAINST `db/`, THE MIGRATIONS, AND EVERY `SourceRecord(...)` OCCURRENCE IN THE TREE.**'
+  open_questions: '**`Q25` (Matt — the source set, THE HINGE) · `Q28` (the PO — `PID.md` §6 prose vs the register''s `DERIVES`).** This seat answers neither.'
+  residuals_carried_not_closed: '`contracts/execution/CD-RT-017-*.md` and `CD-RT-018-*.md` owed at increments **17** and **18** — **and per the auditor''s probe they become the SOLE remaining cause on those two rows the moment run records land.** · the framework double-report, to the PBG track.'
+
+next_actor: '**INCREMENT 15 — THE PUBLICATION LAYER — TO A FRESH ENGINEER SEAT, PER `PO-DECISIONS-0024` RULING 2 AND THE AUDITOR''S OWN NAMED NEXT SAFE GATE. THEN THE STOP: THE MATT HOLD ON `Q25`.**'

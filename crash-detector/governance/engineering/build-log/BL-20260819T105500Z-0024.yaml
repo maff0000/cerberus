@@ -1,0 +1,267 @@
+# WO-2R INCREMENT 2 RECONCILED AND **NOT ACCEPTED**. The Engineer's CD-ASR-F01 closure reproduces
+# every number it declared, and is nevertheless ESCAPED by a fresh Project Lead probe that publishes
+# a scalar derived from BOTH dials through BOTH layers. Increment 2 is RE-OPENED as increment 2b.
+# This is RECONCILIATION, not assurance (PBG-SOD-001, non-waivable).
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T105500Z-0024
+timestamp_utc: '2026-08-19T10:55:00Z'
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 205498304970df2f354a95a9715e2cdd135f1771
+current_sha: 205498304970df2f354a95a9715e2cdd135f1771
+lane_head_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0
+parent_entry_id: BL-20260819T095200Z-0023
+record_origin: MANUAL_BOOTSTRAP_CONTINUITY
+tooling_available_at_capture: true
+schema_version: 2
+
+action_summary: >
+  FOURTH RUNTIME TERMINATION. The preceding Project Lead process was killed by its harness at
+  2026-08-19T10:44:43Z on a two-hour ceiling, mid-flight, after dispatching Engineer CD-ENG-WO2R-01
+  for WO-2R increment 2. The seat's work survived — it is committed on the lane through a94ef97 with
+  its own Build Log entry BL-20260819T113000Z-0041 — but the PROJECT LEAD'S RECONCILIATION OF IT DID
+  NOT HAPPEN. This entry is that reconciliation, performed by the resumed seat.
+
+  THE PROJECT LEAD RAN EVERYTHING ITSELF on a pristine `git archive` extraction of a94ef97, in
+  /tmp, never in a git worktree. EVERY NUMBER THE SEAT DECLARED REPRODUCES EXACTLY — all eleven
+  declared commands, the full suite at 1054, and the anti-relaxation check at zero missing node ids.
+  The seat's four self-raised findings are real and are recorded as raised.
+
+  THE PROJECT LEAD THEN WROTE ELEVEN FRESH PROBES OF ITS OWN, none in the auditor's known set and
+  none among the seat's five. NINE WERE REFUSED. TWO WERE NOT, AND ONE OF THOSE TWO PUBLISHES A
+  BLENDED SCALAR THROUGH BOTH LAYERS.
+
+  INCREMENT 2 IS NOT ACCEPTED. CD-ASR-F01 IS NOT CLOSED. Raised as CD-PL-F54 (HIGH) and re-opened
+  as increment 2b against the same seat.
+
+reconciliation_of_the_seat_return:
+  claimed_by_the_seat: >
+    CD-ASR-F01 closed at the type and at the publication boundary. "A scalar derived from BOTH dial
+    types is unrepresentable at runtime, and unpublishable" (contracts/execution/
+    CD-RT-002-TYPE-NO-ARITHMETIC.md line 14), with four residues declared.
+  method: >
+    `git archive a94ef97 | tar -x -C /tmp/pl-inc2`, and separately `git archive 27bb880` to /tmp/pl-base
+    for the BEFORE numbers. `python3 -B` throughout. Nothing was run in /srv/crash-detector-wo2 and
+    nothing in this worktree. The probes were run in a third extraction, /tmp/pl-ast, so a probe
+    module could be added and removed without touching the subject of the measurement.
+  declared_commands_re_run_by_the_project_lead:
+    - {command: 'python3 -B tools/register/check_no_numeric_default.py --root .', exit: 0, observed: 'PASS 301 assertions, 0 violations', seat_declared: 'PASS 301', agrees: true}
+    - {command: 'PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py -q', exit: 0, observed: '90 passed', seat_declared: '90 passed', agrees: true}
+    - {command: 'PYTHONPATH=src python3 -B -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q', exit: 0, observed: '205 passed', seat_declared: '205 passed', agrees: true}
+    - {command: 'python3 -B tools/register/check_no_blend.py --root .', exit: 0, observed: 'PASS 3893 assertions', seat_declared: 'PASS 3893', agrees: true}
+    - {command: 'python3 -B tools/register/check_schema_closed.py --root .', exit: 0, observed: 'PASS 242 assertions', seat_declared: 'PASS 242', agrees: true}
+    - {command: 'python3 -B tools/register/check_engine_no_witness_reach.py --root .', exit: 0, observed: 'PASS 12 assertions', seat_declared: 'PASS 12', agrees: true}
+    - {command: 'python3 -B tools/register/check_grant_matrix_live.py --root .', exit: 3, observed: 'PRECONDITION NOT MET, connection target not set, named env vars only, never a skip', seat_declared: 'exit 3', agrees: true}
+    - {command: 'PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py -q', exit: 0, observed: '65 passed', seat_declared: '65 passed', agrees: true}
+    - {command: 'python3 -B tools/register/check_no_execution_interface.py --root .', exit: 0, observed: 'PASS 33146 assertions', seat_declared: 'PASS 33146', agrees: true}
+    - {command: 'python3 -B tools/register/check_lockfile_denylist.py --root .', exit: 0, observed: 'PASS 15 assertions', seat_declared: 'PASS 15', agrees: true}
+    - {command: 'python3 -B tools/register/check_egress_no_broker.py --root .', exit: 0, observed: 'PASS 43 assertions', seat_declared: 'PASS 43', agrees: true}
+    - {command: 'PYTHONPATH=src python3 -B -m pytest -q', exit: 0, observed: '1054 passed in 7.86s', seat_declared: '1054 passed', agrees: true}
+  anti_relaxation_check:
+    method: 'pytest -q --collect-only on both extractions, node ids sorted, comm -23 old new'
+    before_at_27bb880: 945
+    after_at_a94ef97: 1054
+    original_node_ids_missing: 0
+    node_ids_added: 109
+    verdict: >
+      NOTHING WAS RELAXED TO MAKE THIS INCREMENT PASS. Not one of the 945 assertions that existed
+      before the increment has disappeared. This is the check that would catch a seat buying a green
+      arm by deleting the test that was red, and it is clean.
+  verdict_on_the_seat_s_own_numbers: >
+    FULLY REPRODUCED. Twelve of twelve commands agree to the assertion count. The seat did not
+    overstate a single figure, and the one non-zero exit it declared is non-zero here for the stated
+    reason and is not a skip. Its four self-raised findings (CD-ENG-WO2R-F06 repaired, F07/F08/F09
+    declared) are accepted as raised. THE HONESTY OF THE RECORD IS NOT IN QUESTION. What follows is
+    about the STRUCTURE, not the record.
+
+the_project_lead_s_own_fresh_probes:
+  why: >
+    PO Ruling 2 requires the closure be proved against routes the seat did not choose. The seat's
+    five (V07 reflection, V08 JSON, V09 pickle, V10 selection, V11 provenance union) and the
+    auditor's two (E01 inter-procedural fold, E02 getattr over string slots) are now the KNOWN SET.
+    These eleven are none of them. They were written by reading the closure and asking what a
+    developer would actually do next, not by permuting the known set.
+  refused_nine:
+    - {id: PL-Q1b, route: 'the repr-laundered blend offered to EquityCrashScore with no contributions', observed: 'TypeError, missing required argument — refused, but on ARITY, which is not the closure. Re-run properly as PL-Q4 below and it is NOT refused. RECORDED SO THAT A CARELESS READING OF THIS PROBE IS NOT AVAILABLE.'}
+    - {id: PL-Q2a, route: 'math.fsum over both magnitudes — a reduction that never uses +', observed: 'REFUSED TypeError: must be real number, not DialMagnitude'}
+    - {id: PL-Q2b, route: 'round(m, 2) — __round__, a coercion dunder no known-set variant touches', observed: 'REFUSED TypeError: type DialMagnitude does not define __round__ method'}
+    - {id: PL-Q2c, route: 'operator.index — the __index__ integer protocol', observed: 'REFUSED TypeError: DialMagnitude object cannot be interpreted as an integer'}
+    - {id: PL-Q2d, route: 'decimal.Decimal(m) — a coercion through a stdlib numeric type, not through float', observed: 'REFUSED TypeError: conversion from DialMagnitude to Decimal is not supported'}
+    - {id: PL-Q2e, route: 'int(m)', observed: 'REFUSED TypeError: int() argument must be a string, bytes-like or real number'}
+    - {id: PL-Q2f, route: 'complex(m) — the one numeric tower entry a float-focused closure might miss', observed: 'REFUSED TypeError: complex() first argument must be a string or a number'}
+    - {id: PL-Q2g, route: 'format(m, "f") — __format__ with a numeric presentation type', observed: 'REFUSED TypeError: unsupported format string passed to DialMagnitude.__format__'}
+    - {id: PL-Q3b, route: 'after type.__setattr__ installs __add__ on the class, ask the publication gate for a number', observed: 'REFUSED MagnitudeSurfaceViolated: DialMagnitude carries undeclared member(s) [__add__]. THE DECLARED RESIDUE IS EXACTLY AS DECLARED — the mutation succeeds, and every release path refuses the mutated class. Verified, not accepted on the seat''s word.'}
+  not_refused_two:
+    - id: PL-Q3
+      route: "type.__setattr__(DialMagnitude, '__add__', ...) then eq + mo"
+      observed: 'The arithmetic RUNS. This is the declared post-import class-mutation residue and it is INSIDE the declaration. Reported for completeness, not as a finding: PL-Q3b shows the number cannot then be released.'
+    - id: PL-Q9
+      route: 'THE FINDING. See CD-PL-F54.'
+      observed: 'Publishes EquityCrashScore(score=DialMagnitude(dial_id=equity_crash, quantity=0.5)) derived from a 0.4 equity magnitude and a 0.6 monetary magnitude, with check_no_blend at PASS 3919 assertions, 0 violations.'
+
+findings_raised_by_the_project_lead:
+  - finding_id: CD-PL-F54
+    severity: HIGH
+    against: 'WO-2R increment 2, lane a94ef97, CD-ASR-F01'
+    title: 'The F01 closure does not close the class: repr is an undeclared release door, and the layer the declaration names as carrying the residue does not carry it'
+    the_class_that_is_still_open: >
+      A scalar derived from BOTH dial types, published wearing ONE dial's provenance, through source
+      that names no dial and performs no arithmetic on a DialMagnitude.
+    three_measured_facts:
+      a_repr_releases_the_number_without_naming_a_dial: >
+        `float(repr(m).split("quantity=")[1].rstrip(")"))` yields the bare quantity. MEASURED:
+        0.4 and 0.6 recovered from the two magnitudes, summed to 1.0, no exception. The execution
+        contract DISCLOSES that repr contains the quantity and argues it from debuggability —
+        "hiding a value from a developer's own debugger would be obfuscation, and obfuscation is not
+        structure", which is a defensible position. But the SAME contract, eight lines later, claims
+        "reducing one to a number requires naming its single dial". BOTH CANNOT BE TRUE. repr
+        reduces it to a number and names nothing. The disclosure and the claim contradict each other
+        in one file, and the claim is the one the closure rests on.
+      b_boundary_6_names_a_layer_that_does_not_carry_it: >
+        tools/register/check_no_blend.py boundary 6 states: "THE PUBLICATION BOUNDARY CARRIES THIS:
+        number_for_dial_slot accepts only a DialMagnitude whose provenance is exactly the slot's
+        dial, so `blended` cannot be offered for publication; and the closed envelope schema has no
+        third key for it." MEASURED FALSE. The blended float is re-wrapped —
+        DialMagnitude(dial_id="equity_crash", quantity=blended) — whose provenance IS exactly
+        frozenset({"equity_crash"}), and number_for_dial_slot("equity_crash", it) RETURNS 0.5.
+        EquityCrashScore accepts it. The envelope needs no third key because the blend is wearing
+        the first key's name. The check's own instruction to the auditor is the criterion that
+        convicts it: "A variant that reaches the violation through a route a boundary above says is
+        COVERED by the type layer or the publication boundary, and is nevertheless not refused when
+        EXECUTED, is a defect in the closure and should be reported as one."
+      c_pl_q9_escapes_both_layers_together: >
+        A single plausible module, added under src/crash_detector/serving/, defeats the static arm
+        and the runtime arm at once. Source is in the artefacts section below. It names no dial in
+        any expression; it performs no arithmetic on any DialMagnitude; it launders each reading to
+        a float through repr inside a helper that takes a generic parameter, accumulates with
+        `total = total + f` over a list, and publishes the mean into a slot the CALLER names.
+        MEASURED: check_no_blend PASS, 3919 assertions, 0 violations. Runtime:
+        EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5), contributions=()).
+    why_this_is_not_inside_the_declared_limit: >
+      Boundaries 1, 2, 3 and 5 all end "THE TYPE LAYER CARRIES THIS", and for E01/E02 that is true —
+      both raise TypeError when executed. PL-Q9 raises nothing, because it never asks the type for a
+      number; it reads the number off the type's own text. Boundary 6 is the only boundary that
+      could cover it and boundary 6 hands the residue to the publication boundary, which does not
+      hold it. So PL-Q9 is not a route a declaration disclaimed. It is a route two declarations each
+      assumed the other was covering.
+    what_would_actually_close_it_structurally:
+      note: 'DIRECTION, NOT DESIGN. The Engineer chooses the structure; a Project Lead that specifies the implementation has begun approving its own work.'
+      first: >
+        The provenance-forgetting step is the whole class. Any float that leaves a magnitude has lost
+        its dial, and no downstream layer can recover it. So the closure has to be at the RE-ENTRY,
+        not at the exit: a DialMagnitude constructed from a number whose own provenance is not
+        established is the thing to make unrepresentable. That is the same structural move increment 1
+        already made for absence and it worked there — the question changed from "is this number
+        blended?", which is undecidable, to "is this number's provenance DECLARED?", which is set
+        equality.
+      second: >
+        repr should not be a release door. Rendering the provenance and a redacted quantity keeps the
+        debugger useful without making the number parseable; if the seat judges that the debugging
+        value outweighs it, then the CLAIM "reducing one to a number requires naming its single dial"
+        must be withdrawn from the contract and repr declared as boundary A-bis, and CD-ASR-F01 does
+        not close on a declared limit that wide (CD-RULE-004 permits declaring a limit; it does not
+        permit declaring the finding itself as the limit).
+      third: >
+        Boundary 6 must be corrected whatever else changes, because it currently tells an auditor
+        that a layer holds something that layer does not hold. That is worse than no declaration.
+  - finding_id: CD-PL-F55
+    severity: LOW
+    against: 'Build Log entry_id timestamps, project-wide'
+    title: 'Entry ids are being stamped with LOCAL time carrying a Z suffix, so the log is not monotonic in real time'
+    measured: >
+      The lane's increment-2 entry is BL-20260819T113000Z-0041, written by a commit dated
+      2026-08-19 11:41:56 +0100 — that is 10:41:56 UTC. The "Z" is British Summer Time wearing a UTC
+      label, and 11:30:00Z had not yet happened when the entry claiming it was written. THIS ENTRY,
+      0024, is stamped from `date -u` at 10:55Z, and therefore sorts EARLIER than an entry written
+      BEFORE it. Ordering by entry_id is now wrong across the lane/main boundary.
+    ruling: >
+      NEITHER ENTRY IS EDITED (PBG-CONT-003, non-waivable). Corrections supersede. FORWARD RULE,
+      effective now: every entry_id and timestamp_utc is taken from `date -u +%FT%TZ` and from
+      nothing else. Recorded as CD-RULE-005 in governance/rules/PROJECT-RULES.md. Sequence numbers
+      remain the reliable ordering within each of the two blocks (main from 0023, lane from 0040).
+
+decisions:
+  - decision_id: CD-D-037
+    ruling: >
+      WO-2R INCREMENT 2 IS NOT ACCEPTED AND CD-ASR-F01 IS NOT CLOSED. The work is not rejected —
+      it is substantial, honestly recorded, fully reproducible, and it closes several real routes
+      including two the auditor found. It is INCOMPLETE against PO Ruling 2, which for F01 requires
+      that any scalar derived from both dial types be unrepresentable or unpublishable AS A CLASS.
+      PL-Q9 publishes one. The increment is RE-OPENED as increment 2b.
+    consequence: >
+      The lane stays at a94ef97 and is not merged. Increments 3, 4 and 5 (F04, F05, F06) do not
+      start until 2b returns. The gate is unchanged: Assurance PASS on all five.
+  - decision_id: CD-D-038
+    ruling: >
+      THE PROJECT LEAD DOES NOT WRITE THE FIX. The direction above is a statement of what is not yet
+      closed and of one structural precedent that already worked on this project; it is not a design.
+      A Project Lead that authors the closure has made itself the implementer of work it will then
+      reconcile, and the reconciliation stops being worth anything (PBG-SOD-001 in spirit, PBG-AUTH-006
+      in letter). CD-ENG-WO2R-01 is re-dispatched.
+  - decision_id: CD-D-039
+    ruling: >
+      PL-Q9 IS ADDED TO THE NEXT AUDITOR'S EXCLUSION SET, not withheld from the Engineer. Withholding
+      it to see whether the seat finds it independently would be a test of the seat, not of the
+      structure, and would spend an increment to learn something the gate does not ask. It is written
+      to governance/reconciliation/WO-2R/ as DATA — nothing executable (PBG-ASSURE-001) — and from
+      this commit forward it PROVES NOTHING ABOUT THE CLASS, exactly as the ten escapes do not.
+      CD-ASR-WO2-02 must devise variants that are none of: the auditor's ten, the seat's eleven, or
+      the Project Lead's eighteen.
+
+artefacts:
+  pl_q9_source: |
+    # src/crash_detector/serving/pl_q9_banner.py — DATA, NOT A DELIVERABLE. Never committed to src/.
+    """Aggregate the operator banner over whatever readings the caller supplies."""
+    from crash_detector.dials.magnitude import DialMagnitude
+    from crash_detector.dials.scores import EquityCrashScore
+
+
+    def _as_number(reading):
+        """Read the bare figure off a reading without asserting which reading it is."""
+        return float(repr(reading).split("quantity=")[1].rstrip(")"))
+
+
+    def aggregate(readings, slot):
+        """Mean of every supplied reading, published into ``slot``."""
+        figures = [_as_number(r) for r in readings]
+        total = 0.0
+        for f in figures:
+            total = total + f
+        return EquityCrashScore(score=DialMagnitude(dial_id=slot, quantity=total / len(figures)),
+                                contributions=())
+  pl_q9_observation: |
+    $ python3 -B tools/register/check_no_blend.py --root .
+    CD-RT-002-AST-NO-BLEND: PASS — 3919 assertions, 0 violations
+    $ PYTHONPATH=src python3 -B -c "..."
+    RUNTIME: EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5), contributions=())
+  contrast_that_proves_rule_1_is_alive: >
+    The same attack SPELLED WITH THE DIAL NAMES IN SCOPE **is** caught, twice — PL-Q7 (repr launder,
+    dial ids as module constants) and PL-Q8 (quantity_for launder) both produce
+    "VIOLATION ... RULE 1: arithmetic across the two dials" and FAIL. RULE 1 works. What defeats it
+    is the removal of every flavour-bearing NAME, which is boundary 2's mechanism applied to a value
+    the type layer cannot refuse because the type was never asked for a number.
+
+obligations_status:
+  po_ruling_1_run_record: DISCHARGED — CD-RULE-001 recorded and in force; latest_admitted_run still null.
+  po_ruling_2_close_the_class: 'IN PROGRESS. F02+F03 CLOSED (increment 1, accepted). F01 NOT CLOSED (increment 2, re-opened as 2b). F04, F05, F06 NOT STARTED.'
+  po_ruling_3_identity: DISCHARGED — all 24 lane commits re-authored; every commit since carries its seat identity; audited again in this entry.
+  po_ruling_4_fresh_assurance: NOT REACHED.
+
+next_safe_action: >
+  Record CD-RULE-005. Write the PL-Q9 artefact to governance/reconciliation/WO-2R/ as data. Commit
+  this checkpoint. THEN re-dispatch CD-ENG-WO2R-01 for increment 2b, bounded to CD-PL-F54 and
+  NOTHING ELSE, carrying PL-Q9 and PL-Q4/Q5/Q6 as its minimum proof obligation, requiring the same
+  mandatory commit block, and requiring that boundary 6 of the AST check's declared limit be
+  corrected whatever else changes. Then reconcile 2b by running it. Then increments 3, 4, 5. Then
+  CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never this one and never the
+  Engineer (PBG-SOD-001, non-waivable) — which must devise FRESH variants. STOP at the gate either
+  way and report to the Product Owner.

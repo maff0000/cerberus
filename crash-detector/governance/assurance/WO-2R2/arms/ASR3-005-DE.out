@@ -1,0 +1,10 @@
+############ D: CONTROL — the SAME lying state THROUGH the constructor ############
+  PanelRow REFUSED it: PanelRow.state must be a str: expected str, got LyingState
+  => the closure IS real at the constructor; resolve_panel simply does not require it.
+
+############ E: evaluate() accepts a duck-typed ConfigSnapshot ############
+  observation age         : 3650 days
+  declared window         : 600 s (but FakeWindow.covers() -> True always)
+  equity reading          : Value
+  monetary reading        : Value
+  *** A TEN-YEAR-OLD OBSERVATION PRODUCED A NUMBER: 0.9 ***

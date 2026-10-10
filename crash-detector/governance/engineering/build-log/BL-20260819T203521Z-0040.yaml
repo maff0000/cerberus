@@ -1,0 +1,200 @@
+# ================================================================================================ #
+# THE WO-2 GATE, SECOND ATTEMPT. ASSURANCE RETURNED **RED**. THE GATE IS NOT MET.
+# THE NEXT ACTOR IS THE PRODUCT AUTHORITY.
+# ================================================================================================ #
+
+entry_id: BL-20260819T203521Z-0040
+timestamp_utc: "2026-08-19T20:35:21Z"
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_01
+role: PROJECT_LEAD
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: GATE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+baseline_sha: 00e87ff9f9041b21288d52bebe45692e2d89e9d0
+lane_head_sha: 50fc23177f790164c3fc3604ccee51663e755c70
+parent_entry_id: BL-20260819T200314Z-0039
+schema_version: 1
+record_origin: >
+  Written by the EIGHTH Project Lead seat immediately on the auditor's return, against its persisted
+  evidence and the Project Lead's own integrity checks. Written FIRST and in full because the seat
+  is inside the last twenty minutes of its runtime ceiling and a gate outcome that exists only in
+  conversation is not project state (PBG-CONT-007).
+
+action_summary: >
+  CD-ASR-WO2-02 audited 50fc231 and returned **RED**. THE WO-2 GATE IS NOT MET FOR THE SECOND TIME,
+  ON DIFFERENT GROUNDS. CD-AC-003 PASS (scoped); CD-AC-001, CD-AC-005, CD-AC-012 AMBER; CD-AC-002
+  **RED** on a documented claim REFUTED BY EXECUTION. Two HIGH findings. The run record is written
+  and NOT ADMITTED. The next actor is the PRODUCT AUTHORITY.
+
+# ================================================================================================ #
+# THE INTEGRITY CHECKS THE PROJECT LEAD RAN ITSELF, BEFORE READING THE VERDICT
+# ================================================================================================ #
+target_unmutated:
+  method: 'The CD-D-022 device — the fingerprint recorded at issue, re-taken on return.'
+  result: >
+    IDENTICAL. 364 files then, 364 files now; the sha256sum manifests `diff` clean with zero lines;
+    the fingerprint recomputes to 50ae34d657126709c0e44b3a57c58c8308d25c1cb845aa70b30e86338a2d729d,
+    exactly the value recorded at issue; `git status --porcelain` in the audit worktree returns ZERO
+    lines and HEAD is still 50fc231. NOT ONE BYTE OF THE AUDITED TREE MOVED. The auditor honoured
+    the /tmp-extraction discipline in full — even the __pycache__ hazard the dispatch warned about
+    did not materialise, which means the clean baseline arms were run outside too.
+sd3_teardown:
+  result: >
+    COMPLETE AND EVIDENCED. `docker ps -a` and `docker volume ls` filtered on `cd-asr-wo2r-` both
+    return ZERO rows. 36 other containers on this host were untouched, consistent with the auditor's
+    own statement and with the bound in SD-3. Teardown evidence at arms/SD-3-teardown.txt.
+evidence_transported:
+  result: >
+    37 files copied UNALTERED from /srv/crash-detector-wo2r-evidence/ to governance/assurance/WO-2R/.
+    ZERO are executable (PBG-ASSURE-001 satisfied — the auditor's six fresh variants are mode 0664
+    data). The Project Lead authored none of it and edited none of it.
+run_record_not_admitted:
+  result: >
+    RTR-WO2R-0001.json is WRITTEN and NOT ADMITTED. `latest_admitted_run` in required-tests.yaml at
+    the target is STILL null. CD-RULE-001 (Product Owner, NON-RELAXABLE) forbids admitting a run
+    record without its paired assurance verdict AND forbids a criterion the Assurance seat holds
+    not-PASS from computing PASS. THE VERDICT IS RED ON CD-AC-002. Admission is not available and is
+    not sought. This is the same refusal the Product Owner COMMENDED at the first gate, and it costs
+    the project nothing to repeat.
+
+# ================================================================================================ #
+# THE VERDICT
+# ================================================================================================ #
+verdict:
+  overall: 'RED — the worst of the five, as the gate requires.'
+  actor: CD-ASR-WO2-02
+  independence: 'DECLARED CLEAN. Separate from CD-ENG-WO2R-01, CD-ENG-READER-01, CD-ASR-WO2-01 and the Project Lead. PBG-SOD-001 satisfied.'
+  target_verified_authentic: 'YES — HEAD, tree object 5a952282, 364 files, clean. The stale-worktree trap was cleared explicitly.'
+  per_criterion:
+    CD-AC-001: 'AMBER — closes the class of numeric defaults CONSTRUCTED, not of absence ANSWERED with a number.'
+    CD-AC-002: 'RED — CLASS NOT CLOSED. A documented claim refuted by execution.'
+    CD-AC-003: 'PASS (scoped) — CLASS CLOSED. The auditor calls it the strongest work here and could not break it.'
+    CD-AC-005: 'AMBER — class not closed, but the limit was honestly hedged.'
+    CD-AC-012: 'AMBER — class not closed on the dependency surface.'
+
+the_two_HIGH_findings:
+  ASR2_F01:
+    criterion: CD-AC-002
+    severity: HIGH
+    finding: >
+      `combine_within_one_dial` is PUBLIC API, is ABSENT from ADMISSION_VOCABULARY, and passes an
+      arbitrary caller callable's return value unvalidated into `derived_within_one_dial`. A closure
+      smuggles the other dial's number past a door that only checks the LABEL. Equity 0.9 and
+      monetary 0.1 publish as an EQUITY READING OF 0.5 through `number_for_dial_slot`, with
+      check_no_blend PASS at 4873 assertions and the full 1325-test suite green.
+    why_it_is_RED_and_not_a_declared_limit: >
+      magnitude.py boundary A states WITHOUT QUALIFICATION that "the sum cannot come back... no
+      number so obtained can ever be a dial magnitude again". THAT IS FALSE. Boundary 7 enumerates
+      its residues exhaustively and this route is none of the three. So it is not inside a declared
+      limit — it is a FALSE CARRIER, which is exactly what CD-RULE-006 forbids and exactly the
+      CD-PL-F54 / CD-PL-F59 shape this project has now sent two increments back for.
+    the_bitter_part: >
+      CD-D-040 accepted increment 2b ON PRECISELY THE STATIC CARRIER THAT FAILS HERE. The
+      Project Lead's own PL-R5 probe was refused by RULE 4 and read as proof the door was closed;
+      the door is closed to a probe that arrives through a declared admission site and open to
+      public API that never needed one. NQ-1 asked whether a static-only guard on the admission door
+      is sufficient for CD-AC-002. THE ANSWER IS NO, AND IT IS ANSWERED BY EXECUTION.
+  ASR2_F02:
+    criterion: CD-AC-005
+    severity: HIGH
+    finding: >
+      StalenessWindow refuses a `float` subclass on EXACT TYPE — and the same doctrine was never
+      applied to the comparison's OTHER OPERAND. `ensure_utc` admits any `datetime` by `isinstance`.
+      A `datetime` SUBCLASS makes a DECADE-OLD ROW RENDER "WITNESS AGREES", through every constructor
+      on the path, with NO `object.__setattr__` anywhere. Control arm: the identical instant as a
+      plain `datetime` renders WITNESS UNAVAILABLE.
+    why_it_matters_beyond_its_criterion: >
+      Boundary 3 said "three is the denominator, not a proof that a fourth does not exist". THIS IS
+      THE FOURTH. And it is not exotic: `pandas.Timestamp` IS a `datetime` subclass. The residue the
+      project ruled inside its declared limit at CD-D-040 and CD-D-057 was reached here WITHOUT the
+      forbidden-but-unpreventable route, which is what makes it a finding rather than a confirmation.
+
+what_the_auditor_CLOSED_and_the_project_should_bank:
+- 'CD-RT-003-GRANT-MATRIX-LIVE CONTRASTED FOR THE FIRST TIME IN THIS PROJECT''S HISTORY — 0 -> 1, 138 assertions on both arms, 9 violations across 6 routes including a live PostgreSQL session refusal. THE STANDING RISK CD-RT-002 AND CD-D-020 ARE DISCHARGED. The auditor also queried the catalogue itself: cd_engine 16/16 privilege probes FALSE on schema witness; no role holds SUPERUSER, a password or inheritance; NO UPDATE OR DELETE GRANT TO ANY PROJECT ROLE ANYWHERE. That structure is now verified live rather than asserted, by the only party entitled to verify it.'
+- 'THE 70/71/72 DENOMINATOR IS SETTLED — 70 patches + 2 .py.txt = 72 artefacts, 73 files, 0 executable. "71" was a TRANSCRIPTION DEFECT, not missing work. CD-PL-F73''s open question is answered.'
+- 'THE ELEVEN UNDELIVERED-CRITERIA COMMANDS ARE NOW MEASURED AT 50fc231 rather than argued from the base — all non-zero, each naming an absent subject, none passing vacuously. That item leaves the NOT_INDEPENDENTLY_VERIFIED list properly.'
+- 'NO FRAMEWORK BYPASS EXISTS. The auditor tested it adversarially: even renamed to the id the register cites, exit codes alone compute NOT_EVALUATED and never PASS. The CD-FWK-005 class is not reachable from evidence shape alone.'
+- 'CD-AC-003 IS A PASS THAT BIT — it tracked a full rename of the witness package and caught a compose `command:` override.'
+- 'NQ-2 PARTIALLY ANSWERED: a FOURTH DIVERGENCE in _yamlmin was found (it splits on any `:` without the space real YAML requires) — but deny-by-default refused it as a non-scalar. THE FOURTH FALSE-CLEAN ROUTE WAS NOT FOUND, AND THE AUDITOR EXPRESSLY DOES NOT CLAIM IT DOES NOT EXIST. That is the CD-RULE-006 discipline applied by an auditor to its own negative result.'
+
+# ================================================================================================ #
+# THE RULING
+# ================================================================================================ #
+CD_D_072:
+  decision: 'THE WO-2 GATE IS NOT MET. WO-2 DOES NOT CLOSE, WO-3 IS NOT DISPATCHED, AND NO RUN RECORD IS ADMITTED.'
+  grounds: >
+    The gate is Assurance PASS on all five and the verdict is RED on CD-AC-002 and AMBER on three
+    more. There is no arithmetic by which that is a pass and no waiver available — the gate was set
+    by the Product Owner at PO-GATE-REVIEW-WO2-0001 and reaffirmed unchanged in this dispatch.
+  the_project_lead_does_NOT_write_the_fix: >
+    PBG-AUTH-006, and CD-D-038 / CD-D-045 precedent, which this project has already declined to
+    relax twice on the argument that a fix "looks small". ASR2-F01 will look like a one-line
+    vocabulary addition. IT IS NOT: adding `combine_within_one_dial` to ADMISSION_VOCABULARY is the
+    INSTANCE GAME and the auditor said so unprompted in its own next-safe-gate.
+  what_is_NOT_ruled_here: >
+    Whether to authorise a WO-2R2 rework, how to bound it, and whether the AMBER criteria travel
+    with it are NOT the Project Lead's calls. The last rework was ordered by the Product Owner after
+    a gate review, and this gate belongs to the same authority.
+
+CD_D_073:
+  decision: 'THE PROJECT LEAD STOPS HERE AND REPORTS TO THE PRODUCT AUTHORITY. It does not dispatch WO-2R2.'
+  grounds: >
+    A second consecutive gate failure on a rework the Product Owner personally ordered and scoped is
+    a Product Authority question on its face, not an engineering one. The PO ruled the first gate
+    with four rulings and four standing project rules; the same seat should rule this one. Issuing a
+    third Engineer dispatch from here would be the Project Lead re-scoping the PO's own rework on its
+    own authority.
+  the_recommendation_offered_NOT_taken: >
+    The auditor's named next safe gate is a bounded WO-2R2 Engineer dispatch scoped to ASR2-F01 and
+    ASR2-F02 ONLY, returning to a THIRD Assurance seat, expressly NOT scoped as "add the function to
+    the vocabulary". The Project Lead concurs and RECOMMENDS it. A recommendation is not a decision
+    and this one is placed before the Product Authority, not acted on.
+
+# ================================================================================================ #
+# WHAT THIS SEAT DID **NOT** VERIFY — the honest label
+# ================================================================================================ #
+NOT_INDEPENDENTLY_VERIFIED:
+- 'ASR2-F01 AND ASR2-F02 WERE **NOT** INDEPENDENTLY REPLICATED BY THE PROJECT LEAD. This seat reached the gate with under twenty minutes of runtime ceiling and chose a durable committed record over a partial replication. THIS IS THE FIRST WORK OF THE NEXT SEAT. It matters: at the FIRST gate the Project Lead REPLICATED CD-ASR-F02 itself before accepting it, and at increments 2 and 3 its own replication SENT WORK BACK that the seat''s own numbers had made look finished. An unreplicated HIGH finding is a strong claim on an auditor''s standing, which is good evidence and is not the same thing as a measurement.'
+- 'THE OTHER ELEVEN FINDINGS (F03-F13) ARE RECORDED FROM THE AUDITOR''S RETURN AND ITS PERSISTED EVIDENCE, NOT RE-MEASURED. F05 in particular — `tastytrade-sdk`, a real broker SDK, escaping a test the register calls `scope: CLASS` — is the kind of claim this project has learned to check itself.'
+- 'THE VERDICT DOCUMENT IS 1036 LINES AND THIS SEAT READ ITS HEAD AND THE AUDITOR''S STRUCTURED RETURN, NOT ALL OF IT. The evidence is committed in full so the next seat and the Product Owner read the source rather than this summary. Where this entry and governance/assurance/WO-2R/VERDICT.md disagree, THE VERDICT WINS — it is the auditor''s words and this is the Project Lead''s compression.'
+
+status: IN_PROGRESS
+current_sha: PENDING
+next_safe_action: >
+  **STOP. THE NEXT ACTOR IS THE PRODUCT AUTHORITY (Matt, with the Product Owner preparing).**
+  Report: the WO-2 gate is NOT MET for the second time; CD-AC-002 is RED on a claim refuted by
+  execution; two HIGH findings; the grant matrix is verified live for the first time; nothing is
+  admitted and nothing is accepted.
+  BEFORE ANY NEW DISPATCH, THE NEXT PROJECT LEAD SEAT MUST INDEPENDENTLY REPLICATE ASR2-F01 AND
+  ASR2-F02 on its own pristine extractions of 50fc231. Not because the auditor is doubted — its
+  target-integrity discipline was exact and its negative results are honestly hedged — but because
+  this project's own precedent is that the Project Lead measures before it rules, and because
+  ASR2-F01 contradicts a boundary the Project Lead itself accepted at CD-D-040 on a probe (PL-R5)
+  that was refused for a reason narrower than it appeared. THAT IS THE CD-ENG-WO2R-F13 PATTERN
+  AIMED AT AN ACCEPTANCE RATHER THAN A PROBE, and it would be the sixth recurrence.
+  DO NOT dispatch WO-2R2 without Product Authority direction (CD-D-073). DO NOT admit RTR-WO2R-0001
+  (CD-RULE-001, non-relaxable). The recommended shape, if the PO authorises it, is a bounded
+  Engineer dispatch scoped to ASR2-F01 and ASR2-F02 ONLY, returning to a THIRD Assurance seat, and
+  expressly NOT scoped as "add the function to the vocabulary" — that is the instance game and it is
+  what failed the first gate.
+expected_next_actor: PRODUCT_AUTHORITY
+
+evidence_references:
+- 'governance/assurance/WO-2R/VERDICT.md — the auditor''s verdict, 1036 lines, transported unaltered'
+- 'governance/assurance/WO-2R/arms/ — 27 per-arm records including SD-3-teardown.txt, W4-register-verify.txt, W4-undelivered-eleven.txt'
+- 'governance/assurance/WO-2R/variants/ — the auditor''s six FRESH variants, mode 0664, nothing executable'
+- 'governance/assurance/WO-2R/notes/W6-declared-limits.md and W7-corpus-audit.md'
+- 'governance/assurance/WO-2R/required-tests/runs/RTR-WO2R-0001.json — WRITTEN, NOT ADMITTED'
+- '/tmp/cd-asr-wo2r-tree-RETURN.sha256sums — the return fingerprint manifest, identical to the issue manifest'
+- 'governance/dispatch/CD-DISPATCH-WO2R-ASSURANCE.yaml — the brief this verdict answers'
+
+risks:
+- 'THE CHEAPEST READING OF ASR2-F01 IS A ONE-LINE FIX AND IT IS THE WRONG ONE. Adding `combine_within_one_dial` to ADMISSION_VOCABULARY closes the instance and leaves the class — the door checks a LABEL and the defect is that a caller callable''s return value is never validated. This project has declined the cheap fix twice (CD-D-038, CD-D-045) and the pressure to take it will be highest now, at a second failed gate, with the fix looking smallest.'
+- 'TWO HIGH FINDINGS ARE UNREPLICATED BY THE PROJECT LEAD. If either does not reproduce, this gate record overstates the failure; if both do, the record is right and the next rework is correctly aimed. Either way the measurement is owed BEFORE the next dispatch, not after.'
+- 'ASR2-F01 CONTRADICTS AN ACCEPTANCE THIS PROJECT ALREADY MADE (CD-D-040). If it stands, the lesson is not about `combine_within_one_dial` — it is that PL-R5 was read as proving more than it did, and that the Project Lead''s own probe corpus has the same fitting problem it has twice caught in the Engineer''s. That is a method finding about reconciliation itself and it should not be lost in the repair.'
+- 'THE THREE AMBER CRITERIA ARE NOT FREE. A rework scoped only to the two HIGH findings leaves CD-AC-001, CD-AC-005 and CD-AC-012 short of class closure, and the gate is PASS ON ALL FIVE. Whether AMBER travels with the rework is a Product Authority scoping call and is named here so it is not discovered late.'

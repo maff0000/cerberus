@@ -1,0 +1,151 @@
+# ================================================================================================== #
+# BL-20260824T132602Z-0169 — PROJECT LEAD BOUNDARY. **16B-FIX-3 RETURNED. THE $ref-SIBLING ESCAPE IS
+# CLOSED AND THIS SEAT PROVED IT WITH ITS OWN PLANT. THE SEAT OVERRODE THIS DISPATCH'S ORDERED
+# REMEDY ON A TECHNICAL ARGUMENT AND MAY WELL BE RIGHT. FINAL ASSURANCE OF THIS SESSION DISPATCHED.**
+#
+# *** **THE SEAT REFUSED THE FIX IT WAS ORDERED TO BUILD, AND ITS REASON IS BETTER THAN THE ORDER.**
+# The dispatch said "make _deref spec-correct — the target MERGED with its siblings". The seat says a
+# merge IS NOT 2020-12's semantics: $ref + siblings is a CONJUNCTION, and additionalProperties and
+# unevaluated* are evaluated against their OWN schema object's annotations, so A MERGED OBJECT CAN
+# ADMIT DOCUMENTS NEITHER SCHEMA ADMITS. A merge could therefore only ever WEAKEN the instrument
+# SILENTLY — which is precisely the defect it was ordered to close. It took deny-by-default instead,
+# at the resolver, reporting dropped asserting siblings AT EVERY HOP so the deeper arm is caught by
+# the same sentence. **IF THAT ARGUMENT HOLDS, THIS DISPATCH WAS WRONG ON THE MECHANISM AND THE SEAT
+# WAS RIGHT TO REFUSE IT. GRADING IT IS THE ASSURANCE SEAT'S FIRST NAMED JOB.** ***
+#
+# **REPRODUCED BY THIS SEAT ON ITS OWN $ref-SIBLING PLANT: was PASS — 144/0 with the gate ADMITTING
+# calm on an UNKNOWN dial on both surfaces; is now FAIL — 32 (40x CD-CALM-BRANCHES-006 + 12x
+# CD-CALM-PAIRED-004). C10/C21 control still PASS — 158. C14, the 16C liveness arm, still FAIL — 2.
+# Clean tree PASS — 144. Zero protected paths, one identity.**
+#
+# **AND THE MEASUREMENT THE INCREMENT EXISTS FOR, IN THE SEAT'S WORDS: on all three new trees the
+# superseded instrument reports PASS — 144 while the live gate ADMITS the forbidden document on both
+# surfaces, and REGISTER LINE 3 — THE REGISTER-WIRED INSTRUMENT — NOW MOVES ON ALL THREE, WHERE AT
+# ba4523e IT MOVED ON NONE. The memorial is no longer the only catcher.**
+#
+# **CD-PL-F196, AGAINST THIS SEAT AND CONFIRMED: the dispatch called both findings "one-line class
+# errors". FALSE FOR F1 — a one-line resolver deny would have turned the CLEAN TREE RED, because the
+# public contract already carries four $ref nodes with a description sibling. NINTH DISPATCH, NINTH
+# FALSE STATEMENT CAUGHT BY THE SEAT RECEIVING IT.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T132602Z-0169
+timestamp_utc: '2026-08-24T13:26:02Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T13:26:02Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T125012Z-0168
+base_sha: f73a7b6701de1e232a690d4c1dae277bc168e9c9
+current_sha: f73a7b6701de1e232a690d4c1dae277bc168e9c9
+status: READY_FOR_ASSURANCE
+schema_version: 2
+
+action_summary: >
+  CD-ENG-WO3-08 returned READY_FOR_ASSURANCE at 4d797e6 (content tip 3c44843). It closed both
+  escapes, REFUSED the remedy this dispatch ordered and argued the order was technically wrong,
+  built and measured the overshoot examples itself rather than relaying them, and raised a finding
+  against its own work naming the new soft spot. This seat reproduced the closure with its own
+  plant, confirmed the seat's judgement to continue past a false statement in the dispatch, and
+  dispatched CD-ASR-WO3-08. 16C REMAINS HELD.
+
+what_the_seat_delivered:
+  seat: CD-ENG-WO3-08 (FRESH — never CD-ENG-WO3-07 which built it, never CD-ASR-WO3-07 which found F1 and F2)
+  tip: 4d797e694ffaaa0ea66f503a4d0a9c558e5ba08b (content tip 3c44843143df85ec2ded7197bd22c61cbf470e38)
+  fx9: >
+    DENY-BY-DEFAULT AT THE RESOLVER, NOT THE ORDERED MERGE. `_resolve` reports dropped ASSERTING
+    siblings at EVERY HOP, so the deeper arm C19 is caught by the same sentence as C18; `_deref` is
+    a wrapper over it so the two cannot drift; and the conditional-keyword guard is BYTE-UNCHANGED.
+  fx10: 'A root property DECLARING a `state` key reaches the undecidable limb whatever the shape of that key subschema. C20 FAIL 2, both CD-CALM-SLOTS-007.'
+  fx11: >
+    Limits 10 and 12 superseded in all three CD-RULE-004 places, each quoted verbatim, plus a new
+    limit 13; numbering 1-12 -> 1-13 in all three. AND THE SEAT BUILT AND MEASURED D2 AND D3 AT ITS
+    OWN TIP RATHER THAN RELAYING THEM FROM THE AUDIT — FAIL 2 each, naming ['jurisdiction'] and
+    ['run_provenance']. THAT IS THE CD-PL-F193 DISCIPLINE THE PROJECT LEAD KEEPS FAILING, PRACTISED
+    BY A SEAT WITHOUT BEING ASKED.
+  arms: 'C18 FAIL 32 · C19 FAIL 32 (same census) · C20 FAIL 2 · C21 PASS 158 from its own extraction. C1-C17 re-run, EVERY census identical to A307 F6.'
+  scope: 'Seven files, ZERO protected paths, ONE identity. C1-C17 patch files byte-untouched; MANIFEST append-only (223 insertions, 0 deletions); evidence/ does not exist.'
+
+what_this_seat_reproduced_itself:
+  method: 'A fresh git archive extraction of the target, re-planted with THIS SEAT''S OWN $ref-sibling mutation script from BL-0168 — not the Engineer''s C18 patch.'
+  result: >
+    was  PASS — 144 assertions, 0 violations, gate ADMITTED calm on an UNKNOWN dial on BOTH surfaces
+    now  FAIL — 32 violations: 40x CD-CALM-BRANCHES-006 + 12x CD-CALM-PAIRED-004
+  controls: 'C10/C21 PASS — 158 assertions, 0 violations. C14, the 16C liveness arm, FAIL — 2. Clean worktree PASS — 144, exit 0.'
+  scope_and_identity: 'Zero paths on eleven protected prefixes including both envelope schemas, src/, tests/ and evidence/. ONE identity, CD-ENG-WO3-08.'
+
+the_override_and_why_it_is_the_headline:
+  what_the_dispatch_ordered: 'Make `_deref` spec-correct: a $ref with siblings is the target MERGED with those siblings, at every hop. Deny-by-default was offered only as a fallback "if full merge semantics are more than this row should absorb".'
+  what_the_seat_did: 'Took deny-by-default AND SAID THE ORDERED REMEDY IS WRONG, not merely expensive.'
+  its_argument: >
+    $ref + siblings is a CONJUNCTION in 2020-12, not a merge. `additionalProperties` and the
+    `unevaluated*` keywords are evaluated against their OWN schema object's annotations, so a
+    merged object can admit documents NEITHER schema admits. A merge could therefore only ever
+    WEAKEN the instrument, SILENTLY — which is exactly the shape of the defect it was closing.
+    Deny can only over-report.
+  this_seats_position: >
+    THE ARGUMENT LOOKS RIGHT TO THIS SEAT AND THIS SEAT IS NOT THE ONE TO CERTIFY IT. It is made
+    §3.2 of the Assurance dispatch in those terms: EITHER THE ARGUMENT IS CORRECT AND THIS DISPATCH
+    WAS WRONG ON THE MECHANISM — which belongs on the record — OR IT IS A VERY WELL-DRESSED SHORTCUT
+    AND THE VERDICT IS RED. Nobody has graded it.
+
+findings_against_this_seats_own_dispatch:
+  - id: CD-PL-F196
+    severity: LOW, CONFIRMED
+    raised_by: CD-ENG-WO3-08 as its F01
+    the_dispatch_said: '§0: "Two escapes remain and both are one-line class errors ... your whole job is to write those two lines."'
+    the_truth: >
+      FALSE FOR F1. A one-line resolver deny would have turned the CLEAN TREE RED: the public
+      contract already carries FOUR $ref nodes with a `description` sibling. FX10 genuinely was one
+      line; FX9 was not, and §2 of the same dispatch half-conceded it by offering two remedies.
+    disposition: >
+      The seat continued on the CD-PL-F192 precedent — the falsehood is about the SIZE OF THE WORK
+      and not the prescription, and the ordered action discharges identically. CONFIRMED. NINTH
+      CONSECUTIVE DISPATCH WITH A FALSE STATEMENT CAUGHT BY ITS RECIPIENT.
+
+the_seats_finding_against_itself_which_is_the_next_attack:
+  id: 'CD-ENG-WO3-08 F03'
+  what: >
+    `REF_INERT_SIBLINGS` is a TYPED-IN LIST OF NINE KEYWORDS and only `description` is exercised
+    by any tree the seat built. A KEYWORD WRONGLY INCLUDED IN THAT LIST IS A FALSE NEGATIVE. It asks
+    the auditor to attack `default`, `readOnly`/`writeOnly` and `examples` first, and then
+    `_synthesise`, which still resolves without denying — saying its justification there is "an
+    argument, not a measurement".
+  why_it_is_made_the_primary_attack: >
+    EVERY PREVIOUS AUDIT ON THIS ROW FOUND THE GUARD ONE POSITION OVER FROM WHERE IT WAS LOOKING, AND
+    A TYPED-IN INERT LIST IS A BLACKLIST'S MIRROR IMAGE. The seat has named where the fifth escape
+    would live, before an auditor found it. That is the same discipline CD-ASR-WO3-07 praised in
+    DECLARED LIMIT 12.
+
+the_dispatch_issued:
+  record: governance/engineering/CD-DISPATCH-INC16B-FIX3-ASSURANCE.md
+  seat: CD-ASR-WO3-08 (FRESH — never CD-ENG-WO3-08, never CD-ASR-WO3-07)
+  primary_attack: 'REF_INERT_SIBLINGS keyword by keyword, then _synthesise — because the builder said so and named the keywords.'
+  second_job: 'GRADE THE OVERRIDE. Is the seat''s rejection of the merge remedy correct? If yes, say so plainly and put it on the record against this dispatch. If no, it is a RED.'
+  the_question_it_must_answer_in_its_own_words: 'WOULD THIS GUARD SEE 16C GO WRONG? The previous answer was "qualified yes, ONE KEYSTROKE WIDE". Say whether that is still true and how wide the keystroke is now.'
+
+next_safe_action: >
+  Launch CD-ASR-WO3-08 against 4d797e6 per CD-DISPATCH-INC16B-FIX3-ASSURANCE.md. IF THE SESSION ENDS
+  BEFORE ITS VERDICT IS BANKED, THE NEXT ACTOR IS A FRESH ASSURANCE SEAT AGAINST 4d797e6 AND 16C
+  STAYS HELD. On a clean verdict, 16C is released subject to CD-ASR-WO3-07's TWO CONDITIONS, which
+  are recorded at BL-20260824T125012Z-0168 and are binding on its dispatch.
+
+expected_next_actor: 'CD-ASR-WO3-08 — dispatched by this seat, not yet run.'
+
+risks:
+  - '16C IS STILL HELD, and it is releasable-with-conditions on the previous auditor''s judgement, not on a verdict over this tip.'
+  - 'THE NEW SOFT SPOT IS NAMED AND UNTESTED: REF_INERT_SIBLINGS is nine typed-in keywords of which one is exercised. A wrongly-included keyword is a FALSE NEGATIVE, and _synthesise still resolves without denying on an argument the builder itself declines to call a measurement.'
+  - 'THE ORDERED REMEDY MAY HAVE BEEN WRONG AND NOBODY HAS GRADED THE REFUSAL. If the seat''s conjunction argument fails, the deny-by-default resolver is a shortcut and the verdict is RED.'
+  - 'FOUR AUDITS, FOUR CLASSES OF ESCAPE, EACH MORE EXOTIC THAN THE LAST, ALL CLOSED AND ALL CLOSURES STILL HOLDING. That is convergence and it is not a bound. The instrument guards against REGRESSION; it is not a proof against a hostile schema editor and no record may imply otherwise.'
+  - 'CD-PL-F180 is OPEN, re-scoped to the contract BYTES the gate loads at publish time. 16D.'
+  - 'CD-AC-001 is still only HALF guarded by live instruments; the missing half is what 16C opens.'
+  - 'The row still computes UNDECIDABLE, like 16 of the other 17. Wired is not computed.'
+  - 'Three of the PO''s ruled six items remain undelivered: 16C (held), 16D, 16E. Nothing is registered, no source is wired, every dial reads UNKNOWN, and the 30 indicators in the ratified mapping are still data that nothing reads.'

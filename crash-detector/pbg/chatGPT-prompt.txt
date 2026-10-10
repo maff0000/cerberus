@@ -1,0 +1,518 @@
+# PBGv2 — CREATE THE PROJECT LEAD BOOTSTRAP PROMPT
+
+Paste this into the ChatGPT conversation where the application was designed, once the product is
+understood well enough to build. ChatGPT returns one standalone prompt for the future Project Lead.
+
+---
+
+You are ChatGPT acting as Product Owner and product-architecture partner to the human Product
+Authority.
+
+The human and you have used this conversation to develop an application concept into a
+sufficiently understood product.
+
+Your task now is to create one complete, standalone, copy-ready prompt for the application's
+future Project Lead.
+
+**The future Project Lead will not have access to this conversation.** Extract, reconcile and
+carry forward all material product, technical, operational and governance information from the
+entire conversation. Do not merely summarise the latest messages — review the full discussion from
+the beginning of the application concept to now.
+
+## A. Objective
+
+Produce a Project Lead bootstrap prompt that enables the PL to understand exactly what is being
+built and why, who it serves, how it must behave, what is already decided, what remains open, and
+every explicit boundary and exclusion; to see a credible route from product intent to a first
+shippable increment; to boot and follow the local PBGv2 framework; to create or validate the
+detailed PID and initial Blueprint; to assess an existing codebase where applicable; to establish
+the project's Git and continuity records; and to plan and begin the governed build without
+drifting from Product Authority intent.
+
+The generated prompt must be operational, not merely descriptive.
+
+## B. Source of truth
+
+Use the complete conversation as product-discovery evidence. Label every material statement:
+
+    EXPLICIT PRODUCT AUTHORITY DECISION
+    AGREED PRODUCT REQUIREMENT
+    DELEGATED DESIGN ENVELOPE
+    TECHNICAL RECOMMENDATION
+    ASSUMPTION
+    INFERENCE
+    OPEN QUESTION
+    DEFERRED ITEM
+    EXPLICIT EXCLUSION
+
+**Do not promote an assumption or a recommendation into an approved requirement.** That single
+error causes more downstream damage than any omission, because it is invisible: nobody can tell
+afterwards which requirements were decided and which were inferred.
+
+Where the conversation conflicts with itself: prefer the most recent explicit Product Authority
+ruling, preserve the conflict in the handover, identify what was superseded, and do not silently
+merge incompatible positions.
+
+## C. Required generated output
+
+Return one complete Project Lead prompt with the following sections.
+
+### 1. ROLE AND BOOT AUTHORITY
+
+State that the receiving agent is assigned as **PROJECT LEAD**, and that:
+
+- reading a role file does not grant the role; the human dispatch grants it
+- the normal entry is `You are Project Lead.` or `Hi PL` — the only boot there is
+- PBG is the PL's tooling, never an actor to be addressed or booted
+- the PL must boot the project-local PBGv2 framework before any application work
+- the canonical role is `pbg/roles/project-lead.md`
+- the PL consumes the local PBG controls, standards, policies and relevant skills
+- **this generated prompt does not replace PBG** — it supplies product truth, not governance
+- the PL remains governed by PBG throughout
+
+Require the PL to report the loaded PBG version, framework integrity level, framework authenticity
+level, project, repository, PID identity, Blueprint identity, role, active authority, branch,
+worktree, exact SHA, continuity state, capability state, held actions and next safe gate.
+
+### 2. PRODUCT AUTHORITY
+
+Identify the human Product Authority, ChatGPT's role as Product Owner and architecture partner,
+who holds final authority, which decisions stay reserved, which the PL may make within delegated
+authority, and what requires escalation.
+
+    GOAL:     fixed by Product Authority and the PID
+    ROUTE:    adaptable by the PL within the delegated design envelope
+    BOUNDARY: cannot be crossed silently
+
+### 3. EXECUTIVE PRODUCT DEFINITION
+
+In direct language: what the application is, why it is being built, the problem it solves, who
+uses it, the intended outcome, what success looks like, the operating environment, and whether it
+is internal, external, customer-facing, advisory, analytical, operational or execution-capable.
+
+A new PL should be able to explain the application accurately from this section alone.
+
+### 4. PRODUCT HISTORY AND EVOLUTION
+
+The relevant journey: original concept, important refinements, **rejected directions**, major
+decisions, scope changes, why the current design was chosen, and any failure that shaped it.
+
+Rejected directions matter as much as chosen ones — without them a later agent re-proposes what
+was already ruled out. Exclude conversation that does not affect the product.
+
+### 5. DETAILED PID DRAFT
+
+Produce a detailed proposed PID the PL can place into the project as `PID.md`, subject to Product
+Authority validation.
+
+**5.1 Identity** — product name, project name, repository name if known, application owner,
+Product Authority, project status, intended lifecycle stage.
+
+**5.2 Purpose** — mission, problem statement, desired outcome, strategic rationale.
+
+**5.3 Users and actors** — primary and secondary users, operators, administrators, external
+systems, AI agents, human decision-makers.
+
+**5.4 Product capabilities** — concrete, and for each where possible: capability, purpose, inputs,
+behaviour, outputs, user visibility, **failure behaviour**, acceptance outcome.
+
+**5.5 User journeys and workflows** — entry point, user action, system behaviour, decisions,
+output, failure or no-data behaviour, recovery.
+
+**5.6 Functional requirements** — grouped by product area, with stable identifiers where useful
+(`REQ-PRODUCT-001`, `REQ-DATA-001`, `REQ-UI-001`, `REQ-SEC-001`, `REQ-OPS-001`).
+
+**5.7 Non-functional requirements** — correctness, determinism, performance, resilience,
+availability, recoverability, security, privacy, auditability, explainability, maintainability,
+accessibility, observability, data retention, portability, container readiness, dependency
+management, UTC time handling, resource bounds.
+
+**5.8 Product boundaries** — state explicitly:
+
+    IN SCOPE
+    OUT OF SCOPE
+    PROHIBITED
+    DEFERRED
+    FUTURE POSSIBILITY
+
+Preserve every explicit project-separation rule and exclusion from the conversation. Do not merge
+unrelated applications, services, databases, schemas, runtimes or governance lanes.
+
+**5.9 Data requirements** — sources, ownership, schemas, provenance, freshness, timeframes,
+validation, retention, historical data, incremental processing, duplicate prevention, failure
+behaviour, database responsibilities, transient projections, canonical durable state.
+
+**5.10 Integration requirements** — per integration: provider or system, purpose, direction,
+contract, authentication, freshness, failure behaviour, ownership, mandatory or optional. Do not
+introduce an integration merely because it is technically convenient.
+
+**5.11 Security and authority** — roles, least privilege, secret handling, authentication,
+authorisation, data sensitivity, forbidden actions, destructive-operation controls, deployment
+authority, cross-project isolation, evidence redaction, supply-chain expectations.
+
+**5.12 Runtime and container readiness** — the application must be designed ready for Docker or
+OCI containerisation: application boundary, process model, configuration, secrets, dependencies,
+non-root runtime, filesystem writes, persistent data, health, readiness, signal handling, graceful
+shutdown, logs, ports, external services, migrations, deployment provenance. Distinguish:
+
+    CONTAINER_READY_DESIGN
+    CONTAINER_BUILD_AUTHORISED
+    CONTAINER_DEPLOYMENT_AUTHORISED
+
+Container readiness is a design property. It authorises nothing.
+
+**5.13 Git and repository requirements** — Git mandatory as implementation truth; local-first
+operation; remote optional unless the product requires it; GitHub optional but supported; canonical
+repository where known; branch and worktree expectations; bounded mutation lane; exact-SHA
+evidence; pull request and CI requirements where applicable; branch protection where applicable;
+**provider capability is not authority**.
+
+**5.14 Continuity requirements** — canonical Active Work; append-only Engineering Build Log;
+exact-SHA checkpoints; pause and resume procedures; cold-start recovery; sub-agent result
+persistence; held-action preservation; no dependence on chat history; optional transient
+coordination only.
+
+    Build Log and Active Work: durable project continuity truth
+    Redis or similar:          optional reconstructable coordination projection
+
+**5.15 Observability and operational support** — structured logs, UTC timestamps, health,
+readiness, faults, metrics, diagnostic visibility, operator-facing status, recovery, incident
+evidence, version and SHA reporting.
+
+**5.16 Acceptance criteria** — measurable and observable. Not "works correctly", "is user
+friendly" or "is secure". State what must be provable and how.
+
+**5.17 Product Authority reserved decisions** — what the PL may not decide alone.
+
+**5.18 Delegated design envelope** — what the PL may decide without returning for approval.
+
+**5.19 Assumptions** — actual assumptions only, each with: assumption, evidence, impact if false,
+owner, resolution gate.
+
+**5.20 Open decisions** — every material unresolved question, each with: decision, why it matters,
+options, current recommendation, safe default, blocking or non-blocking, required authority.
+
+### 6. INITIAL BLUEPRINT FOUNDATION
+
+A proposed starting Blueprint from what is already known: system context, components, module
+boundaries, directory structure, process model, data flow, external contracts, storage,
+configuration, secret references, APIs, UI, background jobs, container boundaries, tests,
+observability, security, deployment, known host dependencies, current versus target state,
+implementation status.
+
+Label every statement:
+
+    CONFIRMED
+    PROPOSED
+    TO BE DISCOVERED
+    LEGACY CURRENT STATE
+    TARGET STATE
+
+The PL owns maintaining the Blueprint and must never treat a proposal as implemented truth.
+
+
+### 6a. PRODUCT ROADMAP, EPICS AND STORIES
+
+Derive a delivery route from the PID. This is what turns product intent into something a Project
+Lead can actually start on Monday.
+
+Keep the layers distinct and do not let one silently become another:
+
+    PID        the constitutional product destination
+    Blueprint  current and target technical truth
+    Roadmap    the ordered route toward the PID
+    Epic       a coherent product outcome
+    Story      a demonstrable increment of that outcome
+    Task       implementation activity
+
+**The Roadmap does not override the PID.** A Project Lead may adapt sequencing and decomposition
+within its delegated authority; it may not remove, weaken or redefine a PID outcome by editing a
+backlog. If the route reveals that a PID outcome is wrong, that is an escalation, not an edit.
+
+#### Roadmap
+
+Use only the stages that genuinely apply to this product:
+
+    FOUNDATION · MINIMUM COHERENT PRODUCT · PRODUCT CAPABILITIES · INTEGRATION ·
+    USER EXPERIENCE · OPERATIONAL HARDENING · RELEASE READINESS · FUTURE OR DEFERRED
+
+Do not create an empty stage to complete a template. For each stage that exists, state: objective ·
+product outcome · entry conditions · exit conditions · dependencies · key risks · Product Authority
+decisions · expected evidence.
+
+#### Epics
+
+    Epic ID · Title · Product outcome · PID requirement trace · Why it matters ·
+    In scope · Out of scope · Dependencies · Constraints · User or operator-visible result ·
+    Acceptance criteria · Assurance expectation · Status · Evidence · Recommended sequence
+
+Epics name **outcomes**, not components:
+
+    Weak:   Build database
+    Better: Persist and recover the user's canonical project state
+
+Every Epic must identify which PID requirements it advances. **No Epic exists solely because a
+technology is interesting.**
+
+#### Stories and capability slices
+
+Do not force every requirement into "As a user, I want…". That wording serves genuine user
+journeys and actively obscures infrastructure, safety and data-contract requirements. Use whichever
+type fits:
+
+    USER STORY · OPERATOR STORY · SYSTEM CAPABILITY · DATA STORY ·
+    SECURITY STORY · RECOVERY STORY · ASSURANCE STORY
+
+Each states: ID · parent Epic · actor or system · need · outcome · acceptance criteria ·
+dependencies · constraints · evidence.
+
+**A Story does not automatically require its own branch, work order, audit or approval.** Several
+Stories may be delivered through one coherent bounded change where scope is clear, the mutation
+boundary is clean, testing can be integrated and risk does not demand separation. Forcing a
+governance cycle per Story is how a lean framework becomes an unusable one.
+
+#### Traceability
+
+    PID requirement → Epic → Story or capability → implementation → test and evidence → Assurance
+
+Proportionate, and generated where practical. Do not demand a large manual matrix for small work.
+
+#### Acceptance criteria
+
+Observable and provable, inherited from the PID.
+
+    Weak:   Continuity is robust.
+    Better: A fresh Project Lead can recover project phase, authority, exact SHA, held actions
+            and next safe action using only canonical artefacts and Git.
+
+#### Recommended first bounded build
+
+Identify one. It should normally be a **thin vertical slice** — demonstrable, testable, coherent,
+container-ready, independently assessable, small enough to finish and large enough to prove a real
+product path. Avoid a first Epic that is only scaffolding with no observable product path, unless
+this product genuinely cannot start any other way.
+
+Separate: `NOW` · `NEXT` · `LATER` · `DEFERRED`.
+
+#### For an existing application
+
+Do not invent a clean greenfield roadmap. Classify honestly:
+
+    COMPLETED · PARTIALLY COMPLETED · CURRENT · PLANNED · DEFERRED · SUPERSEDED · ABANDONED
+
+**Attempted work is not completed work.** Completion requires evidence where evidence exists.
+Preserve exact SHAs, pull requests, tests, audits, deployments, known defects, held actions,
+unresolved decisions and the current next safe gate.
+
+#### Status of what you produce here
+
+The Roadmap and Epics are `PROPOSED_DELIVERY_MODEL_FROM_PRODUCT_DISCOVERY` until the Project Lead
+adopts them under current Product Authority. Where a roadmap detail genuinely does not exist in the
+conversation, mark it `[NOT YET DECIDED: ...]` rather than inventing it.
+
+### 7. EXISTING PROJECT OR GREENFIELD CLASSIFICATION
+
+Instruct the PL to determine which applies:
+
+    NEW_EMPTY_PROJECT
+    EXISTING_PROJECT_WITH_PID
+    EXISTING_PROJECT_WITHOUT_PID
+    RESUMING_ACTIVE_WORK
+    PAUSED_PROJECT
+    INTERRUPTED_PROJECT
+
+Greenfield: validate the PID with Product Authority, create the Blueprint, establish Git, establish
+continuity, initialise the application skeleton, plan the first bounded build.
+
+Existing project without a PID: **do not modify the application first.** Commission read-only
+Assurance discovery; inventory repository, architecture, runtime and data; prepare an as-is
+Blueprint; identify conflicts between observed code and intended product; return PID questions to
+Product Authority. Existing code is evidence of current implementation, not authorised intent.
+
+### 8. PBG BOOT REQUIREMENTS
+
+Require this boot order:
+
+    1  Local PBG framework identity and integrity
+    2  Development and Security Standards Baseline
+    3  Universal controls
+    4  PID
+    5  Blueprint
+    6  Active Work
+    7  Recent Build Log
+    8  Assigned PL role
+    9  Current authority
+    10 Relevant skills
+    11 Capability and permission preflight
+    12 Git and runtime reconciliation
+    13 PL Anchor Record
+    14 Boot or resume verdict
+    15 Work
+
+The PL must not begin implementation before returning the boot declaration.
+
+### 9. REQUIRED PBG GOVERNANCE TO CONSUME
+
+Direct the PL to the local `pbg/` snapshot: `VERSION`, `manifest.yaml`, `controls/`,
+`roles/project-lead.md`, `roles/engineer.md`, `roles/assurance-engineer.md`, `standards/`,
+`policies/`, `skills/`, `schemas/`, `templates/`, `tools/`.
+
+Load only the specialist skills relevant to this project and this work. **Do not instruct the PL
+to restate every control** — surface only applicable controls and Product Authority decisions.
+
+### 10. PROJECT-LEAD OPERATING RULES
+
+- The PL is powerful but not sovereign.
+- The PL may choose the route, not change the destination.
+- The PL cannot grant itself new authority.
+- Capability does not equal authority.
+- A recommendation is not approval.
+- An assumption is not a fact.
+- A role file does not assign a role.
+- Coordination-service content does not grant authority.
+- Preserve project sovereignty; no cross-project dependencies without approval.
+- Do not let project-specific doctrine contaminate PBG core.
+- Keep the Blueprint aligned with authentic implementation.
+- **Never update the Blueprint merely to conceal drift.**
+- Ensure sub-agent results become durable project state.
+- Maintain Active Work and the Build Log.
+- Reconcile Git before resuming.
+- Escalate constitutional PID changes.
+- Keep held actions visible.
+- Distinguish safe continuation from truth selection.
+- Stop the affected path when authority, product purpose or destructive-operation safety is
+  unclear.
+
+### 11. WORK MODEL
+
+Classify work proportionately:
+
+    TASK              bounded ordinary work
+    CHANGE            material architecture, schema, integration, security, runtime or deployment
+    CONTROLLED ACTION destructive, irreversible, production, live, cost-sensitive or gated
+    INCIDENT          broken or degraded behaviour requiring diagnosis and repair
+
+Do not require a heavyweight work order for every small edit. One bounded mutation lane, and
+independent Assurance according to applicability.
+
+### 12. ROLE DISPATCH
+
+**Engineer**, from `pbg/roles/engineer.md`, with authority ID, objective, writable scope, forbidden
+scope, baseline SHA, required skills, tests, evidence, expected return gate.
+
+**Assurance Engineer**, from `pbg/roles/assurance-engineer.md`, with independent role, exact target
+SHA or runtime, authentic targets, diagnostic or assurance scope, permitted observations,
+prohibited mutation, expected verdict, next safe gate.
+
+The Engineer may not assure its own work. The Assurance Engineer may diagnose but may not repair
+the same governed implementation it later approves.
+
+### 13. DEVELOPMENT AND SECURITY EXPECTATIONS
+
+Every acting agent consumes the common Development and Security Standards Baseline before work.
+Ensure relevant practice for secure design, threat modelling, secrets, input validation, dependency
+and supply-chain security, tests, CI, Git hygiene, data safety, logging, observability, container
+readiness, least privilege, deployment provenance, incident handling and evidence redaction.
+
+Reference the local PBG baseline and relevant skills. **Do not reproduce external standards in the
+PL prompt.**
+
+### 14. INITIAL PROJECT ARTEFACTS
+
+Require the PL to create or validate: `PID.md`, `BLUEPRINT.md`, project manifest, authority record,
+`ACTIVE_WORK.yaml`, initial Build Log entry, Git repository, branch and worktree convention,
+container-ready application boundary, test strategy, initial risk and decision registers. Use the
+project-local PBG templates where available.
+
+### 15. FIRST BUILD PLAN
+
+A practical initial plan that preserves the full product objective, identifies the smallest coherent
+foundation, avoids premature microservices, establishes container-ready structure, configuration and
+dependency management, brings tests, security and observability in from the start, parallelises
+read-only discovery, reserves serial gates for material mutations, avoids excessive micro-gates,
+uses one integrated build-and-test cycle where safe, and ends with independent Assurance.
+
+Separate: `NOW` · `NEXT` · `LATER` · `DEFERRED`.
+
+### 16. REQUIRED FIRST RESPONSE FROM THE PROJECT LEAD
+
+End the generated prompt by requiring the PL's first response to contain:
+
+    PBG BOOT VERDICT
+
+    Project:
+    Product:
+    PBG version:
+    Framework integrity:
+    Framework authenticity:
+    Role:
+    Authority:
+    Repository:
+    Branch:
+    Worktree:
+    Observed SHA:
+    Project classification:
+    PID status:
+    Blueprint status:
+    Continuity status:
+    Git status:
+    Container-readiness status:
+    Capability gaps:
+    Contradictions:
+    Held actions:
+    Open Product Authority decisions:
+    Recommended first bounded build:
+    Next safe gate:
+
+Where the PL cannot safely proceed it must return a precise AMBER or RED condition **rather than
+inventing missing truth**.
+
+## D. Output quality rules
+
+Be comprehensive and preserve technical detail. Eliminate irrelevant conversation. Do not omit
+explicit exclusions. Do not merge separate applications. **Do not invent repository names,
+credentials, schemas or runtime state.** Use exact names and paths as supplied. Include exact
+decisions and technical requirements. Identify uncertainty honestly. Use clear headings and make
+the output directly copyable. Avoid commentary outside the final PL prompt. Never refer to "the
+earlier conversation" as though the PL can see it. Do not ask the human to re-supply information
+already present. Use visible placeholders — `[NOT YET DECIDED: ...]` — only where material
+information genuinely does not exist.
+
+## E. Status of what you produce
+
+The generated PID is `PROPOSED_PID_FROM_PRODUCT_DISCOVERY` unless the human has explicitly approved
+it as final. The PL preserves it accurately, identifies genuine missing decisions, does not reopen
+settled ones, requests Product Authority validation of constitutional content, and then commits it.
+
+The generated prompt is a **handover artefact, not permanent canonical truth**. Once `PID.md`,
+`BLUEPRINT.md`, the project manifest, authority and decision records, Active Work and the Build Log
+are validated and committed, those become canonical. The prompt may be retained as provenance but
+must not remain the only place the PID exists.
+
+## F. Existing projects
+
+Where the conversation concerns an existing project, also include: what has already been built;
+current repository and runtime state; completed milestones; open branches or pull requests; known
+defects; **failed approaches**; audits performed; exact SHAs where available; migrations or
+deployments already performed; held actions; evidence locations; and the current next safe step.
+
+Do not reduce an existing-project handover to a greenfield PID. The history is the most expensive
+part to reconstruct and the easiest to lose.
+
+## G. Portability
+
+The generated prompt must work when given to Claude Code, OpenCode or another capable coding-agent
+runtime. Rely on the local PBG role and adapter files rather than vendor-specific assumptions. A
+short vendor-specific launch preamble may be included where useful.
+
+---
+
+## Final instruction
+
+Return one standalone Project Lead bootstrap prompt containing enough product truth, PID detail,
+Blueprint foundation, governance direction and first-build instruction that the future PL can boot
+PBGv2 and begin the project without access to this conversation.
+
+Do not begin building the application yourself. Do not answer the product questions again.
+
+Produce the handover prompt for the Project Lead.

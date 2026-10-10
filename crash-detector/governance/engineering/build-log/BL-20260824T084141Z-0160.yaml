@@ -1,0 +1,206 @@
+# ================================================================================================== #
+# BL-20260824T084141Z-0160 — PROJECT LEAD BOUNDARY. **THE SEPARATE ASSURANCE SEAT RETURNED `RED` OVER
+# INCREMENT 16A AT `53f639a`. THE `RED` IS ON `D2` AND ON `D2` ALONE, AND THIS SEAT REPRODUCED IT.**
+#
+# *** **AN `UNKNOWN` DIAL CARRYING `detail_level: "calm"` IS ADMITTED BY `refuse_unless_publishable`
+# ON BOTH SURFACES. PID §3.2 IS CONSTITUTIONAL — "Missing data must never render as calm" — AND THE
+# CLOSED CONTRACT ADMITS PRECISELY THE ONE VALUE IT FORBIDS.** ***
+#
+# **THE PROBE IS LIVE, WHICH IS WHAT MAKES THE ADMISSION MEAN SOMETHING:** `banana` REFUSED
+# `[SCHEMA_VIOLATION]`, the field REMOVED REFUSED, a top-level attachment REFUSED `[UNKNOWN_KEY]`.
+# **THE GATE WORKS. IT LETS THIS THROUGH.**
+#
+# *** **AND THE PART THAT MAKES IT `RED` RATHER THAN A BUG: THE SCHEMA'S OWN DESCRIPTION CLAIMS THE
+# GUARANTEE IT DOES NOT HOLD, AND THE REPLACEMENT GUARD CANNOT SEE THE FIX. THIS SEAT APPLIED THE
+# REMEDY ON A COPY: `calm` BECOMES REFUSED ON BOTH SURFACES — AND ALL 43 `detail_level` TESTS STILL
+# PASS. THE GUARD WOULD NEITHER REQUIRE NOR FORBID ITS OWN REMEDY.** ***
+#
+# **THE ENGINEER'S `F03` DISCLOSURE IS COMPLETE, MEASURED MECHANICALLY AND NOT TAKEN ON TRUST:
+# EXACTLY ONE PATH WAS TOUCHED-AND-REVERTED ACROSS THE WHOLE RANGE AND IT IS THE ONE IT DISCLOSED.**
+# ================================================================================================== #
+
+entry_id: BL-20260824T084141Z-0160
+timestamp_utc: '2026-08-24T08:41:41Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-24T08:41:41Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_02
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_02
+authority_id: CD-AUTH-0001
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260824T081819Z-0159
+base_sha: 2592dc010e64db9c6bb0e44f1a6ac9626bc0d287
+current_sha: 2592dc010e64db9c6bb0e44f1a6ac9626bc0d287
+status: IN_PROGRESS
+schema_version: 2
+
+action_summary: >
+  CD-ASR-WO3-03, a fresh Assurance seat, returned RED over WO-3 increment 16A at 53f639a. The RED is
+  on D2 alone: an UNKNOWN dial carrying detail_level "calm" is admitted by refuse_unless_publishable
+  on both surfaces, which is the one value PID §3.2 forbids. This seat reproduced the admission, the
+  liveness of the probe, the zero-caller enforcement, and the guard's indifference to its own remedy.
+  D1, D3 and D4 PASS, D3 with two measured gaps this seat also reproduced. The Engineer's F03
+  disclosure is proved complete. Q32 is extended by the auditor and goes to the Product Authority
+  unresolved. A bounded fix increment, 16A-FIX, is dispatched to a fresh Engineer seat.
+
+the_verdict:
+  seat: 'CD-ASR-WO3-03 — **FRESH IDENTITY.** Never CD-ENG-WO3-01/-02/-03, never CD-ASR-WO3-01/-02 (`PBG-SOD-001`, non-waivable, honoured a FIFTH time on WO-3 alone).'
+  target: '53f639a91088ee42f5ba6c0d269f69782ba2a20a'
+  verdict: '**RED — on D2 and on D2 alone.**'
+  artefact: 'BL-20260824T083556Z-A303.yaml, 444 lines, committed by the auditor itself at b7f0439 on branch asr-wo3-03-verdict. **THE VERDICT IS DURABLE IN THE REPOSITORY AND IS NOT A SENTENCE IN A CONVERSATION (`PBG-CONT-007`) — and it was written by the seat that reached it, which is what `CD-PL-F163` was raised about.**'
+  boot_as_received: '**RED** — CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, inherited from the frozen base. Diagnosed, NOT repaired. Declared rather than netted off.'
+
+the_RED_reproduced_by_this_seat:
+  the_claim: 'CD-ASR-WO3-03-F01, confidence HIGH: an UNKNOWN dial carrying `detail_level: "calm"` is ADMITTED on both surfaces.'
+  this_seats_probe: |
+    refuse_unless_publishable(envelope with equity_crash = UNKNOWN dial, surface=...)
+      PUBLIC   detail_level="calm"       -> ***ADMITTED***
+      PUBLIC   detail_level="elevated"   -> ***ADMITTED***
+      PUBLIC   detail_level="banana"     -> REFUSED  [SCHEMA_VIOLATION] at /equity_crash
+      PUBLIC   detail_level REMOVED      -> REFUSED  [SCHEMA_VIOLATION] at /equity_crash
+      PRIVATE  detail_level="calm"       -> ***ADMITTED***
+      PRIVATE  detail_level="banana"     -> REFUSED  [SCHEMA_VIOLATION]
+      PRIVATE  detail_level REMOVED      -> REFUSED  [SCHEMA_VIOLATION]
+    contracts/public_envelope.schema.json  $defs.detail_level.enum -> ['calm','elevated','acute']
+  why_the_live_probe_is_the_point: >
+    **A GATE THAT ADMITS EVERYTHING PROVES NOTHING.** This one refuses a garbage value, refuses the
+    field's absence, and refuses a top-level attachment — **so it is working, and it lets `calm` onto
+    an `UNKNOWN` dial anyway.** The admission is a property of the contract, not a hole in the probe.
+  leg_2_zero_callers: |
+    grep -rn "detail_level_for" src/  (excluding its own def and __all__)
+      src/crash_detector/publication/detail_level.py:3   <- a DOCSTRING EXAMPLE
+      src/crash_detector/publication/detail_level.py:62  <- a DOCSTRING MENTION
+    ZERO REAL CALLERS. **THE MODULE THAT WOULD ENFORCE PID §3.2 IS NEVER INVOKED BY ANYTHING.**
+  leg_3_the_fake_hardcodes_it: >
+    `tests/publication_fakes.py:119` `unknown_dial()` returns `"detail_level": "elevated"` **as a
+    LITERAL**, not derived through `detail_level_for`. Its own comment asserts *"the level absent data
+    renders at, which PID §3.2 forbids from being `calm`"* — **the comment states the guarantee the
+    code beside it does not obtain.** Hand-construction is the only route that exists, and
+    hand-construction is exactly what the closed schema exists to police.
+  leg_4_the_guard_cannot_see_its_own_remedy: >
+    *** **THIS IS THE MEASUREMENT THAT DECIDES `RED` OVER `AMBER`, AND THIS SEAT RAN IT RATHER THAN
+    REASONING ABOUT IT.** *** On an extracted copy, the REMEDY was applied — `dial_reading_unknown`'s
+    `detail_level` narrowed to `enum: ['elevated','acute']` on BOTH contracts. **RESULT:
+    `pytest tests/test_detail_level.py` -> 43 PASSED. AND THE SAME PROBE NOW RETURNS `REFUSED` ON BOTH
+    SURFACES.** **SO THE FIX WORKS AND THE GUARD DOES NOT NOTICE IT EITHER WAY. A GUARD THAT WOULD
+    NEITHER REQUIRE NOR FORBID ITS OWN REMEDY IS NOT GUARDING THE THING IT IS NAMED FOR.**
+  the_auditors_sharpest_sentence_adopted: >
+    The test is called `test_the_UNKNOWN_branch_carries_a_level_and_that_is_the_constitutional_half`
+    and is headed *"PID §3.2"*, and it asserts only that `score` is absent and that `detail_level` is
+    required. **NAMED FOR PID §3.2; DOES NOT TEST PID §3.2.** The auditor calls it the third instance
+    after `CD-PL-F169` and `CD-ASR-WO3-02`'s F06/F07, and this seat agrees: **the pattern on this
+    project is not weak tests, it is TESTS WHOSE NAMES CLAIM MORE THAN THEIR ASSERTIONS DO.**
+  the_honest_mitigation_carried_not_buried: >
+    **NOT EXPLOITABLE TODAY.** No builder constructs an envelope; `publish_cycle` has zero callers;
+    and `DetailPolicy` genuinely does refuse a `calm` `absent_data_level` at construction (the
+    auditor reproduced it). **THE DEFECT IS LATENT UNTIL THE FIRST LINE OF THE 16B ENVELOPE BUILDER —
+    WHICH IS EXACTLY WHY IT MUST BE FIXED BEFORE THAT LINE IS WRITTEN AND NOT AFTER.**
+  what_this_says_about_this_seats_own_dispatch: >
+    **`CD-PL-F176` (MEDIUM), AGAINST THIS SEAT.** The assurance dispatch's §3.1 ranked `detail_level`
+    first and its reasoning was right — **but its INTERNAL ORDER was wrong.** The first three attacks
+    it named (top-level placement, removal, per-branch presence) **all PASS**, and only its last
+    sentence — *"build an envelope that publishes an UNKNOWN dial with `detail_level: calm` and see
+    whether anything refuses it"* — finds the defect. **A SEAT WORKING THE LIST TOP-DOWN AND STOPPING
+    WHEN THREE PROBES CAME BACK CLEAN WOULD HAVE RETURNED `PASS`.** The auditor said so against its
+    own instructions and it is right. **THE REMEDY IS ORDERING: PUT THE END-TO-END BEHAVIOURAL ATTACK
+    FIRST AND THE STRUCTURAL ONES AFTER IT.** The auditor also corrected this seat's claim that
+    §3.3 (`F03`) was *"the highest-value adversarial question in this increment"* — it was not; §3.1's
+    last sentence was. **ACCEPTED.**
+
+what_PASSED_and_was_reproduced:
+  D1: '**PASS.** The auditor verified the carriage at the BLOB level — `53f639a:PID.md` byte-identical to `main:PID.md` — which is a stronger check than this seat''s `cmp` on working files. `sha256 08baf51c…` equals the pin; register prints `pid.content_hash MATCHES`.'
+  D3: '**PASS, WITH TWO MEASURED GAPS.** Clean arm reproduced at 1072 assertions / 0 violations; all six rules refuse independently across nine plants; three admitting arms admit.'
+  D3_gap_A_reproduced_by_this_seat: |
+    **A DELL-SPECIFIC ABSOLUTE PATH HIDDEN INSIDE AN ENV DEFAULT PASSES.** Planted on a copy:
+      CD_CONTRACTS_DIR: "${CD_CONTRACTS_DIR:-/srv/crash-detector/dell-only/contracts}"
+      check_portability.py --root .  ->  PASS — 1072 assertions, 0 violations,  exit 0
+    Rule 5 stops at the `${` prefix and never inspects the default. **THE ONE CONTROL BUILT TO PROVE
+    CUT-AND-PASTE PORTABILITY ADMITS A PATH THAT EXISTS ON THIS MACHINE AND ON NO OTHER.**
+  D3_gap_B_reproduced_by_this_seat: |
+    **A REAL DELL HOSTNAME PASSES.** Planted on a copy:
+      CD_STORE_HOST: postgres.dell.matt.local        (was `cd-store`)
+      check_portability.py --root .  ->  PASS — 1072 assertions, 0 violations,  exit 0
+    The key is allowlisted as "a compose service name" and **nothing checks that the value is one.**
+    The auditor proved the probe live by noting an IPv4 in the SAME key IS caught.
+  D4: '**PASS — and the auditor calls it the strongest work in the increment.** 17 refusal arms, 4 admitting arms. **The auditor proved the `__class__` forgery WORKS — `isinstance` returns True for all three new enums and for `DialBinding` — AND THAT ALL SEVEN DOORS STILL REFUSED IT, because every one uses `type() is`.** That is the increment-10 lesson held on new code. Zero rows; the anti-fixture control catches both a `PLANT_SYNTH_` row and a `DRTSCILM` row.'
+  F03_disclosure_COMPLETE: |
+    **MEASURED MECHANICALLY BY THIS SEAT, NOT TAKEN ON THE SEAT'S WORD OR THE AUDITOR'S.**
+      git rev-parse 116c01f:tools  ->  f43053520e5e5b8ed0647c26231dfea1d2f81d30
+      git rev-parse 53f639a:tools  ->  f43053520e5e5b8ed0647c26231dfea1d2f81d30   (IDENTICAL)
+      paths touched anywhere in 116c01f..53f639a but ABSENT from the net diff:
+        ['tools/audit/check_deploy_portability.py']   <- EXACTLY ONE, AND IT IS THE DISCLOSED ONE
+    **THE ENGINEER DISCLOSED ALL OF THEM. `CD-PL-F173` STANDS AS A FINDING ABOUT THE INSTRUMENTS —
+    net-zero diffs still pass every scope check this project owns — AND NOT AS A DOUBT ABOUT THE SEAT.**
+  invariants: '`1882` at `116c01f` and `1990` at the tip reproduced by the auditor independently of this seat; the register report **BYTE-IDENTICAL** base-to-tip; `latest_admitted_run (null)`; `GATE: SHUT`; `be0b355` unmoved; zero network-capable imports; **`CD-AC-002` proved unreachable by the auditor''s OWN AST sweep**; no grade moved — all 18 `UNDECIDABLE` at both ends for the same reason.'
+
+Q32_extended:
+  what_the_auditor_added: >
+    *** **IT COULD NOT REFUTE THE READING AND IT MADE IT STRONGER, WHICH IS THE MOST USEFUL THING AN
+    AUDITOR CAN DO WITH SOMEBODY ELSE'S DIAGNOSIS.** *** **THIS PROJECT'S STORE SCHEMA ALREADY
+    SEPARATES THE TWO QUANTITIES**: `raw.observation.observed_utc`/`outcome` are LIVENESS;
+    `source_as_of_utc` and `raw.source_registry.cadence_seconds` are RELEVANCE. **BUT NO CODE READS
+    THE LIVENESS HALF**, and `cadence.py` is deliberately built so that it CANNOT see the age of a
+    number. **SO THE STALENESS WINDOW IS TODAY THE ONLY DEAD-FEED DETECTOR IN THE SYSTEM, AND
+    WIDENING THE CEILING WOULD SILENTLY DELETE IT.**
+  the_consequence_for_the_product_authority: >
+    **THE ANSWER IS A THIRD QUANTITY ON THE ROW, NOT A BIGGER NUMBER ON THE FIRST.** Had `Q32` been
+    answered by widening `STALENESS_WINDOW_CEILING_SECONDS` — the obvious remedy, and the one a
+    hurried seat would have proposed — **the project would have lost its only dead-feed detector in
+    the same act that made quarterly sources registrable, and nothing would have reported the loss.**
+  status: 'OPEN. Next actor PRODUCT_AUTHORITY. The auditor states this is an opinion and not a ruling, and it is right to. **UNBLOCKED BY THE FIX INCREMENT — 16A-FIX does not touch it.**'
+
+the_next_gate:
+  what_the_auditor_named: >
+    A bounded ENGINEER dispatch — a fresh seat, not `CD-ENG-WO3-03` and not the auditor
+    (`PBG-SOD-004`) — scoped to the two contracts, `tests/test_detail_level.py` and `publish.py`:
+    exclude `calm` from the `UNKNOWN` and `DEGRADED` branches, add the guard arm that FAILS when that
+    is reverted, re-point the PID §3.2 test at PID §3.2, and supersede `publish.py`'s declared limit
+    2. Then re-assurance by a separate fresh seat.
+  this_seats_decision_and_the_judgement_in_it: >
+    **DISPATCHED AS `16A-FIX`, AND THIS SEAT STATES THE JUDGEMENT RATHER THAN BURYING IT.** The
+    standing instruction is to stop at the increment boundary. **THIS SEAT READS CLOSING A `RED` ON
+    THE INCREMENT IT JUST DISPATCHED AS FINISHING THAT INCREMENT, NOT AS STARTING THE NEXT ONE** —
+    16A is not complete while it is `RED`. The remedy needs **no product content, no answer to `Q30`,
+    `Q31` or `Q32`, and no `BLUEPRINT` change**; it is specified by an INDEPENDENT seat rather than by
+    this one; and it is followed by a separate fresh Assurance seat, so nothing is self-certified.
+    **THE ALTERNATIVE — LEAVING A REPRODUCED CONSTITUTIONAL BREACH ON THE LANE WHILE THE PRODUCT
+    AUTHORITY CONSIDERS THREE UNRELATED QUESTIONS — WOULD BE STOPPING ON A DEFECT RATHER THAN AT A
+    BOUNDARY.** **IF MATT DISAGREES, THE FIX IS ONE COMMIT AND IS TRIVIALLY REVERSIBLE, AND THIS
+    RECORD IS WHERE HE WOULD LOOK.**
+  the_gaps_folded_in: '`D3`''s two gaps go into the same dispatch. They are the same class as the `RED` — **a check whose NAME claims more than its ASSERTIONS deliver** — and fixing them separately would mean two seats over the same three files.'
+  what_is_NOT_in_it: '`Q30`, `Q31`, `Q32`. No indicator row. No `MappingKind` member. No entrypoint and no `publish_cycle` caller — the health surface''s value axis is still open and still blocks any transport.'
+
+standing_and_unmoved:
+  - '**INCREMENT 16A IS BANKED AND `RED`. IT IS NOT ACCEPTED AND NOT MERGED.** The lane is safe to leave where it is; the auditor states plainly it is NOT safe to build the 16B envelope builder on.'
+  - 'CD-AC-002 AMBER and NOT CLOSED · CD-AC-005 RED · the WO-2 gate SHUT · wo-2r3 FROZEN at be0b355'
+  - 'NO SOURCE REGISTERED · no MappingKind member accepted · no grade moved · no finding closed'
+  - 'nothing under pbg/ modified · CD-PL-F171 still reported and unrepaired'
+  - 'CD-HOLD-003, CD-HOLD-004, CD-HOLD-005 all HELD'
+
+evidence_references:
+  - 'asr-wo3-03-verdict at b7f0439 — governance/engineering/build-log/BL-20260824T083556Z-A303.yaml, the verdict of record, 444 lines, written and committed by the seat that reached it'
+  - 'wo-3 at 53f639a — the audited increment'
+  - 'governance/engineering/CD-DISPATCH-INC16A-ASSURANCE.md — the dispatch it answers, and which CD-PL-F176 is against'
+
+next_safe_action: >
+  **LAUNCH `CD-ENG-WO3-04` FOR `16A-FIX` — ONE SEAT, SEQUENTIAL, NO PARALLEL SEAT (`CD-D-181`) —
+  THEN A SEPARATE FRESH RE-ASSURANCE SEAT, THEN STOP.** The fix is bounded to two contracts,
+  `tests/test_detail_level.py`, `publish.py` and `deploy/check_portability.py`: make `calm`
+  unrepresentable on the `UNKNOWN` and `DEGRADED` branches, add the guard arm that FAILS when it is
+  reverted, re-point the PID §3.2 test at PID §3.2, close `D3`'s two gaps, and supersede
+  `publish.py`'s limit 2. **THE ACCEPTANCE TEST IS THIS SEAT'S OWN PROBE: an `UNKNOWN` dial carrying
+  `calm` MUST BE REFUSED ON BOTH SURFACES, AND THE GUARD MUST FAIL IF THAT REFUSAL IS REMOVED.**
+  **THEN STOP: `Q30`, `Q31` AND `Q32` ARE ALL OPEN, ALL THREE ARE THE PRODUCT AUTHORITY'S, AND TWO OF
+  THEM BLOCK 16B SEPARATELY FROM EACH OTHER.**
+
+expected_next_actor: 'ENGINEER — CD-ENG-WO3-04, a fresh seat. Then a fresh ASSURANCE_ENGINEER. Then MATT.'
+
+risks:
+  - '**THE RED IS LATENT, NOT LIVE — AND LATENT DEFECTS ARE HOW THIS PROJECT GETS HURT.** Nothing publishes today, so nothing renders calm today. The first line of the 16B envelope builder is the moment it becomes real, and that line will be written by a seat focused on registering indicators.'
+  - 'CD-PL-F176: this seat''s assurance dispatch ranked the right target and ordered the probes so that a top-down seat would have stopped three probes short of the defect. **THE AUDITOR DID NOT STOP. THE NEXT ONE MIGHT.**'
+  - 'The pattern the auditor named — tests whose NAMES claim more than their ASSERTIONS deliver — now has three recorded instances (CD-PL-F169, CD-ASR-WO3-02 F06/F07, and this one). It is not a defect class this project has a control for.'

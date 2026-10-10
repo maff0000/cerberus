@@ -1,0 +1,14 @@
+=== CD-RT-012-LOCKFILE-DENYLIST [BASELINE] ===
+plant   : none   (n/a)
+command : python3 -B tools/register/check_lockfile_denylist.py --root .
+EXIT    : 0
+--- output (tail 25) ---
+CD-RT-012-LOCKFILE-DENYLIST
+    subject: /tmp/cd-asr3/arms/CD-RT-012-LOCKFILE-DENYLIST-BASELINE
+    scanned: 3 dependency manifests: pyproject.toml, requirements.txt, requirements.lock; 9 distinct distributions; registry deploy/dependency-registry.yaml with 9 admissible
+    assertions: 134
+    note: LAYER 1 is DENY BY DEFAULT over deploy/dependency-registry.yaml: 9 registered distributions form the admissible set, and an unregistered distribution is refused without anything being recognised about it.
+    note: LAYER 2 SURVIVES over both the registry and the manifests: the denylist carries 61 named distributions and is a FLOOR, not an oracle, and the token rule is the part that generalises. NEITHER LAYER IS SOLE.
+    note: normalisation is PEP 503, so Alpaca_Trade_API and alpaca-trade-api are one name: alpaca-trade-api
+    note: SCOPE IS DECLARED_SURFACE, NOT CLASS. A clean run means every manifest distribution was registered by somebody and none is recognisable as a broker SDK. It does NOT mean no dependency can reach a broker — see declared limit boundaries 1, 2 and 5.
+CD-RT-012-LOCKFILE-DENYLIST: PASS — 134 assertions, 0 violations

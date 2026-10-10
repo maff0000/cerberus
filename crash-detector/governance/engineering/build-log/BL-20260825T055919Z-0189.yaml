@@ -1,0 +1,176 @@
+# =================================================================================================== #
+# BL-20260825T055919Z-0189 — PROJECT LEAD BOUNDARY. Q41 IS DISPOSED. THE STOP LIFTS.
+#
+# A NEW PROJECT LEAD SEAT (PROJECT_LEAD_SEAT_09) BOOTED, RECONCILED, AND FOUND THE RECORD
+# HEADLINE STALE FOR THE THIRD TIME IN THREE BOUNDARIES. IT IS CORRECTED HERE BY SUPERSESSION.
+# =================================================================================================== #
+
+entry_id: BL-20260825T055919Z-0189
+timestamp_utc: '2026-08-25T05:59:19Z'   # from `date -u` and from nothing else (CD-RULE-005)
+utc: '2026-08-25T05:59:19Z'
+record_type: PROJECT_LEAD_BOUNDARY
+project: crash-detector
+actor: PROJECT_LEAD_SEAT_09
+role: PROJECT_LEAD
+causal_owner: PROJECT_LEAD_SEAT_09
+authority_id: CD-AUTH-0001
+work_type: RECONCILIATION
+phase: GATE
+repository: local
+branch: main
+worktree: /srv/crash-detector
+parent_entry_id: BL-20260825T001900Z-0188
+base_sha: c734cb1
+current_sha: c734cb1
+status: PROCEEDING_ON_PRODUCT_AUTHORITY_DISPOSITION
+schema_version: 2
+
+action_summary: >
+  *** **Q41 IS DISPOSED AND THE STOP LIFTS. THIS IS THE FIRST BOUNDARY SINCE `BL-...-0174` AT WHICH
+  THE PROJECT IS NOT WAITING ON THE PRODUCT AUTHORITY.** *** `PO-DECISIONS-0032` (committed at
+  `c734cb1`, authored by the Product Owner and ratified by Matt — *"go with your suggestion and green
+  light"*) chose **ACCEPT-AND-RELEASE** over pressing for a fuller guarantee. The guard at `7ac11c9`
+  is **ACCEPTED WITH ITS SCOPE DECLARED**; the insider-source-weakening residual (`CD-ASR-F14-01`) is
+  assigned to the **ASSURANCE/DETECTION TIER** as declared later-hardening and is **NOT** a product
+  blocker. **THIS SEAT DOES NOT REOPEN IT AND MAY NOT.**
+  *** **WHAT THIS SEAT DID: BOOT, RECONCILE, MEASURE, PLAN, RECORD. NO APPLICATION CODE WAS WRITTEN
+  AND NONE MAY BE — THE PROJECT LEAD DISPATCHES IMPLEMENTATION, IT DOES NOT PERFORM IT
+  (`PBG-SOD-003`).** ***
+
+boot_reconciliation:
+  boot_verdict: 'AMBER — `CONTINUITY_MATCH/RESUME_AMBER`. The AMBER is the absent `ROADMAP.md`, which is a long-standing declared condition of this project and not new at this boundary.'
+  observed_sha: c734cb1b072ec7acaa097d52bb15e63a2a2651e2
+  recorded_sha: c734cb1
+  drift: 'ZERO between recorded and observed Git state. Working tree carries no uncommitted governed file — only untracked operator wrapper logs (`.wo2*`, `.continue-prompt.txt`) and a `pbg/tools/pbg/__pycache__/` directory, none of them governed artefacts.'
+  frozen_lane_check: 'MEASURED. `git rev-parse wo-2r3` -> `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5`. **UNMOVED AND STILL FROZEN.**'
+  work_lane_check: 'MEASURED. `git rev-parse wo-3` -> `c475b8e75004a14481f39e63d09e86da3898195b`, content tip `7ac11c9`. **UNMOVED.**'
+  concurrency_check: >
+    MEASURED, NOT ASSUMED. `ps -eo pid,etimes,args | grep claude` shows **EXACTLY ONE** live Project
+    Lead process (pid 2541277) and its `timeout` wrapper (pid 2541276). **THERE IS NO SECOND LIVE
+    PROJECT LEAD**, so the two-seats-one-identity hazard is not live at this boundary.
+  seat_ceiling_measured: >
+    **MEASURED FROM THE LIVE PROCESS AND NOT ASSUMED:** the wrapper is `timeout 21600` — a SIX HOUR
+    ceiling, not two. The wrapper HARD-KILLS this seat at the ceiling, so every increment below is
+    bounded and banked at its own boundary rather than held to the end.
+
+# =================================================================================================== #
+CD_PL_F212 — THE STALE NARRATIVE CLASS RECURRED A THIRD TIME, AND THIS SEAT IS ITS THIRD FINDER:
+# =================================================================================================== #
+  finding_id: CD-PL-F212
+  severity: 'LOW at this boundary — the field was stale for FIVE HOURS and not twenty-five entries. RECORDED BECAUSE THE CLASS IS NOW THREE-FOR-THREE.'
+  statement: >
+    **THE BOOT VERDICT THIS SEAT RECEIVED PRINTED `current_work` AS "THERE IS NO BLOCK OF WORK OUT.
+    THE PROJECT IS STOPPED AT A GATE ON A `RED` VERDICT AND THE NEXT ACTOR IS THE PRODUCT AUTHORITY —
+    MATT — ON `Q41`." THAT WAS TRUE WHEN WRITTEN AT `BL-...-0188` AND IS FALSE AT THIS BOOT.** Q41 was
+    disposed at `c734cb1`, which is the SAME COMMIT the boot resolved as `observed_sha`. **THE RECORD
+    THAT ANSWERED THE QUESTION AND THE FIELD THAT SAYS THE QUESTION IS OPEN ARE IN THE SAME TREE.**
+  why_it_is_only_LOW_this_time: >
+    `CD-PL-F211` was the same field twenty-five entries and twenty-nine commits stale. This instance is
+    one commit stale, and the commit that staled it is the disposition itself — the ordinary lag between
+    a Product Authority act and the next Project Lead boundary. **IT IS RECORDED ANYWAY, BECAUSE THE
+    POINT OF `CD-PL-F211` WAS THAT NOTHING IN THIS REPOSITORY CHECKS THE FIELD, AND NOTHING STILL DOES.**
+  disposition: 'CORRECTED AT THIS BOUNDARY BY SUPERSESSION, NEVER BY EDIT (`PBG-CONT-003`). The gap itself — no freshness control on `current_block` or `current_phase` — REMAINS HELD AND OPEN, carried forward from `CD-PL-F211`.'
+
+# =================================================================================================== #
+what_this_seat_MEASURED_rather_than_inherited (CD-PL-F193 — an inherited claim is a hypothesis):
+# =================================================================================================== #
+  - claim: '`CD-ASR-F14-04` — the word `CLOSED` was deleted from `DECLARED LIMIT 2`''s heading in `required-tests.yaml` and nowhere else, by edit and not by supersession.'
+    how_this_seat_tested_it: >
+      Ran a naive `grep -ci "closed written list"` over all three `CD-RULE-004` places at `a9e19c3`,
+      `7ac11c9` and `c475b8e`. **THE NAIVE MEASUREMENT APPEARED TO REFUTE THE VERDICT** — it reported
+      the phrase ABSENT from `required-tests.yaml` AND from the execution contract at `a9e19c3`, where
+      the verdict says all three carried it. Re-ran whitespace-normalised, stripping comment markers and
+      collapsing newlines, because the text is line-wrapped differently in each of the three files.
+    result: >
+      *** **THE VERDICT IS CONFIRMED EXACTLY AS RECORDED. THE NAIVE GREP WAS CONFOUNDED BY LINE
+      WRAPPING AND THE CONFOUND WAS THIS SEAT''S, NOT THE AUDITOR''S.** *** Normalised, at `a9e19c3` all
+      three read `VOCABULARY IS A CLOSED WRITTEN LIST`; at `7ac11c9` `required-tests.yaml` alone reads
+      `VOCABULARY IS A WRITTEN LIST` and the other two are unchanged.
+    command: |
+      git show <sha>:<file> | sed 's/^[[:space:]]*#*[[:space:]]*//' | tr '\n' ' ' | tr -s ' ' \
+        | grep -o "VOCABULARY IS A[A-Z ]*WRITTEN LIST"
+    why_it_is_recorded: >
+      **BECAUSE A SEAT THAT HAD STOPPED AT THE FIRST MEASUREMENT WOULD HAVE DISPATCHED AN ENGINEER TO
+      "CORRECT" A CONFIRMED FINDING OUT OF THE RECORD.** `CD-PL-F193` says run it; running it once was
+      not enough, and the second run is the one that matters.
+  - claim: '`CD-ASR-F14-02` — `DECLARED LIMIT 9` carries a sentence false in the reassuring direction in all three `CD-RULE-004` places.'
+    how_this_seat_tested_it: 'Located the sentence in all three places by direct read rather than accepting the auditor''s paraphrase.'
+    result: >
+      **CONFIRMED PRESENT IN ALL THREE.** The reassuring clause is *"It is caught by the sibling
+      STRUCTURAL row `CD-RT-001-PUBLICATION-CHOKEPOINT` (`CD-CHOKE-005`), AND THE TWO ROWS ARE A PAIR
+      FOR EXACTLY THIS REASON"* at `tools/register/check_stale_data_never_calm.py:263-266`,
+      `required-tests.yaml:1475-1478`, and again in the row-level summary at `required-tests.yaml:1642-1643`,
+      with the counterpart in `contracts/execution/CD-RT-001-STALE-DATA-NEVER-CALM.md`. **THE AUDITOR''S
+      QUOTATION IS A PARAPHRASE; THE DEFECT IT NAMES IS REAL AND IS AT THOSE LINES.**
+  - claim: 'The `122` figure that does not reproduce (`CD-ASR-F14-05`).'
+    result: >
+      **THE FIGURE IS WIDER THAN THE VERDICT RECORDED.** The verdict raised it against the build-log
+      return `BL-20260824T223344Z-16FC` only. This seat finds `122` ALSO WRITTEN INTO `DECLARED LIMIT 11`
+      in the instrument header (`check_stale_data_never_calm.py:290`) and in `required-tests.yaml:1499`.
+      **THE CORRECTION IS THEREFORE A `CD-RULE-004` THREE-PLACE CORRECTION AND NOT A ONE-LINE BUILD-LOG
+      SUPERSESSION, AND THE ENGINEER IS TOLD SO IN THE DISPATCH.** The measured figure is NOT taken from
+      the verdict either — the Engineer re-runs the instrument at `a9e19c3` and writes what its own shell
+      prints.
+
+# =================================================================================================== #
+the_plan — FOUR BOUNDED INCREMENTS, SEQUENTIAL SINGLE-SEAT, EACH GRADED BY A FRESH ASSURANCE SEAT:
+# =================================================================================================== #
+  constraint: '`CD-D-181` SEQUENTIAL-ONLY. `be0b355` FROZEN. `PBG-SOD-001` NON-WAIVABLE — the Engineer and the Assurance Engineer are never the same agent, and no seat grades a repair of a defect it raised.'
+  increments:
+  - increment: '16G — THE FOUR TRUE-REGARDLESS FINDINGS'
+    contains: '`CD-ASR-F14-02` (supersede the false `DECLARED LIMIT 9` sentence in all three places, naming arm `Z7`) · `CD-ASR-F14-03` (`CD-CHOKE-003` to inspect `refuse_unless_publishable`''s OWN exception handlers — the `Z5` swallow) · `CD-ASR-F14-04` (restore `CLOSED`, by disclosed supersession, never by silent edit) · `CD-ASR-F14-05` (`122` -> the Engineer''s own measured figure, in all three places AND the build-log return).'
+    why_first: 'Every item is TRUE WHATEVER Q41 WAS RULED. They were owed before the disposition and are not created by it.'
+  - increment: '16H — THE DECLARED SCOPE'
+    contains: 'The guard''s DECLARED SCOPE statement (three places) and the PID scope declaration: PREVENTS accident, casual misuse and every NON-INSIDER bypass shape; an insider weakening the publication CODE is caught by ASSURANCE/audit and the DETECTION tier, owed as later hardening, NOT gate-prevented. Plus the PID §5 three-quantity record-act.'
+  - increment: '16C — THE DETECTOR-SIDE LIVENESS MARKING'
+    contains: '`feed_liveness` produced by a REAL dead-feed detector, carrying the honesty obligation — provenance-backed, witness-corroboratable stamps (`PO-DECISIONS-0030` ruling 2).'
+  - increment: '16I — REGISTER THE INDICATOR ROWS'
+    contains: 'The rows from `governance/mapping/indicator_mapping.yaml` into the portable Postgres store. SLOOS registers PENDING (source identified `DRTSCILM`+`NDFI`, not yet wired); private credit ~120d relevance window; two dials NEVER blended; a BOTH indicator scores each dial with its OWN polarity; weights PROVISIONAL pending backtest.'
+
+# =================================================================================================== #
+a_disclosure_about_the_PID_5_record_act — SAID NOW, NOT DISCOVERED AT THE INCREMENT:
+# =================================================================================================== #
+  what_the_rulings_say: >
+    `PO-DECISIONS-0026` ruling 12 states the §5 prose correction is *"a separate PO record-act, carried
+    at the next boundary **once I have §5's exact bytes to author the verbatim replacement**"*.
+    `PO-DECISIONS-0032` ruling 5 orders it carried at the release increment's start.
+  the_gap: >
+    **THE PRODUCT OWNER HAS NOT YET AUTHORED BESPOKE REPLACEMENT BYTES FOR §5.** Ruling 12 anticipated
+    authoring them and `PO-DECISIONS-0032` does not contain them.
+  what_this_seat_will_therefore_do: >
+    Carry `PO-DECISIONS-0026` ruling 5's own three definitions — (a) RELEVANCE, (b) LIVENESS /
+    fetch-freshness, (c) PUBLISH BUDGET — **VERBATIM AND ATTRIBUTED**, in the established pattern of
+    `tools/reconciliation/check_pid_carried_po_*_verbatim.py`, with a new verbatim-carriage check beside
+    it. **THE PROJECT LEAD AUTHORS NO PRODUCT PROSE (`PBG-PID-004`). IF THE PRODUCT OWNER WANTS
+    DIFFERENT WORDS IN §5, THE CARRIED RULING TEXT IS REPLACED BY THE PO''S AND NOT AMENDED BY A SEAT.**
+  this_is_a_disclosure_and_not_a_blocking_question: '**IT DOES NOT STOP INCREMENT 16G AND IT DOES NOT STOP 16H''s GUARD-SIDE WORK.** It is flagged here so the Product Authority can correct it at any point rather than discover it in a diff.'
+
+blockers: []
+
+open_questions_with_the_product_authority:
+  - id: Q40
+    status: 'OPEN — seat identity on commits. **HONOURED AT THIS BOUNDARY:** this entry is committed under the `PROJECT_LEAD_SEAT_09` identity via `GIT_AUTHOR_*`/`GIT_COMMITTER_*`, not under a bare repository default.'
+
+risks:
+  - '**THE SIX-HOUR CEILING IS A HARD KILL.** Four increments, each with a build and a fresh audit, is eight seats. **IF THE CEILING ARRIVES MID-INCREMENT, WHAT IS BANKED IS BANKED AND WHAT IS NOT IS LOST** — which is why each increment commits at its own boundary and nothing is held to the end.'
+  - '**THE INSIDER-SOURCE RESIDUAL IS DECLARED, NOT CLOSED.** Anyone reading the released product must read the declared scope with it. That is exactly what increment 16H exists to guarantee, and 16H is therefore not optional decoration on the release.'
+
+held_actions:
+  - '**THE `CD-ASR-F14-01` FULL GUARANTEE (a code-structure invariant over the walk-output-to-comparison dataflow) IS RECORDED AS OWED LATER-HARDENING AND IS NOT REOPENED HERE.** `PO-DECISIONS-0032` ruling 3.'
+  - '**NO FRESHNESS CONTROL ON `current_block` OR `current_phase`.** Carried forward from `CD-PL-F211`, unclosed, now with a third instance (`CD-PL-F212`) behind it.'
+  - '**THE `wo-3` LANE POINTER REPAIR** — still held, unchanged at this boundary.'
+
+next_safe_action: >
+  **DISPATCH INCREMENT 16G TO A FRESH ENGINEER SEAT ON THE `wo-3` LANE AT `c475b8e`.** The four
+  true-regardless findings, documentary plus one bounded guard change (`CD-CHOKE-003`). **NOTHING UNDER
+  `src/` IS IN SCOPE AND THE DECLARED STOP IS THAT `src/` DOES NOT MOVE.** On its return, a FRESH
+  Assurance seat — **NOT `CD-ASR-WO3-14`, WHICH RAISED THESE FINDINGS AND MAY NOT GRADE THEIR REPAIR** —
+  grades it read-only.
+
+expected_next_actor: PROJECT_LEAD (dispatching CD-ENG-WO3-15)
+
+evidence_references:
+  - 'governance/decisions/PO-DECISIONS-0032.md — the disposition, at `c734cb1`.'
+  - 'governance/decisions/PO-DECISIONS-0030.md — ruling 2, the honesty obligation carried into 16C.'
+  - 'governance/decisions/PO-DECISIONS-0026.md — rulings 5 and 12, the three-quantity model and the §5 record-act.'
+  - 'The banked 16F verdict, `git show af4ac85:governance/engineering/build-log/BL-20260824T234541Z-A314.yaml` — 849 lines, the source of `CD-ASR-F14-01` through `-06`.'

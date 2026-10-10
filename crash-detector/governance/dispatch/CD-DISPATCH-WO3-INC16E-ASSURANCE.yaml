@@ -1,0 +1,259 @@
+# ================================================================================================== #
+# CD-D-183 — CD-DISPATCH-WO3-INC16E-ASSURANCE
+#
+# **GRADE INCREMENT 16E — THE CONTROL ROW — AT `a9e19c3`.**
+#
+# Authority: PO-DECISIONS-0030 (commit 0e6f094, authored by Matt Scott and by NO SEAT), rulings 1,
+# 2 and 3, as dispatched at CD-D-182 and returned at BL-20260824T200624Z-16EC.
+#
+# *** **THE QUESTION YOU ARE ANSWERING: `CD-AC-001`'s STALE HALF WAS TRUE AND UNGUARDED AT
+# `0e80a09`. IS IT NOW GUARDED — REALLY GUARDED, BY A CONTROL THAT BITES, WITHOUT THE GUARDED THING
+# HAVING BEEN MOVED TO MEET IT, AND WITHOUT THE SIBLING GUARD ON THE OTHER HALF HAVING BEEN
+# WEAKENED IN PASSING?** ***
+# ================================================================================================== #
+
+dispatch_id: CD-D-183
+name: CD-DISPATCH-WO3-INC16E-ASSURANCE
+issued_utc: '2026-08-24T20:18:46Z'   # from `date -u` and from nothing else (CD-RULE-005)
+issued_by: PROJECT_LEAD_SEAT_06
+parent_entry_id: BL-20260824T201846Z-0182
+status: ISSUED
+
+# ================================================================================================== #
+role:
+# ================================================================================================== #
+  role_source: pbg/roles/assurance-engineer.md
+  role: ASSURANCE_ENGINEER
+  actor_id: CD-ASR-WO3-13
+  authority_record: CD-AUTH-0001
+  reading_this_file_does_not_grant_the_role: >-
+    PBG-BOOT-001. This dispatch grants it. PBG-BOOT-002 (non-waivable): you do not self-assign a
+    role, a scope or mutation authority.
+  identity_freshness_MEASURED_by_the_dispatching_seat: >-
+    `git log --all --format=%an | sort -u` names CD-ENG-WO3-01..13 and CD-ASR-WO3-02..12.
+    **CD-ASR-WO3-13 DOES NOT APPEAR.** Commit as
+    `CD-ASR-WO3-13 <cd-asr-wo3-13@seats.crash-detector.invalid>` via GIT_AUTHOR_* / GIT_COMMITTER_*
+    environment variables — **`git -c user.name=` DOES NOT WORK ON THIS HOST.**
+  separation_of_duties:
+    you_are_not_CD_ENG_WO3_13: >-
+      It wrote every line you are grading (PBG-SOD-001, non-waivable).
+    you_are_not_CD_ASR_WO3_12: >-
+      **It wrote the PRESCRIPTION this increment executes (A312-F1). An auditor grading the
+      discharge of its own prescription is marking its own paper one layer out.** Read its verdict
+      as an input; do not defer to it.
+    you_are_not_the_project_lead: >-
+      PROJECT_LEAD_SEAT_06 dispatched the work and reconciled it by measurement. **ITS
+      RECONCILIATION IS AN INPUT TO YOU AND NOT A FINDING. RE-RUN WHAT MATTERS.**
+
+# ================================================================================================== #
+mutation:
+# ================================================================================================== #
+  rule: >-
+    **READ-ONLY. MUTATION PROHIBITED** except explicitly safe diagnostic artefacts: your own
+    verdict file, on your OWN branch, in your OWN worktree.
+  you_repair_nothing: >-
+    **PBG-SOD-004: if you find a defect, you WRITE THE PRESCRIPTION AND LEAVE THE LINE UNWRITTEN.**
+    Every predecessor auditor on this row did exactly that and was right to.
+  the_lane_is_not_yours: >-
+    **`/srv/crash-detector-wo3` MUST NOT BE WRITTEN TO OR CHECKED OUT BY YOU.** Work in `git
+    worktree`s of your own under `/tmp` and in `git archive | tar -x` extractions. **`be0b355`
+    (`wo-2r3`) IS FROZEN — do not check it out; report `git rev-parse wo-2r3` at your return.**
+  no_parallel_sub_agent: CD-D-181, sequential single-seat.
+
+# ================================================================================================== #
+the_target:
+# ================================================================================================== #
+  branch: wo-3
+  grade_this_sha: a9e19c39830557105d646408590487c75dd6b5bd
+  content_tip: ed7263a31d371b8d4b7a0be8939e226870548963
+  why_the_entry_tip_and_not_the_content_tip: >-
+    The Engineer states the execution contracts reference `plants/WO3-INC16E/MANIFEST.md`, which
+    lands with the return record at `a9e19c3`. **VERIFY THAT CLAIM — `git diff --name-only ed7263a
+    a9e19c3` should name the record and the MANIFEST and nothing that is an instrument, a contract,
+    a register or a test.**
+  base: ef3c960d23327800e0ad084c6833afca74a1a0fa
+  the_sha_that_must_be_PRESERVED: 0e80a09af9661a9e7e6bb73193fbe56133fcff29
+  the_engineers_return: governance/engineering/build-log/BL-20260824T200624Z-16EC.yaml
+  authority: governance/decisions/PO-DECISIONS-0030.md (rulings 1, 2, 3)
+  read_also:
+    - 'governance/dispatch/CD-DISPATCH-WO3-INC16E-CONTROL-ROW-ENGINEER.yaml — what was ordered.'
+    - 'governance/engineering/build-log/BL-20260824T192219Z-0181.yaml — the PL boundary that
+       dispatched it, including the PL''s OWN pre-increment measurements.'
+    - 'governance/engineering/build-log/BL-20260824T201846Z-0182.yaml — the PL''s reconciliation of
+       the return, and the three things it explicitly DID NOT grade and handed to you.'
+    - 'git show 924691b:governance/engineering/build-log/BL-20260824T190320Z-A312.yaml — the AMBER
+       this increment answers.'
+
+# ================================================================================================== #
+the_central_question — grade this first, before anything else:
+# ================================================================================================== #
+  A312_F1_IS_IT_CLOSED:
+    the_defect_as_measured_at_0e80a09: >-
+      Arm `D1` deletes the entire fourth refusal stage, the live gate re-ADMITS `1970` and `2099`
+      carrying `calm` on both surfaces, **and all thirty `execute:` lines are `diff`-identical —
+      `TOTAL lines=30 rc0=19 nonzero=11` at both ends. NOT ONE ROW MOVED.** Measured independently
+      by CD-ASR-WO3-12 and by PROJECT_LEAD_SEAT_06.
+    what_the_engineer_claims_and_what_the_PL_reproduced: >-
+      At `a9e19c3`: CLEAN `TOTAL lines=32 rc0=21 nonzero=11`, D1 `TOTAL lines=32 rc0=19
+      nonzero=13`, and exactly two lines move — LINE 04 `check_stale_data_never_calm.py` and LINE
+      05 `pytest tests/test_envelope_freshness.py`, each rc 0 -> 1. **THE PROJECT LEAD REPRODUCED
+      THIS IN ITS OWN SHELL. DO NOT TAKE EITHER ACCOUNT — RUN IT YOURSELF.**
+    and_then_go_past_it: >-
+      **A CONTROL THAT CATCHES THE ONE ARM IT WAS BUILT AGAINST IS A CONTROL THAT GUARDS THE
+      INSTANCE, NOT THE CLASS. THAT IS THIS PROJECT'S MOST-REPEATED FINDING — `A311-F1`, `A312-F2`,
+      `CD-ASR-WO3-06-F1` AND OTHERS ALL LAND THERE.** The Engineer claims D1 `FAIL — 12`, D2
+      `FAIL — 4`, D3 `FAIL — 12`, D4 `FAIL — 2`. **BUILD A FIFTH WEAKENING IT HAS NOT SEEN.** Some
+      shapes worth trying: the stage present but its result discarded; the predicate inverted on
+      one surface only; the node walk stopped one container short; oldest-governs silently changed
+      to first-found; the refusal raised with a different `reason_class` so a caller keying on
+      `STALE_CALM` stops seeing it; the stage short-circuited by an early return on a document
+      property. **IF YOU CANNOT BREAK IT, SAY SO IN THOSE WORDS — THAT SENTENCE IS WORTH MORE HERE
+      THAN A LIST OF NITS.**
+
+# ================================================================================================== #
+the_three_things_the_project_lead_measured_but_deliberately_did_NOT_grade:
+# ================================================================================================== #
+  1_the_58_deleted_lines_around_the_SIBLING_row:
+    measured: >-
+      `git diff --numstat ef3c960 a9e19c3` — `required-tests.yaml` 498 insertions / **5
+      deletions**; `tools/register/check_missing_data_never_calm.py` 104 / **30**;
+      `contracts/execution/CD-RT-001-MISSING-DATA-NEVER-CALM.md` 102 / **23**.
+    why_it_is_yours: >-
+      **THIS PROJECT'S CONVENTION IS TO SUPERSEDE AND RETAIN, NOT TO DELETE**, and
+      `required-tests.yaml` carries retained superseded blocks that prove the convention —
+      including one where that very row said *"The instrument fails on all of these"* and did not.
+      Read every deleted line. **ARE THEY CORRECTIONS PROPERLY MADE, OR IS THIS TEXT QUIETLY
+      REMOVED FROM AROUND A CONSTITUTIONAL ROW?** The PL names this without pre-judging it.
+  2_the_SIBLING_GUARD_moved_by_134_lines_net:
+    why_it_is_yours: >-
+      `check_missing_data_never_calm.py` guards the OTHER half of the same constitutional criterion
+      and it CHANGED in an increment that was not about it. **A ROW THAT WAS `PASS — 260` BEFORE
+      AND IS `PASS` AFTER, ON AN INSTRUMENT THAT MOVED, IS A ROW WHOSE STRENGTH MUST BE RE-MEASURED
+      AND NOT ASSUMED.** This project's own words: *"a replacement that quietly narrows what it
+      checks is how a guard becomes a certificate."* **RE-RUN THE MISSING-HALF ARMS — `C6`-`C10`,
+      `E1`-`E3`, the `$ref`-sibling and `patternProperties` shapes from `WO3-INC16B` — AGAINST THE
+      NEW INSTRUMENT AND CONFIRM THEY STILL BITE.**
+  3_did_the_new_row_take_credit_for_a_line_it_did_not_earn:
+    the_engineers_own_F16E_03: >-
+      It disclosed that **`D3` was never fully unguarded** — `check_no_blend` already caught it at
+      the base, incidentally, for `CD-AC-002` and by accident of spelling. **VERIFY THAT
+      DISCLOSURE, AND VERIFY THE CONVERSE: is any part of the new row's claimed coverage actually
+      being delivered by a pre-existing line?** Run the arms at the BASE (`ef3c960`) as well as the
+      tip; a row that moves at both ends was not moved by this increment.
+
+# ================================================================================================== #
+also_grade — the rest of what was ordered:
+# ================================================================================================== #
+  ITEM_2_the_declared_scope_statement:
+    what_was_ordered: >-
+      A DOCUMENTARY statement, in all three `CD-RULE-004` places, that the gate enforces
+      DOCUMENT-INTERNAL freshness and cannot catch a source that consistently lies about its own
+      stamp — **AND THAT THIS IS NOT UNENFORCEABLE. It is the F1-forgery class, caught by the
+      DETECTION tier (`CD-AC-018`, witness divergence + provenance), ENFORCED ONE TIER OUT AND OWED
+      AT WO-3.** It must NAME the criterion, NAME the tier and NAME when it is owed.
+    grade_it_for_HONESTY_not_presence: >-
+      **THREE SENTENCES ON THIS ROW HAVE ALREADY BEEN SUPERSEDED FOR BEING TRUE-SOUNDING AND
+      MEASURABLY FALSE.** A declared scope that overstates what the gate does is the defect. So is
+      one that understates it into "we cannot do this" when the ruling says it is done at the next
+      tier. **Check it says what is true, in all three places, and that the three agree.**
+    and_check_no_behaviour_changed: >-
+      Item 2 was DOCUMENTARY. `src/` must be untouched.
+  ITEM_3_CD_RULE_004_third_place: >-
+    DECLARED LIMITS 18, 19 and 20 in all three places, and `published_utc` raised into DECLARED
+    LIMIT 19 alongside `staleness_window_seconds` (A312-F3). **VERIFY THE THREE PLACES AGREE
+    VERBATIM ENOUGH TO BE THE SAME LIMIT, AND THAT EACH CARRIES SOMETHING AN AUDITOR CAN EXECUTE.**
+  ITEM_4_the_record_corrections: >-
+    The "closed TWICE OVER" claim withdrawn or narrowed **BY SUPERSESSION AND NEVER BY EDIT**
+    (PBG-CONT-003, non-waivable). `CD-ENG-F16D-05` superseded per A312-F4. The instance-not-class
+    nature of `test_A311_F1_arm_H_...` recorded. **MEASURE THAT `BL-20260824T183401Z-16DF.yaml` IS
+    BYTE-UNCHANGED** — the PL measured this and found it unchanged, and found that a naive
+    `git diff 0e80a09 <tip>` makes it LOOK edited because `0e80a09` predates the file. Confirm
+    independently.
+  the_declared_stop:
+    what_it_was: >-
+      **PO-DECISIONS-0030 ruling 3: "preserve 0e80a09." NOTHING UNDER `src/` CHANGES. NOTHING IS
+      REVERTED.**
+    measure_it: >-
+      `git diff --name-only 0e80a09 a9e19c3` in full; `contracts/*.json` byte-identical by hash;
+      `pbg/` zero paths. **AND BEHAVIOURALLY: the live gate at `a9e19c3` must be IDENTICAL to
+      `0e80a09` — stale-calm and future-stamp REFUSED, and CRITICALLY, fresh-calm and
+      stale-ELEVATED still ADMITTED on both surfaces. THE VACUITY DIRECTION IS THE HALF THIS
+      PROJECT'S HISTORY SAYS GETS MISSED.**
+  the_memorial: >-
+    The memorial in `required-tests.yaml` MUST NOT have been removed. The PL measured it
+    byte-identical with one ADDED reference. Confirm.
+  scope_discipline: >-
+    **16C MUST NOT HAVE BEEN BUILT** — no `feed_liveness` slot, no dead-feed detector, no liveness
+    marking. **NO INDICATOR ROW** from `governance/mapping/indicator_mapping.yaml`. **NO TIGHTENING
+    OF STAMP DETECTION** (Q36, product scope). Nothing merged to `main`.
+
+# ================================================================================================== #
+the_open_questions_you_should_be_aware_of_but_must_NOT_settle:
+# ================================================================================================== #
+  Q37_two_rows_where_the_ruling_said_one: >-
+    Ruling 1 says "its OWN row" — SINGULAR — and the Engineer landed TWO
+    (`CD-RT-001-STALE-DATA-NEVER-CALM` and `CD-RT-001-STALE-DATA-WITNESS-SUITE`), because
+    `pbg/tools/pbg/required_tests.py` requires `execute` to be a single string and chaining with
+    `&&` would short-circuit the pytest half. **THIS IS WITH THE PRODUCT AUTHORITY. YOUR JOB IS
+    NOT TO RULE ON IT — IT IS TO MEASURE WHAT DEPENDS ON IT: does EACH row move on `D1`
+    INDEPENDENTLY? If `CD-RT-001-STALE-DATA-WITNESS-SUITE` were removed tomorrow, would the
+    guarantee still be guarded? SAY SO WITH NUMBERS.**
+  Q36_the_stamp_detection_tightening: >-
+    A312-F2's decoy-stamp shape. Product scope (PBG-AUTH-005), deliberately NOT in this increment.
+    **NOT A DEFECT OF THIS INCREMENT. Do not grade it as one.** If you find it is a LIVE escape on
+    the shipped contract — CD-ASR-WO3-12 measured that it is not, because `degraded_inputs` is an
+    array of plain strings — **that WOULD be new and would be RED.**
+  Q38_the_framework_is_internally_inconsistent: >-
+    `pbg/roles/engineer.md` mandates a `READY_FOR_ASSURANCE` status the pinned entry schema's enum
+    does not contain. Two Engineers resolved it identically and NEITHER edited `pbg/`.
+    **THAT IS CORRECT BEHAVIOUR (PBG-FWK-013). Do not grade it against the Engineer.**
+
+# ================================================================================================== #
+method — how this project measures, learned from measured failures:
+# ================================================================================================== #
+  behavioural_first: >-
+    **DRIVE THE LIVE GATE BEFORE YOU READ THE INSTRUMENT.** CD-ASR-WO3-04 disclosed that this
+    ordering is what caught its F2, and this project has repeatedly found instruments that report
+    `PASS` while the gate admits the thing the row forbids.
+  extract_never_mutate: >-
+    Every arm in its OWN `git archive <sha> | tar -x -C <tmpdir>` extraction.
+  take_rc_from_the_command: >-
+    `rc=$?` immediately after, NEVER from a pipe (CD-ENG-F02's defect class).
+  check_the_apply_rc: >-
+    **CD-ASR-WO3-11 disclosed against itself that its runner read patches FROM the extracted tree,
+    got rc=128, then ran the instrument on an UNPATCHED tree — measuring nothing while looking like
+    a result.** Read patches from an ABSOLUTE path outside every extraction; abort loudly on rc ≠ 0.
+  do_not_reuse_a_probe_blind: >-
+    **`plants/WO3-INC16D/probe_16d.py` HARD-CODES `sys.path.insert(0,
+    "/srv/crash-detector-wo3/src")` and measures THE LANE no matter which tree you name.** The
+    Project Lead hit this and wrote its own taking the tree as `argv[1]`. Check
+    `plants/WO3-INC16E/eng13_probe.py` for the same trap before trusting any number it produced.
+  verify_the_census_yourself: >-
+    Do not inherit "32 lines" or "97 assertions". Derive them.
+  a_verdict_is_not_an_acceptance: >-
+    **PBG-AUTH-003.** You return PASS / AMBER / RED and the NEXT SAFE GATE. You do not admit, merge,
+    promote or release anything, and 16C is not yours to release.
+
+# ================================================================================================== #
+the_return:
+# ================================================================================================== #
+  expected: PASS / AMBER / RED, with the next safe gate named.
+  where: >-
+    A build-log entry under `governance/engineering/build-log/`, committed on YOUR OWN branch
+    (suggested `asr-wo3-13-verdict`), ONE file, YOUR identity only.
+  it_must_contain:
+    - '**The D1 register rc diff at `a9e19c3`, run by YOU** — the acceptance test of A312-F1.'
+    - 'Your fifth weakening: what you built, whether the register caught it, and the numbers.'
+    - 'Whether each of the two new rows moves on D1 INDEPENDENTLY (this is what Q37 turns on).'
+    - 'Your reading of the 58 deleted lines around the sibling row.'
+    - 'Re-measured strength of the SIBLING instrument — do the missing-half arms still bite?'
+    - 'The vacuity arms: fresh-calm ADMITTED, stale-ELEVATED ADMITTED, both surfaces.'
+    - '`git diff --name-only 0e80a09 a9e19c3` in full; contract hashes; `git rev-parse wo-2r3`.'
+    - 'Confirmation that `BL-20260824T183401Z-16DF.yaml` is byte-unchanged.'
+    - 'Findings raised against the DISPATCH and against the Project Lead, if any. **Every auditor on
+       this row has raised findings against the seat that dispatched it, and each was right to.**'
+  and_the_thing_this_project_values_most: >-
+    **CD-ASR-WO3-12 set out to DISBELIEVE "closed by construction" and reported *"on the contract
+    this product ships, I could not."* THAT SENTENCE — EITHER POLARITY, HONESTLY MEASURED — IS THE
+    MOST VALUABLE THING YOU CAN RETURN. An unscoped `PASS` is a liability
+    (`pbg/roles/assurance-engineer.md`). So is a `RED` assembled from nits.**
