@@ -1,6 +1,6 @@
 # CERBERUS
 
-A combined wealth-management, day-trading, and market-crash-detection system for Matt's family capital — built by adopting proven open-source components where they're genuinely good, and reserving custom build effort for the handful of things nothing off-the-shelf does honestly.
+A combined wealth-management, day-trading, and market-crash-detection system — built by adopting proven open-source components where they're genuinely good, and reserving custom build effort for the handful of things nothing off-the-shelf does honestly.
 
 **This repo is public deliberately**, so that ChatGPT (acting as Architect/thinking partner on the broader programme this sits inside) can view the build directly and help, without anything being pasted back and forth by hand. If you're reading this as that Architect: welcome, start with `PID.md`, and see "How to help" below.
 
