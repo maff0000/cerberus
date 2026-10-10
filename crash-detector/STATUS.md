@@ -2,7 +2,7 @@
 
 **Read this first.** This is the cold-start orientation for `crash-detector/`: what the thing is, what was actually built, exactly where the build stopped, and what it would take to finish and deploy it. It was written at import time (CERBERUS WO-1.2, 2026-10-10) from the archived records themselves, not from memory, and it corrects at least one claim made about the build before the import (see §3).
 
-Everything under `crash-detector/` is the **unmodified** recovered repository (history preserved, see §8). This file and `ARCHIVE-COMMIT-MAP.txt` are the only additions.
+Everything under `crash-detector/` is the recovered repository (history preserved, see §8), **modified only by an email/identity scrub** (see `RECOVERY-ERRATA.md`). This file, `ARCHIVE-COMMIT-MAP.txt` and `RECOVERY-ERRATA.md` are the only additions.
 
 ---
 
@@ -147,4 +147,4 @@ Heads-up on volume: `governance/engineering/ACTIVE_WORK.yaml` is ~700 KB and the
 - **Imported commit SHAs differ from the originals** (the path rewrite changes them). Build-log entries, verdicts and commit messages quote **original** SHAs. Translate with `ARCHIVE-COMMIT-MAP.txt` (`old new`, one pair per line).
 - Merge structure: archive `main` and `wo-3` (merge-base `bf8fcf9` original) are merged cleanly; twelve single-commit Assurance verdict branches `asr-wo3-03..14` are folded in by an octopus merge; the 24 commits that exist only under tag `wo-2-pre-identity-rework` are recorded with a tree-neutral (`-s ours`) merge.
 - Not imported: the PBGv2 framework's own repository (a separate project), and an un-versioned copy of the WO-2 tree (`crash-detector-wo2`, superseded by the WO-2 branch). A backup path named in the CERBERUS PID (`/mnt/backup/crash-detector.git`) did not exist when this was checked.
-- Security: the full imported history was scanned with `gitleaks` (all refs) with no findings. See `evidence/WO-1.2-crash-detector-recovery.md`.
+- Security: the full imported history was scanned with `gitleaks` (all refs) with no findings. Owner email addresses were subsequently scrubbed from history; see `RECOVERY-ERRATA.md`. See `evidence/WO-1.2-crash-detector-recovery.md`.
