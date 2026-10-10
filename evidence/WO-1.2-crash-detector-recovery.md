@@ -20,7 +20,7 @@ Date: 2026-10-10 · Executor: Rogue (FORGE PL, dispatched by Trinity) · Branch:
   - **Commit metadata carries the Owner's email addresses** (a work address and a personal one, in author/committer fields of ~200 commits) plus a service-account identity. Public-record-of-authorship, not credentials, but it is now public. Removing it would mean rewriting history; left as-is pending a decision.
   - A handful of mentions of the hostname `dell-debian` and `/srv/...` paths in governance prose, and test fixtures using `postgres.dell.matt.local` / `10.11.12.13` as *negative* examples for a portability check. No addresses of real hosts.
   - The README rule "infrastructure specifics stay out of this repo" is therefore not literally met inside `crash-detector/governance/` history prose. Judged non-sensitive; flagged.
-- Final gitleaks over the finished WO branch (all commits, including these docs): see commit message / report.
+- Final `gitleaks detect --log-opts=HEAD` over the finished WO branch (587 commits scanned, including the CERBERUS history and these docs): **no leaks found**.
 
 ## Verification
 - `PYTHONPATH=src python3 -m pytest -q tests` on a clean `git archive` of the merged `crash-detector/`: **2,099 passed** (CPython 3.11.2, 70 s, no network).
