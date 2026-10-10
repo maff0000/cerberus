@@ -15,13 +15,18 @@ Three units (advisory, alert, producer) were symlinks from /etc/systemd/system i
   - src/api/routes/playbook.py + templates/playbook.html — Playbook GUI; read-only; returns None if key missing, flags `_stale` past max_staleness_days.
   - src/review/playbook_review.py (daily review) — reads regime key; missing -> DORMANT/inert, unreadable/stale -> floored to WATCH + blindness flag (fail-safe, advisory only).
   - src/calc/deployment_engine.py — consumes the regime via the same fail-safe seam.
-  All are advisory-only, fail-safe consumers. None write to or depend on the six services running. Effect of retirement: the Playbook crash panel / review crash context go stale (flagged as such) and the last published regime key stays as-is until it ages out. No capital-moving path depends on it.
+  All are advisory-only, fail-safe consumers. None write to or depend on the six services running. Effect of retirement: the Playbook crash panel / review crash context go stale (flagged as such) and the last published regime key stays as-is (it has no TTL, so it does NOT age out).
+
+  **CORRECTION (R2D2 audit, AMBER, 2026-10-10) — the original claim "no capital-moving path depends on it" was imprecise and is withdrawn.** `src/calc/deployment_engine.py` consumes `argus:monetary_regime:state:latest` to decide whether to halt new equity deployment. The key is currently WATCH + blindness_flag=true, no TTL. Retirement therefore freezes that halt ON (safe direction) but does NOT release it; it stays frozen until someone acts.
+  **Hazard:** if a future cleanup deletes that key as "stale", consumers read the missing key as DORMANT, which silently LIFTS the halt — fail-open, by accident.
+  **WARNING: do NOT delete `argus:monetary_regime:state:latest` as part of any stale-key cleanup until CERBERUS (or a deliberate Owner decision) replaces the seam it feeds.**
 - Limits of this check: grep covered /srv-argus-live, /etc/systemd, cron; a wider /srv-wide grep timed out and was not completed. Other hosts (e.g. Trinity) were not searched.
 
 ## Actions
 1. Archived BEFORE stopping (see below).
 2. `systemctl stop` + `disable` on all 6 timers and services; `daemon-reload`.
-3. `disable` removed the /etc/systemd/system symlinks for advisory/alert/producer (service+timer) and the timers.target.wants links for all 6 timers. The tell-* .service/.timer regular files remain in /etc/systemd/system, disabled. Source in /srv-argus-live/ARGUS (ops/, src/, tests/) was NOT touched. Redis keys NOT touched. Env files NOT touched or copied (secrets).
+3. `disable` removed the /etc/systemd/system symlinks for advisory/alert/producer (service+timer) and the timers.target.wants links for all 6 timers. The tell-* .service/.timer regular files remain in /etc/systemd/system, disabled. The orphan drop-in `/etc/systemd/system/argus-monetary-regime-alert.service.d/override.conf` is still on disk (harmless, already archived under dropins/); it was not removed in this WO.
+   Source in /srv-argus-live/ARGUS (ops/, src/, tests/) was NOT touched. Redis keys NOT touched. Env files NOT touched or copied (secrets).
 
 ## Archive
 dell-debian:/srv/ARCHIVE/legacy-crash-engine-retired-20261010/ — units/ (resolved copies of all 12 unit files), dropins/ (alert override.conf), launchers/ (6 ops/*.sh), original-symlinks.txt, pre-retirement-unit-file-state.txt, README.md (with restore steps).
@@ -35,3 +40,4 @@ dell-debian:/srv/ARCHIVE/legacy-crash-engine-retired-20261010/ — units/ (resol
 ## Not done / follow-ups
 - WO-1.2 not started.
 - Stale `argus:*` Redis keys and the dead code in the ARGUS repo are left for a later cleanup decision (ARGUS lane / Matt).
+- **FOR WO-1.2 ONWARD: `argus:monetary_regime:state:latest` must NOT be deleted in any stale-key cleanup — deleting it fail-opens the deployment_engine equity halt (see CORRECTION above). Keep until CERBERUS or an explicit Owner decision replaces the seam.**
