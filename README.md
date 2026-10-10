@@ -9,7 +9,7 @@ A combined wealth-management, day-trading, and market-crash-detection system —
 Three Epics, one authorised PID:
 
 1. **Crash Detector rebuild** — **the active priority.** CERBERUS's crash detector **replaces** ARGUS's legacy, currently-failing crash-engine services outright (confirmed by the Owner, 2026-10-10) — this is not a parallel option sitting alongside the old one, it's the successor. The design itself is sound and already Owner-signed (two dials — equity crash / monetary debasement — deliberately never blended, ~24 mapped indicators); the problem was never the design, it's that the standalone build was orphaned mid-increment when its old governing framework (PBGv2) was retired, and never actually deployed. 342 commits of real engineering work from that attempt are salvageable, archived on dell-debian, and are being recovered here rather than re-derived from scratch.
-2. **LGT wealth tooling** — a small set of adopted research/due-diligence tools (OpenBB, a personal research console, an on-demand due-diligence agent, a monthly committee-cycle tool) feeding Matt's own long-term portfolio review. Not started yet.
+2. **wealth tooling** — a small set of adopted research/due-diligence tools (OpenBB, a personal research console, an on-demand due-diligence agent, a monthly committee-cycle tool) feeding Matt's own long-term portfolio review. Not started yet.
 3. **US-equities day trading** — currently paused pending reconciliation with a separate, more mature project (ARGCAT) that already does most of this. Don't duplicate it; see `PID.md` §3 for the full reasoning.
 
 Full detail, scope, risk register, and the authorisation record: **[`PID.md`](PID.md)**. Read it before touching anything — it is the product-authority document, not a suggestion.
