@@ -1,0 +1,40 @@
+diff --git a/src/crash_detector/publication/merged.py b/src/crash_detector/publication/merged.py
+new file mode 100644
+index 0000000..497c1d7
+--- /dev/null
++++ b/src/crash_detector/publication/merged.py
+@@ -0,0 +1,34 @@
++"""A merged magnitude that carries the provenance of every dial it was built from."""
++
++from __future__ import annotations
++
++import dataclasses
++
++from crash_detector.dials.magnitude import DialMagnitude
++
++__all__ = ["merged_magnitude"]
++
++
++def merged_magnitude(dials):
++    """One magnitude for the banner, carrying the union of the dials' provenance.
++
++    Provenance is preserved rather than discarded: the merged figure records every dial it
++    came from, which is more information than either dial carries alone.
++    """
++    magnitudes = [
++        getattr(dials, field.name).value.score
++        for field in dataclasses.fields(dials)
++    ]
++    quantities = [
++        magnitude._DialMagnitude__quantity for magnitude in magnitudes
++    ]
++    merged = DialMagnitude.__new__(DialMagnitude)
++    object.__setattr__(
++        merged,
++        "provenance",
++        frozenset().union(*(magnitude.provenance for magnitude in magnitudes)),
++    )
++    object.__setattr__(
++        merged, "_DialMagnitude__quantity", sum(quantities) / len(quantities)
++    )
++    return merged

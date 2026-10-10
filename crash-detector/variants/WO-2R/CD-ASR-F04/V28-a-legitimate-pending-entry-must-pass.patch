@@ -1,0 +1,25 @@
+diff --git a/deploy/compose.yaml b/deploy/compose.yaml
+index 19f7867..8d4a605 100644
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -436,6 +436,20 @@ services:
+       durable: []
+ 
+   # ----------------------------------------------------------------------------------------
++  cd-atlas:
++    image: python:3.11-slim
++    x-uid: 10011
++    x-egress:
++      policy: ALLOWLIST
++      hosts: []
++      pending:
++        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
++          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
++      enforced_by:
++        - "attached only to cd-net-private, which is internal: true"
++    networks:
++      - cd-net-private
++
+   # cd-witness — fetch WITNESS observations, build the panel, compute divergence.
+   # Doctrine §3.4: a witness that is also an ingredient corroborates nothing.
+   # ----------------------------------------------------------------------------------------

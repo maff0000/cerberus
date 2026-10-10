@@ -1,0 +1,83 @@
+diff --git a/probe_v26_conforming_hostile_adapter.py b/probe_v26_conforming_hostile_adapter.py
+new file mode 100644
+index 0000000..ebde265
+--- /dev/null
++++ b/probe_v26_conforming_hostile_adapter.py
+@@ -0,0 +1,77 @@
++"""V26 — CD-BP-003, DEMONSTRATED IN THE POSITIVE DIRECTION.
++
++This probe asserts that something IS ADMITTED. It is the executable example the declared
++limit names: a structurally conforming adapter that satisfies every establishment
++BP-AMENDMENT-0001 §D.3 part 2 adds, and invents its observation.
++
++    PYTHONPATH=src python3 -B probe_v26_conforming_hostile_adapter.py
++"""
++from datetime import datetime, timedelta, timezone
++
++from crash_detector.collectors.adapter import FetchedResponse, missing_adapter_members
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++from crash_detector.observations import OK
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class ConformingButFictional:
++    source_id = "src.does.not.exist"
++    adapter_id = "fiction.v0"
++    response_schema = {
++        "$schema": "https://json-schema.org/draft/2020-12/schema",
++        "type": "object",
++        "additionalProperties": False,
++        "properties": {"reading": {"type": "number"}},
++    }
++
++    def fetch(self, *, timeout_seconds):
++        return FetchedResponse(
++            payload={"reading": 0.0}, source_as_of_utc=NOW - timedelta(seconds=1)
++        )
++
++    def is_empty(self, payload):
++        return False
++
++
++class Sink:
++    def __init__(self):
++        self.rows = []
++
++    def record(self, attempt):
++        self.rows.append(attempt)
++
++
++class Ledger:
++    def __init__(self):
++        self.keys = []
++
++    def admit_if_absent(self, key):
++        if key in self.keys:
++            return False
++        self.keys.append(key)
++        return True
++
++
++sink = Sink()
++print("missing protocol members:", missing_adapter_members(ConformingButFictional()))
++result = collect(
++    ConformingButFictional(),
++    policy=RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0),
++    sink=sink,
++    ledger=Ledger(),
++    collector_run_id="run-v26",
++    started_utc=NOW,
++    delay=DelayKind.WALL_CLOCK,
++)
++print("ADMITTED:", type(result.final_outcome).__name__)
++print("payload recorded:", result.final_outcome.payload if isinstance(result.final_outcome, OK) else None)
++print("source_id recorded:", result.source_id)
++print("rows written:", len(sink.rows))
++print("reading admitted:", result.reading_admitted)
++print()
++print("CD-BP-003: this adapter is a fiction and NOTHING IN THIS TREE REFUSES IT.")
++print("What bounds it, measured: collectors/ may not import the dials or the engine, and")
++print("over the SHIPPED EMPTY source registry this observation contributes to no dial.")
++print("Whether a conforming adapter tells the truth: NOT PROVED TO BE CARRIED ANYWHERE.")

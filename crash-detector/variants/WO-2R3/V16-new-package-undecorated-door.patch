@@ -1,0 +1,18 @@
+diff --git a/src/crash_detector/judging/__init__.py b/src/crash_detector/judging/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/src/crash_detector/judging/decide.py b/src/crash_detector/judging/decide.py
+new file mode 100644
+index 0000000..847f4a9
+--- /dev/null
++++ b/src/crash_detector/judging/decide.py
+@@ -0,0 +1,9 @@
++"""V16 — a public judgement-path door under a package the check has never heard of.
++
++No `admits`, no return annotation. It decides whether a dial is shown, which is exactly
++what `present_dial` decides, and it lives one directory across.
++"""
++
++
++def decide(reading):
++    return getattr(reading, "value", 0.0)

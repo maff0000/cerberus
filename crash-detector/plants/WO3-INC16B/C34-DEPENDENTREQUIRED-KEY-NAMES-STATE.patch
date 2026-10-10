@@ -1,0 +1,58 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 16:34:52.482439602 +0100
+@@ -58,6 +58,25 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "A NAMING POSITION NOBODY IN THIS CHAIN ATTACKED, FIXED ANYWAY (FX15). A key of `dependentRequired` NAMES a property as literally as a member of its value list does: this node says 'if `state` is present then `reason` must be', which names `state` and constrains a document carrying one. The superseded code read the VALUES and not the KEYS, so this answered a clean False — NOT A DIAL — while the node admits {'state': 'STALE', 'detail_level': 'calm'}.",
++      "type": "object",
++      "dependentRequired": {
++        "state": [
++          "reason"
++        ]
++      },
++      "properties": {
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 16:34:52.482439602 +0100
+@@ -60,6 +60,25 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "A NAMING POSITION NOBODY IN THIS CHAIN ATTACKED, FIXED ANYWAY (FX15). A key of `dependentRequired` NAMES a property as literally as a member of its value list does: this node says 'if `state` is present then `reason` must be', which names `state` and constrains a document carrying one. The superseded code read the VALUES and not the KEYS, so this answered a clean False — NOT A DIAL — while the node admits {'state': 'STALE', 'detail_level': 'calm'}.",
++      "type": "object",
++      "dependentRequired": {
++        "state": [
++          "reason"
++        ]
++      },
++      "properties": {
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {

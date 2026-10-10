@@ -1,0 +1,13 @@
+diff --git a/tools/probe/external_probe.py b/tools/probe/external_probe.py
+index 9bd525c..f913f06 100644
+--- a/tools/probe/external_probe.py
++++ b/tools/probe/external_probe.py
+@@ -94,6 +94,8 @@ import json
+ import sys
+ import urllib.error
+ import urllib.request
++
++from crash_detector.health import HEALTH_KEYS
+ from datetime import datetime, timezone
+ 
+ EXIT_HEALTHY = 0

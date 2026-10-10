@@ -1,0 +1,537 @@
+# WO-2R increment 2b — CD-PL-F54 (HIGH), re-opening CD-ASR-F01 (HIGH), on criterion CD-AC-002.
+# The CLASS attacked is PROVENANCE-FORGETTING RE-ENTRY: a number that has left a magnitude and
+# lost its dial being given a fresh single-dial provenance by assertion. Three commits.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+#
+# ON THE SEQUENCE NUMBER AND THE TIMESTAMP. 0042 is the next free number in the lane's RESERVED
+# BLOCK from 0040 upward (CD-D-036). The entry_id and timestamp_utc below were taken from
+# `date -u +%FT%TZ` and from nothing else (CD-RULE-005, raised because the predecessor entry
+# BL-20260819T113000Z-0041 was stamped with British Summer Time wearing a Z, so it claimed a moment
+# that had not yet happened). That entry is NOT edited.
+
+entry_id: BL-20260819T114046Z-0042
+timestamp_utc: '2026-08-19T11:40:46Z'
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+seat_instance: 'WO-2R increment 2b (seat instance 3; instance 2 delivered increment 2 at a94ef97, which the Project Lead reconciled and DID NOT ACCEPT)'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: a94ef97041d0cddbf72ad9df38f1e87d1f64edc0      # increment_2b_F01_reopened's execution base
+increment_sha: 5011b69f9f0cc17efac80b4705b7daa1763ee9e7     # the last commit before this entry
+parent_entry_id: BL-20260819T113000Z-0041                   # newest ENGINEER entry in this lane
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  THREE commits in this increment. The SHA to quote is 5011b69f9f0cc17efac80b4705b7daa1763ee9e7, the
+  last that can exist before this entry, because an entry cannot contain its own hash.
+
+    006b9220ef26988174ae4e8854227c1d45c73079  step 1, THE RE-ENTRY CLOSURE:
+                                              dials/provenance.py (new: DeclaredQuantity, the two
+                                              doors, and the exceptions moved here from magnitude),
+                                              dials/magnitude.py (constructor admits only a
+                                              DeclaredQuantity; boundaries A, D and E rewritten),
+                                              dials/__init__.py, engine/evaluate.py (the one product
+                                              admission site), tests/dial_magnitudes.py (new
+                                              mechanics helper), five test modules updated in
+                                              MECHANICS ONLY, and the Rule F pass-through in
+                                              check_no_numeric_default.py
+    4a257f0b356afe3061181f4edd06279e34019ea1  step 2, RULE 4 AND THE DECLARED LIMIT:
+                                              deny-by-default over DECLARED_ADMISSION_SITES in
+                                              check_no_blend.py, BOUNDARY 6 CORRECTED with executed
+                                              evidence, new boundary 7, 101 new tests, the register
+                                              entries and both execution contracts
+    5011b69f9f0cc17efac80b4705b7daa1763ee9e7  step 3, THE EVIDENCE: seven durable variant
+                                              patches and the manifest section, RULE 3 extended to
+                                              the second private slot, the eleven plants re-run,
+                                              boundary B corrected, CD-ENG-WO2R-F10 and F11 raised
+    <the commit containing this file>          this Build Log entry
+
+  Split this way because the runtime has killed four seats on this project and a termination had to
+  cost the evidence record rather than the closure. Every SHA above was resolved with
+  `git rev-parse` against the object database, not written from memory (CD-CONT-002).
+
+# --- boot and reconciliation ------------------------------------------------------------------ #
+
+boot_verdict: >
+  Read IN FULL before writing anything: pbg/roles/engineer.md (the role contract; reading it grants
+  nothing — this dispatch does, PBG-BOOT-001/002); CD-DISPATCH-WO2R-ENGINEER.yaml IN FULL, including
+  increment_2b_F01_reopened, commit_identity, writable_scope, protected_scope, prohibited,
+  commit_message_contract, proof_standard, runtime_authorisation and gate;
+  governance/rules/PROJECT-RULES.md including the two rules written since the last increment,
+  CD-RULE-005 (timestamps) and CD-RULE-006 (a residue declaration must name a layer MEASURED to hold
+  it); governance/reconciliation/WO-2R/ in full, all three probe files and the README; then the code
+  this increment changes and its DOCSTRINGS — dials/magnitude.py in full, dials/scores.py,
+  publication/dial_scalar.py, engine/evaluate.py, tools/register/check_no_blend.py in full including
+  its six-boundary declared limit, tools/register/check_no_numeric_default.py's Rule F,
+  required-tests.yaml's CD-AC-002 block, plants/MANIFEST.md and variants/WO-2R/MANIFEST.md.
+
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` returned AMBER, on the pre-existing
+  roadmap_identity UNAVAILABLE (no ROADMAP.md). No blocking_failures. That is the same verdict the
+  Project Lead's own boot returns and is not a condition this increment created or may repair.
+
+  RECONCILIATION: observed HEAD of /srv/crash-detector-wo2 was
+  a94ef97041d0cddbf72ad9df38f1e87d1f64edc0 on branch wo-2-skeleton, `git status --short` ZERO
+  lines. EXACTLY the execution base increment_2b_F01_reopened names. No drift (PBG-CONT-006). Work
+  began only after that matched.
+
+  BASELINE ESTABLISHED BEFORE ANYTHING WAS CHANGED, on a pristine `git archive` extraction of
+  a94ef97 under /tmp: eleven declared commands, the full suite at 1054 passed, and the sorted list
+  of 1054 pytest node ids saved for the anti-relaxation comparison. A refactor with no before-number
+  cannot prove it regressed nothing.
+
+  THE DEFECT WAS REPRODUCED BEFORE IT WAS REPAIRED. PL-Q9 was applied to a pristine extraction of
+  a94ef97: check_no_blend PASS on 3919 assertions with 0 violations, and at runtime it returned
+  EquityCrashScore(score=DialMagnitude(dial_id='equity_crash', quantity=0.5)) from a 0.4 equity
+  reading and a 0.6 monetary one. Both numbers match the Project Lead's account exactly.
+
+  `python3 -B` and `pytest -p no:cacheprovider` were used everywhere, and every variant ran in its
+  own `git archive` extraction under /tmp, never in the worktree and never in a git worktree
+  (PBG-RT-001 — mutation by EFFECT, not by label).
+
+scope_check: >
+  BOUNDED TO CD-PL-F54 AND NOTHING ELSE. Increments 3 (CD-ASR-F04, egress), 4 (CD-ASR-F05, code
+  graph) and 5 (CD-ASR-F06, witness resolver) were NOT started; nothing under deploy/, db/ or
+  src/crash_detector/serving/witness_resolver.py was touched. CD-ENG-WO2R-F07, F08 and F09 were NOT
+  repaired — they are declared and owed elsewhere.
+
+  INCREMENT 2 WAS NOT REVERTED AND NOT RESTARTED, as the dispatch requires. The nominal per-dial
+  non-coercible magnitude, the metaclass seal, the declared attribute surface asserted by set
+  equality, the provenance comparisons, combine_within_one_dial, the publication gate and all 109 of
+  increment 2's tests are intact. What changed in magnitude.py is the constructor's admissible type,
+  the two release paths that now read through it, and three docstring boundaries. Increment 1's
+  closure is untouched: src/crash_detector/dials/reading.py is BYTE-IDENTICAL to a94ef97.
+
+  Written: src/, tests/, tools/, contracts/, plants/, variants/, required-tests.yaml, and this new
+  Build Log entry. All inside writable_scope. Nothing under pbg/, PID.md, BLUEPRINT.md, CLAUDE.md,
+  docs/, db/, governance/assurance/, governance/decisions/, governance/dispatch/, governance/rules/
+  or ACTIVE_WORK.yaml was modified. governance/reconciliation/WO-2R/ and
+  BL-20260819T105500Z-0024.yaml on main were READ ONLY. `latest_admitted_run` is still null and was
+  not touched. No status-like key was added to the register.
+
+the_class_closed: >
+  PROVENANCE-FORGETTING RE-ENTRY. Any float that has left a DialMagnitude by ANY route — repr, str,
+  format, an f-string, %-formatting, pprint, a log line, a traceback, json.dumps over __getstate__,
+  the bytes of a pickle, getattr on the private slot, or a protocol nobody here has heard of — has
+  lost its dial, and can no longer become a dial magnitude.
+
+  THE STRUCTURE. src/crash_detector/dials/provenance.py defines DeclaredQuantity: a sealed, slotted,
+  non-coercible pairing of a finite float with the frozenset of dials its derivation touched.
+  DialMagnitude's constructor admits a DeclaredQuantity and nothing else, comparing q.dials to
+  dial_id by SET EQUALITY in both directions. Exactly two doors establish a provenance —
+  observed_for_dial(), which admits a measurement from outside for ONE named dial citing the
+  non-empty set of sources it came from, and combine_within_one_dial(), whose dial set is COMPUTED
+  by the machinery as the union of the magnitudes the caller had to be holding and refused unless it
+  is exactly one. DeclaredQuantity itself defines no arithmetic dunder, so no expression produces a
+  third declared quantity from two.
+
+  WHY IT IS A CLASS CLOSURE AND NOT A LONGER LIST. It enumerates no laundering route and does not
+  need to know one existed; it removes the destination they all share. Increment 2 answered "can the
+  type be ASKED for a number?" and answered it well — nine of eleven Project Lead probes refused,
+  including every alternate coercion protocol. But every exit it left open, and every exit Python
+  will add later, ends in the same place: a bare float in somebody's hand. Chasing exits is the
+  instance game, and the exit list has no last member. So the question changed from "is this number
+  blended?", undecidable, to "is this number's provenance DECLARED?", set equality — the same move
+  increment 1 made for absence, applied to the step increments 1 and 2 both left open.
+
+  THE EVIDENCE THAT IT IS NOT A REPR FIX is V16: laundering through an f-string and through a JSON
+  round trip, with no repr anywhere. Both leaks succeed and both re-entries are refused.
+
+the_contradiction_resolved: >
+  THE DISPATCH REQUIRED A CHOICE AND THIS SEAT CHOSE (ii), DECLARATION, AND THEN CLOSED THE CLASS
+  ANYWAY SO THAT (ii) IS NOT THE WHOLE ANSWER.
+
+  contracts/execution/CD-RT-002-TYPE-NO-ARITHMETIC.md disclosed that repr renders the quantity and
+  claimed six lines later that reducing a magnitude to a number requires naming its single dial.
+  Both could not be true and the second was false.
+
+  repr STAYS. Hiding a value from a developer's own debugger is obfuscation and obfuscation is not
+  structure; the inherited argument is right and this seat did not overrule it. Two further reasons
+  it would have been the wrong repair: repr is one member of an exit class with no last member, so
+  closing it moves the same attack one line sideways to str, to format, to json.dumps, to the pickle
+  bytes; and a non-round-trippable repr is a boundary made INCONVENIENT rather than a boundary
+  written down, which CD-RULE-004 prefers against. repr(EQUITY) is asserted BYTE-IDENTICAL to
+  a94ef97 by a declared test.
+
+  THE CLAIM IS WITHDRAWN, in magnitude.py boundary A and D, in provenance.py, in the register entry
+  and in CD-RT-002-TYPE-NO-ARITHMETIC.md, and repr is NAMED as a release door alongside quantity_for
+  and reflection. Two tests assert the limit is still true rather than letting it lapse quietly:
+  test_the_exits_are_open_and_that_is_declared and
+  test_two_released_numbers_still_add_and_that_is_declared.
+
+  AND BECAUSE CD-RULE-004 DOES NOT PERMIT DECLARING THE FINDING AS THE LIMIT, the laundered-float
+  class is closed at the re-entry. CD-ASR-F01's laundering half is CLOSED, not declared. What is
+  declared is the admission door beneath it (boundary 7) and the in-place slot rewrite (boundary B),
+  and neither is handed to a layer that has not been measured.
+
+on_the_direction_the_project_lead_offered: >
+  ACCEPTED, NOT REJECTED, and implemented as offered: the move is at the RE-ENTRY, and the question
+  became "is this number's provenance DECLARED?", decided by set equality. This seat adds one thing
+  the direction did not name — that the base case of any provenance chain is an ASSERTION, so the
+  runtime layer alone cannot be the whole closure — and answers it with a SECOND, different layer:
+  RULE 4, deny-by-default over a declared registry of admission sites, which watches the one door a
+  laundering module cannot avoid instead of watching for a blend it cannot recognise.
+
+implemented:
+- 'src/crash_detector/dials/provenance.py (NEW). DeclaredQuantity with SealedQuantityType,
+  __slots__, a declared surface asserted by SET EQUALITY at import, no arithmetic and no coercion,
+  a __dictoffset__ assertion, and __getstate__/__setstate__ keyed by the private slot name and
+  validated identically to construction. observed_for_dial() and derived_within_one_dial() are the
+  two doors. ScoreOutOfRange, CrossDialCombination and require_finite_float MOVED here from
+  magnitude.py and re-exported, so every existing import site is unchanged. New:
+  QuantityProvenanceMissing, a subclass of CrossDialCombination and therefore of TypeError, so a
+  caller catching the cross-dial refusal catches re-entry too.'
+- 'observed_for_dial refuses three things by COMPARING DATA: a dial_id that is not a non-empty
+  string; an empty inputs_used, or one carrying anything that is not a non-empty string; and the
+  dial_id appearing IN inputs_used. That last one is A DIAL IS NOT AN INGREDIENT OF A DIAL, and it
+  closes the most natural honest-looking spelling of the forgery — declaring the two dials as the
+  inputs of a third figure — without recognising a single spelling.'
+- 'src/crash_detector/dials/magnitude.py. _install now refuses a non-DeclaredQuantity, reporting a
+  value that is not even a finite float in the FAMILIAR terms first (require_finite_float, hence
+  ScoreOutOfRange) so that "you passed a string" does not arrive dressed as a provenance argument;
+  everything surviving that is a real number with no provenance and raises
+  QuantityProvenanceMissing. This ordering is why NOT ONE existing test expectation had to change.
+  quantity_for and __repr__ read through the declared quantity. The private slot now holds a
+  DeclaredQuantity, so reflection reaches another provenance-carrying value rather than a float —
+  boundary C strengthened as a CONSEQUENCE rather than by a new rule.'
+- 'src/crash_detector/engine/evaluate.py. The one product admission site, with the reason written
+  where a reader of that line will find it: used_ids is the set of sources the dial actually got,
+  and the enclosing function is wrapped by _absence_is_never_a_number, which re-derives from
+  (spec, usable) whether those inputs were present. The admission citation and the post-condition
+  premise are the same evidence read twice.'
+- 'tools/register/check_no_blend.py RULE 4 — DENY BY DEFAULT over DECLARED_ADMISSION_SITES, four
+  modules each with its stated reason. Guarded vocabulary: observed_for_dial,
+  derived_within_one_dial, DeclaredQuantity, judged as a Name, an Attribute, an IMPORT alias and a
+  string Constant. The check also REFUSES (exit 3) if provenance.py is absent.'
+- 'tools/register/check_no_blend.py RULE 3 extended from one private slot to two, with the
+  whole-module exemption replaced by SLOT_DECLARING_MODULES so each declaring module may name only
+  the slot it declares.'
+- 'tools/register/check_no_numeric_default.py: observed_for_dial added to MAGNITUDE_CONSTRUCTORS as
+  a PASS-THROUGH and deliberately NOT to DECLARED_MAGNITUDE_SOURCES. V14 measures both directions.'
+- '101 new tests in tests/test_dial_provenance.py and tests/dial_magnitudes.py as the mechanics
+  helper. Every test diff elsewhere is a construction becoming explicit.'
+- 'Documentation corrected wherever it now claims more than it delivers: check_no_blend.py header
+  (boundary 6 rewritten, boundary 7 added, four rules not three), required-tests.yaml CD-AC-002
+  acceptance_semantics and both negative controls, CD-RT-002-AST-NO-BLEND.md,
+  CD-RT-002-TYPE-NO-ARITHMETIC.md, magnitude.py boundaries A/B/D/E, provenance.py, plants/MANIFEST.md
+  and variants/WO-2R/MANIFEST.md.'
+
+proof_standard_discharge: >
+  The Product Owner's word for CD-AC-002 is "unrepresentable", which is a RUNTIME property, so no
+  checker exit is offered as proof of it. Every variant below was WRITTEN, RUN, and its refusal
+  OBSERVED with the exception type and message, in a separate pristine `git archive` extraction
+  under /tmp, one per variant, python3 -B throughout, never in the worktree.
+
+  ONE METHOD POINT THAT MATTERS. Run verbatim against the new tree, the Project Lead's probe files
+  fail at their own FIXTURE SETUP — they build DialMagnitude(dial_id=..., quantity=0.4), which is
+  now refused. That would be a refusal of the scaffolding and not of the attack, and reporting it as
+  a pass would be exactly the constructed-state failure PBG forbids. So every probe below builds its
+  two fixtures through the DECLARED admission door — legitimate magnitudes of 0.4 (equity) and 0.6
+  (monetary) — and then runs the attack UNCHANGED. The refusals recorded are refusals of the attack.
+
+known_set_variants_re_run:
+- 'E01 inter-procedural fold -> REFUSED. TypeError: unsupported operand type(s) for +:
+  DialMagnitude and DialMagnitude. AST exit 0 — boundary 1, as declared.'
+- 'E02 getattr over string slots -> REFUSED. TypeError: unsupported operand type(s) for +: int and
+  DialMagnitude. AST exit 0 — boundary 2, as declared.'
+- 'PL-Q4 repr-launder both, re-wrap as equity, publish -> REFUSED.
+  QuantityProvenanceMissing: a bare number (0.5) was offered as dial equity_crash''s magnitude.
+  NOT REFUSED at a94ef97, where it constructed the score.'
+- 'PL-Q5 the same through the DECLARED door quantity_for -> REFUSED, same exception and message.
+  NOT REFUSED at a94ef97. This is the one that matters most of the three: both numbers were
+  released by naming their own single dial, exactly as the design intends.'
+- 'PL-Q6 number_for_dial_slot on the re-wrapped blend -> REFUSED, same. It RETURNED 0.5 at a94ef97,
+  which is what refuted boundary 6. The gate is unchanged and is not what refuses it; the magnitude
+  the gate requires cannot be built, so the gate is never reached.'
+- 'PL-Q9 the flavour-free module, verbatim -> REFUSED, same. Its STATIC arm still exits 0, PASS on
+  4716 assertions, and always will: nothing about such a module is recognisable. That is boundary 6
+  and it is stated rather than glossed.'
+- 'PL-Q1a repr text leak then add -> STILL NOT REFUSED, returns 1.0. Two floats add. Boundary 6,
+  and a declared test asserts it so the limit cannot lapse quietly.'
+- 'PL-Q1b, PL-Q2a..PL-Q2h (math.fsum, round, operator.index, Decimal, int, complex, format,
+  str-then-float) -> all still REFUSED, re-run rather than assumed.'
+- 'PL-Q3 type.__setattr__ installing __add__ -> still succeeds; the increment-2 declared residue,
+  unchanged. PL-Q3b publication after that mutation -> REFUSED, MagnitudeSurfaceViolated.'
+
+new_variants_of_this_seat:
+- 'V12 admission door with a false declaration — PL-Q9 plus one line. AST exit 1, two RULE 4
+  violations (the import and the call). RUNTIME NOT REFUSED, publishes 0.5. Boundary 7, declared.'
+- 'V13 the door via importlib + getattr with a whole string, no import of the name. AST exit 1, one
+  RULE 4 violation on the string constant — the manoeuvre that beat RULE 1 does not beat RULE 4.
+  RUNTIME NOT REFUSED. Boundary 7.'
+- 'V15 DeclaredQuantity constructed directly, bypassing both doors. AST exit 1, two RULE 4
+  violations. RUNTIME NOT REFUSED. Boundary 7.'
+- 'V14 the door used as a numeric default on the absence branch — written to attack the SEAM with
+  increment 1, because a closure most often reopens something it was not looking at. NUMDEF exit 1,
+  Rule F violation at evaluate.py:306 reporting the literal as the literal it is; AND 9 pytest
+  failures from increment 1''s post-condition. The pass-through did not become a terminus.'
+- 'V16 f-string and JSON round trip, NO repr ANYWHERE. Both leaks succeed (0.4 and 0.6 printed, so
+  the exit genuinely worked and nothing was hidden) and both re-entries REFUSED with
+  QuantityProvenanceMissing. This is the evidence that the closure is at the re-entry and is not a
+  repr fix. AST also exit 1, six RULE 3 violations.'
+- 'V17 in-place rewrite of the second private slot, so nothing is ever constructed. AST exit 1, six
+  RULE 3 violations. RUNTIME NOT REFUSED — see CD-ENG-WO2R-F11.'
+- 'All seven, plus PL-Q9, are committed as git apply-able patches in variants/WO-2R/CD-ASR-F01/ with
+  a manifest row each: proposition, route, why the route differs from the known set, the literal
+  command lines, and the observed refusal OR the observed non-refusal. Nothing under variants/ is
+  executable; the LAUNDER-PROBE is written out in the manifest to be retyped (PBG-ASSURE-001).'
+
+false_positives_checked: >
+  A CLOSURE THAT FORBIDS THE PRODUCT IS NOT A CLOSURE, so this was checked before it was claimed.
+
+  SAME-DIAL COMPUTATION STILL WORKS END TO END. A rolling mean and a max over a one-dial window
+  still compute (test_same_dial_computation_still_works), the same-dial helper still fails only when
+  it is REUSED across dials, and a derived same-dial magnitude now PUBLISHES end to end through
+  number_for_dial_slot (test_a_derived_same_dial_magnitude_still_publishes, new).
+
+  A MAGNITUDE STILL PUBLISHES INTO ITS OWN SLOT. number_for_dial_slot is unchanged and returns 0.9
+  and 0.1 for the two dials.
+
+  THE DEBUGGER IS UNHARMED, AND THAT WAS A DESIGN CONSTRAINT RATHER THAN A HAPPY OUTCOME.
+  repr(EQUITY) is asserted byte-identical to a94ef97:
+  DialMagnitude(dial_id='equity_crash', quantity=0.9). DeclaredQuantity renders its own dials and
+  value. A developer at a breakpoint sees strictly more than before, not less.
+
+  NOT ONE TEST EXPECTATION CHANGED. All 1054 original node ids are present and pass; every diff in
+  tests/ is a construction becoming explicit through tests/dial_magnitudes.py. That was achieved
+  deliberately by validating a non-DeclaredQuantity with require_finite_float FIRST, so the seven
+  parametrised bad values in test_a_magnitude_refuses_anything_that_is_not_a_finite_float still
+  raise ScoreOutOfRange exactly as they did.
+
+commands_run: >
+  All on the returned tree unless stated. IMPLEMENTATION EVIDENCE, not assurance (PBG-SOD-001).
+
+  THE ELEVEN DECLARED COMMANDS FROM required-tests.yaml
+    python3 tools/register/check_no_numeric_default.py --root .        -> 0, 362 assertions (was 301)
+    pytest tests/test_reading.py tests/test_evaluate.py -q             -> 0, 90 passed (unchanged)
+    pytest tests/test_scores.py tests/test_dialset.py
+           tests/test_dial_provenance.py -q                            -> 0, 306 passed (was 205)
+    python3 tools/register/check_no_blend.py --root .                  -> 0, 4688 assertions (was 3893)
+    python3 tools/register/check_schema_closed.py --root .             -> 0, 242 assertions
+    python3 tools/register/check_engine_no_witness_reach.py --root .   -> 0, 13 assertions (was 12)
+    python3 tools/register/check_grant_matrix_live.py --root .         -> 3 PRECONDITION_NOT_MET,
+        no store reachable. UNCHANGED from the a94ef97 baseline, a stated non-zero exit and never a
+        skip. No throwaway container was started: RT-A authorises one only if the increment touches
+        what the live check reads, and this increment touches nothing it reads.
+    pytest tests/test_witness_panel.py tests/test_witness_resolver.py  -> 0, 65 passed (unchanged)
+    python3 tools/register/check_no_execution_interface.py --root .    -> 0, 34502 assertions
+    python3 tools/register/check_lockfile_denylist.py --root .         -> 0, 15 assertions
+    python3 tools/register/check_egress_no_broker.py --root .          -> 0, 43 assertions
+
+  THE FULL SUITE
+    PYTHONPATH=src python3 -B -m pytest -q -p no:cacheprovider         -> 0, 1155 passed (was 1054)
+
+  THE ANTI-RELAXATION CHECK, which is the one that would catch this seat cheating
+    pytest -q --collect-only at a94ef97 and at the returned tree, sorted, compared with comm:
+      1054 node ids before, 1155 after; ZERO of the 1054 missing; 101 added.
+    No test was deleted, renamed, parametrised away, skipped or xfailed.
+
+  THE REGISTER STILL VERIFIES
+    PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify   -> GATE SHUT,
+    latest_admitted_run null, criteria UNDECIDABLE. Unchanged and correct at this boundary.
+
+eleven_plants: >
+  ALL ELEVEN RE-RUN AS A SET, each applied to its own throwaway copy. All eleven still apply
+  cleanly with NO regeneration and NO deletion (CD-D-033). Ten exit 1.
+  CD-RT-003-GRANT-MATRIX-LIVE exits 3 PRECONDITION_NOT_MET for want of a live store, exactly as on
+  the clean tree — ITS CONTRAST WAS NOT RE-RUN, for the reason above, and that is disclosed rather
+  than implied.
+
+  ONE FAILURE SIGNATURE NARROWED, AND IT IS THE MOST IMPORTANT LINE IN THIS SECTION.
+  CD-RT-002-TYPE-NO-ARITHMETIC went from "6 failed, 199 passed" to "2 failed, 304 passed". NOT ONE
+  TEST CHANGED — all six node ids are still collected and still assert what they asserted. Four
+  stopped firing because THE PLANT'S OWN ARITHMETIC NOW RAISES: its __add__ builds
+  DialMagnitude(quantity=left + right) from a bare float, which is refused with
+  QuantityProvenanceMissing, itself a TypeError — so the four tests asserting that the operation is
+  a TypeError are satisfied even with the plant applied. The plant still catches the added dunder on
+  the two surface assertions and still fires ONLY its own arm. Raised as CD-ENG-WO2R-F10.
+
+  CD-AC-002 THREE-TEST INDEPENDENCE RE-MEASURED under that plant and INTACT: check_no_blend exit 0
+  at 4722 assertions, check_schema_closed exit 0, and both CD-AC-001 arms clean
+  (check_no_numeric_default exit 0 at 365, reading+evaluate 90 passed).
+
+declared_limits:
+- id: 'BOUNDARY 6 OF check_no_blend.py — CORRECTED, which the dispatch made mandatory'
+  was: '"THE PUBLICATION BOUNDARY CARRIES THIS."'
+  measured: >
+    FALSE. The re-wrapped blend has provenance of exactly the slot''s dial and
+    number_for_dial_slot returned 0.5 (PL-Q6 at a94ef97, reproduced by this seat).
+  now: >
+    "THE RE-ENTRY CARRIES THIS", with six executed refusals recorded beside it — PL-Q4, PL-Q5,
+    PL-Q6, PL-Q9, V16a and V16b, each with the exception type and message (CD-RULE-006). It also
+    states what is NOT claimed: the addition itself is not refused and PL-Q1a still returns 1.0.
+  consistently_in: 'the check header, the required-tests.yaml comment above the entry, and
+    contracts/execution/CD-RT-002-AST-NO-BLEND.md, plus magnitude.py boundary A and provenance.py.'
+- id: 'BOUNDARY 7 OF check_no_blend.py — NEW. The admission door.'
+  text: >
+    observed_for_dial is the base case of the re-entry closure and it believes what it is told;
+    something has to be the first number, and a base case that had to prove itself would need a base
+    case of its own. A module that calls it with a blend and a fabricated inputs_used obtains a
+    magnitude. MEASURED as V12: check_no_blend FAILS with two RULE 4 violations while the RUNTIME is
+    NOT refused and publishes 0.5.
+  carried_by: >
+    "NOT PROVED TO BE CARRIED ANYWHERE AT RUNTIME." RULE 4 is the only layer over it and RULE 4 is
+    static, so the residue inherits every limitation in the list. Its own residues are an edit to
+    DECLARED_ADMISSION_SITES itself, a module outside the scanned set (boundary 4) and a dynamically
+    assembled door name (boundary 5). V13 shows importlib + getattr with a whole string IS caught.
+- id: 'BOUNDARY B OF magnitude.py — CORRECTED. object.__setattr__ has two directions.'
+  was: '"There is no forgery of provenance that yields a number", presented as covering the residue.'
+  now: >
+    True of forging the PROVENANCE — that makes the magnitude LESS usable. FALSE of forging the
+    VALUE: object.__setattr__(q, "_DeclaredQuantity__value", <a blend>) changes the number in place
+    so nothing is ever constructed and the re-entry closure is never reached. MEASURED as V17, NOT
+    refused at runtime. "NO RUNTIME LAYER CARRIES THIS AND NONE IS CLAIMED TO." RULE 3 carries it
+    statically; no Python-level structure can prevent an in-place slot rewrite.
+- id: 'BOUNDARIES 1, 2, 3 and 5 — unchanged, and RE-MEASURED rather than inherited (CD-RULE-006).'
+  text: 'All four hand their residue to the TYPE LAYER, and E01 and E02 both raise TypeError when
+    executed at this commit. The sentences stand because they were re-tested, not because they were
+    already written.'
+- id: 'THE CLAIM WITHDRAWN FROM CD-RT-002-TYPE-NO-ARITHMETIC.md'
+  text: '"reducing one to a number requires naming its single dial" is withdrawn as false. repr,
+    str, format, f-strings, json.dumps over __getstate__, pickle bytes and getattr on the private
+    slot are all named as release doors. What replaced the claim is measured: THE SUM CANNOT BECOME
+    A MAGNITUDE AGAIN.'
+- id: 'TWO STALE SENTENCES WITHDRAWN FROM variants/WO-2R/MANIFEST.md'
+  text: 'It told a future auditor that a released blend is "unpublishable" and to "attack the
+    PUBLICATION path, not the type". That is the advice that sent the Project Lead''s attention to
+    the layer where the defect was not, which is what CD-RULE-006 now forbids. Replaced by the
+    measured account.'
+- id: 'CD-RT-002-AST-NO-BLEND remains scope: INSTANCE'
+  text: 'Unchanged from increment 2 and deliberately. RULE 4 denies by default and is therefore
+    class-shaped in KIND, but the check as a whole is still a static intra-procedural read of source
+    and PL-Q9 still passes it. Upgrading the scope on the strength of one deny-by-default rule would
+    be the over-claim this rework exists to correct.'
+
+findings_raised:
+- id: CD-ENG-WO2R-F10
+  severity: LOW
+  against: 'this seat''s own work, and the plant it inherited'
+  finding: >
+    The CD-RT-002-TYPE-NO-ARITHMETIC plant''s contrast NARROWED from six failures to two because the
+    re-entry closure defeats the plant''s own __add__ before it can blend. The plant still applies,
+    still exits non-zero and still fires only its own arm, so CD-D-033 is satisfied; but its
+    recorded demonstration — ((e + m) / 2.0).score reading 0.5 — no longer holds, and it is now
+    closer to a token dunder than the manifest''s argument for it claims.
+  what_was_done: >
+    The MANIFEST row was rewritten to state the new signature, name the four tests that stopped
+    firing, and say why. The plant was DELIBERATELY NOT rewritten to blend through the admission
+    door: a plant calling observed_for_dial from scores.py would also fire RULE 4 and destroy
+    CD-AC-002''s three-test independence, which is the CD-PL-F53 hazard. The next Assurance seat
+    should treat this plant as evidence for the surface assertion only and devise its own for the
+    blend.
+- id: CD-ENG-WO2R-F11
+  severity: MEDIUM
+  against: 'this seat''s own closure'
+  finding: >
+    THE RE-ENTRY CLOSURE CANNOT SEE A NUMBER THAT NEVER RE-ENTERS. V17 overwrites
+    _DeclaredQuantity__value in place on the quantity a live magnitude already holds, via
+    object.__setattr__. Nothing is constructed, so no constructor is reached, and the magnitude then
+    reads the blend. NOT REFUSED at runtime.
+  what_was_done: >
+    Boundary B in magnitude.py and the matching paragraph in provenance.py were CORRECTED — the
+    inherited text said the object.__setattr__ residue was safe, which is true of the provenance
+    direction and false of the value direction — and both now read "NO RUNTIME LAYER CARRIES THIS
+    AND NONE IS CLAIMED TO". RULE 3 was extended from one private slot to two so the static layer at
+    least reports it. No Python-level structure can prevent an in-place slot rewrite, and a guard
+    claiming to would be claiming something Python does not offer.
+  honest_qualification: >
+    This seat did NOT find a route to the second private slot that avoids naming the first, so V17
+    already produced four RULE 3 violations before the extension. THE RULE 3 EXTENSION IS THEREFORE
+    PROPHYLACTIC — closing a name the closure created — AND NOT THE REPAIR OF A MEASURED ESCAPE. It
+    is recorded that way in the variant row rather than presented as a catch.
+- id: CD-ENG-WO2R-F12
+  severity: MEDIUM
+  against: 'the structure this seat built'
+  finding: >
+    THE ADMISSION DOOR IS THE WHOLE RESIDUE AND IT IS WHERE THE NEXT ESCAPE WILL BE. V12, V13 and
+    V15 all publish a blend at runtime and are stopped only by a STATIC rule over a written list of
+    four modules. Boundary 7 says so, but the shape of the risk deserves naming on its own: this
+    closure converted an undecidable question into a decidable one at the cost of concentrating the
+    residual trust into one function, and the layer guarding that function inherits every limitation
+    of static analysis — including that a module outside src/crash_detector/ and deploy/entrypoints/
+    is not scanned at all.
+  recommendation: >
+    For the WO-3 dispatch, not for this seat: a runtime check that the number a
+    ContributionModel returns is the number that was admitted, which would give the admission door
+    an independent second layer. It cannot be built in WO-2 because no model is registered and no
+    ingredient source exists (CD-D-005, owed by the Product Owner). NOT attempted here — it needs
+    product data this seat may not invent (CD-RULE-003).
+- id: CD-ENG-WO2R-F13
+  severity: LOW
+  against: 'this seat''s own work'
+  finding: >
+    dial_id is now stated TWICE at every magnitude construction — once to observed_for_dial and once
+    to DialMagnitude — and the set-equality comparison between them is the point. A reader may
+    reasonably read it as redundant and "simplify" it by deriving one from the other, which would
+    remove the comparison and with it the closure.
+  what_was_done: >
+    The reason is written at both sites, in DialMagnitude.__init__''s docstring and in the comment at
+    the one product admission site in evaluate.py. Recorded here so that a future seat that removes
+    it has to remove a written warning to do so.
+
+runtime_actions: >
+  NON_MUTATING_PROVEN throughout, classified before running (PBG-RT-001, PBG-RT-005).
+  No container was started, so RT-A was NOT exercised: it authorises a throwaway PostgreSQL only if
+  the increment touches what check_grant_matrix_live reads, and this increment touches nothing it
+  reads. RT-B (image builds) remains FORBIDDEN and no image was built.
+  Every variant ran in its own `git archive | tar -x` extraction under /tmp, discarded afterwards,
+  never in the worktree and never in a git worktree. `python3 -B` and `pytest -p no:cacheprovider`
+  everywhere, so no __pycache__ or .pytest_cache was written into a governed tree.
+  No secret value was recorded anywhere (PBG-SEC-002, PBG-EVID-003, PBG-CONT-009).
+
+obligations_status: >
+  CLOSED: the LAUNDERING half of CD-ASR-F01, which CD-PL-F54 re-opened — a bare float that has left
+  a magnitude cannot become one again, by any exit, measured on six known-set routes and two of this
+  seat''s own that never touch repr.
+
+  CLOSED: the mandatory obligation. Boundary 6 is corrected and carries executed evidence.
+
+  RESOLVED AND STATED: the repr contradiction, in the DECLARATION direction, with the class closed
+  elsewhere so that the finding is not declared as the limit.
+
+  NOT CLOSED, DECLARED, WITH THE LAYER MEASURED OR NAMED AS ABSENT (CD-RULE-006): the admission door
+  (boundary 7 — static only, three variants publish at runtime); the in-place slot rewrite (boundary
+  B — no runtime layer, and none claimed); a number already released being added (boundary 6 — two
+  floats add, PL-Q1a returns 1.0); post-import type.__setattr__ class mutation (increment 2''s
+  residue, unchanged); and the four static limitations of the AST locator, boundaries 1 to 5.
+
+  NOT STARTED, AND CORRECTLY SO: increments 3, 4 and 5. NOT REPAIRED: CD-ENG-WO2R-F07, F08, F09.
+
+  `latest_admitted_run` remains null. THIS SEAT DOES NOT CERTIFY ITS OWN WORK (PBG-SOD-001,
+  non-waivable). Everything in commands_run is IMPLEMENTATION EVIDENCE. CD-ASR-WO2-02 decides, with
+  FRESH variants: the auditor''s ten, the Project Lead''s eighteen, and now this seat''s eighteen are
+  all the KNOWN set and prove nothing about the class.
+
+escalations: >
+  NONE BLOCKING. Three things for the Project Lead to see:
+
+  1. CD-ENG-WO2R-F12 — the admission door concentrates the residual trust, and the layer guarding it
+     is static. If the Project Lead judges that insufficient for CD-AC-002, this seat has NOT closed
+     CD-ASR-F01 to the standard required and says so here rather than in a footnote.
+  2. CD-ENG-WO2R-F11 — the in-place slot rewrite is not refused at runtime and cannot be.
+  3. NO PRODUCT QUESTION WAS RESOLVED AND NO PRODUCT QUANTITY WAS INVENTED (CD-RULE-003). No range,
+     no unit, no threshold, no ceiling. CD-D-005 remains owed by the Product Owner and the refusal to
+     declare a score range is preserved verbatim in provenance.py''s require_finite_float.
+
+seat_return: >
+  INCREMENT_2b_COMPLETE at 5011b69f9f0cc17efac80b4705b7daa1763ee9e7, plus the commit carrying this
+  entry. READY_FOR_ASSURANCE. The seat STOPS HERE as dispatched and does not begin increment 3.
+
+next_safe_action: >
+  PROJECT LEAD RECONCILIATION of increment 2b: re-run the eleven declared commands and the full
+  suite on its own extraction of the returned SHA; re-run PL-Q4, PL-Q5, PL-Q6 and PL-Q9 from its own
+  reconciliation directory, building the fixtures through the admission door; apply V12 to V17 from
+  variants/WO-2R/CD-ASR-F01/ and confirm both the static and the runtime column of the summary
+  table, INCLUDING the three rows that say NOT REFUSED; compare the full pytest node-id list against
+  a94ef97 with comm for a disappeared assertion; audit the four commit identities (CD-RULE-002); and
+  check each commit for the mandatory CLASS/STRUCTURE block. Then rule on CD-ENG-WO2R-F12 —
+  whether a static-only guard over the admission door is sufficient for CD-AC-002 — because that
+  judgement, not this seat''s, decides whether CD-ASR-F01 closes.

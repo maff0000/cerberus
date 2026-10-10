@@ -1,0 +1,700 @@
+# Crash Detector — the container set, as DESIGN. BLUEPRINT §2, deliverable A6.
+#
+# ==========================================================================================
+# NOTHING HERE IS BUILT IN WO-2. RT-B IS FORBIDDEN.
+# ==========================================================================================
+# PBG-RT-010 keeps image creation and container startup as separate, separately authorised,
+# risk-proportionate actions, and the control's own verification note states that
+# CONTAINER_READY_DESIGN together with CONTAINER_BUILD_NOT_YET_AUTHORISED is a COMPLETE and
+# VALID state. WO-2 delivers the container set as design — this file, the Dockerfiles, the
+# digest pins, the networks, the egress posture, the non-root users and the storage classes
+# — and builds none of it. Image build, smoke test and the non-root proof observed on a
+# RUNNING container are WO-3 work, recorded as OWED and not as done.
+#
+# Do not run `docker compose up` from this file under a WO-2 dispatch.
+#
+# ==========================================================================================
+# THE EGRESS POSTURE, WHICH CD-AC-012 IS PLANTED AGAINST
+# ==========================================================================================
+# BLUEPRINT §2 and §13: "no container's egress allowlist names a broker; engine and both
+# surfaces have no egress at all". Every service below carries an `x-egress` block, and the
+# block is DATA rather than prose: a register check parses this file as YAML, reads
+# `services.<name>.x-egress`, and fails on a violation. A comment is not a posture, because
+# a comment cannot be read by the thing that has to refuse.
+#
+# An egress allowlist entry is DENY BY DEFAULT against deploy/egress-destinations.yaml, the
+# in-tree destination registry. See CD-EGRESS-004 below and that file's header for why the
+# structure is a registry rather than a better broker-name matcher: a matcher recognises
+# SPELLINGS, and the spelling an auditor used to defeat the previous one was an IP address.
+#
+# The contract that check reads is declared once, here, so the check has a specification
+# rather than a habit:
+x-cd-egress-contract:
+  version: 1
+  applies_to: every service in this file, with no exception and no default
+  fields:
+    policy:
+      type: enum
+      values:
+        - NONE
+        - ALLOWLIST
+      meaning:
+        NONE: >
+          This service has no route out of the container network at all. Enforced
+          structurally by attaching it only to networks marked `internal: true`, so the
+          absence of egress is a property of the network topology and not of a firewall
+          rule anyone has to maintain.
+        ALLOWLIST: >
+          This service may reach the hosts named in `hosts`, and nothing else. Enforced at
+          deploy time by the egress lane named in `enforced_by` — Docker Compose has no
+          per-host egress primitive, and claiming this file enforces one would be false.
+    hosts:
+      type: list of REGISTERED DESTINATION HOSTS
+      meaning: >
+        EXHAUSTIVE, AND DENY BY DEFAULT. A host that is not in this list is not reachable by
+        this service. An empty list under ALLOWLIST means nothing is reachable yet, which is
+        the fail-closed state and is where WO-2 leaves every allowlist.
+
+        AN ENTRY HERE IS NOT A FREE STRING. Every entry must be, character for character, the
+        `host` of a destination registered in deploy/egress-destinations.yaml, and that
+        registered destination must name THIS service in its `services` list. Anything else —
+        an address literal, a CIDR, a URL, a wildcard, a bare service name, or a hostname
+        nobody registered — is a violation BY DEFAULT, because it is not a destination anyone
+        declared.
+
+        THIS REPLACES A CHECK THAT RECOGNISED BROKERS BY NAME, and it exists because that
+        check was defeated by writing an address instead of a name (CD-ASR-F04; the auditor
+        put `198.51.100.24` where `api.ibkr.com` had been and it went green). Deny by default
+        means the guard performs NO recognition on an unregistered entry, so there is no
+        pattern to write around. The broker vocabulary and the known-operator denylist survive
+        as a SECOND layer over the registry itself and over every entry as written, catching a
+        destination somebody DID register that is a broker. Neither layer is sole.
+    pending:
+      type: list of OMISSION RECORDS — NEVER a list of hosts
+      meaning: >
+        Endpoints BLUEPRINT §2 declares this service will need, whose host could not be
+        resolved by this seat without inventing it. Declared so the omission is visible
+        rather than discovered in WO-3.
+
+        AN ENTRY HERE IS NOT A HOST AND MUST NOT NAME ONE. Every entry is a mapping
+        declaring EXACTLY two keys, both non-empty prose:
+
+          declared_in  the clause of recorded product intent that says this service will
+                       need an endpoint here.
+          blocked_by   why the host is NOT WRITTEN — the decision that is owed, or the fact
+                       that resolving it would mean inventing it.
+
+        A HOST IS PRECISELY THE THING A PENDING ENTRY DECLARES THE ABSENCE OF, so there is no
+        field in one that can carry a destination, and `host:`, `endpoint:`, `url:`,
+        `address:` or `target:` here is a violation (CD-EGRESS-007). The key set is asserted
+        by EQUALITY with the declared set, so a key nobody has thought of fails the same
+        clause.
+
+        "A PENDING ENTRY GRANTS NOTHING" IS TRUE AND IS NOT THE POINT. At WO-2 an allowlist
+        entry grants nothing either, because both networks are `internal: true`; this whole
+        contract is about DECLARATIONS, not packets, and `pending` is the declaration the
+        WO-3 enforcement lane inherits. It was guarded by the broker vocabulary alone until
+        CD-PL-F59 measured the consequence: `api.ibkr.com` written here was refused and
+        `198.51.100.24` in the same slot passed.
+    enforced_by:
+      type: list
+      meaning: which instrument makes the policy true, named so it can be verified.
+  invariants:
+    - id: CD-EGRESS-001
+      criterion: CD-AC-012
+      statement: >
+        cd-engine, cd-public, cd-private and cd-store declare policy NONE with an empty
+        `hosts` list, and are attached only to networks declared `internal: true`.
+    - id: CD-EGRESS-002
+      criterion: CD-AC-012
+      statement: >
+        No `hosts` entry, in any service, in this file, names a broker, an exchange, an
+        order-routing endpoint or a trading API. The check that establishes this must
+        judge the CLASS — an allowlist entry is a host the system may talk to, and the
+        question is what kind of thing lives there, not whether its name contains a string
+        somebody thought of.
+    - id: CD-EGRESS-003
+      statement: >
+        Every service declares an `x-egress` block. A service with none is a violation and
+        not a default: a check that skips a service it does not recognise is a check that
+        an author bypasses by adding a service.
+    - id: CD-EGRESS-004
+      criterion: CD-AC-012
+      added_closing: CD-ASR-F04
+      statement: >
+        DENY BY DEFAULT OVER A DECLARED DESTINATION REGISTRY. Every entry in every service's
+        `x-egress.hosts` is, character for character, the `host` of a destination registered
+        in deploy/egress-destinations.yaml whose `services` list names that service. An entry
+        that is not is a violation, and it is a violation because nobody declared it rather
+        than because anything was recognised about it. The registry is IN TREE and is read as
+        data: no name resolution, no network call, nothing whose verdict an auditor offline
+        could not reproduce (CD-PL-F48).
+    - id: CD-EGRESS-005
+      criterion: CD-AC-012
+      added_closing: CD-ASR-F04
+      statement: >
+        CLOSED KEY SETS. An `x-egress` block declares exactly `policy`, `hosts`, `pending` and
+        `enforced_by`; a registered destination declares exactly `id`, `host`, `operator`,
+        `purpose`, `declared_in` and `services`; the registry document declares exactly
+        `version`, `contract` and `destinations`. Any other key is a violation and not an
+        extension. A field the guard does not read is a declaration nothing enforces, and a
+        posture arriving through one would be invisible to the same guard that is supposed to
+        be reading the posture.
+    - id: CD-EGRESS-006
+      criterion: CD-AC-012
+      added_closing: CD-ASR-F04
+      statement: >
+        A REGISTERED DESTINATION IS WELL FORMED AND ATTRIBUTABLE. Its `host` is a DNS hostname
+        of two or more labels drawn from lowercase letters, digits and hyphens, with no
+        leading or trailing hyphen and an alphabetic final label of at least two characters —
+        a POSITIVE PERMITTED SHAPE, so an unrecognised form fails rather than passes. Its `id`
+        and `host` are unique in the file, it names an `operator`, a `purpose` and the
+        `declared_in` clause of product intent that authorises it, and every service in its
+        `services` list exists in this file and declares policy ALLOWLIST. The shape rule is
+        not tidiness: the only offline evidence of what a destination REACHES is its
+        registrable domain, and an address literal carries none, so it cannot be judged and
+        therefore cannot be declared.
+    - id: CD-EGRESS-007
+      criterion: CD-AC-012
+      added_closing: CD-PL-F59
+      statement: >
+        A PENDING ENTRY DECLARES AN OMISSION, NOT A DESTINATION. Every service declares
+        `pending` as a LIST; every entry in it is a mapping whose key set is EXACTLY
+        `declared_in` and `blocked_by`, both non-empty scalars. This is LAYER 1 over
+        `pending`, and it is deliberately NOT CD-EGRESS-004's registry: a pending entry
+        exists because the host is UNKNOWN, so requiring it to name a registered destination
+        would either be unsatisfiable or would force an engineering seat to invent the
+        hostname this project recorded as owed (CD-RULE-003, PBG-AUTH-005). A HOST IS
+        PRECISELY THE THING A PENDING ENTRY DECLARES THE ABSENCE OF, so the closure removes
+        the field a destination could sit in rather than trying to recognise destinations:
+        `host:`, `endpoint:`, `url:`, `address:`, `target:` and every key nobody has thought
+        of fail one clause, asserted by EQUALITY with the declared set.
+
+        WHY THIS INVARIANT EXISTS. CD-PL-F59: after CD-EGRESS-004 closed `hosts`, `pending`
+        still carried only the broker vocabulary, so `api.ibkr.com` written there was refused
+        and `198.51.100.24` IN THE SAME SLOT PASSED — CD-ASR-F04 reproduced verbatim one
+        field across. `pending` is not incidental: it is the declaration the WO-3 enforcement
+        lane inherits, which is the thing that lane must not inherit with a hole in it.
+
+        WHAT IT DOES NOT CLOSE: the free prose of `declared_in` and `blocked_by` is not
+        judged for addresses. See boundary 7 of the declared limit in
+        tools/register/check_egress_no_broker.py, which carries the measured example and
+        does not claim any layer carries it.
+
+# ==========================================================================================
+# BASE IMAGE IDENTITY — BY DIGEST, NEVER BY TAG
+# ==========================================================================================
+# "A tag is a mutable pointer; a digest is an identity" (Standards Baseline §3,
+# pbg/skills/specialist/docker-oci-containerisation.md). A tag-only reference anywhere in
+# this file or in a Dockerfile must FAIL the register check.
+#
+# cd-store's digest was RESOLVED AND OBSERVED on this host rather than copied from a
+# specification:
+#
+#     $ docker image inspect postgres:16-alpine \
+#         --format '{{.Id}} {{range .RepoDigests}}{{.}}{{end}}'
+#     sha256:75f5a96988cdf694a215073c3e9c001b706b371e2f94df3967f2efdec2787f6b
+#     postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+#
+# The six application services have NO resolved base digest, and the omission is a refusal
+# rather than an oversight. The Python base image is not present on this host, resolving
+# its digest requires `docker pull`, and pulling is not within this seat's runtime
+# authorisation (RT-A authorises exactly one throwaway PostgreSQL container; RT-B is
+# forbidden). Writing a plausible-looking digest that nobody verified would be constructing
+# evidence, which is non-waivable (PBG-EVID-002, PBG-ASSURE-*).
+#
+# So each Dockerfile takes its base as a build argument with NO DEFAULT, and this file
+# passes it through with `:?`. Both fail closed: `docker build` refuses a blank base, and
+# `docker compose` refuses an unset variable. There is no tag-only reference to leak
+# through, and nothing is claimed that was not observed. See deploy/base-images.json.
+
+name: crash-detector
+
+# ==========================================================================================
+# NETWORKS — two, exactly as BLUEPRINT §2 describes them
+# ==========================================================================================
+networks:
+  # Carries the store, collectors, witness, engine, review and cd-private.
+  cd-net-private:
+    name: cd-net-private
+    driver: bridge
+    # `internal: true` is what makes "no egress" structural. A container attached only to
+    # internal networks has no route off the host, so the engine, the store and both
+    # surfaces cannot reach anything outside regardless of what code runs in them. There is
+    # nowhere for an execution pathway to go (CD-AC-012).
+    internal: true
+
+  # Carries cd-public and nothing else that can reach the store's private schemas.
+  cd-net-public:
+    name: cd-net-public
+    driver: bridge
+    # ALSO internal, and this is a deliberate, disclosed choice rather than a copy of the
+    # line above.
+    #
+    # BLUEPRINT §2 gives cd-public egress `none`. If this network were externally routed,
+    # cd-public would have egress by attachment, and the strongest statement in the egress
+    # column would be true of three services instead of four.
+    #
+    # THE RESIDUAL RISK, STATED: published ports on an internal bridge network are not
+    # verified on this Docker version (28.5.2) by this seat, because verifying it means
+    # starting a container, and RT-B is forbidden in WO-2. It is possible that
+    # 127.0.0.1:8710 will not reach cd-public until this network is made externally routed
+    # or a host-side proxy is added. That verification is owed at WO-3 build time.
+    #
+    # The choice is deliberate because its FAILURE MODE IS THE SAFE ONE: if it does not
+    # work, the public surface is unreachable — which is exactly CD-D-006 and CD-HOLD-005,
+    # "nothing is publicly reachable until Matt says so". The opposite mistake, a surface
+    # that is reachable and also has egress, is the one that cannot be undone by noticing.
+    internal: true
+
+# ==========================================================================================
+# VOLUMES — the third storage class, and the ONLY durable one (PBG-RT-013)
+# ==========================================================================================
+# Three classes, separated (BLUEPRINT §2):
+#   image        = read-only code. Every service declares `read_only: true`, so no process
+#                  can write into its own code directory even if it tried.
+#   tmpfs        = ephemeral scratch. Declared per service, sized, and lost on restart
+#                  because nothing durable is allowed to live there.
+#   named volume = durable data. Exactly one exists, it belongs to the store alone, and no
+#                  other service mounts it.
+volumes:
+  cd-store-data:
+    name: cd-store-data
+
+# ==========================================================================================
+# COMMON FRAGMENTS
+# ==========================================================================================
+x-cd-hardening: &cd-hardening
+  # Least privilege at the container boundary, matching the least privilege the grant matrix
+  # applies at the store boundary (BLUEPRINT §4). Neither is load-bearing alone.
+  cap_drop:
+    - ALL
+  security_opt:
+    - "no-new-privileges:true"
+  read_only: true
+  restart: unless-stopped
+  stop_signal: SIGTERM
+  # Comfortably above crash_detector.runtime.lifecycle.DEFAULT_GRACE_SECONDS (15.0). A
+  # platform grace shorter than the application's shutdown budget makes the budget fiction.
+  stop_grace_period: 30s
+  logging:
+    # Logs go to stdout/stderr and the platform collects them (PBG-OBS-002). An application
+    # rotating its own logs inside a container is fighting the platform.
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "5"
+
+x-cd-python-service: &cd-python-service
+  <<: *cd-hardening
+  environment:
+    # Configuration from the environment only (BLUEPRINT §11, PBG-SEC-001). Every value
+    # below is either a literal operational setting or a reference to a variable BY NAME.
+    # `:?` makes an unset variable a refusal rather than a silent empty string.
+    CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+    CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+    CD_CONTRACTS_DIR: /contracts
+    PYTHONPATH: /app/src
+    PYTHONDONTWRITEBYTECODE: "1"
+    PYTHONUNBUFFERED: "1"
+  tmpfs:
+    # Ephemeral scratch. Small, noexec, nosuid: nothing durable belongs here, and nothing
+    # executable should arrive here.
+    - /tmp:size=16m,mode=1777,noexec,nosuid,nodev
+
+x-cd-contracts-mount: &cd-contracts-mount
+  # contracts/ mounted READ-ONLY into every service that validates an envelope. The path is
+  # read from $CD_CONTRACTS_DIR by crash_detector.publication.envelope_contract, so a
+  # container may mount them anywhere without a code change.
+  type: bind
+  source: ../contracts
+  target: /contracts
+  read_only: true
+
+# ==========================================================================================
+# SERVICES — seven, each because a boundary in the PID requires it (BLUEPRINT §2)
+# ==========================================================================================
+services:
+
+  # ----------------------------------------------------------------------------------------
+  # cd-store — PostgreSQL 16, the durable record.
+  # ----------------------------------------------------------------------------------------
+  cd-store:
+    <<: *cd-hardening
+    # BY DIGEST. Observed on this host with `docker image inspect`; see the header.
+    image: postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+    # The postgres image's own non-root account. Declared explicitly rather than inherited,
+    # so an image whose default changed would be a diff here rather than a surprise.
+    user: "70:70"
+    networks:
+      - cd-net-private
+    # NO PORTS. The store is not reachable from the host at all; the only routes to it are
+    # from containers on cd-net-private.
+    environment:
+      POSTGRES_DB: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      POSTGRES_USER: "${CD_STORE_MIGRATOR_USER:?CD_STORE_MIGRATOR_USER must be set}"
+      # SECRET BY REFERENCE ONLY. This is an env-var NAME; no value appears in this file,
+      # in this repository, or in any governed record (PBG-SEC-002, non-waivable).
+      POSTGRES_PASSWORD: "${CD_STORE_MIGRATOR_PASSWORD:?CD_STORE_MIGRATOR_PASSWORD must be set}"
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: UTC
+    volumes:
+      # The one durable volume in the system.
+      - type: volume
+        source: cd-store-data
+        target: /var/lib/postgresql/data
+    tmpfs:
+      # PostgreSQL needs a writable socket directory and scratch; `read_only: true` above
+      # means it gets them here and nowhere else.
+      - /tmp:size=64m,mode=1777,noexec,nosuid,nodev
+      - /run/postgresql:size=16m,mode=0755,nosuid,nodev
+      - /var/run/postgresql:size=16m,mode=0755,nosuid,nodev
+    healthcheck:
+      # LIVENESS. Readiness is a separate question and belongs to the services that depend
+      # on this one (Standards Baseline §13): "the store process is up" and "cd-public can
+      # serve a current envelope" are different facts and must not share a probe.
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -q'
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    x-uid: 70
+    x-egress:
+      policy: NONE
+      hosts: []
+      pending: []
+      enforced_by:
+        - "attached only to cd-net-private, which is internal: true"
+    x-storage:
+      image: "read-only root filesystem; no writable code directory"
+      tmpfs:
+        - /tmp
+        - /run/postgresql
+        - /var/run/postgresql
+      durable:
+        - cd-store-data at /var/lib/postgresql/data
+    x-migration:
+      applied_by: "db/migrate.py --apply, run as a dedicated deployment step"
+      not_the_startup_path: true
+      control: "PBG-DATA-002, PBG-DATA-003"
+
+  # ----------------------------------------------------------------------------------------
+  # cd-collectors — fetch and persist INGREDIENT observations. OWN COLLECTORS (PID §7).
+  # ----------------------------------------------------------------------------------------
+  cd-collectors:
+    <<: *cd-python-service
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.collectors
+      args:
+        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+    user: "10001:10001"
+    networks:
+      - cd-net-private
+    environment:
+      CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+      CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+      CD_CONTRACTS_DIR: /contracts
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CD_STORE_HOST: cd-store
+      CD_STORE_PORT: "5432"
+      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      CD_STORE_ROLE: cd_collector
+      CD_STORE_COLLECTOR_PASSWORD: "${CD_STORE_COLLECTOR_PASSWORD:?CD_STORE_COLLECTOR_PASSWORD must be set}"
+    volumes:
+      - <<: *cd-contracts-mount
+    depends_on:
+      cd-store:
+        condition: service_healthy
+    x-uid: 10001
+    x-egress:
+      # ALLOWLIST, and it is EMPTY, and that is the WO-2 deliverable rather than a gap.
+      #
+      # An entry here is a host this system may talk to. Naming an ingredient source host
+      # is registering an ingredient source, which is prohibited to this seat: CD-D-005 —
+      # which inputs feed each dial and what each stands for — is owed by the Product Owner
+      # before WO-3, and choosing ingredients is choosing what a dial MEANS (PBG-AUTH-005).
+      # With nothing registered there is nothing to fetch, so an empty allowlist is not
+      # merely safe, it is the accurate description of this service in WO-2.
+      policy: ALLOWLIST
+      hosts: []
+      pending:
+        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
+          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
+      enforced_by:
+        - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+        - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
+    x-storage:
+      image: "read-only root filesystem at /app"
+      tmpfs:
+        - /tmp
+      durable: []
+
+  # ----------------------------------------------------------------------------------------
+  # cd-witness — fetch WITNESS observations, build the panel, compute divergence.
+  # Doctrine §3.4: a witness that is also an ingredient corroborates nothing.
+  # ----------------------------------------------------------------------------------------
+  cd-witness:
+    <<: *cd-python-service
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.witness
+      args:
+        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+    user: "10002:10002"
+    networks:
+      - cd-net-private
+    environment:
+      CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+      CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+      CD_CONTRACTS_DIR: /contracts
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CD_STORE_HOST: cd-store
+      CD_STORE_PORT: "5432"
+      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      CD_STORE_ROLE: cd_witness
+      CD_STORE_WITNESS_PASSWORD: "${CD_STORE_WITNESS_PASSWORD:?CD_STORE_WITNESS_PASSWORD must be set}"
+    volumes:
+      - <<: *cd-contracts-mount
+    depends_on:
+      cd-store:
+        condition: service_healthy
+    x-uid: 10002
+    x-egress:
+      policy: ALLOWLIST
+      hosts: []
+      pending:
+        - declared_in: "BLUEPRINT §2 — 'allowlist: OFR, Quantical'"
+          blocked_by: >
+            The Blueprint names the witnesses but not their hosts. This seat will not write
+            a hostname it did not verify: a guessed host in an allowlist is either dead —
+            and the witness silently unavailable — or alive and not what anyone intended.
+            Resolving and recording both hosts is WO-3 work.
+      enforced_by:
+        - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+        - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
+    x-storage:
+      image: "read-only root filesystem at /app"
+      tmpfs:
+        - /tmp
+      durable: []
+
+  # ----------------------------------------------------------------------------------------
+  # cd-engine — compute both dials, build both envelopes. The only writer of dial numbers.
+  # ----------------------------------------------------------------------------------------
+  cd-engine:
+    <<: *cd-python-service
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.engine
+      args:
+        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+    user: "10003:10003"
+    networks:
+      - cd-net-private
+    environment:
+      CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+      CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+      CD_CONTRACTS_DIR: /contracts
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CD_STORE_HOST: cd-store
+      CD_STORE_PORT: "5432"
+      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      # Authenticates as cd_engine, which holds NO GRANT OF ANY KIND on schema witness
+      # (BLUEPRINT §4, CD-AC-003). The boundary is held in two independent places — network
+      # and grant — because either one alone is a single point of failure.
+      CD_STORE_ROLE: cd_engine
+      CD_STORE_ENGINE_PASSWORD: "${CD_STORE_ENGINE_PASSWORD:?CD_STORE_ENGINE_PASSWORD must be set}"
+    volumes:
+      - <<: *cd-contracts-mount
+    depends_on:
+      cd-store:
+        condition: service_healthy
+    x-uid: 10003
+    x-egress:
+      # NO EGRESS AT ALL. CD-AC-012: there is nowhere for an execution pathway to go.
+      policy: NONE
+      hosts: []
+      pending: []
+      enforced_by:
+        - "attached only to cd-net-private, which is internal: true"
+    x-storage:
+      image: "read-only root filesystem at /app"
+      tmpfs:
+        - /tmp
+      durable: []
+
+  # ----------------------------------------------------------------------------------------
+  # cd-public — serve the public market read. Doctrine §3.5: "not the same container".
+  # ----------------------------------------------------------------------------------------
+  cd-public:
+    <<: *cd-python-service
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.public
+      args:
+        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+    user: "10004:10004"
+    networks:
+      # Attaches to BOTH, and authenticates to the store as cd_public — a role that can
+      # read exactly two tables (BLUEPRINT §3, separation 2 and separation 3).
+      - cd-net-public
+      - cd-net-private
+    ports:
+      # LOOPBACK ONLY. CD-D-006 and CD-HOLD-005: nothing is publicly reachable until Matt
+      # says so, and making it so is a PROD decision the Product Owner takes, not a line
+      # anyone edits here. The 127.0.0.1 prefix is not optional and its absence must fail
+      # the register check.
+      - "127.0.0.1:8710:8710"
+    environment:
+      CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+      CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+      CD_CONTRACTS_DIR: /contracts
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CD_BIND_HOST: "0.0.0.0"
+      CD_BIND_PORT: "8710"
+      CD_STORE_HOST: cd-store
+      CD_STORE_PORT: "5432"
+      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      CD_STORE_ROLE: cd_public
+      CD_STORE_PUBLIC_PASSWORD: "${CD_STORE_PUBLIC_PASSWORD:?CD_STORE_PUBLIC_PASSWORD must be set}"
+    volumes:
+      - <<: *cd-contracts-mount
+    depends_on:
+      cd-store:
+        condition: service_healthy
+    x-uid: 10004
+    x-egress:
+      policy: NONE
+      hosts: []
+      pending: []
+      enforced_by:
+        - "attached only to cd-net-public and cd-net-private, both internal: true"
+    x-storage:
+      image: "read-only root filesystem at /app"
+      tmpfs:
+        - /tmp
+      durable: []
+    x-surface:
+      classification: PUBLIC
+      bind: "127.0.0.1:8710"
+      publicly_reachable: false
+      held_by: "CD-D-006, CD-HOLD-005 — a PROD decision the Product Owner takes"
+
+  # ----------------------------------------------------------------------------------------
+  # cd-private — serve Matt's drill-down and anything book-adjacent.
+  # ----------------------------------------------------------------------------------------
+  cd-private:
+    <<: *cd-python-service
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.private
+      args:
+        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+    user: "10005:10005"
+    networks:
+      # NOT on cd-net-public. Separation 2 of BLUEPRINT §3 runs in this direction too.
+      - cd-net-private
+    ports:
+      - "127.0.0.1:8711:8711"
+    environment:
+      CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+      CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+      CD_CONTRACTS_DIR: /contracts
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CD_BIND_HOST: "0.0.0.0"
+      CD_BIND_PORT: "8711"
+      CD_STORE_HOST: cd-store
+      CD_STORE_PORT: "5432"
+      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      CD_STORE_ROLE: cd_private
+      CD_STORE_PRIVATE_PASSWORD: "${CD_STORE_PRIVATE_PASSWORD:?CD_STORE_PRIVATE_PASSWORD must be set}"
+    volumes:
+      - <<: *cd-contracts-mount
+    depends_on:
+      cd-store:
+        condition: service_healthy
+    x-uid: 10005
+    x-egress:
+      policy: NONE
+      hosts: []
+      pending: []
+      enforced_by:
+        - "attached only to cd-net-private, which is internal: true"
+    x-storage:
+      image: "read-only root filesystem at /app"
+      tmpfs:
+        - /tmp
+      durable: []
+    x-surface:
+      classification: PRIVATE
+      bind: "127.0.0.1:8711"
+      publicly_reachable: false
+      held_by: "CD-D-006, CD-HOLD-005"
+
+  # ----------------------------------------------------------------------------------------
+  # cd-review — the one AI review, through its four validators. Doctrine §3.3: the only
+  # component with model-API egress, and it can write no number.
+  # ----------------------------------------------------------------------------------------
+  cd-review:
+    <<: *cd-python-service
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.review
+      args:
+        CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference; see deploy/base-images.json}"
+    user: "10006:10006"
+    networks:
+      - cd-net-private
+    environment:
+      CD_TICK_INTERVAL_SECONDS: "${CD_TICK_INTERVAL_SECONDS:-30.0}"
+      CD_SHUTDOWN_GRACE_SECONDS: "${CD_SHUTDOWN_GRACE_SECONDS:-15.0}"
+      CD_CONTRACTS_DIR: /contracts
+      PYTHONPATH: /app/src
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      CD_STORE_HOST: cd-store
+      CD_STORE_PORT: "5432"
+      CD_STORE_NAME: "${CD_STORE_NAME:?CD_STORE_NAME must be set}"
+      CD_STORE_ROLE: cd_review
+      CD_STORE_REVIEW_PASSWORD: "${CD_STORE_REVIEW_PASSWORD:?CD_STORE_REVIEW_PASSWORD must be set}"
+      # The model API key, BY NAME. No value here, ever.
+      CD_MODEL_API_KEY: "${CD_MODEL_API_KEY:?CD_MODEL_API_KEY must be set}"
+    volumes:
+      - <<: *cd-contracts-mount
+    depends_on:
+      cd-store:
+        condition: service_healthy
+    x-uid: 10006
+    x-egress:
+      policy: ALLOWLIST
+      hosts: []
+      pending:
+        - declared_in: "BLUEPRINT §2 — 'allowlist: model API only'"
+          blocked_by: >
+            Which model, and therefore which host, is not decided in BLUEPRINT §16 and is
+            not this seat's to choose. Recorded as owed rather than guessed.
+      enforced_by:
+        - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
+        - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
+    x-storage:
+      image: "read-only root filesystem at /app"
+      tmpfs:
+        - /tmp
+      durable: []
+    x-authority:
+      writes_numbers: false
+      basis: "the cd_review role holds no INSERT or UPDATE on any dial or envelope number (BLUEPRINT §4, §9), and publication.review declares no numeric dial column"

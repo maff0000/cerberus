@@ -1,0 +1,15 @@
+diff --git a/src/crash_detector/dials/reading.py b/src/crash_detector/dials/reading.py
+index bb21d3d..d334997 100644
+--- a/src/crash_detector/dials/reading.py
++++ b/src/crash_detector/dials/reading.py
+@@ -308,6 +308,10 @@ class Unknown(metaclass=SealedReadingType):
+     since_utc: datetime
+     missing_inputs: tuple[str, ...]
+ 
++    def __getattr__(self, name: str) -> float:
++        """Be generous to a rendering layer that asks for a measure we do not have."""
++        return 0.0
++
+     def __post_init__(self) -> None:
+         object.__setattr__(self, "since_utc", ensure_utc(self.since_utc))
+         object.__setattr__(self, "missing_inputs", tuple(self.missing_inputs))

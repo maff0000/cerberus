@@ -1,0 +1,284 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 7 — ITEMS 3 AND 4, LANDED TOGETHER AND THE COUPLING IS THE HEADLINE.
+#
+# ITEM 3: the `__wrapped__` PRODUCT DEFECT — removed, the presence-asserting test corrected, every
+#         live `__wrapped__` enumerated BY INSTRUMENT, the historic attack set re-run.
+# ITEM 4: the residual `tree.body` in `_established_here_spellings`, closed with its contrast.
+#
+# **WHY ONE COMMIT.** Item 3's fix — `delattr(guarded, "__wrapped__")` — IS A CALL WITH `guarded`
+# AS AN ARGUMENT, and item 2's reachability clause denied by default on `PASSED_TO`. **SO THE
+# INCREMENT'S OWN REPAIR RECLASSIFIED THE CD-ASR-F03 NET AS A REACHABLE DOOR AND TOOK THE DOORS
+# CHECK FROM PASS TO FAIL — the exact outcome PO-DECISIONS-0012 ruling 1 forbids.** The criterion is
+# corrected here, so items 2, 3 and 4 are only coherent read together. Recorded as
+# CD-ENG-WO2R3-03-F11.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0075. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T005840Z-0076
+timestamp_utc: "2026-08-23T00:58:40Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-03
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0013.md rulings 2 and 6'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+parent_entry_id: BL-20260823T003909Z-0075
+schema_version: 1
+
+record_type: INCREMENT
+
+item_3_part_a_the_removal:
+  what_changed_in_the_code_path: >
+    `src/crash_detector/engine/evaluate.py`, inside `_absence_is_never_a_number`, after the closure
+    is defined and before it is returned: `delattr(guarded, "__wrapped__")` in a
+    `try/except AttributeError`, plus `guarded.__signature__ = inspect.signature(evaluate_one_dial)`
+    so `inspect.signature` still reports what the evaluator takes. **THAT IS THE PROJECT'S OWN
+    PRACTICE AT ITS TWO OTHER SITES, COPIED INCLUDING ITS SHAPE** — `admission.py:766` and
+    `establishment.py:506` both delattr, both keep the signature as DATA, and both carry a comment
+    block saying what the deletion does NOT close.
+  and_the_honesty_was_copied_too_because_that_was_the_instruction: >
+    The comment block states what remains OPEN — the `__closure__` cell route — names it as
+    `admission.py`'s DECLARED LIMIT 6 and `establishment.py`'s DECLARED LIMIT 3, says it is true of
+    every Python decorator, and **CITES THIS SEAT'S OWN MEASUREMENT OF IT AT THIS COMMIT** rather
+    than asserting it: P-F arm A6 obtains the undecorated function from the cells.
+  measured_both_arms: |
+    variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py, same probe, two trees:
+      BEFORE (9f7b764)   A5  PRESENT -> <function _evaluate_dial>
+                         A5b calling the INNER through it: POST-CONDITION NOT RUN, returned Unknown
+      AFTER  (here)      A5  ABSENT — this route does not exist
+                         A6  PRESENT — the closure route, DECLARED and unchanged
+
+item_3_part_b_the_test_correction:
+  the_ruling: '*"a test that requires a bypass to exist pins the bypass open, and a test that asserts a vulnerability is a defect in the test."*'
+  what_was_there: >
+    `tests/test_evaluate.py:692` — `assert hasattr(evaluate_module._evaluate_dial, "__wrapped__")`.
+    **THE ONLY SHIPPED ASSERTION THAT THE CD-ASR-F03 GUARD WAS APPLIED WAS THE PRESENCE OF THE
+    ATTRIBUTE THAT REMOVES IT.** The superseded assertion is QUOTED IN THE DOCSTRING, not deleted.
+  the_intent_kept_the_instrument_changed_FOUR_ASSERTIONS:
+  - '1. THE NEGATIVE — `not hasattr(..., "__wrapped__")` and `inspect.unwrap(x) is x`, matching
+     `tests/test_admission.py:334` and `tests/test_field_establishment.py:215`. **THREE SITES, ONE
+     PRACTICE, THREE CARRIERS**, which is what the ruling asked for.'
+  - '2. THE GUARD FIRES ON THE REAL OBJECT — the module-level post-condition is replaced by a spy,
+     the REAL `_evaluate_dial` is called, and the spy is asserted to have been called ONCE with the
+     real (spec, usable, reading). **NOT "an attribute is present" — the post-condition OBSERVED
+     RUNNING at the real boundary.**'
+  - '3. THE GUARD SURVIVES ANY BODY — the docstring''s actual claim. The decorator is applied to a
+     body that returns a value-bearing reading having received no inputs (CD-ASR-F03''s own shape)
+     and must raise `AbsenceYieldedAValue`. **WITH THE COUNTERFACTUAL ARM (CD-D-079): the identical
+     body UNDECORATED returns the bad `Value` happily.**'
+  - '4. THE OPEN HALF ASSERTED OPEN — the closure cells still reach the undecorated function, and
+     the assertion FAILS IF THAT EVER CLOSES, so the declared limit cannot go stale in the
+     comfortable direction.'
+  proved_non_vacuous_at_its_own_seam_PBG_ASSURE_017: |
+    Two throwaway trees, the guard broken at each of its two seams:
+      delattr REMOVED (bypass restored) -> FAILED, "the CD-ASR-F03 guard must not publish a
+                                           documented way round itself", assert not True
+      guard CALL removed               -> FAILED, "the post-condition was not called at the
+                                           evaluator's boundary", assert 0 == 1
+    **TWO SEAMS, TWO DISTINCT MESSAGES.** A single message for both would have been one assertion
+    wearing four hats.
+
+item_3_part_c_every_live_wrapped_BY_INSTRUMENT:
+  instrument: 'tools/audit/enumerate_live_wrapped.py — NEW. EXIT 0.'
+  why_it_imports_the_product_when_no_other_instrument_here_does: >
+    **`__wrapped__` IS A RUNTIME ATTRIBUTE ON A COMPILED FUNCTION OBJECT AND APPEARS IN NO SOURCE
+    FILE.** A source scan cannot answer this and A GREP IS NOT AN INSTRUMENT — that is precisely the
+    reading that let this bypass survive three gates: everyone saw `@functools.wraps` and did not
+    ask the object. The cost is DISCLOSED in the header: an auditor who trusts nothing in the
+    implementation cannot trust this one, so it does not replace the static checks.
+  THE_RESULT_AND_A_COUNT_IS_NOT_AN_ANSWER: |
+    OBJECTS INTERROGATED: 808.  MODULES THAT FAILED TO IMPORT: 0.
+    LIVE `__wrapped__` FOUND: 43 — classified by WHERE THE WRAPPER'S OWN CODE LIVES, derived from
+    the object and never from a list of known-good names:
+      **APPLIED BY THIS PROJECT'S OWN CODE — THE ONLY BUCKET THAT IS A FINDING : 0**
+      `staticmethod`/`classmethod` objects, CPython's BUILT-IN descriptor            : 8
+      wrapped by code OUTSIDE the package (`reprlib.recursive_repr` via `dataclasses`): 35
+    **THE RAW 43 WOULD HAVE READ AS 43 PROJECT BYPASSES AND IT IS ZERO.** The 8 are
+    `Sealed*Type.__new__` and friends, where `__wrapped__` is a CPython attribute on the
+    `staticmethod` OBJECT and nothing applied `functools.wraps`; the 35 are every `@dataclass`
+    `__repr__`, wrapped by `reprlib`.
+  the_discriminator_and_why_the_OBVIOUS_one_is_WRONG: >
+    The classifier reads `carrier.__code__.co_filename` — **where the WRAPPER'S code lives.** It
+    does NOT read the target's `__module__`, and that matters: **`functools.wraps` COPIES
+    `__module__` FROM THE WRAPPED FUNCTION**, so a `dataclasses` `__repr__` wrapped by `reprlib`
+    reports `__module__` = the product module and would be MISFILED AS THIS PROJECT'S CODE by any
+    check that trusted it. Measured — that is what this instrument's first version would have done.
+  PROVED_NON_VACUOUS_and_this_is_the_arm_that_matters: |
+    The same instrument, copied unchanged into a pristine extraction of 9f7b764:
+      BEFORE  LIVE FOUND: 44   **PACKAGE DECORATOR: 1**
+              crash_detector.engine.evaluate._evaluate_dial -> '_evaluate_dial'
+              `_absence_is_never_a_number` — the CD-ASR-F03 guard   **PRESENT  <- A BYPASS**
+      AFTER   LIVE FOUND: 43   PACKAGE DECORATOR: 0
+              `_absence_is_never_a_number` — the CD-ASR-F03 guard   absent
+    **44 -> 43, AND THE ONE THAT MOVED IS THE RIGHT ONE.** A "0 found" from an instrument that has
+    never found anything is not evidence.
+  what_it_does_NOT_reach_PRINTED_AT_EVERY_RUN: >
+    an object reachable only from a function's CLOSURE CELLS; an object created LAZILY after import;
+    a wrapper on an object inside a CONTAINER in a namespace; a class attribute more than ONE level
+    of nesting in; anything in a module that fails to import (reported as a row, never skipped).
+
+item_3_part_d_the_historic_attack_set_re_run:
+  instrument: 'variants/WO-2R3/P-I-the-wrapped-attack-set-re-run.sh — EXIT 0. Routes READ FROM THE DIRECTORY, not from the manifest (CD-PL-F97).'
+  the_set_and_why_it_is_this_set: >
+    V24 (the `__wrapped__` probe itself) plus **EVERY** patch in `variants/WO-2R/CD-ASR-F02-F03/` —
+    nine routes. The fifth Assurance seat's M10 established why: *"the layer that closes V03, E04
+    and V06 is `refuse_a_number_without_its_inputs` — the guard whose `__wrapped__` bypass I
+    demonstrated live."* That corpus is the one whose closure depends on the guard this item changed.
+  THE_GUARD_ROW_WHICH_IS_WHAT_THE_RULING_ASKS: |
+    arm      __wrapped__ | through the guard             | through __wrapped__
+    BEFORE   PRESENT     | REFUSED AbsenceYieldedAValue  | *** ACCEPTED THROUGH __wrapped__ ***
+    AFTER    absent      | REFUSED AbsenceYieldedAValue  | ROUTE ABSENT
+    **THE GUARD REFUSES IN BOTH ARMS. WHAT CHANGED IS THAT THE WAY ROUND IT IS GONE.**
+  the_before_after_table: |
+    route                                            BEFORE applies  BEFORE result   AFTER applies   AFTER result
+    V24-wrapped-attribute-bypass                     git apply       CLOSED (2 f)    git apply       CLOSED (8 f)
+    E03-unknown-numeric-property                     git apply       CLOSED (collect error)  git apply   CLOSED (collect error)
+    E04-module-level-constant                        -C1             CLOSED (13 f)   -C1             CLOSED (19 f)
+    V01-classvar-not-a-property                      git apply       CLOSED (collect error)  git apply   CLOSED (collect error)
+    V02-getattr-catch-all                            git apply       CLOSED (collect error)  git apply   CLOSED (collect error)
+    V03-dynamic-constructor-on-the-absence-branch    -C1             CLOSED (13 f)   patch --fuzz=5  CLOSED (19 f)
+    V04-post-import-class-mutation                   git apply       CLOSED (39 f)   git apply       CLOSED (45 f)
+    V05-decorator-installs-the-member                patch --fuzz=5  CLOSED (collect error)  patch --fuzz=5  CLOSED (collect error)
+    V06-magnitude-from-configuration-not-a-literal   -C1             CLOSED (13 f)   patch --fuzz=5  CLOSED (collect error)
+  THE_ANSWER: >
+    **NO WO-2R ROUTE REOPENS. NINE OF NINE CLOSED BEFORE, NINE OF NINE CLOSED AFTER.** The ruling
+    said this is *"answered by that re-run, not by argument"*, and it is.
+  AND_THE_PART_OF_THAT_TABLE_THAT_IS_WEAKER_THAN_IT_LOOKS_STATED_BY_ME: >
+    **V03 AND V06's AFTER ARMS APPLIED BY A DIFFERENT MECHANISM FROM THEIR BEFORE ARMS** (`-C1` ->
+    `patch --fuzz=5`), because this item's edit to `evaluate.py` moved their context, and **V06's
+    AFTER outcome is a COLLECT ERROR where its BEFORE outcome was 13 test failures.** A collect
+    error and a test failure are both "exit non-zero" and **THEY ARE NOT THE SAME EVIDENCE**
+    (CD-ENG-WO2R3-F12). Those two rows say the routes did not silently pass; they do NOT say the
+    closure mechanism is unchanged. **THE HIGHER AFTER-COUNTS (2->8, 13->19, 39->45) ARE THIS
+    INCREMENT'S SIX NEW CARRIERS PLUS THE CORRECTED TEST, NOT NEW BREAKAGE** — checked by
+    subtraction, and stated because an unexplained rise in a failure count is exactly the sort of
+    figure a reader waves through.
+
+item_4_the_residual_tree_body:
+  where: '`_established_here_spellings`''s module-level rebinding fixpoint in `check_judgement_path_doors.py`. It read `for node in tree.body` TWELVE LINES from `_callables`, which increment 6 widened to walk at any depth — same file, same idiom, same defect shape, left behind by the increment dispatched to eliminate it.'
+  what_was_done: 'CLOSED. `for node in ast.walk(tree)`.'
+  THE_ESCAPE_MEASURED_BEFORE_THE_FIX_RATHER_THAN_ASSERTED_AFTER_IT: |
+    Planted into engine/model.py: `def _install_door(): EH = ESTABLISHED_HERE` — the alias bound
+    INSIDE A FUNCTION BODY — then `@admits(value=EH("..."))` on a door escaping to a public
+    module-level name.
+      BEFORE  ESTABLISHED_HERE uses: 16   <- the exemption NOT COUNTED
+      AFTER   ESTABLISHED_HERE uses: 17   <- and NAMED: engine/model.py:791
+                                             _install_door.planted_door(value)
+    In a limit whose own text says the exemption is **COUNTED, NOT HIDDEN**.
+  why_CLOSED_and_not_CARRIED_the_direction_of_the_error_decides_it: >
+    Widening can ADD a spelling a module-level decorator could not actually see — a false row, which
+    is NOISE. Not widening HIDES a weakening, which is the exact failure the limit is named after.
+    **A REGISTER THAT EXISTS TO SAY "THIS MANY EXPLICIT WEAKENINGS" TAKES THE NOISY ANSWER OVER THE
+    SILENT ONE.** And the other direction is MEASURED, not assumed: **the shipped tree's count is
+    UNMOVED at 16**, so no false row was introduced here, asserted by
+    `test_the_widened_fixpoint_adds_no_false_row_to_the_shipped_tree`.
+  NAME_YOUR_CARRIER_AND_THE_ANSWER_RESIZES_MY_OWN_FIX: >
+    Line 518 says *"THIS IS A REPORTING FIX AND NOT A CLOSURE, AND THE DIFFERENCE IS THE WHOLE OF
+    CD-RULE-006: A CHECK REPORTS, A CARRIER FAILS."* **I MEASURED THE CARRIER BEFORE CLAIMING
+    ANYTHING, AND IT ALREADY HELD.** On the same plant, at the UNWIDENED instrument,
+    `tests/test_admission.py::test_the_established_here_exemptions_are_exactly_this_set` **ALREADY
+    FAILED, `17 != 16`**, because it enumerates from the RUNTIME compiled declaration objects where
+    a spelling cannot matter. **SO THIS CLOSED A GAP IN WHAT THE CHECK SAYS AND NOT IN WHAT THE
+    PROJECT REFUSES, AND LINE 518'S SENTENCE STILL APPLIES TO MY OWN REPAIR.** Claiming a closure
+    here would have been the overstatement CD-RULE-006 exists to stop.
+  new_carrier_for_the_widening_itself: 'tests/test_judgement_path_doors.py::test_an_established_here_alias_bound_in_a_function_body_is_counted, and its companion asserting the shipped count did not move.'
+
+findings:
+- id: CD-ENG-WO2R3-03-F11
+  severity: HIGH
+  against: 'THIS INCREMENT AGAINST ITSELF — item 2''s criterion versus item 3''s fix.'
+  what_happened_MEASURED: >
+    Item 2's reachability clause treated `PASSED_TO` as an escape and DENIED BY DEFAULT. Item 3's
+    fix is `delattr(guarded, "__wrapped__")` — **A CALL WITH `guarded` AS AN ARGUMENT.** So the
+    clause reclassified the CD-ASR-F03 net as a REACHABLE DOOR and the doors check went
+    **PASS -> `FAIL — 2 violation(s)`** (`UNDECORATED_JUDGEMENT_PATH_DOOR` +
+    `NET_DECLARED_BUT_ABSENT`) **ON THE INCREMENT'S OWN REPAIR.**
+  why_it_is_HIGH: >
+    **THAT IS THE EXACT OUTCOME PO-DECISIONS-0012 RULING 1 FORBIDS — `guarded` becoming a door —
+    produced by the instrument written to implement ruling 2.** And both available escapes were
+    worse than the defect: an exclusion list of "callees that do not retain" is A VOCABULARY, which
+    is what ruling 2 exists to remove; decorating `guarded` is prohibited outright. **THE ONLY
+    HONEST MOVE WAS TO CORRECT THE CRITERION.**
+  how_it_was_found_and_this_is_the_uncomfortable_part: >
+    **NOT BY DESIGN.** It surfaced while measuring ITEM 4's escape in a throwaway tree, where an
+    unrelated plant produced two violations in `evaluate.py` that had nothing to do with the plant.
+    Had item 3 landed in its own commit before item 4 was measured, **THE DOORS CHECK WOULD HAVE
+    BEEN RED AT THAT COMMIT AND I WOULD HAVE BEEN DEBUGGING IT AS A REGRESSION RATHER THAN
+    UNDERSTANDING IT AS A DESIGN ERROR.**
+  the_correction: >
+    `PASSED_TO` is TAGGED and NOT treated as an escape. The clause now answers the question actually
+    asked — *can a caller outside this module obtain and call it* — rather than a broader one
+    (*could anything at all happen to it*). Declared in all three CD-RULE-004 places, with this
+    measurement, as a DELIBERATE WEAKENING and not as a neutral choice.
+  WHAT_IS_LOST_AND_IT_IS_REAL: >
+    **A CALLEE THAT STORES THE OBJECT SOMEWHERE REACHABLE IS NOT SEEN.** `register(decide)` where
+    `register` appends to a module-level list is invisible to this clause. **CARRIER: NOT PROVED TO
+    BE CARRIED ANYWHERE**, except that ON A JUDGEMENT PATH the NETS population denies by default and
+    such a callable fails `UNCLASSIFIED_INTERCEPTOR` unless declared. Off a judgement path: nothing.
+  regression_carrier: 'tests/test_judgement_path_doors.py::test_the_projects_own_delattr_fix_does_not_make_the_net_a_door, which also asserts the delattr is still in the shipped source so it cannot pass vacuously.'
+  disposition: 'REPAIRED IN THIS COMMIT. **RAISED AT HIGH BECAUSE THE INTERACTION, NOT THE BUG, IS THE FINDING**: two items of one increment, each correct alone, wrong together.'
+
+- id: CD-ENG-WO2R3-03-F12
+  severity: LOW
+  against: 'THE ATTACK-SET RE-RUN''s OWN EVIDENCE QUALITY.'
+  what_is_measured: >
+    V03 and V06's AFTER arms applied by a DIFFERENT mechanism from their BEFORE arms (`-C1` ->
+    `patch --fuzz=5`) because this item's edit to `evaluate.py` moved their context, and **V06's
+    AFTER outcome is a COLLECT ERROR where its BEFORE was 13 test failures.**
+  why_it_matters: >
+    **A COLLECT ERROR AND A TEST FAILURE ARE BOTH "CLOSED" IN A SUMMARY TABLE AND THEY ARE NOT THE
+    SAME EVIDENCE** (CD-ENG-WO2R3-F12). Those two rows establish that the routes did not silently
+    pass. They do NOT establish that the closure MECHANISM is unchanged, and this record does not
+    claim they do.
+  what_would_settle_it: 'Re-cutting V03 and V06 against the new head so both arms apply cleanly. NOT DONE — the variant corpus is the auditors'' and CD-ENG-WO2R3-F20 records that extending it is the Project Lead''s call, not this seat''s.'
+  disposition: 'RAISED AND OPEN.'
+
+- id: CD-ENG-WO2R3-03-F13
+  severity: LOW
+  against: 'THE `__wrapped__` ENUMERATION INSTRUMENT — its first version would have lied.'
+  what_is_measured: >
+    The obvious discriminator for "is this wrapper ours" is the target's `__module__`. **IT IS
+    WRONG, AND WRONG IN THE ALARMING DIRECTION: `functools.wraps` COPIES `__module__` FROM THE
+    WRAPPED FUNCTION**, so all 35 `dataclasses`/`reprlib` `__repr__` wrappers report a
+    `crash_detector.*` module and would have been reported as this project's own decorators.
+    **THE HEADLINE WOULD HAVE READ "43 LIVE BYPASSES IN THE PACKAGE" AND THE TRUE ANSWER IS ZERO.**
+  the_correction: 'Classify by `carrier.__code__.co_filename` — where the WRAPPER''s code lives — which `wraps` does not copy.'
+  disposition: 'REPAIRED BEFORE LANDING. Recorded because the next person to write a runtime-attribute instrument on this project will reach for `__module__` first.'
+
+what_these_items_do_NOT_close_MEASURED:
+- '**THE `__closure__` ROUTE IS OPEN AND IS ASSERTED OPEN.** P-F arm A6 obtains the undecorated
+   `_evaluate_dial` from the cells at this commit. True of every Python decorator; DECLARED LIMIT 6
+   / DECLARED LIMIT 3; **this site now sits INSIDE that limit rather than outside it, and that is
+   the whole of what item 3 changed about the guard''s reach.**'
+- '**THE ENUMERATION IS A SNAPSHOT AT IMPORT TIME.** A wrapper built lazily on first use does not
+   exist when the instrument runs. Declared and printed at every run; NOT PROVED TO BE CARRIED
+   ANYWHERE.'
+- '**ITEM 4 IS A REPORTING FIX AND NOT A CLOSURE**, and its own carrier already held before it —
+   measured, `17 != 16` at the unwidened instrument. Nothing the project REFUSES changed.'
+- '**THE `PASSED_TO` WEAKENING** (F11) — a callee that stores the object is not seen. NOT PROVED TO
+   BE CARRIED ANYWHERE off a judgement path.'
+- '**NO CLAIM IS MADE THAT THE WO-2R CORPUS IS THE WHOLE ATTACK SET.** Nine routes were re-run
+   because the fifth seat''s M10 named that corpus as the one depending on this guard. CD-D-047
+   says the corpus proves nothing about any class, and it does not become a class by being re-run.'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  doors_check: 'EXIT 0 — PASS, 60 assertions, 0 violations, 27 subjects, 27 decorated.'
+  suite: 'EXIT 0 — 1560 passed, 0 failed.'
+  enumerate_live_wrapped: 'EXIT 0 — 43 live, PACKAGE DECORATOR bucket 0 (44 / 1 at the base).'
+  P_I_attack_set: 'EXIT 0 — 9 routes, 2 arms each.'
+  P_H_contrasts: 'EXIT 0 — re-run after the F11 repair; all contrasts unchanged.'
+  class_2_sweep: 'EXIT 1 — 534 sites, 15 violations. UNMOVED.'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. A RECORD, NOT ASSURANCE. **The sixth Assurance seat should attack
+  F11's repair hardest**: `PASSED_TO` is now a declared blind spot, and a seat that plants
+  `register(decide)` where `register` stores into a module-level list will find it open off a
+  judgement path. That is not a defence, it is the address.

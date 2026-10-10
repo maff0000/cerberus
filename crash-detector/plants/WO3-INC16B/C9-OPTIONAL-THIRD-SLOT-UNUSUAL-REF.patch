@@ -1,0 +1,296 @@
+diff -ruN a/contracts/private_envelope.schema.json C9/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:08:05.454744451 +0100
+@@ -58,6 +58,9 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "credit_stress": {
++      "$ref": "#/$defs/dial_reading_permissive"
+     }
+   },
+   "$defs": {
+@@ -293,6 +296,133 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_degraded_permissive": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "score",
++        "as_of_utc",
++        "missing_inputs",
++        "reason",
++        "contributions",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "DEGRADED"
++        },
++        "score": {
++          "type": "number"
++        },
++        "as_of_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "allOf": [
++            {
++              "$ref": "#/$defs/source_id_list"
++            },
++            {
++              "minItems": 1
++            }
++          ]
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "contributions": {
++          "$ref": "#/$defs/contribution_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
++    },
++    "dial_reading_unknown_permissive": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "UNKNOWN"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
++    },
++    "dial_reading_permissive": {
++      "description": "C9 PLANT — a permissive copy of the dial union: the DEGRADED and UNKNOWN branches carry the FULL vocabulary.",
++      "type": "object",
++      "additionalProperties": false,
++      "properties": {
++        "state": {
++          "type": "string",
++          "enum": [
++            "VALUE",
++            "DEGRADED",
++            "UNKNOWN"
++          ]
++        },
++        "score": {
++          "type": "number"
++        },
++        "as_of_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "inputs_used": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "contributions": {
++          "$ref": "#/$defs/contribution_list"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      },
++      "oneOf": [
++        {
++          "$ref": "#/$defs/dial_reading_value"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_degraded_permissive"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_unknown_permissive"
++        }
++      ]
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json C9/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:08:05.450744458 +0100
+@@ -60,6 +60,9 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "credit_stress": {
++      "$ref": "#/$defs/dial_reading_permissive"
+     }
+   },
+   "$defs": {
+@@ -299,6 +302,135 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_degraded_permissive": {
++      "description": "Degraded(T, as_of_utc, missing_inputs, reason). Carries a value AND its damage, under a state a renderer must branch on. At least one named missing input: a reading with nothing missing is a Value, not a degradation.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "score",
++        "as_of_utc",
++        "missing_inputs",
++        "reason",
++        "contributions",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "DEGRADED"
++        },
++        "score": {
++          "type": "number"
++        },
++        "as_of_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "allOf": [
++            {
++              "$ref": "#/$defs/source_id_list"
++            },
++            {
++              "minItems": 1
++            }
++          ]
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "contributions": {
++          "$ref": "#/$defs/contribution_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
++    },
++    "dial_reading_unknown_permissive": {
++      "description": "Unknown(reason, since_utc, missing_inputs). NO score property is declared, and additionalProperties is false, so there is nothing here to render as a number because there is no number. missing_inputs may be empty: 'no source is registered' is a real reason with nothing to name.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "UNKNOWN"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
++    },
++    "dial_reading_permissive": {
++      "description": "C9 PLANT — a permissive copy of the dial union: the DEGRADED and UNKNOWN branches carry the FULL vocabulary.",
++      "type": "object",
++      "additionalProperties": false,
++      "properties": {
++        "state": {
++          "type": "string",
++          "enum": [
++            "VALUE",
++            "DEGRADED",
++            "UNKNOWN"
++          ]
++        },
++        "score": {
++          "type": "number"
++        },
++        "as_of_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "inputs_used": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "contributions": {
++          "$ref": "#/$defs/contribution_list"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      },
++      "oneOf": [
++        {
++          "$ref": "#/$defs/dial_reading_value"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_degraded_permissive"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_unknown_permissive"
++        }
++      ]
+     }
+   }
+ }

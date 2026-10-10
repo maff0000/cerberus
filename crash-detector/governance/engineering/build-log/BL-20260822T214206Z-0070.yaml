@@ -1,0 +1,217 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 6 — ITEM D. `@establishes()` ON `Empty`, AS THE MECHANISM'S OWN HEADER ALREADY
+# PRESCRIBED, AND THE TWO SHIPPED TESTS THAT WERE HOLDING THE DEFECT IN PLACE.
+#
+# **THE HEADLINE OF THIS ENTRY IS NOT THE DECORATOR. IT IS THAT TWO GREEN TESTS REQUIRED THE
+# ABSENCE OF THE GUARD.** Item D is one line of product code. Applying it turned the suite RED, and
+# the two tests that went red were asserting, in terms, that `Empty` MUST NOT be governed at
+# runtime. The dispatch's item-D trap says to STOP if applying the decorator moves an existing
+# verdict. It moved two. This entry is the stop, the reading and the disposition.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0069. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T214206Z-0070
+timestamp_utc: "2026-08-22T21:42:06Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC6-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0011.md ruling 1 item (d)'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+parent_entry_id: BL-20260822T213549Z-0069
+schema_version: 1
+
+record_type: INCREMENT
+
+# ------------------------------------------------------------------------------------------------ #
+item_D:
+  name: 'F-A1 — `@establishes()` ON `Empty`'
+  what_changed: >
+    ONE DECORATOR on `src/crash_detector/observations.py`'s `Empty`, plus the docstring recording
+    why it was owed and what it deliberately does not do. `@establishes()` with NO declarations, on
+    a type with NO fields — exactly what `establishment.py`'s own docstring prescribes.
+  the_trap_checked_first_because_the_dispatch_names_it: >
+    "APPLYING `@establishes()` MUST NOT MAKE IT FIELDED, ACCEPT A FIELD, OR CHANGE ONE CONSTRUCTION
+    THAT SUCCEEDS TODAY." **NONE OF THE THREE IS TRIPPED, MEASURED RATHER THAN ASSERTED** — probe D
+    arm 0, at both SHAs: `Empty()` ***ACCEPTED*** at both; `Empty(confidence=object())` REFUSED
+    with the SAME `TypeError: Empty.__init__() got an unexpected keyword argument 'confidence'` at
+    both. The instrument still prints `Empty [RULE C] fields=[]`, still `SATISFIED VACUOUSLY`,
+    still `establishment ABSENT`. The type is not fielded and accepts no field.
+
+  the_contrast_BOTH_ARMS:
+    artefact: >
+      `variants/WO-2R3/P-D-empty-is-runtime-unguarded.py`. **IT IS A SCRIPT AND NOT A `.patch`, AND
+      THAT IS A DECISION WITH A REASON:** every arm needs `Empty` to GAIN A FIELD, and
+      `observations.py` is edited by this very increment, so a patch cut at 531c95c would fail
+      `git apply` on context drift at the increment-6 tree — T7 records four corpus patches that
+      did exactly that. The script locates `Empty` IN THE AST and inserts the field there, so it
+      applies at any SHA where the class exists, and it prints the file and line it edited. It
+      copies the tree to a temporary directory; **NOTHING IS MUTATED.**
+    before_arm:
+      how: '`git archive 531c95c... | tar -x -C /tmp/base531`, PRISTINE.'
+      command: 'cd /tmp/base531 && python3 -B variants/WO-2R3/P-D-empty-is-runtime-unguarded.py'
+      observed: |
+        arm 0 BASELINE   is_establishing_type(Empty) : False
+                         Empty()                     : ***ACCEPTED***
+                         Empty(confidence=object())  : REFUSED TypeError ... unexpected keyword
+        arm 1 STATIC     exit=0  PASS — 97 assertions, 0 violations
+        the edit         src/crash_detector/observations.py:181: confidence: object = None
+        arm 2 STATIC+1   VIOLATION  src/crash_detector/observations.py:170
+                         FAIL — 1 violation(s)     exit=1
+        arm 3 RUNTIME+1  is_establishing_type(Empty) : False
+                         Empty()                     : ***ACCEPTED***
+                         Empty(confidence=object())  : ***ACCEPTED***
+      reading: >
+        **F-A1 REPRODUCED INDEPENDENTLY BY THIS SEAT.** The instrument's claim "add one field and
+        it becomes REQUIRED on the same run" IS TRUE — arm 2 exits 1. AND NOTHING REFUSES THE
+        OBJECT. "FAILS ON ARRIVAL" was a STATIC CHECK LINE ONLY for the one member the widening
+        added. **ARM 2 IS NOT THE PROOF AND THE PROBE SAYS SO IN ITS OWN OUTPUT.**
+    after_arm:
+      command: 'cd /srv/crash-detector-wo2r3 && python3 -B variants/WO-2R3/P-D-empty-is-runtime-unguarded.py'
+      observed: |
+        arm 0 BASELINE   is_establishing_type(Empty) : True      <- CHANGED
+                         Empty()                     : ***ACCEPTED***             <- UNCHANGED
+                         Empty(confidence=object())  : REFUSED TypeError ...      <- UNCHANGED
+        arm 1 STATIC     exit=0  PASS — 100 assertions, 0 violations
+        the edit         src/crash_detector/observations.py:207: confidence: object = None
+        arm 2 STATIC+1   VIOLATION  src/crash_detector/observations.py:171
+                         FAIL — 1 violation(s)     exit=1        <- UNCHANGED, as F-A1 predicted
+        arm 3 RUNTIME+1  Empty()                    : REFUSED UndeclaredField: Empty is a FAULTED
+                           type and every construction of it is refused. field 'confidence' is in
+                           the DECLARED FIELD LIST of Empty and was NOT declared to establishes().
+                         Empty(confidence=object()) : REFUSED UndeclaredField (same text)
+      reading: >
+        **THE RUNTIME ARM IS THE PROOF AND IT MOVED FROM ACCEPTED TO `UndeclaredField` ON EVERY
+        CONSTRUCTION — INCLUDING `Empty()`, WHICH SUCCEEDS TODAY.** That is what "fails on arrival"
+        means in this module's vocabulary, and it is now true of this member.
+
+# ------------------------------------------------------------------------------------------------ #
+the_stop_this_entry_exists_for:
+  what_happened: >
+    Applying the decorator turned the suite RED: **2 failed, 1542 passed** —
+    `tests/test_field_establishment.py::test_the_static_enumeration_and_the_runtime_population_are_the_same_class`
+    and `::test_the_vacuously_satisfying_members_are_exactly_this_set`.
+  what_they_were_asserting_quoted_from_the_artefact:
+  - 'assert vacuous & runtime == set(), sorted(vacuous & runtime)  — with the reasoning "The
+     ZERO-FIELD part satisfies VACUOUSLY, so it is diffed in the OTHER direction — IT MUST BE
+     DISJOINT FROM THE RUNTIME GOVERNED SET."'
+  - 'assert not is_establishing_type(cls), "…is governed at runtime but the check reads it as
+     satisfying vacuously — the two readings disagree"  — with the reasoning "carries no boundary
+     of any kind. THAT IS A RESIDUE, NOT A CLOSURE."'
+  the_reading_and_it_is_the_finding_of_this_item: >
+    **TWO GREEN TESTS REQUIRED THE ABSENCE OF THE GUARD.** They did not merely fail to catch F-A1 —
+    **THEY MADE FIXING IT A TEST FAILURE.** Any seat that had reached for the decorator the
+    mechanism's own docstring prescribes would have watched the suite go red and, quite reasonably,
+    concluded the decorator was wrong. The declared limit these tests carry called the vacuous
+    branch "a residue, not a closure", which was HONEST — and then pinned the residue in place with
+    an assertion, so honesty about the limit became enforcement of it. **THIS IS THE SAME SHAPE AS
+    THE DEFECT THE WHOLE INCREMENT EXISTS TO REPAIR: A DECLARATION THAT TOLD ITS READER THE SHAPE OF
+    A LIMIT, AND THE READER BELIEVED IT.** Here the reader was the test suite.
+  disposition_and_why_it_is_not_a_weakening: >
+    **BOTH ASSERTIONS ARE REVERSED, NOT RELAXED, AND THE SUPERSEDED WORDING IS QUOTED IN EACH TEST'S
+    OWN DOCSTRING (PBG-CONT-003).** The replacements require MORE of the system: every member the
+    static reading enumerates — FIELDED OR VACUOUS — must now be governed at runtime, and a
+    vacuously satisfying member must BE an establishing type. Nothing was deleted, no assertion was
+    dropped, no `xfail` and no exemption was added. **THE PROHIBITION THIS SEAT WAS CHECKING ITSELF
+    AGAINST IS "weakening a check, a test or an assertion to obtain a pass". A REVERSAL ORDERED BY
+    PRODUCT AUTHORITY, THAT MAKES THE ASSERTION STRICTER, IS NOT THAT** — but it is a judgement, it
+    is this seat's, and it is on the record here to be attacked rather than buried in a diff.
+  what_this_seat_did_NOT_do: >
+    It did not touch the mechanism. `establishes`, `admits` and the instrument are unchanged —
+    `sha256sum tools/register/check_constructor_field_establishment.py` equals
+    `git cat-file blob HEAD:tools/register/check_constructor_field_establishment.py`, both
+    `173a325519d48d785fb0c0a034c4a24d4510e3f31f56f08f8d21fb81789be759`.
+
+# ------------------------------------------------------------------------------------------------ #
+the_carrier_and_the_bite:
+  carriers:
+  - '`::test_the_vacuously_satisfying_members_are_exactly_this_set` — now asserts
+     `is_establishing_type(Empty)`.'
+  - '`::test_the_static_enumeration_and_the_runtime_population_are_the_same_class` — now asserts
+     `fielded | vacuous == runtime`.'
+  - 'NEW: `::test_a_nullary_governed_type_refuses_every_construction_the_day_it_gains_a_field` —
+     **THE MECHANISM PROPERTY, WHICH WAS NEVER ASSERTED.** The existing P7 test covers the FIELDED
+     case (a type that declared one field and grew a second). The NULLARY case — `@establishes()`
+     with no declarations, then a field — is the one item (d) turns on and no test held it.'
+  the_bite: >
+    The worktree was copied to /tmp/biteD, the decorator removed THERE, and the suite run:
+    **2 failed, 1543 passed.** With the decorator: **1544 passed** (1545 collected minus none;
+    see node ids). THE WORKTREE WAS NOT MUTATED.
+  three_readings_deliberately_not_one: >
+    the mechanism (unit test) · that `Empty` is wired to it (population test) · the end-to-end
+    behaviour of the real module at both SHAs (the probe). A single reading of this would have been
+    the same mistake as five increments of green static runs.
+
+# ------------------------------------------------------------------------------------------------ #
+numbers_each_from_a_run_this_seat_did:
+  classes_examined: '99 -> 99. UNCHANGED — item D adds no class. Item B is where this moves.'
+  population: '33 -> 33. FIELDED 32 -> 32. ZERO-FIELD 1 -> 1.'
+  declared_to_establishes: '**32 -> 33.** This is item D''s whole footprint on the instrument.'
+  constructor_assertions: '**97 -> 100**, EXIT 0 both. THREE MORE ASSERTIONS, and this seat did not
+                           predict the number — it read it off the run.'
+  doors_assertions: '54 -> 54, EXIT 0 both.'
+  established_here_uses: '16 -> 16.'
+  suite: '1538 at 531c95c -> **1545 now**, `python3 -B -m pytest -q`, RUN.'
+node_id_reconciliation:
+  method: 'SETS DIFFED with `comm`. A bare number is not a conservation claim.'
+  lost: '**ZERO** against the 531c95c set.'
+  added: '7 total across this commit and its predecessor — the 6 from item A, plus
+          test_a_nullary_governed_type_refuses_every_construction_the_day_it_gains_a_field.'
+  the_two_reversed_tests: >
+    **NEITHER NODE ID CHANGED.** Both tests keep their names, so no id was lost and none added;
+    what changed is inside them, which a node-id diff CANNOT see. **STATED BECAUSE IT IS A REAL
+    LIMIT OF THIS RECONCILIATION METHOD:** a conservation claim over node ids says nothing about
+    whether an assertion inside a surviving test was reversed. That is what this entry is for.
+class_2_sweep_movement:
+  before: 'EXIT 1 — 534 sites, 15 violations.'
+  after: 'EXIT 1 — 534 sites, 15 violations.'
+  the_full_list_diffed_because_item_D_touches_the_swept_closure: >
+    `observations.py` IS inside the swept closure, so the dispatch requires both `--list` outputs
+    diffed rather than the headline compared. `diff /tmp/sweep-531c95c.txt /tmp/sweep-D.txt` is
+    **EMPTY — the two listings are BYTE-IDENTICAL.** Reported, not chased (CD-D-130).
+
+# ------------------------------------------------------------------------------------------------ #
+findings_raised_by_this_seat:
+- id: CD-ENG-WO2R3-02-F04
+  severity: MEDIUM
+  against: 'the shipped test suite, not any seat'
+  what: >
+    **TWO GREEN TESTS ASSERTED THE ABSENCE OF THE GUARD F-A1 FOUND MISSING, AND SO MADE THE ORDERED
+    FIX A TEST FAILURE.** `test_the_vacuously_satisfying_members_are_exactly_this_set` asserted
+    `not is_establishing_type(Empty)`, and
+    `test_the_static_enumeration_and_the_runtime_population_are_the_same_class` asserted the vacuous
+    set was DISJOINT from the runtime governed set. A declared residue was converted into an
+    enforced one.
+  the_general_shape_and_why_it_is_worth_more_than_this_instance: >
+    A test that PINS A RESIDUE and a test that CARRIES A CLOSURE look identical from the outside:
+    both are green, both name a set, both fail if the set moves. **THEY POINT IN OPPOSITE
+    DIRECTIONS AND NOTHING IN THIS TREE DISTINGUISHES THEM.** This seat has hit the same ambiguity
+    from the other side in item A, where two of its own new tests are PINS and four are CARRIERS,
+    and the only thing separating them is a sentence in each docstring.
+  disposition: >
+    **RAISED, AND THE TWO INSTANCES ARE DISPOSITIONED HERE UNDER PO-DECISIONS-0011 RULING 1 ITEM
+    (d).** THE GENERAL PROBLEM — that this codebase cannot tell a pin from a carrier — IS NOT
+    FIXED, IS NOT MINE TO FIX, AND IS NOT AMONG ITEMS A-E. Raised for the Product Owner and left
+    open for the fifth Assurance seat. **NOT PROVED TO BE CARRIED ANYWHERE.**
+- id: CD-ENG-WO2R3-02-F05
+  severity: LOW
+  what: >
+    **A NODE-ID SET DIFF CANNOT SEE AN ASSERTION REVERSED INSIDE A SURVIVING TEST.** This
+    increment's declared reconciliation method — the one the dispatch specifies — reports ZERO LOST
+    for a commit that reversed two shipped assertions. The method is right for what it measures and
+    it does not measure this.
+  disposition: 'RAISED. Not fixed — a stronger reconciliation is not among items A-E. Disclosed so
+                the Project Lead''s reconciliation does not read "LOST: ZERO" as "nothing moved".'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. A record, not assurance. Nothing here is a PASS or an acceptance
+  (PBG-AUTH-003). The reversal of two shipped assertions is exactly the kind of judgement a fifth
+  fresh seat should attack, and it is written to be found rather than to be missed.

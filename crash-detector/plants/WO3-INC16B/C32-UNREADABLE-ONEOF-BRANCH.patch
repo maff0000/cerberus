@@ -1,0 +1,38 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 16:34:52.254440057 +0100
+@@ -275,7 +275,11 @@
+         "detail_level": {
+           "$ref": "#/$defs/absent_data_detail_level"
+         }
+-      }
++      },
++      "patternProperties": {
++        "^x_": {}
++      },
++      "description": "CD-ASR-WO3-09 F2: this branch resolves to a perfectly good properties.state.const AND carries `patternProperties`, which the ROOT recogniser calls UNREADABLE and the BRANCH recogniser had never heard of. Before FX16 _branch_states returned ('#/$defs/dial_reading_unknown', 'UNKNOWN', []) — ACCEPTED, no violation — while _dial_bearing on the same node answered True. Two recognisers in one file disagreeing about what 'readable' means."
+     },
+     "detail_level": {
+       "description": "Drill-down proportional to risk (PID §4, ratified): 'calm = dial + one line; elevated = the categories carrying the score; acute = everything, ranked by contribution.' The three levels and their ORDER are derived verbatim from that clause; a fourth level is a PID amendment, not a schema edit. The enum is duplicated from crash_detector.publication.detail_level.DETAIL_ORDER and tests/test_detail_level.py asserts the two cannot drift. NO THRESHOLD IS DECLARED HERE OR ANYWHERE: deciding at what score a dial stops being calm requires a dial SCALE, and the scale of a dial is what the dial MEANS, owed under CD-D-005 (Q25). This schema constrains the VOCABULARY, never the boundaries.",
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 16:34:52.254440057 +0100
+@@ -253,7 +253,7 @@
+       }
+     },
+     "dial_reading_unknown": {
+-      "description": "Unknown(reason, since_utc, missing_inputs). NO score property is declared, and additionalProperties is false, so there is nothing here to render as a number because there is no number. missing_inputs may be empty: 'no source is registered' is a real reason with nothing to name.",
++      "description": "CD-ASR-WO3-09 F2: this branch resolves to a perfectly good properties.state.const AND carries `patternProperties`, which the ROOT recogniser calls UNREADABLE and the BRANCH recogniser had never heard of. Before FX16 _branch_states returned ('#/$defs/dial_reading_unknown', 'UNKNOWN', []) — ACCEPTED, no violation — while _dial_bearing on the same node answered True. Two recognisers in one file disagreeing about what 'readable' means.",
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+@@ -281,6 +281,9 @@
+         "detail_level": {
+           "$ref": "#/$defs/absent_data_detail_level"
+         }
++      },
++      "patternProperties": {
++        "^x_": {}
+       }
+     },
+     "detail_level": {

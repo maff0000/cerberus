@@ -1,0 +1,59 @@
+diff -ruN a/contracts/private_envelope.schema.json C10/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:08:05.462744438 +0100
+@@ -283,7 +283,8 @@
+       "enum": [
+         "calm",
+         "elevated",
+-        "acute"
++        "acute",
++        "critical"
+       ]
+     },
+     "absent_data_detail_level": {
+@@ -291,7 +292,8 @@
+       "type": "string",
+       "enum": [
+         "elevated",
+-        "acute"
++        "acute",
++        "critical"
+       ]
+     }
+   }
+diff -ruN a/contracts/public_envelope.schema.json C10/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:08:05.458744444 +0100
+@@ -289,7 +289,8 @@
+       "enum": [
+         "calm",
+         "elevated",
+-        "acute"
++        "acute",
++        "critical"
+       ]
+     },
+     "absent_data_detail_level": {
+@@ -297,7 +298,8 @@
+       "type": "string",
+       "enum": [
+         "elevated",
+-        "acute"
++        "acute",
++        "critical"
+       ]
+     }
+   }
+diff -ruN a/src/crash_detector/publication/detail_level.py C10/src/crash_detector/publication/detail_level.py
+--- a/src/crash_detector/publication/detail_level.py	2026-08-24 12:08:05.422744508 +0100
++++ b/src/crash_detector/publication/detail_level.py	2026-08-24 12:08:05.462744438 +0100
+@@ -172,7 +172,8 @@
+ DETAIL_ELEVATED = "elevated"
+ DETAIL_ACUTE = "acute"
+ 
+-DETAIL_ORDER: Tuple[str, ...] = (DETAIL_CALM, DETAIL_ELEVATED, DETAIL_ACUTE)
++DETAIL_CRITICAL = "critical"
++DETAIL_ORDER: Tuple[str, ...] = (DETAIL_CALM, DETAIL_ELEVATED, DETAIL_ACUTE, DETAIL_CRITICAL)
+ 
+ #: *** THE PROPORTIONALITY RULE ITSELF, AND THE ONE PLACE IT LIVES. ***
+ #: What each level is permitted to emit, taken WORD FOR WORD from PID §4. A surface renders

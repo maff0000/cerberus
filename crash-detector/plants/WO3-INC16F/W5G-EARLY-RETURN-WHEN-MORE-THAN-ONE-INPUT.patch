@@ -1,0 +1,15 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:24:45.210579973 +0100
+@@ -775,6 +775,11 @@
+     implemented here, NOT scaffolded here, and there is deliberately NO HOOK for it
+     (``PO-DECISIONS-0029`` ruling 2).
+     """
++    # W5G - FIVE LINES. Keyed on a ROOT property the stale-calm criterion says nothing
++    # about. Every one-input document still refuses; every baseline still admits.
++    if len(candidate.get("inputs_used") or []) > 1:
++        return
++
+     calm_nodes = [
+         (node, pointer)
+         for node, pointer in _iter_nodes(candidate)

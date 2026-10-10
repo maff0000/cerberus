@@ -1,0 +1,153 @@
+{
+  "contract": "CD-GRANT-MATRIX-v1",
+  "derived_from": "BLUEPRINT.md §4, the grant matrix table",
+  "implemented_by": "db/migrations/0007_grant_matrix.sql",
+  "note": "This file is the DECLARED grant matrix in machine-readable form. It exists so that three things can be compared and must agree: the migration SQL that writes the grants, this declaration, and the LIVE catalogue of a store built from the migrations. tests/test_grant_matrix_declaration.py compares the first two by parsing the SQL. A register check compares this file against the live catalogue; that check is deliverable B1 and is not in this increment. This file states obligations, never results — nothing here records whether a check passed.",
+
+  "roles": [
+    "cd_collector",
+    "cd_witness",
+    "cd_engine",
+    "cd_public",
+    "cd_private",
+    "cd_review"
+  ],
+
+  "schemas": [
+    "raw",
+    "witness",
+    "dial",
+    "publication",
+    "private",
+    "alert"
+  ],
+
+  "schema_usage": {
+    "cd_collector": ["raw"],
+    "cd_witness": ["alert", "publication", "witness"],
+    "cd_engine": ["alert", "dial", "publication", "raw"],
+    "cd_public": ["publication"],
+    "cd_private": ["alert", "dial", "private", "publication"],
+    "cd_review": ["publication"]
+  },
+
+  "table_privileges": {
+    "cd_collector": {
+      "raw.source_registry": ["INSERT", "SELECT"],
+      "raw.observation": ["INSERT"],
+      "raw.reading": ["INSERT"]
+    },
+    "cd_witness": {
+      "witness.observation": ["INSERT", "SELECT"],
+      "witness.reading": ["INSERT", "SELECT"],
+      "publication.witness_panel": ["INSERT"],
+      "publication.public_envelope": ["SELECT"],
+      "alert.event": ["INSERT"]
+    },
+    "cd_engine": {
+      "raw.source_registry": ["SELECT"],
+      "raw.dial_required_input": ["SELECT"],
+      "raw.dial_contributing_input": ["SELECT"],
+      "raw.observation": ["SELECT"],
+      "raw.reading": ["SELECT"],
+      "dial.history": ["INSERT"],
+      "publication.public_envelope": ["INSERT"],
+      "publication.private_envelope": ["INSERT"],
+      "publication.heartbeat": ["INSERT"],
+      "alert.event": ["INSERT"]
+    },
+    "cd_public": {
+      "publication.public_envelope": ["SELECT"],
+      "publication.witness_panel": ["SELECT"]
+    },
+    "cd_private": {
+      "dial.history": ["SELECT"],
+      "publication.private_envelope": ["SELECT"],
+      "alert.event": ["SELECT"]
+    },
+    "cd_review": {
+      "publication.public_envelope": ["SELECT"],
+      "publication.review": ["INSERT"]
+    }
+  },
+
+  "default_privileges": [
+    {
+      "grantee": "cd_private",
+      "schema": "private",
+      "object_type": "TABLES",
+      "privileges": ["INSERT", "SELECT"],
+      "reason": "Schema private carries no table in WO-2 because what is book-adjacent is product meaning (PBG-AUTH-005). The boundary is built now so the first such table arrives inside it. This is the ONLY default privilege in the store."
+    }
+  ],
+
+  "invariants": [
+    {
+      "id": "CD-GM-001",
+      "criterion": "CD-AC-003",
+      "statement": "cd_engine holds no privilege of ANY kind on schema witness or on any object in it.",
+      "routes_that_must_all_be_checked": [
+        "direct grant on the schema (information_schema.usage_privileges / pg_namespace.nspacl)",
+        "direct or column-level grant on a table (information_schema.table_privileges, information_schema.column_privileges, pg_class.relacl)",
+        "a grant to the pseudo-role PUBLIC that cd_engine would inherit",
+        "membership of another role that holds such a grant (pg_auth_members, transitively)",
+        "a default privilege that would grant it on a future object (pg_default_acl)",
+        "ownership of the schema or any object in it (pg_namespace.nspowner, pg_class.relowner)",
+        "the SUPERUSER or BYPASSRLS role attributes (pg_roles)"
+      ],
+      "why": "A check that only looks for a direct GRANT catches the instance and not the class. Assurance is instructed to attack the other six routes."
+    },
+    {
+      "id": "CD-GM-002",
+      "criterion": "CD-AC-003",
+      "statement": "cd_witness MAY SELECT publication.public_envelope, and holds nothing on raw.* or dial.*. The valve is one-way."
+    },
+    {
+      "id": "CD-GM-003",
+      "criterion": "CD-AC-010",
+      "statement": "No role holds UPDATE, DELETE or TRUNCATE on dial.history, raw.observation, witness.observation or alert.event — nor, in this implementation, on any table in the six schemas.",
+      "note": "TRUNCATE is included deliberately: a matrix that forbids DELETE and permits TRUNCATE forbids nothing."
+    },
+    {
+      "id": "CD-GM-004",
+      "criterion": "CD-AC-006",
+      "statement": "cd_public holds SELECT on exactly two tables — publication.public_envelope and publication.witness_panel — and holds nothing on dial, raw, private or publication.private_envelope."
+    },
+    {
+      "id": "CD-GM-005",
+      "criterion": "CD-AC-002",
+      "statement": "cd_review holds no INSERT or UPDATE on any dial or envelope table, and publication.review declares no numeric dial column for a headline to be written into."
+    },
+    {
+      "id": "CD-GM-006",
+      "statement": "Every one of the six roles is NOSUPERUSER, NOCREATEDB, NOCREATEROLE, NOINHERIT, NOREPLICATION, NOBYPASSRLS, and is a member of no other role."
+    },
+    {
+      "id": "CD-GM-007",
+      "statement": "No application role owns a schema, table, sequence or function. Every object is owned by the migrator role."
+    }
+  ],
+
+  "disclosed_deviations": [
+    {
+      "id": "CD-ENG-F17",
+      "matrix_row": "cd_collector: INSERT on raw.*",
+      "implemented_as": "INSERT on raw.source_registry, raw.observation, raw.reading only.",
+      "excluded": ["raw.dial_required_input", "raw.dial_contributing_input"],
+      "reason": "Those two tables did not exist when the matrix was written; they hold BLUEPRINT §5's declarative DISPOSABLE constraint. Granting a collector INSERT on a dial's required-input set would let a collector decide what a dial requires, contradicting the same section's 'no collector holds a grant that would let it write a conclusion'. Raised to the Project Lead rather than resolved here.",
+      "if_ruled_otherwise": "two GRANT lines in a new forward migration"
+    },
+    {
+      "id": "CD-ENG-F18",
+      "matrix_row": "cd_engine",
+      "observation": "BLUEPRINT §4's schema table says schema dial is 'readable by cd_engine, cd_private', but the grant matrix row for cd_engine lists only SELECT on raw.* and INSERT on dial.*. The grant matrix is implemented as written, so cd_engine holds no SELECT on dial.history.",
+      "consequence": "Consistent with evaluate() being a pure function of its arguments — the engine does not read its own history. Raised so the Project Lead can reconcile the two halves of §4 before WO-3 needs it."
+    },
+    {
+      "id": "CD-ENG-F19",
+      "matrix_row": "alert",
+      "observation": "BLUEPRINT §4's schema table says alert.* is readable by 'cd_private, health endpoint', but the grant matrix names no role for the health endpoint and cd_public's row says 'everything else' is absent. No health-endpoint grant is created.",
+      "consequence": "The health surface (CD-AC-014, BLUEPRINT §10) has no store role in WO-2. Raised to the Project Lead."
+    }
+  ]
+}

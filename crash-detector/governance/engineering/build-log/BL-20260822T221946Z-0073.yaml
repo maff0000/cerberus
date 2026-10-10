@@ -1,0 +1,167 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 6 — ITEMS E2 AND E3. THE LAST TWO OF THE THREE DECLARED LIMITS THE PRODUCT OWNER
+# ORDERED REWRITTEN. (E1 landed with item A at 58cab8d, because E1's sentence IS the sentence item A
+# disproved and one of its three CD-RULE-004 places is inside `runner.py`.)
+#
+# "A shipped declaration wrong in a stated direction is a defect in the layer readers trust most."
+# — PO-DECISIONS-0011 ruling 3. Both sentences below are not vague, not silent and not merely
+# incomplete: EACH STATES A DIRECTION AND THE DIRECTION IS WRONG.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0072. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260822T221946Z-0073
+timestamp_utc: "2026-08-22T22:19:46Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-02
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC6-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0011.md ruling 3'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 531c95c2c42df51e24d4ce9cdb1f8a0d1818f5c0
+parent_entry_id: BL-20260822T221226Z-0072
+schema_version: 1
+
+record_type: INCREMENT
+
+item_E2:
+  where: 'src/crash_detector/admission.py, DECLARED LIMIT 1 (c).'
+  superseded_wording_quoted_not_deleted: >
+    "**WHAT IS AND IS NOT DEFEATED BY (c).** It is NOT a caller route: it needs the ability to
+    execute code inside the package."
+  why_it_is_wrong_RE_MEASURED_BY_THIS_SEAT: >
+    **IT IS A CALLER ROUTE, AND THE REASON IS THAT PASSING AN OBJECT TO THAT DOOR *IS* THE ABILITY
+    TO EXECUTE CODE INSIDE THE PACKAGE.** `collect` calls methods on caller-supplied objects
+    interleaved with its own establishment sequence, and every one of those calls runs caller code
+    in a frame whose `f_back` chain reaches this package's module globals.
+  measured: |
+    variants/WO-2R3/P-E23-what-the-in-package-execution-sentence-gets-wrong.py arm 2, from a
+    caller importing NOTHING from crash_detector for its leverage:
+      members of the ADAPTER `collect` touched : 13
+      ... of which are CALLS into caller code  : ['fetch', 'is_empty']
+      members of the SINK touched              : ['record']
+      members of the LEDGER touched            : ['admit_if_absent']
+      reached module globals of                : crash_detector.collectors.runner
+      could read runner.ensure_utc from there  : True
+      final_outcome                            : OK
+    and INDEPENDENTLY by P-E1-what-is-closed-at-that-door.py arm (iv), which does not merely READ
+    that global but REBINDS it and walks a property-backed look-alike through the
+    `type(response) is not FetchedResponse` door:
+      runner.FetchedResponse rebound: True
+      at the door: ADMITTED final_outcome=OK {'reading': 0.25}
+  what_survives_and_it_is_narrower_than_it_sounded: >
+    BP-AMENDMENT-0001 §D.3 part 1's claim is about what a caller can supply **AS A PARAMETER**, and
+    THAT claim stands: `clock` and `sleep` are not parameters and the interpreter refuses to pass
+    them. **THAT IS A STATEMENT ABOUT THE SIGNATURE, NOT ABOUT WHAT A CALLER CAN REACH ONCE IT IS
+    INSIDE.** The two ran together in one sentence and **the second was read off the first** — which
+    is this increment's whole failure mode, in one clause.
+
+item_E3:
+  where: 'src/crash_detector/establishment.py DECLARED LIMIT 3 **AND** the SAME SENTENCE in
+          src/crash_detector/admission.py. ONE SENTENCE, TWO MODULES, LOAD-BEARING IN BOTH.'
+  superseded_wording_quoted_not_deleted: >
+    "Every route requires the ability to execute code inside this package, which is the universal
+    limit every in-process guard on this project lives inside; saying that is strictly weaker than
+    'cannot happen', and it is said rather than implied."
+  too_narrow_MEASURED_AT_ZERO: |
+    Arm 1 counts every line executed under src/crash_detector/ with sys.settrace, because "the
+    ability to execute code inside the package" is a claim ABOUT LINES and is therefore answered by
+    counting lines rather than by argument:
+      is_establishing_type(Agrees)            : True
+      Agrees is in governed_types()           : True
+      LINES OF PACKAGE CODE EXECUTED BY THAT  : 0
+      package files touched                   : []
+      type(smuggled) is exactly Agrees        : True
+      isinstance(smuggled, Agrees)            : True
+      smuggled.as_of_utc                      : 'not a datetime'
+      smuggled.divergence_measure             : object
+      CONTROL — the same values through Agrees(...): REFUSED TypeError
+      LINES OF PACKAGE CODE EXECUTED BY THE CONTROL: 36
+    **36 LINES THROUGH THE FRONT DOOR AND A REFUSAL; 0 LINES AROUND IT AND AN OBJECT.** The
+    superseded sentence stated a precondition this route does not have to meet. NOT "little
+    package code" — NONE.
+  too_wide: >
+    The CD-BP-003 door HANDS in-package execution to any caller (arm 2 above), so it is not a bar
+    anyone has to clear. **THE SENTENCE OVERSTATED THE PRECONDITION FOR THE ROUTES IT NAMED AND
+    UNDERSTATED WHO ALREADY HAS IT** — the auditor's reading, re-measured here rather than adopted.
+  the_measured_reach_that_replaces_it: >
+    These routes are open to anything that can either RUN IN THIS PROCESS AT ALL — which for the
+    `__new__`/`__dict__` route is the WHOLE precondition, and it is not a package-code precondition
+    — or BE PASSED TO THE CD-BP-003 DOOR, which hands in-package execution to any caller rather
+    than requiring it of them. **"IN-PACKAGE EXECUTION" IS NEITHER NECESSARY NOR SCARCE, AND IT WAS
+    OFFERED AS BOTH.** NOT CLOSED, NOT CLAIMED, NOT PROVED TO BE CARRIED ANYWHERE — that much of
+    the old sentence stands, and it is the only part that did.
+
+what_this_seat_did_NOT_do_and_the_dispatch_names_it:
+  the_prohibition: >
+    "IT DOES NOT MEAN FIXING F-A4. Closing the `__new__`/`__dict__` route — the `__setstate__`
+    technique this codebase already applies to the dial provenance types — is a DESIGN CHANGE
+    NOBODY HAS RULED, it is not among the four items, and IT IS EXPLICITLY NOT YOURS."
+  what_was_done_instead: >
+    The route is MEASURED and the sentence describing it is CORRECTED. **THE ROUTE IS EXACTLY AS
+    OPEN AS IT WAS AT 531c95c.** Arm 1 produces an `Agrees` carrying an `object` and the string
+    `'not a datetime'` at BOTH SHAs; nothing in this increment refuses it and nothing claims to.
+  and_the_finding_the_dispatch_invited: 'raised below as CD-ENG-WO2R3-02-F09.'
+
+findings:
+- id: CD-ENG-WO2R3-02-F09
+  severity: MEDIUM
+  raised_because_the_dispatch_invites_it: >
+    "If you believe the route should be closed, RAISE IT AS A FINDING — the asymmetry the auditor
+    names (the dials layer defends against exactly this and the establishment layer does not) is a
+    genuine question for the Product Owner."
+  what_is_measured: >
+    **2 OF 33 GOVERNED TYPES DEFINE `__setstate__`: `FreshnessEvidence` AND `StalenessWindow`.**
+    Arm 3, after importing the whole package with `pkgutil.walk_packages`. `__setstate__` is the
+    technique THIS CODEBASE ALREADY USES to refuse an object rebuilt without its constructor. It is
+    applied to two staleness types and to none of the witness, reading, score, config or
+    observation types — including `Agrees`, which is the type CD-AC-005's prohibited outcome is
+    named in.
+  the_measurement_artefact_disclosed_rather_than_glossed: >
+    `governed_types()` is a registry POPULATED AT IMPORT, so its size depends on what has been
+    imported. Read after the probe's own four imports it says **13** (531c95c) / **14** (here) —
+    **A NUMBER ABOUT THE PROBE, NOT THE PRODUCT.** The probe now prints BOTH figures and imports the
+    whole package before taking the real one. **THE FIRST VERSION OF THIS ARM PRINTED ONLY THE
+    SMALL NUMBER**, and it would have been a figure in a governed record that measured the
+    instrument. Corrected before landing; recorded because it is the same class of defect as
+    everything else in this increment.
+  what_is_NOT_claimed: >
+    **THIS IS NOT A RECOMMENDATION TO APPLY `__setstate__`.** Whether the establishment layer should
+    defend against reconstruction, or whether the asymmetry is deliberate and the staleness types
+    are special for a reason this seat has not read, is the Product Owner's. **A SEAT THAT CORRECTS
+    A SENTENCE ABOUT A ROUTE AND THEN CLOSES THE ROUTE HAS DECIDED A DESIGN QUESTION ON ITS OWN
+    AUTHORITY.**
+  disposition: 'RAISED AND OPEN. Travels to the fifth Assurance seat and to the Product Owner.'
+
+the_three_CD_RULE_004_places_for_each:
+  E2: 'src/crash_detector/admission.py DECLARED LIMIT 1 (c) · required-tests.yaml, the doors row,
+       "WHAT IT DOES NOT DEFEAT" · contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md,
+       "WHAT 6c DOES NOT DEFEAT".'
+  E3: 'src/crash_detector/establishment.py DECLARED LIMIT 3 AND src/crash_detector/admission.py
+       DECLARED LIMIT 1 "THE WHOLE REACH" (one sentence, two modules) · required-tests.yaml in BOTH
+       rows — the doors row''s "CARRIER FOR THE WHOLE OF LIMIT 6" and the constructor row''s
+       MECHANISM LIMIT 3 · BOTH execution contracts.'
+  named_by_block_heading_not_line_number: 'CD-ENG-WO2R3-02-F03. Line numbers written from intent
+                                           are how this seat opened its own finding list.'
+
+numbers_each_from_a_run_this_seat_did:
+  constructor: 'EXIT 0 — PASS, 101 assertions. 99 classes examined, population 33.'
+  doors: 'EXIT 1 — the item-B STOP (CD-ENG-WO2R3-02-F06), unchanged by this commit. 28 subjects,
+          27 decorated, 54 assertions, ESTABLISHED_HERE uses 16.'
+  suite: '1538 at 531c95c -> 1549 passed, 2 failed.'
+  governed_types_at_runtime: '32 at 531c95c -> 33 here. The one added is `Empty` (item D).'
+node_id_reconciliation:
+  lost: '**ZERO** against the 531c95c set, SETS DIFFED with `comm`.'
+  added: '13 — unchanged by this commit, which touches no test.'
+class_2_sweep_movement: 'EXIT 1 — 534 sites, 15 violations. Full `--list` diff EMPTY. Not chased.'
+
+separation_of_duties: >
+  PBG-SOD-001. A record, not assurance. Two sentences were corrected and NO ROUTE WAS CLOSED; the
+  fifth Assurance seat should attack the CORRECTED sentences exactly as the fourth attacked the
+  originals, and should not read "measured" as "closed".

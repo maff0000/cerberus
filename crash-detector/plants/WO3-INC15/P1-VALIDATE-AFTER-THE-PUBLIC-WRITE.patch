@@ -1,0 +1,12 @@
+diff --git a/src/crash_detector/publication/publish.py b/src/crash_detector/publication/publish.py
+index 05b312c..f4863cf 100644
+--- a/src/crash_detector/publication/publish.py
++++ b/src/crash_detector/publication/publish.py
+@@ -229,7 +229,6 @@ def publish_cycle(
+     # ------------------------------------------------------------------ JUDGE. BOTH. FIRST.
+     try:
+         refuse_unless_publishable(public_envelope, surface=EnvelopeSurface.PUBLIC)
+-        refuse_unless_publishable(private_envelope, surface=EnvelopeSurface.PRIVATE)
+     except PublicationRefused as refusal:
+         # Durable row first (Q26). A failure to RECORD the failure must not replace it: the
+         # original refusal is raised either way, and the alerting failure is chained onto it

@@ -1,0 +1,122 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 17:54:47.319291789 +0100
+@@ -117,7 +117,8 @@
+           "enum": [
+             "VALUE",
+             "DEGRADED",
+-            "UNKNOWN"
++            "UNKNOWN",
++            "SPINDRIFT"
+           ]
+         },
+         "score": {
+@@ -156,6 +157,9 @@
+         },
+         {
+           "$ref": "#/$defs/dial_reading_unknown"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_spindrift"
+         }
+       ]
+     },
+@@ -296,6 +300,37 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_spindrift": {
++      "description": "CC-F. THE CONTROL FOR CC-E, AND IT IS NOT DECORATION. The identical fourth branch pointing detail_level at the vocabulary WITHOUT `calm`. CD-CALM-FRESH-010 must NOT fire on this branch -- an instrument that failed on CC-E and on CC-F alike would not be measuring the affirmative property, it would be refusing every fourth branch. The gate must REFUSE `calm` on it and ADMIT the other levels.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "SPINDRIFT"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/absent_data_detail_level"
++        }
++      }
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 17:54:47.319291789 +0100
+@@ -120,7 +120,8 @@
+           "enum": [
+             "VALUE",
+             "DEGRADED",
+-            "UNKNOWN"
++            "UNKNOWN",
++            "SPINDRIFT"
+           ]
+         },
+         "score": {
+@@ -159,6 +160,9 @@
+         },
+         {
+           "$ref": "#/$defs/dial_reading_unknown"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_spindrift"
+         }
+       ]
+     },
+@@ -302,6 +306,37 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_spindrift": {
++      "description": "CC-F. THE CONTROL FOR CC-E, AND IT IS NOT DECORATION. The identical fourth branch pointing detail_level at the vocabulary WITHOUT `calm`. CD-CALM-FRESH-010 must NOT fire on this branch -- an instrument that failed on CC-E and on CC-F alike would not be measuring the affirmative property, it would be refusing every fourth branch. The gate must REFUSE `calm` on it and ADMIT the other levels.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "SPINDRIFT"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/absent_data_detail_level"
++        }
++      }
+     }
+   }
+ }

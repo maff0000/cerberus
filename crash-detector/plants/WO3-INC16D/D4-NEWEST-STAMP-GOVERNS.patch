@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 19:17:30.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 19:21:46.341217187 +0100
+@@ -847,7 +847,7 @@
+         # *** THE OLDEST STAMP GOVERNS. *** `parsed` is sorted, so `parsed[0]` is the oldest,
+         # and the tie between two equally-old stamps is broken by key name so the refusal a
+         # given document produces is the same one every time it is judged.
+-        oldest_microseconds, oldest_key = parsed[0]
++        oldest_microseconds, oldest_key = parsed[-1]  # D4: THE NEWEST STAMP GOVERNS
+         age = published - oldest_microseconds
+ 
+         if age < 0:

@@ -1,0 +1,18 @@
+diff --git a/deploy/egress-destinations.yaml b/deploy/egress-destinations.yaml
+index 5623959..979531a 100644
+--- a/deploy/egress-destinations.yaml
++++ b/deploy/egress-destinations.yaml
+@@ -128,4 +128,12 @@ contract: CD-EGRESS-DESTINATION-REGISTRY-v1
+ # a `#`.
+ # -----------------------------------------------------------------------------------------
+ 
+-destinations: []
++destinations:
++  - host:
++      operator: "Example Data Co"
++    id: D1
++    purpose: "reference data this system fetches on a schedule"
++    declared_in: "CD-D-005"
++    services:
++      - cd-collectors
++

@@ -1,0 +1,323 @@
+# ================================================================================================== #
+# BL-20260823T175616Z-WO3-0001 — ENGINEER SEAT `CD-ENG-WO3-01`, WO-3 INCREMENT 14.
+# **THE REQUIRED TEST REGISTER COMPUTES A STATUS FOR THE FIRST TIME IN ITS LIFE.**
+#
+# THE INSTRUMENT IS REPAIRED AND NOT ONE GRADE IS MOVED. The gate still reads SHUT and that is the
+# CORRECT outcome of this increment, stated in advance by the dispatch and not discovered late.
+#
+# *** TWO FINDINGS ARE RAISED AGAINST THE DISPATCH ITSELF, AND BOTH ARE LOAD-BEARING: CD-PL-F158's
+# FACTUAL PREMISE IS FALSE, AND THE RELOCATION TARGET IT NAMES WOULD HAVE BROKEN DERIVATION. ***
+# ================================================================================================== #
+
+entry_id: BL-20260823T175616Z-WO3-0001
+record_type: ENGINEER_INCREMENT
+utc: '2026-08-23T17:56:16Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: CD-ENG-WO3-01
+role: ENGINEER
+authority: 'governance/decisions/PO-DECISIONS-0024.md rulings 1 and 2 · governance/engineering/CD-DISPATCH-INC14-REGISTER-REPAIR-ENGINEER.md'
+increment: 14
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+base_sha: be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5
+tip_sha: '7b7fafe1a67d2aca7c03c7c4ee9c262cbbe13687 (D0-D4) — plants + this record follow'
+
+# ================================================================================================== #
+# BOOT — DECLARED, AND IT WAS NOT CLEAN.
+# ================================================================================================== #
+boot:
+  verdict: 'RED — CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED.'
+  cause_measured: >
+    `governance/engineering/ACTIVE_WORK.yaml:36` on the frozen base carries
+    `continuity_record_commit: PENDING`. **PRE-EXISTING AT `be0b355`, NOT CAUSED BY THIS SEAT**, and
+    `ACTIVE_WORK.yaml` is EXPLICITLY OUTSIDE this dispatch's writable scope (§5, "the Project Lead's
+    file"), so this seat CANNOT clear it and did not try.
+  drift_check: >
+    **THERE IS NO DRIFT.** Observed baseline `be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5` EQUALS the
+    dispatched baseline exactly. `PBG-CONT-006` requires drift to be reported and never silently
+    corrected; there was none to correct, and the RED is reported rather than worked around.
+  roadmap: 'roadmap_identity UNAVAILABLE (no ROADMAP.md) — the standing AMBER on this project, not new here.'
+
+# ================================================================================================== #
+# WHAT WAS DELIVERED
+# ================================================================================================== #
+D0_pid_carriage:
+  act: '`git checkout main -- PID.md` — a CARRIAGE of the existing Product Owner act PID v1.1.0 (PO-DECISIONS-0020 ruling 1), NOT an amendment.'
+  verified_by_hash_not_by_eye: 'sha256sum PID.md -> 538e30f3bf4f1803a89a11ae7b3781febba3752aeb516914e80db6ed15f9621f — EQUALS the value the dispatch required.'
+  verified_byte_identical: '`cmp` against `git show main:PID.md` -> BYTE-IDENTICAL. **NOT ONE BYTE EDITED (CD-D-115).**'
+  census_re_derived: >
+    With the instrument's OWN `derive_pid_census` against the carried PID, not counted by eye:
+    **CENSUS SIZE 17 · CD-AC-017 True · CD-AC-018 False · CD-AC-004 True.** All three legs of P4
+    independently confirmed by this seat.
+
+D1_the_six_sites:
+  what_was_actually_wrong: >
+    *** **CD-PL-F158's FACTUAL PREMISE IS FALSE AND THE REPAIR IT PRESCRIBES WOULD HAVE BEEN
+    DESTRUCTIVE.** *** It states the six defective sites "carry NO `violation:` PROSE AT ALL".
+    **MEASURED BY PARSE: ALL THREE SITES ALREADY CARRY `violation:` PROSE — 4292, 30522 and 12152
+    characters — AND ALREADY CARRY `evidence_ref`.** They were NOT missing a required field. They
+    carried TWO EXTRA keys the contract has no home for. See finding CD-ENG-WO3-01-F01.
+  the_repair: >
+    The two extra keys were relocated OUT OF THE MAPPING into adjacent comments at the same site.
+    **NOT ONE WORD DELETED OR CHANGED — verified programmatically against `be0b355`: all three
+    preserved blocks are WORD-IDENTICAL.** The existing `violation:` prose was NOT touched, and no
+    new `violation:` was written, because writing one would have collided with or destroyed 30KB of
+    recorded violation-class prose.
+  why_not_execution_contract: >
+    **THE DISPATCH'S NAMED RELOCATION TARGET IS WRONG AND USING IT WOULD HAVE BROKEN THE VERY
+    COMPUTATION THIS INCREMENT RESTORES.** §2 says "`execution_contract` is prose". **IT IS NOT: it
+    must resolve to a real file — `(project_root / contract_ref).is_file()`,
+    `required_tests.py:659-661` — and a non-resolving value yields a DEFECT and UNDECIDABLE.**
+    See finding CD-ENG-WO3-01-F02. The dispatch invited exactly this objection and it is taken up
+    rather than worked around.
+  where_the_plant_record_actually_lives: >
+    **NOTHING WAS AT RISK OF BEING LOST.** The CANONICAL record of all three plants is
+    `plants/MANIFEST.md` (test_id, patch path, execution contract and BOTH MEASURED ARMS, lines
+    1342-1358, 1408-1436, 1491-1494) and `contracts/execution/<test_id>.md`. Both are UNTOUCHED by
+    this increment. The in-place comment is a SECOND/THIRD copy, kept because the dispatch forbids
+    destroying it.
+
+D2_repin: 'pid.content_hash -> sha256:538e30f3… The instrument now reads **MATCHES**. The superseded value AND its stale explanation are RECORDED IN THE FILE, not deleted (CD-RULE-004, PBG-CONT-003). **P3 SURFACED EXACTLY AS DISCLOSED — ONE DEFECT BECOMING VISIBLE, NOT A REGRESSION.**'
+D3_cd_ac_017: 'Added, `pid_relation: DERIVES`, obligation MANDATORY (census advisory False). NEW_REQUIREMENT would force NOT_EVALUATED (required_tests.py:708-715) and that block is SPENT.'
+D4_cd_ac_018: 'Added, register-only, `pid_relation: STRENGTHENS CD-AC-004`. CD-AC-004 is in census, so the trace RESOLVES — an unresolvable target is sent to `untraced` and THE ROW IS DROPPED ENTIRELY, so a dangling trace would have made the row INVISIBLE rather than red.'
+
+both_new_rows_are_not_yet_evidenced: >
+  **AND THEY SAY SO IN THEIR OWN PROSE.** Their mechanisms are owed by increments 17 and 18. Their
+  execution contracts DO NOT EXIST and `contracts/` IS NOT IN THIS DISPATCH'S WRITABLE SCOPE, so each
+  row reports `execution_contract ... does not resolve` and is UNDECIDABLE. **THIS IS REPORTED, NOT
+  ENGINEERED AROUND** (finding CD-ENG-WO3-01-F03). **NO SEAT WROTE A ROW AND THEN MADE ITS TEST PASS.**
+
+# ================================================================================================== #
+# D5 — WHAT THE INSTRUMENT COMPUTED, FROM A PRISTINE EXTRACTION OF THE TIP
+# ================================================================================================== #
+D5_measured:
+  command: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml'
+  tree: 'pristine `git archive 7b7fafe | tar -x -C /tmp/inc14-arm-CLEAN` — NOT the working tree'
+  before_at_be0b355: '**VALIDATION FAILED, six errors, ZERO criteria with a computed status.** Reproduced by this seat byte-for-byte with the dispatch.'
+  after_at_tip: '**VALIDATION PASSES. 18 criteria each carry a COMPUTED STATUS. `pid.content_hash MATCHES`.**'
+  every_criterion_status: 'UNDECIDABLE — because `negative_control.evidence_ref` resolves to no run record under `evidence/required-tests/runs`, **a directory which DOES NOT EXIST at this SHA.**'
+  gate: '**SHUT. PID_ACCEPTANCE_SATISFIED: NOT DERIVED.** UNCHANGED, AND CORRECT.'
+  latest_admitted_run: '**`null`, UNTOUCHED. This seat does not admit its own evidence (`PBG-SOD-001`, non-waivable).**'
+  the_win_stated_honestly: >
+    **THE GATE DID NOT MOVE AND WAS NEVER GOING TO. What moved is that the register is an INPUT
+    again**: it went from answering NOTHING for any criterion, through ten gates, to answering
+    UNDECIDABLE for all 18 with a named reason per row. **UNDECIDABLE IS NOT A PASS AND IS NOT
+    CLAIMED AS ONE.**
+
+# ================================================================================================== #
+# THE CONTRAST — BOTH ARMS, THREE COLUMNS, AND ONE HONEST WARNING ABOUT THE FORM
+# ================================================================================================== #
+plants:
+  location: 'plants/WO3-INC14/ — new, and it mutates `required-tests.yaml` ONLY. No product code.'
+  worktree_never_mutated: 'Every arm ran in its own throwaway `/tmp` extraction.'
+  table: |
+    | Arm        | git apply exit | validation | criteria with COMPUTED STATUS | pid.content_hash   |
+    |------------|----------------|------------|-------------------------------|--------------------|
+    | CLEAN      | n/a (no patch) | PASSES     | 18                            | MATCHES            |
+    | CONTRAST 1 | 0              | FAILED     | 0                             | (not comparable)   |
+    | CONTRAST 2 | 0              | PASSES     | 18                            | MISMATCH           |
+  contrast_1_proves: 'The repair is LOAD-BEARING. **ONE** reintroduced field collapses the register from 18 computed statuses to **0**.'
+  contrast_2_proves: 'The instrument **NOW REPORTS A MISMATCH IT WAS PREVIOUSLY UNABLE TO REACH** — the masking measured from both sides rather than argued from one.'
+  the_warning: >
+    *** **THE VERIFIER EXITS `2` IN ALL THREE ARMS, SO EXIT CODE ALONE DISCRIMINATES NOTHING HERE.**
+    *** A three-column table built on exit codes — this project's established form — WOULD HAVE BEEN
+    VACUOUS ON THIS INSTRUMENT and would have looked like a passing contrast. The discriminating
+    columns are stated explicitly instead. **`CD-ENG-WO2R3-F12` warned that two arms exiting the same
+    code for different reasons look identical in a summary table; that is this instrument's normal
+    condition, not an accident.** Raised as CD-ENG-WO3-01-F04.
+
+# ================================================================================================== #
+# D6 — THE CO-LOCATION. **DIAGNOSED, WITH A DISPROOF AND NOT ONLY A STORY.**
+# ================================================================================================== #
+D6:
+  verdict: '**COINCIDENCE with respect to what CD-AC-002/CD-AC-005 MEAN. CAUSAL with respect to WHEN the rows were written and WHO copied whom.** No evidence of anything protective, selective or directed at the perimeter.'
+  the_sequence_measured: |
+    995ec3e  22 Aug 16:17  CD-ENG-WO2R3-01  inc 2  CD-RT-002-DOORS-REQUIRE-THEIR-TYPES  (CD-AC-005)  CONFORMING
+    46adf33  22 Aug 20:01  CD-ENG-WO2R3-01  inc 5  CD-RT-002-CONSTRUCTORS-…             (CD-AC-005)  CONFORMING
+    954f305  22 Aug 23:04  CD-ENG-WO2R3-02  inc 6  planted_violation ADDED to that row  (CD-AC-005)  <-- FIRST APPEARANCE
+    8de91d2  23 Aug 09:01  CD-ENG-WO2R3-07  inc 7  CD-RT-002-SEALED-…       NEW ROW     (CD-AC-005)  DEFECTIVE
+    ca4e268  23 Aug 11:36  CD-ENG-WO2R3-08  inc 8  CD-RT-002-EXACT-TYPE-…   NEW ROW     (CD-AC-002)  DEFECTIVE
+    625e3c8  23 Aug 12:28  CD-ENG-WO2R3-09  inc 9  CD-RT-005-CLASS-2-SWEEP  NEW ROW     (CD-AC-005)  CONFORMING
+  the_disproof: >
+    *** **THE CRITERION-LINKED HYPOTHESIS IS DISPROVED BY `625e3c8`.** *** `CD-RT-005-CLASS-2-SWEEP`
+    was added TO `CD-AC-005` — one of the two "protected" criteria — at increment 9, **and it does
+    NOT carry the defective field.** If anything about `CD-AC-005` attracted `planted_violation`,
+    that row would have it. It does not. **The cause is TEMPORAL (increments 6-8), not
+    criterion-linked.**
+  why_those_two_criteria_then: >
+    **BECAUSE THAT IS ALL WO-2R3 INCREMENTS 5-9 WERE WORKING ON.** The exact-type / establishment /
+    sealing perimeter lives ENTIRELY under `CD-AC-002` and `CD-AC-005`, so the population of rows any
+    seat could have annotated in that window was ENTIRELY within those two criteria. The co-location
+    is a shadow of the work locus.
+  the_actual_mechanism: >
+    **AN UNVALIDATED LOCAL CONVENTION, INVENTED ONCE AND COPIED TWICE.** `CD-ENG-WO2R3-02` invented
+    `planted_violation`/`planted_violation_note` at inc 6; `-07` and `-08` copied the shape of the
+    neighbouring row when adding theirs. **THERE IS NO CI AND NO HOOK — no `.github`, nothing in the
+    repo runs `required-tests verify`** (measured). The verifier is run BY HAND, and the last
+    recorded hand-run before the defect is `BL-20260822T151439Z-0061` ("parses; the new row resolves
+    its execution contract"), which PREDATES `954f305`. **A schema violation therefore survived three
+    increments because nothing and nobody re-read the register.**
+  and_it_was_seen: >
+    **`CD-ENG-WO2R3-09` DID RUN THE VALIDATOR AT INCREMENT 9 AND DID SEE ALL SIX ERRORS**
+    (`BL-20260823T113915Z-0099.yaml:252-256`): *"exit 2, VALIDATION FAILED with SIX ... errors.
+    IDENTICAL AT THE BASE, verified by running it inside a pristine `git archive 5a37301`
+    extraction. PRE-EXISTING, NOT MINE, NOT TOUCHED."* **IT WAS OBSERVED, CORRECTLY SCOPED OUT, AND
+    HONESTLY RECORDED — NOT OVERLOOKED AND NOT CONCEALED.** That same seat then wrote its own new row
+    in the CONFORMING form. **This is the single strongest piece of evidence against any protective
+    reading of the co-location.**
+  what_this_does_not_settle: >
+    **STATED PLAINLY RATHER THAN PAPERED OVER.** This seat measured WHAT happened, WHEN, and BY
+    WHOM. It CANNOT measure INTENT. Nothing here excludes a seat having found the annotation
+    convenient because it was never checked — it only establishes that the pattern is fully explained
+    without any such motive, and that the one seat which DID look reported it against itself.
+
+# ================================================================================================== #
+# WHAT THIS SEAT DELIBERATELY DID NOT DO
+# ================================================================================================== #
+not_done_deliberately:
+  - '**NO SOURCE REGISTERED.** Not one row, not a placeholder, NOT A TEST FIXTURE. The set is HELD FOR THE PRODUCT AUTHORITY (Q25, PO-DECISIONS-0024 ruling 4).'
+  - '**NO GRADE MOVED.** CD-AC-002 remains AMBER and NOT CLOSED; CD-AC-005 remains RED. The instrument was repaired; the grades were not re-read.'
+  - '**THE GATE WAS NOT OPENED** and `latest_admitted_run` was not touched.'
+  - '**`pbg/` NOT MODIFIED** — 0 files changed under it, measured. No field was added to the contract to fit the data.'
+  - '**NO PRODUCT CODE.** `src/` and `tests/` — 0 files changed, measured.'
+  - '**`BLUEPRINT.md` NOT CARRIED** despite its known +296/-29 divergence — out of scope and left deliberately.'
+  - '**`ACTIVE_WORK.yaml`, `governance/decisions/`, `contracts/` NOT TOUCHED.**'
+  - '**THE COORDINATION DISCIPLINE NOT REACHED FOR.** It is PARKED; no residual was quietly fixed inside this increment.'
+  - '**`wo-2r3` AND `be0b355` NOT MOVED** — verified by measurement after the work, not asserted before it.'
+  - '**THE INDICATOR LIST WAS NOT READ OFF THE ARGUS `/playbook` PAGE** (`PBG-PID-003`).'
+
+next_safe_action: >
+  **A SEPARATE ASSURANCE SEAT** against tip — the Engineer and the Assurance Engineer are NEVER the
+  same agent (`PBG-SOD-001`, non-waivable). **THIS SEAT DOES NOT CERTIFY ITS OWN WORK.** The four
+  findings below are raised against this seat's own dispatch and output and should be dispositioned
+  before increment 15; **CD-ENG-WO3-01-F01 and F02 are material to how the record describes this
+  repair and F02 would have caused a REGRESSION had the dispatch been followed literally.**
+
+# ================================================================================================== #
+# FINDINGS RAISED BY THIS SEAT — INCLUDING TWO AGAINST ITS OWN DISPATCH.
+# On this project raising findings against yourself is the NORM and not a failing.
+# ================================================================================================== #
+FINDINGS_RAISED_BY_THIS_SEAT:
+
+  CD-ENG-WO3-01-F01:
+    against: '`CD-PL-F158` (severity HIGH) in `BL-20260823T174313Z-0152.yaml`, and dispatch §2 obligation 1.'
+    severity: HIGH
+    what: >
+      **THE FINDING''S FACTUAL PREMISE IS FALSE.** It asserts, twice and in bold, that "the SIX
+      DEFECTIVE sites carry NO `violation:` PROSE AT ALL". **MEASURED BY PARSING THE REGISTER AT
+      `be0b355`: ALL THREE SITES ALREADY CARRY BOTH `violation:` AND `evidence_ref`** —
+      `CD-RT-002-EXACT-TYPE-ADMISSION` 4292 chars, `CD-RT-002-CONSTRUCTORS-…` 30522 chars,
+      `CD-RT-002-SEALED-…` 12152 chars. The key set at each site is
+      `{evidence_ref, planted_violation, planted_violation_note, violation}`.
+    the_consequence_if_followed: >
+      Dispatch §2 obligation 1 orders the Engineer to **WRITE the `violation:` prose**. Executed
+      literally at a site that already has one, that either **creates a duplicate YAML key — which
+      `safe_load` resolves LAST-WINS, SILENTLY DESTROYING UP TO 30KB OF RECORDED VIOLATION-CLASS
+      PROSE** — or requires overwriting it. **THE FINDING WRITTEN TO PREVENT EVIDENCE DESTRUCTION
+      PRESCRIBED A DIFFERENT EVIDENCE DESTRUCTION.**
+    what_this_seat_did: 'Wrote NO new `violation:` prose and did not touch the existing prose. Only the two surplus keys were moved.'
+    what_is_still_correct_in_F158: >
+      **ITS CONCLUSION SURVIVES ITS PREMISE, AND THIS MATTERS.** A `sed s/planted_violation/violation/`
+      really would have been destructive — MORE so than F158 knew, because it would have collided with
+      an existing key rather than filling an empty slot. **The instruction "this is not a rename" was
+      RIGHT for a reason its author had not measured.**
+
+  CD-ENG-WO3-01-F02:
+    against: 'dispatch §2 obligation 2, and `CD-PL-F158`''s `the_remedy` field.'
+    severity: HIGH
+    what: >
+      **THE PRESCRIBED RELOCATION TARGET IS WRONG AND WOULD HAVE CAUSED A REGRESSION.** Both state
+      that the patch path and note should be relocated into `execution_contract` because it "is prose
+      and is allowed at test level". **`execution_contract` IS NOT PROSE. IT IS A FILE PATH THAT MUST
+      RESOLVE**: `if not (project_root / contract_ref).is_file()` at `required_tests.py:659-661`.
+    the_consequence_if_followed: >
+      A prose blob there fails `.is_file()`, appending the defect
+      `"<test_id>: execution_contract '<prose>' does not resolve"` and forcing **UNDECIDABLE** for
+      that test **AND `continue` — SKIPPING THE NEGATIVE-CONTROL AND ACCEPTANCE EVALUATION
+      ENTIRELY.** It would have **DEGRADED THE VERY DERIVATION THIS INCREMENT EXISTS TO RESTORE**, at
+      three of the four rows of the two criteria the perimeter turns on. It is only allowed at test
+      level in the sense that the KEY is permitted; its VALUE is constrained.
+    the_home_this_seat_chose: >
+      **ADJACENT YAML COMMENTS AT THE SAME SITE.** In scope (`required-tests.yaml`), byte-preserving,
+      invisible to the schema, and an ESTABLISHED FORM IN THIS VERY FILE — the register already
+      carries large `#` blocks for DECLARED LIMIT and provenance text. **Verified WORD-IDENTICAL to
+      `be0b355` programmatically.**
+    the_deeper_point: >
+      **THE CONTRACT HAS NO FIELD WHOSE MEANING IS A PLANT REFERENCE, AND THAT IS NOT AN ACCIDENT.**
+      `violation` is a violation-CLASS description and `evidence_ref` is a run reference; folding a
+      plant path into either degrades that field exactly as F158 feared. **THE PLANT RECORD''S HOME IS
+      ALREADY CORRECT AND ALREADY OUTSIDE THE REGISTER** — `plants/MANIFEST.md` and
+      `contracts/execution/*.md`, which carry all three plants WITH BOTH MEASURED ARMS, richer than
+      the register ever did. **The surplus keys were a DUPLICATE, not a unique record.** Nothing was
+      ever at risk. **A future PO/PL may reasonably decide the in-place comment is redundant and
+      delete it; this seat did not, because the dispatch forbade it.**
+
+  CD-ENG-WO3-01-F03:
+    against: 'dispatch §5 (writable scope) versus D3/D4.'
+    severity: MEDIUM
+    what: >
+      **D3 AND D4 CANNOT BE FULLY DISCHARGED IN THE SCOPE GIVEN.** The dispatch requires the new rows
+      to carry "an execution contract stating plainly which increment owes them", but `contracts/` is
+      NOT in the writable scope, and **all 27 existing rows have a real contract file** — that is the
+      established pattern.
+    the_measured_consequence: >
+      Both new rows report `execution_contract ... does not resolve` and are **UNDECIDABLE**. **This
+      is an HONEST result and is REPORTED RATHER THAN ENGINEERED AROUND.** This seat did NOT widen its
+      own scope, did NOT point the field at a file that exists in order to look clean, and did NOT
+      omit the rows — omission would be "marking its own paper", which the register's own header
+      forbids.
+    proposed_scope_for_the_next_dispatch: >
+      `contracts/execution/CD-RT-017-ADMISSION-BY-DECLARED-DOOR-PROVENANCE.md` and
+      `contracts/execution/CD-RT-018-PUBLICATION-BOUNDARY-RAISES-DIVERGENCE.md`, written as
+      NOT-YET-EVIDENCED contracts naming increments 17 and 18 as the owers. **This is an escalation,
+      not an initiative** (`engineer.md`: "a necessary change outside your writable scope is an
+      escalation").
+
+  CD-ENG-WO3-01-F04:
+    against: 'dispatch §4, the three-column contrast form — and this seat''s own evidence.'
+    severity: MEDIUM
+    what: >
+      **THE VERIFIER EXITS `2` IN ALL THREE ARMS. EXIT CODE DISCRIMINATES NOTHING ON THIS
+      INSTRUMENT.** It exits 2 whenever the gate is shut, which is every arm, because
+      `latest_admitted_run` is null in every arm and no seat may change it.
+    why_it_matters: >
+      **THE ESTABLISHED THREE-COLUMN FORM WOULD HAVE PRODUCED A VACUOUS TABLE HERE** — three arms,
+      identical exit codes, "contrast demonstrated". This is precisely `CD-ENG-WO2R3-F12`: *"two arms
+      exiting 1 for different reasons look identical in a summary table and prove nothing."* **THAT
+      FAILURE MODE IS THIS INSTRUMENT''S DEFAULT CONDITION, NOT AN EDGE CASE.**
+    what_this_seat_did: >
+      Replaced the exit-code column with the two measurements that DO discriminate — whether
+      `VALIDATION FAILED` appears, and **HOW MANY CRITERIA RECEIVED A COMPUTED STATUS (18 vs 0)** —
+      and recorded `git apply`''s exit code separately as §4 requires. **The form was followed AND its
+      limit was declared** (`CD-RULE-004`).
+
+  CD-ENG-WO3-01-F05:
+    against: 'dispatch §3 D3/D4 ("take the register from 16 rows to 17") and §4 ("17 criteria reported").'
+    severity: LOW
+    what: >
+      **THE ARITHMETIC IS OFF BY ONE. 16 rows + CD-AC-017 + CD-AC-018 = 18, AND THE INSTRUMENT REPORTS
+      18** (measured: 17 MANDATORY + 1 ADVISORY). 17 is the **PID CENSUS** size; the **REGISTER** now
+      carries 18 rows because `CD-AC-018` is register-only and correctly absent from the census.
+    why_it_is_recorded_at_all: >
+      It is trivial arithmetic, but **a seat told to expect 17 and measuring 18 is a seat under
+      pressure to explain away a discrepancy**, which is the same hazard the dispatch was managing
+      when it announced `SHUT` in advance. Recorded so the next reader is not surprised.
+
+  CD-ENG-WO3-01-F06:
+    against: 'PID.md line 122, versus this seat''s own new CD-AC-017 row.'
+    severity: MEDIUM
+    what: >
+      **THE PID AND THE REGISTER NOW DISAGREE ON `CD-AC-017`''S RELATION, IN WRITING.** PID.md line
+      122 reads "**`CD-AC-017` enters as `NEW_REQUIREMENT`**". This seat wrote `pid_relation: DERIVES`
+      as D3 instructs.
+    why_the_dispatch_is_right_on_the_mechanics: >
+      **CONFIRMED IN THE CODE, NOT TAKEN ON THE DISPATCH''S WORD:** `NEW_REQUIREMENT` forces
+      `NOT_EVALUATED` with "blocked pending PO amendment of the PID"
+      (`required_tests.py:708-715`), and `CD-AC-017` **IS** in the census (measured). Writing
+      `NEW_REQUIREMENT` would **SUPPRESS THE VERY CRITERION THE AMENDMENT CREATED.** The PID sentence
+      describes the state ON THE DAY OF THE AMENDMENT — the same PID entry says "the register row does
+      not exist and 4/4 is a WO-3 claim."
+    why_it_is_still_raised: >
+      **THE PID IS PRODUCT-OWNER PROSE AND ITS RECONCILIATION IS NOT THIS SEAT''S CALL**
+      (`PBG-AUTH-005`, `CD-D-115`). This seat did NOT edit the PID and did NOT silently correct the
+      divergence; it implemented the dispatch, declared the conflict in the register''s own comment
+      block at the row, and raises it here **for the Product Owner to dispose of.**

@@ -1,0 +1,19 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-25 07:07:56.969277310 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-25 07:08:17.333241324 +0100
+@@ -317,7 +317,14 @@
+     _refuse_non_json(candidate, surface)
+     _refuse_classified_keys(candidate, surface)
+     _refuse_schema_violation(candidate, surface)
+-    _refuse_stale_calm(candidate, surface)
++    # Z5CTRL: THE SAME `try` SHAPE THAT DOES NOT SWALLOW. The handler ends in a bare
++    # `raise`, so the refusal propagates unchanged. THIS ARM MUST STAY PASS — it is the
++    # vacuity direction of the new assertion: a control that fails on every `try` in the
++    # gate would be refusing a legitimate shape, not catching a swallow.
++    try:
++        _refuse_stale_calm(candidate, surface)
++    except PublicationRefused:
++        raise
+ 
+ 
+ def _refuse_non_json(candidate: Mapping, surface: "EnvelopeSurface") -> None:

@@ -1,0 +1,709 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 1 COMPLETE — §C, MODELS ARE DATA.
+# `ContributionModel` AND `CONTRIBUTION_MODELS` ARE DELETED. `DialSpec.contribution_model` — THE
+# FIELD THROUGH WHICH ASR3-F02 PUBLISHED A LAUNDERED NUMBER — DOES NOT EXIST.
+# P1, P2, P3, P4 AND P8 DEMONSTRATED IN BOTH ARMS. THE RENAME TEST MEASURED, NOT CLAIMED.
+# THREE FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK. NOTHING HERE IS ASSURANCE.
+# ================================================================================================ #
+#
+# FIRST ENTRY OF THE WO-2R3 LANE, TAKING THE RESERVED BLOCK FROM 0060 (CD-D-096). The lane's
+# branch-point copy of this directory ends at 0053; main continues from 0050. A lane worktree can
+# only see the branch-point copy, so lane and main sequences collide unless the lane takes its own
+# block. 0054-0059 are deliberately NOT used by this lane.
+# ================================================================================================ #
+
+entry_id: BL-20260822T120041Z-0060
+timestamp_utc: "2026-08-22T12:00:41Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: f30e63cbac6782ec5d7789071ee26be0ba7fe2e5
+increment_commits:
+  - 945d9ce6b49d7815d37e53c225f8af54679252d0   # part 1 of 2 — the structure and the clean arm
+  - PENDING                                     # part 2 of 2 — the plants and this entry
+parent_entry_id: BL-20260820T013522Z-0053
+schema_version: 1
+
+action_summary: >
+  INCREMENT 1 DELIVERED IN TWO COMMITS. BP-AMENDMENT-0001 §C is implemented in full: the model
+  boundary is not a stronger door, it is NO DOOR. `ContributionModel` (the Protocol) and
+  `CONTRIBUTION_MODELS` (the dict) are DELETED and nothing re-exports them;
+  `DialSpec.contribution_model` — the field the auditor's plant was placed in — DOES NOT EXIST, so
+  `spec.contribution_model.compute(payloads)` is not an expression that can be written. In their
+  place: `ModelId`, `MappingKind` (a closed enum, EXACTLY ONE member, computing nothing),
+  `DeclaredParameter`, `ModelProvenance`, `ModelSpec` (frozen data, no callable-typed field),
+  `ModelRegistry` (required on ConfigSnapshot with no default), `EMPTY_MODEL_REGISTRY` with zero
+  rows, §C.5's three invariants in ONE function called from TWO places, and
+  `engine.mapping.compute` — the engine-owned executor, whose one branch RAISES `UnspecifiedMapping`
+  and returns nothing.
+  MEASURED, NOT INHERITED: 1400 collected AND 1400 PASSED at f30e63c on this host today (the
+  dispatch recorded the collection but declared the run unverified); ALL ELEVEN declared plants
+  APPLY at f30e63c (the record's claim, now this seat's measurement).
+  NOW: 1437 collected, 1437 passed. ZERO node ids lost. 6 replaced under the deleted-subject rule
+  with old id, new id and proposition named. 2 retained with the subject moved. 37 added.
+  Nine register checks exit 0; the delegated-judgement sweep moves from 1 module OUT_OF_BOUND to 0.
+  P1, P2, P3, P4 and P8 each demonstrated in BASELINE and VIOLATED arms, every violated arm run in
+  a separate pristine `git archive` extraction, never in the worktree.
+  THREE FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK, and no guard built for any of them.
+  I DO NOT CERTIFY THIS WORK (PBG-SOD-001, non-waivable).
+
+# ================================================================================================ #
+# 1. BOOT
+# ================================================================================================ #
+boot:
+  verdict: >
+    BOOTED AMBER, with the sole degradation PRE-EXISTING AND NOT MINE. Role taken from the
+    dispatch record plus CD-AUTH-0001; never self-assigned (PBG-BOOT-001, PBG-BOOT-002,
+    non-waivable). `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` at /srv/crash-detector
+    returned AMBER with `roadmap_identity` UNAVAILABLE (ROADMAP.md absent) — the standing condition
+    CD-PL-F70 already measured and named, unchanged by anything in this increment.
+  lane_reconciliation: >
+    `git -C /srv/crash-detector-wo2r3 rev-parse HEAD` -> f30e63cbac6782ec5d7789071ee26be0ba7fe2e5,
+    EXACTLY the dispatched execution_base_sha, resolved and read rather than transcribed (CD-PL-F36).
+    `git -C /srv/crash-detector-wo2r3 status --porcelain` -> ZERO LINES on arrival.
+    Branch `wo-2r3`. NO DRIFT. Nothing was reconciled because nothing disagreed.
+  read_before_designing: >
+    The dispatch record in full including `what_the_project_lead_has_NOT_verified_at_issue_time`;
+    pbg/roles/engineer.md; pbg/standards/DEVELOPMENT_SECURITY_BASELINE.md; BP-AMENDMENT-0001 in
+    full with §C and §C.2.1 read twice; `combine_within_one_dial` and `SameDialReduction` in
+    dials/provenance.py BEFORE any design was written, as the dispatch required;
+    governance/rules/PROJECT-RULES.md all nine; PO-DECISIONS-0004 and -0005.
+
+# ================================================================================================ #
+# 2. WHAT WAS BUILT — the structure, not a list of edits
+# ================================================================================================ #
+structure_delivered:
+  deleted:
+  - '`ContributionModel` (the Protocol) — DELETED. No deprecation path, no shim, no alias.'
+  - '`CONTRIBUTION_MODELS` (the dict) — DELETED.'
+  - '`DialSpec.contribution_model` — THE FIELD IS GONE. Not narrowed to None, not renamed with a
+     compatibility property: absent from `dataclasses.fields(DialSpec)`, absent from the
+     constructor signature, absent from an instance. `DialSpec(..., contribution_model=x)` is a
+     TypeError from the interpreter''s own argument binding.'
+  - '`crash_detector.engine` re-exports neither name; `engine.ContributionModel` is an
+     AttributeError.'
+  added:
+  - '`ModelId` — a name, established through `own_model_id`/`own_str`, like every other id in this
+     codebase. The ALIAS is documentation; the ESTABLISHMENT is the refusal, and that is written
+     out in the module rather than left to be assumed.'
+  - '`MappingKind` — a closed enum with EXACTLY ONE member, `UNSPECIFIED`, which computes nothing.
+     The names are the Project Lead''s at CD-D-090 and were not altered.'
+  - '`DeclaredParameter` — a configured name and finite number. WO-2 ships ZERO instances.
+     Deliberately NOT `DeclaredQuantity`, which is a dial number with dial provenance; the two are
+     separated in writing because the names are close enough to be confused.'
+  - '`ModelProvenance` — SHAPE is this seat''s construction per §C.6; CONTENTS are CD-D-005''s and
+     are NOT invented here. Three fields — stands_for, account, decided_by — each argued in the
+     docstring. The per-source facts are deliberately NOT copied onto it: they live in the
+     SourceRegistry and invariant 3 forces the two to agree, because two records of one fact drift.'
+  - '`ModelSpec` — frozen data. NO callable-typed field, and no method that computes.'
+  - '`ModelRegistry` — a TUPLE of exact-typed rows, NOT a caller-supplied Mapping. Holding a
+     Mapping would mean resolution runs the caller''s `__getitem__` — the caller choosing which
+     spec a dial resolved to, which is this amendment''s own defect one storey down. Same reasoning
+     that put SAME_DIAL_REDUCTIONS behind a MappingProxyType with no other reference.'
+  - '`EMPTY_MODEL_REGISTRY` — zero rows, shipped, joining EMPTY_SOURCE_REGISTRY.'
+  - '`ModelNotRegistered`, `ModelBoundToAnotherDial`, `ModelReadsUndeclaredInput` — named errors,
+     so a plant can catch the CLASS rather than the one member somebody planted.'
+  - '`ConfigSnapshot.model_registry` — REQUIRED, NO DEFAULT. A registry nobody chose is not
+     evidence of anything.'
+  - '`ConfigSnapshot.model_for(dial_id)` — THE ONE RESOLUTION DOOR, mirroring `window()`.'
+  - '`engine/mapping.py` — NEW MODULE. `compute(spec, payloads) -> ScoreComputation`, engine-owned,
+     holding no module-level mutable state, taking one dial''s spec and one dial''s payloads.'
+  the_one_function_two_call_sites: >
+    §C.5's three invariants live in `establish_model_for_dial` and NOWHERE ELSE. It is called from
+    `ConfigSnapshot.__post_init__` (so an incoherent configuration is refused before an evaluation
+    runs) and from `ConfigSnapshot.model_for` (so a slot rewritten past `frozen` between
+    construction and evaluation is refused at the second reading). ONE FUNCTION, TWO CALL SITES —
+    two independently written checks would be an enumeration, and enumerations come apart. This is
+    the reasoning StalenessWindow already applies to the two staleness comparison sites, read here.
+
+structural_invariant: >
+  After this increment there is no field, parameter or constructor argument reachable from
+  `ConfigSnapshot`, `DialSpec`, `ModelSpec` or `engine.mapping.compute` that accepts a callable or
+  a model object, and `engine.mapping.compute` returns no value on any code path that exists today.
+  WRITTEN NARROWLY ON PURPOSE (CD-PL-F76): it says NOTHING about the collector boundary, the
+  serving path or `Reading.fold`, none of which this increment touches.
+
+why_it_is_a_class_closure: >
+  Not because a check rejects model objects — NO CHECK DOES. The DESTINATION is removed. Every
+  field on the path is one of three things: a value this system rebuilds from primitives
+  (`own_str`), a member of an enum the interpreter closes against subclassing, or an exact-type
+  comparison against a frozen dataclass. A callable is none of those. A callable wearing a `str`
+  subclass — which `isinstance(x, str)` would have admitted — is REBUILT as an exact `str` that has
+  no `__call__`, which is measured as a test. The single registry-shaped thing, which mappings
+  exist, is closed by `enum` membership (closed by the LANGUAGE, not by a check) and the executor's
+  branch set is asserted set-equal to the enum AT IMPORT, so a member added without a branch stops
+  the module importing rather than falling out of the bottom of `compute`.
+
+# ================================================================================================ #
+# 3. THE PLANTS — P1, P2, P3, P4, P8. BOTH ARMS. EVERY VIOLATED ARM IN A PRISTINE EXTRACTION.
+# ================================================================================================ #
+extraction_hygiene: >
+  The worktree was NEVER mutated to test a variant and NO git worktree was created for one. Each
+  variant got its OWN pristine extraction: `git archive <sha> | tar -x -C <tmpdir>`, `git apply
+  -p1 <patch>`, run, discard. `python3 -B` everywhere, so no __pycache__ was written into any
+  governed tree. All four violated-arm patches were GENERATED WITH `git diff` (CD-ENG-WO2R-F13,
+  adopted) in a scratch repo, never hand-written.
+
+plants:
+- id: P1
+  plant: the auditor's ASR3-F02 model object into DialSpec
+  must_fail_at: DialSpec construction
+  baseline_arm:
+    command: |
+      D=/tmp/cd-p1-baseline; git archive 945d9ce | tar -x -C $D
+      PYTHONPATH=$D/src python3 -B -c '<the auditor driver, DialSpec construction only>'
+    observed_step_2: "TypeError: DialSpec.__init__() got an unexpected keyword argument 'contribution_model'"
+    observed_step_2b_adapted_to_the_new_field: >
+      NotEstablishedOnOwnTerms: a model reference is a NAME, and CarryingModel is not a name.
+      Models are DATA resolved against the model registry, never objects supplied by a caller
+      (BP-AMENDMENT-0001 §C.1): there is no field anywhere on the dial path that holds a model
+      object or a callable.
+    refusing_layer_and_its_scope: >
+      STEP 2 — THE PYTHON DATACLASS CONSTRUCTOR ITSELF (argument binding). SCOPE: every
+      construction of a DialSpec by any caller anywhere.
+      STEP 2b — `own_model_id`, i.e. `own_str`'s isinstance test. SCOPE: every `model_ref` on every
+      DialSpec, every `model_id` on every ModelSpec, and every lookup through ModelRegistry.get.
+  violated_arm:
+    what_removing_the_structure_means: >
+      §C DELETES a type and a field, so the violated arm cannot be a patch that removes a line —
+      it is the tree WITHOUT the structure, which is f30e63c itself. That is the honest violated
+      arm and it is stronger than a synthetic one: it shows the ACTUAL prior product publishing
+      the laundered number, executed by this seat on its own extraction and NOT inherited from any
+      prior record (PO-DECISIONS-0004 ruling 4).
+    command: |
+      D=/tmp/cd-p1-violated
+      git archive f30e63cbac6782ec5d7789071ee26be0ba7fe2e5 | tar -x -C $D
+      cd $D && git apply -p1 variants/WO-2R2/CLASS-1/CD-ENG-WO2R2-V05-stateful-model-shared-by-both-dials.patch
+      PYTHONPATH=$D/src python3 -B -c '<the manifest driver, verbatim>'
+    observed: |
+      TRUE INPUTS      : equity 0.9, monetary 0.1
+      PUBLISHED MONETARY: 0.5
+    reading: >
+      NOT REFUSED. One stateful object in BOTH DialSpecs published monetary 0.5 out of an equity
+      0.9 and a monetary 0.1, through `number_for_dial_slot` — the one declared publication gate.
+      ASR3-F02 replicated by this seat, at this seat's own extraction.
+  note_worth_recording: >
+    The auditor's plant FILE still applies cleanly at my SHA, because it only ADDS a new module.
+    That is correct and expected: §C does not try to stop anyone WRITING the class. It removes
+    everywhere the object could be put. The class is legal Python; the placement is not expressible.
+
+- id: P2
+  plant: a callable into any ModelSpec field
+  must_fail_at: ModelSpec construction
+  baseline_arm:
+    command: 'PYTHONPATH=src python3 -B -m pytest tests/test_engine_model_registry.py -q'
+    coverage: >
+      PARAMETRISED OVER ALL SEVEN FIELDS, and the parametrisation is asserted SET-EQUAL to
+      `dataclasses.fields(ModelSpec)` in both directions by its own test — so a field added later
+      without being planted arrives as a FAILING TEST rather than as an unplanted door. The plant
+      enumerates its subject FROM THE ARTEFACT.
+    observed_example: "TypeError: ModelSpec.mapping must be a MappingKind member, got Carrying"
+    refusing_layer_and_its_scope: >
+      model_id/dial_id — `own_str`; both id tuples — `own_str` elementwise; mapping —
+      `type(x) is not MappingKind`; parameters — `type(x) is not DeclaredParameter` elementwise;
+      provenance — `type(x) is not ModelProvenance`. SCOPE: every ModelSpec construction anywhere.
+      An Enum with members cannot be subclassed by the interpreter, so the mapping refusal has no
+      subclass it could admit.
+  violated_arm:
+    command: |
+      # patch generated with `git diff`; if False: replaces the exact-type refusal on mapping
+      D=/tmp/cd-p2-violated; git archive 945d9ce | tar -x -C $D
+      cd $D && git apply -p1 /tmp/P2-violated.patch
+      PYTHONPATH=$D/src python3 -B -c '<construct ModelSpec with a CarryingModel as its mapping>'
+    observed: |
+      ModelSpec CONSTRUCTED with a callable object in its mapping field: CarryingModel
+      callable(spec.mapping.compute): True
+    reading: 'NOT REFUSED. The one line credited with the refusal is the line that carries it.'
+
+- id: P3
+  plant: an equity-bound ModelSpec named by the monetary DialSpec
+  must_fail_at: ConfigSnapshot construction
+  baseline_arm:
+    observed: >
+      ModelBoundToAnotherDial: dial 'monetary_debasement' names model 'm.shared', which declares it
+      serves dial 'equity_crash'. A model serves EXACTLY ONE dial (BP-AMENDMENT-0001 §C.4).
+    refusing_layer_and_its_scope: >
+      `establish_model_for_dial` invariant 2. SCOPE: every ConfigSnapshot construction AND every
+      resolution, for every dial — one function called at both, so they cannot come apart.
+    the_deeper_half_also_measured: >
+      §C.4's real content is not the check, it is that THERE IS NO OBJECT TO PLACE IN BOTH SPECS.
+      A separate test constructs the LEGITIMATE case — two rows, one per dial, naming the SAME
+      mapping — and asserts it is ACCEPTED and blends nothing: the two rows are distinct frozen
+      data with no shared mutable state and the executor has no reference to the other dial's
+      payloads to close over.
+    and_the_frozen_slot_rewrite: >
+      A further test builds a coherent snapshot, then rewrites the resolved row's `dial_id` to the
+      other dial with `object.__setattr__`, and shows `model_for` and `evaluate` both refusing at
+      the NEXT resolution. That is the measured carrier for declared limit (a) below.
+  violated_arm:
+    command: 'git apply -p1 /tmp/P3-violated.patch in a pristine extraction of 945d9ce'
+    observed: |
+      ConfigSnapshot CONSTRUCTED. One equity-bound row serves BOTH dials:
+        equity  resolves to model.shared.v0 declaring dial equity_crash
+        monetary resolves to model.shared.v0 declaring dial equity_crash
+    reading: 'NOT REFUSED. Invariant 2 removed, and one row serves two dials again.'
+
+- id: P4
+  plant: a ModelSpec reading an undeclared input
+  must_fail_at: ConfigSnapshot construction
+  baseline_arm:
+    observed: >
+      ModelReadsUndeclaredInput: model 'm.greedy' reads inputs dial 'equity_crash' did not declare:
+      required ['src.x'], contributing [].
+    refusing_layer_and_its_scope: >
+      `establish_model_for_dial` invariant 3. SCOPE: every (dial, model) pair in every snapshot,
+      at construction and at resolution.
+    the_second_route_also_planted: >
+      A model that MOVES an id rather than adding one — the dial declares `src.c` CONTRIBUTING and
+      the model declares the same id REQUIRED. A naive "is every model input one of the dial's
+      inputs?" test would admit it, and it changes what absence MEANS (required absence forces
+      Unknown; contributing absence forces Degraded, BLUEPRINT §5). The invariant is a subset test
+      PER SET for exactly this reason and this plant is what makes the per-set half load-bearing.
+    two_false_positive_controls: >
+      (i) a model reading EXACTLY its dial's two sets, with agreeing criticalities — ACCEPTED;
+      (ii) a model reading a strict SUBSET of its dial's inputs — ACCEPTED, because it is a subset
+      rule and not an equality rule, and asserting that stops a later seat tightening it silently.
+  violated_arm:
+    command: 'git apply -p1 /tmp/P4-violated.patch in a pristine extraction of 945d9ce'
+    observed: |
+      ConfigSnapshot CONSTRUCTED. The dial declares ('src.e',)
+        but its model reads ('src.e', 'src.undeclared') -> reads an input the dial never declared
+    reading: 'NOT REFUSED.'
+
+- id: P8
+  plant: a ModelSpec whose mapping is MappingKind.UNSPECIFIED, resolved and executed
+  must_fail_at: 'the executor, with UnspecifiedMapping — and NO MAGNITUDE RETURNED'
+  baseline_arm:
+    observed: >
+      UnspecifiedMapping: model 'm.p8' for dial 'equity_crash' declares MappingKind.UNSPECIFIED
+      over inputs ['src.e'], which NAMES THE ABSENCE of a declared mapping. There is nothing to
+      execute and NOTHING IS RETURNED.
+    refusing_layer_and_its_scope: >
+      `engine.mapping.compute`'s UNSPECIFIED branch. SCOPE: every execution of every mapping,
+      because it is the only branch there is.
+    four_ways_it_is_asserted:
+    - 'the refusal fires when the executor is called directly;'
+    - 'the refusal TRAVELS out of `evaluate` on the real dial path — not caught and turned into a
+       number, not caught and turned into Unknown;'
+    - 'the refusal carries NO magnitude, is not itself a number, and has a string message. An
+       exception with a number on it would be CD-AC-001''s failure mode with an extra step;'
+    - 'AN AST READ OF THE MODULE asserts `compute` contains NO `return` with a value on ANY path,
+       reached or unreached. That is what "no else, no fallthrough, no numeric return" means,
+       CHECKED rather than promised.'
+    and_the_frozen_slot_rewrite: >
+      A test rewrites a built spec's `mapping` slot to a CALLABLE with `object.__setattr__` and
+      shows `compute` refusing with a TypeError, because it reads the SLOT rather than trusting the
+      constructor that filled it. That is the last place an object could conceivably reach the
+      computation, and it does not.
+  violated_arm:
+    command: 'git apply -p1 /tmp/P8-violated.patch in a pristine extraction of 945d9ce'
+    observed: |
+      NOT REFUSED. The UNSPECIFIED mapping RETURNED a magnitude and it published:
+        reading type   : Value
+        PUBLISHED EQUITY: 0.5
+    reading: >
+      The refusal branch replaced by `return ScoreComputation(magnitude=0.5, contributions=())`
+      publishes 0.5 through `number_for_dial_slot`, the declared publication gate, from a dial
+      whose mapping is DECLARED ABSENT. This is why ruling 2's "refuses with a named error and
+      never returns a magnitude" is load-bearing and not decorative.
+
+all_plants_over_empty_model_registry:
+  answer: >
+    YES — and the claim is made precisely, in two halves, because they are different things.
+  half_1_the_product: >
+    THE PRODUCT REGISTERS ZERO MODELS AND ZERO SOURCES AND NO PLANT CHANGED THAT. Not one row was
+    registered anywhere in src/. `EMPTY_MODEL_REGISTRY.models == ()`, `EMPTY_SOURCE_REGISTRY` is
+    unchanged, `empty_config_snapshot` names no model on either dial, and each of P1, P3, P4 and P8
+    carries an explicit `..._over_the_shipped_empty_registry` arm showing the route dying against
+    exactly the shipped configuration — at RESOLUTION with `ModelNotRegistered` (P1, P3), at the
+    SOURCE registry with `SourceNotRegistered` (P4), or by the executor being UNREACHABLE because
+    no model_ref resolves (P8, which is §C.2.1's own sentence, measured).
+  half_2_the_local_specs: >
+    P2, P3, P4 and P8 ALSO construct a ModelSpec inside the test, and MUST. They plant against
+    ModelSpec's own constructor, against ConfigSnapshot invariants 2 and 3, and against the
+    executor, and none of those can be reached without a spec to reach them with. This is exactly
+    why PO-DECISIONS-0005 ruling 2 made MappingKind ship non-empty. A spec built inside a test is
+    NOT a registered product model, and no such spec escapes the test file.
+  said_plainly: >
+    NO PLANT NEEDED A REGISTERED PRODUCT ROW. If any had, it would have contradicted the PO's
+    standing condition and it would be written here in those words.
+
+# ================================================================================================ #
+# 4. THE RENAME TEST — MEASURED, NOT ASSERTED (CD-PL-F74, adopted)
+# ================================================================================================ #
+rename_test:
+  why_it_is_run_and_not_claimed: >
+    CD-PL-F74 makes this a DELIVERY OBLIGATION: for every variant recorded as refused, if one
+    identifier is renamed does it still refuse? If not, a VOCABULARY was measured and not a CLASS.
+    Most of this architecture's refusals SHOULD survive a rename, which is exactly why saying so
+    without running it would be the cheapest possible unearned claim.
+  what_was_done: |
+    D=/tmp/cd-rename
+    git archive 945d9ce6b49d7815d37e53c225f8af54679252d0 | tar -x -C $D
+    # plus the not-yet-committed plant file copied in, and SEVEN identifiers renamed across
+    # every .py in src/, tests/ and tools/:
+    sed -i -e 's/\bMappingKind\b/Kind/g' -e 's/\bUNSPECIFIED\b/NOTHING_YET/g' \
+           -e 's/\bmodel_ref\b/mapping_name/g' -e 's/\bModelSpec\b/RegisteredMapping/g' \
+           -e 's/\bUnspecifiedMapping\b/NoMappingDeclared/g' \
+           -e 's/\bestablish_model_for_dial\b/resolve_row/g' \
+           -e 's/\bown_model_id\b/establish_name/g' <every .py>
+    PYTHONPATH=$D/src python3 -B -m pytest tests -q
+  observed: >
+    grep for any of the old names in src/ -> 0 files. All 37 plant baseline arms PASSED. The whole
+    suite PASSED, 1437.
+  verdict_per_refusal: >
+    P1 (dataclass argument binding), P1b (own_str's isinstance), P2 (all seven field refusals),
+    P3 (a string inequality between two rebuilt strings), P4 (a set difference), P8 (an IDENTITY
+    comparison against an enum member OBJECT, not against its `.value` string and not against its
+    `.name`), ModelNotRegistered (a lookup miss) — EVERY ONE SURVIVES. None of them is a
+    vocabulary result.
+  the_honest_qualification: >
+    TWO ASSERTIONS INSIDE THE PLANTS DO check message TEXT — `"contribution_model" in str(exc)` and
+    `"MappingKind" in str(exc)`. Those are assertions ABOUT THE MESSAGE and not the refusals
+    themselves; the refusal in both cases is the exception TYPE, which is what survives. Recorded
+    here rather than left for the fourth Assurance seat to notice.
+
+counterfactual_arms_CD_D_079:
+  statement: >
+    EVERY refusal credited to a structure carries a counterfactual arm, and the four violated arms
+    in §3 ARE those counterfactuals: the line or the type credited was removed and the escape was
+    shown returning. P2, P3, P4 and P8 each had exactly one construct neutralised and each escaped.
+  p1_is_different_and_is_said_so: >
+    P1's counterfactual could not be "delete a line", because §C deletes a TYPE and a FIELD. Its
+    counterfactual is the tree without them — f30e63c — executed by this seat, which showed the
+    escape returning as monetary 0.5. That is a counterfactual with a different shape and the
+    difference is stated rather than glossed.
+
+# ================================================================================================ #
+# 5. THE CLEAN ARM
+# ================================================================================================ #
+clean_arm:
+  at_the_base_measured_by_me_not_inherited:
+    why: >
+      The dispatch declared, in terms, that the 1400 figure was COLLECTED but that the suite WAS
+      NOT RUN, and that whether all 1400 pass at f30e63c on this host today was NOT established.
+      It is established now, by this seat, before anything was changed.
+    commands: |
+      git archive f30e63cbac6782ec5d7789071ee26be0ba7fe2e5 | tar -x -C /tmp/cd-base-f30e63c
+      PYTHONPATH=/tmp/cd-base-f30e63c/src python3 -B -m pytest tests --collect-only -q
+      PYTHONPATH=/tmp/cd-base-f30e63c/src python3 -B -m pytest tests -q
+    observed: '1400 tests collected; 1400 passed. Nine register checks exit 0.'
+  at_this_increment:
+    commands: |
+      PYTHONPATH=src python3 -B -m pytest tests -q
+      python3 -B tools/register/check_no_numeric_default.py --root .
+      python3 -B tools/register/check_no_blend.py --root .
+      python3 -B tools/register/check_schema_closed.py --root .
+      python3 -B tools/register/check_engine_no_witness_reach.py --root .
+      python3 -B tools/register/check_no_execution_interface.py --root .
+      python3 -B tools/register/check_lockfile_denylist.py --root .
+      python3 -B tools/register/check_egress_no_broker.py --root .
+      python3 -B tools/register/check_base_image_digest_pin.py --root .
+      python3 -B tools/register/check_dockerignore.py --root .
+      python3 -B tools/sweep/delegated_judgement_sweep.py
+    observed:
+      pytest: '1437 collected, 1437 passed, exit 0'
+      check_no_numeric_default: 'exit 0 — PASS, 539 assertions, 0 violations (456 at base)'
+      check_no_blend: 'exit 0 — PASS, 6112 assertions, 0 violations (5554 at base)'
+      check_schema_closed: 'exit 0 — PASS, 242 assertions, 0 violations'
+      check_engine_no_witness_reach: 'exit 0 — PASS, 26 assertions, 0 violations (25 at base)'
+      check_no_execution_interface: 'exit 0 — PASS, 45559 assertions, 0 violations'
+      check_lockfile_denylist: 'exit 0 — PASS, 134 assertions, 0 violations'
+      check_egress_no_broker: 'exit 0 — PASS, 69 assertions, 0 violations'
+      check_base_image_digest_pin: 'exit 0 — PASS, 13 assertions, 0 violations'
+      check_dockerignore: 'exit 0 — PASS, 22 assertions, 0 violations'
+      delegated_judgement_sweep: >
+        PASS — 471 sites over 17 modules (402 over 16 at base). 3 tier-1 sites and **0 MODULES**
+        declared OPEN or OUT OF BOUND, against 3 sites and **1 MODULE** at f30e63c. The module that
+        left the OUT_OF_BOUND list is `crash_detector.engine.model` — the injected
+        ContributionModel — and it left because the ROUTE is gone, not because a guard was added.
+  not_run_and_why:
+    check_grant_matrix_live: >
+      EXITS 3 WITH A STATED REASON at f30e63c and here alike — it needs a live digest-pinned
+      Postgres, which is CD-AC-003 and is explicitly out of this dispatch's scope. It is a
+      non-zero exit with a stated reason, never a pass and never a skip (PBG-CI-001). NOT MINE,
+      NOT CHANGED, NOT CLAIMED.
+
+node_id_reconciliation:
+  base: '1400 at f30e63c — MEASURED by this seat, command recorded above (CD-RULE-009).'
+  now: '1437'
+  lost: '0'
+  replaced_under_the_deleted_subject_rule: 6
+  retained_with_the_subject_moved: 2
+  added: 37
+  arithmetic: '1400 - 0 + 37 = 1437. The 6 replacements and 2 retentions are net-zero by construction.'
+  replacements:
+  - old: 'tests/test_evaluate.py::test_the_application_registers_no_contribution_model'
+    new: 'tests/test_evaluate.py::test_the_application_registers_no_model'
+    proposition: 'the application registers no model.'
+    why_the_same_thing: >
+      The subject `CONTRIBUTION_MODELS` is deleted by §C. The successor asserts the identical
+      proposition against EMPTY_MODEL_REGISTRY three ways (is_empty, models, model_ids) plus the
+      shipped snapshot, because `is_empty` is a property a future row could make lie about.
+  - old: 'tests/test_evaluate.py::test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage'
+    new: 'tests/test_evaluate.py::test_a_missing_contributing_input_does_not_force_unknown_the_way_a_required_one_does'
+    proposition: 'a missing CONTRIBUTING input is not a missing REQUIRED one.'
+    why_the_same_thing: 'Asserted by contrast in both directions against the same configuration.'
+    what_was_lost: >
+      THAT THE READING IS SPECIFICALLY `Degraded` WITH ITS REASON AND MISSING SOURCE. See
+      finding CD-ENG-WO2R3-F01 below. Not hidden: it is written in the test's own docstring.
+  - old: 'tests/test_evaluate.py::test_a_model_that_cannot_compute_raises_rather_than_returning_a_number'
+    new: 'tests/test_evaluate.py::test_an_executor_that_cannot_compute_raises_rather_than_returning_a_number'
+    proposition: >
+      a refusal from the mapping TRAVELS — not caught and turned into a number, not caught and
+      turned into Unknown.
+    why_the_same_thing: >
+      IDENTICAL proposition, and STRONGER: the raiser is now the engine's own executor rather than
+      a caller-supplied double, so there is no caller code in the stack at all. The successor also
+      asserts the exception carries no magnitude, which the original did not.
+  - old: 'tests/test_evaluate.py::test_a_satisfied_dial_reads_value_with_its_inputs_named'
+    new: 'tests/test_evaluate.py::test_a_satisfied_dial_reaches_the_executor_with_its_inputs_named'
+    proposition: >
+      a dial whose required inputs are all present gets all the way to the mapping carrying
+      exactly the inputs it declared and no others.
+    why_the_same_thing: >
+      Asserted off the refusal, which names the model, the dial and the input set the executor was
+      handed.
+    what_was_lost: 'that the result is a `Value` carrying an EquityCrashScore. See CD-ENG-WO2R3-F01.'
+  - old: 'tests/test_evaluate.py::test_each_dial_carries_its_own_score_type'
+    new: 'tests/test_evaluate.py::test_each_dial_has_its_own_unrelated_score_type'
+    proposition: 'two dials, two unrelated score types, neither subclassing the other (PID §3.1).'
+    what_was_lost: >
+      that a LIVE evaluation stamps each. The cross-dial route the old contrast guarded is now
+      refused at CONSTRUCTION by ModelSpec.dial_id, which is P3.
+  - old: 'tests/test_evaluate.py::test_a_value_bearing_reading_with_no_contribution_model_is_refused'
+    new: 'tests/test_evaluate.py::test_a_value_bearing_reading_from_a_dial_naming_no_model_is_refused'
+    proposition: 'a dial with inputs and no declared mapping cannot produce an explicable number.'
+    why_the_same_thing: 'IDENTICAL body. Only the re-pointed field name changed.'
+  retained_with_the_subject_moved:
+  - node_id: 'tests/test_evaluate.py::test_a_reading_is_only_as_fresh_as_its_oldest_input'
+    why_the_id_is_unchanged: >
+      The RULE is unchanged and `_oldest_as_of` is untouched by this amendment; only the route to
+      it moved, from reading `as_of_utc` off a `Value` that no longer occurs to exercising the
+      function that owns the rule. DECLARED HERE rather than presented as untouched.
+  - node_id: 'tests/test_evaluate.py::test_the_latest_observation_per_source_wins'
+    why_the_id_is_unchanged: >
+      Same case. `_latest_usable_ok` is untouched; the test now calls it directly and takes its
+      window from a real snapshot, so the admission door is still the only way to obtain one.
+  added: >
+    37 node ids, all in the NEW file tests/test_engine_model_registry.py — P1's four baseline
+    tests plus its empty-registry arm, P2's seven parametrised field plants plus its
+    enumerate-from-the-artefact test and its positive control, P3's four, P4's five, P8's six, and
+    nine tests of the registry's and executor's own doors.
+  a_bare_number_is_not_a_conservation_claim: >
+    Which is why the six replacements are named old-id -> new-id with the proposition and the two
+    retentions are declared. 1437 on its own would say nothing.
+
+eleven_declared_plants:
+  at_f30e63c_measured_by_me: >
+    ALL ELEVEN APPLY. `git apply --check -p1` over each, in the pristine base extraction. The
+    dispatch declared this was the RECORD'S CLAIM (BL-...-0046) and NOT the Project Lead's
+    measurement; it is now measured, and the record is correct.
+  at_this_increment: >
+    EIGHT APPLY. **THREE DO NOT**, and all three fail in the two modules §C rewrote:
+      - plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch — fails at engine/evaluate.py:102
+        (its context carries `if spec.contribution_model is None:`)
+      - plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch — fails at engine/config.py:84
+        (its context carries `contribution_model: Union[ContributionModel, None]`)
+      - plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch — fails at engine/evaluate.py:82
+        (five hunks against evaluate.py, whose __all__ and body both moved)
+  what_happens_to_them: >
+    NONE IS DELETED — deleting one is prohibited (CD-D-033). Each is UPDATED to violate the SAME
+    proposition against the new structure, and the dispatch places that work in INCREMENT 4
+    (`increment_4_reconciliation_and_return`), not here. It is recorded at the FIRST increment
+    rather than discovered at the return, so it cannot be carried silently.
+
+# ================================================================================================ #
+# 6. DECLARED LIMITS (CD-RULE-004) AND RESIDUE (CD-RULE-006)
+# ================================================================================================ #
+declared_limits:
+- id: 'engine/model.py boundary 1 — object.__setattr__ still walks past frozen'
+  where_written: 'the module docstring of crash_detector/engine/model.py'
+  carrier: >
+    PARTIALLY CARRIED, AND THE CARRIER IS MEASURED. `establish_model_for_dial` runs at
+    ConfigSnapshot construction AND AGAIN at every resolution, so a `dial_id` or an input tuple
+    rewritten between the two is refused at the second reading — MEASURED as
+    `test_p3_a_dial_id_rewritten_after_snapshot_construction_is_refused_at_resolution`, which shows
+    both `model_for` and `evaluate` refusing. `compute` reads the `mapping` SLOT and refuses a
+    non-member — MEASURED as `test_p8_the_executor_refuses_a_spec_whose_mapping_slot_was_rewritten`.
+  what_is_not_carried: >
+    `mapping` rewritten to ANOTHER member of the enum. There is nothing to refuse today because
+    there is exactly one member and it refuses. Should a computing member ever be added, that route
+    is **NOT PROVED TO BE CARRIED ANYWHERE**.
+- id: 'engine/mapping.py boundary 3 — the executor door is written in the BODY, not derived from the signature'
+  where_written: 'the module docstring of crash_detector/engine/mapping.py, and the sweep disposition'
+  statement: >
+    §D.1 requires establishment at a public entry point to be DERIVED FROM THE SIGNATURE so a
+    rewrite of the body cannot remove it. `admits` is §D and is a LATER INCREMENT of WO-2R3. Until
+    it lands, `compute`'s refusals are a property of that function's body and an edit to the body
+    removes them — which is CD-ASR-F03's own shape.
+  carrier: '**NOT PROVED TO BE CARRIED ANYWHERE.**'
+  what_does_not_depend_on_it: >
+    THE §C CLAIM ITSELF. No field on ModelSpec or DialSpec holds code, so with every line of that
+    body deleted `compute` still has no caller-supplied callable to execute. The body bounds what a
+    MALFORMED spec can do at that door; it is not what stops a model object arriving.
+- id: 'CD-BP-002 — a mapping member''s implementation is code and can be wrong'
+  statement: >
+    This design does not make a mapping correct; it makes it HAVE SOURCE for static analysis, which
+    is strictly weaker than "cannot happen" and is stated as one in §E and in BLUEPRINT §17. The
+    executor is now the single highest-value target in the product and that concentration is
+    deliberate — one place with source beats seven doors without — and it is a RISK and not a win.
+    WO-2 ships no computing member, so there is no implementation to be wrong yet.
+  carrier: '**NOT PROVED TO BE CARRIED ANYWHERE.**'
+- id: 'engine/model.py boundary 2 — a spec is established; the TRUTH of a spec is not'
+  statement: >
+    `ModelProvenance` REQUIRES an account (doctrine §3.6's "no unexplained mappings"); it does not
+    ADJUDICATE one. A row misdescribing what its mapping measures gets a faithfully validated
+    misdescription. That adjudication is CD-D-005 and is the Product Owner's.
+  carrier: '**NOT PROVED TO BE CARRIED ANYWHERE.**'
+- id: 'engine/mapping.py boundary 1 — payload SHAPE is established; payload CONTENTS are not'
+  statement: >
+    Keys are rebuilt through own_str and both dict levels copied into dicts this module built, so
+    no supplied mapping decides a lookup. The VALUES inside a payload are external observation data
+    believed as data, exactly as own_terms boundary 3 describes. Source trust is a different
+    problem with a different instrument (BLUEPRINT §5, CD-D-005).
+  carrier: '**NOT PROVED TO BE CARRIED ANYWHERE.**'
+
+declarations_i_invalidated_and_corrected:
+  principle: >
+    Correcting a boundary THIS SEAT BROKE is part of closing the class; going looking for
+    boundaries it did not break is scope creep. Only the ones broken here were touched.
+  corrected_now:
+  - file: tools/sweep/declared_dispositions.py
+    what: >
+      `crash_detector.engine.model` moves from OUT_OF_BOUND — "DECLARED OPEN, DELIBERATELY NOT
+      CLOSED, ON THE PRODUCT AUTHORITY'S RULING … NOT PROVED TO BE CARRIED ANYWHERE" — to
+      ESTABLISHED. The superseded text is QUOTED IN PLACE so a reader of the diff sees the
+      transition rather than inferring it. It is withdrawn because the ROUTE IS GONE, not because a
+      guard was added.
+    also: >
+      `crash_detector.engine.evaluate`'s sentence "THE ONE EXCEPTION IS DECLARED BELOW under model"
+      is withdrawn for the same reason and says why. `crash_detector.engine.config` gains
+      model_ref's establishment. `crash_detector.engine.mapping` is newly declared EXACT with its
+      own residue. Two new tier-1 DUCK sites on ModelSpec and ModelProvenance are declared
+      ESTABLISHED.
+    measured: 'the sweep read 1 module OUT_OF_BOUND at f30e63c and reads 0 now.'
+  still_owed_and_named_so_none_is_carried_silently:
+  - 'tools/register/check_no_blend.py — DECLARED_ADMISSION_SITES'' reason text for
+     engine/evaluate.py still says "traces the magnitude through the door to
+     ContributionModel.compute". The CHECK still passes (RULE F matches the CALL NAME `compute`,
+     which is unchanged) but the PROSE names a deleted type.'
+  - 'tools/register/check_no_numeric_default.py — the comment above DECLARED_MAGNITUDE_SOURCES
+     describes "the declared contribution-model interface". Same case.'
+  - 'required-tests.yaml lines ~311, ~471, ~920 and contracts/execution/CD-RT-002-AST-NO-BLEND.md,
+     CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md — all cite CD-ENG-WO2R2-V05 or the injected
+     ContributionModel as an OPEN route. It is closed; the register is INCREMENT 4''s work
+     (`increment_4_reconciliation_and_return`) and is not touched here.'
+  - 'docstrings in src/crash_detector/dials/magnitude.py (~197), dials/provenance.py (~147) and
+     staleness.py (~293) cite CD-ENG-WO2R2-V05 as a residue NOT PROVED TO BE CARRIED ANYWHERE.
+     That residue is now closed by construction. Increment 4.'
+  why_not_now: >
+    The dispatch places declaration reconciliation in increment 4 in terms. Doing it here would
+    widen this increment; leaving it UNNAMED would be the actual failure. It is named.
+
+# ================================================================================================ #
+# 7. FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK
+# ================================================================================================ #
+findings_against_my_own_work:
+- id: CD-ENG-WO2R3-F01
+  severity: MEDIUM
+  title: >
+    §C PLUS ONE NON-COMPUTING MAPPING MEMBER MAKES THE VALUE-BEARING TAIL OF `_evaluate_dial`
+    UNREACHABLE FROM `evaluate`, AND FOUR PROPOSITIONS LOST THEIR END-TO-END COVERAGE.
+  what: >
+    MappingKind ships one member and it refuses, so `compute` raises on every call and NO
+    configuration this product can construct reaches the code below it. That code — the
+    Degraded/Value choice, DIAL_SCORE_TYPES selection, the `observed_for_dial` admission and
+    `_oldest_as_of`'s use — is not dead (a CD-D-005 computing member makes it live again) but
+    NOTHING CAN DRIVE IT TODAY. Four propositions consequently lost their end-to-end assertions:
+    that a satisfied dial renders `Value`; that a missing contributing input renders `Degraded`
+    with its reason and missing source; that a live evaluation stamps each dial's own score type;
+    and that a reading's `as_of_utc` is its oldest input's.
+  what_i_did: >
+    Replaced each with a successor asserting the surviving half at the structure that now carries
+    it, and wrote the LOST half into the successor's own docstring next to the code rather than
+    only into a record. `_oldest_as_of` and `_latest_usable_ok` are now exercised directly, so
+    those two rules keep unit coverage; `Degraded` and `Value` construction stay covered by
+    tests/test_reading.py and the post-condition tests.
+  what_i_did_NOT_do: >
+    I did not add a second MappingKind member to restore the coverage. That is prohibited and it
+    would be inventing product meaning (PO-DECISIONS-0005 ruling 2, CD-RULE-003, PBG-AUTH-005). I
+    did not weaken or delete any assertion to obtain a pass. NO GUARD WAS BUILT FOR THIS.
+  for_the_project_lead: >
+    This is a consequence of a ruling and not a defect in the ruling — I am reporting it because
+    the fourth Assurance seat will find `_evaluate_dial`'s tail uncovered and should find it here
+    first, with the reason, rather than as a surprise. If the Project Lead reads it differently the
+    remedy is a product decision (a computing member with CD-D-005), not an engineering one.
+- id: CD-ENG-WO2R3-F02
+  severity: LOW
+  title: 'THE EXECUTOR''S DOOR IS NOT YET DERIVED FROM ITS SIGNATURE, AND `compute` IS PUBLIC.'
+  what: >
+    `engine.mapping.compute` is a PUBLIC entry point on a judgement path — arguably the most
+    consequential one in the product, since it is now the only place a dial magnitude is computed —
+    and its argument establishment is written in its BODY. §D.1 says that is exactly the shape that
+    fails, because a rewrite of the body removes it (CD-ASR-F03). §D's `admits` is a later
+    increment of this same dispatch and will cover it, but at THIS SHA the door is body-guarded.
+  what_i_did: 'Declared it in the module docstring and in the sweep disposition. NO GUARD BUILT.'
+  note: >
+    It is also worth the fourth Assurance seat's attention that `compute` did NOT appear in §B's
+    measured inventory of 44 callables, because it did not exist when that inventory was taken. The
+    denominator §B measured is a floor at f30e63c and this increment ADDS a public callable to the
+    judgement path. Increment 2's static check must enumerate it.
+- id: CD-ENG-WO2R3-F03
+  severity: LOW
+  title: '`ModelProvenance`''S SHAPE IS THIS SEAT''S CONSTRUCTION AND NOBODY HAS RATIFIED IT.'
+  what: >
+    §C.6 assigns the SHAPE to the Project Lead and the CONTENTS to the Product Owner. The shape
+    delivered is three required non-empty strings — stands_for, account, decided_by — and the
+    reasoning for each, and for deliberately NOT duplicating the per-source facts that live in the
+    SourceRegistry, is written out in the type's docstring. But it is a shape derived from reading
+    §C.6, not one anybody has agreed, and CD-D-005 has not landed to test it against. A provenance
+    shape the register cannot populate would be a re-work.
+  what_i_did: >
+    Shipped zero instances in the product, argued the shape in the docstring, and raised this. NO
+    GUARD BUILT — there is nothing to guard, only a decision to confirm.
+
+# ================================================================================================ #
+# 8. WHAT THIS INCREMENT DID NOT DO
+# ================================================================================================ #
+not_done_deliberately:
+- 'INCREMENTS 2, 3 AND 4. No `admits` mechanism, no A2-A6 door work, no collector boundary, no
+   static judgement-path check, no register edits, no variant manifest. Nothing from them was
+   started, and nothing here should be read as a down payment on them.'
+- 'P5, P6 and P7 — they are increment 2''s plants and belong to the `admits` mechanism.'
+- 'NO MODEL ROW AND NO INGREDIENT SOURCE REGISTERED. Both registries ship EMPTY.'
+- 'NO SECOND `MappingKind` MEMBER. One member, computing nothing.'
+- 'ASR3-F04 and ASR3-F05 are NOT addressed here — they are increment 2''s P6 and P5. This increment
+   claims ASR3-F02 and nothing else. ASR3-F08 is out of the dispatch entirely.'
+- '`latest_admitted_run` in required-tests.yaml UNTOUCHED and still null. I do not admit my own
+   evidence and CD-RULE-001 forbids it regardless.'
+- 'NOT ONE BYTE CHANGED under pbg/, PID.md, BLUEPRINT.md, governance/blueprint/,
+   governance/decisions/, governance/dispatch/, governance/rules/, governance/assurance/,
+   governance/reconciliation/, ACTIVE_WORK.yaml, deploy/, db/, docs/ or requirements*. `git status`
+   on those paths is empty and the diff touches src/, tests/, tools/sweep/ and this file only.'
+- 'CD-AC-003 and the grant matrix NOT TOUCHED. check_grant_matrix_live exits 3 for the same
+   environmental reason it did at f30e63c.'
+
+separation_of_duties:
+  statement: >
+    I am CD-ENG-WO2R3-01, a FRESH Engineer seat. I am not CD-ENG-WO2-01, CD-ENG-WO2R-01,
+    CD-ENG-WO2R2-01 or -02, and I am no Assurance seat. I did not self-assign this role.
+    EVERYTHING IN THIS ENTRY IS IMPLEMENTATION EVIDENCE. It does not become assurance by being
+    thorough, and I am aware the last three seats' evidence was thorough. I certify nothing, I
+    accept nothing, and I hold no view that is binding on the gate (PBG-SOD-001, non-waivable).
+
+next_safe_action: >
+  INCREMENT 2 — BP-AMENDMENT-0001 §D.1 and §D.2 for A2-A5, the `admits` mechanism derived from the
+  signature, the static judgement-path check, and plants P5, P6 and P7. P7 first, because the
+  Product Owner has directed the fourth Assurance seat to run it first and a mechanism that fails
+  P7 is not the mechanism ruling 1 accepted. The Project Lead is asked to note CD-ENG-WO2R3-F02:
+  `engine.mapping.compute` is a NEW public judgement-path entry point that post-dates §B's measured
+  inventory of 44, and increment 2's static check must enumerate it.

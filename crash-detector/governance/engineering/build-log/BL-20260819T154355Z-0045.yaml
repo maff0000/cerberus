@@ -1,0 +1,406 @@
+entry_id: BL-20260819T154355Z-0045
+timestamp_utc: "2026-08-19T15:43:55Z"
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: ba469b5ef9aa5509cf2eba1bd46b581f751bb313
+current_sha: 7f6833a3e656075073b5e45c3985873fdd39597c
+parent_entry_id: BL-20260819T150752Z-0044
+record_origin: >
+  Written by the Engineer seat CD-ENG-WO2R-01 in the lane worktree, closing WO-2R increment 4
+  (CD-ASR-F05), dispatched by block increment_4_F05 of
+  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml. The Project Lead's reconciliation that
+  accepted increment 3b and dispatched this one is BL-20260819T151732Z-0027 on main
+  (CD-D-048..052). Per CD-RULE-005 this entry_id timestamp comes from `date -u` and is
+  genuine UTC.
+tooling_available_at_capture: >
+  python3 3.11, pytest, git, PyYAML (used ONLY to validate that required-tests.yaml still
+  parses; no check depends on it). PBG CLI available. Docker present but NOT USED — RT-A was
+  NOT exercised and no container was created, because increment 4 touches nothing
+  CD-RT-003-GRANT-MATRIX-LIVE reads. RT-B (building images) remains FORBIDDEN and no image was
+  built: the container is reasoned about from its declaration, never from a build.
+schema_version: 1
+
+boot_and_reconciliation: >
+  Observed HEAD of /srv/crash-detector-wo2 was ba469b5 exactly, branch wo-2-skeleton,
+  `git status --short` 0 lines. NO DRIFT against the dispatched execution base.
+
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` in the PROJECT ROOT still returns RED on
+  CONTINUITY_SEMANTIC_INVALID/RESUME_BLOCKED, because governance/engineering/ACTIVE_WORK.yaml
+  still describes CD-WO-002 increment 5 of 7. That file is PROJECT-LEAD-ONLY and is in this
+  dispatch's protected_scope, so it is REPORTED AND NOT TOUCHED. Pre-existing, disclosed by
+  the Project Lead at BL-20260819T151732Z-0027, and unchanged by this increment.
+
+action_summary: >
+  CD-ASR-F05 IS CLOSED AS A CLASS under CD-RULE-004 OPTION (i) — CLOSE, not declare — with one
+  residue DECLARED and MEASURED. E06 escaped at ba469b5 (exit 0, PASS 13 assertions,
+  reproduced verbatim by this seat before anything was repaired) and is now refused: exit 1,
+  rule "engine reaches witness code", route `crash_detector.witness.panel <- cd_engine`.
+
+  THE WALK ROOT AND THE SCANNED UNIVERSE ARE NOW DERIVED FROM THE ARTEFACTS AND NOT FROM
+  CONSTANTS, and the derivation is shown LIVE: change the container's declared entrypoint and
+  the guard's subject moves with it.
+
+the_defect_verified_by_this_seat_rather_than_taken_on_trust: >
+  The Project Lead located this precisely and the seat re-derived it. The old check rooted its
+  walk at the CONSTANT ENGINE_PACKAGE = "crash_detector.engine" under SOURCE_ROOT = "src"
+  (lines 65, 200, 223 at ba469b5). deploy/Dockerfile.engine:109 declares
+  ENTRYPOINT ["python3", "-B", "/app/entrypoints/cd_engine.py"] and line 62 COPYs
+  deploy/entrypoints/ into the image alongside src/. So the guard's subject was the engine
+  PACKAGE and the criterion's subject is the engine CONTAINER, and deploy/entrypoints/ was
+  outside BOTH the walk root and the scanned universe — not mis-parsed, never read.
+
+  MEASURED AT ba469b5, on a pristine extraction:
+    clean                                 -> exit 0, PASS 13 assertions, 32 modules, 12 reachable
+    E06 (witness import in cd_engine.py)  -> exit 0, PASS 13 assertions. ESCAPES, verbatim.
+  Thirteen further routes of this seat's own devising also escaped at ba469b5 (V31-V44 below,
+  V42 excepted as a false-positive control).
+
+the_structure:
+  invariant_1: >
+    CD-ENGINE-ROOT-001 — THE ROOT SET IS DERIVED FROM THE CONTAINER. The engine service is
+    located in deploy/compose.yaml; the Dockerfile its `build` names is read; the effective
+    process is `entrypoint + command` with compose OVERRIDING the image and a compose
+    `entrypoint` CANCELLING the image CMD, as Compose itself does; YAML merge keys (`<<`) are
+    resolved against top-level anchors so a declaration parked in a shared fragment is seen.
+    Every argument of that process naming a Python module the image ships becomes a walk root.
+    THERE IS NO CONSTANT IN THE FILE NAMING AN ENTRYPOINT PATH AND THERE CANNOT BE ONE.
+  invariant_2: >
+    CD-ENGINE-ROOT-002 — THE SCANNED UNIVERSE IS WHAT THE IMAGE SHIPS. The module map is built
+    from the Dockerfile's own COPY instructions — every *.py that lands in the image — named
+    against the sys.path roots the image itself declares: ENV PYTHONPATH, the compose
+    `environment` value that overrides it, the entry script's own directory, and WORKDIR when
+    `-m` is used. UNIONED with src/, named as BLUEPRINT §13 names it, so that arm cannot be
+    removed by a Dockerfile edit.
+  invariant_3: >
+    CD-ENGINE-ROOT-003 — IT FAILS CLOSED ON A DERIVATION IT CANNOT MAKE. Ten clauses,
+    CD-ENGINE-ROOT-101..110, each with a stable id an auditor can assert on rather than
+    asserting merely "non-zero" (CD-ENG-WO2R-F13): compose absent/unparseable/no services;
+    the engine service absent or with no `build`; a merge key naming an anchor the reader
+    cannot locate; a Dockerfile absent or declaring neither ENTRYPOINT nor CMD; a COPY that
+    cannot be resolved statically (--from= a stage, a glob, a variable, a missing source, an
+    escape from the context); SHELL FORM; a non-Python interpreter or `python -c`; a process
+    naming NO shipped module (the empty root set); one module name claimed by two files; and
+    Python shipped into the image that no declared sys.path root can name.
+  the_union_is_load_bearing_and_it_is_measured_not_assumed: >
+    ROOTS = derived container roots UNION the engine package. NEITHER IS A SUPERSET OF THE
+    OTHER. In WO-2 the container's process is cd_engine -> _service ->
+    crash_detector.runtime.lifecycle and does NOT reach crash_detector.engine at all, because
+    the WO-2 services start, tick and shut down and evaluate nothing (no registered ingredient
+    source; CD-D-005 owed). THE PROOF IS THE PRE-EXISTING PLANT: this criterion's own plant is
+    caught through the PACKAGE arm, route `crash_detector.witness.panel <-
+    crash_detector.corroboration <- crash_detector.engine.evaluate`, which the container's
+    process never touches. REPLACING the package root with the derived one — the obvious
+    reading of "the walk root must derive from the container's own entrypoint set" — would
+    have DELETED a working guard. Widening the root must not narrow the rules, so the root set
+    is a union and this entry states why rather than leaving it to be inferred.
+  what_was_deliberately_NOT_done: >
+    The obvious fix was "also scan deploy/entrypoints/". It was declined: that is a SECOND
+    hard-coded path, and the next escape is a third one — a moved entrypoint, a renamed one,
+    one overridden in compose, one merged in through an anchor, one in `-m` form pointing
+    inside src/. Six of the fourteen new variants are exactly those routes and all six are
+    refused, which is what makes this a closure rather than a second constant.
+
+the_derivation_shown_live_which_is_this_increments_central_obligation: >
+  V31 changes deploy/Dockerfile.engine's ENTRYPOINT to /app/entrypoints/cd_public.py and
+  changes NOTHING else. The check exits 0 — nothing violating is planted — and its note moves
+  from "derived walk root(s) from the container: cd_engine" to "... cd_public". THE SUBJECT
+  FOLLOWED THE ARTEFACT, observed, with no violation to confuse it with.
+
+  V37 changes the same line to `-m crash_detector.runtime.engine_main`. The derived root
+  becomes crash_detector.runtime.engine_main AND the image sys.path roots reported change from
+  "/app/src, /app/entrypoints" to "/app/src, /app", because WORKDIR joins the path set under
+  `-m` and the entry script's directory no longer does. Both halves of the derivation moved.
+
+  V33 moves the declaration to compose instead of the Dockerfile and the origin note changes
+  from "deploy/Dockerfile.engine:109 ENTRYPOINT" to "deploy/compose.yaml
+  services.cd-engine.entrypoint". V38 adds a compose `command:` and the note reads
+  "deploy/Dockerfile.engine:109 ENTRYPOINT + deploy/compose.yaml services.cd-engine.command"
+  with SIX roots instead of five.
+
+  This is the same property CD-RT-012-EGRESS-NO-BROKER has for its service set, where the
+  Project Lead measured `scanned: 7 -> 8` at PL-S1 and PL-T1.
+
+fail_closed_shown_by_execution: >
+  V35 SHELL-FORM ENTRYPOINT plus the E06 import -> exit 3, CD-ENGINE-ROOT-106.
+  V39 cd-engine declared as a prebuilt digest-pinned image with no `build:` -> exit 3,
+      CD-ENGINE-ROOT-102.
+  V40 COPY --from=assets for the entrypoints -> exit 3, CD-ENGINE-ROOT-105.
+  V41 `<<` naming an anchor declared below the top level, carrying the entrypoint -> exit 3,
+      CD-ENGINE-ROOT-103.
+  V43 Python shipped off every declared sys.path root -> exit 3, CD-ENGINE-ROOT-110.
+  In every one of the five the tree ALSO carries or could carry a violation, and in every one
+  the answer is a non-zero exit with a stated clause id. NEVER an empty root set and NEVER a
+  pass. Note that these are exit 3 and not exit 1: an auditor asserting only "non-zero" would
+  not see the difference, which is why each clause has an id.
+
+declared_limit_six_boundaries: >
+  Stated IDENTICALLY in three places (CD-RULE-004): the header of
+  tools/register/check_engine_no_witness_reach.py, the negative_control in required-tests.yaml,
+  and contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md.
+    1 A STATIC READ OF DECLARATIONS AT ONE COMMIT — no image built, no container started. A
+      compose OVERRIDE file, `docker run --entrypoint`, `docker exec`, a non-compose
+      orchestrator manifest: NOT PROVED TO BE CARRIED ANYWHERE, owed at WO-3, the same residue
+      CD-RT-012-EGRESS-NO-BROKER declares at its boundary 6.
+    2 A SECOND PROCESS STARTED AT RUN TIME is not an import edge. PARTIALLY CARRIED, MEASURED
+      (string-literal and non-literal import_module clauses still fire); for a second process
+      named by a non-witness path, NOT PROVED TO BE CARRIED ANYWHERE.
+    3 IMPORTING WITNESS TYPES IS NOT READING WITNESS DATA. CARRIED by
+      CD-RT-003-GRANT-MATRIX-LIVE — a different instrument on a different substrate. The
+      auditor made this point about E06 itself and it is carried forward rather than dropped.
+    4 THE COMPOSE READER IS A STDLIB-ONLY YAML SUBSET. A non-empty FLOW collection raises and
+      becomes CD-ENGINE-ROOT-101, a refusal — fail-closed, but a shape a legitimate author
+      could write, so it is declared. The reader's known NON-TERMINATION defect
+      (CD-ENG-WO2R-F14 / CD-PL-F61, ruled CD-D-051 to a separate bounded dispatch) is SHARED by
+      this check and is NOT repaired here and NOT in scope.
+    5 ONLY THE ENGINE SERVICE'S PROCESS IS A WALK ROOT. The other five are RESOLVED so a
+      rename is loud, but not walked. MEASURED: V42, the same witness import in
+      deploy/entrypoints/cd_witness.py, exits 0. That is the criterion, not an escape.
+    6 RUN-TIME sys.path MUTATION IS NOT DERIVED — THE DERIVATION'S OWN RESIDUE. MEASURED, V44:
+      cd_engine.py inserts /app/src/crash_detector/witness into sys.path and writes
+      `import panel`; panel.py IS scanned and IS witness code, but the edge is spelled `panel`,
+      resolves to no module in the graph, and the check exits 0, PASS 23. PARTIALLY CARRIED,
+      MEASURED: the string-literal and dynamic-import clauses are unchanged and still bite, and
+      CD-ENGINE-ROOT-110 closes the neighbouring route of shipping code OFF the declared path
+      (V43, exit 3). FOR A SHORT-NAME IMPORT OF ALREADY-SCANNED WITNESS CODE AFTER A sys.path
+      INSERT, NOT PROVED TO BE CARRIED ANYWHERE.
+
+commands_run: >
+  EXTRACTION HYGIENE, every run: `git archive <sha> | tar -x -C <fresh tmpdir>`,
+  `git apply -p1 <patch>`, run, discard. A SEPARATE PRISTINE EXTRACTION PER VARIANT. Never the
+  lane worktree, never a git worktree. `python3 -B` everywhere and `-p no:cacheprovider` for
+  pytest, so no __pycache__ or .pytest_cache is written into any governed tree (PBG-RT-001 —
+  mutation by EFFECT, not by label). `timeout 60` on every register-check invocation and
+  `timeout 600` on the suite, because CD-PL-F61 is live in this tree and a hang must be visible
+  as exit 124 rather than as a stalled run.
+
+  CLEAN ARM at 7f6833a (before-numbers from ba469b5 in brackets):
+    python3 -B tools/register/check_no_numeric_default.py --root .        -> 0, 362   [362]
+    python3 -B tools/register/check_no_blend.py --root .                  -> 0, 4688  [4688]
+    python3 -B tools/register/check_schema_closed.py --root .             -> 0, 242   [242]
+    python3 -B tools/register/check_engine_no_witness_reach.py --root .   -> 0, 23    [13]
+    python3 -B tools/register/check_grant_matrix_live.py --root .         -> 3        [3]
+    python3 -B tools/register/check_no_execution_interface.py --root .    -> 0, 36675 [35173]
+    python3 -B tools/register/check_lockfile_denylist.py --root .         -> 0, 15    [15]
+    python3 -B tools/register/check_egress_no_broker.py --root .          -> 0, 69    [69]
+    python3 -B tools/register/check_dockerignore.py --root .              -> 0, 22    [22]
+    env PYTHONPATH=src python3 -B -m pytest tests/ -q -p no:cacheprovider -> 0, 1192 passed
+                                                                             [1192 passed]
+
+  TWO MOVEMENTS, BOTH EXPLAINED RATHER THAN LEFT TO BE NOTICED (CD-ENG-WO2R-F16):
+    check_engine_no_witness_reach 13 -> 23: the derivation itself is asserted (one for the
+      engine derivation, five for the other buildable services resolving, one for the derived
+      roots being inside the universe) and the reachable set grew 12 -> 15 because the
+      universe grew 32 -> 39 modules.
+    check_no_execution_interface 35173 -> 36675: that check scans this repository's source and
+      the check file this increment rewrote is much longer. An INCREASE, and it still exits 0 —
+      no false positive from the new prose.
+
+  ANTI-RELAXATION: 1192 pytest node ids at ba469b5, 1192 at 7f6833a. ZERO REMOVED, ZERO ADDED.
+  No test was changed, added or deleted by this increment; the evidence for this guard is the
+  CONTRAST, which is this project's convention for a register check (no register check in this
+  tree has unit tests).
+
+  The two commands for criteria WO-2 does not deliver that fall under CD-AC-002/CD-AC-010
+  (check_public_artefact_no_private_field, check_first_published_immutable) terminate NON-ZERO
+  (exit 2, absent subject) at 7f6833a exactly as at ba469b5. Unchanged and not this
+  increment's business.
+
+variants_re_run: >
+  FIFTEEN patches under variants/WO-2R/CD-ASR-F05/, all mode 0644, NOTHING EXECUTABLE anywhere
+  under variants/ (0 files with u+x; PBG-ASSURE-001). All fifteen APPLY CLEANLY at 7f6833a.
+  Per-row detail — proposition, route, why it differs from the known set, command line and
+  observed refusal — is in variants/WO-2R/MANIFEST.md.
+
+    E06  known set, witness import in the container's entrypoint     ba469b5: 0/13  -> 1  engine reaches witness code
+    V31  ENTRYPOINT retargeted, benign; THE DERIVATION SHOWN LIVE    ba469b5: 0/13  -> 0  root moves cd_engine -> cd_public
+    V32  ENTRYPOINT retargeted to a NEW module                       ba469b5: 0/13  -> 1  route ... <- cd_engine_v2
+    V33  compose entrypoint OVERRIDES the image                      ba469b5: 0/13  -> 1  route ... <- cd_engine_alt
+    V34  entrypoint declared in the SHARED YAML ANCHOR               ba469b5: 0/13  -> 1  route ... <- cd_shared_boot
+    V35  SHELL FORM entrypoint                                       ba469b5: 0/13  -> 3  CD-ENGINE-ROOT-106
+    V36  the SHARED SHIM _service.py, transitively                   ba469b5: 0/13  -> 1  route ... <- _service <- cd_engine
+    V37  `-m` form, root inside src/ but outside engine/             ba469b5: 0/13  -> 1  root crash_detector.runtime.engine_main
+    V38  a SECOND module via compose `command:`                      ba469b5: 0/13  -> 1  6 roots, route ... <- cd_engine_sidecar
+    V39  cd-engine as a prebuilt image, no `build:`                  ba469b5: 0/13  -> 3  CD-ENGINE-ROOT-102
+    V40  COPY --from another build stage                             ba469b5: 0/13  -> 3  CD-ENGINE-ROOT-105
+    V41  merge key naming a NESTED anchor                            ba469b5: 0/13  -> 3  CD-ENGINE-ROOT-103
+    V42  FALSE-POSITIVE CONTROL, same import on cd-witness           ba469b5: 0/13  -> 0  PASS 23, correctly
+    V43  Python shipped off every declared sys.path root             ba469b5: 0/13  -> 3  CD-ENGINE-ROOT-110
+    V44  run-time sys.path insert then `import panel`                ba469b5: 0/13  -> 0  PASS 23. IT ESCAPES. Boundary 6.
+
+  ONE ASSERTION COUNT DROPS AND IT IS NOT A SKIPPED ARM: V37 reports 22 where the clean arm is
+  23. `-m` REPLACES the entrypoint, so cd_engine and _service stop being reached while
+  engine_main, crash_detector.witness and crash_detector.witness.panel start being. A change of
+  composition, not of work done — stated because CD-ENG-WO2R-F16 says a silently shrinking
+  count is how a skipped arm hides, and a seat that adopts its own method note should be seen
+  applying it.
+
+eleven_plants: >
+  ELEVEN OF ELEVEN APPLY and ELEVEN OF ELEVEN STILL CONTRAST, re-run as a SET at ba469b5 and
+  again at 7f6833a, each on its own throwaway extraction. IDENTICAL IN BOTH ARMS: ten exit 1,
+  CD-RT-003-GRANT-MATRIX-LIVE exits 3 PRECONDITION_NOT_MET for want of a live store exactly as
+  it does on the clean tree — its CONTRAST was NOT re-run, and that is disclosed rather than
+  implied. NO PLANT WAS REGENERATED, WEAKENED OR DELETED (CD-D-033); none patches a structure
+  this increment changed.
+
+  Signatures at 7f6833a: ABSENCE-RENDERS-UNKNOWN 17 failed/73 passed · AST-NO-NUMERIC-DEFAULT
+  3 violations · AST-NO-BLEND 2 · SCHEMA-CLOSED 3 · TYPE-NO-ARITHMETIC 2 failed/304 passed ·
+  ENGINE-NO-WITNESS-REACH 1 violation · GRANT-MATRIX-LIVE exit 3 · PANEL-UNAVAILABLE-NEVER-
+  AGREES 6 failed/59 passed · EGRESS-NO-BROKER 2 · LOCKFILE-DENYLIST 2 ·
+  NO-EXECUTION-INTERFACE 6. Every one of these matches ba469b5 exactly.
+
+  ONE SIGNATURE MOVED, AND IT IS THE MEASUREMENT THAT MATTERS. CD-AC-003's own plant went from
+  15 to 25 assertions with the SAME exit 1, the SAME single violation and the SAME ROUTE
+  `crash_detector.witness.panel <- crash_detector.corroboration <-
+  crash_detector.engine.evaluate`. That route runs through the ENGINE PACKAGE arm, which the
+  container's process does not reach in WO-2. This plant is therefore the direct evidence that
+  the union root set is load-bearing and not belt-and-braces.
+
+  RT-A WAS NOT EXERCISED AND NO CONTAINER WAS CREATED. CD-RT-003-GRANT-MATRIX-LIVE reads
+  <root>/db/migrations/*.sql and <root>/db/grant_matrix.json (lines 708-709). Increment 4
+  touches neither, so the authorisation's condition — "if and only if this increment touches
+  anything the live check reads" — is not met. No docker command of any kind was run.
+
+findings_raised_against_my_own_work:
+- id: CD-ENG-WO2R-F17
+  severity: LOW
+  status: OPEN — DECLARED, NOT FIXED, and this is the residue of my own structure
+  title: "run-time sys.path mutation defeats the derived module naming: an already-scanned witness module imported by a short name is not an edge the graph carries"
+  detail: >
+    The universe half of this closure names files against the sys.path roots THE ARTEFACTS
+    DECLARE. A module that inserts a directory into sys.path at run time makes a name
+    importable that no declaration mentions. Measured, variant V44: cd_engine.py does
+    `sys.path.insert(0, "/app/src/crash_detector/witness")` then `import panel`. panel.py IS in
+    the scanned universe and IS witness code, but the edge is spelled `panel`, which resolves
+    to no module in the graph, so the check exits 0, PASS 23 assertions, 0 violations.
+  why_i_did_not_close_it: >
+    The two available closures are both worse than the declaration. (i) Refuse every sys.path
+    mutation in a scanned module — but the CLEAN TREE legitimately contains one, in
+    deploy/entrypoints/_service.py, which exists so an entrypoint runs from a checkout as well
+    as from an image; a guard that fires on the product is a guard somebody switches off, which
+    is the argument CD-RT-012-NO-EXECUTION-INTERFACE's L3 already makes at length. (ii)
+    Symbolically evaluate the inserted path — that is interpreting code the check has already
+    said, in the dynamic-import clause, that it will not follow, and it would need
+    `pathlib.Path(__file__).resolve().parents[2] / "src"` to be evaluated statically. I also
+    declined the cheap partial fix of naming unnameable shipped files by their BASENAME: that
+    would be inventing the sys.path mutation that makes the name real, and a guessed fact is
+    worse than a stated refusal. What I did instead is CD-ENGINE-ROOT-110, which refuses
+    outright when the image ships Python no declared path can name (V43, exit 3) — the
+    neighbouring route, closed, with the residue named rather than blurred into it.
+  what_would_close_it: >
+    Most likely a WO-3 change to _service.py so the checkout fallback is expressed as a
+    declaration the guard can read rather than as a run-time mutation, after which refusing all
+    sys.path mutation inside the shipped set becomes available. That is a change to application
+    code outside this increment's finding and I did not take it (widening scope silently is
+    prohibited; escalating is not).
+- id: CD-ENG-WO2R-F18
+  severity: LOW
+  status: OPEN — DISCLOSED, and it is a property of the fail-closed posture I chose
+  title: "five of my fifteen variants are refused at exit 3, not exit 1, and an auditor asserting only 'non-zero' cannot tell a derivation failure from a detected reach"
+  detail: >
+    V35, V39, V40, V41 and V43 all carry, or could carry, a real witness reach AND a broken
+    derivation. The check refuses on the derivation first and never reaches the assertion, so
+    it reports PRECONDITION_NOT_MET at exit 3 and never says "engine reaches witness code" —
+    even when the reach is there in the tree. That is the correct fail-closed order (a guard
+    that reported a clean graph it could not build would be worse), but it means the exit code
+    alone under-describes what was found, and an auditor scripting `[ $? -ne 0 ]` learns less
+    than the output contains.
+  mitigation_already_in_place: >
+    Every clause carries a stable id, CD-ENGINE-ROOT-101..110, printed on stderr, and the
+    execution contract tabulates all ten. This is CD-ENG-WO2R-F13 applied to my own refusals:
+    assert the CLAUSE ID, not merely a non-zero exit. Recorded so the next auditor does not
+    have to discover the distinction by tripping over it.
+- id: CD-ENG-WO2R-F19
+  severity: LOW
+  status: OPEN — DISCLOSED
+  title: "the anchor resolver only follows top-level anchors, so a legitimate nested fragment is a refusal rather than a read"
+  detail: >
+    tools/register/_yamlmin.py does not track YAML anchors, so this check rebuilds the anchor
+    index by scanning the raw text for `key: &name` and resolving only those at indent 0
+    through the parsed document. An anchor declared deeper is recorded as UNRESOLVABLE and
+    becomes CD-ENGINE-ROOT-103, a refusal. Today deploy/compose.yaml declares all three of its
+    anchors at the top level, so the clean tree is unaffected and V41 shows the refusal working
+    as intended. But a legitimate reorganisation that nests a fragment would break the check
+    rather than be read, and the author would have to move the anchor or change the guard.
+    Fail-closed and therefore safe, but it is a usability cost paid by a future author and it
+    should be visible before they pay it, not after. The proper repair belongs with the
+    _yamlmin dispatch CD-D-051 already schedules, since anchor tracking is a reader feature.
+
+what_i_deliberately_did_not_do: >
+  - I did NOT touch tools/register/_yamlmin.py. CD-ENG-WO2R-F14 / CD-PL-F61 is confirmed, is
+    ruled by CD-D-051 to a separate bounded dispatch after increments 4 and 5, and is NOT in
+    this increment's scope. This check now shares the reader and therefore shares the defect;
+    that is stated at declared limit 4 rather than quietly repaired.
+  - I did NOT start increment 5 (CD-ASR-F06) and did not touch the staleness window, the
+    resolver or the panel.
+  - I did NOT revisit F01-F04.
+  - I did NOT add unit tests for the derivation. No register check in this tree has unit tests;
+    the project's evidence convention for a register check is the CONTRAST, and I produced
+    fifteen contrasts rather than inventing a second convention. Stated so the absence reads as
+    a choice rather than an omission.
+  - I did NOT edit deploy/. The writable scope names deploy/ for "compose x-egress and the
+    destination registry only", and increment 4 needed no deploy change: the guard reads those
+    artefacts, it does not amend them. Every deploy edit in this increment exists only inside a
+    throwaway variant extraction.
+  - I did NOT touch latest_admitted_run (still null), did not introduce any status-like key
+    into the register, registered no ingredient source, recorded no secret value, bound no
+    port, created no container, and built no image.
+  - I did NOT touch governance/engineering/ACTIVE_WORK.yaml, PID.md, BLUEPRINT.md,
+    governance/assurance/ or anything under pbg/.
+
+commits:
+- sha: e0fe7c1fd64e5ec2654094aec0aea13d9ba20b35
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 4 step 1 — CD-ASR-F05: the walk root is derived from the engine CONTAINER"
+  identity: "CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid> in BOTH author and committer, verified with `git log -1 --format='%an <%ae> | %cn <%ce>'` immediately after the commit"
+- sha: dae65039c08ed6cb2df5dfa4a0b7d648cfdd9258
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 4 step 2 — the register entry and the execution contract say what the guard now delivers"
+  identity: "CD-ENG-WO2R-01, both, verified the same way"
+- sha: 7f6833a3e656075073b5e45c3985873fdd39597c
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 4 step 3 — fifteen variants land durably, and the eleven plants are re-run as a set"
+  identity: "CD-ENG-WO2R-01, both, verified the same way"
+- sha: "(this entry)"
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 4 step 4 — the Build Log entry, READY_FOR_ASSURANCE"
+  identity: "CD-ENG-WO2R-01, both"
+  note: >
+    Identity set through GIT_AUTHOR_NAME/GIT_AUTHOR_EMAIL/GIT_COMMITTER_NAME/GIT_COMMITTER_EMAIL
+    environment variables on each commit invocation, never `git -c` (CD-PL-F56: it fails
+    silently on this host) and never `git config`. Nothing was amended (PBG-CONT-003).
+
+obligations_status:
+  CD-ASR-F01: "CLOSED AS A CLASS at increment 2b, subject to Assurance"
+  CD-ASR-F02: "CLOSED AS A CLASS at increment 1, subject to Assurance"
+  CD-ASR-F03: "CLOSED AS A CLASS at increment 1, subject to Assurance"
+  CD-ASR-F04: "CLOSED AS A CLASS at increment 3b, subject to Assurance"
+  CD-ASR-F05: "CLOSED AS A CLASS at increment 4 with ONE DECLARED LIMIT (boundary 6, measured by V44), subject to Assurance"
+  CD-ASR-F06: "NOT STARTED — increment 5"
+  CD-PL-F61: "OPEN — separate bounded dispatch owed before Assurance (CD-D-051). NOT touched here."
+  CD-ENG-WO2R-F17: "OPEN — declared limit 6, raised by this seat against its own structure"
+  CD-ENG-WO2R-F18: "OPEN — disclosure about exit-3 refusals"
+  CD-ENG-WO2R-F19: "OPEN — disclosure about top-level-only anchor resolution"
+  gate: "Assurance PASS on all five planted criteria. NOT MET, and this seat cannot meet it (PBG-SOD-001)."
+  latest_admitted_run: "null, untouched (CD-RULE-001, non-relaxable)"
+
+next_safe_action: >
+  RETURN READY_FOR_ASSURANCE to the Project Lead at lane SHA 7f6833a (this entry's commit
+  supersedes it as HEAD; the exact SHA is resolved in the return). The Project Lead reconciles
+  — it re-runs these arms itself, re-runs E06 itself, and writes fresh probes; it does not
+  certify this work and may not.
+
+  THE OBVIOUS RECONCILIATION PROBE IS THE ONE THIS INCREMENT WAS BUILT FOR: change
+  deploy/Dockerfile.engine's ENTRYPOINT, or add a compose `entrypoint:`/`command:`, and watch
+  "derived walk root(s) from the container:" follow. V31 does it benignly; V33, V37 and V38 do
+  it with a violation attached. THE PROBE MOST LIKELY TO FIND SOMETHING NEW is anything that
+  makes a module importable WITHOUT a declaration — that is boundary 6 and CD-ENG-WO2R-F17,
+  and V44 is the one route through it this seat found and could not close.
+
+  THEN increment 5 (CD-ASR-F06), THEN the CD-PL-F61 reader dispatch (CD-D-051), THEN
+  CD-DISPATCH-WO2R-ASSURANCE to CD-ASR-WO2-02 — a SEPARATE agent, never this seat and never
+  the Project Lead (PBG-SOD-001, non-waivable). The exclusion set now also contains
+  E06 and V31-V44 as recorded in variants/WO-2R/MANIFEST.md.

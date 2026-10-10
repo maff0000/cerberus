@@ -1,0 +1,90 @@
+diff --git a/probe_v29_fetched_response_subclass.py b/probe_v29_fetched_response_subclass.py
+new file mode 100644
+index 0000000..d38dbc9
+--- /dev/null
++++ b/probe_v29_fetched_response_subclass.py
+@@ -0,0 +1,71 @@
++"""V29 — VIOLATED ARM for A6-4. `isinstance(response, FetchedResponse)` restored.
++
++    PYTHONPATH=src python3 -B probe_v29_fetched_response_subclass.py
++"""
++from datetime import datetime, timezone
++
++from crash_detector.collectors.adapter import FetchedResponse
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++SCHEMA = {
++    "$schema": "https://json-schema.org/draft/2020-12/schema",
++    "type": "object",
++    "additionalProperties": False,
++    "properties": {"reading": {"type": "number"}},
++}
++
++calls = {"n": 0}
++
++
++class TwoFaced(FetchedResponse):
++    pass
++
++
++response = TwoFaced(payload={"reading": 1.5}, source_as_of_utc=NOW)
++
++
++def _payload(self):
++    calls["n"] += 1
++    return {"reading": 1.5} if calls["n"] == 1 else {"reading": 999.0}
++
++
++# Installed AFTER __post_init__ has run and established the field.
++type.__setattr__(TwoFaced, "payload", property(_payload))
++
++
++class Adapter:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = SCHEMA
++
++    def fetch(self, *, timeout_seconds):
++        return response
++
++    def is_empty(self, payload):
++        return False
++
++
++class Sink:
++    def record(self, attempt):
++        return None
++
++
++class Ledger:
++    def admit_if_absent(self, key):
++        return True
++
++
++calls["n"] = 0
++result = collect(Adapter(), policy=RetryPolicy(max_attempts=1, timeout_seconds=5.0,
++                                               backoff_seconds=0.0),
++                 sink=Sink(), ledger=Ledger(), collector_run_id="run-v29",
++                 started_utc=NOW, delay=DelayKind.WALL_CLOCK)
++print("outcome            :", type(result.final_outcome).__name__)
++print("payload STORED     :", getattr(result.final_outcome, "payload", None))
++print("payload asks made  :", calls["n"])
++print()
++print("ESCAPED: the value the VALIDATOR saw and the value the READING stored are different")
++print("objects, chosen by a property the adapter defined, and every constructor on the path")
++print("ran. This is ASR3-F04's shape one component to the left.")
+diff --git a/src/crash_detector/collectors/runner.py b/src/crash_detector/collectors/runner.py
+index 6dd2996..d74fa92 100644
+--- a/src/crash_detector/collectors/runner.py
++++ b/src/crash_detector/collectors/runner.py
+@@ -643,7 +643,7 @@ def _attempt(
+     # this runner at the moment the runner reads it. A subclass whose `payload` answers a
+     # conforming mapping when the validator asks and something else when `OK` stores it is
+     # the same defect as ASR3-F04 one component to the left.
+-    if type(response) is not FetchedResponse:
++    if not isinstance(response, FetchedResponse):      # V29: the pre-D.3 admission
+         return Malformed(
+             schema_error_class=MALFORMED_ADAPTER_CONTRACT_BREACH,
+             instance_path="",

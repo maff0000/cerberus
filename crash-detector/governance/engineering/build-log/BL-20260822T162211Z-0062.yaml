@@ -1,0 +1,452 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 3 COMPLETE — BP-AMENDMENT-0001 §D.3, A6, THE COLLECTOR BOUNDARY, BOTH PARTS.
+#
+# PART 1: `clock` AND `sleep` ARE NOT STRONGER-CHECKED. THEY ARE DELETED AS PARAMETERS. The run's
+# instant is a VALUE, exact-typed and then rebuilt by `ensure_utc`; the waiting is a NAMED MEMBER of
+# a closed `DelayKind` executed by the module that owns waiting; and the elapsed span the
+# timeout-budget refusal turns on is THIS SYSTEM'S OWN MONOTONIC READING and no longer a callable the
+# caller supplied.
+#
+# PART 2: the four `Protocol`s STAY, and every value they hand back is established AT THE POINT OF
+# RETURN. Seven such returns, each with a baseline and a violated arm.
+#
+# DECLARED LIMIT 3 OF THE STATIC CHECK IS DISCHARGED: `collectors/` is a judgement-path package under
+# RULE 1, deny-by-default. What remains open there is NARROWER, is CD-BP-003, and is declared in all
+# three CD-RULE-004 places with an executable example that is POSITIVE — an object that IS ADMITTED.
+#
+# THREE FINDINGS RAISED AGAINST THIS SEAT'S OWN WORK, AND ONE AGAINST THE AMENDMENT THAT DISPATCHED
+# IT. NOTHING HERE IS ASSURANCE (PBG-SOD-001, non-waivable).
+# ================================================================================================ #
+
+entry_id: BL-20260822T162211Z-0062
+timestamp_utc: "2026-08-22T16:22:11Z"   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 995ec3e36f5bd43bcbfdff66ccab1ace1a11949c
+increment_commits:
+  - 78a2cc9c265071d07b45ff328977438b32eebb03   # 1/3 — the code and its nine baseline plants
+  - c09069e5db011771443a625cd1e88b9dc39465de   # 2/3 — the static check, CD-BP-003 in three places, seven variants
+  - 61a28c814ab1210ea3d0fed976e6a55cb852e67f   # 3/3 — this entry. RESOLVED from PENDING in the
+                                                #       follow-up commit, because a commit cannot
+                                                #       name its own SHA (CD-RULE-007).
+parent_entry_id: BL-20260822T151439Z-0061
+schema_version: 1
+
+lane_reconciliation_before_anything_was_written: >
+  `git -C /srv/crash-detector-wo2r3 rev-parse HEAD` returned
+  995ec3e36f5bd43bcbfdff66ccab1ace1a11949c, `git status --short` returned ZERO LINES, branch wo-2r3.
+  Matches the dispatched lane head for increment 3 exactly. No drift (PBG-CONT-006).
+
+a_note_on_the_seat_itself: >
+  The seat id CD-ENG-WO2R3-01 built increments 1 and 2. That agent instance did not survive its
+  runtime; the seat, the authority record and the git identity are unchanged and the context is gone.
+  A fresh seat is required BETWEEN dispatches and not between increments of one, so this is the same
+  dispatch continued and not a new one. It is the reason this increment landed in three commits
+  rather than one (PBG-CONT-007).
+
+action_summary: >
+  INCREMENT 3 DELIVERED IN THREE COMMITS. BP-AMENDMENT-0001 §D.3 is implemented for A6 —
+  `collect(adapter, policy, sink, ledger, collector_run_id, clock, sleep, validator)` — BOTH PARTS,
+  as the Product Owner ruled it in at PO-DECISIONS-0005 ruling 4 and re-fixed at PO-DECISIONS-0007
+  ruling 5.
+  PART 1. `clock` and `sleep` are GONE AS PARAMETERS. This is the `combine_within_one_dial(using)`
+  repair applied a second time: not a stronger check on a callable, a DELETION of the parameter
+  through which code arrived. `clock` is replaced by `started_utc: datetime` — a VALUE, exact-typed
+  at the door and then REBUILT by `ensure_utc` from its own primitive fields, so no method of the
+  supplied object is ever consulted. `sleep` is replaced by `delay: DelayKind` — a NAME from a closed
+  enum with EXACTLY ONE member, executed by a new module `crash_detector.collectors.delay` that owns
+  waiting. And the elapsed span the runner's timeout-budget refusal turns on is now taken from
+  `monotonic_reading()`/`seconds_since()` in that same module: it used to be the difference between
+  two calls to a CALLER-SUPPLIED clock, so a clock that never advanced made every adapter punctual
+  and the one guarantee the runner offers about an adapter that ignores its budget evaporated with
+  no line of the runner changing.
+  PART 2. `adapter`, `sink`, `ledger` and `validator` KEEP their `Protocol`s — the thing on the other
+  side is genuinely foreign and exact-typing it against a concrete class is not available and would
+  be wrong — and EVERY VALUE THEY RETURN IS ESTABLISHED AT ITS POINT OF RETURN. Seven of them:
+  `fetch` -> exactly `FetchedResponse` (was `isinstance`, which admitted a subclass whose `payload`
+  is a property); `is_empty` -> exactly `bool`; `validate` -> exactly `None` (the return was
+  DISCARDED, so "conforming" meant only "did not raise"); `record` -> exactly `None`;
+  `admit_if_absent` -> exactly `bool` (was `bool(...)`, which COERCES, so a truthy answer reported a
+  duplicate source period as a first claim); `source_id` and `adapter_id` -> rebuilt by `own_str`,
+  after the whole protocol member set is checked.
+  `policy` is brought to this project's exact-type standard at the door, which is what §D.3 asks for
+  in terms: `isinstance(policy, RetryPolicy)` admitted a subclass shadowing `max_attempts` with a
+  property, and V28 shows that subclass driving the runner past a ceiling of 5 to 201 attempts.
+  THE STATIC CHECK now treats `collectors/` as a judgement-path package under RULE 1,
+  deny-by-default. DECLARED LIMIT 3 — which said the package was deferred BY SCOPE — is DISCHARGED,
+  and what stands in its place is CD-BP-003 at its exact extent.
+
+what_was_delivered:
+  new_module: src/crash_detector/collectors/delay.py — DelayKind (closed, one member), apply_delay,
+    monotonic_reading, seconds_since, DelayRefused, UnknownDelayKind, MAX_DELAY_SECONDS_CEILING
+  collect_door: "`@admits(adapter=ESTABLISHED_HERE(...), policy=RetryPolicy, sink=ESTABLISHED_HERE(...), ledger=ESTABLISHED_HERE(...), collector_run_id=str, started_utc=datetime, delay=DelayKind, validator=ESTABLISHED_HERE(...))` — and NO `clock`, NO `sleep`"
+  arrival_establishment: seven points of return, three new named refusals (AdapterContractBreach,
+    SinkContractBreach, LedgerContractBreach) and one new outcome class
+    (MALFORMED_VALIDATOR_CONTRACT_BREACH)
+  other_collector_doors: missing_adapter_members, json_pointer, local_refs_only,
+    JsonSchemaValidator.validate — all four decorated, so RULE 1's deny-by-default is satisfiable
+  static_check: JUDGEMENT_PATH_PACKAGES = ("engine", "serving", "collectors"); DECLARED LIMIT 3
+    rewritten as CD-BP-003; the limit's extent DERIVED FROM THE ARTEFACT and printed at every run
+  declarations: CD-BP-003 in all three CD-RULE-004 places, consistently, with the same executable
+    example and the same carrier statements
+  variants: variants/WO-2R3/V26..V32 — seven patches and seven manifest rows, all RUN
+  new_tests: 37 node ids added, 2 replaced (both deleted subjects, old and new named), 0 lost
+
+structural_invariants_as_landed:
+  commit_1_of_3: >
+    There is no parameter of `crash_detector.collectors.runner.collect` through which a caller can
+    supply a callable and have it executed, and no value returned to it by a `SourceAdapter`,
+    `ObservationSink`, `ReadingLedger` or `PayloadValidator` is used without its exact type being
+    established first.
+  commit_2_of_3: >
+    Every public callable under src/crash_detector/collectors/ is a subject of
+    CD-RT-002-DOORS-REQUIRE-THEIR-TYPES and carries an `admits` declaration whose parameter names are
+    exactly its signature's, and the check exits non-zero if any one of them loses it.
+  narrowness_is_deliberate: >
+    Written narrowly enough to be true (CD-PL-F76). The first says nothing about what four of
+    `collect`'s parameters are DECLARED to admit — that is CD-BP-003 and it is a limit, not a
+    closure — and nothing about any door outside `collect`. The second says the doors are DECORATED
+    and that the check enumerates them; it does not say what they require.
+
+class_closed_or_closed_in_part: CLOSED IN PART, and the parts are named
+closed:
+  - "PART 1 ENTIRELY. `clock` and `sleep` are not parameters. A callable cannot arrive: there is no
+     expression to write. Adding either back is a signature change that `admits` refuses on every
+     call (P7), and V31 is the counterfactual — put `sleep` back and a policy declaring 20 seconds of
+     backoff runs in 0.0004 s."
+  - "`policy` at the door — exact `RetryPolicy`, so a subclass shadowing a field with a property is
+     refused. MEASURED OPEN by V28 when the pre-§D.3 `isinstance` is restored."
+  - "`started_utc` at the door — exact `datetime`, then REBUILT by `ensure_utc`, so a `datetime`
+     subclass overriding `astimezone` or `__rsub__` (ASR2-005-A's shape) is refused twice."
+  - "`delay` — exact `DelayKind`. The member set is closed BY THE INTERPRETER: an `Enum` with members
+     cannot be subclassed, measured, and a look-alike is refused by exact type at `apply_delay`."
+  - "THE SEVEN POINTS OF RETURN of the four Protocols. Enumerated, not sampled; each with a violated
+     arm run in a pristine extraction (V27, V29, V30, V32)."
+  - "`collectors/` as a judgement-path PACKAGE, deny-by-default within, so a new module there is a
+     subject the day it is written. Asserted by BREAKING it, not by reading the tuple."
+not_closed_and_declared:
+  - "CD-BP-003 — THE PROTOCOL BOUNDARY. `collect`'s adapter, sink, ledger and validator are ADMITTED,
+     not established. A structurally conforming adapter is admitted whatever it says. MEASURED OPEN,
+     in the POSITIVE direction, by variants/WO-2R3/V26. CARRIER for whether a conforming adapter
+     tells the truth: NOT PROVED TO BE CARRIED ANYWHERE — source trust is CD-D-005 and BLUEPRINT §5
+     and it is OWED. THIS IS THE FOURTH ASSURANCE SEAT'S NAMED FIRST TARGET AND NO FACADE WAS BUILT
+     IN FRONT OF IT."
+  - "THE PROTOCOL CONFORMANCE CHECK FAILS THE RENAME TEST. `missing_adapter_members` asks `hasattr`
+     for five SPELLED names. It measures a VOCABULARY and not a class. Unavoidable at a boundary to a
+     foreign system — structural conformance IS nominal — and it is the ONLY refusal this increment
+     relies on that fails the rename test."
+  - "`started_utc`'s TRUTH. A caller passing an instant from 2016 gets attempt rows dated 2016.
+     CARRIER MEASURED for the one route that decides a dial: freshness is computed in
+     `engine.evaluate` from the OUTCOME's `source_as_of_utc` against `StalenessWindow`, not from the
+     collector's instant. For latency figures and operator forensics: NOT PROVED TO BE CARRIED
+     ANYWHERE."
+  - "SINK DURABILITY AND LEDGER HONESTY. A sink returning None that wrote nothing, and a ledger
+     returning True twice for one period, are both admitted here. CARRIER MEASURED AND IT IS NOT THIS
+     LAYER: the UNIQUE (source_id, source_as_of_utc) constraint and the grant matrix, in the store,
+     measured by tests/test_store_schema_sql.py and CD-RT-GRANT-MATRIX-LIVE. IN PROCESS: NOT PROVED
+     TO BE CARRIED ANYWHERE, and it cannot be — the property belongs to the store."
+  - "CONSTRUCTORS (DECLARED LIMIT 1) — unchanged and still open. RULED as increment 5 by
+     PO-DECISIONS-0007 ruling 1, bounded to ConfigSnapshot/DialSpec/ModelSpec/PanelRow. NOT TOUCHED."
+  - "THE CHECK'S PACKAGE TUPLE (DECLARED LIMIT 2) — still a vocabulary, and it now matters MORE:
+     `collect` returns `CollectionResult`, which is not a judgement value type, so A6 is reached by
+     RULE 1 ALONE. Remove `collectors` from the tuple and A6 leaves the subject set entirely. See
+     CD-ENG-WO2R3-F09."
+  - "THE COUNTERFEIT DECORATOR (DECLARED LIMIT 4) — unchanged. Re-measured at this head: V18 still
+     exits 0 with 54 assertions, and the RUNTIME still catches it, 3 failed 1516 passed."
+  - "THE `__closure__` ROUTE (DECLARED LIMIT 6) — unchanged, open, and asserted open."
+
+plants_both_arms_all_over_EMPTY_MODEL_REGISTRY:
+  scope_note: >
+    §F.1's P1..P8 belong to increments 1 and 2. §F.1 declares NO plant for A6 — the amendment's plant
+    table predates ruling 4 folding A6 in — so increment 3's plants are this seat's own, numbered
+    A6-1..A6-9, and each is stated with its refusing layer NAMED AND SCOPED and its rename-test
+    result, per CD_PL_F74_ADOPTED. P1..P8 are unchanged and green in the clean arm below.
+  A6_1_policy_subclass:
+    refusing_layer: "`crash_detector.admission.admits`, at `collect`'s boundary, derived from its signature: type(policy) is not RetryPolicy. SCOPE: every call to collect by any caller anywhere. It is NOT the RetryPolicy constructor, which this subclass PASSED."
+    baseline: >
+      An `Unbounded(RetryPolicy)` honestly constructed with max_attempts=1, then given a
+      `max_attempts` property answering 5000 by `type.__setattr__`. "NotAdmitted: collect:
+      policy=Unbounded is not admitted; this door requires exactly RetryPolicy."
+    violated: >
+      variants/WO-2R3/V28-policy-subclass-isinstance.patch restores `isinstance(policy, RetryPolicy)`
+      in the body. MEASURED: "MAX_ATTEMPTS_CEILING: 5", "policy.max_attempts as asked: 5000",
+      "STOPPED THE PROBE AT 201 ATTEMPTS. The ceiling is 5. ESCAPED."
+    rename_test: SURVIVES — an identity comparison between two type objects.
+  A6_2_and_A6_3_the_deleted_callables:
+    refusing_layer: "`admits` at `collect`'s boundary: type(started_utc) is not datetime; type(delay) is not DelayKind. SCOPE: every call to collect."
+    baseline: >
+      A zero-argument callable returning a datetime, and a one-argument callable — the two objects
+      the deleted parameters used to take — are each NotAdmitted. A `datetime` SUBCLASS is refused
+      too. And the deletion itself is checked ON THE SIGNATURE: "clock" not in
+      inspect.signature(collect).parameters, likewise "sleep".
+    violated: >
+      variants/WO-2R3/V31-caller-supplied-sleep-restored.patch PUTS THE PARAMETER BACK — part 1 is a
+      deletion, so its counterfactual is not "remove a guard". MEASURED: policy.backoff_seconds 5.0,
+      worst_case_seconds 25.0, "backoffs the policy asked: [5.0, 5.0, 5.0, 5.0]", "seconds actually
+      waited: 0.0004". The bound the policy states was enforced by code the CALLER wrote.
+    rename_test: SURVIVES — type identity, and an absent parameter has no name to depend on.
+  A6_4_fetched_response_subclass:
+    refusing_layer: "`crash_detector.collectors.runner._attempt`, at the point of return from adapter.fetch: type(response) is not FetchedResponse. SCOPE: every response from every adapter on every attempt. It is NOT the FetchedResponse constructor, which this object PASSED."
+    baseline: >
+      A `TwoFaced(FetchedResponse)` honestly constructed, then given a `payload` property answering
+      {'reading': 1.5} once and {'reading': 999.0} thereafter. Recorded
+      Malformed(ADAPTER_CONTRACT_BREACH), and the lying property's counter is asserted ZERO — it was
+      never consulted, because the response was refused by its TYPE.
+    violated: >
+      variants/WO-2R3/V29-fetched-response-subclass.patch restores `isinstance`. MEASURED:
+      "outcome: OK", "payload STORED: {'reading': 999.0}" while the validator saw {'reading': 1.5},
+      "payload asks made: 4". ASR3-F04's shape one component to the left.
+    rename_test: SURVIVES — type identity.
+  A6_5_ledger_verdict:
+    refusing_layer: "`_established_ledger_verdict`, at the point of return from ReadingLedger.admit_if_absent: type(verdict) is not bool. SCOPE: every ledger verdict on every OK outcome."
+    baseline: 'A ledger answering the string "already claimed" -> LedgerContractBreach naming `str`.'
+    violated: >
+      variants/WO-2R3/V27-lying-ledger.patch restores `bool(...)`. MEASURED: two collections of ONE
+      source period, "first admitted: True", "second admitted: True". One period, two readings.
+    rename_test: SURVIVES — type identity.
+  A6_6_validator_verdict:
+    refusing_layer: "`_attempt`, at the point of return from PayloadValidator.validate: verdict is not None. SCOPE: every validation of every response, including the shipped JsonSchemaValidator's."
+    baseline: "A validator returning {'reading': 0.0} instead of raising -> Malformed(VALIDATOR_CONTRACT_BREACH)."
+    violated: >
+      variants/WO-2R3/V30-validator-return-discarded.patch discards the verdict. MEASURED:
+      "outcome: OK", "payload stored: {'reading': 'not a number'}", "reading admitted: True". A
+      NON-conforming response recorded as OK — silent coercion at the boundary whose entire job is to
+      refuse it.
+    rename_test: SURVIVES — an identity comparison against None.
+  A6_7_A6_8_A6_9_sink_conformance_identity:
+    refusing_layers: "`_record` at the point of return from ObservationSink.record; `_established_adapter_identity` via `missing_adapter_members` over the WHOLE of ADAPTER_PROTOCOL_MEMBERS; `crash_detector.own_terms.own_str` at the point of return from the adapter's source_id and adapter_id. SCOPE: every row written, and every collect call."
+    baseline: >
+      A sink returning a string -> SinkContractBreach. An adapter missing `is_empty` ->
+      AdapterContractBreach BEFORE any attempt, and `sink.recorded == []` asserted — no attempt was
+      made so no row is owed. A `source_id` that is a `str` subclass answering True to every
+      comparison -> rebuilt to exact `str`.
+    violated: >
+      variants/WO-2R3/V32-arrival-establishment-removed.patch removes all three, in one patch
+      labelled as three arms. MEASURED, all escaped: ARM 1 a sink that writes nothing and returns a
+      string is ADMITTED with rows_recorded 1; ARM 2 an adapter missing is_empty is recorded
+      "Malformed EMPTINESS_UNDECIDABLE_AttributeError" — OUR wiring defect blamed on the source;
+      ARM 3 source_id stored as the SUBCLASS and `result.source_id == 'anything at all'` is True.
+    rename_test: >
+      A6-7 and A6-9 SURVIVE (identity against None; `str.__str__` invoked as the base
+      implementation). **A6-8 FAILS THE RENAME TEST** and it is the only one in this increment:
+      `hasattr` over five SPELLED names is a VOCABULARY. Declared as CD-BP-003 rather than presented
+      as a closure.
+  the_declared_limit_demonstrated_positively:
+    id: V26-conforming-hostile-adapter.patch
+    what_it_is: >
+      NOT a violated arm — it removes no guard. It is CD-BP-003's executable example run in the
+      direction that matters: an object that IS ADMITTED. An adapter supplying all five protocol
+      members, returning an exact FetchedResponse whose payload conforms to the schema it declared
+      itself. MEASURED: "missing protocol members: ()", "ADMITTED: OK", "payload recorded:
+      {'reading': 0.0}", "source_id recorded: src.does.not.exist", "rows written: 1", "reading
+      admitted: True". NOTHING IN THIS TREE REFUSES IT.
+  empty_registry: >
+    YES, EVERY ONE, and ASSERTED rather than asserted-about. The collector path reads no registry at
+    all, so the premise is checked directly: tests/test_collector_admission.py::
+    test_every_plant_here_ran_over_the_empty_registries and tests/test_collector_delay.py::
+    test_the_delay_module_registers_nothing_and_runs_over_the_empty_registries each assert
+    EMPTY_MODEL_REGISTRY.is_empty, model_ids == () and EMPTY_SOURCE_REGISTRY.source_ids == () after
+    every plant above has run. V26's adapter names `src.does.not.exist` PRECISELY BECAUSE the source
+    registry is empty. NO ROW OF ANY KIND WAS REGISTERED TO MAKE ANY TEST EASIER.
+
+extraction_hygiene: >
+  Every variant was run in a SEPARATE pristine extraction — `git archive <sha> | tar -x -C <tmpdir>`,
+  `git apply -p1`, run, discard — so no variant contaminated another. No git worktree was created for
+  any of them and the dispatched worktree was never mutated to test one. `python3 -B` throughout, so
+  no __pycache__ was written into any governed tree (PBG-RT-001). Every patch was generated with
+  `git diff` and never by hand (CD-ENG-WO2R-F13).
+
+clean_arm:
+  suite: "PYTHONPATH=src python3 -B -m pytest tests -q  ->  exit 0, 1519 passed"
+  doors_check: "python3 -B tools/register/check_judgement_path_doors.py --root .  ->  exit 0, PASS, 54 assertions, 0 violations; 24 subjects, 24 decorated, 16 ESTABLISHED_HERE uses printed, CD-BP-003 reported at 4 parameters of collect()"
+  collection: "PYTHONPATH=src python3 -B -m pytest tests --collect-only -q  ->  '1519 tests collected'"
+  note_on_the_assertion_count: >
+    38 at increment 2, 54 here. The rise is `collectors/` joining RULE 1 and the subject count going
+    19 -> 24. Every place that quoted 38 was RE-RUN and corrected in the same commit that invalidated
+    it, not recalculated.
+
+node_id_reconciliation:
+  floor_of_record: "1400 at f30e63c — the dispatch's MEASURED figure at issue time"
+  execution_base: "1482 at 995ec3e, MEASURED HERE before anything was written. Command: `PYTHONPATH=src python3 -B -m pytest tests --collect-only -q` in the lane at that head -> '1482 tests collected'; the same tree runs '1482 passed'"
+  now: "1519 — `PYTHONPATH=src python3 -B -m pytest tests --collect-only -q` -> '1519 tests collected'"
+  lost_to_deleted_subjects: 2
+  the_two_replacements_named_in_full:
+    - old_id: tests/test_collector_runner.py::test_collect_has_no_default_clock_and_no_default_sleep
+      new_id: tests/test_collector_runner.py::test_collect_takes_no_clock_and_no_sleep_and_defaults_neither_instant_nor_delay
+      proposition: >
+        "clock and sleep are required injections, so no module-level now() and no real delay can hide
+        inside collect."
+      why_the_new_test_tests_the_same_thing: >
+        The SUBJECT — two CALLABLE parameters — is deleted by §D.3 part 1. The replacement asserts the
+        same proposition against the new structure and asserts STRICTLY MORE: that there is no
+        `clock` and no `sleep` parameter AT ALL rather than that two named ones are mandatory; that
+        the two values which replaced them are themselves mandatory; and that the set of parameters
+        this door does NOT exact-type is exactly the four CD-BP-003 Protocols, so a fifth is a test
+        failure. Checked on the signature, so a rewrite of the body cannot restore either.
+    - old_id: tests/test_judgement_path_doors.py::test_the_collector_gap_is_declared_and_still_open
+      new_id: tests/test_judgement_path_doors.py::test_the_collector_boundary_is_a_judgement_path_package_and_cd_bp_003_is_what_remains
+      proposition: >
+        "DECLARED LIMIT 3 is declared, is printed at every run, and cannot close silently."
+      why_the_new_test_tests_the_same_thing: >
+        That test was WRITTEN TO FAIL the day `collectors` became a judgement-path package, which is
+        exactly what this increment does — it is the carrier that made the limit unable to close
+        quietly, and it worked. Leaving it standing would have turned a true scope statement into a
+        false one by the passage of time, which the dispatch named in terms. The replacement asserts
+        the same proposition against the new structure — the limit at this slot is declared, printed
+        with its extent DERIVED FROM THE ARTEFACT, and cannot widen silently — and additionally that
+        the DISCHARGED increment-2 wording appears nowhere in the output.
+  replaced: 2
+  added: 37
+  arithmetic: "1482 - 2 + 2 + 37 = 1519. ZERO LOST WITH NO SUCCESSOR."
+  added_where: >
+    17 in tests/test_collector_delay.py (new), 18 in tests/test_collector_admission.py (new), 1 in
+    tests/test_admission.py (test_cd_bp_003_is_exactly_four_parameters_and_every_one_names_its_residue),
+    1 in tests/test_judgement_path_doors.py (test_the_collector_doors_are_really_subjects_and_not_merely_counted).
+  two_test_doubles_deleted_with_their_subject: >
+    `SteppingClock` and `RecordingSleep` in tests/collector_fakes.py. They are DOUBLES, not tests;
+    they carry no node id; nothing else in the suite referenced them (measured with
+    `grep -rn "SteppingClock\|RecordingSleep" tests/`); and what they were doubles OF no longer
+    exists. The comment that replaces them says so in the file rather than leaving a reader to
+    wonder.
+
+eleven_plants:
+  measured_at_this_head: "8 of 11 apply. Command, with a fresh extraction: `git archive <head> | tar -x -C /tmp/cd-plants` then `git apply --check -p1 <plant>` per plant."
+  the_three_that_do_not: >
+    plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch,
+    plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch,
+    plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch — THE SAME THREE, and the same eight
+    applying, as at 7b00ce9 and at 995ec3e.
+  increment_3_effect: "NONE. The condition pre-dates increment 2 and is CD-ENG-WO2R3-F06, already raised and not yet ruled. This increment neither fixed nor worsened it."
+  contrast_not_re_measured_here: >
+    STATED PLAINLY: `git apply --check` is an APPLICABILITY test and nothing more. Whether the eight
+    that apply still CONTRAST was not re-measured at this increment. The dispatch places that work in
+    increment 4 (`increment_4_reconciliation_and_return`), and this seat did not pull it forward and
+    does not claim it.
+
+findings_raised_against_this_seats_own_work_and_against_its_specification:
+  CD-ENG-WO2R3-F08:
+    severity: MEDIUM
+    against: THE AMENDMENT — BP-AMENDMENT-0001 §D.3 part 1
+    finding: >
+      §D.3 part 1 says `clock` becomes "an engine-owned instant ALREADY ESTABLISHED BY `ensure_utc`,
+      passed as a VALUE". **A SINGLE INSTANT CANNOT MEASURE AN ELAPSED SPAN**, and the runner has a
+      judgement that needs one: `FETCH_FAILED(TIMEOUT_BUDGET_EXCEEDED)` — the refusal that makes an
+      adapter's declared timeout mean something — is computed from the difference between two clock
+      readings. THE AMENDMENT IS SILENT ON WHERE THAT SECOND READING COMES FROM. It is not wrong; it
+      is incomplete, and the gap is exactly where the defect lived.
+    what_this_seat_did: >
+      Resolved it by making the span ENGINE-OWNED: `monotonic_reading`/`seconds_since` in
+      `collectors/delay.py`, read from `time.monotonic`, with no parameter through which a caller
+      could substitute either. This is STRICTLY STRONGER than the amendment's letter — a caller
+      supplies neither the span nor a clock — and it is reported rather than presented as what §D.3
+      said, because a seat that reads its own resolution back into its specification has inverted the
+      loop.
+    consequence_disclosed: >
+      Attempt timestamps are now `started_utc + <monotonic span since the run began>` rather than
+      readings of a supplied clock. That makes `requested_utc <= observed_utc` true BY CONSTRUCTION
+      (the underlying clock is non-decreasing) where it was previously enforced by `AttemptRecord`
+      refusing rows that said otherwise. It also means the collector now performs REAL waits and
+      REAL elapsed measurement in the test suite: total added wall time measured at ~65 ms across
+      the whole suite, and the timeout-budget test is deterministic in the direction that matters
+      because `time.sleep(s)` guarantees AT LEAST `s`.
+    for_the_project_lead: >
+      If the Product Owner or the Project Lead reads §D.3 as requiring the elapsed span to come from
+      the passed instant alone, this increment does not implement that reading and cannot: the
+      timeout-budget refusal would have to be deleted. Say so and it will be reworked.
+  CD-ENG-WO2R3-F09:
+    severity: LOW
+    against: THIS SEAT'S OWN WORK — the static check
+    finding: >
+      A6 is reached by RULE 1 ALONE. `collect` returns `CollectionResult`, which is not in
+      JUDGEMENT_VALUE_TYPES, so RULE 2 does not reach it. The two rules are unioned "because each
+      covers the other's blind spot", and for the door §D.2 lists as A6 that redundancy does not
+      exist: remove `collectors` from the package tuple and A6 leaves the subject set entirely.
+    why_it_was_not_closed_here: >
+      Adding `CollectionResult` to JUDGEMENT_VALUE_TYPES would assert that a collection result IS a
+      judgement value. It is not — a collector fetches and records and never computes (BLUEPRINT §5),
+      and that type is the boundary between the two halves. Making the check say otherwise to buy a
+      redundancy would be inventing a classification to make a guard look stronger. RAISED, NOT
+      CLOSED.
+  CD-ENG-WO2R3-F10:
+    severity: MEDIUM
+    against: THIS SEAT'S OWN WORK — the admission mechanism's declared limit 1
+    finding: >
+      THE `ESTABLISHED_HERE` EXEMPTION SET DOUBLED, 8 -> 16. DECLARED LIMIT 1 of
+      src/crash_detector/admission.py calls the set "an explicit weakening, COUNTED, NOT HIDDEN", and
+      the counting works — the pin test failed and each new use had to be justified in the artefact.
+      But a set of sixteen is materially harder for a reviewer to hold than a set of eight, and the
+      limit's protection is entirely a reviewer's attention. Four of the eight new uses are CD-BP-003
+      itself; four are establishment doors whose contract IS to accept any object. This seat believes
+      all eight are correct and says so, and also says that "the check prints them and a reviewer
+      must adjudicate them" is a weaker control at sixteen than it was at eight.
+    what_would_close_it: >
+      Not this seat's call. A candidate is a second CATEGORY on the declaration — establishment door
+      versus declared limit — so the two kinds are counted separately at every run rather than by a
+      reader reading reasons. That is a mechanism change and it is not in this dispatch's scope.
+      RAISED, NOT CLOSED. The check already partitions the two groups for `collectors/` only.
+  CD-ENG-WO2R3-F11:
+    severity: LOW
+    against: THIS SEAT'S OWN WORK — a constructor was edited, and the dispatch said not to
+    finding: >
+      `CollectionResult` gained a field, `delays_applied`, and its `__post_init__` gained a type
+      establishment for it. THE DISPATCH SAYS "do not touch a constructor" and the fifth increment is
+      ruled to cover ConfigSnapshot, DialSpec, ModelSpec and PanelRow. `CollectionResult` is on
+      neither list, and the edit is not the kind increment 5 is about — it adds a NEW field rather
+      than changing how an existing one is established — but it IS a constructor body edit made by
+      this seat and it is disclosed rather than left for a diff to reveal.
+      WHY THE FIELD EXISTS: §D.3 part 1 deleted the `sleep` callable, and the property "backoff
+      between attempts, never after the last one" used to be read off a caller-supplied double's log
+      — the system's behaviour attested by the caller's own object. It is now the runner's own record
+      of its own run. Leaving the new field with no establishment would have been the worse choice.
+      ALSO DISCLOSED: `AttemptRecord.__post_init__` still admits its `observation` by `isinstance`
+      rather than by exact type. This seat did NOT change it, for the same reason: it is a
+      constructor, and `AttemptRecord` is on neither the increment-3 nor the increment-5 list. It is
+      an `isinstance` on a judgement-adjacent path and the Project Lead should know it is there.
+
+what_this_seat_deliberately_did_NOT_do:
+  - CONSTRUCTORS beyond the one disclosed above — RULED as increment 5 by PO-DECISIONS-0007 ruling 1,
+    bounded to ConfigSnapshot/DialSpec/ModelSpec/PanelRow with V17 as its plant. Not folded in, not
+    pre-empted.
+  - A7 and `fold` — RULED WO-4. §D.3's work makes it no easier to close and it was not touched.
+  - Class C, `Lifecycle.run(tick)` and `on_shutdown(callback)` — OUT by §B.4 and §H. `runtime/` is
+    NOT in JUDGEMENT_PATH_PACKAGES and this increment did not add it. That scoping remains the
+    fourth Assurance seat's to attack.
+  - ASR3-F08 and the dependency surface — OUT, a separate work order. `deploy/` and `requirements*`
+    untouched.
+  - CD-AC-003 and the grant matrix — the one PASS in the third gate. Untouched.
+  - a second MappingKind member — PROHIBITED. `DelayKind` is a DIFFERENT enum, in a different
+    package, and it ships with ONE member for the same reason and by the same discipline; the
+    rejected second member (`NONE`/`NO_DELAY`) and why it was rejected are written into
+    collectors/delay.py's docstring and asserted by a test.
+  - registering any model row or any ingredient source. Both registries are empty and asserted empty.
+  - CD-AC-002's four-refusal trace and CD-AC-005's restructuring in required-tests.yaml — increment 4.
+  - CD-PL-F80 and CD-PL-F81, the rewording of two declared limits to their measured reach —
+    increment 4 or 5. Documentary findings are answered with documents, not with logic (CD-D-080).
+  - touching latest_admitted_run. It is null and untouched (CD-RULE-001).
+  - anything under pbg/, PID.md, BLUEPRINT.md, governance/blueprint/, governance/decisions/,
+    governance/dispatch/, governance/rules/, governance/assurance/, governance/reconciliation/,
+    ACTIVE_WORK.yaml, deploy/, db/, docs/ or CLAUDE.md.
+
+next_safe_action: >
+  INCREMENT 4 — reconciliation and return, NO NEW LOGIC: required-tests.yaml's CD-AC-002 four-refusal
+  trace and CD-AC-005's `admits` door; the eleven plants re-applied AND re-contrasted; CD-PL-F80 and
+  CD-PL-F81 reworded to their measured reach; the final Build Log entry. Before it, the Project Lead
+  reconciles THIS increment BY REPLICATION AND NOT BY RELAY — V26 first, because it is the one that
+  shows what is NOT closed — and rules on CD-ENG-WO2R3-F08, which is a question about the
+  specification and not about the code.
+
+this_is_not_assurance: >
+  Every run above is IMPLEMENTATION EVIDENCE produced by the seat that wrote the code. It does not
+  become assurance by being thorough, and this seat does not certify, assure or accept its own work
+  (PBG-SOD-001, non-waivable). A FOURTH FRESH ASSURANCE SEAT audits this, and the Product Owner has
+  already given it its first two targets: P7, and CD-BP-003 — the boundary this increment declares
+  open, points at, and does not defend.

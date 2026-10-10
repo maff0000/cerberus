@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments are not used by this project: everything runs on the host
+# interpreter with PYTHONPATH=src and no install step (BLUEPRINT §11, WO-2 A1).
+.venv/
+venv/
+
+# Never commit an environment file. Secrets are referenced by env-var NAME only
+# (PBG-SEC-002, PBG-EVID-003 — non-waivable). See README.md.
+.env
+.env.*
+*.pem
+*.key
+
+# Editor / OS noise
+.idea/
+.vscode/
+.DS_Store

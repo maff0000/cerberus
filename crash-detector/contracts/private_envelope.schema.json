@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:crash-detector:contracts:private-envelope:1.1.0",
+  "title": "Crash Detector private envelope",
+  "description": "CLOSED. BLUEPRINT §3, §4 and §8. The other side of the hard public/private split (PID doctrine §3.5): a SEPARATE document, validated against a SEPARATE schema, written to a separate table, read by a separate role, served from a separate container on a separate network. This schema is closed for the same reason the public one is, but against a different failure: on the public surface an unknown key is a leak, and here an unknown key is an unaudited field on the side of the boundary where the book lives. Note what this document does NOT do. It does not carry a superset flag, an include_private toggle, or any switch that would let one builder emit either envelope. Two envelopes, two builders, two schemas: a shared builder with a mode parameter is one bug away from emitting the private shape onto the public surface, and 'not the same container, let alone the same page' is not satisfied by 'the same function with a different argument'. WHAT IS DELIBERATELY ABSENT AND OWED. The book-adjacent content itself. Which private fields exist, what they mean and which of them a drill-down may show are product decisions this seat has not been given and must not invent (PBG-AUTH-005); CD-AC-006's enforcement evidence is sequenced at WO-5 (CD-D-004, BLUEPRINT §13). WO-2 therefore ships the private envelope with the same honesty fields and the same two dials as the public one, plus its classification. That is the doctrinally correct empty state, and it is the same posture as the empty source registry: the boundary is built now, the content arrives when the Product Owner has ruled on it, and each addition is a deliberate allowlist edit with a schema_version bump. AT WO-3 INCREMENT 16A ONE SUCH ADDITION WAS MADE AND PAID FOR: detail_level now attaches PER DIAL inside $defs/dial_reading — never at this top level — under PO-DECISIONS-0025 ruling 5, and schema_version was bumped 1.0.0 -> 1.1.0. *** RULE CC — EVERY PROPERTY OF THIS ROOT IS EXACTLY ONE OF TWO THINGS, AND THERE IS NO THIRD CASE (PO-DECISIONS-0028 ruling 1). *** (a) a CANONICAL DIAL SLOT, spelled literally {\"$ref\": \"#/$defs/dial_reading\"} — that one key, no sibling keyword; or (b) a DECLARED NON-DIAL PROPERTY, whose name is on the finite written allowlist in tools/register/check_missing_data_never_calm.py AND which is AFFIRMATIVELY PROVED, by driving the live gate, to be incapable of carrying a detail_level. A root property that is neither is a VIOLATION of register row CD-RT-001-MISSING-DATA-NEVER-CALM, which goes RED and STAYS RED until a human rules on it: adding a root property to this envelope is a PRODUCT act and not an implementer's (PBG-AUTH-005). The partition is exhaustive because this root's properties object has a finite enumerable key set, both limbs are decidable by equality, and additionalProperties is false here — so a document cannot introduce a root key this contract does not declare. *** THIS SENTENCE REFUSES NOTHING BY ITSELF; the instrument named above is the enforcement point. ***",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "classification",
+    "as_of_utc",
+    "published_utc",
+    "regime",
+    "staleness_window_seconds",
+    "inputs_used",
+    "degraded_inputs",
+    "config_snapshot_id",
+    "equity_crash",
+    "monetary_debasement"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "classification": {
+      "description": "Required and pinned. A private envelope that does not say so cannot be written, so a document cannot arrive at the private table having lost the one label that says where it may go. The public schema declares no classification property at all, so a private envelope validated against the public schema is rejected on this key before anything else about it is considered.",
+      "const": "PRIVATE"
+    },
+    "as_of_utc": {
+      "$ref": "#/$defs/utc_timestamp"
+    },
+    "published_utc": {
+      "$ref": "#/$defs/utc_timestamp"
+    },
+    "regime": {
+      "description": "As in the public envelope: a non-empty string, deliberately not an enumeration, because naming the regimes is product meaning owed with CD-AC-009 in WO-3.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "staleness_window_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "inputs_used": {
+      "$ref": "#/$defs/source_id_list"
+    },
+    "degraded_inputs": {
+      "$ref": "#/$defs/source_id_list"
+    },
+    "config_snapshot_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "equity_crash": {
+      "$ref": "#/$defs/dial_reading"
+    },
+    "monetary_debasement": {
+      "$ref": "#/$defs/dial_reading"
+    }
+  },
+  "$defs": {
+    "utc_timestamp": {
+      "description": "ISO-8601, UTC, with an explicit Z. Enforced by pattern, not by format: format is an annotation by default and an annotation is not a refusal.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+    },
+    "source_id_list": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 256,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      }
+    },
+    "contribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "category",
+        "weight",
+        "contribution"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "weight": {
+          "type": "number"
+        },
+        "contribution": {
+          "type": "number"
+        }
+      }
+    },
+    "dial_reading": {
+      "description": "Identical in shape to the public envelope's dial_reading, and duplicated here rather than referenced across files on purpose: a cross-document $ref would make the private contract depend on resolving the public one, and a schema that must fetch another schema to judge a document is a schema with an availability failure mode. *** detail_level ATTACHES HERE, PER DIAL, AND NOT AT ENVELOPE TOP LEVEL (PO-DECISIONS-0025 ruling 5, which ruled Q29). *** The placement is the doctrine: a SINGLE envelope-level detail_level derived from BOTH readings would require a function consuming the equity magnitude and the monetary magnitude and returning one answer, which is the CD-AC-002 shape reached one step sideways (the output is a level rather than a number). Two dials, two levels, computed separately by crash_detector.publication.detail_level.detail_level_for, which takes ONE reading and ONE dial slot and has no variant taking both. It is REQUIRED in every branch of the union INCLUDING UNKNOWN, and that is the point rather than an oversight: PID §3.2 is constitutional — 'Missing data must never render as calm' — so the branch with no score is exactly the branch that must still say how loudly to render. *** AND THE VALUE IT MAY CARRY THERE IS NARROWED BY THIS DOCUMENT, NOT DELEGATED TO ONE: DEGRADED and UNKNOWN reference #/$defs/absent_data_detail_level, which does not contain calm, so an unknown dial rendering as calm is UNREPRESENTABLE rather than merely forbidden elsewhere. SUPERSEDED AT WO-3 INCREMENT 16A-FIX, STATED AND NOT ERASED: this sentence previously ended 'and DetailPolicy REFUSES CONSTRUCTION when absent_data_level is calm.' That was TRUE OF THAT MODULE AND FALSE AS A CLAIM ABOUT THIS CONTRACT — the envelope never consults DetailPolicy, detail_level_for had zero callers in src/, and an UNKNOWN dial carrying calm was in fact ADMITTED on BOTH surfaces (CD-ASR-WO3-03, RED). A description is not an enforcement point; the claim is now held by the thing that does the refusing. *** An OPTIONAL detail_level would let a renderer meet a dial carrying no level and decide for itself, which is the second decision site the whole module exists to prevent. *** RULE CC — THE CANONICAL DIAL SHAPE, MANDATED HERE AND ENFORCED ELSEWHERE (PO-DECISIONS-0028 ruling 1). *** The discriminator lives at ONE canonical path and nowhere else: properties.state, at depth ONE of this definition, with each oneOf branch pinning its value at properties.state.const. A dial that spells its discriminator anything else, nests it deeper, or omits it altogether is REFUSED AT CONTRACT VALIDATION rather than left to be RECOGNISED by a walk over an open space — and 'required: [\"state\"]' above is that mandate stated as an ASSERTION instead of left to be implied by the branches. Every branch must ALSO REQUIRE at least one property typed #/$defs/utc_timestamp, which is the FRESHNESS half of 'present and fresh'; and a branch may reference the calm-bearing #/$defs/detail_level IF AND ONLY IF its state.const is a state in which the data is PRESENT. Every other branch must reference #/$defs/absent_data_detail_level, from which calm is absent — so a never-before-named state arrives as a new branch, a new branch has not proved present-and-fresh, and it therefore CANNOT CARRY calm, by construction over a closed set rather than by recognition over an open one. *** THIS SENTENCE IS NOT THE ENFORCEMENT POINT AND MUST NOT BE READ AS ONE. *** See absent_data_detail_level's own record of 16A, where a guarantee asserted only in PROSE sat beside a gate that ADMITTED a calm UNKNOWN dial on both surfaces. THE PROSE STATES THE MANDATE; tools/register/check_missing_data_never_calm.py — register row CD-RT-001-MISSING-DATA-NEVER-CALM — ENFORCES IT, and goes RED on any branch that departs from it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "VALUE",
+            "DEGRADED",
+            "UNKNOWN"
+          ]
+        },
+        "score": {
+          "type": "number"
+        },
+        "as_of_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "since_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "inputs_used": {
+          "$ref": "#/$defs/source_id_list"
+        },
+        "missing_inputs": {
+          "$ref": "#/$defs/source_id_list"
+        },
+        "contributions": {
+          "$ref": "#/$defs/contribution_list"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "detail_level": {
+          "$ref": "#/$defs/detail_level"
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/dial_reading_value"
+        },
+        {
+          "$ref": "#/$defs/dial_reading_degraded"
+        },
+        {
+          "$ref": "#/$defs/dial_reading_unknown"
+        }
+      ]
+    },
+    "contribution_list": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/contribution"
+      }
+    },
+    "dial_reading_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "score",
+        "as_of_utc",
+        "inputs_used",
+        "contributions",
+        "detail_level"
+      ],
+      "properties": {
+        "state": {
+          "const": "VALUE"
+        },
+        "score": {
+          "type": "number"
+        },
+        "as_of_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "inputs_used": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/source_id_list"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "contributions": {
+          "$ref": "#/$defs/contribution_list"
+        },
+        "detail_level": {
+          "$ref": "#/$defs/detail_level"
+        }
+      }
+    },
+    "dial_reading_degraded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "score",
+        "as_of_utc",
+        "missing_inputs",
+        "reason",
+        "contributions",
+        "detail_level"
+      ],
+      "properties": {
+        "state": {
+          "const": "DEGRADED"
+        },
+        "score": {
+          "type": "number"
+        },
+        "as_of_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "missing_inputs": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/source_id_list"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "contributions": {
+          "$ref": "#/$defs/contribution_list"
+        },
+        "detail_level": {
+          "$ref": "#/$defs/absent_data_detail_level"
+        }
+      }
+    },
+    "dial_reading_unknown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "reason",
+        "since_utc",
+        "missing_inputs",
+        "detail_level"
+      ],
+      "properties": {
+        "state": {
+          "const": "UNKNOWN"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "since_utc": {
+          "$ref": "#/$defs/utc_timestamp"
+        },
+        "missing_inputs": {
+          "$ref": "#/$defs/source_id_list"
+        },
+        "detail_level": {
+          "$ref": "#/$defs/absent_data_detail_level"
+        }
+      }
+    },
+    "detail_level": {
+      "description": "Drill-down proportional to risk (PID §4, ratified): 'calm = dial + one line; elevated = the categories carrying the score; acute = everything, ranked by contribution.' The three levels and their ORDER are derived verbatim from that clause; a fourth level is a PID amendment, not a schema edit. The enum is duplicated from crash_detector.publication.detail_level.DETAIL_ORDER and tests/test_detail_level.py asserts the two cannot drift. NO THRESHOLD IS DECLARED HERE OR ANYWHERE: deciding at what score a dial stops being calm requires a dial SCALE, and the scale of a dial is what the dial MEANS, owed under CD-D-005 (Q25). This schema constrains the VOCABULARY, never the boundaries.",
+      "type": "string",
+      "enum": [
+        "calm",
+        "elevated",
+        "acute"
+      ]
+    },
+    "absent_data_detail_level": {
+      "description": "*** PID §3.2, CONSTITUTIONAL, AND HELD IN THIS DOCUMENT RATHER THAN DELEGATED: 'Missing data must never render as calm.' *** The #/$defs/detail_level vocabulary MINUS calm. It is the type the DEGRADED and UNKNOWN branches use, and those two are exactly the missing-data states: UNKNOWN declares no score at all, and DEGRADED carries a value AND its damage with at least one named missing input. crash_detector.publication.detail_level.detail_level_for returns policy.absent_data_level for BOTH of them and never a level derived from a score, so a calm on either branch is a document the code cannot produce and the contract must not accept. This is the SAME PATTERN CD-AC-001 already holds one clause over — UNKNOWN declares no score property at all, so an unknown dial carrying a number is unrepresentable — applied to the other constitutional clause, which is what WO-3 increment 16A missed. Duplicated from the public contract rather than cross-referenced, for the same reason dial_reading is: a schema that must fetch another schema to judge a document has an availability failure mode. SUPERSEDED STATE, RECORDED RATHER THAN ERASED: before 16A-FIX both branches referenced #/$defs/detail_level, the guarantee was asserted only in PROSE and enforced only in DetailPolicy.__post_init__ — a module this envelope never consults — and an UNKNOWN dial carrying calm was ADMITTED by refuse_unless_publishable on BOTH surfaces (CD-ASR-WO3-03, RED; reproduced at BL-20260824T084141Z-0160). With zero registered sources every dial is UNKNOWN, so that was the only state this product could publish. VALUE deliberately keeps the full vocabulary including calm: a genuinely calm reading backed by a real number is the whole reason calm exists, and narrowing it there would satisfy PID §3.2 vacuously by making the dial incapable of ever reading calm. NO THRESHOLD IS DECLARED HERE either; this constrains VOCABULARY, never boundaries.",
+      "type": "string",
+      "enum": [
+        "elevated",
+        "acute"
+      ]
+    }
+  }
+}

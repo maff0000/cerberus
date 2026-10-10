@@ -1,0 +1,115 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 8 — ITEM 6. `F-06-L` / `F-06-M`. THE DOCUMENTARY CORRECTIONS.
+#
+# **THE CHEAP ITEM FOUND THE THING NOTHING ELSE WOULD HAVE.** Re-measuring the plant set is what
+# discovered that ITEM 1 OF THIS INCREMENT BROKE A PLANT — a fact invisible to the suite, to the
+# twelve register checks and to the Class-2 sweep. This is why a documentary correction that keeps
+# being deferred because it is cheap is how a record stops describing its tree.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0088. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T063420Z-0089
+timestamp_utc: "2026-08-23T06:34:20Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-06
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC8-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0015.md ruling 2 — the auditor''s ten-item ordered gate ADOPTED; item 6 is `F-06-L` / `F-06-M`, and three of them are the fifth seat''s item (e), two gates old'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 314592c6c397b4e1f2f03ca84488ce800840ad09
+parent_entry_id: BL-20260823T062549Z-0088
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_6
+title: '`F-06-L` / `F-06-M` — the plant manifest and the corpus index corrected to their MEASURED state, and one plant this increment broke, repaired.'
+
+# ---------------------------------------------------------------------------------------------- #
+CD_RULE_009__EVERY_NUMBER_BELOW_CAME_OUT_OF_AN_INSTRUMENT_I_RAN:
+  the_method_for_the_plants: >
+    **ONE PRISTINE `git archive` EXTRACTION PER PLANT**, clean arm and violated arm, the DECLARED
+    command taken from `required-tests.yaml` by `test_id` (not from the manifest's prose), exit
+    code recorded on both — **AND `git apply`'s OWN EXIT CODE RECORDED AS A THIRD COLUMN**,
+    because a patch that does not apply produces a "violated" arm that is the clean tree and a
+    two-column table cannot tell the two apart. Script: /tmp/cd06/measure_plants.sh, run at BOTH
+    SHAs.
+  the_method_for_the_corpus: '`find`, for every number: patch counts per tree, `.py` and `.sh` counts, file modes, symlink count. Nothing transcribed.'
+
+# ---------------------------------------------------------------------------------------------- #
+F_06_L__THE_PLANT_MANIFEST:
+  what_was_wrong: '**IT SAID ELEVEN.** *"Eleven tests, eleven patches"*, and `CD-AC-005/ ... (1 plant)`. **THERE ARE TWELVE ON DISK AND THERE HAVE BEEN SINCE WO-2R3 INCREMENT 5**, when the constructor-establishment plant landed. Nobody had measured the set since `531c95c`.'
+  THE_MEASURED_STATE: |
+                                    AT 314592c (base)        AT THIS TIP
+      patches on disk                     12                      12
+      EVIDENCE  (0 clean -> 1 violated)   10                      11
+      DECORATION (no contrast)             2                       1
+  the_two_decorations_at_the_BASE__AND_THEY_ARE_NOT_THE_SAME_TWO_AT_THE_TIP:
+    - '`CD-RT-003-GRANT-MATRIX-LIVE` — **exit 3 on BOTH arms**, PRECONDITION_NOT_MET, for want of a live PostgreSQL. Applies cleanly; there is no contrast to have. **STILL DECORATION AT THE TIP AND NOW THE ONLY ONE.**'
+    - '`CD-RT-012-NO-EXECUTION-INTERFACE` — **exit 1 on BOTH arms.** Its CLEAN arm was already red, because the register row itself was red at the base (`F-06-A`). **TWO ARMS EXITING 1 FOR DIFFERENT REASONS PROVE NOTHING** (`CD-ENG-WO2R3-F12`) and that had been true of this row for a whole increment. **ITEM 2 OF THIS INCREMENT RESTORED IT TO EVIDENCE**: exit 0 -> exit 1. Nobody predicted that consequence; it fell out of the measurement.'
+  what_I_wrote: 'The head block of `plants/MANIFEST.md` carries the table above, names both base decorations and the one at the tip, and quotes the superseded *"Eleven tests, eleven patches"* and `(1 plant)` rather than deleting them. The directory listing now reads `(2 plants)` for CD-AC-005 and carries an explicit `TOTAL: 12`. **Every historical paragraph that says "eleven" is LEFT EXACTLY AS IT STANDS** — each was true when written.'
+
+# ---------------------------------------------------------------------------------------------- #
+A_FINDING_AGAINST_MY_OWN_WORK__AND_THE_CHEAP_ITEM_IS_WHAT_FOUND_IT:
+  id: CD-ENG-WO2R3-06-F06
+  severity: MEDIUM
+  what: >
+    **ITEM 1 OF THIS INCREMENT BROKE A PLANT.** `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`
+    applied cleanly at `314592c` and contrasted exit 0 -> exit 1. The redesign rewrote
+    `src/crash_detector/engine/evaluate.py`, and the plant's hunk at `_evaluate_dial`'s signature
+    stopped applying: `error: patch failed: src/crash_detector/engine/evaluate.py:362`. **The
+    "violated" arm was then the clean tree and exited 0** — a plant that has stopped biting,
+    reporting a pass.
+  how_it_was_caught: '**BY ITEM 6''s RE-MEASUREMENT AND BY NOTHING ELSE.** The suite does not apply plants. The twelve register checks do not. The Class-2 sweep does not. Had this item been deferred again — it is two gates old — the increment would have shipped with a dead plant and a green board.'
+  what_I_did: >
+    REGENERATED the patch against the new structure, violating the SAME proposition by the SAME
+    route. Verified at the layer the proposition names rather than by exit code: the check prints
+    *"witness module `crash_detector.witness.panel` is REACHABLE from the engine container's root
+    set. Route (nearest first): crash_detector.witness.panel <- crash_detector.corroboration <-
+    crash_detector.engine.evaluate"*. **NO PATCH WAS DELETED, DISABLED OR WEAKENED** (CD-D-033).
+    Recorded in the manifest's head block rather than only fixed.
+  the_finding_it_leaves_OPEN_and_it_is_NOT_MINE_TO_CLOSE: >
+    **A PLANT THAT STOPS APPLYING IS INVISIBLE TO EVERY INSTRUMENT THIS PROJECT RUNS AT A
+    BOUNDARY.** FOUR separate increments have now broken a plant and found out only when somebody
+    re-ran the set by hand — WO-2R increments 1 and 2, WO-2R3 increment 4, and this one, each
+    recorded in its own paragraph of that manifest. **CARRIER: NOT PROVED TO BE CARRIED
+    ANYWHERE.** Raised rather than repaired: a runner over `plants/` is exactly the wrapper
+    `PBG-ASSURE-001` forbids this seat to write, and the honest alternative is a decision
+    somebody else makes.
+
+# ---------------------------------------------------------------------------------------------- #
+F_06_M__THE_CORPUS_INDEX:
+  defect_1__BLIND_TO_AN_ENTIRE_TREE: '`variants/MANIFEST.md` had rows for `WO-2R/` and `WO-2R2/` and **NO ROW FOR `WO-2R3/`, for SEVEN INCREMENTS.** Added, with the tree MEASURED: **45 entries — 28 patches (`V16`..`V43`), 12 `.py` probes, 4 `.sh` probes (`P-A`..`P-O`), and that tree''s own MANIFEST.md.**'
+  defect_2__IT_ASSERTED_THE_OPPOSITE_OF_WHAT_IS_ON_DISK:
+    the_superseded_sentence: '*"NOTHING ANYWHERE UNDER `variants/` IS EXECUTABLE — patches and prose only, mode 0664, no symlinks, no wrapper, no runner (PBG-ASSURE-001)."*'
+    THE_MEASURED_STATE: |
+      git apply-able patches            112   (70 WO-2R · 14 WO-2R2 · 28 WO-2R3)
+      runnable probes                    16   (12 .py + 4 .sh, ALL under WO-2R3/)
+      files carrying the executable bit   1   (WO-2R3/P-L-...sh, mode 0775)
+      every other file                        mode 0664
+      symlinks                            0
+    what_the_old_sentence_was_RIGHT_about: '**THERE IS NO WRAPPER AND NO RUNNER**, and that is the half that carries `PBG-ASSURE-001`. Nothing here applies a patch, runs a suite, iterates the corpus or reports a verdict about the product. The sixteen probes are INSTRUMENTS THAT REPORT and none is a carrier (`CD-RULE-006`): every one exits 0 whatever it measures and says so in its own header.'
+    what_it_was_WRONG_about_and_why_it_matters: '**A SEAT TOLD "patches and prose only" HAS BEEN TOLD THERE IS NOTHING HERE TO EXECUTE AND NO REASON TO LOOK AT WHAT IT WOULD DO.** Sixteen files under this tree run code. The corrected text names both halves separately, so the `PBG-ASSURE-001` claim survives and the false one does not, and it names the one file whose mode is not 0664 rather than rounding it off.'
+  and_one_file_whose_mode_was_MINE: '`variants/WO-2R3/P-N-what-abolishing-publicness-would-cost.sh` — I created it `0775` earlier in this increment and set it to `0664` here, so that my own work is not a second exception to a convention I was in the middle of writing down. `P-L`''s `0775` is NOT mine, predates this increment, and is reported as measured.'
+
+# ---------------------------------------------------------------------------------------------- #
+instruments_run_and_their_exit_codes__MINE_MEASURED_BY_ME:
+  the_plant_set_at_BOTH_SHAs: 'Twelve plants, two arms each, both SHAs — 48 runs. Tables above.'
+  the_whole_register_set_twelve_checks_at_this_tip: 'ELEVEN EXIT 0 · `check_grant_matrix_live` EXIT 3 (env gate, no credentials, none guessed). **UNMOVED.** `check_engine_no_witness_reach` EXIT 0 on the clean tree, which is the arm the regenerated plant contrasts against.'
+  delegated_judgement_sweep: 'EXIT 1 — 555 sites, 4 violations. **UNMOVED BY THIS ITEM**; the four are ITEM 3''s declared register staleness.'
+  full_suite: 'EXIT 1 — **3 failed, 1687 passed. UNMOVED BY THIS ITEM** — it adds no test and changes no line under `src/`, `tools/` or `tests/`.'
+
+what_this_does_NOT_close__MEASURED:
+  - '**THE PLANT-DRIFT FINDING IS OPEN.** Nothing at a boundary applies a plant. NOT PROVED TO BE CARRIED ANYWHERE.'
+  - '**`CD-RT-003-GRANT-MATRIX-LIVE` IS STILL DECORATION.** It needs a live PostgreSQL; there are no credentials on this host and **NONE WERE GUESSED**.'
+  - '**THE CORPUS STILL PROVES NOTHING ABOUT ANY CLASS** (`CD-D-047`), and correcting its index does not change that.'
+  - '**NO `DEFECT_OPEN` FINDING IS CLOSED** and this seat has no authority to close one.'
+
+next_safe_action: 'RETURN. All five outstanding items are committed. `STOPPED_AT_ITEM_3` for the register half only — see that item''s entry — and READY_FOR_ASSURANCE on the rest.'

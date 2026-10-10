@@ -1,0 +1,38 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 16:34:51.566441429 +0100
+@@ -58,6 +58,15 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "THE SAME A309-F1 ESCAPE SPELLED WITH `const` INSTEAD OF `enum`. One literal reading, fixed exactly: a dead feed rendering as calm. `const` carries no subschema — which is why it is correctly on the INERT list — but its VALUE names `state` and `detail_level`, which is the whole of CD-ASR-WO3-09 F1.",
++      "const": {
++        "state": "STALE",
++        "reason": "FEED_DEAD",
++        "since_utc": "2026-08-23T12:00:00Z",
++        "detail_level": "calm"
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 16:34:51.566441429 +0100
+@@ -60,6 +60,15 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "THE SAME A309-F1 ESCAPE SPELLED WITH `const` INSTEAD OF `enum`. One literal reading, fixed exactly: a dead feed rendering as calm. `const` carries no subschema — which is why it is correctly on the INERT list — but its VALUE names `state` and `detail_level`, which is the whole of CD-ASR-WO3-09 F1.",
++      "const": {
++        "state": "STALE",
++        "reason": "FEED_DEAD",
++        "since_utc": "2026-08-23T12:00:00Z",
++        "detail_level": "calm"
++      }
+     }
+   },
+   "$defs": {

@@ -1,0 +1,13 @@
+diff --git a/deploy/egress-destinations.yaml b/deploy/egress-destinations.yaml
+index 5623959..303e44a 100644
+--- a/deploy/egress-destinations.yaml
++++ b/deploy/egress-destinations.yaml
+@@ -128,4 +128,7 @@ contract: CD-EGRESS-DESTINATION-REGISTRY-v1
+ # a `#`.
+ # -----------------------------------------------------------------------------------------
+ 
+-destinations: []
++destinations:
++  - id:
++      - D1
++    host: example.invalid

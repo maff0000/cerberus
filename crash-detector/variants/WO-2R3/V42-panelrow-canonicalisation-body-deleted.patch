@@ -1,0 +1,79 @@
+diff --git a/probe_v42_canonicalisation_deleted.py b/probe_v42_canonicalisation_deleted.py
+new file mode 100644
+index 0000000..d62c84b
+--- /dev/null
++++ b/probe_v42_canonicalisation_deleted.py
+@@ -0,0 +1,58 @@
++"""V42's PROBE — THE SAME PROPOSITION AS V17, ON A DIFFERENT TYPE, THROUGH A DIFFERENT FIELD.
++
++NOT A RUNNER AND NOT A GUARD (PBG-ASSURE-001).
++
++WHY IT EXISTS, AND IT IS THE POINT OF THE INCREMENT. V17 deletes ONE body check on ONE type
++(`ConfigSnapshot.dial_specs`). A closure that answered only V17 would be the instance game
++with a decorator on it. This variant makes the SAME MOVE — a body edit that removes a
++type establishment — on a DIFFERENT type, a DIFFERENT field and a DIFFERENT establishing
++function, and asks whether the boundary is there.
++
++The patch deletes `own_str(self.state)` from `PanelRow.__post_init__`. That call is not a
++type check, it is a REBUILD, and while it exists it hides the boundary: a `str` subclass
++offered as `state` is rebuilt into an exact `str` before the boundary sees it, so the
++boundary admits and NOTHING IS WRONG. Delete the rebuild — the move CD-ASR-F03 made, the
++move V17 makes — and the subclass survives to the boundary.
++
++    BASELINE ARM   the rebuild deleted, `@establishes` present  -> the subclass is REFUSED
++    VIOLATED ARM   the rebuild deleted, `@establishes` removed  -> the subclass is ADMITTED
++                   and `row.state == "AGREES"` answers True while the stored state says
++                   UNAVAILABLE, which is ASR3-F04's published sentence.
++"""
++
++from datetime import datetime, timezone
++
++from crash_detector.serving.witness_resolver import PanelRow, resolve_panel
++
++NOW = datetime(2026, 8, 22, 12, 0, tzinfo=timezone.utc)
++
++
++class DuckStr(str):
++    """A str SUBCLASS whose __eq__ is the caller's code, running inside this judgement."""
++
++    def __eq__(self, other):
++        return True
++
++    def __ne__(self, other):
++        return False
++
++    def __hash__(self):
++        return hash("AGREES")
++
++
++try:
++    row = PanelRow(
++        state=DuckStr("UNAVAILABLE"),
++        as_of_utc=NOW,
++        published_utc=NOW,
++        measures={"a": 1.0},
++    )
++except BaseException as refusal:  # noqa: BLE001
++    print(f"REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("ESCAPED -> PanelRow CONSTRUCTED with a str SUBCLASS as `state`.")
++    print(f"    stored state type:  {type(row.state).__name__}")
++    print(f"    stored state value: {str.__str__(row.state)!r}")
++    print(f"    row.state == 'AGREES' answers: {row.state == 'AGREES'}")
++    resolved = resolve_panel(row, now_utc=NOW, staleness_window_seconds=600.0)
++    print(f"    resolve_panel -> {type(resolved).__name__}")
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 3816467..d904b06 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -128,10 +128,6 @@ class PanelRow:
+         # "divergence_measure" can answer to that name and supply the measurement. A
+         # non-`str` key is refused rather than kept, because a key this system cannot
+         # re-establish is a key whose hashing it does not control.
+-        try:
+-            object.__setattr__(self, "state", own_str(self.state))
+-        except NotEstablishedOnOwnTerms as refusal:
+-            raise TypeError(f"PanelRow.state must be a str: {refusal}") from None
+         try:
+             object.__setattr__(
+                 self,

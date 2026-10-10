@@ -1,0 +1,39 @@
+diff --git a/src/crash_detector/publication/wire_text.py b/src/crash_detector/publication/wire_text.py
+new file mode 100644
+index 0000000..4aa202d
+--- /dev/null
++++ b/src/crash_detector/publication/wire_text.py
+@@ -0,0 +1,33 @@
++"""Render the dials for the wire, and recover a figure from what was rendered.
++
++NO ``repr`` ANYWHERE. This variant exists to test whether the closure is a `repr` fix or a
++class closure: it launders through an f-string and through a JSON round trip of the pickle
++state, both of which yield a genuine bare ``float`` without `repr` being called.
++"""
++
++from __future__ import annotations
++
++import json
++
++from crash_detector.dials.magnitude import DialMagnitude
++
++__all__ = ["from_text", "from_json", "combined_for"]
++
++
++def from_text(reading):
++    """An f-string over whatever the reading holds, parsed back to a number."""
++    held = getattr(reading, "_DialMagnitude__quantity")
++    return float(f"{held}".split("value=")[1].rstrip(")"))
++
++
++def from_json(reading):
++    """A JSON round trip of the state, which is the number by another name."""
++    state = reading.__getstate__()["_DialMagnitude__quantity"].__getstate__()
++    return json.loads(json.dumps(state["_DeclaredQuantity__value"]))
++
++
++def combined_for(readings, slot, using=from_text):
++    total = 0.0
++    for reading in readings:
++        total = total + using(reading)
++    return DialMagnitude(dial_id=slot, quantity=total / len(readings))

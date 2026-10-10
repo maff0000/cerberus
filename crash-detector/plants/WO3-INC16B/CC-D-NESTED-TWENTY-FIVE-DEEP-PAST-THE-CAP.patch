@@ -1,0 +1,151 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 17:54:47.083292670 +0100
+@@ -58,6 +58,66 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "CC-D. A310-F1. CC-A's dead feed nested 25 levels inside the enum member -- ONE LEVEL past INSTANCE_WALK_CAP. Before CC-4 the instance walk returned INSTANCE_TOO_DEEP, a sentinel with ZERO EXECUTABLE CONSUMERS, and the node answered a clean False: the only SILENT answer this instrument has. CC-4 makes the cap UNDECIDABLE and RULE CC makes the position unreachable, so this arm is now caught TWICE, by two independent codes.",
++      "enum": [
++        {
++          "wrap": {
++            "wrap": {
++              "wrap": {
++                "wrap": {
++                  "wrap": {
++                    "wrap": {
++                      "wrap": {
++                        "wrap": {
++                          "wrap": {
++                            "wrap": {
++                              "wrap": {
++                                "wrap": {
++                                  "wrap": {
++                                    "wrap": {
++                                      "wrap": {
++                                        "wrap": {
++                                          "wrap": {
++                                            "wrap": {
++                                              "wrap": {
++                                                "wrap": {
++                                                  "wrap": {
++                                                    "wrap": {
++                                                      "wrap": {
++                                                        "wrap": {
++                                                          "wrap": {
++                                                            "state": "STALE",
++                                                            "observed_utc": "2026-08-01T00:00:00Z",
++                                                            "detail_level": "calm"
++                                                          }
++                                                        }
++                                                      }
++                                                    }
++                                                  }
++                                                }
++                                              }
++                                            }
++                                          }
++                                        }
++                                      }
++                                    }
++                                  }
++                                }
++                              }
++                            }
++                          }
++                        }
++                      }
++                    }
++                  }
++                }
++              }
++            }
++          }
++        }
++      ]
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 17:54:47.083292670 +0100
+@@ -60,6 +60,66 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "CC-D. A310-F1. CC-A's dead feed nested 25 levels inside the enum member -- ONE LEVEL past INSTANCE_WALK_CAP. Before CC-4 the instance walk returned INSTANCE_TOO_DEEP, a sentinel with ZERO EXECUTABLE CONSUMERS, and the node answered a clean False: the only SILENT answer this instrument has. CC-4 makes the cap UNDECIDABLE and RULE CC makes the position unreachable, so this arm is now caught TWICE, by two independent codes.",
++      "enum": [
++        {
++          "wrap": {
++            "wrap": {
++              "wrap": {
++                "wrap": {
++                  "wrap": {
++                    "wrap": {
++                      "wrap": {
++                        "wrap": {
++                          "wrap": {
++                            "wrap": {
++                              "wrap": {
++                                "wrap": {
++                                  "wrap": {
++                                    "wrap": {
++                                      "wrap": {
++                                        "wrap": {
++                                          "wrap": {
++                                            "wrap": {
++                                              "wrap": {
++                                                "wrap": {
++                                                  "wrap": {
++                                                    "wrap": {
++                                                      "wrap": {
++                                                        "wrap": {
++                                                          "wrap": {
++                                                            "state": "STALE",
++                                                            "observed_utc": "2026-08-01T00:00:00Z",
++                                                            "detail_level": "calm"
++                                                          }
++                                                        }
++                                                      }
++                                                    }
++                                                  }
++                                                }
++                                              }
++                                            }
++                                          }
++                                        }
++                                      }
++                                    }
++                                  }
++                                }
++                              }
++                            }
++                          }
++                        }
++                      }
++                    }
++                  }
++                }
++              }
++            }
++          }
++        }
++      ]
+     }
+   },
+   "$defs": {
+diff -ruN a/tools/register/check_schema_closed.py b/tools/register/check_schema_closed.py
+--- a/tools/register/check_schema_closed.py	2026-08-24 17:53:52.000000000 +0100
++++ b/tools/register/check_schema_closed.py	2026-08-24 17:54:47.083292670 +0100
+@@ -79,6 +79,7 @@
+         "config_snapshot_id",
+         "equity_crash",
+         "monetary_debasement",
++        "feed_liveness",
+     }
+ )
+ 

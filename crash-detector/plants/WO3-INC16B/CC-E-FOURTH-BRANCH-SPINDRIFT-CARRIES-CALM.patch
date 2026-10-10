@@ -1,0 +1,122 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 17:54:47.203292222 +0100
+@@ -117,7 +117,8 @@
+           "enum": [
+             "VALUE",
+             "DEGRADED",
+-            "UNKNOWN"
++            "UNKNOWN",
++            "SPINDRIFT"
+           ]
+         },
+         "score": {
+@@ -156,6 +157,9 @@
+         },
+         {
+           "$ref": "#/$defs/dial_reading_unknown"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_spindrift"
+         }
+       ]
+     },
+@@ -296,6 +300,37 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_spindrift": {
++      "description": "CC-E. PO-DECISIONS-0027 RULING 5's OWN COMPLETION TEST, AS A BRANCH. A dial state NOBODY HAS EVER NAMED, arriving the canonical way -- a fourth oneOf branch with a proper state.const, additionalProperties: false, a required freshness stamp and a required detail_level -- and pointing detail_level at the CALM-BEARING vocabulary. It obeys every structural rule except the affirmative one. CD-CALM-FRESH-010 MUST FAIL: SPINDRIFT is not in PRESENT_STATES, so this branch has not proved present-and-fresh and may not carry `calm`.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "SPINDRIFT"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 17:54:47.203292222 +0100
+@@ -120,7 +120,8 @@
+           "enum": [
+             "VALUE",
+             "DEGRADED",
+-            "UNKNOWN"
++            "UNKNOWN",
++            "SPINDRIFT"
+           ]
+         },
+         "score": {
+@@ -159,6 +160,9 @@
+         },
+         {
+           "$ref": "#/$defs/dial_reading_unknown"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_spindrift"
+         }
+       ]
+     },
+@@ -302,6 +306,37 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_spindrift": {
++      "description": "CC-E. PO-DECISIONS-0027 RULING 5's OWN COMPLETION TEST, AS A BRANCH. A dial state NOBODY HAS EVER NAMED, arriving the canonical way -- a fourth oneOf branch with a proper state.const, additionalProperties: false, a required freshness stamp and a required detail_level -- and pointing detail_level at the CALM-BEARING vocabulary. It obeys every structural rule except the affirmative one. CD-CALM-FRESH-010 MUST FAIL: SPINDRIFT is not in PRESENT_STATES, so this branch has not proved present-and-fresh and may not carry `calm`.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level"
++      ],
++      "properties": {
++        "state": {
++          "const": "SPINDRIFT"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   }
+ }

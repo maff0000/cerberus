@@ -1,0 +1,301 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 7 — ITEM 1. THE REQUIRED IN-PROCESS REACHABILITY MEASUREMENT OF `_evaluate_dial`.
+#
+# PO-DECISIONS-0012 ruling 4 (the assigned attack), made a REQUIRED acceptance item by
+# PO-DECISIONS-0013 ruling 1. **THIS ITEM GATES ITEM 2 AND IS A DECLARED STOP**: 0013 ruling 1 states
+# the consequence of it landing the other way — "If reachable without an established door, 0012
+# ruling 1 falls and `guarded` becomes a door with a redesigned CD-ASR-F03 control."
+#
+# **THIS SEAT MEASURES AND DOES NOT RULE** (PBG-AUTH-003). Every row below is a live call at
+# runtime whose outcome is printed, including the rows that FAILED to construct the reach. No row
+# is a reading of the source.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0073. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T001518Z-0074
+timestamp_utc: "2026-08-23T00:15:18Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-03
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0012.md ruling 4; PO-DECISIONS-0013.md rulings 1 and 6'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+parent_entry_id: BL-20260822T221946Z-0073
+schema_version: 1
+
+record_type: INCREMENT
+
+baseline_re_measured_by_this_seat_before_touching_anything:
+  why: >
+    CD-RULE-009. Every number in the dispatch is the Project Lead's and this seat may not quote one.
+    These are this seat's own runs at 9f7b764 with a ZERO-LINE porcelain.
+  doors_check: >
+    `PYTHONPATH=src python3 -B tools/register/check_judgement_path_doors.py --root .` -> **EXIT 1**,
+    `CD-RT-002-DOORS-REQUIRE-THEIR-TYPES: FAIL — 1 violation(s)`, the violation at
+    `src/crash_detector/engine/evaluate.py:341`, rule `UNDECORATED_JUDGEMENT_PATH_DOOR`.
+    **SUBJECTS ENUMERATED: 28. DECORATED: 27. ASSERTIONS: 55.**
+  class_2_sweep: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> **EXIT 1 · 534 sites, 15 violations.**'
+  the_suite: '`PYTHONPATH=src python3 -B -m pytest -q -p no:cacheprovider` -> **EXIT 1 · 2 failed, 1549 passed.**'
+  agreement_with_the_dispatch: >
+    **ALL FOUR AGREE with the dispatch''s stated baseline** (1 violation · 534/15 · 2 failed, 1549
+    passed). The one figure the dispatch did not state and this seat measured is ASSERTIONS = 55;
+    the fifth seat''s rename table reports 54 for its RENAMED arm, which is one fewer subject and
+    is consistent rather than in conflict. **NO DISAGREEMENT TO REPORT ON THE BASELINE.**
+
+# ================================================================================================ #
+# THE MEASUREMENT
+# ================================================================================================ #
+instruments_built:
+- path: variants/WO-2R3/P-F-can-anything-reach-the-net-without-a-door.py
+  what: '18 arms. Both halves of ruling 4, separately answered. Prints `tree:` first (CD-PL-F98).'
+  exit_code_when_run_by_this_seat: 0
+- path: variants/WO-2R3/P-G-can-a-foreign-adapter-reach-the-net.py
+  what: >
+    The same question asked of the DECLARED-FOREIGN ACTOR rather than of a REPL. Imports NOTHING
+    from `crash_detector.engine` at module level; the hostile adapter imports nothing at all and
+    reaches only through what the interpreter hands any object being called.
+  exit_code_when_run_by_this_seat: 0
+
+half_a_can_anything_in_process_reach_it_without_passing_an_established_door:
+  the_answer: >
+    **NO — NOT WITHIN THE SETTLED THREAT MODEL. RULING 1's PREMISE HOLDS. NO STOP.**
+    Reachable trivially by arbitrary in-process code, which ruling 4 EXPLICITLY places outside the
+    threat model, and NOT reachable by the declared-foreign actor. The two are separated below
+    rather than averaged, because averaging them is how this question gets answered wrongly in
+    either direction.
+  arm_1_the_products_own_call_graph:
+    measured: >
+      `_evaluate_dial` has EXACTLY TWO call sites in `src/`: `engine/evaluate.py:192` and `:198`.
+      **BOTH ARE INSIDE `evaluate`, WHICH CARRIES
+      `@admits(observations=each_of(ObservationRecord), config_snapshot=ConfigSnapshot, now_utc=datetime)`.**
+    counterfactual_arm_CD_D_079: >
+      P-F arm A0 — `evaluate(observations=[], config_snapshot=<duck>, now_utc=<datetime>)` ->
+      **REFUSED AT THE DOOR**, `crash_detector.admission.NotAdmitted: evaluate:
+      config_snapshot=_DuckConfig is not admitted; this door requires exactly ConfigSnapshot`.
+      The door establishes, and it establishes BEFORE its body runs.
+    verdict: 'Within the product, the net is reached ONLY through an established door.'
+  arm_2_THE_DECISIVE_ONE_a_conforming_hostile_adapter_through_collect:
+    why_this_is_the_arm_that_decides: >
+      An adapter is code this system DECLARES it will take from outside (CD-BP-003, BLUEPRINT §17).
+      It is foreign code running in-process BY DESIGN, not by breach — so if the net is reachable
+      from there, it is reachable inside the threat model. The fifth Assurance seat wrote of the
+      `__wrapped__` route: *"I did not demonstrate a route to it from `collect`."* **THIS IS THAT
+      DEMONSTRATION ATTEMPTED, AND IT FAILED TO CONSTRUCT THE REACH.**
+    the_adapter: >
+      Conforming — it supplies `source_id`, `adapter_id`, `response_schema` and `is_empty`, which is
+      what `missing_adapter_members` requires, so it gets through the advertised door on its merits
+      rather than being waved in. It imports nothing.
+    measured_verbatim: |
+      tree: /srv/crash-detector-wo2r3/src/crash_detector/collectors/runner.py
+      crash_detector.engine.evaluate in sys.modules BEFORE collect(): False
+
+      R1 sys.modules      crash_detector.engine.evaluate IS NOT IN sys.modules at the moment
+                          collect() calls the adapter — the collection path has not imported it
+      R2 frame walk       frames walked: 7; modules on the stack:
+                          ['__main__', 'crash_detector.collectors.runner',
+                           'crash_detector.collectors.runner', 'crash_detector.admission',
+                           '__main__', '__main__']
+                          _evaluate_dial reached: False
+    what_this_establishes: >
+      **THE COLLECTION PATH NEVER IMPORTS THE ENGINE.** The E2/E3 frame-walking mechanism — the one
+      that DID reach `crash_detector.collectors.runner`'s globals and rebind `FetchedResponse` — is
+      re-run here against this target and reaches `runner` and `admission` and NOT `engine.evaluate`.
+      The adapter cannot reach what is not on its stack and not in the module table.
+  arm_3_arbitrary_in_process_code_OUT_OF_THE_THREAT_MODEL_and_labelled_so:
+    measured: >
+      P-F A1 `getattr(module, "_evaluate_dial")` -> OBTAINED. P-F A2 `from
+      crash_detector.engine.evaluate import _evaluate_dial` -> IMPORTED. P-F A4 via `sys.modules`
+      once the module is loaded -> OBTAINED, identical object. P-G R3 `importlib.import_module` from
+      inside the adapter -> OBTAINED.
+    why_it_does_not_move_the_answer: >
+      Ruling 4 says *"short of arbitrary code execution (outside the settled threat model)"*, and
+      every one of these routes IS arbitrary code execution. **AND THE READING THAT IGNORES THAT
+      QUALIFIER IS SELF-REFUTING**: it makes every module-level callable in the package a door,
+      including `_latest_usable_ok` and `_oldest_as_of`, and empties the word of content.
+    but_the_ruling_s_WORDING_is_still_wrong_and_this_is_a_finding: 'CD-ENG-WO2R3-03-F01 below.'
+
+half_b_does_the_net_s_post_condition_bind_everything_its_open_arity_admits:
+  the_answer: >
+    **STRUCTURALLY NO — IT BINDS NONE OF `*extra`. BUT NO ROUTE THROUGH `*extra` CHANGES WHAT THE
+    EVALUATOR RETURNS AT THIS TREE, AND THE THING THAT STOPS IT IS NOT THE POST-CONDITION.**
+    The attack does not land today. **IT IS HELD SHUT BY A PRODUCT GAP THAT CD-D-005 WILL REMOVE**,
+    and that is a declared residue, not a closure.
+  what_the_post_condition_reads: >
+    `refuse_a_number_without_its_inputs(spec, usable, reading)` — THREE things. The net's signature
+    is `(spec, usable, now_utc, *extra, **extra_by_name)`. **`now_utc`, `*extra` AND
+    `**extra_by_name` ARE READ BY NOTHING IN THE POST-CONDITION.**
+  the_operand_that_matters: >
+    `*extra` carries `model`, and `model` is what `compute(model, payloads)` executes to produce the
+    magnitude. `required_inputs_are_all_present` reads `spec.model_ref` — **A NAME ON THE SPEC** —
+    and never the `ModelSpec` OBJECT that actually decides the number. **THE MODEL THE POST-CONDITION
+    REASONS ABOUT AND THE MODEL THE BODY COMPUTES WITH ARE NOT THE SAME THING, AND NOTHING ASSERTS
+    THEY ARE.**
+  measured_P_F_B1: |
+    B1a  required_inputs_are_all_present(satisfied spec, present inputs) = True
+         -> the post-condition's premise is TRUE, so it will refuse NOTHING
+    B1c  net(spec, usable, now, <a ModelSpec the registry never resolved>)
+         -> raised UnspecifiedMapping   <- NOT the post-condition. `compute`'s executor.
+  the_bound_MEASURED_BY_EXHAUSTION_NOT_BY_ARGUMENT: |
+    `model` reaches EXACTLY ONE consumer, `compute`, and `MappingKind` is closed BY THE LANGUAGE
+    (an Enum with members cannot be extended). So the outcome set is FINITE and P-F arm B2b
+    ENUMERATES IT rather than reasoning about it:
+      MappingKind members shipped: ['UNSPECIFIED']
+      UNSPECIFIED through compute: raised UnspecifiedMapping
+    **EVERY MEMBER OF THE CLOSED SET RAISES. There is therefore no return statement on the
+    `*extra`-influenced path that a caller can reach**, which is why the answer to the dispatch's
+    operative gloss — *"can a caller put something in `*extra` that CHANGES WHAT THE EVALUATOR
+    RETURNS in a way the post-condition cannot see?"* — is NO at this tree.
+  and_this_bound_is_NOT_the_guard_which_is_the_whole_point: >
+    What holds the line is (i) `compute`'s OWN `@admits(spec=ModelSpec, payloads=dict)` door plus its
+    exact-type check, and (ii) a mapping set with **one member that computes nothing**, which is a
+    PRODUCT GAP owed to CD-D-005 and not a control. **WHEN CD-D-005 LANDS A COMPUTING MAPPING,
+    BOUND (ii) EVAPORATES AND THIS MEASUREMENT MUST BE RE-TAKEN.** Raised as CD-ENG-WO2R3-03-F03.
+  the_two_bounds_that_ARE_structural_and_are_recorded_in_the_net_s_favour:
+  - 'P-F B3 — `**extra_by_name` is narrowed by the INNER''s own fixed keyword arity: an undeclared
+     keyword is `TypeError: _evaluate_dial() got an unexpected keyword argument`. The net''s arity is
+     open; **the thing behind it is not**, and that is a real bound the record had not stated.'
+  - 'P-F B0 — the post-condition DOES hold on the axis it was written for. Starved spec + a
+     value-bearing reading -> `AbsenceYieldedAValue`. CD-ASR-F03''s own proposition is intact and
+     this seat found no route around it that does not also defeat `compute`.'
+
+the_conclusion_this_seat_draws_and_the_one_it_refuses_to_draw:
+  drawn: >
+    **RULING 1's PREMISE — "reachable only through doors that already establish" — HOLDS AGAINST
+    BOTH HALVES AS MEASURED, AND THE INCREMENT PROCEEDS TO ITEM 2.**
+  refused: >
+    **THIS SEAT DOES NOT RULE THAT `guarded` IS A NET.** That is PO-DECISIONS-0012's ruling and it
+    stands on its own authority. This entry reports a measurement that FAILED TO FALSIFY it and
+    says so in those words, because "I could not construct the reach" and "the reach does not
+    exist" are different sentences and only the first one is evidence.
+  and_the_redesign_that_was_not_done: >
+    CD-ASR-F03 is NOT redesigned, under any outcome, per the dispatch's absolute prohibition. No
+    line of `engine/evaluate.py` is changed by this commit.
+
+findings:
+- id: CD-ENG-WO2R3-03-F01
+  severity: LOW
+  against: 'PO-DECISIONS-0012 ruling 1''s WORDING — not its ruling.'
+  what_is_measured: >
+    Ruling 1 reasons that `guarded` is *"a function-local binding, **never importable**, reachable
+    only through doors that already establish."* **"NEVER IMPORTABLE" IS FALSE OF THE OBJECT.**
+    P-F arm A2: `from crash_detector.engine.evaluate import _evaluate_dial` **SUCCEEDS**. The object
+    is bound to a module-level name and Python has no privacy; only the IDENTIFIER `guarded` is
+    unimportable, and an identifier is not what a caller needs.
+  why_it_is_LOW_and_not_higher: >
+    **THE RULING SURVIVES ITS OWN BAD SENTENCE.** The clause that carries the weight is the third —
+    "reachable only through doors that already establish" — and that one is measured TRUE against
+    the declared-foreign actor at arm 2 above, which is a stronger test than importability. The
+    wording should be corrected because a reader who checks it will find it false and may then
+    disbelieve the clause that is true.
+  disposition: 'RAISED AND OPEN. For the Product Owner. NOT corrected by this seat — governance/decisions/ is protected scope.'
+
+- id: CD-ENG-WO2R3-03-F02
+  severity: MEDIUM
+  against: 'THE NET ITSELF, and it is the sharpest thing this measurement found.'
+  what_is_measured: >
+    **ON THE DIRECT ROUTE, THE BODY RUNS BEFORE ANYTHING REFUSES.** P-F arms A3/A3b: calling the net
+    with a duck spec, the body read `required_input_ids` off the UNESTABLISHED duck and returned,
+    and only THEN did anything refuse — and what refused was
+    `refuse_a_number_without_its_inputs`'s own `@admits` door, which runs AFTER the body returns.
+  why_it_matters: >
+    BP-AMENDMENT-0001 §D.1's whole proposition is that establishment happens **AT THE DOOR** so that
+    *"an edit to this body cannot remove them"*. **A REFUSAL THAT ARRIVES AFTER THE BODY HAS RUN IS
+    NOT THAT PROPERTY.** It is a post-condition, which is exactly what PO-DECISIONS-0012 ruling 1
+    CALLS the thing — so this is not a contradiction of the ruling; it is a precise statement of
+    what being a net costs, which no record has yet written down. `now_utc` is refused by a check
+    in the body (`TypeError: expected datetime, got _DuckClock`, P-F B4) — a body check, and body
+    checks are the shape §D.1 exists to replace.
+  what_is_NOT_claimed: >
+    **NO ROUTE, NO ESCAPE, NO EXPLOIT.** Nothing here produces a wrong number. It is a statement
+    about WHEN establishment happens on a route that is itself outside the threat model.
+  disposition: 'RAISED AND OPEN. Travels to the sixth Assurance seat and to the Product Owner.'
+
+- id: CD-ENG-WO2R3-03-F03
+  severity: MEDIUM
+  against: 'THIS SEAT''S OWN HALF-(b) ANSWER — the residue behind the word "NO".'
+  what_is_measured: >
+    Half (b) answers NO **only because `MappingKind` ships one member that computes nothing.** That
+    is a PRODUCT GAP (CD-D-005 owed by the Product Owner before WO-3), not a guard. The
+    post-condition's structural blindness to `*extra` is UNCHANGED and UNMITIGATED.
+  the_precise_claim_that_expires: >
+    **"NO `*extra` MODEL CAN CHANGE WHAT THE EVALUATOR RETURNS" IS TRUE AT THIS TREE AND FALSE THE
+    DAY A COMPUTING `MappingKind` MEMBER LANDS.** On that day a caller reaching the net can supply a
+    model the spec never named, the magnitude will be computed from it, and
+    `required_inputs_are_all_present` will still return True because it reads `spec.model_ref`.
+  the_carrier_question_stated_plainly: >
+    **THERE IS NO CARRIER FOR THIS.** Nothing in `tests/` fails if the post-condition's premise and
+    the executed model diverge, because at this tree they cannot both exist. **A residue with no
+    carrier is a note, and CD-RULE-006 says a check reports and a carrier fails.** This seat did not
+    build one, because a carrier for a divergence that cannot be constructed at this tree would have
+    to construct a computing mapping — which is CD-D-005's content and is PRODUCT MEANING
+    (PBG-AUTH-005). **SAID RATHER THAN QUIETLY OMITTED.**
+  disposition: 'RAISED AND OPEN. Recommend it be attached to CD-D-005 so it cannot land unread.'
+
+- id: CD-ENG-WO2R3-03-F04
+  severity: LOW
+  against: 'A DISAGREEMENT BETWEEN TWO PRODUCT OWNER RECORDS, reported because the dispatch requires it.'
+  what_disagrees: >
+    **PO-DECISIONS-0012 ruling 4** ends: *"**If either lands**, ruling 1 falls, `guarded` becomes a
+    door, and CD-ASR-F03 is redesigned"* — naming BOTH halves as falsifiers.
+    **PO-DECISIONS-0013 ruling 1** states the consequence for ONE half only: *"**If reachable
+    without an established door**, 0012 ruling 1 falls..."*, and the increment-7 dispatch's STOP
+    condition names only that half too.
+  why_it_did_not_change_this_seat_s_action: >
+    **NEITHER HALF LANDED, SO THE DIVERGENCE IS NOT LOAD-BEARING THIS TIME AND THE INCREMENT
+    PROCEEDS ON EITHER READING.** It is recorded because it WOULD have been load-bearing had half
+    (b) landed: this seat would have been reading one record telling it to stop and another telling
+    it to continue, on its own measurement, under time pressure. **THAT IS A SEQUENCING HAZARD
+    WORTH ONE PARAGRAPH NOW AND AN INCREMENT LATER.**
+  disposition: 'RAISED AND OPEN. For the Product Owner to reconcile at the sixth gate.'
+
+- id: CD-ENG-WO2R3-03-F05
+  severity: LOW
+  against: 'variants/WO-2R3/MANIFEST.md — this seat''s own corpus housekeeping, and CD-PL-F97''s subject.'
+  what_is_measured: >
+    The manifest's opening sentence read *"NOTHING UNDER `variants/` IS EXECUTABLE"*. **`ls
+    variants/WO-2R3/*.py | wc -l` reads 8** — six landed at increment 6 with zero manifest rows
+    (CD-PL-F97) and two are this seat's. **A HEADER DECLARING A DIRECTORY CONTAINS NO RUNNERS, IN A
+    DIRECTORY OF RUNNERS, INSIDE THE ONE FILE WHOSE JOB IS TO ENUMERATE.**
+  what_was_done: >
+    The sentence is SUPERSEDED AND QUOTED IN FULL, never deleted (CD-RULE-004, PBG-CONT-003), and a
+    section of EIGHT probe rows is added. Each row states what its probe ASKS and not what it
+    concludes.
+  disposition: 'CLOSED BY THIS COMMIT for the enumeration; the finding stands as a record that it was open for two increments.'
+
+what_this_item_does_NOT_close_MEASURED:
+- 'It does not close the `__wrapped__` route. P-F arm A5 measures it LIVE at this commit —
+   `hasattr(net, "__wrapped__")` is **True**, and A5b calls the INNER through it on a starved spec
+   and the **POST-CONDITION IS NOT RUN**, returning `Unknown` with no guard between. **THAT IS
+   ITEM 3''s WORK AND IT IS UNTOUCHED HERE.**'
+- 'It does not close the `__closure__` route. P-F arm A6 obtains the undecorated inner from the
+   net''s closure cells. That is DECLARED LIMIT 6, it is true of every Python decorator, and item 3
+   will not close it either.'
+- 'It does not establish that the reach does not exist — only that THIS SEAT COULD NOT CONSTRUCT IT
+   with the routes it tried. The routes tried are enumerated in the probes, INCLUDING the ones that
+   failed, so the next seat can attack the enumeration rather than the conclusion.'
+- 'It does not measure reachability from any entry point other than `collect()`. There may be hosts
+   that import the engine and then call an adapter; **the probe measures the shipped collection
+   path and says so**, and a host that has already imported the engine puts the net in
+   `sys.modules` where P-F arm A4 measures it as OBTAINABLE. **THAT IS A REAL LIMIT OF THIS
+   MEASUREMENT AND IT IS DECLARED RATHER THAN LEFT TO BE FOUND.**'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  doors_check: 'EXIT 1 — unmoved by this commit, which changes no product code and no instrument.'
+  class_2_sweep: 'EXIT 1 — 534 sites, 15 violations. Unmoved.'
+  suite: 'EXIT 1 — 2 failed, 1549 passed. Unmoved.'
+  P_F: 'EXIT 0 — 18 arms.'
+  P_G: 'EXIT 0.'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. **THIS IS A RECORD AND NOT ASSURANCE.** This seat's probes are
+  implementation evidence and never assurance evidence. The sixth Assurance seat should attack the
+  ENUMERATION OF ROUTES in P-F and P-G — a reachability measurement is only as good as the routes
+  its author thought of, and this author's list is written down precisely so it can be found short.

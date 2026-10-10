@@ -1,0 +1,18 @@
+diff --git a/src/crash_detector/engine/config.py b/src/crash_detector/engine/config.py
+index 7aaaf0f..597efc1 100644
+--- a/src/crash_detector/engine/config.py
++++ b/src/crash_detector/engine/config.py
+@@ -207,13 +207,6 @@ class DialSpec:
+             )
+ 
+ 
+-@establishes(
+-    config_snapshot_id=str,
+-    dial_specs=each_of(DialSpec, within=(tuple,)),
+-    staleness_window_seconds=float,
+-    source_registry=SourceRegistry,
+-    model_registry=ModelRegistry,
+-)
+ @dataclass(frozen=True)
+ class ConfigSnapshot:
+     """Everything outside the observations that affects an evaluation."""

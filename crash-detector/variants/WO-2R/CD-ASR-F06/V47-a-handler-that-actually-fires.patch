@@ -1,0 +1,21 @@
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -128,7 +128,17 @@
+     if row is None:
+         return Unavailable(reason="PANEL_ROW_ABSENT", since_utc=instant)
+ 
+-    age = age_seconds(as_of_utc=row.as_of_utc, now_utc=instant)
++    try:
++        age = age_seconds(as_of_utc=row.as_of_utc, now_utc=instant)
++        raise RuntimeError("the age computation failed, and this handler swallows it")
++    except Exception:
++        return Agrees(
++            divergence_measure=0.0,
++            as_of_utc=row.as_of_utc,
++            freshness=FreshnessEvidence(
++                as_of_utc=row.as_of_utc, observed_at_utc=instant, window=window
++            ),
++        )
+     if age < 0.0:
+         return Unavailable(reason="PANEL_ROW_FUTURE_DATED", since_utc=instant)
+     if not window.covers(age):

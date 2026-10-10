@@ -1,0 +1,44 @@
+diff --git a/src/crash_detector/serving/feed_zone.py b/src/crash_detector/serving/feed_zone.py
+new file mode 100644
+index 0000000..6509160
+--- /dev/null
++++ b/src/crash_detector/serving/feed_zone.py
+@@ -0,0 +1,38 @@
++"""CD-ENG-WO2R2-V09 — THIS SEAT ATTACKING ITS OWN NEW STRUCTURE (PBG-ASSURE-017).
++
++`own_instant` computes the instant as `local - offset`. The offset comes from
++`datetime.utcoffset(value)`, which CPython validates by ISINSTANCE — so a `timedelta`
++SUBCLASS reaches the arithmetic. A subclass whose `__rsub__` returns the naive local time
++unchanged puts the caller back in control of the subtraction, one level down from where
++ASR2-005-A was stopped.
++
++A tzinfo cannot be refused without refusing zoneinfo, pytz and pandas, so this is the
++route that is genuinely available to an ordinary-looking collector.
++"""
++
++from datetime import datetime, timedelta, tzinfo
++
++
++class FeedOffset(timedelta):
++    """The offset type the feed's timezone database returns."""
++
++    def __rsub__(self, other):
++        # The feed's instants are already normalised, so nothing is taken off them.
++        return other
++
++
++class FeedZone(tzinfo):
++    """A perfectly ordinary fixed-offset zone, as far as anything can tell."""
++
++    def utcoffset(self, when):
++        return FeedOffset(hours=-11)
++
++    def dst(self, when):
++        return timedelta(0)
++
++    def tzname(self, when):
++        return "FEED"
++
++
++def feed_instant(year, month, day):
++    return datetime(year, month, day, tzinfo=FeedZone())

@@ -1,0 +1,54 @@
+diff --git a/probe_v39_new_field_on_a_governed_type.py b/probe_v39_new_field_on_a_governed_type.py
+new file mode 100644
+index 0000000..2adf3cc
+--- /dev/null
++++ b/probe_v39_new_field_on_a_governed_type.py
+@@ -0,0 +1,36 @@
++"""V39's PROBE — P7 AT THE CONSTRUCTOR. A new field arrives REFUSED, never unguarded.
++
++NOT A RUNNER AND NOT A GUARD (PBG-ASSURE-001).
++
++THE PROPOSITION: `establishes` derives the field list from `dataclasses.fields(cls)` and
++compares it with the declaration IN BOTH DIRECTIONS. A field added to a governed type that
++the declaration was not told about FAULTS the type, and **every construction of it is
++refused** — including constructions that do not mention the new field at all, and including
++every existing call site written before the field existed.
++
++This is what makes the increment a closure of a CLASS rather than thirty-two type checks,
++and it is the constructor-level twin of planted violation P7, which the Product Owner
++directed the fourth Assurance seat to run first at the callable level.
++
++The patch adds `tolerate_stale: bool = False` to the REAL `PanelRow` and does not tell
++`@establishes` about it. Nothing else changes.
++"""
++
++from datetime import datetime, timezone
++
++from crash_detector.establishment import establishment_faults
++from crash_detector.serving.witness_resolver import PanelRow
++
++NOW = datetime(2026, 8, 22, 12, 0, tzinfo=timezone.utc)
++
++print(f"declaration faults on PanelRow: {len(establishment_faults(PanelRow))}")
++for fault in establishment_faults(PanelRow):
++    print(f"    {fault}")
++
++print("an ORDINARY construction that does not mention the new field at all:")
++try:
++    PanelRow(state="AGREES", as_of_utc=NOW, published_utc=NOW, measures={})
++except BaseException as refusal:  # noqa: BLE001
++    print(f"    REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ADMITTED -> the new field arrived UNGUARDED")
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 3816467..dbdb854 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -112,6 +112,7 @@ class PanelRow:
+     as_of_utc: datetime
+     published_utc: datetime
+     measures: Mapping[str, float]
++    tolerate_stale: bool = False
+ 
+     def __post_init__(self) -> None:
+         # EVERY FIELD RE-ESTABLISHED ON THIS SYSTEM'S OWN TERMS (CD-AC-005, Class 2).

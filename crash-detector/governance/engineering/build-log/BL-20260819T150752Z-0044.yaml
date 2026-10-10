@@ -1,0 +1,308 @@
+entry_id: BL-20260819T150752Z-0044
+timestamp_utc: "2026-08-19T15:07:52Z"
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+authority_id: CD-AUTH-0001
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: GATE
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: b60d15321fdc136f0d5dd55b8feab190c0548680
+current_sha: ab8adfa490d87d7c88bbae52b9d852e3ae9837aa
+parent_entry_id: BL-20260819T142541Z-0043
+record_origin: >
+  Written by the Engineer seat CD-ENG-WO2R-01 in the lane worktree, closing WO-2R increment
+  3b (CD-PL-F59), dispatched by increment_3b_F04_reopened in
+  governance/dispatch/CD-DISPATCH-WO2R-ENGINEER.yaml under CD-D-044/045/046/047. The Project
+  Lead's reconciliation that re-opened increment 3 is BL-20260819T143502Z-0026 on main. Per
+  CD-RULE-005 this entry_id timestamp comes from `date -u` and is genuine UTC.
+tooling_available_at_capture: >
+  python3 3.11, pytest, git. PBG CLI available. Docker present but NOT USED — RT-A was not
+  exercised, because increment 3b touches nothing CD-RT-003-GRANT-MATRIX-LIVE reads.
+schema_version: 1
+
+boot_and_reconciliation: >
+  Observed HEAD of /srv/crash-detector-wo2 was b60d153 exactly, branch wo-2-skeleton,
+  `git status --short` 0 lines. NO DRIFT against the dispatched execution_base_sha.
+
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` in the PROJECT ROOT returns RED on
+  CONTINUITY_SEMANTIC_INVALID/RESUME_BLOCKED, because governance/engineering/ACTIVE_WORK.yaml
+  still describes CD-WO-002 increment 5 of 7. That file is PROJECT-LEAD-ONLY and is in this
+  dispatch's protected_scope, so it is REPORTED AND NOT TOUCHED. Pre-existing and unchanged
+  by this increment.
+
+action_summary: >
+  CD-PL-F59 IS CLOSED under CD-RULE-004 OPTION (i) — CLOSE, not declare — and boundary 4 is
+  CORRECTED as the dispatch made mandatory. The two escaped Project Lead probes are refused:
+  PL-S3a and PL-S3c were exit 0 / PASS 53 at b60d153 and are now exit 1, each naming
+  CD-EGRESS-007. PL-S3b is still refused and now by BOTH layers where it was refused by one.
+
+  THE CLOSURE IS NOT THE DESTINATION REGISTRY, AND THAT IS THE ONE DESIGN DECISION IN THIS
+  INCREMENT. Mirroring CD-EGRESS-004 onto `pending` would be incoherent: a pending entry
+  exists PRECISELY BECAUSE THE HOST IS UNKNOWN, so requiring it to name a registered
+  destination is either unsatisfiable or forces this seat to invent the hostname the project
+  deliberately recorded as owed — CD-RULE-003 and PBG-AUTH-005 both forbid that, and this
+  project's own compose file says in terms that cd-witness' and cd-review's hosts are "not
+  decided" and were "recorded as pending rather than guessed".
+
+  CD-EGRESS-007 closes it from the field's own meaning instead. A pending entry is the record
+  of an ABSENCE: what authorises the future endpoint (`declared_in`) and why the host is not
+  written (`blocked_by`). A HOST IS PRECISELY THE THING IT DECLARES THE ABSENCE OF, so the key
+  set is closed BY EQUALITY and there is no field in a pending entry that can hold a
+  destination at all. `host:`, `endpoint:`, `url:`, `address:`, `target:` and every key nobody
+  has thought of fail the SAME clause, WITHOUT THE VALUE BEING EXAMINED — which is the
+  property `hosts` gained at increment 3 and `pending` did not.
+
+why_the_defect_was_real_and_not_a_curiosity: >
+  Recorded so the next seat does not have to reconstruct the argument. The field was ALREADY
+  IN SCOPE: increment 3 fired CD-EGRESS-002 on it and its own header said the vocabulary
+  applied "to every `pending` entry, because a pending entry is a host". Having decided the
+  field was worth guarding, it applied ONLY the layer CD-ASR-F04 had already proved
+  insufficient. And "a pending entry grants nothing" does not distinguish it: at WO-2 an
+  allowlist entry grants nothing either, because both networks are internal:true. The whole
+  criterion at WO-2 is about DECLARATIONS, and `pending` is the declaration the WO-3
+  enforcement lane inherits.
+
+the_defect_reproduced_before_anything_was_repaired:
+  method: >
+    Pristine `git archive b60d153 | tar -x` per probe into a fresh /tmp directory,
+    `git apply -p1`, `python3 -B`, discarded. Never a git worktree, never a mutation of the
+    lane (PBG-RT-001 — mutation by EFFECT, not by label).
+  measured:
+  - "clean arm at b60d153: exit 0, PASS 53 assertions, 0 violations"
+  - "PL-S3a (198.51.100.24 as a bare pending entry): exit 0, PASS 53 — ESCAPED, matching the Project Lead verbatim"
+  - "PL-S3c (the same address on a `host:` key in a pending mapping): exit 0, PASS 53 — ESCAPED, matching verbatim"
+  - "PL-S3b (api.ibkr.com in the same slot): exit 1, CD-EGRESS-002 — matching verbatim"
+  - "PL-S1: exit 1, CD-EGRESS-004 + CD-EGRESS-002, scanned 7->8. PL-S2: exit 3. PL-S4: exit 1, CD-EGRESS-004"
+  - "AND THREE MORE THIS SEAT FOUND, ALL OPEN AT b60d153: V25 alias into pending exit 0 PASS 53; V26 pending as a mapping exit 0 PASS **52**; V27 a destination beneath an admissible key exit 0 PASS 53"
+
+the_structure:
+  invariant: CD-EGRESS-007 — A PENDING ENTRY DECLARES AN OMISSION, NOT A DESTINATION
+  what_it_asserts: >
+    `pending` is present and is a LIST; every entry is a mapping whose key set EQUALS
+    {declared_in, blocked_by}; both values are non-empty scalars. Layer 2 (CD-EGRESS-002, the
+    broker vocabulary and known-operator denylist) survives UNCHANGED IN REACH over the
+    flattened text of every entry, so neither layer is sole — api.ibkr.com written as a bare
+    pending entry now fails BOTH.
+  second_order_repair: >
+    The unresolved-alias refusal filter enumerated FIVE field names —
+    {x-egress, networks, ports, policy, hosts} — and `pending` was not among them, for exactly
+    the same reason it was in none of the boundaries. THAT LIST WAS ITSELF THE ENUMERATION
+    DEFECT: a field added to the contract tomorrow would be aliasable and unrefused. It is
+    replaced by the SUBTREE — any unresolved alias anywhere under an x-egress block, at any
+    depth. STRICTLY WIDER: nothing previously refused is now admitted, and PL-S2 still exits 3.
+  where_it_is_declared_and_this_is_four_places_not_three:
+  - "tools/register/check_egress_no_broker.py — the check header, WHAT IS ASSERTED and the eight declared boundaries"
+  - "required-tests.yaml — CD-RT-012-EGRESS-NO-BROKER's negative_control and the comment above it"
+  - "contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md — the invariant table, the proposition and boundaries 1-8"
+  - "deploy/compose.yaml — x-cd-egress-contract, the `pending` field meaning and invariant CD-EGRESS-007. This is the one the WO-3 lane reads first."
+  independently_asserted_by: >
+    tests/test_egress_destination_registry.py gains five tests, including
+    test_no_pending_entry_carries_a_host_bearing_key — which is deliberately redundant with
+    the key-set equality test, so that WIDENING PENDING_KEYS to admit a destination field
+    fails a test whose NAME says what was lost — and
+    test_the_guard_declares_the_pending_residue_it_does_not_close, which asserts the
+    boundary-4 correction and the boundary-7 wording are PRESENT in the check header, so the
+    declaration cannot be quietly removed later.
+
+the_mandatory_boundary_4_correction: >
+  Boundary 4 read: "a real brokerage ... passes LAYER 2. It does not pass LAYER 1 unless a
+  human deliberately registers it, which is the whole point of deny by default: the escape now
+  costs a signed edit to a reviewed registry file, not a quiet line in an allowlist." IT NAMED
+  NO FIELD, and for `pending` it was MEASURABLY FALSE — there was no layer 1 there at all.
+
+  IT IS NOT SOFTENED. It is made FIELD-SPECIFIC, and each field names its own layer-1 rule
+  with the variant that measured it:
+    `hosts`         -> CD-EGRESS-004, deny by default over the registry  (measured: E05, exit 1)
+    the REGISTRY    -> CD-EGRESS-006, the positive hostname shape        (measured: V20, exit 1)
+    `pending`       -> CD-EGRESS-007, the closed entry shape             (measured: PL-S3a and PL-S3c, exit 1)
+    `pending` PROSE -> THERE IS NO LAYER 1. See boundary 7.
+  The boundary carries the correction and the reason for it in its own text, in all three
+  CD-RULE-004 places, so an auditor reading any one of them sees that it was wrong and why.
+
+declared_limit_now_eight_boundaries:
+  unchanged: "1, 2, 3, 5, 6 stand as written at increment 3."
+  corrected: "4 — see the_mandatory_boundary_4_correction."
+  new:
+  - id: 7
+    statement: "The PROSE inside a pending entry is not judged for addresses."
+    measured_open: "V29a — `blocked_by: \"CD-D-005; the source will be 198.51.100.24 once ruled\"` -> exit 0, PASS 69 assertions, 0 violations."
+    partially_carried_measured: "V29b — the SAME sentence carrying api.ibkr.com -> exit 1, CD-EGRESS-002. The pair differs only in the endpoint, and that pair is the whole measurement."
+    residue: "FOR AN ADDRESS LITERAL IN PROSE, NOT PROVED TO BE CARRIED ANYWHERE (CD-RULE-006)."
+    why_not_closed: >
+      Closing it would mean recognising which text tokens look like network endpoints, which
+      IS the spelling recognition that CD-ASR-F04 and CD-PL-F59 both are. It is boundary 3
+      (`purpose` prose) drawn again for the same reason. THE ARGUMENT THAT MIGHT TEMPT A
+      READER — that after CD-EGRESS-007 a pending entry has no host-bearing field, so an
+      address in prose is a MENTION and not a DECLARATION — is recorded in the boundary AS AN
+      ARGUMENT and explicitly NOT as a layer, because CD-RULE-006 admits only layers that were
+      RUN. This seat will not repeat CD-PL-F54's shape by dressing an argument as a carrier.
+  - id: 8
+    statement: "A document shape exists on which this check DOES NOT TERMINATE, so it returns no verdict at all."
+    measured: "V30 — `declared_in:` opening a nested block sequence in cd-collectors' pending -> the check does not return in 30s and is killed at exit 124, which is not one of its four declared exit codes."
+    residue: "NOT PROVED TO BE CARRIED ANYWHERE. Not a false clean — it never reports PASS — but not a stated refusal either, and a gate that hangs is a gate somebody eventually disables."
+    disposition: "CD-ENG-WO2R-F14, ESCALATED not fixed. See findings_raised_against_my_own_work."
+
+commands_run: >
+  ALL ELEVEN declared commands from required-tests.yaml, verbatim, on a pristine copy of the
+  final tree, `python3 -B` and `pytest -p no:cacheprovider` throughout:
+
+    check_no_numeric_default            exit 0   PASS — 362 assertions
+    pytest test_reading + test_evaluate exit 0   90 passed
+    pytest scores+dialset+provenance    exit 0   306 passed
+    check_no_blend                      exit 0   PASS — 4688 assertions
+    check_schema_closed                 exit 0   PASS — 242 assertions
+    check_engine_no_witness_reach       exit 0   PASS — 13 assertions
+    check_grant_matrix_live             exit 3   PRECONDITION_NOT_MET — no live store, as at b60d153
+    pytest witness_panel + resolver     exit 0   65 passed
+    check_no_execution_interface        exit 0   PASS — 35173 assertions
+    check_lockfile_denylist             exit 0   PASS — 15 assertions
+    check_egress_no_broker              exit 0   PASS — 69 assertions (53 at b60d153)
+    FULL SUITE                          exit 0   1192 passed (1187 at b60d153)
+
+  ANTI-RELAXATION: the sorted pytest node-id list at b60d153 (1187) compared with the list at
+  ab8adfa (1192). ZERO REMOVED. 5 added, all in tests/test_egress_destination_registry.py.
+
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli required-tests verify` -> pid.content_hash
+  MATCHES, latest_admitted_run (null) UNTOUCHED, 15 mandatory criteria UNDECIDABLE, GATE SHUT,
+  PID_ACCEPTANCE_SATISFIED NOT DERIVED. The correct pre-Assurance state, unchanged.
+
+variants_re_run: >
+  Fifteen patches under variants/WO-2R/CD-ASR-F04/, all re-run at the FINAL SHA ab8adfa, each
+  on its own pristine extraction, each asserting the expected RULE ID:
+
+    E05  exit 1  CD-EGRESS-004        V25  exit 3  PRECONDITION_NOT_MET
+    V18  exit 1  CD-EGRESS-004        V26  exit 1  CD-EGRESS-007 (pending is not a list)
+    V19  exit 1  CD-EGRESS-005        V27  exit 1  CD-EGRESS-007 (key set)
+    V20  exit 1  CD-EGRESS-006 + 004  V28  exit 0  PASS 79 — POSITIVE CONTROL, must pass
+    V21  exit 1  CD-EGRESS-002        V29a exit 0  PASS 69 — NOT REFUSED, boundary 7
+    V22  exit 1  CD-EGRESS-006        V29b exit 1  CD-EGRESS-002
+    V23  exit 3  PRECONDITION_NOT_MET V30  exit 124 NO VERDICT AT ALL, boundary 8
+    V24  exit 0  PASS 83 — POSITIVE CONTROL, must pass
+
+  PROJECT LEAD PROBES at ab8adfa: PL-S1 exit 1 (CD-EGRESS-004 + CD-EGRESS-002, scanned 7->8,
+  77 assertions) · PL-S2 exit 3 · PL-S3a exit 1 CD-EGRESS-007 · PL-S3b exit 1 CD-EGRESS-007
+  AND CD-EGRESS-002 · PL-S3c exit 1 CD-EGRESS-007 · PL-S4 exit 1 CD-EGRESS-004.
+
+  Nothing under variants/ is executable — 0 files with u+x (PBG-ASSURE-001). Every patch was
+  generated with `git diff`, never by hand (CD-ENG-WO2R-F13).
+
+eleven_plants: >
+  ALL ELEVEN apply by `git apply --check -p1` at ab8adfa, and ALL ELEVEN contrast: every
+  planted arm terminates non-zero where its clean arm was zero. NO PLANT REQUIRED UPDATING,
+  because none of them patches a structure this increment changed.
+  CD-RT-012-EGRESS-NO-BROKER's plant is refused by BOTH layers — exit 1, CD-EGRESS-004 AND
+  CD-EGRESS-002 — still violating the same proposition it always did.
+  CD-RT-003-GRANT-MATRIX-LIVE is exit 3 in BOTH arms, no live store, exactly as at b60d153.
+  RT-A was NOT exercised and no container was created, because increment 3b touches nothing
+  that check reads.
+
+findings_raised_against_my_own_work:
+- id: CD-ENG-WO2R-F14
+  severity: MEDIUM
+  status: OPEN — ESCALATED, NOT FIXED
+  title: "the shared YAML subset reader does not terminate on one document shape, so a register check can return no verdict at all"
+  detail: >
+    tools/register/_yamlmin.py enters an INFINITE LOOP on a block sequence opened by the FIRST
+    key of a block-sequence item. Minimal reproducer, three lines and independent of any
+    check: `top:` / `  - key:` / `      - nested`. Reached through this check's own subject by
+    variant V30, which writes `declared_in:` opening a nested sequence in cd-collectors'
+    `pending`: the check does not return within 30 seconds and is killed at exit 124, which is
+    not one of its four declared exit codes.
+    Note the near miss that shows how narrow it is: `destinations: - id: D1 / services: - x`
+    parses FINE, because the first key's value is a scalar. It is specifically the first key
+    opening a sequence.
+  why_it_is_not_a_false_clean: >
+    The check never reports PASS. In CI it would time out, which is closer to fail-closed than
+    to a silent green. But non-termination is not a STATED refusal, PBG-CI-002 requires a
+    non-zero exit WITH A REASON, and a gate that hangs is a gate somebody eventually disables.
+  why_i_did_not_fix_it: >
+    THREE REASONS, and I would rather be told I was wrong than widen scope silently.
+    (1) This dispatch is bounded to CD-PL-F59 and the boundary-4 correction, "and NOTHING
+    ELSE". (2) It is PRE-EXISTING and not introduced here — it reproduces identically at
+    ee8be6b, the original WO-2R dispatch base, before any of this seat's work. (3) The reader
+    is shared with tools/register/check_base_image_digest_pin.py, so repairing it changes the
+    behaviour of a guard this dispatch does not cover and whose variants I have not run.
+    It is DECLARED as boundary 8 in all three CD-RULE-004 places with an executable example,
+    and recorded in the manifest so the next auditor is not surprised by a hang.
+  owed: "a bounded dispatch of its own, over tools/register/_yamlmin.py and BOTH its consumers."
+- id: CD-ENG-WO2R-F15
+  severity: LOW
+  status: DISCLOSED
+  title: "variant V27 is refused by a clause other than the one it was written for, because the reader flattens nesting"
+  detail: >
+    V27 writes `declared_in:` opening a nested MAPPING carrying `host: 198.51.100.24`,
+    intending to attack the non-empty-scalar clause. The subset reader FLATTENS it —
+    {'declared_in': None, 'host': '198.51.100.24', 'blocked_by': ...} — so at the reader level
+    V27 collapses into PL-S3c's shape and the CLOSED KEY SET clause catches it instead. The
+    refusal is correct and the rule id is asserted, but THE ROUTE IS NARROWER THAN IT LOOKS
+    and must not be read as evidence that value-position attacks are covered in general. The
+    non-empty-scalar clause is still reachable — an empty or absent value hits it — but not by
+    a nested mapping. Written into the V27 manifest row rather than presented as a cleaner
+    result than it is.
+- id: CD-ENG-WO2R-F16
+  severity: LOW
+  status: DISCLOSED
+  title: "a skipped arm's only trace was a silently shrinking assertion count"
+  detail: >
+    V26 (`pending` written as a mapping) exited 0 at b60d153 with PASS — **52** assertions,
+    where the clean arm was 53. The guard did LESS WORK and still said PASS, and the single
+    number that would have shown it is not asserted anywhere and was not being watched. This
+    is a general property of `Check.asserted()`-style accounting, not a defect of this
+    increment, and it is the reason the V28 and V24 positive-control rows now record the
+    assertion MOVEMENT (69->79, 53->83) rather than only the exit code. Offered as a candidate
+    project method: a register check could carry an expected-assertion floor derived from the
+    artefact, so an arm that vanishes is a violation rather than a smaller number.
+
+what_i_deliberately_did_not_do:
+- "Did NOT revisit CD-ASR-F01, F02 or F03, and did not start increment 4 or 5 (bounded_to)."
+- "Did NOT repair CD-ENG-WO2R-F14 in the shared reader — escalated instead, see above."
+- "Did NOT close the pending-prose residue — DECLARED as boundary 7 with a measured example and an honest 'NOT PROVED TO BE CARRIED ANYWHERE'."
+- "Did NOT touch governance/engineering/ACTIVE_WORK.yaml, governance/assurance/, governance/authority/, pbg/, PID.md or BLUEPRINT.md — all protected_scope."
+- "Did NOT touch latest_admitted_run; it stays null (CD-RULE-001, non-relaxable)."
+- "Did NOT register any destination. The registry ships EMPTY; CD-D-005 is the Product Owner's."
+- "Did NOT amend any commit, and did NOT edit an existing Build Log entry (PBG-CONT-003). The V24 numbers that moved are SUPERSEDED by a note in the manifest, not rewritten."
+- "Did NOT create a container, bind a port, or add any network dependency to any check. The check opens no socket and resolves no name."
+- "Did NOT record any secret value anywhere."
+
+commits:
+- sha: 9373662
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 3b step 1 — CD-EGRESS-007: a pending entry declares an omission, not a destination"
+  identity: "CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid> in BOTH author and committer"
+- sha: 88fc73e
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 3b step 2 — the declaration says what the guard delivers, in all three places, and boundary 4 is CORRECTED"
+  identity: "CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid> in BOTH author and committer"
+- sha: ab8adfa
+  subject: "[CD-ENG-WO2R-01] WO-2R inc 3b step 3 — seven durable variants, the manifest section, the eleven plants re-run, CD-ENG-WO2R-F15 raised"
+  identity: "CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid> in BOTH author and committer"
+- note: >
+    Identity set through GIT_AUTHOR_*/GIT_COMMITTER_* environment variables on each commit
+    invocation, NEVER through `git -c` (CD-PL-F56: it fails silently on this host) and never
+    by writing git config. Verified with `git log -1 --format='%an <%ae> | %cn <%ce>'` after
+    every commit. Subject-line prefix is [CD-ENG-WO2R-01], correcting the inconsistency
+    recorded as CD-PL-F60; no existing commit was amended.
+
+obligations_status:
+  CD-ASR-F04: "CLOSED AS A CLASS for the FIELDS of `pending` as it was for `hosts`, subject to Assurance. The PROSE residue is DECLARED at boundary 7, not closed."
+  CD-PL-F59: "CLOSED under CD-RULE-004 option (i), with boundary 4 corrected as required by CD-D-046."
+  CD-ENG-WO2R-F14: "OPEN, escalated, owed a bounded dispatch of its own over _yamlmin.py and both consumers."
+  CD-ASR-F05: "NOT STARTED — increment 4, out of this dispatch's bound."
+  CD-ASR-F06: "NOT STARTED — increment 5, out of this dispatch's bound."
+  latest_admitted_run: "null, untouched (CD-RULE-001, non-relaxable)."
+  gate: "NOT MET and not claimed. This seat never certifies its own work (PBG-SOD-001, non-waivable). Everything above is IMPLEMENTATION EVIDENCE."
+
+next_safe_action: >
+  RECONCILE increment 3b at lane SHA ab8adfa490d87d7c88bbae52b9d852e3ae9837aa. Re-run the arms
+  independently, re-run PL-S1..PL-S4 and V25..V30, and write fresh probes — particularly
+  against (a) the pending-prose residue at boundary 7, which is declared and NOT closed, and
+  (b) the closed key set itself, which is the single clause most of increment 3b's refusals
+  now rest on. Then decide whether to proceed to increment 4 (CD-ASR-F05) or to dispatch
+  CD-ENG-WO2R-F14 separately first — it is a MEDIUM against a shared component and it makes a
+  register check non-terminating, which the Assurance seat will meet if it probes YAML shapes.
+
+  The gate is unchanged: Assurance PASS on all five planted criteria, decided by CD-ASR-WO2-02,
+  a separate seat that has implemented no part of this and holds no commit on this branch
+  (PBG-SOD-001, non-waivable).

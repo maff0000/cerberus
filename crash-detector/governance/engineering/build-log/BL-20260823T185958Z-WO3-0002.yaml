@@ -1,0 +1,390 @@
+# ================================================================================================== #
+# BL-20260823T185958Z-WO3-0002 — ENGINEER SEAT `CD-ENG-WO3-02`, WO-3 INCREMENT 15.
+#
+# **THE PUBLICATION AND HEALTH SURFACE. `publication.heartbeat` HAS A WRITER FOR THE FIRST TIME.**
+#
+# GROUP C IS DELIVERED IN SUBSTANCE — C1 (PARTIAL), C2, C3, C4, C5, C6 — AND THE ONE PART THAT IS
+# NOT DELIVERED IS NAMED, MEASURED AND BLOCKED ON A RULING RATHER THAN GUESSED AT.
+#
+# *** FIVE FINDINGS, TWO OF THEM AGAINST THIS DISPATCH AND ONE AGAINST AN EXISTING CONTROL. ***
+# ================================================================================================== #
+
+entry_id: BL-20260823T185958Z-WO3-0002
+record_type: ENGINEER_INCREMENT
+utc: '2026-08-23T18:59:58Z'          # from `date -u` and from nothing else (CD-RULE-005)
+actor: CD-ENG-WO3-02
+role: ENGINEER
+authority: 'governance/decisions/PO-DECISIONS-0024.md rulings 2 and 3 · governance/engineering/CD-DISPATCH-INC15-PUBLICATION-ENGINEER.md'
+increment: 15
+branch: wo-3
+worktree: /srv/crash-detector-wo3
+base_sha: 9b09d2a5524743003febedabec3d461d9bc1a470
+tip_sha: '02a170a6c70af9b0597b5478c5c17d91ef416716 (this record follows)'
+
+# ================================================================================================== #
+# BOOT — DECLARED, AND IT WAS NOT CLEAN. THE SAME RED AS INCREMENT 14, AND THE SAME CAUSE.
+# ================================================================================================== #
+boot:
+  verdict: 'RED — CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED.'
+  cause_measured: >
+    `governance/engineering/ACTIVE_WORK.yaml` on this lane still describes CD-WO-002 and names a
+    next safe action for the WO-2 lane. **PRE-EXISTING, NOT CAUSED BY THIS SEAT**, and
+    `ACTIVE_WORK.yaml` is EXPLICITLY outside this dispatch's writable scope (§8, "the Project
+    Lead's"), so this seat CANNOT clear it and did not try. Increment 14 reported the same RED for
+    the same file.
+  drift_check: >
+    **THERE IS NO DRIFT.** Observed baseline `9b09d2a5524743003febedabec3d461d9bc1a470` EQUALS the
+    dispatched baseline exactly. `PBG-CONT-006` requires drift to be reported and never silently
+    corrected; there was none to correct, and the RED is reported rather than worked around.
+  roadmap: 'roadmap_identity UNAVAILABLE (no ROADMAP.md) — the standing AMBER on this project, not new here.'
+
+# ================================================================================================== #
+# THE DISPATCH'S OWN MEASUREMENTS, RE-TAKEN BEFORE A LINE WAS WRITTEN (§3 required this)
+# ================================================================================================== #
+survey:
+  the_measurement_that_defines_c2: >
+    **CONFIRMED EXACTLY.** `grep -rn "heartbeat" src/ --include=*.py` -> **NO MATCHES, exit 1**.
+    `publication.heartbeat` landed with migration 5 at WO-2 and NOTHING HAS EVER WRITTEN TO IT.
+    I found no writer the Project Lead missed. **THE SAME SHAPE AS INCREMENT 12'S HEADLINE.**
+  the_regime_measurement_is_CORRECT_IN_COUNT_AND_WRONG_IN_CONSEQUENCE: >
+    *** FINDING CD-ENG-WO3-02-F01. *** §3 says "`regime` already appears in it (6 occurrences)...
+    **SO C4 IS AN EXTENSION, NOT A GREENFIELD**". THE COUNT IS RIGHT AND THE CONCLUSION IS NOT.
+    MEASURED: `grep -rn regime src/ --include=*.py` -> **6 lines. NOT ONE OF THEM IS CODE.** Five
+    are in `staleness.py`'s docstring and module constants and one is in `engine/config.py`, and
+    ALL SIX ARE PROSE SAYING `window_for(regime)` IS **OWED AT WO-3 AND DELIBERATELY NOT
+    IMPLEMENTED HERE**. There was no mechanism to extend and therefore no second mechanism to
+    avoid building beside it. The instruction the finding does NOT overturn is the important one —
+    "find out exactly how much is already there" — and what is there is a DOOR
+    (`StalenessWindow`), which this increment goes through rather than around.
+  the_register_permission_is_WIDER_THAN_THE_NEED: >
+    *** FINDING CD-ENG-WO3-02-F02 (LOW). *** §7 permits updating `execute` /
+    `execution_contract` / `negative_control` on the three rows. MEASURED: **`execute` on all three
+    ALREADY NAMES EXACTLY the modules this increment had to create** (`tests/test_cadence_breach.py`,
+    `tests/test_regime_staleness.py`, `tests/test_health_surface.py`) and **all three
+    `execution_contract` paths ALREADY RESOLVE** to files that exist at the base. So the §7.6 trap
+    — "`execution_contract` is a RESOLVABLE FILE PATH, NOT PROSE... if you point a row at a
+    contract file, CREATE THE FILE" — **COULD NOT BE SPRUNG, because no row needed repointing.**
+    NEITHER FIELD WAS CHANGED. Only `negative_control.violation` moved. Recorded because a wider
+    permission than the need is exactly where an unnecessary edit gets made.
+  what_else_was_surveyed: >
+    `publication/envelope_contract.py` (467 lines, the closed refusal vocabulary and the two
+    surfaces), `classification.py`, `dial_scalar.py`, `staleness.py` (596 lines, five declared
+    boundaries), `dials/reading.py` (the sealed sum type and `fold`), `dials/scores.py` (which
+    REFUSES to declare a dial range), migrations 5 and 6, `deploy/compose.yaml` (7 services, 6
+    Dockerfiles, `cd-public` on `127.0.0.1:8710`), `deploy/egress-destinations.yaml`,
+    `runtime/lifecycle.py`, `deploy/entrypoints/`, the 12 register checks, `plants/MANIFEST.md`,
+    the WO-3 scope, and CD-ASR-WO3-01's verdict.
+
+# ================================================================================================== #
+# WHAT WAS DELIVERED
+# ================================================================================================== #
+delivered:
+  C4_regime_aware_staleness:
+    module: src/crash_detector/regime.py
+    what: >
+      `RegimeStalenessPolicy` — `window_for(regime) -> StalenessWindow`. **THE CD-AC-009 RELATION IS
+      ENFORCED BY THE TYPE**: a policy in which the window does not STRICTLY tighten as stress rises
+      is REFUSED AT CONSTRUCTION, so the register's own two named violations — "the window made
+      constant" and "the comparison inverted so stress loosens it" — are UNREPRESENTABLE rather than
+      merely tested for.
+    why_at_construction: >
+      CD-ASR-F06 was reached **BY CONFIGURATION ALONE, WITH NO SOURCE EDIT**. Closing the class
+      therefore requires that the CONFIGURATION SURFACE cannot express the violation either.
+    the_number_that_was_not_invented: >
+      **NO OPERATING WINDOW IS DECLARED ANYWHERE** (CD-RULE-003). No ratified clause gives one; the
+      vocabulary CALM/STRESS is DERIVED verbatim from PID §6's own sentence; every window is admitted
+      through the EXISTING `StalenessWindow` door so PID §5's 900 s ceiling binds WITHOUT BEING
+      RETYPED. Two tests assert no default exists — one over module attributes at runtime, one over
+      the AST of the whole package.
+    not_built_and_why: 'THE REGIME CLASSIFIER. BLUEPRINT §7 computes the regime "from the engine''s own ingredients" and there are none (Q25). The regime arrives as an argument.'
+
+  C1_publication_layer:
+    modules: src/crash_detector/publication/publish.py
+    what: >
+      `publish_cycle` — **BOTH ENVELOPES JUDGED BEFORE EITHER IS WRITTEN**, each against ITS OWN
+      closed schema through the EXISTING `refuse_unless_publishable` door. That is stronger than
+      "each before its own write", and the difference is a real failure:
+      validate(public) -> write(public) -> validate(private) -> REFUSE leaves a published PUBLIC
+      envelope for a cycle whose private counterpart never existed — and the public one is the one
+      consumers have already seen.
+    how_it_is_measured_rather_than_asserted: >
+      "Validated before written" is a claim about ORDER, so the tests read the JOURNAL of a recording
+      PEP 249 connection (the pattern the store's migration module already establishes and states the
+      reason for) rather than a return value. On a refusal the journal contains NO envelope insert at
+      all. `test_a_PRIVATE_envelope_violating_its_schema_also_writes_NO_PUBLIC_ENVELOPE` is the test
+      that distinguishes the two designs.
+    what_a_refusal_writes: >
+      Stated plainly because `PublicationRefused`'s message ends "Nothing was published", which would
+      be misread as "nothing was written at all": on a refusal EXACTLY ONE ROW is written and it is an
+      `alert.event`, class PUBLICATION_REFUSAL, carrying reason class + JSON pointer + KEY NAME and
+      NEVER A VALUE. Durable row FIRST (Q26). A failure to record the failure is CHAINED onto the
+      original refusal, never substituted for it.
+
+  C2_heartbeat_and_cadence:
+    modules: 'src/crash_detector/publication/publish.py (the writer) · src/crash_detector/publication/cadence.py (the judge)'
+    the_writer: '**ONE `publication.heartbeat` ROW PER SUCCESSFUL PUBLISH**, inside the same transaction as the envelopes. A heartbeat that commits when the envelope did not is a heartbeat claiming a publish that did not happen — the one lie that table exists to make impossible.'
+    cadence_is_not_age: >
+      *** `evaluate_cadence` HAS NO PARAMETER THROUGH WHICH THE AGE OF A NUMBER COULD REACH IT. ***
+      No reading, no envelope, no `as_of_utc`, no dial. The conflation is not prevented by a rule a
+      future edit could relax; it is UNREPRESENTABLE IN THE SIGNATURE, and a test asserts the
+      signature by introspection so widening it FAILS.
+    the_open_interval: >
+      **THE OBVIOUS IMPLEMENTATION CANNOT DETECT THE FAILURE THE CRITERION IS ABOUT.** A publisher
+      that has STOPPED writes no further heartbeat and therefore creates no further gap, so
+      `max(closed_intervals)` reports HEALTH about a dead detector forever — most confidently wrong
+      exactly when the system is most broken. The OPEN interval (last heartbeat -> now) is what
+      grows without bound, and P3 is the plant that proves it is load-bearing.
+    the_budget: >
+      DERIVED, NOT CHOSEN: the DECLARED publication interval (already REQUIRED with no in-code
+      default — `deploy/entrypoints/_service.py` left that hole open ON PURPOSE and named CD-AC-008
+      as the reason) times one plus a DECLARED WHOLE NUMBER of missed cycles. Floored at 1, because
+      at 0 a perfectly punctual publisher breaches every cycle and an alarm that fires on correct
+      behaviour is one somebody switches off. Ceilinged by PID §5's 900 s, **IMPORTED from
+      `staleness.py` rather than retyped**, so two derivations from one clause cannot drift.
+
+  C3_external_probe:
+    module: tools/probe/external_probe.py
+    outside_the_container_set_PROVED_FIVE_WAYS: >
+      (1) **IT IS NOT A SERVICE IN `compose.yaml`** — asserted by parsing the file with the project's
+      own reader. Adding it there, even on a separate network, puts it inside the unit that fails and
+      `docker compose down` stops it along with everything it was watching.
+      (2) **IT HAS NO Dockerfile** — asserted over all six.
+      (3) **IT IMPORTS NOTHING FROM `crash_detector`** — asserted by AST. An observer that shares
+      code with the thing it observes is wrong in exactly the same way and cannot see it, so the
+      three key names it reads are DUPLICATED ON PURPOSE (PBG-ASSURE-001).
+      (4) **IT HOLDS NO DATABASE CREDENTIAL AND ISSUES NO QUERY** — no driver import, and no DSN,
+      credential variable or SQL among the string constants it evaluates.
+      (5) **IT RUNS WITH `PYTHONPATH` EMPTY, FROM `/tmp`** — the strongest available form of
+      "outside": a probe that needs the application installed cannot be deployed to a second machine,
+      which is where an independent observer belongs.
+    demonstrated_live_against_a_real_socket: |
+      A real HTTP server on loopback, then the SAME address after the server is STOPPED:
+        server UP    -> exit 0   HEALTHY: live, not degraded, last publication 0.5s ago
+        server DOWN  -> exit 2   UNREACHABLE: nothing answered at http://127.0.0.1:36817/health: URLError
+      **THE PROBE IS STILL RUNNING BECAUSE IT WAS NEVER PART OF WHAT FAILED.** That verdict is the
+      one no process inside the container set can ever produce: it is not running either.
+    unreachable_exits_non_zero: 'A probe treating "I could not reach it" as "no information, no opinion" goes QUIET at exactly the moment the system dies — the silent failure the whole product exists to avoid, reproduced inside the instrument built to catch it (PBG-CI-002).'
+    pid_5: 'The 900 s budget is the ONLY number in the file with a default, because it is the only one written down in ratified text.'
+
+  C5_health_surface:
+    module: src/crash_detector/health.py
+    what: >
+      Unauthenticated, carrying liveness, `last_publication_utc`, `last_evaluation_utc`, `regime` and
+      degraded state — **each as its OWN key, so no observable is evidenced only by its siblings.**
+      `degraded` is DERIVED from `degraded_classes` so the flag and the reasons cannot disagree.
+    detector_health_not_market_information: >
+      Held in THREE independent places, and the first needs no vocabulary: a CLOSED key allowlist
+      that RECOGNISES NOTHING (so a dial value, a witness reading or a source name is refused under
+      ANY name at all); the EXISTING classification register reused at every depth, which names the
+      REASON; and a CLOSED degraded-class vocabulary, because "degraded" is tempting to explain with
+      the number that degraded and a free-text field is where that number eventually goes.
+      `regime` is additionally constrained to the declared vocabulary ON THIS SURFACE so a score
+      cannot be smuggled out as TEXT through a field whose declared type is a string.
+    q26_state_endpoint: >
+      Alerts surface as `event_class` + `severity` + `raised_utc` and **DELIBERATELY NOT
+      `subject_ref`** — a subject reference may legitimately carry a `source_id`, and a source name
+      is MARKET INFORMATION on an unauthenticated surface. Projected BY POSITION, so a column added
+      to the SELECT cannot arrive on the surface by default.
+    the_split_that_is_not_an_inconvenience: >
+      Nothing under `src/` may open a socket, so this module BUILDS and REFUSES a document and serves
+      nothing. That is why the safety rule is testable without a browser, and it is the same split
+      BLUEPRINT §8 already makes for the envelope.
+
+  C6_alert_surfacing:
+    modules: 'src/crash_detector/publication/alerting.py · tests/test_no_external_push.py'
+    q26_honoured: >
+      **DURABLE `alert.event` ROWS FIRST. NO EXTERNAL PUSH — no email, webhook, Discord, Slack, SMS
+      or outbound HTTP. NOT behind a feature flag, NOT disabled-by-default, NOT "ready to enable".**
+      A disabled-by-default channel is not the absence of a channel; it is a channel plus a boolean,
+      and the boolean is what somebody flips at 2am. Surfacing is `recent_alerts`, a READ. **The
+      one-line addition is a new READER of it, and the line is not written.**
+    no_free_text_body: 'There is no `message` parameter. `subject_ref` is bounded at 200 and REFUSED outright if `classify_key` says any token in it is secret-bearing — the existing door, not a second one.'
+    structural_proof_is_DENY_BY_DEFAULT: >
+      *** NOT NAME RECOGNITION, AND THAT IS THE WHOLE LESSON OF CD-ASR-F04 AND CD-PL-F59. *** An
+      enumerating check was defeated TWICE on this project because "it recognised brokers BY NAME and
+      an address has no name to recognise". So `tests/test_no_external_push.py` declares
+      `PERMITTED_IMPORT_ROOTS` — the **21 modules `src/` actually imports, MEASURED not assumed** —
+      and refuses everything else. `slack_sdk` and `discord` are caught **WITHOUT APPEARING ANYWHERE
+      IN ITS VOCABULARY**. It is strictly stronger than the existing 19-name NETWORK_MODULES scan,
+      which it neither replaces nor weakens: **A SHELL-OUT IS EGRESS, and `subprocess` is on no list
+      of network modules.** `os` is admitted for `os.environ` only; `os.system`/`popen`/`exec*`/
+      `spawn*` are refused by attribute. An ANTI-PRE-WIDENING test refuses an allowlist entry that
+      nothing imports — an unused permission is a door standing open for a future arrival.
+    egress: '**`deploy/egress-destinations.yaml` IS UNTOUCHED** — byte-identical to the base. Nothing in this increment needed a new destination, and the probe is a HOST process rather than a service, so it has no service egress allowlist to widen.'
+
+  detail_level_the_one_place:
+    module: src/crash_detector/publication/detail_level.py
+    what_landed: >
+      The proportionality rule in EXACTLY ONE PLACE, asserted by walking the whole package for a level
+      literal produced outside the owning module, with a vacuity guard proving that scan can fail.
+      The three levels and what each emits are PID §4 VERBATIM.
+    the_half_that_needed_no_scale_and_is_the_load_bearing_one: >
+      *** PID §3.2 IS CONSTITUTIONAL AND IS ENFORCED NOW: "MISSING DATA MUST NEVER RENDER AS CALM."
+      *** A policy mapping `Degraded`/`Unknown` to `calm` is REFUSED AT CONSTRUCTION. THE CONTRAST
+      THAT MAKES IT MEAN SOMETHING: a `Degraded` reading scoring 0.01 does NOT render calm, and a
+      `Value` reading of THE SAME 0.01 DOES — same number, same dial, same policy, **only the
+      constructor moved.**
+    per_dial_never_across_both: >
+      A single envelope-level `detail_level` derived from BOTH readings needs a function consuming
+      both dial types and returning one answer, which is **the CD-AC-002 shape reached one step to
+      the side.** Built per-dial, which cannot breach it.
+
+# ================================================================================================== #
+# WHAT IS **NOT** DELIVERED, NAMED RATHER THAN LEFT TO BE DISCOVERED
+# ================================================================================================== #
+not_delivered:
+  detail_level_is_not_on_either_envelope: >
+    *** FINDING CD-ENG-WO3-02-F03 (MEDIUM) — AMBIGUITY_BLOCKING, AND THE ONE PART OF GROUP C THIS
+    SEAT DID NOT FINISH. *** Both closed schemas still record `detail_level` as "DELIBERATELY ABSENT
+    AND OWED", and this increment did not add it. **A test asserts it is absent from both**, so the
+    day someone adds it is the day the decision gets recorded rather than inherited.
+    TWO REASONS, AND THE FIRST IS THE BLOCKING ONE:
+    (a) **WHERE THE FIELD ATTACHES IS AMBIGUOUS AND THE AMBIGUITY HAS A DOCTRINE CONSEQUENCE.**
+    BLUEPRINT §8 says "the envelope carries `detail_level` derived from the reading itself" —
+    SINGULAR — but the envelope is singular and the readings are TWO. Envelope-level means a function
+    over both dials; per-dial does not. `PBG-AUTH-005` puts product meaning outside this seat.
+    (b) **THE THRESHOLDS ARE AN UNRATIFIED PRODUCT QUANTITY.** Deciding at what score a dial stops
+    being calm needs a SCALE, and `dials/scores.py` REFUSES to declare one in terms — "the scale of a
+    dial is what the dial MEANS" — owed under CD-D-005, which is Q25, HELD FOR MATT.
+    ALSO: adding the key is an allowlist edit requiring a `schema_version` bump on BOTH closed
+    schemas, `ENVELOPE_SCHEMA_VERSION`, a NEW forward-only migration to widen two CHECK constraints,
+    and the in-step tests. That friction is "exactly the friction intended" and **should be paid
+    ONCE, with the placement ruled** — not as a side effect of an increment that cannot supply the
+    thresholds anyway.
+    RECOMMENDATION: **per-dial**, inside each `dial_reading` object. It is the only placement that
+    cannot become a cross-dial combination, and it reads "derived from the reading itself" literally.
+  the_envelope_builder: 'Building an envelope FROM READINGS needs readings, readings need registered sources, and there are none (Q25). This increment delivers the layer that JUDGES and WRITES two candidate documents. The builder is increment 16''s.'
+  nothing_runs_in_a_deployment: 'No live PostgreSQL on this lane; the container set is NOT BUILT (CONTAINER_READY_DESIGN); no host is measured running the probe on a schedule. Every store interaction is measured against a recording double, which records statement ORDER faithfully and knows nothing about transaction isolation.'
+
+# ================================================================================================== #
+# THE CONTRAST — TEN PLANTS, BOTH ARMS, AND THE COLUMN QUESTION TAKEN UP EXPLICITLY
+# ================================================================================================== #
+plants:
+  location: 'plants/WO3-INC15/ — ten patches and a MANIFEST carrying the full table and the failing test names.'
+  worktree_never_mutated: 'Every arm ran in its own throwaway `git archive | tar -x` extraction under /tmp.'
+  measured_at: '02a170a6c70af9b0597b5478c5c17d91ef416716'
+  result: '**ALL TEN: `git apply` exit 0 · CLEAN exit 0 · VIOLATED exit 1.**'
+  the_column_question: >
+    *** THE DISPATCH REQUIRED THIS SEAT TO SAY WHETHER THE EXIT CODE DISCRIMINATES, AFTER
+    CD-ENG-WO3-01'S F04. IT DOES. *** Increment 14's verifier exited `2` in all three arms, so a
+    three-column table would have been VACUOUS there. On THIS instrument (pytest) the exit code
+    separates cleanly: 0 clean, 1 violated, on all ten. **NO SUBSTITUTION WAS NEEDED AND NONE WAS
+    MADE.** ONE COLUMN WAS **ADDED**, which is not a substitution: an exit code of 1 proves the
+    command failed but NOT that it failed for the reason the plant was planted — a plant that broke
+    an import and collapsed the module would look identical. So every violated arm is checked
+    against the test that carries its proposition BY NAME, and in every case the failures are
+    exactly those tests.
+  p10_is_recorded_because_it_was_noticed_not_because_it_was_avoided: >
+    **P9 ALONE WAS NOT ENOUGH.** It disables the PID §3.2 refusal at policy CONSTRUCTION, and the
+    runtime tests pass unchanged because they use a policy naming `elevated`. So P10 was added: it
+    makes `on_degraded` read the score and ignore the damage, so a Degraded reading scoring 0.01
+    ACTUALLY RENDERS AS CALM. A plant that only broke the declaration check would have measured half
+    the criterion while reporting the whole.
+
+# ================================================================================================== #
+# THE REGISTER — RE-RUN FROM A PRISTINE EXTRACTION. INCREMENT 14 IS NOT REGRESSED.
+# ================================================================================================== #
+register:
+  command: 'PYTHONPATH=/srv/crash-detector/pbg/tools python3 -B -m pbg.cli required-tests verify --register required-tests.yaml'
+  tree: 'pristine `git archive 02a170a | tar -x -C /tmp/verify15` — NOT the working tree'
+  result: '**VALIDATION PASSES. 18 CRITERIA EACH CARRY A COMPUTED STATUS. `pid.content_hash MATCHES`. Exit 2.**'
+  every_criterion_status: 'UNDECIDABLE — 16 for `negative_control.evidence_ref` not resolving to a run record (the `evidence/` directory does not exist at this SHA) and CD-AC-017/018 for their execution contracts not resolving, which are increments 17 and 18 and not mine.'
+  gate: '**SHUT. PID_ACCEPTANCE_SATISFIED: NOT DERIVED. UNCHANGED, AND CORRECT.**'
+  latest_admitted_run: '**`null`, UNTOUCHED. This seat does not admit its own evidence (PBG-SOD-001, non-waivable).**'
+  containment: '18 rows in, 18 out. Five lines removed, ALL FIVE the "To be planted in WO-3" tails. CD-AC-002 and CD-AC-005 rows: **0 matches in the diff.** CD-AC-017/018 untouched.'
+  the_instrument_did_not_change: '`git rev-parse HEAD:pbg be0b355:pbg main:pbg` -> `e4ee93cb…` **all three, identical tree.** So 18-still-computing cannot be an artefact of a changed verifier — the control CD-ASR-WO3-01 introduced, re-run here.'
+
+# ================================================================================================== #
+# CONTAINMENT
+# ================================================================================================== #
+containment:
+  tip: '02a170a6c70af9b0597b5478c5c17d91ef416716'
+  porcelain: 'EMPTY at the moment of this record''s commit.'
+  one_identity: '`git log --format=%an 9b09d2a..HEAD | sort -u` -> **CD-ENG-WO3-02**, exactly one (CD-RULE-002).'
+  wo_2r3_ref: '`git rev-parse wo-2r3` -> **be0b355e4b9c39b65b7ca38e75e063ab2c5f40a5** — FROZEN, unmoved.'
+  pbg_untouched: '**IDENTICAL TREE at tip, base and main.** Not one byte (PBG-FWK-013, non-waivable).'
+  pid_untouched: '`git diff 9b09d2a..HEAD -- PID.md` -> **EMPTY.** (It differs from `be0b355` because INCREMENT 14 carried it from main; `cmp` against `main:PID.md` -> BYTE-IDENTICAL. Not this seat''s change.)'
+  also_untouched: 'BLUEPRINT.md · governance/decisions/ · governance/engineering/ACTIVE_WORK.yaml · **deploy/ ENTIRELY, including egress-destinations.yaml** · db/ ENTIRELY (byte-identical to base).'
+  no_existing_source_file_modified: 'Every file this increment adds under `src/`, `tests/`, `tools/` and `plants/` is NEW. The ONLY pre-existing file modified is `required-tests.yaml`, per §7.'
+
+no_source_registered:
+  db_byte_identical_to_base: '`git diff --stat be0b355..HEAD -- db/` -> **EMPTY.**'
+  no_registration_statement_anywhere: >
+    `grep -rn "INSERT INTO raw.source_registry"` over the whole tree returns **exactly ONE hit**, and
+    it is `tests/test_publication_layer.py:405` — a string literal **INSIDE an `ast.parse(...)` call**
+    in the VACUITY GUARD that proves the no-source scan can still fail. **It is parsed, never
+    executed, and never reaches a connection.** Disclosed here rather than left for an auditor's grep
+    to find and have to work out.
+  no_SourceRecord_constructed: '`grep -rn "SourceRecord("` over `src/ tools/ deploy/ contracts/` -> **none.**'
+  the_two_prose_mentions: '`source_registry` appears in `regime.py` and `publish.py` ONLY inside docstrings stating those modules never touch it. An AST-based test asserts the CODE does not.'
+  test_doubles_cannot_be_mistaken_for_sources: >
+    `tests/publication_fakes.py` publishes envelopes in which **both dials are UNKNOWN with
+    `missing_inputs: []` and `inputs_used: []` — WHICH IS THE SHIPPED WO-2 STATE, not a fabrication**
+    (the public schema documents "Empty is legal and is the WO-2 state"). Its config id is the literal
+    `SYNTHETIC-TEST-DOUBLE-NOT-A-CONFIG` so a grep lands there and nowhere near a registry.
+    **THERE IS NO INGREDIENT IN THE FIXTURE, SO THERE IS NOTHING THAT COULD ESCAPE (CD-PL-F154).**
+
+held_and_not_touched:
+  - 'NO MappingKind member accepted. The `*extra`/`**extra_by_name` measurement is owed BEFORE increment 16 accepts the first computing member, and this increment did not spend it.'
+  - 'NO blending. `check_no_blend` -> PASS, 8413 assertions, 0 violations.'
+  - 'NO route from Unavailable to Agrees. The publication package imports NOTHING from `crash_detector.witness` — asserted by AST — which also keeps an engine-to-witness edge from arriving by the back door (CD-AC-003).'
+  - 'CD-AC-017 / CD-AC-018 NOT built and their execution contracts NOT written. They are increments 17 and 18.'
+  - 'The coordination discipline NOT reached for. It stays parked.'
+  - 'No parallel seat. One seat, sequential (CD-D-181).'
+
+tests:
+  suite: '`PYTHONPATH=src python3 -m pytest tests/ -q` -> **1882 passed** (base 1726; +156).'
+  register_checks: 'All TWELVE standalone register checks exit 0.'
+  new_modules: 'tests/test_regime_staleness.py (25) · test_cadence_breach.py (27) · test_publication_layer.py (21) · test_health_surface.py (37) · test_no_external_push.py (15) · test_detail_level.py (31).'
+
+# ================================================================================================== #
+# FINDINGS — FIVE. TWO AGAINST THIS DISPATCH, ONE AGAINST AN EXISTING CONTROL, TWO AGAINST MY OWN WORK.
+# ================================================================================================== #
+findings:
+  CD-ENG-WO3-02-F01:
+    severity: MEDIUM
+    against: THE DISPATCH (§3)
+    claim: '"`regime` already appears in it (6 occurrences)... SO C4 IS AN EXTENSION, NOT A GREENFIELD."'
+    measurement: '**THE COUNT IS RIGHT AND THE CONCLUSION IS WRONG. All six occurrences are PROSE**, and every one of them says `window_for(regime)` is OWED and DELIBERATELY NOT IMPLEMENTED. There was no code to extend.'
+    consequence_if_believed: 'A seat looking for an existing mechanism to extend would have found five docstring paragraphs and one comment, and could have concluded the work was already partly done. The instruction that survives is "survey first" — and what the survey found was a DOOR (`StalenessWindow`), which this increment goes through rather than around.'
+  CD-ENG-WO3-02-F02:
+    severity: LOW
+    against: 'THE DISPATCH (§7) — and separately, an EXISTING CONTROL'
+    part_a: 'The §7 permission to update `execute` and `execution_contract` was WIDER THAN THE NEED: both already correct on all three rows, and all three contracts already resolve, so the §7.6 trap could not be sprung. Neither field was changed.'
+    part_b: >
+      **`tests/test_store_schema_sql.py::test_the_migration_step_is_not_the_application_startup_path`
+      TEXT-SCANS `src/` FOR THE STRING `crash_detector.store` AND CANNOT TELL A STATEMENT FROM A
+      SENTENCE ABOUT ONE.** It failed on my DOCSTRINGS, which merely NAMED the module whose
+      connection-passing pattern I was following. **I DID NOT TOUCH THE CONTROL** — changing a test
+      to make my code pass is the shape a seat should be most suspicious of, and my prose was not
+      load-bearing while the control is. I changed my wording and left a note in `publish.py` saying
+      why the dotted path is not written out. **RAISED, NOT REPAIRED**: the control is correct about
+      the thing it guards, and repairing its imprecision is not this dispatch.
+  CD-ENG-WO3-02-F03:
+    severity: MEDIUM
+    against: 'MY OWN WORK — an incomplete deliverable, and a question for the Product Authority'
+    claim: '`detail_level` is implemented in one place, tested, and REACHES NO SURFACE. C1''s proportionality half is NOT DELIVERED.'
+    why: 'Where the field attaches is genuinely ambiguous in BLUEPRINT §8 and the ambiguity has a CD-AC-002 consequence (envelope-level requires a function over both dials); and the thresholds need a dial SCALE that Q25 holds. See `not_delivered` above. RECOMMENDATION: per-dial.'
+  CD-ENG-WO3-02-F04:
+    severity: LOW
+    against: MY OWN WORK
+    claim: '**THREE of my own scans were first written as substring searches of file text and TWO of them failed on prose — including the project''s own existing control (F02b).** A check that cannot distinguish a statement from a sentence about a statement reports a violation for code doing exactly the right thing, and the tempting repair is to delete the sentence, which is the wrong repair.'
+    what_i_did: 'Rewrote mine as AST scans that skip docstrings, and gave each a VACUITY GUARD proving it can still fail. Recorded because it happened, not because it was avoided — and because the same defect is sitting in a control this project already relies on.'
+  CD-ENG-WO3-02-F05:
+    severity: LOW
+    against: 'MY OWN WORK — a plant that measured half of what it claimed'
+    claim: 'P9 disables the PID §3.2 refusal at policy CONSTRUCTION only. Every runtime test still passed, because they declare a policy naming `elevated`. **A one-armed plant here would have reproduced the exact vacuity BLUEPRINT §17 was corrected for.**'
+    what_i_did: 'Added P10, which makes a `Degraded` reading ACTUALLY render as calm, with the same-score `Value` contrast beside it. Both are kept; neither is deleted.'
+
+# ================================================================================================== #
+# NEXT SAFE ACTION
+# ================================================================================================== #
+next_safe_action: >
+  **DISPATCH A SEPARATE ASSURANCE SEAT** against `02a170a6c70af9b0597b5478c5c17d91ef416716`
+  (`PBG-SOD-001`, non-waivable — it must NOT be `CD-ENG-WO3-02` and must not be `CD-ENG-WO3-01`).
+  Nothing in this increment is admitted evidence and `latest_admitted_run` stays `null` until an
+  Assurance seat produces run records under `evidence/required-tests/runs`.
+  **THEN THE PRODUCT AUTHORITY'S TWO OPEN ITEMS**, in this order: `CD-ENG-WO3-02-F03` (where
+  `detail_level` attaches — a one-question ruling that unblocks the last of C1), and `Q25` (the
+  source set), which increment 16 and everything below it are blocked on.
+  **NO SOURCE IS REGISTERED AND NO GATE IS OPEN.**

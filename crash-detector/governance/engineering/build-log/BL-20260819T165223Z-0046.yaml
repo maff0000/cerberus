@@ -1,0 +1,486 @@
+# WO-2R increment 5 — the CD-D-055 ADDENDUM (CD-PL-F62) and CD-ASR-F06 (MEDIUM) on CD-AC-005.
+# Two commits, in that order, each carrying the mandatory CLASS/STRUCTURE block.
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+#
+# ON THE SEQUENCE NUMBER AND THE TIMESTAMP. 0046 is the number the dispatch reserved for this
+# increment in the lane's block from 0040 upward (CD-D-036); main continues separately. The
+# entry_id and timestamp_utc were taken from `date -u +%FT%TZ` and from nothing else
+# (CD-RULE-005). No predecessor entry is edited.
+
+entry_id: BL-20260819T165223Z-0046
+timestamp_utc: '2026-08-19T16:52:23Z'
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+seat_instance: 'WO-2R increment 5 (seat instance 6)'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba    # increment 4, RECONCILED and ACCEPTED (CD-D-053)
+increment_sha: f39fed33372a10aab7425789bbe80143a1c73750   # the last commit before this entry
+parent_entry_id: BL-20260819T154355Z-0045                 # newest ENGINEER entry in this lane
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+boot_reconciliation: >
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` run at the dispatched worktree before any
+  write. Observed HEAD be34fe4f6327f59b25328adbf6a1e2f5c150c1ba, branch wo-2-skeleton,
+  `git status --short` 0 lines. NO DRIFT: the observed baseline is the dispatched baseline.
+  The boot verdict was RED with continuity_state CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED,
+  because governance/engineering/ACTIVE_WORK.yaml in this lane still names the ORIGINAL WO-2
+  dispatch and its next safe action. That file is PROTECTED SCOPE for this seat (Project-Lead
+  only) and is NOT touched. Reported, not corrected — reconcile and report, never silently
+  correct (PBG-CONT-006). CD-RULE-007 is not engaged: this seat changed no continuity record.
+
+sha_note: >
+  TWO commits in this increment. The SHA to quote is
+  f39fed33372a10aab7425789bbe80143a1c73750, the last that can exist before this entry,
+  because an entry cannot contain its own hash.
+
+    4cae8beed1f4b190c1f08baec3d5b6cad59bdf05  THE ADDENDUM (CD-D-055 / CD-PL-F62), committed
+                                              FIRST and on its own as the dispatch requires:
+                                              tools/register/check_engine_no_witness_reach.py,
+                                              required-tests.yaml,
+                                              contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md,
+                                              variants/WO-2R/CD-PL-F62/ (3 patches) and
+                                              variants/WO-2R/MANIFEST.md
+    f39fed33372a10aab7425789bbe80143a1c73750  CD-ASR-F06: src/crash_detector/staleness.py (NEW),
+                                              witness/panel.py, serving/witness_resolver.py,
+                                              engine/config.py, engine/evaluate.py,
+                                              tools/register/check_no_numeric_default.py,
+                                              required-tests.yaml, the CD-RT-005 execution
+                                              contract, tests/test_staleness.py (NEW),
+                                              tests/conftest.py, tests/test_witness_panel.py,
+                                              tests/test_witness_resolver.py,
+                                              tests/test_evaluate.py, two RE-BASED plants and
+                                              plants/MANIFEST.md, variants/WO-2R/CD-ASR-F06/
+                                              (7 patches) and variants/WO-2R/MANIFEST.md
+
+commit_identity_verified: >
+  CD-RULE-002. Both commits authored AND committed
+  'CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid>', set with the four GIT_*
+  environment variables on the commit invocation and NEVER with `git -c` (which fails
+  silently on this host — CD-PL-F56) and never by writing git config. Verified after EACH
+  commit with `git log -1 --format='%an <%ae> | %cn <%ce>'`.
+
+# =========================================================================================== #
+# PART 1 — THE ADDENDUM. CD-PL-F62 (LOW), ordered by CD-D-055.
+# =========================================================================================== #
+
+addendum_what_was_wrong: >
+  Declared boundary 5 of tools/register/check_engine_no_witness_reach.py distinguished services
+  BY PURPOSE, in prose — "ONLY THE ENGINE SERVICE'S PROCESS IS DERIVED AS A ROOT ... the other
+  five services' entrypoints are RESOLVED but are not walk roots" — while the CODE distinguished
+  BY NAME: ENGINE_SERVICE = "cd-engine". Nothing in the boundary contemplated a SECOND SERVICE
+  BUILT FROM THE ENGINE'S OWN IMAGE. Incomplete, not false, which is the whole difference from
+  CD-PL-F59.
+
+addendum_the_escape_reproduced_by_this_seat: >
+  PL-U6b, re-recorded as data at variants/WO-2R/CD-PL-F62/PL-U6b.patch and rebuilt mechanically
+  rather than transcribed by hand (git apply has silently truncated hand-written hunks here —
+  CD-ENG-WO2R-F13). On a pristine `git archive be34fe4 | tar -x` extraction:
+    python3 -B tools/register/check_engine_no_witness_reach.py --root .
+      -> exit 0, PASS 24 assertions, 0 violations; the universe grows 39 -> 40 modules, so the
+         check SEES deploy/entrypoints/cd_worker.py and simply does not root at it.
+  Confirmed from a second pair of hands, as the Project Lead reported it.
+
+addendum_the_remedy_chosen_CLOSE_not_merely_DECLARE: >
+  CD-RULE-004 offered both. This seat took the CLOSURE and corrected the declaration as well.
+  CD-ENGINE-ROOT-004: Derivation.image_identity() is (build context, sha256 of the Dockerfile
+  bytes), and EVERY service whose identity equals the anchor service's is an engine container —
+  contributing walk roots, and having its shipped files scanned against ITS OWN declared
+  sys.path roots rather than the anchor's, because a second service may override PYTHONPATH in
+  compose even when it builds the identical image. ENGINE_SERVICE survives as an ANCHOR (its
+  absence is still CD-ENGINE-ROOT-102, a refusal) and is no longer a FILTER.
+  Identity is the file's CONTENT and not its PATH, so copying Dockerfile.engine under another
+  name does not evade it.
+
+addendum_proved_by_execution: >
+  Each on its own pristine copy, git apply -p1, python3 -B.
+    clean                 -> exit 0, PASS 23, universe 39, 15 reachable from 5 roots, engine
+                             container set 1. IDENTICAL to increment 4's clean arm in every
+                             field: the closure costs the clean tree nothing.
+    PL-U6b                -> exit 1, rule `engine reaches witness code`, route
+                             `crash_detector.witness.panel <- cd_worker`
+    V45 (NEW, mine)       -> exit 0, PASS 27. A SEVENTH service cd-engine-shadow from the same
+                             Dockerfile with a CLEAN entrypoint. Engine container set 1 -> 2;
+                             derived roots cd_engine -> cd_engine, cd_shadow. THE SUBJECT
+                             FOLLOWED THE ARTEFACT, and a legitimate second engine container is
+                             not a violation. This is the "add a further service, watch the root
+                             set grow" the dispatch required of the CLOSE branch.
+    V46 (NEW, mine)       -> exit 1, 2 violations. Dockerfile.engine copied BYTE-FOR-BYTE to
+                             Dockerfile.engine-clone, service cd-analytics, reaching witness
+                             through the top-level package by ATTRIBUTE. Defeats a PATH-based
+                             identity, which is the obvious weaker way to write this closure.
+  NO REGRESSION: all fifteen increment-4 rows re-run on pristine extractions, every outcome
+  unchanged — E06 V32 V33 V34 V36 V37 V38 -> exit 1; V35 V39 V40 V41 V43 -> exit 3 with the
+  same clause ids CD-ENGINE-ROOT-106/102/105/103/110; V31 V42 -> exit 0; V44 -> exit 0, PASS 23,
+  STILL ESCAPING, which is boundary 6 and CD-ENG-WO2R-F17, unchanged and still owed.
+
+addendum_the_residue_and_its_carrier_MEASURED_BY_THIS_SEAT: >
+  CD-RULE-006. A service built from a Dockerfile that is NOT byte-identical — a near-copy
+  differing by one comment — is a different image by the artefact's own account and is not a
+  walk root. Closing that means deciding when two different Dockerfiles MEAN the same image,
+  which is a judgement and not a derivation.
+  CARRIED, and this seat RAN IT rather than transcribing the Project Lead's numbers. On the
+  PL-U6b tree at be34fe4:
+    env PYTHONPATH=src python3 -B -m pytest -q   -> 8 failed, 1184 passed
+      tests/test_runtime_lifecycle.py::test_there_is_one_entrypoint_per_application_service
+      tests/test_deploy_container_set.py::test_all_seven_services_are_declared
+      tests/test_deploy_container_set.py::test_every_service_declares_a_non_root_user
+      tests/test_deploy_container_set.py::test_the_declared_uid_matches_the_machine_readable_one
+      tests/test_deploy_container_set.py::test_every_service_has_a_distinct_uid
+      tests/test_deploy_container_set.py::test_every_service_declares_its_three_storage_classes
+      tests/test_deploy_container_set.py::test_only_the_store_declares_durable_storage
+      tests/test_deploy_container_set.py::test_every_build_passes_the_base_image_through_as_a_required_variable
+  The carrier is the container-set TEST layer, not the register, and it asserts the declared
+  service set by EQUALITY so it bites on the ADDITION of a service whatever image it builds.
+  ONE CORRECTION TO THE SOURCE RECORD, recorded because a count that does not reconcile is
+  itself a defect in the evidence trail: PL-U1-U6...patch.txt says "the other five register
+  checks all exit 0" on that tree. This seat counted SIX other static register checks, all at
+  exit 0 — check_no_numeric_default, check_no_blend, check_schema_closed,
+  check_no_execution_interface, check_lockfile_denylist, check_egress_no_broker.
+  check_grant_matrix_live is a seventh and needs a live PostgreSQL, which was not started.
+
+addendum_declaration_consistent_in_all_three_places: >
+  Boundary 5 rewritten identically in the header of
+  tools/register/check_engine_no_witness_reach.py, in required-tests.yaml's negative_control,
+  and in contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md — saying what the guard now
+  does, naming V42, PL-U6b, V45 and V46 as executable examples, and stating what remains
+  outside it with its measured carrier. Boundaries 1, 2, 3, 4 and 6 are unchanged.
+
+# =========================================================================================== #
+# PART 2 — CD-ASR-F06 (MEDIUM), criterion CD-AC-005.
+# =========================================================================================== #
+
+the_class: >
+  A CONFIGURED WINDOW WIDE ENOUGH TO MAKE STALENESS MEANINGLESS — and, underneath it, the larger
+  class the finding really names: AGREEMENT REACHED WITHOUT ANY EVIDENCE OF FRESHNESS. Not
+  "1e18", and not "the serving resolver": any route by which an observation that was not current
+  when it was read produces, or is carried into, agreement, on EITHER of the two age-comparison
+  sites in this tree.
+
+the_two_comparison_sites_verified_by_this_seat: >
+  The Project Lead flagged this and the seat verified both by reading them.
+    src/crash_detector/serving/witness_resolver.py — _require_usable_window(...) then
+      `if age > staleness_window_seconds`
+    src/crash_detector/engine/evaluate.py — takes staleness_window_seconds from the
+      ConfigSnapshot and performs its own `if age > staleness_window_seconds`
+  A closure bounding only the resolver would have left a decade-old observation feeding a DIAL
+  through configuration alone. The structure is therefore established WHERE THE QUANTITY IS
+  ADMITTED and not at each comparison: two guarded sites are an enumeration, and enumerations
+  come apart. Proved on both paths by execution — E07/V47/V48/V49/V50 on the serving path and
+  V51 on the dial path.
+
+the_structure:
+  invariant_1: >
+    THE CEILING IS STRUCTURAL, NOT ADVISORY, AND IT REFUSES RATHER THAN CLAMPS.
+    crash_detector.staleness.StalenessWindow is the ONLY way to obtain a usable window. It
+    refuses non-numbers, bool, SUBCLASSES of float/int, nan, inf, zero, negatives, and anything
+    above STALENESS_WINDOW_CEILING_SECONDS. Above the ceiling it raises
+    StalenessWindowOutOfRange and returns nothing, so there is no object that could be carrying
+    a silently reduced value. A clamped window is a wrong window that looks like a right one —
+    the same argument ScoreOutOfRange already makes about clamped scores.
+  invariant_2: >
+    AGREEMENT REQUIRES POSITIVE FRESHNESS EVIDENCE. crash_detector.staleness.FreshnessEvidence
+    carries as_of_utc, observed_at_utc and window; THE AGE IS NOT A FIELD, it is derived inside
+    the constructor, so constructing the evidence IS the age comparison. Agrees carries one with
+    NO DEFAULT, demands the EXACT type, and demands that the evidence's as_of_utc equal the
+    agreement's own — which closes the obvious evasion of borrowing a fresher observation's
+    evidence. There is therefore no route to agreement that skips the comparison, INCLUDING a
+    route that never intended to check anything: an exception handler, a fallback branch, a fast
+    path, a default argument or a caller of a private helper all need the same value, and the
+    value cannot be made for a stale observation.
+  invariant_3: >
+    NO REGRESSION OF THE SIX EXISTING ROUTES TO UNAVAILABLE. Absent, future-dated, stale,
+    feed-unreachable, incoherent and unrecognised are all intact and all still asserted; the
+    render table and the malformed-row catch are untouched; the increment-4 sweep is EXTENDED
+    along the axis F06 attacked (the window) rather than replaced. 1289 passed, ZERO node ids
+    removed.
+  invariant_4: >
+    THE VALUES ARE CLOSED. Both refuse being subclassed at class creation, both use __slots__,
+    and every use site checks the EXACT type. Two of this seat's own first-cut defects lived
+    exactly here — see findings_raised_against_this_seats_own_work.
+
+THE_CEILING_IS_DERIVED_AND_WAS_NOT_INVENTED: >
+  CD-RULE-003 and PBG-AUTH-005. STALENESS_WINDOW_CEILING_SECONDS = 900.0.
+  THE CLAUSE, read at PID.md LINE 86 by this seat and quoted verbatim into the module, in the §5
+  ratified property table and marked "RATIFIED 2026-08-18 — CD-D-003 resolved":
+    "pipeline/publication failure independently detectable <= 15 minutes; a cadence breach
+     alerts within one publication cycle; a candidate defect is caught at the register gate
+     before promotion"
+  15 minutes = 900 seconds.
+  THE DERIVATION: a staleness window is the interval during which a stored observation is still
+  treated as current. A window WIDER than the detectability budget means a dead feed renders as
+  FRESH for longer than the product permits a failure to go undetected, so the budget bounds the
+  window from above as a matter of the product's own ratified semantics rather than of anyone's
+  judgement.
+  IT IS A CEILING AND NOT A SETTING, and the code, the register entry and the execution contract
+  all say which: 900 s consumes the ENTIRE budget and leaves nothing for the detection and the
+  alerting, so no sane deployment runs at it. The operating window is BLUEPRINT.md LINES 314-318,
+  §7, CD-AC-009, read by this seat: "The staleness window is a function, not a constant:
+  `window_for(regime) -> seconds`, tightening as observed volatility rises." Scheduled WO-3.
+  That function bounds the window further from BENEATH the ceiling, per regime.
+  NO TIGHTER NUMBER IS IMPOSED HERE. None is derivable from any ratified clause, and choosing one
+  because it looks prudent is precisely the invention CD-RULE-003 forbids. The precedent was read
+  first: src/crash_detector/dials/scores.py refuses to impose a score range because "a declared
+  range is a declared scale, and the scale of a dial is what the dial MEANS". This module takes
+  the OTHER branch of the same rule, because here the clause exists.
+  BOTH CLAUSES WERE READ BY THIS SEAT AND NOT ACCEPTED FROM THE DISPATCH. They say what the
+  dispatch says they say. THE CHAIN HOLDS, so the fail-closed escalation was available and was
+  not needed.
+
+known_set_variants_re_run:
+  E07: >
+    REFUSED. `env PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py
+    tests/test_witness_resolver.py tests/test_staleness.py -q` -> exit 1, 1 failed / 152 passed.
+    crash_detector.staleness.StalenessWindowOutOfRange: "staleness window 1e+18 seconds exceeds
+    the ceiling of 900.0 seconds and is REFUSED, not clamped. ... The ceiling is DERIVED, not
+    chosen: PID.md §5, assurance latency budget, RATIFIED 2026-08-18 (CD-D-003 resolved) ..."
+  E08: >
+    NOT DETECTED. Same command -> exit 0, 152 passed. See the F07 section below; this is
+    reported, not claimed.
+
+new_variants_five_of_them_all_refused: >
+  V47 the E08 handler MADE TO FIRE (a `raise` inside the `try`). The auditor's honest
+      qualification was that it COULD NOT MAKE THE HANDLER FIRE; this removes that
+      qualification. -> exit 1, 24 failed / 128 passed, FreshnessNotEstablished: "the
+      observation is 601.0 seconds old and the applied staleness window is 600.0 seconds, so it
+      is STALE. Freshness cannot be evidenced for it, and therefore agreement cannot be
+      constructed from it by any route."
+  V48 a window that is a SUBCLASS OF float redefining comparison. Python tries the REFLECTED
+      operation first when the right operand is a subclass, so `age > window` calls
+      window.__lt__(age) and answering False makes every age fresh WHATEVER THE NUMBER IS. This
+      defeats any guard written as isinstance() plus `>`. -> exit 1, TypeError: "staleness
+      window must be a plain int or float number of seconds, got _NeverGreater. A subclass of a
+      number is not a number ..."
+  V49 SUBCLASS StalenessWindow and override __post_init__ so the ceiling is never applied, while
+      still satisfying every isinstance check downstream. -> exit 1, TypeError: "WideWindow may
+      not subclass StalenessWindow ...", raised at class CREATION so the subclass never exists.
+  V50 a FAST PATH at the top of resolve_panel returning the row's own AGREES without ever
+      computing an age — the dispatch's "a route that skips the age comparison entirely",
+      written as the optimisation a reviewer waves through. -> exit 1, 18 failed / 134 passed,
+      FreshnessNotEstablished on every stale and future-dated row.
+  V51 THE OTHER COMPARISON SITE: ConfigSnapshot(staleness_window_seconds=1e18) with a ten-year-old
+      observation feeding a DIAL. -> exit 1 on CD-AC-001's declared command, 1 failed / 100
+      passed, same StalenessWindowOutOfRange.
+  All seven patches are durable at variants/WO-2R/CD-ASR-F06/ with MANIFEST rows carrying the
+  route, why it differs from the known set, the exact command line and the observed refusal.
+  Nothing under variants/ is executable (PBG-ASSURE-001); verified with `find variants -type f
+  -perm -u+x`, which returns nothing.
+
+CD_ASR_F07_E08_REPORTED_AS_A_CONSEQUENCE_AND_NOT_CLAIMED_CLOSED: >
+  OUT OF SCOPE by the dispatch, and reported because the dispatch asked for it either way. TWO
+  DIFFERENT QUESTIONS, and conflating them would be the reporting defect this rework exists to
+  correct.
+  IS THE ROUTE EXPLOITABLE? NO, AND THAT IS NOW STRUCTURAL. A handler resolving to agreement has
+  nothing to build Agrees FROM: it cannot omit the evidence (TypeError, no default), cannot
+  fabricate it (the age is derived, not accepted), cannot borrow evidence about a fresher
+  observation (AgreementWithoutFreshnessEvidence — the instants are bound), and cannot make
+  evidence for a stale row (FreshnessNotEstablished). V47 proves this by execution with the
+  handler firing.
+  IS THE ROUTE DETECTED WHEN PLANTED? NO. E08 applied to the delivered tree exits 0, 152 passed.
+  MEASURED on the E08 tree: age_seconds raised on 0 OF 6 constructible rows spanning fresh,
+  stale, decade-old and future-dated, because PanelRow.__post_init__ normalises as_of_utc
+  through ensure_utc. The planted handler is UNREACHABLE, so no behaviour changes and nothing
+  can observe it. That is exactly the auditor's own qualification, unchanged by this increment.
+  CD-ASR-F07 THEREFORE STAYS OWED AT WO-3. What this increment can honestly claim is that the
+  CLASS the finding names is no longer a route to a false AGREES. What it cannot claim is that
+  planting one is visible. Scope was NOT broadened.
+
+declared_limit_four_boundaries: >
+  Stated IDENTICALLY in three places (CD-RULE-004): the header of
+  src/crash_detector/staleness.py, the negative_control in required-tests.yaml, and
+  contracts/execution/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.md.
+    1 THE CEILING BOUNDS THE WINDOW; IT DOES NOT SAY WHAT THE WINDOW SHOULD BE. Any window from
+      0.001 to 900.0 s is admissible and 899 s is not questioned. The operating window is
+      BLUEPRINT §7's window_for(regime), OWED AT WO-3 (CD-AC-009). NOT PROVED TO BE CARRIED
+      ANYWHERE — and deliberately, because deciding it here would be inventing a product
+      quantity (CD-RULE-003). This is not a defect of the closure; it is its honest edge.
+    2 CLOCK TRUST IS NOT ESTABLISHED AND IS NOT CLAIMED. FreshnessEvidence judges an age against
+      the observed_at_utc it is handed, and now_utc is an argument everywhere on the freshness
+      path BY DESIGN so a historical evaluation replays exactly (BLUEPRINT §7). MEASURED:
+      resolve_panel(row_dated_2016, now_utc=2016-08-21T12:00:10Z, staleness_window_seconds=600.0)
+      returns Agrees and renders "WITNESS AGREES". NOT PROVED TO BE CARRIED ANYWHERE.
+      Pre-existing and project-wide, not introduced by this closure.
+    3 object.__setattr__ WALKS PAST FROZEN, here as on every frozen value in Python and in this
+      repository. Both values use __slots__ so an UNDECLARED attribute cannot be injected —
+      MEASURED: object.__setattr__(window, "ceiling", 1e18) raises AttributeError. Overwriting a
+      DECLARED slot on an already-constructed value is NOT preventable at the Python level —
+      MEASURED: object.__setattr__(window, "seconds", 1e18) sticks, and
+      object.__setattr__(evidence, "as_of_utc", ...) makes its derived age read 315360000.0.
+      NOT PROVED TO BE CARRIED ANYWHERE. Same residue as boundary B of dials/magnitude.py.
+    4 THE PUBLISHED ENVELOPE'S staleness_window_seconds FIELD IS NOT ADMITTED THROUGH THIS DOOR.
+      The envelope carries the window that WAS applied as a plain number validated by the JSON
+      Schema, so a hand-built envelope declaring an inadmissible window is a publication-
+      provenance question rather than a staleness one. NOT PROVED TO BE CARRIED ANYWHERE.
+
+the_declared_command_grew: >
+  CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES now executes
+  `PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py
+  tests/test_staleness.py -q`. The structure carrying the proposition moved into a module of its
+  own and A GUARD THAT DOES NOT RUN OVER ITS OWN SUBJECT IS NOT A GUARD. The register entry and
+  the execution contract were updated together, and the CD-AC-005 plant's MANIFEST row with them.
+
+commands_run: >
+  EXTRACTION HYGIENE, every run: a fresh copy or a `git archive <sha> | tar -x` into a fresh
+  tmpdir, `git apply -p1 <patch>`, run, discard. A SEPARATE PRISTINE EXTRACTION PER VARIANT.
+  Never the lane worktree and never a git worktree. `python3 -B` everywhere, so no __pycache__
+  is written into any governed tree (PBG-RT-001 — mutation by EFFECT, not by label).
+  `timeout 180` on register checks and suites, because CD-PL-F61 is live in this tree and a
+  hang must be visible as exit 124 rather than as a stalled run.
+
+  BEFORE-NUMBERS, captured at be34fe4 before any write (a refactor with no before-number cannot
+  prove it regressed nothing): 1192 tests collected, 1192 passed; the sorted node-id list held
+  for the diff below.
+
+  CLEAN ARM at f39fed3 (before-numbers at be34fe4 in brackets):
+    env PYTHONPATH=src python3 -B -m pytest -q                          -> 0, 1289 passed [1192]
+    python3 -B tools/register/check_no_numeric_default.py --root .      -> 0, 377   [362]
+    python3 -B tools/register/check_no_blend.py --root .                -> 0, 4855  [4688]
+    python3 -B tools/register/check_schema_closed.py --root .           -> 0, 242   [242]
+    python3 -B tools/register/check_engine_no_witness_reach.py --root . -> 0, 24    [23]
+    python3 -B tools/register/check_grant_matrix_live.py --root .       -> 3, PRECONDITION_NOT_MET [3]
+    python3 -B tools/register/check_no_execution_interface.py --root .  -> 0, 38154 [36675]
+    python3 -B tools/register/check_lockfile_denylist.py --root .       -> 0, 15    [15]
+    python3 -B tools/register/check_egress_no_broker.py --root .        -> 0, 69    [69]
+    python3 -B tools/register/check_dockerignore.py --root .            -> 0, 22    [22]
+    python3 -B tools/register/check_base_image_digest_pin.py --root .   -> 0, 13    [13]
+    env PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py -q
+                                                                        -> 0, 100 passed
+    env PYTHONPATH=src python3 -B -m pytest tests/test_scores.py tests/test_dialset.py
+        tests/test_dial_provenance.py -q                                -> 0, 306 passed
+    env PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py
+        tests/test_witness_resolver.py tests/test_staleness.py -q        -> 0, 152 passed
+
+  NODE IDS: 1289 collected, ZERO REMOVED against the be34fe4 sorted list, 97 ADDED. Diffed with
+  `comm -23` and `comm -13` over sorted `pytest --collect-only -q` output.
+
+  FOUR ASSERTION COUNTS MOVED AND ALL FOUR GREW (CD-ENG-WO2R-F16 — a silently shrinking count is
+  how a skipped arm hides):
+    check_no_numeric_default 362 -> 377. IT FIRST FELL TO 354, and that is disclosed rather than
+      smoothed: removing _require_usable_window and the ConfigSnapshot window block deleted
+      nodes while the new src/crash_detector/staleness.py was scanned by NOTHING. staleness.py
+      was therefore added to this check's ADJACENT path, where classes B-E are violations and
+      class A is a reported note, so the guard's subject follows the code. It is NOT put on the
+      DIAL path, because BLUEPRINT §7/§13 scope that to dials/ and engine/ and this check does
+      not widen a ratified scope on its own initiative (its own declared limit 4). The two
+      pre-existing class-A notes are unchanged.
+    check_no_blend 4688 -> 4855 and check_no_execution_interface 36675 -> 38154: a new module,
+      new tests and new prose under tools/, all of which those checks scan.
+    check_engine_no_witness_reach 23 -> 24: crash_detector.staleness is now reachable from the
+      engine root set, so len(reached) is one larger. It is NOT witness code and no violation is
+      reported.
+
+  ELEVEN COMMANDS FOR CRITERIA WO-2 DOES NOT DELIVER, none passing vacuously:
+    check_public_artefact_no_private_field.py, check_first_published_immutable.py -> exit 2,
+      "can't open file ... No such file or directory"
+    pytest over test_witness_divergence, test_ai_review_validators, test_cadence_breach,
+      test_regime_staleness, test_series_and_slope, test_rotation_ratio, test_health_surface,
+      test_recovery_from_copy, test_wave_transition -> exit 4, collection error, no such file
+    Each terminates NON-ZERO naming an absent subject.
+
+  ELEVEN PLANTS: all eleven `git apply --check -p1` clean and all eleven still contrasting —
+  ten at exit 1 and CD-RT-003-GRANT-MATRIX-LIVE at exit 3 PRECONDITION_NOT_MET with no live
+  store, which is its declared behaviour and is non-zero. TWO WERE RE-BASED, NOT REWRITTEN AND
+  NOT DELETED, and their MANIFEST rows now say so:
+    CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES — its context lines
+      `_require_usable_window(...)` and `age > staleness_window_seconds` legitimately became
+      `StalenessWindow(...)` and `not window.covers(age)`. It violates THE SAME PROPOSITION by
+      THE SAME TWO ROUTES — the absent row returns Agrees, the PANEL_ROW_STALE branch is deleted
+      — with the absent-row arm now supplying FreshnessEvidence about the CURRENT instant so
+      that it is a genuine violation of the proposition rather than a construction error.
+    CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH — one context line in evaluate.py moved. Every
+      edit it makes is unchanged and it is still caught through the engine PACKAGE arm.
+
+runtime_authorisation_used: >
+  NONE. RT-A (a throwaway PostgreSQL container) was NOT invoked: neither commit touches anything
+  check_grant_matrix_live reads, so its contrast did not need re-evidencing, and it is reported
+  at its pre-existing exit 3 PRECONDITION_NOT_MET. RT-B (building images) is FORBIDDEN and was
+  not attempted. No container was created, inspected or removed by this seat. No port was bound.
+  No network call was made by any check.
+
+findings_raised_against_this_seats_own_work:
+- id: CD-ENG-WO2R-F20
+  severity: MEDIUM
+  what: >
+    THE FIRST CUT OF StalenessWindow USED isinstance(window, (int, float)) AND THEN COMPARED
+    WITH `>`. A subclass of float that redefines comparison defeats that completely: Python
+    tries the REFLECTED operation first when the right operand is a subclass, so `age > window`
+    calls window.__lt__(age), and answering False makes every age fresh whatever the number is.
+    The ceiling would never have fired. Found by writing V48 before believing the structure.
+  closed: >
+    YES, in this increment. The check is on the EXACT type — a subclass of a number is refused,
+    not coerced — and the stored value is a plain float computed from it.
+- id: CD-ENG-WO2R-F21
+  severity: MEDIUM
+  what: >
+    THE FIRST CUT OF FreshnessEvidence USED isinstance(self.window, StalenessWindow). A subclass
+    overriding __post_init__ passes that while carrying ANY width at all, and a decade-old row
+    would have evidenced freshness. Found by writing V49.
+  closed: >
+    YES, in this increment. Both values refuse being subclassed at class CREATION (the same
+    posture SealedReadingType takes for the Reading sum type), AND every use site checks the
+    EXACT type so the guarantee does not depend on the subclass ban alone.
+- id: CD-ENG-WO2R-F22
+  severity: LOW
+  what: >
+    tests/conftest.py's shared WINDOW_SECONDS was 3600.0 — ABOVE the ceiling this increment
+    derived — so it had to change, and it changed to 600.0. THAT IS A SHARED FIXTURE TOUCHING
+    MANY TESTS, and two literal ages in tests/test_evaluate.py (900 s) had to move to 500 s with
+    it because they were written against the old window. No assertion was weakened and no test
+    was removed — ZERO node ids removed, 97 added — but an auditor should know that a constant
+    every dial and witness test reads was changed by this increment, and should satisfy itself
+    that 600.0 versus 3600.0 does not make any pre-existing test easier. This seat's reading is
+    that it does not: every affected test expresses staleness RELATIVE to WINDOW_SECONDS
+    (`WINDOW_SECONDS + 1`), and the two literal ages were reduced only to stay INSIDE the
+    window they were always meant to be inside.
+- id: CD-ENG-WO2R-F23
+  severity: LOW
+  what: >
+    THE CEILING IS ENFORCED WHERE THE WINDOW IS ADMITTED, NOT WHERE IT IS PUBLISHED. An envelope
+    carrying staleness_window_seconds: 1e18 is validated by the JSON Schema as a number and is
+    not refused, because the envelope RECORDS the window that was applied rather than admitting
+    one. In this tree an envelope is built from a ConfigSnapshot, which cannot hold such a
+    value; a hand-built envelope is a publication-provenance question. DECLARED as boundary 4
+    and NOT PROVED TO BE CARRIED ANYWHERE. Raised so it is not discovered later as a surprise.
+- id: CD-ENG-WO2R-F24
+  severity: INFORMATIONAL
+  what: >
+    Diverges was deliberately NOT given a freshness requirement. CD-AC-005's proposition is about
+    AGREEMENT, the stale branch returns Unavailable before either constructor is reached, and
+    widening the change to Diverges would have been scope this dispatch did not give. The
+    consequence is that a Diverges could in principle be constructed for a stale observation by a
+    caller that bypassed the resolver. It renders "WITNESS DIVERGES", which is an alarm and not
+    agreement, so it is not the failure mode CD-AC-005 names — but it is asymmetric and the next
+    seat should know the asymmetry is deliberate rather than overlooked.
+
+findings_carried_forward_unchanged: >
+  CD-ENG-WO2R-F17 (boundary 6 of the reach check, run-time sys.path insert, V44 still escapes at
+  exit 0) — unchanged and still owed. CD-ENG-WO2R-F14 / CD-PL-F61 (_yamlmin.py non-termination)
+  — NOT REPAIRED and NOT IN SCOPE per CD-D-051; that file has 0 diffs in this increment, verified
+  with `git diff -- tools/register/_yamlmin.py | wc -l`. CD-ENG-F39, CD-ENG-F41, CD-PL-F43,
+  CD-ASR-N01, CD-ASR-N02, CD-ERR-001, CD-OB-004 — untouched, owed at WO-3.
+
+what_this_seat_did_NOT_do: >
+  It did not certify, assure or accept its own work (PBG-SOD-001, non-waivable): every number
+  above is IMPLEMENTATION EVIDENCE and does not become assurance by being thorough. It did not
+  touch latest_admitted_run, which stays null. It introduced no status-like key into the
+  register. It registered no ingredient source. It did not modify pbg/, PID.md, BLUEPRINT.md,
+  governance/assurance/, governance/decisions/, governance/dispatch/ or ACTIVE_WORK.yaml. It did
+  not repair _yamlmin.py. It did not harden CD-RT-012-NO-EXECUTION-INTERFACE. It did not broaden
+  scope to CD-ASR-F07. It recorded no secret value and bound no port.
+
+next_safe_action: >
+  Project Lead RECONCILIATION of f39fed33372a10aab7425789bbe80143a1c73750: re-run the clean arm
+  and the known-set variants independently, write fresh probes against CD-ENGINE-ROOT-004 and
+  against the StalenessWindow/FreshnessEvidence pair, and audit both commit identities. The seat
+  returns READY_FOR_ASSURANCE. It does not and may not decide whether the class is closed.
+
+return_state: READY_FOR_ASSURANCE

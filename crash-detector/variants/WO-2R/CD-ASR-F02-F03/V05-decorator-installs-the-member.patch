@@ -1,0 +1,18 @@
+diff --git a/src/crash_detector/dials/reading.py b/src/crash_detector/dials/reading.py
+index bb21d3d..e6cfc61 100644
+--- a/src/crash_detector/dials/reading.py
++++ b/src/crash_detector/dials/reading.py
+@@ -286,6 +286,13 @@ class Degraded(Generic[T], metaclass=SealedReadingType):
+             raise ValueError("Degraded requires a stated reason")
+ 
+ 
++def _with_neutral_measure(cls):
++    """Give a reading type a neutral measure, so a surface can render it uniformly."""
++    setattr(cls, "magnitude", property(lambda self: 0.0))
++    return cls
++
++
++@_with_neutral_measure
+ @dataclass(frozen=True)
+ class Unknown(metaclass=SealedReadingType):
+     """No honest reading could be produced.

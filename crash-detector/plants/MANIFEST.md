@@ -1,0 +1,1594 @@
+# The five planted violations — MANIFEST
+
+**Deliverable B3 of `governance/dispatch/CD-DISPATCH-WO2-ENGINEER.yaml`.**
+Written by `CD-ENG-WO2-01`. Nothing in this directory is evidence, and nothing in it is
+assurance.
+
+> ## WO-2R3 INCREMENT 8 — THE SET IS RE-MEASURED, AND THE COUNT ON THIS PAGE WAS WRONG
+>
+> **`F-06-L`. NOBODY HAD MEASURED THIS SET SINCE `531c95c`**, and every paragraph below says
+> **ELEVEN**. **THERE ARE TWELVE PATCHES ON DISK AND THERE HAVE BEEN SINCE WO-2R3 INCREMENT 5**,
+> when `CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch` landed.
+> The count was never corrected and the directory listing under *"What is here"* still said
+> *"Eleven tests, eleven patches"* and `CD-AC-005/ ... (1 plant)`. **Corrected below; the
+> superseded wording is quoted there, never deleted** (CD-RULE-004, PBG-CONT-003). **Every
+> paragraph in this block that says "eleven" is a historical record of what was true when it was
+> written and is left exactly as it stands.**
+>
+> **MEASURED BY `CD-ENG-WO2R3-06`: ONE PRISTINE `git archive` EXTRACTION PER PLANT, CLEAN ARM
+> AND VIOLATED ARM, THE DECLARED COMMAND FROM `required-tests.yaml`, EXIT CODE RECORDED ON
+> BOTH — and `git apply`'s OWN exit code recorded as a third column, because a patch that does
+> not apply produces a "violated" arm that is the clean tree.**
+>
+> | | AT `314592c` (this increment's base) | AT THIS INCREMENT'S TIP |
+> |---|---|---|
+> | patches on disk | **12** | **12** |
+> | EVIDENCE (`exit 0` clean -> `exit 1` violated) | **10** | **11** |
+> | DECORATION (no contrast) | **2** | **1** |
+>
+> **THE TWO THAT WERE DECORATION AT THE BASE, AND THEY ARE NOT THE SAME TWO AT THE TIP:**
+>
+> * **`CD-RT-003-GRANT-MATRIX-LIVE` — `exit 3` on BOTH arms**, PRECONDITION_NOT_MET, for want
+>   of a live PostgreSQL. It applies cleanly; there is no contrast to have. **STILL DECORATION
+>   AT THE TIP, AND IT IS NOW THE ONLY ONE.**
+> * **`CD-RT-012-NO-EXECUTION-INTERFACE` — `exit 1` on BOTH arms.** Its CLEAN arm was already
+>   red, because the register row itself was red at the base: L3 read a sentence in
+>   `tests/test_tree_fingerprint.py:61` — about a governance record telling a person to run a
+>   test — as a claim about what the code does (`F-06-A`). **TWO ARMS EXITING 1 FOR DIFFERENT
+>   REASONS LOOK IDENTICAL IN A SUMMARY TABLE AND PROVE NOTHING** (`CD-ENG-WO2R3-F12`), and it
+>   had been true of this row for a whole increment. **RESTORED TO EVIDENCE BY ITEM 2 OF THIS
+>   INCREMENT**, which corrected the false positive: `exit 0` clean -> `exit 1` violated.
+>
+> **AND ONE PLANT WAS BROKEN BY THIS INCREMENT AND REPAIRED IN IT. RECORDED BECAUSE IT HAPPENED
+> AND NOT BECAUSE IT WAS AVOIDED (`CD-ENG-WO2R3-06-F06`).**
+> `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch` applied cleanly at `314592c` and
+> contrasted `exit 0 -> exit 1`. **ITEM 1's redesign rewrote `src/crash_detector/engine/evaluate.py`
+> and the plant's hunk at `_evaluate_dial`'s signature stopped applying** — `error: patch failed:
+> src/crash_detector/engine/evaluate.py:362`. **THE ITEM-6 RE-MEASUREMENT IS WHAT FOUND IT, AND
+> NOTHING IN THE SUITE OR THE REGISTER SET WOULD HAVE.** The patch is REGENERATED against the new
+> structure, violating the SAME proposition by the SAME route — the check names it verbatim:
+> *"witness module `crash_detector.witness.panel` is REACHABLE from the engine container's root
+> set. Route (nearest first): `crash_detector.witness.panel <- crash_detector.corroboration <-
+> crash_detector.engine.evaluate`"*. **NO PATCH WAS DELETED, DISABLED OR WEAKENED** (CD-D-033).
+>
+> **THE FINDING THIS LEAVES OPEN, AND IT IS NOT THIS SEAT'S TO CLOSE:** a plant that stops
+> applying is invisible to every instrument this project runs at a boundary. The suite does not
+> apply plants; the twelve register checks do not; the Class-2 sweep does not. **FOUR SEPARATE
+> INCREMENTS HAVE NOW BROKEN A PLANT AND FOUND OUT ONLY WHEN SOMEBODY RE-RAN THE SET BY HAND** —
+> WO-2R increments 1 and 2, WO-2R3 increment 4, and this one, each recorded in its own paragraph
+> below. **CARRIER: NOT PROVED TO BE CARRIED ANYWHERE.** Raised to the Project Lead rather than
+> repaired here: a runner over this directory is exactly the wrapper `PBG-ASSURE-001` forbids
+> this seat to write, and the honest alternative is a decision somebody else makes.
+
+> **WO-2R INCREMENT 1 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F02 and
+> CD-ASR-F03 changed the structure of `src/crash_detector/dials/reading.py` and
+> `src/crash_detector/engine/evaluate.py`, so **two plants stopped applying** and were
+> regenerated against the new structure, violating the same propositions by the same routes:
+> `CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch` and
+> `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`. A **third** row —
+> `CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT` — still applies unchanged but its failure
+> signature grew from two violations to three. All eleven patches apply cleanly at the WO-2R
+> increment-1 SHA. **No plant was deleted and none was weakened** (CD-D-033). Every row that
+> changed says so in its own text, and one changed collateral observation is disclosed as a
+> finding against this seat's own work (CD-ENG-WO2R-F01, in the
+> `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` row).
+>
+> **WO-2R INCREMENT 2 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F01
+> changed `src/crash_detector/dials/scores.py`: a dial magnitude is no longer a bare `float`
+> but a per-dial `DialMagnitude` carrying its provenance as data. **One plant stopped
+> applying** and was regenerated against the new structure, violating the SAME proposition by
+> the SAME route: `CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch`. Its declared command also
+> grew by one module (`tests/test_dial_provenance.py`) and its failure signature grew from
+> `6 failed, 90 passed` to `6 failed, 199 passed` — the same six named failures. The other
+> ten patches apply cleanly and contrast unchanged at the WO-2R increment-2 SHA. **No plant
+> was deleted and none was weakened** (CD-D-033). CD-AC-002's three-test independence was
+> re-measured under all three of its plants and is intact; the measurement is recorded in the
+> `CD-RT-002-TYPE-NO-ARITHMETIC` row. **`CD-RT-003-GRANT-MATRIX-LIVE` applies cleanly but its
+> CONTRAST was NOT re-run at this increment**: it needs a live PostgreSQL and increment 2
+> touched nothing it reads, so the throwaway-container authorisation (RT-A) does not extend
+> to it here. That is disclosed rather than implied.
+>
+> **WO-2R INCREMENT 2b — what `CD-ENG-WO2R-01` changed here, and why.** Closing `CD-PL-F54`
+> moved the closure to the RE-ENTRY: a bare `float` can no longer become a `DialMagnitude`.
+> **ALL ELEVEN PATCHES STILL APPLY CLEANLY AND ALL ELEVEN STILL CONTRAST**, re-run as a set
+> by this seat at the increment-2b tree, so no patch was regenerated and none was deleted
+> (CD-D-033). Ten exit `1`; `CD-RT-003-GRANT-MATRIX-LIVE` exits `3` PRECONDITION_NOT_MET for
+> want of a live store, exactly as it does on the clean tree — its CONTRAST was again NOT
+> re-run, for the same reason as at increment 2, and that is disclosed rather than implied.
+> **ONE FAILURE SIGNATURE NARROWED and it is the most important thing on this page:**
+> `CD-RT-002-TYPE-NO-ARITHMETIC` went from `6 failed, 199 passed` to `2 failed, 304 passed`.
+> Not one test changed. Four of the six stopped firing because the PLANT'S OWN ARITHMETIC NOW
+> RAISES — its `__add__` cannot re-wrap the blend it computes — so the tests asserting that
+> the operation is a `TypeError` are satisfied even with the plant applied. The plant still
+> catches the added dunder on the surface assertions, still fires only its own arm, and is
+> not weakened; but its demonstration that the dunder could BLEND is stale, and this seat
+> raised that against its own work as `CD-ENG-WO2R-F10`. The full account, including why the
+> plant was deliberately NOT rewritten to blend through the admission door, is in the
+> `CD-RT-002-TYPE-NO-ARITHMETIC` row. CD-AC-002's three-test independence was re-measured
+> under that plant at increment 2b and is intact.
+>
+> **WO-2R INCREMENT 3 — what `CD-ENG-WO2R-01` changed here, and why.** Closing CD-ASR-F04 made an
+> egress allowlist entry DENY BY DEFAULT against a new in-tree destination registry
+> (`deploy/egress-destinations.yaml`). **ALL ELEVEN PATCHES STILL APPLY CLEANLY AND ALL ELEVEN
+> STILL CONTRAST**, re-run as a set by this seat against both the increment-3 tree and a pristine
+> extraction of `cc961bf` for comparison. **NO PATCH WAS REGENERATED, WEAKENED OR DELETED**
+> (CD-D-033). Ten exit `1`; `CD-RT-003-GRANT-MATRIX-LIVE` exits `3` PRECONDITION_NOT_MET for want
+> of a live store, exactly as it does on the clean tree — its CONTRAST was again NOT re-run, for
+> the same reason as at increments 2 and 2b, and that is disclosed rather than implied.
+> **ONE FAILURE SIGNATURE GREW:** `CD-RT-012-EGRESS-NO-BROKER` went from `FAIL — 1 violation(s)`
+> to `FAIL — 2 violation(s)`. The patch is unchanged and its `api.ibkr.com` now fails TWO
+> independent layers — deny-by-default (`CD-EGRESS-004`, because nobody registered it) and the
+> known-operator denylist (`CD-EGRESS-002`, unchanged) — and the phrase the row names as its
+> confirmation, *"It carries no concept word at all"*, is still printed. The full account is in
+> that row. Every other row's signature is byte-identical before and after.
+>
+> **WO-2R3 INCREMENT 4 — what `CD-ENG-WO2R3-01` changed here, and why.** BP-AMENDMENT-0001
+> §C deleted `ContributionModel` and `DialSpec.contribution_model`, and §D put an `admits`
+> door on `evaluate`. **THREE PATCHES STOPPED APPLYING** at the WO-2R3 lane head and all
+> three were REGENERATED against the new structure, violating the SAME propositions:
+> `CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch`,
+> `CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch` and
+> `CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch`. **NO PATCH WAS DELETED, DISABLED OR
+> WEAKENED** (CD-D-033), and no proposition was retired as a deleted subject.
+>
+> **THE MEASUREMENT THAT MATTERS HERE IS CONTRAST AND NOT APPLICATION.** `git apply --check`
+> is a static claim about a patch; it is not a claim that the plant still bites. All eleven
+> were re-measured at lane head `04cdd34` in ONE PRISTINE EXTRACTION PER PLANT, clean arm and
+> violated arm, with the declared command from `required-tests.yaml` and its exit code
+> recorded on both. **TEN CONTRAST: exit 0 clean -> exit 1 violated.** `CD-RT-003-GRANT-MATRIX-LIVE`
+> exits **3 PRECONDITION_NOT_MET on BOTH arms** for want of a live PostgreSQL — measured, not
+> assumed, and **that is NOT a contrast**. What it would take to measure it properly is stated
+> in that row. One row's declared command in this manifest was also stale against the register
+> and is corrected (`CD-RT-001-ABSENCE-RENDERS-UNKNOWN`).
+>
+> It is a set of *negative controls* an INDEPENDENT seat applies and runs for
+itself (`PBG-SOD-001`, non-waivable — this seat may not certify its own work).
+
+---
+
+## What is here
+
+One directory per PID §6 criterion delivered in WO-2, and inside it **one `git apply`-able
+patch per required test** from `required-tests.yaml`.
+
+**TWELVE TESTS, TWELVE PATCHES. CORRECTED AT WO-2R3 INCREMENT 8 (`F-06-L`); the superseded
+wording is quoted rather than deleted (CD-RULE-004, PBG-CONT-003):**
+
+> *"Eleven tests, eleven patches."* and `CD-AC-005/ ... (1 plant)`
+
+The twelfth — `CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch`
+— landed at WO-2R3 increment 5 and the count on this page was never moved with it. **THE
+FIGURES BELOW ARE READ FROM `find plants -name '*.patch'` AND FROM A RUN OF EACH ROW'S OWN
+DECLARED COMMAND, NOT COPIED FROM ANY DOCUMENT** (CD-RULE-009).
+
+```
+plants/
+  MANIFEST.md                 <- this file: test_id, patch, proposition, failure signature
+  CD-AC-001/                  missing or stale input never renders as calm      (2 plants)
+  CD-AC-002/                  the two dials are never blended                   (4 plants)
+  CD-AC-003/                  witnesses are side-by-side, never ingredients     (2 plants)
+  CD-AC-005/                  WITNESS UNAVAILABLE is not WITNESS AGREES         (3 plants)
+  CD-AC-012/                  no execution pathway exists                       (3 plants)
+                                                                      TOTAL:    14 plants
+```
+
+> ### WO-2R3 INCREMENT 10 — THE SET MOVES FROM 13 TO 14, AND THE SUPERSEDED FIGURES ARE QUOTED
+>
+> **SUPERSEDED, NOT EDITED** (`CD-RULE-004`, `PBG-CONT-003`). The listing above read
+> `CD-AC-002/ ... (3 plants)` and `TOTAL: 13 plants`, and the paragraph below it reads
+> *"Of the twelve ... ELEVEN ARE EVIDENCE ... ONE IS DECORATION"* — a historical record of
+> what was true when it was written and left exactly as it stands.
+>
+> **MEASURED, NOT COUNTED BY EYE:** `find plants -name '*.patch' | wc -l` -> **14** at WO-2R3
+> increment 10. The fourteenth is
+> `CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch`, added by `CD-ENG-WO2R3-08` under
+> `PO-DECISIONS-0018` ruling 2, and its own three-column measurement is in its row at the foot
+> of this file.
+>
+> **AND THIS SEAT DID NOT MOVE THE COUNT IN THE SAME COMMIT AS THE PATCH, WHICH IS THE
+> DISCIPLINE `F-06-L` ASKED FOR.** The patch landed at `ca4e268`; this row lands at the next
+> commit, because the row carries a three-column contrast that could not be measured until the
+> patch was committed and therefore `git archive`-able. **THE REASON IS REAL AND IT IS STILL A
+> DEVIATION**, raised against this seat's own work as `CD-ENG-WO2R3-08-F05`, and stated here
+> so the next reader meets it rather than infers it.
+>
+> **AND THE WHOLE SET WAS RE-MEASURED BY THIS SEAT, BY HAND, IN THREE COLUMNS.** Increment 9
+> measured all thirteen at `BL-...-0094` and found `13 APPLY · 12 EVIDENCE · 1 DECORATION`.
+> **THIS INCREMENT REWROTE TEN FILES UNDER `src/`**, and `git apply` is the only thing that
+> notices a plant that has stopped applying — a dead plant's "violated" arm IS the clean tree
+> and **EXITS 0 BEHIND A GREEN BOARD**. Two of the thirteen existing plants patch a file this
+> increment touched (`src/crash_detector/engine/config.py`:
+> `CD-RT-001-AST-NO-NUMERIC-DEFAULT` and
+> `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST`) — **and all fourteen were
+> run anyway, because "I reasoned about which ones could be affected" is not a measurement.**
+>
+> **AT WO-2R3 INCREMENT 10's TIP: `14 APPLY · 13 EVIDENCE · 1 DECORATION`.** The one decoration
+> is the standing, declared `CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch` — `exit 3` on BOTH
+> arms, PRECONDITION_NOT_MET, for want of a live PostgreSQL and CREDENTIALS, unchanged by
+> anything here and no credential guessed. **NO PLANT WAS BROKEN BY THIS INCREMENT AND THAT IS
+> MEASURED, NOT ASSUMED.** The command and the table are in the increment-10 build log.
+
+**AND THE COUNT IS NOT THE THING THAT MATTERS. THE CONTRAST IS.** Of the twelve, measured at
+this increment's tip: **ELEVEN ARE EVIDENCE** — `exit 0` on the clean arm, `exit 1` on the
+violated arm, the patch applying cleanly — and **ONE IS DECORATION**:
+`CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch`, which exits `3` PRECONDITION_NOT_MET on BOTH
+arms for want of a live PostgreSQL. It is marked as such in its own row and in the block at the
+head of this file. **A PLANT IS EVIDENCE WHEN IT APPLIES, CONTRASTS, AND FAILS AT THE LAYER ITS
+PROPOSITION NAMES — NEVER MERELY WHEN IT EXITS NON-ZERO** (`CD-ENG-WO2R3-F12`).
+
+## What is deliberately NOT here
+
+**There is no wrapper script, no make target, no pytest harness and no runner of any kind,
+and there may not be one** (`PBG-ASSURE-001`). An auditor who verifies a planted violation
+through a script the project wrote has verified the script. The patches and this manifest
+are the deliverable; APPLYING them and running the arms is the Assurance seat's work, done
+with its own hands, on a tree it extracted itself.
+
+That is also why every row below carries the **literal command lines**. They are not
+described, they are written out, so that reproducing a result requires no interpretation of
+anything this seat says.
+
+---
+
+## How an auditor uses this — the exact procedure
+
+Do this once per plant. Never in the Engineer's worktree; never in a `git worktree`.
+
+```bash
+# 1. Extract a THROWAWAY COPY of the subject tree, yourself, from the object database.
+SUBJECT=$(mktemp -d /tmp/cd-plant-XXXXXX)
+git -C <this repository> archive <the SHA under audit> | tar -x -C "$SUBJECT"
+
+# 2. Establish the CLEAN ARM first. The declared command must exit 0 (or, for the two
+#    pytest arms, report all tests passed) on the unmodified tree. A plant that fails a
+#    check which was already failing evidences nothing.
+cd "$SUBJECT" && <the declared command for this test>   # expect: clean
+
+# 3. Apply the plant.
+git apply --stat --check "<repo>/plants/<CRITERION>/<TEST_ID>.patch"   # verify it applies
+git apply             "<repo>/plants/<CRITERION>/<TEST_ID>.patch"
+
+#    The patches are plain unified diffs against the delivered tree. `$SUBJECT` need not be
+#    a git repository for `git apply` to work; it reads the diff, not the index.
+
+# 4. Run the SAME declared command again. It must now fail with the signature below.
+cd "$SUBJECT" && <the declared command for this test>   # expect: the signature in this file
+echo "exit=$?"
+
+# 5. Destroy the copy.
+rm -rf "$SUBJECT"
+```
+
+`<the declared command for this test>` is quoted verbatim in each row below and is the same
+string as `criteria[].tests[].execute` in `required-tests.yaml`. Where the two ever differ,
+`required-tests.yaml` is the register and this file is wrong.
+
+## Reading a result
+
+* **Register checks** (`tools/register/check_*.py`) exit `0` clean, `1` violation, `2`
+  usage, `3` precondition not met. A plant must produce **`1`**. A `3` means the check could
+  not reach its subject — that is not a demonstrated violation and must not be recorded as
+  one.
+* **pytest arms** must go from all-passed to at least one FAILED. The named tests are given
+  in each row; a plant that fails *different* tests than those named is a finding worth
+  raising, not a pass.
+
+---
+
+## The single constraint these plants were built to
+
+**Each plant violates the PROPOSITION, not the string the checker greps for.** Where a
+guard's own documentation names the escape a plant author actually uses — a blend spelled
+over three statements, a witness import reached transitively through a relative import, a
+broker host with no execution word in its name — the plant takes THAT route rather than the
+obvious one, so that a guard which caught only the literal instance would pass and be
+caught doing it.
+
+Each row therefore states the proposition first and the mechanism second. If a future edit
+makes a guard catch the patch but stop catching the class, the patch is no longer doing its
+job and should be rewritten rather than kept green.
+
+## On collateral
+
+Several plants fail more than the test they are filed under, because the criteria are
+defended at more than one layer on purpose. Every collateral failure this seat OBSERVED is
+disclosed in its row. Collateral is disclosed rather than trimmed away: a plant edited until
+it fails exactly one instrument would be a plant shaped to the instruments rather than to
+the product.
+
+---
+---
+
+# CD-AC-001 — Missing or stale input never renders as calm
+
+> PID §6 plant: kill a feed, and the affected dial shows UNKNOWN or DEGRADED within the
+> assurance latency budget, NEVER a calm reading. PID doctrine §3.2 is constitutional.
+>
+> The criterion has two halves and both are required: **absence must have a name in the
+> type system**, and **no route may exist by which absence becomes a number**. Two tests,
+> and the two plants below demonstrate that neither test is redundant — each plant is
+> caught by its own arm and *not* by the other.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-001-AST-NO-NUMERIC-DEFAULT` |
+| **patch** | `plants/CD-AC-001/CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch` |
+| **command** | `python3 tools/register/check_no_numeric_default.py --root .` |
+
+**Proposition violated.** *No route exists on the dial path by which absence becomes a
+number.* The patch opens two of them at once, and they are two of the five distinct ROUTES
+the check enumerates rather than two spellings of one:
+
+* **class A** — `DialSpec.last_known_magnitude: Union[float, None]`. A nullable number on
+  the dial path is a type whose absence case is a value slot; every consumer must remember
+  to branch, and the one that forgets renders absence as a number. The dial path uses a sum
+  type precisely so that absence has a *constructor* and no value field.
+* **class C** — `spec.last_known_magnitude or 0.0` inside `_evaluate_dial`.
+
+**Why this is the proposition and not a token.** The semantics are the exact failure PID
+§3.2 forbids: a required input that did not answer no longer forces `Unknown`. It produces
+`Degraded` carrying **the previous magnitude, or zero** — a stale dial that reads calm. The
+patch tells the plausible story that gets this written in real life ("a feed that drops for
+one cycle should not blank the surface"), which is why it is worth catching by class: the
+author is not being clever, they are being helpful.
+
+**Expected failure signature.** Exit **1**, `FAIL — 3 violation(s)`:
+
+```
+VIOLATION  src/crash_detector/engine/config.py:84
+    rule: A: nullable-number annotation
+    what: `last_known_magnitude` is annotated as a number that may be None (float | None). ...
+VIOLATION  src/crash_detector/engine/evaluate.py:<line>
+    rule: C: `or <number>`
+    what: `spec.last_known_magnitude or 0.0` substitutes a number when the left side is falsey. ...
+VIOLATION  src/crash_detector/engine/evaluate.py:<line>
+    rule: F: unrecognised magnitude provenance
+    what: `Degraded(value=DIAL_SCORE_TYPES[spec.dial_id](score=carried, contributions=()), ...)`
+          constructs a reading that CARRIES A VALUE ... but `carried` is bound in this scope to
+          something that is not a declared magnitude source: the magnitude comes from
+          `spec.last_known_magnitude or 0.0` ...
+```
+
+**UPDATED IN WO-2R (`CD-ENG-WO2R-01`).** The patch itself is unchanged and still applies. What
+changed is the signature: it was `FAIL — 2 violation(s)` at the WO-2 gate, and it is now
+**three**, because `check_no_numeric_default.py` gained **RULE F** closing CD-ASR-F03. The
+third violation is the one worth reading — it does not depend on the `or 0.0` idiom at all. It
+fires because a `Degraded` is constructed carrying a magnitude whose provenance is not the
+declared contribution model, so the SAME plant written without `or` (say, with a plain
+`spec.last_known_magnitude`) would still be caught. Rules A and C catch the spelling; rule F
+catches the class. Line numbers moved with the module and are given as `<line>` rather than
+transcribed, because a transcribed line number is a maintenance trap; the rule names are the
+signature.
+
+Two notes about class A on the ADJACENT path (`observations.py:99`,
+`witness_resolver.py:168`) are printed on the clean arm as well and are **not** violations.
+They must appear in both arms; if they appear only under the plant, something else changed.
+
+**Collateral observed by this seat** (`PYTHONPATH=src python3 -m pytest tests/test_reading.py
+tests/test_evaluate.py -q` → 9 failed, 40 passed at the WO-2 gate). The behaviour changed as
+well as the shape, so the sibling arm fails too. Disclosed, not trimmed: the two arms are meant
+to overlap here. **WO-2R re-measurement is owed to the auditor, not asserted here**: the
+sibling suite gained 40 tests in WO-2R, so the failure count will differ from 9 and the seat
+that re-runs it should record what it observes rather than expect this number.
+
+**REGENERATED AT WO-2R3 INCREMENT 4 (`CD-ENG-WO2R3-01`), same proposition, same two routes,
+new structure.** The WO-2R patch stopped applying for one reason and one reason only:
+BP-AMENDMENT-0001 §C deleted the field it anchored on. `DialSpec.contribution_model:
+Union[ContributionModel, None]` — the line the class-A hunk added itself after — **does not
+exist**, and `_evaluate_dial`'s `missing_required` branch moved when `model` joined its
+signature. The regenerated patch adds `last_known_magnitude: Union[float, None] = None` after
+`model_ref` instead, and rewrites the same branch to the same `Degraded(... score=carried ...)`.
+**IT IS NOT A DELETED SUBJECT.** The subject of this plant was never `contribution_model`; it
+is *a nullable number on the dial path answering an absence*, and `DialSpec` is still where a
+helpful author would put one. A field had to be given a new neighbour, not a new meaning.
+
+**MEASURED AT LANE HEAD `04cdd34`, both arms, pristine extraction per arm** (`git archive
+04cdd34 | tar -x`), with the declared command from `required-tests.yaml`, which is the one in
+the row above:
+
+```
+CLEAN    python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 0
+VIOLATED python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 1
+         CD-RT-001-AST-NO-NUMERIC-DEFAULT: FAIL — 3 violation(s)
+           A: nullable-number annotation      src/crash_detector/engine/config.py:147
+           C: `or <number>`                   src/crash_detector/engine/evaluate.py:406
+           F: unrecognised magnitude provenance src/crash_detector/engine/evaluate.py:407
+```
+
+Three violations, the same three rules, in the same order as at the WO-2R gate. The two
+ADJACENT-path class-A notes are still printed on BOTH arms (`observations.py:100`,
+`serving/witness_resolver.py:218` — the line numbers moved, the notes did not), so the
+both-arms test in the paragraph above still holds.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` |
+| **patch** | `plants/CD-AC-001/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q` |
+
+> **THE COMMAND ROW ABOVE WAS STALE AND IS CORRECTED AT WO-2R3 INCREMENT 4.** It named two
+> modules; `required-tests.yaml` has named THREE (`tests/test_dial_presentation.py` joined at
+> WO-2R2) since before this lane opened. The register is the authority and this page was
+> behind it. No measurement below uses the two-module form.
+
+**Proposition violated.** *With an empty source registry both dials read `Unknown`; absence
+never renders as a value.* The patch makes `evaluate()` return
+`Value(EquityCrashScore(score=0.0))` for a dial that declares no required inputs — the WO-2
+shipped state, in which **no ingredient source is registered at all**.
+
+**Why this is the proposition and not a token.** This is the failure the whole product
+exists to prevent, in its most likely real form. Nobody plants it maliciously; somebody
+writes it because a surface has nothing to render and "0 until the sources land" reads like
+a placeholder rather than a claim. It is a claim. The dial says *calm* on a day when the
+detector has no data whatsoever, and `evaluate`'s own docstring already refuses it in
+words: "Zero satisfied requirements is not 'all requirements satisfied'."
+
+**REWRITTEN IN WO-2R (`CD-ENG-WO2R-01`), same proposition, same route, new context.** The
+WO-2 patch no longer applied: `_evaluate_dial` gained the CD-ASR-F03 post-condition decorator
+and a longer docstring, so the hunk context moved. The patch was regenerated against the WO-2R
+structure and makes the identical semantic change — a dial declaring no required inputs returns
+`Value(EquityCrashScore(score=0.0), inputs_used=("baseline",))`. Nothing about what it violates
+has changed. *A plant that no longer applies is not a plant* (CD-D-033), and deleting one is
+prohibited.
+
+**Expected failure signature.** pytest exits **1**. At the WO-2 gate this was `3 failed, 46
+passed` with `AttributeError: 'Value' object has no attribute 'since_utc'`. In WO-2R it is
+**`17 failed, 72 passed`**, and the reason is worth reading rather than the count:
+
+```
+crash_detector.dials.reading.AbsenceYieldedAValue: dial 'monetary_debasement' produced Value,
+which carries a value, but its required inputs were not all present: it declares [], NO
+contribution model is declared, and the usable inputs are []. A reading that carries a value is
+a claim that its inputs were present; a dial that did not get them must be Unknown, whatever the
+number is and wherever it came from (PID §3.2, CD-AC-001, CD-ASR-F03).
+```
+
+The post-condition raises inside `evaluate()`, so every test in the file that evaluates
+anything now fails rather than only the three that inspected the reading. That is a stronger
+contrast and a worse-looking number; both are honest. The signature to check is the exception
+type, not the count.
+
+**Collateral, RE-MEASURED IN WO-2R, and it CHANGED — disclosed as a finding against this
+seat's own work (CD-ENG-WO2R-F01).** At the WO-2 gate
+`python3 tools/register/check_no_numeric_default.py --root .` stayed at exit **0** under this
+plant, and the manifest reasoned from that: the two CD-AC-001 tests were "not two spellings of
+one instrument", because only the behavioural arm saw this violation. **That is no longer
+true.** Rule F now catches this plant too (exit **1**, `FAIL — 1 violation(s)`, `F:
+unrecognised magnitude provenance` — `score=0.0` is a literal, and a literal is not a declared
+magnitude source). The plant is still a valid negative control for its own arm, but it no
+longer *demonstrates* the independence of the two arms.
+
+The route that still separates them is **boundary 1 of `CD-RT-001-AST-NO-NUMERIC-DEFAULT`'s
+declared limit** — a constructor obtained dynamically, which rule F cannot see as a
+construction and which the runtime post-condition refuses anyway. It is written out as variant
+**`V03`** in `variants/WO-2R/CD-ASR-F02-F03/`, with its command and its observed refusal, so
+the property this row used to evidence is evidenced somewhere it can be executed.
+
+**REGENERATED AT WO-2R3 INCREMENT 4 (`CD-ENG-WO2R3-01`), same proposition, same route, and
+THE MAGNITUDE HAD TO BE REBUILT — READ THIS BEFORE TRUSTING THE CONTRAST.** The WO-2R patch
+stopped applying because §D gave `_evaluate_dial` a fourth parameter and §C renamed the
+`model_ref` branch beneath it, so the hunk context moved. That much is ordinary. What is not
+ordinary is what the first regeneration revealed, and it is raised as a finding against this
+seat's own work (`CD-ENG-WO2R3-F12`):
+
+> A LITERAL REGENERATION OF THIS PLANT CONTRASTS AT THE WRONG LAYER. The WO-2R patch wrote
+> `DIAL_SCORE_TYPES[spec.dial_id](score=0.0, contributions=())` — a **bare float** in the
+> score slot. Since WO-2R increment 2 a dial magnitude is a `DialMagnitude` carrying its
+> provenance, so that line now dies at
+> `crash_detector.dials.provenance.ScoreOutOfRange: MonetaryDebasementScore.score must be a
+> DialMagnitude carrying dial 'monetary_debasement', got float` — **a CD-AC-002 refusal**.
+> The declared command still exits 1, so a seat that read only the exit code would have
+> recorded a contrast and filed it under CD-AC-001. It would have been measuring the
+> CD-AC-002 magnitude guard, one criterion across, and the CD-AC-001 post-condition this
+> plant exists to exercise would never have been reached. **An exit code is not a refusing
+> layer** (CD-PL-F74).
+
+The patch as delivered therefore builds the magnitude the way the product builds it —
+`DialMagnitude(dial_id=..., quantity=observed_for_dial(dial_id=..., quantity=0.0,
+inputs_used=("baseline",)))` — so the reading is CONSTRUCTIBLE and reaches the post-condition.
+The plant is thereby *stronger*, not weaker: the author it imitates now has to get past
+CD-AC-002's magnitude type before CD-AC-001 refuses them, and CD-AC-001 still does.
+
+**MEASURED AT LANE HEAD `04cdd34`, both arms, pristine extraction per arm** (`git archive
+04cdd34 | tar -x`), declared command from `required-tests.yaml`:
+
+```
+CLEAN    PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py \
+             tests/test_dial_presentation.py -q     -> exit 0, 124 passed
+VIOLATED PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py \
+             tests/test_dial_presentation.py -q     -> exit 1, 15 failed, 109 passed
+```
+
+REFUSING LAYER NAMED AND SCOPED (CD-PL-F74): `refuse_a_number_without_its_inputs`, the
+CD-ASR-F03 absence post-condition applied at `_evaluate_dial`'s boundary by
+`_absence_is_never_a_number`. Its scope is *one dial's reading, checked against that dial's
+own `(spec, usable)` arguments*; it says nothing about any other criterion. Observed:
+
+```
+crash_detector.dials.reading.AbsenceYieldedAValue: dial 'monetary_debasement' produced Value,
+which carries a value, but its required inputs were not all present: it declares [], it NAMES
+NO MODEL, and the usable inputs are []. ...
+```
+
+Note `it NAMES NO MODEL` — the message wording moved with §C's `model_ref`, so a seat
+matching the WO-2R text `NO contribution model is declared` will not find it. The exception
+TYPE is the signature; the prose is not.
+
+**Collateral re-measured at `04cdd34` and UNCHANGED IN KIND:**
+`python3 -B tools/register/check_no_numeric_default.py --root .` exits **1**,
+`FAIL — 1 violation(s)`, rule F — the CD-ENG-WO2R-F01 disclosure above still stands and is
+neither better nor worse. `python3 -B tools/register/check_no_blend.py --root .` stays at exit
+**0**, 6829 assertions, which was worth measuring rather than assuming: the regenerated patch
+adds a SECOND textual reference to `observed_for_dial` inside `evaluate.py`, and RULE 4 of
+that check denies by default over its declared admission sites.
+
+---
+---
+
+# CD-AC-002 — The two dials are never blended
+
+> PID §3.1 is CONSTITUTIONAL: "Two dials, never blended. Equity crash and
+> monetary/debasement fail in opposite directions; averaging cancels the signal."
+>
+> Enforced at **three independent layers**, because one layer is a preference and three are
+> a structure: the TYPES refuse arithmetic, an AST scan refuses the expression, and the
+> closed envelope schema refuses the document. A blend that slips past any one layer must
+> still fail the other two — so there is one plant per layer, and each was checked against
+> the other two arms.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-TYPE-NO-ARITHMETIC` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q` |
+
+> **REGENERATED AT WO-2R INCREMENT 2 by `CD-ENG-WO2R-01`, and the command GREW by one
+> module.** Closing CD-ASR-F01 changed `src/crash_detector/dials/scores.py` — `score` is no
+> longer a bare `float` but a per-dial `DialMagnitude` — so the previous patch stopped
+> applying. It was regenerated to violate **the same proposition by the same route**: an
+> arithmetic dunder on a score type that actually blends the two dials. **Nothing was
+> deleted and nothing was weakened** (CD-D-033). The declared command grew by
+> `tests/test_dial_provenance.py` because the register entry now names a publication-boundary
+> layer and may not claim a layer it declares no test for.
+
+**Proposition violated.** *A scalar derived from BOTH dial types is unrepresentable — the
+score types and the dial magnitude type reject every arithmetic operator and share no
+numeric base.* The patch gives `EquityCrashScore` an `__add__` (with `__radd__ = __add__` so
+`sum()` works from its zero start) and a `__truediv__`, told as "so a rolling window can be
+averaged".
+
+**Why this is the proposition and not a token.** The added `__add__` reads the other
+operand's magnitude through **whatever dial that magnitude says it came from** —
+`other.score.quantity_for(sorted(other.score.provenance)[0])` — so it does not merely
+*exist*: **it actually blends the two dials, and it does so while walking around the
+provenance check rather than through it.** This seat ran it on a pristine extraction:
+
+```
+>>> e = EquityCrashScore(score=DialMagnitude(dial_id=EQUITY_DIAL_ID, quantity=0.9), contributions=())
+>>> m = MonetaryDebasementScore(score=DialMagnitude(dial_id=MONETARY_DIAL_ID, quantity=0.1), contributions=())
+>>> ((e + m) / 2.0).score
+DialMagnitude(dial_id='equity_crash', quantity=0.5)
+```
+
+An equity dial at 0.9 and a monetary dial at 0.1 become one number reading 0.5, **wearing
+equity's provenance**, so it would pass the publication gate as an equity reading — the
+signal cancelled and the provenance falsified, exactly as PID §3.1 says it will be. Note
+also that the author only ever wrote methods on the *equity* type and never mentioned the
+monetary one; the blend arrives without either type naming the other, which is why the test
+asserts the absence of the whole `ARITHMETIC_DUNDERS` family rather than watching for
+`equity + monetary` to raise.
+
+**Expected failure signature — RESTATED AT WO-2R INCREMENT 2b, AND IT NARROWED. READ WHY.**
+pytest exits **1**, `2 failed, 304 passed`:
+
+```
+FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
+FAILED tests/test_scores.py::test_no_ancestor_of_either_score_type_defines_one_either
+```
+
+At lane SHA `a94ef97` this plant produced **six** failures. Four of them have stopped firing
+and **not one test was changed to make that happen** — the node ids are all still collected
+and still assert exactly what they asserted. The four are:
+
+```
+test_every_binary_operator_between_the_two_dials_is_a_type_error[add]
+test_no_score_can_be_combined_with_a_bare_number_either[add]
+test_no_score_can_be_combined_with_a_bare_number_either[truediv]
+test_a_score_cannot_be_summed_which_is_how_a_blend_usually_arrives
+```
+
+They assert that the operation raises `TypeError`. **It still does** — but now it raises from
+inside the plant's own `__add__`, because closing `CD-PL-F54` made
+`DialMagnitude(dial_id=..., quantity=left + right)` refuse a bare `float` with
+`QuantityProvenanceMissing`, which is a `TypeError`. So the plant's arithmetic no longer
+BLENDS. The demonstration recorded above —
+
+```
+>>> ((e + m) / 2.0).score
+DialMagnitude(dial_id='equity_crash', quantity=0.5)
+```
+
+— **no longer holds at the current lane SHA**, and is preserved here as the record of what
+this patch did at `a94ef97` rather than as a claim about today.
+
+**THE IMPLEMENTING SEAT RAISED THIS AGAINST ITS OWN WORK AS `CD-ENG-WO2R-F10` AND STATES THE
+COST PLAINLY.** The plant still applies cleanly, still exits non-zero, and still fires ONLY
+its own declared arm, so `CD-D-033` is satisfied and nothing was deleted or weakened. But
+its evidential value is narrower than it was: it now proves that the surface assertion
+catches an added dunder, and no longer proves that the dunder could have blended the dials.
+It was deliberately NOT rewritten to blend through the admission door, because a plant that
+called `observed_for_dial` from `scores.py` would also fire `check_no_blend`'s RULE 4 and
+would destroy the three-test independence this criterion's plants exist to demonstrate —
+the same hazard `CD-PL-F53` was raised for. The next Assurance seat should treat this plant
+as evidence for the surface assertion only, and devise its own for the blend.
+
+**Sibling arms under this plant, RE-OBSERVED AT WO-2R INCREMENT 2b:**
+`check_no_blend.py` exit **0** (4722 assertions), `check_schema_closed.py` exit **0**. The
+type layer is still the only one that sees it — nothing in the source yet writes the blend,
+and nothing publishes it, so a project relying on the AST scan alone would have shipped a
+blendable dial type.
+
+**THREE-TEST INDEPENDENCE, RE-MEASURED AT WO-2R INCREMENT 2 AND STILL INTACT.** CD-AC-002
+has three declared tests and this plant fires exactly one of them. Both CD-AC-001 arms also
+stay clean under it (`check_no_numeric_default.py` exit 0 at 365 assertions;
+`pytest tests/test_reading.py tests/test_evaluate.py` 90 passed — both re-observed at
+increment 2b), so strengthening the type layer, and then the re-entry, did NOT make two
+declared tests fire on the same plant — the hazard the previous
+increment raised against its own work. Each of CD-AC-002's three plants still fires its own
+arm and only its own arm.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-AST-NO-BLEND` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-AST-NO-BLEND.patch` |
+| **command** | `python3 tools/register/check_no_blend.py --root .` |
+
+**Proposition violated.** *No single expression consumes both dial types outside the
+allowlisted container and serving layer, and no expression anywhere combines them
+arithmetically.* The patch adds a new module `src/crash_detector/publication/headline.py`
+whose `headline_figure(dials)` returns the mean of the two dial magnitudes — the "one number
+for the banner" that PID §3.1 exists to forbid.
+
+**Why this is the proposition and not a token.** It is written in the spelling
+`check_no_blend.py`'s own docstring names as the ESCAPE, not the one it names as the
+obvious plant:
+
+```python
+    first = dials.equity.value.score
+    second = dials.monetary.value.score
+    return (first + second) / 2.0
+```
+
+By the time the addition happens, **no dial marker is left in the expression**. The local
+names are `first` and `second` — deliberately neutral, carrying no `equity`, `monetary` or
+`debasement` token — so the check can only catch this through intra-procedural flavour
+propagation. A guard that inspected single expressions, or that pattern-matched on dial
+names, reports the tree clean while the blend sits in it. It also reaches for the two
+`.score` floats and so never asks the type system anything, which is why the type layer
+does not see it either.
+
+**Expected failure signature.** Exit **1**, `FAIL — 2 violation(s)`, both at
+`src/crash_detector/publication/headline.py:23`:
+
+```
+    rule: RULE 1: arithmetic across the two dials
+    what: `first + second` combines an equity-flavoured value with a monetary-flavoured value. ...
+    rule: RULE 2: one expression consumes both dials
+    what: `(first + second) / 2.0` consumes BOTH dial types in a single expression, ...
+```
+
+Both rules must fire. RULE 1 alone would mean the propagation worked; RULE 2 alone would
+mean it did not and only the co-occurrence sweep caught the return value.
+
+**Sibling arms under this plant, observed by this seat:** the type arm passes (96 passed),
+`check_schema_closed.py` exit **0**, and so do `check_no_execution_interface.py` and
+`check_no_numeric_default.py`. This plant is seen by exactly one instrument.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-SCHEMA-CLOSED` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-SCHEMA-CLOSED.patch` |
+| **command** | `python3 tools/register/check_schema_closed.py --root .` |
+
+**Proposition violated.** *The public envelope schema is closed and its properties are an
+allowlist; there is no place in it for a third, combined number.* The patch adds a
+`combined_stress` property of `"type": "number"` to the public envelope contract, and adds
+it to `required` — i.e. the contract change is made *properly*, the way an engineer who
+believed in it would make it, not left half-written.
+
+**Why this is the proposition and not a token.** The plant does not open the schema
+(`additionalProperties` stays `false` at every level) and does not touch
+`patternProperties` or `unevaluatedProperties`. It concedes the point the honest way: a
+declared, required, documented top-level number that is neither dial. That is what makes it
+a fair test — the guard has to hold the ALLOWLIST as an exact set rather than merely hunt
+for escape hatches, and it has to notice that the document now carries a second scalar
+number whatever the key is called.
+
+**Expected failure signature.** Exit **1**, `FAIL — 3 violation(s)` in
+`contracts/public_envelope.schema.json` — three *independent* propositions, not one finding
+reported three times:
+
+```
+    rule: 3: the root properties are not the declared allowlist
+    what: ... UNDECLARED KEYS PRESENT: combined_stress. ...
+    rule: 4: required does not match the allowlist
+    what: required=[... 'combined_stress' ...] but the allowlist is [...]. ...
+    rule: 5: a third top-level number
+    what: ... scalar-numeric root properties ['combined_stress', 'staleness_window_seconds']; ...
+```
+
+Proposition 5 is the one that matters most: it holds even if a future edit widened the
+allowlist in proposition 3, because a blended headline has to be a number somewhere and
+that rule counts the numbers whatever they are called.
+
+**Collateral observed by this seat.** `PYTHONPATH=src python3 -m pytest
+tests/test_envelope_contracts.py tests/test_publication_refusal.py -q` → 17 failed, 237
+passed, including
+`test_the_same_blend_is_refused_by_every_construction_route[dict_round_trip]` and
+`[json_reparse]`. Those are the WO-2 boundary tests for CD-AC-006, and they see the same
+change from the other side. The type arm and the AST arm both stay clean.
+
+---
+---
+
+# CD-AC-003 — Witnesses are side-by-side, never ingredients
+
+> PID §6: the score computed with witnesses unreachable is BYTE-IDENTICAL. PID doctrine
+> §3.4: "a witness that is also an ingredient cannot corroborate anything."
+>
+> Held in **two independent places**, and the two are different KINDS of fact: the code
+> graph, and the database catalogue. A GRANT that was written and a GRANT that is held are
+> not the same thing, and where they disagree the catalogue wins. One plant each.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-003-ENGINE-NO-WITNESS-REACH` |
+| **patch** | `plants/CD-AC-003/CD-RT-003-ENGINE-NO-WITNESS-REACH.patch` |
+| **command** | `python3 tools/register/check_engine_no_witness_reach.py --root .` |
+
+> **RE-BASED AT INCREMENT 5 (CD-ASR-F06), NOT REWRITTEN.** Its hunk on
+> `src/crash_detector/engine/evaluate.py` carried
+> `staleness_window_seconds=config_snapshot.staleness_window_seconds` as context, and that line
+> legitimately became `window=config_snapshot.window()` when the staleness admission door was
+> made a shared type. The patch no longer applied. **Every edit it makes is unchanged** — the
+> same `corroboration.py`, the same relative import of `.witness.panel`, the same
+> `WITNESSES_DIVERGED` branch in `_evaluate_dial` — only the surrounding context lines moved.
+> Re-measured: `git apply --check` clean, planted command **exit 1**, caught through the engine
+> PACKAGE arm exactly as before. No plant was deleted and none was weakened.
+
+**Proposition violated.** *Nothing reachable from `src/crash_detector/engine/` reaches
+witness code.* The patch adds `src/crash_detector/corroboration.py` — a small shared helper
+sitting beside `observations.py` — which relatively-imports `.witness.panel`, and has
+`evaluate()` consult it: a dial whose panel says the independent view has diverged now
+returns `Unknown(WITNESSES_DIVERGED)` instead of its computed reading.
+
+**Why this is the proposition and not a token.** This is PID §3.4 broken in substance, not
+in form. The witness stops being a witness and becomes an input: the dial's value now
+depends on it, so when the two agree the agreement is circular and corroborates nothing.
+And the story is the seductive one — "surely we should not publish a number the independent
+sources contradict" — which is exactly why the separation is structural rather than left to
+judgement.
+
+**It takes three routes a grep would not find, all at once:**
+
+* **transitive.** The reach is two hops: engine → `crash_detector.corroboration` → witness.
+  `grep -rn '^\s*\(from\|import\).*witness' src/crash_detector/engine/` returns **nothing**
+  with the plant applied. This seat ran that grep. A one-level check reports clean.
+* **relative.** The helper writes `from .witness.panel import ...`, never the dotted
+  absolute path, so a search for `crash_detector.witness` finds nothing either.
+* **placement.** The import in `evaluate.py` is FUNCTION-LOCAL. That is not cosmetic —
+  see the collateral note below, where it defeats a runtime test.
+
+**Expected failure signature.** Exit **1**, `FAIL — 1 violation(s)`, and the route trail is
+the part to read:
+
+```
+VIOLATION  src/crash_detector/witness/panel.py
+    rule: engine reaches witness code
+    what: witness module `crash_detector.witness.panel` is REACHABLE from the engine package.
+          Route (nearest first): crash_detector.witness.panel <- crash_detector.corroboration
+          <- crash_detector.engine.evaluate. ...
+```
+
+A trail of length 2 is the pass condition for this plant. A trail showing a direct
+`engine → witness` edge would mean the plant had been simplified into the instance the
+check's own docstring says a grep would find.
+
+**REGENERATED IN WO-2R (`CD-ENG-WO2R-01`), same proposition, same three routes, new context.**
+The WO-2 patch no longer applied: it patches `evaluate.py`'s import block and `_evaluate_dial`'s
+signature, both of which moved when the CD-ASR-F03 post-condition landed. The patch was
+regenerated and makes the identical semantic change — a new `src/crash_detector/corroboration.py`
+relatively importing `.witness.panel`, consulted through a function-local import in
+`evaluate.py`. The transitive, relative and function-local properties are all preserved and were
+re-verified: the violation trail is still of length 2 and
+`test_importing_the_engine_does_not_pull_in_the_witness_package` still PASSES under it.
+
+**Collateral observed by this seat, and it is the most interesting result here.**
+`PYTHONPATH=src python3 -m pytest tests/test_reading.py tests/test_evaluate.py -q` → **1
+failed, 88 passed** in WO-2R (**1 failed, 48 passed** at the WO-2 gate; the suite grew), and the
+one failure is
+`test_evaluate_has_the_blueprint_signature` (the added parameter), *not* the witness test.
+**`test_evaluate.py::test_importing_the_engine_does_not_pull_in_the_witness_package`
+PASSES with this plant applied** — because the import is function-local, so importing the
+engine genuinely does not pull the witness package into `sys.modules`. The runtime test is
+not wrong; it is measuring a different thing. Only the static import-graph walk sees this
+reach, which is the argument for CD-AC-003 having a structural guard at all.
+`check_no_numeric_default.py`, `check_no_blend.py` and `check_no_execution_interface.py`
+all stay at exit **0**.
+
+**REGENERATED AT WO-2R3 INCREMENT 4 (`CD-ENG-WO2R3-01`), same proposition, same three routes,
+AND ONE DELIBERATE CHANGE OF SHAPE THAT MUST NOT PASS WITHOUT COMMENT.** The WO-2R patch
+stopped applying because §D put an `@admits(...)` door on `evaluate` and §C rewrote the
+import block and `_evaluate_dial`'s signature beneath it. The new module
+`src/crash_detector/corroboration.py` is **byte-identical** to the WO-2R one; the relative
+import `.witness.panel`, the `WITNESSES_DIVERGED` reason and the function-local
+`from crash_detector.corroboration import is_corroborated` are unchanged.
+
+**WHAT CHANGED, AND WHY IT IS NOT A WEAKENING.** The WO-2R patch added a PUBLIC parameter —
+`evaluate(..., witness_panel: object = None)`. After BP-AMENDMENT-0001 §D that parameter
+would arrive REFUSED on every call: `admits` reads `evaluate`'s parameter list from the
+signature at decoration, and a parameter its declaration was not told about FAULTS the door,
+so `UndeclaredParameter` is raised before the body runs — that is planted violation P7,
+working. The plant would then have died at the §D door instead of being caught by the
+CD-AC-003 import walk, **which is the wrong reason** (the CD-ENG-WO2R-F13 lesson, and the
+same defect this seat found in the CD-AC-001 plant next door as `CD-ENG-WO2R3-F12`). So the
+panel is carried on the PRIVATE per-dial evaluator `_evaluate_dial`, which is not a §D
+subject, through the `*extra` channel `_absence_is_never_a_number` already forwards. The
+CD-AC-003 proposition — *nothing reachable from the engine reaches witness code* — is
+violated in exactly the same three ways and by exactly the same trail.
+
+**MEASURED AT LANE HEAD `04cdd34`, both arms, pristine extraction per arm:**
+
+```
+CLEAN    python3 -B tools/register/check_engine_no_witness_reach.py --root .  -> exit 0
+VIOLATED python3 -B tools/register/check_engine_no_witness_reach.py --root .  -> exit 1
+         CD-RT-003-ENGINE-NO-WITNESS-REACH: FAIL — 1 violation(s)
+         Route (nearest first): crash_detector.witness.panel
+                                <- crash_detector.corroboration
+                                <- crash_detector.engine.evaluate
+```
+
+**TRAIL LENGTH 2 — the pass condition for this plant — is intact**, and it is now reported
+through the DERIVED engine-container root set as well as the package root.
+
+**Collateral re-measured, and the plant is now MORE isolating than its WO-2R self.** With it
+applied, `PYTHONPATH=src python3 -B -m pytest tests -q` is **1519 passed, exit 0** — the WHOLE
+suite, not one module. At WO-2R this plant failed `test_evaluate_has_the_blueprint_signature`
+because it changed a public signature; it no longer touches one, so **NOT ONE TEST FAILS**.
+`grep -rn '^\s*\(from\|import\).*witness' src/crash_detector/engine/` returns nothing (exit 1,
+re-run by this seat). `test_importing_the_engine_does_not_pull_in_the_witness_package` still
+PASSES. `check_no_numeric_default.py`, `check_no_blend.py` and
+`check_no_execution_interface.py` all stay at exit **0**. **The declared static check is the
+ONLY instrument in this tree that sees it**, which is the sharpest statement of this row's
+argument the manifest has yet been able to make.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-003-GRANT-MATRIX-LIVE` |
+| **patch** | `plants/CD-AC-003/CD-RT-003-GRANT-MATRIX-LIVE.patch` |
+| **command** | `python3 tools/register/check_grant_matrix_live.py --root .` |
+| **also needs** | a reachable PostgreSQL, named in the environment: `CD_CHECK_STORE_HOST`, `CD_CHECK_STORE_PORT`, `CD_CHECK_STORE_NAME`, `CD_CHECK_STORE_USER`, `CD_CHECK_STORE_PASSWORD`. **By name only** — no value appears in this file, in the patch, or anywhere governed. |
+
+**Proposition violated.** *`cd_engine` holds no privilege of any kind on schema `witness`.*
+The patch adds one forward migration, `db/migrations/0008_engine_reads_witness_panel.sql`,
+granting `USAGE ON SCHEMA witness` and `SELECT` on two witness tables to `cd_engine`. It is
+written the way such a migration really arrives: modest, reasoned, SELECT-only, explicitly
+leaving migration 7's append-only posture alone.
+
+**Why this is the proposition and not a token — and why it is the plant this check was
+built for.** The grant is added in a **later migration**, so:
+
+* `db/grant_matrix.json` is left untouched and still says `cd_engine` reaches only
+  `alert, dial, publication, raw`;
+* `tests/test_grant_matrix_declaration.py` — which parses the migration *named*
+  `grant_matrix`, i.e. 0007 — **still passes**. This seat ran it: green.
+
+So the text comparison between the SQL and the declaration is blind to it by construction.
+The store nevertheless holds the grant. That is precisely the gap this check exists to
+close: "a GRANT that was written and a GRANT that is held are different facts, and where
+they disagree the catalogue wins."
+
+**Expected failure signature.** Exit **1**, `FAIL — 9 violation(s)` — **five** of them
+CD-GM-001 along independent routes, so a check that only queried one table would still
+fail, plus CD-GM-002 and both whole-matrix comparisons:
+
+```
+CD-GM-001 route=schema-privilege USAGE           has_schema_privilege('cd_engine','witness','USAGE') -> True
+CD-GM-001 route=table-privilege SELECT ON witness.observation
+CD-GM-001 route=table-privilege SELECT ON witness.reading
+CD-GM-001 route=column-privilege                 information_schema.column_privileges -> [19 rows]
+CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.observation LIMIT 1`
+          THE STATEMENT SUCCEEDED — cd_engine reached schema witness in a real session
+CD-GM-001 route=live refusal: cd_engine `SELECT 1 FROM witness.reading LIMIT 1`
+CD-GM-002 route=schema witness is cd_witness's alone
+WHOLE-MATRIX route=schema USAGE, live vs db/grant_matrix.json
+WHOLE-MATRIX route=table privileges, live vs db/grant_matrix.json
+```
+
+The two `live refusal` lines are the ones to weigh: they are not catalogue queries at all.
+The check opens a session as `cd_engine` and asks PostgreSQL itself to refuse. Under the
+plant, PostgreSQL does not refuse.
+
+**Note the migration count in the header.** The clean arm reports `built from 7 subject-tree
+migrations`; the plant arm reports `8`, and names `0008_engine_reads_witness_panel.sql` in
+its applied list. If the plant arm still says 7, the patch did not apply.
+
+**Verified by this seat under RT-A**, with the result recorded in the increment 6b Build Log
+entry: clean arm `PASS — 138 assertions, 0 violations`; plant arm `FAIL — 9 violation(s)`,
+against PostgreSQL 16.15 in one throwaway loopback-bound container, destroyed before the
+seat returned. **That run is implementation evidence and is NOT assurance** — the Assurance
+seat builds its own store and reads the catalogue itself (`PBG-SOD-001`, `PBG-ASSURE-001`).
+
+**WO-2R3 INCREMENT 4 — MEASURED, AND WHAT WAS MEASURED IS NOT A CONTRAST.** At lane head
+`04cdd34`, in two pristine extractions:
+
+```
+CLEAN    python3 -B tools/register/check_grant_matrix_live.py --root .  -> exit 3
+VIOLATED python3 -B tools/register/check_grant_matrix_live.py --root .  -> exit 3
+         CD-RT-003-GRANT-MATRIX-LIVE: PRECONDITION_NOT_MET
+           the connection target is not set: CD_CHECK_STORE_HOST, CD_CHECK_STORE_PORT,
+           CD_CHECK_STORE_NAME, CD_CHECK_STORE_USER, CD_CHECK_STORE_PASSWORD
+```
+
+`git apply --check` is clean and the patch applies, so the *patch* is current. **BOTH ARMS
+EXIT 3 AND THAT IS NOT A CONTRAST — IT IS THE SAME ANSWER TWICE.** The check is behaving
+correctly: an unset connection target is a non-zero exit with a stated reason and never a
+skip (`PBG-CI-002`). But a plant whose two arms are indistinguishable evidences nothing about
+this criterion at this SHA, and this row says so rather than counting the exit code as a
+catch.
+
+**WHAT IT WOULD TAKE TO MEASURE IT PROPERLY, stated so it is a cost and not a mystery.** A
+reachable PostgreSQL — a digest-pinned throwaway container bound to `127.0.0.1` only
+(CD-D-006), migrations 0001–0007 applied, the five `CD_CHECK_STORE_*` variables exported BY
+NAME with their values never written anywhere governed (`PBG-SEC-002`) — then the clean arm
+re-run to `PASS — 138 assertions`, migration `0008` applied from the patch, and the plant arm
+re-run to `FAIL — 9 violation(s)` with `built from 8 subject-tree migrations`. **This seat
+did not do that.** No such authorisation is in this dispatch — increment 4 is
+reconciliation-and-return with no new logic, and CD-AC-003 is named `explicitly_out_of_scope`
+("DO NOT TOUCH IT") — and standing one up unasked would be widening scope by initiative. It
+is the fourth Assurance seat's to run, and it is the *only* one of the eleven plants whose
+contrast is not established at this SHA by any party.
+
+**Collateral observed by this seat.** `tests/test_store_migrations.py::test_the_delivered_set_loads`
+and `tests/test_store_schema_sql.py::test_the_migration_set_loads_and_is_not_empty` fail —
+both assert the delivered migration set, which now has an eighth member.
+`tests/test_grant_matrix_declaration.py` passes, as explained above, and
+`check_no_execution_interface.py` stays at exit **0** over the added SQL.
+
+**If the store is unreachable, the check exits 3, not 0.** With none of the five environment
+variables set it prints `PRECONDITION_NOT_MET` and exits **3**. That is the correct answer
+and it is *not* a demonstrated violation: an auditor who records exit 3 as "the plant
+failed the check" has recorded nothing. Bring a store.
+
+---
+---
+
+# CD-AC-005 — WITNESS UNAVAILABLE is not WITNESS AGREES
+
+> PID §6: kill the witness feed, and the panel degrades to UNAVAILABLE, NEVER to agreement.
+> BLUEPRINT §13 adds the harder half: **delete the panel row entirely and the result is the
+> same**, and a row older than its staleness window is an absence too.
+>
+> "There must be no input whatever — missing, stale, malformed or defaulted — from which the
+> serving layer produces AGREES."
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES` |
+| **patch** | `plants/CD-AC-005/CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch` |
+| **command** | `PYTHONPATH=src python3 -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q` |
+
+> **RE-BASED AT INCREMENT 5 (CD-ASR-F06), NOT REWRITTEN.** The structure this patch edits
+> legitimately changed: `_require_usable_window(...)` became `window = StalenessWindow(...)`,
+> `age > staleness_window_seconds` became `not window.covers(age)`, and `Agrees` gained a
+> required `freshness` field. The patch therefore no longer applied. **It violates exactly the
+> same proposition by exactly the same two routes** — the absent row returns `Agrees`, and the
+> `PANEL_ROW_STALE` branch is deleted — written against the new structure, with the absent-row
+> arm now supplying `FreshnessEvidence` about the CURRENT instant so that the plant is a
+> genuine violation of the proposition rather than a construction error. `tests/test_staleness.py`
+> joined the declared command in the same increment. Re-measured: `git apply --check` clean,
+> planted command **exit 1**. No plant was deleted and none was weakened.
+
+**Proposition violated.** *No absence resolves to agreement.* The patch attacks **both**
+halves of the proposition, because the criterion names both and a plant that took only one
+would leave the other unevidenced:
+
+* **the explicit absence** — `row is None` now returns
+  `Agrees(divergence_measure=NO_MEASURED_DIVERGENCE)`, on the reasoning that "cd-witness has
+  raised nothing, so there is no disagreement on record";
+* **the silent one** — the `PANEL_ROW_STALE` branch is **deleted**, so a row older than its
+  window falls through to ordinary state handling and keeps saying whatever it last said.
+
+**Why this is the proposition and not a token.** Neither edit is exotic and neither looks
+wrong in review. The first is the "no news is good news" default, which is the single most
+common way a monitoring surface learns to lie. The second is what happens the week the
+staleness window is judged too tight and somebody removes the branch that keeps returning
+UNAVAILABLE, rather than widening the window where it is configured. Both produce the same
+outcome and it is the one PID §3.4 names: a panel that reads AGREES most confidently at the
+exact moment the witness pipeline is broken, manufacturing corroboration out of silence.
+
+Note what the patch does **not** do. It does not touch `WitnessPanel`, so `Unavailable` is
+still a distinct constructor with no measurement on it, `UNAVAILABLE_REASONS` is unchanged,
+`render_panel` still raises on a foreign member, and all of `tests/test_witness_panel.py`
+passes. The type layer is intact and the product still lies — which is the argument for the
+resolver being tested as behaviour and not inferred from the shape of its return type.
+
+**Expected failure signature.** pytest exits **1**, `6 failed, 59 passed`, all in
+`tests/test_witness_resolver.py`:
+
+```
+FAILED test_an_absent_panel_row_resolves_to_unavailable
+FAILED test_a_stale_panel_row_resolves_to_unavailable
+FAILED test_a_stale_row_that_said_agrees_does_not_keep_agreeing
+FAILED test_freshness_is_judged_on_the_data_not_on_when_we_wrote_the_row
+FAILED test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees
+FAILED test_the_absent_row_case_is_included_in_the_sweep_separately
+```
+
+with `_resolve(None)` returning `Agrees(divergence_measure=0.0, ...)`.
+
+Three of those six are worth reading as a set:
+`test_no_absent_stale_future_or_malformed_input_ever_resolves_to_agrees` is the sweep over
+the whole class of bad inputs, `test_the_absent_row_case_is_included_in_the_sweep_separately`
+is the guard that the sweep did not quietly drop the `None` case, and
+`test_a_stale_row_that_said_agrees_does_not_keep_agreeing` is the half a plant author is
+most likely to forget. If the sweep fails but the separate absent-row test passes, the
+sweep is not covering what its name claims.
+
+**Collateral observed by this seat: none.** All five source-scanning register checks stay at
+exit **0** — `check_no_numeric_default.py` included, even though a `0.0` now reaches a panel
+value on the serving path. This violation is visible to exactly one instrument, and CD-AC-005
+has exactly one declared test.
+
+---
+---
+
+# CD-AC-012 — No execution pathway exists
+
+> PID §6: a test asserts the codebase contains no broker, order or execution interface —
+> **advisory-only is STRUCTURAL, not policy**. That distinction is the whole criterion. A
+> policy saying "we do not trade" is a sentence somebody can change in an afternoon; a
+> codebase with no order interface in it, no broker SDK in its lockfile and no container
+> that may reach a broker is a different kind of promise.
+>
+> Three independent tests, because the pathway can be opened **in source**, **in a
+> dependency**, or **in the network posture**, and closing two of the three closes nothing.
+> Each plant below opens exactly one of them, and each was run against the other two.
+
+**Read this before judging the first plant.** `CD-RT-012-NO-EXECUTION-INTERFACE` carries a
+**DECLARED LIMIT**, written out in the header of
+`tools/register/check_no_execution_interface.py`, in its `required-tests.yaml` entry and in
+its execution contract (CD-D-014, bounded by CD-D-015). It states in six numbered boundaries
+what the check does **not** catch — deliberate euphemism among them. Per CD-D-014, a
+CD-AC-012 variant an auditor plants that lands beyond that boundary is a finding **against
+the declaration** — *was the limit honestly drawn?* — and not an automatic RED against the
+guard. This seat did not plant beyond the boundary and does not claim the boundary is
+narrow; it claims only that the boundary is written down.
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-012-NO-EXECUTION-INTERFACE` |
+| **patch** | `plants/CD-AC-012/CD-RT-012-NO-EXECUTION-INTERFACE.patch` |
+| **command** | `python3 tools/register/check_no_execution_interface.py --root .` |
+
+**Proposition violated.** *The application source contains no order-entry path.* The patch
+adds `src/crash_detector/backtest/paper_book.py` — a paper book "so a published reading can
+be scored against what it implied", with the adapter left as a stub and a comment saying
+nothing reaches a live venue in WO-2.
+
+**Why this is the proposition and not a token.** The story is the one that actually opens
+this door in an advisory product: nobody sets out to build an execution pathway, they build
+a backtest harness, and the harness needs a shape for an intention. The shape is an order
+ticket, and once the type and the entry point exist the remaining distance to a live venue
+is the adapter nobody has written yet. PID §2's answer is that the shape itself is the
+thing forbidden.
+
+The patch deliberately contains **three different kinds of subject** so that no single layer
+carries the result:
+
+* `place_order(symbol, quantity, side, limit_price, venue)` — the named instance, which L1
+  catches on `place` applied to `order`;
+* `record(instrument, size, direction, destination)` — **the same order ticket under a name
+  with no execution word in it**. L1 has nothing to say about `record`. It is caught by L2,
+  which reads the field set and never reads the name at all;
+* `class Ticket` — a frozen dataclass carrying the same five fields, caught by L2 as a
+  *class* data model rather than as a callable signature.
+
+**Expected failure signature.** Exit **1**, `FAIL — 6 violation(s)` in
+`src/crash_detector/backtest/paper_book.py`, spread across all three layers:
+
+```
+:16  execution interface (signature shape)   class `Ticket` takes an ORDER TICKET: destination=`venue`,
+                                             instrument=`symbol`, price=`limit_price`, quantity=`quantity`, side=`side`
+:26  execution interface (signature shape)   function `place_order` takes an ORDER TICKET: (same five)
+:26  execution interface (definition)        `place_order` applies the transmission verb `place`
+                                             to the tradeable noun `order`
+:31  execution interface (signature shape)   function `record` takes an ORDER TICKET: destination=`destination`,
+                                             instrument=`instrument`, quantity=`size`, side=`direction`
+:12  execution interface declared in prose   "place_order"
+:27  execution interface declared in prose   "Write one intention into the paper book and hand it
+                                             to the venue adapter" — trade-lifecycle act `book` with `venue`
+```
+
+**The line to check is `:31`.** If the run reports the `place_order` violations but not
+`record`, the guard has caught the instance and lost the class: L2 is the layer that makes
+renaming useless, and `record` is the only subject in the patch that tests it in isolation.
+
+**Sibling arms under this plant, observed by this seat:** `check_lockfile_denylist.py` exit
+**0** and `check_egress_no_broker.py` exit **0**. An order-entry path can exist in the source
+of a project whose dependencies and network posture are both spotless.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-012-LOCKFILE-DENYLIST` |
+| **patch** | `plants/CD-AC-012/CD-RT-012-LOCKFILE-DENYLIST.patch` |
+| **command** | `python3 tools/register/check_lockfile_denylist.py --root .` |
+
+**Proposition violated.** *No broker, exchange or order-routing SDK appears in any
+dependency manifest.* The patch adds `ib-insync==0.9.86` to `[project].dependencies` in
+`pyproject.toml` and to `requirements.txt`, with the comment "Market data for the equity
+dial's price inputs ... only the historical-bars call is used".
+
+**Why this is the proposition and not a token.** `ib_insync` is a full Interactive Brokers
+client. The comment is true and irrelevant: the distribution being present makes order entry
+one `import` away and needs no further dependency review to become real, because the review
+already happened and it said yes. That is the whole argument for scanning the manifest
+rather than the code — the code that uses it does not have to exist yet.
+
+**The name carries no execution word.** `ib-insync` tokenises to `{ib, insync}`; neither is
+`broker`, `order`, `trade`, `execution`, `oms`, `ems`, `fix` or `exchange`. The token rule —
+the rule that generalises to an SDK nobody has heard of — does **not** fire here. This plant
+is caught only by the named denylist, which is why the check carries both rules and says in
+its own output that the denylist is a **floor and not an oracle**.
+
+**Why the plant is in `pyproject.toml` and `requirements.txt` and NOT in
+`requirements.lock`.** A lockfile entry needs a `--hash=sha256:...` line, and this seat will
+not write a digest it did not compute over bytes it fetched. Inventing one would be
+recording a false observation in a governed artefact, which is worse than the narrower
+plant. The two manifests it does touch are where a human adds a dependency; the lock is
+generated from them. The lock ARM of this check is therefore **not exercised by this plant**,
+and that is stated rather than left to be discovered.
+
+**Expected failure signature.** Exit **1**, `FAIL — 2 violation(s)`:
+
+```
+VIOLATION  pyproject.toml:36      rule: broker SDK in a dependency manifest
+    what: `ib-insync` is a known broker, exchange or order-routing SDK. ... Declared in [project].dependencies.
+VIOLATION  requirements.txt:20    rule: broker SDK in a dependency manifest
+    what: `ib-insync` is a known broker, exchange or order-routing SDK. ... Declared in requirements.txt.
+```
+
+Both must appear. One alone means only one manifest was read.
+
+**Sibling arms under this plant, observed by this seat:** `check_no_execution_interface.py`
+exit **0** and `check_egress_no_broker.py` exit **0**. Nothing in the source imports it yet —
+which is exactly the state this check exists to refuse.
+
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-012-EGRESS-NO-BROKER` |
+| **patch** | `plants/CD-AC-012/CD-RT-012-EGRESS-NO-BROKER.patch` |
+| **command** | `python3 tools/register/check_egress_no_broker.py --root .` |
+
+**Proposition violated.** *No container's egress allowlist names a broker.* The patch puts
+`api.ibkr.com` into `cd-collectors`' `x-egress.hosts`, commented "Market data for the equity
+dial's price inputs. Read-only historical bars."
+
+**Why this is the proposition and not a token.** The host chosen is the one the check's own
+docstring names as *"the single most likely real-world instance"*: `ibkr.com` contains **no
+execution concept word at all**. Tokenised, its labels are `{api, ibkr, com}` — not
+`broker`, not `order`, not `trade`, not `exchange`. The concept-vocabulary rule does not fire
+on it. Only the registrable-domain denylist does. A guard built from a word list alone
+reports this tree clean while the collectors hold standing permission to talk to a brokerage.
+
+And the intent behind the entry is genuinely innocent, which is the point: a broker really is
+a market-data vendor, the request really would be read-only historical bars, and the
+allowlist entry is nevertheless a route from this system to a venue that accepts
+instructions. CD-EGRESS-002's own wording insists the question is *what kind of thing lives
+there*, not what the request happens to be for today.
+
+**Expected failure signature — UPDATED AT WO-2R INCREMENT 3, and the plant is STRONGER, not
+weakened.** Exit **1**, `FAIL — 2 violation(s)` (it was **1** up to and including `cc961bf`):
+
+```
+VIOLATION  deploy/compose.yaml:380
+    rule: CD-EGRESS-004: an allowlist entry is not a registered destination
+    what: service `cd-collectors` may reach `api.ibkr.com`, which is not registered in
+          deploy/egress-destinations.yaml. THIS IS A VIOLATION BY DEFAULT: nothing was
+          recognised about `api.ibkr.com` and nothing needed to be. ...
+VIOLATION  deploy/compose.yaml:380
+    rule: CD-EGRESS-002: an allowlist names a broker
+    what: service `cd-collectors` may reach `api.ibkr.com`, and ibkr.com is a known broker,
+          exchange or order-routing operator. It carries no concept word at all, which is
+          precisely why a vocabulary rule alone would let it through. ...
+```
+
+**THE PATCH WAS NOT CHANGED.** It applies byte-for-byte as written and violates exactly the
+same proposition; only the line number moved (324 → 380), because the compose file's egress
+contract block grew when `CD-EGRESS-004`, `-005` and `-006` were declared in it. What changed is
+that the same entry now fails **two independent layers** instead of one: deny-by-default
+(`CD-EGRESS-004`, because nobody registered `api.ibkr.com` as a destination) and the
+known-operator denylist (`CD-EGRESS-002`, unchanged).
+
+The phrase *"It carries no concept word at all"* in the check's own output is **still printed**
+and is still the confirmation that rule 2 fired and rule 1 did not — i.e. that the denylist did
+the work. A run that reports the `CD-EGRESS-002` violation with a `carries the execution
+concept(s) ...` reason has matched something else and the plant should be re-read.
+
+**Why this row was updated rather than the plant regenerated (CD-D-033).** The plant still
+applies and still contrasts, so there was nothing to regenerate; deleting or rewriting it is
+prohibited and neither was done. What was owed was the honest failure signature, because a
+manifest row stating `FAIL — 1 violation(s)` against a tree that produces two is a record an
+auditor would rightly report as drift.
+
+**Not attacked by this plant, and named so the gap is visible:** the *other* half of
+CD-EGRESS-002's proposition — any egress at all granted to `cd-engine`, `cd-public`,
+`cd-private` or `cd-store`, the four services BLUEPRINT §13 gives none. That half is asserted
+by CD-EGRESS-001 (policy `NONE`, empty `hosts`, and attachment only to `internal: true`
+networks) and is exercised on the clean arm, not by a plant here. One test, one plant; an
+auditor wanting the second half covered should say so as a finding about coverage rather
+than read this row as claiming it.
+
+**Collateral observed by this seat.**
+`PYTHONPATH=src python3 -m pytest tests/test_deploy_container_set.py -q` →
+`test_no_allowlist_anywhere_names_a_host` fails, 82 passed. That test is the WO-2 boundary
+assertion that the allowlists are *empty*, which is a stronger and narrower claim than "name
+no broker"; it sees the same change from the other side.
+`check_no_execution_interface.py`, `check_lockfile_denylist.py` and
+`check_base_image_digest_pin.py` all stay at exit **0**.
+
+---
+
+## WO-2R3 INCREMENT 5 — what `CD-ENG-WO2R3-01` changed here, and why
+
+**ONE PLANT STOPPED APPLYING AND WAS REGENERATED. NONE WAS DELETED AND NONE WAS WEAKENED**
+(`CD-D-033`).
+
+`CD-AC-002/CD-RT-002-TYPE-NO-ARITHMETIC.patch`. Increment 5 applies `@establishes(...)` to all 32
+members of the body-borne field-establishment class, two of which are `EquityCrashScore` and
+`MonetaryDebasementScore` in `src/crash_detector/dials/scores.py`. The plant's hunk ends with the
+trailing context `@dataclass(frozen=True)` / `class MonetaryDebasementScore:`, and there is now an
+`@establishes(...)` block between those two lines, so `git apply --check` refused it at
+`src/crash_detector/dials/scores.py:216`.
+
+**WHAT WAS REGENERATED AND WHAT WAS NOT.** The plant's CONTENT is unchanged: the same `__add__`, the
+same `__radd__ = __add__`, the same `__truediv__`, on the same type, violating the same proposition
+— *a scalar derived from BOTH dial types made representable or publishable, by ANY route* — by the
+same route. Only the surrounding context moved. The patch was regenerated with `git diff` and never
+by hand (`CD-ENG-WO2R-F13`).
+
+**RE-MEASURED AS A SET AT TREE `3ae0205a5e692a69ad5724c8f8973375eecfa3ca`** (the tree of commit
+`66d1d6a`), **one pristine extraction PER ARM**, `git archive <tree> | tar -x -C <tmpdir>`, each
+arm's declared command taken from `required-tests.yaml` and run with `python3 -B`:
+
+**ALL ELEVEN APPLY. TEN OF ELEVEN CONTRAST 0 -> 1.**
+
+| plant | clean | planted |
+|---|---|---|
+| `CD-RT-001-AST-NO-NUMERIC-DEFAULT` | exit 0, PASS — 540 assertions | exit 1, FAIL — 3 violations |
+| `CD-RT-001-ABSENCE-RENDERS-UNKNOWN` | exit 0, 124 passed | exit 1, 15 failed, 109 passed |
+| `CD-RT-002-TYPE-NO-ARITHMETIC` | exit 0, 314 passed | exit 1, 2 failed, 312 passed |
+| `CD-RT-002-AST-NO-BLEND` | exit 0, PASS — 7121 assertions | exit 1, FAIL — 2 violations |
+| `CD-RT-002-SCHEMA-CLOSED` | exit 0, PASS — 242 assertions | exit 1, FAIL — 3 violations |
+| `CD-RT-003-ENGINE-NO-WITNESS-REACH` | exit 0, PASS — 28 assertions | exit 1, FAIL — 1 violation |
+| `CD-RT-003-GRANT-MATRIX-LIVE` | **exit 3 PRECONDITION_NOT_MET** | **exit 3 PRECONDITION_NOT_MET** |
+| `CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES` | exit 0, 152 passed | exit 1, 12 failed, 140 passed |
+| `CD-RT-012-NO-EXECUTION-INTERFACE` | exit 0, PASS — 52279 assertions | exit 1, FAIL — 6 violations |
+| `CD-RT-012-LOCKFILE-DENYLIST` | exit 0, PASS — 134 assertions | exit 1, FAIL — 2 violations |
+| `CD-RT-012-EGRESS-NO-BROKER` | exit 0, PASS — 69 assertions | exit 1, FAIL — 2 violations |
+
+**`CD-RT-003-GRANT-MATRIX-LIVE` EXITS 3 ON BOTH ARMS** for want of a live PostgreSQL. **THAT IS NOT A
+CONTRAST AND IT IS NOT COUNTED AS ONE**, exactly as at increments 2, 2b, 3 and 4. Its authorisation
+to stand up a throwaway container is not this dispatch's to grant and was not taken. The Product
+Owner has since named it for the fourth Assurance seat (PO-DECISIONS-0009 ruling 3(ii)) — *"a control
+that has never been seen to refuse under attack is still a rumour by this project's own §F.1
+doctrine"* — and this seat agrees and has not been able to change it.
+
+**THE LAYER TEST APPLIED TO THE REGENERATED PLANT (`CD-ENG-WO2R3-F12`, this seat's own finding
+against its own increment-4 work).** An exit code is not a refusing layer. The two failures under
+`CD-RT-002-TYPE-NO-ARITHMETIC` are, by name:
+
+```
+FAILED tests/test_scores.py::test_neither_score_type_defines_any_arithmetic_or_coercion_dunder
+FAILED tests/test_scores.py::test_no_ancestor_of_either_score_type_defines_one_either
+E   AssertionError: EquityCrashScore defines ['__add__', '__radd__', '__truediv__']
+```
+
+— the CD-AC-002 arithmetic-dunder SURFACE assertions, which is the layer the plant's proposition
+names, and the same two named failures the record carries from increment 2b onward. Read from the
+failure text and not from the exit code.
+
+**THE SIGNATURE MOVED AND IT IS STATED RATHER THAN LEFT.** `CD-RT-002-TYPE-NO-ARITHMETIC`'s planted
+arm reads **2 failed, 312 passed** here against a clean arm of **314 passed**. The `2 failed` and the
+two named tests are unchanged; the passing count moves with the suite, not with the plant. This seat
+measured both arms rather than transcribing either.
+
+---
+
+## WO-2R3 INCREMENT 6 — A TWELFTH PLANT, AND IT IS THE FIRST TO VARY THE *REACH* AXIS
+
+**Written by `CD-ENG-WO2R3-02` under `PO-DECISIONS-0011` ruling 2, which ordered it in those
+words: the auditor's one-indentation plant becomes a PERMANENT planted violation with baseline
+and violated arms.** Nothing above is altered; no plant was deleted, regenerated or weakened
+(`CD-D-033`). **Eleven becomes twelve.**
+
+### Why this one exists, and why the eleven did not catch what it catches
+
+`CD-PL-F94`, in the auditor's own correction of it:
+
+> *"A declared limit pointed four parties at the narrower of two axes, and nobody tested the axis
+> it did not name."*
+
+`check_constructor_field_establishment.py`'s **DECLARED LIMIT 2** declares *RULE A's package list*
+to be the vocabulary, and `V16-new-package-undecorated-door.patch` exists to demonstrate **that**
+axis. Every party — Engineer, Project Lead, Product Owner and the fourth Assurance seat — therefore
+asked *"what if the type is in a different **package**?"*. **PACKAGES WERE NEVER THE LIMIT.** V43 and
+V16 varied WHERE THE FILE WAS. **Nobody varied HOW DEEP THE CLASS WAS.**
+
+| | `CD-AC-005` |
+|---|---|
+| **test_id** | `CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST` |
+| **patch** | `plants/CD-AC-005/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch` |
+| **declared command** | `python3 -B tools/register/check_constructor_field_establishment.py --root .` |
+| **proposition violated** | Every PUBLIC, FROZEN, FIELDED type on a judgement path derives its field establishment from its DECLARED FIELD LIST at the class boundary. |
+| **the route it takes** | **ONE INDENTATION LEVEL.** A public frozen fielded `Verdict` nested inside a plain `Judgement` container, appended to `src/crash_detector/engine/config.py` — an ALREADY-GOVERNED file in a RULE A judgement-path package. **No new package. No new module. No rename. No import added.** |
+| **clean arm** | `exit 0` · `PASS — 101 assertions, 0 violations` |
+| **violated arm** | `exit 1` · `FAIL — 1 violation(s)` |
+
+**THE FAILURE SIGNATURE, LINE FOR LINE:**
+
+```
+VIOLATION  src/crash_detector/engine/config.py:392
+    rule: FIELD_ESTABLISHMENT_NOT_DERIVED_FROM_THE_DECLARED_FIELD_LIST
+    what: Judgement.Verdict is a PUBLIC FROZEN type ON A JUDGEMENT PATH declaring 2 field(s)
+          ['score', 'breached'], and it carries no @establishes(...). Its establishment is
+          ABSENT (no __post_init__ or __init__ in its own class body). ...
+CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST: FAIL — 1 violation(s)
+```
+
+### BITTEN, to `PO-DECISIONS-0011` ruling 4's standard, on the day it landed
+
+> *"bitten is henceforth the standard a plant is held to before its criterion is called guarded"*
+
+Not "it should fail" — **it was made to fail, by this seat, with its own hands:**
+
+* the tree was extracted to a throwaway `/tmp` copy; **the worktree was never mutated;**
+* the **clean arm** was established FIRST: `exit 0`, `PASS — 101 assertions, 0 violations`;
+* `git apply --check` then `git apply` — **APPLIED FOR REAL**, not simulated;
+* the violated arm reproduced the signature above, **`exit 1`**;
+* **the instrument was SHA-VERIFIED BYTE-IDENTICAL** to the tree it was run from:
+  `sha256sum tools/register/check_constructor_field_establishment.py` =
+  `48679d2bc5b2ac8ceef427023e553d37f64e65716bbbe6c90ac1d80636479382`, equal to the worktree's own
+  copy. **The instrument that failed is the instrument that ships.**
+
+### What this plant does NOT establish, said here rather than left to be discovered
+
+**IT DEMONSTRATES ONE DEPTH.** Depth 2, function-local placement, and conditional (`if True:`)
+placement are demonstrated separately by `variants/WO-2R3/P-B-how-deep-can-a-type-hide.py`, which
+runs NINE placements at both SHAs and prints the ones that STILL ESCAPE beside the ones that do not.
+
+**IT ESCAPED AT `531c95c` AND IT ALSO ESCAPED AT `f495eef`** — the post-item-A, post-item-D commit
+of this same increment. Both were measured, not assumed. Only item B closes it.
+
+**TWO PLACEMENTS STILL ESCAPE AND THEY ARE DECLARED, NOT HIDDEN:** a type built by `type(...)` at
+runtime (no `ClassDef` node exists), and a module outside `src/crash_detector/` (never parsed).
+Both are `DECLARED LIMIT 5` of the instrument, in all three `CD-RULE-004` places, each with the
+probe row that demonstrates it. **CARRIER FOR EITHER: NOT PROVED TO BE CARRIED ANYWHERE.**
+
+---
+
+# THE THIRTEENTH PLANT — WO-2R3 INCREMENT 9
+
+> **THE COUNT ON THIS PAGE MOVES AGAIN, AND THIS TIME IN THE SAME COMMIT AS THE PATCH.**
+> `F-06-L` was raised because the twelfth plant landed at increment 5 and the count on this page
+> was never moved with it, for three increments. **THE SUPERSEDED FIGURES ARE QUOTED, NEVER
+> DELETED** (`CD-RULE-004`, `PBG-CONT-003`), and every historical paragraph above that says
+> *"eleven"* or *"twelve"* was true when it was written and is left exactly as it stands.
+>
+> > superseded: *"TWELVE TESTS, TWELVE PATCHES"* · `CD-AC-005/ ... (2 plants)` · `TOTAL: 12 plants`
+>
+> **THIRTEEN TESTS, THIRTEEN PATCHES. `CD-AC-005/` HOLDS 3. TOTAL: 13.**
+> Read from `find plants -name '*.patch' | wc -l` and from a run of this row's own declared
+> command — not copied from any document (`CD-RULE-009`).
+
+| | `CD-AC-005` |
+|---|---|
+| **test_id** | `CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT` |
+| **patch** | `plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch` |
+| **declared command** | `python3 -B tools/register/check_sealed_against_forged_establishment.py --root .` |
+| **proposition violated** | A governed class must not be constructible with FORGED STATE by a route that executes NO PACKAGE CODE. |
+| **the route it takes** | **THE POPULATION AXIS.** A plain public `LedgerCursor` appended to `src/crash_detector/store/migrations.py` — a module the SIBLING constructor check rules OUT by TWO of its three clauses at once (not a frozen dataclass, on no judgement path). No new package, no new module, no rename, no import added. |
+| **clean arm** | `exit 0` · `PASS — 99 assertions, 0 violations` · 99 classes examined, 51 SEALED, **0 OPEN AND REQUIRED**, 48 EXCLUDED BY MEASUREMENT, 0 UNMEASURABLE |
+| **`git apply` exit code** | **`0`** · `Applied patch src/crash_detector/store/migrations.py cleanly.` |
+| **violated arm** | `exit 1` · `FAIL — 1 violation(s)` · 100 classes examined, **1 OPEN AND REQUIRED** |
+
+**THE THIRD COLUMN IS NOT DECORATION.** `PO-DECISIONS-0017` ruling 1 exists because a plant that
+stops applying is invisible to every instrument this project runs at a boundary: its "violated" arm
+silently becomes the clean tree and **exits 0 — a dead plant reporting a pass behind a green board**,
+four times on this record. The plant-drift carrier is ruled and sequenced AFTER the seventh gate, so
+it did not exist while this was built. `git apply`'s own exit code is recorded here instead.
+
+**THE FAILURE SIGNATURE, LINE FOR LINE:**
+
+```
+VIOLATION  src/crash_detector/store/migrations.py:320
+    rule: OPEN TO FORGED STATE
+    what: LedgerCursor is a governed class that the sealing property is REQUIRED of, and 3
+          declared route(s) reach an object of exactly this type carrying forged field values
+          having executed ZERO lines of package code:
+          R1 cls.__new__(cls) + __dict__.update -> REACHED an object; exact type True;
+             forged value readable True; package lines executed 0;
+          R2 object.__new__(cls) + __dict__.update -> ... package lines executed 0;
+          R3 copyreg._reconstructor + __dict__.update -> ... package lines executed 0.
+          Declare `__slots__` naming its members, and verify `__dictoffset__` is 0. ...
+CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT: FAIL — 1 violation(s)
+```
+
+**READ THE `rule:` LINE, NOT THE EXIT CODE** (`CD-ENG-WO2R3-F12`). Two arms exiting 1 for different
+reasons look identical in a summary table and prove nothing.
+
+### AND THE MEASUREMENT THAT MAKES THIS PLANT WORTH HAVING
+
+**ON THE VIOLATED ARM, THE SIBLING CONSTRUCTOR CHECK STILL EXITS 0:**
+
+```
+$ cd <violated arm> && python3 -B tools/register/check_constructor_field_establishment.py --root .
+CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST: PASS — 101 assertions, 0 violations
+```
+
+**THAT IS THE FOURTH WIDENING, MEASURED RATHER THAN ARGUED.** The Product Owner's sentence was
+*"floors are not populations, and a remedy applied to 13 of 99 is a census with extra steps."* A
+control scoped to the 33-member field-establishment class does not see `LedgerCursor` at all. The
+sealing property is required of **THE CLASS**, and this plant is the demonstration that the two rows
+are not the same row.
+
+### BITTEN, to `PO-DECISIONS-0011` ruling 4's standard, on the day it landed
+
+* both arms extracted with `git archive` into `/tmp/plantmeas/{clean,violated}`; **the worktree was
+  never mutated;**
+* the **clean arm** was established FIRST: `exit 0`, `PASS — 99 assertions, 0 violations`;
+* `git apply --verbose` — **APPLIED FOR REAL**, exit code recorded, not simulated;
+* the violated arm reproduced the signature above, **`exit 1`**, and the count line moved from
+  `0 OPEN AND REQUIRED` to `1 OPEN AND REQUIRED`;
+* **THE COUNTERFACTUAL (`CD-D-079`)**: the same instrument copied into a pristine extraction of the
+  increment's BASE SHA `753efe4` exits **1** with `FAIL — 36 violation(s)` and
+  `15 SEALED, 36 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT`. **A GREEN RUN AT THE TIP IS NOT A
+  RUN OF A CHECK THAT CANNOT FAIL.**
+
+### What this plant does NOT establish, said here rather than left to be discovered
+
+**IT DEMONSTRATES ONE ROUTE FAMILY ON ONE CLASS.** The route set is five and is DECLARED, not proved
+complete — see the execution contract's LIMIT 2.
+
+**IT SAYS NOTHING ABOUT THE 48 EXCLUDED CLASSES.** They are not safe; they are **unsealable** — 43
+whose `__dict__` is imposed by `builtins.BaseException` and 5 by `enum.Enum`, each proved by
+building a probe subclass with `__slots__ = ()` and reading `__dictoffset__` (16 and -48 on Python
+3.11.2). Every one of them remains open to the route. **NOT PROVED TO BE CARRIED ANYWHERE**
+(`CD-RULE-006`).
+
+**IT IS NOT THE VACUITY GUARD ON ITS OWN.** That is
+`tests/test_sealed_against_forged_state.py::test_VIOLATED_ARM_removing_one_seal_fails_the_check_AT_THE_LAYER_ITS_PROPOSITION_NAMES`,
+which opens `Agrees` — a class the seal IS available to — and requires the exclusion clause not to
+excuse it.
+
+---
+---
+
+| | |
+|---|---|
+| **test_id** | `CD-RT-002-EXACT-TYPE-ADMISSION` |
+| **patch** | `plants/CD-AC-002/CD-RT-002-EXACT-TYPE-ADMISSION.patch` |
+| **command** | `python3 -B tools/register/check_exact_type_admission.py --root .` |
+| **contract** | `contracts/execution/CD-RT-002-EXACT-TYPE-ADMISSION.md` |
+| **added** | WO-2R3 increment 10, ITEM_1, by `CD-ENG-WO2R3-08`, under `PO-DECISIONS-0018` ruling 2 |
+
+**Proposition violated.** *A judgement-path door admits by EXACT TYPE, so an instance of a
+forged metatype subclass — which passes `isinstance` by construction and fails exact type by
+construction — is refused.* The patch replaces `is_exactly(value, self.types)` with
+`isinstance(value, self.types)` in `_Exactly.refusal`.
+
+**Why this is the proposition and not a token.** It is **ONE LINE**, at the single point where
+every `@admits` parameter and every `@establishes` field decides what it accepts, and it is the
+exact regression `F-06-D` corrected at increment 8 — *the shape this project has now made four
+times and called a simplification*. It does not delete a guard, does not remove a decorator and
+does not touch a metaclass. Under it the door still reports `faults: ()`, `is_admitting_door` is
+still `True`, and the refusal message a reader would grep for still reads *"this door requires
+exactly X"*. **THAT IS WHAT MAKES IT A FAIR TEST: A SOURCE-HONEST DOOR THAT HAS STOPPED
+GUARDING.**
+
+**Expected failure signature.** Exit **1**, `FAIL — 3 violation(s)`, all `CD-EXACT-DOOR-004`:
+
+```
+    crash_detector.serving.dial_presentation::is_shown: **THE FORGED INSTANCE WAS ADMITTED**
+    and the door returned False. A NotShown that coerces to 0.5, built with zero lines of
+    package code, reached a judgement path. That is CD-ASR-F01.
+
+    crash_detector.dials.magnitude::_established_quantity: the forged instance was refused,
+    but by CrossDialCombination and NOT by the declared NotAdmitted ...
+
+    crash_detector.serving.dial_presentation::present_dial: the forged instance was refused,
+    but by TypeError and NOT by the declared NotAdmitted ...
+```
+
+**THE THIRD AND SECOND ROWS ARE THE ONES WORTH READING.** Under the plant, two of the four doors
+still refuse the forged instance — **AT THE BODY, NOT AT THE DOOR** — and one
+(`derived_within_one_dial`, whose parameter is a declared `ESTABLISHED_HERE` exemption) is
+unaffected entirely. **A CHECK THAT ONLY ASKED "DID SOMETHING RAISE?" WOULD HAVE SCORED THIS
+PLANT 1 VIOLATION INSTEAD OF 3 AND CALLED THE OTHER TWO CLEAN.** *"The right outcome from the
+wrong layer"* is this project's most-repeated defect, and this row is where it is caught.
+
+**ARM 1 IS UNMOVED BY THE PLANT AND THAT IS ASSERTED, NOT ASSUMED.** On the violated arm all
+four `ARM 1 ... REFUSED <Surface>Violated` notes are still printed. The plant does not obtain
+its result by breaking the accident-proofing `PO-DECISIONS-0018` ruling 1(a) keeps.
+
+### BITTEN, to `PO-DECISIONS-0011` ruling 4's standard, on the day it landed
+
+* both arms extracted with `git archive` at a RESOLVED SHA into
+  `/tmp/cd-eng-wo2r3-08/pm/{clean,violated}`; **the worktree was never mutated;**
+* the DECLARED command and the DECLARED patch path were both **derived from
+  `required-tests.yaml` by `test_id` with `yaml.safe_load`**, never read from this document's
+  prose (`CD-RULE-009`);
+* the **clean arm** was established FIRST: `exit 0`, `PASS — 36 assertions, 0 violations`;
+* `git apply --verbose` — **APPLIED FOR REAL**, exit code recorded, not simulated:
+  `Applied patch src/crash_detector/admission.py cleanly.` exit **0**;
+* the violated arm reproduced the signature above, **`exit 1`**;
+* each arm printed its own `pwd` and its own resolved `crash_detector.__file__` (`CD-PL-F98`).
+
+### THE COUNTERFACTUAL (`CD-D-079`) — AND IT IS NOT THE ONE A READER WILL EXPECT
+
+**THIS CHECK ALSO PASSES AT THE INCREMENT'S BASE SHA `686a374`.** The instrument was copied into
+a pristine extraction of the base tree and run: `exit 0`, `PASS — 36 assertions, 0 violations`,
+all four doors refusing with their declared identities.
+
+**SO THIS CHECK IS NOT EVIDENCE THAT INCREMENT 10 FIXED THESE FOUR DOORS. IT DID NOT.** Those
+four were already exact-typed at the base by the `@admits` / `@establishes` machinery, and this
+row is a NEW CARRIER FOR AN EXISTING PROPERTY plus a REGRESSION TEST on ruling 1(a). **SAID HERE
+IN TERMS, BECAUSE A GREEN BOARD BESIDE A REMEDY IS READ AS THE REMEDY'S DOING AND THAT WOULD BE
+THE SIXTH FALSE GREEN.**
+
+**WHAT INCREMENT 10 ACTUALLY MOVED IS CARRIED SOMEWHERE ELSE, AND ITS BASE/TIP CONTRAST IS
+STARK.** `tests/test_exact_type_admission_sweep.py`, the carrier for the twelve tier-1 sites
+converted from `isinstance` to exact type, run on pristine extractions of both trees:
+
+```
+$ cd <686a374 extraction> && PYTHONPATH=src python3 -B -m pytest -q tests/test_exact_type_admission_sweep.py
+13 failed, 1 passed          <- SIX of the twelve sites ADMITTED the object outright
+
+$ cd <tip extraction>      && PYTHONPATH=src python3 -B -m pytest -q tests/test_exact_type_admission_sweep.py
+14 passed
+```
+
+The one test passing on BOTH arms is
+`test_isinstance_has_two_routes_and_the_second_needs_no_subclass`, which asserts a property of
+CPython and not of this tree — it SHOULD pass on both, and it is named here so nobody has to
+wonder.
+
+### What this plant does NOT establish, said here rather than left to be discovered
+
+**IT SAYS NOTHING ABOUT WHETHER THE FORGED CLASS CAN BE BUILT. IT CAN.** The check builds one in
+every run, at every one of the four metatypes, and prints that it succeeded with the package
+lines it executed. `PO-DECISIONS-0018` ruling 1: *an enumeration cannot close a
+property-defined class.*
+
+**IT IS FOUR DOORS, NOT EVERY DOOR.** Eighteen `isinstance` admissions survive in the package,
+each with a written measured reason at its own site, and this check looks at none of them. Four
+of those eighteen are the metatype `__new__` guards themselves, where `isinstance` is the
+STRICTER operator because the predicate REFUSES — converting them would ADMIT an ordinary
+`class` statement through one forged intermediate, MEASURED on all four.
+
+**IT IS NOT THE VACUITY GUARD ON ITS OWN.** That is this plant plus
+`tests/test_exact_type_admission_sweep.py::test_the_converted_sites_are_exactly_these_twelve`,
+which enumerates the twelve conversions from RUNTIME behaviour and names any one that starts
+admitting again.

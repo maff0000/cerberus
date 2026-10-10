@@ -1,0 +1,277 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 8 — ITEM 1. THE `CD-ASR-F03` REDESIGN. `guarded` IS A DOOR.
+#
+# `PO-DECISIONS-0012` ruling 1 held that `_evaluate_dial` was *"reachable only through doors that
+# already establish"*. It was falsified by measurement twice independently and the Product Owner
+# took the consequence it had pre-committed to (`PO-DECISIONS-0015` ruling 1). **THIS IS THE
+# REPLACEMENT FOR A RULING THAT DIED.**
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0084 (READ, not assumed: 0084 is the highest landed
+# entry in this lane). 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T055251Z-0085
+timestamp_utc: "2026-08-23T05:52:51Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-06
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC8-ENGINEER   # instance 2 amendment, BL-20260823T050107Z-0121
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0015.md ruling 1 — 0012 ruling 1 FALLS; `guarded` becomes a DOOR; CD-ASR-F03 is REDESIGNED, not repaired; the doors criterion moves on REAL PUBLIC BINDINGS AND MEASURED REACH, never on an underscore'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 314592c6c397b4e1f2f03ca84488ce800840ad09
+parent_entry_id: BL-20260823T042136Z-0084
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_1
+title: 'The `CD-ASR-F03` redesign — the three acceptance properties, and the doors criterion that stops moving on an underscore.'
+
+# ---------------------------------------------------------------------------------------------- #
+THE_QUARANTINED_PRIOR_DRAFT__WHAT_I_ADOPTED_AND_WHAT_I_MEASURED_TO_EARN_IT:
+  ruling: 'CD-D-093. I read /srv/crash-detector-wo2r3-inc8-item1-salvage/ as an UNVERIFIED PRIOR DRAFT. I did not apply its patch. I own every line I committed.'
+  design_ideas_adopted_and_named_as_adopted:
+    - 'THE BODY CARRIED AS A `code` OBJECT rather than a function object. **Measured to earn it:** `[type(c.cell_contents).__name__ for c in _evaluate_dial.__closure__]` reads `[tuple, dict, NoneType, str, code, dict, tuple, Signature]` and the CALLABLE filter over it returns `[]`. The draft asserted this; I ran it, and then I built the attack that the draft cited and never wrote.'
+    - '`functools.wraps` DROPPED ENTIRELY so `__wrapped__` is never created rather than created-and-deleted. **Measured:** `hasattr(_evaluate_dial, "__wrapped__")` is False, and `tests/test_the_absence_door.py` asserts it from the AST as well, so a `grep` cannot match this file''s own prose about the superseded implementation.'
+    - 'ESTABLISHMENT DERIVED FROM RESOLVED ANNOTATIONS through `crash_detector.admission.declaration`, the project''s ONE vocabulary. **Measured:** `declared_admissions(_evaluate_dial)` reports `{spec: DialSpec, usable: dict, now_utc: datetime, model: ModelSpec or None}` and every object in it is the class `declaration()` produces.'
+    - 'DERIVING THE POST-CONDITION''S ARGUMENTS from its own signature. **Measured:** `_post_condition_order(signature, refuse_a_number_without_its_inputs)` returns `("spec", "usable", None)`, and a post-condition with two outstanding parameters raises `AdmissionFault` at import.'
+  what_I_did_NOT_take_from_it:
+    - '**ITS TEST CHANGES.** The draft cited `tests/test_the_absence_door.py` as "THE FULL ATTACK" and that file had never existed. **I WROTE IT** — eleven arms, all four routes, with a counterfactual control arm built the old way. 10 of the 11 FAIL at `314592c`; the eleventh is property (c)''s, which is a RETENTION property and correctly passes at the base.'
+    - '**ITS `DECLARED LIMIT 10`.** The draft cited that number three times, defined it nowhere, and put two different residues under it. I split them: **LIMIT 10** is the `types.FunctionType` reconstitution, **LIMIT 11** is the dropped generic subscript, and each is written in all three CD-RULE-004 places.'
+    - '**ITS SILENCE ON THE SWEEP.** The draft left the suite RED because the Class-2 sweep moved and a test pinned the old count. I carried the consequence (below) rather than suppressing it.'
+    - '**ITS TEST-SIDE EDITS TO `test_judgement_path_doors.py`.** Where the draft re-pinned a literal string, I located the call BY AST instead, so the carrier stops breaking on a spelling it is not about.'
+  CD_PL_F109__DISPOSITIONED_DELIBERATELY_AND_MEASURED_NOT_ARGUED:
+    the_change: '`_evaluate_dial`''s `usable`: `Mapping[str, OK]` -> `dict[str, OK]`. KEPT.'
+    why_it_is_forced_and_not_incidental: 'The establishment is derived from the annotation BY EXACT TYPE. An abstract `Mapping` has no exact type to derive — `type(value) is Mapping` is false for every value there is — so the mechanism would have to FAULT the door. The annotation had to become honest about what the path requires.'
+    the_finding_the_Project_Lead_raised: '"a `Mapping` that is not a `dict` becomes REFUSED AT THE DOOR where it was previously admitted."'
+    what_I_MEASURED__TWO_ARMS_ONE_AXIS_BOTH_TREES: |
+      probe: variants/WO-2R3/P-M-is-the-usable-annotation-narrowing-what-the-product-accepts.py
+      TREE /tmp/cd06/base  (pristine `git archive 314592c`)
+        ARM 1  plain dict  (control): ADMITTED -> Unknown
+        ARM 2  Mapping, not a dict : REFUSED -> NotAdmitted: refuse_a_number_without_its_inputs: usable=NotADict ... requires exactly dict
+      TREE /srv/crash-detector-wo2r3  (the lane, this work applied)
+        ARM 1  plain dict  (control): ADMITTED -> Unknown
+        ARM 2  Mapping, not a dict : REFUSED -> NotAdmitted: _evaluate_dial: usable=NotADict ... requires exactly dict
+    the_conclusion: >
+      **IT IS NOT A NARROWING OF WHAT THE PRODUCT ACCEPTS. THE ACCEPTED SET IS IDENTICAL AND ONLY
+      THE POINT OF REFUSAL MOVES** — from AFTER the body has run to BEFORE it binds. The reason is
+      that `refuse_a_number_without_its_inputs` has ALWAYS declared `usable=dict` at its own
+      `@admits` door and has always fired on every call through the net, so a non-`dict` Mapping
+      was already refused with `NotAdmitted` at the base. **THE FINDING WAS RIGHT TO BE RAISED AND
+      THE MEASUREMENT ANSWERS IT IN THE PRODUCT'S FAVOUR.** Declared as DECLARED LIMIT 11 in all
+      three CD-RULE-004 places, with this table, and carried by the probe above.
+    what_I_ALSO_changed_for_the_same_reason: '`_latest_usable_ok`''s RETURN annotation, `Mapping[str, OK]` -> `dict[str, OK]`. Its body has always built and returned a `dict` literal. With the establishment now derived from annotations, an annotation wider than the truth is an establishment wider than the truth.'
+
+# ---------------------------------------------------------------------------------------------- #
+what_changed_in_the_code_path:
+  property_a__no_undecorated_evaluator_object_exists_at_runtime:
+    the_code_path: >
+      `_absence_is_never_a_number` no longer closes over the evaluator. `_body_materials` takes
+      `(__code__, __globals__, __name__, __defaults__, __kwdefaults__)` and the function object is
+      never referenced below that line, so it is unreachable and collected. `guarded` rebuilds a
+      body with `types.FunctionType` PER CALL and drops it. A body with free variables is REFUSED
+      AT IMPORT, because carrying its cells would be carrying exactly what the ruling calls the
+      defect class.
+    the_contrast_BOTH_ARMS: |
+      tests/test_the_absence_door.py::test_the_attack_that_felled_the_ruling_finds_no_callable_at_all
+      ARM 1  THE SHIPPED DOOR, obtained from `sys.modules` as the attack obtains it:
+             __closure__ callables      : []
+             __wrapped__                : [] (never created)
+             __globals__ callables      : []
+             module namespace callables : []
+             door.__dict__ callables    : []
+      ARM 2  THE CONTROL — the same walk, the same payload, a decorator built THE OLD WAY
+             (`functools.wraps` over a cell holding the naked function):
+             __closure__ callables      : NON-EMPTY, and calling one RETURNS A `Value` from a
+                                          starved dial — the judgement reached with no door
+             __wrapped__                : NON-EMPTY
+      ONE AXIS: whether the mechanism carries the body as a `code` object or as a function object.
+    what_it_does_NOT_close__MEASURED_AND_ASSERTED_TRUE: >
+      **DECLARED LIMIT 10.** `types.FunctionType(code, globals)` over the materials still in the
+      cells RECONSTITUTES a callable body, and calling it reaches the judgement with neither the
+      establishment nor the post-condition applied. **THE CARRIER ASSERTS THIS RESIDUE *TRUE*** —
+      `test_the_reconstitution_residue_is_real_and_is_declared_limit_10` performs the
+      reconstitution and requires it to SUCCEED — so the paragraph cannot go stale in the
+      reassuring direction. **PROPERTY (a) IS MET AS THE RULING STATES IT (no undecorated
+      evaluator OBJECT EXISTS); THE `__closure__` REACH IS NOT CLOSED AND IS NOT CLAIMED CLOSED.**
+      What changed is the COST: construct a callable rather than read one out of a cell.
+  property_b__the_establishment_is_derived_from_the_signature:
+    the_code_path: >
+      `_establishment_derived_from` resolves the evaluator's annotations with
+      `typing.get_type_hints` (they are STRINGS under `from __future__ import annotations`;
+      reading them would be reading source text) and compiles one admission per parameter through
+      `crash_detector.admission.declaration`. A union unwraps to `one_of(...)`; a subscripted
+      generic to its origin; **anything else RAISES AT IMPORT**, uncaught. An OPEN CHANNEL and an
+      UNANNOTATED parameter each raise `AdmissionFault` at decoration. **NOBODY WRITES A PARAMETER
+      LIST.**
+    the_contrast_BOTH_ARMS__THE_ADD_A_PARAMETER_ARM_THE_DISPATCH_CALLS_THE_WHOLE_OF_b: |
+      tests/test_the_absence_door.py::test_adding_a_parameter_is_established_without_anyone_editing_the_guard
+        def a_body_with_a_fourth_parameter(spec: DialSpec, usable: dict,
+                                           now_utc: datetime, weighting: float) -> "Reading": ...
+        door = evaluate._absence_is_never_a_number(a_body_with_a_fourth_parameter)   # UNEDITED
+      ARM 1  THE DERIVED GUARD (no line of the mechanism mentions `weighting`):
+             declared_admissions(door)          -> ['now_utc', 'spec', 'usable', 'weighting']
+             ...['weighting'].describe()        -> 'float'
+             door(spec, {}, NOW, 1.0)           -> Unknown          (admitted)
+             door(spec, {}, NOW, "1.0")         -> NotAdmitted, and the message names `weighting`
+      ARM 2  THE COUNTERFACTUAL — the OLD NET's shape, `*extra, **extra_by_name`, same body:
+             gaping(spec, {}, NOW, "1.0")       -> Unknown          (ADMITTED UNESTABLISHED)
+             is_admitting_door(gaping)          -> False
+      ONE AXIS: whether the wrapper derives or gapes. **THE OLD NET'S OPEN ARITY BOUND NOTHING,
+      AND THAT IS THE FINDING PO-DECISIONS-0015 RULING 1 RECORDS, RE-MEASURED HERE.**
+  property_c__the_post_condition_is_retained_inside_the_same_mechanism:
+    the_code_path: >
+      One wrapper, one closure. `guarded` calls `refuse_a_number_without_its_inputs` BY THAT
+      LITERAL NAME so `tools/register/declared_nets.py`'s third assertion is checked against this
+      code and not against a sentence about it, and WHICH arguments it receives is derived from
+      its own signature.
+    the_contrast_BOTH_ARMS: |
+      tests/test_the_absence_door.py::test_the_post_condition_still_refuses_a_number_a_rewritten_body_paid_for
+      ARM 1  the mechanism applied to a body that pays a number for nothing -> AbsenceYieldedAValue
+      ARM 2  the identical body with NO mechanism applied                   -> returns a `Value`
+    honest_note: >
+      **THIS IS THE ONE ARM OF THE ELEVEN THAT PASSES AT `314592c`, AND IT SHOULD.** (c) is a
+      RETENTION property — the post-condition was already there and had to survive. A carrier that
+      failed at the base would mean the redesign had introduced it, which is not the claim.
+  the_criterion_half__membership_moves_on_real_bindings_and_measured_reach:
+    what_moved__TWO_THINGS_AND_NO_MORE: |
+      (i)  MEMBERSHIP. A module-level `def` is a subject if it is PUBLIC **or if its return
+           annotation names a JUDGEMENT VALUE TYPE.** A callable that PRODUCES A JUDGEMENT is a
+           judgement-path door whatever it is spelled. That is a property of the artefact and it
+           survives renaming the identifier IN EITHER DIRECTION.
+      (ii) THE ESCAPE-ROUTE DESTINATION TEST. It asked whether the destination's IDENTIFIER was
+           public and treated a private one as a dead end — `guarded`'s reason line read
+           *"reaches only ['_evaluate_dial'], every one of them non-public"*, the FALSE sentence
+           Ground 1 falsified. It now asks whether the destination is ITSELF AN ENUMERATED
+           SUBJECT with a def site to assert; if it is, the local's obligation is **RESOLVED**
+           there — at the name a caller writes — rather than DENIED.
+    the_second_door_form__because_a_derived_door_has_no_argument_list_to_compare: >
+      `tools/register/declared_door_mechanisms.py`, NEW, and it is DATA CHECKED AGAINST THE CODE
+      exactly as `declared_nets.py` is: the mechanism must EXIST, must read `inspect.signature`,
+      must compile through `crash_detector.admission.declaration`, and must DECORATE SOMETHING —
+      and at every subject it derives, EVERY PARAMETER ANNOTATED and NO VARIADIC. **A ROW IS NOT
+      AN EXEMPTION AND BUYS A SUBJECT NOTHING.**
+    the_measured_movement: |
+      SUBJECTS ENUMERATED 27 -> 31.  DECORATED 27 -> 31.  ASSERTIONS 60 -> 72.
+      The four new subjects, all four now doors:
+        engine/evaluate.py        _evaluate_dial        DERIVED door (the mechanism)
+        dials/magnitude.py        _established_quantity @admits(magnitude=DialMagnitude)
+        dials/provenance.py       _new_quantity         @admits(dials=frozenset, value=ESTABLISHED_HERE(...))
+        serving/dial_presentation.py _shown_from        @admits(dial_id=str, score=ESTABLISHED_HERE(...))
+      ESTABLISHED_HERE uses 16 -> 18, across 9 -> 11 callables. MEASURED from my own run and its
+      listing piped through `sort -u`; corrected in `admission.py`'s DECLARED LIMIT 1 with the
+      superseded wording quoted in full.
+    THE_RENAME_TEST_APPLIED_TO_MY_OWN_CRITERION__REPORTED_WHICHEVER_WAY_IT_FALLS: >
+      **IT PASSES IN BOTH DIRECTIONS, AND THE OLD CRITERION PASSED IN ONLY ONE.** Renaming the
+      function-local `guarded` -> `_guarded`: verdict and subject count unmoved (the pre-existing
+      carrier, still green). Renaming the DESTINATION `_evaluate_dial` -> `evaluate_dial`: verdict
+      and subject count unmoved — **NEW, and the old clause's own docstring conceded it could not
+      survive this** (*"renaming the DESTINATION DOES change the verdict, and correctly"*). New
+      carrier: `test_renaming_the_reachable_destination_does_not_move_the_verdict_either`.
+    what_I_did_NOT_do_and_the_measurement_that_decided_it: >
+      **I DID NOT ABOLISH PUBLICNESS ALTOGETHER**, which is the wide reading of *"never on an
+      underscore"*. MEASURED on a pristine `git archive` extraction of `314592c` with
+      `_is_public`'s body replaced by `return True`: **SUBJECTS 27 -> 68, FAIL — 42 violations** —
+      41 private helpers becoming doors in one increment. Whether §D.1's *"public entry points"*
+      class includes them is a PRODUCT-MEANING boundary and not an implementation one
+      (PBG-AUTH-005), and the superseded DECLARED LIMIT 9 bullet had already handed exactly that
+      question up. **I RAISE IT AGAIN RATHER THAN TAKE IT.** Probe:
+      `variants/WO-2R3/P-N-what-abolishing-publicness-would-cost.sh`, two arms, each running its
+      own tree's own copy and printing the tree (CD-PL-F98).
+
+# ---------------------------------------------------------------------------------------------- #
+the_consequence_of_my_own_change__CARRIED_NOT_SUPPRESSED:
+  what_the_quarantined_draft_left_red: 'the Class-2 sweep population moved and `tests/test_disposition_contract.py::test_the_five_original_words_are_unchanged_in_shape` pinned the old count.'
+  what_I_MEASURED: 'THE DENOMINATOR 534 -> 555 sites, CD-CLASS-2-SWEEP **PASS, EXIT 0**. Every one of the twenty-one new occurrences is TIER 2 (the deciding operation) in a module the register already DERIVES.'
+  what_I_did: >
+    Superseded the pinned number with the MEASURED one, quoting the old text verbatim and stating
+    why the old reason ("the record act changed no line under src/") is TRUE OF A RECORD ACT AND
+    FALSE OF THIS INCREMENT. **AND ADDED THE ASSERTION THAT ACTUALLY MATTERS BESIDE IT**: the
+    TIER 1 admission population is pinned SEPARATELY at 45 distinct sites, because a tier-1 site
+    needs a written disposition in `tools/sweep/declared_dispositions.py` — a register outside my
+    scope — and bumping only the total would let a new undeclared admission hide inside a
+    legitimate tier-2 movement. **HAD THIS INCREMENT ADDED A TIER-1 SITE, THAT TEST WOULD BE RED
+    AND WOULD HAVE TO STAY RED.**
+  and_it_nearly_did: >
+    My first draft of `_exact_types_of` wrote `getattr(types, "UnionType", ())`, which IS a tier-1
+    DUCK admission. **THE SWEEP CAUGHT IT: `CD-CLASS-2-SWEEP: FAIL — 556 sites, 1 violations,
+    UNDECLARED ADMISSION crash_detector.engine.evaluate::_exact_types_of`.** I named
+    `types.UnionType` directly instead — the project is pinned to `3.11.*` in `pyproject.toml`,
+    where the attribute always exists — rather than declaring a site in a register that is not mine.
+
+# ---------------------------------------------------------------------------------------------- #
+FINDINGS_AGAINST_MY_OWN_WORK:
+  - id: CD-ENG-WO2R3-06-F01
+    severity: MEDIUM
+    what: >
+      **I PUT AN EXACT-TYPE DOOR IN FRONT OF A NAMED REFUSAL AND SILENTLY DISCHARGED A PUBLIC
+      DOOR'S DECLARED EXEMPTION AT A PRIVATE CALLABLE.** My first decoration of `_new_quantity`
+      was `@admits(dials=frozenset, value=float)`. `observed_for_dial`'s OWN `ESTABLISHED_HERE`
+      reason names `ScoreOutOfRange` as what refuses a bad `quantity`, and that refusal happens in
+      `_install`, one level in. My door preempted it with a generic `NotAdmitted`.
+    how_it_was_caught: '**BY RUNNING THE SUITE, NOT BY READING THE CODE.** `tests/test_dial_provenance.py::test_the_admission_door_refuses_anything_that_is_not_a_finite_float` went to **4 failed**.'
+    what_I_did: 'Changed `value` to `ESTABLISHED_HERE` with the reason, the named error and the measured carrier written into the artefact, and recorded the near-miss in `admission.py`''s DECLARED LIMIT 1 rather than only fixing it. `dials` stays exact-typed: a `frozenset` has no named refusal here to preempt.'
+    the_shape_it_is_an_instance_of: 'admission.py''s own DECLARED LIMIT 5 — *"Exact-typing them at the door would PREEMPT those named refusals ... and replace this project''s strongest closures with a coarser one"*. **I HAD REASONED ABOUT THAT FOR `_shown_from` AND WALKED INTO IT AT `_new_quantity` IN THE SAME COMMIT.**
+      A rule you can quote and still break is a rule you have not applied.'
+  - id: CD-ENG-WO2R3-06-F02
+    severity: MEDIUM
+    what: >
+      **MY FIRST VERSION OF THE RESOLUTION CLAUSE BROKE THE ITEM-5 CARRIER THAT HAD JUST LANDED,
+      AND IT BROKE IT IN THE EXACT DIRECTION ITEM 5 EXISTED TO FIX.** I removed the two
+      `if _is_public(target): return True` branches outright, so a function-local escaping to a
+      PUBLIC MODULE-LEVEL ASSIGNMENT — `public_evaluator = _install_evaluator()` — stopped being a
+      DOOR and became an UNCLASSIFIED_INTERCEPTOR. Right exit code, **false diagnosis** — which is
+      precisely what `CD-ENG-WO2R3-05` measured and repaired one commit earlier.
+    how_it_was_caught: '`tests/test_module_level_traversal.py` — the previous seat''s own carrier — went to 2 failed. **The value of that seat committing as it went is not theoretical.**'
+    what_I_did: >
+      Made the resolution require a destination WITH A DEF SITE TO RESOLVE *TO*. A module-level
+      `def` has a signature and a decorator for the check to assert; a module-level ASSIGNMENT has
+      neither, so resolving to it would discharge an obligation onto nothing. That case falls
+      through and the LOCAL is the door, exactly as before. The reason is written into the code at
+      the branch, with the measurement.
+  - id: CD-ENG-WO2R3-06-F03
+    severity: LOW
+    what: >
+      **THE DERIVED-DOOR FORM IS RECOGNISED BY THE MECHANISM'S NAME IN THE SOURCE, AND THAT IS THE
+      SAME LIMIT `admits` ALREADY DECLARES (DECLARED LIMIT 4) RATHER THAN A NEW ONE — BUT I AM THE
+      SEAT THAT ADDED A SECOND INSTANCE OF IT AND I SHOULD SAY SO.** A do-nothing decorator named
+      `_absence_is_never_a_number` in `engine/evaluate.py` would be recognised. The four
+      source-checked assertions bound it (it must read `inspect.signature` and compile through
+      `declaration`), and the failure direction is safe (rename it and TWO violations fire, never
+      a silence) — **but "the mechanism is real" is asserted statically and the runtime carrier for
+      it is `tests/test_the_absence_door.py`, not this check.** CD-RULE-006: a check reports, a
+      carrier fails.
+    not_repaired: 'Closing it means importing the product inside a static check, which is the property that lets an auditor run this instrument against a tree they extracted themselves. Raised, not taken.'
+
+# ---------------------------------------------------------------------------------------------- #
+instruments_run_and_their_exit_codes__MINE_MEASURED_BY_ME:
+  the_whole_register_set_twelve_checks_at_this_tip: 'TEN EXIT 0 · check_grant_matrix_live EXIT 3 (env gate, no credentials, none guessed) · check_no_execution_interface EXIT 1 (one violation, NOT this item''s — it is ITEM 2''s). **IDENTICAL TO THE BASE MEASUREMENT OF THE SAME TWELVE.**'
+  check_judgement_path_doors: 'EXIT 0 — PASS, 72 assertions, 31 subjects, 31 decorated. Base: EXIT 0, 60 assertions, 27/27.'
+  delegated_judgement_sweep: 'EXIT 0 — PASS, 555 sites. Base: EXIT 0, 534 sites.'
+  full_suite: 'EXIT 0 — **1659 passed**. Base: 1641. +18 = 11 (test_the_absence_door.py) + 7 (the criterion and derived-door arms).'
+  the_new_carriers_at_the_base: |
+    pristine `git archive 314592c` + ONLY the new file:
+      tests/test_the_absence_door.py         -> **10 failed, 1 passed**  (the 1 is property (c), a RETENTION property)
+      tests/test_judgement_path_doors.py     -> **12 failed, 28 passed** (7 new + 5 whose propositions this item moved)
+
+# ---------------------------------------------------------------------------------------------- #
+the_declared_limits_written_in_all_three_CD_RULE_004_places:
+  limits_10_and_11: 'src/crash_detector/engine/evaluate.py header · required-tests.yaml CD-RT-001-ABSENCE-RENDERS-UNKNOWN · contracts/execution/CD-RT-001-ABSENCE-RENDERS-UNKNOWN.md. **The numbering runs as ONE sequence across THREE headers now (1-4, 7-9 the check''s; 5-6 the mechanism''s; 10-11 this guard''s), which is CD-PL-F81/CD-D-111 applying to a third header.**'
+  limit_9_rewritten: 'tools/register/check_judgement_path_doors.py header · required-tests.yaml CD-RT-002-DOORS-REQUIRE-THEIR-TYPES · contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md. Superseded wording quoted in full at every one of the three (CD-RULE-004, PBG-CONT-003).'
+  limit_1_count_corrected: 'src/crash_detector/admission.py, 16/9 -> 18/11, superseded wording quoted in full.'
+
+# ---------------------------------------------------------------------------------------------- #
+what_this_does_NOT_close__MEASURED:
+  - '**THE `__closure__` REACH IS NOT CLOSED.** DECLARED LIMIT 10, asserted TRUE by its own carrier. What changed is the cost, not the reach.'
+  - '**THE UNDERSCORE STILL DECIDES FOR A MODULE-LEVEL NAME THAT RETURNS NO JUDGEMENT VALUE.** Abolishing it costs 41 new undecorated doors, MEASURED. Raised as a PRODUCT-MEANING question, not taken (PBG-AUTH-005).'
+  - '**NO `DEFECT_OPEN` FINDING IS CLOSED BY THIS ITEM** and this seat has no authority to close one (PBG-AUTH-003).'
+  - '**`CD-RT-012` IS STILL RED AT THIS TIP.** One violation, `tests/test_tree_fingerprint.py:61`, unmoved by this item. It is ITEM 2''s.'
+  - '**WHETHER THIS DISCHARGES `PO-DECISIONS-0015` RULING 1 IS NOT MINE TO SAY.** A fresh seventh Assurance seat tests it and the Product Owner dispositions it (PBG-SOD-001, PBG-AUTH-003).'
+
+next_safe_action: 'ITEM 2 — `CD-RT-012-NO-EXECUTION-INTERFACE`, the correction IF AND ONLY IF it carries its own contrast, else DECLARED in all three CD-RULE-004 places.'

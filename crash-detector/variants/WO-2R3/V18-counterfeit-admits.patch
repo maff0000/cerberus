@@ -1,0 +1,59 @@
+diff --git a/probe_v24_wrapped_bypass.py b/probe_v24_wrapped_bypass.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/probe_v25_admitted_then_rewritten.py b/probe_v25_admitted_then_rewritten.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/src/crash_detector/judging/__init__.py b/src/crash_detector/judging/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/src/crash_detector/judging/decide.py b/src/crash_detector/judging/decide.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/src/crash_detector/own_terms.py b/src/crash_detector/own_terms.py
+index b89c9ad..ea1c331 100644
+--- a/src/crash_detector/own_terms.py
++++ b/src/crash_detector/own_terms.py
+@@ -326,6 +326,22 @@ def own_float(value: float) -> float:
+     return float.__float__(value)
+ 
+ 
++def admits(**_declared):
++    """V18 — A COUNTERFEIT, planted in a module the check does not scan for doors.
++
++    Same NAME, same call shape, admits everything. `check_judgement_path_doors.py` reads
++    TEXT: it cannot know that the `admits` a judgement-path module imported is
++    `crash_detector.admission.admits`. Placed here, and imported by
++    `serving/witness_resolver.py` below, it shadows the real one with a decorator that
++    does nothing at all.
++    """
++
++    def decorate(entry_point):
++        return entry_point
++
++    return decorate
++
++
+ def own_str(value: str) -> str:
+     """An exact-type ``str`` built from ``value``'s own code points.
+ 
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 897071f..e4794a4 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -56,8 +56,13 @@ from dataclasses import dataclass
+ from datetime import datetime
+ from typing import Mapping, Union
+ 
+-from crash_detector.admission import admits, one_of
+-from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_float, own_str
++from crash_detector.admission import one_of
++from crash_detector.own_terms import (
++    NotEstablishedOnOwnTerms,
++    admits,
++    own_float,
++    own_str,
++)
+ from crash_detector.staleness import FreshnessEvidence, StalenessWindow
+ from crash_detector.time_utc import age_seconds, ensure_utc
+ from crash_detector.witness.panel import (

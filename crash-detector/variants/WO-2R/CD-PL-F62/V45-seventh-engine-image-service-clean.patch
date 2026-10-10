@@ -1,0 +1,31 @@
+--- a/deploy/compose.yaml
++++ b/deploy/compose.yaml
+@@ -439,6 +439,23 @@
+   # cd-witness — fetch WITNESS observations, build the panel, compute divergence.
+   # Doctrine §3.4: a witness that is also an ingredient corroborates nothing.
+   # ----------------------------------------------------------------------------------------
++  cd-engine-shadow:
++    build:
++      context: ..
++      dockerfile: deploy/Dockerfile.engine
++    entrypoint:
++      - python3
++      - -B
++      - /app/entrypoints/cd_shadow.py
++    networks:
++      - cd-net-private
++    x-egress:
++      policy: NONE
++      hosts: []
++      pending: []
++      enforced_by:
++        - "attached only to cd-net-private, which is internal: true"
++
+   cd-witness:
+     <<: *cd-python-service
+     build:
+--- a/deploy/entrypoints/cd_shadow.py
++++ b/deploy/entrypoints/cd_shadow.py
+@@ -0,0 +1,2 @@
++from crash_detector.runtime import lifecycle
++print(lifecycle)

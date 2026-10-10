@@ -1,0 +1,12 @@
+diff --git a/src/crash_detector/publication/alerting.py b/src/crash_detector/publication/alerting.py
+index 4c848e4..5a62c44 100644
+--- a/src/crash_detector/publication/alerting.py
++++ b/src/crash_detector/publication/alerting.py
+@@ -60,6 +60,7 @@ sole.**
+ 
+ from __future__ import annotations
+ 
++import smtplib
+ from typing import Any, Tuple
+ 
+ from crash_detector.publication.classification import (

@@ -1,0 +1,14 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 23:04:12.150807768 +0100
+@@ -788,6 +788,10 @@
+         # ordinary output to look strict.
+         return
+ 
++    # N13: NO early exit at all. The enumeration is simply EMPTIED after the fact.
++    if candidate.get("regime") == "acute":
++        calm_nodes = []
++
+     published = _parse_utc_stamp(candidate.get(PUBLISHED_UTC_KEY))
+     window = _positive_finite_seconds(candidate.get(STALENESS_WINDOW_KEY))
+ 

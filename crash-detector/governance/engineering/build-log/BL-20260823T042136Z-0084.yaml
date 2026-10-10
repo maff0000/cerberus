@@ -1,0 +1,198 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 8 — ITEM 5, TAKEN **FIRST**, AND THAT ORDER IS A FINDING AGAINST THE ADOPTED ONE.
+#
+# The Product Owner adopted the sixth Assurance seat's TEN-ITEM ORDERED GATE with the `CD-ASR-F03`
+# redesign at its head. **THE MEASUREMENT SAYS ITEM 5 HAS TO COME FIRST**, and the dispatch
+# pre-authorised exactly this: *"DO ITEM 5 FIRST IF YOU FIND THEY COLLIDE, AND SAY SO — the order is
+# the Product Owner's but a measured dependency between two items is a finding, not a licence."*
+#
+# THE DEPENDENCY, STATED SO IT CAN BE CHECKED: item 1's criterion half must move on **REAL PUBLIC
+# BINDINGS**. The function that computes what the module-level bindings ARE is `_module_bindings`,
+# and until this commit it read `for node in tree.body` — which cannot see a binding written inside
+# any module-level block. **"Real public binding" was already wrong before item 1 asked the
+# question.** Redesigning the criterion on top of that reader would have been a redesign resting on
+# a measurement defect, which is how this project got the ruling that just fell.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0083. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T042136Z-0084
+timestamp_utc: "2026-08-23T04:21:36Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-05
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC8-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0015.md ruling 2 — the auditor''s ten-item ordered gate ADOPTED; item 5 is `F-06-K`'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 4410275f3fd3fc6cb419265a8d782edb3301ddcf
+parent_entry_id: BL-20260823T033915Z-0083
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_5
+title: '`F-06-K` — the `tree.body` traversal residual. Four sites, all four closed, and the declared limit corrected in all three CD-RULE-004 places.'
+
+# ---------------------------------------------------------------------------------------------- #
+WHY_THIS_ITEM_PRECEDED_ITEM_1__MEASURED_AND_REPORTED_AS_A_FINDING:
+  the_finding_id: CD-ENG-WO2R3-05-F01
+  against: 'THE ADOPTED ORDER, not the auditor and not the Product Owner. Neither could have known this without running it.'
+  severity: MEDIUM
+  what_was_measured: >
+    `check_judgement_path_doors.py:_module_bindings` builds the three maps
+    (`decorates`, `assigned_from`, `defined_at_module_level`) that `_reachable_public_binding`
+    reasons over, and it built them from `tree.body`. **A public module-level name bound inside
+    `if`/`try`/`with`/`for`/`while` was therefore not a binding as far as the reachability
+    criterion was concerned.** Item 1's ruling requires that criterion to move on REAL PUBLIC
+    BINDINGS. Building it on this reader first would have shipped a criterion whose input was
+    already known-wrong.
+  the_arm: >
+    Planted into a throwaway extraction: a private factory `_install_evaluator()` returning a
+    function-local `decide`, with `public_evaluator = _install_evaluator()` written inside
+    `if True:`. **BASE INSTRUMENT: `UNCLASSIFIED_INTERCEPTOR` — "its return value reaches only
+    ['nothing at module level'], every one of them non-public".** The object is reachable as
+    `module.public_evaluator` by any importer. **FIXED INSTRUMENT: `UNDECORATED_JUDGEMENT_PATH_DOOR`.**
+  what_this_finding_is_NOT: >
+    It is NOT a claim that the adopted order is wrong. Items 2, 3, 4 and 6 are independent of both.
+    It is a claim about ONE edge, 5 -> 1, and it is offered so the Product Owner can see the
+    dependency rather than infer it.
+
+# ---------------------------------------------------------------------------------------------- #
+what_changed_in_the_code_path:
+  the_new_helper: >
+    `tools/register/_support.py::module_level_statements(tree)` — every statement at MODULE SCOPE,
+    **pruned at the three node types that END module scope (`FunctionDef`, `AsyncFunctionDef`,
+    `ClassDef`) and at nothing else.**
+  why_it_is_not_ast_walk_and_not_a_list_of_block_types: >
+    **THE DISPATCH SAID `tree.body` -> `ast.walk` AND I DID NOT TAKE THAT SHAPE. THE REASON IS
+    MEASURED AND IS STATED HERE RATHER THAN LEFT AS A PREFERENCE.** `ast.walk` is TOO WIDE: it
+    descends into function bodies and class bodies, which are not module scope, so a local variable
+    inside a function would be reported as a module-level binding — a widening in the direction
+    that manufactures false doors. The other obvious shape — descend into
+    `if`/`try`/`with`/`for`/`while` — **IS A VOCABULARY**, which is the defect class
+    `PO-DECISIONS-0012` ruling 2 removed from the membership clause, and a `match` statement
+    defeats it silently. So the rule is INVERTED and CLOSED: descend into everything except the
+    three scope-ending node types. It is derived from Python's own scoping rule and needs no edit
+    when the grammar grows.
+  the_four_sites_all_now_reading_module_scope:
+    - 'tools/register/check_constructor_field_establishment.py `_module_level_names` — the prior finding, UNTOUCHED since it was raised.'
+    - 'tools/register/check_judgement_path_doors.py `_module_bindings` — NEW at increment 7. **The convergence with GROUND 1.**'
+    - 'tools/register/check_judgement_path_doors.py `main`, NET post-condition RESOLUTION — NEW at increment 7.'
+    - 'tools/register/check_judgement_path_doors.py `main`, NET post-condition FETCH — NEW at increment 7. This one could raise `StopIteration` rather than report.'
+  and_a_fifth_site_that_is_NOT_one_checked_rather_than_assumed: >
+    `tools/register/check_no_blend.py:657` reads `tree.body` and is NOT a fifth site: its
+    `scan_body`/`scan_statement` pair descends into `For`, `With`, `If` and `Try` bodies already.
+    **It does so by ENUMERATING those types, which is the vocabulary shape** — reported here as an
+    observation, not repaired, because that row is not in this item and widening scope on my own
+    initiative is an escalation and not an initiative (`CD-ENG-WO2R3-05-F02`, LOW).
+
+# ---------------------------------------------------------------------------------------------- #
+the_contrast_that_proves_it__BOTH_ARMS_BOTH_RESULTS:
+  the_axis: 'ONE variable: whether `FetchOutcome = Union[OK, FetchFailed, Malformed, Empty]` is written flush left or one indent in. Nothing else differs between the control and the escape.'
+  base_instrument: |
+    tree /tmp/e05-i5-ctl-clean  clean                                      PASS — 101 assertions, pop 33, EXIT 0
+    tree /tmp/e05-i5-ctl-viol   + @establishes stripped from FetchFailed   FAIL —   1 violation,  pop 33, EXIT 1
+    tree /tmp/e05-i5-escape     + the same, and `if True:` around the Union PASS —  91 assertions, pop 30, EXIT 0
+  fixed_instrument: |
+    tree /tmp/e05-i5-ctl-clean  clean                                      PASS — 101 assertions, pop 33, EXIT 0
+    tree /tmp/e05-i5-ctl-viol   + @establishes stripped from FetchFailed   FAIL —   1 violation,  pop 33, EXIT 1
+    tree /tmp/e05-i5-escape     + the same, and `if True:` around the Union FAIL —   1 violation,  pop 33, EXIT 1
+  the_command: 'cd <tree> && python3 -B tools/register/check_constructor_field_establishment.py --root .'
+  what_the_third_row_says: >
+    **INDENTING ONE LINE TOOK THREE TYPES OUT OF THE GOVERNED CLASS AND CONVERTED A REAL FAIL INTO
+    A PASS.** `FetchFailed`, `Malformed` and `Empty` left the population with the violation still in
+    the file. After the repair the escape arm is BYTE-FOR-BYTE the control arm's verdict.
+  the_clean_arm_is_UNMOVED: >
+    101 assertions and population 33 before and after. **The widening added no false row**, which is
+    the arm that stops this being a fix that buys itself a bigger number.
+
+# ---------------------------------------------------------------------------------------------- #
+the_carrier__AND_IT_FAILS_AT_THE_BASE:
+  file: tests/test_module_level_traversal.py
+  arms: 6
+  at_the_base_sha: '**6 failed** — `PYTHONPATH=src python3 -m pytest tests/test_module_level_traversal.py -q` run in a pristine `git archive` extraction of 4410275 with only this one file added.'
+  at_the_tip: '**6 passed.**'
+  why_six_and_not_one:
+    - 'the FAIL-into-PASS conversion, three arms on one axis (the control arm is required by CD-D-079 and is asserted, not assumed);'
+    - 'the same fact as an INVARIANT — the governed population must not move on an indent — because a verdict can be right for the wrong reason;'
+    - '`_module_bindings` on a judgement path: **asserts the VIOLATION CODE, not the exit code**, because both arms exit 1 (`CD-ENG-WO2R3-F12`);'
+    - '`_module_bindings` outside the RULE 1 packages;'
+    - 'the NET post-condition resolution and fetch — a FALSE VIOLATION removed;'
+    - 'the helper itself, asserted on `match` and on an `except` handler — **constructs the fix was not written against** — and in the other direction, that it does NOT report a function local or a class attribute as module scope.'
+
+# ---------------------------------------------------------------------------------------------- #
+A_FINDING_AGAINST_MY_OWN_WORK__CAUGHT_BY_MEASURING_INSTEAD_OF_REASONING:
+  id: CD-ENG-WO2R3-05-F03
+  severity: MEDIUM
+  what: >
+    **I WROTE A TEST WHOSE DOCSTRING CLAIMED AN `EXIT 0` -> `EXIT 1` CONTRAST AND THE MEASUREMENT
+    SAID OTHERWISE.** The test planted the reachability arm in a module outside
+    `engine`/`serving`/`collectors`, on the reasoning that this puts it off the judgement path and
+    removes the NETS deny-by-default backstop. **IT DOES NOT: RULE 2 reaches any callable whose
+    return annotation names a judgement value type, wherever it lives, and being reached by RULE 2
+    IS being on a judgement path for the NETS population's purposes.** Measured at the base SHA
+    that arm is `UNCLASSIFIED_INTERCEPTOR`, EXIT 1 — not EXIT 0.
+  what_I_did: >
+    Corrected the test's NAME and its docstring to state the measured result, and recorded in the
+    docstring and in both DECLARED LIMIT texts that **I LOOKED FOR AN ARM AT `_module_bindings`
+    WHERE THE BLINDNESS CONVERTS A FAIL INTO A PASS AND COULD NOT BUILD ONE.** Removing the
+    backstop means putting the callable outside both RULE 1 and RULE 2, and then it is not a
+    subject at all.
+  the_consequence_for_the_grading_of_F_06_K: >
+    **THE TWO SITES ARE NOT EQUALLY DANGEROUS AND THE RECORD SHOULD NOT SAY THEY ARE.** At
+    `_module_level_names` the blindness converts a real FAIL into a PASS — a hole. At
+    `_module_bindings` it converts the RIGHT violation into the WRONG one — the exit code was
+    right and the diagnosis was false. **THAT IS A CORRECTION IN THE INSTRUMENT'S FAVOUR AND IT IS
+    RECORDED BECAUSE IT IS TRUE, NOT BECAUSE IT IS COMFORTABLE.** An instrument whose stated reason
+    is false is still unusable by an auditor, which is why it is still fixed.
+  the_shape_it_is_an_instance_of: '`CD-ENG-WO2R3-F12` — a probe whose two arms differ for a reason other than the one the label claims. Third-party-verified as this project''s most-repeated measurement defect, and it caught me too.'
+
+# ---------------------------------------------------------------------------------------------- #
+the_declared_limit_corrected_in_ALL_THREE_CD_RULE_004_PLACES:
+  rule: 'CD-RULE-004 option 2 requires the boundary in the check header, the register entry AND the execution contract, consistently. CD-RULE-004/PBG-CONT-003: a declared limit is SUPERSEDED, never deleted. The old wording is quoted in full at every one of the three.'
+  place_1_check_headers:
+    - 'tools/register/check_constructor_field_establishment.py DECLARED LIMIT 5'
+    - 'tools/register/check_judgement_path_doors.py DECLARED LIMIT 7'
+  place_2_register_entry: 'required-tests.yaml — both rows'
+  place_3_execution_contracts:
+    - 'contracts/execution/CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.md'
+    - 'contracts/execution/CD-RT-002-DOORS-REQUIRE-THEIR-TYPES.md'
+  what_the_correction_says: >
+    The superseded claim — *"THE RESIDUAL REACH LIMITS ARE EXACTLY TWO"* — was **accurate on the
+    class/callable-enumeration axis and false on the NAME axis**, which is the auditor's
+    *"merely less wrong"*. Increment 7 added three sites while closing one: **net +2 across the two
+    governing instruments, with the declaration unmoved.** The corrected text says the limits are
+    **TWO AGAIN**, and says that "again" is load-bearing: they were two, then three for two
+    increments while all three places said two, and they are two now. **Every corrected text ends
+    by telling the reader to run the carrier for the current number rather than trust the
+    paragraph** (CD-RULE-009).
+
+# ---------------------------------------------------------------------------------------------- #
+what_this_does_NOT_close__MEASURED:
+  - '**THE TWO RESIDUAL LIMITS ARE UNTOUCHED AND STILL UNCARRIED.** (i) a class or callable with no
+     `ClassDef`/`FunctionDef` node — built by `type(...)`, `exec` or a `lambda` — is invisible to
+     any AST reader; (ii) a module outside `src/crash_detector/` is never parsed. **CARRIER FOR
+     BOTH: NOT PROVED TO BE CARRIED ANYWHERE**, unchanged by this item.'
+  - '**`check_no_blend.py` DESCENDS INTO BLOCKS BY ENUMERATING THEM.** Measured, not repaired, not
+     in scope (`CD-ENG-WO2R3-05-F02`).'
+  - '**NOTHING IN `src/` MOVED.** This item changes three instruments and adds one test file. The
+     product is byte-identical.'
+  - '**NO `DEFECT_OPEN` FINDING IS CLOSED BY THIS ITEM** and this seat has no authority to close one.'
+  - '**`F-06-K` IS NOT DISCHARGED BY ME.** Whether this item answers it is the seventh Assurance
+     seat''s to test and the Product Owner''s to rule (PBG-AUTH-003).'
+
+# ---------------------------------------------------------------------------------------------- #
+instruments_run_and_their_exit_codes__MINE_MEASURED_BY_ME:
+  the_whole_register_set_twelve_checks: 'Ten EXIT 0 · `check_grant_matrix_live.py` EXIT 3 (env gate, no credentials, none guessed) · `check_no_execution_interface.py` EXIT 1 (one violation, NOT this item''s, it is item 2''s). **UNMOVED from the base measurement of the same twelve.**'
+  check_constructor_field_establishment: 'EXIT 0 — PASS, 101 assertions, population 33. Identical to base.'
+  check_judgement_path_doors: 'EXIT 0 — PASS, 60 assertions. Identical to base.'
+  full_suite: 'EXIT 0 — **1641 passed** (base 1635; +6 is exactly this item''s carrier).'
+  the_carrier_at_the_base: '**EXIT 1 — 6 failed**, in a pristine `git archive` extraction of 4410275.'
+
+next_safe_action: 'ITEM 1 — the `CD-ASR-F03` redesign, now that the criterion''s input is sound.'

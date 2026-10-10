@@ -1,0 +1,12 @@
+diff --git a/src/crash_detector/serving/witness_resolver.py b/src/crash_detector/serving/witness_resolver.py
+index 897071f..56a2981 100644
+--- a/src/crash_detector/serving/witness_resolver.py
++++ b/src/crash_detector/serving/witness_resolver.py
+@@ -149,6 +149,7 @@ def resolve_panel(
+     *,
+     now_utc: datetime,
+     staleness_window_seconds: float,
++    tolerate_stale: bool = False,
+ ) -> "WitnessPanel":
+     """Resolve a stored panel row to a :class:`WitnessPanel`.
+ 

@@ -1,0 +1,122 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 16:34:51.798440966 +0100
+@@ -16,7 +16,8 @@
+     "degraded_inputs",
+     "config_snapshot_id",
+     "equity_crash",
+-    "monetary_debasement"
++    "monetary_debasement",
++    "market_pulse"
+   ],
+   "properties": {
+     "schema_version": {
+@@ -58,6 +59,36 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "market_pulse": {
++      "description": "*** PO-DECISIONS-0027 RULING 5's COMPLETION TEST. *** A dial in a state NO ONE HAS EVER NAMED — 'SPINDRIFT' / 'HALCYON_VOID', zero occurrences anywhere in this repository at dd40407 — carrying detail_level 'calm', declared by a spelling no audit in this chain has used: the state is named TWO LEVELS INSIDE an `enum` member's instance value, under a property called `pulse` that no envelope has ever declared. It is not on any denylist, it reuses no old bad state name, and calm is admissible on it. IT MUST BE REFUSED — because calm requires proven-fresh-and-present and an unrecognised state cannot prove it.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "reading",
++        "detail_level"
++      ],
++      "properties": {
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        },
++        "reading": {
++          "enum": [
++            {
++              "pulse": {
++                "state": "SPINDRIFT",
++                "observed_utc": "2026-08-23T12:00:00Z"
++              }
++            },
++            {
++              "pulse": {
++                "state": "HALCYON_VOID",
++                "observed_utc": "2026-08-23T12:00:00Z"
++              }
++            }
++          ]
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 16:34:45.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 16:34:51.798440966 +0100
+@@ -15,7 +15,8 @@
+     "degraded_inputs",
+     "config_snapshot_id",
+     "equity_crash",
+-    "monetary_debasement"
++    "monetary_debasement",
++    "market_pulse"
+   ],
+   "properties": {
+     "schema_version": {
+@@ -60,6 +61,36 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "market_pulse": {
++      "description": "*** PO-DECISIONS-0027 RULING 5's COMPLETION TEST. *** A dial in a state NO ONE HAS EVER NAMED — 'SPINDRIFT' / 'HALCYON_VOID', zero occurrences anywhere in this repository at dd40407 — carrying detail_level 'calm', declared by a spelling no audit in this chain has used: the state is named TWO LEVELS INSIDE an `enum` member's instance value, under a property called `pulse` that no envelope has ever declared. It is not on any denylist, it reuses no old bad state name, and calm is admissible on it. IT MUST BE REFUSED — because calm requires proven-fresh-and-present and an unrecognised state cannot prove it.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "reading",
++        "detail_level"
++      ],
++      "properties": {
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        },
++        "reading": {
++          "enum": [
++            {
++              "pulse": {
++                "state": "SPINDRIFT",
++                "observed_utc": "2026-08-23T12:00:00Z"
++              }
++            },
++            {
++              "pulse": {
++                "state": "HALCYON_VOID",
++                "observed_utc": "2026-08-23T12:00:00Z"
++              }
++            }
++          ]
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/tools/register/check_missing_data_never_calm.py b/tools/register/check_missing_data_never_calm.py
+--- a/tools/register/check_missing_data_never_calm.py	2026-08-24 16:34:45.000000000 +0100
++++ b/tools/register/check_missing_data_never_calm.py	2026-08-24 16:34:51.798440966 +0100
+@@ -1150,6 +1150,7 @@
+         "inputs_used": [],
+         "degraded_inputs": [],
+         "config_snapshot_id": SYNTHETIC_CONFIG_SNAPSHOT_ID,
++        "market_pulse": {'reading': {'pulse': {'state': 'SPINDRIFT', 'observed_utc': '2026-08-23T12:00:00Z'}}, 'detail_level': 'acute'},
+     }
+     for name in slots:
+         envelope[name] = dict(filler)
+diff -ruN a/tools/register/check_schema_closed.py b/tools/register/check_schema_closed.py
+--- a/tools/register/check_schema_closed.py	2026-08-24 16:34:45.000000000 +0100
++++ b/tools/register/check_schema_closed.py	2026-08-24 16:34:51.794440975 +0100
+@@ -79,6 +79,7 @@
+         "config_snapshot_id",
+         "equity_crash",
+         "monetary_debasement",
++        "market_pulse",
+     }
+ )
+ 

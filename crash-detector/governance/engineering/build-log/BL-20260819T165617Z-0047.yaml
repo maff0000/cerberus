@@ -1,0 +1,95 @@
+# WO-2R increment 5 — SUPERSEDING CORRECTION to BL-20260819T165223Z-0046.
+# BL-20260819T165223Z-0046 IS NOT EDITED. Corrections supersede, never edit (PBG-CONT-003,
+# non-waivable). This entry exists for two reasons and nothing else:
+#   1. entry 0046 attests f39fed3, and one further commit exists after it (e661fb6), so the
+#      FINAL SHA of this increment is not the one entry 0046 quotes;
+#   2. entry 0046 records CD-RT-003-ENGINE-NO-WITNESS-REACH's boundary-5 assertion counts as
+#      measured at the addendum commit 4cae8be, and they are one higher at the final SHA.
+#
+# The dispatch reserved 0046 for this increment; 0047 is the next free number in the lane's
+# block from 0040 upward (CD-D-036). entry_id and timestamp_utc from `date -u +%FT%TZ` and
+# from nothing else (CD-RULE-005).
+
+entry_id: BL-20260819T165617Z-0047
+timestamp_utc: '2026-08-19T16:56:17Z'
+project: crash-detector
+actor: CD-ENG-WO2R-01
+role: ENGINEER
+seat_instance: 'WO-2R increment 5 (seat instance 6)'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: be34fe4f6327f59b25328adbf6a1e2f5c150c1ba
+increment_sha: e661fb64d115ef4a6e7c213689d8769c8bcdf836   # THE FINAL SHA OF THIS INCREMENT
+parent_entry_id: BL-20260819T165223Z-0046
+supersedes: BL-20260819T165223Z-0046
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+what_this_corrects: >
+  ENTRY 0046 REMAINS VALID IN EVERY OTHER RESPECT and is not edited. Two things in it are
+  superseded here.
+
+  1. THE FINAL SHA. Entry 0046 quotes f39fed33372a10aab7425789bbe80143a1c73750, which was the
+     last commit that could exist before it was written. Two commits follow:
+       39f4217716f9b53a1ecc97d37f76fdf49725afd0  entry 0046 itself
+       e661fb64d115ef4a6e7c213689d8769c8bcdf836  the declaration correction described below
+     THE SHA TO ASSURE IS e661fb64d115ef4a6e7c213689d8769c8bcdf836.
+
+  2. BOUNDARY 5's ASSERTION COUNTS. Entry 0046 and the addendum commit 4cae8be record
+     CD-RT-003-ENGINE-NO-WITNESS-REACH's clean arm as PASS 23 and its boundary-5 examples as
+     V42 PASS 23, V44 PASS 23, V45 PASS 27. Those were measured at 4cae8be and are correct
+     THERE. At the final SHA every one is ONE HIGHER — clean PASS 24, V42 PASS 24, V44 PASS 24,
+     V45 PASS 28 — because the CD-ASR-F06 commit added src/crash_detector/staleness.py, which
+     is reachable from the engine root set, so len(reached) is one larger. It is NOT witness
+     code and no violation is reported. The counts GREW; nothing shrank (CD-ENG-WO2R-F16).
+
+how_it_was_caught: >
+  By this seat re-running its OWN variants against the DELIVERED SHA rather than against the
+  commit it wrote them at. That is the whole reason to re-run at the end, and it is recorded
+  because the same class of slip — a declaration true of the commit that wrote it and false of
+  the tree that ships — is what CD-ENG-F40 was raised for.
+
+what_the_correction_commit_changed: >
+  e661fb6 touches four files and no code: the header of
+  tools/register/check_engine_no_witness_reach.py, required-tests.yaml,
+  contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md and variants/WO-2R/MANIFEST.md.
+  BOTH numbers are now stated in each, rather than one overwritten, so an auditor reproducing
+  at either commit finds its own number in the declaration. The three CD-RULE-004 places say
+  the same thing as each other and as the tree.
+
+re_verified_at_the_final_sha: >
+  On a pristine `git archive e661fb6 | tar -x` extraction, `python3 -B` throughout,
+  `timeout 180`:
+    env PYTHONPATH=src python3 -B -m pytest -q                          -> 0, 1289 passed
+    node ids: 1289 collected, ZERO REMOVED against be34fe4, 97 ADDED
+    check_no_numeric_default      -> 0, 377     check_no_blend            -> 0, 4855
+    check_schema_closed           -> 0, 242     check_engine_no_witness_reach -> 0, 24
+    check_no_execution_interface  -> 0, 38154   check_lockfile_denylist   -> 0, 15
+    check_egress_no_broker        -> 0, 69      check_dockerignore        -> 0, 22
+    check_base_image_digest_pin   -> 0, 13      check_grant_matrix_live   -> 3, PRECONDITION_NOT_MET
+    ELEVEN PLANTS: all apply, all contrast — ten at exit 1, grant-matrix-live at exit 3.
+    ALL TEN NEW VARIANTS `git apply --check` clean and re-run at this SHA:
+      PL-U6b 1 | V45 0 (PASS 28) | V46 1 | E07 1 | E08 0 | V47 1 | V48 1 | V49 1 | V50 1 | V51 1
+    COMMIT IDENTITY, all four commits be34fe4..e661fb6: author AND committer
+      CD-ENG-WO2R-01 <cd-eng-wo2r-01@seats.crash-detector.invalid>. No human identity.
+    tools/register/_yamlmin.py: 0 diffs across the whole increment (CD-D-051).
+    latest_admitted_run: null, unchanged.
+
+everything_else_in_entry_0046_stands: >
+  The class closed, the structure, the derivation of the 900-second ceiling from PID.md line 86
+  with BLUEPRINT.md lines 314-318 deferring the operating window to WO-3, the four declared
+  boundaries with their measured carriers, the CD-ASR-F07 report, and the five findings
+  CD-ENG-WO2R-F20 through F24 raised against this seat's own work. None of that is changed by
+  this entry.
+
+next_safe_action: >
+  Project Lead RECONCILIATION of e661fb64d115ef4a6e7c213689d8769c8bcdf836.
+
+return_state: READY_FOR_ASSURANCE

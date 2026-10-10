@@ -1,0 +1,15 @@
+diff --git a/src/crash_detector/dials/reading.py b/src/crash_detector/dials/reading.py
+index bb21d3d..9b74ed0 100644
+--- a/src/crash_detector/dials/reading.py
++++ b/src/crash_detector/dials/reading.py
+@@ -304,6 +304,10 @@ class Unknown(metaclass=SealedReadingType):
+ 
+     __slots__ = ("reason", "since_utc", "missing_inputs")
+ 
++    # Reference scale for a surface with nothing to draw. Not a field, not a descriptor,
++    # not a dunder: a plain class attribute holding a number.
++    FALLBACK_MAGNITUDE = 0.0
++
+     reason: str
+     since_utc: datetime
+     missing_inputs: tuple[str, ...]

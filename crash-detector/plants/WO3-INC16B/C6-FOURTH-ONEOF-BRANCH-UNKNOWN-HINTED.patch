@@ -1,0 +1,138 @@
+diff -ruN a/contracts/private_envelope.schema.json C6/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:08:05.430744493 +0100
+@@ -142,6 +142,11 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
+         }
+       },
+       "oneOf": [
+@@ -153,6 +158,9 @@
+         },
+         {
+           "$ref": "#/$defs/dial_reading_unknown"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_unknown_hinted"
+         }
+       ]
+     },
+@@ -293,6 +301,43 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_unknown_hinted": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level",
++        "render_hint"
++      ],
++      "properties": {
++        "state": {
++          "const": "UNKNOWN"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        }
++      },
++      "description": "C6 PLANT — a fourth branch of the dial_reading union. Identical to dial_reading_unknown except that detail_level references the FULL #/$defs/detail_level vocabulary, and a marker property render_hint selects it. NO NEW ROOT KEY, so check_schema_closed's root allowlist never fires."
+     }
+   }
+ }
+diff -ruN a/contracts/public_envelope.schema.json C6/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:08:05.430744493 +0100
+@@ -145,6 +145,11 @@
+         },
+         "detail_level": {
+           "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
+         }
+       },
+       "oneOf": [
+@@ -156,6 +161,9 @@
+         },
+         {
+           "$ref": "#/$defs/dial_reading_unknown"
++        },
++        {
++          "$ref": "#/$defs/dial_reading_unknown_hinted"
+         }
+       ]
+     },
+@@ -299,6 +307,43 @@
+         "elevated",
+         "acute"
+       ]
++    },
++    "dial_reading_unknown_hinted": {
++      "description": "C6 PLANT — a fourth branch of the dial_reading union. Identical to dial_reading_unknown except that detail_level references the FULL #/$defs/detail_level vocabulary, and a marker property render_hint selects it. NO NEW ROOT KEY, so check_schema_closed's root allowlist never fires.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "missing_inputs",
++        "detail_level",
++        "render_hint"
++      ],
++      "properties": {
++        "state": {
++          "const": "UNKNOWN"
++        },
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "missing_inputs": {
++          "$ref": "#/$defs/source_id_list"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        },
++        "render_hint": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        }
++      }
+     }
+   }
+ }

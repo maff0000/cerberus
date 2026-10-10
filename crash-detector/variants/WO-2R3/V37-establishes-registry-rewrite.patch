@@ -1,0 +1,113 @@
+diff --git a/probe_v37_establishes_registry_rewrite.py b/probe_v37_establishes_registry_rewrite.py
+new file mode 100644
+index 0000000..b3a2ff3
+--- /dev/null
++++ b/probe_v37_establishes_registry_rewrite.py
+@@ -0,0 +1,107 @@
++"""V37 — DECLARED LIMIT 3's EXECUTABLE EXAMPLE. The interpreter reach, at this boundary.
++
++NOT A RUNNER AND NOT A GUARD (PBG-ASSURE-001). It removes no guard from the source: it
++reaches into the running process, exactly as `variants/WO-2R3/V33-closure-declaration-rewrite.patch`
++does one level up, and shows what that reach buys HERE.
++
++THE PROPOSITION: a boundary is built out of things the interpreter leaves reachable, and
++anything that can execute code inside this package can reach them. `admission.py`'s DECLARED
++LIMIT 6 says so for doors; `establishment.py`'s DECLARED LIMIT 3 says so for types and
++INHERITS it rather than incurring it newly.
++
++THE SUBJECT IS `ScoreComputation` AND THE CHOICE IS DELIBERATE. Its `__post_init__` calls
++`tuple()` on `contributions` and establishes NO element type, so nothing in the body can
++refuse a wrong-typed element and **the boundary is the only layer that can**. Choosing a
++type whose body canonicalises — `PanelRow.measures`, say, where `dict(self.measures)`
++rebuilds a subclass into an exact dict before the boundary ever sees it — would have
++measured the BODY and credited the result to the boundary, which is CD-ENG-WO2R3-F12's
++defect in its other direction.
++
++FOUR ARMS, AND ARM 3 IS THE ONE THIS SEAT GOT WRONG FIRST:
++  ARM 1  the front door, unmodified                              -> REFUSED
++  ARM 2  `ScoreComputation.__init__.__wrapped__`                 -> REFUSED (deleted)
++  ARM 3  rewrite `establishment._DECLARATIONS[ScoreComputation]` -> **STILL REFUSED**
++  ARM 4  rewrite the `compiled` dict in `__init__.__closure__`   -> ESCAPED
++
++ARM 3 was written expecting an escape and MEASURED A REFUSAL. The registry is a REPORT and
++not the live declaration: the wrapper closes over its own local `compiled` dict, so
++rewriting `_DECLARATIONS` changes what the boundary SAYS about itself and nothing about what
++it DOES. That is CD-ENG-WO2R3-F13's shape inverted — the introspection surface can be made
++to lie in the SAFE direction — and it is recorded because a seat that tried the obvious
++thing, saw a refusal and concluded the reach was closed would be wrong. It is not closed.
++**ARM 4 is where it is not closed**, and it is precisely V33's move one level down: the
++`compiled` dict IS what the boundary consults on every construction, it is reachable through
++`__closure__`, and after it every construction in the process is unguarded — including code
++that never went near this module. CPython offers no way to prevent it.
++"""
++
++from crash_detector import establishment
++from crash_detector.establishment import ESTABLISHED_HERE, declared_establishment
++from crash_detector.engine.model import ScoreComputation
++
++
++def described(cls):
++    return {name: admission.describe() for name, admission in declared_establishment(cls).items()}
++
++
++def build():
++    return ScoreComputation(magnitude=0.5, contributions=(object(),))
++
++
++print("ARM 1 — the front door, nothing modified")
++try:
++    build()
++except BaseException as refusal:  # noqa: BLE001 - the identity of the refusal IS the result
++    print(f"    REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ESCAPED -> ScoreComputation built through the front door")
++
++print("ARM 2 — ScoreComputation.__init__.__wrapped__")
++try:
++    wrapped = ScoreComputation.__init__.__wrapped__
++except AttributeError as refusal:
++    print(f"    REFUSED: AttributeError: {refusal}")
++else:
++    blank = object.__new__(ScoreComputation)
++    wrapped(blank, magnitude=0.5, contributions=(object(),))
++    print(f"    ESCAPED -> contributions element type {type(blank.contributions[0]).__name__}")
++
++print("ARM 3 — rewrite the live declaration registry")
++print(f"    before: {described(ScoreComputation)}")
++compiled, faults, fields = establishment._DECLARATIONS[ScoreComputation]
++establishment._DECLARATIONS[ScoreComputation] = (
++    {name: ESTABLISHED_HERE("rewritten in flight") for name in fields},
++    faults,
++    fields,
++)
++try:
++    computation = build()
++except BaseException as refusal:  # noqa: BLE001
++    print(f"    REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ESCAPED -> ScoreComputation CONSTRUCTED through the ordinary front door")
++    print(f"        contributions element type stored: {type(computation.contributions[0]).__name__}")
++    print(f"    introspection AFTERWARDS: {described(ScoreComputation)}")
++print(f"    introspection surface now SAYS: {described(ScoreComputation)}")
++
++print("ARM 4 — rewrite the `compiled` dict the boundary actually consults, via __closure__")
++for cell in ScoreComputation.__init__.__closure__ or ():
++    try:
++        contents = cell.cell_contents
++    except ValueError:
++        continue
++    if isinstance(contents, dict) and set(contents) == {"magnitude", "contributions"}:
++        for name in list(contents):
++            contents[name] = ESTABLISHED_HERE("rewritten in flight, in the closure cell")
++        print("    found and rewrote the live `compiled` dict in a closure cell")
++        break
++else:
++    print("    the `compiled` dict was not found in a closure cell")
++try:
++    computation = build()
++except BaseException as refusal:  # noqa: BLE001
++    print(f"    REFUSED: {type(refusal).__module__}.{type(refusal).__name__}: {refusal}")
++else:
++    print("    ESCAPED -> ScoreComputation CONSTRUCTED through the ordinary front door")
++    print(f"        contributions element type stored: {type(computation.contributions[0]).__name__}")
++    print("        every caller in this process is now unguarded for this type. DECLARED LIMIT 3.")

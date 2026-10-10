@@ -1,0 +1,245 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 10, ITEM_1, PART B — SITE BY SITE OVER ALL THIRTY. TWELVE CONVERTED TO EXACT
+# TYPE, EIGHTEEN DECLARED WITH A MEASURED REASON, AND ONE OF THE REGISTER'S OWN DECLARATIONS
+# FALSIFIED BY RE-MEASUREMENT.
+#
+# **THE ONE THAT EARNS THE INCREMENT: `SourceRegistry.ids_with` WAS A LIVE ADMISSION OF A FORGED
+# CRITICALITY**, and it was declared `EXACT` on the ground that `Criticality` cannot be subclassed.
+# It cannot. IT DID NOT NEED TO BE. `isinstance` also consults `__class__`.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0095. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T102609Z-0096
+timestamp_utc: "2026-08-23T10:26:09Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-08
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC10-F01-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 4192c41d8a9930e804915beffda82ea789c1a39c
+parent_entry_id: BL-20260823T100139Z-0095
+schema_version: 1
+
+record_type: CHANGE
+
+title: 'ITEM_1 part B: 12 of the 30 tier-1 ISINSTANCE admissions converted to exact type, 18 declared with a measured reason, and the register''s C4 reach re-measured and found STALE.'
+
+# ---------------------------------------------------------------------------------------------- #
+THE_ONE_SENTENCE_THIS_ENTRY_IS_ALLOWED_TO_WRITE:
+  it: >
+    **"The forged subclass is still constructible — the platform permits it and this increment does
+    not claim otherwise. It is REFUSED at every judgement path enumerated by the instrument,
+    because admission is by exact type."** — and even that is bounded by the eighteen sites where
+    exact type is NOT taken, each of which is named below with its measured reason.
+  what_is_NOT_written_here: >
+    Not *"CD-ASR-F01 is closed"*. Not *"the forged type is prevented"*. Not *"the class is sealed"*.
+    **THE DISPOSITION OF `CD-ASR-WO2R3-04-F01` IS THE EIGHTH ASSURANCE SEAT'S AND THE PRODUCT
+    OWNER'S, NOT THIS SEAT'S.** This entry closes SITES, names them, and counts them.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_SITE_BY_SITE_TABLE__ALL_THIRTY__DERIVED_FROM_THE_INSTRUMENT_AND_NOT_FROM_A_GREP:
+  how_the_table_was_derived: |
+      python3 -B tools/sweep/delegated_judgement_sweep.py --root . --list  (at 686a374, and at the tip)
+        | grep -E '^    \[[A-Z_ ]+\] .*ISINSTANCE'
+      then comm -23 of the two site-key lists.  30 at base, 18 at tip, 12 in the difference.
+  CONVERTED__twelve: |
+      #   SITE                                                                     WAS -> IS
+      1   admission::_EstablishedHere.__call__  isinstance(because, str)           -> type(because) is not str
+      2   admission::_compile                   isinstance(declaration, _Admission)-> is_exactly(declaration, _ADMISSION_FORMS)
+      3   admission::_compile                   isinstance(declaration, tuple)     -> type(declaration) is tuple
+      4   admission::each_of                    isinstance(within, tuple)          -> type(within) is not tuple
+      5   observations::FetchFailed             isinstance(status, int)            -> type(status) is not int
+      6   observations::Malformed               isinstance(self.instance_path, str)-> type(...) is not str
+      7   source_registry::SourceRecord         isinstance(self.criticality, Criticality) -> type(...) is not Criticality
+      8   source_registry::SourceRecord         isinstance(self.cadence_seconds, int)     -> type(...) is not int
+      9   source_registry::SourceRegistry.ids_with isinstance(criticality, Criticality)   -> type(...) is not Criticality
+      10  dials.magnitude::DialMagnitude.__setstate__ isinstance(provenance, frozenset)   -> type(...) is not frozenset
+      11  dials.provenance::_install            isinstance(dials, frozenset)       -> type(dials) is not frozenset
+      12  dials.reading::seal_reading_type      isinstance(cls, SealedReadingType) -> type(cls) is not SealedReadingType
+  DECLARED_WITH_A_MEASURED_REASON__eighteen: |
+      #   SITE                                                          THE MEASURED REASON (short form)
+      A   admission::_compile     isinstance(declaration, type)         exact type refuses this package's OWN metaclass-
+      B   admission::_type_tuple  isinstance(value, type)               sealed declarations; register's reach is STALE
+      C   dials.magnitude::SealedMagnitudeType.__new__   isinstance(base, ...)      REFUSAL predicate — isinstance is the
+      D   dials.provenance::SealedQuantityType.__new__   isinstance(base, ...)      STRICTER operator; exact type OPENS an
+      E   dials.reading::SealedReadingType.__new__       isinstance(base, ...)      ordinary `class` statement through one
+      F   serving.dial_presentation::SealedPresentationType.__new__ isinstance(...) forged intermediate. ALL FOUR EXECUTED.
+      G   engine.config::ConfigSnapshot   isinstance(window, bool)      REFUSAL predicate; bool unsubclassable but WEARABLE
+      H   observations::FetchFailed       isinstance(status, bool)      REFUSAL predicate; same
+      I   own_terms::own_float            isinstance(value, bool)       REFUSAL predicate; same
+      J   source_registry::SourceRecord   isinstance(self.cadence_seconds, bool)   REFUSAL predicate; same
+      K   engine.config::ConfigSnapshot   isinstance(window, float)     CARRIED: StalenessWindow refuses a float subclass
+                                                                        on the NEXT LINE. RE-MEASURED. (see F03)
+      L   own_terms::own_float            isinstance(value, float)      numpy.float64 MUST be admitted; carried by
+      M   own_terms::own_str              isinstance(value, str)        the UNBOUND BASE-TYPE DESCRIPTOR, which CPython
+      N   own_terms::own_instant          isinstance(value, datetime)   refuses to apply to a non-instance. MEASURED,
+      O   own_terms::own_utc_offset       isinstance(value, datetime)   with the TypeError text quoted at each site.
+      P   own_terms::own_utc_offset       isinstance(declared, timedelta)
+      Q   time_utc::ensure_utc            isinstance(value, datetime)   pandas.Timestamp MUST be readable; value rebuilt
+      R   time_utc::parse_utc             isinstance(text, str)         from C-struct fields / own_str on the next line
+
+# ---------------------------------------------------------------------------------------------- #
+THE_MEASUREMENT_THAT_MATTERS_MOST__AND_IT_FALSIFIES_A_DECLARED_DISPOSITION:
+  the_declaration_as_the_register_writes_it: >
+    `crash_detector.source_registry::SourceRecord.__post_init__ ISINSTANCE:
+    isinstance(self.criticality, Criticality)` -> **[EXACT]** — *"Criticality is an enum.Enum with
+    members, which CPython refuses to subclass, so isinstance and exact type coincide here and no
+    supplied implementation exists to reach. This is the check that makes the DISPOSABLE
+    prohibition mean anything."* And its sibling `SourceRegistry.ids_with` -> **[EXACT]** — *"As
+    above — Criticality cannot be subclassed."*
+  WHAT_IS_TRUE_MEASURED_AT_686a374: |
+      class EvilCrit(Criticality)                -> TypeError: <enum 'EvilCrit'> cannot extend <enum 'Criticality'>
+      class Forged:
+          @property
+          def __class__(self): return Criticality
+      isinstance(Forged(), Criticality)          -> True                  <<< the premise fails here
+      type(Forged()) is Criticality              -> False
+      Forged().value                             -> <<no such attribute>>
+
+      SourceRecord(criticality=Forged())         -> REFUSED FieldNotEstablished  (@establishes carried it)
+      registry.ids_with(Forged())                -> ***ADMITTED***, returned ()  <<< NOTHING REFUSED IT
+      registry.ids_with(Criticality.REQUIRED)    -> ('s',)                        (control)
+      registry.ids_with('REQUIRED')              -> TypeError                     (control)
+  the_sentence_that_is_false_and_why: >
+    **"CPython REFUSES TO SUBCLASS IT, THEREFORE isinstance AND EXACT TYPE COINCIDE" IS FALSE, AND
+    IT IS FALSE FOR EVERY CLASS AND NOT ONLY FOR THIS ONE.** `isinstance` has TWO routes: CPython's
+    `object_isinstance` checks `Py_TYPE(inst)` and, failing that, **retrieves the instance's
+    `__class__` ATTRIBUTE** — an ordinary property any caller can define. **SUBCLASSING IS NOT THE
+    ONLY WAY TO SATISFY `isinstance`, AND THIS PROJECT'S RECORD HAS ONLY EVER NAMED THE ONE.**
+  the_judgement_path_consequence: >
+    `ids_with` answers *"which sources carry this criticality"*. Handed the forgery it answered
+    `()` — **"none"** — with no refusal anywhere. A caller asking which sources are REQUIRED is
+    told none, and a required-inputs check over an empty tuple passes VACUOUSLY. Raised as
+    **`CD-ENG-WO2R3-08-F02`, and it is a finding against the REGISTER and not only against the
+    code.** The register is PROTECTED from this seat and is NOT edited (PO-DECISIONS-0018 r.3).
+  the_carrier_now: 'tests/test_exact_type_admission_sweep.py::test_ids_with_refuses_a_worn_criticality_and_this_site_was_a_live_admission — three controls beside the refusal.'
+
+# ---------------------------------------------------------------------------------------------- #
+AND_A_SECOND_DECLARED_REACH_RE_MEASURED_AND_FOUND_STALE_IN_THE_OTHER_DIRECTION:
+  the_site: 'crash_detector.admission::_compile ISINSTANCE: isinstance(declaration, type) — [DEFECT_OPEN]'
+  what_the_register_claims_VERBATIM: >
+    *"**C4, VERIFIED BY THE SIXTH SEAT PERSONALLY AND RE-STATED BY CD-PL-F103.** A metaclass
+    defining `__eq__` satisfies `isinstance(X, type)` here and then compares EQUAL TO EVERY TYPE at
+    `_Exactly.refusal`. Measured end to end on an ordinary `@admits(value=Wildcard)` door: `faults:
+    ()`, `is_admitting_door: True`, and every value admitted."*
+  WHAT_MEASUREMENT_SAYS_AT_686a374: |
+      @admits(value=Wildcard)                     # Wildcard's metaclass __eq__ returns True
+      admission_faults  ()      is_admitting_door True     <- the first half STILL HOLDS
+      an_ordinary_door(int)      REFUSED NotAdmitted
+      an_ordinary_door(str)      REFUSED NotAdmitted
+      an_ordinary_door(object)   REFUSED NotAdmitted
+      an_ordinary_door(float)    REFUSED NotAdmitted
+      an_ordinary_door(list)     REFUSED NotAdmitted
+      an_ordinary_door(None)     REFUSED NotAdmitted
+      an_ordinary_door(Wildcard())  BODY RAN         <- only a REAL Wildcard, which is correct
+  the_verdict: >
+    **"AND EVERY VALUE ADMITTED" IS FALSE AT MY BASE, AND WAS MADE FALSE BY `F-06-D` AT INCREMENT
+    8** — the correction that replaced `type(value) in self.types` with `is_exactly`, whose
+    reasoning is written into `is_exactly`'s own docstring in this same file. **THE REGISTER
+    CLAIMS A LIVE REACH THAT MEASUREMENT SAYS IS DEAD.** Raised as `CD-ENG-WO2R3-08-F01`.
+    A register entry that claims MORE than the code does is CD-RULE-004's defect wearing the other
+    face, and it is the reason the dispatch said *"RE-MEASURE THESE, DO NOT COPY THEM FORWARD."*
+  and_the_site_is_still_KEPT: >
+    Not because the reach is dead, but because **EXACT TYPE IS NOT AVAILABLE AT THAT LINE**:
+    `type(declaration) is type` refuses `Criticality` (EnumType), `DialMagnitude`
+    (SealedMagnitudeType), `DeclaredQuantity`, `Value`/`Degraded`/`Unknown`, `Shown`/`NotShown` —
+    **the sealing that makes them trustworthy is the same property an exact-type test would
+    refuse.** The declared limit is written into `_type_tuple`'s docstring, in full, with the
+    residue named: a metaclass `__name__` property can still lie IN THE TEXT OF A REFUSAL MESSAGE,
+    and **NOT PROVED TO BE CARRIED ANYWHERE.**
+
+# ---------------------------------------------------------------------------------------------- #
+THE_FOUR_METATYPE_GUARDS__WHY_CONVERTING_THEM_WOULD_HAVE_BEEN_THE_REGRESSION_RULING_1a_FORBIDS:
+  the_shape: '`if isinstance(base, Sealed...Type): raise` — a **REFUSAL** predicate. At a refusal predicate the WIDER operator is the STRICTER one.'
+  MEASURED_ON_ALL_FOUR_NOT_INFERRED_FROM_ONE: |
+      Sub    = type('Sealed<X>TypeSub', (Sealed<X>Type,), {})
+      Forged = type.__new__(Sub, 'Forged', (<victim>,), {'__slots__': ()})
+
+      METATYPE                 isinstance(Forged,M)  type(Forged) is M   class Child(Forged) TODAY   exact-type predicate
+      SealedMagnitudeType      True                  False               REFUSED MagnitudeSurfaceViolated   ***ADMITS***
+      SealedQuantityType       True                  False               REFUSED QuantitySurfaceViolated    ***ADMITS***
+      SealedReadingType        True                  False               REFUSED ReadingSurfaceViolated     ***ADMITS***
+      SealedPresentationType   True                  False               REFUSED DialPresentationRefused    ***ADMITS***
+  the_conclusion: >
+    **CONVERTING THOSE FOUR WOULD LET AN ORDINARY `class` STATEMENT SUBCLASS A SEALED TYPE THROUGH
+    ONE FORGED INTERMEDIATE.** That is a WEAKENING of exactly the accident-proofing
+    PO-DECISIONS-0018 ruling 1(a) keeps: *"The declared-route refusals STAND and are kept."*
+    **THE MECHANICAL READING OF "EXACT TYPE EVERYWHERE" IS WRONG AT FOUR SITES AND THE PROOF IS AN
+    EXECUTION, NOT AN ARGUMENT.** The same reasoning holds at the four `bool` limbs and is written
+    at each.
+  and_the_MIRROR_of_it_which_is_why_seal_reading_type_WAS_converted: >
+    `seal_reading_type`'s `isinstance(cls, SealedReadingType)` is an **ADMISSION** predicate — pass
+    it and the class is recorded in `_SEALED`. There the wider operator is the WEAKER one, and a
+    metatype SUBCLASS supplies its own `__setattr__`/`__delattr__`, which are the two members
+    sealing consists of. **A CLASS CLOSED BY SOMEBODY ELSE'S CODE WAS BEING RECORDED AS SEALED BY
+    THIS ONE.** Converted, with the impostor built and refused in the carrier.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_DELTA_I_CAUSED_MEASURED_AND_DECLARED_AND_NOT_PAPERED_OVER:
+  the_sweep_BEFORE: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` at 686a374 -> EXIT 1, **FAIL — 555 sites, 4 violations** (3 STALE + 1 UNDECLARED MODULE, all `crash_detector.admission`).'
+  the_sweep_AFTER: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` at this commit -> EXIT 1, **FAIL — 548 sites, 18 violations.**'
+  the_cause_of_every_one_of_the_14_NEW_violations: >
+    **A DISPOSITION KEY CARRIES ITS SITE'S SOURCE TEXT AS ITS FOURTH ELEMENT, SO CONVERTING A SITE
+    RE-KEYS IT AND ITS OLD DECLARATION GOES STALE.** 14 new `STALE DECLARATION` rows: the twelve
+    converted tier-1 keys, plus two tier-2 `TRUTHINESS` keys in `crash_detector.admission` whose
+    source text contained the converted expression. **ZERO `UNDECLARED ADMISSION` ROWS** — every
+    converted site left tier 1 entirely (an exact-type test is tier-2 `IDENTITY`), so this
+    increment created NO new tier-1 obligation. TIER 1 went **45 -> 33 distinct sites**,
+    **ISINSTANCE 30 -> 18**, DUCK 22 -> 22 unchanged.
+  I_DID_NOT_TOUCH_THE_REGISTER: >
+    `git diff 686a374..HEAD -- tools/sweep/` -> **EMPTY**, asserted in the next entry by command.
+    **THE STALE KEYS ARE HELD BY PO-DECISIONS-0018 RULING 3 AND CLEARING THEM IS NOT MINE.** The
+    exact list of dead keys and what replaced each is handed over in the closing entry so the
+    clearing act can be one act.
+  the_suite_BEFORE: '`python3 -B -m pytest -q` at 686a374 -> **3 failed, 1696 passed**. The three DECLARED by the dispatch, in `tests/test_the_fifteen.py`. **NO FOURTH FAILURE AT MY BASE — I checked before I changed anything.**'
+  the_suite_AFTER: '`python3 -B -m pytest -q` -> **4 failed, 1709 passed.** The declared three, PLUS ONE, named below. +13 net passing is the 14 new tests in `tests/test_exact_type_admission_sweep.py` less one superseded assertion folded into another.'
+  THE_FOURTH_FAILURE_IS_MINE_AND_I_NAME_IT: >
+    `tests/test_the_fifteen.py::test_the_tier_1_tally_is_ten_DEFECT_OPEN_and_three_CARRIER_ONLY`.
+    It asserts `DEFECT_OPEN 10 |` in the sweep's printed tally. **IT NOW READS 6, BECAUSE FOUR
+    `DEFECT_OPEN` SITES WERE FIXED** — the tally is a property of the PROTECTED register, and four
+    of its rows now describe sites that no longer exist. **IT IS LEFT RED DELIBERATELY.** Bumping
+    10 to 6 would assert a number that becomes wrong the moment the Project Lead re-declares the
+    twelve keys, and the honest state of a register held stale by product authority is a RED test
+    standing next to it. **THIS IS THE PRECEDENT OF INCREMENT 8**, where `CD-ENG-WO2R3-06` made the
+    `is_exactly` correction, left three tests red, and returned `SCOPE_INSUFFICIENT` for the same
+    one file. **I RETURN THE SAME.**
+  the_one_test_I_DID_supersede_and_why_that_is_not_the_same_thing: >
+    `tests/test_disposition_contract.py::test_the_five_original_words_are_unchanged_in_shape`
+    pinned `"555 sites"` and `"TIER 1 — admission: 45 distinct sites"`. **THOSE ARE SOURCE
+    POPULATION FINGERPRINTS, NOT REGISTER CONTENT**, and the test's own docstring instructs:
+    *"If that was a deliberate product change, supersede this number with the MEASURED one and say
+    what moved it"*. It has been superseded twice before on that instruction. **SUPERSEDED, NOT
+    EDITED: the old assertions are quoted verbatim in the docstring** (PBG-CONT-003). **AND THE
+    REPLACEMENT IS STRICTLY STRONGER, NOT A BUMPED NUMBER:** the tier-1 pin is now an INEQUALITY
+    (`<= 33`) parsed from the instrument's own line, plus a second one on `ISINSTANCE <= 18`, so a
+    future change that removes one admission and adds another is RED where the old equality would
+    have gone green. **A BUMPED EQUALITY WOULD HAVE BEEN THE WEAKENING; AN INEQUALITY IN THE SAFE
+    DIRECTION IS NOT.**
+  register_checks: '**TWELVE EXIT 0**, `check_grant_matrix_live` EXIT 3 — the declared environment condition. UNMOVED by this part. `check_sealed_against_forged_establishment.py` still EXIT 0 and IS NOT CITED AS SUPPORT FOR ANYTHING HERE (the dispatch forbids it and the Project Lead has re-derived why).'
+
+# ---------------------------------------------------------------------------------------------- #
+FILES_CHANGED:
+  source: |
+      src/crash_detector/admission.py                 4 conversions + the declared limit at _type_tuple
+      src/crash_detector/observations.py              2 conversions
+      src/crash_detector/source_registry.py           3 conversions (one of them a LIVE admission)
+      src/crash_detector/dials/magnitude.py           1 conversion + the refusal-direction declaration
+      src/crash_detector/dials/provenance.py          1 conversion + the refusal-direction declaration
+      src/crash_detector/dials/reading.py             1 conversion + the refusal-direction declaration
+      src/crash_detector/serving/dial_presentation.py the refusal-direction declaration
+      src/crash_detector/engine/config.py             DECLARED LIMIT ONLY — no behaviour change
+      src/crash_detector/own_terms.py                 DECLARED LIMIT 5 ONLY — no behaviour change
+      src/crash_detector/time_utc.py                  DECLARED LIMIT ONLY — no behaviour change
+  tests: |
+      tests/test_exact_type_admission_sweep.py        NEW — 14 tests, every refusal with its control
+      tests/test_disposition_contract.py              one assertion superseded, quoted not deleted
+  NOT_CHANGED_AND_CHECKED: 'tools/sweep/ (the whole directory) · tools/register/check_sealed_against_forged_establishment.py · BLUEPRINT.md · governance/decisions/ · governance/assurance/ · governance/findings/ · ACTIVE_WORK.yaml · PID.md · pbg/ · any landed build-log entry.'
+
+next_safe_action: 'ITEM_1 part C — the plant, both arms, on pristine `git archive` extractions, three columns.'

@@ -1,0 +1,33 @@
+diff --git a/src/crash_detector/store/migrations.py b/src/crash_detector/store/migrations.py
+index acd6a4a..158bc0a 100644
+--- a/src/crash_detector/store/migrations.py
++++ b/src/crash_detector/store/migrations.py
+@@ -302,3 +302,28 @@ def pending_migrations(
+     return tuple(
+         migration for migration in migrations if migration.version not in applied
+     )
++
++
++# ================================================================================================ #
++# PLANTED VIOLATION — CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.
++# **THE POPULATION AXIS, WHICH IS THE ONE THIS INCREMENT EXISTS TO CLOSE.** This class is ruled
++# OUT of the CONSTRUCTOR check's population by TWO of its three clauses at once — it is not a
++# frozen dataclass (clause 2) and it is on no judgement path (clause 3) — so
++# `check_constructor_field_establishment.py` STILL EXITS 0 WITH THIS PATCH APPLIED. That is the
++# whole point: a control scoped to 33 of 99 does not see it, and the sealing property is required
++# of THE CLASS. The seal is physically AVAILABLE to it (no base imposes a __dict__), so the one
++# measured exclusion this project grants does not excuse it.
++# Not part of the product; `git apply` puts it here and `git checkout` removes it.
++# ================================================================================================ #
++
++
++class LedgerCursor:
++    """A plain public class in a governed module, carrying instance state and NO __slots__.
++
++    `LedgerCursor.__new__(LedgerCursor)` followed by `__dict__.update({'version': 'FORGED'})`
++    returns an object of exactly this type carrying that value, having executed no package
++    code at all.
++    """
++
++    def __init__(self, version: int) -> None:
++        self.version = version

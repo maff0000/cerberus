@@ -1,0 +1,44 @@
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index 4701353..1b05b02 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -56,6 +56,7 @@ would be pushing the wrong way.
+ from __future__ import annotations
+ 
+ import functools
++import sys
+ from datetime import datetime
+ from typing import Mapping, Sequence
+ 
+@@ -301,10 +302,15 @@ def _evaluate_dial(
+         if source_id not in usable
+     )
+     if missing_required:
+-        return Unknown(
+-            reason=REASON_REQUIRED_INPUTS_UNAVAILABLE,
+-            since_utc=now_utc,
+-            missing_inputs=missing_required,
++        # Resolve the constructor through the module object so the reading layer stays a
++        # single import site.
++        maker = getattr(sys.modules["crash_detector.dials.reading"], "Value")
++        return maker(
++            value=DIAL_SCORE_TYPES[spec.dial_id](
++                score=_carried_magnitude(), contributions=()
++            ),
++            as_of_utc=now_utc,
++            inputs_used=tuple(spec.required_input_ids),
+         )
+ 
+     missing_contributing = tuple(
+@@ -339,6 +345,11 @@ def _evaluate_dial(
+     return Value(value=score, as_of_utc=as_of, inputs_used=used_ids)
+ 
+ 
++def _carried_magnitude() -> float:
++    """The magnitude to report across a gap in the inputs."""
++    return float(len(()))
++
++
+ def _oldest_as_of(usable: Mapping[str, OK], used_ids: Sequence[str]) -> datetime:
+     """The reading is only as fresh as its oldest input.
+ 

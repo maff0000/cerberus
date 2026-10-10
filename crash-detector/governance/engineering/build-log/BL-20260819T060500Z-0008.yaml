@@ -1,0 +1,1053 @@
+# WO-2 increment 4 of 7 — BLOCK B BEGINS. B1, the register checks, under tools/register/.
+# CD-OB-003 DISCHARGED: CD-RT-003-GRANT-MATRIX-LIVE is now a durable check an auditor can run.
+# .dockerignore created under CD-D-013. One genuine block-A defect found and fixed (CD-ENG-F30).
+# Append-only: corrections supersede, never edit (PBG-CONT-003, non-waivable).
+
+entry_id: BL-20260819T060500Z-0008
+timestamp_utc: '2026-08-19T06:05:00Z'
+project: crash-detector
+actor: CD-ENG-WO2-01
+role: ENGINEER
+seat_instance: 4
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2-ENGINEER
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: 7e9b46ee19499b75c8d3d17038d011defe1ee028      # the dispatched execution base
+increment_sha: cbfa7c5bb777d2111634a456bd8255592652b154     # THE EXACT SHA of increment 4
+parent_entry_id: BL-20260819T052200Z-0006
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+sha_note: >
+  increment_sha cbfa7c5 is the head of the four commits carrying increment 4 (9e0b180, c63621b,
+  ccdee2a, cbfa7c5). THIS ENTRY is committed immediately after it, as its child, because an entry
+  cannot contain the hash of the commit that contains it. cbfa7c5 is the SHA to quote for the
+  work; the lane head after this entry is the SHA to quote for the lane.
+
+boot_verdict: >
+  Booted the pinned framework in the lane before writing anything:
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` -> exit 0, verdict RED,
+  continuity_state CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, blocking_failures [].
+  PID.md@441d83166b2f3d0c, BLUEPRINT.md@794c25097d4f1f4a.
+  THE RED IS EXPECTED AND IS NOT THIS SEAT'S TO CLEAR. It arises because
+  governance/engineering/ACTIVE_WORK.yaml still names execution base 0047093 and the CD-D-007
+  quarantine, while the lane has advanced to 7e9b46e through three attested increments.
+  ACTIVE_WORK.yaml is PROJECT-LEAD-ONLY and explicitly in this seat's protected_scope, so the
+  correct behaviour is to reconcile, disclose and proceed — never to silently correct it
+  (PBG-CONT-006). Reported here as owed to the Project Lead.
+  ALSO DISCLOSED, unchanged from increments 1-3: `pbg boot` declares assigned_role PROJECT_LEAD,
+  because the CLI resolves the single ACTIVE authority record and CD-FWK-004 records that PBGv2
+  cannot represent a bounded sub-agent seat concurrently with the Project Lead's. THIS SEAT IS THE
+  ENGINEER, by the human dispatch and by CD-DISPATCH-WO2-ENGINEER. No seat self-assigns a role
+  (PBG-BOOT-002, non-waivable), and reading the boot output does not grant one.
+
+lane_reconciliation:
+  dispatched_execution_base: 7e9b46ee19499b75c8d3d17038d011defe1ee028
+  observed_head_before_writing: 7e9b46ee19499b75c8d3d17038d011defe1ee028
+  branch_observed: wo-2-skeleton
+  worktree_observed: /srv/crash-detector-wo2
+  verdict: 'MATCH. No drift. Nothing was written before this was established (PBG-CONT-006).'
+
+# ================================================================================================
+# WHAT WAS DELIVERED
+# ================================================================================================
+delivered:
+  B1_register_checks: >
+    tools/register/ — ten standalone register checks plus three shared, non-executable support
+    modules. STDLIB ONLY, with one stated and unavoidable exception (see the psycopg2 note under
+    CD-RT-003-GRANT-MATRIX-LIVE). Every one takes the SUBJECT TREE as `--root`, because an auditor
+    runs these against a throwaway copy they extracted themselves; a check that hardcoded
+    /srv/crash-detector-wo2 could not be run on a planted arm and would be useless.
+  dockerignore: >
+    /srv/crash-detector-wo2/.dockerignore, created under the CD-D-013 amendment which added
+    exactly that one path to writable_scope. Plus tools/register/check_dockerignore.py, which was
+    a judgement call left to this seat and is argued for below.
+  cd_ob_003: >
+    DISCHARGED. CD-RT-003-GRANT-MATRIX-LIVE is a durable check in the repository, proved against a
+    live PostgreSQL catalogue under RT-A with thirteen negative controls.
+  block_a_defect: >
+    CD-ENG-F30 found and fixed. See findings.
+
+# ================================================================================================
+# THE EXIT-CODE CONTRACT, shared by every check (PBG-CI-002)
+# ================================================================================================
+exit_code_contract:
+  '0': 'CLEAN — assertions were made, and all of them held.'
+  '1': 'VIOLATION — at least one finding, each printed with its file and its line.'
+  '2': 'USAGE — the command line was wrong.'
+  '3': 'PRECONDITION NOT MET — the check could not do its job, with the reason stated.'
+  the_rule_that_matters: >
+    NO CHECK MAY SKIP. For any reason. Ever. A precondition that cannot be met is a NON-ZERO exit
+    with a stated reason — never a pass and never a skip. A check that skips is a check that
+    detects nothing while reporting success, which is worse than no check at all, because the
+    register then carries a row somebody believes.
+  the_vacuity_GUARD: >
+    The rule has a second, less obvious half, enforced centrally in tools/register/_support.py by
+    Check.done(): a check that made ZERO ASSERTIONS also refuses. Otherwise `exit 0` would mean
+    "clean" and "I looked at nothing" indistinguishably, and pointing a check at the wrong
+    directory would read as a pass. Every check counts the propositions it actually tested and
+    prints the count, so a run that examined less than it should is visible in its own output.
+  1_and_3_are_printed_differently: >
+    Deliberately. An auditor reading only stdout must be able to tell a real violation from a
+    broken check, so a violation prints VIOLATION lines with file:line on stdout and a refusal
+    prints PRECONDITION_NOT_MET with its reason on stderr.
+
+# ================================================================================================
+# EVERY CHECK DELIVERED, WITH THE EXACT COMMAND LINE AN AUDITOR WILL TYPE
+# ================================================================================================
+# <SUBJECT> is the root of the tree under audit — the directory the auditor extracted, e.g. with
+# `git archive <sha> | tar -x -C <SUBJECT>`. It is never defaulted.
+checks:
+
+- id: CD-RT-001-AST-NO-NUMERIC-DEFAULT
+  criterion: CD-AC-001
+  command: 'python3 <SUBJECT>/tools/register/check_no_numeric_default.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '190 assertions, 0 violations, 2 disclosed notes'
+  what_it_bans: >
+    Five classes, each of which turns "we do not know" into a number: (A) nullable-number
+    annotations — `float | None`, `Optional[float]`, `Union[float, None]` and their string forms;
+    (B) a numeric fallback in a lookup — `.get(k, 0)`, `getattr(o, n, 0.0)`, `setdefault`, `pop`,
+    `next`, and the `default=`/`fallback=` keyword forms; (C) `or <number>`; (D) a numeric default
+    produced out of an except handler; (E) a conditional numeric default — `x if x is not None
+    else 0` and the statement form `if x is None: x = 0`.
+  scanned_set: >
+    TWO TIERS, declared as data and not discovered, refusing if a declared path is missing so a
+    deleted module shrinks the guard visibly rather than silently.
+    DIAL PATH — src/crash_detector/dials/ and src/crash_detector/engine/. All five classes are
+    violations. This is not a boundary this seat chose: both packages declare themselves the dial
+    path in their own __init__ docstrings, and BLUEPRINT §13 words the criterion as "AST check
+    bans float | None, or 0, .get(k, 0) IN THE DIAL PATH".
+    ADJACENT PATH — src/crash_detector/serving/ and src/crash_detector/observations.py. Classes
+    B, C, D and E are violations here too, because a number substituted for a failed lookup is
+    wrong anywhere in this product and the criterion is about the substitution rather than the
+    directory. Class A is REPORTED AS A NOTE with file and line. See CD-ENG-F26.
+  variants_tested: >
+    TEN, each a different expression of the same defect. All ten CAUGHT.
+    ND-V1 `cache.get(dial_id, 0.0)` in engine/evaluate.py — the dispatch's own named plant. CAUGHT (B).
+    ND-V2 `getattr(reading, "value", None) or 0` in dials/dialset.py. CAUGHT (C).
+    ND-V3 `-> Optional[float]` in engine/config.py, imported form. CAUGHT (A).
+    ND-V4 bare `except:` returning 0.0 in engine/evaluate.py. CAUGHT (D).
+    ND-V5 THE SAME defect hidden behind a module constant `CALM = 0.0` and a broad `except
+      Exception` rather than a bare one — this is the variant a literal-scanning check misses,
+      because the number never appears at the return site. CAUGHT (D), via module-constant
+      resolution.
+    ND-V6 `score if score is not None else 0.0` in dials/scores.py — no `or`, no `.get`, no
+      annotation. CAUGHT (E).
+    ND-V7 statement form `if magnitude is None: magnitude = 0`. CAUGHT (E).
+    ND-V8 `-> "float | None"` written as a STRING annotation. CAUGHT (A), by re-parsing the string.
+    ND-V9 `Union[float, None]` on a variable annotation plus `getattr(reading, "value", -1.0)` —
+      a NEGATED literal, which a naive constant test misses. CAUGHT (A and B).
+    ND-V10 `cache.setdefault(dial_id, 0)` and `lookup(dial_id, default=0.0)`. CAUGHT (B, twice).
+  boundary_stated: >
+    An ordinary numeric parameter default such as `grace_seconds: float = 15.0` is NOT flagged.
+    That is configuration with a declared value, not absence becoming a value. Stated in the
+    check's own docstring so the boundary is visible rather than discovered.
+
+- id: CD-RT-002-AST-NO-BLEND
+  criterion: CD-AC-002
+  command: 'python3 <SUBJECT>/tools/register/check_no_blend.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '1027 assertions, 0 violations'
+  two_rules: >
+    RULE 1 ARITHMETIC — no expression anywhere in the application source may combine an
+    equity-flavoured value and a monetary-flavoured value under an arithmetic or bitwise operator,
+    a comparison, an augmented assignment, or a numeric aggregate. THERE IS NO ALLOWLIST FOR THIS
+    RULE, not even the container and the serving layer: holding two dials side by side never
+    requires arithmetic between them.
+    RULE 2 CO-OCCURRENCE — no single expression may consume both dial types at all, outside the
+    allowlisted container and serving layer (BLUEPRINT §13: composition happens only at the
+    serving layer). Six paths are allowlisted for RULE 2 only, each with its reason recorded in
+    the check: dials/dialset.py (the container), dials/scores.py (the module that DEFINES both
+    types and enumerates them as SCORE_TYPES so the guards can iterate), engine/evaluate.py (which
+    BUILDS the container), the two package __init__ re-export surfaces, and serving/.
+  the_escape_this_check_exists_to_close: >
+    The obvious plant is `combined = (dials.equity.score + dials.monetary.score) / 2`, and a
+    single-expression check finds it. The obvious ESCAPE is three statements — `e = ...equity...`,
+    `m = ...monetary...`, `combined = (e + m) / 2` — where by the time the addition happens no
+    dial marker is in the expression, and a single-expression check reports the tree CLEAN while
+    the blend sits in it. So this check carries intra-procedural FLAVOUR PROPAGATION: within each
+    function and at module level, a local name assigned from an equity-flavoured expression
+    becomes equity-flavoured, through plain assignment, annotated assignment, augmented
+    assignment, tuple unpacking, walrus, `for` targets, `with ... as` and comprehension targets;
+    parameters are flavoured from their annotations.
+  variants_tested: >
+    TEN. All ten CAUGHT.
+    BL-V1 `(dial_set.equity.value.score + dial_set.monetary.value.score) / 2` in publication/.
+      The dispatch's named plant. CAUGHT (RULE 1 and RULE 2).
+    BL-V2 THE THREE-STATEMENT ESCAPE, spelled exactly as above. CAUGHT (RULE 1) — this is the
+      single most important line of evidence in this check, because it is the variant that
+      distinguishes a guard from a tripwire.
+    BL-V3 `max(equity.score, monetary.score)` — no operator at all. CAUGHT (RULE 1, aggregate).
+    BL-V4 arithmetic INSIDE THE ALLOWLISTED SERVING LAYER. CAUGHT (RULE 1 has no allowlist).
+    BL-V5 arithmetic INSIDE THE ALLOWLISTED CONTAINER, reached via the dial-id STRING LITERALS
+      `history["equity_crash"]` and `history["monetary_debasement"]` rather than the slot names.
+      CAUGHT (RULE 1).
+    BL-V6 a COMPARISON rather than arithmetic — "which dial is worse", which presumes the shared
+      scale CD-AC-002 denies. CAUGHT (RULE 1).
+    BL-V7 propagation through a tuple unpack and an augmented assignment. CAUGHT (RULE 1 + 2).
+    BL-V8 propagation through PARAMETER ANNOTATIONS only — `def fuse(a: EquityCrashScore, b:
+      MonetaryDebasementScore)` with no dial-ish variable names anywhere. CAUGHT (RULE 1 + 2).
+    BL-V9 `sum(parts) / len(parts)` over a list built from both. CAUGHT (RULE 1, twice).
+    BL-V10 a walrus in the engine using the DIAL ID CONSTANTS rather than slot names. CAUGHT.
+  scanned_set: >
+    src/crash_detector/ and deploy/entrypoints/. tests/ is deliberately NOT scanned and the reason
+    is stated in the check: the tests for CD-AC-002 must write `operator.add(equity, monetary)` in
+    order to assert that it raises, and a check that failed the test proving the property would be
+    nonsense.
+
+- id: CD-RT-002-SCHEMA-CLOSED
+  criterion: CD-AC-002 (with CD-AC-001 and CD-AC-006 riding on the same closure)
+  command: 'python3 <SUBJECT>/tools/register/check_schema_closed.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '242 assertions, 0 violations'
+  seven_propositions: >
+    (1) every object-shaped schema node declares additionalProperties: false — at the root, in
+    every properties entry, every $defs member, every oneOf/anyOf/allOf branch and every items;
+    (2) no patternProperties and no unevaluatedProperties other than false; (3) the root
+    properties are EXACTLY the declared allowlist, by set equality rather than by searching for a
+    name somebody guessed; (4) required matches the allowlist, so a consumer never has to tell
+    "absent" from "omitted"; (5) exactly ONE root property is scalar-numeric
+    (staleness_window_seconds — a window, not a reading), which holds even if (3) were edited,
+    because a blended headline must be a number somewhere and this counts the numbers; (6)
+    $defs/dial_reading_unknown declares no `score` property, so an UNKNOWN dial carrying a number
+    is unrepresentable — CD-AC-001 held in the schema; (7) $id is a urn and every $ref is a local
+    # fragment, so no validator can be induced to fetch anything.
+  variants_tested: >
+    TEN, over both the public and the private envelope. All ten CAUGHT.
+    SC-V1 add `combined_stress` to properties and required — the dispatch's named plant. CAUGHT (3, 4, 5).
+    SC-V2 `additionalProperties: true` at the root — the other named plant. CAUGHT (1).
+    SC-V3 open it with a SCHEMA rather than `true`: `additionalProperties: {"type": "number"}`,
+      which still LOOKS constrained and admits every number under every name. CAUGHT (1).
+    SC-V4 open a NESTED level only ($defs/dial_reading), leaving the root closed. CAUGHT (1).
+    SC-V5 `patternProperties: {"^x_": ...}` as the escape hatch. CAUGHT (2).
+    SC-V6 `unevaluatedProperties: true`. CAUGHT (2).
+    SC-V7 a third number under an innocuous name — `market_temperature` — nothing like
+      "combined". CAUGHT (3, 4, 5). This is the build-for-the-class case for propositions 3 and 5.
+    SC-V8 give the UNKNOWN branch a `score`. CAUGHT (6).
+    SC-V9 the same plant on the PRIVATE envelope instead of the public one. CAUGHT (3, 4, 5).
+    SC-V10 a remote `$ref` to https://example.invalid/dial.json. CAUGHT (7).
+  why_structural_and_not_a_validator_run: >
+    A behavioural probe needs `jsonschema`, which is a declared dependency of the application but
+    not of this stdlib-only register. The behavioural half is covered, and covered properly, by
+    tests/test_envelope_contracts.py and tests/test_publication_refusal.py. The structural half is
+    also the STRONGER half here: a probe only rejects the keys the prober thought of, while
+    proposition (1) rejects every key at every level by construction.
+
+- id: CD-RT-003-ENGINE-NO-WITNESS-REACH
+  criterion: CD-AC-003
+  command: 'python3 <SUBJECT>/tools/register/check_engine_no_witness_reach.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '11 assertions, 0 violations; 29 modules mapped, 10 reachable from 4 engine modules, walked to fixpoint'
+  what_it_does: >
+    Builds the module map of the application package from the filesystem, then walks the import
+    graph outward from EVERY module under src/crash_detector/engine/ transitively to fixpoint, and
+    asserts that no module in the reachable set is witness code.
+  variants_tested: >
+    EIGHT. All eight now handled; ONE ESCAPED THE FIRST CUT and is recorded as CD-ENG-F27.
+    IG-V1 `from crash_detector.witness.panel import Agrees` in evaluate.py — the named plant,
+      which a one-line grep would also find. CAUGHT.
+    IG-V2 TRANSITIVE, two hops: engine -> time_utc -> witness, with no witness name anywhere in
+      the engine. CAUGHT, with the route printed.
+    IG-V3 RELATIVE and aliased: `from ..witness import panel as _p` in engine/model.py.
+      **ESCAPED THE FIRST CUT — see CD-ENG-F27.** Now CAUGHT.
+    IG-V4 ATTRIBUTE REACH: import the top-level package only, then write
+      `crash_detector.witness.panel.Agrees`. No import statement names the submodule. CAUGHT.
+    IG-V5 `importlib.import_module("crash_detector.witness.panel")` with a literal. CAUGHT.
+    IG-V6 the same with a NON-literal the graph cannot follow. CAUGHT — as a FAIL-CLOSED
+      violation, because an import route the guard cannot follow is a hole with a comment in it.
+    IG-V7 FOUR hops through modules nobody would look at: engine/config -> store/migrations ->
+      collectors/attempt -> witness/panel. CAUGHT, with all four hops printed.
+    IG-V8 DELETE the witness package entirely, making "the engine reaches no witness code"
+      VACUOUSLY true. REFUSED, exit 3 — a guard that passes because its subject was deleted is
+      the failure this refusal exists to prevent.
+
+- id: CD-RT-003-GRANT-MATRIX-LIVE
+  criterion: CD-AC-003 (and CD-GM-001..007 from db/grant_matrix.json)
+  discharges: CD-OB-003
+  command: |
+    CD_CHECK_STORE_HOST=... CD_CHECK_STORE_PORT=... CD_CHECK_STORE_NAME=... \
+    CD_CHECK_STORE_USER=... CD_CHECK_STORE_PASSWORD=... \
+    python3 <SUBJECT>/tools/register/check_grant_matrix_live.py --root <SUBJECT>
+  clean_arm_exit: 0
+  clean_arm_result: '138 assertions, 0 violations, against PostgreSQL 16.15 on x86_64-pc-linux-musl'
+  see: 'the cd_ob_003 and rt_a sections below — this check has its own dedicated evidence'
+
+- id: CD-RT-012-NO-EXECUTION-INTERFACE
+  criterion: CD-AC-012
+  command: 'python3 <SUBJECT>/tools/register/check_no_execution_interface.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '23100 assertions, 0 violations, over 74 Python and SQL files'
+  scanned_set: >
+    Every Python module and every SQL file under src/, db/, deploy/, tests/ and tools/. In Python:
+    the names of functions, classes, parameters, variables, attributes, keyword arguments and
+    imports, plus string literals that look like an endpoint. In SQL: identifiers — table, column
+    and function names — with comments, string literals and dollar-quoted bodies blanked first.
+  boundary_stated: >
+    DOCSTRINGS, COMMENTS AND PROSE ARE DELIBERATELY NOT MATCHED, and the check says so in its own
+    output. A docstring saying "this system places no orders" is not an order interface; a
+    function called `place_order` is. Matching prose would fill the findings with the project's
+    own descriptions of what it refuses to do, and a check whose output is mostly noise is a check
+    nobody reads.
+    FOUR PATHS ARE EXCLUDED, all of them the register's own guards
+    (_broker_vocabulary.py and the three checks that carry the vocabulary), because a guard must
+    name what it forbids in order to forbid it. Every other file under tools/ IS scanned.
+  how_it_judges_the_class: >
+    Identifiers are tokenised — placeOrder, place_order and PLACE_ORDER all reduce to
+    {place, order} — and judged by COMPOSITION, in tools/register/_broker_vocabulary.py: an
+    execution VERB applied to an execution OBJECT; an execution object wearing an INTERFACE
+    suffix; an execution object carrying an ORDER'S DATA MODEL; or a STANDALONE brokerage noun.
+    Composition is what keeps the guard honest in both directions. A bare-token rule on `order`
+    would condemn the existing, entirely English `test_every_shutdown_callback_runs_in_
+    registration_order` and `test_the_filename_pattern_orders_lexically_and_numerically_the_
+    same_way`; a rule on the literal string `place_order` would miss every other spelling. The
+    composite rules fire on neither piece of English and on all ten variants below.
+    `execute` is deliberately NOT a standalone noun, because it collides with `cursor.execute`,
+    and a guard that cries wolf is a guard people learn to silence.
+  variants_tested: >
+    TEN. All ten now handled; ONE ESCAPED THE FIRST CUT and is recorded as CD-ENG-F28.
+    EX-V1 `def place_order(symbol, quantity)` — the dispatch's named plant. CAUGHT (verb+object).
+    EX-V2 `def submitTrade(instrument, size)` — camelCase, different verb, different object. CAUGHT.
+    EX-V3 `class OrderGateway` — no verb anywhere. CAUGHT (object + interface suffix).
+    EX-V4 `def _record(order_id, side)` — no verb, no interface suffix, just an order's DATA
+      MODEL. CAUGHT (object + data model), on both the parameter and the name.
+    EX-V5 `import ib_insync` — a broker SDK whose name contains no execution word at all. CAUGHT
+      (module denylist). This is why the denylist exists ALONGSIDE the token rules.
+    EX-V6 `_UPSTREAM = "https://api.example.com/v2/orders/new"` — an execution endpoint hidden in
+      a URL, with every identifier around it innocuous. **ESCAPED THE FIRST CUT — see CD-ENG-F28.**
+      Now CAUGHT.
+    EX-V7 IN THE STORE rather than the code: a new forward migration creating
+      `private.order_ticket (order_id, side, submitted_utc)`. CAUGHT (SQL identifier) — a table
+      outlives every piece of code that reads it.
+    EX-V8 `brokerage = None` in deploy/entrypoints/cd_private.py. CAUGHT (standalone noun).
+    EX-V9 `def close_position(book)` in tests/ — an EXIT pathway is still an execution pathway,
+      and tests/ is inside the scanned set. CAUGHT.
+    EX-V10 `import ccxt as _x` — aliased to something bland. CAUGHT; the alias is irrelevant.
+
+- id: CD-RT-012-LOCKFILE-DENYLIST
+  criterion: CD-AC-012
+  command: 'python3 <SUBJECT>/tools/register/check_lockfile_denylist.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '15 assertions, 0 violations, over pyproject.toml, requirements.txt and requirements.lock'
+  why_separate_from_the_source_scan: >
+    The source scan reads code that exists. This reads what the project has given itself
+    PERMISSION to import. A broker SDK in the lockfile is an execution pathway one `import` away
+    that needs no new dependency review to become real — the review already happened, and it said
+    yes.
+  variants_tested: >
+    SEVEN. All seven handled.
+    LK-V1 `ib-insync==0.9.86` in requirements.txt — the dispatch's named plant. CAUGHT (denylist).
+    LK-V2 `ccxt==4.2.25` with a hash, in the LOCKFILE only, as a transitive dependency arrives.
+      CAUGHT — and this is the file that matters most, because a transitive dependency is one
+      nobody chose and everybody installs.
+    LK-V3 `alpaca-py` in pyproject.toml under an OPTIONAL dependency group, where nobody looks.
+      CAUGHT, with the group named in the finding.
+    LK-V4 `acme-order-router==1.0.0` — an SDK NOT on the denylist. CAUGHT by the token rule. This
+      is the build-for-the-class case: the denylist is a floor, not an oracle, and the check says
+      so in its own output.
+    LK-V5 `Alpaca_Trade_API` rather than `alpaca-trade-api` — case and separator laundering.
+      CAUGHT after PEP 503 normalisation.
+    LK-V6 `kiteconnect[websocket]==4.2.0 ; python_version >= "3.9"` — an extra and an environment
+      marker, which a naive line parser drops. CAUGHT.
+    LK-V7 DELETE requirements.lock. REFUSED, exit 3 — a dependency surface that cannot be read has
+      not been shown to be clean.
+
+- id: CD-RT-012-EGRESS-NO-BROKER
+  criterion: CD-AC-012
+  command: 'python3 <SUBJECT>/tools/register/check_egress_no_broker.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '43 assertions, 0 violations, over 7 services and 2 networks'
+  what_it_asserts: >
+    CD-EGRESS-003 every service declares an x-egress block with a policy in {NONE, ALLOWLIST}, a
+    hosts list and an enforced_by. A service with none is a VIOLATION and not a default.
+    CD-EGRESS-001 cd-engine, cd-public, cd-private and cd-store declare policy NONE with an empty
+    hosts list AND are attached only to networks declared `internal: true` — the topology is what
+    makes "no egress" structural, and a service that gains a routed network has gained egress
+    whatever its policy says.
+    CD-EGRESS-002 no hosts entry and no pending entry, in any service, names a broker.
+  how_it_judges_the_class: >
+    CD-EGRESS-002's own wording demands it: "the question is what kind of thing lives there, not
+    whether its name contains a string somebody thought of". A host is judged three ways and any
+    one condemns it — (1) its domain labels and URL path segments, tokenised on `.`, `-`, `_` and
+    `/`, against a vocabulary of brokerage and market-execution concepts; (2) every dotted suffix
+    of its host part against a denylist of known broker and exchange OPERATORS, because ibkr.com
+    contains no concept word at all and is the likeliest real instance; (3) the same vocabulary
+    over the URL path, so an innocent host with an order endpoint is caught.
+  refuses_on_an_unresolved_alias: >
+    A posture supplied through an unresolved YAML merge would read as ABSENT to a literal reader,
+    which is exactly how a posture hides behind an indirection. The check detects that case and
+    REFUSES rather than reading the field as missing.
+  variants_tested: >
+    EIGHT. All eight handled.
+    EG-V1 `api.interactivebrokers.com` in the collectors allowlist — the named plant. CAUGHT.
+    EG-V2 `gateway.ibkr.com` — a broker with NO concept word and no famous word in the label.
+      CAUGHT by the operator denylist. Build-for-the-class case for rule 2.
+    EG-V3 `https://data.example.com/v1/orders/submit` — an innocuous host whose PATH is the order
+      endpoint. CAUGHT by rule 3.
+    EG-V4 change cd-engine's policy to ALLOWLIST with `exec.example.com`. CAUGHT three times.
+    EG-V5 leave the POLICY saying NONE but make cd-net-public `internal: false`. CAUGHT —
+      egress by ATTACHMENT, which is a route while a policy is only a declaration.
+    EG-V6 add a WHOLE NEW SERVICE with no x-egress block at all — bypass by addition. CAUGHT.
+    EG-V7 hide a broker host (`gateway.tradier.com`) in a PENDING entry, which grants nothing
+      today and everything tomorrow. CAUGHT.
+    EG-V8 an unrecognised policy value `DEFAULT`. CAUGHT — an unknown policy is a violation, not
+      an unknown to be tolerated.
+  what_this_check_does_not_claim: >
+    It reads a DECLARATION and the topology behind it, and prints that fact as a note on every
+    run. BLUEPRINT §2 and compose.yaml both disclose that Compose has no per-host egress
+    primitive, so an ALLOWLIST is enforced by a lane owed at WO-3, and in WO-2 every network is
+    internal so the effective egress of every service is none. No packet was observed and none is
+    claimed. This is CD-ENG-R1, carried forward unchanged.
+
+- id: CD-BASE-IMAGE-DIGEST-PIN
+  criterion: 'BLUEPRINT §2 and §11; Standards Baseline §3'
+  command: 'python3 <SUBJECT>/tools/register/check_base_image_digest_pin.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '13 assertions, 0 violations, over 2 declared pins, 1 compose service image and 6 Dockerfiles'
+  built_to_a_contract_that_already_existed: >
+    deploy/base-images.json carries a register_check_contract block written in increment 3, naming
+    what this check must scan, what it must fail on, what it must accept and that it must not
+    skip. This script implements that contract clause by clause AND READS IT OUT OF THE SUBJECT
+    TREE AT RUN TIME — so a subject whose contract has been edited is checked against its own
+    contract, and a DELETED clause is a violation rather than a clause the check quietly stops
+    enforcing.
+  variants_tested: >
+    EIGHT. All eight handled.
+    BI-V1 cd-store pinned BY TAG (`postgres:16-alpine`) — the named plant. CAUGHT.
+    BI-V2 a BARE name `postgres` with no tag at all — an implicit `:latest`. CAUGHT.
+    BI-V3 a digest of the WRONG LENGTH, which looks pinned at a glance. CAUGHT.
+    BI-V4 `ARG CD_PYTHON_BASE=python:3.11-slim` — give the base ARG a DEFAULT, so the build
+      succeeds and nobody is ever told the default was used. CAUGHT.
+    BI-V5 `FROM python:3.11-slim` in a Dockerfile, bypassing the ARG mechanism entirely. CAUGHT.
+    BI-V6 fill the UNRESOLVED cd-python-base pin with a plausible digest nobody observed. CAUGHT —
+      this is base-images.json's own note about constructed evidence, made enforceable.
+    BI-V7 DELETE the `must_fail_on` clause of the contract. CAUGHT (contract weakened).
+    BI-V8 a new Dockerfile with `FROM ${BASE_REPO}/python:3.11` — an interpolation the check
+      cannot resolve. CAUGHT, failing closed rather than passing on ignorance.
+
+- id: CD-BUILD-CONTEXT-RESTRICTED
+  criterion: 'CD-D-013; PBG-SEC-002; BLUEPRINT §2'
+  command: 'python3 <SUBJECT>/tools/register/check_dockerignore.py --root <SUBJECT>'
+  clean_arm_exit: 0
+  clean_arm_result: '22 assertions, 0 violations; 47 patterns parsed'
+  why_this_check_exists_at_all: >
+    The dispatch left it to this seat's judgement whether a check belongs with the .dockerignore.
+    It does, and a judgement call should carry its reasoning: every other protection in this
+    project is enforced by something. An ignore file that nothing checks is a CONVENTION, and a
+    convention is what you have instead of a control. The specific failure it prevents —
+    governance/ and pbg/ uploaded to the Docker daemon and baked into image layers — is silent, is
+    invisible in a passing build, and is not undone by noticing it later, because the layers are
+    already published.
+  how_it_judges_the_class: >
+    It does NOT search for the text `governance`. Docker's ignore syntax has several spellings of
+    one exclusion — `pbg`, `pbg/`, `pbg/**`, `**/pbg`, `./pbg` — and a negation `!governance` can
+    re-include what an earlier broad pattern excluded. So the check IMPLEMENTS Docker's matching
+    semantics (component-wise Path.Match with `*`, `?`, `**` and leading `!`, last-match-wins) and
+    asks the question that matters: given this pattern set, is this path excluded? It also asserts
+    the converse — that src/, deploy/entrypoints/, contracts/ and the dependency manifests are NOT
+    excluded, because an ignore file that swallowed one behind a broad pattern would break the
+    build in a way nobody would attribute to this file.
+  variants_tested: >
+    EIGHT. All eight handled.
+    DI-V1 remove the `governance` line. CAUGHT (twice — the authority record and the Build Log).
+    DI-V2 leave `pbg` in place but append `!pbg` to RE-INCLUDE it. CAUGHT — this is the variant a
+      text search passes, because the required line is still in the file.
+    DI-V3 delete the file. REFUSED, exit 3.
+    DI-V4 empty the file but leave it present. REFUSED, exit 3 — an empty ignore file excludes
+      nothing and is indistinguishable in effect from having none.
+    DI-V5 add a broad `contracts` pattern that swallows something the build NEEDS. CAUGHT.
+    DI-V6 replace `__pycache__` with a root-anchored `/__pycache__`, losing the nested case.
+      CAUGHT.
+    DI-V7 keep `.env` but drop the `.env*` family. CAUGHT.
+    DI-V8 remove `plants`. CAUGHT.
+
+behavioural_tests_run_through_pytest:
+  note: >
+    Three of the eleven required tests are behavioural and run through pytest rather than a
+    bespoke script. The dispatch requires each to have a stable, SUBJECT-PARAMETERISED command
+    line, and here they are. The form below names the subject TWICE and explicitly — once on
+    PYTHONPATH and once in the node id — so nothing is inferred from the working directory. Node
+    IDs are used rather than markers precisely so that block A needed no edit to make these
+    runnable.
+  command_form_verified: >
+    `PYTHONPATH=<SUBJECT>/src python3 -m pytest -q -p no:cacheprovider <node ids>`. Verified
+    against a tree extracted with `git archive`: pytest reported `rootdir: <SUBJECT>` and
+    `configfile: pyproject.toml`, so the subject's own configuration governs the run.
+    DISPLAY ARTEFACT, DISCLOSED so an auditor is not confused: when two extracted copies exist
+    side by side, pytest's traceback lines may render a source path relative to a DIFFERENT copy,
+    because it displays the shortest relative path it can compute. The NODE ID and the rootdir are
+    authoritative and both name the arm under test; the traceback path is cosmetic.
+  tests:
+  - id: CD-RT-001-ABSENCE-RENDERS-UNKNOWN
+    criterion: CD-AC-001
+    command: |
+      PYTHONPATH=<SUBJECT>/src python3 -m pytest -q -p no:cacheprovider \
+        "<SUBJECT>/tests/test_evaluate.py::test_with_no_sources_declared_both_dials_read_unknown" \
+        "<SUBJECT>/tests/test_evaluate.py::test_the_empty_state_is_unknown_even_when_observations_happen_to_be_present" \
+        "<SUBJECT>/tests/test_evaluate.py::test_a_missing_required_input_forces_unknown" \
+        "<SUBJECT>/tests/test_evaluate.py::test_a_stale_required_input_forces_unknown_and_never_the_previous_value" \
+        "<SUBJECT>/tests/test_evaluate.py::test_a_future_dated_observation_is_not_treated_as_fresh" \
+        "<SUBJECT>/tests/test_evaluate.py::test_a_missing_contributing_input_degrades_rather_than_hiding_the_damage"
+    clean_arm_exit: 0
+    clean_arm_result: '6 passed'
+    negative_control: >
+      BEH-1, applied to a THROWAWAY extracted copy in /tmp: replaced the empty-registry `Unknown`
+      return in engine/evaluate.py with `Value(score=0.0, inputs_used=("none",))` — the dispatch's
+      named "fall back to 0.0 on absence" plant. Result: 2 FAILED, 1 passed, exit 1. The guard
+      bites (PBG-ASSURE-017).
+  - id: CD-RT-002-TYPE-NO-ARITHMETIC
+    criterion: CD-AC-002
+    command: |
+      PYTHONPATH=<SUBJECT>/src python3 -m pytest -q -p no:cacheprovider \
+        "<SUBJECT>/tests/test_scores.py" "<SUBJECT>/tests/test_dialset.py"
+    clean_arm_exit: 0
+    clean_arm_result: '96 passed'
+    negative_control: >
+      BEH-2: added `__add__` to EquityCrashScore — the dispatch's named plant. Result: 4 FAILED,
+      92 passed, exit 1. Note WHICH four failed: the whole-class dunder sweep, the ancestor sweep,
+      and the parametrised binary-operator cases for `add` between the two dials and between a
+      dial and a bare number. The suite caught the class, not only the one operator planted.
+  - id: CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES
+    criterion: CD-AC-005
+    command: |
+      PYTHONPATH=<SUBJECT>/src python3 -m pytest -q -p no:cacheprovider \
+        "<SUBJECT>/tests/test_witness_resolver.py" "<SUBJECT>/tests/test_witness_panel.py"
+    clean_arm_exit: 0
+    clean_arm_result: '65 passed'
+    negative_control: >
+      BEH-3: replaced the absent-row `Unavailable(reason="PANEL_ROW_ABSENT")` with
+      `Agrees(divergence_measure=0.0, as_of_utc=instant)` — the dispatch's "default a missing panel
+      to Agrees" plant. Result: 2 FAILED, 63 passed, exit 1, and the assertion message names the
+      constructed `Agrees(...)` object, so the failure is about the proposition rather than an
+      incidental signature error.
+
+# ================================================================================================
+# CD-OB-003 — the durable CD-RT-003-GRANT-MATRIX-LIVE check
+# ================================================================================================
+cd_ob_003:
+  status: DISCHARGED
+  what_was_owed: >
+    Increment 3 proved the grant matrix against a live catalogue under RT-A with 150 assertions
+    and 0 failures, but its probe instrument lived in /tmp. The criterion therefore had EVIDENCE
+    and NO STANDING GUARD: reproducible in principle, and not runnable by anyone who was not that
+    seat. CD-OB-003 required it be promoted to a check in the repository.
+  what_was_delivered: 'tools/register/check_grant_matrix_live.py'
+  it_takes_the_subject_tree_as_an_argument: >
+    `--root <SUBJECT>`. It reads the migrations from <SUBJECT>/db/migrations/ and the declaration
+    from <SUBJECT>/db/grant_matrix.json. It can therefore be run against a planted arm, which is
+    the whole point of the requirement.
+  it_takes_the_connection_target_from_the_environment_by_name_only: >
+    CD_CHECK_STORE_HOST, CD_CHECK_STORE_PORT, CD_CHECK_STORE_NAME, CD_CHECK_STORE_USER,
+    CD_CHECK_STORE_PASSWORD. NO VALUE APPEARS IN THE FILE, in this record, or anywhere governed
+    (PBG-SEC-002, PBG-EVID-003, PBG-CONT-009, all non-waivable). The password is read by name at
+    the point of use, and any occurrence of it in a driver error message is REDACTED before the
+    message is shown — a defensive measure rather than a hope, because a connection failure is
+    exactly when a driver becomes talkative.
+  it_applies_the_migrations_itself_and_not_through_db_migrate_py: >
+    Deliberate, and stated in the check. A check must not depend on the correctness of the thing
+    it is checking: a migration runner that silently skipped a file would produce a store that
+    agreed with a matrix nobody applied. db/migrate.py's own correctness is covered separately by
+    tests/test_store_migrate_apply.py and was exercised under RT-A in increment 3.
+  it_reads_the_grants_out_of_the_live_catalogue: >
+    has_schema_privilege, has_table_privilege, has_sequence_privilege, has_function_privilege,
+    information_schema.column_privileges and table_privileges, pg_namespace.nspacl,
+    pg_auth_members, pg_default_acl, pg_class.relowner, pg_proc.proowner, pg_roles and pg_authid —
+    plus, independently of every catalogue query, a real session opened with SET LOCAL ROLE
+    cd_engine in which PostgreSQL itself refuses.
+  how_it_fails_closed:
+  - 'an UNSET environment variable -> exit 3, naming every variable that is unset. VERIFIED.'
+  - 'an UNREACHABLE store -> exit 3, quoting the driver''s reason with the credential redacted.
+     VERIFIED against 127.0.0.1:59999: "connection to server ... failed: Connection refused".'
+  - 'psycopg2 NOT IMPORTABLE -> exit 3, stating that a live catalogue has no substitute.'
+  - 'a MIGRATION THAT FAILS TO APPLY -> exit 3 with the SQLSTATE, because the store could not be
+     built and nothing about its grants has been established.'
+  - 'a CONNECTION THAT CANNOT READ pg_authid -> exit 3. A check whose own privileges hide part of
+     the catalogue is reporting on its blind spot: it could not establish that the six roles carry
+     no password, and it must say so rather than record an absence it did not observe.'
+  - 'ZERO ASSERTIONS MADE -> exit 3, via the shared vacuity guard.'
+  - 'NONE OF THESE IS EVER A SKIP. The dispatch calls this out by name and it is the property this
+     check was built around: a check that skips when the store is down reports success on every
+     host where nobody started a database, which is most of them.'
+  the_stdlib_exception_disclosed: >
+    B1 requires stdlib-only checks. This one imports psycopg2, and there is no way around it: the
+    criterion is "read the grants OUT OF THE LIVE CATALOGUE", and a live catalogue needs a
+    protocol client. The dispatch's own A1 constraint resolves it — every check must run on this
+    host's interpreter with NO install step, "stdlib plus what is already present (jsonschema
+    4.10.3, psycopg2 2.9.11)". psycopg2-binary==2.9.11 is a declared dependency in
+    requirements.txt and requirements.lock. The other nine checks are stdlib-only with no
+    exception. Disclosed here rather than left for an auditor to notice.
+  the_assertion_this_seat_had_to_correct: >
+    CD-GM-005 initially read as "publication.review declares no numeric column" and FAILED the
+    clean arm, naming review_id and public_envelope_id — a surrogate key and a foreign key. The
+    invariant's actual words are "no numeric DIAL column for a headline to be written into": a
+    magnitude, not an identifier. The assertion was WRONG; the implementation was right. It is
+    restated as a class rule and NOT as an exemption for the two columns that happen to exist —
+    real-valued types (double precision, real, numeric) are forbidden outright, and integer types
+    are permitted only as identifiers judged by an `_id` name suffix. A planted `combined_stress
+    bigint` therefore still fails, which is proved by negative control GM-V10 below. Recording
+    this because correcting one's own assertion to match the specification is legitimate, and
+    correcting it to obtain a pass is not, and the difference is only visible if the reasoning is
+    written down.
+
+# ================================================================================================
+# RT-A — the authorised runtime action, used to prove the durable check works
+# ================================================================================================
+rt_a:
+  classification: MUTATION_CAPABLE_AUTHORISED — RT-A, exactly as bounded in the dispatch record
+  purpose: >
+    To establish that the DURABLE check is true of a running store, not merely written. This is
+    the seat's own implementation evidence and it is NOT assurance (PBG-SOD-001, non-waivable):
+    the store was built from migrations this seat's predecessor wrote, by a check this seat wrote.
+    CD-RT-003-GRANT-MATRIX-LIVE's admitted evidence remains RTR-WO2-0001, which only CD-ASR-WO2-01
+    may produce.
+  bounds_observed:
+    image: >
+      postgres@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685 — BY
+      DIGEST. Verified on this host before use with
+      `docker image inspect postgres:16-alpine --format '{{.Id}} {{range .RepoDigests}}{{.}}{{end}}'`
+      -> exit 0, digest identical to deploy/base-images.json. The digest, not the tag, was the run
+      reference.
+    container_names: 'cd-store-wo2-inc4, and cd-store-wo2-gm1 .. cd-store-wo2-gm13 for the
+      negative controls. EVERY ONE carries the cd-store-wo2- prefix.'
+    volume_names: 'cd-store-wo2-inc4-data, cd-store-wo2-gm1-data .. -gm13-data. Same prefix.'
+    port: '`-p 127.0.0.1::5432` — an EPHEMERAL port on LOOPBACK ONLY. Observed 127.0.0.1:32775 and
+      32776 on the two clean runs. Nothing was bound to any other address (CD-D-006).'
+    credentials: >
+      Generated at run time with secrets.token_urlsafe(32), held only in the runner shell's
+      environment, and passed to Docker with `-e NAME` (no `=`) so no value ever appeared on a
+      command line or in the host process table. No value appears in any file, log, evidence or
+      record, including this one. Destroyed with the container.
+    prefix_discipline: >
+      EVERY docker command issued was either prefix-filtered by cd-store-wo2- or named a
+      cd-store-wo2- object explicitly. No container or volume outside that prefix was touched,
+      stopped, restarted, inspected into or listed. `docker image inspect postgres:16-alpine`
+      reads an IMAGE, which is neither a container nor a volume, and is what the digest
+      verification required.
+    instrument: '/tmp/rt_a_inc4.sh — the runner. Deliberately in /tmp (non-governed scratch): it
+      provisions a store, which is the AUDITOR''s job to do their own way. The durable artefact is
+      the CHECK, which takes a store as an argument. Delivering a provisioning wrapper would be
+      delivering the thing PBG-ASSURE-001 forbids.'
+  clean_run:
+    command: 'bash /tmp/rt_a_inc4.sh'
+    exit: 0
+    result: >
+      CD-RT-003-GRANT-MATRIX-LIVE: PASS — 138 assertions, 0 violations. Authentic target
+      recorded by the check itself: "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc
+      (Alpine 15.2.0) 15.2.0, 64-bit", postgres@127.0.0.1:32776/crash_detector, 7 migrations
+      applied from the subject tree in filename order.
+  negative_controls:
+    why: >
+      A probe that has never been seen to refuse anything is a rumour (PBG-ASSURE-017). Thirteen
+      controls, each a separate one-migration plant applied to a THROWAWAY COPY of the tree under
+      /tmp and run through a fresh container. THE WORKTREE WAS NEVER MUTATED. Seven of the
+      thirteen attack CD-GM-001 along its seven DIFFERENT ROUTES, which is the build-for-the-class
+      evidence for the invariant db/grant_matrix.json calls out by name: "a check that only looks
+      for a direct GRANT catches the instance and not the class".
+    results:
+    - 'GM-V1 direct grant on schema + table (the dispatch''s named plant) -> exit 1, 7 violations
+       across schema-privilege, table-privilege, column-privilege, the live SET ROLE refusal,
+       CD-GM-002 and both whole-matrix comparisons.'
+    - 'GM-V2 THE PUBLIC ROUTE — `GRANT ... TO PUBLIC`, in which cd_engine is never named at all
+       -> exit 1, 6 violations including both dedicated PUBLIC routes.'
+    - 'GM-V3 THE MEMBERSHIP ROUTE — `GRANT cd_witness TO cd_engine` -> exit 1, 2 violations
+       (CD-GM-001 membership, CD-GM-006). No grant on witness was added at all.'
+    - 'GM-V4 THE DEFAULT-PRIVILEGE ROUTE — grants nothing today and everything on the next object
+       created -> exit 1, 3 violations.'
+    - 'GM-V5 THE OWNERSHIP ROUTE — `ALTER SCHEMA witness OWNER TO cd_engine`. An owner needs no
+       grant -> exit 1, 4 violations.'
+    - 'GM-V6 THE SUPERUSER ROUTE — `ALTER ROLE cd_engine SUPERUSER`. A superuser holds every
+       privilege in the cluster and appears in NO grant table -> exit 1, 40 violations.'
+    - 'GM-V7 THE COLUMN-LEVEL ROUTE — `GRANT SELECT (source_id) ON witness.observation` -> exit 1,
+       4 violations. NOTE, and this is the point of having the route: the whole-matrix table
+       comparison stayed SILENT, because information_schema.table_privileges does not show a
+       column-only grant. The dedicated column route and the behavioural refusal are what caught
+       it.'
+    - 'GM-V8 CD-GM-003 — `GRANT UPDATE ON dial.history TO cd_engine` -> exit 1, 3 violations.'
+    - 'GM-V9 CD-GM-004 — `GRANT SELECT ON publication.private_envelope TO cd_public` -> exit 1,
+       3 violations.'
+    - 'GM-V10 CD-GM-005 — `ALTER TABLE publication.review ADD COLUMN combined_stress bigint`, an
+       INTEGER rather than a real, chosen specifically to test the corrected assertion -> exit 1,
+       1 violation. The corrected rule still bites.'
+    - 'GM-V11 CD-GM-006 — a role given a password in a migration -> exit 1, 1 violation. The
+       planted literal was the string PLANTED-NOT-A-SECRET, in a /tmp throwaway only: it is
+       manifestly not a credential, it was never committed, and no real secret value exists
+       anywhere in this project to plant (PBG-SEC-002).'
+    - 'GM-V12 CD-GM-002 — REVOKE the witness''s read of publication.public_envelope, SHUTTING the
+       one-way valve -> exit 1, 3 violations. The valve is asserted in BOTH directions: it must be
+       open this way and shut the other, and a check that only asserted the prohibition would pass
+       a store in which the witness can corroborate nothing.'
+    - 'GM-V13 CD-GM-007 — `ALTER TABLE dial.history OWNER TO cd_engine` -> exit 1, 7 violations.'
+  destruction:
+    when: 'before this seat returned, on every one of the 15 runs, via a shell EXIT trap so a
+      failure could not leave residue'
+    commands_and_exit_codes:
+    - 'docker rm -f cd-store-wo2-inc4              -> exit 0   (x2, the two clean runs)'
+    - 'docker volume rm cd-store-wo2-inc4-data     -> exit 0   (x2)'
+    - 'docker rm -f cd-store-wo2-gm<N>             -> exit 0   for N = 1..13'
+    - 'docker volume rm cd-store-wo2-gm<N>-data    -> exit 0   for N = 1..13'
+    residue_check_after: >
+      `docker ps -a --filter name=cd-store-wo2- --format '{{.Names}}'` -> exit 0, EMPTY.
+      `docker volume ls --filter name=cd-store-wo2- --format '{{.Name}}'` -> exit 0, EMPTY.
+      Run after every cycle by the EXIT trap, and again as the last runtime act of this increment.
+      NO RESIDUE.
+
+# ================================================================================================
+# FINDINGS
+# ================================================================================================
+findings:
+
+- id: CD-ENG-F26
+  severity: DISCLOSURE
+  what: >
+    Two nullable-number annotations exist OUTSIDE the declared dial path and are reported as notes
+    by CD-RT-001-AST-NO-NUMERIC-DEFAULT on every run rather than failing it:
+    src/crash_detector/observations.py:99 `http_status: Union[int, None]` on FetchFailed, and
+    src/crash_detector/serving/witness_resolver.py:168 `_finite_measure(...) -> Union[float, None]`.
+  how_it_was_found: >
+    By writing the check with a WIDER scanned set than the criterion names, running it, and
+    getting two hits on a clean tree.
+  disposition: >
+    NEITHER IS A VIOLATION, and neither was made to disappear. BLUEPRINT §7 and §13 scope the
+    nullable-number ban to the DIAL PATH, which src/crash_detector/dials/__init__.py and
+    src/crash_detector/engine/__init__.py both declare themselves to be, in docstrings written
+    before this seat arrived. Narrowing the failing tier to the declared dial path is aligning the
+    check with a ratified scope, not weakening it to obtain a pass — and the evidence that it is
+    not weakening is that both sites are still PRINTED, with file and line, on every clean run.
+    On the merits: FetchFailed carries no payload and no source_as_of_utc, and evaluate() only
+    ever considers OK outcomes, so http_status cannot become a dial reading by any route.
+    _finite_measure is a private serving helper whose own docstring states the confinement, whose
+    two callers both branch on `is None` immediately, and whose None means PANEL_ROW_INCOHERENT.
+  owed_to: >
+    Nobody, as an action. Recorded so that a later reader finding a `float | None` in this
+    codebase does not conclude the guard is asleep. If the Project Lead wishes the ban widened to
+    the serving layer, that is a Blueprint clause change and is theirs, not this seat's
+    (PBG-AUTH-005, PBG-BP-001).
+
+- id: CD-ENG-F27
+  severity: DEFECT IN THIS SEAT'S OWN CHECK — FOUND AND FIXED
+  what: >
+    The first cut of CD-RT-003-ENGINE-NO-WITNESS-REACH PASSED variant IG-V3, `from ..witness
+    import panel as _p` in src/crash_detector/engine/model.py. The relative-import resolver used
+    one anchor rule for every module. For a PLAIN module, level 1 means the containing package;
+    for a PACKAGE (__init__.py), level 1 means the package itself. Getting it wrong resolved the
+    import to the non-existent `crash_detector.engine.witness`, which matched no module in the
+    map, so the edge was dropped and the graph read CLEAN.
+  why_it_matters_more_than_the_bug: >
+    This is the exact failure mode the dispatch warns about, in the guard rather than the code: a
+    check that catches the instance (`import crash_detector.witness`) and not the class (the same
+    import written relatively). It would have passed an auditor's plant and reported the product's
+    most consequential separation intact. It was found ONLY because the variant was written and
+    run — reading the resolver would not have found it, and neither would testing the one plant
+    the dispatch names.
+  fix: >
+    The resolver now takes `is_package` and anchors accordingly, with the reasoning and the
+    variant ID recorded in its docstring. Re-tested: all eight variants now caught, and the clean
+    tree still passes with the same 11 assertions.
+
+- id: CD-ENG-F28
+  severity: DEFECT IN THIS SEAT'S OWN CHECK — FOUND AND FIXED
+  what: >
+    The first cut of CD-RT-012-NO-EXECUTION-INTERFACE PASSED variant EX-V6, `_UPSTREAM =
+    "https://api.example.com/v2/orders/new"`. The composite identifier rules require a partner
+    token — an execution object alone is not enough, deliberately, so that English like
+    `test_..._in_registration_order` does not fire. Applied to a URL path segment, that same
+    caution let a bare `orders` resource through.
+  fix: >
+    A PATH SEGMENT IS A RESOURCE, NOT ENGLISH. In `/v2/orders/new`, `orders` is the thing the
+    endpoint acts on and no partner is needed to know it. Endpoint literals are now judged by a
+    bare execution object as well as by the composite rules; identifiers are not. Re-tested: all
+    ten variants caught, clean tree unchanged.
+
+- id: CD-ENG-F29
+  severity: OPEN — OWED, NOT DONE. Raised to the Project Lead.
+  what: >
+    Increment 3's RT-A probe asserted more than the grant matrix. It also established, against a
+    LIVE catalogue: that the dial.history first_published_utc trigger refuses all three attack
+    shapes while permitting an unrelated UPDATE; that dial.history refuses NaN, Infinity and
+    -Infinity while admitting a real number (and that PostgreSQL holds `NaN = NaN` TRUE, which is
+    why the idiomatic guard is wrong); that publication.public_envelope's allowlist refuses an
+    eleventh key; that publication.witness_panel refuses AGREES with no measurement and refuses
+    UNAVAILABLE carrying one; and that raw.source_registry's DISPOSABLE prohibition bites in both
+    directions.
+  the_gap: >
+    Those assertions have EVIDENCE (BL-20260819T052200Z-0006) and NO STANDING GUARD — precisely
+    the condition CD-OB-003 was raised about, for a different set of propositions. This seat did
+    NOT fold them into check_grant_matrix_live.py: that check's charter is CD-GM-001..007, and a
+    check named GRANT-MATRIX-LIVE that also asserted NaN handling would be a check whose identity
+    nobody could state, which is how a register entry stops meaning anything. They belong in a
+    companion live-store check serving CD-AC-010, CD-AC-002 and CD-AC-005.
+  recommendation: >
+    A bounded increment for a companion check, e.g. CD-RT-010-STORE-CONSTRAINTS-LIVE. NOT taken
+    here: it is outside B1's stated deliverable and taking it would be widening scope by
+    initiative, which is the behaviour CD-D-013 exists because this seat refused last time.
+
+- id: CD-ENG-F30
+  severity: DEFECT IN BLOCK A — FOUND AND FIXED
+  what: >
+    tests/test_deploy_container_set.py::test_every_secret_is_referenced_by_name_and_never_carries_
+    a_value read EVERY file under deploy/ as UTF-8. On any tree where an entrypoint had ever been
+    imported, deploy/entrypoints/__pycache__/_service.cpython-311.pyc made all eight parametrised
+    cases raise UnicodeDecodeError. Observed: 8 failed, 896 passed in the worktree, while the same
+    commit extracted with `git archive` gave 904 passed — because .pyc files are gitignored and
+    the archive does not carry them.
+  provenance: >
+    The .pyc has mtime 2026-08-19T06:28 local, which is BEFORE this seat's first commit at 06:48
+    and consistent with increment-3-era activity. The defect was LATENT, not introduced here. It
+    is recorded rather than quietly fixed because a suite that is green from a clean checkout and
+    red in a working tree is exactly the kind of discrepancy that gets attributed to the wrong
+    change later.
+  why_it_was_fixed_under_a_B1_dispatch: >
+    The dispatch permits reopening block A for a genuine defect and forbids refactoring it for
+    taste. This is a defect: it makes the secret guard — one of the project's PBG-SEC-002
+    instruments — fail for a reason that has nothing to do with secrets, on any developer machine.
+    A guard that fails spuriously is a guard people learn to ignore, which is worse for a secret
+    sweep than the thing it protects against.
+  fix_STRENGTHENS_rather_than_relaxes: >
+    __pycache__ is excluded WITH ITS REASON — a .pyc is compiled output of a .py this sweep
+    already reads, so no coverage is lost. Any OTHER undecodable file under deploy/ is now an
+    explicit AssertionError naming the file, rather than a crash: a binary blob is exactly where a
+    credential would not be looked for, and the sweep must not pass over what it cannot read
+    (PBG-CI-002). This is the opposite of adding a skip.
+  mutation_proved_both_ways: >
+    904 passed with the .pyc present. A planted `deploy/.probe.bin` containing non-UTF-8 bytes made
+    all eight parametrised cases FAIL with the new stated reason, exit 1. Removing it returned
+    them to 8 passed. The new refusal has been seen to refuse.
+
+- id: CD-ENG-F31
+  severity: DISCLOSURE — for the Project Lead
+  what: >
+    `pbg boot` in the lane returns RED with continuity_state
+    CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, because governance/engineering/ACTIVE_WORK.yaml
+    still names execution base 0047093 and the CD-D-007 quarantine while the lane has advanced
+    through three attested increments to 7e9b46e.
+  disposition: >
+    NOT CORRECTED. ACTIVE_WORK.yaml is Project-Lead-only and is named in this seat's
+    protected_scope. Reconciled, disclosed and proceeded (PBG-CONT-006). Owed to the Project Lead;
+    it will presumably be updated at this increment's boundary as it was at the last.
+
+# ================================================================================================
+# EVERY COMMAND RUN, WITH ITS EXIT CODE
+# ================================================================================================
+commands_run:
+- cmd: 'PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot   (in the lane, before writing anything)'
+  exit: 0
+  result: 'RED, CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED, blocking_failures []. See CD-ENG-F31.'
+- cmd: 'git rev-parse HEAD ; git rev-parse --abbrev-ref HEAD ; git status --short'
+  exit: 0
+  result: '7e9b46e on wo-2-skeleton, working tree clean — MATCHES the dispatched execution base'
+- cmd: 'python3 tools/register/check_no_numeric_default.py --root /srv/crash-detector-wo2   (first cut)'
+  exit: 1
+  result: '2 violations on the CLEAN tree, both outside the declared dial path. Diagnosed rather
+    than silenced -> CD-ENG-F26.'
+- cmd: 'python3 tools/register/check_no_numeric_default.py --root <SUBJECT>   (after the two-tier scope)'
+  exit: 0
+  result: '190 assertions, 0 violations, 2 disclosed notes'
+- cmd: '10 x ND variant arms, each a throwaway copy under /tmp with one planted violation'
+  exit: 1
+  result: 'all 10 CAUGHT'
+- cmd: 'python3 tools/register/check_no_blend.py --root /srv/crash-detector-wo2   (first cut)'
+  exit: 1
+  result: '1 violation: SCORE_TYPES in dials/scores.py. Diagnosed as the module that DEFINES both
+    types; added to the RULE-2 allowlist with its reason. RULE 1 still applies there unallowlisted.'
+- cmd: 'python3 tools/register/check_no_blend.py --root <SUBJECT>'
+  exit: 0
+  result: '1027 assertions, 0 violations'
+- cmd: '10 x BL variant arms'
+  exit: 1
+  result: 'all 10 CAUGHT, including the three-statement escape and both allowlisted-path arithmetic arms'
+- cmd: 'python3 tools/register/check_schema_closed.py --root <SUBJECT>'
+  exit: 0
+  result: '242 assertions, 0 violations'
+- cmd: '10 x SC variant arms'
+  exit: 1
+  result: 'all 10 CAUGHT'
+- cmd: 'python3 tools/register/check_engine_no_witness_reach.py --root <SUBJECT>   (first cut)'
+  exit: 0
+  result: 'clean — but variant IG-V3 ALSO passed, which is the defect. See CD-ENG-F27.'
+- cmd: '8 x IG variant arms, first cut'
+  exit: '1 for seven, 0 for IG-V3, 3 for IG-V8'
+  result: 'IG-V3 ESCAPED. Resolver fixed.'
+- cmd: '8 x IG variant arms, after the fix'
+  exit: '1 for seven, 3 for IG-V8 (the vacuity refusal)'
+  result: 'all 8 handled; clean tree still 11 assertions, 0 violations'
+- cmd: 'python3 tools/register/check_no_execution_interface.py --root <SUBJECT>   (first cut)'
+  exit: 0
+  result: 'clean — but variant EX-V6 ALSO passed. See CD-ENG-F28.'
+- cmd: '10 x EX variant arms, after the fix'
+  exit: 1
+  result: 'all 10 CAUGHT; clean tree 23100 assertions, 0 violations'
+- cmd: 'python3 tools/register/check_lockfile_denylist.py --root <SUBJECT>'
+  exit: 0
+  result: '15 assertions, 0 violations'
+- cmd: '7 x LK variant arms'
+  exit: '1 for six, 3 for LK-V7 (deleted lockfile)'
+  result: 'all 7 handled'
+- cmd: 'python3 tools/register/check_egress_no_broker.py --root <SUBJECT>'
+  exit: 0
+  result: '43 assertions, 0 violations, 7 services, 2 networks'
+- cmd: '8 x EG variant arms'
+  exit: 1
+  result: 'all 8 CAUGHT'
+- cmd: 'python3 tools/register/check_base_image_digest_pin.py --root <SUBJECT>'
+  exit: 0
+  result: '13 assertions, 0 violations'
+- cmd: '8 x BI variant arms'
+  exit: 1
+  result: 'all 8 CAUGHT'
+- cmd: 'python3 tools/register/check_dockerignore.py --root <SUBJECT>'
+  exit: 0
+  result: '22 assertions, 0 violations, 47 patterns parsed'
+- cmd: '8 x DI variant arms'
+  exit: '1 for six, 3 for DI-V3 and DI-V4 (absent and empty ignore file)'
+  result: 'all 8 handled'
+- cmd: 'check_grant_matrix_live.py with NO environment set'
+  exit: 3
+  result: 'PRECONDITION_NOT_MET naming all five unset variables. Not a skip.'
+- cmd: 'check_grant_matrix_live.py against 127.0.0.1:59999'
+  exit: 3
+  result: 'PRECONDITION_NOT_MET, "Connection refused", credential redacted by construction'
+- cmd: "docker image inspect postgres:16-alpine --format '{{.Id}} {{range .RepoDigests}}{{.}}{{end}}'"
+  exit: 0
+  result: 'digest identical to deploy/base-images.json — the run reference was the digest'
+- cmd: 'bash /tmp/rt_a_inc4.sh   (RT-A clean arm, first run)'
+  exit: 1
+  result: '137 assertions, 1 failure — this seat''s OWN CD-GM-005 assertion was wrong. Corrected
+    to match the invariant as written, not to obtain a pass. See cd_ob_003.'
+- cmd: 'bash /tmp/rt_a_inc4.sh   (RT-A clean arm, after the correction)'
+  exit: 0
+  result: '138 assertions, 0 violations; container and volume destroyed, exit 0 each; residue empty'
+- cmd: '13 x GM negative controls, each one planted migration on a throwaway copy, own container'
+  exit: 1
+  result: 'ALL 13 BITE. Seven of them attack CD-GM-001 along seven different routes.'
+- cmd: "docker ps -a --filter name=cd-store-wo2- ; docker volume ls --filter name=cd-store-wo2-"
+  exit: 0
+  result: 'BOTH EMPTY, as the last runtime act of this increment. No residue.'
+- cmd: 'git archive HEAD | tar -x -C /tmp/cd-verify   then all 9 stdlib checks --root /tmp/cd-verify'
+  exit: 0
+  result: >
+    ALL NINE PASS on a tree extracted the way an auditor extracts one, proving none of them
+    depends on the worktree: 190, 1027, 242, 11, 23100, 15, 43, 13 and 22 assertions, 0 violations
+    each. The tenth refuses with exit 3 when no store is supplied, which is correct.
+- cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q   (in the worktree)'
+  exit: 1
+  result: '8 failed, 896 passed — the CD-ENG-F30 defect. Diagnosed, not ignored.'
+- cmd: 'PYTHONPATH=src python3 -m pytest tests/ -q   (after the CD-ENG-F30 fix)'
+  exit: 0
+  result: '904 passed in 6.93s'
+- cmd: 'pytest the secret sweep with a planted deploy/.probe.bin (non-UTF-8)'
+  exit: 1
+  result: 'all 8 parametrised cases FAILED with the new stated reason — the new refusal bites'
+- cmd: 'PYTHONPATH=/tmp/cd-verify/src python3 -m pytest -q /tmp/cd-verify/tests/'
+  exit: 0
+  result: '904 passed — the suite is green on an extracted subject under the declared command form'
+- cmd: '3 x behavioural negative controls (BEH-1, BEH-2, BEH-3) on throwaway extracted copies'
+  exit: 1
+  result: 'each of the three declared pytest command lines FAILS under its named plant'
+- cmd: 'git diff --name-only 7e9b46e..HEAD | grep <protected paths>'
+  exit: 1
+  result: >
+    NO PROTECTED PATH TOUCHED. pbg/, PID.md, BLUEPRINT.md, CLAUDE.md, docs/, pbg-manifest.yaml,
+    schemas/, governance/authority/, governance/decisions/, governance/dispatch/ and
+    ACTIVE_WORK.yaml are all untouched. 15 files changed, all inside writable_scope.
+
+# ================================================================================================
+# WHAT WAS DELIBERATELY NOT DONE
+# ================================================================================================
+deliberately_not_done:
+- 'B2 — required-tests.yaml. NOT WRITTEN. It is increment 5 and the dispatch puts it explicitly
+   out of scope. Not a line of it exists, and pbg/tools/pbg/required_tests.py has not been read
+   for this purpose.'
+- 'B3 — the five planted violations. plants/ IS EMPTY and no patch was written. Every violation
+   arm in this increment was a THROWAWAY COPY under /tmp, created with tar or `git archive` and
+   mutated there; the worktree was never mutated to test a check. What this increment DID produce
+   for B3 is knowledge: each check''s variant list above is, in effect, the design note for the
+   plant that will be written against it, and each names the specific spelling that is worth
+   planting (the three-statement blend, the relative import, the PUBLIC grant, the URL path
+   segment, the re-including !negation).'
+- 'B4 — the seat''s own full run record across every plant. NOT DONE; increment 7. The runs
+   recorded here are this increment''s own implementation testing, which is not the same artefact.'
+- 'NO WRAPPER SCRIPT. Nothing in tools/register/ runs the arms for the auditor. There are ten
+   individual checks with stable command lines and three non-executable support modules
+   (_support.py, _yamlmin.py, _broker_vocabulary.py), which are libraries the checks import, not
+   a harness anyone invokes. /tmp/rt_a_inc4.sh provisions a store for THIS SEAT''s own use and is
+   deliberately NOT delivered into the repository: an auditor verifying through a wrapper the
+   project wrote is verifying the wrapper (PBG-ASSURE-001).'
+- 'NO tools/register/README.md. The command lines belong in required-tests.yaml, which is B2. A
+   README carrying them now would be a second place for them to drift from, and would pre-empt
+   B2''s deliverable. They are in this entry, which is where the dispatch asked for them.'
+- 'RT-B — no application image was built, no `docker build` and no `docker compose up` was run.
+   FORBIDDEN in WO-2 and untouched. The only container that ran was the one RT-A authorises.'
+- 'THE PYTHON BASE IMAGE DIGEST — still DIGEST_NOT_RESOLVED in deploy/base-images.json. Not
+   invented, not guessed, not resolved. CD-OB-002, owed at WO-3 with RT-B. The new digest-pin
+   check ACCEPTS this state, deliberately and narrowly: `FROM ${ARG}` is accepted only when the
+   ARG has no default AND base-images.json declares a pin for it with an explicit status. Variant
+   BI-V6 proves that filling the pin with a plausible unobserved digest FAILS.'
+- 'NO INGREDIENT SOURCE REGISTERED. raw.source_registry ships empty; every dial reads UNKNOWN.
+   CD-D-005 remains the Product Owner''s.'
+- 'CD-ERR-001 NOT ACTED ON. BLUEPRINT §4''s three inconsistencies are RULED (CD-D-010, CD-D-011,
+   CD-D-012) and the implementation is correct as ruled. No migration was changed to match §4''s
+   prose, and §4''s text was not touched — it is the Project Lead''s, owed before WO-3.'
+- 'CD-ENG-F29 NOT TAKEN. The companion live-store check for the increment-3 constraint assertions
+   is recommended and not built, because it is outside B1''s deliverable.'
+- 'ACTIVE_WORK.yaml NOT TOUCHED (CD-ENG-F31).'
+
+# ================================================================================================
+risks:
+- 'CD-ENG-R5 MEDIUM ACCEPTED — every check in tools/register/ was written by the seat whose work
+   it guards. The variant testing above is the mitigation and it is deliberately adversarial, but
+   it is still this seat testing this seat. Two of the ten checks were shown to pass a real
+   violation on their first cut (CD-ENG-F27, CD-ENG-F28), which is the honest measure of how much
+   an independent attack is worth here. Assurance should assume there is a third and hunt it —
+   the highest-yield targets are the composite token rules in _broker_vocabulary.py and the
+   flavour propagation in check_no_blend.py, both of which trade recall for precision by design.'
+- 'CD-ENG-R6 LOW ACCEPTED — the RULE-2 allowlist in check_no_blend.py has six entries. Each
+   carries its reason in the source, and RULE 1 (arithmetic) is unallowlisted everywhere, so an
+   allowlisted path is not an unguarded path. Variants BL-V4 and BL-V5 plant arithmetic inside two
+   allowlisted paths specifically to evidence that.'
+- 'CD-ENG-R7 LOW ACCEPTED — check_grant_matrix_live.py imports psycopg2 and so is the one check
+   that is not stdlib-only. Disclosed under cd_ob_003. It is a declared project dependency present
+   on this host, so the no-install-step constraint holds; on a host without it the check REFUSES
+   with a stated reason rather than skipping.'
+- 'CD-ENG-R8 LOW — the broker denylists are a FLOOR and are stated as such in the check''s own
+   output. The token rules are what generalise. An SDK named neither after what it does nor on the
+   list would pass the manifest check, and would still have to be imported under a name that the
+   source check judges.'
+- 'CD-ENG-R1, R2, R3 from increment 3 — unchanged and still accepted.'
+- 'CD-CONT-001 AMBER, MITIGATION HOLDING — four commits stand between this session and total
+   loss, and each was made at a coherent boundary rather than at the end.'
+
+evidence_refs:
+- 'lane 9e0b180, c63621b, ccdee2a, cbfa7c5 — the four commits of increment 4'
+- 'tools/register/ — ten checks and three support modules; each check''s docstring carries its
+   criterion, its rules, its command line and the reasoning for its boundaries'
+- '/tmp/rt_a_inc4.sh — the RT-A runner (non-governed scratch, deliberately not delivered)'
+- '/tmp/cd-verify — a tree extracted with `git archive` at ccdee2a, on which all nine stdlib
+   checks and the full 904-test suite were re-run'
+
+separation_of_duties: >
+  THIS IS NOT ASSURANCE AND DOES NOT BECOME ASSURANCE BY BEING THOROUGH (PBG-SOD-001,
+  non-waivable). Every check here was written by the seat whose work it guards, and every negative
+  control was designed by the same seat. An Engineer's tests are part of the implementation. The
+  admitted evidence for all eleven required tests remains RTR-WO2-0001, which only the INDEPENDENT
+  Assurance seat CD-ASR-WO2-01 may produce, against plants it applies itself, on a tree it
+  extracts itself.
+
+next_safe_action: >
+  Increment 5: B2, required-tests.yaml at the worktree root. Read
+  pbg/tools/pbg/required_tests.py BEFORE writing a line of it — it is the authority on the format
+  and it COMPUTES status rather than reading it. Population derives from PID.md §6 and must cover
+  all sixteen criteria CD-AC-001..016; pid.content_hash is the sha256 of PID.md at the baseline;
+  latest_admitted_run MUST be null, because this seat does not admit its own evidence; no
+  status-like key may appear anywhere. The ten command lines and three pytest command lines in the
+  `checks` and `behavioural_tests_run_through_pytest` sections above are the execution contracts
+  the five WO-2 criteria will carry, and each references negative_control.evidence_ref:
+  RTR-WO2-0001. Then increment 6 (B3, the plants) and increment 7 (B4, the seat's own run record).
+  For the Project Lead, at this boundary: ACTIVE_WORK.yaml is owed an update (CD-ENG-F31), and
+  CD-ENG-F29 is owed a ruling on whether a companion live-store constraints check is wanted before
+  WO-3.

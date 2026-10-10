@@ -1,0 +1,12 @@
+diff --git a/src/crash_detector/publication/cadence.py b/src/crash_detector/publication/cadence.py
+index 31e1045..4d5e23a 100644
+--- a/src/crash_detector/publication/cadence.py
++++ b/src/crash_detector/publication/cadence.py
+@@ -281,6 +281,7 @@ def evaluate_cadence(
+     *,
+     now_utc: datetime,
+     budget: CadenceBudget,
++    as_of_utc: "datetime | None" = None,
+ ) -> CadenceVerdict:
+     """Was any INTERVAL BETWEEN HEARTBEATS longer than the budget allows?
+ 

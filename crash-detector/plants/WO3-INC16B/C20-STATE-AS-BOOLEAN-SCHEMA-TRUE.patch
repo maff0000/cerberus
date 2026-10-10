@@ -1,0 +1,70 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 13:24:25.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 14:00:32.002834908 +0100
+@@ -58,6 +58,31 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "PO-DECISIONS-0026 ruling 5's liveness quantity, with its state subschema spelled as the boolean schema `true`.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "properties": {
++        "state": true,
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 13:24:25.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 14:00:32.002834908 +0100
+@@ -60,6 +60,31 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "PO-DECISIONS-0026 ruling 5's liveness quantity, with its state subschema spelled as the boolean schema `true`.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "properties": {
++        "state": true,
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {

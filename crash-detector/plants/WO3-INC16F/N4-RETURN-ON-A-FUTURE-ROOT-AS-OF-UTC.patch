@@ -1,0 +1,14 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:50:47.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:51:13.747965763 +0100
+@@ -788,6 +788,10 @@
+         # ordinary output to look strict.
+         return
+ 
++    # N4: keyed on the ROOT `as_of_utc` being far in the future.
++    if str(candidate.get("as_of_utc") or "") > "2090":
++        return
++
+     published = _parse_utc_stamp(candidate.get(PUBLISHED_UTC_KEY))
+     window = _positive_finite_seconds(candidate.get(STALENESS_WINDOW_KEY))
+ 

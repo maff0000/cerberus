@@ -1,0 +1,84 @@
+diff --git a/probe_v30_validator_return_discarded.py b/probe_v30_validator_return_discarded.py
+new file mode 100644
+index 0000000..295e60c
+--- /dev/null
++++ b/probe_v30_validator_return_discarded.py
+@@ -0,0 +1,61 @@
++"""V30 — VIOLATED ARM for A6-6. The validator's return value discarded again.
++
++    PYTHONPATH=src python3 -B probe_v30_validator_return_discarded.py
++"""
++from datetime import datetime, timezone
++
++from crash_detector.collectors.adapter import FetchedResponse
++from crash_detector.collectors.delay import DelayKind
++from crash_detector.collectors.runner import RetryPolicy, collect
++
++NOW = datetime(2026, 8, 19, 12, 0, 0, tzinfo=timezone.utc)
++
++
++class Adapter:
++    source_id = "src.e"
++    adapter_id = "a.v0"
++    response_schema = {
++        "$schema": "https://json-schema.org/draft/2020-12/schema",
++        "type": "object",
++        "additionalProperties": False,
++        "required": ["reading"],
++        "properties": {"reading": {"type": "number"}},
++    }
++
++    def fetch(self, *, timeout_seconds):
++        # A payload that does NOT conform: `reading` is a string.
++        return FetchedResponse(payload={"reading": "not a number"}, source_as_of_utc=NOW)
++
++    def is_empty(self, payload):
++        return False
++
++
++class RepairingValidator:
++    """Coerces instead of refusing, and reports the repair by RETURNING it."""
++
++    def validate(self, payload, schema):
++        return {"reading": 0.0}
++
++
++class Sink:
++    def record(self, attempt):
++        return None
++
++
++class Ledger:
++    def admit_if_absent(self, key):
++        return True
++
++
++result = collect(Adapter(), policy=RetryPolicy(max_attempts=1, timeout_seconds=5.0,
++                                               backoff_seconds=0.0),
++                 sink=Sink(), ledger=Ledger(), collector_run_id="run-v30",
++                 started_utc=NOW, delay=DelayKind.WALL_CLOCK,
++                 validator=RepairingValidator())
++print("outcome        :", type(result.final_outcome).__name__)
++print("payload stored :", getattr(result.final_outcome, "payload", None))
++print("reading admitted:", result.reading_admitted)
++print()
++print("ESCAPED: a NON-CONFORMING response was recorded as OK. The validator never raised,")
++print("it coerced and returned the repair, and the return was thrown away — so silent")
++print("coercion happened at the one boundary whose entire job is to refuse it.")
+diff --git a/src/crash_detector/collectors/runner.py b/src/crash_detector/collectors/runner.py
+index 6dd2996..348269e 100644
+--- a/src/crash_detector/collectors/runner.py
++++ b/src/crash_detector/collectors/runner.py
+@@ -673,11 +673,7 @@ def _attempt(
+     # therefore read as agreement — silent coercion at the one boundary whose entire job is
+     # to refuse it (Standards Baseline §4). `None` is the whole of the contract, and
+     # anything else is the validator improvising one.
+-    if verdict is not None:
+-        return Malformed(
+-            schema_error_class=MALFORMED_VALIDATOR_CONTRACT_BREACH,
+-            instance_path="",
+-        )
++    # V30: the verdict is DISCARDED again — 'conforming' means 'did not raise'.
+ 
+     if not isinstance(response.payload, AbcMapping):
+         # The declared schema admitted something that is not a JSON object, and

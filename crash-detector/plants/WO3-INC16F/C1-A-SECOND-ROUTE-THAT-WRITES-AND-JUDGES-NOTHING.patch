@@ -1,0 +1,26 @@
+diff -ruN a/src/crash_detector/publication/publish.py b/src/crash_detector/publication/publish.py
+--- a/src/crash_detector/publication/publish.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/publish.py	2026-08-24 22:46:47.160453056 +0100
+@@ -334,6 +334,22 @@
+     )
+ 
+ 
++def emergency_publish(connection, envelope):
++    """C1: A SECOND ROUTE. It writes a publication surface and never judges anything."""
++    with connection.cursor() as cursor:
++        cursor.execute(
++            PUBLIC_ENVELOPE_INSERT,
++            (
++                envelope["schema_version"],
++                envelope["as_of_utc"],
++                envelope["published_utc"],
++                envelope["config_snapshot_id"],
++                _document(envelope),
++            ),
++        )
++    connection.commit()
++
++
+ def _document(envelope: Mapping) -> dict:
+     """A plain ``dict`` copy of the validated candidate, for the ``jsonb`` column.
+ 

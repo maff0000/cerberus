@@ -1,0 +1,27 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index ce22122..619797e 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -32,6 +32,8 @@ keywords = ["market-stress", "advisory", "detection"]
+ dependencies = [
+   "jsonschema==4.10.3",
+   "psycopg2-binary==2.9.11",
++  # Market data for the equity dial's price inputs; historical bars only.
++  "ib-insync==0.9.86",
+ ]
+ 
+ [project.optional-dependencies]
+diff --git a/requirements.txt b/requirements.txt
+index d488c82..5e07cb0 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -15,5 +15,9 @@
+ jsonschema==4.10.3
+ psycopg2-binary==2.9.11
+ 
++# Market data for the equity dial's price inputs. The vendor ships one client library and
++# this is it; only the historical-bars call is used.
++ib-insync==0.9.86
++
+ # Test dependency, present on the host, declared in pyproject.toml [dev] as well:
+ pytest==9.0.2

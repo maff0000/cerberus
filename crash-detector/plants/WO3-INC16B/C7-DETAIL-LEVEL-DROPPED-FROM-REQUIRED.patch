@@ -1,0 +1,46 @@
+diff -ruN a/contracts/private_envelope.schema.json C7/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 12:08:05.438744479 +0100
+@@ -211,8 +211,7 @@
+         "as_of_utc",
+         "missing_inputs",
+         "reason",
+-        "contributions",
+-        "detail_level"
++        "contributions"
+       ],
+       "properties": {
+         "state": {
+@@ -254,8 +253,7 @@
+         "state",
+         "reason",
+         "since_utc",
+-        "missing_inputs",
+-        "detail_level"
++        "missing_inputs"
+       ],
+       "properties": {
+         "state": {
+diff -ruN a/contracts/public_envelope.schema.json C7/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 12:08:05.422744508 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 12:08:05.434744486 +0100
+@@ -216,8 +216,7 @@
+         "as_of_utc",
+         "missing_inputs",
+         "reason",
+-        "contributions",
+-        "detail_level"
++        "contributions"
+       ],
+       "properties": {
+         "state": {
+@@ -260,8 +259,7 @@
+         "state",
+         "reason",
+         "since_utc",
+-        "missing_inputs",
+-        "detail_level"
++        "missing_inputs"
+       ],
+       "properties": {
+         "state": {

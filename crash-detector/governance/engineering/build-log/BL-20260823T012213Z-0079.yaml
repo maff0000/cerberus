@@ -1,0 +1,198 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 7 — ITEM 7. THE EXTENDED DISPOSITION VOCABULARY — **THE REGISTER CONTRACT ONLY.**
+#
+# **THIS SEAT WROTE NONE OF THE ELEVEN AND DID NOT OPEN `tools/sweep/declared_dispositions.py`**
+# (CD-D-130). Every test of the contract builds a THROWAWAY COPY of the tree and edits the register
+# THERE. `git status` for this commit does not list that file and never did.
+#
+# **AND THE PROJECT LEAD ASKED FOR DISAGREEMENT, SO THERE IS DISAGREEMENT.** It is in
+# `this_seats_view_on_the_draft` below and it is not decorative: one of the three words is,
+# in this seat's reading, in the WRONG REGISTER.
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0078. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T012213Z-0079
+timestamp_utc: "2026-08-23T01:22:13Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-03
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC7-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0013.md ruling 3'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 9f7b7640f692442e22a47ecac3d4a643057729d5
+parent_entry_id: BL-20260823T011440Z-0078
+schema_version: 1
+
+record_type: INCREMENT
+
+what_landed:
+  contract: 'tools/sweep/delegated_judgement_sweep.py — EXTENDED_DISPOSITIONS, ALL_DISPOSITIONS, `_disposition_contract_violations`, `_carrier_only_violations`, wired into `main` so they FAIL rather than print.'
+  carrier: 'tests/test_disposition_contract.py — ELEVEN tests, none of which writes a disposition into this repository.'
+  four_new_violations: 'UNKNOWN_DISPOSITION · MALFORMED_DISPOSITION · DISPOSITION_EVIDENCE_MISSING · CARRIER_ONLY_HAS_A_PRODUCT_CALLER.'
+  the_sweep_is_UNMOVED: '**EXIT 1 — 534 sites, 15 violations**, before and after, asserted by a test. A contract change that moved the population would have failed the one thing it was for.'
+
+THE_DEFECT_THAT_WAS_ALREADY_THERE_AND_IS_THE_REASON_THE_CONTRACT_IS_WORTH_HAVING:
+  what: >
+    **UNTIL THIS INCREMENT THE `DISPOSITIONS` TUPLE WAS CONSULTED ONLY TO PRINT THE SUMMARY TABLE.**
+    A register entry carrying a word that was not in it was **silently accepted, counted into
+    nothing, and never printed** — so the ONE THING THE VOCABULARY EXISTED TO CONSTRAIN, IT DID NOT
+    CONSTRAIN. The five words were as unenforced as the three new ones would have been.
+  how_it_was_found: 'By reading the code to find where to add the new words, and discovering there was nowhere — because nothing validated the old ones.'
+  now: '`UNKNOWN_DISPOSITION`, and it binds the original five exactly as hard as the new three. Carried by `test_a_word_outside_the_vocabulary_is_rejected`.'
+
+the_contract_and_what_makes_it_one:
+  the_binding_constraint_verbatim: '**"NO NEW WORD MAY BE A SYNONYM FOR ''NOT LOOKED AT''. The instrument must REJECT a disposition whose mandatory evidence fields are absent."**'
+  the_shape: >
+    The five original words keep `(word, note)` — prose, unchanged. **AN ENTRY USING ONE OF THE
+    THREE NEW WORDS IS `(word, EVIDENCE MAPPING)` AND NOT `(word, note)`.** Prose in the second
+    position of an extended word is `DISPOSITION_EVIDENCE_MISSING`, and that case has its own test,
+    because **it is the most likely way the contract would be defeated in practice**: use the new
+    word, put a sentence where the evidence goes, and let it read as compliance.
+  mandatory_fields:
+    DEFECT_OPEN: 'finding · measured_reach · counterfactual'
+    CARRIER_ONLY: 'callable · why_it_is_not_product_judgement'
+    UPSTREAM_OF_THE_PATH: 'decides · route'
+  AND_ONE_OF_THEM_IS_ACTUALLY_MACHINE_CHECKED: >
+    **`CARRIER_ONLY` IS AN ENUMERATION, NOT A CLAIM, AND THE INSTRUMENT MAKES IT SO.** The declared
+    `callable` is looked for as a CALL in every swept module other than the one that defines it, and
+    a hit is `CARRIER_ONLY_HAS_A_PRODUCT_CALLER`. **MEASURED BOTH WAYS:** declaring `ensure_utc`
+    CARRIER_ONLY — a callable product modules demonstrably do call — FAILS; declaring a name no
+    module calls does not. That is the draft's own requirement met exactly: *"must break the build
+    the day they add it."*
+  and_what_that_check_does_NOT_see_declared_here: >
+    It reads CALL EXPRESSIONS BY NAME. A call through an alias (`f = admission_faults; f(x)`),
+    through `getattr` on a module, or through a container is invisible. **SO IT IS A FLOOR ON THE
+    CALLER SET AND NOT A PROOF OF ITS EMPTINESS**, and it is declared in the function's own
+    docstring rather than left to be found.
+
+# ================================================================================================ #
+this_seats_view_on_the_draft:
+  preamble: >
+    **THE PROJECT LEAD DRAFTED THESE THREE AND SAID IT IS NOT CONFIDENT IN THEM, AND INVITED
+    DISAGREEMENT.** *"A draft the implementer disagreed with silently is worse than no draft."* The
+    Product Owner ratifies; nothing below is a decision.
+
+  are_three_too_many_or_too_few:
+    answer: >
+      **TWO OF THE THREE EARN THEIR PLACE OUTRIGHT. THE THIRD IS IN THE WRONG REGISTER, NOT THE
+      WRONG VOCABULARY** — see UPSTREAM_OF_THE_PATH below. So: three WORDS is right; **TWO of them
+      belong in the TIER-1 site register and ONE belongs in the TIER-2 module register**, and the
+      draft does not say that.
+
+  DEFECT_OPEN:
+    does_it_belong_in_a_disposition_register_at_all: >
+      **YES, AND THE PROJECT LEAD'S OWN DOUBT IS ANSWERABLE.** A disposition register answers *"how
+      is this site's deciding operand established?"* `DEFECT_OPEN` answers *"it is not, and here is
+      the measurement"* — which IS an answer to that question, and the honest negative one. The
+      register already contains `DELEGATED`, whose note says *"OPEN"*, so the form already admits
+      negative answers.
+    is_it_a_synonym_for_DELEGATED: >
+      **NO, and the distinction is worth writing down.** `DELEGATED` says *an outside object decides,
+      BY DESIGN, and here is whose authority left it open.* `DEFECT_OPEN` says *a caller can
+      influence this and NOBODY INTENDED THAT.* Same openness, opposite intent, and a register that
+      could not tell them apart would let a defect hide behind a design decision.
+    my_one_disagreement_with_its_SHAPE: >
+      **ITS MANDATORY FIELDS RESTATE A FINDING INSTEAD OF REFERENCING ONE.** `measured_reach` and
+      `counterfactual` are exactly what a findings record already carries. Requiring them here
+      creates **TWO COPIES OF ONE MEASUREMENT THAT CAN DRIFT**, which is this project's named
+      hand-maintained-summary defect — the thing ruling 3 exists to prevent — reintroduced by the
+      fix for it. **RECOMMENDATION: require `finding` to RESOLVE, and let the finding carry the
+      reach and the counterfactual.**
+      **AND THE REASON I DID NOT IMPLEMENT THAT: THERE IS NO FINDINGS REGISTER IN THIS TREE TO
+      RESOLVE AGAINST.** Measured — `governance/` holds `authority`, `decisions`, `dispatch`,
+      `engineering`; findings live in build-log prose and in assurance verdicts, neither of which is
+      machine-resolvable. **SO `finding` IS TODAY AN UNCHECKED STRING, AND I AM SAYING SO RATHER
+      THAN LETTING THE WORD "MANDATORY" IMPLY OTHERWISE.** Creating a findings register is a
+      governance change and is not this seat's.
+
+  CARRIER_ONLY:
+    does_it_collapse_into_OUT_OF_BOUND: >
+      **NO, AND THE DIFFERENCE IS CHECKABLE, WHICH IS THE STRONGEST ANSWER AVAILABLE.**
+      `OUT_OF_BOUND` is a SCOPE claim — *"this increment does not cover it"* — and no instrument can
+      falsify it. `CARRIER_ONLY` is a REACHABILITY claim — *"no module under `src/` calls this"* —
+      and it is FALSIFIED BY AN IMPORT. **A word an instrument can disprove is categorically
+      stronger than one it cannot, and collapsing the first into the second would trade a fact for
+      a scope statement.**
+    my_view: '**IT IS THE BEST OF THE THREE AND I WOULD KEEP IT EVEN IF THE OTHER TWO WERE DROPPED.**'
+    one_caution: >
+      Its `does_not_buy` says *"a carrier that asks an object about itself is a carrier that can be
+      told anything"*. **TRUE, AND IT MEANS `CARRIER_ONLY` IS NOT A CLEAN BILL — it relocates the
+      consequence, it does not remove it.** The word's own definition says this and the register
+      must keep saying it, because "only the tests" reads as "harmless" to a tired reader.
+
+  UPSTREAM_OF_THE_PATH:
+    my_view: '**THIS IS THE ONE I DISAGREE WITH, AND THE DISAGREEMENT IS STRUCTURAL RATHER THAN ABOUT THE IDEA.**'
+    the_idea_is_right: >
+      The reasoning is the strongest in the draft. *"A tier-1 admission inside `admission` decides
+      whether a judgement-path door establishes at all — that is not adjacent to the deciding path,
+      it is upstream of every point on it."* **The fifth seat is right and the sweep denying by
+      default was right.**
+    the_structural_objection: >
+      **IT IS DRAFTED FOR "the `crash_detector.admission` UNDECLARED MODULE entry" — WHICH IS A
+      TIER-2 MODULE DISPOSITION, NOT A TIER-1 SITE DISPOSITION.** The other two words are site-level.
+      This one is module-level, it lives in a DIFFERENT REGISTER
+      (`DECLARED_MODULE_DISPOSITIONS`) with a different key shape and a WEAKER guarantee — the tool's
+      own header says a module-level claim *"says how operands are established in that module, and a
+      single site inside a module can contradict it without this file noticing"*.
+      **PUTTING THREE WORDS IN ONE LIST WHEN ONE OF THEM BINDS A DIFFERENT REGISTER AT A DIFFERENT
+      STRENGTH IS HOW A READER COMES TO BELIEVE THEY ARE THE SAME KIND OF CLAIM.**
+      *(The contract as landed validates BOTH registers, so the word WORKS in either. The objection
+      is that the DRAFT does not say which, and the answer changes what it is worth.)*
+    the_second_objection_and_it_is_the_dispatchs_own_test: >
+      **ITS TWO MANDATORY FIELDS ARE BOTH PROSE AND I CANNOT MAKE EITHER MACHINE-CHECKABLE.**
+      `decides` and `route` are sentences. There is no instrument that can verify "is upstream of".
+      The dispatch says: *"IF YOU CANNOT MAKE A WORD MACHINE-CHECKABLE, SAY SO — that is a finding
+      against the Project Lead's draft and it is worth more than a compliant implementation."*
+      **I AM SAYING SO. As drafted, `UPSTREAM_OF_THE_PATH` is a PROSE WORD IN A CONTRACT THAT EXISTS
+      TO ELIMINATE PROSE WORDS.** What the contract can enforce is that the fields are PRESENT and
+      NON-EMPTY, which stops silence but not a bad sentence.
+    what_would_make_it_checkable_offered_as_options_not_as_a_decision: >
+      (i) require `decides` to NAME A MODULE OR CALLABLE THAT RESOLVES, so the claim points at
+      something that exists; (ii) require that the named downstream thing IS in the swept closure,
+      which is checkable today; (iii) drop the word and let `crash_detector.admission` carry a
+      `DELEGATED`-shaped module note whose text says the same thing — weaker, but honest about
+      being prose. **THIS SEAT PREFERS (i)+(ii). IT IS THE PRODUCT OWNER'S TO RULE.**
+
+  the_summary_the_product_owner_can_rule_on: >
+    **KEEP `CARRIER_ONLY` UNCHANGED — it is checkable and it is the best of the three.
+    KEEP `DEFECT_OPEN` BUT MAKE `finding` A REFERENCE THAT RESOLVES, WHICH NEEDS A FINDINGS REGISTER
+    THAT DOES NOT YET EXIST.
+    KEEP THE IDEA BEHIND `UPSTREAM_OF_THE_PATH` AND FIX ITS FORM: say which register it binds, and
+    make `decides` name something that resolves — or accept, in writing, that one word in this
+    vocabulary is prose.**
+# ================================================================================================ #
+
+what_this_item_does_NOT_close_MEASURED:
+- '**THE ELEVEN ARE NOT WRITTEN.** The sweep is EXIT 1, 534 sites, 15 violations — UNMOVED, and
+   asserted unmoved by a test. **THE THREE EXTENDED COUNTS READ 0 AT THIS SHA AND THAT IS CORRECT**;
+   the form landed, the contents did not, and that ordering is the whole of ruling 3.'
+- '**THE WORDS ARE NOT RATIFIED.** The printed table marks all three `(EXTENDED, PO RATIFICATION
+   PENDING)` so no reader mistakes drafted for ruled.'
+- '**`finding` IS AN UNCHECKED STRING.** There is no findings register to resolve it against — and
+   "mandatory" without "resolvable" only stops silence, not fiction.'
+- '**`UPSTREAM_OF_THE_PATH`''s TWO FIELDS ARE PROSE AND STAY PROSE.** Presence and non-emptiness are
+   enforced. Truth is not, and cannot be by this instrument.'
+- '**`CARRIER_ONLY`''s ENUMERATION IS A FLOOR.** It reads call expressions BY NAME; an aliased call,
+   a `getattr`, or a call through a container is invisible. Declared in the function''s own docstring.'
+- '**NOTHING HERE VERIFIES THAT ANY DISPOSITION IS TRUE**, which is the tool''s DECLARED LIMIT 1 and
+   is untouched. The contract constrains the FORM of a claim. **A WELL-FORMED LIE PASSES.**'
+
+instruments_run_by_this_seat_and_their_exit_codes:
+  class_2_sweep: 'EXIT 1 — 534 sites, 15 violations. UNMOVED, and asserted so.'
+  carrier: 'EXIT 0 — 11 passed.'
+  suite: 'EXIT 0 — 1580 passed, 0 failed.'
+  doors_check: 'EXIT 0.'
+
+separation_of_duties: >
+  PBG-SOD-001, non-waivable. A RECORD, NOT ASSURANCE. **AND THE SPLIT HELD:
+  `tools/sweep/declared_dispositions.py` IS NOT IN THIS COMMIT AND WAS NEVER OPENED FOR WRITING.**
+  The eleven are the Project Lead's after this increment banks (CD-D-130), and this seat's view on
+  the vocabulary above is a VIEW — the Product Owner ratifies, not the Project Lead and not this
+  seat (PBG-AUTH-003).

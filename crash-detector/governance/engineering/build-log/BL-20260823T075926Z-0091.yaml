@@ -1,0 +1,199 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 9 — ITEM 1, PART B. THE INSTRUMENT, THE CARRIER, THE PLANT, THE THREE PLACES.
+#
+# **THE INSTRUMENT FOUND A DEFECT IN ITSELF BEFORE IT FOUND ONE IN THE TREE, TWICE.**
+#   * its first exclusion probe called `type(base)(name, (base,), {...})` with an ordinary dict and
+#     reported FIVE `enum.Enum` subclasses as UNMEASURABLE — **an instrument reporting its own
+#     defect as a property of the subject**;
+#   * its `__setstate__` route offered a MAPPING state, and CPython's `_dataclass_setstate` ZIPS,
+#     so the marker never landed and **IT SCORED `StalenessWindow` AND `FreshnessEvidence` SEALED —
+#     THE EXACT FALSE GREEN THIS INCREMENT EXISTS TO REMOVE, INSIDE THE INSTRUMENT THAT REMOVES IT.**
+# Both are recorded because they were caught, not because they were avoided (`CD-PL-F113`).
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0090. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T075926Z-0091
+timestamp_utc: "2026-08-23T07:59:26Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-07
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC9-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+product_authority_basis: 'governance/decisions/PO-DECISIONS-0016.md ruling 2 — "instrument-enumerated over all 99 governed classes, exclusions MEASURED AND DECLARED never assumed, a plant in the established contrast form"'
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 419bd7e537939e7ac6ae7daa7af141da7a3cf771
+parent_entry_id: BL-20260823T074551Z-0090
+schema_version: 1
+
+record_type: INCREMENT_ITEM
+
+item: ITEM_1_PART_B
+title: '`CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT` — the instrument over all 99, its runtime carrier, its plant, and its row in all three CD-RULE-004 places.'
+
+what_landed:
+  instrument: 'tools/register/check_sealed_against_forged_establishment.py — sha256 e9a7a50d763bee2f58ed1bbf861b0a57c6772cd9f34343b20461298dbdd5ed97 (`sha256sum` on the worktree copy, which is the copy that ran).'
+  carrier: 'tests/test_sealed_against_forged_state.py — NINE tests.'
+  plant: 'plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch, plus its MANIFEST row and the count corrections (12 -> 13, CD-AC-005 2 -> 3), quoting the superseded figures rather than deleting them.'
+  the_three_CD_RULE_004_places: 'the check header · the `required-tests.yaml` row (inserted inside the CD-AC-005 criterion block, beside its sibling) · contracts/execution/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.md. **THE SIX DECLARED LIMITS ARE STATED IN ALL THREE AND SAY THE SAME THING.**'
+
+# ---------------------------------------------------------------------------------------------- #
+CD_RULE_009__EVERY_NUMBER_BELOW_WITH_THE_COMMAND_THAT_PRODUCES_IT:
+  the_tip: |
+      $ python3 -B tools/register/check_sealed_against_forged_establishment.py --root .
+      scanned: 39 module(s) under src/crash_detector; 99 class(es) examined;
+               51 SEALED, 0 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT, 0 UNMEASURABLE
+      CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT: PASS — 99 assertions, 0 violations   EXIT 0
+  the_counterfactual_CD_D_079: |
+      $ rm -rf /tmp/cf_base && mkdir -p /tmp/cf_base && git archive 753efe4 | tar -x -C /tmp/cf_base
+      $ cp tools/register/check_sealed_against_forged_establishment.py /tmp/cf_base/tools/register/
+      $ cd /tmp/cf_base && python3 -B tools/register/check_sealed_against_forged_establishment.py --root .
+      99 class(es) examined; 15 SEALED, 36 OPEN AND REQUIRED, 48 EXCLUDED BY MEASUREMENT, 0 UNMEASURABLE
+      CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT: FAIL — 36 violation(s)                EXIT 1
+    **15 + 36 = 51, AND 51 IS THE TIP'S SEALED COUNT. THE 36 ARE EXACTLY THE 36 CLASSES PART A
+    SEALED, WITH NOTHING LEFT OVER AND NOTHING BORROWED.**
+  the_plant_THREE_COLUMNS_BECAUSE_A_DEAD_PLANT_EXITS_0: |
+      $ git add -A && TREE=$(git write-tree)
+      $ git archive "$TREE" | tar -x -C /tmp/plantmeas/clean
+      $ git archive "$TREE" | tar -x -C /tmp/plantmeas/violated
+      $ cd /tmp/plantmeas/violated && git apply --verbose plants/CD-AC-005/CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch
+        "Applied patch src/crash_detector/store/migrations.py cleanly."   GIT_APPLY_EXIT = 0
+      CLEAN     EXIT 0  PASS — 99 assertions, 0 violations   99 classes,  0 OPEN AND REQUIRED
+      VIOLATED  EXIT 1  FAIL — 1 violation(s)               100 classes,  1 OPEN AND REQUIRED
+                        VIOLATION src/crash_detector/store/migrations.py:320
+                            rule: OPEN TO FORGED STATE   <- READ FROM THE TEXT, NOT THE EXIT CODE
+  AND_THE_MEASUREMENT_THAT_MAKES_THE_PLANT_WORTH_HAVING: |
+      $ cd /tmp/plantmeas/violated && python3 -B tools/register/check_constructor_field_establishment.py --root .
+      CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST: PASS — 101 assertions, 0 violations   EXIT 0
+    **THE SIBLING STILL EXITS 0 ON THE VIOLATED ARM.** The planted `LedgerCursor` is ruled OUT of
+    the sibling's population by TWO of its three clauses at once. **THAT IS THE FOURTH WIDENING,
+    MEASURED RATHER THAN ARGUED.**
+  the_suite: '`python3 -B -m pytest -q` -> **3 failed, 1696 passed** (1687 + the 9 new). The three failures are the DECLARED ones in `tests/test_the_fifteen.py`. No fourth.'
+  the_class_2_sweep: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> EXIT 1, **FAIL — 555 sites, 4 violations** — byte-identical to the declared base. `tools/sweep/declared_dispositions.py` remains UNMODIFIED.'
+  the_register_checks: '`for f in tools/register/check_*.py; do python3 -B "$f" --root .; done` -> **TWELVE EXIT 0** (eleven pre-existing plus this one), `check_grant_matrix_live` EXIT 3.'
+  the_yaml: '`python3 -c "import yaml; yaml.safe_load(open(''required-tests.yaml''))"` -> parses. NOTE: `tools/register/_yamlmin.load_yaml` REFUSES this file at line 71 (`- criterion_id: CD-AC-001`) and refused it at the base too — the restricted parser does not accept a top-level sequence. **THAT IS PRE-EXISTING AND NOT MINE**, and it is written down because a reader may otherwise take my row for the cause.'
+
+# ---------------------------------------------------------------------------------------------- #
+HOW_THE_ENUMERATION_IS_DERIVED__THE_DISPATCH_REQUIRED_THIS_TO_BE_SAID:
+  which: >
+    **REUSED, NOT COPIED AND NOT REIMPLEMENTED.** The check IMPORTS
+    `check_constructor_field_establishment` FROM THE SUBJECT TREE and calls that instrument's own
+    `_classes()` over the same file set. A hard-coded list of 99 names is a transcription that rots
+    at the next class anyone adds; a reimplementation of its traversal is a second opinion
+    pretending to be a first.
+  and_the_second_derivation: >
+    A `vars()` descent over the IMPORTED modules, at any nesting depth, recording every class whose
+    `__module__` is that module. **ONE READING IS OF THE SOURCE TEXT AND THE OTHER IS OF THE LIVE
+    OBJECT GRAPH** — which is the independence the sibling's own two derivations cannot have,
+    because both of those read `ast`.
+  WHAT_HAPPENS_WHEN_THEY_DISAGREE: >
+    **IT IS A VIOLATION AND NEVER A RECONCILIATION.** The check does not adopt the source reading,
+    does not adopt the live reading, does not take the union and does not take the intersection for
+    its verdict: it measures the intersection and FAILS on the difference, printing both directions.
+    A class inside `if False:` is in the source and not live; a class built by `type(...)` is live
+    and in no source reading. **CARRIED:**
+    `test_a_class_built_by_type_at_module_level_makes_the_two_enumerations_disagree` appends
+    `Smuggled = type("Smuggled", (object,), {...})` to a throwaway tree and requires EXIT 1 with
+    `ENUMERATIONS DISAGREE` and `LIVE AND NOT IN THE SOURCE: 1`.
+  and_it_imports_where_its_sibling_parses__DECLARED_LIMIT_1: >
+    The sibling PARSES so an auditor who trusts nothing can run it on a tree they extracted.
+    **THIS CHECK CANNOT: THE PROPERTY IS A RUNTIME PROPERTY.** `__dictoffset__` is a C-level slot;
+    `__setstate__` is installed by `dataclasses._add_slots` AFTER the class body is read; and
+    "executes no package code" is a statement about execution, measured with `sys.settrace`. A tree
+    that does not import is a tree this check REFUSES on (exit 3), never one it passes. CD-PL-F98 is
+    answered structurally: every already-imported `crash_detector*` module is evicted, the subject's
+    paths go to the front of `sys.path`, and **each imported module's `__file__` is asserted to
+    resolve under `--root`** or the check refuses.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_EXCLUSION_IS_ONE_CLAUSE_AND_IT_IS_BUILT_AND_READ_NOT_ASSERTED:
+  the_clause: >
+    Walk `__mro__` for the base that imposes an instance `__dict__`; **BUILD A THROWAWAY SUBCLASS OF
+    THAT BASE AT RUN TIME through the base's own metaclass protocol, declaring `__slots__ = ()`; READ
+    the resulting `__dictoffset__`.** Exclude only if that number is non-zero AND the base is
+    OUTSIDE this package — **because a base we own carrying a `__dict__` is our defect to fix and
+    never our exclusion to claim.**
+  what_it_measured: |
+      EXCLUDED, 43 class(es): __dict__ imposed by builtins.BaseException; probe __dictoffset__ == 16
+      EXCLUDED,  5 class(es): __dict__ imposed by enum.Enum;             probe __dictoffset__ == -48
+      (Python 3.11.2, printed by the check with the interpreter version beside it.)
+  there_is_NO_LIST_ANYWHERE_IN_THE_FILE: >
+    No list of excluded classes, no list of excluded bases, no list of excluded modules.
+    **"It is `AdmissionFault`" is a list entry. "A probe subclass of its base still reports
+    `__dictoffset__ == 16`" is a measurement.** If a future interpreter makes such a base sealable,
+    the check requires the seal of those 48 on the very next run with NO EDIT TO ANY FILE.
+  AND_AN_EXCLUSION_IT_CANNOT_MEASURE_IS_NOT_AN_EXCLUSION: >
+    If the probe cannot be built the class is `UNMEASURABLE` and is a **VIOLATION**, not an
+    exemption. That path is live and it fired: see the finding below.
+  CD_RULE_006__THE_RESIDUE: >
+    **48 OF 99 GOVERNED CLASSES REMAIN OPEN TO THE ROUTE AND THE SEAL IS PHYSICALLY UNAVAILABLE TO
+    THEM. NOT SAFE — UNSEALABLE. NOT PROVED TO BE CARRIED ANYWHERE.**
+
+# ---------------------------------------------------------------------------------------------- #
+FINDINGS_AGAINST_MY_OWN_WORK:
+  CD_ENG_WO2R3_07_F06__HIGH__MY_OWN_INSTRUMENT_SCORED_THE_FALSE_GREEN_I_FOUND_AS_SEALED: >
+    **THE INSTRUMENT BUILT TO CATCH THE `__setstate__` HOLE DID NOT CATCH IT.** Its `R4` offered a
+    MAPPING state keyed by the class's own field names. CPython's `_dataclass_setstate` is
+    `for field, value in zip(fields(self), state)` — **IT ZIPS** — so iterating a mapping yields its
+    KEYS, and `StalenessWindow.__setstate__({'seconds': FORGED})` sets `seconds` to the string
+    `'seconds'`. The object IS forged; the marker the check reads back is not there; the check
+    printed `forged value readable False` and scored the class **SEALED**. At the base SHA it
+    reported **17 SEALED / 34 OPEN**; with `R5` (a SEQUENCE state) added it reports **15 SEALED /
+    36 OPEN**, and the 36 match the 36 classes PART A sealed exactly.
+    **A ROUTE THAT FAILS FOR THE WRONG REASON SCORES A CLASS CLOSED — THE `CD-ENG-WO2R3-F12`
+    STANDARD FAILING INSIDE THE INSTRUMENT WHOSE HEADER CITES IT.** Found by running the
+    counterfactual and refusing to accept a number I could not derive twice, not by reading the
+    code. **BOTH SHAPES ARE NOW IN THE SET** because both exist here: `DialMagnitude.__setstate__`
+    and `DeclaredQuantity.__setstate__` INDEX BY NAME and need the mapping; the stdlib one ZIPS.
+    Carried by `test_the_setstate_sibling_is_refused_in_BOTH_of_its_state_shapes`.
+  CD_ENG_WO2R3_07_F07__MEDIUM__MY_FIRST_EXCLUSION_PROBE_REPORTED_ITS_OWN_DEFECT_AS_THE_SUBJECTS: >
+    `type(base)(name, (base,), {"__slots__": ()})` with an ORDINARY DICT returns
+    `AttributeError: 'dict' object has no attribute '_member_names'` for `enum.Enum`, because
+    `EnumMeta.__prepare__` returns an `_EnumDict`. Five classes were reported **UNMEASURABLE** —
+    honest, and not an answer. **AN INSTRUMENT THAT REPORTS UNMEASURABLE BECAUSE IT CALLED THE WRONG
+    CONSTRUCTOR HAS MEASURED ITS OWN DEFECT AND LABELLED IT A PROPERTY OF THE SUBJECT.** Fixed by
+    asking the metaclass for its own namespace via `__prepare__`, which is the general form; the
+    `UNMEASURABLE` verdict remains live and remains a violation. Recorded rather than quietly fixed.
+  CD_ENG_WO2R3_07_F08__MEDIUM__A_FINDING_AGAINST_THE_DISPATCH_ITSELF: >
+    **HEADER ITEM 4 SAYS THE `--why` OUTPUT "HAS AT LEAST THREE LINE FORMS AND NOBODY HAS ENUMERATED
+    THEM". THERE ARE SIX, AND THE PROJECT LEAD'S HANDED-OVER REGEX SURVIVES BY ACCIDENT.** The sixth
+    form is `ESTABLISHED_HERE: <path>:<line> <Class>.<field>`; the regex's trailing
+    `[A-Za-z_][A-Za-z0-9_]*` stops at the `.`, so it contributes `FetchedResponse` — a name already
+    in the set — and the count stays 99. **CHANGE THAT LINE FORM TO PRINT
+    `<Class>_<field>` AND THE ENUMERATION SILENTLY GAINS THREE ENTRIES.** This check does not use
+    the regex at all — it reuses `_classes()` — so it is not exposed; the DISPATCH'S OWN
+    RECONCILIATION COMMAND IS.
+  CD_ENG_WO2R3_07_F09__LOW__THE_INSTRUMENT_HAS_A_SECOND_SET_THIS_PROJECT_WOULD_NORMALLY_REMOVE: >
+    `ROUTES` is a dictionary of five named routes. **IT IS A VOCABULARY**, exactly as
+    `check_judgement_path_doors`'s package list is, and it is declared as one in DECLARED LIMIT 2 in
+    all three places. The difference from an exclusion list is real and is worth stating: **a
+    vocabulary of ATTACKS errs toward missing a violation; a vocabulary of EXEMPTIONS errs toward
+    inventing a pass.** The first is a limit; the second is what `PO-DECISIONS-0012` ruling 2
+    forbids. This file has the first and, deliberately, none of the second.
+  CD_ENG_WO2R3_07_F10__LOW__THE_CARRIER_TESTS_RUN_FAST_ENOUGH_TO_DESERVE_SUSPICION: >
+    Nine tests, four of which copy `src/` and `tools/` and run a subprocess, complete in **0.93 s**.
+    That is fast enough that a reader should check they are not vacuous, so: the VIOLATED arm asserts
+    `returncode == 1` AND the literal `OPEN TO FORGED STATE` AND `1 OPEN AND REQUIRED`; the
+    derivation arm asserts `LIVE AND NOT IN THE SOURCE: 1`; and each arm asserts the subject literal
+    is still present with *"the subject of this test moved; fix the test"* rather than passing over
+    a missing target. **I HAVE NOT PROVED THEY CANNOT BE VACUOUS; I HAVE MADE EACH ONE NAME WHAT IT
+    READ.**
+
+# ---------------------------------------------------------------------------------------------- #
+tests_run:
+  new: 'tests/test_sealed_against_forged_state.py -> **9 passed**.'
+  suite: '**3 failed, 1696 passed** — the declared three, all in tests/test_the_fifteen.py.'
+  register_checks: '**TWELVE EXIT 0**, check_grant_matrix_live EXIT 3 (declared).'
+  sweep: '**FAIL — 555 sites, 4 violations** — the declared base state, unchanged.'
+
+what_I_did_NOT_do:
+- '**I did not add a `variants/WO-2R3/` probe**, so there is no manifest row owed there (CD-PL-F97). Every measurement in this increment is reproducible from the COMMITTED instrument and the COMMITTED tests; the scratch probe under /tmp was superseded by them and is not cited as evidence.'
+- '**I did not touch `tools/sweep/declared_dispositions.py`, `governance/findings/`, `PID.md`, `BLUEPRINT.md` or any landed build-log entry.**'
+- '**I did not claim the route set is complete** and I did not claim the excluded 48 are safe.'
+
+next_safe_action: 'ITEM_2 — CD-PL-F104, `establishes` admits a non-dataclass.'

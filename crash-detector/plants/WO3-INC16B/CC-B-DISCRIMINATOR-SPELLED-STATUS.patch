@@ -1,0 +1,61 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 17:54:46.847293550 +0100
+@@ -58,6 +58,21 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "CC-B. A310-F2, AND IT IS CC-A WITH ONE STRING CHANGED: `state` -> `status`. The recogniser answers a clean False about this node -- it names no property called `state`, so `_dial_bearing` never looks at the values and CD-CALM-SLOTS-007 never compares it. THE ONLY THING THAT CATCHES IT IS RULE CC, which never asks what it is.",
++      "enum": [
++        {
++          "status": "LIVE",
++          "observed_utc": "2026-08-23T12:00:00Z",
++          "detail_level": "acute"
++        },
++        {
++          "status": "STALE",
++          "observed_utc": "2026-08-01T00:00:00Z",
++          "detail_level": "calm"
++        }
++      ]
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 17:53:52.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 17:54:46.847293550 +0100
+@@ -60,6 +60,21 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "CC-B. A310-F2, AND IT IS CC-A WITH ONE STRING CHANGED: `state` -> `status`. The recogniser answers a clean False about this node -- it names no property called `state`, so `_dial_bearing` never looks at the values and CD-CALM-SLOTS-007 never compares it. THE ONLY THING THAT CATCHES IT IS RULE CC, which never asks what it is.",
++      "enum": [
++        {
++          "status": "LIVE",
++          "observed_utc": "2026-08-23T12:00:00Z",
++          "detail_level": "acute"
++        },
++        {
++          "status": "STALE",
++          "observed_utc": "2026-08-01T00:00:00Z",
++          "detail_level": "calm"
++        }
++      ]
+     }
+   },
+   "$defs": {
+diff -ruN a/tools/register/check_schema_closed.py b/tools/register/check_schema_closed.py
+--- a/tools/register/check_schema_closed.py	2026-08-24 17:53:52.000000000 +0100
++++ b/tools/register/check_schema_closed.py	2026-08-24 17:54:46.847293550 +0100
+@@ -79,6 +79,7 @@
+         "config_snapshot_id",
+         "equity_crash",
+         "monetary_debasement",
++        "feed_liveness",
+     }
+ )
+ 

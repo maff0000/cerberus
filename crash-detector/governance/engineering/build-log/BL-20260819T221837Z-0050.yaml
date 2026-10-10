@@ -1,0 +1,422 @@
+# =============================================================================================
+# BUILD LOG — CD-WO-002R2 INCREMENT 1. CLASS 1: ADMISSION IS VALIDATION.
+#
+# THE FIRST INCREMENT OF THE SECOND REWORK, and the one the Product Owner scoped at CD-D-073.
+# It lands as FOUR commits rather than one, deliberately: a long-running seat with no
+# intermediate commit loses everything it has done when it dies, and this project has already
+# lost one seat that way (CD-CONT-001).
+#
+# THIS SEAT DOES NOT CERTIFY THIS WORK (PBG-SOD-001, non-waivable). Every run below is
+# IMPLEMENTATION EVIDENCE and does not become assurance by being thorough. The last two seats'
+# evidence was thorough and the gate failed twice.
+#
+# THE MOST IMPORTANT THING IN THIS ENTRY IS NOT A CLOSURE. It is CD-ENG-WO2R2-V05: a route
+# this seat wrote against its own work, MEASURED OPEN, publishing a blend with every declared
+# layer green, and DELIBERATELY NOT GUARDED. See findings.
+# =============================================================================================
+
+entry_id: BL-20260819T221837Z-0050
+timestamp_utc: '2026-08-19T22:18:37Z'   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R2-01
+role: ENGINEER
+seat_instance: 'CD-WO-002R2 increment 1, seat instance 1'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R2-ENGINEER
+work_type: CHANGE
+traits: [creates_process, deployable]
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: 50fc23177f790164c3fc3604ccee51663e755c70
+increment_sha: PENDING   # the commit that carries this entry; resolved by the follow-up, which
+                         # writes this field and nothing else (the 192fc50 precedent, CD-RULE-007)
+parent_entry_id: BL-20260819T193519Z-0049
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+# --- boot ------------------------------------------------------------------------------------ #
+boot_declaration: >
+  Booted by reading the pinned framework and the governance record in the order CLAUDE.md
+  prescribes — pbg/roles/engineer.md, pbg/standards/DEVELOPMENT_SECURITY_BASELINE.md,
+  governance/decisions/PO-DECISIONS-0002.md (CD-D-073), the dispatch record in full,
+  governance/assurance/WO-2R/VERDICT.md (findings F01 and F03), governance/rules/PROJECT-RULES.md
+  (CD-RULE-001..008) and the two auditor variants for this increment — and then by running
+  `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` in the lane.
+
+  LANE RECONCILED BEFORE ANYTHING WAS WRITTEN (PBG-CONT-006). Observed HEAD of
+  /srv/crash-detector-wo2 was 50fc23177f790164c3fc3604ccee51663e755c70, EQUAL to the dispatched
+  execution_base_sha, and `git status --short` returned ZERO LINES. No drift.
+
+  BOOT VERDICT: BLOCKING, and it is PRE-EXISTING — see finding CD-ENG-WO2R2-F02. `pbg boot`
+  returns `continuity_state CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED` and one BLOCKING line,
+  and it returns the SAME state on a pristine `git archive 50fc231 | tar -x` extraction that
+  this seat had not touched. It is not caused by this work and this seat did not repair it:
+  governance/engineering/ACTIVE_WORK.yaml is Project-Lead-only and is in this dispatch's
+  protected scope. Nothing under governance/engineering/ACTIVE_WORK.yaml was written, so
+  CD-RULE-007 and CD-RULE-008 impose no boot re-run obligation on this increment.
+  `assigned_role` reads PROJECT_LEAD because governance/authority/ admits exactly one ACTIVE
+  record (CD-FWK-004, disclosed in the dispatch header). THIS SEAT'S ROLE COMES FROM THE
+  DISPATCH AND NOT FROM THAT FIELD (PBG-BOOT-002, non-waivable).
+
+# --- what was dispatched, and what this launch was bounded to --------------------------------- #
+scope_of_this_launch: >
+  INCREMENT 1 ONLY — CLASS 1, ADMISSION IS VALIDATION, carrying CD-AC-002 (RED, CD-ASR-WO2R-F01)
+  and CD-AC-001's AMBER (CD-ASR-WO2R-F03). Increment 2 (CLASS 2, staleness, datetime subclasses)
+  and increment 3 (the CD-AC-012 dependency surface) were NOT started and NOT touched. They are
+  re-dispatched after the Project Lead reconciles this one.
+
+commits:
+- sha: 1cd15b2c9bf319fa044a9043582148b19944e763
+  what: 'increment 1a — the DERIVATION door now validates the VALUE. src/, tests/.'
+- sha: 9aa56862f69d07c83b3aeecb41786dcddfc63d32
+  what: 'increment 1b — four variants made durable + two manifests. variants/.'
+- sha: ccb6af8471bace48eca3c792605f70ed9872e73a
+  what: 'increment 1c — ABSENCE IS ANSWERED. The presentation sum type, its tests, and the
+         CD-RT-001 boundary-7 declaration in all three CD-RULE-004 places.'
+- sha: 54e9464325b01b96b4066a6e1db8ca6c3c6b6085
+  what: 'increment 1d — the two claims measured false WITHDRAWN and replaced, boundary 7''s
+         exhaustiveness withdrawn, boundary 8 added, in all three places each.'
+commit_identity_audit: >
+  `git log --format='%an <%ae> | %cn <%ce>'` over all four: every one reads
+  `CD-ENG-WO2R2-01 <cd-eng-wo2r2-01@seats.crash-detector.invalid>` as BOTH author and committer.
+  Set by GIT_AUTHOR_* / GIT_COMMITTER_* ENVIRONMENT VARIABLES on each invocation. No `git config`
+  was written and `git -c` was not used (CD-RULE-002, CD-PL-F56). Verified after every commit.
+
+# --- the classes, and the invariants that close them ------------------------------------------ #
+class_1_derivation:
+  criterion: 'CD-AC-002 (RED). Finding CD-ASR-WO2R-F01 (HIGH).'
+  disposition: CLOSED IN PART
+  structural_invariant: >
+    The only values from which crash_detector.dials.provenance will build a DeclaredQuantity BY
+    DERIVATION are DeclaredQuantity values it has itself already established, and the number it
+    stores is computed by that module from a CLOSED set of NAMED reductions — so there is no
+    argument, anywhere on any derivation path, through which a caller's float or a caller's
+    callable can reach a dial magnitude.
+  how_an_auditor_refutes_it_by_execution: >
+    Write any expression using only the public API of crash_detector that yields a DialMagnitude
+    whose quantity is a number of your choosing, without calling observed_for_dial.
+  what_changed: >
+    derived_within_one_dial(*, quantities, reduction) — WAS (*, dials, value). It takes no number
+    and no dial set. It refuses by EXACT TYPE anything that is not a DeclaredQuantity, COMPUTES the
+    provenance union from the quantities themselves, and refuses by EXACT TYPE any reduction that
+    is not a SameDialReduction member. SameDialReduction is an enum.Enum, closed against
+    subclassing and member addition by the interpreter. SAME_DIAL_REDUCTIONS is a MappingProxyType
+    over a dict literal never bound to a name. DeclaredQuantity.__init__ REFUSES ALWAYS — its two
+    former parameters were exactly the two things a caller can simply write. combine_within_one_dial's
+    `using` is a named reduction, not a callable, and it passes established quantities onward
+    rather than released floats.
+  what_is_NOT_closed: >
+    THE EXTERNAL ADMISSION BASE CASE. observed_for_dial believes what it is told; something has to
+    be the first number or the product cannot exist. See finding CD-ENG-WO2R2-F03.
+
+class_1_absence:
+  criterion: 'CD-AC-001 (AMBER, travelling with Class 1 by CD-D-073). Finding CD-ASR-WO2R-F03 (MEDIUM).'
+  disposition: CLOSED IN PART
+  structural_invariant: >
+    There is no value of type Shown whose magnitude is not a DialMagnitude of exactly the dial it
+    is shown as, and there is no field anywhere on NotShown that can hold a number — so a number
+    obtained from an Unknown by any route, through any helper, computed any way, cannot be
+    presented as a dial reading.
+  how_an_auditor_refutes_it_by_execution: >
+    Construct a Shown, by any means, whose magnitude is a number you chose; or find a field on
+    NotShown that holds one.
+  what_changed: >
+    A new closed sum type in src/crash_detector/serving/dial_presentation.py —
+    Shown(dial_id, magnitude) | NotShown(dial_id, reason, missing_inputs) — with no common
+    ancestor, sealed against subclassing, slotted, surface asserted by set equality at import and
+    re-verified at every consumer boundary. present_dial() performs the elimination ITSELF, so a
+    surface never supplies `on_unknown`.
+  what_was_deliberately_NOT_done: >
+    NO GUARD WAS PUT IN `fold`, and this is the decision that matters. A ban on a numeric return
+    from on_unknown is a ban on a SPELLING — `on_unknown=lambda u: Box(0.0)` walks past it — and it
+    would forbid a legitimate numeric answer ABOUT an absence, such as a count of missing inputs.
+    It would have caught the auditor's four lines and not the class. That is the instance game and
+    this seat refused it. A declared test asserts the legitimate numeric use still works.
+  what_is_NOT_closed: >
+    A module may still compute its own number from an Unknown and hand it to its own caller.
+    ASR2-001-A's surface_scalar still returns 0.0 at this SHA. NOT PROVED TO BE CARRIED ANYWHERE.
+
+# --- proof, by execution ---------------------------------------------------------------------- #
+extraction_hygiene: >
+  The lane worktree was NEVER mutated to test a variant and NO git worktree was created for one.
+  Every arm ran in its own `git archive <sha> | tar -x -C <tmpdir>` extraction, patched with
+  `git apply -p1`, and discarded. A separate pristine extraction per variant. `python3 -B`
+  everywhere, so no __pycache__ was written into any governed tree (PBG-RT-001). Every patch was
+  generated with `git diff` — in a throwaway repository for the new variants — and never by hand
+  (CD-ENG-WO2R-F13).
+
+replication_before_repair: >
+  BOTH auditor findings were REPLICATED at 50fc231 by this seat BEFORE anything was changed, on
+  pristine extractions with its own drivers.
+  ASR2-002-A: check_no_blend PASS 4873 assertions (clean 4855 — it SCANNED the module and had
+  nothing to say); RESULT DialMagnitude(dial_id='equity_crash', quantity=0.5); publication gate
+  returned 0.5 out of an equity 0.9 and a monetary 0.1. Reproduces exactly.
+  ASR2-001-A: check_no_numeric_default PASS 377 assertions; SURFACE SHOWS 0.0 for an Unknown with
+  reason REQUIRED_INPUT_MISSING. Reproduces exactly.
+
+auditor_variants:
+- id: ASR2-002-A-derivation-door-launders-a-blend
+  outcome: REFUSED
+  refusing_layer: 'crash_detector.dials.provenance.derived_within_one_dial, at runtime, by `type(reduction) is not SameDialReduction`.'
+  layer_scope: >
+    Every call to the derivation door in the process, from any module, inside or outside any
+    scanned set, reached by any name or under any alias. An exact-type comparison of the object the
+    door was handed; it reads no source, no registry and no module path.
+  observed: "crash_detector.dials.provenance.UndeclaredReduction: 'a function was offered as a reduction. A derivation is named, never supplied: the declared reductions are ['MEAN', 'SUM', 'MAX', 'MIN'] ...'"
+  rename_test: 'SURVIVES. Measured, not asserted — CD-ENG-WO2R2-V01 is this variant with every identifier renamed and the door imported as `fold_readings`, and the refusal is byte-identical.'
+  static_layer_note: >
+    check_no_blend is PASS with this variant present, at 50fc231 (4873) and at the closure (4984,
+    5276 after the declaration commit). THE STATIC LAYER HAD NOTHING TO SAY BEFORE AND HAS NOTHING
+    TO SAY NOW. A clean run of it carries no information about this class in either direction, and
+    boundary 8 of its declared limit now says exactly that.
+- id: ASR2-001-A-fold-unknown-branch-returns-calm
+  outcome: 'REFUSED AT THE PRESENTATION BOUNDARY; NOT refused at the point it computes its number.'
+  refusing_layer: 'crash_detector.serving.dial_presentation.Shown.__post_init__, at runtime, by `type(self.magnitude) is not DialMagnitude`.'
+  layer_scope: >
+    Every construction of a dial presentation in the process, from any module, inside or outside
+    any scanned set. An exact-type comparison of the object the constructor was handed.
+  observed: "crash_detector.serving.dial_presentation.DialPresentationRefused: 'a float was offered as dial 'equity_crash''s presented magnitude ...'; and present_dial returns NotShown(dial_id='equity_crash', reason='REQUIRED_INPUT_MISSING', missing_inputs=('vix','move'))."
+  rename_test: 'SURVIVES. Exact-type identity consults no identifier.'
+  what_it_does_NOT_reach: >
+    The variant's own return value. surface_scalar still returns 0.0 and check_no_numeric_default
+    is still PASS with it present (443 assertions; 377 at 50fc231). That is boundary 7, declared in
+    all three CD-RULE-004 places by this increment, and its carrier for that half is NOT PROVED TO
+    BE CARRIED ANYWHERE.
+
+new_variants:
+  where: 'variants/WO-2R2/CLASS-1/ (patches, mode 0664) and variants/WO-2R2/MANIFEST.md (rows).'
+  hygiene: >
+    NOTHING under variants/ is executable — no wrapper, no runner, no symlink; verified by
+    `find variants -type f -perm /111 -o -type l` returning nothing (PBG-ASSURE-001). Each row
+    carries its driver as a fenced block of DATA rather than as a file, for the same reason. All
+    four re-verified `git apply --check` clean at the final tree.
+  rows:
+  - id: CD-ENG-WO2R2-V01
+    route: 'ASR2-002-A with EVERY identifier renamed and the door imported under an alias. THE RENAME TEST, EXECUTED rather than asserted (CD_PL_F74_ADOPTED).'
+    outcome: 'REFUSED — derived_within_one_dial, runtime, `type(reduction) is not SameDialReduction`. Scope: every call to that door in the process, from anywhere, under any name.'
+    rename_test: 'SURVIVES — this row IS the measurement.'
+  - id: CD-ENG-WO2R2-V03
+    route: >
+      Accept that the door refuses a callable, then install the callable INTO
+      SAME_DIAL_REDUCTIONS, the table the door executes. In NEITHER corpus because the structure it
+      attacks did not exist until this increment; this seat attacking its own seam
+      (PBG-ASSURE-017).
+    outcome: "REFUSED — the CPython interpreter, on a types.MappingProxyType. \"TypeError: 'mappingproxy' object does not support item assignment\". Scope: every write to that mapping by any module."
+    rename_test: 'SURVIVES — raised by the interpreter on the object''s own type.'
+    residue: 'gc.get_referents(SAME_DIAL_REDUCTIONS) reaches the underlying dict and no Python-level structure can prevent that. NOT PROVED TO BE CARRIED ANYWHERE, and it is the same fact already declared for object.__setattr__.'
+  - id: CD-ENG-WO2R2-V04
+    route: >
+      Duck-type the PROVENANCE CARRIER — a faithful look-alike with a real single-dial `dials`
+      frozenset and a contract-honouring `value_for` — plus a float-subclass arm. In NEITHER
+      corpus: both corpora duck-type outcomes, readings and timestamps, never the provenance
+      carrier, because until this increment there was no carrier to imitate.
+    outcome: 'REFUSED, both arms — derived_within_one_dial, `type(offered) is not DeclaredQuantity`. Scope: every value offered for derivation, however faithfully it imitates.'
+    rename_test: >
+      SURVIVES for the runtime refusal. DOES NOT SURVIVE for the check_no_blend FAIL this variant
+      also produces — that is RULE 4 reacting to the variant happening to NAME a door, a coincidence
+      of spelling, labelled a VOCABULARY result in the manifest row. It is the clearest side-by-side
+      demonstration in the corpus of why the two kinds of evidence must not be confused.
+  - id: CD-ENG-WO2R2-V05
+    route: 'ONE stateful ContributionModel injected into BOTH DialSpecs. See findings — NOT REFUSED.'
+    outcome: '*** NOT REFUSED. OPEN. ***'
+    rename_test: 'Not applicable — there is no refusal to rename-test. Stated rather than omitted.'
+  - id: CD-ENG-WO2R2-V02
+    route: 'WITHDRAWN as a new variant; the id is LEFT UNUSED rather than reassigned.'
+    why: >
+      Drafted as a forged-provenance arm (object.__setattr__ making a magnitude''s label and its
+      carried quantity disagree) and withdrawn because object.__setattr__ on a private slot is
+      already V17/PL-W5 in the exclusion set — re-driving a known road is not a new route. MEASURED
+      anyway as a regression and REFUSED by _install''s set-equality comparison:
+      "CrossDialCombination: a quantity declared for ['equity_crash'] was offered as dial
+      'monetary_debasement''s magnitude."
+
+# --- the clean arm and the regression net ----------------------------------------------------- #
+clean_arm_at_54e9464:
+- 'CD-RT-001-AST-NO-NUMERIC-DEFAULT   python3 -B tools/register/check_no_numeric_default.py --root .   -> exit 0, 443 assertions, 0 violations'
+- 'CD-RT-001-ABSENCE-RENDERS-UNKNOWN  PYTHONPATH=src python3 -B -m pytest tests/test_reading.py tests/test_evaluate.py tests/test_dial_presentation.py -q -> exit 0, 124 passed'
+- 'CD-RT-002-TYPE-NO-ARITHMETIC       PYTHONPATH=src python3 -B -m pytest tests/test_scores.py tests/test_dialset.py tests/test_dial_provenance.py -q -> exit 0, 314 passed'
+- 'CD-RT-002-AST-NO-BLEND             python3 -B tools/register/check_no_blend.py --root .             -> exit 0, 5258 assertions, 0 violations'
+- 'CD-RT-002-SCHEMA-CLOSED            python3 -B tools/register/check_schema_closed.py --root .        -> exit 0, 242 assertions'
+- 'CD-RT-003-ENGINE-NO-WITNESS-REACH  python3 -B tools/register/check_engine_no_witness_reach.py --root . -> exit 0, 24 assertions'
+- 'CD-RT-003-GRANT-MATRIX-LIVE        python3 -B tools/register/check_grant_matrix_live.py --root .    -> EXIT 3, PRECONDITION_NOT_MET (the connection target is not set). IDENTICAL AT 50fc231.'
+- 'CD-RT-005-PANEL-UNAVAILABLE        PYTHONPATH=src python3 -B -m pytest tests/test_witness_panel.py tests/test_witness_resolver.py tests/test_staleness.py -q -> exit 0, 152 passed'
+- 'CD-RT-012-NO-EXECUTION-INTERFACE   python3 -B tools/register/check_no_execution_interface.py --root . -> exit 0, 40300 assertions'
+- 'CD-RT-012-LOCKFILE-DENYLIST        python3 -B tools/register/check_lockfile_denylist.py --root .    -> exit 0, 15 assertions'
+- 'CD-RT-012-EGRESS-NO-BROKER         python3 -B tools/register/check_egress_no_broker.py --root .     -> exit 0, 69 assertions'
+- 'CD-BASE-IMAGE-DIGEST-PIN           python3 -B tools/register/check_base_image_digest_pin.py --root . -> exit 0, 13 assertions'
+- 'CD-BUILD-CONTEXT-RESTRICTED        python3 -B tools/register/check_dockerignore.py --root .         -> exit 0, 22 assertions'
+- 'WHOLE SUITE                        PYTHONPATH=src python3 -B -m pytest tests -q                     -> exit 0, 1357 passed'
+
+node_id_conservation:
+  at_baseline: 1325
+  at_54e9464: 1357
+  lost: 0
+  method: >
+    Collected the full node-id list with `pytest -q --collect-only` on a pristine extraction of
+    50fc231 AND on this tree, sorted both, and diffed them. The "in base, not now" set is EMPTY.
+    Not argued from the totals — the totals cannot tell a rename from a replacement.
+  added: >
+    8 in tests/test_dial_provenance.py (increment 1a) and 24 in the new
+    tests/test_dial_presentation.py (increment 1c).
+  renames: 'NONE. No test was renamed, so no old-id/new-id/reason record is owed.'
+  changed_in_spelling_only: >
+    FIVE existing tests in tests/test_dial_provenance.py changed their CALL SPELLING because the
+    API they exercise changed — `using=<a lambda>` / `using=max` / `using=sum` became
+    `using=SameDialReduction.MEAN` / `.MAX` / `.SUM`. Node ids unchanged; each asserts the same
+    proposition it asserted before; test_same_dial_computation_still_works asserts strictly MORE
+    (MIN and SUM arms added). NOTHING WAS WEAKENED.
+
+eleven_plants:
+  method: 'Re-measured over the final tree, each on its own pristine extraction of 54e9464 with the increment applied.'
+  apply: 'ALL ELEVEN `git apply --check` CLEAN.'
+  contrast: 'TEN CONTRAST — declared command exit 0 clean, exit 1 planted.'
+  the_eleventh: >
+    CD-RT-003-GRANT-MATRIX-LIVE is EXIT 3 PRECONDITION_NOT_MET in BOTH arms, because no store
+    connection target is set in this environment. IDENTICAL AT 50fc231 and unchanged by any commit
+    of this increment, so it is not a contrast this seat degraded and not one it can measure.
+    CD-ASR-WO2-02 measured that guard live and reported the matrix contrasting 0 -> 1.
+  edits: 'NONE. No plant was updated, none was deleted, and none stopped applying.'
+
+# --- declarations written or corrected (CD-RULE-004, CD-RULE-006) ----------------------------- #
+declared_limits:
+- id: 'CD-RT-001-AST-NO-NUMERIC-DEFAULT, NEW BOUNDARY 7 — a consumer that ANSWERS an absence with a number'
+  three_places: 'tools/register/check_no_numeric_default.py header · required-tests.yaml entry comment · contracts/execution/CD-RT-001-AST-NO-NUMERIC-DEFAULT.md'
+  why: 'Boundaries 1, 2, 3, 5 and 6 are every one of them about CONSTRUCTION. The enumeration was measured INCOMPLETE by CD-ASR-WO2R-F03.'
+  executable_example: 'ASR2-001-A verbatim — exit 0 here, 377 assertions at 50fc231 and 443 at this SHA.'
+  carrier_measured: >
+    IN PART. crash_detector.serving.dial_presentation carries the PRESENTATION half and the
+    measurement is quoted above (DialPresentationRefused, on a pristine extraction with the variant
+    present). Evidenced by CD-RT-001-ABSENCE-RENDERS-UNKNOWN, whose declared command GREW by
+    tests/test_dial_presentation.py; nothing was removed from it.
+  carrier_NOT_measured: >
+    A module that computes a number for an absence and renders it ITSELF without coming through the
+    presentation type: **NOT PROVED TO BE CARRIED ANYWHERE.** The rendering LAYER is WO-3. This is
+    asserted rather than merely written —
+    tests/test_dial_presentation.py::test_asr2_001_a_still_computes_its_number_and_that_is_declared
+    fails the day somebody claims otherwise.
+  also_corrected: >
+    The header sentence naming CD-AC-001's runtime carrier as "the sealed Reading types and the
+    absence post-condition" now names the presentation type as the third and says in terms that the
+    first two do NOT carry a consumption route.
+- id: 'CD-RT-002-AST-NO-BLEND, BOUNDARY 7 CORRECTED — the exhaustiveness claim withdrawn'
+  three_places: 'tools/register/check_no_blend.py header · required-tests.yaml entry comment and CD-AC-002 acceptance_semantics · contracts/execution/CD-RT-002-AST-NO-BLEND.md'
+  why: >
+    It enumerated its residues as (i) a registry edit, (ii) a module outside the scanned set,
+    (iii) a dynamically assembled name, and ASR2-002-A was NONE OF THE THREE. Residues (iv) a
+    public function that reaches a door on its caller's behalf, and (v) a declared admission site
+    reached through a caller-supplied extension point, are added. The list is no longer offered as
+    complete.
+  carrier_measured: '(iv) for the admission door: RULE 4 only, STATIC, A NAME VOCABULARY, DOES NOT SURVIVE A RENAME — labelled a vocabulary result.'
+  carrier_NOT_measured: '(v): **NOT PROVED TO BE CARRIED ANYWHERE.** MEASURED OPEN as CD-ENG-WO2R2-V05.'
+- id: 'CD-RT-002-AST-NO-BLEND, NEW BOUNDARY 8 — the derivation door is closed at the TYPE and not by this check'
+  three_places: 'the same three.'
+  why: >
+    This check exits 0 either way and always did: PASS 4873 with ASR2-002-A present when the route
+    was OPEN, PASS 4984 with the same variant present when it was CLOSED. A CLEAN RUN OF THIS CHECK
+    CARRIES NO INFORMATION ABOUT THIS CLASS IN EITHER DIRECTION, and the boundary says so.
+  carrier_measured: >
+    THE TYPE LAYER, four executed refusals, each on its own pristine extraction: ASR2-002-A ->
+    UndeclaredReduction; CD-ENG-WO2R2-V01 -> the identical refusal (the rename test, executed);
+    CD-ENG-WO2R2-V03 -> TypeError on a mappingproxy; CD-ENG-WO2R2-V04 -> QuantityProvenanceMissing,
+    both arms.
+withdrawn_claims:
+- 'src/crash_detector/dials/magnitude.py boundary A: "the sum cannot come back ... no number so obtained can ever be a dial magnitude again." WITHDRAWN. Replaced by a claim an auditor can refute by execution, together with what is explicitly NOT claimed.'
+- 'tools/register/check_no_blend.py RULE 4: "cannot avoid coming here." WITHDRAWN AS A CLAIM by the Product Owner at CD-D-073. NOT SOFTENED — REPLACED by a property that is true: a module that NAMES one of the three names and is not a declared site is REPORTED, which is a fact about names, is not a bound on the set of routes, and DOES NOT SURVIVE A RENAME.'
+- 'The sibling sentence "since CD-PL-F54 there is exactly one way to get the number back in", in BOTH places it appeared. Verified by grep: no instance of any of the three survives anywhere in src/, tools/, contracts/ or required-tests.yaml.'
+register_changes:
+  changed: 'CD-RT-001-ABSENCE-RENDERS-UNKNOWN `execute` GREW by tests/test_dial_presentation.py, because the register may not claim a layer it declares no test for (CD-RULE-004). Its execution contract carries the identical command. Two negative_control texts and two entry comments extended.'
+  not_changed: 'latest_admitted_run — UNTOUCHED, still null, verified by parsing the file. No status-like key introduced. No `scope:` declaration changed. Nothing removed from any declared command.'
+
+# --- findings this seat raised, including against its own work -------------------------------- #
+findings:
+- id: CD-ENG-WO2R2-F03
+  severity: HIGH
+  against: 'THIS SEAT''S OWN CLASS CLOSURE. Raised by the seat that wrote it.'
+  finding: >
+    THE EXTERNAL ADMISSION BASE CASE IS NOT CLOSED, AND CD-ENG-WO2R2-V05 SHOWS IT REACHED THROUGH
+    THE PRODUCT'S OWN EXTENSION POINT WITH NOTHING REFUSING IT. One stateful ContributionModel
+    object injected into BOTH DialSpecs is handed each dial's payloads in turn by `evaluate`, keeps
+    what it saw, and returns the mean as the second dial's magnitude. MEASURED on a pristine
+    extraction: check_no_blend PASS 5002, check_no_numeric_default PASS 397, whole suite 1333
+    passed, and number_for_dial_slot('monetary_debasement', ...) RETURNED 0.5 out of an equity 0.9
+    and a monetary 0.1. It launders nothing, names no door outside a declared site, touches no
+    private slot, and every field of its admission claim is TRUE except the number.
+  carrier: 'NONE. **NOT PROVED TO BE CARRIED ANYWHERE** (CD-RULE-006). Measured, not reasoned.'
+  no_guard_was_built_and_why: >
+    DELIBERATE, and it is the substance of this finding rather than an omission from it. An
+    identity check refusing one model OBJECT shared between two DialSpecs is a one-line change that
+    refuses exactly this variant and is defeated by two instances of the same class sharing a class
+    attribute — the instance game for the third time on this project, which both the auditor and
+    the Product Owner named in writing. A purity probe (call compute twice and compare) catches
+    this variant, is defeated by a model that memoises on its payloads, doubles the cost of every
+    evaluation, and would be a fourth clever guard over a hole it does not close. Whether a
+    caller-supplied model is pure is NOT DECIDABLE AT THIS ALTITUDE.
+  what_closing_it_would_take: >
+    AN ARCHITECTURAL CHANGE, NOT A GUARD: the system computing dial magnitudes from source payloads
+    itself rather than delegating to a caller-supplied model. That is BLUEPRINT §7 / CD-D-005
+    territory and is owed to the Product Owner. PO-DECISIONS-0002 states that escalating a
+    structural impossibility is worth more to this project than another guard. THIS IS THAT
+    ESCALATION, WITH THE MEASUREMENT ATTACHED.
+- id: CD-ENG-WO2R2-F02
+  severity: MEDIUM
+  against: 'THE RECORD, not this work. NOT REPAIRED — the file is in this dispatch''s protected scope.'
+  finding: >
+    THE LANE'S CONTINUITY RECORD IS INVALID AND HAS BEEN SINCE BEFORE THIS DISPATCH.
+    `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` returns
+    `CONTINUITY_REFERENCE_INVALID/RESUME_BLOCKED` with one BLOCKING line, and returns the SAME
+    state on a pristine `git archive 50fc231 | tar -x` extraction this seat had not touched — so it
+    is pre-existing and is not caused by this increment. Measured facts:
+    governance/engineering/ACTIVE_WORK.yaml carries `continuity_record_commit: PENDING`,
+    `last_completed_checkpoint_sha: 0047093...` and `last_build_log_entry:
+    BL-20260819T025400Z-0004` while the lane's latest entry before this one is
+    BL-20260819T193519Z-0049 — 45 entries further on — and `current_work` still describes the
+    interrupted first WO-2 Engineer lane. The referenced entry FILE is present, so this is not the
+    CD-PL-F69 missing-file shape; the unresolved PENDING is the likeliest cause and the precise
+    diagnosis is the Project Lead's, since ACTIVE_WORK.yaml is Project-Lead-only.
+  why_it_matters: >
+    Every seat dispatched into this lane since has booted BLOCKING, and CD-RULE-007 exists
+    precisely because a continuity write is not complete until `pbg boot` has read it back. It is
+    reported rather than worked around.
+- id: CD-ENG-WO2R2-F01
+  severity: LOW
+  against: 'THE RECORD.'
+  finding: >
+    `variants/MANIFEST.md` did not exist at 50fc231, although both this dispatch and the WO-2R
+    dispatch refer to variants by that exact path; the corpus manifest is at
+    `variants/WO-2R/MANIFEST.md`. An index was CREATED at that path rather than the reference
+    silently worked around, naming both trees and stating that the whole corpus proves nothing
+    about any class (CD-D-047). A dispatch pointing at a path that does not exist costs the next
+    seat the same minutes it cost this one.
+
+# --- separation of duties --------------------------------------------------------------------- #
+separation_of_duties: >
+  This seat did not certify, assure or accept this work (PBG-SOD-001, non-waivable). It did not
+  weaken any check, test, assertion, guard or plant, and it deleted none. It did not touch
+  latest_admitted_run, did not register an ingredient source, did not invent a product quantity
+  (a weighted reduction was refused for exactly that reason, CD-RULE-003), recorded no secret
+  value, bound no port, and modified nothing under pbg/, governance/assurance/,
+  governance/decisions/, governance/dispatch/, governance/rules/, governance/reconciliation/,
+  governance/engineering/ACTIVE_WORK.yaml, PID.md or BLUEPRINT.md. No Build Log entry was edited;
+  this is a NEW entry (PBG-CONT-003, non-waivable).
+
+what_was_not_done:
+- 'INCREMENT 2 (CLASS 2 — JUDGE VALUES, NEVER TYPES; ASR2-005-A; the isinstance sweep) — NOT STARTED. Out of this launch by the dispatch.'
+- 'INCREMENT 3 (ITEM 3 — the CD-AC-012 dependency surface; ASR2-012-B) — NOT STARTED. Out of this launch by the dispatch.'
+- 'ASR2-003-A and CD-AC-003 — NOT TOUCHED. Ruled PASS (scoped) and explicitly out of scope. No change under this increment forced one.'
+- 'ASR2-012-C — NOT TOUCHED. CD-D-015 prohibits further hardening of that check. Nothing in this increment affects it.'
+- 'The documentary findings F04, F07..F13 — NOT TOUCHED. Owed at WO-3. The only declarations corrected here are the ones THIS closure invalidated.'
+- 'THE EXTERNAL ADMISSION BASE CASE — NOT CLOSED, and no guard built for it. See CD-ENG-WO2R2-F03.'
+
+next_safe_action: >
+  Project Lead reconciles increment 1 at 54e9464325b01b96b4066a6e1db8ca6c3c6b6085 and resolves the
+  `increment_sha: PENDING` in this entry with a follow-up commit that writes THAT FIELD AND NOTHING
+  ELSE (CD-RULE-007, the 192fc50 precedent). THEN: carry CD-ENG-WO2R2-F03 to the Product Authority
+  before increment 2 is dispatched, because it is a carrier/admission-shaped result and the
+  PO-DECISIONS-0002 standing condition is about exactly that class of finding. Increments 2 and 3
+  are re-dispatched to a fresh Engineer seat afterwards. The audit goes to a THIRD Assurance seat —
+  neither CD-ASR-WO2-01 nor CD-ASR-WO2-02 — with fresh variants and an exclusion set extended by
+  variants/WO-2R2/.

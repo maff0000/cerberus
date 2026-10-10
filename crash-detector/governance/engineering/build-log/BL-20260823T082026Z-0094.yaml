@@ -1,0 +1,124 @@
+# ================================================================================================ #
+# WO-2R3 INCREMENT 9 — CLOSING ENTRY. THE PLANT SET RE-MEASURED, AND ONE CORRECTION THAT SUPERSEDES.
+#
+# **THE PLANT SET IS THE THING THIS INCREMENT WAS MOST LIKELY TO BREAK AND NOBODY WOULD HAVE
+# NOTICED.** Increment 9 rewrote 16 product files; plants patch product files by line context; and
+# `PO-DECISIONS-0017` ruling 1 records FOUR occurrences of a plant silently ceasing to apply, whose
+# "violated" arm then becomes the clean tree and **EXITS 0 — a dead plant reporting a pass behind a
+# green board.** The plant-drift carrier is ruled and sequenced AFTER the seventh gate, so it does
+# not exist yet. **THIS ENTRY IS THAT MEASUREMENT TAKEN BY HAND INSTEAD.**
+#
+# AND ONE NUMBER IN BL-...-0093 IS WRONG. IT IS SUPERSEDED HERE AND NOT EDITED THERE
+# (PBG-CONT-003, NON-WAIVABLE).
+#
+# SEQUENCE BLOCK: 0060-0099, CONTINUING FROM 0093. 0100 AND ABOVE IS main's (CD-D-132).
+# ================================================================================================ #
+
+entry_id: BL-20260823T082026Z-0094
+timestamp_utc: "2026-08-23T08:20:26Z"   # from `date -u +%FT%TZ`, and nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-WO2R3-07
+role: ENGINEER
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R3-INC9-ENGINEER
+causal_owner: PROJECT_LEAD_SEAT_01
+work_type: CHANGE
+phase: BUILD
+repository: local
+branch: wo-2r3
+worktree: /srv/crash-detector-wo2r3
+execution_base_sha: 2b6796946cfa9b240016b8fab4a246145e0f678b
+parent_entry_id: BL-20260823T081759Z-0093
+schema_version: 1
+
+record_type: INCREMENT_CLOSE
+
+title: 'Increment 9 closed: the whole plant set re-measured in three columns, and one superseding correction.'
+
+# ---------------------------------------------------------------------------------------------- #
+A_CORRECTION_THAT_SUPERSEDES_BL_0093_AND_DOES_NOT_EDIT_IT:
+  the_entry: BL-20260823T081759Z-0093
+  the_field: 'FINDINGS.CD_ENG_WO2R3_07_F16, the parenthesis about the execution contracts.'
+  what_it_says: '"(**`contracts/execution/` HAS NO FILE FOR IT** — 26 contracts, none for the sweep)"'
+  WHAT_IS_TRUE: >
+    **THERE ARE 25, NOT 26.** `ls contracts/execution/*.md | wc -l` -> **25** at
+    `2b67969`, and 24 before this increment added
+    `CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.md`. **THE SUBSTANTIVE CLAIM IS UNCHANGED AND
+    WAS RE-CHECKED: none of the 25 is for the Class-2 sweep** (`ls contracts/execution/ | grep -ci
+    sweep` -> 0). **THE COUNT WAS NOT DERIVED, IT WAS ESTIMATED FROM A DIRECTORY LISTING I HAD READ
+    EARLIER IN THE SESSION, AND CD-RULE-003 SAYS A SEAT DERIVES A QUANTITY OR FAILS CLOSED.**
+    Recorded because it was caught, in the same session, by re-running the count instead of
+    trusting the sentence — which is the entire method this record is built on, applied to my own
+    prose. **CD-ENG-WO2R3-07-F21, LOW.**
+
+# ---------------------------------------------------------------------------------------------- #
+THE_PLANT_SET__RE_MEASURED_IN_THREE_COLUMNS_BECAUSE_A_DEAD_PLANT_EXITS_0:
+  the_method: >
+    **TWO PRISTINE `git archive` EXTRACTIONS PER PLANT** at `2b67969` — one clean, one violated —
+    the DECLARED command taken from `required-tests.yaml` BY `test_id` (derived with
+    `yaml.safe_load`, never read from the manifest's prose), **and `git apply`'s OWN EXIT CODE
+    RECORDED AS A THIRD COLUMN.** The plant list is `find plants -name '*.patch'`, not a document.
+  the_command: |
+      $ python3 -c "...yaml.safe_load(required-tests.yaml); map patch stem -> execute..." > /tmp/cmds.tsv
+      $ while IFS=$'\t' read -r patch tid cmd; do
+            for arm in clean violated; do git archive $SHA | tar -x -C /tmp/pm/$(basename $patch .patch)-$arm; done
+            (cd ...-violated && git apply "$patch"); ga=$?
+            (cd ...-clean    && eval "$cmd"); c=$?
+            (cd ...-violated && eval "$cmd"); v=$?
+        done < /tmp/cmds.tsv
+  the_result: |
+      PLANT                                                            CLEAN  GIT-APPLY  VIOLATED  VERDICT
+      CD-RT-001-ABSENCE-RENDERS-UNKNOWN.patch                              0          0         1  EVIDENCE
+      CD-RT-001-AST-NO-NUMERIC-DEFAULT.patch                               0          0         1  EVIDENCE
+      CD-RT-002-AST-NO-BLEND.patch                                         0          0         1  EVIDENCE
+      CD-RT-002-SCHEMA-CLOSED.patch                                        0          0         1  EVIDENCE
+      CD-RT-002-TYPE-NO-ARITHMETIC.patch                                   0          0         1  EVIDENCE
+      CD-RT-003-ENGINE-NO-WITNESS-REACH.patch                              0          0         1  EVIDENCE
+      CD-RT-003-GRANT-MATRIX-LIVE.patch                                    3          0         3  NOT A CONTRAST
+      CD-RT-002-CONSTRUCTORS-ESTABLISH-FROM-THE-DECLARED-FIELD-LIST.patch  0          0         1  EVIDENCE
+      CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT.patch                  0          0         1  EVIDENCE   <- NEW
+      CD-RT-005-PANEL-UNAVAILABLE-NEVER-AGREES.patch                       0          0         1  EVIDENCE
+      CD-RT-012-EGRESS-NO-BROKER.patch                                     0          0         1  EVIDENCE
+      CD-RT-012-LOCKFILE-DENYLIST.patch                                    0          0         1  EVIDENCE
+      CD-RT-012-NO-EXECUTION-INTERFACE.patch                               0          0         1  EVIDENCE
+                                                                13 patches · 13 APPLY · 12 EVIDENCE · 1 DECORATION
+  MY_WORK_BROKE_NO_PLANT_AND_THAT_IS_MEASURED_AND_NOT_ASSUMED: >
+    **`git apply` RETURNED 0 ON ALL THIRTEEN**, on a tree where increment 9 rewrote 16 product
+    files. Increment 8's ITEM_1 broke `CD-RT-003-ENGINE-NO-WITNESS-REACH` and only ITEM_6's
+    re-measurement saw it; this increment ran the same measurement without being told to, because
+    the risk is the same and the carrier still does not exist.
+  the_one_decoration_is_the_declared_one: >
+    `CD-RT-003-GRANT-MATRIX-LIVE` — **EXIT 3 ON BOTH ARMS**, PRECONDITION_NOT_MET. Identical output
+    clean and violated. **NOT A CONTRAST; DECORATION.** Standing, declared at increment 8 (`F-06-L`)
+    and unchanged by anything here. `F-06-O` measured that the missing thing is CREDENTIALS and not
+    a store — **no credentials were guessed here either.**
+  and_the_set_moved_from_12_to_13: >
+    Increment 8's tip measured **12 patches, 11 EVIDENCE, 1 DECORATION**. This tip measures
+    **13, 12, 1.** The delta is exactly this increment's own plant. `plants/MANIFEST.md`'s count
+    was moved IN THE SAME COMMIT AS THE PATCH, with the superseded figures quoted rather than
+    deleted — which is `F-06-L`'s whole complaint answered structurally rather than promised.
+
+# ---------------------------------------------------------------------------------------------- #
+THE_FINAL_STATE_OF_THE_LANE_AT_2b67969:
+  suite: '`python3 -B -m pytest -q` -> **3 failed, 1696 passed.** All three in `tests/test_the_fifteen.py`, all three DECLARED IN ADVANCE by the dispatch. **NO FOURTH FAILURE.** 1687 -> 1696 is the nine new tests in `tests/test_sealed_against_forged_state.py`.'
+  class_2_sweep: '`python3 -B tools/sweep/delegated_judgement_sweep.py --root .` -> EXIT 1, **FAIL — 555 sites, 4 violations.** Byte-identical to the declared base state. **THE THREE STALE KEYS ARE STILL STALE.**'
+  protected_file_untouched: '`git diff --stat 753efe4..2b67969 -- tools/sweep/` -> **EMPTY.** Not the register, not the checker.'
+  register_checks: '**TWELVE EXIT 0** (eleven pre-existing plus `CD-RT-002-SEALED-AGAINST-FORGED-ESTABLISHMENT`), `check_grant_matrix_live` EXIT 3 — the declared environment condition.'
+  the_sealing_instrument: '`PASS — 99 assertions, 0 violations`; 99 examined, **51 SEALED · 0 OPEN AND REQUIRED · 48 EXCLUDED BY MEASUREMENT · 0 UNMEASURABLE**, and 51 + 0 + 48 + 0 = 99.'
+  variants_manifest: '**ZERO GAPS.** Every file under `variants/WO-2R3/` is named by at least one row of its MANIFEST — checked by iterating the directory, not by reading the manifest (`CD-PL-F97`).'
+  commits:
+  - '419bd7e — ITEM_1 PART A, the seal applied to 36 classes'
+  - '8de91d2 — ITEM_1 PART B, the instrument, the carrier, the plant, the three places'
+  - 'da308a1 — ITEM_2, CD-PL-F104 measured, closed in a variant, declared in three places'
+  - '2b67969 — ITEM_3, CD-D-166 measured on both axes'
+  - 'this entry — the plant set and the correction'
+  every_commit_identity_verified: '`git log 753efe4..HEAD --format=''%an <%ae> | %cn <%ce>''` -> **CD-ENG-WO2R3-07 on all four, author AND committer** (CD-RULE-002).'
+
+# ---------------------------------------------------------------------------------------------- #
+WHAT_THE_NEXT_ACTOR_SHOULD_ATTACK_FIRST__WRITTEN_BY_THE_SEAT_THAT_BUILT_IT:
+- '**THE ROUTE SET.** Five routes, DECLARED not complete. It grew twice under measurement in one increment (R2/R3 for the enums, R5 for the `_dataclass_setstate` zip). **A SET THAT GREW TWICE IN ONE DAY SHOULD BE ASSUMED INCOMPLETE.** `__reduce__`, `__reduce_ex__`, `__class__` reassignment on an existing object, and `ctypes` were NOT measured.'
+- '**THE EXCLUSION CLAUSE''S SECOND CONDITION.** A class is excluded only if the imposing base is OUTSIDE the package. **NOTHING TESTS THAT BRANCH** — there is no governed class today whose `__dict__` comes from a base we own, so the "our defect, not our exclusion" arm has never fired. It is written and unexercised.'
+- '**THE 48.** They are UNSEALABLE, not safe, and 43 of them are the exception types every refusal on this project is carried by. **NOT PROVED TO BE CARRIED ANYWHERE.**'
+- '**`__slots__` AS A TRANSCRIPTION.** 34 classes now carry a tuple that restates their field list. The rot is loud (AttributeError on first construction) but it is still a second list that must agree with a first.'
+
+next_safe_action: 'The Project Lead reconciles BY MEASUREMENT on its own `git archive` extractions and banks the increment. Then the SEVENTH fresh Assurance seat, whose brief must carry: the sealing claim as an ATTACKABLE claim; the two findings this seat raised against its own instrument (F06, F07); the two against the dispatch (F08, F16, F17); and the SCOPE_INSUFFICIENT for `tools/sweep/`.'

@@ -1,0 +1,34 @@
+diff --git a/src/crash_detector/serving/feed_state.py b/src/crash_detector/serving/feed_state.py
+new file mode 100644
+index 0000000..748818f
+--- /dev/null
++++ b/src/crash_detector/serving/feed_state.py
+@@ -0,0 +1,28 @@
++"""The discriminator the witness feed hands us for its panel rows.
++
++CD-ENG-WO2R2-V06. NOT the timestamp. `resolve_panel` selects the panel constructor with
++`row.state == _STATE_AGREES`, and `==` is the LEFT operand's to define. The feed's own
++state type reports UNAVAILABLE to every log and every store while comparing equal to
++"AGREES" at the one place it decides anything.
++
++Nothing about time is involved: the row is fresh, the window is ordinary, and the
++FreshnessEvidence constructor runs and succeeds honestly.
++"""
++
++
++class FeedState(str):
++    """The state string the upstream feed's client library returns."""
++
++    def __eq__(self, other):
++        # The feed normalises its own vocabulary against ours.
++        return other == "AGREES"
++
++    def __ne__(self, other):
++        return not (other == "AGREES")
++
++    def __hash__(self):
++        return hash("AGREES")
++
++
++def feed_state(reported):
++    return FeedState(reported)

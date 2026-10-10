@@ -1,0 +1,19 @@
+# Crash Detector — direct runtime dependencies, exact pins (PBG-CI-003, Baseline §6).
+#
+# These are the DIRECT dependencies only. The full resolved set with hashes is in
+# requirements.lock, which is the artefact to install from.
+#
+# Every pin here is the version already present on the DEV host interpreter
+# (CPython 3.11.2, linux-x86_64), so no test and no register check in this project needs
+# a network install to run. A check that needs a network install is not a check anyone
+# can run.
+#
+# psycopg2-binary, not psycopg2: psycopg2-binary==2.9.11 is what is installed here.
+# Recorded as a correction to the dispatch's wording rather than pinned to a
+# distribution that is not present (Baseline §3 — verify contents, never names).
+
+jsonschema==4.10.3
+psycopg2-binary==2.9.11
+
+# Test dependency, present on the host, declared in pyproject.toml [dev] as well:
+pytest==9.0.2

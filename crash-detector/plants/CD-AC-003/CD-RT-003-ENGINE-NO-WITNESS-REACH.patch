@@ -1,0 +1,90 @@
+diff --git a/src/crash_detector/corroboration.py b/src/crash_detector/corroboration.py
+new file mode 100644
+index 0000000..c9cf812
+--- /dev/null
++++ b/src/crash_detector/corroboration.py
+@@ -0,0 +1,20 @@
++"""Corroboration of a computed reading against the independent view.
++
++The witness panel already carries the comparison between what we computed and what the
++independent sources say. When the two have come apart there is no honest number to
++publish, so the engine consults it before it settles a dial.
++
++Kept as a small shared helper next to :mod:`crash_detector.observations`, so both the
++engine and the serving layer can ask the same question the same way.
++"""
++
++from __future__ import annotations
++
++from .witness.panel import Diverges, WitnessPanel
++
++__all__ = ["is_corroborated"]
++
++
++def is_corroborated(panel: "WitnessPanel") -> bool:
++    """True unless the panel says the independent view has come apart from ours."""
++    return not isinstance(panel, Diverges)
+diff --git a/src/crash_detector/engine/evaluate.py b/src/crash_detector/engine/evaluate.py
+index dea4bb7..cdb16a6 100644
+--- a/src/crash_detector/engine/evaluate.py
++++ b/src/crash_detector/engine/evaluate.py
+@@ -214,6 +214,7 @@ __all__ = [
+     "REASON_REQUIRED_INPUTS_UNAVAILABLE",
+     "REASON_CONTRIBUTING_INPUTS_UNAVAILABLE",
+     "REASON_NO_MODEL_DECLARED",
++    "REASON_WITNESSES_DIVERGED",
+     "READINGS_THAT_CARRY_A_VALUE",
+     "required_inputs_are_all_present",
+     "refuse_a_number_without_its_inputs",
+@@ -242,6 +243,7 @@ REASON_CONTRIBUTING_INPUTS_UNAVAILABLE = "CONTRIBUTING_INPUTS_UNAVAILABLE"
+ #: from both envelope schemas and from every test, which is why the rename is safe and why
+ #: keeping a name that points at a deleted type would have been the worse choice.
+ REASON_NO_MODEL_DECLARED = "NO_MODEL_DECLARED"
++REASON_WITNESSES_DIVERGED = "WITNESSES_DIVERGED"
+ 
+ 
+ @admits(
+@@ -311,6 +313,19 @@ def evaluate(
+     )
+ 
+ 
++def _corroborated(witness_panel: object) -> bool:
++    """Whether the independent view currently agrees with what we computed.
++
++    Imported here rather than at module scope: the witness types are only needed on the
++    cycles where a panel is actually supplied.
++    """
++    from crash_detector.corroboration import is_corroborated
++
++    if witness_panel is None:
++        return True
++    return is_corroborated(witness_panel)
++
++
+ def _latest_usable_ok(
+     observations: Sequence[ObservationRecord],
+     *,
+@@ -765,6 +780,7 @@ def _evaluate_dial(
+     usable: dict[str, OK],
+     now_utc: datetime,
+     model: "Union[ModelSpec, None]" = None,
++    witness_panel: object = None,
+ ) -> "Reading":
+     """One dial's reading, or the named reason there is not one.
+ 
+@@ -779,6 +795,15 @@ def _evaluate_dial(
+     the moment anybody gave the evaluator a fourth argument"*. This is that fourth argument,
+     and the guard did not come off with it.
+     """
++    if not _corroborated(witness_panel):
++        # The independent view has come apart from ours. There is no honest number to
++        # publish while that is true.
++        return Unknown(
++            reason=REASON_WITNESSES_DIVERGED,
++            since_utc=now_utc,
++            missing_inputs=(),
++        )
++
+     if not spec.required_input_ids:
+         # The WO-2 state: no ingredient sources declared (CD-D-005 owed, BLUEPRINT §16).
+         # Zero requirements satisfied is NOT "all requirements satisfied".

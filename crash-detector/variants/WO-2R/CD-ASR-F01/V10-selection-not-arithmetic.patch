@@ -1,0 +1,26 @@
+diff --git a/src/crash_detector/publication/worse.py b/src/crash_detector/publication/worse.py
+new file mode 100644
+index 0000000..26cfbe0
+--- /dev/null
++++ b/src/crash_detector/publication/worse.py
+@@ -0,0 +1,20 @@
++"""The worse of the declared dials, for a single-figure banner."""
++
++from __future__ import annotations
++
++import dataclasses
++
++__all__ = ["worse_dial_magnitude"]
++
++
++def worse_dial_magnitude(dials):
++    """Whichever dial reads highest.
++
++    No arithmetic anywhere: this only chooses between the readings. The figure returned
++    is one dial's own magnitude, unaltered.
++    """
++    magnitudes = [
++        getattr(dials, field.name).value.score
++        for field in dataclasses.fields(dials)
++    ]
++    return max(magnitudes)

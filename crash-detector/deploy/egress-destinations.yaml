@@ -1,0 +1,131 @@
+# =========================================================================================
+# THE EGRESS DESTINATION REGISTRY — the only places anything in this system may be permitted
+# to go. Read by tools/register/check_egress_no_broker.py (CD-RT-012-EGRESS-NO-BROKER) and
+# by tests/test_egress_destination_registry.py.
+#
+# CRITERION: CD-AC-012, "no execution pathway exists" (PID §6). PID §2 is constitutional:
+# the detector is advisory-only, and advisory-only is STRUCTURAL, not policy.
+#
+# -----------------------------------------------------------------------------------------
+# WHY THIS FILE EXISTS. IT IS THE ANSWER TO A FINDING.
+# -----------------------------------------------------------------------------------------
+# CD-ASR-F04 (MEDIUM, assurance CD-ASR-WO2-01): an independent auditor put the IP literal
+# `198.51.100.24` into cd-collectors' egress allowlist where `api.ibkr.com` had been, and the
+# register check went GREEN. The check recognised brokers BY NAME, and an address has no name
+# to recognise. The Product Owner's ruling (PO-GATE-REVIEW-WO2-0001, Ruling 2, F04) is that
+# "the check must resolve what an entry REACHES, not what it is spelled as", and that it must
+# be closed before any WO-3 egress lane inherits it.
+#
+# THE OBVIOUS REPAIR IS THE WRONG ONE. Adding an IP-literal detector would recognise one more
+# SPELLING, and the next spelling is a CIDR, a URL, an unregistered hostname, a punycode host,
+# a hex-dotted address or an internal service name. That is the same defect one level up, and
+# it is the defect this whole rework exists to stop repeating.
+#
+# RESOLUTION IS ALSO NOT AVAILABLE, AND THAT IS DELIBERATE. A check whose verdict depends on
+# DNS or on any network call is not reproducible, cannot be run offline by an auditor, and
+# therefore cannot be a gate (CD-PL-F48; the WO-2R dispatch prohibits it in terms). So "what
+# an entry reaches" has to be decided from DATA IN THE TREE — which is this file.
+#
+# -----------------------------------------------------------------------------------------
+# THE STRUCTURE: DENY BY DEFAULT.
+# -----------------------------------------------------------------------------------------
+# An entry in any service's `x-egress.hosts` in deploy/compose.yaml is admissible ONLY if it
+# is, character for character, the `host` of a destination REGISTERED BELOW, and only if that
+# destination names that service in its `services` list. Everything else is a violation BY
+# DEFAULT — not because the check recognised something about it, but because nobody declared
+# it. An IP literal then stops being a spelling to catch and is simply not a destination
+# anyone declared, which is the same thing a CIDR, a URL, a wildcard and a hostname somebody
+# added quietly all are.
+#
+# The check performs NO recognition on an unregistered entry. It cannot be evaded by writing
+# the destination differently, because there is no pattern to write around.
+#
+# THE BROKER VOCABULARY AND THE KNOWN-OPERATOR DENYLIST SURVIVE AS A SECOND LAYER OVER THIS
+# FILE ITSELF, so that a destination somebody DOES register is still judged: `api.ibkr.com`
+# registered here fails on `ibkr.com`, and an operator field reading "Interactive Brokers"
+# fails on `brokers`. NEITHER LAYER IS SOLE. Layer 1 catches what nobody declared; layer 2
+# catches what somebody declared and should not have.
+#
+# -----------------------------------------------------------------------------------------
+# WHY WO-2 SHIPS THIS REGISTRY EMPTY, AND WHY THAT IS THE DELIVERABLE RATHER THAN A GAP.
+# -----------------------------------------------------------------------------------------
+# Registering a destination for cd-collectors IS registering an ingredient source, and
+# CD-D-005 — which inputs feed each dial and what each stands for — is owed by the Product
+# Owner before WO-3. Choosing ingredients is choosing what a dial MEANS (PBG-AUTH-005), and
+# no engineering seat may do it. cd-witness' two witness hosts and cd-review's model host are
+# likewise undecided in BLUEPRINT §2 and §16, and are recorded as `pending` on those services
+# rather than guessed.
+#
+# With nothing registered, the admissible set is EMPTY and every allowlist in compose.yaml is
+# empty too. That is not merely safe: it is the accurate description of this system in WO-2,
+# and it is fail-closed by construction rather than by anybody's restraint.
+#
+# -----------------------------------------------------------------------------------------
+# WHAT THIS FILE DOES NOT CLAIM.
+# -----------------------------------------------------------------------------------------
+# It is a DECLARATION. Docker Compose has no per-host egress primitive, so nothing here is
+# enforced at WO-2 by this file or by the compose file; what makes egress structurally absent
+# today is the TOPOLOGY — both networks are `internal: true` and both published ports bind
+# 127.0.0.1. The lane that makes ALLOWLIST mean more than NONE is owed at WO-3, and this
+# registry exists so that lane inherits a declaration that is closed rather than one with a
+# hole in it. No packet has been observed and none is claimed.
+#
+# A REGISTERED DESTINATION IS A HUMAN CLAIM, AND A FALSE ONE IS NOT DETECTABLE FROM THIS TREE.
+# If someone registers a hostname that in fact resolves to a broker's edge, nothing here can
+# know that, because knowing it would require the network. What the structure buys is that
+# the claim must be WRITTEN DOWN, attributed to an operator, given a purpose and cited to a
+# clause of product intent — reviewable by a person, at a named line, before it is reachable.
+# That limit is stated in full in the check's header and in the register entry, and it is not
+# claimed to be carried by any other layer.
+#
+# =========================================================================================
+
+version: 1
+contract: CD-EGRESS-DESTINATION-REGISTRY-v1
+
+# -----------------------------------------------------------------------------------------
+# THE ENTRY SHAPE. A destination declares EXACTLY these six keys — no more and no fewer.
+# An unknown key is a violation, not an extension: a field the guard does not read is a
+# declaration nobody enforces, which is how the last hole got in.
+#
+#   id           a stable identifier for this destination, unique in this file
+#   host         the DNS hostname, in canonical form. TWO OR MORE LABELS of lowercase
+#                letters, digits and hyphens, no leading or trailing hyphen, final label
+#                alphabetic and at least two characters. NOTHING ELSE IS A DESTINATION THAT
+#                CAN BE DECLARED: not an address literal, not a CIDR block, not a URL, not a
+#                wildcard, not a bare service name. The reason is not tidiness. The only
+#                offline evidence of what a destination REACHES is its registrable domain,
+#                which is what the known-operator denylist reads; an address literal carries
+#                no such evidence at all, so it cannot be judged and therefore cannot be
+#                declared. This is a POSITIVE PERMITTED SHAPE, so an unrecognised form is a
+#                violation rather than a silence.
+#   operator     the organisation that runs it. Judged by the same broker vocabulary and
+#                known-operator denylist as the host, so a broker cannot be admitted by
+#                registering an innocent-looking hostname it happens to own.
+#   purpose      why this system must reach it, in plain English. NOT judged by the guard —
+#                see the declared limit — and written for the human reviewing the diff.
+#   declared_in  the clause of recorded product intent that authorises it: a PID section, a
+#                BLUEPRINT section, or a ruled decision id. A destination nothing authorises
+#                is a destination nobody agreed to.
+#   services     the services permitted to name this host. Each must exist in
+#                deploy/compose.yaml AND declare policy ALLOWLIST — registering a destination
+#                for cd-engine, cd-public, cd-private or cd-store is a violation, because
+#                BLUEPRINT §13 gives those four no egress at all.
+#
+# The shape of an entry, for when one is finally authorised:
+#
+#   - id: DEST-EXAMPLE-001
+#     host: data.example.org
+#     operator: Example Data Ltd
+#     purpose: >
+#       What this system fetches from it and why it cannot be obtained otherwise.
+#     declared_in: "CD-D-005 — the ingredient set, owed by the Product Owner"
+#     services:
+#       - cd-collectors
+#
+# THAT BLOCK IS A COMMENT AND REGISTERS NOTHING. It is written here rather than as a
+# commented-out entry in the list below so that no future edit can make it live by deleting
+# a `#`.
+# -----------------------------------------------------------------------------------------
+
+destinations: []

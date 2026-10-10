@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 19:17:30.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 19:21:46.341217187 +0100
+@@ -850,7 +850,7 @@
+         oldest_microseconds, oldest_key = parsed[0]
+         age = published - oldest_microseconds
+ 
+-        if age < 0:
++        if False:  # D2: THE NEGATIVE-AGE BRANCH, REMOVED. `age > window` alone.
+             raise PublicationRefused(
+                 REFUSAL_STALE_CALM,
+                 surface=surface,

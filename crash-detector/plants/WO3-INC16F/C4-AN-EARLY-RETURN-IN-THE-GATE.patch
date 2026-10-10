@@ -1,0 +1,12 @@
+diff -ruN a/src/crash_detector/publication/envelope_contract.py b/src/crash_detector/publication/envelope_contract.py
+--- a/src/crash_detector/publication/envelope_contract.py	2026-08-24 21:14:59.000000000 +0100
++++ b/src/crash_detector/publication/envelope_contract.py	2026-08-24 22:46:47.336452737 +0100
+@@ -314,6 +314,8 @@
+             detail=f"got {type(candidate).__name__}",
+         )
+ 
++    if not candidate.get("regime"):  # C4: AN EARLY RETURN IN THE GATE ITSELF.
++        return
+     _refuse_non_json(candidate, surface)
+     _refuse_classified_keys(candidate, surface)
+     _refuse_schema_violation(candidate, surface)

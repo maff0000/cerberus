@@ -1,0 +1,483 @@
+# =============================================================================================
+# BUILD LOG — CD-WO-002R-READER. The shared YAML reader that did not terminate.
+#
+# CD-PL-F61 (MEDIUM), confirming the seat-raised CD-ENG-WO2R-F14 (MEDIUM), ruled by CD-D-051 to
+# a separate bounded dispatch issued AFTER WO-2R increments 4 and 5 and BEFORE Assurance.
+#
+# THIS SEAT DOES NOT CERTIFY THIS WORK. Every run below is IMPLEMENTATION EVIDENCE and does not
+# become assurance by being thorough (PBG-SOD-001, non-waivable). An independent Assurance seat
+# decides. The Project Lead has said it will reproduce these numbers on pristine extractions and
+# write fresh probes of its own, so the soft spots are declared here by name rather than left to
+# be found.
+# =============================================================================================
+
+entry_id: BL-20260819T175414Z-0048
+timestamp_utc: '2026-08-19T17:54:14Z'   # from `date -u +%FT%TZ`, and from nothing else (CD-RULE-005)
+project: crash-detector
+actor: CD-ENG-READER-01
+role: ENGINEER
+seat_instance: 'CD-WO-002R-READER, seat instance 1'
+causal_owner: PROJECT_LEAD_SEAT_01
+authority_id: CD-AUTH-0001
+dispatch_id: CD-DISPATCH-WO2R-READER
+work_type: CHANGE
+traits: [creates_process]
+phase: BUILD
+repository: local
+branch: wo-2-skeleton
+worktree: /srv/crash-detector-wo2
+baseline_sha: f22d120a1f92e43aa4944b6f1b20a789ba951760
+increment_sha: deaedbcccad4504819ced129495a013a537f39f9   # THE FINAL SHA OF THIS DISPATCH
+parent_entry_id: BL-20260819T165617Z-0047
+record_origin: ENGINEER_SEAT
+tooling_available_at_capture: true
+schema_version: 2
+
+# --- boot ------------------------------------------------------------------------------------ #
+boot_declaration: >
+  Booted with `PYTHONPATH=pbg/tools python3 -B -m pbg.cli boot` in /srv/crash-detector-wo2.
+  VERDICT RED, on continuity: CONTINUITY_REFERENCE_INVALID / RESUME_BLOCKED, because the lane's
+  checked-out governance/engineering/ACTIVE_WORK.yaml is the branch-point copy and names the
+  ORIGINAL WO-2 dispatch and execution base 0047093 rather than this one. THIS IS THE KNOWN BOOT
+  CONDITION the dispatch names and instructs the seat to DECLARE AND NOT CORRECT. ACTIVE_WORK.yaml
+  is Project-Lead-only protected scope. The previous seat declared it rather than fixing it and
+  was right to (CD-ENG-F31); this seat did the same and touched nothing.
+  Observed HEAD f22d120a1f92e43aa4944b6f1b20a789ba951760 == execution_base_sha, `git status
+  --short` 0 lines. NO DRIFT (PBG-CONT-006). PID.md@441d83166b2f3d0c,
+  BLUEPRINT.md@794c25097d4f1f4a. Held actions CD-HOLD-003/004/005 all still HELD and none touched.
+  Also noted at boot and not corrected: roadmap_identity UNAVAILABLE (no ROADMAP.md), pre-existing.
+
+# --- the defect, as measured by this seat ----------------------------------------------------- #
+the_defect_reproduced_at_the_dispatch_base: >
+  On a pristine `git archive f22d120 | tar -x` extraction:
+    printf 'top:\n  - key:\n      - nested\n' > /tmp/hang.yaml
+    timeout 20 python3 -B -c "import sys; sys.path.insert(0,'tools/register'); import _yamlmin;
+                              _yamlmin.load_yaml('/tmp/hang.yaml')"
+  -> EXIT 124. Reproduced exactly as the dispatch records it.
+
+root_cause: >
+  `_parse_sequence`'s INLINE-MAPPING MERGE LOOP. When a sequence item carries a key inline
+  (`- key: ...`), the loop `while index < len(lines) and lines[index][1] >= child_indent` merges
+  deeper lines by delegating to `_parse_mapping` — and it has NO INCREMENT OF ITS OWN, so the
+  delegation is the only source of progress. `_parse_mapping` BREAKS IMMEDIATELY, consuming
+  nothing, whenever the line it is pointed at begins `- `, because a sequence item cannot open a
+  mapping. The loop condition is then still true on the same cursor, and the next iteration is
+  bit-for-bit identical to the last. That is the whole defect: a delegation that can consume
+  nothing inside a loop that can only advance by delegating.
+
+why_this_is_a_class_and_not_a_shape: >
+  The class is AN INPUT ON WHICH THE READER DOES NOT FINISH. It is NOT "the nested-sequence
+  document" and it is NOT, as CD-ENG-WO2R-F14 records it, "specifically the first key opening a
+  sequence" — see CD-ENG-READER-F03, which is a measured counterexample to that wording. The
+  repair therefore tests THE CURSOR, which is the only thing a stall consists of, and knows
+  nothing about document shapes.
+
+# --- the repair -------------------------------------------------------------------------------- #
+what_i_implemented: >
+  ONE invariant, stated once in the module docstring and enforced at every site.
+
+  EVERY LOOP IN _yamlmin.py DRIVES ONE MONOTONE CURSOR into `lines`, a finite list built before
+  parsing starts and never mutated during it. On every iteration a loop either LEAVES (break /
+  return / raise) or MOVES THE CURSOR STRICTLY FORWARD, and no loop's continuation condition can
+  be true on a cursor that did not move. There are exactly two sources of movement:
+
+  RULE 1 — the loop moves it itself, with an unconditional `index += 1` on its own path. This is
+  `_parse_mapping`'s loop and both loops in `_fold_block_scalars`.
+
+  RULE 2 — the loop DELEGATES and adopts the returned cursor. Every such delegation now passes
+  through the new `_advance(lines, before, after, what)`, which returns a cursor that moved and
+  RAISES YamlSubsetError on one that did not, naming the line number, the offending text and what
+  it was trying to read there. This is `_parse_sequence`'s merge loop — the live stall — and its
+  empty-item branch, where the guard is measured from the top of the ITERATION rather than from
+  the delegation, so it passes today and would fire if a future edit removed the increment.
+
+  THE ONE UNGUARDED DELEGATION IS DOCUMENTED AT ITS CALL SITE. `_parse_mapping`'s `_parse(lines,
+  index, indent + 1)` legitimately returns a still cursor — `key:` with no block beneath it, a
+  sibling key following — and takes its progress from rule 1 instead. Stated in the code rather
+  than left to be re-derived by the next reader.
+
+  A BACKSTOP, so termination survives future edits. Each of the four loops carries an iteration
+  budget of len(lines). It is unreachable while rules 1 and 2 hold. It exists so that an edit
+  which breaks either one FAILS CLOSED with a stated reason at a named line instead of
+  reintroducing a hang, and it is proved LIVE by test rather than left as decoration.
+
+why_no_input_can_fail_to_advance: >
+  Because a loop that fails to advance is DETECTED AND REFUSED rather than repeated. `_advance`
+  does not enumerate shapes; it compares two integers. And if `_advance` itself were ever removed
+  or bypassed, the budget still converts the stall into a stated refusal — asserted by a test that
+  monkeypatches `_advance` to a pass-through, standing in for exactly that future edit. Termination
+  is checked while running, not argued from the current branch set. That is the difference between
+  this and a reader that terminates because every known shape was enumerated.
+
+what_a_document_it_cannot_parse_now_does: >
+  It RAISES, and it SAYS WHAT IT COULD NOT READ — the standard set by the increment-3 behaviour
+  commended at CD-D-048. Example, verbatim:
+    "line 3: this reader cannot read a nested block beneath a key written inline on a
+     block-sequence item. It made no progress past '- nested' and refuses rather than guessing.
+     It supports block mappings, block sequences of scalars and block sequences of mappings;
+     write the value as a block beneath its own key so it can be read without a YAML engine."
+  A partial parse of a gate's subject makes the gate decide on a document nobody wrote, so the
+  reader refuses instead.
+
+no_third_party_parser: >
+  The hand-rolled reader was repaired. NO dependency was substituted and `import yaml` appears
+  nowhere. The decision recorded in _yamlmin.py's header stands and was not re-taken.
+
+# --- evidence ---------------------------------------------------------------------------------- #
+method: >
+  A SEPARATE PRISTINE EXTRACTION PER VARIANT, every one `git archive <sha> | tar -x -C <tmpdir>`
+  then `git apply -p1`, run, discard. NEVER the worktree and NEVER a `git worktree`. `python3 -B`
+  on every invocation so no __pycache__ was written into any governed tree (PBG-RT-001: mutation
+  by EFFECT, not by label). `timeout` on every reader invocation on BOTH arms — without it the
+  session hangs instead of measuring the defect. Refusals asserted by REASON — the expected rule
+  id, artefact and line — never by bare exit code (CD-ENG-WO2R-F13, adopted project method).
+
+before_and_after_every_register_check:
+  note: >
+    Clean tree, no variant applied. LEFT COLUMN measured on a pristine extraction of f22d120.
+    RIGHT COLUMN measured on a pristine extraction of deaedbc. Exit code / assertion count.
+  table:
+  - 'check_base_image_digest_pin.py     0 / 13     ->  0 / 13'
+  - 'check_dockerignore.py              0 / 22     ->  0 / 22'
+  - 'check_egress_no_broker.py          0 / 69     ->  0 / 69'
+  - 'check_engine_no_witness_reach.py   0 / 24     ->  0 / 24'
+  - 'check_grant_matrix_live.py         3 / -      ->  3 / -'
+  - 'check_lockfile_denylist.py         0 / 15     ->  0 / 15'
+  - 'check_no_blend.py                  0 / 4855   ->  0 / 4855'
+  - 'check_no_execution_interface.py    0 / 38154  ->  0 / 38847'
+  - 'check_no_numeric_default.py        0 / 377    ->  0 / 377'
+  - 'check_schema_closed.py             0 / 242    ->  0 / 242'
+  the_one_count_that_moved: >
+    check_no_execution_interface.py, and it GREW. It scans src/ db/ deploy/ tests/ tools/ and
+    asserts over the source it finds, so it asserts over source this dispatch ADDS. Decomposed by
+    ISOLATION rather than by argument — four runs on one tree, each adding one file:
+      38154  base
+      38303  + the repaired tools/register/_yamlmin.py           (+149)
+      38847  + tests/test_register_yamlmin_termination.py        (+544)
+      38847  + the check_egress_no_broker.py declared-limit edit (+0, a docstring: no AST nodes)
+    NOTHING SHRANK ANYWHERE, on any check, on any tree. A silently shrinking assertion count is
+    how a skipped arm hides (CD-ENG-WO2R-F16, adopted project method), which is why the
+    decomposition is by measurement and not by explanation.
+  grant_matrix_live: >
+    exit 3 PRECONDITION_NOT_MET in BOTH columns and in both arms of its own plant. No live store
+    exists and this seat did NOT stand one up: the dispatch authorises no container build, no
+    container start and no network access (PBG-RT-010), and CD-HOLD-003 remains HELD.
+
+the_checks_that_returned_no_verdict:
+  note: >
+    Measured on the PL-T5 tree — `declared_in` written as a list of two authorities — extracted
+    pristine at f22d120 and at deaedbc. THE DISPATCH, CD-PL-F61 AND CD-ENG-WO2R-F14 ALL SAY TWO.
+    IT IS THREE. See CD-ENG-READER-F01.
+  table:
+  - 'check_egress_no_broker.py          exit 124  ->  exit 3, PRECONDITION_NOT_MET, line 428'
+  - 'check_base_image_digest_pin.py     exit 124  ->  exit 3, PRECONDITION_NOT_MET, line 428'
+  - 'check_engine_no_witness_reach.py   exit 124  ->  exit 3, CD-ENGINE-ROOT-101, line 428'
+  each_with_a_stated_reason: >
+    All three name deploy/compose.yaml, the exact line, and what could not be read there. None of
+    them changed WHAT it concludes about anything it could already read.
+
+variants:
+  location: 'variants/WO-2R/READER/, with rows in variants/WO-2R/MANIFEST.md. Nothing executable (PBG-ASSURE-001) — verified `find variants -type f -perm -u+x` returns 0.'
+  minimum_set_re_run:
+  - 'R01 the three-line minimal document      exit 124 -> exit 1, YamlSubsetError at line 3'
+  - 'R02 PL-T5, declared_in as two authorities exit 124 -> exit 3, PRECONDITION_NOT_MET, line 428'
+  - 'R03 V30, the seat-declared boundary-8 variant, re-run in place rather than duplicated
+     exit 124 -> exit 3, PRECONDITION_NOT_MET, line 428'
+  - 'R04 CD-ENG-WO2R-F19''s nested-anchor case, folded in rather than left owed
+     exit 124 -> exit 3, PRECONDITION_NOT_MET, line 428'
+  new_variants_mine:
+  - 'R05 THE BLOCK-SCALAR FOLDER''S BLIND SPOT. `- key: |` is never recognised as opening a
+     literal block: the indicator test matches only a bare `- |`. The raw body is handed to the
+     parser as sequence items. DIFFERENT ROUTE — a PREPROCESSING stage declining to consume text
+     it should have absorbed, nothing to do with nesting depth. 124 -> exit 3.'
+  - 'R06 AN INLINE KEY CARRYING A SCALAR VALUE. DIFFERENT ROUTE — it is a COUNTEREXAMPLE to the
+     recorded diagnosis rather than a deeper version of the known shape. 124 -> exit 3.
+     Raised as CD-ENG-READER-F03.'
+  - 'R07 THE SECOND ARTEFACT AND THE SECOND CALL SITE. The stall through
+     deploy/egress-destinations.yaml at that document''s own root. DIFFERENT ROUTE — a repair
+     made at the compose call site rather than in the reader passes every other row and fails
+     this one. 124 -> exit 3, and the LINE AND ARTEFACT BOTH MOVE (line 133, the registry), which
+     is what proves the row reached the second call site.'
+  - 'R08 STACK EXHAUSTION RATHER THAN CURSOR STALL. ~600 levels of block mapping. DIFFERENT ROUTE
+     — the one path to "does not finish" that `_advance` says nothing about, because it is not a
+     loop. exit 1 RecursionError -> exit 1 RecursionError, IDENTICAL AND DELIBERATELY UNCHANGED.
+     See the declared limit and CD-ENG-READER-F02.'
+  r08_has_no_patch_file_and_that_is_a_choice: >
+    The smallest document that reaches the interpreter's default recursion limit is ~128 KB of
+    pure indentation. A 128 KB blob of whitespace is not a reviewable artefact, so the MANIFEST
+    row carries the exact generator instead, which reproduces it byte-for-byte. Stated in the row
+    so the omission reads as a decision rather than as a gap.
+
+regression_cover:
+  file: tests/test_register_yamlmin_termination.py
+  node_ids: 'before 1289, after 1325. +36 added, 0 REMOVED, by `pytest -q --collect-only` diff.'
+  suite: 'PYTHONPATH=src python3 -B -m pytest -q -> exit 0, 1325 passed in 8.46s.'
+  the_property_that_matters_most: >
+    EVERY reader call in this file is WALL-CLOCK BOUNDED by signal.setitimer. A regression test
+    for non-termination that simply calls the reader would, on a regression, HANG THE WHOLE SUITE
+    instead of failing it — the defect wearing a test's clothes. Proved by running the new file
+    against the UNREPAIRED reader at f22d120: 21 FAILED, 15 passed, in 85.85s. It FAILS. It does
+    not hang. The 85 seconds is the timer firing sixteen times, which is the mechanism working.
+    A test named test_the_time_bound_itself_detects_a_hang spins deliberately and asserts the
+    guard unwinds it, so a green in this file cannot come from a timer that never fires.
+  what_is_covered: >
+    Eight documents that stalled at f22d120 (the minimal reproduction, PL-T5, V30, four levels
+    deep, at the document root, a scalar-bearing inline key, through the folder, through an
+    anchor), each asserted to terminate AND to name the line and the reason. Four documents that
+    must still parse byte-identically, including deploy/compose.yaml itself. Five malformed
+    documents that must RAISE, each asserted against ITS OWN reason. And the invariant directly:
+    `_advance` accepts a moved cursor, refuses a still one, permits a still one at end of input;
+    and the iteration budget fires when `_advance` is monkeypatched away.
+  why_it_is_here_at_all: >
+    CD-PL-F63 was raised because an 892-line rewrite added zero tests. Not repeated.
+
+eleven_plants: >
+  ALL ELEVEN `git apply --check` clean on a pristine extraction of deaedbc, and ALL ELEVEN still
+  contrast, each on its own pristine extraction with its own declared command from
+  plants/MANIFEST.md: ten at clean=0 planted=1, and CD-RT-003-GRANT-MATRIX-LIVE at 3/3 with no
+  live store. Identical to the state recorded at BL-20260819T165617Z-0047. NO PLANT WAS EDITED —
+  plants/ is protected scope and this dispatch changed nothing any plant patches.
+
+# --- scope --------------------------------------------------------------------------------------#
+files_changed:
+- 'tools/register/_yamlmin.py — the repair. +147 / -2.'
+- 'tools/register/check_egress_no_broker.py — DECLARED-LIMIT CORRECTION ONLY (boundary 8 closed,
+   8b added). No functional change; its assertion count is unchanged at 69.'
+- 'required-tests.yaml — the same declared-limit correction. latest_admitted_run UNTOUCHED and
+   still null (CD-RULE-001, non-relaxable).'
+- 'contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md — the same declared-limit correction.'
+- 'variants/WO-2R/MANIFEST.md — the rows for R01..R08.'
+- 'variants/WO-2R/READER/ — six new patch files. Nothing executable.'
+- 'tests/test_register_yamlmin_termination.py — new.'
+- 'governance/engineering/build-log/BL-20260819T175414Z-0048.yaml — this entry.'
+
+a_scope_reading_i_am_declaring_rather_than_assuming: >
+  writable_scope lists `variants/WO-2R/READER/`, but variants_and_proof.durable_variants in the
+  same dispatch requires "a row in variants/WO-2R/MANIFEST.md". MANIFEST.md sits one directory
+  above the listed path. I read the explicit instruction as authorising the rows, and APPENDED a
+  new section rather than editing any existing row. If the Project Lead reads the path list as
+  the tighter boundary, this is the one edit to reverse and I am flagging it rather than letting
+  it pass unremarked.
+
+what_i_deliberately_did_not_do: >
+  - I did NOT change what any check DECIDES. Every verdict on the clean tree and on every existing
+    variant is identical, with identical assertion counts, except the single count that grew
+    because the check scans source this dispatch added. The only outcomes that changed are the
+    ones that were previously exit 124 — no verdict at all.
+  - I did NOT repair the RecursionError path. It TERMINATES, so the class is closed without it,
+    but converting it would move all three callers from exit 1 to exit 3 on an input that already
+    has a verdict. The dispatch puts that out of bounds and says to report it. CD-ENG-READER-F02.
+  - I did NOT change the reader's FLATTENING of a mapping nested under a sequence item's inline
+    key (CD-ENG-WO2R-F15). It is a partial parse and it is wrong, but correcting it would change
+    what check_egress_no_broker DECIDES about variant V27, whose refusal currently arrives through
+    that flattening. PINNED BY A TEST so it cannot drift unnoticed, and re-raised as
+    CD-ENG-READER-F05.
+  - I did NOT close CD-ENG-WO2R-F19 proper. Top-level-only anchor RESOLUTION lives in
+    check_engine_no_witness_reach.py, which is not in writable scope, and giving the reader anchor
+    tracking would change that check's verdict on a nested anchor from CD-ENGINE-ROOT-103 to a
+    read. R04 covers the nested-anchor case as a variant, which is what the dispatch asked for.
+  - I did NOT correct the now-stale declared limit 4 of CD-RT-003-ENGINE-NO-WITNESS-REACH, in any
+    of its three places. Its check header is outside writable scope, so correcting the register
+    entry and the execution contract would leave CD-RULE-004's three places INCONSISTENT — worse
+    than leaving all three stale together. Escalated as CD-ENG-READER-F06.
+  - I did NOT touch check_base_image_digest_pin.py AT ALL. The repair required no caller change in
+    either consumer; the one caller file that changed changed only its declared-limit prose.
+  - I did NOT substitute a third-party YAML parser, add any dependency, or touch requirements.
+  - I did NOT touch src/, deploy/, plants/, db/, docs/, schemas/, pbg/, PID.md, BLUEPRINT.md,
+    CLAUDE.md, governance/authority|decisions|dispatch|rules/, governance/assurance/,
+    governance/reconciliation/ or governance/engineering/ACTIVE_WORK.yaml.
+  - I did NOT build an image, create or start a container, bind a port, reach the network, stand up
+    a store, register an ingredient source, record a secret value, or release a held action.
+  - I did NOT rewrite history. Commit deaedbc completes 18f5196 by ADDING the two untracked paths
+    `git commit -a` had skipped; it supersedes rather than amends (PBG-CONT-003, non-waivable).
+
+# --- findings against my own work -------------------------------------------------------------- #
+findings_raised_against_my_own_work:
+- id: CD-ENG-READER-F01
+  severity: MEDIUM
+  status: OPEN — the repair covers it, the RECORD does not
+  title: 'THREE checks returned no verdict on the same input, not two. Every governing record says two.'
+  detail: >
+    tools/register/check_engine_no_witness_reach.py imports `load_yaml` at line 293 and reads
+    deploy/compose.yaml at line 1009. MEASURED on the PL-T5 tree at f22d120: exit 124, the same as
+    the other two. The dispatch, CD-PL-F61 and CD-ENG-WO2R-F14 all say "TWO of the eleven declared
+    gate commands", and PL-T1-T5's own text says "IT AFFECTS BOTH REGISTER CHECKS THAT SHARE THE
+    READER, not one". It affects three.
+  why_it_matters: >
+    The repair is in the shared reader, so all three are covered by construction and no code is
+    owed. What is owed is the RECORD: a blast radius understated by fifty per cent in the finding,
+    the probe file and the dispatch is a number an auditor will reasonably rely on.
+  owed: 'a correction to CD-PL-F61''s scope statement. Project Lead scope, not mine.'
+- id: CD-ENG-READER-F02
+  severity: LOW
+  status: OPEN — DECLARED LIMIT 8b, deliberately not repaired
+  title: 'nesting deeper than the interpreter''s recursion limit raises RecursionError, not a stated refusal'
+  detail: >
+    ~600 levels of block mapping in deploy/compose.yaml gives exit 1 and a RecursionError
+    traceback, on all three consumers, IDENTICALLY before and after this repair. It TERMINATES, so
+    the class "an input on which the reader does not finish" is closed without it. But the second
+    invariant this dispatch sets — a document it cannot parse raises AND SAYS WHAT IT COULD NOT
+    READ — is only partially met: a traceback names no line.
+  why_i_did_not_fix_it: >
+    Converting it to YamlSubsetError moves all three callers from exit 1 to exit 3, because they
+    catch YamlSubsetError and check.refuse() returns EXIT_PRECONDITION. That is a VERDICT CHANGE ON
+    AN INPUT THAT ALREADY HAS A VERDICT, which this dispatch puts out of bounds and instructs the
+    seat to report rather than take. Measured in both arms on all three checks rather than argued.
+  my_recommendation: >
+    Take it, in a dispatch that can rule on the exit code — a stated refusal at exit 3 is more
+    honest than a traceback at exit 1, and exit 1 here is an accident of Python's exit convention
+    rather than a considered verdict. It is a ruling, not an implementation choice.
+  declared_at: 'check_egress_no_broker.py limit 8b · required-tests.yaml (8b) · contracts/execution/CD-RT-012-EGRESS-NO-BROKER.md (8b) · executable example: MANIFEST row R08.'
+- id: CD-ENG-READER-F03
+  severity: LOW
+  status: OPEN — DISCLOSED, and it is a correction to a recorded finding
+  title: 'CD-ENG-WO2R-F14''s recorded characterisation of the defect is NARROWER THAN THE DEFECT'
+  detail: >
+    F14 records: "the near miss that shows how narrow it is: `destinations: - id: D1 / services:
+    - x` parses FINE, because the first key's value is a scalar. It is specifically the first key
+    opening a sequence." MEASURED at f22d120, variant R06: `- declared_in: "BLUEPRINT §2 —
+    ingredient sources"` followed by a deeper `- 198.51.100.24` carries a scalar first value AND
+    STALLS ANYWAY, exit 124. The trigger is the CONTINUATION line's shape — any line at or beyond
+    child_indent that begins `- ` — not the inline key's value. F14's near-miss example parses for
+    a different reason than the one it gives: its continuation is a MAPPING key, not a sequence item.
+  why_it_matters: >
+    This is the finding the dispatch warned about in its own words — "a reader that terminates
+    because every known shape was enumerated is the exact defect four AMBER verdicts were about".
+    A repair fitted to F14's wording would have special-cased the empty-value inline key and left
+    R06 hanging. The repair here tests the cursor and never reads the wording, which is why R06
+    was closed by the same three lines that closed the minimal document.
+- id: CD-ENG-READER-F04
+  severity: LOW
+  status: OPEN — DISCLOSED, out of scope to close
+  title: 'the block-scalar folder does not recognise an indicator on a sequence item''s inline key'
+  detail: >
+    _fold_block_scalars tests `(":" in body and indicator in INDICATORS and not
+    body.startswith("- ")) or (body.startswith("- ") and body[2:].strip() in INDICATORS)`. The
+    second clause matches only a BARE `- |`. So `- key: |` is never folded, and the literal
+    block's body is handed to the parser as ordinary lines. Before this repair that was a HANG
+    (variant R05, exit 124). It is now a stated refusal at exit 3 — fail-closed and honest — but
+    the folder blind spot itself is not closed, and a legitimate author writing a literal block on
+    a sequence item's key gets a refusal rather than a read.
+  why_i_did_not_fix_it: >
+    Making the folder absorb that body would give the reader a CAPABILITY it does not have today,
+    on a shape that currently reaches a check as a refusal. That changes what a check decides on
+    such a tree. This dispatch changes whether a check terminates, not what it concludes.
+  owed: 'a reader-capability dispatch, if a compose author ever needs the shape. Not urgent: deploy/compose.yaml does not use it.'
+- id: CD-ENG-READER-F05
+  severity: LOW
+  status: OPEN — DISCLOSED, re-raising CD-ENG-WO2R-F15 against my own scope
+  title: 'the reader still FLATTENS a mapping nested under a sequence item''s inline key — a partial parse it does not admit to'
+  detail: >
+    `top:` / `  - key:` / `      sub: 1` reads as `{'top': [{'key': None, 'sub': '1'}]}`. The
+    correct reading is `{'top': [{'key': {'sub': 1}}]}`. The reader neither parses it correctly nor
+    refuses it — it silently produces a document nobody wrote, which is precisely what this
+    dispatch's second invariant says is worse than a refusal. It is the same structural weakness as
+    the stall: the merge loop assumes every deeper line is another key of the SAME mapping.
+  why_i_did_not_fix_it: >
+    Variant V27's refusal currently arrives THROUGH this flattening — CD-ENG-WO2R-F15 records that
+    V27 "collapses into PL-S3c's shape and the CLOSED KEY SET clause catches it instead". Correcting
+    the flattening would change which clause refuses V27, and possibly whether it is refused at all.
+    That is a verdict change and is out of bounds here.
+  what_i_did_instead: 'PINNED IT WITH A TEST (test_a_sequence_item_whose_nested_value_is_a_mapping_still_flattens) so it cannot drift unnoticed, with the reason for preserving it in the docstring.'
+  my_recommendation: >
+    This is the more serious of the two remaining reader defects — a stall is loud and a wrong
+    parse is quiet — and it should be dispatched WITH the V27 re-measurement, not separately.
+- id: CD-ENG-READER-F06
+  severity: LOW
+  status: OPEN — ESCALATED, scope insufficient
+  title: 'CD-RT-003-ENGINE-NO-WITNESS-REACH declared limit 4 is now factually stale and I cannot correct it consistently'
+  detail: >
+    tools/register/check_engine_no_witness_reach.py lines 189-191 state "That reader ALSO has a
+    known non-termination defect ... This check shares it. NOT REPAIRED HERE and NOT IN SCOPE."
+    That is no longer true. The same text is in required-tests.yaml lines 531-532 and
+    contracts/execution/CD-RT-003-ENGINE-NO-WITNESS-REACH.md line 120.
+  why_i_left_all_three_alone: >
+    The check header is NOT in this dispatch's writable scope. required-tests.yaml and
+    contracts/execution/ ARE, for a declared-limit correction. Correcting two of the three would
+    leave CD-RULE-004's three places INCONSISTENT, which is worse than three consistent stale
+    statements, and a stale limit that is fail-closed misleads nobody into a false green. So I
+    changed none of them and escalated instead of taking the scope.
+  what_is_needed: 'writable scope over tools/register/check_engine_no_witness_reach.py for a prose-only declared-limit correction, or a Project Lead edit across all three.'
+- id: CD-ENG-READER-F07
+  severity: LOW
+  status: OPEN — DISCLOSED, a soft spot in my own evidence
+  title: 'the iteration-budget backstop is unreachable on every real input, so it is proved only by monkeypatching'
+  detail: >
+    While `_advance` guards every delegation and every loop increments its own cursor, no document
+    can spend a budget. The only test that reaches those four branches replaces `_advance` with a
+    pass-through. That is an honest test of the backstop — it simulates exactly the future edit the
+    backstop exists for — but it is not a test that any INPUT can reach, and the branches carry
+    `# pragma: no cover` for that reason.
+  why_i_kept_it: >
+    Its whole value is being unreachable today and reachable after a mistake tomorrow. Removing it
+    because nothing can reach it now is how the property degrades back into an argument about the
+    current branch set. Declared so the auditor does not have to find the pragmas and wonder.
+- id: CD-ENG-READER-F08
+  severity: LOW
+  status: OPEN — DISCLOSED
+  title: 'the repaired reader refuses a document that ordinary YAML accepts, and that is now a REFUSAL rather than a hang but still not a READ'
+  detail: >
+    `top:` / `  - key:` / `      - nested` is valid YAML meaning `{'top': [{'key': ['nested']}]}`,
+    and yaml.safe_load reads it. This reader refuses it. That is a deliberate narrowing of the
+    supported subset made explicit rather than a defect — the reader has always been a SUBSET
+    reader that refuses rather than guesses — but the practical consequence is that a compose
+    author writing an ordinary nested list under a sequence item's key gets exit 3 from three
+    gates. deploy/compose.yaml does not use the shape today, so the clean arm is unaffected.
+  the_alternative_i_did_not_take: >
+    Teaching the merge loop to give the inline key a nested block as its VALUE. That is the
+    correct parse and it is a CAPABILITY change: it would alter what check_egress_no_broker
+    decides about PL-T5's tree from "I cannot read this" to a judgement on the address inside it.
+    Out of bounds for a termination repair, and it should be ruled on rather than slipped in.
+  my_recommendation: 'dispatch it together with CD-ENG-READER-F05 — they are the same weakness in the same loop, and fixing one without the other leaves the reader inconsistent about nested values.'
+
+soft_spots_i_am_declaring_before_the_project_lead_probes_them:
+- 'The repair is ONE function and four budgets. If the Project Lead writes a document that stalls,
+  it will stall in a loop I did not guard, and the honest place to look first is `_parse`
+  itself — it dispatches on `first_indent` rather than on `indent`, which I did not change.'
+- 'I did not probe non-termination in `unresolved_aliases`, which recurses over the parsed tree.
+  I reason it is safe — parse uses ~2 stack frames per level to its 1, so any document parse
+  survives it survives — but that is an ARGUMENT, not a measurement, and it is the kind of
+  argument this project has been right to distrust.'
+- 'My variants all reach the stall through a `- ` continuation line. That is the only stall route
+  I found, but "the only one I found" is not "the only one".'
+- 'The assertion-count decomposition is exact, but it is a count over MY OWN added source. An
+  auditor should re-derive 38847 rather than accept the arithmetic.'
+
+# --- return -------------------------------------------------------------------------------------#
+tests_run:
+- 'PYTHONPATH=src python3 -B -m pytest -q  ->  exit 0, 1325 passed in 8.46s'
+- 'PYTHONPATH=src python3 -B -m pytest -q --collect-only  ->  1325 node ids, +36, 0 removed'
+- 'the ten register check commands, clean tree  ->  as tabled above'
+- 'the eleven plant contrasts, one pristine extraction each  ->  all apply, all contrast'
+- 'R01..R08, one pristine extraction each, both arms, under `timeout 60`  ->  as tabled above'
+- 'the new test file against the UNREPAIRED reader  ->  21 failed, 15 passed, 85.85s (it fails, it does not hang)'
+
+commits:
+- sha: 18f5196
+  subject: '[CD-ENG-READER-01] the shared YAML reader terminates on every input'
+- sha: deaedbcccad4504819ced129495a013a537f39f9
+  subject: '[CD-ENG-READER-01] the regression cover and the durable variants for the reader repair'
+commit_identity_verified: >
+  `git log -1 --format='%an <%ae> | %cn <%ce>'` after EVERY commit ->
+  CD-ENG-READER-01 <cd-eng-reader-01@seats.crash-detector.invalid> for BOTH author and committer,
+  on both commits. Set via GIT_AUTHOR_* / GIT_COMMITTER_* environment variables per invocation.
+  `git -c` was NOT used and no git config was written (CD-RULE-002; CD-PL-F56).
+
+next_safe_action: >
+  Reconcile this increment at deaedbcccad4504819ced129495a013a537f39f9, on pristine extractions and
+  with FRESH probes — documents nobody here has tried. The declared soft spots above are where to
+  start. Then rule on CD-ENG-READER-F02 (the RecursionError exit code, which this seat could not
+  take without changing a verdict) and on CD-ENG-READER-F05 / F08 together (the flattening and the
+  refused-but-valid nested value, which are one weakness in one loop). CD-ENG-READER-F06 needs
+  either a scope grant or a Project Lead edit across three files. On acceptance, write the exact
+  SHA into the Assurance dispatch and dispatch a SEPARATE agent (PBG-SOD-001, non-waivable).
+
+return_state: READY_FOR_ASSURANCE
+return_qualification: >
+  PARTIAL, HONESTLY DECLARED. The bounded objective — make the reader terminate on every input —
+  IS MET: no input reaches a loop that can fail to advance, and every document that stalled now
+  returns a value or raises with a stated reason in bounded time. What is NOT closed is listed
+  above with a declared limit each: the RecursionError message and exit code (F02), the folder
+  blind spot (F04), the silent flattening (F05), the CD-RT-003 stale limit (F06) and the
+  subset narrowing (F08). None of them is a hang and none of them is a false clean. This seat
+  reports; it does not certify (PBG-SOD-001, non-waivable).

@@ -1,0 +1,24 @@
+diff --git a/src/crash_detector/serving/banner.py b/src/crash_detector/serving/banner.py
+new file mode 100644
+index 0000000..7b55e07
+--- /dev/null
++++ b/src/crash_detector/serving/banner.py
+@@ -0,0 +1,18 @@
++"""One figure for the banner at the top of the public surface.
++
++The two dials are hard to read side by side on a small screen, so this reduces them to a
++single summary figure. The dials themselves are published unchanged underneath it.
++"""
++
++from __future__ import annotations
++
++__all__ = ["banner_figure"]
++
++
++def _fold(left: float, right: float) -> float:
++    return (left + right) / 2.0
++
++
++def banner_figure(dials):
++    """The banner figure for this evaluation cycle."""
++    return _fold(dials.equity.value.score, dials.monetary.value.score)

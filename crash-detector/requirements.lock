@@ -1,0 +1,95 @@
+# Crash Detector — dependency lockfile (PBG-CI-003, Standards Baseline §6).
+#
+# Format: pip --require-hashes compatible.
+#     python3 -m pip install --require-hashes --no-deps -r requirements.lock
+#
+# NETWORK PROBE, recorded because PBG-CI-003 makes hashes conditional on it and the
+# condition must be evidenced rather than assumed:
+#
+#   $ python3 -c "import socket; socket.create_connection(('pypi.org',443),timeout=6)"
+#   pypi.org:443                REACHABLE
+#   files.pythonhosted.org:443  REACHABLE
+#
+# The network permits hashes here, so hashes are recorded. No reason-for-absence
+# clause is claimed, because none applies.
+#
+# HOW THESE DIGESTS WERE OBTAINED: read from the PyPI JSON metadata API
+# (https://pypi.org/pypi/<name>/<version>/json, field urls[].digests.sha256) for the
+# exact pinned versions. Nothing was installed, upgraded or resolved on this host to
+# produce this file; the host environment is unchanged by its generation.
+#
+# DIGESTS VERIFIED, not merely transcribed: each of the 17 digests below was checked by
+# fetching the artefact and recomputing sha256 over its bytes. All 17 matched. Nothing was
+# installed or built to do it. (Baseline §6 — a download that succeeded is not a download
+# that was authentic, and a digest copied out of an index is a claim, not an observation.)
+#
+# LOCKFILE PARSE, evidenced OFFLINE so the check cannot depend on the index:
+#     $ python3 -m pip download --no-deps --no-index --require-hashes \
+#           -d /tmp/cd-lockcheck -r requirements.lock
+#     ERROR: Could not find a version that satisfies the requirement jsonschema==4.10.3
+#     exit 1
+# pip reached RESOLUTION, which means it parsed this file and accepted its hash syntax.
+# It does not mean the file installs; see NOT VERIFIED below.
+#
+# ARTEFACT SELECTION: for each pinned version, the source distribution plus the wheels
+# applicable to this target — pure-python wheels, and CPython 3.11 manylinux x86_64
+# wheels. Wheels for other interpreters and platforms are deliberately absent: this
+# project targets CPython 3.11 on linux-x86_64 and an unpinned platform is not a pin.
+#
+# VERSION SELECTION: every version below is the version ALREADY INSTALLED on the DEV
+# host, read from importlib.metadata, not chosen. That is the load-bearing property of
+# deliverable A1 — every test and every register check runs on this host's interpreter
+# with NO install step. This lockfile therefore describes what is running, and is not
+# an instruction anyone needs to execute to run the suite.
+#
+# NOT VERIFIED BY THIS SEAT: that a clean environment built from this lockfile alone
+# reproduces the host environment (PBG-SEC-004). That needs a clean environment, which
+# is a container build, and container build is FORBIDDEN in WO-2 (dispatch RT-B). It is
+# owed at WO-3, not done.
+#
+# pyrsistent 0.18.1 ships no CPython 3.11 wheel; the sdist is the only artefact for
+# this target, so a clean install of it would need a compiler. Recorded, not hidden.
+
+# direct — boundary validation against explicit JSON Schemas (Baseline §4)
+jsonschema==4.10.3 \
+    --hash=sha256:443442f9ac2fdfde7bc99079f0ba08e5d167fc67749e9fc706a393bc8857ca48 \
+    --hash=sha256:59ad13764820eb9d2cafc6db32e92fabd318c1e4e3f2205e646225283704a2c3
+
+# transitive of jsonschema
+attrs==22.2.0 \
+    --hash=sha256:29e95c7f6778868dbd49170f98f8818f78f3dc5e0e37c0b1f474e3561b240836 \
+    --hash=sha256:c9227bfc2f01993c03f68db37d1d15c9690188323c067c641f1a35ca58185f99
+
+# transitive of jsonschema
+pyrsistent==0.18.1 \
+    --hash=sha256:d4d61f8b993a7255ba714df3aca52700f8125289f84f704cf80916517c46eb96
+
+# direct — PostgreSQL client for the store and the live grant-matrix check
+psycopg2-binary==2.9.11 \
+    --hash=sha256:2c226ef95eb2250974bf6fa7a842082b31f68385c4f3268370e3f3870e7859ee \
+    --hash=sha256:b6aed9e096bf63f9e75edf2581aa9a7e7186d97ab5c177aa6c87797cd591236c
+
+# direct, test only
+pytest==9.0.2 \
+    --hash=sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b \
+    --hash=sha256:75186651a92bd89611d1d9fc20f0b4345fd827c41ccd5c299a868a05d70edf11
+
+# transitive of pytest
+iniconfig==1.1.1 \
+    --hash=sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3 \
+    --hash=sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32
+
+# transitive of pytest
+packaging==23.0 \
+    --hash=sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2 \
+    --hash=sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97
+
+# transitive of pytest
+pluggy==1.6.0 \
+    --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746 \
+    --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3
+
+# transitive of pytest
+pygments==2.14.0 \
+    --hash=sha256:fa7bd7bd2771287c0de303af8bfdfc731f51bd2c6a47ab69d117138893b82717 \
+    --hash=sha256:b3ed06a9e8ac9a9aae5a6f5dbe78a8a58655d17b43b93c078f094ddc476ae297

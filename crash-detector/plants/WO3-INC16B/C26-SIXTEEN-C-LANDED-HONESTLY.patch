@@ -1,0 +1,127 @@
+diff -ruN a/contracts/private_envelope.schema.json b/contracts/private_envelope.schema.json
+--- a/contracts/private_envelope.schema.json	2026-08-24 15:22:33.000000000 +0100
++++ b/contracts/private_envelope.schema.json	2026-08-24 15:22:41.722892577 +0100
+@@ -16,7 +16,8 @@
+     "degraded_inputs",
+     "config_snapshot_id",
+     "equity_crash",
+-    "monetary_debasement"
++    "monetary_debasement",
++    "feed_liveness"
+   ],
+   "properties": {
+     "schema_version": {
+@@ -58,6 +59,38 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "PO-DECISIONS-0026 ruling 5's liveness quantity as a REAL 16C would land it: the root object stays closed, the slot is REQUIRED, and `state` is declared under patternProperties. Auditor A308 arm FINAL.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "patternProperties": {
++        "^state$": {
++          "enum": [
++            "LIVE",
++            "STALE"
++          ]
++        }
++      },
++      "properties": {
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/contracts/public_envelope.schema.json b/contracts/public_envelope.schema.json
+--- a/contracts/public_envelope.schema.json	2026-08-24 15:22:33.000000000 +0100
++++ b/contracts/public_envelope.schema.json	2026-08-24 15:22:41.722892577 +0100
+@@ -15,7 +15,8 @@
+     "degraded_inputs",
+     "config_snapshot_id",
+     "equity_crash",
+-    "monetary_debasement"
++    "monetary_debasement",
++    "feed_liveness"
+   ],
+   "properties": {
+     "schema_version": {
+@@ -60,6 +61,38 @@
+     },
+     "monetary_debasement": {
+       "$ref": "#/$defs/dial_reading"
++    },
++    "feed_liveness": {
++      "description": "PO-DECISIONS-0026 ruling 5's liveness quantity as a REAL 16C would land it: the root object stays closed, the slot is REQUIRED, and `state` is declared under patternProperties. Auditor A308 arm FINAL.",
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "state",
++        "reason",
++        "since_utc",
++        "detail_level"
++      ],
++      "patternProperties": {
++        "^state$": {
++          "enum": [
++            "LIVE",
++            "STALE"
++          ]
++        }
++      },
++      "properties": {
++        "reason": {
++          "type": "string",
++          "minLength": 1,
++          "maxLength": 128
++        },
++        "since_utc": {
++          "$ref": "#/$defs/utc_timestamp"
++        },
++        "detail_level": {
++          "$ref": "#/$defs/detail_level"
++        }
++      }
+     }
+   },
+   "$defs": {
+diff -ruN a/tools/register/check_missing_data_never_calm.py b/tools/register/check_missing_data_never_calm.py
+--- a/tools/register/check_missing_data_never_calm.py	2026-08-24 15:22:33.000000000 +0100
++++ b/tools/register/check_missing_data_never_calm.py	2026-08-24 15:22:41.742892534 +0100
+@@ -990,6 +990,8 @@
+         "inputs_used": [],
+         "degraded_inputs": [],
+         "config_snapshot_id": SYNTHETIC_CONFIG_SNAPSHOT_ID,
++        "feed_liveness": {"state": "LIVE", "reason": "feed is live",
++                          "since_utc": AS_OF_UTC, "detail_level": "acute"},
+     }
+     for name in slots:
+         envelope[name] = dict(filler)
+diff -ruN a/tools/register/check_schema_closed.py b/tools/register/check_schema_closed.py
+--- a/tools/register/check_schema_closed.py	2026-08-24 15:22:33.000000000 +0100
++++ b/tools/register/check_schema_closed.py	2026-08-24 15:22:41.742892534 +0100
+@@ -79,6 +79,7 @@
+         "config_snapshot_id",
+         "equity_crash",
+         "monetary_debasement",
++        "feed_liveness",
+     }
+ )
+ 
