@@ -47,8 +47,9 @@ __all__ = [
 #: without bound. Multpl's full monthly table is the largest legitimate body (~150 KB).
 MAX_BODY_BYTES = 4_000_000
 
-#: Ceiling on the optional raw close history carried for the 200-day average.
-MAX_HISTORY = 400
+#: Ceiling on the optional raw history a payload may carry: ~260 closes for the 200-day average,
+#: or multpl's full monthly CAPE table (~1,870 rows since 1871) for the engine's percentile.
+MAX_HISTORY = 2400
 
 RESPONSE_SCHEMA: Mapping[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -194,16 +195,28 @@ _MULTPL_ROW = re.compile(
 )
 
 
-def parse_multpl_table(text: str, unit: str) -> dict:
-    """First (= most recent) row of multpl's ``/table/by-month`` page."""
-    match = _MULTPL_ROW.search(text)
-    if match is None:
+def parse_multpl_table(text: str, unit: str, with_history: bool = False) -> dict:
+    """First (= most recent) row of multpl's ``/table/by-month`` page; optionally the whole table.
+
+    ``with_history`` carries every row of the page, oldest first, as raw ``[date, value]`` pairs
+    so the ENGINE can percentile the latest figure within it. Nothing is computed here. A row
+    whose date or value cannot be read makes the whole payload MALFORMED rather than being
+    skipped: a percentile over a silently thinned table would be a different quantity.
+    """
+    matches = list(_MULTPL_ROW.finditer(text))
+    if not matches:
         return {"malformed": "shape"}  # no row found is a page we do not understand, not "empty"
-    try:
-        observed = datetime.strptime(html.unescape(match.group(1)), "%b %d, %Y").date().isoformat()
-    except ValueError:
-        return {"malformed": "date"}
-    return {"unit": unit, "observation_date": observed, "value": _number_or_token(match.group(2))}
+    rows = []
+    for match in matches if with_history else matches[:1]:
+        try:
+            observed = datetime.strptime(html.unescape(match.group(1)), "%b %d, %Y").date().isoformat()
+        except ValueError:
+            return {"malformed": "date"}
+        rows.append((observed, _number_or_token(match.group(2))))
+    out: dict = {"unit": unit, "observation_date": rows[0][0], "value": rows[0][1]}
+    if with_history:
+        out["history"] = [[d, v] for d, v in reversed(rows)]
+    return out
 
 
 # --- transport ------------------------------------------------------------------------ #
@@ -375,11 +388,15 @@ class YahooChartAdapter(_BaseAdapter):
 class MultplShillerAdapter(_BaseAdapter):
     """multpl.com's Shiller P/E monthly table (declared source: ``multpl/Shiller``)."""
 
-    __slots__ = ()
+    __slots__ = ("_history",)
     adapter_id = "cd.ingest.multpl_shiller_pe.v1"
+
+    def __init__(self, history: int = 0, **kw: Any) -> None:
+        super().__init__(**kw)
+        self._history = bool(history)
 
     def _url(self) -> str:
         return "https://www.multpl.com/shiller-pe/table/by-month"
 
     def _parse(self, body: str) -> dict:
-        return parse_multpl_table(body, self._unit)
+        return parse_multpl_table(body, self._unit, self._history)

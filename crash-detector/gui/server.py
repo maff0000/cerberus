@@ -41,7 +41,7 @@ main{padding:20px 24px;max-width:1280px}
 .num.none{font-size:30px;color:#8a1c1c}
 .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:700;color:#fff}
 .VALUE,.LIVE{background:#1f7a3d}.DEGRADED,.STALE,.PARTIAL{background:#b26a00}
-.NOREADING,.MISSING,.FEED_FAILING{background:#a61e1e}.PENDING,.DERIVED,.NOT_TRACTABLE{background:#5b6479}
+.NOREADING,.MISSING,.FEED_FAILING{background:#a61e1e}.UNAVAILABLE{background:#8a5a00}.PENDING,.DERIVED,.NOT_TRACTABLE{background:#5b6479}
 .why{color:#46506a;font-size:13px;margin-top:6px}
 table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #cfd5df;margin-top:6px}
 th,td{padding:5px 8px;border-bottom:1px solid #e4e8ef;text-align:left;vertical-align:top;font-size:13px}
@@ -100,7 +100,7 @@ def _row_html(e: dict) -> str:
 def render_page(state: dict) -> str:
     esc = html.escape
     counts = ", ".join(f"{esc(k)}: {v}" for k, v in sorted(state["counts"].items()))
-    order = {"LIVE": 0, "STALE": 1, "FEED_FAILING": 1, "MISSING": 1}
+    order = {"LIVE": 0, "STALE": 1, "FEED_FAILING": 1, "MISSING": 1, "UNAVAILABLE": 1}
     rows = sorted(state["indicators"], key=lambda e: (order.get(e["state"], 2), e["id"]))
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'

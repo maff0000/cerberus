@@ -47,7 +47,7 @@ def test_empty_store_shows_no_reading_on_both_dials_and_pending_reasons(db_path)
     page = gui_server.render_page(state)
     assert page.count("NO READING") >= 2
     pending = [i for i in state["indicators"] if i["state"] == "PENDING"]
-    assert len(pending) == 13 and all(i["why"] for i in pending)
+    assert len(pending) == 7 and all(i["why"] for i in pending)
 
 
 def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wiring):
@@ -57,7 +57,7 @@ def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wirin
     eq, mo = _dial(state, "equity_crash"), _dial(state, "monetary_debasement")
     assert eq["status"] == "VALUE" and mo["status"] == "VALUE"
     assert 0.0 <= eq["value"] <= 1.0 and 0.0 <= mo["value"] <= 1.0
-    assert state["counts"] == {"LIVE": 17, "PENDING": 13}
+    assert state["counts"] == {"LIVE": 23, "PENDING": 7}
     # No key anywhere in the view-model combines the dials.
     assert set(state) == {"generated_utc", "provisional", "dials", "indicators", "counts"}
     live = {i["id"]: i for i in state["indicators"] if i["state"] == "LIVE"}

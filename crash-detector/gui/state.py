@@ -15,13 +15,13 @@ numbers together: ``dials`` is a list of two independent entries and nothing her
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from crash_detector.dials.reading import Degraded, Value
 from crash_detector.serving.dial_presentation import Shown, present_dial
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
-from ingestion.wiring import DIALS, _rows, build_wiring, coverage, observations_from_store
+from ingestion.wiring import DIALS, _rows, build_wiring, coverage, derive_from_store, observations_from_store
 from crash_detector.engine.evaluate import evaluate
 
 __all__ = ["build_state"]
@@ -76,11 +76,12 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
                if any(b.dial_id == dial for b in m.dial_bindings)}
         for dial in DIALS
     }
+    derived = derive_from_store(store, wiring)
     indicators = []
     for row in _rows():
         ind = row["id"]
         info = ingest.get(ind, {"state": "UNKNOWN", "detail": ""})
-        live_candidate = ind in wiring.ingredient_for
+        live_candidate = ind in wiring.live_ids
         entry = {
             "id": ind,
             "name": row["name"],
@@ -97,6 +98,23 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
             entry["state"] = "PENDING"
             entry["why"] = wiring.pending.get(ind, "not wired")
             entry["ingest_state"] = info["state"]
+        elif ind in wiring.derived_for:
+            got = derived[ind]
+            entry["state"] = info["state"]
+            entry["why"] = "" if info["state"] == "DERIVED" else info["detail"]
+            if isinstance(got, str):
+                # the engine could not compute it from what is stored: say why, show no number
+                if info["state"] == "DERIVED":
+                    entry["state"], entry["why"] = "UNAVAILABLE", got
+            else:
+                as_of = datetime.fromisoformat(got.observation_date).replace(tzinfo=timezone.utc)
+                entry["as_of_utc"] = _iso(as_of)
+                entry["age_days"] = round((now_utc - as_of).total_seconds() / 86400, 2)
+                entry["unit"] = got.unit
+                if info["state"] == "DERIVED" and entry["age_days"] <= entry["window_days"]:
+                    entry["state"], entry["value"] = "LIVE", got.value
+                elif info["state"] == "DERIVED":
+                    entry["state"], entry["why"] = "STALE", f"derived figure is dated {got.observation_date}, outside its window"
         else:
             ing = wiring.ingredient_for[ind]
             reading = store.latest_reading(ing.source_id)
@@ -110,6 +128,10 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
             # A number is shown only for a LIVE indicator: a stale or failing one is not shown as a value.
             if info["state"] == "LIVE" and reading is not None:
                 entry["value"] = reading["payload"].get("value")
+        held = {d: why for (i, d), why in wiring.held.items() if i == ind}
+        if held:
+            entry["held"] = held
+            entry["why"] = " ".join(filter(None, [entry["why"]] + [f"[{d}] {w}" for d, w in held.items()]))
         indicators.append(entry)
 
     counts: dict = {}

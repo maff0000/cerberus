@@ -160,6 +160,13 @@ class SqliteStore:
             return None
         return {"source_as_of_utc": row[0], "payload": json.loads(row[1]), "admitted_utc": row[2]}
 
+    def recent_readings(self, source_id: str, limit: int) -> list:
+        """Up to ``limit`` admitted payloads, newest SOURCE period first (a derivation's inputs)."""
+        rows = self._db.execute(
+            "SELECT payload FROM raw_reading WHERE source_id=? ORDER BY source_as_of_utc DESC LIMIT ?",
+            (source_id, int(limit))).fetchall()
+        return [json.loads(row[0]) for row in rows]
+
     def outcome_counts(self) -> Iterator[tuple[str, str, int]]:
         yield from self._db.execute(
             "SELECT source_id, outcome, COUNT(*) FROM raw_observation GROUP BY 1,2 ORDER BY 1,2")
