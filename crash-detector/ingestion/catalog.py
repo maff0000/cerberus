@@ -5,7 +5,9 @@ nothing else. No source here is a choice made by this module: each ``Ingredient`
 feed a mapping row already declares (``source.feed``), reached by the nearest public
 endpoint. Where the declared source cannot be reached publicly, the indicator is listed in
 :data:`NOT_TRACTABLE` with the reason, and NO substitute is wired — a substitute would be a
-provenance decision, which is not this module's to make.
+provenance decision, which is not this module's to make. WO-1.6 is the recorded exception: the
+two indicators wired from something other than their declared feed are listed, with the
+authority each rests on, in :data:`SUBSTITUTED_FEEDS`, and nowhere else.
 
 ``serves`` names the mapping rows an ingredient feeds. ``completes`` says whether that
 single ingredient is the indicator's whole scored quantity (``DIRECT``) or one input to a
@@ -22,11 +24,13 @@ from typing import Callable, Union
 from ingestion.adapters import (
     CboeAdapter,
     FredAdapter,
+    LbmaGoldAdapter,
     MultplShillerAdapter,
     YahooChartAdapter,
 )
 
-__all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "EGRESS_HOSTS", "build_adapter"]
+__all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "SUBSTITUTED_FEEDS", "WINDOW_OVERRIDES",
+           "window_seconds", "EGRESS_HOSTS", "build_adapter"]
 
 DAY, WEEK = 86_400, 7 * 86_400
 #: Polling interval, deliberately independent of publication cadence: a daily series is
@@ -38,7 +42,7 @@ POLL_DAILY, POLL_SLOW = 6 * 3600, DAY
 @dataclass(frozen=True)
 class Ingredient:
     source_id: str
-    kind: str                      # fred | cboe | yahoo | multpl
+    kind: str                      # fred | cboe | yahoo | multpl | lbma
     ref: str                       # series id / index / symbol
     unit: str
     declared_feed: str             # the mapping row's ``source.feed`` this implements
@@ -52,10 +56,11 @@ class Ingredient:
     stands_for: str = ""
 
 
-def _f(series, unit, serves, completes="DIRECT", *, poll=POLL_DAILY, rule="obs_date", tr=None, feed=None, stands=""):
+def _f(series, unit, serves, completes="DIRECT", *, poll=POLL_DAILY, rule="obs_date", tr=None, feed=None, stands="",
+       history=0):
     sid = f"fred.{series}" + (f".{tr}" if tr else "")
     return Ingredient(sid, "fred", series, unit, feed or f"FRED:{series}", tuple(serves), completes, poll, rule, tr,
-                      stands_for=stands or f"FRED {series}" + (f" ({tr})" if tr else ""))
+                      history=history, stands_for=stands or f"FRED {series}" + (f" ({tr})" if tr else ""))
 
 
 INGREDIENTS: tuple[Ingredient, ...] = (
@@ -80,6 +85,26 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("PCEPILFE", "percent_yoy", ["core_pce_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
     # ---- FRED, quarterly (SLOOS, auto C&I leg only — see PARTIAL) -----------------------
     _f("DRTSCILM", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
+    # ---- WO-1.6: substitute / ported-rule inputs (see SUBSTITUTED_FEEDS) ---------------------
+    # buffett_indicator: Z.1 corporate equities (market value, $ millions) over nominal GDP ($ billions).
+    # Both are quarterly and FRED dates them at the quarter START; they are aged from the quarter END
+    # (the ``quarter_end`` as-of rule), the period they describe, as ``month_end`` does for monthly series.
+    _f("NCBEILQ027S", "usd_millions", ["buffett_indicator"], "COMPONENT", poll=POLL_SLOW, rule="quarter_end",
+       feed="FRED:NCBEILQ027S", stands="FRED NCBEILQ027S (Z.1 nonfinancial corporate equities, market value, $M)"),
+    _f("GDP", "usd_billions", ["buffett_indicator"], "COMPONENT", poll=POLL_SLOW, rule="quarter_end", feed="FRED:GDP",
+       stands="FRED GDP (nominal GDP, $B, annual rate)"),
+    # fiscal_dominance: the legacy discriminator's two inputs, as RAW LEVEL HISTORY. The engine takes the
+    # 12-month change of WALCL and the 3-month annualised change of core CPI; the collector computes neither.
+    # WALCL is weekly (history 70 rows spans the 53 weeks the year-on-year needs, with slack); CPILFESL is
+    # monthly (history 8 rows: the latest, and the one 3 months before it, with slack for a missing month).
+    _f("WALCL", "usd_millions", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, history=70, feed="FRED:WALCL",
+       stands="FRED WALCL (Fed total assets, $M) with its last 70 weekly levels"),
+    _f("CPILFESL", "index", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, rule="month_end", history=8,
+       feed="FRED:CPILFESL", stands="FRED CPILFESL (core CPI index) with its last 8 monthly levels"),
+    # ---- LBMA (gold_spot) ---------------------------------------------------------------
+    Ingredient("lbma.gold_fix_usd", "lbma", "gold_pm+gold_am", "usd_per_oz", "market:XAUUSD (LBMA PM fix, AM fallback)",
+               ("gold_spot",), "DIRECT", POLL_DAILY,
+               stands_for="LBMA daily gold fix in USD per troy ounce: the PM fix, else that date's AM fix"),
     # ---- CBOE public history CSVs ------------------------------------------------------
     Ingredient("cboe.SKEW", "cboe", "SKEW", "index", "CBOE:SKEW", ("cboe_skew",), "DIRECT", POLL_DAILY,
                column="SKEW", stands_for="CBOE SKEW index close"),
@@ -123,40 +148,70 @@ PARTIAL: dict[str, str] = {
 #: Indicators whose DECLARED source cannot be reached with public/free data, or whose
 #: definition needs a decision this module has no authority to make. No substitute is wired.
 NOT_TRACTABLE: dict[str, str] = {
-    "buffett_indicator": "Declared 'Wilshire/GDP'. FRED withdrew the Wilshire 5000 series "
-    "(WILL5000PRFC -> HTTP 404) and Wilshire publishes no free market-cap series. A FRED "
-    "Z.1 corporate-equities/GDP ratio would be a different provenance: a Product Owner call.",
     "ism_manufacturing": "Declared feed 'ISM'. ISM PMI is licensed; FRED withdrew NAPM "
     "(HTTP 404). Needs a paid/licensed feed or an approved substitute (e.g. regional Fed "
     "surveys), which changes what the indicator means.",
-    "gold_spot": "Declared 'market:XAUUSD, spot'. No keyless public spot source reachable "
-    "(Yahoo XAUUSD=X -> 404; Stooq requires JS/key; FRED gold fixing withdrawn). GC=F futures "
-    "is ingested for copper_gold/gold_real_rate_cross where the mapping declares futures, "
-    "but futures is not spot: using it here is a provenance decision.",
     "private_credit_stress": "Declared composite of BDC NAV discount + non-accrual rate + PIK "
     "share (quarterly SEC filings) + a public-spread proxy. The composite's weighting and the "
     "per-BDC universe are undefined; filing extraction is a build in its own right.",
-    "fiscal_dominance": "Declared 'derived, playbook' discriminator (deficit/GDP vs "
-    "interest-cost/revenue vs benign growth). The discriminator rule is not in the mapping; "
-    "the Treasury/BEA components are public but cannot be wired without that definition.",
 }
+
+#: Indicators WIRED (WO-1.6) from a feed or rule that is NOT the one the ratified mapping row declares.
+#: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and
+#: ``tests/test_ingestion.py`` allows a catalog/mapping feed mismatch for exactly these and no others.
+SUBSTITUTED_FEEDS: dict[str, str] = {
+    "buffett_indicator": "Declared 'Wilshire/GDP, percentiled'; Wilshire is unavailable (FRED withdrew WILL5000PRFC). "
+    "Wired as the Z.1 ratio FRED NCBEILQ027S / (GDP*1000), in percent, banded as that ratio (the row's "
+    "'percentiled' step is NOT applied). Substitute accepted by Matt per the Trinity dispatch of WO-1.6; the legacy "
+    "engine proved it live (Trinity 2026-07-07, ~218%). Its staleness window is overridden (see WINDOW_OVERRIDES).",
+    "fiscal_dominance": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
+    "discriminated vs benign growth'. Wired instead as the legacy ARGUS crash-engine discriminator (fred_tells.py, "
+    "R2D2-locked bands): Fed balance-sheet (WALCL) growth >= 10% over 12 months AND core CPI (CPILFESL) >= 4% "
+    "annualised over 3 months, as a conjunction. This is a DIFFERENT quantity from the ratified row's wording "
+    "(monetisation vs deficit/interest burden). Ported on the Trinity dispatch of WO-1.6; OWNER CONFIRMATION that it "
+    "may stand for this row is OUTSTANDING.",
+}
+
+#: Per-indicator staleness windows that REPLACE the ratified row's ``staleness_window_seconds``, with the reason.
+#: A window shorter than the data's own release rhythm would mark a healthy feed permanently STALE.
+WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
+    "buffett_indicator": (
+        120 * DAY,
+        "the ratified row says 45 days (it assumed a monthly Wilshire series; this ratio is QUARTERLY). The Z.1 "
+        "release for a quarter lands about 70 days after the quarter ends and the next one about 91 days later, so a "
+        "healthy ratio is 70 to ~165 days old when aged from the quarter END. 120 days is the WIDEST relevance window "
+        "the engine will admit (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS, the Owner's own figure for "
+        "quarterly series), so the ratio reads STALE for roughly the last 45 days before each release. That is stated, "
+        "not hidden; widening it means raising a staleness ceiling, which is an Owner decision with external review.",
+    ),
+}
+
+
+def window_seconds(indicator_id: str, ratified_seconds: float) -> float:
+    """The staleness window to apply: the ratified one unless a recorded override replaces it."""
+    override = WINDOW_OVERRIDES.get(indicator_id)
+    return float(override[0]) if override else float(ratified_seconds)
+
 
 EGRESS_HOSTS: dict[str, str] = {
     "fred.stlouisfed.org": "Federal Reserve Bank of St. Louis",
     "cdn-api.cboe.com": "Cboe Global Markets",
     "query1.finance.yahoo.com": "Yahoo",
     "www.multpl.com": "multpl.com",
+    "prices.lbma.org.uk": "LBMA (London Bullion Market Association)",
 }
 
 
 def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
     common = dict(source_id=ing.source_id, as_of_rule=ing.as_of_rule, unit=ing.unit, clock=clock)
     if ing.kind == "fred":
-        return FredAdapter(ing.ref, ing.transformation, **common)
+        return FredAdapter(ing.ref, ing.transformation, ing.history, **common)
     if ing.kind == "cboe":
         return CboeAdapter(ing.ref, ing.column, **common)
     if ing.kind == "yahoo":
         return YahooChartAdapter(ing.ref, ing.history, **common)
     if ing.kind == "multpl":
         return MultplShillerAdapter(history=ing.history, **common)
+    if ing.kind == "lbma":
+        return LbmaGoldAdapter(**common)
     raise ValueError(f"unknown ingredient kind {ing.kind!r}")

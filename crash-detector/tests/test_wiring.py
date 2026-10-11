@@ -31,13 +31,33 @@ CALM = {
     # WO-1.5 DERIVED: these are the FIGURES the engine must compute; _seed writes components that yield them.
     "breadth_rsp_spy": 0.29, "credit_stress_hyg_lqd": 0.80, "copper_gold": 2.0,
     "vix_term_structure": 0.85, "spx_vs_200dma": 5.0, "shiller_cape": 50.0,
+    # WO-1.6: buffett_indicator and fiscal_dominance are DERIVED (figures the engine must compute); gold_spot is direct.
+    "buffett_indicator": 100.0, "fiscal_dominance": 0.0, "gold_spot": 2000.0,
 }
+
+
+def _fiscal_components(parts, fired, date_text):
+    """WALCL / core-CPI level histories whose discriminator is `fired` or not, built independently of the engine.
+
+    Fired: the balance sheet is +25% on a year ago and core CPI is +10% in 3 months (~46% annualised).
+    Not fired: both flat.
+    """
+    wal = [[f"2025-{1 + i // 4:02d}-{1 + 7 * (i % 4):02d}", 100.0] for i in range(48)]
+    wal.append([date_text, 125.0 if fired else 100.0])
+    month, year = int(date_text[5:7]), int(date_text[:4])
+    earlier = month - 3 if month > 3 else month + 9
+    core = [[f"{year if month > 3 else year - 1}-{earlier:02d}-01", 100.0],
+            [date_text[:7] + "-01", 110.0 if fired else 100.0]]
+    return {parts[0].source_id: {"unit": "x", "observation_date": date_text, "value": wal[-1][1], "history": wal},
+            parts[1].source_id: {"unit": "x", "observation_date": core[-1][0], "value": core[-1][1], "history": core}}
 
 
 def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
     """{ingredient source_id: payload} whose engine derivation is `figure`, built independently of the engine."""
     parts = wiring.derived_for[indicator]
     unit = "x"
+    if indicator == "fiscal_dominance":
+        return _fiscal_components(parts, figure >= 0.5, date_text)
     if indicator == "spx_vs_200dma":
         r = 1.0 + figure / 100.0
         latest = 19900.0 * r / (200.0 - r)  # 199 closes of 100 + this one: latest / average - 1 == figure %
@@ -50,7 +70,7 @@ def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
     if indicator == "vix_term_structure":
         # cboe.VIX is SHARED with vix_level (its direct seed writes the numerator); only VIX3M is written here.
         return {parts[1].source_id: {"unit": unit, "observation_date": date_text, "value": vix / figure}}
-    scale = {"copper_gold": 1000.0}.get(indicator, 1.0)
+    scale = {"copper_gold": 1000.0, "buffett_indicator": 0.1}.get(indicator, 1.0)
     return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": figure / scale * 100.0},
             parts[1].source_id: {"unit": unit, "observation_date": date_text, "value": 100.0}}
 
@@ -122,9 +142,9 @@ def _mag(reading):
 
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
-    assert len(wiring.ingredient_for) == 17
-    assert len(wiring.derived_for) == 6
-    assert len(wiring.pending) == 7
+    assert len(wiring.ingredient_for) == 18  # + gold_spot (WO-1.6)
+    assert len(wiring.derived_for) == 8  # + buffett_indicator, fiscal_dominance (WO-1.6)
+    assert len(wiring.pending) == 4
     assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
     assert not wiring.live_ids & set(wiring.pending)
     assert not set(wiring.ingredient_for) & set(wiring.derived_for)
@@ -245,7 +265,7 @@ def test_coverage_discloses_that_a_fully_live_dial_is_built_from_part_of_the_rat
         assert 0.0 < c["fraction"] < 1.0, "pending rows exist, so no dial may claim full coverage"
         assert c["wired_weight"] < c["nominal_weight"] and c["pending"]
         assert not set(c["pending"]) & set(wiring.ingredient_for)
-    assert "fiscal_dominance" in cov["monetary_debasement"]["pending"]
+    assert "gold_real_rate_cross" in cov["monetary_debasement"]["pending"]
 
 
 def test_relevance_window_is_inclusive_at_its_limit_and_refuses_beyond_and_the_future():

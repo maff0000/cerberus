@@ -15,7 +15,7 @@ from crash_detector.collectors import DelayKind, RetryPolicy, collect
 from crash_detector.collectors.adapter import AdapterFetchError
 from crash_detector.observations import OK, FetchFailed, Malformed
 from ingestion import adapters as A
-from ingestion.catalog import EGRESS_HOSTS, INGREDIENTS, NOT_TRACTABLE, PARTIAL, build_adapter
+from ingestion.catalog import EGRESS_HOSTS, INGREDIENTS, NOT_TRACTABLE, PARTIAL, SUBSTITUTED_FEEDS, build_adapter
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
 
@@ -46,6 +46,8 @@ def test_declared_feeds_name_a_feed_the_mapping_row_actually_declares():
     feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
     for ing in INGREDIENTS:
         for ind in ing.serves:
+            if ind in SUBSTITUTED_FEEDS:  # a recorded, authority-cited substitute (WO-1.6): see its own test
+                continue
             # every FRED series / CBOE index token an ingredient uses appears in the row's feed
             token = ing.ref if ing.kind in ("fred", "cboe") else None
             if token:
@@ -220,7 +222,7 @@ def test_http_get_does_not_follow_redirects(monkeypatch):
 def test_report_never_reads_missing_as_live_and_marks_derived_partial_not_tractable(store):
     states = {s["id"]: s["state"] for s in indicator_states(store, NOW)}
     assert states["vix_level"] == "MISSING"
-    assert states["buffett_indicator"] == "NOT_TRACTABLE"
+    assert states["ism_manufacturing"] == "NOT_TRACTABLE"
     _run(store, "fred.DFF", lambda *a: "observation_date,DFF\n2026-10-08,3.88\n")
     assert {s["id"]: s["state"] for s in indicator_states(store, NOW)}["fed_funds_rate"] == "LIVE"
 
@@ -246,3 +248,109 @@ def test_report_flags_a_failing_feed_even_when_the_last_good_reading_is_in_windo
     _run(store, "fred.DFF", boom)
     s = {x["id"]: x["state"] for x in indicator_states(store, NOW)}
     assert s["fed_funds_rate"] == "FEED_FAILING"
+
+
+# --- WO-1.6: legacy-source reuse (gold_spot, buffett_indicator, fiscal_dominance) ------------------ #
+
+import json  # noqa: E402
+
+PM = json.dumps([
+    {"d": "2026-10-07", "v": [4180.5, 3100.0, 3600.0], "is_cancelled": False},
+    {"d": "2026-10-08", "v": [4201.25, 3110.0, 3610.0], "is_cancelled": False},
+    {"d": "2026-10-09", "v": [None, None, None], "is_cancelled": False},
+])
+AM = json.dumps([
+    {"d": "2026-10-08", "v": [4195.0, 3105.0, 3605.0], "is_cancelled": False},
+    {"d": "2026-10-09", "v": [4216.5, 3120.0, 3620.0], "is_cancelled": False},
+])
+
+
+def test_lbma_prefers_pm_for_a_date_and_falls_back_to_am_only_for_a_date_with_no_pm():
+    # 10-09 has no PM fix yet (null) so its AM fix is the newest figure; 10-08 would have used PM (4201.25).
+    assert A.parse_lbma_gold(PM, AM, "usd_per_oz") == {"unit": "usd_per_oz", "observation_date": "2026-10-09", "value": 4216.5}
+    pm_only_latest = json.dumps([{"d": "2026-10-09", "v": [4220.0, 1, 1]}])
+    assert A.parse_lbma_gold(pm_only_latest, AM, "usd_per_oz")["value"] == 4220.0  # PM beats AM for the same date
+
+
+def test_lbma_skips_cancelled_and_null_rows_but_never_a_non_numeric_figure():
+    cancelled = json.dumps([{"d": "2026-10-09", "v": [1.0, 1.0, 1.0], "is_cancelled": True},
+                            {"d": "2026-10-08", "v": [4201.25, 1, 1]}])
+    assert A.parse_lbma_gold(cancelled, "[]", "u")["observation_date"] == "2026-10-08"
+    bad = json.dumps([{"d": "2026-10-09", "v": ["n/a", 1, 1]}])
+    out = A.parse_lbma_gold(bad, "[]", "u")
+    assert out["value"] == "n/a"  # passed through so the closed schema rejects it: MALFORMED, not skipped
+
+
+def test_lbma_unrecognised_bodies_are_malformed_and_an_empty_one_is_empty():
+    assert "unit" not in A.parse_lbma_gold("<html>Attention Required</html>", AM, "u")
+    assert "unit" not in A.parse_lbma_gold(PM, '{"d": 1}', "u")
+    assert "unit" not in A.parse_lbma_gold('[{"v": [1]}]', AM, "u")
+    assert A.parse_lbma_gold("[]", "[]", "u") == {"unit": "u"}
+
+
+def test_lbma_adapter_asks_for_both_fixes_with_the_browser_style_agent_and_records_a_403_not_a_value(store):
+    seen = []
+
+    def fake(url, timeout, headers):
+        seen.append((url, dict(headers or {})))
+        return PM if "gold_pm" in url else AM
+
+    result, ing = _run(store, "lbma.gold_fix_usd", fake)
+    assert [u for u, _ in seen] == [A.LBMA_PM_URL, A.LBMA_AM_URL]
+    assert all(h == {"User-Agent": A.LBMA_USER_AGENT} for _, h in seen)
+    assert isinstance(result.final_outcome, OK) and result.final_outcome.payload["value"] == 4216.5
+
+    def blocked(url, timeout, headers):
+        raise AdapterFetchError("HTTP_ERROR", 403)  # the Cloudflare "Attention Required" refusal seen on 2026-10-11
+
+    refused, _ = _run(store, "lbma.gold_fix_usd", blocked)
+    assert isinstance(refused.final_outcome, FetchFailed) and refused.final_outcome.http_status == 403
+    assert {x["id"]: x["state"] for x in indicator_states(store, NOW)}["gold_spot"] == "FEED_FAILING"
+
+
+def test_fred_history_carries_raw_levels_oldest_first_and_a_bad_level_is_malformed_not_dropped():
+    body = "observation_date,WALCL\n2026-09-23,6747704\n2026-09-30,6743031\n2026-10-07,6747560\n"
+    out = A.parse_fred_csv(body, "WALCL", "usd_millions", history=2)
+    assert out["observation_date"] == "2026-10-07" and out["value"] == 6747560.0
+    assert out["history"] == [["2026-09-30", 6743031.0], ["2026-10-07", 6747560.0]]
+    assert "history" not in A.parse_fred_csv(body, "WALCL", "usd_millions")
+    junk = "observation_date,WALCL\n2026-09-30,abc\n2026-10-07,6747560\n"
+    out = A.parse_fred_csv(junk, "WALCL", "usd_millions", history=2)
+    assert out["history"][0] == ["2026-09-30", "abc"]  # a token, rejected by the closed schema downstream
+
+
+def test_quarter_end_as_of_rule_ages_a_quarter_start_dated_figure_from_the_period_it_describes():
+    assert A.as_of_for("2026-04-01", "quarter_end", NOW) == datetime(2026, 6, 30, tzinfo=timezone.utc)
+    assert A.as_of_for("2026-01-01", "quarter_end", NOW) == datetime(2026, 3, 31, tzinfo=timezone.utc)
+    assert A.as_of_for("2026-10-01", "quarter_end", NOW) == datetime(2026, 10, 11, tzinfo=timezone.utc)  # capped at today
+
+
+def test_the_three_wo_1_6_indicators_are_served_and_no_longer_listed_not_tractable():
+    served = {i for ing in INGREDIENTS for i in ing.serves}
+    for ind in ("gold_spot", "buffett_indicator", "fiscal_dominance"):
+        assert ind in served and ind not in NOT_TRACTABLE
+    assert set(NOT_TRACTABLE) == {"ism_manufacturing", "private_credit_stress"}
+
+
+def test_substituted_feeds_are_exactly_the_two_that_differ_from_the_ratified_row_and_say_so():
+    feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
+    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance"}
+    assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["fiscal_dominance"]
+    assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["fiscal_dominance"]
+
+
+def test_the_buffett_window_override_never_exceeds_the_engines_relevance_ceiling_and_is_the_only_override():
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    assert set(WINDOW_OVERRIDES) == {"buffett_indicator"}
+    assert window_seconds("buffett_indicator", 3888000) == 120 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
+    assert window_seconds("hy_oas", 345600) == 345600.0
+    assert WINDOW_OVERRIDES["buffett_indicator"][1]  # a reason is on record
+
+
+def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_history():
+    by_id = {i.source_id: i for i in INGREDIENTS}
+    assert by_id["fred.WALCL"].history >= 54 and by_id["fred.CPILFESL"].history >= 4
+    assert by_id["fred.NCBEILQ027S"].as_of_rule == by_id["fred.GDP"].as_of_rule == "quarter_end"
+    assert by_id["lbma.gold_fix_usd"].completes == "DIRECT" and by_id["lbma.gold_fix_usd"].serves == ("gold_spot",)

@@ -36,6 +36,9 @@ __all__ = [
     "CboeAdapter",
     "YahooChartAdapter",
     "MultplShillerAdapter",
+    "LbmaGoldAdapter",
+    "LBMA_USER_AGENT",
+    "parse_lbma_gold",
     "parse_fred_csv",
     "parse_cboe_csv",
     "parse_yahoo_chart",
@@ -94,12 +97,18 @@ def as_of_for(observation_date: str, rule: str, now_utc: datetime) -> datetime:
                     capped at today: a figure never claims to refer to a date later than
                     the day we asked.
 
-    Both are conservative in the direction that matters: neither can make old data look
+    ``quarter_end`` (WO-1.6) the same idea for a QUARTERLY series FRED dates at the quarter START
+                    (Z.1 and GDP): the last day of that quarter, capped at today.
+
+    All are conservative in the direction that matters: none can make old data look
     newer than the period it covers.
     """
     day = date.fromisoformat(observation_date)
     if rule == "month_end":
         day = day.replace(day=calendar.monthrange(day.year, day.month)[1])
+    elif rule == "quarter_end":
+        month = (day.month - 1) // 3 * 3 + 3
+        day = day.replace(month=month, day=calendar.monthrange(day.year, month)[1])
     elif rule != "obs_date":
         raise ValueError(f"unknown as-of rule {rule!r}")
     today = now_utc.date()
@@ -120,8 +129,14 @@ def _number_or_token(token: str) -> Union[float, str]:
     return number if math.isfinite(number) else token
 
 
-def parse_fred_csv(text: str, column: str, unit: str) -> dict:
+def parse_fred_csv(text: str, column: str, unit: str, history: int = 0) -> dict:
     """Latest non-missing row of a ``fredgraph.csv`` body. FRED writes ``.`` for no data.
+
+    ``history``: when positive, also carry the last ``history`` non-missing rows as raw
+    ``[date, number]`` pairs, oldest first (WO-1.6: the engine derives a year-on-year move and a
+    3-month rate from the raw levels; nothing is computed here). A row whose value is not a
+    finite number makes the payload MALFORMED, never skipped: a derivation over a silently
+    thinned series would be a different quantity.
 
     ``column`` is the expected value-column header: the series id, or ``<ID>_<TRANSFORM>``
     (e.g. ``M2SL_PC1``) when a server-side transformation was requested. A body whose header
@@ -132,12 +147,20 @@ def parse_fred_csv(text: str, column: str, unit: str) -> dict:
         return {"malformed": "header"}  # no "unit": fails the closed schema -> MALFORMED
     if lines[0].split(",")[1] != column:
         return {"malformed": "series"}
+    rows = []
     for line in reversed(lines[1:]):
         cells = line.split(",")
         if len(cells) != 2 or cells[1] in ("", "."):
             continue
-        return {"unit": unit, "observation_date": cells[0], "value": _number_or_token(cells[1])}
-    return {"unit": unit}  # a conforming body with no observation: EMPTY
+        rows.append((cells[0], _number_or_token(cells[1])))
+        if len(rows) >= max(history, 1):
+            break
+    if not rows:
+        return {"unit": unit}  # a conforming body with no observation: EMPTY
+    out: dict = {"unit": unit, "observation_date": rows[0][0], "value": rows[0][1]}
+    if history:
+        out["history"] = [[d, v] for d, v in reversed(rows)]
+    return out
 
 
 def parse_cboe_csv(text: str, column: str, unit: str) -> dict:
@@ -219,6 +242,57 @@ def parse_multpl_table(text: str, unit: str, with_history: bool = False) -> dict
     return out
 
 
+#: The browser-style agent LBMA's edge requires (legacy ARGUS ``gold_tells.py`` used exactly this).
+LBMA_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) argus-crash-engine/monetary-tells"
+LBMA_PM_URL = "https://prices.lbma.org.uk/json/gold_pm.json"
+LBMA_AM_URL = "https://prices.lbma.org.uk/json/gold_am.json"
+
+
+def _lbma_usd_by_date(text: str) -> Union[dict, None]:
+    """date -> USD fix of an LBMA ``gold_*.json`` body, or None if the body is not that shape.
+
+    The body is a list of ``{"d": "YYYY-MM-DD", "v": [USD, GBP, EUR], ...}``. A row with no USD
+    figure (a day with no fix, or a cancelled one) is skipped: that is the source saying there is
+    no fix, not a number we are discarding. A figure that is present but not a finite number is
+    passed through as a token so the closed schema rejects it (MALFORMED).
+    """
+    try:
+        rows = json.loads(text)
+    except ValueError:
+        return None
+    if type(rows) is not list:
+        return None
+    out: dict = {}
+    for row in rows:
+        if type(row) is not dict or type(row.get("d")) is not str:
+            return None
+        values = row.get("v")
+        if values is None or row.get("is_cancelled") is True:
+            continue
+        if type(values) is not list:
+            return None
+        if not values or values[0] is None:
+            continue
+        out[row["d"]] = values[0] if type(values[0]) in (int, float) and math.isfinite(values[0]) else str(values[0])
+    return out
+
+
+def parse_lbma_gold(pm_text: str, am_text: str, unit: str) -> dict:
+    """The newest LBMA gold fix in USD per troy ounce: the PM fix of a date, else that date's AM fix.
+
+    Same selection as the legacy ARGUS gold tell: take the union of dates, prefer PM for a date
+    that has one, fall back to AM only for a date with no PM (today, before the PM fix is made).
+    """
+    pm, am = _lbma_usd_by_date(pm_text), _lbma_usd_by_date(am_text)
+    if pm is None or am is None:
+        return {"malformed": "shape"}
+    dates = sorted(set(pm) | set(am))
+    if not dates:
+        return {"unit": unit}  # a conforming body with no fix: EMPTY
+    day = dates[-1]
+    return {"unit": unit, "observation_date": day, "value": pm[day] if day in pm else am[day]}
+
+
 # --- transport ------------------------------------------------------------------------ #
 
 
@@ -294,9 +368,12 @@ class _BaseAdapter:
     def _parse(self, body: str) -> dict:  # pragma: no cover - abstract
         raise NotImplementedError
 
+    def _acquire(self, timeout_seconds: float) -> dict:
+        """One bounded read of the source, parsed. A source needing more than one GET overrides this."""
+        return self._parse(self._getter(self._url(), timeout_seconds, self._headers()))
+
     def fetch(self, *, timeout_seconds: float) -> FetchedResponse:
-        body = self._getter(self._url(), timeout_seconds, self._headers())
-        payload = self._parse(body)
+        payload = self._acquire(timeout_seconds)
         now = self._clock()
         date_text = payload.get("observation_date")
         if isinstance(date_text, str):
@@ -323,13 +400,14 @@ class FredAdapter(_BaseAdapter):
     merely recorded.
     """
 
-    __slots__ = ("_series", "_transformation")
+    __slots__ = ("_series", "_transformation", "_history")
     adapter_id = "cd.ingest.fred_csv.v1"
 
-    def __init__(self, series: str, transformation: Union[str, None], **kw: Any) -> None:
+    def __init__(self, series: str, transformation: Union[str, None], history: int = 0, **kw: Any) -> None:
         super().__init__(**kw)
         self._series = series
         self._transformation = transformation
+        self._history = history
 
     def _url(self) -> str:
         suffix = f"&transformation={self._transformation}" if self._transformation else ""
@@ -337,7 +415,7 @@ class FredAdapter(_BaseAdapter):
 
     def _parse(self, body: str) -> dict:
         column = self._series + (f"_{self._transformation.upper()}" if self._transformation else "")
-        return parse_fred_csv(body, column, self._unit)
+        return parse_fred_csv(body, column, self._unit, self._history)
 
 
 class CboeAdapter(_BaseAdapter):
@@ -400,3 +478,27 @@ class MultplShillerAdapter(_BaseAdapter):
 
     def _parse(self, body: str) -> dict:
         return parse_multpl_table(body, self._unit, self._history)
+
+
+class LbmaGoldAdapter(_BaseAdapter):
+    """LBMA daily gold fix (USD/oz), PM with AM fallback — the genuine spot-gold reference.
+
+    Two bounded GETs (``gold_pm.json`` and ``gold_am.json``); BOTH must succeed, so a half-fetched
+    answer is a recorded failure and never a silent choice. The edge wants a browser-style
+    User-Agent. If the edge refuses us anyway (HTTP 403 from its bot protection), that is
+    recorded as ``HTTP_ERROR``/403 like any failure: this adapter does not try to get around it.
+    """
+
+    __slots__ = ()
+    adapter_id = "cd.ingest.lbma_gold_fix.v1"
+
+    def _headers(self) -> Mapping[str, str]:
+        return {"User-Agent": LBMA_USER_AGENT}
+
+    def _url(self) -> str:
+        return LBMA_PM_URL
+
+    def _acquire(self, timeout_seconds: float) -> dict:
+        pm_body = self._getter(LBMA_PM_URL, timeout_seconds, self._headers())
+        am_body = self._getter(LBMA_AM_URL, timeout_seconds, self._headers())
+        return parse_lbma_gold(pm_body, am_body, self._unit)

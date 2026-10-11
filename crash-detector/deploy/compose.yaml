@@ -413,8 +413,8 @@ services:
         condition: service_healthy
     x-uid: 10001
     x-egress:
-      # ALLOWLIST. Four public data hosts, each registered in deploy/egress-destinations.yaml
-      # and each the feed a Matt-ratified mapping row already declares (WO-1.2b). The
+      # ALLOWLIST. Five public data hosts, each registered in deploy/egress-destinations.yaml
+      # and each the feed a Matt-ratified mapping row already declares (WO-1.2b; LBMA added WO-1.6). The
       # authority is the ratified mapping (2026-08-24), not an engineering choice of
       # ingredient: no host is here that a mapping row does not name.
       policy: ALLOWLIST
@@ -423,6 +423,7 @@ services:
         - cdn-api.cboe.com
         - query1.finance.yahoo.com
         - www.multpl.com
+        - prices.lbma.org.uk
       pending: []
       enforced_by:
         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"

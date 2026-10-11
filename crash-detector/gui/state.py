@@ -19,9 +19,10 @@ from datetime import datetime, timezone
 
 from crash_detector.dials.reading import Degraded, Value
 from crash_detector.serving.dial_presentation import Shown, present_dial
+from ingestion.catalog import SUBSTITUTED_FEEDS, window_seconds
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
-from ingestion.wiring import DIALS, _rows, build_wiring, coverage, derive_from_store, observations_from_store
+from ingestion.wiring import DIALS, _rows, build_wiring, coverage, derive_from_store, derived_as_of, observations_from_store
 from crash_detector.engine.evaluate import evaluate
 
 __all__ = ["build_state"]
@@ -92,7 +93,7 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
             "unit": "",
             "as_of_utc": None,
             "age_days": None,
-            "window_days": round(row["staleness_window_seconds"] / 86400, 2),
+            "window_days": round(window_seconds(ind, row["staleness_window_seconds"]) / 86400, 2),
         }
         if not live_candidate:
             entry["state"] = "PENDING"
@@ -107,7 +108,7 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
                 if info["state"] == "DERIVED":
                     entry["state"], entry["why"] = "UNAVAILABLE", got
             else:
-                as_of = datetime.fromisoformat(got.observation_date).replace(tzinfo=timezone.utc)
+                as_of = derived_as_of(ind, got.observation_date, now_utc)
                 entry["as_of_utc"] = _iso(as_of)
                 entry["age_days"] = round((now_utc - as_of).total_seconds() / 86400, 2)
                 entry["unit"] = got.unit
@@ -128,6 +129,9 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
             # A number is shown only for a LIVE indicator: a stale or failing one is not shown as a value.
             if info["state"] == "LIVE" and reading is not None:
                 entry["value"] = reading["payload"].get("value")
+        if ind in SUBSTITUTED_FEEDS and live_candidate:
+            entry["substitute"] = SUBSTITUTED_FEEDS[ind]
+            entry["why"] = " ".join(filter(None, [entry["why"], "[SUBSTITUTE FEED, not the ratified row's] " + SUBSTITUTED_FEEDS[ind]]))
         held = {d: why for (i, d), why in wiring.held.items() if i == ind}
         if held:
             entry["held"] = held
