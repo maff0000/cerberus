@@ -61,7 +61,7 @@ The authoritative documents (read in this order):
 
 ## 4. What is real vs. what is scaffolded
 
-Measured at import: **2,099 tests pass** (`PYTHONPATH=src python3 -m pytest tests`, CPython 3.11, run on a clean `git archive` of the merged tree). Roughly 17k lines in 45 modules under `src/crash_detector/`.
+Measured at import: **2,099 tests pass** (`PYTHONPATH=src python3 -m pytest tests`, CPython 3.11, run on a clean `git archive` of the merged tree). After WO-1.2b (2026-10-11): **2,129 pass** (`python3 -m pytest`, 30 new in `tests/test_ingestion.py`). Roughly 17k lines in 45 modules under `src/crash_detector/`.
 
 ### Implemented and tested
 - **Dial types** (`dials/`): `Reading` sum type where absence (`Unknown`) is structurally incapable of yielding a number; scores; provenance. The two dials cannot be combined into one scalar.
@@ -77,8 +77,8 @@ Measured at import: **2,099 tests pass** (`PYTHONPATH=src python3 -m pytest test
 - **Assurance machinery**: Required Test Register (`required-tests.yaml`), planted-violation suites (`plants/`), variant suites (`variants/`), probes and sweeps (`tools/`). These are unusually extensive; the project was built *to be audited*.
 
 ### Scaffolded or not built
-- **No real data collection.** By design the package opens no sockets (a test asserts it). No adapter for FRED, Shiller, Wilshire, CBOE, OFR, Quantical, etc. exists. The mapping's sources are *identified*, not *wired*.
-- **Indicator rows are not yet registered in the engine**, so **the dials have never produced a real number.** That was the next step after 16G ("register the indicator rows from the mapping… first real numbers", PO-DECISIONS-0032 §4). Also owed first: detector-side `feed_liveness` marking from a real dead-feed detector.
+- **Real data collection: PARTIAL (WO-1.2b), outside the application tree.** `src/crash_detector` still opens no sockets (a test asserts it). The network-bearing adapters live in `crash-detector/ingestion/` and drive the core's own `collect()`. 25 of 30 indicators have a wired public feed; 5 do not (see §4a). Nothing is scheduled: ingestion runs only when invoked, and writes to a SQLite DEV store, not the Postgres `cd-store`.
+- **Indicator rows are not yet registered in the engine**, so **the dials have never produced a real number.** (Raw readings now exist in the ingestion store; nothing consumes them yet.) That was the next step after 16G ("register the indicator rows from the mapping… first real numbers", PO-DECISIONS-0032 §4). Also owed first: detector-side `feed_liveness` marking from a real dead-feed detector.
 - **Weights are provisional**; no backtest has been run. Nothing is calibrated.
 - **Containers are written, not built.** The six Dockerfiles, `compose.yaml` and entrypoints exist and are checked for portability (no host-specific addresses), but each entrypoint is a 20-line shim and the images were explicitly never built (`CONTAINER_BUILD_NOT_YET_AUTHORISED`).
 - **No public page / presentation layer** (WO-4). `serving/dial_presentation.py` exists; the actual page does not.
@@ -86,6 +86,31 @@ Measured at import: **2,099 tests pass** (`PYTHONPATH=src python3 -m pytest test
 - **Rotation-readiness ratio, wave-transition monitor, recovery-from-backup proof** (`CD-AC-013/015/016`) — WO-6, not implemented.
 - **Witness live feeds and divergence history/slope** (`CD-AC-004`, `010`, `011`) — WO-4.
 - **No deployment of any kind.** Never run against live data, never on PROD.
+
+### 4a. Ingestion state (WO-1.2b, verified live 2026-10-11)
+
+`ingestion/` fetches and records. It computes nothing: no ratio, spread, percentile or score (collector-never-computes, BLUEPRINT §5). Sources are exactly the feeds the Owner-ratified mapping declares, reached by the nearest keyless public endpoint: FRED `fredgraph.csv`, Cboe daily-history CSVs, Yahoo chart, multpl Shiller table. Egress is the four hosts in `deploy/egress-destinations.yaml`, for `cd-collectors` only.
+
+A live run on 2026-10-11 fetched **27 of 27 sources OK**. Of the 30 ratified indicators:
+
+| State | n | Indicators |
+|---|---|---|
+| **LIVE** (the source's own number, inside its staleness window) | 17 | hy_oas, ig_oas, yield_curve_10y3m, yield_curve_10y2y, real_rate_10y_tips, breakeven_5y, fed_funds_rate, jobless_claims_4w, chicago_fed_nfci, broad_dollar, sahm_rule, michigan_sentiment, m2_yoy, cpi_yoy, core_pce_yoy, vix_level, cboe_skew |
+| **DERIVED** (every input fetched; the *engine* must derive the number, and has no computing mapping yet, so there is no number of its own) | 7 | credit_stress_hyg_lqd, breadth_rsp_spy, vix_term_structure, spx_vs_200dma, copper_gold, gold_real_rate_cross, shiller_cape |
+| **PARTIAL** | 1 | sloos_bank_lending: the automatic C&I leg (FRED DRTSCILM) is live; the manual NDFI leg (SLOOS Table 2 Q14) has no feed, so it must not read complete |
+| **NOT_TRACTABLE** (no substitute wired; a substitute is a provenance decision) | 5 | buffett_indicator (Wilshire/GDP: FRED withdrew WILL5000PRFC, no free market-cap series), ism_manufacturing (licensed; FRED withdrew NAPM), gold_spot (no keyless public spot source; GC=F is futures, not spot), private_credit_stress (composite weighting and BDC universe undefined), fiscal_dominance (discriminator rule not in the mapping) |
+
+So **17 produce a real number now, 7 have all raw inputs but need the engine to derive, 1 is half-fed, 5 are blocked.** "Tractable" is 25 of 30 counting inputs, 17 of 30 counting finished numbers.
+
+Caveats, stated plainly:
+- Yahoo is unofficial, unlicensed and rate-limited, and it is the only source for 5 of the 7 DERIVED indicators (credit_stress_hyg_lqd, breadth_rsp_spy, spx_vs_200dma, copper_gold; gold_real_rate_cross in part). Its failures are recorded, never defaulted.
+- multpl is scraped HTML; a layout change is recorded MALFORMED.
+- FRED monthly series are dated at the first of the month; the as-of used is month-end (capped at today) so they are neither permanently stale nor future-dated.
+- Two zeros are genuine source values (SAHMREALTIME 2026-09 = 0.00; DRTSCILM 2026-07 = 0.0), checked against the raw FRED CSV.
+- `ingestion/report.py` imports PyYAML, which the host has but `requirements.txt` does not declare (tests already depend on it too). Declaring it is owed; the lock was not touched here.
+- None of the five NOT_TRACTABLE gaps is closable by engineering alone: each needs a licensed feed, a substitute the Product Owner approves, or a missing definition.
+
+Run: `PYTHONPATH=src:. python3 -m ingestion.run --db <file> [--force]`, then `python3 -m ingestion.report --db <file>`.
 
 ### Declared limits (not defects to be "fixed" casually)
 - Deliberate in-process forgery by an insider cannot be *prevented* in Python (`CD-BP-005`); it is carried by the **DETECTED** tier (witness divergence at publication). The Owner accepted this explicitly (PO-DECISIONS-0018/0019/0032). Any text claiming more is the defect.
@@ -116,10 +141,10 @@ In the order the Product Owner sequenced it (PO-DECISIONS-0032 §6):
 
 ```bash
 cd crash-detector
-PYTHONPATH=src python3 -m pytest -q tests      # 2,099 tests, ~70 s, no network, no install step
+python3 -m pytest -q                            # 2,129 tests, ~70 s, no network, no install step
 ```
 
-There is intentionally no install step (see `crash-detector/README.md`). Do not read a green test run as "the detector works": it means the *machinery that refuses to render absence as calm* is intact. No data flows through it yet.
+There is intentionally no install step (see `crash-detector/README.md`). Do not read a green test run as "the detector works": it means the *machinery that refuses to render absence as calm* is intact. Raw data can now be ingested (§4a) but no dial consumes it yet.
 
 ## 7. Map of this directory
 

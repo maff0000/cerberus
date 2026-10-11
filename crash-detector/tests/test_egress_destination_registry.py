@@ -105,35 +105,35 @@ def test_the_destinations_field_is_a_list(registry: dict):
     assert isinstance(registry.get("destinations"), list)
 
 
-# --- WO-2 ships it EMPTY, and that is the deliverable ----------------------------------- #
+# --- WO-1.2b registers exactly the four ratified data hosts ------------------------------ #
+
+RATIFIED_DESTINATIONS = {
+    "fred.stlouisfed.org": "DEST-FRED-001",
+    "cdn-api.cboe.com": "DEST-CBOE-001",
+    "query1.finance.yahoo.com": "DEST-YAHOO-001",
+    "www.multpl.com": "DEST-MULTPL-001",
+}
 
 
-def test_wo2_registers_no_destination_at_all(destinations: list):
-    """Registering a destination for cd-collectors IS registering an ingredient source.
+def test_registry_holds_exactly_the_ratified_data_hosts_for_cd_collectors(destinations: list):
+    """Each host is the feed a Matt-ratified mapping row declares (ratified 2026-08-24).
 
-    ``CD-D-005`` — which inputs feed each dial and what each stands for — is owed by the
-    Product Owner, and choosing ingredients is choosing what a dial MEANS
-    (``PBG-AUTH-005``). cd-witness' two witness hosts and cd-review's model host are equally
-    undecided. With nothing registered the admissible set is empty and every allowlist in
-    the compose file is empty too, which is fail-closed by construction rather than by
-    anybody's restraint.
+    A destination appearing beyond these is an engineering seat resolving product meaning;
+    this test is what must be updated, deliberately, with the ratified row cited.
     """
-    assert destinations == [], (
-        "WO-2 registers no egress destination. A destination appearing here is either a "
-        "Product Owner decision that has landed — in which case this test is what should be "
-        "updated, deliberately, with the decision cited — or an engineering seat resolving "
-        "product meaning, which no seat may do."
-    )
+    assert {d["host"]: d["id"] for d in destinations} == RATIFIED_DESTINATIONS
+    for entry in destinations:
+        assert entry["services"] == ["cd-collectors"], entry["id"]
+        assert "indicator_mapping.yaml" in entry["declared_in"], entry["id"]
 
 
-def test_no_service_names_any_host_in_its_allowlist(services: dict):
-    """The other half of the same state: the admissible set is empty AND unused."""
+def test_only_cd_collectors_names_hosts_in_its_allowlist(services: dict):
     named = {
-        name: service["x-egress"]["hosts"]
+        name: sorted(service["x-egress"]["hosts"])
         for name, service in services.items()
         if service.get("x-egress", {}).get("hosts")
     }
-    assert named == {}, f"services naming egress hosts in WO-2: {named}"
+    assert named == {"cd-collectors": sorted(RATIFIED_DESTINATIONS)}
 
 
 # --- CD-EGRESS-004: DENY BY DEFAULT ------------------------------------------------------ #

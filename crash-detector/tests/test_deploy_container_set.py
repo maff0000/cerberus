@@ -206,31 +206,42 @@ def test_the_three_allowlist_services_are_exactly_the_ones_blueprint_names(servi
     assert declared == ALLOWLIST_SERVICES
 
 
-def test_no_allowlist_anywhere_names_a_host(services: dict):
-    """The WO-2 state, asserted rather than assumed.
+#: The ONLY hosts any allowlist may name (WO-1.2b). Each is the feed a Matt-ratified
+#: mapping row declares (governance/mapping/indicator_mapping.yaml, 2026-08-24). Widening
+#: this set is a decision with a record: change it here, deliberately, and cite the row.
+RATIFIED_COLLECTOR_HOSTS = [
+    "fred.stlouisfed.org",
+    "cdn-api.cboe.com",
+    "query1.finance.yahoo.com",
+    "www.multpl.com",
+]
 
-    Every allowlist is empty. For cd-collectors that is because naming an ingredient
-    source host is registering an ingredient source, which is CD-D-005 and the Product
-    Owner's. For cd-witness and cd-review it is because the Blueprint names the endpoint
-    and not the host, and this seat does not write a hostname it did not verify.
 
-    When WO-3 populates them, THIS TEST MUST BE CHANGED DELIBERATELY, and the change is
-    the moment somebody has to look at what is being admitted.
+def test_only_cd_collectors_names_hosts_and_exactly_the_ratified_ones(services: dict):
+    """WO-1.2b state: cd-collectors carries the four ratified data hosts, nothing else.
+
+    cd-witness and cd-review stay empty (their endpoints are still undecided). Any extra
+    or missing host in cd-collectors fails here.
     """
     for name, service in services.items():
-        assert service["x-egress"]["hosts"] == [], (
-            f"{name} names a host in its egress allowlist. WO-2 ships every allowlist "
-            "empty; adding one is a decision with a record, not an edit."
+        expected = RATIFIED_COLLECTOR_HOSTS if name == "cd-collectors" else []
+        assert sorted(service["x-egress"]["hosts"]) == sorted(expected), (
+            f"{name}: egress allowlist {service['x-egress']['hosts']} != {expected}. "
+            "Changing an allowlist is a decision with a record, not an edit."
         )
 
 
-def test_every_allowlist_service_records_why_its_allowlist_is_empty(services: dict):
+def test_every_empty_allowlist_service_records_why_and_a_populated_one_has_nothing_pending(services: dict):
     """An empty allowlist with no explanation is indistinguishable from a forgotten one."""
     for name in sorted(ALLOWLIST_SERVICES):
-        pending = services[name]["x-egress"].get("pending")
+        egress = services[name]["x-egress"]
+        pending = egress.get("pending")
+        if egress["hosts"]:
+            assert not pending, f"{name} has hosts AND still lists pending entries"
+            continue
         assert pending, (
             f"{name} declares an empty allowlist and records nothing pending. The "
-            "omission must be visible now rather than discovered in WO-3."
+            "omission must be visible now rather than discovered later."
         )
         for entry in pending:
             assert entry.get("declared_in"), f"{name}: a pending entry names no source"
