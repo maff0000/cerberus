@@ -68,6 +68,11 @@ def _dial_html(d: dict) -> str:
         lines.append(f'<div class="why"><b>Why:</b> {esc(d["reason"])}</div>')
     if d["missing_inputs"]:
         lines.append(f'<div class="why"><b>Missing / stale inputs:</b> {esc(", ".join(d["missing_inputs"]))}</div>')
+    cov = d["coverage"]
+    lines.append(
+        f'<div class="why"><b>Coverage:</b> {cov["fraction"]:.0%} of this dial\'s ratified indicator weight is wired. '
+        f'Still PENDING (not in this number): {esc(", ".join(cov["pending"]))}</div>'
+    )
     if d["inputs_used"]:
         lines.append(f'<div class="why">Inputs used: {esc(", ".join(d["inputs_used"]))}</div>')
     return '<section class="dial">' + "".join(lines) + "</section>"

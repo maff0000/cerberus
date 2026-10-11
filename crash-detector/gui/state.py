@@ -21,7 +21,7 @@ from crash_detector.dials.reading import Degraded, Value
 from crash_detector.serving.dial_presentation import Shown, present_dial
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
-from ingestion.wiring import DIALS, _rows, build_wiring, observations_from_store
+from ingestion.wiring import DIALS, _rows, build_wiring, coverage, observations_from_store
 from crash_detector.engine.evaluate import evaluate
 
 __all__ = ["build_state"]
@@ -65,6 +65,10 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
     observations = observations_from_store(store, wiring, now_utc)
     dialset = evaluate(observations, wiring.snapshot, now_utc)
     dials = [_dial_entry("equity_crash", dialset.equity), _dial_entry("monetary_debasement", dialset.monetary)]
+    cov = coverage(wiring)
+    for d in dials:
+        c = cov[d["dial_id"]]
+        d["coverage"] = {"fraction": round(c["fraction"], 3), "pending": c["pending"]}
 
     ingest = {row["id"]: row for row in indicator_states(store, now_utc)}
     scored_in = {

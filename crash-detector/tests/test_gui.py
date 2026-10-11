@@ -63,6 +63,9 @@ def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wirin
     live = {i["id"]: i for i in state["indicators"] if i["state"] == "LIVE"}
     assert live["hy_oas"]["value"] == CALM["hy_oas"] and live["hy_oas"]["dials"] == ["equity_crash"]
     assert "PROVISIONAL" in gui_server.render_page(state)
+    for d in state["dials"]:
+        assert 0.0 < d["coverage"]["fraction"] < 1.0 and d["coverage"]["pending"]
+    assert "fiscal_dominance" in gui_server.render_page(state)
 
 
 def test_a_missing_required_input_blanks_that_dial_only(db_path, wiring):
@@ -95,11 +98,11 @@ def test_text_from_the_store_is_html_escaped():
     state = {
         "generated_utc": "x", "provisional": "<script>alert(1)</script>", "counts": {"<b>": 1},
         "dials": [{"dial_id": "d", "title": "<i>t</i>", "status": "NO READING", "value": None, "as_of_utc": None,
-                   "missing_inputs": ["<img>"], "reason": "<u>why</u>", "inputs_used": []}],
+                   "coverage": {"fraction": 0.5, "pending": ["<p>"]}, "missing_inputs": ["<img>"], "reason": "<u>why</u>", "inputs_used": []}],
         "indicators": [],
     }
     page = gui_server.render_page(state)
-    for raw in ("<script>alert", "<i>t</i>", "<img>", "<u>why", "<b>: 1"):
+    for raw in ("<script>alert", "<i>t</i>", "<img>", "<u>why", "<b>: 1", "<p>"):
         assert raw not in page
 
 
