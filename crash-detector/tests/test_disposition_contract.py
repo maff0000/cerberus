@@ -293,7 +293,11 @@ def test_the_five_original_words_are_unchanged_in_shape(a_tree):
     # `PO-DECISIONS-0018` ruling 3 and outside any Engineer seat's scope. **THE CODE WAS
     # MOVED INTO A MODULE THAT ALREADY CARRIES AN ESTABLISHED DISPOSITION RATHER THAN THE
     # REGISTER BEING EDITED TO ACCEPT IT.** The control did its job and the code moved.
-    assert "610 sites" in result.stdout, (
+    # WO-1.3 (2026-10-11): 610 -> 648 sites, MEASURED by running the instrument. The growth is
+    # the banded executor, RelevanceWindow and the relevance door: tier-2 (exact-type identity)
+    # sites. TIER 1 stays at 33 distinct sites (ISINSTANCE 18) and the module count stays 19,
+    # so no new module entered the judgement closure and no disposition is owed.
+    assert "648 sites" in result.stdout, (
         "the sweep's own POPULATION moved. If that was a deliberate product change, "
         "supersede this number with the MEASURED one and say what moved it; if it was not, "
         "something changed under src/ that nobody intended.\n" + result.stdout[-3000:]

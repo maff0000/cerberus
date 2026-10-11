@@ -521,8 +521,9 @@ def test_the_data_file_path_comes_from_the_environment(monkeypatch, tmp_path):
 
 def test_the_loader_makes_NO_judgement_of_its_own_a_bad_row_dies_in_the_constructor(tmp_path):
     """A loader with its own copy of the rules is a second place the rules live, and the two
-    come apart in the direction nobody is testing. Here a row with a QUARTERLY window fails
-    with the SAME collision refusal a hand-built row gets."""
+    come apart in the direction nobody is testing. Here a row whose window is wider than the
+    RELEVANCE ceiling (120 days, WO-1.3) fails with the SAME refusal a hand-built
+    RelevanceWindow gets; a quarterly row is now ADMITTED (see the admitting arm below)."""
     path = tmp_path / "wide.json"
     path.write_text(json.dumps({
         "$comment": [], "mapping_artefact": "PLANT_SYNTH_ARTEFACT",
@@ -533,7 +534,7 @@ def test_the_loader_makes_NO_judgement_of_its_own_a_bad_row_dies_in_the_construc
                 {"dial_id": EQUITY_DIAL_ID, "polarity": "RISING_MEANS_MORE_RISK"}
             ],
             "provisional_tier": "x3",
-            "staleness_window_seconds": 91 * 86400.0,
+            "staleness_window_seconds": 121 * 86400.0,
             "provenance": {
                 "ruling_ref": "PLANT_SYNTH_RULING",
                 "mapping_artefact": "PLANT_SYNTH_ARTEFACT",
@@ -543,7 +544,7 @@ def test_the_loader_makes_NO_judgement_of_its_own_a_bad_row_dies_in_the_construc
             "wiring_state": "PENDING",
         }],
     }), encoding="utf-8")
-    with pytest.raises(StalenessWindowTooWideForTheCeiling):
+    with pytest.raises(StalenessWindowOutOfRange):
         load_indicator_mapping_registry(path)
 
 

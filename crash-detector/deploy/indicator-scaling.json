@@ -1,0 +1,34 @@
+{
+  "$comment": [
+    "PROVISIONAL SCALING FOR THE BANDED_WEIGHTED_MEAN MAPPING (CERBERUS WO-1.3).",
+    "EVERY NUMBER HERE IS A PLACEHOLDER BAND, NOT A CALIBRATED THRESHOLD. No backtest has been run (PO-DECISIONS-0025 r3: 'No weight is trusted on assertion'). They exist so a LIVE/DIRECT indicator can be scored at all and so the reading is explainable; they must be replaced by backtested values before any reading is relied on.",
+    "calm  = the indicator value that scores 0.0 (no stress). stress = the value that scores 1.0. Linear between, clamped. The ORDER of the two encodes polarity per dial; a test asserts it agrees with the ratified mapping's polarity for that dial.",
+    "weight is NOT stored here: it is derived from the ratified mapping's tier (1 -> 3, 2 -> 2, 3 -> 1).",
+    "required = true means the dial is Unknown unless this input is present and fresh. It is set only on indicators bound to ONE dial (source criticality is per source, not per dial) and only on the dial's highest-tier wired indicators. Everything else CONTRIBUTES: if absent the dial is Degraded and says which input is missing. Absence is never averaged in as zero.",
+    "Only indicators the ingestion catalog delivers as a whole scored quantity (DIRECT, with no COMPONENT ingredient) are wired. Derived, partial, and intractable indicators are PENDING and contribute nothing."
+  ],
+  "equity_crash": {
+    "hy_oas":            {"calm": 3.0,     "stress": 6.0,     "required": true},
+    "yield_curve_10y3m": {"calm": 1.5,     "stress": -1.0,    "required": true},
+    "yield_curve_10y2y": {"calm": 1.0,     "stress": -0.75,   "required": true},
+    "ig_oas":            {"calm": 0.9,     "stress": 2.0,     "required": false},
+    "jobless_claims_4w": {"calm": 200000.0, "stress": 300000.0, "required": false},
+    "sahm_rule":         {"calm": 0.0,     "stress": 0.5,     "required": false},
+    "michigan_sentiment":{"calm": 90.0,    "stress": 55.0,    "required": false},
+    "cboe_skew":         {"calm": 120.0,   "stress": 160.0,   "required": false},
+    "vix_level":         {"calm": 14.0,    "stress": 35.0,    "required": false},
+    "chicago_fed_nfci":  {"calm": -0.5,    "stress": 0.5,     "required": false},
+    "real_rate_10y_tips":{"calm": 0.0,     "stress": 2.5,     "required": false},
+    "fed_funds_rate":    {"calm": 2.0,     "stress": 5.5,     "required": false},
+    "m2_yoy":            {"calm": 6.0,     "stress": -2.0,    "required": false}
+  },
+  "monetary_debasement": {
+    "broad_dollar":      {"calm": 125.0,   "stress": 105.0,   "required": true},
+    "breakeven_5y":      {"calm": 2.0,     "stress": 3.5,     "required": true},
+    "cpi_yoy":           {"calm": 2.0,     "stress": 6.0,     "required": false},
+    "core_pce_yoy":      {"calm": 2.0,     "stress": 5.0,     "required": false},
+    "real_rate_10y_tips":{"calm": 2.0,     "stress": -1.0,    "required": false},
+    "fed_funds_rate":    {"calm": 4.0,     "stress": 0.0,     "required": false},
+    "m2_yoy":            {"calm": 4.0,     "stress": 12.0,    "required": false}
+  }
+}

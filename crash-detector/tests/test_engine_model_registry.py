@@ -846,7 +846,7 @@ def test_p8_the_enum_ships_exactly_one_member_and_it_is_the_refusing_one():
     adding one is inventing product meaning (``PBG-AUTH-005``, CD-RULE-003) — so this test
     is the tripwire that makes such an addition visible instead of quiet.
     """
-    assert list(MappingKind) == [MappingKind.UNSPECIFIED]
+    assert list(MappingKind) == [MappingKind.UNSPECIFIED, MappingKind.BANDED_WEIGHTED_MEAN]
     assert MAPPINGS_WITH_AN_EXECUTOR_BRANCH == frozenset(MappingKind), (
         "every declared mapping must have a branch in the executor and vice versa; the "
         "module asserts this at import, and this asserts that the assertion is live"
@@ -878,11 +878,22 @@ def test_p8_no_code_path_in_the_executor_module_returns_a_number():
         for node in ast.walk(functions[0])
         if isinstance(node, ast.Return) and node.value is not None
     ]
-    assert returns == [], (
-        "compute() returns a value on some path. The one shipped mapping member REFUSES "
-        "and returns nothing (PO-DECISIONS-0005 ruling 2); a return here would be a "
-        "magnitude manufactured where a mapping is absent."
+    # WO-1.3: BANDED_WEIGHTED_MEAN is the first computing member, so exactly ONE return with a
+    # value is permitted, and it must be the delegation to the banded executor inside the
+    # branch that tests for that member and for no other. The UNSPECIFIED branch still
+    # raises and returns nothing.
+    assert len(returns) == 1, (
+        "compute() must have exactly one value-bearing return (the BANDED_WEIGHTED_MEAN "
+        "branch); any other is a magnitude manufactured where a mapping is absent."
     )
+    only = returns[0].value
+    assert isinstance(only, ast.Call) and getattr(only.func, "id", None) == "_banded_weighted_mean"
+    guards = [
+        node
+        for node in ast.walk(functions[0])
+        if isinstance(node, ast.If) and returns[0] in list(ast.walk(node))
+    ]
+    assert guards and "BANDED_WEIGHTED_MEAN" in ast.unparse(guards[-1].test)
 
 
 def test_p8_the_executor_refuses_a_spec_whose_mapping_slot_was_rewritten():

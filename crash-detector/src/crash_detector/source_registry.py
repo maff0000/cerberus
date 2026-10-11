@@ -69,14 +69,15 @@ import json
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Union
 
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.own_terms import NotEstablishedOnOwnTerms, own_str
-from crash_detector.establishment import each_of, establishes
+from crash_detector.establishment import each_of, establishes, one_of
 from crash_detector.staleness import (
     STALENESS_WINDOW_CEILING_SECONDS,
     STALENESS_WINDOW_CEILING_SOURCE,
+    RelevanceWindow,
     StalenessWindow,
     StalenessWindowOutOfRange,
 )
@@ -109,6 +110,7 @@ __all__ = [
     "INDICATOR_MAPPING_PATH_ENV_VAR",
     "SYNTHETIC_ID_MARKER",
     "admit_staleness_window",
+    "admit_relevance_window",
     "indicator_mapping_path",
     "load_indicator_mapping_registry",
 ]
@@ -680,6 +682,16 @@ def admit_staleness_window(seconds: object) -> StalenessWindow:
         raise
 
 
+def admit_relevance_window(seconds: object) -> RelevanceWindow:
+    """Admit a per-indicator RELEVANCE window (data cadence), the door ``_admit_row`` uses.
+
+    WO-1.3 (Owner direction, 2026-10-11): separate from :func:`admit_staleness_window`, which
+    keeps the 900 s FEED-LIVENESS ceiling and is unchanged. See
+    :class:`~crash_detector.staleness.RelevanceWindow`.
+    """
+    return RelevanceWindow(seconds=seconds)
+
+
 @establishes(dial_id=str, polarity=Polarity)
 @dataclass(frozen=True)
 class DialBinding:
@@ -808,7 +820,7 @@ class MappingProvenance:
     source_id=str,
     dial_bindings=each_of(DialBinding, within=(tuple,)),
     provisional_tier=ProvisionalTier,
-    staleness_window=StalenessWindow,
+    staleness_window=one_of(StalenessWindow, RelevanceWindow),
     provenance=MappingProvenance,
     wiring_state=WiringState,
 )
@@ -832,7 +844,7 @@ class IndicatorMapping:
     source_id: str
     dial_bindings: tuple[DialBinding, ...]
     provisional_tier: ProvisionalTier
-    staleness_window: StalenessWindow
+    staleness_window: Union[StalenessWindow, RelevanceWindow]
     provenance: MappingProvenance
     wiring_state: WiringState
 
@@ -889,7 +901,7 @@ class IndicatorMapping:
             )
         # EXACT TYPE: a StalenessWindow subclass may redefine `covers`, and `covers` IS the
         # freshness answer — the thing that decides whether an observation is current.
-        if type(self.staleness_window) is not StalenessWindow:
+        if type(self.staleness_window) not in (StalenessWindow, RelevanceWindow):
             raise MappingRefused(
                 "IndicatorMapping.staleness_window must be a StalenessWindow, got "
                 f"{type(self.staleness_window).__name__}. A bare number of seconds has not "
@@ -1113,7 +1125,7 @@ def _admit_row(raw: object) -> IndicatorMapping:
             _admit_binding(b, source_id=source_id) for b in raw["dial_bindings"]
         ),
         provisional_tier=tier,
-        staleness_window=admit_staleness_window(raw["staleness_window_seconds"]),
+        staleness_window=admit_relevance_window(raw["staleness_window_seconds"]),
         provenance=MappingProvenance(**provenance_raw),
         wiring_state=wiring,
     )
