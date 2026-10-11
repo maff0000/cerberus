@@ -204,7 +204,7 @@ from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.engine.mapping import compute
 from crash_detector.engine.model import ModelSpec
 from crash_detector.observations import OK, ObservationRecord
-from crash_detector.staleness import StalenessWindow
+from crash_detector.staleness import RelevanceWindow, StalenessWindow
 from crash_detector.time_utc import age_seconds, ensure_utc
 
 __all__ = [
@@ -294,6 +294,7 @@ def evaluate(
         observations,
         now_utc=instant,
         window=config_snapshot.window(),
+        relevance=_relevance_windows_of(config_snapshot),
     )
     return DialSet(
         equity=_evaluate_dial(
@@ -311,11 +312,28 @@ def evaluate(
     )
 
 
+def _relevance_windows_of(config_snapshot: ConfigSnapshot) -> dict:
+    """source_id -> the :class:`RelevanceWindow` its indicator mapping declares (WO-1.3).
+
+    Only mappings carrying a ``RelevanceWindow`` appear here. A source with no such mapping
+    is judged by the snapshot's single liveness window exactly as before, so every
+    pre-WO-1.3 snapshot evaluates identically. A source WITH one is judged by that window and
+    ONLY that window: the 900 s liveness ceiling is a statement about feed liveness, and a
+    daily series is not dead at 16 minutes.
+    """
+    return {
+        mapping.source_id: mapping.staleness_window
+        for mapping in config_snapshot.indicator_mapping_registry.mappings
+        if type(mapping.staleness_window) is RelevanceWindow
+    }
+
+
 def _latest_usable_ok(
     observations: Sequence[ObservationRecord],
     *,
     now_utc: datetime,
     window: StalenessWindow,
+    relevance: Union[dict, None] = None,
 ) -> dict[str, OK]:
     """The most recent usable ``OK`` observation per source.
 
@@ -364,7 +382,8 @@ def _latest_usable_ok(
         if type(outcome) is not OK:
             continue
         age = age_seconds(as_of_utc=outcome.source_as_of_utc, now_utc=now_utc)
-        if not window.covers(age):
+        applicable = window if relevance is None else relevance.get(record.source_id, window)
+        if not applicable.covers(age):
             continue
         incumbent = latest.get(record.source_id)
         # WHICH OBSERVATION IS THE LATEST IS DECIDED BY THIS SYSTEM. `>` between two stored

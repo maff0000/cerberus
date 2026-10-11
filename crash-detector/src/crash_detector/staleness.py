@@ -372,6 +372,9 @@ __all__ = [
     "StalenessWindowOutOfRange",
     "FreshnessNotEstablished",
     "StalenessWindow",
+    "RELEVANCE_WINDOW_CEILING_SECONDS",
+    "RELEVANCE_WINDOW_CEILING_SOURCE",
+    "RelevanceWindow",
     "FreshnessEvidence",
 ]
 
@@ -506,6 +509,96 @@ class StalenessWindow:
                 f"age must be a plain int or float number of seconds, got "
                 f"{type(age).__name__}. A subclass of a number may redefine comparison, "
                 "and the comparison is the whole of this answer."
+            )
+        value = float(age)
+        if not math.isfinite(value):
+            return False
+        return 0.0 <= value <= self.seconds
+
+
+#: The HARD UPPER BOUND on a per-indicator RELEVANCE window, in seconds: how old an
+#: observation of a slow series may be and still be that series' CURRENT observation.
+#: DERIVED from the Owner-ratified indicator mapping (``governance/mapping/indicator_mapping.yaml``,
+#: ratified 2026-08-24): the widest window it declares is 10_368_000 s (120 days; private
+#: credit stress and SLOOS, both quarterly). A ceiling and not a setting, for the same reason
+#: :data:`STALENESS_WINDOW_CEILING_SECONDS` is: a relevance window that can be 1e18 abolishes
+#: staleness.
+RELEVANCE_WINDOW_CEILING_SECONDS: float = 10_368_000.0
+
+RELEVANCE_WINDOW_CEILING_SOURCE = (
+    "the widest per-indicator window in the Owner-ratified indicator mapping "
+    "(10,368,000 s = 120 days: private_credit_stress and sloos_bank_lending, quarterly "
+    "series). WO-1.3 (2026-10-11): the Owner directed that real data be wired into the "
+    "engine, which resolves the collision admit_staleness_window recorded between FEED "
+    "LIVENESS (the 900 s ceiling above, unchanged) and DATA CADENCE (this)."
+)
+
+
+@establishes(
+    seconds=float,
+)
+@dataclass(frozen=True)
+class RelevanceWindow:
+    """How old an observation of ONE indicator may be and still be its current observation.
+
+    **A DIFFERENT QUANTITY FROM** :class:`StalenessWindow`, **NOT A WIDER INSTANCE OF IT.**
+    ``StalenessWindow`` is bounded by the 15-minute detectability budget (PID §5) and
+    answers *"is the feed alive?"*. A three-month-old SLOOS print is not a dead feed; it is
+    the current observation of a quarterly series. ``RelevanceWindow`` answers that second
+    question, per indicator (PO-PRODUCT-0001 R2), and is bounded by the widest cadence the
+    ratified mapping declares. The two types are separate so that neither can be passed
+    where the other is meant: widening the liveness ceiling to fit the data was the move the
+    previous seat declined, and this is the alternative it pointed at.
+
+    Every hardening :class:`StalenessWindow` carries is carried here: exact numeric type,
+    finite, positive, ceilinged-and-refused-not-clamped, closed against subclassing, and a
+    negative (future-dated) age is never covered. Absence past the window is ABSENCE: the
+    engine treats the observation as not there, never as a value with a caveat.
+    """
+
+    __slots__ = ("seconds",)
+
+    seconds: float
+
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        raise TypeError(
+            f"{cls.__name__} may not subclass RelevanceWindow: a subclass could redefine "
+            "the admission that gives a window its meaning while remaining acceptable to "
+            "every isinstance check downstream."
+        )
+
+    def __post_init__(self) -> None:
+        declared = self.seconds
+        if type(declared) is not float and type(declared) is not int:
+            raise TypeError(
+                "relevance window must be a plain int or float number of seconds, got "
+                f"{type(declared).__name__}. A subclass of a number may redefine "
+                "comparison, and the comparison is the whole of this answer."
+            )
+        window = float(declared)
+        if not math.isfinite(window):
+            raise StalenessWindowOutOfRange(
+                f"relevance window must be finite, got {window!r}. An unbounded window is "
+                "no window: it abolishes staleness."
+            )
+        if window <= 0.0:
+            raise StalenessWindowOutOfRange(
+                f"relevance window must be positive, got {window!r} seconds."
+            )
+        if window > RELEVANCE_WINDOW_CEILING_SECONDS:
+            raise StalenessWindowOutOfRange(
+                f"relevance window {window!r} seconds exceeds the ceiling of "
+                f"{RELEVANCE_WINDOW_CEILING_SECONDS} seconds and is REFUSED, not clamped. "
+                f"The ceiling is DERIVED, not chosen: {RELEVANCE_WINDOW_CEILING_SOURCE}"
+            )
+        object.__setattr__(self, "seconds", window)
+
+    def covers(self, age: float) -> bool:
+        """Is an observation of this ``age`` in seconds still its indicator's current one?"""
+        if type(age) is not float and type(age) is not int:
+            raise TypeError(
+                f"age must be a plain int or float number of seconds, got "
+                f"{type(age).__name__}."
             )
         value = float(age)
         if not math.isfinite(value):

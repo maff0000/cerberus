@@ -301,6 +301,22 @@ class MappingKind(Enum):
     would reintroduce it at the one place this amendment concentrates all computation.
     """
 
+    BANDED_WEIGHTED_MEAN = "banded_weighted_mean"
+    """THE FIRST COMPUTING MEMBER (WO-1.3, Owner direction 2026-10-11).
+
+    Each input's released ``value`` is scaled onto [0, 1] by a linear band declared as DATA
+    (parameters ``calm::<source_id>`` -> 0.0 and ``stress::<source_id>`` -> 1.0, clamped; the
+    ORDER of the two encodes the indicator's polarity, so there is no separate sign to
+    forget), and the dial magnitude is the weighted mean of those stresses over the inputs
+    present (parameters ``weight::<source_id>``). Every contribution is returned by name.
+
+    **EVERY BAND AND WEIGHT IS PROVISIONAL.** Nothing is calibrated; no backtest has been
+    run (PO-DECISIONS-0025 r3). The values are carried in ``deploy/indicator-scaling.json``
+    with their rationale and travel in the snapshot so a reading can be explained later.
+    A mean over the inputs PRESENT is only ever returned as ``Value``/``Degraded`` by
+    ``evaluate``, which states the missing inputs; absence is never averaged in as zero.
+    """
+
 
 #: The persisted discriminator values for a model registry row's ``mapping`` column, when
 #: deliverable A5's schema reaches it. Derived from the enum rather than restated, so the

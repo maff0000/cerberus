@@ -118,7 +118,10 @@ NOT PROVED TO BE CARRIED ANYWHERE (CD-RULE-006).
 
 from __future__ import annotations
 
+import math
+
 from crash_detector.admission import admits
+from crash_detector.dials.scores import Contribution
 from crash_detector.engine.model import (
     MappingKind,
     ModelSpec,
@@ -157,7 +160,9 @@ class UnspecifiedMapping(Exception):
 #:
 #: A ``frozenset`` and not a list: membership is what is asserted, and order is not a
 #: property of an enum's branches.
-MAPPINGS_WITH_AN_EXECUTOR_BRANCH = frozenset({MappingKind.UNSPECIFIED})
+MAPPINGS_WITH_AN_EXECUTOR_BRANCH = frozenset(
+    {MappingKind.UNSPECIFIED, MappingKind.BANDED_WEIGHTED_MEAN}
+)
 
 if MAPPINGS_WITH_AN_EXECUTOR_BRANCH != frozenset(MappingKind):
     raise AssertionError(
@@ -210,6 +215,58 @@ def _payloads_the_engine_released(payloads: object) -> dict:
     return established
 
 
+def _finite_number(owner: str, value: object) -> float:
+    if type(value) is bool or type(value) not in (int, float):
+        raise TypeError(
+            f"{owner} must be a plain number, got {type(value).__name__}. A token, a string "
+            "or a missing value is not a measurement and is never coerced into one."
+        )
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"{owner} must be finite, got {number!r}")
+    return number
+
+
+@admits(spec=ModelSpec, released=dict)
+def _banded_weighted_mean(spec: ModelSpec, released: dict) -> ScoreComputation:
+    """The ``BANDED_WEIGHTED_MEAN`` executor. See :class:`MappingKind` for the definition.
+
+    Raises (never returns a number) when an input has no declared band/weight, a band has no
+    span, a weight is not positive, or a payload's ``value`` is not a finite plain number.
+    With no inputs at all it raises rather than answering 0.0: ``evaluate`` never calls it
+    without at least the dial's required inputs, and an empty mean is not a score.
+    """
+    parameters = {parameter.name: parameter.value for parameter in spec.parameters}
+    if not released:
+        raise ValueError(f"model {spec.model_id!r} was handed no inputs; an empty mean is not a score")
+    total_weight = 0.0
+    weighted = 0.0
+    contributions = []
+    for source_id in sorted(released):
+        try:
+            calm = parameters[f"calm::{source_id}"]
+            stress = parameters[f"stress::{source_id}"]
+            weight = parameters[f"weight::{source_id}"]
+        except KeyError as missing:
+            raise ValueError(
+                f"model {spec.model_id!r} has no declared parameter {missing.args[0]!r} for "
+                f"input {source_id!r}: an input without a band is not scored, it is refused"
+            ) from None
+        if stress == calm:
+            raise ValueError(f"input {source_id!r} declares a band with no span")
+        if weight <= 0.0:
+            raise ValueError(f"input {source_id!r} declares a non-positive weight")
+        value = _finite_number(f"payload value of {source_id!r}", released[source_id].get("value"))
+        scaled = (value - calm) / (stress - calm)
+        scaled = 0.0 if scaled < 0.0 else 1.0 if scaled > 1.0 else scaled
+        total_weight += weight
+        weighted += weight * scaled
+        contributions.append(
+            Contribution(source_id=source_id, category="banded_indicator", weight=weight, contribution=scaled)
+        )
+    return ScoreComputation(magnitude=weighted / total_weight, contributions=tuple(contributions))
+
+
 @admits(spec=ModelSpec, payloads=dict)
 def compute(spec: ModelSpec, payloads: dict) -> ScoreComputation:
     """Execute ``spec``'s NAMED mapping over ``payloads`` and return the computation.
@@ -258,6 +315,9 @@ def compute(spec: ModelSpec, payloads: dict) -> ScoreComputation:
             "COMPUTING mapping arrives only with the CD-D-005 register (BLUEPRINT §16, "
             "PO-DECISIONS-0005 ruling 2)."
         )
+
+    if spec.mapping is MappingKind.BANDED_WEIGHTED_MEAN:
+        return _banded_weighted_mean(spec, released)
 
     # NO `else`, NO FALLTHROUGH, AND NO RETURN. Reaching this line would require a
     # MappingKind member with no branch above, and MAPPINGS_WITH_AN_EXECUTOR_BRANCH is

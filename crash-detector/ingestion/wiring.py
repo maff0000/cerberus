@@ -1,0 +1,247 @@
+"""Wire real ingestion-store readings into the engine's two dials (CERBERUS WO-1.3).
+
+Reads the ratified mapping (``governance/mapping/indicator_mapping.yaml``), the ingredient
+catalog and the PROVISIONAL scaling (``deploy/indicator-scaling.json``) and builds a
+``ConfigSnapshot`` plus the ``ObservationRecord`` list ``evaluate`` consumes. It lives
+outside ``src/`` for the same reason the rest of ingestion does: it reads a file store and
+YAML, and the application tree does neither.
+
+WHICH INDICATORS ARE LIVE. Only those the catalog delivers as their WHOLE scored quantity:
+at least one ``DIRECT`` ingredient and no ``COMPONENT`` ingredient. Everything else (derived
+cross-ratios, the partial SLOOS leg, the intractable five, CAPE which the engine would have to
+percentile) is PENDING: it gets no observation, so a dial that needs it is Unknown and a dial
+that merely lists it is Degraded. Nothing is defaulted, estimated or carried forward.
+
+TWO DIALS, NEVER BLENDED. One ``ModelSpec`` per dial, each over only the indicators bound to
+that dial, each with its own band for that dial's polarity.
+"""
+
+from __future__ import annotations
+
+import json
+import math
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+
+import yaml
+
+from crash_detector.dials.dialset import DialSet
+from crash_detector.engine.config import ConfigSnapshot, DialSpec
+from crash_detector.engine.evaluate import evaluate
+from crash_detector.engine.model import (
+    DeclaredParameter,
+    MappingKind,
+    ModelProvenance,
+    ModelRegistry,
+    ModelSpec,
+)
+from crash_detector.observations import OK, ObservationRecord
+from crash_detector.source_registry import (
+    Criticality,
+    DialBinding,
+    IndicatorMapping,
+    IndicatorMappingRegistry,
+    MappingProvenance,
+    Polarity,
+    ProvisionalTier,
+    SourceRecord,
+    SourceRegistry,
+    WiringState,
+)
+from crash_detector.staleness import RelevanceWindow
+from crash_detector.time_utc import ensure_utc
+
+from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient
+from ingestion.store import SqliteStore
+
+__all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store"]
+
+ROOT = Path(__file__).resolve().parents[1]
+MAPPING_YAML = ROOT / "governance" / "mapping" / "indicator_mapping.yaml"
+SCALING_JSON = ROOT / "deploy" / "indicator-scaling.json"
+
+#: The tier -> weight rule of PO-DECISIONS-0025 r1 (x3/x2/x1). Provisional, pending backtest.
+TIER_WEIGHT = {1: 3.0, 2: 2.0, 3: 1.0}
+TIER_ENUM = {1: ProvisionalTier.X3, 2: ProvisionalTier.X2, 3: ProvisionalTier.X1}
+POLARITY = {
+    "high_is_worse": Polarity.RISING_MEANS_MORE_RISK,
+    "low_is_better": Polarity.RISING_MEANS_MORE_RISK,
+    "low_is_worse": Polarity.RISING_MEANS_LESS_RISK,
+    "high_is_better": Polarity.RISING_MEANS_LESS_RISK,
+}
+DIALS = ("equity_crash", "monetary_debasement")
+
+
+@dataclass(frozen=True)
+class Wiring:
+    snapshot: ConfigSnapshot
+    #: indicator id -> the catalog ingredient that is its whole scored quantity.
+    ingredient_for: dict
+    #: indicator id -> why it is not live. Never scored, never defaulted.
+    pending: dict
+
+
+def _rows() -> list:
+    return yaml.safe_load(MAPPING_YAML.read_text(encoding="utf-8"))["indicators"]
+
+
+def _direct_ingredients() -> dict:
+    """indicator id -> its single DIRECT ingredient, only if no COMPONENT ingredient serves it."""
+    direct: dict[str, Ingredient] = {}
+    component: set[str] = set()
+    for ing in INGREDIENTS:
+        for indicator in ing.serves:
+            if ing.completes == "DIRECT":
+                direct.setdefault(indicator, ing)
+            else:
+                component.add(indicator)
+    return {k: v for k, v in direct.items() if k not in component}
+
+
+def _polarities(row: dict) -> dict:
+    dials = row["dial"] if isinstance(row["dial"], list) else [row["dial"]]
+    pol = row["polarity"]
+    return {d: (pol[d] if isinstance(pol, dict) else pol) for d in dials}
+
+
+def _pending_reason(row: dict, all_serving: dict) -> str:
+    sid = row["id"]
+    if sid in NOT_TRACTABLE:
+        return "NOT_TRACTABLE: " + NOT_TRACTABLE[sid]
+    if sid in PARTIAL:
+        return "PARTIAL: " + PARTIAL[sid]
+    if sid in all_serving:
+        return "DERIVED: needs an engine computation over component ingredients that does not exist yet"
+    return "UNWIRED: no ingestion ingredient serves this indicator"
+
+
+def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
+    rows = _rows()
+    scaling = json.loads(SCALING_JSON.read_text(encoding="utf-8"))
+    direct = _direct_ingredients()
+    serving = {i for ing in INGREDIENTS for i in ing.serves}
+    live = [r for r in rows if r["id"] in direct and r.get("status") != "registration_pending"]
+    live_ids = {r["id"] for r in live}
+    pending = {r["id"]: _pending_reason(r, serving) for r in rows if r["id"] not in live_ids}
+
+    mappings, sources, cache = [], [], {}
+    for r in live:
+        pols = _polarities(r)
+        ing = direct[r["id"]]
+        # Criticality is per SOURCE; the scaling file's `required` flags must agree across dials.
+        flags = {bool(scaling[d][r["id"]]["required"]) for d in pols if r["id"] in scaling[d]}
+        if len(flags) != 1:
+            raise ValueError(f"{r['id']}: scaling must declare the same `required` on every dial it binds")
+        required = flags.pop()
+        if required and len(pols) != 1:
+            raise ValueError(f"{r['id']}: a two-dial indicator cannot be REQUIRED (criticality is per source)")
+        cache[r["id"]] = (r, pols, required)
+        mappings.append(IndicatorMapping(
+            source_id=r["id"],
+            dial_bindings=tuple(DialBinding(dial_id=d, polarity=POLARITY[p]) for d, p in pols.items()),
+            provisional_tier=TIER_ENUM[r["tier"]],
+            staleness_window=RelevanceWindow(seconds=float(r["staleness_window_seconds"])),
+            provenance=MappingProvenance(
+                ruling_ref="PO-DECISIONS-0025",
+                mapping_artefact="governance/mapping/indicator_mapping.yaml",
+                mapping_version=str(yaml.safe_load(MAPPING_YAML.read_text(encoding="utf-8"))["schema_version"]),
+                stands_for=f"{r['name']}: {ing.stands_for}",
+            ),
+            wiring_state=WiringState.WIRED,
+        ))
+        sources.append(SourceRecord(
+            source_id=r["id"], adapter_id=ing.source_id, cadence_seconds=int(ing.poll_seconds),
+            criticality=Criticality.REQUIRED if required else Criticality.CONTRIBUTING,
+            stands_for=ing.stands_for or ing.source_id,
+        ))
+
+    specs, models = [], []
+    for dial in DIALS:
+        ids = [r["id"] for r in live if dial in cache[r["id"]][1]]
+        req = tuple(i for i in ids if cache[i][2])
+        con = tuple(i for i in ids if not cache[i][2])
+        params = []
+        for i in ids:
+            band = scaling[dial][i]
+            params += [
+                DeclaredParameter(name=f"calm::{i}", value=float(band["calm"])),
+                DeclaredParameter(name=f"stress::{i}", value=float(band["stress"])),
+                DeclaredParameter(name=f"weight::{i}", value=TIER_WEIGHT[cache[i][0]["tier"]]),
+            ]
+        model_id = f"banded-weighted-mean::{dial}::v0-provisional"
+        models.append(ModelSpec(
+            model_id=model_id, dial_id=dial, required_input_ids=req, contributing_input_ids=con,
+            mapping=MappingKind.BANDED_WEIGHTED_MEAN, parameters=tuple(params),
+            provenance=ModelProvenance(
+                stands_for="Weighted mean of linearly banded indicator stresses for this dial only",
+                account="deploy/indicator-scaling.json (bands) and the ratified mapping's tiers (weights); "
+                        "ALL PROVISIONAL, uncalibrated, no backtest run (PO-DECISIONS-0025 r3)",
+                decided_by="Owner direction 2026-10-11 (WO-1.3); numbers are placeholders pending backtest",
+            ),
+        ))
+        specs.append(DialSpec(dial_id=dial, required_input_ids=req, contributing_input_ids=con, model_ref=model_id))
+
+    snapshot = ConfigSnapshot(
+        config_snapshot_id=config_snapshot_id,
+        dial_specs=tuple(specs),
+        staleness_window_seconds=900.0,
+        source_registry=SourceRegistry(sources=tuple(sources)),
+        model_registry=ModelRegistry(models=tuple(models)),
+        indicator_mapping_registry=IndicatorMappingRegistry(mappings=tuple(mappings)),
+    )
+    return Wiring(snapshot=snapshot, ingredient_for={i: direct[i] for i in live_ids}, pending=pending)
+
+
+def observations_from_store(store: SqliteStore, wiring: Wiring, observed_utc: datetime) -> list:
+    """One OK observation per live indicator that has a finite numeric stored reading.
+
+    A missing reading, or a value that is not a plain finite number, yields NO observation:
+    the engine then sees absence, never a default.
+    """
+    out = []
+    for indicator, ing in sorted(wiring.ingredient_for.items()):
+        reading = store.latest_reading(ing.source_id)
+        if reading is None:
+            continue
+        payload = reading["payload"]
+        value = payload.get("value")
+        if type(value) not in (int, float) or not math.isfinite(value):
+            continue
+        out.append(ObservationRecord(
+            source_id=indicator,
+            observed_utc=ensure_utc(observed_utc),
+            outcome=OK(payload=payload,
+                       source_as_of_utc=datetime.fromisoformat(reading["source_as_of_utc"].replace("Z", "+00:00"))),
+        ))
+    return out
+
+
+def evaluate_from_store(store: SqliteStore, now_utc: datetime, wiring: "Wiring | None" = None) -> DialSet:
+    wiring = wiring or build_wiring()
+    return evaluate(observations_from_store(store, wiring, now_utc), wiring.snapshot, now_utc)
+
+
+def coverage(wiring: Wiring) -> dict:
+    """Per dial: the share of the ratified nominal tier weight that is WIRED (Auditor F1, WO-1.3).
+
+    A dial built from only the live indicators reads as a full ``Value`` because the pending
+    rows are not in its spec. This is the disclosure that closes that gap for any consumer: it
+    counts every ratified row bound to the dial, live or not, and names the pending ones.
+    """
+    out = {}
+    for dial in DIALS:
+        total = live = 0.0
+        pending = []
+        for r in _rows():
+            if dial not in _polarities(r):
+                continue
+            w = TIER_WEIGHT[r["tier"]]
+            total += w
+            if r["id"] in wiring.ingredient_for:
+                live += w
+            else:
+                pending.append(r["id"])
+        out[dial] = {"wired_weight": live, "nominal_weight": total,
+                     "fraction": live / total if total else 0.0, "pending": pending}
+    return out
