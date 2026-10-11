@@ -28,12 +28,52 @@ CALM = {
     "cboe_skew": 120.0, "vix_level": 14.0, "chicago_fed_nfci": -0.5, "real_rate_10y_tips": 0.0,
     "fed_funds_rate": 2.0, "m2_yoy": 6.0, "broad_dollar": 125.0, "breakeven_5y": 2.0,
     "cpi_yoy": 2.0, "core_pce_yoy": 2.0,
+    # WO-1.5 DERIVED: these are the FIGURES the engine must compute; _seed writes components that yield them.
+    "breadth_rsp_spy": 0.29, "credit_stress_hyg_lqd": 0.80, "copper_gold": 2.0,
+    "vix_term_structure": 0.85, "spx_vs_200dma": 5.0, "shiller_cape": 50.0,
 }
+
+
+def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
+    """{ingredient source_id: payload} whose engine derivation is `figure`, built independently of the engine."""
+    parts = wiring.derived_for[indicator]
+    unit = "x"
+    if indicator == "spx_vs_200dma":
+        r = 1.0 + figure / 100.0
+        latest = 19900.0 * r / (200.0 - r)  # 199 closes of 100 + this one: latest / average - 1 == figure %
+        history = [[f"2025-{1 + i // 28:02d}-{1 + i % 28:02d}", 100.0] for i in range(259)] + [[date_text, latest]]
+        return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": latest, "history": history}}
+    if indicator == "shiller_cape":
+        j = round(figure * 10) - 1  # history 1..999 => percentile of j+0.5 is 100*(1+j)/1000
+        history = [[f"{1800 + i // 12:04d}-{1 + i % 12:02d}-01", float(i + 1)] for i in range(999)]
+        return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": j + 0.5, "history": history}}
+    if indicator == "vix_term_structure":
+        # cboe.VIX is SHARED with vix_level (its direct seed writes the numerator); only VIX3M is written here.
+        return {parts[1].source_id: {"unit": unit, "observation_date": date_text, "value": vix / figure}}
+    scale = {"copper_gold": 1000.0}.get(indicator, 1.0)
+    return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": figure / scale * 100.0},
+            parts[1].source_id: {"unit": unit, "observation_date": date_text, "value": 100.0}}
+
+
+def _put(store, source_id, payload, as_of):
+    cur = store._db.execute(
+        "INSERT INTO raw_observation (source_id, adapter_id, collector_run_id, attempt_number,"
+        " requested_utc, observed_utc, outcome, source_as_of_utc) VALUES (?,?,?,?,?,?,?,?)",
+        (source_id, "t", "r", 1, as_of, as_of, "OK", as_of))
+    store._db.execute(
+        "INSERT INTO raw_reading (source_id, source_as_of_utc, payload, observation_id, admitted_utc)"
+        " VALUES (?,?,?,?,?)", (source_id, as_of, json.dumps(payload), cur.lastrowid, as_of))
 
 
 def _seed(store, wiring, values, *, age=timedelta(days=1), skip=()):
     for indicator, value in values.items():
         if indicator in skip:
+            continue
+        if indicator in wiring.derived_for:
+            day = (NOW - age).date().isoformat()
+            for source_id, payload in _derived_components(wiring, indicator, value, day,
+                                                              vix=values.get("vix_level", CALM["vix_level"])).items():
+                _put(store, source_id, payload, day + "T00:00:00Z")
             continue
         ing = wiring.ingredient_for[indicator]
         as_of = (NOW - age).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -45,7 +85,8 @@ def _seed(store, wiring, values, *, age=timedelta(days=1), skip=()):
         store._db.execute(
             "INSERT INTO raw_reading (source_id, source_as_of_utc, payload, observation_id, admitted_utc)"
             " VALUES (?,?,?,?,?)",
-            (ing.source_id, as_of, json.dumps({"unit": ing.unit, "value": value}), cur.lastrowid, as_of),
+            (ing.source_id, as_of, json.dumps({"unit": ing.unit, "observation_date": as_of[:10], "value": value}),
+            cur.lastrowid, as_of),
         )
 
 
@@ -82,20 +123,26 @@ def _mag(reading):
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
     assert len(wiring.ingredient_for) == 17
-    assert len(wiring.pending) == 13
-    assert set(wiring.ingredient_for) | set(wiring.pending) == {r["id"] for r in _rows()}
-    assert not set(wiring.ingredient_for) & set(wiring.pending)
-    for derived in ("vix_term_structure", "gold_real_rate_cross", "shiller_cape", "sloos_bank_lending"):
-        assert derived in wiring.pending and wiring.pending[derived]
+    assert len(wiring.derived_for) == 6
+    assert len(wiring.pending) == 7
+    assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
+    assert not wiring.live_ids & set(wiring.pending)
+    assert not set(wiring.ingredient_for) & set(wiring.derived_for)
+    for blocked in ("gold_real_rate_cross", "sloos_bank_lending"):
+        assert blocked in wiring.pending and wiring.pending[blocked]
+    assert wiring.pending["gold_real_rate_cross"].startswith("BLOCKED on definition")
 
 
 def test_scaling_band_order_agrees_with_the_ratified_polarity_for_every_dial(wiring):
     scaling = json.loads(SCALING_JSON.read_text())
     for row in _rows():
-        if row["id"] not in wiring.ingredient_for:
+        if row["id"] not in wiring.live_ids:
             continue
         dials = row["dial"] if isinstance(row["dial"], list) else [row["dial"]]
         for dial in dials:
+            if (row["id"], dial) in wiring.held:
+                assert row["id"] not in scaling[dial], "a HELD binding must carry no band"
+                continue
             pol = row["polarity"][dial] if isinstance(row["polarity"], dict) else row["polarity"]
             band = scaling[dial][row["id"]]
             rising_is_riskier = band["stress"] > band["calm"]
@@ -103,7 +150,7 @@ def test_scaling_band_order_agrees_with_the_ratified_polarity_for_every_dial(wir
     # and nothing is scaled that is not live, nor bound to a dial it does not serve
     for dial in DIALS:
         for indicator in scaling[dial]:
-            assert indicator in wiring.ingredient_for
+            assert indicator in wiring.live_ids and (indicator, dial) not in wiring.held
 
 
 def test_every_input_present_gives_a_value_on_both_dials_never_blended(wiring, store):
@@ -120,7 +167,13 @@ def test_stress_in_one_dial_moves_only_that_dial(wiring, store):
     _seed(store, wiring, stressed)
     dials = evaluate_from_store(store, NOW, wiring)
     assert _mag(dials.equity) == pytest.approx(_expected("equity_crash", stressed))
-    assert _mag(dials.equity) > _expected("equity_crash", CALM) + 0.3
+    # Margin derived from structure, not a hard-coded constant: three tier-1 inputs (weight 3
+    # each) saturate at 1.0 against the dial's total weight, so each further calm input dilutes
+    # the score (0.346 at 17 live inputs, 0.231 at 23). Require at least half that ceiling.
+    tier = {r["id"]: r["tier"] for r in _rows()}
+    total = sum({1: 3.0, 2: 2.0, 3: 1.0}[tier[i]]
+                for i in json.loads(SCALING_JSON.read_text())["equity_crash"])
+    assert _mag(dials.equity) > _expected("equity_crash", CALM) + 0.5 * 9.0 / total
     assert _mag(dials.monetary) == pytest.approx(_expected("monetary_debasement", CALM))
 
 
@@ -211,6 +264,9 @@ def test_a_non_finite_or_non_number_stored_value_yields_no_observation(wiring, s
     _seed(store, wiring, {"hy_oas": 3.0})
     ing = wiring.ingredient_for["vix_level"]
     as_of = (NOW - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # Simulates a corrupted stored payload. SQLite < 3.42 refuses NaN/Infinity literals through the
+    # table's json_type CHECK, so the CHECK is bypassed for this one insert only.
+    store._db.execute("PRAGMA ignore_check_constraints=ON")
     cur = store._db.execute(
         "INSERT INTO raw_observation (source_id, adapter_id, collector_run_id, attempt_number,"
         " requested_utc, observed_utc, outcome, source_as_of_utc) VALUES (?,?,?,?,?,?,?,?)",
@@ -219,5 +275,6 @@ def test_a_non_finite_or_non_number_stored_value_yields_no_observation(wiring, s
         "INSERT INTO raw_reading (source_id, source_as_of_utc, payload, observation_id, admitted_utc)"
         " VALUES (?,?,?,?,?)",
         (ing.source_id, as_of, json.dumps({"unit": "x", "value": bad}, allow_nan=True), cur.lastrowid, as_of))
+    store._db.execute("PRAGMA ignore_check_constraints=OFF")
     ids = {o.source_id for o in observations_from_store(store, wiring, NOW)}
     assert "hy_oas" in ids and "vix_level" not in ids

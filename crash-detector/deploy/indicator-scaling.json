@@ -5,7 +5,10 @@
     "calm  = the indicator value that scores 0.0 (no stress). stress = the value that scores 1.0. Linear between, clamped. The ORDER of the two encodes polarity per dial; a test asserts it agrees with the ratified mapping's polarity for that dial.",
     "weight is NOT stored here: it is derived from the ratified mapping's tier (1 -> 3, 2 -> 2, 3 -> 1).",
     "required = true means the dial is Unknown unless this input is present and fresh. It is set only on indicators bound to ONE dial (source criticality is per source, not per dial) and only on the dial's highest-tier wired indicators. Everything else CONTRIBUTES: if absent the dial is Degraded and says which input is missing. Absence is never averaged in as zero.",
-    "Only indicators the ingestion catalog delivers as a whole scored quantity (DIRECT, with no COMPONENT ingredient) are wired. Derived, partial, and intractable indicators are PENDING and contribute nothing."
+    "Wired indicators are those the ingestion catalog delivers as a whole scored quantity (DIRECT) AND, since WO-1.5, the six DERIVED ones the ENGINE computes from stored components (crash_detector.engine.derivations). Partial, blocked and intractable indicators are PENDING and contribute nothing.",
+    "WO-1.5 DERIVED BANDS ARE THE LEAST-GROUNDED NUMBERS IN THIS FILE. They band a computed figure (a ratio, a percent, a percentile) whose historical range this project has not examined: each is a round-number guess placed within roughly +-20% of the figure's level on 2026-10-09. NO backtest, NO distribution study. Treat the resulting scores as an illustration that the wiring works, not as a reading of risk.",
+    "  shiller_cape: the figure is the CAPE's PERCENTILE (0-100) within multpl's own monthly history since 1871. spx_vs_200dma: percent of the latest close above(+)/below(-) its 200-day simple average; the row's '>15% above = overextended' arm is non-monotone and cannot be expressed by a one-direction band (the declared polarity is low_is_worse), so it is NOT scored. copper_gold: HG ($/lb) / GC ($/oz) x 1000. breadth_rsp_spy, credit_stress_hyg_lqd, vix_term_structure: plain price/level ratios of same-date closes.",
+    "  copper_gold is scored on the equity dial ONLY. Its monetary_debasement binding is HELD (ingestion/wiring.py HELD_BINDINGS): the ratified polarity word and the row's own comment disagree about direction. No monetary band is declared, deliberately."
   ],
   "equity_crash": {
     "hy_oas":            {"calm": 3.0,     "stress": 6.0,     "required": true},
@@ -20,7 +23,13 @@
     "chicago_fed_nfci":  {"calm": -0.5,    "stress": 0.5,     "required": false},
     "real_rate_10y_tips":{"calm": 0.0,     "stress": 2.5,     "required": false},
     "fed_funds_rate":    {"calm": 2.0,     "stress": 5.5,     "required": false},
-    "m2_yoy":            {"calm": 6.0,     "stress": -2.0,    "required": false}
+    "m2_yoy":            {"calm": 6.0,     "stress": -2.0,    "required": false},
+    "shiller_cape":      {"calm": 50.0,    "stress": 99.0,    "required": false},
+    "breadth_rsp_spy":   {"calm": 0.29,    "stress": 0.25,    "required": false},
+    "credit_stress_hyg_lqd": {"calm": 0.80, "stress": 0.70,   "required": false},
+    "copper_gold":       {"calm": 2.0,     "stress": 1.2,     "required": false},
+    "vix_term_structure":{"calm": 0.85,    "stress": 1.05,    "required": false},
+    "spx_vs_200dma":     {"calm": 5.0,     "stress": -10.0,   "required": false}
   },
   "monetary_debasement": {
     "broad_dollar":      {"calm": 125.0,   "stress": 105.0,   "required": true},

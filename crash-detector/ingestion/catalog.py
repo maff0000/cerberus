@@ -103,8 +103,13 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     Ingredient("yahoo.GC=F", "yahoo", "GC=F", "usd_per_oz", "market:HG,GC", ("copper_gold", "gold_real_rate_cross"),
                "COMPONENT", POLL_DAILY, stands_for="COMEX gold front-month close"),
     # ---- multpl (declared: multpl/Shiller) ---------------------------------------------
-    Ingredient("multpl.shiller_pe", "multpl", "shiller-pe", "ratio", "multpl/Shiller", ("shiller_cape",), "COMPONENT",
-               POLL_SLOW, stands_for="Shiller CAPE as published (the engine percentiles it)"),
+    # A NEW source id (was ``multpl.shiller_pe``, latest figure only): the payload now carries the
+    # whole published monthly table for the engine's percentile, and the store keeps the first
+    # payload admitted per source period, so reusing the id would have kept the history-less
+    # reading in place until multpl's date rolled over. The old id's readings are left untouched.
+    Ingredient("multpl.shiller_pe_table", "multpl", "shiller-pe", "ratio", "multpl/Shiller", ("shiller_cape",),
+               "COMPONENT", POLL_SLOW, history=2400,
+               stands_for="Shiller CAPE as published, with multpl's full monthly table (the engine percentiles it)"),
 )
 
 #: DRTSCILM is only the automatic leg of sloos_bank_lending; the NDFI leg is a manual
@@ -153,5 +158,5 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
     if ing.kind == "yahoo":
         return YahooChartAdapter(ing.ref, ing.history, **common)
     if ing.kind == "multpl":
-        return MultplShillerAdapter(**common)
+        return MultplShillerAdapter(history=ing.history, **common)
     raise ValueError(f"unknown ingredient kind {ing.kind!r}")

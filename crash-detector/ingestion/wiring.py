@@ -6,11 +6,17 @@ catalog and the PROVISIONAL scaling (``deploy/indicator-scaling.json``) and buil
 outside ``src/`` for the same reason the rest of ingestion does: it reads a file store and
 YAML, and the application tree does neither.
 
-WHICH INDICATORS ARE LIVE. Only those the catalog delivers as their WHOLE scored quantity:
-at least one ``DIRECT`` ingredient and no ``COMPONENT`` ingredient. Everything else (derived
-cross-ratios, the partial SLOOS leg, the intractable five, CAPE which the engine would have to
-percentile) is PENDING: it gets no observation, so a dial that needs it is Unknown and a dial
-that merely lists it is Degraded. Nothing is defaulted, estimated or carried forward.
+WHICH INDICATORS ARE LIVE. Two kinds, and only these:
+
+* DIRECT: the catalog delivers the indicator's WHOLE scored quantity (at least one ``DIRECT``
+  ingredient and no ``COMPONENT`` ingredient).
+* DERIVED (WO-1.5): the catalog delivers COMPONENT ingredients and ``DERIVED_FROM`` below names
+  which, in which role. The ENGINE (``crash_detector.engine.derivations``) computes the figure
+  from the stored readings; this module only fetches those readings and hands them over.
+
+Everything else (the partial SLOOS leg, the intractable five, ``gold_real_rate_cross`` and the
+held bindings below) is PENDING: it gets no observation, so a dial that needs it is Unknown and a
+dial that merely lists it is Degraded. Nothing is defaulted, estimated or carried forward.
 
 TWO DIALS, NEVER BLENDED. One ``ModelSpec`` per dial, each over only the indicators bound to
 that dial, each with its own band for that dial's polarity.
@@ -21,12 +27,13 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
 
 from crash_detector.dials.dialset import DialSet
+from crash_detector.engine.derivations import DERIVATIONS, DerivationKind, DerivationUnavailable, derive
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.engine.evaluate import evaluate
 from crash_detector.engine.model import (
@@ -55,7 +62,8 @@ from crash_detector.time_utc import ensure_utc
 from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient
 from ingestion.store import SqliteStore
 
-__all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store"]
+__all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store",
+           "DERIVED_FROM", "HELD_BINDINGS", "derive_from_store"]
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING_YAML = ROOT / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -72,14 +80,53 @@ POLARITY = {
 }
 DIALS = ("equity_crash", "monetary_debasement")
 
+#: Derived indicator -> the catalog ingredients that fill the engine derivation's roles, in the
+#: order ``DERIVATIONS[...].roles`` lists them. The calculation itself is the engine's.
+DERIVED_FROM: dict = {
+    "breadth_rsp_spy": ("yahoo.RSP", "yahoo.SPY"),
+    "credit_stress_hyg_lqd": ("yahoo.HYG", "yahoo.LQD"),
+    "copper_gold": ("yahoo.HG=F", "yahoo.GC=F"),
+    "vix_term_structure": ("cboe.VIX", "cboe.VIX3M"),
+    "spx_vs_200dma": ("yahoo.^GSPC",),
+    "shiller_cape": ("multpl.shiller_pe_table",),
+}
+
+#: (indicator, dial) bindings that are NOT scored although the indicator is live on its other dial.
+HELD_BINDINGS: dict = {
+    ("copper_gold", "monetary_debasement"): "HELD: the ratified row declares polarity `low_is_better` for this dial "
+    "while its own comment says falling copper/gold = gold strength = debasement. Under every other row's "
+    "vocabulary ('worse' = more debasement) that comment would be `low_is_worse`. The two cannot both be right "
+    "and which is intended is the Owner's call; scoring either way would be a guess on a x2 weight.",
+}
+
+#: Newest source periods fetched per component: enough to find the latest date both share.
+DERIVATION_LOOKBACK = 10
+
+#: Why a derived indicator that is NOT wired cannot be.
+DERIVATION_BLOCKED: dict = {
+    "gold_real_rate_cross": "BLOCKED on definition: the row says 'gold vs 10y TIPS divergence, normalised 0-100'. "
+    "Neither 'divergence' (a residual? a rolling correlation break? a spread of z-scores?) nor the 0-100 "
+    "normalisation (percentile of what window?) is defined, and both need a history of gold futures and of "
+    "DFII10 that the store does not hold (it keeps the latest figure of each). Any formula chosen here would "
+    "be invented product meaning (CD-D-005). Needs an Owner definition.",
+}
+
 
 @dataclass(frozen=True)
 class Wiring:
     snapshot: ConfigSnapshot
     #: indicator id -> the catalog ingredient that is its whole scored quantity.
     ingredient_for: dict
+    #: indicator id -> the component ingredients (in role order) the ENGINE derives it from.
+    derived_for: dict
+    #: (indicator id, dial id) -> why a live indicator is not scored on that dial.
+    held: dict
     #: indicator id -> why it is not live. Never scored, never defaulted.
     pending: dict
+
+    @property
+    def live_ids(self) -> set:
+        return set(self.ingredient_for) | set(self.derived_for)
 
 
 def _rows() -> list:
@@ -111,8 +158,10 @@ def _pending_reason(row: dict, all_serving: dict) -> str:
         return "NOT_TRACTABLE: " + NOT_TRACTABLE[sid]
     if sid in PARTIAL:
         return "PARTIAL: " + PARTIAL[sid]
+    if sid in DERIVATION_BLOCKED:
+        return DERIVATION_BLOCKED[sid]
     if sid in all_serving:
-        return "DERIVED: needs an engine computation over component ingredients that does not exist yet"
+        return "DERIVED: component ingredients are ingested but no engine derivation is registered for it"
     return "UNWIRED: no ingestion ingredient serves this indicator"
 
 
@@ -120,15 +169,30 @@ def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
     rows = _rows()
     scaling = json.loads(SCALING_JSON.read_text(encoding="utf-8"))
     direct = _direct_ingredients()
+    by_id = {ing.source_id: ing for ing in INGREDIENTS}
+    derived = {}
+    for indicator, source_ids in DERIVED_FROM.items():
+        if indicator not in DERIVATIONS or len(source_ids) != len(DERIVATIONS[indicator].roles):
+            raise ValueError(f"{indicator}: DERIVED_FROM does not match the engine derivation's roles")
+        parts = tuple(by_id[sid] for sid in source_ids)
+        if any(indicator not in ing.serves for ing in parts):
+            raise ValueError(f"{indicator}: a named component ingredient does not serve it in the catalog")
+        derived[indicator] = parts
     serving = {i for ing in INGREDIENTS for i in ing.serves}
-    live = [r for r in rows if r["id"] in direct and r.get("status") != "registration_pending"]
+    live = [r for r in rows
+            if (r["id"] in direct or r["id"] in derived) and r.get("status") != "registration_pending"]
     live_ids = {r["id"] for r in live}
     pending = {r["id"]: _pending_reason(r, serving) for r in rows if r["id"] not in live_ids}
 
     mappings, sources, cache = [], [], {}
     for r in live:
-        pols = _polarities(r)
-        ing = direct[r["id"]]
+        pols = {d: p for d, p in _polarities(r).items() if (r["id"], d) not in HELD_BINDINGS}
+        parts = derived.get(r["id"])
+        ing = direct[r["id"]] if parts is None else parts[0]
+        cadence = max(i.poll_seconds for i in parts) if parts else ing.poll_seconds
+        adapter_id = ing.source_id if parts is None else f"engine.derive.{DERIVATIONS[r['id']].kind.value}"
+        stands_for = ing.stands_for if parts is None else (
+            f"derived by the engine ({DERIVATIONS[r['id']].kind.value}) from " + ", ".join(i.source_id for i in parts))
         # Criticality is per SOURCE; the scaling file's `required` flags must agree across dials.
         flags = {bool(scaling[d][r["id"]]["required"]) for d in pols if r["id"] in scaling[d]}
         if len(flags) != 1:
@@ -146,14 +210,14 @@ def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
                 ruling_ref="PO-DECISIONS-0025",
                 mapping_artefact="governance/mapping/indicator_mapping.yaml",
                 mapping_version=str(yaml.safe_load(MAPPING_YAML.read_text(encoding="utf-8"))["schema_version"]),
-                stands_for=f"{r['name']}: {ing.stands_for}",
+                stands_for=f"{r['name']}: {stands_for}",
             ),
             wiring_state=WiringState.WIRED,
         ))
         sources.append(SourceRecord(
-            source_id=r["id"], adapter_id=ing.source_id, cadence_seconds=int(ing.poll_seconds),
+            source_id=r["id"], adapter_id=adapter_id, cadence_seconds=int(cadence),
             criticality=Criticality.REQUIRED if required else Criticality.CONTRIBUTING,
-            stands_for=ing.stands_for or ing.source_id,
+            stands_for=stands_for or ing.source_id,
         ))
 
     specs, models = [], []
@@ -190,16 +254,49 @@ def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
         model_registry=ModelRegistry(models=tuple(models)),
         indicator_mapping_registry=IndicatorMappingRegistry(mappings=tuple(mappings)),
     )
-    return Wiring(snapshot=snapshot, ingredient_for={i: direct[i] for i in live_ids}, pending=pending)
+    return Wiring(snapshot=snapshot,
+                  ingredient_for={i: direct[i] for i in live_ids if i in direct},
+                  derived_for={i: derived[i] for i in live_ids if i in derived},
+                  held=dict(HELD_BINDINGS), pending=pending)
+
+
+def derive_from_store(store: SqliteStore, wiring: Wiring) -> dict:
+    """indicator id -> the engine's ``Derived``, or the plain-text reason it cannot be computed.
+
+    Fetches the component readings and hands them to ``crash_detector.engine.derivations``;
+    nothing is computed here. A ratio gets the newest few source periods of each component so
+    the engine can find the latest date both share; a series derivation needs only the newest.
+    """
+    out: dict = {}
+    for indicator, parts in sorted(wiring.derived_for.items()):
+        spec = DERIVATIONS[indicator]
+        depth = DERIVATION_LOOKBACK if spec.kind is DerivationKind.RATIO else 1
+        inputs = {role: store.recent_readings(ing.source_id, depth) for role, ing in zip(spec.roles, parts)}
+        try:
+            out[indicator] = derive(indicator, inputs)
+        except DerivationUnavailable as why:
+            out[indicator] = str(why)
+    return out
 
 
 def observations_from_store(store: SqliteStore, wiring: Wiring, observed_utc: datetime) -> list:
     """One OK observation per live indicator that has a finite numeric stored reading.
 
     A missing reading, or a value that is not a plain finite number, yields NO observation:
-    the engine then sees absence, never a default.
+    the engine then sees absence, never a default. A derived indicator yields one only when the
+    engine could compute it from real stored readings.
     """
     out = []
+    for indicator, derived in sorted(derive_from_store(store, wiring).items()):
+        if isinstance(derived, str):
+            continue
+        out.append(ObservationRecord(
+            source_id=indicator,
+            observed_utc=ensure_utc(observed_utc),
+            outcome=OK(payload={"unit": derived.unit, "observation_date": derived.observation_date,
+                                "value": derived.value},
+                       source_as_of_utc=datetime.fromisoformat(derived.observation_date).replace(tzinfo=timezone.utc)),
+        ))
     for indicator, ing in sorted(wiring.ingredient_for.items()):
         reading = store.latest_reading(ing.source_id)
         if reading is None:
@@ -238,7 +335,7 @@ def coverage(wiring: Wiring) -> dict:
                 continue
             w = TIER_WEIGHT[r["tier"]]
             total += w
-            if r["id"] in wiring.ingredient_for:
+            if r["id"] in wiring.live_ids and (r["id"], dial) not in wiring.held:
                 live += w
             else:
                 pending.append(r["id"])

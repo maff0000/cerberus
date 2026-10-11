@@ -111,6 +111,8 @@ Caveats, stated plainly:
 - Auditor reconciliation (AMBER): a feed whose latest attempt failed now reports FEED_FAILING instead of LIVE; Yahoo bars dated today are dropped (a partial intraday bar can no longer be locked in as the close). Point-in-time/revision handling (a first print is never replaced) remains a noted WO-1.3+ concern.
 - None of the five NOT_TRACTABLE gaps is closable by engineering alone: each needs a licensed feed, a substitute the Product Owner approves, or a missing definition.
 
+**Superseded in part by WO-1.5 (2026-10-11):** the engine now derives 6 of the 7 DERIVED indicators (`engine/derivations.py`: credit_stress_hyg_lqd, breadth_rsp_spy, vix_term_structure, spx_vs_200dma, copper_gold, shiller_cape). Live wired = 17 direct + 6 derived = 23 of 30. `gold_real_rate_cross` stays BLOCKED on definition. copper_gold is derived and stored, but its monetary binding is HELD on a polarity conflict (no band, not scored). Scaling bands for the derived six are provisional placeholders: no backtest, no distribution study. The "no computing mapping yet" wording in the table above is the WO-1.2b state.
+
 Run: `PYTHONPATH=src:. python3 -m ingestion.run --db <file> [--force]`, then `python3 -m ingestion.report --db <file>`.
 
 ### Declared limits (not defects to be "fixed" casually)
