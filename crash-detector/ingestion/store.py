@@ -69,7 +69,13 @@ class SqliteStore:
 
     __slots__ = ("_db", "_pending")
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, *, read_only: bool = False) -> None:
+        if read_only:
+            # The GUI's door (WO-1.4): the database must already exist, nothing is created and
+            # no write of any kind can be issued through this handle.
+            self._db = sqlite3.connect(f"file:{path}?mode=ro", uri=True, isolation_level=None)
+            self._pending = {}
+            return
         self._db = sqlite3.connect(path, isolation_level=None)  # autocommit: durable per row
         self._db.execute("PRAGMA journal_mode=WAL")
         self._db.execute("PRAGMA synchronous=FULL")

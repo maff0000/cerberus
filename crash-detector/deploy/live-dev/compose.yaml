@@ -1,0 +1,54 @@
+# CERBERUS WO-1.4 — the DEV live stack. Run from crash-detector/:
+#   CD_PYTHON_BASE=<digest ref> CD_BUILD_SHA=$(git rev-parse --short HEAD) \
+#   docker compose -p cerberus-live -f deploy/live-dev/compose.yaml up -d --build
+#
+# This is NOT deploy/compose.yaml (the six-service design, whose networks are all internal:true and
+# whose containers do no work). Differences, deliberately and on the record:
+#   * cd-live-collector has outbound internet (FRED, Cboe, Yahoo, multpl): the design's egress lane
+#     is still OWED; this runs the WO-1.2b runner directly with a plain bridge network.
+#   * cd-live-gui is a read-only view over the same SQLite volume; it computes the dials on request.
+#     It publishes ONE port. The market read touches no book data.
+x-live: &live
+  build:
+    context: ../../..
+    dockerfile: crash-detector/deploy/live-dev/Dockerfile
+    args:
+      CD_PYTHON_BASE: "${CD_PYTHON_BASE:?CD_PYTHON_BASE must be a digest-pinned base image reference}"
+      CD_BUILD_SHA: "${CD_BUILD_SHA:-unknown}"
+  image: "cd-live-dev:${CD_BUILD_SHA:-dev}"
+  user: "10010:10010"
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  restart: unless-stopped
+  volumes:
+    - cd-live-data:/data
+  tmpfs:
+    - /tmp:size=16m,noexec,nosuid,nodev
+
+services:
+  cd-live-collector:
+    <<: *live
+    command: ["python3", "-B", "/app/collector_loop.py"]
+    environment:
+      CD_COLLECT_INTERVAL_SECONDS: "300"
+
+  cd-live-gui:
+    <<: *live
+    depends_on:
+      - cd-live-collector
+    ports:
+      - "${CD_GUI_BIND:-127.0.0.1}:${CD_GUI_PORT:-8710}:8710"
+    environment:
+      CD_BIND_HOST: "0.0.0.0"
+      CD_BIND_PORT: "8710"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8710/healthz', timeout=5).status==200 else 1)"]
+      interval: 30s
+      timeout: 6s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  cd-live-data:
+    name: cd-live-data
