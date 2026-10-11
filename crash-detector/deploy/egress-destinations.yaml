@@ -128,4 +128,46 @@ contract: CD-EGRESS-DESTINATION-REGISTRY-v1
 # a `#`.
 # -----------------------------------------------------------------------------------------
 
-destinations: []
+destinations:
+  # WO-1.2b (2026-10-11). Registered under the Owner-ratified indicator mapping
+  # (governance/mapping/indicator_mapping.yaml, ratified 2026-08-24), which declares each of
+  # these feeds as an indicator's `source.feed`. These are the nearest public endpoints to
+  # those declared feeds, nothing more. A host that no mapping row names does not belong here.
+  - id: DEST-FRED-001
+    host: fred.stlouisfed.org
+    operator: Federal Reserve Bank of St. Louis
+    purpose: >
+      Public keyless fredgraph.csv for the 16 FRED series the ratified mapping declares
+      (credit spreads, yield curves, TIPS/breakeven, claims, Sahm, NFCI, Fed funds, dollar,
+      sentiment, M2/CPI/core PCE YoY via FRED's own pc1 transform, SLOOS C&I).
+    declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed FRED:*; CERBERUS PID WO-1.2b"
+    services:
+      - cd-collectors
+  - id: DEST-CBOE-001
+    host: cdn-api.cboe.com
+    operator: Cboe Global Markets
+    purpose: >
+      Public daily index history CSVs for SKEW, VIX and VIX3M, declared as CBOE:SKEW,
+      CBOE:VIX and CBOE:VIX,VIX3M in the ratified mapping.
+    declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed CBOE:*; CERBERUS PID WO-1.2b"
+    services:
+      - cd-collectors
+  - id: DEST-YAHOO-001
+    host: query1.finance.yahoo.com
+    operator: Yahoo
+    purpose: >
+      Public chart endpoint for daily closes of HYG, LQD, RSP, SPY, the S&P 500 index and
+      COMEX copper/gold futures, declared as market:* feeds in the ratified mapping. Unofficial
+      and unlicensed: availability is not guaranteed and a failure is recorded, never defaulted.
+    declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed market:*; CERBERUS PID WO-1.2b"
+    services:
+      - cd-collectors
+  - id: DEST-MULTPL-001
+    host: www.multpl.com
+    operator: multpl.com
+    purpose: >
+      Shiller CAPE monthly table, declared as multpl/Shiller in the ratified mapping.
+      Scraped HTML: a layout change is recorded MALFORMED, never defaulted.
+    declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed multpl/Shiller; CERBERUS PID WO-1.2b"
+    services:
+      - cd-collectors

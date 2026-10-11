@@ -45,7 +45,7 @@ dev = [
 minversion = "9.0"
 # This is what makes `pytest` work from the worktree root with no install step and no
 # sys.path manipulation inside test files.
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 testpaths = ["tests"]
 # A test that can skip is not evidence (Standards Baseline §7, PBG-CI-002). Warnings are
 # errors and an unregistered marker is a failure, so a silently-skipped guard cannot hide.

@@ -413,19 +413,17 @@ services:
         condition: service_healthy
     x-uid: 10001
     x-egress:
-      # ALLOWLIST, and it is EMPTY, and that is the WO-2 deliverable rather than a gap.
-      #
-      # An entry here is a host this system may talk to. Naming an ingredient source host
-      # is registering an ingredient source, which is prohibited to this seat: CD-D-005 —
-      # which inputs feed each dial and what each stands for — is owed by the Product Owner
-      # before WO-3, and choosing ingredients is choosing what a dial MEANS (PBG-AUTH-005).
-      # With nothing registered there is nothing to fetch, so an empty allowlist is not
-      # merely safe, it is the accurate description of this service in WO-2.
+      # ALLOWLIST. Four public data hosts, each registered in deploy/egress-destinations.yaml
+      # and each the feed a Matt-ratified mapping row already declares (WO-1.2b). The
+      # authority is the ratified mapping (2026-08-24), not an engineering choice of
+      # ingredient: no host is here that a mapping row does not name.
       policy: ALLOWLIST
-      hosts: []
-      pending:
-        - declared_in: "BLUEPRINT §2 — 'allowlist: ingredient sources only'"
-          blocked_by: "CD-D-005, owed by the Product Owner before WO-3"
+      hosts:
+        - fred.stlouisfed.org
+        - cdn-api.cboe.com
+        - query1.finance.yahoo.com
+        - www.multpl.com
+      pending: []
       enforced_by:
         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"
         - "OWED at WO-3: the egress lane that makes ALLOWLIST mean more than NONE"
