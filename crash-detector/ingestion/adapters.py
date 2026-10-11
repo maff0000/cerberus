@@ -158,8 +158,13 @@ def parse_cboe_csv(text: str, column: str, unit: str) -> dict:
     return {"unit": unit}
 
 
-def parse_yahoo_chart(text: str, unit: str, history: int = 0) -> dict:
-    """Latest daily close of a Yahoo v8 chart body; optionally the last ``history`` closes."""
+def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date, None] = None) -> dict:
+    """Latest daily close of a Yahoo v8 chart body; optionally the last ``history`` closes.
+
+    ``today``: when given, any bar dated on or after it is DROPPED. During a session the last
+    bar is the live price, not a close, and the store keeps the first value admitted for a
+    period (Auditor finding 2, WO-1.2b), so a partial bar would be locked in as the close.
+    """
     try:
         result = json.loads(text)["chart"]["result"][0]
         stamps = result["timestamp"]
@@ -172,7 +177,10 @@ def parse_yahoo_chart(text: str, unit: str, history: int = 0) -> dict:
     for stamp, close in zip(stamps, closes):
         if close is None:  # Yahoo nulls a session it has no print for; skip, never fill.
             continue
-        rows.append((datetime.fromtimestamp(stamp, tz=timezone.utc).date().isoformat(), close))
+        bar_date = datetime.fromtimestamp(stamp, tz=timezone.utc).date()
+        if today is not None and bar_date >= today:
+            continue  # not yet a close
+        rows.append((bar_date.isoformat(), close))
     if not rows:
         return {"unit": unit}
     out: dict = {"unit": unit, "observation_date": rows[-1][0], "value": _number_or_token(str(rows[-1][1]))}
@@ -361,7 +369,7 @@ class YahooChartAdapter(_BaseAdapter):
         return f"https://query1.finance.yahoo.com/v8/finance/chart/{quoted}?range={rng}&interval=1d"
 
     def _parse(self, body: str) -> dict:
-        return parse_yahoo_chart(body, self._unit, self._history)
+        return parse_yahoo_chart(body, self._unit, self._history, today=self._clock().date())
 
 
 class MultplShillerAdapter(_BaseAdapter):

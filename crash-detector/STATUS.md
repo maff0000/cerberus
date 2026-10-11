@@ -100,14 +100,15 @@ A live run on 2026-10-11 fetched **27 of 27 sources OK**. Of the 30 ratified ind
 | **PARTIAL** | 1 | sloos_bank_lending: the automatic C&I leg (FRED DRTSCILM) is live; the manual NDFI leg (SLOOS Table 2 Q14) has no feed, so it must not read complete |
 | **NOT_TRACTABLE** (no substitute wired; a substitute is a provenance decision) | 5 | buffett_indicator (Wilshire/GDP: FRED withdrew WILL5000PRFC, no free market-cap series), ism_manufacturing (licensed; FRED withdrew NAPM), gold_spot (no keyless public spot source; GC=F is futures, not spot), private_credit_stress (composite weighting and BDC universe undefined), fiscal_dominance (discriminator rule not in the mapping) |
 
-So **17 produce a real number now, 7 have all raw inputs but need the engine to derive, 1 is half-fed, 5 are blocked.** "Tractable" is 25 of 30 counting inputs, 17 of 30 counting finished numbers.
+So **17 have a raw source value that needs no further input (the dial scaling is WO-1.3), 7 have all raw inputs but need the engine to derive, 1 is half-fed, 5 are blocked.** "Tractable" is 25 of 30 counting inputs, 17 of 30 counting finished numbers.
 
 Caveats, stated plainly:
 - Yahoo is unofficial, unlicensed and rate-limited, and it is the only source for 5 of the 7 DERIVED indicators (credit_stress_hyg_lqd, breadth_rsp_spy, spx_vs_200dma, copper_gold; gold_real_rate_cross in part). Its failures are recorded, never defaulted.
 - multpl is scraped HTML; a layout change is recorded MALFORMED.
 - FRED monthly series are dated at the first of the month; the as-of used is month-end (capped at today) so they are neither permanently stale nor future-dated.
 - Two zeros are genuine source values (SAHMREALTIME 2026-09 = 0.00; DRTSCILM 2026-07 = 0.0), checked against the raw FRED CSV.
-- `ingestion/report.py` imports PyYAML, which the host has but `requirements.txt` does not declare (tests already depend on it too). Declaring it is owed; the lock was not touched here.
+- `ingestion/report.py` imports PyYAML; declared in `requirements.txt` at the host version (6.0) in the WO-1.2b Auditor reconciliation. The hash lock is not regenerated here.
+- Auditor reconciliation (AMBER): a feed whose latest attempt failed now reports FEED_FAILING instead of LIVE; Yahoo bars dated today are dropped (a partial intraday bar can no longer be locked in as the close). Point-in-time/revision handling (a first print is never replaced) remains a noted WO-1.3+ concern.
 - None of the five NOT_TRACTABLE gaps is closable by engineering alone: each needs a licensed feed, a substitute the Product Owner approves, or a missing definition.
 
 Run: `PYTHONPATH=src:. python3 -m ingestion.run --db <file> [--force]`, then `python3 -m ingestion.report --db <file>`.

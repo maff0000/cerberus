@@ -5,7 +5,7 @@ Run with the rest of the suite: ``python3 -m pytest`` (pyproject adds ``src`` an
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -228,3 +228,21 @@ def test_report_never_reads_missing_as_live_and_marks_derived_partial_not_tracta
 def test_report_flags_an_old_reading_stale_not_live(store):
     _run(store, "fred.DFF", lambda *a: "observation_date,DFF\n2026-01-08,3.88\n")
     assert {s["id"]: s["state"] for s in indicator_states(store, NOW)}["fed_funds_rate"] == "STALE"
+
+
+def test_yahoo_drops_a_bar_dated_today_so_a_partial_intraday_bar_is_never_a_close():
+    body = '{"chart":{"result":[{"timestamp":[1791244800,1791331200],"indicators":{"quote":[{"close":[10.5,11.5]}]}}]}}'
+    out = A.parse_yahoo_chart(body, "usd", 0, today=date(2026, 10, 7))
+    assert out["value"] == 10.5 and out["observation_date"] == "2026-10-06"
+    assert "value" not in A.parse_yahoo_chart(body, "usd", 0, today=date(2026, 10, 6))
+
+
+def test_report_flags_a_failing_feed_even_when_the_last_good_reading_is_in_window(store):
+    _run(store, "fred.DFF", lambda *a: "observation_date,DFF\n2026-10-08,3.88\n")
+
+    def boom(*a):
+        raise AdapterFetchError("x")
+
+    _run(store, "fred.DFF", boom)
+    s = {x["id"]: x["state"] for x in indicator_states(store, NOW)}
+    assert s["fed_funds_rate"] == "FEED_FAILING"

@@ -4,6 +4,8 @@ This is an INGESTION-HEALTH view, not a dial input and not a score. For each of 
 ratified indicators it says which of these it is, and nothing warmer:
 
     LIVE       every ingredient has a reading inside the indicator's staleness window
+    FEED_FAILING the latest fetch attempt of an ingredient was not OK, whatever the age of
+               the last good reading
     STALE      a reading exists but is older than the window — NOT shown as a value
     MISSING    an ingredient has never produced a reading
     DERIVED    all ingredients live, but the quantity is derived by the engine, which has no
@@ -40,7 +42,11 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
         ings = [i for i in INGREDIENTS if ind in i.serves]
         window = row["staleness_window_seconds"]
         worst, parts = "LIVE", []
+        failing = []
         for ing in ings:
+            last = store.last_attempt(ing.source_id)
+            if last is not None and last[1] != "OK":
+                failing.append(f"{ing.source_id}: last attempt {last[1]} at {last[0].isoformat()}")
             reading = store.latest_reading(ing.source_id)
             if reading is None:
                 worst, parts = "MISSING", parts + [f"{ing.source_id}: never read"]
@@ -50,6 +56,11 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
             if age > window and worst != "MISSING":
                 worst = "STALE"
             parts.append(f"{ing.source_id}={reading['payload'].get('value')} as_of={as_of.date()} age={age/86400:.1f}d")
+        if failing:
+            # Auditor finding 1 (WO-1.2b): a feed whose latest attempt failed must not read
+            # LIVE just because its last good reading is still inside the window.
+            out.append({"id": ind, "state": "FEED_FAILING", "detail": "; ".join(failing + parts)})
+            continue
         complete = all(i.completes == "DIRECT" for i in ings)
         state = worst if worst != "LIVE" or complete else "DERIVED"
         if ind in PARTIAL and state in ("LIVE", "DERIVED"):
