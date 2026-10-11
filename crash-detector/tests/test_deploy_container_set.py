@@ -214,11 +214,12 @@ RATIFIED_COLLECTOR_HOSTS = [
     "cdn-api.cboe.com",
     "query1.finance.yahoo.com",
     "www.multpl.com",
+    "prices.lbma.org.uk",
 ]
 
 
 def test_only_cd_collectors_names_hosts_and_exactly_the_ratified_ones(services: dict):
-    """WO-1.2b state: cd-collectors carries the four ratified data hosts, nothing else.
+    """WO-1.2b state: cd-collectors carries the ratified data hosts (five since WO-1.6), nothing else.
 
     cd-witness and cd-review stay empty (their endpoints are still undecided). Any extra
     or missing host in cd-collectors fails here.

@@ -91,7 +91,7 @@ Measured at import: **2,099 tests pass** (`PYTHONPATH=src python3 -m pytest test
 
 `ingestion/` fetches and records. It computes nothing: no ratio, spread, percentile or score (collector-never-computes, BLUEPRINT §5). Sources are exactly the feeds the Owner-ratified mapping declares, reached by the nearest keyless public endpoint: FRED `fredgraph.csv`, Cboe daily-history CSVs, Yahoo chart, multpl Shiller table. Egress is the four hosts in `deploy/egress-destinations.yaml`, for `cd-collectors` only.
 
-A live run on 2026-10-11 fetched **27 of 27 sources OK**. Of the 30 ratified indicators:
+A live run on 2026-10-11 fetched **27 of 27 sources OK**. (As of WO-1.6 a live run fetches 31 of 32 OK; the one failure is `lbma.gold_fix_usd`, HTTP 403, see the addendum below.) Of the 30 ratified indicators:
 
 | State | n | Indicators |
 |---|---|---|
@@ -100,7 +100,9 @@ A live run on 2026-10-11 fetched **27 of 27 sources OK**. Of the 30 ratified ind
 | **PARTIAL** | 1 | sloos_bank_lending: the automatic C&I leg (FRED DRTSCILM) is live; the manual NDFI leg (SLOOS Table 2 Q14) has no feed, so it must not read complete |
 | **NOT_TRACTABLE** (no substitute wired; a substitute is a provenance decision) | 5 | buffett_indicator (Wilshire/GDP: FRED withdrew WILL5000PRFC, no free market-cap series), ism_manufacturing (licensed; FRED withdrew NAPM), gold_spot (no keyless public spot source; GC=F is futures, not spot), private_credit_stress (composite weighting and BDC universe undefined), fiscal_dominance (discriminator rule not in the mapping) |
 
-So **17 have a raw source value that needs no further input (the dial scaling is WO-1.3), 7 have all raw inputs but need the engine to derive, 1 is half-fed, 5 are blocked.** "Tractable" is 25 of 30 counting inputs, 17 of 30 counting finished numbers.
+> **WO-1.6 addendum (2026-10-11, supersedes the NOT_TRACTABLE row above for three indicators).**  `buffett_indicator` (FRED NCBEILQ027S / GDP, 255.05 % on 2026-10-11) and `fiscal_dominance` (FRED WALCL + core CPI conjunction) are now **LIVE as disclosed SUBSTITUTE feeds**; the fiscal_dominance substitute still awaits Owner acceptance. `gold_spot` is **wired to the LBMA fix but FEED_FAILING**: prices.lbma.org.uk answers HTTP 403 (Cloudflare) from the build host for every User-Agent tried, so it delivers no reading and degrades the monetary dial honestly until an accessible source exists. `copper_gold` monetary binding is HELD (polarity contradiction in the mapping); `gold_real_rate_cross` is BLOCKED (divergence undefined).
+
+So **17 have a raw source value that needs no further input (the dial scaling is WO-1.3), 7 have all raw inputs but need the engine to derive, 1 is half-fed, 5 are blocked.** *(Counts as of WO-1.2b/1.3; after the WO-1.6 addendum, `buffett_indicator` and `fiscal_dominance` are LIVE substitutes, `gold_spot` is wired but FEED_FAILING, so 2 of the 5 blocked are now live and the remaining blocked set is `ism_manufacturing`, `private_credit_stress` and `gold_spot`'s feed.)* "Tractable" is 25 of 30 counting inputs, 17 of 30 counting finished numbers.
 
 Caveats, stated plainly:
 - Yahoo is unofficial, unlicensed and rate-limited, and it is the only source for 5 of the 7 DERIVED indicators (credit_stress_hyg_lqd, breadth_rsp_spy, spx_vs_200dma, copper_gold; gold_real_rate_cross in part). Its failures are recorded, never defaulted.
@@ -109,7 +111,7 @@ Caveats, stated plainly:
 - Two zeros are genuine source values (SAHMREALTIME 2026-09 = 0.00; DRTSCILM 2026-07 = 0.0), checked against the raw FRED CSV.
 - `ingestion/report.py` imports PyYAML; declared in `requirements.txt` at the host version (6.0) in the WO-1.2b Auditor reconciliation. The hash lock is not regenerated here.
 - Auditor reconciliation (AMBER): a feed whose latest attempt failed now reports FEED_FAILING instead of LIVE; Yahoo bars dated today are dropped (a partial intraday bar can no longer be locked in as the close). Point-in-time/revision handling (a first print is never replaced) remains a noted WO-1.3+ concern.
-- None of the five NOT_TRACTABLE gaps is closable by engineering alone: each needs a licensed feed, a substitute the Product Owner approves, or a missing definition.
+- (Superseded in part by the WO-1.6 addendum: three of these five were wired.) None of the five NOT_TRACTABLE gaps is closable by engineering alone: each needs a licensed feed, a substitute the Product Owner approves, or a missing definition.
 
 **Superseded in part by WO-1.5 (2026-10-11):** the engine now derives 6 of the 7 DERIVED indicators (`engine/derivations.py`: credit_stress_hyg_lqd, breadth_rsp_spy, vix_term_structure, spx_vs_200dma, copper_gold, shiller_cape). Live wired = 17 direct + 6 derived = 23 of 30. `gold_real_rate_cross` stays BLOCKED on definition. copper_gold is derived and stored, but its monetary binding is HELD on a polarity conflict (no band, not scored). Scaling bands for the derived six are provisional placeholders: no backtest, no distribution study. The "no computing mapping yet" wording in the table above is the WO-1.2b state.
 

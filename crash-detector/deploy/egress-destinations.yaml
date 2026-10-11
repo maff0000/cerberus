@@ -171,3 +171,15 @@ destinations:
     declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed multpl/Shiller; CERBERUS PID WO-1.2b"
     services:
       - cd-collectors
+  # WO-1.6 (2026-10-11). Registered on the Trinity dispatch for WO-1.6 (gold_spot from the LBMA
+  # daily gold fix, the genuine spot reference; the ratified row's feed is `market:XAUUSD`, spot).
+  - id: DEST-LBMA-001
+    host: prices.lbma.org.uk
+    operator: LBMA (London Bullion Market Association)
+    purpose: >
+      Public JSON of the daily LBMA gold fix (gold_pm.json, with gold_am.json as the same-day
+      fallback) for the `gold_spot` indicator. Its edge sits behind bot protection and may answer
+      HTTP 403 to this host; that is recorded as a failed fetch, never defaulted, and not circumvented.
+    declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) gold_spot source.provenance spot; CERBERUS WO-1.6 dispatch (Trinity)"
+    services:
+      - cd-collectors

@@ -25,7 +25,7 @@ from pathlib import Path
 
 import yaml
 
-from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL
+from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, window_seconds
 from ingestion.store import SqliteStore
 
 MAPPING = Path(__file__).resolve().parents[1] / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -40,7 +40,7 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
             out.append({"id": ind, "state": "NOT_TRACTABLE", "detail": NOT_TRACTABLE[ind]})
             continue
         ings = [i for i in INGREDIENTS if ind in i.serves]
-        window = row["staleness_window_seconds"]
+        window = window_seconds(ind, row["staleness_window_seconds"])
         worst, parts = "LIVE", []
         failing = []
         for ing in ings:

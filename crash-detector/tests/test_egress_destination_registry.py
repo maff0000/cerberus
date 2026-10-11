@@ -105,13 +105,14 @@ def test_the_destinations_field_is_a_list(registry: dict):
     assert isinstance(registry.get("destinations"), list)
 
 
-# --- WO-1.2b registers exactly the four ratified data hosts ------------------------------ #
+# --- WO-1.2b registers exactly the ratified data hosts (five since WO-1.6) ------------------------------ #
 
 RATIFIED_DESTINATIONS = {
     "fred.stlouisfed.org": "DEST-FRED-001",
     "cdn-api.cboe.com": "DEST-CBOE-001",
     "query1.finance.yahoo.com": "DEST-YAHOO-001",
     "www.multpl.com": "DEST-MULTPL-001",
+    "prices.lbma.org.uk": "DEST-LBMA-001",
 }
 
 

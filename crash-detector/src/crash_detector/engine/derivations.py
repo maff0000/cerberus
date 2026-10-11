@@ -14,6 +14,11 @@ SIX CALCULATIONS, EACH THE ROW'S DECLARED ONE (``governance/mapping/indicator_ma
                        below (-) the simple average of its last 200 closes.
 ``PERCENTILE``         ``shiller_cape``: where the latest CAPE sits in its own published
                        monthly history, 0-100.
+``RATIO``  (WO-1.6)    ``buffett_indicator``: Z.1 corporate equities ($M) over nominal GDP ($B),
+                       in percent: ``NCBEILQ027S / (GDP * 1000) * 100``, i.e. a RATIO with scale 0.1.
+``FISCAL_CONJUNCTION`` ``fiscal_dominance`` (WO-1.6): the legacy ARGUS discriminator. Fed balance-sheet
+                       (WALCL) growth over 12 months >= 10% AND core CPI annualised over 3 months >= 4%.
+                       Both legs or nothing: balance-sheet growth alone never fires. 1.0 = fired, 0.0 = not.
 
 NOTHING IS FILLED IN. A derivation that cannot be computed RAISES :class:`DerivationUnavailable`
 carrying a plain reason and no number; the caller emits NO observation and the dial sees an
@@ -35,6 +40,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from datetime import date, timedelta
 from enum import Enum
 
 from crash_detector.admission import admits
@@ -47,17 +53,30 @@ __all__ = [
     "DerivationUnavailable",
     "Derived",
     "MINIMUM_PERCENTILE_HISTORY",
+    "FISCAL_BALANCE_SHEET_GROWTH_FIRE",
+    "FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT",
     "derive",
 ]
 
 #: A percentile over fewer points than this is a truncated or broken page, not a history.
 MINIMUM_PERCENTILE_HISTORY = 360
 
+#: The fiscal-dominance discriminator's two fire bands. NOT chosen here: they are the legacy ARGUS
+#: crash-engine's, which records them as R2D2-LOCKED (migration 072, ``fred_tells.py``): Fed total assets
+#: growth >= 10% over 12 months AND core CPI >= 4.0% annualised over the latest 3 months.
+FISCAL_BALANCE_SHEET_GROWTH_FIRE = 0.10
+FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT = 4.0
+#: The legacy look-back for the balance-sheet leg: the latest level against the last level on or before
+#: this many days earlier (365 = 12 months).
+FISCAL_BALANCE_SHEET_LOOKBACK_DAYS = 365
+FISCAL_CORE_CPI_MONTHS = 3
+
 
 class DerivationKind(Enum):
     RATIO = "ratio"
     PERCENT_VS_AVERAGE = "percent_vs_average"
     PERCENTILE = "percentile"
+    FISCAL_CONJUNCTION = "fiscal_conjunction"
 
 
 class DerivationUnavailable(Exception):
@@ -105,6 +124,11 @@ DERIVATIONS = {
     "vix_term_structure": Derivation(DerivationKind.RATIO, ("numerator", "denominator"), "ratio", 1.0, 0),
     "spx_vs_200dma": Derivation(DerivationKind.PERCENT_VS_AVERAGE, ("series",), "percent_vs_200dma", 1.0, 200),
     "shiller_cape": Derivation(DerivationKind.PERCENTILE, ("series",), "percentile", 1.0, 0),
+    # NCBEILQ027S is in $ millions and GDP in $ billions: (NCB / (GDP * 1000)) * 100 == NCB / GDP * 0.1.
+    "buffett_indicator": Derivation(DerivationKind.RATIO, ("numerator", "denominator"), "percent_of_gdp", 0.1, 0),
+    "fiscal_dominance": Derivation(
+        DerivationKind.FISCAL_CONJUNCTION, ("balance_sheet", "core_price_index"), "fired_flag", 1.0, 0
+    ),
 }
 
 
@@ -198,6 +222,60 @@ def _percentile(spec: Derivation, inputs: dict) -> Derived:
     return Derived(value=100.0 * at_or_below / (len(rows) + 1), observation_date=date_text, unit=spec.unit)
 
 
+def _dated_rows(owner: str, payload: object) -> list:
+    """The payload's raw ``[date, number]`` history as ascending ``(date, number)`` pairs, dates validated."""
+    rows = _history_of(owner, payload)
+    for day, _ in rows:
+        try:
+            date.fromisoformat(day)
+        except ValueError:
+            raise DerivationUnavailable(f"{owner}: history date {day!r} is not an ISO date") from None
+    return rows
+
+
+def _fiscal_conjunction(spec: Derivation, inputs: dict) -> Derived:
+    """The legacy discriminator, ported: fired only if BOTH legs are over their band.
+
+    Balance-sheet leg: latest WALCL level against the last level on or before 365 days earlier.
+    Core-CPI leg: ``(latest / level 3 months earlier) ** 4 - 1``, in percent. The level 3 months earlier
+    must BE the level dated exactly 3 calendar months before the latest one: a missing month (FRED has
+    had unpublished months) is refused, not bridged by taking whichever level is four rows back.
+    The reading is dated by the OLDER of the two legs' latest dates, so it is never fresher than its
+    stalest input.
+    """
+    walcl = _dated_rows("balance_sheet", inputs["balance_sheet"][0])
+    core = _dated_rows("core_price_index", inputs["core_price_index"][0])
+    if not walcl or not core:
+        raise DerivationUnavailable("a leg of the fiscal discriminator carries no history")
+    last_day, last_level = walcl[-1]
+    cutoff = (date.fromisoformat(last_day) - timedelta(days=FISCAL_BALANCE_SHEET_LOOKBACK_DAYS)).isoformat()
+    prior = [level for day, level in walcl if day <= cutoff]
+    if not prior:
+        raise DerivationUnavailable(
+            f"the balance-sheet history ({walcl[0][0]}..{last_day}) does not reach back {FISCAL_BALANCE_SHEET_LOOKBACK_DAYS} days"
+        )
+    if prior[-1] <= 0.0:
+        raise DerivationUnavailable("the prior balance-sheet level is not positive")
+    growth = (last_level - prior[-1]) / prior[-1]
+
+    core_day, core_level = core[-1]
+    latest = date.fromisoformat(core_day)
+    month_index = latest.year * 12 + latest.month - 1 - FISCAL_CORE_CPI_MONTHS
+    earlier_day = date(month_index // 12, month_index % 12 + 1, 1).isoformat()
+    earlier = [level for day, level in core if day == earlier_day]
+    if not earlier:
+        raise DerivationUnavailable(
+            f"core price index has no level dated {earlier_day}, {FISCAL_CORE_CPI_MONTHS} months before {core_day}"
+        )
+    if earlier[0] <= 0.0 or core_level <= 0.0 or latest.day != 1:
+        raise DerivationUnavailable("core price index levels must be positive and month-start dated")
+    annualised = ((core_level / earlier[0]) ** (12 // FISCAL_CORE_CPI_MONTHS) - 1.0) * 100.0
+    if not (math.isfinite(growth) and math.isfinite(annualised)):
+        raise DerivationUnavailable("a leg of the fiscal discriminator is not finite")
+    fired = growth >= FISCAL_BALANCE_SHEET_GROWTH_FIRE and annualised >= FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT
+    return Derived(value=1.0 if fired else 0.0, observation_date=min(last_day, core_day), unit=spec.unit)
+
+
 @admits(indicator_id=str, inputs=dict)
 def derive(indicator_id: str, inputs: dict) -> Derived:
     """Compute one derived indicator from its stored component readings.
@@ -218,4 +296,6 @@ def derive(indicator_id: str, inputs: dict) -> Derived:
         return _ratio(spec, inputs)
     if spec.kind is DerivationKind.PERCENT_VS_AVERAGE:
         return _percent_vs_average(spec, inputs)
+    if spec.kind is DerivationKind.FISCAL_CONJUNCTION:
+        return _fiscal_conjunction(spec, inputs)
     return _percentile(spec, inputs)

@@ -59,11 +59,12 @@ from crash_detector.source_registry import (
 from crash_detector.staleness import RelevanceWindow
 from crash_detector.time_utc import ensure_utc
 
-from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient
+from ingestion.adapters import as_of_for
+from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient, window_seconds
 from ingestion.store import SqliteStore
 
 __all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store",
-           "DERIVED_FROM", "HELD_BINDINGS", "derive_from_store"]
+           "DERIVED_FROM", "HELD_BINDINGS", "derive_from_store", "derived_as_of"]
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING_YAML = ROOT / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -89,6 +90,9 @@ DERIVED_FROM: dict = {
     "vix_term_structure": ("cboe.VIX", "cboe.VIX3M"),
     "spx_vs_200dma": ("yahoo.^GSPC",),
     "shiller_cape": ("multpl.shiller_pe_table",),
+    # WO-1.6 (substitutions recorded in ingestion.catalog.SUBSTITUTED_FEEDS):
+    "buffett_indicator": ("fred.NCBEILQ027S", "fred.GDP"),
+    "fiscal_dominance": ("fred.WALCL", "fred.CPILFESL"),
 }
 
 #: (indicator, dial) bindings that are NOT scored although the indicator is live on its other dial.
@@ -99,16 +103,28 @@ HELD_BINDINGS: dict = {
     "and which is intended is the Owner's call; scoring either way would be a guess on a x2 weight.",
 }
 
+#: The as-of rule for a DERIVED figure whose date is the quarter START (the engine returns the components' own
+#: date). Everything else is aged from its own date.
+DERIVED_AS_OF_RULE: dict = {"buffett_indicator": "quarter_end"}
+
+
+def derived_as_of(indicator: str, observation_date: str, now_utc: datetime) -> datetime:
+    """The instant a derived figure refers to (see :func:`ingestion.adapters.as_of_for`)."""
+    return as_of_for(observation_date, DERIVED_AS_OF_RULE.get(indicator, "obs_date"), now_utc)
+
+
 #: Newest source periods fetched per component: enough to find the latest date both share.
 DERIVATION_LOOKBACK = 10
 
 #: Why a derived indicator that is NOT wired cannot be.
 DERIVATION_BLOCKED: dict = {
-    "gold_real_rate_cross": "BLOCKED on definition: the row says 'gold vs 10y TIPS divergence, normalised 0-100'. "
-    "Neither 'divergence' (a residual? a rolling correlation break? a spread of z-scores?) nor the 0-100 "
-    "normalisation (percentile of what window?) is defined, and both need a history of gold futures and of "
-    "DFII10 that the store does not hold (it keeps the latest figure of each). Any formula chosen here would "
-    "be invented product meaning (CD-D-005). Needs an Owner definition.",
+    "gold_real_rate_cross": "BLOCKED on definition (re-examined WO-1.6, unchanged): the row says 'gold vs 10y TIPS "
+    "divergence, normalised 0-100'. Neither 'divergence' (a residual? a rolling correlation break? a spread of "
+    "z-scores?) nor the 0-100 normalisation (percentile of what window?) is defined. Spot gold "
+    "(LBMA) does not touch that: it is the DEFINITION that is missing, not an input (and LBMA is itself currently "
+    "refusing this host, see gold_spot). The legacy ARGUS engine has no gold-vs-TIPS tell to port (its two gold tells are SPX-in-gold and a gold/SPX "
+    "correlation flip: different quantities). Any formula chosen here would be invented product meaning (CD-D-005). "
+    "Needs an Owner definition.",
 }
 
 
@@ -205,7 +221,7 @@ def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
             source_id=r["id"],
             dial_bindings=tuple(DialBinding(dial_id=d, polarity=POLARITY[p]) for d, p in pols.items()),
             provisional_tier=TIER_ENUM[r["tier"]],
-            staleness_window=RelevanceWindow(seconds=float(r["staleness_window_seconds"])),
+            staleness_window=RelevanceWindow(seconds=window_seconds(r["id"], r["staleness_window_seconds"])),
             provenance=MappingProvenance(
                 ruling_ref="PO-DECISIONS-0025",
                 mapping_artefact="governance/mapping/indicator_mapping.yaml",
@@ -295,7 +311,7 @@ def observations_from_store(store: SqliteStore, wiring: Wiring, observed_utc: da
             observed_utc=ensure_utc(observed_utc),
             outcome=OK(payload={"unit": derived.unit, "observation_date": derived.observation_date,
                                 "value": derived.value},
-                       source_as_of_utc=datetime.fromisoformat(derived.observation_date).replace(tzinfo=timezone.utc)),
+                       source_as_of_utc=derived_as_of(indicator, derived.observation_date, observed_utc)),
         ))
     for indicator, ing in sorted(wiring.ingredient_for.items()):
         reading = store.latest_reading(ing.source_id)
