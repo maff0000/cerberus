@@ -27,6 +27,9 @@ COPY --chmod=0555 crash-detector/src/ /app/src/
 COPY --chmod=0555 crash-detector/ingestion/ /app/ingestion/
 COPY --chmod=0555 crash-detector/gui/ /app/gui/
 COPY --chmod=0555 crash-detector/governance/mapping/ /app/governance/mapping/
+# Create /app/deploy explicitly: COPY --chmod applies to implicitly created parent dirs too, so a
+# bare "COPY --chmod=0444 file /app/deploy/" yields a dr--r--r-- dir the non-root user cannot traverse.
+RUN mkdir -m 0555 /app/deploy
 COPY --chmod=0444 crash-detector/deploy/indicator-scaling.json /app/deploy/indicator-scaling.json
 COPY --chmod=0555 crash-detector/deploy/live-dev/collector_loop.py /app/collector_loop.py
 
