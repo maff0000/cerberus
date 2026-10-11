@@ -180,3 +180,44 @@ def test_both_dial_indicators_use_each_dials_own_band(wiring, store):
     assert _mag(dials.monetary) == pytest.approx(_expected("monetary_debasement", values))
     assert _mag(dials.equity) > _expected("equity_crash", CALM)
     assert _mag(dials.monetary) < _expected("monetary_debasement", CALM)
+
+
+# --- WO-1.3 Auditor reconciliation (F1, F3) -------------------------------------------------- #
+
+def test_coverage_discloses_that_a_fully_live_dial_is_built_from_part_of_the_ratified_weight(wiring):
+    from ingestion.wiring import coverage
+    cov = coverage(wiring)
+    for dial in DIALS:
+        c = cov[dial]
+        assert 0.0 < c["fraction"] < 1.0, "pending rows exist, so no dial may claim full coverage"
+        assert c["wired_weight"] < c["nominal_weight"] and c["pending"]
+        assert not set(c["pending"]) & set(wiring.ingredient_for)
+    assert "fiscal_dominance" in cov["monetary_debasement"]["pending"]
+
+
+def test_relevance_window_is_inclusive_at_its_limit_and_refuses_beyond_and_the_future():
+    from crash_detector.staleness import RelevanceWindow
+    w = RelevanceWindow(seconds=345600.0)
+    assert w.covers(345600.0) and w.covers(0.0)
+    assert not w.covers(345600.001) and not w.covers(-1.0)
+    assert not w.covers(float("nan")) and not w.covers(float("inf"))
+    assert RelevanceWindow(seconds=10_368_000.0).covers(10_368_000.0)
+    with pytest.raises(Exception):
+        RelevanceWindow(seconds=10_368_001.0)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), True, "3.0", None])
+def test_a_non_finite_or_non_number_stored_value_yields_no_observation(wiring, store, bad):
+    _seed(store, wiring, {"hy_oas": 3.0})
+    ing = wiring.ingredient_for["vix_level"]
+    as_of = (NOW - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    cur = store._db.execute(
+        "INSERT INTO raw_observation (source_id, adapter_id, collector_run_id, attempt_number,"
+        " requested_utc, observed_utc, outcome, source_as_of_utc) VALUES (?,?,?,?,?,?,?,?)",
+        (ing.source_id, "t", "r", 1, as_of, as_of, "OK", as_of))
+    store._db.execute(
+        "INSERT INTO raw_reading (source_id, source_as_of_utc, payload, observation_id, admitted_utc)"
+        " VALUES (?,?,?,?,?)",
+        (ing.source_id, as_of, json.dumps({"unit": "x", "value": bad}, allow_nan=True), cur.lastrowid, as_of))
+    ids = {o.source_id for o in observations_from_store(store, wiring, NOW)}
+    assert "hy_oas" in ids and "vix_level" not in ids

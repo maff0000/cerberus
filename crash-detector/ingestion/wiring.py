@@ -55,7 +55,7 @@ from crash_detector.time_utc import ensure_utc
 from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient
 from ingestion.store import SqliteStore
 
-__all__ = ["Wiring", "build_wiring", "observations_from_store", "evaluate_from_store"]
+__all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store"]
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING_YAML = ROOT / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -220,3 +220,28 @@ def observations_from_store(store: SqliteStore, wiring: Wiring, observed_utc: da
 def evaluate_from_store(store: SqliteStore, now_utc: datetime, wiring: "Wiring | None" = None) -> DialSet:
     wiring = wiring or build_wiring()
     return evaluate(observations_from_store(store, wiring, now_utc), wiring.snapshot, now_utc)
+
+
+def coverage(wiring: Wiring) -> dict:
+    """Per dial: the share of the ratified nominal tier weight that is WIRED (Auditor F1, WO-1.3).
+
+    A dial built from only the live indicators reads as a full ``Value`` because the pending
+    rows are not in its spec. This is the disclosure that closes that gap for any consumer: it
+    counts every ratified row bound to the dial, live or not, and names the pending ones.
+    """
+    out = {}
+    for dial in DIALS:
+        total = live = 0.0
+        pending = []
+        for r in _rows():
+            if dial not in _polarities(r):
+                continue
+            w = TIER_WEIGHT[r["tier"]]
+            total += w
+            if r["id"] in wiring.ingredient_for:
+                live += w
+            else:
+                pending.append(r["id"])
+        out[dial] = {"wired_weight": live, "nominal_weight": total,
+                     "fraction": live / total if total else 0.0, "pending": pending}
+    return out
