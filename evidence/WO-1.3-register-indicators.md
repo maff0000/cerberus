@@ -1,6 +1,6 @@
 # WO-1.3 — Register indicators: independent audit and reconciliation
 
-Audit target: `c9f6af3` (base `59a48f4`). Fresh FORGE Auditor, own worktree, tests re-run (2143 passed), mutation-tested.
+Audit target: `dc9ad77` (base `1a0def5`). Fresh FORGE Auditor, own worktree, tests re-run (2143 passed), mutation-tested.
 **AUDIT_VERDICT: AMBER** (no RED). non_vacuity_established: yes for the main doctrine controls. Browser gate n/a (no surface).
 
 ## Judgement calls — both ruled SOUND

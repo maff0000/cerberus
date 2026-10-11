@@ -100,6 +100,8 @@ A live run on 2026-10-11 fetched **27 of 27 sources OK**. Of the 30 ratified ind
 | **PARTIAL** | 1 | sloos_bank_lending: the automatic C&I leg (FRED DRTSCILM) is live; the manual NDFI leg (SLOOS Table 2 Q14) has no feed, so it must not read complete |
 | **NOT_TRACTABLE** (no substitute wired; a substitute is a provenance decision) | 5 | buffett_indicator (Wilshire/GDP: FRED withdrew WILL5000PRFC, no free market-cap series), ism_manufacturing (licensed; FRED withdrew NAPM), gold_spot (no keyless public spot source; GC=F is futures, not spot), private_credit_stress (composite weighting and BDC universe undefined), fiscal_dominance (discriminator rule not in the mapping) |
 
+> **WO-1.6 addendum (2026-10-11, supersedes the NOT_TRACTABLE row above for three indicators).**  `buffett_indicator` (FRED NCBEILQ027S / GDP, 255.05 % on 2026-10-11) and `fiscal_dominance` (FRED WALCL + core CPI conjunction) are now **LIVE as disclosed SUBSTITUTE feeds**; the fiscal_dominance substitute still awaits Owner acceptance. `gold_spot` is **wired to the LBMA fix but FEED_FAILING**: prices.lbma.org.uk answers HTTP 403 (Cloudflare) from the build host for every User-Agent tried, so it delivers no reading and degrades the monetary dial honestly until an accessible source exists. `copper_gold` monetary binding is HELD (polarity contradiction in the mapping); `gold_real_rate_cross` is BLOCKED (divergence undefined).
+
 So **17 have a raw source value that needs no further input (the dial scaling is WO-1.3), 7 have all raw inputs but need the engine to derive, 1 is half-fed, 5 are blocked.** "Tractable" is 25 of 30 counting inputs, 17 of 30 counting finished numbers.
 
 Caveats, stated plainly:

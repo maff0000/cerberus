@@ -10,6 +10,7 @@ import pytest
 from crash_detector.dials.reading import Degraded, Unknown, Value
 from ingestion.store import SqliteStore
 from ingestion.wiring import (
+    DERIVED_FROM,
     DIALS,
     SCALING_JSON,
     POLARITY,
@@ -298,3 +299,8 @@ def test_a_non_finite_or_non_number_stored_value_yields_no_observation(wiring, s
     store._db.execute("PRAGMA ignore_check_constraints=OFF")
     ids = {o.source_id for o in observations_from_store(store, wiring, NOW)}
     assert "hy_oas" in ids and "vix_level" not in ids
+
+
+def test_buffett_derived_roles_are_numerator_then_denominator():
+    # Order is the role: swapping them silently inverts the ratio and every other test still passes.
+    assert DERIVED_FROM["buffett_indicator"] == ("fred.NCBEILQ027S", "fred.GDP")

@@ -242,7 +242,8 @@ def parse_multpl_table(text: str, unit: str, with_history: bool = False) -> dict
     return out
 
 
-#: The browser-style agent LBMA's edge requires (legacy ARGUS ``gold_tells.py`` used exactly this).
+#: The browser-prefixed agent legacy ARGUS ``gold_tells.py`` used. It no longer gets past LBMA's
+#: Cloudflare edge from the build host (HTTP 403), so it is not a working credential.
 LBMA_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) argus-crash-engine/monetary-tells"
 LBMA_PM_URL = "https://prices.lbma.org.uk/json/gold_pm.json"
 LBMA_AM_URL = "https://prices.lbma.org.uk/json/gold_am.json"
@@ -484,8 +485,9 @@ class LbmaGoldAdapter(_BaseAdapter):
     """LBMA daily gold fix (USD/oz), PM with AM fallback — the genuine spot-gold reference.
 
     Two bounded GETs (``gold_pm.json`` and ``gold_am.json``); BOTH must succeed, so a half-fetched
-    answer is a recorded failure and never a silent choice. The edge wants a browser-style
-    User-Agent. If the edge refuses us anyway (HTTP 403 from its bot protection), that is
+    answer is a recorded failure and never a silent choice. The legacy browser-prefixed User-Agent is
+    sent. If the edge refuses us (HTTP 403 from its bot protection; observed from the build host
+    with this and a plain curl agent), that is
     recorded as ``HTTP_ERROR``/403 like any failure: this adapter does not try to get around it.
     """
 
