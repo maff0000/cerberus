@@ -167,7 +167,13 @@ def test_stress_in_one_dial_moves_only_that_dial(wiring, store):
     _seed(store, wiring, stressed)
     dials = evaluate_from_store(store, NOW, wiring)
     assert _mag(dials.equity) == pytest.approx(_expected("equity_crash", stressed))
-    assert _mag(dials.equity) > _expected("equity_crash", CALM) + 0.2
+    # Margin derived from structure, not a hard-coded constant: three tier-1 inputs (weight 3
+    # each) saturate at 1.0 against the dial's total weight, so each further calm input dilutes
+    # the score (0.346 at 17 live inputs, 0.231 at 23). Require at least half that ceiling.
+    tier = {r["id"]: r["tier"] for r in _rows()}
+    total = sum({1: 3.0, 2: 2.0, 3: 1.0}[tier[i]]
+                for i in json.loads(SCALING_JSON.read_text())["equity_crash"])
+    assert _mag(dials.equity) > _expected("equity_crash", CALM) + 0.5 * 9.0 / total
     assert _mag(dials.monetary) == pytest.approx(_expected("monetary_debasement", CALM))
 
 
