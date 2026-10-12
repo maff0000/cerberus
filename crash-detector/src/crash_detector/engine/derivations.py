@@ -55,6 +55,8 @@ __all__ = [
     "MINIMUM_PERCENTILE_HISTORY",
     "FISCAL_BALANCE_SHEET_GROWTH_FIRE",
     "FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT",
+    "CORRELATION_WINDOW",
+    "MINIMUM_SURVEY_HISTORY",
     "derive",
 ]
 
@@ -71,12 +73,23 @@ FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT = 4.0
 FISCAL_BALANCE_SHEET_LOOKBACK_DAYS = 365
 FISCAL_CORE_CPI_MONTHS = 3
 
+#: WO-1.7 ``gold_real_rate_cross``: rolling-correlation window in aligned trading-day changes. TRINITY'S PROVISIONAL
+#: CHOICE, not Owner-ratified and not calibrated; changing it is a one-line edit in ``DERIVATIONS``.
+CORRELATION_WINDOW = 60
+
+#: WO-1.7 ``ism_manufacturing``: a survey's z-score needs at least this many monthly points (10 years); a shorter page
+#: is a truncated fetch, not a distribution.
+MINIMUM_SURVEY_HISTORY = 120
+
 
 class DerivationKind(Enum):
     RATIO = "ratio"
     PERCENT_VS_AVERAGE = "percent_vs_average"
     PERCENTILE = "percentile"
     FISCAL_CONJUNCTION = "fiscal_conjunction"
+    CORRELATION_PERCENTILE = "correlation_percentile"
+    Z_COMPOSITE = "z_composite"
+    LEG_MEAN = "leg_mean"
 
 
 class DerivationUnavailable(Exception):
@@ -128,6 +141,16 @@ DERIVATIONS = {
     "buffett_indicator": Derivation(DerivationKind.RATIO, ("numerator", "denominator"), "percent_of_gdp", 0.1, 0),
     "fiscal_dominance": Derivation(
         DerivationKind.FISCAL_CONJUNCTION, ("balance_sheet", "core_price_index"), "fired_flag", 1.0, 0
+    ),
+    # WO-1.7 (all three provisional, see ingestion.catalog.SUBSTITUTED_FEEDS and STATUS.md):
+    "gold_real_rate_cross": Derivation(
+        DerivationKind.CORRELATION_PERCENTILE, ("gold", "real_rate"), "percentile_of_rolling_corr", 1.0, CORRELATION_WINDOW
+    ),
+    "ism_manufacturing": Derivation(
+        DerivationKind.Z_COMPOSITE, ("philadelphia", "new_york", "dallas"), "regional_survey_z_composite", 1.0, 0
+    ),
+    "sloos_bank_lending": Derivation(
+        DerivationKind.LEG_MEAN, ("commercial_industrial", "ndfi"), "net_percent_tightening", 1.0, 0
     ),
 }
 
@@ -276,6 +299,92 @@ def _fiscal_conjunction(spec: Derivation, inputs: dict) -> Derived:
     return Derived(value=1.0 if fired else 0.0, observation_date=min(last_day, core_day), unit=spec.unit)
 
 
+def _pearson(owner: str, xs: list, ys: list) -> float:
+    n = len(xs)
+    mean_x, mean_y = sum(xs) / n, sum(ys) / n
+    sxx = sum((x - mean_x) ** 2 for x in xs)
+    syy = sum((y - mean_y) ** 2 for y in ys)
+    if sxx <= 0.0 or syy <= 0.0:
+        raise DerivationUnavailable(f"{owner}: a window has zero variance, so its correlation is undefined")
+    r = sum((x - mean_x) * (y - mean_y) for x, y in zip(xs, ys)) / math.sqrt(sxx * syy)
+    return max(-1.0, min(1.0, r))
+
+
+def _correlation_percentile(spec: Derivation, inputs: dict) -> Derived:
+    """``gold_real_rate_cross`` (TRINITY'S PROVISIONAL CONSTRUCTION; not Owner-ratified; uncalibrated).
+
+    Align the two daily histories on the dates BOTH have. Between consecutive shared dates take gold's simple return
+    and the real yield's change in percentage points. The rolling Pearson correlation of the last ``window`` such pairs
+    is normally negative (gold rises as real yields fall); the figure is the percentile, 0-100, of the LATEST rolling
+    correlation within every rolling correlation the stored history yields, so a flip toward positive reads high.
+    Refused, never shortened, when there are too few correlations to percentile.
+    """
+    gold = dict(_dated_rows("gold", inputs["gold"][0]))
+    real = dict(_dated_rows("real_rate", inputs["real_rate"][0]))
+    if any(level <= 0.0 for level in gold.values()):
+        raise DerivationUnavailable("gold: a non-positive price cannot be turned into a return")
+    shared = sorted(set(gold) & set(real))
+    if len(shared) < spec.window + 1:
+        raise DerivationUnavailable(f"only {len(shared)} shared dates; a {spec.window}-change correlation needs {spec.window + 1}")
+    gold_change = [gold[b] / gold[a] - 1.0 for a, b in zip(shared, shared[1:])]
+    real_change = [real[b] - real[a] for a, b in zip(shared, shared[1:])]
+    correlations = [
+        _pearson("gold_real_rate_cross", gold_change[i - spec.window:i], real_change[i - spec.window:i])
+        for i in range(spec.window, len(gold_change) + 1)
+    ]
+    latest, earlier = correlations[-1], correlations[:-1]
+    if len(earlier) < MINIMUM_PERCENTILE_HISTORY:
+        raise DerivationUnavailable(
+            f"the stored history yields {len(earlier)} earlier correlations; a percentile needs at least {MINIMUM_PERCENTILE_HISTORY}"
+        )
+    at_or_below = 1 + sum(1 for c in earlier if c <= latest)
+    return Derived(value=100.0 * at_or_below / (len(earlier) + 1), observation_date=shared[-1], unit=spec.unit)
+
+
+def _z_composite(spec: Derivation, inputs: dict) -> Derived:
+    """``ism_manufacturing`` substitute: the equal-weighted mean of each regional survey's z-score.
+
+    Each survey is z-scored against its OWN full stored history (population standard deviation, the latest point
+    included). The composite is taken at the newest month ALL regions share; a region that has not yet reported that
+    month holds the composite at the previous shared month rather than being dropped (a two-region mean is a different
+    quantity). In-sample and uncalibrated.
+    """
+    zscores = []
+    for role in spec.roles:
+        rows = _dated_rows(role, inputs[role][0])
+        if len(rows) < MINIMUM_SURVEY_HISTORY:
+            raise DerivationUnavailable(f"{role}: {len(rows)} monthly points; a z-score needs at least {MINIMUM_SURVEY_HISTORY}")
+        values = [v for _, v in rows]
+        mean = sum(values) / len(values)
+        std = math.sqrt(sum((v - mean) ** 2 for v in values) / len(values))
+        if std <= 0.0:
+            raise DerivationUnavailable(f"{role}: the history has zero variance")
+        zscores.append({day: (v - mean) / std for day, v in rows})
+    shared = set(zscores[0])
+    for z in zscores[1:]:
+        shared &= set(z)
+    if not shared:
+        raise DerivationUnavailable("no month is reported by every regional survey")
+    day = max(shared)
+    return Derived(value=sum(z[day] for z in zscores) / len(zscores), observation_date=day, unit=spec.unit)
+
+
+def _leg_mean(spec: Derivation, inputs: dict) -> Derived:
+    """``sloos_bank_lending``: the plain mean of the automatic C&I leg and the hand-entered NDFI leg.
+
+    Both legs are required; a missing one is DerivationUnavailable and never filled. The figure is dated by the OLDER
+    leg, so it ages out when either leg does. The mean is an engineering choice (the row says '+', not how to combine).
+    """
+    values, days = [], []
+    for role in spec.roles:
+        day, value = _dated_value(role, inputs[role][0])
+        if not -100.0 <= value <= 100.0:
+            raise DerivationUnavailable(f"{role}: {value} is not a net percentage in [-100, 100]")
+        values.append(value)
+        days.append(day)
+    return Derived(value=sum(values) / len(values), observation_date=min(days), unit=spec.unit)
+
+
 @admits(indicator_id=str, inputs=dict)
 def derive(indicator_id: str, inputs: dict) -> Derived:
     """Compute one derived indicator from its stored component readings.
@@ -298,4 +407,10 @@ def derive(indicator_id: str, inputs: dict) -> Derived:
         return _percent_vs_average(spec, inputs)
     if spec.kind is DerivationKind.FISCAL_CONJUNCTION:
         return _fiscal_conjunction(spec, inputs)
+    if spec.kind is DerivationKind.CORRELATION_PERCENTILE:
+        return _correlation_percentile(spec, inputs)
+    if spec.kind is DerivationKind.Z_COMPOSITE:
+        return _z_composite(spec, inputs)
+    if spec.kind is DerivationKind.LEG_MEAN:
+        return _leg_mean(spec, inputs)
     return _percentile(spec, inputs)

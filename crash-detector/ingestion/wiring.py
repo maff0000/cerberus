@@ -64,7 +64,7 @@ from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient, w
 from ingestion.store import SqliteStore
 
 __all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store",
-           "DERIVED_FROM", "HELD_BINDINGS", "derive_from_store", "derived_as_of"]
+           "DERIVED_FROM", "HELD_BINDINGS", "WIRED_DESPITE_PENDING_STATUS", "derive_from_store", "derived_as_of"]
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING_YAML = ROOT / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -93,6 +93,17 @@ DERIVED_FROM: dict = {
     # WO-1.6 (substitutions recorded in ingestion.catalog.SUBSTITUTED_FEEDS):
     "buffett_indicator": ("fred.NCBEILQ027S", "fred.GDP"),
     "fiscal_dominance": ("fred.WALCL", "fred.CPILFESL"),
+    # WO-1.7 (gold_real_rate_cross and ism_manufacturing are SUBSTITUTED_FEEDS; sloos' second leg is hand-entered):
+    "gold_real_rate_cross": ("lbma.gold_fix_usd.history", "fred.DFII10.history"),
+    "ism_manufacturing": ("fred.GACDFSA066MSFRBPHI", "fred.GACDISA066MSFRBNY", "fred.BACTSAMFRBDAL"),
+    "sloos_bank_lending": ("fred.DRTSCILM", "manual.sloos_ndfi"),
+}
+
+#: Rows the ratified mapping still marks ``registration_pending`` that are wired anyway (WO-1.7), with the reason. The
+#: ratified file is not edited; the wiring says it is overriding its status.
+WIRED_DESPITE_PENDING_STATUS: dict = {
+    "sloos_bank_lending": "the manual NDFI leg now has a recorded entry mechanism (ingestion.manual); the indicator is "
+    "live only while BOTH legs are present and inside the 120-day window",
 }
 
 #: (indicator, dial) bindings that are NOT scored although the indicator is live on its other dial.
@@ -105,7 +116,7 @@ HELD_BINDINGS: dict = {
 
 #: The as-of rule for a DERIVED figure whose date is the quarter START (the engine returns the components' own
 #: date). Everything else is aged from its own date.
-DERIVED_AS_OF_RULE: dict = {"buffett_indicator": "quarter_end"}
+DERIVED_AS_OF_RULE: dict = {"buffett_indicator": "quarter_end", "ism_manufacturing": "month_end"}
 
 
 def derived_as_of(indicator: str, observation_date: str, now_utc: datetime) -> datetime:
@@ -116,16 +127,9 @@ def derived_as_of(indicator: str, observation_date: str, now_utc: datetime) -> d
 #: Newest source periods fetched per component: enough to find the latest date both share.
 DERIVATION_LOOKBACK = 10
 
-#: Why a derived indicator that is NOT wired cannot be.
-DERIVATION_BLOCKED: dict = {
-    "gold_real_rate_cross": "BLOCKED on definition (re-examined WO-1.6, unchanged): the row says 'gold vs 10y TIPS "
-    "divergence, normalised 0-100'. Neither 'divergence' (a residual? a rolling correlation break? a spread of "
-    "z-scores?) nor the 0-100 normalisation (percentile of what window?) is defined. Spot gold "
-    "(LBMA) does not touch that: it is the DEFINITION that is missing, not an input (and LBMA is itself currently "
-    "refusing this host, see gold_spot). The legacy ARGUS engine has no gold-vs-TIPS tell to port (its two gold tells are SPX-in-gold and a gold/SPX "
-    "correlation flip: different quantities). Any formula chosen here would be invented product meaning (CD-D-005). "
-    "Needs an Owner definition.",
-}
+#: Why a derived indicator that is NOT wired cannot be. Empty since WO-1.7: every ratified row but
+#: ``private_credit_stress`` is now wired (see ``ingestion.catalog.NOT_TRACTABLE``).
+DERIVATION_BLOCKED: dict = {}
 
 
 @dataclass(frozen=True)
@@ -196,7 +200,8 @@ def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
         derived[indicator] = parts
     serving = {i for ing in INGREDIENTS for i in ing.serves}
     live = [r for r in rows
-            if (r["id"] in direct or r["id"] in derived) and r.get("status") != "registration_pending"]
+            if (r["id"] in direct or r["id"] in derived)
+            and (r.get("status") != "registration_pending" or r["id"] in WIRED_DESPITE_PENDING_STATUS)]
     live_ids = {r["id"] for r in live}
     pending = {r["id"]: _pending_reason(r, serving) for r in rows if r["id"] not in live_ids}
 
