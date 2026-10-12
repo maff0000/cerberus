@@ -56,6 +56,7 @@ __all__ = [
     "FISCAL_BALANCE_SHEET_GROWTH_FIRE",
     "FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT",
     "CORRELATION_WINDOW",
+    "DRAWDOWN_WINDOW",
     "MINIMUM_SURVEY_HISTORY",
     "derive",
 ]
@@ -82,6 +83,11 @@ CORRELATION_WINDOW = 60
 MINIMUM_SURVEY_HISTORY = 120
 
 
+#: WO-1.8 ``private_credit_stress`` v1: the trailing-high look-back, in trading days (~1 year, the usual drawdown
+#: convention). TRINITY'S PROVISIONAL CHOICE, not Owner-ratified and not calibrated.
+DRAWDOWN_WINDOW = 252
+
+
 class DerivationKind(Enum):
     RATIO = "ratio"
     PERCENT_VS_AVERAGE = "percent_vs_average"
@@ -90,6 +96,7 @@ class DerivationKind(Enum):
     CORRELATION_PERCENTILE = "correlation_percentile"
     Z_COMPOSITE = "z_composite"
     LEG_MEAN = "leg_mean"
+    DRAWDOWN = "drawdown"
 
 
 class DerivationUnavailable(Exception):
@@ -151,6 +158,10 @@ DERIVATIONS = {
     ),
     "sloos_bank_lending": Derivation(
         DerivationKind.LEG_MEAN, ("commercial_industrial", "ndfi"), "net_percent_tightening", 1.0, 0
+    ),
+    # WO-1.8: a MARKET-PRICE PROXY for the ratified composite (BDC NAV discount + non-accrual + PIK), see SUBSTITUTED_FEEDS.
+    "private_credit_stress": Derivation(
+        DerivationKind.DRAWDOWN, ("series",), "percent_below_trailing_high", 1.0, DRAWDOWN_WINDOW
     ),
 }
 
@@ -385,6 +396,34 @@ def _leg_mean(spec: Derivation, inputs: dict) -> Derived:
     return Derived(value=sum(values) / len(values), observation_date=min(days), unit=spec.unit)
 
 
+def _drawdown(spec: Derivation, inputs: dict) -> Derived:
+    """``private_credit_stress`` v1 (TRINITY'S PROVISIONAL CONSTRUCTION; a market-price proxy; uncalibrated).
+
+    The percent the latest close sits BELOW the highest close of the last ``window`` closes (the latest included), so
+    the figure is never negative: 0 = at a new high, 25 = 25% below it. Higher = more stress, matching the row's
+    ``high_is_worse``. The history must hold ``window`` real closes ending on the reading's own date and value; a
+    shorter history is refused with its count, not measured over a shorter (easier-to-be-near-the-high) window.
+    """
+    latest = inputs["series"][0]
+    date_text, value = _dated_value("series", latest)
+    rows = _dated_rows("series", latest)
+    if len(rows) < spec.window:
+        raise DerivationUnavailable(
+            f"the stored history holds {len(rows)} closes; a {spec.window}-day trailing high needs {spec.window}. "
+            "No shorter window is substituted."
+        )
+    if rows[-1][0] != date_text:
+        raise DerivationUnavailable(
+            f"the history ends {rows[-1][0]} but the reading is dated {date_text}; they must be the same close"
+        )
+    if not math.isclose(rows[-1][1], value, rel_tol=1e-9):
+        raise DerivationUnavailable("the reading's value is not the last close of its own history")
+    closes = [close for _, close in rows[-spec.window:]]
+    if any(close <= 0.0 for close in closes):
+        raise DerivationUnavailable("a non-positive close cannot be drawn down from")
+    return Derived(value=(1.0 - closes[-1] / max(closes)) * 100.0, observation_date=date_text, unit=spec.unit)
+
+
 @admits(indicator_id=str, inputs=dict)
 def derive(indicator_id: str, inputs: dict) -> Derived:
     """Compute one derived indicator from its stored component readings.
@@ -413,4 +452,6 @@ def derive(indicator_id: str, inputs: dict) -> Derived:
         return _z_composite(spec, inputs)
     if spec.kind is DerivationKind.LEG_MEAN:
         return _leg_mean(spec, inputs)
+    if spec.kind is DerivationKind.DRAWDOWN:
+        return _drawdown(spec, inputs)
     return _percentile(spec, inputs)

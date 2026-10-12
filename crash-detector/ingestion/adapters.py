@@ -183,8 +183,12 @@ def parse_cboe_csv(text: str, column: str, unit: str) -> dict:
     return {"unit": unit}
 
 
-def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date, None] = None) -> dict:
+def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date, None] = None,
+                      field: str = "close") -> dict:
     """Latest daily close of a Yahoo v8 chart body; optionally the last ``history`` closes.
+
+    ``field`` is ``close`` (the printed price, the default) or ``adjclose`` (split- and DIVIDEND-adjusted, i.e. a
+    total-return series). A body that lacks the requested field is MALFORMED, never silently read as ``close``.
 
     ``today``: when given, any bar dated on or after it is DROPPED. During a session the last
     bar is the live price, not a close, and the store keeps the first value admitted for a
@@ -193,7 +197,8 @@ def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date,
     try:
         result = json.loads(text)["chart"]["result"][0]
         stamps = result["timestamp"]
-        closes = result["indicators"]["quote"][0]["close"]
+        closes = (result["indicators"]["quote"][0]["close"] if field == "close"
+                  else result["indicators"][field][0][field])
     except (ValueError, KeyError, IndexError, TypeError):
         return {"malformed": "shape"}
     if len(stamps) != len(closes):
@@ -449,13 +454,14 @@ class YahooChartAdapter(_BaseAdapter):
     recorded like any other; none is defaulted.
     """
 
-    __slots__ = ("_symbol", "_history")
+    __slots__ = ("_symbol", "_history", "_field")
     adapter_id = "cd.ingest.yahoo_chart.v1"
 
-    def __init__(self, symbol: str, history: int = 0, **kw: Any) -> None:
+    def __init__(self, symbol: str, history: int = 0, field: str = "close", **kw: Any) -> None:
         super().__init__(**kw)
         self._symbol = symbol
         self._history = history
+        self._field = field
 
     def _headers(self) -> Mapping[str, str]:
         # Yahoo answers 429 to urllib's default agent and 200 to an identified browser-style
@@ -468,7 +474,7 @@ class YahooChartAdapter(_BaseAdapter):
         return f"https://query1.finance.yahoo.com/v8/finance/chart/{quoted}?range={rng}&interval=1d"
 
     def _parse(self, body: str) -> dict:
-        return parse_yahoo_chart(body, self._unit, self._history, today=self._clock().date())
+        return parse_yahoo_chart(body, self._unit, self._history, today=self._clock().date(), field=self._field)
 
 
 class MultplShillerAdapter(_BaseAdapter):

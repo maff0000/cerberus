@@ -39,6 +39,8 @@ CALM = {
     # WO-1.7: ism and sloos are seeded to exactly this figure; gold_real_rate_cross is whatever percentile the fixed
     # pseudo-random series below yields (re-derived independently with statistics.correlation, see GOLD_FIGURE).
     "ism_manufacturing": 0.0, "sloos_bank_lending": 0.0,
+    # WO-1.8: percent BIZD sits below its 252-day high; seeded to exactly this figure (the calm end of the band).
+    "private_credit_stress": 5.0,
 }
 
 
@@ -113,6 +115,10 @@ def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
     if indicator == "spx_vs_200dma":
         r = 1.0 + figure / 100.0
         latest = 19900.0 * r / (200.0 - r)  # 199 closes of 100 + this one: latest / average - 1 == figure %
+        history = [[f"2025-{1 + i // 28:02d}-{1 + i % 28:02d}", 100.0] for i in range(259)] + [[date_text, latest]]
+        return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": latest, "history": history}}
+    if indicator == "private_credit_stress":
+        latest = 100.0 * (1.0 - figure / 100.0)  # 259 closes of 100, then this one: 1 - latest/high == figure %
         history = [[f"2025-{1 + i // 28:02d}-{1 + i % 28:02d}", 100.0] for i in range(259)] + [[date_text, latest]]
         return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": latest, "history": history}}
     if indicator == "shiller_cape":
@@ -208,13 +214,12 @@ def _mag(reading):
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
     assert len(wiring.ingredient_for) == 18  # + gold_spot (WO-1.6)
-    assert len(wiring.derived_for) == 11  # + buffett_indicator, fiscal_dominance (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7)
-    assert set(wiring.pending) == {"private_credit_stress"}
+    assert len(wiring.derived_for) == 12  # + buffett_indicator, fiscal_dominance (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7); + private_credit_stress (WO-1.8)
+    assert set(wiring.pending) == set()  # WO-1.8: every ratified row is wired (private_credit_stress as a disclosed proxy)
     assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
     assert not wiring.live_ids & set(wiring.pending)
     assert not set(wiring.ingredient_for) & set(wiring.derived_for)
-    assert wiring.pending["private_credit_stress"].startswith("NOT_TRACTABLE")
-    for wired in ("gold_real_rate_cross", "sloos_bank_lending", "ism_manufacturing"):
+    for wired in ("gold_real_rate_cross", "sloos_bank_lending", "ism_manufacturing", "private_credit_stress"):
         assert wired in wiring.derived_for and wired not in wiring.pending
 
 
@@ -327,10 +332,14 @@ def test_coverage_discloses_that_a_fully_live_dial_is_built_from_part_of_the_rat
     cov = coverage(wiring)
     for dial in DIALS:
         c = cov[dial]
-        assert 0.0 < c["fraction"] < 1.0, "pending rows exist, so no dial may claim full coverage"
-        assert c["wired_weight"] < c["nominal_weight"] and c["pending"]
+        # A dial may claim full coverage only when it lists NOTHING pending (WO-1.8: the equity dial now has every
+        # ratified row wired; the monetary dial still holds copper_gold's binding), and never the other way round.
+        assert (c["fraction"] == 1.0) == (not c["pending"]) and 0.0 < c["fraction"] <= 1.0
+        assert (c["wired_weight"] == c["nominal_weight"]) == (not c["pending"])
         assert not set(c["pending"]) & set(wiring.ingredient_for)
-    assert "private_credit_stress" in cov["equity_crash"]["pending"]
+    assert cov["monetary_debasement"]["pending"] == ["copper_gold"] and cov["monetary_debasement"]["fraction"] < 1.0
+    assert cov["equity_crash"]["pending"] == [] and cov["equity_crash"]["fraction"] == 1.0
+    assert "private_credit_stress" not in cov["equity_crash"]["pending"]
     assert "gold_real_rate_cross" not in cov["monetary_debasement"]["pending"]
 
 

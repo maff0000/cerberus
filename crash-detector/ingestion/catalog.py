@@ -156,6 +156,13 @@ INGREDIENTS: tuple[Ingredient, ...] = (
                stands_for="COMEX copper front-month close"),
     Ingredient("yahoo.GC=F", "yahoo", "GC=F", "usd_per_oz", "market:HG,GC", ("copper_gold",),
                "COMPONENT", POLL_DAILY, stands_for="COMEX gold front-month close"),
+    # ---- WO-1.8: private_credit_stress v1 = BIZD market-price proxy (see SUBSTITUTED_FEEDS) ----------------------
+    # ``column="adjclose"`` asks Yahoo for the DIVIDEND-ADJUSTED close: BIZD distributes most of its return, and a
+    # printed-price drawdown would count every ex-dividend drop as stress (verified 2026-10-12: 19.7% printed vs 9.5%
+    # adjusted below the 252-day high). history=520 is the whole ``range=2y`` page (~500 bars) the adapter requests.
+    Ingredient("yahoo.BIZD.adj", "yahoo", "BIZD", "usd", "market:BIZD (VanEck BDC Income ETF), dividend-adjusted close",
+               ("private_credit_stress",), "COMPONENT", POLL_DAILY, column="adjclose", history=520,
+               stands_for="BIZD dividend-adjusted close + last 520 adjusted closes for the 252-day trailing high"),
     # ---- multpl (declared: multpl/Shiller) ---------------------------------------------
     # A NEW source id (was ``multpl.shiller_pe``, latest figure only): the payload now carries the
     # whole published monthly table for the engine's percentile, and the store keeps the first
@@ -174,11 +181,7 @@ PARTIAL: dict[str, str] = {}
 
 #: Indicators whose DECLARED source cannot be reached with public/free data, or whose
 #: definition needs a decision this module has no authority to make. No substitute is wired.
-NOT_TRACTABLE: dict[str, str] = {
-    "private_credit_stress": "Declared composite of BDC NAV discount + non-accrual rate + PIK "
-    "share (quarterly SEC filings) + a public-spread proxy. The composite's weighting and the "
-    "per-BDC universe are undefined; filing extraction is a build in its own right.",
-}
+NOT_TRACTABLE: dict[str, str] = {}
 
 #: Indicators WIRED (WO-1.6) from a feed or rule that is NOT the one the ratified mapping row declares.
 #: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and
@@ -203,6 +206,15 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "Wired as the Z.1 ratio FRED NCBEILQ027S / (GDP*1000), in percent, banded as that ratio (the row's "
     "'percentiled' step is NOT applied). Substitute accepted by Matt per the Trinity dispatch of WO-1.6; the legacy "
     "engine proved it live (Trinity 2026-07-07, ~218%). Its staleness window is overridden (see WINDOW_OVERRIDES).",
+    "private_credit_stress": "The ratified row declares a COMPOSITE of BDC NAV discount + non-accrual rate + PIK share "
+    "(quarterly SEC filings) with public spreads as a fast proxy. Those three metrics live in free-text filing narrative, "
+    "not structured XBRL tags (confirmed against ARCC's EDGAR data), so they are NOT extracted. v1 is a MARKET-PRICE "
+    "PROXY: the percent drawdown of BIZD (VanEck BDC Income ETF), on its DIVIDEND-ADJUSTED close, below its trailing "
+    "252-trading-day high. It measures how the market is pricing listed private-credit risk, NOT the underlying loan "
+    "quality; it is a different quantity from the declared composite, and it moves with equity beta and liquidity as well "
+    "as credit. v2 (BDC NAV-discount leg, manual cadence) and v3 (non-accrual/PIK by filing-text extraction or a paid "
+    "vendor) remain OPEN and are not attempted. Substitute directed by Trinity (provisional, not Owner-ratified). Its "
+    "staleness window is overridden to 4 days (see WINDOW_OVERRIDES).",
     "fiscal_dominance": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
     "discriminated vs benign growth'. Wired instead as the legacy ARGUS crash-engine discriminator (fred_tells.py, "
     "R2D2-locked bands): Fed balance-sheet (WALCL) growth >= 10% over 12 months AND core CPI (CPILFESL) >= 4% "
@@ -222,6 +234,14 @@ WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
         "the engine will admit (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS, the Owner's own figure for "
         "quarterly series), so the ratio reads STALE for roughly the last 45 days before each release. That is stated, "
         "not hidden; widening it means raising a staleness ceiling, which is an Owner decision with external review.",
+    ),
+    "private_credit_stress": (
+        4 * DAY,
+        "the ratified row's 120 days assumed QUARTERLY filings (NAV / non-accrual / PIK). v1 is a DAILY ETF price; under a "
+        "120-day window a dead feed would keep a months-old drawdown reading as current, which is the opposite of the "
+        "row's own 'absence reads Unknown never calm'. 4 days is the same weekend-plus-grace window every other daily "
+        "row in the mapping declares (345,600 s), and is inside the engine's 120-day relevance ceiling. Revert this "
+        "override when a quarterly v2/v3 leg is added.",
     ),
 }
 
@@ -248,7 +268,7 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
     if ing.kind == "cboe":
         return CboeAdapter(ing.ref, ing.column, **common)
     if ing.kind == "yahoo":
-        return YahooChartAdapter(ing.ref, ing.history, **common)
+        return YahooChartAdapter(ing.ref, ing.history, field=ing.column or "close", **common)
     if ing.kind == "multpl":
         return MultplShillerAdapter(history=ing.history, **common)
     if ing.kind == "lbma":
